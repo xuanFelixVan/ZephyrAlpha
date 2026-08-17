@@ -5,7 +5,7 @@ title: AI 架构外部对标分析
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.5.0"
+version: "0.5.1"
 date: 2026-08-17
 topic: ai_external_benchmark
 scope: 09_ai_architecture
@@ -412,3 +412,148 @@ Hermes（外部）                          场内设计（AutoSkill）
 **为什么中度对标它**：CrewAI 的"角色+人在环"范式与本项目"人调度多 AI 会话"神似——差异在 CrewAI 把人在环编码进框架，本项目由人在 TRAE 多对话间手动调度。它的角色卡（role/goal/backstory 三要素）定义方式对本项目 AI 员工花名册（Stage K 未激活）的岗位描述格式有参考价值。适配度"低"是因为 61 号备忘已暂缓 agent 编排，只取其角色定义 schema 思想。
 
 **考虑过的替代方案**：AutoGen（微软，对话式编排，同样编排越界）；MetaGPT（SOP 编码，与本项目 design_memos 流程重复）。
+
+---
+
+## 五、模块工厂落地性评估
+
+> 模块工厂（Module Factory）在 §一 被评为"⭐⭐ 核心独创"——没有任何已公开系统有此概念。本节回答的问题是：它会不会是纸上谈兵？评估基准是 [system_charter.md](../../04_architecture_principles_decisions/system_charter.md) §2 硬约束（1 人全栈 + 单机 RTX 3090 + 无集群 + AI 生成代码需交叉验证）。施工细节真源是 [13_module_factory.md](13_module_factory.md)，本节只做落地性判断。
+
+### 5.1 逐项可行性评估
+
+| 环节 | 可行性 | 判断 |
+|------|--------|------|
+| 知识采集（手动/爬虫） | **可行** | 无技术门槛；Hermes `/learn`（2026-06）证明"从材料到技能"的蒸馏可轻至一个标准 prompt 回合（§4.2） |
+| LLM 知识分类 | **可行** | LLM 文本分类准确率已足够支撑因子/策略/风控/执行的粗粒度分桶 |
+| 语义匹配→模块映射 | **可行** | embedding + SQLite FTS5 轻量实现；Hermes 跨会话召回同为 SQLite FTS5 方案，单机验证过的栈 |
+| DSL 约束代码生成 | **可行** | DSL 限制搜索空间，AST 沙箱防注入；AQuA 证明受限 DSL 路线可产出组合 IC≈0.190 级成果（§2.1） |
+| 回测验证 | **可行** | 现有 C-003 回测直接复用；评估器必须冻结，不允许 Agent 自选回测口径（AQuA 密封沙箱原则，§2.1） |
+| **Phase 2 全自动零审核** | **不可行** | LLM 生成交易策略代码，零审核=自杀（system_charter §2 约束六） |
+| **Phase 3 MAML/EWC** | **不现实** | RTX 3090 单 GPU 跑不动显式元训练，ICL 替代更实际 |
+| **Phase 3 自我进化** | **远期愿景** | RSI 学术界无可靠实现，只能渐进逼近；hermes-agent-self-evolution 证明"无 GPU 技能自进化"（DSPy+GEPA 纯 API，单次 $2~10）是这条渐进路径上已验证的第一级台阶（§7.1） |
+
+### 5.2 结论
+
+**模块工厂不是纸上谈兵，但 Phase 2→3 需要大幅裁剪。**
+
+- **Phase 0→1（知识→模块映射）**：核心独特点，值得优先落地。技术栈成熟（LLM 分类 + embedding 检索 + DSL 代码生成 + 现有回测），无不可逾越的障碍。
+- **Phase 2（全自动）**：保留人工审核。LLM 生成 → 人工审核 → 自动回测，不追求零人工。
+- **Phase 3（自我进化）**：用 ICL（上下文学习）替代 MAML/EWC——只需精心设计 prompt 含历史案例，无需显式元训练，与单 GPU 兼容。
+- **成本与容量必须内嵌**：R&D-Agent-Quant A 股第三方实测暴露"IC 优化目标与实盘收益脱钩"（§2.8）——模块工厂试运行环节必须内嵌成本/容量/回撤评估，不能只看 IC。
+
+### 5.3 裁剪后的现实路径
+
+```
+Phase 0（手动）     → 知识→模块映射验证，全程人工
+Phase 1（半自动）   → LLM 分类+匹配自动化，代码生成人工审核
+Phase 2（全自动）   → 采集→分类→匹配→生成→回测 全自动，上线人工审批
+Phase 3（自我进化） → ICL 元学习 + AutoSkill 技能库 + 证据关联迭代引导
+                     （裁剪掉 MAML/EWC，用 ICL + prompt 工程替代）
+```
+
+### 5.4 实施约束（不可违反）
+
+| 约束 | 来源 | 说明 |
+|------|------|------|
+| 不做 agent 编排系统 | 61 号备忘 §2.3 | 多 AI 协作 = 人调度多会话，非 agent 自治 |
+| 架构手动来 | 用户明确裁定 | 架构设计决策始终由人做出，AI 不自动修改架构 |
+| 多 AI 交叉验证 | system_charter §2 约束六 | AI 生成代码不可完全信任 |
+| AI 自治熔断 | system_charter §2 约束六 | 亏损超限/置信度低 → 降级"仅建议"模式 |
+| Phase 2 保留人工审核 | 本文 §5.2 | LLM 生成交易策略代码，零审核=自杀 |
+| Phase 3 用 ICL 替代 MAML/EWC | 本文 §5.3 | 单 GPU 不支撑 MAML/EWC，ICL 更实际 |
+
+---
+
+## 六、不做什么（本文边界）
+
+1. **不做代码实现细节**：本文只做框架分析、映射与落地性判断，不施工；施工真源是 03~17 号施工文档，设施存在性真源是 [02_design_asset_inventory.md](02_design_asset_inventory.md)。
+2. **不做框架完整复现**：只取启示与单点机制（如 Goodhart 检测、渐进披露加载、密封沙箱），不引入外部框架本体作依赖——NeMo 本地部署需 48GB+ 显存（§2.2）、OpenRouter 类托管路由数据出站不可审计（§4.3）、claude-flow 跨网络联邦超出单机约束（§4.4），均已逐个否决。
+3. **不做远期框架的深度评估**：AI Agent Swarm、受约束 Vibe Coding（Meta Agent）等机构级/范式级条目仅作边界校准与跟踪（远期属性见 §1.3 分级与 §7.2），不展开施工级分析。
+4. **不做双真源维护**：00_index.md §2 只保留一句话速览表，深度分析唯一真源在本文；场内设计资产细节唯一真源在 02 号文与 12/13 号文，本文引用不复制。
+
+---
+
+## 七、前沿演进方向
+
+### 7.1 2026-08 已核实动态（2026-08-17 WebSearch 复核）
+
+| 动向 | 事实 | 对本项目的意义 |
+|------|------|---------------|
+| Hermes 持续爆发 | 2026-08-11 达 228,662 stars，为 2026 年增长最快的开源 Agent；官方文档确认 Curator 后台进程归档低分技能、FTS5 跨会话召回、技能经 `/<skill-name>` 加载 | "技能库建好会腐烂、需周期自治维护"的判断获官方实现背书 → 11 号文施工参考 |
+| hermes-agent-self-evolution Phase 1 验证报告（2026-03-09） | DSPy + GEPA（ICLR 2026 Oral）纯 API 进化技能文本，无需 GPU，单次 $2~10；arxiv 技能 held-out 质量 0.408→0.569（+39.5%）；GEPA 较 GRPO +6% 且 rollouts 少 35 倍；防护门 = 测试 100% 通过 + 技能 ≤15KB + 语义保留 + 人工评审 | **无 GPU 技能自进化的直接工程先例**，印证 §5.3 用 ICL/文本进化替代 MAML/EWC 的裁剪方向；其防护门设计可作 13 号文模块工厂验证环节参照 |
+| AQuA 挂网（2026-08-13，arXiv:2608.12841v1） | 双系统不共享 agents/memories/candidate spaces/research state；作者立场："改进的是研究过程，而非成功的定义" | 已并入 §2.1；自我进化的证据完整性有了学术标杆 |
+| NeMo 信号发现蓝图商品化 | build.nvidia.com launchable，托管 API 免本地 GPU；蓝图演示最优信号 Rank IC=-0.0134（3,504 个交易日统计显著，效应量 modest） | "AI 发现信号可行但非圣杯"，门控与成本意识不可少（§2.2） |
+| Qualixar OS 产品化 | npm 化（`npx qualixar-os`）；拓扑从论文 12 种增至 13 种；测试通过数 2,821（论文）→ 2,936（产品页）；产品页许可证标注 FSL-1.1（两年后转 Apache 2.0），论文标注 Elastic License 2.0——两者均为源码可用非 OSI，§4.3"借鉴思想不搬代码"结论不变 | 独立研究员可持续运营该量级系统，佐证本项目自我进化层的个人可达性 |
+| R&D-Agent-Quant 获学术认可 | NeurIPS 2025 收录，迭代至 v0.8.0；A 股第三方实测（2026-05-20，国联民生金工） | 三条启示已并入 §2.8（代码工程能力 > 推理能力、IC 与实盘脱钩、环境约束） |
+| RSI 成为独立研究领域 | ICLR 2026 首设 Recursive Self-Improvement Workshop；OpenAI 随 GPT-5.6 发布 RSI Index；Anthropic 披露 Claude 产出公司 80%+ 合入代码；Sakana AI 设 RSI Lab（2026-06） | Phase 3 方向的外部合法性增强，同时印证"渐进逼近、不赌单点"的裁剪策略 |
+| 自进化三层分类共识 | 社区分类法（2026-07 流传）：Models（权重）/ Harness（prompt·记忆·技能·路由）/ Artifacts（产出物）三层自进化 | 本项目 Phase 3 与 Hermes/AutoSkill 同属 **Harness 层**——不动权重、只进化脚手架，正是单 GPU 约束下唯一可行层 |
+
+> 中国市场监管维度（"降频、透明、限空、收费"导向，2026-06 上交所清理量化专属高速通道）已并入 §2.5 正文，不重复登记。
+
+### 7.2 持续跟踪清单
+
+| 条目 | 跟踪理由 | 触发动作 |
+|------|---------|---------|
+| 受约束 Vibe Coding / Meta Agent（Zenera，2026-03） | 若"意图层 Agent 化"被证明可靠且不漂移，本项目意图层（design_memos 人工维护）才有自动化候选路径 | 出现可复现的意图→任务分解实证时再评估 |
+| FactorMAD 深挖 | 12 号文多 Agent 投票评审环节的对标来源，本轮未独立深挖 | 12 号文施工时按场内既有对标口径引用，必要时补深度 |
+| hermes-agent-self-evolution Phase 2~5 | Phase 1 仅覆盖技能文本；后续阶段覆盖工具描述/系统 prompt/代码进化/连续循环 | 每季度复查其报告，验证"无 GPU 进化"的边界扩展情况 |
+| 新涌现框架（2026 Q3/Q4 及以后） | 外部演进速度快（本轮复核的框架均有新事实） | 按 Q4 开放问题待裁定的机制登记；登记前只做跟踪，不替换已定决策 |
+
+---
+
+## 八、开放问题
+
+| # | 问题 | 状态 | 说明 |
+|---|------|------|------|
+| Q1 | AQuA 双系统完全隔离沙箱是否值得引入？ | 待裁定 | 目前场内无此机制，因子发现和模型开发可能互相污染；AQuA 论文证明隔离是防证据污染的关键机制（§2.1） |
+| Q2 | AlphaQuanter 的 RL 端到端训练是否值得引入 MOD-ML-002？ | 待裁定 | 场内目前无 RL 训练信号回传；可验证奖励机制对策略优化有价值，但单 RTX 3090 训练/推理时段冲突难以调和（§2.4） |
+| Q3 | Qualixar OS 的 Q-learning 动态路由是否值得替换静态路由？ | 待裁定 | 静态路由简单可控且是学习路由的数据前置；task_model_learner.py 已具任务×模型表现学习雏形，Q-learning 需积累路由结果数据（§4.3） |
+| Q4 | 新涌现框架如何纳入本文更新机制？ | 待裁定 | 建议每季度搜索一次（§7.2 已列跟踪清单），但由谁触发、如何登记未定 |
+
+---
+
+## 九、参考来源
+
+### 外部来源
+
+| 框架 | 来源 | 日期 |
+|------|------|------|
+| AQuA | arXiv:2608.12841v1（Princeton + Ant Group + Stanford，Mengdi Wang 团队） | 2026-08-13 |
+| TiMi | arXiv:2510.04787（Microsoft Research Asia + 同济大学；v1 2025-10-06，v2 2026-02-09） | 2026-02-09（v2） |
+| AlphaQuanter | HKUST，GitHub: AlphaQuanter/AlphaQuanter | 2025-10-16 |
+| NVIDIA NeMo Signal Discovery | NVIDIA Developer Blog（Peihan Huo 等） | 2026-05-21 |
+| AI Agent Swarm | DX Today / Rick Spair（行业研究报告，数据口径宜作趋势参考） | 2026-01 |
+| R&D-Agent-Quant A 股实测 | 国联民生金工第三方实测报告 | 2026-05-20 |
+| Vibe Coding → Agentic Engineering | Karpathy / 张昕东 | 2025-02 → 2026-02 |
+| 受约束 Vibe Coding | Zenera / Stephane Maes | 2026-03 |
+| Hermes Agent | Nous Research（MIT；228,662 stars @2026-08-11）；hermes-agent-self-evolution Phase 1 验证报告 | 2026-02 发布；报告 2026-03-09 |
+| Qualixar OS | arXiv:2604.06392v1（独立研究员 Varun Pratap Bhardwaj；DOI: 10.5281/zenodo.19454219） | 2026-04-07 |
+| claude-flow | ruvnet | 2026-06 |
+| CrewAI | joaomdmoura | 2026-06 |
+| Man Group AlphaGPT / Balyasny·Millennium | 机构公开实践报道 | 2026 年口径 |
+
+### 场内设计资产
+
+| 设计 | 核心内容 |
+|------|---------|
+| 自反Agent | Actor→Evaluator→SelfReflection、L1/L2/L3 三级反思、PreFlect 前瞻反思、Agent-R 实时反思、ReflCtrl 频率控制、策略自我修正闭环、技能注册、四层记忆 |
+| 元学习系统（S6 层） | 7 阶段流水线、模块工厂（核心独创）、STOP/RISE/Voyager/Meta-Harness/AutoSkill/MAML/EWC/ICL、Phase 0→3、13 个公开系统对标 |
+| 分阶段实现路线 | Phase 0 手动→Phase 1 半自动→Phase 2 全自动→Phase 3 自我进化（真源：17 号文） |
+| 行业对标（13 个公开系统） | R&D-Agent-Quant / QuantEvolve / Hubble / FactorMAD / TiMi / ProFiT / CogAlpha / FactorMiner / FinRL-X / Dnalyaw 等（明细真源在 12/13 号文引用的场内设计资产） |
+
+---
+
+## 十、修订记录
+
+| 日期 | 版本 | 变更 | 原因 |
+|------|------|------|------|
+| 2026-08-17 | 0.1.0 | 初版：外部对标分析 + 差距矩阵 | 新建 09_ai_architecture |
+| 2026-08-17 | 0.2.0 | 修正结论："项目缺失"→"设计已有，缺施工"；新增模块工厂落地性分析；删除不可二元判定的成功标准表格 | 发现场内设计资产已包含大量自我进化设计 |
+| 2026-08-17 | 0.3.0 | 加入 frontmatter+开放问题+修订记录；增加过度工程标注（Swarm 属远期/个人项目不适用）；增加更新策略说明 | 按 AI_review 方法论规范文档结构 |
+| 2026-08-17 | 0.4.0 | 移除对场外草稿目录的引用，相关编号改纯文字描述 | 用户裁定草稿目录待删除 |
+| 2026-08-17 | 0.5.0 | 深度填充：14 个框架/实践按深度分级逐段展开（为什么对标/对本项目的映射/考虑过的替代方案）；新增 §1.1~1.3 现状快照+已施工设施盘点+深度分级；新增 §2.6~2.8 机构实践与量化系统速览；全部关键事实经 2026-08-17 WebSearch 复核 | AI-FILL-01 第一轮：信息库深度填充 |
+| 2026-08-17 | 0.5.1 | 补完第一轮中断处：续写 §5 模块工厂落地性评估（含成本/容量内嵌新约束）、§6 不做什么、§7 前沿演进方向（7.1 已核实动态+7.2 跟踪清单）、§8 开放问题（Q1~Q4 按现状核实更新）、§9 参考来源（补 arXiv 编号与版本口径）、§10 修订记录 | AI-FILL-01 第二轮补完 |
+
+---
+
+*维护者：AI 架构协调者*
