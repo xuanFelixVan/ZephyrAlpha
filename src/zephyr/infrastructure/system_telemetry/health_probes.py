@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.security.access_control
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 12-system triple-state probes; liveness/readiness/degraded contract; ProbeStatus enum stability
+# [INVARIANTS] 11-system triple-state probes（knowledge_base 已于 d5b6f5dde1 随 KB 系统退役移除）; liveness/readiness/degraded contract; ProbeStatus enum stability
 # [MODIFY-GUARD] health_aggregator.py; watchdog.py; health.py
 # [STABILITY] evolving
 # [SAFETY] H
@@ -19,7 +19,8 @@
 三态健康探针协议（Health Probes — CT-HEALTH-001）
 
 依据：MOD-MASTER-002 蓝图 §十四 标准化 HealthCheck
-实现 12 系统 liveness/readiness/degraded 三态探针。
+实现 11 系统 liveness/readiness/degraded 三态探针
+（原 12 系统含 knowledge_base，已随 KB 系统退役 commit d5b6f5dde1 移除）。
 """
 
 from __future__ import annotations

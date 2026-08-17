@@ -302,18 +302,24 @@ class SLAMonitor:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("SLAMonitor: subscribe_eventbus failed: %s", e, exc_info=True)
 
-    def _on_recovery_start(self, payload: object) -> None:
+    def _on_recovery_start(self, event: object) -> None:
         """失败事件触发：记录恢复开始时间（RTO 计时起点）。轻量handler。"""
         self._recovery_start_time = time.time()
         logger.debug("SLAMonitor: recovery timer started")
 
-    def _on_recovery_completed(self, payload: object) -> None:
-        """rollback_completed 事件：记录 RTO/RPO（恢复完成）。轻量handler。"""
+    def _on_recovery_completed(self, event: object) -> None:
+        """rollback_completed 事件：记录 RTO/RPO（恢复完成）。轻量handler。
+
+        契约：EventBusBackpressure handler 收 Event 对象（非裸 dict），payload 经
+        event.payload 提取（治本 AI-14：原 isinstance(payload, dict) 对 Event 恒 False，
+        lost_tasks 静默恒 0）。
+        """
         if self._recovery_start_time is None:
             logger.debug("SLAMonitor: rollback_completed without prior failure event, skipping")
             return
         try:
-            data = payload if isinstance(payload, dict) else {}
+            raw = getattr(event, "payload", event)
+            data = raw if isinstance(raw, dict) else {}
             lost_tasks = int(data.get("lost_tasks", 0))
             self.record_recovery(self._recovery_start_time, lost_tasks=lost_tasks)
             logger.info(

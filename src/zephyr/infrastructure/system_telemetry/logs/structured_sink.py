@@ -33,9 +33,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 _logger = logging.getLogger(__name__)
 
-_DEFAULT_LOG_DIR: Path = Path("data/telemetry/prod/logs")
+# 治本（AI-14 审计 R3）：相对路径默认改为 REPO_ROOT 锚定（禁止相对路径硬约束，
+# 对齐 sla_monitor P1-9 先例）——原 Path("data/...") 随进程 cwd 漂移，
+# 生产无 configure() 调用方，默认值即生产路径。
+_DEFAULT_LOG_DIR: Path = REPO_ROOT / "data" / "telemetry" / "prod" / "logs"
 _BUFFER_MAX: int = 500
 _FLUSH_INTERVAL_SECONDS: float = 5.0
 _MAX_FILE_BYTES: int = 10 * 1024 * 1024

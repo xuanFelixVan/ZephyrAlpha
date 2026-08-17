@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.governance.phase_hold
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.governance.__init__
+# [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.phase_hold
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] none
+# [INVARIANTS] 常量与基础逻辑单真源在 a2a_protocol.phase_hold；本模块仅派生扩展 is_hold_active
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] M
@@ -15,31 +15,37 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Phase 4 Hold — A2A Phase 4 锁定标记模块 与其他 Phase 3 模块不可并发施工."""
+"""Phase 4 Hold — governance 子包派生扩展（真源收敛）。
 
-from datetime import UTC, datetime
-from typing import Any
+治本（AI-14 审计 R1-06）：本模块原与 ``a2a_protocol.phase_hold`` 全量重复定义
+``PHASE_HOLD_ACTIVE``/``PHASE_HOLD_REASON``/``Phase4Hold``（双胞胎双真源，漂移温床）。
+现收敛：常量与基础类唯一真源 = ``zephyr.infrastructure.a2a_protocol.phase_hold``，
+本模块仅保留 governance 子包派生扩展（``is_hold_active`` 便捷判定），保持
+``zephyr.infrastructure.a2a_protocol.governance.phase_hold`` 导入路径不变（向后兼容）。
+"""
 
-PHASE_HOLD_ACTIVE = True
-PHASE_HOLD_REASON = "A2A module locked to Phase 4 — cannot be built concurrently with Phase 3 modules (Drift, Budget, Rollback, Escalation)"
+from __future__ import annotations
+
+from typing import Final
+
+from zephyr.infrastructure.a2a_protocol.phase_hold import (
+    PHASE_HOLD_ACTIVE,
+    PHASE_HOLD_REASON,
+    Phase4Hold as _Phase4HoldBase,
+)
+
+__all__: Final = [
+    "PHASE_HOLD_ACTIVE",
+    "PHASE_HOLD_REASON",
+    "Phase4Hold",
+]
 
 
-class Phase4Hold:
-    """A2A Phase 4 施工锁定."""
+class Phase4Hold(_Phase4HoldBase):
+    """A2A Phase 4 施工锁定（governance 子包派生扩展）。
 
-    def __init__(self) -> None:
-        self.hold_active = PHASE_HOLD_ACTIVE
-        self.hold_since = datetime.now(UTC).isoformat()
-
-    def check(self) -> dict[str, Any]:
-        return {
-            "hold_active": self.hold_active,
-            "reason": PHASE_HOLD_REASON,
-            "hold_since": self.hold_since,
-        }
-
-    def can_proceed(self, current_phase: str) -> bool:
-        return current_phase in ("Phase4", "phase4", "4") and self.hold_active
+    继承真源全部行为（check/can_proceed），新增 is_hold_active 便捷判定。
+    """
 
     def is_hold_active(self) -> bool:
         return self.hold_active

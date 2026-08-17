@@ -59,6 +59,11 @@ class EventLevel(str, Enum):
     CRITICAL = "critical"
 
 
+# class-name-alias: 本模块 EventStore=SQLite 审计事件存储（MOD-INF-002，events.db），
+# 区别于 zephyr.infrastructure.events.event_store.EventStore（JSONL DomainEvent 存储，
+# MOD-INF-016，data/events/event_store.jsonl）。语义与存储引擎均不同——非 re-export。
+
+
 EVENT_STORE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
