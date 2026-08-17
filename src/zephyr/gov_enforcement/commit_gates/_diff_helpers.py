@@ -200,7 +200,11 @@ def _parse_diff_with_line_numbers(diff_stdout: str) -> list[tuple[int, str]]:
     """
     result: list[tuple[int, str]] = []
     current_line = 0
-    for raw_line in diff_stdout.splitlines():
+    # 2026-08-17 AI-00 收口治本：splitlines() → split("\n")——HEAD 侧 \r\r\n 双 CR
+    # 损坏文件（2026-08-16 EOL 批残留）的删除行被 splitlines 按 \r 再切出幻影空行，
+    # 落入 else 分支虚增 current_line（+2/删除行），致 added 行号膨胀（实证：真 118 行
+    # 被报为 575），AST 豁免行号集（干净解析）与膨胀行号失配 → SQL_* 常量被裸 SQL 误报。
+    for raw_line in diff_stdout.split("\n"):
         m = _HUNK_HEADER_RE.match(raw_line)
         if m:
             current_line = int(m.group(1))
