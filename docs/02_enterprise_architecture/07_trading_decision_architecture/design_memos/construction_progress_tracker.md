@@ -316,7 +316,8 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 113 | strategy_deviation_monitor / strategy_retirement_evaluator（MON-001 批）持私有 loader 与路径常量，可收敛到 shared threshold_loader | AI-THD-001 反馈⑥ | 同字面量非第二决策点，优化项非缺陷；私有 loader 语义与 threshold_loader 一致（fail-closed 同构），收敛=消重非修 bug | ⏳ 收口窗口优化项 |
 | 114 | IPO 数据源接入（37 号 §5 跨会话排期②） | AI-LVL3-001 反馈⑥ | 数据层施工范围，37 号 §6 待裁定行持续有效（tracker #42② 已标注承接） | ⏳ 数据层专项 |
 | 115 | dev 基线 10 项存量测试失败（governance 域 API 签名漂移债） | AI-GOVA-001 反馈⑥+第六统筹 dev 抽验实证 | 三簇：adversarial run_one 缺 detector 参（test_adversarial_tester 2 项）/base_repo new_id 缺 prefix 参（3 项）/naming_e2e 注册表状态+consumer_registry summary 漂移（5 项）——dev 抽验 7 failed 实证复现（TypeError 签名漂移，#63 测试债同族）；GOVA pristine dev 对比实证与本包零因果 | ⏳ 后续测试债批 |
-| 116 | fail-open 敞口治理方案（PG 离线 5 门禁静默放行） | AI-GOVA-001 交付物（docs/_working/reports/2026-08-17-fail-open-analysis.md） | 报告裁定待 Owner 拍板：推荐 B 告警升级（B1=#1/#2/#3/#5 fail-open 分支统一接 log_gate_failure 持久化，与 #4 既有先例同构；B2=PG 探针增强可延后；顺手 verify_schema_health 崩溃式阻断优雅化）——#1/#2/#3/#5 当前形态=真实敞口（不可感知+无强制补偿窗口），A 保持=铁律失效无追账，C fail-closed=环境故障传导开发冻结收益为负 | ⏳ 待 Owner 裁定立项 |
+| 117 | tick_subscriber 看门狗不覆盖"启动时 QMT 离线致标的解析 0 只"情形 | 2026-08-17 开盘实盘验证实证 | 08-16 18:57 启动时 QMT 未开→板块获取全失败→"订阅 0 只标的"；_biz_watchdog_loop L681 重订阅条件含 `self._symbols_resolved` 非空——标的为 0 时看门狗永不触发，活进程零采集静默 14h+（#ARCH-DATA-017 裁定E"预热后永久静默"的未覆盖边缘）；处置=杀进程 guard 自动拉起后秒级恢复（8035 只订阅+首 tick 2.4s）。建议：标的为 0 且盘中时段，看门狗应周期性重试 universe 解析+订阅（非仅对已有标的重订阅） | ⏳ 数据层专项（与 #114 同域） |
+| 116 | fail-open 敞口治理方案（PG 离线 5 门禁静默放行） | AI-GOVA-001 交付物（docs/_working/reports/2026-08-17-fail-open-analysis.md） | **Owner 已裁定 B1+B2 全量**（2026-08-17，#ARCH-119）：AI-FOPEN-001 派单施工（4 gate 留痕接 log_gate_failure+PG 探针+FRESHNESS 离线豁免+verify_schema_health 优雅化） | ✅ 已派单（AI-FOPEN-001 施工中） |
 
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
