@@ -283,7 +283,10 @@ class TestPathConstants:
         assert DB_DIR == REPO_ROOT / "data"
 
     def test_gates_dir_under_repo_root(self):
-        assert GATES_DIR == REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+        # 治本（2026-08-17，AI-AUDIT11）：真源修正为 gov_enforcement（物理唯一真源），
+        # 并补 exists() 断言防再次悬空漂移（原断言只验字面量不验存在性，漂移多年未发现）。
+        assert GATES_DIR == REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "rule_enforcement"
+        assert GATES_DIR.exists()
 
     def test_find_repo_root_returns_path(self):
         root = find_repo_root()

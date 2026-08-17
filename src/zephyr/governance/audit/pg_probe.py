@@ -257,6 +257,7 @@ def log_db_failopen(
     affected_files: list[str] | None = None,
     session_id: str = "",
     trigger_source: str = "pre_commit_gate",
+    stack_trace: str = "",
 ) -> None:
     """B1 统一留痕入口：fail-open 放行持久化到 reconcile_execution_log（critical_warn）。
 
@@ -273,6 +274,11 @@ def log_db_failopen(
         affected_files: 受影响文件清单（被降级放行的文件）。
         session_id: commit/merge session_id（可空）。
         trigger_source: 触发源标识。
+        stack_trace: 完整调用栈（traceback.format_exc() 输出，可空）——透传给
+            log_gate_failure（P1-3 已支持）。治本（2026-08-17，AI-AUDIT11）：
+            B1 落地时 docstring 声明「与 log_gate_failure 同款签名」但漏本参数，
+            调用方（depgraph_pre_registration_gate REAL_ERROR 路径）传入即
+            TypeError 反而阻断留痕——补齐使契约声明为真。
     """
     from zephyr.governance.audit.reconciliation_registry import log_gate_failure
 
@@ -307,6 +313,7 @@ def log_db_failopen(
         log_gate_failure(
             project_root, gate_id, detail,
             session_id=session_id, trigger_source=trigger_source,
+            stack_trace=stack_trace,
         )
     except Exception as e:  # noqa: BLE001 — 留痕失败不阻断 gate 主流程
         logger.warning("pg_probe: log_db_failopen 落库失败: %s", e)
