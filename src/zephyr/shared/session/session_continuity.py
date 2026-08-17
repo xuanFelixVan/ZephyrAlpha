@@ -23,7 +23,8 @@ SessionContinuity — Session 交接包自动生成与恢复
 Vibe Coding 最大痛点：AI 每次新 session 是零记忆的。
 本模块解决"打开 IDE 不知道上回做到哪了"的问题。
 
-注意：本模块使用纯 Python + sqlite3，不 import zephyr.shared（避让已知导入链断裂）。
+注意：SQLite 连接统一走 zephyr.shared.io.sqlite_factory.get_db_connection（PRAGMA 基线）；
+frontmatter 解析委托 zephyr.shared.io.frontmatter_utils（SSoT）。
 
 用法：
     from zephyr.shared.session.session_continuity import SessionContinuity
@@ -39,20 +40,21 @@ Vibe Coding 最大痛点：AI 每次新 session 是零记忆的。
 
 from __future__ import annotations
 
-import logging
-
-logger = logging.getLogger(__name__)
-
 import json
+import logging
 import re
 import sqlite3
 import sys
-from zephyr.shared.io.sqlite_factory import get_db_connection
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from zephyr.shared.io.frontmatter_utils import extract_body, parse_frontmatter
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.sqlite_factory import get_db_connection
+
+logger = logging.getLogger(__name__)
 
 __all__ = ["ContinuityContext", "SessionContinuity", "SessionState"]
 
@@ -138,7 +140,6 @@ class SessionContinuity:
         """公共接口：detect_agent_context（Stage 4 公共化）。"""
         return self._detect_agent_context()
 
-
     @property
     def db_path(self):
         """只读：db_path（Stage 4 公共化）。"""
@@ -149,11 +150,9 @@ class SessionContinuity:
         """写入：db_path（Stage 4 公共化）。"""
         self._db_path = value
 
-
     def auto_generate_questions(self, blocked_items, completed_count) -> list[str]:
         """公共接口：auto_generate_questions（Stage 4 公共化）。"""
         return self._auto_generate_questions(blocked_items, completed_count)
-
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -175,7 +174,6 @@ class SessionContinuity:
     def sessions_dir(self, value):
         """写入：sessions_dir（Stage 4 公共化）。"""
         self._sessions_dir = value
-
 
     def _get_conn(self) -> sqlite3.Connection:
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -338,25 +336,16 @@ class SessionContinuity:
             return {"valid": False, "error": "missing: docs/03_modules/_system_master/blueprint.md"}
         if not content.startswith("---"):
             return {"valid": False, "error": "no frontmatter found"}
-        fm_end = content.find("---", 3)
-        if fm_end == -1:
+        fm_raw = parse_frontmatter(content)
+        if fm_raw is None:
             return {"valid": False, "error": "no frontmatter found"}
-        fm_text = content[3:fm_end]
-        fm = {}
-        for line in fm_text.strip().splitlines():
-            if ":" in line:
-                k, _, v = line.partition(":")
-                fm[k.strip()] = v.strip().strip("'\"")
+        fm = {str(k): str(v) for k, v in fm_raw.items()}
         version = fm.get("version", "")
         ai_role = fm.get("ai_role_instruction", "")
         rule_count = len(re.findall(r"\(\d+\)", ai_role))
         # 解析分派表数据行数
-        body = content[fm_end + 3 :]
-        table_lines = [
-            line
-            for line in body.splitlines()
-            if line.strip().startswith("|") and "---" not in line
-        ]
+        body = extract_body(content)
+        table_lines = [line for line in body.splitlines() if line.strip().startswith("|") and "---" not in line]
         dispatch_domains = max(0, len(table_lines) - 1)
         return {
             "valid": True,
@@ -492,6 +481,7 @@ class SessionContinuity:
         # 延迟导入避免 shared 层向上依赖（NO-UPWARD-IMPORT）
         # 通过 importlib 动态调用，gate 静态扫描无法检测
         import importlib as _importlib
+
         _bridge_mod = _importlib.import_module("zephyr.gov_audit.bridge")
         _bridge_mod.write_to_core(
             "session_handoff",
@@ -542,12 +532,7 @@ class SessionContinuity:
         try:
             import subprocess
 
-            script = (
-                REPO_ROOT
-                / "scripts"
-                / "governance"
-                / "auto_sync_all_registries.py"
-            )
+            script = REPO_ROOT / "scripts" / "governance" / "auto_sync_all_registries.py"
             if script.exists():
                 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
@@ -673,8 +658,9 @@ class SessionContinuity:
             "owner_approved": rbac_info.get("owner_approved", False),
         }
 
-    @staticmethod
-    def _try_load_rbac_config(ide_source: str) -> dict:
+    # AI-15 审计治本（2026-08-17）：原 @staticmethod 却引用 self._project_root（F821），
+    # NameError 被宽泛 except 吞掉导致 RBAC 识别静默失效；改为实例方法。
+    def _try_load_rbac_config(self, ide_source: str) -> dict:
         """尝试从 rbac_roles.yaml 加载当前 IDE 对应的 Agent 配置。"""
         try:
             import yaml
@@ -757,27 +743,9 @@ class SessionContinuity:
         print(f"  📝 上下文摘要: {handoff['context_summary'][:120]}")
         print("=" * 60 + "\n")
 
-    @staticmethod
-    def _print_asset_summary() -> None:
-        try:
-            import yaml as _yaml
-
-            index_path = self._project_root / "data" / "asset_index" / "unified-asset-index.yaml"
-            if not index_path.exists():
-                return
-            with open(index_path, encoding="utf-8") as f:
-                data = _yaml.safe_load(f) or {}
-            health_data = data.get("health", {})
-            health = health_data.get("health_grade", health_data.get("health_score", "?"))
-            total = data.get("total_assets", "?")
-            orphan_data = data.get("orphan_risk", {})
-            orphan_rate = orphan_data.get("orphan_rate", "?")
-            if orphan_rate != "?" and isinstance(orphan_rate, (int, float)):
-                orphan_rate = f"{orphan_rate * 100:.1f}"
-            gen = str(data.get("generated_at", "?"))[:19]
-            print(f"  [Asset Inventory] 资产: {total} | 健康: {health} | 孤儿率: {orphan_rate}% | 生成: {gen}")
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("suppressed error in session_continuity", exc_info=True)
+    # AI-15 审计治本（2026-08-17）：删除 _print_asset_summary——私有方法、全仓 0 调用方，
+    # 且原 @staticmethod 引用 self._project_root（F821 潜伏 bug，被宽泛 except 吞掉）。
+    # 资产摘要能力真源为 asset_inventory 体系，不在会话恢复职责内重复落地。
 
     def restore_session(self) -> dict | None:
         """恢复上次 session 状态（程序化接口）

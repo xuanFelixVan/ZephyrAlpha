@@ -23,6 +23,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
+from zephyr.shared.io.file_utils import atomic_write
+
 
 class ActivityStatus(Enum):
     PENDING = "pending"
@@ -151,16 +153,12 @@ class WorkflowManager:
             "version": 1,
         }
         path = Path(self._snapshot_dir) / f"{self.workflow_id}.snapshot.json"
-        tmp_path = f"{path}.{os.getpid()}.tmp"
         try:
-            with open(tmp_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False)
-            os.replace(tmp_path, path)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+            # AI-15 审计治本（2026-08-17）：委托唯一真源 file_utils.atomic_write，
+            # 消除本地 tmp+os.replace 重复实现。
+            atomic_write(path, json.dumps(data, ensure_ascii=False))
+        except OSError:  # 快照保存为 best-effort（load_snapshot 容忍缺失）；原子写失败静默跳过
+            pass
         return snapshot
 
     def load_snapshot(self) -> ProgressSnapshot | None:

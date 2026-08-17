@@ -57,6 +57,7 @@ from pathlib import Path
 from typing import Protocol
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.io.file_utils import atomic_write
 
 __all__ = [
     "DistributedLock",
@@ -90,15 +91,12 @@ def next_fencing_token(counter_path: Path | str) -> int:
     except (OSError, ValueError):
         token = 0
     token += 1
-    tmp = path.with_name(f"{path.name}.{os.getpid()}.tmp")
     try:
-        tmp.write_text(str(token), encoding="utf-8")
-        os.replace(tmp, path)
+        # AI-15 审计治本（2026-08-17）：委托唯一真源 file_utils.atomic_write，
+        # 消除本地 tmp+os.replace 重复实现（AtomicWriteError 是 OSError 子类，静默语义不变）。
+        atomic_write(path, str(token))
     except OSError:
-        try:
-            os.remove(tmp)
-        except OSError:
-            pass
+        pass
     return token
 
 
@@ -142,6 +140,7 @@ class SyncLockRenewer:
 
 class LockError(ZephyrBaseError):
     """分布式锁操作失败——锁已被占用、后端不可达、超时。"""
+
     error_code = "ZA-SH-0041"
 
 

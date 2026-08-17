@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.shared.utils.db_utils
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.shared.io.sqlite_factory; zephyr.governance.persistence.sqlite_schema(init_db)
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -17,13 +17,16 @@
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
 """
-db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governance.persistence.sqlite_schema）
+db_utils.py — SQLite 连接公共 API
 
 真源声明：
   - DB_PATH 真源为 zephyr.shared.io.paths（治本 2026-06-30：删除 re-export，
     用 _DB_PATH 别名阻断 IDE organize imports 自动加回 from db_utils import DB_PATH。
     18 个下游文件已改为从 zephyr.shared.io.paths 直接导入 DB_PATH）
-  - get_db_connection / init_db 真源为 zephyr.governance.persistence.sqlite_schema
+  - get_db_connection 真源为 zephyr.shared.io.sqlite_factory（AI-15 审计治本
+    2026-08-17：改从同层真源直接导入，消除 shared→governance 逆向依赖跳数；
+    governance.persistence.sqlite_schema 仅为 re-export shim）
+  - init_db 真源为 zephyr.governance.persistence.sqlite_schema（schema DDL 所在）
   - 本文件是公共 API 层，供 gates/orchestrator/kb 等上层模块使用
   - 禁止在本文件中重复定义 DB_PATH / get_db_connection / _PRAGMAS / _apply_pragmas
 """
@@ -32,8 +35,9 @@ from __future__ import annotations
 
 import importlib as _il
 
+from zephyr.shared.io.sqlite_factory import get_db_connection
+
 _mod = _il.import_module("zephyr.governance.persistence.sqlite_schema")
-get_db_connection = _mod.get_db_connection
 init_db = _mod.init_db
 
 __all__ = [

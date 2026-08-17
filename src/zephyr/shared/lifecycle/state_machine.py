@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 状态转换必须合法;转换守卫必须同步;命名冲突必须注册
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__; _state-machine-registry.yaml
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__; src/zephyr/shared/_state_machine_registry.yaml
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -43,6 +43,7 @@ from typing import Any, Generic, TypeVar
 import yaml
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.io.file_utils import atomic_write
 
 __all__ = [
     "ConflictReport",
@@ -63,13 +64,18 @@ logger = logging.getLogger(__name__)
 
 S = TypeVar("S")
 
-_REGISTRY_PATH = Path(__file__).parent / "_state-machine-registry.yaml"
+# AI-15 审计治本（2026-08-17）：注册表真源收敛至 src/zephyr/shared/_state_machine_registry.yaml
+# （snake_case，registry_of_registries.yaml 已登记的唯一真源）；旧 lifecycle/_state-machine-registry.yaml
+# （连字符命名违规 + 每次启动重复 append 已腐坏）已合并删除。
+_REGISTRY_PATH = Path(__file__).resolve().parent.parent / "_state_machine_registry.yaml"
 
 
 class InvalidTransitionError(ZephyrBaseError):
     error_code = "ZA-SH-0027"
 
-    def __init__(self, fsm_id: str, current: str, target: str, allowed: set[Any] | None = None, *, error_code: str | None = None):
+    def __init__(
+        self, fsm_id: str, current: str, target: str, allowed: set[Any] | None = None, *, error_code: str | None = None
+    ):
         self.fsm_id = fsm_id
         self.current_state = current
         self.target_state = target
@@ -95,6 +101,7 @@ class TransitionGuardError(ZephyrBaseError):
 
 class StateMachineRegistryError(ZephyrBaseError):
     """状态机注册表错误。"""
+
     error_code = "ZA-SH-0029"
 
 
@@ -279,25 +286,40 @@ class StateMachineRegistry:
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to load state machine registry: %s", exc, exc_info=True)
 
-    def register(self, config: StateMachineConfig[Any]) -> str:
-        with self._lock:
-            if config.fsm_id in self._configs:
-                existing = self._configs[config.fsm_id]
-                if isinstance(existing, StateMachineConfig):
-                    raise StateMachineRegistryError(f"Duplicate fsm_id: {config.fsm_id!r} already registered")
-            self._configs[config.fsm_id] = config
-            self._persist_entry(config)
-            logger.info("Registered state machine: %s (owner: %s)", config.fsm_id, config.owner_module)
-            return config.fsm_id
-
-    def _persist_entry(self, config: StateMachineConfig[Any]) -> None:
-        entry = {
+    @staticmethod
+    def _entry_of(config: StateMachineConfig[Any]) -> dict[str, Any]:
+        """StateMachineConfig -> 持久化条目 dict（注册/去重/落盘共用的唯一序列化点）。"""
+        return {
             "fsm_id": config.fsm_id,
             "owner_module": config.owner_module,
             "states": [str(sd.state) for sd in config.states],
             "transitions": [{"source": str(t.source), "target": str(t.target)} for t in config.transitions],
             "initial": str(config.initial),
         }
+
+    def register(self, config: StateMachineConfig[Any]) -> str:
+        with self._lock:
+            if config.fsm_id in self._configs:
+                existing = self._configs[config.fsm_id]
+                # AI-15 审计治本（2026-08-17）：从磁盘加载的条目是 dict（非 StateMachineConfig），
+                # 旧检查 isinstance(existing, StateMachineConfig) 被绕过——每次进程启动重新 register
+                # 都会向注册表 YAML 追加一份重复条目（旧文件已腐坏出 15+ 份 factor_lifecycle 副本）。
+                # 幂等语义：同内容重复注册 = no-op（跳过落盘）；内容漂移 = 报错。
+                existing_entry = self._entry_of(existing) if isinstance(existing, StateMachineConfig) else existing
+                new_entry = self._entry_of(config)
+                if isinstance(existing_entry, dict) and {
+                    k: existing_entry.get(k) for k in ("states", "transitions", "initial")
+                } == {k: new_entry[k] for k in ("states", "transitions", "initial")}:
+                    self._configs[config.fsm_id] = config
+                    return config.fsm_id
+                raise StateMachineRegistryError(f"Duplicate fsm_id: {config.fsm_id!r} already registered")
+            self._configs[config.fsm_id] = config
+            self._persist_entry(config)
+            logger.info("Registered state machine: %s (owner: %s)", config.fsm_id, config.owner_module)
+            return config.fsm_id
+
+    def _persist_entry(self, config: StateMachineConfig[Any]) -> None:
+        entry = self._entry_of(config)
         if not self._registry_path.exists():
             data: dict[str, Any] = {"state_machines": []}
         else:
@@ -307,22 +329,16 @@ class StateMachineRegistry:
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 data = {"state_machines": []}
         machines = data.setdefault("state_machines", [])
+        # AI-15 审计治本（2026-08-17）：按 fsm_id 去重——同 id 条目替换而非追加，
+        # 根除注册表 YAML 重复膨胀；顺带清理历史遗留的同 id 重复副本。
+        machines[:] = [m for m in machines if not (isinstance(m, dict) and m.get("fsm_id") == config.fsm_id)]
         machines.append(entry)
-        tmp_path = f"{self._registry_path}.{id(self)}.tmp"
-        try:
-            with open(tmp_path, "w", encoding="utf-8") as f:
-                yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
-            import os
-
-            os.replace(tmp_path, str(self._registry_path))
-        except PermissionError:
-            try:
-                import os
-
-                os.remove(tmp_path)
-            except OSError:
-                pass
-            raise
+        # AI-15 审计治本（2026-08-17）：委托唯一真源 file_utils.atomic_write，
+        # 消除本地 tmp+os.replace 样板（AtomicWriteError 为 OSError 子类，直接透传）。
+        atomic_write(
+            self._registry_path,
+            yaml.dump(data, default_flow_style=False, allow_unicode=True),
+        )
 
     def get(self, fsm_id: str) -> StateMachineConfig[Any]:
         with self._lock:

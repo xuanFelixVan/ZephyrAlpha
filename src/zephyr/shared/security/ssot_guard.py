@@ -15,11 +15,6 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-from __future__ import annotations
-
-from typing import Final
-from typing import Self
-
 #!/usr/bin/env python3
 """
 SSoT 锁定卫兵 (SSoT Guard) - Pre-commit Hook
@@ -50,7 +45,7 @@ C-4  注册表路径声明格式必须合法（不允许绝对路径、反斜杠
 ----
 作为 pre-commit hook 直接执行::
 
-    python src/zephyr/shared/ssot_guard.py
+    python src/zephyr/shared/security/ssot_guard.py
 
 作为模块导入（单元测试 / 集成测试）::
 
@@ -60,11 +55,13 @@ pre-commit 钩子配置示例（`.pre-commit-config.yaml`）::
 
     - id: ssot-guard
       name: SSoT 锁定卫兵
-      entry: python src/zephyr/shared/ssot_guard.py
+      entry: python src/zephyr/shared/security/ssot_guard.py
       language: system
       pass_filenames: false
       stages: [commit]
 """
+
+from __future__ import annotations
 
 import io
 import re
@@ -73,6 +70,7 @@ import sys
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Final, Self
 
 
 def _fix_windows_console() -> None:
@@ -120,6 +118,7 @@ from zephyr.shared.foundation.errors import ZephyrBaseError
 
 class SsotError(ZephyrBaseError):
     """SSoT Guard 模块专属基类。"""
+
     error_code = "ZA-SH-0014"
 
 
@@ -134,6 +133,7 @@ class SsotViolation(SsotError):
 
 class RegistryParseError(SsotError):
     """注册表 YAML 解析失败。"""
+
     error_code = "ZA-SH-0015"
 
 

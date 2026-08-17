@@ -114,15 +114,15 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.shared.schema.task_types import ExecutionModel
-from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.foundation.models import (
     DecompositionResult,
     GateLevel,
     TaskCard,
     TaskStatus,
 )
-from zephyr.shared.schema.task_types import TaskNamespace, TaskStatus
+from zephyr.shared.io.frontmatter_utils import parse_frontmatter_from_file
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.schema.task_types import ExecutionModel, TaskNamespace, TaskStatus
 
 logger = logging.getLogger(__name__)
 
@@ -237,7 +237,6 @@ class BlueprintDecomposer:
         """公共接口：next_global_seq（Stage 4 公共化）。"""
         return self._next_global_seq(ns)
 
-
     @property
     def global_seq(self) -> dict[str, int]:
         """只读：global_seq（Stage 4 公共化）。"""
@@ -247,7 +246,6 @@ class BlueprintDecomposer:
     def global_seq(self, value):
         """写入：global_seq（Stage 4 公共化）。"""
         self._global_seq = value
-
 
     # === target_layer 自动映射（对齐 target_layer_vocabulary.yaml v1.0.0）===
 
@@ -275,15 +273,9 @@ class BlueprintDecomposer:
     }
 
     def _parse_frontmatter(self, blueprint_path: str) -> dict:
-        """解析蓝图文件的 YAML frontmatter。"""
+        """解析蓝图文件的 YAML frontmatter（委托 SSoT frontmatter_utils）。"""
         try:
-            text = Path(blueprint_path).read_text(encoding="utf-8")
-            if not text.startswith("---"):
-                return {}
-            parts = text.split("---", 2)
-            if len(parts) < 3:
-                return {}
-            return yaml.safe_load(parts[1]) or {}
+            return parse_frontmatter_from_file(blueprint_path) or {}
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {}
 

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.events.event_bus_upgrade
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
+# [CONSUMERS] tests/utils/test_orphan_integration.py; zephyr.integration.shared.events.event_bus_upgrade(re-export shim); zephyr.shared.events.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -26,6 +26,7 @@ from dataclasses import dataclass, field
 
 class EventVersionError(Exception):
     """事件版本错误。"""
+
     error_code = "ZA-SH-0033"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):

@@ -49,8 +49,9 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.io.frontmatter_utils import extract_body, parse_frontmatter
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
     "DOSLauncher",
@@ -82,8 +83,6 @@ _DIRECTIVE_DIR = _resolve_default_directive_dir()
 _CHAIN_SEPARATOR = "+"
 
 _FM_OPEN = re.compile(r"^---\s*$")
-_FM_CLOSE = re.compile(r"^---\s*$")
-_FM_FIELD = re.compile(r"^(\w+)\s*:\s*(.+)$")
 
 
 class DirectiveInfo(BaseModel):
@@ -108,40 +107,21 @@ class DOSResult(BaseModel):
 
 
 def _parse_frontmatter(text: str) -> dict[str, str]:
-    lines = text.splitlines()
-    if not lines or not _FM_OPEN.match(lines[0]):
+    """解析 directive 文件 frontmatter（委托 SSoT frontmatter_utils，值统一转 str 保持历史语义）。"""
+    fm = parse_frontmatter(text)
+    if not fm:
         return {}
-    result: dict[str, str] = {}
-    in_fm = False
-    for i, line in enumerate(lines):
-        if i == 0:
-            in_fm = True
-            continue
-        if _FM_CLOSE.match(line):
-            break
-        if in_fm:
-            m = _FM_FIELD.match(line)
-            if m:
-                key = m.group(1).strip()
-                val = m.group(2).strip().strip("'\"")
-                result[key] = val
-    return result
+    return {str(k): str(v) for k, v in fm.items()}
 
 
 def _parse_body(text: str) -> str:
+    """提取 frontmatter 之后的正文（委托 SSoT frontmatter_utils.extract_body）。"""
     lines = text.splitlines()
     if not lines or not _FM_OPEN.match(lines[0]):
         return text
-    found_close = False
-    body_start = 0
-    for i, line in enumerate(lines):
-        if i > 0 and _FM_CLOSE.match(line):
-            found_close = True
-            body_start = i + 1
-            break
-    if not found_close:
+    if "\n---" not in text[3:]:
         return ""
-    return "\n".join(lines[body_start:]).strip()
+    return extract_body(text).strip()
 
 
 class DOSLauncher:
@@ -171,7 +151,6 @@ class DOSLauncher:
     def cache(self, value):
         """写入：cache（Stage 4 公共化）。"""
         self._cache = value
-
 
     def load_directive(self, directive_id: str) -> DirectiveInfo | None:
         if directive_id in self._cache:
