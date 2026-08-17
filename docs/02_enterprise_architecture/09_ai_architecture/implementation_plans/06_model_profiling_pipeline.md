@@ -5,7 +5,7 @@ title: 模型画像→考试→护照流水线施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.3.0"
+version: "0.3.1"
 date: 2026-08-18
 topic: model_profiling_pipeline
 scope: 09_ai_architecture
@@ -24,7 +24,7 @@ scope: 09_ai_architecture
 |---|---|
 | 主题组 | 模型画像→考试→护照流水线 |
 | 所属 | [00_index.md](00_index.md) §1 目标架构·AI 自我进化层·模型路由（级联控制器，本地/API 分时分任务） |
-| 依赖 | MOD-INF-034（模型画像器）+ MOD-INF-036（模型能力考试）+ MOD-INF-035（TaskGate 任务门控，蓝图锚点异常见 §6 Q13） |
+| 依赖 | MOD-INF-034（模型画像器）+ MOD-INF-036（模型能力考试）+ MOD-INF-035（TaskGate 任务门控，蓝图锚点已对齐 2026-08-18，§6 Q13 已关闭） |
 | 优先级 | P1——模型路由是 AI 层核心能力，护照是路由的能力真源 |
 | 状态 | draft（v0.3.0：第 2 轮实测纠错 + 10/11 号文接口对齐完成） |
 
@@ -43,7 +43,7 @@ ZephyrAlpha 是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道�
 | 画像（7 维 26 项 benchmark） | MOD-INF-034 `profiler.py`（648 行） | production，但自动化门禁未开（见 §2.3） |
 | 考试（五轴：横/纵/速/幻/稳） | MOD-INF-036 `exam_orchestrator.py`（1665 行） | production，已产出 **7 份**护照 |
 | 护照（CapabilityPassport） | MOD-INF-034 `capability_passport.py`（571 行） | production，HMAC-SHA256 签名+版本迁移钩子 |
-| 门控（TaskGate） | MOD-INF-035 `src/zephyr/trading/task_gate.py` | production，`can_dispatch(model_id, capability)` 按护照 depth.capabilities pass/fail 返回 (bool, reason)（蓝图锚点异常见 §6 Q13） |
+| 门控（TaskGate） | MOD-INF-035 `src/zephyr/trading/task_gate.py` | production，`can_dispatch(model_id, capability)` 按护照 depth.capabilities pass/fail 返回 (bool, reason)（蓝图锚点已对齐 2026-08-18，§6 Q13 已关闭） |
 | 岗位匹配（JobMatcher） | MOD-INF-036 `job_matcher.py`（351 行） | production，required/bonus/幻觉/成本四维加权评分 |
 | 任务×模型增量学习 | MOD-INF-034 `task_model_learner.py`（313 行） | production，composite_score = speed×0.40 + quality×0.35 + consistency×0.25（代码实测） |
 
@@ -63,13 +63,13 @@ ZephyrAlpha 是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道�
 补充核心问题（填充时新发现）：
 
 - **链路未闭环**：画像/考试/护照/门控四个环节的代码各自 production，但没有自动调度器把它们串成流水线——新模型入库后不会自动考试，考试结果不会自动更新护照，护照不会自动推送门控。这是本文档要解决的主问题。
-- **重复代码**：`model_profiling/pipeline_routing/` 子包（6 文件，2690 行）与顶层同名文件功能重叠（如 profiler.py 715 行 vs 顶层 648 行、benchmark_suite.py 964 行 vs 顶层 446 行），疑似早期实验分支，去留待裁定（见 §6 Q3）。
+- **重复代码（已裁定合并 2026-08-18）**：`model_profiling/pipeline_routing/` 子包（6 文件，2690 行）与顶层同名文件功能重叠（如 profiler.py 715 行 vs 顶层 648 行、benchmark_suite.py 964 行 vs 顶层 446 行），确认为早期实验分支——已裁定合并：顶层为唯一真源，profiler 上移 6 个公共 API、task_model_learner 上移 3 个 def（纯超集判定，零行为丢弃），消费方已重定向，子包 6 文件删除（commit de393cc0fc，§6 Q3 已关闭）。
 - **护照落盘 schema 滞后于代码模型**：代码已有 `CostBreakdown`（cost_score）与 Tool 轴能力阈值（function_calling/tool_chaining），但 7 份落盘护照均无 cost/tool 字段（2026-08-18 Grep 实测）；成本数据目前只记录在考试结果原始文件（`deepseek_v4_exam_results.json` 含 `cost.total_cost_rmb`）。下次 Standard 考试刷新护照时会自然补齐，不单独施工。
 
 ### 2.3 约束条件
 
 1. **硬件约束**：单机 PC 工作站（i7-12700KF / RTX 3090 24GB 显存 <90% / 64GB RAM / 30Mbps 网络），无集群/K8s。考试必须单机串行跑，Deep 模式（2-3h）不能阻塞日常开发，只能夜间/空闲时段执行。
-2. **自动化门禁**：MOD-INF-034 蓝图头部「AUTOMATION-GATE」明确三条件——可用 LLM 模型数 ≥3、Benchmark 运行次数 ≥50、模型切换 ≥3 次/周——全满足才允许自动化，并注明"现在不自动化"的理由（采样不足无统计意义）。2026-08-18 实测：护照覆盖 5 个模型族 7 个变体（≥3 ✓）；但 `data/model_profiles/` 只有 24 个 `.tmp` 未完成运行痕迹（<50 ✗）；模型切换频率无记录（✗）。**自动化条件不满足，只能手动/触发式执行**——这是 §3.3 触发式更新的硬依据。
+2. **自动化门禁**：MOD-INF-034 蓝图头部「AUTOMATION-GATE」明确三条件——可用 LLM 模型数 ≥3、Benchmark 运行次数 ≥50、模型切换 ≥3 次/周——全满足才允许自动化，并注明"现在不自动化"的理由（采样不足无统计意义）。2026-08-18 实测：护照覆盖 5 个模型族 7 个变体（≥3 ✓）；但 `data/model_profiles/` 无有效运行记录（原 24 个 0 字节 `.tmp` 残留已于 2026-08-18 清除，commit de23915d1f；<50 ✗）；模型切换频率无记录（✗）。**自动化条件不满足，只能手动/触发式执行**——这是 §3.3 触发式更新的硬依据。
 3. **成本约束**：个人资金，云端 API 调用需过预算门（MOD-INF-024 Budget Enforcer 蓝图；运行时预算预检 BudgetEngine.pre_flight_check 见 10 号文 §2.4）；MOD-INF-036 蓝图 references 明确"考试消耗 Token 需预算管控"。考试成本实测量级：deepseek-v4-flash-thinking 单次考试 `total_cost_rmb=0.056`（3 万 token）——单次便宜，但全量重考 7 变体 ×多轮仍须走预算审批。
 4. **治理约束**：AI 生成代码需交叉验证+依赖锁定+自治熔断（system_charter §2 硬边界）；护照带 HMAC-SHA256 签名防篡改，`capability_passport.py`/`exam_orchestrator.py`/`exam_test_cases.py`/`benchmark_suite.py`/`deepseek_v4_chat.py` 头部均为 `AI_AUTONOMY=human_gated`（实测）——考试题库、护照结构、考试主控的改动都需人工批准，本文施工计划全程遵守。
 
@@ -82,7 +82,7 @@ ZephyrAlpha 是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道�
 | 类别 | 路径/位置 | 内容简述 | 状态 |
 |---|---|---|---|
 | 画像/考试主包 | `src/zephyr/intelligence/model_profiling/` | 顶层 18 个 .py 文件（合计 12701 行）：exam_test_cases(5408)/exam_orchestrator(1665)/deepseek_v4_chat(666)/profiler(648)/capability_passport(571)/benchmark_suite(446)/cli(432)/exam_rubric(411)/exam_checks(385)/job_matcher(351)/exam_judge(337)/task_model_learner(313)/model_discovery(208)/results_writer(203)/exam_executor(178)/__init__(173)/case_assembler(152)/provider_data(154) | production |
-| 代码模块（重复） | `src/zephyr/intelligence/model_profiling/pipeline_routing/` | 6 个 .py 文件（合计 2690 行：benchmark_suite 964/profiler 715/results_writer 406/task_model_learner 322/cli 216/__init__ 67），与顶层同名文件功能重叠但行数有差异，疑似早期实验分支 | draft（去留待裁定，§6 Q3） |
+| 代码模块（重复，已合并删除 2026-08-18） | ~~`src/zephyr/intelligence/model_profiling/pipeline_routing/`~~ | 原 6 个 .py 文件（合计 2690 行）与顶层同名文件功能重叠，确认为早期实验分支——已裁定合并：顶层为唯一真源，profiler 上移 6 个公共 API、task_model_learner 上移 3 个 def（纯超集判定，零行为丢弃），消费方（pipeline_orchestrator/integration __init__/5 个测试文件）已重定向，子包 6 文件删除（commit de393cc0fc，790 测试绿，§6 Q3 已关闭） | 已删除 |
 | 任务门控 | `src/zephyr/trading/task_gate.py` | TaskGate（MOD-INF-035）：`load_passports()` 加载全部护照、`can_dispatch(model_id, capability) → (bool, reason)` 按 depth.capabilities pass_/failure_reason 判定（no_passport/no_depth_data/capability_not_tested/low_accuracy 四类拒绝原因） | production |
 | Quick 模式 CLI | `scripts/quick_profile.py` | Quick 模式入口（--from-passport/--model/--list），MOD-INF-036 蓝图 §0.1 登记 | production |
 
@@ -95,7 +95,7 @@ ZephyrAlpha 是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道�
 | 岗位匹配矩阵 | `data/brain/job_matrix.yaml` | v1.0.0（2026-06-27）：九维幻觉权重（总和 1.00）+ 成本维度（weight 0.10）+ 6 示例岗位（骨架） | production |
 | QuickProfile 落盘 | `data/brain/quick_profiles/` | 1 份：`qwen3_8b.json`（QuickProfile 不带 HMAC 签名，capability_passport.py 实测） | production |
 | 增量学习数据 | `data/model_learning/task-model-matrix.json` | `matrix: {}`（空）+ benchmark_baseline（M1~M7 维度，qwen3:8b / deepseek-r1:8b 基准分） | production |
-| 画像结果 | `data/model_profiles/` | 24 个 `benchmark_*.jsonl.tmp`（2026-07-17 ~ 2026-08-03），**全部为 .tmp 未完成运行残留**，无正式 .jsonl | draft（清理待裁定，§6 Q9） |
+| 画像结果 | `data/model_profiles/` | 原 24 个 `benchmark_*.jsonl.tmp`（2026-07-17 ~ 2026-08-03）0 字节残留**已清除**，results_writer 原子写入已加异常清理（治本加固，commit de23915d1f，§6 Q9 已关闭）；当前无正式 .jsonl | 已清理 |
 
 **护照清单（7 份，2026-08-18 实测）**
 
@@ -117,7 +117,7 @@ ZephyrAlpha 是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道�
 |---|---|---|---|
 | 蓝图 | `docs/03_modules/_cross_layer/model_profiler/blueprint.md` | MOD-INF-034 Model Profiler v2.2.3：7 维 26 项 benchmark + 任务×模型增量学习 + AUTOMATION-GATE 准入门禁 + 自动化宿主 CircadianScheduler hour=6（远期） | Active |
 | 蓝图 | `docs/03_modules/_cross_layer/model_capability_exam/blueprint.md` | MOD-INF-036 Model Capability Exam v2.3.5：五轴考试 + 三级模式（Quick 5-8min / Standard 20-30min / Deep 2-3h）+ 九维幻觉 + 三轨评分 + 岗位匹配 + 29 道标准题（v2.3.2 扩展后全量 127 题） | Active |
-| 蓝图 | ~~`docs/03_modules/_domain_infra_runtime/task-system/blueprint.md`~~ | TaskGate 蓝图锚点**悬空**：task_gate.py 文件头引用该路径，但实测不存在（_domain_infra_runtime 目录不存在）；MOD-INF-035 在 blueprint_registry 实际登记为 AutoRuntime Core（`_cross_layer/auto_runtime_core/blueprint.md` v6.0.2） | 异常（§6 Q13） |
+| 蓝图 | `docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md`（MOD-INF-035 登记锚点，v6.0.2） | TaskGate 蓝图锚点**已对齐（2026-08-18）**：task_gate.py 与 test_task_gate.py 头注已对齐 MOD-INF-035+auto_runtime_core 真实路径，`src/zephyr/__init__.py` MOD-INF-002 锚点同修，model_capability_exam 蓝图 3 处不存在的 runtime/task_gate.py 引用已勘正（commit 3bb6651c2f，§6 Q13 已关闭） | 已对齐 |
 | 测试 | `tests/model/`（23 个文件） | 关键：test_profiler.py / test_model_capability_exam.py / test_job_matcher.py（蓝图记载 36 tests）/ test_exam_orchestrator.py / test_exam_test_cases.py；另有 test_benchmark_suite.py / test_model_router.py / test_model_drift_detector.py 等（与 11 号文 §2.4 盘点一致） | production |
 | 测试 | `tests/budget/test_budget_profile_manager.py` | 预算画像管理测试（考试预算管控的配套） | production |
 
@@ -307,7 +307,7 @@ ZephyrAlpha 是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道�
 3. **不做通用 LLM 评测**：只评测与本项目相关的任务能力（题库 29 道标准题、扩展后 127 题，覆盖代码/摘要/分类/幻觉/工具调用等能力），不跑 MMLU/GSM8K 等通用 benchmark。
 4. **不做定时全量重考**：触发式更新足够（§3.3）；定时自动化属远期，且被 MOD-INF-034 蓝图 AUTOMATION-GATE 明确拦截（实测三条件未全满足，§2.3）。
 5. **不做多层门控**：一层 TaskGate 足够，不加画像门控/运行时门控（§3.1 替代方案已否决；11 号文 L1 能力门是路由内部过滤，非新增门控层）。
-6. **不处理 pipeline_routing 子包**：疑似早期实验分支，去留属代码治理范畴，记入 §6 Q3 待 Owner 裁定，本施工图不动它。
+6. **不处理 pipeline_routing 子包（已闭环 2026-08-18）**：该疑似早期实验分支已裁定合并——顶层为唯一真源，子包 6 文件已删除（commit de393cc0fc），本条目仅保留闭环记录（§6 Q3）。
 7. **不做 100 模型并发容量**：MOD-INF-036 蓝图"目标容量 100 模型并发"、MOD-INF-034"目标容量 30-50 模型"均为远期愿景，个人项目当前 ~5 模型族，并发调度不施工。
 8. **不引入预测式 ML 路由/独立路由代理**：2026 年前沿（Cascade/ONNX 路由代理、QE 升级分类器等，§3.7）面向高并发服务场景，本项目单机低频不需要；路由排序增强归 11 号文远期。
 9. **不做评测平台化**：不做 Web UI/多租户/公开榜单/评测即服务——CLI + JSON 落盘 + 人工触发已满足单人工作流。
@@ -320,17 +320,17 @@ ZephyrAlpha 是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道�
 |---|---|---|---|
 | Q1 | 模型画像 7 维评测与能力考试五轴评测的关系？ | 已裁定 | 互补不重复：画像=静态跑分排名，考试=动态上岗资格；重叠能力冲突时以考试 pass/fail 为准。见 §3.2 |
 | Q2 | 能力护照的更新频率？ | 已裁定 | 触发式更新（新模型入库/版本变更/漂移告警/人工触发），非定时。见 §3.3 |
-| Q3 | model_profiling/pipeline_routing/ 子包与顶层文件功能重叠，是否保留？ | 待用户裁定 | 实测 6 文件 2690 行与顶层同名文件高度相似但行数有差异（profiler.py 715 vs 648、benchmark_suite.py 964 vs 446 等），疑似早期实验分支。建议确认后删除或合并，需 Owner 决策 |
+| Q3 | model_profiling/pipeline_routing/ 子包与顶层文件功能重叠，是否保留？ | **已裁定+已施工 2026-08-18** | 已裁定合并：顶层为唯一真源——profiler 上移 6 个公共 API、task_model_learner 上移 3 个 def（纯超集判定，零行为丢弃），消费方（pipeline_orchestrator/integration __init__/5 个测试文件）已重定向，子包 6 文件删除（commit de393cc0fc），790 测试绿 |
 | Q4 | 11 号文「护照→模型路由」接口契约 | 已对齐（2026-08-18） | 11 号文 v0.3.0 已填充：字段接口复审成立、双门控歧义已消除（§3.6）；剩余跟踪项=护照刷新时补齐 cost 段落盘（P2-1）、11 据本文 §3.3/§3.5 真源修订其 §4.6 |
 | Q5 | 10 号文 LLM 运行时/计费接口契约 | 已对齐（2026-08-18） | 10 号文 v0.3.0 已填充：本地 GGUF/Ollama 主路径（GPTQ 否决）、预算门 pre_flight_check、10 Phase 2.4 复用本文考试链路跑 qwen3:8b 基线（§4 Phase 3） |
 | Q6 | data/model_profiles/、data/model_learning/、data/brain/quick_profiles/ 目录内容盘点 | 已回填（2026-08-18） | 实测完成并写入 §2.4：model_learning=task-model-matrix.json（matrix 空）、model_profiles=24 个 .tmp 残留、quick_profiles=qwen3_8b.json |
 | Q7 | 护照数据时间陈旧（最近一批 2026-06-26，距今约 53 天） | 待用户裁定 | 现有 7 份护照是否需要在 Phase 0 全部重考刷新？涉及 GPU/Token 预算（单次云端考试约 0.06 元量级+本地 GPU 时长），需 Owner 决策 |
 | Q8 | 本目录文件曾被隔离事件 | 待用户裁定 | 2026-08-17 晚 implementation_plans/ 整目录被移至 .runtime/quarantine/gova_leftover_20260817/（reflog 3c9bb5a60b 记载该批文件因 TTL-METADATA 门禁未收），后已恢复。本文档在恢复后的骨架上填充 |
-| Q9 | data/model_profiles/ 下 24 个 .tmp 残留文件 | 待用户裁定 | 2026-07-17~08-03 的 benchmark 运行全部以 .tmp 收尾（疑似中断/未正常 finalize），是否清理或修复 results_writer 的 finalize 逻辑？涉及代码改动，需 Owner 决策 |
+| Q9 | data/model_profiles/ 下 24 个 .tmp 残留文件 | **已裁定+已施工 2026-08-18** | 24 个 0 字节 .tmp 残留已清除；results_writer 原子写入已加异常清理（治本加固，异常路径不再留 0 字节 .tmp），commit de23915d1f |
 | Q10 | 护照落盘 schema 滞后（无 cost/tool 段、幻觉三维 vs 代码九维、drift 全 tested=false） | 已登记（不单独施工） | 代码模型已扩展，落盘待下次 Standard/Deep 考试自然刷新；若 Q7 裁定全量重考则一并解决 |
 | Q11 | 00_index.md §5.2 对本文的版本标注滞后 | 已登记（归 AI-FILL-00） | 00_index §5.2 标注本文"draft v0.2.0"，本文已升 v0.3.0；00_index 刷新归 AI-FILL-00 职责，本文不越权修改 |
 | Q12 | MOD-INF-036 蓝图自身不一致 | 已登记（不越权修改） | 其 §0.6 file_count 声明 14 vs depgraph 16（蓝图已自标 ❌"以 depgraph 为准"）；MOD-INF-024 蓝图 submodule_path（src/zephyr/governance/budget_engine.py）与实测落点（ops_governance/budget_engine.py）不一致——均属蓝图维护侧待办，本文只登记 |
-| Q13 | TaskGate 蓝图锚点悬空 | 待用户裁定 | task_gate.py 头 `[BLUEPRINT] MOD-INF-035 \| docs/03_modules/_domain_infra_runtime/task-system/blueprint.md`——该路径实测不存在，且 MOD-INF-035 已登记为 AutoRuntime Core。TaskGate 的真实蓝图归属需 Owner 裁定后修文件头（MODIFY-GUARD 限制，本文不改代码） |
+| Q13 | TaskGate 蓝图锚点悬空 | **已裁定+已施工 2026-08-18** | 锚点已对齐双注册表口径：task_gate.py 与 test_task_gate.py 头注已对齐 MOD-INF-035 + `_cross_layer/auto_runtime_core/blueprint.md` 真实路径，`src/zephyr/__init__.py` MOD-INF-002 锚点同修，model_capability_exam 蓝图 3 处不存在的 runtime/task_gate.py 引用已勘正（commit 3bb6651c2f） |
 
 ---
 
@@ -341,6 +341,7 @@ ZephyrAlpha 是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道�
 | 2026-08-17 | 0.1.0 | 骨架建立 | 新建 |
 | 2026-08-17 | 0.2.0 | 第 1 轮填充：§2 背景+§3 设计决策+§4 施工计划+§5 不做什么+§6 开放问题 | AI-FILL-06 按指令集填充 |
 | 2026-08-18 | 0.3.0 | 第 2 轮（红蓝对抗纠错+依赖对齐+扩充）：①实测纠错——护照 10 份→7 份（无 deepseek-r1 护照）、18 文件行数全部按 Get-Content 实测更新、tests 路径 tests/model/（23 文件）、pipeline_routing 行数更正；②Q4/Q5 闭环——10/11 号文 v0.3.0 均已填充，接口假设升级为已对齐契约（§3.6/§4 接口契约节），修正"llama.cpp+GPTQ INT4"过时假设（10 号文已实证否决 GPTQ）；③Q6 回填——三个数据目录内容实测入 §2.4；④新增 §3.0 总览/§3.4 阈值与评分/§3.5 幻觉与成本定位/§3.7 前沿演进（2026 登记 5 项）；⑤新增开放问题 Q9~Q13（.tmp 残留/schema 滞后/00_index 版本标注/蓝图不一致/TaskGate 锚点悬空）；⑥P0-4 标记完成、P0 验收样本按实测护照修正 | 第 1 轮数据凭首轮快照未逐条实测，本轮按指令集规则 15/17 全量实测纠正；10/11 号文填充完成消除阻塞 |
+| 2026-08-18 | 0.3.1 | Owner 裁定回填+施工事实登记（裁定 3/4/5）：①Q3 关闭——pipeline_routing 子包已裁定合并，顶层为唯一真源（profiler 上移 6 公共 API、task_model_learner 上移 3 def，纯超集零行为丢弃；消费方 pipeline_orchestrator/integration __init__/5 测试文件已重定向；子包 6 文件删除，commit de393cc0fc，790 测试绿），§2.2/§2.4/§5 第 6 条同步更新为已合并口径；②Q9 关闭——24 个 0 字节 .tmp 已清除，results_writer 原子写入加异常清理治本加固（commit de23915d1f），§2.3/§2.4 同步；③Q13 关闭——task_gate.py 与 test_task_gate.py 头注对齐 MOD-INF-035+auto_runtime_core 真实路径，src/zephyr/__init__.py MOD-INF-002 锚点同修，model_capability_exam 蓝图 3 处不存在引用勘正（commit 3bb6651c2f），§1/§2.1/§2.4 同步 | AI-ADJ-004 按 Owner 裁定回填 |
 
 ---
 
