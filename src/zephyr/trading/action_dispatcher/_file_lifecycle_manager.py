@@ -20,6 +20,7 @@
 通过 facade 引用访问 patchable 实例方法（_extract_module_name/_find_module_file/_version_backup 等）。
 通过 _facade_mod 访问 patchable 模块级常量（REPO_ROOT/BRAIN_BACKUPS_DIR/BRAIN_TRASH_DIR）。
 """
+
 from __future__ import annotations
 
 import json
@@ -126,7 +127,9 @@ class FileLifecycleManager:
             return _facade_mod.ActionReport(file_path_str, "code_generate", "error", "path escapes REPO_ROOT")
 
         if target.exists():
-            return _facade_mod.ActionReport(file_path_str, "code_generate", "skipped", f"file already exists: {target.name}")
+            return _facade_mod.ActionReport(
+                file_path_str, "code_generate", "skipped", f"file already exists: {target.name}"
+            )
 
         # 添加 BRAIN 标记 header
         ts = datetime.now(UTC).isoformat()

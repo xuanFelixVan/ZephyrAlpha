@@ -95,7 +95,8 @@ class TestDetectGhosts:
 
     def test_no_ghosts_for_existing_files(self, syncer: StateSynchronizer, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "KBG-001", "data/databases/governance.db", "PENDING")
+        # 使用 git 跟踪文件（任何 checkout/worktree 必存在），避免依赖 gitignored 数据文件的环境脆弱性
+        _insert_task(conn, "KBG-001", "pyproject.toml", "PENDING")
         conn.close()
         ghosts = syncer.detect_ghosts()
         ghost_ids = [g.task_id for g in ghosts]

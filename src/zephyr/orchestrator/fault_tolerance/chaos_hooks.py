@@ -23,9 +23,9 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from zephyr.shared.contracts.orchestration_protocol import ChaosEngineProtocol
 from zephyr.orchestrator.fault_tolerance.chaos_engine import ChaosEngine, FaultRecord
 from zephyr.orchestrator.fault_tolerance.fault_types import FaultTypeRegistry, get_default_registry
+from zephyr.shared.contracts.orchestration_protocol import ChaosEngineProtocol
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +115,8 @@ class ChaosHook:
                     "ChaosHook: pre_step inject failed step=%s fault=%s: %s",
                     context.step_name,
                     fault_type,
-                    exc, exc_info=True
+                    exc,
+                    exc_info=True,
                 )
 
         context.fault_records = records
@@ -144,7 +145,8 @@ class ChaosHook:
                     "ChaosHook: post_step recover failed step=%s fault_id=%s: %s",
                     context.step_name,
                     record.fault_id,
-                    exc, exc_info=True
+                    exc,
+                    exc_info=True,
                 )
 
         context.fault_records = []

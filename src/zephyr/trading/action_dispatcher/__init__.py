@@ -111,9 +111,6 @@ __all__ = [
     "_git_commit_hash",
 ]
 
-from typing import Final
-from zephyr.shared.io.serialization import dumps
-
 import json
 import logging
 import re
@@ -121,12 +118,14 @@ import shutil
 import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, Final
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-from typing import TYPE_CHECKING, Any
+from zephyr.shared.io.serialization import dumps
 
 if TYPE_CHECKING:
-    from zephyr.shared.schema.task_types import TaskCard
     from zephyr.infrastructure.queue.task_scheduler import TaskScheduler
+    from zephyr.shared.schema.task_types import TaskCard
 
 _log = logging.getLogger(__name__)
 
@@ -159,7 +158,7 @@ def _git_commit_hash(project_root: Path) -> str | None:
             timeout=3,
         )
         if result.returncode == 0:
-                return result.stdout.strip()
+            return result.stdout.strip()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.warning("_git_commit_hash: failed to get git commit hash (%s: %s)", type(e).__name__, e, exc_info=True)
     return None
@@ -354,8 +353,8 @@ class ActionReport:
 # ═══════════════════════════════════════════════════════════════════
 # 提取类导入（ActionReport 已在上面定义, worker 可安全 import）
 # ═══════════════════════════════════════════════════════════════════
-from zephyr.trading.action_dispatcher._audit_log_writer import AuditLogWriter
 from zephyr.trading.action_dispatcher._annotation_writer import AnnotationWriter
+from zephyr.trading.action_dispatcher._audit_log_writer import AuditLogWriter
 from zephyr.trading.action_dispatcher._file_lifecycle_manager import FileLifecycleManager
 from zephyr.trading.action_dispatcher._search_replace_engine import SearchReplaceEngine
 
@@ -378,8 +377,13 @@ class ActionDispatcher:
         self._dry_run = dry_run
         self._locator = ModuleFileLocator()
         self._stats: dict[str, int] = {
-            "dispatched": 0, "modified": 0, "skipped": 0,
-            "created": 0, "deleted": 0, "search_replaced": 0, "backups": 0,
+            "dispatched": 0,
+            "modified": 0,
+            "skipped": 0,
+            "created": 0,
+            "deleted": 0,
+            "search_replaced": 0,
+            "backups": 0,
         }
         # 构造顺序 A: AuditLogWriter（零依赖，facade 引用供未来扩展）
         self._audit = AuditLogWriter(dry_run=dry_run, facade=self)

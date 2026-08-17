@@ -64,7 +64,6 @@ class IntegrationRegistry:
         """写入：points（Stage 4 公共化）。"""
         self._points = value
 
-
     def register(self, point: IntegrationPoint) -> None:
         self._points[point.point_id] = point
 

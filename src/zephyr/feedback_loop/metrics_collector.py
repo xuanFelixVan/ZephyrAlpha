@@ -28,11 +28,12 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import time
 import uuid
 from enum import Enum, unique
 from typing import Any
+
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 
 @unique
@@ -81,7 +82,6 @@ class MetricsCollector:
     def db_path(self, value):
         """写入：db_path（Stage 4 公共化）。"""
         self._db_path = value
-
 
     def _get_conn(self) -> sqlite3.Connection:
         if self._conn is None:

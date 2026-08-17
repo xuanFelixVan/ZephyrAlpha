@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] BoundaryComputeError(ZA-PLAN-0001)
-# [TESTS] tests/plan_engine/test_tomorrow_boundary_planner.py
+# [TESTS] tests/plan_engine/test_plan_engine.py
 # [A_module] module_id=MOD-PLAN-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -50,11 +50,19 @@ from typing import Any
 
 from zephyr.shared.utils.time_utils import now_utc
 
-
 # ── 常量（41 §3.10.2 参数默认值）──
 
 DEFAULT_MAX_ADD_POSITION = 0.30  # 加仓仓位上限（单标的加仓后总仓位不超过此上限）
 BREAKOUT_CONFIRM_CONDITION = "放量站稳10分钟"  # 突破验证条件
+
+
+class BoundaryComputeError(ValueError):
+    """边界计算错误（ZA-PLAN-0001）——边界层坏=致命，调用方暂停操作。
+
+    继承 ValueError 保持向后兼容（调用方/测试按 ValueError 捕获仍生效）。
+    """
+
+    error_code = "ZA-PLAN-0001"
 
 
 # ── 数据契约（41 §3.10.2 输出契约）──
@@ -68,12 +76,12 @@ class TomorrowBoundary:
     """
 
     symbol: str
-    box_upper: float          # 箱体上沿（明日压力位）
-    box_lower: float          # 箱体下沿（明日支撑位）
-    max_add_position: float   # 加仓仓位上限（默认 0.30）
-    no_add_price: float       # 禁加仓价位（≈上沿，价格接近时禁止加仓防追高）
-    must_exit_price: float    # 必出止盈价位（冲上沿必出，纪律）
-    breakout_confirm: str     # 突破验证条件（"放量站稳10分钟"）
+    box_upper: float  # 箱体上沿（明日压力位）
+    box_lower: float  # 箱体下沿（明日支撑位）
+    max_add_position: float  # 加仓仓位上限（默认 0.30）
+    no_add_price: float  # 禁加仓价位（≈上沿，价格接近时禁止加仓防追高）
+    must_exit_price: float  # 必出止盈价位（冲上沿必出，纪律）
+    breakout_confirm: str  # 突破验证条件（"放量站稳10分钟"）
     computed_at: Any = None  # 计算时间（datetime，由 now_utc() 生成）
 
 
@@ -119,7 +127,7 @@ class TomorrowBoundaryPlanner:
         close_price = market_state.get("close", 0.0)
         if close_price <= 0:
             msg = f"收盘价异常: {close_price}"
-            raise ValueError(msg)
+            raise BoundaryComputeError(msg)
 
         # 箱体上沿/下沿：基于昨日收盘价和技术位计算
         # MVP 简化：用昨日振幅的 ±1 倍作为箱体
@@ -133,7 +141,7 @@ class TomorrowBoundaryPlanner:
             box_lower=box_lower,
             max_add_position=DEFAULT_MAX_ADD_POSITION,
             no_add_price=box_upper * 0.98,  # 接近上沿时禁止加仓
-            must_exit_price=box_upper,       # 冲上沿必出
+            must_exit_price=box_upper,  # 冲上沿必出
             breakout_confirm=BREAKOUT_CONFIRM_CONDITION,
             computed_at=now_utc(),
         )

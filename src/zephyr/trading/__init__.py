@@ -16,14 +16,14 @@
 #   name_zh: ① 模块命名空间声明
 #   name_en: zephyr.trading.__init__
 #   intro: [A_module] module_id=MOD-TRADING | layer=infrastructure | st
-#   desc: MOD-INF-016 包入口，模块命名空间声明并声明 __all__（39项）
+#   desc: MOD-INF-016 包入口，模块命名空间声明并声明 __all__（40项）
 #   inputs: I1
 #   outputs: zephyr.trading 包级公共命名空间
-#   invariant: 包级导出以 __all__ 声明为准（39项）
+#   invariant: 包级导出以 __all__ 声明为准（40项）
 # 层: 输出
 # - id: O1
 #   name_zh: zephyr.trading 包公共 API
-#   name_en: __all__ 39项
+#   name_en: __all__ 40项
 #   intro: [A_module] module_id=MOD-TRADING | layer=infrastructure | st——对外统一出口
 #   downstream: 见蓝图头 [CONSUMERS] 声明
 # [/ALGO_FLOW]
@@ -75,4 +75,6 @@ __all__ = [
     "__main__",
 ]
 
-from zephyr.trading import trigger_registry  # noqa: F401  # ORPHAN-MODULE: 新模块引用登记（41_buy_flow §3.9 MOD-TRIG-001）
+from zephyr.trading import (
+    trigger_registry,  # noqa: F401  # ORPHAN-MODULE: 新模块引用登记（41_buy_flow §3.9 MOD-TRIG-001）
+)

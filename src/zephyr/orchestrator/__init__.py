@@ -28,14 +28,14 @@
 #   name_zh: ① 包级聚合再导出
 #   name_en: zephyr.orchestrator.__init__
 #   intro: MOD-INF-039 包入口
-#   desc: MOD-INF-039 包入口，包级聚合再导出并声明 __all__（7项）
+#   desc: MOD-INF-039 包入口，包级聚合再导出并声明 __all__（12项）
 #   inputs: I1 I2 I3 I4
 #   outputs: zephyr.orchestrator 包级公共命名空间
-#   invariant: 包级导出以 __all__ 声明为准（7项）
+#   invariant: 包级导出以 __all__ 声明为准（12项）
 # 层: 输出
 # - id: O1
 #   name_zh: zephyr.orchestrator 包公共 API
-#   name_en: __all__ 7项
+#   name_en: __all__ 12项
 #   intro: MOD-INF-039 包入口——对外统一出口
 #   downstream: 见蓝图头 [CONSUMERS] 声明
 # [/ALGO_FLOW]
@@ -48,12 +48,8 @@
 """
 
 from zephyr.orchestrator.contracts.alert_handler import AlertHandler
-
 from zephyr.orchestrator.execution.context_bridge import ContextBridge
-
 from zephyr.orchestrator.execution.script_runner import ScriptRunner
-
-
 
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 
@@ -154,58 +150,32 @@ LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）
 """
 
 
-
 __all__ = [  # noqa: n114-final  n114-final豁免: __all__是Python导出约定且本文件运行时动态append，Final标注不适用
-
     "agent_health_monitor",
-
     "agent_orchestrator",
-
     "deferred_queue",
-
     "file_task_mapper",
-
     "hallucination_detector",
-
     "rollback_manager",
-
     "task_queue",
-
 ]
-
 
 
 _SUBMODULES = [  # noqa: n114-final  n114-final豁免: 惰性加载子模块注册表，仅成员检测不修改，保持列表语义
-
     "agent_health_monitor",
-
     "agent_orchestrator",
-
     "deferred_queue",
-
     "file_task_mapper",
-
     "hallucination_detector",
-
     "rollback_manager",
-
     "task_queue",
-
-    "MemoryWriter",
-
 ]
-
-
-
 
 
 def __getattr__(name: str):
 
     if name in _SUBMODULES:
-
         import importlib
-
-
 
         mod = importlib.import_module(f"zephyr.orchestrator.{name}")
 
@@ -216,24 +186,17 @@ def __getattr__(name: str):
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
-
-
-
 __all__.append("AlertHandler")
-
 
 
 __all__.append("ContextBridge")
 
 
-
 __all__.append("ScriptRunner")
-
 
 
 from zephyr.orchestrator.execution.memory_writer import MemoryWriter, archive_to_vms
 
-
-
 __all__.append("MemoryWriter")
 
+__all__.append("archive_to_vms")

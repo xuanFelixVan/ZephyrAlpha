@@ -84,7 +84,6 @@ class ModuleOnboardingScanner:
         """写入：src_root（Stage 4 公共化）。"""
         self._src_root = value
 
-
     def scan_filesystem(self) -> list[ModuleDiscovery]:
         discoveries: list[ModuleDiscovery] = []
         if not self._src_root.exists():
@@ -136,7 +135,9 @@ class ModuleOnboardingScanner:
             source = path.read_text(encoding="utf-8")
             tree = ast.parse(source)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("_parse_module: failed to parse module %s (%s: %s)", path, type(e).__name__, e, exc_info=True)
+            logger.warning(
+                "_parse_module: failed to parse module %s (%s: %s)", path, type(e).__name__, e, exc_info=True
+            )
             return None
 
         rel = path.relative_to(self._src_root)

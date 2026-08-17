@@ -374,8 +374,7 @@ class SettlementReconciler:
 
         if not result.matched:
             _logger.warning(
-                "结算对账发现差异: date=%s drifts=%d system_trades=%d "
-                "broker_trades=%d matched=%d",
+                "结算对账发现差异: date=%s drifts=%d system_trades=%d broker_trades=%d matched=%d",
                 settlement_date,
                 len(drifts),
                 result.total_system_trades,
@@ -386,9 +385,7 @@ class SettlementReconciler:
                 try:
                     self._on_discrepancy(result)
                 except Exception:  # noqa: BLE001 — 告警通道故障不阻断对账主流程
-                    _logger.exception(
-                        "on_discrepancy 回调异常（已忽略，不影响对账结果）"
-                    )
+                    _logger.exception("on_discrepancy 回调异常（已忽略，不影响对账结果）")
 
         return result
 
@@ -448,9 +445,7 @@ class SettlementReconciler:
 
     # ── 内部方法 ──
 
-    def _compare_fields(
-        self, fill: Fill, rec: BrokerSettlementRecord
-    ) -> list[SettlementDrift]:
+    def _compare_fields(self, fill: Fill, rec: BrokerSettlementRecord) -> list[SettlementDrift]:
         """逐字段比较单笔配对交易, 返回差异列表(空=无差异)。"""
         drifts: list[SettlementDrift] = []
         cfg = self._config

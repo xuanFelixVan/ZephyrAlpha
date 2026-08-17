@@ -25,9 +25,9 @@ import json
 import logging
 from datetime import UTC, datetime
 
+from zephyr.feedback_loop.alert_dispatcher import AlertEvent
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.infrastructure.system_telemetry.metrics_bridge import MetricPoint
-from zephyr.feedback_loop.alert_dispatcher import AlertEvent
 
 logger = logging.getLogger(__name__)
 

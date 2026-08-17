@@ -30,8 +30,8 @@ AI Agent 冷启动分派表（Dispatch Table）
 
 from __future__ import annotations
 
-from typing import Final
 from dataclasses import dataclass
+from typing import Final
 
 
 @dataclass(frozen=True)

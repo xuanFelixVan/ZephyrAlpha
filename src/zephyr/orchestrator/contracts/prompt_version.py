@@ -33,7 +33,6 @@ class PromptVersionManager:
         """写入：versions（Stage 4 公共化）。"""
         self._versions = value
 
-
     def register(self, prompt_id: str, version: str, template: str) -> None:
         self._versions[prompt_id] = version
 

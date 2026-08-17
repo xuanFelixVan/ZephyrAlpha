@@ -51,7 +51,6 @@ class MetricCardinalityGuard:
         """公共接口：compute_growth_rate（Stage 4 公共化）。"""
         return self._compute_growth_rate(metric_name)
 
-
     def classify_cardinality(self, count) -> CardinalityStatus:
         """公共接口：classify_cardinality（Stage 4 公共化）。"""
         return self._classify_cardinality(count)

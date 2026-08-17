@@ -104,7 +104,7 @@ responsibility_domain:
 | 19 | stop_gate.py | §3.1 | 质量闸门 | 已实现 |
 | 20 | finalizer.py | §3.1 | 优雅清理 | 已实现 |
 | 21 | lifecycle_manager.py | §3.1 | 启动/停止/健康检查序列 | 已实现 |
-| 22 | action_dispatcher.py | §3.1 | 动作分派器 | 已实现 |
+| 22 | action_dispatcher/（包：__init__ 外观 + 4 worker） | §3.1 | 动作分派器 | 已实现 |
 | 23 | task_gate.py | §3.1 | 任务门禁 | 已实现 |
 | 24 | windows_service.py | §3.1 | Windows Service 包装器 | 已实现 |
 | 25 | __init__.py | — | 包初始化 | 已实现 |

@@ -66,7 +66,9 @@ from zephyr.shared.infra.lock import SyncLockRenewer, next_fencing_token  # 5.58
 
 logger = logging.getLogger(__name__)
 
-_COMMIT_LOCK = threading.Lock()  # 5.12.11 修复：仅进程内线程安全辅助锁；跨进程互斥由 _CrossProcessLock(os.open O_CREAT|O_EXCL) 负责
+_COMMIT_LOCK = (
+    threading.Lock()
+)  # 5.12.11 修复：仅进程内线程安全辅助锁；跨进程互斥由 _CrossProcessLock(os.open O_CREAT|O_EXCL) 负责
 
 
 def _atomic_replace(tmp: Path, target: Path, max_retries: int = 5) -> None:
@@ -201,10 +203,17 @@ class _CrossProcessLock:
                 # 5.58.2：已持锁后分配单调递增 fencing token 并写回锁内容
                 self._token = next_fencing_token(self._fence_file)
                 self._write_content(
-                    {"pid": self._pid, "acquired_at": time.time(), "file": self._file_path, "fencing_token": self._token}
+                    {
+                        "pid": self._pid,
+                        "acquired_at": time.time(),
+                        "file": self._file_path,
+                        "fencing_token": self._token,
+                    }
                 )
                 # 5.58.3：持有者存活期间自动续期，TTL 不失效
-                self._renewer = SyncLockRenewer(self._refresh_lease, self._TTL_SECONDS / 3, name="staging-commit-lock-renewer")
+                self._renewer = SyncLockRenewer(
+                    self._refresh_lease, self._TTL_SECONDS / 3, name="staging-commit-lock-renewer"
+                )
                 self._renewer.start()
                 self._acquired = True
                 return self
@@ -242,11 +251,18 @@ class _CrossProcessLock:
                 try:
                     os.remove(self._lock_file)
                 except OSError as e:
-                    logger.warning("_CrossProcessLock.__exit__: failed to remove lock file %s (%s: %s)", self._lock_file, type(e).__name__, e)
+                    logger.warning(
+                        "_CrossProcessLock.__exit__: failed to remove lock file %s (%s: %s)",
+                        self._lock_file,
+                        type(e).__name__,
+                        e,
+                    )
             elif data is not None:
                 logger.warning(
                     "_CrossProcessLock.__exit__: lock %s held by another owner (pid=%s token=%s), not removing",
-                    self._lock_file, data.get("pid"), data.get("fencing_token"),
+                    self._lock_file,
+                    data.get("pid"),
+                    data.get("fencing_token"),
                 )
             else:
                 try:
@@ -697,8 +713,12 @@ class StagingArea:
 
             if draft_vs_baseline_overlap and current_vs_baseline_overlap:
                 return _build_conflict_result(
-                    file_path, draft, locked_mtime, locked_hash,
-                    current_lines, draft_lines,
+                    file_path,
+                    draft,
+                    locked_mtime,
+                    locked_hash,
+                    current_lines,
+                    draft_lines,
                     "overlapping changes — needs owner resolution",
                 )
 
@@ -707,8 +727,12 @@ class StagingArea:
             )
             if has_conflict:
                 return _build_conflict_result(
-                    file_path, draft, locked_mtime, locked_hash,
-                    current_lines, draft_lines,
+                    file_path,
+                    draft,
+                    locked_mtime,
+                    locked_hash,
+                    current_lines,
+                    draft_lines,
                     "overlapping replace — needs owner resolution",
                 )
 

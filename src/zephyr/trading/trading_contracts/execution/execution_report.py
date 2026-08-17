@@ -20,6 +20,7 @@
 改为 re-export shared 层真源，消除多真源。
 SSoT: cross_layer_contracts.yaml -> CTR-P1-007 (codegen 生成 shared/contracts/execution_report.py)
 """
+
 from __future__ import annotations
 
 from zephyr.shared.contracts.execution_report import ExecutionReport

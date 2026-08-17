@@ -46,7 +46,6 @@ class Finalizer:
         """写入：cleanup_fns（Stage 4 公共化）。"""
         self._cleanup_fns = value
 
-
     def register(self, resource_type: str, cleanup_fn: Callable[[], None]) -> None:
         self._cleanup_fns.append((resource_type, cleanup_fn))
 
@@ -126,8 +125,3 @@ def register_monitoring_finalizers_auto() -> None:
     无需传入 Finalizer 实例，使用全局单例。
     """
     register_monitoring_finalizers(get_finalizer())
-
-# ── Stage 4 公共化（2026-07-29）：module-level public aliases ──
-global_finalizer: Finalizer | None = _global_finalizer  # public alias（Stage 4 公共化）
-monitoring_finalizers_registered = _monitoring_finalizers_registered  # public alias（Stage 4 公共化）
-

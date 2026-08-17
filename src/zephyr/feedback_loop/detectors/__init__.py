@@ -40,11 +40,7 @@ _SUBPKG_GROUPS = (
 )
 
 # 叶子名 -> 所属子包（兼容垫片重定向映射）
-_LEAF_TO_SUBPKG = {
-    _leaf: _subpkg
-    for _subpkg, _subs in _SUBPKG_GROUPS
-    for _leaf in _subs
-}
+_LEAF_TO_SUBPKG = {_leaf: _subpkg for _subpkg, _subs in _SUBPKG_GROUPS for _leaf in _subs}
 
 _SUBMODULES = _ANOMALY_SUBS + _DRIFT_SUBS + _GUARD_SUBS + _RELIABILITY_SUBS + _CORRELATION_SUBS
 
@@ -74,7 +70,7 @@ class _LeafAliasFinder(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, path=None, target=None):
         if not fullname.startswith(_PREFIX):
             return None
-        leaf = fullname[len(_PREFIX):]
+        leaf = fullname[len(_PREFIX) :]
         if "." in leaf or leaf not in _LEAF_TO_SUBPKG:
             return None
         real_name = f"{_PREFIX}{_LEAF_TO_SUBPKG[leaf]}.{leaf}"
@@ -86,9 +82,7 @@ sys.meta_path.append(_LeafAliasFinder())
 
 def __getattr__(name):
     if name in _LEAF_TO_SUBPKG:
-        mod = importlib.import_module(
-            f"zephyr.feedback_loop.detectors.{_LEAF_TO_SUBPKG[name]}.{name}"
-        )
+        mod = importlib.import_module(f"zephyr.feedback_loop.detectors.{_LEAF_TO_SUBPKG[name]}.{name}")
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

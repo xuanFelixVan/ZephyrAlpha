@@ -36,8 +36,9 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any
+
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 # 5.97.7 修复: psutil 提升至模块级导入，供 _extract_proc_info / scan_zombie_processes 共享
 try:
@@ -277,9 +278,7 @@ def scan_zombie_processes() -> ZombieScanResult:
             continue
 
         result.scanned += 1
-        cat, reason = _classify_zombie(
-            info["runtime"], info["mem_gb"], info["cpu"], info["children"]
-        )
+        cat, reason = _classify_zombie(info["runtime"], info["mem_gb"], info["cpu"], info["children"])
         if cat is None:
             continue
 
@@ -317,7 +316,9 @@ def _kill_process(pid: int) -> bool:
                 if psutil.pid_exists(pid):
                     psutil.Process(pid).kill()
         except (ProcessLookupError, PermissionError) as e:
-            logger.warning("_kill_process: failed to clean up process %s (%s: %s)", pid, type(e).__name__, e, exc_info=True)
+            logger.warning(
+                "_kill_process: failed to clean up process %s (%s: %s)", pid, type(e).__name__, e, exc_info=True
+            )
             return False
         return True
     except OSError as e:

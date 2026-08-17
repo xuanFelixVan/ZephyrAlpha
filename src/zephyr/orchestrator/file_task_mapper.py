@@ -45,16 +45,16 @@ logger = logging.getLogger(__name__)
 
 import re
 from dataclasses import dataclass, field
-from functools import lru_cache
+from functools import cache, lru_cache
 from pathlib import Path
 
 import yaml
 
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 from zephyr.shared.io.yaml_utils import load_vocabulary_values
+from zephyr.shared.schema.task_types import TaskNamespace
 from zephyr.shared.utils.db_utils import get_db_connection, init_db
 from zephyr.shared.utils.time_utils import now_iso
-from zephyr.shared.schema.task_types import TaskNamespace
 
 __all__ = [
     "FileTaskMapper",
@@ -66,22 +66,14 @@ __all__ = [
 
 
 # 5.160.3 修复：SQL常量集中化
-SQL_SELECT_TASK_FILE_BY_FILE_PATH = (
-    "SELECT task_id FROM task_files WHERE file_path = ? ORDER BY task_id"
-)
-SQL_SELECT_TASK_FILE_BY_TASK_ID = (
-    "SELECT file_path, role FROM task_files WHERE task_id = ? ORDER BY role, file_path"
-)
-SQL_SELECT_TASK_NEXT_SEQ = (
-    "SELECT COALESCE(MAX(seq), 0) + 1 AS next_seq FROM tasks WHERE namespace = ?"
-)
+SQL_SELECT_TASK_FILE_BY_FILE_PATH = "SELECT task_id FROM task_files WHERE file_path = ? ORDER BY task_id"
+SQL_SELECT_TASK_FILE_BY_TASK_ID = "SELECT file_path, role FROM task_files WHERE task_id = ? ORDER BY role, file_path"
+SQL_SELECT_TASK_NEXT_SEQ = "SELECT COALESCE(MAX(seq), 0) + 1 AS next_seq FROM tasks WHERE namespace = ?"
 SQL_INSERT_TASK = """INSERT INTO tasks
     (task_id, namespace, seq, phase, title, status, execution_model, safety_level,
      directive, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, 'PENDING', ?, ?, '', ?, ?)"""
-SQL_INSERT_TASK_FILE = (
-    "INSERT OR IGNORE INTO task_files (task_id, file_path, role) VALUES (?, ?, ?)"
-)
+SQL_INSERT_TASK_FILE = "INSERT OR IGNORE INTO task_files (task_id, file_path, role) VALUES (?, ?, ?)"
 SQL_SELECT_TASK_FILE_JOIN_BY_TASK_ID = (
     "SELECT tf.task_id, tf.file_path, t.status "
     "FROM task_files tf JOIN tasks t ON tf.task_id = t.task_id "
@@ -163,7 +155,7 @@ def _build_alias_fallback(*items: str) -> frozenset[str]:
     return frozenset(items)
 
 
-@lru_cache(maxsize=None)
+@cache
 def _load_draft_aliases() -> frozenset[str]:
     """从 status_vocabulary.yaml 加载 draft 状态及其大小写兼容形式。
 
@@ -377,9 +369,7 @@ class FileTaskMapper:
                     (task_id,),
                 ).fetchall()
             else:
-                rows = conn.execute(
-                    SQL_SELECT_TASK_FILE_JOIN_ALL
-                ).fetchall()
+                rows = conn.execute(SQL_SELECT_TASK_FILE_JOIN_ALL).fetchall()
 
             for row in rows:
                 tid = row["task_id"]

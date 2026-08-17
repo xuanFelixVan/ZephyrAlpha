@@ -255,7 +255,9 @@ class ParameterizedSafetyGate:
         self.frequency_counters[key] = self.frequency_counters.get(key, 0) + 1
         if self.frequency_counters[key] > limit:
             return GateResult(
-                layer, GateVerdict.REJECT, gtype,
+                layer,
+                GateVerdict.REJECT,
+                gtype,
                 reject_reason.format(count=self.frequency_counters[key], limit=limit),
             )
         return GateResult(layer, GateVerdict.PASS, gtype)
@@ -284,6 +286,7 @@ class ParameterizedSafetyGate:
             try:
                 module_path, func_name = handler_path.rsplit(".", 1)
                 import importlib
+
                 mod = importlib.import_module(module_path)
                 handler = getattr(mod, func_name)
                 return handler(ctx, gtype, rule)

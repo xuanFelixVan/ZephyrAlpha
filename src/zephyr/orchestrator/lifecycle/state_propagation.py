@@ -30,10 +30,9 @@ TaskCard 状态变更 -> 所有关联系统得到通知。
 
 from __future__ import annotations
 
-from typing import Final
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any
+from typing import Any, Final
 
 from pydantic import BaseModel, Field
 

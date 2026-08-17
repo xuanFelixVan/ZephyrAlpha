@@ -25,12 +25,12 @@ TUI + JSON API 双模式。
 from datetime import datetime
 from typing import Any
 
+from zephyr.shared.utils.time_utils import now_utc
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.health_monitor import HealthMonitor
 from zephyr.trading.night_shift_queue import NightShiftQueue
 from zephyr.trading.orphan_detector import OrphanDetector
 from zephyr.trading.work_orchestrator import WorkOrchestrator
-from zephyr.shared.utils.time_utils import now_utc
 
 
 def _current_phase() -> str:
@@ -99,7 +99,6 @@ class StatusDashboard:
     def uptime_start(self, value):
         """写入：uptime_start（Stage 4 公共化）。"""
         self._uptime_start = value
-
 
     def render_tui(self) -> str:
         phase = _current_phase()

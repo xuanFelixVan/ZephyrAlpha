@@ -33,12 +33,13 @@ proceeding. Flag inconsistent config states.
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import hashlib
 import time
 from dataclasses import dataclass, field
 from enum import Enum
+
+from zephyr.shared.io.serialization import dumps
 
 
 class ConfigConsistency(str, Enum):

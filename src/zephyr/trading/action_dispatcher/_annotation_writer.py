@@ -84,6 +84,7 @@
 # A2 --> O2
 # A3 --> O2
 """
+
 from __future__ import annotations
 
 import logging
@@ -106,7 +107,7 @@ class AnnotationWriter:
     Blueprint 摘要同步。
     """
 
-    def __init__(self, dry_run: bool, facade: "ActionDispatcher | None" = None) -> None:
+    def __init__(self, dry_run: bool, facade: ActionDispatcher | None = None) -> None:
         self._dry_run = dry_run
         self._facade = facade
 
@@ -116,7 +117,9 @@ class AnnotationWriter:
         module_name = self._facade._extract_module_name(source_text)
         py_file = self._facade._find_module_file(module_name)
         if py_file is None:
-            return _facade_mod.ActionReport(module_name, "task_classification", "skipped", f"file not found for: {module_name}")
+            return _facade_mod.ActionReport(
+                module_name, "task_classification", "skipped", f"file not found for: {module_name}"
+            )
 
         original = _facade_mod._read_text(py_file)
         if original is None:
@@ -190,7 +193,9 @@ class AnnotationWriter:
             card_file.write_text(new_yaml, encoding="utf-8")
 
         _log.info("BrainHands: %s +tags=%s", card_file.name, new_tags)
-        return _facade_mod.ActionReport(card_file.name, "tag_completion", "modified", f"added {len(new_tags)} tags: {new_tags}")
+        return _facade_mod.ActionReport(
+            card_file.name, "tag_completion", "modified", f"added {len(new_tags)} tags: {new_tags}"
+        )
 
     def annotate_blueprint(self, source_text: str, result: dict):
         """将摘要同步到模块的 blueprint YAML 中。"""
@@ -230,4 +235,6 @@ class AnnotationWriter:
             bp_file.write_text(new_content, encoding="utf-8")
 
         _log.info("BrainHands: %s <- summary (%d points)", bp_file.name, len(points))
-        return _facade_mod.ActionReport(bp_file.name, "summary_extraction", "modified", f"added {len(points)} summary points")
+        return _facade_mod.ActionReport(
+            bp_file.name, "summary_extraction", "modified", f"added {len(points)} summary points"
+        )

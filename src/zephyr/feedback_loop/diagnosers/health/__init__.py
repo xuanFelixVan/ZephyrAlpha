@@ -31,5 +31,17 @@ _SUBMODULES = [
     "dr_resilience_metrics",
 ]
 
-__all__ = ['action_composition_health_monitor', 'dr_resilience_metrics', 'e2e_integration_health', 'fle_dogfood_monitor', 'fle_self_slo_metrics', 'global_health_map', 'memory_self_check', 'model_health', 'self_benchmark', 'self_bottleneck_detector', 'self_health_monitor', 'self_llm_observability']
-
+__all__ = [
+    "action_composition_health_monitor",
+    "dr_resilience_metrics",
+    "e2e_integration_health",
+    "fle_dogfood_monitor",
+    "fle_self_slo_metrics",
+    "global_health_map",
+    "memory_self_check",
+    "model_health",
+    "self_benchmark",
+    "self_bottleneck_detector",
+    "self_health_monitor",
+    "self_llm_observability",
+]

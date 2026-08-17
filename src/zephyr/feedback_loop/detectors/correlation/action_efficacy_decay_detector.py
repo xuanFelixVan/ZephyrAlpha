@@ -45,12 +45,11 @@ class ActionEfficacyDecayDetector:
         x_mean = (n - 1) / 2.0
         y_mean = sum(values) / n
         num = sum(((i - x_mean) * (v - y_mean) for i, v in enumerate(values)))
-        den = sum(((i - x_mean) ** 2 for i in range(n)))
+        den = sum((i - x_mean) ** 2 for i in range(n))
         return num / den if den != 0 else 0.0
 
-
     @staticmethod
-    def compute_ewma(values: list[float], alpha: float=0.3) -> list[float]:
+    def compute_ewma(values: list[float], alpha: float = 0.3) -> list[float]:
         if not values:
             return []
         result = [values[0]]
@@ -92,7 +91,7 @@ class ActionEfficacyDecayDetector:
         return [k for k, v in findings.items() if v["is_decaying"]]
 
     @staticmethod
-    def _compute_ewma(values: list[float], alpha: float=0.3) -> list[float]:
+    def _compute_ewma(values: list[float], alpha: float = 0.3) -> list[float]:
         """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
         return ActionEfficacyDecayDetector.compute_ewma(values, alpha)
 

@@ -28,10 +28,11 @@ from __future__ import annotations
 import time
 import uuid
 
-from zephyr.feedback_loop.collectors.feedback_collector import FeedbackCollector
-from zephyr.feedback_loop.collectors.metrics_collector import MetricsCollector, MetricSnapshot
 from zephyr.feedback_loop.detectors.anomaly_detector import AnomalyDetector
 from zephyr.feedback_loop.diagnosers.diagnosis_engine import DiagnosisEngine
+
+from zephyr.feedback_loop.collectors.feedback_collector import FeedbackCollector
+from zephyr.feedback_loop.collectors.metrics_collector import MetricsCollector, MetricSnapshot
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, SafetyGatePipeline
 from zephyr.feedback_loop.gates.safety_gate_l66_l67 import SafetyGateL66L67
 

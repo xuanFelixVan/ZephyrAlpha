@@ -5,4 +5,13 @@
 # [TTL] permanent
 """quality — orchestrator quality subpackage."""
 
-__all__: list[str] = ["agent_quality", "benchmark_runner", "blind_spot_closure", "blueprint_scorer", "ke_quality", "knowledge_freshness", "lean_scanner", "stability_guard"]
+__all__: list[str] = [
+    "agent_quality",
+    "benchmark_runner",
+    "blind_spot_closure",
+    "blueprint_scorer",
+    "ke_quality",
+    "knowledge_freshness",
+    "lean_scanner",
+    "stability_guard",
+]

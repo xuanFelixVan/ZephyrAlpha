@@ -17,7 +17,13 @@ Moved from shared/contracts/ to eliminate cross-package violations.
 Infrastructure contracts (core/, backpressure/) remain in shared/contracts/.
 """
 
+from zephyr.shared.contracts.factor_monitor_report import FactorMonitorReport
+from zephyr.shared.contracts.factor_signal import FactorSignal
+from zephyr.shared.contracts.macro_factor_signal import MacroFactorSignal
+from zephyr.shared.contracts.market_data import NormalizedMarketData
 from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.portfolio.money import Money, get_currency_precision
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 from zephyr.trading.trading_contracts import factories
 from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
 from zephyr.trading.trading_contracts.execution.execution_rejection_error import ExecutionRejectionError
@@ -26,8 +32,6 @@ from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
-from zephyr.shared.contracts.factor_monitor_report import FactorMonitorReport
-from zephyr.shared.contracts.factor_signal import FactorSignal
 from zephyr.trading.trading_contracts.market.instrument import (
     ETF,
     FX,
@@ -46,11 +50,7 @@ from zephyr.trading.trading_contracts.market.instrument import (
     Stock,
     TradingCalendarName,
 )
-from zephyr.shared.contracts.macro_factor_signal import MacroFactorSignal
-from zephyr.shared.contracts.market_data import NormalizedMarketData
 from zephyr.trading.trading_contracts.market.signal_degradation_warning import SignalDegradationWarning
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
-from zephyr.shared.contracts.portfolio.money import Money, get_currency_precision
 from zephyr.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import RiskLimitViolationError

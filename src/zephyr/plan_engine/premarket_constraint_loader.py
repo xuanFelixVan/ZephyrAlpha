@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ConstraintLoadError(ZA-PLAN-0002)
-# [TESTS] tests/plan_engine/test_premarket_constraint_loader.py
+# [TESTS] tests/plan_engine/test_plan_engine.py
 # [A_module] module_id=MOD-PLAN-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -49,27 +49,35 @@ from typing import Any, Final
 
 from zephyr.plan_engine.tomorrow_boundary_planner import TomorrowBoundary
 
-
 # ── 常量（41 §3.10.3 参数默认值）──
 
 AUCTION_MATCH_WINDOW_START = "09:20"  # 竞价匹配窗口开始
-AUCTION_MATCH_WINDOW_END = "09:25"    # 竞价匹配窗口结束
+AUCTION_MATCH_WINDOW_END = "09:25"  # 竞价匹配窗口结束
 
 # 9 种情景分类（高开/低开/平开 × 真涨/假涨/真跌/假跌/洗盘）
 SCENARIO_LIST: Final = [
-    "HIGH_OPEN_REAL_UP",      # 高开真涨
-    "HIGH_OPEN_FAKE_UP",      # 高开假涨
-    "HIGH_OPEN_WASH",         # 高开洗盘
-    "LOW_OPEN_REAL_DOWN",     # 低开真跌
-    "LOW_OPEN_FAKE_DOWN",     # 低开假跌
-    "LOW_OPEN_WASH",          # 低开洗盘
-    "FLAT_OPEN_REAL_UP",      # 平开真涨
-    "FLAT_OPEN_REAL_DOWN",    # 平开真跌
-    "FLAT_OPEN_WASH",         # 平开洗盘
+    "HIGH_OPEN_REAL_UP",  # 高开真涨
+    "HIGH_OPEN_FAKE_UP",  # 高开假涨
+    "HIGH_OPEN_WASH",  # 高开洗盘
+    "LOW_OPEN_REAL_DOWN",  # 低开真跌
+    "LOW_OPEN_FAKE_DOWN",  # 低开假跌
+    "LOW_OPEN_WASH",  # 低开洗盘
+    "FLAT_OPEN_REAL_UP",  # 平开真涨
+    "FLAT_OPEN_REAL_DOWN",  # 平开真跌
+    "FLAT_OPEN_WASH",  # 平开洗盘
 ]
 
 
 # ── 数据契约（41 §3.10.2 输出契约）──
+
+
+class ConstraintLoadError(ValueError):
+    """盘前约束加载错误（ZA-PLAN-0002）——加载失败=致命，禁止开始交易。
+
+    继承 ValueError 保持向后兼容（调用方/测试按 ValueError 捕获仍生效）。
+    """
+
+    error_code = "ZA-PLAN-0002"
 
 
 @dataclass(frozen=True)
@@ -81,8 +89,8 @@ class ConstraintState:
 
     symbol: str
     boundary: TomorrowBoundary
-    scenario: str             # 盘前竞价匹配的 9 情景之一
-    initialized: bool         # 盘前加载是否成功
+    scenario: str  # 盘前竞价匹配的 9 情景之一
+    initialized: bool  # 盘前加载是否成功
 
 
 # ── 盘前预案加载器 ──
@@ -116,7 +124,7 @@ class PremarketConstraintLoader:
         """
         if boundary is None:
             msg = f"TomorrowBoundary 未加载: {symbol}"
-            raise ValueError(msg)
+            raise ConstraintLoadError(msg)
 
         # 9:25 竞价匹配情景（MVP：无竞价数据时默认平开）
         scenario = self._match_scenario(auction_data) if auction_data else "FLAT_OPEN_WASH"

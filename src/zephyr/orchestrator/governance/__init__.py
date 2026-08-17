@@ -5,4 +5,13 @@
 # [TTL] permanent
 """governance — orchestrator governance subpackage."""
 
-__all__: list[str] = ["autonomy_guard", "capacity_budget", "dependency_lock", "model_registry", "path_index", "risk_registry", "schema_migration", "version_manifest"]
+__all__: list[str] = [
+    "autonomy_guard",
+    "capacity_budget",
+    "dependency_lock",
+    "model_registry",
+    "path_index",
+    "risk_registry",
+    "schema_migration",
+    "version_manifest",
+]

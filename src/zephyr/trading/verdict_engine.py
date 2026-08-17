@@ -194,11 +194,11 @@ class VerdictEngine:
     # so callers (incl. tests) need not touch private members.
 
     @property
-    def protection_index(self) -> "ProtectionIndex | None":
+    def protection_index(self) -> ProtectionIndex | None:
         return self._protection_index
 
     @property
-    def gpu_scheduler(self) -> "LocalModelScheduler | None":
+    def gpu_scheduler(self) -> LocalModelScheduler | None:
         return self._gpu_scheduler
 
     @property
@@ -266,7 +266,9 @@ class VerdictEngine:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.151.3 修复: protection_level 是安全判决关键输入, 失败后静默吞没并继续走决策树
                 # 存在安全风险。记录 warning 使查询失败可见 (不阻断决策, 但留审计痕迹)
-                logger.warning("verdict_engine: protection_index.query failed for %s: %s", operation.target_path, e, exc_info=True)
+                logger.warning(
+                    "verdict_engine: protection_index.query failed for %s: %s", operation.target_path, e, exc_info=True
+                )
 
         verdict_level, reason = self.apply_decision_tree(actor, operation, gate_passed, violation_count)
 
@@ -310,7 +312,9 @@ class VerdictEngine:
             reason=reason,
         )
 
-    def _parse_event(self, event: AuditEntryV1 | AuditEvent | dict[str, Any]) -> tuple[ActorInfo, OperationInfo, bool, int] | None:
+    def _parse_event(
+        self, event: AuditEntryV1 | AuditEvent | dict[str, Any]
+    ) -> tuple[ActorInfo, OperationInfo, bool, int] | None:
         """将 3 种事件类型统一解析为 (actor, operation, gate_passed, violation_count)。未知类型返回 None。"""
         if _HAS_AUDIT_ENTRY and isinstance(event, AuditEntryV1):
             return self._parse_audit_entry_v1(event)
@@ -432,9 +436,7 @@ class VerdictEngine:
 
         # 5.44.1 修复：批次大小校验，超过 max_batch_size 抛 ValueError
         if len(events) > self._max_batch_size:
-            raise ValueError(
-                f"evaluate_batch 批次大小 {len(events)} 超过上限 {self._max_batch_size}，请分片处理"
-            )
+            raise ValueError(f"evaluate_batch 批次大小 {len(events)} 超过上限 {self._max_batch_size}，请分片处理")
 
         loop = asyncio.get_running_loop()
 
@@ -451,14 +453,14 @@ class VerdictEngine:
                     graduated_level=GraduatedLevel.L6,
                     reason="evaluate_timeout",
                 )
-            except (TimeoutError, asyncio.TimeoutError, ConnectionError) as exc:
+            except ConnectionError as exc:
                 self._red_count += 1
                 return Verdict(
                     verdict_level=VerdictLevel.RED,
                     graduated_level=GraduatedLevel.L6,
                     reason=f"evaluate_error:{exc}",
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — SSoT(test_verdict_engine): evaluate 任意异常收敛为 RED，不炸批量
                 # SSoT (test_verdict_engine): evaluate raising any exception
                 # returns RED verdict with error message, does not break batch.
                 self._red_count += 1
@@ -476,9 +478,7 @@ class VerdictEngine:
 
         tasks = [_limited_eval(_eval_one(evt)) for evt in events]
         # 5.44.1 修复：整体超时包裹，超时抛 TimeoutError 给调用方
-        results = await asyncio.wait_for(
-            asyncio.gather(*tasks), timeout=self._batch_timeout_s
-        )
+        results = await asyncio.wait_for(asyncio.gather(*tasks), timeout=self._batch_timeout_s)
         return list(results)
 
     def resolve_graduated_level(

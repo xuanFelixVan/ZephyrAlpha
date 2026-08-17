@@ -26,5 +26,12 @@ _SUBMODULES = [
     "trend_cycle_separator",
 ]
 
-__all__ = ['concept_drift', 'config_drift', 'context_window_contamination_detector', 'diminishing_returns_detector', 'ensemble_drift', 'gradual_poisoning_detector', 'trend_cycle_separator']
-
+__all__ = [
+    "concept_drift",
+    "config_drift",
+    "context_window_contamination_detector",
+    "diminishing_returns_detector",
+    "ensemble_drift",
+    "gradual_poisoning_detector",
+    "trend_cycle_separator",
+]

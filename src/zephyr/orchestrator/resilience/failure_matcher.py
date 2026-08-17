@@ -123,7 +123,6 @@ class FailurePatternMatcher:
         """写入：active（Stage 4 公共化）。"""
         self._active = value
 
-
     def activate(self) -> None:
         if self._active:
             return
@@ -205,6 +204,7 @@ class FailurePatternMatcher:
 # 以及 FailureMatcher.match / categorize / aggregate_failures 三个方法。
 # 旧的 TRANSIENT/PERMANENT/CASCADING/RESOURCE/CONFIGURATION 常量无任何消费者（已 grep 验证），
 # 故直接替换为测试契约要求的 9 类枚举（lowercase string values）。
+
 
 class FailureCategory(str, Enum):
     """失败类别枚举——按错误文本特征分类。
@@ -312,8 +312,7 @@ class FailureMatcher:
         self.config = config or {}
         # 预编译以避免每次 match 都重新编译
         self._compiled: list[tuple[FailureCategory, re.Pattern[str], float, str]] = [
-            (cat, re.compile(pat, re.IGNORECASE), prob, sug)
-            for cat, pat, prob, sug in _CATEGORY_PATTERNS
+            (cat, re.compile(pat, re.IGNORECASE), prob, sug) for cat, pat, prob, sug in _CATEGORY_PATTERNS
         ]
 
     def match(self, error: object) -> FailureMatch:

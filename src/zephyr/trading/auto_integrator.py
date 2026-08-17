@@ -26,10 +26,10 @@ AutoIntegrator — 自动接入器
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from zephyr.shared.utils.time_utils import now_utc
 from zephyr.trading.capability_card import CapabilityCard, CapabilityCategory
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.module_onboarding_scanner import UnregisteredModule
-from zephyr.shared.utils.time_utils import now_utc
 
 
 @dataclass
@@ -73,7 +73,6 @@ class AutoIntegrator:
         """写入：max_daily_l3（Stage 4 公共化）。"""
         self._max_daily_l3 = value
 
-
     @property
     def last_reset_date(self):
         """只读：last_reset_date（Stage 4 公共化）。"""
@@ -84,11 +83,9 @@ class AutoIntegrator:
         """写入：last_reset_date（Stage 4 公共化）。"""
         self._last_reset_date = value
 
-
     def infer_category(self, package) -> CapabilityCategory:
         """公共接口：infer_category（Stage 4 公共化）。"""
         return self._infer_category(package)
-
 
     @property
     def daily_l3_count(self):
@@ -100,11 +97,9 @@ class AutoIntegrator:
         """写入：daily_l3_count（Stage 4 公共化）。"""
         self._daily_l3_count = value
 
-
     def check_daily_reset(self) -> None:
         """公共接口：check_daily_reset（Stage 4 公共化）。"""
         return self._check_daily_reset()
-
 
     def analyze_module(self, module: UnregisteredModule) -> IntegrationAnalysis:
         self._check_daily_reset()

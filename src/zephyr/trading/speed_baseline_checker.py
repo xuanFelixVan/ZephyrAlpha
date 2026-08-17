@@ -1,5 +1,3 @@
-from typing import Final
-
 # [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.speed_baseline_checker
 # [DOMAIN] D_TRADING
@@ -16,16 +14,17 @@ from typing import Final
 # [TESTS] test_speed_baseline_checker.py
 # [A_module] module_id=MOD-RESOURCE_OPTIMIZATION_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-
 import logging
 import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from typing import Final
 
 import psutil
 import yaml
+
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 logger = logging.getLogger(__name__)
 

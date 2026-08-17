@@ -29,11 +29,10 @@
 
 from __future__ import annotations
 
-from typing import Final
 import logging
-
 from datetime import UTC, datetime
 from enum import Enum
+from typing import Final
 
 from pydantic import BaseModel, Field
 
@@ -100,7 +99,6 @@ class CapacityBudgetController:
     def budget(self, value):
         """写入：budget（Stage 4 公共化）。"""
         self._budget = value
-
 
     @property
     def state(self) -> CapacityState:

@@ -99,7 +99,16 @@ class AutoPilot:
             "",
             "  全局任务统计:",
         ]
-        for st in [TaskStatus.READY, TaskStatus.IN_PROGRESS, TaskStatus.BLOCKED, TaskStatus.WAITING, TaskStatus.PENDING, TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED]:
+        for st in [
+            TaskStatus.READY,
+            TaskStatus.IN_PROGRESS,
+            TaskStatus.BLOCKED,
+            TaskStatus.WAITING,
+            TaskStatus.PENDING,
+            TaskStatus.COMPLETED,
+            TaskStatus.FAILED,
+            TaskStatus.CANCELLED,
+        ]:
             cnt = counts.get(st, 0)
             marker = " <<<" if st == TaskStatus.READY and cnt > 0 else ""
             lines.append(f"    {st.value:14s}: {cnt:4d}{marker}")
@@ -231,8 +240,7 @@ def _on_task_completed(payload: object) -> None:
         detail = data.get("detail", str(payload))
         source = data.get("source_function", "unknown")
         logger.info(
-            "AutoPilot: task_completed event received "
-            "(source=%s, detail=%s) — run_cycle deferred to AI session",
+            "AutoPilot: task_completed event received (source=%s, detail=%s) — run_cycle deferred to AI session",
             source,
             detail,
         )

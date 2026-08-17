@@ -16,6 +16,7 @@
 # [TTL] permanent
 # ==== BEGIN CODGEN:CTR-ERR-005 ====
 from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 

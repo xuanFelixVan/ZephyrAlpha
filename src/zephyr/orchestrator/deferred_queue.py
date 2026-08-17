@@ -26,15 +26,14 @@ Depends: observer.py (T-1-08), task_repo.py (T-1-04)
 
 from __future__ import annotations
 
-from typing import Final
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import time
 from enum import Enum, unique
 from threading import RLock
-from typing import Any
+from typing import Any, Final
 
 from zephyr.shared.infra.observer import EventType, Observer
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 
 @unique

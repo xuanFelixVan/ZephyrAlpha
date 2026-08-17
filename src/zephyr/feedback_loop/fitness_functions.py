@@ -1,4 +1,6 @@
-from typing import Final
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Final
 
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.fitness_functions
@@ -17,9 +19,6 @@ from typing import Final
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from zephyr.shared.io.serialization import dumps
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any
 
 METRIC_COMPLIANCE_RATE: Final[str] = "METRIC_COMPLIANCE_RATE"
 METRIC_HALLUCINATION_INTERCEPTION: Final[str] = "METRIC_HALLUCINATION_INTERCEPTION"

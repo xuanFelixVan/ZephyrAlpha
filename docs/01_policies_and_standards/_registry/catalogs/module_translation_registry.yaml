@@ -5276,13 +5276,6 @@ entries:
   desc_zh: 重新导出核心类（原 feedback_loop.py 迁入包内，解决包/文件同名覆盖）
   desc_en: Feedback Loop Engine — MOD-FEEDBACK_LOOP.
   plain_zh: 重新导出核心类（原 feedback_loop.py 迁入包内，解决包/文件同名覆盖）
-- module_path: src/zephyr/feedback_loop/_gen_inherited.py
-  domain_id: D_FEEDBACK_LOOP
-  name_zh: 生成inherited
-  name_en: _gen_inherited
-  desc_zh: 生成inherited，提供包入口和模块加载功能
-  desc_en: ''
-  plain_zh: 生成inherited，支撑反馈闭环检测修复（gen inherited）
 - module_path: src/zephyr/feedback_loop/actors/__init__.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 包入口
@@ -24639,13 +24632,6 @@ entries:
   domain_id: D_GOVERNANCE
   name_zh: MicroClone检测器测试
   name_en: Test Micro Clone Detector
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
-- module_path: src/zephyr/trading/action_dispatcher.py
-  domain_id: D_INFRA_RUNTIME
-  name_zh: 动作分发器
-  name_en: Action Dispatcher
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
@@ -48830,12 +48816,6 @@ algo_submodules:
   name_zh: ③ 平方根冲击滑点预测
   name_en: SquareRootImpactPredictor.predict
   plain_zh: 用平方根法则预估这单大概会滑多少个基点
-- module_path: src/zephyr/feedback_loop/subdir/test_file.py
-  module_id: __unmanaged__src/zephyr/feedback_loop/subdir/test_file.py
-  node_id: A1
-  name_zh: ① print 打印
-  name_en: print
-  plain_zh: 调用内置 print 把 hello 写到标准输出
 - module_path: src/zephyr/governance/capability_lookup.py
   module_id: MOD-INF-037
   node_id: A1

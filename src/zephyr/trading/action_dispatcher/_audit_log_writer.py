@@ -19,6 +19,7 @@
 职责簇：JSONL 审计日志写入。无状态（仅 dry_run 标志）。
 通过 _facade_mod 访问模块级常量（test-patchable via patch("...action_dispatcher.AUDIT_LOGS_DIR")）。
 """
+
 from __future__ import annotations
 
 import json

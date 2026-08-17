@@ -30,8 +30,8 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, Field
 
-from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.io.serialization import filter_dataclass_fields
+from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import now_utc
 
 __all__ = [

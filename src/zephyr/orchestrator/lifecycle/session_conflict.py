@@ -33,7 +33,6 @@ class SessionConflictGuard:
         """写入：active_sessions（Stage 4 公共化）。"""
         self._active_sessions = value
 
-
     def register_session(self, session_id: str, files: list[str]) -> bool:
         for f in files:
             for sid, locked in self._active_sessions.items():

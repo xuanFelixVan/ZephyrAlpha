@@ -20,7 +20,6 @@
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import os
 import threading
@@ -28,7 +27,7 @@ import time
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, Final
 
 logger = logging.getLogger(__name__)
 
@@ -121,12 +120,14 @@ INJECTION_POINTS: Final[list[dict[str, Any]]] = [
 _ACTIVE_LATENCY_TIMERS: list[threading.Timer] = []
 
 # Phase 7d: inject() 处理的 InjectType 子集（7 个枚举值中仅 4 个有 _inject_* 实现）
-_HANDLED_INJECT_TYPES: Final[frozenset[InjectType]] = frozenset({
-    InjectType.LATENCY,
-    InjectType.ERROR,
-    InjectType.CRASH,
-    InjectType.EXIT_CODE,
-})
+_HANDLED_INJECT_TYPES: Final[frozenset[InjectType]] = frozenset(
+    {
+        InjectType.LATENCY,
+        InjectType.ERROR,
+        InjectType.CRASH,
+        InjectType.EXIT_CODE,
+    }
+)
 
 
 def _cleanup_latency_timers() -> None:
@@ -163,7 +164,6 @@ class ChaosEngine:
     def last_result(self, value):
         """写入：last_result（Stage 4 公共化）。"""
         self._last_result = value
-
 
     def get_injection_points(self) -> list[dict[str, Any]]:
         return INJECTION_POINTS
@@ -224,9 +224,7 @@ class ChaosEngine:
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return self._handle_injection_failure(exc, point, target, injection_type_or_point, start)
 
-    def _dispatch_injection(
-        self, inject_type: InjectType, delay_ms: int, target: str
-    ) -> InjectionResult:
+    def _dispatch_injection(self, inject_type: InjectType, delay_ms: int, target: str) -> InjectionResult:
         """Phase 7d: if/elif 分发链提取（调用前需确保 inject_type 在 _HANDLED_INJECT_TYPES 中）"""
         if inject_type is InjectType.LATENCY:
             return self._inject_latency(delay_ms, target)
@@ -237,8 +235,12 @@ class ChaosEngine:
         return self._inject_exit_code(target)
 
     def _handle_injection_failure(
-        self, exc: Exception, point: dict | None, target: str,
-        injection_type_or_point: str, start: float,
+        self,
+        exc: Exception,
+        point: dict | None,
+        target: str,
+        injection_type_or_point: str,
+        start: float,
     ) -> InjectionResult | bool:
         """Phase 7d: except Exception 路径提取"""
         if point is not None:
@@ -281,7 +283,7 @@ class ChaosEngine:
         if os.environ.get("CHAOS_CRASH_CONFIRMED") != "yes":
             raise ChaosInjectError(
                 "Crash injection requires CHAOS_CRASH_CONFIRMED=yes env var. "
-                f"Refusing to crash without explicit confirmation"  # 5.168治本:移除target敏感变量
+                "Refusing to crash without explicit confirmation"  # 5.168治本:移除target敏感变量
             )
 
         return InjectionResult(
