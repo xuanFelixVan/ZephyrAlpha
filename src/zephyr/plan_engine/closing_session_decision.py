@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ClosingDecisionError(ZA-PLAN-0003)
-# [TESTS] tests/plan_engine/test_closing_session_decision.py
+# [TESTS] tests/plan_engine/test_plan_engine.py
 # [A_module] module_id=MOD-PLAN-003 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -53,13 +53,22 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-
 # ── 常量（41 §3.10.4 参数默认值）──
 
-ADD_POSITION_THRESHOLD = 0.70    # 尾盘加仓阈值（明日高开概率 >70%）
+ADD_POSITION_THRESHOLD = 0.70  # 尾盘加仓阈值（明日高开概率 >70%）
 REDUCE_POSITION_THRESHOLD = 0.60  # 尾盘减仓阈值（明日低开概率 >60%）
 DECISION_WINDOW_START = "14:45"  # 尾盘决策窗口开始
-DECISION_WINDOW_END = "15:00"    # 尾盘决策窗口结束
+DECISION_WINDOW_END = "15:00"  # 尾盘决策窗口结束
+
+
+class ClosingDecisionError(ValueError):
+    """尾盘决策错误（ZA-PLAN-0003）——决策未就绪=不操作（保持现有持仓过夜）。
+
+    继承 ValueError 保持向后兼容。当前实现异常向上传播由调用方捕获，
+    本类为声明的错误契约锚点（供调用方 except 定向捕获）。
+    """
+
+    error_code = "ZA-PLAN-0003"
 
 
 # ── 数据契约（41 §3.10.2 输出契约）──
@@ -73,10 +82,10 @@ class BoundedActionAdvice:
     """
 
     symbol: str
-    action: str               # "ADD" / "REDUCE" / "HOLD" / "EXIT"
+    action: str  # "ADD" / "REDUCE" / "HOLD" / "EXIT"
     price_bound: tuple[float, float]  # 动作允许的价格区间（在 boundary 内）
-    max_weight: float         # 动作允许的最大权重
-    reason: str               # 边界内推演理由
+    max_weight: float  # 动作允许的最大权重
+    reason: str  # 边界内推演理由
 
 
 # ── 尾盘决策引擎 ──

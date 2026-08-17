@@ -22,12 +22,11 @@ DDL与sqlite_schema.py的_DDL_FLE_METRICS保持一致（SSoT）。
 
 from __future__ import annotations
 
-from typing import Final
 import json
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.shared.io.paths import DB_PATH

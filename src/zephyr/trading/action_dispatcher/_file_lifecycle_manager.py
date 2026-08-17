@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §5.150.7
-# [MODULE] MOD-INF-035 | zephyr.trading.action_dispatcher._file_lifecycle_manager
+# [MODULE] zephyr.trading.action_dispatcher._file_lifecycle_manager
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.action_dispatcher (facade module: _facade_mod.REPO_ROOT/BRAIN_BACKUPS_DIR/BRAIN_TRASH_DIR/_read_text/_git_commit_hash/ActionReport/_MAX_BACKUPS_PER_FILE; facade ref: _extract_module_name/_find_module_file/_parse_file_path/_version_backup)
 # [CONSUMERS] zephyr.trading.action_dispatcher.ActionDispatcher.__init__ (构造 _file_lifecycle 实例); ActionDispatcher._version_backup (facade 委托)
@@ -19,7 +19,28 @@
 职责簇：文件创建/删除/版本备份。
 通过 facade 引用访问 patchable 实例方法（_extract_module_name/_find_module_file/_version_backup 等）。
 通过 _facade_mod 访问 patchable 模块级常量（REPO_ROOT/BRAIN_BACKUPS_DIR/BRAIN_TRASH_DIR）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 文件操作请求
+#   fields: file_path / content（create_file、delete_file 参数，来自 ActionDispatcher 委托）
+#   code: create_file/delete_file 入口参数
+# - id: I2
+#   name: facade 可补丁方法与模块常量
+#   fields: _extract_module_name/_find_module_file/_parse_file_path/_version_backup 实例方法 + REPO_ROOT/BRAIN_BACKUPS_DIR/BRAIN_TRASH_DIR 常量
+#   code: _facade_mod 模块引用
+# 层: 处理
+# - id: F1
+#   name: 创建/删除/备份主流程
+#   code: create_file（不存在则写入）/ delete_file（备份后删除）/ _version_backup（BRAIN_BACKUPS_DIR 限频备份）
+# 层: 输出
+# - id: O1
+#   name: ActionReport
+#   fields: status=skipped|created|deleted|error + detail
+#   code: create_file/delete_file 返回值
 """
+
 from __future__ import annotations
 
 import json
@@ -126,7 +147,9 @@ class FileLifecycleManager:
             return _facade_mod.ActionReport(file_path_str, "code_generate", "error", "path escapes REPO_ROOT")
 
         if target.exists():
-            return _facade_mod.ActionReport(file_path_str, "code_generate", "skipped", f"file already exists: {target.name}")
+            return _facade_mod.ActionReport(
+                file_path_str, "code_generate", "skipped", f"file already exists: {target.name}"
+            )
 
         # 添加 BRAIN 标记 header
         ts = datetime.now(UTC).isoformat()

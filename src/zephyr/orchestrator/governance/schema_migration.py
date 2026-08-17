@@ -34,7 +34,6 @@ class SchemaMigration:
         """写入：history（Stage 4 公共化）。"""
         self._history = value
 
-
     def current_version(self) -> int:
         return self._version
 

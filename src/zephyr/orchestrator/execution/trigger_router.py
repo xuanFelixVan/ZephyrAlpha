@@ -53,19 +53,19 @@ experimental 起始集（5 种 trigger_type）
 
 from __future__ import annotations
 
-from typing import Final
 import importlib
 import logging
 from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from threading import RLock
-from typing import Any, Protocol, runtime_checkable
+from typing import Any, Final, Protocol, runtime_checkable
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
+
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 @runtime_checkable
@@ -83,6 +83,7 @@ class AuditLoggerProtocol(Protocol):
         result: str,
         extra: dict[str, Any] | None = None,
     ) -> None: ...
+
 
 __all__ = [
     "DEFAULT_ROUTER_YAML_PATH",
@@ -308,7 +309,6 @@ class TriggerRouter:
     def specs(self, value):
         """写入：specs（Stage 4 公共化）。"""
         self._specs = value
-
 
     # ------------------------------------------------------------------
     # 加载

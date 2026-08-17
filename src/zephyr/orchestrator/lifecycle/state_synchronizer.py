@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 import json as _json
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import cache, lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -95,7 +95,7 @@ def _build_alias_fallback(*items: str) -> frozenset[str]:
     return frozenset(items)
 
 
-@lru_cache(maxsize=None)
+@cache
 def _load_draft_aliases() -> frozenset[str]:
     """从 status_vocabulary.yaml 加载 draft 状态及其大小写兼容形式。
 

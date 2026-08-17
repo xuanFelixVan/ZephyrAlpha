@@ -35,13 +35,12 @@ AutoTaskGenerator — 自动任务生成器
 
 from __future__ import annotations
 
-from typing import Final
 import hashlib
 import logging
 import time
 from collections import deque
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 if TYPE_CHECKING:
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
@@ -373,6 +372,7 @@ def _on_task_completed(payload: object) -> None:
             return
 
         from zephyr.shared.io.paths import REPO_ROOT
+
         generator = AutoTaskGenerator(project_root=REPO_ROOT)
         submitted = generator.generate_and_submit(_scheduler_ref)
         if submitted > 0:

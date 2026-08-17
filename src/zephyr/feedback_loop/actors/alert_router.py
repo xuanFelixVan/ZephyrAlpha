@@ -109,9 +109,8 @@ class AlertRoutingDecision:
 
 
 # severity-based alert channel router (feedback_loop.actors), distinct from
-# gov_drift.alert_router.AlertRouter (drift alert routing with silencing/dedup)
-# and feedback_loop._gen_inherited.AlertRouter (auto-gen stub). Different
-# routing concerns; no shadowing risk (consumers import from explicit paths).
+# gov_drift.alert_router.AlertRouter (drift alert routing with silencing/dedup).
+# Different routing concerns; no shadowing risk (consumers import from explicit paths).
 # class-name-alias: FBL severity router vs gov_drift dedup router (ARCH-034)
 class AlertRouter:
     """Route alerts to channels based on severity.
@@ -131,7 +130,8 @@ class AlertRouter:
         severity = (
             severity_attr.value
             if hasattr(severity_attr, "value")
-            else str(severity_attr).upper() if severity_attr is not None
+            else str(severity_attr).upper()
+            if severity_attr is not None
             else "UNKNOWN"
         )
         channels = _SEVERITY_CHANNELS.get(severity)

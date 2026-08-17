@@ -5,4 +5,14 @@
 # [TTL] permanent
 """lifecycle — orchestrator lifecycle subpackage."""
 
-__all__: list[str] = ["housekeeping", "incident_postmortem", "rolling_upgrade", "session_conflict", "startup_sequencer", "state_propagation", "state_synchronizer", "system_transfer", "teardown_manager"]
+__all__: list[str] = [
+    "housekeeping",
+    "incident_postmortem",
+    "rolling_upgrade",
+    "session_conflict",
+    "startup_sequencer",
+    "state_propagation",
+    "state_synchronizer",
+    "system_transfer",
+    "teardown_manager",
+]

@@ -111,9 +111,9 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any, TypeVar
 
-from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderType
 from zephyr.shared.contracts.factor_signal import FactorSignal
 from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderType
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport

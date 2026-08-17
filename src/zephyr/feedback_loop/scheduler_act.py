@@ -54,9 +54,7 @@ class ActResult:
     skipped: bool = False
 
 
-def _gate_action(
-    handler: ActPhaseHandler, anomaly: object, diagnosis: object, snapshot: object
-) -> ActResult | None:
+def _gate_action(handler: ActPhaseHandler, anomaly: object, diagnosis: object, snapshot: object) -> ActResult | None:
     throttle = handler.throttle_defense.request_action(
         anomaly.anomaly_id,
         "system",

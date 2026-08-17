@@ -17,7 +17,6 @@
 
 """Error Budget 状态机——monthly budget + burn_rate + exhaust_policy。"""
 
-
 from pydantic import BaseModel
 
 
@@ -44,7 +43,6 @@ class ErrorBudgetManager:
     def budgets(self, value):
         """写入：budgets（Stage 4 公共化）。"""
         self._budgets = value
-
 
     def init_budget(self, contract_id: str) -> ErrorBudget:
         budget = ErrorBudget(contract_id=contract_id)

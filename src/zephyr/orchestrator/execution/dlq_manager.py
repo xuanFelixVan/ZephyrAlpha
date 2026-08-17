@@ -53,7 +53,6 @@ class DLQManager:
         """写入：messages（Stage 4 公共化）。"""
         self._messages = value
 
-
     def enqueue(self, message_id: str, contract_id: str, payload: dict | None = None) -> DLQMessage:
         msg = DLQMessage(
             message_id=message_id,

@@ -51,9 +51,9 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+from zephyr.shared.io.paths import DB_PATH
 from zephyr.shared.utils.db_utils import get_db_connection
 from zephyr.shared.utils.time_utils import now_iso
-from zephyr.shared.io.paths import DB_PATH
 
 __all__ = [
     "Checkpoint",

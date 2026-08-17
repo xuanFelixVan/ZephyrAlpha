@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §5.150.7
-# [MODULE] MOD-INF-035 | zephyr.trading.action_dispatcher._audit_log_writer
+# [MODULE] zephyr.trading.action_dispatcher._audit_log_writer
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.action_dispatcher (facade module: _facade_mod.AUDIT_LOGS_DIR/ActionReport)
 # [CONSUMERS] zephyr.trading.action_dispatcher.ActionDispatcher.__init__ (构造 _audit 实例)
@@ -18,7 +18,28 @@
 
 职责簇：JSONL 审计日志写入。无状态（仅 dry_run 标志）。
 通过 _facade_mod 访问模块级常量（test-patchable via patch("...action_dispatcher.AUDIT_LOGS_DIR")）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: triage 结果字典
+#   fields: result 字典（含 needs_human 等键）+ dry_run 标志
+#   code: write_triage_log 入口参数
+# - id: I2
+#   name: facade 模块级常量
+#   fields: AUDIT_LOGS_DIR/ActionReport（_facade_mod 引用，test-patchable）
+#   code: _facade_mod 模块引用
+# 层: 处理
+# - id: F1
+#   name: JSONL 追加写入
+#   code: write_triage_log 主流程（构造带时间戳记录 → 追加 AUDIT_LOGS_DIR 下 jsonl；dry_run 跳过写盘）
+# 层: 输出
+# - id: O1
+#   name: ActionReport
+#   fields: status=modified；needs_human=True→detail 含 ALERT，否则 CLEAR
+#   code: write_triage_log 返回值
 """
+
 from __future__ import annotations
 
 import json

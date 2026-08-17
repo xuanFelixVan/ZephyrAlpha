@@ -127,10 +127,10 @@ def _create_repair_task(
     detail: str,
     task_repo: TaskRepositoryProtocol | None = None,
 ) -> object:
+    from zephyr.shared.foundation.models import TaskCard
     from zephyr.shared.schema.base_config import Classification, EvolutionPolicy
     from zephyr.shared.schema.execution_model import ExecutionModel
     from zephyr.shared.schema.severity_types import Priority
-    from zephyr.shared.foundation.models import TaskCard
     from zephyr.shared.schema.task_types import TaskNamespace, TaskStatus
 
     priority = Priority.P0 if severity == "CRITICAL" else Priority.P1

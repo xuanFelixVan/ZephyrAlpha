@@ -198,6 +198,7 @@ class ScriptRunner:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("[SCRIPT-GATE] submit skipped", exc_info=True)
 
+
 def run_audit(
     task_id: str,
     scripts: list[str],

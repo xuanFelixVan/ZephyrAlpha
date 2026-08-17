@@ -16,12 +16,12 @@
 # [TTL] permanent
 from __future__ import annotations
 
-from typing import Final
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from typing import Final
 
 from zephyr.feedback_loop.evolution_engine import (
     ApplyFn,

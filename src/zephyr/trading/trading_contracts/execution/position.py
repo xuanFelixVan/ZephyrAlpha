@@ -20,6 +20,7 @@
 改为 re-export shared 层真源，消除多真源。
 SSoT: cross_layer_contracts.yaml -> CTR-006 (codegen 生成 shared/contracts/position.py)
 """
+
 from __future__ import annotations
 
 from zephyr.shared.contracts.position import PositionSnapshot

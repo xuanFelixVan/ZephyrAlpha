@@ -13,7 +13,8 @@
 
 import os
 
-from zephyr.feedback_loop._gen_inherited import BASE, SKELETONS
+from zephyr.feedback_loop.generator import BASE
+from zephyr.feedback_loop.template import SKELETONS
 
 
 class TestGenInheritedInstantiation:

@@ -33,14 +33,14 @@ LifecycleManager — 启动/停止序列
 借鉴: K8s Init Containers + Sidecar + Finalizer
 """
 
-from dataclasses import dataclass, field
 import logging
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from dataclasses import dataclass, field
 
+from zephyr.feedback_loop import FeedbackLoop
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.trading.ai_audit_logger import AiAuditLogger
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.dream_cycle import DreamCycle
-from zephyr.feedback_loop import FeedbackLoop
 from zephyr.trading.finalizer import Finalizer
 from zephyr.trading.health_monitor import HealthMonitor
 from zephyr.trading.integration_registry import IntegrationRegistry
@@ -83,7 +83,6 @@ class LifecycleManager:
     def config(self, value):
         """写入：config（Stage 4 公共化）。"""
         self._config = value
-
 
     def boot_sequence(
         self,
@@ -143,8 +142,7 @@ class LifecycleManager:
         threshold = getattr(self._config, "max_boot_disconnected_integrations", 0)
         if report.disconnected > threshold:
             raise RuntimeError(
-                f"integration validate: {report.disconnected} DISCONNECTED "
-                f"(threshold={threshold}) -> {report.details}"
+                f"integration validate: {report.disconnected} DISCONNECTED (threshold={threshold}) -> {report.details}"
             )
         if report.disconnected or report.degraded:
             logger.warning(

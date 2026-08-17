@@ -33,11 +33,11 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.trading.capability_registry import CapabilityRegistry
-from zephyr.trading.work_dag import WorkDAG, WorkItem
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 from zephyr.shared.io.serialization import filter_dataclass_fields
 from zephyr.shared.utils.time_utils import now_utc
+from zephyr.trading.capability_registry import CapabilityRegistry
+from zephyr.trading.work_dag import WorkDAG, WorkItem
 
 
 class WorkOrchestrator:
@@ -70,7 +70,6 @@ class WorkOrchestrator:
         """写入：items（Stage 4 公共化）。"""
         self._items = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def slots(self) -> dict[str, int]:
@@ -91,7 +90,6 @@ class WorkOrchestrator:
     def slots_used(self, value):
         """写入：slots_used（Stage 4 公共化）。"""
         self._slots_used = value
-
 
     def register_dag(self, dag: WorkDAG) -> None:
         # 5.142.3 修复: _dags 访问统一用 self._lock 保护, 避免与 list_dags/load_dags 并发抛 RuntimeError
@@ -237,7 +235,8 @@ class WorkOrchestrator:
             if other.status == TaskStatus.PENDING:
                 pending_deps.update(other.depends_on)
         stale = [
-            iid for iid, it in self._items.items()
+            iid
+            for iid, it in self._items.items()
             if it.status in (TaskStatus.COMPLETED, TaskStatus.FAILED)
             and iid not in pending_deps
             and iid != just_completed_id

@@ -105,9 +105,9 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
+from zephyr.orchestrator.agent_orchestrator import OrchestrationResult
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
-from zephyr.orchestrator.agent_orchestrator import OrchestrationResult
 
 __all__ = [
     "AgentHealthMonitor",
@@ -250,7 +250,6 @@ class AgentHealthMonitor:
         """写入：slo（Stage 4 公共化）。"""
         self._slo = value
 
-
     @staticmethod
     def percentile(values: list[float], pct: float) -> float:
         if not values:
@@ -261,7 +260,6 @@ class AgentHealthMonitor:
         rank = max(1, int(round(len(sorted_v) * pct / 100.0 + 0.5)) - 1)
         rank = min(rank, len(sorted_v) - 1)
         return sorted_v[rank]
-
 
     def record(self, result: OrchestrationResult) -> None:
         self._latencies.append(float(result.latency_ms))

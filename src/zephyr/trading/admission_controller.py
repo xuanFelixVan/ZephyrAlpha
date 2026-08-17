@@ -248,7 +248,6 @@ class AdmissionController:
         """写入：circuit_breaker（Stage 4 公共化）。"""
         self._circuit_breaker = value
 
-
     def admit(self, event: VerdictEvent | dict[str, Any]) -> AdmissionResult:
         with self._metrics_lock:
             self._total_requests += 1

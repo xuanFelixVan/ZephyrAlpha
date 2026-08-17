@@ -29,8 +29,8 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.io.serialization import filter_dataclass_fields
+from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import now_utc
 
 
@@ -86,20 +86,19 @@ class NightShiftQueue:
         results: list[NightShiftEntry] = []
         if not self._path.exists():
             return results
-        with self._lock:
-            # 5.169 修复：用 context manager 防止文件句柄泄漏
-            with self._path.open(encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    try:
-                        data = json.loads(line)
-                        entry = NightShiftEntry(**filter_dataclass_fields(NightShiftEntry, data))
-                        if entry.human_decision is None:
-                            results.append(entry)
-                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                        continue
+        # 5.169 修复：用 context manager 防止文件句柄泄漏
+        with self._lock, self._path.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    data = json.loads(line)
+                    entry = NightShiftEntry(**filter_dataclass_fields(NightShiftEntry, data))
+                    if entry.human_decision is None:
+                        results.append(entry)
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    continue
         return results
 
     def resolve(self, entry_id: str, decision: str, notes: str = "") -> bool:
@@ -132,20 +131,19 @@ class NightShiftQueue:
         resolved = 0
         if not self._path.exists():
             return {"total": 0, "pending": 0, "resolved": 0}
-        with self._lock:
-            # 5.169 修复：用 context manager 防止文件句柄泄漏
-            with self._path.open(encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    try:
-                        data = json.loads(line)
-                        total += 1
-                        if data.get("human_decision") is not None:
-                            resolved += 1
-                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                        continue
+        # 5.169 修复：用 context manager 防止文件句柄泄漏
+        with self._lock, self._path.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    data = json.loads(line)
+                    total += 1
+                    if data.get("human_decision") is not None:
+                        resolved += 1
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    continue
         return {"total": total, "pending": total - resolved, "resolved": resolved}
 
     def has_unresolved(self) -> bool:

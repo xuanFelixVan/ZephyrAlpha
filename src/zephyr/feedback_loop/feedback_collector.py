@@ -33,7 +33,6 @@ as JSON for downstream analysis or audit logging.
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import json
 from datetime import datetime
@@ -41,6 +40,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, field_validator
 
+from zephyr.shared.io.serialization import dumps
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import now_utc
 

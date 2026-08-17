@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §5.150.7
-# [MODULE] MOD-INF-035 | zephyr.trading.action_dispatcher._search_replace_engine
+# [MODULE] zephyr.trading.action_dispatcher._search_replace_engine
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.action_dispatcher (facade module: _facade_mod.REPO_ROOT/_read_text/ActionReport; facade ref: _extract_module_name/_find_module_file/_parse_file_path/_version_backup)
 # [CONSUMERS] zephyr.trading.action_dispatcher.ActionDispatcher.__init__ (构造 _search_replace 实例)
@@ -19,7 +19,28 @@
 职责：对 Python 源文件执行精确/宽松搜索替换，包含版本备份和 dry-run 保护。
 通过 facade 引用访问 patchable 实例方法（_extract_module_name/_find_module_file/_version_backup 等）。
 通过 _facade_mod 访问 patchable 模块级常量（_read_text/_log/ActionReport）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 搜索替换请求
+#   fields: file_path / search / replace / dry_run 参数（来自 ActionDispatcher.search_replace_file 委托）
+#   code: search_replace_file 入口参数
+# - id: I2
+#   name: facade 可补丁方法与模块常量
+#   fields: _extract_module_name/_find_module_file/_version_backup 实例方法 + _read_text/ActionReport 常量
+#   code: _facade_mod 模块引用
+# 层: 处理
+# - id: F1
+#   name: 精确/宽松匹配 + 备份 + 写盘
+#   code: search_replace_file 主流程（匹配失败→skipped；dry_run→只报告；否则 _version_backup 后写入）
+# 层: 输出
+# - id: O1
+#   name: ActionReport
+#   fields: status=skipped|search_replaced|error + detail
+#   code: search_replace_file 返回值
 """
+
 from __future__ import annotations
 
 import logging
@@ -64,27 +85,44 @@ class SearchReplaceEngine:
             py_file = self._facade._parse_file_path(source_text)
         if py_file is None:
             return _facade_mod.ActionReport(
-                module_name, "search_replace", "skipped",
+                module_name,
+                "search_replace",
+                "skipped",
                 f"file not found for: {module_name}",
             )
 
         entries = result.get(field, [])
         if not entries:
             return _facade_mod.ActionReport(
-                module_name, "search_replace", "skipped", f"empty {field}",
+                module_name,
+                "search_replace",
+                "skipped",
+                f"empty {field}",
             )
 
         original = _facade_mod._read_text(py_file)
         if original is None:
             return _facade_mod.ActionReport(
-                module_name, "search_replace", "error", "cannot read file",
+                module_name,
+                "search_replace",
+                "error",
+                "cannot read file",
             )
 
         modified, applied, failed, reasons = self.apply_replacement_entries(
-            py_file, original, entries, remove,
+            py_file,
+            original,
+            entries,
+            remove,
         )
         return self.finalize_replacement(
-            py_file, original, modified, applied, failed, reasons, remove,
+            py_file,
+            original,
+            modified,
+            applied,
+            failed,
+            reasons,
+            remove,
         )
 
     @staticmethod
@@ -132,7 +170,8 @@ class SearchReplaceEngine:
                     failed += 1
                     _log.debug(
                         "SearchReplace: old_str not found in %s: %r",
-                        py_file.name, old_str[:60],
+                        py_file.name,
+                        old_str[:60],
                     )
 
         return modified, applied, failed, reasons
@@ -150,12 +189,17 @@ class SearchReplaceEngine:
         """验证修改 → 版本备份 → 写回文件 → 组装 ActionReport。"""
         if applied == 0:
             return _facade_mod.ActionReport(
-                py_file.name, "search_replace", "skipped",
+                py_file.name,
+                "search_replace",
+                "skipped",
                 f"{failed} match(es) failed",
             )
         if modified == original:
             return _facade_mod.ActionReport(
-                py_file.name, "search_replace", "skipped", "unchanged",
+                py_file.name,
+                "search_replace",
+                "skipped",
+                "unchanged",
             )
 
         # 对于 remove 操作，清理产生的多余空行
@@ -180,13 +224,20 @@ class SearchReplaceEngine:
         if failed > 0:
             _log.warning(
                 "BrainHands: %s SearchReplace applied=%d failed=%d",
-                py_file.name, applied, failed,
+                py_file.name,
+                applied,
+                failed,
             )
         else:
             _log.info(
                 "BrainHands: %s SearchReplace applied=%d failed=%d",
-                py_file.name, applied, failed,
+                py_file.name,
+                applied,
+                failed,
             )
         return _facade_mod.ActionReport(
-            py_file.name, "search_replace", "search_replaced", detail,
+            py_file.name,
+            "search_replace",
+            "search_replaced",
+            detail,
         )

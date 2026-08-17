@@ -1,5 +1,3 @@
-from typing import Final
-
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.evolution_engine
 # [DOMAIN] D_FEEDBACK_LOOP
@@ -17,6 +15,7 @@ from typing import Final
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +27,7 @@ from enum import Enum
 from typing import Any
 
 import numpy as np
+
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 
@@ -155,7 +155,6 @@ class EvolutionEngine:
         """写入：thresholds（Stage 4 公共化）。"""
         self._thresholds = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def now(self):
@@ -166,7 +165,6 @@ class EvolutionEngine:
     def now(self, value):
         """写入：now（Stage 4 公共化）。"""
         self._now = value
-
 
     def _state_key(self, state: str) -> str:
         return state
@@ -259,9 +257,7 @@ class EvolutionEngine:
         # L1: 低分聚合检测
         self._detect_low_score_aggregation(entries, report, owner_approved, dry_run)
         # L2: 标签模式检测
-        report.l2_triggered = self._detect_tag_patterns(
-            entries, all_tags, report, owner_approved, dry_run
-        )
+        report.l2_triggered = self._detect_tag_patterns(entries, all_tags, report, owner_approved, dry_run)
         # L3: 架构级分数漂移检测（平均分漂移 + 低分率上升）
         self._check_avg_score_drift(scores, report, baseline_avg_score, owner_approved, dry_run)
         self._check_low_score_rate_rise(scores, report, baseline_low_score_rate, owner_approved, dry_run)
@@ -451,8 +447,6 @@ class EvolutionEngine:
 
     def _lsg_scan_proposals(self, report: EvolutionReport) -> None:
         try:
-            import asyncio
-
             from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
             gateway = LSGSecurityGateway()

@@ -21,16 +21,15 @@ import logging
 import threading
 from typing import TYPE_CHECKING
 
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-
 from zephyr.shared.event_bus import EventBus, EventType
 
 # 5.160.11 修复：TaskStatus字符串替换为Enum引用
 from zephyr.shared.foundation.constants import TaskStatus
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 if TYPE_CHECKING:
-    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
     from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
+    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
 
 logger = logging.getLogger(__name__)
 
@@ -100,6 +99,7 @@ def _init_shared_monitoring_modules() -> None:
     # 1. LongevityMonitor
     try:
         from zephyr.shared.lifecycle.longevity_monitor import LongevityMonitor
+
         _monitor = LongevityMonitor()
         logger.info("Shared monitoring: LongevityMonitor instantiated")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -108,6 +108,7 @@ def _init_shared_monitoring_modules() -> None:
     # 2. HealthcheckService
     try:
         from zephyr.shared.lifecycle.healthcheck_service import HealthcheckService
+
         _healthcheck = HealthcheckService(project_root=project_root)
         logger.info("Shared monitoring: HealthcheckService instantiated")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -121,8 +122,10 @@ def _init_shared_monitoring_modules() -> None:
     # 4. HealthDiscovery — 注册系统健康检查
     try:
         from zephyr.shared.lifecycle.health_discovery import register_system_health
+
         def _boot_hooks_health_check() -> str:
             return "healthy"
+
         register_system_health("boot_hooks", _boot_hooks_health_check, source="boot_hooks")
         logger.info("Shared monitoring: HealthDiscovery registered boot_hooks health check")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -131,6 +134,7 @@ def _init_shared_monitoring_modules() -> None:
     # 5. MetricsRegistry — 懒加载
     try:
         from zephyr.shared.observability.metrics import MetricsRegistry
+
         _metrics = MetricsRegistry()
         _metrics.observe("boot_hooks.init", 1.0, labels={"module": "shared_monitoring"})
         logger.info("Shared monitoring: MetricsRegistry instantiated (lazy)")
@@ -140,6 +144,7 @@ def _init_shared_monitoring_modules() -> None:
     # 6. AutonomyMonitor
     try:
         from zephyr.shared.maintenance.autonomy_monitor import AutonomyMonitor
+
         _autonomy = AutonomyMonitor(data_dir=project_root / "data" / "autonomy")
         logger.info("Shared monitoring: AutonomyMonitor instantiated")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -148,6 +153,7 @@ def _init_shared_monitoring_modules() -> None:
     # DM-201248: 事件订阅机制
     try:
         from zephyr.shared.lifecycle.health import subscribe_monitoring_events
+
         subscribe_monitoring_events()
         logger.info("Shared monitoring: event subscription registered (health)")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -155,6 +161,7 @@ def _init_shared_monitoring_modules() -> None:
 
     try:
         from zephyr.shared.observability.metrics import subscribe_metrics_events
+
         subscribe_metrics_events()
         logger.info("Shared monitoring: event subscription registered (metrics)")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -163,6 +170,7 @@ def _init_shared_monitoring_modules() -> None:
     # DM-201249: Finalizer 自动关闭
     try:
         from zephyr.trading.finalizer import register_monitoring_finalizers_auto
+
         register_monitoring_finalizers_auto()
         logger.info("Shared monitoring: finalizer registered (monitor-flush + monitor-health-snapshot)")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -240,7 +248,9 @@ def _subscribe_eventbus_consumers() -> None:
 def _register_rbac_hooks() -> None:
     """注册RBAC事件钩子 — 在任务状态转换时检查权限."""
     try:
-        from zephyr.governance.event_hook import hook_registry  # noqa: import-integrity  sys.modules shim registered in governance/__init__.py
+        from zephyr.governance.event_hook import (
+            hook_registry,  # noqa: import-integrity  sys.modules shim registered in governance/__init__.py
+        )
 
         def _on_task_in_progress_rbac_check(event: object) -> None:
             """任务开始执行时验证RBAC系统就绪状态."""
@@ -297,9 +307,7 @@ def _register_rbac_hooks() -> None:
         hook_registry.register(_on_task_in_progress_rbac_check, priority=40, name="rbac_readiness_check")
         hook_registry.register(_on_task_completed_rbac_audit, priority=46, name="rbac_audit_sign")
         hook_registry.register(_on_task_failed_rbac_alert, priority=57, name="rbac_kill_switch_check")
-        logger.info(
-            "RBAC hooks registered: rbac_readiness_check / rbac_audit_sign / rbac_kill_switch_check"
-        )
+        logger.info("RBAC hooks registered: rbac_readiness_check / rbac_audit_sign / rbac_kill_switch_check")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Failed to register RBAC hooks: %s", e, exc_info=True)
 
@@ -339,10 +347,12 @@ def _subscribe_governance_regeneration() -> None:
     """
     try:
         import sys as _sys
-        _repo_root = str(Path(__file__).resolve().parents[3])
+
+        _repo_root = str(REPO_ROOT)
         if _repo_root not in _sys.path:
             _sys.path.insert(0, _repo_root)
         from scripts.governance.reconcile_generators import reconcile_stale
+
         result = reconcile_stale()
         regenerated = result.get("regenerated", [])
         if regenerated:
@@ -352,16 +362,17 @@ def _subscribe_governance_regeneration() -> None:
                 if status == "ok":
                     logger.info(
                         "Governance regeneration: %s refreshed (%d outputs, %s, reason=%s)",
-                        name, len(r.get("outputs", [])), r.get("elapsed_ms"),
+                        name,
+                        len(r.get("outputs", [])),
+                        r.get("elapsed_ms"),
                         r.get("stale_reason"),
                     )
                 else:
-                    logger.warning(
-                        "Governance regeneration: %s FAILED: %s", name, r.get("error")
-                    )
+                    logger.warning("Governance regeneration: %s FAILED: %s", name, r.get("error"))
             logger.info(
                 "Governance regeneration complete: %d regenerated, %d skipped",
-                len(regenerated), len(result.get("skipped", [])),
+                len(regenerated),
+                len(result.get("skipped", [])),
             )
         else:
             logger.debug(
@@ -581,12 +592,20 @@ def register_boot_hooks(
     budget_engine: BudgetEngineProtocol | None = None,
 ) -> None:
     try:
-        from zephyr.governance.event_hook import hook_registry  # noqa: import-integrity  sys.modules shim registered in governance/__init__.py
+        from zephyr.governance.event_hook import (
+            hook_registry,  # noqa: import-integrity  sys.modules shim registered in governance/__init__.py
+        )
 
         # Task system hooks — 需要 task_repo 的用 lambda 绑定
-        hook_registry.register(lambda e: _hook_auto_unblock_dependents(e, task_repo), priority=50, name="auto_unblock_dependents")
-        hook_registry.register(lambda e: _hook_auto_retry_on_failure(e, task_repo), priority=60, name="auto_retry_on_failure")
-        hook_registry.register(lambda e: _hook_triple_alignment_on_verified(e, task_repo), priority=70, name="triple_alignment_on_verified")
+        hook_registry.register(
+            lambda e: _hook_auto_unblock_dependents(e, task_repo), priority=50, name="auto_unblock_dependents"
+        )
+        hook_registry.register(
+            lambda e: _hook_auto_retry_on_failure(e, task_repo), priority=60, name="auto_retry_on_failure"
+        )
+        hook_registry.register(
+            lambda e: _hook_triple_alignment_on_verified(e, task_repo), priority=70, name="triple_alignment_on_verified"
+        )
         hook_registry.register(_hook_cleanup_task_processes, priority=45, name="cleanup_task_processes")
         hook_registry.register(lambda e: _hook_orc_vms_archive(e, task_repo), priority=48, name="orc_vms_archive")
         hook_registry.register(_hook_rbk_gate_freeze, priority=55, name="rbk_gate_freeze")
@@ -595,7 +614,9 @@ def register_boot_hooks(
         )
 
         # Event-driven hooks
-        hook_registry.register(lambda e: _hook_escalation_check(e, task_repo), priority=56, name="escalation_check_event")
+        hook_registry.register(
+            lambda e: _hook_escalation_check(e, task_repo), priority=56, name="escalation_check_event"
+        )
         hook_registry.register(lambda e: _hook_timeout_check(e, task_repo), priority=56, name="timeout_check_event")
         hook_registry.register(lambda e: _hook_budget_delta(e, budget_engine), priority=94, name="budget_delta_event")
         hook_registry.register(_hook_session_startup_init_budget, priority=10, name="session_startup_init_budget")
@@ -610,7 +631,9 @@ def register_boot_hooks(
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("EventBus subscribe failed for triple_align blueprint hooks", exc_info=True)
 
-        logger.info("Event-driven hooks registered: escalation_check / timeout_check / budget_delta / session_startup_init_budget / session_shutdown_budget_close / triple_align")
+        logger.info(
+            "Event-driven hooks registered: escalation_check / timeout_check / budget_delta / session_startup_init_budget / session_shutdown_budget_close / triple_align"
+        )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Failed to register task system hooks: %s", e, exc_info=True)
 
@@ -629,6 +652,7 @@ def register_boot_hooks(
     # P0-2 修复：RollbackBootIntegration 启动钩子接线 — WAL/Verifier 自动初始化
     try:
         from zephyr.infrastructure.rollback.rollback_boot_integration import RollbackBootIntegration
+
         _rollback_boot = RollbackBootIntegration(project_root=REPO_ROOT)
         _rollback_boot.register_startup_hook()
         logger.info("RollbackBootIntegration: registered startup hook (WAL+Verifier init)")
@@ -638,6 +662,7 @@ def register_boot_hooks(
     # P1-10 修复：SLAMonitor 永久系统启动接入 — 事件驱动 RTO/RPO 自动记录
     try:
         from zephyr.infrastructure.sla.sla_monitor import SLAMonitor
+
         _sla_monitor = SLAMonitor()
         _sla_monitor.subscribe_eventbus()
         logger.info("SLAMonitor: subscribed to EventBus (RTO/RPO auto-record)")
@@ -647,6 +672,7 @@ def register_boot_hooks(
     # P1-10 修复：Notifier 永久系统启动接入 — 事件驱动 Owner 通知
     try:
         from zephyr.infrastructure.observability.notifier import Notifier
+
         _notifier = Notifier()
         _notifier.subscribe_eventbus()
         logger.info("Notifier: subscribed to EventBus (pipeline_failed/kill_switch auto-notify)")
@@ -656,6 +682,7 @@ def register_boot_hooks(
     # P1-10 修复：HealthAggregator 永久系统启动接入 — 事件驱动健康快照
     try:
         from zephyr.infrastructure.system_telemetry.health_aggregator import HealthAggregator
+
         _health_aggregator = HealthAggregator()
         _health_aggregator.subscribe_eventbus()
         logger.info("HealthAggregator: subscribed to EventBus (critical event auto-snapshot)")
@@ -669,6 +696,7 @@ def register_boot_hooks(
     _f5_integration = None
     try:
         from zephyr.governance.resilience_governance.f5_boot_integration import register_f5_boot_hook
+
         _f5_integration = register_f5_boot_hook(project_root=REPO_ROOT)
         logger.info("F5BootIntegration: registered startup hook (F5四组件 auto-init)")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -676,6 +704,7 @@ def register_boot_hooks(
 
     try:
         from zephyr.governance.resilience_governance.f5_shutdown_manager import register_f5_shutdown_hook
+
         register_f5_shutdown_hook(integration=_f5_integration, project_root=REPO_ROOT)
         logger.info("F5ShutdownManager: installed shutdown hook (F5 auto-shutdown)")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -692,6 +721,7 @@ def register_boot_hooks(
         from zephyr.security.adversarial_validation.commit_trigger import (
             RedBlueTriggerConsumer,
         )
+
         RedBlueTriggerConsumer().start()
         logger.info("RedBlueTriggerConsumer: started via boot hooks")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

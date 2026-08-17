@@ -25,6 +25,7 @@ StopGate — 质量闸门
 
 from dataclasses import dataclass, field
 from datetime import datetime
+
 from zephyr.shared.utils.time_utils import now_utc
 
 
@@ -67,7 +68,6 @@ class StopGate:
     def shutdown_acknowledged(self, value):
         """写入：shutdown_acknowledged（Stage 4 公共化）。"""
         self._shutdown_acknowledged = value
-
 
     def initialize(self) -> None:
         self._session_start = now_utc().isoformat()

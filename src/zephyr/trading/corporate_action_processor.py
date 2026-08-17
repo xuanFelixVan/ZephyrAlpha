@@ -297,25 +297,15 @@ class CorporateActionProcessor:
         atype = action.action_type
 
         if atype == CorporateActionType.CASH_DIVIDEND:
-            adj_qty, adj_cost, cash = self._cash_dividend(
-                action, quantity, avg_cost
-            )
+            adj_qty, adj_cost, cash = self._cash_dividend(action, quantity, avg_cost)
         elif atype == CorporateActionType.STOCK_DIVIDEND:
-            adj_qty, adj_cost, cash = self._stock_dividend(
-                action, quantity, avg_cost
-            )
+            adj_qty, adj_cost, cash = self._stock_dividend(action, quantity, avg_cost)
         elif atype == CorporateActionType.RIGHTS_OFFERING:
-            adj_qty, adj_cost, cash = self._rights_offering(
-                action, quantity, avg_cost
-            )
+            adj_qty, adj_cost, cash = self._rights_offering(action, quantity, avg_cost)
         elif atype == CorporateActionType.STOCK_SPLIT:
-            adj_qty, adj_cost, cash = self._stock_split(
-                action, quantity, avg_cost
-            )
+            adj_qty, adj_cost, cash = self._stock_split(action, quantity, avg_cost)
         elif atype == CorporateActionType.EX_RIGHTS:
-            adj_qty, adj_cost, cash = self._ex_rights(
-                action, quantity, avg_cost
-            )
+            adj_qty, adj_cost, cash = self._ex_rights(action, quantity, avg_cost)
         else:
             raise InvalidCorporateActionError(
                 f"不支持的公司行动类型: {atype}",
@@ -402,9 +392,7 @@ class CorporateActionProcessor:
             try:
                 self._on_adjusted(result)
             except Exception:  # noqa: BLE001 — 告警通道故障不阻断处理主流程
-                _logger.exception(
-                    "on_adjusted 回调异常（已忽略，不影响处理结果）"
-                )
+                _logger.exception("on_adjusted 回调异常（已忽略，不影响处理结果）")
 
         return result
 
@@ -471,9 +459,7 @@ class CorporateActionProcessor:
         adj_cost = avg_cost / ratio
         return adj_qty, adj_cost, _ZERO
 
-    def _ex_rights(
-        self, action: CorporateAction, qty: Decimal, avg_cost: Decimal
-    ) -> tuple[Decimal, Decimal, Decimal]:
+    def _ex_rights(self, action: CorporateAction, qty: Decimal, avg_cost: Decimal) -> tuple[Decimal, Decimal, Decimal]:
         """除权除息(复合): 按顺序应用 现金分红 → 送股 → 配股。
 
         每个子行动独立计算, 前一个的输出是后一个的输入。
@@ -482,39 +468,29 @@ class CorporateActionProcessor:
 
         # 1. 现金分红
         if action.dividend_per_share is not None:
-            cur_qty, cur_cost, cash = self._cash_dividend(
-                action, cur_qty, cur_cost
-            )
+            cur_qty, cur_cost, cash = self._cash_dividend(action, cur_qty, cur_cost)
             total_cash += cash
 
         # 2. 送股
         if action.stock_dividend_ratio is not None:
-            cur_qty, cur_cost, cash = self._stock_dividend(
-                action, cur_qty, cur_cost
-            )
+            cur_qty, cur_cost, cash = self._stock_dividend(action, cur_qty, cur_cost)
             total_cash += cash
 
         # 3. 配股
         if action.rights_ratio is not None and action.rights_price is not None:
-            cur_qty, cur_cost, cash = self._rights_offering(
-                action, cur_qty, cur_cost
-            )
+            cur_qty, cur_cost, cash = self._rights_offering(action, cur_qty, cur_cost)
             total_cash += cash
 
         # 4. 拆股(与上述互斥, 但允许同时存在)
         if action.split_ratio is not None:
-            cur_qty, cur_cost, cash = self._stock_split(
-                action, cur_qty, cur_cost
-            )
+            cur_qty, cur_cost, cash = self._stock_split(action, cur_qty, cur_cost)
             total_cash += cash
 
         return cur_qty, cur_cost, total_cash
 
     # ── 输入校验 ──
 
-    def _validate(
-        self, action: CorporateAction, quantity: Decimal, avg_cost: Decimal
-    ) -> None:
+    def _validate(self, action: CorporateAction, quantity: Decimal, avg_cost: Decimal) -> None:
         """校验公司行动输入和持仓参数。"""
         if not action.action_id:
             raise InvalidCorporateActionError(

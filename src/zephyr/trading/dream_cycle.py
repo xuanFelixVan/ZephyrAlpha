@@ -104,7 +104,6 @@ class DreamCycle:
         """写入：semantic_dir（Stage 4 公共化）。"""
         self._semantic_dir = value
 
-
     def trigger_archival(self) -> DreamReport:
         report = DreamReport()
 

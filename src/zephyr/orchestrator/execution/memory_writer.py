@@ -16,10 +16,11 @@
 # [TTL] permanent
 """Orc->VMS 记忆写入器"""
 
-from zephyr.shared.io.serialization import dumps
 import logging
 from dataclasses import dataclass
 from typing import Any
+
+from zephyr.shared.io.serialization import dumps
 
 logger = logging.getLogger(__name__)
 __all__ = ["ArchiveResult", "MemoryWriter", "archive_to_vms"]
@@ -43,7 +44,9 @@ class MemoryWriter:
             tid = getattr(task, "task_id", "unknown")
             summary = f"Task: {getattr(task, 'title', '')}. Result: {dumps(result or {})}"
             bridge._vms.write(
-                "session_snapshots", summary[:2000], metadata={"task_id": tid, "status": getattr(task, "status", "?")},
+                "session_snapshots",
+                summary[:2000],
+                metadata={"task_id": tid, "status": getattr(task, "status", "?")},
                 doc_id=f"session::{tid}",
             )
             logger.info("[ORC-VMS] archived: %s", tid)

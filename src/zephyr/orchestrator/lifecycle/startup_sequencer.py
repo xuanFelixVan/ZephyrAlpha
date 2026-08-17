@@ -88,7 +88,6 @@ class StartupSequencer:
         """写入：states（Stage 4 公共化）。"""
         self._states = value
 
-
     def _init_states(self) -> None:
         for layer in STARTUP_ORDER:
             self._states[layer] = StartupState(layer=layer)

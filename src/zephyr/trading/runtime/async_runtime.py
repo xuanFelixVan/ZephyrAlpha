@@ -16,7 +16,9 @@
 # [TTL] permanent
 
 from __future__ import annotations
+
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
+
 """AsyncRuntime — 事件循环引导 + run_in_executor 桥接（R1-1）
 
 渐进式 async 化的入口：提供事件循环生命周期管理 + 同步->异步桥接，
@@ -76,11 +78,9 @@ class AsyncRuntime:
         self._loop_timeout = loop_timeout
         self._loop: asyncio.AbstractEventLoop | None = None
         # 5.16.8 修复：executor 在 __init__ 时一次性创建，消除 run_in_executor 竞态
-        self._executor: concurrent.futures.ThreadPoolExecutor | None = (
-            concurrent.futures.ThreadPoolExecutor(
-                max_workers=max_workers,
-                thread_name_prefix="AsyncRuntime",
-            )
+        self._executor: concurrent.futures.ThreadPoolExecutor | None = concurrent.futures.ThreadPoolExecutor(
+            max_workers=max_workers,
+            thread_name_prefix="AsyncRuntime",
         )
         self._owns_loop = False
 

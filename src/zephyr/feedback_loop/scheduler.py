@@ -34,20 +34,19 @@ import time
 from dataclasses import dataclass, field
 from datetime import UTC
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from zephyr.feedback_loop.actors.action_selector import ActionSelector
 from zephyr.feedback_loop.collectors.feedback_collector import FeedbackCollector
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 if TYPE_CHECKING:
-    from zephyr.feedback_loop.alert_dispatcher import AlertEvent
     from zephyr.feedback_loop.actors.action_selector import ActionRecord
+    from zephyr.feedback_loop.alert_dispatcher import AlertEvent
     from zephyr.feedback_loop.detectors.anomaly.anomaly_detector import AnomalyEvent
     from zephyr.feedback_loop.diagnosers.diagnosis.diagnosis_engine import Diagnosis
     from zephyr.feedback_loop.verifiers.verification_engine import VerificationResult
     from zephyr.shared.protocols.ports import VectorMemoryProtocol
-from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from zephyr.feedback_loop.collectors.metrics_collector import (
     MetricsCollector,
     MetricSnapshot,
@@ -70,6 +69,7 @@ from zephyr.feedback_loop.scheduler_act import ActPhaseHandler
 from zephyr.feedback_loop.scheduler_collect_detect import CollectDetectHandler
 from zephyr.feedback_loop.scheduler_health import HealthReporter
 from zephyr.feedback_loop.scheduler_safety import SafetyGateManager
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)
 
@@ -188,8 +188,8 @@ class ExternalPersistenceWriter:
         try:
             from datetime import datetime
 
-            from zephyr.infrastructure.system_telemetry.metrics_bridge import MetricPoint, SourceSystem
             from zephyr.feedback_loop.db_writer import write_metrics_batch
+            from zephyr.infrastructure.system_telemetry.metrics_bridge import MetricPoint, SourceSystem
 
             ts = datetime.fromtimestamp(snapshot.timestamp, tz=UTC).isoformat()
             metric_fields = {
@@ -287,7 +287,7 @@ class ExternalPersistenceWriter:
             logger.debug("[FLE-DB] alert persist skipped", exc_info=True)
 
     @staticmethod
-    def persist_failure_pattern(vector_bridge: "VectorMemoryProtocol | None", event: FLEPipelineEvent) -> None:
+    def persist_failure_pattern(vector_bridge: VectorMemoryProtocol | None, event: FLEPipelineEvent) -> None:
         """5.158.4 重构：从 _run_once 提取 VMS 失败模式持久化逻辑。
 
         治本(风险B): str(diagnosis) 含 uuid diagnosis_id -> 内容哈希每次不同 = 无幂等
@@ -404,8 +404,9 @@ class FeedbackLoopScheduler:
                 logger.info("FLE-Scheduler: VectorBridge auto-initialized")
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning(
-                    "FLE-Scheduler: VectorBridge initialization failed, failure patterns will not persist to VMS"
-                , exc_info=True)
+                    "FLE-Scheduler: VectorBridge initialization failed, failure patterns will not persist to VMS",
+                    exc_info=True,
+                )
                 self.vector_bridge = None
 
     _instance: ClassVar[FeedbackLoopScheduler | None] = None

@@ -50,11 +50,9 @@ class AgentTrajectoryAnomalyDetector:
         """公共接口：detect_missing_steps（Stage 4 公共化）。"""
         return self._detect_missing_steps()
 
-
     def detect_drift(self) -> list[dict]:
         """公共接口：detect_drift（Stage 4 公共化）。"""
         return self._detect_drift()
-
 
     def detect_cycles(self) -> list[dict]:
         """公共接口：detect_cycles（Stage 4 公共化）。"""

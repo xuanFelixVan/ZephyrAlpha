@@ -29,5 +29,15 @@ _SUBMODULES = [
     "recursive_diagnosis_trust_evaluator",
 ]
 
-__all__ = ['alert_desensitization_curve', 'guard_cascade_detector', 'guard_oscillation_detector', 'placebo_action_detector', 'positive_feedback_defense', 'recursive_diagnosis_trust_evaluator', 'self_audit', 'self_diagnosis_data_leak_detector', 'self_ha', 'temporal_coherence_of_self_model']
-
+__all__ = [
+    "alert_desensitization_curve",
+    "guard_cascade_detector",
+    "guard_oscillation_detector",
+    "placebo_action_detector",
+    "positive_feedback_defense",
+    "recursive_diagnosis_trust_evaluator",
+    "self_audit",
+    "self_diagnosis_data_leak_detector",
+    "self_ha",
+    "temporal_coherence_of_self_model",
+]

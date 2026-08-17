@@ -34,6 +34,7 @@ import threading
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+
 from zephyr.shared.utils.time_utils import now_utc
 
 
@@ -42,6 +43,7 @@ def _run_hidden(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
     from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
     return run_subprocess_hidden(cmd, **kwargs)
+
 
 # 5.160.11 修复：TaskStatus字符串替换为Enum引用
 from zephyr.shared.foundation.constants import TaskStatus
@@ -282,7 +284,9 @@ def _force_kill_pid(pid: int) -> bool:
             psutil.Process(pid).terminate()
             return True
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("_force_kill_pid: failed to terminate process %s (%s: %s)", pid, type(e).__name__, e, exc_info=True)
+            logger.warning(
+                "_force_kill_pid: failed to terminate process %s (%s: %s)", pid, type(e).__name__, e, exc_info=True
+            )
             return False
 
 
@@ -429,14 +433,16 @@ class IdeHealthDaemon:
         # stash 数量
         r = _run_hidden(
             ["git", "stash", "list"],
-            capture_output=True, text=True,
+            capture_output=True,
+            text=True,
             cwd=str(self._project_root),
         )
         # 5.75.3 修复：检查 returncode，非零时记录 warning 并标记 metrics 不可用
         if r.returncode != 0:
             logger.warning(
                 "drift health: git stash list failed (returncode=%d): %s",
-                r.returncode, r.stderr.strip(),
+                r.returncode,
+                r.stderr.strip(),
             )
             metrics["stash_count"] = None
         else:
@@ -444,13 +450,15 @@ class IdeHealthDaemon:
         # worktree 变更量
         r = _run_hidden(
             ["git", "status", "--porcelain"],
-            capture_output=True, text=True,
+            capture_output=True,
+            text=True,
             cwd=str(self._project_root),
         )
         if r.returncode != 0:
             logger.warning(
                 "drift health: git status --porcelain failed (returncode=%d): %s",
-                r.returncode, r.stderr.strip(),
+                r.returncode,
+                r.stderr.strip(),
             )
             metrics["worktree_changes"] = None
         else:
@@ -473,13 +481,16 @@ class IdeHealthDaemon:
                 result = _run_hidden(
                     [sys.executable, "scripts/governance/cleanup_stash.py", "--cleanup"],
                     cwd=str(self._project_root),
-                    capture_output=True, text=True, timeout=60,
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
                 )
                 # W2 治本: 检查 returncode，非 0 记 warning（原静默忽略失败）
                 if result.returncode != 0:
                     logger.warning(
                         "drift health: stash auto-cleanup exited non-zero (returncode=%d): %s",
-                        result.returncode, result.stderr.strip(),
+                        result.returncode,
+                        result.stderr.strip(),
                     )
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("drift health: stash auto-cleanup failed", exc_info=True)

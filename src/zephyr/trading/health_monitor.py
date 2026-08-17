@@ -23,6 +23,7 @@ HealthMonitor — 健康监控 + 自愈
 """
 
 import json
+import logging
 import threading
 import time
 from collections.abc import Callable
@@ -30,16 +31,14 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any, Final
-
-import logging
 
 from pydantic import BaseModel, Field
 
 from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
-from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.contracts.telemetry_emitter import TelemetryEmitter
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
@@ -56,9 +55,7 @@ _HEALTH_THRESHOLD_SPEC: Final[dict[str, str]] = {
 
 def _load_pressure_thresholds(registry_path: Path | None = None) -> dict[str, int]:
     """从告警阈值注册表加载压力分级阈值（fail-closed；registry_path 为测试逃生门）。"""
-    return load_alert_thresholds(
-        _HEALTH_THRESHOLD_SPEC, registry_path=registry_path, cast="int"
-    )
+    return load_alert_thresholds(_HEALTH_THRESHOLD_SPEC, registry_path=registry_path, cast="int")
 
 
 _HEALTH_DEFAULTS: Final[dict[str, int]] = _load_pressure_thresholds()
@@ -77,6 +74,7 @@ class PressureThresholds:
     mem_high: float = _MEM_PRESSURE_HIGH
     mem_critical: float = _MEM_PRESSURE_CRITICAL
     disk_critical: float = _DISK_PRESSURE_CRITICAL
+
 
 # 5.39.1 修复：模块级共享 MetricsRegistry，避免每次 _collect_metrics 创建新实例导致指标被 GC
 _shared_metrics_registry = None
@@ -153,7 +151,6 @@ class HealthMonitor:
         """写入：running（Stage 4 公共化）。"""
         self._running = value
 
-
     @property
     def probe_fns(self) -> dict[str, Callable[[], ProbeResult]]:
         """只读：probe_fns（Stage 4 公共化）。"""
@@ -163,7 +160,6 @@ class HealthMonitor:
     def probe_fns(self, value):
         """写入：probe_fns（Stage 4 公共化）。"""
         self._probe_fns = value
-
 
     @property
     def monitor_thread(self) -> threading.Thread | None:
@@ -175,11 +171,9 @@ class HealthMonitor:
         """写入：monitor_thread（Stage 4 公共化）。"""
         self._monitor_thread = value
 
-
     def collect_metrics(self) -> None:
         """公共接口：collect_metrics（Stage 4 公共化）。"""
         return self._collect_metrics()
-
 
     def register_probe(
         self, capability_id: str, probe_fn: Callable[[], ProbeResult], restart_fn: Callable[[], bool] | None = None
@@ -379,7 +373,13 @@ class HealthMonitor:
         try:
             return fn()
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("_auto_restart: restart failed for capability %s (%s: %s)", capability_id, type(e).__name__, e, exc_info=True)
+            logger.warning(
+                "_auto_restart: restart failed for capability %s (%s: %s)",
+                capability_id,
+                type(e).__name__,
+                e,
+                exc_info=True,
+            )
             return False
 
     def pressure_level(self) -> PressureLevel:
@@ -469,7 +469,9 @@ class HealthMonitor:
                 bus.subscribe("health.check.request", lambda _: self.tick())
                 logger.info("HealthMonitor started (event-driven, no daemon thread)")
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("HealthMonitor EventBus subscribe failed, tick() must be called manually: %s", e, exc_info=True)
+                logger.warning(
+                    "HealthMonitor EventBus subscribe failed, tick() must be called manually: %s", e, exc_info=True
+                )
 
     def stop(self) -> None:
         """停止健康监控 — P1 修复：事件驱动模式无线程需 join。"""

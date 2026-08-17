@@ -122,8 +122,6 @@ class DecisionEngine:
         """写入：pending（Stage 4 公共化）。"""
         self._pending = value
 
-
-
     def evaluate_anomaly(self, report: AnomalyReport) -> ScheduleAdjustment:
         action_type = _ANOMALY_TO_ACTION.get(report.severity, ActionType.REPAIR)
         throttle = 0.0
@@ -166,6 +164,7 @@ class DecisionEngine:
             self._pending.clear()
             return items
 
+        flushed: list[ScheduleAdjustment] = []
         remaining: list[ScheduleAdjustment] = []
         for adj in self._pending:
             try:
@@ -173,10 +172,11 @@ class DecisionEngine:
                     action_type=adj.action_type,
                     payload={"reason": adj.reason},
                 )
+                flushed.append(adj)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 remaining.append(adj)
         self._pending = remaining
-        return [a for a in self._pending if a not in remaining]
+        return flushed
 
     @property
     def pending_count(self) -> int:

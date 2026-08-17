@@ -25,10 +25,11 @@ CapabilityRegistry — 能力注册中心
 import threading
 from pathlib import Path
 from typing import Any
+
 import yaml
 
-from zephyr.trading.capability_card import CapabilityCard
 from zephyr.shared.io.serialization import filter_dataclass_fields
+from zephyr.trading.capability_card import CapabilityCard
 
 
 class CapabilityRegistry:
@@ -55,7 +56,6 @@ class CapabilityRegistry:
     def card_dir(self, value):
         """写入：card_dir（Stage 4 公共化）。"""
         self._card_dir = value
-
 
     def register(self, card: CapabilityCard) -> None:
         with self._lock:

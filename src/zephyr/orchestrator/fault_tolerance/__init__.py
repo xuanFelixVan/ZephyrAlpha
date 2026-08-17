@@ -5,4 +5,13 @@
 # [TTL] permanent
 """fault_tolerance — orchestrator fault_tolerance subpackage."""
 
-__all__: list[str] = ["bulkhead_manager", "canary_manager", "chaos_engine", "chaos_hooks", "degrade_cascade", "disk_guard", "fault_types", "network_partition"]
+__all__: list[str] = [
+    "bulkhead_manager",
+    "canary_manager",
+    "chaos_engine",
+    "chaos_hooks",
+    "degrade_cascade",
+    "disk_guard",
+    "fault_types",
+    "network_partition",
+]

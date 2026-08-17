@@ -31,11 +31,10 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
-from typing import List
-from typing import Optional
+from typing import List, Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -60,6 +59,7 @@ AI Prompt
     当 Signal 信号合成引擎检测到以下情况时，MUST 发布 SignalDegradationWarning： - confidence_below_threshold：合成后的信号置信度低于阈值 - regime_change_detected：检测到市场状态切换（如趋势→震荡） - factor_decay_triggered：某个依赖的因子 ICIR 大幅下降 这不是错误——信号仍然产出，但 Risk/Portfolio 应对此做降级处理（如减半仓位）。
 """
 
+
 @dataclass(frozen=True)
 class SignalDegradationWarning:
     degradation_level: str
@@ -67,8 +67,9 @@ class SignalDegradationWarning:
     reason: str
     suggested_action: str
     warning_id: str
-    affected_factor_ids: List[str] = field(default_factory=list)
+    affected_factor_ids: list[str] = field(default_factory=list)
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-ERR-003 ====

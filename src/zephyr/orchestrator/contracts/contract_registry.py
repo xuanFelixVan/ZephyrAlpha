@@ -47,11 +47,10 @@ session 持有（HELD-OVERLAP 硬阻断），改用同文件分区方案——�
 
 from __future__ import annotations
 
-from typing import Final
 from enum import Enum
+from typing import Final
 
 from pydantic import BaseModel, Field
-
 
 # ============================================================================
 # SECTION 1/5: 枚举定义（AIReadOnlyHint 四级调用提示 / TelemetryType 指标类型）

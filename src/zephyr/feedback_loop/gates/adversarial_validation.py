@@ -122,12 +122,13 @@ class AdversarialValidation:
                 BypassRecorder,
                 ConstitutionGuard,
                 DefenseRunner,
-                RedBlueValidator,
                 ResultClass,
                 ScenarioLoader,
             )
         except ImportError as exc:
-            raise RedBlueImportError(f"Cannot import zephyr.security.adversarial_validation: {exc}") from exc  # 5.99.13 修复: %格式化改f-string统一
+            raise RedBlueImportError(
+                f"Cannot import zephyr.security.adversarial_validation: {exc}"
+            ) from exc  # 5.99.13 修复: %格式化改f-string统一
 
         tier = kwargs.get("tier", 1)
         attempts = kwargs.get("attempts", 3)

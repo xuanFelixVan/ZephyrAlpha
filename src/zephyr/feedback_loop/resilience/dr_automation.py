@@ -55,7 +55,6 @@ class DRAutomation:
         """写入：last_drill（Stage 4 公共化）。"""
         self._last_drill = value
 
-
     rpo_target_seconds: float = 300.0
     rto_target_seconds: float = 900.0
     drills: list[DRDrillResult] = field(default_factory=list)

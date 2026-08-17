@@ -67,7 +67,6 @@ class ReconciliationLoop:
         """写入：results（Stage 4 公共化）。"""
         self._results = value
 
-
     def reconcile(self, states: dict[str, bool] | None = None) -> ReconcileResult:
         invariants: list[Invariant] = []
         for name in RECONCILE_INVARIANTS:

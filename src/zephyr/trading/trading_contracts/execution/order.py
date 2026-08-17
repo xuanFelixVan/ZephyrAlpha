@@ -20,6 +20,7 @@
 改为 re-export shared 层真源，消除多真源 + bug。
 SSoT: cross_layer_contracts.yaml -> CTR-004 (codegen 生成 shared/contracts/order.py)
 """
+
 from __future__ import annotations
 
 # 5.152 #1 修复: 枚举真源下沉到 shared 层，消除 shared→trading 违规依赖

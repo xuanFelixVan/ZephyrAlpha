@@ -30,5 +30,16 @@ _SUBMODULES = [
     "flapping_detector",
 ]
 
-__all__ = ['anomaly_clustering', 'anomaly_detector', 'emergent_behavior_detector', 'flapping_detector', 'heisenbug_detector', 'infinite_loop_detector', 'intermittent_failure_pattern', 'log_anomaly', 'silent_corruption_detector', 'synthetic_anomaly_generator', 'temporal_pattern']
-
+__all__ = [
+    "anomaly_clustering",
+    "anomaly_detector",
+    "emergent_behavior_detector",
+    "flapping_detector",
+    "heisenbug_detector",
+    "infinite_loop_detector",
+    "intermittent_failure_pattern",
+    "log_anomaly",
+    "silent_corruption_detector",
+    "synthetic_anomaly_generator",
+    "temporal_pattern",
+]

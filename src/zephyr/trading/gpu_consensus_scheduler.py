@@ -18,8 +18,6 @@
 
 from __future__ import annotations
 
-from http import HTTPStatus
-
 import asyncio
 import logging
 import os
@@ -27,12 +25,13 @@ import threading
 import time
 import uuid
 from enum import Enum, IntEnum
+from http import HTTPStatus
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.trading.verdict_engine import ProtectionLevel, VerdictLevel
 from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
+from zephyr.trading.verdict_engine import ProtectionLevel, VerdictLevel
 
 logger = logging.getLogger(__name__)
 
@@ -231,7 +230,7 @@ class GPUConsensusScheduler:
         self._local_model = value
 
     @property
-    def queue(self) -> "_PriorityQueue":
+    def queue(self) -> _PriorityQueue:
         """优先级队列（public API, Stage 4）."""
         return self._queue
 

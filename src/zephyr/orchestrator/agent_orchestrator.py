@@ -69,9 +69,6 @@ Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十�
 
 from __future__ import annotations
 
-from typing import Final
-from zephyr.shared.io.serialization import dumps
-
 import json
 import logging
 import threading
@@ -81,21 +78,28 @@ from collections import deque
 from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import Enum
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from typing import (
+    TYPE_CHECKING,
     Any,
+    Final,
     Literal,
     Protocol,
     runtime_checkable,
 )
 
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.io.serialization import dumps
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
+
+if TYPE_CHECKING:
+    from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+
 from pydantic import BaseModel, Field, field_validator
 
+from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
-from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
-from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 logger = logging.getLogger(__name__)
 
@@ -367,7 +371,6 @@ class AgentRouter:
     def pool(self, value):
         """写入：pool（Stage 4 公共化）。"""
         self._pool = value
-
 
     @property
     def pool_size(self) -> int:
@@ -744,7 +747,7 @@ class AgentOrchestrator:
         default_token_budget: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
         sanitize_llm_context: bool = True,
         input_sanitizer: InputSanitizer | None = None,
-        lsg_gateway: "LSGSecurityGateway | None" = None,
+        lsg_gateway: LSGSecurityGateway | None = None,
         enable_lsg: bool = True,
     ) -> None:
         self._router = router
@@ -772,7 +775,6 @@ class AgentOrchestrator:
         """公共接口：lsg_scan_agent_action（Stage 4 公共化）。"""
         return self._lsg_scan_agent_action(tool_name, tool_params)
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def input_sanitizer(self):
@@ -783,7 +785,6 @@ class AgentOrchestrator:
     def input_sanitizer(self, value):
         """写入：input_sanitizer（Stage 4 公共化）。"""
         self._input_sanitizer = value
-
 
     # ---- accessors ---------------------------------------------------
 
@@ -954,7 +955,12 @@ class AgentOrchestrator:
 
                             AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
                         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                            logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s) — fail-closed", type(e).__name__, e, exc_info=True)
+                            logger.warning(
+                                "_lsg_scan_agent_action: failed to init LSG gateway (%s: %s) — fail-closed",
+                                type(e).__name__,
+                                e,
+                                exc_info=True,
+                            )
                             return "lsg_unavailable"
             gw = AgentOrchestrator._lsg_gateway_instance
         try:

@@ -46,8 +46,16 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from zephyr.shared.capacity_governance.capacity_calibrator import CapacityCalibrator
+from zephyr.shared.capacity_governance.capacity_digital_twin import CapacityDigitalTwin
+from zephyr.shared.capacity_governance.capacity_fingerprint import CapacityFingerprint
+from zephyr.shared.capacity_governance.capacity_governance_loop import CapacityGovernanceLoop
+from zephyr.shared.capacity_governance.capacity_runbook_generator import CapacityRunbookGenerator
+from zephyr.shared.capacity_governance.model_capacity_probe import ModelCapacityProbe
+from zephyr.shared.infra.process_pool import MCPProcessPool
 from zephyr.shared.io.io_cache import FileCache
 from zephyr.shared.lifecycle.daemon_registry import DaemonRegistry
+from zephyr.shared.lifecycle.lazy_loader import LazyModuleRegistry
 from zephyr.shared.lifecycle.resource_optimization_models import (
     CacheStats,
     CircuitBreakerState,
@@ -62,14 +70,6 @@ from zephyr.shared.lifecycle.resource_optimization_models import (
     ProcessPoolStats,
     ResourceSnapshot,
 )
-from zephyr.shared.capacity_governance.capacity_calibrator import CapacityCalibrator
-from zephyr.shared.capacity_governance.capacity_digital_twin import CapacityDigitalTwin
-from zephyr.shared.capacity_governance.capacity_fingerprint import CapacityFingerprint
-from zephyr.shared.capacity_governance.capacity_governance_loop import CapacityGovernanceLoop
-from zephyr.shared.capacity_governance.capacity_runbook_generator import CapacityRunbookGenerator
-from zephyr.shared.lifecycle.lazy_loader import LazyModuleRegistry
-from zephyr.shared.capacity_governance.model_capacity_probe import ModelCapacityProbe
-from zephyr.shared.infra.process_pool import MCPProcessPool
 
 __all__ = [
     "CacheStats",
@@ -140,7 +140,6 @@ class CircuitBreaker:
     def state(self, value):
         """写入：state（Stage 4 公共化）。"""
         self._state = value
-
 
     def _try_recover(self) -> None:
         """5.91.3 修复: 提取状态转换逻辑,仅在allow()中调用。"""
@@ -495,6 +494,7 @@ class _ExternalNotifier:
         engine.last_pressure_level = snap.pressure
         try:
             from zephyr.shared.event_bus import bus
+
             bus.emit(
                 engine._eventbus_topic,
                 {
@@ -533,7 +533,6 @@ class _ExternalNotifier:
 
 
 class ResourceOptimizationEngine:
-
     """MAPE-K 自治资源优化引擎（单例 facade）。
 
     5.150.1 God Class 治本：3 个高内聚零耦合职责簇已提取为同文件协作者类——
@@ -609,7 +608,6 @@ class ResourceOptimizationEngine:
         """公共接口：classify_pressure（Stage 4 公共化）。"""
         return self._classify_pressure(snap)
 
-
     @property
     def circuit_breakers(self) -> dict[str, CircuitBreaker]:
         """只读：circuit_breakers（Stage 4 公共化）。"""
@@ -619,7 +617,6 @@ class ResourceOptimizationEngine:
     def circuit_breakers(self, value):
         """写入：circuit_breakers（Stage 4 公共化）。"""
         self._circuit_breakers = value
-
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -642,7 +639,6 @@ class ResourceOptimizationEngine:
         """写入：pressure_callbacks（Stage 4 公共化）。"""
         self._pressure_callbacks = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def pressure_sm(self):
@@ -653,7 +649,6 @@ class ResourceOptimizationEngine:
     def pressure_sm(self, value):
         """写入：pressure_sm（Stage 4 公共化）。"""
         self._pressure_sm = value
-
 
     # ══ 职责分区① Monitor/Analyze 核心（保留，不外移） ══
     # 保留理由：snapshot() 的副作用链环环相扣——psutil/ctypes 采集 →
@@ -1093,7 +1088,7 @@ class ResourceOptimizationEngine:
             )
             # 5.72.4 修复：exponential backoff + jitter 避免重试风暴
             if retries < self.self_healing_max_retries:
-                _delay = (2 ** retries) + random.uniform(0, 1)
+                _delay = (2**retries) + random.uniform(0, 1)
                 time.sleep(min(_delay, 30.0))
 
         logger.warning("ResourceOptimizationEngine: self-heal failed after %d retries", retries)

@@ -24,8 +24,9 @@ AiAuditLogger — AI 行为审计日志
 5.17.3 修复：添加 SHA-256 哈希链 + 篡改检测，实现真正的不可变性。
 """
 
-from zephyr.shared.io.serialization import dumps
 import logging
+
+from zephyr.shared.io.serialization import dumps
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,6 @@ class AiAuditLogger:
     def session_id(self, value):
         """写入：session_id（Stage 4 公共化）。"""
         self._session_id = value
-
 
     def _load_last_hash(self) -> None:
         """从今日日志最后一行恢复 _last_hash（重启后链连续）。"""

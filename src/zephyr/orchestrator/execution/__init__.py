@@ -5,4 +5,17 @@
 # [TTL] permanent
 """execution — orchestrator execution subpackage."""
 
-__all__: list[str] = ["batch_orchestrator", "context_bridge", "data_lifecycle", "dispatch_table", "dlq_manager", "memory_writer", "phase_executor", "reconciliation_loop", "script_runner", "task_context_builder", "trigger_router", "wave_generator"]
+__all__: list[str] = [
+    "batch_orchestrator",
+    "context_bridge",
+    "data_lifecycle",
+    "dispatch_table",
+    "dlq_manager",
+    "memory_writer",
+    "phase_executor",
+    "reconciliation_loop",
+    "script_runner",
+    "task_context_builder",
+    "trigger_router",
+    "wave_generator",
+]

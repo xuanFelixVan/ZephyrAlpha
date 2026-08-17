@@ -50,7 +50,6 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Final
 
-
 # ── 常量（41 §3.9）──
 
 # 默认冷却期（秒）
@@ -68,6 +67,24 @@ SCOPE_ORDER: Final = {
 }
 
 
+class TriggerRegistrationError(ValueError):
+    """触发器注册错误（ZA-TRIG-0001）——trigger_id 重复或 priority 越界。
+
+    继承 ValueError 保持向后兼容（调用方/测试按 ValueError 捕获仍生效）。
+    """
+
+    error_code = "ZA-TRIG-0001"
+
+
+class TriggerConflictError(ValueError):
+    """触发器冲突仲裁错误（ZA-TRIG-0002）——声明的错误契约锚点（供调用方定向捕获）。
+
+    继承 ValueError 保持向后兼容。
+    """
+
+    error_code = "ZA-TRIG-0002"
+
+
 # ── 数据契约（41 §3.9）──
 
 
@@ -79,12 +96,12 @@ class TriggerEntry:
     扳机清单只做注册、优先级排序与派发。
     """
 
-    trigger_id: str               # 唯一标识，如 "BUY_BATCH2_RELEASE" / "SELL_ATR_STOP" / "RISK_DRAWDOWN_L2"
-    source_module: str            # "41" / "42" / "40" / "35" / "36" / "37"
-    condition: Callable           # 判定函数，返回 bool（判定逻辑在各自 spec 内）
-    action: str                   # 触发动作，如 "PLACE_ORDER" / "CANCEL_BATCH" / "CLOSE_POSITION" / "HALT_NEW_BUY"
-    priority: int                 # 优先级 1(最高)-5(最低)，冲突时高优先级覆盖
-    scope: str                    # "POSITION" 单标的 / "STRATEGY" 策略级 / "PORTFOLIO" 组合级
+    trigger_id: str  # 唯一标识，如 "BUY_BATCH2_RELEASE" / "SELL_ATR_STOP" / "RISK_DRAWDOWN_L2"
+    source_module: str  # "41" / "42" / "40" / "35" / "36" / "37"
+    condition: Callable  # 判定函数，返回 bool（判定逻辑在各自 spec 内）
+    action: str  # 触发动作，如 "PLACE_ORDER" / "CANCEL_BATCH" / "CLOSE_POSITION" / "HALT_NEW_BUY"
+    priority: int  # 优先级 1(最高)-5(最低)，冲突时高优先级覆盖
+    scope: str  # "POSITION" 单标的 / "STRATEGY" 策略级 / "PORTFOLIO" 组合级
     cooldown_sec: int = DEFAULT_COOLDOWN_SEC  # 冷却期，防同触发器重复派发
 
 
@@ -132,10 +149,10 @@ class TriggerRegistry:
         """
         if entry.trigger_id in self._entries:
             msg = f"trigger_id 重复注册: {entry.trigger_id}"
-            raise ValueError(msg)
+            raise TriggerRegistrationError(msg)
         if not PRIORITY_MIN <= entry.priority <= PRIORITY_MAX:
             msg = f"priority 越界 [{PRIORITY_MIN},{PRIORITY_MAX}]: {entry.priority}"
-            raise ValueError(msg)
+            raise TriggerRegistrationError(msg)
         self._entries[entry.trigger_id] = entry
 
     def unregister(self, trigger_id: str) -> None:
@@ -228,6 +245,7 @@ class TriggerRegistry:
 # ── MVP 扳机清单（41 §3.9，按优先级排序）──
 # 15 条注册项，condition 函数为占位符（判定逻辑在各自 spec 域内）
 
+
 def _placeholder_condition(ctx: dict[str, Any]) -> bool:
     """占位 condition——实际判定逻辑在各自 spec 域内实现。"""
     return False
@@ -235,40 +253,130 @@ def _placeholder_condition(ctx: dict[str, Any]) -> bool:
 
 MVP_TRIGGER_LIST: Final = [
     # priority=1（最高，覆盖一切）
-    {"trigger_id": "RISK_KILL_SWITCH", "source_module": "35", "action": "HALT_ALL",
-     "priority": 1, "scope": "PORTFOLIO", "cooldown_sec": 0},
-    {"trigger_id": "RISK_DRAWDOWN_L4", "source_module": "35", "action": "CLOSE_ALL_NEW",
-     "priority": 1, "scope": "PORTFOLIO", "cooldown_sec": 0},
+    {
+        "trigger_id": "RISK_KILL_SWITCH",
+        "source_module": "35",
+        "action": "HALT_ALL",
+        "priority": 1,
+        "scope": "PORTFOLIO",
+        "cooldown_sec": 0,
+    },
+    {
+        "trigger_id": "RISK_DRAWDOWN_L4",
+        "source_module": "35",
+        "action": "CLOSE_ALL_NEW",
+        "priority": 1,
+        "scope": "PORTFOLIO",
+        "cooldown_sec": 0,
+    },
     # priority=2
-    {"trigger_id": "RISK_DRAWDOWN_L3", "source_module": "35", "action": "HALT_NEW_BUY",
-     "priority": 2, "scope": "PORTFOLIO", "cooldown_sec": 0},
-    {"trigger_id": "RISK_LIQUIDITY_CRISIS", "source_module": "37", "action": "HALT_NEW_BUY",
-     "priority": 2, "scope": "PORTFOLIO", "cooldown_sec": 0},
-    {"trigger_id": "RISK_VAR_BREACH", "source_module": "36", "action": "REDUCE_POSITION_20PCT",
-     "priority": 2, "scope": "PORTFOLIO", "cooldown_sec": 0},
+    {
+        "trigger_id": "RISK_DRAWDOWN_L3",
+        "source_module": "35",
+        "action": "HALT_NEW_BUY",
+        "priority": 2,
+        "scope": "PORTFOLIO",
+        "cooldown_sec": 0,
+    },
+    {
+        "trigger_id": "RISK_LIQUIDITY_CRISIS",
+        "source_module": "37",
+        "action": "HALT_NEW_BUY",
+        "priority": 2,
+        "scope": "PORTFOLIO",
+        "cooldown_sec": 0,
+    },
+    {
+        "trigger_id": "RISK_VAR_BREACH",
+        "source_module": "36",
+        "action": "REDUCE_POSITION_20PCT",
+        "priority": 2,
+        "scope": "PORTFOLIO",
+        "cooldown_sec": 0,
+    },
     # priority=3
-    {"trigger_id": "SELL_BREAKOUT_FAIL", "source_module": "42→41", "action": "CANCEL_BATCH2",
-     "priority": 3, "scope": "POSITION", "cooldown_sec": 60},
-    {"trigger_id": "SELL_SUPPORT_BREAK", "source_module": "42→41", "action": "CANCEL_ALL_BATCH",
-     "priority": 3, "scope": "POSITION", "cooldown_sec": 60},
-    {"trigger_id": "SELL_CIRCUIT_BREAKER", "source_module": "42", "action": "HALT_STRATEGY",
-     "priority": 3, "scope": "STRATEGY", "cooldown_sec": 300},
+    {
+        "trigger_id": "SELL_BREAKOUT_FAIL",
+        "source_module": "42→41",
+        "action": "CANCEL_BATCH2",
+        "priority": 3,
+        "scope": "POSITION",
+        "cooldown_sec": 60,
+    },
+    {
+        "trigger_id": "SELL_SUPPORT_BREAK",
+        "source_module": "42→41",
+        "action": "CANCEL_ALL_BATCH",
+        "priority": 3,
+        "scope": "POSITION",
+        "cooldown_sec": 60,
+    },
+    {
+        "trigger_id": "SELL_CIRCUIT_BREAKER",
+        "source_module": "42",
+        "action": "HALT_STRATEGY",
+        "priority": 3,
+        "scope": "STRATEGY",
+        "cooldown_sec": 300,
+    },
     # priority=4
-    {"trigger_id": "BUY_BREAKOUT_FAIL", "source_module": "41", "action": "CANCEL_BATCH2",
-     "priority": 4, "scope": "POSITION", "cooldown_sec": 60},
-    {"trigger_id": "SELL_ATR_STOP", "source_module": "42", "action": "CLOSE_POSITION",
-     "priority": 4, "scope": "POSITION", "cooldown_sec": 60},
-    {"trigger_id": "SELL_TRAILING_STOP", "source_module": "42", "action": "CLOSE_POSITION",
-     "priority": 4, "scope": "POSITION", "cooldown_sec": 60},
-    {"trigger_id": "SELL_TAKE_PROFIT", "source_module": "42", "action": "CLOSE_POSITION",
-     "priority": 4, "scope": "POSITION", "cooldown_sec": 60},
+    {
+        "trigger_id": "BUY_BREAKOUT_FAIL",
+        "source_module": "41",
+        "action": "CANCEL_BATCH2",
+        "priority": 4,
+        "scope": "POSITION",
+        "cooldown_sec": 60,
+    },
+    {
+        "trigger_id": "SELL_ATR_STOP",
+        "source_module": "42",
+        "action": "CLOSE_POSITION",
+        "priority": 4,
+        "scope": "POSITION",
+        "cooldown_sec": 60,
+    },
+    {
+        "trigger_id": "SELL_TRAILING_STOP",
+        "source_module": "42",
+        "action": "CLOSE_POSITION",
+        "priority": 4,
+        "scope": "POSITION",
+        "cooldown_sec": 60,
+    },
+    {
+        "trigger_id": "SELL_TAKE_PROFIT",
+        "source_module": "42",
+        "action": "CLOSE_POSITION",
+        "priority": 4,
+        "scope": "POSITION",
+        "cooldown_sec": 60,
+    },
     # priority=5（最低）
-    {"trigger_id": "BUY_BATCH2_RELEASE", "source_module": "41", "action": "PLACE_ORDER",
-     "priority": 5, "scope": "POSITION", "cooldown_sec": 60},
-    {"trigger_id": "EXE_MAKE_OR_TAKE", "source_module": "40", "action": "AMEND_TO_MARKET",
-     "priority": 5, "scope": "POSITION", "cooldown_sec": 30},
-    {"trigger_id": "EXE_CANCEL_RATE", "source_module": "40", "action": "THROTTLE_ORDERS",
-     "priority": 5, "scope": "STRATEGY", "cooldown_sec": 300},
+    {
+        "trigger_id": "BUY_BATCH2_RELEASE",
+        "source_module": "41",
+        "action": "PLACE_ORDER",
+        "priority": 5,
+        "scope": "POSITION",
+        "cooldown_sec": 60,
+    },
+    {
+        "trigger_id": "EXE_MAKE_OR_TAKE",
+        "source_module": "40",
+        "action": "AMEND_TO_MARKET",
+        "priority": 5,
+        "scope": "POSITION",
+        "cooldown_sec": 30,
+    },
+    {
+        "trigger_id": "EXE_CANCEL_RATE",
+        "source_module": "40",
+        "action": "THROTTLE_ORDERS",
+        "priority": 5,
+        "scope": "STRATEGY",
+        "cooldown_sec": 300,
+    },
 ]
 
 

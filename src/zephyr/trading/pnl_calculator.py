@@ -275,9 +275,7 @@ class AShareFeeCalculator:
         # 佣金：按费率计算，不低于最低收费
         commission = max(turnover * cfg.commission_rate, cfg.commission_min)
         # 印花税：仅卖出
-        stamp_duty = (
-            turnover * cfg.stamp_duty_rate if side == OrderSide.SELL else Decimal("0")
-        )
+        stamp_duty = turnover * cfg.stamp_duty_rate if side == OrderSide.SELL else Decimal("0")
         # 过户费：双向
         transfer_fee = turnover * cfg.transfer_fee_rate
         return FeeBreakdown(
@@ -311,13 +309,9 @@ class PnlCalculator:
     """
 
     def __init__(self, fee_calculator: FeeCalculator | None = None) -> None:
-        self._fee_calculator: FeeCalculator = (
-            fee_calculator if fee_calculator is not None else AShareFeeCalculator()
-        )
+        self._fee_calculator: FeeCalculator = fee_calculator if fee_calculator is not None else AShareFeeCalculator()
 
-    def calculate_realized(
-        self, fill: Fill, side: OrderSide, avg_cost: Decimal
-    ) -> RealizedPnl:
+    def calculate_realized(self, fill: Fill, side: OrderSide, avg_cost: Decimal) -> RealizedPnl:
         """计算单笔成交的已实现盈亏。
 
         Args:
@@ -465,10 +459,7 @@ class PnlCalculator:
         Returns:
             PortfolioPnl: 含已实现列表、未实现列表及合计属性。
         """
-        realized = [
-            self.calculate_realized(fill, side, avg_cost)
-            for (fill, side, avg_cost) in fills
-        ]
+        realized = [self.calculate_realized(fill, side, avg_cost) for (fill, side, avg_cost) in fills]
         unrealized = [
             self.calculate_unrealized(symbol, quantity, avg_cost, current_price)
             for (symbol, quantity, avg_cost, current_price) in positions
