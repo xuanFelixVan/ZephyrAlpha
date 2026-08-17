@@ -275,10 +275,10 @@ class TestRealProjectIntegration:
     """真实项目集成测试——使用真实 in_process_gate_registry.yaml。"""
 
     def test_load_real_yaml_entries(self) -> None:
-        """真实 YAML 可加载且条目数与 registry 演进同步（2026-08-15：83→92，治理批②新增 RECONCILER-FILE-OPS 等 9 gate；2026-08-16：92→93）。"""
+        """真实 YAML 可加载且条目数与 registry 演进同步（2026-08-15：83→92，治理批②新增 RECONCILER-FILE-OPS 等 9 gate；2026-08-16：92→93；2026-08-17：93→97，AI-AUDIT11 补登 4 个死 gate）。"""
         from zephyr.shared.io.paths import REPO_ROOT
         entries = load_gate_entries(Path(REPO_ROOT))
-        assert len(entries) == 93, f"expected 93 entries, got {len(entries)}"
+        assert len(entries) == 97, f"expected 97 entries, got {len(entries)}"
 
     def test_real_yaml_all_enabled(self) -> None:
         """真实 YAML 所有 gate enabled=true。"""

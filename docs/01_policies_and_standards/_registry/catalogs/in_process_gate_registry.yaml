@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 93  # 2026-08-15 实测修正（原 90 与 entries 实数 92 存量漂移）+ 本批 REGISTRY-CODE-ANCHOR 新增=93
+total_gates: 97  # 2026-08-17 AI-AUDIT11 实测修正：补登 4 个死 gate（ISSUE-RESOLVED-INTEGRITY/STASH-ACCUMULATION/BLUEPRINT-AMODULE-CROSS-CHECK/TABLE-NAME-REGISTRY）93→97
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
 - gate_id: HELD-OVERLAP
@@ -638,4 +638,32 @@ gates:
   factory_function: make_registry_code_anchor_gate
   source: in_process
   register_line: 0  # priority=129
+  enabled: true
+# --- 死 gate 复活（AI-AUDIT11 2026-08-17）：以下 4 个 gate 文件存在且有测试，但从未/被应急
+# commit 5b8b88af76（2026-07-22 为凑硬编码测试数 76）从本 YAML 移除——唯一注册路径
+# auto_register_gates 不加载即永不运行。治本=补登。ISSUE-RESOLVED-INTEGRITY 原 priority=117
+# 与 RECONCILER-FILE-OPS=117 撞号（GateRegistrationError fail-closed），后到者让位至 130。
+- gate_id: ISSUE-RESOLVED-INTEGRITY
+  module_path: zephyr.gov_enforcement.commit_gates.issue_resolved_integrity_gate
+  factory_function: make_issue_resolved_integrity_gate
+  source: in_process
+  register_line: 0  # priority=130（原 117 与 RECONCILER-FILE-OPS 撞号让位；REGISTRY-CODE-ANCHOR 129 之后）
+  enabled: true
+- gate_id: STASH-ACCUMULATION
+  module_path: zephyr.gov_enforcement.commit_gates.stash_accumulation_gate
+  factory_function: make_stash_accumulation_gate
+  source: in_process
+  register_line: 0  # priority=118（#ARCH-STASH-ACCUMULATION-001 Phase 4）
+  enabled: true
+- gate_id: BLUEPRINT-AMODULE-CROSS-CHECK
+  module_path: zephyr.gov_enforcement.commit_gates.blueprint_amodule_cross_check_gate
+  factory_function: make_blueprint_amodule_cross_check_gate
+  source: in_process
+  register_line: 0  # priority=119
+  enabled: true
+- gate_id: TABLE-NAME-REGISTRY
+  module_path: zephyr.gov_enforcement.commit_gates.table_name_registry_gate
+  factory_function: make_table_name_registry_gate
+  source: in_process
+  register_line: 0  # priority=120
   enabled: true

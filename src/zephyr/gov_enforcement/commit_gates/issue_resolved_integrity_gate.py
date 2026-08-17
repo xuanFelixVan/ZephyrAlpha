@@ -29,7 +29,7 @@ registry 登记）实际从未完成——capability_id 和 creation_token 双�
 
 治本方案
 --------
-在 GitCommitGateway pre-commit 阶段注册 warn-only 门禁（priority=117）：
+在 GitCommitGateway pre-commit 阶段注册 warn-only 门禁（priority=130）：
   1. 只在 architecture_issue_registry.yaml 被 staged 时触发
   2. 解析 YAML，找到 status=resolved 的条目
   3. 从 impact 字段提取文件路径（.py/.yaml/.json 后缀）
@@ -45,7 +45,8 @@ registry 登记）实际从未完成——capability_id 和 creation_token 双�
 3. **只检测 impact 字段**：fix_phase 是自由文本格式不统一，难以可靠提取
    文件路径；impact 是 YAML 列表，文件路径在字符串开头，可可靠提取。
 4. **fail-open**：YAML 解析失败时不阻断 commit。
-5. **priority=117**：紧接 CONSUMERS-ACCURACY=116，作为最新的 warn-only gate。
+5. **priority=130**：原 117 与 RECONCILER-FILE-OPS 撞号（#ARCH-GATE-PRIORITY-UNIQUENESS-001
+   fail-closed），后到者让位——REGISTRY-CODE-ANCHOR=129 之后的下一个空位。
 
 Usage::
 
@@ -146,7 +147,7 @@ def check_impact_files_exist(
 
 
 def make_issue_resolved_integrity_gate() -> GateSpec:
-    """构造 ISSUE-RESOLVED-INTEGRITY pre-commit warn-only 门禁（priority=117）。
+    """构造 ISSUE-RESOLVED-INTEGRITY pre-commit warn-only 门禁（priority=130）。
 
     检测 staged architecture_issue_registry.yaml 中 status=resolved 的条目，
     验证其 impact 字段中提到的文件路径是否存在。不存在则 warn（passed=True 不阻断）。
@@ -155,7 +156,7 @@ def make_issue_resolved_integrity_gate() -> GateSpec:
     防止 "resolved but incomplete" —— AI 标记 resolved 但遗漏收尾登记工作。
 
     Returns:
-        GateSpec(gate_id="ISSUE-RESOLVED-INTEGRITY", priority=117)。
+        GateSpec(gate_id="ISSUE-RESOLVED-INTEGRITY", priority=130)。
         warn-only：检出违规返回 (True, warning_detail)，不阻断 commit。
     """
 
@@ -221,7 +222,7 @@ def make_issue_resolved_integrity_gate() -> GateSpec:
     return GateSpec(
         gate_id="ISSUE-RESOLVED-INTEGRITY",
         check=_check,
-        priority=117,
+        priority=130,
     )
 
 

@@ -134,9 +134,9 @@ class TestGateSpecFields:
     def test_gate_id(self):
         assert make_issue_resolved_integrity_gate().gate_id == "ISSUE-RESOLVED-INTEGRITY"
 
-    def test_priority_is_117(self):
-        # 116=CONSUMERS-ACCURACY 已占用，用 117
-        assert make_issue_resolved_integrity_gate().priority == 117
+    def test_priority_is_130(self):
+        # 117=RECONCILER-FILE-OPS 已占用，后到者让位至 130
+        assert make_issue_resolved_integrity_gate().priority == 130
 
     def test_check_callable(self):
         assert callable(make_issue_resolved_integrity_gate().check)

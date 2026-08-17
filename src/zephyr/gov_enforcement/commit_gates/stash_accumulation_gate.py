@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git stash list 失败降级为 fail-open（passed=True）
-# [TESTS] tests/governance/commit_gates/test_stash_accumulation_gate.py
+# [TESTS]
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """stash_accumulation_gate.py — stash 堆积阈值检测门禁（STASH-ACCUMULATION）

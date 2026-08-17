@@ -6,6 +6,16 @@
 
 # [DOMAIN] D_GOV_RULE
 
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
 # [TTL] permanent
 
 """
