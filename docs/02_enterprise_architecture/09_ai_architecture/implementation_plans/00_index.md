@@ -5,7 +5,7 @@ title: AI 架构设计——结构总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.7.1"
+version: "0.7.2"
 date: 2026-08-17
 topic: ai_architecture_design
 scope: 09_ai_architecture
@@ -47,7 +47,7 @@ scope: 09_ai_architecture
 │  └───────────────────────────────────────┘   │
 │  ┌───────────────────────────────────────┐   │
 │  │ 多Agent协作                             │   │
-│  │ 投票优先(3-5 Agent投票→选最优)           │   │
+│  │ 主路径:单Agent+红蓝对抗(投票壳=可选模式)      │   │
 │  │ FactorMAD因子挖掘 │ R&D-Agent联合优化    │   │
 │  │ 涌现行为检测器(非预期涌现→告警+介入)      │   │
 │  │ 对标:FactorMAD/R&D-Agent-Quant         │   │
@@ -92,8 +92,9 @@ scope: 09_ai_architecture
 │           基础设施层（现有+待建）               │
 │  AutoRuntime Core · 三层运行时 · LLM 安全栈    │
 │  LLM Agent工具调用(MCP动态发现,新增工具零代码)  │
-│  LLM推理优化(llama.cpp+GPTQ INT4,显存14→4GB) │
-│  模型注册(MLflow) │ 数据增强(TimeGAN/扩散)    │
+│  LLM推理优化(GGUF量化,Ollama托管,显存14→4GB) │
+│  模型注册(REG-ML-001+运行时注册对账)          │
+│  数据增强(TimeGAN/扩散)                      │
 └─────────────────────────────────────────────┘
 ```
 
@@ -152,7 +153,8 @@ scope: 09_ai_architecture
 | 三分类 | ai_modifiable（AI 自动执行）/ human_gated（AI 提议+人工审批）/ immutable（硬边界不可修改） | 设计完成 |
 | Agentic Drift 防护 | 双维度阈值 + Hard-Gate + 行为基线 + Agent Challenge | 设计完成 |
 | 自治熔断模式 | 只读模式 → 仅建议模式 → 全自治模式 | 设计完成 |
-| 治理激活时序 | Phase 0(审计日志) → Phase 1(审批 L1-L3+自治边界) → Phase 2(漂移检测+三方对齐) → Phase 3(审批 L4-L5+漂移全量) → Phase 4(治理自动化) → Phase 5(Agentic Drift 防护) | 设计完成 |
+| 治理激活时序 | Phase 0(审计日志) → Phase 1(审批 L1-L3+自治边界) → Phase 2(漂移检测+三方对齐) → Phase 3(审批 L4-L5+漂移全量) → Phase 4(治理自动化) → Phase 5(Agentic Drift 防护)；逐 Phase 验收：P0 审计日志完整性≥99% / P1 变更审批合规率≥90% / P2 漂移检测覆盖率≥60% / P3 变更审批合规率≥98% / P4 治理自动化覆盖率≥70% / P5 AI 自治边界违规≤1次/月 | 设计完成 |
+| 治理成熟度分级 | M1 初始 → M2 发展中 → M3 已定义(正式框架文档化) → M4 已管理(KPI 量化,本系统目标级) → M5 优化；跃迁条件：M3→M4 需治理 KPI 体系建立并稳定运行 3 个月，M4→M5 需治理自动化覆盖率≥90% 且持续改进机制运行 6 个月 | 设计完成 |
 
 ### 3.2 AI/Agent 风险治理
 
@@ -213,18 +215,18 @@ scope: 09_ai_architecture
 09_ai_architecture/
 │
 ├── 0x meta（3 文档）
-│   ├── 00_index.md                          ← 结构设计+施工约束 [轨道F] 本文 · v0.7.1
+│   ├── 00_index.md                          ← 结构设计+施工约束 [轨道F] 本文 · v0.7.2
 │   ├── 01_external_benchmark_analysis.md    ← 外部对标信息库 [轨道E] 随时 · draft v0.5.1 已填充
 │   └── 02_design_asset_inventory.md         ← 设计资产盘点 [轨道E] 随时 · draft v0.4.0 已填充
 │
 ├── 1x 基础设施层（3 文档）
 │   ├── 04_autoruntime_core_build.md         ← AutoRuntime Core 五层同心圆 [轨道A] U1 · draft v0.2.1 已填充
 │   ├── 09_llm_security_integration.md       ← LLM 安全栈 L0~L8 [轨道B] U2 · draft v0.2.0 已填充
-│   └── 10_llm_infrastructure.md             ← 三层运行时 + MCP 工具调用 + 推理优化(llama.cpp+GPTQ) + 模型注册(MLflow) + 数据增强(TimeGAN) [轨道A] U1 · draft v0.2.2 已填充
+│   └── 10_llm_infrastructure.md             ← 三层运行时 + MCP 工具调用 + 推理优化(GGUF量化/Ollama托管) + 模型注册(REG-ML-001+运行时注册对账) + 数据增强(TimeGAN) [轨道A] U1 · draft v0.2.2 已填充
 │
 ├── 2x 自我进化层（3 文档）
 │   ├── 11_evidence_skill_router.md          ← 证据关联 + 技能库(AutoSkill+Voyager) + 模型路由 [轨道C] U3 · draft v0.2.0 已填充
-│   ├── 12_reflexion_multi_agent.md          ← 自反Agent(L1/L2/L3反思+PreFlect+Agent-R) + 多Agent协作(投票优先/FactorMAD/R&D-Agent/涌现检测) [轨道C] U4 · draft v0.2.0 已填充
+│   ├── 12_reflexion_multi_agent.md          ← 自反Agent(L1/L2/L3反思+PreFlect+Agent-R) + 多Agent协作(投票壳=可选模式/FactorMAD/R&D-Agent/涌现检测) [轨道C] U4 · draft v0.2.0 已填充
 │   └── 13_module_factory.md                 ← 模块工厂（核心独创，独立文档因复杂度足够）[轨道C] U4+U8 · draft v0.2.0 已填充
 │
 ├── 3x 执行层（1 文档）
@@ -341,8 +343,8 @@ scope: 09_ai_architecture
 ### 6.2 与交易决策侧联动（只读不改，等对方就绪）
 - [ ] 确认派生图生成器是否支持跨域 AI 层视图
 - [ ] 生成 derived_graphs/ 派生图并补充各文件的源真源标注（目录待建，见 §5.2）
-- [ ] 等待 62 号注册表 P0 完成以解锁模块工厂 Phase 0→1（U8）
-- [ ] 等待 G04 策略定义完成以细化 14 号业务 Agent（U7）
+- [ ] U8 前置已就绪（62 号注册表 P0 三件套 + P1 factor/strategy registry 均 active，13 号文 §2.4/§4.1 实测）——模块工厂 Phase 0→1 转入 GP 排期，待 Owner 裁定（13 号文 Q1）
+- [ ] U7 前置已就绪（G04 策略定义 active，14 号文 §4 S1.3 口径）——业务 Agent 细化转入 GP 排期，待 Owner 裁定（14 号文 Q1）
 
 ### 6.3 施工图 → 代码实施（文档填充完成后的下一阶段）
 - [ ] 按 17 号分阶段路线启动 Phase 0 代码施工（AutoRuntime Core 基础层、LLM 基础设施 L1 先行）
@@ -360,6 +362,7 @@ scope: 09_ai_architecture
 | Q4 | AI 自治运维闭环（Detect→Diagnose→Remediate→Learn）的施工优先级？ | 待裁定 | 设计完整，但需故障模式库先行积累才能生效；是先建库还是先建闭环？ |
 | Q5 | Kill Switch 多路径（<1ms AI 自动触发）能否在 Windows+miniQMT 环境下实现？ | 待裁定 | <1ms 需要内核级或 FPGA 级响应，Windows 用户态+Python 可能不可行 |
 | Q6 | Agentic Drift 防护中的"Agent Challenge"机制具体如何实现？ | 待裁定 | 设计描述为"双维度阈值+Hard-Gate+行为基线+Agent Challenge"，Challenge 的实现方式未细化 |
+| Q7 | 04 号文「自治层不变量与契约」节落盘后，本文补一行索引引用 | 待 04 号文落盘 | AI-FILL-00-R3 接口复审实测：04 号文（v0.2.1）尚无该节，真源缺失不立索引；待 AI-FILL-04 补建后回引 |
 
 ---
 
@@ -375,6 +378,7 @@ scope: 09_ai_architecture
 | 2026-08-17 | 0.6.0 | §5.1 目录结构增加轨道+解锁点标注；新增 §5.1 施工顺序与解锁点（5 轨道+8 解锁点+交易决策侧关联）；§6 待办按施工顺序重排为 8 组（6.1~6.8） | 用户要求排列施工顺序和解锁点，建立填充 SOP |
 | 2026-08-17 | 0.7.0 | §5.1 各文档补实测状态标注（01 v0.5.0 / 02 v0.4.0 / 03~16 v0.2.x 已填充；17 按「填充中→v0.2.0」口径登记，AI-FILL-17 并行施工中）；§5.2 补轨道+解锁点标注，derived_graphs/ 经实测目录不存在，标注待建；§6 待办重排为当前剩余项（17 号收口 / 交易决策侧联动 / 代码实施阶段） | AI-FILL-00 mop-up：16 篇施工图（01~16）填充完成并提交 dev 后，更新总索引施工顺序与解锁点标注为当前真实状态 |
 | 2026-08-17 | 0.7.1 | §5.1 回写 17 号最终状态（v0.2.0 已填充）+ 01 号版本标注同步（v0.5.1，第二轮补完收尾章节）；§6.1 填充收口两项全部勾销——AI-FILL-01~17 全部完成 | 17 号路线+01 号补完提交后状态同步 |
+| 2026-08-17 | 0.7.2 | 过期口径修订（接口复审实测，均有既有裁定/实证依据）：§1 架构图+§5.1「llama.cpp+GPTQ」→「GGUF 量化（Ollama 托管）」（10 号文 §3.3 实证否决 GPTQ，3090 无 INT4 tensor core）；§1+§5.1「模型注册(MLflow)」→「REG-ML-001+运行时注册对账」（51 号备忘 MLflow 已退役卸载）；§1「投票优先(3-5 Agent 投票→选最优)」→「主路径=单 Agent+红蓝对抗，投票壳=可选模式」（#ARCH-OE-011，12/14 号文已按此施工）；§3.1 治理激活时序补逐 Phase 验收指标（P0 审计完整性≥99%/P1 审批合规率≥90%/P2 漂移覆盖率≥60%/P3 审批合规率≥98%/P4 自动化≥70%/P5 边界违规≤1次/月）+M1~M5 成熟度分级与 M3→M4/M4→M5 跃迁条件（源：治理架构 §5.2、29-D-GOVERNANCE §13.1~13.2）；§6.2 U7/U8 更新为前置已就绪、转入 GP 排期待裁定（13/14/17 号文实测）；§7 新增 Q7（04 号文自治层不变量节待落盘后回引） | AI-FILL-00-R3 第三轮回填：过期口径修订+治理激活指标 |
 
 ---
 
