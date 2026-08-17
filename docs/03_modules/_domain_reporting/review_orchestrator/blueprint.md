@@ -3,7 +3,7 @@ module_id: MOD-RPT-009
 title: "复盘编排器蓝图 — 日/周/月三频复盘链路编排+四段式周报模板（55 号 G26 §3.6）"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.7"
 ttl: permanent
 layer: L07_reporting
 layer_name: reporting
@@ -112,29 +112,4 @@ tests/reporting/test_review_orchestrator.py——日 PASS/FAIL 两态/周模板�
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
 
-### §0.6 五图对齐视图
 
-<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
-
-> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-RPT-009`
-
-#### 全景位置
-
-| 图 | 位置 | 状态 | 链接 |
-|----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-RPT-009` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-RPT-009` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
-| 蓝图 (blueprint) | 本文件 | Active | — |
-
-#### 四核心字段
-
-| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
-|------|-------------------|--------------------------|:-------:|
-| module_id | MOD-RPT-009 | MOD-RPT-009 | ✅ |
-| domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
-| file_count | 2 文件 | N/A | — |
-
-> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

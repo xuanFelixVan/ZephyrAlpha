@@ -3,7 +3,7 @@ module_id: MOD-CMP-008
 title: "数据源授权合规审计器蓝图 — 授权条款登记/使用审计/违规处置"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.7"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -109,29 +109,4 @@ tests/compliance/test_license_usage_auditor.py — 11 用例：缺段保守/超�
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
 
-### §0.6 五图对齐视图
 
-<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
-
-> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-CMP-008`
-
-#### 全景位置
-
-| 图 | 位置 | 状态 | 链接 |
-|----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-CMP-008` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-CMP-008` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
-| 蓝图 (blueprint) | 本文件 | Active | — |
-
-#### 四核心字段
-
-| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
-|------|-------------------|--------------------------|:-------:|
-| module_id | MOD-CMP-008 | MOD-CMP-008 | ✅ |
-| domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
-| file_count | 1 文件 | N/A | — |
-
-> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
