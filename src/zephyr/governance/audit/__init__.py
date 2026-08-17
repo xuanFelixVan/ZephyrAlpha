@@ -16,7 +16,7 @@ governance.audit — auto-generated package init.
 #   name_zh: ① 包导出声明
 #   name_en: __all__
 #   intro: 声明 governance.audit 包对外导出的子模块清单
-#   desc: 自动生成 package init，仅列 __all__ = ['reconciliation_registry', 'snapshot_manager']，无运行逻辑
+#   desc: 自动生成 package init，仅列 __all__ = ['reconciliation_registry', 'snapshot_manager', 'default_attribution_engine']，无运行逻辑
 #   inputs: I1
 #   outputs: 包命名空间导出表
 # 层: 输出
@@ -32,5 +32,4 @@ governance.audit — auto-generated package init.
 # A1 --> O1
 """
 
-__all__ = ['reconciliation_registry', 'snapshot_manager']
-
+__all__ = ["reconciliation_registry", "snapshot_manager", "default_attribution_engine"]

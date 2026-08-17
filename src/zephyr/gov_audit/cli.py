@@ -90,7 +90,10 @@ def _cmd_pool_stats(_args: argparse.Namespace) -> int:
 
 def _audit_integrity_trail() -> tuple[str, Any]:
     try:
-        from zephyr.governance.integrity import IntegrityVerifier
+        # 治本（AI-AUDIT12 跨层契约修复）：真实 IntegrityVerifier（含 verify_chain）
+        # 位于 zephyr.gov_audit.integrity；zephyr.governance.integrity 的同名类是
+        # 无 verify_chain 的桩（compute_hash 恒空/verify 恒真），原导入必 AttributeError。
+        from zephyr.gov_audit.integrity import IntegrityVerifier
 
         verifier = IntegrityVerifier()
         chain = verifier.verify_chain()

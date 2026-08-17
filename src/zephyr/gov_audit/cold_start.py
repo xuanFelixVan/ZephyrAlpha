@@ -32,6 +32,7 @@ import threading
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.io.paths import REPO_ROOT  # 路径真源（SSoT）
 from zephyr.shared.io.serialization import dumps
 from zephyr.shared.utils.time_utils import now_utc
 
@@ -39,7 +40,8 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["BootstrapCache"]
 
-CACHE_DIR = Path("data/audit_cache")
+# 治本（AI-AUDIT12 路径SSoT收敛）：相对默认锚定 REPO_ROOT 真源。
+CACHE_DIR = REPO_ROOT / "data" / "audit_cache"
 CACHE_FILE = "bootstrap_cache.json"
 
 

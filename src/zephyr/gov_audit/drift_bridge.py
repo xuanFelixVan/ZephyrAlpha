@@ -50,9 +50,14 @@ class DriftBridge:
     """
 
     def __init__(self, audit_events_path: Path | str | None = None) -> None:
-        self._audit_events_path: Path | None = (
-            Path(audit_events_path) if audit_events_path is not None else None
-        )
+        # 治本（AI-AUDIT12 路径SSoT收敛）：默认锚定 AUDIT_DATA_DIR 真源
+        # （原 None 默认使桥接默认构造即静默空读，test_default_path 契约
+        # 要求 audit_events_path 非 None）。
+        if audit_events_path is None:
+            from zephyr.shared.io.paths import AUDIT_DATA_DIR
+
+            audit_events_path = AUDIT_DATA_DIR / "events.jsonl"
+        self._audit_events_path: Path | None = Path(audit_events_path)
         self._detector = None
         self._available = False
         try:

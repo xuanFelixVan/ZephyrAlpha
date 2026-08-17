@@ -71,11 +71,12 @@ class AuditDelegationBridge:
         }
 
         try:
-            from pathlib import Path
-
             from zephyr.gov_audit.delegation_bridge import AuditWriter
+            from zephyr.shared.io.paths import AUDIT_DATA_DIR
 
-            writer = AuditWriter(Path("data/audit-trail"))
+            # 治本（AI-AUDIT12 路径SSoT收敛）：默认锚定 AUDIT_DATA_DIR 真源
+            # （原裸 Path("data/audit-trail") 连字符化石目录+相对 cwd）。
+            writer = AuditWriter(AUDIT_DATA_DIR)
             chain_hash = writer.write(record)
             record["chain_hash"] = chain_hash
             _logger.info(

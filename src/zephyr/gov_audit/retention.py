@@ -101,7 +101,10 @@ class RetentionEnforcer:
         data_dir: Path | None = None,
         policy: RetentionPolicy | None = None,
     ) -> None:
-        self._data_dir = Path(data_dir) if data_dir is not None else Path("data/audit_history")
+        # 治本（AI-AUDIT12 路径SSoT收敛）：相对默认锚定 REPO_ROOT 真源。
+        from zephyr.shared.io.paths import REPO_ROOT
+
+        self._data_dir = Path(data_dir) if data_dir is not None else REPO_ROOT / "data" / "audit_history"
         self._policy = policy or RetentionPolicy()
         self._approved_deletions: set[str] = set()
 

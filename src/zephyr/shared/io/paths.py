@@ -34,13 +34,31 @@ REPO_ROOT，导致：
   - scripts/governance/_shared/constants.py（治理脚本侧的路径 SSoT）
   - Google Style Guide: "Define constants in one place"（常量只在一处定义）
   - Terraform: provider 配置集中定义，模块引用而非重定义
-"""
 
-from typing import Final
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 路径定位请求
+#   fields: ZEPHYR_WORKTREE_ROOT 环境变量（worktree 显式注入，可选）/ 调用方 __file__ 位置
+#   code: find_repo_root / strip_session_worktree 入口
+# 层: 处理
+# - id: F1
+#   name: 仓库根解析（worktree 感知）
+#   code: ZEPHYR_WORKTREE_ROOT 优先 → 否则自 paths.py 向上遍历找 src/zephyr/__init__.py 锚点
+# - id: F2
+#   name: worktree 路径剥离
+#   code: strip_session_worktree 识别 .aidrafts/.worktrees 前缀段并切回主仓根
+# 层: 输出
+# - id: O1
+#   name: 路径常量 SSoT
+#   fields: REPO_ROOT / MAIN_REPO_ROOT 等 Final[Path] 常量
+#   downstream: src/zephyr/ 全体需要路径常量的模块（本文件唯一真源）
+"""
 
 import functools
 import os
 from pathlib import Path
+from typing import Final
 
 
 @functools.cache
@@ -124,6 +142,7 @@ def anchor_main_root(root: Path) -> Path:
         return root.parent.parent
     return root
 
+
 # 治本(2026-07-19): PROJECT_ROOT 作为 REPO_ROOT 的语义别名（canonical SSoT 定义点）。
 # 某些模块（如 immutable_core）的测试契约要求 monkeypatch PROJECT_ROOT 属性，
 # 将 canonical 定义放在此处避免 SSOT-REDEFINITION gate 阻断（消除分散重定义）。
@@ -156,8 +175,14 @@ MODELS_CACHE_DIR: Final[Path] = REPO_ROOT / ".audit_cache" / "models"
 VMS_PERSIST_DIR: Final[Path] = REPO_ROOT / "data" / "vector_db"
 
 # 治本（裁定#6 路径SSoT）：审计数据目录真源——所有审计模块（gov_audit.writer/integrity 等）
-# 必须从此处导入 AUDIT_DATA_DIR，禁止裸 `Path.cwd()/"data"/"audit-trail"`（违反"禁止相对路径"硬约束）。
-AUDIT_DATA_DIR: Final[Path] = REPO_ROOT / "data" / "audit-trail"
+# 必须从此处导入 AUDIT_DATA_DIR，禁止裸 `Path.cwd()/"data"/"audit_trail"`（违反"禁止相对路径"硬约束）。
+# 治本（AI-AUDIT12 真源方向裁定 2026-08-17）：目录名取 data/audit_trail（下划线）——
+# 实证：主仓 data/audit_trail/events.jsonl 60.8MB 当日活跃（含 merkle_batches/merkle_hourly/
+# cold/hot/chain_state.json/gate_chain.jsonl 全套生产产物），而 data/audit-trail（连字符）
+# 仅 1.8KB 化石（2026-07-21 起无人写）。retention.py INVARIANTS 与 audit_chain_verifier.py
+# 均声明下划线目录为核心不可变链；原连字符真源指向化石目录，所有 SSoT 消费方
+# （integrity/anomaly/merkle_hourly/evidence_pack/bridges）默认读空链——审计验证静默失效。
+AUDIT_DATA_DIR: Final[Path] = REPO_ROOT / "data" / "audit_trail"
 
 # DM-90974 Phase 2 治本（2026-07-19 真源收敛）：depgraph dirty flag 路径真源。
 # PG-write 脚本（apply_depgraph.py 等）成功 commit DB 后调用 mark_depgraph_dirty() 落此空文件，

@@ -303,13 +303,13 @@ def generate_runbook(event: DriftEvent) -> str:
 
     sections.append("")
 
-    sections.append("- Blueprint: `docs/03_modules/_domain-infra_ops/drift-detector/blueprint.md`")
+    sections.append("- Blueprint: `docs/03_modules/_domain_governance/drift_detector/blueprint.md`")
 
-    sections.append("- Detector Registry: `src/zephyr/behavioral-auditor/_detector-registry.yaml`")
+    sections.append("- Detector Registry: `src/zephyr/gov_drift/_detector_registry.yaml`")
 
-    sections.append("- State Machine: `src/zephyr/behavioral-auditor/state_machine.py`")
+    sections.append("- State Machine: `src/zephyr/gov_drift/state_machine.py`")
 
-    sections.append("- Incident Postmortem: check `src/zephyr/behavioral-auditor/incident_postmortem.py`")
+    sections.append("- Incident Forensics: check `src/zephyr/gov_drift/forensics_engine.py`")
 
     return "\n".join(sections)
 

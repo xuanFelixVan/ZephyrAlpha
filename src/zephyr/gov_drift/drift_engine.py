@@ -104,7 +104,7 @@ def _resolve_paths() -> None:
 
     _ENGINE_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-    _REGISTRY_PATH = os.path.join(_ENGINE_ROOT, "_detector-registry.yaml")
+    _REGISTRY_PATH = os.path.join(_ENGINE_ROOT, "_detector_registry.yaml")
 
 
 def load_detector_registry(registry_path: str | None = None) -> list[Detector]:

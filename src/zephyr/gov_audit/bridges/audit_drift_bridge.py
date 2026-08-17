@@ -74,8 +74,14 @@ class DriftBridge:
 
     def __init__(
         self,
-        audit_events_path: Path | str = Path("data/audit-trail/events.jsonl"),
+        audit_events_path: Path | str | None = None,
     ) -> None:
+        # 治本（AI-AUDIT12 路径SSoT收敛）：默认锚定 AUDIT_DATA_DIR 真源
+        # （原默认 Path("data/audit-trail/events.jsonl") 连字符化石目录+相对 cwd）。
+        if audit_events_path is None:
+            from zephyr.shared.io.paths import AUDIT_DATA_DIR
+
+            audit_events_path = AUDIT_DATA_DIR / "events.jsonl"
         self._audit_events_path = Path(audit_events_path)
 
     def sync(self) -> BridgeResult:

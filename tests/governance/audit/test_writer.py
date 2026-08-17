@@ -210,3 +210,44 @@ class TestAuditWriter:
         with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "hmac_signature" not in written or written.get("hmac_signature") is not None
+
+    def test_merkle_batch_accumulates_and_finalizes(self, data_dir):
+        """回归（AI-AUDIT12）：write() 必须累积 entry_hash 到批次，
+        finalize_current_batch() 返回真实 Merkle root 且清空批次。
+
+        修复前：_batch_event_hashes 无追加点（finalize 恒 None）且调用了
+        不存在的 MerkleAggregator.aggregate（应为 build）——批聚合整体死代码。
+        """
+        from zephyr.gov_audit.integrity import MerkleAggregator
+
+        w = AuditWriter(data_dir=data_dir, enable_merkle=True, hmac_key="test-key")
+        h1 = w.write({"event_type": "file_write", "agent_id": "a"})
+        h2 = w.write({"event_type": "file_read", "agent_id": "b"})
+        assert w.get_merkle_batches() == [h1, h2]
+
+        root = w.finalize_current_batch()
+        assert root == MerkleAggregator.build([h1, h2])
+        assert len(root) == 64
+        assert w.get_merkle_batches() == []
+        # 批次已清空，二次 finalize 返回 None
+        assert w.finalize_current_batch() is None
+
+    def test_merkle_batch_skipped_when_disabled(self, writer):
+        """enable_merkle=False 时不累积批次（fixture 默认 disable）。"""
+        writer.write({"event_type": "file_write", "agent_id": "a"})
+        assert writer.get_merkle_batches() == []
+        assert writer.finalize_current_batch() is None
+
+    def test_write_strips_producer_reserved_fields(self, writer, data_dir):
+        """回归（AI-AUDIT12）：生产方预注入的 entry_hash/hmac_signature 必须被剔除，
+        由 writer 统一重算——外来哈希值会把 canonical 绑死为不可验证状态。"""
+        writer.write({
+            "event_type": "file_write",
+            "agent_id": "a",
+            "entry_hash": "f" * 64,
+            "hmac_signature": "forged",
+        })
+        with open(writer.event_log_path, encoding="utf-8") as f:
+            written = json.loads(f.readline())
+        assert written["entry_hash"] != "f" * 64
+        assert written["hmac_signature"] != "forged"

@@ -13,3 +13,4 @@
 # scope, polluting the entire pytest process (zephyr/zephyr.shared/zephyr.shared.contracts
 # stubs shadowed real packages for all subsequent tests).
 # tests/conftest.py already adds src/ to sys.path — no conftest needed here.
+# （merge AI-AUDIT12 裁定：分支侧 stub 机器为同问题早期治标迭代，弃用；取 HEAD 整体删除路线）

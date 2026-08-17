@@ -232,7 +232,7 @@ def _l0_startup_probe(project_root, result):
         registry_ok = check_registry_parsable(base)
 
         if not registry_ok:
-            result.errors.append("registry: _detector-registry.yaml not parsable")
+            result.errors.append("registry: _detector_registry.yaml not parsable")
 
         db_ok = bootstrap_self_check(base)
 

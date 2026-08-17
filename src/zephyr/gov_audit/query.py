@@ -23,13 +23,15 @@ from typing import Any, Final
 
 from zephyr.gov_audit.contracts import AuditQuery as AuditQueryABC  # 5.104.16 修复: 继承ABC契约
 from zephyr.gov_audit.models import AuditIssue, IntegrityReport, OrchestratorStatus
+from zephyr.shared.io.paths import AUDIT_DATA_DIR, REPO_ROOT  # 路径真源（SSoT）
 from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["AuditQueryEngine", "AuditQuery", "MetaAuditLogger", "_sanitize_for_ai_context"]
 
-DEFAULT_REPORT_DIR: Final[Any] = Path("data/audit_history")
+# 治本（AI-AUDIT12 路径SSoT收敛）：相对路径默认锚定 REPO_ROOT/AUDIT_DATA_DIR 真源。
+DEFAULT_REPORT_DIR: Final[Any] = REPO_ROOT / "data" / "audit_history"
 
 # AI context sanitization patterns
 _INJECTION_PATTERNS = [
@@ -195,7 +197,10 @@ class AuditQuery:
     """
 
     def __init__(self, event_log_path: Path | None = None) -> None:
-        self._event_log_path = Path(event_log_path) if event_log_path is not None else Path("data/audit_trail/events.jsonl")
+        # 治本（AI-AUDIT12 路径SSoT收敛）：原 Path("data/audit_trail/events.jsonl")
+        # （下划线+相对）与 SSoT AUDIT_DATA_DIR（连字符绝对）不一致——默认构造的查询
+        # 永远读不到 writer 真实写入目录。收敛为真源。
+        self._event_log_path = Path(event_log_path) if event_log_path is not None else AUDIT_DATA_DIR / "events.jsonl"
         self._events: list[dict[str, Any]] | None = None
         self._meta_logger = MetaAuditLogger()
 

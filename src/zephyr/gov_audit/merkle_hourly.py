@@ -41,10 +41,13 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict
 
 from zephyr.gov_audit.integrity import MerkleAggregator
+from zephyr.shared.io.paths import AUDIT_DATA_DIR  # 路径真源（SSoT）
 
 _logger = logging.getLogger(__name__)
 
-DEFAULT_AUDIT_DATA_DIR: Path = Path("data/audit-trail")
+# 治本（AI-AUDIT12 路径SSoT收敛）：原 Path("data/audit-trail") 相对路径（cwd 漂移即
+# 聚合空目录），收敛为 AUDIT_DATA_DIR 绝对真源，与 writer/integrity 同目录。
+DEFAULT_AUDIT_DATA_DIR: Path = AUDIT_DATA_DIR
 MERKLE_DIR_NAME: str = "merkle_hourly"
 
 

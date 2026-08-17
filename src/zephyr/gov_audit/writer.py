@@ -27,6 +27,7 @@ from typing import Any, Final
 
 from zephyr.gov_audit.contracts import AuditWriter as AuditWriterABC  # 5.104.15 修复: 继承ABC契约
 from zephyr.gov_audit.models import AuditEventType, AuditIssue, GlobalAuditReport
+from zephyr.shared.io.paths import AUDIT_DATA_DIR, REPO_ROOT  # 路径真源（SSoT）
 from zephyr.shared.io.serialization import dumps
 from zephyr.shared.security.secrets import get_secret_or_default
 from zephyr.shared.session.session_audit import (
@@ -38,8 +39,12 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["AuditReportWriter", "AuditWriter", "get_audit_writer"]
 
-DEFAULT_REPORT_DIR: Final[Any] = Path.cwd() / "data" / "audit_history"
-DEFAULT_AUDIT_DIR: Final[Any] = Path.cwd() / "data" / "audit_trail"
+# 治本（AI-AUDIT12 路径SSoT收敛）：默认目录锚定 zephyr.shared.io.paths 真源。
+# 原 DEFAULT_AUDIT_DIR=Path.cwd()/"data"/"audit_trail"（下划线+相对 cwd）与验证方
+# AUDIT_DATA_DIR（data/audit-trail 连字符绝对路径）双真源不一致——默认写入的
+# events.jsonl 永远落在验证器/小时 Merkle 聚合器读不到的目录，审计链默认即断链。
+DEFAULT_REPORT_DIR: Final[Any] = REPO_ROOT / "data" / "audit_history"
+DEFAULT_AUDIT_DIR: Final[Any] = AUDIT_DATA_DIR
 _GENESIS_HASH = "0" * 64
 
 # 治本（I9 核心模型强制消费）：已知事件类型白名单——AuditEventType 值（lowercase）
@@ -272,6 +277,13 @@ class AuditWriter:
             entry_id = _generate_entry_id(prefix=prefix, seq=self._lamport_counter)
 
             entry: dict[str, Any] = dict(event)
+            # 治本（AI-AUDIT12 保留字段净化）：剔除生产方注入的保留字段——实证主仓
+            # 2026-07-04 起 5343 条 gate_audit 事件（audit_chain_verifier 预注入自有
+            # entry_hash）canonical 绑定了不可恢复的外来哈希值，整段链永久不可验证；
+            # 且 writer 无 HMAC 密钥时外来 hmac_signature 会原样落盘（伪造签名幻象）。
+            # entry_hash/hmac_signature 只能由本 writer 计算赋值，禁止生产方预注入。
+            entry.pop("entry_hash", None)
+            entry.pop("hmac_signature", None)
             entry["entry_id"] = entry_id
             entry["timestamp"] = datetime.now(timezone.utc).isoformat()
             entry["prev_hash"] = self._last_hash
@@ -304,6 +316,11 @@ class AuditWriter:
             self._last_hash = entry_hash
             self.event_count += 1
             self.lamport_time += 1
+            # 治本（AI-AUDIT12 Merkle 批聚合断链）：写入成功后把 entry_hash 累积进当前
+            # 批次——此前 _batch_event_hashes 无任何追加点，finalize_current_batch()
+            # 恒返回 None、get_merkle_batches() 恒为空，Merkle 批聚合路径整体死代码。
+            if self.enable_merkle:
+                self._batch_event_hashes.append(entry_hash)
 
         return entry_hash
 
@@ -337,7 +354,9 @@ class AuditWriter:
         if self.enable_merkle:
             from zephyr.gov_audit.integrity import MerkleAggregator
 
-            root = MerkleAggregator.aggregate(self._batch_event_hashes)
+            # 治本（AI-AUDIT12）：MerkleAggregator 仅有 build/verify 静态方法，
+            # 原调用不存在的 aggregate() 必抛 AttributeError。
+            root = MerkleAggregator.build(self._batch_event_hashes)
         else:
             root = self._last_hash
         self._batch_event_hashes.clear()

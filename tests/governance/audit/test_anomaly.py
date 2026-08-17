@@ -69,8 +69,11 @@ class TestAnomalyResult:
 
 class TestAnomalyDetectorInstantiation:
     def test_default_path(self):
+        # 治本（AI-AUDIT12 路径SSoT）：默认锚定 AUDIT_DATA_DIR 真源（原连字符化石目录）。
+        from zephyr.shared.io.paths import AUDIT_DATA_DIR
+
         detector = AnomalyDetector()
-        assert detector.event_log_path == Path("data/audit-trail/events.jsonl")
+        assert detector.event_log_path == AUDIT_DATA_DIR / "events.jsonl"
 
     def test_custom_path(self, tmp_path):
         p = tmp_path / "custom.jsonl"

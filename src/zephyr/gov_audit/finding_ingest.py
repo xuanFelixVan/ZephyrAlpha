@@ -46,7 +46,12 @@ class IngestResult(BaseModel):
 class FindingIngest:
     _subscribers_registered: bool = False
 
-    def __init__(self, audit_dir: str = "data/audit_events") -> None:
+    def __init__(self, audit_dir: str | None = None) -> None:
+        # 治本（AI-AUDIT12 路径SSoT收敛）：相对默认锚定 REPO_ROOT 真源。
+        if audit_dir is None:
+            from zephyr.shared.io.paths import REPO_ROOT
+
+            audit_dir = str(REPO_ROOT / "data" / "audit_events")
         self._audit_dir = audit_dir
         self._writer: AuditWriter | None = None
         self._writer_initialized = False

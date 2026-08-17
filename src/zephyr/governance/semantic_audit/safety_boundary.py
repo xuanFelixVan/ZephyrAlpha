@@ -53,6 +53,11 @@ class SafetyBoundary:
         self._forbidden_keywords: list[str] = []
         self._confidence_threshold: float = 0.95
         self._config_loaded = False
+        # 治本（AI-AUDIT12 fail-closed）：初始化即声明失败标记——原实现仅在
+        # _load_config 异常分支赋值 _config_load_failed，_classify 从不检查该标记，
+        # 导致配置加载失败后禁碰清单为空、高置信触发直接 PROCEED（ERROR_CONTRACT
+        # 声明"配置加载失败时默认 HOLD 所有 TriggerResult"名实分离）。
+        self._config_load_failed = False
 
     def filter(self, triggers: list[TriggerResult]) -> list[FilteredTrigger]:
         if not self._config_loaded:
@@ -72,6 +77,10 @@ class SafetyBoundary:
         return results
 
     def _classify(self, trigger: TriggerResult) -> SafetyDecision:
+        # 治本（AI-AUDIT12 fail-closed）：配置加载失败时默认 HOLD 所有触发
+        # （契约 [ERROR_CONTRACT]），不得落入空禁碰清单误判 PROCEED。
+        if self._config_load_failed:
+            return SafetyDecision.HOLD
         target = trigger.target_location.lower()
         for fp in self._forbidden_paths:
             if fp.lower() in target:
@@ -90,7 +99,12 @@ class SafetyBoundary:
         try:
             raw = self._config_path.read_text(encoding="utf-8")
             config = yaml.safe_load(raw) or {}
-        except (OSError, yaml.YAMLError) as exc:
+            if not isinstance(config, dict):
+                raise ValueError(f"forbidden_patterns 配置根节点须为 mapping, got {type(config).__name__}")
+            # 预校验数值字段——畸形阈值（如非数字字符串）视同配置加载失败（fail-closed），
+            # 不得漏出 ValueError 使 filter() 崩溃（ERROR_CONTRACT: 加载失败默认 HOLD）。
+            float(config.get("confidence_threshold", 0.95))
+        except (OSError, yaml.YAMLError, ValueError, TypeError) as exc:
             # 修复 fail-open：配置加载失败时标记，_classify 将 HOLD 所有触发
             logger.warning("无法加载禁碰规则配置: %s, 默认 HOLD 所有触发", exc)
             self._config_load_failed = True
