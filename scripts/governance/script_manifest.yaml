@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-16T22:48:37Z
+# 自动生成于 2026-08-17T07:07:39Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-16T22:48:37Z'
+generated_at: '2026-08-17T07:07:39Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 404
@@ -2999,11 +2999,8 @@ scripts:
   timeout_seconds: 10
   args: []
   warn_only: false
-  description: '
-
-    检测 staged 文件中未解决的合并冲突标记（<<<<<<< / ======= / >>>>>>>）。
-
-    纯 stdlib 替代 external pre-commit-hooks check-merge-conflict（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
+  description: '检测 staged 文件中未解决的合并冲突标记（<<<<<<< / ======= / >>>>>>>）。 纯 stdlib 替代
+    external pre-commit-hooks check-merge-conflict（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
 
     '
   tags:
@@ -3130,11 +3127,8 @@ scripts:
   timeout_seconds: 10
   args: []
   warn_only: false
-  description: '
-
-    检测 staged 文件中意外提交的私钥标记（BEGIN PRIVATE KEY / BEGIN OPENSSH PRIVATE KEY 等）。
-
-    纯 stdlib 替代 external pre-commit-hooks detect-private-key（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
+  description: '检测 staged 文件中意外提交的私钥标记（BEGIN PRIVATE KEY / BEGIN OPENSSH PRIVATE KEY
+    等）。 纯 stdlib 替代 external pre-commit-hooks detect-private-key（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
 
     '
   tags:
