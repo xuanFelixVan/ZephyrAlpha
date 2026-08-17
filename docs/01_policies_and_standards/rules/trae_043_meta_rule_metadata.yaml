@@ -1,6 +1,6 @@
 rule_id: TRAE-043
 title: 元规则-元数据与度量
-version: '1.0.0'
+version: '1.0.1'
 layer: L1_foundation
 module_id: TRAE-043
 depends_on:
@@ -154,7 +154,7 @@ sections:
       fail: 绕过术语表直接定义新术语
     actions:
     - type: mandatory
-      step: 项目文档中使用的核心术语必须以术语表(glossary_glossary.yaml)为准；新增术语需更新术语表
+      step: 项目文档中使用的核心术语必须以术语表(_registry/catalogs/terminology_glossary.yaml)为准；新增术语需更新术语表
     prohibitions:
     - 绕过术语表直接在非权威文件中定义新术语
   mr3_scope:

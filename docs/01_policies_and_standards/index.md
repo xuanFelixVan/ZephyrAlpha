@@ -3,7 +3,7 @@ module_id: PS-IDX-001
 title: 规则体系总索引
 doc_type: index
 status: active
-version: "2.2.0"
+version: "2.2.1"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-08-17"
 ttl: permanent
-summary: "01_policies_and_standards/ 的顶层导航入口。v2.2.0：AI-17 审计治本——规则计数 60→84（补 trae_061~084），catalogs/contracts/vocabularies 实测计数更正，补 sop/ 目录，修正术语表引用（terminology_glossary.yaml），功能域计数 39→82 实测。"
+summary: "01_policies_and_standards/ 的顶层导航入口。v2.2.1：AI-17 审计复检——§4.1 冷启动路径术语表悬挂引用修正（vocabularies/glossary.yaml → catalogs/terminology_glossary.yaml，文件 2026-06-27 已删除）。v2.2.0：规则计数 60→84（补 trae_061~084），catalogs/contracts/vocabularies 实测计数更正，补 sop/ 目录，功能域计数 39→82 实测。"
 tags: [index, root, navigation, policies-and-standards]
 rule_form: declarative
 scope: global
@@ -214,7 +214,7 @@ verifiability: manual
 1. 本文件（index.md）                              ← 3 分钟了解全貌
 2. rules/trae_060_inward_consolidation.yaml        ← 向内收三原则（顶层统辖，必读真源）
 3. _registry/catalogs/rule_catalog_registry.yaml   ← 规则索引全貌（自动生成）
-4. _registry/vocabularies/glossary.yaml            ← 术语对齐
+4. _registry/catalogs/terminology_glossary.yaml    ← 术语对齐（仲裁源）
 5. rules/trae_041_meta_rule_classification.yaml    ← 规则怎么分类
 ```
 
@@ -254,6 +254,7 @@ verifiability: manual
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
+| 2.2.1 | 2026-08-17 | AI-17 审计复检。§4.1 冷启动路径第 4 步悬挂引用修正：`_registry/vocabularies/glossary.yaml`（2026-06-27 已删除）→ `_registry/catalogs/terminology_glossary.yaml`（术语仲裁源真源）。 |
 | 2.2.0 | 2026-08-17 | AI-17 审计治本修复。(1) 规则计数 60→84 实测更正（目录树补 trae_061~084 全量 24 条+§3.1/§3.3 同步）。(2) catalogs 计数 26→64 登记表 YAML 实测更正（补 architecture_issue/candidate_module/capability_canonical/module_translation/terminology_glossary 等关键条目导航）。(3) contracts 3→5（补 data_retention/directory）。(4) vocabularies 29→39 实测更正，删除不存在的 vocabularies/glossary.yaml 引用（术语表真源= catalogs/terminology_glossary.yaml）。(5) 补 sop/ 目录（此前整目录缺失于索引）。(6) §二表补 policies/sop 行，合计更正为 5 子目录 219 文件。(7) §五功能域 39→82 实测更正，新增 ROOR（docs/registry_of_registries.yaml，73 项登记实测）行。(8) 正文 version 2.0.0 与 frontmatter 不一致修正。 |
 | 2.1.0 | 2026-06-26 | P0 审查修复。(1) §4.1 冷启动路径加入 trae_060（向内收三原则）作为第 2 步必读真源，与 `.trae/rules/project_rules.md` 第二原则对称接入。(2) 目录树补全 058/059/060。(3) 修正"48 个 trae_*.yaml"为"60 个"（3 处）+ 管辖文件数 49→61。(4) 分类体系表 040-057→040-060。对齐 trae_060 §2 唯一真源与 §4 新AI可发现性。 |
 | 2.0.0 | 2026-06-22 | 架构升级对齐。(1) 删除 meta/ 目录引用（已物理删除，规则合并至 rules/）。(2) 删除 governance/、operational/、domains/ 目录引用（已删除，内容合并至 rules/）。(3) 新增 rules/ 目录（60 个 trae_*.yaml）。(4) 更新 _registry/ 文件数（catalogs 24 + contracts 3 + schemas 3 + vocabularies 25 = 55）。(5) 统一下划线命名（doc_type_vocabulary.yaml → doc_type_vocabulary.yaml 等）。(6) 移除14层引用（D19/D21 裁定：14层降级为域属性）。 |
