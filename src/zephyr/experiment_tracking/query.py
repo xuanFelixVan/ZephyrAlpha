@@ -129,17 +129,22 @@ def _get_run_fallback(
 ) -> Optional[RunDetail]:
     """扫 fallback_dir 找 run_meta.json。
 
-    artifact_paths 赋**完整 artifact 描述列表**（含 bytes artifact 的
-    filename+artifact_path，与本地路径 artifact 的 local_path+artifact_path）——
-    修复旧版只取 local_path 致 bytes artifact 信息丢失的缺口
-    （models.py 声明 dict[str,str] 为预存类型 bug，此处按下载层契约赋 list[dict]）。
+    artifact_paths 契约（dict[str, str]，与 models.py 声明一致）：
+    {artifact名: 本地绝对路径}——local_path 类 artifact 直接取 local_path；
+    bytes 类 artifact（log_artifact_bytes 落盘）按 run 目录重建绝对路径
+    {run_dir}/{artifact_path}/{filename}，信息零丢失。
+    治本留痕：旧版曾赋 list[dict] 并注释"models.py 声明为预存类型 bug"——
+    实测唯一消费者 strategy_deviation_monitor.load_backtest_returns_from_experiment
+    按 dict 调 .items()，list 形状使其 broad-except 静默降级 None
+    （回测-实盘偏差监控基准供给桥失效）。本实现按声明归一，契约三方对齐。
     """
     base = cfg.fallback_dir
     if not base.exists():
         return None
     comps = [component] if component else [p.name for p in base.iterdir() if p.is_dir()]
     for comp in comps:
-        meta_path = base / comp / run_id / "run_meta.json"
+        run_dir = base / comp / run_id
+        meta_path = run_dir / "run_meta.json"
         if meta_path.exists():
             meta = _load_meta(meta_path)
             if meta is None:
@@ -157,14 +162,39 @@ def _get_run_fallback(
                 tags=tags,
                 metrics=metrics,
                 params=dict(meta.get("params", {})),
-                artifact_paths=[
-                    # 防御：旧版 fallback meta 的 artifacts 为 list[str]（2026-08-07 前写入）
-                    {"filename": a} if isinstance(a, str)
-                    else {k: v for k, v in a.items() if v is not None}
-                    for a in meta.get("artifacts", [])
-                ],
+                artifact_paths=_build_artifact_paths(meta.get("artifacts", []), run_dir),
             )
     return None
+
+
+def _build_artifact_paths(artifacts: list[Any], run_dir: Path) -> dict[str, str]:
+    """把 run_meta.json 的 artifacts 列表归一为 {artifact名: 本地绝对路径} dict。
+
+    三种条目形态（FallbackBackend 写入侧对称）：
+      - bytes artifact: {"filename", "artifact_path"} → 名="artifact_path/filename"，
+        值=run_dir 下重建的落盘绝对路径
+      - 本地路径 artifact: {"local_path", "artifact_path"} → 名=artifact_path 或
+        local_path 文件名，值=local_path
+      -  legacy str（2026-08-07 前写入）：名=值=原字符串
+    """
+    paths: dict[str, str] = {}
+    for a in artifacts:
+        if isinstance(a, str):  # legacy list[str] 形态
+            paths[a] = a
+            continue
+        if not isinstance(a, dict):
+            continue
+        if a.get("local_path"):
+            local_path = str(a["local_path"])
+            name = a.get("artifact_path") or Path(local_path).name
+            paths[str(name)] = local_path
+        elif a.get("filename"):
+            filename = str(a["filename"])
+            artifact_path = a.get("artifact_path")
+            name = f"{artifact_path}/{filename}" if artifact_path else filename
+            disk = run_dir / str(artifact_path) / filename if artifact_path else run_dir / filename
+            paths[name] = str(disk)
+    return paths
 
 
 def list_runs(

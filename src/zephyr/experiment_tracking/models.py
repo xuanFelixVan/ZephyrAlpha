@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.experiment_tracking.query ; zephyr.frontend.dashboard.components.experiment_history
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 数据模型不可变(frozen)；RunSummary/RunDetail 屏蔽 mlflow vs 降级差异
+# [INVARIANTS] 数据模型不可变(frozen)；RunSummary/RunDetail 为统一 JSON 源查询模型
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -17,9 +17,9 @@
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
 """L_INFRA_TELEMETRY — 实验跟踪数据模型（RunSummary / RunDetail）。
 
-屏蔽 mlflow 与降级 JSON 的底层差异，Panel/AI 只消费统一模型。
-依据: backtest_observability_mlflow_plan.md M1 query.py 设计
-Version: 0.1.0
+统一本地 JSON 源的查询模型（MLflow 已退役），Panel/AI 只消费统一模型。
+依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 A2 + backtest_observability_mlflow_plan.md M1 query.py 设计
+Version: 0.1.1（RunDetail.artifact_paths=dict[str,str] 契约实证归一，见 query.py 治本留痕）
 """
 from __future__ import annotations
 

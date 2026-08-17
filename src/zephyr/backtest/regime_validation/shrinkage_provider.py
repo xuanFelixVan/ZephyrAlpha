@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] ShrinkageProviderError(ZA-BT-0010)
+# [ERROR_CONTRACT] ShrinkageProviderError(ZA-BT-0016)
 # [TESTS] tests/backtest/test_shrinkage_provider.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -63,9 +63,13 @@ _logger = logging.getLogger(__name__)
 
 
 class ShrinkageProviderError(ZephyrBaseError):
-    """ZA-BT-0010: Shrinkage provider 构造/查表错误。"""
+    """ZA-BT-0016: Shrinkage provider 构造/查表错误。
 
-    error_code = "ZA-BT-0010"
+    改号留痕：原 ZA-BT-0010 与 data_handler.DataHandlerError 重码，
+    #ARCH-ERRCODE-001 裁定 git 首引入者保留 canonical，本类后引入（2026-08-06）改号。
+    """
+
+    error_code = "ZA-BT-0016"
 
 
 # ──────────────────────────────────────────────────────────────────────────────

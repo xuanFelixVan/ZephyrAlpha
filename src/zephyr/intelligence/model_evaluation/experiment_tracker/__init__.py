@@ -23,4 +23,4 @@ from zephyr.backtest.implementations.vectorized_engine import (
     DefaultBacktestEngine,
 )
 
-__all__ = ["BacktestConfig", "DefaultBacktestEngine", "default_backtest_engine"]
+__all__ = ["BacktestConfig", "DefaultBacktestEngine"]

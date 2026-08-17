@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] C1ShrinkageComparatorError(ZA-BT-0011)
+# [ERROR_CONTRACT] C1ShrinkageComparatorError(ZA-BT-0017)
 # [TESTS] tests/backtest/test_c1_comparator.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -74,9 +74,13 @@ _logger = logging.getLogger(__name__)
 
 
 class C1ShrinkageComparatorError(ZephyrBaseError):
-    """ZA-BT-0011: C1 对比器错误（回测失败/输入非法）。"""
+    """ZA-BT-0017: C1 对比器错误（回测失败/输入非法）。
 
-    error_code = "ZA-BT-0011"
+    改号留痕：原 ZA-BT-0011 与 result_repository.ArtifactNotFoundError 重码，
+    #ARCH-ERRCODE-001 裁定 git 首引入者保留 canonical，本类后引入（2026-08-06）改号。
+    """
+
+    error_code = "ZA-BT-0017"
 
 
 # ──────────────────────────────────────────────────────────────────────────────

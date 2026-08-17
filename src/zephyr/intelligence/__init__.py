@@ -46,4 +46,4 @@ Intelligence Domain
 
 from __future__ import annotations
 
-__all__ = ["intelligence", 'model_drift_detector']
+__all__ = ["model_drift_detector"]

@@ -80,9 +80,12 @@ class OverfittingGateError(OverfittingError):
     蓝图 §16.7 SIM-56 + P0-9 双重否决语义:
       - is_overfitting=True(三维度任一不稳定或样本外 Sharpe < 70% 样本内)
       - 严格门禁启用(strict_overfitting_gate=True)
+
+    改号留痕：原 ZA-BT-0010 与 data_handler.DataHandlerError 重码，
+    #ARCH-ERRCODE-001 裁定 git 首引入者保留 canonical，本类改号 ZA-BT-0015。
     """
 
-    error_code = "ZA-BT-0010"
+    error_code = "ZA-BT-0015"
 
     def __init__(self, *args, error_code: str | None = None) -> None:
         super().__init__(*args, error_code=error_code)

@@ -26,8 +26,7 @@ Data Quality Checker — 回测数据质量检查器 (MOD-BT-022)
 属A类基础设施(纯pandas检查+阈值判定+报告生成, 逻辑明确), 阈值为C类可调参数。
 纯工具模块, 不依赖外部数据库, 数据由调用方传入。
 
-依据: D:\临时工作区\依赖图-D-BACKTEST-回测引擎域.md §1 BT-22
-       docs/03_modules/_domain_backtest/blueprint.md §5.1 L697 (P1-13 数据质量检查)
+蓝图: docs/03_modules/_domain_backtest/blueprint.md §5.1 L697 (P1-13 数据质量检查)
 SSoT: depgraph MOD-BT-022
 Version: 0.1.0
 

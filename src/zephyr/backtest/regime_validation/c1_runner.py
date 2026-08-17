@@ -5,12 +5,12 @@
 # [CONSUMERS] 11_regime_backtest_validation_plan Phase 1 验证执行 ; scripts/regime/run_c1.py
 # [STARTUP] imported
 # [MATURITY] production
-# [INARIANTS] 开/关两组除 Shrinkage 外全等(同config/数据/信号); mock模式不依赖特征管道; regime模式用预计算序列(PIT as-of join); 报告落盘幂等
+# [INVARIANTS] 开/关两组除 Shrinkage 外全等(同config/数据/信号); mock模式不依赖特征管道; regime模式用预计算序列(PIT as-of join); 报告落盘幂等
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] C1RunnerError(ZA-BT-0012); 数据/信号为空->返回空 C1ComparisonResult(不抛)
+# [ERROR_CONTRACT] C1RunnerError(ZA-BT-0025); 数据/信号为空->返回空 C1ComparisonResult(不抛)
 # [TESTS] tests/backtest/test_c1_runner.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -79,9 +79,13 @@ __backtest_id__ = "c1-runner"
 
 
 class C1RunnerError(ZephyrBaseError):
-    """ZA-BT-0012: C1 执行器错误（数据非法/报告落盘失败）。"""
+    """ZA-BT-0025: C1 执行器错误（数据非法/报告落盘失败）。
 
-    error_code = "ZA-BT-0012"
+    改号留痕：原 ZA-BT-0012 与 backtest_result_sink.BacktestResultSinkError 重码，
+    #ARCH-ERRCODE-001 裁定 git 首引入者保留 canonical，本类后引入（2026-08-07）改号。
+    """
+
+    error_code = "ZA-BT-0025"
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -148,7 +152,7 @@ def _track_result(
     mode: str,
     strategy_name: str,
 ) -> None:
-    """track=True 时把 C1 结果记录为 mlflow run（lazy import 破循环）。
+    """track=True 时把 C1 结果记录为实验跟踪 run（lazy import 破循环）。
 
     仅在 track=True 分支内 import `c1_adapter.track_c1_result`，避免 backtest →
     experiment_tracking 包级强依赖（adapter 仅 TYPE_CHECKING 引用 backtest 类型）。
@@ -198,7 +202,7 @@ def run_c1_with_provider(
         c1_config: C1 门槛配置。None 用默认 C1Config()（11_regime_backtest_validation_plan §5 标准）。
         strategy_name: 策略名（两组共用）。
         initial_capital: 初始资金（两组共用，None 用 config 值）。
-        track: True 时把结果记录为 mlflow run（lazy import c1_adapter，失败不崩业务）。
+        track: True 时把结果记录为实验跟踪 run（lazy import c1_adapter，失败不崩业务）。
         mode: tracking 标签（"mock"/"regime"/"provider"），写入 tags 供筛选。
 
     Returns:
@@ -250,7 +254,7 @@ def run_c1_mock(
         data/signals/backtest_config/c1_config: 同 run_c1_with_provider。
         vol_window: 实现波动率窗口（默认 20）。
         strategy_name: 策略名。
-        track: True 时把结果记录为 mlflow run（mode="mock"）。
+        track: True 时把结果记录为实验跟踪 run（mode="mock"）。
 
     Returns:
         C1ComparisonResult。

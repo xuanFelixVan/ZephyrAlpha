@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.regime_validation.c1_runner (track=True 时 lazy import 调用)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] C1ComparisonResult → mlflow run（params/metrics/artifacts/tags）；tracker 降级时 no-op 不抛；comparator=None 时跳过 nav artifact；matplotlib 未装时跳过 PNG（仅写 CSV）；不依赖 backtest 运行时 import（TYPE_CHECKING 隔离）
+# [INVARIANTS] C1ComparisonResult → 实验跟踪 run（params/metrics/artifacts/tags）；tracker 降级时 no-op 不抛；comparator=None 时跳过 nav artifact；matplotlib 未装时跳过 PNG（仅写 CSV）；不依赖 backtest 运行时 import（TYPE_CHECKING 隔离）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,12 +15,13 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — C1 对比结果 → MLflow 语义适配器（M1-3）。
+"""L_INFRA_TELEMETRY — C1 对比结果 → 实验跟踪语义适配器（M1-3，单一 JSON 后端）。
 
-把 ``C1ComparisonResult`` 翻译成 mlflow run，使人/AI 能通过 ``mlflow ui`` 或
+把 ``C1ComparisonResult`` 翻译为一个实验跟踪 run，使人/AI 能通过 Panel「实验历史」Tab 或
 ``experiment_tracking.query`` 对比多次 C1 运行（开/关四项指标 + 净值曲线）。
+（MLflow 已裁定完全卸载——51 号；存储=FallbackBackend 本地 JSON。）
 
-Zephyr 语义 → MLflow 映射:
+Zephyr 语义 → 实验跟踪映射:
   - params   : C1 门槛配置（sharpe_tolerance 等）+ 模式 + 策略名 + 数据日期范围
   - metrics  : baseline_/experiment_ sharpe/maxdd/turnover/calmar + 各 verdict 值 + passed
   - artifacts: nav_curve_baseline.csv / nav_curve_experiment.csv / nav_curve_comparison.png / c1_summary.md
@@ -36,7 +37,7 @@ Zephyr 语义 → MLflow 映射:
 
 降级
 ----
-``get_tracker()`` 已封装三 backend（mlflow / FallbackBackend JSON / NullBackend no-op）。
+``get_tracker()`` 已封装 backend 选择（FallbackBackend JSON / NullBackend no-op）。
 本 adapter 只调 ``start_run`` + ``log_*``，不关心 backend 选择——tracker 关闭时 NullBackend
 全 no-op，run_id="null-run"。所有 log 失败由 ``RunContext`` 内 try/except 兜住，不抛。
 
@@ -223,7 +224,7 @@ def track_c1_result(
     strategy_name: str = "c1-shrinkage",
     extra_tags: Optional[dict[str, str]] = None,
 ) -> str:
-    """把 ``C1ComparisonResult`` 记录为一个 mlflow run。
+    """把 ``C1ComparisonResult`` 记录为一个实验跟踪 run。
 
     Args:
         result: C1 开/关对比结果（含四项 verdicts + passed + summary）。
@@ -234,12 +235,11 @@ def track_c1_result(
         extra_tags: 额外 tags（可选）。
 
     Returns:
-        run_id（NullBackend 返回 "null-run"；fallback/mlflow 返回真实 id）。
+        run_id（NullBackend 返回 "null-run"；FallbackBackend 返回真实 id）。
         tracker 降级时仍返回 id（FallbackBackend 写 JSON）。
-
     语义:
       - tracker 关闭（enable_tracking=False）→ NullBackend no-op，返回 "null-run"
-      - mlflow 未装 → FallbackBackend 写 JSON，返回伪 id
+      - 默认 → FallbackBackend 写本地 JSON（单一后端，MLflow 已退役），返回伪 id
       - 任何 log 失败 → RunContext 内 try/except 兜住，不抛、不崩 C1 业务
     """
     tracker = get_tracker()

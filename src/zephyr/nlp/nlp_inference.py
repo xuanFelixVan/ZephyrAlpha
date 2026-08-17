@@ -160,6 +160,13 @@ USER_TEMPLATE = """新闻标题: {title}
 class NLPInferenceError(Exception):
     """NLP 推理编程错误（ZA-NLP-0001）——仅 chat 为 None 等契约违反时抛。"""
 
+    error_code = "ZA-NLP-0001"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 @runtime_checkable
 class ChatBackend(Protocol):

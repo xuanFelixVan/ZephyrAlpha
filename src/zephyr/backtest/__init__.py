@@ -75,9 +75,7 @@ __all__ = [
     "BacktestConfig",
     "DefaultBacktestEngine",
     "core",
-    "engine_base",
     "implementations",
-    "vectorized_engine",
     # v1.3.0 新增（#ARCH-047）
     "io",
     "BacktestSinkData",

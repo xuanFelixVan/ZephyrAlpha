@@ -23,7 +23,7 @@ Decay Monitor — 策略衰减监控告警器 (MOD-BT-018)
 跟踪策略性能指标随时间变化, 通过短期/长期均值对比和线性趋势检测识别衰减。
 4级告警: STABLE → WARNING → DECAYING → CRITICAL。
 
-依据: D:\临时工作区\依赖图-D-BACKTEST-回测引擎域.md §1 BT-18
+蓝图: docs/03_modules/_domain_backtest/decay_monitor/blueprint.md
 SSoT: depgraph MOD-BT-018
 Version: 0.1.0
 
