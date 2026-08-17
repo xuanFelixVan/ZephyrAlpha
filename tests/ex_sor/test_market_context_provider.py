@@ -24,7 +24,6 @@ from zephyr.ex_sor.core.market_context_provider import (
 from zephyr.infrastructure.h1_redis_hot.h1_redis_schema import tick_latest_key
 from zephyr.shared.contracts.market_data import NormalizedMarketData
 
-
 # ── 符号归一化 ──
 
 

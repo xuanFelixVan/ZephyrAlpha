@@ -347,7 +347,8 @@ class CorporateActionAdjuster:
         Args:
             symbol: 股票代码
             original_prev_close: 原始前收盘价
-            price_limit_pct: 涨跌幅限制（默认 10%，ST 5%，北交所 30%）
+            price_limit_pct: 涨跌幅限制（默认 10%；2026-07-06 规则：主板/ST ±10%，
+                创业板/科创板 ±20%，北交所 ±30%，板块分类真源=board_lot.classify_board）
 
         Returns:
             (涨停价, 跌停价) — 基于调整后的前收盘价计算

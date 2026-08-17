@@ -11,8 +11,8 @@
 from decimal import Decimal
 
 from zephyr.backtest.core.matching_engine import (
-    MatchingEngine,
     MatchingConfig,
+    MatchingEngine,
     MatchingError,
     MatchingFill,
     MatchOrderInput,

@@ -283,7 +283,7 @@ class TradingHaltResolver:
         self,
         target_weights: dict[str, float],
         held_symbols: set[str] | None = None,
-    ) -> tuple[dict[str, float], list["HaltAction"]]:
+    ) -> tuple[dict[str, float], list[HaltAction]]:
         """过滤目标权重，移除停牌票。
 
         - 目标票停牌（盘中临停/跨日停牌）→ 从目标移除
@@ -311,7 +311,7 @@ class TradingHaltResolver:
                     actions.append(HaltAction(
                         symbol=symbol,
                         status=HaltStatus.RESUMED_REEVALUATE,
-                        reason=f"复牌后重新评估（之前跨日停牌已释放预占）",
+                        reason="复牌后重新评估（之前跨日停牌已释放预占）",
                         remove_from_target=False,
                         release_prepaid=False,
                     ))

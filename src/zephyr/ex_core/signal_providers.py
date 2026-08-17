@@ -23,6 +23,42 @@
   - make_clickhouse_signal_provider: 从 ClickHouse 加载历史 → 计算因子 → 合成信号 → 返回最新日信号
   - make_mock_signal_provider: 测试用——返回固定信号
   - make_mock_price_provider: 测试用——返回固定价格
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 标的池 universe + 因子配置 factor_ids
+#   fields: list[str] 标的代码 + 因子ID元组/合成方法/回看天数/pit_shift
+#   code: make_clickhouse_signal_provider(factor_ids, ...) (signal_providers.py)
+# 层: 算法
+# - id: A1
+#   name_zh: ① ClickHouse 信号管线
+#   name_en: _provider（闭包）
+#   intro: 加载历史→逐因子算面板→截面合成→PIT平移→取最后非NaN截面
+#   desc: load_history → compute_factor_panel → synthesize(equal_weight等) → panel.shift(pit_shift) → _extract_latest_signals
+#   inputs: I1
+#   outputs: dict[symbol, signal]（最新日信号）
+#   invariant: PIT 无前瞻（pit_shift≥1 今日决策用昨日因子）
+# - id: A2
+#   name_zh: ② Mock 源工厂
+#   name_en: make_mock_signal_provider / make_mock_price_provider
+#   intro: 测试用固定信号/价格闭包，忽略 universe 入参
+#   desc: 返回 dict(signals)/dict(prices) 副本的 callable
+#   inputs: I1
+#   outputs: 固定信号/价格 dict
+# 层: 输出
+# - id: O1
+#   name_zh: SignalProvider / PriceProvider callable
+#   name_en: provider 闭包
+#   intro: 可注入 TradingSession 的信号源/价格源，与具体数据源解耦
+#   downstream: ex_core.trading_session（构造注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# A1 --> O1
+# A2 --> O1
 """
 
 from __future__ import annotations

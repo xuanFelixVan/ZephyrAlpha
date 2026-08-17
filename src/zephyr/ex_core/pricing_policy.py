@@ -216,7 +216,8 @@ class PricingDecision:
     reason: str
 
 
-# A 股涨跌停幅度（主板/创业板/科创板 10%，北交所 30%，ST 5%）
+# A 股涨跌停幅度（2026-07-06 规则修订：主板/ST ±10%，创业板/科创板 ±20%，北交所 ±30%；
+# 板块分类真源=ex_core.board_lot.classify_board，板块幅度表=miniqmt_broker._BOARD_PRICE_LIMIT_PCT）
 # 这里用通用 10% 作为无明确涨停价时的估算，调用方应优先传入 exchange 提供的精确涨停价
 _DEFAULT_LIMIT_UP_PCT = Decimal("0.10")
 _DEFAULT_LIMIT_DOWN_PCT = Decimal("0.10")

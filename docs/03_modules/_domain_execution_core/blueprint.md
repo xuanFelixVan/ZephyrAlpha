@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.7"
+version: "2.2.8"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -13,8 +13,8 @@ classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-05-05"
-last_updated: "2026-07-17"
-last_verified: "2026-07-17"
+last_updated: "2026-08-17"
+last_verified: "2026-08-17"
 valid_from: "2026-05-05"
 ttl: permanent
 actual_disk_path: "src/zephyr/ex_core/"
@@ -782,8 +782,8 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 | asset_classes | ["stock", "etf", "convertible_bond"] | A股股票/ETF/可转债 |
 | market | "A_SHARE" | A股市场 |
 | t_plus | 1 | T+1锁定 |
-| price_limits | True | 涨跌停限制(主板±10%/创业板±20%/ST±5%) |
-| min_order_qty | 100 | A股最小1手=100股 |
+| price_limits | True | 涨跌停限制(主板/ST±10%/创业板/科创板±20%/北交所±30%, 2026-07-06修订, 板块分类真源 board_lot) |
+| min_order_qty | 板块差异化 | 主板/创业板/北交所100股递增, 科创板200股起1股递增(真源 ex_core.board_lot, §决策⑰) |
 | price_tick | 0.01 | 最小价格变动单位 |
 
 #### B. xttrader API 映射表
@@ -842,7 +842,8 @@ class MiniQmtBroker(BrokerInterface):
     
     def submit_order(self, order: Order) -> str:
         """下单. 
-        Pre-checks: (1) T+1锁定校验(卖出时); (2) 涨跌停校验; (3) 幂等键校验.
+        Pre-checks: (1) 幂等键校验; (2) 板块差异化整手校验(board_lot); (3) T+1锁定校验(卖出时);
+        (4) 涨跌停校验; (5) 价格笼子夹边(price_cage, 限价单带盘口时, 超限夹到边界不废单).
         撮合逻辑: 调用self._matching_logic.match(order, order_book) (共享模块).
         """
         ...

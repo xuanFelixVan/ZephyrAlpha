@@ -11,33 +11,25 @@
   - order_stock 返回 order_id（正整数=成功，-1=失败），非旧版错误码
   - account 参数传 StockAccount 对象，非 str session_id
   - start() 在 connect() 时调一次，submit_order 不再调 start()
+
+2026-08-17：历史循环导入已消除，改为包路径直接导入（原 importlib 按文件
+加载 workaround 拆除——绕过包 __init__ 会让模块脱离包上下文，掩盖真实问题）。
 """
-import importlib.util
-from datetime import date, datetime
 from decimal import Decimal
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
-
-# 绕开 zephyr.ex_core.adapters.__init__.py 的循环导入，直接按文件加载模块
-# 注意：tests/ 目录比 scripts/tests/ 浅一层，用 parents[1] 获取项目根
-_spec = importlib.util.spec_from_file_location(
-    "zephyr.ex_core.adapters.miniqmt_broker",
-    Path(__file__).resolve().parents[1]
-    / "src" / "zephyr" / "ex_core" / "adapters" / "miniqmt_broker.py",
-)
-_mod = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_mod)
-MiniQmtBroker = _mod.MiniQmtBroker
-MiniQmtBrokerError = _mod.MiniQmtBrokerError
-XTTRADER_ERROR_CODES = _mod.XTTRADER_ERROR_CODES
 
 from zephyr.backtest.core.matching_logic import (
     MatchingConfig,
     MatchingLogic,
     MatchOrderInput,
     OrderBookSnapshot,
+)
+from zephyr.ex_core.adapters.miniqmt_broker import (
+    XTTRADER_ERROR_CODES,
+    MiniQmtBroker,
+    MiniQmtBrokerError,
 )
 from zephyr.trading.trading_contracts.execution.order import (
     Order,
@@ -223,3 +215,91 @@ def test_thread_safety():
     assert hasattr(broker, "_lock"), "broker 必须有 _lock"
     import threading
     assert isinstance(broker.lock, type(threading.Lock())), "_lock 必须是 threading.Lock 实例"
+
+
+def make_order_book(symbol="600000.SH", ask1=Decimal("10.50"), bid1=Decimal("10.49")):
+    """构造5档盘口快照（预校验/价格笼子测试用）。"""
+    return OrderBookSnapshot(
+        symbol=symbol,
+        ask_price=tuple(ask1 + Decimal("0.01") * i for i in range(5)),
+        bid_price=tuple(bid1 - Decimal("0.01") * i for i in range(5)),
+        ask_vol=(Decimal("1000"),) * 5,
+        bid_vol=(Decimal("1000"),) * 5,
+        last_price=Decimal("10.50"),
+    )
+
+
+def test_board_differentiated_quantity():
+    """板块差异化整手校验（board_lot 真源，§决策⑰）。
+
+    科创板（688）：min_unit=200、1股递增——100股申报应拒绝（废单级），
+    201股合法应放行；主板 100 股整数倍规则不变。
+    """
+    broker = make_broker()
+
+    # 科创板 100 股（非法：低于 200 起买量）→ 拒绝
+    try:
+        broker.submit_order(make_order(qty=100, symbol="688001.SH", idempotency_key="star-100"))
+        assert False, "科创板 100 股应被拒绝（低于 200 股起买量）"
+    except MiniQmtBrokerError as e:
+        assert e.error_code == 52
+
+    # 科创板 201 股（合法：200 起 +1 股递增）→ 放行
+    broker.xttrader.order_stock.return_value = 2001
+    broker_id = broker.submit_order(make_order(qty=201, symbol="688001.SH", idempotency_key="star-201"))
+    assert broker_id == "2001"
+
+    # 创业板 100 股（合法：100 整数倍）→ 放行
+    broker.xttrader.order_stock.return_value = 2002
+    broker_id = broker.submit_order(make_order(qty=100, symbol="300750.SZ", idempotency_key="gem-100"))
+    assert broker_id == "2002"
+
+    # 北交所 150 股（非法：100 递增）→ 拒绝
+    try:
+        broker.submit_order(make_order(qty=150, symbol="830799.BJ", idempotency_key="bse-150"))
+        assert False, "北交所 150 股应被拒绝（须 100 股递增）"
+    except MiniQmtBrokerError as e:
+        assert e.error_code == 52
+
+
+def test_price_cage_clamp_in_submit():
+    """价格笼子接入下单链：限价单超笼子上限 → 夹到边界提交（不废单）。"""
+    broker = make_broker()
+    ob = make_order_book()  # ask1=10.50
+    # 买入 limit 10.80：超笼子（主板上限=max(10.50*1.02, 10.50+0.10)=10.71）
+    # 但低于涨停价 11.00（prev_close=10.00 × 1.10），不触发涨跌停拒单
+    order = make_order(qty=100, limit_price=Decimal("10.80"), idempotency_key="cage-001")
+    broker.submit_order(order, order_book=ob, prev_close=Decimal("10.00"))
+    assert order.limit_price == Decimal("10.71"), (
+        f"超笼子买入价应夹到 10.71，实际 {order.limit_price}"
+    )
+    # 夹边后的价格必须真实发给 xttrader
+    call_args = broker.xttrader.order_stock.call_args
+    assert call_args.args[5] == 10.71  # price 位置参数（float）
+
+
+def test_price_cage_in_cage_no_change():
+    """价格笼子内限价单：价格不被改动。"""
+    broker = make_broker()
+    ob = make_order_book()
+    order = make_order(qty=100, limit_price=Decimal("10.50"), idempotency_key="cage-002")
+    broker.submit_order(order, order_book=ob, prev_close=Decimal("10.00"))
+    assert order.limit_price == Decimal("10.50")
+
+
+def test_query_order_int_order_id_match():
+    """query_order 对 int 型 xt order_id 也能命中缓存（类型归一）。"""
+    broker = make_broker()
+    broker_order_id = broker.submit_order(make_order(idempotency_key="q-001"))
+    assert broker_order_id == "1001"
+
+    xt_order = MagicMock()
+    xt_order.order_id = 1001  # int 型（新版 xtquant）
+    xt_order.order_status = 52  # FILLED
+    xt_order.traded_volume = 100
+    xt_order.traded_price = 10.5
+    broker.xttrader.query_stock_orders.return_value = [xt_order]
+
+    found = broker.query_order("1001")
+    assert found is not None, "int order_id 应能命中（str 归一比较）"
+    assert found.status.name == "FILLED"

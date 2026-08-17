@@ -12,11 +12,10 @@
 # [TTL] permanent
 """
 
+D_EXECUTION_CORE 执行核心域 — 包入口（懒加载聚合导出）
 
-D_EXECUTION_CORE Trade Execution — Re-export wrapper (DM-298)
-
-All modules have been migrated to zephyr.execution_core.core.
-This package re-exports for backward compatibility.
+本包即执行核心域 canonical 实现（MOD-L06-001），非迁移残留 shim。
+包级命名空间通过 _LAZY_IMPORTS 懒加载，避免包导入即拉起执行链重依赖。
 
 # [ALGO_FLOW]
 # 层: 输入
@@ -32,7 +31,7 @@ This package re-exports for backward compatibility.
 # - id: A1
 #   name_zh: ① 包级聚合再导出
 #   name_en: zephyr.ex_core.__init__
-#   intro: D_EXECUTION_CORE Trade Execution — Re-export wrapper (DM-298
+#   intro: D_EXECUTION_CORE 执行核心域包入口（canonical 实现，非 shim）
 #   desc: MOD-L06-001 包入口，包级聚合再导出并声明 __all__（12项）
 #   inputs: I1 I2
 #   outputs: zephyr.ex_core 包级公共命名空间
@@ -41,7 +40,7 @@ This package re-exports for backward compatibility.
 # - id: O1
 #   name_zh: zephyr.ex_core 包公共 API
 #   name_en: __all__ 12项
-#   intro: D_EXECUTION_CORE Trade Execution — Re-export wrapper (DM-298——对外统一出口
+#   intro: 执行核心域对外统一出口（懒加载，canonical 实现）
 #   downstream: 见蓝图头 [CONSUMERS] 声明
 # [/ALGO_FLOW]
 # 边:

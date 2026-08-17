@@ -30,7 +30,6 @@ from zephyr.shared.contracts.order import Order
 from zephyr.shared.contracts.position import PositionSnapshot
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 
-
 # ──────────────────────────────────────────────────────────────────────────────
 # Fake 组件
 # ──────────────────────────────────────────────────────────────────────────────
@@ -633,7 +632,7 @@ class TestConcurrency:
             try:
                 order = make_order(symbol=symbol)
                 results.append(saga.execute(order, OrderSide.BUY))
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 并发测试工作线程收集一切异常到 errors 列表, 由主线程断言
                 errors.append(exc)
 
         threads = [

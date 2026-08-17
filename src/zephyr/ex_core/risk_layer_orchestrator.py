@@ -26,7 +26,6 @@
 # O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level) + RecoveryResult + 清算报告
 # [/ALGO_FLOW]
 """D_EX_CORE — 风控层运行时编排器（Risk Layer Orchestrator）
-
 双轮审查裁定书 §六 P0 风控接线批（#ARCH-100，AI-RWIRE-001 施工）：
 35 回撤 / 36 VaR-ES / 37 流动性模块 + KillSwitch + PositionReconciler 模块全写完、
 测试全绿但生产链路零实例化（"消防栓装了没接水管"）。本模块是把组合级风控层
@@ -58,6 +57,19 @@
 
 边界（并发会话 AI-RRESIL-001）：DefaultRiskValidator / fill_handler /
 PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
+
+# [ALGO_FLOW]
+# I1: nav(盘中净值, cash+持仓市值) + positions(券商持仓快照) + today_fills(当日成交)
+# I2: DrawdownController/VaRCalculator/TailRiskMonitor/DrawdownTracker(既有风控组件实例)
+# I3: broker(券商接口, 启动恢复查询+清算执行) + reconciler(持仓对账器)
+# F1: recover_from_broker(以券商持仓为准重建账本, 重建完成前 is_trading_allowed=False)
+# F2: evaluate_intraday(净值→回撤追踪→收益序列→VaR/ES→DrawdownController.evaluate→position_cap)
+# F3: evaluate_intraday 内嵌系统性风险评估(systemic_input_provider→MOD-RK-10 detector.check→三级警报→37号§3.6降级机)
+# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007/系统性LEVEL_3→trigger_kill_switch+清算)
+# A2: start/stop_reconcile_loop(盘中定时对账, 蓝图MOD-EX-056阶段2规划位, 默认300s)
+# A3: _evaluate_systemic_risk(LEVEL_3→build_escape_directive→_engage_kill_switch; 降级候选→check_recovery门禁)
+# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level) + RecoveryResult + 清算报告
+# [/ALGO_FLOW]
 """
 
 from __future__ import annotations

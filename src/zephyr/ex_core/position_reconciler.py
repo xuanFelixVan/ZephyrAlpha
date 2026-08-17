@@ -92,7 +92,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
 from threading import Lock
-from typing import Protocol, Callable
+from typing import Callable, Protocol
 
 from zephyr.shared.contracts.position import PositionSnapshot
 

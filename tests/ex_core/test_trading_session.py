@@ -189,6 +189,66 @@ def test_rebalance_round_lot_skip_small_delta() -> None:
     assert len(orders) == 0
 
 
+def test_rebalance_star_board_lot_rounding() -> None:
+    """科创板目标数量按板块规则取整（200 股起 1 股递增，不按 100 股取整）。"""
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(cash=Decimal("1000000"))
+    session = _make_session(
+        broker=broker,
+        strategy=_strategy_returning({"688001.SH": 0.0025}),  # target=2500/10=250 股
+        price_provider=make_mock_price_provider({"688001.SH": Decimal("10")}),
+        config=TradingSessionConfig(universe=["688001.SH"], broker_id="test_broker"),
+    )
+    orders = session.rebalance()
+    assert len(orders) == 1
+    assert orders[0].side == OrderSide.BUY
+    # 1,000,000 * 0.0025 / 10 = 250 股：科创板 200 起 +1 递增 → 250 合法保留
+    #（旧统一 100 股取整会错误截到 200）
+    assert orders[0].quantity == Decimal("250")
+
+
+def test_rebalance_odd_lot_sell_all() -> None:
+    """零股持仓（<100）不在目标权重 → 一次性清仓（不被 min_order_qty 吞掉）。"""
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(
+        cash=Decimal("995000"),
+        holdings={"600519.SH": Decimal("50")},  # 零股
+        total_market_value=Decimal("5000"),
+    )
+    session = _make_session(
+        broker=broker,
+        strategy=_strategy_returning({}),  # 空目标 → 清仓
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+        config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+    )
+    orders = session.rebalance()
+    assert len(orders) == 1
+    assert orders[0].side == OrderSide.SELL
+    assert orders[0].quantity == Decimal("50")  # 零股一次性申报卖出
+
+
+def test_rebalance_odd_lot_remainder_triggers_full_sell() -> None:
+    """主板卖出后剩余不足 100 股 → 放大为一次性清仓（board_lot 零股规则）。"""
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(
+        cash=Decimal("850000"),
+        holdings={"600519.SH": Decimal("150")},
+        total_market_value=Decimal("15000"),
+    )
+    session = _make_session(
+        broker=broker,
+        # target=0.0005 → target_qty=round_buy_qty(865000*0.0005/100=4.325)=0
+        # → delta=-150 → 取整 100 → 剩余 50 <100 → 清仓 150
+        strategy=_strategy_returning({"600519.SH": 0.0005}),
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+        config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+    )
+    orders = session.rebalance()
+    assert len(orders) == 1
+    assert orders[0].side == OrderSide.SELL
+    assert orders[0].quantity == Decimal("150")
+
+
 def test_rebalance_zero_total_asset_returns_empty() -> None:
     """total_asset <= 0 → 返回空列表。"""
     broker = MagicMock()

@@ -24,6 +24,33 @@ CTR 契约：
   生产者 — ExperimentResult -> D_RESEARCH, D_ML_TRAIN
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-014
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 实验配置 ExperimentConfig
+#   fields: experiment_id/hypothesis/control_params/treatment_params/metrics
+#   code: DefaultExperimentPipeline.run(config, idempotency_key) (default_experiment_pipeline.py)
+# 层: 算法
+# - id: A1
+#   name_zh: ① A/B 对照统计验证
+#   name_en: run
+#   intro: 逐指标取对照/处理值，算效应量与估计 p 值，产出显著性结论
+#   desc: 逐 metric：control/treatment → compute_effect_size → _estimate_p_value → ExperimentMetric 缓存登记
+#   inputs: I1
+#   outputs: list[ExperimentMetric]（含 is_significant）
+#   invariant: 实现 OCP 实验-EXP 契约；结果可缓存复査
+# 层: 输出
+# - id: O1
+#   name_zh: 实验指标列表
+#   name_en: list[ExperimentMetric]
+#   intro: 各指标对照/处理值+效应量+p值+显著性，供 ScoutAgent 汇总为 ExperimentResult
+#   downstream: zephyr.simulation.pipeline_base.ScoutAgentBase（汇总）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

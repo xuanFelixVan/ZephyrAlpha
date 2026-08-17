@@ -17,9 +17,9 @@ from zephyr.simulation.strategy_simulator import (
     SignalContext,
     SimulatedTrade,
     SimulationResult,
+    StrategySimulationError,
     StrategySimulator,
     StrategySimulatorConfig,
-    StrategySimulationError,
     StrategySpec,
 )
 

@@ -129,10 +129,11 @@ import logging
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, time as dtime, timezone
+from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 from typing import Final
+from zoneinfo import ZoneInfo
 
 from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
 from zephyr.shared.contracts.order import Order
@@ -222,6 +223,10 @@ OpponentPriceProvider = Callable[[str, OrderSide], Decimal | None]
 # 当前时间查询函数签名（用于尾盘清退判断）：() -> datetime
 NowProvider = Callable[[], datetime]
 
+# A 股交易时段语义锚定上海时区（14:55 尾盘清退为交易所本地墙钟）。
+# 与 governance.data_governance.miniqmt_provider._SHANGHAI_TZ 同一约定。
+_SHANGHAI_TZ: Final = ZoneInfo("Asia/Shanghai")
+
 
 class OpenOrderResolver:
     """未成交/部分成交订单续接处理器。
@@ -269,8 +274,9 @@ class OpenOrderResolver:
             opponent_price_provider: 对手价查询函数 (symbol, side) -> Decimal|None。
                 None=无盘口数据时 Make-or-Take 跳过（仅撤单不重挂）。
             clock: 单调时钟函数（默认 time.monotonic），用于超时判断
-            now_provider: 当前时间函数（默认 datetime.now(timezone.utc)），
-                用于尾盘清退判断。注入可控制测试场景。
+            now_provider: 当前时间函数（默认 Asia/Shanghai 时区墙钟——A 股
+                14:55 尾盘清退为交易所本地时间语义），用于尾盘清退判断。
+                注入可控制测试场景。
             resubmit_callback: 重挂单回调 (order, opponent_price) -> broker_order_id|None。
                 None=用 order_manager.submit_order 重挂（需 order 有可重挂状态）。
                 生产环境可注入自定义重挂逻辑（如带价格笼子校验）。
@@ -279,7 +285,7 @@ class OpenOrderResolver:
         self._config = config or OpenOrderResolverConfig()
         self._opponent_price_provider = opponent_price_provider
         self._clock = clock
-        self._now_provider = now_provider or (lambda: datetime.now(timezone.utc))
+        self._now_provider = now_provider or (lambda: datetime.now(_SHANGHAI_TZ))
         self._resubmit_callback = resubmit_callback
 
         # 订单跟踪：order_id -> (提交时 monotonic 时间, urgency)

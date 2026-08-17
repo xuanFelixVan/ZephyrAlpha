@@ -422,8 +422,20 @@ execution_algos:
     cancel_rate_limit: 0.15
     min_order_interval_us: 50
     is_hft: false
+    after_hours_eligible: false
+    latency_floor_ms: 2.0
+    network_type: wan
+    price_cage_config: {board: main_gem, buy_ceiling_pct: 1.02, sell_floor_pct: 0.98, has_unit_floor: true, unit_floor_yuan: 0.1}
+    t_plus_1: true
+    limit_up_down_untradable: true
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
     entry_role: "rule"
     applies_to: ["stock"]
     tags: ["执行", "订单", "量价"]
-    algorithm_status: "quantized"
+    algorithm_status: "pending_backtest"
     evidence: "TWAP/VWAP/冰山参数（volume_share=0.02/visible_ratio=0.1）"
+    code_symbol: null
+    code_fingerprint: null

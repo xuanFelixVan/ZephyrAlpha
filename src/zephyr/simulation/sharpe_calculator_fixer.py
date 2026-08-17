@@ -346,7 +346,7 @@ class SharpeCalculatorFixer:
                 returns, num_trials=num_trials, risk_free_rate=rf
             )
             dsr = dsr_result.dsr
-        except Exception:
+        except Exception:  # noqa: BLE001 — DSR 为可选增强指标, 计算失败降级跳过(dsr=None)且有日志, 不阻断主指标
             _logger.warning("DSR 计算失败, 跳过", exc_info=True)
 
         method = (
