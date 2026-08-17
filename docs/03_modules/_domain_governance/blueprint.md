@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.5"
+version: "0.13.6"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -214,7 +214,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GOVERNANCE` 的 81 个 file 节点 | design | `extract_depgraph.py --modules MOD-GOVERNANCE` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GOVERNANCE` 的 83 个 file 节点 | design | `extract_depgraph.py --modules MOD-GOVERNANCE` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -226,7 +226,7 @@ build_status: generated
 | module_id | MOD-GOVERNANCE | MOD-GOVERNANCE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 81 文件 | N/A | — |
+| file_count | 83 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -2177,7 +2177,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/context_governance/prompt_lifecycle.py` | ✅ 已实现 | |
 | `src/zephyr/governance/data_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/financial_governance/microstructure_defense.py` | ✅ 已实现 | |
-| `src/zephyr/governance/intelligence_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/intelligence_governance/multi_model_consensus.py` | ✅ 已实现 | |
 | `src/zephyr/governance/lifecycle_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/lifecycle_governance/migration_strategy.py` | ✅ 已实现 | |
@@ -2198,6 +2197,7 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `tests/governance/lifecycle/test_strategy_retirement_evaluator.py` | ✅ 已实现 | |
 | `tests/governance/test_alert_threshold_consistency.py` | ✅ 已实现 | |
+| `tests/governance/test_intelligence_governance_facade.py` | ✅ 已实现 | |
 | `tests/governance/test_task_board.py` | ✅ 已实现 | |
 
 ### 12.5 路径索引使用指南
