@@ -5,8 +5,8 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.11.0"
-date: 2026-08-12
+version: "2.11.3"
+date: 2026-08-17
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
 ---
@@ -18,7 +18,7 @@ scope: 07_trading_decision_architecture
 > 用途：用户将开启多个 AI，每个 AI 认领一个主题组 → 讨论 → 落盘 discussion/design_memo → 施工。本文档是分工的"作战地图"。
 > 关联：[30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)（多策略并发架构，已定稿 v2.5.0）｜ [10_regime_detector_spec](10_regime_detector_spec.md)（regime 完整 spec，已定稿 v1.5.1）｜ [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md)（regime 验证，已定稿 v1.5.2，C1 已通过 commit 852457e9）
 
-## 0. 现有文档总目录（48 篇·按段位编号）
+## 0. 现有文档总目录（50 篇·按段位编号）
 
 > 段位语义：**0x**=meta（规范与索引）｜**1x**=地基层（regime/数据特征）｜**2x**=Alpha 策略层｜**3x**=组合仓位与风控层｜**4x**=交易执行层｜**5x**=验证与可观测性层｜**6x**=跨切治理层｜**9x**=开放问题与远期愿景。
 > 命名规则见 §8；新旧名对照见 §10；占用登记见 §7.3。
@@ -79,6 +79,7 @@ scope: 07_trading_decision_architecture
 | [65_git_safety_governance.md](65_git_safety_governance.md) | Git 安全治理体系（alias 失效修复+多层防护施工总案，Trae IDE 专用；#ARCH-AICOLLAB-001 三件套方案落 §12；wipe 治本 S1-S6+task_board 已 merge 回 dev，四证首次真实清理走通；**Phase 1 wrapper 层 7 项已全部施工**，merge 后跑安装脚本激活） | active v2.3.1 |
 | [66_commit_queue_serialization.md](66_commit_queue_serialization.md) | 提交队列串行化（跨切治理层·集成基建；commit queue 三层防护方案，MVP 待排期；§2.4 #9 task_board 已按其 schema 重建 production 并 merge 回 dev） | active v1.1.0 |
 | [67_merge_conflict_resolution_sop.md](../../../01_policies_and_standards/sop/merge_conflict_resolution_sop.md) | Merge 冲突处理 SOP——冲突三分法（叠加型合并/迭代型取新/互斥型升级裁定）+标准 7 步流程+5 红线，全项目冲突处理唯一真源 **→ 2026-08-13 迁至 docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md** | active v1.0.1（已迁出本目录） |
+| [68_code_algorithm_review_pipeline.md](68_code_algorithm_review_pipeline.md) | 代码与算法多模型审查流水线（跨切治理层；施工后审查线——5+5 路并发：施工 5 对话+审查修复 5 对话复用 audit 20 域每路 4 域，Kimi-K3/GLM-5.3/Qwen3.8-Max 多模型轮流交叉审查已 merge 模块代码/算法/运行情况，全自动化零打扰自主治本修复，冲突防护五机制，统一统筹调度；执行蓝本 docs/audit_prompts_20_ai.md；模型池已定 Kimi-K3/GLM-5.3/Qwen3.8-Max（Trae CN 切换）+轮换矩阵+调度卡一键复制指令模板库） | draft v1.2.0 |
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案 21 项（全部待讨论） | draft v1.18.1 |
 | [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.2 |
 
@@ -850,3 +851,6 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-12 | 2.10.0 | **作战地图全覆盖工程（BM 339 环节逐环节核对闭合）**——以 PG `battle_map_steps` 为真源全量核对 design_memos 覆盖：① **新建 43号**（G30 合规与交易纪律体系，draft v0.1.0，承载 BM-BUY-08-A/08-B/09/12/15）；② **26 篇补环节设计/裁定**：41号 v1.6.0（明日预案双层架构 BM-PLAN-01/02/03 + 上游四轨裁定）、61号 v2.13.1（研究知识流水线拍板+研究环境否定式裁定+运行时风险治理 BM-RC-09/04-F）、40号 v2.10.1（§2.8 盘前检查链 BM-RC-02/02-C）、53号 v1.7.3（§3.9 仿真域 why 回填 BM-SIM-03/04/06/07）、52号 v1.0.3（辅助组件契约+暂缓裁定）、42号 v1.6.2（§3.11 卖出闭环优化）、31号 v1.24.2（§2.8 持仓漂移与再平衡）、32号 v1.0.22（组合优化口径裁定）、35号 v1.38.2（否决执行引擎 BM-RC-10/10-A）、36/37/54/55/62/15/51/17/64/90/91/21/24/25/20/34/23/10 号同步补丁；③ **环节级锚定**：全部活跃环节（320/339，19 弃用除外）正文显式标注 BM 编号至承载小节，可检索可追溯；④ §0 目录 47→48 篇 + G30 主题组登记 + §2 快照 12 阶段全部"已覆盖"（60号 骨架待重建除外）+ §7.3 补登 43号。否定式裁定（不建设/暂缓+重评条件）经用户 2026-08-12 裁定认可。遗留：battle_map 真源 3 处成熟度口径修正登记在 61 §7.5 / 52 §7 待治理流程回写 DB | 用户裁定驱动：design_memos 须包含作战全景图全部环节流程供后续完整开发；四路语义审计（221 环节）发现 GAP 32 项+PARTIAL 72 项，按"能合并不新建"偏好仅新建 43 号一篇，其余全部并入现有备忘 |
 | 2026-08-12 | 2.10.1 | **全覆盖复核补锚 3 活跃环节 + 28/60号状态回归修正**——① PG `battle_map_steps` 复核（340 环节/19 deprecated/321 活跃，BM-SIM-08 新入库 +1）：发现 3 个活跃环节未逐编号锚定，补锚 24号 v1.10.4（BM-SEL-23-C 情绪周期策略映射→§3.5 门控切换/§3.6 仓位上限 5 档、BM-SEL-25-B 情绪周期自适应权重→§3.5 `determine_adaptive_weights`）+ 53号 v1.7.4（BM-SIM-08 Paper Matching 涨跌停排队引擎→§3.2 Step②/公式②），321 活跃环节恢复 0 缺口；② §2 快照口径更新 339→340 环节、320→321 活跃；③ 修正 v2.10.0 合并回归——28号/60号 状态误回退为"骨架待重建"，实际 28号 v1.2.0 已恢复（16f119bd）、60号 active v1.0.0 已在 HEAD（8da7513309），重放 v2.9.2 更正至 §0 头部注记/§0 目录×2/§2 快照行 12+结论/§6 G21 行+结论/§9 定位器评估行/#D1 闭环共 8 处；④ §0 目录版本对齐 24号 v1.10.4 / 53号 v1.7.4 | 全覆盖工程收口复核：以 DB 当前真源（340 环节）重扫发现 BM-SIM-08 等 3 个活跃环节漏锚（语义早已覆盖、编号未显式）；同时发现 v2.10.0 合并时 28/60号状态文本覆盖了 v2.9.2 的已恢复标注，一并修正 |
 | 2026-08-14 | 2.11.0 | **29号补登（潘潘课程因子策略提炼知识库迁入）**——§0 目录 48→49 篇 + §7.3 占用表补登 29 号；29_factor_strategy_extraction.md（原 docs/_working/潘潘直播课程/因子与策略提炼.md，546 条 F1-F8 因子+S9-S16 策略，二十一轮审查收敛）经用户裁定迁入 design_memos 落位 2x Alpha 策略层，frontmatter 按 01 号规范 §4.2 规范化（ttl→permanent），factor/strategy/risk_limit 三注册表 doc_ref 同步更名；capability_canonical_file_registry token 沿用（auto-panpan-factor-extraction-20260810） | 用户裁定驱动：提炼知识库作为三注册表 doc_ref 真源应落位永久区而非 _working 临时区（task_bound 易被 TTL/wipe 类进程误删，已实证两次）；迁入后命名合规（段位号+snake_case） |
+| 2026-08-17 | 2.11.1 | **68 号补登（代码与算法多模型审查流水线）**——§0 目录 49→50 篇（标题篇数由 48 同步修正为 50，29 号 v2.11.0 补登时标题滞后一并修正）；68_code_algorithm_review_pipeline.md 落位 6x 跨切治理层（67 号已占用迁出，取下一空号 68），draft v1.0.0 待用户裁定（待定问题 4 项：模型版本渠道/首审批次/token 预算/周审查窗口） | 用户指令驱动：建立施工后审查线——多模型轮流审查已 merge 模块代码/算法/运行情况，与前方施工线双线并行，统一由统筹会话调度；与 AI_review_instructions（审文档 why 层）、55 号（监控基建）、pre-commit 门禁（L1 机械检查）互补不重叠 |
+| 2026-08-17 | 2.11.2 | 68 号描述同步更新（§0 目录 68 号一句话）：v1.0.0→v1.1.0——只读纪律推翻→自主治本修复，双线并行→5+5 并发制，新增冲突防护五机制+止损降级线+全自动化零打扰两个打扰例外，执行蓝本补登 audit_prompts_20_ai.md；§5 待裁定重排（删报告存放、增模型-域绑定表与提示词落盘形态） | 用户裁定驱动：68 号 v1.0.0 初稿设计（审查线只登记+双线串行）被用户推翻，按用户"并发执行且审查与自我循环修复全自动化尽量不问用户"裁定修订为 v1.1.0；索引描述随之同步更新 |
+| 2026-08-17 | 2.11.3 | 68 号描述同步更新（§0 目录 68 号一句话）：v1.1.0→v1.2.0——模型池确认（Kimi-K3/GLM-5.3/Qwen3.8-Max，Trae CN 选择器手动切换）+§2.3 轮换矩阵落地+新增决策十一调度卡协议（切模型/执行任务/一键复制指令三要素）+§8 附录指令模板库（初审修复/复审/红队/调度卡示例），待裁定 #4/#5 与待定问题 #1 闭环 | 用户裁定驱动：三模型版本与 Trae CN 切换工作方式确认（每对话完成须输出下一步切模型+任务+一键复制指令），68 号 v1.2.0 落地调度卡任务链机制，索引描述同步 |

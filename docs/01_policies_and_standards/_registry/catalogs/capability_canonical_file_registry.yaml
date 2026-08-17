@@ -9344,6 +9344,11 @@ creation_tokens:
     token: "fopen001-verify-schema-health-pg-unreachable-test-20260817"
     created_by: "AI-FOPEN-001"
     capability: "pg_availability_probe"
+  # --- 68号 代码与算法多模型审查流水线设计备忘（2026-08-17，第六统筹会话落盘：5+5并发审查线+多模型轮换矩阵+调度卡任务链，draft v1.2.0）---
+  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/68_code_algorithm_review_pipeline.md"
+    token: "auto-68-code-algorithm-review-pipeline-20260817"
+    created_by: "COORD-68-001"
+    capability: "code_algorithm_review_pipeline"
 di_seam_exemptions:
   - module_path: "zephyr.trading.auto_runtime_core.AutoRuntimeCore"
     reason: "P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）"
