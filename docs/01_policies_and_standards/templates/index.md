@@ -42,7 +42,7 @@ ai_autonomy: human_gated
 
 ## 排除规则（不应放入本目录的内容）
 
-- ❌ 正式规则文件 → `01_policies_and_standards/governance/ 或 operational/`
+- ❌ 正式规则文件 → `01_policies_and_standards/rules/`（governance/、operational/ 目录已删除合并至 rules/）
 - ❌ 模块文档 → `03_modules/`
 
 ## 父级目录

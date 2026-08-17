@@ -74,4 +74,4 @@ python -m scripts.governance.d5_architecture.generators.generate_code_wiki_stats
 - handbook AUTO 块**只读**真源（depgraph PG / YAML / table_registry / pyproject），**禁止反向写**。
 - 规则数据真源 = YAML（`architecture_model/`、`docs/01_policies_and_standards/rules/`）→ `sync_yaml_to_depgraph.py` 单向同步到 DB。
 - 架构数据真源 = PostgreSQL depgraph → `apply_depgraph.py` / `generate_project_depgraph.py` 直接写。
-- 改统计口径 = 改生成器，不改文档；改原则 = 手工改 `principles/*.md`。
+- 改统计口径 = 改生成器，不改文档；原则文档层（`principles/`）已于 2026-07-30 取消——可执行约束真源为 `architecture_model/cross_cutting/invariants.yaml` + `trae_*.yaml` 规则 + commit gates。

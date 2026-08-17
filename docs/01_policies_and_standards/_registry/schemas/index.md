@@ -26,7 +26,7 @@ updated: "2026-06-22"
 
 ## 排除规则（不应放入本目录的内容）
 
-- ❌ 手动编辑的文件 → `docs/02_enterprise_architecture/` 或 `docs/08_knowledge/`
+- ❌ 手动编辑的文件 → `docs/02_enterprise_architecture/`（知识条目走 KB 知识库/KE 管线，docs/08_knowledge/ 已退役）
 
 ## 父级目录
 

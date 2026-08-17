@@ -3,15 +3,15 @@ module_id: PS-IDX-001
 title: 规则体系总索引
 doc_type: index
 status: active
-version: "2.1.0"
+version: "2.2.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-06-26"
+date: "2026-08-17"
 ttl: permanent
-summary: "01_policies_and_standards/ 的顶层导航入口。v2.1.0：P0 审查修复——§4.1 冷启动路径接入 trae_060 向内收三原则，目录树补全 058/059/060，修正规则计数 48→60。"
+summary: "01_policies_and_standards/ 的顶层导航入口。v2.2.0：AI-17 审计治本——规则计数 60→84（补 trae_061~084），catalogs/contracts/vocabularies 实测计数更正，补 sop/ 目录，修正术语表引用（terminology_glossary.yaml），功能域计数 39→82 实测。"
 tags: [index, root, navigation, policies-and-standards]
 rule_form: declarative
 scope: global
@@ -21,7 +21,7 @@ verifiability: manual
 
 # 规则体系总索引
 
-> **module_id**: PS-IDX-001 | **version**: 2.0.0 | **status**: active
+> **module_id**: PS-IDX-001 | **version**: 2.2.0 | **status**: active
 
 本文件是 `01_policies_and_standards/` 的顶层导航入口。**新 AI session 的第一站**——读完此文件即理解整个规则体系的全貌。
 
@@ -33,7 +33,7 @@ verifiability: manual
 
 ```
 01_policies_and_standards/
-├── rules/                       ← 规则文件唯一真源（60 个 trae_*.yaml）
+├── rules/                       ← 规则文件唯一真源（84 个 trae_*.yaml + index.md）
 │   ├── trae_001_file_operation_security.yaml       ← 文件操作安全（RULE-ZERO~FOUR）
 │   ├── trae_002_anti_orphan_search_first.yaml      ← 搜索先行（RULE-EIGHT）
 │   ├── trae_003_task_granularity_threshold.yaml    ← 任务粒度（RULE-SIX）
@@ -64,30 +64,60 @@ verifiability: manual
 │   ├── trae_057_ai_consumer_first.yaml             ← AI消费优先原则
 │   ├── trae_058_depgraph_scan_exclusions.yaml      ← 全景图扫描排除
 │   ├── trae_059_schema_version_write_protection.yaml ← schema_version写保护
-│   └── trae_060_inward_consolidation.yaml          ← 向内收三原则（顶层统辖）
+│   ├── trae_060_inward_consolidation.yaml          ← 向内收三原则（顶层统辖）
+│   ├── trae_061_decisiongraph_access_protocol.yaml ← 决策图访问协议
+│   ├── trae_062_ssot_classification.yaml           ← SSoT 分类铁律
+│   ├── trae_063_data_ops_discipline.yaml           ← 数据运维纪律
+│   ├── trae_064_git_call_budget.yaml               ← git 调用预算
+│   ├── trae_065_capability_lookup_required.yaml    ← 能力反查强制（CAPABILITY-LOOKUP）
+│   ├── trae_066_rule_seventeen_runcommand_purity.yaml ← RULE-17 RunCommand 纯度
+│   ├── trae_067_window_flash_discipline.yaml       ← 窗口闪烁纪律
+│   ├── trae_068_preventability_layer.yaml          ← 可预防性分层
+│   ├── trae_069_commit_gateway_abuse_thresholds.yaml ← 提交网关滥用阈值
+│   ├── trae_070_temporary_file_placement.yaml      ← 临时文件落位
+│   ├── trae_071_temporary_file_lifecycle.yaml      ← 临时文件生命周期
+│   ├── trae_072_cross_commit_atomicity.yaml        ← 跨提交原子性
+│   ├── trae_073_precommit_offline_discipline.yaml  ← pre-commit 离线纪律
+│   ├── trae_074_worktree_base_freshness.yaml       ← worktree 基线新鲜度
+│   ├── trae_075_stash_lifecycle.yaml               ← stash 生命周期
+│   ├── trae_076_worktree_commit_persistence.yaml   ← worktree 提交持久化
+│   ├── trae_077_capability_lookup_scene_classify.yaml ← 能力反查场景分类
+│   ├── trae_078_force_merge_safety.yaml            ← 强制合并安全
+│   ├── trae_079_commit_serialization.yaml          ← 提交串行化
+│   ├── trae_080_panorama_alignment.yaml            ← 五图对齐铁律
+│   ├── trae_081_audit_dimensions_framework.yaml    ← 审计审查维度框架
+│   ├── trae_082_symbol_convention.yaml             ← 符号约定
+│   ├── trae_083_design_intent_source_discipline.yaml ← 设计意图来源纪律
+│   └── trae_084_precommit_incremental_discipline.yaml ← pre-commit 增量纪律
 │
 ├── _registry/                   ← 注册表 + 验证契约（机器可读）
-│   ├── catalogs/                ← 集中注册表（26 个 YAML/MD）
+│   ├── catalogs/                ← 集中注册表（64 个登记表 YAML + _index.yaml + index.md）
 │   │   ├── registry_master_index.yaml             ← 注册表总索引（自动生成）
-│   │   ├── gate_registry.yaml                      ← 门禁注册表
-│   │   ├── functional_domain_registry.yaml         ← 功能域注册表（43域）
+│   │   ├── gate_registry.yaml                      ← 门禁注册表（自动生成）
+│   │   ├── functional_domain_registry.yaml         ← 功能域注册表（82 域实测）
+│   │   ├── architecture_issue_registry.yaml        ← 架构议题登记表（#ARCH-*）
+│   │   ├── candidate_module_registry.yaml          ← 候选模块登记表（CAND-*）
+│   │   ├── capability_canonical_file_registry.yaml ← 能力→真源文件反查（含 creation_tokens）
+│   │   ├── module_translation_registry.yaml        ← 模块中英文翻译 SSoT（含 plain_zh）
+│   │   ├── terminology_glossary.yaml               ← 术语表（仲裁源）
 │   │   ├── frontmatter_field_registry.yaml         ← frontmatter 字段注册表
-│   │   ├── rule_catalog_registry.yaml              ← 规则目录注册表
-│   │   └── ...（其余 19 个 catalog 文件）
-│   ├── contracts/               ← 架构合规契约
+│   │   ├── rule_catalog_registry.yaml              ← 规则目录注册表（自动生成）
+│   │   └── ...（其余 54 个 catalog 文件 + _archive/）
+│   ├── contracts/               ← 架构合规契约（5 个 + index.md）
 │   │   ├── architecture_contract.yaml              ← 架构合规自动验证契约
 │   │   ├── contract_mapping_table.yaml             ← 契约映射表
+│   │   ├── data_retention_contract.yaml            ← 数据留存契约
+│   │   ├── directory_contract.yaml                 ← 目录契约
 │   │   └── model_capability_contract.yaml          ← 模型能力契约
-│   ├── schemas/                 ← JSON Schema 定义
+│   ├── schemas/                 ← Schema 定义（2 个 + index.md）
 │   │   ├── frontmatter_schema.json                 ← frontmatter 字段校验 Schema
 │   │   └── session_log_schema.yaml                 ← 会话日志 Schema
-│   └── vocabularies/            ← 受控词表（29 个）
-│       ├── glossary.yaml                           ← 术语表（仲裁源）
+│   └── vocabularies/            ← 受控词表（39 个 + index.md）
 │       ├── terminology_mapping.yaml                ← 术语映射表
 │       ├── doc_type_vocabulary.yaml                ← 文档类型受控枚举
 │       ├── domain_vocabulary.yaml                  ← 域受控枚举
 │       ├── layer_vocabulary.yaml                   ← 层级受控枚举
-│       └── ...（其余 20 个 vocabulary 文件）
+│       └── ...（其余 35 个 vocabulary 文件）
 │
 │
 ├── policies/                   ← 策略文件（3 个）
@@ -95,7 +125,12 @@ verifiability: manual
 │   ├── branch_strategy_policy.md                   ← 分支策略（单一主分支模型）
 │   └── workspace_governance_policy.md              ← 工作区治理规则
 │
-└── templates/                   ← 文档模板（10 个标准模板，含 index.md）
+├── sop/                        ← 标准作业流程（3 个）
+│   ├── construction_workflow_sop.md                ← 施工工作流 SOP
+│   ├── merge_conflict_resolution_sop.md            ← 合并冲突解决 SOP
+│   └── worktree_cleanup_sop.md                     ← worktree 清理 SOP
+│
+└── templates/                   ← 文档模板（9 个标准模板 + index.md）
     ├── blueprint_construction_template.md          ← 蓝图 + 施工指引统一模板
     ├── dependency_graph_template.md                ← 依赖图模板
     ├── playbook_runbook.md                         ← 操作手册模板
@@ -114,11 +149,13 @@ verifiability: manual
 
 | 子目录 | 职责 | 管辖文件数 | 索引入口 |
 |--------|------|:---------:|---------|
-| `rules/` | 规则文件唯一真源——60 个 trae_*.yaml（涵盖文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略） | 60 | [rule_catalog_registry.yaml](_registry/catalogs/rule_catalog_registry.yaml) |
-| `_registry/` | 注册表+契约+Schema+词表——4 个子目录 | 56 | [_registry/index.md](_registry/index.md) |
+| `rules/` | 规则文件唯一真源——84 个 trae_*.yaml（涵盖文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略/SSoT/提交治理/五图对齐） | 85 | [rule_catalog_registry.yaml](_registry/catalogs/rule_catalog_registry.yaml) |
+| `_registry/` | 注册表+契约+Schema+词表——4 个子目录（catalogs 67 + contracts 6 + schemas 3 + vocabularies 40 + index.md） | 117 | [_registry/index.md](_registry/index.md) |
+| `policies/` | 策略文件——并行协调/分支/工作区治理 | 3 | 本目录直接导航 |
+| `sop/` | 标准作业流程——施工/冲突解决/worktree 清理 | 3 | 本目录直接导航 |
 | `templates/` | 文档模板——9 个标准模板 + index.md | 10 | [templates/index.md](templates/index.md) |
 
-> **合计**：3 个子目录，115 个文件。
+> **合计**：5 个子目录，218 个文件（含本 index.md 共 219）。
 > **历史变更**：`meta/` 目录已于 2026-06 删除，规则文件合并至 `rules/`；`governance/`、`operational/`、`domains/` 目录已删除，内容合并至 `rules/` 对应 trae_*.yaml 文件。
 
 ---
@@ -131,7 +168,7 @@ verifiability: manual
 
 | 类别 | 存放位置 | 说明 |
 |------|---------|------|
-| **规则文件** | `rules/` | 60 个 trae_*.yaml——文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略 |
+| **规则文件** | `rules/` | 84 个 trae_*.yaml——文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略/SSoT/提交治理 |
 | **机器注册表** | `_registry/` | 自动索引、受控词表、验证契约、Schema |
 | **文档模板** | `templates/` | 新建文件的起点 |
 
@@ -144,7 +181,7 @@ verifiability: manual
 | 企业架构视图（TOGAF） | 架构模型不是规则 | `docs/02_enterprise_architecture/` |
 | 架构决策记录（KB 决策记录） | 架构决策不是规则标准；凭证真源为 KB | **`KB:decisions`**（Git-backed） |
 | 模块生命周期文档 | 蓝图+施工图+交付 | `docs/03_modules/` |
-| 知识库条目 | 经验积累不是规则 | `docs/08_knowledge/` |
+| 知识库条目 | 经验积累不是规则 | **KB 知识库**（KE 管线检索；索引=`_registry/catalogs/knowledge_article_registry.yaml`；docs/08_knowledge/ 已退役） |
 | 审计报告 | 事后评估不是规则 | `docs/_working/audit/` |
 | 业务代码 | 可执行代码 | `src/zephyr/` |
 | 治理/审计脚本 | 工具不是规则 | `scripts/governance/` / `scripts/audit/` |
@@ -165,6 +202,7 @@ verifiability: manual
 | trae_031-035 | 安全+模块+任务 | 密钥/生命周期/注册/任务卡 |
 | trae_036-039 | 架构门控+幻觉检测 | 门控/版本/注入/检测 |
 | trae_040-060 | AI路由+元规则+运维+域策略+向内收 | 21 个规则文件（含 058 扫描排除/059 schema保护/060 向内收三原则） |
+| trae_061-084 | SSoT+数据运维+提交治理+五图对齐+审计框架 | 24 个规则文件（062 SSoT分类/065 能力反查/070-071 临时文件/072 跨提交原子性/079 提交串行化/080 五图对齐/081 审计维度框架/084 pre-commit 增量纪律等） |
 
 ---
 
@@ -197,12 +235,16 @@ verifiability: manual
 
 | 注册表 | 路径 | 用途 |
 |--------|------|------|
-| **注册表之注册表** | [_registry/catalogs/registry_consistency_contract.yaml](_registry/catalogs/registry_consistency_contract.yaml) | 48 个注册表总索引 |
-| **门禁注册表** | [_registry/catalogs/gate_registry.yaml](_registry/catalogs/gate_registry.yaml) | 全部门禁清单 |
-| **功能域注册表** | [_registry/catalogs/functional_domain_registry.yaml](_registry/catalogs/functional_domain_registry.yaml) | 39 域清单 |
+| **注册表之注册表（ROOR）** | [../registry_of_registries.yaml](../registry_of_registries.yaml) | 全项目注册表中央索引（73 项登记实测） |
+| **注册表一致性契约** | [_registry/catalogs/registry_consistency_contract.yaml](_registry/catalogs/registry_consistency_contract.yaml) | 跨登记表一致性校验契约 |
+| **门禁注册表** | [_registry/catalogs/gate_registry.yaml](_registry/catalogs/gate_registry.yaml) | 全部门禁清单（自动生成） |
+| **功能域注册表** | [_registry/catalogs/functional_domain_registry.yaml](_registry/catalogs/functional_domain_registry.yaml) | 82 域清单（实测） |
+| **架构议题登记表** | [_registry/catalogs/architecture_issue_registry.yaml](_registry/catalogs/architecture_issue_registry.yaml) | #ARCH-* 议题/决策/技术债登记 |
+| **候选模块登记表** | [_registry/catalogs/candidate_module_registry.yaml](_registry/catalogs/candidate_module_registry.yaml) | CAND-* 功能/增强候选登记 |
+| **能力反查注册表** | [_registry/catalogs/capability_canonical_file_registry.yaml](_registry/catalogs/capability_canonical_file_registry.yaml) | capability→真源文件反查 + creation_tokens |
 | **架构契约** | [_registry/contracts/architecture_contract.yaml](_registry/contracts/architecture_contract.yaml) | 架构合规自动验证契约 |
 | **frontmatter Schema** | [_registry/schemas/frontmatter_schema.json](_registry/schemas/frontmatter_schema.json) | frontmatter 字段校验 Schema |
-| **术语表** | [_registry/vocabularies/glossary.yaml](_registry/catalogs/terminology_glossary.yaml) | 术语仲裁源 |
+| **术语表** | [_registry/catalogs/terminology_glossary.yaml](_registry/catalogs/terminology_glossary.yaml) | 术语仲裁源 |
 | **doc_type 词表** | [_registry/vocabularies/doc_type_vocabulary.yaml](_registry/vocabularies/doc_type_vocabulary.yaml) | 文档类型受控枚举 |
 | **domain 词表** | [_registry/vocabularies/domain_vocabulary.yaml](_registry/vocabularies/domain_vocabulary.yaml) | 域受控枚举 |
 
@@ -212,6 +254,7 @@ verifiability: manual
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
+| 2.2.0 | 2026-08-17 | AI-17 审计治本修复。(1) 规则计数 60→84 实测更正（目录树补 trae_061~084 全量 24 条+§3.1/§3.3 同步）。(2) catalogs 计数 26→64 登记表 YAML 实测更正（补 architecture_issue/candidate_module/capability_canonical/module_translation/terminology_glossary 等关键条目导航）。(3) contracts 3→5（补 data_retention/directory）。(4) vocabularies 29→39 实测更正，删除不存在的 vocabularies/glossary.yaml 引用（术语表真源= catalogs/terminology_glossary.yaml）。(5) 补 sop/ 目录（此前整目录缺失于索引）。(6) §二表补 policies/sop 行，合计更正为 5 子目录 219 文件。(7) §五功能域 39→82 实测更正，新增 ROOR（docs/registry_of_registries.yaml，73 项登记实测）行。(8) 正文 version 2.0.0 与 frontmatter 不一致修正。 |
 | 2.1.0 | 2026-06-26 | P0 审查修复。(1) §4.1 冷启动路径加入 trae_060（向内收三原则）作为第 2 步必读真源，与 `.trae/rules/project_rules.md` 第二原则对称接入。(2) 目录树补全 058/059/060。(3) 修正"48 个 trae_*.yaml"为"60 个"（3 处）+ 管辖文件数 49→61。(4) 分类体系表 040-057→040-060。对齐 trae_060 §2 唯一真源与 §4 新AI可发现性。 |
 | 2.0.0 | 2026-06-22 | 架构升级对齐。(1) 删除 meta/ 目录引用（已物理删除，规则合并至 rules/）。(2) 删除 governance/、operational/、domains/ 目录引用（已删除，内容合并至 rules/）。(3) 新增 rules/ 目录（60 个 trae_*.yaml）。(4) 更新 _registry/ 文件数（catalogs 24 + contracts 3 + schemas 3 + vocabularies 25 = 55）。(5) 统一下划线命名（doc_type_vocabulary.yaml → doc_type_vocabulary.yaml 等）。(6) 移除14层引用（D19/D21 裁定：14层降级为域属性）。 |
 | 1.4.0 | 2026-05-04 | 审计修复。meta/ 下已迁移文件注释行删除；文件数全面更新。 |
