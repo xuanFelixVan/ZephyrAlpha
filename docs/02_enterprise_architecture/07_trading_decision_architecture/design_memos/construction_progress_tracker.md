@@ -301,25 +301,25 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
 | 101 | 53 号 §3.8 五态降级机（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING）裁定落点与代码不符 | 独立复核实证（2026-08-16） | 53 号 v1.7.7 修订记录称"降级维度真源=§3.8 五态（落地 rollback_state_machine.py）"，实测该文件为回滚步骤编排机（RollbackStep/StepStatus），五态枚举 src 全仓零命中；晋级迁移 FSM 已经 Owner 裁定方案 C 废弃（不另建，阶段维度真源=paper_live_transition 三阶段门禁）；53 号结案报告已按实测修正 | ✅ 已闭环（2026-08-17 AI-DGR-001 派单施工，[GW:AI-DGR-001]）：governance/lifecycle_governance/rollback_state_machine.py 新建（MOD-GOV-045，§3.8 伪代码逐行落码——单向更保守/fail-closed/Hysteresis/≥30 笔地板/JsonStateStore 持久化）+ paper_live_transition.py check_promotion_allowed 晋级前置 NORMAL 耦合点；57 新测试两轮全绿+既有 28 项零回归；#ARCH-QUANT-003 resolved；53 号 v1.7.8 锚点全同步 |
-| 102 | regime_detector.py 文件头 MATURITY=design vs 蓝图 design_maturity=production 不一致 | 独立复核实证（2026-08-16） | 文件级标记与模块级状态（_domain_regime/regime_detector/blueprint.md L7=production）矛盾；C1/Phase 2 均已通过且检测器在数据流实际运行，以蓝图为准，文件头标记待对齐 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
+| 102 | regime_detector.py 文件头 MATURITY=design vs 蓝图 design_maturity=production 不一致 | 独立复核实证（2026-08-16） | 文件级标记与模块级状态（_domain_regime/regime_detector/blueprint.md L7=production）矛盾；C1/Phase 2 均已通过且检测器在数据流实际运行，以蓝图为准，文件头标记待对齐 | ✅ 已闭环（2026-08-17 AI-GOVB-001，4078c7d757：主文件实证已 production（前批已修）；同域核对 12 文件同类漂移（MOD-REGIME-002×11+MOD-REGIME-005×1）design→production 对齐；VAL-002 八文件锚定设计备忘无 production 声明，design 合法保留） |
 | 103 | tests/git test_git_command_timeout_handled 环境敏感失败 | 独立复核实证（2026-08-16） | 测试期望 git 命令超时返回 COMMIT_FAILED，本机执行过快未触发超时致断言失败（148 过/1 失败/1 xpassed）；非功能缺陷，属测试环境假设缺陷 | ⏳ 观察（换机/负载变化时再评估） |
 
 ### P1-补6 · 2026-08-17 AI-RFIX-001 登记（第六统筹并入，承接方已甄别）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 105 | D9 文档漂移：stop_loss.py 头注+35 号"已施工"措辞 vs 生产零调用 | AI-RFIX-001 反馈⑤ | 按避让纪律原拟移交 RWIRE-001 接线批一并修正——RWIRE-001 已 merge 完工（2b3b68b5d2），承接方改挂后续治理/接线批 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
-| 106 | memo 36 §3.10 动作 1-3 执行者"RiskOrchestrator"措辞与 RWIRE 落地 risk_layer_orchestrator.py（MOD-L06-001）命名对账 | AI-RFIX-001 反馈⑤ | memo 已标"禁止按可执行语气直读"（设计契约）；命名漂移对账+memo 措辞同步，后续批 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
+| 105 | D9 文档漂移：stop_loss.py 头注+35 号"已施工"措辞 vs 生产零调用 | AI-RFIX-001 反馈⑤ | 按避让纪律原拟移交 RWIRE-001 接线批一并修正——RWIRE-001 已 merge 完工（2b3b68b5d2），承接方改挂后续治理/接线批 | ✅ 已闭环（2026-08-17 AI-GOVB-001，4078c7d757：stop_loss.py [CONSUMERS] 补 MOD-L06-001；memo35 v1.39.3——§2.4④ RiskOrchestrator「无代码」→已建（落地名 RiskLayerOrchestrator）、§3.5.1 L1 行补生产接线对账（编排层已调用 stop_loss 两入口，trading_session 注入缝默认 None 未实例化，组合根装配待运行时装配批）） |
+| 106 | memo 36 §3.10 动作 1-3 执行者"RiskOrchestrator"措辞与 RWIRE 落地 risk_layer_orchestrator.py（MOD-L06-001）命名对账 | AI-RFIX-001 反馈⑤ | memo 已标"禁止按可执行语气直读"（设计契约）；命名漂移对账+memo 措辞同步，后续批 | ✅ 已闭环（2026-08-17 AI-GOVB-001，4078c7d757：memo36 v1.11.1——§3.10 执行者状态标注/组件状态表/「production 口径澄清」三处命名对账（落地名 RiskLayerOrchestrator MOD-L06-001，盘中编排已接线；§3.10 校准动作调用点未接入仍=设计契约），零语义变更） |
 | 107 | POT 连续 5 日失败→阈值调整升级计数器 | AI-RFIX-001 反馈⑤ | 需跨日持久化计数器，随 state_store 持久化批（REDIS-001 在途范围不含，归其后续批） | 🔵 已派单（AI-POT-001，2026-08-17） |
 | 108 | tests/risk/test_ml_experiment_pipeline.py::test_p_hacking_warning 既有失败 | AI-RFIX-001 反馈⑤+第六统筹实证 | dev HEAD 同败实证（'no_models' vs 'p_hacking_warning'），shim 模块 standalone 复现，与本批零依赖链；tests 域归后续测试债批 | 🔵 已派单（AI-TDEBT-002，2026-08-17） |
-| 109 | worktree 内 post-commit reconciler 状态文件未落盘（spawn 降级 WMI 路径） | AI-RFIX-001 反馈⑤+第六统筹实证 | #ARCH-105 同族病灶（WMI 降级 spawn 通道）；主仓通道健康实证——merge commit f8a14cf7 状态文件已落盘 .runtime/reconcile_reports/；归 #ARCH-105 专项一并治理 | 🔵 已派单（AI-GOVB-001 随批治理，2026-08-17） |
+| 109 | worktree 内 post-commit reconciler 状态文件未落盘（spawn 降级 WMI 路径） | AI-RFIX-001 反馈⑤+第六统筹实证 | #ARCH-105 同族病灶（WMI 降级 spawn 通道）；主仓通道健康实证——merge commit f8a14cf7 状态文件已落盘 .runtime/reconcile_reports/；归 #ARCH-105 专项一并治理 | ✅ 已闭环（2026-08-17 AI-GOVB-001，4078c7d757：复现坐实——WMI spawn 通道正常，三证拒启时 failed status 无条件 anchor_main_root 落主仓而 launch pending 在 worktree=split-brain（外部观测即「状态文件未落盘」）；治本=落点分诊（worktree 存活→failed 落 worktree 原位与 pending 同址，证1→落主仓原行为保留）+2 回归测试 10/10 绿；#ARCH-105 同族病灶本批收口） |
 
 ### P1-补7 · 2026-08-17 AI-DGR-001 登记（53 号 §3.8 五态降级机施工批）【编号注记：原登记 #105-#107 与 RFIX-001 已入 dev 的 #105-#109 撞号，merge 重编 #110-#112——2026-08-17 第六统筹】
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
 | 110 | MOD-GOV-045 rollback_state_machine depgraph 登记 | AI-DGR-001（原 #105） | NEW-FILE-DEPGRAPH 门禁强制：已登记 file 粒度节点（build_status=generated，design_maturity=design——pre-merge 正确态；#ARCH-70 通道 merge 后重扫自动同身份转 production，无需手工 transition）。⚠️ 教训实证：design_maturity 提前手工转 production 会被主仓锚定的后台重扫当孤儿收割（文件未上主仓盘），pre-merge 必须保持 design | ✅ 已闭环（2026-08-17 merge 后统筹全量重扫，该节点实证 stable+production） |
-| 111 | scaffold module 功能域 alias 门禁对裁定同名碰撞无逃生口 | AI-DGR-001 实证（原 #106） | `rollback_state_machine` 名含 alias "rollback"（D_GOV_REPAIR/MOD-INF-021 注册别名）被 SSoT 门禁硬阻断；Owner 派单已预先裁定同名巧合（#ARCH-QUANT-003），但 module 子命令无 --force-override（仅 script 子命令有）——本次按 dry-run 查重已过+module_path 唯一实证手工补登 creation_token 闭环。门禁增强（裁定通道/白名单）属 GOVA 治理域 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
+| 111 | scaffold module 功能域 alias 门禁对裁定同名碰撞无逃生口 | AI-DGR-001 实证（原 #106） | `rollback_state_machine` 名含 alias "rollback"（D_GOV_REPAIR/MOD-INF-021 注册别名）被 SSoT 门禁硬阻断；Owner 派单已预先裁定同名巧合（#ARCH-QUANT-003），但 module 子命令无 --force-override（仅 script 子命令有）——本次按 dry-run 查重已过+module_path 唯一实证手工补登 creation_token 闭环。门禁增强（裁定通道/白名单）属 GOVA 治理域 | ✅ 已闭环（2026-08-17 AI-GOVB-001，4078c7d757：module 子命令补 --force-override 裁定通道（与 script 同款并扩展——跳过功能域 alias 模糊匹配+蓝图关键词匹配；exact/module_path 冲突仍阻断不误放开；放行命中打印留痕）；check_overlap 加 skip_alias 参数；8 新测试，两轮 46/46 全绿） |
 | 112 | 五态降级机执行侧动作接线（撤单/阻断/减仓/平仓入交易运行时） | AI-DGR-001（原 #107） | 本批只产出姿态（FSM 永不生成/撤销订单）；执行动作消费方接线属 SHADOW 阶段施工（53 号 §3.6 表已同步标注"执行侧接线待施工"） | ⏳ 待 SHADOW 阶段 |
 
 ### P1-补8 · 2026-08-17 THD/LVL3 反馈遗留并入（第六统筹）
@@ -332,6 +332,15 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 117 | tick_subscriber 看门狗不覆盖"启动时 QMT 离线致标的解析 0 只"情形 | 2026-08-17 开盘实盘验证实证 | 08-16 18:57 启动时 QMT 未开→板块获取全失败→"订阅 0 只标的"；_biz_watchdog_loop L681 重订阅条件含 `self._symbols_resolved` 非空——标的为 0 时看门狗永不触发，活进程零采集静默 14h+（#ARCH-DATA-017 裁定E"预热后永久静默"的未覆盖边缘）；处置=杀进程 guard 自动拉起后秒级恢复（8035 只订阅+首 tick 2.4s）。建议：标的为 0 且盘中时段，看门狗应周期性重试 universe 解析+订阅（非仅对已有标的重订阅） | 🔵 已派单（AI-IPO-001，2026-08-17） |
 | 116 | fail-open 敞口治理方案（PG 离线 5 门禁静默放行） | AI-GOVA-001 交付物（docs/_working/reports/2026-08-17-fail-open-analysis.md） | **Owner 已裁定 B1+B2 全量**（2026-08-17，#ARCH-119）：AI-FOPEN-001 派单施工（4 gate 留痕接 log_gate_failure+PG 探针+FRESHNESS 离线豁免+verify_schema_health 优雅化） | ✅ 已 merge 闭环（2026-08-17 AI-00 总控 merge 8a872d0e59+续吸收 48ce3d93cb；fa25c19e49 实证已在 dev：18 文件 +4 gate 留痕/pg_probe.py 探针/FRESHNESS 24h 豁免/verify_schema_health exit 2 优雅化，红队四向量实证；merge 冲突 8 处全解+blueprint_registry 误删恢复+GATE-21 等门禁顺修；#ARCH-119 resolved。统筹会话反馈滞后，本次核验补登记） |
 
+
+### P1-补9 · 2026-08-17 AI-GOVB-001 登记（治理 B 包）
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 118 | scaffold.py 维度3 raise 内存量 Unicode 箭头（L950/957/960-963）及文档串多处 | AI-GOVB-001 提交实证 | MSG-STYLE 门禁只扫「已修改」行——本批 dedent 翻新的两个 raise 已顺手转 ASCII ->；维度3 raise（module_path 冲突消息）等未触及行仍存 →，下次触及必被门禁拦，顺手转 -> 即可 | ⏳ 下一治理批顺手修 |
+| 119 | 心跳 daemon idle>1800s 自退 × 证3 worker 拒启组合缺口 | AI-GOVB-001 复现+横幅实证 | session 末次活动 >30min 后 commit：daemon 已自退且心跳超 900s 宽限窗→worker 证3 拒启（今日 REGF/TDEBT/GOVB 三起实证+主仓 critical_warn 噪音）。#109 落点分诊已治本（failed 与 pending 同址），拒启本身=设计内 rogue 防护；但「daemon idle 1800s 自退」与「证3 宽限窗 900s」存在间隙期——间隙期 commit 必被拒，宽限窗/daemon idle 阈值对齐待裁定 | ⏳ 待裁定 |
+| 120 | lock_files.py CLI 防呆缺陷：--session 被当文件名 acquire | AI-GOVB-001 开工探测实证 | 全仓唯一活跃锁=AI-POT-001 持有字面量 --session（TTL 自灭无实害）——疑 cquire 少传位置参数时 --session 被当 file 落锁；CLI 防呆（-- 前缀文件名拒锁）待修 | ⏳ 下一治理批顺手修 |
+| 121 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量 | AI-GOVB-001 提交期横幅实证 | 2 条 GATE-WORKTREE-DRIFT-WATCHDOG（AI-FILL 域 implementation_plans 两文档漂移）+3 条 2026-08-16 PG 停服期 GATE-PANORAMA-ALIGNMENT 失败——均非本批引入；PG 类属 FOPEN-001 前历史且 PG 已恢复；漂移类供统筹知情 | ⏳ 观察 |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
