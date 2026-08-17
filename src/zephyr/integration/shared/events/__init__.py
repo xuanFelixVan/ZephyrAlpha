@@ -10,6 +10,8 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
+from typing import Final
+
 from zephyr.shared.events.dlq import DeadLetter, DeadLetterQueue, attach_dlq_to_observer
 from zephyr.integration.shared.events.dlq_bridge import DLQEventBridge, make_dlq_event_handler
 from zephyr.integration.shared.events.dlq_bridge import attach_dlq_to_observer as dlq_bridge_attach
@@ -24,7 +26,7 @@ from zephyr.integration.shared.events.event_schemas import (
 )
 from zephyr.integration.shared.events.upgrade_strategy import EventBusUpgrade, UpgradePlan, UpgradeStatus, UpgradeStep
 
-__all__ = [
+__all__: Final = [
     "EVENT_PAYLOAD_MAP",
     "DLQEventBridge",
     "DeadLetter",
@@ -42,7 +44,6 @@ __all__ = [
     "UpgradeStatus",
     "UpgradeStep",
     "attach_dlq_to_observer",
-    "dlq",
     "dlq_bridge",
     "dlq_bridge_attach",
     "event_schemas",

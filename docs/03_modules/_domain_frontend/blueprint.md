@@ -4,7 +4,7 @@ submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层"
 doc_type: blueprint
 status: Active
-version: "3.1.5"
+version: "3.4.0"
 layer: L3_application
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -13,11 +13,11 @@ created_by: human_plus_agent
 date: "2026-05-05"
 ttl: permanent
 actual_disk_path: "src/zephyr/frontend/"
-last_updated: "2026-07-05"
-last_verified: "2026-07-05"
+last_updated: "2026-08-17"
+last_verified: "2026-08-17"
 generation: 2
 functional_domain: interface
-summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。v3.0.0(#ARCH-047)技术栈切换: Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; ChartFactory图表统一工厂(callback仅编排); 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)已迁移至Panel+HoloViz。v3.1.0(#ARCH-047): 5个旧Streamlit页面(fitness_functions/gate_statistics/knowledge_overview/olap_trend/task_progress)迁移至Panel; 新建app_panel.py主应用入口(pn.Tabs组装10个Tab); ChartFactory新增make_gate_chart/make_trend_line; 仪表盘可运行(panel serve --show)。"
+summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。v3.0.0(#ARCH-047)技术栈切换: Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; ChartFactory图表统一工厂(callback仅编排); 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)已迁移至Panel+HoloViz。v3.1.0(#ARCH-047): 5个旧Streamlit页面(fitness_functions/gate_statistics/knowledge_overview/olap_trend/task_progress)迁移至Panel; 新建app_panel.py主应用入口(pn.Tabs组装10个Tab); ChartFactory新增make_gate_chart/make_trend_line; 仪表盘可运行(panel serve --show)。v3.4.0(51号工作流B): 新增「实验历史」Tab(experiment_history.py, C1回测历史+双净值对比, MLflow退役后单一JSON源), app_panel扩至11 Tab。"
 tags: [human-ai-interface, l08, dashboard, panel, holoviz, plotly, notification, approval, backtest-visualization, real-trading-panel]
 priority: P1
 runtime_plane: warm
@@ -68,11 +68,12 @@ build_status: generated
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
 > 当前 construction_progress = partially_implemented，可继续业务代码实现。
 
-> module_id: MOD-L08-001 | version: 3.1.5 | status: active | domain: frontend
+> module_id: MOD-L08-001 | version: 3.4.0 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: partially_implemented
 > v2.2.0新增: 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel), 对接D_BACKTEST/D_EX_CORE/D_DATA, 支持joinquant/Qbot风格仪表盘+实盘交易面板
 > v3.0.0(#ARCH-047): Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; 新增ChartFactory(callback仅编排); 5组件已迁移
 > v3.1.0(#ARCH-047): 5旧页面迁移至Panel; 新建app_panel.py主入口(pn.Tabs 10 Tab); ChartFactory新增make_gate_chart/make_trend_line; 仪表盘可运行
+> v3.4.0(51号工作流B): 新增「实验历史」Tab(experiment_history.py, C1回测历史+双净值对比, MLflow退役后单一JSON源); app_panel扩至11 Tab
 
 # Human Machine Interface Core 蓝图+施工图 — 人机交互层
 
@@ -131,7 +132,8 @@ build_status: generated
 | 11 | dashboard/components/position_monitor.py | §16.7.4 | **v3.0.0迁移** 实盘持仓监控(可用/冻结/当日买入/未实现盈亏) | 已实现 |
 | 12 | dashboard/components/trade_panel.py | §16.7.5 | **v3.0.0迁移** 实盘交易面板(下单表单/订单列表/撤单/风控提示) | 已实现 |
 | 13 | dashboard/components/chart_factory.py | §3.1 | **v3.0.0新增** 图表统一工厂(make_equity/make_drawdown/make_kline/make_tick/make_heatmap/make_orderbook/make_position/make_orderflow + v3.1.0 make_gate_chart/make_trend_line) | 已实现 |
-| 14 | dashboard/app_panel.py | §3.1 | **v3.1.0新增** Panel 主应用入口(pn.Tabs组装10 Tab, pn.serve+.servable) | 已实现 |
+| 14 | dashboard/app_panel.py | §3.1 | **v3.1.0新增** Panel 主应用入口(pn.Tabs组装11 Tab, pn.serve+.servable; v3.4.0新增实验历史Tab) | 已实现 |
+| 15 | dashboard/components/experiment_history.py | §3.1 | **v3.4.0新增** 实验历史组件(C1回测历史列表+多选横向对比+双净值对比视图, MLflow退役后单一JSON源) | 已实现 |
 
 ### §0.2 对齐验证矩阵
 
@@ -152,6 +154,7 @@ build_status: generated
 | v2.2.0 (交易/回测组件规划) | 同 v2.1.0 | DefaultNotificationManager, DefaultApprovalGateway, 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel) | 规划5个新组件规格(§16.7.1~§16.7.5), 对接D_BACKTEST/D_EX_CORE/D_DATA, 待施工 |
 | v3.0.0 (Panel技术栈切换) | 同 v2.1.0 + 5个交易/回测组件迁移 + ChartFactory | DefaultNotificationManager, DefaultApprovalGateway | #ARCH-047: Streamlit→Panel+HoloViz+Plotly+plotly_resampler; 5组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)迁移; 新增ChartFactory(8工厂方法) |
 | v3.1.0 (仪表盘可运行化) | 同 v3.0.0 + 5旧页面迁移 + app_panel主入口 | DefaultNotificationManager, DefaultApprovalGateway | #ARCH-047: 5旧Streamlit页面(fitness_functions/gate_statistics/knowledge_overview/olap_trend/task_progress)迁移至Panel; 新建app_panel.py主入口(pn.Tabs 10 Tab); ChartFactory新增make_gate_chart/make_trend_line |
+| v3.4.0 (实验历史Tab) | 同 v3.1.0 + experiment_history组件 + app_panel 11 Tab | DefaultNotificationManager, DefaultApprovalGateway | 51号工作流B: 新增experiment_history.py(C1回测历史+多选横向对比+双净值对比, MLflow退役后单一JSON源); app_panel扩至11 Tab |
 
 ---
 
@@ -287,7 +290,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 1 | DashboardBase | 面板 OCP 扩展点（render/refresh） | — | 同步调用 |
 | 2 | NotificationManagerBase | 通知 OCP 扩展点（send/channels） | — | 同步调用 |
 | 3 | ApprovalGatewayBase | 审批 OCP 扩展点（submit/decide/pending） | — | 同步调用 |
-| 4 | DashboardPanelApp | Panel 主应用入口 (v3.1.0新建, #ARCH-047; 旧 DashboardApp 在 app.py 已弃用) | 10组件+ChartFactory | 组合 |
+| 4 | DashboardPanelApp | Panel 主应用入口 (v3.1.0新建, #ARCH-047; 旧 DashboardApp 在 app.py 已弃用) | 11组件+ChartFactory | 组合 |
 | 5 | Dashboard 组件(5 个, v2.1.0) | 独立可渲染面板 | DashboardApp | 组合 |
 | 6 | Notification | 通知消息 dataclass | — | 数据传递 |
 | 7 | ApprovalRequest | 审批请求 dataclass | — | 数据传递 |
@@ -297,7 +300,8 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 11 | **position_monitor** (v3.0.0) | 实盘持仓监控组件 | D_EX_CORE MiniQmtBroker | fetch+render |
 | 12 | **trade_panel** (v3.0.0) | 实盘交易面板组件 | D_EX_CORE ExecutionEngine | submit+render |
 | 13 | **ChartFactory** (v3.0.0, v3.1.0扩展) | 图表统一工厂(make_equity/make_drawdown/make_kline/make_tick/make_heatmap/make_orderbook/make_position/make_orderflow + v3.1.0新增 make_gate_chart/make_trend_line) | HoloViews/Plotly/plotly_resampler | 工厂模式 |
-| 14 | **app_panel** (v3.1.0) | Panel主应用入口(pn.Tabs组装10 Tab, pn.serve+.servable) | 10组件+ChartFactory | 组合 |
+| 14 | **app_panel** (v3.1.0) | Panel主应用入口(pn.Tabs组装11 Tab, pn.serve+.servable; v3.4.0新增实验历史Tab) | 11组件+ChartFactory | 组合 |
+| 15 | **experiment_history** (v3.4.0) | 实验历史组件(C1回测历史列表+多选横向对比+双净值对比视图) | experiment_tracking FallbackBackend JSON | fetch+render |
 
 ### 3.2 数据流
 
@@ -1180,6 +1184,7 @@ def render_trade_panel(data: TradePanelData) -> None:
 | v2.2.0 | 2 | 交易/回测组件规划 | 新增5个交易/回测组件规格(§16.7.1~§16.7.5)+对接D_BACKTEST/D_EX_CORE/D_DATA | ⚠️(规格已就绪, 代码待施工) |
 | v3.0.0 | 3 | 技术栈切换(#ARCH-047) | Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts(HTML Pane+原生JS); 新增ChartFactory(make_equity/drawdown/kline/tick/heatmap/orderbook/position/orderflow); callback仅编排约束; Datashader阈值触发(>50万点); 5组件迁移完成(backtest_results/tick_replay/order_book/position_monitor/trade_panel) | ✅(代码已施工, 2026-07-05) |
 | v3.1.0 | 3 | 仪表盘可运行化(#ARCH-047) | 5个旧Streamlit页面(fitness_functions/gate_statistics/knowledge_overview/olap_trend/task_progress)迁移至Panel; 新建app_panel.py主应用入口(pn.Tabs组装10 Tab); ChartFactory新增make_gate_chart/make_trend_line; 仪表盘可运行(panel serve --show) | ✅(代码已施工, 2026-07-05) |
+| v3.4.0 | 3 | 实验历史Tab(51号工作流B) | 新增experiment_history.py(C1回测历史列表+多选横向对比+双净值对比视图, MLflow退役后单一JSON源); app_panel扩至11 Tab | ✅(代码已施工, 2026-08-17) |
 
 ### 升级组件清单
 
@@ -1197,7 +1202,8 @@ def render_trade_panel(data: TradePanelData) -> None:
 | **knowledge_overview** (v3.1.0) | — | knowledge_overview.py | Phase 2.5 | ✅v3.1.0已迁移(Panel) |
 | **olap_trend** (v3.1.0) | — | olap_trend.py | Phase 2.5 | ✅v3.1.0已迁移(Panel+ChartFactory.make_trend_line) |
 | **task_progress** (v3.1.0) | — | task_progress.py | Phase 2.5 | ✅v3.1.0已迁移(Panel) |
-| **app_panel** (v3.1.0) | — | app_panel.py | Phase 2.5 | ✅v3.1.0已迁移(Panel主入口, pn.Tabs 10 Tab) |
+| **app_panel** (v3.1.0) | — | app_panel.py | Phase 2.5 | ✅v3.1.0已迁移(Panel主入口, pn.Tabs 11 Tab, v3.4.0新增实验历史Tab) |
+| **experiment_history** (v3.4.0) | — | experiment_history.py | Phase 2.6 | ✅v3.4.0已施工(C1回测历史+双净值对比, MLflow退役后单一JSON源) |
 
 ---
 

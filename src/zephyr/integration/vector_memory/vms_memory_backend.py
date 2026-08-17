@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import logging
 import threading
+from typing import Final
 
 from zephyr.intelligence.model_evaluation._memory_backend import (
     InMemoryMemoryBackend,
@@ -52,7 +53,7 @@ from zephyr.intelligence.model_evaluation._memory_backend import (
 )
 from zephyr.integration.vector_memory.bridge_layer import TOPIC_TO_COLLECTION
 
-__all__ = ["TOPIC_TO_COLLECTION", "VMSMemoryBackend"]
+__all__: Final = ["TOPIC_TO_COLLECTION", "VMSMemoryBackend"]
 
 _logger = logging.getLogger(__name__)
 
