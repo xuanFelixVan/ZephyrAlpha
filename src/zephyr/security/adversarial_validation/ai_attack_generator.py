@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["AIAttackGenerator", "AttackGenerationError"]
 
-_REGISTRY_PATH: Path = Path(__file__).parent / "_scenario-registry.yaml"
+_REGISTRY_PATH: Path = Path(__file__).parent / "_scenario_registry.yaml"
 
 MUTATION_STRATEGIES: Final[list[str]] = [
     "payload_variation",

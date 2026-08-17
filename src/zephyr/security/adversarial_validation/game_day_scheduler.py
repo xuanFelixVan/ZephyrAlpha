@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §8.3 + §16 Phase 2b
 # [MODULE] zephyr.security.adversarial_validation.game_day_scheduler
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.security.adversarial_validation.game_day_runner
+# [DEPENDENCIES] zephyr.security.adversarial_validation.game_day_runner; zephyr.shared.io.paths
 # [CONSUMERS] cli.py; CI/CD workflow
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] Dual trigger: timer-based (daily/weekly/monthly) + webhook-based (git push -> per_commit); MUST NOT schedule overlapping game days
+# [INVARIANTS] 事件主触发(git push webhook->per_commit)+CI定时兜底(cron_daily/weekly/monthly由外部CI调用trigger); MUST NOT schedule overlapping game days; 状态文件锚定REPO_ROOT
 # [MODIFY-GUARD] Adding triggers MUST update _TRIGGER_MAP; scheduler state persisted to data/red_blue/scheduler-state.yaml
 # [STABILITY] evolving
 # [SAFETY] H
@@ -19,20 +19,21 @@ from __future__ import annotations
 
 import logging
 import os
-import threading
-import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import yaml
 
 from zephyr.security.adversarial_validation.game_day_runner import GameDayFrequency, GameDayRunner
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["GameDayScheduler", "ScheduleConflictError"]
 
-_STATE_PATH: Path = Path("data/red_blue/scheduler-state.yaml")
+# 锚定 REPO_ROOT（对齐同包 commit_trigger.py 范式；原 CWD 相对路径会在非仓根
+# 工作目录下派生第二状态文件——状态真源分裂）。
+_STATE_PATH: Path = REPO_ROOT / "data" / "red_blue" / "scheduler-state.yaml"
 # 5.79.2 修复：原模块级 os.makedirs 在 import 时执行，在只读文件系统/受限沙箱中 import 直接抛 PermissionError。
 # 延迟到 GameDayScheduler.__init__ 中创建。
 
@@ -62,23 +63,28 @@ class ScheduleConflictError(RuntimeError):
 
 
 class GameDayScheduler:
+    """游戏日调度状态机（事件主触发 + CI 定时兜底）。
+
+    触发模型（原则②创造必全自动）：
+      - 主触发=事件：git push webhook → handle_webhook("push") → trigger("git_push")
+        （事件入口真源=同包 commit_trigger.py）。
+      - 兜底=CI 定时：外部 CI 定期 job 调用 trigger("cron_daily"/"cron_weekly"/
+        "cron_monthly")；should_run/next_scheduled 仅做到期判定，不含任何进程内
+        定时循环（2026-08-17 治本删除 auto_start sleep-loop 守护与 flag-only
+        幽灵事件订阅面——前者属原则②禁止的进程内定时调度器，后者伪装已接线
+        构成幻觉源；Phase 2b 事件订阅须按 tests/safety 两 skip 文件的
+        EventBus 契约施工并注册 boot_hooks）。
+    """
+
     def __init__(
         self,
         state_path: Path | None = None,
-        enable_event_subscription: bool = False,
     ) -> None:
         self._state_path: Path = state_path or _STATE_PATH
         # 5.79.2 修复：延迟到 __init__ 创建目录，避免 import 时副作用。
-        os.makedirs("data/red_blue", exist_ok=True)
+        os.makedirs(self._state_path.parent, exist_ok=True)
         self._runner = GameDayRunner()
         self._state: dict = self._load_state()
-        # auto_start 守护线程状态（Stage 4 公共化，primary 为公共 property）
-        self._auto_start_thread: threading.Thread | None = None
-        self._auto_start_running: bool = False
-        self._auto_start_lock = threading.Lock()
-        # event subscription 状态（Stage 4 公共化，primary 为公共 property）
-        self._event_subscribed: bool = False
-        self._enable_event_subscription: bool = enable_event_subscription
 
     # ── Stage 4 公共化（2026-07-28）：properties + 公共方法 ──
     # 消除 tests/safety/test_game_day_scheduler.py 中 68 处私有成员访问。
@@ -102,119 +108,6 @@ class GameDayScheduler:
     def state_path(self, value):
         """写入：state_path（Stage 4 公共化）。"""
         self._state_path = value
-
-    # ── auto_start 公共 API（Stage 4 公共化，primary） ──
-
-    @property
-    def auto_start_thread(self) -> threading.Thread | None:
-        """只读：auto_start_thread（Stage 4 公共化）。"""
-        return self._auto_start_thread
-
-    @auto_start_thread.setter
-    def auto_start_thread(self, value):
-        """写入：auto_start_thread（Stage 4 公共化）。"""
-        self._auto_start_thread = value
-
-    @property
-    def auto_start_running(self) -> bool:
-        """读写：auto_start 守护线程运行标志（Stage 4 公共化）。"""
-        return self._auto_start_running
-
-    @auto_start_running.setter
-    def auto_start_running(self, value: bool) -> None:
-        self._auto_start_running = value
-
-    @property
-    def event_subscribed(self) -> bool:
-        """读写：事件订阅状态（Stage 4 公共化）。"""
-        return self._event_subscribed
-
-    @event_subscribed.setter
-    def event_subscribed(self, value: bool) -> None:
-        self._event_subscribed = value
-
-    def is_auto_start_running(self) -> bool:
-        """查询 auto_start 守护线程是否正在运行（Stage 4 公共化，primary）。"""
-        return self._auto_start_running
-
-    def auto_start(self, interval_seconds: int = 86400) -> bool:
-        """启动 auto_start 守护线程（Stage 4 公共化，primary）。
-
-        Args:
-            interval_seconds: 循环间隔秒数，默认 86400（每天）。
-
-        Returns:
-            True 表示启动成功；False 表示已有守护线程在运行。
-        """
-        with self._auto_start_lock:
-            if self._auto_start_running:
-                return False
-            self._auto_start_running = True
-            thread = threading.Thread(
-                target=self.auto_start_loop,
-                args=(interval_seconds,),
-                name="GameDayAutoStart",
-                daemon=True,
-            )
-            self._auto_start_thread = thread
-            thread.start()
-            return True
-
-    def auto_stop(self) -> bool:
-        """停止 auto_start 守护线程（Stage 4 公共化，primary）。
-
-        Returns:
-            True 表示成功停止；False 表示原本就未运行。
-        """
-        with self._auto_start_lock:
-            if not self._auto_start_running:
-                return False
-            self._auto_start_running = False
-            self._auto_start_thread = None
-            return True
-
-    def auto_start_loop(self, interval_seconds: int) -> None:
-        """auto_start 守护线程循环体（Stage 4 公共化，primary）。
-
-        循环执行 trigger("cron_daily")，捕获异常后 sleep interval_seconds。
-        当 auto_start_running 为 False 时退出。
-        """
-        while self._auto_start_running:
-            try:
-                self.trigger("cron_daily")
-            except ScheduleConflictError:
-                logger.exception("schedule_conflict in auto_start_loop")
-            except Exception:
-                logger.exception("error in auto_start_loop")
-            time.sleep(interval_seconds)
-
-    def _auto_start_loop(self, interval_seconds: int) -> None:
-        """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return self.auto_start_loop(interval_seconds)
-
-    def register_to_phase_manager(self) -> bool:
-        """尝试注册到 phase_manager（Stage 4 公共化，primary）。
-
-        Returns:
-            True 表示 phase_manager 可用并注册成功；False 表示不可用。
-        """
-        try:
-            from zephyr.governance.ops_governance.phase_manager import (  # noqa: F401
-                PHASE_SEQUENCE,
-            )
-
-            return True
-        except ImportError:
-            logger.warning("phase_manager_unavailable register_to_phase_manager_failed")
-            return False
-
-    def subscribe_to_events(self) -> None:
-        """订阅事件总线（Stage 4 公共化，primary）。"""
-        self._event_subscribed = True
-
-    def unsubscribe_from_events(self) -> None:
-        """取消订阅事件总线（Stage 4 公共化，primary）。"""
-        self._event_subscribed = False
 
     def trigger(self, trigger_name: str) -> list[dict]:
         frequencies = _TRIGGER_MAP.get(trigger_name, [])

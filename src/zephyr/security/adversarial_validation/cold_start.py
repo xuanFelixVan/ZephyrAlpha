@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] New module/MCP server joining MUST auto-register adversarial scenarios; bootstrap per §8.1 onboarding protocol
-# [MODIFY-GUARD] Registration writes to _scenario-registry.yaml with atomic os.replace; bootstrap phases: SCAN->MAP->REGISTER->VERIFY
+# [MODIFY-GUARD] Registration writes to _scenario_registry.yaml with atomic os.replace; bootstrap phases: SCAN->MAP->REGISTER->VERIFY
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["BootstrapPhase", "BootstrapVerificationError", "ColdStart"]
 
-_REGISTRY_PATH: Path = Path(__file__).parent / "_scenario-registry.yaml"
+_REGISTRY_PATH: Path = Path(__file__).parent / "_scenario_registry.yaml"
 
 REGISTRATION_TEMPLATES: Final[dict[str, dict]] = {
     "python_module": {
