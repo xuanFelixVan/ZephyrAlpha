@@ -1,0 +1,379 @@
+---
+ttl: permanent
+doc_type: index
+title: AI 架构设计——结构总案
+owner: ZephyrAlpha-Owner
+language: zh
+status: draft
+version: "0.7.0"
+date: 2026-08-17
+topic: ai_architecture_design
+scope: 09_ai_architecture
+---
+
+# AI 架构设计（AI Architecture Design）
+
+> **本文定位**：AI 层整体结构设计与施工约束——回答"AI 系统长什么样、怎么建、边界在哪"。
+>
+> **与其他文件的分工**：盘点信息见 [02_design_asset_inventory.md](02_design_asset_inventory.md)，外部对标详情见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md)。
+>
+> **与业务域的区别**：`02_domain_architecture_docs/` 描述"各业务域做什么"，本目录描述"AI 系统怎么连、怎么建"。
+
+---
+
+## 1. 目标架构
+
+按"**AI 对治理、业务、算法、自我循环迭代优化，但架构手动来**"的原则：
+
+```
+┌─────────────────────────────────────────────┐
+│              人（架构师）                      │
+│     架构设计 · 意图定义 · 红线裁定              │
+│     （手动，不可自动化）                        │
+├─────────────────────────────────────────────┤
+│     AI 自我进化层（设计已有，待施工）           │
+│  ┌───────────┐ ┌───────────┐ ┌───────────┐ │
+│  │ 证据关联   │ │ 技能库     │ │ 模型路由   │ │
+│  │ 假设→证据  │ │ AutoSkill │ │ 级联控制器 │ │
+│  │ →迭代引导  │ │ +Voyager  │ │ 本地/API   │ │
+│  │           │ │ 技能库     │ │ 分时分任务 │ │
+│  │ 对标:AQuA │ │ 对标:Hermes│ │ 对标:Qualixar│ │
+│  └───────────┘ └───────────┘ └───────────┘ │
+│  ┌───────────────────────────────────────┐   │
+│  │ 自反Agent                              │   │
+│  │ Actor→Evaluator→SelfReflection       │   │
+│  │ L1/L2/L3反思 + PreFlect + Agent-R    │   │
+│  │ 对标:TiMi 数学反思闭环                 │   │
+│  └───────────────────────────────────────┘   │
+│  ┌───────────────────────────────────────┐   │
+│  │ 多Agent协作                             │   │
+│  │ 投票优先(3-5 Agent投票→选最优)           │   │
+│  │ FactorMAD因子挖掘 │ R&D-Agent联合优化    │   │
+│  │ 涌现行为检测器(非预期涌现→告警+介入)      │   │
+│  │ 对标:FactorMAD/R&D-Agent-Quant         │   │
+│  └───────────────────────────────────────┘   │
+├─────────────────────────────────────────────┤
+│     AI 执行层（现有增强）                     │
+│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐      │
+│  │治理   │ │业务   │ │算法   │ │自我   │      │
+│  │Agent │ │Agent │ │Agent │ │迭代   │      │
+│  │      │ │      │ │      │ │Agent │      │
+│  │gate  │ │因子/  │ │信号/  │ │评估/  │      │
+│  │检查/  │ │策略/  │ │模型/  │ │优化/  │      │
+│  │规则  │ │组合   │ │训练   │ │反馈   │      │
+│  └──────┘ └──────┘ └──────┘ └──────┘      │
+├─────────────────────────────────────────────┤
+│     AI 治理/风控/运维层（横切，已有设计）       │
+│  ┌───────────────────────────────────────┐   │
+│  │ AI自治边界                             │   │
+│  │ ai_modifiable │ human_gated │ immutable│   │
+│  │ Agentic Drift防护 + 自治熔断 + 降级     │   │
+│  └───────────────────────────────────────┘   │
+│  ┌───────────────────────────────────────┐   │
+│  │ AI/Agent风险                           │   │
+│  │ 有界自治5级(L0~L3) │ 保障缺口 │ ARS双轨 │   │
+│  │ OWASP ASI+AST+MCP │ 串谋+涌现+目标劫持 │   │
+│  │ Kill Switch多路径(<1ms自动/100ms人工)  │   │
+│  └───────────────────────────────────────┘   │
+│  ┌───────────────────────────────────────┐   │
+│  │ AI安全                                 │   │
+│  │ LLM 4层guardrails(G1~G4)              │   │
+│  │ 串谋检测9种+涌现检测+幻觉防护            │   │
+│  │ 记忆投毒6层防御 │ MCP Triple Gate      │   │
+│  │ KILLSWITCH三级响应                     │   │
+│  └───────────────────────────────────────┘   │
+│  ┌───────────────────────────────────────┐   │
+│  │ AI自治运维                              │   │
+│  │ Detect→Diagnose→Remediate(TNR)→Learn │   │
+│  │ 成熟度A-L0~A-L4 │ 故障模式库+策略库+因果图│   │
+│  │ 应急保命轨(L0~L3) │ 三平面拓扑(Hot/Warm/Cold)│  │
+│  └───────────────────────────────────────┘   │
+├─────────────────────────────────────────────┤
+│           基础设施层（现有+待建）               │
+│  AutoRuntime Core · 三层运行时 · LLM 安全栈    │
+│  LLM Agent工具调用(MCP动态发现,新增工具零代码)  │
+│  LLM推理优化(llama.cpp+GPTQ INT4,显存14→4GB) │
+│  模型注册(MLflow) │ 数据增强(TimeGAN/扩散)    │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+## 2. 外部顶级框架速览
+
+> 四个社区的最顶级框架一句话概括，详细分析见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md)。
+
+### 2.1 量化社区
+
+| 框架 | 来源 | 一句话 | 对本项目的核心启示 |
+|------|------|--------|-------------------|
+| **AQuA** | Princeton 2026-08 | 双系统完全隔离（因子发现+模型开发），各自闭环递归自我改进，IC=0.190 Sharpe=+2.50 | 证据保留→迭代引导是自我进化的核心机制；双系统隔离防污染值得参考 |
+| **NVIDIA NeMo** | NVIDIA 2026-05 | 三 Agent 自进化循环：信号→代码→评估→反馈优化 | 模块创建→试运行→元学习反馈流水线与此高度对齐 |
+| **TiMi** | Microsoft 2026-02 | 理性驱动多 Agent，策略开发与部署解耦，数学反思闭环优化 | 自反Agent三级反思+PreFlect 已覆盖此功能 |
+| **AlphaQuanter** | HKUST 2025-10 | 单 Agent + RL 端到端训练，可验证奖励直接优化决策过程 | 项目无 RL 训练信号回传，MOD-ML-002 可参考 |
+| **AI Agent Swarm** | 行业报告 2026-01 | 42.5% 美股量化交易量由 Agent 群体管理，$1.2T AUM | 机构级终局形态，61 号备忘已裁定不做 agent 编排 |
+
+### 2.2 Vibe Coding 社区
+
+| 范式 | 提出者 | 一句话 | 对本项目的核心启示 |
+|------|--------|--------|-------------------|
+| **Vibe Coding** | Karpathy 2025-02 | 自然语言→代码，人关注意图不关注实现 | 项目当前所处阶段 |
+| **Agentic Engineering** | Karpathy 2026-02 | 三层架构：意图层→协作生成层→工程保障层 | Phase 0→3 分阶段路线已覆盖此演进路径 |
+| **受约束 Vibe Coding** | Zenera 2026-03 | Meta Agent 接收高级意图→自动生成部署工件→语义验证→持续优化 | 项目无 Meta Agent 概念，可作为远期参考 |
+| **VibeDev** | GitHub 2026-07 | AI 驱动软件开发治理框架，阶段/计划/门禁/复盘 | 65/66 号备忘已覆盖核心功能，偏防护非编排 |
+
+### 2.3 GitHub 开源
+
+| 框架 | Stars | 一句话 | 对本项目的核心启示 |
+|------|-------|--------|-------------------|
+| **claude-flow** | 61k | 自主 Agent 协调+目标分解+跨网络联邦+MCP 工具 | D_ORCHESTRATOR 可参考其目标分解引擎 |
+| **CrewAI** | 54k | 角色化多 Agent+人在环+协作工作流 | 61 号备忘已暂缓 agent 编排 |
+| **Hermes** | 2026 最火 | 可写运行时（执行→发现短板→自动生成技能→测试→入库）+五层记忆 | AutoSkill 技能库已有等价设计，Hermes 工程实现可参考 |
+| **Qualixar OS** | 新 | 12 种拓扑+三层模型路由（Q-learning+POMDP）+Goodhart 检测+行为契约 | LLM 路由已有设计，Qualixar 的 Q-learning 动态学习可参考 |
+
+### 2.4 机构实践
+
+| 实践 | 来源 | 一句话 | 对本项目的核心启示 |
+|------|------|--------|-------------------|
+| **AI Agent Swarm** | 2026-01 行业报告 | 42.5% 美股量化交易量，$1.2T AUM，角色分工：情绪分析/风险守护/执行/协调 | 远期参考，非当前方向 |
+| **Man Group AlphaGPT** | 机构实践 | 全自动投研：AI 独立提出假设→编写代码→验证策略→解释经济原理 | 学习系统最接近此路径，但多了"知识采集→模块工厂" |
+| **Balyasny/Millennium** | 机构实践 | 中心化 AI 基础设施，赋能多团队 | 模块工厂有此路径特征 |
+
+---
+
+## 3. AI 层核心设计（横切能力）
+
+> 以下设计是 AI 层的**横切能力**——不是某个单一模块的功能，而是贯穿 AI 系统全生命周期的治理、风控、运维机制。
+
+### 3.1 AI 自治边界
+
+| 机制 | 内容 | 状态 |
+|------|------|------|
+| 三分类 | ai_modifiable（AI 自动执行）/ human_gated（AI 提议+人工审批）/ immutable（硬边界不可修改） | 设计完成 |
+| Agentic Drift 防护 | 双维度阈值 + Hard-Gate + 行为基线 + Agent Challenge | 设计完成 |
+| 自治熔断模式 | 只读模式 → 仅建议模式 → 全自治模式 | 设计完成 |
+| 治理激活时序 | Phase 0(审计日志) → Phase 1(审批 L1-L3+自治边界) → Phase 2(漂移检测+三方对齐) → Phase 3(审批 L4-L5+漂移全量) → Phase 4(治理自动化) → Phase 5(Agentic Drift 防护) | 设计完成 |
+
+### 3.2 AI/Agent 风险治理
+
+| 机制 | 内容 | 状态 |
+|------|------|------|
+| 有界自治 5 级 | L0 人工 → L1 建议 → L2 低风险 → L3 中风险 | 设计完成 |
+| OWASP ASI+AST+MCP | 10 类 Agent 安全威胁映射（目标劫持/提示注入/工具滥用/串谋/涌现等） | 设计完成 |
+| Kill Switch 多路径 | AI 自动(<1ms) / 人工一键(<100ms) / 定时熔断(<1ms) / 外部信号 | 设计完成 |
+| 保障缺口管理 | Assurance Gap：每 Agent 命名问责人 | 设计完成 |
+| ARS 双轨结算 | Fee+Principal 双轨，防止 Agent 自利行为 | 设计完成 |
+
+### 3.3 AI 安全
+
+| 机制 | 内容 | 状态 |
+|------|------|------|
+| LLM 4层 guardrails | G1 输入过滤（Prompt 注入检测+Spotlighting 分隔）→ G2 模型运行（工具调用验证+意图分类+目标偏移检测）→ G3 输出审查（幻觉检测+敏感信息+Schema 检查）→ G4 权限审计（最小权限+操作审计+实时阻断） | 设计完成 |
+| Agent 安全 | 串谋检测 9 种探测 + 隐写术 + 举报人机制 + 涌现检测（行为基线）+ 幻觉防护 + 记忆投毒 6 层防御 + 沙箱分级隔离 + 红队 6 维度对抗 | 设计完成 |
+| MCP Triple Gate | Gate1 输入过滤 + Gate2 对齐审查 + Gate3 权限隔离 | 设计完成 |
+| KILLSWITCH 三级响应 | level_1 P1(high)→暂降 IM 模式 / level_2 P0(critical)→暂停 Agent / level_3 global_critical→全局暂停 | 设计完成 |
+| OWASP Agentic Top 10 | ASI01~ASI10 完整映射（行为劫持/提示注入/身份权限/供应链/级联故障/数据泄露/未授权行为/信任链断裂/供应链/失控 Agent） | 设计完成 |
+| HB-SEC 硬边界 | HB-SEC-01~13 共 13 条不可绕过约束（出站白名单/LLM 脱敏 100%/密钥管理/SBOM/工具白名单/预算熔断等） | 设计完成 |
+
+### 3.4 AI 自治运维闭环
+
+| 机制 | 内容 | 状态 |
+|------|------|------|
+| Detect→Diagnose→Remediate→Learn | 自监控→自诊断→自修复→经验学习 | 设计完成 |
+| TNR（Transactional No-Regression） | 修复动作必须满足"可撤销"和"不恶化" | 设计完成 |
+| 自治成熟度 | A-L0（无自治）→ A-L1（告警）→ A-L2（自愈建议）→ A-L3（渐进自治）→ A-L4（安全关键自治） | 设计完成 |
+| 知识库 | 故障模式库 / 修复策略库 / 根因因果图 / 假阳性记录 | 设计完成 |
+| 应急保命轨 | D-L0 正常运行 → D-L1 降级运行 → D-L2 保命清仓 → D-L3 冻结 | 设计完成 |
+
+---
+
+## 4. 实施约束（不可违反）
+
+| 约束 | 来源 | 说明 |
+|------|------|------|
+| 不做 agent 编排系统 | 61 号备忘 §2.3 | 多 AI 协作 = 人调度多会话，非 agent 自治 |
+| 架构手动来 | 用户明确 | 架构设计决策始终由人做出，AI 不自动修改架构 |
+| 多 AI 交叉验证 | 系统宪章约束六 | AI 生成代码不可完全信任 |
+| AI 自治熔断 | 系统宪章约束六 | 亏损超限/置信度低 → 降级"仅建议"模式 |
+| Phase 2 保留人工审核 | 01 号文 §5.2 | LLM 生成交易策略代码，零审核=自杀 |
+| Phase 3 用 ICL 替代 MAML/EWC | 01 号文 §5.3 | 单 GPU 不支撑 MAML/EWC，ICL 更实际 |
+| 单 GPU 约束 | system_charter §2 约束二 | RTX 3090 24GB，显存<90%=21.6GB 硬上限；MAML/EWC/向量模型训练均受限 |
+| 单机无集群 | system_charter §2 约束二 | 无 K8s/无分布式训练/无热备；所有 AI 推理必须单机可跑 |
+| 网络 30Mbps | system_charter §2 约束二 | 大模型本地下载/更新受限；L3 API 调用延迟不可控 |
+
+---
+
+## 5. 目录结构
+
+### 5.1 细分支预估
+
+按架构图四个主树干拆解，预估每个树干下的细分支文档数量：
+
+```
+09_ai_architecture/
+│
+├── 0x meta（3 文档）
+│   ├── 00_index.md                          ← 结构设计+施工约束 [轨道F] 本文 · v0.7.0
+│   ├── 01_external_benchmark_analysis.md    ← 外部对标信息库 [轨道E] 随时 · draft v0.5.0 已填充
+│   └── 02_design_asset_inventory.md         ← 设计资产盘点 [轨道E] 随时 · draft v0.4.0 已填充
+│
+├── 1x 基础设施层（3 文档）
+│   ├── 04_autoruntime_core_build.md         ← AutoRuntime Core 五层同心圆 [轨道A] U1 · draft v0.2.1 已填充
+│   ├── 09_llm_security_integration.md       ← LLM 安全栈 L0~L8 [轨道B] U2 · draft v0.2.0 已填充
+│   └── 10_llm_infrastructure.md             ← 三层运行时 + MCP 工具调用 + 推理优化(llama.cpp+GPTQ) + 模型注册(MLflow) + 数据增强(TimeGAN) [轨道A] U1 · draft v0.2.2 已填充
+│
+├── 2x 自我进化层（3 文档）
+│   ├── 11_evidence_skill_router.md          ← 证据关联 + 技能库(AutoSkill+Voyager) + 模型路由 [轨道C] U3 · draft v0.2.0 已填充
+│   ├── 12_reflexion_multi_agent.md          ← 自反Agent(L1/L2/L3反思+PreFlect+Agent-R) + 多Agent协作(投票优先/FactorMAD/R&D-Agent/涌现检测) [轨道C] U4 · draft v0.2.0 已填充
+│   └── 13_module_factory.md                 ← 模块工厂（核心独创，独立文档因复杂度足够）[轨道C] U4+U8 · draft v0.2.0 已填充
+│
+├── 3x 执行层（1 文档）
+│   └── 14_execution_layer.md                ← 治理Agent + 业务Agent + 算法Agent + 自我迭代Agent [轨道D] U4+U7 · draft v0.2.0 已填充
+│
+├── 4x 横切层（2 文档）
+│   ├── 15_autonomy_boundary_risk.md         ← AI 自治边界 + Agentic Drift + Agent 风险(有界自治5级/OWASP/Kill Switch/ARS双轨) [轨道D] U5 · draft v0.2.1 已填充
+│   └── 16_ai_security_ops.md                ← AI 安全(LLM guardrails/串谋/涌现/幻觉/记忆投毒/MCP Triple Gate/KILLSWITCH) + 自治运维(Detect→Diagnose→Remediate→Learn/TNR/成熟度/知识库/保命轨) [轨道D] U6 · draft v0.2.1 已填充
+│
+├── 5x 元设计（5 文档）
+│   ├── 03_domain_boundary_definition.md     ← 域边界 [轨道A] P0 · draft v0.2.0 已填充
+│   ├── 05_intelligence_governance_consolidation.md ← intelligence_governance 整合 [轨道B] U1 · active v0.2.0 已填充
+│   ├── 06_model_profiling_pipeline.md       ← 模型画像→考试→护照 [轨道B] U2 · draft v0.2.0 已填充
+│   ├── 07_context_engine_build.md           ← Context Engine [轨道B] U2 · draft v0.2.2 已填充
+│   └── 08_multi_ai_concurrency_governance.md ← 多 AI 并发治理 [轨道A] P0 · draft v0.2.1 已填充
+│
+└── 6x 分阶段路线（1 文档）
+    └── 17_phase_roadmap.md                  ← Phase 0 手动→Phase 1 半自动→Phase 2 全自动→Phase 3 自我进化 [轨道E] 依赖03~16 · draft v0.1.0 填充中（AI-FILL-17 并行施工，目标 v0.2.0）
+```
+
+> 状态标注口径：status/version 均为 2026-08-17 实测各文档 frontmatter 当前值；"已填充" = 背景+设计决策+施工计划已落盘。
+
+**总计 18 文档**，全部已落盘；16 篇（01~16）已完成填充施工，17 号路线填充中。
+
+**合并原则**：
+- 单一文档预计 ≤2000 行（对标 design_memos 经验）
+- 责任不混：基础设施 ≠ 自我进化 ≠ 执行 ≠ 横切 ≠ 元设计
+- 每个文档聚焦一个主题，可独立施工
+
+**施工顺序与解锁点**（详细指令见 [AI_fill_instructions.md](AI_fill_instructions.md)）：
+
+```
+轨道 A：前置与基础设施（P0，无业务依赖，立即开工）
+  03域边界 → 04AutoRuntime → 08多AI并发治理 → 10LLM基础设施
+
+轨道 B：元设计与安全（P1，依赖轨道 A，可部分并行）
+  05包整合 → 06模型画像流水线 → 07ContextEngine → 09LLM安全栈
+
+轨道 C：自我进化层（P1，依赖轨道 B）
+  11证据技能路由 → 12自反Agent+多Agent → 13模块工厂
+
+轨道 D：执行与横切层（P1，依赖轨道 C + 交易决策侧业务模块）
+  14执行层 → 15自治边界风险 → 16AI安全+运维
+
+轨道 E：信息与路线（随时可并行，信息库不阻塞施工）
+  01外部对标 + 02资产盘点 + 17分阶段路线
+
+轨道 F：总索引更新（依赖所有轨道至少完成第 1~2 轮填充）
+  00_index.md 更新施工顺序和解锁点
+```
+
+**解锁点定义**：
+
+| 解锁点 | 条件 | 解锁文档 | 说明 |
+|---|---|---|---|
+| U1 域边界就绪 | 03 完成 | 04, 05, 08 | AI 层域归属裁定后，才能确定设施归属 |
+| U2 基础设施就绪 | 04 + 10 完成 | 06, 07, 09, 11 | AutoRuntime + LLM 基础设施是上层能力地基 |
+| U3 画像流水线就绪 | 06 完成 | 11 | 模型路由依赖画像→考试→护照链路 |
+| U4 自我进化层就绪 | 11 + 12 + 13 完成 | 14 | 执行层 Agent 依赖自我进化能力 |
+| U5 执行层就绪 | 14 完成 | 15 | 自治边界需知道有哪些 Agent 才能定边界 |
+| U6 安全层就绪 | 09 + 15 完成 | 16 | AI 安全+运维需 LLM 安全栈和自治边界先就位 |
+| U7 业务模块就绪（交易决策侧） | G04 策略定义完成 | 14 业务 Agent 细化 | 业务 Agent 需策略载体才能执行 |
+| U8 注册表就绪（交易决策侧） | 62 号注册表 P0 完成 | 13 模块工厂 Phase 0→1 | 模块工厂依赖 factor/strategy 注册表 |
+
+**与交易决策侧的关联**（只读不改，发现需同步改的记在本文档「开放问题」节）：
+- **G04 策略定义**（20_first_batch_strategies.md）：14 号业务 Agent 的前置依赖
+- **G12 多策略并发**（30_multi_strategy_concurrency.md）：14 号业务 Agent 的并发框架
+- **62 号注册表**（62_business_registry_construction.md）：13 号模块工厂入库的前置依赖
+- **61 号备忘**（61_lifecycle_multi_ai.md）：08 号多 AI 并发治理的设计依据
+
+### 5.2 目录树
+
+```
+09_ai_architecture/
+├── derived_graphs/                              ← AI 链接关系派生图（待建：目录未施工，由派生图生成器生成）
+│   ├── 01_ai_layer_dependency_topology.md      ← AI 层模块依赖拓扑（跨 D_AUTONOMY_CORE / D_ORCHESTRATOR / D_INTELLIGENCE 等）（待建）
+│   ├── 02_runtime_orchestration_layers.md      ← 三层运行时编排图（L1 Trae / L2 Local Ollama / L3 API）（待建）
+│   ├── 03_model_lifecycle_flow.md              ← 模型全生命周期（画像→考试→护照→路由→推理→退役）（待建）
+│   ├── 04_context_memory_flow.md               ← 上下文与记忆数据流（Context Engine → 压缩 → 注入 → 记忆检索）（待建）
+│   ├── 05_multi_ai_collaboration.md            ← 多 AI 协作时序图（单 AI 多会话 + 人调度 + 落盘交接）（待建）
+│   └── 06_llm_security_stack.md               ← LLM 安全栈 L0-L8 纵深防御图（待建）
+└── implementation_plans/          ← AI 层施工图（所有手写文档，对标 design_memos/ 结构）
+    ├── 00_index.md                            ← 本文件（结构设计+施工约束）[轨道F]
+    ├── 01_external_benchmark_analysis.md      ← 信息库：外部对标分析 + 场内设计资产对照 + 模块工厂落地性 [轨道E·随时]
+    ├── 02_design_asset_inventory.md           ← 盘点：设计资产 + AI 员工体系 + 已有域 + 运行态设施 [轨道E·随时]
+    ├── 03_domain_boundary_definition.md       ← AI 层域边界定义（depgraph 域划分方案）[轨道A·P0]
+    ├── 04_autoruntime_core_build.md           ← AutoRuntime Core 施工图（五层同心圆落地）[轨道A·U1]
+    ├── 05_intelligence_governance_consolidation.md ← intelligence_governance 包整合施工图 [轨道B·U1]
+    ├── 06_model_profiling_pipeline.md         ← 模型画像→考试→护照流水线施工图 [轨道B·U2]
+    ├── 07_context_engine_build.md             ← Context Engine 施工图（剩余未实现部分）[轨道B·U2]
+    ├── 08_multi_ai_concurrency_governance.md  ← 多 AI 并发治理施工图（61/65/66 号备忘落地）[轨道A·P0]
+    ├── 09_llm_security_integration.md         ← LLM 安全栈集成施工图 [轨道B·U2]
+    ├── 10_llm_infrastructure.md               ← LLM 基础设施施工图（三层运行时+MCP+推理优化+模型注册+数据增强）[轨道A·U1]
+    ├── 11_evidence_skill_router.md            ← 自我进化核心组件施工图（证据关联+技能库+模型路由）[轨道C·U3]
+    ├── 12_reflexion_multi_agent.md            ← 自反Agent与多Agent协作施工图（反思+投票+FactorMAD+涌现检测）[轨道C·U4]
+    ├── 13_module_factory.md                   ← 模块工厂施工图（核心独创）[轨道C·U4+U8]
+    ├── 14_execution_layer.md                  ← AI 执行层施工图（治理/业务/算法/自我迭代 Agent）[轨道D·U4+U7]
+    ├── 15_autonomy_boundary_risk.md           ← AI 自治边界与风险施工图（自治边界+Agentic Drift+Agent 风险）[轨道D·U5]
+    ├── 16_ai_security_ops.md                  ← AI 安全与自治运维施工图（guardrails+安全+运维闭环）[轨道D·U6]
+    └── 17_phase_roadmap.md                    ← 分阶段实现路线（Phase 0→3）[轨道E·依赖03~16]
+```
+
+---
+
+## 6. 待办（按施工顺序）
+
+> 施工顺序详细指令见 [AI_fill_instructions.md](AI_fill_instructions.md)。
+> 文档填充施工（AI-FILL-01~16）已全部完成，各文档 status/version 实测值见 §5.1 标注；以下为当前剩余待办。
+
+### 6.1 填充收口（进行中）
+- [ ] **AI-FILL-17**：17_phase_roadmap.md 分阶段实现路线填充（当前 draft v0.1.0，目标 v0.2.0；完成后回写 §5.1 标注）
+
+### 6.2 与交易决策侧联动（只读不改，等对方就绪）
+- [ ] 确认派生图生成器是否支持跨域 AI 层视图
+- [ ] 生成 derived_graphs/ 派生图并补充各文件的源真源标注（目录待建，见 §5.2）
+- [ ] 等待 62 号注册表 P0 完成以解锁模块工厂 Phase 0→1（U8）
+- [ ] 等待 G04 策略定义完成以细化 14 号业务 Agent（U7）
+
+### 6.3 施工图 → 代码实施（文档填充完成后的下一阶段）
+- [ ] 按 17 号分阶段路线启动 Phase 0 代码施工（AutoRuntime Core 基础层、LLM 基础设施 L1 先行）
+- [ ] 各施工图对应代码验收后，回写本文档 §5 状态标注
+
+---
+
+## 7. 开放问题
+
+| # | 问题 | 状态 | 说明 |
+|---|------|------|------|
+| Q1 | AI 层在 depgraph 中的域边界如何划分？ | 待裁定 | D_AUTONOMY_CORE / D_ORCHESTRATOR / D_INTELLIGENCE / D_ML_TRAIN / D_ML_SERVE / D_KNOWLEDGE / D_SECURITY_LLM 哪些归入 AI 层？还是 AI 层是横切视图而非独立域？ |
+| Q2 | 模块工厂 Phase 0→1 的施工优先级如何排序？ | 待裁定 | 知识→模块映射是核心独特点，但依赖 factor_registry/strategy_registry 等 P1 注册表先就位 |
+| Q3 | 自反Agent 的施工顺序——先 L1 单轨迹反思还是直接上 L1+L2？ | 待裁定 | L1 最轻量可先行，L2 需要 N=5 次同类任务累积才有意义 |
+| Q4 | AI 自治运维闭环（Detect→Diagnose→Remediate→Learn）的施工优先级？ | 待裁定 | 设计完整，但需故障模式库先行积累才能生效；是先建库还是先建闭环？ |
+| Q5 | Kill Switch 多路径（<1ms AI 自动触发）能否在 Windows+miniQMT 环境下实现？ | 待裁定 | <1ms 需要内核级或 FPGA 级响应，Windows 用户态+Python 可能不可行 |
+| Q6 | Agentic Drift 防护中的"Agent Challenge"机制具体如何实现？ | 待裁定 | 设计描述为"双维度阈值+Hard-Gate+行为基线+Agent Challenge"，Challenge 的实现方式未细化 |
+
+---
+
+## 修订记录
+
+| 日期 | 版本 | 变更 | 原因 |
+|------|------|------|------|
+| 2026-08-17 | 0.1.0 | 初版：目录索引+盘点+外部对标分析混在一起 | 新建 09_ai_architecture 目录 |
+| 2026-08-17 | 0.2.0 | 三分工：00=结构设计，01=信息库，02=盘点；加入外部顶级框架速览；加入 frontmatter+开放问题+修订记录 | 用户反馈 00_index 不该放盘点内容；按 AI_review 方法论规范文档结构 |
+| 2026-08-17 | 0.3.0 | 新增 §3"架构图中发现的 AI 层核心设计"（横切能力：自治边界/Agent风险/自治运维/AI合规）；更新目标架构图增加横切层；新增 4 条约束；新增 4 个开放问题（Q5-Q8）；待办增加 4 项 | 扫描架构图/ 后发现大量未纳入的横切设计 |
+| 2026-08-17 | 0.4.0 | 移除 A6 AI 合规（过度工程：zkCA 零知识审计/决策溯源链 DAG/AI 伦理声明不适用个人项目）；移除所有对 架构图/ 和 依赖图/ 草稿目录的引用（这两个目录建立后将删除）；§3 横切能力节改为纯文字描述不带文件链接；开放问题从 Q1-Q8 精简为 Q1-Q6 | 用户裁定 A6 合规过度工程+草稿目录待删除 |
+| 2026-08-17 | 0.5.0 | 新增 §3.3 AI 安全（LLM 4层 guardrails/Agent 安全/MCP Triple Gate/KILLSWITCH 三级响应/OWASP Agentic Top 10/HB-SEC 硬边界）；自我进化层新增多Agent协作（投票优先/FactorMAD/R&D-Agent/涌现行为检测）；基础设施层新增 LLM Agent 工具调用（MCP）/LLM 推理优化（llama.cpp+GPTQ）/模型注册（MLflow）/数据增强（TimeGAN）；标记 ABIDES-MARL/联邦多Agent 为远期（超硬件） | 扫描 A1/A5/A10 架构图后发现遗漏的 AI 层内容 |
+| 2026-08-17 | 0.6.0 | §5.1 目录结构增加轨道+解锁点标注；新增 §5.1 施工顺序与解锁点（5 轨道+8 解锁点+交易决策侧关联）；§6 待办按施工顺序重排为 8 组（6.1~6.8） | 用户要求排列施工顺序和解锁点，建立填充 SOP |
+| 2026-08-17 | 0.7.0 | §5.1 各文档补实测状态标注（01 v0.5.0 / 02 v0.4.0 / 03~16 v0.2.x 已填充；17 按「填充中→v0.2.0」口径登记，AI-FILL-17 并行施工中）；§5.2 补轨道+解锁点标注，derived_graphs/ 经实测目录不存在，标注待建；§6 待办重排为当前剩余项（17 号收口 / 交易决策侧联动 / 代码实施阶段） | AI-FILL-00 mop-up：16 篇施工图（01~16）填充完成并提交 dev 后，更新总索引施工顺序与解锁点标注为当前真实状态 |
+
+---
+
+*维护者：AI 架构协调者*
