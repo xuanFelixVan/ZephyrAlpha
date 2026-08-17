@@ -1,9 +1,8 @@
 schema_version: 1.0.0
 partition:
-  id: l12
+  id: system_telemetry
   name: System Telemetry
   track: b_track
-  layer_position: 12
   runtime_plane: warm
   status: implemented
   note: '全系统遥测的 metrics/logs/traces/ai_behavior 采集与归档，为 L00-L11 + L13 所有业务层提供可观测性数据底座。
@@ -19,8 +18,6 @@ modules:
   priority: P0
   runtime_plane: warm
   description: 根包级遥测工具（契约指标等），与子目录流式模块并列
-  files:
-  - contract_metrics.py
   interfaces:
   - contract_id: CT-TELE-FLE-001
     role: producer
@@ -34,8 +31,6 @@ modules:
   priority: P1
   runtime_plane: warm
   description: AI 行为遥测 Phase 1（event_sink）
-  files:
-  - event_sink.py
   interfaces: []
   kb_ref: []
 - id: l12-metrics
@@ -46,8 +41,6 @@ modules:
   priority: P1
   runtime_plane: warm
   description: 指标流（blueprint_metrics instrumentation）
-  files:
-  - blueprint_metrics.py
   interfaces: []
   kb_ref: []
 - id: l12-logs
@@ -58,8 +51,6 @@ modules:
   priority: P1
   runtime_plane: warm
   description: 结构化日志 JSONL（structured_sink）
-  files:
-  - structured_sink.py
   interfaces: []
   kb_ref: []
 - id: l12-traces
@@ -70,8 +61,6 @@ modules:
   priority: P1
   runtime_plane: warm
   description: 追踪占位（span_stub / 后续 OTEL）
-  files:
-  - span_stub.py
   interfaces: []
   kb_ref: []
 - id: l12-archive
@@ -82,8 +71,6 @@ modules:
   priority: P2
   runtime_plane: cold
   description: 冷归档占位（cold_stub）
-  files:
-  - cold_stub.py
   interfaces: []
   kb_ref: []
 summary:

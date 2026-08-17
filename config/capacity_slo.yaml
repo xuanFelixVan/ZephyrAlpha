@@ -21,42 +21,42 @@ slo_registry:
     target_ms: 2000
     measurement: "pytest 基准"
     golden_signal: latency
-    instrumentation: { hook_point: "src/zephyr/__init__.py", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "src/zephyr/__init__.py", sampling_sample_rate: null }
 
   - id: CAP-002-event-throughput
     description: "事件总线吞吐量 msg/s"
     target: 1000
     measurement: "压力测试"
     golden_signal: traffic
-    instrumentation: { hook_point: "event_bus.emit", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "event_bus.emit", sampling_sample_rate: null }
 
   - id: CAP-003-error-rate
     description: "跨模块调用错误率上限"
     target: 0.001
     measurement: "circuit_breaker 统计"
     golden_signal: errors
-    instrumentation: { hook_point: "zephyr.shared.resilience.circuit_breaker", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "zephyr.shared.resilience.circuit_breaker", sampling_sample_rate: null }
 
   - id: CAP-004-memory-saturation
     description: "内存饱和度"
     target: 0.8
     measurement: "psutil"
     golden_signal: saturation
-    instrumentation: { hook_point: "capacity_metrics writer", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "capacity_metrics writer", sampling_sample_rate: null }
 
   - id: CAP-005-cpu-saturation
     description: "CPU 饱和度"
     target: 0.7
     measurement: "psutil"
     golden_signal: saturation
-    instrumentation: { hook_point: "capacity_metrics writer", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "capacity_metrics writer", sampling_sample_rate: null }
 
   - id: CAP-006-queue-depth-saturation
     description: "事件队列深度上限"
     target: 500
     measurement: "asyncio.Queue.qsize"
     golden_signal: saturation
-    instrumentation: { hook_point: "event_bus.queue", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "event_bus.queue", sampling_sample_rate: null }
 
   - id: CAP-007-type-check-time
     description: "类型检查耗时 P99"
@@ -86,28 +86,28 @@ slo_registry:
     measurement: "D_GOV_ENFORCEMENT gateway latency"
     golden_signal: latency
     relates_invariant: INV-015
-    instrumentation: { hook_point: "compliance security_gateway", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "compliance security_gateway", sampling_sample_rate: null }
 
   - id: CAP-011-disk-io-saturation
     description: "磁盘 I/O 饱和度"
     target: 0.7
     measurement: "psutil disk_io_counters"
     golden_signal: saturation
-    instrumentation: { hook_point: "capacity_metrics writer", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "capacity_metrics writer", sampling_sample_rate: null }
 
   - id: CAP-012-network-saturation
     description: "网络带宽饱和度"
     target: 0.6
     measurement: "psutil net_io_counters"
     golden_signal: saturation
-    instrumentation: { hook_point: "capacity_metrics writer", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "capacity_metrics writer", sampling_sample_rate: null }
 
   - id: CAP-013-goroutine-thread-saturation
     description: "线程/协程并发饱和度"
     target: 0.8
     measurement: "threading.active_count / psutil"
     golden_signal: saturation
-    instrumentation: { hook_point: "event_bus.queue", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "event_bus.queue", sampling_sample_rate: null }
 
 arch_guard:
   min_slo_entries: 10

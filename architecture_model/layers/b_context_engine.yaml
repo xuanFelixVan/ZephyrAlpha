@@ -16,16 +16,6 @@ modules:
     priority: P0
     runtime_plane: warm
     description: 上下文四阶段流水线：build→compress→validate→inject。本机 LLM (Qwen2.5-3B) + 规则基摘要+ 截断三级回退
-    files:
-      - context_assembler.py
-      - context_budget_tracker.py
-      - context_injector.py
-      - doc_compressor.py
-      - intent_keyword_mapper.py
-      - intent_parser.py
-      - pattern_library.py
-      - prompt_registry.py
-      - system_snapshot.py
     interfaces:
       - contract_id: CT-CE-VMS-001
         role: consumer

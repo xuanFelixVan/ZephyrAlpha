@@ -14,12 +14,7 @@ modules:
     status: implemented
     priority: P0
     runtime_plane: warm
-    description: 跨层共享数据契约 �?Instrument / Money / Timestamp / RuntimePlaneTag (Pydantic V2)
-    files:
-      - instrument.py
-      - money.py
-      - runtime_plane_tag.py
-      - timestamp.py
+    description: 跨层共享数据契约——Instrument / Money / Timestamp / RuntimePlaneTag (Pydantic V2)
     interfaces:
       - contract_id: CT-HEALTH-001
         description: "从 MOD-MASTER-002 §2.1 同步"
@@ -194,14 +189,7 @@ modules:
     status: implemented
     priority: P0
     runtime_plane: warm
-    description: 跨层共享基础设施 �?SSoT 守卫 / 观察者事件总线 / 能力定义 / 内容指纹 / DOS 启动�?
-    files:
-      - capability.py
-      - content_fingerprint.py
-      - dos_launcher.py
-      - observer.py
-      - schemas.py
-      - ssot_guard.py
+    description: 跨层共享基础设施——SSoT 守卫 / 观察者事件总线 / 能力定义 / 内容指纹 / DOS 启动器
     interfaces: []
     kb_ref:
 

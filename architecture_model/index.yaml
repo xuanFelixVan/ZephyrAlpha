@@ -136,8 +136,8 @@ partitions:
   - id: vector_memory
     name: Vector Memory Service (VMS)
     path: layers/b_vector_memory.yaml
-    status: phase_2_complete
-    description: 蓝图 v0.7.0：18 .py 文件 + 11 子模块 + 23 单元测试 + 7 对抗测试全部通过
+    status: implemented
+    description: 蓝图 v0.7.0：18 .py 文件 + 11 子模块 + 23 单元测试 + 7 对抗测试全部通过（2026-08-17 AI-02 审计：status 由 phase_2_complete 归一到 schema 合法值 implemented）
 
 # === 73域清单（从depgraph派生，禁止手工编辑）===
 domains:
@@ -365,9 +365,9 @@ global_stats:
   total_domains: 73
   total_partitions: 12
   b_track_modules: 13
-  b_track_implemented: 11
+  b_track_implemented: 12
   b_track_under_construction: 1
-  b_track_phase_2_complete: 1
+  b_track_phase_2_complete: 0
   b_track_skeleton: 0
   notes: >
     73域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。

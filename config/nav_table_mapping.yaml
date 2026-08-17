@@ -6,11 +6,12 @@
 # ai_autonomy: ai_modifiable
 # ttl: permanent
 # --- 治理锚定结束 ---
-# nav_table_mapping.yaml — 全流程导航表映射配置 v1.0.0
-# 本文件是 AGENTS.md §5.2 的 SSoT。
-# 新增规则/脚本时：更新本文件 → 运行 scripts/governance/generate_nav_table.py → §5.2 自动刷新。
-# 设计原则：本文件只定义"什么规则/脚本出现在导航表中、对应哪个阶段/维度"，
-#           不重复 registries 中已有的路径/版本/状态信息（这些由 generate_nav_table.py 从 registries 自动拉取）。
+# nav_table_mapping.yaml — 七阶段流程 × 十维审计框架 × 十问 mantra 的机读配置 v1.1.0
+# 2026-08-17 AI-02 审计治本：原头部声明"AGENTS.md §5.2 SSoT + generate_nav_table.py 自动刷新"已失实——
+# 生成器已归档（scripts/governance/_archive/prototype/），AGENTS.md 无 §5.2 派生链（git grep 实证零命中）。
+# 本文件现行职责：七阶段（想法→草稿→审计裁定→蓝图→施工→验收→持续审计）× 十维（A~J）× 十问 mantra
+# 的治理方法论机读定义。methodology_files 中规则路径一律以 module_id_registry.yaml / rule_catalog_registry.yaml
+# 登记为准（单真源），status: planned 条目为规划未创建文档（P8-FIX-S0 约定），禁止作为现存文件引用。
 
 module_id: MOD-INF-002
 seven_stages:
@@ -143,7 +144,7 @@ seven_stages:
       - PS-STD-012
       - GOV-CMP-002
     manual_files:
-      - "scripts/governance/quality-standard.md"
+      - "scripts/governance/quality_standard.md"
       - "scripts/governance/index.md"
 
 audit_dimensions:
@@ -337,6 +338,7 @@ methodology_files:
     description: "规则体系最高元规则——什么进宪法（ABS）、什么进登记表（COND/REC）"
   - name: "GOV-DOC-010 文档可发现性策略"
     path: "docs/01_policies_and_standards/rules/document_discovery_policy.md"
+    status: planned  # 规划文档未创建（P8-FIX-S0 约定），禁止作为现存文件引用
     stage: "①~⑦"
     description: "文档发现机制——index.md是一切发现的起点、module_id是通用钥匙"
   - name: "PS-STD-002 标准文档模板"
@@ -344,28 +346,30 @@ methodology_files:
     stage: "②~④"
     description: "标准文档模板元标准——L1/L2/L3三层模板体系、SSoT声明、消费者注册表"
   - name: "GOV-DOC-009 文档控制原则"
-    path: "docs/01_policies_and_standards/rules/document_control_policy.md"
+    path: "docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml"
     stage: "②~⑤"
     description: "文档控制8原则——SSoT唯一、责任二选一、安全删除、完整路径引用、创建前必查、先读后改、引用不复制、上下文预算意识"
   - name: "GOV-AI-002 模型路由策略"
-    path: "docs/01_policies_and_standards/governance/ai/model_routing_policy.md"
+    path: "docs/01_policies_and_standards/rules/trae_040_ai_model_routing.yaml"
     stage: "③"
     description: "模型路由策略——DeepSeek主力+GLM审查+Claude救援三层防御"
   - name: "PS-STD-004 规则分类与冲突裁决"
     path: "docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml"
     stage: "③"
     description: "规则冲突裁决——五维分类+推导链（stability→layer→scope→Owner）"
-  - name: "PS-STD-000 元标准宪法"
   - name: "Gate Strategy Standard"
     path: "docs/01_policies_and_standards/governance/architecture/gate_strategy_standard.md"
+    status: planned  # 规划文档未创建（P8-FIX-S0 约定）
     stage: "④~⑤"
     description: "5级门禁策略（G0~G4）+ Gate Pipeline 触发条件"
   - name: "Phase Transition Protocol"
     path: "docs/01_policies_and_standards/governance/architecture/phase_transition_protocol.md"
+    status: planned  # 规划文档未创建（P8-FIX-S0 约定）
     stage: "④~⑤"
     description: "阶段转换协议（开发阶段之间的切换规则）"
   - name: "GOV-ARCH-002 架构评审门控"
     path: "docs/01_policies_and_standards/governance/architecture/architecture_review_policy.md"
+    status: planned  # 规划文档未创建（P8-FIX-S0 约定）
     stage: "④~⑤"
     description: "架构评审门控——触发条件、评审清单（6项）、否决条件（7项）"
   - name: "GOV-ARCH-001 架构决策记录"
@@ -374,26 +378,29 @@ methodology_files:
     description: "33 ADRs 已迁入 KB decisions namespace（原 adr-protocol.md 已删除）"
   - name: "GOV-MOD-001 模块准入门控"
     path: "docs/01_policies_and_standards/governance/module/module_admission_policy.md"
+    status: planned  # 规划文档未创建（P8-FIX-S0 约定）
     stage: "④~⑥"
     description: "模块准入门控——四级筛选（MAD-001~005）+ P0额外条件"
   - name: "GOV-MOD-003 模块生命周期"
     path: "docs/01_policies_and_standards/governance/module/module_lifecycle_policy.md"
+    status: planned  # 规划文档未创建（P8-FIX-S0 约定）
     stage: "④~⑥"
     description: "模块生命周期——8阶段状态机（planned→archived）"
   - name: "GOV-MOD-004 模块接口契约"
     path: "docs/01_policies_and_standards/governance/module/module_interface_contract_policy.md"
+    status: planned  # 规划文档未创建（P8-FIX-S0 约定）
     stage: "④~⑥"
     description: "模块接口契约——7必填字段、语义化版本、契约注册表、退役级联"
   - name: "GOV-AI-003 AI幻觉自检"
-    path: "docs/01_policies_and_standards/governance/ai/ai_hallucination_self_check_policy.md"
+    path: "docs/01_policies_and_standards/rules/trae_039_ai_hallucination_detection.yaml"
     stage: "⑤"
     description: "AI幻觉自检清单——session开始前6项自检（路径/模块ID/接口/依赖/SSoT/编号）"
   - name: "GOV-AI-004 双编辑器协作"
-    path: "docs/01_policies_and_standards/governance/ai/dual_editor_collaboration_policy.md"
+    path: "docs/01_policies_and_standards/rules/trae_040_ai_model_routing.yaml"
     stage: "⑤"
     description: "双编辑器协作规则——Cursor vs Trae分工、编码安全、切换检查清单"
   - name: "GOV-DOC-005 编码安全标准"
-    path: "docs/01_policies_and_standards/rules/encoding_safety_standard.md"
+    path: "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
     stage: "⑤"
     description: "编码安全标准——UTF-8强制、BOM禁止、LF换行符、PowerShell陷阱"
   - name: "PS-STD-003 行为边界标准"
@@ -402,6 +409,7 @@ methodology_files:
     description: "行为边界标准——ABS绝对禁止（48条）+ COND条件禁止 + REC推荐做法"
   - name: "GOV-AI-008 跨会话交接协议"
     path: "docs/01_policies_and_standards/governance/ai/handoff_protocol.md"
+    status: planned  # 规划文档未创建（P8-FIX-S0 约定）
     stage: "⑤"
     description: "跨会话交接协议——HandoffPackage 8必填字段"
   - name: "PS-STD-012 规则验证标准"
@@ -410,6 +418,7 @@ methodology_files:
     description: "规则验证标准——V1~V4四级验证（自动化阻断/警告/人工审查/审计抽样）"
   - name: "GOV-CMP-002 审计追踪策略"
     path: "docs/01_policies_and_standards/governance/compliance/audit_trail_policy.md"
+    status: planned  # 规划文档未创建（P8-FIX-S0 约定）
     stage: "⑦"
     description: "审计追踪策略——6类操作必须审计、日志不可篡改、访问受限"
   - name: "审计脚本体系总入口"

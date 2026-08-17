@@ -110,7 +110,7 @@
       "note": "VMS 向量记忆 MCP Server——search/write/recall/list_collections/health_check 五工具 (MOD-INF-011 v0.7.0)"
     },
     "red_blue_validator": {
-      "module": "zephyr.autonomy_perm.red_blue_validator.mcp_endpoints",
+      "module": "zephyr.security.adversarial_validation.mcp_endpoints",
       "server_id": "red_blue_validator",
       "version": "1.0.0",
       "transport": "stdio",

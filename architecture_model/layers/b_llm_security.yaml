@@ -16,33 +16,6 @@ modules:
     priority: P0
     runtime_plane: warm
     description: LLM 九层纵深防御 + 自我防护 + 运维保障体系：L0供应链模型验证+依赖扫描+AI BOM+Code Signing+Slopsquatting防御)/L1输入(直接+间接+越狱+Spotlighting+RAG投毒防御+ToolResultTransform)/L2 Prompt隔离防泄露Drift检测Promptware KillChain对标/L3输出(Schema+沙箱+脱敏+幻觉+AI代码信任边界+EmbeddingInversion防御)/L4 Agent安全+HITL+MCPSampling+DeepSeek越狱补偿/L5资源保护+性能预算SLA+超预算自动降级；L6可观测性、自监控KillChain追踪+延迟追踪/L7持续验证+Red Team+LSG自我回归/L8多Agent(通信认证+跨Agent权限+级联熔断+Rogue检测TrustAntiAbuse+Shadow/NHI)+凭据生命周期+数据层安全；RLS/Default-Secure)。原则：fail-closed + 性能SLO(L6/L7例外降级)
-    files:
-      - __init__.py
-      - behavior_audit_logger.py
-      - input_sanitizer.py
-      - process_sandbox.py
-      - protocol.py
-      - layers/l0_supply_chain.py
-      - layers/l1_input.py
-      - layers/l2_prompt_protection.py
-      - layers/l3_output.py
-      - layers/l4_agent.py
-      - layers/l5_resource_protection.py
-      - layers/l6_observability.py
-      - layers/l7_validation.py
-      - layers/l8_multi_agent.py
-      - layers/circuit_breaker.py
-      - patterns/secrets.py
-      - patterns/injection_patterns.py
-      - sandbox/code_exec_sandbox.py
-      - payloads/red_team_payloads.yaml
-      - self_protection/lsg_watchdog.py
-      - self_protection/credential_manager.py
-      - self_protection/incident_response.py
-      - self_protection/shadow_agent_detector.py
-      - self_protection/code_integrity.py
-      - self_protection/data_layer_auditor.py
-      - ai_bom.yaml
     interfaces:
       - contract_id: CT-CE-LSG-001
         role: producer

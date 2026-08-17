@@ -10,14 +10,17 @@ modules:
   - id: pipeline-core
     module_id: MOD-INF-009
     name: Pipeline Orchestrator
-    submodule_path: src/zephyr/pipeline/
+    submodule_path: src/zephyr/infrastructure/pipeline/
+    submodule_path_note: "M1-M11 编排入口在 src/zephyr/integration/pipeline_orchestrator.py（同属 MOD-INF-009，跨包登记；文件↔模块归属真源为 depgraph 代码头部扫描）"
     status: implemented
     priority: P0
     runtime_plane: warm
     description: >
-      M1-M11 双管�?�?A�?M1-M5)生产管线 + B�?M6-M11)审计管线�?      模型路由依据 GOV-AI-002 v2 决策树：全部使用 DeepSeek V4 Pro�?      Claude API 仅在极端救援场景触发（DeepSeek 连续失败>=3�?�?autonomy_level==unsafe �?DeepSeek 已失败）�?      执行模式依据 b_execution_model.yaml 三层模型：Trae(人在旁边)/Local(嵌入)/API(无人值守)�?      当前状态：_call_model() 返回 simulated: True，尚未接入真�?API�?    files:
-      - models.py
-      - pipeline_orchestrator.py
+      M1-M11 双管线：A线（M1-M5）生产管线 + B线（M6-M11）审计管线。
+      模型路由依据 GOV-AI-002 v2 决策树：全部使用 DeepSeek V4 Pro。
+      Claude API 仅在极端救援场景触发（DeepSeek 连续失败>=3 次且 autonomy_level==unsafe 且 DeepSeek 已失败）。
+      执行模式依据 b_execution_model.yaml 三层模型：Trae(人在旁边)/Local(嵌入)/API(无人值守)。
+      当前状态：_call_model() 返回 simulated: True，尚未接入真实 API。
     interfaces:
       - contract_id: CT-PIPE-ORC-001
         role: producer

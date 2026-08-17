@@ -15,18 +15,11 @@ modules:
     module_id: MOD-INF-012
     name: Metadata Persistence Layer
     submodule_path: src/zephyr/governance/
-    submodule_path_note: "文件分布在 governance/persistence/ + governance/financial_governance/，见各 file 实际路径"
+    submodule_path_note: "模块文件分布在 governance/persistence/ + governance/financial_governance/（文件↔模块归属真源为 depgraph 代码头部扫描，layers YAML 不再手工维护文件清单——2026-08-17 AI-02 审计裁定，见 schema.yaml v1.3.0）"
     status: implemented
     priority: P0
     runtime_plane: warm
     description: SQLite 元数据持久化——ATM v2.0 SQLite/文件系统两阶段提交 + tx_idempotency 幂等去重 + compensating_transaction 补偿 + 事务超时控制（ARCH-OLAP-RETIRE 2026-07-16：DuckDB OLAP 层已退役，OLAP 分析迁移至 ClickHouse Hyper-V VM）
-    files:
-      - atomic_transaction_manager.py
-      - sqlite_schema.py
-      - task_repo.py
-      - database_manager.py
-      - audit_schema.py
-      - query_metrics.py
     interfaces:
       - contract_id: CT-DB-001
         role: producer
@@ -38,16 +31,6 @@ modules:
         role: producer
         description: 运维管理契约——DatabaseManager(health_check/backup/maintenance/stats)
     kb_ref:
-    test_coverage:
-      tested:
-        - atomic_transaction_manager.py (tests/test_atomic_transaction_manager.py)
-        - sqlite_schema.py (tests/test_sqlite_schema.py)
-        - task_repo.py (tests/test_task_repo.py)
-        - database_manager.py (tests/test_database_manager.py)
-        - audit_schema.py (tests/test_audit_schema.py)
-        - query_metrics.py (tests/test_query_metrics.py)
-      untested_p1: []
-      untested_p2: []
     history: "ARCH-OLAP-RETIRE(2026-07-16): CT-DB-003/OLAPEngine 契约退役——DuckDB OLAP 层被 ClickHouse(Hyper-V VM)替代，olap_engine.py 业务侧零调用，已删除"
 
   - id: db-depgraph-pg
@@ -60,12 +43,6 @@ modules:
     description: depgraph (PostgreSQL) 迁移层——28表schema v18，支持40+ AI并发写入(MVCC)，Psycopg2连接，PgConnExecuteWrapper兼容层。P2迁移完成于2026-06-27。数据库清单真源：infrastructure_registry.yaml INFRA-DB-003
     db_engine: postgresql
     db_connection_ssot: "→ infrastructure_registry.yaml INFRA-DB-003（数据库清单真源，禁止同步）"
-    files:
-      - depgraph_schema.py
-      - database_service.py
-      - depgraph_reader.py
-      - rule_engine.py
-      - auto_runner.py
     interfaces:
       - contract_id: CT-DB-PG-001
         role: producer
@@ -74,11 +51,6 @@ modules:
         role: producer
         description: PG兼容层契约——PgConnExecuteWrapper(execute/executemany/commit/rollback)
     kb_ref:
-    test_coverage:
-      tested:
-        - depgraph_schema.py (tests/io/test_depgraph_schema.py)
-      untested_p1: []
-      untested_p2: []
 
   - id: db-clickhouse-c1-market
     module_id: MOD-INF-012
@@ -90,23 +62,13 @@ modules:
     description: "ClickHouse 业务行情仓库 c1_market——日线/分钟线/Tick/5档盘口/可转债隐含波动率/期货期限结构。替代已删除的 market.duckdb（2026-07-01 删除）。统一入口：DatabaseService.get_clickhouse_conn()（readonly=1）。数据库清单真源：infrastructure_registry.yaml INFRA-DB-006"
     db_engine: clickhouse
     db_connection_ssot: "→ infrastructure_registry.yaml INFRA-DB-006（数据库清单真源，禁止同步）"
-    files:
-      - database_service.py
     interfaces:
       - contract_id: CT-DB-CLICKHOUSE-001
         role: producer
         description: "ClickHouse c1_market 连接契约——DatabaseService.get_clickhouse_conn() readonly=1"
-    test_coverage:
-      tested: []
-      untested_p1:
-        - database_service.py (待补 test_database_service_clickhouse.py)
-      untested_p2: []
 
 summary:
   total: 3
   by_status:
     implemented: 3
     deleted: 0
-  total_files: 8
-  tested_files: 5
-  untested_files: 3

@@ -18,24 +18,24 @@ services:
   - id: SVC-DEPGRAPH
     name: "depgraph PostgreSQL"
     type: database
-    component_ref: "INFRA-DB-001"
+    component_ref: "INFRA-DB-003"
     domain: D_DATA_ENG
     port: 5432
     host: localhost
     protocol: postgresql
     status: active
-    description: "全景图数据库(架构SSoT),40张表存储依赖/路径/数据流/决策流"
+    description: "全景图数据库(架构SSoT),28张表存储依赖/路径/数据流/决策流"
     owner: ZephyrAlpha-Owner
 
   - id: SVC-CLICKHOUSE
     name: "ClickHouse c1_market"
     type: database
-    component_ref: "INFRA-DB-003"
+    component_ref: "INFRA-DB-006"
     domain: D_MKT_DATA
     port: 9000
-    host: localhost
+    host: "172.24.30.100"
     protocol: clickhouse
-    status: planned
+    status: active
     description: "业务行情仓库(C1),K线/指数/板块/财务数据"
     owner: ZephyrAlpha-Owner
 
@@ -54,7 +54,7 @@ services:
   - id: SVC-GOVERNANCE-DB
     name: "governance.db SQLite"
     type: database
-    component_ref: null
+    component_ref: "INFRA-DB-001"
     domain: D_GOVERNANCE
     port: null
     host: "data/governance.db"

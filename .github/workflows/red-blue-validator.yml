@@ -1,4 +1,17 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §12 + §16 Phase 3
+#
+# 治本(2026-08-17, AI-02 审计)——本 workflow 原已全面失效，本次按 CLI 真源修复：
+# ① CLI 目标错误：`python -m zephyr.red_blue_validator` 指向 re-export shim 包
+#    （无 __main__.py，调用必失败 "package cannot be directly executed"）；
+#    真源 CLI = `python -m zephyr.security.adversarial_validation`（cli.py 实证）。
+# ② 参数签名全部不存在于真实 CLI：run --tier 1（应为 L1~L7）/--format json；
+#    onboard --source-dir（真实为位置参数 module_path）；report --format/--output
+#    （真实 report 无此参数，JSON 报告直接取 run 子命令 stdout）；
+#    gameday --frequency DAILY --timeout（真实为小写 daily 且无 --timeout）。
+# ③ 触发路径 5 个幽灵目录（llm_security/escalation-engine/agent_rbac/circuit_breaker/
+#    drift_detector 均不存在于 src/zephyr/）——域重组迁移残留；改指真实目录
+#    （security/adversarial_validation + security/llm_defense + security/access_control + gov_drift），
+#    并补登实现本体路径 security/adversarial_validation/**。
 name: Red-Blue Adversarial Validator
 
 on:
@@ -6,29 +19,25 @@ on:
     branches: [main, master, dev, "phase/*", "sprint/*", "feature/*"]
     paths:
       - "src/zephyr/red_blue_validator/**"
+      - "src/zephyr/security/adversarial_validation/**"
+      - "src/zephyr/security/llm_defense/**"
+      - "src/zephyr/security/access_control/**"
       - "src/zephyr/gov_enforcement/rule_enforcement/**"
-      - "src/zephyr/llm_security/**"
-      - "src/zephyr/escalation-engine/**"
       - "src/zephyr/governance/**"
       - "src/zephyr/feedback_loop/gates/**"
-      - "src/zephyr/agent_rbac/**"
-      - "src/zephyr/circuit_breaker/**"
-      - "src/zephyr/drift_detector/**"
+      - "src/zephyr/gov_drift/**"
       - ".github/workflows/red-blue-validator.yml"
   pull_request:
     branches: [main, master, dev]
     paths:
-      # 治本(2026-07-17): 修复 push/PR paths 不对称——原 PR 仅 2 条路径，
-      # 导致 PR 提交时 red_blue_validator 模块变更不触发对抗验证
       - "src/zephyr/red_blue_validator/**"
+      - "src/zephyr/security/adversarial_validation/**"
+      - "src/zephyr/security/llm_defense/**"
+      - "src/zephyr/security/access_control/**"
       - "src/zephyr/gov_enforcement/rule_enforcement/**"
-      - "src/zephyr/llm_security/**"
-      - "src/zephyr/escalation-engine/**"
       - "src/zephyr/governance/**"
       - "src/zephyr/feedback_loop/gates/**"
-      - "src/zephyr/agent_rbac/**"
-      - "src/zephyr/circuit_breaker/**"
-      - "src/zephyr/drift_detector/**"
+      - "src/zephyr/gov_drift/**"
       - ".github/workflows/red-blue-validator.yml"
   workflow_dispatch:
 
@@ -54,23 +63,28 @@ jobs:
           pip install -e .
 
       - name: Cold Start Bootstrap
-        run: python -m zephyr.red_blue_validator onboard --source-dir src/zephyr
+        run: python -m zephyr.security.adversarial_validation onboard src/zephyr
         continue-on-error: true
 
       - name: Red-Blue Adversarial Run
         id: adversarial
-        run: python -m zephyr.red_blue_validator run --tier 1 --blast-radius FILE --format json
-        # 治本(2026-07-17): 原 continue-on-error: true 使 workflow 永不阻断，
-        # 失去 CI 最后一道防线意义。改为 false 硬阻断。
+        # run 子命令 stdout 即 JSON 报告（session_id/total/blocked/bypassed/blocked_rate/duration_ms）；
+        # 硬阻断语义：bypassed>0（有攻击穿透防御）→ exit 1，CI 最后防线不失效。
+        run: |
+          New-Item -ItemType Directory -Force data/red_blue | Out-Null
+          $out = python -m zephyr.security.adversarial_validation run --name ci-adversarial --tier L1 --blast-radius FILE
+          $out | Out-File -Encoding utf8 data/red_blue/ci_report.json
+          $report = $out | ConvertFrom-Json
+          Write-Host "total=$($report.total) blocked=$($report.blocked) bypassed=$($report.bypassed) blocked_rate=$($report.blocked_rate)"
+          if ($report.bypassed -gt 0) {
+            Write-Host "FAIL: $($report.bypassed) 个攻击场景穿透防御（bypassed>0）"
+            exit 1
+          }
         continue-on-error: false
-
-      - name: Generate Report
-        if: always()
-        run: python -m zephyr.red_blue_validator report --format json --output data/red_blue/ci_report.json
 
       - name: Check Convergence
         if: always()
-        run: python -m zephyr.red_blue_validator status
+        run: python -m zephyr.security.adversarial_validation status
         continue-on-error: true
 
       - name: Upload Report Artifact
@@ -106,7 +120,7 @@ jobs:
 
       - name: Run Game Day
         id: gameday
-        run: python -m zephyr.red_blue_validator gameday --frequency DAILY --timeout 2400
+        run: python -m zephyr.security.adversarial_validation gameday --frequency daily
         continue-on-error: true
 
       - name: Upload Game Day Report

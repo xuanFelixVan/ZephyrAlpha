@@ -54,7 +54,7 @@ boundary_rules:
 aggregate_roots:
   - id: AGG-001
     name: "Order / 委托订单"
-    layer: l06
+    domain: D_EX_CORE  # 2026-08-17 AI-02：layer(l0x) 为已废弃 c_track ID，§2.1 裁定后域化为 D_*（映射证据：runtime_planes.yaml l→domain 对照 + bounded_context 语义）
     bounded_context: "Trade Execution 域"
     physical_path: src/zephyr/shared/contracts/order.py
     description: "订单全生命周期管理、委托路由、成交汇总。"
@@ -97,8 +97,8 @@ aggregate_roots:
 
   - id: AGG-002
     name: "Position / 持仓"
-    layer: l06
-    bounded_context: "Position Tracking 域（L06/L04 共享）"
+    domain: D_POSITION  # 2026-08-17 AI-02：layer(l0x) 为已废弃 c_track ID，§2.1 裁定后域化为 D_*（映射证据：runtime_planes.yaml l→domain 对照 + bounded_context 语义）
+    bounded_context: "Position Tracking 域"
     physical_path: src/zephyr/shared/contracts/position.py
     description: "持仓快照、盈亏计算基础、风控监控输入。"
     contains_entities: [ENT-002]
@@ -130,7 +130,7 @@ aggregate_roots:
 
   - id: AGG-003
     name: "Portfolio / 投资组合"
-    layer: l05
+    domain: D_PF_CORE  # 2026-08-17 AI-02：layer(l0x) 为已废弃 c_track ID，§2.1 裁定后域化为 D_*（映射证据：runtime_planes.yaml l→domain 对照 + bounded_context 语义）
     bounded_context: "Portfolio Management 域"
     physical_path: src/zephyr/pf_core/domain/portfolio.py
     description: "组合定义、目标持仓维护、再平衡触发。"
@@ -162,8 +162,8 @@ aggregate_roots:
 
   - id: AGG-004
     name: "Strategy / 策略"
-    layer: l05
-    bounded_context: "Strategy Management 域（L05 + L03 共享）"
+    domain: D_PF_CORE  # 2026-08-17 AI-02：layer(l0x) 为已废弃 c_track ID，§2.1 裁定后域化为 D_*（映射证据：runtime_planes.yaml l→domain 对照 + bounded_context 语义）
+    bounded_context: "Strategy Management 域"
     physical_path: src/zephyr/pf_core/domain/strategy.py
     description: "策略定义、版本管理、信号生成。"
     contains_entities: [ENT-003]
@@ -191,7 +191,7 @@ aggregate_roots:
 
   - id: AGG-005
     name: "Factor / 因子"
-    layer: l02
+    domain: D_FACTOR  # 2026-08-17 AI-02：layer(l0x) 为已废弃 c_track ID，§2.1 裁定后域化为 D_*（映射证据：runtime_planes.yaml l→domain 对照 + bounded_context 语义）
     bounded_context: "Factor Engine 域"
     physical_path: src/zephyr/factor/domain/factor.py
     description: "因子定义、版本管理、计算引擎。FactorValue 通过 ID 引用，不嵌入（时序数据海量）。"
@@ -219,7 +219,7 @@ aggregate_roots:
 
   - id: AGG-006
     name: "Signal / 交易信号"
-    layer: l03
+    domain: D_SIGLEGACY  # 2026-08-17 AI-02：layer(l0x) 为已废弃 c_track ID，§2.1 裁定后域化为 D_*（映射证据：runtime_planes.yaml l→domain 对照 + bounded_context 语义）
     bounded_context: "Signal 域"
     physical_path: src/zephyr/signal/domain/signal.py
     description: "策略输出的交易意图载体。本身即单一 Entity，无内部子 Entity。"
@@ -252,7 +252,7 @@ aggregate_roots:
 
   - id: AGG-007
     name: "RiskPolicy / 风控策略"
-    layer: l04
+    domain: D_RISK  # 2026-08-17 AI-02：layer(l0x) 为已废弃 c_track ID，§2.1 裁定后域化为 D_*（映射证据：runtime_planes.yaml l→domain 对照 + bounded_context 语义）
     bounded_context: "Risk Management 域"
     physical_path: src/zephyr/risk/domain/risk_policy.py
     description: "风控规则定义、限额管理、Pre-Trade 检查。"
@@ -278,7 +278,7 @@ aggregate_roots:
 
   - id: AGG-008
     name: "Model / ML 模型"
-    layer: l11
+    domain: D_ML_TRAIN  # 2026-08-17 AI-02：layer(l0x) 为已废弃 c_track ID，§2.1 裁定后域化为 D_*（映射证据：runtime_planes.yaml l→domain 对照 + bounded_context 语义）
     bounded_context: "ML Platform 域"
     physical_path: src/zephyr/ml_train/domain/model.py
     description: "ML 模型定义、版本管理、验证与漂移监控。TrainingRun 通过 ID 引用（训练产物海量）。"
@@ -358,7 +358,7 @@ entities:
       - {name: factor_id, type: str, description: "反向引用"}
       - {name: formula_hash, type: str, description: "公式的 hash（验证不可变）"}
       - {name: version_number, type: "str (semver)", description: "版本号"}
-      - {name: code_ref, type: str, description: "src/zephyr/l02_.../factors/xxx.py commit hash"}
+      - {name: code_ref, type: str, description: "src/zephyr/factor/xxx.py commit hash"}
       - {name: activated_at, type: "Timestamp | None", description: "激活时间"}
       - {name: deprecated_at, type: "Timestamp | None", description: "废弃时间"}
 

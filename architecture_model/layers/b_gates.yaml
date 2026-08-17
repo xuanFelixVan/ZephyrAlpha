@@ -14,27 +14,17 @@ modules:
     status: implemented
     priority: P0
     runtime_plane: warm
-    description: beta G1-G5 KMS 决策�?+ 任务启动前合规门�?
-    files:
-      - circuit_breaker.py
-      - contract_template_manager.py
-      - gate_engine.py
-      - task_completion_gate.py
-      - g1_ingest.yaml
-      - g2_triage.yaml
-      - g3_evaluate.yaml
-      - g4_activate.yaml
-      - g5_extract.yaml
+    description: beta G1-G5 KMS 决策门 + 任务启动前合规门禁
     interfaces:
       - contract_id: CT-ORC-GATE-001
         role: producer
-        description: Orchestrator 调用的任务门禁判�?
+        description: Orchestrator 调用的任务门禁判定
       - contract_id: CT-SCRIPT-GATE-001
         role: consumer
-        description: 治理脚本 exit code �?GATE-n 判定
+        description: 治理脚本 exit code → GATE-n 判定
       - contract_id: EXT-GATE-PRECOMMIT-001
         role: producer
-        description: GATE-18 pre-commit 本地化门禁（扩展登记�?
+        description: GATE-18 pre-commit 本地化门禁（扩展登记）
     kb_ref: []
 
 summary:

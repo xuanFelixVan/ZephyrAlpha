@@ -17,7 +17,7 @@ modules:
   - id: exec-trae
     module_id: MOD-EXEC-001
     name: Trae Execution Layer
-    submodule_path: N/A
+    submodule_path: null  # Trae IDE 内置 AI 执行层，无代码锚点（概念层，schema v1.3.0 起允许 null）
     status: implemented
     priority: P0
     runtime_plane: hot
@@ -27,7 +27,6 @@ modules:
       适用场景：日常开发、代码生成、深度审查、文档编写、系统改进建议。
       覆盖模块：M1(任务解析)、M3(代码生成)、M6(差异检查)、M7(深度审查)、
       M8(合规检查)、M9(风险评估)、M10(报告生成)、Feedback Loop 进化提案。
-    files: []
     interfaces:
       - contract_id: CT-EXEC-TRAE-001
         role: producer
@@ -38,7 +37,8 @@ modules:
   - id: exec-local
     module_id: MOD-EXEC-002
     name: Local Model Layer
-    submodule_path: src/zephyr/vector_memory/embedding_router.py
+    submodule_path: src/zephyr/integration/local_model/
+    submodule_path_note: "本地模型层物理锚点（embedding_router/local_model_scheduler 等）；覆盖能力调用涉及 integration/vector_memory/（VMS 嵌入）与 intelligence/model_evaluation/reranker.py（重排），文件↔模块归属真源为 depgraph 代码头部扫描"
     status: implemented
     priority: P0
     runtime_plane: hot
@@ -52,11 +52,6 @@ modules:
       可选场景：Qwen2.5-7B 本地推理（简单分析/提取，需 8GB VRAM）。
       硬件最低：CPU + 2GB RAM（仅嵌入模型）。
       硬件推荐：CPU + 8GB RAM + 可选 GPU 8GB VRAM（嵌入+本地推理）。
-    files:
-      - vector_memory/embedding_router.py
-      - vector_memory/in_process_vector_memory.py
-      - vector_memory/cache_layer.py
-      - intelligence/model_evaluation/reranker.py
     interfaces:
       - contract_id: CT-EXEC-LOCAL-001
         role: producer
@@ -67,8 +62,8 @@ modules:
   - id: exec-api
     module_id: MOD-EXEC-003
     name: API Execution Layer
-    submodule_path: src/zephyr/pipeline/pipeline_orchestrator.py
-    status: partial
+    submodule_path: src/zephyr/integration/pipeline_orchestrator.py
+    status: phase_1_partial
     priority: P1
     runtime_plane: warm
     runtime_schedule: night_shift
@@ -89,9 +84,6 @@ modules:
         2. ai_autonomy_level == "unsafe" 且 DeepSeek 已尝试失败
         注意：security/experimental 标签不再直接路由 Claude，一律先走 DeepSeek。
       当前状态：_call_model() 返回 simulated: True，尚未接入真实 API。
-    files:
-      - pipeline/pipeline_orchestrator.py
-      - pipeline/models.py
     interfaces:
       - contract_id: CT-EXEC-API-001
         role: producer
@@ -225,4 +217,4 @@ summary:
   total: 3
   by_status:
     implemented: 2
-    partial: 1
+    phase_1_partial: 1

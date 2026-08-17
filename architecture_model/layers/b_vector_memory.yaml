@@ -5,41 +5,21 @@ partition:
   track: b_track
   bounded_context: true
   umbrella_layer: l12
-  status: phase_2_complete
-  note: "蓝图 v0.7.0：18 .py 文件 + 11 子模块 + 23 单元测试 + 7 对抗测试全部通过"
+  status: implemented
+  note: "蓝图 v0.7.0：18 .py 文件 + 11 子模块 + 23 单元测试 + 7 对抗测试全部通过（2026-08-17 AI-02 审计：status 由 phase_2_complete 归一到 schema 合法值 implemented）"
 
 modules:
   - id: vms-core
     module_id: MOD-INF-011
     name: Vector Memory Service Core
-    submodule_path: src/zephyr/vector_memory/
-    status: phase_2_complete
+    submodule_path: src/zephyr/integration/vector_memory/
+    status: implemented
     priority: P0
     runtime_plane: warm
     description: >
       向量化存储与检索：ChromaDB PersistentClient + BGE-M3 ONNX (本地推理 1024d) + bge-small-en-v1.5 (ONNX 384d)。
       8 Collection: decisions / code_context / lessons / knowledge / rules / blueprints / session_snapshots / execution_traces。
       InProcessVectorMemory 统一入口，VectorBridge 外部集成适配器，HybridRetriever (Vector+BM25+RRF)。
-    files:
-      - __init__.py
-      - in_process_vector_memory.py
-      - interface.py
-      - vms_schemas.py
-      - collection_manager.py
-      - embedding_router.py
-      - hybrid_retriever.py
-      - provenance_enforcer.py
-      - bridge_layer.py
-      - vector_bridge.py
-      - retrieval_feedback.py
-      - cache_layer.py
-      - index_health_monitor.py
-      - chunk_strategy_router.py
-      - cross_collection_retriever.py
-      - delegated_vector_memory.py
-      - in_memory_fake_vms.py
-      - in_memory_memory_backend.py
-      - vms_config.yaml
     interfaces:
       - contract_id: CT-ORC-VMS-001
         role: producer
@@ -52,5 +32,5 @@ modules:
 summary:
   total: 1
   by_status:
-    phase_2_complete: 1
+    implemented: 1
   note: "蓝图 v0.7.0 施工完成，11 子模块全部落地，23 单元测试 + 7 红队对抗测试全部通过"
