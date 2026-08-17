@@ -164,6 +164,8 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | **🔵 治理批 B 包（施工线 4/5）** | **AI-GOVB-001：§六 #102 regime_detector MATURITY 对齐+#105 stop_loss D9 文档漂移+#106 memo36 RiskOrchestrator 命名对账+#111 scaffold module alias 裁定逃生口+#109 worktree spawn WMI 降级（随 #ARCH-105）** | 🔵 已派单 |
 | **🔵 注册表一致性批（施工线 5/5）** | **AI-REGF-001：§六 #8 MOD-POS-021 capability 补登+#10 UNI-BASKET-001 dangling FK+#11 16 号指标分类对齐+#12 data_asset 13 个 E5 锚点漂移+#15 BUY 命名冲突消解+#16 MOD-PLAN-001/002/003 域归属** | 🔵 已派单 |
 
+> **⏸ 开工时序裁定（2026-08-17 第七统筹，用户询疑触发实证）**：上述 10 路**与 AI-AUDIT01~20 旧文档审计批收口任务（16 worktree 串行 merge 回 dev）不同时开工**。实证：抽查 AUDIT09 分支 diff=161 文件（+31297/-213407）、AUDIT16=99 文件（+31910/-217386），覆盖 src/tests/scripts/docs/registries 全域——与 10 路全面重叠；且 audit 分支 fork 自陈旧 dev（RFIX/THD/DGR/GOVA/FOPEN 均在其后 merge），16 个串行 merge 冲突解决需独占专注。**正确编排：收口任务先跑完（产出干净基线+全局复审）→ 10 路再从新 dev HEAD 派生 worktree 开工**（一键复制指令不变，review 目标 commit 为历史 commit 不受基线前移影响）。⚠️ 收口 session 注意：逐分支 merge 前必须先 diff 核验——两个抽查分支均含 -21 万行级删除，须防陈旧分支吞掉后发批次内容。
+
 ## 六、遗留项登记表（重建版，按优先级分类）
 
 > 原表经 15（第一批末）→19（交接时）→28（第二批末）三轮演变，原文件丢失。
