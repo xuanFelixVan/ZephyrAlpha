@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-17T18:17:39Z'
+generated_at: '2026-08-17T18:42:30Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 217
@@ -2080,7 +2080,7 @@ files:
   title: 候选模块登记表
   doc_type: register
   status: active
-  version: 1.1.0
+  version: 1.1.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -2155,7 +2155,7 @@ files:
   title: 跨模块依赖登记表
   doc_type: register
   status: active
-  version: 1.1.0
+  version: 1.1.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -2605,7 +2605,7 @@ files:
   title: 模块级翻译注册表（中英对照真源）
   doc_type: register
   status: active
-  version: 1.8.2
+  version: 1.8.3
   rule_form: ''
   scope: ''
   stability: ''
@@ -2785,7 +2785,7 @@ files:
   title: 裁定中央登记表
   doc_type: register
   status: active
-  version: 1.1.0
+  version: 1.1.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -3070,7 +3070,7 @@ files:
   title: ai_autonomy_level_planned 受控词表
   doc_type: vocabulary
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
