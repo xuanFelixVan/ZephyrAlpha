@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy; pandas
 # [CONSUMERS] MOD-REGIME-002(OverlaySignalsConstructor消费s2_wyckoff_score→S2 confirm)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] score∈[0,100]; 无结构=0(平时不干预); PIT严格(只用历史事件,ffill传播已发生阶段); PIT由调用方shift(1)
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving

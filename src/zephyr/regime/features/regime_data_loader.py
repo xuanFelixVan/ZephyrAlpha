@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy; pandas; zephyr.data.ch_reader; zephyr.data.table_registry
 # [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder透传→risk/overlay构造器消费)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] 任一表查询失败返回None(降级友好); 表名经TableRegistry获取(禁止硬编码); 同表首次查询后缓存
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving

@@ -352,6 +352,7 @@ class ScaffoldEngine:
         description: str = "",
         domain: str = "",
         subdomain: str = "",
+        force_override: bool = False,
     ) -> Path:
         """在 src/zephyr/<package>/<name>.py 创建模块，注册到 __init__.py。"""
         package_dir = SRC_ZEPHYR / package
@@ -369,7 +370,7 @@ class ScaffoldEngine:
 
         # ── 检查 3: 功能重复 ──
         check_duplicate_functionality(
-            name, description, domain, subdomain,
+            name, description, domain, subdomain, force_override=force_override,
             expected_module_path=f"zephyr.{package}.{name}",
         )
 
@@ -900,14 +901,14 @@ def check_duplicate_functionality(
     """SSoT门禁：检查功能域重叠 + module_path 冲突。硬阻断——重叠时禁止创建。
 
     三个检测维度：
-      维度1: 功能域注册表重叠（force_override 不跳过——防止真重复）
+      维度1: 功能域注册表重叠（exact 冲突不跳过；alias 模糊匹配 force_override 跳过并留痕）
       维度2: 蓝图关键词匹配（force_override 跳过）
       维度3: module_path 冲突 + basename 跨域查重（force_override 不跳过——确凿重复信号）
              维度3a: 同 module_path = 同文件身份（方案 E：复用 [MODULE] 头）
              维度3b: 同 basename 跨域 = 复刻信号（P0-4 防再生：阻断 AI 跨域复刻同名模块）
                      豁免: __init__.py / conftest.py / __main__.py（Python 包/约定标识）
 
-    force_override=True 时跳过维度2（蓝图关键词匹配），维度1和维度3仍执行。
+    force_override=True 时跳过维度1的 alias 模糊匹配（exact 冲突仍阻断）与维度2（蓝图关键词匹配）；维度3不跳过。
     用于确认 SSoT 误报后强制创建。
     （Stage 4 公共化，primary）
     """
@@ -968,70 +969,91 @@ def check_duplicate_functionality(
         except Exception as exc:
             print(f"  WARNING: module_path 冲突检测失败: {exc}（L2 兜底门禁补防线）")
 
-    if force_override:
-        # 仅跳过蓝图关键词匹配；功能域注册表检查仍执行（防止真重复）
-        pass
-    else:
-        try:
-            from zephyr.infrastructure.registry_governance import FunctionalDomainRegistry
+    # 维度1: 功能域注册表重叠——exact domain/subdomain 冲突为确凿重复信号，force_override 不跳过；
+    # alias 子串模糊匹配为启发式软判断（#111 裁定通道：同名碰撞经裁定确为巧合时可跳过）。
+    # force_override=True 跳过 alias 匹配与维度2蓝图关键词匹配；被放行的 alias 命中打印留痕。
+    try:
+        from zephyr.infrastructure.registry_governance import FunctionalDomainRegistry
 
-            registry = FunctionalDomainRegistry()
-            overlap = registry.check_overlap(
+        registry = FunctionalDomainRegistry()
+        overlap = registry.check_overlap(
+            domain=domain,
+            subdomain=subdomain,
+            name=name,
+            description=description,
+            skip_alias=force_override,
+        )
+        if overlap.has_overlap:
+            details = "; ".join(overlap.overlap_details)
+            raise ScaffoldError(
+                f"SSoT门禁阻断：功能域重叠检测到\n"
+                f"  {details}\n"
+                f"  复用决策（RULE-EIGHT）：\n"
+                f"    完全覆盖 -> 直接用已有模块\n"
+                f"    80%覆盖 -> 扩展已有模块\n"
+                f"    50%覆盖 -> 重构已有+扩展\n"
+                f"    0%覆盖 -> 确认domain/subdomain后重新创建\n"
+                f"  如确需新建，请指定 --domain 和 --subdomain 参数声明新功能域"
+                f"\n  同名碰撞经裁定确为巧合（非真重复）-> 使用 --force-override 裁定通道"
+                f"\n  （仅跳过 alias 模糊匹配与蓝图关键词匹配；exact/module_path 冲突仍阻断）"
+            )
+        if force_override:
+            alias_probe = registry.check_overlap(
                 domain=domain,
                 subdomain=subdomain,
                 name=name,
                 description=description,
+                skip_alias=False,
             )
-            if overlap.has_overlap:
-                details = "; ".join(overlap.overlap_details)
-                raise ScaffoldError(
-                    f"SSoT门禁阻断：功能域重叠检测到\n"
-                    f"  {details}\n"
-                    f"  复用决策（RULE-EIGHT）：\n"
-                    f"    完全覆盖 → 直接用已有模块\n"
-                    f"    80%覆盖 → 扩展已有模块\n"
-                    f"    50%覆盖 → 重构已有+扩展\n"
-                    f"    0%覆盖 → 确认domain/subdomain后重新创建\n"
-                    f"  如确需新建，请指定 --domain 和 --subdomain 参数声明新功能域"
+            if alias_probe.has_overlap:
+                print(
+                    f"  WARNING: --force-override 裁定通道放行 "
+                    f"{len(alias_probe.overlap_details)} 条功能域 alias 模糊匹配（exact/module_path 冲突检查仍执行）："
                 )
-        except ScaffoldError:
-            raise
-        except ImportError:
-            pass
-        except Exception as exc:
-            print(f"  WARNING: 功能域注册表检查失败: {exc}")
+                for _detail in alias_probe.overlap_details:
+                    print(f"    - {_detail}")
+    except ScaffoldError:
+        raise
+    except ImportError:
+        pass
+    except Exception as exc:
+        print(f"  WARNING: 功能域注册表检查失败: {exc}")
 
-        try:
-            from zephyr.integration.mcp import BlueprintSearchServer
-        except ImportError:
-            return
+    if force_override:
+        # 维度2（蓝图关键词匹配）随裁定通道跳过
+        return
 
-        query = f"{name} {description}".strip()
-        if not query or len(query) < 3:
-            return
+    try:
+        from zephyr.integration.mcp import BlueprintSearchServer
+    except ImportError:
+        return
 
-        try:
-            server = BlueprintSearchServer()
-            result = server._find_relevant_blueprint(query, num_results=5)
-            matches = result.get("results", [])
-            for m in matches[:3]:
-                score = m.get("relevance_score", 0)
-                if score >= 20:
-                    raise ScaffoldError(
-                        f"SSoT门禁阻断：蓝图关键词匹配检测到类似功能\n"
-                        f"  已有蓝图: {m.get('blueprint_id', '?')} (score={score})\n"
-                        f"  description: {m.get('hint', 'N/A')}\n"
-                        f"  level={m.get('blueprint_level')} priority={m.get('priority')}\n"
-                        f"  复用决策（RULE-EIGHT）：\n"
-                        f"    完全覆盖 → 直接用已有蓝图\n"
-                        f"    80%覆盖 → 扩展已有蓝图\n"
-                        f"    50%覆盖 → 重构已有+扩展\n"
-                        f"    0%覆盖 → 确认后使用 --force-override 强制创建"
-                    )
-        except ScaffoldError:
-            raise
-        except Exception:
-            pass
+    query = f"{name} {description}".strip()
+    if not query or len(query) < 3:
+        return
+
+    try:
+        server = BlueprintSearchServer()
+        result = server._find_relevant_blueprint(query, num_results=5)
+        matches = result.get("results", [])
+        for m in matches[:3]:
+            score = m.get("relevance_score", 0)
+            if score >= 20:
+                raise ScaffoldError(
+                    f"SSoT门禁阻断：蓝图关键词匹配检测到类似功能\n"
+                    f"  已有蓝图: {m.get('blueprint_id', '?')} (score={score})\n"
+                    f"  description: {m.get('hint', 'N/A')}\n"
+                    f"  level={m.get('blueprint_level')} priority={m.get('priority')}\n"
+                    f"  复用决策（RULE-EIGHT）：\n"
+                    f"    完全覆盖 -> 直接用已有蓝图\n"
+                    f"    80%覆盖 -> 扩展已有蓝图\n"
+                    f"    50%覆盖 -> 重构已有+扩展\n"
+                    f"    0%覆盖 -> 确认后使用 --force-override 强制创建"
+                )
+    except ScaffoldError:
+        raise
+    except Exception:
+        pass
 
 
 def _check_duplicate_functionality(
@@ -1379,6 +1401,7 @@ def main() -> None:
     p_mod.add_argument("--domain", default="", help="功能域 (e.g. governance)")
     p_mod.add_argument("--subdomain", default="", help="子功能域 (e.g. gate_engine)")
     p_mod.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
+    p_mod.add_argument("--force-override", action="store_true", help="裁定通道：跳过功能域 alias 模糊匹配+蓝图关键词匹配（exact/module_path 冲突仍阻断，同名碰撞经裁定后使用）")
 
     # script
     p_scr = sub.add_parser("script", help="创建 scripts/<path>/<name>.py")
@@ -1445,6 +1468,7 @@ def main() -> None:
                 args.desc,
                 domain=getattr(args, "domain", ""),
                 subdomain=getattr(args, "subdomain", ""),
+                force_override=getattr(args, "force_override", False),
             )
         elif args.mode == "script":
             engine.create_script(

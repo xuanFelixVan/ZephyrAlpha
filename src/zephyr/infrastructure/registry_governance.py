@@ -114,6 +114,7 @@ class FunctionalDomainRegistry:
         covers: list[str] | None = None,
         name: str = "",
         description: str = "",
+        skip_alias: bool = False,
     ) -> OverlapResult:
         self.load()
         result = OverlapResult()
@@ -135,7 +136,7 @@ class FunctionalDomainRegistry:
                     result.overlapping_entries.append(e)
                     result.overlap_details.append(f"Cover overlap with {e.ssot_module}: {overlap_covers}")
 
-        if not result.has_overlap and (name or description):
+        if not result.has_overlap and not skip_alias and (name or description):
             query_text = f"{name} {description}".lower()
             for e in self._entries:
                 for alias in e.aliases:

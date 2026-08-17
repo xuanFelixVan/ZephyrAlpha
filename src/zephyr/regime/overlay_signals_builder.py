@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy; pandas; zephyr.regime.features.overlay_features; zephyr.regime.regime_feature_builder
 # [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder.build_shrinkage_schedule消费→overlay_signals)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] score维度∈[0,100]; flag维度∈{0,1}; 无信号=0(平时不干预→纯HMM不退化); PIT严格(build_for_date(dt)只用≤dt-1,预计算shift(1)); 数据缺失→维度=0.0降级
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving

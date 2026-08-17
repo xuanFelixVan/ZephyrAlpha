@@ -467,9 +467,14 @@ def _run_worker(payload: dict) -> int:
     if not admitted:
         from zephyr.shared.io.paths import anchor_main_root
 
-        # 锚定失效时 status 落主仓（worktree 路径可能已不存在）；
+        # status 落点按拒启类型分诊（#109 治本）：
+        # - 证1（锚定失效）：worktree 目录可能已不存在 → 落主仓（原行为保留）；
+        # - 证2/证3（锚定存活但拒启）：launch 已在 worktree 写 pending，failed 须同址
+        #   落 worktree——否则 pending@worktree 永不更新、failed@主仓双文件分裂
+        #   （外部观测即「worktree 状态文件未落盘」）。
         # anchor_main_root 单级父目录判定——嵌套 pytest tmp 库不误剥（同族陷阱根治）
-        status_root = str(anchor_main_root(Path(project_root)))
+        _wt_root = Path(project_root)
+        status_root = str(_wt_root) if _wt_root.is_dir() else str(anchor_main_root(_wt_root))
         _write_failed_status(
             status_root, commit_sha, session_id, started_at,
             [f"worker 启动三证拒启: {deny_reason}"],

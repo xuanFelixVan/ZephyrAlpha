@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy; pandas
 # [CONSUMERS] MOD-REGIME-002(RiskSignalConstructor消费13参数系数映射→risk_signal_inputs)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] 所有coef∈[0.30,1.00]; 无异常=1.0(平时不干预); 系数只降不升(风险只减不增); PIT由调用方shift(1)
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving

@@ -5,7 +5,7 @@ title: VaR/ES 与波动率监控
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.11.0"
+version: "1.11.1"
 date: 2026-08-16
 topic: var_es_monitoring
 scope: 07_trading_decision_architecture
@@ -355,7 +355,7 @@ else:
 
 **决策**：三档响应——PASS / RECALIBRATE / REBUILD。
 
-> **执行者状态标注（v1.11.0，双轮审查 D1/D7 对账）**：本节动作表的执行者 `RiskOrchestrator` 编排类**未建**（src 零匹配），各 `update_config()/enable()/force_static_mode()` 调用点为设计契约——在风控接线批（AI-RWIRE-001，#ARCH-100）建成编排层前，本节动作由人工/daily_auditor 告警驱动执行，禁止按可执行语气直读。
+> **执行者状态标注（v1.11.1 命名对账，AI-GOVB-001 #106）**：本节动作表的执行者 `RiskOrchestrator` 为设计契约名——编排层已建成，落地名 `RiskLayerOrchestrator`（MOD-L06-001，`src/zephyr/ex_core/risk_layer_orchestrator.py`，AI-RWIRE-001 #ARCH-100）；盘中风控编排（evaluate_intraday/Kill Switch/对账冻结）已接线，但各 `update_config()/enable()/force_static_mode()` 校准动作调用点未接入编排层——本节动作仍由人工/daily_auditor 告警驱动执行，禁止按可执行语气直读。
 >
 > **ES 插值口径裁定（v1.11.0，双轮审查 F1）**：`compute_expected_shortfall` 尾部筛选分位数采用 `method='lower'`（实有样本点 sorted[floor((n-1)(1-c))]，不线性插值）——线性插值产出样本中不存在的虚拟分位值，小样本下尾部口径不稳定；'lower' 口径下 ES ≥ VaR 由构造成立。VaR 历史模拟分位数（`compute_var` / `var_calculator._historical`）保留线性插值（单点连续取值无尾部切片抖动问题）；离散收益（大量 0 值日）下 VaR 可分位报 0 为已知口径特征，由 min_samples 下限 + POT 降级链兜底，回测验证（§3.9）负责捕获系统性低估。
 
@@ -434,7 +434,7 @@ else:
 
 **组件状态**：
 
-> **"production" 口径澄清（v1.11.0，双轮审查 D7 对账）**：下表 ✅ production = **模块成熟度**（模块已建 + 单测全绿 + 接口冻结承诺），≠ 生产交易链已接线生效。风控链路（VaR/ES/回撤/KillSwitch/流动性危机/对账）的生产接线由接线批承载（AI-RWIRE-001，#ARCH-100）——接线完成前，本节组件在盘中仅经 daily_auditor 盘后回测链路消费。
+> **"production" 口径澄清（v1.11.0，双轮审查 D7 对账）**：下表 ✅ production = **模块成熟度**（模块已建 + 单测全绿 + 接口冻结承诺），≠ 生产交易链已接线生效。风控链路（VaR/ES/回撤/KillSwitch/流动性危机/对账）的生产接线由接线批承载（AI-RWIRE-001，#ARCH-100）——RWIRE-001 已建成编排层（`RiskLayerOrchestrator`，MOD-L06-001）+ `trading_session` 注入缝，组合根实例化前，本节组件在盘中仅经 daily_auditor 盘后回测链路消费。
 
 | 组件 | 状态 | 说明 |
 |---|---|---|
@@ -443,7 +443,7 @@ else:
 | var_backtester.py | ✅ evolving v0.1.0 | MVP 4 法 + Basel traffic light |
 | daily_auditor.py | ✅ production v0.2.0 | run_var_backtest + 3 审计日志方法 |
 | drawdown_controller.py | ✅ production v0.1.0 | 5 级（v1.11.0 仓位上限单调性修正：ORANGE 0.7→0.5）+ 7 黑天鹅 + BlackSwanSignal API |
-| RiskOrchestrator | ⚠️ 未建 | §3.10/§3.15/§3.17 动作表执行者，设计契约——风控接线批（AI-RWIRE-001）承载 |
+| RiskOrchestrator（落地名 `RiskLayerOrchestrator`，MOD-L06-001） | ✅ 已建（AI-RWIRE-001，#ARCH-100） | 盘中风控编排（evaluate_intraday/Kill Switch/对账冻结）已接线；§3.10/§3.15/§3.17 动作表校准执行者语义仍=设计契约，未接入编排层 |
 | backtest_store | ⚠️ 待施工 | 回测结果持久化层 |
 | clean P&L 双轨记录 | ⚠️ 待施工 | clean/dirty P&L 区分 |
 
@@ -1182,3 +1182,4 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 | 2026-08-12 | 1.10.2 | 作战地图环节映射补强——锚定 BM-RC-04-A、BM-RC-06-B、BM-RC-07 | §3.3/§3.12 末尾补映射块，环节级可追溯 |
 | 2026-08-14 | 1.10.3 | 压缩精简：已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） | 已施工内容折叠为"✅ 已施工（2 轮 27 测试全绿）+ 接口级摘要"，删除施工过程/调试记录/重复散文；VaR/ES 公式、配置参数、四级阈值、FHS/QbSD/Vol-Targeting 远期规约、§6 待裁定、§7 待定问题、35号契约、BM 锚点、全部数值参数零丢失 |
 | 2026-08-15 | 1.10.4 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §3.14 blackswan_active 来源链相邻两处重复合并为一处（定义点 §3.5.2）；全篇扫描无其他可压缩点——VaR 2/4/6%+CVaR 10% 五级、POT 0.90/0.2/0.5/3.0、Basel 交通灯 16/17-20/21、REBUILD 静态 3%/5%/0.7、var_breach ×0.8/×0.9、GREM 四级、盘中 7 触发+冷却 5 分钟+日限 6 次、§6 待裁定/BM 锚点/35号契约/链接逐项零丢失 |
+| 2026-08-17 | 1.11.1 | RiskOrchestrator 命名对账（AI-GOVB-001 #106）：§3.10 执行者状态标注/组件状态表/「production 口径澄清」三处同步 RWIRE-001 完工现实——编排层已建（落地名 RiskLayerOrchestrator，MOD-L06-001，盘中编排已接线），§3.10 校准动作调用点未接入仍=设计契约 | 仅命名/状态对账，零语义变更；「禁止按可执行语气直读」标注保留 |

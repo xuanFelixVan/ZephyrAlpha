@@ -4,7 +4,7 @@
 # [DEPENDENCIES] —
 # [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder 消费 #12 筹码结构 / #5 空间位置 / S2 底部筹码 / 13 风险参数系数)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] regime 特征管道包——RegimeFeatures/OverlaySignals/RiskSignalInputs 的生成入口
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving

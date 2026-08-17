@@ -2,7 +2,7 @@
 # [MODULE] zephyr.risk.stop_loss
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.implementations.default_stop_loss_engine; zephyr.risk.implementations.default_risk_validator; zephyr.shared.state_store
-# [CONSUMERS] tests/risk/test_l04_risk_management.py
+# [CONSUMERS] MOD-L06-001(RiskLayerOrchestrator._engage_kill_switch 消费 trigger_kill_switch/execute_kill_switch_liquidation); tests/risk/test_l04_risk_management.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 清算锁 Fail-Closed(状态损坏拒绝二次进入); 平仓按15笔/秒限频分片; event_id 幂等重放不重复发单
