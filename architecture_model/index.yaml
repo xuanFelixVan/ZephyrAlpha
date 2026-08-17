@@ -32,16 +32,16 @@ governance:
     改 depgraph 或 layers/b_*.yaml 后由 GATE-ARCH-MODEL reconciler 自动重生。
 
 # === 分区管理约定（Partition Management Convention）===
-# 73域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
+# 74域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 # AI找模块只有一条路：按域找。
 # b_track 是横切基础设施模块的施工视图（物理蓝图文件对齐），独立于域分类。
 
 partitions:
-# === 73域索引（物理分类唯一真源：depgraph domains表）===
+# === 74域索引（物理分类唯一真源：depgraph domains表）===
 - id: domains
   path: depgraph (PostgreSQL)
   description: >
-    73域物理分类唯一真源。
+    74域物理分类唯一真源。
     查询命令: python scripts/governance/extract_depgraph.py --summary
     4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 
@@ -139,7 +139,7 @@ partitions:
     status: phase_2_complete
     description: 蓝图 v0.7.0：18 .py 文件 + 11 子模块 + 23 单元测试 + 7 对抗测试全部通过
 
-# === 73域清单（从depgraph派生，禁止手工编辑）===
+# === 74域清单（从depgraph派生，禁止手工编辑）===
 domains:
 - id: D_ALT_DATA
   name: 另类数据
@@ -318,6 +318,9 @@ domains:
 - id: D_PF_CORE
   name: 组合核心
   layer_id: L2_domain
+- id: D_PLAN
+  name: 预案引擎
+  layer_id: L2_domain
 - id: D_POSITION
   name: 仓位管理
   layer_id: L2_domain
@@ -362,7 +365,7 @@ domains:
   layer_id: L2_domain
 
 global_stats:
-  total_domains: 73
+  total_domains: 74
   total_partitions: 12
   b_track_modules: 13
   b_track_implemented: 11
@@ -370,14 +373,14 @@ global_stats:
   b_track_phase_2_complete: 1
   b_track_skeleton: 0
   notes: >
-    73域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
+    74域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
     b_track 13横切基础设施模块（从 layers/b_*.yaml 物理文件派生）。
     结构化数据从depgraph + 物理蓝图文件派生，禁止硬编码会变化的数字。
-  last_updated: '2026-08-17'
+  last_updated: '2026-08-18'
 
 query_hints:
 - question: 系统有哪些域？
-  answer: 73域，见domains列表，真源为depgraph domains表
+  answer: 74域，见domains列表，真源为depgraph domains表
 - question: 某域有哪些模块？
   answer: "查询depgraph: python scripts/governance/extract_depgraph.py --domains <域ID>"
 - question: 模块间的依赖关系？
@@ -389,7 +392,7 @@ query_hints:
 - question: 运行平面分布？
   answer: 读cross_cutting/runtime_planes.yaml
 - question: 系统能力成熟度？
-  answer: 读cross_cutting/capability_heatmap.yaml（73域×10能力域矩阵）
+  answer: 读cross_cutting/capability_heatmap.yaml（74域×10能力域矩阵）
 - question: 前端有哪些模块？
   answer: 读frontend/frontend_model.yaml
 - question: 治理/审计脚本有哪些？
