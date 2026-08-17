@@ -322,6 +322,10 @@ data/governance/watchdog_state.json
 data/night_shift_queue.jsonl
 # 零样本推理预测缓存（eval_sentiment.py 派生断点续作产物；评估集 news_sentiment_200.jsonl 保留跟踪）
 data/eval/zero_shot_predictions.jsonl
+# 对抗日志（唯一读写方 _archive/prototype/adversarial_log.py 已归档，防手动运行再入库）
+data/adversarial_log.jsonl
+# CircadianScheduler 运行时状态（进程内定时调度属 banned 模式，机制已退役）
+data/circadian_tasks/
 
 # Governance watchdog snapshots
 scripts/governance/meta/_backups/
