@@ -64,7 +64,7 @@ G12 策略相关性门禁——在策略上线/资金分配前, 检查策略两�
 
 ## 5. 错误契约
 
-- `InvalidCorrelationInputError` (ZA-PA-0002): 指标越界、策略自相关、pair 字段非法
+- `InvalidCorrelationInputError` (ZA-PA-0004): 指标越界、策略自相关、pair 字段非法
 
 ## 6. 测试
 

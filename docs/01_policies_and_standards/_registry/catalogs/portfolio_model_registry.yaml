@@ -32,11 +32,11 @@ tier: tier_2_data_runtime
 status: active
 version: 1.2.0
 created: '2026-08-14'
-last_updated: '2026-08-15'
+last_updated: '2026-08-17'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - model_id
-entry_count: 8
+entry_count: 11
 
 entry_schema:
   model_id: str                  # PFM-{CLASS}-{NNN}，如 PFM-RP-001

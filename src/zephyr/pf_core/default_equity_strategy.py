@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain_portfolio_core/blueprint.md
 # [MODULE] zephyr.pf_core.default_equity_strategy
-# [DOMAIN] D_PF_ALLOC
-# [DEPENDENCIES] zephyr.governance.strategy_base; zephyr.trading.trading_contracts.execution.order
+# [DOMAIN] D_PF_CORE
+# [DEPENDENCIES] zephyr.governance.strategies.strategy_base; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

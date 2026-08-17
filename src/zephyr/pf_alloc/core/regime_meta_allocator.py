@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-PA-007 | docs/03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md
 # [MODULE] zephyr.pf_alloc.core.regime_meta_allocator
 # [DOMAIN] D_PF_ALLOC
-# [DEPENDENCIES] zephyr.regime.core.regime_detector
+# [DEPENDENCIES] zephyr.shared.foundation.errors（regime 概率以纯数据入参消费，无代码级 import——依赖倒置）
 # [CONSUMERS] MOD-POS-020(StrategyBook消费BudgetAllocation); MOD-POS-022(BudgetChangeHandler收BudgetChanged事件)
 # [STARTUP] imported
 # [MATURITY] production
@@ -144,6 +144,8 @@ from typing import Any, Sequence
 
 import numpy as np
 
+from zephyr.shared.foundation.errors import ZephyrBaseError
+
 logger = logging.getLogger(__name__)
 
 
@@ -192,8 +194,11 @@ RISK_SIGNAL_MAX: float = 1.00
 MAX_CLIP_ITERATIONS: int = 5
 
 
-class AllocationError(Exception):
+class AllocationError(ZephyrBaseError):
     """ZA-PA-0007: 分配计算异常（如策略列表为空、base_weights 缺失等）。"""
+
+    # 2026-08-17 对齐全域错误基类（原裸继承 Exception 且无 error_code 类属性）
+    error_code = "ZA-PA-0007"
 
 
 @dataclass(frozen=True)

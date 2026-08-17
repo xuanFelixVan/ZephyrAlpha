@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-POS-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 Position State Machine — 仓位状态机 (MOD-POS-002)
@@ -213,19 +213,23 @@ _GRADUATION_ORDER: list[GraduationStage] = [
 class ObservingPeriodViolationError(ZephyrBaseError):
     """观察期规则违反(如观察期内尝试新买入)。"""
 
-    error_code = "ZA-POS-0001"
+    # 2026-08-17 改号 ZA-POS-0001→ZA-POS-0011：与 position_sizing_engine(MOD-POS-001)
+    # 重码，按 #ARCH-ERRCODE-001「后引入者改号」裁定（canonical=MOD-POS-001，本模块 MOD-POS-002）
+    error_code = "ZA-POS-0011"
 
 
 class CooldownPeriodError(ZephyrBaseError):
     """冷却期规则违反(如冷却期内尝试重新建仓)。"""
 
-    error_code = "ZA-POS-0002"
+    # 2026-08-17 改号 ZA-POS-0002→ZA-POS-0012（同上裁定）
+    error_code = "ZA-POS-0012"
 
 
 class GraduationRegressionError(ZephyrBaseError):
     """灰度阶段回退违反(灰度阶段只能单调推进)。"""
 
-    error_code = "ZA-POS-0003"
+    # 2026-08-17 改号 ZA-POS-0003→ZA-POS-0013（同上裁定）
+    error_code = "ZA-POS-0013"
 
 
 # ──────────────────────────────────────────────────────────────────────────────

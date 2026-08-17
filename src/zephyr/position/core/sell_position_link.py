@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-POS-016 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 Sell-Position Bidirectional Link — 卖出-仓位双向链接 (MOD-POS-016)
@@ -169,7 +169,9 @@ class PostBuyAlertLevel(int, Enum):
 class InvalidSellPositionLinkInputError(ZephyrBaseError):
     """卖出-仓位链接输入数据非法(如价格非正、ATR非正、因子越界)。"""
 
-    error_code = "ZA-POS-0008"
+    # 2026-08-17 改号 ZA-POS-0008→ZA-POS-0016：与 drawdown_controller(MOD-POS-008)
+    # 重码，按 #ARCH-ERRCODE-001「后引入者改号」裁定；0016 对齐本模块 MOD-POS-016
+    error_code = "ZA-POS-0016"
 
 
 # ──────────────────────────────────────────────────────────────────────────────

@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-PF-002 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 Portfolio Optimizer — 组合优化器 (MOD-PF-002)
@@ -146,7 +146,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 
@@ -314,7 +314,7 @@ class PortfolioOptimizer:
         config: OptimizerConfig | None = None,
         budget_allocator: RiskBudgetAllocator | None = None,
         constraint_solver: ConstraintSolver | None = None,
-        clock: "Callable[[], datetime] | None" = None,
+        clock: Callable[[], datetime] | None = None,
     ) -> None:
         self._config = config or OptimizerConfig()
         self._budget_allocator = budget_allocator or RiskBudgetAllocator()
@@ -475,7 +475,7 @@ class PortfolioOptimizer:
         try:
             result = self._budget_allocator.allocate_by_budget(cov, budgets)
             return result.weights
-        except Exception as exc:  # RK-08 求解失败 → 等权 fallback
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: RK-08 求解失败 → 等权 fallback（故障隔离不阻断优化主流程）
             logger.warning("risk_budget optimization failed (%s), fallback to equal_weight", exc)
             return self._equal_weights(len(assets))
 
@@ -596,7 +596,3 @@ class PortfolioOptimizer:
             c = current.get(a, 0.0)
             drift += abs(t - c)
         return drift / 2.0
-
-
-# 避免顶层 import 循环: 仅类型注解用
-from typing import Callable  # noqa: E402

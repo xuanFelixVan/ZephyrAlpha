@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] BatchPlanError(ZA-PA-0006); InsufficientCapitalError(ZA-PA-0007)
+# [ERROR_CONTRACT] gate_batch_order 透传 DisciplineGuardError（闸未接线 Fail-Closed）；build_plan/clip_to_available_capital 不抛领域异常（资金不足以 _degrade_reason 降级标记返回，41 §3.6）。2026-08-17 勘正：移除幻影声明 BatchPlanError(ZA-PA-0006)/InsufficientCapitalError(ZA-PA-0007)——类从未实例化且 ZA-PA-0007 与 MOD-PA-007 AllocationError 撞号（#ARCH-ERRCODE-001）
 # [TESTS] tests/pf_alloc/test_batched_position_builder.py
 # [A_module] module_id=MOD-PA-006 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -50,7 +50,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date, datetime, time
-from random import uniform
 from typing import Any, Final
 
 from zephyr.compliance.discipline_prohibition_checker import (
@@ -269,11 +268,12 @@ def compute_anchor_price(
     vwap = cum_value / cum_volume if cum_volume > 0 else level_price
 
     if buy_type == "BREAKOUT":
-        # 突破买入：锚压力位，略低 0-1% 防追高
-        return level_price * uniform(0.99, 1.00)
+        # 突破买入：锚压力位，略低 0.5% 防追高（确定性偏移——2026-08-17 裁定：
+        # 原 random.uniform(0.99,1.00) 非确定性破坏回测=实盘一致性，取区间中点）
+        return level_price * 0.995
     if buy_type == "PULLBACK":
-        # 回踩买入：锚支撑位，略高 0-1% 确保成交
-        return level_price * uniform(1.00, 1.01)
+        # 回踩买入：锚支撑位，略高 0.5% 确保成交（同上，确定性偏移）
+        return level_price * 1.005
     # 通用兜底：min(目标价, 当日 VWAP)，避免被动追涨
     return min(level_price, vwap)
 
@@ -337,7 +337,11 @@ def rank_buy_orders(
 
     依据: 41_buy_flow §3.6 多标的下单排序算法
     """
-    symbols = [s for s in target_holdings if s != "CASH"]
+    symbols = [
+        s
+        for s in target_holdings
+        if s != "CASH" and not s.startswith("_")  # 排除 "_degrade_reason" 等元数据键（clip_to_available_capital 产出可含，防 KeyError）
+    ]
     return sorted(
         symbols,
         key=lambda s: (

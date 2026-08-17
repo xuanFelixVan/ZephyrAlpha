@@ -52,9 +52,9 @@ NONE → BUILDING → ACTIVE → OBSERVING → REDUCING → EXITING → CLOSED
 
 | 错误类 | error_code | 触发条件 |
 |--------|-----------|---------|
-| ObservingPeriodViolationError | ZA-POS-0001 | 观察期内尝试新买入 |
-| CooldownPeriodError | ZA-POS-0002 | 冷却期内尝试重新建仓 |
-| GraduationRegressionError | ZA-POS-0003 | 灰度阶段回退或未满最短验证天数 |
+| ObservingPeriodViolationError | ZA-POS-0011 | 观察期内尝试新买入 |
+| CooldownPeriodError | ZA-POS-0012 | 冷却期内尝试重新建仓 |
+| GraduationRegressionError | ZA-POS-0013 | 灰度阶段回退或未满最短验证天数 |
 | InvalidTransitionError | (共享基类) | 非法状态转换 |
 
 ## 4. 依赖关系
