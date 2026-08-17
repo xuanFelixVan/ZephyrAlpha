@@ -5,8 +5,8 @@ title: 分阶段实现路线
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.0"
-date: 2026-08-17
+version: "0.2.1"
+date: 2026-08-18
 topic: phase_roadmap
 scope: 09_ai_architecture
 ---
@@ -28,7 +28,7 @@ scope: 09_ai_architecture
 | 依赖 | 全部 03~16 号文 |
 | 对标 | Agentic Engineering 三层架构（Karpathy 2026-02，见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md) §3.2） |
 | 优先级 | P1——指导所有文档的施工顺序 |
-| 状态 | draft（骨架填充完成 v0.2.0） |
+| 状态 | draft（骨架填充完成，R2 一致性刷新 v0.2.1） |
 
 ---
 
@@ -36,13 +36,13 @@ scope: 09_ai_architecture
 
 ### 2.1 项目处境
 
-**AI 层处于「设计完备、文档就绪、代码地基不均衡、自动化未启动」的状态**（2026-08-17 实测）：
+**AI 层处于「设计完备、文档就绪、代码地基不均衡、自动化未启动」的状态**（2026-08-18 R2 复测）：
 
-1. **文档层已就绪**：18 篇 AI 架构文档全部完成骨架填充——03~16 号 14 篇施工/裁定文档均达 v0.2.0+（§2.4 盘点表逐篇实测版本），00 号 v0.7.0（施工顺序与解锁点已定义，AI-FILL-00 并行更新中）、01 号 v0.5.0（外部对标）、02 号 v0.4.0（资产盘点）。**本文档的填充前置（03~16 至少完成第 1~2 轮）已满足**，文档填充级解锁点 U1~U6 全部达成。
-2. **代码地基不均衡**（02 号文 v0.4.0 结论）：横切设施代码密度高（access_control 108 个 .py、llm_defense 39 个 .py、feedback_loop 338 个 .py、autonomy_core/skills 58 个 .py），自我进化层基本空白（证据关联无代码、模块工厂无代码、自反 Agent 仅部分）。
-3. **交易决策侧前置已就绪**：U7（G04 策略定义）与 U8（62 号注册表）均实测就绪——factor_registry 140 条目 / strategy_registry 146 条目落盘 active（13 号文 v0.2.0 §2.4 实测，本文抽验两个 YAML 文件存在）。
+1. **文档层已就绪**：18 篇 AI 架构文档全部完成骨架填充——03~16 号 14 篇施工/裁定文档均达 v0.2.1+（§2.4 盘点表逐篇实测版本），00 号 v0.7.2（施工顺序与解锁点已定义，AI-FILL-00 并行更新中）、01 号 v0.6.0（外部对标）、02 号 v0.5.1（资产盘点）。**本文档的填充前置（03~16 至少完成第 1~2 轮）已满足**，文档填充级解锁点 U1~U6 全部达成。
+2. **代码地基不均衡**（02 号文 v0.5.1 结论）：横切设施代码密度高（access_control 108 个 .py、llm_defense 39 个 .py、feedback_loop 338 个 .py、autonomy_core/skills 58 个 .py），自我进化层基本空白（证据关联无代码、模块工厂无代码、自反 Agent 仅部分）。
+3. **交易决策侧前置已就绪**：U7（G04 策略定义）与 U8（62 号注册表）均实测就绪——factor_registry 140 条目 / strategy_registry 146 条目落盘 active（13 号文 v0.3.0 §2.4/§4 前置解锁注口径，本文抽验两个 YAML 文件存在）。
 4. **当前所处阶段 = 全局 Phase 0（手动）**：AI 层全部产出为「AI 提议 + 人执行/审核」形态；各施工文档的内部 Phase 0（手动形态施工项）绝大多数未启动或未验收——唯一已完成的内部 Phase 0 是 05 号文（包整合文档定稿，零代码改动性质）。
-5. **施工方式本身就是 Phase 0 的一部分**：1 人在 TRAE 上用多 AI 多对话并发施工（system_charter §2 约束一），多 AI 并发治理三件套中会话隔离层与 git 安全层已 production，**提交队列 MVP 是唯一未施工项**（08 号文 v0.2.1 §4.2）——它是半自动化的提交通道前提。
+5. **施工方式本身就是 Phase 0 的一部分**：1 人在 TRAE 上用多 AI 多对话并发施工（system_charter §2 约束一），多 AI 并发治理三件套中会话隔离层与 git 安全层已 production，**提交队列 MVP 是唯一未施工项**（08 号文 v0.2.2 §4.2）——它是半自动化的提交通道前提。
 
 ### 2.2 核心问题
 
@@ -69,29 +69,29 @@ scope: 09_ai_architecture
 
 ### 2.4 已施工设施盘点
 
-**A. 文档设施（路线直接消费对象，2026-08-17 逐篇 Read frontmatter 实测）**：
+**A. 文档设施（路线直接消费对象，2026-08-18 R2 逐篇 Grep frontmatter 复测）**：
 
 | 文档 | 版本 | 状态（frontmatter/主题组实测） | 内部 Phase 划分（各文档 §4） |
 |------|------|------|------|
-| [00_index.md](00_index.md) | 0.7.0 | draft | ——（索引类，§5 解锁点已定义） |
-| [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md) | 0.5.0 | draft | ——（信息库类） |
-| [02_design_asset_inventory.md](02_design_asset_inventory.md) | 0.4.0 | draft | ——（盘点类） |
-| [03_domain_boundary_definition.md](03_domain_boundary_definition.md) | 0.2.0 | draft（待 Owner 裁定后升 active） | 裁定类：完成路径 + A/B/C 三分支 |
-| [04_autoruntime_core_build.md](04_autoruntime_core_build.md) | 0.2.1 | draft | Phase 0 T0 → Phase 1~3 T1/T2/T3 拐点（触发式） |
-| [05_intelligence_governance_consolidation.md](05_intelligence_governance_consolidation.md) | 0.2.0 | active | Phase 0 已完成；Phase 1 待裁定；Phase 2 依赖 14 号 |
-| [06_model_profiling_pipeline.md](06_model_profiling_pipeline.md) | 0.2.0 | draft | Phase 0 手动跑通 → Phase 1 触发式闭环 → Phase 2 路由集成 → Phase 3 成本感知 |
-| [07_context_engine_build.md](07_context_engine_build.md) | 0.2.2 | draft | Phase 0 对齐收口 → Phase 1 补缺 → Phase 2 集成接线 → Phase 3 远期 |
-| [08_multi_ai_concurrency_governance.md](08_multi_ai_concurrency_governance.md) | 0.2.1 | draft | Phase 0 提交队列 MVP → Phase 1 队列联动 → Phase 2 优化可观测 |
-| [09_llm_security_integration.md](09_llm_security_integration.md) | 0.2.0 | draft | Phase 0 主链路贯通 → Phase 1 缺口收尾 → Phase 2 纵深增强 |
-| [10_llm_infrastructure.md](10_llm_infrastructure.md) | 0.2.2 | draft | Phase 0 登记对账 → Phase 1 L2/L3 统一入口 → Phase 2 MCP+推理优化 → Phase 3 对账自动化 |
-| [11_evidence_skill_router.md](11_evidence_skill_router.md) | 0.2.0 | draft | Phase 0 证据关联 → Phase 1 路由级联 → Phase 2 技能库 → Phase 3 三组件闭环 |
-| [12_reflexion_multi_agent.md](12_reflexion_multi_agent.md) | 0.2.0 | draft | Phase 0 L1 反思 → Phase 1 ReflCtrl/投票壳/PreFlect → Phase 2 L2+对抗互评 → Phase 3 L3（远期） |
-| [13_module_factory.md](13_module_factory.md) | 0.2.0 | draft | Phase 0 手动 SOP → Phase 1 半自动 → Phase 2 全自动+人审 → Phase 3 自我进化（远期 P4） |
-| [14_execution_layer.md](14_execution_layer.md) | 0.2.0 | draft | Phase 0 四类薄入口手动 → Phase 1 多 Agent 半自动；Phase 2+ 远期不在其范围 |
-| [15_autonomy_boundary_risk.md](15_autonomy_boundary_risk.md) | 0.2.1 | draft | Phase 0 运行时 gate+KS 编排 → Phase 1 Drift 防护 → Phase 2 远期候选 |
-| [16_ai_security_ops.md](16_ai_security_ops.md) | 0.2.1 | draft | Phase 0 统一事件流+TNR → Phase 1 Diagnose→Remediate → Phase 2 Learn+KILLSWITCH 三级 |
+| [00_index.md](00_index.md) | 0.7.2 | draft | ——（索引类，§5 解锁点已定义） |
+| [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md) | 0.6.0 | draft | ——（信息库类） |
+| [02_design_asset_inventory.md](02_design_asset_inventory.md) | 0.5.1 | draft | ——（盘点类） |
+| [03_domain_boundary_definition.md](03_domain_boundary_definition.md) | 0.2.1 | draft（待 Owner 裁定后升 active） | 裁定类：完成路径 + A/B/C 三分支 |
+| [04_autoruntime_core_build.md](04_autoruntime_core_build.md) | 0.2.2 | draft | Phase 0 T0 → Phase 1~3 T1/T2/T3 拐点（触发式） |
+| [05_intelligence_governance_consolidation.md](05_intelligence_governance_consolidation.md) | 0.2.1 | active | Phase 0 已完成；Phase 1 待裁定；Phase 2 依赖 14 号 |
+| [06_model_profiling_pipeline.md](06_model_profiling_pipeline.md) | 0.3.0 | draft | Phase 0 手动跑通 → Phase 1 触发式闭环 → Phase 2 路由集成 → Phase 3 成本感知 |
+| [07_context_engine_build.md](07_context_engine_build.md) | 0.3.0 | draft | Phase 0 对齐收口 → Phase 1 补缺 → Phase 2 集成接线 → Phase 3 远期 |
+| [08_multi_ai_concurrency_governance.md](08_multi_ai_concurrency_governance.md) | 0.2.2 | draft | Phase 0 提交队列 MVP → Phase 1 队列联动 → Phase 2 优化可观测 |
+| [09_llm_security_integration.md](09_llm_security_integration.md) | 0.3.0 | draft | Phase 0 主链路贯通 → Phase 1 缺口收尾 → Phase 2 纵深增强 |
+| [10_llm_infrastructure.md](10_llm_infrastructure.md) | 0.3.0 | draft | Phase 0 登记对账 → Phase 1 L2/L3 统一入口 → Phase 2 MCP+推理优化 → Phase 3 对账自动化 |
+| [11_evidence_skill_router.md](11_evidence_skill_router.md) | 0.3.0 | draft | Phase 0 证据关联 → Phase 1 路由级联 → Phase 2 技能库 → Phase 3 三组件闭环 |
+| [12_reflexion_multi_agent.md](12_reflexion_multi_agent.md) | 0.3.0 | draft | Phase 0 L1 反思 → Phase 1 ReflCtrl/投票壳/PreFlect → Phase 2 L2+对抗互评 → Phase 3 L3（远期） |
+| [13_module_factory.md](13_module_factory.md) | 0.3.0 | draft | Phase 0 手动 SOP → Phase 1 半自动 → Phase 2 全自动+人审 → Phase 3 自我进化（远期 P4） |
+| [14_execution_layer.md](14_execution_layer.md) | 0.3.0 | draft | Phase 0 四类薄入口手动 → Phase 1 多 Agent 半自动；Phase 2+ 远期不在其范围 |
+| [15_autonomy_boundary_risk.md](15_autonomy_boundary_risk.md) | 0.2.2 | draft | Phase 0 运行时 gate+KS 编排 → Phase 1 Drift 防护 → Phase 2 远期候选 |
+| [16_ai_security_ops.md](16_ai_security_ops.md) | 0.3.0 | draft | Phase 0 统一事件流+TNR → Phase 1 Diagnose→Remediate → Phase 2 Learn+KILLSWITCH 三级 |
 
-**B. 代码地基（全量盘点以 02 号文为真源；此处只列路线相关的地基性设施，2026-08-17 本文抽验存在性）**：
+**B. 代码地基（全量盘点以 02 号文为真源；此处只列路线相关的地基性设施，2026-08-18 R2 本文复测存在性与计数）**：
 
 | 类别 | 路径/位置 | 内容简述 | 状态 |
 |------|-----------|---------|------|
@@ -100,7 +100,7 @@ scope: 09_ai_architecture
 | 多 AI 并发治理 | `scripts/lock_files.py`、`scripts/git_commit.py`、`scripts/git_guard.py` | 会话隔离 + GitCommitGateway + git 护栏（三件套其二已就位，提交队列 MVP 未施工——08 号文 §4.2） | production（队列 draft） |
 | LLM 安全栈 | `src/zephyr/security/llm_defense/` | 39 个 .py（本文实测），L0~L8 层内约 80%（09 号文口径） | production（层内有缺口） |
 | 治理包 | `src/zephyr/governance/intelligence_governance/` | 24 个模块（05 号文职责矩阵口径；本文抽验目录存在） | production |
-| 能力护照 | `data/brain/passports/` | 能力护照 JSON **7 份**（本文 2026-08-17 `Get-ChildItem` 实测：deepseek-v4 系列 4 + qwen 系列 3；06 号文 v0.2.0 口径为 10 份含重复/历史命名，差异记 §6 Q5） | production |
+| 能力护照 | `data/brain/passports/` | 能力护照 JSON **7 份**（本文 2026-08-18 `Get-ChildItem` 复测；06 号文 v0.3.0 §2.4 已核对收口为同款 7 份口径，§6 Q5 随之消解） | production |
 | 技能库基座 | `src/zephyr/autonomy_core/skills/` | 58 个 .py（本文实测，与 02 号文一致） | production |
 | 业务注册表 | `docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml`（140 条目）/ `strategy_registry.yaml`（146 条目） | 模块工厂入库目标（13 号文实测条目数；本文抽验文件存在） | active |
 
@@ -247,11 +247,11 @@ scope: 09_ai_architecture
 
 **进入条件**：
 
-| # | 条件 | 就绪状态（2026-08-17） |
+| # | 条件 | 就绪状态（2026-08-18 R2 复测） |
 |---|------|----------------|
 | I1-1 | GP0 退出条件 E0-1~E0-8 全绿 | 未达成 |
-| I1-2 | U7（G04 策略定义）就绪 | **已就绪**（14 号文 v0.2.0 §4 S1.3 口径：业务输入真源全就绪） |
-| I1-3 | U8（62 号注册表）就绪 | **已就绪**（13 号文 v0.2.0 §4.1 前置解锁实测：P0 三件套 + factor/strategy registry active） |
+| I1-2 | U7（G04 策略定义）就绪 | **已就绪**（14 号文 v0.3.0 §3 业务 Agent 口径：U7 已满足、业务输入真源全就绪；§4 Phase 1 S1.3 为 U7 深化项） |
+| I1-3 | U8（62 号注册表）就绪 | **已就绪**（13 号文 v0.3.0 §4 前置解锁注实测口径：P0 三件套 + factor/strategy registry active） |
 
 **退出条件（二元判定检查表）**：
 
@@ -382,7 +382,7 @@ scope: 09_ai_architecture
 | Q2 | 各阶段的成功标准如何定义？ | **建议方案已落盘，待用户裁定** | 本文 §4.2~§4.5 的 E0/E1/E2 检查表（全部二元判定，无结果类指标）；GP3 按 13 号文同款不设硬性验收 |
 | Q3 | 全局 Phase 与文档内部 Phase 的真源分工确认 | 待裁定 | §3.2 建议：组件级验收以各文档为真源、阶段归属以本文为真源。若 Owner 裁定其他分工（如全局 Phase 强制对齐内部 Phase 编号），本文 §4.6 映射矩阵需重构并升版本 |
 | Q4 | GP0 退出条件 E0-8（03 号文 Owner 裁定拍板）是否允许豁免 | 待裁定 | 03 号文 Q1 域边界裁定是人工等待项；若允许「裁定未落地但各文档按 03 号文 §4.6 接口假设继续施工」则 E0-8 可豁免——但域归属结论会影响 04/05/08/10 等文档的设施归属统计口径 |
-| Q5 | 能力护照数量口径不一致 | 待 06 号文核对 | 本文 2026-08-17 实测 `data/brain/passports/` 为 7 份 JSON；06 号文 v0.2.0 §2.4 记 10 份（含 deepseek_r1_8b/14b 与重复命名）。按只读不改纪律不修订 06 号文；本文以实测 7 份为准，差异登记于此 |
+| Q5 | 能力护照数量口径不一致 | **已消解（R2 关闭）** | 本文 2026-08-17 实测 `data/brain/passports/` 为 7 份 JSON，06 号文 v0.2.0 曾记 10 份（含重复/历史命名）；2026-08-18 R2 复测仍为 7 份，且 06 号文 v0.3.0 §2.4 已自行核对收口为同款 7 份口径（护照清单 2026-08-18 实测）——两侧口径已一致，无需裁定 |
 | Q6 | GP2 进入条件 I2-2/I2-3 的「production」判定粒度 | 待裁定 | 建议口径：09/15 号文 Phase 0/1 全部验收项通过 + 相关 depgraph 节点 status=production 二者同时满足；若只要求验收项通过（depgraph 翻转允许滞后）需在本文升版本修订 |
 
 ---
@@ -393,6 +393,7 @@ scope: 09_ai_architecture
 |------|------|------|------|
 | 2026-08-17 | 0.1.0 | 骨架建立 | 新建 |
 | 2026-08-17 | 0.2.0 | 骨架填充完成：§2 背景（含 18 篇文档填充进度与代码地基实测盘点）、§3 六项设计决策（四阶段划分/双层 Phase 结构/自下而上/二元判定/ICL 替代/触发式排期）、§4 全局 Phase 0→3 逐阶段目标-组成-进入-退出-验收 + 映射矩阵 + 关键路径、§5 不做什么九项、§6 开放问题六项；依赖状态检查：03~16 全部 v0.2.0+ 就绪，U7/U8 实测就绪；全局 Phase 编号定名 GP0~GP3（查重后避让 00_index guardrails G1~G4 与 02 号文缺口 G 系列） | AI-FILL-17 按指令集填充；前置依赖已全部完成填充 |
+| 2026-08-18 | 0.2.1 | R2 一致性复查刷新：①§2.4 A 表 17 篇文档版本列按 2026-08-18 Grep frontmatter 复测全量更新（00→0.7.2、01→0.6.0、02→0.5.1、03→0.2.1、04→0.2.2、05→0.2.1、06→0.3.0、07→0.3.0、08→0.2.2、09→0.3.0、10→0.3.0、11→0.3.0、12→0.3.0、13→0.3.0、14→0.3.0、15→0.2.2、16→0.3.0）；②§2.1/§2.4 B 表/§4.3 进入条件的版本与日期引用同步刷新，B 表代码地基计数复测（护照 7/skills 58/llm_defense 39/context 39，注册表双文件存在）；③§6 Q5 关闭——06 号文 v0.3.0 §2.4 已自行核对护照口径为 7 份，与本文复测一致，差异消解；④红蓝对抗复核：03~16 各文档内部 Phase 结构与本文 §2.4/§4.6 映射逐篇比对零漂移，引用锚点逐一实测仍成立（08 §4.2 提交队列 50 提交验收、09 §4.2 绕过路径=0+§4.7 收尾、15 §4.1 三类事故仿真+延迟实测、16 §4.2/§4.4、13 §4.1/§4.3/§4.4/§4.8/Q5、12 §4.5 ≥100 条启动条件、11 §4.4 证据稀薄暂缓、10 Phase 0/1、04 触发矩阵 T0~T3、03 §4.1 步骤 4+§4.6、14 §3/§4 S1.3、01 §3.2/§5.2/§5.3、00 §5 U1~U8）；未发现实质冲突（无文档删除本文引用的任务） | AI-FILL-17-R2 一致性刷新轮：03~16 号文定稿后发生版本演进，按指令做依赖状态复查与一致性刷新；仅同步引用口径，不改动阶段定义与映射（无实质冲突需拍板） |
 
 ---
 
