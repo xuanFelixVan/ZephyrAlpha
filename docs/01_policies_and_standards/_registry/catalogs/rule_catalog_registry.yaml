@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-16T22:49:06Z'
+generated_at: '2026-08-17T04:34:40Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 217
@@ -19,7 +19,7 @@ files:
   title: 规则体系总索引
   doc_type: index
   status: active
-  version: 2.1.0
+  version: 2.2.0
   rule_form: declarative
   scope: global
   stability: stable
@@ -1945,7 +1945,7 @@ files:
   title: 登记表体系目录索引
   doc_type: index
   status: active
-  version: 3.1.0
+  version: 3.2.0
   rule_form: declarative
   scope: global
   stability: stable
@@ -3010,7 +3010,7 @@ files:
   title: _registry/contracts/ 目录索引
   doc_type: index
   status: active
-  version: 1.0.1
+  version: 1.0.2
   rule_form: ''
   scope: ''
   stability: ''
@@ -3370,7 +3370,7 @@ files:
   title: _registry/vocabularies/ 目录索引
   doc_type: index
   status: active
-  version: 2.0.0
+  version: 2.1.0
   rule_form: ''
   scope: ''
   stability: ''
