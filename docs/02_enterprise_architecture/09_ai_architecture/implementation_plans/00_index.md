@@ -5,7 +5,7 @@ title: AI 架构设计——结构总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.7.3"
+version: "0.7.4"
 date: 2026-08-18
 topic: ai_architecture_design
 scope: 09_ai_architecture
