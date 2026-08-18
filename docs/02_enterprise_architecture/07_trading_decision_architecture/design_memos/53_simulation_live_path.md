@@ -5,8 +5,8 @@ title: 模拟与实盘验证路径
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.8"
-date: 2026-08-17
+version: "1.7.9"
+date: 2026-08-18
 topic: simulation_live_path
 scope: 07_trading_decision_architecture
 ---
@@ -905,3 +905,5 @@ def _state_idx(s: RollbackState) -> int:
 | 2026-08-15 | 1.7.5 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-09）。§3.4 删 half-sized 晋级重复段；§3.2 square-root 理论背书/citrusquant/EvoMarket 三段长引文要点化；§3.5 REDUCING 态两段合并 + 监管依据/mx-risk-guard/Ghost Position 引文精简；§5.2 MPC/RMATS/概率型 kill switch 改指针（真源 §4.4/§4.5/§6）；§9 修订记录 1.1.0~1.7.0 各行过程性理由压缩为一行结论 | 第二轮循环压缩协议：标题/frontmatter/契约/公式/阈值/裁定/开放问题/BM-XXX/#ARCH-XXX/跨文档链接零丢失，过程性叙述与重复信息收敛 |
 | 2026-08-15 | 1.7.6 | 十五次复审（引用现状同步，AI-SIM-001）：①52 号全篇引用 draft v0.1.0 骨架→active v1.0.4（其 §3.4 已承载 G23 why 层并反向引用本备忘 §3.1）；②55 号 draft v0.1.0 骨架→active v1.0.2（§3.4 偏离度量决策已定待施工）；③20 号 v1.2.4→v1.3.2、35 号 v1.37.0→v1.39.2（detect_ghost_positions 已施工 v1.39.0）、50 号 draft v1.0.2→active v1.1.1；④`backtest/` 相对路径 9 处统一为 `src/zephyr/backtest/` 全路径（顶层无 backtest/ 目录，相对引用不可定位）；⑤§7 更新 52/55 联动项（重评条件已触发，52 侧闭环）+ 00_index 漂移项复核 + 新增 #ARCH-QUANT-002/003 proposed 议题登记（通用规则 #12；QUANT-003 registry 5 态与 §3.8 5 态语义冲突待用户裁定）；⑥Alpha Decay 表 v1.2.0 版本残留两行清理 | 施工会话 AI-SIM-001 第 1-2 轮盘点实证：52/55 号 2026-08-12 已重建 active（commit 6a4f539214+d448be21f3），本备忘"骨架待讨论"表述全过时；35 号 §6.11 detect_ghost_positions 已施工（commit 1d814359） |
 | 2026-08-15 | 1.7.7 | Owner 裁定落地（AI-SIM-001 会话三项批准）：①#ARCH-QUANT-003 按方案 C 修正——阶段维度真源=paper_live_transition 三阶段（不新建迁移 FSM），registry 原迁移 5 态废弃（重复建模），降级维度真源=§3.8 五态（落地 rollback_state_machine.py），HALTED 归一 HARD_HALT；②#ARCH-QUANT-002 Crash-only 批准，先于 QUANT-003 施工；③§3.6 晋级条件补两机唯一耦合点"降级姿态=NORMAL 方可晋级"；§7 两议题行同步 decided 状态；registry 双议题 proposed→decided + owner_approval 留痕 | 用户会话内明确批准三项裁定（方案 C 按维度各一真源消除双真源风险；QUANT-002 为 fail-closed 前置先行；00_index 漂移本会话顺手修） |
+| 2026-08-17 | 1.7.8 | §3.8 五态降级机代码落地（AI-DGR-001，#ARCH-QUANT-003 resolved）：rollback_state_machine.py（MOD-GOV-045）按 §3.8 伪代码逐行落码 + paper_live_transition.check_promotion_allowed 晋级前置 NORMAL 耦合点；结案报告补记/§3.6 回退程序表施工状态/§3.8 伪代码头落地标注/§7 开放问题行落地/§8.3 代码真源补登 | 2026-08-16 独立复核实测裁定落点与代码不符（rollback_state_machine.py 原为回滚步骤编排机、五态枚举全仓零命中），DGR-001 派单真正落码，57 项测试两轮全绿 |
+| 2026-08-18 | 1.7.9 | §3.8 迁移矩阵+伪代码补齐 THROTTLED→SOFT_HALT 的 `daily_loss > 2.5%` 触发分支（"接近 3%"数值化=3%×5/6，AI-R5 审查批 spec 漂移治本） | v1.7.8 落码时迁移矩阵明文"daily_loss 接近 3%"漏实现——跳空/慢跌场景 daily_loss 在 THROTTLED 态无爬梯通道（SOFT_HALT 态才检查 daily_loss，THROTTLED 态永远到不了 HARD_HALT 的 3% 检查点）；rollback_state_machine.py 补 `_breach(daily_loss, mult=5/6)` + 边界测试 2 项（2.6% 触发/2.4%、2.5% 停留），蓝图梯子行同步 |
