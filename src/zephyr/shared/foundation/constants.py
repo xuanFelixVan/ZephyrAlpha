@@ -38,6 +38,32 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.4 shared-constants
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 共享枚举/常量查找
+#   fields: import zephyr.shared.foundation.constants（含懒加载符号名）
+#   code: L48+ 分组 from-import / __getattr__ (L134)
+# 层: 算法
+# - id: A1
+#   name_zh: 常量集中再导出
+#   name_en: constants_reexport
+#   intro: 纯 re-export——各域枚举/常量 SSoT 仍在原文件，本文件按域分组集中暴露
+#   code: 模块级 import + __all__ (L141)
+# - id: A2
+#   name_zh: 向上依赖懒加载
+#   name_en: lazy_symbol_loading
+#   intro: _LAZY_SYMBOLS 命中时 importlib 按需加载 trading/governance 上层符号，避免循环依赖
+#   code: __getattr__ (L134) / _LAZY_SYMBOLS (L131)
+# 层: 输出
+# - id: O1
+#   name_zh: 共享常量符号
+#   name_en: shared_constant_symbols
+#   intro: AssetClass/OrderSide/EventType/RuntimePlane/TaskStatus 等统一出口
+#   downstream: 全库 AI 施工与运行态模块
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 import importlib
@@ -47,10 +73,20 @@ from typing import Final
 
 from zephyr.shared.contracts.core.runtime_plane_tag import (
     COLD_PATH_LATENCY_BUDGET_MS as _COLD_PATH_LATENCY_BUDGET_MS,
+)
+from zephyr.shared.contracts.core.runtime_plane_tag import (
     COLD_PATH_PARTIAL_ACTIVATED as _COLD_PATH_PARTIAL_ACTIVATED,
+)
+from zephyr.shared.contracts.core.runtime_plane_tag import (
     HOT_PATH_ACTIVATED as _HOT_PATH_ACTIVATED,
+)
+from zephyr.shared.contracts.core.runtime_plane_tag import (
     HOT_PATH_LATENCY_BUDGET_MS as _HOT_PATH_LATENCY_BUDGET_MS,
+)
+from zephyr.shared.contracts.core.runtime_plane_tag import (
     WARM_PATH_LATENCY_BUDGET_MS as _WARM_PATH_LATENCY_BUDGET_MS,
+)
+from zephyr.shared.contracts.core.runtime_plane_tag import (
     RuntimePlane,
 )
 from zephyr.shared.infra.observer import EventType
@@ -83,6 +119,10 @@ SEMVER_PATTERN: Final[re.Pattern] = re.compile(
 # 5.160.9 修复：Ollama URL 集中化为共享常量（原散落 6 文件，DEFAULT_OLLAMA_URL 重复定义 3 处）
 DEFAULT_OLLAMA_URL: Final[str] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
+# OTLP gRPC 端点集中化（NO-HARDCODED-URL 门禁，2026-08-17 AI-00 收口：_gen_inherited
+# 模板内嵌字面量被拦，按 §5.160.9 SSoT 原则收编；本地 Jaeger/Tempo 默认 4317）
+DEFAULT_OTLP_ENDPOINT: Final[str] = os.getenv("OTLP_ENDPOINT", "http://localhost:4317")
+
 # RSSHub 本地实例 URL（部署在 D:\RSSHub，npm start，监听 1200 端口）
 DEFAULT_RSSHUB_URL: Final[str] = os.getenv("RSSHUB_BASE_URL", "http://localhost:1200")
 
@@ -90,9 +130,7 @@ DEFAULT_RSSHUB_URL: Final[str] = os.getenv("RSSHUB_BASE_URL", "http://localhost:
 # #ARCH-RSS-INVESTING-403-001：原 rss_provider.py 硬编码 "ZephyrAlpha-DataBot/1.0"
 # 触发 Cloudflare WAF 间歇 403，集中化为浏览器 UA（直连源 36kr/tmtpost 等受益）
 DEFAULT_HTTP_UA: Final[str] = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/126.0.0.0 Safari/537.36"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 )
 
 # 5.141 修复：DeepSeek API URL 集中化为共享常量（原散落 3 处字面量重复：
@@ -140,6 +178,7 @@ __all__ = [
     "DEFAULT_DEEPSEEK_URL",
     "DEFAULT_HTTP_UA",
     "DEFAULT_OLLAMA_URL",
+    "DEFAULT_OTLP_ENDPOINT",
     "DEFAULT_RSSHUB_URL",
     "ETF",
     "FX",

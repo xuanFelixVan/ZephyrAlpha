@@ -36,6 +36,32 @@ v1.1.0 重构要点:
   - T+1: 由 Portfolio 负责（matching_engine 只生成 fills）
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.2 §5.1 §16.7
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 目标权重+盘口快照
+#   fields: target_weights / order_books(OrderBookSnapshot|TickSnapshot) / portfolio / prev_close
+#   code: MatchingEngine.generate_fills (L181) / _build_target_orders (L73)
+# 层: 算法
+# - id: A1
+#   name_zh: 目标订单生成
+#   name_en: build_target_orders
+#   intro: 按权重×NAV换算目标股数(100股整数倍)，剔除停牌/涨跌停标的
+#   code: _build_target_orders (L73)
+# - id: A2
+#   name_zh: 委托撮合与成交转换
+#   name_en: delegate_match_convert
+#   intro: 委托 MatchingLogic 纯函数撮合，MatchingFill 加 date 转 BacktestFill
+#   code: _generate_fills_from_order_books (L390) / _to_backtest_fill (L488)
+# 层: 输出
+# - id: O1
+#   name_zh: 回测成交列表
+#   name_en: backtest_fills
+#   intro: list[BacktestFill]（含 date/price/commission/slippage_cost）
+#   downstream: zephyr.backtest.core.portfolio.Portfolio.apply_fill
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from __future__ import annotations
@@ -76,7 +102,7 @@ def _build_target_orders(
     order_books: dict[str, OrderBookSnapshot],
     portfolio: Portfolio,
     total_nav: Decimal,
-    prev_close: Optional[dict[str, Decimal]],
+    prev_close: dict[str, Decimal] | None,
     tick_mode: bool,
 ) -> list[dict]:
     orders: list[dict] = []
@@ -89,17 +115,12 @@ def _build_target_orders(
             continue  # 停牌或无数据
 
         # 涨跌停检查（Tick 模式跳过，Tick 内已含状态）
-        if not tick_mode and prev_close and engine._is_price_limit(
-            symbol, ob.last_price, prev_close.get(symbol)
-        ):
+        if not tick_mode and prev_close and engine._is_price_limit(symbol, ob.last_price, prev_close.get(symbol)):
             continue
 
         # 计算目标数量（100股整数倍）
         target_value = total_nav * Decimal(str(weight))
-        target_qty = (
-            int(target_value / ob.last_price / engine._config.lot_size)
-            * engine._config.lot_size
-        )
+        target_qty = int(target_value / ob.last_price / engine._config.lot_size) * engine._config.lot_size
 
         # 当前持仓
         current_pos = portfolio.get_position(symbol)
@@ -108,13 +129,9 @@ def _build_target_orders(
         # 差额
         diff = Decimal(target_qty) - current_qty
         if diff > 0:
-            orders.append(
-                {"side": "BUY", "symbol": symbol, "quantity": diff}
-            )
+            orders.append({"side": "BUY", "symbol": symbol, "quantity": diff})
         elif diff < 0:
-            orders.append(
-                {"side": "SELL", "symbol": symbol, "quantity": abs(diff)}
-            )
+            orders.append({"side": "SELL", "symbol": symbol, "quantity": abs(diff)})
     return orders
 
 
@@ -165,7 +182,7 @@ class MatchingEngine:
         )
     """
 
-    def __init__(self, config: Optional[MatchingConfig] = None):
+    def __init__(self, config: MatchingConfig | None = None):
         """初始化撮合引擎
 
         Args:
@@ -184,7 +201,7 @@ class MatchingEngine:
         prices: dict[str, Decimal],
         portfolio: Portfolio,
         date: object,
-        prev_close: Optional[dict[str, Decimal]] = None,
+        prev_close: dict[str, Decimal] | None = None,
     ) -> list[BacktestFill]:
         """根据目标权重生成成交记录（市价单，向后兼容接口）
 
@@ -232,7 +249,7 @@ class MatchingEngine:
         order_books: dict[str, OrderBookSnapshot],
         portfolio: Portfolio,
         date: object,
-        prev_close: Optional[dict[str, Decimal]] = None,
+        prev_close: dict[str, Decimal] | None = None,
     ) -> list[BacktestFill]:
         """根据目标权重 + 5档盘口生成成交记录（Level 4 撮合）
 
@@ -393,9 +410,9 @@ class MatchingEngine:
         order_books: dict[str, OrderBookSnapshot],
         portfolio: Portfolio,
         date: object,
-        prev_close: Optional[dict[str, Decimal]] = None,
+        prev_close: dict[str, Decimal] | None = None,
         tick_mode: bool = False,
-        ticks: Optional[dict[str, TickSnapshot]] = None,
+        ticks: dict[str, TickSnapshot] | None = None,
     ) -> list[BacktestFill]:
         """统一批量撮合流程（内部共享方法）
 
@@ -408,9 +425,7 @@ class MatchingEngine:
           6. MatchingFill -> BacktestFill
         """
         # 计算当前总 NAV（用 last_price 汇总市值）
-        prices_for_nav = {
-            symbol: ob.last_price for symbol, ob in order_books.items()
-        }
+        prices_for_nav = {symbol: ob.last_price for symbol, ob in order_books.items()}
         total_nav = portfolio.total_nav(prices_for_nav)
         if total_nav <= 0:
             raise MatchingError(f"总 NAV 必须 > 0, got {total_nav}")
@@ -432,9 +447,7 @@ class MatchingEngine:
         # 生成 fills
         fills: list[BacktestFill] = []
         for order_dict in orders:
-            fill = self._match_order_dict(
-                order_dict, order_books, tick_mode=tick_mode, ticks=ticks
-            )
+            fill = self._match_order_dict(order_dict, order_books, tick_mode=tick_mode, ticks=ticks)
             # Tick 模式下部分成交（quantity>0 但 filled=False）也应当应用
             # 市价单/限价单完全成交才应用（filled=True）
             if fill is not None and (fill.filled or fill.filled_quantity > 0):
@@ -446,8 +459,8 @@ class MatchingEngine:
         order_dict: dict,
         order_books: dict[str, OrderBookSnapshot],
         tick_mode: bool = False,
-        ticks: Optional[dict[str, TickSnapshot]] = None,
-    ) -> Optional[MatchingFill]:
+        ticks: dict[str, TickSnapshot] | None = None,
+    ) -> MatchingFill | None:
         """根据订单字典和盘口撮合，返回 MatchingFill
 
         Args:
@@ -501,9 +514,7 @@ class MatchingEngine:
             slippage_cost=fill.slippage_cost,
         )
 
-    def _synthetic_order_book(
-        self, symbol: str, price: Decimal
-    ) -> OrderBookSnapshot:
+    def _synthetic_order_book(self, symbol: str, price: Decimal) -> OrderBookSnapshot:
         """从单一价格构造合成1档盘口（日线回测兼容模式）
 
         用途: generate_fills() 接收单一价格时，构造1档盘口委托给 MatchingLogic。
@@ -520,9 +531,7 @@ class MatchingEngine:
             timestamp=None,
         )
 
-    def _is_price_limit(
-        self, symbol: str, price: Decimal, prev_close: Optional[Decimal]
-    ) -> bool:
+    def _is_price_limit(self, symbol: str, price: Decimal, prev_close: Decimal | None) -> bool:
         """检查是否涨跌停（A股 ±10%，ST股 ±5% 简化统一用10%）
 
         Args:
@@ -535,12 +544,8 @@ class MatchingEngine:
         """
         if prev_close is None or prev_close <= 0:
             return False
-        upper_limit = (prev_close * (1 + self._config.price_limit_pct)).quantize(
-            Decimal("0.01")
-        )
-        lower_limit = (prev_close * (1 - self._config.price_limit_pct)).quantize(
-            Decimal("0.01")
-        )
+        upper_limit = (prev_close * (1 + self._config.price_limit_pct)).quantize(Decimal("0.01"))
+        lower_limit = (prev_close * (1 - self._config.price_limit_pct)).quantize(Decimal("0.01"))
         return price >= upper_limit or price <= lower_limit
 
 

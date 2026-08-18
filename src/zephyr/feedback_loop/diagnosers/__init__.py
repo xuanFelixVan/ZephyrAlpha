@@ -17,6 +17,27 @@
 实际模块已迁移到 ``zephyr.feedback_loop.diagnosers.<subpkg>.<leaf>``。
 ``__getattr__`` 处理 ``from diagnosers import <leaf>`` 形式；
 ``_LeafAliasFinder`` 处理 ``from diagnosers.<leaf> import X`` / ``import diagnosers.<leaf>`` 形式。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 旧路径导入请求
+#   fields: zephyr.feedback_loop.diagnosers.<leaf>（71 个叶子旧路径）
+#   code: _LeafAliasFinder.find_spec / __getattr__
+# 层: 算法
+# - id: A1
+#   name_zh: 叶子→子包重定向
+#   name_en: leaf_subpkg_redirect
+#   intro: _LEAF_TO_SUBPKG 映射旧叶子名到 4 个子包，importlib 加载真实模块并回填 sys.modules
+#   code: _LeafAliasLoader.exec_module / __getattr__
+# 层: 输出
+# - id: O1
+#   name_zh: 兼容导入的叶子模块
+#   name_en: aliased_leaf_module
+#   intro: 旧路径可导入的子包叶子模块（__all__ 不变）
+#   downstream: zephyr.integration.runtime_core.feedback_loop 及 diagnosers 子包消费者
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> O1
 """
 
 import importlib

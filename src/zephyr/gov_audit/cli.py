@@ -15,13 +15,43 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""gov_audit CLI — 审计编排器命令行入口（MOD-INF-020/MOD-INF-027）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: CLI 子命令
+#   fields: sys.argv: health / admit / pool-stats / run-audit（+--operation/--target/--scope/--level）
+#   code: main (L245)
+# 层: 算法
+# - id: A1
+#   name_zh: 命令分发
+#   name_en: command_dispatch
+#   intro: 未知命令拦截退出1；argparse 解析后 dispatch 表路由到 _cmd_* 处理器
+#   code: main (L245-286)
+# - id: A2
+#   name_zh: 审计模块调用
+#   name_en: audit_module_invoke
+#   intro: 惰性 import AuditAdmissionController/ResourceAwarePool 等，执行健康检查/准入/池统计/审计管线
+#   code: _cmd_health / _cmd_admit / _cmd_pool_stats / _cmd_run_audit
+# 层: 输出
+# - id: O1
+#   name_zh: JSON 结果+退出码
+#   name_en: json_output_exit_code
+#   intro: 所有子命令 stdout 打印 JSON，按结果 0/1 退出
+#   downstream: End users; CI/CD; MCP tool wrappers
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+"""
+
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import argparse
 import json
 import sys
 from typing import Any, Callable
+
+from zephyr.shared.io.serialization import dumps
 
 __all__: list[str] = ["main"]
 

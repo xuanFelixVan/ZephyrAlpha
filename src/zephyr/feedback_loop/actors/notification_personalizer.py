@@ -19,6 +19,27 @@
 
 Blindspot: One-size-fits-all notifications; owner ignores irrelevant alerts.
 Risk: R67 — Alert fatigue causes owner to miss critical notification.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 原始告警
+#   fields: alert dict；owner_preferences 偏好表
+#   code: NotificationPersonalizer.personalize
+# 层: 算法
+# - id: A1
+#   name_zh: 告警个性化标记
+#   name_en: alert_personalization
+#   intro: 按 owner_preferences 合并告警并置 personalized=True（当前为最小实现）
+#   code: NotificationPersonalizer.personalize
+# 层: 输出
+# - id: O1
+#   name_zh: 个性化告警
+#   name_en: personalized_alert
+#   intro: 带 personalized 标记的告警 dict
+#   downstream: 通知通道（secondary_alert_channel）
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> O1
 """
 
 from dataclasses import dataclass, field

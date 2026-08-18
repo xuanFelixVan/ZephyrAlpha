@@ -71,13 +71,17 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
-from _shared.constants import GATES_DIR, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, GATES_DIR, REPO_ROOT
 from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 PROJECT_ROOT = REPO_ROOT
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-SCRIPT_MANIFEST = SCRIPTS_DIR / "script_manifest.yaml"
+# 治本（2026-08-18 AI-00 merge-17 实证）：消费方文件名对齐真源——
+# 全树脚本清单真源为 scripts/script-manifest.yaml（连字符，scripts/generate_manifest.py 产出，
+# 702 脚本，git tracked）；原读 scripts/script_manifest.yaml（下划线）为不存在路径，
+# 静默降级空注册表 → baseline 差分模式把任何"首次入变更集的脚本"误报 NEW 孤儿硬阻断。
+SCRIPT_MANIFEST = SCRIPTS_DIR / "script-manifest.yaml"
 GATE_REGISTRY = GATES_DIR / "_registry.yaml"
 
 EXCLUDE_PATTERNS = {
@@ -171,6 +175,7 @@ class ZombieEntry:
 @dataclass
 class ModulePathMismatch:
     """[MODULE] 头部声明的路径与实际磁盘路径不一致（ARCH-034 P4 防复发）。"""
+
     path: Path
     relative: str
     declared_module: str
@@ -194,48 +199,60 @@ def _to_findings(ar: AuditResult) -> list[dict]:
     """
     findings: list[dict] = []
     for oe in ar.orphan_modules:
-        findings.append({
-            "dimension": "D1_module_orphan",
-            "target": {"file_path": oe.relative},
-            "description": f"未注册模块: {oe.package}" if oe.package else f"未注册模块: {oe.relative}",
-            "severity": "P2",
-        })
+        findings.append(
+            {
+                "dimension": "D1_module_orphan",
+                "target": {"file_path": oe.relative},
+                "description": f"未注册模块: {oe.package}" if oe.package else f"未注册模块: {oe.relative}",
+                "severity": "P2",
+            }
+        )
     for oe in ar.orphan_scripts:
-        findings.append({
-            "dimension": "D2_script_orphan",
-            "target": {"file_path": oe.relative},
-            "description": f"未注册脚本: {oe.relative}",
-            "severity": "P2",
-        })
+        findings.append(
+            {
+                "dimension": "D2_script_orphan",
+                "target": {"file_path": oe.relative},
+                "description": f"未注册脚本: {oe.relative}",
+                "severity": "P2",
+            }
+        )
     for oe in ar.orphan_gates:
-        findings.append({
-            "dimension": "D3_gate_orphan",
-            "target": {"file_path": oe.relative},
-            "description": f"未注册门禁: {oe.relative}",
-            "severity": "P2",
-        })
+        findings.append(
+            {
+                "dimension": "D3_gate_orphan",
+                "target": {"file_path": oe.relative},
+                "description": f"未注册门禁: {oe.relative}",
+                "severity": "P2",
+            }
+        )
     for ze in ar.zombie_references:
-        findings.append({
-            "dimension": "D4_zombie_reference",
-            "target": {"file_path": ze.reference},
-            "description": f"僵尸引用: {ze.registry} → {ze.reference}",
-            "severity": "P2",
-        })
+        findings.append(
+            {
+                "dimension": "D4_zombie_reference",
+                "target": {"file_path": ze.reference},
+                "description": f"僵尸引用: {ze.registry} → {ze.reference}",
+                "severity": "P2",
+            }
+        )
     for p in ar.missing_all:
         rel = p.relative_to(PROJECT_ROOT).as_posix() if p.is_absolute() else str(p)
-        findings.append({
-            "dimension": "D5_missing_all",
-            "target": {"file_path": rel},
-            "description": f"__init__.py 缺 __all__: {rel}",
-            "severity": "P2",
-        })
+        findings.append(
+            {
+                "dimension": "D5_missing_all",
+                "target": {"file_path": rel},
+                "description": f"__init__.py 缺 __all__: {rel}",
+                "severity": "P2",
+            }
+        )
     for mpm in ar.module_path_mismatches:
-        findings.append({
-            "dimension": "D6_module_path_mismatch",
-            "target": {"file_path": mpm.relative},
-            "description": f"[MODULE] 路径不一致: 声明={mpm.declared_module}, 期望={mpm.expected_module}",
-            "severity": "P2",
-        })
+        findings.append(
+            {
+                "dimension": "D6_module_path_mismatch",
+                "target": {"file_path": mpm.relative},
+                "description": f"[MODULE] 路径不一致: 声明={mpm.declared_module}, 期望={mpm.expected_module}",
+                "severity": "P2",
+            }
+        )
     return findings
 
 
@@ -448,8 +465,7 @@ def _batch_collect_imports() -> dict[str, list[str]]:
         # 下游 line.split(":", 2) 会把盘符冒号当首分隔符 → consumer_file 被截成 "D"。
         root_py_files = [p.relative_to(PROJECT_ROOT).as_posix() for p in PROJECT_ROOT.glob("*.py")]
         result = subprocess.run(
-            ["rg", "--no-heading", "-n", "-e", pattern, "src/", "scripts/", "tests/"]
-            + root_py_files,
+            ["rg", "--no-heading", "-n", "-e", pattern, "src/", "scripts/", "tests/"] + root_py_files,
             cwd=str(PROJECT_ROOT),
             capture_output=True,
             text=True,
@@ -592,15 +608,13 @@ def _scan_module_orphans(
                 # 有消费者 = 已有自然发现机制 = 豁免
                 continue
 
-            pkg_dotted = pkg.replace('/', '.').replace('\\', '.')
+            pkg_dotted = pkg.replace("/", ".").replace("\\", ".")
             result.orphan_modules.append(
                 OrphanEntry(
                     path=py_file,
                     relative=rel_str,
                     package=pkg,
-                    suggestion=(
-                        f"from zephyr.{pkg_dotted}.{module_name} import {class_name}"
-                    ),
+                    suggestion=(f"from zephyr.{pkg_dotted}.{module_name} import {class_name}"),
                 )
             )
 
@@ -790,11 +804,7 @@ def _check_module_path_consistency(
             expected = "zephyr." + ".".join(parts[:-1]) if len(parts) > 1 else "zephyr"
         else:
             stem = py_file.stem
-            expected = (
-                "zephyr." + ".".join(parts[:-1] + (stem,))
-                if len(parts) > 1
-                else f"zephyr.{stem}"
-            )
+            expected = "zephyr." + ".".join(parts[:-1] + (stem,)) if len(parts) > 1 else f"zephyr.{stem}"
 
         if declared_module != expected:
             result.module_path_mismatches.append(
@@ -989,7 +999,9 @@ def main() -> None:
     )
     scan_mode = parser.add_mutually_exclusive_group()
     scan_mode.add_argument("--full", action="store_true", help="全量扫描（默认）")
-    scan_mode.add_argument("--incremental", action="store_true", help="增量扫描：仅扫描 git 变更文件（git diff HEAD + 未跟踪）")
+    scan_mode.add_argument(
+        "--incremental", action="store_true", help="增量扫描：仅扫描 git 变更文件（git diff HEAD + 未跟踪）"
+    )
     scan_mode.add_argument(
         "--files",
         nargs="+",
@@ -1041,7 +1053,7 @@ def main() -> None:
                 ar = audit(changed_files=changed_files)
         else:
             ar = audit()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch（审计入口兜底，降级 exit 2 不抛栈）
         print(f"ERROR: 审计失败: {e}", file=sys.stderr)
         sys.exit(EXIT_ERROR)
 
@@ -1093,7 +1105,7 @@ def main() -> None:
         resolved_findings = [f for f in comparison["classified"] if f["baseline_status"] == "RESOLVED"]
 
         print(f"\n{'=' * 60}")
-        print(f"  RULE-TWO 注册审计（基线差分模式）")
+        print("  RULE-TWO 注册审计（基线差分模式）")
         print(f"{'=' * 60}")
         print(f"  当前: {comparison['current_total']}, 基线: {comparison['baseline_total']}")
         print(f"  🆕 NEW: {comparison['new_count']}（阻断）")
@@ -1101,14 +1113,14 @@ def main() -> None:
         print(f"  🔄 PERSISTENT: {comparison['persistent_count']}（存量，不阻断）")
 
         if new_findings:
-            print(f"\n  [NEW] 本次变更新引入的孤儿（必须修复）:")
+            print("\n  [NEW] 本次变更新引入的孤儿（必须修复）:")
             for f in new_findings:
                 fp = f.get("target", {}).get("file_path", "?")
                 desc = f.get("description", "")[:100]
                 print(f"    {fp}: {desc}")
 
         if persistent_findings:
-            print(f"\n  [PERSISTENT] 存量孤儿（不阻断，需后续专项治理）:")
+            print("\n  [PERSISTENT] 存量孤儿（不阻断，需后续专项治理）:")
             for f in persistent_findings[:20]:
                 fp = f.get("target", {}).get("file_path", "?")
                 print(f"    {fp}")
@@ -1116,7 +1128,7 @@ def main() -> None:
                 print(f"    ...（共 {len(persistent_findings)} 个）")
 
         if resolved_findings:
-            print(f"\n  [RESOLVED] 本次变更解决的存量孤儿:")
+            print("\n  [RESOLVED] 本次变更解决的存量孤儿:")
             for f in resolved_findings[:10]:
                 fp = f.get("target", {}).get("file_path", "?")
                 print(f"    {fp}")

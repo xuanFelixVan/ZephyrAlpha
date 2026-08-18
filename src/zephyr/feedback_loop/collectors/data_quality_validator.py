@@ -19,6 +19,27 @@
 
 Blindspot: Corrupt data enters FLE pipeline undetected.
 Risk: R110 — Diagnosis on garbage data; repair targets wrong system.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 待校验数据点
+#   fields: data_point dict（字段名 → 值）
+#   code: DataQualityValidator.validate
+# 层: 算法
+# - id: A1
+#   name_zh: 全数值类型校验
+#   name_en: all_numeric_type_check
+#   intro: data_point 所有值均为 int/float 才返回 True，任一非数值则判为脏数据
+#   code: DataQualityValidator.validate
+# 层: 输出
+# - id: O1
+#   name_zh: 数据质量结论
+#   name_en: data_quality_verdict
+#   intro: bool——数据点是否获准进入 FLE 流水线
+#   downstream: FLE 诊断流水线（仅消费通过校验的数据）
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> O1
 """
 
 from dataclasses import dataclass

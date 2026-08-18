@@ -18,6 +18,32 @@
 
 L38: HARD_BLOCK violated -> BLOCK; SOFT_BLOCK -> NEED_OVERRIDE
 L39: degradation > 5%/month -> BLOCK SELF_UPGRADE; cyclical_deps > 5 -> BLOCK
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx.action_type；门禁态 hard_block_triggered / soft_block_triggered / monthly_degradation_pct / cyclical_deps
+#   code: SafetyGateL38L39.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L38 确定性安全校验
+#   name_en: l38_deterministic_safety
+#   intro: HARD_BLOCK 触发 → REJECT；SOFT_BLOCK 触发 → OBSERVE_ONLY 需人工覆盖
+#   code: _l38_deterministic_safety
+# - id: A2
+#   name_zh: L39 架构完整性校验
+#   name_en: l39_architectural_integrity
+#   intro: 月退化 >5% 阻断 SELF_UPGRADE；循环依赖 >5 → REJECT（A1 未拒才执行）
+#   code: _l39_architectural_integrity
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

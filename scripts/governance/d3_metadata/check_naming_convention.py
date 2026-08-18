@@ -80,18 +80,34 @@ from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 # 独立脚本运行时（_GOV_DIR 已注入 sys.path）回退到顶层导入。
 try:
     from scripts.governance.d3_metadata.validate_module_id_naming import (
-        MODULE_ID_LAYER_MASTER_RE as _MODULE_ID_LAYER_MASTER_RE,
         MODULE_ID_DOMAIN_DERIVED_RE as _MODULE_ID_DOMAIN_DERIVED_RE,
+    )
+    from scripts.governance.d3_metadata.validate_module_id_naming import (
+        MODULE_ID_LAYER_MASTER_RE as _MODULE_ID_LAYER_MASTER_RE,
+    )
+    from scripts.governance.d3_metadata.validate_module_id_naming import (
         MODULE_ID_SHARED_RE as _MODULE_ID_SHARED_RE,
+    )
+    from scripts.governance.d3_metadata.validate_module_id_naming import (
         SUBMODULE_ID_RE as _SUBMODULE_ID_RE,
+    )
+    from scripts.governance.d3_metadata.validate_module_id_naming import (
         is_valid_module_id as _is_valid_module_id,
     )
 except ImportError:
     from d3_metadata.validate_module_id_naming import (
-        MODULE_ID_LAYER_MASTER_RE as _MODULE_ID_LAYER_MASTER_RE,
         MODULE_ID_DOMAIN_DERIVED_RE as _MODULE_ID_DOMAIN_DERIVED_RE,
+    )
+    from d3_metadata.validate_module_id_naming import (
+        MODULE_ID_LAYER_MASTER_RE as _MODULE_ID_LAYER_MASTER_RE,
+    )
+    from d3_metadata.validate_module_id_naming import (
         MODULE_ID_SHARED_RE as _MODULE_ID_SHARED_RE,
+    )
+    from d3_metadata.validate_module_id_naming import (
         SUBMODULE_ID_RE as _SUBMODULE_ID_RE,
+    )
+    from d3_metadata.validate_module_id_naming import (
         is_valid_module_id as _is_valid_module_id,
     )
 
@@ -356,51 +372,61 @@ def _check_n06_dual_track_format(filepath: str, content: str) -> list[NamingViol
         seen.add(value)
         if value.startswith("MOD-"):
             if not (_MODULE_ID_LAYER_MASTER_RE.match(value) or _MODULE_ID_DOMAIN_DERIVED_RE.match(value)):
-                violations.append(NamingViolation(
-                    rule="N-06",
-                    message=(
-                        f"module_id 格式不符合双轨制(裁定#208): {value}"
-                        f"（应为 MOD-{{LAYER}}-NNN layer-master 轨 或 MOD-{{DOMAIN_FRAGMENT}}[-NNN] 派生轨）"
-                    ),
-                    filepath=filepath,
-                ))
+                violations.append(
+                    NamingViolation(
+                        rule="N-06",
+                        message=(
+                            f"module_id 格式不符合双轨制(裁定#208): {value}"
+                            f"（应为 MOD-{{LAYER}}-NNN layer-master 轨 或 MOD-{{DOMAIN_FRAGMENT}}[-NNN] 派生轨）"
+                        ),
+                        filepath=filepath,
+                    )
+                )
         elif value.startswith("MOD"):
             # MOD_ 或 MODxxx — MOD 前缀后必须用连字符 - 分隔，禁止下划线 _
-            violations.append(NamingViolation(
-                rule="N-06",
-                message=f"module_id 格式不符合双轨制(裁定#208): {value}（MOD 前缀后必须用连字符 - 分隔，禁止下划线 _）",
-                filepath=filepath,
-            ))
+            violations.append(
+                NamingViolation(
+                    rule="N-06",
+                    message=f"module_id 格式不符合双轨制(裁定#208): {value}（MOD 前缀后必须用连字符 - 分隔，禁止下划线 _）",
+                    filepath=filepath,
+                )
+            )
         elif value.startswith("D-"):
             # R2 治本修订（2026-07-05）：D-XXX-NNN 已废弃为 module_id 派生轨，
             # 重定义为 submodule_id 专用（见 trae_028 gov_doc_009）。
             # 任何 D- 前缀的 module_id 值触发 ERROR——应改用 MOD-{DOMAIN_FRAGMENT}[-NNN] 派生轨。
-            violations.append(NamingViolation(
-                rule="N-06",
-                message=(
-                    f"module_id D-前缀已废弃(R2治本修订,2026-07-05): {value}"
-                    f"（D-XXX-NNN 重定义为 submodule_id 专用,见 trae_028 gov_doc_009;"
-                    f"module_id 应改用 MOD-{{DOMAIN_FRAGMENT}}[-NNN] 派生轨）"
-                ),
-                filepath=filepath,
-            ))
+            violations.append(
+                NamingViolation(
+                    rule="N-06",
+                    message=(
+                        f"module_id D-前缀已废弃(R2治本修订,2026-07-05): {value}"
+                        f"（D-XXX-NNN 重定义为 submodule_id 专用,见 trae_028 gov_doc_009;"
+                        f"module_id 应改用 MOD-{{DOMAIN_FRAGMENT}}[-NNN] 派生轨）"
+                    ),
+                    filepath=filepath,
+                )
+            )
         elif value.startswith("D_"):
-            violations.append(NamingViolation(
-                rule="N-06",
-                message=f"module_id 格式不符合双轨制(裁定#208): {value}（D 前缀后必须用连字符 - 分隔，禁止下划线 _）",
-                filepath=filepath,
-            ))
+            violations.append(
+                NamingViolation(
+                    rule="N-06",
+                    message=f"module_id 格式不符合双轨制(裁定#208): {value}（D 前缀后必须用连字符 - 分隔，禁止下划线 _）",
+                    filepath=filepath,
+                )
+            )
         elif value.startswith("SH-"):
             # 跨域共享模块: SH-{ABBR}-{NNN}（序号必填，trae_028 L86/L466/L475）
             if not _MODULE_ID_SHARED_RE.match(value):
-                violations.append(NamingViolation(
-                    rule="N-06",
-                    message=(
-                        f"module_id SH-前缀格式不符合跨域共享模块规范(trae_028 L86/L466/L475): {value}"
-                        f"（应为 SH-{{ABBR}}-NNN，如 SH-DB-001）"
-                    ),
-                    filepath=filepath,
-                ))
+                violations.append(
+                    NamingViolation(
+                        rule="N-06",
+                        message=(
+                            f"module_id SH-前缀格式不符合跨域共享模块规范(trae_028 L86/L466/L475): {value}"
+                            f"（应为 SH-{{ABBR}}-NNN，如 SH-DB-001）"
+                        ),
+                        filepath=filepath,
+                    )
+                )
     return violations
 
 
@@ -413,7 +439,7 @@ def _check_n06_module_id_scope(filepath: str, abspath: Path | None = None) -> li
         return []
     try:
         content = _read_text_bom_safe(abspath)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
     # Check: does ANY module_id: in the file have a valid scope prefix?
     if _MODULE_ID_SCOPE_RE.search(content) or _INLINE_MODULE_ID_SCOPE_RE.search(content):
@@ -463,7 +489,7 @@ def _check_n07_module_id_number_mismatch(filepath: str, abspath: Path | None = N
         return []
     try:
         content = _read_text_bom_safe(abspath)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
     fn_match = _FILENAME_ADR_NUM_RE.match(stem)
     mod_match = _MODULE_ID_NUM_RE.search(content)
@@ -644,11 +670,7 @@ _DOC_TYPE_VOCAB_PATH = (
 def _load_doc_type_suffixes() -> dict[str, list[str]]:
     """从 doc_type_vocabulary.yaml 加载 value→filename_suffixes 映射。"""
     data = yaml.safe_load(_DOC_TYPE_VOCAB_PATH.read_text(encoding="utf-8"))
-    return {
-        v["value"]: v["filename_suffixes"]
-        for v in data.get("values", [])
-        if "filename_suffixes" in v
-    }
+    return {v["value"]: v["filename_suffixes"] for v in data.get("values", []) if "filename_suffixes" in v}
 
 
 # 模块级加载一次（词表是项目内稳定文件，import 时读取）
@@ -670,7 +692,7 @@ def _check_n11_doctype_suffix(filepath: str, abspath: Path | None = None) -> lis
         return []
     try:
         content = _read_text_bom_safe(abspath)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
     dt_match = _DOC_TYPE_RE.search(content)
     if not dt_match:
@@ -868,7 +890,7 @@ def _check_n14_init_has_all(filepath: str, abspath: Path | None = None) -> list[
         return []
     try:
         content = _read_text_bom_safe(abspath)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
     if not content.strip():
         return []
@@ -897,7 +919,7 @@ def _check_n15_blueprint_path_exists(
         return []
     try:
         content = _read_text_bom_safe(abspath)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
     match = _BLUEPRINT_HEADER_RE.search(content)
     if not match:
@@ -922,18 +944,26 @@ def _check_n15_blueprint_path_exists(
 # N-16 豁免清单真源: trae_028_doc_structure_naming.yaml §gov_doc_003_filename_uniqueness.n16_config
 # 本模块直接消费 YAML 真源(非同步复制),YAML改即生效。禁止在此硬编码新豁免项。
 # fail-open: YAML不存在/解析失败/n16_config字段不完整时回退到下方硬编码值,防破坏性故障。
-_N16_YAML_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
-)
+_N16_YAML_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
 
 # fail-open 回退值(与 trae_028.yaml v1.5.0 n16_config 保持一致;仅在YAML不可达时使用)
 _N16_TESTS_EXEMPT_NAMES_FALLBACK: frozenset[str] = frozenset({"conftest.py", "__init__.py"})
-_N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK: frozenset[str] = frozenset({
-    "blueprint.md", "README.md", "changelog.md", "spec.md", ".gitkeep", "_index.yaml",
-    'index.md',
-})
+_N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK: frozenset[str] = frozenset(
+    {
+        "blueprint.md",
+        "README.md",
+        "changelog.md",
+        "spec.md",
+        ".gitkeep",
+        "_index.yaml",
+        "index.md",
+    }
+)
 _N16_DOCS_SKIP_DIRS_FALLBACK: set[str] = {
-    "_DO_NOT_USE_old_tree", "_archive", "_backups", "session_logs",
+    "_DO_NOT_USE_old_tree",
+    "_archive",
+    "_backups",
+    "session_logs",
     "_working",  # SSoT: trae_028 n16_config.skip_dirs_docs；草稿区豁免（#ARCH-PRECOMMIT-INCREMENTAL, 2026-08-05）
 }
 # 临时沙箱目录前缀回退(目录名前缀匹配,os.walk剪枝);真源在 trae_028.yaml §n16_config.skip_dir_prefixes
@@ -951,11 +981,7 @@ def _load_n16_exemptions_from_yaml() -> tuple[frozenset[str], frozenset[str], se
     """
     try:
         data = yaml.safe_load(_N16_YAML_PATH.read_text(encoding="utf-8"))
-        cfg = (
-            data.get("sections", {})
-            .get("gov_doc_003_filename_uniqueness", {})
-            .get("n16_config", {})
-        )
+        cfg = data.get("sections", {}).get("gov_doc_003_filename_uniqueness", {}).get("n16_config", {})
         tests_raw = cfg.get("exempt_names_tests", [])
         docs_raw = cfg.get("exempt_names_docs_extra", [])
         skip_raw = cfg.get("skip_dirs_docs", [])
@@ -969,7 +995,7 @@ def _load_n16_exemptions_from_yaml() -> tuple[frozenset[str], frozenset[str], se
         if any(x == "" for x in prefixes_raw):
             raise ValueError("n16_config.skip_dir_prefixes 含空字符串")
         return frozenset(tests_raw), frozenset(docs_raw), set(skip_raw), set(prefixes_raw)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return (
             _N16_TESTS_EXEMPT_NAMES_FALLBACK,
             _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK,
@@ -1202,6 +1228,27 @@ def check_new_files_naming(
     if not new_rel_files:
         return []
 
+    # 治本（2026-08-18 AI-00 merge-17 实证）：pass_filenames=true 传入的是全部 staged 文件
+    # （含 M 修改），原实现把"已跟踪多年的修改文件"当新增拦重名——与本 hook 声明语义
+    # 「只拦 staged 新增重名…不拦历史遗留」直接矛盾。现以 git diff --cached --diff-filter=AR
+    # 求真·新增集（A=新增，R=重命名目标），M 文件一律跳过（存量重名走 gate-naming-audit 清零）。
+    # fail-open：git 不可用时返回 [] 不阻断（与下方 ls-files 失败路径同策略）。
+    try:
+        added_r = subprocess.run(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=AR"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=str(project_root),
+        )
+        truly_added = {f.replace("\\", "/") for f in added_r.stdout.strip().splitlines() if f}
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return []  # fail-open：git 不可用时不阻断 commit
+    new_rel_files = [rel for rel in new_rel_files if rel in truly_added]
+
+    if not new_rel_files:
+        return []
+
     # 豁免清单（真源：trae_028.yaml §n16_config，模块级常量已动态加载）
     # 跨 scope 统一豁免：__init__.py/conftest.py（包标识/pytest约定）+ __main__.py（python -m入口）+ docs约定同名
     exempt = _N16_TESTS_EXEMPT_NAMES | _N16_DOCS_EXEMPT_NAMES | frozenset({"__main__.py"})
@@ -1248,19 +1295,23 @@ def check_new_files_naming(
         if nc_basename in tracked_basename_to_paths:
             existing = [p for p in tracked_basename_to_paths[nc_basename] if os.path.normcase(p) != nc_rel]
             if existing:
-                violations.append(NamingViolation(
-                    rule="N-16",
-                    message=f"文件名不唯一: {basename} (新增: {rel}, 已有: {', '.join(existing)})",
-                    filepath=rel,
-                ))
+                violations.append(
+                    NamingViolation(
+                        rule="N-16",
+                        message=f"文件名不唯一: {basename} (新增: {rel}, 已有: {', '.join(existing)})",
+                        filepath=rel,
+                    )
+                )
 
         # 冲突检测 2：本次提交内部冲突
         if basename in committed_basenames:
-            violations.append(NamingViolation(
-                rule="N-16",
-                message=f"文件名不唯一: {basename} (本次提交内冲突: {rel} vs {committed_basenames[basename]})",
-                filepath=rel,
-            ))
+            violations.append(
+                NamingViolation(
+                    rule="N-16",
+                    message=f"文件名不唯一: {basename} (本次提交内冲突: {rel} vs {committed_basenames[basename]})",
+                    filepath=rel,
+                )
+            )
         committed_basenames[basename] = rel
 
     return violations
@@ -1308,7 +1359,9 @@ def check_new_files_full(
     try:
         tracked_result = subprocess.run(
             ["git", "ls-files"],
-            capture_output=True, text=True, check=True,
+            capture_output=True,
+            text=True,
+            check=True,
             cwd=str(project_root),
         )
         tracked_set = {os.path.normcase(f.replace("\\", "/")) for f in tracked_result.stdout.strip().splitlines() if f}
@@ -1343,9 +1396,7 @@ def check_new_files_full(
         if _is_new_file(rel) and rel.startswith(_N16_NEW_FILE_SCOPES):
             added_files_for_n16.append(f)
     if added_files_for_n16:
-        violations.extend(check_new_files_naming(
-            added_files_for_n16, project_root, scopes=None
-        ))
+        violations.extend(check_new_files_naming(added_files_for_n16, project_root, scopes=None))
 
     # 2. N-01~N-17 风格检查
     # - 新增文件：全量检查
@@ -1354,6 +1405,7 @@ def check_new_files_full(
     #   filename 级规则(N-01~N-05,N-08,N-11~N-13)对修改文件天然全豁免（文件名不变→HEAD 和工作区结果相同→差集为空）
     #   content 级规则(N-06,N-07,N-14,N-15,N-17)只阻断修改引入的新违规
     import tempfile
+
     for f in new_files:
         p = Path(f)
         if not p.is_absolute():
@@ -1376,14 +1428,13 @@ def check_new_files_full(
             try:
                 head_result = subprocess.run(
                     ["git", "show", f"HEAD:{rel}"],
-                    capture_output=True, cwd=str(project_root),
+                    capture_output=True,
+                    cwd=str(project_root),
                 )
                 if head_result.returncode != 0:
                     continue  # HEAD 中无此文件（新增？），跳过
                 # 写 HEAD 内容到临时文件，跑 check_file 获取基线违规
-                with tempfile.NamedTemporaryFile(
-                    mode="wb", suffix=Path(rel).suffix, delete=False
-                ) as tmp:
+                with tempfile.NamedTemporaryFile(mode="wb", suffix=Path(rel).suffix, delete=False) as tmp:
                     tmp.write(head_result.stdout)
                     tmp_path = Path(tmp.name)
                 try:
@@ -1435,7 +1486,11 @@ def _is_path_exempt(filepath: str) -> bool:
 # 临时/构建/缓存目录前缀——这些目录虽位于 REPO_ROOT 内，但不应触发 N-16 项目级扫描
 # （pytest --basetemp 使 tmp_path 落在 .runtime/tmp/ 下，会误触发 N-16 扫描整个项目）
 _N16_TEMP_DIR_PREFIXES: tuple[str, ...] = (
-    ".runtime", ".tmp", ".cache", ".pytest_cache", "tmp",
+    ".runtime",
+    ".tmp",
+    ".cache",
+    ".pytest_cache",
+    "tmp",
 )
 
 
@@ -1491,7 +1546,7 @@ def _check_n17_blueprint_domain_consistency(filepath: str, abspath: Path | None 
         return []
     try:
         content = _read_text_bom_safe(abspath)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
 
     bp_match = _BP_HEADER_RE.search(content)
@@ -1616,15 +1671,12 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
     防 SSoT 修订后 enforcement 脚本未同步（AI 编程社区 enforcement gap）。
     独立模式（--validate-ssot），不扫描文件，仅校验 SSoT 文件与脚本常量一致性。
     """
-    ssot_path = (
-        REPO_ROOT
-        / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
-    )
+    ssot_path = REPO_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
     if not ssot_path.exists():
         return False, f"❌ SSoT 文件不存在: {ssot_path}"
     try:
         content = ssot_path.read_text(encoding="utf-8")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False, f"❌ SSoT 读取失败: {e}"
 
     # 1. version 字段读取（用于成功消息可追溯性报告；下界校验已删除——版本号只升不降
@@ -1654,11 +1706,7 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
     #    若 YAML 加了新豁免项但 fallback 未同步，此处报漂移。
     try:
         ssot_data = yaml.safe_load(content)
-        n16_cfg = (
-            ssot_data.get("sections", {})
-            .get("gov_doc_003_filename_uniqueness", {})
-            .get("n16_config", {})
-        )
+        n16_cfg = ssot_data.get("sections", {}).get("gov_doc_003_filename_uniqueness", {}).get("n16_config", {})
         yaml_tests = frozenset(n16_cfg.get("exempt_names_tests", []))
         yaml_docs_extra = frozenset(n16_cfg.get("exempt_names_docs_extra", []))
         yaml_skip_dirs = set(n16_cfg.get("skip_dirs_docs", []))
@@ -1686,12 +1734,10 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
                 "❌ N-16 _N16_*_FALLBACK 与 YAML n16_config 不一致（漂移风险，改 YAML 后须同步 fallback）:\n  "
                 + "\n  ".join(drifts)
             )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False, f"❌ N-16 fallback 一致性校验失败: {e}"
 
-    return True, (
-        f"✅ SSoT(trae_028 v{ver[0]}.{ver[1]}.{ver[2]}) 与脚本双轨正则 + N-16 fallback 一致"
-    )
+    return True, (f"✅ SSoT(trae_028 v{ver[0]}.{ver[1]}.{ver[2]}) 与脚本双轨正则 + N-16 fallback 一致")
 
 
 def main() -> int:
@@ -1703,14 +1749,18 @@ def main() -> int:
     parser.add_argument("--scan", action="store_true", help="扫描整个项目目录")
     parser.add_argument("--staged", action="store_true", help="只检查git暂存区文件")
     parser.add_argument("--warn-only", action="store_true", help="仅警告，不阻断")
-    parser.add_argument("--validate-ssot", action="store_true", help="校验 SSoT(trae_028)与脚本双轨正则+N-16 fallback 一致性(裁定#208 R4)")
+    parser.add_argument(
+        "--validate-ssot",
+        action="store_true",
+        help="校验 SSoT(trae_028)与脚本双轨正则+N-16 fallback 一致性(裁定#208 R4)",
+    )
     parser.add_argument(
         "--check-new",
         nargs="*",
         default=None,
         metavar="FILE",
         help="增量 N-16 检查：只检查指定文件是否与已跟踪文件同名冲突（GitCommitGateway subprocess 调用，"
-             "git ls-files 基线，不阻断历史遗留）",
+        "git ls-files 基线，不阻断历史遗留）",
     )
     parser.add_argument(
         "--check-new-full",
@@ -1718,7 +1768,7 @@ def main() -> int:
         default=None,
         metavar="FILE",
         help="增量全量命名硬阻断(治本·选项B):新增文件N-01~N-17风格+所有文件N-16唯一性"
-             "(覆盖tests/docs/src/scripts),硬阻断绕不过--no-verify。GitCommitGateway内嵌调用",
+        "(覆盖tests/docs/src/scripts),硬阻断绕不过--no-verify。GitCommitGateway内嵌调用",
     )
     args = parser.parse_args()
 
@@ -1790,9 +1840,7 @@ def main() -> int:
         # 原因: pre-commit hook 传入项目内文件（相对路径），需要 N-16 检测同名冲突；
         # 但测试传入 tmp_path（位于 REPO_ROOT 外），N-16 扫描整个项目会检出与测试
         # 无关的预存在同名文件，遮蔽被测文件的 N-13/N-01 违规。
-        _targets_in_repo = any(
-            _is_path_inside_repo(Path(t)) for t in targets
-        )
+        _targets_in_repo = any(_is_path_inside_repo(Path(t)) for t in targets)
         if _targets_in_repo or not args.paths:
             _project_root_for_n16 = REPO_ROOT
             all_violations.extend(check_filename_uniqueness_all(_project_root_for_n16))
@@ -1821,14 +1869,16 @@ def main() -> int:
         print(f"[{v.rule}] {v.message}")
 
     if n16_violations:
-        print(f"\n[N-16 BLOCK] 文件名不唯一（硬阻断，不受 --warn-only 影响）:")
+        print("\n[N-16 BLOCK] 文件名不唯一（硬阻断，不受 --warn-only 影响）:")
         for v in n16_violations:
             print(f"  [N-16] {v.message}")
         print(f"  共 {len(n16_violations)} 个 N-16 阻断违规")
 
     if n17_violations:
         if args.warn_only:
-            print(f"\n[N-17 WARNING] blueprint_id 域片段不一致（过渡期 --warn-only，不阻断；裁定#208 阶段 E 激活后阻断）:")
+            print(
+                "\n[N-17 WARNING] blueprint_id 域片段不一致（过渡期 --warn-only，不阻断；裁定#208 阶段 E 激活后阻断）:"
+            )
             for v in n17_violations:
                 print(f"  [N-17] {v.message}")
             print(f"  共 {len(n17_violations)} 个 N-17 warning")

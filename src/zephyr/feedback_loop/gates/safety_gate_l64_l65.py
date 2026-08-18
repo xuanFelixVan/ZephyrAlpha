@@ -18,6 +18,32 @@
 
 L64: Pre-Trade Risk + Best Execution + Market Microstructure + Counterparty Credit + PnL Attribution
 L65: KB Injection Defense + AI Code Duplication + Multi-Model Ensemble + DB Migration + Context Contamination + RCA + MTTR + Bus Factor
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx；门禁态 pre_trade_risk_ok / pnl_reconciled / kb_injection_defense_active
+#   code: SafetyGateL64L65.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L64 金融完整性校验
+#   name_en: l64_financial_integrity
+#   intro: 盘前风控失败 → REJECT；PnL 未对账 → OBSERVE_ONLY
+#   code: _l64
+# - id: A2
+#   name_zh: L65 VibeOps:Solo 完整性校验
+#   name_en: l65_vibeops_solo
+#   intro: KB 注入防御等单人运维完整性守护（当前恒 PASS）
+#   code: _l65
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

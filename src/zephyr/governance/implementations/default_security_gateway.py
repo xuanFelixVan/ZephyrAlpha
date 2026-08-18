@@ -16,6 +16,29 @@
 # [TTL] permanent
 # Re-export shim: canonical source = zephyr.governance.security_governance.default_security_gateway (SSoT 收敛，消除多真源)
 
+"""default_security_gateway — re-export shim（真源 zephyr.governance.security_governance.default_security_gateway）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: shim 导入请求
+#   fields: import zephyr.governance.implementations.default_security_gateway
+#   code: L21-25 from-import
+# 层: 算法
+# - id: A1
+#   name_zh: 真源透传
+#   name_en: ssot_reexport
+#   intro: 无逻辑——三个符号从 security_governance 真源原样再导出
+# 层: 输出
+# - id: O1
+#   name_zh: 兼容符号
+#   name_en: compat_symbols
+#   intro: DefaultSecurityGateway / ScanFinding / SecurityContext
+#   downstream: 存量旧路径消费者
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> O1
+"""
+
 from __future__ import annotations
 
 from zephyr.governance.security_governance.default_security_gateway import (

@@ -33,11 +33,15 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _common import DB_DISPLAY_NAME
+from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
 from _shared.constants import get_depgraph_pg_connection
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "asset_catalog.md"
+
+SQL_COUNT_DATAFLOW_JOBS = "SELECT COUNT(*) AS c FROM dataflow_jobs"
+SQL_COUNT_DATAFLOW_DATASETS = "SELECT COUNT(*) AS c FROM dataflow_datasets"
 
 
 def generate_asset_catalog() -> str:
@@ -81,9 +85,9 @@ def generate_asset_catalog() -> str:
         contracts = [dict(r) for r in cur.fetchall()]
 
         # 6. 数据流作业
-        cur = conn.execute("SELECT COUNT(*) AS c FROM dataflow_jobs")
+        cur = conn.execute(SQL_COUNT_DATAFLOW_JOBS)
         dataflow_jobs = cur.fetchone()["c"]
-        cur = conn.execute("SELECT COUNT(*) AS c FROM dataflow_datasets")
+        cur = conn.execute(SQL_COUNT_DATAFLOW_DATASETS)
         dataflow_datasets = cur.fetchone()["c"]
 
         # 7. 数据源 API 清单（join data_source_assets 取源名）
@@ -116,10 +120,14 @@ def generate_asset_catalog() -> str:
     lines.append("")
     lines.append("# 资产清单全景图 / Asset Catalog")
     lines.append("")
-    lines.append(f"> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共{total}项资产。AI接入新功能前必查此图确认可复用资产。")
+    lines.append(
+        f"> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共{total}项资产。AI接入新功能前必查此图确认可复用资产。"
+    )
     lines.append("")
     lines.append(f"> 本文档由 generate_asset_catalog.py 从 {DB_DISPLAY_NAME} 自动生成")
-    lines.append("> 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml")
+    lines.append(
+        "> 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml"
+    )
     lines.append("")
 
     # 统计概览
@@ -144,7 +152,9 @@ def generate_asset_catalog() -> str:
     lines.append("| ID | 名称 | 类型 | 类别 | 供应商 | 状态 | API数 | 覆盖范围 |")
     lines.append("|----|------|------|------|--------|------|-------|----------|")
     for ds in data_sources:
-        lines.append(f"| {ds['source_id']} | {ds['name']} | {ds['type']} | {ds['category']} | {ds['vendor']} | {ds['status']} | {ds['api_count']} | {ds['coverage'] or '—'} |")
+        lines.append(
+            f"| {ds['source_id']} | {ds['name']} | {ds['type']} | {ds['category']} | {ds['vendor']} | {ds['status']} | {ds['api_count']} | {ds['coverage'] or '—'} |"
+        )
     lines.append("")
 
     # 服务资产
@@ -153,8 +163,10 @@ def generate_asset_catalog() -> str:
     lines.append("| ID | 名称 | 类型 | 域 | 端口 | 协议 | 状态 | 描述 |")
     lines.append("|----|------|------|-----|------|------|------|------|")
     for svc in services:
-        port = str(svc['port']) if svc['port'] else '—'
-        lines.append(f"| {svc['service_id']} | {svc['name']} | {svc['type']} | {svc['domain'] or '—'} | {port} | {svc['protocol'] or '—'} | {svc['status']} | {svc['description'] or '—'} |")
+        port = str(svc["port"]) if svc["port"] else "—"
+        lines.append(
+            f"| {svc['service_id']} | {svc['name']} | {svc['type']} | {svc['domain'] or '—'} | {port} | {svc['protocol'] or '—'} | {svc['status']} | {svc['description'] or '—'} |"
+        )
     lines.append("")
 
     # 基础设施组件
@@ -163,18 +175,22 @@ def generate_asset_catalog() -> str:
     lines.append("| ID | 类型 | 地址 | 状态 | SLA |")
     lines.append("|----|------|------|------|-----|")
     for ic in infra:
-        lines.append(f"| {ic['component_id']} | {ic['component_type']} | {ic['address'] or '—'} | {ic['status']} | {ic['sla'] or '—'} |")
+        lines.append(
+            f"| {ic['component_id']} | {ic['component_type']} | {ic['address'] or '—'} | {ic['status']} | {ic['sla'] or '—'} |"
+        )
     lines.append("")
 
     # 契约资产
     lines.append("## 5. 契约资产")
     lines.append("")
-    lines.append(f"> 详细流向矩阵和字段定义见 [contract_catalog.md](contract_catalog.md)")
+    lines.append("> 详细流向矩阵和字段定义见 [contract_catalog.md](contract_catalog.md)")
     lines.append("")
     lines.append("| ID | 名称 | 类型 | 提供方 | 状态 |")
     lines.append("|----|------|------|--------|------|")
     for c in contracts:
-        lines.append(f"| {c['contract_id']} | {c['name'] or '—'} | {c['contract_type']} | {c['provider_domain'] or '—'} | {c['fulfillment_status']} |")
+        lines.append(
+            f"| {c['contract_id']} | {c['name'] or '—'} | {c['contract_type']} | {c['provider_domain'] or '—'} | {c['fulfillment_status']} |"
+        )
     lines.append("")
 
     # 配置项
@@ -185,15 +201,17 @@ def generate_asset_catalog() -> str:
     lines.append("| 文件路径 | 大小(KB) | 最后修改 |")
     lines.append("|----------|---------|----------|")
     for cfg in configs:
-        size_kb = f"{cfg['size_bytes'] / 1024:.1f}" if cfg['size_bytes'] else '—'
-        lm = cfg['last_modified'].strftime('%Y-%m-%d') if cfg['last_modified'] else '—'
+        size_kb = f"{cfg['size_bytes'] / 1024:.1f}" if cfg["size_bytes"] else "—"
+        lm = cfg["last_modified"].strftime("%Y-%m-%d") if cfg["last_modified"] else "—"
         lines.append(f"| `{cfg['file_path']}` | {size_kb} | {lm} |")
     lines.append("")
 
     # 数据源 API 清单（按数据源分组，每个 API 一行）
     lines.append("## 7. 数据源 API 清单")
     lines.append("")
-    lines.append(f"> 共 {len(apis)} 个 API,按数据源分组。真源: `architecture_model/data/data_source_apis_registry.yaml`,参数坑/调用示例见 [data_source_operation_manual.md](../../03_modules/_domain_data/data_source_operation_manual.md)。")
+    lines.append(
+        f"> 共 {len(apis)} 个 API,按数据源分组。真源: `architecture_model/data/data_source_apis_registry.yaml`,参数坑/调用示例见 [data_source_operation_manual.md](../../03_modules/_domain_data/data_source_operation_manual.md)。"
+    )
     lines.append("")
     lines.append("**测试状态图例**: ✅ verified | 🟡 partial | ⚠️ untested | ❌ deprecated")
     lines.append("")
@@ -212,7 +230,9 @@ def generate_asset_catalog() -> str:
 
         lines.append(f"### 7.{idx} {source_name}（`{source_id}`，{len(source_apis)} API）")
         lines.append("")
-        lines.append(f"测试状态: ✅ {verified_count} verified / 🟡 {partial_count} partial / ⚠️ {untested_count} untested / ❌ {deprecated_count} deprecated")
+        lines.append(
+            f"测试状态: ✅ {verified_count} verified / 🟡 {partial_count} partial / ⚠️ {untested_count} untested / ❌ {deprecated_count} deprecated"
+        )
         lines.append("")
         lines.append("| API ID | 函数名 | 类别 | 功能 | 频率 | 范围 | 状态 | 章节引用 |")
         lines.append("|--------|--------|------|------|------|------|:----:|----------|")
@@ -231,7 +251,9 @@ def generate_asset_catalog() -> str:
             freq = a["frequency_codes"] or "—"
             scope = a["data_scope"] or "—"
             section_ref = a["section_ref"] or "—"
-            lines.append(f"| `{a['api_id']}` | `{api_name}` | {category} | {func} | {freq} | {scope} | {sym} | {section_ref} |")
+            lines.append(
+                f"| `{a['api_id']}` | `{api_name}` | {category} | {func} | {freq} | {scope} | {sym} | {section_ref} |"
+            )
 
         lines.append("")
 

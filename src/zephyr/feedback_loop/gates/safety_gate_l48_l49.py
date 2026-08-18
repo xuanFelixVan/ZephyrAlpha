@@ -18,6 +18,32 @@
 
 L48: dependency integrity verified + transitive trust chain intact
 L49: owner cognitive budget respected + alert flooding suppressed
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx；门禁态 dependency_integrity_ok / transitive_trust_score / cognitive_budget_remaining_pct / alert_flood_detected
+#   code: SafetyGateL48L49.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L48 供应链治理校验
+#   name_en: l48_supply_chain_governance
+#   intro: 依赖完整性破坏或传递信任分 <0.5 → REJECT
+#   code: _l48_supply_chain_governance
+# - id: A2
+#   name_zh: L49 认知安全校验
+#   name_en: l49_cognitive_safety
+#   intro: 告警洪水 → REJECT 抑制；负责人认知预算 <10% → OBSERVE_ONLY（A1 未拒才执行）
+#   code: _l49_cognitive_safety
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

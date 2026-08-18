@@ -37,17 +37,15 @@ Exit codes:
 
 from __future__ import annotations
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
-
 import re
 import sys
+
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 from zephyr.shared.io.paths import REPO_ROOT
 
 GATES_DIR = REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
-BLUEPRINT_PATH = (
-    REPO_ROOT / "docs" / "03_modules" / "_cross_layer" / "gate_engine" / "blueprint.md"
-)
+BLUEPRINT_PATH = REPO_ROOT / "docs" / "03_modules" / "_cross_layer" / "gate_engine" / "blueprint.md"
 
 # 匹配 blueprint.md §0.1 表格中的 commit_gates/xxx.py 条目
 _RE_BP_GATE_ENTRY = re.compile(r"commit_gates/(\w+\.py)")
@@ -85,7 +83,7 @@ def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     try:
         missing, extra = detect_drift()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"ERROR: {e}", file=sys.stderr)
         return EXIT_ERROR
     actual = scan_actual_gates()
@@ -93,10 +91,7 @@ def main() -> int:
         print(f"OK: commit_gates inventory in sync ({len(actual)} gates)")
         return EXIT_PASS
     listed = scan_blueprint_listed()
-    print(
-        f"DRIFT: commit_gates inventory mismatch "
-        f"(actual={len(actual)} listed={len(listed)})"
-    )
+    print(f"DRIFT: commit_gates inventory mismatch (actual={len(actual)} listed={len(listed)})")
     if missing:
         print(f"  MISSING in blueprint.md §0.1 ({len(missing)}):")
         for f in missing:
@@ -110,5 +105,7 @@ def main() -> int:
         bp_rel = BLUEPRINT_PATH.relative_to(REPO_ROOT).as_posix()
         print(f"  → 清理: 从 {bp_rel} §0.1 表格移除上述文件行")
     return EXIT_FINDINGS
+
+
 if __name__ == "__main__":
     sys.exit(main())

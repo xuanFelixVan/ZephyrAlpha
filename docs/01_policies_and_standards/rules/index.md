@@ -6,14 +6,14 @@ module_id: ""
 blueprint_id: ""
 version: "1.0.0"
 created: "2026-06-30"
-updated: "2026-06-30"
+updated: "2026-08-17"
 ttl: "permanent"
 ---
 
 # rules
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-06-30
+> 生成日期：2026-08-17
 
 ## 目录内容
 
@@ -80,6 +80,30 @@ ttl: "permanent"
 | [trae_058_depgraph_scan_exclusions.yaml](trae_058_depgraph_scan_exclusions.yaml) | YAML | |
 | [trae_059_schema_version_write_protection.yaml](trae_059_schema_version_write_protection.yaml) | YAML | |
 | [trae_060_inward_consolidation.yaml](trae_060_inward_consolidation.yaml) | YAML | |
+| [trae_061_decisiongraph_access_protocol.yaml](trae_061_decisiongraph_access_protocol.yaml) | YAML | |
+| [trae_062_ssot_classification.yaml](trae_062_ssot_classification.yaml) | YAML | |
+| [trae_063_data_ops_discipline.yaml](trae_063_data_ops_discipline.yaml) | YAML | |
+| [trae_064_git_call_budget.yaml](trae_064_git_call_budget.yaml) | YAML | |
+| [trae_065_capability_lookup_required.yaml](trae_065_capability_lookup_required.yaml) | YAML | |
+| [trae_066_rule_seventeen_runcommand_purity.yaml](trae_066_rule_seventeen_runcommand_purity.yaml) | YAML | |
+| [trae_067_window_flash_discipline.yaml](trae_067_window_flash_discipline.yaml) | YAML | |
+| [trae_068_preventability_layer.yaml](trae_068_preventability_layer.yaml) | YAML | |
+| [trae_069_commit_gateway_abuse_thresholds.yaml](trae_069_commit_gateway_abuse_thresholds.yaml) | YAML | |
+| [trae_070_temporary_file_placement.yaml](trae_070_temporary_file_placement.yaml) | YAML | |
+| [trae_071_temporary_file_lifecycle.yaml](trae_071_temporary_file_lifecycle.yaml) | YAML | |
+| [trae_072_cross_commit_atomicity.yaml](trae_072_cross_commit_atomicity.yaml) | YAML | |
+| [trae_073_precommit_offline_discipline.yaml](trae_073_precommit_offline_discipline.yaml) | YAML | |
+| [trae_074_worktree_base_freshness.yaml](trae_074_worktree_base_freshness.yaml) | YAML | |
+| [trae_075_stash_lifecycle.yaml](trae_075_stash_lifecycle.yaml) | YAML | |
+| [trae_076_worktree_commit_persistence.yaml](trae_076_worktree_commit_persistence.yaml) | YAML | |
+| [trae_077_capability_lookup_scene_classify.yaml](trae_077_capability_lookup_scene_classify.yaml) | YAML | |
+| [trae_078_force_merge_safety.yaml](trae_078_force_merge_safety.yaml) | YAML | |
+| [trae_079_commit_serialization.yaml](trae_079_commit_serialization.yaml) | YAML | |
+| [trae_080_panorama_alignment.yaml](trae_080_panorama_alignment.yaml) | YAML | |
+| [trae_081_audit_dimensions_framework.yaml](trae_081_audit_dimensions_framework.yaml) | YAML | |
+| [trae_082_symbol_convention.yaml](trae_082_symbol_convention.yaml) | YAML | |
+| [trae_083_design_intent_source_discipline.yaml](trae_083_design_intent_source_discipline.yaml) | YAML | |
+| [trae_084_precommit_incremental_discipline.yaml](trae_084_precommit_incremental_discipline.yaml) | YAML | |
 
 ## 导航
 

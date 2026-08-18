@@ -19,6 +19,27 @@
 
 Blindspot: Config change history invisible; cannot correlate config changes with anomalies.
 Risk: R99 — Post-config-change anomaly misdiagnosed as system failure.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 配置变更记录
+#   fields: change dict（一次配置变更的描述）
+#   code: ConfigTimeline.record
+# 层: 算法
+# - id: A1
+#   name_zh: 变更追加留痕
+#   name_en: change_append_recording
+#   intro: 将变更 dict 追加到 changes 时间线列表，形成可关联异常的变更历史
+#   code: ConfigTimeline.record
+# 层: 输出
+# - id: O1
+#   name_zh: 配置变更时间线
+#   name_en: config_change_timeline
+#   intro: changes 列表——按到达顺序排列的变更历史
+#   downstream: FLE 诊断方（变更-异常关联分析）
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> O1
 """
 
 from dataclasses import dataclass, field

@@ -34,18 +34,19 @@
 self_review/rule_comprehension 缺负例对照组。本脚本作为 CI 检查，
 防止下次题库扩展时同类问题复发（审查2.1/2.2 治本措施）。
 """
-from __future__ import annotations
 
-from _shared.constants import EXIT_PASS
+from __future__ import annotations
 
 import argparse
 import sys
 
+from _shared.constants import EXIT_PASS
+
+import zephyr.intelligence.model_profiling.exam_test_cases as _etc  # noqa: E402
 from zephyr.intelligence.model_profiling.exam_test_cases import (  # noqa: E402
     ALL_EXAM_CASES,
     ExamTestCase,
 )
-import zephyr.intelligence.model_profiling.exam_test_cases as _etc  # noqa: E402
 
 # 二元判断字段映射：字段名 -> 能力名
 # 这些字段构成"二元判断"能力，必须同时有正例(True)和负例(False)对照组，
@@ -111,13 +112,11 @@ def check_binary_negatives(registered: list[ExamTestCase]) -> list[str]:
         has_false = any(v is False for v in values)
         if not has_true:
             issues.append(
-                f"{cap}.{field}: 缺少正例(True)——所有 {len(cases)} 题均为 False，"
-                f"'总是报阴性'退化策略可拿满分"
+                f"{cap}.{field}: 缺少正例(True)——所有 {len(cases)} 题均为 False，'总是报阴性'退化策略可拿满分"
             )
         if not has_false:
             issues.append(
-                f"{cap}.{field}: 缺少负例(False)——所有 {len(cases)} 题均为 True，"
-                f"'总是报阳性'退化策略可拿满分"
+                f"{cap}.{field}: 缺少负例(False)——所有 {len(cases)} 题均为 True，'总是报阳性'退化策略可拿满分"
             )
     return issues
 
@@ -142,10 +141,7 @@ def main() -> int:
     registered = list(ALL_EXAM_CASES)
 
     print("== 考试题库一致性检查 ==")
-    print(
-        f"  定义: {len(defined)} 题 | 注册: {len(registered)} 题 | "
-        f"瘦能力阈值: {args.min_cases}"
-    )
+    print(f"  定义: {len(defined)} 题 | 注册: {len(registered)} 题 | 瘦能力阈值: {args.min_cases}")
 
     errors: list[str] = []
 
@@ -160,9 +156,7 @@ def main() -> int:
     # 2. 瘦能力检查（审查2.1 治本）
     thin = check_thin_capabilities(registered, args.min_cases)
     for cap, n in sorted(thin.items()):
-        errors.append(
-            f"瘦能力: {cap} 仅 {n} 题（< {args.min_cases}）— 无法形成难度梯度"
-        )
+        errors.append(f"瘦能力: {cap} 仅 {n} 题（< {args.min_cases}）— 无法形成难度梯度")
 
     # 3. 二元判断缺对照组检查（审查2.2 治本）
     for issue in check_binary_negatives(registered):
@@ -172,13 +166,12 @@ def main() -> int:
         print()
         for e in errors:
             print(f"  [ERROR] {e}")
-        print(
-            f"\n== 结果: {len(errors)} 个问题 | "
-            f"{'WARN-ONLY（不阻断）' if args.warn_only else 'BLOCKED by ERROR'} =="
-        )
+        print(f"\n== 结果: {len(errors)} 个问题 | {'WARN-ONLY（不阻断）' if args.warn_only else 'BLOCKED by ERROR'} ==")
         return 0 if args.warn_only else 1
 
     print("  ALL CLEAN")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

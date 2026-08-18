@@ -19,6 +19,32 @@
 L66: Market Abuse + Financial Stress Test + Independent Price Verification + Collateral + Tax + Privacy + IP + Insurance
 L67: Full 67-layer pipeline audit — every gate must log independently; full traceability required
 同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文 + 上游门禁结果
+#   fields: ActionContext（compliance_ok 等）+ evaluate 内累积的 results
+#   code: SafetyGateL66L67.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L66 财务审慎校验
+#   name_en: l66_financial_prudence
+#   intro: compliance_ok=False → HARD REJECT；否则 PASS（Market Abuse/Stress/Price/Collateral/Tax/Privacy/IP/Insurance 八项合规前提）
+#   code: _l66
+# - id: A2
+#   name_zh: L67 全链路审计终判
+#   name_en: l67_full_pipeline_audit
+#   intro: 校验 67 层每层独立留痕；逐层 verdict 聚合 + write_to_core 写不可变审计链
+#   code: _l67 / _log
+# 层: 输出
+# - id: O1
+#   name_zh: 双层门禁裁决
+#   name_en: gate_verdicts
+#   intro: list[GateResult]（L66/L67 各一）+ 核心审计链落账
+#   downstream: 门禁链编排器 / zephyr.gov_audit.writer.AuditWriter
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from __future__ import annotations

@@ -19,6 +19,27 @@
 
 Blindspot: FLE acts on symptoms not intents; repair may violate operator intent.
 Risk: R159 — FLE "fixes" something owner intentionally configured.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 待校验动作
+#   fields: action 字符串；declared_intents 已声明意图清单
+#   code: IntentDrivenOps.validate
+# 层: 算法
+# - id: A1
+#   name_zh: 操作意图符合性校验
+#   name_en: operator_intent_validation
+#   intro: 对照 declared_intents 校验动作是否违背负责人意图（当前为占位实现，恒返回 True）
+#   code: IntentDrivenOps.validate
+# 层: 输出
+# - id: O1
+#   name_zh: 校验结论
+#   name_en: validation_verdict
+#   intro: bool——动作是否获准执行
+#   downstream: FLE 动作执行层（actors 各执行器）
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> O1
 """
 
 from dataclasses import dataclass, field

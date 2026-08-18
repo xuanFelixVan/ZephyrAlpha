@@ -58,7 +58,7 @@ def _normalize_dep(module: str) -> str | None:
     """
     if not module or not module.startswith(_GOV_PREFIX):
         return None
-    rest = module[len(_GOV_PREFIX):]
+    rest = module[len(_GOV_PREFIX) :]
     # 与历史行为一致：只保留 `governance.<sub>.<subsub>` 三段
     parts = ("governance." + rest).split(".")[:3]
     return ".".join(parts)
@@ -71,6 +71,7 @@ def _iter_load_time_imports(tree: ast.Module):
     import 在模块加载时执行，可能形成 load-time 循环依赖；函数体内的 import 是
     runtime lazy import，不会造成 load-time 循环（Python import 系统允许）。
     """
+
     def _walk(node: ast.AST):
         """_walk implementation."""
         for child in ast.iter_child_nodes(node):
@@ -79,6 +80,7 @@ def _iter_load_time_imports(tree: ast.Module):
             if isinstance(child, (ast.Import, ast.ImportFrom)):
                 yield child
             yield from _walk(child)
+
     yield from _walk(tree)
 
 
@@ -95,9 +97,7 @@ def build_dependency_graph(package_path: str | Path | None = None) -> dict[str, 
     graph: dict[str, list[str]] = {}
 
     for py_file in sorted(pkg.rglob("*.py")):
-        module_name = str(
-            py_file.relative_to(Path("src/zephyr"))
-        ).replace("\\", ".").replace(".py", "")
+        module_name = str(py_file.relative_to(Path("src/zephyr"))).replace("\\", ".").replace(".py", "")
         try:
             content = py_file.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):

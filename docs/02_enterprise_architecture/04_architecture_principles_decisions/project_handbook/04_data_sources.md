@@ -32,7 +32,7 @@ language: zh
 
 ## 3. 任务清单结构
 
-`config/tasks.yaml`（或 `architecture_model/data/data_sources_registry.yaml`）定义任务，每个任务声明 `task_id/table/source/schedule/incremental/dependencies/capability`。调度由 `IntegratorScheduler`（APScheduler BackgroundScheduler，5 cron 时段 + DAG 依赖 + 断点续传）编排。
+`src/zephyr/data/config/tasks.yaml`（或 `architecture_model/data/data_sources_registry.yaml`）定义任务，每个任务声明 `task_id/table/source/schedule/incremental/dependencies/capability`。调度由 `IntegratorScheduler`（APScheduler BackgroundScheduler，5 cron 时段 + DAG 依赖 + 断点续传）编排。
 
 ## 4. 七大韧性机制
 

@@ -18,6 +18,32 @@
 
 L40: immutable core violation -> BLOCK; operational_window prohibited -> BLOCK
 L41: container mutability -> OBSERVE_ONLY alert; image drift -> block deploy
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx；门禁态 immutable_core_violation / operational_window_prohibited / container_mutable / image_drift_detected
+#   code: SafetyGateL40L41.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L40 自身完整性校验
+#   name_en: l40_self_integrity
+#   intro: 不可变核心被篡改或处于禁用操作窗口 → REJECT
+#   code: _l40_self_integrity
+# - id: A2
+#   name_zh: L41 容器不可变性校验
+#   name_en: l41_container_immutability
+#   intro: 镜像漂移 → REJECT 阻断部署；容器可变 → OBSERVE_ONLY 告警（A1 未拒才执行）
+#   code: _l41_container_immutability
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

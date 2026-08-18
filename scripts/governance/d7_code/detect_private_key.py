@@ -69,6 +69,9 @@ _EXEMPT_PATHS: set[str] = {
     "tests/fix/test_auto_fix_core.py",
     "tests/llm_security/test_secrets.py",
     "tests/test_credential_rotation_trigger.py",
+    # 自检豁免（2026-08-18 AI-00 merge 裁定）：本检测器源码必然含私钥模式字面量
+    # （同 secrets.py 豁免理据——检测模式真源）。仅当本文件自身被 staged 时触发。
+    "scripts/governance/d7_code/detect_private_key.py",
 }
 
 

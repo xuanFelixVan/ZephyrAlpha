@@ -10,7 +10,7 @@
 ## 如何生成查看
 
 ```powershell
-# 生成全部 72 个域文档（+ 联动 HTML）
+# 生成全部 73 个域文档（+ 联动 HTML）
 python scripts/governance/d5_architecture/generators/generate_domain_doc.py --all
 
 # 或用本地 HTTP 服务一键生成 + 浏览器查看

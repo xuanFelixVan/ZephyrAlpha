@@ -4,8 +4,8 @@ title: "ZephyrAlpha 架构文档库 · 导航索引"
 doc_type: index
 rule_form: declarative
 status: active
-version: 1.0.0
-date: 2026-07-30
+version: 1.1.0
+date: 2026-08-17
 owner: ZephyrAlpha-Owner
 ttl: permanent
 language: zh
@@ -40,14 +40,25 @@ created_by: agent
 | 文档 | 内容 |
 |------|------|
 | [dependency_path_panorama.md](panorama/dependency_path_panorama.md) | 依赖与路径全景图能力定位：双态模型、SSoT 分层、生成器角色、AI 查询模板 |
+| [battle_map_positioning.md](panorama/battle_map_positioning.md) | 交易决策作战地图能力定位书（第五全景图 / battle_map） |
+| [generator_auto_trigger_pilot.md](panorama/generator_auto_trigger_pilot.md) | 生成器自动触发机制（试点：battle_map）+ 自动触发注册表 |
+| [visualization_view_template.md](panorama/visualization_view_template.md) | 可视化视图模板规范（三视图 + 可缩放 HTML） |
 
-## 四、自动化说明（_automation/）
+## 四、根级文档（本目录直属）
+
+| 文档 | 内容 |
+|------|------|
+| [system_charter.md](system_charter.md) | 系统宪章 / System Charter |
+| [2026-08-14_ai-liq-001_worktree_wipe_incident_review.md](2026-08-14_ai-liq-001_worktree_wipe_incident_review.md) | 架构裁定书——AI-LIQ-001 遗留项六项全面审查（worktree wipe 事故） |
+| [2026-08-14_coord_reconciler_auto_delete_governance_review.md](2026-08-14_coord_reconciler_auto_delete_governance_review.md) | 架构裁定书——reconciler 自动删除/归档失控族全面审查 |
+
+## 五、自动化说明（_automation/）
 
 | 文档 | 内容 |
 |------|------|
 | [_automation/README.md](_automation/README.md) | AUTO 块清单 / 触发方式 / 生成器入口 / 维护规则 |
 
-## 五、外部权威源矩阵（深度明细，不在本文件夹重复）
+## 六、外部权威源矩阵（深度明细，不在本文件夹重复）
 
 | 权威源 | 路径 | 生成器 |
 |--------|------|--------|

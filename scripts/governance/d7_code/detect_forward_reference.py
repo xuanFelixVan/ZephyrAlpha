@@ -27,6 +27,7 @@
     python scripts/governance/d7_code/detect_forward_reference.py [--warn-only]
     python scripts/governance/d7_code/detect_forward_reference.py --path src/zephyr/
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -55,6 +56,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT
+
 SCAN_DIRS = [REPO_ROOT / "src" / "zephyr", REPO_ROOT / "scripts"]
 SCAN_EXTENSIONS = {".py"}
 EXIT_PASS = 0
@@ -168,13 +170,15 @@ def scan_file(filepath: str) -> tuple[list[ForwardRefViolation], bool, str | Non
                     context_line = source_lines[line - 1].strip() if line <= len(source_lines) else ""
                 except (IndexError, OSError):
                     context_line = ""
-                violations.append(ForwardRefViolation(
-                    filepath=filepath,
-                    line=line,
-                    col=col,
-                    class_name=ctx,
-                    context=context_line,
-                ))
+                violations.append(
+                    ForwardRefViolation(
+                        filepath=filepath,
+                        line=line,
+                        col=col,
+                        class_name=ctx,
+                        context=context_line,
+                    )
+                )
 
     return violations, has_future, None
 
@@ -196,9 +200,7 @@ def iter_py_files(scan_dirs: list[Path]) -> list[str]:
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="前向引用检测扫描器——检测 class X 内部引用 X 自身的前向引用 bug"
-    )
+    parser = argparse.ArgumentParser(description="前向引用检测扫描器——检测 class X 内部引用 X 自身的前向引用 bug")
     parser.add_argument(
         "--warn-only",
         action="store_true",
@@ -229,10 +231,12 @@ def main() -> int:
             result.errors.append(f"{filepath}: {error}")
         result.violations.extend(violations)
 
-    print(f"[SCAN] files_scanned={result.files_scanned} "
-          f"files_with_future={result.files_with_future} "
-          f"violations={len(result.violations)} "
-          f"errors={len(result.errors)}")
+    print(
+        f"[SCAN] files_scanned={result.files_scanned} "
+        f"files_with_future={result.files_with_future} "
+        f"violations={len(result.violations)} "
+        f"errors={len(result.errors)}"
+    )
 
     if result.errors:
         for err in result.errors[:10]:

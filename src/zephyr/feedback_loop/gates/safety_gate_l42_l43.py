@@ -18,6 +18,32 @@
 
 L42: counterfactual_harm_rate + decision_entropy -> severity-dependent action limit
 L43: net_negative_value -> only P1; data_expired -> no action; no_checkpoints -> block upgrade
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx.action_type；门禁态 counterfactual_harm_rate / decision_entropy / net_value / data_expired / checkpoints_count
+#   code: SafetyGateL42L43.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L42 因果完整性校验
+#   name_en: l42_causal_integrity
+#   intro: 反事实伤害率 >0.2 → REJECT；决策熵 >0.8 → OBSERVE_ONLY
+#   code: _l42_causal_integrity
+# - id: A2
+#   name_zh: L43 可生存性校验
+#   name_en: l43_survivability
+#   intro: 净值为负仅允许 P1；数据过期禁动作；无检查点阻断 SELF_UPGRADE（A1 未拒才执行）
+#   code: _l43_survivability
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

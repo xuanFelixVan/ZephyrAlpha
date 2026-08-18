@@ -14,6 +14,36 @@
 # [TESTS]
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+
+"""Feedback Collector — FLE 动作结果与负责人应答的滑动窗口采集与比率统计。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 反馈事件
+#   fields: ActionResult(action_type, pre/post_value, success_flag, timestamp)；OwnerAck(response, timestamp)
+#   code: FeedbackCollector.collect_action_result / collect_owner_ack
+# 层: 算法
+# - id: A1
+#   name_zh: 滑动窗口修剪
+#   name_en: sliding_window_trim
+#   intro: 以最新 timestamp 为基准，剔除超 window_seconds(300s) 的旧记录
+#   code: FeedbackCollector._trim_window
+# - id: A2
+#   name_zh: 失败率与覆盖率统计
+#   name_en: failure_override_rate_stats
+#   intro: repair_failure_rate 统计修复失败占比；owner_override_rate 统计 OVERRIDE 应答占比
+#   code: FeedbackCollector.repair_failure_rate / owner_override_rate
+# 层: 输出
+# - id: O1
+#   name_zh: 反馈统计指标
+#   name_en: feedback_metrics
+#   intro: 失败率/覆盖率浮点比率及窗口内 ActionResult、OwnerAck 队列
+#   downstream: FLE 进化/诊断方（动作效果与负责人满意度反馈）
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+"""
+
 from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum

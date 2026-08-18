@@ -2,8 +2,8 @@
 module_id: GOV-036
 doc_type: index
 status: Active
-version: 3.1.0
-generated: '2026-08-16'
+version: 3.1.1
+generated: '2026-08-17'
 depends_on:
 - target: DOCS-INDEX
   at: §子目录
@@ -46,7 +46,7 @@ ttl: permanent
 |--------|------|------|:---:|------|
 | `00_overview_entry/` | 总览入口（导航索引+全景注册表） | [navigation_index.md](00_overview_entry/navigation_index.md) | 人类视图 | 派生·不入git |
 | `01_global_architecture_diagram/` | 全局架构图（项目树/资产目录/契约目录/集成拓扑/能力热力图） | [full_project_tree_zh.md](01_global_architecture_diagram/full_project_tree_zh.md) | 人类视图 | 派生·不入git |
-| `02_domain_architecture_docs/` | 域架构文档（73 域按 D_* 拆分） | [domain_index.md](02_domain_architecture_docs/domain_index.md) | 人类视图 | 派生·不入git（README/domain_index 手写） |
+| `02_domain_architecture_docs/` | 域架构文档（73 域按 D_* 拆分） | [domain_index.md](02_domain_architecture_docs/domain_index.md) | 人类视图 | 派生·不入git（仅 README 手写） |
 | `03_governance_reports/` | 治理报告（容量/约束违例/设计vs生产/候选模块清单） | [design_vs_production.md](03_governance_reports/design_vs_production.md) | 人类视图 | 派生·不入git |
 | `04_architecture_principles_decisions/` | 架构原则与决策（system_charter/全景定位/项目手册/治理复盘） | [index.md](04_architecture_principles_decisions/index.md) | 人类视图 | 手写·入git |
 | `05_dataflow_architecture/` | 数据流架构（数据清单/采集流/域数据流） | [index.md](05_dataflow_architecture/index.md) | 人类视图 | 混合：index/yaml 手写，d_*.md 派生 |

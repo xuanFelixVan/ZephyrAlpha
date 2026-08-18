@@ -18,6 +18,32 @@
 
 L52: boot_integrity attestation — runtime measurement validation
 L53: OSS license compliance — SPDX audit pass before action
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx；门禁态 boot_measurement_ok / spdx_compliant
+#   code: SafetyGateL52L53.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L52 启动完整性证明校验
+#   name_en: l52_boot_integrity
+#   intro: boot 运行时度量与基线不匹配 → REJECT
+#   code: _l52
+# - id: A2
+#   name_zh: L53 OSS 许可证合规校验
+#   name_en: l53_oss_license_compliance
+#   intro: SPDX 许可证审计不合规 → REJECT
+#   code: _l53
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（PASS / REJECT，HARD 门）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

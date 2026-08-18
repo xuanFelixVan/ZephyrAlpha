@@ -23,6 +23,7 @@ validate_truth_source_cascade.py — 真源级联一致性校验
 
 exit codes: 0=pass（warn-only 模式）
 """
+
 from __future__ import annotations
 
 import re
@@ -49,9 +50,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import REPO_ROOT  # noqa: E402
 
 # 真源决策日志路径（默认）
-RATIONALE_LOG_PATH = (
-    REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
-)
+RATIONALE_LOG_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
 
 # 报告输出目录（默认）
 DEFAULT_REPORTS_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports"
@@ -69,14 +68,10 @@ _R_ID_PATTERN = re.compile(r"R-?(\d+)")
 _INLINE_LIST_PATTERN = re.compile(r"affected_files:\s*\[([^\]]+)\]", re.DOTALL)
 
 # Code block pattern: ```affected_files ... ```
-_CODE_BLOCK_PATTERN = re.compile(
-    r"```affected_files\s*\n(.*?)\n```", re.DOTALL
-)
+_CODE_BLOCK_PATTERN = re.compile(r"```affected_files\s*\n(.*?)\n```", re.DOTALL)
 
 # YAML block pattern: affected_files:\n  - x\n  - y
-_YAML_BLOCK_PATTERN = re.compile(
-    r"affected_files:\s*\n((?:\s*-\s+.+\n?)+)", re.MULTILINE
-)
+_YAML_BLOCK_PATTERN = re.compile(r"affected_files:\s*\n((?:\s*-\s+.+\n?)+)", re.MULTILINE)
 
 # Markdown table row pattern (3+ columns)
 _TABLE_ROW_PATTERN = re.compile(r"^\|(.+)\|\s*$")
@@ -249,12 +244,14 @@ def parse_rationale_log(path) -> list[RationaleDecision]:
         affected = _extract_affected_files(desc_cell)
         if not affected:
             continue
-        decisions.append(RationaleDecision(
-            decision_id=decision_id,
-            decision_date=decision_date,
-            decision_summary=desc_cell.strip(),
-            affected_files=affected,
-        ))
+        decisions.append(
+            RationaleDecision(
+                decision_id=decision_id,
+                decision_date=decision_date,
+                decision_summary=desc_cell.strip(),
+                affected_files=affected,
+            )
+        )
     return decisions
 
 
@@ -353,13 +350,15 @@ def detect_outdated_truth_sources(
             status = "✅ OK"
             last_updated_str = last_updated.isoformat()
 
-        rows.append({
-            "file": file_path,
-            "decisions": decisions_str,
-            "latest_date": latest_date_str,
-            "last_updated": last_updated_str,
-            "status": status,
-        })
+        rows.append(
+            {
+                "file": file_path,
+                "decisions": decisions_str,
+                "latest_date": latest_date_str,
+                "last_updated": last_updated_str,
+                "status": status,
+            }
+        )
     return warnings, rows
 
 
@@ -380,7 +379,7 @@ def generate_report(result: TruthSourceCascadeResult, output_path) -> Path:
     # 同一秒内多次调用时，若文件已存在则追加计数器后缀确保唯一性
     # （test_duplicate_date_gets_timestamp_suffix 期望两次调用返回不同路径）。
     # 不依赖 time.time_ns() —— Windows 上连续两次调用可能返回相同值。
-    base_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    base_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"truth_source_cascade_{base_timestamp}.md"
     report_path = out_dir / filename
     counter = 1

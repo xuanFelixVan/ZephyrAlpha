@@ -18,6 +18,32 @@
 
 L60: Exchange Halt + Corporate Events + Model Retirement -> environmental checks
 L61: Cross-Blueprint Contract Drift + Owner Burnout + Cascading Rollback
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx.owner_fatigue；门禁态 exchange_halted / corporate_event_active / burnout_risk
+#   code: SafetyGateL60L61.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L60 环境接地校验
+#   name_en: l60_environmental_grounding
+#   intro: 交易所停牌 → REJECT 交易动作；公司行动事件激活 → OBSERVE_ONLY 抑制非关键
+#   code: _l60
+# - id: A2
+#   name_zh: L61 元系统完整性校验
+#   name_en: l61_meta_system_integrity
+#   intro: owner_fatigue >0.8（负责人倦怠风险） → REJECT
+#   code: _l61
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

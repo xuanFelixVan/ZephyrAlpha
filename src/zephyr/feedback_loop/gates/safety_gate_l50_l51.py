@@ -19,6 +19,32 @@
 L50-L51: knowledge coherence, cross-subsystem consistency
 L52-L53: run-time integrity, boot-time attestation
 L54-L55: end-to-end validation, final integrity gate
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx；门禁态 coherence_score / runtime_integrity / boot_attestation_ok / e2e_validation
+#   code: SafetyGateL50L55.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L50-L54 五层链式校验
+#   name_en: l50_l54_staged_checks
+#   intro: 一致性 <0.6 → REJECT；运行时完整性/启动证明/E2E 校验失败 → REJECT（L51 恒 PASS）
+#   code: _l50_coherence / _l51_consistency / _l52_runtime / _l53_boot / _l54_e2e
+# - id: A2
+#   name_zh: L55 完整性终判聚合
+#   name_en: l55_final_aggregation
+#   intro: L52-L54 任一 REJECT → L55 REJECT（上游完整性链断裂）
+#   code: _l55_final
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（六层各一条，PASS / REJECT）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

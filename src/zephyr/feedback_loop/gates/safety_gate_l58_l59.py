@@ -18,6 +18,32 @@
 
 L58: quantum_sig_degradation + strategic_withhold + tz_semantic -> horizon risks
 L59: explore_exploit_balance + third_party_model_dep + ontology_drift
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx；门禁态 explore_exploit_ratio / third_party_model_risk / ontology_drift
+#   code: SafetyGateL58L59.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L58 超视距风险校验
+#   name_en: l58_over_the_horizon
+#   intro: 量子签名退化/战略隐瞒等远期风险监视（当前恒 PASS）
+#   code: _l58
+# - id: A2
+#   name_zh: L59 时间完整性校验
+#   name_en: l59_temporal_integrity
+#   intro: 探索利用比 <0.05 → OBSERVE_ONLY；第三方模型风险 >0.7 → REJECT；本体漂移 >0.4 → OBSERVE_ONLY
+#   code: _l59
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

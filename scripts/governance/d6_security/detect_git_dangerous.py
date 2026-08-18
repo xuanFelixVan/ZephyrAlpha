@@ -82,6 +82,9 @@ EXCLUDE_PATH_PARTS = (
     # 统筹审计留痕文档（append-only 施工台账/交接书）——历史操作取证引用危险命令属证据非指令
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md",
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/handoff_construction_coordinator.md",
+    # 同上理据（2026-08-18 AI-00 merge-17 实证）：00 索引备忘录汇总各备忘录历史事故取证引文
+    # （如 2026-08-11 git clean -fd 灾难事件记录），属证据留痕非操作指令
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md",
 )
 
 

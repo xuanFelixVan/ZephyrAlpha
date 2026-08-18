@@ -14,10 +14,38 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from typing import Final
+"""agent_dispatch — Agent 域调度表（域→预读/复读/token 预算/蓝图章节）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 调度查询
+#   fields: domain_key / keyword
+#   code: resolve_domain (L710) / resolve_by_keyword (L723)
+# 层: 算法
+# - id: A1
+#   name_zh: 调度表声明
+#   name_en: dispatch_table_declare
+#   intro: DISPATCH_TABLE 登记各域 DomainDispatch(pre_read/re_read/token_budget/blueprint_section)
+#   code: DISPATCH_TABLE (L34)
+# - id: A2
+#   name_zh: 域解析
+#   name_en: domain_resolve
+#   intro: 按键精确查；按关键字小写模糊匹配 domain/blueprint_section/pre_read
+#   code: resolve_domain (L710) / resolve_by_keyword (L723)
+# 层: 输出
+# - id: O1
+#   name_zh: 域调度项
+#   name_en: domain_dispatch
+#   intro: DomainDispatch | list[DomainDispatch]（未命中 None/空列表）
+#   downstream: 施工 Agent 调度流程
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+"""
 
 import logging
 from dataclasses import dataclass
+from typing import Final
 
 logger = logging.getLogger(__name__)
 

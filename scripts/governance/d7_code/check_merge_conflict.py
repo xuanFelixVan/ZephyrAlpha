@@ -23,7 +23,7 @@
 或离线环境会卡死所有 commit（包括合法 gateway 路径外的兜底场景）。
 
 本脚本用纯 stdlib 等价替代，无任何网络依赖。检测 staged 文件中的
-<<<<<<< / ======= / >>>>>>> 合并冲突标记（标准 git conflict markers）。
+标准 git conflict markers（<×7 / =×7 / >×7 行首标记）。
 
 exit codes: 0=pass, 1=findings(发现冲突标记), 2=error
 """
@@ -89,11 +89,41 @@ def _is_text_file(filepath: Path) -> bool:
         return False
     # 常见文本扩展名白名单（对标 pre-commit-hooks check-merge-conflict 行为）
     text_exts = {
-        ".py", ".md", ".yaml", ".yml", ".json", ".toml", ".ini", ".cfg",
-        ".txt", ".sh", ".bat", ".ps1", ".sql", ".html", ".css", ".xml",
-        ".js", ".ts", ".jsx", ".tsx", ".java", ".c", ".cpp", ".h", ".hpp",
-        ".go", ".rs", ".rb", ".php", ".swift", ".kt", ".scala",
-        ".editorconfig", ".gitignore", ".dockerfile",
+        ".py",
+        ".md",
+        ".yaml",
+        ".yml",
+        ".json",
+        ".toml",
+        ".ini",
+        ".cfg",
+        ".txt",
+        ".sh",
+        ".bat",
+        ".ps1",
+        ".sql",
+        ".html",
+        ".css",
+        ".xml",
+        ".js",
+        ".ts",
+        ".jsx",
+        ".tsx",
+        ".java",
+        ".c",
+        ".cpp",
+        ".h",
+        ".hpp",
+        ".go",
+        ".rs",
+        ".rb",
+        ".php",
+        ".swift",
+        ".kt",
+        ".scala",
+        ".editorconfig",
+        ".gitignore",
+        ".dockerfile",
     }
     if filepath.suffix.lower() in text_exts:
         return True

@@ -31,6 +31,32 @@ CTR 契约:
   生产者 — CTR-P1-016 (BacktestResult) -> 实验
 
 SSoT: cross_layer_contracts.yaml -> CTR-001 + CTR-P1-016
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 行情+因子信号
+#   fields: data(OHLCV, CTR-001) / signals(目标权重, CTR-002) / BacktestConfig
+#   code: DefaultBacktestEngine.run (L106)
+# 层: 算法
+# - id: A1
+#   name_zh: 逐日回测主循环
+#   name_en: daily_bar_loop
+#   intro: 按交易日取价(PIT)→取当日信号→MatchingEngine 撮合→Portfolio 记账→更新净值
+#   code: run (L106) / _get_day_prices (L239) / _get_day_signals (L267)
+# - id: A2
+#   name_zh: 指标与质量门禁
+#   name_en: metrics_quality_gates
+#   intro: calculate_full_metrics 绩效指标；Walk-Forward/过拟合检测/DecisionGate 评估
+#   code: run_walk_forward_analysis (L321) / detect_overfitting (L342) / evaluate_decision_gate (L375)
+# 层: 输出
+# - id: O1
+#   name_zh: 回测结果
+#   name_en: backtest_result
+#   intro: BacktestResult 全字段填充（CTR-P1-016）
+#   downstream: 实验（CTR-P1-016 消费者）
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from __future__ import annotations
@@ -45,16 +71,16 @@ from typing import Any, Optional
 
 import pandas as pd
 
+from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig, DecisionGateResult
 from zephyr.backtest.core.engine_base import (
     BacktestEngineBase,
     BacktestResult,
 )
 from zephyr.backtest.core.matching_engine import MatchingConfig, MatchingEngine
 from zephyr.backtest.core.metrics import DEFAULT_RISK_FREE_RATE, calculate_full_metrics
-from zephyr.backtest.core.portfolio import Portfolio
 from zephyr.backtest.core.overfitting_detector import OverfittingDetector, OverfittingGateError
+from zephyr.backtest.core.portfolio import Portfolio
 from zephyr.backtest.core.walk_forward import WalkForwardAnalyzer, WalkForwardConfig
-from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig, DecisionGateResult
 
 _logger = logging.getLogger(__name__)
 
@@ -101,13 +127,13 @@ class DefaultBacktestEngine(BacktestEngineBase):
             slippage_bps=self._config.slippage_bps,
         )
         self._results: list[BacktestResult] = []
-        self._last_portfolio: Optional[Portfolio] = None
+        self._last_portfolio: Portfolio | None = None
 
     def run(
         self,
         data: pd.DataFrame,
         signals: pd.DataFrame,
-        initial_capital: Optional[float] = None,
+        initial_capital: float | None = None,
         **kwargs,
     ) -> BacktestResult:
         """执行向量化回测
@@ -220,7 +246,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
         return result
 
     @property
-    def last_portfolio(self) -> Optional[Portfolio]:
+    def last_portfolio(self) -> Portfolio | None:
         """最近一次 run() 的 Portfolio 引用 (含 nav_series/trades_log/positions)
 
         供前端可视化适配器取净值曲线与交易日志, 不修改 BacktestResult 契约。
@@ -438,17 +464,17 @@ class DefaultBacktestEngine(BacktestEngineBase):
             passed = fold.get("passed")
             if passed is None:
                 passed = sharpe > 0
-            gate_results.append({
-                "passed": bool(passed),
-                "sharpe": sharpe,
-                "max_drawdown": md,
-            })
+            gate_results.append(
+                {
+                    "passed": bool(passed),
+                    "sharpe": sharpe,
+                    "max_drawdown": md,
+                }
+            )
         return gate_results
 
 
-def _collect_day_prices_multiindex(
-    day_data: pd.DataFrame, prices: dict[str, Decimal]
-) -> None:
+def _collect_day_prices_multiindex(day_data: pd.DataFrame, prices: dict[str, Decimal]) -> None:
     """从MultiIndex切片中收集symbol->close价格到prices。
 
     day_data的index可能是symbol,也可能含symbol列。
@@ -468,9 +494,7 @@ def _collect_day_prices_multiindex(
                     prices[symbol] = Decimal(str(close))
 
 
-def _collect_day_prices_columns(
-    data: pd.DataFrame, date: object, prices: dict[str, Decimal]
-) -> None:
+def _collect_day_prices_columns(data: pd.DataFrame, date: object, prices: dict[str, Decimal]) -> None:
     """从date/symbol列布局中收集指定日期的symbol->close价格到prices。"""
     day_data = data[data["date"] == date]
     for _, row in day_data.iterrows():
@@ -480,9 +504,7 @@ def _collect_day_prices_columns(
             prices[symbol] = Decimal(str(close))
 
 
-def _collect_day_prices_single(
-    data: pd.DataFrame, date: object, prices: dict[str, Decimal]
-) -> None:
+def _collect_day_prices_single(data: pd.DataFrame, date: object, prices: dict[str, Decimal]) -> None:
     """从单symbol(以date为index)布局中收集close价格到prices['default']。"""
     try:
         close = data.loc[date, "close"]

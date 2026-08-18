@@ -21,6 +21,27 @@ Blindspot: API version contracts invisible to consuming agents; sunset dates une
 Risk: R188 — Agent calls deprecated API version; silent failure or wrong behavior.
 
 Mitigation: Agent-readable API version contracts with sunset date enforcement.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: API 版本契约 + 调用时刻
+#   fields: APIVersionContract（api_name/version/sunset_date）+ now_utc()
+#   code: 契约 dataclass 与状态判定入口
+# 层: 算法
+# - id: A1
+#   name_zh: 版本生命周期判定
+#   name_en: version_lifecycle_verdict
+#   intro: 按 sunset_date 与当前时间判定 ACTIVE/DEPRECATED/SUNSET，阻断过期版本调用
+#   code: 状态判定逻辑（VersionStatus）
+# 层: 输出
+# - id: O1
+#   name_zh: 版本可用性裁决
+#   name_en: version_verdict
+#   intro: Agent 可读的版本状态（SUNSET 即拒用）
+#   downstream: 调用方 Agent / feedback_loop actors
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> O1
 """
 
 from __future__ import annotations

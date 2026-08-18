@@ -36,7 +36,7 @@ scope: 07_trading_decision_architecture
 - 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，T+1 结算，不能做空）
 - 板块在架构中是**选股的输入特征**，不是独立决策层——G04（[20_first_batch_strategies](20_first_batch_strategies.md)）三策略"与 regime 关系"行（§2.2/§2.3/§2.4）均裁定选股**不读** regime 输出、只收 budget 数字；板块信号作为选股打分维度的消费关系落在选股漏斗（BM-SEL-17 初筛消费板块强度）与 G04 §7.2 作战地图登记（BM-SEL-08/09 为"G06 板块轮动输入"）。⚠️ 注意：20 号 §2.5 差异化矩阵 8 行维度中无"板块信号"行，板块消费关系真实出处是 §2.2-2.4 各节 + §7.2，已登记 §7 待定问题（20 号 §2.5 矩阵补板块维度行，不越界改）
 - **板块数据采集与基础分析已 production**（非空白起步，逐项真源见 §2.5 已施工设施盘点）：
-  - `sector_snapshot_collector`（production，[11_d_data](../../02_domain_architecture_docs/11_d_data.md)）：tqcenter → ClickHouse `sector_snapshot` 表，混合模式（推送 99 只 + 全量轮询 30 秒），schema 真源 18 个采集字段（22 列含审计列，[market_sector_snapshot.py](../../../schemas/categories/market_sector_snapshot.py) DDL-as-Code）。**实测 2026-07-22：582 只 = 454 个 880xxx + 128 个 881xxx**（非设计估算 584）
+  - `sector_snapshot_collector`（production，[11_d_data](../../02_domain_architecture_docs/11_d_data.md)）：tqcenter → ClickHouse `sector_snapshot` 表，混合模式（推送 99 只 + 全量轮询 30 秒），schema 真源 18 个采集字段（22 列含审计列，[market_sector_snapshot.py](../../../../schemas/categories/market_sector_snapshot.py) DDL-as-Code）。**实测 2026-07-22：582 只 = 454 个 880xxx + 128 个 881xxx**（非设计估算 584）
   - `sector_ranking_engine`（production，[11_d_data](../../02_domain_architecture_docs/11_d_data.md)）：5 因子复合排名动态选 99 只推送池，基准 880001.SH（上证指数）
   - `sector_analyzer`（[MOD-SIG-026](../../../03_modules/_domain_signal/blueprint.md)，production/stable）：6 维度板块分析（强度/延续性/轮动预警/启动条件/风格适配/抱团瓦解），纯函数（v1.9.0 代码确认 6 方法落码：evaluate_strength/judge_continuity/warn_rotation/evaluate_launch_conditions/adapt_market_style/detect_breakdown）
 - [battle_map_05 BM-SEL-08/09](../battle_map/battle_map_05_stock_selection.md) 已登记 proposed：轮动序列追踪 + 回踩 A/B/C（缺失态-未实现）、调整周期进度（MOD-SIG-040 planned）
@@ -75,8 +75,8 @@ scope: 07_trading_decision_architecture
 | 板块 K 线下载 | `src/zephyr/data/sector_kline_downloader.py` → `c1_market.market_kline_sector_880`（tqcenter 盘后日K/分钟K，`--period all` 全周期） | ✅ production | **§3.1⑧ q3/q5/q20 真正数据源**——N 日累计涨跌幅从 880xxx 日K 收盘价计算（v1.9.0 修正：此前误声明自 sector_snapshot 的 change_pct_3d/5d/20d 字段，该表无此字段）；§3.1④ RRG 的 P_sector 序列同源 |
 | 板块动态排名 | `src/zephyr/data/sector_ranking_engine.py`（5 因子复合，基准 880001.SH） | ✅ production | §3.1① 动量活跃度维 + Top99 推送池选取 |
 | 板块分析器 | `src/zephyr/signal_ashare/sector_analyzer.py`（MOD-SIG-026） | ✅ production/stable | §3.1① 结构强度维（evaluate_strength）+ §3.1④ 单板块轮动预警（warn_rotation）+ §3.1⑥ 资金流字段（SectorData.net_inflow） |
-| 板块成分股 | `c1_market.sector_constituent`（sector_code/stock_code，SCD-2 valid_from/valid_to，[schema](../../../schemas/categories/market_sector_constituent.py)） | ✅ production | §3.1① 涨停比归一化的成分股数分母 + §3.1⑦ 板块→个股传导映射的归属关系 + v1.8.0 资金性质板块级聚合的成分清单 |
-| 个股资金流分层 | `c1_market.money_flow`（main/super_large/large/medium/small 五层净流入+净占比，[schema](../../../schemas/categories/market_money_flow.py)） | ✅ production | v1.8.0 `aggregate_capital_nature_to_sector` 的个股级输入（经 sector_constituent 聚合上溯板块级） |
+| 板块成分股 | `c1_market.sector_constituent`（sector_code/stock_code，SCD-2 valid_from/valid_to，[schema](../../../../schemas/categories/market_sector_constituent.py)） | ✅ production | §3.1① 涨停比归一化的成分股数分母 + §3.1⑦ 板块→个股传导映射的归属关系 + v1.8.0 资金性质板块级聚合的成分清单 |
+| 个股资金流分层 | `c1_market.money_flow`（main/super_large/large/medium/small 五层净流入+净占比，[schema](../../../../schemas/categories/market_money_flow.py)） | ✅ production | v1.8.0 `aggregate_capital_nature_to_sector` 的个股级输入（经 sector_constituent 聚合上溯板块级） |
 | 板块元数据/清单 | `c1_market.sector_meta` / `sector_list` / `concept_sector`（schemas/categories/ 下 DDL-as-Code） | ✅ production | 板块代码↔名称映射、概念板块补充维度 |
 | 市场情绪分析 | `src/zephyr/signal_ashare/market_sentiment_analyzer.py`（BM-SEL-03-A） | ✅ production | §3.1① 封板率修正因子的情绪数据基础（边界：市场整体情绪温度归 G21/BM-SEL-23-B） |
 | 盘中买卖点 | `src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py`（BM-SEL-05-C） | ✅ production | §3.1② 回踩 A/B/C 复用其 PULLBACK 买点判定 + Fib 回撤位 |
@@ -323,7 +323,7 @@ def detect_siphon_state(sectors: list[SectorData], window: int = 20, n_top: int 
 
 #### ⑥ 板块资金流 —— 复用现有字段，不新建
 
-**裁定**：`sector_analyzer.SectorData` 已含 `net_inflow`（净流入，亿）字段（代码确认 [sector_analyzer.py L88](../../../src/zephyr/signal_ashare/sector_analyzer.py)）。⚠️ 数据源注意：**snapshot 链路不含资金流字段**——`sector_snapshot` 表 18 采集字段无 inflow 类字段（schema 真源），且 analyzer 是纯函数库（数据装配调用方未落码）。板块级 `net_inflow` 的正确来源 = **`money_flow`（个股级五层净流入，production）× `sector_constituent`（SCD-2 成分股）聚合**——与 v1.8.0 `aggregate_capital_nature_to_sector` 同一聚合路径，该聚合器待施工（纯函数，无新数据源）。
+**裁定**：`sector_analyzer.SectorData` 已含 `net_inflow`（净流入，亿）字段（代码确认 [sector_analyzer.py L88](../../../../src/zephyr/signal_ashare/sector_analyzer.py)）。⚠️ 数据源注意：**snapshot 链路不含资金流字段**——`sector_snapshot` 表 18 采集字段无 inflow 类字段（schema 真源），且 analyzer 是纯函数库（数据装配调用方未落码）。板块级 `net_inflow` 的正确来源 = **`money_flow`（个股级五层净流入，production）× `sector_constituent`（SCD-2 成分股）聚合**——与 v1.8.0 `aggregate_capital_nature_to_sector` 同一聚合路径，该聚合器待施工（纯函数，无新数据源）。
 
 - `evaluate_launch_conditions` 已用 `net_inflow > 0` 加分，`judge_continuity` 已用 `net_inflow ≥ 10亿` 判深度介入
 - §3.1⑤ 虹吸态识别直接消费聚合后的板块级净流入，不新建资金流采集管道
@@ -625,7 +625,7 @@ sector_snapshot_collector (production) ──880xxx快照──┐
 - 实时只 Top 99 推送池，规避实时全量过载
 - 对标国海 2026-07 只看 31 个申万一级行业，本项目 880xxx 细分到 454 是更细粒度，但采集层已解决、计算层按需，非过载
 
-> **过度工程审查回执（v1.9.2，2026-08-12 第 5 轮，判定基准=[system_charter §2 硬边界](../04_architecture_principles_decisions/system_charter.md)）**：
+> **过度工程审查回执（v1.9.2，2026-08-12 第 5 轮，判定基准=[system_charter §2 硬边界](../../04_architecture_principles_decisions/system_charter.md)）**：
 > ①**460 板块全覆盖是否过重（MVP 是否只需 50-100 个重点板块）**——**裁定：不过重，且"Top99 推送池动态选取"已是比静态 50-100 列表更优的答案**。582 只板块数据是 `sector_snapshot_collector` production 的存量事实（§2.5 盘点），盘后全量计算是纯函数秒级；实时计算只跑动态 Top99 推送池——推送池本质就是"重点板块"，但由 5 因子排名每日动态选出，比人工圈定 50-100 个静态名单更能适应轮动（§2.4 电风扇行情周度排名变化 12.75 下，静态名单一周即失效）
 > ②**板块→个股传导多层逻辑是否过重**——**裁定：不过重，全部是规则层 if-else 无 ML**。§3.1⑦ 传导两步（龙头识别→加权传导）+ §3.1⑩ 准入 gate 共三层，每层都是阈值规则（涨停时间排序/封单量比/0.60/0.80 门槛），无模型训练、无 GPU 依赖、单机毫秒级；§5.2 已分层——MVP 第一阶段仅复用 production 三模块，⑩⑪ 依赖 G05/G21 就绪后才施工， staged 交付控制复杂度
 > ③**重机制全部在第四阶段/暂缓**：lead-lag network（Granger/transfer entropy）、华泰残差动量+遗传规划 ML 转折点检测、板块相关性聚类（§5.2.1）、GRU/Transformer 行业预测（§8.4 对标但拒绝引入）——全部显式标注第四阶段增强或已拒绝，按审查规则"远期工程不算过度工程"予以保留

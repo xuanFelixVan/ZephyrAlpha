@@ -19,6 +19,27 @@
 
 Blindspot: FLE operates same way during weekends as weekdays.
 Risk: R102b — Weekend low-urgency repairs escalate unnecessarily.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 日历上下文
+#   fields: is_weekend 布尔标志
+#   code: CalendarAdapter 数据类字段
+# 层: 算法
+# - id: A1
+#   name_zh: 周末上下文标志持有
+#   name_en: weekend_context_carrier
+#   intro: 纯数据载体——持有 is_weekend 供上层降 urgency（本模块无行为逻辑）
+#   code: CalendarAdapter
+# 层: 输出
+# - id: O1
+#   name_zh: 日历上下文
+#   name_en: calendar_context
+#   intro: 含 is_weekend 的适配器实例
+#   downstream: FLE 调度/分诊方（周末抑制非紧急升级）
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> O1
 """
 
 from dataclasses import dataclass

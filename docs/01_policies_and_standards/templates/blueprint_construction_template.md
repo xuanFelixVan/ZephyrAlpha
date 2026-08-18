@@ -664,7 +664,7 @@ class {DataModel}(BaseModel):
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `architecture_model/module_id_registry.yaml` | {新增/修改什么} | {为什么} |
 | 2 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | {新增/修改什么} | {为什么} |
-| 3 | 治理资产清单 | `docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml` | {新增/修改什么} | {为什么} |
+| 3 | 治理资产清单 | `docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml` | {新增/修改什么} | {为什么} |
 | 4 | 依赖图 | PostgreSQL depgraph（`extract_depgraph.py --modules {module_id}`）+ [dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md) | {新增/修改什么} | {为什么} |
 
 ---

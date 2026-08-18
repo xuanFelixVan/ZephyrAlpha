@@ -23,6 +23,32 @@ PathResolver — 模块路径解析器
   - task card 仍写死路径（防止 AI 幻觉）
   - 施工前 PathResolver 校验路径是否匹配当前项目结构
   - 不匹配时自动建议正确路径，并要求更新 task card
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 期望路径+项目根
+#   fields: project_root / expected_path / module_hint / task_card_content
+#   code: PathResolver.__init__ (L49) / validate_path (L133)
+# 层: 算法
+# - id: A1
+#   name_zh: 目录树索引构建
+#   name_en: build_tree_index
+#   intro: os.walk 扫描 src/zephyr 建文件/目录/模块索引，忽略缓存与隐藏目录
+#   code: _build_index (L57)
+# - id: A2
+#   name_zh: 路径校验与建议
+#   name_en: validate_and_suggest
+#   intro: 精确/模糊匹配定位真实路径，生成 PathResolution 状态与建议路径
+#   code: validate_path (L133) / resolve_module (L91) / resolve_path (L122)
+# 层: 输出
+# - id: O1
+#   name_zh: 路径解析结果
+#   name_en: path_resolution
+#   intro: PathResolution(exists/found_exact_elsewhere/found_fuzzy/suggested_path/status)
+#   downstream: task card 施工前校验流程
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 import os
@@ -255,6 +281,7 @@ def reslove_path(module: str, filename: str, project_root: str = None) -> str | 
     """快捷函数：解析模块路径"""
     # 5.155.16 修复：原使用ZEPHYR_ROOT（仅此文件使用），统一为ZEPHYR_PROJECT_ROOT + REPO_ROOT SSoT
     from zephyr.shared.io.paths import REPO_ROOT
+
     root = project_root or os.environ.get("ZEPHYR_PROJECT_ROOT") or str(REPO_ROOT)
     pr = PathResolver(root)
     return pr.resolve_path(module, filename)

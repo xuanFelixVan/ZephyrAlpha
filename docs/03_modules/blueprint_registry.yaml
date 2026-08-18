@@ -1,12 +1,12 @@
 registry:
   version: 2.7.14
   created: '2026-05-02'
-  last_updated: '2026-08-17'
+  last_updated: '2026-08-18'
   total_blueprints: 173
   scope: 03_modules/
   note: Auto-synced from 173 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-08-17'
+  generated_at: '2026-08-18'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -2424,7 +2424,7 @@ summary:
     L03_trading: 3
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress
     已于 2026-07-18 退役）
-  last_recomputed: '2026-08-17'
+  last_recomputed: '2026-08-18'
 changelog:
 - version: 2.7.16
   date: '2026-08-17'

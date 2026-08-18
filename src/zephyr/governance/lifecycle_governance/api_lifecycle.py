@@ -14,6 +14,35 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""api_lifecycle — API 生命周期管理（Active→Deprecated→Removed 状态机）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: API 端点+弃用参数
+#   fields: APIEndpoint / migration_guide / grace_period_days
+#   code: deprecate_api (L60) / remove_api (L77)
+# 层: 算法
+# - id: A1
+#   name_zh: 弃用登记
+#   name_en: deprecate_register
+#   intro: 生成 DeprecationNotice(deprecated_at/removal_at=+宽限期)，端点置 Deprecated
+#   code: deprecate_api (L60)
+# - id: A2
+#   name_zh: 剩余期计算与移除
+#   name_en: grace_countdown_remove
+#   intro: days_until_removal 距移除天数(下限0)与 expired 判定；remove_api 置 Removed+sunset_date
+#   code: DeprecationNotice.days_until_removal (L38) / remove_api (L77)
+# 层: 输出
+# - id: O1
+#   name_zh: 生命周期状态
+#   name_en: lifecycle_state
+#   intro: DeprecationNotice / 更新后的 APIEndpoint.state
+#   downstream: API 治理消费者
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+"""
+
 from datetime import UTC, datetime, timedelta
 from enum import Enum
 

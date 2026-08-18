@@ -21,6 +21,32 @@ Blindspot: Multiple concurrent autonomous actions uncoordinated; resource confli
 Risk: R226 — Two FLE repairs target same resource simultaneously; deadlock or race.
 
 Mitigation: Global priority-based action scheduler with deadlock detection and preemption.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 待调度动作
+#   fields: ScheduledAction(action_id, priority, target_resources)
+#   code: GlobalActionScheduler.enqueue
+# 层: 算法
+# - id: A1
+#   name_zh: 优先级队列调度
+#   name_en: priority_queue_dispatch
+#   intro: enqueue 按 priority 降序排序，_dispatch 在 max_concurrent=3 上限内出队执行
+#   code: GlobalActionScheduler.enqueue / _dispatch
+# - id: A2
+#   name_zh: 资源冲突死锁检测
+#   name_en: resource_deadlock_detection
+#   intro: 扫描运行中动作的 target_resources，共享同一资源的动作对判为死锁
+#   code: GlobalActionScheduler.detect_deadlock
+# 层: 输出
+# - id: O1
+#   name_zh: 运行态与死锁清单
+#   name_en: running_state_and_deadlocks
+#   intro: running 中 RUNNING 动作及 detect_deadlock 返回的冲突 action_id 列表
+#   downstream: FLE 动作执行层（actors 各执行器）
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from __future__ import annotations
@@ -62,7 +88,7 @@ class GlobalActionScheduler:
         while len(self.running) < self.max_concurrent and self.queue:
             action = self.queue.pop(0)
             action.state = ActionState.RUNNING
-            action.started_at = time.time()
+            action.started_at = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
             self.running[action.action_id] = action
 
     def complete(self, action_id: str) -> None:

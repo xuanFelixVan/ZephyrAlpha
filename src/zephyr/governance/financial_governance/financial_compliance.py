@@ -14,9 +14,37 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from typing import Final
+"""financial_compliance — 金融合规框架目录（合规层/保障措施/协议定义）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 合规目录查询
+#   fields: Protocol / Safeguard 枚举成员
+#   code: get_protocol (L92) / get_safeguard (L96)
+# 层: 算法
+# - id: A1
+#   name_zh: 合规目录声明
+#   name_en: compliance_catalog_declare
+#   intro: 三层合规(L1-L3)×7项保障措施×4协议的枚举与标签/定义字典
+#   code: ComplianceLayer / Safeguard / Protocol / SAFEGUARD_LABELS / PROTOCOL_DEFS
+# - id: A2
+#   name_zh: 目录查询
+#   name_en: catalog_lookup
+#   intro: 按键查 PROTOCOL_DEFS / SAFEGUARD_LABELS，未命中返回 None/空
+#   code: get_protocol (L92) / get_safeguard (L96)
+# 层: 输出
+# - id: O1
+#   name_zh: 合规定义/标签
+#   name_en: compliance_defs
+#   intro: ProtocolDef / 中文标签字符串
+#   downstream: 合规报告与审计消费者
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+"""
 
 from enum import Enum
+from typing import Final
 
 from pydantic import BaseModel
 

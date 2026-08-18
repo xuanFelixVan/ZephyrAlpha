@@ -25,6 +25,32 @@ Risk: R461 — Single-channel alerting creates single point of failure in human-
 Mitigation: Multi-channel fallback chain (primary -> secondary -> tertiary).
 Health-check each channel with heartbeat pings. Auto-failover when primary
 loses connectivity for >heartbeat_interval. Log all channel transitions.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 告警发送请求与通道心跳
+#   fields: send_alert(message, severity)；heartbeat(channel) 心跳
+#   code: SecondaryAlertChannel.send_alert / heartbeat
+# 层: 算法
+# - id: A1
+#   name_zh: 通道健康判定
+#   name_en: channel_health_check
+#   intro: 超 3×heartbeat_interval 未心跳的通道标记为 DOWN
+#   code: SecondaryAlertChannel.check_channels
+# - id: A2
+#   name_zh: 故障转移选路
+#   name_en: channel_failover
+#   intro: 主通道 DOWN 时按 channels 顺序切到首个 HEALTHY 通道并累计 failover_count
+#   code: SecondaryAlertChannel.check_channels
+# 层: 输出
+# - id: O1
+#   name_zh: 告警投递结果
+#   name_en: alert_dispatch_result
+#   intro: {"channel": 当前活跃通道, "message", "severity", "failover_count"} dict
+#   downstream: 负责人通知终端（sms / email / push）
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from __future__ import annotations
@@ -54,14 +80,14 @@ class SecondaryAlertChannel:
         self.active_channel = self.channels[0] if self.channels else ""
         for ch in self.channels:
             self.channel_health[ch] = ChannelState.HEALTHY
-            self.last_heartbeat[ch] = time.time()
+            self.last_heartbeat[ch] = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
 
     def heartbeat(self, channel: str) -> None:
-        self.last_heartbeat[channel] = time.time()
+        self.last_heartbeat[channel] = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
         self.channel_health[channel] = ChannelState.HEALTHY
 
     def check_channels(self) -> str:
-        now = time.time()
+        now = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
         for ch in self.channels:
             if now - self.last_heartbeat.get(ch, 0) > self.heartbeat_interval * 3:
                 self.channel_health[ch] = ChannelState.DOWN

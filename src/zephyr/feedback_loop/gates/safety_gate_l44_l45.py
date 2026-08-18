@@ -18,6 +18,32 @@
 
 L44: self_SLO_compliance OK + API contracts intact + chain amplification controlled
 L45: execution quality no degradation + noise correctly filtered + learning ceiling respected
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx；门禁态 slo_compliant / api_contracts_intact / chain_amplification / execution_quality / learning_ceiling_reached
+#   code: SafetyGateL44L45.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L44 运营卓越校验
+#   name_en: l44_operational_excellence
+#   intro: 自 SLO 违约或 API 契约破坏 → REJECT；链式放大 >1.0 → OBSERVE_ONLY
+#   code: _l44_operational_excellence
+# - id: A2
+#   name_zh: L45 因果可质询性校验
+#   name_en: l45_causal_interrogability
+#   intro: 学习触顶 → OBSERVE_ONLY；执行质量 <0.5 → REJECT（A1 未拒才执行）
+#   code: _l45_causal_interrogability
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

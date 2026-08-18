@@ -18,6 +18,26 @@
 
 收敛双源——reporting.analytics_base 为真源（蓝图 MOD-L07-001 submodule_path=src/zephyr/reporting），
 本模块仅 re-export 以保持向后兼容。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: shim 导入请求
+#   fields: import zephyr.governance.observability_governance.analytics_base
+#   code: L23 from-import
+# 层: 算法
+# - id: A1
+#   name_zh: 真源透传
+#   name_en: ssot_reexport
+#   intro: 无逻辑——两个引擎基类从 zephyr.reporting.analytics_base 真源原样再导出
+# 层: 输出
+# - id: O1
+#   name_zh: 兼容符号
+#   name_en: compat_symbols
+#   intro: AttributionEngineBase / TCAEngineBase
+#   downstream: 存量旧路径消费者
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> O1
 """
 
 from zephyr.reporting.analytics_base import AttributionEngineBase, TCAEngineBase

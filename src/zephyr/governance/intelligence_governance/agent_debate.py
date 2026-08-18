@@ -15,7 +15,37 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
+"""agent_debate — 双模型辩论与裁决（共识检测/人工覆盖）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 双模型响应
+#   fields: model_a/model_b 名称与内容文本（+override_decision）
+#   code: AgentDebate.debate (L67) / adjudicate (L104)
+# 层: 算法
+# - id: A1
+#   name_zh: 响应哈希化
+#   name_en: response_hashing
+#   intro: sha256 截断生成 response_hash/content_hash，供共识比对
+#   code: ModelResponse.from_content (L43)
+# - id: A2
+#   name_zh: 辩论裁决
+#   name_en: debate_adjudication
+#   intro: content_hash 一致→AGREE 共识；不一致→OVERRIDE 要求人工裁决，轮次入历史
+#   code: debate (L67) / adjudicate (L104)
+# 层: 输出
+# - id: O1
+#   name_zh: 裁决结果
+#   name_en: debate_verdict
+#   intro: DebateVerdict + DebateRound 历史（agreement_rate 统计一致率）
+#   downstream: 智能治理调用方
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+"""
+
 from __future__ import annotations
+
 import hashlib
 import logging
 from enum import Enum

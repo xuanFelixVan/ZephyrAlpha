@@ -18,6 +18,32 @@
 
 L46: vicious_spiral dampened + model_diversity maintained + pipeline_backpressure handled
 L47: diagnostic_consistency + knowledge_freshness + version_correctness
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 动作上下文与门禁状态
+#   fields: ctx；门禁态 vicious_spiral_pct / model_diversity / backpressure_ratio / diagnostic_consistency / knowledge_freshness / version_correct
+#   code: SafetyGateL46L47.evaluate
+# 层: 算法
+# - id: A1
+#   name_zh: L46 系统性涌现校验
+#   name_en: l46_systemic_emergence
+#   intro: 恶性循环 >30% → REJECT；模型多样性 <0.3 或背压 >0.9 → OBSERVE_ONLY
+#   code: _l46_systemic_emergence
+# - id: A2
+#   name_zh: L47 本体一致性校验
+#   name_en: l47_ontological_consistency
+#   intro: 诊断一致性 <0.7、KB 新鲜度 <0.5 或版本不匹配 → REJECT（A1 未拒才执行）
+#   code: _l47_ontological_consistency
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁裁决列表
+#   name_en: gate_results
+#   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+#   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

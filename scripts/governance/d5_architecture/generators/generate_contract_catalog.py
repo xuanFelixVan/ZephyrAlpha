@@ -34,11 +34,14 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _common import DB_DISPLAY_NAME
+from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
 from _shared.constants import get_depgraph_pg_connection
+
 from zephyr.shared.io.paths import REPO_ROOT
 
-OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "contract_catalog.md"
+OUTPUT_PATH = (
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "contract_catalog.md"
+)
 
 
 def generate_contract_catalog() -> str:
@@ -73,7 +76,9 @@ def generate_contract_catalog() -> str:
     lines.append("")
     lines.append("# 契约目录全景图 / Contract Catalog")
     lines.append("")
-    lines.append(f"> **文档作用 / Purpose**: 以表格形式展示{len(contracts)}个跨层数据契约,用于AI接入新模块时查询\"消费了谁的契约、产出什么契约\"。")
+    lines.append(
+        f'> **文档作用 / Purpose**: 以表格形式展示{len(contracts)}个跨层数据契约,用于AI接入新模块时查询"消费了谁的契约、产出什么契约"。'
+    )
     lines.append("")
     lines.append(f"> 本文档由 generate_contract_catalog.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 真源: architecture_model/contracts/cross_layer_contracts.yaml")
@@ -89,8 +94,8 @@ def generate_contract_catalog() -> str:
 
     lines.append("## 1. 统计概览")
     lines.append("")
-    lines.append(f"| 指标 | 数量 |")
-    lines.append(f"|------|------|")
+    lines.append("| 指标 | 数量 |")
+    lines.append("|------|------|")
     lines.append(f"| 契约总数 | {len(contracts)} |")
     lines.append(f"| P0(核心数据/错误/背压契约) | {p0_count} |")
     lines.append(f"| P1(蓝图签名契约) | {p1_count} |")

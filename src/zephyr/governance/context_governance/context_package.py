@@ -24,6 +24,32 @@ This module exposes two distinct context-package types:
      decisions/session_state/locks_held. SSoT is a2a_schemas — re-export only.
   2. `EscalationContext` + `ContextPackageBuilder`: escalation-specific context
      with evidence_chain/try_trace/escalation_level. Locally defined.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 升级上下文构建请求
+#   fields: task_id / reason / level / evidence / trace
+#   code: ContextPackageBuilder.build (L58)
+# 层: 算法
+# - id: A1
+#   name_zh: SSoT 再导出
+#   name_en: ssot_reexport
+#   intro: ContextPackage 从 a2a_schemas 真源原样再导出，本地禁止重定义
+#   code: L37 from-import
+# - id: A2
+#   name_zh: 升级上下文构建
+#   name_en: escalation_context_build
+#   intro: 组装 EscalationContext（context_id=CTX-{task_id}，证据链+try_trace）
+#   code: ContextPackageBuilder.build (L58)
+# 层: 输出
+# - id: O1
+#   name_zh: 上下文包/升级上下文
+#   name_en: context_packages
+#   intro: ContextPackage / EscalationContext
+#   downstream: tests/context/test_context_package.py; tests/e/test_e_context_package.py
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; I1 --> A2 ; A1 --> O1 ; A2 --> O1
 """
 
 from __future__ import annotations

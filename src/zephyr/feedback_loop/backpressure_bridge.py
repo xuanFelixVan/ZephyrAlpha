@@ -25,6 +25,32 @@ AUDIT-08：在 EvolutionEngine 产出含 CRITICAL 提案时，对 BackpressureMa
 - 延迟 import ``zephyr.infrastructure.pipeline.backpressure_manager``，避免 feedback-loop 包被
   import 时强依赖 pipeline（运行时仍单向：FLE -> pipeline）。
 - 仅 **CRITICAL** 触发；HIGH/MEDIUM 不扰动全局吞吐（可后续按 signal 类型扩展）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 进化提案列表与背压管理器
+#   fields: proposals（duck-typing 需 severity 属性）；backpressure_manager；symbol
+#   code: sync_evolution_proposals_to_backpressure
+# 层: 算法
+# - id: A1
+#   name_zh: CRITICAL 提案过滤
+#   name_en: critical_proposal_filter
+#   intro: 仅保留 severity is Severity.CRITICAL 的提案；为空或管理器 None 则 skipped 短路
+#   code: sync_evolution_proposals_to_backpressure 内列表推导
+# - id: A2
+#   name_zh: 节流速率换算与下发
+#   name_en: throttle_rate_emission
+#   intro: rate=clamp(20//critical_count, 1, 50)，延迟 import 后 emit_throttle 到 BackpressureManager
+#   code: sync_evolution_proposals_to_backpressure 尾部 emit_throttle 调用
+# 层: 输出
+# - id: O1
+#   name_zh: 桥接结果
+#   name_en: bridge_result
+#   intro: {"throttled": bool, "critical_count": int, "skipped": bool} dict
+#   downstream: zephyr.infrastructure.pipeline.backpressure_manager（D_DATA→D_FACTOR 降速）
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from __future__ import annotations

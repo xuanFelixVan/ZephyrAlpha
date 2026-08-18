@@ -400,9 +400,9 @@ pytest tests/path/to/test_xxx.py -v
 **遗留项登记**（防止遗忘）：审查中发现的遗留项（如文件被其他会话占用无法同步、无法访问 worktree 验证等）MUST 登记到统筹会话的 `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md` §六遗留项登记表，含：遗留项描述/来源施工队/原因/待办条件/状态。bm-fill 或其他会话释放后逐项闭环。**禁止不登记就跳过——未登记的遗留项=必忘项**
 **方法论根因分析**（[trae_024_methodology_diagnosis.yaml](../rules/trae_024_methodology_diagnosis.yaml) MTH-006）：修复问题时修改既有产物即触发——追问到底+诊断反转验证，禁第一个为什么就停（治本关键）；标准先行（查专业框架映射表）+架构上下文自检（文件操作前定位架构层）+决策质量四问（埋雷/容量/对标/建议）+SSoT 冲突裁决（时序/职责/先例）+补漏与终止双检
 **漂移检测套件**（[trae_016_arch_drift_detection.yaml](../rules/trae_016_arch_drift_detection.yaml) + 脚本）：
-- 契约代码漂移：`scripts/governance/d2_links/check_contract_code_drift.py`
-- LoadPath 完整性：`scripts/governance/d2_links/validate_load_path_integrity.py`（改 AGENTS.md 后必跑）
-- 配置漂移：`scripts/governance/d2_links/validate_config_integrity.py`
+- 契约代码漂移：`scripts/governance/d5_architecture/checkers/check_contract_code_drift.py`
+- LoadPath 完整性：`scripts/governance/d5_architecture/validators/validate_load_path_integrity.py`（改 AGENTS.md 后必跑）
+- 配置漂移：`scripts/governance/d1_structure/validate_config_integrity.py`
 - 断链/相对引用检测：`scripts/governance/d2_links/`
 - 废弃路径写入/分裂删除引用：`scripts/governance/d4_paths/`
 - 孤儿文档/重复规范语言：`scripts/governance/d9_knowledge/`
