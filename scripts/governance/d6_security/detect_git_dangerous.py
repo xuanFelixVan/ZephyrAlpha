@@ -104,11 +104,25 @@ EXCLUDE_PATH_PARTS = (
     # ③ 安全防护系统自身的模式/别名定义与防护消息字面量（git_guard 家族 + worktree 三件的告警文案）
     "scripts/git_guard.py",
     "scripts/setup_git_guard_aliases.py",
+    "scripts/install_git_safety_wrapper.ps1",
+    "scripts/git_safety_wrapper.ps1",
+    "src/zephyr/governance/escalation/git_hook_pre_scanner.py",
+    "scripts/session_worktree.py",
     "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py",
     "src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py",
     "src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py",
     # ④ 回滚工具本职功能（rollback.py 的 restore/reset 即其存在意义，受 GIT-SAFE 包装约束）
     "scripts/rollback.py",
+    "src/zephyr/infrastructure/rollback/rollback_executor.py",
+    # ⑥ 域架构派生文档（02_domain_architecture_docs 目录由域文档生成器派生，
+    #    引文随真源再生）+ SOP/备忘录/基础文档枚举（危险命令说明属规范文本）
+    "docs/02_enterprise_architecture/02_domain_architecture_docs/",
+    "docs/02_enterprise_architecture/08_algorithm_overview/system_foundation.md",
+    "docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md",
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/34_regime_meta_allocator.md",
+    "docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/AI_fill_instructions.md",
+    # ⑤ 分支策略政策真源（枚举禁止命令属策略定义）
+    "docs/01_policies_and_standards/policies/branch_strategy_policy.md",
 )
 
 

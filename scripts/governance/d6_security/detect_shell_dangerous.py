@@ -91,6 +91,8 @@ EXCLUDE_PATH_PARTS = ("docs/03_modules/_cross_layer/large_language_model_securit
     # ② 策略文档枚举（RBAC/LLM 安全网蓝与 git 安全治理文的禁止项定义文本）
     "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md",
     "docs/03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md",
+    # ④ 域架构派生文档目录（派生引文随真源再生）
+    "docs/02_enterprise_architecture/02_domain_architecture_docs/",
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md",
     # ③ 安全防护系统自身的模式定义/攻击语料真源（input_guard 拦截模式、payloads 库、
     #    红队语料、dry-run 模拟器阻断清单、demo 恶意样本字符串、phase_check/adapter/a2a_red_team 文案）
