@@ -38,6 +38,17 @@ mermaid.min.js 策略：dev 环境（仓库根 tmp/mermaid.min.js 存在）内�
 [DOMAIN] D_GOVERNANCE
 """
 
+__manifest__ = """
+args: []
+description: 可缩放 Mermaid HTML 生成器（共享模块）。
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import re
 import sys
 from datetime import datetime

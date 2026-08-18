@@ -30,6 +30,17 @@
 
 触发：改 data_sources_registry.yaml → commit → reconciler → 本生成器 → policies.yaml 重生
 """
+
+__manifest__ = """
+args: []
+description: '#183: 从 data_sources_registry.yaml 派生 policies.yaml'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 import sys
 from pathlib import Path
 

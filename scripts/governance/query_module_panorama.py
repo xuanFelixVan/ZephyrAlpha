@@ -35,6 +35,17 @@ Usage::
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: query_module_panorama.py — 模块全景查询入口（五图模块对齐 Step 5）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from pathlib import Path

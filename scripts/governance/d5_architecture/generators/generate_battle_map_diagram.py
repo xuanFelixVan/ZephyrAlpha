@@ -53,6 +53,17 @@ generate_battle_map_diagram.py — 交易决策作战地图可视化生成器
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: generate_battle_map_diagram.py — 交易决策作战地图可视化生成器
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from pathlib import Path

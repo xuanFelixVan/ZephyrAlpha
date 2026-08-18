@@ -83,6 +83,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: domain_header_maint.py — [DOMAIN] header 维护 + 孤儿锁清理工具
+dimensions:
+- D3
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import json
 import os
@@ -132,7 +143,7 @@ def is_process_alive(pid: int) -> bool:
         try:
             import ctypes
 
-            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab Win32 API 常量名为平台既定术语非治理词表违规
             kernel32 = ctypes.windll.kernel32
             handle = kernel32.OpenProcess(
                 PROCESS_QUERY_LIMITED_INFORMATION, False, pid

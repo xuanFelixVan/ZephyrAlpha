@@ -32,6 +32,17 @@ Usage::
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: fix_depgraph_module_id.py — 修正 depgraph 中不合规的 blueprint_id（module_id）并同步文件头
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import json
 import os

@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 
 # [MODULE] scripts.governance.d7_code.check_module_id_consistency
 # [DOMAIN] D_GOV_CODE_QUALITY
@@ -40,6 +41,17 @@
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: check_module_id_consistency.py — module_id 全仓一致性扫描（--scan-existing 模式）.
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 from _shared.constants import EXIT_ERROR
 

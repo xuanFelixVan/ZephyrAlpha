@@ -43,6 +43,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: '裸 Any 类型推断辅助工具 — #ARCH-ANY-GOVERNANCE-001 Phase 1.'
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import ast
 import json

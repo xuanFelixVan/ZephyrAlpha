@@ -42,6 +42,18 @@ Usage:
 
 from __future__ import annotations
 
+__manifest__ = """
+args:
+- {flag: --check, type: bool, description: "检测漂移，不一致时 exit 1"}
+description: GATE-21 静态清单漂移阻断——顺序运行所有静态清单生成器的 --check 模式，自动生成版与磁盘版不一致即硬失败
+dimensions:
+- D1
+- D5
+priority: P1
+timeout_seconds: 120
+warn_only: false
+"""
+
 import os
 import subprocess
 import sys

@@ -51,9 +51,10 @@ if _GOV_DIR not in sys.path:
 
 from _common import cleanup_stale_files, DB_DISPLAY_NAME, idempotent_date, idempotent_timestamp  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
 
-__manifest__ = f"""
+# 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
+__manifest__ = """
 args: []
-description: G2+G10 合并：从 {DB_DISPLAY_NAME} nodes+edges 表生成指定域的 MD 文档
+description: G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档
 dimensions:
 - D5
 priority: P2

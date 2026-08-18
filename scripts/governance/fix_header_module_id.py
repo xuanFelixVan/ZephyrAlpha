@@ -26,6 +26,17 @@ Usage::
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: fix_header_module_id.py — 批量修复文件头 module_id 与 depgraph 一致
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import json
 import os

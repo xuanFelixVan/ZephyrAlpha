@@ -18,6 +18,17 @@
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 为暂缓模块添加设计态依赖边（dep_maturity='design'）。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import sys
 from pathlib import Path
 

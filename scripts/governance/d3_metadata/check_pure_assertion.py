@@ -28,6 +28,17 @@ Exit codes: 0=clean, 1=violations found, 2=script error
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: check_pure_assertion.py — GOV-DOC-016 纯陈述原则检测真源（SSoT）。
+dimensions:
+- D3
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import re
 
 # Exit codes

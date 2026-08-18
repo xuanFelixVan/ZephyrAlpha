@@ -39,6 +39,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 'G-decision: 从 decisiongraph (PostgreSQL) 生成决策流图(.md 文档，Mermaid 内嵌)'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import json
 import os

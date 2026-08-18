@@ -101,6 +101,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 门禁：生成器禁止使用实时时间源（datetime.now / time.time / datetime.today）。
+dimensions:
+- D11
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import re
 import subprocess
 import sys

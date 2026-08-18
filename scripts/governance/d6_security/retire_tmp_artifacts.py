@@ -47,6 +47,17 @@ retire_tmp_artifacts — tmp/ + logs/ 退役区 TTL 执行器（AI-03 审计 P2/
   python scripts/governance/d6_security/retire_tmp_artifacts.py --tmp-days 3 --pg-keep 5
 """
 
+__manifest__ = """
+args: []
+description: retire_tmp_artifacts — tmp/ + logs/ 退役区 TTL 执行器（AI-03 审计 P2/P3 治本）
+dimensions:
+- D6
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import shutil
 import sys

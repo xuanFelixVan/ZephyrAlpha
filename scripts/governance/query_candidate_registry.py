@@ -14,6 +14,17 @@
   python scripts/governance/query_candidate_registry.py --check-duplicate "黑天鹅模式库"
   python scripts/governance/query_candidate_registry.py --has-position-in dataflowgraph
 """
+
+__manifest__ = """
+args: []
+description: 候选模块登记表查询工具。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 import argparse
 import sys
 from datetime import date

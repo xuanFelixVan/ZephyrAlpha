@@ -42,6 +42,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: register_candidate_acquisitions.py — 为49行无候选条目的候选态环节补登骨架候选条目
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import sys
 from datetime import date
 from pathlib import Path

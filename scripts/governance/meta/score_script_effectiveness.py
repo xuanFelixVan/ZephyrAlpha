@@ -32,7 +32,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 脚本有效性评分 — 按维度计算检测效能（B90: 脚本ROI）
+description: '脚本有效性评分 — 按维度计算检测效能（B90: 脚本ROI）'
 dimensions:
 - D10
 priority: P2

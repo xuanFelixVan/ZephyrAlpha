@@ -29,6 +29,17 @@ AI session 启动时运行的核心工具健康度检查。
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: git_health_smoke.py — Git 健康度 smoke test（ARCH-GIT-CALL-BUDGET P3.2）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import json
 import os
 import re

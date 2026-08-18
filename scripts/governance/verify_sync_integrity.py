@@ -31,6 +31,17 @@ sync 完整性校验脚本：验证 YAML→DB 同步的一致性。
     0 = 全部通过
     1 = 有校验失败项
 """
+
+__manifest__ = """
+args: []
+description: sync 完整性校验脚本：验证 YAML→DB 同步的一致性。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 import argparse
 import os
 import sys

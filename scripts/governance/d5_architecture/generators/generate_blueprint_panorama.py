@@ -44,6 +44,17 @@ depgraph 是架构数据真源（SSoT），蓝图是派生视图，冲突时以 
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 'G-panorama-gen: 蓝图 §0.6 五图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import re
 import sys

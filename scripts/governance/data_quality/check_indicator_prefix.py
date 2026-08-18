@@ -45,6 +45,17 @@
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: macro_data indicator_name 前缀合规检测工具。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from pathlib import Path

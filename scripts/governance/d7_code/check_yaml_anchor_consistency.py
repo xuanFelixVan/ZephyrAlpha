@@ -53,6 +53,17 @@ B_yaml 格式真源（TRAE-047）: 6 字段注释块——
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: check_yaml_anchor_consistency.py — YAML 治理锚定一致性扫描.
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import json
 import re

@@ -32,6 +32,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: sync_panorama_module.py — 五图模块同步引擎（ARCH-056）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from pathlib import Path

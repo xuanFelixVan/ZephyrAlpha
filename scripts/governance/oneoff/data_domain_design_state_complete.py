@@ -41,6 +41,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 数据域全景设计态补全——一次性执行脚本。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from pathlib import Path

@@ -32,6 +32,19 @@
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: generate_rule_ai_perception_index.py — 规则AI感知索引生成器（#ARCH-GOV-CONVERGENCE-META
+  Phase 3.2a）
+dimensions:
+- D1
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from datetime import UTC, datetime

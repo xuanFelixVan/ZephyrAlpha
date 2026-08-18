@@ -59,6 +59,17 @@ Usage::
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: post_commit_regen_yaml.py — post-commit YAML 变更触发器（治本缺口#3）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import os
 import subprocess
 import sys

@@ -25,6 +25,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 'G13: 从 depgraph (PostgreSQL) 生成资产清单全景图'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import sys
 from pathlib import Path
 

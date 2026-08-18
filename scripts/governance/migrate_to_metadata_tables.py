@@ -30,6 +30,17 @@ P1/P2 Python 保护机制（load_production_state_from_db 等）下线。
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: migrate_to_metadata_tables.py — 裁定#209 Stage 2 一次性迁移脚本
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import sys
 from datetime import datetime
 from pathlib import Path

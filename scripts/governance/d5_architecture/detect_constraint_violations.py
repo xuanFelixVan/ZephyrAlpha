@@ -51,6 +51,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 'G9-Detect: 架构约束违规检测器（对照 depgraph 实际数据检测 6 类违规）'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from datetime import datetime

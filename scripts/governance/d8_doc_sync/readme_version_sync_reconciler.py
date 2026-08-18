@@ -52,6 +52,17 @@ Usage::
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: readme_version_sync_reconciler.py — README 版本号派生展示校验 reconciler
+dimensions:
+- D8
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import logging
 import re
 from pathlib import Path

@@ -33,6 +33,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: oneoff 审计基线生成器——#ARCH-PRECOMMIT-INCREMENTAL 历史违规快照。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import json
 import re
 import subprocess

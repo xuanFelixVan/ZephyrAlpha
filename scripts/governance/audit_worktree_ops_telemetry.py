@@ -67,6 +67,17 @@ Exit codes:
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: audit_worktree_ops_telemetry.py — 主工作区文件级擦除操作遥测完整性审计（P2-6）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import ast
 import json

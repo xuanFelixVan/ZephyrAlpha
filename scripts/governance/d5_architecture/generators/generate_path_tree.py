@@ -30,13 +30,13 @@
 
 from __future__ import annotations
 
-# 治本（2026-07-04）：DB_DISPLAY_NAME 前移到 __manifest__ 之前，避免 f-string 求值时 NameError。
 # _common.py 与本文件同目录（generators/），CLI 运行时 sys.path[0]=本目录，可直接 import。
-from _common import DB_DISPLAY_NAME, idempotent_timestamp  # noqa: E402
+from _common import DB_DISPLAY_NAME, idempotent_timestamp  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
 
-__manifest__ = f"""
+# 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
+__manifest__ = """
 args: []
-description: 'G1: 从 {DB_DISPLAY_NAME} arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/
+description: 'G1: 从 depgraph (PostgreSQL) arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/
   目录树(中英文)输出到 generated/'
 dimensions:
 - D5
@@ -555,7 +555,7 @@ def get_file_description(filename: str, lang: str, file_path: str = "") -> str:
     if m:
         domain_key = "D-" + m.group(1).upper()
         try:
-            from domain_name_mapping import get_domain_name_zh
+            from domain_name_mapping import get_domain_name_zh  # noqa: import-integrity  sys.path 动态加载的本地模块
             domain_zh = get_domain_name_zh(domain_key, "")
             if domain_zh:
                 return f"{domain_zh}架构图" if lang == "zh" else f"{domain_zh} architecture"
@@ -567,7 +567,7 @@ def get_file_description(filename: str, lang: str, file_path: str = "") -> str:
     if m:
         domain_key = "D-" + m.group(1).upper()
         try:
-            from domain_name_mapping import get_domain_name_zh
+            from domain_name_mapping import get_domain_name_zh  # noqa: import-integrity  sys.path 动态加载的本地模块
             domain_zh = get_domain_name_zh(domain_key, "")
             if domain_zh:
                 return domain_zh if lang == "zh" else domain_zh
@@ -579,7 +579,7 @@ def get_file_description(filename: str, lang: str, file_path: str = "") -> str:
     if m:
         domain_key = "D-" + m.group(1).upper()
         try:
-            from domain_name_mapping import get_domain_name_zh
+            from domain_name_mapping import get_domain_name_zh  # noqa: import-integrity  sys.path 动态加载的本地模块
             domain_zh = get_domain_name_zh(domain_key, "")
             if domain_zh:
                 return f"{domain_zh}依赖图" if lang == "zh" else f"{domain_zh} dependency"

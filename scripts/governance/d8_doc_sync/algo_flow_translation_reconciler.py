@@ -62,6 +62,17 @@ Usage::
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: algo_flow_translation_reconciler.py — ALGO_FLOW 标记 ↔ 翻译真源漂移检测 reconciler（§4.16.4）
+dimensions:
+- D8
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import json
 import logging
 import re

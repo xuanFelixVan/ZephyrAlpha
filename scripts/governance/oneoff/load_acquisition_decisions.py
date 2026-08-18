@@ -43,6 +43,17 @@ emoji 分类（枚举真源 = DDL CHECK 约束）：
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: load_acquisition_decisions.py — 把 107 环节决策表的"怎么搞到手"导入模块生命周期
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import sys
 from pathlib import Path
 

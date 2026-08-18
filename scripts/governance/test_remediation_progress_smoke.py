@@ -25,6 +25,18 @@ make_remediation_progress_reconciler，真实写入 temp governance.db，验证�
 
 使用临时目录隔离生产 governance.db（TRAE-054 测试隔离铁律）。
 """
+
+__manifest__ = """
+args: []
+description: test_remediation_progress_smoke.py — Phase 3.1 治本进度 reconciler end-to-end
+  smoke test。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 import sqlite3
 import sys
 import tempfile

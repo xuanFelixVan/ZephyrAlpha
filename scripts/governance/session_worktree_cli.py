@@ -40,6 +40,17 @@ Usage::
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: session_worktree_cli.py — session worktree 管理 CLI（治本遗留项#2，2026-07-17）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 import argparse

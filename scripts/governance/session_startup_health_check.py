@@ -68,6 +68,18 @@ Exit codes:
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: session_startup_health_check.py — AI session 启动健康度自检（ARCH-TOOL-HEALTH-V1
+  Phase 6）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import importlib
 import importlib.util
 import json

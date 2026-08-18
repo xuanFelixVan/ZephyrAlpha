@@ -27,6 +27,17 @@
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: panorama_common.py — 全景投票共享工具（ARCH-056 引擎加固）
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 MATURITY_RANK: dict[str, int] = {"design": 0, "production": 1}
 
 _TEST_PATH_PREFIX = "tests/"

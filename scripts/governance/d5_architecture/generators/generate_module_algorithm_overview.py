@@ -95,7 +95,8 @@ from _shared.constants import DOC_HTTP_BASE  # noqa: E402
 from zephyr.governance.persistence.depgraph_reader import DepgraphReader  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
-__manifest__ = f"""
+# 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
+__manifest__ = """
 args: []
 description: 算法全景图：从代码docstring+blueprint派生模块算法，按battle_map作战环节拆分多文件，零漂移离库派生
 dimensions:

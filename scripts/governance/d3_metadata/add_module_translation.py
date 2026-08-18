@@ -54,6 +54,17 @@ Exit codes:
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: add_module_translation.py — 模块翻译条目合规写入工具（TRANSLATION-COVERAGE 配套）。
+dimensions:
+- D3
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import re
 import sys

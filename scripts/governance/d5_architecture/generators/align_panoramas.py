@@ -46,6 +46,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 'G-panorama-align: 全景对齐检测器（ARCH-053 + ARCH-056 五图升级）'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import re
 import sys

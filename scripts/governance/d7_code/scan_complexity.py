@@ -44,6 +44,17 @@ NO-HIGH-COMPLEXITY gate (priority=85) 只检测**新增**函数的复杂度（�
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 全量循环复杂度扫描器 — §5.158 暗债监控（裁定#214 Phase 4 引入）。
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 import argparse

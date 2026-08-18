@@ -48,6 +48,18 @@ Usage::
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: requirements_version_sync_reconciler.py — requirements.txt ↔ pyproject.toml
+  依赖一致性校验 reconciler
+dimensions:
+- D8
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import logging
 import re
 from pathlib import Path

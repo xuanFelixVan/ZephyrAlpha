@@ -24,6 +24,17 @@
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 数据域设计态排查 - DB 现状查询（Phase 2，只读不写）。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import sys
 from pathlib import Path
 

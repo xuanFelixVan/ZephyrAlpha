@@ -65,6 +65,17 @@ Exit codes:
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: audit_return_contract_usage.py — 返回契约 ok 键调用方审计（P2-5，2026-07-19）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import ast
 import json

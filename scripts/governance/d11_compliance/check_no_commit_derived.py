@@ -77,6 +77,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 门禁：阻断对派生产物（已离库的生成器输出）的 git add。
+dimensions:
+- D11
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import re
 import subprocess
 import sys

@@ -30,13 +30,13 @@
 
 from __future__ import annotations
 
-# 治本（2026-07-04）：DB_DISPLAY_NAME 前移到 __manifest__ 之前，避免 f-string 求值时 NameError。
 # _common.py 与本文件同目录（generators/），CLI 运行时 sys.path[0]=本目录，可直接 import。
-from _common import DB_DISPLAY_NAME  # noqa: E402
+from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
 
-__manifest__ = f"""
+# 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
+__manifest__ = """
 args: []
-description: 'G7: 从 {DB_DISPLAY_NAME} domains 表生成域容量报告MD文档'
+description: 'G7: 从 depgraph (PostgreSQL) domains 表生成域容量报告MD文档'
 dimensions:
 - D5
 priority: P2
@@ -55,7 +55,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
-from domain_name_mapping import get_domain_name_zh
+from domain_name_mapping import get_domain_name_zh  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports" / "capacity_report.md"

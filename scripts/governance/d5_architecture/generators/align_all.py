@@ -49,6 +49,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 'G-align-all: 五图对齐执行入口（ARCH-ALIGN-UNIFIED-001）'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from pathlib import Path
@@ -68,7 +79,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 
 # 导入两个对齐检测器
-from align_panoramas import (  # noqa: E402
+from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
     PanoramaAlignmentReport,
     PanoramaEmptyError,
     run_alignment as run_panorama_alignment,

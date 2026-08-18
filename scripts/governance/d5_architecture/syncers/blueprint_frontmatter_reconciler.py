@@ -28,6 +28,18 @@
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: blueprint_frontmatter_reconciler.py — 蓝图 frontmatter 核心字段对齐（ARCH-056
+  Phase 3）
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import re
 import sys
 from pathlib import Path
@@ -49,7 +61,7 @@ except ImportError:
     _pc_path = str(Path(__file__).resolve().parents[1])  # d5_architecture/
     if _pc_path not in _sys.path:
         _sys.path.insert(0, _pc_path)
-    from panorama_common import weighted_domain_vote, min_maturity as _min_mat
+    from panorama_common import weighted_domain_vote, min_maturity as _min_mat  # noqa: import-integrity  sys.path 动态加载的本地模块
 
 # ---------------------------------------------------------------------------
 # SQL 常量（SQL 集中化，§5.160.2）

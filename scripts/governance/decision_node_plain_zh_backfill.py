@@ -42,6 +42,17 @@ SSoT 裁定（TRAE-062）：
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: decision_node_plain_zh_backfill.py — 一次性补齐 213 决策节点的 plain_zh 大白话简介。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from pathlib import Path

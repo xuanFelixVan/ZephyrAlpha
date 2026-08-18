@@ -52,6 +52,18 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 类型注解 Any 滥用扫描器 — 5.145 维度防御门闸（R70 引入，#ARCH-ANY-GOVERNANCE-001 Phase 3
+  升级为 commit 阻断）。
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import ast
 import re

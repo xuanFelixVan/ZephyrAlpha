@@ -10,6 +10,17 @@
 # noqa: m11-perm-manual-legitimate  一次性修复脚本，task_bound 已执行完毕待退役清理
 """补全剩余 65 条英文条目的中文翻译——直接映射 module_path → 中文名。"""
 
+__manifest__ = """
+args: []
+description: 补全剩余 65 条英文条目的中文翻译——直接映射 module_path → 中文名。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import re
 from pathlib import Path
 

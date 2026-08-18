@@ -47,6 +47,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: scan_consumers_accuracy.py — CONSUMERS 字段准确性 baseline-scan 脚本
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import json
 import re

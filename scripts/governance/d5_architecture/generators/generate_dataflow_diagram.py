@@ -38,6 +38,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 'G-dataflow: 从 dataflowgraph (PostgreSQL) 生成数据流图 Markdown 文档（内嵌 Mermaid）'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from datetime import datetime

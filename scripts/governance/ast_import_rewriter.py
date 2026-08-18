@@ -36,6 +36,17 @@ The YAML map format::
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: AST-based import rewriter for governance directory migration.
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 import argparse

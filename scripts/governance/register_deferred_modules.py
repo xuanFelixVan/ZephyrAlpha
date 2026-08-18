@@ -23,6 +23,17 @@
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 将42项暂缓模块写入 depgraph 设计态，含3图对齐设计。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import sys
 from pathlib import Path
 

@@ -37,6 +37,18 @@ Exit codes:
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: check_gate_inventory_drift.py — commit_gates 模块清单漂移检测（ARCH-055 治本）
+dimensions:
+- D1
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import re
 import sys
 

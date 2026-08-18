@@ -22,6 +22,17 @@
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 批量修复 module_translation_registry.yaml 中 name_zh 字段不含中文的条目。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import re
 import sys

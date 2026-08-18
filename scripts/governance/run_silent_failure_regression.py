@@ -69,6 +69,17 @@ Exit codes:
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: run_silent_failure_regression.py — silent-failure 回归套件一键执行入口（P3-2，2026-07-19）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import json
 import subprocess
 import sys

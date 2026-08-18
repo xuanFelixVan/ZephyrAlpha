@@ -42,6 +42,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 架构债务扫描器 — 5.96 维度防御门闸（R67 引入）。
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 # bootstrap sys.path —— _shared 在 scripts/governance/，pre-commit 从 repo root 运行需显式加入
 import sys
 from pathlib import Path

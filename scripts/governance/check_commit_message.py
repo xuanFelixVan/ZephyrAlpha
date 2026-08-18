@@ -67,6 +67,17 @@ Exit Codes
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: check_commit_message.py — GitHub Actions PR commit message guard (P4-3).
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 import json

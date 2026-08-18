@@ -57,6 +57,17 @@ apply_dataflowgraph.py — dataflowgraph 变更写入工具（CLI）
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: apply_dataflowgraph.py — dataflowgraph 变更写入工具（CLI）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 from datetime import datetime

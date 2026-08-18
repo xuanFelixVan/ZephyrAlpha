@@ -52,6 +52,17 @@
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 'G-battle-map-align: 作战地图对齐检测器（battle_map_positioning.md §8.3）'
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import logging
 import sys

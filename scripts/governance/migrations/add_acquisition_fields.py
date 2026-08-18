@@ -55,6 +55,18 @@ apply_depgraph.update_module_metadata 已对齐：acquisition_method='' → None
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: add_acquisition_fields.py — 为 nodes_metadata 表添加 acquisition 字段 + 枚举
+  CHECK 约束
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import sys
 from pathlib import Path
 

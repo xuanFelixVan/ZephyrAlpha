@@ -52,6 +52,16 @@ Usage::
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: dashboard 指标数描述派生校验 reconciler——post-commit 触发，校验 dashboard.py 及派生文件指标数描述与 len(METRICS) 一致性
+dimensions:
+- D8
+priority: P2
+timeout_seconds: 60
+warn_only: true
+"""
+
 import logging
 import re
 from pathlib import Path
