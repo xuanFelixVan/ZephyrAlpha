@@ -139,12 +139,15 @@ Usage::
 
 from __future__ import annotations
 
+import hashlib
 import io
 import logging
+import os
 import subprocess
 import tarfile
 from pathlib import Path
 from typing import Optional
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
@@ -287,6 +290,17 @@ class GitCommandBatcher:
         if not files:
             return []
 
+        # P2-6 遥测（2026-08-19 循环审计 R1 治本）：git restore 是主工作区文件级擦除
+        # （内容还原到 HEAD），项目记忆硬约束要求全量遥测——操作前内容 hash 落
+        # worktree_ops_log.jsonl 支持事后审计恢复；遥测失败绝不阻断主流程。
+        pre_hashes: dict[str, str] = {}
+        for rel in files:
+            try:
+                p = self._root / rel
+                pre_hashes[rel] = hashlib.sha256(p.read_bytes()).hexdigest()[:16] if p.is_file() else ""
+            except OSError:
+                pre_hashes[rel] = ""
+
         cmd = ["git", "restore"]
         if staged:
             cmd.append("--staged")
@@ -308,6 +322,22 @@ class GitCommandBatcher:
             return []
 
         if r.returncode == 0:
+            try:
+                from zephyr.shared.io.workspace_telemetry import (  # noqa: PLC0415 延迟 import 防循环
+                    log_workspace_op,
+                )
+
+                for rel in files:
+                    log_workspace_op(
+                        op="git_restore_batch",
+                        session_id=os.environ.get("ZEPHYR_SESSION_ID", ""),
+                        source="git_batcher.git_restore_batch",
+                        root=self._root,
+                        file=rel,
+                        content_hash=pre_hashes.get(rel, ""),
+                    )
+            except Exception:  # noqa: BLE001 — 遥测失败不阻断
+                logger.debug("git_restore_batch: telemetry failed", exc_info=True)
             return list(files)
 
         stderr = r.stderr.strip()[:300]

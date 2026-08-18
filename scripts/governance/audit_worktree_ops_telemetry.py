@@ -106,9 +106,14 @@ ERASURE_PATTERNS: list[tuple[str, str, str]] = [
 ]
 
 # 满足遥测要求的函数名（同函数内出现即视为已遥测）
+# 2026-08-19：补 shared 公共名——真源已提取到 zephyr.shared.io.workspace_telemetry
+# （裁定 A），新代码直接调 log_workspace_op（无下划线前缀），检测器漏认会误报
+# （git_batcher.git_restore_batch 实证）。
 TELEMETRY_FUNCTIONS: set[str] = {
     "_log_workspace_op",
     "_log_worktree_delete",
+    "log_workspace_op",
+    "log_worktree_delete",
 }
 
 # 豁免上下文：函数名包含这些关键词时，擦除操作豁免（worktree 或 temp 文件操作）
