@@ -11,10 +11,10 @@ module_id: MOD-GOVERNANCE
 doc_type: register
 title: ZephyrAlpha 业务异常 error_code SSoT 注册表
 status: active
-version: 2.3.0
-date: '2026-08-17'
+version: 3.0.0
+date: '2026-08-18'
 owner: ZephyrAlpha-Owner
-description: '本文件是所有自定义异常类 error_code 字段的唯一真源（SSoT）。 格式：ZA-XX-NNNN（项目前缀-域前缀-4位序号）。 grep 唯一命中：每个 code 在全项目仅出现一次。
+description: '本文件是所有自定义异常类 error_code 字段的唯一真源（SSoT）。 格式：ZA-XX-NNNN（项目前缀-域前缀-4位序号）。 grep 唯一命中：每个 code 在全项目仅出现一次（存量 9 码例外见 known_duplicates 段——GAP-010 高敏区人审约束，改号待 Owner 批准，对账门禁仅豁免该段清单、硬阻断一切新增重码/未登记码）。
 
   '
 purpose: 1. 提供业务异常错误码的单一发现入口 2. 声明每个 error_code 的类名/模块/文件路径归属 3. 驱动 error_code 一致性校验
@@ -24,6 +24,9 @@ purpose: 1. 提供业务异常错误码的单一发现入口 2. 声明每个 err
 domain_prefixes:
   AC: D_AUTONOMY_CORE
   BT: D_BACKTEST
+  CMP: D_COMPLIANCE
+  DATA: D_DATA
+  EX: D_EX_CORE
   FE: D_FRONTEND
   GT: D_GOVERNANCE
   GV: D_GOVERNANCE
@@ -33,14 +36,24 @@ domain_prefixes:
   INT: D_INFRASTRUCTURE
   IT: D_INTELLIGENCE
   KB: D_INTEGRATION
+  MKT: D_MKT_DATA
   MLT: D_ML_TRAIN
   NLP: D_DATA
+  PA: D_PF_ALLOC
+  PF: D_PF_CORE
+  PLAN: D_PLAN
+  POS: D_POSITION
+  REGIME: D_REGIME
   RK: D_RISK
   RPT: D_REPORTING
   SC: D_SECURITY
+  SELL: D_SELL_DECISION
   SH: D_SHARED
+  SIM: D_SIMULATION
   TR: D_TRADING
+  TRIG: D_TRADING
   XC: D_EX_CORE
+  XS: D_EX_SOR
 # ============================================================
 # 段位规划
 # ============================================================
@@ -188,6 +201,121 @@ error_codes:
   module: zephyr.backtest.services.nan_processor
   file: src/zephyr/backtest/services/nan_processor.py
   introduced: '2026-08-17: AI-AUDIT07 补登'
+- code: ZA-CMP-0001
+  class: ChecklistCheckerError
+  module: zephyr.compliance.discipline_must_do_checker
+  file: src/zephyr/compliance/discipline_must_do_checker.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-CMP-0002
+  class: DisciplineGuardError
+  module: zephyr.compliance.discipline_prohibition_checker
+  file: src/zephyr/compliance/discipline_prohibition_checker.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-CMP-0003
+  class: LicenseAuditError
+  module: zephyr.compliance.license_usage_auditor
+  file: src/zephyr/compliance/license_usage_auditor.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-CMP-0004
+  class: FeatureGateError
+  module: zephyr.compliance.hard_boundary_adjudicator
+  file: src/zephyr/compliance/hard_boundary_adjudicator.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-CMP-0005
+  class: TradingComplianceError
+  module: zephyr.compliance.trading_compliance_detector
+  file: src/zephyr/compliance/trading_compliance_detector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-CMP-0006
+  class: ComplianceReportError
+  module: zephyr.compliance.compliance_report_registry
+  file: src/zephyr/compliance/compliance_report_registry.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-CMP-0010
+  class: ComplianceLogError
+  module: zephyr.compliance.compliance_log
+  file: src/zephyr/compliance/compliance_log.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-DATA-0020
+  class: NewsCollectorError
+  module: zephyr.data.news_collector
+  file: src/zephyr/data/news_collector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-DATA-PIT-001
+  class: PITQueryError
+  module: zephyr.data.pit_query
+  file: src/zephyr/data/pit_query.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-001-01
+  class: DuplicateFillError
+  module: zephyr.ex_core.fill_handler
+  file: src/zephyr/ex_core/fill_handler.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-001-02
+  class: InvalidFillError
+  module: zephyr.ex_core.fill_handler
+  file: src/zephyr/ex_core/fill_handler.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-001-03
+  class: OrderNotFoundError
+  module: zephyr.ex_core.fill_handler
+  file: src/zephyr/ex_core/fill_handler.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-0010
+  class: ProgrammaticTradingGuardError
+  module: zephyr.ex_core.programmatic_trading_guard
+  file: src/zephyr/ex_core/programmatic_trading_guard.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-0011
+  class: ComplianceGateBlockError
+  module: zephyr.ex_core.order_manager
+  file: src/zephyr/ex_core/order_manager.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-0015
+  class: AuditChainError
+  module: zephyr.ex_core.audit_journal.auditor
+  file: src/zephyr/ex_core/audit_journal/auditor.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-049-01
+  class: AggregateManagerError
+  module: zephyr.ex_core.aggregate_root_manager
+  file: src/zephyr/ex_core/aggregate_root_manager.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-050-01
+  class: RepositoryError
+  module: zephyr.ex_core.repository_interface
+  file: src/zephyr/ex_core/repository_interface.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-050-02
+  class: OrderNotFoundError
+  module: zephyr.ex_core.repository_interface
+  file: src/zephyr/ex_core/repository_interface.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-050-03
+  class: SnapshotNotFoundError
+  module: zephyr.ex_core.repository_interface
+  file: src/zephyr/ex_core/repository_interface.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-055-01
+  class: ContractAlreadyRegisteredError
+  module: zephyr.ex_core.multi_contract_adapter
+  file: src/zephyr/ex_core/multi_contract_adapter.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-055-02
+  class: ContractNotFoundError
+  module: zephyr.ex_core.multi_contract_adapter
+  file: src/zephyr/ex_core/multi_contract_adapter.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-055-03
+  class: ContractFrozenError
+  module: zephyr.ex_core.multi_contract_adapter
+  file: src/zephyr/ex_core/multi_contract_adapter.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-EX-055-04
+  class: InvalidVersionError
+  module: zephyr.ex_core.multi_contract_adapter
+  file: src/zephyr/ex_core/multi_contract_adapter.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-FE-0001
   class: ChartFactoryError
   module: zephyr.frontend.dashboard.components.chart_factory
@@ -392,6 +520,11 @@ error_codes:
   module: zephyr.governance.lifecycle_governance.strategy_retirement_evaluator
   file: src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py
   description: 阈值注册表缺失/畸形 fail-closed（55 号 G26 §3.5，#ARCH-MON-001）
+- code: ZA-GV-0050
+  class: GateRegistrationError
+  module: zephyr.gov_enforcement.rule_bridge.commit_gate_registry
+  file: src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-HF-0001
   class: MCPError
   module: zephyr.integration.mcp.doc_guard_server
@@ -416,6 +549,8 @@ error_codes:
   class: MCPError
   module: zephyr.integration.mcp._base_server
   file: src/zephyr/integration/mcp/_base_server.py
+  deprecated: '2026-08-18: AI-ERR-001 全域对账实证本码从未在该文件存活（git log -S 零命中，幻影登记）；该文件 MCPError 现行码为 ZA-IG-0018'
+  replacement: ZA-IG-0018
 - code: ZA-IF-0002
   class: TelemetryWriteError
   module: zephyr.infrastructure.system_telemetry.metrics_bridge
@@ -520,6 +655,8 @@ error_codes:
   class: EventVersionError
   module: zephyr.integration.shared.events.event_bus_upgrade
   file: src/zephyr/integration/shared/events/event_bus_upgrade.py
+  deprecated: '2026-08-18: 2026-08-17 AI-15 审计治本——该文件已收敛为 re-export shim（禁重新落地实现），EventVersionError 唯一定义点归 shared 侧'
+  replacement: ZA-SH-0033
 - code: ZA-IG-0017
   class: InvalidDecisionError
   module: zephyr.integration.behavioral_admission.admission_response
@@ -551,16 +688,51 @@ error_codes:
   module: zephyr.integration.mcp.tool_contracts
   file: src/zephyr/integration/mcp/tool_contracts.yaml
   description: embedding model 不可用（声明于 tool_contracts.yaml）
+  deprecated: '2026-08-18: Knowledge Base 系统 2026-07-23 d5b6f5dde1 彻底退役，tool_contracts.yaml 的 ZA-KB 命名空间随之移除，本码无存活定义点'
 - code: ZA-KB-0003
   class: MCPError
   module: zephyr.integration.mcp.tool_contracts
   file: src/zephyr/integration/mcp/tool_contracts.yaml
   description: 查询延迟超限 >500ms（声明于 tool_contracts.yaml）
+  deprecated: '2026-08-18: Knowledge Base 系统 2026-07-23 d5b6f5dde1 彻底退役，tool_contracts.yaml 的 ZA-KB 命名空间随之移除，本码无存活定义点'
 - code: ZA-KB-0004
   class: MCPError
   module: zephyr.integration.mcp.tool_contracts
   file: src/zephyr/integration/mcp/tool_contracts.yaml
   description: 索引重建要求（声明于 tool_contracts.yaml）
+  deprecated: '2026-08-18: Knowledge Base 系统 2026-07-23 d5b6f5dde1 彻底退役，tool_contracts.yaml 的 ZA-KB 命名空间随之移除，本码无存活定义点'
+- code: ZA-MKT-0001
+  class: VendorAlreadyRegisteredError
+  module: zephyr.market_data.vendor_registry
+  file: src/zephyr/market_data/vendor_registry.py
+  description: "canonical 归属=VendorAlreadyRegisteredError（同 commit 7a9579fa48 同文件先定义，L95）；存量重码：同文件 VendorNotFoundError(L101) 同码占用，改号 ZA-MKT-0007 待 Owner 批准（GAP-010 高敏区人审约束，#ARCH-ERRCODE-001）"
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-MKT-0002
+  class: VendorError
+  module: zephyr.market_data.vendor_base
+  file: src/zephyr/market_data/vendor_base.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-MKT-0003
+  class: ConnectorError
+  module: zephyr.market_data.connectors.base
+  file: src/zephyr/market_data/connectors/base.py
+  description: "canonical 归属=connectors/base.py::ConnectorError（同 commit b6e018f3be，基类模块优先）；存量重码：connectors/manager.py ConnectorAlreadyRegisteredError/ConnectorNotFoundError 同码占用，改号 ZA-MKT-0008/0009 待 Owner 批准（GAP-010，#ARCH-ERRCODE-001）"
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-MKT-0004
+  class: FailoverError
+  module: zephyr.market_data.failover.manager
+  file: src/zephyr/market_data/failover/manager.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-MKT-0005
+  class: AutoloadError
+  module: zephyr.market_data.autoload
+  file: src/zephyr/market_data/autoload.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-MKT-0006
+  class: CacheError
+  module: zephyr.market_data.raw_data_cache.cache
+  file: src/zephyr/market_data/raw_data_cache/cache.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-MLT-0001
   class: SFTTrainError
   module: zephyr.ml_train.implementations.sentiment_sft_trainer
@@ -571,6 +743,207 @@ error_codes:
   module: zephyr.nlp.nlp_inference
   file: src/zephyr/nlp/nlp_inference.py
   introduced: '2026-08-17: AI-AUDIT07 补登（类 error_code 属性本批补齐，此前仅文档声明）'
+- code: ZA-PA-0001
+  class: InvalidStrategySignalError
+  module: zephyr.pf_alloc.core.signal_synthesis_combiner
+  file: src/zephyr/pf_alloc/core/signal_synthesis_combiner.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PA-0002
+  class: PositionCapExceededError
+  module: zephyr.pf_alloc.core.signal_synthesis_combiner
+  file: src/zephyr/pf_alloc/core/signal_synthesis_combiner.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PA-0003
+  class: InvalidAllocationInputError
+  module: zephyr.pf_alloc.core.multi_strategy_capital_allocator
+  file: src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PA-0004
+  class: InvalidCorrelationInputError
+  module: zephyr.pf_alloc.core.strategy_correlation_gate
+  file: src/zephyr/pf_alloc/core/strategy_correlation_gate.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PA-0007
+  class: AllocationError
+  module: zephyr.pf_alloc.core.regime_meta_allocator
+  file: src/zephyr/pf_alloc/core/regime_meta_allocator.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0011
+  class: StrategyLifecycleError
+  module: zephyr.pf_core.core.strategy_engine
+  file: src/zephyr/pf_core/core/strategy_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0012
+  class: ColdStartViolationError
+  module: zephyr.pf_core.core.strategy_engine
+  file: src/zephyr/pf_core/core/strategy_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0013
+  class: StrategyNotFoundError
+  module: zephyr.pf_core.core.strategy_engine
+  file: src/zephyr/pf_core/core/strategy_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0021
+  class: InvalidOptimizationInputError
+  module: zephyr.pf_core.core.portfolio_optimizer
+  file: src/zephyr/pf_core/core/portfolio_optimizer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0022
+  class: OptimizationError
+  module: zephyr.pf_core.core.portfolio_optimizer
+  file: src/zephyr/pf_core/core/portfolio_optimizer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0031
+  class: InvalidRebalanceInputError
+  module: zephyr.pf_core.core.rebalance_scheduler
+  file: src/zephyr/pf_core/core/rebalance_scheduler.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0061
+  class: ConstraintViolationError
+  module: zephyr.pf_core.core.constraint_solver
+  file: src/zephyr/pf_core/core/constraint_solver.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0062
+  class: CorrelationGateFailure
+  module: zephyr.pf_core.core.constraint_solver
+  file: src/zephyr/pf_core/core/constraint_solver.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0071
+  class: AttributionDataIncompleteError
+  module: zephyr.pf_core.core.performance_attribution_engine
+  file: src/zephyr/pf_core/core/performance_attribution_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0072
+  class: RiskDecompositionUnavailable
+  module: zephyr.pf_core.core.performance_attribution_engine
+  file: src/zephyr/pf_core/core/performance_attribution_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PF-0073
+  class: ICDecayDetectionError
+  module: zephyr.pf_core.core.performance_attribution_engine
+  file: src/zephyr/pf_core/core/performance_attribution_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PLAN-0001
+  class: BoundaryComputeError
+  module: zephyr.plan_engine.tomorrow_boundary_planner
+  file: src/zephyr/plan_engine/tomorrow_boundary_planner.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PLAN-0002
+  class: ConstraintLoadError
+  module: zephyr.plan_engine.premarket_constraint_loader
+  file: src/zephyr/plan_engine/premarket_constraint_loader.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PLAN-0003
+  class: ClosingDecisionError
+  module: zephyr.plan_engine.closing_session_decision
+  file: src/zephyr/plan_engine/closing_session_decision.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0001
+  class: InvalidPositionInputError
+  module: zephyr.position.core.position_sizing_engine
+  file: src/zephyr/position/core/position_sizing_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0002
+  class: KellyEstimationError
+  module: zephyr.position.core.position_sizing_engine
+  file: src/zephyr/position/core/position_sizing_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0003
+  class: ConstraintViolationError
+  module: zephyr.position.core.position_sizing_engine
+  file: src/zephyr/position/core/position_sizing_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0004
+  class: InvalidDriftInputError
+  module: zephyr.position.core.position_drift_monitor
+  file: src/zephyr/position/core/position_drift_monitor.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0005
+  class: InvalidCapitalCurveInputError
+  module: zephyr.position.core.capital_curve_manager
+  file: src/zephyr/position/core/capital_curve_manager.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0006
+  class: InvalidCashFlowError
+  module: zephyr.position.core.cash_manager
+  file: src/zephyr/position/core/cash_manager.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0007
+  class: InvalidRebalanceInputError
+  module: zephyr.position.core.rebalance_engine
+  file: src/zephyr/position/core/rebalance_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0008
+  class: InvalidDrawdownControlError
+  module: zephyr.position.core.drawdown_controller
+  file: src/zephyr/position/core/drawdown_controller.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0009
+  class: AuditChainError
+  module: zephyr.position.services.position_audit_logger
+  file: src/zephyr/position/services/position_audit_logger.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0010
+  class: InvalidPositionPlanError
+  module: zephyr.position.core.position_limit_enforcer
+  file: src/zephyr/position/core/position_limit_enforcer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0011
+  class: ObservingPeriodViolationError
+  module: zephyr.position.core.position_state_machine
+  file: src/zephyr/position/core/position_state_machine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0012
+  class: CooldownPeriodError
+  module: zephyr.position.core.position_state_machine
+  file: src/zephyr/position/core/position_state_machine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0013
+  class: GraduationRegressionError
+  module: zephyr.position.core.position_state_machine
+  file: src/zephyr/position/core/position_state_machine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0016
+  class: InvalidSellPositionLinkInputError
+  module: zephyr.position.core.sell_position_link
+  file: src/zephyr/position/core/sell_position_link.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-POS-0017
+  class: InvalidCalendarInputError
+  module: zephyr.position.core.calendar_position_constraint
+  file: src/zephyr/position/core/calendar_position_constraint.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-REGIME-0010
+  class: RegimeFeatureError
+  module: zephyr.regime.regime_feature_builder
+  file: src/zephyr/regime/regime_feature_builder.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-REGIME-0020
+  class: A1ValidationError
+  module: zephyr.regime.validation.phase2.a1_sample_sufficiency
+  file: src/zephyr/regime/validation/phase2/a1_sample_sufficiency.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-REGIME-0021
+  class: A2ValidationError
+  module: zephyr.regime.validation.phase2.a2_hmm_overfitting
+  file: src/zephyr/regime/validation/phase2/a2_hmm_overfitting.py
+  description: "canonical 归属=a2_hmm_overfitting.py::A2ValidationError（同 commit 14c8b9f158，A2 先于 B4）；存量重码：b4_transition_accuracy.py::B4ValidationError 同码占用，改号 ZA-REGIME-0025 待 Owner 批准（GAP-010，#ARCH-ERRCODE-001）"
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-REGIME-0022
+  class: Phase2RunnerError
+  module: zephyr.regime.validation.phase2.phase2_runner
+  file: src/zephyr/regime/validation/phase2/phase2_runner.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-REGIME-0023
+  class: B1ValidationError
+  module: zephyr.regime.validation.phase2.b1_probability_calibration
+  file: src/zephyr/regime/validation/phase2/b1_probability_calibration.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-REGIME-0024
+  class: CalibrationError
+  module: zephyr.regime.validation.phase2.confidence_calibrator
+  file: src/zephyr/regime/validation/phase2/confidence_calibrator.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-RK-0003
   class: InvalidDrawdownInputError
   module: zephyr.risk.core.drawdown_tracker
@@ -630,6 +1003,11 @@ error_codes:
   module: zephyr.risk.core.strategy_deviation_monitor
   file: src/zephyr/risk/core/strategy_deviation_monitor.py
   description: 阈值注册表缺失/畸形 fail-closed（55 号 G26 §3.4，MOD-RK-23，#ARCH-MON-001）
+- code: ZA-RK-0024
+  class: ExcessiveNonFiniteDataError
+  module: zephyr.risk.core.var_calculator
+  file: src/zephyr/risk/core/var_calculator.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-RPT-0001
   class: InvalidDashboardInputError
   module: zephyr.reporting.realtime_pnl_dashboard
@@ -804,6 +1182,66 @@ error_codes:
   class: SafetyFenceError
   module: zephyr.security.access_control.orphan_judge.safety_fence
   file: src/zephyr/security/access_control/orphan_judge/safety_fence.py
+- code: ZA-SELL-0000
+  class: InvalidTriageInputError
+  module: zephyr.sell_decision.core.position_triage
+  file: src/zephyr/sell_decision/core/position_triage.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0001
+  class: InvalidSellSignalError
+  module: zephyr.sell_decision.core.sell_signal_collector
+  file: src/zephyr/sell_decision/core/sell_signal_collector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0002
+  class: DuplicateProviderError
+  module: zephyr.sell_decision.core.sell_signal_collector
+  file: src/zephyr/sell_decision/core/sell_signal_collector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0003
+  class: InvalidBreakoutInputError
+  module: zephyr.sell_decision.core.breakout_failure_detector
+  file: src/zephyr/sell_decision/core/breakout_failure_detector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0004
+  class: InvalidTakeProfitInputError
+  module: zephyr.sell_decision.core.take_profit_strategy
+  file: src/zephyr/sell_decision/core/take_profit_strategy.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0005
+  class: SellStopLossInputError
+  module: zephyr.sell_decision.core.stop_loss_strategy
+  file: src/zephyr/sell_decision/core/stop_loss_strategy.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0006
+  class: InvalidRebalanceInputError
+  module: zephyr.sell_decision.core.replacement_rebalance_seller
+  file: src/zephyr/sell_decision/core/replacement_rebalance_seller.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0007
+  class: InvalidFusionInputError
+  module: zephyr.sell_decision.core.sell_signal_fusion_engine
+  file: src/zephyr/sell_decision/core/sell_signal_fusion_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0008
+  class: InvalidArbitrationInputError
+  module: zephyr.sell_decision.core.sell_conflict_arbitrator
+  file: src/zephyr/sell_decision/core/sell_conflict_arbitrator.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0009
+  class: InvalidUrgencyInputError
+  module: zephyr.sell_decision.core.sell_urgency_scorer
+  file: src/zephyr/sell_decision/core/sell_urgency_scorer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0015
+  class: InvalidStopHuntInputError
+  module: zephyr.sell_decision.core.stop_hunting_protector
+  file: src/zephyr/sell_decision/core/stop_hunting_protector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SELL-0019
+  class: InvalidExecutionPlanInputError
+  module: zephyr.sell_decision.core.sell_execution_planner
+  file: src/zephyr/sell_decision/core/sell_execution_planner.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-SH-0001
   class: ConfigError
   module: zephyr.shared.foundation.errors
@@ -944,6 +1382,8 @@ error_codes:
   class: SerializationError
   module: zephyr.shared.io.serialization
   file: src/zephyr/shared/io/serialization.py
+  deprecated: '2026-08-18: #ARCH-089 已删除 serialization.py 内重复 SerializationError 定义（遮蔽 ZA-SH-0034 正确版，致全部 raise 点 TypeError），本码无存活定义点'
+  replacement: ZA-SH-0034
 - code: ZA-SH-0036
   class: CompressionInvariantError
   module: zephyr.shared.io.doc_compressor
@@ -1006,6 +1446,46 @@ error_codes:
   module: zephyr.shared.state_store
   file: src/zephyr/shared/state_store.py
   description: "canonical 归属=state_store（2026-08-16 7f72f36a86 先引入）；存量重码：threshold_loader.py::AlertThresholdConfigError 同码占用（2026-08-17 6c181232a3 后引入，55 号 §3.3 统读/tracker #87/AI-THD-001），后引入者改号 ZA-SH-0052 留 #ARCH-ERRCODE-001 专项（动存量生产模块，归 src 域窗口施工）"
+- code: ZA-SIM-0002
+  class: StrategySimulationError
+  module: zephyr.simulation.strategy_simulator
+  file: src/zephyr/simulation/strategy_simulator.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SIM-0003
+  class: SimulationError
+  module: zephyr.simulation.risk_simulator
+  file: src/zephyr/simulation/risk_simulator.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SIM-0005
+  class: ScenarioGenerationError
+  module: zephyr.simulation.scenario_generator
+  file: src/zephyr/simulation/scenario_generator.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SIM-0012
+  class: SimulationAnalysisError
+  module: zephyr.simulation.result_analyzer
+  file: src/zephyr/simulation/result_analyzer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SIM-0021
+  class: SimulationError
+  module: zephyr.simulation.parameter_robustness_tester
+  file: src/zephyr/simulation/parameter_robustness_tester.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SIM-0022
+  class: SimulationError
+  module: zephyr.simulation.look_ahead_bias_detector
+  file: src/zephyr/simulation/look_ahead_bias_detector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SIM-0023
+  class: SimulationError
+  module: zephyr.simulation.sharpe_calculator_fixer
+  file: src/zephyr/simulation/sharpe_calculator_fixer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-SIM-0024
+  class: SimulationError
+  module: zephyr.simulation.deflated_sharpe_calculator
+  file: src/zephyr/simulation/deflated_sharpe_calculator.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-TR-0001
   class: RiskLimitViolationError
   module: zephyr.trading.trading_contracts.risk.risk_limit_violation_error
@@ -1084,18 +1564,278 @@ error_codes:
   module: zephyr.gov_enforcement.rule_bridge.worktree_lifecycle
   file: src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py
   introduced: '2026-07-21: #ARCH-WORKTREE-LIFECYCLE-001——WorktreeLifecycle 状态机非法转换异常'
+- code: ZA-TRIG-0001
+  class: TriggerRegistrationError
+  module: zephyr.trading.trigger_registry
+  file: src/zephyr/trading/trigger_registry.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-TRIG-0002
+  class: TriggerConflictError
+  module: zephyr.trading.trigger_registry
+  file: src/zephyr/trading/trigger_registry.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-XC-0001
   class: MiniQmtBrokerError
   module: zephyr.ex_core.adapters.miniqmt_broker
   file: src/zephyr/ex_core/adapters/miniqmt_broker.py
+- code: ZA-XC-0010
+  class: OpenOrderResolverError
+  module: zephyr.ex_core.open_order_resolver
+  file: src/zephyr/ex_core/open_order_resolver.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XC-0011
+  class: PricingPolicyError
+  module: zephyr.ex_core.pricing_policy
+  file: src/zephyr/ex_core/pricing_policy.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XC-0012
+  class: AsyncFillDispatcherError
+  module: zephyr.ex_core.async_fill_dispatcher
+  file: src/zephyr/ex_core/async_fill_dispatcher.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XC-0014
+  class: TradingHaltResolverError
+  module: zephyr.ex_core.trading_halt_resolver
+  file: src/zephyr/ex_core/trading_halt_resolver.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XC-0015
+  class: CorporateActionAdjusterError
+  module: zephyr.ex_core.corporate_action_adjuster
+  file: src/zephyr/ex_core/corporate_action_adjuster.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0001
+  class: RoutingError
+  module: zephyr.ex_sor.core.optimal_order_router
+  file: src/zephyr/ex_sor/core/optimal_order_router.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0001-IW
+  class: InvalidRouteWeightsError
+  module: zephyr.ex_sor.core.optimal_order_router
+  file: src/zephyr/ex_sor/core/optimal_order_router.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0001-NA
+  class: NoRouteAvailableError
+  module: zephyr.ex_sor.core.optimal_order_router
+  file: src/zephyr/ex_sor/core/optimal_order_router.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0002
+  class: BrokerAdapterError
+  module: zephyr.ex_sor.core.broker_adapter_manager
+  file: src/zephyr/ex_sor/core/broker_adapter_manager.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0002-FE
+  class: FailoverExhaustedError
+  module: zephyr.ex_sor.core.broker_adapter_manager
+  file: src/zephyr/ex_sor/core/broker_adapter_manager.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0002-NA
+  class: NoAvailableBrokerError
+  module: zephyr.ex_sor.core.broker_adapter_manager
+  file: src/zephyr/ex_sor/core/broker_adapter_manager.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0004
+  class: SchedulerError
+  module: zephyr.ex_sor.core.execution_scheduler
+  file: src/zephyr/ex_sor/core/execution_scheduler.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0004-EP
+  class: EmptyPlanError
+  module: zephyr.ex_sor.core.execution_scheduler
+  file: src/zephyr/ex_sor/core/execution_scheduler.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0004-IW
+  class: InvalidScheduleWindowError
+  module: zephyr.ex_sor.core.execution_scheduler
+  file: src/zephyr/ex_sor/core/execution_scheduler.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0004-OP
+  class: OverParticipationError
+  module: zephyr.ex_sor.core.execution_scheduler
+  file: src/zephyr/ex_sor/core/execution_scheduler.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0005
+  class: AlgoError
+  module: zephyr.ex_sor.core.algo_trading_engine
+  file: src/zephyr/ex_sor/core/algo_trading_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0005-IP
+  class: InvalidAlgoParamsError
+  module: zephyr.ex_sor.core.algo_trading_engine
+  file: src/zephyr/ex_sor/core/algo_trading_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0005-NA
+  class: UnknownAlgoError
+  module: zephyr.ex_sor.core.algo_trading_engine
+  file: src/zephyr/ex_sor/core/algo_trading_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0005-OL
+  class: OrderTooLargeError
+  module: zephyr.ex_sor.core.algo_trading_engine
+  file: src/zephyr/ex_sor/core/algo_trading_engine.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0011
+  class: SelectorError
+  module: zephyr.ex_sor.core.algo_execution_selector
+  file: src/zephyr/ex_sor/core/algo_execution_selector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0011-IF
+  class: InvalidFeaturesError
+  module: zephyr.ex_sor.core.algo_execution_selector
+  file: src/zephyr/ex_sor/core/algo_execution_selector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0011-NA
+  class: NoAlgoAvailableError
+  module: zephyr.ex_sor.core.algo_execution_selector
+  file: src/zephyr/ex_sor/core/algo_execution_selector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0013
+  class: BrokerConnectionError
+  module: zephyr.ex_sor.api.broker_api_connector
+  file: src/zephyr/ex_sor/api/broker_api_connector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0013-CB
+  class: CircuitBreakerOpenError
+  module: zephyr.ex_sor.api.broker_api_connector
+  file: src/zephyr/ex_sor/api/broker_api_connector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0013-HB
+  class: HeartbeatTimeoutError
+  module: zephyr.ex_sor.api.broker_api_connector
+  file: src/zephyr/ex_sor/api/broker_api_connector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0013-RL
+  class: RateLimitedError
+  module: zephyr.ex_sor.api.broker_api_connector
+  file: src/zephyr/ex_sor/api/broker_api_connector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0013-S
+  class: BrokerSubmitError
+  module: zephyr.ex_sor.api.broker_api_connector
+  file: src/zephyr/ex_sor/api/broker_api_connector.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-0014
+  class: InvalidRateLimitConfigError
+  module: zephyr.ex_sor.api.api_rate_limiter
+  file: src/zephyr/ex_sor/api/api_rate_limiter.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-EXT-0001
+  class: SlippageAnalyzerError
+  module: zephyr.ex_sor.services.slippage_analyzer
+  file: src/zephyr/ex_sor/services/slippage_analyzer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-EXT-0001-IB
+  class: InvalidBenchmarkError
+  module: zephyr.ex_sor.services.slippage_analyzer
+  file: src/zephyr/ex_sor/services/slippage_analyzer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-EXT-0001-IF
+  class: InsufficientFillsError
+  module: zephyr.ex_sor.services.slippage_analyzer
+  file: src/zephyr/ex_sor/services/slippage_analyzer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-EXT-0002
+  class: QualityScorerError
+  module: zephyr.ex_sor.services.execution_quality_scorer
+  file: src/zephyr/ex_sor/services/execution_quality_scorer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-EXT-0002-IM
+  class: InsufficientMetricsError
+  module: zephyr.ex_sor.services.execution_quality_scorer
+  file: src/zephyr/ex_sor/services/execution_quality_scorer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-EXT-0002-IW
+  class: InvalidWeightsError
+  module: zephyr.ex_sor.services.execution_quality_scorer
+  file: src/zephyr/ex_sor/services/execution_quality_scorer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-EXT-0003
+  class: TransactionCostError
+  module: zephyr.ex_sor.services.transaction_cost_optimizer
+  file: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-EXT-0003-CI
+  class: InvalidCostInputError
+  module: zephyr.ex_sor.services.transaction_cost_optimizer
+  file: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XS-EXT-0003-FS
+  class: InvalidFeeScheduleError
+  module: zephyr.ex_sor.services.transaction_cost_optimizer
+  file: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
+  introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+# ============================================================
+# 已知跨定义点重码（GAP-010 高敏区人审约束——改号清单待 Owner 批准；对账门禁仅豁免本段存量、硬阻断新增）
+# 改号执行连带项（批准后经 GitCommitGateway 一次性施工）：
+#   1. tests/trading/test_corporate_action_processor.py:513 断言 error_code=="ZA-TR-0004" 需同步改 "ZA-TR-0020"
+#   2. 6 处 blueprint.md 文档同步：pnl_calculator/corporate_action_processor/vendor_registry/connectors/ashare_stop_loss_engine + ssot_guard 系
+#   3. 无运行时按码字符串分支（全仓 grep 实证：except/raises 均按类捕获），改号不破坏既有异常处理逻辑
+# ============================================================
+known_duplicates:
+- code: ZA-MKT-0001
+  canonical: {class: VendorAlreadyRegisteredError, file: src/zephyr/market_data/vendor_registry.py}
+  later_introducers:
+  - {class: VendorNotFoundError, file: src/zephyr/market_data/vendor_registry.py, planned_code: ZA-MKT-0007}
+  evidence: 同 commit 7a9579fa48(2026-08-02) 同文件引入；文件内定义序前者(L95)保留 canonical
+  status: pending_owner_approval
+- code: ZA-MKT-0003
+  canonical: {class: ConnectorError, file: src/zephyr/market_data/connectors/base.py}
+  later_introducers:
+  - {class: ConnectorAlreadyRegisteredError, file: src/zephyr/market_data/connectors/manager.py, planned_code: ZA-MKT-0008}
+  - {class: ConnectorNotFoundError, file: src/zephyr/market_data/connectors/manager.py, planned_code: ZA-MKT-0009}
+  evidence: 同 commit b6e018f3be(2026-08-02) 引入；基类模块 connectors/base.py 保留 canonical
+  status: pending_owner_approval
+- code: ZA-REGIME-0021
+  canonical: {class: A2ValidationError, file: src/zephyr/regime/validation/phase2/a2_hmm_overfitting.py}
+  later_introducers:
+  - {class: B4ValidationError, file: src/zephyr/regime/validation/phase2/b4_transition_accuracy.py, planned_code: ZA-REGIME-0025}
+  evidence: 同 commit 14c8b9f158(2026-08-07) 引入；A2 先于 B4（验证器阶段序）保留 canonical
+  status: pending_owner_approval
+- code: ZA-RK-0009
+  canonical: {class: BudgetOptimizationError, file: src/zephyr/risk/core/risk_budget_allocator.py}
+  later_introducers:
+  - {class: InvalidStopLossInputError, file: src/zephyr/risk/core/ashare_stop_loss_engine.py, planned_code: ZA-RK-0025}
+  evidence: canonical f2f48ea0db(2026-08-02) 先引入，后引入 4a943705bf；原规划目标 ZA-RK-0024 已被 var_calculator.py::ExcessiveNonFiniteDataError 新增占用，顺延 0025
+  status: pending_owner_approval
+- code: ZA-SH-0014
+  canonical: {class: SsotError, file: src/zephyr/shared/security/ssot_guard.py}
+  later_introducers:
+  - {class: PoolExhaustedError, file: src/zephyr/shared/foundation/errors.py, planned_code: ZA-SH-0053}
+  evidence: canonical 4d4ecfd6e6(2026-07-06) 先引入，后引入 f8e152676b(2026-07-19)
+  status: pending_owner_approval
+- code: ZA-SH-0049
+  canonical: {class: PatchConflictError, file: src/zephyr/shared/utils/diff_utils.py}
+  later_introducers:
+  - {class: StateStoreError, file: src/zephyr/shared/state_store.py, planned_code: ZA-SH-0051}
+  evidence: canonical 4d4ecfd6e6(2026-07-06) 先引入，后引入 7f72f36a86(2026-08-16)
+  status: pending_owner_approval
+- code: ZA-SH-0050
+  canonical: {class: StateCorruptError, file: src/zephyr/shared/state_store.py}
+  later_introducers:
+  - {class: AlertThresholdConfigError, file: src/zephyr/shared/alerts/threshold_loader.py, planned_code: ZA-SH-0052}
+  evidence: canonical 7f72f36a86(2026-08-16) 先引入，后引入 6c181232a3(2026-08-17)
+  status: pending_owner_approval
+- code: ZA-TR-0001
+  canonical: {class: RiskLimitViolationError, file: src/zephyr/trading/trading_contracts/risk/risk_limit_violation_error.py}
+  later_introducers:
+  - {class: InvalidPnlInputError, file: src/zephyr/trading/pnl_calculator.py, planned_code: ZA-TR-0019}
+  evidence: canonical 4d4ecfd6e6(2026-07-06) 先引入，后引入 ff2662668d(2026-08-02)
+  status: pending_owner_approval
+- code: ZA-TR-0004
+  canonical: {class: StagingError, file: src/zephyr/trading/staging_area.py}
+  later_introducers:
+  - {class: InvalidCorporateActionError, file: src/zephyr/trading/corporate_action_processor.py, planned_code: ZA-TR-0020}
+  evidence: canonical 5d15f0dba2(2026-07-06) 先引入，后引入 6faa32f9be(2026-08-02)
+  status: pending_owner_approval
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
 # ============================================================
 known_issues:
-- issue: 全域登记缺口——代码实测 316 个码 vs 本表 233 条（2026-08-15 补登 RK/RPT 两域 23 条后）；未登记集中域=MKT/PA/POS/REGIME 等（4 个前缀未声明 domain_prefixes）
-  remediation: '#ARCH-ERRCODE-001 专项（全域补登 + 前缀声明 + code↔registry 一致性校验门禁缺失补课）'
-- issue: 存量跨文件重码 17 处（实证清单：ZA-TR-0001/0004、ZA-BT-0009/0010/0011/0012、ZA-MKT-0003、ZA-PA-0002、ZA-POS-0001/0002/0003/0008、ZA-REGIME-0021、ZA-RK-0009、ZA-SH-0014、ZA-SH-0049、ZA-SH-0050）——违反本表「grep 唯一命中」不变量。2026-08-17 AI-02 审计新增实证 2 处：ZA-SH-0049（state_store.py::StateStoreError 2026-08-16 后引入）+ ZA-SH-0050（threshold_loader.py::AlertThresholdConfigError 2026-08-17 后引入），git 首引入裁定见对应条目 description
-  remediation: '#ARCH-ERRCODE-001 专项按 git 首引入定 canonical、后引入者改号（动存量生产代码，避让并发会话窗口择期施工）'
+- issue: 全域登记缺口已收口（2026-08-18 AI-ERR-001，#ARCH-ERRCODE-001）：代码实测 371 个码（385 个定义点）全量登记，本表 379 条 = 371 active + 8 deprecated（TR-0002/TR-0011 既有 + IF-0001/IG-0016/KB-0002/KB-0003/KB-0004/SH-0035 本批实证退役）；domain_prefixes 19→32（补登 CMP/DATA/EX/MKT/PA/PF/PLAN/POS/REGIME/SELL/SIM/TRIG/XS 13 个未声明前缀，域 ID 逐一对齐 [DOMAIN] 头注实证：PF→D_PF_CORE、PLAN→D_PLAN 等）
+  remediation: 已闭环；新增未登记码由 tests/governance/test_error_code_consistency.py + GATE-ERRCODE commit 门禁硬阻断
+- issue: 存量跨定义点重码 9 码 10 处（2026-08-18 实测收敛——2026-08-15 清单 17 码中 BT 域 4 码经 AI-AUDIT07 改号收口、ZA-PA-0002 经 2026-08-17 改号 ZA-PA-0004 收口、POS 域 4 码实证已唯一）：清单/git 首引入裁定/计划改号见 known_duplicates 段（GAP-010 高敏区人审约束，改号待 Owner 批准；已实证无运行时按码字符串分支，唯一连带=1 处测试断言+6 处蓝图文档同步）
+  remediation: Owner 批准 known_duplicates 段后经 GitCommitGateway 执行改号；对账门禁仅豁免该段存量、硬阻断一切新增重码
+- issue: 格式偏离诚实登记（不阻断，新增码应遵守 ZA-XX-NNNN 基准格式）：子码后缀族 22 条（如 ZA-XS-0001-IW/NA、ZA-XS-EXT-0003-FS/CI）、模块号嵌入族 11 条（ZA-EX-001-01~03、ZA-EX-049-01、ZA-EX-050-01~03、ZA-EX-055-01~04）、复合命名空间 4 条（ZA-DATA-PIT-001、ZA-XS-EXT-0001/0002/0003）、ZA-SELL-0000 序号 0000 偏离段位规划（0001 起）
+  remediation: 登记以代码真源为准（SSoT 诚实原则）；格式归一属行为变更，留后续专项裁定
 # ============================================================
 # 关联系统
 # ============================================================

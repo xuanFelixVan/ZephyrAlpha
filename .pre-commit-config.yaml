@@ -563,6 +563,24 @@ repos:
         files: "^src/zephyr/.*\\.py$|^tests/.*\\.py$"
         description: "测试门禁合并——GATE-18(pytest --collect-only，保留 -m not slow and not e2e) + GATE-19(测试结构合规)，run_gate_chain 顺序执行"
 
+      # ── GATE-ERRCODE: error_code 注册表↔代码真源双向对账（#ARCH-ERRCODE-001）──
+      # 目的声明（D2）：防新增未登记 error_code 静默入仓——「注册表声明不被机器执行=不存在」
+      #   教训（2026-08-15 实证 130 码未登记漂移），本 gate 把登记纪律从人审软约束升级为
+      #   commit 硬阻断：方向A 未登记码/未声明前缀 + 方向B active 条目无存活定义点 +
+      #   跨定义点重码白名单（known_duplicates 段）外零容忍。
+      # 真源：tests/governance/test_error_code_consistency.py（AST 扫描器=判定逻辑 SSoT，
+      #   本 hook 仅调用不重实现）；存量 9 码 10 处重码经 git 首引入裁定入 known_duplicates
+      #   段豁免（GAP-010 高敏区人审约束，改号待 Owner 批准）。
+      # 模式：硬阻断（pytest exit≠0 拒绝提交）
+      - id: gate-errcode-consistency
+        name: "GATE-ERRCODE: error_code 注册表↔代码双向对账（#ARCH-ERRCODE-001）"
+        entry: python -m pytest tests/governance/test_error_code_consistency.py -q --tb=line -p no:asyncio --import-mode=importlib
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(src/zephyr/.*\\.py|architecture_model/contracts/error_code_registry\\.yaml)$"
+        description: "error_code 一致性门禁——代码定义点全量登记 + active 条目存活锚定 + 重码白名单外零容忍 + 前缀声明（真源 tests/governance/test_error_code_consistency.py）"
+
       # ── GATE-SSOT-DOCS 已合并到 GATE-FRONTMATTER（见上 gate-frontmatter）──
 
       # ── GATE-REG-BL: 注册基线合并门禁（原 GATE-REG-BL + GATE-IDX 二合一）──

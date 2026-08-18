@@ -356,6 +356,15 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 123 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量（分支原登 #121） | AI-GOVB-001 提交期横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批逐条归因：①3 条 GATE-PANORAMA-ALIGNMENT=08-16 PG 停服期历史（PG 已恢复+FOPEN-001 fail-open 留痕已治理）——已按 acknowledge_critical_warns 正式 ack 消音，横幅 24h 窗未 ack 归零；②2 条 DRIFT-WATCHDOG=AI-FILL 填报会话主仓直改 tracked 文档但**未注册 SessionRegistry 写入方**（work ∅→hash 实证），自愈合机制已自动 ack——FILL 侧流程缺口供统筹知情；③另 1 条 GATE-RULE-AUDIT 08-15 存量已出 24h 窗自然消音） | ✅ |
 | 124 | session_concurrency.py [CONSUMERS] 声明漂移（reconcile_worker/runner 括号内函数名误写为消费者自身函数而非被消费的 SessionRegistry）（分支原登 #122） | AI-GOVB-001 续批提交期 CONSUMERS-ACCURACY 门禁实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批顺手修：声明勘正为 reconcile_worker (SessionRegistry) / reconcile_runner (SessionRegistry)——与 #105 同类的头注派生数据漂移） | ✅ |
 
+### P1-补11 · 2026-08-18 AI-ERR-001 登记（#ARCH-ERRCODE-001 全域收口批）
+
+> 任务书三步：①全域补登 ②重码治理 ③对账门禁。①③已完工落地，②裁定完毕待 Owner 批准执行改号（GAP-010 高敏区人审约束）。
+> 口径勘正：任务书"108 码未登记/15 处重码/4 前缀未声明"系 2026-08-15 快照；2026-08-18 实测=130 码未登记（AUDIT07 等批次先行收口一部分后仍余）/重码 9 码 10 处（BT 4 码+PA-0002+POS 4 码已先行收口）/13 前缀未声明。一切以代码真源实测为准。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 128 | #ARCH-ERRCODE-001 全域收口：①补登 ②重码 ③对账门禁 | AI-ERR-001 施工批（commit 0e7c1393，[ARCH-APPROVAL:#ARCH-ERRCODE-001] 通道） | **①已闭环**：registry v2.3.0→v3.0.0——130 码补登（371 码/385 定义点全量登记=零缺口）+6 条 stale 实证退役（ZA-IF-0001 幻影登记 git -S 零命中/ZA-IG-0016 shim 收敛→ZA-SH-0033/ZA-KB-0002~0004 KB 系统 d5b6f5dde1 退役/ZA-SH-0035 #ARCH-089 已删→ZA-SH-0034）+domain_prefixes 19→32（CMP/DATA/EX/MKT/PA/PF/PLAN/POS/REGIME/SELL/SIM/TRIG/XS，域 ID 经 [DOMAIN] 头注逐一实证：PF→D_PF_CORE、PLAN→D_PLAN）。**③已闭环**：tests/governance/test_error_code_consistency.py 新建（AST 扫描器=判定 SSoT，6 用例全绿）+GATE-ERRCODE 接入 .pre-commit-config.yaml（src/**.py 或注册表变更触发硬阻断）；红队实证：注入 ZA-ZZZ-9999 未登记码即拦截（2 用例红），移除复绿。**②裁定完毕待 Owner 批准**：9 码 10 处重码 git 首引入裁定+计划改号清单落 registry known_duplicates 段（MKT-0001→0007/MKT-0003→0008+0009/REGIME-0021→0025/RK-0009→0025（原规划 0024 已被 var_calculator 新增 ExcessiveNonFiniteDataError 占用顺延）/SH-0014→0053/SH-0049→0051/SH-0050→0052/TR-0001→0019/TR-0004→0020）；已实证全仓无运行时按码字符串分支（except/raises 均按类捕获），改号连带=tests/trading/test_corporate_action_processor.py:513 一处断言+6 处蓝图文档同步。验证命令：`python -m pytest tests/governance/test_error_code_consistency.py -q --tb=line -p no:asyncio --import-mode=importlib`（6 passed）。**剩余动作**：Owner 批准 known_duplicates 段→经网关执行 10 处改号+断言/蓝图同步→清空 known_duplicates 段（白名单防腐测试强制）→#ARCH-ERRCODE-001 status 翻 resolved | 🔄 ①③闭环；②待 Owner 批准 |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
