@@ -233,6 +233,12 @@ class OrderManager:
         """写入：orders（Stage 4 公共化）。"""
         self._orders = value
 
+    @property
+    def declaration_guard(self) -> CancelRateGuard | None:
+        """只读：日申报硬计数器（AI-R3 复审 P1：供装配层校验同实例注入，
+        防 TradingSession 与 OrderManager 各持独立计数器分裂计数）。"""
+        return self._declaration_guard
+
     def register_broker(self, broker_id: str, broker: BrokerInterface) -> None:
         self._brokers[broker_id] = broker
         broker.register_fill_callback(self._on_fill)

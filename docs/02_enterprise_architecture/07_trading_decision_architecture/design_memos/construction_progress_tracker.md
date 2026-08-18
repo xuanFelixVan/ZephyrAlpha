@@ -386,6 +386,15 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 139 | symbol 级舆情（标的关联）与 CTR-INT-AISA 契约登记（分支原登 #131） | AI-AISA-001 范围裁定 | MVP 产出市场级窗口 sentiment_index；symbol 级聚合需新闻→标的关联层（公告已有标的字段、新闻需 NER/规则提取，26 号备忘录 BM-SEL-19 漏斗联动候选）；契约 CTR-INT-AISA 拟定未登记，待 MOD-SIG-002 信号生成定型后对齐 | ⏳ 待 MOD-SIG-002 定型 |
 | 140 | ZA-IT-0003 错误码未登 error_code_registry.yaml（分支原登 #132；AI-AISA-001 GLM 复审发现） | AI-AISA-001 GLM 复审 | error_code_registry.yaml 系 AI-ERR-001 活跃施工面故施工侧避让；现 ERR-001 已 merge（795fa5c00f），登记格式=code/class/module/file/description，条目：ZA-IT-0003 / NewsSentimentAnalyzerError / zephyr.intelligence.news_sentiment_analyzer / 舆情分析器参数与输入校验错误 | ⏳ 移交统筹收口批补登 |
 
+### P1-补14 · 2026-08-18 AI-R3 登记（近 3 日 merge 增量五批复审批）【编号注记：分支原登 #128-131（插位 P2 存量表 #81/#82 之间，且与 ERR-001 #128 撞号）+#ARCH-120~123（与 SEAT-001 #ARCH-120 撞号），merge 终态重编 #141-144 + #ARCH-124~127——2026-08-18 第八统筹】
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 141 | AI-R3 复审遗留①：pg_probe module_id N-17 回潮（depgraph 节点未刷新致 S2 对齐循环回退治本值）（分支原登 #128） | AI-R3 复审第一轮（2026-08-18） | pg_probe.py 行1 MOD-GOV_PG_PROBE vs 行15 MOD-PG_PROBE 不一致=N-17 违例重新成立；根因=depgraph 节点=MOD-GOV_PG_PROBE（旧值），S2 对齐循环以节点为真源回退文件头治本值。裁定=全量重扫刷新节点（#ARCH-70 通道）+重扫前加对齐豁免 | ✅ 已登记（#ARCH-124，commit d7728911）；⏳ 重扫执行归统筹收口批 |
+| 142 | AI-R3 复审遗留②：CancelRateGuard 日申报硬计数器纯内存（重启归零可绕过 1 万笔阻断线）（分支原登 #129） | AI-R3 复审第一轮（2026-08-18） | _daily_count/_daily_date 纯内存，进程重启当日计数归零；二轮审查 P1-5 建议②未落地（f9e10bebdd 只完成接线建议①）。裁定=随 state_store 持久化批落盘 {count, date} | ✅ 已登记（#ARCH-125）；⏳ 随 state_store 持久化批施工 |
+| 143 | AI-R3 复审遗留③：Saga 恢复路径 step5 失败时持仓回滚漂移（对从未入账的成交做反向 apply_fill 负向漂移）（分支原登 #130） | AI-R3 复审第一轮（2026-08-18） | _recover_filled_order 的 `if not self._step5_position_update(ctx): return True` 静默吞掉 step5 失败，但内部 except 已调 _compensate_position 对未入账成交做反向 apply_fill。裁定=step5 失败区分"已入账后回滚"vs"未入账"，未入账不回滚 | ✅ 已登记（#ARCH-126）；⏳ 随后续 saga 修复批施工 |
+| 144 | AI-R3 复审遗留④：Kill Switch 清算链 T+1 可卖数量未分化（对当日买入 T+1 锁定份额发单必被券商拒）（分支原登 #131） | AI-R3 复审第一轮（2026-08-18） | execute_kill_switch_liquidation 对全部持仓发 MARKET SELL，含 T+1 锁定份额——券商必拒，无识别/重试/告警分化。裁定=按 available 数量发单或 T+1 拒绝与普通失败分桶 | ✅ 已登记（#ARCH-127）；⏳ 随后续清算链修复批施工 |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |

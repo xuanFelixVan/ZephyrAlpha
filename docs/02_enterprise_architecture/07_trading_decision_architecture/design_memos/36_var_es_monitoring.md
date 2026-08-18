@@ -386,7 +386,7 @@ else:
 | # | 动作 | 执行者 | 具体参数 |
 |---|---|---|---|
 | 1 | 标记模型不可用 | RiskOrchestrator → state_store.set_var_model_status("UNAVAILABLE") | 持久化标记，盘前初始化读取 |
-| 2 | 回退到保守静态映射 | RiskOrchestrator → drawdown_controller.force_static_mode() | 静态映射：VaR 固定 3%（ORANGE 级），CVaR 固定 5%，position_cap 固定 0.7——不再用 var_calculator 动态计算 |
+| 2 | 回退到保守静态映射 | RiskOrchestrator → drawdown_controller.force_static_mode() | 静态映射：VaR 固定 3%（ORANGE 级），CVaR 固定 5%，position_cap 固定 0.5——不再用 var_calculator 动态计算（0.7→0.5：P1-4 五级单调性裁定，2026-08-16 AI-RFIX-001；2026-08-18 AI-R3 复审同步本处残留） |
 | 3 | 人工审查 | daily_auditor.log_rebuild_event() + alert(REBUILD) | 通知业主审查模型，需人工解除 UNAVAILABLE 标记 |
 | 4 | 考虑 Phase 2 蒙特卡洛 | 远期（不在 REBUILD 自动流程内） | 待 Phase 2 GPU 蒙特卡洛落地后作为 REBUILD 的可选升级路径 |
 
@@ -396,7 +396,7 @@ else:
 3. RiskOrchestrator 重新启用 var_calculator 动态计算
 4. 次日回测验证 → PASS 才完全恢复；RECALIBRATE/REBUILD 则继续静态映射
 
-> **跨文档契约**（35号 §3.15/§3.18）：REBUILD 动作 2 的 force_static_mode() 产出的静态 position_cap = 0.7，需喂入 35号 §3.10 daily_risk_loop 的 drawdown_controller.evaluate()，作为 C 层 VaR/CVaR 约束的替代。35号 §3.18 盘后持久化需记录 var_model_status，供次日 §3.15 盘前初始化加载。
+> **跨文档契约**（35号 §3.15/§3.18）：REBUILD 动作 2 的 force_static_mode() 产出的静态 position_cap = 0.5，需喂入 35号 §3.10 daily_risk_loop 的 drawdown_controller.evaluate()，作为 C 层 VaR/CVaR 约束的替代。35号 §3.18 盘后持久化需记录 var_model_status，供次日 §3.15 盘前初始化加载。
 
 **RECALIBRATE/REBUILD 审计日志调用时机**（v1.1.0 D1）：
 - `log_recalibration(action="RECALIBRATE", reason=...)`：执行 RECALIBRATE 动作 1-4 任一后立即调用
@@ -464,7 +464,7 @@ else:
 - 调用方：35号 §3.13 `intraday_risk_loop` 检测触发后调用 `intraday_var_recalc()`
 - 执行：① `var_calculator.calculate(current_returns, current_nav)` + `tail_risk_monitor.assess()` 重算 → `VarCvarMetrics(var_95, cvar_95)`；② 与盘前基线（state_store.load_premarket_baseline，§3.18 持久化）对比，`var_change_ratio > 0.20` → `significant_change=True` + `daily_auditor.log_intraday_recalc_significant()`；③ 更新 §3.15 VaR breach 状态机；④ `state_store.append_intraday_recalc_log()` 记录
 - 返回 `IntradayVarResult(var_cvar, breach_state, significant_change)` → 35号 §3.13 用新 var_cvar 重新调用 `drawdown_controller.evaluate()` 产出新 DrawdownResponse，覆盖盘前 response
-- **取最严维度澄清**（v1.4.0）："取最严" = position_cap 取 min（盘前 cap vs 盘中重算 cap），非 level 取 max——position_cap 是实际仓位约束，level 仅是分级标签。例：盘前 RED（cap=0.5）盘中重算 YELLOW（cap=0.7）→ 取 min(0.5, 0.7)=0.5（盘前 RED 胜出）
+- **取最严维度澄清**（v1.4.0）："取最严" = position_cap 取 min（盘前 cap vs 盘中重算 cap），非 level 取 max——position_cap 是实际仓位约束，level 仅是分级标签。例：盘前 RED（cap=0.5）盘中重算 GREEN（cap=1.0）→ 取 min(0.5, 1.0)=0.5（盘前 RED 胜出）（示例数值勘正 2026-08-18 AI-R3 复审：原 YELLOW cap=0.7 系旧 ORANGE 值误植，五级上限序列 1.0/0.5/0.5/0.5/0.0 无 0.7）
 
 **A 股收盘集合竞价特殊处理**（v1.1.0，职责边界）：
 - 36号 §3.12：检测 14:55 后是否触发盘中重算 → 重算 → 返回 IntradayVarResult（不直接提交减仓单）
@@ -1182,4 +1182,5 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 | 2026-08-12 | 1.10.2 | 作战地图环节映射补强——锚定 BM-RC-04-A、BM-RC-06-B、BM-RC-07 | §3.3/§3.12 末尾补映射块，环节级可追溯 |
 | 2026-08-14 | 1.10.3 | 压缩精简：已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） | 已施工内容折叠为"✅ 已施工（2 轮 27 测试全绿）+ 接口级摘要"，删除施工过程/调试记录/重复散文；VaR/ES 公式、配置参数、四级阈值、FHS/QbSD/Vol-Targeting 远期规约、§6 待裁定、§7 待定问题、35号契约、BM 锚点、全部数值参数零丢失 |
 | 2026-08-15 | 1.10.4 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §3.14 blackswan_active 来源链相邻两处重复合并为一处（定义点 §3.5.2）；全篇扫描无其他可压缩点——VaR 2/4/6%+CVaR 10% 五级、POT 0.90/0.2/0.5/3.0、Basel 交通灯 16/17-20/21、REBUILD 静态 3%/5%/0.7、var_breach ×0.8/×0.9、GREM 四级、盘中 7 触发+冷却 5 分钟+日限 6 次、§6 待裁定/BM 锚点/35号契约/链接逐项零丢失 |
+| 2026-08-16 | 1.11.0 | 双轮审查算法修复批（AI-RFIX-001）六要素勘正——§3.2/§3.5/§3.7/§3.9.1/§3.10/§3.11/§3.15 | ①§3.2 ES 分位数 method='lower' 口径裁定（防线性插值虚拟分位值）+ POT 小样本降级 pot_fallback_historical；②§3.5 ORANGE 仓位上限 0.7→0.5（五级单调性裁定 P1-4）；③§3.7 窗口表勘正（60 日负日占比 50% 常态 exceedances≈3<5 降级而非硬拟合）；④§3.9.1 回测 4 法表；⑤§3.10 REBUILD 静态映射状态标注；⑥§3.11 示例数值勘正；⑦§3.15 VarBreachStateMachine 未落码标注。frontmatter 1.10.4→1.11.0（修订行漏登，2026-08-18 AI-R3 复审补登） |
 | 2026-08-17 | 1.11.1 | RiskOrchestrator 命名对账（AI-GOVB-001 #106）：§3.10 执行者状态标注/组件状态表/「production 口径澄清」三处同步 RWIRE-001 完工现实——编排层已建（落地名 RiskLayerOrchestrator，MOD-L06-001，盘中编排已接线），§3.10 校准动作调用点未接入仍=设计契约 | 仅命名/状态对账，零语义变更；「禁止按可执行语气直读」标注保留 |

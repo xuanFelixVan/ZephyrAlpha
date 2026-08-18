@@ -3,7 +3,7 @@ module_id: MOD-RK-15
 title: "尾部风险监控器蓝图 — ES/CVaR + POT模型 + 跳跃检测 + FRTB加价"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.2.0"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -11,7 +11,7 @@ functional_domain: risk
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-02"
-last_updated: "2026-08-02"
+last_updated: "2026-08-18"
 priority: P1
 blueprint_level: module
 responsibility_domain: 
@@ -85,10 +85,11 @@ build_status: stable
 - tail_index = 1/shape
 - jump_count 单调非减 (窗口内)
 - FRTB 加价 >= 0
+- 非有限值 Fail-Closed（2026-08-18 AI-R3 复审 P1）：isfinite 过滤+计数，占比 > max_nonfinite_ratio（默认 5%，与 var_calculator 同口径）→ 抛 InvalidTailRiskInputError（原仅静默滤 NaN，±Inf 穿透污染 ES/POT/jump）
 
 ## 5. 错误契约
 
-- `InvalidTailRiskInputError` (ZA-RK-0015): 收益率序列过短 / 置信度非 (0,1) / 阈值非正
+- `InvalidTailRiskInputError` (ZA-RK-0015): 收益率序列过短 / 置信度非 (0,1) / 阈值非正 / 非有限值占比超阈值（Fail-Closed）
 
 ## 6. 测试
 

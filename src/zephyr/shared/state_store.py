@@ -256,7 +256,16 @@ class AppendOnlyDedupSet:
             ) from exc
         if not raw:
             return
-        text = raw.decode("utf-8", errors="strict")
+        try:
+            text = raw.decode("utf-8", errors="strict")
+        except UnicodeDecodeError as exc:
+            # 错误契约统一（AI-R3 复审 P2 治本）：字节级损坏（非法 UTF-8）
+            # 原裸 UnicodeDecodeError 逃逸违反头注 INVARIANT「读损坏必抛
+            # StateCorruptError」——统一映射，消费方 catch 语义不被破坏
+            raise StateCorruptError(
+                "去重集编码损坏（非法 UTF-8）",
+                details={"path": str(self._path), "error": str(exc)},
+            ) from exc
         lines = text.split("\n")
         # 末行无换行符（crash 残行）→ 丢弃
         if lines and not text.endswith("\n"):

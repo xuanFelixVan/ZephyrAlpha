@@ -1676,7 +1676,7 @@ risk_limits:
     threshold_unit: "%"
     inherent_risk: null
     residual_risk: null
-    consumption_tracking: "VaR_95∈[4%,6%)触发橙级：禁止新开仓+减仓30%（position_cap=0.7）；代码var_orange=0.04"
+    consumption_tracking: "VaR_95∈[4%,6%)触发橙级：禁止新开仓+减仓至上限50%（position_cap=0.5，P1-4 五级单调性裁定 2026-08-16 AI-RFIX-001；原 0.7 倒挂已修正，2026-08-18 AI-R3 复审同步本登记）；代码var_orange=0.04"
     kri_frequency: "daily"
     review_cycle: "quarterly"
     breach_action: "skip"
@@ -1684,9 +1684,9 @@ risk_limits:
     doc_ref: "36_var_es_monitoring.md §3.5.1"
     code_path: "src/zephyr/position/core/drawdown_controller.py"
     status: "active"
-    version: "1.0.0"
+    version: "1.0.1"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-08-18"
     owner: "MOD-GOVERNANCE"
     current_consumption: null
     stage: "active"

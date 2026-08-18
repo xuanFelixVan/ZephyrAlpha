@@ -3,7 +3,7 @@ module_id: MOD-RK-05
 title: "VaR 风险价值计算器蓝图 — 参数法+历史模拟法 Phase 1"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.2.0"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -11,7 +11,7 @@ functional_domain: risk
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-02"
-last_updated: "2026-08-02"
+last_updated: "2026-08-18"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
@@ -76,6 +76,7 @@ Phase 3(未实现): Basel III 三角验证+乘数因子+压力 VaR
 - `InvalidVaRConfigError` (ZA-RK-0005): 配置非法(置信度/持有期)
 - `InsufficientVaRHistoryError` (ZA-RK-0006): 历史样本不足
 - `ExcessiveNonFiniteDataError` (ZA-RK-0024): 非有限值(NaN/±Inf)占比超阈值
+  （编号终局 2026-08-18：#ARCH-ERRCODE-001 专项批 AI-ERR-001 裁定本类保留 ZA-RK-0024，stop_loss 重码方顺延 ZA-RK-0025）
 
 ## 6. 测试
 

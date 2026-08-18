@@ -89,6 +89,7 @@ SSoT: depgraph MOD-EX-001
 from __future__ import annotations
 
 import logging
+import threading
 from collections import defaultdict
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -207,8 +208,28 @@ class FillHandler:
         )
         self._summaries: dict[str, FillSummary] = {}
         self._callbacks: list[Callable[[Fill, FillSummary], None]] = []
+        # 幂等门原子化锁（AI-R3 复审 P2 治本）：纯内存 set 场景下
+        # check-then-add 非原子，多线程同 fill_id 存在双入账窗口
+        self._dedup_lock = threading.Lock()
 
     # ── 核心处理 ──────────────────────────────────────────────────────────
+
+    def _claim_fill_id(self, fill_id: str) -> bool:
+        """原子认领 fill_id（AI-R3 复审 P2 治本：消除 check-then-add 双入账窗口）。
+
+        与 PositionTracker.apply_fill 同款模式——以去重集 add 返回值做单步门：
+        持久化去重集场景 add 自身持锁原子；纯内存 set 场景用 _dedup_lock 串行。
+
+        Returns:
+            True=首次见到（已登记，调用方继续入账）；False=已处理（幂等拦截）。
+        """
+        if isinstance(self._processed_fill_ids, AppendOnlyDedupSet):
+            return self._processed_fill_ids.add(fill_id)
+        with self._dedup_lock:
+            if fill_id in self._processed_fill_ids:
+                return False
+            self._processed_fill_ids.add(fill_id)
+            return True
 
     def process_fill(self, fill: Fill, order: Order) -> FillSummary:
         """处理一笔成交——更新订单成交状态，返回成交汇总。
@@ -238,8 +259,10 @@ class FillHandler:
                 f"成交回报 order_id={fill.order_id} 与传入订单 order_id={order.order_id} 不匹配"
             )
 
-        # ── 幂等检查 ──
-        if fill.fill_id in self._processed_fill_ids:
+        # ── 幂等检查（原子单步门，AI-R3 复审 P2 治本）──
+        # 认领即登记（at-most-once）：登记后入账前 crash 该 fill 视为已处理，
+        # 与 PositionTracker.apply_fill 去重登记先行同语义——宁可少计不重复计
+        if not self._claim_fill_id(fill.fill_id):
             logger.debug("幂等拦截: fill_id=%s 已处理，跳过", fill.fill_id)
             cached = self._summaries.get(order.order_id)
             if cached is not None:
@@ -267,7 +290,6 @@ class FillHandler:
 
         # ── 记录成交 ──
         self._fills[order.order_id].append(fill)
-        self._processed_fill_ids.add(fill.fill_id)
 
         # ── 累积计算 ──
         old_filled = order.filled_quantity or Decimal("0")

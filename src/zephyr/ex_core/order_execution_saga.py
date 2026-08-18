@@ -460,9 +460,10 @@ class OrderExecutionSaga:
             return self._run_saga(ctx)
         finally:
             # 清理 fill callback（step3 可能注册了 collector）
+            # 走公共 fill_callbacks 属性（AI-R3 复审 P2：OrderManager Stage 4 已公共化）
             if ctx.collector is not None:
                 try:
-                    self._order_manager._fill_callbacks.remove(ctx.collector)
+                    self._order_manager.fill_callbacks.remove(ctx.collector)
                 except (ValueError, AttributeError):
                     pass  # 已清理或不存在
 
@@ -487,19 +488,22 @@ class OrderExecutionSaga:
             remaining = ctx.remaining_timeout(self._config)
             fill = self._step4_fill_confirm(ctx, ctx.collector, remaining)
             if fill is None:
-                # 超时 → 补偿撤单；撤单失败强制查询订单终态——已成交补走后续
-                # step5/6 而非吞掉（裁定书 §三 P0-2，#ARCH-100）
+                # 超时 → 补偿撤单；只要未确认撤净就强制查终态分流（AI-R3 复审
+                # P1 治本：原仅 FAILED 分支查终态——collector.wait 超时后、撤单
+                # 检查前成交回调到达使订单转 FILLED 时，_compensate_order 返回
+                # NOT_NEEDED 直接跳过恢复，成交被吞=与 P0-2 同型事故窗口）
                 ctx.state = SagaState.TIMEOUT
                 ctx.error = f"fill timeout after {self._config.timeout_seconds}s"
                 outcome = self._compensate_order(ctx)
-                if outcome is _CancelOutcome.FAILED:
+                if outcome in (_CancelOutcome.FAILED, _CancelOutcome.NOT_NEEDED):
                     if self._recover_filled_order(ctx):
                         return ctx.to_result()
-                    _logger.critical(
-                        "[Saga %s] 撤单失败且无法确认订单终态——持仓可能与券商不一致，需人工对账: order=%s",
-                        ctx.saga_id[:8],
-                        ctx.order.order_id,
-                    )
+                    if outcome is _CancelOutcome.FAILED:
+                        _logger.critical(
+                            "[Saga %s] 撤单失败且无法确认订单终态——持仓可能与券商不一致，需人工对账: order=%s",
+                            ctx.saga_id[:8],
+                            ctx.order.order_id,
+                        )
                 self._audit_timeout(ctx)
                 return ctx.to_result()
 
@@ -750,18 +754,26 @@ class OrderExecutionSaga:
             return _CancelOutcome.FAILED
 
     def _recover_filled_order(self, ctx: _SagaContext) -> bool:
-        """超时撤单失败后的终态恢复：强制查询订单终态，已成交补走 step5/6。
+        """超时后的终态恢复：强制查询订单终态，有成交（全成/部成）补走 step5/6。
+
+        AI-R3 复审 P1 治本：原仅 FILLED 终态恢复——PARTIAL（部分成交）时
+        已成交部分不入账，持仓账与券商漂移。改为按 filled_quantity 分流：
+        有成交即恢复（FILLED 缺数量时按订单全量兜底），无成交保持 TIMEOUT。
 
         Returns:
-            True=订单实际已成交且后续步骤已补走；False=未成交或无法确认终态
+            True=订单有成交且后续步骤已补走；False=无成交或无法确认终态
             （保持 TIMEOUT 语义，调用方继续告警）。
         """
         terminal = self._query_terminal_order(ctx)
-        if terminal is None or terminal.status is not OrderStatus.FILLED:
+        if terminal is None:
             return False
-        # 已成交：构造恢复 Fill 补走持仓更新+报告（fill_id 确定性前缀 saga-fq-，
+        recovered_qty = terminal.filled_quantity
+        if terminal.status is OrderStatus.FILLED and recovered_qty <= 0:
+            recovered_qty = ctx.order.quantity  # FILLED 但数量缺失（契约漂移兜底）
+        if recovered_qty <= 0:
+            return False  # 无成交（CANCELLED/REJECTED/零成交）→ 保持 TIMEOUT
+        # 有成交：构造恢复 Fill 补走持仓更新+报告（fill_id 确定性前缀 saga-fq-，
         # 供 fill_id 去重集识别恢复来源——去重落地归 AI-RRESIL-001，本侧只保证可识别）
-        recovered_qty = terminal.filled_quantity if terminal.filled_quantity > 0 else ctx.order.quantity
         recovered_price = terminal.avg_fill_price or ctx.order.limit_price or Decimal("0")
         ctx.fill = Fill(
             fill_id=f"saga-fq-{ctx.order.order_id}",

@@ -228,7 +228,16 @@ class TradingSession:
         self._price_provider = price_provider
         self._order_manager = order_manager
         self._config = config
-        self._cancel_rate_guard = cancel_rate_guard or CancelRateGuard()
+        # 同实例防护（AI-R3 复审 P1 治本）：OrderManager 已注入 declaration_guard
+        # 时复用同一实例——报单计数（record_submit）与撤单计数（record_cancel）
+        # 必须落入同一日申报硬计数器，否则 1 万笔阻断线可被双实例分裂计数绕过
+        om_guard = getattr(order_manager, "declaration_guard", None)
+        if cancel_rate_guard is not None and om_guard is not None and cancel_rate_guard is not om_guard:
+            raise ValueError(
+                "cancel_rate_guard 与 OrderManager.declaration_guard 必须是同一实例"
+                "（日申报计数分裂=1 万笔阻断线失效，AI-R3 复审 P1 裁定）"
+            )
+        self._cancel_rate_guard = cancel_rate_guard or om_guard or CancelRateGuard()
         # C-004 合规闸（None=未接线不校验，AI-ASM-001 装配批）
         self._checklist_checker = checklist_checker
         self._kill_switch = kill_switch

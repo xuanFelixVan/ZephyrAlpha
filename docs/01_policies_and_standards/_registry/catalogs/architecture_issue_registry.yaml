@@ -17412,3 +17412,101 @@ entries:
   created: '2026-08-18'
   last_updated: '2026-08-18'
   owner_approval: '2026-08-18 Owner 派单转正（施工线新四路指令，P1 候选转正 MVP）'
+
+# --- #ARCH-124: pg_probe module_id N-17 回潮——depgraph 节点未刷新致 S2 对齐循环回退治本（AI-R3 复审第一轮遗留①；merge 撞号 #ARCH-120 SEAT-001 占用，重编 124） ---
+- issue_id: '#ARCH-124'
+  title: pg_probe module_id N-17 违例回潮——reconciler S2 对齐循环以旧 depgraph 节点为真源把 MOD-PG_PROBE 回退为 MOD-GOV_PG_PROBE
+  severity: P1高
+  category: governance_metadata_drift
+  discovered: 2026-08-18 AI-R3 复审第一轮（子代理审查 fa25c19e49 批 pg_probe.py）
+  adjudication: |-
+    2026-08-18 AI-R3 复审第二轮自主裁定（依据指令 0.8 框架）：
+    【证据】pg_probe.py 行1 [BLUEPRINT] MOD-GOV_PG_PROBE 与行15 [A_module] module_id=MOD-PG_PROBE
+    不一致；MOD-GOV_PG_PROBE 与 [DOMAIN] D_GOV_AUDIT 共享 token GOV 且片段不等=N-17 违例重新成立。
+    时间线实证：fa25c19e49 原文件头部为 MOD-GATE_ENGINE（N-17 干净）→ merge 8a872d0e59 冲突解决
+    改 MOD-GOV_PG_PROBE（埋下 N-17）→ c556ed3ba1 治本改名 MOD-PG_PROBE（头注/翻译注册表/ownership_map
+    三处同步）→ reconciler 自动提交 90655a9990 的 S2 alignment_loop "auto-fix ORPHAN_MODULE_ID drift"
+    把行1改回 MOD-GOV_PG_PROBE（depgraph 节点尚未重扫刷新，自动对齐以旧节点为真源）。
+    根因：depgraph 节点=MOD-GOV_PG_PROBE（旧值），S2 对齐循环以节点为真源回退文件头治本值。
+    【裁定】需全量重扫刷新 depgraph 节点（#ARCH-70 通道，generate_project_depgraph.py --output-db
+    depgraph --force），使 S2 对齐循环收敛；重扫完成前给该文件加对齐豁免防再次回退。
+    属主仓共享状态（worktree 内写入 REFUSED），移交统筹侧执行。
+  impact:
+    - 'src/zephyr/governance/audit/pg_probe.py（行1/行15 module_id 不一致，N-17 违例）'
+    - 'depgraph（PostgreSQL）nodes 表 MOD-GOV_PG_PROBE 节点需重扫刷新为 MOD-PG_PROBE'
+  fix_phase: 'AI-R3 复审第二轮登记（2026-08-18）；移交统筹侧执行 #ARCH-70 全量重扫'
+  status: open
+  related_rules: '#ARCH-70; #ARCH-KEBAB-DIR-001（同类 N-17 治本先例 c556ed3ba1）'
+  created: '2026-08-18'
+  last_updated: '2026-08-18'
+
+# --- #ARCH-125: CancelRateGuard 日申报硬计数器纯内存——进程重启归零可绕过 1 万笔阻断线（AI-R3 复审第一轮遗留②；merge 撞号重编 125） ---
+- issue_id: '#ARCH-125'
+  title: CancelRateGuard 日申报硬计数器（_daily_count/_daily_date）纯内存——进程重启当日计数归零，1 万笔限交易阻断线可被"重启"绕过
+  severity: P1高
+  category: risk_resilience_gap
+  discovered: 2026-08-18 AI-R3 复审第一轮（子代理审查 f9e10bebdd 批 cancel_order 接线）
+  adjudication: |-
+    2026-08-18 AI-R3 复审第二轮自主裁定：
+    【证据】cancel_rate_guard.py L168-169 _daily_count/_daily_date 纯内存（无任何 state_store/文件 IO）；
+    二轮审查 P1-5 修复建议②明确要求"计数器落盘（当日计数+日期），启动加载"，f9e10bebdd 只完成建议①
+    （接线），持久化未见登记去向。进程重启（含 Kill Switch 清算后重启）当日计数归零，阻断线可被绕过。
+    【裁定】随 state_store 持久化批落盘 {count, date}（与 PotFailureCounter 同模式：读失败 fail-closed
+    按最保守计），启动加载恢复当日计数；跨日清零用自然日 date.today()（交易日口径，隔日作废）。
+  impact:
+    - 'src/zephyr/ex_core/cancel_rate_guard.py（_daily_count/_daily_date 加 state_store 持久化）'
+    - 'tests/ex_core/test_cancel_rate_guard.py（补持久化/重启恢复/读失败 fail-closed 用例）'
+  fix_phase: 'AI-R3 复审第二轮登记（2026-08-18）；随 state_store 持久化批施工'
+  status: open
+  related_rules: '#ARCH-QUANT-002（Crash-only 状态外部化）; 43 号 §8 方案 A 日申报硬计数器'
+  created: '2026-08-18'
+  last_updated: '2026-08-18'
+
+# --- #ARCH-126: Saga 恢复路径 step5 失败时持仓回滚漂移——对从未入账的成交做反向 apply_fill 负向漂移（AI-R3 复审第一轮遗留③；merge 撞号重编 126） ---
+- issue_id: '#ARCH-126'
+  title: Saga 恢复路径 step5（持仓更新）失败时 _compensate_position 对从未入账的成交做反向 apply_fill 负向漂移
+  severity: P2中
+  category: risk_saga_compensation_drift
+  discovered: 2026-08-18 AI-R3 复审第一轮（子代理审查 2b3b68b5d2 批 saga 超时恢复）
+  adjudication: |-
+    2026-08-18 AI-R3 复审第二轮自主裁定：
+    【证据】order_execution_saga.py _recover_filled_order（超时恢复路径）：
+    `if not self._step5_position_update(ctx): return True`——step5 失败时静默吞掉（返回 True），
+    但 _step5_position_update 内部 except 块已调 _compensate_position 做持仓回滚；此时成交从未入账
+    （apply_fill 抛异常），反向 apply_fill 对不存在的持仓做扣减=负向漂移。区分"已入账后回滚"（正常
+    补偿）与"未入账"（不应回滚）缺失。
+    【裁定】step5 失败时区分两种情形：①apply_fill 部分成功后失败→正常补偿回滚；②apply_fill 未执行
+    即失败→不回滚（持仓未变，无物可回滚）；_recover_filled_order 对 step5 失败应返回 False
+    （保持 TIMEOUT 语义+CRITICAL 告警），不静默吞掉。
+  impact:
+    - 'src/zephyr/ex_core/order_execution_saga.py（_step5_position_update 异常分类 + _recover_filled_order 返回值修正）'
+    - 'tests/ex_core/test_saga_timeout_recovery.py（补 step5 失败漂移用例）'
+  fix_phase: 'AI-R3 复审第二轮登记（2026-08-18）；随后续 saga 修复批施工'
+  status: open
+  related_rules: '#ARCH-100（Saga 超时终态）; #ARCH-QUANT-002'
+  created: '2026-08-18'
+  last_updated: '2026-08-18'
+
+# --- #ARCH-127: 清算链 T+1 可卖数量未分化——Kill Switch 清算对当日买入 T+1 锁定份额发单必被券商拒（AI-R3 复审第一轮遗留④；merge 撞号重编 127） ---
+- issue_id: '#ARCH-127'
+  title: Kill Switch 清算链对全部持仓发 MARKET SELL，含当日买入 T+1 锁定份额——实盘必被券商拒，无识别/重试/告警分化
+  severity: P2中
+  category: risk_liquidation_t_plus_1
+  discovered: 2026-08-18 AI-R3 复审第一轮（子代理审查 2b3b68b5d2 批清算链）
+  adjudication: |-
+    2026-08-18 AI-R3 复审第二轮自主裁定：
+    【证据】stop_loss.py execute_kill_switch_liquidation 对 _resolve_live_positions 全部持仓发
+    MARKET SELL，含当日买入的 T+1 锁定份额——A 股 T+1 规则下券商必拒（进 liquidation_errors，
+    all_success=False），链路无识别/重试/告警分化。T+1 校验真源在 broker 层（miniqmt
+    _check_t_plus_1 查 can_sell_volume），清算链未消费。
+    【裁定】清算前按 available（可卖）数量发单：broker 提供 can_sell_volume/available_qty 时按
+    min(持仓, 可卖) 发单；或把 T+1 拒绝与普通失败分桶（liquidation_errors 区分 t_plus_1_rejected
+    vs broker_rejected），T+1 拒绝不标记 all_success=False（次日自动解锁，非真实失败）。
+  impact:
+    - 'src/zephyr/risk/stop_loss.py（execute_kill_switch_liquidation 可卖数量分化）'
+    - 'tests/risk/test_kill_switch_state_persistence.py（补 T+1 拒绝分桶用例）'
+  fix_phase: 'AI-R3 复审第二轮登记（2026-08-18）；随后续清算链修复批施工'
+  status: open
+  related_rules: '#ARCH-QUANT-002; A 股 T+1 交易规则'
+  created: '2026-08-18'
+  last_updated: '2026-08-18'

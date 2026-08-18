@@ -131,24 +131,6 @@ class FakeBroker(BrokerInterface):
         pass
 
 
-class RebuildableTracker(PositionTracker):
-    """按 AI-RRESIL-001 约定签名实现 rebuild_from_broker 的测试替身。
-
-    签名约定：rebuild_from_broker(holdings: dict, today_fills: list) -> None
-    （merge 时与 RRESIL 真实实现对齐；本替身语义=以券商为准全量覆盖）。
-    """
-
-    def rebuild_from_broker(self, holdings: dict, today_fills: list) -> None:
-        self.reset()
-        for fill, side in today_fills:
-            self.apply_fill(fill, side)
-        with self._lock:
-            for symbol, qty in holdings.items():
-                self._holdings[symbol] = Decimal(str(qty))
-                if self._avg_costs.get(symbol, Decimal("0")) == Decimal("0"):
-                    self._avg_costs[symbol] = Decimal("0")
-
-
 def _make_orchestrator(
     *,
     broker: FakeBroker,
@@ -333,7 +315,7 @@ class TestStartupRecovery:
             cost_prices={"600000.SH": Decimal("100")},
             today_fills=[(fill, OrderSide.BUY)],
         )
-        tracker = RebuildableTracker(initial_cash=Decimal("1000000"))
+        tracker = PositionTracker(initial_cash=Decimal("1000000"))
         orch = _make_orchestrator(broker=broker, tracker=tracker)
 
         result = orch.recover_from_broker()
@@ -476,7 +458,7 @@ class TestIntradayReconcile:
     def test_frozen_symbol_blocked_in_rebalance(self) -> None:
         """对账 drift → 标的冻结 → 该标的订单硬拦。"""
         broker = FakeBroker(cash=Decimal("1000000"))  # 券商账：无持仓
-        tracker = RebuildableTracker(initial_cash=Decimal("1000000"))
+        tracker = PositionTracker(initial_cash=Decimal("1000000"))
         reconciler = PositionReconciler(system_source=tracker, broker_source=broker)
         orch = _make_orchestrator(broker=broker, tracker=tracker, reconciler=reconciler)
         assert orch.recover_from_broker().success is True
@@ -510,7 +492,7 @@ class TestIntradayReconcile:
     def test_reconcile_loop_start_stop(self) -> None:
         """定时对账循环：drift 出现后自动冻结；stop 后定时器清理。"""
         broker = FakeBroker(cash=Decimal("1000000"))
-        tracker = RebuildableTracker(initial_cash=Decimal("1000000"))
+        tracker = PositionTracker(initial_cash=Decimal("1000000"))
         drift_seen = threading.Event()
 
         def _on_drift(_result: object) -> None:
