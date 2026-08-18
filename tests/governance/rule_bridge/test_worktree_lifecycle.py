@@ -37,10 +37,10 @@ from pathlib import Path
 import pytest
 import yaml
 
-
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 _SRC_DIR = str(_PROJECT_ROOT / "src")
 import sys
+
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 

@@ -96,8 +96,8 @@ class TestFiveSystemDiscovery:
         assert r.budget_level.name == "L0_NORMAL"
 
     def test_cross_system_escalation_chain(self):
-        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
         from zephyr.governance.escalation.escalation_engine import EscalationEngine, RuleCategory
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
         e = EscalationEngine("chain-test")
         be = BudgetEngine()

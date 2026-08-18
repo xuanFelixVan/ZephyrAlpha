@@ -38,7 +38,6 @@ from zephyr.gov_enforcement.commit_gates.arch_reference_gate import (
     make_arch_reference_gate,
 )
 
-
 # 测试用 registry YAML：含数字制 + 描述性 ARCH ID，不含 #ARCH-999 / #ARCH-DOC-REF-FAKE
 _REGISTRY_YAML = """\
 module_id: REG-ARCH-ISSUE-001

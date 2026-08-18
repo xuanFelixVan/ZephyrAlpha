@@ -36,12 +36,11 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from tests.governance.commit_gates.gate_test_helpers import make_mock_gateway  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.zephyr_env_direct_access_gate import (  # noqa: E402
     make_zephyr_env_direct_access_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
-from tests.governance.commit_gates.gate_test_helpers import make_mock_gateway  # noqa: E402
-
 
 # ============================================================================
 # TestGateSpecFields

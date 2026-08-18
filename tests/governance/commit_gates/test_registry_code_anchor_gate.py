@@ -58,7 +58,6 @@ from zephyr.gov_enforcement.commit_gates.registry_code_anchor_gate import (  # n
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
-
 # ---------------------------------------------------------------- fixtures
 
 _REG_YAML = """module_id: MOD-GOVERNANCE

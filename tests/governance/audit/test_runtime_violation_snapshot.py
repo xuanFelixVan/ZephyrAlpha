@@ -40,14 +40,13 @@ if _SRC_DIR not in sys.path:
 
 from zephyr.governance.audit.runtime_violation_snapshot import (  # noqa: E402
     _CATEGORY_TO_METRIC,
-    compute_drift_count,
     compare_baseline_with_live,
+    compute_drift_count,
     generate_snapshot,
     is_snapshot_fresh,
     load_snapshot,
     save_snapshot,
 )
-
 
 # ---------------------------------------------------------------------------
 # 辅助：构造 baseline YAML（最小化）

@@ -50,9 +50,9 @@ class TestReconcileForAcceptsCommitMessage:
     def test_reconcile_for_accepts_commit_message_kwarg(self):
         """reconcile_for(commit_message='...') 不抛异常。"""
         from zephyr.governance.audit.reconciliation_registry import (
-            ReconciliationRegistry,
-            ReconcilerSpec,
             ReconcileResult,
+            ReconcilerSpec,
+            ReconciliationRegistry,
         )
         registry = ReconciliationRegistry()
 
@@ -77,9 +77,9 @@ class TestReconcileForAcceptsCommitMessage:
     def test_reconcile_for_default_empty_commit_message(self):
         """reconcile_for 不传 commit_message 时默认空字符串（向后兼容）。"""
         from zephyr.governance.audit.reconciliation_registry import (
-            ReconciliationRegistry,
-            ReconcilerSpec,
             ReconcileResult,
+            ReconcilerSpec,
+            ReconciliationRegistry,
         )
         registry = ReconciliationRegistry()
 
@@ -111,9 +111,9 @@ class TestThreeArgReconcilerReceivesCommitMessage:
     def test_three_arg_reconciler_receives_commit_message(self):
         """reconcile(files, sid, commit_message) 签名的 reconciler 收到 commit_message。"""
         from zephyr.governance.audit.reconciliation_registry import (
-            ReconciliationRegistry,
-            ReconcilerSpec,
             ReconcileResult,
+            ReconcilerSpec,
+            ReconciliationRegistry,
         )
         registry = ReconciliationRegistry()
         received_messages: list[str] = []
@@ -140,9 +140,9 @@ class TestThreeArgReconcilerReceivesCommitMessage:
     def test_three_arg_reconciler_with_bypass_marker(self):
         """3-arg reconciler 能检测 [no-lookup:reason] 标记。"""
         from zephyr.governance.audit.reconciliation_registry import (
-            ReconciliationRegistry,
-            ReconcilerSpec,
             ReconcileResult,
+            ReconcilerSpec,
+            ReconciliationRegistry,
         )
         registry = ReconciliationRegistry()
 
@@ -183,9 +183,9 @@ class TestTwoArgReconcilerBackwardCompat:
     def test_two_arg_reconciler_still_works(self):
         """2-arg reconcile(files, sid) 签名的 reconciler 不受 commit_message 影响。"""
         from zephyr.governance.audit.reconciliation_registry import (
-            ReconciliationRegistry,
-            ReconcilerSpec,
             ReconcileResult,
+            ReconcilerSpec,
+            ReconciliationRegistry,
         )
         registry = ReconciliationRegistry()
 
@@ -222,8 +222,8 @@ class TestLogReconcileResultsStoresCommitMessage:
     def test_log_stores_commit_message_in_db(self, tmp_path: Path):
         """_log_reconcile_results 将 commit_message 写入 reconcile_execution_log 表。"""
         from zephyr.governance.audit.reconciliation_registry import (
-            _log_reconcile_results,
             ReconcileResult,
+            _log_reconcile_results,
         )
         # 准备 governance.db 路径
         db_dir = tmp_path / "data" / "databases"
@@ -255,8 +255,8 @@ class TestLogReconcileResultsStoresCommitMessage:
     def test_log_default_empty_commit_message(self, tmp_path: Path):
         """不传 commit_message 时 DB 中存储空字符串。"""
         from zephyr.governance.audit.reconciliation_registry import (
-            _log_reconcile_results,
             ReconcileResult,
+            _log_reconcile_results,
         )
         db_dir = tmp_path / "data" / "databases"
         db_dir.mkdir(parents=True, exist_ok=True)
@@ -292,6 +292,7 @@ class TestEnsureCommitMessageColumn:
     def test_ensure_column_creates_if_missing(self, tmp_path: Path):
         """老库（无 commit_message 列）调用后补列。"""
         import sqlite3
+
         from zephyr.governance.audit.reconciliation_registry import (
             SQL_CREATE_RECONCILE_EXECUTION_LOG,
             _ensure_commit_message_column,
@@ -327,6 +328,7 @@ class TestEnsureCommitMessageColumn:
     def test_ensure_column_idempotent(self, tmp_path: Path):
         """已有 commit_message 列时幂等（不报错）。"""
         import sqlite3
+
         from zephyr.governance.audit.reconciliation_registry import (
             _ensure_commit_message_column,
         )

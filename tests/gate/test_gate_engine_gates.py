@@ -29,8 +29,6 @@ from pathlib import Path
 import pytest
 import yaml
 
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
     GateEngine,
     GateEngineError,
@@ -42,8 +40,10 @@ from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
     _check_path_blacklist,
 )
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
-from zephyr.shared.schema.severity_types import SafetyLevel
+from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.shared.foundation.models import TaskCard
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.schema.severity_types import SafetyLevel
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -257,7 +257,7 @@ def test_valid_path_not_blocked(engine: GateEngine) -> None:
 def test_encoding_utf8_bom_blocked(tmp_dir: Path, engine: GateEngine) -> None:
     bad_file = tmp_dir / "bom_file.md"
     bad_file.write_bytes(b"\xef\xbb\xbf# BOM header\n")
-    
+
     task = _make_task(deliverables=["bom_file.md"])
     result = engine.evaluate(task, "G1")
     assert result.passed is False
@@ -267,7 +267,7 @@ def test_encoding_utf8_bom_blocked(tmp_dir: Path, engine: GateEngine) -> None:
 def test_encoding_corrupted_blocked(tmp_dir: Path, engine: GateEngine) -> None:
     bad_file = tmp_dir / "corrupt.md"
     bad_file.write_bytes(b"\xff\xfe# corrupted\n")
-    
+
     task = _make_task(deliverables=["corrupt.md"])
     result = engine.evaluate(task, "G1")
     assert result.passed is False
@@ -279,7 +279,7 @@ def test_encoding_valid_utf8_passes(tmp_dir: Path, engine: GateEngine) -> None:
     frontmatter = "---\nmodule_id: TEST_GOOD\ntitle: 测试文件\ncategory: test\n---\n"
     body = "# 正常文件\n\n" + "这是正常的内容，包含足够的字符。" * 10
     good_file.write_bytes((frontmatter + body).encode("utf-8"))
-    
+
     task = _make_task(deliverables=["good.md"])
     result = engine.evaluate(task, "G1")
     assert result.passed is True
@@ -294,7 +294,7 @@ def test_empty_file_blocked_by_g2(tmp_dir: Path, engine: GateEngine) -> None:
     """G2 的 content_quality 检查拦截空壳文件。"""
     empty_file = tmp_dir / "empty.md"
     empty_file.write_bytes(b"")
-    
+
     task = _make_task(deliverables=["empty.md"])
     result = engine.evaluate(task, "G2")
     assert result.passed is False
@@ -305,7 +305,7 @@ def test_placeholder_heavy_file_blocked_by_g2(tmp_dir: Path, engine: GateEngine)
     """G2 的 content_quality 检查拦截充满占位符的空壳文件。"""
     stub_file = tmp_dir / "stub.md"
     stub_file.write_bytes(b"# TODO\n\nTODO TODO TODO TODO TODO TODO TODO TODO\n")
-    
+
     task = _make_task(deliverables=["stub.md"])
     result = engine.evaluate(task, "G2")
     assert result.passed is False
@@ -315,7 +315,7 @@ def test_g1_short_content_warning(tmp_dir: Path, engine: GateEngine) -> None:
     """G1 的 content_length 检查（P1）：内容过短产生警告但不阻断任务启动。"""
     short_file = tmp_dir / "short.md"
     short_file.write_bytes(b"---\nmodule_id: X\ntitle: t\ncategory: c\n---\n\nShort.\n")
-    
+
     task = _make_task(deliverables=["short.md"])
     result = engine.evaluate(task, "G1")
     # P1 违规不阻断（passed=True），但会记录到 violations 列表
@@ -328,7 +328,7 @@ def test_content_rich_file_passes_g2(tmp_dir: Path, engine: GateEngine) -> None:
     """G2 的 content_quality 检查：内容丰富的文件通过。"""
     rich_file = tmp_dir / "rich.md"
     rich_file.write_bytes(("# 实现说明\n\n" + "这是丰富的内容描述，包含足够的字符数。" * 10).encode("utf-8"))
-    
+
     task = _make_task(deliverables=["rich.md"])
     result = engine.evaluate(task, "G2")
     assert result.passed is True

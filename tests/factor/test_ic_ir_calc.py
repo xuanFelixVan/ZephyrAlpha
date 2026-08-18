@@ -6,8 +6,8 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from zephyr.factor.core.evaluation.backtest import EvaluationResult
 from zephyr.factor.analysis import ic_ir_calc
+from zephyr.factor.core.evaluation.backtest import EvaluationResult
 
 
 def _make_result(fid: str, ic: float = 0.05, ir: float = 0.6) -> EvaluationResult:

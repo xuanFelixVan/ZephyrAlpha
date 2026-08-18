@@ -35,8 +35,8 @@ if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
 from zephyr.governance.audit.health_score_calculator import (  # noqa: E402
-    AbuseHealthScore,
     _DEFAULT_WEIGHTS,
+    AbuseHealthScore,
     calculate_health_score,
 )
 

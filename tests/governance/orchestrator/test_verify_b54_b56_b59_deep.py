@@ -16,13 +16,13 @@ from pathlib import Path
 
 import pytest
 
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.governance.persistence.task_repo import (
     P0InflationFrozenError,
     TaskRepository,
 )
-from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
-from zephyr.shared.schema.severity_types import Priority as P
 from zephyr.shared.foundation.models import TaskCard
+from zephyr.shared.schema.severity_types import Priority as P
 
 now = datetime.now(UTC)
 

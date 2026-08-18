@@ -57,8 +57,6 @@ arbitrator_mod = pytest.importorskip(
     reason="arbitrator module not available",
 )
 
-from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
-from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
 from zephyr.governance.escalation.escalation_api import EscalationAPI
 from zephyr.governance.escalation.escalation_engine import EscalationEngine
 from zephyr.governance.escalation.escalation_loop_detector import EscalationLoopDetector
@@ -69,11 +67,13 @@ from zephyr.governance.escalation.escalation_models import (
     EscalationState,
     RuleCategory,
 )
+from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
+from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import (
     AgentMeta,
     AgentRole,
-    Arbitrator,
     ArbitrationVerdict,
+    Arbitrator,
 )
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.cascade_guard import (
     CascadeGuard,
@@ -445,7 +445,7 @@ class TestConcurrent100TasksMixed:
             else:
                 det.add_edge(f"mix_w_{idx}", f"mix_h_{idx}")
                 guard.record_failure(f"mix_agent_{idx}")
-                return f"deadlock+guard:ok"
+                return "deadlock+guard:ok"
 
         with ThreadPoolExecutor(max_workers=16) as pool:
             futures = [pool.submit(mixed_task, i) for i in range(100)]

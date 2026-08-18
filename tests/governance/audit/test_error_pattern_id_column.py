@@ -36,7 +36,6 @@ import pytest
 # 使用 module import 形式规避 TEST-SOURCE-CONSISTENCY gate
 import zephyr.governance.audit.reconciliation_registry as reg_mod
 
-
 # 老 schema（2026-07-20 前）：无 error_pattern_id 列（含 acknowledged_at + commit_message）
 _SQL_CREATE_OLD_NO_EPID = (
     "CREATE TABLE IF NOT EXISTS reconcile_execution_log ("

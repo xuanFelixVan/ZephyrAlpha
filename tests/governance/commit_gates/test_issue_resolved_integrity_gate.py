@@ -19,7 +19,6 @@ from zephyr.gov_enforcement.commit_gates.issue_resolved_integrity_gate import (
     make_issue_resolved_integrity_gate,
 )
 
-
 # ============================================================================
 # extract_file_paths_from_impact 测试
 # ============================================================================
@@ -196,7 +195,7 @@ entries:
         """resolved 条目的 impact 文件存在时放行。"""
         (tmp_path / "src").mkdir()
         (tmp_path / "src" / "exists.py").write_text("# test")
-        content = f"""\
+        content = """\
 module_id: TEST
 entries:
   - issue_id: '#ARCH-TEST-001'

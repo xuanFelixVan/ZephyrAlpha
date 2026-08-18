@@ -22,8 +22,8 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.governance.observability_governance.query_metrics import PercentileTracker, QueryMetrics
+from zephyr.governance.persistence.sqlite_schema import init_db
 
 
 @pytest.fixture

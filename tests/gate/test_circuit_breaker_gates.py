@@ -21,7 +21,6 @@ T-V2-005 单元测试 — CircuitBreakerGateway (CBG)
 
 import pytest
 
-from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.gov_enforcement.rule_enforcement.circuit_breaker import (
     DEFAULT_THRESHOLD,
     CBGManager,
@@ -35,6 +34,7 @@ from zephyr.gov_enforcement.rule_enforcement.circuit_breaker import (
 from zephyr.gov_enforcement.rule_enforcement.circuit_breaker import (
     register_compliance as register_l08_policy,
 )
+from zephyr.governance.persistence.sqlite_schema import init_db
 
 # ---------------------------------------------------------------------------
 # Fixture：每个测试使用独立内存数据库

@@ -17,13 +17,13 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
 from zephyr.governance.escalation.escalation_models import (
     DelegationStrategy,
     EscalationEvent,
     EscalationLevel,
     RuleCategory,
 )
+from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
 
 
 def _make_event(owner_id="owner1", description="test event"):

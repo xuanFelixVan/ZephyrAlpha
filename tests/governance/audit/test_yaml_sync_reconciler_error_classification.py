@@ -52,13 +52,13 @@ _SYNC_DIR = str(_PROJECT_ROOT / "scripts" / "governance" / "d8_doc_sync")
 if _SYNC_DIR not in sys.path:
     sys.path.insert(0, _SYNC_DIR)
 
+from sync_yaml_to_depgraph import _classify_error  # noqa: E402
+
 from zephyr.governance.audit.reconciliation_registry import (  # noqa: E402
     ReconcilerSpec,
     _classify_sync_failure,
     make_yaml_sync_reconciler,
 )
-from sync_yaml_to_depgraph import _classify_error  # noqa: E402
-
 
 # ============================================================================
 # 1. _classify_sync_failure 纯函数测试

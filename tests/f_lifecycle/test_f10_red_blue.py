@@ -39,13 +39,12 @@ from zephyr.intelligence.model_profiling.capability_passport import (
     _compute_signature,
     _get_signing_key,
 )
-from zephyr.intelligence.model_profiling.exam_orchestrator import ExamOrchestrator
 from zephyr.intelligence.model_profiling.exam_checks import validate_result
+from zephyr.intelligence.model_profiling.exam_orchestrator import ExamOrchestrator
 from zephyr.intelligence.model_profiling.exam_test_cases import (
     CASES_BY_CAPABILITY,
     ExamTestCase,
 )
-
 
 # ------------------------------------------------------------------
 # 辅助函数

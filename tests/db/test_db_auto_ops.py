@@ -190,9 +190,9 @@ def test_schema_version_check():
         if row:
             print(f"  ✓ governance.db: schema 版本 = {row[0]}")
         else:
-            print(f"  ⚠ governance.db: _schema_version 表为空")
+            print("  ⚠ governance.db: _schema_version 表为空")
     except sqlite3.OperationalError:
-        print(f"  ⚠ governance.db: 无 _schema_version 表")
+        print("  ⚠ governance.db: 无 _schema_version 表")
     except Exception as e:
         assert False, f"governance.db: 检查失败: {e}"
 
@@ -206,9 +206,9 @@ def test_schema_version_check():
         if row:
             print(f"  ✓ depgraph (PostgreSQL): schema 版本 = {row[0]}")
         else:
-            print(f"  ⚠ depgraph (PostgreSQL): _schema_version 表为空")
+            print("  ⚠ depgraph (PostgreSQL): _schema_version 表为空")
     except psycopg2.Error:
-        print(f"  ⚠ depgraph (PostgreSQL): 无 _schema_version 表")
+        print("  ⚠ depgraph (PostgreSQL): 无 _schema_version 表")
     except Exception as e:
         assert False, f"depgraph (PostgreSQL): 检查失败: {e}"
 

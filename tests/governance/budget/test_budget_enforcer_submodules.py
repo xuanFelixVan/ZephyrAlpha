@@ -69,7 +69,11 @@ class TestInstructionBloatDetector:
 
 class TestStreamAbortGuard:
     def test_continue_when_budget_ok(self):
-        from zephyr.governance.ops_governance.stream_abort_guard import AbortDecision, StreamAbortGuard, StreamCheckpoint
+        from zephyr.governance.ops_governance.stream_abort_guard import (
+            AbortDecision,
+            StreamAbortGuard,
+            StreamCheckpoint,
+        )
 
         guard = StreamAbortGuard()
         cp = StreamCheckpoint(
@@ -79,7 +83,11 @@ class TestStreamAbortGuard:
         assert result.decision == AbortDecision.CONTINUE
 
     def test_abort_when_budget_exhausted(self):
-        from zephyr.governance.ops_governance.stream_abort_guard import AbortDecision, StreamAbortGuard, StreamCheckpoint
+        from zephyr.governance.ops_governance.stream_abort_guard import (
+            AbortDecision,
+            StreamAbortGuard,
+            StreamCheckpoint,
+        )
 
         guard = StreamAbortGuard()
         cp = StreamCheckpoint(
@@ -89,7 +97,11 @@ class TestStreamAbortGuard:
         assert result.decision == AbortDecision.IMMEDIATE_ABORT
 
     def test_abort_when_verbose(self):
-        from zephyr.governance.ops_governance.stream_abort_guard import AbortDecision, StreamAbortGuard, StreamCheckpoint
+        from zephyr.governance.ops_governance.stream_abort_guard import (
+            AbortDecision,
+            StreamAbortGuard,
+            StreamCheckpoint,
+        )
 
         guard = StreamAbortGuard()
         cp = StreamCheckpoint(tokens_emitted=500, expected_max_tokens=100, remaining_budget=5000, session_budget=10000)

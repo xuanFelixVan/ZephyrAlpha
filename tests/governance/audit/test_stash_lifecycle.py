@@ -58,7 +58,6 @@ from zephyr.governance.audit.reconciliation_registry import (  # noqa: E402
     make_stash_lifecycle_reconciler,
 )
 
-
 # 复用 reconciliation_registry 中的 _AI_STASH_RE 逻辑做正则测试
 _AI_STASH_RE = re.compile(
     r"^(?:session_worktree_pre_merge|session_worktree_abort|pre-merge[- ]stash"

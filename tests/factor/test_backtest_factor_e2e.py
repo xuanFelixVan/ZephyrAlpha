@@ -34,8 +34,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-# 因子侧
-from zephyr.factor.factor_base import FactorBase, FactorMeta, FactorRegistry
+# 回测侧
+from zephyr.backtest.core.engine_base import BacktestResult
+from zephyr.backtest.services.scheduler import BacktestScheduler, GridSearchSummary
 from zephyr.factor.core.evaluation.metrics import (
     check_overfitting,
     compute_ic,
@@ -44,9 +45,8 @@ from zephyr.factor.core.evaluation.metrics import (
     compute_oos_positive_rate,
 )
 
-# 回测侧
-from zephyr.backtest.core.engine_base import BacktestResult
-from zephyr.backtest.services.scheduler import BacktestScheduler, GridSearchSummary
+# 因子侧
+from zephyr.factor.factor_base import FactorBase, FactorMeta, FactorRegistry
 
 # 纯函数等价于 evaluation/backtest.py 的 _compute_factor_panel / _compute_forward_returns
 # 此处复刻其逻辑，避免依赖 ch_reader DB

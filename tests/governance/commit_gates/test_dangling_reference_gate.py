@@ -33,12 +33,11 @@ from zephyr.gov_enforcement.commit_gates.dangling_reference_gate import (
     make_dangling_reference_gate,
 )
 
-
 # § 字符常量（避免源文件中直接写 § 导致编码问题）
 _SEC = chr(0xA7)
 
 # 测试用 AGENTS.md 内容：含 §6 和 §7，不含 §6.9
-_AGENTS_MD_CONTENT = f"""# AGENTS.md
+_AGENTS_MD_CONTENT = """# AGENTS.md
 
 ## 6. 关键路径
 

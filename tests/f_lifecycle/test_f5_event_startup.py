@@ -53,8 +53,8 @@ def full_subscriber(isolated_bus: EventBusBackpressure) -> F5EventSubscriber:
     会触发 LSG 扫描, 而项目中 SupplyChainGuard 存在签名不匹配的预存问题
     (见 test_f5_auto_startup.py 中的注释)。
     """
-    from zephyr.governance.resilience_governance.f5_boot_integration import F5BootIntegration
     from zephyr.governance.escalation.escalation_models import EscalationEvent, RuleCategory
+    from zephyr.governance.resilience_governance.f5_boot_integration import F5BootIntegration
     integration = F5BootIntegration()
     boot = integration.on_startup()
     assert boot.success is True, f"F5 boot failed: {boot.errors}"

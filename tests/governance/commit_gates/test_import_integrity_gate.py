@@ -29,7 +29,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _matches_any_prefix,
     _module_to_file_candidates,
@@ -43,6 +42,7 @@ from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
     make_import_integrity_gate,
     scan_content_for_dangling_imports,
 )
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 
 def _make_gateway() -> MagicMock:

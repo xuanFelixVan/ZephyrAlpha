@@ -15,16 +15,16 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.feedback_loop.detectors.anomaly.anomaly_detector import (
-    AnomalyDetector,
-    AnomalyEvent,
-)
 from zephyr.feedback_loop.collectors.feedback_collector import (
     FeedbackCollector,
 )
 from zephyr.feedback_loop.collectors.metrics_collector import (
     MetricsCollector,
     MetricSnapshot,
+)
+from zephyr.feedback_loop.detectors.anomaly.anomaly_detector import (
+    AnomalyDetector,
+    AnomalyEvent,
 )
 from zephyr.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
 

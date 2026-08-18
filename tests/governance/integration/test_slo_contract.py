@@ -30,13 +30,13 @@ from zephyr.gov_enforcement.rule_enforcement.slo_contract import (
     TRADING_OVERRIDE,
     BudgetSnapshot,
     BudgetTier,
-    budget_tier_ordering,
     ContractPriority,
     SLIDefinition,
     SLIName,
     SLIReading,
     SLOContractEngine,
     SLOContractTerms,
+    budget_tier_ordering,
 )
 
 

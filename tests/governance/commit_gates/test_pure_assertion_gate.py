@@ -2,6 +2,7 @@
 # [TTL] permanent
 """test_pure_assertion_gate.py — pure_assertion_gate.py 闭包测试。"""
 from unittest.mock import MagicMock, patch
+
 from zephyr.gov_enforcement.commit_gates.pure_assertion_gate import make_pure_assertion_gate
 
 

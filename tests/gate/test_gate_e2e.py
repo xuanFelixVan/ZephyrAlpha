@@ -31,17 +31,17 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.governance.persistence.sqlite_schema import init_db
-from zephyr.governance.persistence.task_repo import (
-    GateViolationError,
-    TaskRepository,
-)
 from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
     GateEngine,
     GateEngineError,
     GateResult,
 )
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import (
+    GateViolationError,
+    TaskRepository,
+)
 from zephyr.shared.foundation.models import TaskCard
 
 # ---------------------------------------------------------------------------

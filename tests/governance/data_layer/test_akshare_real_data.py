@@ -232,12 +232,11 @@ class TestAkshareRealData:
         """用真实行情数据过 Quality Gate"""
         from datetime import datetime, timedelta
 
-        from zephyr.governance.data_governance.akshare_provider import (
-            AkshareQuoteProvider,
-        )
-
         from zephyr.gov_enforcement.rule_enforcement.default_quality_gate import (
             DefaultQualityGate,
+        )
+        from zephyr.governance.data_governance.akshare_provider import (
+            AkshareQuoteProvider,
         )
 
         provider = AkshareQuoteProvider()

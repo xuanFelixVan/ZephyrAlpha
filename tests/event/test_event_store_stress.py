@@ -23,9 +23,9 @@ from pathlib import Path
 import pytest
 
 from zephyr.gov_audit.event_store import EventStore
-from zephyr.governance.persistence.sqlite_schema import SchemaManager
-from zephyr.governance.observability_governance.projection_engine import ProjectionEngine
 from zephyr.governance.audit.snapshot_manager import SnapshotManager
+from zephyr.governance.observability_governance.projection_engine import ProjectionEngine
+from zephyr.governance.persistence.sqlite_schema import SchemaManager
 
 # gate_event_adapter 真源在 zephyr.gov_enforcement.behavioral_admission.gate_event_adapter（DW-0006 已补全）
 gate_event_adapter_mod = pytest.importorskip("zephyr.gov_enforcement.behavioral_admission.gate_event_adapter")

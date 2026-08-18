@@ -30,12 +30,12 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.shared.foundation.models import TaskCard
 from zephyr.shared.schema.base_config import Classification
 from zephyr.shared.schema.execution_model import ExecutionModel
 from zephyr.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.foundation.models import TaskCard
 from zephyr.trading.autopilot import AutoPilot
 
 

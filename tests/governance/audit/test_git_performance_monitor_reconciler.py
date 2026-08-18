@@ -40,7 +40,6 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec  # noqa: E402
 from zephyr.governance.audit.git_performance_monitor_reconciler import (  # noqa: E402
     DEGRADATION_TREND_COUNT,
     GATE_ID,
@@ -52,10 +51,11 @@ from zephyr.governance.audit.git_performance_monitor_reconciler import (  # noqa
     append_perf_log,
     count_stale_worktrees,
     detect_degradation_trend,
+    make_git_performance_monitor_reconciler,
     measure_git_status,
     read_recent_perf_entries,
-    make_git_performance_monitor_reconciler,
 )
+from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec  # noqa: E402
 
 
 class _FakeGateway:

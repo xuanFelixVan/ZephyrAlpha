@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 

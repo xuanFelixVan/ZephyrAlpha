@@ -33,9 +33,8 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from scripts.scaffold import ScaffoldError, check_duplicate_functionality
-from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo, SSoTConflict
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitStatus, GitCommitGateway
-
+from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo, SSoTConflict
 
 # ---------------------------------------------------------------------------
 # 辅助 fixture
@@ -717,7 +716,8 @@ class TestRedBlueExtreme:
         正则 _RE_MODULE 大小写敏感。AI 写错大小写会被放行——
         但这也意味着文件不会被 scaffold 识别（无 module_path = 不存在）。
         """
-        import tempfile, os
+        import os
+        import tempfile
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
             f.write("# [module] zephyr.gov_enforcement.rule_bridge.git_commit_gateway\n")
             tmp = f.name
@@ -729,7 +729,8 @@ class TestRedBlueExtreme:
 
     def test_red_empty_module_header_skipped(self):
         """红方攻击6：`# [MODULE]` 无内容 → module_path 为空 → 跳过。"""
-        import tempfile, os
+        import os
+        import tempfile
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
             f.write("# [MODULE]\n")
             tmp = f.name
@@ -741,7 +742,8 @@ class TestRedBlueExtreme:
 
     def test_red_empty_file_skipped(self):
         """红方攻击7：空文件 → 无头 → 跳过。"""
-        import tempfile, os
+        import os
+        import tempfile
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
             f.write("")
             tmp = f.name

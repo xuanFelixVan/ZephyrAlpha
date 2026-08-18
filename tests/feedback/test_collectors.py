@@ -18,6 +18,13 @@ import pytest
 from zephyr.feedback_loop.collectors.calendar_adapter import CalendarAdapter
 from zephyr.feedback_loop.collectors.config_timeline import ConfigTimeline
 from zephyr.feedback_loop.collectors.data_quality_validator import DataQualityValidator
+from zephyr.feedback_loop.collectors.feedback_collector import (
+    ActionResult,
+    FeedbackChannel,
+    FeedbackCollector,
+    OwnerAck,
+    OwnerResponse,
+)
 from zephyr.feedback_loop.collectors.financial_stratification import FinancialStratification
 from zephyr.feedback_loop.collectors.kb_provenance import KBProvenance
 from zephyr.feedback_loop.collectors.knowledge_capture import KnowledgeCapture
@@ -34,6 +41,7 @@ from zephyr.feedback_loop.collectors.market_event_integrator import (
     MarketEventIntegrator,
     MarketMode,
 )
+from zephyr.feedback_loop.collectors.metrics_collector import EMABaseline, MetricsCollector, MetricSnapshot
 from zephyr.feedback_loop.collectors.notification_feedback import NotificationFeedback
 from zephyr.feedback_loop.collectors.schema_evolution import SchemaEvolution
 from zephyr.feedback_loop.collectors.schema_migration import (
@@ -43,14 +51,6 @@ from zephyr.feedback_loop.collectors.schema_migration import (
 )
 from zephyr.feedback_loop.collectors.temporal_event_store import TemporalEventStore
 from zephyr.feedback_loop.collectors.token_finops import TokenFinOps
-from zephyr.feedback_loop.collectors.feedback_collector import (
-    ActionResult,
-    FeedbackChannel,
-    FeedbackCollector,
-    OwnerAck,
-    OwnerResponse,
-)
-from zephyr.feedback_loop.collectors.metrics_collector import EMABaseline, MetricsCollector, MetricSnapshot
 
 
 class TestMetricSnapshot:

@@ -32,7 +32,6 @@ if str(_META_DIR) not in sys.path:
 
 import backup_runtime_state as brs  # noqa: E402
 
-
 # ── Fake PG（内存模拟，不连真实 PostgreSQL） ─────────────────────────────
 
 def _install_fake_pg(monkeypatch, tmp_path, table_rows: dict[str, list] | None = None):

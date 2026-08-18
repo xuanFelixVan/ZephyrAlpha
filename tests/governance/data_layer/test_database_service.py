@@ -20,6 +20,7 @@ R2-1: DatabaseService 测试 — governance/depgraph 连接与健康检查
 import sys
 
 import pytest
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 PROJECT_ROOT = REPO_ROOT  # alias 真源

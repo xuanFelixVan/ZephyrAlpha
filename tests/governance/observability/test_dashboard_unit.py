@@ -21,6 +21,8 @@ Unit tests for Streamlit Dashboard components (T-4-07)
 
 import pytest
 
+# 治本：zephyr.ops 已迁移到 zephyr.feedback_loop（ARCH-032，ops/ 74 文件迁移到 trading/feedback_loop/）。
+from zephyr.feedback_loop.fitness_functions import FitnessInputs
 from zephyr.frontend.dashboard.app import create_app
 from zephyr.frontend.dashboard.components.fitness_functions import (
     FitnessDashboardData,
@@ -49,8 +51,6 @@ from zephyr.frontend.dashboard.components.task_progress import (
     fetch_task_progress,
     render_task_progress,
 )
-# 治本：zephyr.ops 已迁移到 zephyr.feedback_loop（ARCH-032，ops/ 74 文件迁移到 trading/feedback_loop/）。
-from zephyr.feedback_loop.fitness_functions import FitnessInputs
 
 
 class TestTaskProgressComponent:

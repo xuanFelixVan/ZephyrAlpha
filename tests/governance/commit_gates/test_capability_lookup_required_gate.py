@@ -293,8 +293,8 @@ class TestAuditLog:
     def test_no_audit_log_blocks(self, tmp_path, monkeypatch):
         """session 未调 rule_discovery → audit log 不存在 → 阻断。"""
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
-            make_capability_lookup_required_gate,
             _get_audit_log_path,
+            make_capability_lookup_required_gate,
         )
         gw = _make_zephyr_gateway(tmp_path)
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
@@ -431,8 +431,8 @@ class TestEndToEnd:
             make_capability_lookup_required_gate,
         )
         from zephyr.integration.mcp.rule_discovery_server import (
-            RuleDiscoveryServer,
             LOOKUP_AUDIT_DIR,
+            RuleDiscoveryServer,
         )
 
         # patch LOOKUP_AUDIT_DIR 到 tmp_path 下

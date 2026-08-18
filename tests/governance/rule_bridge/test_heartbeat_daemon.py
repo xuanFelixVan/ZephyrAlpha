@@ -42,13 +42,6 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import (
-    _append_heartbeat_log,
-    _session_in_registry,
-    cleanup_heartbeat_file,
-    heartbeat_file_path,
-    run_daemon,
-)
 from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
     _check_emergency_escalation,
     _increment_emergency_count,
@@ -56,8 +49,14 @@ from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
     _write_emergency_count,
     check_start_blocked,
 )
+from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import (
+    _append_heartbeat_log,
+    _session_in_registry,
+    cleanup_heartbeat_file,
+    heartbeat_file_path,
+    run_daemon,
+)
 from zephyr.gov_enforcement.rule_bridge.session_worktree import _classify_merge_failure
-
 
 # ---------------------------------------------------------------------------
 # P1-1: heartbeat_daemon.py 单元测试

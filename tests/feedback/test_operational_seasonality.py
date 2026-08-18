@@ -13,11 +13,11 @@
 
 from datetime import UTC, datetime
 
-from zephyr.shared.utils.time_utils import freeze_time
 from zephyr.feedback_loop.diagnosers.reliability.operational_seasonality import (
     OperationalSeasonality,
     OpMode,
 )
+from zephyr.shared.utils.time_utils import freeze_time
 
 
 class TestOpMode:

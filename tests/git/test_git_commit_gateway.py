@@ -43,12 +43,12 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E402
+    GATEWAY_ENV,
+    GLOBAL_LOCK_FILE,
     CommitStatus,
     GatewayError,
     GitCommitGateway,
     GlobalCommitLock,
-    GATEWAY_ENV,
-    GLOBAL_LOCK_FILE,
 )
 
 
@@ -1249,10 +1249,10 @@ class TestNonWorktreeCommitWarning:
 # 原硬编码 timeout=120s → 改为 read 15s / write 60s / default 30s。
 # ---------------------------------------------------------------------------
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E402
-    classify_git_timeout,
     GIT_TIMEOUT_DEFAULT,
     GIT_TIMEOUT_READ,
     GIT_TIMEOUT_WRITE,
+    classify_git_timeout,
 )
 
 

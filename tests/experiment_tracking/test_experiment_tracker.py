@@ -27,9 +27,9 @@ import pytest
 from zephyr.experiment_tracking.config import ExperimentTrackingConfig, load_config
 from zephyr.experiment_tracking.experiment_tracker import (
     ExperimentTracker,
+    FallbackBackend,
     RunContext,
     _NullBackend,
-    FallbackBackend,
     get_tracker,
     reset_tracker,
 )

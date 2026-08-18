@@ -38,13 +38,12 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+import zephyr.governance.capability_lookup as _cap_lookup  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.capability_overlap_gate import (  # noqa: E402
     _tokenize,
     make_capability_overlap_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
-
-import zephyr.governance.capability_lookup as _cap_lookup  # noqa: E402
 
 
 @dataclass

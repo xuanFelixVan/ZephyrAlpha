@@ -36,7 +36,6 @@ from unittest.mock import patch
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -367,14 +366,14 @@ class TestGitCommitGatewayDispatcher:
     def test_sync_mode_dispatches_to_sync(self, tmp_repo, monkeypatch):
         """ZEPHYR_RECONCILE_SYNC=1 时调用 _run_post_commit_reconcile_sync。"""
         # 准备：构造一个最小 gateway stub，只 mock 我们关心的方法
+        # 不构造真实 gateway（构造会触发 _register_default_reconcilers 拉起 30+ reconciler）
+        # 用 SimpleNamespace + 绑定方法的方式 mock
+        from types import SimpleNamespace
+
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
             CommitResult,
             CommitStatus,
         )
-
-        # 不构造真实 gateway（构造会触发 _register_default_reconcilers 拉起 30+ reconciler）
-        # 用 SimpleNamespace + 绑定方法的方式 mock
-        from types import SimpleNamespace
 
         call_log: list[str] = []
 
@@ -587,9 +586,9 @@ class TestHeartbeat:
         """running 状态文件被心跳刷新。"""
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_RUNNING,
-            write_status_file,
-            write_heartbeat,
             read_status_file,
+            write_heartbeat,
+            write_status_file,
         )
 
         write_status_file(
@@ -614,9 +613,9 @@ class TestHeartbeat:
         """非 running 状态（done）心跳不写入。"""
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_DONE,
-            write_status_file,
-            write_heartbeat,
             read_status_file,
+            write_heartbeat,
+            write_status_file,
         )
 
         write_status_file(
@@ -633,9 +632,9 @@ class TestHeartbeat:
     def test_reconcile_for_heartbeat_callback_invoked(self, tmp_repo):
         """reconcile_for 接收 heartbeat 回调，每个 trigger 命中的 reconciler 调用一次。"""
         from zephyr.governance.audit.reconciliation_registry import (
+            ReconcileResult,
             ReconcilerSpec,
             ReconciliationRegistry,
-            ReconcileResult,
         )
 
         calls: list[str] = []
@@ -665,9 +664,9 @@ class TestHeartbeat:
     def test_reconcile_for_heartbeat_none_no_effect(self, tmp_repo):
         """heartbeat=None 时行为与原有一致（无心跳）。"""
         from zephyr.governance.audit.reconciliation_registry import (
+            ReconcileResult,
             ReconcilerSpec,
             ReconciliationRegistry,
-            ReconcileResult,
         )
 
         reg = ReconciliationRegistry()
@@ -684,9 +683,9 @@ class TestHeartbeat:
     def test_heartbeat_callback_exception_does_not_block(self, tmp_repo):
         """心跳回调抛异常时 reconciler 仍正常执行。"""
         from zephyr.governance.audit.reconciliation_registry import (
+            ReconcileResult,
             ReconcilerSpec,
             ReconciliationRegistry,
-            ReconcileResult,
         )
 
         def bad_hb(gate_id: str) -> None:
@@ -712,8 +711,8 @@ class TestSweepStaleWorkers:
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_RUNNING,
             STATUS_STALE,
-            sweep_stale_workers,
             read_status_file,
+            sweep_stale_workers,
             write_status_file,
         )
 
@@ -736,6 +735,7 @@ class TestSweepStaleWorkers:
         不记 critical_warn——收割即自愈，记 critical_warn 是语义倒置 + 无配对 clean 自愈。
         """
         import sqlite3
+
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_RUNNING,
             sweep_stale_workers,
@@ -788,8 +788,8 @@ class TestSweepStaleWorkers:
         """running + 超阈值但 pid 仍存活 → 不改写（避免误杀慢 worker）。"""
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_RUNNING,
-            sweep_stale_workers,
             read_status_file,
+            sweep_stale_workers,
             write_status_file,
         )
 
@@ -810,6 +810,7 @@ class TestSweepStaleWorkers:
         不记 clean，不标记 stale（worker 仍在运行）——激活原防御性死代码分支。
         """
         import sqlite3
+
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_RUNNING,
             read_status_file,
@@ -873,6 +874,7 @@ class TestSweepStaleWorkers:
         critical_warn → 不再进活跃告警查询。补全告警生命周期对称性（对齐 BOOT 先例）。
         """
         import sqlite3
+
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_RUNNING,
             sweep_stale_workers,
@@ -942,8 +944,8 @@ class TestSweepStaleWorkers:
         """running 未超阈值 → 不 sweep。"""
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_RUNNING,
-            sweep_stale_workers,
             read_status_file,
+            sweep_stale_workers,
             write_status_file,
         )
 
@@ -962,8 +964,8 @@ class TestSweepStaleWorkers:
         """done 状态文件不参与 sweep（即使很旧）。"""
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_DONE,
-            sweep_stale_workers,
             read_status_file,
+            sweep_stale_workers,
             write_status_file,
         )
 
@@ -980,10 +982,10 @@ class TestSweepStaleWorkers:
         """有新鲜心跳的 running 文件即使 started_at 很旧也不 sweep。"""
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_RUNNING,
-            sweep_stale_workers,
             read_status_file,
-            write_status_file,
+            sweep_stale_workers,
             write_heartbeat,
+            write_status_file,
         )
 
         old = int(time.time()) - 100000  # started 很久以前
@@ -1000,14 +1002,15 @@ class TestSweepStaleWorkers:
 
     def test_stale_heartbeat_triggers_sweep(self, tmp_repo):
         """心跳本身超阈值 + pid 已死 → sweep。"""
+        import json
+        from pathlib import Path
+
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_RUNNING,
             STATUS_STALE,
-            sweep_stale_workers,
             read_status_file,
+            sweep_stale_workers,
         )
-        from pathlib import Path
-        import json
 
         # 直接构造一个心跳超阈值的 running 文件（write_heartbeat 写当前时间，
         # 这里手写文件以注入过期心跳）
@@ -1145,6 +1148,7 @@ class TestSweepPendingDead:
         pending 即死收割记 clean（收割即自愈），不记 critical_warn。
         """
         import sqlite3
+
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_PENDING,
             sweep_stale_workers,

@@ -295,10 +295,10 @@ class TestGateIntegration:
 
     def test_find_then_gate_passes(self, tmp_path: Path):
         """e2e: find() 写 log → gate 读取 → entry count > 0 放行。"""
-        from zephyr.governance.capability_lookup import CapabilityLookup
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             _count_valid_log_entries,
         )
+        from zephyr.governance.capability_lookup import CapabilityLookup
         yaml_path = _write_yaml(tmp_path)
         audit_dir = tmp_path / "lookup_audit"
         with patch(

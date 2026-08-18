@@ -346,7 +346,8 @@ class TestGatewayIntegration:
         critical_warn 落盘（DB 离线降级，含受影响文件清单）。"""
         import json as _json
         import sqlite3 as _sqlite3
-        from datetime import datetime, timezone as _tz
+        from datetime import datetime
+        from datetime import timezone as _tz
 
         # 植入探针状态：离线
         _state = {

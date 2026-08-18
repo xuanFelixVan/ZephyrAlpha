@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import ast
+import importlib.util
 import os
 import sys
 import tempfile
@@ -22,7 +23,6 @@ from pathlib import Path
 
 import pytest
 
-import importlib.util
 from zephyr.shared.io.paths import REPO_ROOT
 
 # 用 importlib 直接加载，绕过 governance 命名冲突

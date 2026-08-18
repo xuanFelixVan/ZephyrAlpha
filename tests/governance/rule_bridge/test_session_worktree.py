@@ -253,6 +253,7 @@ def _clean_worktree_env(_isolated_repo, monkeypatch):
     """
     # 用模块对象 patch（字符串路径在 pytest 下不可靠）
     import sys
+
     import zephyr.gov_enforcement.rule_bridge.session_worktree as sw_mod
     import zephyr.gov_enforcement.rule_bridge.worktree_manager as wm_mod
     test_mod = sys.modules[__name__]
@@ -505,9 +506,10 @@ def test_breaking_change_error_references_section_9_7(_isolated_repo):
     gate 误判为悬空引用阻断 commit。标签本身在 docstring + AGENTS.md L554
     已建立语义锚点，无需 AGENTS.md 前缀也能被 grep 定位。
     """
+    import os as _os
+
     from zephyr.gov_enforcement.rule_bridge.session_worktree import _check_concurrency_block
     from zephyr.security.access_control.session_concurrency import SessionRegistry
-    import os as _os
 
     repo = _isolated_repo
     # 先注册一个活跃 session（PID=当前进程，alive）
@@ -777,10 +779,10 @@ def test_quarantine_branch_ref_returns_none_on_failure():
 
 def test_sweep_quarantine_refs_cleans_expired():
     """_sweep_quarantine_refs: 删除过期的 quarantine ref（age > 72h）。"""
-    from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_quarantine_refs
-
     # for-each-ref 返回 2 个 ref：一个过期（100h 前），一个未过期（1h 前）
     import time as _time
+
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_quarantine_refs
     old_ts = str(int(_time.time() - 100 * 3600))
     new_ts = str(int(_time.time() - 1 * 3600))
     for_each_output = f"refs/quarantine/sess-old {old_ts}\nrefs/quarantine/sess-new {new_ts}\n"
@@ -903,8 +905,9 @@ def test_sweep_one_dir_force_clean_triggers_when_over_age():
 
 def test_session_worktree_sweep_accepts_force_clean_hours():
     """session_worktree_sweep: 公开接口接受 force_clean_hours 参数且向后兼容。"""
-    from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_sweep
     import inspect
+
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_sweep
 
     sig = inspect.signature(session_worktree_sweep)
     assert "force_clean_hours" in sig.parameters, "session_worktree_sweep 应有 force_clean_hours 参数"
@@ -926,8 +929,8 @@ def test_session_worktree_sweep_accepts_force_clean_hours():
 def test_sweep_skips_when_active_lockfile_fresh():
     """判据 4：active lockfile 存在且未过期（age < 1h TTL）→ sweep 跳过（P1-2 根治）。"""
     from zephyr.gov_enforcement.rule_bridge.session_worktree import (
-        _sweep_one_dir,
         _session_active_lockfile,
+        _sweep_one_dir,
     )
     from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
     from zephyr.security.access_control.session_concurrency import SessionRegistry
@@ -968,8 +971,8 @@ def test_sweep_skips_when_active_lockfile_fresh():
 def test_sweep_proceeds_when_lockfile_stale():
     """判据 4：active lockfile 存在但已过期（age > 1h TTL）→ 清理 stale lockfile 后 sweep 继续。"""
     from zephyr.gov_enforcement.rule_bridge.session_worktree import (
-        _sweep_one_dir,
         _session_active_lockfile,
+        _sweep_one_dir,
     )
     from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
     from zephyr.security.access_control.session_concurrency import SessionRegistry
@@ -1008,8 +1011,8 @@ def test_sweep_proceeds_when_lockfile_stale():
 def test_sweep_proceeds_when_lockfile_corrupted():
     """判据 4：active lockfile 损坏（JSON 解析失败）→ 清理 corrupt lockfile 后 sweep 继续。"""
     from zephyr.gov_enforcement.rule_bridge.session_worktree import (
-        _sweep_one_dir,
         _session_active_lockfile,
+        _sweep_one_dir,
     )
     from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
     from zephyr.security.access_control.session_concurrency import SessionRegistry
@@ -1280,6 +1283,7 @@ def test_cleanup_orphan_draft_scripts_oserror_silent():
     不影响 fixture teardown 的 _cleanup_artifacts。
     """
     from unittest.mock import patch
+
     from zephyr.gov_enforcement.rule_bridge.session_worktree import _cleanup_orphan_draft_scripts
 
     drafts = Path(REPO_ROOT) / ".aidrafts"
@@ -1649,7 +1653,8 @@ def test_pre_merge_topo_check_error_exit_fail_open(_isolated_repo, monkeypatch):
 
 def _plant_probe_state(repo, *, reachable: bool) -> None:
     """在临时仓库植入探针状态文件（并冻结 refresh 为 no-op）。"""
-    from datetime import datetime, timezone as _tz
+    from datetime import datetime
+    from datetime import timezone as _tz
     now = datetime.now(_tz.utc).isoformat()
     state = {
         "reachable": reachable, "checked_at": now,
@@ -1790,9 +1795,9 @@ def test_topo_failopen_exit2_and_json_persist(_isolated_repo, monkeypatch):
 # ---------------------------------------------------------------------------
 import zephyr.gov_enforcement.rule_bridge.session_worktree as _sw_mod_retry  # noqa: E402
 from zephyr.gov_enforcement.rule_bridge.session_worktree import (  # noqa: E402
-    _cleanup_worktree_locks,
     _GATE_RETRY_DELAYS,
     _GATE_RETRY_MAX_ATTEMPTS,
+    _cleanup_worktree_locks,
     _run_pre_commit_gates,
     _run_pre_commit_gates_once,
 )
@@ -1991,6 +1996,7 @@ class TestBaseFreshnessFullLifecycle:
     def test_telemetry_log_written(self, _isolated_repo):
         """_log_base_freshness_event 写入 worktree_ops_log.jsonl。"""
         import json
+
         from zephyr.gov_enforcement.rule_bridge.session_worktree import _log_base_freshness_event
         _log_base_freshness_event(_isolated_repo, "sess-test-telemetry", "commit", "pass", main_head="abc12345", wt_head="abc12345")
         log_path = _isolated_repo / ".runtime" / "worktree_ops_log.jsonl"
@@ -2011,6 +2017,7 @@ class TestBaseFreshnessFullLifecycle:
     def test_run_git_with_retry_on_oserror(self, _isolated_repo, monkeypatch):
         """_run_git_with_retry 遇到 OSError 时重试，最终返回 None。"""
         import subprocess
+
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
         call_count = [0]
         original_run = subprocess.run

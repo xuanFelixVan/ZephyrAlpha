@@ -50,7 +50,6 @@ from zephyr.gov_enforcement.commit_gates.tests_coverage_gate import (  # noqa: E
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

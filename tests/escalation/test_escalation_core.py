@@ -14,7 +14,6 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
 from zephyr.governance.escalation.escalation_engine import EscalationEngine
 from zephyr.governance.escalation.escalation_models import (
     DEFAULT_ESCALATION_RULES,
@@ -28,6 +27,7 @@ from zephyr.governance.escalation.escalation_models import (
     EscalationState,
     RuleCategory,
 )
+from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
 from zephyr.governance.resilience_governance.circuit_breaker import CircuitBreaker, CircuitBreakerConfig, CircuitState
 
 

@@ -11,7 +11,7 @@ import json
 import os
 import sys
 import tempfile
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -20,25 +20,25 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from zephyr.gov_enforcement.commit_gates.snapshot_drift_gate import (
-    make_snapshot_drift_gate,
-    _validate_snapshot_structure,
-    _validate_generated_at_freshness,
-    _validate_commit_sha,
-)
-from zephyr.gov_enforcement.commit_gates.vocab_chain_gate import (
-    make_vocab_chain_gate,
-    _matches_ssot_pattern,
-    _detect_ssot_hardcoding,
-)
-from zephyr.gov_enforcement.commit_gates.manual_only_permanent_gate import (
-    make_manual_only_permanent_gate,
-    _detect_manual_trigger,
-    _detect_event_or_auto_trigger,
-    _has_permanent_ttl,
-)
 import ast
 
+from zephyr.gov_enforcement.commit_gates.manual_only_permanent_gate import (
+    _detect_event_or_auto_trigger,
+    _detect_manual_trigger,
+    _has_permanent_ttl,
+    make_manual_only_permanent_gate,
+)
+from zephyr.gov_enforcement.commit_gates.snapshot_drift_gate import (
+    _validate_commit_sha,
+    _validate_generated_at_freshness,
+    _validate_snapshot_structure,
+    make_snapshot_drift_gate,
+)
+from zephyr.gov_enforcement.commit_gates.vocab_chain_gate import (
+    _detect_ssot_hardcoding,
+    _matches_ssot_pattern,
+    make_vocab_chain_gate,
+)
 
 # ── SNAPSHOT-DRIFT gate tests ──────────────────────────────────────────────
 

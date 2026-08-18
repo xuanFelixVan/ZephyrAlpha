@@ -35,7 +35,6 @@ from zephyr.factor.core.intraday_factor_loop import (
     _parse_tick_hash,
 )
 
-
 # ── _parse_tick_hash 测试 ──
 
 

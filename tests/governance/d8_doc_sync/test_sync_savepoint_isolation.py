@@ -150,7 +150,7 @@ class TestSyncSavepointIsolation:
 
     def test_log_sync_failures_creates_table_and_records(self):
         """_log_sync_failures 创建 sync_failures_log 表并记录失败项。"""
-        from sync_yaml_to_depgraph import _log_sync_failures, _ensure_sync_failures_log_table
+        from sync_yaml_to_depgraph import _ensure_sync_failures_log_table, _log_sync_failures
         conn = _get_conn()
         cur = conn.cursor()
         try:

@@ -1,7 +1,7 @@
 """test_check_pure_assertion.py — check_pure_assertion.py 检测逻辑测试。"""
+import importlib.util
 import os
 import sys
-import importlib.util
 
 # 加载 scripts/ 下的 checker（不可从 src/ import）
 _SCRIPT = os.path.join(

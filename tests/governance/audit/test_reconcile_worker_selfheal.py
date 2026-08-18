@@ -34,7 +34,6 @@ from unittest.mock import patch
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -101,6 +100,7 @@ def _query_records(repo: Path, gate_id: str = "RECONCILE-WORKER-BOOT") -> list[d
 def _insert_critical_warn(repo: Path, commit_sha: str = "old123") -> str:
     """插入一条历史 RECONCILE-WORKER-BOOT critical_warn（模拟之前的 worker boot 失败）。"""
     from datetime import datetime, timezone
+
     from zephyr.governance.audit.reconciliation_registry import (
         ReconcileResult,
         _log_reconcile_results,
@@ -224,9 +224,9 @@ class TestRunWorkerSelfHealIntegration:
 
     def test_run_worker_success_calls_selfheal(self, tmp_repo_with_db):
         """_run_worker 成功返回 0 后，DB 中应有 RECONCILE-WORKER-BOOT clean 记录。"""
-        import zephyr.governance.audit.reconcile_worker as rw_mod
         import zephyr.gov_enforcement.rule_bridge.git_commit_gateway as gtw_mod
         import zephyr.governance.audit.reconcile_runner as rr_mod
+        import zephyr.governance.audit.reconcile_worker as rw_mod
 
         payload = {
             "commit_sha": "abc123",
@@ -257,8 +257,8 @@ class TestRunWorkerSelfHealIntegration:
 
     def test_run_worker_failure_does_not_call_selfheal(self, tmp_repo_with_db):
         """_run_worker 失败（gateway 构造失败）不写 clean，只写 critical_warn。"""
-        import zephyr.governance.audit.reconcile_worker as rw_mod
         import zephyr.gov_enforcement.rule_bridge.git_commit_gateway as gtw_mod
+        import zephyr.governance.audit.reconcile_worker as rw_mod
 
         payload = {
             "commit_sha": "fail123",

@@ -32,7 +32,6 @@ from typing import Any
 
 import pytest
 
-
 # =========================================================================
 # 1. backtest_results 单元测试
 # =========================================================================
@@ -197,8 +196,8 @@ class TestTickReplay:
         monkeypatch.setattr(mod, "pn", None)
         from zephyr.frontend.dashboard.components.tick_replay import (
             ReplaySpeed,
-            TickSnapshotView,
             TickReplayData,
+            TickSnapshotView,
             render_tick_replay,
         )
         data = TickReplayData(

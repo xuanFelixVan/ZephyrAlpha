@@ -34,6 +34,7 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_ROOT / "scripts" / "governance" / "d3_metadata"))
 
+import pytest  # noqa: E402
 from check_naming_convention import (  # noqa: E402
     _N16_DOCS_EXEMPT_NAMES,
     _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK,
@@ -46,9 +47,6 @@ from check_naming_convention import (  # noqa: E402
     _validate_ssot_linkage,
     check_test_name_uniqueness,
 )
-
-import pytest  # noqa: E402
-
 
 # ---------------------------------------------------------------------------
 # 辅助：monkeypatch _N16_YAML_PATH 后调用加载函数

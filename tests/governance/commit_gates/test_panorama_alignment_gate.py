@@ -51,7 +51,6 @@ from zephyr.gov_enforcement.commit_gates.panorama_alignment_gate import (
     make_panorama_alignment_gate,
 )
 
-
 # ---------------------------------------------------------------------------
 # 辅助：fake 报告 / fake git 结果 / fake gateway
 # ---------------------------------------------------------------------------

@@ -126,14 +126,14 @@ class TestFinalizerAutoShutdown:
 
     def test_register_monitoring_finalizers_auto(self) -> None:
         """register_monitoring_finalizers_auto 使用全局单例。"""
-        from zephyr.trading.finalizer import register_monitoring_finalizers_auto, get_finalizer
+        from zephyr.trading.finalizer import get_finalizer, register_monitoring_finalizers_auto
         register_monitoring_finalizers_auto()
         f = get_finalizer()
         assert len(f.cleanup_fns) == 2
 
     def test_monitor_flush_cleanup(self) -> None:
         """monitor-flush cleanup 执行成功。"""
-        from zephyr.trading.finalizer import register_monitoring_finalizers_auto, get_finalizer
+        from zephyr.trading.finalizer import get_finalizer, register_monitoring_finalizers_auto
         register_monitoring_finalizers_auto()
         f = get_finalizer()
         results = f.run()
@@ -141,7 +141,7 @@ class TestFinalizerAutoShutdown:
 
     def test_monitor_health_snapshot_cleanup(self) -> None:
         """monitor-health-snapshot cleanup 执行成功。"""
-        from zephyr.trading.finalizer import register_monitoring_finalizers_auto, get_finalizer
+        from zephyr.trading.finalizer import get_finalizer, register_monitoring_finalizers_auto
         register_monitoring_finalizers_auto()
         f = get_finalizer()
         results = f.run()
@@ -149,11 +149,10 @@ class TestFinalizerAutoShutdown:
 
     def test_finalizer_with_event_data(self) -> None:
         """Finalizer 在有事件数据时正常工作。"""
-        from zephyr.trading.finalizer import register_monitoring_finalizers_auto, get_finalizer
-        from zephyr.shared.lifecycle.health import subscribe_monitoring_events, get_event_health_log
-        from zephyr.shared.event_bus import bus
-
         import zephyr.shared.lifecycle.health as health_mod
+        from zephyr.shared.event_bus import bus
+        from zephyr.shared.lifecycle.health import get_event_health_log, subscribe_monitoring_events
+        from zephyr.trading.finalizer import get_finalizer, register_monitoring_finalizers_auto
         health_mod.monitoring_events_subscribed = False
         health_mod.event_health_log = []
 
@@ -178,8 +177,9 @@ class TestFinalizerAutoShutdown:
 
     def test_boot_hooks_integrates_finalizer(self) -> None:
         """boot_hooks 集成了 finalizer 注册。"""
-        from zephyr.trading import boot_hooks
         import inspect
+
+        from zephyr.trading import boot_hooks
         src = inspect.getsource(boot_hooks)
         assert "register_monitoring_finalizers_auto" in src, "boot_hooks 未集成 finalizer"
 

@@ -32,12 +32,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate import (
     _extract_session_id,
     _is_session_registered,
     make_forged_gw_marker_gate,
 )
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 
 def _make_gateway(project_root: Path | None = None) -> MagicMock:

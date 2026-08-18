@@ -36,14 +36,14 @@ import pytest
 
 from zephyr.governance.resilience_governance.f5_boot_integration import BootResult, F5BootIntegration
 from zephyr.governance.resilience_governance.f5_event_subscriber import (
-    F5EventSubscriber,
     TOPIC_CONFLICT_DETECTED,
     TOPIC_DEADLOCK_DETECTED,
     TOPIC_ESCALATION_NEEDED,
+    F5EventSubscriber,
 )
 from zephyr.governance.resilience_governance.f5_shutdown_manager import F5ShutdownManager, ShutdownResult
-from zephyr.shared.event_bus import EventBusBackpressure, bus as default_bus
-
+from zephyr.shared.event_bus import EventBusBackpressure
+from zephyr.shared.event_bus import bus as default_bus
 
 # ── Fixtures ────────────────────────────────────────────────────────────
 
@@ -142,9 +142,9 @@ class TestBootPhase:
 
     def test_components_are_real_instances_not_mocks(self):
         """验证使用真实组件 (非 MagicMock)。"""
-        from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
-        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
         from zephyr.governance.escalation.escalation_engine import EscalationEngine
+        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
+        from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
         from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import Arbitrator
 
         integ = F5BootIntegration()

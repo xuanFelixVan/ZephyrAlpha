@@ -41,7 +41,6 @@ from pathlib import Path
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -536,7 +535,8 @@ class TestEmergencyCountBucketing:
         """计数文件路径应为 .runtime/emergency_counts/{bucket_id}.json。"""
         monkeypatch.setenv("ZEPHYR_AGENT_ID", "test-bucket-path-agent")
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
-            _agent_bucket_id, _emergency_count_path,
+            _agent_bucket_id,
+            _emergency_count_path,
         )
         bucket = _agent_bucket_id(isolated_repo)
         path = _emergency_count_path(isolated_repo, bucket)
@@ -557,7 +557,9 @@ class TestEmergencyCountBucketing:
         """
         monkeypatch.setenv("ZEPHYR_AGENT_ID", "cross-session-agent-p1-2")
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
-            _agent_bucket_id, _read_emergency_count, _increment_emergency_count,
+            _agent_bucket_id,
+            _increment_emergency_count,
+            _read_emergency_count,
         )
         bucket = _agent_bucket_id(isolated_repo)
 
@@ -581,7 +583,8 @@ class TestEmergencyCountBucketing:
     def test_different_agents_separate_buckets(self, isolated_repo, monkeypatch):
         """不同 agent 的计数应隔离（不同 bucket 文件）。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
-            _increment_emergency_count, _read_emergency_count,
+            _increment_emergency_count,
+            _read_emergency_count,
         )
 
         # agent-A 提交 3 次
@@ -600,8 +603,10 @@ class TestEmergencyCountBucketing:
         """N>=5 时 _check_emergency_escalation 应阻断提交。"""
         monkeypatch.setenv("ZEPHYR_AGENT_ID", "escalation-test-agent-p1-2")
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
-            _agent_bucket_id, _check_emergency_escalation, _increment_emergency_count,
             _EMERGENCY_BLOCK_THRESHOLD,
+            _agent_bucket_id,
+            _check_emergency_escalation,
+            _increment_emergency_count,
         )
         bucket = _agent_bucket_id(isolated_repo)
         assert _EMERGENCY_BLOCK_THRESHOLD == 5
@@ -624,8 +629,10 @@ class TestEmergencyCountBucketing:
         """N>=3 且 reason 为空时 _check_emergency_escalation 应拒绝。"""
         monkeypatch.setenv("ZEPHYR_AGENT_ID", "reason-test-agent-p1-2")
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
-            _agent_bucket_id, _check_emergency_escalation, _increment_emergency_count,
             _EMERGENCY_REASON_THRESHOLD,
+            _agent_bucket_id,
+            _check_emergency_escalation,
+            _increment_emergency_count,
         )
         bucket = _agent_bucket_id(isolated_repo)
         assert _EMERGENCY_REASON_THRESHOLD == 3

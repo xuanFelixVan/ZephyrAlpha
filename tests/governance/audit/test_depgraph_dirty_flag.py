@@ -48,6 +48,7 @@ if str(_GOV_DIR) not in sys.path:
 
 import _shared.constants as _const_mod  # noqa: E402
 from _shared.constants import mark_depgraph_dirty  # noqa: E402
+
 # 直接 submodule import（避免 from zephyr.governance.audit import reconciliation_registry
 # 触发 TEST-SOURCE-CONSISTENCY gate：__init__.py 虽 __all__ 含此名但未显式 import）
 import zephyr.governance.audit.reconciliation_registry as reconciliation_registry  # noqa: E402
@@ -55,7 +56,6 @@ from zephyr.governance.audit.reconciliation_registry import (  # noqa: E402
     ReconcileResult,
     make_regenerate_reconciler,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

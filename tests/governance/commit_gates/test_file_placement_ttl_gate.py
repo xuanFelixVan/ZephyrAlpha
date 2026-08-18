@@ -30,7 +30,6 @@ from zephyr.gov_enforcement.commit_gates.file_placement_ttl_gate import (  # noq
     make_file_placement_ttl_gate,
 )
 
-
 # ============================================================
 # 测试夹具：构建临时 repo + 真源 YAML stub
 # ============================================================

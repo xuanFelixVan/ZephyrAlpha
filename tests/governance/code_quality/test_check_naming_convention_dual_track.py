@@ -44,8 +44,8 @@ from check_naming_convention import (  # noqa: E402
     _MODULE_ID_SHARED_RE,
     _SUBMODULE_ID_RE,
     _check_n06_dual_track_format,
-    _validate_ssot_linkage,
     _is_valid_module_id,
+    _validate_ssot_linkage,
 )
 
 

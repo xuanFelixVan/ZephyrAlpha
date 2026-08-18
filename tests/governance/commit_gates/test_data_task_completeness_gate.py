@@ -15,16 +15,16 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 _SRC = Path(__file__).parent.parent.parent.parent / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from zephyr.gov_enforcement.commit_gates.data_task_completeness_gate import (  # noqa: E402
-    make_data_task_completeness_gate,
-    _extract_new_task_ids,
     _check_task_has_fallback,
+    _extract_new_task_ids,
+    make_data_task_completeness_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 

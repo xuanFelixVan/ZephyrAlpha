@@ -46,14 +46,14 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
+    _GLOBAL_LOCK_FILE,
+    _LOCK_TTL_SECONDS,
     CommitStatus,
     GatewayError,
     GitCommitGateway,
-    _GLOBAL_LOCK_FILE,
-    _LOCK_TTL_SECONDS,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 _PROJECT_ROOT = REPO_ROOT
 

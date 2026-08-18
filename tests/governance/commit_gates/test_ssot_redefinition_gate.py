@@ -51,7 +51,6 @@ from zephyr.gov_enforcement.commit_gates.ssot_redefinition_gate import (  # noqa
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
-
 # ============================================================================
 # 测试用 registry YAML（含 rule_patterns_ssot capability）
 # ============================================================================

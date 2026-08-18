@@ -37,10 +37,10 @@ import os
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.gov_enforcement.commit_gates.foreign_change_gate import (
     make_foreign_change_gate,
 )
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
 
 

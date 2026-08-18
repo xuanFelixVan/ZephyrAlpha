@@ -46,12 +46,13 @@ from __future__ import annotations
 
 import pytest
 
+import zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler as reconciler_mod
+
 # 真实 import 三个组件（不 mock——集成 smoke test 的核心要求）
 from zephyr.gov_enforcement.rule_enforcement.adaptive_threshold import (
     AdaptiveThreshold,
     ThresholdMode,
 )
-import zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler as reconciler_mod
 from zephyr.governance.audit.health_score_calculator import (
     AbuseHealthScore,
     calculate_health_score,
@@ -550,8 +551,9 @@ class TestCodeYamlConsistency:
         _DEFAULT_THRESHOLDS 和 YAML thresholds 段都用 full names 作 key
         （warn_only_sustained_24h 等）。
         """
-        import yaml
         from pathlib import Path
+
+        import yaml
 
         yaml_path = (
             Path(__file__).resolve().parents[3]
@@ -579,8 +581,9 @@ class TestCodeYamlConsistency:
 
     def test_score_constants_match_yaml(self):
         """_CRITICAL_WARN_SCORE / _BLOCK_NEXT_SCORE 与 YAML 一致。"""
-        import yaml
         from pathlib import Path
+
+        import yaml
 
         yaml_path = (
             Path(__file__).resolve().parents[3]

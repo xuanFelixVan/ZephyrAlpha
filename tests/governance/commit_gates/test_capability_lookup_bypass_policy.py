@@ -66,7 +66,8 @@ class TestConstants:
 
     def test_thresholds_loaded(self):
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
-            ESCALATION_THRESHOLD, WINDOW,
+            ESCALATION_THRESHOLD,
+            WINDOW,
         )
         assert ESCALATION_THRESHOLD == 5
         assert WINDOW == 10

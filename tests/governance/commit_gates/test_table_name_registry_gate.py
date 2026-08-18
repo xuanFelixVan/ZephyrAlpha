@@ -19,7 +19,6 @@ from zephyr.gov_enforcement.commit_gates.table_name_registry_gate import (
     make_table_name_registry_gate,
 )
 
-
 # ============================================================================
 # 测试辅助
 # ============================================================================

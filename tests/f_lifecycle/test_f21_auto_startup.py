@@ -39,8 +39,9 @@ class TestAutoStartup:
 
     def test_init_function_exists(self) -> None:
         """_init_shared_monitoring_modules 函数存在。"""
-        from zephyr.trading import boot_hooks
         import inspect
+
+        from zephyr.trading import boot_hooks
         src = inspect.getsource(boot_hooks)
         assert "_init_shared_monitoring_modules" in src, "boot_hooks 缺少 _init_shared_monitoring_modules"
 
@@ -93,8 +94,9 @@ class TestAutoStartup:
 
     def test_boot_hooks_source_contains_all_6_modules(self) -> None:
         """boot_hooks 源码包含全部 6 个模块的初始化代码。"""
-        from zephyr.trading import boot_hooks
         import inspect
+
+        from zephyr.trading import boot_hooks
         src = inspect.getsource(boot_hooks)
 
         # 6 个监控模块的导入/初始化

@@ -15,6 +15,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 _SMOKE_TEST = "governance/d1_structure/run_script_smoke_test.py"

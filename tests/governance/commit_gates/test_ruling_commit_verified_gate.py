@@ -41,13 +41,12 @@ if _SRC_DIR not in sys.path:
 
 from zephyr.gov_enforcement.commit_gates.ruling_commit_verified_gate import (  # noqa: E402
     _ESCAPE_MARKER,
+    _RULING_COMMIT_RE,
     _extract_commit_hashes,
     _is_trigger_file,
-    _RULING_COMMIT_RE,
     _verify_commit_exists,
     make_ruling_commit_verified_gate,
 )
-
 
 # ============================================================================
 # 辅助函数
@@ -428,7 +427,7 @@ class TestRulingCommitVerifiedGate:
         _commit_file(tmp_path, registry_path, registry_content)
 
         # 添加含无效 hash 的"已完成"声明
-        new_content = registry_content + f"    fix_phase: 已完成（commit deadbeef）\n"
+        new_content = registry_content + "    fix_phase: 已完成（commit deadbeef）\n"
         (tmp_path / registry_path).write_text(new_content, encoding="utf-8")
 
         gateway = _make_gateway(tmp_path)

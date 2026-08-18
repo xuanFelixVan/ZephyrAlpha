@@ -15,8 +15,8 @@
 
 from __future__ import annotations
 
+from zephyr.gov_drift.events import DriftType, ManagedDriftEvent, ManagedDriftState
 from zephyr.infrastructure.rollback.drift_fix import DriftFixHandler
-from zephyr.gov_drift.events import ManagedDriftEvent, ManagedDriftState, DriftType
 
 
 class TestDriftFixHandlerInstantiation:

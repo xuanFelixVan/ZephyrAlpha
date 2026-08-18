@@ -286,6 +286,7 @@ class TestReconcilerSpec:
     def test_reconcile_accepts_three_args(self, tmp_path):
         """3-arg reconcile 签名（接收 commit_message，Phase 3.4 机制）。"""
         import inspect
+
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
@@ -332,7 +333,6 @@ class TestRegistrationInGateway:
 
 
 import os  # noqa: E402 — late import for test_reconciler_registered_in_gateway env
-
 
 # ---------------------------------------------------------------------------
 # TestBypassSceneClassification: #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001

@@ -188,7 +188,7 @@ class TestAutoRun:
 
     def test_run_returns_auto_runner_result(self) -> None:
         """run() 返回 AutoRunnerResult。"""
-        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner, AutoRunnerResult
+        from zephyr.governance.ops_governance.auto_runner import AutoRunnerResult, GovernanceAutoRunner
         runner = GovernanceAutoRunner()
         result = runner.run()
         assert isinstance(result, AutoRunnerResult)

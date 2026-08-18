@@ -41,14 +41,13 @@ if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
 from zephyr.gov_enforcement.rule_bridge.session_worktree import (  # noqa: E402
+    _WS_CLEAN_GATE_ID,
     _check_workspace_clean,
     _log_workspace_drift_warn,
     _workspace_clean_check_abort,
     _workspace_clean_check_merge,
     _workspace_clean_check_start,
-    _WS_CLEAN_GATE_ID,
 )
-
 
 # ============================================================================
 # 辅助函数

@@ -32,6 +32,7 @@ from datetime import datetime
 from pathlib import Path
 
 import pytest
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
@@ -215,9 +216,10 @@ def test_data_constraints(tmp_db: Path):
 
 def main():
     """脚本入口：直接运行时执行测试（需生产库可用 + tmp 隔离）。"""
-    from zephyr.shared.io.paths import DB_PATH
     import tempfile
+
     from zephyr.governance.persistence.sqlite_schema import init_db
+    from zephyr.shared.io.paths import DB_PATH
 
     print("=" * 80)
     print("DM-100020: 红蓝对抗测试 - 数据库安全与韧性")

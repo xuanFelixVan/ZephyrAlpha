@@ -24,13 +24,13 @@ import pytest
 
 from zephyr.governance.audit.reconciliation_registry import (
     SQL_INSERT_RECONCILE_LOG,
+    ReconcileResult,
     _check_recent_critical_warns,
     _log_reconcile_results,
     acknowledge_critical_warns,
     backfill_auto_ack_healed,
     cleanup_reconcile_log,
 )
-from zephyr.governance.audit.reconciliation_registry import ReconcileResult
 
 # 老 schema（2026-07-19 前）：无 acknowledged_at 列
 _SQL_CREATE_OLD = (

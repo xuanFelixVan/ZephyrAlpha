@@ -29,11 +29,11 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.gov_enforcement.commit_gates.derived_file_deletion_gate import (
-    make_derived_file_deletion_gate,
     _PROTECTED_DERIVED_FILES,
+    make_derived_file_deletion_gate,
 )
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 
 def _make_gateway(

@@ -13,9 +13,9 @@
 
 import pytest
 
-from zephyr.governance.persistence.task_repo import TaskNotFoundError
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 from zephyr.governance.lifecycle_governance.transition import TransitionMixin
+from zephyr.governance.persistence.task_repo import TaskNotFoundError
 
 
 class TestTransitionMixinImport:

@@ -47,8 +47,8 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import (  # noqa: E402
     _ABSTRACT_CODE_PREFIXES,
     _CONSUMERS_RE,
-    _classify_consumer_format,
     _check_filepath_exists,
+    _classify_consumer_format,
     _has_cjk,
     check_consumers_accuracy,
     make_consumers_accuracy_gate,

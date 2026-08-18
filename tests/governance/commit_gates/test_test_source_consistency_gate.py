@@ -57,6 +57,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+import zephyr.gov_enforcement.commit_gates.test_source_consistency_gate as _gate_mod  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.test_source_consistency_gate import (  # noqa: E402
     _check_test_file,
     _extract_all_list,
@@ -66,8 +67,6 @@ from zephyr.gov_enforcement.commit_gates.test_source_consistency_gate import (  
     make_test_source_consistency_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
-
-import zephyr.gov_enforcement.commit_gates.test_source_consistency_gate as _gate_mod  # noqa: E402
 
 
 @dataclass

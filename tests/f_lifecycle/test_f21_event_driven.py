@@ -67,8 +67,8 @@ class TestEventDrivenMonitoring:
 
     def test_event_subscription_idempotent(self) -> None:
         """事件订阅幂等（重复订阅不重复注册）。"""
-        from zephyr.shared.lifecycle.health import subscribe_monitoring_events
         import zephyr.shared.lifecycle.health as health_mod
+        from zephyr.shared.lifecycle.health import subscribe_monitoring_events
 
         subscribe_monitoring_events()
         flag1 = health_mod._monitoring_events_subscribed
@@ -80,8 +80,8 @@ class TestEventDrivenMonitoring:
 
     def test_f5_deadlock_event_triggers_health_log(self) -> None:
         """f5.deadlock_detected 事件触发健康日志记录。"""
-        from zephyr.shared.lifecycle.health import subscribe_monitoring_events, get_event_health_log
         from zephyr.shared.event_bus import bus
+        from zephyr.shared.lifecycle.health import get_event_health_log, subscribe_monitoring_events
 
         subscribe_monitoring_events()
         bus.emit("f5.deadlock_detected", {"test": "f5_deadlock"})
@@ -92,8 +92,8 @@ class TestEventDrivenMonitoring:
 
     def test_fle_anomaly_event_triggers_health_log(self) -> None:
         """fle.anomaly 事件触发健康日志记录。"""
-        from zephyr.shared.lifecycle.health import subscribe_monitoring_events, get_event_health_log
         from zephyr.shared.event_bus import bus
+        from zephyr.shared.lifecycle.health import get_event_health_log, subscribe_monitoring_events
 
         subscribe_monitoring_events()
         bus.emit("fle.anomaly", {"test": "fle_anomaly"})
@@ -104,8 +104,8 @@ class TestEventDrivenMonitoring:
 
     def test_audit_finding_event_triggers_health_log(self) -> None:
         """audit.finding_created 事件触发健康日志记录。"""
-        from zephyr.shared.lifecycle.health import subscribe_monitoring_events, get_event_health_log
         from zephyr.shared.event_bus import bus
+        from zephyr.shared.lifecycle.health import get_event_health_log, subscribe_monitoring_events
 
         subscribe_monitoring_events()
         bus.emit("audit.finding_created", {"test": "audit_finding"})
@@ -116,8 +116,8 @@ class TestEventDrivenMonitoring:
 
     def test_event_triggers_metrics_counter(self) -> None:
         """事件触发 metrics counter 递增。"""
-        from zephyr.shared.observability.metrics import subscribe_metrics_events, get_registry
         from zephyr.shared.event_bus import bus
+        from zephyr.shared.observability.metrics import get_registry, subscribe_metrics_events
 
         subscribe_metrics_events()
         registry = get_registry()
@@ -139,8 +139,8 @@ class TestEventDrivenMonitoring:
 
     def test_multiple_events_all_recorded(self) -> None:
         """多个事件全部被记录。"""
-        from zephyr.shared.lifecycle.health import subscribe_monitoring_events, get_event_health_log
         from zephyr.shared.event_bus import bus
+        from zephyr.shared.lifecycle.health import get_event_health_log, subscribe_monitoring_events
 
         # 清除旧 handler，确保干净的测试环境
         bus.unsubscribe_all("f5.deadlock_detected")
@@ -190,8 +190,8 @@ class TestEventDrivenMonitoring:
 
     def test_health_log_capped(self) -> None:
         """健康日志有上限（防止内存泄漏）。"""
-        from zephyr.shared.lifecycle.health import subscribe_monitoring_events, get_event_health_log
         from zephyr.shared.event_bus import bus
+        from zephyr.shared.lifecycle.health import get_event_health_log, subscribe_monitoring_events
 
         subscribe_monitoring_events()
 

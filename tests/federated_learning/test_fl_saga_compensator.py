@@ -13,13 +13,12 @@
 
 from __future__ import annotations
 
-from zephyr.shared.compensation.saga_compensator import SagaCompensator
-
-
 # #ARCH-082：测试契约 compensate(list[str]) -> list["undo_*"] 与生产
 # SagaCompensator（SagaContext 状态机 + compensate_all）为两套设计——
 # 测试先行契约未落地（#ARCH-073~076 同族）。TestCompensate xfail 留痕。
 import pytest
+
+from zephyr.shared.compensation.saga_compensator import SagaCompensator
 
 _COMPENSATE_CONTRACT_GAP = pytest.mark.xfail(
     strict=False, reason="#ARCH-082 compensate 契约分歧（list 补偿 vs SagaContext 状态机），待裁定"

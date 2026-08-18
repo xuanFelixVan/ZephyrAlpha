@@ -39,16 +39,15 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec  # noqa: E402
 from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  # noqa: E402
-    ALLOW_OVERLAP_7D_THRESHOLD,
     ADAPTIVE_FACTOR,
+    ALLOW_OVERLAP_7D_THRESHOLD,
     BASELINE_WINDOW_DAYS,
     BLOCK_NEXT_SCORE,
     CRITICAL_WARN_SCORE,
     EMERGENCY_24H_THRESHOLD,
-    FORGED_24H_THRESHOLD,
     FORCE_MERGE_7D_THRESHOLD,
+    FORGED_24H_THRESHOLD,
     GATE_ID,
     NON_GW_24H_THRESHOLD,
     PRIORITY,
@@ -59,10 +58,11 @@ from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  #
     count_emergency_commits,
     count_force_merge_usage,
     load_baseline,
+    make_commit_gateway_abuse_monitor_reconciler,
     read_json_reports,
     record_daily_metrics,
-    make_commit_gateway_abuse_monitor_reconciler,
 )
+from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec  # noqa: E402
 
 
 class _FakeGateway:
@@ -604,7 +604,8 @@ class TestLoadThresholdsFromYaml:
     def test_load_returns_all_5_dimensions(self):
         """load_thresholds_from_yaml 返回 5 个维度的阈值。"""
         from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
-            load_thresholds_from_yaml, DEFAULT_THRESHOLDS,
+            DEFAULT_THRESHOLDS,
+            load_thresholds_from_yaml,
         )
         thresholds = load_thresholds_from_yaml()
         assert set(thresholds.keys()) == set(DEFAULT_THRESHOLDS.keys()), (
@@ -618,9 +619,12 @@ class TestLoadThresholdsFromYaml:
     def test_yaml_values_match_code_constants(self):
         """YAML 加载的值必须与代码常量一致（启动时已加载）。"""
         from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
-            WARN_ONLY_24H_THRESHOLD, EMERGENCY_24H_THRESHOLD,
-            ALLOW_OVERLAP_7D_THRESHOLD, FORGED_24H_THRESHOLD,
-            NON_GW_24H_THRESHOLD, load_thresholds_from_yaml,
+            ALLOW_OVERLAP_7D_THRESHOLD,
+            EMERGENCY_24H_THRESHOLD,
+            FORGED_24H_THRESHOLD,
+            NON_GW_24H_THRESHOLD,
+            WARN_ONLY_24H_THRESHOLD,
+            load_thresholds_from_yaml,
         )
         yaml_thresholds = load_thresholds_from_yaml()
         assert WARN_ONLY_24H_THRESHOLD == yaml_thresholds["warn_only_sustained_24h"]
@@ -643,7 +647,8 @@ class TestLoadThresholdsFromYaml:
     def test_load_fail_open_on_missing_file(self, tmp_path, monkeypatch):
         """YAML 文件缺失 → fail-open 返回默认值（不抛异常）。"""
         from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
-            load_thresholds_from_yaml, DEFAULT_THRESHOLDS,
+            DEFAULT_THRESHOLDS,
+            load_thresholds_from_yaml,
         )
         # mock 路径为不存在的临时目录
         monkeypatch.setattr(
@@ -656,7 +661,8 @@ class TestLoadThresholdsFromYaml:
     def test_load_fail_open_on_invalid_yaml(self, tmp_path, monkeypatch):
         """YAML 解析失败 → fail-open 返回默认值（不抛异常）。"""
         from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
-            load_thresholds_from_yaml, DEFAULT_THRESHOLDS,
+            DEFAULT_THRESHOLDS,
+            load_thresholds_from_yaml,
         )
         # 创建一个无效的 YAML 文件
         bad_yaml = tmp_path / "bad.yaml"
@@ -671,7 +677,8 @@ class TestLoadThresholdsFromYaml:
     def test_load_handles_invalid_threshold_value(self, tmp_path, monkeypatch):
         """YAML 中某维度值无效（非 int 或 < 0）→ 用默认值替换该维度。"""
         from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
-            load_thresholds_from_yaml, DEFAULT_THRESHOLDS,
+            DEFAULT_THRESHOLDS,
+            load_thresholds_from_yaml,
         )
         # 创建一个有无效值的 YAML
         invalid_yaml = tmp_path / "invalid_threshold.yaml"

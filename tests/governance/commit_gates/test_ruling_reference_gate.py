@@ -33,7 +33,6 @@ from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
     make_ruling_reference_gate,
 )
 
-
 # 测试用 registry YAML：含 裁定#6 / 裁定#19 / 裁定#19-B / 裁定#203-B，不含 裁定#999
 # 使用真源字段 "entries"（对标 architecture_issue_registry.yaml 结构）
 _REGISTRY_YAML = """\

@@ -23,9 +23,9 @@ for _p in (str(_REPO_ROOT / "src"), str(_REPO_ROOT / "scripts" / "governance")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
-
 import generate_project_depgraph as gen  # noqa: E402
+
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 
 # 测试用唯一路径前缀（避免与真实数据冲突，对齐 design_protection 测试惯例）
 _TEST_PATH = "test/design_conversion/probe.py"

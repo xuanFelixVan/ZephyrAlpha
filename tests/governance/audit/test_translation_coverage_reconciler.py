@@ -47,7 +47,6 @@ from zephyr.governance.audit.translation_coverage_reconciler import (  # noqa: E
     make_translation_coverage_reconciler,
 )
 
-
 # ---------------------------------------------------------------------------
 # TestReconcilerSpec
 # ---------------------------------------------------------------------------

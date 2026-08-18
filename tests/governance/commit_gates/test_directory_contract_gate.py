@@ -22,15 +22,15 @@ _SRC = Path(__file__).parent.parent.parent.parent / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from zephyr.gov_enforcement.commit_gates.directory_contract_gate import (  # noqa: E402
-    make_directory_contract_gate,
-)
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
-
 # ── check_directory_contract.py 纯函数加载（TestCheckDeprecatedDirectory 用） ──
 # check_directory_contract.py 在 scripts/ 下（非包模块），用 importlib 从文件路径加载。
 # 模块自身有 bootstrap（L54-57）把 _shared 所在目录加到 sys.path，exec_module 时自动执行。
 import importlib.util  # noqa: E402
+
+from zephyr.gov_enforcement.commit_gates.directory_contract_gate import (  # noqa: E402
+    make_directory_contract_gate,
+)
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 _SCRIPT_DIR = Path(__file__).resolve().parent.parent.parent.parent / "scripts" / "governance" / "d1_structure"
 _spec = importlib.util.spec_from_file_location(

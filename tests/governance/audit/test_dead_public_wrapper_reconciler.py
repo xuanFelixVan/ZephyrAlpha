@@ -40,7 +40,6 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec  # noqa: E402
 from zephyr.governance.audit.dead_public_wrapper_reconciler import (  # noqa: E402
     _GATE_ID,
     _PRIORITY,
@@ -49,7 +48,7 @@ from zephyr.governance.audit.dead_public_wrapper_reconciler import (  # noqa: E4
     _is_trivial_wrapper,
     make_dead_public_wrapper_reconciler,
 )
-
+from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec  # noqa: E402
 
 # ============================================================================
 # 辅助
@@ -493,7 +492,7 @@ class TestReconcile:
             lines.append(f"def f{i}(x):")
             lines.append(f"    return _f{i}(x)")
             lines.append(f"def _f{i}(x):")
-            lines.append(f"    return x")
+            lines.append("    return x")
             lines.append("")
         content = "\n".join(lines)
         src.mkdir(parents=True, exist_ok=True)

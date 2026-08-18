@@ -32,13 +32,12 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry, GateSpec
 from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import (
     REGISTRY_REL_PATH,
     auto_register_gates,
     load_gate_entries,
 )
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry, GateSpec
-
 
 # ========== load_gate_entries 测试 ==========
 
@@ -309,8 +308,8 @@ class TestRealProjectIntegration:
 
     def test_auto_register_matches_explicit_register(self) -> None:
         """auto_register 注册的 gate 集合与显式注册一致。"""
-        from zephyr.shared.io.paths import REPO_ROOT
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
+        from zephyr.shared.io.paths import REPO_ROOT
 
         # 显式注册（通过 GitCommitGateway 实例化）
         gw = GitCommitGateway()

@@ -375,9 +375,9 @@ class TestReleaseCleansTimestamps:
 
 class TestDelegationEngineIntegration:
     def test_delegation_engine_uses_deadlock_detector(self, monkeypatch):
-        from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
-        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
         from zephyr.governance.escalation.escalation_models import EscalationEvent, RuleCategory
+        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
+        from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
 
         det = DeadlockDetector()
         engine = DelegationEngine(deadlock_detector=det)
@@ -396,9 +396,8 @@ class TestDelegationEngineIntegration:
         assert record.deadlock_detected is True
 
     def test_delegation_engine_no_deadlock_proceeds(self, monkeypatch):
-        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
         from zephyr.governance.escalation.escalation_models import EscalationEvent, RuleCategory
-
+        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
         from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
 
         det = DeadlockDetector()

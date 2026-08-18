@@ -44,7 +44,6 @@ from zephyr.governance.audit.reconciliation_registry import (  # noqa: E402
     make_blueprint_id_legacy_reconciler,
 )
 
-
 _STUB_VALIDATOR = '''\
 """Stub validate_module_id_naming for isolated testing."""
 import re

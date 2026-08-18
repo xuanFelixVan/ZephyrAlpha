@@ -357,7 +357,8 @@ class TestCheckClosure:
 def _plant_probe_state(project_root: Path, *, reachable: bool) -> None:
     """写入探针状态文件（模拟网关前置探针结果）。"""
     import json as _json
-    from datetime import datetime, timezone as _tz
+    from datetime import datetime
+    from datetime import timezone as _tz
     state = {
         "reachable": reachable,
         "checked_at": datetime.now(_tz.utc).isoformat(),

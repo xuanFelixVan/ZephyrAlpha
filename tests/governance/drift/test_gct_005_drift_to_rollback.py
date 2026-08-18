@@ -23,8 +23,8 @@ class TestGCT005DriftToRollback:
         assert e.drift_id == "D001"
 
     def test_drift_fix_handler_accepts_event(self):
-        from zephyr.infrastructure.rollback.drift_fix import DriftFixHandler
         from zephyr.gov_drift.events import ManagedDriftEvent
+        from zephyr.infrastructure.rollback.drift_fix import DriftFixHandler
 
         e = ManagedDriftEvent(drift_id="D001", target="test_config")
         handler = DriftFixHandler()
@@ -32,7 +32,7 @@ class TestGCT005DriftToRollback:
         assert result is not None
 
     def test_drift_state_enum(self):
-        from zephyr.gov_drift.events import ManagedDriftState, DriftType
+        from zephyr.gov_drift.events import DriftType, ManagedDriftState
 
         assert ManagedDriftState.DETECTED is not None
         assert DriftType.CONFIG_DRIFT is not None

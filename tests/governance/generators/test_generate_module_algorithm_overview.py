@@ -32,13 +32,13 @@ for _p in (_GOV_DIR, _GEN_DIR):
         sys.path.insert(0, _p)
 
 from _shared.code_algorithm_extractor import (  # noqa: E402
-    AlgorithmSummary,
     AlgoFlowData,
     AlgoFlowNode,
+    AlgorithmSummary,
 )
 from generate_module_algorithm_overview import (  # noqa: E402
-    STATUS_EMOJI,
     STAGE_ID_TO_FILE,
+    STATUS_EMOJI,
     _build_consumers,
     _build_rel_context,
     build_module_to_file_map,
@@ -47,8 +47,8 @@ from generate_module_algorithm_overview import (  # noqa: E402
     render_index_doc,
     render_mermaid_layer_overview,
     render_quality_report,
-    render_stats,
     render_stage_doc,
+    render_stats,
     render_system_foundation_doc,
 )
 

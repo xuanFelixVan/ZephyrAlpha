@@ -41,7 +41,6 @@ from scripts.governance.d3_metadata.check_frontmatter_metadata import (
     load_vocabulary_values,
 )
 
-
 # ── fixtures ──
 
 @pytest.fixture

@@ -46,7 +46,6 @@ from zephyr.gov_enforcement.commit_gates.manual_only_permanent_gate import (  # 
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
-
 # ===========================================================================
 # 测试辅助（复用 test_perm_trigger_gate.py 范式）
 # ===========================================================================

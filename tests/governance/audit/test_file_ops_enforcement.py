@@ -31,9 +31,11 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "scripts"))
 
+import scripts.ops_guard as ops_guard_mod  # noqa: E402
 from scripts.ops_guard import (  # noqa: E402
-    DeleteBlockedError,
     _BULK_APPROVED,
+    _ORIG_PRIMITIVES,
+    DeleteBlockedError,
     _inprocess_judge,
     audit_delete,
     get_reconciler_context,
@@ -44,14 +46,11 @@ from scripts.ops_guard import (  # noqa: E402
     reset_reconciler_context,
     set_reconciler_context,
     uninstall_inprocess_enforcement,
-    _ORIG_PRIMITIVES,
 )
-import scripts.ops_guard as ops_guard_mod  # noqa: E402
-
 from zephyr.governance.audit.reconciliation_registry import (  # noqa: E402
-    ReconciliationRegistry,
     ReconcileResult,
     ReconcilerSpec,
+    ReconciliationRegistry,
     _compose_reconcilers,
 )
 

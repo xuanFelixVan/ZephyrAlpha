@@ -42,6 +42,7 @@ _SCRIPTS_DIR = _PROJECT_ROOT / "scripts" / "governance" / "d3_metadata"
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
+import domain_header_maint as dhm  # noqa: E402
 from domain_header_maint import (  # noqa: E402
     _read_head,
     _should_skip,
@@ -51,8 +52,6 @@ from domain_header_maint import (  # noqa: E402
     cmd_scan,
     is_process_alive,
 )
-import domain_header_maint as dhm  # noqa: E402
-
 
 # ---------------------------------------------------------------------------
 # Helpers
