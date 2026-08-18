@@ -416,20 +416,29 @@ class TestExtractDepMapDepths:
 
 
 class TestCheckTripleAlignment:
-    def test_returns_result_on_missing_blueprint_registry(self):
-        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value=None):
+    def test_returns_result_on_registry_load_failure(self):
+        """entries 加载彻底失败（文件缺失+frontmatter 回退失败）→ registry_load ERROR。"""
+        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_bp_entries", return_value=None):
             result = check_triple_alignment()
             assert isinstance(result, TripleAlignmentResult)
             assert result.passed is False
             assert len(result.violations) == 1
             assert result.violations[0].check == "registry_load"
 
-    def test_returns_result_on_invalid_blueprint_registry(self):
-        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value={"other_key": []}):
-            result = check_triple_alignment()
-            assert isinstance(result, TripleAlignmentResult)
-            assert result.passed is False
-            assert result.violations[0].check == "registry_load"
+    def test_frontmatter_fallback_when_registry_file_missing(self):
+        """B 类治本（2026-08-19 派生退库终态）：盘文件缺失 → frontmatter 现算回退。
+
+        旧契约：文件缺失即 registry_load ERROR（0 检查）。新契约：文件缺失从
+        docs/03_modules/**/blueprint.md frontmatter 现算 entries（比陈旧派生物更贴真源），
+        真实仓库下应现算出非空 entries 且检查正常执行。
+        """
+        from zephyr.gov_enforcement.rule_enforcement import triple_alignment as ta
+
+        with patch.object(ta, "_load_yaml", return_value=None):
+            entries = ta._load_bp_entries()
+        assert entries, "frontmatter 回退应在真实仓库现算出非空 entries"
+        assert len(entries) > 100, f"现算条目数异常: {len(entries)}"
+        assert all(isinstance(v, dict) and "file_path" in v for v in entries.values())
 
     def test_empty_blueprints_list(self):
         with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value={"blueprints": []}):

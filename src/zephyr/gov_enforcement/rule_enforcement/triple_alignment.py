@@ -111,6 +111,51 @@ def _load_yaml(path: Path) -> dict | list | None:
         return yaml.safe_load(f)
 
 
+def _load_bp_entries() -> dict[str, dict] | None:
+    """加载 blueprint 注册表条目（{module_id: entry}）。
+
+    B 类治本（2026-08-19）：blueprint_registry.yaml 已派生退库（03df6215e8，
+    #ARCH-BP-REGISTRY-DELETION-001 后续裁定——100% 可由 frontmatter 重生成=派生物，
+    盘文件删除+.gitignore+check_no_commit_derived 防重新跟踪）。文件缺失不再是
+    事故而是决策终态：优先读盘文件（存在时=已再生的新鲜派生物），缺失则从
+    docs/03_modules/**/blueprint.md frontmatter 现算（比读陈旧派生文件更贴近真源）。
+    双路皆失败 → None（registry_load ERROR 保留兜底语义）。
+    """
+    bp_registry_data = _load_yaml(BLUEPRINT_REGISTRY)
+    if bp_registry_data and "blueprints" in bp_registry_data:
+        return {
+            entry["module_id"]: entry
+            for entry in bp_registry_data["blueprints"]
+            if entry.get("module_id")
+        }
+    try:
+        import sys
+
+        syncers_dir = REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "syncers"
+        if str(syncers_dir) not in sys.path:
+            sys.path.insert(0, str(syncers_dir))
+        from sync_registry_from_blueprints import (  # noqa: PLC0415 延迟 import 防循环
+            build_registry_entry,
+            extract_frontmatter,
+            find_all_blueprints,
+        )
+
+        entries: dict[str, dict] = {}
+        for fp in find_all_blueprints():
+            entry = build_registry_entry(fp, extract_frontmatter(fp))
+            mid = entry.get("module_id", "")
+            if mid:
+                entries[mid] = entry
+        logger.info(
+            "triple_alignment: blueprint_registry.yaml 不在盘（派生退库终态），"
+            "已从 frontmatter 现算 %d 条 entries", len(entries),
+        )
+        return entries or None
+    except Exception:  # noqa: BLE001 — frontmatter 回退失败走 registry_load ERROR 兜底
+        logger.warning("triple_alignment: frontmatter 现算回退失败", exc_info=True)
+        return None
+
+
 def _parse_code_headers(py_path: Path) -> dict[str, str]:
     headers: dict[str, str] = {}
     if not py_path.exists():
@@ -382,27 +427,21 @@ def check_triple_alignment(
 ) -> TripleAlignmentResult:
     result = TripleAlignmentResult()
 
-    bp_registry_data = _load_yaml(BLUEPRINT_REGISTRY)
-    if not bp_registry_data or "blueprints" not in bp_registry_data:
+    bp_entries = _load_bp_entries()
+    if bp_entries is None:
         result.add_violation(
             AlignmentViolation(
                 check="registry_load",
                 severity=Severity.ERROR,
                 module_id="*",
                 source="blueprint_registry.yaml",
-                expected="valid YAML",
-                actual="load failed",
+                expected="valid YAML 或 frontmatter 可现算",
+                actual="load failed（文件缺失且 frontmatter 回退失败）",
             )
         )
         return result
 
     dep_map_modules = _extract_dep_map_modules()
-
-    bp_entries: dict[str, dict] = {}
-    for entry in bp_registry_data.get("blueprints", []):
-        mid = entry.get("module_id", "")
-        if mid:
-            bp_entries[mid] = entry
 
     for mid, bp in bp_entries.items():
         if specific_module and mid != specific_module:
