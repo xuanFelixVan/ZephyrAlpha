@@ -47,12 +47,12 @@ Safety     : M（只读查询，不修改数据）
 from __future__ import annotations
 
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 from pathlib import Path
 from typing import Any
 
 from zephyr.governance.persistence.sqlite_schema import init_db, schema_version
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 __all__ = [
     "AuditQuery",

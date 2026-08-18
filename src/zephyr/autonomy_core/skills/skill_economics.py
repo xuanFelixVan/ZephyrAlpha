@@ -23,9 +23,7 @@ Version: 0.3.0
 Token/API cost tracking
 """
 
-from typing import Final
-
-from typing import Any
+from typing import Any, Final
 
 PRICING: Final[set] = {
     "deepseek-chat": {"in": 0.001, "out": 0.002},

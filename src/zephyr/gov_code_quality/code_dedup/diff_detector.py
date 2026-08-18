@@ -85,12 +85,12 @@ class DiffDetector:
             return []
         functions: list[ChangedFunction] = []
         class _FunctionVisitor(ast.NodeVisitor):
-        
+
             def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
                 end = node.end_lineno or node.lineno
                 functions.append(ChangedFunction(file='', name=node.name, lineno=node.lineno, end_lineno=end, source=ast.get_source_segment(source, node) or ''))
                 self.generic_visit(node)
-        
+
             def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
                 end = node.end_lineno or node.lineno
                 functions.append(ChangedFunction(file='', name=node.name, lineno=node.lineno, end_lineno=end, source=ast.get_source_segment(source, node) or ''))

@@ -32,14 +32,14 @@ import logging
 import time
 from typing import Iterator
 
+from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
+from ..policy_registry import SourcePolicy
 from ..provider_base import (
-    IngestProviderBase,
-    IngestProviderMeta,
     FetchPayload,
     FetchResult,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
-from ..policy_registry import SourcePolicy
-from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)
@@ -50,6 +50,7 @@ _TBL_NEWS_DATA = get_registry().table("fund_news_data")
 # 财联社电报（通过本地 RSSHub 实例，财联社直连API需sign加密）
 # 部署：D:\RSSHub，npm start，监听 localhost:1200
 from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
+
 _CLS_RSSHUB_URL = f"{DEFAULT_RSSHUB_URL}/cls/telegraph"
 _CLS_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",

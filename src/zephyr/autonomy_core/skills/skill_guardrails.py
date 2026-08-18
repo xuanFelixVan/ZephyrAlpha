@@ -23,9 +23,7 @@ Version: 0.3.0
 Runtime guardrails: budget/mutation/output checks
 """
 
-from typing import Final
-
-from typing import Any
+from typing import Any, Final
 
 DESTRUCTIVE: Final[set] = {
     "rm -rf": "critical",

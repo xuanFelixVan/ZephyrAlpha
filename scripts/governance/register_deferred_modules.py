@@ -44,7 +44,6 @@ for _p in (str(_REPO_ROOT), str(_REPO_ROOT / "src"), str(_REPO_ROOT / "scripts" 
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection, release_depgraph_pg_connection
 
-
 # ============================================================
 # 模块数据定义（3图设计的核心）
 # ============================================================
@@ -401,9 +400,9 @@ def main():
     print("=" * 70)
     print(f"  Category A (已注册更新):  成功={stats['A_updated']}  失败={stats['A_failed']}")
     print(f"  Category B (新增节点):    成功={stats['B_added']}  失败={stats['B_failed']}  元数据失败={stats['B_meta_failed']}")
-    print(f"  Category C (已覆盖跳过):  3项 (D-DATA-ENG-04/05/08)")
-    print(f"\n  下一步: 运行 sync_panorama_module.py --all 派生 dataflow/decision 图")
-    print(f"  然后:   运行 align_panoramas.py 验证4类对齐问题清零")
+    print("  Category C (已覆盖跳过):  3项 (D-DATA-ENG-04/05/08)")
+    print("\n  下一步: 运行 sync_panorama_module.py --all 派生 dataflow/decision 图")
+    print("  然后:   运行 align_panoramas.py 验证4类对齐问题清零")
 
     if stats["A_failed"] > 0 or stats["B_failed"] > 0:
         print("\n  ⚠️ 有失败项，请检查上方 [ERROR] 日志")

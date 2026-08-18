@@ -40,7 +40,7 @@ _logger = logging.getLogger(__name__)
 __all__: Final = ["list_runs", "get_run", "compare_runs", "download_artifact", "download_artifact_text"]
 
 
-def _parse_dt(s: Optional[str]) -> Optional[datetime]:
+def _parse_dt(s: str | None) -> datetime | None:
     """解析 ISO 字符串为 datetime（失败返回 None）。"""
     if not s:
         return None
@@ -50,7 +50,7 @@ def _parse_dt(s: Optional[str]) -> Optional[datetime]:
         return None
 
 
-def _parse_passed(metrics: dict[str, Any], tags: dict[str, Any]) -> Optional[bool]:
+def _parse_passed(metrics: dict[str, Any], tags: dict[str, Any]) -> bool | None:
     """从 metrics/tags 解析 C1 passed（metrics.passed=1.0/0.0 优先，tags.passed 字符串兜底）。
 
     修复预存 bug：RunSummary.passed 为必填位（无默认值），旧构造未传 → TypeError
@@ -90,7 +90,7 @@ def _meta_to_summary(meta: dict[str, Any], component: str) -> RunSummary:
     )
 
 
-def _load_meta(meta_path: Path) -> Optional[dict[str, Any]]:
+def _load_meta(meta_path: Path) -> dict[str, Any] | None:
     """读取 run_meta.json（失败返回 None）。"""
     try:
         return json.loads(meta_path.read_text(encoding="utf-8"))
@@ -100,7 +100,7 @@ def _load_meta(meta_path: Path) -> Optional[dict[str, Any]]:
 
 
 def _list_runs_fallback(
-    component: Optional[str],
+    component: str | None,
     cfg: ExperimentTrackingConfig,
 ) -> list[RunSummary]:
     """扫 fallback_dir JSON 目录。"""
@@ -124,9 +124,9 @@ def _list_runs_fallback(
 
 def _get_run_fallback(
     run_id: str,
-    component: Optional[str],
+    component: str | None,
     cfg: ExperimentTrackingConfig,
-) -> Optional[RunDetail]:
+) -> RunDetail | None:
     """扫 fallback_dir 找 run_meta.json。
 
     artifact_paths 契约（dict[str, str]，与 models.py 声明一致）：
@@ -198,9 +198,9 @@ def _build_artifact_paths(artifacts: list[Any], run_dir: Path) -> dict[str, str]
 
 
 def list_runs(
-    component: Optional[str] = None,
+    component: str | None = None,
     max_results: int = 100,
-    config: Optional[ExperimentTrackingConfig] = None,
+    config: ExperimentTrackingConfig | None = None,
 ) -> list[RunSummary]:
     """列出 runs（统一返回 RunSummary，单一 JSON 源）。
 
@@ -222,9 +222,9 @@ def list_runs(
 
 def get_run(
     run_id: str,
-    component: Optional[str] = None,
-    config: Optional[ExperimentTrackingConfig] = None,
-) -> Optional[RunDetail]:
+    component: str | None = None,
+    config: ExperimentTrackingConfig | None = None,
+) -> RunDetail | None:
     """获取单次 run 详情（统一返回 RunDetail，单一 JSON 源）。
 
     Args:
@@ -245,8 +245,8 @@ def get_run(
 
 def compare_runs(
     run_ids: list[str],
-    component: Optional[str] = None,
-    config: Optional[ExperimentTrackingConfig] = None,
+    component: str | None = None,
+    config: ExperimentTrackingConfig | None = None,
 ) -> list[RunDetail]:
     """对比多次 run（逐个 get_run，失败的跳过）。
 
@@ -269,10 +269,10 @@ def compare_runs(
 def download_artifact(
     run_id: str,
     component: str,
-    artifact_path: Optional[str] = None,
-    filename: Optional[str] = None,
-    config: Optional[ExperimentTrackingConfig] = None,
-) -> Optional[bytes]:
+    artifact_path: str | None = None,
+    filename: str | None = None,
+    config: ExperimentTrackingConfig | None = None,
+) -> bytes | None:
     """从 fallback run 目录读 artifact bytes。
 
     路径规则 = {fallback_dir}/{component}/{run_id}/{artifact_path or ""}/{filename}
@@ -308,10 +308,10 @@ def download_artifact(
 def download_artifact_text(
     run_id: str,
     component: str,
-    artifact_path: Optional[str] = None,
-    filename: Optional[str] = None,
-    config: Optional[ExperimentTrackingConfig] = None,
-) -> Optional[str]:
+    artifact_path: str | None = None,
+    filename: str | None = None,
+    config: ExperimentTrackingConfig | None = None,
+) -> str | None:
     """download_artifact 薄包装（返回 str 或 None，便于直接读 c1_summary.md）。"""
     data = download_artifact(run_id, component, artifact_path, filename, config)
     if data is None:

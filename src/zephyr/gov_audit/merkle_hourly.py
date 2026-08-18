@@ -29,7 +29,6 @@ audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps, filter_dataclass_fields
 
 import hmac
 import json
@@ -42,6 +41,7 @@ from pydantic import BaseModel, ConfigDict
 
 from zephyr.gov_audit.integrity import MerkleAggregator
 from zephyr.shared.io.paths import AUDIT_DATA_DIR  # 路径真源（SSoT）
+from zephyr.shared.io.serialization import dumps, filter_dataclass_fields
 
 _logger = logging.getLogger(__name__)
 

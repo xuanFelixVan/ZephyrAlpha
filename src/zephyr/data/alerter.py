@@ -37,7 +37,6 @@
 """
 from __future__ import annotations
 
-from typing import Final
 import datetime
 import json
 import logging
@@ -48,7 +47,7 @@ import urllib.request
 from email.header import Header
 from email.mime.text import MIMEText
 from pathlib import Path
-from typing import Optional
+from typing import Final, Optional
 
 from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.security.secrets import get_secret_or_default

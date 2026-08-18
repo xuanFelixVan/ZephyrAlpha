@@ -54,8 +54,8 @@ for _p in (str(_REPO_ROOT), str(_GOVERNANCE_DIR)):
         sys.path.insert(0, _p)
 
 from apply_depgraph import (  # noqa: E402
-    _load_depgraph,
     _atomic_write,
+    _load_depgraph,
     add_edge,
     delete_edge,
 )

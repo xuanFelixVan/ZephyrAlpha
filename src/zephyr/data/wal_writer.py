@@ -49,8 +49,9 @@ import time
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from . import ch_writer, local_replay
 from zephyr.shared.observability.metrics import get_registry
+
+from . import ch_writer, local_replay
 
 if TYPE_CHECKING:
     from .provider_base import FetchResult

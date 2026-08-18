@@ -27,12 +27,11 @@ v0.3.0: complete lifecycle with guard functions, transition log, rollback, batch
 
 from __future__ import annotations
 
-from typing import Final
 import json
 import time
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from zephyr.autonomy_core.skills.skill_model import SkillStatus
 

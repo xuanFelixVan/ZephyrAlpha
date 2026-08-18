@@ -128,6 +128,7 @@ if not hasattr(_datetime, "UTC"):
 
 # 2. typing.Self — Python 3.11+ 新增，运行时用 TypeVar 等价替代
 import typing as _typing
+
 if not hasattr(_typing, "Self"):
     try:
         from typing_extensions import Self as _Self

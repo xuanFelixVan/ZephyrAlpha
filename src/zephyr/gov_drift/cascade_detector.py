@@ -32,10 +32,10 @@ prevention: dry-run影响面分析(临时目录模拟修复diff跑关联检测�
 
 from __future__ import annotations
 
-from typing import Final
-from zephyr.shared.io.serialization import dumps
-
 import logging
+from typing import Final
+
+from zephyr.shared.io.serialization import dumps
 
 logger = logging.getLogger(__name__)
 

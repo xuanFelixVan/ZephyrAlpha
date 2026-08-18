@@ -58,18 +58,18 @@ from typing import Any, Callable, Optional
 
 import pandas as pd
 
+from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig, DecisionGateResult
 from zephyr.backtest.core.engine_base import BacktestEngineBase, BacktestResult
 from zephyr.backtest.core.matching_engine import MatchingConfig, MatchingEngine
 from zephyr.backtest.core.metrics import DEFAULT_RISK_FREE_RATE, calculate_full_metrics
+from zephyr.backtest.core.overfitting_detector import OverfittingDetector, OverfittingGateError
 from zephyr.backtest.core.portfolio import Portfolio
 from zephyr.backtest.core.tick_replay import (
     TickEvent,
     TickReplayConfig,
     TickReplayEngine,
 )
-from zephyr.backtest.core.overfitting_detector import OverfittingDetector, OverfittingGateError
 from zephyr.backtest.core.walk_forward import WalkForwardAnalyzer, WalkForwardConfig
-from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig, DecisionGateResult
 
 _logger = logging.getLogger(__name__)
 
@@ -123,7 +123,7 @@ class EventDrivenEngine(BacktestEngineBase):
     def __init__(
         self,
         config: object | None = None,
-        matching_config: Optional[MatchingConfig] = None,
+        matching_config: MatchingConfig | None = None,
     ):
         """初始化事件驱动回测引擎
 
@@ -170,10 +170,10 @@ class EventDrivenEngine(BacktestEngineBase):
         start: datetime,
         end: datetime,
         strategy_callback: Callable[[TickEvent], dict[str, float]],
-        initial_capital: Optional[Decimal] = None,
-        tick_config: Optional[TickReplayConfig] = None,
+        initial_capital: Decimal | None = None,
+        tick_config: TickReplayConfig | None = None,
         strategy_name: str = "event_driven",
-        risk_free_rate: Optional[float] = None,
+        risk_free_rate: float | None = None,
     ) -> BacktestResult:
         """执行 Tick 级事件驱动回测
 
@@ -214,7 +214,7 @@ class EventDrivenEngine(BacktestEngineBase):
         ticks_processed = 0
         fills_applied = 0
         last_prices: dict[str, Decimal] = {}
-        last_date: Optional[Any] = None
+        last_date: Any | None = None
 
         def on_tick(event: TickEvent) -> None:
             nonlocal ticks_processed, fills_applied, last_date

@@ -163,9 +163,9 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from zephyr.shared.infra.process_pool import (  # noqa: E402
-    run_subprocess_hidden,
-    spawn_python_hidden,
+from zephyr.autonomy_core.context.shadow_canary import (  # noqa: E402
+    CanaryResult,
+    ShadowCanary,
 )
 from zephyr.gov_enforcement.rule_enforcement.can_i_deploy import (  # noqa: E402
     CanIDeploy,
@@ -175,9 +175,9 @@ from zephyr.security.access_control.canary_rollout_manager import (  # noqa: E40
     CanaryRolloutManager,
     CanaryState,
 )
-from zephyr.autonomy_core.context.shadow_canary import (  # noqa: E402
-    CanaryResult,
-    ShadowCanary,
+from zephyr.shared.infra.process_pool import (  # noqa: E402
+    run_subprocess_hidden,
+    spawn_python_hidden,
 )
 
 log = logging.getLogger("shadow_canary_deploy")

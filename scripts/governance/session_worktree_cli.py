@@ -51,11 +51,11 @@ warn_only: false
 """
 
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
-
 import argparse
 import json
 import sys
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_sweep
 from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager

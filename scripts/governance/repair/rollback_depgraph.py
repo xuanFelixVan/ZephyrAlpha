@@ -58,7 +58,8 @@ while not (_PROJECT_ROOT / ".git").exists() and _PROJECT_ROOT != _PROJECT_ROOT.p
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  仓库根真源（SSoT）
 
 DST = str(REPO_ROOT / "data" / "databases" / "depgraph")

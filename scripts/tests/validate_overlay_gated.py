@@ -164,7 +164,7 @@ def main() -> None:
     # 退化判定
     sharpe_gated = gv.get('Sharpe', 0)
     calmar_gated = gv.get('Calmar', 0)
-    print(f"\n退化判定（方案A vs baseline）:")
+    print("\n退化判定（方案A vs baseline）:")
     print(f"  Sharpe  差 {sharpe_gated - 0.3474:+.4f}  ({'噪声范围✅' if abs(sharpe_gated-0.3474)<0.005 else '退化⚠️' if sharpe_gated<0.3474 else '改善'})")
     print(f"  Calmar  差 {calmar_gated - 0.3694:+.4f}  ({'噪声范围✅' if abs(calmar_gated-0.3694)<0.005 else '退化⚠️' if calmar_gated<0.3694 else '改善'})")
     print(f"\n方案A passed={r_gated.passed}")

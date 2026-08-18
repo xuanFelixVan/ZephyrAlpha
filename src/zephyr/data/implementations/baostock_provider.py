@@ -35,14 +35,14 @@ import threading
 import time
 from typing import Iterator
 
+from ..policy_registry import SourcePolicy
 from ..provider_base import (
-    IngestProviderBase,
-    IngestProviderMeta,
+    CapabilityContract,
     FetchPayload,
     FetchResult,
-    CapabilityContract,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
-from ..policy_registry import SourcePolicy
 from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)

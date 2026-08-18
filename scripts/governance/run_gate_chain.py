@@ -16,9 +16,10 @@
 Usage:
     python scripts/governance/run_gate_chain.py script1.py,arg1,arg2 script2.py,arg3
 """
-from _shared.constants import EXIT_ERROR
 import subprocess
 import sys
+
+from _shared.constants import EXIT_ERROR
 
 __manifest__ = """
 args: []

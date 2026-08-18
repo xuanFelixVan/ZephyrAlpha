@@ -20,9 +20,9 @@ import gzip
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
+
 from zephyr.shared.utils.time_utils import now_utc
-from typing import Final
 
 logger = logging.getLogger(__name__)
 

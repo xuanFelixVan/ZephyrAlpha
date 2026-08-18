@@ -52,8 +52,8 @@ def _update_failure_streaks(results: list[dict]) -> None:
     同一天多次健康检查只计一次（last_date 去重）；告警/状态读写失败仅记日志，
     绝不影响健康检查主流程（ERROR_CONTRACT）。
     """
-    import json
     import datetime as _dt
+    import json
 
     try:
         today = now_utc().date().isoformat()
@@ -65,7 +65,7 @@ def _update_failure_streaks(results: list[dict]) -> None:
             except Exception:  # noqa: BLE001 — 损坏则从空重建
                 streaks = {}
 
-        from zephyr.data.alerter import Alerter, LEVEL_ERROR, LEVEL_INFO
+        from zephyr.data.alerter import LEVEL_ERROR, LEVEL_INFO, Alerter
 
         alerter = Alerter()
         for r in results:
@@ -162,6 +162,7 @@ def _probe_rss(provider) -> list:
     单源探针误报 empty_data → 任务误走 fallback。改为双源任一并非空即健康。
     """
     import feedparser
+
     from zephyr.shared.foundation.constants import DEFAULT_HTTP_UA
     for url in ("https://36kr.com/feed", "https://www.tmtpost.com/rss.xml"):
         try:
@@ -180,7 +181,7 @@ def _probe_cls(provider) -> list:
     依赖本地 RSSHub 实例（localhost:1200）。RSSHub 未运行→连接失败→test_fail，
     属真实健康信号（cls 能力本身依赖 RSSHub 路由）。
     """
-    from zephyr.data.implementations.cls_provider import _CLS_RSSHUB_URL, _CLS_HEADERS
+    from zephyr.data.implementations.cls_provider import _CLS_HEADERS, _CLS_RSSHUB_URL
     resp = provider._http_get(
         _CLS_RSSHUB_URL, params={"format": "json"},
         headers=_CLS_HEADERS, timeout=15,
@@ -196,7 +197,8 @@ def _probe_eastmoney_news(provider) -> list:
     但 np-listapi 实测可用，不受影响。
     """
     from zephyr.data.implementations.eastmoney_news_provider import (
-        _EM_NEWS_URL, _EM_HEADERS,
+        _EM_HEADERS,
+        _EM_NEWS_URL,
     )
     params = {
         "client": "web", "biz": "web_724", "column": "350", "order": "1",
@@ -415,7 +417,7 @@ def _write_log(results: list[dict]) -> Path:
 
     lines = [
         f"{'=' * 70}",
-        f"  数据源健康检查报告",
+        "  数据源健康检查报告",
         f"  时间: {now_utc().strftime('%Y-%m-%d %H:%M:%S')}",
         f"{'=' * 70}",
         "",

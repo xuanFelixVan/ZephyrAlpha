@@ -809,6 +809,7 @@ class TickSubscriber:
         """
         try:
             import os
+
             import psutil
         except ImportError:
             log.debug("psutil 不可用，跳过 TCP 实例辨识")
@@ -977,7 +978,8 @@ class TickSubscriber:
         # P1-3: 启动双源切换器（主源 QMT + 备源 TDX 自动切换）
         if self._backup_provider is not None and self._heartbeat is not None:
             from zephyr.data.redundant_source.backup_tick_poller import (
-                BackupTickPoller, QMTSourceAdapter,
+                BackupTickPoller,
+                QMTSourceAdapter,
             )
             from zephyr.data.redundant_source.source_switcher import SourceSwitcher
 

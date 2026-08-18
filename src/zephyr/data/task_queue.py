@@ -30,12 +30,11 @@ DAG 依赖示例（蓝图 §6.3）：
 """
 from __future__ import annotations
 
-from typing import Final
 import logging
 import threading
 from collections import defaultdict
 from pathlib import Path
-from typing import Optional
+from typing import Final, Optional
 
 log = logging.getLogger(__name__)
 

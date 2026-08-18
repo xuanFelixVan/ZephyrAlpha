@@ -174,7 +174,7 @@ def save_registry(data: dict) -> None:
         raise
 
 
-def get_entries(data: dict, subdir: Optional[str] = None) -> list[MigrationEntry]:
+def get_entries(data: dict, subdir: str | None = None) -> list[MigrationEntry]:
     """Filter registry entries by OLD_PATH_PREFIX and optional subdir."""
     raw_entries = data.get("entries", [])
     result: list[MigrationEntry] = []

@@ -242,7 +242,7 @@ class IntegratorMetrics:
 
 # ============== 模块级单例 ==============
 
-_metrics: Optional[IntegratorMetrics] = None
+_metrics: IntegratorMetrics | None = None
 _metrics_lock = threading.Lock()
 
 

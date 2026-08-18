@@ -34,13 +34,13 @@ import logging
 import time
 from typing import Iterator
 
+from ..policy_registry import SourcePolicy
 from ..provider_base import (
-    IngestProviderBase,
-    IngestProviderMeta,
     FetchPayload,
     FetchResult,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
-from ..policy_registry import SourcePolicy
 from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)

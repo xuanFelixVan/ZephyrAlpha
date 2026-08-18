@@ -28,17 +28,18 @@
 """
 from __future__ import annotations
 
-import datetime
 import dataclasses
+import datetime
+import logging
 import math
 import time
-import logging
 from typing import Iterator
 
-from ..provider_base import IngestProviderBase, FetchPayload, FetchResult, IngestProviderMeta, CapabilityContract
-from ..policy_registry import SourcePolicy
 from .. import ch_reader
+from ..policy_registry import SourcePolicy
+from ..provider_base import CapabilityContract, FetchPayload, FetchResult, IngestProviderBase, IngestProviderMeta
 from ..table_registry import get_registry
+
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
 _TBL_ADJ_FACTOR = get_registry().table("market_adj_factor")
 _TBL_AUCTION_BOOK = get_registry().table("market_auction_book")
@@ -503,8 +504,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
         if self._has_l2 is not None:
             return self._has_l2
         try:
-            from xtquant import xtdata
             import datetime as _dt
+
+            from xtquant import xtdata
             today = _dt.date.today().strftime("%Y%m%d")
             # 对平安银行探测，只需验证 API 可调用（返回空也算有权限）
             xtdata.get_l2_quote([], "000001.SZ", today, today, -1)
@@ -1314,8 +1316,8 @@ class MiniQmtIngestProvider(IngestProviderBase):
         Yields:
             FetchResult: 每个股票一批
         """
-        from xtquant import xtdata
         import pandas as pd
+        from xtquant import xtdata
 
         table = _resolve_kline_aggregated_table(freq, payload, dividend_type)
 
@@ -1521,8 +1523,8 @@ class MiniQmtIngestProvider(IngestProviderBase):
         policy: SourcePolicy, end_date,
     ) -> list[tuple]:
         """处理单个期货合约的持仓数据，返回行列表。"""
-        from xtquant import xtdata
         import pandas as pd
+        from xtquant import xtdata
 
         symbol = self._stock_to_symbol(stock_code)
         detail = self._call_with_policy(
@@ -1937,6 +1939,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
             dict: {Underlying, ExercisePrice, EndDelivDate, OptType} 或 None
         """
         import re
+
         from xtquant import xtdata
 
         detail = self._call_with_policy(
@@ -3549,8 +3552,8 @@ class MiniQmtIngestProvider(IngestProviderBase):
             )
             return
 
-        from xtquant import xtdata
         import numpy as np
+        from xtquant import xtdata
 
         table = payload.table or _TBL_L2_TICK
         columns = [

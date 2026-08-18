@@ -29,12 +29,12 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from pathlib import Path
 
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.shared.io.paths import DB_PATH
-from dataclasses import dataclass, field
-from datetime import UTC, datetime
 
 # S5: drift 持续监控 SQL（§5.160.2 NO-BARE-SQL gate 合规）
 # 数据源：drift_scan_results（S1 写入）、drift_audit_findings（S2 写入）

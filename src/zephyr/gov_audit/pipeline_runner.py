@@ -44,8 +44,8 @@ from zephyr.gov_audit.finding_model import (
     RemediationPriority,
     generate_finding_id,
 )
-from zephyr.shared.schema.base_config import BASE_CONFIG
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.schema.base_config import BASE_CONFIG
 
 logger = logging.getLogger(__name__)
 

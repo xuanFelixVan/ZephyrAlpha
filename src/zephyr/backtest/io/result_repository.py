@@ -41,10 +41,10 @@ from typing import Any, Optional
 
 from zephyr.backtest.io.backtest_result_sink import (
     BacktestSinkData,
+    BenchmarkPoint,
+    DrawdownPoint,
     EquityPoint,
     TradeRecord,
-    DrawdownPoint,
-    BenchmarkPoint,
 )
 from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.utils.time_utils import now_utc, now_utc_str
@@ -79,11 +79,11 @@ class BacktestRunArtifact:
     equity_curve: list[dict[str, Any]]  # [{timestamp: ISO8601, equity: float}, ...]
     trade_log: list[dict[str, Any]]  # [{timestamp, symbol, side, price, quantity, commission}, ...]
     schema_version: str = "1.0.0"
-    tick_replay_data: Optional[list[dict[str, Any]]] = None  # [{timestamp, price, volume}, ...]
-    benchmark_curve: Optional[list[dict[str, Any]]] = None  # [{timestamp, value}, ...]
-    drawdown_curve: Optional[list[dict[str, Any]]] = None  # [{timestamp, drawdown}, ...]
+    tick_replay_data: list[dict[str, Any]] | None = None  # [{timestamp, price, volume}, ...]
+    benchmark_curve: list[dict[str, Any]] | None = None  # [{timestamp, value}, ...]
+    drawdown_curve: list[dict[str, Any]] | None = None  # [{timestamp, drawdown}, ...]
     created_at: str = ""  # ISO8601, save_artifact 时自动填充
-    metrics: Optional[dict[str, Any]] = None  # 汇总指标快照(从 BacktestSinkData 提取)
+    metrics: dict[str, Any] | None = None  # 汇总指标快照(从 BacktestSinkData 提取)
 
 
 # ===== 存储后端 =====
@@ -112,7 +112,7 @@ def _dict_to_artifact(d: dict[str, Any]) -> BacktestRunArtifact:
 
 def save_artifact(
     artifact: BacktestRunArtifact,
-    storage_path: Optional[Path] = None,
+    storage_path: Path | None = None,
 ) -> str:
     """持久化 BacktestRunArtifact, 返回 run_id。
 
@@ -152,7 +152,7 @@ def save_artifact(
 
 def get_artifact(
     run_id: str,
-    storage_path: Optional[Path] = None,
+    storage_path: Path | None = None,
 ) -> BacktestRunArtifact:
     """按 run_id 检索 BacktestRunArtifact, 供 D_FRONTEND 消费。
 
@@ -187,8 +187,8 @@ def get_artifact(
 
 
 def list_artifacts(
-    strategy_id: Optional[str] = None,
-    storage_path: Optional[Path] = None,
+    strategy_id: str | None = None,
+    storage_path: Path | None = None,
 ) -> list[str]:
     """列出所有 run_id（可按 strategy_id 过滤）。
 
@@ -229,7 +229,7 @@ def list_artifacts(
 
 def delete_artifact(
     run_id: str,
-    storage_path: Optional[Path] = None,
+    storage_path: Path | None = None,
 ) -> bool:
     """删除指定 run_id 的产物文件。
 
@@ -255,7 +255,7 @@ def delete_artifact(
 
 def build_artifact_from_data(
     data: BacktestSinkData,
-    tick_replay_data: Optional[list[dict[str, Any]]] = None,
+    tick_replay_data: list[dict[str, Any]] | None = None,
 ) -> BacktestRunArtifact:
     """从 BacktestSinkData 构建 BacktestRunArtifact。
 

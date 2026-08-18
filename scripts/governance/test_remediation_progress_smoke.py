@@ -46,7 +46,8 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
 
@@ -201,10 +202,10 @@ def main() -> int:
     """入口：编排全部 smoke test。"""
     from zephyr.governance.audit.remediation_progress_reconciler import (
         RemediationProgressRecord,
-        record_remediation_progress,
+        make_remediation_progress_reconciler,
         query_all_dimensions,
         query_stale_dimensions,
-        make_remediation_progress_reconciler,
+        record_remediation_progress,
     )
 
     failures: list[str] = []

@@ -21,10 +21,11 @@ Forensic Package — v0.8.0 取证就绪: escalation event bundle+hash chain+tim
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import hashlib
 from datetime import UTC, datetime
+
+from zephyr.shared.io.serialization import dumps
 
 
 class ForensicPackage:

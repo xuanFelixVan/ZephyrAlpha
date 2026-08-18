@@ -22,10 +22,9 @@ Task ID : MOD-CONTEXT_ENGINE-TASK-011
 Priority: P2 (beta)
 """
 
-from typing import Final
-
 import json
 from pathlib import Path
+from typing import Final
 
 CE_ROOT: Final[Path] = Path(__file__).resolve().parent
 

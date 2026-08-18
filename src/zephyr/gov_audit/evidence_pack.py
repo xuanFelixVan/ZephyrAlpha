@@ -28,7 +28,6 @@ audit-trail.evidence_pack — MOD-INF-020 · 证据包导出器
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import logging
 from datetime import UTC, datetime
@@ -39,6 +38,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from zephyr.governance.evidence_pack import EvidencePack  # re-export: audit_trail 模块依赖 EvidencePack
 from zephyr.shared.io.paths import AUDIT_DATA_DIR  # 路径真源（SSoT）
+from zephyr.shared.io.serialization import dumps
 
 _logger = logging.getLogger(__name__)
 

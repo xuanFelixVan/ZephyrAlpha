@@ -16,6 +16,7 @@
 # [TTL] permanent
 
 from __future__ import annotations
+
 import logging
 import re
 from enum import Enum
@@ -45,7 +46,7 @@ class ConstructionStage(str, Enum):
     POST_AUDIT = "post_audit"
 
     @classmethod
-    def from_label(cls, label: str) -> Optional["ConstructionStage"]:
+    def from_label(cls, label: str) -> "ConstructionStage" | None:
         mapping = {
             "想法": cls.IDEA,
             "草稿": cls.IDEA,

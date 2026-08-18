@@ -39,10 +39,10 @@ class FallbackBackend:
 
     def __init__(self, fallback_dir: Path) -> None:
         self._base = Path(fallback_dir)
-        self._current: Optional[dict[str, Any]] = None
-        self._current_dir: Optional[Path] = None
+        self._current: dict[str, Any] | None = None
+        self._current_dir: Path | None = None
 
-    def start_run(self, component: str, run_name: Optional[str], tags: Optional[dict]) -> str:
+    def start_run(self, component: str, run_name: str | None, tags: dict | None) -> str:
         run_id = uuid.uuid4().hex[:12]
         run_dir = self._base / component
         run_dir.mkdir(parents=True, exist_ok=True)
@@ -67,13 +67,13 @@ class FallbackBackend:
         if current is not None:
             current["params"].update({k: str(v) for k, v in params.items()})
 
-    def log_metrics(self, metrics: dict[str, float], step: Optional[int]) -> None:
+    def log_metrics(self, metrics: dict[str, float], step: int | None) -> None:
         current = getattr(self, "_current", None)
         if current is not None:
             for k, v in metrics.items():
                 current["metrics"][k] = float(v)
 
-    def log_artifact(self, local_path: str, artifact_path: Optional[str]) -> None:
+    def log_artifact(self, local_path: str, artifact_path: str | None) -> None:
         current = getattr(self, "_current", None)
         if current is None:
             return
@@ -83,7 +83,7 @@ class FallbackBackend:
             "artifact_path": artifact_path,
         })
 
-    def log_artifact_bytes(self, data: bytes, filename: str, artifact_path: Optional[str]) -> None:
+    def log_artifact_bytes(self, data: bytes, filename: str, artifact_path: str | None) -> None:
         current = getattr(self, "_current", None)
         current_dir = getattr(self, "_current_dir", None)
         if current is None or current_dir is None:

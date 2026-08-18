@@ -16,7 +16,6 @@ from zephyr.gov_audit.bridges.audit_feedback_bridge import AuditFeedbackBridge
 from zephyr.gov_audit.bridges.audit_tiered_storage_bridge import AuditTieredStorageBridge
 from zephyr.gov_audit.bridges.audit_trust_bridge import AuditTrustBridge
 
-
 __all__ = [
     "AnomalyDetector",
     "AnomalyEvent",

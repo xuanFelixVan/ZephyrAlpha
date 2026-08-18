@@ -58,8 +58,8 @@ try:
     from zephyr.data import ch_reader
     from zephyr.data.table_registry import get_registry
     from zephyr.regime.core.regime_detector import RegimeDetector
-    from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
     from zephyr.regime.features.regime_data_loader import RegimeDataLoader
+    from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
     REAL_DEPS_OK = True
 except Exception as _exc:  # pragma: no cover
     _REAL_IMPORT_ERROR = _exc

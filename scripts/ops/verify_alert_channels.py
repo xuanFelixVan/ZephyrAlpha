@@ -95,7 +95,7 @@ def _run_feishu_test() -> dict:
     try:
         os.environ["ZEPHYR_FEISHU_WEBHOOK"] = _TEST_WEBHOOK_VAL.format(port=port)
         # 延迟导入确保 env 先设置（Alerter 在调用时读 env，非构造时）
-        from zephyr.data.alerter import Alerter, LEVEL_ERROR
+        from zephyr.data.alerter import LEVEL_ERROR, Alerter
 
         alerter = Alerter(failures_dir=os.path.join(os.path.dirname(__file__), "_tmp_failures"))
         task_id = "b2_feishu_verify"
@@ -261,7 +261,7 @@ def _run_smtp_test() -> dict:
         original_starttls = smtplib.SMTP.starttls
         smtplib.SMTP.starttls = lambda self, *a, **kw: None  # type: ignore[method-assign]
         try:
-            from zephyr.data.alerter import Alerter, LEVEL_CRITICAL
+            from zephyr.data.alerter import LEVEL_CRITICAL, Alerter
 
             alerter = Alerter(
                 failures_dir=os.path.join(os.path.dirname(__file__), "_tmp_failures")

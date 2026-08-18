@@ -18,8 +18,7 @@
 import logging
 import subprocess
 from pathlib import Path
-from typing import Any
-from typing import Final
+from typing import Any, Final
 
 logger = logging.getLogger(__name__)
 

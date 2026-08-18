@@ -19,10 +19,11 @@ import os
 import re
 from collections.abc import Generator
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any
 
 import yaml
+
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _BASE_DIR = Path(__file__).resolve().parent
 _SKILLS_DIR = _BASE_DIR / "skills"
@@ -171,7 +172,9 @@ class SkillFactory:
         if current != content:
             try:
                 import json as _json
-                from datetime import datetime as _dt, timezone as _tz
+                from datetime import datetime as _dt
+                from datetime import timezone as _tz
+
                 # 触发表目标是 skills 包内 AGENTS.md，审计锚仓根 .runtime/audit/
                 from zephyr.shared.io.paths import REPO_ROOT
                 audit_dir = REPO_ROOT / ".runtime" / "audit"

@@ -68,7 +68,7 @@ _COMPONENT = "c1-validation"
 
 def _extract_params(
     result: "C1ComparisonResult",
-    comparator: Optional["C1ShrinkageComparator"],
+    comparator: "C1ShrinkageComparator" | None,
     mode: str,
     strategy_name: str,
 ) -> dict[str, Any]:
@@ -129,7 +129,7 @@ def _extract_metrics(result: "C1ComparisonResult") -> dict[str, float]:
     return metrics
 
 
-def _render_nav_png(nav_data: dict[str, Any]) -> Optional[bytes]:
+def _render_nav_png(nav_data: dict[str, Any]) -> bytes | None:
     """渲染 baseline/experiment 净值曲线对比图为 PNG bytes。
 
     matplotlib 未安装时返回 None（调用方跳过 PNG，仅写 CSV）。
@@ -161,7 +161,7 @@ def _render_nav_png(nav_data: dict[str, Any]) -> Optional[bytes]:
 
 def _log_nav_artifacts(
     run: Any,
-    comparator: Optional["C1ShrinkageComparator"],
+    comparator: "C1ShrinkageComparator" | None,
 ) -> None:
     """把 baseline/experiment 净值曲线写为 CSV + PNG artifact（comparator=None 或无 nav 时跳过）。"""
     if comparator is None:
@@ -219,10 +219,10 @@ def _build_summary_md(result: "C1ComparisonResult") -> str:
 def track_c1_result(
     result: "C1ComparisonResult",
     *,
-    comparator: Optional["C1ShrinkageComparator"] = None,
+    comparator: "C1ShrinkageComparator" | None = None,
     mode: str = "unknown",
     strategy_name: str = "c1-shrinkage",
-    extra_tags: Optional[dict[str, str]] = None,
+    extra_tags: dict[str, str] | None = None,
 ) -> str:
     """把 ``C1ComparisonResult`` 记录为一个实验跟踪 run。
 

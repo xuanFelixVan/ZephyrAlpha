@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 """临时冒烟：walk-forward 小范围(2020-2021)验证。用完即删。"""
 import time
+
 import numpy as np
+
 from zephyr.regime.core.regime_detector import RegimeDetector
 from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
 

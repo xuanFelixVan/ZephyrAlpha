@@ -144,14 +144,14 @@ def main() -> int:
         backtest_config=BacktestConfig(initial_capital=Decimal("100000")),
     )
 
-    print(f"\n=== STEP 2: 多标的 Path A 回测 ===")
+    print("\n=== STEP 2: 多标的 Path A 回测 ===")
     print(f"[INFO] symbols={SYMBOLS}")
     print(f"[INFO] range={start} ~ {end}")
     print(f"[INFO] strategy={config.strategy_id}  factor={config.factor_ids}")
     print(f"[INFO] top_n={config.top_n}  max_single={config.max_single}")
 
     # 3. 预检：单独构造权重面板，验证多列对齐 + strip_map 后缀还原
-    print(f"\n=== STEP 3: 权重面板预检（多标的对齐）===")
+    print("\n=== STEP 3: 权重面板预检（多标的对齐）===")
     runner = StrategyRunner()
     try:
         data, weight_panel = runner.build_weight_panel(SYMBOLS, start, end, config)
@@ -190,7 +190,7 @@ def main() -> int:
             print(f"    {ts}: {weights}")
 
     # 4. 运行 Path A 多标的回测（EDE tick 撮合）
-    print(f"\n=== STEP 4: EDE 多标的 tick 撮合回测 ===")
+    print("\n=== STEP 4: EDE 多标的 tick 撮合回测 ===")
     print("[INFO] 正在下载 tick 数据并回放（3 标的 × 多日，预计耗时数分钟）...")
     try:
         result = runner.run_tick_backtest(
@@ -207,7 +207,7 @@ def main() -> int:
         return 1
 
     # 5. 结果分析
-    print(f"\n=== STEP 5: 结果 ===")
+    print("\n=== STEP 5: 结果 ===")
     print(f"  strategy_id={result.strategy_id}")
     print(f"  total_return={result.total_return:.4f}")
     print(f"  annual_return={result.annual_return:.4f}")
@@ -217,7 +217,7 @@ def main() -> int:
     print(f"  win_rate={result.win_rate:.4f}")
 
     # 6. 验收检查
-    print(f"\n=== STEP 6: 验收检查 ===")
+    print("\n=== STEP 6: 验收检查 ===")
     all_pass = True
 
     # 6a. 权重面板 3 列对齐

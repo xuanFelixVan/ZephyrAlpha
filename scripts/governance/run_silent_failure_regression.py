@@ -86,7 +86,6 @@ import sys
 from pathlib import Path
 from typing import TypedDict
 
-
 # ===========================================================================
 # 返回契约（TypedDict，对标 session_worktree_commit 返回契约 P2-5）
 # ===========================================================================
@@ -223,7 +222,7 @@ def _run_stage(
             ok=False,
             exit_code=-1,
             duration_s=round(duration, 2),
-            detail=f"timeout after 600s",
+            detail="timeout after 600s",
         )
     except Exception as exc:  # noqa: BLE001 — 永不抛异常，所有异常转 failed 段
         duration = time.monotonic() - start
@@ -283,12 +282,12 @@ def run_silent_failure_regression(
         print()
         if all_ok:
             print("=" * 78)
-            print(f"  SILENT-FAILURE REGRESSION: ALL PASSED")
+            print("  SILENT-FAILURE REGRESSION: ALL PASSED")
             print(f"  {len(stages)} stages in {round(total_duration, 2)}s")
             print("=" * 78)
         else:
             print("=" * 78)
-            print(f"  !!! SILENT-FAILURE REGRESSION: FAILED")
+            print("  !!! SILENT-FAILURE REGRESSION: FAILED")
             print(f"  {len(failed_names)}/{len(stages)} stages failed: {', '.join(failed_names)}")
             for s in stages:
                 if not s["ok"]:

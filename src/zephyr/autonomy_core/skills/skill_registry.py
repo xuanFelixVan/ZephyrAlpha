@@ -44,10 +44,10 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.shared.schema.schemas import BASE_CONFIG
 # 5.160.20 修复：SEMVER正则统一为共享常量
 from zephyr.shared.foundation.constants import SEMVER_PATTERN
 from zephyr.shared.io.yaml_utils import load_vocabulary_values
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 # SSoT(5.1.1 词表硬编码治本): stability 合法值唯一真源是 stability_vocabulary.yaml
 # (frozen/stable/evolving/volatile)——原硬编码 {experimental,beta,stable,frozen} 属值域漂移，

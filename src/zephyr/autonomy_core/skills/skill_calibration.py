@@ -140,7 +140,7 @@ class SkillCalibration:
         return SkillCalibration.trend_direction(drifts)
 
     @classmethod
-    def clear_history(cls, skill_id: Optional[str] = None):
+    def clear_history(cls, skill_id: str | None = None):
         if skill_id:
             cls._history.pop(skill_id, None)
         else:

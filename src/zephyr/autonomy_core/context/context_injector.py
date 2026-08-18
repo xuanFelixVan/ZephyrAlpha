@@ -35,9 +35,10 @@ Respects token budget limits from ContextBudgetTracker.
 
 from __future__ import annotations
 
-from typing import Final
 import time
 from enum import Enum
+from typing import Final
+
 from pydantic import BaseModel, Field
 
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens

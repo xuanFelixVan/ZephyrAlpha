@@ -76,7 +76,7 @@ def fetch_olap_trends(olap_engine: object = None, period: str = "day", limit: in
     return data
 
 
-def _extract_xy(rows: list[dict[str, Any]]) -> tuple[list[str], list[float], Optional[str]]:
+def _extract_xy(rows: list[dict[str, Any]]) -> tuple[list[str], list[float], str | None]:
     """从 list[dict] 启发式提取 X(时间)/Y(数值) 序列及 Y 轴字段名。
 
     策略: X 取第一个匹配 _TIME_KEYS 的字段；Y 取第一个数值型非时间字段。
@@ -86,7 +86,7 @@ def _extract_xy(rows: list[dict[str, Any]]) -> tuple[list[str], list[float], Opt
         return [], [], None
 
     keys = list(rows[0].keys())
-    x_field: Optional[str] = None
+    x_field: str | None = None
     for k in keys:
         if k.lower() in _TIME_KEYS:
             x_field = k
@@ -94,7 +94,7 @@ def _extract_xy(rows: list[dict[str, Any]]) -> tuple[list[str], list[float], Opt
     if x_field is None and keys:
         x_field = keys[0]
 
-    y_field: Optional[str] = None
+    y_field: str | None = None
     for k in keys:
         if k == x_field:
             continue

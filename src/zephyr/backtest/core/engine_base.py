@@ -36,7 +36,6 @@ SSoT: cross_layer_contracts.yaml v3.0
 from __future__ import annotations
 
 import abc
-from typing import Any, ClassVar
 
 # ==== BEGIN CODGEN:CTR-P1-016 ====
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
@@ -55,11 +54,11 @@ from typing import Any, ClassVar
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Any, ClassVar, Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -97,10 +96,10 @@ class BacktestResult:
     total_return: float
     trades_count: int
     win_rate: float
-    benchmark_symbol: Optional[str] = None
+    benchmark_symbol: str | None = None
     overfitting_flag: bool = False
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-P1-016 ====
 

@@ -32,9 +32,6 @@ metrics: detection_rate / time_to_detect / false_negative_trend
 
 from __future__ import annotations
 
-from typing import Final
-from zephyr.shared.io.serialization import dumps
-
 import os
 import re
 import uuid
@@ -42,6 +39,9 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
+from typing import Final
+
+from zephyr.shared.io.serialization import dumps
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 

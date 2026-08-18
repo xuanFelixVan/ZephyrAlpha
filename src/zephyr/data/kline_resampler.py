@@ -117,6 +117,7 @@ def _get_ch_client():
     （2026-08-17 AI-04 审计治本：load_ch_config → load_ch_writer_config）
     """
     from clickhouse_driver import Client
+
     from zephyr.data.ch_config import load_ch_writer_config
     cfg = load_ch_writer_config()
     c = Client(

@@ -37,8 +37,8 @@ from dataclasses import dataclass
 from typing import Optional
 
 from zephyr.data.provider_base import FetchPayload, FetchResult
-from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
 from zephyr.data.table_registry import get_registry
+from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
 
 log = logging.getLogger(__name__)
 
@@ -99,7 +99,7 @@ _TBL_US_INDEX = get_registry().table("market_us_index")
 # start_override/end_override 为 None 时用 SAMPLE_START/SAMPLE_END
 # 财务报表是季度数据，10天窗口内 0 行，需用 1 年范围
 _YEAR_AGO = datetime.date(2025, 7, 10)
-TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.date], Optional[datetime.date]]] = [
+TEST_MATRIX: list[tuple[str, str, str, dict, list | None, datetime.date | None, datetime.date | None]] = [
     # kline_daily 两源对比
     ("miniqmt", "kline_daily", _TBL_KLINE_DAILY, {"capability": "kline_daily"}, None, None, None),
     ("baostock", "kline_daily", _TBL_KLINE_DAILY, {"capability": "kline_daily"},
@@ -291,10 +291,10 @@ class SpeedTestConfig:
     capability: str
     target_table: str
     extra: dict
-    symbols_override: Optional[list] = None
-    sample_symbols: Optional[list] = None
-    sample_start: Optional[datetime.date] = None
-    sample_end: Optional[datetime.date] = None
+    symbols_override: list | None = None
+    sample_symbols: list | None = None
+    sample_start: datetime.date | None = None
+    sample_end: datetime.date | None = None
 
 
 def _init_result(cfg: SpeedTestConfig, symbols: list) -> dict:
@@ -417,8 +417,8 @@ def speed_test_one(cfg: SpeedTestConfig) -> dict:
 
 # ============== 批量测速 ==============
 def run_speed_tests(
-    source_filter: Optional[str] = None,
-    cap_filter: Optional[str] = None,
+    source_filter: str | None = None,
+    cap_filter: str | None = None,
 ) -> list[dict]:
     """批量执行测速。
 
@@ -544,7 +544,7 @@ def print_report(results: list[dict]) -> None:
         valid.sort(key=lambda x: x["rows_per_sec"], reverse=True)
         print(f"\n  {cap}:")
         if not valid:
-            print(f"    无可用源（全部 broken/blocked）")
+            print("    无可用源（全部 broken/blocked）")
             for i in items:
                 print(f"    - {i['source']}: {i['api_status']} ({i['known_issues'][:50]})")
             continue
@@ -556,4 +556,4 @@ def print_report(results: list[dict]) -> None:
             print(f"    备用: {secondary['source']:<10} rows/s={secondary['rows_per_sec']:.2f} "
                   f"sym/s={secondary['symbols_per_sec']:.4f} status={secondary['api_status']}")
         else:
-            print(f"    备用: 无（单源）")
+            print("    备用: 无（单源）")

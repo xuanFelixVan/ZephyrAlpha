@@ -25,6 +25,8 @@
 # [TESTS] tests/test_behavioral_auditor_imports.py
 # [A_module] module_id=MOD-INF-011 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# ARCH-034 P3: ConfigConflict canonical 真源为 config_consistency（drift_models 存根已删除）
+from zephyr.gov_drift.config_consistency import ConfigConflict
 from zephyr.gov_drift.drift_engine import (
     build_report,
     load_detector_registry,
@@ -52,8 +54,6 @@ from zephyr.gov_drift.drift_models import (
     ScanResult,
     Severity,
 )
-# ARCH-034 P3: ConfigConflict canonical 真源为 config_consistency（drift_models 存根已删除）
-from zephyr.gov_drift.config_consistency import ConfigConflict
 from zephyr.gov_drift.events import DriftType, ManagedDriftEvent, ManagedDriftState
 from zephyr.gov_drift.state_machine import (
     DriftEventRecord,

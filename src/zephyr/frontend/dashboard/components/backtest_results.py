@@ -92,11 +92,11 @@ class BacktestResultData:
 
 def fetch_backtest_results(
     backtest_result: object,
-    nav_series: Optional[list[float]] = None,
-    drawdown_series: Optional[list[float]] = None,
-    timestamps: Optional[list[str]] = None,
-    metrics: Optional[BacktestMetrics] = None,
-    gate_status: Optional[BacktestGateStatus] = None,
+    nav_series: list[float] | None = None,
+    drawdown_series: list[float] | None = None,
+    timestamps: list[str] | None = None,
+    metrics: BacktestMetrics | None = None,
+    gate_status: BacktestGateStatus | None = None,
     sortino: float = 0.0,
     ic: float = 0.0,
     ir: float = 0.0,

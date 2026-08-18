@@ -33,20 +33,20 @@ T-V2-006 扩展（experimental）
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
 import time
 from enum import Enum, unique
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from threading import RLock
 from typing import TYPE_CHECKING, Any
 
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 from zephyr.shared.infra.observer import EventType, Observer
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 if TYPE_CHECKING:
     from zephyr.shared.io.doc_compressor import DocCompressor

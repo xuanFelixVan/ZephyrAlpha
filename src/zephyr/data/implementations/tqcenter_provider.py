@@ -43,10 +43,10 @@ from typing import Iterator
 from ..policy_registry import SourcePolicy
 from ..provider_base import (
     CapabilityContract,
-    IngestProviderBase,
-    IngestProviderMeta,
     FetchPayload,
     FetchResult,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
 from ..table_registry import get_registry
 

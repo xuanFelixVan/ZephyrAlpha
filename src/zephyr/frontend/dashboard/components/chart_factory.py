@@ -45,10 +45,9 @@ ARCH-047: Streamlit->Panel+HoloViz技术栈切换, ChartFactory 作为图表生�
 """
 from __future__ import annotations
 
-from typing import Final
-from zephyr.shared.io.serialization import dumps
+from typing import Final, Optional
 
-from typing import Optional
+from zephyr.shared.io.serialization import dumps
 
 try:
     import holoviews as hv
@@ -85,7 +84,7 @@ class ChartFactoryError(Exception):
 DATASHADER_THRESHOLD: Final[int] = 500_000
 
 
-def _ensure_x(x: Optional[list], length: int) -> list:
+def _ensure_x(x: list | None, length: int) -> list:
     """生成 X 轴序列：若 x 为空或长度不匹配，用 range(length) 兜底"""
     if x and len(x) == length:
         return list(x)
@@ -94,7 +93,7 @@ def _ensure_x(x: Optional[list], length: int) -> list:
 
 def make_equity(
     net_value_curve: list[float],
-    timestamps: Optional[list] = None,
+    timestamps: list | None = None,
     title: str = "Net Value",
     color: str = "#1f77b4",
     width: int = 800,
@@ -143,7 +142,7 @@ def make_equity(
 
 def make_drawdown(
     drawdown_curve: list[float],
-    timestamps: Optional[list] = None,
+    timestamps: list | None = None,
     title: str = "Drawdown",
     color: str = "#d62728",
     width: int = 800,
@@ -273,7 +272,7 @@ def make_kline(
 
 def make_tick(
     tick_data: list[float],
-    timestamps: Optional[list] = None,
+    timestamps: list | None = None,
     title: str = "Tick Replay",
     color: str = "#1f77b4",
     width: int = 800,
@@ -340,8 +339,8 @@ def make_tick(
 
 def make_heatmap(
     data: list[list[float]],
-    x_labels: Optional[list[str]] = None,
-    y_labels: Optional[list[str]] = None,
+    x_labels: list[str] | None = None,
+    y_labels: list[str] | None = None,
     title: str = "Heatmap",
     colorscale: str = "RdYlGn",
     width: int = 800,
@@ -706,7 +705,7 @@ def make_gate_chart(
 
 def make_trend_line(
     y_values: list[float],
-    x_labels: Optional[list[str]] = None,
+    x_labels: list[str] | None = None,
     title: str = "Trend",
     color: str = "#1f77b4",
     width: int = 800,

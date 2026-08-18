@@ -38,20 +38,21 @@ import threading
 import time
 from typing import Iterator
 
+# 19 号 memo：北向季度持仓快照（绝对 import 供 ORPHAN-MODULE 门禁 git grep 发现引用）
+from zephyr.data.implementations.northbound_hold_fetcher import fetch_northbound_hold_snapshot
+from zephyr.shared.security.secrets import get_required_secret, get_secret_or_default
+from zephyr.shared.utils.time_utils import now_utc, seconds_since
+
+from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
+from ..policy_registry import SourcePolicy
 from ..provider_base import (
-    IngestProviderBase,
-    IngestProviderMeta,
     CapabilityContract,
     FetchPayload,
     FetchResult,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
-from ..policy_registry import SourcePolicy
-from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
-from zephyr.shared.security.secrets import get_required_secret, get_secret_or_default
 from ..table_registry import get_registry
-# 19 号 memo：北向季度持仓快照（绝对 import 供 ORPHAN-MODULE 门禁 git grep 发现引用）
-from zephyr.data.implementations.northbound_hold_fetcher import fetch_northbound_hold_snapshot
-from zephyr.shared.utils.time_utils import now_utc, seconds_since
 
 log = logging.getLogger(__name__)
 

@@ -64,9 +64,10 @@ import yaml
 from pydantic import BaseModel, Field, field_validator
 
 from zephyr.infrastructure.capacity_assurance.token_budget import estimate_tokens
-from zephyr.shared.schema.schemas import BASE_CONFIG
+
 # 5.160.20 修复：SEMVER正则统一为共享常量
 from zephyr.shared.foundation.constants import SEMVER_PATTERN
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 if TYPE_CHECKING:
     from zephyr.autonomy_core.context.context_injector import ContextInjector, InjectedContext

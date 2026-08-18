@@ -40,11 +40,11 @@ for p in (str(_REPO_ROOT), str(_SRC)):
     if p not in sys.path:
         sys.path.insert(0, p)
 
-from _shared.constants import EXIT_ERROR
 import psycopg2
+from _shared.constants import EXIT_ERROR
 from psycopg2.extras import RealDictCursor
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection, _load_pg_config
+from zephyr.governance.depgraph_schema import _load_pg_config, get_depgraph_pg_connection
 
 RESULTS: list[tuple[str, bool, str]] = []
 TEST_TABLE = "_p2_concurrent_test"

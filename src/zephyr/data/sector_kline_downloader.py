@@ -173,8 +173,8 @@ def _write_to_ch(rows: list[tuple]) -> int:
     """
     if not rows:
         return 0
-    from zephyr.data.provider_base import FetchResult
     from zephyr.data import ch_writer
+    from zephyr.data.provider_base import FetchResult
     result = FetchResult(
         table=_CH_TABLE,
         columns=_COLUMNS,

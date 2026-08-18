@@ -148,7 +148,7 @@ class C1ComparisonResult:
     experiment_calmar: float
     metric_verdicts: list[C1MetricVerdict]
     passed: bool                       # 四项全过=True
-    veto_reason: Optional[str]         # None=通过；否则=首个失败指标说明
+    veto_reason: str | None         # None=通过；否则=首个失败指标说明
     summary: str                       # 人类可读总结
 
 
@@ -182,8 +182,8 @@ class C1ShrinkageComparator:
     def __init__(self, config: C1Config | None = None) -> None:
         self._config = config or C1Config()
         # 供 experiment_tracking.c1_adapter 取 nav_series 用（不改 compare 返回值，向后兼容）
-        self.last_baseline_portfolio: Optional[Portfolio] = None
-        self.last_experiment_portfolio: Optional[Portfolio] = None
+        self.last_baseline_portfolio: Portfolio | None = None
+        self.last_experiment_portfolio: Portfolio | None = None
 
     @property
     def config(self) -> C1Config:
@@ -261,8 +261,8 @@ class C1ShrinkageComparator:
         self,
         baseline_result: BacktestResult,
         experiment_result: BacktestResult,
-        baseline_portfolio: Optional[Portfolio] = None,
-        experiment_portfolio: Optional[Portfolio] = None,
+        baseline_portfolio: Portfolio | None = None,
+        experiment_portfolio: Portfolio | None = None,
     ) -> C1ComparisonResult:
         """对已跑完的开/关两组回测结果做裁定。
 
@@ -302,7 +302,7 @@ class C1ShrinkageComparator:
 
         failed = [v for v in verdicts if not v.passed]
         passed = not failed
-        veto_reason: Optional[str] = failed[0].detail if failed else None
+        veto_reason: str | None = failed[0].detail if failed else None
         summary = self._build_summary(
             baseline_result, experiment_result,
             base_calmar, exp_calmar,
@@ -372,7 +372,7 @@ class C1ShrinkageComparator:
         else:
             threshold = base
             passed = exp >= threshold
-            desc = f"C_开 ≥ C_关（基线非正，退化为不变差判定）"
+            desc = "C_开 ≥ C_关（基线非正，退化为不变差判定）"
         return C1MetricVerdict(
             name="Calmar",
             baseline_value=base,
@@ -431,7 +431,7 @@ class C1ShrinkageComparator:
         base_turnover: float,
         exp_turnover: float,
         passed: bool,
-        veto_reason: Optional[str],
+        veto_reason: str | None,
     ) -> str:
         verdict = "通过" if passed else "一票否决"
         lines = [
@@ -465,7 +465,7 @@ def _compute_calmar(annual_return: float, max_drawdown: float) -> float:
 
 
 def _compute_turnover(
-    portfolio: Optional[Portfolio], trading_days_per_year: int
+    portfolio: Portfolio | None, trading_days_per_year: int
 ) -> float:
     """年化单向换手率 = Σ(|qty × price|) / (avg_nav × num_years)。
 

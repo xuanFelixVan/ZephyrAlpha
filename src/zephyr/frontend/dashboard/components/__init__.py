@@ -17,12 +17,14 @@ from __future__ import annotations
 # v3.0.0 新增 ChartFactory 图表统一工厂（#ARCH-047 Streamlit->Panel+HoloViz）
 # 用多行单 import 语句（ORPHAN-MODULE gate 的 git grep pattern: from .* import {short_name}）
 try:
-    from zephyr.frontend.dashboard.components import backtest_results
-    from zephyr.frontend.dashboard.components import chart_factory
-    from zephyr.frontend.dashboard.components import order_book
-    from zephyr.frontend.dashboard.components import position_monitor
-    from zephyr.frontend.dashboard.components import tick_replay
-    from zephyr.frontend.dashboard.components import trade_panel
+    from zephyr.frontend.dashboard.components import (
+        backtest_results,
+        chart_factory,
+        order_book,
+        position_monitor,
+        tick_replay,
+        trade_panel,
+    )
 except ImportError:
     backtest_results = None  # type: ignore[assignment]
     chart_factory = None  # type: ignore[assignment]

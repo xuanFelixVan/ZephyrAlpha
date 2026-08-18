@@ -123,7 +123,7 @@ def _build_position_item(
     cost_prices: dict[str, float],
     today_bought_map: dict[str, int],
     symbol_names: dict[str, str],
-) -> Optional[PositionItem]:
+) -> PositionItem | None:
     """从单条持仓构建 PositionItem（fetch_position_monitor 辅助，Extract Method）。
 
     qty <= 0 返回 None（调用方跳过），与原 continue 语义一致。
@@ -160,10 +160,10 @@ def _build_position_item(
 
 def fetch_position_monitor(
     miniqmt_broker: object,
-    today_bought_map: Optional[dict[str, int]] = None,
-    last_prices: Optional[dict[str, float]] = None,
-    cost_prices: Optional[dict[str, float]] = None,
-    symbol_names: Optional[dict[str, str]] = None,
+    today_bought_map: dict[str, int] | None = None,
+    last_prices: dict[str, float] | None = None,
+    cost_prices: dict[str, float] | None = None,
+    symbol_names: dict[str, str] | None = None,
 ) -> PositionMonitorData:
     """从 D_EX_CORE MiniQmtBroker 获取持仓（纯函数，无副作用）
 

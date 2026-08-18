@@ -30,8 +30,9 @@ integrity_manifest: 每DEEP scan签名存Git
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
@@ -40,6 +41,7 @@ import hashlib
 import json
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+
 
 @dataclass
 class FileBaselineSnapshot:

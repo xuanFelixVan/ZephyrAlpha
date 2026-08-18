@@ -163,7 +163,7 @@ class BacktestSinkData:
     trades_count: int
     timestamp: datetime  # 回测完成时间戳(UTC)
     overfitting_flag: bool = False
-    benchmark_symbol: Optional[str] = None
+    benchmark_symbol: str | None = None
     schema_version: str = "1.0"
 
     # --- 时序明细（可选, 由调用方填充）---
@@ -195,10 +195,10 @@ class BacktestSinkData:
 
 def sink_backtest_result(
     result: BacktestResult,
-    equity_curve: Optional[list[dict[str, Any]]] = None,
-    trade_log: Optional[list[dict[str, Any]]] = None,
-    drawdown_curve: Optional[list[dict[str, Any]]] = None,
-    benchmark_curve: Optional[list[dict[str, Any]]] = None,
+    equity_curve: list[dict[str, Any]] | None = None,
+    trade_log: list[dict[str, Any]] | None = None,
+    drawdown_curve: list[dict[str, Any]] | None = None,
+    benchmark_curve: list[dict[str, Any]] | None = None,
 ) -> BacktestSinkData:
     """从 BacktestResult 提取并转化为可视化数据模型 BacktestSinkData。
 

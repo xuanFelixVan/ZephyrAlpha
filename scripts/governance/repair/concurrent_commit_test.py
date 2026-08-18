@@ -65,11 +65,11 @@ while not (_PROJECT_ROOT / ".git").exists() and _PROJECT_ROOT != _PROJECT_ROOT.p
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E402
     CommitStatus,
     GitCommitGateway,
 )
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _REPORT_DIR = _PROJECT_ROOT / "data" / "red_blue" / "reports"
 _REPORT_FILE = _REPORT_DIR / "rb_ghost_commit_test_report.md"
@@ -338,7 +338,7 @@ def scenario_8(repo_dir: Path) -> str:
 
     def commit(sess: str, rel: str):
         """commit implementation."""
-        (repo_dir / rel).write_text(f"v = 1\n", encoding="utf-8")
+        (repo_dir / rel).write_text("v = 1\n", encoding="utf-8")
         t0 = time.monotonic()
         r = gw.commit(sess, [str((repo_dir / rel).resolve())], f"feat: {sess}")
         t1 = time.monotonic()
@@ -428,7 +428,7 @@ def write_report(report: TestReport) -> Path:
     lines = [
         "# 幽灵提交红蓝对抗测试报告",
         "",
-        f"**任务卡**: OPS-2026062514",
+        "**任务卡**: OPS-2026062514",
         f"**开始时间**: {report.started_at}",
         f"**结束时间**: {report.finished_at}",
         f"**结果**: {report.passed_count}/{report.total} PASS, {report.failed_count} FAIL",

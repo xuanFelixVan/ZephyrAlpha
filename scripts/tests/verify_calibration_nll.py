@@ -59,7 +59,7 @@ def run_scenario(name: str, logits: np.ndarray, occurred: np.ndarray) -> None:
     # ── 核心验证：不崩溃 ──
     try:
         T = fit_temperature(log_proba, occurred)
-        print(f"  ✅ fit_temperature 不崩溃")
+        print("  ✅ fit_temperature 不崩溃")
     except Exception as exc:
         print(f"  ❌ fit_temperature 崩溃: {type(exc).__name__}: {exc}")
         return
@@ -76,7 +76,7 @@ def run_scenario(name: str, logits: np.ndarray, occurred: np.ndarray) -> None:
 
     # 分桶校准效果
     buckets = [(0.0, 0.5), (0.5, 0.8), (0.8, 1.01)]
-    print(f"  分桶校准:")
+    print("  分桶校准:")
     for lo, hi in buckets:
         mask = (original_conf >= lo) & (original_conf < hi)
         if mask.sum() == 0:
@@ -160,7 +160,7 @@ def main() -> None:
         print("  ⚠️  旧代码没崩溃（可能 numpy 版本行为不同）")
     except Exception as exc:
         print(f"  ✅ 旧代码确认崩溃: {type(exc).__name__}: {exc}")
-        print(f"     这验证了 Bug #3 的存在——旧代码 occurred.argmax(axis=1) 对 1D 数组无效")
+        print("     这验证了 Bug #3 的存在——旧代码 occurred.argmax(axis=1) 对 1D 数组无效")
 
     print(f"\n{'='*60}")
     print("验证完成")

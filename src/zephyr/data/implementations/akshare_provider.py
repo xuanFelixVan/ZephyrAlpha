@@ -68,7 +68,7 @@ import math
 import re
 import threading
 import time
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
@@ -1421,8 +1421,9 @@ class AkshareIngestProvider(IngestProviderBase):
         原串行 5000只×~1s=60min+，逼近6h STALE红线被 reaped。
         改 ThreadPoolExecutor 并行（参照 _fetch_daily_valuation 已验证模式）。
         """
-        import akshare as ak  # 用于 _get_all_a_symbols 获取标的列表（裁定 #ARCH-CH-018）
         from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        import akshare as ak  # 用于 _get_all_a_symbols 获取标的列表（裁定 #ARCH-CH-018）
 
         table = _TBL_MONEY_FLOW
         columns = [
@@ -3365,8 +3366,9 @@ class AkshareIngestProvider(IngestProviderBase):
         原串行 5000只×~1s=90min，逼近6h STALE红线被 reaped。
         改 ThreadPoolExecutor 并行（参照 _fetch_daily_valuation 已验证模式）。
         """
-        import akshare as ak
         from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        import akshare as ak
 
         table = _TBL_STOCK_INDICATOR
         columns = [

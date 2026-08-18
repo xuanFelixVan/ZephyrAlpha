@@ -90,19 +90,19 @@ class RunContext:
         except Exception as e:  # noqa: BLE001 — tracking 失败不崩业务
             print(f"[zephyr.experiment_tracking] log_params 失败(忽略): {e}", file=sys.stderr)
 
-    def log_metrics(self, metrics: dict[str, float], step: Optional[int] = None) -> None:
+    def log_metrics(self, metrics: dict[str, float], step: int | None = None) -> None:
         try:
             self._backend.log_metrics(metrics, step)
         except Exception as e:  # noqa: BLE001
             print(f"[zephyr.experiment_tracking] log_metrics 失败(忽略): {e}", file=sys.stderr)
 
-    def log_artifact(self, local_path: str | Path, artifact_path: Optional[str] = None) -> None:
+    def log_artifact(self, local_path: str | Path, artifact_path: str | None = None) -> None:
         try:
             self._backend.log_artifact(str(local_path), artifact_path)
         except Exception as e:  # noqa: BLE001
             print(f"[zephyr.experiment_tracking] log_artifact 失败(忽略): {e}", file=sys.stderr)
 
-    def log_artifact_bytes(self, data: bytes, filename: str, artifact_path: Optional[str] = None) -> None:
+    def log_artifact_bytes(self, data: bytes, filename: str, artifact_path: str | None = None) -> None:
         try:
             self._backend.log_artifact_bytes(data, filename, artifact_path)
         except Exception as e:  # noqa: BLE001
@@ -117,13 +117,13 @@ class RunContext:
 class _NullBackend:
     """enable_tracking=False 时的 no-op backend（所有方法空实现）。"""
 
-    def start_run(self, component: str, run_name: Optional[str], tags: Optional[dict]) -> str:
+    def start_run(self, component: str, run_name: str | None, tags: dict | None) -> str:
         return "null-run"
 
     def log_params(self, params: dict[str, Any]) -> None: pass
-    def log_metrics(self, metrics: dict[str, float], step: Optional[int]) -> None: pass
-    def log_artifact(self, local_path: str, artifact_path: Optional[str]) -> None: pass
-    def log_artifact_bytes(self, data: bytes, filename: str, artifact_path: Optional[str]) -> None: pass
+    def log_metrics(self, metrics: dict[str, float], step: int | None) -> None: pass
+    def log_artifact(self, local_path: str, artifact_path: str | None) -> None: pass
+    def log_artifact_bytes(self, data: bytes, filename: str, artifact_path: str | None) -> None: pass
     def end_run(self, status: str) -> None: pass
 
 
@@ -140,7 +140,7 @@ class ExperimentTracker:
       - 否则                 → FallbackBackend（JSON）
     """
 
-    def __init__(self, config: Optional[ExperimentTrackingConfig] = None) -> None:
+    def __init__(self, config: ExperimentTrackingConfig | None = None) -> None:
         self._config = config or load_config()
         self._backend = self._make_backend()
 
@@ -161,8 +161,8 @@ class ExperimentTracker:
     def start_run(
         self,
         component: str,
-        run_name: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
+        run_name: str | None = None,
+        tags: dict[str, str] | None = None,
     ) -> RunContext:
         """开启一个 run。component 映射到 experiment 名（zephyr-{component}）。"""
         run_id = self._backend.start_run(component, run_name, tags)
@@ -173,7 +173,7 @@ class ExperimentTracker:
 # 单例工厂
 # ──────────────────────────────────────────────────────────────────────────────
 
-_tracker_singleton: Optional[ExperimentTracker] = None
+_tracker_singleton: ExperimentTracker | None = None
 
 
 def get_tracker() -> ExperimentTracker:

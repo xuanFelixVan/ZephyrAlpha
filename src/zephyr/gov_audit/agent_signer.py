@@ -29,11 +29,11 @@ audit-trail.agent_signer — MOD-INF-020 · Agent Ed25519 签名器
 
 from __future__ import annotations
 
-from zephyr.shared.io.serialization import dumps
-
 import hashlib
 import logging
 from typing import Any
+
+from zephyr.shared.io.serialization import dumps
 
 _logger = logging.getLogger(__name__)
 

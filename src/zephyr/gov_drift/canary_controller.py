@@ -29,9 +29,6 @@ auto_rollback: v2 FP率>2×v1自动回退
 
 from __future__ import annotations
 
-from typing import Final
-from zephyr.shared.io.serialization import dumps
-
 import json
 import os
 import uuid
@@ -39,6 +36,9 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
+from typing import Final
+
+from zephyr.shared.io.serialization import dumps
 
 
 class CanaryComparison(str, Enum):

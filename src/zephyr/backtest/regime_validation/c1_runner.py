@@ -180,10 +180,10 @@ def run_c1_with_provider(
     data: pd.DataFrame,
     signals: pd.DataFrame,
     shrinkage_provider: Any,
-    backtest_config: Optional[BacktestConfig] = None,
-    c1_config: Optional[C1Config] = None,
+    backtest_config: BacktestConfig | None = None,
+    c1_config: C1Config | None = None,
     strategy_name: str = "c1-shrinkage",
-    initial_capital: Optional[float] = None,
+    initial_capital: float | None = None,
     track: bool = False,
     mode: str = "provider",
 ) -> C1ComparisonResult:
@@ -236,8 +236,8 @@ def run_c1_with_provider(
 def run_c1_mock(
     data: pd.DataFrame,
     signals: pd.DataFrame,
-    backtest_config: Optional[BacktestConfig] = None,
-    c1_config: Optional[C1Config] = None,
+    backtest_config: BacktestConfig | None = None,
+    c1_config: C1Config | None = None,
     vol_window: int = 20,
     strategy_name: str = "c1-mock",
     track: bool = False,
@@ -284,8 +284,8 @@ def run_c1_regime(
     data: pd.DataFrame,
     signals: pd.DataFrame,
     regime_results: list[tuple[datetime, Any]],
-    backtest_config: Optional[BacktestConfig] = None,
-    c1_config: Optional[C1Config] = None,
+    backtest_config: BacktestConfig | None = None,
+    c1_config: C1Config | None = None,
     strategy_name: str = "c1-regime",
     track: bool = False,
 ) -> C1ComparisonResult:
@@ -332,7 +332,7 @@ def run_c1_end_to_end(
     end: str,
     runner_config: Any,
     mode: str = "mock",
-    regime_results: Optional[list[tuple[datetime, Any]]] = None,
+    regime_results: list[tuple[datetime, Any]] | None = None,
     track: bool = False,
 ) -> C1ComparisonResult:
     """端到端：StrategyRunner.build_weight_panel → C1 开/关对比。
@@ -389,7 +389,7 @@ def save_c1_report(
     result: C1ComparisonResult,
     output_path: str | Path,
     mode: str = "mock",
-    meta: Optional[dict[str, Any]] = None,
+    meta: dict[str, Any] | None = None,
 ) -> str:
     """C1ComparisonResult → markdown 报告落盘（幂等）。
 

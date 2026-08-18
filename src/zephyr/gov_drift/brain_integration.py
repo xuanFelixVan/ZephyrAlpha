@@ -30,8 +30,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from zephyr.shared.utils.async_utils import run_sync
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.utils.async_utils import run_sync
 
 if TYPE_CHECKING:
     from zephyr.gov_drift.cold_start import ColdStartResult
@@ -40,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 # 5.155.20 修复：原独立计算项目根（重复SSoT），改用REPO_ROOT
 from zephyr.shared.io.paths import REPO_ROOT
+
 _PROJECT_ROOT = str(REPO_ROOT)
 
 class ProbeStatus:

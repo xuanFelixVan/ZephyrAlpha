@@ -41,11 +41,10 @@ A股约束:
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Final
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
-from typing import Any, Protocol
+from typing import Any, Final, Protocol
 
 try:
     import panel as pn
@@ -192,11 +191,11 @@ def build_risk_warning(
     amount = sub.estimated_amount
     cash_after = available_cash - amount if sub.side == "buy" else available_cash + amount
     lines = [
-        f"⚠ 风控提示 — 请仔细确认",
+        "⚠ 风控提示 — 请仔细确认",
         f"  标的: {sub.symbol}",
         f"  方向: {sub.side.upper()}",
         f"  数量: {sub.quantity} 股",
-        f"  价格: {sub.price:.3f}" + (f" (限价)" if sub.order_type == "limit" else " (市价参考)"),
+        f"  价格: {sub.price:.3f}" + (" (限价)" if sub.order_type == "limit" else " (市价参考)"),
         f"  算法: {sub.order_type.upper()}",
         f"  预估金额: {amount:,.2f}",
         f"  资金影响: 可用资金 {available_cash:,.2f} -> {cash_after:,.2f}",
@@ -259,8 +258,9 @@ def submit_order(
     # 构造 Order 对象（惰性导入，避免循环依赖）
     try:
         from zephyr.trading.trading_contracts.execution.order import (
-
-            Order, OrderSide, OrderType,
+            Order,
+            OrderSide,
+            OrderType,
         )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False, f"导入 Order 失败: {e}", risk_text

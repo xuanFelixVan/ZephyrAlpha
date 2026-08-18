@@ -42,9 +42,9 @@ import sys
 import threading
 from typing import Any
 
-from zephyr.data.scheduler import IntegratorScheduler
 from zephyr.data.policy_registry import PolicyRegistry, get_registry
 from zephyr.data.progress_store import ProgressStore, get_store
+from zephyr.data.scheduler import IntegratorScheduler
 
 log = logging.getLogger(__name__)
 
@@ -200,9 +200,9 @@ def _cmd_rerun_failed(args: argparse.Namespace) -> int:
         ok = integrator.run_task(task_id)
         if ok:
             success_count += 1
-            print(f"    成功")
+            print("    成功")
         else:
-            print(f"    失败")
+            print("    失败")
 
     print(f"\n重跑完成: {success_count}/{len(failed)} 成功")
     return 0 if success_count == len(failed) else 1

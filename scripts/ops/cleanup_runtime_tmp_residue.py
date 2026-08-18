@@ -72,9 +72,9 @@ def _load_shared_predicates():
         sys.path.insert(0, str(src))
     try:
         from zephyr.governance.audit.reconciliation_registry import (
+            _load_test_residue_config,
             _match_test_residue,
             _should_remove_test_dir,
-            _load_test_residue_config,
         )
     except ImportError as exc:
         print(

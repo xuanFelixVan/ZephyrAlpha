@@ -45,7 +45,7 @@ try:
 except ImportError:
     DatabaseService = None  # type: ignore[assignment,misc]
 
-from zephyr.backtest.core.pit_manager import PITManager, PITConfig
+from zephyr.backtest.core.pit_manager import PITConfig, PITManager
 from zephyr.data import ch_reader
 
 _logger = logging.getLogger(__name__)
@@ -557,7 +557,7 @@ class MultiSourceDataHandler:
         end: object,
         mode: str = "auto",
         tick_provider: object | None = None,
-        batch_data: Optional[pd.DataFrame] = None,
+        batch_data: pd.DataFrame | None = None,
         database_service: object | None = None,
         table: str = "daily_kline",
     ):
@@ -594,13 +594,13 @@ class MultiSourceDataHandler:
         self._tick_idx: dict[str, int] = {}
         self._merged_ticks: list[dict] = []
         self._merged_idx = 0
-        self._batch_handler: Optional[BacktestDataHandler] = None
+        self._batch_handler: BacktestDataHandler | None = None
 
         self._resolve_source(batch_data, database_service)
 
     def _resolve_source(
         self,
-        batch_data: Optional[pd.DataFrame],
+        batch_data: pd.DataFrame | None,
         database_service: object | None,
     ) -> None:
         """根据 mode 解析实际数据源
@@ -672,7 +672,7 @@ class MultiSourceDataHandler:
 
     def _init_batch_source(
         self,
-        batch_data: Optional[pd.DataFrame],
+        batch_data: pd.DataFrame | None,
         database_service: object | None,
     ) -> None:
         """初始化批量数据源（DataFrame 或 ClickHouse）
@@ -702,7 +702,7 @@ class MultiSourceDataHandler:
             return dt.strftime("%Y-%m-%d")
         return str(dt)
 
-    def next_bar(self) -> Optional[pd.DataFrame]:
+    def next_bar(self) -> pd.DataFrame | None:
         """推送下一个 bar（批量模式）
 
         Returns:
@@ -720,7 +720,7 @@ class MultiSourceDataHandler:
         except StopIteration:
             return None
 
-    def next_tick(self) -> Optional[pd.DataFrame]:
+    def next_tick(self) -> pd.DataFrame | None:
         """推送下一个 Tick（Tick 模式）
 
         Returns:
@@ -756,7 +756,7 @@ class MultiSourceDataHandler:
             return 0
         return len(self._batch_handler.dates)
 
-    def get_history(self, lookback: int = 1) -> Optional[pd.DataFrame]:
+    def get_history(self, lookback: int = 1) -> pd.DataFrame | None:
         """获取历史数据（PIT: 返回当前及之前 lookback 条数据）
 
         Args:

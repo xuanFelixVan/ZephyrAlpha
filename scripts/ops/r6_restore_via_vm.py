@@ -74,7 +74,7 @@ def main() -> None:
         print(f"[5] ❌ FAIL: 行数不一致 (src={src_n} vs restored={rst_n})")
 
     # 6. 额外校验：抽样数据比对
-    print(f"[6] 抽样数据比对（前 5 行）...")
+    print("[6] 抽样数据比对（前 5 行）...")
     src_sample = ch_query(
         f"SELECT * FROM {SRC_DB}.{TABLE} ORDER BY 1 LIMIT 5 FORMAT TabSeparated"
     )
@@ -89,7 +89,7 @@ def main() -> None:
     # 7. 清理临时库
     print(f"[7] 清理临时库 {TMP_DB}...")
     print(ch_query(f"DROP DATABASE IF EXISTS {TMP_DB}"))
-    print(f"\n=== R6 演练完成 ===")
+    print("\n=== R6 演练完成 ===")
 
 
 if __name__ == "__main__":

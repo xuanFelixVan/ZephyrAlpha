@@ -29,23 +29,23 @@ ContextAssembler — 上下文装配、校验、影子留档
 
 from __future__ import annotations
 
-from typing import Final
 import hashlib
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 from pydantic import BaseModel, Field
 
+from zephyr.autonomy_core.context.context_rule_registry import (
+    ContextRuleRegistry,  # 5.12.10 修复：移除 if TYPE_CHECKING: 死分支（条件import残留）
+)
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
-from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry  # 5.12.10 修复：移除 if TYPE_CHECKING: 死分支（条件import残留）
-
 if TYPE_CHECKING:
-    from zephyr.shared.protocols.ports import RerankerProtocol
     from zephyr.orchestrator.contracts.task_card import TaskCard
+    from zephyr.shared.protocols.ports import RerankerProtocol
 
 __all__ = [
     "AssembledContext",

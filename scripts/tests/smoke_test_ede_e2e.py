@@ -157,7 +157,7 @@ def main() -> int:
     end_dt = datetime.combine(end, datetime.min.time())
     initial_capital = Decimal("100000")
 
-    print(f"\n=== STEP 2: EDE 端到端回测 ===")
+    print("\n=== STEP 2: EDE 端到端回测 ===")
     print(f"[INFO] symbol={symbol}  range={start} ~ {end}  capital={initial_capital}")
 
     # --- 测试 A: IntradaySurgeFallStrategy（路径 B 策略）---

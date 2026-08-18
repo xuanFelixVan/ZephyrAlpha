@@ -89,9 +89,9 @@ memory_bank.py — AI 读写结构化持久上下文 (DD: memory_bank, TASK-014 
 
 from __future__ import annotations
 
-from typing import Final
-from datetime import UTC, timezone, datetime
+from datetime import UTC, datetime, timezone
 from pathlib import Path
+from typing import Final
 
 UTC: Final[timezone] = UTC
 

@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 """临时冒烟：RegimeFeatureBuilder.build_features() + build_train_matrix()。用完即删。"""
 import time
+
 import numpy as np
-from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder, FEATURE_NAMES
+
+from zephyr.regime.regime_feature_builder import FEATURE_NAMES, RegimeFeatureBuilder
 
 t0 = time.time()
 builder = RegimeFeatureBuilder(

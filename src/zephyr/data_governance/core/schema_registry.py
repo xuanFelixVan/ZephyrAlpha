@@ -181,7 +181,7 @@ class ManagedSchemaRegistry:
 
     def get_column(
         self, table_name: str, column_name: str
-    ) -> Optional[ColumnSchema]:
+    ) -> ColumnSchema | None:
         """获取列定义。不存在返回 None。"""
         schema = self._schemas.get(table_name)
         if schema is None:

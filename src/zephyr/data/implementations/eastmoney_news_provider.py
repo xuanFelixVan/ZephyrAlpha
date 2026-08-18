@@ -31,14 +31,14 @@ import logging
 import time
 from typing import Iterator
 
+from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
+from ..policy_registry import SourcePolicy
 from ..provider_base import (
-    IngestProviderBase,
-    IngestProviderMeta,
     FetchPayload,
     FetchResult,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
-from ..policy_registry import SourcePolicy
-from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)

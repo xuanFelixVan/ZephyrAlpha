@@ -18,6 +18,7 @@ import logging
 import time
 from datetime import datetime
 from typing import Any
+
 from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)

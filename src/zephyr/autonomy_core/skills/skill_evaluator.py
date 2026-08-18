@@ -41,31 +41,31 @@ class SkillEvaluator:
     """Skill 多维度质量评估器"""
 
     @classmethod
-    def evaluate_token_efficiency(cls, body, token_count) -> Tuple[float, dict[str, Any]]:
+    def evaluate_token_efficiency(cls, body, token_count) -> tuple[float, dict[str, Any]]:
         """公共接口：evaluate_token_efficiency（Stage 4 公共化，委托到 cls._evaluate_token_efficiency）。"""
         return cls._evaluate_token_efficiency(body, token_count)
 
 
     @classmethod
-    def evaluate_structure(cls, body, l1_data) -> Tuple[float, list[str]]:
+    def evaluate_structure(cls, body, l1_data) -> tuple[float, list[str]]:
         """公共接口：evaluate_structure（Stage 4 公共化，委托到 cls._evaluate_structure）。"""
         return cls._evaluate_structure(body, l1_data)
 
 
     @classmethod
-    def evaluate_freshness(cls, freshness_data) -> Tuple[float, dict[str, Any]]:
+    def evaluate_freshness(cls, freshness_data) -> tuple[float, dict[str, Any]]:
         """公共接口：evaluate_freshness（Stage 4 公共化，委托到 cls._evaluate_freshness）。"""
         return cls._evaluate_freshness(freshness_data)
 
 
     @classmethod
-    def evaluate_density(cls, body) -> Tuple[float, dict[str, Any]]:
+    def evaluate_density(cls, body) -> tuple[float, dict[str, Any]]:
         """公共接口：evaluate_density（Stage 4 公共化，委托到 cls._evaluate_density）。"""
         return cls._evaluate_density(body)
 
 
     @classmethod
-    def evaluate_constraints(cls, body) -> Tuple[float, list[str]]:
+    def evaluate_constraints(cls, body) -> tuple[float, list[str]]:
         """公共接口：evaluate_constraints（Stage 4 公共化，委托到 cls._evaluate_constraints）。"""
         return cls._evaluate_constraints(body)
 
@@ -85,7 +85,7 @@ class SkillEvaluator:
     ]
 
     @classmethod
-    def _evaluate_structure(cls, body: str, l1_data: dict[str, Any]) -> Tuple[float, list[str]]:
+    def _evaluate_structure(cls, body: str, l1_data: dict[str, Any]) -> tuple[float, list[str]]:
         score = 0.0
         issues: list[str] = []
 
@@ -121,7 +121,7 @@ class SkillEvaluator:
         return score, issues
 
     @classmethod
-    def _evaluate_density(cls, body: str) -> Tuple[float, dict[str, Any]]:
+    def _evaluate_density(cls, body: str) -> tuple[float, dict[str, Any]]:
         lines = [l for l in body.split("\n") if l.strip()]
         if len(lines) < 5:
             return 0.0, {"line_count": len(lines), "detail": "too_short"}
@@ -145,7 +145,7 @@ class SkillEvaluator:
         }
 
     @classmethod
-    def _evaluate_constraints(cls, body: str) -> Tuple[float, list[str]]:
+    def _evaluate_constraints(cls, body: str) -> tuple[float, list[str]]:
         constraint_categories = {
             "security": ["安全", "security", "injection", "注入", "sandbox"],
             "performance": ["性能", "performance", "latency", "延迟", "budget"],
@@ -168,7 +168,7 @@ class SkillEvaluator:
         return score, missing
 
     @classmethod
-    def _evaluate_freshness(cls, freshness_data: dict[str, Any] | None = None) -> Tuple[float, dict[str, Any]]:
+    def _evaluate_freshness(cls, freshness_data: dict[str, Any] | None = None) -> tuple[float, dict[str, Any]]:
         if freshness_data is None:
             return 50.0, {"detail": "no_freshness_data"}
 
@@ -176,7 +176,7 @@ class SkillEvaluator:
         return score, freshness_data
 
     @classmethod
-    def _evaluate_token_efficiency(cls, body: str, token_count: int) -> Tuple[float, dict[str, Any]]:
+    def _evaluate_token_efficiency(cls, body: str, token_count: int) -> tuple[float, dict[str, Any]]:
         if token_count == 0:
             return 0.0, {"detail": "zero_tokens"}
 

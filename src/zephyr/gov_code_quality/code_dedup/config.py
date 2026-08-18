@@ -246,7 +246,6 @@ from zephyr.infrastructure.config.app_config import (
     reload_config,
 )
 
-
 DEFAULT_CONFIG_FILENAMES = ["config.yaml", "config.yml", ".code_dedup.yaml"]
 
 

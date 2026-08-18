@@ -69,7 +69,7 @@ class SkillKillSwitch:
         return time.time() - entry["killed_at"] < cls._COOLDOWN_S
 
     @classmethod
-    def auto_kill_on_errors(cls, skill_id: str, error_count: int) -> Optional[dict[str, Any]]:
+    def auto_kill_on_errors(cls, skill_id: str, error_count: int) -> dict[str, Any] | None:
         if error_count >= cls._FAIL_THRESHOLD:
             return cls.kill(
                 skill_id,

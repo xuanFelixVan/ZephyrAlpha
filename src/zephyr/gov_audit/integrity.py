@@ -31,8 +31,6 @@ audit-trail.integrity — MOD-INF-020 · 密码学完整性验证器
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
-from zephyr.shared.io.paths import AUDIT_DATA_DIR  # 路径真源（SSoT：zephyr.shared.io.paths）
 
 import hashlib
 import hmac
@@ -40,6 +38,9 @@ import json
 import logging
 from pathlib import Path
 from typing import Any
+
+from zephyr.shared.io.paths import AUDIT_DATA_DIR  # 路径真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.io.serialization import dumps
 
 _logger = logging.getLogger(__name__)
 

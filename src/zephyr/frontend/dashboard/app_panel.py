@@ -68,8 +68,27 @@ try:
 except ImportError:
     hv = None
 
-from zephyr.governance.persistence.sqlite_schema import init_db
-from zephyr.governance.persistence.task_repo import TaskRepository
+# 掘金风格 5-Tab 绩效分析 (v3.2.0, bt-visualizer + 掘金量化)
+from zephyr.frontend.dashboard.components.backtest_performance import (
+    BacktestPerformanceData,
+    backtest_result_to_performance_data,
+    generate_demo_performance_data,
+    render_backtest_performance,
+)
+
+# 交易/回测类组件（v3.0.0 迁移）
+from zephyr.frontend.dashboard.components.backtest_results import (
+    BacktestGateStatus,
+    BacktestMetrics,
+    BacktestResultData,
+    render_backtest_results,
+)
+
+# 实验历史（v3.4.0, 51 号工作流 B：C1 回测历史 + 双净值对比，单一 JSON 源）
+from zephyr.frontend.dashboard.components.experiment_history import (
+    fetch_experiment_history,
+    render_experiment_history,
+)
 
 # 治理类组件（v3.1.0 迁移）
 from zephyr.frontend.dashboard.components.fitness_functions import (
@@ -88,30 +107,6 @@ from zephyr.frontend.dashboard.components.olap_trend import (
     fetch_olap_trends,
     render_olap_trends,
 )
-from zephyr.frontend.dashboard.components.task_progress import (
-    fetch_task_progress,
-    render_task_progress,
-)
-
-# 交易/回测类组件（v3.0.0 迁移）
-from zephyr.frontend.dashboard.components.backtest_results import (
-    BacktestGateStatus,
-    BacktestMetrics,
-    BacktestResultData,
-    render_backtest_results,
-)
-# 掘金风格 5-Tab 绩效分析 (v3.2.0, bt-visualizer + 掘金量化)
-from zephyr.frontend.dashboard.components.backtest_performance import (
-    BacktestPerformanceData,
-    backtest_result_to_performance_data,
-    generate_demo_performance_data,
-    render_backtest_performance,
-)
-from zephyr.frontend.dashboard.components.tick_replay import (
-    ReplaySpeed,
-    fetch_tick_replay,
-    render_tick_replay,
-)
 from zephyr.frontend.dashboard.components.order_book import (
     fetch_order_book,
     render_order_book,
@@ -120,15 +115,21 @@ from zephyr.frontend.dashboard.components.position_monitor import (
     fetch_position_monitor,
     render_position_monitor,
 )
+from zephyr.frontend.dashboard.components.task_progress import (
+    fetch_task_progress,
+    render_task_progress,
+)
+from zephyr.frontend.dashboard.components.tick_replay import (
+    ReplaySpeed,
+    fetch_tick_replay,
+    render_tick_replay,
+)
 from zephyr.frontend.dashboard.components.trade_panel import (
     TradePanelData,
     render_trade_panel,
 )
-# 实验历史（v3.4.0, 51 号工作流 B：C1 回测历史 + 双净值对比，单一 JSON 源）
-from zephyr.frontend.dashboard.components.experiment_history import (
-    fetch_experiment_history,
-    render_experiment_history,
-)
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 __all__ = [
     "DashboardPanelApp",
@@ -169,7 +170,7 @@ class DashboardPanelApp:
         olap_engine: object | None = None,
         backtest_result: object | None = None,
         backtest_portfolio: object | None = None,
-        tick_data: Optional[list] = None,
+        tick_data: list | None = None,
         miniqmt_provider: object | None = None,
         miniqmt_broker: object | None = None,
         execution_engine: object | None = None,

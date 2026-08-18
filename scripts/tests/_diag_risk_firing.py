@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 """诊断：各 risk 参数在 2015-2026 的触发率（%<1.0）和均值，定位过度收缩元凶。"""
 import warnings
+
 warnings.filterwarnings("ignore")
 import logging
+
 logging.getLogger("hmmlearn").setLevel(logging.ERROR)
 
 import numpy as np
 import pandas as pd
-from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
+
 from zephyr.regime.features import risk_features as rf
+from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
 
 builder = RegimeFeatureBuilder(
     backtest_start="2015-01-01", backtest_end="2026-06-30", data_load_start="2010-01-01",

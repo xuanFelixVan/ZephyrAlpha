@@ -24,8 +24,8 @@ warnings.filterwarnings("ignore")
 logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
 logging.getLogger("zephyr.regime.overlay_signals_builder").setLevel(logging.INFO)
 
-from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
 from zephyr.regime.features.regime_data_loader import RegimeDataLoader
+from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
 
 # S2 阈值（与 regime_detector.TRANSITION_CONFIG["S2"] 对齐）
 S2_THRESHOLDS = {
@@ -57,8 +57,8 @@ def main() -> int:
     # 触发特征构建 + overlay 构造器惰性初始化
     _ = builder.build_features()
     # 复刻 Phase2Runner._ensure_constructors
-    from zephyr.regime.risk_signal_builder import RiskSignalConstructor
     from zephyr.regime.overlay_signals_builder import OverlaySignalsConstructor
+    from zephyr.regime.risk_signal_builder import RiskSignalConstructor
     if builder._risk_ctor is None:
         builder._risk_ctor = RiskSignalConstructor(
             backtest_start=builder.backtest_start, backtest_end=builder.backtest_end,
@@ -112,7 +112,7 @@ def main() -> int:
         if best_stage != "none":
             print(f"  → 窗口内最高 stage: {best_stage} @ {best_date.date()}")
         else:
-            print(f"  → 窗口内无任何 S2 stage 触发")
+            print("  → 窗口内无任何 S2 stage 触发")
         print()
 
     return 0

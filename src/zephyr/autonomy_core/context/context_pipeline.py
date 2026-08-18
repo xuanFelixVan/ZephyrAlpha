@@ -45,14 +45,14 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.blueprint_tools.architecture_context_loader import (
-    format_architecture_context_excerpt,
-    load_architecture_context_dict,
-)
 from zephyr.autonomy_core.context.context_assembler import AssembledContext, AssemblyError, ContextAssembler
 from zephyr.autonomy_core.context.context_injector import ContextInjector, InjectedContext
 from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.shared.blueprint_tools.architecture_context_loader import (
+    format_architecture_context_excerpt,
+    load_architecture_context_dict,
+)
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
 InjectMode = Literal["none", "task_id", "module_id", "keyword"]

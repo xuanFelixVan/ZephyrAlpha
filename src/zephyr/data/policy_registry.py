@@ -27,14 +27,13 @@
 """
 from __future__ import annotations
 
-from typing import Final
 import logging
 import os
 import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Final, Optional
 
 log = logging.getLogger(__name__)
 
@@ -70,9 +69,9 @@ class SourcePolicy:
     initial_wait_sec: float = 2.0
     retry_on: list = field(default_factory=list)
     use_proxy: bool = False
-    proxy: Optional[str] = None
+    proxy: str | None = None
     disconnect_vpn: bool = False
-    user_agent: Optional[str] = None
+    user_agent: str | None = None
     respect_robots_txt: bool = True
     session_ttl_sec: int = 0
     relogin_on_auth_error: bool = False
@@ -149,7 +148,7 @@ class PolicyRegistry:
         self._policies: dict[str, SourcePolicy] = {}
         self._lock = threading.RLock()
         self._last_reload: float = 0.0
-        self._yaml_path: Optional[Path] = None
+        self._yaml_path: Path | None = None
         self._yaml_mtime: float = 0.0
         # 加载默认策略
         self._load_defaults()
@@ -222,7 +221,7 @@ class PolicyRegistry:
 
 # ============== 模块级单例 ==============
 
-_registry: Optional[PolicyRegistry] = None
+_registry: PolicyRegistry | None = None
 _registry_lock = threading.Lock()
 
 

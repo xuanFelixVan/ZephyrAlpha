@@ -28,8 +28,9 @@ from __future__ import annotations
 
 import os
 import sqlite3
-from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from dataclasses import dataclass, field
+
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 
 
 @dataclass

@@ -32,12 +32,12 @@ YAML为SSoT，auto_fix生成config_sync.yaml
 
 from __future__ import annotations
 
-from typing import Final
 import os
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Final
 
 
 @dataclass

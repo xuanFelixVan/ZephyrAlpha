@@ -57,6 +57,7 @@ if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
 
 from _shared.constants import EXIT_PASS
+
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.governance.persistence.dataflowgraph_schema import (
     get_dataflowgraph_pg_connection,

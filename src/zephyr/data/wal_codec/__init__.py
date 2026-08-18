@@ -65,8 +65,8 @@ Protobuf codec 为 P3 远期备选（蓝图 §2.1 标注"仅在 TSV 性能不满
 # A1 --> O1
 # A2 --> O1
 """
-from zephyr.data.wal_codec.tsv_codec import TsvCodec, encode_tsv, decode_tsv
 from zephyr.data.wal_codec.codec_registry import CodecRegistry, get_registry
+from zephyr.data.wal_codec.tsv_codec import TsvCodec, decode_tsv, encode_tsv
 
 __all__ = [
     "TsvCodec",

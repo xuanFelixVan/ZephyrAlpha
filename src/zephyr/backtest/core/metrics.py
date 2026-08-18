@@ -31,8 +31,8 @@ SSoT: docs/03_modules/_domain_backtest/blueprint.md §4.2
 
 from __future__ import annotations
 
-from typing import Optional
 import math
+from typing import Optional
 
 import numpy as np
 import pandas as pd

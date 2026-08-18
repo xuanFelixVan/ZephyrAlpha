@@ -33,11 +33,11 @@ SourcePolicy 定义在 policy_registry.py，本模块用 TYPE_CHECKING 前向引
 from __future__ import annotations
 
 import abc
+import datetime
 import logging
 import random
-import time
 import threading
-import datetime
+import time
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Callable, Iterator
 

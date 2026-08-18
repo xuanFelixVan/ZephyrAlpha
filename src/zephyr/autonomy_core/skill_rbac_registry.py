@@ -24,9 +24,8 @@ Bidirectional bridge:
 
 from __future__ import annotations
 
-from typing import Final
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import yaml
 from pydantic import BaseModel

@@ -40,7 +40,8 @@ import logging
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, time as dtime
+from datetime import datetime
+from datetime import time as dtime
 from decimal import Decimal
 from typing import Any, Optional
 
@@ -80,7 +81,7 @@ class TickReplayConfig:
 
     speed: str = "max_speed"
     fast_forward_ratio: int = 10
-    time_window: Optional[tuple[str, str]] = None
+    time_window: tuple[str, str] | None = None
     aggregate_5s: bool = False
 
 
@@ -161,7 +162,7 @@ class TickReplayEngine:
         symbols: list[str],
         start: datetime,
         end: datetime,
-        config: Optional[TickReplayConfig] = None,
+        config: TickReplayConfig | None = None,
     ):
         """初始化 Tick 回放引擎
 
@@ -221,7 +222,7 @@ class TickReplayEngine:
         )
 
         start_wall = time.time()
-        prev_timestamp: Optional[datetime] = None
+        prev_timestamp: datetime | None = None
         seq = 0
 
         for tick_row in self._merged_ticks:

@@ -32,12 +32,6 @@ from zephyr.frontend.dashboard.components.backtest_results import (
     fetch_backtest_results,
     render_backtest_results,
 )
-from zephyr.frontend.dashboard.components.tick_replay import (
-    ReplaySpeed,
-    detect_t_scenarios,
-    fetch_tick_replay,
-    render_tick_replay,
-)
 from zephyr.frontend.dashboard.components.order_book import (
     fetch_order_book,
     render_order_book,
@@ -45,6 +39,12 @@ from zephyr.frontend.dashboard.components.order_book import (
 from zephyr.frontend.dashboard.components.position_monitor import (
     fetch_position_monitor,
     render_position_monitor,
+)
+from zephyr.frontend.dashboard.components.tick_replay import (
+    ReplaySpeed,
+    detect_t_scenarios,
+    fetch_tick_replay,
+    render_tick_replay,
 )
 from zephyr.frontend.dashboard.components.trade_panel import (
     DEFAULT_GREY_CAPITAL,

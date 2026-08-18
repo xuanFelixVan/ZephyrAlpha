@@ -80,7 +80,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR, DB_PATH
+from _shared.constants import DB_PATH, EXIT_FINDINGS, EXIT_PASS, MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR
 from _shared.thresholds import get as _get_threshold  # noqa: E402  治本(ARCH-036 P3-A5): 全局硬超时读SSoT
 
 DEFAULT_OUTPUT = SCRIPTS_DIR / "reports" / "findings.jsonl"

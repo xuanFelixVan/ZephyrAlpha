@@ -42,22 +42,22 @@ exchange 码体系（TRAE-082）：
   与 CH MATERIALIZED multiIf 表达式严格对齐（单一真源，DRY）
 """
 from zephyr.data.symbol_normalizer.normalizer import (
-    EXCHANGE_SH,
-    EXCHANGE_SZ,
-    EXCHANGE_BJ,
-    EXCHANGE_HK,
-    EXCHANGE_US,
-    _PREFIX_TO_EXCHANGE,
+    _INDEX_PREFIX3_TO_EXCHANGE,
     _PREFIX2_TO_EXCHANGE,
     _PREFIX3_TO_EXCHANGE,
-    _INDEX_PREFIX3_TO_EXCHANGE,
+    _PREFIX_TO_EXCHANGE,
+    EXCHANGE_BJ,
+    EXCHANGE_HK,
+    EXCHANGE_SH,
+    EXCHANGE_SZ,
+    EXCHANGE_US,
     derive_exchange,
     derive_exchange_index,
-    split_suffix_symbol,
-    split_prefix_symbol,
-    to_canonical,
-    normalize_symbol,
     is_bare_symbol,
+    normalize_symbol,
+    split_prefix_symbol,
+    split_suffix_symbol,
+    to_canonical,
 )
 
 __all__ = [

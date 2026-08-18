@@ -18,7 +18,7 @@ import warnings
 
 import pandas as pd
 
-from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder, FEATURE_NAMES
+from zephyr.regime.regime_feature_builder import FEATURE_NAMES, RegimeFeatureBuilder
 from zephyr.regime.validation.phase2 import Phase2Runner
 from zephyr.regime.validation.phase2.b1_probability_calibration import (
     B1ProbabilityCalibration,

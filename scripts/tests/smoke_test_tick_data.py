@@ -70,8 +70,8 @@ def _load_env_qmt() -> str:
 
 def main() -> int:
     from zephyr.governance.data_governance.miniqmt_provider import (
-        MiniQmtQuoteProvider,
         MiniQmtProviderError,
+        MiniQmtQuoteProvider,
     )
 
     qmt_path = _load_env_qmt()

@@ -58,16 +58,16 @@ zephyr.data — 数据源集成器（MOD-L00-004）。
 # I2 --> A2
 # A2 --> O2
 """
+from .policy_registry import (
+    PolicyRegistry,
+    SourcePolicy,
+    get_registry,
+)
 from .provider_base import (
-    IngestProviderBase,
-    IngestProviderMeta,
     FetchPayload,
     FetchResult,
-)
-from .policy_registry import (
-    SourcePolicy,
-    PolicyRegistry,
-    get_registry,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
 from .scheduler import IntegratorScheduler
 

@@ -751,7 +751,7 @@ def run_real(
         )
         report.state_stats = stats
 
-        print(f"\n  各态统计特征（供重设计 _STATE_RISK_FACTORS 态语义）:")
+        print("\n  各态统计特征（供重设计 _STATE_RISK_FACTORS 态语义）:")
         print(f"  {'态':>4} {'天数':>6} {'占比':>7} {'vol_pct':>9} {'slope':>8} "
               f"{'ad_ratio':>9} {'vol_anom':>9} {'fr_1d':>9} {'fr_5d':>9}")
         print("  " + "-" * 74)
@@ -798,7 +798,7 @@ def run_real(
     print("\n" + "=" * 78)
     if rec and rec > 0:
         print(f"★ BIC 扫描完成：推荐 HMM 态数 9 → {rec}")
-        print(f"  下一步（步骤2）：用上述 Viterbi 统计特征重设计 _STATE_RISK_FACTORS + TRANSITION_CONFIG")
+        print("  下一步（步骤2）：用上述 Viterbi 统计特征重设计 _STATE_RISK_FACTORS + TRANSITION_CONFIG")
     else:
         print("⛔ BIC 扫描未给出明确推荐，需人工复核")
     print("=" * 78)

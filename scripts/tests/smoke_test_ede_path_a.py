@@ -142,7 +142,7 @@ def main() -> int:
         backtest_config=BacktestConfig(initial_capital=Decimal("100000")),
     )
 
-    print(f"\n=== STEP 2: Path A 回测 ===")
+    print("\n=== STEP 2: Path A 回测 ===")
     print(f"[INFO] symbol={symbol}  range={start} ~ {end}")
     print(f"[INFO] strategy={config.strategy_id}  factor={config.factor_ids}")
     print(f"[INFO] rebalance={config.rebalance_freq}  pit_shift={config.pit_shift}")
@@ -164,7 +164,7 @@ def main() -> int:
         return 1
 
     # 4. 结果分析
-    print(f"\n=== STEP 3: 结果 ===")
+    print("\n=== STEP 3: 结果 ===")
     print(f"  strategy_id={result.strategy_id}")
     print(f"  total_return={result.total_return:.4f}")
     print(f"  annual_return={result.annual_return:.4f}")
@@ -174,7 +174,7 @@ def main() -> int:
     print(f"  win_rate={result.win_rate:.4f}")
 
     # 5. 验收检查
-    print(f"\n=== STEP 4: 验收检查 ===")
+    print("\n=== STEP 4: 验收检查 ===")
     all_pass = True
 
     if result.trades_count == 0:

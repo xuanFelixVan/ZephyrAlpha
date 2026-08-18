@@ -55,8 +55,8 @@ import datetime
 import logging
 from typing import Callable, Final, Iterator
 
-from ..provider_base import FetchPayload, FetchResult
 from ..policy_registry import SourcePolicy
+from ..provider_base import FetchPayload, FetchResult
 from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)

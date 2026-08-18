@@ -42,7 +42,6 @@ from dataclasses import dataclass
 from threading import RLock
 from typing import ClassVar
 
-
 # 默认参数（NEW API）
 REF_TOKENS_DEFAULT: int = 4000
 K_DEFAULT: float = 0.5
