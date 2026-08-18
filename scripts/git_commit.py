@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION); exit 7=claim-only部分文件被其他session持有(冲突跳过); exit 8=worktree隔离阻断(WORKTREE_VIOLATION); exit 9=跨域混合提交阻断(COMMIT_SCOPE_VIOLATION)
+# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION); exit 7=claim-only部分文件被其他session持有(冲突跳过); exit 8=worktree隔离阻断(WORKTREE_VIOLATION); exit 9=跨域混合提交阻断(COMMIT_SCOPE_VIOLATION); exit 10=MERGE_HEAD晾置拒绝(MERGE_IN_PROGRESS，B2治本①)
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-INF-005 | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -144,6 +144,14 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
         "  请拆分为多个 commit，每个域一个（AGENTS.md「一个任务=1次commit」原则）。"
         "  如确认需跨域提交（跨域重构/域注册表变更），添加 --allow-multi-domain 重新执行"
         "（2026-08-13 裁定：AI 可默认使用，[GW:<sid>:multi-domain] 留痕）。",
+        False,
+    ),
+    CommitStatus.MERGE_IN_PROGRESS: (
+        10,
+        "MERGE_IN_PROGRESS: {message}",
+        "  检测到未完成的 merge（MERGE_HEAD 晾置）。B2 治本①（AI-FILL-14 截胡事故）："
+        "  普通 commit 会连带提交他人 merge 并张冠李戴。"
+        "  若该 merge 是你发起且冲突已解决，添加 --merge-finalize 重新执行（[GW:<sid>:merge] 留痕）。",
         False,
     ),
 }
@@ -527,6 +535,16 @@ def main() -> int:
              "2026-08-13 用户裁定：AI 可默认使用（留痕审计，对称 --allow-overlap 治理）。",
     )
     parser.add_argument(
+        "--merge-finalize",
+        action="store_true",
+        default=False,
+        help="显式完成在途 merge（B2 治本①，2026-08-19，AI-FILL-14 截胡事故治本）——"
+             "MERGE_HEAD 存在时普通 commit 一律拒绝（exit 10，防把他人晾置 merge 连带提交"
+             "并张冠李戴 commit message），仅本标志放行。merge 期间 git 禁 partial commit，"
+             "故走全量 commit 并追加 [GW:<sid>:merge] 标记留痕。前置：确认该 merge 是你发起的、"
+             "冲突已解决、staged 区内容全部归属本次 merge。",
+    )
+    parser.add_argument(
         "--adopt-prior-work",
         action="store_true",
         default=False,
@@ -651,6 +669,7 @@ def main() -> int:
                 allow_derived_deletion=args.allow_derived_deletion,
                 allow_non_worktree=args.allow_non_worktree,
                 allow_multi_domain=args.allow_multi_domain,
+                merge_finalize=args.merge_finalize,
             )
         finally:
             gw.release_files(args.session, claimed)
