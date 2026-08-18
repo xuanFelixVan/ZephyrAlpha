@@ -1,6 +1,19 @@
-# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
-# [TTL] permanent
 #!/usr/bin/env python
+# [MODULE] scripts.governance._archive.one_off.oneoff_update_four_question_text_fields
+# [DOMAIN] D_GOV_SCRIPTS
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-GOV_ONEOFF_UPDATE_FOUR_QUESTION | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """ONEOFF: 更新 candidate_module_registry.yaml 非注释数据字段中的"四问"引用。
 
 策略：q1 保留并改名为"一问标准 q1"；q2/q3/q4 直接删除（含证据文本），不留(已废)历史。

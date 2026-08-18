@@ -1,9 +1,17 @@
-# [MODULE] scripts.oneoff_purge_harvest_candidates
+# [MODULE] scripts.governance._archive.one_off.oneoff_purge_harvest_candidates
 # [DOMAIN] D_GOV_SCRIPTS
+# [DEPENDENCIES]
+# [CONSUMERS]
 # [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
 # [STABILITY] volatile
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-GOV_ONEOFF_PURGE_HARVEST_CANDIDATES | layer=script | stability=volatile | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """一次性 purge 脚本：把 candidate_module_registry.yaml 中 5283 个 CAND-HARVEST-* 条目
 归档到独立 archive 文件，主 registry 只保留 ~90 个手工候选，瘦身 6.9MB→~300KB。

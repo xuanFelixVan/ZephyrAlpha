@@ -1,5 +1,18 @@
-# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
-# [TTL] permanent
+# [MODULE] scripts.governance._archive.one_off.oneoff_fix_generator_nonidempotent
+# [DOMAIN] D_GOV_SCRIPTS
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-GOV_ONEOFF_FIX_GENERATOR_NONIDEMPOTENT | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """一次性脚本：批量修复 6 个生成器的 datetime.now() 和 write_text newline（#ARCH-REGEN-NONIDEMPOTENT-001）。
 
 治本：#ARCH-REGEN-NONIDEMPOTENT-001

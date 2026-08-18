@@ -1,4 +1,19 @@
 #!/usr/bin/env python
+# [MODULE] scripts.governance._archive.one_off.oneoff_commit_audit02
+# [DOMAIN] D_GOV_SCRIPTS
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.git_commit_gateway
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-GOV_ONEOFF_COMMIT_AUDIT02 | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """One-off: commit 9 config YAML audit-02 fixes via GitCommitGateway escape hatch.
 
 User authorized the allow_non_worktree escape hatch (WORKTREE-REQUIRED gate blocks

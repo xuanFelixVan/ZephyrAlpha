@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# [MODULE] scripts.governance._archive.one_off.oneoff_migrate_four_question_to_design_admission
+# [DOMAIN] D_GOV_SCRIPTS
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-GOV_ONEOFF_MIGRATE_FOUR_QUESTION | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """
 ONEOFF: 四问 -> 一问标准 真源迁移（裁定 2026-08-04）
 
