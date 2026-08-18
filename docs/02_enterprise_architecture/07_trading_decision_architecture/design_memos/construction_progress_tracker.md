@@ -380,7 +380,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 136 | MOD-INT-AISA depgraph 设计态节点 planned→production 流转（分支原登 #128） | AI-AISA-001（舆情 MVP 批） | worktree 施工纪律：会话内只登记不流转（design 态受重建 DELETE 豁免保护，#110 同款教训——提前手工转 production 会被主仓锚定后台重扫当孤儿收割）；merge 回 dev 后由 #ARCH-70 同身份 UPDATE 通道随第一次重建自动转 production，merge 执行人负责实证核验+闭环 | ⏳ 待 merge 后自动流转+统筹核验 |
+| 136 | MOD-INT-AISA depgraph 设计态节点 planned→production 流转（分支原登 #128） | AI-AISA-001（舆情 MVP 批） | worktree 施工纪律：会话内只登记不流转（design 态受重建 DELETE 豁免保护，#110 同款教训——提前手工转 production 会被主仓锚定后台重扫当孤儿收割）；merge 回 dev 后由 #ARCH-70 同身份 UPDATE 通道随第一次重建自动转 production，merge 执行人负责实证核验+闭环 | ✅ 已闭环（2026-08-18 第八统筹核验：全量重扫后 extract_depgraph 实证 MOD-INT-AISA=stable；同批 MOD-SIG-056/MOD-RK-26/MOD-REGIME-006 四节点全部 stable） |
 | 137 | LLM 打分通道默认未启用（规则法为默认打分器）（分支原登 #129） | AI-AISA-001 范围裁定 | nlp_inference 零样本 F1=0.5148 未达 SFT 目标 0.75（#ARCH-NLP-PIPELINE-001 Phase 2 实证）——MVP 默认规则法确定性打分，LLM 扩展口（构造注入 llm_scorer callable）已就位；切换条件=SFT F1≥0.75 且评估集复测通过 | ⏳ 待 SFT 达标后切换 |
 | 138 | sentiment 持久化表未建（MVP 内存态输出）（分支原登 #130） | AI-AISA-001 范围裁定 | 26 号备忘录裁定情绪分数作事件信号维度非独立 alpha，落库需求待下游确定；建表时走 data_asset_registry + CH DDL-as-Code 流程（DS-104 同族），不绕过 | ⏳ 待下游需求驱动 |
 | 139 | symbol 级舆情（标的关联）与 CTR-INT-AISA 契约登记（分支原登 #131） | AI-AISA-001 范围裁定 | MVP 产出市场级窗口 sentiment_index；symbol 级聚合需新闻→标的关联层（公告已有标的字段、新闻需 NER/规则提取，26 号备忘录 BM-SEL-19 漏斗联动候选）；契约 CTR-INT-AISA 拟定未登记，待 MOD-SIG-002 信号生成定型后对齐 | ⏳ 待 MOD-SIG-002 定型 |
@@ -390,7 +390,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 141 | AI-R3 复审遗留①：pg_probe module_id N-17 回潮（depgraph 节点未刷新致 S2 对齐循环回退治本值）（分支原登 #128） | AI-R3 复审第一轮（2026-08-18） | pg_probe.py 行1 MOD-GOV_PG_PROBE vs 行15 MOD-PG_PROBE 不一致=N-17 违例重新成立；根因=depgraph 节点=MOD-GOV_PG_PROBE（旧值），S2 对齐循环以节点为真源回退文件头治本值。裁定=全量重扫刷新节点（#ARCH-70 通道）+重扫前加对齐豁免 | ✅ 已登记（#ARCH-124，commit d7728911）；⏳ 重扫执行归统筹收口批 |
+| 141 | AI-R3 复审遗留①：pg_probe module_id N-17 回潮（depgraph 节点未刷新致 S2 对齐循环回退治本值）（分支原登 #128） | AI-R3 复审第一轮（2026-08-18） | pg_probe.py 行1 MOD-GOV_PG_PROBE vs 行15 MOD-PG_PROBE 不一致=N-17 违例重新成立；根因=depgraph 节点=MOD-GOV_PG_PROBE（旧值），S2 对齐循环以节点为真源回退文件头治本值。裁定=全量重扫刷新节点（#ARCH-70 通道）+重扫前加对齐豁免 | ✅ 全闭环（2026-08-18 第八统筹收口：全量重扫后节点=MOD-PG_PROBE stable，对齐循环已自动回正文件头行1/行15 双一致，extract_depgraph+头注双实证） |
 | 142 | AI-R3 复审遗留②：CancelRateGuard 日申报硬计数器纯内存（重启归零可绕过 1 万笔阻断线）（分支原登 #129） | AI-R3 复审第一轮（2026-08-18） | _daily_count/_daily_date 纯内存，进程重启当日计数归零；二轮审查 P1-5 建议②未落地（f9e10bebdd 只完成接线建议①）。裁定=随 state_store 持久化批落盘 {count, date} | ✅ 已登记（#ARCH-125）；⏳ 随 state_store 持久化批施工 |
 | 143 | AI-R3 复审遗留③：Saga 恢复路径 step5 失败时持仓回滚漂移（对从未入账的成交做反向 apply_fill 负向漂移）（分支原登 #130） | AI-R3 复审第一轮（2026-08-18） | _recover_filled_order 的 `if not self._step5_position_update(ctx): return True` 静默吞掉 step5 失败，但内部 except 已调 _compensate_position 对未入账成交做反向 apply_fill。裁定=step5 失败区分"已入账后回滚"vs"未入账"，未入账不回滚 | ✅ 已登记（#ARCH-126）；⏳ 随后续 saga 修复批施工 |
 | 144 | AI-R3 复审遗留④：Kill Switch 清算链 T+1 可卖数量未分化（对当日买入 T+1 锁定份额发单必被券商拒）（分支原登 #131） | AI-R3 复审第一轮（2026-08-18） | execute_kill_switch_liquidation 对全部持仓发 MARKET SELL，含 T+1 锁定份额——券商必拒，无识别/重试/告警分化。裁定=按 available 数量发单或 T+1 拒绝与普通失败分桶 | ✅ 已登记（#ARCH-127）；⏳ 随后续清算链修复批施工 |
@@ -400,15 +400,29 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
 | 145 | FHS 引擎 MVP 施工（CAND-AUTONOMYCORE-002 转正，memo 36 §3.16 落地，MOD-RK-26）（分支原登 #128） | Owner 派单（2026-08-18） | 新建 src/zephyr/risk/core/fhs_engine.py（GARCH(1,1) 自研 QMLE→L-BFGS-B+持续性罚项（932db04422 审查线治本）+标准化残差重采样+FHS VaR/ES+HS 对照）+27 用例+蓝图 v0.1.0+五登记链（token/capability/translation/#ARCH-121/blueprint）+CAND promoted 留痕；并列方法论独立模块零耦合 var_calculator（避让 R3 审查线）；27/27 两轮全绿+ruff 全过 | ✅ 已 merge（统筹串行） |
-| 146 | memo 36 状态更新（FHS 已施工后的文档对账）（分支原登 #129） | AI-FHS-001 避让登记 | memo 36 §3.10 动作 4「⚠️ 未施工（远期候选 CAND-AUTONOMYCORE-002）」+ §3.9.2 远期 9 法 #5 FHS「未施工」+ §6 待裁定「FHS 采纳时机」三处需随 FHS 落码更新（§3.16 施工规约本体已是设计契约无需动）——归统筹侧 merge 后文档收敛批，本批避让（R3 审查线邻域文档） | ⏳ 统筹收口批处理 |
+| 146 | memo 36 状态更新（FHS 已施工后的文档对账）（分支原登 #129） | AI-FHS-001 避让登记 | memo 36 §3.10 动作 4「⚠️ 未施工（远期候选 CAND-AUTONOMYCORE-002）」+ §3.9.2 远期 9 法 #5 FHS「未施工」+ §6 待裁定「FHS 采纳时机」三处需随 FHS 落码更新（§3.16 施工规约本体已是设计契约无需动）——归统筹侧 merge 后文档收敛批，本批避让（R3 审查线邻域文档） | ✅ 已闭环（2026-08-18 第八统筹收口批：§3.9.2 #5 标引擎已施工+§3.10 动作 4 改「引擎已施工/接线仍设计契约」+§6 采纳时机注明采纳=编排接线裁定，三处均指向 tracker #147 远期接线） |
 | 147 | FHS 远期编排层接线（should_switch_to_fhs 三触发 + FHS_COOLDOWN_DAYS=10 冷却期 + FHS_PERMANENTLY_DISABLED 升级 + RiskOrchestrator→fhs_engine 调用点）（分支原登 #130） | memo 36 §3.16/§3.10 动作 4 设计契约 | 本 MVP 明确不做（引擎能力先行）；启用仍按 memo 36 §3.10 动作 4 触发链（Christoffersen 独立性失败 LR_ind p<0.05 且 kupiec p≥0.05 / 连续 2 次 E-backtesting red / 盘中重算显著连续 3 日）——待 RiskLayerOrchestrator 校准动作调用点接入批一并施工（对齐 v1.11.1 命名对账「§3.10 动作仍=设计契约」现状） | 🧊 远期 |
-| 148 | FHS 引擎 merge 后统筹侧收口项（分支原登 #131） | AI-FHS-001 移交 | ①depgraph 设计态节点（src/zephyr/risk/core/fhs_engine.py）转 production 链（#ARCH-70 通道）；②蓝图 §0.6 五图对齐视图+§8 代码索引 AUTOGEN 生成（generate_blueprint_panorama.py MOD-RK-26 + sync_blueprint_code_index.py）；③algo_submodules ALGO_FLOW 节点翻译派生（A1-A5 五节点）；④错误码 ZA-RK-0026~0029 收编 AI-ERR-001 对账批（ZA-RK-0025 已避让 ERR 改号计划 RK-0009→0025，Qwen 审查线撞码实证）；⑤#ARCH-120→121/tracker #128-131→145-148 撞号重编（本条已执行） | ⏳ 统筹收口批处理 |
+| 148 | FHS 引擎 merge 后统筹侧收口项（分支原登 #131） | AI-FHS-001 移交 | ①depgraph 设计态节点（src/zephyr/risk/core/fhs_engine.py）转 production 链（#ARCH-70 通道）——✅ 已闭环（重扫后 MOD-RK-26=stable 实证）；②蓝图 §0.6 五图对齐视图+§8 代码索引 AUTOGEN 生成（generate_blueprint_panorama.py MOD-RK-26 + sync_blueprint_code_index.py）——⏳ 归派生 align 批；③algo_submodules ALGO_FLOW 节点翻译派生（A1-A5 五节点）——⏳ 归派生 align 批；④错误码 ZA-RK-0026~0029 收编 AI-ERR-001 对账批（ZA-RK-0025 已避让 ERR 改号计划 RK-0009→0025，Qwen 审查线撞码实证）——⏳ 待 ERR-001 改号 Owner 批准后随同批收编；⑤#ARCH-120→121/tracker #128-131→145-148 撞号重编——✅ 已执行 | 🔄 ①⑤闭环；②③归派生 align 批；④待 Owner 批准 |
 
 ### P1-补16 · 2026-08-18 AI-CYCLE-001 登记（CAND-CYCLE-001 时间周期 MVP 批）【编号注记：分支原登 P1-补11 #128 与已入 dev 的 ERR-001 #128 等五路撞号，#ARCH-120 与 SEAT-001 撞号——merge 终态重编 P1-补16 #149 + #ARCH-122——2026-08-18 第八统筹】
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
 | 149 | CAND-CYCLE-001 时间周期分析 MVP 施工（MOD-REGIME-006）（分支原登 #128） | AI-CYCLE-001 派单 | 两件套落码：①日历效应统计（月末/月初/节后，Welch t+Bonferroni 检验族=4，对齐 CYC-STAT-013）②周年日效应（显著高低点 ±5 日窗口 \|日收益\| 检验，对齐 CYC-TIME-004）；Gann 固定间隔/几何类列扩展口 EXT-G/EXT-GEO 不落码（证据强度不足不过度工程）。自主裁定：域归属 D_SIGNAL(deprecated)→D_REGIME 修正、MOD-REGIME-006 取号（001~005 已占）、scaffold --force-override 裁定通道（包名=域别名必然误报，同 #111 先例）、边界钉死=辅助参考信号非独立交易信号（is_advisory_only 恒 True/不显著 confidence=0 下游禁消费/未过 WFA 禁挂 regime 节流）。登记链：creation_token(auto-scaffold-regime_cycle_analyzer-20260818)+translation plain_zh+depgraph 设计态节点+blueprint v0.1.0+REG-CYCLE-001 两条目 code_path/code_symbol 锚定+#ARCH-122+CAND 留痕 promoted | ✅ 已 merge（统筹串行）；遗留=真数据实证回填 evidence+WFA 验证+regime 节流接线（蓝图 §9） |
+
+### P1-补17 · 2026-08-18 第八统筹 merge 列车总账（七路收口：ERR/SEAT/AISA/FHS/CYCLE/R4/R3）
+
+> 2026-08-18 晚第八统筹串行 merge 六路分支 + 并行会话落地 R3，全部收口。
+
+| 项 | 内容 | 实证 |
+|---|---|---|
+| merge 序列 | ①AI-ERR-001（795fa5c00f，先行）②AI-SEAT-001（180a73a27d）③AI-AISA-001（2df795a8c8）④AI-R3（d1616f1464，并行会话提交，统筹内容修正）⑤AI-FHS-001（796ab4431e）⑥AI-CYCLE-001（f84a093f12）⑦AI-R4（8c3bf463a2） | dev log 七笔在案 |
+| 派生污染剔除 | AISA/R3 两分支 reconciler 在 worktree 环境重扫 unified-asset-index.yaml 均截断 -63%（273409→~101800 行）+path_ownership_map 整表重排——两次均从 HEAD 逐字节还原剔除，未入 dev | git show 行数比对实证 |
+| 编号终态 | tracker：ERR=128 / SEAT=132-135 / AISA=136-140 / R3=141-144 / FHS=145-148 / CYCLE=149；ARCH：SEAT=120 / FHS=121 / CYCLE=122 / R3=124-127 / AISA=#ARCH-AISA-001 | 各段编号注记在案 |
+| CAND 翻转 | SEAT-001/AISA-001（统筹 f149219057）+ AUTONOMYCORE-002/CYCLE-001（分支预翻核验）四路全部 promoted | candidate_module_registry |
+| depgraph 收口 | 全量重扫（966 模块）后 MOD-SIG-056/MOD-INT-AISA/MOD-RK-26/MOD-REGIME-006 四设计节点全 stable；pg_probe N-17（#ARCH-124）节点刷新+文件头自动回正 | extract_depgraph 实证 |
+| 门禁顺带治本 | GATE-21：blueprint_registry.yaml 磁盘缺失去库存量→骨架引导+syncer 重生 177 条（gitignored 盘文件范式）；GATE-DOC-NODE-ID：SEAT 蓝图 node_id 硬编码改 blueprint_id 口径；GATE-ERRCODE 实测拦截 ZA-IT-0003 未登记→补登闭环（#140） | 各 gate 转绿实证 |
+| 遗留归口 | memo 36 三处（#146 ✅）；FHS 远期接线（#147 🧊）；ERR 改号清单待 Owner 批准（#128 🔄）；R3 三遗留件随对应修复批（#142-144 ⏳）；SEAT 阈值回测/词表（#133/134 ⏳）；AISA LLM 切换/持久化/symbol 级（#137-139 ⏳）；CYCLE 真数据实证/WFA（#149 ⏳）；派生 align 批（146 文件，归并行会话收口） | 见各条目 |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 

@@ -333,9 +333,11 @@ else:
 
 #### §3.9.2 远期 9 法（未施工）
 
+> 2026-08-18 勘正：#5 FHS 引擎已施工（fhs_engine.py，MOD-RK-26，#ARCH-121，CAND-AUTONOMYCORE-002 转正 MVP）——引擎能力就位，编排层接线（RiskOrchestrator 调用点+三触发+冷却期）仍属远期（tracker #147）。
+
 | # | 方法 | 来源 | 说明 |
 |---|---|---|---|
-| 5 | FHS | Filtered Historical Simulation | GARCH 残差重采样，独立性失败时优先选 |
+| 5 | FHS | Filtered Historical Simulation | GARCH 残差重采样，独立性失败时优先选（✅ 引擎已施工 2026-08-18，接线待触发链） |
 | 6 | 多项式 VaR 回测 | - | Phase 2 |
 | 7 | Fissler-Ziegel 联合回测 | - | Phase 2 |
 | 8 | Ridge 回测 | - | Phase 2 |
@@ -370,14 +372,14 @@ else:
 | 1 | 扩大数据窗口 | RiskOrchestrator → var_calculator.update_config() | `min_history` 30→60，`window` 60→120 交易日 | 次日回测仍 RECALIBRATE → 继续扩大至 250；连续 3 日 REBUILD → 回滚至 60 |
 | 2 | 切换 VaR 方法 | RiskOrchestrator → var_calculator.update_config() | `method` conservative_max → historical（参数法不稳定时）；或 → parametric（历史模拟小样本不稳定时） | 切换后次日回测 PASS → 保留；RECALIBRATE → 切回原方法 + 标记方法切换失败 |
 | 3 | 重校准 POT 阈值 | RiskOrchestrator → tail_risk_monitor.update_config() | `pot_threshold_quantile` 0.90→0.85（更厚尾）或 →0.95（更保守） | GPD 拟合失败（KS p<0.05）→ 回滚至 0.90 + 跳过 POT 修正 |
-| 4 | 切换到 FHS | ⚠️ 未施工（远期候选 CAND-AUTONOMYCORE-002）——RiskOrchestrator → fhs_engine.enable() 为设计契约，src 零匹配 | GARCH(1,1) 拟合 + 残差重采样（§3.16） | FHS 拟合失败（GARCH 不收敛）→ 回退 historical + 标记 FHS 不可用 |
+| 4 | 切换到 FHS | 🔄 引擎已施工（fhs_engine.py，MOD-RK-26，#ARCH-121，2026-08-18 AI-FHS-001）——RiskOrchestrator → fhs_engine 调用点接线仍为设计契约（tracker #147） | GARCH(1,1) 拟合 + 残差重采样（§3.16） | FHS 拟合失败（GARCH 不收敛）→ 回退 historical + 标记 FHS 不可用 |
 
 **触发条件 → 动作映射**（v1.1.0）：
 
 | 回测失败信号 | 优先动作 | 理由 |
 |---|---|---|
 | Kupiec reject（覆盖率失败） | 动作 1（扩窗口）+ 动作 2（切方法） | 覆盖率失败 = 样本不足或分布假设错 |
-| Christoffersen LR_ind reject（独立性失败） | 动作 1 + 动作 2（v1.11.0 勘正：动作 4 切 FHS 未施工，src 零匹配——远期晋升走 CAND-AUTONOMYCORE-002） | 独立性失败 = 超限聚集 → 远期用 GARCH 残差重采样破自相关，当前以扩窗口/切方法应对 |
+| Christoffersen LR_ind reject（独立性失败） | 动作 1 + 动作 2（v1.11.1 勘正：动作 4 FHS 引擎已施工 2026-08-18（#ARCH-121），编排接线未落——触发链仍按 CAND-AUTONOMYCORE-002 远期路径） | 独立性失败 = 超限聚集 → 远期用 GARCH 残差重采样破自相关，当前以扩窗口/切方法应对 |
 | Z2 reject（ES 幅度失败） | 动作 3（重校准 POT） | ES 幅度失败 = 尾部拟合不准 |
 | E-backtesting red（anytime-valid 累积证据） | 动作 1 + 动作 2 + 动作 3（组合） | 累积证据 = 多重校准问题 |
 
@@ -1052,7 +1054,7 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 |---|---|---|
 | Conformal Risk Control (CRC) 采纳时机 | 交换性假设不成立，RWC/TWC 引入超参 | A 股 walk-forward 验证 RWC 覆盖率 ∈ [0.94, 0.96] |
 | ResCP ESN reservoir A 股适配 | 论文 60% 宽度缩减未相对 EWMA 基线验证 | head-to-head 四要素验证通过 |
-| FHS 采纳时机 | Christoffersen 独立性失败未实际发生 | 回测出现独立性失败（LR_ind p < 0.05） |
+| FHS 采纳时机 | Christoffersen 独立性失败未实际发生（引擎已施工 2026-08-18 #ARCH-121，采纳=编排层接线裁定） | 回测出现独立性失败（LR_ind p < 0.05） |
 | 蒙特卡洛法 | 算力限制 | GPU 环境就绪 |
 | Bayesian EVT Hawkes | 模型复杂度极高 | Phase 4 鲁棒性阶段 |
 | 期权隐含 ES bounds | 期权数据接入待建 | 50ETF/300ETF 期权数据管道就绪 |
