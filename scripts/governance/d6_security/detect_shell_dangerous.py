@@ -88,9 +88,10 @@ EXCLUDE_PATH_PARTS = ("docs/03_modules/_cross_layer/large_language_model_securit
     # 循环审计 R1（2026-08-19 AI-00 基线治本，与 detect_git_dangerous 同构逐文件甄别）：
     # ① tests/ 全目录：红队对抗载荷/安全语料（rm -rf 等攻击字面量是测试数据，执行面在 tmp 仓）
     "tests/",
-    # ② 策略文档枚举（RBAC/LLM 安全网蓝的禁止项定义文本）
+    # ② 策略文档枚举（RBAC/LLM 安全网蓝与 git 安全治理文的禁止项定义文本）
     "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md",
     "docs/03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md",
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md",
     # ③ 安全防护系统自身的模式定义/攻击语料真源（input_guard 拦截模式、payloads 库、
     #    红队语料、dry-run 模拟器阻断清单、demo 恶意样本字符串、phase_check/adapter/a2a_red_team 文案）
     "src/zephyr/security/access_control/guards/input_guard.py",
