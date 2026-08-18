@@ -307,3 +307,18 @@ generators:
       - yaml:docs/01_policies_and_standards/rules
     output_globs:
       - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+
+  # ════════════════════════════════════════════════════════════════════════
+  # algo_flow_translation_sync — ALGO_FLOW 标记 → 翻译真源同步（手工 rollout 工具）
+  # B7 治本登记（2026-08-19）：两次未登记运行致 MTR 整文件重序列化漂移（drift watchdog
+  #   快照在案）。登记目的=产物归属声明（跑了有人认领、漂移可归因）；不挂自动触发源
+  #   （输入=src 模块 ALGO_FLOW 标记，无单一 mtime 真源可对比，手工 rollout 防循环触发）；
+  #   运行审计=.runtime/audit/algo_flow_translation_sync_runs.jsonl（运行即写）。
+  # ════════════════════════════════════════════════════════════════════════
+  - name: algo_flow_translation_sync
+    module_path: scripts.governance._shared.algo_flow_translation_sync
+    trigger_sources: []
+    input_sources: []
+    output_globs:
+      - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+      - docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml

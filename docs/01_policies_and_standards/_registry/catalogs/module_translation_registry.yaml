@@ -2679,10 +2679,8 @@ entries:
   domain_id: D_DATA
   name_zh: 北向资金季度持仓快照采集器
   name_en: northbound_hold_fetcher
-  desc_zh: 北向资金季度持仓快照 fetcher（memo 19）——tushare pro.hk_hold 季度末全量快照（仅北向 SH/SZ），PIT 守卫=季度末+20 自然日才采集，全量覆盖写入 c1_market.northbound_hold_snapshot（ReplacingMergeTree
-    幂等）；港交所 2024-08-19 日频断档后的替代数据源
-  desc_en: Northbound quarterly holdings snapshot fetcher (memo 19) - tushare pro.hk_hold quarter-end full snapshot (SH/SZ
-    only), PIT guard=quarter_end+20d, full-overwrite into c1_market.northbound_hold_snapshot (ReplacingMergeTree idempotent)
+  desc_zh: 北向资金季度持仓快照 fetcher（memo 19）——tushare pro.hk_hold 季度末全量快照（仅北向 SH/SZ），PIT 守卫=季度末+20 自然日才采集，全量覆盖写入 c1_market.northbound_hold_snapshot（ReplacingMergeTree 幂等）；港交所 2024-08-19 日频断档后的替代数据源
+  desc_en: 'Northbound quarterly holdings snapshot fetcher (memo 19) - tushare pro.hk_hold quarter-end full snapshot (SH/SZ only), PIT guard=quarter_end+20d, full-overwrite into c1_market.northbound_hold_snapshot (ReplacingMergeTree idempotent)'
   plain_zh: 北向资金（外资通过沪深股通买A股的钱）的日频数据 2024 年 8 月起港交所不再公布，但每季度还会公布一次"季末各股票被外资持有多少股"。本模块每季度把这个快照整张拉回来存进数据库，只取北向（上海/深圳）不要南向（香港）；为防一次拉太多被截断，按上海、深圳分两次拉；新季度数据官方发布后才采，没发布就跳过。
 - module_path: schemas/categories/market_northbound_hold_snapshot.py
   domain_id: D_DATA
@@ -8439,8 +8437,7 @@ entries:
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 治理代理裸删除原语静态扫描门禁
   name_en: reconciler_file_ops_gate
-  desc_zh: RECONCILER-FILE-OPS 门禁——staged 治理代理代码新增裸 os.remove/shutil.move 等删除/移动原语即阻断，删除 MUST 走 ops_guard 安全 API（#ARCH-RECONCILER-AUTO-DELETE-GOV-001
-    T1③ 防回流）。
+  desc_zh: RECONCILER-FILE-OPS 门禁——staged 治理代理代码新增裸 os.remove/shutil.move 等删除/移动原语即阻断，删除 MUST 走 ops_guard 安全 API（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1③ 防回流）。
   desc_en: ''
   plain_zh: 防止治理代码里有人直接写"删文件"的裸命令。所有删除/移动必须走带审计和回收站的守卫 API，这个门禁在提交时扫代码，发现裸删就拦下。
 - module_path: src/zephyr/governance/audit/reconcile_runner.py
@@ -17143,11 +17140,11 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/sell_decision/core/position_triage.py
   domain_id: D_SELL_DECISION
-  name_zh: 持仓分级判定器
-  name_en: Position Triage
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 按持仓盈亏和止损距离把持仓分成Watch/Monitor/Hold三级，决定卖出扫描盯盘频率——快触止损的盯紧点，深度盈利的躺平，正常的5分钟看一次
+  name_zh: "持仓分级判定器"
+  name_en: "Position Triage"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按持仓盈亏和止损距离把持仓分成Watch/Monitor/Hold三级，决定卖出扫描盯盘频率——快触止损的盯紧点，深度盈利的躺平，正常的5分钟看一次"
 - module_path: tests/governance/commit_gates/test_empty_handler_gate.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: EMPTY-HANDLER 门禁单测
@@ -26089,11 +26086,11 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/sell_decision/core/stop_loss_strategy.py
   domain_id: D_SELL_DECISION
-  name_zh: 止损策略族
-  name_en: Stop Loss Strategy
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 用吊灯止损法算卖出止损价——亏损时放宽防被震荡洗出去，盈利后收紧锁定利润，波动大的股票自动给更宽的缓冲，ATR数据缺失时退回固定百分比兜底
+  name_zh: "止损策略族"
+  name_en: "Stop Loss Strategy"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用吊灯止损法算卖出止损价——亏损时放宽防被震荡洗出去，盈利后收紧锁定利润，波动大的股票自动给更宽的缓冲，ATR数据缺失时退回固定百分比兜底"
 - module_path: src/zephyr/risk/risk_manager.py
   domain_id: D_RISK
   name_zh: 校验单标的权重是否合规
@@ -36169,11 +36166,11 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/sell_decision/core/take_profit_strategy.py
   domain_id: D_SELL_DECISION
-  name_zh: 止盈策略族
-  name_en: Take Profit Strategy
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 算移动止盈退出价——盈利超过一倍ATR后自动切换成紧跟踪模式锁定利润，让利润继续奔跑但回撤到吊灯线就离场，与止损共用同一套公式
+  name_zh: "止盈策略族"
+  name_en: "Take Profit Strategy"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "算移动止盈退出价——盈利超过一倍ATR后自动切换成紧跟踪模式锁定利润，让利润继续奔跑但回撤到吊灯线就离场，与止损共用同一套公式"
 - module_path: src/zephyr/shared/contracts/synthesized_signal.py
   domain_id: D_INFRASTRUCTURE
   name_zh: Synthesized信号
@@ -41373,184 +41370,181 @@ entries:
   plain_zh: 验证两级引用校验口径——因子整体引用必须和注册表文案一致、分量引用只查条目存在、引用不存在的条目会报悬空（§4.16.4，#ARCH-69/70）。
 - module_path: src/zephyr/risk/core/liquidity_crisis_manager.py
   domain_id: D_RISK
-  name_zh: 流动性危机管理器
-  name_en: LiquidityCrisisManager
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 盘中实时监控单只股票是不是陷入流动性危机：看盘口卖方挂单占比和买卖价差有没有同时爆掉，涨跌停时按跌停等于卖不出特殊处理；真出危机先停新开仓，危机消了按比触发线更宽的恢复线加最短冷却时间确认稳住才放行，还能提前算未来几天大型IPO要抽走市场多少资金并自动下调仓位上限
+  name_zh: "流动性危机管理器"
+  name_en: "LiquidityCrisisManager"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘中实时监控单只股票是不是陷入流动性危机：看盘口卖方挂单占比和买卖价差有没有同时爆掉，涨跌停时按跌停等于卖不出特殊处理；真出危机先停新开仓，危机消了按比触发线更宽的恢复线加最短冷却时间确认稳住才放行，还能提前算未来几天大型IPO要抽走市场多少资金并自动下调仓位上限"
 - module_path: tests/risk/core/test_liquidity_crisis_manager.py
   domain_id: D_RISK
-  name_zh: 流动性危机管理器单元测试
-  name_en: LiquidityCrisisManagerTests
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 验证流动性危机管理器的卖压计算、价差计算、涨跌停识别、危机恢复双阈值门控、IPO抽离预警和盘中编排全链路是否按37号设计备忘的算法正确工作
+  name_zh: "流动性危机管理器单元测试"
+  name_en: "LiquidityCrisisManagerTests"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证流动性危机管理器的卖压计算、价差计算、涨跌停识别、危机恢复双阈值门控、IPO抽离预警和盘中编排全链路是否按37号设计备忘的算法正确工作"
 - module_path: src/zephyr/sell_decision/core/sell_execution_planner.py
   domain_id: D_SELL_DECISION
-  name_zh: 卖出执行编排器
-  name_en: Sell Execution Planner
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 决定卖出单什么时候下、怎么排队——止损盘一触即发立即挂限价单，止盈等尾盘集中成交，强制清仓不管什么时候都市价单先跑，跌停板卖不掉就按亏损大小排队等次日竞价
+  name_zh: "卖出执行编排器"
+  name_en: "Sell Execution Planner"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "决定卖出单什么时候下、怎么排队——止损盘一触即发立即挂限价单，止盈等尾盘集中成交，强制清仓不管什么时候都市价单先跑，跌停板卖不掉就按亏损大小排队等次日竞价"
 - module_path: scripts/task_board.py
   domain_id: D_GOVERNANCE
-  name_zh: 任务认领板
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 多 AI 抢活儿时用的'任务黑板'。谁把任务写上去，别人就能认领；同一件事两个人同时抢，只有一个人能抢到（SQLite CAS 原子认领）。任务只有三种状态：待认领/已认领/已完成。2026-08-14 wipe 事故把原版弄丢了，这是按
-    66 号备忘录 schema 重建的。
+  name_zh: "任务认领板"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "多 AI 抢活儿时用的'任务黑板'。谁把任务写上去，别人就能认领；同一件事两个人同时抢，只有一个人能抢到（SQLite CAS 原子认领）。任务只有三种状态：待认领/已认领/已完成。2026-08-14 wipe 事故把原版弄丢了，这是按 66 号备忘录 schema 重建的。"
 - module_path: src/zephyr/compliance/discipline_must_do_checker.py
   domain_id: D_COMPLIANCE
-  name_zh: 四项必做清单检查器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 每天四个时点（盘前/盘中/盘后/晚上）自动点名：该做的复盘、计划、风险检查做没做——盘中没做直接拦单，其他时点超时只提醒不拦
+  name_zh: "四项必做清单检查器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天四个时点（盘前/盘中/盘后/晚上）自动点名：该做的复盘、计划、风险检查做没做——盘中没做直接拦单，其他时点超时只提醒不拦"
 - module_path: src/zephyr/compliance/discipline_prohibition_checker.py
   domain_id: D_COMPLIANCE
-  name_zh: 四项严禁纪律闸
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 下单前拦四种冲动交易：追高/被套补仓/连赢后加大注/亏损后报复性加仓——前两种和最后一种直接拒单，连赢只提醒，报复还会顺带把该策略当天停掉
+  name_zh: "四项严禁纪律闸"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "下单前拦四种冲动交易：追高/被套补仓/连赢后加大注/亏损后报复性加仓——前两种和最后一种直接拒单，连赢只提醒，报复还会顺带把该策略当天停掉"
 - module_path: src/zephyr/compliance/hard_boundary_adjudicator.py
   domain_id: D_COMPLIANCE
-  name_zh: 硬边界功能裁定门禁
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 新功能上线前先查表：表里说能建才放行，说禁建或没登记的一律拦住，并告诉你什么条件下能重新评
+  name_zh: "硬边界功能裁定门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "新功能上线前先查表：表里说能建才放行，说禁建或没登记的一律拦住，并告诉你什么条件下能重新评"
 - module_path: src/zephyr/compliance/trading_compliance_detector.py
   domain_id: D_COMPLIANCE
-  name_zh: 交易合规检测器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 盯自己的单子别踩监管红线：拉抬打压/大额成交/幌骗/分层/自成交/尾盘操纵，一命中就拦单并留证据
+  name_zh: "交易合规检测器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯自己的单子别踩监管红线：拉抬打压/大额成交/幌骗/分层/自成交/尾盘操纵，一命中就拦单并留证据"
 - module_path: src/zephyr/compliance/license_usage_auditor.py
   domain_id: D_COMPLIANCE
-  name_zh: 数据源授权合规审计器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 查每个数据源的授权条款：能不能用于实盘/回测/再分发，过期就断流，没登记条款的一律只准回测
+  name_zh: "数据源授权合规审计器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "查每个数据源的授权条款：能不能用于实盘/回测/再分发，过期就断流，没登记条款的一律只准回测"
 - module_path: src/zephyr/compliance/compliance_report_registry.py
   domain_id: D_COMPLIANCE
-  name_zh: 程序化交易报告门禁
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 先报告后交易：六项法定义务（账户/软件/策略类型/速率/笔数/重大变更）没得到券商确认就不让下单
+  name_zh: "程序化交易报告门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "先报告后交易：六项法定义务（账户/软件/策略类型/速率/笔数/重大变更）没得到券商确认就不让下单"
 - module_path: src/zephyr/compliance/compliance_log.py
   domain_id: D_COMPLIANCE
-  name_zh: 合规日志落库
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 所有合规判定只增不删地记进一个 JSONL 文件，当证据链用，写不进去也不影响交易
+  name_zh: "合规日志落库"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "所有合规判定只增不删地记进一个 JSONL 文件，当证据链用，写不进去也不影响交易"
 - module_path: src/zephyr/risk/core/strategy_deviation_monitor.py
   domain_id: D_RISK
-  name_zh: 策略偏离监控器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 每天收盘后拿实盘赚的钱和当初回测说好的钱对一遍账：差太多（超过三成）就提醒人看看，差一半以上就提醒这策略可能要不得了。还能从回测档案里自动把当初的成绩单翻出来当基准。
+  name_zh: "策略偏离监控器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天收盘后拿实盘赚的钱和当初回测说好的钱对一遍账：差太多（超过三成）就提醒人看看，差一半以上就提醒这策略可能要不得了。还能从回测档案里自动把当初的成绩单翻出来当基准。"
 - module_path: src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py
   domain_id: D_GOVERNANCE
-  name_zh: 策略退役评估器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 盯着一个策略是不是该退休了：连续跑输大盘、长期不赚钱、回撤比历史上最惨的时候还惨一半、或者实盘跟回测差一半以上，命中任何一条就写一份评估报告等人拍板，它自己绝不会偷偷把策略下线。
+  name_zh: "策略退役评估器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯着一个策略是不是该退休了：连续跑输大盘、长期不赚钱、回撤比历史上最惨的时候还惨一半、或者实盘跟回测差一半以上，命中任何一条就写一份评估报告等人拍板，它自己绝不会偷偷把策略下线。"
 - module_path: src/zephyr/reporting/review_orchestrator.py
   domain_id: D_REPORTING
-  name_zh: 复盘编排器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 把每天的自动审计、每周的复盘周报、每月的治理汇总串成一条龙：日报机器自己跑，只有出问题才叫人；周报固定四段（赚赔归因、偏离告警、参数变更、下周要干的事）人来看；月报顺带扫一遍哪些策略该考虑退休了。
+  name_zh: "复盘编排器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把每天的自动审计、每周的复盘周报、每月的治理汇总串成一条龙：日报机器自己跑，只有出问题才叫人；周报固定四段（赚赔归因、偏离告警、参数变更、下周要干的事）人来看；月报顺带扫一遍哪些策略该考虑退休了。"
 - module_path: scripts/ch/optimize_merge.py
   domain_id: D_DATA
-  name_zh: CH合并维护工具
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ClickHouse 的 ReplacingMergeTree 表靠后台合并去重，但合并不保证完成，旧重复行会一直堆着。这个工具按分区逐个强制合并（OPTIMIZE FINAL），把物理重复行真正清掉——既可一次性追补历史，也可每周例行维护近3个月分区
+  name_zh: "CH合并维护工具"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "ClickHouse 的 ReplacingMergeTree 表靠后台合并去重，但合并不保证完成，旧重复行会一直堆着。这个工具按分区逐个强制合并（OPTIMIZE FINAL），把物理重复行真正清掉——既可一次性追补历史，也可每周例行维护近3个月分区"
 - module_path: src/zephyr/shared/state_store.py
   domain_id: D_SHARED
-  name_zh: 状态外部化原语
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 把关键运行时状态（熔断开关、已处理成交号去重集）写到磁盘文件里：进程崩了重启还能接着用，不会出现'重启后忘记已经熔断'或'同一笔成交记两次账'的事故
+  name_zh: "状态外部化原语"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把关键运行时状态（熔断开关、已处理成交号去重集）写到磁盘文件里：进程崩了重启还能接着用，不会出现'重启后忘记已经熔断'或'同一笔成交记两次账'的事故"
 - module_path: src/zephyr/shared/state_store_redis.py
   domain_id: D_SHARED
-  name_zh: 状态外部化原语Redis后端
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 状态外部化的 Redis 版实现（与文件版同一套接口）：状态写进 Redis 而不是磁盘文件，适合多进程/多机共享；进程崩了重连即恢复，切换时消费方代码一行不用改
+  name_zh: "状态外部化原语Redis后端"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "状态外部化的 Redis 版实现（与文件版同一套接口）：状态写进 Redis 而不是磁盘文件，适合多进程/多机共享；进程崩了重连即恢复，切换时消费方代码一行不用改"
 - module_path: src/zephyr/ex_core/risk_layer_orchestrator.py
   domain_id: D_EX_CORE
-  name_zh: 风控层运行时编排器
-  name_en: Risk Layer Orchestrator
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 把组合级风控三件套（回撤追踪/VaR/尾部风险）加熔断清算链、盘中持仓对账、启动恢复重建接进交易会话运行时：启动时先以券商持仓为准重建账本，重建完成前禁止下单；盘中每次调仓前评估回撤与VaR/ES，产出仓位上限缩放目标权重；回撤触及EMERGENCY或尾部风险极值时经单一仲裁点触发熔断并按15笔每秒限频清算全部持仓
+  name_zh: "风控层运行时编排器"
+  name_en: "Risk Layer Orchestrator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把组合级风控三件套（回撤追踪/VaR/尾部风险）加熔断清算链、盘中持仓对账、启动恢复重建接进交易会话运行时：启动时先以券商持仓为准重建账本，重建完成前禁止下单；盘中每次调仓前评估回撤与VaR/ES，产出仓位上限缩放目标权重；回撤触及EMERGENCY或尾部风险极值时经单一仲裁点触发熔断并按15笔每秒限频清算全部持仓"
 - module_path: src/zephyr/governance/lifecycle_governance/rollback_state_machine.py
   domain_id: D_GOVERNANCE
-  name_zh: 降级状态机
-  name_en: rollback_state_machine
-  desc_zh: 53号§3.8五态降级/回退状态机（#ARCH-QUANT-003）：单向更保守自动迁移+人工恢复（RCA+双人复核）+fail-closed+Hysteresis+30笔样本地板
-  desc_en: ''
-  plain_zh: 降级状态机——回撤/拒单率超阈值时自动向更保守态迁移（正常→节流→软停→硬停→平仓），只能更保守不能自动恢复；恢复须人工双人复核+RCA报告；状态读取失败默认软停（宁可停错不可不停，fail-closed）
+  name_zh: "降级状态机"
+  name_en: "rollback_state_machine"
+  desc_zh: "53号§3.8五态降级/回退状态机（#ARCH-QUANT-003）：单向更保守自动迁移+人工恢复（RCA+双人复核）+fail-closed+Hysteresis+30笔样本地板"
+  desc_en: ""
+  plain_zh: "降级状态机——回撤/拒单率超阈值时自动向更保守态迁移（正常→节流→软停→硬停→平仓），只能更保守不能自动恢复；恢复须人工双人复核+RCA报告；状态读取失败默认软停（宁可停错不可不停，fail-closed）"
 - module_path: src/zephyr/shared/alerts/threshold_loader.py
   domain_id: D_SHARED
-  name_zh: 告警阈值加载器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 所有告警阈值只认一个地方：告警阈值注册表。谁要用阈值（比如回撤5%报警），就从这里拿；注册表文件丢了、条目少了、类型写错了，它就当场报错，绝不偷偷用代码里的旧数字。
+  name_zh: "告警阈值加载器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "所有告警阈值只认一个地方：告警阈值注册表。谁要用阈值（比如回撤5%报警），就从这里拿；注册表文件丢了、条目少了、类型写错了，它就当场报错，绝不偷偷用代码里的旧数字。"
 - module_path: src/zephyr/governance/audit/pg_probe.py
   module_id: MOD-PG_PROBE
   domain_id: D_GOV_AUDIT
   name_zh: PG可用性前置探针与DB降级留痕统一入口
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: commit/merge 前先用 TCP 摸一下 PostgreSQL 5432 通不通（1 秒超时，不通也不拦你，只把结果写进 .runtime/pg_probe_state.json）；几个 depgraph 门禁在数据库连不上被迫放行时，会查这个状态来分清是'数据库真的挂了'还是'别的错误'，并把放行记录写进治理库（同一个原因一天只记一次，防止刷屏），下次提交时横幅提醒你追账；数据库连续挂超
-    24 小时时，还会豁免 depgraph 新鲜度门禁的误伤
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "commit/merge 前先用 TCP 摸一下 PostgreSQL 5432 通不通（1 秒超时，不通也不拦你，只把结果写进 .runtime/pg_probe_state.json）；几个 depgraph 门禁在数据库连不上被迫放行时，会查这个状态来分清是'数据库真的挂了'还是'别的错误'，并把放行记录写进治理库（同一个原因一天只记一次，防止刷屏），下次提交时横幅提醒你追账；数据库连续挂超 24 小时时，还会豁免 depgraph 新鲜度门禁的误伤"
 - module_path: src/zephyr/signal_ashare/seat_pattern_analyzer.py
   domain_id: D_ASHARE_SIGNAL
-  name_zh: 龙虎榜席位形态分析器
-  name_en: Seat Pattern Analyzer
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 看龙虎榜上都是谁在买股票——是机构、知名游资、量化还是散户，据此判断这股能不能跟。机构和大游资一起买加分，量化和散户扎堆减分，最后给出0到100分的跟随评分和买/观望/回避三档建议。
+  name_zh: "龙虎榜席位形态分析器"
+  name_en: "Seat Pattern Analyzer"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "看龙虎榜上都是谁在买股票——是机构、知名游资、量化还是散户，据此判断这股能不能跟。机构和大游资一起买加分，量化和散户扎堆减分，最后给出0到100分的跟随评分和买/观望/回避三档建议。"
 - module_path: src/zephyr/intelligence/news_sentiment_analyzer.py
   domain_id: D_INTELLIGENCE
-  name_zh: 新闻舆情分析器
-  name_en: News Sentiment Analyzer
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 对已采集的财经新闻做情绪打分：先用关键词规则法算出每条新闻看多还是看空，再按小时窗口聚合成情绪指数，指数突然变正或变负时产出舆情事件信号，供下游选股信号参考。支持注入大模型打分器替换规则法。
+  name_zh: "新闻舆情分析器"
+  name_en: "News Sentiment Analyzer"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "对已采集的财经新闻做情绪打分：先用关键词规则法算出每条新闻看多还是看空，再按小时窗口聚合成情绪指数，指数突然变正或变负时产出舆情事件信号，供下游选股信号参考。支持注入大模型打分器替换规则法。"
 - module_path: src/zephyr/risk/core/fhs_engine.py
   domain_id: D_RISK
-  name_zh: FHS 引擎
-  name_en: FHS Engine
-  desc_zh: Filtered Historical Simulation——GARCH(1,1) 拟合收益序列得标准化残差，有放回重采样乘条件波动率预测，产出 FHS VaR/ES；GARCH 不收敛回退历史模拟（memo 36 §3.16）
-  desc_en: Filtered Historical Simulation VaR/ES via GARCH(1,1) standardized-residual resampling; falls back to historical
-    simulation on non-convergence
-  plain_zh: 历史模拟法算 VaR 是把过去每天盈亏一视同仁排队取尾巴，但市场有波动聚集（震荡会扎堆），老黄历里的大跌会让刚平静下来时的风险被高估、刚起风暴时的风险被低估。这个模块先给收益序列配一个会随时间呼吸的波动率（GARCH），把每天的盈亏按当时波动率折算成标准份，再从这些标准份里随机抽样乘上明天的预测波动率，得到更贴近当前市况的
-    VaR/ES；如果波动率模型配不出来，就老实回退到历史模拟法并打标记。
+  name_zh: "FHS 引擎"
+  name_en: "FHS Engine"
+  desc_zh: "Filtered Historical Simulation——GARCH(1,1) 拟合收益序列得标准化残差，有放回重采样乘条件波动率预测，产出 FHS VaR/ES；GARCH 不收敛回退历史模拟（memo 36 §3.16）"
+  desc_en: "Filtered Historical Simulation VaR/ES via GARCH(1,1) standardized-residual resampling; falls back to historical simulation on non-convergence"
+  plain_zh: "历史模拟法算 VaR 是把过去每天盈亏一视同仁排队取尾巴，但市场有波动聚集（震荡会扎堆），老黄历里的大跌会让刚平静下来时的风险被高估、刚起风暴时的风险被低估。这个模块先给收益序列配一个会随时间呼吸的波动率（GARCH），把每天的盈亏按当时波动率折算成标准份，再从这些标准份里随机抽样乘上明天的预测波动率，得到更贴近当前市况的 VaR/ES；如果波动率模型配不出来，就老实回退到历史模拟法并打标记。"
 - module_path: src/zephyr/regime/regime_cycle_analyzer.py
   domain_id: D_REGIME
-  name_zh: 时间周期分析器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 分析日历上的时间规律：月末月初效应、长假节后效应、历史高低点周年日效应，用统计检验自证是否真有效，输出'什么时候可能变盘'的提醒窗口。它只是辅助参考，不直接发买卖信号
+  name_zh: "时间周期分析器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "分析日历上的时间规律：月末月初效应、长假节后效应、历史高低点周年日效应，用统计检验自证是否真有效，输出'什么时候可能变盘'的提醒窗口。它只是辅助参考，不直接发买卖信号"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
@@ -45831,12 +45825,8 @@ battle_map_cross_cutting:
   - BM-POS-01
   - BM-SELL-02
   - BM-BUY-02
-  plain_zh: Model A（独立账本+firm 聚合）下跨策略冲突的结构性前提消失，原 31 条冲突场景清单经 60 号裁定收敛为 3 条 firm-level 硬上限：防御永远优先于进攻（风控 C-004 高于一切）、仓位上限是硬约束（firm
-    层求和超上限即裁剪）、卖比买紧急（同标的买卖信号卖出优先）。
-  mechanism_zh: Model A 每个 sleeve 独立 StrategyBook、独立 PnL、独立下单，无统一优化器、无跨策略仓位竞争——跨策略仲裁无载体，不协商、不投票。3 条 firm-level 硬上限执行点：①风控拦截（C-004
-    族各风控模块）；②firm 层仓位裁剪 FirmRiskAggregator（MOD-POS-021，production）；③买卖冲突卖出优先 sell_conflict_arbitrator（MOD-SELL-008，production：强冲突
-    0 延迟立即执行、弱冲突延迟 1 Tick 观察；仲裁优先级 风控>C-047>市场状态>卖出>买入，与下方优先级总原则一致）。原 31 条清单（统一优化器时代遗产）的裁定理由见 design_memos/60_cross_cutting_cleanup.md
-    §3.1。
+  plain_zh: 'Model A（独立账本+firm 聚合）下跨策略冲突的结构性前提消失，原 31 条冲突场景清单经 60 号裁定收敛为 3 条 firm-level 硬上限：防御永远优先于进攻（风控 C-004 高于一切）、仓位上限是硬约束（firm 层求和超上限即裁剪）、卖比买紧急（同标的买卖信号卖出优先）。'
+  mechanism_zh: 'Model A 每个 sleeve 独立 StrategyBook、独立 PnL、独立下单，无统一优化器、无跨策略仓位竞争——跨策略仲裁无载体，不协商、不投票。3 条 firm-level 硬上限执行点：①风控拦截（C-004 族各风控模块）；②firm 层仓位裁剪 FirmRiskAggregator（MOD-POS-021，production）；③买卖冲突卖出优先 sell_conflict_arbitrator（MOD-SELL-008，production：强冲突 0 延迟立即执行、弱冲突延迟 1 Tick 观察；仲裁优先级 风控>C-047>市场状态>卖出>买入，与下方优先级总原则一致）。原 31 条清单（统一优化器时代遗产）的裁定理由见 design_memos/60_cross_cutting_cleanup.md §3.1。'
   priority_hierarchy:
   - rank: 1
     holder: 风控(C-004)
