@@ -72,9 +72,11 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 # 逃生通道 env（紧急逃生，落审计）
 _BYPASS_ENV = "ZEPHYR_PROTECTED_PATHS_BYPASS"
 
-# [ARCH-APPROVAL:ISSUE_ID] 标记检测正则
+# [ARCH-APPROVAL:ISSUE_ID] 标记检测正则——真源=check_protected_paths.APPROVAL_MARKER_RE
+# （SSoT，_load_protected_patterns 同通道 import）；import 失败回退本地编译同款。
 # 匹配 [ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001] / [ARCH-APPROVAL:#ARCH-007] 等
 _APPROVAL_MARKER_RE = re.compile(r"\[ARCH-APPROVAL:(#?ARCH-[A-Z0-9_-]+)\]")
+_APPROVAL_MARKER_RE_LOADED = False
 
 # 受保护路径真源——运行时 import check_protected_paths.PROTECTED_PATTERNS
 # 避免复制造成多真源漂移（SSoT 原则）
@@ -104,6 +106,12 @@ def _load_protected_patterns() -> list[tuple[str, str]]:
             sys.path.insert(0, str(gov_dir))
         from check_protected_paths import PROTECTED_PATTERNS  # type: ignore[import-not-found]
         _PROTECTED_PATTERNS = list(PROTECTED_PATTERNS)
+        # B4 治本（2026-08-19）：审批标记正则 SSoT 对齐（同通道 import，禁复制防漂移）
+        global _APPROVAL_MARKER_RE, _APPROVAL_MARKER_RE_LOADED
+        if not _APPROVAL_MARKER_RE_LOADED:
+            from check_protected_paths import APPROVAL_MARKER_RE  # type: ignore[import-not-found]
+            _APPROVAL_MARKER_RE = APPROVAL_MARKER_RE
+            _APPROVAL_MARKER_RE_LOADED = True
     except Exception:  # noqa: BLE001 — fail-open: import 失败降级为内置清单
         # import 失败——降级为内置最小清单（.gitignore/.gitattributes/AGENTS.md）
         # 这是 fail-open 的保守降级：至少保护核心文件
@@ -241,6 +249,41 @@ def make_protected_paths_gate() -> GateSpec:
                     f"PROTECTED-PATHS: {len(hits)} protected file(s) staged but commit message "
                     f"contains [ARCH-APPROVAL:{issue_id}] (approved, audited): {hits[:3]}"
                 )
+
+        # 3c. B4 治本（2026-08-19）：merge finalize 场景审批转置——受保护改动在分支侧
+        # commit 已验过 [ARCH-APPROVAL]（Layer 1 在分支 commit 时检查），merge commit 只是
+        # 搬运，重复要求 merge message 带标记=重复审批（05/08 两域被拦实证）。
+        # 判据：gateway 检测到在途 merge（B2① 落地后=显式 --merge-finalize 场景）；
+        # 逐文件枚举分支侧 commit 链（HEAD..第二父），任一带标记→放行（落审计）；
+        # 核验异常/无标记→维持阻断（受保护路径高危区 fail-closed）。
+        try:
+            if getattr(gateway, "_is_merge_in_progress", lambda: False)():
+                from check_protected_paths import (  # type: ignore[import-not-found]
+                    _branch_side_approved,
+                    _branch_side_commits_touching,
+                    _merge_head_shas,
+                )
+                gw_cwd = str(getattr(gateway, "project_root", ".") or ".")
+                merge_shas = _merge_head_shas(cwd=gw_cwd)
+                if merge_shas:
+                    unapproved: list[str] = []
+                    approved_issue: str | None = None
+                    for f, _reason in hits:
+                        commits = _branch_side_commits_touching(merge_shas, f, cwd=gw_cwd)
+                        ok, issue = _branch_side_approved(commits, cwd=gw_cwd)
+                        if ok:
+                            approved_issue = approved_issue or issue
+                        else:
+                            unapproved.append(f)
+                    if not unapproved:
+                        _audit_bypass(gateway, files, "merge_branch_approval", approved_issue)
+                        return True, (
+                            f"PROTECTED-PATHS: {len(hits)} protected file(s) from merge, "
+                            f"branch-side commits approved "
+                            f"([ARCH-APPROVAL:{approved_issue}], audited): {hits[:3]}"
+                        )
+        except Exception:  # noqa: BLE001 — 合并态核验异常不打开逃生口，维持阻断判定
+            pass
 
         # 4. 有命中 + 无逃生通道 → 阻断
         hits_desc = "; ".join(f"{f} ({r})" for f, r in hits[:5])

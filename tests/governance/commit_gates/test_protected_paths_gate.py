@@ -26,6 +26,7 @@
 from __future__ import annotations
 
 import os
+import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -211,3 +212,85 @@ class TestIsProtected:
     def test_backslash_normalized(self):
         """Windows 反斜杠路径 → True。"""
         assert is_protected(".gitignore") is True
+
+
+class TestMergeBranchApprovalGate:
+    """B4 治本（2026-08-19）Layer 1：merge finalize 场景分支侧审批转置。
+
+    与 Layer 2（tests/scripts/test_check_protected_paths_merge.py）共享真源三件套
+    （check_protected_paths._merge_head_shas 等）；Layer 1 仅在 gateway 检测到在途
+    merge（B2① 落地后=显式 --merge-finalize）时启用，核验异常维持阻断（fail-closed）。
+    """
+
+    @staticmethod
+    def _git(repo: Path, *args: str) -> subprocess.CompletedProcess:
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = "test@test.com"
+        env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        return subprocess.run(
+            ["git", *args], cwd=str(repo),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        )
+
+    def _make_merge_scene(self, repo: Path, approved: bool) -> None:
+        """真分叉 + side 分支改 .gitignore（按 approved 带不带审批标记）+ 在途 MERGE_HEAD。"""
+        self._git(repo, "init")
+        self._git(repo, "config", "user.name", "Test")
+        self._git(repo, "config", "user.email", "test@test.com")
+        (repo / ".gitignore").write_text("*.log\n", encoding="utf-8")
+        (repo / "main.py").write_text("x = 1\n", encoding="utf-8")
+        self._git(repo, "add", ".")
+        self._git(repo, "commit", "-m", "init", "--no-verify")
+        base_ref = self._git(repo, "rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
+        self._git(repo, "checkout", "-qb", "side")
+        (repo / ".gitignore").write_text("*.log\n*.tmp\n", encoding="utf-8")
+        self._git(repo, "add", ".gitignore")
+        msg = (
+            "chore: gitignore [ARCH-APPROVAL:ARCH-TEST-010]"
+            if approved else "chore: gitignore (no approval)"
+        )
+        self._git(repo, "commit", "-m", msg, "--no-verify")
+        self._git(repo, "checkout", "-q", base_ref)
+        (repo / "main2.py").write_text("y = 2\n", encoding="utf-8")
+        self._git(repo, "add", "main2.py")
+        self._git(repo, "commit", "-m", "main advances", "--no-verify")
+        self._git(repo, "merge", "--no-commit", "--no-ff", "side")
+
+    def _make_merge_gateway(self, repo: Path) -> MagicMock:
+        gw = _make_gateway(repo)
+        gw._is_merge_in_progress.return_value = True
+        return gw
+
+    def test_merge_finalize_branch_approved_passes(self, tmp_path):
+        """merge finalize + 分支侧带审批标记 → 放行（merge_branch_approval 审计）。"""
+        self._make_merge_scene(tmp_path, approved=True)
+        gw = self._make_merge_gateway(tmp_path)
+        gate = make_protected_paths_gate()
+        passed, detail = gate.check(gw, [".gitignore"], commit_message="merge: finalize")
+        assert passed is True, f"分支侧已审批应放行: {detail}"
+        assert "branch-side commits approved" in detail
+        audit_file = tmp_path / ".runtime" / "gate_audit" / "protected_paths_bypass.jsonl"
+        assert audit_file.is_file()
+        content = audit_file.read_text(encoding="utf-8")
+        assert "merge_branch_approval" in content
+        assert "ARCH-TEST-010" in content
+
+    def test_merge_finalize_branch_unapproved_blocks(self, tmp_path):
+        """merge finalize + 分支侧无审批标记 → 维持阻断。"""
+        self._make_merge_scene(tmp_path, approved=False)
+        gw = self._make_merge_gateway(tmp_path)
+        gate = make_protected_paths_gate()
+        passed, detail = gate.check(gw, [".gitignore"], commit_message="merge: finalize")
+        assert passed is False, f"分支侧无审批应维持阻断: {detail}"
+        assert "PROTECTED-PATHS" in detail
+
+    def test_no_merge_no_marker_still_blocks(self, tmp_path):
+        """回归防破：非 merge + 无标记 → 阻断（gateway 报无在途 merge）。"""
+        self._make_merge_scene(tmp_path, approved=True)
+        gw = _make_gateway(tmp_path)
+        gw._is_merge_in_progress.return_value = False  # 非 merge 场景
+        gate = make_protected_paths_gate()
+        passed, detail = gate.check(gw, [".gitignore"], commit_message="normal commit")
+        assert passed is False, f"非 merge 无标记应阻断: {detail}"
