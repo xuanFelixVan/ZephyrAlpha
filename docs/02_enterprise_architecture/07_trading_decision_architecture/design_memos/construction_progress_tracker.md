@@ -390,6 +390,19 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 
 > **复审批验证汇总**：pytest 227 passed（初审 199 + 复审新增 28：NaN/Inf 27 + loader 直测 1，ipo 短码断言并入既有用例）；ruff 零增量（3 项 I001=初审 #133④ 已登记存量）。**分支依赖**：AI-R1-002 分支已 merge ai/AI-R1-001/task-audit-r1-review（b697258c54，fast-forward 不可行因 dev 已前进——统筹 merge 本分支即同时落地初审+复审两批）。
 
+### P1-补14 · 2026-08-18 AI-R1-003 登记（红队批——对抗构造异常输入/边界场景找茬，攻击向量=数值溢出/空数据/停牌涨跌停/除权除息/并发竞态/降级抖动/跨层契约假设）
+
+红队结论：初审+复审修复基线稳固（145 项基线全绿），但红队构造攻击新发现 3 项 P1 全部治本修复+回归沉淀（跨层契约假设类 1 + 幻影码同族 1 + 数值溢出崩溃 1）。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 138 | GitCommitGateway MERGE_HEAD 检测 worktree 盲区（跨层契约假设类 P1）：L1842/L2019 硬编码 `project_root/.git/MERGE_HEAD`——linked worktree 的 `.git` 是指针文件（`gitdir: <common>/.git/worktrees/<name>`），该路径恒不存在，检测在 worktree 内恒 False → merge finalize 误走 pathspec partial commit 被 git 拒绝（"cannot do a partial commit during a merge"），worktree 内合法 merge 流程被堵死 | AI-R1-003 红队基线 merge 实证（`.git/MERGE_HEAD` exists=False vs `git rev-parse --git-path MERGE_HEAD` 解析正确，对照实证） | 治本=新增 `_is_merge_in_progress()` 用 `git rev-parse --git-path MERGE_HEAD` 解析真实 per-worktree git 目录（主仓/worktree 均正确，git 失败回退旧路径向后兼容），替换两处硬编码；修复在真实 merge 场景即验证（本批基线 merge 3199f08b42 经修复后网关完成）；3 回归测试（主仓无 merge=False/主仓 merge=True/linked worktree merge=True+盲区对照断言） | ✅ 已闭环（随基线 merge commit 3199f08b42 落地；tests/git/test_git_commit_gateway.py 56 项全绿） |
+| 139 | `_collect_st_rows` 裸 `zfill(6)` 幻影码（与 #135 ipo_calendar 同族 P1）：无长度/数字门禁——空码 `''`→`'000000'` 幻影成平安银行、5 位码 `'00700'`→`'000700'` 撞深主板前缀静默入库；且 `if not sym` 死代码（zfill 后恒非空）；ST 幻影码污染 stk_limit 的 st_flag 口径致涨跌停幅度误判 5%/10%（跨表传导） | AI-R1-003 红队幻影码攻击（空码/短码/非数字三向量实证复现） | 治本=严格 `len(sym)!=6 or not sym.isdigit()` 门禁替代裸 zfill（对齐 _fetch_ipo_calendar/_suspend_rows_* 姊妹防御范式）；`test_phantom_code_rejected_strict_gate` 回归（三类幻影全拒+合法行保留） | ✅ 已闭环（commit 见本批；market_meta 53 项全绿） |
+| 140 | `_fetch_ipo_calendar` `_num_or_none` 仅拒 NaN 未拒 Inf（数值溢出崩溃类 P1，比 #136 threshold_loader 同族更重）：上游 `'inf'`/`'1e400'` 经 safe_float 转 inf 后，total_shares 派生 `int(inf*1e4)` 直接 OverflowError 崩整个快照循环（不是脏值入库而是整批崩溃） | AI-R1-003 红队溢出攻击（`int(float('inf')*10000)` OverflowError 实证复现） | 治本=`_num_or_none` 改 `math.isfinite` 统一拒非有限值（NaN/±Inf 同面），派生列得 None 不炸；`test_inf_value_no_overflow_crash` 回归（Inf 发行价/溢出股数/正常行三行断言） | ✅ 已闭环（commit 见本批；ipo_calendar 8 项全绿） |
+| 141 | 红队观察项（不修登记）：①threshold_loader 结构畸形（条目缺 threshold_id→KeyError/thresholds 非列表→TypeError）绕过 AlertThresholdConfigError 错误契约——失败方向仍 fail-closed（崩溃阻断启动，无静默错值），但错误类型违约；注册表有 schema 门禁前置防御，触发条件苛刻；②`_st_flag_at` CH 不可达降级 st_flag=0 系文档声明的 fail-open（日志已留痕），ST 快照缺失窗口内改革前创业板 ST 股幅度取 10% 而非 5%——保守方向偏松（幅度偏大），与 #137① 同族回填精度缺口 | AI-R1-003 红队复核 | 全部低危/条件触发/保守方向，按"不过度修复"纪律登记备查 | ⏳ 观察项 |
+
+> **红队批验证汇总**：pytest 203 passed（gateway 56 含 3 新 + ipo_calendar 8 含 1 新 + market_meta 53 含 1 新 + threshold_consistency 86）两轮全绿；基线 145 项修复前后零回归。**攻击结果**：防御通过=空数据/停牌窗口/除权修正/Decimal 精度/CH 不可达探活/阈值 NaN-Inf-bool fail-closed（初审+复审已堵）；防御击穿=3 项 P1（#138/#139/#140 全部治本+回归沉淀）。**避让登记**：开工 `session_worktree.py list` 实证 12 在途 worktree（R1-001/002、R2~R5、AISA/CYCLE/ERR/FHS/SEAT），本批仅触 data 域 akshare_provider+threshold 测试+git 网关，与在途施工面零交集。
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |

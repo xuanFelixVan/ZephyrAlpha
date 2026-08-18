@@ -515,6 +515,50 @@ class TestStStockListCoverage:
         st_syms = {r[1]: r[3] for r in rows}
         assert st_syms == {"688999": "*ST", "000002": "ST"}
 
+    def test_phantom_code_rejected_strict_gate(self, monkeypatch):
+        """幻影码严格门禁（AI-R1-003 红队治本回归）：空码/短码/非数字跳过，合法保留。
+
+        攻击向量：原裸 zfill(6) 无长度/数字门禁——空码 ''→'000000' 幻影成
+        平安银行、5 位码 '00700'→'000700' 撞深主板前缀静默入库（与 ipo_calendar
+        #135 同族）。ST 幻影码污染 stk_limit 的 st_flag 口径致涨跌停幅度误判。
+        修复=严格 6 位数字门禁（对齐 _fetch_ipo_calendar/_suspend_rows_* 姊妹防御）。
+        """
+        def sh_fn(symbol=None, **kw):
+            if symbol == "科创板":
+                return pd.DataFrame({
+                    "证券代码": ["688999"], "证券简称": ["*ST科创"],
+                    "证券全称": ["x"], "公司全称": ["x"], "上市日期": ["2020-01-01"],
+                })
+            return pd.DataFrame({
+                # 空码（None）/ 5 位短码 / 非数字——三类幻影攻击
+                "证券代码": [None, "00700", "ABC123"],
+                "证券简称": ["ST空码", "ST短码", "ST非数字"],
+                "证券全称": ["x", "x", "x"], "公司全称": ["x", "x", "x"],
+                "上市日期": ["1999-11-10"] * 3,
+            })
+
+        def sz_fn(symbol=None, **kw):
+            return pd.DataFrame({
+                "板块": ["主板"], "A股代码": ["000002"], "A股简称": ["ST万宝"],
+                "A股上市日期": ["1991-01-29"], "A股总股本": ["0"],
+                "A股流通股本": ["0"], "所属行业": ["K 房地产"],
+            })
+
+        p = AkshareIngestProvider()
+        _mock_ak(
+            monkeypatch,
+            stock_info_sh_name_code=sh_fn,
+            stock_info_sz_name_code=sz_fn,
+        )
+        results = _call_fetch(p, "st_stock_list", _payload(D(2026, 8, 14), D(2026, 8, 14)))
+        rows = results[0].rows
+        st_syms = {r[1] for r in rows}
+        # 三类幻影码全被拒（无 '000000'/'000700'/'ABC123' 入库），合法行保留
+        assert "000000" not in st_syms  # 空码幻影→平安银行
+        assert "000700" not in st_syms  # 短码幻影→撞深主板前缀
+        assert "ABC123" not in st_syms  # 非数字
+        assert st_syms == {"688999", "000002"}
+
 
 # ============== suspend 快照+推导 ==============
 

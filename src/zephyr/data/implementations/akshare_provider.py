@@ -64,6 +64,7 @@ _diag_logging.getLogger(__name__).debug(
 import calendar
 import datetime
 import logging
+import math
 import re
 import threading
 import time
@@ -2523,8 +2524,14 @@ class AkshareIngestProvider(IngestProviderBase):
             st_type = self._classify_st_type(name)
             if not st_type:
                 continue
-            sym = str(row.get(code_col) or "").zfill(6)
-            if not sym:
+            # 严格 6 位数字门禁（AI-R1-003 红队治本）：原裸 zfill(6) 无长度/数字
+            # 门禁——空码 ''→'000000' 幻影成平安银行、5 位码 '00700'→'000700'
+            # 撞深主板前缀静默入库（与 ipo_calendar #135 同族幻影码漏洞）。
+            # 对齐 _fetch_ipo_calendar/_suspend_rows_* 姊妹防御：官方清单恒 6 位，
+            # 上游异常显式跳过（保守缺行优于幻影错值——ST 幻影码会污染
+            # stk_limit 的 st_flag 口径，致涨跌停幅度误判 5%/10%）。
+            sym = str(row.get(code_col) or "").strip()
+            if len(sym) != 6 or not sym.isdigit():
                 continue
             rows.append((iso_date, sym, name, st_type, "akshare"))
         return rows
@@ -5695,9 +5702,15 @@ class AkshareIngestProvider(IngestProviderBase):
         t0 = time.monotonic()
 
         def _num_or_none(v) -> float | None:
-            """NaN/None/非法值→None（NaN 自检 f!=f；CH Nullable(Decimal) 不收 NaN）。"""
+            """NaN/Inf/None/非法值→None（CH Nullable(Decimal) 不收 NaN/Inf）。
+
+            AI-R1-003 红队治本：原仅拒 NaN（f!=f 自检）未拒 Inf——上游
+            'inf'/'1e400' 溢出经 safe_float 转 inf 后，total_shares 派生
+            int(inf*1e4) 直接 OverflowError 崩整个快照循环（比脏值入库更重）。
+            改用 math.isfinite 统一拒非有限值（NaN/±Inf 同面）。
+            """
             f = safe_float(v)
-            if f is None or f != f:  # noqa: PLR0124 — NaN 自检惯用法（NaN != NaN 为 True）
+            if f is None or not math.isfinite(f):
                 return None
             return f
 

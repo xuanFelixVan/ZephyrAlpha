@@ -1644,3 +1644,90 @@ class TestGateTrackedDriftWatch:
             and r.get("session_id") == "sess-drift"
             for r in records
         )
+
+
+# ---------------------------------------------------------------------------
+# AI-R1-003 红队治本：MERGE_HEAD 检测 worktree 盲区
+# ---------------------------------------------------------------------------
+class TestMergeInProgressWorktreeAware:
+    """_is_merge_in_progress worktree 感知检测（AI-R1-003 红队，2026-08-18）。
+
+    病根：原实现硬编码 ``project_root / ".git" / "MERGE_HEAD"``——但 linked
+    worktree 的 ``.git`` 是指针文件（内容 ``gitdir: <common>/.git/worktrees/<name>``），
+    该路径恒不存在，检测在 worktree 内恒 False（worktree 盲区）。merge finalize
+    场景下网关误判非 merge → 走 pathspec partial commit → git 拒绝
+    （"cannot do a partial commit during a merge"）。
+
+    治本：改用 ``git rev-parse --git-path MERGE_HEAD`` 解析真实 per-worktree
+    git 目录（主仓与 linked worktree 均正确）。
+    """
+
+    @staticmethod
+    def _git_env() -> dict:
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = "test@test.com"
+        env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        return env
+
+    def test_main_repo_no_merge_returns_false(self, tmp_path: Path) -> None:
+        """主仓无 merge → False（基线：非 merge 态不误报）。"""
+        _init_git_repo(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+        assert gw._is_merge_in_progress() is False
+
+    def test_main_repo_merge_head_detected(self, tmp_path: Path) -> None:
+        """主仓 MERGE_HEAD 存在 → True（原路径判定仍有效，向后兼容）。"""
+        _init_git_repo(tmp_path)
+        env = self._git_env()
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout.strip()
+        (tmp_path / ".git" / "MERGE_HEAD").write_bytes((head + "\n").encode("ascii"))
+        gw = GitCommitGateway(project_root=tmp_path)
+        assert gw._is_merge_in_progress() is True
+
+    def test_linked_worktree_merge_head_detected(self, tmp_path: Path) -> None:
+        """linked worktree MERGE_HEAD 存在 → True（红队治本核心：worktree 盲区修复）。
+
+        构造真实 linked worktree（.git 是指针文件），写 MERGE_HEAD 到
+        per-worktree git 目录，验证网关能检测到（原硬编码 .git/MERGE_HEAD 在此恒 False）。
+        """
+        _init_git_repo(tmp_path)
+        env = self._git_env()
+        # 建分支 + linked worktree
+        subprocess.run(
+            ["git", "branch", "wt-branch"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        wt_dir = tmp_path / "wt"
+        subprocess.run(
+            ["git", "worktree", "add", str(wt_dir), "wt-branch"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        # 实证 .git 是指针文件（非目录）——worktree 盲区前提
+        assert (wt_dir / ".git").is_file(), "linked worktree 的 .git 应为指针文件"
+        # 写 MERGE_HEAD 到 per-worktree git 目录（git rev-parse --git-path 解析的真实位置）
+        git_path = subprocess.run(
+            ["git", "rev-parse", "--git-path", "MERGE_HEAD"], cwd=str(wt_dir),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout.strip()
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(wt_dir),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout.strip()
+        merge_head_path = Path(git_path)
+        if not merge_head_path.is_absolute():
+            merge_head_path = wt_dir / merge_head_path
+        merge_head_path.write_bytes((head + "\n").encode("ascii"))
+        # 红队治本验收：网关在 worktree root 下能检测到 merge 态
+        gw = GitCommitGateway(project_root=wt_dir)
+        assert gw._is_merge_in_progress() is True, (
+            "worktree 盲区未修复：linked worktree 的 MERGE_HEAD 未被检测到"
+        )
+        # 对照：原硬编码路径在 worktree 下恒 False（盲区实证）
+        assert not (wt_dir / ".git" / "MERGE_HEAD").exists(), (
+            "对照实证：原硬编码 .git/MERGE_HEAD 在 worktree 下应不存在"
+        )

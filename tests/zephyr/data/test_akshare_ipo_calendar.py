@@ -156,6 +156,42 @@ class TestIpoCalendarFetch:
         assert len(rows) == 1
         assert rows[0][1] == "600000"
 
+    def test_inf_value_no_overflow_crash(self, monkeypatch):
+        """非有限值（Inf/溢出字符串）→ None 不崩（AI-R1-003 红队治本回归）。
+
+        攻击向量：上游 'inf'/'1e400' 经 safe_float 转 inf 后，total_shares 派生
+        int(inf*1e4) 直接 OverflowError 崩整个快照循环。修复=_num_or_none 用
+        math.isfinite 统一拒非有限值（NaN/±Inf 同面），派生列得 None 不炸。
+        """
+        df = _ipo_df([
+            {"证劵代码": "688825", "证券简称": "Inf发行价",
+             "上市日期": pd.NaT, "申购日期": pd.NaT,
+             "发行价": float("inf"), "总发行数量": 74000.0, "发行市盈率": 45.5},
+            {"证劵代码": "301688", "证券简称": "溢出股数",
+             "上市日期": pd.NaT, "申购日期": pd.NaT,
+             "发行价": 90.0, "总发行数量": "1e400", "发行市盈率": 45.5},
+            {"证劵代码": "600000", "证券简称": "正常",
+             "上市日期": pd.NaT, "申购日期": pd.NaT,
+             "发行价": 10.0, "总发行数量": 40000.0, "发行市盈率": 20.0},
+        ])
+        _mock_ak(monkeypatch, stock_new_ipo_cninfo=df)
+        provider = AkshareIngestProvider()
+        # 修复前：OverflowError 崩循环；修复后：3 行全产出，非有限值列 None
+        results = _call_fetch(provider, "ipo_calendar", _payload(D(2026, 8, 17), D(2026, 8, 17)))
+        rows = results[0].rows
+        assert len(rows) == 3
+        by_sym = {r[1]: r for r in rows}
+        # Inf 发行价 → issue_price None，raise_amount None（未定价口径），total_shares 仍可派生
+        assert by_sym["688825"][5] is None
+        assert by_sym["688825"][7] is None
+        assert by_sym["688825"][6] == 740000000
+        # 溢出股数 '1e400' → total_shares None，raise_amount None，issue_price 正常
+        assert by_sym["301688"][6] is None
+        assert by_sym["301688"][7] is None
+        assert by_sym["301688"][5] == 90.0
+        # 正常行不受影响
+        assert by_sym["600000"][6] == 400000000
+
     def test_source_failure_yields_empty_not_raise(self, monkeypatch):
         """源异常 → yield 空 rows FetchResult（error=None），不向上抛出。"""
         _mock_ak(monkeypatch, stock_new_ipo_cninfo=ConnectionError("cninfo 不可达"))
