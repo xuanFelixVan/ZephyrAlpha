@@ -46,7 +46,7 @@ ssot_claims:
   - {claim: "CD 流水线 job 依赖图SSoT", scope: "module"}
 responsibility_domain: 
 design_maturity: production
-build_status: generated
+build_status: deprecated
 ---
 
 # CD Pipeline 蓝图 — Shadow Canary 灰度发布基建（MOD-CD-001）
@@ -82,7 +82,7 @@ build_status: generated
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CD-001 | MOD-CD-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | deprecated | generated | ❌ |
+| build_status | deprecated | deprecated | ✅ |
 | file_count | 6 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
