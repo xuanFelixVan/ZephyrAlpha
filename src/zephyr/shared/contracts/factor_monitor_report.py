@@ -15,8 +15,8 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from typing import Optional
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -53,7 +53,7 @@ class FactorMonitorReport:
     is_effective: bool
     rank_ic: float
     evaluation_window: int = 63
-    half_life_days: Optional[int] = None
+    half_life_days: int | None = None
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-P1-001 ====

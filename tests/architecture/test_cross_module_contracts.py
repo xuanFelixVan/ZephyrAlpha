@@ -18,8 +18,8 @@ from pathlib import Path
 
 import pytest
 import yaml
-from zephyr.shared.io.paths import REPO_ROOT
 
+from zephyr.shared.io.paths import REPO_ROOT
 
 # #ARCH-095 裁定：MCP 实际依赖（import 实证）= MOD-TASK_SYSTEM + MOD-GATE_ENGINE；
 # 原 REQUIRED_DEPENDENCIES 含 MOD-INF-039/MOD-INF-018 属过期契约且无消费方——已删

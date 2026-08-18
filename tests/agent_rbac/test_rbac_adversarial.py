@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import pytest
 
+from zephyr.security.access_control.guards.rbac_guard import RBACGuard
 from zephyr.security.access_control.identity import (
     AgentIdentity,
     AgentRole,
@@ -30,7 +31,6 @@ from zephyr.security.access_control.identity import (
     MaturityLevel,
 )
 from zephyr.security.access_control.immutable_core import get_immutable_core
-from zephyr.security.access_control.guards.rbac_guard import RBACGuard
 
 
 class TestIdentitySpoofing:

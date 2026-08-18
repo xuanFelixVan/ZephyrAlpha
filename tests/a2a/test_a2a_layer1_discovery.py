@@ -13,13 +13,13 @@
 
 import pytest
 
-from zephyr.infrastructure.a2a_protocol.layer1_discovery.identity_verifier import (
-    IdentityVerifier,
-)
 from zephyr.infrastructure.a2a_protocol.layer1_discovery.a2a_registry import A2ARegistry
 from zephyr.infrastructure.a2a_protocol.layer1_discovery.agent_card import (
     AgentCapability,
     AgentCard,
+)
+from zephyr.infrastructure.a2a_protocol.layer1_discovery.identity_verifier import (
+    IdentityVerifier,
 )
 
 

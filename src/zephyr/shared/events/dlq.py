@@ -43,22 +43,23 @@ Version: 0.1.0
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import logging
+
+from zephyr.shared.io.serialization import dumps
 
 logger = logging.getLogger(__name__)
 
 import json
 import re
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.shared.infra.observer import EventType, Observer
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 __all__ = [
     "DeadLetter",

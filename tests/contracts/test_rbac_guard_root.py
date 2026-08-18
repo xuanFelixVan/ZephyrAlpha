@@ -15,18 +15,18 @@ import sys
 
 sys.path.insert(0, "src")
 
-from zephyr.shared.contracts.identity.agent_identity import (
-    AgentIdentity,
-    AgentRole,
-    IDESource,
-    MaturityLevel,
-)
 from zephyr.security.access_control.guards.rbac_guard import (
     ALWAYS_ALLOW_OPERATIONS,
     ALWAYS_BLOCKED_OPERATIONS,
     PermissionDecision,
     PermissionResult,
     RBACGuard,
+)
+from zephyr.shared.contracts.identity.agent_identity import (
+    AgentIdentity,
+    AgentRole,
+    IDESource,
+    MaturityLevel,
 )
 
 

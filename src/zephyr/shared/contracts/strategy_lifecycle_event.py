@@ -15,9 +15,8 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
+from typing import Dict, Optional
 
-from typing import Dict
-from typing import Optional
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -52,7 +51,7 @@ class StrategyLifecycleEvent:
     reason: str
     strategy_id: str
     triggered_by: str
-    performance_snapshot: Optional[Dict[str, float]] = None
+    performance_snapshot: dict[str, float] | None = None
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-P1-006 ====

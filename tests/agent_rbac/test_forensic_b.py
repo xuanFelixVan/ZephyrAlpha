@@ -10,9 +10,9 @@
 
 from __future__ import annotations
 
+from zephyr.security.access_control.detectors.shell_dialect_detector import ShellDialectDetector
 from zephyr.security.access_control.guards.path_guard import PathGuard
 from zephyr.security.access_control.guards.rule_injection_guard import RuleInjectionGuard
-from zephyr.security.access_control.detectors.shell_dialect_detector import ShellDialectDetector
 
 
 class TestForensicB:

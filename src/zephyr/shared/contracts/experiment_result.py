@@ -15,13 +15,11 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
-from typing import Dict
-from typing import List
-from typing import Optional
+from typing import Dict, List, Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -62,12 +60,12 @@ class ExperimentResult:
     variant_a_description: str
     variant_b_description: str
     variant_b_improvement: float
-    actionable_suggestions: List[str] = field(default_factory=list)
-    affected_factor_ids: List[str] = field(default_factory=list)
-    affected_strategy_ids: List[str] = field(default_factory=list)
+    actionable_suggestions: list[str] = field(default_factory=list)
+    affected_factor_ids: list[str] = field(default_factory=list)
+    affected_strategy_ids: list[str] = field(default_factory=list)
     archived_to_kms: bool = False
-    metrics: Dict[str, float] = field(default_factory=dict)
+    metrics: dict[str, float] = field(default_factory=dict)
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-P1-014 ====

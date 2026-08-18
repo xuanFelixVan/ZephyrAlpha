@@ -13,9 +13,9 @@ from __future__ import annotations
 import time
 
 from zephyr.security.access_control.guards.audit_log_guard import AuditLogGuard
+from zephyr.security.access_control.guards.replay_attack_guard import ReplayAttackGuard
 from zephyr.security.access_control.legal_audit_chain import LegalAuditChain
 from zephyr.security.access_control.monotonic_clock import MonotonicClock
-from zephyr.security.access_control.guards.replay_attack_guard import ReplayAttackGuard
 from zephyr.security.access_control.rollback_sandbox import RollbackSandbox
 
 

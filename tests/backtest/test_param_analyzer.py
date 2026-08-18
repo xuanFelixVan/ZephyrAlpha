@@ -31,12 +31,11 @@ from zephyr.backtest.services.param_analyzer import (
     ParamAnalysisConfig,
     ParamAnalysisError,
     ParamAnalysisReport,
+    ParameterAnalyzer,
     ParamRun,
     ParamSensitivity,
-    ParameterAnalyzer,
     StabilityAssessment,
 )
-
 
 # ============== 辅助函数 ==============
 

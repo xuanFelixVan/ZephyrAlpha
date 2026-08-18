@@ -17,11 +17,11 @@
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import subprocess
 import time
 from pathlib import Path
+from typing import Final
 
 from zephyr.security.adversarial_validation.models import SteadyStateSummary
 

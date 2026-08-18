@@ -15,12 +15,11 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
-from typing import Dict
-from typing import Optional
+from typing import Dict, Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -49,14 +48,14 @@ AI Prompt
 class RiskLimits:
     as_of_date: datetime
     idempotency_key: str
-    max_drawdown_limit: Optional[float] = None
+    max_drawdown_limit: float | None = None
     max_gross_leverage: float = 1.0
-    max_portfolio_var_1d: Optional[float] = None
+    max_portfolio_var_1d: float | None = None
     max_sector_concentration: float = 0.3
     max_single_position: float = 0.1
     min_single_position: float = 0.0
     schema_version: str = "1.0"
-    symbol_overrides: Dict[str, float] = field(default_factory=dict)
-    trace_context: Optional[TraceContext] = None
+    symbol_overrides: dict[str, float] = field(default_factory=dict)
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-003 ====

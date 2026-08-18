@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import total_ordering

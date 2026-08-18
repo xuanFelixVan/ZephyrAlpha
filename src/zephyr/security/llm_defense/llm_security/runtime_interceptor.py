@@ -51,8 +51,8 @@ from __future__ import annotations
 import functools
 import importlib.abc
 import importlib.machinery
-import os
 import logging
+import os
 import sys
 import threading
 import time

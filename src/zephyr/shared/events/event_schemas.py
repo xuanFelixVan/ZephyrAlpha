@@ -47,10 +47,9 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-from typing import Final
 import importlib
 from datetime import datetime
-from typing import Any, Literal
+from typing import Any, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 

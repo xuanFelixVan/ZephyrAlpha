@@ -18,7 +18,10 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.security.llm_defense.llm_security.adversarial_robustness import AdversarialFuzzResult, AdversarialRobustnessTester
+    from zephyr.security.llm_defense.llm_security.adversarial_robustness import (
+        AdversarialFuzzResult,
+        AdversarialRobustnessTester,
+    )
 
     _IMPORT_OK = True
     _IMPORT_REASON = ""

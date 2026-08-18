@@ -42,7 +42,6 @@ Version: 0.1.0
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import contextvars
 import datetime
@@ -51,6 +50,8 @@ import sys
 import uuid
 from contextlib import contextmanager
 from typing import Any
+
+from zephyr.shared.io.serialization import dumps
 
 __all__ = [
     "LogLevel",

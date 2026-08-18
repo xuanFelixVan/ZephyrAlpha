@@ -51,8 +51,8 @@ class MultiAgentSecurityLayer:
         Returns an object with ``verified`` (bool) and ``signature`` (str).
         The item is appended to ``comm_history``.
         """
-        from types import SimpleNamespace as _NS
         import hashlib as _hashlib
+        from types import SimpleNamespace as _NS
 
         sender = getattr(item, "sender_id", "") or getattr(item, "source_id", "")
         receiver = getattr(item, "receiver_id", "") or getattr(item, "target_id", "")

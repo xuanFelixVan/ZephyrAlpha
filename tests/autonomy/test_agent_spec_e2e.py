@@ -23,8 +23,8 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.autonomy_core.spec_engine import SpecEngine, UpgradePhase, UpgradeResult
 from zephyr.autonomy_core.skills.skill_freshness import FreshnessDecayModel
+from zephyr.autonomy_core.spec_engine import SpecEngine, UpgradePhase, UpgradeResult
 
 # #ARCH-075/083 族：SpecEngine 宽契约缺口留痕（strict=False）——dry_run/report/
 # drift_check/create_blueprint_from_skill/upgrade_all 生产缺席；role-skill 数据资产

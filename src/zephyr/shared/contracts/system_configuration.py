@@ -15,11 +15,9 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
-from typing import Any
-from typing import Dict
-from typing import List
+from typing import Any, Dict, List
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -54,8 +52,8 @@ class SystemConfiguration:
     is_active: bool
     updated_at: datetime
     version: str
-    config_data: Dict[str, Any] = field(default_factory=dict)
-    exceptions: List[str] = field(default_factory=list)
+    config_data: dict[str, Any] = field(default_factory=dict)
+    exceptions: list[str] = field(default_factory=list)
     max_retries: int = 3
     retry_policy: str = "linear"
     schema_version: str = "1.0"

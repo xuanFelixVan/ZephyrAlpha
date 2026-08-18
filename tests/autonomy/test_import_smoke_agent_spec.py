@@ -16,6 +16,7 @@ from pathlib import Path
 import pytest
 
 from zephyr.shared.io.paths import REPO_ROOT
+
 _PROJECT_ROOT = REPO_ROOT
 _SRC_DIR = _PROJECT_ROOT / "src"
 

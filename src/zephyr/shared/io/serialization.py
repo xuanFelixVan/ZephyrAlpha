@@ -45,13 +45,12 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-from typing import Final
 import json
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
 from enum import Enum, unique
-from typing import Any
+from typing import Any, Final
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 

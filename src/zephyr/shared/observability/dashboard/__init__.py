@@ -55,19 +55,19 @@ Grafana 双数据源仪表盘模块（MOD-INF-044）。
 # I1 --> A1
 # A1 --> O1
 """
+from zephyr.shared.observability.dashboard.alert_rules import (
+    ALERT_RULES,
+    generate_alert_rules_yaml,
+)
+from zephyr.shared.observability.dashboard.dashboard_templates import (
+    export_dashboard_json,
+    generate_ch_write_dashboard,
+    generate_data_collection_dashboard,
+    generate_drain_health_dashboard,
+)
 from zephyr.shared.observability.dashboard.datasource_config import (
     generate_clickhouse_datasource_yaml,
     generate_prometheus_datasource_yaml,
-)
-from zephyr.shared.observability.dashboard.dashboard_templates import (
-    generate_data_collection_dashboard,
-    generate_ch_write_dashboard,
-    generate_drain_health_dashboard,
-    export_dashboard_json,
-)
-from zephyr.shared.observability.dashboard.alert_rules import (
-    generate_alert_rules_yaml,
-    ALERT_RULES,
 )
 
 __all__ = [

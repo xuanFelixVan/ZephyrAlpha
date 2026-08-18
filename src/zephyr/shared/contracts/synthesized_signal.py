@@ -15,12 +15,11 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
-from typing import Dict
-from typing import Optional
+from typing import Dict, Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -55,11 +54,11 @@ class SynthesizedSignal:
     signal_id: str
     signal_value: float
     symbol: str
-    contributing_factors: Dict[str, float] = field(default_factory=dict)
+    contributing_factors: dict[str, float] = field(default_factory=dict)
     is_degraded: bool = False
     regime: str = ""
     schema_version: str = "1.0"
     suggested_position_pct: float = 0
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-P1-015 ====

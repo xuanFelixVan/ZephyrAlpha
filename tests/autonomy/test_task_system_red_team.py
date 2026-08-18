@@ -28,7 +28,6 @@ if sys.stdout.encoding != "utf-8":
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-
 # ============================================================================
 # 阶段0：基础导入测试
 # ============================================================================
@@ -65,8 +64,8 @@ def test_00_imports():
 
 def test_01_taskcard_minimal():
     """测试 TaskCard 最小合法构造"""
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tc = TaskCard(
         task_id="CP-1",
@@ -91,8 +90,8 @@ def test_01_taskcard_minimal():
 
 def test_01_taskcard_full():
     """测试 TaskCard 完整构造（带扩展字段）"""
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import GateLevel, TaskAuditFinding, TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tc_full = TaskCard(
         task_id="CP-2",
@@ -149,8 +148,8 @@ def test_01_taskcard_full():
 
 def test_01_taskcard_extra_forbid():
     """测试 TaskCard extra=forbid——未知字段 MUST 被拒"""
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     with pytest.raises(Exception):
         TaskCard(
@@ -175,8 +174,8 @@ def test_01_taskcard_extra_forbid():
 
 def test_01_taskcard_short_description():
     """测试 TaskCard description 长度<10 应被拒绝"""
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     with pytest.raises(Exception):
         TaskCard(
@@ -199,8 +198,8 @@ def test_01_taskcard_short_description():
 
 def test_01_taskcard_bad_id_format():
     """测试 task_id 格式错误应被拒绝"""
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     with pytest.raises(Exception):
         TaskCard(
@@ -223,8 +222,8 @@ def test_01_taskcard_bad_id_format():
 
 def test_01_taskcard_string_dates():
     """测试 created_at / updated_at 可以是字符串"""
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tc = TaskCard(
         task_id="CP-6",
@@ -252,10 +251,10 @@ def test_01_taskcard_string_dates():
 
 def test_02_task_repo_crud():
     """测试 TaskRepo CRUD + 状态机"""
-    from zephyr.governance.persistence.task_repo import InvalidTransitionError, TaskRepository
     from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
+    from zephyr.governance.persistence.task_repo import InvalidTransitionError, TaskRepository
     from zephyr.shared.foundation.models import TaskCard
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tmp_db = Path(tempfile.mktemp(suffix=".db"))
     repo = TaskRepository(db_path=tmp_db, auto_init=True, enable_gate=False)
@@ -307,10 +306,10 @@ def test_02_task_repo_crud():
 
 def test_02_task_repo_lifecycle():
     """测试完整状态生命周期 PENDING→IN_PROGRESS→COMPLETED→VERIFIED"""
-    from zephyr.governance.persistence.task_repo import TaskRepository
     from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
+    from zephyr.governance.persistence.task_repo import TaskRepository
     from zephyr.shared.foundation.models import TaskCard
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tmp_db = Path(tempfile.mktemp(suffix=".db"))
     repo = TaskRepository(db_path=tmp_db, auto_init=True, enable_gate=False)
@@ -364,8 +363,8 @@ def test_02_task_repo_lifecycle():
 def test_02_taskcard_repo_polymorphism():
     """测试 TaskCard 通过 TaskRepo 保存（多态）"""
     from zephyr.governance.persistence.task_repo import TaskRepository
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tmp_db = Path(tempfile.mktemp(suffix=".db"))
     repo = TaskRepository(db_path=tmp_db, auto_init=True, enable_gate=False)
@@ -410,8 +409,8 @@ def test_02_taskcard_repo_polymorphism():
 def test_03_pipeline_A_dispatch():
     """测试 A区管线 dispatch"""
     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tc_a = TaskCard(
         task_id="CP-200",
@@ -440,8 +439,8 @@ def test_03_pipeline_A_dispatch():
 def test_03_pipeline_B_dispatch():
     """测试 B区审计管线 dispatch"""
     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tc_b = TaskCard(
         task_id="CP-201",
@@ -470,8 +469,8 @@ def test_03_pipeline_B_dispatch():
 def test_03_security_tag_claude_rescue():
     """测试 security 标签触发 Claude救援路由"""
     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tc_sec = TaskCard(
         task_id="CP-202",
@@ -502,8 +501,8 @@ def test_03_security_tag_claude_rescue():
 def test_03_experimental_tag_claude_rescue():
     """测试 experimental 标签触发 Claude救援"""
     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tc_exp = TaskCard(
         task_id="CP-203",
@@ -534,8 +533,8 @@ def test_03_experimental_tag_claude_rescue():
 def test_03_invalid_pipeline_rejected():
     """测试无效管线标识被拒绝"""
     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tc_invalid = TaskCard(
         task_id="CP-204",
@@ -649,9 +648,9 @@ def test_05_decompose_batch():
 
 def test_05_check_gates():
     """测试 G0/G7 门禁检查"""
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
     from zephyr.shared.foundation.models import GateLevel, TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     decomposer = BlueprintDecomposer()
     tc = TaskCard(
@@ -693,8 +692,8 @@ def test_06_mcp_init():
 def test_06_md_roundtrip():
     """测试 _taskcard_to_md → _parse_md_to_taskcard 往返"""
     from zephyr.integration.mcp.task_manager_server import _parse_md_to_taskcard, _taskcard_to_md
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     tc = TaskCard(
         task_id="CP-400",
@@ -736,8 +735,8 @@ def test_06_mcp_persist_and_load():
     """测试 MCP _persist + _load"""
     from zephyr.governance.persistence.task_repo import TaskRepository
     from zephyr.integration.mcp.task_manager_server import TaskManagerMCP
-    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
     with tempfile.TemporaryDirectory() as tmpdir:
         db_file = Path(tmpdir) / "test_mcp.db"
@@ -819,8 +818,8 @@ def test_07_field_statistics():
 def test_08_triage_task_construction():
     """测试 TriageGate 内部 Task(title=...) 构造"""
     from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus, normalize_execution_model
-    from zephyr.shared.schema.severity_types import SafetyLevel
     from zephyr.shared.foundation.models import TaskCard
+    from zephyr.shared.schema.severity_types import SafetyLevel
 
     task = TaskCard(
         task_id="CP-999",
@@ -845,8 +844,8 @@ def test_08_triage_task_construction():
 def test_08_task_name_field_rejected():
     """测试 Task(name=...) 字段应被 extra=forbid 拒绝"""
     from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus, normalize_execution_model
-    from zephyr.shared.schema.severity_types import SafetyLevel
     from zephyr.shared.foundation.models import TaskCard
+    from zephyr.shared.schema.severity_types import SafetyLevel
 
     with pytest.raises(Exception):
         TaskCard(

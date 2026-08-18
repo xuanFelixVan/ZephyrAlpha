@@ -58,8 +58,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.shared.schema.schemas import Priority
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.schema.schemas import Priority
 
 _logger = logging.getLogger("zephyr.shared.contracts.registry")
 
@@ -367,8 +367,8 @@ class ContractRegistry:
             return 0
 
 
-from collections import defaultdict
 import threading
+from collections import defaultdict
 
 _registry: ContractRegistry | None = None
 _registry_lock = threading.Lock()

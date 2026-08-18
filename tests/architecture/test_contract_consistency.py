@@ -32,6 +32,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 YAML_PATH = REPO_ROOT / (

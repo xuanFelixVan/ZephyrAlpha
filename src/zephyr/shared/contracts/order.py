@@ -15,15 +15,13 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
-from zephyr.shared.contracts.enums.order_enums import OrderSide
-from zephyr.shared.contracts.enums.order_enums import OrderStatus
-from zephyr.shared.contracts.enums.order_enums import OrderType
+from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -57,14 +55,14 @@ class Order:
     side: OrderSide
     strategy_id: str
     symbol: str
-    avg_fill_price: Optional[Decimal] = None
-    broker_order_id: Optional[str] = None
-    created_at: Optional[datetime] = None
+    avg_fill_price: Decimal | None = None
+    broker_order_id: str | None = None
+    created_at: datetime | None = None
     filled_quantity: Decimal = Decimal("0")
-    limit_price: Optional[Decimal] = None
+    limit_price: Decimal | None = None
     schema_version: str = "1.0"
     status: OrderStatus = OrderStatus.PENDING
-    trace_context: Optional[TraceContext] = None
-    updated_at: Optional[datetime] = None
+    trace_context: TraceContext | None = None
+    updated_at: datetime | None = None
 
 # ==== END CODGEN:CTR-004 ====

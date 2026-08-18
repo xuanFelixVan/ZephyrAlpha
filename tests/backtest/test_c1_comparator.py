@@ -38,7 +38,6 @@ from zephyr.backtest.regime_validation.shrinkage_provider import (
     ConstShrinkageProvider,
 )
 
-
 # ── 手搓 BacktestResult / Portfolio 工具 ──────────────────────────────
 
 def _make_result(

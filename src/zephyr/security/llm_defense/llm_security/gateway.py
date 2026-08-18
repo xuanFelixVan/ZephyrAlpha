@@ -38,6 +38,8 @@ from zephyr.security.llm_defense.llm_security.protocol import (
 )
 from zephyr.security.llm_defense.llm_security.runtime_interceptor import (
     grant_allowance as _grant_runtime_allowance,
+)
+from zephyr.security.llm_defense.llm_security.runtime_interceptor import (
     reset_allowance_for_request as _reset_runtime_allowance,
 )
 from zephyr.security.llm_defense.llm_security.self_protection.l7_validation import ValidationLayer

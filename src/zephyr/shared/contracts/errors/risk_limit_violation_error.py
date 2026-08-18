@@ -46,10 +46,10 @@ def __getattr__(name):
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from typing import Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -85,6 +85,6 @@ class RiskLimitViolationError:
     violated_constraint: str
     violation_detail: str
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-ERR-004 ====

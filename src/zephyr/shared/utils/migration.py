@@ -39,9 +39,8 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-from typing import Final
 from collections.abc import Callable
-from typing import Any
+from typing import Any, Final
 
 __all__ = [
     "MIGRATIONS",

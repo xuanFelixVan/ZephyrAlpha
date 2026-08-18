@@ -23,10 +23,9 @@ a unified healthz endpoint consumable by external monitoring.
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Final
 import logging
-from typing import Any
+from collections.abc import Callable
+from typing import Any, Final
 
 __all__ = [
     "ALL_SYSTEM_NAMES",

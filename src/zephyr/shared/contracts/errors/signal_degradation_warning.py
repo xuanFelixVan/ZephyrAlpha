@@ -45,11 +45,10 @@ def __getattr__(name):
 # [ERROR_CONTRACT]
 # [TESTS]
 from dataclasses import dataclass, field
-
-from typing import List
-from typing import Optional
+from typing import List, Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -81,9 +80,9 @@ class SignalDegradationWarning:
     reason: str
     suggested_action: str
     warning_id: str
-    affected_factor_ids: List[str] = field(default_factory=list)
+    affected_factor_ids: list[str] = field(default_factory=list)
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-ERR-003 ====
 

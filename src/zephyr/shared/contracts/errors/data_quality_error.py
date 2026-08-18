@@ -47,10 +47,10 @@ AI Prompt
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from typing import Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -83,9 +83,9 @@ class DataQualityError:
     quality_score: float
     recovery_hint: str
     symbol: str
-    failed_field: Optional[str] = None
-    failed_value: Optional[str] = None
+    failed_field: str | None = None
+    failed_value: str | None = None
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-ERR-001 ====

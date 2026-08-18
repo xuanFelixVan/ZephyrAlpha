@@ -15,12 +15,11 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-from typing import Final
-
 import hashlib
 import hmac
 import time
 from enum import Enum
+from typing import Final
 
 from pydantic import BaseModel, ConfigDict, Field
 

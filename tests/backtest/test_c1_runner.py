@@ -43,7 +43,6 @@ from zephyr.backtest.regime_validation.shrinkage_provider import (
     ConstShrinkageProvider,
 )
 
-
 # ── 合成数据构造（对齐 test_shrinkage_engine 风格）──────────────────────
 
 _SYMBOLS = ["600001", "600002", "600003"]

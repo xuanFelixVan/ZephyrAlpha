@@ -15,9 +15,9 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
 from typing import Optional
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -49,7 +49,7 @@ class TraceContext:
     service_name: str
     span_id: str
     trace_id: str
-    parent_span_id: Optional[str] = None
+    parent_span_id: str | None = None
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-TRACE-001 ====

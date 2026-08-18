@@ -31,9 +31,9 @@ import pytest
 from zephyr.data import pit_query
 from zephyr.data.pit_query import (
     FINANCIAL_PIT_TABLES,
+    FinancialPITQuery,
     PITQueryConfig,
     PITQueryError,
-    FinancialPITQuery,
     tsv_to_dataframe,
     tsv_to_records,
 )

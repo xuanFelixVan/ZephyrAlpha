@@ -36,7 +36,6 @@ from zephyr.backtest.services.report_generator import (
     ReportFormat,
 )
 
-
 # ============== 辅助函数 ==============
 
 

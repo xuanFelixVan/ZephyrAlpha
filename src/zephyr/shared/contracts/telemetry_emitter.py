@@ -15,9 +15,9 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
 from typing import Dict
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -53,7 +53,7 @@ class TelemetryEmitter:
     metric_value: float
     source_module: str
     timestamp: datetime
-    labels: Dict[str, str] = field(default_factory=dict)
+    labels: dict[str, str] = field(default_factory=dict)
     message: str = ""
     parent_span_id: str = ""
     schema_version: str = "1.0"

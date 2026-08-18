@@ -15,9 +15,8 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
+from typing import Dict, List
 
-from typing import Dict
-from typing import List
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -52,8 +51,8 @@ class RiskDashboardSnapshot:
     portfolio_var_1d: float
     snapshot_time: str
     top_position_concentration: float
-    active_alerts: List[str] = field(default_factory=list)
+    active_alerts: list[str] = field(default_factory=list)
     schema_version: str = "1.0"
-    sector_concentrations: Dict[str, float] = field(default_factory=dict)
+    sector_concentrations: dict[str, float] = field(default_factory=dict)
 
 # ==== END CODGEN:CTR-P1-008 ====

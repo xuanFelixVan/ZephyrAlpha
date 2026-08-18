@@ -13,9 +13,9 @@
 
 
 from zephyr.gov_drift.events import (
+    DriftType,
     ManagedDriftEvent,
     ManagedDriftState,
-    DriftType,
 )
 
 

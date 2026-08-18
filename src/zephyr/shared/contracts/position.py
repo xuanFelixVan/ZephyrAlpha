@@ -15,13 +15,12 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
 from decimal import Decimal
-from typing import Dict
-from typing import Optional
+from typing import Dict, Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -53,10 +52,10 @@ class PositionSnapshot:
     portfolio_id: str
     cash: Decimal = Decimal("0")
     gross_leverage: float = 1.0
-    holdings: Dict[str, Decimal] = field(default_factory=dict)
-    market_values: Dict[str, Decimal] = field(default_factory=dict)
+    holdings: dict[str, Decimal] = field(default_factory=dict)
+    market_values: dict[str, Decimal] = field(default_factory=dict)
     schema_version: str = "1.0"
     total_market_value: Decimal = Decimal("0")
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-006 ====

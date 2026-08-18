@@ -17,12 +17,6 @@ sys.path.insert(0, "src")
 
 import time
 
-from zephyr.shared.contracts.identity.agent_identity import (
-    AgentIdentity,
-    AgentRole,
-    IDESource,
-    MaturityLevel,
-)
 from zephyr.security.access_control.guards.abac_guard import (
     SENSITIVITY_MIN_MATURITY,
     ABACContext,
@@ -30,6 +24,12 @@ from zephyr.security.access_control.guards.abac_guard import (
     SensitivityLabel,
     TemporalCategory,
     TLBRecord,
+)
+from zephyr.shared.contracts.identity.agent_identity import (
+    AgentIdentity,
+    AgentRole,
+    IDESource,
+    MaturityLevel,
 )
 
 

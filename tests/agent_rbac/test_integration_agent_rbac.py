@@ -10,8 +10,8 @@
 
 from __future__ import annotations
 
-from zephyr.security.access_control.verifiers.contract_verifier import ContractVerifier
 from zephyr.security.access_control.integration import IntegrationManager
+from zephyr.security.access_control.verifiers.contract_verifier import ContractVerifier
 
 
 class TestIntegration:

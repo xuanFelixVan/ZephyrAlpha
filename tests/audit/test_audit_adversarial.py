@@ -31,8 +31,8 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.gov_audit.writer import AuditWriter
 from zephyr.gov_audit.integrity import IntegrityVerifier
+from zephyr.gov_audit.writer import AuditWriter
 
 
 @pytest.fixture

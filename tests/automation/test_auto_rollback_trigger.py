@@ -14,9 +14,9 @@
 from __future__ import annotations
 
 from zephyr.infrastructure.rollback.auto_rollback_trigger import (
+    ActionType,
     AutoGuardResult,
     AutoRollbackTrigger,
-    ActionType,
     FailureCategory,
     TriggerDecision,
 )

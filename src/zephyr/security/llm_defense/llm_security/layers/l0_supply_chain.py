@@ -23,8 +23,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
-from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 # ============================================================================
 # Legacy classes (kept for backward compatibility)

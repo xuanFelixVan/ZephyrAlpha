@@ -15,12 +15,12 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -55,10 +55,10 @@ class Fill:
     order_id: str
     strategy_id: str
     symbol: str
-    broker_fill_id: Optional[str] = None
+    broker_fill_id: str | None = None
     commission: Decimal = Decimal("0")
     schema_version: str = "1.0"
-    slippage: Optional[Decimal] = None
-    trace_context: Optional[TraceContext] = None
+    slippage: Decimal | None = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-005 ====

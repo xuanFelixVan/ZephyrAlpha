@@ -33,7 +33,6 @@ from zephyr.backtest.regime_validation.shrinkage_provider import (
     clamp_shrinkage,
 )
 
-
 # ── clamp_shrinkage ───────────────────────────────────────────────────
 
 class TestClamp:

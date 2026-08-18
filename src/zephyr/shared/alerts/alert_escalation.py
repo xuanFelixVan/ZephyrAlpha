@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
+
 from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 from zephyr.shared.utils.time_utils import now_utc
 

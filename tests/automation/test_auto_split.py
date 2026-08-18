@@ -12,11 +12,11 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from zephyr.governance.persistence.task_repo import TaskNotFoundError, TaskRepository
 from zephyr.gov_enforcement.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
+from zephyr.governance.persistence.task_repo import TaskNotFoundError, TaskRepository
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.shared.schema.execution_model import ExecutionModel
 from zephyr.shared.schema.severity_types import SafetyLevel
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _NOW = datetime.now(UTC)
 

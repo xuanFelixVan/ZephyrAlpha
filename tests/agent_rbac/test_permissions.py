@@ -15,8 +15,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel
 from zephyr.security.access_control.guards.permission_guard import GuardDecision, PermissionGuard
+from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel
 
 
 @pytest.fixture

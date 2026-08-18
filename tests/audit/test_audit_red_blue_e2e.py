@@ -17,6 +17,7 @@ import time
 from pathlib import Path
 
 import pytest
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 models_mod = pytest.importorskip("zephyr.security.adversarial_validation.models")

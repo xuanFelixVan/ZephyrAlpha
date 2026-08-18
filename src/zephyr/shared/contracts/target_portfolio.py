@@ -15,13 +15,12 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
-from typing import Dict
-from typing import Optional
+from typing import Dict, Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
 from zephyr.shared.contracts.risk_limits import RiskLimits
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -55,9 +54,9 @@ class TargetPortfolio:
     rebalance_reason: str
     risk_limits: RiskLimits
     strategy_id: str
-    current_weights: Dict[str, float] = field(default_factory=dict)
+    current_weights: dict[str, float] = field(default_factory=dict)
     schema_version: str = "1.0"
-    target_weights: Dict[str, float] = field(default_factory=dict)
-    trace_context: Optional[TraceContext] = None
+    target_weights: dict[str, float] = field(default_factory=dict)
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-007 ====

@@ -42,13 +42,12 @@ SSoT: MOD-INF-016 §2.18 shared-time-utils
 Version: 0.1.0
 """
 
-from typing import Final
-
+import sqlite3
+import threading
 from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import UTC, date, datetime
-import sqlite3
-import threading
+from typing import Final
 
 __all__ = [
     "MOCKED_TIME",

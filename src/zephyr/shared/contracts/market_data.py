@@ -15,13 +15,12 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
 from decimal import Decimal
-from typing import List
-from typing import Optional
+from typing import List, Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -57,18 +56,18 @@ class NormalizedMarketData:
     symbol: str
     timestamp: datetime
     volume: Decimal
-    adj_factor: Optional[Decimal] = None
-    amount: Optional[Decimal] = None
+    adj_factor: Decimal | None = None
+    amount: Decimal | None = None
     config_load_retry_policy: str = "linear"
     config_load_timeout_ms: int = 1000
-    exceptions: List[str] = field(default_factory=list)
-    ingested_at: Optional[datetime] = None
+    exceptions: list[str] = field(default_factory=list)
+    ingested_at: datetime | None = None
     is_suspended: bool = False
     max_retries: int = 3
     quality_score: float = 1.0
     retry_policy: str = "exponential_backoff"
     schema_version: str = "1.0"
     timeout_ms: int = 5000
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-001 ====

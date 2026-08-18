@@ -30,6 +30,7 @@ import re
 from typing import NamedTuple
 
 import pytest
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 

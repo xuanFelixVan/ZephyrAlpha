@@ -154,8 +154,8 @@ class TestDriftHotfixBypassIntegration:
 
     def test_hotfix_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.gov_drift.drift_hotfix_bypass import HotfixBypass
         from zephyr.gov_audit.writer import AuditWriter
+        from zephyr.gov_drift.drift_hotfix_bypass import HotfixBypass
 
         writer = AuditWriter(data_dir=data_dir)
         bypass = HotfixBypass(project_root=str(tmp_path))
@@ -330,8 +330,8 @@ class TestCrossModuleAuditConsistency:
 
     def test_all_modules_share_same_chain(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.gov_audit.writer import AuditWriter
         from zephyr.gov_audit.integrity import IntegrityVerifier
+        from zephyr.gov_audit.writer import AuditWriter
 
         writer = AuditWriter(data_dir=data_dir)
 

@@ -29,6 +29,7 @@ from enum import Enum
 from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel, Field
+
 from zephyr.shared.utils.time_utils import now_utc
 
 

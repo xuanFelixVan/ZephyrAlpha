@@ -15,8 +15,8 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from typing import Dict
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -47,6 +47,6 @@ class ModelServingRequest:
     model_id: str
     model_version: str
     request_id: str
-    input_features: Dict[str, float] = field(default_factory=dict)
+    input_features: dict[str, float] = field(default_factory=dict)
 
 # ==== END CODGEN:CTR-P1-004 ====

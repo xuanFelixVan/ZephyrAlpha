@@ -29,11 +29,11 @@ import pytest
 from zephyr.data.symbol_normalizer import (
     derive_exchange,
     derive_exchange_index,
-    split_suffix_symbol,
-    split_prefix_symbol,
-    to_canonical,
-    normalize_symbol,
     is_bare_symbol,
+    normalize_symbol,
+    split_prefix_symbol,
+    split_suffix_symbol,
+    to_canonical,
 )
 
 

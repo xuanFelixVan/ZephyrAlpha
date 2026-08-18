@@ -22,11 +22,11 @@ from datetime import datetime
 
 import pytest
 
-from zephyr.autonomy_core.spec_engine import SpecEngine
 from zephyr.autonomy_core.integration.pipeline_bridge import (
     PipelineSkillBridge,
 )
 from zephyr.autonomy_core.skills.skill_loader import SkillLoader
+from zephyr.autonomy_core.spec_engine import SpecEngine
 from zephyr.shared.foundation.models import TaskCard
 
 

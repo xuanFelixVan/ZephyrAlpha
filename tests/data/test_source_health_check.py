@@ -29,7 +29,6 @@ import pytest
 
 import zephyr.data.source_health_check as shc
 
-
 # ============ Fake providers（零外部依赖）============
 
 class _OkProvider:

@@ -15,6 +15,7 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
+
 # ---
 # layer: cross_cutting
 # category: data_contract

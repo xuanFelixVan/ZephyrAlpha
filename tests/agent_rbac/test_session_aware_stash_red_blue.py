@@ -54,8 +54,8 @@ from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E40
     GitCommitGateway,
 )
 from zephyr.security.access_control.session_concurrency import (  # noqa: E402
-    SessionRegistry,
     _SESSION_TTL_SECONDS,
+    SessionRegistry,
 )
 
 
@@ -534,7 +534,7 @@ class TestConcurrentCommitNoCrossTheft:
     def test_three_sessions_concurrent_distinct_files(self, tmp_path: Path) -> None:
         """3 session 并发 commit 3 个不同文件——全部成功，无交叉。"""
         _init_repo(tmp_path)
-        files = {s: _commit_file(tmp_path, f"{s}.py", f"v = 0\n") for s in ("A", "B", "C")}
+        files = {s: _commit_file(tmp_path, f"{s}.py", "v = 0\n") for s in ("A", "B", "C")}
 
         gw = GitCommitGateway(project_root=tmp_path)
         for s, f in files.items():

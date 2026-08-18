@@ -16,6 +16,7 @@
 # [TTL] permanent
 
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
 """
 Zero Config — 零配置自检扫描器。
 

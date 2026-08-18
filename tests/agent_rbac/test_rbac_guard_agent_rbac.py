@@ -10,13 +10,13 @@
 测试 L1 RBACGuard — 三层权限模型
 """
 
-from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel
 from zephyr.security.access_control.guards.rbac_guard import (
     ALWAYS_ALLOW_OPERATIONS,
     PermissionDecision,
     PermissionResult,
     RBACGuard,
 )
+from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel
 
 
 class TestRBACGuardAllow:

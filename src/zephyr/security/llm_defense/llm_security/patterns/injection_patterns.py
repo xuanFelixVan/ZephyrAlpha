@@ -14,11 +14,9 @@
 # [TESTS]
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from typing import Final
-
 import os
 import re
-from typing import Any
+from typing import Any, Final
 
 
 class InjectionPattern:

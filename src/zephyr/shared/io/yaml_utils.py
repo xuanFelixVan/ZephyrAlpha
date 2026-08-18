@@ -111,8 +111,8 @@ canonical: src/zephyr/shared/io/yaml_utils.py
 
 from __future__ import annotations
 
-from typing import Final
 from pathlib import Path
+from typing import Final
 
 import yaml
 

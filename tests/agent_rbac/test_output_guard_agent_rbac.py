@@ -8,7 +8,12 @@
 # [TTL] task_bound
 """测试 L5 OutputGuard — 输出护栏"""
 
-from zephyr.security.access_control.guards.output_guard import CREDENTIAL_PATTERNS, PII_PATTERNS, OutputDecision, OutputGuard
+from zephyr.security.access_control.guards.output_guard import (
+    CREDENTIAL_PATTERNS,
+    PII_PATTERNS,
+    OutputDecision,
+    OutputGuard,
+)
 
 
 class TestPIIDetection:

@@ -78,12 +78,11 @@ Dogfooding — 自举测试：用 TaskCard 管理 TaskCard 建设。
 # A3 --> O2
 """
 
-from typing import Final
-
 import json
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Final
 
 
 @dataclass

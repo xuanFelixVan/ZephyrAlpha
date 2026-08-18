@@ -30,11 +30,11 @@ from pathlib import Path
 
 import pytest
 
+from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.infrastructure.system_snapshot import (
     SystemSnapshot,
     SystemSnapshotter,
 )
-from zephyr.governance.persistence.sqlite_schema import init_db
 
 # ---------------------------------------------------------------------------
 # Fixture

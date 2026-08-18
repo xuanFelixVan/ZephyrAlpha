@@ -15,11 +15,9 @@
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-from typing import Final
-
 import re
 from re import Pattern
-from typing import Any
+from typing import Any, Final
 
 _SECRET_PATTERNS: list[dict[str, Any]] = [
     {

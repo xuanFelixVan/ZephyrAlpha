@@ -62,8 +62,8 @@ class TestShutdown:
 
     def test_shutdown_cleans_up_resources(self, engine):
         """shutdown() 应清理 IPI/Spiral/gate_history。"""
-        from zephyr.governance.security_governance.ipi_defense import IPIDefense
         from zephyr.gov_drift.spiral_ews import SpiralEarlyWarningSystem
+        from zephyr.governance.security_governance.ipi_defense import IPIDefense
 
         engine.ipi_defense = IPIDefense()
         engine.spiral_ews = SpiralEarlyWarningSystem()

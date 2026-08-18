@@ -31,8 +31,6 @@ from unittest.mock import MagicMock
 import pytest
 
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace
-from zephyr.shared.schema.execution_model import ExecutionModel
-from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.blueprint_tools.blueprint_decomposer import (
     BlueprintDecomposer,
     _marker_to_blueprint_label,
@@ -40,6 +38,8 @@ from zephyr.shared.blueprint_tools.blueprint_decomposer import (
     _split_desc_and_depends,
 )
 from zephyr.shared.foundation.models import GateLevel, TaskAuditFinding, TaskCard, TaskStatus
+from zephyr.shared.schema.execution_model import ExecutionModel
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
 
 def _make_task_card(

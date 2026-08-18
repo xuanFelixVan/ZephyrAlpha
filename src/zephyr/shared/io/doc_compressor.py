@@ -58,17 +58,16 @@ compress() 在写文件时调用 capability_check("write", target_path)，
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import re
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from threading import RLock
-from typing import Any
+from typing import Any, Final
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.shared.security.capability import capability_check
 
 _log = logging.getLogger(__name__)

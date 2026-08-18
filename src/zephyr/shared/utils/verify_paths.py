@@ -21,11 +21,9 @@ verify_paths.py — 代码路径索引验证 (TASK-012)
 验证 §12 和 §14 中的所有文件路径与实际磁盘一致。
 """
 
-from typing import Final
-
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 CE_DIR: Final[Path] = Path(__file__).resolve().parent
 TESTS_DIR: Final[Any] = CE_DIR.parent.parent.parent / "tests"

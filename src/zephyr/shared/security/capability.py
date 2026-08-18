@@ -35,11 +35,10 @@ CBAC 能力检查器 (Capability-Based Access Control)
 
 from __future__ import annotations
 
-from typing import Final
 import fnmatch
 from pathlib import Path
 from threading import RLock
-from typing import Any, Self, final
+from typing import Any, Final, Self, final
 
 try:
     from pydantic import BaseModel, Field

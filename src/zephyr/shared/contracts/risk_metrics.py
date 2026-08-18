@@ -15,8 +15,8 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
+
 # ---
 # layer: cross_cutting
 # category: data_contract

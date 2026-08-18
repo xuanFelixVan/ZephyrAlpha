@@ -104,11 +104,11 @@ Depends: T-1-04 (task_repo.py)
 
 from __future__ import annotations
 
-from typing import Final
 import os
 import re
 import shlex
 from pathlib import Path
+from typing import Final
 
 ALLOWED_WRITE_DIRS: Final[tuple[str, ...]] = (
     "docs/",

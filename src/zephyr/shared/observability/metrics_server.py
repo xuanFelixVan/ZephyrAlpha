@@ -32,7 +32,7 @@
 from __future__ import annotations
 
 import logging
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 
 from zephyr.shared.observability.metrics import get_registry

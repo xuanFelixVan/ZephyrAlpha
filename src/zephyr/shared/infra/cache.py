@@ -44,12 +44,11 @@ Version: 0.1.0
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import time
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Any, Protocol, TypeVar
+from typing import Any, Final, Protocol, TypeVar
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 

@@ -32,10 +32,10 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from typing import Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -67,10 +67,10 @@ class ContractViolationError:
     error_id: str
     idempotency_key: str
     violation_type: str
-    actual_type: Optional[str] = None
-    expected_type: Optional[str] = None
-    field_name: Optional[str] = None
+    actual_type: str | None = None
+    expected_type: str | None = None
+    field_name: str | None = None
     schema_version: str = "1.0"
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-ERR-006 ====

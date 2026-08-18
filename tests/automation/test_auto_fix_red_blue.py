@@ -29,20 +29,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.infrastructure.auto_fix_engine.models import (
-    FixAction,
-    FixConfidence,
-    FixLevel,
-    FixStatus,
-    ValidationResult,
-)
-from zephyr.infrastructure.auto_fix_engine.fix_safety import (
-    SafetyGate,
-    CascadeBreaker,
-    SandboxExecutor,
-    SecretLeakGuard,
-    FixValidator,
-)
 from zephyr.infrastructure.auto_fix_engine.fix_budget import (
     FixBudget,
     FixStormGuard,
@@ -51,9 +37,22 @@ from zephyr.infrastructure.auto_fix_engine.fix_reliability import (
     BlastRadiusEstimator,
     DeadLetterQueue,
 )
-from zephyr.infrastructure.auto_fix_engine.shadow_workspace import ShadowWorkspace
+from zephyr.infrastructure.auto_fix_engine.fix_safety import (
+    CascadeBreaker,
+    FixValidator,
+    SafetyGate,
+    SandboxExecutor,
+    SecretLeakGuard,
+)
+from zephyr.infrastructure.auto_fix_engine.models import (
+    FixAction,
+    FixConfidence,
+    FixLevel,
+    FixStatus,
+    ValidationResult,
+)
 from zephyr.infrastructure.auto_fix_engine.self_heal_agent import SelfHealAgent
-
+from zephyr.infrastructure.auto_fix_engine.shadow_workspace import ShadowWorkspace
 
 # ============================================================================
 # 攻击向量 1: 修复爆炸 (Fix Storm)

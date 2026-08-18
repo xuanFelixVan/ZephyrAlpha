@@ -24,11 +24,11 @@ from __future__ import annotations
 import pytest
 
 from zephyr.security.access_control.derive_rbac_roles import RBACRoleDeriver
+from zephyr.security.access_control.guards.permission_guard import GuardDecision, PermissionGuard
+from zephyr.security.access_control.guards.rbac_guard import RBACGuard
 from zephyr.security.access_control.identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
 from zephyr.security.access_control.immutable_core import ImmutableCore
 from zephyr.security.access_control.integrity_self_check import IntegritySelfCheck
-from zephyr.security.access_control.guards.permission_guard import GuardDecision, PermissionGuard
-from zephyr.security.access_control.guards.rbac_guard import RBACGuard
 
 MODEL_AGENTS: dict[str, AgentIdentity] = {
     "DeepSeek": AgentIdentity(

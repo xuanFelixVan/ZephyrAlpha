@@ -15,8 +15,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.gov_audit.writer import AuditWriter
 from zephyr.gov_audit.audit_write_failure_protector import AuditWriteProtector
+from zephyr.gov_audit.writer import AuditWriter
 
 
 def _make_writer(tmp_path: Path) -> AuditWriter:

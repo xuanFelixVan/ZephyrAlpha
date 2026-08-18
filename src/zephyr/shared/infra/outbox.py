@@ -53,10 +53,10 @@ from dataclasses import dataclass, field
 from enum import Enum, unique
 from typing import Any, Protocol
 
+from zephyr.shared.foundation.errors import ZephyrBaseError
+
 # 5.119.3 修复: 导入 trace_id_var 用于每轮轮询重置 trace_id
 from zephyr.shared.utils.logging import trace_id_var
-
-from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
     "MemoryOutboxStore",

@@ -112,8 +112,8 @@ Version: 0.14.0
 
 from __future__ import annotations
 
-from typing import Final
 import re
+from typing import Final
 
 __all__ = [
     "MIN_COMPATIBLE_SHARED_VERSION",

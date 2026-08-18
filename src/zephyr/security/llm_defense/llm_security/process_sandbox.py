@@ -68,11 +68,12 @@ L2a 是 ZephyrAlpha RI（Runtime Integration）层的双层沙箱中的第一层
 
 from __future__ import annotations
 
-from typing import Final
 import os
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Final
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = [

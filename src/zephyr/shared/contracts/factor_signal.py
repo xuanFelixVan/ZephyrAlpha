@@ -15,14 +15,11 @@
 # [TESTS]
 # [TTL] permanent
 from dataclasses import dataclass, field
-
 from datetime import datetime, timezone
-from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
+
 # ---
 # layer: cross_cutting
 # category: data_contract
@@ -55,16 +52,16 @@ class FactorSignal:
     raw_value: float
     symbol: str
     confidence: float = 1.0
-    exceptions: List[str] = field(default_factory=list)
-    extra: Dict[str, Any] = field(default_factory=dict)
+    exceptions: list[str] = field(default_factory=list)
+    extra: dict[str, Any] = field(default_factory=dict)
     factor_version: str = "1.0"
     is_valid: bool = True
     max_retries: int = 2
-    normalized_value: Optional[float] = None
-    rank_pct: Optional[float] = None
+    normalized_value: float | None = None
+    rank_pct: float | None = None
     retry_policy: str = "linear"
     schema_version: str = "1.0"
     timeout_ms: int = 3000
-    trace_context: Optional[TraceContext] = None
+    trace_context: TraceContext | None = None
 
 # ==== END CODGEN:CTR-002 ====
