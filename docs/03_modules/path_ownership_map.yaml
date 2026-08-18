@@ -6,7 +6,7 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-08-18T09:23:06Z'
+  generated_at: '2026-08-18T09:48:16Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
   total_path_claims: 6034
   total_ssot_claims: 16
@@ -94,7 +94,7 @@ ownership:
     owner_blueprint: 'MOD-REGIME-006'
     claim_type: 'depgraph_node'
     declared_in: ''
-    existence: '未实现'
+    existence: 'generated'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/position/core/cross_strategy_position_merger.py'
