@@ -17315,7 +17315,7 @@ entries:
   last_updated: '2026-08-17'
   owner_approval: '2026-08-17 Owner 裁定 B1+B2 全量（tracker #116）'
 - issue_id: '#ARCH-120'
-  title: FHS 引擎 MVP 施工裁定——GARCH(1,1) 参数估计自研 QMLE（不引 arch 库）+ FHS 独立模块并列方法论（不集成进 var_calculator 存量）+ CAND-AUTONOMYCORE-002 转正（MOD-RK-26，memo 36 §3.16 落地）
+  title: FHS 引擎 MVP 施工裁定——GARCH(1,1) 参数估计自研 QMLE（不引 arch 库）+ FHS 独立模块并列方法论（不集成进 var_calculator 存量）+ CAND-AUTONOMYCORE-002 转正（MOD-RK-26，memo 36 §3.16 落地）【编号注记：与已入 dev 的 AI-SEAT-001 #ARCH-120（MOD-SIG-056 席位形态分析器）撞号——merge 终态重编，统筹执行（先例 #ARCH-114~116 撞号重编模式）；Qwen 审查线 2026-08-18 撞号实证留痕】
   severity: P2中
   category: algorithm_design_decision
   adjudication: |-
@@ -17338,8 +17338,9 @@ entries:
     前向波动率聚集传播正是 FHS 相对 HS 的增量价值；HS 对照侧仍按 var_calculator 口径 √T 缩放（无 GARCH 结构可传播）。
     ④小样本守卫——garch_min_history=60（memo §3.7 窗口+CAND tech_notes"60 日小样本 GARCH 拟合稳定性需最小样本守卫"），
     min_history(30)≤n<60 不尝试拟合直接回退 historical。
-    ⑤错误码段——自建 ZA-RK-0025~0028（InvalidFHSConfig/InsufficientFHSHistory/ExcessiveFHSNonFinite/GarchConvergence），
-    与 var_calculator 错误类零共享保持独立审查面；AI-ERR-001 错误码对账批请收编。
+    ⑤错误码段——自建 ZA-RK-0026~0029（InvalidFHSConfig/InsufficientFHSHistory/ExcessiveFHSNonFinite/GarchConvergence），
+    与 var_calculator 错误类零共享保持独立审查面；ZA-RK-0025 避让 AI-ERR-001 重码改号计划（RK-0009→ZA-RK-0025 待 Owner 批准），
+    四码顺延 0026~0029（Qwen 审查线 2026-08-18 撞码实证避让）；AI-ERR-001 错误码对账批请收编。
   impact:
     - 'src/zephyr/risk/core/fhs_engine.py（新建，MOD-RK-26，evolving）'
     - 'tests/risk/test_fhs_engine.py（新建，27 用例两轮全绿）'

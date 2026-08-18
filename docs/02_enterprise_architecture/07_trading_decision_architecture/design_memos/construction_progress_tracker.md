@@ -355,14 +355,14 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 123 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量（分支原登 #121） | AI-GOVB-001 提交期横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批逐条归因：①3 条 GATE-PANORAMA-ALIGNMENT=08-16 PG 停服期历史（PG 已恢复+FOPEN-001 fail-open 留痕已治理）——已按 acknowledge_critical_warns 正式 ack 消音，横幅 24h 窗未 ack 归零；②2 条 DRIFT-WATCHDOG=AI-FILL 填报会话主仓直改 tracked 文档但**未注册 SessionRegistry 写入方**（work ∅→hash 实证），自愈合机制已自动 ack——FILL 侧流程缺口供统筹知情；③另 1 条 GATE-RULE-AUDIT 08-15 存量已出 24h 窗自然消音） | ✅ |
 | 124 | session_concurrency.py [CONSUMERS] 声明漂移（reconcile_worker/runner 括号内函数名误写为消费者自身函数而非被消费的 SessionRegistry）（分支原登 #122） | AI-GOVB-001 续批提交期 CONSUMERS-ACCURACY 门禁实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批顺手修：声明勘正为 reconcile_worker (SessionRegistry) / reconcile_runner (SessionRegistry)——与 #105 同类的头注派生数据漂移） | ✅ |
 
-### P1-补11 · 2026-08-18 AI-FHS-001 登记（FHS 引擎 MVP 批，CAND-AUTONOMYCORE-002 转正，#ARCH-120）
+### P1-补11 · 2026-08-18 AI-FHS-001 登记（FHS 引擎 MVP 批，CAND-AUTONOMYCORE-002 转正，#ARCH-120）【编号注记：分支原登 #128-#131 与已入 dev 的 ERR-001 #128 / SEAT-001 #132-135 撞号，且与在途 AISA 分支 #128-131 撞号；#ARCH-120 与 SEAT-001 已入 dev 的 #ARCH-120 撞号——merge 终态重编，统筹执行（先例 #120-124/#110-112）；Qwen 审查线 2026-08-18 撞号实证留痕】
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
 | 128 | FHS 引擎 MVP 施工（CAND-AUTONOMYCORE-002 转正，memo 36 §3.16 落地，MOD-RK-26） | Owner 派单（2026-08-18） | 新建 src/zephyr/risk/core/fhs_engine.py（GARCH(1,1) 自研 QMLE+标准化残差重采样+FHS VaR/ES+HS 对照）+27 用例+蓝图 v0.1.0+五登记链（token/capability/translation/#ARCH-120/blueprint）+CAND promoted 留痕；并列方法论独立模块零耦合 var_calculator（避让 R3 审查线）；27/27 两轮全绿+ruff 全过 | ✅ 已施工待 merge（worktree ai/AI-FHS-001/task-fhs-engine-mvp；merge 统筹串行） |
 | 129 | memo 36 状态更新（FHS 已施工后的文档对账） | AI-FHS-001 避让登记 | memo 36 §3.10 动作 4「⚠️ 未施工（远期候选 CAND-AUTONOMYCORE-002）」+ §3.9.2 远期 9 法 #5 FHS「未施工」+ §6 待裁定「FHS 采纳时机」三处需随 FHS 落码更新（§3.16 施工规约本体已是设计契约无需动）——归统筹侧 merge 后文档收敛批，本批避让（R3 审查线邻域文档） | ⏳ 待 merge 后统筹侧处理 |
 | 130 | FHS 远期编排层接线（should_switch_to_fhs 三触发 + FHS_COOLDOWN_DAYS=10 冷却期 + FHS_PERMANENTLY_DISABLED 升级 + RiskOrchestrator→fhs_engine 调用点） | memo 36 §3.16/§3.10 动作 4 设计契约 | 本 MVP 明确不做（引擎能力先行）；启用仍按 memo 36 §3.10 动作 4 触发链（Christoffersen 独立性失败 LR_ind p<0.05 且 kupiec p≥0.05 / 连续 2 次 E-backtesting red / 盘中重算显著连续 3 日）——待 RiskLayerOrchestrator 校准动作调用点接入批一并施工（对齐 v1.11.1 命名对账「§3.10 动作仍=设计契约」现状） | 🧊 远期 |
-| 131 | FHS 引擎 merge 后统筹侧收口项 | AI-FHS-001 移交 | ①depgraph node 9823086（src/zephyr/risk/core/fhs_engine.py，design 态）转 production 链（#ARCH-70 通道）；②蓝图 §0.6 五图对齐视图+§8 代码索引 AUTOGEN 生成（generate_blueprint_panorama.py MOD-RK-26 + sync_blueprint_code_index.py）；③algo_submodules ALGO_FLOW 节点翻译派生（A1-A5 五节点）；④错误码 ZA-RK-0025~0028 收编 AI-ERR-001 对账批 | ⏳ 待 merge 后统筹侧处理 |
+| 131 | FHS 引擎 merge 后统筹侧收口项 | AI-FHS-001 移交 | ①depgraph node 9823086（src/zephyr/risk/core/fhs_engine.py，design 态）转 production 链（#ARCH-70 通道）；②蓝图 §0.6 五图对齐视图+§8 代码索引 AUTOGEN 生成（generate_blueprint_panorama.py MOD-RK-26 + sync_blueprint_code_index.py）；③algo_submodules ALGO_FLOW 节点翻译派生（A1-A5 五节点）；④错误码 ZA-RK-0026~0029 收编 AI-ERR-001 对账批（ZA-RK-0025 已避让 ERR 改号计划 RK-0009→0025，Qwen 审查线撞码实证）；⑤#ARCH-120/tracker #128-131 撞号重编（与 SEAT-001/ERR-001/AISA 撞，统筹 merge 终态执行） | ⏳ 待 merge 后统筹侧处理 |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 

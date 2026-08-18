@@ -109,16 +109,16 @@ memo ES method='lower'，多日 √T 缩放）——供 FHS vs HS 偏离度审�
 
 ## 5. 错误契约
 
-- `InvalidFHSConfigError` (ZA-RK-0025)：配置非法 / portfolio_value 非正 / 维度错误
-- `InsufficientFHSHistoryError` (ZA-RK-0026)：有效样本 < min_history
-- `ExcessiveFHSNonFiniteDataError` (ZA-RK-0027)：非有限值占比超阈值（Fail-Closed）
-- `GarchConvergenceError` (ZA-RK-0028)：GARCH 不收敛且 fallback_to_historical=False
+- `InvalidFHSConfigError` (ZA-RK-0026)：配置非法 / portfolio_value 非正 / 维度错误
+- `InsufficientFHSHistoryError` (ZA-RK-0027)：有效样本 < min_history
+- `ExcessiveFHSNonFiniteDataError` (ZA-RK-0028)：非有限值占比超阈值（Fail-Closed）
+- `GarchConvergenceError` (ZA-RK-0029)：GARCH 不收敛且 fallback_to_historical=False
 
-（错误码段 AI-ERR-001 对账对象；本模块自建错误类与 var_calculator 零共享，保持独立审查面。）
+（错误码段 AI-ERR-001 对账对象；ZA-RK-0025 避让 ERR-001 重码改号计划 RK-0009→0025，四码顺延 0026~0029——Qwen 审查线 2026-08-18 撞码实证避让。与 var_calculator 错误类零共享保持独立审查面。）
 
 ## 6. 测试
 
-- `tests/risk/test_fhs_engine.py`（27 用例）
+- `tests/risk/test_fhs_engine.py`（28 用例）
 - 覆盖：配置校验 / Fail-Closed 输入校验 / GARCH 拟合收敛与参数恢复（宽容差）/
   FHS 基本不变式 / **与历史模拟法对照合理性**（regime shift FHS>HS、平静尾 FHS<HS、
   iid 正态 FHS≈HS<50% 偏离）/ 多日递归 / 种子可复现 / 不收敛回退三路径
@@ -143,4 +143,4 @@ memo ES method='lower'，多日 √T 缩放）——供 FHS vs HS 偏离度审�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/risk/test_fhs_engine.py` | ✅ 已实现 | 27 用例两轮全绿（2026-08-18 AI-FHS-001） |
+| `tests/risk/test_fhs_engine.py` | ✅ 已实现 | 28 用例两轮全绿（2026-08-18 AI-FHS-001 + Qwen 审查线优化器回归） |

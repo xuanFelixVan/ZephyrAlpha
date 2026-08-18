@@ -193,13 +193,13 @@ class FHSMethod(str, Enum):
 class InvalidFHSConfigError(ZephyrBaseError):
     """FHS 配置非法 (如置信度不在 (0,1))。"""
 
-    error_code = "ZA-RK-0025"
+    error_code = "ZA-RK-0026"
 
 
 class InsufficientFHSHistoryError(ZephyrBaseError):
     """历史收益样本不足 (< min_history), 无法计算 FHS/对照 VaR。"""
 
-    error_code = "ZA-RK-0026"
+    error_code = "ZA-RK-0027"
 
 
 class ExcessiveFHSNonFiniteDataError(ZephyrBaseError):
@@ -209,13 +209,13 @@ class ExcessiveFHSNonFiniteDataError(ZephyrBaseError):
     期间 (停牌/极端行情恰是高波动日) 风险被系统性低估且无任何信号。
     """
 
-    error_code = "ZA-RK-0027"
+    error_code = "ZA-RK-0028"
 
 
 class GarchConvergenceError(ZephyrBaseError):
     """GARCH(1,1) 拟合不收敛 (fallback_to_historical=False 时抛出)。"""
 
-    error_code = "ZA-RK-0028"
+    error_code = "ZA-RK-0029"
 
 
 # ──────────────────────────────────────────────────────────────────────────────
