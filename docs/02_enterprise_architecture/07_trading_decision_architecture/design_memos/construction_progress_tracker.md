@@ -384,7 +384,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 137 | LLM 打分通道默认未启用（规则法为默认打分器）（分支原登 #129） | AI-AISA-001 范围裁定 | nlp_inference 零样本 F1=0.5148 未达 SFT 目标 0.75（#ARCH-NLP-PIPELINE-001 Phase 2 实证）——MVP 默认规则法确定性打分，LLM 扩展口（构造注入 llm_scorer callable）已就位；切换条件=SFT F1≥0.75 且评估集复测通过 | ⏳ 待 SFT 达标后切换 |
 | 138 | sentiment 持久化表未建（MVP 内存态输出）（分支原登 #130） | AI-AISA-001 范围裁定 | 26 号备忘录裁定情绪分数作事件信号维度非独立 alpha，落库需求待下游确定；建表时走 data_asset_registry + CH DDL-as-Code 流程（DS-104 同族），不绕过 | ⏳ 待下游需求驱动 |
 | 139 | symbol 级舆情（标的关联）与 CTR-INT-AISA 契约登记（分支原登 #131） | AI-AISA-001 范围裁定 | MVP 产出市场级窗口 sentiment_index；symbol 级聚合需新闻→标的关联层（公告已有标的字段、新闻需 NER/规则提取，26 号备忘录 BM-SEL-19 漏斗联动候选）；契约 CTR-INT-AISA 拟定未登记，待 MOD-SIG-002 信号生成定型后对齐 | ⏳ 待 MOD-SIG-002 定型 |
-| 140 | ZA-IT-0003 错误码未登 error_code_registry.yaml（分支原登 #132；AI-AISA-001 GLM 复审发现） | AI-AISA-001 GLM 复审 | error_code_registry.yaml 系 AI-ERR-001 活跃施工面故施工侧避让；现 ERR-001 已 merge（795fa5c00f），登记格式=code/class/module/file/description，条目：ZA-IT-0003 / NewsSentimentAnalyzerError / zephyr.intelligence.news_sentiment_analyzer / 舆情分析器参数与输入校验错误 | ⏳ 移交统筹收口批补登 |
+| 140 | ZA-IT-0003 错误码未登 error_code_registry.yaml（分支原登 #132；AI-AISA-001 GLM 复审发现） | AI-AISA-001 GLM 复审 | error_code_registry.yaml 系 AI-ERR-001 活跃施工面故施工侧避让；现 ERR-001 已 merge（795fa5c00f），登记格式=code/class/module/file/description，条目：ZA-IT-0003 / NewsSentimentAnalyzerError / zephyr.intelligence.news_sentiment_analyzer / 舆情分析器参数与输入校验错误 | ✅ 已闭环（2026-08-18 第八统筹 R3 merge 窗口顺手补登——GATE-ERRCODE 对账测试实测拦截 ZA-IT-0003 未登记，按 tracker 条目原文补入，test_error_code_consistency 转绿实证） |
 
 ### P1-补14 · 2026-08-18 AI-R3 登记（近 3 日 merge 增量五批复审批）【编号注记：分支原登 #128-131（插位 P2 存量表 #81/#82 之间，且与 ERR-001 #128 撞号）+#ARCH-120~123（与 SEAT-001 #ARCH-120 撞号），merge 终态重编 #141-144 + #ARCH-124~127——2026-08-18 第八统筹】
 

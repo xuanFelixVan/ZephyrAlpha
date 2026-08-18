@@ -683,6 +683,11 @@ error_codes:
   class: TamperError
   module: zephyr.intelligence.model_profiling.capability_passport
   file: src/zephyr/intelligence/model_profiling/capability_passport.py
+- code: ZA-IT-0003
+  class: NewsSentimentAnalyzerError
+  module: zephyr.intelligence.news_sentiment_analyzer
+  file: src/zephyr/intelligence/news_sentiment_analyzer.py
+  description: 舆情分析器参数与输入校验错误（AI-AISA-001 GLM 复审发现未登，2026-08-18 第八统筹收口批补登，tracker #140）
 - code: ZA-KB-0002
   class: MCPError
   module: zephyr.integration.mcp.tool_contracts
