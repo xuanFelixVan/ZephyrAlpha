@@ -17,9 +17,9 @@
 # noqa: m10-time-trigger  M10豁免: threading.Timer用于一次性超时/延迟执行，非周期时间触发
 from __future__ import annotations
 
-from typing import Final
 import logging
 import threading
+from typing import Final
 
 logger = logging.getLogger(__name__)
 

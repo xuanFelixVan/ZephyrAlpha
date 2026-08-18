@@ -16,6 +16,7 @@
 # [TTL] permanent
 
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
 """MOD-INF-026 §24-25 — Git 历史元数据提取 + 多 IDE 规则生成器。
 
 SRC-0040: 从 git_metadata.py + multi_ide.py 合并。

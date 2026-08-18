@@ -17,9 +17,9 @@
 
 from __future__ import annotations
 
-from typing import Final
 import random
 from enum import Enum
+from typing import Final
 
 
 class BulkheadPool(str, Enum):

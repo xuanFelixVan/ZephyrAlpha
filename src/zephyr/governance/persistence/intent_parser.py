@@ -61,10 +61,9 @@ safety_level: M
 
 from __future__ import annotations
 
-from typing import Final
 import time
 from enum import Enum
-from typing import Any, Protocol, runtime_checkable
+from typing import Any, Final, Protocol, runtime_checkable
 
 from pydantic import BaseModel, Field
 

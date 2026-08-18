@@ -50,7 +50,10 @@ from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.governance.rule_patterns import PIICategory, PII_PATTERNS  # SSoT (ARCH-033 Phase 7 修正: 合并进 rule_patterns)
+from zephyr.governance.rule_patterns import (  # SSoT (ARCH-033 Phase 7 修正: 合并进 rule_patterns)
+    PII_PATTERNS,
+    PIICategory,
+)
 
 _logger = logging.getLogger(__name__)
 

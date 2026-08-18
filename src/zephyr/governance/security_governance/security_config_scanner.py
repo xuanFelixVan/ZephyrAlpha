@@ -23,6 +23,7 @@ Security Config Scanner — v0.13.0 缺失安全配置扫描器。
 from __future__ import annotations
 
 from typing import Final
+
 REQUIRED_CONFIGS: Final[dict] = {"limits.yaml": "resource_limits", "cors.yaml": "cors_whitelist", "secrets.yaml": "api_keys"}
 
 

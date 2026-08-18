@@ -33,7 +33,6 @@ logger = logging.getLogger(__name__)
 
 import json
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import threading
 from dataclasses import dataclass, field
 from enum import Enum
@@ -41,6 +40,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.sqlite_factory import get_db_connection
 from zephyr.shared.utils.time_utils import now_iso  # 5.161 修复: 收敛内联时间戳副本到真源
 
 __all__ = [

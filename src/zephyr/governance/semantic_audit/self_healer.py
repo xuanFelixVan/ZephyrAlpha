@@ -44,8 +44,8 @@ if TYPE_CHECKING:
 
 from pydantic import BaseModel
 
-from zephyr.shared.io.yaml_utils import load_vocabulary_values
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.io.yaml_utils import load_vocabulary_values
 
 logger = logging.getLogger(__name__)
 

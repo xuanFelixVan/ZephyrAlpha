@@ -107,7 +107,6 @@ from . import layer1_discovery, layer2_communication
 from .governance.auditor import A2AAuditor
 from .governance.governance_adapter import GovernanceAdapter
 
-
 __all__ = [
     "A2ACommunication",
     "A2ACommunicationProtocol",

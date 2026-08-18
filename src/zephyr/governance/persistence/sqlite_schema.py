@@ -67,7 +67,9 @@ import re
 import sqlite3
 from pathlib import Path
 
-from zephyr.shared.io.paths import DB_PATH as _DB_PATH  # 治本(2026-06-30): 别名阻断 re-export, 防止 IDE organize imports 自动加回 from sqlite_schema import DB_PATH
+from zephyr.shared.io.paths import (
+    DB_PATH as _DB_PATH,  # 治本(2026-06-30): 别名阻断 re-export, 防止 IDE organize imports 自动加回 from sqlite_schema import DB_PATH
+)
 
 # ---------------------------------------------------------------------------
 # DDL — tasks 表
@@ -432,7 +434,6 @@ from zephyr.shared.io.sqlite_factory import (  # noqa: E402
     _apply_pragmas,
     get_db_connection,
 )
-
 
 # ---------------------------------------------------------------------------
 # 版本化迁移框架（SH-DB-001 v2.0）

@@ -21,13 +21,13 @@ import json
 import logging
 import os
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 from collections import defaultdict
 from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import FixAction, FixStatus
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 logger = logging.getLogger(__name__)
 

@@ -315,7 +315,7 @@ class SemanticAuditor:
                 logger.warning("Health check failed: %s", exc, exc_info=True)
 
         # 降级: 返回最小健康状态
-        from zephyr.governance.semantic_audit.self_health import HealthStatus, HealthLevel
+        from zephyr.governance.semantic_audit.self_health import HealthLevel, HealthStatus
         return HealthStatus(level=HealthLevel.DEGRADED, reason="self_health unavailable")
 
     def _extract_module_id(self, doc_path: Path) -> str:

@@ -15,7 +15,7 @@
 from zephyr.governance.persistence.dataflowgraph_schema import _DATAFLOW_CORE_TABLES  # noqa: F401
 
 # 显式 import 子模块（满足 TEST-SOURCE-CONSISTENCY 门禁的符号漂移检测）
-from . import intent_parser, intent_keyword_mapper  # noqa: F401
+from . import intent_keyword_mapper, intent_parser  # noqa: F401
 
 __all__ = [
     "dataflowgraph_schema",

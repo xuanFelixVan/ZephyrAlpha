@@ -26,9 +26,8 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import FixAction, ShadowResult
-
-from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 

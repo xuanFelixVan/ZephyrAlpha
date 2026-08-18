@@ -58,9 +58,9 @@ from typing import Any
 from zephyr.governance.persistence.decisiongraph_schema import (
     get_decisiongraph_pg_connection,
 )
+
 # R3 治本（2026-07-28）：_PgConnExecuteWrapper 规范副本下沉到 pg_wrapper（消除三处重复）
 from zephyr.governance.persistence.pg_wrapper import _PgConnExecuteWrapper
-
 
 # JSONB 字段名（自动解析为 dict/list）
 _JSONB_NODE_FIELDS = ("inputs", "outputs", "conditions", "facets")

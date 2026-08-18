@@ -64,8 +64,9 @@ Safety : H（基础设施核心，状态机错误会影响整个任务流水线�
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
@@ -80,19 +81,17 @@ from datetime import UTC, datetime
 from pathlib import Path
 from threading import RLock
 
-from zephyr.governance.observability_governance.projection_engine import ProjectionEngine
 from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
     GATES_DIR,
     GateEngine,
 )
-from zephyr.governance.persistence.sqlite_schema import get_db_connection, init_db
-from zephyr.shared.io.paths import DB_PATH
-from zephyr.shared.schema.severity_types import Priority
 from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolationError
-from zephyr.shared.utils.time_utils import now_iso
-from zephyr.shared.schema.task_types import Task, TaskCard, TaskNamespace, TaskStatus
+from zephyr.governance.observability_governance.projection_engine import ProjectionEngine
+from zephyr.governance.persistence.sqlite_schema import get_db_connection, init_db
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
-
+from zephyr.shared.schema.severity_types import Priority
+from zephyr.shared.schema.task_types import Task, TaskCard, TaskNamespace, TaskStatus
+from zephyr.shared.utils.time_utils import now_iso
 
 # 5.160.1 修复：SQL常量集中化（72处裸SQL提取为模块级常量）
 
@@ -1651,10 +1650,10 @@ class TaskRepository:
         source_bp = getattr(task, "source_blueprint", "") or ""
         if not allow_direct_create and (not source_bp.strip() or source_bp.strip().lower() == "unknown"):
             raise ValueError(
-                f"RULE-ZERO-TASK 违规: 任务的 source_blueprint 为空或 'unknown'。"
-                f"蓝图任务建卡路径 = BlueprintDecomposer.decompose(blueprint_path)（MOD-TASK_SYSTEM）。"
-                f"非蓝图任务（Bug修复/架构债务/代码扫描/重构任务）请传 allow_direct_create=True。"
-                f"RULE-ZERO-TASK v2.0+: 建卡触发=用户主动 OR 八指标阈值触发，蓝图拆解非唯一路径。"
+                "RULE-ZERO-TASK 违规: 任务的 source_blueprint 为空或 'unknown'。"
+                "蓝图任务建卡路径 = BlueprintDecomposer.decompose(blueprint_path)（MOD-TASK_SYSTEM）。"
+                "非蓝图任务（Bug修复/架构债务/代码扫描/重构任务）请传 allow_direct_create=True。"
+                "RULE-ZERO-TASK v2.0+: 建卡触发=用户主动 OR 八指标阈值触发，蓝图拆解非唯一路径。"
             )
         # GOV-TASK-001 模板校验 + RULE-THIRTEEN 粒度门禁仅在 enable_gate=True 时强制；
         # enable_gate=False（测试/集成场景）跳过，允许最小字段任务创建

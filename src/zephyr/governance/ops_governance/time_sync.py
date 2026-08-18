@@ -17,8 +17,8 @@
 
 from __future__ import annotations
 
-from typing import Final
 from dataclasses import dataclass
+from typing import Final
 
 NTP_SERVER: Final[str] = "pool.ntp.org"
 NTP_SYNC_INTERVAL_SECONDS: Final[int] = 60

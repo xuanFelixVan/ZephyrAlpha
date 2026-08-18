@@ -35,9 +35,11 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     SafetyDecision,
     ValidationResult,
 )
-# 5.12.2#1 修复：atomic_write 委托 canonical 真源，消除签名漂移
-from zephyr.shared.io.file_utils import AtomicWriteError, atomic_write as _canonical_atomic_write
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+# 5.12.2#1 修复：atomic_write 委托 canonical 真源，消除签名漂移
+from zephyr.shared.io.file_utils import AtomicWriteError
+from zephyr.shared.io.file_utils import atomic_write as _canonical_atomic_write
 
 logger = logging.getLogger(__name__)
 

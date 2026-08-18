@@ -21,7 +21,6 @@ from __future__ import annotations
 import logging
 import os
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import threading
 import time
 from collections import defaultdict
@@ -36,6 +35,7 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     FixStatus,
 )
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 logger = logging.getLogger(__name__)
 

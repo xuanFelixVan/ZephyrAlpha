@@ -35,11 +35,10 @@ Data contract ( section 4.3):
 
 from __future__ import annotations
 
-from typing import Final
 import re
 import time
 from enum import Enum
-from typing import Any, Literal
+from typing import Any, Final, Literal
 
 from pydantic import BaseModel, Field
 

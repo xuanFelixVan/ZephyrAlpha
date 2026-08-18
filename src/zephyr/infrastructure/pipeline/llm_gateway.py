@@ -36,9 +36,10 @@ import os
 import time
 from dataclasses import dataclass
 from typing import Any
+
 from zephyr.shared.foundation.constants import DEFAULT_DEEPSEEK_URL
-from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from zephyr.shared.security.secrets import get_secret_or_default
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)
 

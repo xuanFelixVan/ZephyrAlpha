@@ -23,13 +23,14 @@ import logging
 import os
 import random
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import threading
 import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from queue import Full, Queue
+
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 logger = logging.getLogger(__name__)
 

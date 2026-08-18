@@ -28,6 +28,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
+
 from zephyr.shared.security.secrets import get_secret_or_default
 
 logger = logging.getLogger(__name__)
@@ -158,6 +159,7 @@ from email.mime.text import MIMEText as _MIMEText
 from urllib.error import URLError as _URLError
 from urllib.request import Request as _Request
 from urllib.request import urlopen as _urlopen
+
 urlopen = _urlopen  # public alias（Stage 4 公共化）
 
 

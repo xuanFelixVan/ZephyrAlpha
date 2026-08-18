@@ -19,8 +19,9 @@
 
 from datetime import datetime, timedelta
 
-from ..layer2_communication.a2a_state import A2ATask, A2ATaskStatus
 from zephyr.shared.utils.time_utils import now_utc
+
+from ..layer2_communication.a2a_state import A2ATask, A2ATaskStatus
 
 
 class Supervisor:

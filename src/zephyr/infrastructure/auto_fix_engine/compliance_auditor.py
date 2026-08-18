@@ -21,11 +21,11 @@ import hashlib
 import logging
 import os
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 from datetime import UTC, datetime
 
 from zephyr.infrastructure.auto_fix_engine.models import ComplianceEvidence, FixAction
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 logger = logging.getLogger(__name__)
 

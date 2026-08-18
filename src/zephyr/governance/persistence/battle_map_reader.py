@@ -61,7 +61,6 @@ from zephyr.governance.persistence.battlemap_schema import (
 )
 from zephyr.governance.persistence.pg_wrapper import _PgConnExecuteWrapper
 
-
 # JSONB 字段名（自动解析为 dict/list）
 _JSONB_STEP_FIELDS = ("indicators",)
 

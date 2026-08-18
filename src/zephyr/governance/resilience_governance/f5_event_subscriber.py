@@ -40,13 +40,13 @@ F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3).
 """
 from __future__ import annotations
 
-from typing import Final
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Final
 
-from zephyr.shared.event_bus import EventBusBackpressure, EventPriority, bus as default_bus
+from zephyr.shared.event_bus import EventBusBackpressure, EventPriority
+from zephyr.shared.event_bus import bus as default_bus
 
 logger = logging.getLogger(__name__)
 

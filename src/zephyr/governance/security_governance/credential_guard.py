@@ -22,8 +22,8 @@ Credential Guard — v0.7.0 密钥泄露防护: env检测+git log扫描+运行�
 
 from __future__ import annotations
 
-from typing import Final
 import re
+from typing import Final
 
 CREDENTIAL_PATTERNS: Final[list] = [
     r"sk-[A-Za-z0-9]{20,}",

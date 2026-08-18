@@ -25,7 +25,6 @@ import logging
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.infrastructure.asset_inventory.models import (
     AssetLifecycleEvent,
     AssetStatus,
@@ -34,6 +33,7 @@ from zephyr.infrastructure.asset_inventory.models import (
     Priority,
     UnifiedAssetIndex,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 

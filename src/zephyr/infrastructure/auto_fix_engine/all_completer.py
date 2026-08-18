@@ -32,7 +32,6 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     FixStatus,
     ValidationResult,
 )
-
 from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)

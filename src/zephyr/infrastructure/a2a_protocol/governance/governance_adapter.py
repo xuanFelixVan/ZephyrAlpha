@@ -24,6 +24,7 @@ G-CT-008: A2A -> RBAC + Escalation
 import logging
 from dataclasses import dataclass, field
 from typing import Any
+
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)

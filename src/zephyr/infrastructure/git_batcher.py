@@ -215,7 +215,7 @@ class GitCommandBatcher:
         return self._parse_tar_archive(r.stdout)
 
     def git_diff_cached_names(
-        self, files: Optional[list[str]] = None, timeout: int = 60
+        self, files: list[str] | None = None, timeout: int = 60
     ) -> list[str]:
         """批量获取 staged 文件名。
 
@@ -232,7 +232,7 @@ class GitCommandBatcher:
         return self._run_git_name_list(cmd, timeout, "git_diff_cached_names")
 
     def git_diff_names(
-        self, ref_spec: str, files: Optional[list[str]] = None, timeout: int = 60
+        self, ref_spec: str, files: list[str] | None = None, timeout: int = 60
     ) -> list[str]:
         """批量获取 diff 文件名。
 
@@ -250,7 +250,7 @@ class GitCommandBatcher:
         return self._run_git_name_list(cmd, timeout, "git_diff_names")
 
     def git_ls_files_tracked(
-        self, files: Optional[list[str]] = None, timeout: int = 60
+        self, files: list[str] | None = None, timeout: int = 60
     ) -> list[str]:
         """批量获取 tracked 文件列表。
 

@@ -47,6 +47,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from threading import Event
+
 from zephyr.shared.utils.time_utils import now_utc
 
 DEFAULT_TARGET_MS = 1.0

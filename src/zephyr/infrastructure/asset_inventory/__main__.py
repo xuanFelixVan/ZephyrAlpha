@@ -38,7 +38,6 @@ import os
 import sys
 from pathlib import Path
 
-from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.infrastructure.asset_inventory.classifier import Classifier
 from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
 from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
@@ -46,6 +45,7 @@ from zephyr.infrastructure.asset_inventory.reconciler import Reconciler
 from zephyr.infrastructure.asset_inventory.scanner import Scanner
 from zephyr.infrastructure.asset_inventory.telemetry import get_telemetry
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 

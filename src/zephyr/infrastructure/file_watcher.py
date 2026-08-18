@@ -27,8 +27,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
-
 from zephyr.shared.io.paths import REPO_ROOT
+
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["FileChangeEvent", "FileChangeType", "FileWatcher"]
@@ -235,8 +235,8 @@ class BlueprintWatcher:
     @staticmethod
     def _trigger_decompose(blueprint_path: Path) -> None:
         try:
-            from zephyr.shared.protocols.registry import ServiceRegistry
             from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
+            from zephyr.shared.protocols.registry import ServiceRegistry
 
             task_repo = ServiceRegistry.get("task_repo")
             decomposer = BlueprintDecomposer(task_repo=task_repo)

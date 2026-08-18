@@ -363,7 +363,7 @@ class DriftStateMachine:
 
     def suppress(self, event_id, until):
         if event_id not in self._events:
-            raise InvalidTransitionError(f"Event not found")
+            raise InvalidTransitionError("Event not found")
         rec = self._events[event_id]
         if not self.validate_transition(rec.state, _drift_state_value("SUPPRESSED")):
             raise InvalidTransitionError(

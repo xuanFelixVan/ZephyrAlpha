@@ -46,6 +46,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
 # R3 治本（2026-07-28）：_PgConnExecuteWrapper 规范副本下沉到 pg_wrapper（消除三处重复）
 from zephyr.governance.persistence.pg_wrapper import _PgConnExecuteWrapper
 

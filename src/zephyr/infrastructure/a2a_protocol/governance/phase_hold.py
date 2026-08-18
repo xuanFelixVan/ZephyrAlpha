@@ -31,6 +31,8 @@ from typing import Final
 from zephyr.infrastructure.a2a_protocol.phase_hold import (
     PHASE_HOLD_ACTIVE,
     PHASE_HOLD_REASON,
+)
+from zephyr.infrastructure.a2a_protocol.phase_hold import (
     Phase4Hold as _Phase4HoldBase,
 )
 

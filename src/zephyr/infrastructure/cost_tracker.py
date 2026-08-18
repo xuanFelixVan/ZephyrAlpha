@@ -35,7 +35,6 @@ logger = logging.getLogger(__name__)
 
 import json
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import threading
 import uuid
 from dataclasses import dataclass, field
@@ -44,6 +43,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 __all__ = [
     "COST_TRACKER_SCHEMA",

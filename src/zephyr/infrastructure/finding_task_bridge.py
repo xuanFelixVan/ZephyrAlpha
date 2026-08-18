@@ -28,9 +28,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.shared.schema.schemas import Priority, SafetyLevel
 from zephyr.shared.io.paths import DB_PATH
 from zephyr.shared.protocols.registry import ServiceRegistry
+from zephyr.shared.schema.schemas import Priority, SafetyLevel
 from zephyr.shared.schema.task_types import GateLevel, TaskCard, TaskNamespace, TaskStatus
 
 logger = logging.getLogger(__name__)

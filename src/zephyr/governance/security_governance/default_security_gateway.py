@@ -40,13 +40,13 @@ from typing import Any, ClassVar
 from uuid import uuid4
 
 from zephyr.governance.intelligence_governance.aisg_sandbox import AISGSandbox
-from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from zephyr.governance.security_governance.security_gateway_base import (
     AuditAction,
     AuditDecision,
     SecurityGateway,
 )
 from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)
 

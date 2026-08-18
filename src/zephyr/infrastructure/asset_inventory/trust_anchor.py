@@ -16,6 +16,7 @@
 # [TTL] permanent
 
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
 """MOD-INF-026 §26 — 三重信任锚验证门 R20。
 
 TripleTrustAnchorGate: Git clean + pytest green + audit continuity -> trust level。

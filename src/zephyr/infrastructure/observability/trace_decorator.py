@@ -16,6 +16,7 @@
 # [TTL] permanent
 
 from __future__ import annotations
+
 """
 Trace Decorator — 可观测性追踪 @trace 装饰器。
 

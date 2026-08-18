@@ -29,7 +29,6 @@ F5 = EscalationProtocol 五件套: EscalationEngine + DelegationEngine + Deadloc
 6. 状态恢复: 从 SQLite 恢复 DeadlockDetector 状态 (供下次启动使用)
 """
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import atexit
 import json
@@ -37,13 +36,15 @@ import logging
 import os
 import signal
 import sqlite3
-from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import tempfile
 import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
+from zephyr.shared.io.serialization import dumps
 
 logger = logging.getLogger(__name__)
 

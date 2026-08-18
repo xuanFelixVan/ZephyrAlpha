@@ -22,13 +22,13 @@ RegistryAdapter 抽象基类 + 7 个适配器实现 + RegistryManager。
 """
 
 import csv
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import io
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
 
 from zephyr.infrastructure.asset_inventory.models import ClassifiedAsset, RegistryEntry
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 # 5.66.3 修复：表名白名单，防止 f-string 拼接表名的 SQL 注入风险。
 # SqliteAdapter 读取 governance.db（zalpha_metadata.db）各表，白名单覆盖全部已知表名。
@@ -851,6 +851,7 @@ def discover_all_registries() -> list[dict]:
         >>> print(f"基础设施相关: {infra}")
     """
     import yaml
+
     from zephyr.shared.io.paths import REPO_ROOT
 
     # ROOR 是注册表发现的唯一真源（human_gated）。绝对路径（硬约束）。

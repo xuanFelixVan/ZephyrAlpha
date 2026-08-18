@@ -46,9 +46,9 @@ from zephyr.infrastructure.pipeline.models import (
     PipelineAffinityConstraint,
     PipelineRouteDecision,
 )
-from zephyr.shared.schema.schemas import BASE_CONFIG, Priority
 from zephyr.shared.foundation.models import TaskCard
 from zephyr.shared.io.yaml_utils import load_vocabulary_section_list
+from zephyr.shared.schema.schemas import BASE_CONFIG, Priority
 
 __all__ = [
     "CtPipeRoutingHints",

@@ -46,21 +46,21 @@ Depends    : sqlite_schema.py
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import sqlite3
 import threading
 import time
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Final
 
-from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 from zephyr.governance.persistence.sqlite_schema import (
     get_db_connection,
     init_db,
     schema_version,
 )
 from zephyr.shared.foundation.errors import PoolExhaustedError
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [

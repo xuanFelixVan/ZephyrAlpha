@@ -199,8 +199,9 @@ class DatabaseService(DatabaseCRUDMixin):
         if self._redis_conn is None:
             with self._lock:
                 if self._redis_conn is None:
-                    from zephyr.infrastructure.redis_config import load_redis_config
                     import redis as redis_lib
+
+                    from zephyr.infrastructure.redis_config import load_redis_config
 
                     cfg = load_redis_config()
                     self._redis_conn = redis_lib.Redis(**cfg)

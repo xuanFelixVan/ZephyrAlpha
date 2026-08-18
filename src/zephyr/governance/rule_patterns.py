@@ -132,11 +132,9 @@ Usage::
 
 from __future__ import annotations
 
-from typing import Final
-
 import re
-
 from enum import Enum
+from typing import Final
 
 __all__ = [
 
