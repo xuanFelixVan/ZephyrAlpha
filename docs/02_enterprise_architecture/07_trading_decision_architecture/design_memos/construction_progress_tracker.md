@@ -369,6 +369,18 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 
 > **本批验证汇总**：pytest 199 passed（market_meta 52 + ipo_calendar 7 + tick_subscriber 82 + threshold_consistency 58，含新增断言）；tasks.yaml YAML 解析通过；4 改动 .py AST 通过；ruff 零增量（基线比对实证）。**避让登记**：无（开工 `session_worktree.py list` 实证零在途 session；tracker §五表区 448+ 行有统筹在途改动，本登记落 §六 348-357 行区与在途区不相交，可自动并集）。**共享收口**：无新增（#127 CH 建表统筹执行时自动吸收 #130 修复）。
 
+### P1-补12 · 2026-08-18 AI-R1-002 登记（复审批——复核初审 #128-#133 + 漏报补登 2 项治本）
+
+复审结论：初审 6 项**全部确认**（#128 P1 定级恰当——当前日频运行全在 2020-08-24 改革日后，仅历史回填+ST 快照组合触发，不构成 P0；#130 行为恒等论证经 CH multiIf 逐分支推演成立——123/128 前缀两路径终值均 'SZ' 且跨表 JOIN 一致性反获改善；#131/#129/#132 修复完整性验证通过；#133 观察项维持）。漏报复查三面：降级机阈值真源无漂移（触发 0.005×ratio0.5=0.0025 与 37 号 §3.6 半阈值 0.25% 一致、LEVEL_2/3 内部 ×1.2=0.3% 与矩阵一致、卖压 0.50/min_hold {10,15,30} 一致——`_CHINEXT_20PCT_DATE` 般逐项比对 detector.config 与 RiskLayerConfig 真源）。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 134 | ipo_calendar `zfill(6)` 前无长度门禁——5 位数字码幻影串号（'00700'.zfill(6)='000700' 撞深主板前缀静默入库）；姊妹函数 `_suspend_rows_from_em/baidu` 均 `len!=6→skip`（JOB-077 港股串入实证后加固），防御范式不一致 | AI-R1-002 漏报复查面② | 巨潮源当前实证 402 行恒 6 位（风险=上游变更时静默串码）；官方清单恒 6 位，严格化后上游异常显式跳过（保守缺行优于幻影错值） | ✅ 已闭环（commit bc787ca8：`len(code)!=6 or not code.isdigit()` 门禁替代 zfill，注释留痕姊妹防御对齐依据；`test_invalid_code_skipped` 补 '12345' 短码幻影断言） |
+| 135 | threshold_loader float cast 接受 NaN/Inf（初审 #132 只堵 bool 未堵非有限值）——YAML `value: .nan` 静默通过后**阈值比较恒 False → 风控告警链静默失效**（比 bool→1.0 更隐蔽：NaN<threshold 与 >threshold 双向恒假，三级回撤告警全哑） | AI-R1-002 漏报复查（#132 同族遗漏面） | 触发条件同 #132（注册表笔误），但后果更重（整链静默 vs 单值错误）；数值字符串 "inf"/"1e400" 溢出同面 | ✅ 已闭环（commit bc787ca8：float 分支加 `math.isfinite` 门禁；`test_nan_inf_value_fail_closed` 9 模块×3 值参数化 + `test_numeric_string_overflow_fail_closed` loader 直测 4 字符串；注："inf" 对 cast="str"（PLV 字符串规约）是合法值，参数化已分离防误报） |
+| 136 | 复审补充观察项（不修登记）：①`_fetch_stk_limit` 45 天缓冲窗口 vs 2018 停牌新规前长停牌股（数月级）——复牌日窗口内 i=0 保守跳过不产出行（缺行而非错值，回测约束缺失偏保守方向）；②创业板 2020-08-24 前已进入退市整理期 3 股（千山退/神雾退/盛运退）改革后应保持 10%，现实现一律 20%（3 股×数月窗口，回填精度残余缺口）；③`check_recovery` docstring"active_signals 范围 0-2（双条件计数）"为 MOD-RK-21 旧口径，orchestrator 实传 detector 多信号计数（矩阵语义正确，注释滞后） | AI-R1-002 复核过程 | 全部低危/保守方向/注释级，按"不过度修复"纪律登记 | ⏳ 观察项（①②供回填专项批评估；③ RK-21 文件不属本批面，记 docstring 勘正候选） |
+
+> **复审批验证汇总**：pytest 227 passed（初审 199 + 复审新增 28：NaN/Inf 27 + loader 直测 1，ipo 短码断言并入既有用例）；ruff 零增量（3 项 I001=初审 #133④ 已登记存量）。**分支依赖**：AI-R1-002 分支已 merge ai/AI-R1-001/task-audit-r1-review（b697258c54，fast-forward 不可行因 dev 已前进——统筹 merge 本分支即同时落地初审+复审两批）。
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
