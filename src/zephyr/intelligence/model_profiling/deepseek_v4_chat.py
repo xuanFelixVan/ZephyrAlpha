@@ -36,7 +36,6 @@ DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端
 
 from __future__ import annotations
 
-from typing import Final
 import json
 import logging
 import os
@@ -44,7 +43,7 @@ import random as _random
 import re
 import sys
 import time as _time
-from typing import Any
+from typing import Any, Final
 
 from zephyr.shared.foundation.constants import DEFAULT_DEEPSEEK_URL
 from zephyr.shared.security.secrets import get_secret_or_default

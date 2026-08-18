@@ -66,11 +66,11 @@
 """
 
 from zephyr.integration.local_model.cache_layer import CacheLayer
+from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
 from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
 from zephyr.integration.local_model.ollama_chat import OllamaChat
 from zephyr.integration.local_model.ollama_embedding import OllamaEmbedder
-from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
 
 __all__ = [
     "CacheLayer",

@@ -51,8 +51,8 @@ from typing import Final
 
 from zephyr.position.services.position_audit_logger import (
     AuditChainError,
-    PositionAuditEventType,
     AuditSource,
+    PositionAuditEventType,
     PositionAuditLogger,
     PositionAuditRecord,
     PositionAuditReport,

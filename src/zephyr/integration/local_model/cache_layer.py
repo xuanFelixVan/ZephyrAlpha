@@ -121,11 +121,10 @@ CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU
 
 from __future__ import annotations
 
-from typing import Final
 import hashlib
 import logging
 import threading
-from typing import Any
+from typing import Any, Final
 
 import numpy as np
 

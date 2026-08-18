@@ -35,7 +35,6 @@ from mcp.server import FastMCP
 
 # 5.152 #24 sanctioned: integration 为组合层，允许依赖全部层（gov_enforcement.L2 任务类型）。
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, normalize_execution_model
-from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
 from zephyr.shared.foundation.models import (
     DecompositionResult,
@@ -44,6 +43,7 @@ from zephyr.shared.foundation.models import (
     TaskStatus,
 )
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)

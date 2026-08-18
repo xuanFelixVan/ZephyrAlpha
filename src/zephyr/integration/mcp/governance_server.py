@@ -48,6 +48,7 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 if TYPE_CHECKING:

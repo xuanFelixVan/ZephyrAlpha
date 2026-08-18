@@ -44,7 +44,7 @@ import logging
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from zephyr.ml_train.trainer_base import ModelMetadata, ModelRegistry, ModelTrainerBase
 

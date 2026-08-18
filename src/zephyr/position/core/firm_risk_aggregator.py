@@ -136,7 +136,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Callable
 
-
 # ── 常量（参数来源：31_position_sizing §2.4）──
 SINGLE_NAME_CAP = 0.08           # 单票硬上限 8%（总资金口径，§2.4）
 SECTOR_DEVIATION_CAP = 0.10      # 单行业偏离基准 ±10%（§2.5.1）

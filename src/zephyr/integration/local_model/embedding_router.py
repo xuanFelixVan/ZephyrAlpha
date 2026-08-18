@@ -38,12 +38,11 @@ EmbeddingRouter — MOD-INF-011 双嵌入维度路由
 
 from __future__ import annotations
 
-from typing import Final
 import hashlib
 import logging
 import time
 from pathlib import Path
-from typing import Any, Literal, Protocol, runtime_checkable
+from typing import Any, Final, Literal, Protocol, runtime_checkable
 
 import numpy as np
 

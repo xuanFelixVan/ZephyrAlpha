@@ -34,9 +34,10 @@ from __future__ import annotations
 import logging
 from datetime import UTC, datetime
 
+from zephyr.integration.vector_memory.interface import MemoryEntry, VectorMemoryBase
+
 # 5.152 #21 sanctioned: integration 为组合层，允许依赖全部层（intelligence 统一记忆 API）。
 from zephyr.intelligence.model_evaluation.unified_memory_api import UnifiedMemoryAPI, WriteTrace, get_unified_memory_api
-from zephyr.integration.vector_memory.interface import MemoryEntry, VectorMemoryBase
 
 _logger = logging.getLogger(__name__)
 

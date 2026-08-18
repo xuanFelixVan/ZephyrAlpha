@@ -29,11 +29,10 @@ BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Final
 
 from zephyr.integration.vector_memory.collection_manager import (
     COLLECTION_SCHEMAS,

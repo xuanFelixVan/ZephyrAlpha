@@ -30,13 +30,13 @@
 
 from __future__ import annotations
 
-from zephyr.shared.io.serialization import dumps
-
 import logging
 import threading
 import time
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
+
+from zephyr.shared.io.serialization import dumps
 
 if TYPE_CHECKING:
     from zephyr.infrastructure.system_telemetry.facade import Telemetry

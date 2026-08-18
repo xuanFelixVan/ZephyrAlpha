@@ -33,12 +33,11 @@ Safety : M
 
 from __future__ import annotations
 
-from typing import Final
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import yaml
 

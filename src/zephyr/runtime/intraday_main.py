@@ -129,18 +129,17 @@ import sys
 import time
 from typing import TYPE_CHECKING
 
-from zephyr.data.tick_redis_cache import TickRedisCache
-from zephyr.data.tick_subscriber import TickSubscriber
-from zephyr.data.trading_calendar import is_trading_day
-from zephyr.factor.core.intraday_factor_loop import IntradayFactorLoop
-from zephyr.infrastructure.database_service import DatabaseService
-
 # 治本（2026-08-03 实地演练发现 FactorRegistry 为空）：
 # intraday_main 启动时未导入任何因子模块，IntradayFactorLoop._build_dag 读
 # FactorRegistry.registry.keys() 拿到空列表 → "无因子可计算" → 链路空转。
 # 此处显式导入盘中横截面因子模块触发 @FactorRegistry.register 注册，
 # 保证 _build_dag 时注册表非空。新增盘中因子时在此追加 import 即可。
 import zephyr.factor.intraday_snapshot_factors  # noqa: F401 — 注册副作用
+from zephyr.data.tick_redis_cache import TickRedisCache
+from zephyr.data.tick_subscriber import TickSubscriber
+from zephyr.data.trading_calendar import is_trading_day
+from zephyr.factor.core.intraday_factor_loop import IntradayFactorLoop
+from zephyr.infrastructure.database_service import DatabaseService
 
 if TYPE_CHECKING:
     import redis

@@ -89,8 +89,6 @@ ADR      : ADR-0019(FLE单向依赖) + ADR-0031(ChromaDB选型) + ADR-0016(BGE-M
 
 from __future__ import annotations
 
-# 5.152 #22 sanctioned: integration 为组合层，允许依赖全部层（intelligence 统一记忆 API）。
-from zephyr.intelligence.model_evaluation.unified_memory_api import UnifiedMemoryAPI, get_unified_memory_api
 from zephyr.integration.vector_memory.delegated_vector_memory import UnifiedVectorMemoryAdapter
 from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 from zephyr.integration.vector_memory.interface import (
@@ -100,6 +98,9 @@ from zephyr.integration.vector_memory.interface import (
 )
 from zephyr.integration.vector_memory.ollama_embedding import OllamaEmbedder
 from zephyr.integration.vector_memory.vector_bridge import VectorBridge
+
+# 5.152 #22 sanctioned: integration 为组合层，允许依赖全部层（intelligence 统一记忆 API）。
+from zephyr.intelligence.model_evaluation.unified_memory_api import UnifiedMemoryAPI, get_unified_memory_api
 
 __all__ = [
     "EmbeddingEngineBase",

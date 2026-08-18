@@ -32,9 +32,6 @@ CapabilityPassport --- AI 模型能力护照
 
 from __future__ import annotations
 
-from typing import Final
-from zephyr.shared.io.serialization import dumps, filter_dataclass_fields as _filter_dataclass_fields
-
 import hashlib
 import hmac
 import json
@@ -42,8 +39,11 @@ import logging
 import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.io.serialization import dumps
+from zephyr.shared.io.serialization import filter_dataclass_fields as _filter_dataclass_fields
 from zephyr.shared.security.secrets import get_secret_or_default
 
 _log = logging.getLogger(__name__)

@@ -35,6 +35,7 @@ import subprocess
 import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 warnings.warn(

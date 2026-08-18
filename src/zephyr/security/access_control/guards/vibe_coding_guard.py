@@ -27,7 +27,6 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-
 VIBE_CODING_PATTERNS: list[dict[str, str]] = [
     {"name": "HACK_COMMENT", "pattern": r"#\s*HACK", "risk": "0.5"},
     {"name": "FIXME_BYPASS", "pattern": r"#\s*FIXME.*bypass", "risk": "0.5"},

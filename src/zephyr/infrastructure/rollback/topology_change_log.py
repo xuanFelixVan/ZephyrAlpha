@@ -29,6 +29,7 @@ TopologyChangeLog — 分支拓扑变更日志。
 from __future__ import annotations
 
 import logging
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
@@ -39,6 +40,7 @@ from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
+
 
 class TopologyOp(str, Enum):
     MERGE = "merge"

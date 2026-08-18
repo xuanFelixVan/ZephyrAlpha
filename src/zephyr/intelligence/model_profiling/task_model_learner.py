@@ -53,14 +53,13 @@ composite_score = speed_norm * 0.40 + quality_norm * 0.35 + consistency_norm * 0
 
 from __future__ import annotations
 
-from typing import Final
 import json
 import logging
 import statistics
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 _log = logging.getLogger(__name__)
 

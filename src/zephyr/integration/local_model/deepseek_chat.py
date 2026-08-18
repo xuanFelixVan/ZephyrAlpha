@@ -34,16 +34,15 @@ DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理（requests 实现）
 
 from __future__ import annotations
 
-import logging
-from typing import Final
-
 import json
+import logging
 import os
 import random
 import re
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
+
 from zephyr.shared.foundation.constants import DEFAULT_DEEPSEEK_URL
 from zephyr.shared.io.paths import REPO_ROOT
 

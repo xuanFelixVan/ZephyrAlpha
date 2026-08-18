@@ -57,12 +57,11 @@ Collection: ``unified_memory``
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import threading
 import uuid
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, Final
 
 from pydantic import BaseModel, ConfigDict, Field
 

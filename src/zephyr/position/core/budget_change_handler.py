@@ -128,7 +128,6 @@ from datetime import datetime, timedelta
 from enum import Enum
 from typing import Any
 
-
 # ── 常量（参数来源：30_multi_strategy_concurrency §2.4/§6 + 33号 §3.4）──
 
 # 防抖阈值（§6，theledgermind 2026-05 实证 5% 最优）

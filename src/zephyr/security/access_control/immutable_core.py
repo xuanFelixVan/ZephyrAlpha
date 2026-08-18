@@ -29,6 +29,7 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+
 from zephyr.shared.io.paths import PROJECT_ROOT, REPO_ROOT
 
 # 治本(2026-07-19): PROJECT_ROOT 从 canonical SSoT (zephyr.shared.io.paths) 导入，

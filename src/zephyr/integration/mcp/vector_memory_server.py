@@ -33,10 +33,8 @@ Backend  : InProcessVectorMemory (11子模块 + 8 Collection + HybridRetriever)
 
 from __future__ import annotations
 
-from typing import Final
 import logging
-
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 from zephyr.integration.mcp._base_server import BaseMCPServer
 from zephyr.integration.vector_memory.vms_errors import VMSError

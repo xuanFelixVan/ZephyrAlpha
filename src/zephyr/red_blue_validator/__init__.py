@@ -53,12 +53,12 @@ red_blue_validator — re-export shim for zephyr.security.adversarial_validation
 # A1 --> O1
 """
 
-from zephyr.security.adversarial_validation.validator import RedBlueValidator  # noqa: F401
 from zephyr.security.adversarial_validation.constitution_guard import (  # noqa: F401
     ConstitutionArticle,
     ConstitutionGuard,
     ConstitutionViolationError,
 )
+from zephyr.security.adversarial_validation.validator import RedBlueValidator  # noqa: F401
 
 __all__ = [
     "RedBlueValidator",

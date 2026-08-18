@@ -17,8 +17,8 @@
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
 
 from zephyr.security.adversarial_validation.models import AttackScenario, BlastRadiusLevel
 

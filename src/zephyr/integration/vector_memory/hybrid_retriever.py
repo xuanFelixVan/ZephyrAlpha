@@ -36,13 +36,12 @@ Pipeline
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final
 import logging
 import math
 import threading
 import time
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any, Final
 
 from pydantic import BaseModel, Field
 

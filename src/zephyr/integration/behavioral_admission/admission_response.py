@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
+
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 

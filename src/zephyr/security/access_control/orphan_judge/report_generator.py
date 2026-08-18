@@ -14,11 +14,11 @@
 # [TESTS] tests/orphan-judge/test_report_generator.py
 # [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from zephyr.shared.io.serialization import dumps
 import logging
 
 from zephyr.security.access_control.orphan_judge.db import JudgmentDB
 from zephyr.security.access_control.orphan_judge.models import JudgmentRecord
+from zephyr.shared.io.serialization import dumps
 
 logger = logging.getLogger(__name__)
 

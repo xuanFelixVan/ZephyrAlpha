@@ -27,7 +27,6 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-
 INJECTION_PATTERNS = [
     r"\beval\s*\(",
     r"\bexec\s*\(",

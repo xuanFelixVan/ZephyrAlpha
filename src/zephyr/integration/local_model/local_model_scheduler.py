@@ -47,12 +47,11 @@ LocalModelScheduler — L2 本地模型 24/7 调度循环
 from __future__ import annotations
 
 import logging
-from typing import Final
-
 import queue
 import threading
 import time
 from dataclasses import dataclass, field
+from typing import Final
 
 logger = logging.getLogger(__name__)
 from typing import TYPE_CHECKING, Any

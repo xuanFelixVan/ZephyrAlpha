@@ -35,14 +35,13 @@ ModelProfiler — 核心性能分析引擎
 
 from __future__ import annotations
 
-from typing import Final
 import json
 import logging
 import re
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable
+from typing import Any, Callable, Final
 
 from zephyr.intelligence.model_profiling.benchmark_suite import (
     ALL_BENCHMARK_CASES,

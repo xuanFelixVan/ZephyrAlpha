@@ -43,7 +43,6 @@
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import logging
 import os
@@ -58,6 +57,7 @@ from zephyr.infrastructure.system_telemetry.health import HealthSubsystem
 from zephyr.infrastructure.system_telemetry.profiles import ProfileSubsystem
 from zephyr.infrastructure.system_telemetry.schema import SchemaSubsystem
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.io.serialization import dumps
 
 _logger = logging.getLogger(__name__)
 

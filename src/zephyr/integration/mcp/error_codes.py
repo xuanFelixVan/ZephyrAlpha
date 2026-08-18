@@ -24,6 +24,7 @@ _base_server.py 中的硬编码错误码已迁移至此处导入。
 from __future__ import annotations
 
 from typing import Final
+
 ERR_PARSE_ERROR: Final[int] = -32700
 ERR_INVALID_REQUEST: Final[int] = -32600
 ERR_METHOD_NOT_FOUND: Final[int] = -32601

@@ -171,7 +171,7 @@ class LiquidityMetrics:
     symbol: str
     amihud_illiq: float
     volume_shrinkage_ratio: float
-    bid_ask_spread: Optional[float]
+    bid_ask_spread: float | None
     is_illiquid: bool
     window: int
     timestamp: datetime

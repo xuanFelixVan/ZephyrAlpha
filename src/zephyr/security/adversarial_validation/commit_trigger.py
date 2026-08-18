@@ -48,7 +48,6 @@ CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030).
 
 from __future__ import annotations
 
-from typing import Final
 import json
 import logging
 import os
@@ -56,6 +55,8 @@ import re
 import time
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Final
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)

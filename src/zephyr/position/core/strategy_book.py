@@ -113,7 +113,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
-
 # ── 常量（参数来源：30_multi_strategy_concurrency §2.5 + §2.2）──
 
 # 四级回撤阈值（§2.5.1 行业基准 LedgerMind/ARKA/Sina FOF 2026）

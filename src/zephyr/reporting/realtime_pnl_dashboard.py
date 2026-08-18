@@ -169,7 +169,7 @@ class DashboardSnapshot:
     total_assets: Decimal  # cash + market_value
     return_pct: float  # total_pnl / initial_capital × 100
     positions: list[PositionPnlEntry]
-    risk_snapshot: Optional[RiskDashboardSnapshot]
+    risk_snapshot: RiskDashboardSnapshot | None
     fill_count: int
     schema_version: str = "1.0"
 
@@ -223,10 +223,10 @@ class RealtimePnlDashboard:
         )
 
         # 可选风控状态
-        self._risk_snapshot: Optional[RiskDashboardSnapshot] = None
+        self._risk_snapshot: RiskDashboardSnapshot | None = None
 
         # 最近一次快照缓存
-        self._last_snapshot: Optional[DashboardSnapshot] = None
+        self._last_snapshot: DashboardSnapshot | None = None
 
         self._lock = Lock()
 
@@ -398,7 +398,7 @@ class RealtimePnlDashboard:
             )
             return snapshot
 
-    def get_snapshot(self) -> Optional[DashboardSnapshot]:
+    def get_snapshot(self) -> DashboardSnapshot | None:
         """获取最近一次 refresh 的快照（无则 None）。"""
         with self._lock:
             return self._last_snapshot

@@ -6,9 +6,9 @@
 from zephyr.regime.core.regime_detector import (
     RegimeDetector,
     RegimeProbabilities,
+    RegimeSnapshot,
     ShrinkageResult,
     TransitionTriggered,
-    RegimeSnapshot,
 )
 
 __all__ = [

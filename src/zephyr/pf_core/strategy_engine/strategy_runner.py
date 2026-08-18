@@ -93,7 +93,7 @@ class StrategyRunnerConfig:
     top_n: int = 10
     max_single: float = 0.10
     initial_capital: float = 1_000_000.0
-    backtest_config: Optional[BacktestConfig] = None
+    backtest_config: BacktestConfig | None = None
 
 
 class StrategyRunner:
@@ -147,7 +147,7 @@ class StrategyRunner:
         end: str,
         config: StrategyRunnerConfig,
         provider: object,
-        tick_config: Optional[object] = None,
+        tick_config: object | None = None,
     ) -> BacktestResult:
         """Tick 级事件驱动回测（路径 A：日频信号 × tick 5档盘口撮合）。
 
@@ -229,8 +229,8 @@ class StrategyRunner:
         strategy_id: str,
         provider: object,
         initial_capital: float = 1_000_000.0,
-        tick_config: Optional[object] = None,
-        backtest_config: Optional[BacktestConfig] = None,
+        tick_config: object | None = None,
+        backtest_config: BacktestConfig | None = None,
     ) -> BacktestResult:
         """Tick 级策略回测（路径 B：tick 级策略 × EDE 撮合）。
 
@@ -254,15 +254,12 @@ class StrategyRunner:
         Raises:
             KeyError: strategy_id 未注册
         """
-        from datetime import datetime as _dt, timezone
+        from datetime import datetime as _dt
+        from datetime import timezone
 
         from zephyr.backtest.implementations.event_driven_engine import (
             EventDrivenEngine,
             EventDrivenEngineError,
-        )
-        from zephyr.pf_core.strategy_engine.tick_strategy_base import (
-            TickStrategyBase,
-            autodiscover_tick_strategies,
         )
 
         # 显式 import 路径 B tick 策略：触发 @TickStrategyBase.register 注册（副作用导入）。
@@ -271,6 +268,10 @@ class StrategyRunner:
         # ORPHAN-MODULE 门禁（src/ 内有静态 import 引用，新 AI 可 grep 发现）。
         from zephyr.pf_core.intraday_surge_fall_strategy import IntradaySurgeFallStrategy  # noqa: F401,E402
         from zephyr.pf_core.orderbook_imbalance_strategy import OrderBookImbalanceStrategy  # noqa: F401,E402
+        from zephyr.pf_core.strategy_engine.tick_strategy_base import (
+            TickStrategyBase,
+            autodiscover_tick_strategies,
+        )
         from zephyr.pf_core.vwap_reversion_strategy import VWAPReversionStrategy  # noqa: F401,E402
 
         cls = TickStrategyBase.get(strategy_id)

@@ -17,11 +17,11 @@
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import threading
 import time
 from enum import Enum
+from typing import Final
 
 from zephyr.security.adversarial_validation.bypass_recorder import BypassRecorder
 from zephyr.security.adversarial_validation.circuit_breaker import CircuitBreaker, CircuitState

@@ -17,10 +17,10 @@
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import time
 from enum import Enum
+from typing import Final
 
 from zephyr.security.adversarial_validation.models import RedBlueReport
 

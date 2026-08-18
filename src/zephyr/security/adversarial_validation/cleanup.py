@@ -17,10 +17,10 @@
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import shutil
 from pathlib import Path
+from typing import Final
 
 logger = logging.getLogger(__name__)
 

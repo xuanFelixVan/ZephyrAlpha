@@ -30,8 +30,6 @@ ExamOrchestrator --- 五轴入职考试主控
 
 from __future__ import annotations
 
-from typing import Final
-
 import json
 import logging
 import math
@@ -40,7 +38,7 @@ import statistics
 import time
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from zephyr.intelligence.model_profiling.capability_passport import (
     DEPTH_THRESHOLDS,
@@ -58,30 +56,30 @@ from zephyr.intelligence.model_profiling.capability_passport import (
     compute_grade,
     compute_grade_simple,
 )
+from zephyr.intelligence.model_profiling.exam_checks import (
+    check_fabrication,
+    check_format_hallucination,
+    check_instruction_drift,
+    check_overclaim,
+    check_quantity_hallucination,
+    check_refusal,
+    check_source_confusion,
+    check_static_assertions,
+    check_structure,
+    compute_olympiad_pass_rate,
+    compute_overall_score,
+    normalized_edit_distance,
+    outputs_similar,
+    percentile,
+    validate_result,
+)
+from zephyr.intelligence.model_profiling.exam_executor import ExamExecutor
+from zephyr.intelligence.model_profiling.exam_judge import DeterministicJudge, ExamJudge
+from zephyr.intelligence.model_profiling.exam_rubric import ExamRubric
 from zephyr.intelligence.model_profiling.exam_test_cases import (
     CASES_BY_CAPABILITY,
     Difficulty,
     ExamTestCase,
-)
-from zephyr.intelligence.model_profiling.exam_rubric import ExamRubric
-from zephyr.intelligence.model_profiling.exam_executor import ExamExecutor
-from zephyr.intelligence.model_profiling.exam_judge import DeterministicJudge, ExamJudge
-from zephyr.intelligence.model_profiling.exam_checks import (
-    check_static_assertions,
-    check_structure,
-    check_fabrication,
-    outputs_similar,
-    check_refusal,
-    check_overclaim,
-    check_source_confusion,
-    check_instruction_drift,
-    check_format_hallucination,
-    check_quantity_hallucination,
-    normalized_edit_distance,
-    percentile,
-    compute_olympiad_pass_rate,
-    compute_overall_score,
-    validate_result,
 )
 
 _log = logging.getLogger(__name__)

@@ -31,11 +31,10 @@ ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模型
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Final
 
 _log = logging.getLogger(__name__)
 

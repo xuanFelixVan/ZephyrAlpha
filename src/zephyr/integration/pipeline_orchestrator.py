@@ -107,8 +107,6 @@ from zephyr.infrastructure.pipeline.ct_pipe_routing import (
 )
 from zephyr.infrastructure.pipeline.dead_letter_queue import DeadLetterQueue
 from zephyr.infrastructure.pipeline.model_router import ModelRouter
-from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.shared.utils.async_utils import run_sync  # DM-100252/LSG-fix: 实际 import（原 L53 在 docstring 内非真实 import）
 from zephyr.infrastructure.pipeline.models import (
     M_MODULE_SPECS,
     M_MODULES,
@@ -136,7 +134,11 @@ from zephyr.infrastructure.pipeline.models import (
 from zephyr.infrastructure.pipeline.pipeline_lock import LockResult, PipelineLock
 from zephyr.infrastructure.pipeline.preemption_manager import PreemptionManager
 from zephyr.infrastructure.pipeline.routing_plugins import PipelineRouter
+from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.schema.task_types import TaskStatus
+from zephyr.shared.utils.async_utils import (
+    run_sync,  # DM-100252/LSG-fix: 实际 import（原 L53 在 docstring 内非真实 import）
+)
 from zephyr.shared.utils.time_utils import now_utc
 
 _RBAC_AVAILABLE = False
@@ -186,12 +188,12 @@ except ImportError:
     ModelProfiler = None  # type: ignore[assignment,misc]
 
 if TYPE_CHECKING:
-    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
-    from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
-    from zephyr.shared.protocols.ports import RerankerProtocol
-    from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
     from zephyr.autonomy_core.integration.pipeline_bridge import PipelineSkillBridge
+    from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
+    from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
+    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
     from zephyr.shared.lifecycle.hooks import LifecycleManager
+    from zephyr.shared.protocols.ports import RerankerProtocol
 
 __all__ = ["PipelineOrchestrator"]
 

@@ -31,6 +31,7 @@ Tag 作为语义化回滚目标: zephyr rollback --to rollback/refactor/auth:bef
 from __future__ import annotations
 
 import logging
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
@@ -39,6 +40,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
+
 
 class TagType(str, Enum):
     TASK = "task"

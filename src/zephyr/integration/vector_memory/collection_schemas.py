@@ -17,13 +17,12 @@
 
 from __future__ import annotations
 
-from typing import Final
-from typing import Any
+from typing import Any, Final
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.io.paths import VMS_PERSIST_DIR
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__: list[str] = [
     "ALLOWED_DIMENSIONS",

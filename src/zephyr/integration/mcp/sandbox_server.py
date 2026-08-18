@@ -27,13 +27,12 @@
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import subprocess
 import tempfile
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from zephyr.integration.mcp._base_server import BaseMCPServer, MCPError
 from zephyr.shared.infra.process_pool import run_subprocess_hidden

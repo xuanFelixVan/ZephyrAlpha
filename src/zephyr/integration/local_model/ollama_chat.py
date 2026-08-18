@@ -30,17 +30,14 @@ OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理
 
 from __future__ import annotations
 
-import logging
-from typing import Final
-
-from http import HTTPStatus
-
 import json
+import logging
 import os
 import random
 import re
 import time
-from typing import TYPE_CHECKING, Any
+from http import HTTPStatus
+from typing import TYPE_CHECKING, Any, Final
 
 from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
 

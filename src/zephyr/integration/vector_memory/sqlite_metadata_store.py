@@ -45,7 +45,6 @@ import atexit
 import json
 import logging
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import threading
 from datetime import UTC, datetime
 from pathlib import Path
@@ -55,6 +54,7 @@ from zephyr.integration.vector_memory.collection_manager import (
     COLLECTION_NAMES,
     VMS_PERSIST_DIR,
 )
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 _logger = logging.getLogger(__name__)
 

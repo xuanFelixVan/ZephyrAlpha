@@ -25,7 +25,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 MAX_MEMORY_ACCESS = 1_000_000  # 1MB
 
 PRIVILEGED_MEMORY_OPS = {

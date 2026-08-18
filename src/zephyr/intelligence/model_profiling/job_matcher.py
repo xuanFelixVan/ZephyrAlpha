@@ -41,10 +41,9 @@ match_score 公式 (0-1, 四维加权):
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import yaml
 

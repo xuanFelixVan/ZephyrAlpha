@@ -42,9 +42,9 @@ import abc
 from decimal import Decimal
 from typing import ClassVar
 
+from zephyr.shared.contracts.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import RiskLimitViolationError
-from zephyr.shared.contracts.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport
 
 

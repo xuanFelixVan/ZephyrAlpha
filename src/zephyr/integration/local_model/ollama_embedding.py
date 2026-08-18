@@ -31,16 +31,14 @@ OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入
 
 from __future__ import annotations
 
-from typing import Final
-from http import HTTPStatus
-
 import logging
 import os
-from typing import Any
-
-from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
+from http import HTTPStatus
+from typing import Any, Final
 
 import numpy as np
+
+from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
 
 _log = logging.getLogger(__name__)
 

@@ -26,7 +26,6 @@ from __future__ import annotations
 import re
 from typing import Any
 
-
 BLOCKED_NATIVE_APIS = [
     r"\bctypes\b",
     r"\bCDLL\b",

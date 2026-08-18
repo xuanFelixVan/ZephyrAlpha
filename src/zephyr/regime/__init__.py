@@ -1,4 +1,5 @@
 from zephyr.regime.regime_cycle_analyzer import RegimeCycleAnalyzer
+
 # [BLUEPRINT] MOD-REGIME-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 # [A_module] module_id=PKG-regime | layer=package | stability=evolving | safety=L | ai_autonomy=ai_modifiable

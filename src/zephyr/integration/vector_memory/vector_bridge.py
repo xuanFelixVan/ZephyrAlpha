@@ -31,12 +31,13 @@ VectorBridge — MOD-INF-011 CE/KB 外部集成适配器
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import hashlib
 import logging
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
+
+from zephyr.shared.io.serialization import dumps
 
 if TYPE_CHECKING:
     from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory

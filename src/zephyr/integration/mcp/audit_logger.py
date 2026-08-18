@@ -29,13 +29,12 @@
 
 from __future__ import annotations
 
-from typing import Final
 import hashlib
 import json
 import logging
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from zephyr.shared.io.paths import REPO_ROOT
 

@@ -16,12 +16,13 @@
 # [TTL] permanent
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import argparse
 import json
 import sys
 from pathlib import Path
+
+from zephyr.shared.io.serialization import dumps
 
 __all__: list[str] = ["main"]
 

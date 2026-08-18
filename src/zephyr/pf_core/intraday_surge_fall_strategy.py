@@ -77,8 +77,8 @@ _STATE_FLAT = "flat"  # 已卖出
 class _WindowState:
     """单个 symbol 的窗口计算结果（纯值对象）。"""
 
-    baseline: Optional[Decimal]  # 窗口最旧 tick 价
-    peak: Optional[Decimal]  # 窗口内最高价
+    baseline: Decimal | None  # 窗口最旧 tick 价
+    peak: Decimal | None  # 窗口内最高价
 
 
 @TickStrategyBase.register

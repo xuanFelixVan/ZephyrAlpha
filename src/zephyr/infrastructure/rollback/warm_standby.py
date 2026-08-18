@@ -32,6 +32,7 @@ RTO 从 ~2s 降低到 <100ms（worktree 切换 + 指针替换）。
 from __future__ import annotations
 
 import logging
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)

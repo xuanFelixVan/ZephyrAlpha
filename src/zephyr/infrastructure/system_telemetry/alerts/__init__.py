@@ -26,6 +26,7 @@ from collections import deque
 from pathlib import Path
 
 import yaml
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)

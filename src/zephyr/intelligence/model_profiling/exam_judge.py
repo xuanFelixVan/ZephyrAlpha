@@ -26,12 +26,11 @@ v3.0.5 新增：阶段三极限深度测试的核心评分机制之一。
 
 from __future__ import annotations
 
-from typing import Final
 import json
 import logging
 import re
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Final
 
 _log = logging.getLogger(__name__)
 

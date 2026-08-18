@@ -29,8 +29,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 @dataclass
 class FixResult:

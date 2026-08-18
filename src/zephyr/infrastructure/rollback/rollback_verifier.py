@@ -36,9 +36,10 @@ import ast
 import json
 import shutil
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 
 @dataclass

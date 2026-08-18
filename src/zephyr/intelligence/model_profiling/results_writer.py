@@ -33,13 +33,12 @@ Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检�
 
 from __future__ import annotations
 
-from typing import Final
 import json
 import logging
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from zephyr.intelligence.model_profiling.profiler import ModelProfile
 from zephyr.shared.utils.time_utils import now_utc

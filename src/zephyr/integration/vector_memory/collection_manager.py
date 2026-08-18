@@ -38,21 +38,20 @@ CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理
 
 from __future__ import annotations
 
-from typing import Final
 import json
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, Final
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.io.paths import VMS_PERSIST_DIR
-from zephyr.shared.schema.schemas import BASE_CONFIG
 # SSoT(5.1.1 治本): HOT/COLD_COLLECTIONS 唯一真源在 collection_schemas.py，本模块 import 自用，禁止重复定义
 from zephyr.integration.vector_memory.collection_schemas import (
     COLD_COLLECTIONS,
     HOT_COLLECTIONS,
 )
+from zephyr.shared.io.paths import VMS_PERSIST_DIR
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 if TYPE_CHECKING:
     from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol

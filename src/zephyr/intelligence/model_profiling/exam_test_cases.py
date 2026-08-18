@@ -36,9 +36,9 @@ ExamTestCases --- v3.0.5 扩展考试题库（96 题 / 29 能力 / 5 难度）
 
 from __future__ import annotations
 
-from typing import Final
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Final
 
 # v3.0.5 Phase 3: 真实多文件注入装配器（极限深度 OLYMPIAD 题）
 from .case_assembler import assemble_real_context

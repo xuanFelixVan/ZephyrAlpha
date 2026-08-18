@@ -42,7 +42,6 @@ import threading
 import time
 from pathlib import Path
 from typing import Any
-from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 from zephyr.integration.mcp._base_server import (
     BaseMCPServer,
@@ -63,6 +62,7 @@ from zephyr.integration.mcp.rate_limiter import (
     RATE_LIMITED_KEY,
     PerToolRateLimiter,
 )
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 __all__ = ["MCPGateway", "create_gateway", "start_gateway"]
 

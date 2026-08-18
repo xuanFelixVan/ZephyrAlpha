@@ -12,7 +12,6 @@
 # [TTL] permanent
 from typing import Final
 
-from zephyr.shared.events.dlq import DeadLetter, DeadLetterQueue, attach_dlq_to_observer
 from zephyr.integration.shared.events.dlq_bridge import DLQEventBridge, make_dlq_event_handler
 from zephyr.integration.shared.events.dlq_bridge import attach_dlq_to_observer as dlq_bridge_attach
 from zephyr.integration.shared.events.event_bus_upgrade import EventBusUpgrader, EventSchema, EventVersionError
@@ -25,6 +24,7 @@ from zephyr.integration.shared.events.event_schemas import (
     TimeEventPayload,
 )
 from zephyr.integration.shared.events.upgrade_strategy import EventBusUpgrade, UpgradePlan, UpgradeStatus, UpgradeStep
+from zephyr.shared.events.dlq import DeadLetter, DeadLetterQueue, attach_dlq_to_observer
 
 __all__: Final = [
     "EVENT_PAYLOAD_MAP",

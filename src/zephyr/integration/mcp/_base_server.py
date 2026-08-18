@@ -62,8 +62,8 @@ MCP 扩展码：-32001(ERR_TOOL_NOT_FOUND) / -32002(ERR_TOOL_EXECUTION) /
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +74,7 @@ from dataclasses import dataclass
 from typing import Any, TextIO
 
 import structlog
+
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 __all__ = [

@@ -32,8 +32,8 @@ BenchmarkSuite — 多维度模型性能测试用例集
 
 from __future__ import annotations
 
-from typing import Final
 from dataclasses import dataclass, field
+from typing import Final
 
 
 @dataclass

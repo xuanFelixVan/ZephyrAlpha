@@ -31,11 +31,11 @@ from zephyr.security.access_control.identity import (
     AgentRole,
 )
 from zephyr.security.access_control.immutable_core import ALWAYS_BLOCKED_OPERATIONS
+
 # SSoT 收敛（#ARCH-106）：GuardDecision/GuardResult 真源为 shared.contracts.identity.permission，
 # 本模块 re-export 兼容既有导入方。此前本模块与 contracts 各自定义同名枚举，
 # `decision is GuardDecision.BLOCKED` 跨定义恒 False，会把 BLOCKED 静默折叠为放行（fail-open）。
 from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult
-
 
 _CRITICAL_OPERATIONS = {
     "circumvent_gate_engine",
@@ -55,8 +55,8 @@ class PermissionGuard:
     """
 
     def __init__(self) -> None:
-        from zephyr.security.access_control.immutable_core import ImmutableCore
         from zephyr.security.access_control.guards.rbac_guard import RBACGuard
+        from zephyr.security.access_control.immutable_core import ImmutableCore
 
         self._l0 = ImmutableCore()
         self._l1 = RBACGuard()

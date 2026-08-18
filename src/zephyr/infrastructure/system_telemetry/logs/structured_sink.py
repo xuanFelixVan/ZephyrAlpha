@@ -169,4 +169,5 @@ def buffer_depth() -> int:
 
 
 from zephyr.infrastructure.system_telemetry._trace_bridge import set_record_writer
+
 set_record_writer(append_jsonl_record)

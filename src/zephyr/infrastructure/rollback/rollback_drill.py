@@ -28,6 +28,7 @@ RollbackDrill — 定期回滚演练调度器 (DiRT-style)。
 from __future__ import annotations
 
 import logging
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
@@ -35,11 +36,13 @@ logger = logging.getLogger(__name__)
 import json
 import random
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+
+from zephyr.shared.io.sqlite_factory import get_db_connection
+
 
 @dataclass
 class ChaosScenario:

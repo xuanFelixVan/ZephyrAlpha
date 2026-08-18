@@ -27,6 +27,7 @@ RollbackTargetStaleness — 回滚目标陈旧度检测。
 from __future__ import annotations
 
 import logging
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ logger = logging.getLogger(__name__)
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+
 
 @dataclass
 class StalenessResult:

@@ -36,6 +36,8 @@ from enum import Enum
 # 注意：值大小写变化（security 版 UPPERCASE → shared 版 lowercase），消费方测试断言需同步修正（Batch 3）
 from zephyr.shared.contracts.identity.agent_identity import (
     ROLE_DEFAULT_PERMISSIONS,
+)
+from zephyr.shared.contracts.identity.agent_identity import (
     RbacRole as AgentRole,
 )
 

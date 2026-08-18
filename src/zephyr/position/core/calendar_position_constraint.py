@@ -346,7 +346,7 @@ class CalendarPositionConstraint:
             event_type=CalendarEventType.ANNUAL_FORECAST_DEADLINE,
             action=ConstraintAction.BLOCK_NEW,
             cap_adjustment=1.0,
-            description=f"年报预告截止日前5日: 否决未出预告个股新买入",
+            description="年报预告截止日前5日: 否决未出预告个股新买入",
             affected_symbols=tuple(no_forecast),
         )]
 

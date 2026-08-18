@@ -26,7 +26,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-
 _SUSPICIOUS_KEYWORDS = {
     "sudo",
     "meltdown",

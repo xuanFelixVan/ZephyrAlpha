@@ -33,7 +33,6 @@ Rollback Integration — executor 集成增强层。
 """
 
 from __future__ import annotations
-from zephyr.shared.io.sqlite_factory import get_db_connection
 
 import hashlib
 import json
@@ -48,10 +47,10 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.infrastructure.rollback.contract import ExitCode
-from zephyr.shared.security.secrets import get_secret_or_default
-
-from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.sqlite_factory import get_db_connection
+from zephyr.shared.security.secrets import get_secret_or_default
 
 PROMPT_INJECTION_PATTERNS = [
     re.compile(r"ignore\s+(all\s+)?(previous|above)\s+(instructions?|prompts?)", re.IGNORECASE),

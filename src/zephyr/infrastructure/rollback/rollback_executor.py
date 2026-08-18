@@ -38,7 +38,6 @@ RollbackExecutor — 回滚执行器核心封装。
 """
 
 from __future__ import annotations
-from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 import importlib
 import json
@@ -53,15 +52,15 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
+from zephyr.infrastructure.rollback.rollback_lock import LockPriority, RollbackLock
+from zephyr.infrastructure.rollback.sqlite_dumper import SqliteDumper
 from zephyr.infrastructure.runtime.concurrency_guard import (
     check_rollback_conflict,
     classify_uncommitted_files,
 )
-from zephyr.infrastructure.rollback.rollback_lock import LockPriority, RollbackLock
-from zephyr.infrastructure.rollback.sqlite_dumper import SqliteDumper
-from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
-
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)
 

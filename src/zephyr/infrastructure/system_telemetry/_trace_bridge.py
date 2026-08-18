@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
+
 from typing import Any, Callable
 
 _span_context_getter: Callable[[], Any] | None = None

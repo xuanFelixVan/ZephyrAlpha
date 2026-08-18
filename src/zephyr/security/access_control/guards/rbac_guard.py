@@ -38,7 +38,6 @@ from zephyr.security.access_control.immutable_core import (
     PROTECTED_PATHS,
 )
 
-
 ALWAYS_ALLOW_OPERATIONS = [
     "read:docs",
     "read:src",

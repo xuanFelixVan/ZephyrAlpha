@@ -29,11 +29,11 @@ VMS Blueprint §12 Step 5
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Final
 
 # Bootstrap: 基于 .git marker 定位仓库根（文件移动不 break，替代 parents[N] 硬编码）
 _repo_root = Path(__file__).resolve()

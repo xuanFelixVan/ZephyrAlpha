@@ -20,6 +20,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import yaml
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 

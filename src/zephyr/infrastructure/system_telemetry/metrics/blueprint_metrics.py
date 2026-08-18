@@ -47,6 +47,7 @@ import json
 import logging
 import os
 from datetime import UTC, datetime
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 __all__ = ["METRICS_FILE", "BlueprintReadEvent", "record_blueprint_read"]

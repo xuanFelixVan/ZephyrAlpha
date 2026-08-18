@@ -36,6 +36,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 EXIT_SUBMODULE_OUT_OF_SYNC = 16

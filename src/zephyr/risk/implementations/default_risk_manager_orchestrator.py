@@ -74,8 +74,8 @@ from zephyr.risk.risk_manager_base import (
 
 if TYPE_CHECKING:
     from zephyr.ex_core.audit_journal.auditor import OperationalRiskStats
-    from zephyr.risk.core.alert_generator import Alert, AlertGenerator
     from zephyr.risk.core.ai_agent_monitor import AiAgentMonitor
+    from zephyr.risk.core.alert_generator import Alert, AlertGenerator
     from zephyr.risk.core.crowding_monitor import CrowdingMonitor
     from zephyr.risk.core.liquidity_monitor import LiquidityMonitor
     from zephyr.risk.core.model_risk_audit import ModelRiskAuditor

@@ -36,12 +36,11 @@ True Source : IRN-022（Reranker字段与三件套对齐）
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import threading
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Final
 
 _log = logging.getLogger(__name__)
 

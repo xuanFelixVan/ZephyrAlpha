@@ -28,7 +28,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-
 FORBIDDEN_SEQUENCES: list[dict[str, Any]] = [
     {
         "name": "data_exfiltration",

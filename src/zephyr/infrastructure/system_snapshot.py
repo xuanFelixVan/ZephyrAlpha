@@ -50,7 +50,6 @@ import hashlib
 import json
 import logging
 import sqlite3
-from zephyr.shared.io.sqlite_factory import get_db_connection
 import warnings
 from datetime import UTC, datetime
 from pathlib import Path
@@ -65,6 +64,7 @@ from zephyr.shared.io.paths import (
     REPO_ROOT,
     SNAPSHOTS_DIR,
 )
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 _logger = logging.getLogger(__name__)
 _UTC = UTC

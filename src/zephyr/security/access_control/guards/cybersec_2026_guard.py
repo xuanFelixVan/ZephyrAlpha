@@ -28,7 +28,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-
 CYBERSEC_2026_VECTORS = [
     "lmops_backdoor",
     "multi_modal_jailbreak",

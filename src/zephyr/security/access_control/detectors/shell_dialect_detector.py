@@ -29,7 +29,6 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-
 # bash 危险模式（正则，忽略大小写）
 _BASH_DANGEROUS_PATTERNS: list[str] = [
     r"rm\s+-rf?\s",
