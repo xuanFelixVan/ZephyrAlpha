@@ -132,10 +132,9 @@ class TestRedTeamDailyDeclarationBlock:
         om, broker = self._make_om(tmp_path, guard)
         for _ in range(9999):
             guard.record_submit()
-        # 9999 ≥ 5000 → WARNING 但放行
+        # 9999 ≥ 5000 → WARNING 但放行；submit 侧对称计数（AI-R2 红队 ATK-5：
+        # 指令发往券商即计）→ 该笔放行后恰好计满 1 万
         assert self._submit_one(om).startswith("broker_")
-        # 计数到 1 万（上一笔记入 C-002 前置读数已 9999，这里手动补齐）
-        guard.record_submit()
         assert guard.daily_declaration_count == 10000
         with pytest.raises(ComplianceGateBlockError, match="日申报笔数"):
             self._submit_one(om)

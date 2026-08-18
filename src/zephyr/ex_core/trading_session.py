@@ -239,7 +239,21 @@ class TradingSession:
         self._price_provider = price_provider
         self._order_manager = order_manager
         self._config = config
-        self._cancel_rate_guard = cancel_rate_guard or CancelRateGuard()
+        # CancelRateGuard 单实例契约（AI-R2 红队 ATK-5 配套）：日申报计数
+        # （order_manager C-002 读数）与限频/撤单率（session 消费）必须同实例——
+        # 双实例 wiring 下一侧失明（C-002 读数恒 0 形同虚设 / 限频窗口恒空）。
+        # 未显式注入时自动采用 order_manager 侧实例，显式双注入不同实例 fail-fast。
+        om_guard = getattr(order_manager, "_declaration_guard", None)
+        if (
+            cancel_rate_guard is not None
+            and om_guard is not None
+            and cancel_rate_guard is not om_guard
+        ):
+            raise ValueError(
+                "cancel_rate_guard 与 order_manager.declaration_guard 必须同实例"
+                "（43 号 §8：限频/撤单率与日申报计数分实例即单侧失明）"
+            )
+        self._cancel_rate_guard = cancel_rate_guard or om_guard or CancelRateGuard()
         # C-004 合规闸（None=未接线不校验，AI-ASM-001 装配批）
         self._checklist_checker = checklist_checker
         self._kill_switch = kill_switch
@@ -641,7 +655,8 @@ class TradingSession:
                     broker_id=self._config.broker_id,
                 )
                 self._order_manager.submit_order(registered.order_id, self._config.broker_id)
-                self._cancel_rate_guard.record_submit()
+                # 报单侧申报计数已内聚到 OrderManager.submit_order（AI-R2 红队
+                # ATK-5：与撤单侧对称，broker 异常时仍计数防漏；session 不再重复计）
                 self._submitted_orders.append(registered)
                 submitted.append(registered)
             except Exception as exc:  # noqa: BLE001 — 拒单分类处理，不阻断后续订单

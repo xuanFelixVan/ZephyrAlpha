@@ -210,15 +210,42 @@ class TestReset:
 
 
 class TestEdgeCases:
-    def test_small_window_precision(self):
-        """小窗口下少量撤单即可触发预警（实盘初期需注意）。"""
+    def test_small_window_cold_start_no_statistical_hallucination(self):
+        """冷启动统计幻觉（AI-R2 红队 ATK-4）：样本不足时 100% 撤单率不触发冻结。
+
+        原行为：8 成交 + 2 撤单 = 20% → FROZEN（开盘首单废单重挂即全账户冻结）。
+        修复后：样本 < min_samples_for_status（默认 20）一律 NORMAL。
+        """
         guard = CancelRateGuard(window_size=10)
-        # 8 成交 + 2 撤单 = 20% → FROZEN
+        # 8 成交 + 2 撤单 = 20%（样本 10 < 20 → 统计幻觉门禁）
         for _ in range(8):
             guard.record_fill()
         for _ in range(2):
             guard.record_cancel()
         assert guard.cancel_rate == pytest.approx(0.20)
+        assert guard.status is CancelRateStatus.NORMAL
+
+    def test_cold_start_single_cancel_not_frozen(self):
+        """开盘首笔撤单 1/1=100% 撤单率 → 不冻结（AI-R2 红队 ATK-4）。"""
+        guard = CancelRateGuard()
+        guard.record_cancel()
+        assert guard.cancel_rate == 1.0
+        assert guard.status is CancelRateStatus.NORMAL
+        assert guard.can_place_order() is True
+        assert guard.can_cancel_order() is True
+
+    def test_min_samples_threshold_boundary(self):
+        """样本达 min_samples_for_status 即恢复统计判定（19→20 边界）。"""
+        guard = CancelRateGuard(min_samples_for_status=20)
+        # 19 笔样本（85 成交 + 15 撤单 = 78.9% 撤单率）→ 样本不足 → NORMAL
+        for _ in range(4):
+            guard.record_fill()
+        for _ in range(15):
+            guard.record_cancel()
+        assert guard.cancel_rate == pytest.approx(15 / 19, abs=0.001)
+        assert guard.status is CancelRateStatus.NORMAL
+        # 补 1 笔成交 → 20 笔样本（15/20=75% 撤单率）→ 超 15% → FROZEN
+        guard.record_fill()
         assert guard.status is CancelRateStatus.FROZEN
 
     def test_threshold_boundary_12pct(self):

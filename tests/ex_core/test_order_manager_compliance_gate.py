@@ -257,9 +257,9 @@ class TestCancelDeclarationWiring:
         guard = CancelRateGuard()
         om = _make_om(broker, declaration_guard=guard)
         order_id = self._submit_and_get_id(om)
-        assert guard.daily_declaration_count == 0  # submit 侧不经 OM 计数（trading_session 职责）
+        assert guard.daily_declaration_count == 1  # submit 侧对称计数（AI-R2 ATK-5）
         assert om.cancel_order(order_id) is True
-        assert guard.daily_declaration_count == 1
+        assert guard.daily_declaration_count == 2
         assert guard.total_cancels == 1
 
     def test_cancel_broker_failure_still_counts(self):
@@ -269,8 +269,9 @@ class TestCancelDeclarationWiring:
         guard = CancelRateGuard()
         om = _make_om(broker, declaration_guard=guard)
         order_id = self._submit_and_get_id(om)
+        assert guard.daily_declaration_count == 1  # submit 侧对称计数（AI-R2 ATK-5）
         assert om.cancel_order(order_id) is False
-        assert guard.daily_declaration_count == 1
+        assert guard.daily_declaration_count == 2
         assert guard.total_cancels == 1
 
     def test_local_pending_cancel_not_counted(self):
@@ -298,3 +299,124 @@ class TestCancelDeclarationWiring:
         order_id = self._submit_and_get_id(om)
         assert om.cancel_order(order_id) is True
         assert om.get_order(order_id).status is OrderStatus.CANCELLED
+
+
+# ---------------------------------------------------------------------
+# 报单侧申报计数对称化（AI-R2 红队 ATK-5）：
+# 指令发往券商即 record_submit()（成功/失败均计，与撤单侧同口径宁多勿漏）；
+# C-002 BLOCKED 订单未发出不计
+# ---------------------------------------------------------------------
+
+
+class TestSubmitDeclarationWiring:
+    def test_submit_success_counts_once(self):
+        """报单成功 → 计入日申报硬计数器恰好 1 次（无双计）。"""
+        broker = _make_broker()
+        guard = CancelRateGuard()
+        om = _make_om(broker, declaration_guard=guard)
+        assert _create_and_submit(om) == "broker-oid-1"
+        assert guard.daily_declaration_count == 1
+
+    def test_submit_broker_failure_still_counts(self):
+        """broker 异常（指令或已达交易所）仍计入——漏计则 1 万笔防线可穿透。"""
+        broker = _make_broker()
+        broker.submit_order.side_effect = ConnectionError("miniQMT 连接中断")
+        guard = CancelRateGuard()
+        om = _make_om(broker, declaration_guard=guard)
+        order = om.create_order(
+            symbol="600519.SH",
+            strategy_id="test",
+            side=OrderSide.BUY,
+            order_type=OrderType.LIMIT,
+            quantity=Decimal("100"),
+            limit_price=Decimal("10"),
+            broker_id="test_broker",
+        )
+        with pytest.raises(ConnectionError):
+            om.submit_order(order.order_id, "test_broker")
+        assert guard.daily_declaration_count == 1
+
+    def test_c002_blocked_submit_not_counted(self):
+        """C-002 拒发订单未发出 → 不计申报口径（不过度计数自锁）。"""
+        broker = _make_broker()
+        guard = CancelRateGuard(daily_warn_threshold=1, daily_block_threshold=2)
+        for _ in range(2):
+            guard.record_submit()  # 已超阻断线
+        om = _make_om(broker, declaration_guard=guard)
+        with pytest.raises(ComplianceGateBlockError):
+            _create_and_submit(om)
+        assert guard.daily_declaration_count == 2  # 未新增
+        broker.submit_order.assert_not_called()
+
+    def test_submit_without_guard_unchanged(self):
+        """未注入 declaration_guard → 报单行为不变（向后兼容）。"""
+        broker = _make_broker()
+        om = _make_om(broker)
+        assert _create_and_submit(om) == "broker-oid-1"
+
+
+# ---------------------------------------------------------------------
+# 非法 fill 拒收（AI-R2 红队 ATK-9）：None/NaN/非正价格契约违反不半更新
+# ---------------------------------------------------------------------
+
+
+class TestOnFillPriceGuard:
+    def _filled_order(self, om: OrderManager) -> str:
+        order = om.create_order(
+            symbol="600519.SH",
+            strategy_id="test",
+            side=OrderSide.BUY,
+            order_type=OrderType.LIMIT,
+            quantity=Decimal("100"),
+            limit_price=Decimal("10"),
+            broker_id="test_broker",
+        )
+        om.submit_order(order.order_id, "test_broker")
+        return order.order_id
+
+    def test_none_price_fill_rejected_without_half_update(self):
+        """fill_price=None → 拒收不崩溃（修复前 TypeError 半更新：
+        qty 已加、状态未转 FILLED 的不一致态）。"""
+        from datetime import UTC, datetime
+
+        from zephyr.shared.contracts.fill import Fill
+
+        broker = _make_broker()
+        om = _make_om(broker)
+        order_id = self._filled_order(om)
+        evil = Fill(
+            fill_id="evil-none",
+            fill_price=None,
+            fill_timestamp=datetime.now(UTC),
+            filled_quantity=Decimal("100"),
+            idempotency_key="evil-none",
+            order_id=order_id,
+            strategy_id="test",
+            symbol="600519.SH",
+        )
+        om._on_fill(evil)  # 修复前 TypeError
+        order = om.get_order(order_id)
+        assert order.filled_quantity == Decimal("0")  # 未半更新
+        assert order.status is OrderStatus.SUBMITTED
+
+    def test_zero_and_negative_price_fill_rejected(self):
+        """fill_price<=0 → 拒收（与 Saga _FillCollector 防御口径一致）。"""
+        from datetime import UTC, datetime
+
+        from zephyr.shared.contracts.fill import Fill
+
+        broker = _make_broker()
+        om = _make_om(broker)
+        order_id = self._filled_order(om)
+        for bad in (Decimal("0"), Decimal("-1.5")):
+            om._on_fill(Fill(
+                fill_id=f"evil-{bad}",
+                fill_price=bad,
+                fill_timestamp=datetime.now(UTC),
+                filled_quantity=Decimal("100"),
+                idempotency_key=f"evil-{bad}",
+                order_id=order_id,
+                strategy_id="test",
+                symbol="600519.SH",
+            ))
+        assert om.get_order(order_id).filled_quantity == Decimal("0")

@@ -215,10 +215,19 @@ def detect_breakout_failure(
 
     依据: 41_buy_flow §3.3 突破失败检测算法
     """
+    # 空数据门禁（AI-R2 红队 ATK-7）：无观测证据 → 不降级（无罪推定，
+    # 与 37 号 §3.6 hysteresis 无数据=状态不变同口径）。原实现：low_prices
+    # 空 → min([]) 崩溃；close_prices 空 → all([])=True 误触发 SUPPORT_BROKEN
+    # 止损卖出（数据缺口=无罪证据被当成有罪证据）
+    if not position.low_prices or not position.close_prices:
+        return None
     # 前低定义：首仓入场前 lookback_days 日最低价
     prior_low = min(position.low_prices[-lookback_days:])
-    # 连续 confirm_bars 根确认（防日内假跌破）
+    # 连续 confirm_bars 根确认（防日内假跌破）——不足 N 根=证据不足不判定
+    # （1 根即触发违背"连续确认防假跌破"设计意图）
     recent_closes = position.close_prices[-confirm_bars:]
+    if len(recent_closes) < confirm_bars:
+        return None
     # 支撑破位（更严重）：收盘价 < 前低 → 先检查（收盘 < 前低必然也 < 入场价）
     if all(c < prior_low for c in recent_closes):
         return ("SUPPORT_BROKEN", "暂停全部后续批次", "→ BM-SELL-04-B 止损卖出")

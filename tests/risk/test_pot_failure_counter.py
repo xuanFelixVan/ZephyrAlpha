@@ -163,6 +163,21 @@ class TestResetConditions:
         counter.record_success("2026-08-10")
         assert POT_FAILURE_COUNTER_NAMESPACE not in mem_store.data
 
+    def test_success_clears_stale_date_from_legacy_state(self, mem_store):
+        """升级遗留状态（AI-R2 红队 ATK-8）：旧版 record_success 曾写
+        last_failure_date=当天——新版早退分支必须清 stale date，
+        否则同日真实失败被同日去重误吞（计数器失明）。"""
+        mem_store.data[POT_FAILURE_COUNTER_NAMESPACE] = {
+            "consecutive_failures": 0,
+            "last_failure_date": "2026-08-18",  # 旧版遗留的当天日期
+            "adjusted_threshold": BASE_THRESHOLD,
+        }
+        counter = PotFailureCounter(mem_store)
+        counter.record_success("2026-08-18")  # 早退也必须清 stale date
+        assert mem_store.data[POT_FAILURE_COUNTER_NAMESPACE]["last_failure_date"] == ""
+        # 同日真实失败必须可计数（不被去重误吞）
+        assert counter.record_failure("2026-08-18") == 1
+
 
 # ── 3. 时区跨日 ──
 

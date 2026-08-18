@@ -265,7 +265,14 @@ class PotFailureCounter:
         """
         rec = self._load()
         base_threshold = self._config.pot_threshold_quantile
-        if rec["consecutive_failures"] == 0 and rec["adjusted_threshold"] == base_threshold:
+        # 早退条件须含 last_failure_date 已清空（AI-R2 红队 ATK-8）：升级遗留
+        # 状态（旧版 record_success 曾写当天日期）下早退不清 stale date →
+        # 同日真实失败被 record_failure 同日去重分支误吞（计数器失明）
+        if (
+            rec["consecutive_failures"] == 0
+            and rec["adjusted_threshold"] == base_threshold
+            and not rec["last_failure_date"]
+        ):
             return  # 无变化，省一次写
         rec["consecutive_failures"] = 0
         rec["last_failure_date"] = ""

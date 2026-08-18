@@ -196,6 +196,21 @@ def test_net_value_must_be_positive():
         tracker.update(-1.0)
 
 
+def test_net_value_must_be_finite():
+    """非有限值门禁（AI-R2 红队 ATK-1）：NaN/+Inf/-Inf 一律拒绝。
+
+    实证：NaN 所有比较恒 False → 静默失明轮；+Inf 使 peak=inf 永久中毒，
+    后续真实 -20% 回撤 drawdown=NaN → EMERGENCY 永不触发（回撤链静默死亡）。
+    """
+    tracker = DrawdownTracker(initial_net_value=NAV)
+    for bad in (float("nan"), float("inf"), float("-inf")):
+        with pytest.raises(InvalidDrawdownInputError):
+            tracker.update(bad)
+    # 拒绝后链路完好：真实 -20% 回撤正常触发 EMERGENCY（默认阈值 15%）
+    snap = tracker.update(NAV * 0.80)
+    assert snap.level is DrawdownAlertLevel.EMERGENCY
+
+
 def test_config_threshold_ordering():
     with pytest.raises(InvalidDrawdownInputError):
         DrawdownTrackerConfig(warning_threshold=0.10, critical_threshold=0.05, emergency_threshold=0.15)

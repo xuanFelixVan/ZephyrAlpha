@@ -977,3 +977,58 @@ class TestNanGuard:
         )
         # 修复前：not price / price<=0 对 Decimal("NaN") 均不拦截 → 生成 NaN 订单
         assert session.rebalance() == []
+
+
+class TestCancelRateGuardSingleInstanceContract:
+    """红队（AI-R2 ATK-5 配套）：session 与 order_manager 的 CancelRateGuard
+    单实例契约——双实例 wiring 下限频/撤单率与日申报计数单侧失明。"""
+
+    def test_auto_adopt_om_guard_when_not_injected(self) -> None:
+        """session 未显式注入 → 自动采用 order_manager.declaration_guard（同实例）。"""
+        from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
+
+        guard = CancelRateGuard()
+        broker = MagicMock()
+        om = OrderManager(declaration_guard=guard)
+        om.register_broker("test_broker", broker)
+        session = _make_session(broker=broker, order_manager=om)
+        assert session._cancel_rate_guard is guard
+
+    def test_explicit_same_instance_accepted(self) -> None:
+        """显式注入同实例 → 正常构造。"""
+        from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
+
+        guard = CancelRateGuard()
+        broker = MagicMock()
+        om = OrderManager(declaration_guard=guard)
+        om.register_broker("test_broker", broker)
+        session = TradingSession(
+            broker=broker,
+            strategy=MagicMock(),
+            risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
+            signal_provider=make_mock_signal_provider({}),
+            price_provider=make_mock_price_provider({}),
+            order_manager=om,
+            config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+            cancel_rate_guard=guard,
+        )
+        assert session._cancel_rate_guard is guard
+
+    def test_explicit_different_instance_fail_fast(self) -> None:
+        """显式双注入不同实例 → 装配期 fail-fast（防盘中单侧失明）。"""
+        from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
+
+        broker = MagicMock()
+        om = OrderManager(declaration_guard=CancelRateGuard())
+        om.register_broker("test_broker", broker)
+        with pytest.raises(ValueError, match="必须同实例"):
+            TradingSession(
+                broker=broker,
+                strategy=MagicMock(),
+                risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
+                signal_provider=make_mock_signal_provider({}),
+                price_provider=make_mock_price_provider({}),
+                order_manager=om,
+                config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+                cancel_rate_guard=CancelRateGuard(),
+            )

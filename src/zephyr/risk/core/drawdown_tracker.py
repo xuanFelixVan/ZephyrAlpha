@@ -37,6 +37,7 @@ Version: 0.1.0
 from __future__ import annotations
 
 import logging
+import math
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -259,10 +260,14 @@ class DrawdownTracker:
             DrawdownSnapshot
 
         Raises:
-            InvalidDrawdownInputError: 净值非正
+            InvalidDrawdownInputError: 净值非正或非有限值
         """
-        if net_value <= 0:
-            raise InvalidDrawdownInputError(f"net_value must be positive, got {net_value}")
+        # 非有限值门禁（AI-R2 红队 ATK-1）：NaN 所有比较为 False → 静默失明轮；
+        # +Inf 使 peak=inf 永久中毒（后续 drawdown 恒为 NaN，EMERGENCY 永不触发）
+        if not math.isfinite(net_value) or net_value <= 0:
+            raise InvalidDrawdownInputError(
+                f"net_value must be positive and finite, got {net_value}"
+            )
         now = now or self._clock()
 
         # 1. 峰值更新 (单调非减)

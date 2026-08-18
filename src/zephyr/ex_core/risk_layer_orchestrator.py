@@ -401,7 +401,8 @@ class RiskLayerOrchestrator:
                 self._recovery_completed = True
                 if snapshot.cash is not None:
                     nav = float(snapshot.cash + snapshot.total_market_value)
-                    if nav > 0 and not self._nav_history:
+                    # 非有限门禁（AI-R2 红队）：broker 快照异常值不得入收益序列
+                    if math.isfinite(nav) and nav > 0 and not self._nav_history:
                         self._nav_history.append(nav)
             _logger.info(
                 "启动恢复完成: holdings=%d today_fills=%d（以券商为准）",
@@ -458,9 +459,12 @@ class RiskLayerOrchestrator:
         Returns:
             RiskLayerSnapshot（含 position_cap / allow_new_position / degraded）
         """
-        if nav <= 0:
-            _logger.error("nav 非正，跳过本次风控评估: nav=%s", nav)
-            return self._fallback_snapshot(nav, "nav_non_positive")
+        # 非有限值门禁（AI-R2 红队 ATK-2）：NaN 穿透 nav<=0（比较恒 False）→
+        # 本轮回撤失明；+Inf 使 tracker peak=inf 永久中毒（EMERGENCY 永不触发）。
+        # 兜底快照不加约束但 degraded 留痕，回撤/VaR 链下轮恢复
+        if not math.isfinite(nav) or nav <= 0:
+            _logger.error("nav 非正/非有限，跳过本次风控评估: nav=%s", nav)
+            return self._fallback_snapshot(nav, "nav_non_positive_or_non_finite")
         now = now or self._clock()
 
         # 1. 回撤追踪（EMERGENCY 经监听链同步触发熔断，tracker 内部去抖）
@@ -617,6 +621,14 @@ class RiskLayerOrchestrator:
             raw_inputs = provider()
         except Exception:  # noqa: BLE001 — 输入失效不阻断交易主循环，下轮重试
             _logger.exception("systemic_input_provider 失效，本轮跳过系统性风险检测（状态保持）")
+            return self._state_hold_view()
+        # 类型防御（AI-R2 红队 ATK-3）：非 Mapping（如 list/tuple/str）
+        # 直接 .items() 会崩调仓主循环 → 降级空输入处理
+        if not isinstance(raw_inputs, Mapping):
+            _logger.warning(
+                "systemic_input_provider 返回非 Mapping（%s），降级空输入处理",
+                type(raw_inputs).__name__,
+            )
             return self._state_hold_view()
         if not raw_inputs:
             # 空输入同异常：无观测轮保持 state 派生约束——危机中数据中断

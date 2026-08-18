@@ -187,6 +187,24 @@ class TestDetectBreakoutFailure:
         assert detect_breakout_failure(pos, confirm_bars=3) is not None
         assert detect_breakout_failure(pos, confirm_bars=2) is not None
 
+    def test_empty_data_no_misjudgment(self):
+        """空数据门禁（AI-R2 红队 ATK-7）：无观测证据 → 不降级（无罪推定）。
+
+        原实现：low_prices 空 → min([]) 崩溃；close_prices 空 → all([])=True
+        误触发 SUPPORT_BROKEN 止损卖出（数据缺口被当成有罪证据）。
+        """
+        # 全空：原 min([]) ValueError 崩溃
+        assert detect_breakout_failure(MockPosition(low_prices=[], close_prices=[])) is None
+        # 收盘空：原 all([])=True → 误 SUPPORT_BROKEN
+        assert detect_breakout_failure(MockPosition(close_prices=[])) is None
+        # 前低空
+        assert detect_breakout_failure(MockPosition(low_prices=[], close_prices=[8.0, 8.1])) is None
+
+    def test_insufficient_closes_no_trigger(self):
+        """收盘样本不足 confirm_bars 根 → 证据不足不判定（防 1 根假跌破即止损）。"""
+        pos = MockPosition(entry_price=10.0, close_prices=[8.0])  # 1 根深跌破
+        assert detect_breakout_failure(pos, confirm_bars=2) is None
+
 
 # ══════════════════════════════════════════════════════════════
 # 算法 3：schedule_buy_orders（41 §3.4）

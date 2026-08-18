@@ -1054,3 +1054,82 @@ class TestKillSwitchNanGuard:
             "reason": "execute_kill_switch_liquidation exception",
         }
         assert orch._kill_switch_report is result
+
+
+class TestNonFiniteNavGuard:
+    """红队（AI-R2 ATK-2）：非有限 nav 门禁——NaN/Inf 不得穿透回撤/VaR 链。
+
+    实证（修复前）：NaN 穿透 nav<=0（比较恒 False）→ 本轮回撤失明；
+    +Inf 使 tracker peak=inf 永久中毒，后续真实 -20% 回撤 drawdown=NaN
+    → EMERGENCY 永不触发（回撤保护链静默死亡）。
+    """
+
+    def test_nan_nav_falls_back_without_poisoning(self) -> None:
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch = _make_orchestrator(broker=broker)
+        orch.evaluate_intraday(1_000_000.0, now=_T0)  # 建立峰值锚点
+        snap = orch.evaluate_intraday(float("nan"), now=_T0)
+        assert snap.degraded is True
+        assert "non_finite" in snap.degrade_reason
+        # 中毒检验：后续真实 -20% 回撤必须正常触发 EMERGENCY
+        snap2 = orch.evaluate_intraday(800_000.0, now=_T0)
+        assert snap2.drawdown_pct == pytest.approx(-0.20)
+        assert orch.kill_switch_engaged is True  # EMERGENCY 熔断链完好
+
+    def test_inf_nav_falls_back_without_poisoning(self) -> None:
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch = _make_orchestrator(broker=broker)
+        orch.evaluate_intraday(1_000_000.0, now=_T0)
+        snap = orch.evaluate_intraday(float("inf"), now=_T0)
+        assert snap.degraded is True
+        # 修复前此处 peak=inf → 下行断言必失败
+        snap2 = orch.evaluate_intraday(800_000.0, now=_T0)
+        assert snap2.drawdown_pct == pytest.approx(-0.20)
+        assert orch.kill_switch_engaged is True
+
+    def test_zero_and_negative_nav_still_falls_back(self) -> None:
+        """既有 nav<=0 口径不回归。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch = _make_orchestrator(broker=broker)
+        assert orch.evaluate_intraday(0.0, now=_T0).degraded is True
+        assert orch.evaluate_intraday(-5.0, now=_T0).degraded is True
+
+
+class TestSystemicProviderTypeGuard:
+    """红队（AI-R2 ATK-3）：provider 返回非 Mapping → 状态保持不崩主循环。
+
+    实证（修复前）：list provider → .items() AttributeError 崩 evaluate_intraday
+    （本批修复③只挡了异常/空输入，类型错位在 .items() 调用点裸奔）。
+    """
+
+    def test_non_mapping_provider_holds_state_without_crash(self) -> None:
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch = RiskLayerOrchestrator(
+            drawdown_controller=DrawdownController(),
+            drawdown_tracker=DrawdownTracker(initial_net_value=1_000_000.0),
+            var_calculator=VaRCalculator(),
+            tail_risk_monitor=TailRiskMonitor(),
+            broker=broker,
+            systemic_detector=AshareSystemicRiskDetector(),
+            systemic_input_provider=lambda: ["sell_pressure", "bid_ask_spread"],  # 类型错位
+        )
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)  # 修复前 AttributeError
+        assert snap.systemic_level == 0
+        assert snap.systemic_cap == 1.0
+        assert orch.kill_switch_engaged is False
+
+    def test_non_mapping_provider_holds_crisis_constraints(self) -> None:
+        """危机中 provider 类型错位 → 同数据中断：cap/halt 保持不放松。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = {
+            "sell_pressure": 0.80,
+            "bid_ask_spread": 0.01,
+            "external_market_change": -0.04,
+        }
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 2
+        orch._systemic_input_provider = lambda: ("not", "a", "mapping")  # type: ignore[assignment]
+        snap2 = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=1))
+        assert snap2.systemic_level == 2
+        assert snap2.systemic_cap == pytest.approx(0.70)

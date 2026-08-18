@@ -158,6 +158,10 @@ class CancelRateGuard:
     warn_threshold: float = 0.12
     freeze_threshold: float = 0.15
     rate_limit_per_sec: int = 15
+    # 冷启动统计幻觉门禁（AI-R2 红队 ATK-4）：已完结样本 < 20 笔时比率估计
+    # 标准误 >7pp，超过 12%→15% 的 3pp 缓冲带宽，统计上无法区分——1/1=100%
+    # 的"撤单率"会瞬间冻结全账户（开盘首单废单重挂即事故）。样本不足一律 NORMAL
+    min_samples_for_status: int = 20
     # 日申报笔数硬计数器阈值（43 号 §8 方案 A：5000 预警 / 1 万阻断）
     daily_warn_threshold: int = 5000
     daily_block_threshold: int = 10000
@@ -189,7 +193,10 @@ class CancelRateGuard:
 
     @property
     def status(self) -> CancelRateStatus:
-        """当前监控状态。"""
+        """当前监控状态（样本不足门禁：AI-R2 红队 ATK-4）。"""
+        if len(self._resolved) < self.min_samples_for_status:
+            # 冷启动统计幻觉：分母不足时比率无统计意义，一律 NORMAL
+            return CancelRateStatus.NORMAL
         rate = self.cancel_rate
         if rate > self.freeze_threshold:
             return CancelRateStatus.FROZEN

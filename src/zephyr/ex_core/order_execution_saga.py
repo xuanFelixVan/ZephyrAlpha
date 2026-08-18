@@ -792,6 +792,17 @@ class OrderExecutionSaga:
         # 供 fill_id 去重集识别恢复来源——去重落地归 AI-RRESIL-001，本侧只保证可识别）
         recovered_qty = terminal.filled_quantity if terminal.filled_quantity > 0 else ctx.order.quantity
         recovered_price = terminal.avg_fill_price or ctx.order.limit_price or Decimal("0")
+        # 成本不可得门禁（AI-R2 红队 ATK-6）：市价单 avg_fill_price 缺失时
+        # price=0 入账 → 后续卖出 realized_pnl 全虚盈（账面成本 0）。宁缺账
+        # （critical 告警人工对账，对账链以券商为准兜底）不错账
+        if recovered_price <= 0:
+            _logger.critical(
+                "[Saga %s] 订单已成交但成本价不可得（avg_fill_price/limit_price 均缺），"
+                "不补走持仓更新——人工对账: order=%s",
+                ctx.saga_id[:8],
+                ctx.order.order_id,
+            )
+            return False
         ctx.fill = Fill(
             fill_id=f"saga-fq-{ctx.order.order_id}",
             fill_price=recovered_price,
