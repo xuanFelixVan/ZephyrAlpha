@@ -311,14 +311,16 @@ generators:
   # ════════════════════════════════════════════════════════════════════════
   # algo_flow_translation_sync — ALGO_FLOW 标记 → 翻译真源同步（手工 rollout 工具）
   # B7 治本登记（2026-08-19）：两次未登记运行致 MTR 整文件重序列化漂移（drift watchdog
-  #   快照在案）。登记目的=产物归属声明（跑了有人认领、漂移可归因）；不挂自动触发源
+  #   快照在案）。登记目的=存在性/归属声明（跑了有人认领、漂移可归因）；不挂自动触发源
   #   （输入=src 模块 ALGO_FLOW 标记，无单一 mtime 真源可对比，手工 rollout 防循环触发）；
   #   运行审计=.runtime/audit/algo_flow_translation_sync_runs.jsonl（运行即写）。
+  #   ⚠ output_globs 留空是刻意的：MTR 是双角色文件（battle_map_steps/cross_cutting 段
+  #   是 battle_map 生成器的 input_sources；algo_submodules 段才是本工具产物），整文件
+  #   登记为产物会触发 #3 产物循环阻断、误伤 battle_map 对 MTR 手工段编辑的正常触发
+  #   （test_post_commit_oscillation_guard 实证拦截）。产物段归属以本注释为准。
   # ════════════════════════════════════════════════════════════════════════
   - name: algo_flow_translation_sync
     module_path: scripts.governance._shared.algo_flow_translation_sync
     trigger_sources: []
     input_sources: []
-    output_globs:
-      - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
-      - docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml
+    output_globs: []
