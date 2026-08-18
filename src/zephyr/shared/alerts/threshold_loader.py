@@ -63,11 +63,17 @@ ALERT_THRESHOLD_REGISTRY_PATH: Final[Path] = (
 def _cast_value(raw: Any, cast: Literal["float", "int", "str"], tid: str) -> Any:
     """按声明类型转换阈值原始值（类型畸形 → AlertThresholdConfigError）。
 
-    - float: int/float/数值字符串 → float（对齐 strategy_deviation_monitor 范式）
+    - float: int/float/数值字符串 → float（对齐 strategy_deviation_monitor 范式；
+      拒 bool——YAML `value: true` 笔误须 fail-closed，禁止静默 1.0）
     - int:   仅接受 YAML 整数（拒 bool/浮点/字符串，防 300.5→300 静默截断）
     - str:   仅接受 YAML 字符串（PLV 字符串规约语义，不数值化）
     """
     if cast == "float":
+        if isinstance(raw, bool):
+            raise AlertThresholdConfigError(
+                "阈值条目 value 非数值",
+                details={"threshold_id": tid, "value": repr(raw)},
+            )
         try:
             return float(raw)
         except (TypeError, ValueError) as exc:

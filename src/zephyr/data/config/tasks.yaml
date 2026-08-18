@@ -1367,7 +1367,7 @@ tasks:
   schedule: pre_market
   incremental: true     # 增量（last_key 续算；依赖昨收已落库）
   date_col: trade_date
-  dependencies: ["stock_basic_premarket", "st_status_premarket"]    # ST标记与板块前提
+  dependencies: ["st_status_premarket"]    # ST标记快照前提（板块=代码前缀静态规则，昨收=kline_daily 昨日盘后已落库，均非本调度组任务）
   capability: stk_limit
   symbols:
   fallback_sources: []

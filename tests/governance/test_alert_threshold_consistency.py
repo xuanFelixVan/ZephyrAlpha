@@ -291,3 +291,19 @@ class TestFailClosedRedTeam:
         reg = self._write_registry(tmp_path, entries)
         with pytest.raises(AlertThresholdConfigError):
             _FAIL_CLOSED_LOADERS[module_name](reg)
+
+    @pytest.mark.parametrize("module_name", sorted(_FAIL_CLOSED_LOADERS))
+    def test_bool_value_fail_closed(self, module_name: str, tmp_path: Path):
+        """bool 攻击面：YAML `value: true` 笔误一律 fail-closed。
+
+        float cast 拒 bool（防静默 1.0）；int cast 拒 bool（isinstance 守护）；
+        str cast 拒 bool（非字符串）——三种 cast 布尔值全拒。
+        """
+        entries = [dict(e) for e in _GOOD_REGISTRY_ENTRIES]
+        target = _FIRST_TID[module_name]
+        for entry in entries:
+            if entry["threshold_id"] == target:
+                entry["value"] = True
+        reg = self._write_registry(tmp_path, entries)
+        with pytest.raises(AlertThresholdConfigError):
+            _FAIL_CLOSED_LOADERS[module_name](reg)
