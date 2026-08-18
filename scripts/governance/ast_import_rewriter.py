@@ -47,8 +47,6 @@ warn_only: false
 """
 
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
-
 import argparse
 import ast
 import re
@@ -56,6 +54,8 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -221,7 +221,7 @@ class ImportRewriter:
     # Internal helpers
     # ------------------------------------------------------------------
 
-    def _find_replacement(self, module: str) -> Optional[str]:
+    def _find_replacement(self, module: str) -> str | None:
         """Find replacement module path.
 
         Handles exact match and prefix match:
@@ -242,7 +242,7 @@ class ImportRewriter:
         return None
 
     # ── Stage 4 公共化（补全 2026-08-15）：public wrapper（tests/governance/test_ast_import_rewriter.py 消费） ──
-    def find_replacement(self, module: str) -> Optional[str]:
+    def find_replacement(self, module: str) -> str | None:
         """公共接口：find_replacement（Stage 4 公共化补全，委托到 self._find_replacement）。"""
         return self._find_replacement(module)
 

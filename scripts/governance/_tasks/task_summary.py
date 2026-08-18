@@ -33,7 +33,8 @@ Usage:
 
 from __future__ import annotations
 
-from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT as _PROJECT_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_PASS
+from _shared.constants import REPO_ROOT as _PROJECT_ROOT
 
 __manifest__ = """
 args: []

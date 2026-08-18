@@ -74,9 +74,11 @@ _GENERATORS_DIR = str(Path(__file__).resolve().parent)
 if _GENERATORS_DIR not in sys.path:
     sys.path.insert(0, _GENERATORS_DIR)
 
-from _shared.constants import DOC_HTTP_BASE, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import DOC_HTTP_BASE, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
 from _shared.terminology_loader import get_category_map
+
 try:
     from _common import DB_DISPLAY_NAME, cleanup_stale_files  # noqa: E402
 except ImportError:
@@ -86,12 +88,13 @@ except ImportError:
         """降级 stub：_common 不可用时不动文件。"""
         return []
 
+# 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步）。真源：zoomable_html.py。
+# 对齐 generate_domain_doc.py 的联动模式（visualization_view_template.md §2/§8.4）。
+from zoomable_html import HTML_SUBDIR, emit_zoomable_html  # noqa: E402
+
 from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
     get_decisiongraph_pg_connection,
 )
-# 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步）。真源：zoomable_html.py。
-# 对齐 generate_domain_doc.py 的联动模式（visualization_view_template.md §2/§8.4）。
-from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402
 
 OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "06_decision_architecture"
 _YAML_PATH = _REPO_ROOT / "architecture_model" / "domain" / "decision_graph_model.yaml"
@@ -1084,7 +1087,7 @@ def _md_header(
     lines.append(f"# {title}")
     lines.append("")
     lines.append(f"> 生成时间: {_git_commit_timestamp()}")
-    lines.append(f"> 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）")
+    lines.append("> 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）")
     lines.append(f"> 数据库: {DB_DISPLAY_NAME}")
     lines.append(f"> 导航: [返回主索引 decision_index.md](decision_index.md) | {breadcrumb}")
     if md_stem is not None and with_html_link:

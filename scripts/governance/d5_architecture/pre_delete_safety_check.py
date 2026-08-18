@@ -61,8 +61,8 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 _PROJECT_ROOT = REPO_ROOT
 _SCRIPTS_DIR = _PROJECT_ROOT / "scripts"

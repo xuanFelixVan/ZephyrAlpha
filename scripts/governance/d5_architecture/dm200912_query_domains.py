@@ -44,6 +44,7 @@ warn_only: false
 import json
 import sys
 from pathlib import Path
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _THIS_FILE = Path(__file__).resolve()

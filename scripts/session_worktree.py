@@ -175,10 +175,10 @@ def cmd_create(args: argparse.Namespace) -> int:
             check=False,
         )
         if result.returncode != 0:
-            print(f"[WORKTREE] git worktree add 失败:", file=sys.stderr)
+            print("[WORKTREE] git worktree add 失败:", file=sys.stderr)
             print(result.stderr, file=sys.stderr, end="")
             return 1
-        print(f"[WORKTREE] 创建成功")
+        print("[WORKTREE] 创建成功")
         for note in _provision_worktree_env(wt_path):
             print(f"  {note}")
         # 治理层活性登记（2026-08-14 治本，AI-GIT-001 实证：CLI 创建的 worktree 此前在
@@ -197,7 +197,7 @@ def cmd_create(args: argparse.Namespace) -> int:
             # 进程退出后 PID 死亡 → _is_session_alive 判死（pid>0 时不看 heartbeat），
             # daemon 心跳也无法保活。pid=0 时判活走 90s 心跳新鲜度，daemon 接管续期。
             SessionRegistry(_main_root).register(session_id, pid=0)
-            print(f"  session 已登记 SessionRegistry（逻辑 session，daemon 心跳续期）")
+            print("  session 已登记 SessionRegistry（逻辑 session，daemon 心跳续期）")
         except Exception as e:  # noqa: BLE001 — 登记失败不阻断创建
             print(f"  WARN: SessionRegistry 登记失败（不阻断创建）: {e}", file=sys.stderr)
         # heartbeat daemon 普及（#56 子项 2，对齐 rule_bridge session_worktree_start）：
@@ -255,7 +255,7 @@ def cmd_exec(args: argparse.Namespace) -> int:
         return 1
 
     if not args.command:
-        print(f"[WORKTREE] 错误: 未指定要执行的命令", file=sys.stderr)
+        print("[WORKTREE] 错误: 未指定要执行的命令", file=sys.stderr)
         return 1
 
     # 在 worktree 目录中执行命令
@@ -302,19 +302,19 @@ def cmd_merge(args: argparse.Namespace) -> int:
 
         result = _run_git(merge_cmd + [branch], check=False)
         if result.returncode != 0:
-            print(f"[WORKTREE] 合并失败:", file=sys.stderr)
+            print("[WORKTREE] 合并失败:", file=sys.stderr)
             print(result.stderr, file=sys.stderr, end="")
-            print(f"  可能需要解决冲突后 git commit", file=sys.stderr)
+            print("  可能需要解决冲突后 git commit", file=sys.stderr)
             return 1
 
         if args.squash:
             # squash merge 需要手动 commit
             _run_git(["commit", "-m", f"merge(ai): {session_id} squashed"], check=False)
 
-        print(f"[WORKTREE] 合并成功")
+        print("[WORKTREE] 合并成功")
         # §11.3.1 v2.1.0: merge 后立即 abort 清理
         # S2 四证：merge 场景豁免证 1（会话仍活跃），仍走证 2/4（快照）
-        print(f"[WORKTREE] 自动清理 worktree...")
+        print("[WORKTREE] 自动清理 worktree...")
         return cmd_abort_inner(session_id, exempt_cert1=True)
     except Exception as e:
         print(f"[WORKTREE] 内部错误: {e}", file=sys.stderr)
@@ -588,7 +588,7 @@ def cmd_list(args: argparse.Namespace) -> int:
     try:
         result = _run_git(["worktree", "list"], check=False)
         if result.returncode != 0:
-            print(f"[WORKTREE] git worktree list 失败:", file=sys.stderr)
+            print("[WORKTREE] git worktree list 失败:", file=sys.stderr)
             print(result.stderr, file=sys.stderr, end="")
             return 1
         print("[WORKTREE] 当前 worktree 列表:")

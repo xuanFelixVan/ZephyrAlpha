@@ -53,6 +53,7 @@ sys.path.insert(0, str(_SRC))
 from zephyr.intelligence.model_profiling.capability_passport import (  # noqa: E402
     CapabilityPassport,
 )
+
 # 注: REPO_ROOT 真源由 capability_passport.PASSPORTS_DIR 内部使用（zephyr.shared.io.paths）
 # 本脚本不直接推算仓库根, 避免违反 REPO_ROOT SSoT 约束
 

@@ -34,14 +34,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 # ── _shared 模块 import bootstrap（P2迁移：复用 get_depgraph_pg_connection）──
 _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, get_depgraph_pg_connection  # noqa: E402
 
 # 替换映射（按字符串长度降序排列，避免短串先匹配破坏长串）
 # 注意: 旧名为原始大写/kebab形式，新名为 snake_case。替换已执行完毕，

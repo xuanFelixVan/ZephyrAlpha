@@ -139,7 +139,7 @@ def main():
         _gov_size = os.path.getsize(DB_PATH)
         print(f"  ✅ PASS: governance.db ({_gov_size} bytes)")
     else:
-        print(f"  ❌ FAIL: governance.db 不存在")
+        print("  ❌ FAIL: governance.db 不存在")
         all_pass = False
 
     # 总结

@@ -80,9 +80,12 @@ if str(_SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(_SRC_ROOT))
 sys.path.insert(0, str(_PROJECT_ROOT / "scripts" / "governance" / "d3_metadata"))
 
-from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
-from zephyr.shared.infra.process_pool import is_pid_alive  # noqa: E402  僵尸锁检测真源唯一（AGENTS.md §8 is_pid_alive 真源声明，禁止本地重复定义）
 from check_naming_convention import check_file as _check_naming  # noqa: E402
+
+from zephyr.shared.infra.process_pool import (
+    is_pid_alive,  # noqa: E402  僵尸锁检测真源唯一（AGENTS.md §8 is_pid_alive 真源声明，禁止本地重复定义）
+)
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
 LOCK_ROOT = REPO_ROOT / ".ailocks"
 # TTL 真源：trae_001_file_operation_security.yaml ttl_design section

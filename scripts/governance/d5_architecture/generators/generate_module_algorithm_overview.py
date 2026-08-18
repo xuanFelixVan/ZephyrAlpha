@@ -76,22 +76,23 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _common import DB_DISPLAY_NAME, idempotent_date, idempotent_timestamp  # noqa: E402
-from zoomable_html import HTML_SUBDIR, emit_zoomable_html  # noqa: E402
-from domain_name_mapping import get_domain_name_zh  # noqa: E402
-from _shared.module_translation_loader import (  # noqa: E402
-    derive_name_from_path,
-    get_module_name_bilingual,
-    get_module_plain,
-)
 from _shared.code_algorithm_extractor import (  # noqa: E402
-    AlgorithmSummary,
     AlgoFlowData,
     AlgoFlowNode,
+    AlgorithmSummary,
     build_blueprint_index,
     extract_algorithm_from_blueprint,
     extract_algorithm_from_code,
 )
 from _shared.constants import DOC_HTTP_BASE  # noqa: E402
+from _shared.module_translation_loader import (  # noqa: E402
+    derive_name_from_path,
+    get_module_name_bilingual,
+    get_module_plain,
+)
+from domain_name_mapping import get_domain_name_zh  # noqa: E402
+from zoomable_html import HTML_SUBDIR, emit_zoomable_html  # noqa: E402
+
 from zephyr.governance.persistence.depgraph_reader import DepgraphReader  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 

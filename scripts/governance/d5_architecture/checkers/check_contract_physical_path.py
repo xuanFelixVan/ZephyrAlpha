@@ -59,7 +59,6 @@ import argparse
 import re
 
 import yaml
-
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 __manifest__ = """

@@ -34,7 +34,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import get_depgraph_pg_connection, REPO_ROOT
+from _shared.constants import REPO_ROOT, get_depgraph_pg_connection
 
 # L0 基础设施层（5 域）— 已完成 2026-06-29
 # 注: old_id 保留连字符格式作为迁移记录；文件替换会把脚本自身的 D-INFRA_* 改掉，

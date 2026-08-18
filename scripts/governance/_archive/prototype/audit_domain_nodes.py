@@ -34,9 +34,10 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
-from _shared.constants import EXIT_PASS
-
+from _shared.constants import (
+    EXIT_PASS,
+    get_depgraph_pg_connection,  # noqa: E402
+)
 
 # ============================================================================
 # P0-4 升级：4类检测函数

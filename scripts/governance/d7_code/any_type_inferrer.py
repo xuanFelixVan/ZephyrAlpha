@@ -72,7 +72,8 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
 from scripts.governance.d7_code.check_any_abuse import (  # noqa: E402  project module per IMPORT-INTEGRITY gate
     _CALLABLE_TYPES,
     _CONTAINER_TYPES,

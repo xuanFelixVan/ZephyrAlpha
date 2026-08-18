@@ -95,6 +95,9 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS
+from _shared.yaml_utils import load_vocabulary_values  # 词表合法值加载 SSoT（D-D-05）
+
 from zephyr.governance.persistence.decisiongraph_schema import (
     get_decisiongraph_pg_connection,
     load_build_status_order,
@@ -102,8 +105,6 @@ from zephyr.governance.persistence.decisiongraph_schema import (
     load_node_type_values,
     load_track_ids,
 )
-from _shared.yaml_utils import load_vocabulary_values  # 词表合法值加载 SSoT（D-D-05）
-from _shared.constants import EXIT_FINDINGS, EXIT_ERROR
 
 # ---------------------------------------------------------------------------
 # 常量

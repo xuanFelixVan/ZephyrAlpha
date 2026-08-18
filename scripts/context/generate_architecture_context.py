@@ -46,6 +46,7 @@ if str(_SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(_SRC_ROOT))
 
 import yaml
+
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
 CONTRACTS_YAML = REPO_ROOT / (

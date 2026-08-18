@@ -55,8 +55,8 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 # 治本(2026-06-30): REPO_ROOT 真源来自 _shared.constants (SSoT), 消除 parents[N] 硬编码
-from _shared.constants import DB_PATH, REPO_ROOT as _REPO_ROOT  # noqa: E402
-from _shared.constants import EXIT_PASS, EXIT_ERROR
+from _shared.constants import DB_PATH, EXIT_ERROR, EXIT_PASS  # noqa: E402
+from _shared.constants import REPO_ROOT as _REPO_ROOT
 
 _SRC_DIR = str(_REPO_ROOT / "src")
 if _SRC_DIR not in sys.path:
@@ -64,11 +64,11 @@ if _SRC_DIR not in sys.path:
 
 import sqlite3
 
-from zephyr.shared.io.paths import DB_PATH
 from zephyr.governance.architecture_governance.post_sync_validator import (
     validate_post_sync_command,
     validate_rollback_instructions,
 )
+from zephyr.shared.io.paths import DB_PATH
 
 
 @dataclass

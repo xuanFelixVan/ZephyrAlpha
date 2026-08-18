@@ -70,7 +70,10 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
-from _shared.frontmatter import _FM_END_PATTERN, parse_frontmatter  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
+from _shared.frontmatter import (  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
+    _FM_END_PATTERN,
+    parse_frontmatter,
+)
 
 ensure_utf8_stdout()
 

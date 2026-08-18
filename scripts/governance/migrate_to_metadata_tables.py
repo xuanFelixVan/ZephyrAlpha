@@ -49,10 +49,11 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 from zephyr.governance.depgraph_schema import (  # noqa: E402
-    _DDL_NODES_METADATA,
     _DDL_EDGES_METADATA,
+    _DDL_NODES_METADATA,
     get_depgraph_pg_connection,
 )
 

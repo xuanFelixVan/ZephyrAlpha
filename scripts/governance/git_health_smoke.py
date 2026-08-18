@@ -60,7 +60,7 @@ _STATUS_WARN_SECONDS = 10.0
 _STATUS_FAIL_SECONDS = 30.0
 
 
-def _parse_git_version(version_str: str) -> Optional[tuple[int, int, int]]:
+def _parse_git_version(version_str: str) -> tuple[int, int, int] | None:
     """从 'git version 2.50.1.windows.1' 解析出 (major, minor, patch)。
 
     fail-open：解析失败返回 None（调用方降级为字符串前缀匹配）。

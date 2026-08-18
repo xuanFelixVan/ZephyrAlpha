@@ -45,8 +45,8 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from _shared.constants import REPO_ROOT
 
+from _shared.constants import REPO_ROOT
 
 
 def check_engine_instantiation() -> dict:
@@ -109,8 +109,8 @@ def check_policy_file() -> dict:
 def check_escalation_bridge() -> dict:
     """Check compliance and report findings."""
     try:
-        from zephyr.governance.financial_governance.budget_enforcement.alerts import BudgetAlert
         from zephyr.governance.escalation.budget_handler import on_budget_alert
+        from zephyr.governance.financial_governance.budget_enforcement.alerts import BudgetAlert
 
         alert = BudgetAlert(alert_id="health-check")
         result = on_budget_alert(alert)

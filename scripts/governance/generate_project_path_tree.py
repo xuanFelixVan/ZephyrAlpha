@@ -44,6 +44,7 @@ warn_only: false
 import argparse
 import json
 import logging
+
 # 治本（2026-06-29）：删除 import os / import subprocess（锁剧场删除后无使用）。
 import sys
 from datetime import UTC, datetime
@@ -56,7 +57,13 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, get_depgraph_pg_connection  # Bug 5 修复（2026-07-18）：补 REPO_ROOT + get_depgraph_pg_connection，原仅 import 3 个 EXIT_* 致 NameError
+from _shared.constants import (  # Bug 5 修复（2026-07-18）：补 REPO_ROOT + get_depgraph_pg_connection，原仅 import 3 个 EXIT_* 致 NameError
+    EXIT_ERROR,
+    EXIT_FINDINGS,
+    EXIT_PASS,
+    REPO_ROOT,
+    get_depgraph_pg_connection,
+)
 
 PROJECT_ROOT = REPO_ROOT
 

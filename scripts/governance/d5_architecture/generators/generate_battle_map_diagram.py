@@ -83,7 +83,10 @@ if _THIS_DIR not in sys.path:
     sys.path.insert(0, _THIS_DIR)
 
 from _common import idempotent_date  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
-from _shared.constants import DOC_HTTP_BASE, REPO_ROOT  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
+from _shared.constants import (  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
+    DOC_HTTP_BASE,
+    REPO_ROOT,
+)
 from _shared.module_translation_loader import (  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
     get_cross_cutting_all,
     get_step_indicators_zh,

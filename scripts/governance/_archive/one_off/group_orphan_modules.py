@@ -37,8 +37,8 @@ import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_ERROR
+
+from _shared.constants import EXIT_ERROR, REPO_ROOT
 
 PROJECT_ROOT = REPO_ROOT
 

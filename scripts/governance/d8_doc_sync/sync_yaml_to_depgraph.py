@@ -73,9 +73,8 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 # P2 PG 迁移：删除 lock_files 文件锁（PG 用 MVCC）；导入 PG 连接入口
-from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
-from _shared.constants import EXIT_FINDINGS
 import psycopg2  # noqa: E402
+from _shared.constants import EXIT_FINDINGS, REPO_ROOT, get_depgraph_pg_connection  # noqa: E402
 
 # 治本（2026-06-27）：删除 DB_PATH = str(DEPGRAPH_DB_PATH)（路径污染源）。
 # P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
@@ -1434,12 +1433,12 @@ def verify_readonly_table_comments(cur):
             incomplete.append((table, missing_elements))
 
     if missing_comment:
-        print(f"\n[WARN] S1.2 HB-001 以下 readonly 表缺少 COMMENT（AI 可发现性受损）：")
+        print("\n[WARN] S1.2 HB-001 以下 readonly 表缺少 COMMENT（AI 可发现性受损）：")
         for t in missing_comment:
             print(f"  - {t}（需执行 COMMENT ON TABLE {t} IS '...'，见 02_create_pg_schema.sql 末尾）")
 
     if incomplete:
-        print(f"\n[WARN] S1.2 HB-001 以下 readonly 表 COMMENT 缺少四要素：")
+        print("\n[WARN] S1.2 HB-001 以下 readonly 表 COMMENT 缺少四要素：")
         for table, missing in incomplete:
             print(f"  - {table} 缺少：{', '.join(missing)}")
 
@@ -1470,7 +1469,7 @@ def sync_dataflow_registry(cur):
         print("  跳过: dataflow_graph_registry.yaml 不存在或为空")
         return
 
-    from datetime import datetime, UTC
+    from datetime import UTC, datetime
     now_iso = datetime.now(UTC).isoformat(timespec="seconds")
 
     # --- 清空运营态数据（DELETE + UPSERT 模式，保护设计态）---
@@ -1778,7 +1777,7 @@ def sync_interface_contracts(cur):
         print("  跳过: interface_contract_registry.yaml 不存在或为空")
         return
 
-    from datetime import datetime, UTC
+    from datetime import UTC, datetime
     now_iso = datetime.now(UTC).isoformat(timespec="seconds")
 
     # 建表（幂等，与 sync_dataflow_registry 模式一致）

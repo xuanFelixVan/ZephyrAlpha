@@ -43,8 +43,8 @@
 from __future__ import annotations
 
 import argparse
-import sys
 import os
+import sys
 from pathlib import Path
 
 _THIS_DIR = Path(__file__).resolve().parent
@@ -56,13 +56,13 @@ if str(_SRC_DIR) not in sys.path:
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from zephyr.data import ch_writer  # noqa: E402
 from scripts.ch.apply_exchange_columns import (  # noqa: E402
+    DB,
     TIER1_INDEX_TABLES,
     TIER2_TABLES,
     TIER3_TABLES,
-    DB,
 )
+from zephyr.data import ch_writer  # noqa: E402
 
 # 覆盖率阈值：Tier-1/2 MATERIALIZED 表 exchange 非空率低于此值则告警
 TIER12_COVERAGE_THRESHOLD = 0.95  # 95%（允许少量异常 symbol）

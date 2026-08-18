@@ -27,8 +27,8 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC
 from pathlib import Path
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_PASS
+
+from _shared.constants import EXIT_PASS, REPO_ROOT
 
 PROJECT_ROOT = REPO_ROOT
 ZEPHYR_ROOT = PROJECT_ROOT / "src" / "zephyr"

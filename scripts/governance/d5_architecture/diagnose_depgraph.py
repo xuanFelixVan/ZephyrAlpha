@@ -44,10 +44,13 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_PASS, REPO_ROOT, get_depgraph_pg_connection  # noqa: E402
 from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
-from _shared.constants import EXIT_PASS
-from zephyr.shared.io.yaml_utils import load_vocabulary_entries, load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
+
+from zephyr.shared.io.yaml_utils import (  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
+    load_vocabulary_entries,
+    load_vocabulary_values,
+)
 
 PROJECT_ROOT = REPO_ROOT
 

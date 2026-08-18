@@ -42,8 +42,8 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from _shared.constants import REPO_ROOT
 
+from _shared.constants import REPO_ROOT
 
 # ── 豁免配置 ──
 

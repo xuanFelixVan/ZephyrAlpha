@@ -37,8 +37,7 @@ import sys
 from pathlib import Path
 
 import yaml
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 PROJECT_ROOT = REPO_ROOT
 KEY_FACTS_PATH = PROJECT_ROOT / "data" / "rule_optimization" / "key_facts.yaml"

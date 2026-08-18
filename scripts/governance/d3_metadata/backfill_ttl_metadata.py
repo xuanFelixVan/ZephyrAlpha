@@ -79,8 +79,8 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.frontmatter import (  # noqa: E402
-    PY_HEADER_PATTERN,
     _FM_END_PATTERN,
+    PY_HEADER_PATTERN,
     parse_byaml_anchor,
     parse_frontmatter,
     parse_json_meta,

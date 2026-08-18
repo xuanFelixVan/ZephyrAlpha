@@ -50,7 +50,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import GATES_DIR, EXIT_ERROR, REPO_ROOT
+from _shared.constants import EXIT_ERROR, GATES_DIR, REPO_ROOT
 from _shared.walk import iter_files  # 治本(ARCH-036 P1-3): 收敛 glob→iter_files
 
 __manifest__ = """

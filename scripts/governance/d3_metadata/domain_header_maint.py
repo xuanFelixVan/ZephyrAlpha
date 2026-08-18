@@ -275,7 +275,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
     print(f"\n[1] 扫描范围: {scan_dir_names}")
     print(f"    扫描 .py 文件总数: {total}")
 
-    print(f"\n[2] 分类统计:")
+    print("\n[2] 分类统计:")
     print(f"    OK（有 MODULE 且有 DOMAIN）:     {stats['ok']:5d}")
     print(f"    MISSING（有 MODULE 无 DOMAIN）:   {stats['missing']:5d}  ← 需补全")
     print(f"    EMPTY_DOMAIN（DOMAIN 值为空/#）:  {stats['empty_domain']:5d}  ← 格式错误")
@@ -283,7 +283,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
     print(f"    DOMAIN_ONLY（有 DOMAIN 无 MODULE）: {stats['domain_only']:5d}  ← 异常/旧格式")
     print(f"    READ_ERROR:                       {stats['read_error']:5d}")
 
-    print(f"\n[3] 已有 [DOMAIN] 的域分布:")
+    print("\n[3] 已有 [DOMAIN] 的域分布:")
     for dom, cnt in ok_domain_dist.most_common():
         print(f"    {cnt:5d}  {dom}")
 
@@ -301,7 +301,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
             if len(files) > 20:
                 print(f"    ... 还有 {len(files) - 20} 个")
     else:
-        print(f"\n[4] 缺失 [DOMAIN] 的文件: 无 ✅")
+        print("\n[4] 缺失 [DOMAIN] 的文件: 无 ✅")
 
     if empty_domain_files:
         print(f"\n[5] [DOMAIN] 空值文件（共 {len(empty_domain_files)} 个，需补全域名）:")
@@ -312,7 +312,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
                 rel = f
             print(f"    - {rel}")
     else:
-        print(f"\n[5] [DOMAIN] 空值文件: 无 ✅")
+        print("\n[5] [DOMAIN] 空值文件: 无 ✅")
 
     if domain_only_files:
         print(f"\n[6] 异常（有 DOMAIN 无 MODULE）文件（共 {len(domain_only_files)} 个）:")
@@ -323,9 +323,9 @@ def cmd_scan(args: argparse.Namespace) -> int:
                 rel = f
             print(f"    - {rel}")
     else:
-        print(f"\n[6] 异常文件: 无 ✅")
+        print("\n[6] 异常文件: 无 ✅")
 
-    print(f"\n[7] OK 文件按顶层目录分布:")
+    print("\n[7] OK 文件按顶层目录分布:")
     for d, cnt in ok_by_dir.most_common():
         print(f"    {cnt:5d}  {d}")
 
@@ -371,7 +371,7 @@ def _verify_file(rel: str) -> tuple[str, str | None]:
 
     # 检查 DOMAIN 是否在 MODULE 之后
     if m_dom.start() < m_mod.start():
-        return ("position_error", f"DOMAIN 在 MODULE 之前")
+        return ("position_error", "DOMAIN 在 MODULE 之前")
 
     # 检查 DOMAIN 值是否为空/#
     domain_id = m_dom.group(1)
@@ -439,26 +439,26 @@ def cmd_verify(args: argparse.Namespace) -> int:
         elif status == "read_error":
             errors.append(f"{rel}: {detail}")
 
-    print(f"\n[2] 校验结果:")
+    print("\n[2] 校验结果:")
     print(f"    OK:    {ok_count}")
     print(f"    WARN:  {len(warnings)}")
     print(f"    ERROR: {len(errors)}")
 
     if warnings:
-        print(f"\n[3] 警告（不影响功能）:")
+        print("\n[3] 警告（不影响功能）:")
         for w in warnings[:20]:
             print(f"  {w}")
 
     if errors:
-        print(f"\n[4] 错误:")
+        print("\n[4] 错误:")
         for e in errors[:30]:
             print(f"  {e}")
         if len(errors) > 30:
             print(f"  ... 还有 {len(errors) - 30} 条")
     else:
-        print(f"\n[4] 无错误 ✅")
+        print("\n[4] 无错误 ✅")
 
-    print(f"\n[5] 域分布统计:")
+    print("\n[5] 域分布统计:")
     for dom, cnt in domain_dist.most_common():
         print(f"    {cnt:4d}  {dom}")
 

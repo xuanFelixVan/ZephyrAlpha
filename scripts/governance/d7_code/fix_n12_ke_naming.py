@@ -50,8 +50,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_PASS
+from _shared.constants import EXIT_PASS, REPO_ROOT
 
 # KE 文件名模式: ke-{1-4位数字}-{snake_case_title}.md
 KE_VALID_PATTERN = re.compile(r"^ke-\d{1,4}-[a-z][a-z0-9_]+\.md$")
@@ -254,7 +253,7 @@ def main() -> int:
     print(f"引用更新完成: {files_updated} 个文件, {total_replacements} 处替换")
 
     # Step 3: 重命名文件
-    print(f"\n[Step 3] 重命名文件...")
+    print("\n[Step 3] 重命名文件...")
     renamed_count = 0
     for old_path, new_path in rename_pairs:
         try:

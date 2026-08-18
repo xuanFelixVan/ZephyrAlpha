@@ -37,8 +37,9 @@ for _p in (str(_REPO_ROOT), str(_REPO_ROOT / "src"), str(_REPO_ROOT / "scripts" 
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection, release_depgraph_pg_connection
 import apply_depgraph
+
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection, release_depgraph_pg_connection
 
 # ============================================================
 # 设计态依赖边定义

@@ -72,8 +72,8 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+
 CHECK_SCRIPT = REPO_ROOT / "scripts" / "governance" / "d3_metadata" / "check_naming_convention.py"
 
 SCOPE_PREFIXES_ADDED = ["META", "DM", "TRAE"]
@@ -149,9 +149,9 @@ def main() -> int:
     print()
     print("已应用的修复:")
     print(f"  1. 添加 scope 前缀: {', '.join(SCOPE_PREFIXES_ADDED)}")
-    print(f"  2. 放宽结尾格式: 允许字母/数字/下划线结尾")
-    print(f"  3. 修复 _REAL_MID_RE 跨行匹配 bug")
-    print(f"  4. 添加可选引号匹配")
+    print("  2. 放宽结尾格式: 允许字母/数字/下划线结尾")
+    print("  3. 修复 _REAL_MID_RE 跨行匹配 bug")
+    print("  4. 添加可选引号匹配")
     print(f"  5. 修复 {len(ARCH_MODEL_FILES_FIXED)} 个架构模型文件 mod_inf_XXX → MOD-INF-XXX")
     print()
     print("正则表达式变更:")

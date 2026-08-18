@@ -46,7 +46,8 @@ import sys
 from pathlib import Path
 
 import yaml
-from _shared.constants import EXIT_PASS, REPO_ROOT as _PROJECT_ROOT
+from _shared.constants import EXIT_PASS
+from _shared.constants import REPO_ROOT as _PROJECT_ROOT
 
 _MODULE_REGISTRY = _PROJECT_ROOT / "docs" / "03_modules" / "module-registry.yaml"
 _BLUEPRINT_REGISTRY = _PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"

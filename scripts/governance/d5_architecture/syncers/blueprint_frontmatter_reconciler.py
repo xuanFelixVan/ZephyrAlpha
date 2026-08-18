@@ -52,16 +52,19 @@ for _p in (str(_REPO_ROOT), str(_SRC_DIR)):
 
 from _shared.constants import EXIT_PASS
 from _shared.file_lock import blueprint_write_lock  # noqa: E402  #ARCH-RECONCILER-TOCTOU-CLOBBER-001 P0 止血
+
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 
 try:
-    from d5_architecture.panorama_common import weighted_domain_vote, min_maturity as _min_mat
+    from d5_architecture.panorama_common import min_maturity as _min_mat
+    from d5_architecture.panorama_common import weighted_domain_vote
 except ImportError:
     import sys as _sys
     _pc_path = str(Path(__file__).resolve().parents[1])  # d5_architecture/
     if _pc_path not in _sys.path:
         _sys.path.insert(0, _pc_path)
-    from panorama_common import weighted_domain_vote, min_maturity as _min_mat  # noqa: import-integrity  sys.path 动态加载的本地模块
+    from panorama_common import min_maturity as _min_mat
+    from panorama_common import weighted_domain_vote  # noqa: import-integrity  sys.path 动态加载的本地模块
 
 # ---------------------------------------------------------------------------
 # SQL 常量（SQL 集中化，§5.160.2）
@@ -204,9 +207,9 @@ def _write_frontmatter_updates(bp_file: Path, module_id: str,
         fm_match = _FRONTMATTER_RE.match(content)
         if fm_match:
             fm_text = fm_match.group(1)
-            if re.search(rf"^design_maturity:[ \t]*", fm_text, re.MULTILINE):
+            if re.search(r"^design_maturity:[ \t]*", fm_text, re.MULTILINE):
                 updates["design_maturity"] = dm
-            if re.search(rf"^build_status:[ \t]*", fm_text, re.MULTILINE):
+            if re.search(r"^build_status:[ \t]*", fm_text, re.MULTILINE):
                 updates["build_status"] = bs
         new_content = _update_frontmatter(content, updates)
         if new_content != content:

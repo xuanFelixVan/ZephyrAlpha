@@ -83,11 +83,12 @@ def verdict(step: str, ok: bool, note: str = "") -> str:
 def run_data() -> dict[str, Any]:
     banner("D_DATA: DataSource — 真实行情获取 + Quality Gate")
 
-    from zephyr.governance.data_governance.akshare_provider import (
-        AkshareQuoteProvider,
-    )
     from zephyr.data.default_quality_gate import (
         DefaultQualityGate,
+    )
+
+    from zephyr.governance.data_governance.akshare_provider import (
+        AkshareQuoteProvider,
     )
 
     provider = AkshareQuoteProvider()

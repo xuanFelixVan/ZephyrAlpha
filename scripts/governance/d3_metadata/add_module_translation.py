@@ -78,8 +78,8 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import REPO_ROOT  # noqa: E402
 from _shared.module_translation_loader import (  # noqa: E402
-    is_generic_plain_zh,
     is_generic_plain_suffix,
+    is_generic_plain_zh,
 )
 
 # 翻译真源路径（SSoT：规则数据真源是 YAML 文件）

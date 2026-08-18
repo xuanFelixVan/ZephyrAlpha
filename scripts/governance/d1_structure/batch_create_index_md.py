@@ -240,7 +240,7 @@ for k, v in MODULE_LAYER_MAP.items():
     BOOTSTRAP_LAYER_MAP[k] = f"过渡期 {v.split('—')[1].strip() if '—' in v else v} 施工图（历史）"
 
 
-def get_file_description(filename, dir_path) -> Optional[str]:
+def get_file_description(filename, dir_path) -> str | None:
     """Generate a human-readable description for a file."""
     name = filename.lower()
 

@@ -81,7 +81,11 @@ import argparse
 import tomllib
 
 import yaml
-from _shared.constants import CONFIG_DIR, EXIT_PASS, SRC_DIR  # noqa: E402  治本(ARCH-038 P3): 补全 SRC_DIR import（L8 l8_code_config_reconciliation 使用）
+from _shared.constants import (  # noqa: E402  治本(ARCH-038 P3): 补全 SRC_DIR import（L8 l8_code_config_reconciliation 使用）
+    CONFIG_DIR,
+    EXIT_PASS,
+    SRC_DIR,
+)
 from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  词表合法值加载 SSoT（D-D-05）
 
 # safety_level 合法值真源是 safety_level_vocabulary.yaml，禁止代码硬编码字面量集合。

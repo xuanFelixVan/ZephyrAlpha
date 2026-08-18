@@ -77,16 +77,20 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
+from align_battle_map import (  # noqa: E402
+    BattleMapAlignmentReport,
+)
+from align_battle_map import (
+    run_alignment as run_battle_map_alignment,
+)
 
 # 导入两个对齐检测器
 from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
     PanoramaAlignmentReport,
     PanoramaEmptyError,
-    run_alignment as run_panorama_alignment,
 )
-from align_battle_map import (  # noqa: E402
-    BattleMapAlignmentReport,
-    run_alignment as run_battle_map_alignment,
+from align_panoramas import (
+    run_alignment as run_panorama_alignment,
 )
 
 # 默认输出路径
@@ -109,9 +113,9 @@ def _build_overview(
     lines.append("# 五图对齐总览 (Five-Panorama Alignment Overview)")
     lines.append("")
     lines.append(f"> 生成时间: {generated_at}")
-    lines.append(f"> 对齐轴: module_id（图 1-4）+ step_id（图 5）")
+    lines.append("> 对齐轴: module_id（图 1-4）+ step_id（图 5）")
     lines.append(
-        f"> 五图: depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map"
+        "> 五图: depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map"
     )
     lines.append("")
 

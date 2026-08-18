@@ -29,6 +29,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
 from clickhouse_driver import Client
+
 from zephyr.data.ch_config import load_ch_config
 
 _cfg = load_ch_config()
@@ -146,19 +147,19 @@ def run_recovery_drill(s3_name: str) -> bool:
             return False
 
     # 3. 行数对比
-    print(f"\n[3] 行数校验")
+    print("\n[3] 行数校验")
     live_count = c.execute(f"SELECT count() FROM {DRILL_TABLE}")[0][0]
     drill_count = c.execute(f"SELECT count() FROM {DRILL_RENAMED}")[0][0]
     print(f"  live ({DRILL_TABLE}):  {live_count:,}")
     print(f"  drill ({DRILL_RENAMED}): {drill_count:,}")
     match = (live_count == drill_count)
     if match:
-        print(f"  [OK] 行数一致!")
+        print("  [OK] 行数一致!")
     else:
         print(f"  [WARN] 行数不一致 (diff={live_count - drill_count})")
 
     # 4. 数据抽样对比
-    print(f"\n[4] 数据抽样对比（最新 3 行）")
+    print("\n[4] 数据抽样对比（最新 3 行）")
     try:
         live_sample = c.execute(
             f"SELECT * FROM {DRILL_TABLE} ORDER BY trade_date DESC LIMIT 3"
@@ -169,23 +170,23 @@ def run_recovery_drill(s3_name: str) -> bool:
         if live_sample == drill_sample:
             print("  [OK] 抽样数据完全一致")
         else:
-            print(f"  [WARN] 抽样数据有差异")
+            print("  [WARN] 抽样数据有差异")
             print(f"    live:  {live_sample[:2]}")
             print(f"    drill: {drill_sample[:2]}")
     except Exception as e:
         print(f"  (抽样对比跳过: {e})")
 
     # 5. 清理
-    print(f"\n[5] 清理临时库")
+    print("\n[5] 清理临时库")
     c.execute(f"DROP DATABASE {DRILL_DB}")
-    print(f"  [OK] _restore_drill 已删除")
+    print("  [OK] _restore_drill 已删除")
 
     # 6. 结论
     print(f"\n{'='*60}")
     if match:
-        print(f"恢复演练: PASS — 备份完整可恢复 ✓")
+        print("恢复演练: PASS — 备份完整可恢复 ✓")
     else:
-        print(f"恢复演练: WARN — 行数有差异，需调查")
+        print("恢复演练: WARN — 行数有差异，需调查")
     print(f"{'='*60}")
     return match
 

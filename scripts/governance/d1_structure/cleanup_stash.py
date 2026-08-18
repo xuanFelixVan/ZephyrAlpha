@@ -32,8 +32,8 @@ exit codes: 0=pass/warn, 1=cleanup_needed, 2=error
 """
 
 from __future__ import annotations
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args:

@@ -75,6 +75,12 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from d5_architecture.panorama_common import (  # noqa: E402
+    min_maturity as _min_mat,
+)
+from d5_architecture.panorama_common import (
+    weighted_domain_vote,
+)
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
@@ -83,12 +89,6 @@ from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
 from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
     get_decisiongraph_pg_connection,
 )
-
-from d5_architecture.panorama_common import (  # noqa: E402
-    min_maturity as _min_mat,
-    weighted_domain_vote,
-)
-
 
 # ---------------------------------------------------------------------------
 # 常量

@@ -37,7 +37,13 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, get_depgraph_pg_connection  # noqa: E402  # Bug fix (2026-07-18, #ARCH-DATAQUALITY-V1.4): 补 REPO_ROOT + get_depgraph_pg_connection，原缺 import 致 NameError；shared get_depgraph_pg_connection 已返回 PgConnExecuteWrapper（支持 .execute()），无需本地 wrapper
+from _shared.constants import (  # noqa: E402  # Bug fix (2026-07-18, #ARCH-DATAQUALITY-V1.4): 补 REPO_ROOT + get_depgraph_pg_connection，原缺 import 致 NameError；shared get_depgraph_pg_connection 已返回 PgConnExecuteWrapper（支持 .execute()），无需本地 wrapper
+    EXIT_ERROR,
+    EXIT_FINDINGS,
+    EXIT_PASS,
+    REPO_ROOT,
+    get_depgraph_pg_connection,
+)
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 PROJECT_ROOT = REPO_ROOT

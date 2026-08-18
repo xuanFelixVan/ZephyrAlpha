@@ -44,8 +44,11 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import DB_PATH  # noqa: E402
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import (
+    DB_PATH,  # noqa: E402
+    EXIT_FINDINGS,
+    EXIT_PASS,
+)
 
 
 def main() -> int:

@@ -1,5 +1,6 @@
 """已归档脚本——一次性任务卡生成脚本，已执行完毕，不再适用。"""
 import sys
+
 sys.exit("DEPRECATED: 此脚本已归档，一次性任务已执行完毕")
 
 """Create DM-260~272 task cards via direct SQL insert (bypassing strict Pydantic validation)."""

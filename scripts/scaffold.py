@@ -51,17 +51,19 @@ import os
 import re
 import sys
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
 
 import yaml
-from functools import lru_cache
 
 # bootstrap: 定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT 真源）
 _GOV_DIR = str(Path(__file__).resolve().parent / "governance")
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT as PROJECT_ROOT  # noqa: E402
-from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  # SSoT 词表加载（治本：消除 stability/safety_level/ai_autonomy 硬编码）
+from _shared.yaml_utils import (
+    load_vocabulary_values,  # noqa: E402  # SSoT 词表加载（治本：消除 stability/safety_level/ai_autonomy 硬编码）
+)
 
 # repo root 加入 sys.path 以便 from scripts.governance.d3_metadata... 生效
 if str(PROJECT_ROOT) not in sys.path:

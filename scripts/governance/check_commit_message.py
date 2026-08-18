@@ -78,14 +78,14 @@ warn_only: false
 """
 
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
-
 import json
 import os
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 # 与 forged_gw_marker_gate.py 对齐的常量（复制以保持零依赖）
 _GW_MARKER_RE = re.compile(r"\[GW:")

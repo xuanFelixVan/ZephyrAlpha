@@ -54,7 +54,6 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 import yaml
-
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.yaml_utils import load_vocabulary_values  # 词表加载 SSoT（D-D-05：禁止复制 _load_xxx）

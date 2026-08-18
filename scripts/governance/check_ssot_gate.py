@@ -70,8 +70,10 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
 from zephyr.governance.capability_lookup import CapabilityLookup  # noqa: E402
+
 # 治本(2026-06-30): REPO_ROOT 真源来自 zephyr.shared.io.paths (SSoT), 消除路径派生对 parents[N] 的依赖
 from zephyr.shared.io.paths import REPO_ROOT as _REPO_ROOT  # noqa: E402
 

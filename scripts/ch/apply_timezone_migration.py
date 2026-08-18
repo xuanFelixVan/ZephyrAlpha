@@ -52,9 +52,9 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
-import os
 from dataclasses import dataclass
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
@@ -335,7 +335,7 @@ def _recreate_table(c: Client, db: str, table: str, business_cols: list[str], dr
     actions.append(new_ddl.replace("\n", " ")[:120] + "...")
     actions.append(f"INSERT INTO {new_full} ({cols_list}) SELECT {select_cols} FROM {old_full}")
     actions.append(f"RENAME TABLE {old_full} TO {old_bak}, {new_full} TO {old_full}")
-    actions.append(f"-- partition fixup (concurrent-write tolerance)")
+    actions.append("-- partition fixup (concurrent-write tolerance)")
     actions.append(f"DROP TABLE {old_bak}")
 
     if dry:
@@ -390,11 +390,11 @@ def _recreate_table(c: Client, db: str, table: str, business_cols: list[str], dr
                     f"FROM {old_bak} WHERE {where} "
                     f"SETTINGS max_partitions_per_insert_block=0"
                 )
-            print(f"  [OK] Fixup complete")
+            print("  [OK] Fixup complete")
         else:
-            print(f"  [OK] Current month matches (no concurrent writes or already synced)")
+            print("  [OK] Current month matches (no concurrent writes or already synced)")
     else:
-        print(f"  [WARN] No partition key — skipping partition fixup")
+        print("  [WARN] No partition key — skipping partition fixup")
 
     # ---- Step 6: Verify (historical partition — no concurrent writes) ----
     # 治本修复：旧逻辑用 max(date) 验证，但最新日期仍在被 scheduler 并发写入
@@ -433,13 +433,13 @@ def _recreate_table(c: Client, db: str, table: str, business_cols: list[str], dr
                 print(" -- MATCH")
             else:
                 print(f" -- DIFF (raw={new_rc - old_rc:,} sym={new_sym - old_sym:,})")
-                print(f"  [WARN] Historical partition mismatch — keeping _tzold for safety")
+                print("  [WARN] Historical partition mismatch — keeping _tzold for safety")
                 return actions
         else:
-            print(f"  [WARN] No historical partition found for verification — keeping _tzold")
+            print("  [WARN] No historical partition found for verification — keeping _tzold")
             return actions
     else:
-        print(f"  [WARN] No partition key — skipping verification, keeping _tzold")
+        print("  [WARN] No partition key — skipping verification, keeping _tzold")
         return actions
 
     # ---- Step 7: DROP _tzold (safe, handles >50GB) ----
@@ -523,9 +523,9 @@ def _recreate_tick_data_batched(c: Client, dry: bool) -> list[str]:
         if not is_current:
             # Historical month: safe to DROP (no concurrent writes)
             c.execute(f"ALTER TABLE {old_full} DROP PARTITION {m}")
-            print(f"INSERT + DROP done")
+            print("INSERT + DROP done")
         else:
-            print(f"INSERT done (current month, keeping for concurrent writes)")
+            print("INSERT done (current month, keeping for concurrent writes)")
     print(f"  [OK] All {len(parts)} months migrated. total_before={total_before:,}")
 
     # ---- Step 4: RENAME ----
@@ -547,7 +547,7 @@ def _recreate_tick_data_batched(c: Client, dry: bool) -> list[str]:
             f"WHERE {where_current} "
             f"SETTINGS max_partitions_per_insert_block=0"
         )
-        print(f"  [OK] Fixup complete")
+        print("  [OK] Fixup complete")
     else:
         print(f"  [OK] Current month matches (old={old_curr:,} new={new_curr:,})")
 

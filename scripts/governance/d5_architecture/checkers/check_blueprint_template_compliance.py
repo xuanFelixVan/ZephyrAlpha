@@ -44,8 +44,8 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_ERROR
+
+from _shared.constants import EXIT_ERROR, REPO_ROOT
 
 _PROJECT_ROOT = REPO_ROOT
 _COMPLIANCE_SCRIPT = _PROJECT_ROOT / "scripts" / "governance" / "check_blueprint_compliance.py"

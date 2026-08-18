@@ -57,18 +57,19 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR, get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, get_depgraph_pg_connection  # noqa: E402
 
 _REPO_ROOT = str(next(p for p in _THIS_FILE.parents if (p / "src" / "zephyr").exists()))
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, str(Path(_REPO_ROOT) / "src"))
-from zephyr.governance import depgraph_schema  # noqa: E402
-# Ruling:100PCT-AI-GOVERNANCE P1-2 (2026-07-19): 导入 decisiongraph_schema 用于 CHECK 约束校验
-from zephyr.governance.persistence import decisiongraph_schema  # noqa: E402
-
 # READONLY_TABLES 真源在 sync_yaml_to_depgraph.py（创建只读触发器的地方），
 # 此处动态导入消除硬编码副本，防止真源变更后漂移（红蓝对抗修复-严重1）
 from d8_doc_sync.sync_yaml_to_depgraph import READONLY_TABLES  # noqa: E402
+
+from zephyr.governance import depgraph_schema  # noqa: E402
+
+# Ruling:100PCT-AI-GOVERNANCE P1-2 (2026-07-19): 导入 decisiongraph_schema 用于 CHECK 约束校验
+from zephyr.governance.persistence import decisiongraph_schema  # noqa: E402
 
 
 def parse_ddl_columns(ddl: str) -> list[str]:

@@ -36,7 +36,8 @@ Usage:
 
 from __future__ import annotations
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT as _PROJECT_ROOT, DB_PATH
+from _shared.constants import DB_PATH, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import REPO_ROOT as _PROJECT_ROOT
 
 __manifest__ = """
 args: []

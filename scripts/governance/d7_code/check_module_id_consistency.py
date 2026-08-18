@@ -53,14 +53,14 @@ warn_only: false
 """
 
 
-from _shared.constants import EXIT_ERROR
-
 import argparse
 import json
 import re
 import sys
 from collections import defaultdict
 from pathlib import Path
+
+from _shared.constants import EXIT_ERROR
 
 # === 正则定义（与 module_id_consistency_gate.py 保持一致）===
 
@@ -268,7 +268,7 @@ def main() -> int:
         print(json.dumps(out, indent=2, ensure_ascii=False))
     else:
         # 人类可读输出
-        print(f"=== Module ID 冲突扫描结果（--scan-existing） ===")
+        print("=== Module ID 冲突扫描结果（--scan-existing） ===")
         print(f"项目根: {root}")
         print(f"总 module_id 数: {result['total_ids']}")
         print(f"冲突组数: {result['conflict_groups']}")

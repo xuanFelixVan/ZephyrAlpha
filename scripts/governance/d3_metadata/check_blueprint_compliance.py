@@ -27,7 +27,8 @@
 [TESTS] tests/governance/test_governance.py
 """
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
 __manifest__ = """
 args: []
 description: '[BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md

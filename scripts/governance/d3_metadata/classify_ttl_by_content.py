@@ -413,7 +413,7 @@ def classify(
                 "confidence": "high",
                 "key_signals": key_signals,
                 "reason": f"标题强信号({title_ttl})" +
-                          (f"，目录一致" if dir_ttl == title_ttl else ""),
+                          ("，目录一致" if dir_ttl == title_ttl else ""),
             }
         # 目录冲突——方向不对称处理
         if title_ttl == "task_bound" and dir_ttl == "permanent":
@@ -618,14 +618,14 @@ def main() -> int:
     # 统计报告
     total = len(md_files)
     print(f"\n{'=' * 70}")
-    print(f"ttl 内容关键词分类报告")
+    print("ttl 内容关键词分类报告")
     print(f"{'=' * 70}")
     print(f"  总扫描文件数          : {total}")
     print(f"  明确永久 (permanent)  : {len(permanent_rows)} ({len(permanent_rows)*100//total}%)")
     print(f"  明确临时 (task_bound) : {len(task_bound_rows)} ({len(task_bound_rows)*100//total}%)")
     print(f"  待定讨论 (pending)    : {len(pending_rows)} ({len(pending_rows)*100//total}%)")
     print(f"{'=' * 70}")
-    print(f"\n输出文件：")
+    print("\n输出文件：")
     print(f"  {perm_path}")
     print(f"  {task_path}")
     print(f"  {pending_path}")

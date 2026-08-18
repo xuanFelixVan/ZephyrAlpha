@@ -90,7 +90,7 @@ def _profile_from_passport(model_id: str, top_n: int) -> int:
             f"ERROR: passport not found for model_id={model_id!r}",
             file=sys.stderr,
         )
-        print(f"  hint: use --list to see all passports", file=sys.stderr)
+        print("  hint: use --list to see all passports", file=sys.stderr)
         return 2
 
     # 从 depth.capabilities 提取能力分数
@@ -215,7 +215,7 @@ def _print_report(profile: QuickProfile) -> None:
         print(f"  单价: ${c.price_per_1k_input:.4f}/1K(in) + ${c.price_per_1k_output:.4f}/1K(out)")
         print(f"  估算成本: ${c.estimated_cost_usd:.6f}")
     else:
-        print(f"  估算成本: $0.000000 (本地模型)")
+        print("  估算成本: $0.000000 (本地模型)")
 
     # 4. 岗位推荐
     if profile.recommendations:

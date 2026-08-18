@@ -73,7 +73,11 @@ ensure_utf8_stdout()
 import argparse
 
 import yaml
-from _shared.yaml_utils import load_vocabulary_entries, load_vocabulary_values, load_yaml  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
+from _shared.yaml_utils import (  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
+    load_vocabulary_entries,
+    load_vocabulary_values,
+    load_yaml,
+)
 
 VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
 CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"

@@ -363,10 +363,10 @@ def detect_cross_domain_mismatch(cur) -> list[dict]:
             "severity": "error",
             "enforcement": "audit",
             "description": (
-                f"cross_domain 列与 from/to domain_id 计算值不符——"
-                f"触发器未覆盖的写路径（replica/直连/bug）。"
-                f"修复：UPDATE edges SET cross_domain=edge_cross_domain_value(...) "
-                f"或重新 INSERT 触发 BI 触发器"
+                "cross_domain 列与 from/to domain_id 计算值不符——"
+                "触发器未覆盖的写路径（replica/直连/bug）。"
+                "修复：UPDATE edges SET cross_domain=edge_cross_domain_value(...) "
+                "或重新 INSERT 触发 BI 触发器"
             ),
         }
         for r in cur.fetchall()

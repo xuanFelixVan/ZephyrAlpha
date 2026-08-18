@@ -82,7 +82,11 @@ from _shared.frontmatter import (  # noqa: E402
     parse_json_meta,
     parse_py_header,
 )
-from _shared.yaml_utils import load_yaml, load_vocabulary_values, load_vocabulary_deprecated_map  # 词表加载 SSoT（D-D-05：禁止复制 _load_xxx）  # noqa: E402
+from _shared.yaml_utils import (  # 词表加载 SSoT（D-D-05：禁止复制 _load_xxx）  # noqa: E402
+    load_vocabulary_deprecated_map,
+    load_vocabulary_values,
+    load_yaml,
+)
 
 # 字段校验配置——GATE-15 校验哪些字段的唯一声明
 # 吸收归档脚本 validate_frontmatter_values.py 的 VOCAB_FIELD_MAP 模式
@@ -216,7 +220,7 @@ def _check_file(
     try:
         text = fpath.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
-        return [f"cannot read file"]
+        return ["cannot read file"]
 
     # 格式路由（向内收——一个校验函数，多格式解析）
     # .md→parse_frontmatter / .py+.sh+.ps1+.mmd→parse_py_header / .yaml→parse_byaml_anchor / .json→parse_json_meta

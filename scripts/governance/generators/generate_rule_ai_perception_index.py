@@ -54,9 +54,8 @@ from pathlib import Path
 # （generators/），找不到父目录的 _shared，需先把父目录加入搜索路径
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
-
 import yaml
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 RULES_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "rules"

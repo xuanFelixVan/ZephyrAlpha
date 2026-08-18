@@ -48,7 +48,8 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT as PROJECT_ROOT
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import REPO_ROOT as PROJECT_ROOT
 
 PROGRESS_FILE = PROJECT_ROOT / "docs" / "03_modules" / "_domain-governance" / "domain_progress.json"
 

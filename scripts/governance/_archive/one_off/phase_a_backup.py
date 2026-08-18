@@ -52,8 +52,8 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_FINDINGS
+
+from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 
 _MAX_WORKERS = 8
 

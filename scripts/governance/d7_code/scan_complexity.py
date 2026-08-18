@@ -55,14 +55,14 @@ warn_only: false
 """
 
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
-
 import argparse
 import ast
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import mean
+
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 # ── 阈值（与 high_complexity_gate.py _MAX_COMPLEXITY 一致）─────────────
 _MAX_COMPLEXITY = 15
@@ -249,7 +249,7 @@ def main(argv: list[str] | None = None) -> int:
     if not args.quiet:
         avg = mean(all_complexities) if all_complexities else 0.0
         max_c = max(all_complexities) if all_complexities else 0
-        print(f"\n[scan_complexity] 统计摘要:")
+        print("\n[scan_complexity] 统计摘要:")
         print(f"  扫描目录: {src_dir}")
         print(f"  总函数数: {total_functions}")
         print(f"  平均复杂度: {avg:.1f}")

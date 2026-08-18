@@ -53,7 +53,12 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402  # Bug fix (2026-07-18, #ARCH-DATAQUALITY-V1.4): 补 REPO_ROOT，L68 VOCAB_PATH 使用但未 import 致 NameError
+from _shared.constants import (  # noqa: E402  # Bug fix (2026-07-18, #ARCH-DATAQUALITY-V1.4): 补 REPO_ROOT，L68 VOCAB_PATH 使用但未 import 致 NameError
+    EXIT_ERROR,
+    EXIT_FINDINGS,
+    EXIT_PASS,
+    REPO_ROOT,
+)
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -138,7 +143,7 @@ def main() -> None:
     valid_values, deprecated_map = load_vocabulary()
 
     print(f"\n[TARGET-LAYER] 词表合法值: {len(valid_values)} 个，废弃值: {len(deprecated_map)} 个", file=sys.stderr)
-    print(f"[TARGET-LAYER] 扫描 src/ 和 tests/ 下 .py 文件", file=sys.stderr)
+    print("[TARGET-LAYER] 扫描 src/ 和 tests/ 下 .py 文件", file=sys.stderr)
 
     findings = scan_files(valid_values, deprecated_map)
 

@@ -71,6 +71,8 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from _shared.constants import EXIT_FINDINGS
+
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _collect_function_names  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import (  # noqa: E402
     _check_module_path_exists,
     _is_abstract_code,
@@ -78,7 +80,6 @@ from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import (  # noq
     check_consumers_accuracy,
     parse_consumers_field,
 )
-from zephyr.gov_enforcement.commit_gates._diff_helpers import _collect_function_names  # noqa: E402
 
 # 扫描范围（与 commit-time gate 对齐）
 _SCAN_PREFIXES: tuple[str, ...] = ("scripts/governance/", "src/")
@@ -271,7 +272,7 @@ def _print_report(
 ) -> None:
     """打印人类可读报告。"""
     if not violations:
-        print(f"\n✓ CONSUMERS-ACCURACY baseline-scan 完成——无违规")
+        print("\n✓ CONSUMERS-ACCURACY baseline-scan 完成——无违规")
         print(f"  扫描文件: {total_files}")
         print(f"  有 [CONSUMERS] 字段: {files_with_consumers}")
         print(f"  stale 检测: {'开启' if check_stale else '关闭'}")

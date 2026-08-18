@@ -65,8 +65,15 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
-from _shared.frontmatter import _FM_END_PATTERN, parse_frontmatter  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
-from _shared.yaml_utils import load_vocabulary_deprecated_map, load_vocabulary_values, load_yaml  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
+from _shared.frontmatter import (  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
+    _FM_END_PATTERN,
+    parse_frontmatter,
+)
+from _shared.yaml_utils import (  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
+    load_vocabulary_deprecated_map,
+    load_vocabulary_values,
+    load_yaml,
+)
 
 ensure_utf8_stdout()
 

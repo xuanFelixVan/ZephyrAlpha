@@ -48,8 +48,8 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT as _PROJECT_ROOT, DB_PATH  # noqa: E402
-from _shared.constants import EXIT_FINDINGS
+from _shared.constants import DB_PATH, EXIT_FINDINGS
+from _shared.constants import REPO_ROOT as _PROJECT_ROOT  # noqa: E402
 
 _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
@@ -109,6 +109,7 @@ def main() -> None:
     if args.like:
         # 模糊查询：列出所有匹配前缀的任务
         import sqlite3
+
         from zephyr.governance.persistence.sqlite_schema import DB_PATH
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row

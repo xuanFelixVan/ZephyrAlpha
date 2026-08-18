@@ -44,17 +44,17 @@ DDL-as-Code 模式：对所有证券表 ADD COLUMN exchange + symbol_canonical�
 from __future__ import annotations
 
 import argparse
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
 from zephyr.data import ch_writer  # noqa: E402
 from zephyr.data.symbol_normalizer.normalizer import (  # noqa: E402
-    _PREFIX_TO_EXCHANGE,
+    _INDEX_PREFIX3_TO_EXCHANGE,
     _PREFIX2_TO_EXCHANGE,
     _PREFIX3_TO_EXCHANGE,
-    _INDEX_PREFIX3_TO_EXCHANGE,
+    _PREFIX_TO_EXCHANGE,
 )
 
 DB = "c1_market"

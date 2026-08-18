@@ -37,8 +37,7 @@ import sys
 from pathlib import Path
 
 import yaml
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 PROJECT_ROOT = REPO_ROOT
 DEFAULT_SOURCE_DIR = "docs/01_policies_and_standards/"

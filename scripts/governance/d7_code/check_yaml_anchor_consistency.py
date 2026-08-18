@@ -226,7 +226,7 @@ def main() -> int:
         }
         print(json.dumps(out, ensure_ascii=False, indent=2))
     else:
-        print(f"=== YAML 治理锚定一致性扫描 ===")
+        print("=== YAML 治理锚定一致性扫描 ===")
         print(f"项目根: {root}")
         print(f"总文件数: {result['total']}")
         print(f"问题文件数: {result['problem_files']}")

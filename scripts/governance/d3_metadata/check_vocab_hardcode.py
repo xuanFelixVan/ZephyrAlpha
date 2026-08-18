@@ -70,7 +70,10 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXCLUDE_DIRS, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.walk import iter_files  # noqa: E402
-from _shared.yaml_utils import load_all_vocabulary_values, load_vocabulary_values  # noqa: E402  # D-D-05：词表加载收敛到 SSoT（含批量 #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2）
+from _shared.yaml_utils import (  # noqa: E402  # D-D-05：词表加载收敛到 SSoT（含批量 #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2）
+    load_all_vocabulary_values,
+    load_vocabulary_values,
+)
 
 # ── 词表前缀 → YAML 文件名映射（用于输出建议）──
 _VOCAB_FILES: dict[str, str] = {
@@ -1040,8 +1043,8 @@ def _print_noqa_audit(
                     rel = fp
                 reason_display = reason if reason else "(无理由注释)"
                 print(f"    {rel}:{lineno} {reason_display}")
-            print(f"  必须在 config/governance/noqa_exempt_registry.yaml 登记，")
-            print(f"  或删除该 noqa（治本：扩展 SSoT 函数消除豁免需求）。")
+            print("  必须在 config/governance/noqa_exempt_registry.yaml 登记，")
+            print("  或删除该 noqa（治本：扩展 SSoT 函数消除豁免需求）。")
 
     # 按文件分组输出（仅当有豁免时）
     if all_noqa:
@@ -1063,8 +1066,8 @@ def _print_noqa_audit(
     # 趋势告警（warn-only，不阻断；闭环由 UNREGISTERED 校验承担）
     if trend > 0:
         print(f"\n  [WARN] noqa 总数 {total} > 基线 {baseline}（趋势 +{trend}）")
-        print(f"  新增 # noqa: gate-vocab 必须先在 registry 登记 + commit message 说明豁免理由，")
-        print(f"  或通过治本（如扩展 SSoT 函数支持批量/分组模式）消除豁免需求。")
+        print("  新增 # noqa: gate-vocab 必须先在 registry 登记 + commit message 说明豁免理由，")
+        print("  或通过治本（如扩展 SSoT 函数支持批量/分组模式）消除豁免需求。")
     elif trend < 0:
         print(f"\n  [OK] noqa 总数 {total} < 基线 {baseline}（趋势 {trend}）"
               f"——治本见效，请同步删除 registry 中已退役的条目以降低基线。")

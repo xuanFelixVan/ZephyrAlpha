@@ -37,9 +37,9 @@ _GOV_DIR = _ROOT.parent / "governance"
 if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
+from _arch_ssot import CONTRACTS_PATH, OCP_MANIFEST_PATH, load_yaml  # noqa: E402
 from _shared.constants import REPO_ROOT  # noqa: E402
 
-from _arch_ssot import CONTRACTS_PATH, OCP_MANIFEST_PATH, load_yaml  # noqa: E402
 
 def main() -> int:
     if not OCP_MANIFEST_PATH.is_file():

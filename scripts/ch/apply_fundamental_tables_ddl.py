@@ -37,23 +37,22 @@ DDL-as-Code 模式：
 """
 from __future__ import annotations
 
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 # schemas/ 在仓库根，需加入 path 以便导入 DDL 真源
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from zephyr.data import ch_writer
-from zephyr.data import ch_reader
+from zephyr.data import ch_reader, ch_writer
 
 _DATABASE = "c3_fundamental"
 
 # ========== DDL 真源导入 ==========
 try:
-    from schemas.categories.fundamental_income_statement import INCOME_STATEMENT_DDL
     from schemas.categories.fundamental_balance_sheet import BALANCE_SHEET_DDL
     from schemas.categories.fundamental_cashflow_statement import CASHFLOW_STATEMENT_DDL
+    from schemas.categories.fundamental_income_statement import INCOME_STATEMENT_DDL
 except ImportError:
     print("[ERROR] 无法导入 schemas.categories.fundamental_* DDL 真源")
     sys.exit(2)

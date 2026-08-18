@@ -50,6 +50,7 @@ _REPO_ROOT = _SCRIPT_DIR.parents[1]
 if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
 from _shared.constants import EXIT_ERROR
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 SRC_ZEPHYR = REPO_ROOT / "src" / "zephyr"

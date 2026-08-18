@@ -57,7 +57,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_PASS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_PASS
 
 __manifest__ = """
 args: [--month, --market-type, --limit, --json]
@@ -263,7 +263,7 @@ def _print_human_report(result: dict[str, Any]) -> None:
     month = result["month"]
     mt = result["market_type"] or "全部"
     print("=" * 72)
-    print(f"tick_data 真重复检查报告（RULE-DATA-OPS / TRAE-063）")
+    print("tick_data 真重复检查报告（RULE-DATA-OPS / TRAE-063）")
     print(f"  月份: {month} | market_type: {mt}")
     print("=" * 72)
     print(f"  该月总行数:                 {result['total_row_cnt']}")

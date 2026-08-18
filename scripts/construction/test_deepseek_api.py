@@ -14,20 +14,21 @@
 # [TESTS]
 # [TTL] permanent
 """测试 DeepSeek API 连通性 — 验证 deepseek-v4-flash 和 deepseek-v4-pro 可用"""
+import json
 import os
 import sys
 import time
-import json
 from pathlib import Path
 
 # bootstrap: 定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT 真源）
 _GOV_DIR = str(Path(__file__).resolve().parents[1] / "governance")
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT  # noqa: E402
-
 # 加载 .env（通过 zephyr 包的 secrets 接口读取，合规 #ARCH-SECRETS-GOV-001）
 import sys as _sys
+
+from _shared.constants import REPO_ROOT  # noqa: E402
+
 _SRC_DIR = str(REPO_ROOT / "src")
 if _SRC_DIR not in _sys.path:
     _sys.path.insert(0, _SRC_DIR)
@@ -86,7 +87,7 @@ for model in models_to_test:
             usage = data.get("usage", {})
             tokens_in = usage.get("prompt_tokens", 0)
             tokens_out = usage.get("completion_tokens", 0)
-            print(f"  Status: OK")
+            print("  Status: OK")
             print(f"  Latency: {latency}ms")
             print(f"  Tokens: in={tokens_in} out={tokens_out}")
             print(f"  Response: {content[:100]}")

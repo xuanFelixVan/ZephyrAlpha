@@ -52,9 +52,9 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import BLUEPRINTS_DIR, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
-from _shared.walk import iter_files
 from _shared.encoding import ensure_utf8_stdout
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.walk import iter_files
 
 ensure_utf8_stdout()
 BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"

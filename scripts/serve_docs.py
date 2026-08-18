@@ -117,6 +117,7 @@ import sys
 import threading
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
 PORT = 8765
 GENERATORS = [
     # (描述, 命令)
@@ -159,10 +160,10 @@ def serve_http(port: int) -> None:
 
     print(f"\n🌐 HTTP 服务启动: http://127.0.0.1:{port}/", flush=True)
     print(f"   服务根目录: {REPO_ROOT}", flush=True)
-    print(f"   浏览器入口:", flush=True)
+    print("   浏览器入口:", flush=True)
     print(f"   - 域文档: http://127.0.0.1:{port}/docs/02_enterprise_architecture/02_domain_architecture_docs/README.md", flush=True)
     print(f"   - 全局图: http://127.0.0.1:{port}/docs/02_enterprise_architecture/01_global_architecture_diagram/", flush=True)
-    print(f"\n   Ctrl+C 停止服务。\n", flush=True)
+    print("\n   Ctrl+C 停止服务。\n", flush=True)
 
     with ReusableTCPServer(("127.0.0.1", port), NoCacheHandler) as httpd:
         try:

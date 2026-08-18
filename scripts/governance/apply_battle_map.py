@@ -99,13 +99,14 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
 from _shared.constants import EXIT_FINDINGS
+
 from zephyr.governance.persistence.battlemap_schema import (
-    get_battle_map_pg_connection,
+    _DESIGN_MATURITIES,
+    _EDGE_TYPES,
     _FLOW_STAGES,
     _TARGET_GRAPHS,
     _TARGET_ROLES,
-    _EDGE_TYPES,
-    _DESIGN_MATURITIES,
+    get_battle_map_pg_connection,
 )
 
 # ---------------------------------------------------------------------------
@@ -600,7 +601,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.batch:
         ops = json.loads(Path(args.batch).read_text(encoding="utf-8"))
         if not isinstance(ops, list):
-            print(f"ERROR: --batch 文件必须是 JSON 数组", file=sys.stderr)
+            print("ERROR: --batch 文件必须是 JSON 数组", file=sys.stderr)
             return 1
         return _execute_ops(ops, dry_run=args.dry_run)
     else:

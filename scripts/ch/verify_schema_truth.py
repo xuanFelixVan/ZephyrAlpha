@@ -222,6 +222,7 @@ def _load_truth_schemas() -> list[dict]:
 def _make_client():
     """构建只读 ClickHouse 客户端（过滤 native driver 不支持的键）。"""
     import clickhouse_driver
+
     from zephyr.data.ch_config import load_ch_reader_config
     c = load_ch_reader_config()
     return clickhouse_driver.Client(

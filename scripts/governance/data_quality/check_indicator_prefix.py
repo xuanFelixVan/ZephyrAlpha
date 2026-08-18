@@ -177,7 +177,7 @@ def main() -> int:
     print("=" * 60)
     print("macro_data indicator_name 前缀合规检测")
     print("=" * 60)
-    print(f"\n前缀映射（INDICATOR_PREFIX_MAP）：")
+    print("\n前缀映射（INDICATOR_PREFIX_MAP）：")
     for src, prefix in INDICATOR_PREFIX_MAP.items():
         desc = f"'{prefix}'" if prefix else "无前缀要求（中文名原生格式）"
         print(f"  {src:12s} → {desc}")

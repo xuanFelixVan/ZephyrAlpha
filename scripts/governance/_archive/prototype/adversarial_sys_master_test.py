@@ -30,6 +30,7 @@ import json
 import re
 import sys
 from pathlib import Path
+
 from _shared.constants import REPO_ROOT
 
 PROJECT_ROOT = REPO_ROOT

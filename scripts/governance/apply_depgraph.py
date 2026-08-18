@@ -122,19 +122,24 @@ from _shared.constants import (
 # 会遮蔽 scripts/governance/d3_metadata/。优先用绝对导入避免遮蔽；
 # 独立脚本运行时（_GOV_DIR 已注入 sys.path）回退到顶层导入。
 try:
-    from scripts.governance.d3_metadata.validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
-    from scripts.governance.d3_metadata.validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
     from scripts.governance.d3_metadata.validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402
+    from scripts.governance.d3_metadata.validate_module_id_naming import (
+        is_valid_domain_id as _validate_domain_id_format,  # noqa: E402
+    )
+    from scripts.governance.d3_metadata.validate_module_id_naming import (
+        is_valid_module_id as _validate_bp_id_format,  # noqa: E402
+    )
 except ImportError:
-    from d3_metadata.validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
-    from d3_metadata.validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
     from d3_metadata.validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402
+    from d3_metadata.validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
+    from d3_metadata.validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
 
 # 裁定#209 阶段1（2026-07-02）：_db_write_lock 从 no-op 升级为 pg_advisory_lock 互斥保护。
 # 与 generate_project_depgraph.py.write_depgraph_to_db 共享 lock key 424242。
 # 会话级 lock，finally 显式 pg_advisory_unlock 释放。
 # threading.local 防嵌套死锁：同线程嵌套调用时直接 yield（外层已持有锁）。
 import threading as _threading
+
 _DEPGRAPH_WRITE_LOCK_KEY = 424242
 _depgraph_lock_local = _threading.local()
 
@@ -2127,7 +2132,7 @@ def cmd_clear_blueprint_id(path: str, dry_run: bool = False, db_path: str = None
                 (datetime.datetime.now().isoformat(), path),
             )
             conn.commit()
-            print(f"  [OK] nodes + nodes_metadata blueprint_id 已清空", file=sys.stderr)
+            print("  [OK] nodes + nodes_metadata blueprint_id 已清空", file=sys.stderr)
             return 1
         except Exception as e:
             conn.rollback()
@@ -2598,7 +2603,7 @@ def cmd_update_domain_id(
             domain_ids_in_match = set(r["domain_id"] for r in rows)
             if len(domain_ids_in_match) > 1 and not force_cross_domain:
                 print(f"WARNING: module_id '{module_id}' 匹配 {len(rows)} 个节点，分布在 {len(domain_ids_in_match)} 个域: {domain_ids_in_match}", file=sys.stderr)
-                print(f"  跨域匹配可能导致误迁。使用 --force-cross-domain 确认，或改用 --migrate-nodes 按节点精确迁移。", file=sys.stderr)
+                print("  跨域匹配可能导致误迁。使用 --force-cross-domain 确认，或改用 --migrate-nodes 按节点精确迁移。", file=sys.stderr)
                 return -1
 
             if dry_run:
@@ -3886,7 +3891,7 @@ def cmd_set_blueprint_id(
         )
         if own_conn:
             c.commit()
-        print(f"  [OK] nodes + nodes_metadata 已更新，blueprint_id_invalid 已清除", file=sys.stderr)
+        print("  [OK] nodes + nodes_metadata 已更新，blueprint_id_invalid 已清除", file=sys.stderr)
         return 1
 
     if dry_run:

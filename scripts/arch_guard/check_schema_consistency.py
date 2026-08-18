@@ -34,9 +34,9 @@ _GOV_DIR = _ROOT / "governance"
 if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
+from _arch_ssot import CONTRACTS_PATH, load_yaml  # noqa: E402
 from _shared.constants import REPO_ROOT  # noqa: E402
 
-from _arch_ssot import CONTRACTS_PATH, load_yaml  # noqa: E402
 
 def main() -> int:
     data = load_yaml(CONTRACTS_PATH)

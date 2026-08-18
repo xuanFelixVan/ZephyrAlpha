@@ -47,23 +47,25 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
-from zephyr.shared.utils.time_utils import now_utc
-
 import yaml
+
+from zephyr.shared.utils.time_utils import now_utc
 
 # P2 PG 迁移：删除 import sqlite3；导入 PG 连接入口
 _GOV_DIR = str(Path(__file__).resolve().parent)
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
-from _shared.thresholds import get_thresholds_safe  # noqa: E402  阈值外置（治本 M01 #5）
 import psycopg2  # noqa: E402
-from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
-from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
-# Bug 1 修复（2026-07-18）：导入 PG 连接入口。脚本多处调用但未 import，致 NameError。
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
+
 # Bug 2 修复（2026-07-18）：DictCursor 支持。脚本多处用 row["key"] 字典风格访问。
 import psycopg2.extras  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.thresholds import get_thresholds_safe  # noqa: E402  阈值外置（治本 M01 #5）
+
+# Bug 1 修复（2026-07-18）：导入 PG 连接入口。脚本多处调用但未 import，致 NameError。
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
+from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
 
 PROJECT_ROOT = REPO_ROOT
 
@@ -1739,10 +1741,10 @@ class ScanCache:
                 print(f"[DEPGRAPH][CACHE] Loaded {len(self.entries)} cached paths (fingerprint match)")
             else:
                 self.entries = {}
-                print(f"[DEPGRAPH][CACHE] Cache invalidated (fingerprint/version mismatch) — full rescan")
+                print("[DEPGRAPH][CACHE] Cache invalidated (fingerprint/version mismatch) — full rescan")
         except FileNotFoundError:
             self.entries = {}
-            print(f"[DEPGRAPH][CACHE] No cache file — full scan")
+            print("[DEPGRAPH][CACHE] No cache file — full scan")
         except Exception as e:
             self.entries = {}
             print(f"[DEPGRAPH][CACHE] Load failed ({e}) — full scan")
@@ -2909,7 +2911,7 @@ def _validate_arch_references():
     # 2. 读取 architecture_issue_registry.yaml
     registry_path = str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "architecture_issue_registry.yaml")
     if not _Path(registry_path).exists():
-        print(f"[DEPGRAPH] ERROR: architecture_issue_registry.yaml 不存在，无法校验 ARCH 引用 (编号铁律#6)")
+        print("[DEPGRAPH] ERROR: architecture_issue_registry.yaml 不存在，无法校验 ARCH 引用 (编号铁律#6)")
         _sys.exit(EXIT_FINDINGS)
 
     try:
@@ -2931,7 +2933,7 @@ def _validate_arch_references():
     unregistered = arch_refs - registered_ids
     if unregistered:
         print(f"[DEPGRAPH] ERROR: 发现未注册的 #ARCH-XXX 引用 (编号铁律#6): {sorted(unregistered)}")
-        print(f"[DEPGRAPH] ERROR: 请在 architecture_issue_registry.yaml 中登记这些编号后重试")
+        print("[DEPGRAPH] ERROR: 请在 architecture_issue_registry.yaml 中登记这些编号后重试")
         _sys.exit(EXIT_FINDINGS)
     else:
         print(f"[DEPGRAPH] ARCH 引用校验通过: {sorted(arch_refs)} 均已在 registry 中登记")
@@ -3058,7 +3060,7 @@ def _validate_di_seam():
         if len(warnings) > 20:
             print(f"  ... 还有 {len(warnings) - 20} 条未显示")
     else:
-        print(f"[DEPGRAPH] DI seam 校验通过: 0 个违规 (#ARCH-DI-SEAM-001)")
+        print("[DEPGRAPH] DI seam 校验通过: 0 个违规 (#ARCH-DI-SEAM-001)")
 
 
 def merge_depgraph(new_data: dict, existing_path, old_data=None) -> dict:
@@ -3264,8 +3266,8 @@ def _warn_uncommitted_governance_scripts() -> None:
     对标 trae_054 STEP0："修改 depgraph 前置备份"——backup_pg_architecture() 覆盖数据备份
     （pg_dump），本函数覆盖脚本备份（git commit），形成"数据备份+脚本备份"双层防线。
     """
-    import subprocess as _sp
     import os as _os
+    import subprocess as _sp
 
     _repo_root = _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
     _gov_dir = _os.path.join(_repo_root, "scripts", "governance")
@@ -3375,7 +3377,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
     # 检查 scripts/governance/ 下是否有未提交变更，WARNING 提示先 commit 再改 DB
     _warn_uncommitted_governance_scripts()
 
-    print(f"[DEPGRAPH-DB] Writing to depgraph (PostgreSQL)...")
+    print("[DEPGRAPH-DB] Writing to depgraph (PostgreSQL)...")
     conn = None  # DM-3004: 预初始化None，防御性编程
 
     try:

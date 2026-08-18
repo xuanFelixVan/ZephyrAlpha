@@ -31,7 +31,7 @@
 
 from __future__ import annotations
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 __manifest__ = """
 args: []

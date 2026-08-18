@@ -41,6 +41,7 @@ _GOV_DIR = str(Path(__file__).resolve().parent / "governance")
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT  # noqa: E402
+
 from zephyr.governance.rule_patterns import MODULE_ID_RE  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
 
 PROJECT_ROOT = REPO_ROOT

@@ -140,13 +140,13 @@ print("=" * 120)
 local_models = [r for r in rows if r["deployment_mode"] == "local"]
 api_models = [r for r in rows if r["deployment_mode"] == "api"]
 
-print(f"\n本地模型（Ollama，免费）:")
+print("\n本地模型（Ollama，免费）:")
 total_local_tokens = sum(r["total_tokens"] for r in local_models)
 print(f"  数量: {len(local_models)} 个模型")
-print(f"  费用: ¥0.000000（全部免费）")
+print("  费用: ¥0.000000（全部免费）")
 print(f"  Token消耗: {total_local_tokens:,}（其中仅 qwen2.5-coder_14b 有统计）")
 
-print(f"\nAPI模型（DeepSeek V4，付费）:")
+print("\nAPI模型（DeepSeek V4，付费）:")
 total_api_cost = sum(r["cost"] for r in api_models)
 total_api_tokens = sum(r["total_tokens"] for r in api_models)
 print(f"  数量: {len(api_models)} 个模型")
@@ -154,7 +154,7 @@ print(f"  费用: ¥{total_api_cost:.6f}（约 ${total_api_cost * 0.14:.4f} USD�
 print(f"  Token消耗: {total_api_tokens:,}")
 print(f"  平均每模型: ¥{total_api_cost / len(api_models):.6f}")
 
-print(f"\n总计:")
+print("\n总计:")
 print(f"  模型数: {len(rows)} 个（{len(local_models)} 本地 + {len(api_models)} API）")
 print(f"  总费用: ¥{total_api_cost:.6f}")
 print(f"  总Token: {total_local_tokens + total_api_tokens:,}")

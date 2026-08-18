@@ -528,6 +528,7 @@ def restore_partition(table: str, partition: str, period: str | None = None) -> 
     # 用 clickhouse-driver 读取 Parquet 并 INSERT
     try:
         import pyarrow.parquet as pq
+
         from zephyr.data.ch_writer import get_client
 
         client = get_client()

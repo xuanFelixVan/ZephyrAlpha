@@ -56,6 +56,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+
 BP_MAPPING_PATH = PROJECT_ROOT / "data/asset_index/blueprint-domain-mapping.yaml"
 CSV_PATH = PROJECT_ROOT / "data/asset_index/module_domain_matching.csv"
 REPORT_PATH = PROJECT_ROOT / "data/asset_index/p2b-verification-report.yaml"

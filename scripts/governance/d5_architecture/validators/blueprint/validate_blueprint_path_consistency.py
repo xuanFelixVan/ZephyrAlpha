@@ -57,8 +57,8 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
-from _shared.walk import iter_files
 from _shared.encoding import ensure_utf8_stdout
+from _shared.walk import iter_files
 
 ensure_utf8_stdout()
 

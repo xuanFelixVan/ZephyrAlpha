@@ -46,8 +46,11 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 import yaml as _yaml  # noqa: E402
-from _shared.constants import REPO_ROOT  # noqa: E402
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import (
+    EXIT_FINDINGS,
+    EXIT_PASS,
+    REPO_ROOT,  # noqa: E402
+)
 
 # ── 真源加载：从 directory_contract.yaml 动态加载 forbidden prefixes ──
 _CONTRACT_PATH = (

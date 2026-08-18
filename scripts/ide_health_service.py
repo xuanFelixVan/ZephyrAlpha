@@ -44,9 +44,8 @@ if str(_PROJECT_ROOT) not in sys.path:
 if str(_SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(_SRC_ROOT))
 
-from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
-
 from zephyr.shared.infra.process_pool import is_pid_alive  # PID 存活检测真源唯一（红蓝对抗归一，曾三处分裂）
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

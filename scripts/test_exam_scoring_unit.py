@@ -11,33 +11,33 @@
 运行: python scripts/test_exam_scoring_unit.py
 退出码: 0=全部通过, 1=有失败
 """
-import sys
-import math
 import json
+import math
+import sys
 from pathlib import Path
 
 # 注入 src 路径
 _SRC = Path(__file__).resolve().parent.parent / "src"
 sys.path.insert(0, str(_SRC))
 
-from zephyr.intelligence.model_profiling.exam_orchestrator import (  # noqa: E402
-    _time_weight,
-    _OLYMPIAD_CASE_PASS_THRESHOLD,
-    ExamOrchestrator,
-)
 from zephyr.intelligence.model_profiling.capability_passport import (  # noqa: E402
     BreadthResult,
     CapabilityPassport,
-    DepthResult,
     DepthCapabilityResult,
+    DepthResult,
     HallucinationResult,
     SpeedResult,
 )
+from zephyr.intelligence.model_profiling.exam_orchestrator import (  # noqa: E402
+    _OLYMPIAD_CASE_PASS_THRESHOLD,
+    ExamOrchestrator,
+    _time_weight,
+)
+from zephyr.intelligence.model_profiling.exam_rubric import ExamRubric  # noqa: E402
 from zephyr.intelligence.model_profiling.exam_test_cases import (  # noqa: E402
     ALL_EXAM_CASES,
     Difficulty,
 )
-from zephyr.intelligence.model_profiling.exam_rubric import ExamRubric  # noqa: E402
 
 
 # ── Mock Chat：返回预定 JSON，供 orchestrator 评分 ────────────
@@ -337,7 +337,7 @@ def test_olympiad_field_consistency():
 
     for cid, cap, sc in scores:
         print(f"  {cid} ({cap}): rubric={sc:.3f}")
-    print(f"[PASS] 9 道奥赛题字段一致性（rubric 非零分=字段对齐正确）")
+    print("[PASS] 9 道奥赛题字段一致性（rubric 非零分=字段对齐正确）")
 
 
 # ═══════════════════════════════════════════════════════════════

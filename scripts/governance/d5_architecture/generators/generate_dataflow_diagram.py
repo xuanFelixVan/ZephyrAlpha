@@ -75,18 +75,27 @@ try:
 except ImportError:
     DB_DISPLAY_NAME = "PostgreSQL depgraph"
 
+from _shared.constants import DOC_HTTP_BASE, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
+# 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
+from _shared.terminology_loader import get_flat_map
+from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  词表合法值加载 SSoT（D-D-05）
+
+# 域中文名真源（#ARCH-SSOT-GLOSSARY-MERGE-001）：functional_domain_registry.yaml 经 domain_name_mapping 加载
+from domain_name_mapping import (  # noqa: E402
+    get_domain_desc_zh,
+    get_domain_name_en,
+    get_domain_name_zh,
+    get_domain_name_zh_strict,
+)
+
+# 可缩放 HTML 联动生成（模板 V1.2 §9.1 #1：MD+HTML 双产物，md 刷新即 HTML 刷新）
+from zoomable_html import HTML_SUBDIR, emit_zoomable_html  # noqa: E402
+
 from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
     get_dataflowgraph_pg_connection,
     init_dataflow_db,
 )
-from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  词表合法值加载 SSoT（D-D-05）
-from _shared.constants import DOC_HTTP_BASE, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
-# 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
-from _shared.terminology_loader import get_flat_map
-# 域中文名真源（#ARCH-SSOT-GLOSSARY-MERGE-001）：functional_domain_registry.yaml 经 domain_name_mapping 加载
-from domain_name_mapping import get_domain_name_zh_strict, get_domain_name_zh, get_domain_name_en, get_domain_desc_zh  # noqa: E402
-# 可缩放 HTML 联动生成（模板 V1.2 §9.1 #1：MD+HTML 双产物，md 刷新即 HTML 刷新）
-from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402
 
 # maturity 合法值真源是 maturity_vocabulary.yaml，禁止代码硬编码字面量集合。
 # strict=False 容错：词表缺失时返回空 set，校验逻辑回退（warn-only，不崩溃）。
@@ -733,10 +742,10 @@ def _gen_panorama_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) 
     lines.append("# 数据流图（dataflowgraph）全景（运营态 + 设计态）")
     lines.append("")
     lines.append(f"> 生成时间: {now}")
-    lines.append(f"> 真源: `dataflow_graph_registry.yaml`（13 个真实 Job/Dataset）→ PostgreSQL `dataflow_*` 表（ARCH-051）")
-    lines.append(f"> 注: `dataflow_jobs` 另含 `entity_type='module_placeholder'` 占位记录（`sync_panorama_module.py` 从 depgraph 模块派生，用于五图对齐 ARCH-056，非数据流作业，本文档不展示）")
+    lines.append("> 真源: `dataflow_graph_registry.yaml`（13 个真实 Job/Dataset）→ PostgreSQL `dataflow_*` 表（ARCH-051）")
+    lines.append("> 注: `dataflow_jobs` 另含 `entity_type='module_placeholder'` 占位记录（`sync_panorama_module.py` 从 depgraph 模块派生，用于五图对齐 ARCH-056，非数据流作业，本文档不展示）")
     lines.append(f"> 数据库: {DB_DISPLAY_NAME}")
-    lines.append(f"> 生成器: `scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
+    lines.append("> 生成器: `scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
     lines.append("")
     # HTML 跳转链接（模板 §14：http:// 绝对路径，IDE 预览面板可点开浏览器渲染）
     lines.append(f"> **[可缩放 HTML 版 / Zoomable HTML]({html_link})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式")
@@ -768,8 +777,8 @@ def _gen_panorama_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) 
     # 统计（scope 维度）
     lines.append("## 统计")
     lines.append("")
-    lines.append(f"| 类型 | 生产 (production) | 回测内部 (backtest_internal) | 合计 |")
-    lines.append(f"|------|-------------------|------------------------------|------|")
+    lines.append("| 类型 | 生产 (production) | 回测内部 (backtest_internal) | 合计 |")
+    lines.append("|------|-------------------|------------------------------|------|")
     lines.append(f"| Dataset | {prod_ds} | {bt_ds} | {len(datasets)} |")
     lines.append(f"| Job | {prod_job} | {bt_job} | {len(jobs)} |")
     lines.append(f"| Edge | - | - | {len(edges)} |")
@@ -777,8 +786,8 @@ def _gen_panorama_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) 
     # design_maturity 维度统计（对标 decision_index.md / depgraph 设计态/运营态机制）
     lines.append("### 设计态 / 运营态统计（design_maturity）")
     lines.append("")
-    lines.append(f"| 类型 | 运营态 (production) | 设计态 (design) | 合计 |")
-    lines.append(f"|------|---------------------|-----------------|------|")
+    lines.append("| 类型 | 运营态 (production) | 设计态 (design) | 合计 |")
+    lines.append("|------|---------------------|-----------------|------|")
     lines.append(f"| Dataset | {prod_m_ds} | {design_ds} | {len(datasets)} |")
     lines.append(f"| Job | {prod_m_job} | {design_job} | {len(jobs)} |")
     lines.append("")
@@ -993,8 +1002,8 @@ def _gen_domain_md(
     lines.append(f"# {title}")
     lines.append("")
     lines.append(f"> 生成时间: {now}")
-    lines.append(f"> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表")
-    lines.append(f"> 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
+    lines.append("> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表")
+    lines.append("> 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
     lines.append("")
     # HTML 跳转链接（模板 §14）
     lines.append(f"> **[可缩放 HTML 版 / Zoomable HTML]({html_link})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式")
@@ -1128,7 +1137,7 @@ def _gen_domain_md(
             )
 
     lines.append("")
-    lines.append(f"[← 返回索引](dataflow_index.md)")
+    lines.append("[← 返回索引](dataflow_index.md)")
     return "\n".join(lines) + "\n"
 
 
@@ -1158,8 +1167,8 @@ def _gen_overview_index(datasets: list[dict], jobs: list[dict], edges: list[dict
     lines.append("# 数据流图（dataflowgraph）索引")
     lines.append("")
     lines.append(f"> 生成时间: {now}")
-    lines.append(f"> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）")
-    lines.append(f"> 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
+    lines.append("> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）")
+    lines.append("> 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
     lines.append("")
 
     # 大白话解释数据流图（治本 2026-07-31）：让入口索引对非架构读者也友好
@@ -1181,7 +1190,7 @@ def _gen_overview_index(datasets: list[dict], jobs: list[dict], edges: list[dict
     lines.append("")
     lines.append(f"> {len(jobs)} 个作业 / {len(datasets)} 个数据集 / {len(edges)} 条边（含设计态 {design_job} jobs / {design_ds} datasets）")
     lines.append("")
-    lines.append(f"- [dataflow_panorama.md](dataflow_panorama.md) — 全项目数据流全景图（运营态+设计态）+ Dataset/Job 清单")
+    lines.append("- [dataflow_panorama.md](dataflow_panorama.md) — 全项目数据流全景图（运营态+设计态）+ Dataset/Job 清单")
     lines.append(f"- [可缩放 HTML 版]({_html_link_for('dataflow_panorama')}) — 浏览器打开可 Ctrl+滚轮缩放")
     lines.append("")
 
@@ -1314,7 +1323,7 @@ def main() -> int:
     # 4. 生成索引文件（无 Mermaid 块，不生成 HTML）
     index_md = _gen_overview_index(datasets, jobs, edges, group_counts)
     (out_dir / "dataflow_index.md").write_text(index_md, encoding="utf-8", newline="\n")
-    print(f"[OK] 生成 dataflow_index.md（索引+统计+链接）")
+    print("[OK] 生成 dataflow_index.md（索引+统计+链接）")
 
     # 5. 清理过时 HTML（域分组变更后旧 HTML 残留，模板 §16 reconciler 回退应对）
     # 治本（2026-08-01）：本目录 _zoomable_html/ 由两个生成器共享——

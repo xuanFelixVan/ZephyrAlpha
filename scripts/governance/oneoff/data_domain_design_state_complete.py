@@ -63,10 +63,11 @@ for _p in (str(_REPO_ROOT), str(_GOVERNANCE_DIR)):
         sys.path.insert(0, _p)
 
 from apply_depgraph import (  # noqa: E402
-    _load_depgraph,
     _atomic_write,
+    _load_depgraph,
     add_design_node,
 )
+
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 
 # ============================================================
@@ -269,7 +270,7 @@ def step3_update_contracts(dry_run: bool) -> int:
     if dry_run:
         for cid, target, reason in CONTRACTS_TO_UPDATE:
             print(f"  [DRY RUN] {cid}: -> {target}  ({reason[:60]}...)")
-        print(f"\n  [DRY RUN] Step 3 不写 DB\n")
+        print("\n  [DRY RUN] Step 3 不写 DB\n")
         return len(CONTRACTS_TO_UPDATE)
 
     conn = get_depgraph_pg_connection(autocommit=False)

@@ -85,8 +85,8 @@ import hashlib
 import json
 import os
 import re
-import subprocess
 import sqlite3
+import subprocess
 import sys
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
@@ -1563,7 +1563,7 @@ def metric_19_governance_convergence_gap() -> dict:
             details.append(f'{cf_id}/{ctype}: {count} components, status={status}')
 
     details.append(f'total={total}, consolidated={consolidated}, gap={gap}')
-    details.append(f'target: 6 core function entry points (M19 ≤ 6)')
+    details.append('target: 6 core function entry points (M19 ≤ 6)')
 
     return _make_metric('M19', '治理层收敛缺口数', gap,
         details=details, source=_CONVERGENCE_MAP_REL)

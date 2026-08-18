@@ -99,6 +99,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
 from _shared.constants import EXIT_FINDINGS
+
 from zephyr.governance.persistence.decisiongraph_schema import (
     get_decisiongraph_pg_connection,
     load_build_status_order,

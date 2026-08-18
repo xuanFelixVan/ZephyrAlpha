@@ -36,9 +36,8 @@ _GOV_DIR = _ROOT.parent / "governance"
 if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
-from _shared.constants import REPO_ROOT  # noqa: E402
-
 from _arch_ssot import RISK_PARAMS_PATH, load_yaml  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 # INV-002: 单一持仓 ≤ 5% NAV
 _EXPECTED_NAV = 0.05

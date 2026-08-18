@@ -50,8 +50,7 @@ _SRC_DIR = str(_SCRIPT_DIR.parents[2] / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from _shared.constants import DB_PATH, REPO_ROOT
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import DB_PATH, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 from zephyr.governance.persistence.task_repo import PostSyncValidationError, TaskRepository
 
@@ -214,7 +213,7 @@ def main() -> int:
         repo.close()
         return EXIT_PASS
     # 5. 执行修复
-    print(f"\n执行修复...")
+    print("\n执行修复...")
     success = 0
     failed: list[tuple[str, str]] = []  # (task_id, error_msg)
 

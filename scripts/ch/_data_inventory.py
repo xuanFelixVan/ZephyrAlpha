@@ -27,6 +27,7 @@ from datetime import datetime
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
 from clickhouse_driver import Client
+
 from zephyr.data.ch_config import load_ch_config
 
 _cfg = load_ch_config()

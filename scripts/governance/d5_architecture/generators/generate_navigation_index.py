@@ -51,12 +51,13 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
+from _common import DB_DISPLAY_NAME, idempotent_timestamp
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
-from domain_name_mapping import get_domain_name_zh
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
 from _shared.terminology_loader import get_category_map
-from _common import DB_DISPLAY_NAME, idempotent_timestamp
+from domain_name_mapping import get_domain_name_zh
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 BASE_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture"

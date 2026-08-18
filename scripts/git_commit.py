@@ -43,6 +43,7 @@ import os
 import sys
 from pathlib import Path
 
+
 def _resolve_repo_root() -> Path:
     """从 cwd 用 git rev-parse 解析仓库根（worktree 感知），而非 __file__ 派生。
 
