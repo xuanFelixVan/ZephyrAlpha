@@ -209,7 +209,7 @@ EXT-002 是聚合层：EXT-001 提供价格+冲击维度，EXT-003 提供成本�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-EX_SOR_EXT-002` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-EX_SOR_EXT-002` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
