@@ -307,3 +307,38 @@ class TestFailClosedRedTeam:
         reg = self._write_registry(tmp_path, entries)
         with pytest.raises(AlertThresholdConfigError):
             _FAIL_CLOSED_LOADERS[module_name](reg)
+
+    @pytest.mark.parametrize("bad_value", [float("nan"), float("inf"), float("-inf")])
+    @pytest.mark.parametrize("module_name", sorted(_FAIL_CLOSED_LOADERS))
+    def test_nan_inf_value_fail_closed(
+        self, module_name: str, bad_value: float, tmp_path: Path
+    ):
+        """NaN/Inf 攻击面（AI-R1 复审）：YAML `.nan`/`.inf` 一律 fail-closed——
+        NaN 使阈值比较恒 False → 告警链静默失效（比 bool→1.0 更隐蔽的
+        fail-closed 洞）；float cast 拒非有限值、int/str cast 拒非 int/str。
+        """
+        entries = [dict(e) for e in _GOOD_REGISTRY_ENTRIES]
+        target = _FIRST_TID[module_name]
+        for entry in entries:
+            if entry["threshold_id"] == target:
+                entry["value"] = bad_value
+        reg = self._write_registry(tmp_path, entries)
+        with pytest.raises(AlertThresholdConfigError):
+            _FAIL_CLOSED_LOADERS[module_name](reg)
+
+    def test_numeric_string_overflow_fail_closed(self, tmp_path: Path):
+        """数值字符串 "inf"/"1e400"（float cast 溢出/Inf）loader 直测 fail-closed。
+
+        注：仅 float cast 攻击面——"inf" 对 cast="str"（PLV 字符串规约）是
+        合法字符串值，不做全模块参数化（str 语义不数值化）。
+        """
+        from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
+
+        for bad in ("inf", "-inf", "1e400", "nan"):
+            reg = self._write_registry(
+                tmp_path, [{"threshold_id": "THD-X-001", "value": bad}]
+            )
+            with pytest.raises(AlertThresholdConfigError):
+                load_alert_thresholds(
+                    {"THD-X-001": "x"}, registry_path=reg, cast="float"
+                )

@@ -28,6 +28,7 @@ fail-closed 四类失败一律 raise AlertThresholdConfigError（禁止第二真
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Any, Final, Literal, Mapping
 
@@ -75,12 +76,21 @@ def _cast_value(raw: Any, cast: Literal["float", "int", "str"], tid: str) -> Any
                 details={"threshold_id": tid, "value": repr(raw)},
             )
         try:
-            return float(raw)
+            f = float(raw)
         except (TypeError, ValueError) as exc:
             raise AlertThresholdConfigError(
                 "阈值条目 value 非数值",
                 details={"threshold_id": tid, "value": repr(raw)},
             ) from exc
+        # NaN/Inf 拒绝（AI-R1 复审加固）：NaN 使阈值比较恒 False → 告警链静默
+        # 失效（比 bool→1.0 更隐蔽）；YAML `.nan`/`.inf` 与数值字符串 "inf"
+        # （含 "1e400" 溢出）统一 fail-closed
+        if not math.isfinite(f):
+            raise AlertThresholdConfigError(
+                "阈值条目 value 非有限数值（NaN/Inf）",
+                details={"threshold_id": tid, "value": repr(raw)},
+            )
+        return f
     if cast == "int":
         if isinstance(raw, bool) or not isinstance(raw, int):
             raise AlertThresholdConfigError(

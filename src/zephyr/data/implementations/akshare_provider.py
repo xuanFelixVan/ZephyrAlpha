@@ -5717,11 +5717,11 @@ class AkshareIngestProvider(IngestProviderBase):
             df = None
         if df is not None and len(df) > 0:
             for _, row in df.iterrows():
+                # 严格 6 位数字（AI-R1 复审加固：zfill 前无长度门禁时 5 位码
+                # 幻影串号——'00700'.zfill(6)='000700' 撞深主板前缀；对齐
+                # _suspend_rows_from_em/baidu 姊妹防御，官方清单恒 6 位）
                 code = str(row.get("证劵代码") or "").strip()
-                if not code:
-                    continue
-                code = code.zfill(6)
-                if not code.isdigit() or len(code) != 6:
+                if len(code) != 6 or not code.isdigit():
                     continue
                 name = str(row.get("证券简称") or "").strip()
                 issue_price = _num_or_none(row.get("发行价"))
