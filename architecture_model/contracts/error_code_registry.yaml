@@ -630,11 +630,6 @@ error_codes:
   module: zephyr.risk.core.strategy_deviation_monitor
   file: src/zephyr/risk/core/strategy_deviation_monitor.py
   description: 阈值注册表缺失/畸形 fail-closed（55 号 G26 §3.4，MOD-RK-23，#ARCH-MON-001）
-- code: ZA-RK-0025
-  class: ExcessiveNonFiniteDataError
-  module: zephyr.risk.core.var_calculator
-  file: src/zephyr/risk/core/var_calculator.py
-  description: 收益序列非有限值(NaN/±Inf)占比超 max_nonfinite_ratio——数据缺口期间拒绝出 VaR（Fail-Closed，双轮审查 F2+F4 裁定）。编号裁定（2026-08-18 AI-R3 复审）：原取 ZA-RK-0024 与本表预留改号目标撞号（ZA-RK-0009 重码方改号去向，预留登记在先），改取空闲号 ZA-RK-0025
 - code: ZA-RPT-0001
   class: InvalidDashboardInputError
   module: zephyr.reporting.realtime_pnl_dashboard

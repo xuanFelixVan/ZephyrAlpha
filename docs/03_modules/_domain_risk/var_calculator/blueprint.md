@@ -75,8 +75,8 @@ Phase 3(未实现): Basel III 三角验证+乘数因子+压力 VaR
 
 - `InvalidVaRConfigError` (ZA-RK-0005): 配置非法(置信度/持有期)
 - `InsufficientVaRHistoryError` (ZA-RK-0006): 历史样本不足
-- `ExcessiveNonFiniteDataError` (ZA-RK-0025): 非有限值(NaN/±Inf)占比超阈值
-  （编号裁定 2026-08-18 AI-R3 复审：原 ZA-RK-0024 与 #ARCH-ERRCODE-001 预留改号目标撞号，改取 ZA-RK-0025）
+- `ExcessiveNonFiniteDataError` (ZA-RK-0024): 非有限值(NaN/±Inf)占比超阈值
+  （编号终局 2026-08-18：#ARCH-ERRCODE-001 专项批 AI-ERR-001 裁定本类保留 ZA-RK-0024，stop_loss 重码方顺延 ZA-RK-0025）
 
 ## 6. 测试
 
