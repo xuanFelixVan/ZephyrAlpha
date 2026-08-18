@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-044 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TESTS] zephyr.shared.observability.metrics_server
 # [DOMAIN] D_SHARED
 # [A_module] module_id=MOD-TEST_METRICS_SERVER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable

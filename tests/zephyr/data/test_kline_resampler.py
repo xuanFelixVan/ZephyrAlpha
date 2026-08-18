@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-H1_REDIS_HOT | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """kline_resampler 单元测试。"""
 from __future__ import annotations

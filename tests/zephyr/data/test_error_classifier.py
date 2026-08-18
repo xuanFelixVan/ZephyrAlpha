@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-H1_REDIS_HOT | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] task_bound
 """test_error_classifier.py — 数据源错误分类器单元测试。
 

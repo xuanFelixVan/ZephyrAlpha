@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-H1_REDIS_HOT | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """task_queue 单测（MOD-L00-004 阶段2）。
 
 测试内容：
