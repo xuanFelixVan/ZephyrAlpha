@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/budget_engine.py
 title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根 + 抗对抗
 doc_type: blueprint
 status: Active
-version: 0.7.3
+version: 0.7.4
 layer: L0_infrastructure
 functional_domain: budget_enforcement
 owner: ZephyrAlpha-Owner
@@ -1434,7 +1434,6 @@ solo_maintainer_optimizations:
 | `src/zephyr/governance/budget-enforcer/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/financial_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/intelligence_governance/model_provider_data.py` | ✅ 已实现 | |
-| `src/zephyr/governance/ops_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/service_registration.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/token_budget.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/__init__.py` | ✅ 已实现 | |

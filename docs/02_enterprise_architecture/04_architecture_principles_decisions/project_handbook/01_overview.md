@@ -129,17 +129,17 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 
 | 指标 | 值 |
 |------|----|
-| 域总数 / Total domains | 73 |
-| 节点总数 / Total nodes | 6554 |
-| 依赖边总数 / Total edges | 11850 |
+| 域总数 / Total domains | 74 |
+| 节点总数 / Total nodes | 6535 |
+| 依赖边总数 / Total edges | 12587 |
 | 孤儿节点数 / Orphan nodes | 0 |
 
 | build_status | 节点数 |
 |--------------|--------|
 | `deprecated` | 90 |
-| `generated` | 4434 |
-| `planned` | 121 |
-| `stable` | 1908 |
+| `generated` | 4411 |
+| `planned` | 115 |
+| `stable` | 1918 |
 | `testing` | 1 |
 <!-- AUTO-END:dependency_stats -->
 
@@ -167,6 +167,7 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 | `hvplot>=0.10.0,<1.0.0` | Pandas 绘图 / Pandas plotting |
 | `plotly_resampler>=0.9.0,<1.0.0` | 时序降采样 / Timeseries downsampling |
 | `python-dotenv>=1.0.0,<2.0.0` | 环境变量 / Env vars |
+| `tzdata>=2024.1` | — / — |
 | `apscheduler>=3.10.0,<4.0.0` | 任务调度 / Task scheduling |
 | `sqlalchemy>=2.0.0,<3.0.0` | ORM/JobStore / ORM/JobStore |
 | `exchange_calendars>=4.13,<5.0` | 交易日历 / Trading calendars |

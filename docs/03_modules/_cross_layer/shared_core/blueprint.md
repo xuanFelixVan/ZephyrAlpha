@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.6"
+version: "0.19.7"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -381,12 +381,15 @@ build_status: generated
 | `src/zephyr/pf_alloc/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/pf_alloc/strategy_lifecycle_event.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/adaptation/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/ai_guards/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/alerts/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/api/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/api/api_client.py` | ✅ 已实现 | |
 | `src/zephyr/shared/api/api_index.py` | ✅ 已实现 | |
 | `src/zephyr/shared/blueprint_tools/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/blueprint_tools/blueprint_scorer.py` | ✅ 已实现 | |
 | `src/zephyr/shared/compensation/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/context/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/_types.py` | ✅ 已实现 | |
@@ -441,6 +444,7 @@ build_status: generated
 | `src/zephyr/shared/contracts/trace_context.py` | ✅ 已实现 | |
 | `src/zephyr/shared/dependency/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/draft/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/evaluation/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/events/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/dlq.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/dlq_bridge.py` | ✅ 已实现 | |
@@ -455,6 +459,7 @@ build_status: generated
 | `src/zephyr/shared/security/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/session/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/utils/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/versioning/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/execution/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/execution/execution_rejection_error.py` | ✅ 已实现 | |

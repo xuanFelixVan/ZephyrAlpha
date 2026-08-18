@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.7
+version: 1.3.8
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -191,7 +191,7 @@ D_BACKTEST域代码唯一存放于 `src/zephyr/backtest/`。禁止在research/�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-BT-001` 的 34 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-001` |
-| 数据流图 (dataflow) | 5 个 Dataset / 6 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 5 个 Dataset / 5 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -991,11 +991,15 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/backtest/test_backtest_decisiongraph_adapter.py` | ✅ 已实现 | |
 | `tests/backtest/test_c1_comparator.py` | ✅ 已实现 | |
 | `tests/backtest/test_c1_runner.py` | ✅ 已实现 | |
 | `tests/backtest/test_deadzone_provider.py` | ✅ 已实现 | |
+| `tests/backtest/test_event_driven_engine.py` | ✅ 已实现 | |
+| `tests/backtest/test_matching_engine.py` | ✅ 已实现 | |
 | `tests/backtest/test_shrinkage_engine.py` | ✅ 已实现 | |
 | `tests/backtest/test_shrinkage_provider.py` | ✅ 已实现 | |
+| `tests/backtest/test_tick_replay_data_handler.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

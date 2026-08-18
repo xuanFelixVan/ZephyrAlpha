@@ -4,7 +4,7 @@ submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层"
 doc_type: blueprint
 status: Active
-version: "3.4.0"
+version: "3.4.1"
 layer: L3_application
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -68,7 +68,7 @@ build_status: generated
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
 > 当前 construction_progress = partially_implemented，可继续业务代码实现。
 
-> module_id: MOD-L08-001 | version: 3.4.0 | status: active | domain: frontend
+> module_id: MOD-L08-001 | version: 3.4.1 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: partially_implemented
 > v2.2.0新增: 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel), 对接D_BACKTEST/D_EX_CORE/D_DATA, 支持joinquant/Qbot风格仪表盘+实盘交易面板
 > v3.0.0(#ARCH-047): Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; 新增ChartFactory(callback仅编排); 5组件已迁移
@@ -1383,9 +1383,15 @@ def render_trade_panel(data: TradePanelData) -> None:
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/frontend/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/_extensions/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/frontend/api/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/frontend/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/frontend/dashboard/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/frontend/dashboard/components/backtest_performance.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/dashboard/components/chart_factory.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/infrastructure/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/frontend/models/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/frontend/services/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/dashboard/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/dashboard/components/__init__.py` | ⚠️ 骨架 | |
 

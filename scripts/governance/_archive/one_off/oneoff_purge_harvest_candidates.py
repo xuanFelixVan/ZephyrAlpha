@@ -131,6 +131,7 @@ def _build_archive_header(harvest_count: int) -> list[str]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Purge CAND-HARVEST-* 条目到归档文件")
     parser.add_argument("--dry-run", action="store_true", help="只统计不写文件")
     args = parser.parse_args()

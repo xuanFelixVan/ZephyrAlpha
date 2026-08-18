@@ -1,6 +1,47 @@
 {
-  "status": "no_data",
-  "message": "无扫描记录 — 请先运行 run_all.py",
-  "metrics": {},
-  "violations": []
+  "timestamp": "2026-08-18T16:50:57.670520+00:00",
+  "records_analyzed": 3,
+  "metrics": {
+    "availability": {
+      "value": 0.0,
+      "target": 0.99,
+      "unit": "%",
+      "status": "FAIL"
+    },
+    "mttr": {
+      "critical_hours": 0.0,
+      "target_critical": 24,
+      "high_hours": "N/A",
+      "target_high": 168,
+      "status": "PASS"
+    },
+    "coverage": {
+      "total_scans": 3,
+      "status": "PASS"
+    },
+    "false_positive_rate": {
+      "value": 1.0,
+      "target": 0.05,
+      "status": "FAIL"
+    },
+    "script_health": {
+      "value": 0.0,
+      "target": 1.0,
+      "status": "FAIL"
+    },
+    "summary": {
+      "total_scans": 3,
+      "total_failures": 3,
+      "avg_duration_s": 17.8,
+      "total_findings": 24,
+      "total_critical": 18,
+      "total_high": 0
+    }
+  },
+  "violations": [
+    "availability: 不达标 — 当前 0.0 / 目标 0.99",
+    "false_positive_rate: 不达标 — 当前 1.0 / 目标 0.05",
+    "script_health: 不达标 — 当前 0.0 / 目标 1.0"
+  ],
+  "overall_status": "FAIL"
 }

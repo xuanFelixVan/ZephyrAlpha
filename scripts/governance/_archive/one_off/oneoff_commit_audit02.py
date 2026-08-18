@@ -69,6 +69,7 @@ MESSAGE = """fix(governance): 补全 config YAML 治理锚定 ttl 字段并修�
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     gw = GitCommitGateway(project_root=PROJECT_ROOT)
 
     claimed = gw.claim_files(SESSION_ID, FILES, adopt_prior_work=True)

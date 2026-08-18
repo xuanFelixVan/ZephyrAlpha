@@ -4,7 +4,7 @@ submodule_path: src/zephyr/simulation
 title: "Experimentation Core 蓝图+施工图 — 实验管理平台"
 doc_type: blueprint
 status: Active
-version: "2.1.2"
+version: "2.1.3"
 layer: L2_domain
 functional_domain: research
 owner: ZephyrAlpha-Owner
@@ -50,7 +50,7 @@ design_maturity: production
 
 > ✅ **业务层已开放·可施工** — 本蓝图所属 实验 实验管线层已解除 C 轨 T2-deferred 状态。Owner 已解除占位禁令，基础设施已就绪，AI 可自主实施本层业务代码。
 
-> module_id: MOD-L13-001 | version: 2.1.2 | status: active | domain: simulation
+> module_id: MOD-L13-001 | version: 2.1.3 | status: active | domain: simulation
 > actual_disk_path: src/zephyr/simulation/ | generation: 2 | construction_progress: partially_implemented
 
 # Experimentation Core 蓝图+施工图 — 实验管理平台
@@ -125,7 +125,7 @@ design_maturity: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-L13-001` 的 8 个 file 节点 | production | `extract_depgraph.py --modules MOD-L13-001` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -929,10 +929,11 @@ class ExperimentMetric:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/governance/engine/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/engine/pipeline_base.py` | ✅ 已实现 | |
 | `src/zephyr/governance/implementations/default_experiment_pipeline.py` | ✅ 已实现 | |
 | `src/zephyr/simulation/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/simulation/implementations/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/simulation/implementations/__init__.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
 status: Active
-version: "0.12.3"
+version: "0.12.4"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1488,6 +1488,7 @@ class FeedbackEntry(BaseModel):
 | `src/zephyr/integration/vector_memory/faiss_collection_manager.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/interface.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/migrate_chroma_to_faiss.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/ollama_embedding.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/vector_memory/sqlite_metadata_store.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/vector_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/vector_writer.py` | ✅ 已实现 | |

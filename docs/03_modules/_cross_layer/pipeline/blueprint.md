@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
 doc_type: blueprint
 status: Active
-version: "0.39.5"
+version: "0.39.6"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -38,7 +38,7 @@ build_status: planned
 responsibility_domain: 
 ---
 
-> module_id: MOD-INF-009 | version: 0.39.5 | status: active | layer: cross_layer
+> module_id: MOD-INF-009 | version: 0.39.6 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/integration/pipeline_orchestrator.py | generation: 2 | construction_progress: partially_implemented
 
 # Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
@@ -1022,9 +1022,6 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `src/zephyr/infrastructure/pipeline/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/integration/ports.py` | ✅ 已实现 | |
-| `src/zephyr/integration/shared/contracts/errors/execution_rejection_error.py` | ✅ 已实现 | |
-| `src/zephyr/integration/shared/contracts/errors/risk_limit_violation_error.py` | ✅ 已实现 | |
-| `src/zephyr/integration/shared/contracts/errors/signal_degradation_warning.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

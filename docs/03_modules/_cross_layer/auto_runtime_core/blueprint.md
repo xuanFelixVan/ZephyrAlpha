@@ -5,7 +5,7 @@ title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "6.0.2"
+version: "6.0.3"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -55,7 +55,7 @@ responsibility_domain:
 
 本蓝图描述 AutoRuntime Core——ZephyrAlpha 的系统大脑。它解决了 1500 模块/10000 脚本/100 AI 并发下的全局运行时编排问题。核心职责包括：三层运行时编排、MAPE-K 调和循环、节律调度、健康监控、工作编排、自动接入。当前规模 51 模块/268 脚本/0 AI 并发，目标容量 1500 模块/10000 脚本/100 AI 并发。上游依赖 Pipeline/Gate Engine/Audit Trail，下游被所有模块消费。
 
-> module_id: MOD-INF-035 | version: 6.0.2 | status: active | layer: cross_layer
+> module_id: MOD-INF-035 | version: 6.0.3 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/trading/ | generation: 2 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -1030,7 +1030,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/infrastructure/health_monitor/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/health_monitor/health_aggregator.py` | ✅ 已实现 | |
 | `src/zephyr/trading/__main__.py` | ✅ 已实现 | |
-| `src/zephyr/trading/action_dispatcher/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/action_dispatcher/_annotation_writer.py` | ✅ 已实现 | |
 | `src/zephyr/trading/action_dispatcher/_audit_log_writer.py` | ✅ 已实现 | |
 | `src/zephyr/trading/action_dispatcher/_file_lifecycle_manager.py` | ✅ 已实现 | |

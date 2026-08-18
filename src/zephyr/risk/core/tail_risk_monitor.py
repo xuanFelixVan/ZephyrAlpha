@@ -306,8 +306,8 @@ class TailRiskAlertLevel(Enum):
     """尾部风险告警级别。"""
 
     NONE = "none"
-    WARNING = "warning"  # 尾部风险偏高
-    CRITICAL = "critical"  # 尾部风险严重
+    WARNING = "warning"     # 尾部风险偏高
+    CRITICAL = "critical"   # 尾部风险严重
     EMERGENCY = "emergency"  # 极值, 联动 Kill Switch
 
 
@@ -346,13 +346,17 @@ class TailRiskConfig:
 
     def __post_init__(self) -> None:
         if not 0 < self.confidence < 1:
-            raise InvalidTailRiskInputError(f"confidence must be in (0,1), got {self.confidence}")
+            raise InvalidTailRiskInputError(
+                f"confidence must be in (0,1), got {self.confidence}"
+            )
         if not 0.5 < self.pot_threshold_quantile < 1:
             raise InvalidTailRiskInputError(
                 f"pot_threshold_quantile must be in (0.5,1), got {self.pot_threshold_quantile}"
             )
         if self.jump_threshold_sigma <= 0:
-            raise InvalidTailRiskInputError(f"jump_threshold_sigma must be >0, got {self.jump_threshold_sigma}")
+            raise InvalidTailRiskInputError(
+                f"jump_threshold_sigma must be >0, got {self.jump_threshold_sigma}"
+            )
         if self.heavy_tail_shape_threshold <= 0:
             raise InvalidTailRiskInputError(
                 f"heavy_tail_shape_threshold must be >0, got {self.heavy_tail_shape_threshold}"
@@ -363,13 +367,21 @@ class TailRiskConfig:
                 f"> heavy_tail_shape_threshold ({self.heavy_tail_shape_threshold})"
             )
         if self.es_warning_ratio <= 1.0:
-            raise InvalidTailRiskInputError(f"es_warning_ratio must be >1.0, got {self.es_warning_ratio}")
+            raise InvalidTailRiskInputError(
+                f"es_warning_ratio must be >1.0, got {self.es_warning_ratio}"
+            )
         if self.frtb_multiplier <= 0:
-            raise InvalidTailRiskInputError(f"frtb_multiplier must be >0, got {self.frtb_multiplier}")
+            raise InvalidTailRiskInputError(
+                f"frtb_multiplier must be >0, got {self.frtb_multiplier}"
+            )
         if self.min_samples < 10:
-            raise InvalidTailRiskInputError(f"min_samples must be >=10, got {self.min_samples}")
+            raise InvalidTailRiskInputError(
+                f"min_samples must be >=10, got {self.min_samples}"
+            )
         if not 0.0 <= self.max_nonfinite_ratio < 1.0:
-            raise InvalidTailRiskInputError(f"max_nonfinite_ratio must be in [0,1), got {self.max_nonfinite_ratio}")
+            raise InvalidTailRiskInputError(
+                f"max_nonfinite_ratio must be in [0,1), got {self.max_nonfinite_ratio}"
+            )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -533,7 +545,8 @@ class TailRiskMonitor:
                 self._pot_counter.record_success(date_str)
         if pot_fallback_historical:
             logger.warning(
-                "POT 未生效, 本次快照为纯历史模拟 ES (pot_fallback_historical=True): 厚尾诊断/FRTB shape 加价缺席"
+                "POT 未生效, 本次快照为纯历史模拟 ES (pot_fallback_historical=True): "
+                "厚尾诊断/FRTB shape 加价缺席"
             )
 
         # 4. 跳跃检测
@@ -541,7 +554,9 @@ class TailRiskMonitor:
         jump_threshold = float(np.std(returns) * cfg.jump_threshold_sigma)
 
         # 5. 告警级别判定
-        alert_level, reason = self._determine_alert(pot, es_var_ratio, jump_count, cfg)
+        alert_level, reason = self._determine_alert(
+            pot, es_var_ratio, jump_count, cfg
+        )
 
         # 6. FRTB 加价
         frtb_addon = self._compute_frtb_addon(pot, var_pct, portfolio_value, cfg)
@@ -719,13 +734,19 @@ class TailRiskMonitor:
         # 基于 shape 判定
         if pot is not None:
             if pot.shape >= cfg.critical_shape_threshold:
-                reasons.append(f"POT shape={pot.shape:.3f} >= {cfg.critical_shape_threshold} (严重厚尾)")
+                reasons.append(
+                    f"POT shape={pot.shape:.3f} >= {cfg.critical_shape_threshold} (严重厚尾)"
+                )
             elif pot.shape >= cfg.heavy_tail_shape_threshold:
-                reasons.append(f"POT shape={pot.shape:.3f} >= {cfg.heavy_tail_shape_threshold} (厚尾)")
+                reasons.append(
+                    f"POT shape={pot.shape:.3f} >= {cfg.heavy_tail_shape_threshold} (厚尾)"
+                )
 
         # 基于 ES/VaR 比值判定
         if es_var_ratio >= cfg.es_warning_ratio:
-            reasons.append(f"ES/VaR={es_var_ratio:.2f} >= {cfg.es_warning_ratio} (尾部偏厚)")
+            reasons.append(
+                f"ES/VaR={es_var_ratio:.2f} >= {cfg.es_warning_ratio} (尾部偏厚)"
+            )
 
         # 基于跳跃次数
         if jump_count >= 5:
@@ -736,7 +757,9 @@ class TailRiskMonitor:
 
         # 级别判定: shape 超临界值或 ES/VaR 超 2.0 → EMERGENCY
         is_emergency = (
-            (pot is not None and pot.shape >= cfg.critical_shape_threshold) or es_var_ratio >= 2.0 or jump_count >= 10
+            (pot is not None and pot.shape >= cfg.critical_shape_threshold)
+            or es_var_ratio >= 2.0
+            or jump_count >= 10
         )
         is_critical = (
             (pot is not None and pot.shape >= cfg.heavy_tail_shape_threshold)
@@ -776,7 +799,9 @@ class TailRiskMonitor:
     # ── 内部: 校验 ──
 
     @staticmethod
-    def _validate_returns(returns: np.ndarray, min_samples: int, max_nonfinite_ratio: float = 0.05) -> np.ndarray:
+    def _validate_returns(
+        returns: np.ndarray, min_samples: int, max_nonfinite_ratio: float = 0.05
+    ) -> np.ndarray:
         """输入校验——非有限值 Fail-Closed（AI-R3 复审 P1 治本）。
 
         与 var_calculator 同口径：isfinite 过滤 + 计数 + 超阈值 raise。
@@ -785,9 +810,13 @@ class TailRiskMonitor:
         """
         returns = np.asarray(returns, dtype=float)
         if returns.ndim != 1:
-            raise InvalidTailRiskInputError(f"returns must be 1D, got shape {returns.shape}")
+            raise InvalidTailRiskInputError(
+                f"returns must be 1D, got shape {returns.shape}"
+            )
         if len(returns) < min_samples:
-            raise InvalidTailRiskInputError(f"need >= {min_samples} samples, got {len(returns)}")
+            raise InvalidTailRiskInputError(
+                f"need >= {min_samples} samples, got {len(returns)}"
+            )
         total = len(returns)
         finite_mask = np.isfinite(returns)
         nonfinite_dropped = int(total - finite_mask.sum())

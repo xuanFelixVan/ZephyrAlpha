@@ -78,6 +78,7 @@ def apply_replacements(text: str) -> tuple[str, int]:
     return "\n".join(new_lines), count
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     if not YAML_PATH.exists():
         print(f"ERROR: {YAML_PATH} not found")
         sys.exit(1)

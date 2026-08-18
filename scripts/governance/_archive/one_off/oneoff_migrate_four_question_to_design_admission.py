@@ -50,10 +50,12 @@ SCHEMA_FQ = re.compile(r'^(\s*)four_question:\s*obj\s*$')
 
 
 def get_indent(line: str) -> int:
+    """get_indent implementation."""
     return len(line) - len(line.lstrip(' '))
 
 
 def process(text: str):
+    """process implementation."""
     lines = text.split('\n')
     out = []
     in_fq = False
@@ -126,6 +128,7 @@ def process(text: str):
 
 
 def verify(original: str, result: str, stats: dict) -> bool:
+    """verify implementation."""
     ok = True
     # 1. 无 four_question 残留
     if 'four_question' in result:
@@ -156,6 +159,7 @@ def verify(original: str, result: str, stats: dict) -> bool:
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     if not SRC.exists():
         print(f"[ERR] 源文件不存在: {SRC}")
         sys.exit(2)

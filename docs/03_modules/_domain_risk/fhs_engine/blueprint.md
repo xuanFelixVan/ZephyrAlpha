@@ -3,7 +3,7 @@ module_id: MOD-RK-26
 title: "FHS 引擎蓝图 — Filtered Historical Simulation（GARCH 残差重采样 VaR/ES）MVP"
 doc_type: blueprint
 status: Active
-version: "0.1.0"
+version: "0.1.1"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -143,7 +143,7 @@ memo ES method='lower'，多日 √T 缩放）——供 FHS vs HS 偏离度审�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-RK-26` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-RK-26` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -160,10 +160,29 @@ memo ES method='lower'，多日 √T 缩放）——供 FHS vs HS 偏离度审�
 
 ## 8. 已实现代码完整路径索引
 
-> AGENTS.md §6.1 蓝图-代码同步强制约定；本节由 sync_blueprint_code_index.py 派生，merge 后统筹侧重跑。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
 
 ### 8.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/risk/test_fhs_engine.py` | ✅ 已实现 | 28 用例两轮全绿（2026-08-18 AI-FHS-001 + Qwen 审查线优化器回归） |
+| `tests/risk/test_fhs_engine.py` | ✅ 已实现 | |
+
+### 8.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §8（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
+
+
