@@ -90,6 +90,25 @@ EXCLUDE_PATH_PARTS = (
     "docs/01_policies_and_standards/sop/construction_workflow_sop.md",
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/63_data_utilization_audit.md",
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md",
+    # 循环审计 R1（2026-08-19 AI-00 基线治本）：以下豁免类经逐文件人工甄别，全部属
+    # "定义/取证/载荷"而非可执行指令——
+    # ① tests/ 全目录：红队对抗载荷与扫描器自检语料（攻击字面量是测试数据，执行面在 tmp 仓）
+    "tests/",
+    # ② 政策/规则/契约真源枚举"禁止哪些命令"（策略定义文本）
+    "AGENTS.md",
+    "docs/01_policies_and_standards/rules/",
+    "docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml",
+    "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml",
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md",
+    "docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md",
+    # ③ 安全防护系统自身的模式/别名定义与防护消息字面量（git_guard 家族 + worktree 三件的告警文案）
+    "scripts/git_guard.py",
+    "scripts/setup_git_guard_aliases.py",
+    "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py",
+    "src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py",
+    "src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py",
+    # ④ 回滚工具本职功能（rollback.py 的 restore/reset 即其存在意义，受 GIT-SAFE 包装约束）
+    "scripts/rollback.py",
 )
 
 

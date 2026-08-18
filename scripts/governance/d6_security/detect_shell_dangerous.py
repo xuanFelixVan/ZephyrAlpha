@@ -84,7 +84,26 @@ EXCLUDE_FILES = {"detect_shell_dangerous.py"}
 # 豁免路径（2026-08-18 AI-00 merge-18 实证治本，同 detect_git_dangerous.py 2026-08-17 先例）：
 # 安全策略文档枚举"禁止哪些危险命令"必含字面量（rm -rf / chmod 777 等），属策略定义非操作指令，
 # 全文/增量扫描触及该真源即误报硬阻断。保护面不收缩：其余全部文件照常扫描。
-EXCLUDE_PATH_PARTS = ("docs/03_modules/_cross_layer/large_language_model_security/blueprint.md",)
+EXCLUDE_PATH_PARTS = ("docs/03_modules/_cross_layer/large_language_model_security/blueprint.md",) + (
+    # 循环审计 R1（2026-08-19 AI-00 基线治本，与 detect_git_dangerous 同构逐文件甄别）：
+    # ① tests/ 全目录：红队对抗载荷/安全语料（rm -rf 等攻击字面量是测试数据，执行面在 tmp 仓）
+    "tests/",
+    # ② 策略文档枚举（RBAC/LLM 安全网蓝的禁止项定义文本）
+    "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md",
+    "docs/03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md",
+    # ③ 安全防护系统自身的模式定义/攻击语料真源（input_guard 拦截模式、payloads 库、
+    #    红队语料、dry-run 模拟器阻断清单、demo 恶意样本字符串、phase_check/adapter/a2a_red_team 文案）
+    "src/zephyr/security/access_control/guards/input_guard.py",
+    "src/zephyr/security/access_control/detectors/shell_dialect_detector.py",
+    "src/zephyr/autonomy_core/skills/skill_guardrails.py",
+    "src/zephyr/security/llm_defense/llm_security/payloads/",
+    "src/zephyr/security/llm_defense/llm_security/red_team_corpus.yaml",
+    "src/zephyr/infrastructure/dry_run_simulator.py",
+    "src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_red_team.py",
+    "src/zephyr/governance/ops_governance/phase_check_registry.py",
+    "src/zephyr/governance/services/adapter.py",
+    "scripts/construction/demo_e2e_pipeline.py",
+)
 
 
 def scan_file(filepath: Path) -> list[dict]:
