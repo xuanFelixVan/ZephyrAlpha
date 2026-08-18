@@ -13,20 +13,19 @@
 
 from __future__ import annotations
 
-import os
-
 from zephyr.feedback_loop.generator import generate
 
 
 class TestGenerate:
     def test_generates_new_files(self, tmp_path):
         skeletons = {"subdir/test_file.py": 'print("hello")\n'}
-        target = str(tmp_path)
-        original_base = os.path.join(os.path.dirname(__file__), "")
-        created, skipped, errors = generate(skeletons)
+        # 治本（2026-08-18 第八统筹）：原调用 generate(skeletons) 不传目标根，
+        # 泄漏 src/zephyr/feedback_loop/subdir/test_file.py 进真源树（ORPHAN-MODULE 实证）。
+        created, skipped, errors = generate(skeletons, target_root=str(tmp_path))
         assert isinstance(created, int)
         assert isinstance(skipped, int)
         assert isinstance(errors, int)
+        assert (tmp_path / "subdir" / "test_file.py").exists()
 
     def test_empty_skeletons(self):
         created, skipped, errors = generate({})

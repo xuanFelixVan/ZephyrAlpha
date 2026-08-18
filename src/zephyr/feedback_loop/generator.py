@@ -23,6 +23,12 @@ Generator
 
 依据: 蓝图 MOD-FEEDBACK_LOOP §3-§9
 
+# [ALGO_FLOW]
+# I1: skeletons(相对路径→代码骨架 dict, 默认 SKELETONS 模板全集) + target_root(写入根, 默认 BASE=包目录, 测试传 tmp_path 隔离)
+# A1: _write_one(目标已存在→skipped; 否则 temp-file(pid 后缀)+os.replace 原子写入→created; PermissionError/异常→error)
+# A2: ThreadPoolExecutor(max_workers=8) 并行写盘 + as_completed 聚合 created/skipped/errors 三态计数
+# O1: (created, skipped, errors) 三元组
+# [/ALGO_FLOW]
 """
 
 
@@ -39,16 +45,20 @@ __all__ = ["BASE", "generate", "main"]
 BASE: Final[str] = os.path.join(os.path.dirname(__file__), "")
 
 
-def generate(skeletons: dict[str, str] | None = None) -> tuple[int, int, int]:
+def generate(skeletons: dict[str, str] | None = None, target_root: str | None = None) -> tuple[int, int, int]:
     """执行骨骼代码生成. 返回 (created, skipped, errors).
 
     从 _gen_inherited.py 的 __main__ 块拆分而来.
+    target_root: 写入根目录（默认 BASE=包目录）；测试须传 tmp_path 隔离——
+    2026-08-18 第八统筹治本：test_generates_new_files 未传 target 致
+    src/zephyr/feedback_loop/subdir/test_file.py 泄漏进真源树（ORPHAN-MODULE 门禁实证拦截）。
 
     """
     if skeletons is None:
         skeletons = SKELETONS
 
-    target_root = BASE
+    if target_root is None:
+        target_root = BASE
     created = 0
     skipped = 0
     errors = 0

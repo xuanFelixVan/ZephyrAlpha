@@ -242,6 +242,7 @@ ERROR_SUBCLASSES_EXPECTED = {
     "GateError",
     "IOError",
     "PipelineError",
+    "PoolExhaustedError",
     "SecurityError",
     "SessionError",
     "TaskError",
