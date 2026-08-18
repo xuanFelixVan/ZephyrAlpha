@@ -57,19 +57,7 @@
 
 边界（并发会话 AI-RRESIL-001）：DefaultRiskValidator / fill_handler /
 PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
-
-# [ALGO_FLOW]
-# I1: nav(盘中净值, cash+持仓市值) + positions(券商持仓快照) + today_fills(当日成交)
-# I2: DrawdownController/VaRCalculator/TailRiskMonitor/DrawdownTracker(既有风控组件实例)
-# I3: broker(券商接口, 启动恢复查询+清算执行) + reconciler(持仓对账器)
-# F1: recover_from_broker(以券商持仓为准重建账本, 重建完成前 is_trading_allowed=False)
-# F2: evaluate_intraday(净值→回撤追踪→收益序列→VaR/ES→DrawdownController.evaluate→position_cap)
-# F3: evaluate_intraday 内嵌系统性风险评估(systemic_input_provider→MOD-RK-10 detector.check→三级警报→37号§3.6降级机)
-# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007/系统性LEVEL_3→trigger_kill_switch+清算)
-# A2: start/stop_reconcile_loop(盘中定时对账, 蓝图MOD-EX-056阶段2规划位, 默认300s)
-# A3: _evaluate_systemic_risk(LEVEL_3→build_escape_directive→_engage_kill_switch; 降级候选→check_recovery门禁)
-# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level) + RecoveryResult + 清算报告
-# [/ALGO_FLOW]
+（ALGO_FLOW 唯一真源在文件头注区，AI-R2-001 清除 docstring 内重复副本）
 """
 
 from __future__ import annotations
@@ -627,16 +615,18 @@ class RiskLayerOrchestrator:
             raw_inputs = provider()
         except Exception:  # noqa: BLE001 — 输入失效不阻断交易主循环，下轮重试
             _logger.exception("systemic_input_provider 失效，本轮跳过系统性风险检测（状态保持）")
-            return None
+            return self._state_hold_view()
         if not raw_inputs:
-            return None
+            # 空输入同异常：无观测轮保持 state 派生约束——危机中数据中断
+            # 不放松仓位上限（AI-R2-001 修复：原返回 None → cap 跳回 1.0）
+            return self._state_hold_view()
         # provider 契约：返回 detector.check() 关键字参数映射（"now" 由编排层注入）
         inputs = {k: v for k, v in raw_inputs.items() if k != "now"}
         try:
             alert = detector.check(now=now, **inputs)
         except Exception:  # noqa: BLE001 — 检测失效不阻断交易主循环（输入校验错属数据边界）
             _logger.exception("AshareSystemicRiskDetector.check 失效，本轮跳过（状态保持）")
-            return None
+            return self._state_hold_view()
 
         state = self._systemic_state
         prev_level = state.level if state.in_crisis else 0
@@ -644,8 +634,14 @@ class RiskLayerOrchestrator:
         directive: dict[str, Any] | None = None
 
         if state.in_crisis and level < state.level:
-            # 降级候选——check_recovery 门禁（复用 MOD-RK-21，真源唯一）
-            target = self._try_systemic_recovery(alert, now, inputs)
+            # 降级候选——check_recovery 门禁（复用 MOD-RK-21，真源唯一）；
+            # 门禁入参类型异常等失效隔离跳过不阻断主循环（docstring 契约，
+            # AI-R2-001 修复：原未隔离，float() 类型错会崩调仓循环）
+            try:
+                target = self._try_systemic_recovery(alert, now, inputs)
+            except Exception:  # noqa: BLE001 — 降级门禁失效保持当前级别，下轮重试
+                _logger.exception("系统性风险降级门禁失效，本轮保持当前级别")
+                target = None
             if target is not None:
                 state.exit_crisis(target, timestamp=now)
                 self._systemic_via_recovery = target >= 1
@@ -711,6 +707,22 @@ class RiskLayerOrchestrator:
             )
         )
 
+    def _state_hold_view(self) -> _SystemicView:
+        """无观测轮状态保持视图（37 号 §3.6 hysteresis 语义：无数据=状态不变）。
+
+        provider 失效/空输入/detector 失效时，快照仍输出 state 派生的
+        cap/halt——危机中数据中断不放松仓位约束，也不升级（AI-R2-001）。
+        """
+        cap, halt = self._systemic_cap_halt()
+        return _SystemicView(
+            level=self.systemic_level,
+            cap=cap,
+            halt=halt,
+            signal_count=0,
+            sentiment_breaker=False,
+            escape_directive=None,
+        )
+
     def _systemic_cap_halt(self) -> tuple[float, bool]:
         """系统性层 (position_cap, halt_new_orders)——触发/恢复双口径映射。
 
@@ -747,14 +759,20 @@ class RiskLayerOrchestrator:
                 f"peak={event.snapshot.peak:.2f} nav={event.snapshot.net_value:.2f}"
             )
 
-    def _engage_kill_switch(self, reason: str) -> dict[str, object]:
+    def _engage_kill_switch(self, reason: str) -> dict[str, object] | None:
         """熔断单一仲裁点：状态层熔断 + 事件记录 + 清算执行（重复触发直接返回首报）。
 
         触发源（回撤 EMERGENCY / 尾部 EMERGENCY / BS-007）在此互斥——
         裁定书 P1「多 Protocol 无仲裁」随本仲裁点一并解。
+
+        并发窗口封闭（AI-R2-001）：engaged 置位即跳过后续仲裁——首调用
+        清算进行中（report 未落地）时第二调用不再穿透重复清算；清算异常
+        中断 report 缺失时熔断态保持（禁单），清算残差人工对账兜底，
+        与「持仓查询失效（熔断状态保持）」降级语义一致——宁少清算
+        （禁单态人工介入）不双清算（重复卖单=A 股卖空违规风险）。
         """
         with self._lock:
-            if self._kill_switch_engaged and self._kill_switch_report is not None:
+            if self._kill_switch_engaged:
                 _logger.warning("Kill Switch 已触发，重复仲裁跳过: %s", reason)
                 return self._kill_switch_report
             self._kill_switch_engaged = True  # 先置位防重入

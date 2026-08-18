@@ -914,3 +914,93 @@ class TestSystemicWiringRobustness:
         assert snap.systemic_level == 3
         snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=13))
         assert snap.systemic_level == 2
+
+    def test_data_outage_holds_crisis_constraints(self) -> None:
+        """红队（AI-R2-001 修复实证）：LEVEL_2 危机中数据中断不放松仓位约束。
+
+        原缺陷：provider 失效/空输入返回 None → 快照 systemic_cap 跳回 1.0，
+        危机约束单轮消失。修复后无观测轮输出 state 派生 cap/halt（hysteresis
+        语义：无数据=状态不变）。
+        """
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        # 进入 LEVEL_2（2 信号）
+        inputs_box["data"] = {
+            "sell_pressure": 0.80,
+            "bid_ask_spread": 0.01,
+            "external_market_change": -0.04,
+        }
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 2
+        assert snap.systemic_cap == pytest.approx(0.70)
+        # 数据中断轮（provider 抛异常）：level/cap/halt 全保持
+        def _feed_down() -> dict:
+            raise RuntimeError("feed down")
+
+        orch._systemic_input_provider = _feed_down  # type: ignore[assignment]
+        snap2 = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=1))
+        assert snap2.systemic_level == 2
+        assert snap2.systemic_cap == pytest.approx(0.70)
+        assert snap2.position_cap == pytest.approx(0.70)
+        # 空输入轮：同样保持
+        orch._systemic_input_provider = lambda: {}  # type: ignore[assignment]
+        snap3 = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=2))
+        assert snap3.systemic_level == 2
+        assert snap3.systemic_cap == pytest.approx(0.70)
+
+    def test_recovery_gate_type_error_isolated(self) -> None:
+        """红队（AI-R2-001 修复实证）：降级门禁入参类型异常隔离，不崩主循环。
+
+        原缺陷：_try_systemic_recovery 内 float(str) 抛 ValueError 未捕获，
+        传播崩 evaluate_intraday 调用方（违反自身"越界输入隔离跳过"契约）。
+        """
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = {
+            "sell_pressure": 0.80,
+            "bid_ask_spread": 0.01,
+            "external_market_change": -0.04,
+        }
+        orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert orch.systemic_level == 2
+        # 降级候选轮 + spread 类型污染（str 而非 float）：不抛异常、级别保持
+        inputs_box["data"] = {
+            "sell_pressure": 0.30,
+            "bid_ask_spread": "corrupted",  # type: ignore[dict-item]
+        }
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=45))
+        assert snap.systemic_level == 2  # 门禁失效保持当前级别
+        assert orch.kill_switch_engaged is False
+
+    def test_engage_skip_while_liquidation_inflight(self) -> None:
+        """红队（AI-R2-001 修复实证）：engaged 置位后 report 未落地期间，
+        并发二次仲裁不穿透重复清算（原条件 engaged AND report!=None 留窗口）。
+
+        构造：清算执行器抛异常中断（report 永不落地），后续触发源仍被
+        仲裁点跳过——熔断态保持禁单，宁少清算不双清算。
+        """
+        import zephyr.ex_core.risk_layer_orchestrator as rlo
+
+        broker = FakeBroker(cash=Decimal("0"), holdings={"600000.SH": Decimal("1000")})
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        original = rlo.execute_kill_switch_liquidation
+
+        def _boom(*args: object, **kwargs: object) -> object:
+            raise RuntimeError("liquidation infra down")
+
+        rlo.execute_kill_switch_liquidation = _boom  # type: ignore[assignment]
+        try:
+            inputs_box["data"] = dict(_LEVEL3_INPUTS)
+            with pytest.raises(RuntimeError):
+                orch.evaluate_intraday(1_000_000.0, now=_T0)
+            # engaged 已置位但 report 未落地（清算中断）
+            assert orch.kill_switch_engaged is True
+            assert orch._kill_switch_report is None
+            assert orch.is_trading_allowed is False
+            # 二次触发（修复后：engaged 即跳过，不再穿透重入清算链）
+            snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(seconds=30))
+            assert orch.kill_switch_engaged is True
+            assert len(broker.submitted) == 0  # 未重复下清算单
+            assert snap.systemic_level == 3
+        finally:
+            rlo.execute_kill_switch_liquidation = original  # type: ignore[assignment]

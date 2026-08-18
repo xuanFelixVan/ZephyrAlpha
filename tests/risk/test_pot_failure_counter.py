@@ -112,6 +112,21 @@ class TestCrossDayCounting:
         assert counter.record_failure("2026-08-10") == 1
         assert counter.record_failure("2026-08-10") == 1
 
+    def test_success_then_same_day_failure_counts(self, json_store):
+        """红队（AI-R2-001 修复实证）：同日先成功后失败必须计数。
+
+        原缺陷：record_success 把 last_failure_date 写为当天，同日随后
+        record_failure 被去重分支误吞（当日失败不计入连续失败）。
+        修复：成功时清空 last_failure_date。
+        """
+        counter = PotFailureCounter(json_store)
+        counter.record_failure("2026-08-10")
+        counter.record_success("2026-08-11")  # 成功重置
+        # 同日（08-11）随后失败：必须重新计数（原实现被误吞返回 0）
+        assert counter.record_failure("2026-08-11") == 1
+        # 同日再失败仍去重（只计当日一次）
+        assert counter.record_failure("2026-08-11") == 1
+
     def test_day_string_comparison_not_arithmetic(self, json_store):
         """非连续日历日也按"不同日期"累进 (计数器不验证日历连续性, 由调用方语义保证)。"""
         counter = PotFailureCounter(json_store)

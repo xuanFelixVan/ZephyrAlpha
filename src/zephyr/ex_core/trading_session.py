@@ -68,6 +68,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, time, timezone
 from decimal import Decimal
 from typing import Any, Final
+from zoneinfo import ZoneInfo
 
 from zephyr.compliance.discipline_must_do_checker import (
     ChecklistAction,
@@ -102,6 +103,16 @@ from zephyr.shared.contracts.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 
 _logger = logging.getLogger(__name__)
+
+#: A 股交易时刻口径（尾盘操纵检测窗口 14:57-15:00 为北京时刻，
+#: at_time 缺省 fallback 必须同口径——UTC 时刻会导致窗口永不激活）
+_SHANGHAI_TZ: Final = ZoneInfo("Asia/Shanghai")
+
+
+def _cst_now_time() -> time:
+    """当前北京时刻（A 股交易口径，MOD-CMP-007 尾盘窗口判定用）。"""
+    return datetime.now(_SHANGHAI_TZ).time()
+
 
 SignalProvider = Callable[[list[str]], dict[str, float]]
 PriceProvider = Callable[[list[str]], dict[str, Decimal]]
@@ -769,7 +780,7 @@ class TradingSession:
                     qty,
                     market_ctx.pre_close_vwap,
                     market_ctx.close_window_volume,
-                    market_ctx.at_time or datetime.now(timezone.utc).time(),
+                    market_ctx.at_time or _cst_now_time(),
                 )
             )
         return detector.run_all(*verdicts)

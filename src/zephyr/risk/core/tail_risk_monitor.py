@@ -33,7 +33,7 @@ D-RISK §1.2 L2 Real-Time 盘中监控核心模块。尾部风险度量与监控
     5. FRTB 尾部风险加价: 基于 shape 的资本加价
 
 属 A 类基础设施 (统计拟合 + 阈值判定, 数学逻辑明确), 阈值为 C 类可调参数。
-依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-15, §2 依赖(RK-05→RK-15)
+依据: D:\\临时工作区\\依赖图	-D-RISK-风控域.md §1.2 RK-15, §2 依赖(RK-05→RK-15)
 SSoT: depgraph MOD-RK-15
 Version: 0.2.0
 
@@ -206,7 +206,7 @@ class PotFailureCounter:
         }
         try:
             rec = self._store.load(self._namespace)
-        except Exception:
+        except Exception:  # noqa: BLE001 — fail-closed：读失败按从未失败处理，不阻断
             logger.warning(
                 "POT 计数器读失败，按从未失败处理",
                 exc_info=True,
@@ -232,7 +232,7 @@ class PotFailureCounter:
         """持久化计数器状态；失败只 warning。"""
         try:
             self._store.save(self._namespace, rec)
-        except Exception:
+        except Exception:  # noqa: BLE001 — fail-open-to-memory：写失败仅告警不阻断主链路
             logger.warning("POT 计数器写失败，已降级内存态", exc_info=True)
 
     def record_failure(self, date_str: str) -> int:
@@ -255,13 +255,17 @@ class PotFailureCounter:
         return rec["consecutive_failures"]
 
     def record_success(self, date_str: str) -> None:
-        """记录一次 POT 成功，重置连续失败计数。"""
+        """记录一次 POT 成功，重置连续失败计数。
+
+        last_failure_date 清空（非写当天）——成功后同日再失败必须可计数：
+        写当天会被 record_failure 的同日去重分支误吞（AI-R2-001 修复）。
+        """
         rec = self._load()
         base_threshold = self._config.pot_threshold_quantile
         if rec["consecutive_failures"] == 0 and rec["adjusted_threshold"] == base_threshold:
             return  # 无变化，省一次写
         rec["consecutive_failures"] = 0
-        rec["last_failure_date"] = date_str
+        rec["last_failure_date"] = ""
         rec["adjusted_threshold"] = base_threshold
         self._save(rec)
         logger.info("POT 拟合成功，连续失败计数重置")
@@ -657,7 +661,7 @@ class TailRiskMonitor:
         # scipy 的 genpareto 参数 c 对应 shape ξ
         try:
             shape, loc, scale = stats.genpareto.fit(exceedances, floc=0)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 拟合数值失效降级纯历史 ES（pot_fallback_historical）
             logger.warning("POT fit failed: %s", e)
             return None
 
