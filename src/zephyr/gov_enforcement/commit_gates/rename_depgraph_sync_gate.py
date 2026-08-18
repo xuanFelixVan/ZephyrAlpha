@@ -37,7 +37,7 @@
   1. ``git diff --cached --name-status --diff-filter=R`` 获取 staged 重命名 .py 文件
   2. 对每个新路径查询 ``SELECT 1 FROM nodes WHERE file_path = %s AND build_status != 'deprecated'``
   3. 无记录 → 文件重命名后 depgraph 未重建 → 阻断
-  4. 提示 AI 先运行 ``python scripts/governance/generate_project_depgraph.py --force``
+  4. 提示 AI 先运行 ``python scripts/governance/generate_project_depgraph.py --output-db depgraph --force``（裸 --force 不写库=假成功，2026-08-18 AI-00 实证）
 
 设计权衡
 --------
@@ -220,7 +220,7 @@ def make_rename_depgraph_sync_gate() -> GateSpec:
             detail = _format_violation_detail(missing)
             return False, (
                 f"RENAME-DEPGRAPH-SYNC: {len(missing)} 个 .py 文件重命名后 depgraph 未同步。"
-                f"先运行 'python scripts/governance/generate_project_depgraph.py --force' "
+                f"先运行 'python scripts/governance/generate_project_depgraph.py --output-db depgraph --force' "
                 f"重建 depgraph，再提交。详情: {detail}"
             )
         return True, ""

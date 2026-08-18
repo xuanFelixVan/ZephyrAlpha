@@ -3973,6 +3973,12 @@ def _classify_headerless_files(
 
             continue
 
+        # 治本（2026-08-18 AI-00 实证）：_archive 归档件豁免——归档件不再参与治理注入
+
+        if "_archive" in rel.replace("\\", "/").split("/"):
+
+            continue
+
         try:
 
             with open(abs_path, encoding="utf-8") as f:

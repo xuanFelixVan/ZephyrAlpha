@@ -438,7 +438,7 @@ def main() -> int:
         for r in residuals:
             print(f"  node_id={r['node_id']} file_path={r['file_path']} "
                   f"domain={r['domain_id']} build_status={r['build_status']}")
-        print("修复: python scripts/governance/generate_project_depgraph.py --force")
+        print("修复: python scripts/governance/generate_project_depgraph.py --output-db depgraph --force")
         return EXIT_FINDINGS
 
     # 节点路径模式
