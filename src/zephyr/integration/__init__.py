@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md
 # [MODULE] zephyr.integration
 # [DOMAIN] D_INTEGRATION
-# [A_module] module_id=MOD-INTEGRATION | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-042 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 # [TTL] permanent
 """D_INTEGRATION 集成域包入口。
 

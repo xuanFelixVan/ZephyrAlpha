@@ -47941,12 +47941,6 @@ algo_submodules:
   name_zh: ① 包级懒加载路由
   name_en: __getattr__
   plain_zh: 首次访问符号时才 import 对应子模块并缓存，避免重资产扫描模块冷启动
-- module_path: src/zephyr/integration/shared/contracts/errors/__init__.py
-  module_id: MOD-INTEGRATION
-  node_id: A1
-  name_zh: ① 包级聚合再导出
-  name_en: zephyr.integration.shared.contracts.errors.__init__
-  plain_zh: Auto-generated contracts package — errors
 - module_path: src/zephyr/intelligence/model_profiling/__init__.py
   module_id: MOD-INF-034
   node_id: A1
