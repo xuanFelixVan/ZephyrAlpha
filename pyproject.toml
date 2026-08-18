@@ -137,6 +137,10 @@ addopts = [
 # 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: pytest 缓存归位 .runtime/tmp/（gitignored），
 # 防止 .pytest_cache/ 污染项目根目录。路径相对 rootdir 解析（pytest 文档保证）。
 cache_dir = ".runtime/tmp/pytest_cache"
+# B1 治本（2026-08-19）：pytest-timeout 全局兜底——插件已装但全局零配置，任一测试
+# 卡住即无限挂（tests/governance -n 4 末段 93% 假挂起实证）。120s 后 fail 并留
+# traceback，把"无限挂"转为"可定位失败"；个别慢测试用 @pytest.mark.timeout(N) 覆盖。
+timeout = 120
 markers = [
     "slow: marks slow tests (deselect with '-m \"not slow\"')",
     "e2e: marks end-to-end tests (deselect with '-m \"not e2e\"')",

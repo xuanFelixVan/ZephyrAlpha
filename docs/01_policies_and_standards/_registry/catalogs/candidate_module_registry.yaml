@@ -6654,3 +6654,37 @@ entries:
   last_review_outcome: "2026-08-18 Owner 裁定（裁定 9 联动，16 号文 §6 Q5 选项 c 采纳）：降级远期（P4）登记候选——激活前提=多 Agent 自治编排架构落地（61 号备忘 §5.2 第三阶段重评）"
   acquisition_method: self_build
   acquisition_source: ''
+
+# --- CAND-GOVTEST-001: test_all_scripts mega-item parametrize 拆分（B1 治本 C 方案候选，2026-08-19 登记） ---
+- id: CAND-GOVTEST-001
+  name: test_all_scripts mega-item parametrize 拆分 / xdist 调度友好化
+  aliases:
+  - mega-item 拆分
+  - test_all_scripts 拆分
+  - xdist 尾部堆积治本
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: tests/governance/integration 测试基础设施
+  panorama_position:
+    depgraph:
+      has_position: true
+      note: 改造对象 tests/governance/integration/test_all_scripts.py 已在图（MOD-TEST-276）
+    blueprint:
+      has_position: true
+      target_ref: MOD-TEST-276 / docs/03_modules/_domain_governance/blueprint.md
+  problem: >-
+    B1 工单（2026-08-19）：tests/governance -n 4 末段 93% 假挂起的头号嫌疑=test_all_scripts
+    4 个 class 各是一个巨型单 item（内部 ThreadPoolExecutor(8) 跑几十~100+ 脚本子进程，
+    合法最坏 12 分钟级），xdist --dist=load 逐 item 分发时 mega-item 独占 worker 堆积尾部。
+    今晚已落地兜底链（pyproject 全局 timeout=120 + 本文件模块级 timeout=900 豁免），
+    挂起已不可能（最坏=900s 后 fail 留 traceback），但尾部耗时仍不可预期。
+  proposal: >-
+    把"一个 test 内部 8 线程跑 100 脚本"改为按脚本 parametrize 的小 item
+    （@pytest.mark.parametrize 逐脚本生成），让 load 调度天然均摊到 4 个 worker；
+    配套保留分层 fixture（quick/critical/integration/full 标记入 item 级 marker）。
+    预期收益：-n 4 尾部耗时从 12 分钟级降到 60s 级（单脚本 timeout 上界），耗时可预期。
+  status: candidate
+  priority: P2
+  source: 'B1 工单治本方案 C（2026-08-19 AI-00 审计侧登记；兜底链 A 已落地，本候选非阻断）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'

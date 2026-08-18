@@ -44,6 +44,12 @@ from pathlib import Path
 
 import pytest
 
+# B1 治本（2026-08-19）：本文件 4 个 mega-item 内部 ThreadPoolExecutor(8) 串行跑
+# 几十~100+ 脚本子进程（manifest timeout_seconds=60），合法最坏 ≈12 分钟级——全局
+# timeout=120（pyproject）会误杀。模块级豁免放宽到 900s（xdist 尾部堆积上界显性化，
+# 超 900s 即真异常）；治本拆分（parametrize 小 item 化）登记 CAND 候选后续施工。
+pytestmark = pytest.mark.timeout(900)
+
 _DIMENSION_RE = re.compile(r"d(\d+)[_/]")
 
 
