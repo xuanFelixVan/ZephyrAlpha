@@ -1410,7 +1410,7 @@ def main() -> None:
     p_scr.add_argument("--domain", default="", help="功能域 (e.g. governance)")
     p_scr.add_argument("--subdomain", default="", help="子功能域 (e.g. gate_engine)")
     p_scr.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
-    p_scr.add_argument("--force-override", action="store_true", help="跳过蓝图关键词匹配检查（SSoT误报时使用）")
+    p_scr.add_argument("--force-override", action="store_true", help="裁定通道：跳过功能域 alias 模糊匹配+蓝图关键词匹配（exact/module_path 冲突仍阻断，同名碰撞经裁定后使用）")
 
     # gate
     p_gate = sub.add_parser("gate", help="创建 src/zephyr/gov_enforcement/rule_enforcement/<id>.yaml")
