@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-050 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] zephyr.intelligence.news_sentiment_analyzer
 # [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] pandas; zephyr.data.news_collector; zephyr.nlp.nlp_inference
