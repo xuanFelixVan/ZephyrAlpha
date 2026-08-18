@@ -526,11 +526,11 @@ entries:
     q1_implemented: {result: false, equivalent_nodes: [], evidence: "2026-08-18 全仓 grep 实证：舆情聚合信号层缺失（sentiment_aggregator 规划未建）；MOD-SIG-025 为价格行为情绪周期，nlp_inference 为单条推理层，均非等价节点"}
     blocking_question: answered
     result: approved
-  status: approved
+  status: promoted
   priority: P1
   created_at: '2026-07-31'
   last_reviewed_at: '2026-08-18'
-  promoted_to: "MOD-INT-AISA（MVP 施工完成待 merge 闭环）"
+  promoted_to: "MOD-INT-AISA news_sentiment_analyzer（src/zephyr/intelligence/news_sentiment_analyzer.py，2026-08-18 AI-AISA-001 MVP 施工，#ARCH-AISA-001，merge 2df795a8c8）"
   source_draft: "A股政策驱动需求讨论"
   source_section: "§舆情辅助决策"
   original_id: "AISA"
@@ -6043,11 +6043,11 @@ entries:
       evidence: 全项目无席位形态分析代码（grep 无命中）；SSoT 注册表+数据资产登记已完成（2026-08-14）
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
   priority: P1
   created_at: '2026-08-14'
-  last_reviewed_at: '2026-08-14'
-  promoted_to: ''
+  last_reviewed_at: '2026-08-18'
+  promoted_to: "MOD-SIG-056 seat_pattern_analyzer（src/zephyr/signal_ashare/seat_pattern_analyzer.py，2026-08-18 AI-SEAT-001 MVP 施工，#ARCH-120）"
   source_draft: 2026-08-14 图形形态循环审查会话——「龙虎榜席位形态」裁定为新建表（CAND 候选，与图形形态表正交）
   source_section: ''
   original_id: ''
@@ -6079,7 +6079,7 @@ entries:
   blocked_by: []
   next_review_date: '2026-11-14'
   review_frequency: quarterly
-  last_review_outcome: '2026-08-14 登记：前提数据（AKShare 龙虎榜）已确认可用，SSoT 注册表+数据资产已建，待 JOB-076 接入代码开工'
+  last_review_outcome: '2026-08-18 晋升闭环：AI-SEAT-001 施工（#ARCH-120）——MOD-SIG-056 三件套落码（A1 席位身份识别 seat_registry 精确/别名匹配+A2 类型共现联动+A3 跟随信号基准 50 加减分 0-100 三档，独食判定加 buyer_count≥3 前置防假阳性），17 测试两轮全绿+蓝图 v0.1.0；维度3/4/6 裁至 v0.2（MVP 不引跨域依赖）；v0.1 禁消费胜率 null 字段（数据纪律）；遗留=阈值回测校准/provider 词表统一（tracker #133/#134）'
   acquisition_method: self_build
   acquisition_source: ''
 - id: CAND-CYCLE-001

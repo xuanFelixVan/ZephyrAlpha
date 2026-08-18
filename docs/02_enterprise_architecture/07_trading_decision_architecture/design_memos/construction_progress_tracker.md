@@ -371,7 +371,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 132 | CAND-SEAT-001 状态翻转（candidate→promoted） | AI-SEAT-001 施工记录（分支原登 #128） | 任务书纪律：状态翻转由统筹 merge 后执行，本会话仅留施工记录。施工产出=MOD-SIG-056（src/zephyr/signal_ashare/seat_pattern_analyzer.py 413 行+17 测试两轮全绿+蓝图 v0.1.0+depgraph design 节点 9823087+#ARCH-120）；翻转时同步 candidate_module_registry 的 status/promoted_to/last_reviewed_at | ⏳ 统筹 merge 后执行 |
+| 132 | CAND-SEAT-001 状态翻转（candidate→promoted） | AI-SEAT-001 施工记录（分支原登 #128） | 任务书纪律：状态翻转由统筹 merge 后执行，本会话仅留施工记录。施工产出=MOD-SIG-056（src/zephyr/signal_ashare/seat_pattern_analyzer.py 413 行+17 测试两轮全绿+蓝图 v0.1.0+depgraph design 节点 9823087+#ARCH-120）；翻转时同步 candidate_module_registry 的 status/promoted_to/last_reviewed_at | ✅ 已闭环（2026-08-18 第八统筹执行：status/promoted_to/last_reviewed_at/last_review_outcome 四字段同步翻转；CAND-AISA-001 approved→promoted 同批执行） |
 | 133 | MOD-SIG-056 阈值未经回测（拍脑袋经验值） | AI-SEAT-001 风险登记（分支原登 #129） | 跟随信号全部加减分阈值（机构+15/游资+10/量化-20/散户-15/独食-10/力度±10）取自 seat_registry 六维框架公开经验值，未经本项目数据回测校准；v0.1 信号仅作参考特征不作独立交易依据，校准依赖 DS-080 积累≥3 个月+回测批 | ⏳ v0.2 回测校准（依赖数据积累） |
 | 134 | seat_registry provider 粗分类与 registry 类型词表不同构 | AI-SEAT-001 设计登记（分支原登 #130） | akshare_provider 粗分三类 institution/connect/broker vs seat_registry 五类 institution/youzi/quant/northbound/retail——A1 回退路径产出 connect/broker 与 registry 词表混排（linkage type_set 语义稀释）；v0.2 统一词表（provider 层细分类或映射层归一） | ⏳ v0.2 词表统一 |
 | 135 | 任务书包路径字面（src/zephyr/ashare_signal/）与 depgraph 真源冲突避让 | AI-SEAT-001 避让登记（分支原登 #131） | 任务书字面 ashare_signal 与 D_ASHARE_SIGNAL 域物理包 signal_ashare（37 节点实证）冲突；裁定落 signal_ashare 包（任务书笔误避让，非推翻 active 决策；#ARCH-120 adjudication③ 留痕） | ✅ 已避让（施工落 signal_ashare） |
