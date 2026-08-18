@@ -17345,3 +17345,30 @@ entries:
   related_rules: 'trae_028 gov_doc_003_naming_ssot; trae_028 gov_doc_003_directory_semantics; ARCH-033（渐进收敛策略先源）; ARCH-031'
   created: '2026-08-17'
   last_updated: '2026-08-17'
+- issue_id: '#ARCH-120'
+  title: 新增模块 MOD-SIG-056 龙虎榜席位形态分析器（CAND-SEAT-001 转正 MVP）——新增模块硬约束登记
+  severity: P2中
+  category: new_module_registration
+  adjudication: |-
+    AI-SEAT-001 自主裁定（2026-08-18，MTH-007 四问过检）：
+    ①范围——MVP 三件套：席位画像（A1 身份识别，seat_registry 15 席位档案精确/别名匹配→provider 粗分类回退）+
+    席位联动（A2 类型共现 4 标签+买一买二集中度）+跟随信号（A3 基准50加减分→0-100 三档 long/neutral/avoid）。
+    六维框架裁剪：v0.1 只落维度1（定性）/2（资金力度）/5（结构）；维度3（股价位置）/4（题材）依赖外部域输入、
+    维度6（连续性）依赖历史窗口聚合，全部 v0.2 接入——第一性原理：MVP 不引入跨域依赖。
+    ②数据纪律——v0.1 禁消费 seat_registry 胜率字段（history_win_rate/avg_premium 全 null，消费未回测字段=臆造）；
+    纯函数模块不直连 CH（取数上游职责，与 MOD-SIG-021/025 同构）。
+    ③包路径裁定——任务书字面 src/zephyr/ashare_signal/ 与 depgraph 真源冲突：D_ASHARE_SIGNAL 域物理包=
+    src/zephyr/signal_ashare/（37 节点实证），落 signal_ashare 包（任务书笔误避让，非推翻决策）。
+    ④施工实证修正——独食判定加 buyer_count≥3 前置（2 席买方时 top2 恒 100% 为假阳性）。
+    对标：EasyQuant 涨停复盘龙虎榜模块/数据宝龙虎榜回测（seat_registry 既有对标声明）。
+  impact:
+    - 'src/zephyr/signal_ashare/seat_pattern_analyzer.py（新建，413 行）'
+    - 'tests/signal_ashare/test_seat_pattern_analyzer.py（新建，17 用例两轮全绿）'
+    - 'docs/03_modules/_domain_signal/seat_pattern_analyzer/blueprint.md（新建，v0.1.0 Draft）'
+    - 'depgraph design 节点 node_id=9823087（planned，merge 后统筹重扫转 production）'
+    - 'capability_canonical_file_registry.yaml（3 token：src/bp/test）+ module_translation_registry.yaml（plain_zh）'
+  fix_phase: '施工完成（2026-08-18 AI-SEAT-001）：17 测试两轮全绿，五登记链齐；CAND-SEAT-001 状态翻转（candidate→promoted）由统筹 merge 后执行'
+  status: decided
+  related_rules: 'CAND-SEAT-001; REG-SEAT-001; DS-080/JOB-076; tracker（AI-SEAT-001 施工记录）'
+  created: '2026-08-18'
+  last_updated: '2026-08-18'
