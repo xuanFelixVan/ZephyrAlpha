@@ -78,7 +78,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_ERROR, REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 from _shared.file_utils import atomic_write  # noqa: E402
 
 PROJECT_ROOT = REPO_ROOT
@@ -170,9 +170,7 @@ def find_import_rewrites(source: str, mapping: dict[str, str]) -> list[ImportRew
             for alias in node.names:
                 new_name = match_module(alias.name, mapping)
                 if new_name:
-                    rewrites.append(
-                        ImportRewrite(line=node.lineno, old_text=alias.name, new_text=new_name)
-                    )
+                    rewrites.append(ImportRewrite(line=node.lineno, old_text=alias.name, new_text=new_name))
 
         elif isinstance(node, ast.ImportFrom):
             if not node.module:
@@ -180,9 +178,7 @@ def find_import_rewrites(source: str, mapping: dict[str, str]) -> list[ImportRew
             # from zephyr.autonomy_core.xxx import yyy
             new_module = match_module(node.module, mapping)
             if new_module:
-                rewrites.append(
-                    ImportRewrite(line=node.lineno, old_text=node.module, new_text=new_module)
-                )
+                rewrites.append(ImportRewrite(line=node.lineno, old_text=node.module, new_text=new_module))
             else:
                 # from zephyr.autonomy_core import xxx
                 # 检查 module + "." + name 是否在映射中
@@ -192,11 +188,7 @@ def find_import_rewrites(source: str, mapping: dict[str, str]) -> list[ImportRew
                     if new_full:
                         # 新的 module 路径 = new_full 去掉最后一层
                         new_mod = new_full.rsplit(".", 1)[0]
-                        rewrites.append(
-                            ImportRewrite(
-                                line=node.lineno, old_text=node.module, new_text=new_mod
-                            )
-                        )
+                        rewrites.append(ImportRewrite(line=node.lineno, old_text=node.module, new_text=new_mod))
                         break  # 一行只处理一次 module 替换
 
     return rewrites
@@ -282,7 +274,7 @@ def scan_and_rewrite(
                     if new_source != source:
                         atomic_write(py_file, new_source)
                         result.applied = True
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     print(f"  ERROR writing {py_file}: {e}", file=sys.stderr)
 
             results.append(result)

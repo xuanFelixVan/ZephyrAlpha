@@ -85,6 +85,11 @@ EXCLUDE_PATH_PARTS = (
     # 同上理据（2026-08-18 AI-00 merge-17 实证）：00 索引备忘录汇总各备忘录历史事故取证引文
     # （如 2026-08-11 git clean -fd 灾难事件记录），属证据留痕非操作指令
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md",
+    # 同上理据（2026-08-18 AI-00 全量复审实证）：git 安全协议/审计规范真源文档枚举"禁止执行的危险命令"
+    # （`git reset --hard`/`git clean -fd` 等），属策略定义非操作指令
+    "docs/01_policies_and_standards/sop/construction_workflow_sop.md",
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/63_data_utilization_audit.md",
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md",
 )
 
 

@@ -103,11 +103,7 @@ def _load_gate_files() -> dict[str, str]:
     import yaml
 
     data = yaml.safe_load(registry_path.read_text(encoding="utf-8")) or {}
-    return {
-        g["gate_id"]: g.get("file", "")
-        for g in data.get("gates", [])
-        if isinstance(g, dict) and g.get("gate_id")
-    }
+    return {g["gate_id"]: g.get("file", "") for g in data.get("gates", []) if isinstance(g, dict) and g.get("gate_id")}
 
 
 def check_yaml_gateids_in_engine() -> dict[str, Any]:
@@ -177,7 +173,7 @@ def check_registry_file_refs() -> dict[str, Any]:
 
     try:
         data = yaml.safe_load(registry.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {"label": "D4. 注册表文件引用", "passed": False, "detail": "解析失败", "issues": []}
 
     issues: list[str] = []
@@ -210,10 +206,7 @@ def _load_engine_severity_map() -> dict[str, str]:
     m = re.search(r"_SEVERITY_MAP[^=]*=\s*\{(.*?)\}", content, re.DOTALL)
     if not m:
         return {}
-    return {
-        pair.group(1): pair.group(2)
-        for pair in re.finditer(r'"(\w+)":\s*"(\w+)"', m.group(1))
-    }
+    return {pair.group(1): pair.group(2) for pair in re.finditer(r'"(\w+)":\s*"(\w+)"', m.group(1))}
 
 
 def check_severity_consistency() -> dict[str, Any]:

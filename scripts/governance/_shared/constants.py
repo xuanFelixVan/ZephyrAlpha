@@ -84,10 +84,12 @@ def mark_depgraph_dirty() -> None:
         # flag 写入失败不阻断主流程（DB 已成功写入，flag 仅是优化信号）
         pass
 
+
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，所有治理脚本通过此入口获取 PG 连接。
 # 真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md
 import psycopg2  # noqa: E402
 from psycopg2.extras import RealDictCursor  # noqa: E402
+
 # 注意：import 用别名，避免与本模块下方定义的 wrapper 函数同名遮蔽导致无限递归。
 # F1 真源（depgraph_schema）返回 psycopg2 connection；F4 wrapper（本模块）包装为 PgConnExecuteWrapper。
 # 同名设计是为调用方透明替代，但 wrapper 内部必须调用真源，不能调用自己。
@@ -191,6 +193,7 @@ def get_depgraph_pg_connection(
         # 触发器 trg_edges_protect_apply_depgraph 会阻断对 apply_depgraph edges 的 DELETE。
         conn.execute("SET app.allow_delete_apply_depgraph_edges = on")
     return conn
+
 
 EXCLUDE_DIRS: frozenset[str] = frozenset(
     {
@@ -307,7 +310,12 @@ DOC_HTTP_BASE = os.environ.get("ZEPHYR_DOC_HTTP_BASE") or f"http://{DOC_HTTP_HOS
 # keep-N 退役计数——独立保留最新若干份，避免被自动保留策略挤出丢失回滚安全快照。
 # 消费方：backup_runtime_state._is_protected_backup + retire_tmp_artifacts._is_protected_pg_backup
 # 真源唯一收敛点（原两文件各定义一份副本，漂移风险——治本收敛至此，禁止他处重定义）。
-PROTECTED_PG_BACKUP_PREFIXES: tuple[str, ...] = ("architecture_pre_", "architecture_pinned_", "depgraph_pre_", "depgraph_pinned_")
+PROTECTED_PG_BACKUP_PREFIXES: tuple[str, ...] = (
+    "architecture_pre_",
+    "architecture_pinned_",
+    "depgraph_pre_",
+    "depgraph_pinned_",
+)
 
 EXIT_PASS: int = 0
 EXIT_FINDINGS: int = 1

@@ -76,7 +76,10 @@ PATH_REPLACEMENTS = [
     (r"tests/test_db_integration", r"tests/db/test_db_integration"),
     (r"tests/test_governance_db", r"tests/governance/shared/test_governance_db"),
     (r"tests/test_depgraph_db", r"tests/governance/depgraph/test_depgraph_db"),
-    (r"tests/test_depgraph_generator_design_protection", r"tests/governance/depgraph/test_depgraph_generator_design_protection"),
+    (
+        r"tests/test_depgraph_generator_design_protection",
+        r"tests/governance/depgraph/test_depgraph_generator_design_protection",
+    ),
     (r"tests/test_input_sanitizer_llm_security", r"tests/llm_security/test_input_sanitizer_llm_security"),
     (r"tests/test_f3_auto_integration", r"tests/infrastructure/test_f3_auto_integration"),
     (r"tests/test_f3_extreme", r"tests/infrastructure/test_f3_extreme"),
@@ -87,15 +90,22 @@ PATH_REPLACEMENTS = [
     (r"tests/test_mcp_health_check_recovery", r"tests/infrastructure/test_mcp_health_check_recovery"),
     (r"tests/test_mcp_boot_hooks_integration", r"tests/infrastructure/test_mcp_boot_hooks_integration"),
     (r"tests/test_task_system_red_team", r"tests/autonomy/test_task_system_red_team"),
-    (r"tests/test_mcp_red_team", r"tests/infrastructure/test_mcp_red_team"),    (r"tests/test_action_dispatcher", r"tests/action/test_action_dispatcher"),
+    (r"tests/test_mcp_red_team", r"tests/infrastructure/test_mcp_red_team"),
+    (r"tests/test_action_dispatcher", r"tests/action/test_action_dispatcher"),
     (r"tests/test_defense_runner", r"tests/safety/test_defense_runner"),
     (r"tests/test_pipeline_skill_injection", r"tests/autonomy/test_pipeline_skill_injection"),
     (r"tests/test_adversarial_mutator", r"tests/llm_security/test_adversarial_mutator"),
     (r"tests/test_phase_g_perf", r"tests/trading/test_phase_g_perf"),
     (r"tests/test_sequence_guard_agent_rbac", r"tests/agent_rbac/test_sequence_guard_agent_rbac"),
     # Windows绝对路径风格
-    (r"D:\\ZephyrAlpha\\src\\zephyr\\behavioral_audit\\", r"D:\\ZephyrAlpha\\src\\zephyr\\governance\\drift_detection\\"),
-    (r"d:\\ZephyrAlpha\\src\\zephyr\\behavioral_audit\\", r"d:\\ZephyrAlpha\\src\\zephyr\\governance\\drift_detection\\"),
+    (
+        r"D:\\ZephyrAlpha\\src\\zephyr\\behavioral_audit\\",
+        r"D:\\ZephyrAlpha\\src\\zephyr\\governance\\drift_detection\\",
+    ),
+    (
+        r"d:\\ZephyrAlpha\\src\\zephyr\\behavioral_audit\\",
+        r"d:\\ZephyrAlpha\\src\\zephyr\\governance\\drift_detection\\",
+    ),
 ]
 
 # ═══════════════════════════════════════════════════════════
@@ -142,7 +152,10 @@ NOT_NEEDED_MARKERS = [
 # ═══════════════════════════════════════════════════════════
 STALE_REFERENCES = [
     # autonomy_core/llm_gateway.py 已删除
-    (r"autonomy_core/llm_gateway\.py", "autonomy_core/llm_gateway.py [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本]"),
+    (
+        r"autonomy_core/llm_gateway\.py",
+        "autonomy_core/llm_gateway.py [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本]",
+    ),
     # chaos_injector.py:292引用失效
     (r"chaos_injector\.py:292", "chaos_injector.py:292 [⚠ 引用失效：该文件无asyncio代码]"),
 ]
@@ -222,12 +235,12 @@ def main():
         orig_lines = original.split("\n")
         new_lines = text.split("\n")
         diffs = 0
-        for i, (o, n) in enumerate(zip(orig_lines, new_lines)):
+        for i, (o, n) in enumerate(zip(orig_lines, new_lines, strict=False)):
             if o != n:
                 diffs += 1
                 if diffs <= 20:
-                    print(f"  L{i+1}: -{o[:120]}")
-                    print(f"  L{i+1}: +{n[:120]}")
+                    print(f"  L{i + 1}: -{o[:120]}")
+                    print(f"  L{i + 1}: +{n[:120]}")
         print(f"  ...共{diffs}行变更")
     else:
         REGISTRY.write_text(text, encoding="utf-8")

@@ -39,10 +39,12 @@
 
 循环安全：本脚本不修改 depgraph，不修改 layers/b_*.yaml，可被 reconciler 自动触发。
 """
+
 import sys
 from datetime import date
 from pathlib import Path
 
+# noqa: m11-perm-manual-legitimate  M11豁免: 永久派生脚本，由 reconciler/GATE-ARCH-MODEL 按需触发生成 index.yaml，非 cron/daemon/常驻服务
 __manifest__ = """
 args: []
 description: 从 depgraph (PostgreSQL) + 物理蓝图文件 派生 architecture_model/index.yaml。
@@ -58,94 +60,116 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 import yaml  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 BASE = REPO_ROOT / "architecture_model"
 
-# === 派生1: domains 列表（真源：depgraph (PostgreSQL) domains 表）===
-conn = get_depgraph_pg_connection(autocommit=True)
-rows = conn.execute("""
-    SELECT domain_id, domain_name, layer_id
-    FROM domains
-    ORDER BY domain_id
-""").fetchall()
-conn.close()
 
-domains = [(r["domain_id"], r["domain_name"], r["layer_id"] or "") for r in rows]
-domain_count = len(domains)
-print(f"域总数: {domain_count}")
+def _derive_domains() -> list[tuple[str, str, str]]:
+    """派生1: domains 列表（真源：depgraph (PostgreSQL) domains 表）。"""
+    conn = get_depgraph_pg_connection(autocommit=True)
+    rows = conn.execute("""
+        SELECT domain_id, domain_name, layer_id
+        FROM domains
+        ORDER BY domain_id
+    """).fetchall()
+    conn.close()
+    return [(r["domain_id"], r["domain_name"], r["layer_id"] or "") for r in rows]
 
-# === 派生2: b_track 模块列表（真源：layers/b_*.yaml 物理蓝图文件）===
-# 治本（2026-07-30，#ARCH-INDEX-005）：b_track 从物理文件派生，消除手工模板第二真源。
-# b_ 前缀 = b_track 成员资格（schema.yaml 约定 track 仅 b_track）。
-# 兼容两种格式：partition 块格式（partition.id/name/track/status）与顶层字段格式
-# （顶层 name/human_name/architecture_track/status，如 b_feedback_loop.yaml）。
-LAYERS_DIR = BASE / "layers"
-b_track_files = sorted(LAYERS_DIR.glob("b_*.yaml"))
-b_track_modules = []
-for f in b_track_files:
-    # 文件名去 b_ 前缀作为 id（物理真源，稳定，不受 partition.id 不一致影响）
-    mod_id = f.stem[2:] if f.stem.startswith("b_") else f.stem
+
+def _derive_b_track_modules() -> list[dict]:
+    """派生2: b_track 模块列表（真源：layers/b_*.yaml 物理蓝图文件）。
+
+    治本（2026-07-30，#ARCH-INDEX-005）：b_track 从物理文件派生，消除手工模板第二真源。
+    b_ 前缀 = b_track 成员资格（schema.yaml 约定 track 仅 b_track）。
+    兼容两种格式：partition 块格式（partition.id/name/track/status）与顶层字段格式
+    （顶层 name/human_name/architecture_track/status，如 b_feedback_loop.yaml）。
+    """
+    b_track_files = sorted((BASE / "layers").glob("b_*.yaml"))
+    b_track_modules = []
+    for f in b_track_files:
+        # 文件名去 b_ 前缀作为 id（物理真源，稳定，不受 partition.id 不一致影响）
+        mod_id = f.stem[2:] if f.stem.startswith("b_") else f.stem
+        try:
+            data = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+        except yaml.YAMLError:
+            data = {}
+        partition = data.get("partition", {}) if isinstance(data, dict) else {}
+        name = partition.get("name") or data.get("human_name") or data.get("name") or mod_id
+        status = partition.get("status") or data.get("status") or "unknown"
+        description = partition.get("note") or data.get("description") or ""
+        if isinstance(description, str):
+            description = description.strip().split("\n")[0].strip()
+        else:
+            description = ""
+        b_track_modules.append(
+            {
+                "id": mod_id,
+                "name": name,
+                "path": f"layers/{f.name}",
+                "status": status,
+                "description": description,
+            }
+        )
+    return b_track_modules
+
+
+def _derive_event_stats() -> tuple[int, int]:
+    """派生3: 领域事件统计（真源：events/domain_events.yaml，禁止手写计数避免漂移）。"""
+    events_path = BASE / "events" / "domain_events.yaml"
     try:
-        data = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
-    except yaml.YAMLError:
-        data = {}
-    partition = data.get("partition", {}) if isinstance(data, dict) else {}
-    name = (partition.get("name") or data.get("human_name")
-            or data.get("name") or mod_id)
-    status = partition.get("status") or data.get("status") or "unknown"
-    description = (partition.get("note") or data.get("description") or "")
-    if isinstance(description, str):
-        description = description.strip().split("\n")[0].strip()
-    else:
-        description = ""
-    b_track_modules.append({
-        "id": mod_id,
-        "name": name,
-        "path": f"layers/{f.name}",
-        "status": status,
-        "description": description,
-    })
+        events_data = yaml.safe_load(events_path.read_text(encoding="utf-8")) or {}
+        events_list = events_data.get("events", []) or []
+        event_count = len(events_list)
+        event_domain_count = len(
+            sorted(set(e.get("domain", "") for e in events_list if isinstance(e, dict) and e.get("domain")))
+        )
+    except (FileNotFoundError, yaml.YAMLError):
+        event_count = 0
+        event_domain_count = 0
+    return event_count, event_domain_count
 
-b_track_count = len(b_track_modules)
-b_track_implemented = sum(1 for m in b_track_modules if m["status"] == "implemented")
-b_track_under_construction = sum(1 for m in b_track_modules if m["status"] == "under_construction")
-b_track_phase_2_complete = sum(1 for m in b_track_modules if m["status"] == "phase_2_complete")
-b_track_skeleton = sum(1 for m in b_track_modules if m["status"] == "skeleton")
-print(f"b_track 模块数: {b_track_count} (implemented={b_track_implemented}, under_construction={b_track_under_construction}, phase_2_complete={b_track_phase_2_complete}, skeleton={b_track_skeleton})")
 
-# 生成 b_track modules YAML 片段（动态派生，禁止手工编辑）
-b_track_yaml_lines = []
-for m in b_track_modules:
-    b_track_yaml_lines.append(f"  - id: {m['id']}")
-    b_track_yaml_lines.append(f"    name: {m['name']}")
-    b_track_yaml_lines.append(f"    path: {m['path']}")
-    b_track_yaml_lines.append(f"    status: {m['status']}")
-    if m["description"]:
-        b_track_yaml_lines.append(f"    description: {m['description']}")
-b_track_yaml_block = "\n".join(b_track_yaml_lines)
+def _b_track_yaml_block(b_track_modules: list[dict]) -> str:
+    """生成 b_track modules YAML 片段（动态派生，禁止手工编辑）。"""
+    lines = []
+    for m in b_track_modules:
+        lines.append(f"  - id: {m['id']}")
+        lines.append(f"    name: {m['name']}")
+        lines.append(f"    path: {m['path']}")
+        lines.append(f"    status: {m['status']}")
+        if m["description"]:
+            lines.append(f"    description: {m['description']}")
+    return "\n".join(lines)
 
-# === 派生3: 领域事件统计（真源：events/domain_events.yaml，禁止手写计数避免漂移）===
-events_path = BASE / "events" / "domain_events.yaml"
-try:
-    events_data = yaml.safe_load(events_path.read_text(encoding="utf-8")) or {}
-    events_list = events_data.get("events", []) or []
-    event_count = len(events_list)
-    event_domain_count = len(
-        sorted(set(e.get("domain", "") for e in events_list if isinstance(e, dict) and e.get("domain")))
+
+def main() -> int:
+    """Entry point: generate index.yaml from depgraph + physical blueprint files."""
+    domains = _derive_domains()
+    domain_count = len(domains)
+    print(f"域总数: {domain_count}")
+
+    b_track_modules = _derive_b_track_modules()
+    b_track_count = len(b_track_modules)
+    b_track_implemented = sum(1 for m in b_track_modules if m["status"] == "implemented")
+    b_track_under_construction = sum(1 for m in b_track_modules if m["status"] == "under_construction")
+    b_track_phase_2_complete = sum(1 for m in b_track_modules if m["status"] == "phase_2_complete")
+    b_track_skeleton = sum(1 for m in b_track_modules if m["status"] == "skeleton")
+    print(
+        f"b_track 模块数: {b_track_count} (implemented={b_track_implemented}, under_construction={b_track_under_construction}, phase_2_complete={b_track_phase_2_complete}, skeleton={b_track_skeleton})"
     )
-except (FileNotFoundError, yaml.YAMLError):
-    event_count = 0
-    event_domain_count = 0
-print(f"领域事件: {event_count} 条 / {event_domain_count} 域")
 
-today = date.today().isoformat()
+    event_count, event_domain_count = _derive_event_stats()
+    print(f"领域事件: {event_count} 条 / {event_domain_count} 域")
 
-# 生成 index.yaml 内容（domains 从 depgraph 派生，b_track 从物理文件派生，其余手工模板）
-yaml_content = f"""# --- 治理锚定 ---
+    today = date.today().isoformat()
+    b_track_yaml_block = _b_track_yaml_block(b_track_modules)
+
+    # 生成 index.yaml 内容（domains 从 depgraph 派生，b_track 从物理文件派生，其余手工模板）
+    yaml_content = f"""# --- 治理锚定 ---
 # blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §architecture-index
 # module_id: MOD-GOVERNANCE
 # stability: evolving
@@ -234,13 +258,13 @@ partitions:
 # === {domain_count}域清单（从depgraph派生，禁止手工编辑）===
 domains:
 """
-for domain_id, domain_name, layer_id in domains:
-    if layer_id:
-        yaml_content += f"- id: {domain_id}\n  name: {domain_name}\n  layer_id: {layer_id}\n"
-    else:
-        yaml_content += f"- id: {domain_id}\n  name: {domain_name}\n  layer_id:\n"
+    for domain_id, domain_name, layer_id in domains:
+        if layer_id:
+            yaml_content += f"- id: {domain_id}\n  name: {domain_name}\n  layer_id: {layer_id}\n"
+        else:
+            yaml_content += f"- id: {domain_id}\n  name: {domain_name}\n  layer_id:\n"
 
-yaml_content += f"""
+    yaml_content += f"""
 global_stats:
   total_domains: {domain_count}
   total_partitions: 12
@@ -303,18 +327,24 @@ id_conventions:
     note: "域ID是唯一物理分类标识（全大写+下划线）"
 """
 
-# 直接写入 index.yaml
-out_path = BASE / "index.yaml"
-with open(out_path, "w", encoding="utf-8", newline="\n") as f:
-    f.write(yaml_content)
-print(f"✅ index.yaml 写入完成 ({len(yaml_content)} 字符)")
+    # 直接写入 index.yaml
+    out_path = BASE / "index.yaml"
+    with open(out_path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(yaml_content)
+    print(f"✅ index.yaml 写入完成 ({len(yaml_content)} 字符)")
 
-# 验证写入
-with open(out_path, "r", encoding="utf-8") as f:
-    first_line = f.readline()
-    f.seek(0, 2)
-    size = f.tell()
-print(f"✅ index.yaml 验证: 首行='{first_line.strip()}', 大小={size}")
+    # 验证写入
+    with open(out_path, encoding="utf-8") as f:
+        first_line = f.readline()
+        f.seek(0, 2)
+        size = f.tell()
+    print(f"✅ index.yaml 验证: 首行='{first_line.strip()}', 大小={size}")
+    return 0
+
+
+if __name__ == "__main__":
+    # 治本（2026-08-18 AI-00 全量复审）：模块级 I/O 移入 main()，消除 import 副作用（S4-C 零副作用铁律）
+    sys.exit(main())
 
 # 治本说明：不生成 index.md 和 capability_heatmap.yaml
 # - index.md：根树不允许 .md（directory_contract.yaml 强制），人读视图在 docs/ 树

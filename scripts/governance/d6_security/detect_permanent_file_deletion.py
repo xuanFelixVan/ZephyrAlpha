@@ -126,7 +126,9 @@ def check_permanent_deletions() -> list[dict]:
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="永久文件删除检测（PS-STD-012 V1 / PS-STD-009 §7）")
-    parser.add_argument("files", nargs="*", help="pre-commit positional 传入文件名（忽略——检测基于 git diff 删除集，#69 兼容）")
+    parser.add_argument(
+        "files", nargs="*", help="pre-commit positional 传入文件名（忽略——检测基于 git diff 删除集，#69 兼容）"
+    )
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻断 exit 0）")
     args = parser.parse_args()
     findings = check_permanent_deletions()
