@@ -255,7 +255,7 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
 
     root = anchor_main_root(Path(str(project_root)).resolve())
     summary = {"scanned": 0, "drifted": 0, "alerted": 0, "claimed": 0,
-               "grace_suppressed": 0, "dedup_skipped": 0, "healed": 0}
+               "grace_suppressed": 0, "dedup_skipped": 0, "healed": 0, "merge_suppressed": 0}
     head_sha = _head_sha(root)
     if not head_sha:
         return summary  # git 不可达→本轮 skip（fail-open）
@@ -264,10 +264,30 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
     files_state: dict = state.setdefault("files", {})
     alerted: dict = state.setdefault("alerted", {})
 
+    # B5 治本（2026-08-19）：merge 存续期豁免——MERGE_HEAD 存在期间工作区≠HEAD 是
+    # git 机制设计（merge --no-commit 晾置/冲突待决），写入方是 git 自身，无 claim
+    # 可登记，原判据必误报 critical_warn（gateway commit banner 刷屏实证）。
+    # 判据复用 AI-R1-003 原语（rev-parse --git-path，互指 gateway._is_merge_in_progress）；
+    # 豁免期 audit 照记 verdict=merge_suppressed，MERGE_HEAD 消解后下轮恢复监视。
+    rc, mh_rel = _git(root, ["rev-parse", "--git-path", "MERGE_HEAD"])
+    merge_in_progress = False
+    if rc == 0 and mh_rel.strip():
+        mh_path = Path(mh_rel.strip())
+        if not mh_path.is_absolute():
+            mh_path = root / mh_path
+        merge_in_progress = mh_path.exists()
+
     # 最近一次 commit 时间（宽限窗锚点）
+    # B5 治本：锚点扩展——HEAD reflog（merge/checkout/stash pop 回写都刷新）与
+    # stash reflog（stash push/drop）一并纳入，stash 周期/gateway 正常操作的
+    # 合法回写走 grace_suppressed 而非 alert；超窗未消解的真漂移照常 alert（安全网不破）。
     rc, out = _git(root, ["log", "-1", "--format=%ct"])
-    last_commit_ts = float(out.strip()) if rc == 0 and out.strip() else 0.0
-    in_grace = (now_utc().timestamp() - last_commit_ts) < grace_seconds
+    anchors = [float(out.strip()) if rc == 0 and out.strip() else 0.0]
+    rc, out = _git(root, ["reflog", "-1", "--format=%ct"])
+    anchors.append(float(out.strip()) if rc == 0 and out.strip() else 0.0)
+    rc, out = _git(root, ["reflog", "-1", "--format=%ct", "stash"])
+    anchors.append(float(out.strip()) if rc == 0 and out.strip() else 0.0)
+    in_grace = (now_utc().timestamp() - max(anchors)) < grace_seconds
 
     sessions, claimed = _active_sessions_and_claims(root)
     dirty = _dirty_tracked(root)
@@ -293,6 +313,10 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
         if rel in claimed:
             summary["claimed"] += 1
             _audit(root, {**base, "verdict": "claimed"})
+        elif merge_in_progress:
+            # B5：merge 存续期豁免（audit 照记不告警，MERGE_HEAD 消解后恢复监视）
+            summary["merge_suppressed"] += 1
+            _audit(root, {**base, "verdict": "merge_suppressed"})
         elif in_grace:
             summary["grace_suppressed"] += 1
             _audit(root, {**base, "verdict": "grace_suppressed"})
