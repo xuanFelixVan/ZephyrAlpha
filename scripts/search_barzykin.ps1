@@ -16,7 +16,7 @@ for ($i = 0; $i -lt $lines.Count; $i++) {
 if (-not $found) {
     Write-Output "NONE FOUND"
 }
-# Also check §7.4 area (around L1040-1080)
+# Also check S7.4 area (around L1040-1080)
 Write-Output "`n=== Lines 1040-1090 ==="
 for ($i = 1040; $i -lt 1090 -and $i -lt $lines.Count; $i++) {
     if ($lines[$i].Length -gt 0) {

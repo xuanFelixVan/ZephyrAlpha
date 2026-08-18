@@ -8,7 +8,7 @@ foreach ($t in $targets) {
     Write-Output "=== $t ($($lines.Count) lines) ==="
     # Find key sections
     for ($i = 0; $i -lt $lines.Count; $i++) {
-        if ($lines[$i] -match '^## 8\.|^### 8\.|^## 9\.|修订记录') {
+        if ($lines[$i] -match '^## 8\.|^### 8\.|^## 9\.|\u4FEE\u8BA2\u8BB0\u5F55') {
             $line = $lines[$i]
             if ($line.Length -gt 100) { $line = $line.Substring(0, 100) }
             Write-Output ("  L" + ($i+1) + ": " + $line)

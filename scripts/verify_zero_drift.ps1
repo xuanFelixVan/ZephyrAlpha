@@ -2,10 +2,10 @@ $dir = "d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_archi
 $indexPath = Join-Path $dir "00_index_trading_decision.md"
 $indexLines = Get-Content $indexPath
 
-# Find revision history start (first line matching "| 日期 |")
+# Find revision history start (first line matching the date table header)
 $revStart = 0
 for ($i = 0; $i -lt $indexLines.Count; $i++) {
-    if ($indexLines[$i] -match '^\|\s*日期\s*\|') { $revStart = $i; break }
+    if ($indexLines[$i] -match '^\|\s*\u65E5\u671F\s*\|') { $revStart = $i; break }
 }
 
 # Get actual versions
@@ -18,7 +18,7 @@ foreach ($f in $files) {
     }
 }
 
-# For each document, check ONLY lines in §0 catalog, §7.3 occupancy table, §3 status lines
+# For each document, check ONLY lines in S0 catalog, S7.3 occupancy table, S3 status lines
 # These are structured lines where one document appears per row
 $realDrifts = @()
 
@@ -28,13 +28,13 @@ foreach ($name in $actualMap.Keys) {
         $line = $indexLines[$i]
         if ($line -notmatch [regex]::Escape($name)) { continue }
         
-        # Skip lines that contain multiple doc references (§2 snapshot rows list many docs)
-        # Focus on structured single-doc lines: §0 catalog (| [name.md]), §7.3 (| name |), §3 status (| 状态 | ...)
+        # Skip lines that contain multiple doc references (S2 snapshot rows list many docs)
+        # Focus on structured single-doc lines: S0 catalog (| [name.md]), S7.3 (| name |), S3 status (| \u72B6\u6001 | ...)
         $isStructured = $false
-        if ($line -match "^\| \[$([regex]::Escape($name))\.md\]") { $isStructured = $true }  # §0 catalog
-        if ($line -match "^\| $([regex]::Escape($name)) \|") { $isStructured = $true }  # §7.3 occupancy
-        if ($line -match "^\| 状态 \|") { $isStructured = $true }  # §3 status row
-        if ($line -match "^\| 产出物 \|") { $isStructured = $true }  # §3 product row
+        if ($line -match "^\| \[$([regex]::Escape($name))\.md\]") { $isStructured = $true }  # S0 catalog
+        if ($line -match "^\| $([regex]::Escape($name)) \|") { $isStructured = $true }  # S7.3 occupancy
+        if ($line -match "^\| \u72B6\u6001 \|") { $isStructured = $true }  # S3 status row
+        if ($line -match "^\| \u4EA7\u51FA\u7269 \|") { $isStructured = $true }  # S3 product row
         
         if (-not $isStructured) { continue }
         
@@ -50,7 +50,7 @@ foreach ($name in $actualMap.Keys) {
 }
 
 if ($realDrifts.Count -eq 0) {
-    Write-Output "✅ ZERO DRIFT in structured current-state sections (§0 catalog, §7.3 occupancy, §3 status/product rows)"
+    Write-Output "[OK] ZERO DRIFT in structured current-state sections (S0 catalog, S7.3 occupancy, S3 status/product rows)"
 } else {
     Write-Output "=== Remaining drifts in structured sections ==="
     $realDrifts | ForEach-Object { Write-Output $_ }

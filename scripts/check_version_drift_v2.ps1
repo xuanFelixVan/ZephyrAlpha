@@ -13,11 +13,11 @@ foreach ($f in $files) {
 }
 
 # Scan index for version references in current-state sections (lines before revision history)
-# Revision history starts around "## 8." or "| 日期 | 版本 |"
+# Revision history starts around "## 8." or the date/version table header row
 $indexLines = Get-Content $indexPath
 $revHistoryStart = 0
 for ($i = 0; $i -lt $indexLines.Count; $i++) {
-    if ($indexLines[$i] -match '^\|\s*日期\s*\|') { $revHistoryStart = $i; break }
+    if ($indexLines[$i] -match '^\|\s*\u65E5\u671F\s*\|') { $revHistoryStart = $i; break }
 }
 Write-Output "Revision history starts at line $($revHistoryStart + 1)"
 Write-Output ""

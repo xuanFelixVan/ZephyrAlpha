@@ -82,7 +82,7 @@ build_status: generated
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CD-001 | MOD-CD-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | generated | generated | ✅ |
+| build_status | deprecated | generated | ❌ |
 | file_count | 6 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

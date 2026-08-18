@@ -11,7 +11,7 @@ foreach ($t in $targets) {
         $inRevision = $false
         $count = 0
         for ($i = 0; $i -lt $lines.Count; $i++) {
-            if ($lines[$i] -match '## \d+\. 修订记录') { $inRevision = $true }
+            if ($lines[$i] -match '## \d+\. \u4FEE\u8BA2\u8BB0\u5F55') { $inRevision = $true }
             if ($inRevision -and $lines[$i] -match '^\| 2026-08') {
                 $line = $lines[$i]
                 if ($line.Length -gt 200) { $line = $line.Substring(0, 200) + '...' }

@@ -1,4 +1,4 @@
-# Comprehensive drift fixer v3 - handles §0 catalog, §7.3 occupancy, §3 status/product rows
+# Comprehensive drift fixer v3 - handles S0 catalog, S7.3 occupancy, S3 status/product rows
 # Replaces stale version references with actual frontmatter versions
 $dir = "d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos"
 $indexPath = Join-Path $dir "00_index_trading_decision.md"
@@ -17,7 +17,7 @@ foreach ($f in $files) {
 # Find revision history start (skip everything after)
 $revStart = $lines.Count
 for ($i = 0; $i -lt $lines.Count; $i++) {
-    if ($lines[$i] -match '^\|\s*日期\s*\|') { $revStart = $i; break }
+    if ($lines[$i] -match '^\|\s*\u65E5\u671F\s*\|') { $revStart = $i; break }
 }
 
 $fixLog = @()
@@ -32,7 +32,7 @@ for ($i = 0; $i -lt $revStart; $i++) {
 
         $nameEsc = [regex]::Escape($name)
 
-        # Pattern A: §0 catalog "| [name.md](name.md) | desc with vOLD | status |"
+        # Pattern A: S0 catalog "| [name.md](name.md) | desc with vOLD | status |"
         if ($line -match "^\|\s*\[${nameEsc}\.md\]") {
             # Replace all vOLD in the description cell (2nd content column)
             $cells = $line -split '\|'
@@ -49,7 +49,7 @@ for ($i = 0; $i -lt $revStart; $i++) {
                         $oldVer = [regex]::Match($oldCell, 'v([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
                         if ($oldVer -and $oldVer -ne $actual) {
                             $cells[$c] = $newCell
-                            $fixLog += "L$($i+1) §0: $name v$oldVer -> v$actual"
+                            $fixLog += "L$($i+1) S0: $name v$oldVer -> v$actual"
                         }
                     }
                 }
@@ -58,7 +58,7 @@ for ($i = 0; $i -lt $revStart; $i++) {
             continue
         }
 
-        # Pattern B: §7.3 occupancy "| name | topic | owner | status with vOLD |"
+        # Pattern B: S7.3 occupancy "| name | topic | owner | status with vOLD |"
         if ($line -match "^\|\s*${nameEsc}\s*\|") {
             $cells = $line -split '\|'
             if ($cells.Count -ge 5) {
@@ -74,7 +74,7 @@ for ($i = 0; $i -lt $revStart; $i++) {
                     $oldVer = [regex]::Match($oldCell, 'v([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
                     if ($oldVer -and $oldVer -ne $actual) {
                         $cells[$lastIdx] = $newCell
-                        $fixLog += "L$($i+1) §7.3: $name v$oldVer -> v$actual"
+                        $fixLog += "L$($i+1) S7.3: $name v$oldVer -> v$actual"
                         $line = $cells -join '|'
                     }
                 }
@@ -82,18 +82,18 @@ for ($i = 0; $i -lt $revStart; $i++) {
             continue
         }
 
-        # Pattern C: §3 status "| 状态 | ✅ 已定稿 vOLD（[name]" or "| 状态 | ✅ ... vOLD（[name]"
-        if ($line -match "^\|\s*状态\s*\|" -and $line -match "\[${nameEsc}\]") {
-            # Replace the FIRST version number after "已定稿 " or after "active "
-            $newLine = [regex]::Replace($line, '(\| 状态 \| ✅ 已定稿 )v([0-9]+\.[0-9]+\.[0-9]+)', {
+        # Pattern C: S3 status "| \u72B6\u6001 | \u2705 \u5DF2\u5B9A\u7A3F vOLD\uFF08[name]" or "| \u72B6\u6001 | \u2705 ... vOLD\uFF08[name]"
+        if ($line -match "^\|\s*\u72B6\u6001\s*\|" -and $line -match "\[${nameEsc}\]") {
+            # Replace the FIRST version number after "\u5DF2\u5B9A\u7A3F " or after "active "
+            $newLine = [regex]::Replace($line, '(\| \u72B6\u6001 \| \u2705 \u5DF2\u5B9A\u7A3F )v([0-9]+\.[0-9]+\.[0-9]+)', {
                 param($m)
                 $found = $m.Groups[2].Value
                 if ($found -ne $actual) { "$($m.Groups[1].Value)v$actual" } else { $m.Value }
             }, 1)
             if ($newLine -ne $line) {
-                $oldVer = [regex]::Match($line, '(\| 状态 \| ✅ 已定稿 )v([0-9]+\.[0-9]+\.[0-9]+)').Groups[2].Value
+                $oldVer = [regex]::Match($line, '(\| \u72B6\u6001 \| \u2705 \u5DF2\u5B9A\u7A3F )v([0-9]+\.[0-9]+\.[0-9]+)').Groups[2].Value
                 if ($oldVer -and $oldVer -ne $actual) {
-                    $fixLog += "L$($i+1) §3status: $name v$oldVer -> v$actual"
+                    $fixLog += "L$($i+1) S3status: $name v$oldVer -> v$actual"
                     $line = $newLine
                 }
             }

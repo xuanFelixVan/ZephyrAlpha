@@ -276,7 +276,11 @@ MANIFEST_PATH: Path = SCRIPTS_DIR / "script_manifest.yaml"
 # 原 5 个文件各自定义 BLUEPRINTS_DIR，原 5 个文件各自定义 _GATES_DIR。
 # 统一到此处单一真源，调用方 from _shared.constants import BLUEPRINTS_DIR, GATES_DIR。
 BLUEPRINTS_DIR: Path = REPO_ROOT / "docs" / "03_modules"
-GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+# 治本（2026-08-17）：原指向 src/zephyr/governance/rule_enforcement（governance→gov_enforcement
+# 改名后的陈旧路径，目录不存在）——audit_registration 的 gate 孤儿/僵尸检测、
+# validate_gate_yaml / validate_gate_prompt_conflict 的 YAML 迭代全部静默失明（iter 空目录）。
+# 引擎自身锚定（gate_engine.py L112: Path(__file__).parent.parent）证实真路径。
+GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "rule_enforcement"
 
 # DB_PATH 真源为 zephyr.shared.io.paths（上方 import），本模块 re-export。
 # 治理脚本不得各自硬编码库文件名。
@@ -290,7 +294,7 @@ DOC_HTTP_BASE = os.environ.get("ZEPHYR_DOC_HTTP_BASE") or f"http://{DOC_HTTP_HOS
 
 # depgraph.db 路径——供 sync_yaml_to_depgraph.py 等治理脚本引用（裁定#206 / Bug H 修复）
 # 治本（2026-06-27）：删除 DEPGRAPH_DB_PATH: Path = REPO_ROOT / "data" / "databases" / "depgraph.db"。
-# 历史：sync_yaml_to_depgraph.py 曾硬编码 r"D:\ZephyrAlpha\..." 绝对路径，违反可移植性；
+# 历史：sync_yaml_to_depgraph.py 曾硬编码仓根盘符绝对路径字面量，违反可移植性；
 #       统一到此处常量后，所有治理脚本通过 _shared.constants 单一引用点获取路径。
 # P2 迁移后（2026-06）：depgraph 已迁至 PostgreSQL，实际 DB 连接通过
 #       get_depgraph_pg_connection() 获取，此常量沦为路径污染源（指向往已归档的 .db 文件）。

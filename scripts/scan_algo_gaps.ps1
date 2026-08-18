@@ -2,7 +2,7 @@ $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $dir = 'd:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos'
 $memos = Get-ChildItem $dir -Filter '*.md' | Where-Object { $_.Name -match '^\d+_' } | Sort-Object Name
-$keywords = 'TODO|待施工|待实现|NotImplementedError|待裁定.*施工|施工缺失|算法缺失|缺施工|未实现.*算法|伪代码.*待|gap.*施工'
+$keywords = 'TODO|\u5F85\u65BD\u5DE5|\u5F85\u5B9E\u73B0|NotImplementedError|\u5F85\u88C1\u5B9A.*\u65BD\u5DE5|\u65BD\u5DE5\u7F3A\u5931|\u7B97\u6CD5\u7F3A\u5931|\u7F3A\u65BD\u5DE5|\u672A\u5B9E\u73B0.*\u7B97\u6CD5|\u4F2A\u4EE3\u7801.*\u5F85|gap.*\u65BD\u5DE5'
 foreach ($memo in $memos) {
     $lines = Get-Content $memo.FullName -Encoding UTF8
     $hits = @()

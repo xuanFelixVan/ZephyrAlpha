@@ -29,7 +29,16 @@ import re
 import sys
 from pathlib import Path
 
-REGISTRY = Path(r"D:\ZephyrAlpha\docs\_archive\architecture_debt_registry_v2.md")
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT  # noqa: E402
+
+# 治本（2026-08-17）：原硬编码仓根盘符绝对路径字面量，违反可移植性铁律
+# （detect_absolute_path_hardcoding 门禁全量扫描命中）。改为 REPO_ROOT 派生。
+REGISTRY = REPO_ROOT / "docs" / "_archive" / "architecture_debt_registry_v2.md"
 
 # ═══════════════════════════════════════════════════════════
 # 1. 路径替换映射（DRIFTED → 新路径）
