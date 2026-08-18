@@ -41516,6 +41516,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "commit/merge 前先用 TCP 摸一下 PostgreSQL 5432 通不通（1 秒超时，不通也不拦你，只把结果写进 .runtime/pg_probe_state.json）；几个 depgraph 门禁在数据库连不上被迫放行时，会查这个状态来分清是'数据库真的挂了'还是'别的错误'，并把放行记录写进治理库（同一个原因一天只记一次，防止刷屏），下次提交时横幅提醒你追账；数据库连续挂超 24 小时时，还会豁免 depgraph 新鲜度门禁的误伤"
+- module_path: src/zephyr/signal_ashare/seat_pattern_analyzer.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "龙虎榜席位形态分析器"
+  name_en: "Seat Pattern Analyzer"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "看龙虎榜上都是谁在买股票——是机构、知名游资、量化还是散户，据此判断这股能不能跟。机构和大游资一起买加分，量化和散户扎堆减分，最后给出0到100分的跟随评分和买/观望/回避三档建议。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

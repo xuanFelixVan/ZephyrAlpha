@@ -356,6 +356,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 123 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量（分支原登 #121） | AI-GOVB-001 提交期横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批逐条归因：①3 条 GATE-PANORAMA-ALIGNMENT=08-16 PG 停服期历史（PG 已恢复+FOPEN-001 fail-open 留痕已治理）——已按 acknowledge_critical_warns 正式 ack 消音，横幅 24h 窗未 ack 归零；②2 条 DRIFT-WATCHDOG=AI-FILL 填报会话主仓直改 tracked 文档但**未注册 SessionRegistry 写入方**（work ∅→hash 实证），自愈合机制已自动 ack——FILL 侧流程缺口供统筹知情；③另 1 条 GATE-RULE-AUDIT 08-15 存量已出 24h 窗自然消音） | ✅ |
 | 124 | session_concurrency.py [CONSUMERS] 声明漂移（reconcile_worker/runner 括号内函数名误写为消费者自身函数而非被消费的 SessionRegistry）（分支原登 #122） | AI-GOVB-001 续批提交期 CONSUMERS-ACCURACY 门禁实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批顺手修：声明勘正为 reconcile_worker (SessionRegistry) / reconcile_runner (SessionRegistry)——与 #105 同类的头注派生数据漂移） | ✅ |
 
+<<<<<<< HEAD
 ### P1-补11 · 2026-08-18 AI-ERR-001 登记（#ARCH-ERRCODE-001 全域收口批）
 
 > 任务书三步：①全域补登 ②重码治理 ③对账门禁。①③已完工落地，②裁定完毕待 Owner 批准执行改号（GAP-010 高敏区人审约束）。
@@ -364,6 +365,17 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
 | 128 | #ARCH-ERRCODE-001 全域收口：①补登 ②重码 ③对账门禁 | AI-ERR-001 施工批（commit 0e7c1393，[ARCH-APPROVAL:#ARCH-ERRCODE-001] 通道） | **①已闭环**：registry v2.3.0→v3.0.0——130 码补登（371 码/385 定义点全量登记=零缺口）+6 条 stale 实证退役（ZA-IF-0001 幻影登记 git -S 零命中/ZA-IG-0016 shim 收敛→ZA-SH-0033/ZA-KB-0002~0004 KB 系统 d5b6f5dde1 退役/ZA-SH-0035 #ARCH-089 已删→ZA-SH-0034）+domain_prefixes 19→32（CMP/DATA/EX/MKT/PA/PF/PLAN/POS/REGIME/SELL/SIM/TRIG/XS，域 ID 经 [DOMAIN] 头注逐一实证：PF→D_PF_CORE、PLAN→D_PLAN）。**③已闭环**：tests/governance/test_error_code_consistency.py 新建（AST 扫描器=判定 SSoT，6 用例全绿）+GATE-ERRCODE 接入 .pre-commit-config.yaml（src/**.py 或注册表变更触发硬阻断）；红队实证：注入 ZA-ZZZ-9999 未登记码即拦截（2 用例红），移除复绿。**②裁定完毕待 Owner 批准**：9 码 10 处重码 git 首引入裁定+计划改号清单落 registry known_duplicates 段（MKT-0001→0007/MKT-0003→0008+0009/REGIME-0021→0025/RK-0009→0025（原规划 0024 已被 var_calculator 新增 ExcessiveNonFiniteDataError 占用顺延）/SH-0014→0053/SH-0049→0051/SH-0050→0052/TR-0001→0019/TR-0004→0020）；已实证全仓无运行时按码字符串分支（except/raises 均按类捕获），改号连带=tests/trading/test_corporate_action_processor.py:513 一处断言+6 处蓝图文档同步。验证命令：`python -m pytest tests/governance/test_error_code_consistency.py -q --tb=line -p no:asyncio --import-mode=importlib`（6 passed）。**剩余动作**：Owner 批准 known_duplicates 段→经网关执行 10 处改号+断言/蓝图同步→清空 known_duplicates 段（白名单防腐测试强制）→#ARCH-ERRCODE-001 status 翻 resolved | 🔄 ①③闭环；②待 Owner 批准 |
+
+### P1-补12 · 2026-08-18 AI-SEAT-001 登记（CAND-SEAT-001 转正 MVP 施工批）【编号注记：分支原登 P1-补11 #128-131 与 ERR-001 已入 dev 的 #128 撞号，merge 重编 P1-补12 #132-135——2026-08-18 第八统筹】
+
+> 来源：AI-SEAT-001 施工会话（龙虎榜席位形态分析模块 MVP，CAND-SEAT-001 P1 候选转正）。五登记链齐，merge 由统筹串行执行。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 132 | CAND-SEAT-001 状态翻转（candidate→promoted） | AI-SEAT-001 施工记录（分支原登 #128） | 任务书纪律：状态翻转由统筹 merge 后执行，本会话仅留施工记录。施工产出=MOD-SIG-056（src/zephyr/signal_ashare/seat_pattern_analyzer.py 413 行+17 测试两轮全绿+蓝图 v0.1.0+depgraph design 节点 9823087+#ARCH-120）；翻转时同步 candidate_module_registry 的 status/promoted_to/last_reviewed_at | ⏳ 统筹 merge 后执行 |
+| 133 | MOD-SIG-056 阈值未经回测（拍脑袋经验值） | AI-SEAT-001 风险登记（分支原登 #129） | 跟随信号全部加减分阈值（机构+15/游资+10/量化-20/散户-15/独食-10/力度±10）取自 seat_registry 六维框架公开经验值，未经本项目数据回测校准；v0.1 信号仅作参考特征不作独立交易依据，校准依赖 DS-080 积累≥3 个月+回测批 | ⏳ v0.2 回测校准（依赖数据积累） |
+| 134 | seat_registry provider 粗分类与 registry 类型词表不同构 | AI-SEAT-001 设计登记（分支原登 #130） | akshare_provider 粗分三类 institution/connect/broker vs seat_registry 五类 institution/youzi/quant/northbound/retail——A1 回退路径产出 connect/broker 与 registry 词表混排（linkage type_set 语义稀释）；v0.2 统一词表（provider 层细分类或映射层归一） | ⏳ v0.2 词表统一 |
+| 135 | 任务书包路径字面（src/zephyr/ashare_signal/）与 depgraph 真源冲突避让 | AI-SEAT-001 避让登记（分支原登 #131） | 任务书字面 ashare_signal 与 D_ASHARE_SIGNAL 域物理包 signal_ashare（37 节点实证）冲突；裁定落 signal_ashare 包（任务书笔误避让，非推翻 active 决策；#ARCH-120 adjudication③ 留痕） | ✅ 已避让（施工落 signal_ashare） |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
