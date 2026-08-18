@@ -6,7 +6,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidPnlInputError(ZA-TR-0001)
+# [ERROR_CONTRACT] InvalidPnlInputError(ZA-TR-0019)
 # [TESTS] self
 # [A_module] module_id=MOD-TRADING-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -213,7 +213,7 @@ class TestRealizedPnl:
         fill = make_fill()
         with pytest.raises(InvalidPnlInputError) as exc_info:
             calc.calculate_realized(fill, OrderSide.SELL, avg_cost=Decimal("-1"))
-        assert exc_info.value.error_code == "ZA-TR-0001"
+        assert exc_info.value.error_code == "ZA-TR-0019"
         assert "avg_cost" in exc_info.value.message
 
     def test_invalid_zero_fill_price(self) -> None:

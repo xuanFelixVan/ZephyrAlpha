@@ -510,7 +510,7 @@ class TestInputValidation:
             CorporateActionProcessor().process(action, Decimal("100"), Decimal("10"))
 
     def test_error_code(self):
-        assert InvalidCorporateActionError.error_code == "ZA-TR-0004"
+        assert InvalidCorporateActionError.error_code == "ZA-TR-0020"
 
 
 # ── Decimal 精度 ──

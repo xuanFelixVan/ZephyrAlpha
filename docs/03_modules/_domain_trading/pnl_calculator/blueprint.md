@@ -101,7 +101,7 @@ AShareFeeCalculator (默认实现):
 
 ## 5. 错误契约
 
-- `InvalidPnlInputError` (ZA-TR-0001): 输入数据非法(如负均价/负数量)
+- `InvalidPnlInputError` (ZA-TR-0019): 输入数据非法(如负均价/负数量)
 
 ## 6. 数据模型
 

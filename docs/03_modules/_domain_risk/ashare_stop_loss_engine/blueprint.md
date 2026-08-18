@@ -85,7 +85,7 @@ A股止损规则引擎——A股特色止损规则检测, 产出止损信号交�
 
 ## 5. 错误契约
 
-- `InvalidStopLossInputError` (ZA-RK-0009): 输入非法(价格非正/符号空/限额非递进/停盘天数非递增)
+- `InvalidStopLossInputError` (ZA-RK-0025): 输入非法(价格非正/符号空/限额非递进/停盘天数非递增)
 
 ## 6. 测试
 

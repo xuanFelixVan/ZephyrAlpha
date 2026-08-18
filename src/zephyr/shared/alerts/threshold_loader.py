@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] AlertThresholdConfigError(ZA-SH-0050)
+# [ERROR_CONTRACT] AlertThresholdConfigError(ZA-SH-0052)
 # [TESTS] tests/governance/test_alert_threshold_consistency.py（红队 fail-closed 用例内嵌）
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -47,7 +47,7 @@ __all__: Final = [
 class AlertThresholdConfigError(ZephyrBaseError):
     """告警阈值注册表缺失/畸形（fail-closed：禁止码内第二真源兜底）。"""
 
-    error_code = "ZA-SH-0050"
+    error_code = "ZA-SH-0052"
 
 
 #: 告警阈值注册表相对路径（真源唯一：55 号 §3.3 决策）

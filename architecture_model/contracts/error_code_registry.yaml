@@ -11,10 +11,10 @@ module_id: MOD-GOVERNANCE
 doc_type: register
 title: ZephyrAlpha 业务异常 error_code SSoT 注册表
 status: active
-version: 3.0.0
+version: 3.1.0
 date: '2026-08-18'
 owner: ZephyrAlpha-Owner
-description: '本文件是所有自定义异常类 error_code 字段的唯一真源（SSoT）。 格式：ZA-XX-NNNN（项目前缀-域前缀-4位序号）。 grep 唯一命中：每个 code 在全项目仅出现一次（存量 9 码例外见 known_duplicates 段——GAP-010 高敏区人审约束，改号待 Owner 批准，对账门禁仅豁免该段清单、硬阻断一切新增重码/未登记码）。
+description: '本文件是所有自定义异常类 error_code 字段的唯一真源（SSoT）。 格式：ZA-XX-NNNN（项目前缀-域前缀-4位序号）。 grep 唯一命中：每个 code 在全项目仅出现一次（存量 9 码 10 处重码已于 2026-08-18 Owner 批准改号收口，known_duplicates 白名单已清空——对账门禁硬阻断一切新增重码/未登记码）。
 
   '
 purpose: 1. 提供业务异常错误码的单一发现入口 2. 声明每个 error_code 的类名/模块/文件路径归属 3. 驱动 error_code 一致性校验
@@ -735,7 +735,7 @@ error_codes:
   class: VendorAlreadyRegisteredError
   module: zephyr.market_data.vendor_registry
   file: src/zephyr/market_data/vendor_registry.py
-  description: "canonical 归属=VendorAlreadyRegisteredError（同 commit 7a9579fa48 同文件先定义，L95）；存量重码：同文件 VendorNotFoundError(L101) 同码占用，改号 ZA-MKT-0007 待 Owner 批准（GAP-010 高敏区人审约束，#ARCH-ERRCODE-001）"
+  description: "canonical 归属=VendorAlreadyRegisteredError（同 commit 7a9579fa48 同文件先定义，L95）；存量重码已收口：VendorNotFoundError 改号 ZA-MKT-0007（2026-08-18 Owner 批准执行，#ARCH-ERRCODE-001）"
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-MKT-0002
   class: VendorError
@@ -746,7 +746,7 @@ error_codes:
   class: ConnectorError
   module: zephyr.market_data.connectors.base
   file: src/zephyr/market_data/connectors/base.py
-  description: "canonical 归属=connectors/base.py::ConnectorError（同 commit b6e018f3be，基类模块优先）；存量重码：connectors/manager.py ConnectorAlreadyRegisteredError/ConnectorNotFoundError 同码占用，改号 ZA-MKT-0008/0009 待 Owner 批准（GAP-010，#ARCH-ERRCODE-001）"
+  description: "canonical 归属=connectors/base.py::ConnectorError（同 commit b6e018f3be，基类模块优先）；存量重码已收口：connectors/manager.py ConnectorAlreadyRegisteredError/ConnectorNotFoundError 改号 ZA-MKT-0008/0009（2026-08-18 Owner 批准执行，#ARCH-ERRCODE-001）"
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-MKT-0004
   class: FailoverError
@@ -763,6 +763,24 @@ error_codes:
   module: zephyr.market_data.raw_data_cache.cache
   file: src/zephyr/market_data/raw_data_cache/cache.py
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-MKT-0007
+  class: VendorNotFoundError
+  module: zephyr.market_data.vendor_registry
+  file: src/zephyr/market_data/vendor_registry.py
+  description: 'vendor 不存在（查询/注销/设默认时 vendor_id 未注册）'
+  introduced: '2026-08-18: 重码改号收口——自 ZA-MKT-0001 改号（Owner 批准，#ARCH-ERRCODE-001）'
+- code: ZA-MKT-0008
+  class: ConnectorAlreadyRegisteredError
+  module: zephyr.market_data.connectors.manager
+  file: src/zephyr/market_data/connectors/manager.py
+  description: '连接器重复注册——connector_id 已存在'
+  introduced: '2026-08-18: 重码改号收口——自 ZA-MKT-0003 改号（Owner 批准，#ARCH-ERRCODE-001）'
+- code: ZA-MKT-0009
+  class: ConnectorNotFoundError
+  module: zephyr.market_data.connectors.manager
+  file: src/zephyr/market_data/connectors/manager.py
+  description: '连接器不存在——查询/注销时 connector_id 未注册'
+  introduced: '2026-08-18: 重码改号收口——自 ZA-MKT-0003 改号（Owner 批准，#ARCH-ERRCODE-001）'
 - code: ZA-MLT-0001
   class: SFTTrainError
   module: zephyr.ml_train.implementations.sentiment_sft_trainer
@@ -957,7 +975,7 @@ error_codes:
   class: A2ValidationError
   module: zephyr.regime.validation.phase2.a2_hmm_overfitting
   file: src/zephyr/regime/validation/phase2/a2_hmm_overfitting.py
-  description: "canonical 归属=a2_hmm_overfitting.py::A2ValidationError（同 commit 14c8b9f158，A2 先于 B4）；存量重码：b4_transition_accuracy.py::B4ValidationError 同码占用，改号 ZA-REGIME-0025 待 Owner 批准（GAP-010，#ARCH-ERRCODE-001）"
+  description: "canonical 归属=a2_hmm_overfitting.py::A2ValidationError（同 commit 14c8b9f158，A2 先于 B4）；存量重码已收口：b4_transition_accuracy.py::B4ValidationError 改号 ZA-REGIME-0025（2026-08-18 Owner 批准执行，#ARCH-ERRCODE-001）"
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 - code: ZA-REGIME-0022
   class: Phase2RunnerError
@@ -974,6 +992,12 @@ error_codes:
   module: zephyr.regime.validation.phase2.confidence_calibrator
   file: src/zephyr/regime/validation/phase2/confidence_calibrator.py
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-REGIME-0025
+  class: B4ValidationError
+  module: zephyr.regime.validation.phase2.b4_transition_accuracy
+  file: src/zephyr/regime/validation/phase2/b4_transition_accuracy.py
+  description: 'B4 验证器错误（事件库缺失/格式错/无交易日历）'
+  introduced: '2026-08-18: 重码改号收口——自 ZA-REGIME-0021 改号（Owner 批准，#ARCH-ERRCODE-001）'
 - code: ZA-RK-0003
   class: InvalidDrawdownInputError
   module: zephyr.risk.core.drawdown_tracker
@@ -998,7 +1022,7 @@ error_codes:
   class: BudgetOptimizationError
   module: zephyr.risk.core.risk_budget_allocator
   file: src/zephyr/risk/core/risk_budget_allocator.py
-  description: "canonical 归属=risk_budget_allocator（2026-08-02 f2f48ea0db 先引入）；存量重码：ashare_stop_loss_engine.py::InvalidStopLossInputError 同码占用（4a943705bf 后引入），改号 ZA-RK-0024 留 #ARCH-ERRCODE-001 专项（动存量生产模块，避让并发会话）"
+  description: "canonical 归属=risk_budget_allocator（2026-08-02 f2f48ea0db 先引入）；存量重码已收口：ashare_stop_loss_engine.py::InvalidStopLossInputError（4a943705bf 后引入）改号 ZA-RK-0025（原规划 0024 已被 var_calculator ExcessiveNonFiniteDataError 占用顺延；2026-08-18 Owner 批准执行，#ARCH-ERRCODE-001）"
 - code: ZA-RK-0010
   class: InvalidSystemicRiskInputError
   module: zephyr.risk.core.ashare_systemic_risk_detector
@@ -1038,6 +1062,12 @@ error_codes:
   module: zephyr.risk.core.var_calculator
   file: src/zephyr/risk/core/var_calculator.py
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-RK-0025
+  class: InvalidStopLossInputError
+  module: zephyr.risk.core.ashare_stop_loss_engine
+  file: src/zephyr/risk/core/ashare_stop_loss_engine.py
+  description: 'A股止损规则引擎输入数据非法（价格非正/符号空/限额非递进/停盘天数非递增）'
+  introduced: '2026-08-18: 重码改号收口——自 ZA-RK-0009 改号（Owner 批准，#ARCH-ERRCODE-001）'
 - code: ZA-RPT-0001
   class: InvalidDashboardInputError
   module: zephyr.reporting.realtime_pnl_dashboard
@@ -1470,12 +1500,30 @@ error_codes:
   class: PatchConflictError
   module: zephyr.shared.utils.diff_utils
   file: src/zephyr/shared/utils/diff_utils.py
-  description: "canonical 归属=diff_utils（2026-07-06 4d4ecfd6e6 先引入）；存量重码：state_store.py::StateStoreError 同码占用（2026-08-16 7f72f36a86 后引入），后引入者改号 ZA-SH-0051 留 #ARCH-ERRCODE-001 专项（动存量生产模块，归 src 域窗口施工）"
+  description: "canonical 归属=diff_utils（2026-07-06 4d4ecfd6e6 先引入）；存量重码已收口：state_store.py::StateStoreError（2026-08-16 7f72f36a86 后引入）改号 ZA-SH-0051（2026-08-18 Owner 批准执行，#ARCH-ERRCODE-001）"
 - code: ZA-SH-0050
   class: StateCorruptError
   module: zephyr.shared.state_store
   file: src/zephyr/shared/state_store.py
-  description: "canonical 归属=state_store（2026-08-16 7f72f36a86 先引入）；存量重码：threshold_loader.py::AlertThresholdConfigError 同码占用（2026-08-17 6c181232a3 后引入，55 号 §3.3 统读/tracker #87/AI-THD-001），后引入者改号 ZA-SH-0052 留 #ARCH-ERRCODE-001 专项（动存量生产模块，归 src 域窗口施工）"
+  description: "canonical 归属=state_store（2026-08-16 7f72f36a86 先引入）；存量重码已收口：threshold_loader.py::AlertThresholdConfigError（2026-08-17 6c181232a3 后引入，55 号 §3.3 统读/tracker #87/AI-THD-001）改号 ZA-SH-0052（2026-08-18 Owner 批准执行，#ARCH-ERRCODE-001）"
+- code: ZA-SH-0051
+  class: StateStoreError
+  module: zephyr.shared.state_store
+  file: src/zephyr/shared/state_store.py
+  description: '状态外部化层基础错误'
+  introduced: '2026-08-18: 重码改号收口——自 ZA-SH-0049 改号（Owner 批准，#ARCH-ERRCODE-001）'
+- code: ZA-SH-0052
+  class: AlertThresholdConfigError
+  module: zephyr.shared.alerts.threshold_loader
+  file: src/zephyr/shared/alerts/threshold_loader.py
+  description: '告警阈值注册表缺失/畸形（fail-closed：禁止码内第二真源兜底）'
+  introduced: '2026-08-18: 重码改号收口——自 ZA-SH-0050 改号（Owner 批准，#ARCH-ERRCODE-001）'
+- code: ZA-SH-0053
+  class: PoolExhaustedError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+  description: '连接池耗尽——池内连接与 overflow 临时连接全部借出且阻塞等待超时（5.64.4 治本）'
+  introduced: '2026-08-18: 重码改号收口——自 ZA-SH-0014 改号（Owner 批准，#ARCH-ERRCODE-001）'
 - code: ZA-SIM-0002
   class: StrategySimulationError
   module: zephyr.simulation.strategy_simulator
@@ -1594,6 +1642,18 @@ error_codes:
   module: zephyr.gov_enforcement.rule_bridge.worktree_lifecycle
   file: src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py
   introduced: '2026-07-21: #ARCH-WORKTREE-LIFECYCLE-001——WorktreeLifecycle 状态机非法转换异常'
+- code: ZA-TR-0019
+  class: InvalidPnlInputError
+  module: zephyr.trading.pnl_calculator
+  file: src/zephyr/trading/pnl_calculator.py
+  description: 'PnL 计算输入非法——负均价/负数量/负市价等'
+  introduced: '2026-08-18: 重码改号收口——自 ZA-TR-0001 改号（Owner 批准，#ARCH-ERRCODE-001）'
+- code: ZA-TR-0020
+  class: InvalidCorporateActionError
+  module: zephyr.trading.corporate_action_processor
+  file: src/zephyr/trading/corporate_action_processor.py
+  description: '公司行动输入非法——负比例/负价格/零持仓/缺少必填参数等'
+  introduced: '2026-08-18: 重码改号收口——自 ZA-TR-0004 改号（Owner 批准，#ARCH-ERRCODE-001）'
 - code: ZA-TRIG-0001
   class: TriggerRegistrationError
   module: zephyr.trading.trigger_registry
@@ -1794,76 +1854,25 @@ error_codes:
   file: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 # ============================================================
-# 已知跨定义点重码（GAP-010 高敏区人审约束——改号清单待 Owner 批准；对账门禁仅豁免本段存量、硬阻断新增）
-# 改号执行连带项（批准后经 GitCommitGateway 一次性施工）：
-#   1. tests/trading/test_corporate_action_processor.py:513 断言 error_code=="ZA-TR-0004" 需同步改 "ZA-TR-0020"
-#   2. 6 处 blueprint.md 文档同步：pnl_calculator/corporate_action_processor/vendor_registry/connectors/ashare_stop_loss_engine + ssot_guard 系
-#   3. 无运行时按码字符串分支（全仓 grep 实证：except/raises 均按类捕获），改号不破坏既有异常处理逻辑
+# 跨定义点重码白名单（对账门禁仅豁免本段存量、硬阻断新增；白名单防腐——条目不再对应真实重码即红）
+# 2026-08-18 Owner 批准执行改号收口（#ARCH-ERRCODE-001，第八统筹施工）：9 码 10 处全部改号完成——
+#   VendorNotFoundError ZA-MKT-0001→0007 / ConnectorAlreadyRegisteredError ZA-MKT-0003→0008 /
+#   ConnectorNotFoundError ZA-MKT-0003→0009 / B4ValidationError ZA-REGIME-0021→0025 /
+#   InvalidStopLossInputError ZA-RK-0009→0025 / PoolExhaustedError ZA-SH-0014→0053 /
+#   StateStoreError ZA-SH-0049→0051 / AlertThresholdConfigError ZA-SH-0050→0052 /
+#   InvalidPnlInputError ZA-TR-0001→0019 / InvalidCorporateActionError ZA-TR-0004→0020；
+#   连带=2 处测试断言（test_pnl_calculator:216/test_corporate_action_processor:513）+4 处蓝图同步+头注同步。
+#   裁定证据（git 首引入/同 commit 分析）随改号前版本留存 git 历史（v3.0.0 本段全文）。
 # ============================================================
-known_duplicates:
-- code: ZA-MKT-0001
-  canonical: {class: VendorAlreadyRegisteredError, file: src/zephyr/market_data/vendor_registry.py}
-  later_introducers:
-  - {class: VendorNotFoundError, file: src/zephyr/market_data/vendor_registry.py, planned_code: ZA-MKT-0007}
-  evidence: 同 commit 7a9579fa48(2026-08-02) 同文件引入；文件内定义序前者(L95)保留 canonical
-  status: pending_owner_approval
-- code: ZA-MKT-0003
-  canonical: {class: ConnectorError, file: src/zephyr/market_data/connectors/base.py}
-  later_introducers:
-  - {class: ConnectorAlreadyRegisteredError, file: src/zephyr/market_data/connectors/manager.py, planned_code: ZA-MKT-0008}
-  - {class: ConnectorNotFoundError, file: src/zephyr/market_data/connectors/manager.py, planned_code: ZA-MKT-0009}
-  evidence: 同 commit b6e018f3be(2026-08-02) 引入；基类模块 connectors/base.py 保留 canonical
-  status: pending_owner_approval
-- code: ZA-REGIME-0021
-  canonical: {class: A2ValidationError, file: src/zephyr/regime/validation/phase2/a2_hmm_overfitting.py}
-  later_introducers:
-  - {class: B4ValidationError, file: src/zephyr/regime/validation/phase2/b4_transition_accuracy.py, planned_code: ZA-REGIME-0025}
-  evidence: 同 commit 14c8b9f158(2026-08-07) 引入；A2 先于 B4（验证器阶段序）保留 canonical
-  status: pending_owner_approval
-- code: ZA-RK-0009
-  canonical: {class: BudgetOptimizationError, file: src/zephyr/risk/core/risk_budget_allocator.py}
-  later_introducers:
-  - {class: InvalidStopLossInputError, file: src/zephyr/risk/core/ashare_stop_loss_engine.py, planned_code: ZA-RK-0025}
-  evidence: canonical f2f48ea0db(2026-08-02) 先引入，后引入 4a943705bf；原规划目标 ZA-RK-0024 已被 var_calculator.py::ExcessiveNonFiniteDataError 新增占用，顺延 0025
-  status: pending_owner_approval
-- code: ZA-SH-0014
-  canonical: {class: SsotError, file: src/zephyr/shared/security/ssot_guard.py}
-  later_introducers:
-  - {class: PoolExhaustedError, file: src/zephyr/shared/foundation/errors.py, planned_code: ZA-SH-0053}
-  evidence: canonical 4d4ecfd6e6(2026-07-06) 先引入，后引入 f8e152676b(2026-07-19)
-  status: pending_owner_approval
-- code: ZA-SH-0049
-  canonical: {class: PatchConflictError, file: src/zephyr/shared/utils/diff_utils.py}
-  later_introducers:
-  - {class: StateStoreError, file: src/zephyr/shared/state_store.py, planned_code: ZA-SH-0051}
-  evidence: canonical 4d4ecfd6e6(2026-07-06) 先引入，后引入 7f72f36a86(2026-08-16)
-  status: pending_owner_approval
-- code: ZA-SH-0050
-  canonical: {class: StateCorruptError, file: src/zephyr/shared/state_store.py}
-  later_introducers:
-  - {class: AlertThresholdConfigError, file: src/zephyr/shared/alerts/threshold_loader.py, planned_code: ZA-SH-0052}
-  evidence: canonical 7f72f36a86(2026-08-16) 先引入，后引入 6c181232a3(2026-08-17)
-  status: pending_owner_approval
-- code: ZA-TR-0001
-  canonical: {class: RiskLimitViolationError, file: src/zephyr/trading/trading_contracts/risk/risk_limit_violation_error.py}
-  later_introducers:
-  - {class: InvalidPnlInputError, file: src/zephyr/trading/pnl_calculator.py, planned_code: ZA-TR-0019}
-  evidence: canonical 4d4ecfd6e6(2026-07-06) 先引入，后引入 ff2662668d(2026-08-02)
-  status: pending_owner_approval
-- code: ZA-TR-0004
-  canonical: {class: StagingError, file: src/zephyr/trading/staging_area.py}
-  later_introducers:
-  - {class: InvalidCorporateActionError, file: src/zephyr/trading/corporate_action_processor.py, planned_code: ZA-TR-0020}
-  evidence: canonical 5d15f0dba2(2026-07-06) 先引入，后引入 6faa32f9be(2026-08-02)
-  status: pending_owner_approval
+known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
 # ============================================================
 known_issues:
 - issue: 全域登记缺口已收口（2026-08-18 AI-ERR-001，#ARCH-ERRCODE-001）：代码实测 371 个码（385 个定义点）全量登记，本表 379 条 = 371 active + 8 deprecated（TR-0002/TR-0011 既有 + IF-0001/IG-0016/KB-0002/KB-0003/KB-0004/SH-0035 本批实证退役）；domain_prefixes 19→32（补登 CMP/DATA/EX/MKT/PA/PF/PLAN/POS/REGIME/SELL/SIM/TRIG/XS 13 个未声明前缀，域 ID 逐一对齐 [DOMAIN] 头注实证：PF→D_PF_CORE、PLAN→D_PLAN 等）
   remediation: 已闭环；新增未登记码由 tests/governance/test_error_code_consistency.py + GATE-ERRCODE commit 门禁硬阻断
-- issue: 存量跨定义点重码 9 码 10 处（2026-08-18 实测收敛——2026-08-15 清单 17 码中 BT 域 4 码经 AI-AUDIT07 改号收口、ZA-PA-0002 经 2026-08-17 改号 ZA-PA-0004 收口、POS 域 4 码实证已唯一）：清单/git 首引入裁定/计划改号见 known_duplicates 段（GAP-010 高敏区人审约束，改号待 Owner 批准；已实证无运行时按码字符串分支，唯一连带=1 处测试断言+6 处蓝图文档同步）
-  remediation: Owner 批准 known_duplicates 段后经 GitCommitGateway 执行改号；对账门禁仅豁免该段存量、硬阻断一切新增重码
+- issue: 存量跨定义点重码 9 码 10 处——已收口（2026-08-18 Owner 批准，第八统筹经 GitCommitGateway 执行改号：MKT-0001→0007/MKT-0003→0008+0009/REGIME-0021→0025/RK-0009→0025/SH-0014→0053/SH-0049→0051/SH-0050→0052/TR-0001→0019/TR-0004→0020；连带 2 处测试断言+4 处蓝图+头注同步；known_duplicates 段已清空，白名单防腐测试强制）
+  remediation: 已闭环；对账门禁硬阻断一切新增重码（白名单为空，新增即红）
 - issue: 格式偏离诚实登记（不阻断，新增码应遵守 ZA-XX-NNNN 基准格式）：子码后缀族 22 条（如 ZA-XS-0001-IW/NA、ZA-XS-EXT-0003-FS/CI）、模块号嵌入族 11 条（ZA-EX-001-01~03、ZA-EX-049-01、ZA-EX-050-01~03、ZA-EX-055-01~04）、复合命名空间 4 条（ZA-DATA-PIT-001、ZA-XS-EXT-0001/0002/0003）、ZA-SELL-0000 序号 0000 偏离段位规划（0001 起）
   remediation: 登记以代码真源为准（SSoT 诚实原则）；格式归一属行为变更，留后续专项裁定
 # ============================================================

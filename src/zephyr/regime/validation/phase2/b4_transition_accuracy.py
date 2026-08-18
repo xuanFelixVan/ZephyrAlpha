@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] B4ValidationError(ZA-REGIME-0021)
+# [ERROR_CONTRACT] B4ValidationError(ZA-REGIME-0025)
 # [TESTS] tests/regime/phase2/test_b4_transition_accuracy.py
 # [TTL] permanent
 # [ARCH-REF] #12_regime_phase2_validation §2.2 #12_regime_phase2_validation §4.2 B4
@@ -72,9 +72,9 @@ DEFAULT_EVENTS_PATH = Path(__file__).resolve().parent / "historical_events.yaml"
 
 
 class B4ValidationError(ZephyrBaseError):
-    """ZA-REGIME-0021: B4 验证器错误（事件库缺失/格式错/无交易日历）。"""
+    """ZA-REGIME-0025: B4 验证器错误（事件库缺失/格式错/无交易日历）。"""
 
-    error_code = "ZA-REGIME-0021"
+    error_code = "ZA-REGIME-0025"
 
 
 class B4Verdict(str, Enum):

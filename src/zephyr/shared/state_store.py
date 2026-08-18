@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] StateCorruptError(ZA-SH-0050); StateStoreError(ZA-SH-0049)
+# [ERROR_CONTRACT] StateCorruptError(ZA-SH-0050); StateStoreError(ZA-SH-0051)
 # [TESTS] tests/shared/test_state_store.py
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -88,7 +88,7 @@ DEFAULT_DEDUP_KEY_PREFIX: Final = "za:dedup"
 class StateStoreError(ZephyrBaseError):
     """状态外部化层基础错误。"""
 
-    error_code = "ZA-SH-0049"
+    error_code = "ZA-SH-0051"
 
 
 class StateCorruptError(StateStoreError):

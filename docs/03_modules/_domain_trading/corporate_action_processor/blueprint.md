@@ -95,7 +95,7 @@ avg_cost_new = avg_cost_old / split_ratio
 
 ## 5. 错误契约
 
-- `InvalidCorporateActionError` (ZA-TR-0004): 输入数据非法(如负比例/负价格/零持仓)
+- `InvalidCorporateActionError` (ZA-TR-0020): 输入数据非法(如负比例/负价格/零持仓)
 
 ## 6. 数据模型
 

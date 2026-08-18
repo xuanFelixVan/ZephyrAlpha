@@ -147,7 +147,7 @@ logger = logging.getLogger(__name__)
 class InvalidStopLossInputError(ZephyrBaseError):
     """A股止损规则引擎输入数据非法 (如价格非正、亏损率符号错误)。"""
 
-    error_code = "ZA-RK-0009"
+    error_code = "ZA-RK-0025"
 
 
 # ──────────────────────────────────────────────────────────────────────────────

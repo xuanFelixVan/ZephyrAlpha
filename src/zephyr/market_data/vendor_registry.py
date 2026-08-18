@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] VendorAlreadyRegisteredError(ZA-MKT-0001); VendorNotFoundError(ZA-MKT-0001)
+# [ERROR_CONTRACT] VendorAlreadyRegisteredError(ZA-MKT-0001); VendorNotFoundError(ZA-MKT-0007)
 # [TESTS] tests/market_data/test_vendor_registry.py
 # [A_module] module_id=MOD-MKT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -98,7 +98,7 @@ class VendorAlreadyRegisteredError(ZephyrBaseError):
 class VendorNotFoundError(ZephyrBaseError):
     """Vendor 不存在——查询/注销/设默认时 vendor_id 未注册。"""
 
-    error_code = "ZA-MKT-0001"
+    error_code = "ZA-MKT-0007"
 
 
 class VendorRegistry:

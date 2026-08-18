@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] ConnectorAlreadyRegisteredError(ZA-MKT-0003); ConnectorNotFoundError(ZA-MKT-0003)
+# [ERROR_CONTRACT] ConnectorAlreadyRegisteredError(ZA-MKT-0008); ConnectorNotFoundError(ZA-MKT-0009)
 # [TESTS] tests/market_data/connectors/test_connector_manager.py
 # [A_module] module_id=MOD-MKT-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -42,13 +42,13 @@ _logger = logging.getLogger(__name__)
 class ConnectorAlreadyRegisteredError(ZephyrBaseError):
     """连接器重复注册——connector_id 已存在。"""
 
-    error_code = "ZA-MKT-0003"
+    error_code = "ZA-MKT-0008"
 
 
 class ConnectorNotFoundError(ZephyrBaseError):
     """连接器不存在——查询/注销时 connector_id 未注册。"""
 
-    error_code = "ZA-MKT-0003"
+    error_code = "ZA-MKT-0009"
 
 
 class ConnectorManager:

@@ -73,7 +73,7 @@ build_status: stable
 ## 5. 错误契约
 
 - `VendorAlreadyRegisteredError` (ZA-MKT-0001): 重复注册
-- `VendorNotFoundError` (ZA-MKT-0001): vendor 不存在
+- `VendorNotFoundError` (ZA-MKT-0007): vendor 不存在
 
 ## 6. 依赖
 

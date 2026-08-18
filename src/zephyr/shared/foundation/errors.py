@@ -189,4 +189,4 @@ class UnimplementedError(ZephyrBaseError):
 class PoolExhaustedError(DataError):
     """连接池耗尽——池内连接与 overflow 临时连接全部借出且阻塞等待超时（5.64.4 治本）。"""
 
-    error_code = "ZA-SH-0014"
+    error_code = "ZA-SH-0053"

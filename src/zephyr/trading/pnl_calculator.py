@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidPnlInputError(ZA-TR-0001)
+# [ERROR_CONTRACT] InvalidPnlInputError(ZA-TR-0019)
 # [TESTS] tests/trading/test_pnl_calculator.py
 # [A_module] module_id=MOD-TRADING-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -58,7 +58,7 @@ D_TRADING — PnL Calculator (盈亏计算器)
 #   name_zh: ① 输入校验
 #   name_en: PnlCalculator 校验段
 #   intro: 检查成交价/数量为正、均价市价非负，非法抛错
-#   desc: fill_price<=0 / qty<=0 / avg_cost<0 / current_price<0 → InvalidPnlInputError(ZA-TR-0001)
+#   desc: fill_price<=0 / qty<=0 / avg_cost<0 / current_price<0 → InvalidPnlInputError(ZA-TR-0019)
 #   inputs: I1 I2 I3
 #   outputs: 校验通过或异常
 # - id: A2
@@ -140,7 +140,7 @@ _logger = logging.getLogger(__name__)
 class InvalidPnlInputError(ZephyrBaseError):
     """PnL 计算输入非法——负均价/负数量/负市价等。"""
 
-    error_code = "ZA-TR-0001"
+    error_code = "ZA-TR-0019"
 
 
 # ── 数据模型（全部 frozen 不可变）──

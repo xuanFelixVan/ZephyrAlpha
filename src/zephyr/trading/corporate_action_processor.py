@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidCorporateActionError(ZA-TR-0004)
+# [ERROR_CONTRACT] InvalidCorporateActionError(ZA-TR-0020)
 # [TESTS] tests/trading/test_corporate_action_processor.py
 # [A_module] module_id=MOD-TRADING-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -45,7 +45,7 @@ D-PF-CORE 更新组合目标。
 #   name_zh: ① 输入校验
 #   name_en: _validate
 #   intro: 校验 action_id/symbol 非空、数量均价非负、按类型必填参数齐全
-#   desc: 缺参数/负值 → 抛 InvalidCorporateActionError(ZA-TR-0004)
+#   desc: 缺参数/负值 → 抛 InvalidCorporateActionError(ZA-TR-0020)
 #   inputs: I1 I2
 #   outputs: 校验通过或异常
 # - id: A2
@@ -150,7 +150,7 @@ _ZERO = Decimal("0")
 class InvalidCorporateActionError(ZephyrBaseError):
     """公司行动输入非法——负比例/负价格/零持仓/缺少必填参数等。"""
 
-    error_code = "ZA-TR-0004"
+    error_code = "ZA-TR-0020"
 
 
 # ── 枚举 ──
