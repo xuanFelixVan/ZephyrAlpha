@@ -356,6 +356,19 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 123 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量（分支原登 #121） | AI-GOVB-001 提交期横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批逐条归因：①3 条 GATE-PANORAMA-ALIGNMENT=08-16 PG 停服期历史（PG 已恢复+FOPEN-001 fail-open 留痕已治理）——已按 acknowledge_critical_warns 正式 ack 消音，横幅 24h 窗未 ack 归零；②2 条 DRIFT-WATCHDOG=AI-FILL 填报会话主仓直改 tracked 文档但**未注册 SessionRegistry 写入方**（work ∅→hash 实证），自愈合机制已自动 ack——FILL 侧流程缺口供统筹知情；③另 1 条 GATE-RULE-AUDIT 08-15 存量已出 24h 窗自然消音） | ✅ |
 | 124 | session_concurrency.py [CONSUMERS] 声明漂移（reconcile_worker/runner 括号内函数名误写为消费者自身函数而非被消费的 SessionRegistry）（分支原登 #122） | AI-GOVB-001 续批提交期 CONSUMERS-ACCURACY 门禁实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批顺手修：声明勘正为 reconcile_worker (SessionRegistry) / reconcile_runner (SessionRegistry)——与 #105 同类的头注派生数据漂移） | ✅ |
 
+### P1-补11 · 2026-08-18 AI-R1-001 登记（AI-01~04 域审查修复批：IPO-001 4704f00853 / JOB-077 669066cd27 / 37号LEVEL_3 f0eb9bbc / THD统读 6c181232a3 / TICK-001 e061a3b0 五 merge 增量全量审查）
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 128 | `_limit_pct_of` 创业板 2020-08-24 前 ST/*ST 涨跌停幅度 0.10→应为 0.05（算法口径缺陷，回填历史+ST 快照组合才触发） | AI-R1-001 算法审查+深交所投教官方页实证（szse.cn t20200807_580310：「特别规定实施前创业板风险警示股票价格涨跌幅限制比例为 5%」） | 原实现 `30` 前缀改革前一律 0.10 无视 st_flag，docstring/schema 注释/测试注释"此前 10%（含ST）"同错三处 | ✅ 已闭环（commit a117abec88：代码改 `0.05 if st_flag else 0.10`+双 docstring 勘正+`test_chinext_regime_change` 补改革前 ST 断言防回归；验证 `pytest tests/zephyr/data/test_akshare_market_meta.py` 52 passed） |
+| 129 | test_tick_subscriber.py 文件头双 `[TTL]` 字段冲突（L2 permanent vs L5 task_bound，TTL 治理解析歧义——task_bound 会被退役机制误盯） | AI-R1-001 TICK-001 审查 | TICK-001 入库时头注注入残留双 TTL | ✅ 已闭环（commit a117abec88：删 task_bound 行，测试对象=permanent 生产模块；验证 `pytest tests/zephyr/data/test_tick_subscriber.py` 82 passed） |
+| 130 | market_ipo_calendar.py exchange MATERIALIZED 表达式模板漂移（`substring(...,1,2) IN ('123','128')` 永假分支；全仓 69 个 schema 均 `1,3`） | AI-R1-001 schema 一致性审查（Grep 70 文件实测） | 行为恒等（123/128 转债前缀经 1-char `'1'→SZ` 落点相同；IPO 表无转债标的）；#127 实证 CH 表尚未建（8123 未运行），修复先于首次建表落地=零 live 漂移，统筹执行 apply_market_tables_ddl.py 时自然吸收正确表达式 | ✅ 已闭环（commit a117abec88 单字符修复 1,2→1,3） |
+| 131 | tasks.yaml `stk_limit_premarket` 幽灵依赖 `stock_basic_premarket` | AI-R1-001 算法-配置交叉审查 | `_fetch_stk_limit` 不消费 stock_basic（板块=代码前缀静态规则、昨收=kline_daily、ST=st_stock_list 三真源均非该任务产出）——无谓排序约束+depgraph 元数据失真 | ✅ 已闭环（commit a117abec88：dependencies 仅留 st_status_premarket 真依赖，注释留痕三真源） |
+| 132 | threshold_loader float cast 接受 bool（YAML `value: true` 笔误静默 1.0，fail-closed 小洞；int/str cast 均已拒 bool） | AI-R1-001 THD 统读审查 | tracker #87 统读加固遗漏面 | ✅ 已闭环（commit a117abec88：float 分支加 isinstance bool 拒绝+`test_bool_value_fail_closed` 全 9 统读模块参数化；验证 `pytest tests/governance/test_alert_threshold_consistency.py` 58 passed） |
+| 133 | 审查观察项（不修登记）：①market_sector_constituent.py INSERT_COLUMNS 双逗号笔误（`data_source, , fetched_at`，存量非本批引入，当前无消费者实证）；②`_stk_limit_row_for` i<5 新股判定用窗口索引（长期停牌复牌股理论上误 NULL，部分匹配"恢复上市首日无涨跌幅"真实规则）；③`int(shares_wan*1e4)` float 截断（≤1 股误差对亿元级募资分析无影响）；④ruff 存量 6 项（I001×5+SIM114×1，HEAD 基线一致非本批引入） | AI-R1-001 第 1~2 轮复检 | 全部低危/条件触发/无消费者，按"不过度修复"纪律登记备查 | ⏳ 观察项（供后续专项批评估） |
+
+> **本批验证汇总**：pytest 199 passed（market_meta 52 + ipo_calendar 7 + tick_subscriber 82 + threshold_consistency 58，含新增断言）；tasks.yaml YAML 解析通过；4 改动 .py AST 通过；ruff 零增量（基线比对实证）。**避让登记**：无（开工 `session_worktree.py list` 实证零在途 session；tracker §五表区 448+ 行有统筹在途改动，本登记落 §六 348-357 行区与在途区不相交，可自动并集）。**共享收口**：无新增（#127 CH 建表统筹执行时自动吸收 #130 修复）。
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
