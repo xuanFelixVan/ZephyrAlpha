@@ -17314,6 +17314,46 @@ entries:
   created: '2026-08-17'
   last_updated: '2026-08-17'
   owner_approval: '2026-08-17 Owner 裁定 B1+B2 全量（tracker #116）'
+- issue_id: '#ARCH-121'
+  title: FHS 引擎 MVP 施工裁定——GARCH(1,1) 参数估计自研 QMLE（不引 arch 库）+ FHS 独立模块并列方法论（不集成进 var_calculator 存量）+ CAND-AUTONOMYCORE-002 转正（MOD-RK-26，memo 36 §3.16 落地）【编号注记：分支原登 #ARCH-120 与已入 dev 的 AI-SEAT-001 #ARCH-120（MOD-SIG-056 席位形态分析器）撞号——merge 终态重编 #ARCH-121（先例 #ARCH-114~116 撞号重编模式）；2026-08-18 第八统筹执行】
+  severity: P2中
+  category: algorithm_design_decision
+  adjudication: |-
+    2026-08-18 AI-FHS-001 自主裁定（memo 36 §3.16 施工规约 + CAND-AUTONOMYCORE-002 转正派单，规避 R3 审查线在审文件）：
+    ①GARCH 参数估计方法——自研高斯 QMLE（scipy.optimize.minimize L-BFGS-B+持续性二次罚项），不引入 arch 库。
+    依据：CAND tech_notes 记 arch  availability=missing（新增外部依赖需走依赖登记链且动 pyproject/requirements，
+    与并发批次依赖文件冲突面大）；GARCH(1,1) 仅 ω/α/β 三参数（μ 两阶段分离估计=样本均值先去均值），
+    QMLE 为行业标准且对厚尾稳健（Zivot 2009 实证）；L-BFGS-B 无约束优化+bounds，平稳性 α+β<1 经二次罚项执行
+    （GARCH 估计标准做法）；个人系统可解释性优先+CPU 即可，自研 ~80 行完全可控可测。回退路径：若后续发现数值稳定性问题可再评估 arch（CAND 留痕）。
+    【P0 勘正（2026-08-18 Qwen 审查线）】原实现用 SLSQP+不等式约束，独立数值验证发现早停病灶：约束容差与 ftol
+    相互作用下 nit=5 即宣布收敛且停在起点（多种子估计精确钉在两个起点 [0.05,0.90]/[0.10,0.80] 上，估计点似然比
+    真参数点低 39.5，未真正优化）。改 L-BFGS-B+罚项后失败案例 nll 由 -7283.3（起点）改善至 -7325.3（优于真参数点
+    -7322.7），10 种子参数恢复 max err 0.053（2000 样本正常抽样噪声）。回归测试 test_optimizer_not_stuck_at_start 固化。
+    ②模块定位——FHS 与既有 HS/参数法 VaR 的关系=并列方法论，独立模块 fhs_engine.py（MOD-RK-26），
+    不集成进 var_calculator 存量（CAND panorama 原设想"补第三方法并入取 max 链"被本裁定覆盖：
+    var_calculator/tail_risk_monitor/drawdown_controller 契约冻结 R3 在审，零代码耦合=不 import 其错误类，
+    conservative_max 取大链不改动）。第三法纳入取大链/RECALIBRATE 动作 4 启用裁决属 RiskLayerOrchestrator 层
+    （远期接线，should_switch_to_fhs 三触发+FHS_COOLDOWN_DAYS=10 冷却期+FHS_PERMANENTLY_DISABLED 升级路径均不在本 MVP 范围）。
+    ③多日 horizon——GARCH 递归模拟（Barone-Adesi 原版 FHS，逐日 ε*_s=σ*_s·z*_s 更新 σ*²），非 √T 缩放：
+    前向波动率聚集传播正是 FHS 相对 HS 的增量价值；HS 对照侧仍按 var_calculator 口径 √T 缩放（无 GARCH 结构可传播）。
+    ④小样本守卫——garch_min_history=60（memo §3.7 窗口+CAND tech_notes"60 日小样本 GARCH 拟合稳定性需最小样本守卫"），
+    min_history(30)≤n<60 不尝试拟合直接回退 historical。
+    ⑤错误码段——自建 ZA-RK-0026~0029（InvalidFHSConfig/InsufficientFHSHistory/ExcessiveFHSNonFinite/GarchConvergence），
+    与 var_calculator 错误类零共享保持独立审查面；ZA-RK-0025 避让 AI-ERR-001 重码改号计划（RK-0009→ZA-RK-0025 待 Owner 批准），
+    四码顺延 0026~0029（Qwen 审查线 2026-08-18 撞码实证避让）；AI-ERR-001 错误码对账批请收编。
+  impact:
+    - 'src/zephyr/risk/core/fhs_engine.py（新建，MOD-RK-26，evolving）'
+    - 'tests/risk/test_fhs_engine.py（新建，27 用例两轮全绿）'
+    - 'docs/03_modules/_domain_risk/fhs_engine/blueprint.md（新建 v0.1.0）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（fhs_var_es_engine 能力+3 creation_tokens）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml（fhs_engine 翻译条目）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml（CAND-AUTONOMYCORE-002 promoted 留痕）'
+  fix_phase: 'AI-FHS-001 施工（2026-08-18），随 worktree merge 闭环；merge 后统筹侧：depgraph node 9823086 转 production 链+蓝图 §0.6/§8 AUTOGEN 生成+memo 36 §3.10 动作4/§3.9.2#5/§6 待裁定状态更新'
+  status: decided
+  related_rules: 'CAND-AUTONOMYCORE-002; memo 36 §3.16/§3.9.2#5/§3.10 动作4; tracker #128'
+  created: '2026-08-18'
+  last_updated: '2026-08-18'
+  owner_approval: '2026-08-18 派单指令授权自主裁定（同 AI-SEAT-001 纪律：算法正确性疑点属 P0 即报，无 P0 事项）；同日 Qwen 审查线发现 SLSQP 早停 P0 疑点并修复（L-BFGS-B+罚项），裁定①优化器选型同步勘正'
 
 # --- #ARCH-KEBAB-DIR-001: governance/ 5 个连字符目录 snake_case 豁免裁定登记（AI-AUDIT13 审计发现未登记） ---
 - issue_id: '#ARCH-KEBAB-DIR-001'

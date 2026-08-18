@@ -6434,11 +6434,11 @@ entries:
     q1_implemented: {result: pass, equivalent_nodes: [], evidence: "2026-08-16 grep src 全库 fhs|garch|should_switch_to_fhs|FHS_COOLDOWN 零匹配（双轮审查实证），无重复建设"}
     blocking_question: none
     result: pass
-  status: candidate
+  status: promoted
   priority: P2
   created_at: '2026-08-16'
-  last_reviewed_at: '2026-08-16'
-  promoted_to: ""
+  last_reviewed_at: '2026-08-18'
+  promoted_to: "MOD-RK-26 fhs_engine（src/zephyr/risk/core/fhs_engine.py，2026-08-18 AI-FHS-001 MVP 施工，#ARCH-120）"
   source_draft: "双轮审查差异比对与裁定书（docs/_working/reviews/2026-08-16-dual-review-adjudication.md）"
   source_section: "§三 深挖④ / §六 CAND 登记"
   original_id: ""
@@ -6454,7 +6454,7 @@ entries:
   blocked_by: []
   next_review_date: '2026-11-16'
   review_frequency: quarterly
-  last_review_outcome: "2026-08-16 登记（双轮审查深挖④裁定）：memo 36 §3.10 动作 4 语气已修正为'未施工（远期候选）'，FHS 本体登记本候选等待 trigger"
+  last_review_outcome: "2026-08-18 转正（Owner 派单 AI-FHS-001，#ARCH-120）：MVP 落码 src/zephyr/risk/core/fhs_engine.py（MOD-RK-26，evolving）——GARCH(1,1) 自研 QMLE（SLSQP 不引 arch 库）+标准化残差重采样+FHS VaR/ES 输出+HS 对照，27 用例两轮全绿；并列方法论独立模块不集成 var_calculator（避让 R3 审查线）。未做：should_switch_to_fhs 三触发/FHS_COOLDOWN_DAYS=10 冷却期/FHS_PERMANENTLY_DISABLED/RiskOrchestrator enable 接线（远期编排层）；原 prerequisites 两条（独立性失败真实发生/RiskOrchestrator 建成）未满足即施工=Owner 裁定提前备料，启用仍按 memo 36 §3.10 动作 4 触发链"
   acquisition_method: self_build
   acquisition_source: ''
 

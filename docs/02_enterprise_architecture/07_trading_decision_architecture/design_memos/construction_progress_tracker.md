@@ -395,6 +395,15 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 143 | AI-R3 复审遗留③：Saga 恢复路径 step5 失败时持仓回滚漂移（对从未入账的成交做反向 apply_fill 负向漂移）（分支原登 #130） | AI-R3 复审第一轮（2026-08-18） | _recover_filled_order 的 `if not self._step5_position_update(ctx): return True` 静默吞掉 step5 失败，但内部 except 已调 _compensate_position 对未入账成交做反向 apply_fill。裁定=step5 失败区分"已入账后回滚"vs"未入账"，未入账不回滚 | ✅ 已登记（#ARCH-126）；⏳ 随后续 saga 修复批施工 |
 | 144 | AI-R3 复审遗留④：Kill Switch 清算链 T+1 可卖数量未分化（对当日买入 T+1 锁定份额发单必被券商拒）（分支原登 #131） | AI-R3 复审第一轮（2026-08-18） | execute_kill_switch_liquidation 对全部持仓发 MARKET SELL，含 T+1 锁定份额——券商必拒，无识别/重试/告警分化。裁定=按 available 数量发单或 T+1 拒绝与普通失败分桶 | ✅ 已登记（#ARCH-127）；⏳ 随后续清算链修复批施工 |
 
+### P1-补15 · 2026-08-18 AI-FHS-001 登记（FHS 引擎 MVP 批，CAND-AUTONOMYCORE-002 转正，#ARCH-121）【编号注记：分支原登 P1-补11 #128-131 与已入 dev 的 ERR-001 #128 / SEAT-001 #132-135 / AISA-001 #136-140 / R3 #141-144 撞号，#ARCH-120 与 SEAT-001 撞号——merge 终态重编 P1-补15 #145-148 + #ARCH-121——2026-08-18 第八统筹】
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 145 | FHS 引擎 MVP 施工（CAND-AUTONOMYCORE-002 转正，memo 36 §3.16 落地，MOD-RK-26）（分支原登 #128） | Owner 派单（2026-08-18） | 新建 src/zephyr/risk/core/fhs_engine.py（GARCH(1,1) 自研 QMLE→L-BFGS-B+持续性罚项（932db04422 审查线治本）+标准化残差重采样+FHS VaR/ES+HS 对照）+27 用例+蓝图 v0.1.0+五登记链（token/capability/translation/#ARCH-121/blueprint）+CAND promoted 留痕；并列方法论独立模块零耦合 var_calculator（避让 R3 审查线）；27/27 两轮全绿+ruff 全过 | ✅ 已 merge（统筹串行） |
+| 146 | memo 36 状态更新（FHS 已施工后的文档对账）（分支原登 #129） | AI-FHS-001 避让登记 | memo 36 §3.10 动作 4「⚠️ 未施工（远期候选 CAND-AUTONOMYCORE-002）」+ §3.9.2 远期 9 法 #5 FHS「未施工」+ §6 待裁定「FHS 采纳时机」三处需随 FHS 落码更新（§3.16 施工规约本体已是设计契约无需动）——归统筹侧 merge 后文档收敛批，本批避让（R3 审查线邻域文档） | ⏳ 统筹收口批处理 |
+| 147 | FHS 远期编排层接线（should_switch_to_fhs 三触发 + FHS_COOLDOWN_DAYS=10 冷却期 + FHS_PERMANENTLY_DISABLED 升级 + RiskOrchestrator→fhs_engine 调用点）（分支原登 #130） | memo 36 §3.16/§3.10 动作 4 设计契约 | 本 MVP 明确不做（引擎能力先行）；启用仍按 memo 36 §3.10 动作 4 触发链（Christoffersen 独立性失败 LR_ind p<0.05 且 kupiec p≥0.05 / 连续 2 次 E-backtesting red / 盘中重算显著连续 3 日）——待 RiskLayerOrchestrator 校准动作调用点接入批一并施工（对齐 v1.11.1 命名对账「§3.10 动作仍=设计契约」现状） | 🧊 远期 |
+| 148 | FHS 引擎 merge 后统筹侧收口项（分支原登 #131） | AI-FHS-001 移交 | ①depgraph 设计态节点（src/zephyr/risk/core/fhs_engine.py）转 production 链（#ARCH-70 通道）；②蓝图 §0.6 五图对齐视图+§8 代码索引 AUTOGEN 生成（generate_blueprint_panorama.py MOD-RK-26 + sync_blueprint_code_index.py）；③algo_submodules ALGO_FLOW 节点翻译派生（A1-A5 五节点）；④错误码 ZA-RK-0026~0029 收编 AI-ERR-001 对账批（ZA-RK-0025 已避让 ERR 改号计划 RK-0009→0025，Qwen 审查线撞码实证）；⑤#ARCH-120→121/tracker #128-131→145-148 撞号重编（本条已执行） | ⏳ 统筹收口批处理 |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
