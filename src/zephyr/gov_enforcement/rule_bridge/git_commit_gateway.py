@@ -461,6 +461,13 @@ class GitCommitGateway:
             return
         if os.environ.get('ZEPHYR_RECONCILE_SYNC', '') == '1':
             self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=result)
+        elif os.environ.get('PYTEST_CURRENT_TEST'):
+            # B1/R1 治本（2026-08-19）：pytest 测试体内 commit 不 spawn 真实 reconcile
+            # worker——worker 以 tmp 仓为 root 跑主仓维护链路，实测挂起残留 2h+（8 僵尸
+            # 进程实证），async 回写更是 xdist 尾部资源风暴放大器（61 watchdog daemon
+            # 同族问题）。需覆盖 reconcile 调度的测试走 ZEPHYR_RECONCILE_SYNC=1 同步路径。
+            logger.debug('GitCommitGateway: pytest env, skip async reconcile worker spawn')
+            return
         else:
             self._run_post_commit_reconcile_async(existing, session_id, result.commit_hash, commit_message)
 
