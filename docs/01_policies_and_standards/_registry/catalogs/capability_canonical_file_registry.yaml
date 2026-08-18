@@ -7361,6 +7361,14 @@ creation_tokens:
   created_by: AI-FHS-001
   capability: fhs_var_es_engine
   note: "MOD-RK-26 模块蓝图（memo 36 §3.16 施工规约落地）"
+- file: src/zephyr/regime/regime_cycle_analyzer.py
+  token: auto-scaffold-regime_cycle_analyzer-20260818
+  created_by: scaffold.py
+  capability: regime_cycle_analyzer
+- file: docs/03_modules/_domain_regime/regime_cycle_analyzer/blueprint.md
+  token: auto-regime-cycle-analyzer-blueprint-20260818
+  created_by: AI-CYCLE-001
+  capability: regime_cycle_analyzer
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

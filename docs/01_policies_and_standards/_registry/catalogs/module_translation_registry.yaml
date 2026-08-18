@@ -41537,6 +41537,13 @@ entries:
   desc_zh: "Filtered Historical Simulation——GARCH(1,1) 拟合收益序列得标准化残差，有放回重采样乘条件波动率预测，产出 FHS VaR/ES；GARCH 不收敛回退历史模拟（memo 36 §3.16）"
   desc_en: "Filtered Historical Simulation VaR/ES via GARCH(1,1) standardized-residual resampling; falls back to historical simulation on non-convergence"
   plain_zh: "历史模拟法算 VaR 是把过去每天盈亏一视同仁排队取尾巴，但市场有波动聚集（震荡会扎堆），老黄历里的大跌会让刚平静下来时的风险被高估、刚起风暴时的风险被低估。这个模块先给收益序列配一个会随时间呼吸的波动率（GARCH），把每天的盈亏按当时波动率折算成标准份，再从这些标准份里随机抽样乘上明天的预测波动率，得到更贴近当前市况的 VaR/ES；如果波动率模型配不出来，就老实回退到历史模拟法并打标记。"
+- module_path: src/zephyr/regime/regime_cycle_analyzer.py
+  domain_id: D_REGIME
+  name_zh: "时间周期分析器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "分析日历上的时间规律：月末月初效应、长假节后效应、历史高低点周年日效应，用统计检验自证是否真有效，输出'什么时候可能变盘'的提醒窗口。它只是辅助参考，不直接发买卖信号"
 
 battle_map_steps:
 - step_id: BM-BUY-04

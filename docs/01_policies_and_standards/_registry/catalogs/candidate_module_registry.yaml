@@ -6089,7 +6089,7 @@ entries:
   - 江恩周期
   - 周年日效应
   - regime_cycle_registry 消费模块
-  domain: D_SIGNAL
+  domain: D_REGIME
   domain_status: active
   domain_node_count: 0
   sub_layer: regime 层（时间窗口维度）
@@ -6138,11 +6138,11 @@ entries:
       evidence: 全项目无 Gann/周期识别代码（grep 无命中）；SSoT 注册表已建（2026-08-14）
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
   priority: P2
   created_at: '2026-08-14'
-  last_reviewed_at: '2026-08-14'
-  promoted_to: ''
+  last_reviewed_at: '2026-08-18'
+  promoted_to: MOD-REGIME-006
   source_draft: 2026-08-14 图形形态循环审查会话——「Gann 时间周期/周年日」裁定为新建表（CAND 候选）
   source_section: ''
   original_id: ''
@@ -6173,7 +6173,7 @@ entries:
   blocked_by: []
   next_review_date: '2026-11-14'
   review_frequency: quarterly
-  last_review_outcome: '2026-08-14 登记：无新增数据前提（日线行情已有），SSoT 注册表已建，可随时开工；优先级 P2 排在 CAND-SEAT-001 之后'
+  last_review_outcome: '2026-08-18 晋升闭环：AI-CYCLE-001 施工（#ARCH-122）——MVP 两件套落码（日历效应统计月末/月初/节后 Welch t+Bonferroni 检验族=4 + 周年日效应显著高低点 ±5 日窗口 |日收益| 检验），模块=src/zephyr/regime/regime_cycle_analyzer.py（MOD-REGIME-006，24 单测两轮全绿）；域归属修正 D_SIGNAL(deprecated 遗留域)→D_REGIME；Gann 固定间隔/几何类列扩展口 EXT-G/EXT-GEO 不落码（证据强度不足不过度工程）；边界钉死=辅助参考信号非独立交易信号（is_advisory_only 恒 True，不显著 confidence=0 下游禁消费，未过 WFA 禁挂 regime 节流）；遗留=真数据实证回填 evidence+WFA 验证+节流接线（蓝图 §9）'
   acquisition_method: self_build
   acquisition_source: ''
 
@@ -6438,7 +6438,7 @@ entries:
   priority: P2
   created_at: '2026-08-16'
   last_reviewed_at: '2026-08-18'
-  promoted_to: "MOD-RK-26 fhs_engine（src/zephyr/risk/core/fhs_engine.py，2026-08-18 AI-FHS-001 MVP 施工，#ARCH-120）"
+  promoted_to: "MOD-RK-26 fhs_engine（src/zephyr/risk/core/fhs_engine.py，2026-08-18 AI-FHS-001 MVP 施工，#ARCH-121）"
   source_draft: "双轮审查差异比对与裁定书（docs/_working/reviews/2026-08-16-dual-review-adjudication.md）"
   source_section: "§三 深挖④ / §六 CAND 登记"
   original_id: ""
@@ -6454,7 +6454,7 @@ entries:
   blocked_by: []
   next_review_date: '2026-11-16'
   review_frequency: quarterly
-  last_review_outcome: "2026-08-18 转正（Owner 派单 AI-FHS-001，#ARCH-120）：MVP 落码 src/zephyr/risk/core/fhs_engine.py（MOD-RK-26，evolving）——GARCH(1,1) 自研 QMLE（SLSQP 不引 arch 库）+标准化残差重采样+FHS VaR/ES 输出+HS 对照，27 用例两轮全绿；并列方法论独立模块不集成 var_calculator（避让 R3 审查线）。未做：should_switch_to_fhs 三触发/FHS_COOLDOWN_DAYS=10 冷却期/FHS_PERMANENTLY_DISABLED/RiskOrchestrator enable 接线（远期编排层）；原 prerequisites 两条（独立性失败真实发生/RiskOrchestrator 建成）未满足即施工=Owner 裁定提前备料，启用仍按 memo 36 §3.10 动作 4 触发链"
+  last_review_outcome: "2026-08-18 转正（Owner 派单 AI-FHS-001，#ARCH-121）：MVP 落码 src/zephyr/risk/core/fhs_engine.py（MOD-RK-26，evolving）——GARCH(1,1) 自研 QMLE（SLSQP 不引 arch 库）+标准化残差重采样+FHS VaR/ES 输出+HS 对照，27 用例两轮全绿；并列方法论独立模块不集成 var_calculator（避让 R3 审查线）。未做：should_switch_to_fhs 三触发/FHS_COOLDOWN_DAYS=10 冷却期/FHS_PERMANENTLY_DISABLED/RiskOrchestrator enable 接线（远期编排层）；原 prerequisites 两条（独立性失败真实发生/RiskOrchestrator 建成）未满足即施工=Owner 裁定提前备料，启用仍按 memo 36 §3.10 动作 4 触发链"
   acquisition_method: self_build
   acquisition_source: ''
 

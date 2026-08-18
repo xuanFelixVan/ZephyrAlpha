@@ -404,6 +404,12 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 147 | FHS 远期编排层接线（should_switch_to_fhs 三触发 + FHS_COOLDOWN_DAYS=10 冷却期 + FHS_PERMANENTLY_DISABLED 升级 + RiskOrchestrator→fhs_engine 调用点）（分支原登 #130） | memo 36 §3.16/§3.10 动作 4 设计契约 | 本 MVP 明确不做（引擎能力先行）；启用仍按 memo 36 §3.10 动作 4 触发链（Christoffersen 独立性失败 LR_ind p<0.05 且 kupiec p≥0.05 / 连续 2 次 E-backtesting red / 盘中重算显著连续 3 日）——待 RiskLayerOrchestrator 校准动作调用点接入批一并施工（对齐 v1.11.1 命名对账「§3.10 动作仍=设计契约」现状） | 🧊 远期 |
 | 148 | FHS 引擎 merge 后统筹侧收口项（分支原登 #131） | AI-FHS-001 移交 | ①depgraph 设计态节点（src/zephyr/risk/core/fhs_engine.py）转 production 链（#ARCH-70 通道）；②蓝图 §0.6 五图对齐视图+§8 代码索引 AUTOGEN 生成（generate_blueprint_panorama.py MOD-RK-26 + sync_blueprint_code_index.py）；③algo_submodules ALGO_FLOW 节点翻译派生（A1-A5 五节点）；④错误码 ZA-RK-0026~0029 收编 AI-ERR-001 对账批（ZA-RK-0025 已避让 ERR 改号计划 RK-0009→0025，Qwen 审查线撞码实证）；⑤#ARCH-120→121/tracker #128-131→145-148 撞号重编（本条已执行） | ⏳ 统筹收口批处理 |
 
+### P1-补16 · 2026-08-18 AI-CYCLE-001 登记（CAND-CYCLE-001 时间周期 MVP 批）【编号注记：分支原登 P1-补11 #128 与已入 dev 的 ERR-001 #128 等五路撞号，#ARCH-120 与 SEAT-001 撞号——merge 终态重编 P1-补16 #149 + #ARCH-122——2026-08-18 第八统筹】
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 149 | CAND-CYCLE-001 时间周期分析 MVP 施工（MOD-REGIME-006）（分支原登 #128） | AI-CYCLE-001 派单 | 两件套落码：①日历效应统计（月末/月初/节后，Welch t+Bonferroni 检验族=4，对齐 CYC-STAT-013）②周年日效应（显著高低点 ±5 日窗口 \|日收益\| 检验，对齐 CYC-TIME-004）；Gann 固定间隔/几何类列扩展口 EXT-G/EXT-GEO 不落码（证据强度不足不过度工程）。自主裁定：域归属 D_SIGNAL(deprecated)→D_REGIME 修正、MOD-REGIME-006 取号（001~005 已占）、scaffold --force-override 裁定通道（包名=域别名必然误报，同 #111 先例）、边界钉死=辅助参考信号非独立交易信号（is_advisory_only 恒 True/不显著 confidence=0 下游禁消费/未过 WFA 禁挂 regime 节流）。登记链：creation_token(auto-scaffold-regime_cycle_analyzer-20260818)+translation plain_zh+depgraph 设计态节点+blueprint v0.1.0+REG-CYCLE-001 两条目 code_path/code_symbol 锚定+#ARCH-122+CAND 留痕 promoted | ✅ 已 merge（统筹串行）；遗留=真数据实证回填 evidence+WFA 验证+regime 节流接线（蓝图 §9） |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |

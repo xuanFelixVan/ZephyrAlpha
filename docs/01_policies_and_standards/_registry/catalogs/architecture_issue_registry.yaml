@@ -17350,10 +17350,46 @@ entries:
     - 'docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml（CAND-AUTONOMYCORE-002 promoted 留痕）'
   fix_phase: 'AI-FHS-001 施工（2026-08-18），随 worktree merge 闭环；merge 后统筹侧：depgraph node 9823086 转 production 链+蓝图 §0.6/§8 AUTOGEN 生成+memo 36 §3.10 动作4/§3.9.2#5/§6 待裁定状态更新'
   status: decided
-  related_rules: 'CAND-AUTONOMYCORE-002; memo 36 §3.16/§3.9.2#5/§3.10 动作4; tracker #128'
+  related_rules: 'CAND-AUTONOMYCORE-002; memo 36 §3.16/§3.9.2#5/§3.10 动作4; tracker #145'
   created: '2026-08-18'
   last_updated: '2026-08-18'
   owner_approval: '2026-08-18 派单指令授权自主裁定（同 AI-SEAT-001 纪律：算法正确性疑点属 P0 即报，无 P0 事项）；同日 Qwen 审查线发现 SLSQP 早停 P0 疑点并修复（L-BFGS-B+罚项），裁定①优化器选型同步勘正'
+- issue_id: '#ARCH-122'
+  title: CAND-CYCLE-001 时间周期分析 MVP 施工裁定——D_SIGNAL(deprecated 遗留域)→D_REGIME 域归属修正 + 两件套范围收敛（日历效应统计+周年日；Gann 几何类列扩展口不落码）+ 辅助参考信号边界钉死【编号注记：分支原登 #ARCH-120 与 SEAT-001 撞号——merge 终态重编 #ARCH-122；2026-08-18 第八统筹执行】
+  severity: P2中
+  category: module_construction_adjudication
+  adjudication: |-
+    2026-08-18 AI-CYCLE-001 自主裁定（施工派单框架内，MTH-007 四问过检）：
+    ①域归属修正——CAND-CYCLE-001 登记 domain=D_SIGNAL，但 functional_domain_registry 实证
+    D_SIGNAL 为 deprecated 遗留图示用名（裁定#204 已改名 D_SIGLEGACY，ssot_path=signal_fundamental/）；
+    CAND 条目自身 sub_layer 注明「regime 层（时间窗口维度）」、REG-CYCLE-001 条目 module_id 预留
+    MOD-REGIME-002、downstream 消费方为 regime 层节流——三处证据一致指向 D_REGIME。
+    裁定：模块落 src/zephyr/regime/regime_cycle_analyzer.py，module_id=MOD-REGIME-006
+    （REGIME 序列 001~005 已占用，取下一空号），D_SIGNAL 登记为候选条目陈旧信息随 CAND 留痕修正。
+    ②范围收敛——MVP=统计周期（日历效应：月末/月初/节后，Welch t+Bonferroni 检验族=4）+周年日效应
+    （显著高低点周年窗口 ±5 日，|日收益| 抬升检验）两件套；Gann 固定间隔 30/60/90（CYC-TIME-001~003）
+    与几何类（CYC-GEO-001/002，subjectivity=high）列扩展口 EXT-G/EXT-GEO 不落码——证据强度不足
+    不过度工程（CAND tech_notes 顺序裁定：统计 low→规则 medium→几何 high）。
+    ③边界钉死——时间周期分析=辅助参考信号非独立交易信号：输出契约 is_advisory_only 恒 True；
+    统计不显著（p_adj>0.05 或 n<8）窗口 confidence=0.0 且 direction=neutral 下游禁止消费；
+    未过 OOS/WFA 验证禁止挂接 regime 节流（CAND risks 裁定继承）。
+    ④零新增数据依赖——日历结构纯日历派生（自输入交易日序列），不依赖 calendar_event 空表
+    （17 号 memo §3.3 缺口），输入仅日线 close（DS-002 已有）。
+    ⑤PIT——analyze(as_of) 输入截断 ≤as_of；显著高低点右窗确认制（t 点极值需 t+20 确认，
+    末端未确认不采信）；周年显著性统计只用 ≤as_of 已发生窗口；日历前视=确定性信息非泄漏。
+  impact:
+    - 'src/zephyr/regime/regime_cycle_analyzer.py（新建，MOD-REGIME-006，creation_token=auto-scaffold-regime_cycle_analyzer-20260818）'
+    - 'tests/regime/test_regime_cycle_analyzer.py（新建，24 用例纯合成数据零外部依赖）'
+    - 'docs/03_modules/_domain_regime/regime_cycle_analyzer/blueprint.md（新建 v0.1.0，§1 边界声明 §7 扩展口登记）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/regime_cycle_registry.yaml（CYC-TIME-004/CYC-STAT-013 code_path+code_symbol+algorithm_status=quantized 锚定，库↔代码双向索引 #ARCH-BREG-002）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml（plain_zh 大白话简介）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml（CAND-CYCLE-001 留痕+domain 修正）'
+    - 'depgraph 设计态节点 node_id=9823088（file 粒度，build_status=planned，merge 后 #ARCH-70 通道转 production）'
+  fix_phase: 'AI-CYCLE-001 施工（2026-08-18），随 worktree merge 闭环；遗留=真数据实证回填 evidence 字段+WFA 验证+regime 节流接线（蓝图 §9）'
+  status: implemented
+  related_rules: 'CAND-CYCLE-001; REG-CYCLE-001; #ARCH-BREG-002; tracker #149'
+  created: '2026-08-18'
+  last_updated: '2026-08-18'
 
 # --- #ARCH-KEBAB-DIR-001: governance/ 5 个连字符目录 snake_case 豁免裁定登记（AI-AUDIT13 审计发现未登记） ---
 - issue_id: '#ARCH-KEBAB-DIR-001'
