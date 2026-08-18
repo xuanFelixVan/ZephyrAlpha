@@ -134,7 +134,7 @@ def make_exempt_zone_frontmatter_gate() -> GateSpec:
                 f"(should be in formal directory): {'; '.join(violations)}"
             )
         return True, (
-            f"no exempt-zone frontmatter violations"
+            "no exempt-zone frontmatter violations"
             + (f" (historical skipped: {', '.join(historical)})" if historical else "")
         )
 

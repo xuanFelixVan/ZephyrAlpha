@@ -54,12 +54,12 @@ import logging
 import os
 import re
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 # 复用 perm_trigger_gate 的辅助函数（SSoT，避免 FUNCTION-DUP 重复定义）
 from zephyr.gov_enforcement.commit_gates.perm_trigger_gate import (
-    _has_permanent_ttl,
     _decorator_name,
+    _has_permanent_ttl,
 )
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

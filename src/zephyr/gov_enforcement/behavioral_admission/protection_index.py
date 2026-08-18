@@ -17,12 +17,11 @@
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import struct
 import threading
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from pydantic import BaseModel, ConfigDict
 

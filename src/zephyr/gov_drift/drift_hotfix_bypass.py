@@ -29,8 +29,8 @@ P0 Hotfix 快速旁路处理：[HOTFIX]/[EMERGENCY] commit 自动标记为 ACKNO
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,6 @@ from datetime import UTC, datetime, timedelta
 # shared 层不可能反向 import gov_drift，与本模块无真实循环链——
 # 移除 try/except ImportError 静默降级，import 失败显式化。
 from zephyr.shared.contracts.protocols import AuditWriterProtocol
-
 
 HOTFIX_PREFIXES: Final[tuple[str, ...]] = ("[HOTFIX]", "[EMERGENCY]", "[HOTFIX]", "[EMERGENCY]")
 

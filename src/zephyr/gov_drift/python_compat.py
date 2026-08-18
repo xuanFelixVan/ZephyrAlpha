@@ -35,11 +35,11 @@ auto_fixable: 自动降级语法到目标Python版本
 
 from __future__ import annotations
 
-from typing import Final
 import re
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Final
 
 
 @dataclass

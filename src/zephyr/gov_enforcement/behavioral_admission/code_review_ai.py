@@ -17,8 +17,8 @@
 
 from __future__ import annotations
 
-from typing import Final
 from enum import Enum
+from typing import Final
 
 
 # class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)

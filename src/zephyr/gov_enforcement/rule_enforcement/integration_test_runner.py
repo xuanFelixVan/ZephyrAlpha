@@ -39,6 +39,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Final
 from uuid import UUID
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 # 复用现有的 CITier/CITrigger/TIER_TRIGGERS/SMOKE_CONTRACTS/CORE_CONTRACTS/TestResult/GateResult

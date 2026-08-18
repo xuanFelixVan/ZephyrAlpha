@@ -94,14 +94,14 @@ Phase B：将 FF-015 从此文件替换为实际调用入口。
 
 from __future__ import annotations
 
-from typing import Final
 import sys
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, Final
 
 from zephyr.shared.io.paths import REPO_ROOT
+
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 

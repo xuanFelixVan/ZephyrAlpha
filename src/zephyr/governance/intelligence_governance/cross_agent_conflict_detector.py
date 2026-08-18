@@ -27,6 +27,7 @@ CrossAgentConflictDetector — 多 Agent 并发冲突检测。
 from __future__ import annotations
 
 import logging
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ logger = logging.getLogger(__name__)
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+
 
 @dataclass
 class ConflictReport:

@@ -25,13 +25,12 @@ Blueprint: docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md §
 
 from __future__ import annotations
 
-from typing import Final
 import hashlib
 import logging
 import threading
 from collections.abc import Callable
 from datetime import UTC, datetime
-from typing import Any, Protocol, runtime_checkable
+from typing import Any, Final, Protocol, runtime_checkable
 
 from .budget_models import (
     BudgetAlert,

@@ -100,6 +100,7 @@ from zephyr.gov_enforcement.behavioral_admission.admission_response import (
     InvalidDecisionError,
 )
 from zephyr.gov_enforcement.behavioral_admission.code_review_ai import ReviewLevel
+from zephyr.gov_enforcement.behavioral_admission.gate_event_adapter import GateEventAdapter
 from zephyr.gov_enforcement.behavioral_admission.gpu_consensus_scheduler import (
     ConsensusPriority,
     ConsensusRoute,
@@ -122,13 +123,6 @@ from zephyr.gov_enforcement.behavioral_admission.post_process import (
     typecheck_hook,
 )
 from zephyr.gov_enforcement.behavioral_admission.protection_index import ProtectionIndex
-# #ARCH-WORKTREE-LIFECYCLE-001 (2026-07-21): session_lifecycle.py 已删除（死代码，生产引用=0）
-# 替代状态机：rule_bridge.worktree_lifecycle.WorktreeLifecycle（5态，专门管理 worktree 生命周期）
-# 此处 re-export 保持 behavioral_admission 包入口的可见性，便于 callers 发现新状态机
-from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import (
-    WorktreeLifecycle,
-    WorktreeState,
-)
 
 # Migrated from compliance/behavioral-admission
 from zephyr.gov_enforcement.behavioral_admission.verdict_engine import (
@@ -145,7 +139,14 @@ from zephyr.gov_enforcement.behavioral_admission.vibe_coding_enforcer import (
     must,
     should,
 )
-from zephyr.gov_enforcement.behavioral_admission.gate_event_adapter import GateEventAdapter
+
+# #ARCH-WORKTREE-LIFECYCLE-001 (2026-07-21): session_lifecycle.py 已删除（死代码，生产引用=0）
+# 替代状态机：rule_bridge.worktree_lifecycle.WorktreeLifecycle（5态，专门管理 worktree 生命周期）
+# 此处 re-export 保持 behavioral_admission 包入口的可见性，便于 callers 发现新状态机
+from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import (
+    WorktreeLifecycle,
+    WorktreeState,
+)
 
 __all__ = [
     "AdmissionController",

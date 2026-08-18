@@ -23,6 +23,7 @@ MVEP Orchestrator — v0.11.0 Minimum Viable Escalation Protocol调度器。
 from __future__ import annotations
 
 from typing import Final
+
 MVE_SEQUENCE: Final[list] = [
     "D-022-01 engine",
     "D-022-02 delegation",

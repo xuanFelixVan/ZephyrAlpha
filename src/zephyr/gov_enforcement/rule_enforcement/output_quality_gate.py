@@ -14,9 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from typing import Final
-
 from dataclasses import dataclass
+from typing import Final
 
 
 @dataclass

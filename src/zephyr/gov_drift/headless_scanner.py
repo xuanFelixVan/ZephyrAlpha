@@ -29,8 +29,10 @@ import os
 import uuid
 from dataclasses import dataclass
 
-from .drift_models import ScanResult
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+from .drift_models import ScanResult
+
 
 @dataclass
 class HeadlessDiffEntry:

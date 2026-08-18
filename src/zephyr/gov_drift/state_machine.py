@@ -26,9 +26,9 @@ Drift State Machine — state_machine.py
 
 from __future__ import annotations
 
-from typing import Final
 import uuid
 from datetime import UTC, datetime, timedelta
+from typing import Final
 
 from .drift_models import DriftState
 

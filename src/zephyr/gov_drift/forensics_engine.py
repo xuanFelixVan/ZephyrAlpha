@@ -26,11 +26,11 @@ forensics_report: timeline + state_diffs + actor_trace + dependency_impact
 
 from __future__ import annotations
 
-from typing import Final
-from zephyr.shared.io.serialization import dumps
-
 import logging
+from typing import Final
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.io.serialization import dumps
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +38,7 @@ import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+
 
 @dataclass
 class ForensicsTimelineEntry:

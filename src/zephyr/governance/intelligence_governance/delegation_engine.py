@@ -32,7 +32,6 @@ logger = logging.getLogger(__name__)
 import threading
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
-from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 from zephyr.governance.escalation.escalation_models import (
     DelegationRecord,
@@ -40,6 +39,7 @@ from zephyr.governance.escalation.escalation_models import (
     EscalationEvent,
     EscalationState,
 )
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 
 class DelegationEngine:

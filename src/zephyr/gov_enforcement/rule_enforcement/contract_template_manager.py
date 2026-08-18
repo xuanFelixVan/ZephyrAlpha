@@ -31,7 +31,6 @@ Manages MCP (Model Context Protocol) tool contract templates:
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import json
 from datetime import datetime
@@ -39,6 +38,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, field_validator
 
+from zephyr.shared.io.serialization import dumps
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [

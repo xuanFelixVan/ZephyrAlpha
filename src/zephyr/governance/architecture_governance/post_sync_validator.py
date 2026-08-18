@@ -44,6 +44,7 @@ import shlex
 import subprocess
 import sys
 from pathlib import Path
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 __all__ = [

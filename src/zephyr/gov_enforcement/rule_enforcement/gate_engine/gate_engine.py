@@ -67,8 +67,8 @@ Safety : M（治理层代码，门禁失败阻断任务启动）
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +83,6 @@ from typing import Any, ClassVar
 
 import yaml
 
-from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 from zephyr.gov_enforcement.rule_enforcement.gate_types import (
     GateEngineError,
     GateResult,
@@ -92,9 +91,9 @@ from zephyr.gov_enforcement.rule_enforcement.gate_types import (
 )
 from zephyr.gov_enforcement.rule_enforcement.risk_ssot import load_risk_params_ssot
 from zephyr.gov_enforcement.rule_enforcement.task_types import Task
-from zephyr.shared.io.paths import DB_PATH
-from zephyr.shared.utils.db_utils import ensure_schema, get_db_connection
 from zephyr.shared.io.io_cache import FileCache
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
+from zephyr.shared.utils.db_utils import ensure_schema, get_db_connection
 
 __all__ = [
     "GATES_DIR",

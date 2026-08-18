@@ -15,9 +15,8 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # ARCH-031: migrated from governance/governance/data_quality.py to root (canonical per [MODULE] annotation)
-from typing import Final
-
 from enum import Enum
+from typing import Final
 
 from pydantic import BaseModel
 

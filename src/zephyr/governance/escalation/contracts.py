@@ -24,11 +24,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from zephyr.shared.contracts.rollback_types import RollbackResult
-
 # G-CT-002: RollbackHandler re-export from infrastructure.rollback.contracts
 # (SSoT: tests/governance/audit/test_gct_002_audit_to_rollback.py imports from here)
 from zephyr.infrastructure.rollback.contracts import RollbackHandler  # noqa: E402,F401
+from zephyr.shared.contracts.rollback_types import RollbackResult
 
 
 class EscalationContracts:

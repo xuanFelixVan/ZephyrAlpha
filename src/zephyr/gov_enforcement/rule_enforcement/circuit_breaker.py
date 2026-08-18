@@ -65,8 +65,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, TypeVar
 
-from zephyr.shared.security.capability import capability_check
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.security.capability import capability_check
 from zephyr.shared.utils.db_utils import get_db_connection, init_db
 
 __all__ = [

@@ -17,8 +17,8 @@
 
 from __future__ import annotations
 
-from typing import Final
 from enum import Enum
+from typing import Final
 
 
 class BackupLayer(str, Enum):

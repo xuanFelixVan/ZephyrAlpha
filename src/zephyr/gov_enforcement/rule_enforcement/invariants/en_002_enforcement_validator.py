@@ -27,17 +27,15 @@ SSoT: cross_layer_contracts.yaml v3.0
 
 from __future__ import annotations
 
-from typing import Final
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import yaml
 
-from zephyr.shared.schema.schemas import Priority
-
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.schema.schemas import Priority
 
 _YAML_PATH = Path(__file__).parent / "en_002_enforcement_validator.yaml"
 

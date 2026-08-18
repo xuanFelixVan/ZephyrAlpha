@@ -16,10 +16,9 @@
 # [TTL] permanent
 from __future__ import annotations
 
-from typing import Final
 from enum import Enum
 from functools import wraps
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, Final, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
 

@@ -81,13 +81,13 @@ Returns: 0 if consistent, 1 if drift detected.
 
 from __future__ import annotations
 
-from typing import Final
 import importlib
 import json
 import sys
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
+from typing import Final
 
 
 class DecisionStatus(str, Enum):

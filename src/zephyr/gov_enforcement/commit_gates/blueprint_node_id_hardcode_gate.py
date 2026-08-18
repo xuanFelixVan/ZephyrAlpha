@@ -68,9 +68,9 @@ import subprocess
 import sys
 from typing import Final
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 # 共享 _get_worktree_root（避免 FUNCTION-DUP 重复——与 doc_ref_broken_gate.py 共用）
 from zephyr.gov_enforcement.commit_gates.doc_ref_broken_gate import _get_worktree_root
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)

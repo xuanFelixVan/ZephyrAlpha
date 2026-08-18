@@ -17,9 +17,9 @@
 
 from __future__ import annotations
 
-from typing import Final
 import uuid
 from enum import Enum
+from typing import Final
 
 from pydantic import BaseModel
 

@@ -31,7 +31,6 @@ abort: 文件状态不一致->重新生成+通知Owner
 对标 blueprint.md §6.14。"""
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import hashlib
 import json
@@ -40,6 +39,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from zephyr.shared.io.serialization import dumps
 
 
 @dataclass

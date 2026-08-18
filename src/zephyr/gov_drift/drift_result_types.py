@@ -28,18 +28,19 @@ Drift Detector 结果类型 + 专项检测函数 — drift_result_types.py
 
 from __future__ import annotations
 
+import logging
 import os
 import re
-import logging
 import sqlite3
-from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import sys
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
-from .drift_models import DriftEvent, DriftState, ScanLevel, Severity
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+from .drift_models import DriftEvent, DriftState, ScanLevel, Severity
 
 logger = logging.getLogger(__name__)
 

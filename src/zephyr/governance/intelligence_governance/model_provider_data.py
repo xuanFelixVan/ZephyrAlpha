@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 from typing import Final
+
 from zephyr.governance.ops_governance.budget_models import ModelTier
 
 DEFAULT_PROVIDERS: Final[dict[str, dict[str, str | float | list[str]]]] = {

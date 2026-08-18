@@ -17,9 +17,9 @@
 
 from __future__ import annotations
 
-from typing import Final
 from datetime import UTC, datetime
 from enum import Enum
+from typing import Final
 
 from pydantic import BaseModel, Field
 

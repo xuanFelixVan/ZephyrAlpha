@@ -49,14 +49,13 @@ from decimal import Decimal
 from typing import Any, Optional
 from zoneinfo import ZoneInfo
 
-from zephyr.shared.utils.time_utils import now_utc
-
 import pandas as pd
 
 from zephyr.governance.intelligence_governance.provider_base import (
     QuoteProviderBase,
     QuoteProviderMeta,
 )
+from zephyr.shared.utils.time_utils import now_utc
 
 _logger = logging.getLogger(__name__)
 

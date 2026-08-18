@@ -41,18 +41,18 @@ SSoT: cross_layer_contracts.yaml -> CTR-001
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final, Iterator
 import logging
 from datetime import UTC, datetime, timedelta
+from typing import TYPE_CHECKING, Final, Iterator
 
 import numpy as np
 import pandas as pd
 
 from zephyr.data.provider_base import (
-    IngestProviderBase,
-    IngestProviderMeta,
     FetchPayload,
     FetchResult,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
 
 if TYPE_CHECKING:

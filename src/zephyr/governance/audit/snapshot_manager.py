@@ -29,7 +29,6 @@ SnapshotManager — Event Sourcing 快照管理（DW-0005）
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import json
 import logging
@@ -40,6 +39,7 @@ from pathlib import Path
 from zephyr.gov_audit.event_store import EventRecord, EventStore
 from zephyr.governance.persistence.sqlite_schema import SchemaManager, get_db_connection
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.serialization import dumps
 
 logger = logging.getLogger(__name__)
 

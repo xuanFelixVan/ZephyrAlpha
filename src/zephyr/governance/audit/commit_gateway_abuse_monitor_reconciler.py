@@ -175,7 +175,6 @@ Usage
 """
 
 from __future__ import annotations
-from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 import json
 import logging
@@ -193,6 +192,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     ReconcilerSpec,
     _write_reconcile_report,
 )
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 

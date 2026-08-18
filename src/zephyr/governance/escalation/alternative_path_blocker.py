@@ -23,6 +23,7 @@ Alternative Path Blocker — v0.13.0 替代工具路径拦截器。
 from __future__ import annotations
 
 from typing import Final
+
 BLOCKED_ALTERNATIVES: Final[dict] = {"write_file": ["tee", "cat >", "dd of="], "execute": ["source", "."]}
 
 

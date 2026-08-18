@@ -32,8 +32,8 @@ scalability: 10->100->500->1500模块渐进路线
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
 
 logger = logging.getLogger(__name__)
 

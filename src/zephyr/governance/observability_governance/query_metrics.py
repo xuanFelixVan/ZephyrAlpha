@@ -43,7 +43,6 @@ Safety     : M（监控组件，不影响主流程）
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import functools
 import logging
@@ -56,6 +55,7 @@ from pathlib import Path
 from typing import Any, TypeVar
 
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.serialization import dumps
 
 __all__ = [
     "QueryMetrics",

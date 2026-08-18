@@ -24,7 +24,6 @@
 5.37.9：clear() 权限保护——必须显式 confirm=True，操作本身写核心审计链留痕。
 """
 
-from zephyr.shared.io.serialization import dumps
 import hashlib
 import json
 import logging
@@ -35,6 +34,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus
+from zephyr.shared.io.serialization import dumps
 
 _CORE_AUDIT_AVAILABLE = False
 try:

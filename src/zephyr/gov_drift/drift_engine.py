@@ -32,8 +32,8 @@ Drift Engine — 编排器核心 (SRC-0030 精简后)
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
@@ -42,32 +42,10 @@ import json
 import os
 import signal
 import sqlite3
-from zephyr.governance.persistence.sqlite_schema import get_db_connection
-from zephyr.shared.io.paths import DB_PATH  # DB_PATH SSoT — 治理数据库路径唯一真源
 import uuid
 from datetime import UTC, datetime
 
 import yaml
-
-# 导入 SRC-0031~0034 提取的组件
-from .drift_infrastructure import (
-    CheckpointWriter,
-    RecoveryManager,
-    check_large_diff,
-    consume_budget,
-    declare_maintenance_window,
-    get_maintenance_window,
-)
-from .drift_models import (
-    BulkDriftEvent,
-    Detector,
-    DriftEvent,
-    DriftReport,
-    DriftState,
-    ScanLevel,
-    ScanResult,
-    Severity,
-)
 
 # 5.138.2 治本：zephyr.gov_audit.finding_model 无下游 import（仅 stdlib+pydantic+shared.schema），
 # gov_audit/__init__ 为 PEP 562 全惰性加载，与本模块无真实循环链——
@@ -88,7 +66,28 @@ from zephyr.gov_audit.finding_model import (
     RemediationPriority,
     generate_finding_id,
 )
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
+from zephyr.shared.io.paths import DB_PATH  # DB_PATH SSoT — 治理数据库路径唯一真源
 
+# 导入 SRC-0031~0034 提取的组件
+from .drift_infrastructure import (
+    CheckpointWriter,
+    RecoveryManager,
+    check_large_diff,
+    consume_budget,
+    declare_maintenance_window,
+    get_maintenance_window,
+)
+from .drift_models import (
+    BulkDriftEvent,
+    Detector,
+    DriftEvent,
+    DriftReport,
+    DriftState,
+    ScanLevel,
+    ScanResult,
+    Severity,
+)
 
 _REGISTRY_PATH: str = ""
 

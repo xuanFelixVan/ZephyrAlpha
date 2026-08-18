@@ -249,7 +249,7 @@ def make_commit_scope_gate() -> GateSpec:
             f"请拆分为多个 commit，每个域一个。\n"
             + "\n".join(detail_lines)
             + "\n如确认需跨域提交（如跨域重构/域注册表变更），"
-            f"用 commit(allow_multi_domain=True) 逃生通道。"
+            "用 commit(allow_multi_domain=True) 逃生通道。"
         )
 
     return GateSpec(gate_id="COMMIT-SCOPE", check=_check, priority=48)

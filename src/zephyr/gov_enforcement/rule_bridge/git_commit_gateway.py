@@ -44,52 +44,75 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
-from zephyr.governance.audit.reconciliation_registry import (
-    ReconcileResult,
-    ReconciliationRegistry,
-    make_manifest_reconciler,
-    make_path_tree_reconciler,
-    make_path_ownership_reconciler,
-    make_depgraph_ops_reconciler,
-    make_blueprint_frontmatter_reconciler,  # ARCH-FRONTMATTER-STATE-001 Phase 2
-    make_drift_scan_reconciler,
-    make_drift_fix_reconciler,
-    make_module_id_recommend_reconciler,
-    make_yaml_sync_reconciler,
-    make_ttl_drift_incremental_reconciler,
-    make_vocab_change_reconciler,
-    make_deprecated_directory_reconciler,
-    make_delete_audit_reconciler,
-    make_regenerate_reconciler,
-    make_rule_audit_reconciler,
-    make_registry_sync_reconciler,
-    make_integrity_audit_reconciler,
-    make_index_generator_reconciler,
-    make_runtime_cleanup_reconciler,
-    make_architecture_health_reconciler,
-    make_session_log_index_reconciler,
-    make_arch_diagram_reconciler,
-    make_constraint_detect_reconciler,
-    make_gate_inventory_sync_reconciler,
-    make_gate_registry_sync_reconciler,
-    make_in_process_gate_registry_drift_reconciler,  # #ARCH-GATE-REGISTRY-AUTO-001 Phase 6——YAML ↔ 内存注册表双向漂移检测
-    make_tmp_cleanup_reconciler,
-    make_worktree_lifecycle_reconciler,
-    make_scripts_import_integrity_reconciler,  # ARCH-TOOL-HEALTH-V1 Phase 3
-    make_undefined_name_baseline_reconciler,  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 baseline 全扫）
-    make_consumers_accuracy_baseline_reconciler,  # #ARCH-CONSUMERS-ACCURACY-001/003 治本 Phase 2（CONSUMERS baseline 全扫）
-    make_capability_lookup_health_reconciler,  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺
-    make_stash_lifecycle_reconciler,  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
-    make_session_staging_lifecycle_reconciler,  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 staging TTL 清理（priority=802）
-    make_root_temp_sweep_reconciler,  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 根目录临时文件清扫（priority=803）
-    make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
-    _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
-    _downgrade_auto_committed_on_flush_failure,  # #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001 治本
-    _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
-    _print_block_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2
+from zephyr.gov_enforcement.rule_bridge.batched_auto_committer import BatchedAutoCommitter  # ARCH-GIT-CALL-BUDGET P2.3
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
+from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import (
+    auto_register_gates,  # #ARCH-GATE-REGISTRY-AUTO-001 Phase 4——YAML 驱动自动注册替代 76 个显式 import
+)
+from zephyr.governance.audit.blueprint_status_transition_reconciler import (
+    make_blueprint_status_transition_reconciler,  # 12维度审计自动化 P1-d BLUEPRINT状态转跃reconciler
+)
+from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  # ARCH-TOOL-HEALTH-V1 Phase 5b
+    make_commit_gateway_abuse_monitor_reconciler,
+)
+from zephyr.governance.audit.cross_layer_contract_signature_reconciler import (
+    make_cross_layer_contract_signature_reconciler,  # 12维度审计自动化 P1-b 跨层契约签名reconciler
+)
+from zephyr.governance.audit.dead_public_wrapper_reconciler import (  # #ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 防复发——死公共 wrapper 持续自动检测
+    make_dead_public_wrapper_reconciler,
+)
+from zephyr.governance.audit.error_pattern_consumer_reconciler import (  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b
+    make_error_pattern_consumer_reconciler,
 )
 from zephyr.governance.audit.git_guard_bypass_reconciler import (  # #ARCH-GIT-SELF-HARM-GUARD L2.3 alias 绕过检测（priority=810，post-commit warn-only）
     make_git_guard_bypass_reconciler,
+)
+from zephyr.governance.audit.git_performance_monitor_reconciler import (  # ARCH-GIT-CALL-BUDGET P3.5
+    make_git_performance_monitor_reconciler,
+)
+from zephyr.governance.audit.reconciliation_registry import (
+    ReconcileResult,
+    ReconciliationRegistry,
+    _downgrade_auto_committed_on_flush_failure,  # #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001 治本
+    _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
+    _print_block_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2
+    _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
+    make_arch_diagram_reconciler,
+    make_architecture_health_reconciler,
+    make_blueprint_frontmatter_reconciler,  # ARCH-FRONTMATTER-STATE-001 Phase 2
+    make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
+    make_capability_lookup_health_reconciler,  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺
+    make_constraint_detect_reconciler,
+    make_consumers_accuracy_baseline_reconciler,  # #ARCH-CONSUMERS-ACCURACY-001/003 治本 Phase 2（CONSUMERS baseline 全扫）
+    make_delete_audit_reconciler,
+    make_depgraph_ops_reconciler,
+    make_deprecated_directory_reconciler,
+    make_drift_fix_reconciler,
+    make_drift_scan_reconciler,
+    make_gate_inventory_sync_reconciler,
+    make_gate_registry_sync_reconciler,
+    make_in_process_gate_registry_drift_reconciler,  # #ARCH-GATE-REGISTRY-AUTO-001 Phase 6——YAML ↔ 内存注册表双向漂移检测
+    make_index_generator_reconciler,
+    make_integrity_audit_reconciler,
+    make_manifest_reconciler,
+    make_module_id_recommend_reconciler,
+    make_path_ownership_reconciler,
+    make_path_tree_reconciler,
+    make_regenerate_reconciler,
+    make_registry_sync_reconciler,
+    make_root_temp_sweep_reconciler,  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 根目录临时文件清扫（priority=803）
+    make_rule_audit_reconciler,
+    make_runtime_cleanup_reconciler,
+    make_scripts_import_integrity_reconciler,  # ARCH-TOOL-HEALTH-V1 Phase 3
+    make_session_log_index_reconciler,
+    make_session_staging_lifecycle_reconciler,  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 staging TTL 清理（priority=802）
+    make_stash_lifecycle_reconciler,  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
+    make_tmp_cleanup_reconciler,
+    make_ttl_drift_incremental_reconciler,
+    make_undefined_name_baseline_reconciler,  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 baseline 全扫）
+    make_vocab_change_reconciler,
+    make_worktree_lifecycle_reconciler,
+    make_yaml_sync_reconciler,
 )
 from zephyr.governance.audit.remediation_progress_reconciler import (  # #ARCH-GOV-CONVERGENCE-META Phase 3.1
     make_remediation_progress_reconciler,
@@ -97,29 +120,12 @@ from zephyr.governance.audit.remediation_progress_reconciler import (  # #ARCH-G
 from zephyr.governance.audit.runtime_violation_snapshot_reconciler import (  # #ARCH-GOV-CONVERGENCE-META Phase 3.4b
     make_runtime_violation_snapshot_reconciler,
 )
-from zephyr.governance.audit.git_performance_monitor_reconciler import (  # ARCH-GIT-CALL-BUDGET P3.5
-    make_git_performance_monitor_reconciler,
-)
-from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  # ARCH-TOOL-HEALTH-V1 Phase 5b
-    make_commit_gateway_abuse_monitor_reconciler,
-)
-from zephyr.governance.audit.error_pattern_consumer_reconciler import (  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b
-    make_error_pattern_consumer_reconciler,
+from zephyr.governance.audit.translation_coverage_reconciler import (  # TRANSLATION-COVERAGE Layer 4——翻译覆盖率存量对账（post-commit warn-only，priority=951）
+    make_translation_coverage_reconciler,
 )
 from zephyr.governance.audit.workspace_hygiene_reconciler import (  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002
     make_workspace_hygiene_reconciler,
 )
-from zephyr.governance.audit.dead_public_wrapper_reconciler import (  # #ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 防复发——死公共 wrapper 持续自动检测
-    make_dead_public_wrapper_reconciler,
-)
-from zephyr.governance.audit.translation_coverage_reconciler import (  # TRANSLATION-COVERAGE Layer 4——翻译覆盖率存量对账（post-commit warn-only，priority=951）
-    make_translation_coverage_reconciler,
-)
-from zephyr.gov_enforcement.rule_bridge.batched_auto_committer import BatchedAutoCommitter  # ARCH-GIT-CALL-BUDGET P2.3
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
-from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import auto_register_gates  # #ARCH-GATE-REGISTRY-AUTO-001 Phase 4——YAML 驱动自动注册替代 76 个显式 import
-from zephyr.governance.audit.cross_layer_contract_signature_reconciler import make_cross_layer_contract_signature_reconciler  # 12维度审计自动化 P1-b 跨层契约签名reconciler
-from zephyr.governance.audit.blueprint_status_transition_reconciler import make_blueprint_status_transition_reconciler  # 12维度审计自动化 P1-d BLUEPRINT状态转跃reconciler
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 

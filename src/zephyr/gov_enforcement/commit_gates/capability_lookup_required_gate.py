@@ -84,8 +84,8 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
-    BYPASS_MARKER_PREFIX,
     BYPASS_ENV_VAR,
+    BYPASS_MARKER_PREFIX,
     has_bypass_marker,
     is_emergency_bypass,
     is_exempt_reason,

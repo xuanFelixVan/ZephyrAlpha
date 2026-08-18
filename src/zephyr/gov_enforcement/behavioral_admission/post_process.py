@@ -54,6 +54,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, unique
 from typing import Any
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 

@@ -46,13 +46,12 @@ Phase 3 退役移除——相关字段已从蓝图 frontmatter 与 blueprint_reg
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import yaml
 

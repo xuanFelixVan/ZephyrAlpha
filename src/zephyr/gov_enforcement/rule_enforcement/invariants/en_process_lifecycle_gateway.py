@@ -26,8 +26,8 @@ SSoT: MOD-INF-016 §2.10 | DEP-GRAPH-process-lifecycle-001
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
 
 logger = logging.getLogger(__name__)
 

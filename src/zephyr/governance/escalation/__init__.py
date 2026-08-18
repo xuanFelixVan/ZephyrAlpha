@@ -50,9 +50,6 @@
 # A1 --> O1
 """
 
-from zephyr.governance.intelligence_governance.delegation_engine import (
-    DelegationEngine,
-)
 from zephyr.governance.escalation.escalation_engine import (
     EscalationEngine,
 )
@@ -66,6 +63,9 @@ from zephyr.governance.escalation.escalation_models import (
     EscalationRule,
     EscalationState,
     RuleCategory,
+)
+from zephyr.governance.intelligence_governance.delegation_engine import (
+    DelegationEngine,
 )
 from zephyr.governance.resilience_governance.circuit_breaker import (
     CircuitBreaker,

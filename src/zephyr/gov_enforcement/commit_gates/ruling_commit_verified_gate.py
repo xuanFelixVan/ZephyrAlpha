@@ -65,7 +65,6 @@ Usage::
 """
 
 from __future__ import annotations
-from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 import logging
 import os
@@ -78,6 +77,7 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
 )
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 

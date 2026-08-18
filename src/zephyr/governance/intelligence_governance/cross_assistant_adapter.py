@@ -23,6 +23,7 @@ Cross-Assistant Adapter — v0.6.0 Trae/Cursor/Windsurf/Codex/Wedata统一升级
 from __future__ import annotations
 
 from typing import Final
+
 SUPPORTED_IDES: Final[list] = ["trae", "cursor", "windsurf", "codex", "wedata"]
 
 

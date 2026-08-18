@@ -39,10 +39,10 @@ PhaseManager ↔ GateEngine 桥梁:
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 from collections.abc import Callable
 from enum import Enum
+from typing import Final
 
 from pydantic import BaseModel, Field
 

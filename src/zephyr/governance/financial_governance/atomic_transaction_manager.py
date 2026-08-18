@@ -169,36 +169,21 @@ Usage::
 
 from __future__ import annotations
 
-from typing import Final
-
 import importlib
-
 import json
-
 import logging
-
 import os
-
 import secrets
-
 import sqlite3
-
 import sys
-
 import time
-
 from collections.abc import Iterable, Iterator, Sequence
-
 from contextlib import contextmanager
-
 from pathlib import Path
-
 from threading import RLock
-
-from typing import Any, Literal, cast
+from typing import Any, Final, Literal, cast
 
 from zephyr.shared.io.paths import REPO_ROOT
-
 from zephyr.shared.utils.time_utils import now_iso  # 5.161 修复: 收敛 _now_iso 私有副本到真源
 
 _SCRIPTS_DIR = REPO_ROOT / "scripts"

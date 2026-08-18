@@ -634,7 +634,8 @@ def emergency_commit(
                 try:
                     _ops_log = root / ".runtime" / "worktree_ops_log.jsonl"
                     _ops_log.parent.mkdir(parents=True, exist_ok=True)
-                    import time as _t, json as _j
+                    import json as _j
+                    import time as _t
                     with open(_ops_log, "a", encoding="utf-8") as _f:
                         _f.write(_j.dumps({"ts": _t.time(), "session_id": session_id, "stage": "emergency_commit", "event": "workspace_head_diff", "files": _warn_files}, ensure_ascii=False) + "\n")
                 except OSError:
@@ -816,7 +817,8 @@ def _trigger_reconcilers_safely(
         abs_files = [str(root / f) for f in rel_files]
         # 构造一个 minimal CommitResult 供 reconciler 使用
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
-            CommitResult, CommitStatus,
+            CommitResult,
+            CommitStatus,
         )
         result = CommitResult(
             status=CommitStatus.OK,

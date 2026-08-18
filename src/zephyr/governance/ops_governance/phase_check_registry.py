@@ -44,8 +44,9 @@ import sys
 from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 logger = logging.getLogger(__name__)
 

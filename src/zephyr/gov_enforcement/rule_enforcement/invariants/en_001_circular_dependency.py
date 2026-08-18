@@ -28,16 +28,17 @@ Architecture Decision:  (LPC 双轨)
 
 from __future__ import annotations
 
-from typing import Any, Final
 import ast
 import sys
 from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any, Final
 
 import yaml
 
 from zephyr.shared.io.paths import REPO_ROOT
+
 SRC_ROOT: Final[Path] = REPO_ROOT / "src" / "zephyr"
 
 _YAML_PATH = Path(__file__).parent / "en_001_circular_dependency.yaml"

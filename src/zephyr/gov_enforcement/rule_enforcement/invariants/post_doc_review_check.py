@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-GOV-post_doc_review_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
 """
 PostDocReviewScanner — Session 关门时文档内容审查扫描器。
 

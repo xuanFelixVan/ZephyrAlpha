@@ -238,59 +238,36 @@ __all__ = [
 
 ]
 
-import json
-
-import os
-
-import subprocess
-
-import sys
-
 import contextlib
-
+import functools
+import json
+import logging
+import os
+import subprocess
+import sys
 import time
-
 from pathlib import Path
+from typing import TypedDict
 
-from zephyr.gov_enforcement.rule_bridge.worktree_manager import (
-
-    WorktreeManager,
-
-    WorktreeError,
-
-    _WorktreeLock,
-
-    _force_rmtree,
-
-)
-
-from zephyr.security.access_control.session_concurrency import SessionRegistry
-
+from zephyr.gov_enforcement.rule_bridge.emergency_commit import check_start_blocked as _check_emergency_start_blocked
+from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import cleanup_heartbeat_file
 from zephyr.gov_enforcement.rule_bridge.session_claim import generate_session_id
-
-from zephyr.shared.io.paths import REPO_ROOT
-
+from zephyr.gov_enforcement.rule_bridge.worktree_manager import (
+    WorktreeError,
+    WorktreeManager,
+    _force_rmtree,
+    _WorktreeLock,
+)
+from zephyr.governance.audit.ai_error_pattern_library import (  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-4
+    get_default_library as _get_error_pattern_library,
+)
+from zephyr.security.access_control.session_concurrency import SessionRegistry
 from zephyr.shared.infra.process_pool import (
     is_pid_alive,
     run_subprocess_hidden,
     spawn_python_hidden,
 )
-
-from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import cleanup_heartbeat_file
-
-from zephyr.gov_enforcement.rule_bridge.emergency_commit import check_start_blocked as _check_emergency_start_blocked
-
-from zephyr.governance.audit.ai_error_pattern_library import (  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-4
-
-    get_default_library as _get_error_pattern_library,
-
-)
-
-import functools
-
-import logging
-
-from typing import TypedDict
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
@@ -653,12 +630,12 @@ def _quarantine_root(root: Path) -> Path:
 # 应直接用 shared API，不再需要 audit_worktree_ops_telemetry.py 的 "rollback" 豁免。
 
 from zephyr.shared.io.workspace_telemetry import (
-
     compute_content_hash as _compute_content_hash_impl,
-
-    log_workspace_op as _log_workspace_op_impl,
-
 )
+from zephyr.shared.io.workspace_telemetry import (
+    log_workspace_op as _log_workspace_op_impl,
+)
+
 
 def _log_workspace_op(
 
@@ -4137,9 +4114,8 @@ def _run_pre_commit_gates_once(
     try:
 
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
-
-            GitCommitGateway, _GATEWAY_ENV,
-
+            _GATEWAY_ENV,
+            GitCommitGateway,
         )
 
         _gw = GitCommitGateway(project_root=root)
@@ -6311,10 +6287,9 @@ def _run_reconcilers_after_merge_sync(
     try:
 
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
-
         from zephyr.governance.audit.reconciliation_registry import (
-            _log_reconcile_results,
             _downgrade_auto_committed_on_flush_failure,
+            _log_reconcile_results,
         )
 
         gateway = GitCommitGateway(project_root=root)
@@ -6746,9 +6721,8 @@ def _pre_merge_gate_check(
     try:
 
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
-
-            GitCommitGateway, _GATEWAY_ENV,
-
+            _GATEWAY_ENV,
+            GitCommitGateway,
         )
 
         # 获取 session 分支变更文件列表
@@ -7364,10 +7338,9 @@ def _run_post_commit_reconcile(
     try:
 
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
-
         from zephyr.governance.audit.reconciliation_registry import (
-            _log_reconcile_results,
             _downgrade_auto_committed_on_flush_failure,
+            _log_reconcile_results,
         )
 
         gateway = GitCommitGateway(project_root=root)
@@ -7799,11 +7772,8 @@ def session_worktree_merge(
         try:
 
             from zephyr.governance.audit.reconciliation_registry import (
-
                 ReconcileResult,
-
                 _log_reconcile_results,
-
             )
 
             _block_result = ReconcileResult(
@@ -8201,7 +8171,6 @@ def _write_stash_notice(
     """
 
     import json
-
     import time as _time
 
     notice = {
@@ -8970,11 +8939,8 @@ def _evaluate_drift_after_restore(
         return None  # 无漂移，调用方返回 restored 信息
 
     from zephyr.governance.audit.workspace_hygiene_reconciler import (
-
         _git_status_porcelain,
-
         _is_auto_sync_product,
-
     )
 
     # 重新检测：auto-sync restore 后是否仍有真实代码修改
@@ -9340,11 +9306,8 @@ def _log_workspace_drift_warn(
     try:
 
         from zephyr.governance.audit.workspace_hygiene_reconciler import (
-
             _git_status_porcelain,
-
             _is_auto_sync_product,
-
         )
 
     except ImportError as e:
@@ -9402,7 +9365,6 @@ def _log_workspace_drift_warn(
     # 落盘遥测（fail-open：IO 失败不阻断 commit）
 
     import json
-
     import time
 
     record = {

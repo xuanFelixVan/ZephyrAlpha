@@ -16,11 +16,11 @@
 # [TTL] permanent
 # 代理模块：将 zephyr.governance.budget_enforcement 重定向到实际模块
 from zephyr.autonomy_core.skills.skill_executor import BudgetEnforcer
+from zephyr.governance.intelligence_governance.model_router import ModelRouter, TaskComplexity
 from zephyr.governance.ops_governance.budget_models import BudgetDimension
 from zephyr.governance.ops_governance.budget_tracker import BudgetTracker, TrackerScope
 from zephyr.governance.ops_governance.burn_rate_monitor import BurnRateMonitor
 from zephyr.governance.ops_governance.degradation_manager import DegradationManager
-from zephyr.governance.intelligence_governance.model_router import ModelRouter, TaskComplexity
 from zephyr.governance.ops_governance.timeout_guard import TimeoutGuard, TimeoutLevel
 
 

@@ -180,7 +180,9 @@ try:
     from zephyr.governance.architecture_governance.llm_impact_analyzer import RiskLevel
     from zephyr.governance.audit.snapshot_manager import SnapshotError
     from zephyr.governance.capability_lookup import CapabilityLookup
-    from zephyr.governance.data_governance.akshare_quote_provider import AkshareQuoteProvider  # noqa: import-integrity  git rename staging boundary false-positive, file exists at line 69
+    from zephyr.governance.data_governance.akshare_quote_provider import (
+        AkshareQuoteProvider,  # noqa: import-integrity  git rename staging boundary false-positive, file exists at line 69
+    )
     from zephyr.governance.engine.pipeline_base import ExperimentConfig
     from zephyr.governance.ops_governance.token_budget import PoolLevel
     from zephyr.governance.persistence.database_service import DatabaseService
@@ -224,7 +226,6 @@ try:
     import zephyr.governance.architecture_governance.dependency_manager as dependency_manager
     import zephyr.governance.architecture_governance.local_first_arch as local_first_arch
     import zephyr.governance.architecture_governance.path_resolver as path_resolver
-    import zephyr.governance.financial_governance.strategy_portfolio as strategy_portfolio
     import zephyr.governance.context_governance.context_manager as context_manager
     import zephyr.governance.context_governance.context_recycling as context_recycling
     import zephyr.governance.context_governance.prompt_lifecycle as prompt_lifecycle
@@ -240,6 +241,7 @@ try:
     import zephyr.governance.financial_governance.fsm_verifier as fsm_verifier
     import zephyr.governance.financial_governance.microstructure_defense as microstructure_defense
     import zephyr.governance.financial_governance.oms_risk_engine as oms_risk_engine
+    import zephyr.governance.financial_governance.strategy_portfolio as strategy_portfolio
     import zephyr.governance.intelligence_governance.agent_debate as agent_debate
     import zephyr.governance.intelligence_governance.ai_self_diagnosis as ai_self_diagnosis
     import zephyr.governance.intelligence_governance.multi_model_consensus as multi_model_consensus

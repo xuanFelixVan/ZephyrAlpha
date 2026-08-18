@@ -242,7 +242,7 @@ def make_rule_execution_pairing_gate() -> GateSpec:
                 f"RULE-EXECUTION-PAIRING: {len(violations)} 条规则未配对执行机制"
                 f"（Phase 3.5）: " + "; ".join(violations)
                 + ". 修复：在 enforcement 段添加 paired_gate_id"
-                f"（gate_id 或 null），或用 [no-pairing:<reason>] 逃生通道。"
+                "（gate_id 或 null），或用 [no-pairing:<reason>] 逃生通道。"
             )
         return True, ""
 

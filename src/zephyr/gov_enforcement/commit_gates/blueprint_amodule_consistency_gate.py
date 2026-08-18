@@ -77,39 +77,7 @@ Usage::
 
 
 
-from __future__ import annotations
-
-
-
-import logging
-
-import re
-
-
-
-from zephyr.gov_enforcement.commit_gates._diff_helpers import (
-
-    _extract_docstring_lines,
-
-    _get_added_lines,
-
-    _get_staged_py_files,
-
-    _read_staged_file,
-
-)
-
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
-
-    GateSpec,
-
-    is_test_exempt,
-
-)
-
-
-
-logger = logging.getLogger(__name__)
+from __future__ import annotationsimport loggingimport refrom zephyr.gov_enforcement.commit_gates._diff_helpers import (    _extract_docstring_lines,    _get_added_lines,    _get_staged_py_files,    _read_staged_file,)from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (    GateSpec,    is_test_exempt,)logger = logging.getLogger(__name__)
 
 
 

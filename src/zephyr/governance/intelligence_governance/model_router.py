@@ -14,12 +14,10 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from typing import Final
-
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, Final
 
 from zephyr.governance.ops_governance.budget_models import ModelTier
 

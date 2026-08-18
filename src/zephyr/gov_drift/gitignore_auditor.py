@@ -32,8 +32,8 @@ gitignore_pattern_coverage: 新文件类型未被覆盖建议添加
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
 
 logger = logging.getLogger(__name__)
 

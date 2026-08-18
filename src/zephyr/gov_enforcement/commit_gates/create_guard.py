@@ -647,8 +647,8 @@ def _check_basename_collision(gateway, new_py_files: list[str]) -> tuple[bool, s
         return True, ""
     try:
         from zephyr.governance.capability_lookup import (
-            CapabilityLookup,
             CAPABILITY_DUPLICATE_FIX_HINT,
+            CapabilityLookup,
         )
         _lookup = CapabilityLookup()
         _new_py_tuples = [(str(gateway.project_root / f), f) for f in new_py_files]

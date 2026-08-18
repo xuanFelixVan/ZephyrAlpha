@@ -183,6 +183,7 @@ if __name__ == "__main__":
     退出码：0=全部成功，1=有失败。
     """
     import sys
+
     from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
     from zephyr.shared.io.paths import REPO_ROOT
 

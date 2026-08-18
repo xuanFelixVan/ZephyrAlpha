@@ -26,6 +26,7 @@ D-DATA -> ServiceRegistry 注册模块
 from __future__ import annotations
 
 import logging
+
 from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)

@@ -26,12 +26,12 @@ Drift Detector AI 训练闭环 + 跨语言检测 — drift_training.py
 
 from __future__ import annotations
 
-from typing import Final
 import json
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Final
 
 from .drift_models import DriftEvent, DriftState, ScanLevel, Severity
 

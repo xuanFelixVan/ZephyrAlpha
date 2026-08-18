@@ -94,9 +94,12 @@ from urllib.parse import unquote, urlparse
 import psycopg2
 from psycopg2.pool import PoolError, ThreadedConnectionPool
 
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-from zephyr.shared.security.secrets import SecretsError, get_secret_from_file  # §5.34.8 修复：DB密码走SecretProvider真源
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.security.secrets import (  # §5.34.8 修复：DB密码走SecretProvider真源
+    SecretsError,
+    get_secret_from_file,
+)
 
 # PostgreSQL 连接配置文件路径（P2迁移真源：MOD-DB_DEPGRAPH_PG）
 _PG_ENV_PATH: Path = REPO_ROOT / "config" / ".env.postgres"
@@ -1769,7 +1772,7 @@ if __name__ == "__main__":
     init_db(echo=True)
     tables = table_names()
     ver = schema_version()
-    print(f"\n  depgraph (PostgreSQL) schema verified")
+    print("\n  depgraph (PostgreSQL) schema verified")
     print(f"  Schema version: v{ver}")
     print(f"  Tables ({len(tables)}): {', '.join(tables)}")
     sys.exit(0)

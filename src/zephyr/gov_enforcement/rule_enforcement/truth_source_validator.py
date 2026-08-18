@@ -32,13 +32,12 @@
 
 from __future__ import annotations
 
-from typing import Final
 import hashlib
 import logging
 from datetime import UTC, datetime
 from enum import IntEnum
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from pydantic import BaseModel, Field, model_validator
 

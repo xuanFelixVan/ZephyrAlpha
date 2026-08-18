@@ -27,6 +27,7 @@ Git bisect 自动溯源：bisect start->每step跑detector->定位root_cause com
 from __future__ import annotations
 
 import logging
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)

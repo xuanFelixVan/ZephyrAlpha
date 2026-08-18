@@ -25,11 +25,10 @@ Reference: Google SRE (SLI/SLO/Error Budget/Burn Rate), Nasdaq Pre-Trade Risk.
 
 from __future__ import annotations
 
-from typing import Final
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, Final
 
 
 class BudgetTier(str, Enum):

@@ -44,7 +44,6 @@ from zephyr.gov_code_quality.code_dedup.micro_clone_detector import MicroCloneDe
 from zephyr.infrastructure.asset_inventory.scanner import Scanner
 from zephyr.shared.foundation.errors import SecurityError
 
-
 # 5.45.3 修复：AST 白名单校验，阻断 LLM 生成代码中的危险操作
 _ALLOWED_AST_NODES = (
     ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef,

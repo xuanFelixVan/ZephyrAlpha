@@ -32,8 +32,9 @@ module_id 已重新分配为 MOD-GOV_llm_impact_analyzer 避免撞车。
 
 from __future__ import annotations
 
-from typing import Final
 import logging
+from typing import Final
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
@@ -43,6 +44,7 @@ import subprocess
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 

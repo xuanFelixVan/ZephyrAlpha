@@ -23,6 +23,7 @@ Git Hook Pre-Scanner — v0.14.0 Git操作Hook预扫描器。
 from __future__ import annotations
 
 from typing import Final
+
 SUSPICIOUS_HOOK_CONTENT: Final[list] = ["rm -rf", "git push --force", "curl", "wget", "eval"]
 
 

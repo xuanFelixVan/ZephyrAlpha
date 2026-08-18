@@ -17,9 +17,9 @@
 
 from __future__ import annotations
 
+from enum import Enum
 from pathlib import Path
 from typing import Final
-from enum import Enum
 
 from pydantic import BaseModel
 

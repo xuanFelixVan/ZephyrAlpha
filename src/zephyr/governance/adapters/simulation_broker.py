@@ -51,12 +51,13 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from decimal import Decimal
 
-# 5.152 #9 sanctioned: governance(L2)->trading(L2) 同层契约依赖，层级模型允许；
-# BrokerInterface canonical=zephyr.trading.trading_contracts（ARCH-GOV-SHIM-001 登记真源，禁止下沉 shared）。
-from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.order import Order
 from zephyr.shared.contracts.position import PositionSnapshot
+
+# 5.152 #9 sanctioned: governance(L2)->trading(L2) 同层契约依赖，层级模型允许；
+# BrokerInterface canonical=zephyr.trading.trading_contracts（ARCH-GOV-SHIM-001 登记真源，禁止下沉 shared）。
+from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 
 _logger = logging.getLogger(__name__)
 

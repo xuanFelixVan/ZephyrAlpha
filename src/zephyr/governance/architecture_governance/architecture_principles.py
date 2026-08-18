@@ -17,11 +17,10 @@
 
 from __future__ import annotations
 
-from typing import Final
 from collections.abc import Callable
 from enum import Enum
 from functools import wraps
-from typing import Any, TypeVar
+from typing import Any, Final, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
 

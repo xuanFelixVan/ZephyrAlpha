@@ -80,15 +80,6 @@ ORPHAN-MODULE 注意：gate 模块通过 YAML 动态加载（importlib），但 
 from zephyr.gov_enforcement.commit_gates.blueprint_node_id_hardcode_gate import (  # noqa: F401
     make_blueprint_node_id_hardcode_gate as _make_blueprint_node_id_hardcode_gate,
 )
-from zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate import (  # noqa: F401
-    make_test_residue_ssot_gate as _make_test_residue_ssot_gate,
-)
-from zephyr.gov_enforcement.commit_gates.secret_registry_consistency_gate import (  # noqa: F401  #ARCH-SECRETS-GOV-001 Phase 2-S3
-    make_secret_registry_consistency_gate as _make_secret_registry_consistency_gate,
-)
-from zephyr.gov_enforcement.commit_gates.secret_hardcode_gate import (  # noqa: F401  #ARCH-SECRETS-GOV-001 Phase 3
-    make_secret_hardcode_gate as _make_secret_hardcode_gate,
-)
 from zephyr.gov_enforcement.commit_gates.commit_scope_gate import (  # noqa: F401  # COMMIT-SCOPE 跨域混合提交治本（13a5e1d512 事故）
     make_commit_scope_gate as _make_commit_scope_gate,
 )
@@ -97,6 +88,15 @@ from zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate import (  # no
 )
 from zephyr.gov_enforcement.commit_gates.registry_code_anchor_gate import (  # noqa: F401  # REGISTRY-CODE-ANCHOR 业务注册表代码锚点门禁（#ARCH-BREG-002 门禁A）
     make_registry_code_anchor_gate as _make_registry_code_anchor_gate,
+)
+from zephyr.gov_enforcement.commit_gates.secret_hardcode_gate import (  # noqa: F401  #ARCH-SECRETS-GOV-001 Phase 3
+    make_secret_hardcode_gate as _make_secret_hardcode_gate,
+)
+from zephyr.gov_enforcement.commit_gates.secret_registry_consistency_gate import (  # noqa: F401  #ARCH-SECRETS-GOV-001 Phase 2-S3
+    make_secret_registry_consistency_gate as _make_secret_registry_consistency_gate,
+)
+from zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate import (  # noqa: F401
+    make_test_residue_ssot_gate as _make_test_residue_ssot_gate,
 )
 
 __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-export

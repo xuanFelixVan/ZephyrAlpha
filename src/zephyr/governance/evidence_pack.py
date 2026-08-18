@@ -14,13 +14,14 @@
 # [TESTS] tests/audit-orchestrator/test_evidence_pack.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from zephyr.shared.io.serialization import dumps
 import hashlib
 import json
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from zephyr.shared.io.serialization import dumps
 
 logger = logging.getLogger(__name__)
 

@@ -60,7 +60,6 @@ class SelfTestReport:
 def _check_import_chain() -> CheckResult:
     # Check 1: Import chain
     try:
-        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine  # noqa: F401
         from zephyr.governance.escalation.escalation_engine import EscalationEngine  # noqa: F401
         from zephyr.governance.escalation.escalation_models import (  # noqa: F401
             DelegationStrategy,
@@ -69,6 +68,7 @@ def _check_import_chain() -> CheckResult:
             EscalationState,
             RuleCategory,
         )
+        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine  # noqa: F401
         from zephyr.governance.resilience_governance.circuit_breaker import CircuitBreaker, CircuitState  # noqa: F401
 
         return CheckResult("import_chain", True, detail="All core symbols importable")
@@ -140,8 +140,8 @@ def _check_economic_guard(engine) -> CheckResult:
 def _check_delegation(engine) -> CheckResult:
     # Check 6: Delegation engine
     try:
-        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
         from zephyr.governance.escalation.escalation_models import DelegationStrategy, RuleCategory
+        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
 
         de = DelegationEngine()
         de.register_delegate("_self_test_probe")

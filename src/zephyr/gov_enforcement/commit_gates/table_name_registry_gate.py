@@ -66,6 +66,7 @@ import ast
 import logging
 import re
 
+from zephyr.data.table_registry import TableRegistry, get_registry
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _extract_docstring_lines,
     _get_added_lines,
@@ -76,7 +77,6 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
 )
-from zephyr.data.table_registry import TableRegistry, get_registry
 
 logger = logging.getLogger(__name__)
 

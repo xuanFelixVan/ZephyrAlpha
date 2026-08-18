@@ -61,6 +61,7 @@ Usage::
 """
 
 from __future__ import annotations
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 # git show 超时（秒）——对标 _reference_helpers._GIT_SHOW_TIMEOUT

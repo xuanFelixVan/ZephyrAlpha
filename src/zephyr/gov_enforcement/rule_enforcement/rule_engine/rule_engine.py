@@ -120,6 +120,7 @@ from typing import Any
 import yaml
 
 from zephyr.governance.depgraph_schema import PgConnectionProvider, get_depgraph_pg_connection
+
 # R3 治本（2026-07-28）：_PgConnExecuteWrapper + PgError 规范副本下沉到 pg_wrapper，
 # 消除业务模块顶层 import psycopg2（DIP——业务逻辑仅依赖 persistence 抽象，不再硬耦合驱动）
 from zephyr.governance.persistence.pg_wrapper import PgError, _PgConnExecuteWrapper

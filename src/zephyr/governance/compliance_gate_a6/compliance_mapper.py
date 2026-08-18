@@ -23,6 +23,7 @@ Compliance Mapper — D-022-13 合规映射器: 操作->法规(SOX/GDPR/MiFID)�
 from __future__ import annotations
 
 from typing import Final
+
 COMPLIANCE_MAP: Final[set] = {
     "modify_financial_data": {"sox": True, "gdpr": False, "mifid": True},
     "access_personal_data": {"sox": False, "gdpr": True, "mifid": False},

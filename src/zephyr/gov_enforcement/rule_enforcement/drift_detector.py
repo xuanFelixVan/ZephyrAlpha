@@ -284,13 +284,13 @@ def _fallback_to_rollback_handler(event: object) -> dict[str, Any]:
     except ImportError:
         try:
             from zephyr.gov_drift.events import (
+                DriftType,
+            )
+            from zephyr.gov_drift.events import (
                 ManagedDriftEvent as GovDriftEvent,
             )
             from zephyr.gov_drift.events import (
                 ManagedDriftState as GovDriftState,
-            )
-            from zephyr.gov_drift.events import (
-                DriftType,
             )
 
             gov_event = GovDriftEvent(

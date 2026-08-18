@@ -18,8 +18,6 @@
 
 from __future__ import annotations
 
-from http import HTTPStatus
-
 import asyncio
 import logging
 import os
@@ -27,6 +25,7 @@ import threading
 import time
 import uuid
 from enum import Enum, IntEnum
+from http import HTTPStatus
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field

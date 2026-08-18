@@ -24,11 +24,11 @@ Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.m
 
 from __future__ import annotations
 
-from typing import Final
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
+from typing import Final
 
 
 class EscalationLevel(Enum):

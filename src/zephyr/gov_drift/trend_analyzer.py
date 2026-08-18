@@ -25,15 +25,15 @@ Trend Analyzer — trend_analyzer.py
 对标 blueprint.md §5.1 / TASK-INF-0025 / D-023-08。"""
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import os
 import sqlite3
-from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.serialization import dumps
 
 
 @dataclass

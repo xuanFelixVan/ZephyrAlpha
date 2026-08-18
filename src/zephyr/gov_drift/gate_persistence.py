@@ -25,17 +25,17 @@ Gate Persistence — gate_persistence.py
 对标 blueprint.md §2.17门禁持久化 / D-023-31。"""
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
 
 import hashlib
 import json
 import os
 import sqlite3
-from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import uuid
 from datetime import UTC, datetime
 
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.serialization import dumps
 
 
 class GatePersistence:

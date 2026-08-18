@@ -130,6 +130,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 from zephyr.governance.persistence.base_repo import (
     InvalidTransitionError,
     TaskNotFoundError,
@@ -137,7 +138,6 @@ from zephyr.governance.persistence.base_repo import (
     _row_to_taskcard,
     now_iso,
 )
-from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 
 __all__ = ["GateResult", "GateViolationError", "TransitionMixin"]
 
@@ -145,6 +145,7 @@ __all__ = ["GateResult", "GateViolationError", "TransitionMixin"]
 # Re-export GateViolationError / GateResult for backward compat
 
 from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolationError
+
 is_valid_transition = _is_valid_transition  # public alias（Stage 4 公共化）
 
 
