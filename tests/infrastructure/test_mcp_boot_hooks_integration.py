@@ -34,6 +34,7 @@ from unittest.mock import patch
 import pytest
 
 from zephyr.shared.io.paths import REPO_ROOT
+
 sys.path.insert(0, str(REPO_ROOT / "src"))
 sys.path.insert(0, str(REPO_ROOT))
 

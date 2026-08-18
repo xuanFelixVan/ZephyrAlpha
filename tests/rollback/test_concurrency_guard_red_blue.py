@@ -56,14 +56,18 @@ for _p in [str(_SRC), str(_PROJECT_ROOT)]:
         sys.path.insert(0, _p)
 
 # 导入 git_guard（scripts 包）
-from scripts.git_guard import _EXTRACTORS, DANGEROUS_SUBCOMMANDS, check_and_execute
+# mv 防护相关导入
+from scripts.git_guard import (
+    _EXTRACTORS,
+    DANGEROUS_SUBCOMMANDS,
+    MV_STRATEGY_ENV,
+    check_and_execute,
+    scan_untracked_in_dir,
+)
 from zephyr.infrastructure.runtime.concurrency_guard import (
     DEFAULT_TTL_S,
     scan_active_locks,
 )
-
-# mv 防护相关导入
-from scripts.git_guard import MV_STRATEGY_ENV, scan_untracked_in_dir
 
 # ============================================================================
 # Fixtures

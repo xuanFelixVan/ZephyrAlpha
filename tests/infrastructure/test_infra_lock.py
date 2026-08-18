@@ -24,12 +24,12 @@ import asyncio
 
 import pytest
 
-from zephyr.shared.utils.async_utils import run_coroutine_sync
 from zephyr.shared.infra.lock import (
     LockError,
     LockHandle,
     MemoryLock,
 )
+from zephyr.shared.utils.async_utils import run_coroutine_sync
 
 
 class TestLockHandle:

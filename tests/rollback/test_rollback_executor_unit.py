@@ -27,9 +27,9 @@ from zephyr.infrastructure.rollback.rollback_executor import (
     DiscardDecision,
     DiscardResult,
     PreviewResult,
+    RollbackExecutionResult,
     RollbackExecutor,
     RollbackOp,
-    RollbackExecutionResult,
 )
 
 

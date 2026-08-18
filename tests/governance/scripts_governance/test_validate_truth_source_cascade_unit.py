@@ -24,10 +24,10 @@ T-V2-012 单元测试 — TruthSourceCascadeValidator
 
 from __future__ import annotations
 
+import sys
 import textwrap
 from datetime import UTC, date, datetime
 from pathlib import Path
-import sys
 
 # validate_truth_source_cascade.py imports `_shared` as a top-level package
 # (e.g. `from _shared.constants import ...`), which requires scripts/governance

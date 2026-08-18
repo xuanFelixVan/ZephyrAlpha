@@ -7,6 +7,7 @@
 # [TESTS] —
 # [TTL] task_bound
 from __future__ import annotations
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 """

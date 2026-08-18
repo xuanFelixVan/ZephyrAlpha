@@ -23,7 +23,7 @@ if str(_SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPT_DIR))
 
 import pytest
-
+import requirements_version_sync_reconciler as _rvsr  # noqa: E402
 from requirements_version_sync_reconciler import (  # noqa: E402
     _check_pair,
     _normalize_name,
@@ -34,8 +34,6 @@ from requirements_version_sync_reconciler import (  # noqa: E402
     _trigger,
     make_requirements_version_sync_reconciler,
 )
-
-import requirements_version_sync_reconciler as _rvsr  # noqa: E402
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[4]
 

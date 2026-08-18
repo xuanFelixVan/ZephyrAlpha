@@ -20,8 +20,8 @@ from zephyr.factor.bus_factor_defense import (
     DecisionLog,
     ModuleOwnership,
     OpsRunbook,
-    evaluate_bus_factor,
     create_decision_log,
+    evaluate_bus_factor,
     generate_runbook,
 )
 

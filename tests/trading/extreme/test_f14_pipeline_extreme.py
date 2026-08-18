@@ -35,6 +35,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from zephyr.feedback_loop.error_budget import ErrorBudget, ErrorBudgetManager
 from zephyr.infrastructure.pipeline.backpressure_manager import BackpressureManager, BpState
 from zephyr.infrastructure.pipeline.backpressure_types import (
     BackpressurePause,
@@ -48,8 +49,6 @@ from zephyr.infrastructure.pipeline.models import (
     ModuleStatus,
     PipelineStatus,
 )
-from zephyr.feedback_loop.error_budget import ErrorBudget, ErrorBudgetManager
-
 
 # ---------------------------------------------------------------------------
 # 辅助工厂

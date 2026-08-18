@@ -55,7 +55,6 @@ from zephyr.intelligence.model_profiling.capability_passport import (  # noqa: E
     DepthResult,
 )
 
-
 # ══════════════════════════════════════════════════════════════
 # 合成护照工厂
 # ══════════════════════════════════════════════════════════════

@@ -32,7 +32,6 @@ from zephyr.intelligence.model_profiling.job_matcher import (
     match_jobs,
 )
 
-
 # ── 测试 fixtures ──────────────────────────────────────────
 
 _MINIMAL_MATRIX = """\

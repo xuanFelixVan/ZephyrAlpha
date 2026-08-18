@@ -42,7 +42,6 @@ from zephyr.reporting.report_version_manager import (
     _compute_record_hash,
 )
 
-
 # ── 版本存储测试 ──
 
 

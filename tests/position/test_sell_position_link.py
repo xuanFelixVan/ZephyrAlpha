@@ -8,9 +8,9 @@ import pytest
 
 from zephyr.position.core.sell_position_link import (
     InvalidSellPositionLinkInputError,
-    PostBuyAlertLevel,
     PositionPnLState,
     PositionStateFeedback,
+    PostBuyAlertLevel,
     SellPositionLink,
     ThresholdDirection,
 )

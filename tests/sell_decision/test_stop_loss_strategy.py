@@ -6,8 +6,8 @@ import pytest
 
 from zephyr.sell_decision.core.position_triage import SellPositionSnapshot, StrategyType
 from zephyr.sell_decision.core.stop_loss_strategy import (
-    SellStopLossInputError,
     PositionPhase,
+    SellStopLossInputError,
     StopLossStrategy,
     TimeStopSignal,
 )

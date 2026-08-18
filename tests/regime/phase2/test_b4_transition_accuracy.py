@@ -9,13 +9,13 @@ from unittest.mock import MagicMock
 import pandas as pd
 
 from zephyr.regime.validation.phase2.b4_transition_accuracy import (
+    MATCH_WINDOW_DAYS,
+    PASS_RATIO,
     B4EventMatch,
     B4Report,
     B4TransitionAccuracy,
     B4Verdict,
     HistoricalEvent,
-    MATCH_WINDOW_DAYS,
-    PASS_RATIO,
 )
 
 

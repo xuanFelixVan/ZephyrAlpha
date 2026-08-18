@@ -11,8 +11,9 @@
 # [TESTS] test_red_blue_validator_tests.py
 # [TTL] task_bound
 
-import pytest
 from datetime import UTC, datetime
+
+import pytest
 
 validator_mod = pytest.importorskip(
     "zephyr.security.adversarial_validation.validator",

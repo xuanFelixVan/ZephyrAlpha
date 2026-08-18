@@ -16,15 +16,16 @@
 符合 project_memory 强制约束："测试脚本必须严格隔离生产库"。
 """
 import os
-import sys
-import sqlite3
 import shutil
+import sqlite3
+import sys
 from pathlib import Path
 
 import pytest
 
 # 配置 sys.path（tests/ 无 conftest，自行 insert）
 from zephyr.shared.io.paths import REPO_ROOT
+
 _GOV_DIR = str(REPO_ROOT / "scripts" / "governance")
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
@@ -32,9 +33,11 @@ if _GOV_DIR not in sys.path:
 # 测试库不需要 git 备份（隔离生产库）
 os.environ.setdefault("ZEPHYR_SKIP_BACKUP_CHECK", "1")
 
-from apply_depgraph import cmd_rename_domain, _post_rename_residual_check  # noqa: E402
+from apply_depgraph import _post_rename_residual_check, cmd_rename_domain  # noqa: E402
 from d8_doc_sync.audit_rename_completeness import (  # noqa: E402
-    scan_residual, scan_files_residual, EXCLUDE_COLUMNS,
+    EXCLUDE_COLUMNS,
+    scan_files_residual,
+    scan_residual,
 )
 
 PROD_DB = REPO_ROOT / "data" / "databases" / "depgraph"

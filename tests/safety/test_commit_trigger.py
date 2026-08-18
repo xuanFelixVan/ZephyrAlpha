@@ -12,14 +12,14 @@
 
 from __future__ import annotations
 
+# 直接加载 commit_trigger，绕过 zephyr 包 __init__ import 链断裂风险
+import importlib.util as _ilu
 import json
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
 
-# 直接加载 commit_trigger，绕过 zephyr 包 __init__ import 链断裂风险
-import importlib.util as _ilu
 from zephyr.shared.io.paths import REPO_ROOT
 
 _spec = _ilu.spec_from_file_location(

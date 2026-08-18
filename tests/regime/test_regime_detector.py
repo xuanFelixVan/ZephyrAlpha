@@ -39,13 +39,13 @@ from zephyr.regime.core.regime_detector import (
     HMM_STATES,
     OVERLAY_STATES,
     REGIME_STATES,
+    TRANSITIONS,
+    HMMFittingError,
+    OverlayRuleError,
     RegimeDetector,
     RegimeProbabilities,
     ShrinkageResult,
     TransitionTriggered,
-    TRANSITIONS,
-    HMMFittingError,
-    OverlayRuleError,
 )
 
 try:

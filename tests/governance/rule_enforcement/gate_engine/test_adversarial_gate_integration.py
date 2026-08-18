@@ -11,7 +11,10 @@
 from __future__ import annotations
 
 from zephyr.gov_enforcement.rule_enforcement.adversarial_strategies import AdversarialSampleGenerator
-from zephyr.gov_enforcement.rule_enforcement.gate_engine.adversarial_validation import AdversarialValidationGate, ValidationResult
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.adversarial_validation import (
+    AdversarialValidationGate,
+    ValidationResult,
+)
 
 
 class TestGatePipelineIntegration:

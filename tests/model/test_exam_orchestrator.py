@@ -13,8 +13,9 @@
 
 from __future__ import annotations
 
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 
 # v3.0.5: import 统一到 #3 生产源（zephyr.intelligence.model_profiling）
 from zephyr.intelligence.model_profiling.capability_passport import (
@@ -24,25 +25,25 @@ from zephyr.intelligence.model_profiling.capability_passport import (
     DepthResult,
     HallucinationResult,
 )
+from zephyr.intelligence.model_profiling.exam_checks import (
+    check_fabrication,
+    check_format_hallucination,
+    check_instruction_drift,
+    check_overclaim,
+    check_quantity_hallucination,
+    check_refusal,
+    check_source_confusion,
+    check_static_assertions,
+    check_structure,
+    compute_olympiad_pass_rate,
+    compute_overall_score,
+    normalized_edit_distance,
+    outputs_similar,
+    percentile,
+)
 from zephyr.intelligence.model_profiling.exam_orchestrator import (
     CAPABILITIES,
     ExamOrchestrator,
-)
-from zephyr.intelligence.model_profiling.exam_checks import (
-    check_static_assertions,
-    check_structure,
-    check_fabrication,
-    outputs_similar,
-    check_refusal,
-    check_overclaim,
-    check_source_confusion,
-    check_instruction_drift,
-    check_format_hallucination,
-    check_quantity_hallucination,
-    normalized_edit_distance,
-    percentile,
-    compute_olympiad_pass_rate,
-    compute_overall_score,
 )
 from zephyr.intelligence.model_profiling.exam_test_cases import Difficulty, ExamTestCase
 

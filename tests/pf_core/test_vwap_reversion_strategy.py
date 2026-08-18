@@ -38,7 +38,6 @@ from zephyr.pf_core.strategy_engine.tick_strategy_base import (
 )
 from zephyr.pf_core.vwap_reversion_strategy import VWAPReversionStrategy
 
-
 # ------------------------------------------------------------------
 # 测试辅助
 # ------------------------------------------------------------------

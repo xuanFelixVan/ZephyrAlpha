@@ -264,8 +264,8 @@ def test_session_worktree_start_uses_pool(clean_pool):
     drift 门禁行为本身由 test_session_worktree_workspace_clean.py 专项覆盖。
     """
     from zephyr.gov_enforcement.rule_bridge.session_worktree import (
-        session_worktree_start,
         session_worktree_abort,
+        session_worktree_start,
     )
 
     # 预填池

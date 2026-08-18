@@ -33,6 +33,7 @@ from threading import Thread
 
 import pytest
 
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.governance.persistence.task_repo import (
     InvalidTransitionError,
     TaskNotFoundError,
@@ -40,10 +41,9 @@ from zephyr.governance.persistence.task_repo import (
     allowed_transitions,
     is_terminal,
 )
-from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
+from zephyr.shared.foundation.models import TaskCard
 from zephyr.shared.schema.base_config import Classification, EvolutionPolicy
 from zephyr.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.foundation.models import TaskCard
 
 _UTC = UTC
 

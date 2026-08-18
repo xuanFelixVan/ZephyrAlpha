@@ -32,7 +32,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.shared.security.capability import CapabilityDenied, CapabilityRegistry
 from zephyr.intelligence.model_evaluation.unified_memory_api import (
     InMemoryMemoryBackend,
     MemoryBackendError,
@@ -44,6 +43,7 @@ from zephyr.intelligence.model_evaluation.unified_memory_api import (
     get_unified_memory_api,
     reset_unified_memory_api,
 )
+from zephyr.shared.security.capability import CapabilityDenied, CapabilityRegistry
 
 # ---------------------------------------------------------------------------
 # Fixtures

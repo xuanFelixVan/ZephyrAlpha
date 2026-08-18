@@ -35,18 +35,19 @@ if str(_SCRIPTS_OPS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_OPS))
 
 from shadow_canary_deploy import (  # noqa: E402
-    ComparisonResult,
     EXIT_PRECHECK_FAIL,
     EXIT_PROMOTE,
     EXIT_ROLLBACK,
-    _ThresholdHolder,
+    ComparisonResult,
     WindowsProcessDeployer,
+    _ThresholdHolder,
     compare_decisions,
     load_decisions,
     make_deployer,
     run_deploy,
     run_precheck,
 )
+
 from zephyr.gov_enforcement.rule_enforcement.can_i_deploy import CanIDeployResult  # noqa: E402
 
 

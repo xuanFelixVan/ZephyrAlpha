@@ -16,9 +16,9 @@ from __future__ import annotations
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import (
     AgentMeta,
     AgentRole,
-    Arbitrator,
     ArbitrationResult,
     ArbitrationVerdict,
+    Arbitrator,
     FileOwnership,
 )
 

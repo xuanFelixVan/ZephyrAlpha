@@ -11,9 +11,10 @@
 # [TESTS] test_constitution_engine.py
 # [TTL] task_bound
 
-import pytest
-from pathlib import Path
 from datetime import UTC, datetime
+from pathlib import Path
+
+import pytest
 
 constitution_mod = pytest.importorskip(
     "zephyr.security.adversarial_validation.constitution_engine",
@@ -199,6 +200,7 @@ class TestRegistryIntegrity:
     def test_registry_has_articles(self):
         """验证注册表包含articles。"""
         import yaml
+
         from zephyr.security.adversarial_validation.constitution_engine import _REGISTRY_PATH
         with open(_REGISTRY_PATH, encoding="utf-8") as f:
             raw = yaml.safe_load(f)

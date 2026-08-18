@@ -34,7 +34,6 @@ from zephyr.reporting.ashare_trade_record_template import (
     TradeRecordEntry,
 )
 
-
 # ── 辅助构造 ──
 
 

@@ -35,6 +35,7 @@ from pathlib import Path
 import pytest
 
 from zephyr.shared.io.paths import REPO_ROOT
+
 _REPO_ROOT = REPO_ROOT
 _SRC_DIR = _REPO_ROOT / "src"
 if str(_SRC_DIR) not in sys.path:

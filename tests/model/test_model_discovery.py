@@ -13,13 +13,14 @@
 
 import pytest
 
-# 治本：DEFAULT_OLLAMA_URL 已下沉到 zephyr.shared.foundation.constants（§5.160.9 SSoT），
-# model_discovery.py 仅在函数内 lazy-import，非模块级符号。从真源 constants 导入。
-from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
 from zephyr.intelligence.model_profiling.model_discovery import (
     DiscoveredModel,
     ModelDiscovery,
 )
+
+# 治本：DEFAULT_OLLAMA_URL 已下沉到 zephyr.shared.foundation.constants（§5.160.9 SSoT），
+# model_discovery.py 仅在函数内 lazy-import，非模块级符号。从真源 constants 导入。
+from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
 
 
 class TestDiscoveredModelConstruction:

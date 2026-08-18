@@ -33,8 +33,8 @@ pytest.importorskip(
 
 from zephyr.ex_core.audit_journal.auditor import OperationalRiskStats  # noqa: E402
 from zephyr.intelligence.model_drift_detector import DriftResult  # noqa: E402
-from zephyr.risk.core.alert_generator import AlertGenerator, AlertLevel  # noqa: E402
 from zephyr.risk.core.ai_agent_monitor import AiAgentMonitor  # noqa: E402
+from zephyr.risk.core.alert_generator import AlertGenerator, AlertLevel  # noqa: E402
 from zephyr.risk.core.model_risk_audit import ModelRiskAuditor  # noqa: E402
 from zephyr.risk.core.operational_risk_monitor import (  # noqa: E402
     OperationalRiskMonitor,
@@ -42,7 +42,6 @@ from zephyr.risk.core.operational_risk_monitor import (  # noqa: E402
 from zephyr.risk.implementations.default_risk_manager_orchestrator import (  # noqa: E402
     DefaultRiskManagerOrchestrator,
 )
-
 
 # ── Mock / 辅助 ─────────────────────────────────────────────────────
 

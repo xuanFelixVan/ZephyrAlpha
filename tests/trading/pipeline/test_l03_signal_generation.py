@@ -28,9 +28,9 @@ DegradationMonitorBase = degradation_monitor_base_mod.DegradationMonitorBase
 SignalSynthesizerBase = signal_synthesizer.SignalSynthesizerBase
 
 try:
-    from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
     from zephyr.shared.contracts.factor_signal import FactorSignal
     from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+    from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
 
     HAS_CONTRACTS = True
 except Exception:

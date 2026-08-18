@@ -36,8 +36,8 @@ class TestHealthMonitorDelegation:
         ResourceOptimizationEngine.reset()
 
     def test_pressure_level_delegates_to_roe(self):
-        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
         engine = ResourceOptimizationEngine()
         engine.force_pressure(ROELevel.WARNING, "test")  # 跟进：current 只读 property，公开入口 force_pressure
@@ -47,8 +47,8 @@ class TestHealthMonitorDelegation:
         assert level == PressureLevel.ELEVATED
 
     def test_pressure_level_mapping_critical(self):
-        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
         engine = ResourceOptimizationEngine()
         engine.force_pressure(ROELevel.CRITICAL, "test")  # 跟进：current 只读 property，公开入口 force_pressure
@@ -58,8 +58,8 @@ class TestHealthMonitorDelegation:
         assert level == PressureLevel.HIGH
 
     def test_pressure_level_mapping_emergency(self):
-        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
         engine = ResourceOptimizationEngine()
         engine.force_pressure(ROELevel.EMERGENCY, "test")  # 跟进：current 只读 property，公开入口 force_pressure
@@ -69,8 +69,8 @@ class TestHealthMonitorDelegation:
         assert level == PressureLevel.CRITICAL
 
     def test_pressure_level_mapping_normal(self):
-        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
         engine = ResourceOptimizationEngine()
         engine.force_pressure(ROELevel.NORMAL, "test")  # 跟进：current 只读 property，公开入口 force_pressure

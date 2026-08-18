@@ -33,7 +33,6 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 from zephyr.security.llm_defense.llm_security.protocol import SecurityDecision
 from zephyr.security.llm_defense.llm_security.runtime_interceptor import (
@@ -52,6 +51,7 @@ from zephyr.security.llm_defense.llm_security.runtime_interceptor import (
     revoke_allowance,
     uninstall,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 _REPO_ROOT = REPO_ROOT
 

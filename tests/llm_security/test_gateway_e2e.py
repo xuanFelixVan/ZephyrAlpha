@@ -8,8 +8,8 @@
 # [TTL] task_bound
 import pytest
 
-from zephyr.shared.contracts.security.security_decision import SecurityDecision
 from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
 
 @pytest.fixture

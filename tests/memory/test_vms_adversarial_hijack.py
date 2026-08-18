@@ -42,14 +42,13 @@ from typing import Any
 import pytest
 
 from zephyr.integration.vector_memory.hybrid_retriever import (
-    BM25Index,
     COLLECTION_DECAY_RATES,
     DEFAULT_SCORE_THRESHOLD,
-    HybridRetriever,
     RRF_K,
+    BM25Index,
+    HybridRetriever,
     ScoredHit,
 )
-
 
 # ============================================================================
 # 辅助 Mock — 模拟 ChromaDB Collection 接口

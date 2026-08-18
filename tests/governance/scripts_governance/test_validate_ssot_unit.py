@@ -35,7 +35,6 @@ from pathlib import Path
 
 import pytest
 
-from scripts.governance.shared.frontmatter import parse_frontmatter as _parse_frontmatter
 from scripts.governance.d5_architecture.validators.validate_ssot import (
     VALID_DOCUMENT_STATUSES,
     VALID_PRIORITIES,
@@ -54,6 +53,7 @@ from scripts.governance.d5_architecture.validators.validate_ssot import (
     parse_file,
     render_report,
 )
+from scripts.governance.shared.frontmatter import parse_frontmatter as _parse_frontmatter
 
 # ---------------------------------------------------------------------------
 # 辅助：构造 FileMeta

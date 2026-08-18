@@ -18,18 +18,18 @@ import time
 import pytest
 
 from zephyr.shared.lifecycle.daemon_registry import DaemonRegistry
+from zephyr.shared.lifecycle.resource_optimization_models import (
+    HealthCheckResult,
+    OptimizationRecord,
+    OptimizationResult,
+    ResourceSnapshot,
+)
 from zephyr.trading.resource_optimization import (
     CircuitBreaker,
     CircuitBreakerState,
     OptimizationStrategy,
     PressureLevel,
     ResourceOptimizationEngine,
-)
-from zephyr.shared.lifecycle.resource_optimization_models import (
-    HealthCheckResult,
-    OptimizationRecord,
-    OptimizationResult,
-    ResourceSnapshot,
 )
 
 

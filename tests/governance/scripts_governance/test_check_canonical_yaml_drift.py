@@ -38,7 +38,6 @@ if str(_CHECKER_DIR) not in sys.path:
     sys.path.insert(0, str(_CHECKER_DIR))
 
 import check_canonical_yaml_drift as g  # noqa: E402
-
 import yaml  # noqa: E402
 
 

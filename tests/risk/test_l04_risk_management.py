@@ -20,6 +20,7 @@ import pytest
 
 l04 = pytest.importorskip("zephyr.risk", reason="l04-risk-management not importable")
 
+from zephyr.risk.risk_limits import RiskLimitsCalculator
 from zephyr.risk.risk_manager import RiskManagerBase
 from zephyr.risk.risk_manager_base import (
     PositionLimitCheckerBase,
@@ -42,7 +43,6 @@ from zephyr.risk.stop_loss import (
     trigger_kill_switch,
 )
 from zephyr.shared.contracts.risk_limits import RiskLimits
-from zephyr.risk.risk_limits import RiskLimitsCalculator
 
 
 class _ConcreteRiskManager(RiskManagerBase):

@@ -11,11 +11,13 @@
 # [TESTS] test_game_day_scheduler.py
 # [TTL] task_bound
 
-import pytest
-import yaml
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+
+import pytest
+import yaml
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 scheduler_mod = pytest.importorskip(

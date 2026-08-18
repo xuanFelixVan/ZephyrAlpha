@@ -48,6 +48,7 @@ from zephyr.frontend.interface_base import (
     NotificationLevel,
     NotificationManagerBase,
 )
+from zephyr.gov_drift.contract_drift_detector import DriftAlert  # 生产跟进：detect_contract_drift 委托真源
 from zephyr.governance.security_governance.default_security_gateway import DefaultSecurityGateway
 from zephyr.governance.security_governance.security_gateway_base import (
     AuditAction,
@@ -67,7 +68,6 @@ from zephyr.infrastructure.system_telemetry.contract_metrics import (
     SlaRecord,
     get_contract_metrics,
 )
-from zephyr.gov_drift.contract_drift_detector import DriftAlert  # 生产跟进：detect_contract_drift 委托真源
 from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import DefaultInferenceEngine
 from zephyr.intelligence.model_evaluation.inference_base import (
     InferenceEngineBase,
@@ -77,10 +77,12 @@ from zephyr.intelligence.model_evaluation.inference_base import (
 )
 from zephyr.shared.contracts.compliance_rule import ComplianceRule
 from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
+from zephyr.shared.contracts.experiment.model_serving_response import (
+    ModelServingResponse,  # 生产跟进：experiment/ 为 canonical（旧根级文件为重复漂移类）
+)
 from zephyr.shared.contracts.experiment_result import ExperimentResult
 from zephyr.shared.contracts.factor_monitor_report import FactorMonitorReport
 from zephyr.shared.contracts.macro_factor_signal import MacroFactorSignal
-from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse  # 生产跟进：experiment/ 为 canonical（旧根级文件为重复漂移类）
 from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
 from zephyr.shared.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
 from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal

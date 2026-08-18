@@ -11,9 +11,10 @@
 # [TESTS] test_event_integration.py
 # [TTL] task_bound
 
-import pytest
-from unittest.mock import MagicMock, patch
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 # 裁定(2026-07-19): 同 test_phase_manager_integration.py — GameDayScheduler 的
 # subscribe_to_events/unsubscribe_from_events/_on_security_event/enable_event_subscription

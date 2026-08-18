@@ -33,14 +33,13 @@ _DOC_SYNC_DIR = _PROJECT_ROOT / "scripts" / "governance" / "d8_doc_sync"
 if str(_DOC_SYNC_DIR) not in sys.path:
     sys.path.insert(0, str(_DOC_SYNC_DIR))
 
+import metric_count_drift_reconciler as _mcdr  # noqa: E402
 from metric_count_drift_reconciler import (  # noqa: E402
     _COUNT_DESC_RE,
     _scan_file_for_count_desc,
     _should_trigger,
     make_metric_count_drift_reconciler,
 )
-
-import metric_count_drift_reconciler as _mcdr  # noqa: E402
 
 
 @pytest.fixture(autouse=True)

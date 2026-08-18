@@ -41,7 +41,6 @@ if _SRC_DIR not in sys.path:
 
 from zephyr.infrastructure.git_batcher import GitCommandBatcher  # noqa: E402
 
-
 # ============================================================================
 # 辅助函数
 # ============================================================================

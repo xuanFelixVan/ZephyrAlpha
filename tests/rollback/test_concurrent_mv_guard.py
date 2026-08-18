@@ -62,11 +62,10 @@ for _p in [str(_SRC), str(_PROJECT_ROOT)]:
 from scripts.git_guard import (
     DANGEROUS_SUBCOMMANDS,
     MV_STRATEGY_ENV,
+    check_and_execute,
     handle_mv,
     scan_untracked_in_dir,
-    check_and_execute,
 )
-
 
 # ============================================================================
 # 辅助函数
@@ -728,7 +727,7 @@ class TestConcurrentNoDeadlock:
     def test_stress_mixed_strategies(self, repo):
         """混合策略并发：block/move/stage/force 同时执行 → 不死锁。"""
         for i in range(8):
-            _add_tracked_dir(repo, f"dir_{i}", {f"f.py": str(i)})
+            _add_tracked_dir(repo, f"dir_{i}", {"f.py": str(i)})
             _add_untracked(repo, f"dir_{i}/u.py", f"u{i}")
 
         strategies = ["block", "move", "stage", "force", "block", "move", "stage", "force"]

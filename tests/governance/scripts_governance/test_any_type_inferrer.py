@@ -49,7 +49,6 @@ if str(_D7_CODE) not in sys.path:
 
 import any_type_inferrer as ati  # noqa: E402
 
-
 # ── 辅助函数 ──────────────────────────────────────────────────────────
 
 

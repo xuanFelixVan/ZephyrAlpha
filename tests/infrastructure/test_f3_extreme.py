@@ -75,10 +75,10 @@ def _make_taskcard(task_id: str, batch_id: str = "extreme-batch", **overrides):
         classification="internal",
         ai_autonomy_level="supervised",
         description=(
-            f"根因：F3任务系统在极端并发场景下可能出现重复认领或数据丢失，需通过红蓝对抗极端测试验证其健壮性。"
-            f"治根：使用临时数据库模拟100个任务并发认领场景，验证SQLite UPDATE RETURNING的原子性和线程安全。"
-            f"施工步骤：(1) 创建100个READY状态任务 (2) 10个worker线程并发认领 (3) 验证无重复认领且所有任务被认领。"
-            f"验收标准：claimed_tasks数量=100且无重复task_id，所有任务状态转为IN_PROGRESS。"
+            "根因：F3任务系统在极端并发场景下可能出现重复认领或数据丢失，需通过红蓝对抗极端测试验证其健壮性。"
+            "治根：使用临时数据库模拟100个任务并发认领场景，验证SQLite UPDATE RETURNING的原子性和线程安全。"
+            "施工步骤：(1) 创建100个READY状态任务 (2) 10个worker线程并发认领 (3) 验证无重复认领且所有任务被认领。"
+            "验收标准：claimed_tasks数量=100且无重复task_id，所有任务状态转为IN_PROGRESS。"
         ),
         files_in_scope=[f"d:/tmp/extreme_test/{task_id}.dummy"],
         deliverables=["极端测试通过"],

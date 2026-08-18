@@ -14,9 +14,9 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime
 
-from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
 from zephyr.shared.contracts.factor_signal import FactorSignal
 from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
 
 
 class _EqualWeightTestSynthesizer(SignalSynthesizerBase):

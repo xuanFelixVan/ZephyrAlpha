@@ -9,8 +9,6 @@
 
 import pytest
 
-from zephyr.security.llm_defense.llm_security.protocol import SecurityContext
-from zephyr.shared.contracts.security.security_decision import SecurityDecision
 from zephyr.security.llm_defense.llm_security.layers.l5_resource_protection import (
     AgentExecutionProtector,
     AIRecursionGuard,
@@ -29,6 +27,8 @@ from zephyr.security.llm_defense.llm_security.layers.l5_resource_protection impo
 from zephyr.security.llm_defense.llm_security.layers.l5_resource_protection import (
     _L5TokenBudget as TokenBudget,
 )
+from zephyr.security.llm_defense.llm_security.protocol import SecurityContext
+from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
 
 def make_ctx(

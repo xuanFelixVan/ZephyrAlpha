@@ -12,8 +12,9 @@ FirmRiskAggregator (MOD-POS-021) 单元测试
 
 from __future__ import annotations
 
-import pytest
 from datetime import datetime
+
+import pytest
 
 from zephyr.position.core.firm_risk_aggregator import (
     CASH_SYMBOL,
@@ -27,7 +28,6 @@ from zephyr.position.core.firm_risk_aggregator import (
     FirmTargetPortfolio,
     PreKellyResult,
 )
-
 
 # ── fixtures ──────────────────────────────────────────────────────────────────
 

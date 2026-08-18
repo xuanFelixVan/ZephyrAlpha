@@ -41,13 +41,13 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from scripts import ops_guard as ops_guard_mod  # noqa: E402
 from scripts.ops_guard import (  # noqa: E402
     DeleteBlockedError,
     analyze_delete_command,
     guard_remove,
     guard_rmtree,
 )
-from scripts import ops_guard as ops_guard_mod  # noqa: E402
 
 # ============================================================================
 # 红队攻击向量（必须 100% 被拦截）

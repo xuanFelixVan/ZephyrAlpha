@@ -23,7 +23,6 @@ if _GOV not in sys.path:
 
 from zephyr.governance.persistence.battlemap_schema import get_battle_map_pg_connection
 
-
 # 5个之前不可达的模块（step_id → module_id）
 UNREACHABLE_5 = {
     "BM-SEL-06": "MOD-SIG-038",  # 跨市场传导感知

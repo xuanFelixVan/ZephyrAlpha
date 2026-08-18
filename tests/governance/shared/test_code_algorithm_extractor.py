@@ -35,7 +35,6 @@ from _shared.code_algorithm_extractor import (  # noqa: E402
     extract_algorithm_from_code,
 )
 
-
 # ── 测试用 .py 文件模板 ──────────────────────────────────────
 
 _PY_WITH_DOCSTRING = '''"""TestModule — 测试用模块（算法提取器验证）。

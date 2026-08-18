@@ -37,8 +37,8 @@ import pytest
 # ---------------------------------------------------------------------------
 # sys.path 设置（verify_schema_health 不是包模块，需手动加入 scripts/governance）
 # ---------------------------------------------------------------------------
-
 from zephyr.shared.io.paths import REPO_ROOT
+
 _REPO_ROOT = REPO_ROOT
 _GOV_DIR = _REPO_ROOT / "scripts" / "governance"
 _SRC_DIR = _REPO_ROOT / "src"

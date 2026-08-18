@@ -9,14 +9,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from zephyr.shared.io.paths import REPO_ROOT, DB_PATH
-
 from datetime import UTC, datetime
 
 from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 from zephyr.shared.schema.execution_model import ExecutionModel
 from zephyr.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
 
 DB_PATH = REPO_ROOT / "data" / "databases" / "governance.db"
 

@@ -119,7 +119,7 @@ class TestLockCrashRecovery:
 
     def test_lock_release_after_timeout(self, temp_project):
         """Lock should be recoverable after holder crash (TTL expiry)."""
-        from zephyr.infrastructure.rollback.rollback_lock import RollbackLock, LockPriority
+        from zephyr.infrastructure.rollback.rollback_lock import LockPriority, RollbackLock
 
         lock = RollbackLock(project_root=temp_project)
         # Acquire lock
@@ -144,7 +144,7 @@ class TestPriorityQueue:
 
     def test_high_priority_acquires_first(self, temp_project):
         """High priority rollback should acquire lock before low priority."""
-        from zephyr.infrastructure.rollback.rollback_lock import RollbackLock, LockPriority
+        from zephyr.infrastructure.rollback.rollback_lock import LockPriority, RollbackLock
 
         lock = RollbackLock(project_root=temp_project)
         acquisition_order = []

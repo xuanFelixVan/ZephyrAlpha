@@ -8,14 +8,14 @@
 # [TTL] task_bound
 import pytest
 
-from zephyr.security.llm_defense.llm_security.protocol import SecurityContext
-from zephyr.shared.contracts.security.security_decision import SecurityDecision
 from zephyr.security.llm_defense.llm_security.layers.l1_input import (
     EncodingBypassDefender,
     InputDefenseLayer,
     SourceType,
     ToolResultTransformGuard,
 )
+from zephyr.security.llm_defense.llm_security.protocol import SecurityContext
+from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
 
 class TestInputDefenseLayer:

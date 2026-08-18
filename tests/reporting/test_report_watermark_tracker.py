@@ -36,7 +36,6 @@ from zephyr.reporting.report_watermark_tracker import (
     _compute_signature,
 )
 
-
 # ── 水印加盖测试 ──
 
 

@@ -51,8 +51,8 @@ from zephyr.position.core.rebalance_engine import (
 from zephyr.position.services.position_audit_logger import (
     ZERO_HASH,
     AuditChainError,
-    PositionAuditEventType,
     AuditSource,
+    PositionAuditEventType,
     PositionAuditLogger,
     PositionAuditRecord,
     PositionAuditReport,

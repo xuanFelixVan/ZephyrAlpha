@@ -37,7 +37,6 @@ if str(_MIGRATE_DIR) not in sys.path:
 import migrate_data  # noqa: E402
 import seed_from_yaml  # noqa: E402
 
-
 # ── Fake PG 连接（内存模拟，不连真实 PostgreSQL） ─────────────────────────
 
 class _FakeCursor:

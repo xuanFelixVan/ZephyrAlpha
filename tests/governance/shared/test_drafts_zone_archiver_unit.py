@@ -13,13 +13,13 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.governance.shared.frontmatter import parse_frontmatter_from_file
 from scripts.governance.d1_structure.archive_drafts_zone import (
     STATUS_ARBITRATED,
     compute_archive_target,
     execute_archive,
     scan_drafts,
 )
+from scripts.governance.shared.frontmatter import parse_frontmatter_from_file
 
 
 class TestParseFrontmatter:

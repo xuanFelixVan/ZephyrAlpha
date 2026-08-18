@@ -328,11 +328,11 @@ class TestLoadAllVocabularyValues:
         """
         # _load_all_vocab_values 应调用 load_all_vocabulary_values
         # 通过验证其返回值与新 SSoT 一致（过滤后）
-        from _shared.yaml_utils import load_all_vocabulary_values
         from pathlib import Path
 
         # 找到真实 vocab_dir
         from _shared.constants import REPO_ROOT
+        from _shared.yaml_utils import load_all_vocabulary_values
         vocab_dir = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
 
         # SSoT 原始值

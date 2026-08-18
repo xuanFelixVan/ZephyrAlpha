@@ -25,7 +25,6 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -203,7 +202,7 @@ class TestTrendExhaustion:
 
     def test_hurst_decay_detection(self):
         """趋势衰竭：Hurst 从 >0.65 衰退到 <0.50。"""
-        from zephyr.regime.features.trend_features import hurst_dfa, detect_hurst_decay
+        from zephyr.regime.features.trend_features import detect_hurst_decay, hurst_dfa
         rng = np.random.default_rng(11)
         # 前200天强趋势（正自相关收益率），后200天转随机
         noise_trend = rng.normal(0, 0.003, 200)
@@ -227,7 +226,7 @@ class TestTrendExhaustion:
 
     def test_no_decay_when_stable(self, trending_up_500):
         """稳定趋势不触发衰退。"""
-        from zephyr.regime.features.trend_features import hurst_dfa, detect_hurst_decay
+        from zephyr.regime.features.trend_features import detect_hurst_decay, hurst_dfa
         h1 = hurst_dfa(trending_up_500[:250], window=200)
         h2 = hurst_dfa(trending_up_500[250:], window=200)
         decay = detect_hurst_decay(h1, h2)
@@ -246,8 +245,9 @@ class TestPerformance:
     @pytest.mark.financial
     def test_hurst_under_100ms(self, random_walk_500):
         """Hurst 计算 < 100ms（500日序列）。"""
-        from zephyr.regime.features.trend_features import hurst_dfa
         import time
+
+        from zephyr.regime.features.trend_features import hurst_dfa
         start = time.perf_counter()
         hurst_dfa(random_walk_500, window=200)
         elapsed = time.perf_counter() - start
@@ -256,8 +256,9 @@ class TestPerformance:
     @pytest.mark.financial
     def test_kalman_under_50ms(self, random_walk_500):
         """Kalman 斜率 < 50ms（500日序列）。"""
-        from zephyr.regime.features.trend_features import kalman_slope
         import time
+
+        from zephyr.regime.features.trend_features import kalman_slope
         start = time.perf_counter()
         kalman_slope(random_walk_500)
         elapsed = time.perf_counter() - start

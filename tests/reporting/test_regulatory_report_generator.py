@@ -45,7 +45,6 @@ from zephyr.reporting.regulatory_report_generator import (
     _compute_data_hash,
 )
 
-
 # ── 程序化交易报告测试 ──
 
 

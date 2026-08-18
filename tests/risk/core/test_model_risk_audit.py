@@ -34,10 +34,9 @@ pytest.importorskip(
 from zephyr.intelligence.model_drift_detector import DriftResult  # noqa: E402
 from zephyr.risk.core.model_risk_audit import (  # noqa: E402
     DEFAULT_IC_DECAY_THRESHOLD,
-    ModelRiskAuditReport,
     ModelRiskAuditor,
+    ModelRiskAuditReport,
 )
-
 
 # ── Mock 漂移检测器（可控 drift_detected / divergence_score）─────────
 

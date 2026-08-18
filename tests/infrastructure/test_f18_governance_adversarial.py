@@ -25,6 +25,7 @@ from unittest.mock import patch
 import pytest
 
 from zephyr.shared.io.paths import REPO_ROOT
+
 _PROJECT_ROOT = REPO_ROOT
 _SRC_DIR = str(_PROJECT_ROOT / "src")
 _GOV_DIR = str(_PROJECT_ROOT / "scripts" / "governance")

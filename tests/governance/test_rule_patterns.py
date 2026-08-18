@@ -36,14 +36,13 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from zephyr.governance.rule_patterns import (  # noqa: E402
     DIGIT_SUFFIX_RE,
-    RULE_NAME_RE,
     MODULE_ID_RE,
-    PIICategory,
-    POISONING_INDICATORS,
     PII_PATTERNS,
+    POISONING_INDICATORS,
+    RULE_NAME_RE,
+    PIICategory,
     __all__,
 )
-
 
 # ============================================================================
 # TestSymbolExport

@@ -18,8 +18,6 @@ import pytest
 from pydantic import ValidationError
 
 from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.shared.schema.schemas import TaskNamespace, TaskStatus
-from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.foundation.models import (
     DecompositionResult,
     GateCheckResult,
@@ -28,6 +26,8 @@ from zephyr.shared.foundation.models import (
     TaskCard,
 )
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.schema.schemas import TaskNamespace, TaskStatus
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
 _NOW = datetime(2026, 5, 23, 12, 0, 0)
 

@@ -29,7 +29,6 @@ if str(_SCRIPTS_DIR) not in sys.path:
 
 import check_commit_message as ccm  # type: ignore[import-not-found]
 
-
 # =====================================================================
 # 1. TestExtractSessionId
 # =====================================================================

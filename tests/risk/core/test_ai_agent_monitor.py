@@ -32,11 +32,10 @@ pytest.importorskip(
 )
 
 from zephyr.risk.core.ai_agent_monitor import (  # noqa: E402
+    DEFAULT_RISK_THRESHOLD,
     AiAgentMonitor,
     AiAgentRiskMetrics,
-    DEFAULT_RISK_THRESHOLD,
 )
-
 
 # ── 辅助 ─────────────────────────────────────────────────────────────
 

@@ -56,6 +56,7 @@ def _try_import(module_path: str) -> bool:
 def attack_01_metadata_forgery() -> dict[str, Any]:
     try:
         from zephyr.shared.cross_layer.ml_experiment_pipeline import MLExperimentPipeline
+
         from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline.reset_run_state()
@@ -86,6 +87,7 @@ def attack_01_metadata_forgery() -> dict[str, Any]:
 def attack_02_inference_tampering() -> dict[str, Any]:
     try:
         from zephyr.shared.cross_layer.ml_experiment_pipeline import MLExperimentPipeline
+
         from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline.reset_run_state()
@@ -166,6 +168,7 @@ def attack_03_p_hacking() -> dict[str, Any]:
 def attack_04_promotion_bypass() -> dict[str, Any]:
     try:
         from zephyr.shared.cross_layer.ml_experiment_pipeline import MLExperimentPipeline
+
         from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline.reset_run_state()

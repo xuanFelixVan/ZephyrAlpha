@@ -42,9 +42,8 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from zephyr.integration.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
 from zephyr.integration.local_model.embedding_router import EmbeddingRouter
-
+from zephyr.integration.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
 
 # ============================================================================
 # TestVMSLifecycle — VMS 启动/关闭生命周期

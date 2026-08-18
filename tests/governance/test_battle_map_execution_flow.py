@@ -686,7 +686,7 @@ def _run_simulation_visual():
         print(f"\n[{sid}] → {pkt.type}: {pkt.payload}")
 
     print(f"\n[流转路径] {' → '.join(pkt.history)}")
-    print(f"[闭环验证] TCA 反馈 → BM-EXE-05（degradation）")
+    print("[闭环验证] TCA 反馈 → BM-EXE-05（degradation）")
 
     # 闭环第二轮
     feedback = {"slippage_bps": pkt.payload["slippage_bps"], "is_cost": pkt.payload["is_cost"]}

@@ -9,11 +9,11 @@
 import os
 from pathlib import Path
 
-from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.security.llm_defense.llm_security.self_protection.code_integrity import (
     CodeIntegrityGuard,
     IntegrityStatus,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 PROJECT_ROOT = str(REPO_ROOT)
 

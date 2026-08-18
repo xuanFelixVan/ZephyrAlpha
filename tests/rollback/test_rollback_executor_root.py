@@ -22,9 +22,9 @@ from zephyr.infrastructure.rollback.rollback_executor import (
     DiscardDecision,
     PreflightResult,
     PreviewResult,
+    RollbackExecutionResult,
     RollbackExecutor,
     RollbackOp,
-    RollbackExecutionResult,
 )
 
 

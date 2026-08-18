@@ -11,8 +11,9 @@
 # [TESTS] test_injection_engine.py
 # [TTL] task_bound
 
-import pytest
 from datetime import datetime
+
+import pytest
 
 injection_mod = pytest.importorskip(
     "zephyr.security.adversarial_validation.injection_engine",

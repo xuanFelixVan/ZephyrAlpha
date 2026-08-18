@@ -223,7 +223,7 @@ class TestRunSilentFailureRegression:
         """三段全 fail → RegressionResult.ok=False。"""
         def make_fail_builder(name):
             def builder(root):
-                return ([sys.executable, "-c", f"import sys; sys.exit(1)"], root)
+                return ([sys.executable, "-c", "import sys; sys.exit(1)"], root)
             return builder
         original_stages = runner.STAGES
         try:

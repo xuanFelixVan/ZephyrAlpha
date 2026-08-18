@@ -349,6 +349,7 @@ class TestLogWorkspaceOpContentHash:
     def test_content_hash_param_exists(self):
         """_log_workspace_op 必须有 content_hash 参数。"""
         import inspect
+
         from zephyr.gov_enforcement.rule_bridge.session_worktree import _log_workspace_op
         sig = inspect.signature(_log_workspace_op)
         assert "content_hash" in sig.parameters, \
@@ -458,7 +459,8 @@ class TestQuarantineFileHashIntegration:
     def test_quarantine_logs_content_hash(self, tmp_path):
         """_quarantine_file 移送文件后，遥测日志含 content_hash。"""
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
-            _quarantine_file, _quarantine_root,
+            _quarantine_file,
+            _quarantine_root,
         )
         # 创建测试文件
         src_file = tmp_path / "test_untracked.py"
@@ -482,6 +484,7 @@ class TestQuarantineFileHashIntegration:
     def test_quarantine_hash_matches_file_content(self, tmp_path):
         """quarantine 记录的 content_hash 与原文件内容一致。"""
         import hashlib
+
         from zephyr.gov_enforcement.rule_bridge.session_worktree import _quarantine_file
 
         content = b"# test content for hash verification\n"
@@ -525,6 +528,7 @@ class TestFileRestoreTelemetry:
     def test_recover_function_has_telemetry_call(self):
         """_recover_changes_from_stash 函数体内有 _log_workspace_op 调用。"""
         import inspect
+
         from zephyr.gov_enforcement.rule_bridge.session_worktree import _recover_changes_from_stash
         source = inspect.getsource(_recover_changes_from_stash)
         assert "_log_workspace_op" in source, \

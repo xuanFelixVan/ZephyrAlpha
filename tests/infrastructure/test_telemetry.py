@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import time
 
+import zephyr.infrastructure.asset_inventory.telemetry as telemetry_mod
 from zephyr.infrastructure.asset_inventory.telemetry import (
     ConsoleChannel,
     FeishuWebhook,
@@ -24,7 +25,6 @@ from zephyr.infrastructure.asset_inventory.telemetry import (
     SmtpEmailChannel,
     get_telemetry,
 )
-import zephyr.infrastructure.asset_inventory.telemetry as telemetry_mod
 
 
 class TestMetricPoint:

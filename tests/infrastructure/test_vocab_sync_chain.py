@@ -628,14 +628,16 @@ class TestDbConnectionNamingConvention:
             sys.path.insert(0, str(repo_root))
 
         # 关键：若 F4 递归，下面 import + call 会抛 RecursionError
-        from scripts.governance._shared.constants import (  # noqa: PLC0415
-            PgConnExecuteWrapper,
-            get_depgraph_pg_connection as f4_wrapper,
-        )
-
         # PG 不可用时降级 skip（套件既定约定，conftest pg_db 同规）——递归遮蔽
         # 在抵达 psycopg2.connect 前即抛 RecursionError，故 skip 不削弱回归力。
         import psycopg2  # noqa: PLC0415
+
+        from scripts.governance._shared.constants import (  # noqa: PLC0415
+            PgConnExecuteWrapper,
+        )
+        from scripts.governance._shared.constants import (
+            get_depgraph_pg_connection as f4_wrapper,
+        )
 
         try:
             conn = f4_wrapper(autocommit=True)

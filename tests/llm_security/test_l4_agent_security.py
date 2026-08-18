@@ -8,8 +8,6 @@
 # [TTL] task_bound
 import pytest
 
-from zephyr.security.llm_defense.llm_security.protocol import SecurityContext
-from zephyr.shared.contracts.security.security_decision import SecurityDecision
 from zephyr.security.llm_defense.llm_security.layers.l4_agent import (
     AgentImpersonationDefender,
     AgentPermission,
@@ -19,6 +17,8 @@ from zephyr.security.llm_defense.llm_security.layers.l4_agent import (
     LongHorizonAgentDefender,
     RiskLevel,
 )
+from zephyr.security.llm_defense.llm_security.protocol import SecurityContext
+from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
 
 def make_ctx(

@@ -37,16 +37,6 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.governance.persistence.intent_keyword_mapper import IntentKeywordMapper
-from zephyr.governance.persistence.intent_parser import (
-    EmbeddingHit,
-    IntentParser,
-    LLMIntentVerdict,
-)
-from zephyr.integration.mcp.base_server import JSONRPC_VERSION, BaseMCPServer
-from zephyr.integration.mcp.doc_guard_server import DocGuardServer
-from zephyr.integration.mcp.gate_engine_server import GateEngineServer
-from zephyr.integration.mcp.sentinel_server import SentinelServer
 from zephyr.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionSignal,
@@ -62,6 +52,16 @@ from zephyr.feedback_loop.fitness_functions import (
     MetricStatus,
     from_gate_results,
 )
+from zephyr.governance.persistence.intent_keyword_mapper import IntentKeywordMapper
+from zephyr.governance.persistence.intent_parser import (
+    EmbeddingHit,
+    IntentParser,
+    LLMIntentVerdict,
+)
+from zephyr.integration.mcp.base_server import JSONRPC_VERSION, BaseMCPServer
+from zephyr.integration.mcp.doc_guard_server import DocGuardServer
+from zephyr.integration.mcp.gate_engine_server import GateEngineServer
+from zephyr.integration.mcp.sentinel_server import SentinelServer
 from zephyr.orchestrator.agent_orchestrator import (
     AgentOrchestrator,
     AgentRole,

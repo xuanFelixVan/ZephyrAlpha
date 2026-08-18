@@ -167,7 +167,11 @@ class TestAntiAutomationBias:
         assert r.forced_review
 
     def test_mechanical_confirmation_triggers_review(self):
-        from zephyr.governance.security_governance.anti_automation_bias import AntiAutomationBias, OversightAction, ReviewDecision
+        from zephyr.governance.security_governance.anti_automation_bias import (
+            AntiAutomationBias,
+            OversightAction,
+            ReviewDecision,
+        )
 
         aab = AntiAutomationBias(forced_review_ratio=0.0)
         for i in range(11):

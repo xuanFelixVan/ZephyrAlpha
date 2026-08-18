@@ -52,24 +52,23 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
-from zephyr.integration.vector_memory.retrieval_feedback import (
-    FeedbackEntry,
-    RetrievalFeedback,
+from zephyr.integration.local_model.cache_layer import (
+    DEFAULT_CACHE_SIZE,
+    NO_CACHE_COLLECTIONS,
+    PERMANENT_CACHE_COLLECTIONS,
+    CacheLayer,
 )
+from zephyr.integration.vector_memory.collection_manager import TTL_MAP
 from zephyr.integration.vector_memory.index_health_monitor import (
     DriftReport,
     HealthReport,
     IndexHealthMonitor,
     TTLExpiryReport,
 )
-from zephyr.integration.vector_memory.collection_manager import TTL_MAP
-from zephyr.integration.local_model.cache_layer import (
-    CacheLayer,
-    DEFAULT_CACHE_SIZE,
-    NO_CACHE_COLLECTIONS,
-    PERMANENT_CACHE_COLLECTIONS,
+from zephyr.integration.vector_memory.retrieval_feedback import (
+    FeedbackEntry,
+    RetrievalFeedback,
 )
-
 
 # ============================================================================
 # TestCacheInvalidationOnWrite — 写入后缓存失效

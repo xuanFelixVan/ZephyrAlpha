@@ -20,7 +20,9 @@ import pytest
 # depgraph hint: 让 generate_project_depgraph.py AST 扫描器检测 test→module 依赖边
 # 实际测试用 importlib 动态加载（scripts/ 非 Python 包），此 import 运行时必失败
 try:
-    from scripts.governance.d5_architecture.syncers.blueprint_frontmatter_reconciler import reconcile_blueprint_frontmatter  # noqa: F401
+    from scripts.governance.d5_architecture.syncers.blueprint_frontmatter_reconciler import (
+        reconcile_blueprint_frontmatter,  # noqa: F401
+    )
 except ImportError:
     pass
 

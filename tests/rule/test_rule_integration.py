@@ -19,8 +19,8 @@ import psycopg2
 import pytest
 import yaml
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_engine import RuleLoader
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT
 
 _PROJECT_ROOT = REPO_ROOT

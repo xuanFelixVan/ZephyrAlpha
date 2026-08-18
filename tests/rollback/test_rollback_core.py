@@ -14,6 +14,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from zephyr.infrastructure.rollback.kill_switch import KillLevel, KillSwitchManager, KillSwitchStatus
 from zephyr.infrastructure.rollback.rollback_executor import (
     DiscardDecision,
     PreflightResult,
@@ -21,7 +22,6 @@ from zephyr.infrastructure.rollback.rollback_executor import (
     RollbackOp,
 )
 from zephyr.infrastructure.rollback.rollback_lock import LockAcquireResult, RollbackLock
-from zephyr.infrastructure.rollback.kill_switch import KillLevel, KillSwitchManager, KillSwitchStatus
 
 
 @pytest.fixture

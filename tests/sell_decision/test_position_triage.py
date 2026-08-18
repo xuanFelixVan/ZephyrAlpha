@@ -7,8 +7,8 @@ import pytest
 from zephyr.position.core.position_drift_monitor import TriageLevel
 from zephyr.sell_decision.core.position_triage import (
     InvalidTriageInputError,
-    SellPositionSnapshot,
     PositionTriage,
+    SellPositionSnapshot,
     StrategyType,
 )
 

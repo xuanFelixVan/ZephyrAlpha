@@ -14,8 +14,8 @@ import sys
 from pathlib import Path
 
 import pytest
-from zephyr.shared.io.paths import REPO_ROOT
 
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 @pytest.fixture(scope="module")

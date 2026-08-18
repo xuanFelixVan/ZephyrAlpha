@@ -63,10 +63,10 @@ def _make_taskcard(task_id: str, depends_on: list[str] | None = None) -> "TaskCa
         classification="internal",
         ai_autonomy_level="supervised",
         description=(
-            f"根因：F3任务系统自动化集成测试需验证boot_hooks与TaskRepository真实联动及auto_runtime_core全链路。"
-            f"治根：使用临时数据库创建真实TaskRepository实例，注册boot_hooks并触发状态转换钩子，验证下游自动解锁。"
-            f"施工步骤：创建依赖任务链并验证下游自动解锁功能。"
-            f"验收标准：下游任务状态从BLOCKED自动转为READY，10个MCP Server按DAG拓扑排序启动。"
+            "根因：F3任务系统自动化集成测试需验证boot_hooks与TaskRepository真实联动及auto_runtime_core全链路。"
+            "治根：使用临时数据库创建真实TaskRepository实例，注册boot_hooks并触发状态转换钩子，验证下游自动解锁。"
+            "施工步骤：创建依赖任务链并验证下游自动解锁功能。"
+            "验收标准：下游任务状态从BLOCKED自动转为READY，10个MCP Server按DAG拓扑排序启动。"
         ),
         files_in_scope=[f"d:/tmp/integration_test/{task_id}.dummy"],
         deliverables=["集成测试通过"],

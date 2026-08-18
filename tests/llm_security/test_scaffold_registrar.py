@@ -18,8 +18,8 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-from zephyr.infrastructure.auto_fix_engine.models import FixLevel, FixStatus
 from zephyr.infrastructure.auto_fix_engine import scaffold_registrar as scaffold_mod
+from zephyr.infrastructure.auto_fix_engine.models import FixLevel, FixStatus
 from zephyr.infrastructure.auto_fix_engine.scaffold_registrar import ScaffoldRegistrar
 
 

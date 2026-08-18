@@ -29,12 +29,11 @@ from zephyr.trading.trigger_registry import (
     MVP_TRIGGER_LIST,
     PRIORITY_MAX,
     PRIORITY_MIN,
-    TriggerEntry,
     TriggeredEvent,
+    TriggerEntry,
     TriggerRegistry,
     create_mvp_registry,
 )
-
 
 # ══════════════════════════════════════════════════════════════
 # TriggerEntry dataclass 契约

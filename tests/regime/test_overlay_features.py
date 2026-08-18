@@ -40,14 +40,13 @@ import pytest
 
 from zephyr.regime.features.overlay_features import (
     t3_leader_score,
-    t3_mainline_score,
     t3_ma_trend_score,
+    t3_mainline_score,
     t3_money_effect_score,
     t3_one_day_mainline_flag,
     t3_sentiment_score,
     t3_volume_price_score,
 )
-
 
 # ---------------------------------------------------------------------------
 # 辅助

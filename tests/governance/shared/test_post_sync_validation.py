@@ -46,6 +46,7 @@ import sys
 from pathlib import Path
 
 import pytest
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 # ----------------------------------------------------------------------------

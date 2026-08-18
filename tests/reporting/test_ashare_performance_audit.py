@@ -48,7 +48,6 @@ from zephyr.reporting.ashare_performance_audit import (
     _compute_data_hash,
 )
 
-
 # ── 测试辅助 ──
 
 _GOOD_METRICS = {
