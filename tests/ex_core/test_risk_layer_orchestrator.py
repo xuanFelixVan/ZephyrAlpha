@@ -948,14 +948,20 @@ class TestSystemicWiringRobustness:
         assert snap3.systemic_level == 2
         assert snap3.systemic_cap == pytest.approx(0.70)
 
-    def test_recovery_gate_type_error_isolated(self) -> None:
-        """红队（AI-R2-001 修复实证）：降级门禁入参类型异常隔离，不崩主循环。
+    def test_recovery_gate_exception_isolated(self) -> None:
+        """红队（AI-R2-001 修复实证）：降级门禁内部异常隔离，不崩主循环。
 
-        原缺陷：_try_systemic_recovery 内 float(str) 抛 ValueError 未捕获，
-        传播崩 evaluate_intraday 调用方（违反自身"越界输入隔离跳过"契约）。
+        原缺陷：_try_systemic_recovery 内异常（float() 类型错/min_hold_minutes
+        缺级别键 KeyError 等）未捕获，传播崩 evaluate_intraday 调用方
+        （违反自身"越界输入隔离跳过"契约）。
+        构造：config.min_hold_minutes={1:10,3:30} 缺 level 2 → 降级候选轮
+        gate 内 KeyError → 新 except 分支保持当前级别（AI-R2 复审修正：
+        初审测试用 str spread 实被 detector.check 前置 except 拦截，
+        未触达本修复分支）。
         """
         broker = FakeBroker(cash=Decimal("1000000"))
-        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        config = RiskLayerConfig(systemic_min_hold_minutes={1: 10, 3: 30})  # 缺 level 2
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker, config=config)
         inputs_box["data"] = {
             "sell_pressure": 0.80,
             "bid_ask_spread": 0.01,
@@ -963,11 +969,8 @@ class TestSystemicWiringRobustness:
         }
         orch.evaluate_intraday(1_000_000.0, now=_T0)
         assert orch.systemic_level == 2
-        # 降级候选轮 + spread 类型污染（str 而非 float）：不抛异常、级别保持
-        inputs_box["data"] = {
-            "sell_pressure": 0.30,
-            "bid_ask_spread": "corrupted",  # type: ignore[dict-item]
-        }
+        # 降级候选轮（2 信号→1 信号）：gate KeyError 被隔离，级别保持，主循环不崩
+        inputs_box["data"] = {"sell_pressure": 0.80, "bid_ask_spread": 0.01}
         snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=45))
         assert snap.systemic_level == 2  # 门禁失效保持当前级别
         assert orch.kill_switch_engaged is False

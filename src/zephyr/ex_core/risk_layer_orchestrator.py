@@ -597,8 +597,9 @@ class RiskLayerOrchestrator:
 
         接线语义：systemic_detector 与 systemic_input_provider 成对注入即生效
         （任一缺失=未接线，返回 None，快照 systemic_* 走默认值不加约束）。
-        provider 失效/无输入 → 本轮跳过（状态保持，Fail-Safe-Neutral——回撤/
-        VaR 链仍保护；流动性输入缺失不应冻结交易主循环）。
+        provider 失效/空输入/detector 失效 → 本轮跳过检测但输出 state 派生
+        cap/halt（_state_hold_view，37 号 §3.6 hysteresis 无数据=状态不变——
+        危机中数据中断不放松仓位约束；回撤/VaR 链仍保护，主循环不冻结）。
 
         状态机（37 号 §3.3 触发 + §3.6 恢复双口径）：
           - 升级（alert 级别 > 当前级别）：立即迁移并重置计时；迁移进入 LEVEL_3
