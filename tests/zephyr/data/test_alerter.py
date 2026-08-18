@@ -23,11 +23,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from src.zephyr.data.alerter import (
-    Alerter,
+    LEVEL_CRITICAL,
+    LEVEL_ERROR,
     LEVEL_INFO,
     LEVEL_WARN,
-    LEVEL_ERROR,
-    LEVEL_CRITICAL,
+    Alerter,
 )
 
 

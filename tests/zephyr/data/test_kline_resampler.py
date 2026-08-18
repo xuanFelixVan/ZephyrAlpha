@@ -11,7 +11,6 @@ from zephyr.data.kline_resampler import (
     _get_date_range,
 )
 
-
 # ---------- _SYNTH_MAP ----------
 
 class TestSynthMap:
@@ -97,7 +96,7 @@ class TestGetDateRange:
         start, end = _get_date_range(7)
         # end should be today (UTC date)
         # start should be 7 days before end
-        from datetime import datetime, UTC, timedelta
+        from datetime import UTC, datetime, timedelta
         expected_end = datetime.now(UTC).date()
         expected_start = expected_end - timedelta(days=7)
         assert start == expected_start.strftime("%Y-%m-%d")
@@ -105,7 +104,7 @@ class TestGetDateRange:
 
     def test_30_days_range(self):
         start, end = _get_date_range(30)
-        from datetime import datetime, UTC, timedelta
+        from datetime import UTC, datetime, timedelta
         expected_end = datetime.now(UTC).date()
         expected_start = expected_end - timedelta(days=30)
         assert start == expected_start.strftime("%Y-%m-%d")

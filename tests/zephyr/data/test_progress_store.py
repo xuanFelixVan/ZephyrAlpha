@@ -13,6 +13,7 @@
 """
 import datetime
 import threading
+
 import pytest
 
 from src.zephyr.data.progress_store import ProgressStore

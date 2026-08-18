@@ -3,8 +3,9 @@
 # [TESTS] zephyr.data.tick_subscriber
 # [DOMAIN] D_DATA
 """tick_subscriber 单元测试（含 Phase C: WalWriter + 批量出队 + 无锁计数）。"""
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
 
 import json
@@ -22,7 +23,7 @@ import psutil
 import pytest
 
 import zephyr.data.tick_subscriber as ts_module
-from zephyr.data.tick_subscriber import TickSubscriber, tick_to_row, infer_market_type
+from zephyr.data.tick_subscriber import TickSubscriber, infer_market_type, tick_to_row
 
 
 def _conn(status, lip, lport, rip, rport, pid):

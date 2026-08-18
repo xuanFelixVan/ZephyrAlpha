@@ -12,16 +12,17 @@
 用 tmp_path fixture 隔离测试 yaml。
 """
 import threading
+
 import pytest
 
 from src.zephyr.data.task_queue import (
-    TaskQueue,
+    BLOCKED,
+    DEFERRED_PERSISTENCE,
+    FAILED,
     PENDING,
     RUNNING,
     SUCCESS,
-    FAILED,
-    BLOCKED,
-    DEFERRED_PERSISTENCE,
+    TaskQueue,
 )
 
 

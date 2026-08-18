@@ -12,9 +12,9 @@
 import pytest
 
 from src.zephyr.data.policy_registry import (
-    SourcePolicy,
-    PolicyRegistry,
     DEFAULT_POLICIES,
+    PolicyRegistry,
+    SourcePolicy,
 )
 
 

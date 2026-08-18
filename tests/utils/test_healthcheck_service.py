@@ -26,8 +26,8 @@ import time
 from pathlib import Path
 from unittest.mock import patch
 
-from zephyr.shared.lifecycle.healthcheck_service import HealthcheckService, HealthReport, HealthStatus
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.lifecycle.healthcheck_service import HealthcheckService, HealthReport, HealthStatus
 
 PROJECT_ROOT = REPO_ROOT  # alias 真源
 

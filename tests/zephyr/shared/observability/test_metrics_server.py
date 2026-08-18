@@ -3,12 +3,13 @@
 # [A_module] module_id=MOD-TEST_METRICS_SERVER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """metrics_server 单元测试（P1-5 Prometheus /metrics 端点）。"""
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "src"))
 
-import urllib.request
 import urllib.error
+import urllib.request
 
 from zephyr.shared.observability.metrics import get_registry
 from zephyr.shared.observability.metrics_server import start_metrics_server

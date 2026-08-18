@@ -5,10 +5,10 @@
 import pytest
 
 from zephyr.data.wal_codec import (
-    TsvCodec,
-    encode_tsv,
-    decode_tsv,
     CodecRegistry,
+    TsvCodec,
+    decode_tsv,
+    encode_tsv,
     get_registry,
 )
 

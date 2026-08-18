@@ -14,12 +14,12 @@
 import datetime
 import os
 import sys
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.zephyr.data.provider_base import FetchPayload, FetchResult
 from src.zephyr.data.policy_registry import SourcePolicy
+from src.zephyr.data.provider_base import FetchPayload, FetchResult
 
 
 def _install_mock_module(name: str, mock: MagicMock | None = None) -> MagicMock:

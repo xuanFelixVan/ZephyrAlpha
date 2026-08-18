@@ -9,6 +9,7 @@ import pytest
 import yaml
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
 PROJECT_ROOT = REPO_ROOT  # alias 真源
 GATE_YAML = PROJECT_ROOT / "src" / "zephyr" / "gov_enforcement" / "rule_enforcement" / "g_trae_052.yaml"
 RULE_YAML = (

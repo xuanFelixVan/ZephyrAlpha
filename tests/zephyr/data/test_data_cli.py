@@ -13,13 +13,12 @@
 
 不测试 start 命令（常驻进程会阻塞）。
 """
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.data.cli import main, _build_parser, get_subcommands
+from zephyr.data.cli import _build_parser, get_subcommands, main
 from zephyr.data.policy_registry import SourcePolicy
-
 
 # ============== Parser ==============
 

@@ -25,22 +25,21 @@ import pytest
 
 from src.zephyr.data.capability_validator import (
     Violation,
-    validate_task_capability_contracts,
-    has_blocking_violations,
-    format_violations,
-    extract_route_capabilities,
-    extract_meta_capabilities,
+    _meta_caps_from_tree,
+    _route_caps_from_tree,
     check_route_meta_consistency,
     check_route_meta_consistency_content,
-    _route_caps_from_tree,
-    _meta_caps_from_tree,
+    extract_meta_capabilities,
+    extract_route_capabilities,
+    format_violations,
+    has_blocking_violations,
+    validate_task_capability_contracts,
 )
 from src.zephyr.data.provider_base import (
     CapabilityContract,
     IngestProviderMeta,
     _normalize_capabilities,
 )
-
 
 # ============== CapabilityContract / _normalize_capabilities ==============
 

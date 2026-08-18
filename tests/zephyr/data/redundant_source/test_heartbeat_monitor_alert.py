@@ -24,7 +24,7 @@ class FakeAlerter:
     """记录所有 notify 调用的假告警器。"""
 
     def __init__(self) -> None:
-        self.calls: List[Tuple[str, str, str, str | None]] = []
+        self.calls: list[tuple[str, str, str, str | None]] = []
 
     def notify(
         self,

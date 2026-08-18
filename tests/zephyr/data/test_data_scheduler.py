@@ -15,14 +15,13 @@
 不依赖真实 APScheduler/Provider/ClickHouse，用 mock 替换。
 """
 import datetime
-from unittest.mock import patch, MagicMock, PropertyMock
+from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
 
-from src.zephyr.data.scheduler import IntegratorScheduler
-from src.zephyr.data.provider_base import FetchPayload, FetchResult, IngestProviderBase, IngestProviderMeta
 from src.zephyr.data.ch_writer import WriteDisposition, WriteOutcome
-
+from src.zephyr.data.provider_base import FetchPayload, FetchResult, IngestProviderBase, IngestProviderMeta
+from src.zephyr.data.scheduler import IntegratorScheduler
 
 # ============== 测试用 Mock Provider ==============
 

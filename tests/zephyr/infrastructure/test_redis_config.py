@@ -7,8 +7,9 @@
     try/except 永不触发 → CP-02 优雅降级失效。
     load_redis_config() 必须返回含 socket_timeout / socket_connect_timeout 的字典。
 """
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
 
 import pytest

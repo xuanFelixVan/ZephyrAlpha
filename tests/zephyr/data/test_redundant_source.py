@@ -11,12 +11,12 @@ from zephyr.data.redundant_source.heartbeat_monitor import (
     HeartbeatStatus,
     SourceState,
 )
+from zephyr.data.redundant_source.recovery import RecoveryManager
 from zephyr.data.redundant_source.source_switcher import (
     SourceProvider,
     SourceSwitcher,
 )
 from zephyr.data.redundant_source.sqlite_fallback import SQLiteFallback
-from zephyr.data.redundant_source.recovery import RecoveryManager
 
 
 class TestHeartbeatMonitor:

@@ -51,22 +51,22 @@ from zephyr.infrastructure.a2a_protocol.multi_agent import (
     AgentRole,
     TaskDispatch,
 )
-from zephyr.shared.resilience.durable_execution import (
-    SimpleActivity,
-    WorkflowManager,
-)
 from zephyr.shared.evaluation.evals import (
     EvalCase,
     EvalResult,
     EvalRubric,
     EvalRunner,
 )
+from zephyr.shared.resilience.durable_execution import (
+    SimpleActivity,
+    WorkflowManager,
+)
+from zephyr.shared.session.session_audit import SessionAuditTrail, SessionRecord
 from zephyr.shared.versioning.version_negotiation import (
     SchemaName,
     VersionNegotiator,
     VersionSegment,
 )
-from zephyr.shared.session.session_audit import SessionAuditTrail, SessionRecord
 
 
 class TestA1_EconomicAttacks:

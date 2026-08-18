@@ -13,7 +13,6 @@ from zephyr.data.sector_snapshot_collector import (
     parse_snapshot,
 )
 
-
 # ---------- _to_decimal ----------
 
 class TestToDecimal:

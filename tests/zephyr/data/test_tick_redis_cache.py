@@ -32,7 +32,6 @@ import pytest
 from zephyr.data.tick_redis_cache import TickRedisCache, tick_to_cache_dict
 from zephyr.infrastructure.h1_redis_hot.h1_redis_schema import tick_latest_key
 
-
 # ── 测试数据工厂 ──
 
 def _make_qmt_tick(

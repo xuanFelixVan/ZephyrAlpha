@@ -21,8 +21,8 @@ from unittest.mock import patch
 import pytest
 
 from src.zephyr.data import local_replay, wal_writer
-from src.zephyr.data.wal_writer import WalWriter
 from src.zephyr.data.provider_base import FetchResult
+from src.zephyr.data.wal_writer import WalWriter
 
 
 def _make_result(rows, columns=None, table="c1_market.tick_data", error=None):

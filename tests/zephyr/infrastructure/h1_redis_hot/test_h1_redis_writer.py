@@ -1,8 +1,9 @@
 # [TTL] task_bound
 # [TESTS] zephyr.infrastructure.h1_redis_hot.h1_redis_writer
 """H1RedisWriter 单元测试——验证因子截面批量写入 + updated_at 时戳（CP-02 治本）。"""
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "src"))
 
 from unittest.mock import MagicMock

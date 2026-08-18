@@ -1,8 +1,9 @@
 # [TTL] task_bound
 # [TESTS] zephyr.infrastructure.h1_redis_hot.h1_redis_reader
 """H1RedisReader 单元测试——验证 get_online_features + get_feature_updated_at（CP-02 治本）。"""
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "src"))
 
 from unittest.mock import MagicMock

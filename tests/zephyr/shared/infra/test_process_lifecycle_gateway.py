@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 
 import pytest
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 PROJECT_ROOT = REPO_ROOT

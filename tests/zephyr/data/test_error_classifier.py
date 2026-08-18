@@ -20,8 +20,8 @@ if str(_SRC) not in sys.path:
 
 from zephyr.data.error_classifier import (  # noqa: E402
     classify_error,
-    is_unrecoverable,
     is_recoverable,
+    is_unrecoverable,
 )
 
 

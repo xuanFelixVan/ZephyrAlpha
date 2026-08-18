@@ -14,6 +14,12 @@ from pathlib import Path
 
 import pytest
 
+from zephyr.shared.io.paths import (
+    DB_DIR,
+    GATES_DIR,
+    REPO_ROOT,
+    find_repo_root,
+)
 from zephyr.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
 from zephyr.shared.schema.schemas import (
     AuditFinding,
@@ -30,12 +36,6 @@ from zephyr.shared.schema.schemas import (
     TaskStatus,
 )
 from zephyr.shared.schema.severity_types import SafetyLevel
-from zephyr.shared.io.paths import (
-    DB_DIR,
-    GATES_DIR,
-    REPO_ROOT,
-    find_repo_root,
-)
 
 
 class TestTaskModel:

@@ -11,18 +11,18 @@
 
 不依赖真实 SDK，用 mock 子类和 mock 函数。
 """
-import time
 import datetime
+import time
+
 import pytest
 
+from src.zephyr.data.policy_registry import SourcePolicy
 from src.zephyr.data.provider_base import (
-    IngestProviderBase,
-    IngestProviderMeta,
     FetchPayload,
     FetchResult,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
-from src.zephyr.data.policy_registry import SourcePolicy
-
 
 # ============== 测试用 mock 子类 ==============
 

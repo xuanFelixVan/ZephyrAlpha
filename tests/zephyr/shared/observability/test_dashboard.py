@@ -7,14 +7,14 @@ import json
 import pytest
 
 from zephyr.shared.observability.dashboard import (
-    generate_clickhouse_datasource_yaml,
-    generate_prometheus_datasource_yaml,
-    generate_data_collection_dashboard,
-    generate_ch_write_dashboard,
-    generate_drain_health_dashboard,
-    generate_alert_rules_yaml,
     ALERT_RULES,
     export_dashboard_json,
+    generate_alert_rules_yaml,
+    generate_ch_write_dashboard,
+    generate_clickhouse_datasource_yaml,
+    generate_data_collection_dashboard,
+    generate_drain_health_dashboard,
+    generate_prometheus_datasource_yaml,
 )
 
 

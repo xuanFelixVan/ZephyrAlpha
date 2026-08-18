@@ -7,24 +7,28 @@
 """
 import datetime
 import sys
-import pytest
-import pandas as pd
 from unittest.mock import MagicMock
 
-from src.zephyr.data.provider_base import FetchPayload, FetchResult
-from src.zephyr.data.policy_registry import SourcePolicy
+import pandas as pd
+import pytest
+
 from src.zephyr.data.implementations.akshare_provider import (
     AkshareIngestProvider,
+)
+from src.zephyr.data.implementations.akshare_provider import (
     safe_float as ak_safe_float,
 )
+from src.zephyr.data.implementations.baostock_provider import BaostockProvider
 from src.zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
 from src.zephyr.data.implementations.tqcenter_provider import (
     TQCenterProvider,
+)
+from src.zephyr.data.implementations.tqcenter_provider import (
     _safe_val as tq_safe_val,
 )
 from src.zephyr.data.implementations.tushare_provider import TushareProvider
-from src.zephyr.data.implementations.baostock_provider import BaostockProvider
-
+from src.zephyr.data.policy_registry import SourcePolicy
+from src.zephyr.data.provider_base import FetchPayload, FetchResult
 
 # ============== AkshareIngestProvider 测试 ==============
 

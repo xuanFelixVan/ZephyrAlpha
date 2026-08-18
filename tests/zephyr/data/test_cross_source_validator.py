@@ -4,12 +4,13 @@
 # [DOMAIN] D_DATA
 # [TTL] task_bound
 """cross_source_validator 单元测试（P1-4 多源交叉校验）。"""
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
 
 from decimal import Decimal
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from zephyr.data.cross_source_validator import (
     CrossSourceValidator,
