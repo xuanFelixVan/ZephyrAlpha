@@ -13,6 +13,7 @@
 
 from __future__ import annotations
 
+import subprocess
 import uuid
 
 import pytest
@@ -95,6 +96,11 @@ class TestGitBisectorBisect:
             gb.bisect("det-1", "script.py", last_good="abc123", first_bad="def456")
 
     def test_bisect_no_commits_returns_not_found(self, tmp_path):
+        # 治本（2026-08-18 第八统筹 merge 验收）：tmp_path 落在主仓 .runtime\tmp 内时，
+        # git 向上遍历命中主仓历史致 HEAD~21..HEAD~1 非空（root_cause=真实 merge commit），
+        # 用例环境脆性必红。git init 空仓（零提交）使 range 解析失败→stdout 空→found=False，
+        # 与 tmp_path 落点无关，环境无关确定性。
+        subprocess.run(["git", "init"], cwd=tmp_path, capture_output=True, check=True)
         gb = GitBisector(project_root=str(tmp_path))
         result = gb.bisect("det-1", "script.py", first_bad="HEAD~1")
         assert isinstance(result, BisectResult)
