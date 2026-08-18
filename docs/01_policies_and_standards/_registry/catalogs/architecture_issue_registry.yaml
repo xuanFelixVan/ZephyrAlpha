@@ -17638,3 +17638,28 @@ entries:
   related_rules: 'GATE-TRACKED-DRIFT（#55 族）; GATE-WORKTREE-DRIFT-WATCHDOG; #ARCH-BP-REGISTRY-DELETION-001 同构'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+
+# --- #ARCH-130: GATE-C2 契约快照漂移 + SCHEMA-TRUTH ipo_calendar 单表缺失（环境耦合项登记，待 Owner/统筹裁定） ---
+- issue_id: '#ARCH-130'
+  title: GATE-C2 契约快照过期+9 项现网 DDL 漂移；GATE-SCHEMA-TRUTH c1_market.ipo_calendar 真源有表 DB 无表
+  severity: P2中
+  category: data_contract_drift
+  discovered: 2026-08-19 循环审计 R1 基线三分类（新老基线逐字一致=稳定存量）
+  adjudication: |-
+    2026-08-19 AI-00 登记（非阻断，待专项裁定）：
+    【证据】①GATE-C2：契约快照基线 0e4f5c408eb7 vs 当前 3094accff058；9 项 schema 健康漂移
+    （nodes/edges/decision_* 表现网多出 blocker_status/gate_reason 列未入 DDL 真源；
+    decision_layers 缺列；rule_ai_perception 缺 3 个只读触发器）——PG 在线可比（非环境离线伪报）。
+    ②GATE-SCHEMA-TRUTH：107 表真源校验唯一漂移=c1_market.ipo_calendar 真源有定义 DB 不存在。
+    【裁定】两子项均需"补 DDL 声明 or 回滚现网列 or 建表/摘真源"三选一裁定，涉及现网 DB 变更
+    超出审计侧夜间自主权限（风险优先原则：DB 结构裁定须 Owner 知情）。登记 open 移交专项。
+    审计侧建议：blocker_status/gate_reason 列溯源今晚 merge 批（疑 R 系审查线落库列未同步 DDL 真源），
+    若确认则补 DDL 声明为正解；ipo_calendar 若功能已启用则按 DDL 真源建表。
+  impact:
+    - 'architecture_model/contracts（契约快照 freeze）'
+    - 'DDL 真源（drift 9 项 + ipo_calendar 建表/摘源）'
+  fix_phase: '待 Owner/统筹专项裁定（审计侧已备证据链）'
+  status: open
+  related_rules: '#ARCH-CH-025; GATE-C2; GATE-SCHEMA-TRUTH'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'

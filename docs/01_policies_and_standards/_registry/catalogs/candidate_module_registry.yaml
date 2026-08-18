@@ -6688,3 +6688,49 @@ entries:
   source: 'B1 工单治本方案 C（2026-08-19 AI-00 审计侧登记；兜底链 A 已落地，本候选非阻断）'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+
+# --- CAND-GOVTEST-002: ruff format 全量一次性成型（2273 文件 diff 海啸，需专项冻结窗口） ---
+- id: CAND-GOVTEST-002
+  name: ruff format 全量一次性成型（gate ruff-format 存量清零）
+  aliases:
+  - ruff format 大爆炸
+  - 全仓格式化收口
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 代码风格基线
+  problem: >-
+    ruff-format 门禁存量 2273 文件 would-reformat（新老基线在册）。一次性 ruff format
+    全量落地是零语义变更但 diff 海啸（2273 文件），会与一切在途分支产生文本冲突，
+    且触发全量门禁级联——必须在无并发施工的规划冻结窗口执行，并提前通告所有 AI 会话。
+  proposal: >-
+    择窗口期：①通告冻结（无在途 session/分支）；②ruff format 全量单 commit；
+    ③两轮全量回归验证；④后续新文件 format 由门禁增量守住（已在守）。
+    2026-08-19 循环审计 R1 已完成 ruff check 安全修复 1914 处（九批落地），
+    format 仅剩风格统一价值，不阻断功能正确性，故登记候选不连夜强推。
+  status: candidate
+  priority: P3
+  source: '循环审计 R1 杠杆#4（2026-08-19 AI-00 登记）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+
+# --- CAND-GOVTEST-003: ALGO_FLOW 标记 2186 模块批量补登（drafter 分批+抽查） ---
+- id: CAND-GOVTEST-003
+  name: ALGO_FLOW docstring 标记 2186 模块批量补登（GATE-ALGO-FLOW 存量清零）
+  aliases:
+  - ALGO_FLOW 补齐
+  - algo_flow_drafter 批量回填
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 算法全景真源
+  problem: >-
+    GATE-ALGO-FLOW 存量 2186 模块缺 # ALGO_FLOW docstring 标记（新老基线在册，merge 批净增 2）。
+    批量草稿可由 scripts/governance/_shared/algo_flow_drafter.py 生成，但 2186 模块的
+    草稿质量需分批落地+人工/模型抽查（算法流程描述错误会污染算法全景真源）。
+  proposal: >-
+    每批 200 模块：drafter 生成 → 抽查 10% 质量（算法步骤语义正确性）→ 门禁验证 → commit。
+    约 11 批收敛。属体量工程非阻断债，登记候选排期。
+  status: candidate
+  priority: P3
+  source: '循环审计 R1 杠杆#8（2026-08-19 AI-00 登记）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
