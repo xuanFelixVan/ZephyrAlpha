@@ -400,7 +400,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/门禁决策等能�
 | IDE MCP 配置 SSoT | `config/mcp.json` | ❌ |
 | 启动脚本 | `scripts/mcp/start_all.py` | ❌ |
 | Makefile | `Makefile` | ❌ |
-| MCP 威胁建模 | `docs/13_security/mcp-threat-model.md` | ❌ |
+| MCP 威胁建模 | `architecture_model/security/threat_model.yaml`（§第三方 MCP Tool/MCP 接口越权） | ✅ |
 
 ---
 
@@ -439,7 +439,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/门禁决策等能�
 | # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
 |---|-------------|------|------|---------|------|
 | R18 | 缺 MCP 专项共享测试基础设施（B71） | 确定 | 🟡中 | 新增 `mcp_client_factory` / `tmp_chroma` / `tmp_mcp_session` fixture | 风险 |
-| R33 | 全工程无 MCP 专项安全审计（B86） | 低 | 🔴高 | 新增 `docs/13_security/mcp-threat-model.md` | 风险 |
+| R33 | 全工程无 MCP 专项安全审计（B86） | 低 | 🔴高 | 新增 `architecture_model/security/threat_model.yaml` | 风险 |
 | R34 | MCP Server 无法互调（B87）——MCP孤岛 | 中 | 🔴高 | `_base_server.py` 新增 `invoke_tool()` 方法 | 风险 |
 | R44 | MCP Server 进程生命周期零管理（B97） | 中 | 🔴高 | PID file + kill 旧进程 + stdin 心跳超时 | 风险 |
 | R50 | tool-contracts 无跨 tool 前置约束声明（B103） | 中 | 🔴高 | 新增 `depends_on: [{tool_id, required_outcome}]` 字段 | 风险 |

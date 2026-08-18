@@ -1,8 +1,18 @@
 ---
 module_id: MOD-RK-21
+title: "流动性危机管理器蓝图 — 37号流动性危机协议 6 项算法施工落地"
 doc_type: blueprint
 status: Active
+version: "0.1.0"
 ttl: permanent
+layer: L02_risk
+layer_name: risk
+functional_domain: risk
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-14"
+last_updated: "2026-08-17"
+blueprint_level: module
 blueprint_id: MOD-RK-21
 domain_id: D_RISK
 path: src/zephyr/risk/core/liquidity_crisis_manager.py
@@ -42,7 +52,7 @@ D_RISK 域盘中流动性危机管理辅助层——37号设计备忘
 | 模块 | 时间尺度 | 职责 |
 |------|---------|------|
 | MOD-RK-10 AshareSystemicRiskDetector | 盘内秒级 | 5 信号检测 + 三级警报 + 逃生指令（本模块委托其检测） |
-| MOD-RK-08 LiquidityMonitor | 日频 | Amihud + 成交量萎缩（结构性恶化，事后检测） |
+| MOD-RK-22 LiquidityMonitor | 日频 | Amihud + 成交量萎缩（结构性恶化，事后检测） |
 | MOD-RK-21 本模块 | 盘内 tick | 盘口特征计算 + 涨跌停处理 + 恢复状态机 + 编排 + IPO 前瞻预警 |
 
 ## 2. 输入/输出

@@ -1,3 +1,10 @@
+---
+doc_type: dispatch_order
+ttl: task_bound
+status: active
+date: 2026-08-16
+---
+
 # 233 测试债下批·6 包开工指令（2026-08-16 用户裁定 6 路全并发）
 
 > 发包人：第五统筹 coord-0815-gov3 ｜ 依据：TDEBT-001 裁定书 §关联项 E（docs/_working/audit/architecture-reviews/2026-08-16-test-debt-leftover-adjudication.md）
@@ -29,7 +36,7 @@ python -m pytest tests/<本包域目录>/ -p no:xdist -q 2>&1 | Select-String "F
 
 1. 本包域失败项 **2 轮全绿**（间隔复跑，排除抖动）
 2. 假阳性必须转正（改测试跟进 API 现状），**禁止 delete  failing test 充数**
-3. 确需留置的：xfail(strict=False) + 编号登记（#ARCH-1xx 系列，向统筹申请号段，防撞号）
+3. 确需留置的：xfail(strict=False) + 编号登记（ARCH-1xx 系列，向统筹申请号段，防撞号）
 4. 长清单 Step 1 + Step 6（14 节）双 PASS
 5. 全部经 GitCommitGateway 提交（[GW:会话ID] 标记），**0 裸 commit / 0 --no-verify**
 

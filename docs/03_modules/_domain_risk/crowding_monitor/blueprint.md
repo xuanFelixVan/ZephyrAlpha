@@ -1,7 +1,18 @@
 ---
 module_id: MOD-RK-13
+title: "拥挤度监控器蓝图 — 跨参与者因子拥挤度检测"
 doc_type: blueprint
+status: Active
+version: "0.1.0"
 ttl: permanent
+layer: L02_risk
+layer_name: risk
+functional_domain: risk
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-05"
+last_updated: "2026-08-17"
+blueprint_level: module
 blueprint_id: MOD-RK-13
 domain_id: D_RISK
 path: src/zephyr/risk/core/crowding_monitor.py

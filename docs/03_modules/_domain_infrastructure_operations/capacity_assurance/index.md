@@ -4,7 +4,7 @@ status: Active
 generated: '2026-05-03'
 blueprint_id: MOD-INF-001
 title: Capacity Assurance
-module_id: MOD-INF-024
+module_id: MOD-INF-001
 updated: "2026-06-22"
 ttl: permanent
 ---

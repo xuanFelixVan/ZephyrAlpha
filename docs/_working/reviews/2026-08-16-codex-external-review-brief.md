@@ -2,7 +2,7 @@
 title: Codex 外部审查任务书——量化核心算法正确性专项
 date: 2026-08-16
 doc_type: review_request
-ttl: short_lived
+ttl: task_bound
 completes_when: "Codex 审查报告回收并裁定后归档"
 ---
 

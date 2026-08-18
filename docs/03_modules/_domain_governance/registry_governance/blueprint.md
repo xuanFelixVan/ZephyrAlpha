@@ -44,7 +44,7 @@ references:
   - path: docs/registry_of_registries.yaml
     section: ""
     why: 43个注册表的主索引
-  - path: docs/01_policies_and_standards/templates/register-registry.md
+  - path: docs/01_policies_and_standards/templates/register_template.md
     section: ""
     why: TPL-REGISTER-001注册表模板
 ssot_claims:
@@ -664,8 +664,8 @@ class OverlapResult:
 | 产出物类型 | 存放完整路径（相对优先） | 职责 | consumer_min | 注册位置 |
 |----------|---------------|------|:-----------:|---------|
 | 蓝图文件 | `docs/03_modules/_domain_governance/registry_governance/blueprint.md` | 本文件 | ≥0 | blueprint_registry.yaml |
-| 功能域注册表 | `docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml` | 功能域条目数据 | ≥1 | registry_of_registries.yaml |
-| 物理路径树快照 | `docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml` | 磁盘目录树自动快照(REG-017) | ≥1 | registry_of_registries.yaml |
+| 功能域注册表 | `docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml` | 功能域条目数据 | ≥1 | registry_of_registries.yaml |
+| 物理路径树快照 | `docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_zh.md` | 磁盘目录树自动快照（派生生成，generate_path_tree.py 产出） | ≥1 | registry_of_registries.yaml |
 | 路径归属声明 | `docs/03_modules/path_ownership_map.yaml` | 蓝图→路径映射+冲突检测(REG-018) | ≥1 | registry_of_registries.yaml |
 | 业务代码 | `src/zephyr/infrastructure/runtime_integration/registry_governance.py` | 功能域注册表管理+一致性校验 | ≥1 | `__init__.py` __all__ |
 | 校验脚本 | `scripts/governance/d3_metadata/check_registry_consistency.py` | 注册表一致性校验CLI | ≥0 | script-manifest.yaml |
@@ -749,9 +749,9 @@ class OverlapResult:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.2 DomainEntry数据模型 |
-| 产出位置 | `docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml` |
+| 产出位置 | `docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml` |
 | 验收标准 | YAML文件存在+Schema合规+可被FunctionalDomainRegistry.load()解析 |
-| 验证命令 | `python -c "import yaml; yaml.safe_load(open('docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml'))"` |
+| 验证命令 | `python -c "import yaml; yaml.safe_load(open('docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml'))"` |
 | G7 检查项 | 上游：TPL-REGISTER-001模板已读取；下游：scaffold.py可读取 |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | YAML文件存在且非空 |
@@ -760,7 +760,7 @@ class OverlapResult:
 
 | module_id | 文件名 | doc_type | 完整路径（相对优先） |
 |-----------|--------|----------|------------|
-| MOD-INF-037 | functional-domain-registry.yaml | register | `docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml` |
+| MOD-INF-037 | functional-domain-registry.yaml | register | `docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml` |
 
 **内容编写指引**：
 
@@ -1036,7 +1036,7 @@ class OverlapResult:
 | 3 | 模块ID注册表 | — | `architecture_model/module_id_registry.yaml` | 编号注册 |
 | 4 | AI自治权限注册表 | GOV-AI-001 | `docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml` | AI操作权限 |
 | 5 | 注册表总索引 | — | `docs/registry_of_registries.yaml` | 43个注册表主索引 |
-| 6 | 注册表模板 | TPL-REGISTER-001 | `docs/01_policies_and_standards/templates/register-registry.md` | 功能域注册表Schema |
+| 6 | 注册表模板 | TPL-REGISTER-001 | `docs/01_policies_and_standards/templates/register_template.md` | 功能域注册表Schema |
 
 ---
 
@@ -1053,7 +1053,7 @@ class OverlapResult:
 
 | # | 文件/目录 | 完整路径（相对优先） | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 功能域注册表 | `docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml` | 新建 | 创建YAML注册表 |
+| 1 | 功能域注册表 | `docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml` | 新建 | 创建YAML注册表 |
 | 2 | 业务代码 | `src/zephyr/infrastructure/runtime_integration/registry_governance.py` | 新建 | 创建Python模块 |
 | 3 | 测试代码 | `tests/infrastructure/test_registry_governance.py` | 新建 | 创建测试文件 |
 | 4 | 校验脚本 | `scripts/governance/d3_metadata/check_registry_consistency.py` | 新建 | 创建CLI脚本 |

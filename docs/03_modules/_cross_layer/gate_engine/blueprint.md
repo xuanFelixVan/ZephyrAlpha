@@ -40,7 +40,7 @@ depends_on:
   - {target: "MOD-INF-001", at: "§13", why: "容量 SLO 注册表——门禁容量指标对齐 CAP-001~013"}
   - {target: "MOD-INF-001", at: "§5", why: "容量风险注册表——R1(SQLite) + R19(资产膨胀) + R20(元盘点) 与门禁容量联动"}
 references:
-  - {path: "d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md", section: "REQUIRED_SECTIONS", why: "蓝图模板 v3.5 合规基准"}
+  - {path: "d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md", section: "REQUIRED_SECTIONS", why: "蓝图模板 v3.5 合规基准"}
   - {path: "d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml", section: "§0.5", why: "压缩工作流标准——Layer 1/2 执行规范"}
 ssot_claims:
   - {claim: "G0-G7任务门禁规则SSoT", scope: "global"}
@@ -796,12 +796,12 @@ class ManualApprovalGate:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |------|------|------|------|------|
-| MOD-TASK_SYSTEM (Task System) | runtime_call | 读取TaskCard 28字段→G0-G7判定 | v1.0+ | docs/03_modules/_cross_layer/task_system/blueprint.md |
+| MOD-TASK_SYSTEM (Task System) | runtime_call | 读取TaskCard 28字段→G0-G7判定 | v1.0+ | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md |
 | MOD-INF-005 (Script System) | runtime_call | 脚本exit code→GATE-n PASS/FAIL (CT-SCRIPT-GATE-001) | v1.0+ | docs/03_modules/_domain_governance/governance_automation/blueprint.md |
 | MOD-CONTEXT_ENGINE (Context Engine) | config_consume | blueprint_routing.yaml上下文范围 | v0.5+ | docs/03_modules/_cross_layer/context_engine/blueprint.md |
 | MOD-LLM_SECURITY (LLM Security) | sibling_check | fail-closed模式双门禁互校验 | v0.1+ | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md |
-| MOD-INF-015 (Telemetry) | emit_to | GATE-16 blueprint_read_check→BLUEPRINT-READ-FREQ SLI | v0.5+ | docs/03_modules/_cross_layer/telemetry/blueprint.md |
-| MOD-INF-009 (Session) | data_flow | session_id→Agent身份+配额管理 | v1.0+ | docs/03_modules/_cross_layer/session/blueprint.md |
+| MOD-INF-015 (Telemetry) | emit_to | GATE-16 blueprint_read_check→BLUEPRINT-READ-FREQ SLI | v0.5+ | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md |
+| MOD-INF-009 (Session) | data_flow | session_id→Agent身份+配额管理 | v1.0+ | docs/03_modules/_cross_layer/pipeline/blueprint.md |
 | MOD-INF-001 (Capacity) | data_consume | 容量SLO注册表+风险注册表 | v1.0+ | docs/03_modules/_master_blueprint/blueprint.md |
 | `architecture_model/layers/b_gates.yaml` | ssot | Gates YAML canonical source | — | architecture_model/layers/b_gates.yaml |
 

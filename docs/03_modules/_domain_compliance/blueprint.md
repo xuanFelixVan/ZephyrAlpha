@@ -31,7 +31,7 @@ summary: "合规引擎——SecurityGateway+ComplianceEngine OCP扩展点+AISG S
 tags: [compliance, l10, security-gateway, artifact-scanner]
 priority: P0
 runtime_plane: warm
-ssot_yaml: "architecture_model/layers/l10_compliance.yaml"
+ssot_yaml: "docs/03_modules/_domain_compliance/blueprint.md"
 references:
   - path: "D:\\ZephyrAlpha\\architecture_model\\layers\\l10_compliance.yaml"
     section: "全篇"
@@ -109,7 +109,7 @@ build_status: generated
 |--------|---------|:---:|
 | construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
-| artifact_scanner.py 存在于磁盘但未在 YAML SSoT 中注册 | `cat architecture_model/layers/l10_compliance.yaml` | ☐ |
+| artifact_scanner.py 存在于磁盘但未在 YAML SSoT 中注册 | `cat architecture_model/layers/b_gates.yaml` | ☐ |
 | default_security_gateway.py 根目录与 implementations/ 重复 | `diff default_security_gateway.py implementations/default_security_gateway.py` | ☐ |
 
 ### §0.3 版本-代码映射
@@ -585,7 +585,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 步骤 | 如果出问题 | 回滚操作 |
 |------|----------|---------|
 | 1 | DefaultSecurityGateway三层防御实现失败 | `git checkout -- src/zephyr/compliance/implementations/` |
-| 2 | YAML注册导致格式错误 | `git checkout -- architecture_model/layers/l10_compliance.yaml` |
+| 2 | YAML注册导致格式错误 | `git checkout -- architecture_model/layers/b_gates.yaml` |
 | 3 | ComplianceManagerBase修改导致接口断裂 | `git checkout -- src/zephyr/compliance/compliance_manager.py` |
 
 ### 16.5 施工完成标准

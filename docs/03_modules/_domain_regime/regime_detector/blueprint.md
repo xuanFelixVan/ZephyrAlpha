@@ -25,7 +25,7 @@ responsibility_domain:
 > **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
 > **SSoT**: depgraph MOD-REGIME-001 | **spec 真源**: [10_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) v1.3.1（12态完整 spec）
 > **验证真源**: [11_regime_backtest_validation_plan.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/11_regime_backtest_validation_plan.md) v1.0.0（回测验证方案，§4 验证需求）
-> **消费方**: [RegimeMetaAllocator](../_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) MOD-PA-007（Shrinkage + 12维概率消费者）
+> **消费方**: [RegimeMetaAllocator](../../_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) MOD-PA-007（Shrinkage + 12维概率消费者）
 
 ## 1. 定位
 

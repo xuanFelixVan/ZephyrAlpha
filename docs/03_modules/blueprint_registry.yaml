@@ -536,7 +536,20 @@ blueprints:
   generation: 1
   last_updated: '2026-07-14'
   file_path: 03_modules/_domain_governance/alignment_loop/blueprint.md
-- module_id: MOD-GOV-SYNC-PANORAMA
+- module_id: MOD-GOVERNANCE
+  name: _domain_governance
+  title: Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
+  summary: 治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至MOD-GOV-CAP-001（已归档，见references）。三轮审计29项D-GAP全覆盖。
+  layer: L1_foundation
+  functional_domain: governance
+  blueprint_status: Active
+  blueprint_level: domain
+  priority: P0
+  version: 0.13.6
+  generation: 2
+  last_updated: '2026-05-15'
+  file_path: 03_modules/_domain_governance/blueprint.md
+- module_id: MOD-GOV_SYNC_PANORAMA
   name: panorama_alignment_engine
   title: 五图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 五图对齐
   summary: '五图模块对齐引擎——depgraph/dataflowgraph/decisiongraph/blueprint.md 五图模块对齐。 4
@@ -553,19 +566,6 @@ blueprints:
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_governance/panorama_alignment_engine/blueprint.md
-- module_id: MOD-GOVERNANCE
-  name: _domain_governance
-  title: Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
-  summary: 治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至MOD-GOV-CAP-001。三轮审计29项D-GAP全覆盖。
-  layer: L1_foundation
-  functional_domain: governance
-  blueprint_status: Active
-  blueprint_level: domain
-  priority: P0
-  version: 0.13.6
-  generation: 2
-  last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_governance/blueprint.md
 - module_id: MOD-INF-001
   name: capacity_assurance
   title: Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Token Budget限流+Kill Switch熔断
@@ -1826,29 +1826,29 @@ blueprints:
   file_path: 03_modules/_domain_risk/stress_test_engine/blueprint.md
 - module_id: MOD-RK-13
   name: crowding_monitor
-  title: ''
+  title: 拥挤度监控器蓝图 — 跨参与者因子拥挤度检测
   summary: ''
-  layer: ''
-  functional_domain: ''
-  blueprint_status: Draft
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/crowding_monitor/blueprint.md
 - module_id: MOD-RK-14
   name: ai_agent_monitor
-  title: ''
+  title: AI/Agent 风险监控器蓝图 — 交易 Agent 行为越界检测
   summary: ''
-  layer: ''
-  functional_domain: ''
-  blueprint_status: Draft
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/ai_agent_monitor/blueprint.md
 - module_id: MOD-RK-15
   name: tail_risk_monitor
@@ -1878,29 +1878,29 @@ blueprints:
   file_path: 03_modules/_domain_risk/risk_decomposition/blueprint.md
 - module_id: MOD-RK-18
   name: model_risk_audit
-  title: ''
+  title: 模型风险审计器蓝图 — 交易预测模型漂移/衰退/偏差审计
   summary: ''
-  layer: ''
-  functional_domain: ''
-  blueprint_status: Draft
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/model_risk_audit/blueprint.md
 - module_id: MOD-RK-19
   name: operational_risk_monitor
-  title: ''
+  title: 操作风险监控器蓝图 — 操作风险阈值告警解释层
   summary: ''
-  layer: ''
-  functional_domain: ''
-  blueprint_status: Draft
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/operational_risk_monitor/blueprint.md
 - module_id: MOD-RK-20
   name: daily_auditor
@@ -1917,16 +1917,16 @@ blueprints:
   file_path: 03_modules/_domain_risk/daily_auditor/blueprint.md
 - module_id: MOD-RK-21
   name: liquidity_crisis_manager
-  title: ''
+  title: 流动性危机管理器蓝图 — 37号流动性危机协议 6 项算法施工落地
   summary: ''
-  layer: ''
-  functional_domain: ''
+  layer: L02_risk
+  functional_domain: risk
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/liquidity_crisis_manager/blueprint.md
 - module_id: MOD-RK-23
   name: strategy_deviation_monitor
@@ -2402,21 +2402,21 @@ blueprints:
 summary:
   total: 173
   by_blueprint_status:
-    Active: 159
-    Draft: 14
+    Active: 163
+    Draft: 10
   by_layer:
     L2_domain: 22
     L_BACKTEST: 8
     L1_foundation: 38
     ? ''
-    : 14
+    : 9
     L0_infrastructure: 18
     L3_application: 1
     L01_foundation: 6
     L02_pf_alloc: 4
     L02_portfolio_core: 5
     L03_position: 14
-    L02_risk: 12
+    L02_risk: 17
     L07_reporting: 9
     L03_sell_decision: 11
     L_SIMULATION: 3

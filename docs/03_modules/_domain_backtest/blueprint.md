@@ -22,7 +22,7 @@ references:
   - architecture_model/events/domain_events.yaml#E-BT-01
   - architecture_model/domain/decision_graph_model.yaml#L5
   - docs/03_modules/_domain_data/blueprint.md#§16.7.1
-  - docs/00_meta/_system_master.md#ARCH-047
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml#ARCH-047
   - docs/02_enterprise_architecture/06_decision_architecture/index.md
 rule_form: structural
 scope: domain

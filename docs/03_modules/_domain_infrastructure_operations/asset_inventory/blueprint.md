@@ -177,7 +177,7 @@ Asset Inventory 是 ZephyrAlpha 的资产盘点系统——解决"不知道有�
 > - `config/capacity_params.yaml` CFG-CAP-001——所有容量参数的来源
 > - `docs/03_modules/_system_master/blueprint.md` §〇——系统级 Worker Pool / 硬件感知
 > - `docs/03_modules/_cross_layer/database/blueprint.md` §〇——Database v3.0 双库路由
-> - `docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md` §〇——审计总控容量审计（触发本审查的源头）
+> - `MOD-INF-027` §〇——审计总控容量审计（触发本审查的源头）
 
 ---
 
@@ -855,7 +855,7 @@ class AssetEventBus:
 
 ---
 
-### 〇-F、与 audit-orchestrator 的集成确认
+### 〇-F、与 Audit Orchestrator（MOD-INF-027）的集成确认
 
 | 审计总控依赖 | AssetInventory v3.0.0 响应 | 状态 |
 |-------------|---------------------------|:---:|

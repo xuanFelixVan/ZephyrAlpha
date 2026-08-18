@@ -35,7 +35,7 @@ depends_on:
   - {target: "architecture_model/layers/b_shared.yaml", at: "全篇", why: "Shared YAML SSoT"}
   - {target: "architecture_model/layers/b_core.yaml", at: "全篇", why: "Core YAML SSoT"}
   - {target: "MOD-CONTEXT_ENGINE", at: "blueprint.md", why: "Context Engine 消费 Shared 模型"}
-  - {target: "MOD-INF-003", at: "blueprint.md", why: "Script System 消费 Shared ProcessPoolManager"}
+  - {target: "MOD-INF-002", at: "blueprint.md", why: "Runtime Integration（git_batcher 等运行时集成组件）消费 Shared ProcessPoolManager"}
   - {target: "MOD-GATE_ENGINE", at: "blueprint.md", why: "Gate Engine 消费 Shared AsyncObserver"}
   - {target: "MOD-INF-009", at: "blueprint.md", why: "Pipeline 消费 Shared 分层限流+PriorityLock"}
 responsibility_domain: 

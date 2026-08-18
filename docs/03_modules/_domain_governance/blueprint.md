@@ -28,7 +28,7 @@ stability: evolving
 verifiability: automated
 priority: P0
 runtime_plane: cold
-summary: "治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至MOD-GOV-CAP-001。三轮审计29项D-GAP全覆盖。"
+summary: "治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至MOD-GOV-CAP-001（已归档，见references）。三轮审计29项D-GAP全覆盖。"
 codification_level: L1
 codification_at: "2026-05-14"
 submodule_path: src/zephyr/governance/
@@ -58,15 +58,15 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint.md"
     section: "全篇"
     why: "基础设施域集成蓝图"
-  - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
+  - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint_construction_template.md"
     section: "全篇"
     why: "蓝图模板v3.5/v3.6"
-  - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\governance\\document\\trae_030_doc_numbering_metadata.yaml"
+  - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\rules\\trae_030_doc_numbering_metadata.yaml"
     section: "全篇"
     why: "压缩工作流标准"
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\capacity-upgrade\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\_archive\\03_modules\\_gov_cap_001\\blueprint.md"
     section: "全篇"
-    why: "容量升级设计独立蓝图（MOD-GOV-CAP-001）"
+    why: "容量升级设计独立蓝图（MOD-GOV-CAP-001，2026-05 归档，保留作设计真源参考）"
 tags:
   - domain-blueprint
   - governance
@@ -88,7 +88,7 @@ ssot_claims:
     scope: layer
   - claim: "治理域设计缺失追踪(D-GAP-01~12索引 + D-GAP-13~29设计)"
     scope: layer
-    note: "D-GAP-01~12设计真源在MOD-GOV-CAP-001，本蓝图仅保留索引+引用"
+    note: "D-GAP-01~12设计真源在MOD-GOV-CAP-001（2026-05归档，docs/_archive/03_modules/_gov_cap_001/blueprint.md），本蓝图仅保留索引+引用"
   - claim: "治理域Phase施工路线图与进度"
     scope: layer
 design_maturity: design
@@ -107,7 +107,7 @@ build_status: generated
 ---
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：blueprint-template.md
+> - 蓝图+施工图模板：blueprint_construction_template.md
 > - 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：code-construction-standards.md §7
 > - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
@@ -475,7 +475,7 @@ Worker 内存上限（OOM 防护）：
 验收标准:
   - 修改 src/shared/utils.py → 影响面分析 < 3s
   - 修改 src/risk/model.py → 仅标记 MOD-RISK-012 为直接 + 至多 5 个间接
-  - 修改 docs/README.md → 零模块受影响 → 跳过扫描
+  - 修改 README.md → 零模块受影响 → 跳过扫描
 ```
 
 ---

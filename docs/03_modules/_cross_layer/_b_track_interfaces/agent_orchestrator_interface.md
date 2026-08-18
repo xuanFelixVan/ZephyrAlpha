@@ -85,7 +85,7 @@ build_status: planned
 
 ### 0.2 本文档**不是**
 
-- ❌ **任务卡 YAML schema**——见 `docs/02_enterprise_architecture/task-card-schema.md`
+- ❌ **任务卡 YAML schema**——见 `docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml`
 - ❌ **Context Engine 设计**——见 `context_engine-interface.md`
 - ❌ **沙箱内部实现**——本规范定义沙箱接口，具体 Windows ACL / Docker Desktop 实现另出施工图
 - ❌ **SQLite 表设计细则**——见 experimental 施工图 `construction-plan-orchestrator-*.md`

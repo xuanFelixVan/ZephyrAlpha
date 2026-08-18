@@ -81,6 +81,10 @@ DANGEROUS_SHELL_PATTERNS = [
     (">\\s*/dev/sd[a-z]", "覆写块设备 (ABS-39)"),
 ]
 EXCLUDE_FILES = {"detect_shell_dangerous.py"}
+# 豁免路径（2026-08-18 AI-00 merge-18 实证治本，同 detect_git_dangerous.py 2026-08-17 先例）：
+# 安全策略文档枚举"禁止哪些危险命令"必含字面量（rm -rf / chmod 777 等），属策略定义非操作指令，
+# 全文/增量扫描触及该真源即误报硬阻断。保护面不收缩：其余全部文件照常扫描。
+EXCLUDE_PATH_PARTS = ("docs/03_modules/_cross_layer/large_language_model_security/blueprint.md",)
 
 
 def scan_file(filepath: Path) -> list[dict]:
@@ -115,7 +119,10 @@ def scan_files(file_names: list[str]) -> tuple[list[dict], int, int]:
         filepath = Path(name).resolve()
         if not filepath.is_file():
             continue
+        normalized = str(filepath).replace("\\", "/")
         if filepath.suffix.lower() not in SCAN_EXTENSIONS_CODE or filepath.name in EXCLUDE_FILES:
+            continue
+        if any(part in normalized for part in EXCLUDE_PATH_PARTS):
             continue
         try:
             filepath.relative_to(REPO_ROOT)
@@ -142,6 +149,8 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
         except (ValueError, OSError):
             continue
         if str(rel).startswith("_DO_NOT_USE") or str(rel).startswith(".trae"):
+            continue
+        if any(part in str(rel).replace("\\", "/") for part in EXCLUDE_PATH_PARTS):
             continue
         files_scanned += 1
         findings = scan_file(filepath)

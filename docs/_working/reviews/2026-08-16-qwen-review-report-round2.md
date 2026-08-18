@@ -3,7 +3,7 @@ title: Qwen 外部独立审查报告（第二轮）——量化核心算法正�
 date: 2026-08-16
 doc_type: review_report
 reviewer: Qwen3.8-Max（外部独立审查员）
-ttl: short_lived
+ttl: task_bound
 completes_when: "业主裁定后归档"
 ---
 

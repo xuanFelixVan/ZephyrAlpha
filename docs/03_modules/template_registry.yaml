@@ -44,7 +44,7 @@ registry:
 templates:
   - template_id: "TPL-BLUEPRINT-001"
     name: "蓝图+施工图模板"
-    path: "docs/01_policies_and_standards/templates/blueprint-construction-template.md"
+    path: "docs/01_policies_and_standards/templates/blueprint_construction_template.md"
     version: "4.0.0"
     for: "所有 MOD-* 蓝图创建——含概述段 + §0-§18 + AI优化阅读顺序"
     template_for: "blueprint"
@@ -53,7 +53,7 @@ templates:
 
   - template_id: "TPL-DEPGRAPH-001"
     name: "依赖图模板"
-    path: "docs/01_policies_and_standards/templates/dependency-graph-template.md"
+    path: "docs/01_policies_and_standards/templates/dependency_graph_template.md"
     version: "5.3.1"
     for: "依赖图数据结构的创建——19 大结构 + 11 组受控词表 + 计算规则 + 约束验证 + 蓝图双向链接 + 四层路径对齐 + 文件级/架构级双粒度词表统一 + AI Agent 自检协议"
     template_for: "dependency-graph"
@@ -62,7 +62,7 @@ templates:
 
   - template_id: "TPL-POLICY-001"
     name: "策略文档模板"
-    path: "docs/01_policies_and_standards/templates/policy-policy.md"
+    path: "docs/01_policies_and_standards/templates/policy_template.md"
     version: "0.2.0"
     for: "策略文档的创建——声明式规则，定义必须/禁止 + 概述段"
     template_for: "policy"
@@ -71,7 +71,7 @@ templates:
 
   - template_id: "TPL-STANDARD-001"
     name: "标准文档模板"
-    path: "docs/01_policies_and_standards/templates/standard-standard.md"
+    path: "docs/01_policies_and_standards/templates/standard_template.md"
     version: "0.2.0"
     for: "标准文档的创建——声明式规范，定义度量/格式/接口 + 概述段"
     template_for: "policy"
@@ -80,7 +80,7 @@ templates:
 
   - template_id: "TPL-PLAYBOOK-001"
     name: "Playbook 模板"
-    path: "docs/01_policies_and_standards/templates/playbook-template.md"
+    path: "docs/01_policies_and_standards/templates/playbook_runbook.md"
     version: "0.2.0"
     for: "Playbook 的创建——应急响应流程，事件驱动 + 概述段"
     template_for: "operational_rule"
@@ -89,7 +89,7 @@ templates:
 
   - template_id: "TPL-RUNBOOK-001"
     name: "Runbook 模板"
-    path: "docs/01_policies_and_standards/templates/runbook-runbook.md"
+    path: "docs/01_policies_and_standards/templates/runbook_template.md"
     version: "0.2.0"
     for: "Runbook 的创建——例行操作流程，日历驱动 + 概述段"
     template_for: "operational_rule"
@@ -98,16 +98,17 @@ templates:
 
   - template_id: "TPL-PROTOCOL-001"
     name: "协议模板"
-    path: "docs/01_policies_and_standards/templates/protocol-protocol.md"
+    path: "docs/01_policies_and_standards/templates/policy_template.md"
     version: "0.2.0"
     for: "协议文档的创建——定义交互流程和消息时序 + 概述段"
     template_for: "policy"
-    status: "active"
-    last_updated: "2026-05-13"
+    status: "deprecated"
+    note: "protocol 类型已并入 policy（templates/index.md：protocol migrated_to policy）；新文档请使用 TPL-POLICY-001"
+    last_updated: "2026-08-17"
 
   - template_id: "TPL-REGISTER-001"
     name: "注册表模板"
-    path: "docs/01_policies_and_standards/templates/register-registry.md"
+    path: "docs/01_policies_and_standards/templates/register_template.md"
     version: "0.1.0"
     for: "注册表文档的创建——结构化数据清单"
     template_for: "register"
@@ -116,7 +117,7 @@ templates:
 
   - template_id: "TPL-RISKREG-001"
     name: "风险登记簿模板"
-    path: "docs/01_policies_and_standards/templates/risk-register-registry.md"
+    path: "docs/01_policies_and_standards/templates/risk_register_template.md"
     version: "1.0.0"
     for: "风险登记簿的创建——记录已识别风险、概率、影响、缓解策略"
     template_for: "risk-register"
@@ -125,7 +126,7 @@ templates:
 
   - template_id: "TPL-ROADMAP-001"
     name: "路线图模板"
-    path: "docs/01_policies_and_standards/templates/roadmap-template.md"
+    path: "docs/01_policies_and_standards/templates/roadmap_template.md"
     version: "1.1.0"
     for: "路线图的创建——声明式方向规划，里程碑+出口标准 + 概述段"
     template_for: "blueprint"
@@ -134,7 +135,7 @@ templates:
 
   - template_id: "TPL-TASK-001"
     name: "任务卡模板"
-    path: "docs/01_policies_and_standards/governance/task/task-card-standard.md"
+    path: "docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml"
     version: "3.0.0"
     for: "任务卡的创建——TaskCard 62 字段填写指南 + description 根因→治根格式 + MTH-006 深挖到底协议 + 关闭三步法 + 门禁速查"
     template_for: "task-card"
