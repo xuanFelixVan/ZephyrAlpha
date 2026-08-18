@@ -6199,6 +6199,35 @@ capabilities:
       - recover_from_broker        # 启动恢复入口(删则重启空仓错觉)
       - _engage_kill_switch        # 熔断单一仲裁点(删则EMERGENCY无清算)
 
+  # --------------------------------------------------------------------------
+  - capability_id: fhs_var_es_engine
+    aliases:
+      - FHSEngine
+      - FHS
+      - fhs_engine
+      - Filtered Historical Simulation
+      - GARCH残差重采样
+      - CAND-AUTONOMYCORE-002
+    description: >-
+      FHS（Filtered Historical Simulation）引擎能力（D_RISK 域，MOD-RK-26，
+      memo 36 §3.16 施工规约落地，CAND-AUTONOMYCORE-002 远期候选转正，
+      2026-08-18 AI-FHS-001 施工）。canonical = src/zephyr/risk/core/fhs_engine.py。
+      GARCH(1,1) QMLE（自研 SLSQP 不引 arch 库）拟合收益序列→标准化残差→有放回
+      重采样→逐日递归乘条件波动率预测→产出 FHS VaR/ES；与 var_calculator
+      （MOD-RK-05）并列方法论零代码耦合（避让 R3 审查线契约冻结）；
+      GARCH 不收敛回退 historical + garch_converged=False 标记（memo §3.16）；
+      小样本守卫 garch_min_history=60 不尝试拟合直接回退；ES method='lower'
+      口径 ES≥VaR 构造性成立；historical_var/es 对照始终产出供偏离度审计。
+      解决 Christoffersen 独立性失败时历史模拟法无自相关破缺手段的问题
+      （memo §3.9.2 远期第 5 法）。解决发现性：新 AI 搜
+      "FHS/GARCH/残差重采样/Filtered Historical Simulation/VaR 第三方法" 可定位真源。
+      解决防重建：check_file_canonical() 反查。
+    integrity_anchors:
+      - FHSEngine            # 引擎主类(删则FHS方法论零实现)
+      - compute              # 公开API入口(删则FHS VaR/ES不可计算)
+      - _try_fit_garch       # GARCH QMLE拟合(删则残差无条件波动率可乘)
+      - _simulate_fhs        # 残差重采样递归模拟(删则FHS分布产出断裂)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -9435,6 +9464,22 @@ creation_tokens:
     token: "ipo001-market-ipo-calendar-20260817"
     created_by: "AI-IPO-001"
     capability: "data_source_provider_abstraction"
+  # --- fhs_engine.py（FHS 引擎，memo 36 §3.16 施工规约，CAND-AUTONOMYCORE-002 转正，2026-08-18 AI-FHS-001 施工，MOD-RK-26）---
+  - file: "src/zephyr/risk/core/fhs_engine.py"
+    token: "fhs001-fhs-engine-20260818"
+    created_by: "AI-FHS-001"
+    capability: "fhs_var_es_engine"
+    note: "GARCH(1,1) QMLE 标准化残差重采样 FHS VaR/ES（自研 SLSQP 不引 arch 库，#ARCH-120）；与 var_calculator 并列方法论零耦合（避让 R3 审查线）；GARCH 不收敛回退 historical"
+  - file: "tests/risk/test_fhs_engine.py"
+    token: "fhs001-fhs-engine-test-20260818"
+    created_by: "AI-FHS-001"
+    capability: "fhs_var_es_engine"
+    note: "27 用例：GARCH 拟合/参数恢复/regime shift FHS>HS/平静尾 FHS<HS/iid FHS≈HS/回退三路径/Fail-Closed（tests/ 豁免但自愿补登）"
+  - file: "docs/03_modules/_domain_risk/fhs_engine/blueprint.md"
+    token: "fhs001-fhs-engine-blueprint-20260818"
+    created_by: "AI-FHS-001"
+    capability: "fhs_var_es_engine"
+    note: "MOD-RK-26 模块蓝图（memo 36 §3.16 施工规约落地）"
 di_seam_exemptions:
   - module_path: "zephyr.trading.auto_runtime_core.AutoRuntimeCore"
     reason: "P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）"

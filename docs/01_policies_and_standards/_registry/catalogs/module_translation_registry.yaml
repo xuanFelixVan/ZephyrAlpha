@@ -41516,6 +41516,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "commit/merge 前先用 TCP 摸一下 PostgreSQL 5432 通不通（1 秒超时，不通也不拦你，只把结果写进 .runtime/pg_probe_state.json）；几个 depgraph 门禁在数据库连不上被迫放行时，会查这个状态来分清是'数据库真的挂了'还是'别的错误'，并把放行记录写进治理库（同一个原因一天只记一次，防止刷屏），下次提交时横幅提醒你追账；数据库连续挂超 24 小时时，还会豁免 depgraph 新鲜度门禁的误伤"
+- module_path: src/zephyr/risk/core/fhs_engine.py
+  domain_id: D_RISK
+  name_zh: "FHS 引擎"
+  name_en: "FHS Engine"
+  desc_zh: "Filtered Historical Simulation——GARCH(1,1) 拟合收益序列得标准化残差，有放回重采样乘条件波动率预测，产出 FHS VaR/ES；GARCH 不收敛回退历史模拟（memo 36 §3.16）"
+  desc_en: "Filtered Historical Simulation VaR/ES via GARCH(1,1) standardized-residual resampling; falls back to historical simulation on non-convergence"
+  plain_zh: "历史模拟法算 VaR 是把过去每天盈亏一视同仁排队取尾巴，但市场有波动聚集（震荡会扎堆），老黄历里的大跌会让刚平静下来时的风险被高估、刚起风暴时的风险被低估。这个模块先给收益序列配一个会随时间呼吸的波动率（GARCH），把每天的盈亏按当时波动率折算成标准份，再从这些标准份里随机抽样乘上明天的预测波动率，得到更贴近当前市况的 VaR/ES；如果波动率模型配不出来，就老实回退到历史模拟法并打标记。"
 
 battle_map_steps:
 - step_id: BM-BUY-04
