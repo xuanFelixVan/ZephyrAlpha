@@ -6212,7 +6212,7 @@ capabilities:
       FHS（Filtered Historical Simulation）引擎能力（D_RISK 域，MOD-RK-26，
       memo 36 §3.16 施工规约落地，CAND-AUTONOMYCORE-002 远期候选转正，
       2026-08-18 AI-FHS-001 施工）。canonical = src/zephyr/risk/core/fhs_engine.py。
-      GARCH(1,1) QMLE（自研 SLSQP 不引 arch 库）拟合收益序列→标准化残差→有放回
+      GARCH(1,1) QMLE（自研 L-BFGS-B+持续性罚项不引 arch 库）拟合收益序列→标准化残差→有放回
       重采样→逐日递归乘条件波动率预测→产出 FHS VaR/ES；与 var_calculator
       （MOD-RK-05）并列方法论零代码耦合（避让 R3 审查线契约冻结）；
       GARCH 不收敛回退 historical + garch_converged=False 标记（memo §3.16）；
@@ -9469,7 +9469,7 @@ creation_tokens:
     token: "fhs001-fhs-engine-20260818"
     created_by: "AI-FHS-001"
     capability: "fhs_var_es_engine"
-    note: "GARCH(1,1) QMLE 标准化残差重采样 FHS VaR/ES（自研 SLSQP 不引 arch 库，#ARCH-120）；与 var_calculator 并列方法论零耦合（避让 R3 审查线）；GARCH 不收敛回退 historical"
+    note: "GARCH(1,1) QMLE 标准化残差重采样 FHS VaR/ES（自研 L-BFGS-B+罚项不引 arch 库，#ARCH-120；SLSQP 早停病灶经 Qwen 审查线 P0 勘正）；与 var_calculator 并列方法论零耦合（避让 R3 审查线）；GARCH 不收敛回退 historical"
   - file: "tests/risk/test_fhs_engine.py"
     token: "fhs001-fhs-engine-test-20260818"
     created_by: "AI-FHS-001"

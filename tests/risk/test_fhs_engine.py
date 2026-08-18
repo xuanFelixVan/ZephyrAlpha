@@ -179,6 +179,23 @@ def test_garch_params_recovery_loose(engine: FHSEngine):
     assert 0.70 <= p.persistence < 1.0, f"persistence out of band: {p.persistence}"
 
 
+def test_optimizer_not_stuck_at_start():
+    """优化器早停回归 (2026-08-18 Qwen 审查线 P0 勘正)。
+
+    原 SLSQP+不等式约束实现在此案例 nit=5 即宣布收敛且停在起点
+    (估计精确钉在起点 [0.10, 0.80], 似然比真参数点低 39.5)。
+    L-BFGS-B+罚项修复后估计应真正移动并逼近真参数 (alpha=0.08, beta=0.90)。
+    """
+    r = _make_garch_series(2000, omega=1e-6, alpha=0.08, beta=0.90, seed=31415)
+    res = FHSEngine(FHSConfig(random_seed=1)).compute(r, portfolio_value=NAV)
+    p = res.garch_params
+    assert p is not None
+    assert abs(p.alpha - 0.08) < 0.06, f"alpha 未逼近真值: {p.alpha}"
+    assert abs(p.beta - 0.90) < 0.06, f"beta 未逼近真值: {p.beta}"
+    # 未钉在起点: 两起点 persistence 为 0.95/0.90, 真值 0.98——估计应显著偏离起点带
+    assert p.persistence > 0.96, f"persistence 仍钉在起点带: {p.persistence}"
+
+
 # ── FHS VaR/ES 输出与 HS 对照合理性 ───────────────────────────────────────────
 
 

@@ -57,7 +57,7 @@ FHS（Filtered Historical Simulation）——GARCH(1,1) 拟合收益序列 → �
 | 步骤 | 内容 |
 |------|------|
 | ① 去均值 | eps_t = r_t − μ̂（两阶段估计，μ̂=样本均值） |
-| ② GARCH(1,1) QMLE | σ_t² = ω + α·ε²_{t−1} + β·σ²_{t−1}；约束 ω>0, α≥0, β≥0, α+β<1（平稳性）；SLSQP 双起点取较优 |
+| ② GARCH(1,1) QMLE | σ_t² = ω + α·ε²_{t−1} + β·σ²_{t−1}；约束 ω>0, α≥0, β≥0, α+β<1（平稳性，二次罚项）；L-BFGS-B 双起点取较优 |
 | ③ 标准化残差 | z_t = ε_t / σ_t |
 | ④ 波动率预测 | σ²_{T+1} = ω + α·ε²_T + β·σ²_T |
 | ⑤ 残差重采样 | z* ~ iid bootstrap(z)；逐日递归 ε*_s = σ*_s·z*_s，σ*²_{s+1} = ω + α·ε*²_s + β·σ*²_s |
@@ -66,7 +66,7 @@ FHS（Filtered Historical Simulation）——GARCH(1,1) 拟合收益序列 → �
 
 ### 3.2 不收敛回退（memo §3.16 "GARCH 不收敛→回退 historical+标记 FHS 不可用"）
 
-- 触发：收益方差非正/非有限 / SLSQP 双起点均未收敛 / 滤波后方差非正 / σ 预测非正非有限
+- 触发：收益方差非正/非有限 / L-BFGS-B 双起点均未收敛 / 滤波后方差非正 / σ 预测非正非有限
 - 默认 `fallback_to_historical=True`：回退历史模拟法，`method_used=HISTORICAL_FALLBACK` +
   `garch_converged=False` + `fallback_reason` + warning 日志（标记 FHS 不可用）
 - `fallback_to_historical=False`：抛 `GarchConvergenceError` 供编排层显式处理
@@ -104,7 +104,7 @@ memo ES method='lower'，多日 √T 缩放）——供 FHS vs HS 偏离度审�
 - 非有限值占比超阈值 → 抛 ExcessiveFHSNonFiniteDataError（Fail-Closed）
 - GARCH 不收敛 → 回退 historical（fallback 开启时）且 garch_converged=False
 - 回退时 var == historical_var 且 es == historical_es
-- α+β < 1（平稳性守卫，SLSQP 不等式约束硬执行）
+- α+β < 1（平稳性守卫，二次罚项 + 后验校验硬执行）
 - 置信度 ∈ (0,1)；holding_period ≥ 1；同日同种子结果可复现
 
 ## 5. 错误契约
@@ -127,7 +127,7 @@ memo ES method='lower'，多日 √T 缩放）——供 FHS vs HS 偏离度审�
 ## 7. 依赖
 
 - `zephyr.shared.foundation.errors`（ZephyrBaseError）
-- `numpy`、`scipy.optimize`（SLSQP）
+- `numpy`、`scipy.optimize`（L-BFGS-B）
 - 消费者：无（设计契约消费者 RiskLayerOrchestrator，memo 36 §3.10 动作 4，远期接线 CAND-AUTONOMYCORE-002）
 - **不依赖 var_calculator**（避让 R3 审查线契约冻结；独立模块裁定）
 

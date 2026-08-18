@@ -33,7 +33,7 @@ GARCH(1,1) 残差重采样 VaR/ES。memo 36 §3.16 施工规约落地
 算法 (Barone-Adesi FHS):
     1. 去均值: eps_t = r_t - mu_hat (两阶段估计, mu_hat = 样本均值)
     2. GARCH(1,1) QMLE: sigma_t^2 = omega + alpha*eps_{t-1}^2 + beta*sigma_{t-1}^2
-       约束 omega>0, alpha>=0, beta>=0, alpha+beta<1 (平稳性守卫, SLSQP)
+       约束 omega>0, alpha>=0, beta>=0, alpha+beta<1 (平稳性守卫, 二次罚项)
     3. 标准化残差: z_t = eps_t / sigma_t
     4. 一日波动率预测: sigma_{T+1}^2 = omega + alpha*eps_T^2 + beta*sigma_T^2
     5. 残差重采样: z* ~ iid bootstrap(z), 逐日递归
@@ -46,11 +46,17 @@ GARCH 不收敛 → 回退 historical + 标记 garch_converged=False
 fallback_to_historical=False 时抛 GarchConvergenceError 供编排层显式处理。
 
 GARCH 参数估计方法裁定 (AI-FHS-001 #1):
-    自研 QMLE (scipy.optimize.minimize SLSQP), 不引入 arch 库——
+    自研 QMLE (scipy.optimize.minimize L-BFGS-B), 不引入 arch 库——
     零新增依赖 (不动 pyproject/requirements, 避免并发批次依赖文件冲突);
     GARCH(1,1) 仅 3 参数 (mu 两阶段分离估计), 高斯 QMLE 为行业标准且对厚尾稳健;
-    可解释性优先 (个人系统); CPU 即可。SLSQP 选因: 原生支持 bounds + 不等式
-    约束 (alpha+beta<1)。若后续发现数值问题可再评估 arch (CAND 留痕)。
+    可解释性优先 (个人系统); CPU 即可。平稳性约束 alpha+beta<1 经二次罚项执行
+    (GARCH 估计标准做法)。若后续发现数值问题可再评估 arch (CAND 留痕)。
+
+    优化器勘正 (2026-08-18 Qwen 审查线 P0 修复): 原 SLSQP+不等式约束实现存在
+    早停病灶——约束容差与 ftol 相互作用下 nit=5 即宣布收敛且停在起点
+    (多种子估计精确钉在两个起点上, 似然比真参数点低 39.5), 未真正优化。
+    改 L-BFGS-B (无约束优化, 避开约束容差早停) + 持续性二次罚项, 独立验证
+    失败案例 nll 由 -7283.3 (起点) 改善至 -7325.3 (优于真参数点 -7322.7)。
 
 属 A 类基础设施 (QMLE + bootstrap, 数学逻辑明确), 置信度/持有期/模拟数为 C 类可调参数。
 设计真源: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/36_var_es_monitoring.md §3.16
@@ -75,8 +81,8 @@ Version: 0.1.0 (MVP)
 # - id: A1
 #   name_zh: ① GARCH(1,1) QMLE 拟合
 #   name_en: _fit_garch_11
-#   intro: 去均值后对准对数似然做SLSQP带约束优化估omega/alpha/beta
-#   desc: eps=r-mu_hat; sigma_t^2=omega+alpha*eps_{t-1}^2+beta*sigma_{t-1}^2; 约束omega>0,alpha>=0,beta>=0,alpha+beta<1; 双起点取较优; 不收敛返回None
+#   intro: 去均值后对准对数似然做L-BFGS-B优化估omega/alpha/beta
+#   desc: eps=r-mu_hat; sigma_t^2=omega+alpha*eps_{t-1}^2+beta*sigma_{t-1}^2; 约束omega>0,alpha>=0,beta>=0,alpha+beta<1(二次罚项); L-BFGS-B双起点取较优; 不收敛返回None
 #   inputs: I1 I3
 #   outputs: GarchParams(omega/alpha/beta/mu/sigma_T/loglik) 或 None
 #   invariant: alpha+beta<1(平稳性)
@@ -417,8 +423,10 @@ class FHSEngine:
         config: 计算配置, 默认 95% 日 VaR, 10000 路径, 不收敛回退 historical
     """
 
-    # SLSQP 平稳性约束上限 (alpha+beta 严格 <1, 留数值余量)
+    # 平稳性约束上限 (alpha+beta 严格 <1, 留数值余量)
     _PERSISTENCE_CAP = 1.0 - 1e-6
+    # 持续性二次罚项系数 (alpha+beta 超上限时惩罚, GARCH 估计标准做法)
+    _PERSISTENCE_PENALTY = 1e6
 
     def __init__(self, config: FHSConfig | None = None) -> None:
         self._config = config or FHSConfig()
@@ -566,7 +574,7 @@ class FHSEngine:
                 best = (nll, params)
 
         if best is None:
-            return None, None, "SLSQP 双起点均未收敛 (迭代超限/方差非正)"
+            return None, None, "L-BFGS-B 双起点均未收敛 (迭代超限/方差非正)"
 
         omega, alpha, beta = (float(best[1][0]), float(best[1][1]), float(best[1][2]))
         sigma2 = self._filter_sigma2(eps, omega, alpha, beta, var0)
@@ -596,31 +604,33 @@ class FHSEngine:
     def _optimize_once(
         self, eps: np.ndarray, var0: float, x0: np.ndarray
     ) -> tuple[float, np.ndarray | None]:
-        """单起点 SLSQP 优化, 返回 (neg_loglik, params|None)。"""
-        n = len(eps)
+        """单起点 L-BFGS-B 优化, 返回 (neg_loglik, params|None)。
+
+        平稳性约束 alpha+beta<1 经二次罚项执行 (非不等式约束)——
+        2026-08-18 Qwen 审查线 P0 勘正: SLSQP+不等式约束存在早停病灶
+        (约束容差与 ftol 相互作用下 nit=5 即宣布收敛且停在起点, 未真正优化)。
+        """
 
         def neg_loglik(p: np.ndarray) -> float:
             omega, alpha, beta = p
-            if omega <= 0 or alpha < 0 or beta < 0 or alpha + beta >= 1.0:
+            if omega <= 0 or alpha < 0 or beta < 0:
                 return 1e12
             sigma2 = self._filter_sigma2(eps, omega, alpha, beta, var0)
             if not np.all(np.isfinite(sigma2)) or np.any(sigma2 <= 0):
                 return 1e12
-            return float(
+            v = float(
                 0.5 * np.sum(np.log(2.0 * np.pi) + np.log(sigma2) + eps**2 / sigma2)
             )
+            excess = alpha + beta - self._PERSISTENCE_CAP
+            if excess > 0:
+                v += self._PERSISTENCE_PENALTY * excess * excess
+            return v
 
         res = minimize(
             neg_loglik,
             x0,
-            method="SLSQP",
+            method="L-BFGS-B",
             bounds=[(1e-12, None), (1e-8, 1.0), (1e-8, 1.0)],
-            constraints=[
-                {
-                    "type": "ineq",
-                    "fun": lambda p: self._PERSISTENCE_CAP - p[1] - p[2],
-                }
-            ],
             options={"maxiter": 500, "ftol": 1e-12},
         )
         if not res.success or not np.all(np.isfinite(res.x)):
