@@ -22,6 +22,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from datetime import date, time
 
@@ -604,3 +605,96 @@ class TestGateBatchOrder:
         verdict2 = builder.gate_batch_order(_order(), _ctx(), today=date.today())
         assert verdict2.action is DisciplineAction.HARD_BLOCK
         assert verdict2.kill_switch_triggered
+
+
+# ══════════════════════════════════════════════════════════════
+# 红队修复守卫（AI-R2-001）
+# ══════════════════════════════════════════════════════════════
+
+
+class TestClipCapitalGuard:
+    """clip_to_available_capital 非法 available_cash 入口校验（负/NaN/Inf→按零资金降级）。"""
+
+    def _holdings(self) -> dict[str, float]:
+        return {"600519": 0.40, "000858": 0.40, "CASH": 0.20}
+
+    def test_negative_cash_zero_degrade(self):
+        """available_cash=-100 → 按零资金降级，不产生负权重（不变相做空）。"""
+        result = clip_to_available_capital(self._holdings(), -100.0, 100000)
+        assert result["600519"] == pytest.approx(0.0)
+        assert result["000858"] == pytest.approx(0.0)
+        assert result["CASH"] == pytest.approx(1.0)
+        assert all(w >= 0 for k, w in result.items() if not k.startswith("_"))
+        assert "_degrade_reason" in result
+
+    def test_nan_cash_zero_degrade(self):
+        """available_cash=NaN → 按零资金降级，输出无 NaN 污染。"""
+        result = clip_to_available_capital(self._holdings(), float("nan"), 100000)
+        assert result["600519"] == pytest.approx(0.0)
+        assert result["CASH"] == pytest.approx(1.0)
+        assert all(
+            math.isfinite(w) for k, w in result.items() if not k.startswith("_")
+        )
+        assert "_degrade_reason" in result
+
+    def test_inf_cash_zero_degrade(self):
+        """available_cash=+Inf → 按零资金降级（Inf 资金视为非法输入）。"""
+        result = clip_to_available_capital(self._holdings(), float("inf"), 100000)
+        assert result["600519"] == pytest.approx(0.0)
+        assert result["CASH"] == pytest.approx(1.0)
+        assert all(
+            math.isfinite(w) for k, w in result.items() if not k.startswith("_")
+        )
+        assert "_degrade_reason" in result
+
+    def test_zero_cash_zero_degrade(self):
+        """available_cash=0 → scale=0 全削，权重和非负且=1.0。"""
+        result = clip_to_available_capital(self._holdings(), 0.0, 100000)
+        assert result["600519"] == pytest.approx(0.0)
+        assert result["CASH"] == pytest.approx(1.0)
+        assert abs(sum(v for k, v in result.items() if not k.startswith("_")) - 1.0) < 1e-9
+
+
+class TestBatch2ReleaseGuard:
+    """check_batch2_release 条件②空证据不计票（Fail-Closed，防空集真空值白送 1 票）。"""
+
+    def _scaled_plan(self) -> BatchedEntryPlan:
+        return BatchedPositionBuilder().build_plan("600519", 0.08, 0.50, "multifactor")
+
+    def test_empty_close_prices_not_released(self):
+        """close_prices=[] 零价格证据 → 条件②不计票，确认仓不放行。"""
+        builder = BatchedPositionBuilder()
+        plan = self._scaled_plan()
+        pos = MockPosition(entry_price=10.0, close_prices=[])
+        # ① ✅(days=1) + ② 无证据不计票 + ③ ❌(量比1.5) → 1/3 不放行
+        assert not builder.check_batch2_release(plan, pos, volume_ratio=1.5, days_since_first_batch=1)
+
+    def test_single_close_price_not_counted(self):
+        """仅 1 根收盘价证据不足 → 条件②不计票，确认仓不放行。"""
+        builder = BatchedPositionBuilder()
+        plan = self._scaled_plan()
+        pos = MockPosition(entry_price=10.0, close_prices=[10.5])
+        # ① ✅ + ② 证据不足 + ③ ❌ → 1/3 不放行
+        assert not builder.check_batch2_release(plan, pos, volume_ratio=1.5, days_since_first_batch=1)
+
+
+class TestConfidenceNanGuard:
+    """confidence=NaN 入口归零，保住批次比例和=1.0 不变量。"""
+
+    def test_nan_confidence_treated_as_zero(self):
+        """NaN 置信度 → 按 0.0 走 SCALED 分支，first_pct 有限且=0.30。"""
+        result = compute_batch_split(float("nan"), "multifactor")
+        assert result["mode"] == "SCALED"
+        assert result["adjusted_confidence"] == 0.0
+        assert math.isfinite(result["first_pct"])
+        assert result["first_pct"] == pytest.approx(0.30)
+        # 批次比例和不变量：2 批比例和=1.0
+        assert result["first_pct"] + (1.0 - result["first_pct"]) == pytest.approx(1.0)
+
+    def test_nan_confidence_batch_invariant(self):
+        """NaN 置信度经 build_plan 后批次比例和仍=1.0（不污染不变量）。"""
+        builder = BatchedPositionBuilder()
+        plan = builder.build_plan("600519", 0.08, float("nan"), "multifactor")
+        assert plan.confidence_tier == "SCALED"
+        assert all(math.isfinite(b.weight_fraction) for b in plan.batches)
+        assert sum(b.weight_fraction for b in plan.batches) == pytest.approx(1.0)

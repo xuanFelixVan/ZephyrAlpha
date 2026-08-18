@@ -698,3 +698,153 @@ class TestStateMachine:
         ]
         for s in failure_states:
             assert s in SagaState
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 红队：SagaConfig 超时校验（P1）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestSagaConfigValidation:
+    """SagaConfig.__post_init__ 拒绝极端/非法超时值。"""
+
+    def test_timeout_inf_rejected(self):
+        with pytest.raises(ValueError, match="正有限数"):
+            SagaConfig(timeout_seconds=float("inf"))
+
+    def test_timeout_nan_rejected(self):
+        with pytest.raises(ValueError, match="正有限数"):
+            SagaConfig(timeout_seconds=float("nan"))
+
+    def test_timeout_zero_rejected(self):
+        with pytest.raises(ValueError, match="正有限数"):
+            SagaConfig(timeout_seconds=0.0)
+
+    def test_timeout_negative_rejected(self):
+        with pytest.raises(ValueError, match="正有限数"):
+            SagaConfig(timeout_seconds=-1.0)
+
+    def test_timeout_over_5s_rejected(self):
+        with pytest.raises(ValueError, match="≤5s"):
+            SagaConfig(timeout_seconds=5.1)
+
+    def test_timeout_valid_accepted(self):
+        cfg = SagaConfig(timeout_seconds=5.0)
+        assert cfg.timeout_seconds == 5.0
+        cfg2 = SagaConfig(timeout_seconds=0.5)
+        assert cfg2.timeout_seconds == 0.5
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 红队：_FillCollector 非法 fill 拒收（P1）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _make_fill(
+    order_id: str,
+    qty: Decimal = Decimal("100"),
+    price: Decimal = Decimal("10.00"),
+    fill_id: str = "rt-fill",
+) -> Fill:
+    return Fill(
+        fill_id=fill_id,
+        fill_price=price,
+        fill_timestamp=datetime.now(UTC),
+        filled_quantity=qty,
+        idempotency_key=f"idem-{fill_id}",
+        order_id=order_id,
+        strategy_id="test",
+        symbol="600000.SH",
+    )
+
+
+class TestFillCollectorGuard:
+    """_FillCollector 对 qty/price 非法的 fill 拒收（不 set event）。"""
+
+    def test_invalid_fill_qty_zero_not_collected(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        collector(_make_fill("ord-1", qty=Decimal("0")))
+        assert not collector.collected
+
+    def test_invalid_fill_qty_negative_not_collected(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        collector(_make_fill("ord-1", qty=Decimal("-10")))
+        assert not collector.collected
+
+    def test_invalid_fill_qty_over_order_not_collected(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        collector(_make_fill("ord-1", qty=Decimal("200")))
+        assert not collector.collected
+
+    def test_invalid_fill_price_nan_not_collected(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        collector(_make_fill("ord-1", price=Decimal("NaN")))
+        assert not collector.collected
+
+    def test_valid_fill_collected(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        fill = _make_fill("ord-1", qty=Decimal("100"), price=Decimal("10.00"))
+        collector(fill)
+        assert collector.collected
+        assert collector.wait(timeout=0.1) is fill
+
+    def test_other_order_fill_ignored(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        collector(_make_fill("ord-other"))
+        assert not collector.collected
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 红队：execute 终态订单重复执行守卫（P2）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestExecuteTerminalStateGuard:
+    """已处终态（FILLED/CANCELLED/REJECTED）的订单拒绝重复执行。"""
+
+    def test_execute_filled_order_rejected(self):
+        broker = InstantFillBroker()
+        saga = make_saga(broker)
+        order = make_order()
+        order.status = OrderStatus.FILLED
+
+        result = saga.execute(order, OrderSide.BUY)
+
+        assert result.state == SagaState.SIGNAL_INVALID
+        assert result.error is not None
+        assert "终态" in result.error
+        assert result.steps_completed == ()
+
+    def test_execute_cancelled_order_rejected(self):
+        broker = InstantFillBroker()
+        saga = make_saga(broker)
+        order = make_order()
+        order.status = OrderStatus.CANCELLED
+
+        result = saga.execute(order, OrderSide.BUY)
+
+        assert result.state == SagaState.SIGNAL_INVALID
+        assert "终态" in (result.error or "")
+
+    def test_execute_rejected_order_rejected(self):
+        broker = InstantFillBroker()
+        saga = make_saga(broker)
+        order = make_order()
+        order.status = OrderStatus.REJECTED
+
+        result = saga.execute(order, OrderSide.BUY)
+
+        assert result.state == SagaState.SIGNAL_INVALID
+        assert "终态" in (result.error or "")

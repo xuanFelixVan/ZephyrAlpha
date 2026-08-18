@@ -108,6 +108,7 @@ Version: 1.1.0
 from __future__ import annotations
 
 import logging
+import threading
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -173,6 +174,8 @@ class CancelRateGuard:
         if self._resolved.maxlen != self.window_size:
             self._resolved = deque(self._resolved, maxlen=self.window_size)
         self._daily_date = date.today()
+        # RLock：_count_declaration 持锁后会再经 daily_declaration_status 重入
+        self._daily_lock = threading.RLock()
 
     # ── 状态查询 ──
 
@@ -209,8 +212,9 @@ class CancelRateGuard:
     @property
     def daily_declaration_count(self) -> int:
         """当日申报笔数（报单+撤单，自然日口径，跨日自动清零）。"""
-        self._rollover_if_new_day()
-        return self._daily_count
+        with self._daily_lock:
+            self._rollover_if_new_day()
+            return self._daily_count
 
     @property
     def daily_declaration_status(self) -> DailyDeclarationStatus:
@@ -231,25 +235,26 @@ class CancelRateGuard:
 
     def _count_declaration(self) -> None:
         """记一笔申报（报单或撤单），阈值穿越时告警（仅穿越瞬间各一次）。"""
-        self._rollover_if_new_day()
-        prev_status = self.daily_declaration_status
-        self._daily_count += 1
-        new_status = self.daily_declaration_status
-        if new_status is prev_status:
-            return
-        if new_status is DailyDeclarationStatus.WARNING:
-            _logger.warning(
-                "日申报笔数预警: count=%d >= %d（2026-06-08 程序化新规 5000 笔预警线）",
-                self._daily_count,
-                self.daily_warn_threshold,
-            )
-        elif new_status is DailyDeclarationStatus.BLOCKED:
-            _logger.error(
-                "日申报笔数阻断: count=%d >= %d（2026-06-08 程序化新规 1 万笔限交易线），"
-                "C-002 将拒绝新申报",
-                self._daily_count,
-                self.daily_block_threshold,
-            )
+        with self._daily_lock:
+            self._rollover_if_new_day()
+            prev_status = self.daily_declaration_status
+            self._daily_count += 1
+            new_status = self.daily_declaration_status
+            if new_status is prev_status:
+                return
+            if new_status is DailyDeclarationStatus.WARNING:
+                _logger.warning(
+                    "日申报笔数预警: count=%d >= %d（2026-06-08 程序化新规 5000 笔预警线）",
+                    self._daily_count,
+                    self.daily_warn_threshold,
+                )
+            elif new_status is DailyDeclarationStatus.BLOCKED:
+                _logger.error(
+                    "日申报笔数阻断: count=%d >= %d（2026-06-08 程序化新规 1 万笔限交易线），"
+                    "C-002 将拒绝新申报",
+                    self._daily_count,
+                    self.daily_block_threshold,
+                )
 
     # ── 决策接口 ──
 
@@ -338,9 +343,15 @@ class CancelRateGuard:
             )
 
     def reset(self) -> None:
-        """重置监控（盘前或人工介入后）：清撤单率窗口/限频/日申报计数。"""
-        self._resolved.clear()
-        self._submit_ts.clear()
-        self._daily_count = 0
-        self._daily_date = date.today()
+        """重置监控（仅盘前/人工介入后调用，盘中调用记 critical）。"""
+        with self._daily_lock:
+            if self._daily_count > 0:
+                _logger.critical(
+                    "盘中 reset CancelRateGuard（daily_count=%d）——可能绕过 C-002 日申报限制",
+                    self._daily_count,
+                )
+            self._resolved.clear()
+            self._submit_ts.clear()
+            self._daily_count = 0
+            self._daily_date = date.today()
         _logger.info("CancelRateGuard reset")

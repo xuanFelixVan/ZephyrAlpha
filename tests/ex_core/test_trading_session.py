@@ -953,3 +953,27 @@ class TestTradingComplianceGate:
                 tmp_path,
                 compliance_detector=TradingComplianceDetector(logger=_tmp_logger(tmp_path)),
             )
+
+
+class TestNanGuard:
+    """红队攻击：NaN cap/price 穿透。"""
+
+    def test_cap_nan_fail_closed(self) -> None:
+        """position_cap=NaN 时目标权重全清。"""
+        snap = MagicMock()
+        snap.position_cap = float("nan")
+        # 修复前：NaN 穿透 cap>=1.0/cap<=0.0 双检查 → factor=nan 污染全组合权重
+        assert TradingSession._apply_position_cap({"600519.SH": 0.10}, snap) == {}
+
+    def test_price_nan_skip_order(self) -> None:
+        """price=NaN 时不生成订单。"""
+        broker = MagicMock()
+        broker.get_positions.return_value = _make_position(cash=Decimal("1000000"))
+        session = _make_session(
+            broker=broker,
+            strategy=_strategy_returning({"600519.SH": 0.10}),
+            price_provider=make_mock_price_provider({"600519.SH": Decimal("nan")}),
+            config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+        )
+        # 修复前：not price / price<=0 对 Decimal("NaN") 均不拦截 → 生成 NaN 订单
+        assert session.rebalance() == []

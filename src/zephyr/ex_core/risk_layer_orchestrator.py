@@ -63,6 +63,7 @@ PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
 from __future__ import annotations
 
 import logging
+import math
 import threading
 import uuid
 from collections import deque
@@ -796,7 +797,7 @@ class RiskLayerOrchestrator:
             positions = {
                 symbol: float(qty)
                 for symbol, qty in positions_snapshot.holdings.items()
-                if qty != 0
+                if qty != 0 and math.isfinite(float(qty))
             }
         except Exception as exc:  # noqa: BLE001 — 持仓查询失效仍需熔断状态生效
             _logger.critical("清算持仓查询失效（熔断状态保持，新单已禁）: %s", exc, exc_info=True)
@@ -809,13 +810,17 @@ class RiskLayerOrchestrator:
                 _logger.exception("open_orders_provider 失效（降级为仅平仓）")
 
         adapter = _LiquidationBrokerAdapter(self._broker)
-        report = execute_kill_switch_liquidation(
-            adapter,
-            positions,
-            open_orders,
-            scope=self._config.liquidation_scope,
-            max_orders_per_second=self._config.max_orders_per_second,
-        )
+        try:
+            report = execute_kill_switch_liquidation(
+                adapter,
+                positions,
+                open_orders,
+                scope=self._config.liquidation_scope,
+                max_orders_per_second=self._config.max_orders_per_second,
+            )
+        except Exception:  # noqa: BLE001 — 清算执行异常不阻断熔断状态（已禁单），人工介入
+            _logger.critical("清算执行异常（熔断状态保持，新单已禁）", exc_info=True)
+            report = {"status": "liquidation_error", "reason": "execute_kill_switch_liquidation exception"}
         result: dict[str, object] = {"event": event, "report": report, "reason": reason}
         with self._lock:
             self._kill_switch_report = result

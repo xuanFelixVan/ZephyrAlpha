@@ -976,11 +976,11 @@ class TestSystemicWiringRobustness:
         assert orch.kill_switch_engaged is False
 
     def test_engage_skip_while_liquidation_inflight(self) -> None:
-        """红队（AI-R2-001 修复实证）：engaged 置位后 report 未落地期间，
-        并发二次仲裁不穿透重复清算（原条件 engaged AND report!=None 留窗口）。
+        """红队（AI-R2-001 修复实证）：engaged 置位后并发二次仲裁不穿透重复清算。
 
-        构造：清算执行器抛异常中断（report 永不落地），后续触发源仍被
-        仲裁点跳过——熔断态保持禁单，宁少清算不双清算。
+        构造：清算执行器抛异常（AI-R2-001 修复②后异常被隔离：熔断态保持、
+        report 落地 liquidation_error 兜底字典），后续触发源仍被仲裁点跳过
+        ——熔断态保持禁单，宁少清算不双清算。
         """
         import zephyr.ex_core.risk_layer_orchestrator as rlo
 
@@ -994,11 +994,11 @@ class TestSystemicWiringRobustness:
         rlo.execute_kill_switch_liquidation = _boom  # type: ignore[assignment]
         try:
             inputs_box["data"] = dict(_LEVEL3_INPUTS)
-            with pytest.raises(RuntimeError):
-                orch.evaluate_intraday(1_000_000.0, now=_T0)
-            # engaged 已置位但 report 未落地（清算中断）
+            orch.evaluate_intraday(1_000_000.0, now=_T0)
+            # 清算异常被隔离：engaged 已置位，report 落地 liquidation_error 兜底
             assert orch.kill_switch_engaged is True
-            assert orch._kill_switch_report is None
+            assert orch._kill_switch_report is not None
+            assert orch._kill_switch_report["report"]["status"] == "liquidation_error"  # type: ignore[index]
             assert orch.is_trading_allowed is False
             # 二次触发（修复后：engaged 即跳过，不再穿透重入清算链）
             snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(seconds=30))
@@ -1007,3 +1007,50 @@ class TestSystemicWiringRobustness:
             assert snap.systemic_level == 3
         finally:
             rlo.execute_kill_switch_liquidation = original  # type: ignore[assignment]
+
+
+class TestKillSwitchNanGuard:
+    """红队攻击：NaN qty 穿透清算 + 清算异常隔离。"""
+
+    def test_liquidation_filters_nan_qty(self) -> None:
+        """broker 返回含 NaN qty 的持仓，清算字典应过滤该标的。"""
+        broker = FakeBroker(
+            cash=Decimal("0"),
+            holdings={"A": Decimal("100"), "B": Decimal("nan"), "C": Decimal("0")},
+        )
+        orch = _make_orchestrator(broker=broker)
+
+        result = orch._engage_kill_switch("redteam: nan qty penetration")
+
+        assert result is not None
+        # NaN("B") 与零持仓("C") 均被过滤——仅 "A" 真实清算
+        # （修复前 NaN 穿透：nan>0 为 False → "B" 被生成 BUY 方向清算单）
+        assert [(o.symbol, o.side) for o in broker.submitted] == [("A", OrderSide.SELL)]
+        assert broker.submitted[0].quantity == Decimal(str(100.0))
+
+    def test_liquidation_exception_keeps_engaged(self) -> None:
+        """execute_kill_switch_liquidation 抛 ValueError，熔断状态保持，report 非 None。"""
+        import zephyr.ex_core.risk_layer_orchestrator as rlo
+
+        broker = FakeBroker(cash=Decimal("0"), holdings={"600000.SH": Decimal("1000")})
+        orch = _make_orchestrator(broker=broker)
+        original = rlo.execute_kill_switch_liquidation
+
+        def _boom(*args: object, **kwargs: object) -> object:
+            raise ValueError("liquidation params invalid")
+
+        rlo.execute_kill_switch_liquidation = _boom  # type: ignore[assignment]
+        try:
+            result = orch._engage_kill_switch("redteam: liquidation exception")
+        finally:
+            rlo.execute_kill_switch_liquidation = original  # type: ignore[assignment]
+
+        # 异常被隔离：熔断已置位（禁单保持），report 落地兜底字典而非永久 None
+        assert orch.kill_switch_engaged is True
+        assert orch.is_trading_allowed is False
+        assert result is not None
+        assert result["report"] == {
+            "status": "liquidation_error",
+            "reason": "execute_kill_switch_liquidation exception",
+        }
+        assert orch._kill_switch_report is result

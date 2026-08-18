@@ -109,6 +109,7 @@ SSoT: cross_layer_contracts.yaml -> CTR-004 + CTR-005
 from __future__ import annotations
 
 import logging
+import threading
 import uuid
 from collections import defaultdict
 from collections.abc import Callable
@@ -211,6 +212,7 @@ class OrderManager:
         # C-002 合规门禁（43 号 §7.4/§8，AI-ASM-001 装配批接线；None=未接线不校验）
         self._report_gate = report_gate
         self._declaration_guard = declaration_guard
+        self._fill_lock = threading.Lock()
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -452,32 +454,46 @@ class OrderManager:
         return [f for fills in self._fills.values() for f in fills]
 
     def _on_fill(self, fill: Fill) -> None:
-        self._fills[fill.order_id].append(fill)
+        with self._fill_lock:
+            # 红队防御：fill 数值校验
+            if fill.filled_quantity <= 0:
+                _logger.warning("拒收非法 fill: qty=%s <= 0 (order=%s)", fill.filled_quantity, fill.order_id)
+                return
+            if fill.fill_price is not None and hasattr(fill.fill_price, 'is_nan') and fill.fill_price.is_nan():
+                _logger.warning("拒收非法 fill: price=NaN (order=%s)", fill.order_id)
+                return
+            # fill_id 幂等去重
+            existing_ids = {f.fill_id for f in self._fills.get(fill.order_id, [])}
+            if fill.fill_id and fill.fill_id in existing_ids:
+                _logger.warning("重复 fill_id=%s 跳过 (order=%s)", fill.fill_id, fill.order_id)
+                return
 
-        order = self._orders.get(fill.order_id)
-        if order:
-            order.filled_quantity = (order.filled_quantity or Decimal("0")) + fill.filled_quantity
-            order.avg_fill_price = (
-                (
-                    (order.avg_fill_price or Decimal("0")) * (order.filled_quantity - fill.filled_quantity)
-                    + fill.fill_price * fill.filled_quantity
+            self._fills[fill.order_id].append(fill)
+
+            order = self._orders.get(fill.order_id)
+            if order:
+                order.filled_quantity = (order.filled_quantity or Decimal("0")) + fill.filled_quantity
+                order.avg_fill_price = (
+                    (
+                        (order.avg_fill_price or Decimal("0")) * (order.filled_quantity - fill.filled_quantity)
+                        + fill.fill_price * fill.filled_quantity
+                    )
+                    / order.filled_quantity
+                    if order.filled_quantity > 0
+                    else fill.fill_price
                 )
-                / order.filled_quantity
-                if order.filled_quantity > 0
-                else fill.fill_price
-            )
-            order.updated_at = datetime.now(UTC)
+                order.updated_at = datetime.now(UTC)
 
-            if order.filled_quantity >= order.quantity:
-                try:
-                    self._transition_status(order, OrderStatus.FILLED)
-                except ValueError as e:
-                    _logger.warning("成交回调状态转换跳过: %s", e)
-            elif order.filled_quantity > 0:
-                try:
-                    self._transition_status(order, OrderStatus.PARTIAL)
-                except ValueError as e:
-                    _logger.warning("成交回调状态转换跳过: %s", e)
+                if order.filled_quantity >= order.quantity:
+                    try:
+                        self._transition_status(order, OrderStatus.FILLED)
+                    except ValueError as e:
+                        _logger.warning("成交回调状态转换跳过: %s", e)
+                elif order.filled_quantity > 0:
+                    try:
+                        self._transition_status(order, OrderStatus.PARTIAL)
+                    except ValueError as e:
+                        _logger.warning("成交回调状态转换跳过: %s", e)
 
         for callback in self._fill_callbacks:
             try:

@@ -422,3 +422,37 @@ def test_invariant_frtb_non_negative(normal_returns):
     monitor = TailRiskMonitor()
     snapshot = monitor.assess(normal_returns, now=t())
     assert snapshot.frtb_addon >= 0
+
+
+# ── _validate_returns ±inf 过滤守卫 (AI-R2-001) ──────────────────────────────
+
+
+class TestValidateReturnsInfFilter:
+    """_validate_returns 同时过滤 NaN 与 ±inf（防 VaR=inf/FRTB=inf 流入下游）。
+
+    原缺陷：只滤 NaN 不滤 inf，含 -inf 样本时历史模拟 VaR/ES/FRTB 全变 inf。
+    """
+
+    def test_inf_returns_filtered(self):
+        """含 +inf 样本 → 被过滤，输出全有限。"""
+        returns = np.concatenate([np.full(35, 0.01), np.full(5, np.inf)])
+        out = TailRiskMonitor._validate_returns(returns, 30)
+        assert len(out) == 35
+        assert np.all(np.isfinite(out))
+
+    def test_neg_inf_returns_filtered(self):
+        """含 -inf 样本 → 被过滤，输出全有限。"""
+        returns = np.concatenate([np.full(35, 0.01), np.full(5, -np.inf)])
+        out = TailRiskMonitor._validate_returns(returns, 30)
+        assert len(out) == 35
+        assert np.all(np.isfinite(out))
+
+    def test_mixed_nan_inf_returns_filtered(self):
+        """NaN/+inf/-inf 混合 → 全部过滤，输出全有限且数量正确。"""
+        returns = np.concatenate([
+            np.full(35, 0.01),
+            [np.nan, np.inf, -np.inf, np.nan, np.inf],
+        ])
+        out = TailRiskMonitor._validate_returns(returns, 30)
+        assert len(out) == 35
+        assert np.all(np.isfinite(out))

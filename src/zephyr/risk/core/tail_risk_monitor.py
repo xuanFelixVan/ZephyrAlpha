@@ -214,6 +214,9 @@ class PotFailureCounter:
             return default
         if rec is None:
             return default
+        if not isinstance(rec, dict):
+            logger.warning("POT 计数器记录非 dict（%s），按从未失败处理", type(rec).__name__)
+            return default
         # 防御：损坏记录（缺键/类型异常）→ 合并默认值，fail-closed 不阻断
         for k, v in default.items():
             if k not in rec:
@@ -791,8 +794,8 @@ class TailRiskMonitor:
             raise InvalidTailRiskInputError(
                 f"need >= {min_samples} samples, got {len(returns)}"
             )
-        if np.any(np.isnan(returns)):
-            returns = returns[~np.isnan(returns)]
+        if np.any(~np.isfinite(returns)):
+            returns = returns[np.isfinite(returns)]
         if len(returns) < min_samples:
             raise InvalidTailRiskInputError(
                 f"after NaN removal, need >= {min_samples} samples, got {len(returns)}"

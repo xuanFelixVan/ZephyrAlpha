@@ -387,6 +387,9 @@ class TradingSession:
         if risk_snap is None:
             return target_weights
         cap = risk_snap.position_cap
+        if cap != cap:  # NaN 自检（NaN != NaN）
+            _logger.critical("风控层仓位上限为 NaN——Fail-Closed 全清")
+            return {}
         if cap >= 1.0:
             return target_weights
         if cap <= 0.0:
@@ -446,7 +449,7 @@ class TradingSession:
     ) -> Order | None:
         """单个标的的目标权重 → 买入/卖出 delta 订单（板块差异化整手）。"""
         price = prices.get(symbol)
-        if not price or price <= 0:
+        if price is None or price.is_nan() or price <= 0:
             _logger.debug("skip %s: no valid price", symbol)
             return None
         target_qty = self._calc_target_qty(symbol, total_asset, weight, price)
@@ -479,7 +482,7 @@ class TradingSession:
         必须一次性申报卖出（board_lot §决策⑰），不可滞留。
         """
         price = prices.get(symbol)
-        if not price or price <= 0:
+        if price is None or price.is_nan() or price <= 0:
             _logger.debug("skip sell-all %s: no valid price", symbol)
             return None
         if qty <= 0:

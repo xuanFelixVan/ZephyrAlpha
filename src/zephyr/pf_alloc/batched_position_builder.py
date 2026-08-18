@@ -48,9 +48,11 @@ Version: 1.1.0（2026-08-15 AI-ASM-001 装配批：BM-BUY-08 纪律闸 gate_batc
 
 from __future__ import annotations
 
+import logging
+import math
 from dataclasses import dataclass, field
 from datetime import date, datetime, time
-from typing import Any, Final
+from typing import Any, Final, Protocol
 
 from zephyr.compliance.discipline_prohibition_checker import (
     DisciplineAction,
@@ -61,6 +63,22 @@ from zephyr.compliance.discipline_prohibition_checker import (
     KillSwitchLite,
     OrderRequest,
 )
+
+_logger = logging.getLogger(__name__)
+
+# ── 持仓对象 Protocol（GATE-ANY-ABUSE 修复：裸 Any → 结构化类型）──
+
+
+class _PositionLike(Protocol):
+    """持仓对象最小契约：入场价 + 收盘价序列 + 最低价序列。"""
+
+    @property
+    def entry_price(self) -> float: ...
+    @property
+    def close_prices(self) -> list[float]: ...
+    @property
+    def low_prices(self) -> list[float]: ...
+
 
 # ── 常量（参数来源：41_buy_flow §3.2.1/§3.4/§3.5）──
 
@@ -147,6 +165,8 @@ def compute_batch_split(
     依据: 41_buy_flow §3.2.1 C-031 置信度→批次比例映射算法
     """
     # A/B/C 板块回踩质量调节置信度（22号 v1.8.0 active 后启用，v1.4.0 集成）
+    if confidence_score_c031 != confidence_score_c031:  # NaN 自检
+        confidence_score_c031 = 0.0
     quality_adjustment = QUALITY_ADJUSTMENT.get(sector_quality, 0.0)
     adjusted_confidence = min(max(confidence_score_c031 + quality_adjustment, 0.0), 1.0)
 
@@ -178,7 +198,7 @@ def compute_batch_split(
 
 
 def detect_breakout_failure(
-    position: Any,
+    position: _PositionLike,
     lookback_days: int = DEFAULT_LOOKBACK_DAYS,
     confirm_bars: int = DEFAULT_CONFIRM_BARS,
 ) -> tuple[str, str, str] | None:
@@ -299,6 +319,9 @@ def clip_to_available_capital(
 
     依据: 41_buy_flow §3.6 资金不足 pro-rata 削减算法
     """
+    if not math.isfinite(available_cash) or available_cash < 0:
+        _logger.warning("available_cash=%s 非法（负/NaN/Inf）——按零资金降级", available_cash)
+        available_cash = 0.0
     target_invest = sum(w for s, w in target_holdings.items() if s != "CASH") * total_account_value
     if target_invest <= available_cash:
         return target_holdings  # 资金充足，原样执行
@@ -476,7 +499,7 @@ class BatchedPositionBuilder:
     def check_batch2_release(
         self,
         plan: BatchedEntryPlan,
-        position: Any,
+        position: _PositionLike,
         volume_ratio: float,
         days_since_first_batch: int,
     ) -> bool:
@@ -498,9 +521,9 @@ class BatchedPositionBuilder:
         # ① 调整周期到位（降级：距首仓≥1交易日）
         if days_since_first_batch >= 1:
             conditions_met += 1
-        # ② 二次回落不破首仓入场价
+        # ② 二次回落不破首仓入场价（证据不足不计票——Fail-Closed）
         recent_closes = position.close_prices[-2:]
-        if all(c >= position.entry_price for c in recent_closes):
+        if len(recent_closes) >= 2 and all(c >= position.entry_price for c in recent_closes):
             conditions_met += 1
         # ③ 缩量企稳（量比<1）
         if volume_ratio < 1.0:
@@ -510,7 +533,7 @@ class BatchedPositionBuilder:
 
     def check_degrade(
         self,
-        position: Any,
+        position: _PositionLike,
         lookback_days: int = DEFAULT_LOOKBACK_DAYS,
         confirm_bars: int = DEFAULT_CONFIRM_BARS,
     ) -> tuple[str, str, str] | None:

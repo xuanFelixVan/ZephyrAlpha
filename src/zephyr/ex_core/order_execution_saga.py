@@ -126,6 +126,7 @@ Version: 0.1.0
 from __future__ import annotations
 
 import logging
+import math
 import threading
 import time
 import uuid
@@ -274,6 +275,12 @@ class SagaConfig:
     fill_poll_interval: float = 0.05
     broker_id: str = "simulation"
 
+    def __post_init__(self) -> None:
+        if not math.isfinite(self.timeout_seconds) or self.timeout_seconds <= 0:
+            raise ValueError(f"timeout_seconds 必须为正有限数，got {self.timeout_seconds}")
+        if self.timeout_seconds > 5.0:
+            raise ValueError(f"timeout_seconds 违反 ≤5s 契约，got {self.timeout_seconds}")
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 内部: Fill 收集器 (线程安全, 一次性)
@@ -287,16 +294,29 @@ class _FillCollector:
     自动捕获并设置 Event。用于 Saga 步骤4（成交确认）的同步等待。
     """
 
-    def __init__(self, order_id: str) -> None:
+    def __init__(self, order_id: str, order_quantity: Decimal | None = None) -> None:
         self._order_id = order_id
+        self._order_quantity = order_quantity
         self._event = threading.Event()
         self._fill: Fill | None = None
 
     def __call__(self, fill: Fill) -> None:
-        """fill callback 入口——仅捕获匹配 order_id 的首个 fill。"""
-        if fill.order_id == self._order_id and not self._event.is_set():
-            self._fill = fill
-            self._event.set()
+        """fill callback 入口——匹配 order_id + 数值校验，非法 fill 拒收。"""
+        if fill.order_id != self._order_id or self._event.is_set():
+            return
+        # 红队防御：非法 fill 拒收（不 set event，让 saga 走超时补偿链）
+        if fill.filled_quantity <= 0:
+            _logger.warning("拒收非法 fill: qty=%s <= 0 (order=%s)", fill.filled_quantity, self._order_id)
+            return
+        if self._order_quantity is not None and fill.filled_quantity > self._order_quantity:
+            _logger.warning("拒收非法 fill: qty=%s > order_qty=%s (order=%s)",
+                            fill.filled_quantity, self._order_quantity, self._order_id)
+            return
+        if fill.fill_price is not None and (fill.fill_price.is_nan() or fill.fill_price <= 0):
+            _logger.warning("拒收非法 fill: price=%s (order=%s)", fill.fill_price, self._order_id)
+            return
+        self._fill = fill
+        self._event.set()
 
     def wait(self, timeout: float) -> Fill | None:
         """等待 fill 到达（阻塞至 timeout 或 fill 到达）。"""
@@ -451,6 +471,15 @@ class OrderExecutionSaga:
             side=side,
             start_time=time.monotonic(),
         )
+        # 重复执行守卫：订单已处终态直接拒绝
+        if order.status in (OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED):
+            ctx.state = SagaState.SIGNAL_INVALID
+            ctx.error = f"订单已处终态 {order.status.value}，拒绝重复执行"
+            _logger.warning(
+                "[Saga %s] 拒绝重复执行: order=%s status=%s",
+                ctx.saga_id[:8], order.order_id, order.status.value,
+            )
+            return ctx.to_result()
         _logger.info(
             "[Saga %s] START order=%s symbol=%s side=%s",
             ctx.saga_id[:8], order.order_id, order.symbol, side.value,
@@ -634,7 +663,7 @@ class OrderExecutionSaga:
                 ctx.order = registered  # 替换为已注册的 Order
 
             # 注册 fill collector（用实际 order_id, 在 submit 前注册防同步成交竞态）
-            ctx.collector = _FillCollector(ctx.order.order_id)
+            ctx.collector = _FillCollector(ctx.order.order_id, ctx.order.quantity)
             self._order_manager.register_fill_callback(ctx.collector)
 
             self._order_manager.submit_order(ctx.order.order_id, self._config.broker_id)

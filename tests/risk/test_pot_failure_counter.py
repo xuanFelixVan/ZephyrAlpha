@@ -438,3 +438,54 @@ class TestRealRedisBackend:
         raw = redis_store.load(POT_FAILURE_COUNTER_NAMESPACE)
         assert isinstance(raw["adjusted_threshold"], float)
         assert raw["adjusted_threshold"] == POT_THRESHOLD_ADJUSTED
+
+
+# ── 10. _load 非 dict 穿透守卫 (AI-R2-001) ──
+
+
+class TestLoadNonDictGuard:
+    """store 返回合法 JSON 的非 dict 类型 → 按从未失败处理 (fail-closed, 不炸 assess 主链路)。
+
+    原缺陷：_load 只判 rec is None，list/str/int/float 穿透到缺键合并循环
+    (`k not in rec` / `rec[k] = v`) 抛 TypeError。
+    """
+
+    class _RawStore:
+        """原样返回预置 payload 的 stub。
+
+        （_MemoryStore.load 对返回值做 dict() 拷贝，无法注入非 dict 类型；
+        JsonStateStore 直写非 dict JSON 顶层值即可，但用 stub 更直白。）
+        """
+
+        def __init__(self, payload) -> None:
+            self._payload = payload
+
+        def load(self, namespace: str):
+            return self._payload
+
+        def save(self, namespace: str, payload: dict):
+            pass
+
+    def test_load_list_returns_default(self):
+        """store 返回 [1,2,3] → 默认 fresh 状态，record_failure 从 1 计。"""
+        counter = PotFailureCounter(self._RawStore([1, 2, 3]))
+        assert counter.get_adjusted_threshold() == BASE_THRESHOLD
+        assert counter.record_failure("2026-08-16") == 1
+
+    def test_load_string_returns_default(self):
+        """store 返回 "corrupt" → 默认 fresh 状态。"""
+        counter = PotFailureCounter(self._RawStore("corrupt"))
+        assert counter.get_adjusted_threshold() == BASE_THRESHOLD
+        assert counter.record_failure("2026-08-16") == 1
+
+    def test_load_int_returns_default(self):
+        """store 返回 42 → 默认 fresh 状态。"""
+        counter = PotFailureCounter(self._RawStore(42))
+        assert counter.get_adjusted_threshold() == BASE_THRESHOLD
+        assert counter.record_failure("2026-08-16") == 1
+
+    def test_load_float_returns_default(self):
+        """store 返回 0.85 → 默认 fresh 状态。"""
+        counter = PotFailureCounter(self._RawStore(0.85))
+        assert counter.get_adjusted_threshold() == BASE_THRESHOLD
+        assert counter.record_failure("2026-08-16") == 1
