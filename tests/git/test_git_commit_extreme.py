@@ -410,7 +410,14 @@ class TestTimeoutAndResourceExhaustion:
     def test_git_command_timeout_handled(self, tmp_path: Path) -> None:
         """场景9: git 命令超时——不卡死，返回明确错误。
 
-        模拟：_run_git 抛 subprocess.TimeoutExpired。
+        模拟：git commit 命令抛 subprocess.TimeoutExpired（可控注入，不依赖真实超时）。
+
+        治本（#103）：mock 目标必须是真实执行入口 run_git。_run_git 仅是
+        Stage 4 公共化后保留的向后兼容 thin wrapper（return self.run_git(...)），
+        生产代码全部调用点已直调 run_git，_run_git 零生产调用——mock 打在死钩子上
+        等于空 mock，commit 真实执行成功返回 OK，断言确定性失败（与机器快慢无关）。
+        选择性注入（仅 git commit 抛超时、其余命令走真实调用）让 gate→add→commit
+        主流程走真实路径，只在 commit 命令处可控引爆超时。
         """
         _init_repo(tmp_path)
         _commit_file(tmp_path, "a.py", "a = 0\n")
@@ -418,11 +425,15 @@ class TestTimeoutAndResourceExhaustion:
 
         import subprocess as sp
 
-        def timeout_git(cmd):
-            raise sp.TimeoutExpired(cmd=cmd, timeout=120)
+        real_run_git = gw.run_git
+
+        def timeout_on_commit(cmd, cwd=None):
+            if len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit":
+                raise sp.TimeoutExpired(cmd=cmd, timeout=60)
+            return real_run_git(cmd, cwd)
 
         (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
-        with patch.object(gw, "_run_git", side_effect=timeout_git):
+        with patch.object(gw, "run_git", side_effect=timeout_on_commit):
             # 不应卡死，应抛异常或返回失败
             try:
                 result = gw.commit("sess-timeout", [str(tmp_path / "a.py")], "feat: timeout", allow_overlap=True)
