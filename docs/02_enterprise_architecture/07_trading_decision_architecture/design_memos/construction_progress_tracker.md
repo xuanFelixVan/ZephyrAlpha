@@ -184,7 +184,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 3 | #ARCH-BREG-001 fix_phase 更新：factor/strategy/risk_limit Step4-8、indicator、chart_pattern、field_dictionary、experiment 均已完成，文本仍写"待施工/待做" | AI-REG-COMP/FLD | ✅ 已闭环（fix_phase 已详述批一/批二全部 12 注册表完工态；重建 tracker 时误标滞后，本次复核实证已更新） | ✅ |
 | 4 | 17 号文档路径引用/BOM/换行符补检（merge 后由统筹执行） | AI-STD-001 | ✅ 已闭环（补检全部 PASS：BOM 无/换行符统一 LF/frontmatter 完整/相对链接 0 断链） | ✅ |
 | 5 | AGENTS.md 业务资产速查更新（17 号定稿 + 12 注册表建成后） | AI-STD-001 | ✅ 已闭环（2026-08-13，commit f15de056，Owner 批准 [ARCH-APPROVAL] 落地，12 注册表速查全量更新） | ✅ |
-| 103 | tests/git test_git_command_timeout_handled 环境敏感失败（#103） | AI-TEST-001 | mock 目标误打在死钩子 _run_git（Stage 4 公共化后零生产调用的向后兼容 wrapper）→commit 真实执行成功返回 OK→断言确定性失败（与机器快慢无关）。治本：mock 改打真实入口 run_git，选择性注入仅 git commit 抛 TimeoutExpired，其余命令（add/rev-parse/stash 等）走真实调用。修复 commit <PENDING>，tests/git 154 passed + 1 xpassed 全绿 | ✅ |
+| 103 | tests/git test_git_command_timeout_handled 环境敏感失败（#103） | AI-TEST-001 | mock 目标误打在死钩子 _run_git（Stage 4 公共化后零生产调用的向后兼容 wrapper）→commit 真实执行成功返回 OK→断言确定性失败（与机器快慢无关）。治本：mock 改打真实入口 run_git，选择性注入仅 git commit 抛 TimeoutExpired，其余命令（add/rev-parse/stash 等）走真实调用。修复 commit 07bbc4856d4e，tests/git 154 passed + 1 xpassed 全绿 | ✅ |
 
 ### P1 · 治理登记缺口/一致性问题
 
