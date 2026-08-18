@@ -1514,6 +1514,7 @@ class TestMergeFinalizeForeignStaged:
                 files=[str(fa)],
                 allow_overlap=True,
                 message="merge: finalize",
+                merge_finalize=True,  # B2① 契约变更（2026-08-19）：MERGE_HEAD 场景必须显式 finalize
             )
         assert result.status == CommitStatus.OK, (
             f"merge finalize 应成功: {result.status} {result.message}"
@@ -1552,6 +1553,7 @@ class TestMergeFinalizeForeignStaged:
                 files=[str(fa)],
                 allow_overlap=True,
                 message="merge: finalize clean",
+                merge_finalize=True,  # B2① 契约变更（2026-08-19）：MERGE_HEAD 场景必须显式 finalize
             )
         assert result.status == CommitStatus.OK, (
             f"merge finalize 应成功: {result.status} {result.message}"
@@ -1731,3 +1733,259 @@ class TestMergeInProgressWorktreeAware:
         assert not (wt_dir / ".git" / "MERGE_HEAD").exists(), (
             "对照实证：原硬编码 .git/MERGE_HEAD 在 worktree 下应不存在"
         )
+
+
+# B2 治本①（2026-08-19，AI-FILL-14 截胡事故）：MERGE_HEAD 晾置 pre-flight 硬拒绝
+class TestMergeHeadPreflightReject:
+    """MERGE_HEAD 存在时普通 commit 一律拒绝（MERGE_IN_PROGRESS），仅 merge_finalize 放行。
+
+    事故背景：gateway 对 MERGE_HEAD 盲——他人 merge --no-commit 晾置时，普通 commit
+    会把该 merge 内容连带提交并张冠李戴 commit message（AI-FILL-14 被截胡实证、
+    03 merge 消息张冠李戴实证）。治本=pre-flight 检测 + 显式 finalize 通道。
+    """
+
+    @staticmethod
+    def _git_env() -> dict:
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = "test@test.com"
+        env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        return env
+
+    @staticmethod
+    def _plant_merge_head(repo: Path, merge_head_sha: str | None = None) -> str:
+        """造完整 merge 现场（MERGE_HEAD+MERGE_MODE+MERGE_MSG 三件套），返回 HEAD sha。
+
+        探针实证（2026-08-19）：仅 MERGE_HEAD 时 git commit 按单父普通提交处理，
+        真 merge finalize（git merge --no-commit）三件套齐全才产双亲 commit。
+        """
+        env = TestMergeHeadPreflightReject._git_env()
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(repo),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout.strip()
+        # write_bytes 防 Windows 文本模式 \n→\r\n 翻译（\r 会致 git 报 Corrupt MERGE_HEAD）
+        (repo / ".git" / "MERGE_HEAD").write_bytes(((merge_head_sha or head) + "\n").encode("ascii"))
+        (repo / ".git" / "MERGE_MODE").write_bytes(b"no-ff")
+        (repo / ".git" / "MERGE_MSG").write_bytes(b"Merge branch 'side'\n")
+        return head
+
+    def test_commit_rejected_when_merge_head_present(self, tmp_path: Path) -> None:
+        """MERGE_HEAD 晾置 + 普通 commit → MERGE_IN_PROGRESS 拒绝，HEAD/index 零变化。"""
+        _init_git_repo(tmp_path)
+        fa = _write_file(tmp_path, "a.py", "x = 1\n")
+        head_before = self._plant_merge_head(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="sess-reject",
+            files=[str(fa)],
+            allow_overlap=True,
+            message="normal commit during foreign merge",
+        )
+        assert result.status == CommitStatus.MERGE_IN_PROGRESS, (
+            f"应拒绝为 MERGE_IN_PROGRESS，实际 {result.status}: {result.message}"
+        )
+        env = self._git_env()
+        head_after = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout.strip()
+        assert head_after == head_before, "拒绝后 HEAD 不得移动（未连带提交 merge）"
+        assert (tmp_path / ".git" / "MERGE_HEAD").exists(), "拒绝不得破坏在途 merge 现场"
+
+    def test_reject_message_guides(self, tmp_path: Path) -> None:
+        """拒绝消息必须含处置引导（--merge-finalize / merge --abort）与在途 merge sha。"""
+        _init_git_repo(tmp_path)
+        fa = _write_file(tmp_path, "a.py", "x = 1\n")
+        head = self._plant_merge_head(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="sess-guide",
+            files=[str(fa)],
+            allow_overlap=True,
+            message="normal commit",
+        )
+        assert result.status == CommitStatus.MERGE_IN_PROGRESS
+        assert "--merge-finalize" in result.message, f"缺少 finalize 引导: {result.message}"
+        assert "merge --abort" in result.message, f"缺少 abort 引导: {result.message}"
+        assert head[:8] in result.message, f"缺少在途 merge sha 留痕: {result.message}"
+
+    def test_merge_finalize_flag_allows(self, tmp_path: Path) -> None:
+        """merge_finalize=True → 放行全量 commit：双亲 merge commit + [GW:sid:merge] 留痕。"""
+        _init_git_repo(tmp_path)
+        env = self._git_env()
+        base_ref = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout.strip()
+        # 真第二父：side 分支独立 commit（MERGE_HEAD==HEAD 会被 git 规范化为单父，断言失效）
+        subprocess.run(
+            ["git", "checkout", "-qb", "side"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        _write_file(tmp_path, "side.py", "s = 1\n")
+        subprocess.run(
+            ["git", "add", "side.py"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        subprocess.run(
+            ["git", "commit", "-q", "--no-verify", "-m", "side commit"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        side_sha = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout.strip()
+        subprocess.run(
+            ["git", "checkout", "-q", base_ref], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        # 真分叉构造（2026-08-19 修复）：side 若仅是 base 的后代，git commit 会把
+        # MERGE_HEAD 规范化为单父（fast-forward 语义无合并内容，纯 git 探针实证）。
+        # master 须独立前进一格，使 master/side 互不为祖先 → 真合并 → 双亲 commit。
+        _write_file(tmp_path, "main.py", "m = 1\n")
+        subprocess.run(
+            ["git", "add", "main.py"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        subprocess.run(
+            ["git", "commit", "-q", "--no-verify", "-m", "main advances"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        fa = _write_file(tmp_path, "a.py", "x = 1\n")
+        subprocess.run(
+            ["git", "add", "a.py"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        self._plant_merge_head(tmp_path, merge_head_sha=side_sha)
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="sess-mf",
+            files=[str(fa)],
+            allow_overlap=True,
+            message="merge: explicit finalize",
+            merge_finalize=True,
+        )
+        assert result.status == CommitStatus.OK, (
+            f"显式 finalize 应成功: {result.status} {result.message}"
+        )
+        cat = subprocess.run(
+            ["git", "cat-file", "-p", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout
+        parent_lines = [ln for ln in cat.splitlines() if ln.startswith("parent ")]
+        assert len(parent_lines) == 2, f"应为双亲 merge commit，实际 parents={parent_lines}"
+        assert side_sha in cat, f"第二父应为 side 分支 tip: {cat}"
+        assert "[GW:sess-mf:merge]" in cat, f"缺 [GW:sid:merge] 留痕: {cat}"
+        assert not (tmp_path / ".git" / "MERGE_HEAD").exists(), "finalize 后 MERGE_HEAD 应消解"
+
+
+class TestIntentToAddSweep:
+    """B2 治本②（2026-08-19）：ita（intent-to-add）存量 index 残留清扫。
+
+    实证签名：ita 条目对 git diff --cached 完全不可见（gateway staged 校验盲区），
+    但 git merge 视其为 local changes 拒绝合并（09 分支两文件实证）。
+    清扫=git reset -q -- <paths>（只动 index，工作区内容原样保留回 untracked）。
+    """
+
+    @staticmethod
+    def _git_env() -> dict:
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = "test@test.com"
+        env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        return env
+
+    def test_preflight_sweeps_ita_residue(self, tmp_path: Path) -> None:
+        """非目标 ita 残留 → commit 时被清扫：条目消失、磁盘内容原样、未收编进 commit。"""
+        _init_git_repo(tmp_path)
+        fa = _write_file(tmp_path, "a.py", "x = 1\n")
+        _write_file(tmp_path, "wip.py", "wip = True\n")
+        env = self._git_env()
+        subprocess.run(
+            ["git", "add", "-N", "wip.py"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        assert "wip.py" in gw._list_intent_to_add_paths(), "前置：ita 残留构造失败"
+        result = gw.commit(
+            session_id="sess-ita",
+            files=[str(fa)],
+            allow_overlap=True,
+            message="commit with ita residue",
+        )
+        assert result.status == CommitStatus.OK, (
+            f"commit 应成功: {result.status} {result.message}"
+        )
+        assert gw._list_intent_to_add_paths() == [], "ita 残留应被清扫"
+        assert (tmp_path / "wip.py").read_text(encoding="utf-8") == "wip = True\n", (
+            "清扫只动 index，工作区内容必须原样保留"
+        )
+        show = subprocess.run(
+            ["git", "show", "--name-only", "--format=", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout
+        assert "a.py" in show and "wip.py" not in show, (
+            f"ita 残留不得被收编进 commit: {show}"
+        )
+        audit = tmp_path / ".runtime" / "gate_audit" / "gateway_index_hygiene.jsonl"
+        assert audit.exists(), "清扫事件应落审计"
+        assert "ita_sweep" in audit.read_text(encoding="utf-8")
+
+    def test_sweep_never_touches_targets(self, tmp_path: Path) -> None:
+        """目标文件自身是 ita（git add -N 新文件）→ 不预扫目标，正常收编 commit。"""
+        _init_git_repo(tmp_path)
+        ft = _write_file(tmp_path, "t.py", "t = 1\n")
+        env = self._git_env()
+        subprocess.run(
+            ["git", "add", "-N", "t.py"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="sess-ita-target",
+            files=[str(ft)],
+            allow_overlap=True,
+            message="commit ita target file",
+        )
+        assert result.status == CommitStatus.OK, (
+            f"目标 ita 文件应正常提交: {result.status} {result.message}"
+        )
+        show = subprocess.run(
+            ["git", "show", "--name-only", "--format=", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout
+        assert "t.py" in show, f"目标文件应入 commit: {show}"
+
+    def test_sweep_forbidden_under_merge_head(self, tmp_path: Path) -> None:
+        """MERGE_HEAD 存续期清扫全禁（merge index 神圣）：finalize 收编目标但不动 ita 内容。"""
+        _init_git_repo(tmp_path)
+        fa = _write_file(tmp_path, "a.py", "x = 1\n")
+        _write_file(tmp_path, "wip2.py", "wip = 2\n")
+        env = self._git_env()
+        subprocess.run(
+            ["git", "add", "-N", "wip2.py"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        TestMergeHeadPreflightReject._plant_merge_head(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="sess-ita-merge",
+            files=[str(fa)],
+            allow_overlap=True,
+            message="merge: finalize with ita residue",
+            merge_finalize=True,
+        )
+        assert result.status == CommitStatus.OK, (
+            f"merge finalize 应成功: {result.status} {result.message}"
+        )
+        assert (tmp_path / "wip2.py").read_text(encoding="utf-8") == "wip = 2\n", (
+            "merge 现场保护：ita 工作区内容必须原样"
+        )
+        show = subprocess.run(
+            ["git", "show", "--name-only", "--format=", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout
+        assert "wip2.py" not in show, f"ita 文件不得入 merge commit tree: {show}"

@@ -160,6 +160,7 @@ class CommitStatus(str, Enum):
     COMMIT_SCOPE_VIOLATION = "COMMIT_SCOPE_VIOLATION"  # 跨域混合提交治本（13a5e1d512）
     PURE_SHIM_VIOLATION = "PURE_SHIM_VIOLATION"
     STASH_CONFLICT = "STASH_CONFLICT"  # 阶段3 已弃用，保留向后兼容
+    MERGE_IN_PROGRESS = "MERGE_IN_PROGRESS"  # B2 治本①：MERGE_HEAD 晾置截胡防护（AI-FILL-14 事故）
 
 
 class GatewayError(RuntimeError):
@@ -297,6 +298,29 @@ def _audit_commit_lock_fallback(project_root: Path, session_id: str, error_detai
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
     except Exception:  # noqa: BLE001 — 审计写入失败不阻断 commit
         logger.debug("commit_lock_fallback audit write failed (non-blocking)", exc_info=True)
+
+
+# B2 治本②（2026-08-19）：intent-to-add  index 标志位（GIT_INDEX_FLAG_INTENT_TO_ADD）
+_ITA_FLAG = 0x20000000
+# ita 条目的 ls-files --stage 签名=空 blob（内容未入对象库）
+_EMPTY_BLOB_SHA = "e69de29b2d1d6434b8b29ae775ad8c2e48c5391"
+
+
+def _audit_index_hygiene(project_root: Path, session_id: str, kind: str, payload: dict) -> None:
+    """B2 治本②③：index 卫生事件审计（ita 清扫 / post-commit 一致性异常），滥用监控真源。"""
+    try:
+        audit_dir = project_root / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": int(time.time()),
+            "session_id": session_id,
+            "kind": kind,
+            **payload,
+        }
+        with (audit_dir / "gateway_index_hygiene.jsonl").open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 审计写入失败不阻断 commit
+        logger.debug("index_hygiene audit write failed (non-blocking)", exc_info=True)
 
 
 # P2-2b 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
@@ -1229,10 +1253,13 @@ class GitCommitGateway:
         allow_derived_deletion: bool = False,
         allow_non_worktree: bool = False,
         allow_multi_domain: bool = False,
+        merge_finalize: bool = False,
     ) -> CommitResult:
         """串行化 commit 入口。allow_overlap 逃生通道放行被其他 session 持有的文件，追加 [GW:<sid>:overlap] 标记。
         allow_derived_deletion 逃生通道放行受保护派生文件删除（#ARCH-BP-REGISTRY-DELETION-001 P1）。
-        allow_non_worktree 逃生通道放行 WORKTREE-REQUIRED gate（#ARCH-WORKTREE-GATE-001 治本）。"""
+        allow_non_worktree 逃生通道放行 WORKTREE-REQUIRED gate（#ARCH-WORKTREE-GATE-001 治本）。
+        merge_finalize=True 显式完成在途 merge（B2 治本①）：MERGE_HEAD 存在时普通 commit
+        一律拒绝（防截胡张冠李戴），仅本标志放行全量 commit 并追加 [GW:<sid>:merge] 留痕。"""
         if not files:
             return CommitResult(status=CommitStatus.NOTHING_TO_COMMIT, message="empty files list")
         if not session_id:
@@ -1254,6 +1281,13 @@ class GitCommitGateway:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             wt_session = None
         self._warn_non_worktree_commit(session_id, wt_session)
+
+        # B2 治本①（2026-08-19，AI-FILL-14 截胡事故）：MERGE_HEAD 盲——
+        # 他人 merge --no-commit 晾置时普通 commit 会把 merge 内容连带提交并
+        # 张冠李戴 commit message。显式 merge_finalize 才放行（全量 commit）。
+        # 判据复用 _is_merge_in_progress（AI-R1-003 红队 worktree 感知原语）。
+        if not merge_finalize and self._is_merge_in_progress():
+            return self._merge_in_progress_result()
 
         # tracker #92 治本（2026-08-16）：worktree 物理隔离下，搭便车三 gate
         # （HELD-OVERLAP/CLAIM-REQUIRED/FOREIGN-CHANGE-DETECTION）无检测对象——
@@ -1298,6 +1332,8 @@ class GitCommitGateway:
         # commit message 构造（不依赖 staged 状态，锁外构造）
         gw_marker = _GW_MARKER_FMT.format(session_id=session_id)
         full_message = f"{message}\n\n{gw_marker}"
+        if merge_finalize:
+            full_message += f"\n[GW:{session_id}:merge]"
         if allow_overlap:
             full_message += f"\n[GW:{session_id}:overlap]"
             # TRAE-079 铁律5：allow_overlap 降级为 last-resort（仅文件锁不可用时），落审计
@@ -1313,6 +1349,11 @@ class GitCommitGateway:
         # 治本：gate 检查移入文件锁临界区，串行化整个 [gate → stage → commit] 不可分割
         try:
             with _GlobalCommitLock(self.project_root):
+                # B2① TOCTOU 根治：锁内二次校验（晾置可能发生在锁外 pre-flight 通过之后）
+                if not merge_finalize and self._is_merge_in_progress():
+                    return self._merge_in_progress_result()
+                # B2 治本②：gate 链前清扫 ita 存量残留（staged 校验盲区，merge 误报源）
+                self._sweep_intent_to_add_residue(session_id, self._target_rel_set(existing))
                 # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
                 # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）
                 # commit_message 透传：CAPABILITY-LOOKUP-REQUIRED gate 据此检测 [no-lookup:reason] 逃生标记
@@ -1342,6 +1383,9 @@ class GitCommitGateway:
                 e, session_id,
             )
             # 无锁降级：直接执行 gate + commit（不串行化，但 gate 仍在）
+            if not merge_finalize and self._is_merge_in_progress():
+                return self._merge_in_progress_result()
+            self._sweep_intent_to_add_residue(session_id, self._target_rel_set(existing))
             gate_results = self._check_gates_with_drift_watch(
                 existing, session_id, allow_overlap=allow_overlap,
                 allow_promote=allow_promote, commit_message=message,
@@ -1724,6 +1768,12 @@ class GitCommitGateway:
                 session_shutdown(session_id, summary=full_message)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("GitCommitGateway: session_shutdown handoff failed: %s", e, exc_info=True)
+        # B2 治本③：commit 后 index-HEAD 一致性校验（warn-only）+ ita 复扫
+        if result.status == CommitStatus.OK:
+            try:
+                self._verify_post_commit_index(files, session_id)
+            except Exception as e:  # noqa: BLE001 — 校验失败不掩盖 commit 成功
+                logger.warning("GitCommitGateway: post-commit index 校验失败: %s", e, exc_info=True)
         if pathspec_file:
             try:
                 os.remove(pathspec_file)
@@ -1841,6 +1891,8 @@ class GitCommitGateway:
         # 检测 MERGE_HEAD → 强制全量 commit（无 pathspec）+ 跳过 staged-clean。
         # AI-R1-003 红队治本：worktree 感知检测（原 .git/MERGE_HEAD 硬编码在
         # linked worktree 下恒 False——.git 是指针文件，见 _is_merge_in_progress）
+        # B2 治本①（2026-08-19）：能走到这里且 merge_in_progress=True 的，必经
+        # commit() pre-flight 的 merge_finalize 显式放行（否则已被拒）。
         merge_in_progress = self._is_merge_in_progress()
         if merge_in_progress:
             use_pathspec = False
@@ -2197,6 +2249,124 @@ class GitCommitGateway:
             return git_path_merge_head.exists()
         # 回退：git 不可用时退回旧路径判定（主仓场景仍有效）
         return (self.project_root / ".git" / "MERGE_HEAD").exists()
+
+    def _merge_in_progress_result(self) -> CommitResult:
+        """B2 治本①：MERGE_HEAD 晾置拒绝响应（附处置引导与在途 merge sha 留痕）。"""
+        mh = self.run_git(["git", "rev-parse", "--verify", "-q", "MERGE_HEAD"])
+        mh_sha8 = mh.stdout.strip()[:8] if mh.returncode == 0 else "unknown"
+        return CommitResult(
+            status=CommitStatus.MERGE_IN_PROGRESS,
+            message=(
+                "检测到 MERGE_HEAD——存在未完成的 merge（merge --no-commit 晾置或冲突待决）。"
+                "普通 commit 会把该 merge 内容连带提交并张冠李戴（AI-FILL-14 截胡事故治本）。"
+                "处置：① 若是你的 merge：解决冲突后加 --merge-finalize 重新执行"
+                "（全量 commit，[GW:<sid>:merge] 留痕）；"
+                "② 若不是你的 merge：git merge --abort 清除后重试，或联系发起方完成。"
+                f"MERGE_HEAD={mh_sha8}"
+            ),
+        )
+
+    def _target_rel_set(self, files: list[str]) -> set[str]:
+        """commit 目标文件 → normcase 相对路径集合（ita 清扫排除集用）。"""
+        return {
+            os.path.normcase(os.path.relpath(f, str(self.project_root)).replace("\\", "/"))
+            for f in files
+        }
+
+    def _list_intent_to_add_paths(self) -> list[str]:
+        """列出 index 中 intent-to-add 残留条目（相对路径，正斜杠）。
+
+        B2 治本②（2026-08-19）：ita 条目对 ``git diff --cached`` 完全不可见
+        （gateway staged 校验盲区），但 git merge 视其为 local changes 拒绝合并
+        （09 分支两文件实证）。来源=历史 stash 周期/手动 stash pop/pre-commit
+        框架 patch restore 的存量 index 残留。
+        主判据：``git ls-files --debug`` flags 0x20000000 位；
+        回退：``ls-files --stage`` 空 blob 签名且 HEAD 无此路径。
+        """
+        result = self.run_git(["git", "ls-files", "--debug"])
+        if result.returncode == 0:
+            ita: list[str] = []
+            current: str | None = None
+            for line in result.stdout.splitlines():
+                if not line.startswith(" "):
+                    current = line.strip()
+                elif current is not None and "flags:" in line:
+                    # debug 格式：flags 与 size 同行（"  size: 0\tflags: 20004000"，%x 无前缀）
+                    hex_part = line.split("flags:", 1)[1].strip().split()[0]
+                    try:
+                        if int(hex_part, 16) & _ITA_FLAG:
+                            ita.append(current)
+                    except (ValueError, IndexError):
+                        continue
+            return ita
+        # 回退：空 blob 签名（旧版 git 无 --debug 或命令失败）
+        staged = self.run_git(["git", "ls-files", "--stage"])
+        if staged.returncode != 0:
+            return []
+        ita = []
+        for line in staged.stdout.splitlines():
+            meta, sep, path = line.partition("\t")
+            if not sep or not meta.strip():
+                continue
+            fields = meta.split()
+            if len(fields) >= 2 and fields[1] == _EMPTY_BLOB_SHA:
+                chk = self.run_git(["git", "cat-file", "-e", f"HEAD:{path.strip()}"])
+                if chk.returncode != 0:
+                    ita.append(path.strip())
+        return ita
+
+    def _sweep_intent_to_add_residue(self, session_id: str, exclude_rel: set[str]) -> list[str]:
+        """清扫 index 中 ita 存量残留（B2 治本②）。返回被清扫的相对路径列表。
+
+        只动 index（``git reset -q -- <paths>``），工作区内容原样保留（回 untracked）。
+        MERGE_HEAD 存续期全禁——merge index 神圣，对齐 _commit_with_file_message
+        "绝不能毁掉 merge 现场"。exclude_rel=本次 commit 目标（normcase 相对路径），
+        防误扫目标文件。清扫事件落 .runtime/gate_audit/gateway_index_hygiene.jsonl。
+        """
+        if self._is_merge_in_progress():
+            return []
+        ita = [p for p in self._list_intent_to_add_paths() if os.path.normcase(p) not in exclude_rel]
+        if not ita:
+            return []
+        result = self.run_git(["git", "reset", "-q", "--"] + ita)
+        if result.returncode != 0:
+            logger.warning(
+                "GitCommitGateway: ita 残留清扫失败（不阻断）: %s", result.stderr.strip()
+            )
+            return []
+        logger.info(
+            "GitCommitGateway: 清扫 ita 残留 %d 条（merge local-changes 误报治本）: %s",
+            len(ita), ita,
+        )
+        _audit_index_hygiene(self.project_root, session_id, "ita_sweep", {"swept": ita})
+        return ita
+
+    def _verify_post_commit_index(self, files: list[str], session_id: str) -> None:
+        """B2 治本③：commit 后 index-HEAD 一致性校验（warn-only，commit 已成功不阻断）。
+
+        a) 目标文件全部入 HEAD（staged 无残留）；
+        b) ita 残留复扫（commit 过程中新产生的当场再扫一次）；
+        c) merge finalize 后 MERGE_HEAD 应已消失（仍存在=异常审计）。
+        异常落 .runtime/gate_audit/gateway_index_hygiene.jsonl。
+        """
+        anomalies: dict[str, object] = {}
+        rels = [
+            os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in files
+        ]
+        if rels:
+            diff = self.run_git(["git", "diff", "--cached", "--quiet", "--"] + rels)
+            if diff.returncode != 0:
+                anomalies["targets_staged_residual"] = rels[:20]
+        if self._list_intent_to_add_paths():
+            anomalies["ita_reswept"] = self._sweep_intent_to_add_residue(session_id, set())
+        if self._is_merge_in_progress():
+            anomalies["merge_head_still_present"] = True
+        if anomalies:
+            logger.warning("GitCommitGateway: post-commit index 一致性异常: %s", anomalies)
+            _audit_index_hygiene(
+                self.project_root, session_id, "post_commit_consistency",
+                {"anomalies": anomalies},
+            )
 
     def run_git(self, cmd: list[str], cwd: str | None = None) -> subprocess.CompletedProcess:
         """执行 git 命令（统一 cwd + encoding）。reconciler 禁止裸调 git commit——必须走 _commit_auto()，commit 守卫 _in_commit_flow 技术强制。
