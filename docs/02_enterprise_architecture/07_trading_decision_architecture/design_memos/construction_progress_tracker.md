@@ -464,6 +464,17 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 
 > **红队批验证汇总**：pytest 203 passed（gateway 56 含 3 新 + ipo_calendar 8 含 1 新 + market_meta 53 含 1 新 + threshold_consistency 86）两轮全绿；基线 145 项修复前后零回归。**攻击结果**：防御通过=空数据/停牌窗口/除权修正/Decimal 精度/CH 不可达探活/阈值 NaN-Inf-bool fail-closed（初审+复审已堵）；防御击穿=3 项 P1（#138/#139/#140 全部治本+回归沉淀）。**避让登记**：开工 `session_worktree.py list` 实证 12 在途 worktree（R1-001/002、R2~R5、AISA/CYCLE/ERR/FHS/SEAT），本批仅触 data 域 akshare_provider+threshold 测试+git 网关，与在途施工面零交集。
 
+### P1-补21 · 2026-08-19 第八统筹续班收口（B2 收编协同 + ERR-001 终验核验 + 派生抖动处置）
+
+> 来源：续班会话开工核验——summary 任务面（R2/R1-003 merge、ERR-001 改号）经实证全部已在 HEAD 闭环（本段=核验留痕+增量收口登记，零重复施工）。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 163 | ERR-001 改号终态核验（Owner 批准批收口确认） | 第八统筹续班核验 | 实证链：①新码全落地源码（ZA-MKT-0007/0008/0009、ZA-REGIME-0025、ZA-RK-0025、ZA-SH-0051/0052/0053、ZA-TR-0019/0020 grep 实证，首定义点保留原码）；②known_duplicates=[] 白名单清空；③tests/governance/test_error_code_consistency.py 6 passed（白名单为空新增重码即红）；④#ARCH-ERRCODE-001 status=resolved；⑤改号 commit b0816d48+R2 收编 FHS ZA-RK-0026~0029/ZA-REGIME-0030 在案 | ✅ 已闭环（核验确认，零增量施工） |
+| 164 | B2 治本（MERGE_HEAD 截胡防护+ita 清扫）收编提交——与 AI-00-AUDIT 会话双脑撞单协同实证 | AI-00 审计循环晚间工单 B2（在途施工收编） | AI-00-AUDIT 完成 B2 源码+6 用例测试但提交窗口与本统筹撞单：①本统筹独立发现 B2 未提交并补写 2 用例后发现对方 6 用例套件中途落盘（grep 时序实证），按 D1 查重删重复类保留全套件；②修复其 test_merge_finalize_flag_allows 红——MERGE_HEAD=side（base 后代）被 git 规范化为单父（纯 git 探针实证），真分叉构造修复（master 独立前进一格）；③提交撞单——对方先抢 _GlobalCommitLock 完成 commit 2b5af051（message=对方详尽版），本统筹命令返回同 hash（锁内实际执行者为对方），工作内容（含真分叉修复）经 git show 实证完整含入，零损失；④网关三逃生旗标留痕（overlap/multi-domain/non-worktree）；62 passed 两轮全绿（4 轮 3 绿+1 轮孤立 COMMIT_FAILED flaky 判定非本批） | ✅ 已闭环（commit 2b5af051；教训：同文件双会话施工=双脑事故新形态，对方活跃期本应先探 held_files/心跳再动手） |
+| 165 | 派生抖动处置+integrity db 滞后重注册收口 | B2 commit post-commit reconciler 联动 | ①142 个 blueprint §0.6 视图段"（无节点）↔0 个 Dataset/1 个 Job"回退抖动——旧 depgraph 缓存生成（批② 34acb4e215 刷新方向的逆向），按"可再生派生物只丢不提交"纪律 git restore 丢弃零损失；②depgraph 真重扫（--output-db depgraph --force，966 模块 0 失败，FRESHNESS WARN 消除）；③rules_integrity_db.json 的 script_manifest hash 重注册（批② manifest 联动滞后）commit 95036ad7 落地——不提交则下一 commit 者 GATE-INTEGRITY 红 | ✅ 已闭环 |
+| 166 | 全仓回归终验（B2+派生收口后） | 第八统筹续班终验 | 44827 passed/196 failed（.runtime/full_regression_20260819.log，1:31:51）逐条裁定：①130 红=命令口径伪报（本次误带 -p no:asyncio 禁插件，async 用例无 runner 全红；基线 60 红口径不带该旗标——四簇定向带插件复跑 65→5 实证）；②60 红=基线存量同簇（P1-补17 基线行）；③5 红=B2 真回归（test_session_worktree_workspace_clean：_audit_index_hygiene 审计落 tmp 仓 .runtime/ 触发干净断言——生产 .gitignore L106 已豁免，测试 helper _git_porcelain_status 过滤对齐，33 passed 实证）；④1 红=test_check_protected_paths_worktree=AI-00-AUDIT B4 在途施工面（2222f9c04b/b15a50737a 窗口），归循环审计线自查 | ✅ 已闭环（新增红 6 项全处置：5 修 1 归口；扣除口径差异后与基线 60 红对齐） |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |

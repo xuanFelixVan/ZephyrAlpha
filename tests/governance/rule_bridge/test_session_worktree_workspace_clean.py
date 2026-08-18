@@ -450,13 +450,22 @@ def _make_auto_sync_mm_state(repo_dir: Path) -> None:
 
 
 def _git_porcelain_status(repo_dir: Path) -> str:
-    """获取 git status --porcelain 原始输出。"""
+    """获取 git status --porcelain 原始输出（过滤 .runtime/ 运行时审计目录）。
+
+    2026-08-19 B2 治本适配：GitCommitGateway 的 index 卫生审计（gateway_index_
+    hygiene.jsonl）落 project_root/.runtime/gate_audit/——生产主仓 .gitignore 已豁免
+    .runtime/（L106），测试 tmp 仓无 .gitignore 致 `?? .runtime/` 假脏。过滤对齐
+    生产"版本控制视角干净"语义（与既有 workspace_drift_warn.jsonl 同族运行时产物）。
+    """
     r = subprocess.run(
         ["git", "status", "--porcelain"],
         cwd=str(repo_dir), capture_output=True, text=True, check=True,
         env=_git_env(),
     )
-    return r.stdout
+    return "".join(
+        ln for ln in r.stdout.splitlines(keepends=True)
+        if not ln.rstrip("\n").endswith(" .runtime/") and ln.strip() != "?? .runtime/"
+    )
 
 
 class TestRestoreAutoSyncBatchStagedHandling:
