@@ -559,7 +559,7 @@ flowchart TD
 | 迁移 | 触发条件 | trip 阈值 / recover 阈值（Hysteresis） | 自动/人工 |
 |---|---|---|---|
 | NORMAL → THROTTLED | `reject_rate` 或 `intraday_dd` 超 soft 阈值 | trip: reject>1% / DD>1% ；recover: reject<0.5% / DD<0.3% | 自动 |
-| THROTTLED → SOFT_HALT | `reject_rate` 持续超限 / `intraday_dd` 超 hard 阈值 / `daily_loss` 接近 3% | trip: reject>5% 或持续60s / DD>2% ；recover: 须人工 | 自动 |
+| THROTTLED → SOFT_HALT | `reject_rate` 持续超限 / `intraday_dd` 超 hard 阈值 / `daily_loss` 接近 3% | trip: reject>5% 或持续60s / DD>2% / DL>2.5%（"接近 3%"数值化=3%×5/6，v1.7.9 勘正） ；recover: 须人工 | 自动 |
 | SOFT_HALT → HARD_HALT | `daily_loss ≥ 3%` / `circuit_breaker` 触发 / 任意 P0 事件 | trip: 硬限额 ；recover: 须人工 + RCA | 自动 + P0 |
 | HARD_HALT → UNWINDING | 严重异常 / 回测-实盘偏差 `retire`（>50%）/ 人工决策退役 | — | 人工 + 双人复核 |
 | UNWINDING → NORMAL | `仓位 = 0` 且 RCA 已写 | — | 人工 + 双人复核 + RCA |
@@ -628,6 +628,7 @@ def evaluate_rollback(metrics: dict, current: RollbackState,
     if current == RollbackState.THROTTLED:
         if (_breach(metrics, "intraday_dd", mult=2.0)          # DD > 2%
                 or _breach(metrics, "reject_rate", mult=5.0)    # reject > 5%
+                or _breach(metrics, "daily_loss", mult=5.0/6.0) # DL > 2.5%（接近 3%，v1.7.9）
                 or _persistent(metrics, "reject_rate", 60)):    # 持续 60s
             return RollbackState.SOFT_HALT  # = REDUCING 态（仅减仓不新建）
 

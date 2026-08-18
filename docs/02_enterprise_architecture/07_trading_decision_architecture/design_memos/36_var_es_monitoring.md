@@ -5,7 +5,7 @@ title: VaR/ES 与波动率监控
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.11.1"
+version: "1.11.2"
 date: 2026-08-16
 topic: var_es_monitoring
 scope: 07_trading_decision_architecture
@@ -80,8 +80,10 @@ VaR_param = (z_α · σ - μ) · V · √T
 # 下限 0：(z·σ - μ) 可能为负（高均值低波动）→ VaR 取 0
 
 # 历史模拟法 (Historical Simulation)，经验分位数，无分布假设
-VaR_hist = -quantile(r, 1-c) · V · √T
+VaR_hist = -quantile(r, 1-c, method='lower') · V · √T
 # 取收益序列下侧 (1-c) 经验分位数（负数=损失），VaR = -该分位数 · V（正数），下限 0
+# 分位数口径统一 method='lower'（v1.11.2，AI-R5 审查批）：与 ES 同口径——v1.11.0 F1 裁定只统一了
+# ES 侧，VaR 侧遗留线性插值造成同模块双口径（es_var_ratio 分子分母不同口径、5 级分级对插值虚拟值敏感）
 
 # 保守取 max
 VaR_95 = max(VaR_param, VaR_hist)

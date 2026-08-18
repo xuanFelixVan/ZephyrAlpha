@@ -551,9 +551,12 @@ class RegimeMetaAllocator:
                 break  # 全部固定
 
             target_free = 1.0 - fixed_sum
-            # Σalloc=1（Step 1 已归一化）⇒ target_free == free_sum；
-            # free_sids 非空 ⇒ free_sum > |free|×FLOOR > 0——两条件均由不变量保证，
-            # 原"无法重分配"兜底分支数学不可达（2026-08-16 双轮审查 F5 裁定清理）
+            # 除零安全性（2026-08-16 F5 裁定删除兜底分支的依据，AI-R5 勘正论证）：
+            # free sid 判定条件 = FLOOR < alloc < cap（严格区间），故 free_sids 非空
+            # ⇒ free_sum > |free|×FLOOR > 0，scale 分母恒正。target_free 与 free_sum
+            # 一般并不相等——其差 = 固定侧被抬到 FLOOR/压到 cap 的调整量，正是 free 侧
+            # 缩放（scale = target_free/free_sum）需要吸收的部分，即 water-filling 的
+            # 收敛机制本身；多轮迭代 + 最终安全裁剪保证 Σalloc→1 与边界钳制。
             scale = target_free / free_sum
             changed = False
             for sid in free_sids:

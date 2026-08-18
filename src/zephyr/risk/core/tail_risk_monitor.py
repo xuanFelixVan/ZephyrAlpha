@@ -33,7 +33,7 @@ D-RISK §1.2 L2 Real-Time 盘中监控核心模块。尾部风险度量与监控
     5. FRTB 尾部风险加价: 基于 shape 的资本加价
 
 属 A 类基础设施 (统计拟合 + 阈值判定, 数学逻辑明确), 阈值为 C 类可调参数。
-依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-15, §2 依赖(RK-05→RK-15)
+依据: D:\\临时工作区\\依赖图\t-D-RISK-风控域.md §1.2 RK-15, §2 依赖(RK-05→RK-15)
 SSoT: depgraph MOD-RK-15
 Version: 0.2.0
 
@@ -206,7 +206,7 @@ class PotFailureCounter:
         }
         try:
             rec = self._store.load(self._namespace)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 计数器读兜底：任何持久化异常降级从未失败内存态，不阻断风险监控主流程
             logger.warning(
                 "POT 计数器读失败，按从未失败处理",
                 exc_info=True,
@@ -232,7 +232,7 @@ class PotFailureCounter:
         """持久化计数器状态；失败只 warning。"""
         try:
             self._store.save(self._namespace, rec)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 计数器写兜底：持久化失败降级内存态（下次重写），不阻断风险监控主流程
             logger.warning("POT 计数器写失败，已降级内存态", exc_info=True)
 
     def record_failure(self, date_str: str) -> int:
@@ -568,10 +568,16 @@ class TailRiskMonitor:
     def compute_var(returns: np.ndarray, confidence: float) -> float:
         """历史模拟 VaR (正数, 损失额比率)。
 
-        VaR = -quantile(returns, 1-confidence)
+        VaR = -quantile(returns, 1-confidence, method='lower')
+
+        分位数口径与 compute_expected_shortfall 统一 method='lower'
+        (2026-08-18 AI-R5 口径统一裁定, F1 延伸): 实有样本点不插值——同模块
+        VaR/ES 双口径 (VaR 线性插值 vs ES 'lower') 会产出不可比较的
+        es_var_ratio 与分级漂移; 统一后 VaR 也取实有样本, ES>=VaR 不变量
+        在同口径下更严格成立。
         """
         returns = np.asarray(returns, dtype=float)
-        var = -float(np.quantile(returns, 1 - confidence))
+        var = -float(np.quantile(returns, 1 - confidence, method="lower"))
         return max(var, 0.0)
 
     # ── 公开 API: ES/CVaR ──
@@ -657,7 +663,7 @@ class TailRiskMonitor:
         # scipy 的 genpareto 参数 c 对应 shape ξ
         try:
             shape, loc, scale = stats.genpareto.fit(exceedances, floc=0)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — GPD 拟合兜底：scipy 拟合可抛多种数值异常，失败降级纯历史 ES
             logger.warning("POT fit failed: %s", e)
             return None
 

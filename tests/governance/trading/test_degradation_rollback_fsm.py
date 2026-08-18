@@ -95,6 +95,16 @@ class TestEvaluateRollbackMatrix:
         m = {"reject_rate_duration_s": 60}  # 持续 60s
         assert evaluate_rollback(m, S.THROTTLED, 100) == S.SOFT_HALT
 
+    def test_throttled_daily_loss_near_3pct_to_soft_halt(self):
+        # v1.7.9（AI-R5）：daily_loss > 2.5%（3%×5/6，"接近 3%"数值化）触发爬梯
+        m = {"daily_loss": 0.026}
+        assert evaluate_rollback(m, S.THROTTLED, 100) == S.SOFT_HALT
+
+    def test_throttled_daily_loss_below_2_5pct_stays(self):
+        # daily_loss 恰 2.5%（严格大于口径）不触发——Hysteresis 区间停留
+        assert evaluate_rollback({"daily_loss": 0.025}, S.THROTTLED, 100) == S.THROTTLED
+        assert evaluate_rollback({"daily_loss": 0.024}, S.THROTTLED, 100) == S.THROTTLED
+
     def test_throttled_soft_breach_only_stays(self):
         # THROTTLED 态 1.5% DD（超 soft 未超 hard 2%）停留——Hysteresis 区间
         assert evaluate_rollback({"intraday_dd": 0.015}, S.THROTTLED, 100) == S.THROTTLED

@@ -44,7 +44,7 @@ D_GOVERNANCE 域 lifecycle_governance 包安全设施——策略模拟→实盘
 ## 3. 核心规则
 
 - 五态序=保守程度序：NORMAL < THROTTLED < SOFT_HALT < HARD_HALT < UNWINDING
-- 自动迁移只向更保守（每 tick 单步梯子）：NORMAL→THROTTLED（soft 超限）→SOFT_HALT（hard 超限/持续 60s）→HARD_HALT（daily_loss≥3%/熔断/P0）；HARD_HALT→UNWINDING 不自动
+- 自动迁移只向更保守（每 tick 单步梯子）：NORMAL→THROTTLED（soft 超限）→SOFT_HALT（hard 超限/daily_loss>2.5%/持续 60s）→HARD_HALT（daily_loss≥3%/熔断/P0）；HARD_HALT→UNWINDING 不自动
 - Hysteresis：trip≠recover（intraday_dd 0.01/0.003；daily_loss 0.03/0.00；reject_rate 0.01/0.005）——recover 仅人工参考，不参与自动迁移
 - 样本地板：自动降级须累计 ≥30 笔（AlphaFactory G2.2），P0 事件绕过
 - 恢复=人工专用 recover()：RCA 已写+双人复核缺一 PermissionError；反向/同级 ValueError；UNWINDING→NORMAL 须 position_flat=True（T+1：当日买入不可卖，仅 T-1 持仓可平）
