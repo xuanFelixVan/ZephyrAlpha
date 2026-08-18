@@ -17587,3 +17587,26 @@ entries:
   related_rules: '#ARCH-QUANT-002; A 股 T+1 交易规则'
   created: '2026-08-18'
   last_updated: '2026-08-18'
+
+# --- #ARCH-128: 场内模块清单.csv 消亡登记（B6 工单：工作区/git/隔离区均无，消费方排查结论=无活体消费方） ---
+- issue_id: '#ARCH-128'
+  title: 依赖图/场内模块清单.csv 消亡登记——2434 行历史快照（67% 路径失效），全仓零活体消费方，不重生成
+  severity: P3低
+  category: asset_lifecycle
+  discovered: 2026-08-18 晚间工单 B6（AI-00 审计侧）
+  adjudication: |-
+    2026-08-19 AI-00 自主裁定（消亡登记）：
+    【证据】B6 消费方全仓 grep 实证：仅两类历史引用——①docs/02_enterprise_architecture/
+    09_ai_architecture/implementation_plans/02_design_asset_inventory.md（明文裁定"不作真源，
+    重生成与否待 Owner 裁定 Q10"的历史快照）；②candidate_module_registry_harvest_archive.yaml
+    的 source_draft 溯源串（harvest 来源标注，非运行时消费）。无任何代码/脚本读取该文件。
+    文件本体在工作区/git 历史/隔离区均已不存在。
+    【裁定】消亡登记不重生成：blueprint_id 映射思路已由 depgraph+blueprint 体系吸收（真源在
+    capability_canonical_file_registry/depgraph），路径清单 67% 失效无再生价值；若未来确需
+    场内模块清单，从 depgraph 实重建新产物（新产物新登记），不复活本快照。
+  impact: []
+  fix_phase: '2026-08-19 登记即闭环（无代码面，无需施工）'
+  status: resolved
+  related_rules: '02_design_asset_inventory Q10（Owner 裁定已在此口径内闭环）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
