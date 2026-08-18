@@ -517,3 +517,10 @@ docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_tit
 # 08_algorithm_overview — 全派生（generate_module_algorithm_overview.py 产出，跨域按 layer 拓扑）
 # 真源：代码 docstring + header ｜ blueprint.md §核心规则 ｜ depgraph (PostgreSQL)
 docs/02_enterprise_architecture/08_algorithm_overview/
+
+# blueprint_registry.yaml — 全派生（sync_registry_from_blueprints.py 从 blueprint.md frontmatter 产出，173 条目）
+# 治本（2026-08-18 AI-00 裁定，续 AI-AUDIT19 退库意图 + #ARCH-GOV-BUDGET-001 同构）：
+#   该文件 100% 可由真源重生成，且是 merge 冲突永动机（17~20 连续 4 批冲突）+ post-commit 派生脏源；
+#   消费方读盘不读 git（GAP-2 fail-open / GATE-21 干跑比对 / reconciler 事件自动重生），离库不影响运行态。
+#   与 #ARCH-BP-REGISTRY-DELETION-001 三删事故区别：那是连盘删除致消费方空集，本裁定仅解跟踪、盘文件保留。
+docs/03_modules/blueprint_registry.yaml

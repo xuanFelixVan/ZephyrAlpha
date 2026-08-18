@@ -91,6 +91,9 @@ DERIVED_PATTERNS = [
     re.compile(r"^docs/02_enterprise_architecture/02_domain_architecture_docs/[^/]+\.md$"),
     # generate_path_tree.py 输出（项目树 zh/en）
     re.compile(r"^docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_(zh|en)\.md$"),
+    # sync_registry_from_blueprints.py 输出（2026-08-18 退库，#ARCH-GOV-BUDGET-001 同构裁定；
+    # 防 git add -f 重新跟踪——该文件 100% 可从 blueprint.md frontmatter 重生成）
+    re.compile(r"^docs/03_modules/blueprint_registry\.yaml$"),
 ]
 
 # 豁免：README.md 是手工维护的目录说明，不是派生产物
@@ -132,18 +135,10 @@ def main() -> int:
     if not violations:
         return 0
 
-    print(
-        "GATE-NO-COMMIT-DERIVED: 检测到派生产物被 git add（治本 #ARCH-GOV-BUDGET-001 / I-GOV-1）"
-    )
-    print(
-        "  病根：派生产物（域文档/项目树）已离库，源真源（DB + 生成器代码）已跟踪。"
-    )
-    print(
-        "  派生产物入 git 是 reconciler 非收敛循环的数学根因。"
-    )
-    print(
-        "  正确做法：用 `python scripts/serve_docs.py` 按需生成查看，不要 git add。"
-    )
+    print("GATE-NO-COMMIT-DERIVED: 检测到派生产物被 git add（治本 #ARCH-GOV-BUDGET-001 / I-GOV-1）")
+    print("  病根：派生产物（域文档/项目树）已离库，源真源（DB + 生成器代码）已跟踪。")
+    print("  派生产物入 git 是 reconciler 非收敛循环的数学根因。")
+    print("  正确做法：用 `python scripts/serve_docs.py` 按需生成查看，不要 git add。")
     print()
     for v in violations:
         print(f"  {v}")
