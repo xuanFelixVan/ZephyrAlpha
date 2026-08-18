@@ -17610,3 +17610,31 @@ entries:
   related_rules: '02_design_asset_inventory Q10（Owner 裁定已在此口径内闭环）'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+
+# --- #ARCH-129: 高频运行时状态文件退跟踪（GATE-TRACKED-DRIFT 碰撞/drift-watchdog 误报/pre-commit 伪报三族治本） ---
+- issue_id: '#ARCH-129'
+  title: data/telemetry 高频 jsonl + notifications/sla 运行时文件退 git 跟踪——commit 干扰永动机治本
+  severity: P2中
+  category: governance_infrastructure
+  discovered: 2026-08-19 循环审计 R1（AI-00 审计侧，commit 五连败实证）
+  adjudication: |-
+    2026-08-19 AI-00 自主裁定：
+    【证据】data/telemetry/dev/metrics.jsonl（telemetry facade 每分钟级写入）、
+    blueprint_reads.jsonl（G6 读取事件）、data/notifications/ + data/sla/（scheduler
+    每分钟级新增并被 auto-sync git add）——四类高频运行时状态被 git 跟踪，导致：
+    ①GATE-TRACKED-DRIFT 门禁运行期 tracked 写入碰撞（commit 五连败实证）；
+    ②drift-watchdog 对 metrics.jsonl 等的"未登记写入方"critical_warn 刷屏（reconcile_execution_log 24h 10 条）；
+    ③pre-commit 全量"files were modified by this hook"六连伪报（基线审计实证）。
+    【裁定】退跟踪（git rm --cached 盘文件保留）+ .gitignore 防重新 add。
+    与 data/telemetry/ "auto-sync 跟踪设计"的区别：该设计面向低频聚合产物，
+    分钟级运行态 jsonl 跟踪在 100% AI 高频 commit 场景下是机制性冲突；
+    消费方（G6/遥测门面/SLA 报告）全部读盘不读 git，离库不影响运行态。
+    与 blueprint_registry.yaml 退库（03df6215e8）同构：运行时/派生状态不入 git。
+  impact:
+    - '.gitignore（+4 行豁免清单）'
+    - 'data/telemetry/dev/metrics.jsonl / blueprint_reads.jsonl（退跟踪，盘保留）'
+  fix_phase: '2026-08-19 AI-00 直作闭环'
+  status: resolved
+  related_rules: 'GATE-TRACKED-DRIFT（#55 族）; GATE-WORKTREE-DRIFT-WATCHDOG; #ARCH-BP-REGISTRY-DELETION-001 同构'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'

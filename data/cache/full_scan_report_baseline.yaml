@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # Wave 1 全量基线扫描报告
 # 首次全量扫描后由 ReportGenerator 生成，覆盖全 src/zephyr/ 目录

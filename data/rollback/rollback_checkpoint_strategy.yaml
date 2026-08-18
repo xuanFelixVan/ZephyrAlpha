@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # =============================================================================
 # MOD-INF-021 Rollback Checkpoint Strategy — 双轨协作协议

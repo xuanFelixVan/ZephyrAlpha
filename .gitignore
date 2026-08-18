@@ -524,3 +524,11 @@ docs/02_enterprise_architecture/08_algorithm_overview/
 #   消费方读盘不读 git（GAP-2 fail-open / GATE-21 干跑比对 / reconciler 事件自动重生），离库不影响运行态。
 #   与 #ARCH-BP-REGISTRY-DELETION-001 三删事故区别：那是连盘删除致消费方空集，本裁定仅解跟踪、盘文件保留。
 docs/03_modules/blueprint_registry.yaml
+
+# 高频运行时状态文件退跟踪（2026-08-19 AI-00 裁定 #ARCH-129）：遥测/通知/SLA 是每分钟级运行态，
+# 跟踪=commit 干扰永动机（GATE-TRACKED-DRIFT 碰撞/drift-watchdog 误报/pre-commit files-modified 伪报三族实证）。
+# 消费方读盘不读 git；盘文件保留，仅解跟踪+防重新 add。data/telemetry/ 其余（readme/prod 归档）不动。
+data/telemetry/dev/metrics.jsonl
+data/telemetry/blueprint_reads.jsonl
+data/notifications/
+data/sla/

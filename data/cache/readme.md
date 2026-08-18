@@ -1,5 +1,7 @@
 ---
 blueprint_id: MOD-INF-005
+ttl: permanent
+doc_type: index
 ---
 
 # data/cache/ — ZephyrAlpha Runtime Artifact Cache

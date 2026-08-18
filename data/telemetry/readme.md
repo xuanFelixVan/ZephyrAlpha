@@ -1,5 +1,7 @@
 ---
 blueprint_id: MOD-INF-005
+ttl: permanent
+doc_type: index
 ---
 
 # 蓝图读取遥测（`blueprint_reads.jsonl`）

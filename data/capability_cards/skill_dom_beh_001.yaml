@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 module_id: MOD-INF-035
 capability_id: skill-dom-beh-001
