@@ -176,9 +176,14 @@ class ExcessiveNonFiniteDataError(ZephyrBaseError):
 
     双轮审查裁定 (2026-08-16 F2+F4): 静默过滤 NaN/Inf 会让数据洞期间 (停牌/极端行情
     恰是高波动日) 风险被系统性低估且无任何信号; 占比超 max_nonfinite_ratio 直接 raise。
+
+    编号裁定 (2026-08-18 AI-R3 复审): 原取 ZA-RK-0024 与 #ARCH-ERRCODE-001
+    预留改号目标撞号 (ZA-RK-0009 重码方 ashare_stop_loss_engine 的改号去向,
+    error_code_registry.yaml 预留登记在先)——改取空闲号 ZA-RK-0025,
+    ZA-RK-0024 保留给改号专项。
     """
 
-    error_code = "ZA-RK-0024"
+    error_code = "ZA-RK-0025"
 
 
 # ──────────────────────────────────────────────────────────────────────────────

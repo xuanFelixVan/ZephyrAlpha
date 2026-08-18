@@ -315,6 +315,9 @@ class TailRiskConfig:
         es_warning_ratio: ES/VaR 比值告警阈值, 默认 1.5 (ES 比 VaR 大 50%)
         frtb_multiplier: FRTB 加价乘数, 默认 3.0
         min_samples: 最小样本数, 默认 30
+        max_nonfinite_ratio: 非有限值 (NaN/±Inf) 占比上限, 默认 0.05——超过即抛
+            InvalidTailRiskInputError (Fail-Closed)。与 var_calculator 同口径
+            (AI-R3 复审 P1 治本: 原仅静默滤 NaN, ±Inf 穿透污染 ES/POT/jump)
     """
 
     confidence: float = 0.95
@@ -325,6 +328,7 @@ class TailRiskConfig:
     es_warning_ratio: float = 1.5
     frtb_multiplier: float = 3.0
     min_samples: int = 30
+    max_nonfinite_ratio: float = 0.05
 
     def __post_init__(self) -> None:
         if not 0 < self.confidence < 1:
@@ -359,6 +363,10 @@ class TailRiskConfig:
         if self.min_samples < 10:
             raise InvalidTailRiskInputError(
                 f"min_samples must be >=10, got {self.min_samples}"
+            )
+        if not 0.0 <= self.max_nonfinite_ratio < 1.0:
+            raise InvalidTailRiskInputError(
+                f"max_nonfinite_ratio must be in [0,1), got {self.max_nonfinite_ratio}"
             )
 
 
@@ -503,7 +511,7 @@ class TailRiskMonitor:
         pot_threshold_quantile = cfg.pot_threshold_quantile
         if self._pot_counter is not None:
             pot_threshold_quantile = self._pot_counter.get_adjusted_threshold()
-        returns = self._validate_returns(returns, cfg.min_samples)
+        returns = self._validate_returns(returns, cfg.min_samples, cfg.max_nonfinite_ratio)
 
         # 1. VaR (历史模拟)
         var_pct = self.compute_var(returns, cfg.confidence)
@@ -777,7 +785,15 @@ class TailRiskMonitor:
     # ── 内部: 校验 ──
 
     @staticmethod
-    def _validate_returns(returns: np.ndarray, min_samples: int) -> np.ndarray:
+    def _validate_returns(
+        returns: np.ndarray, min_samples: int, max_nonfinite_ratio: float = 0.05
+    ) -> np.ndarray:
+        """输入校验——非有限值 Fail-Closed（AI-R3 复审 P1 治本）。
+
+        与 var_calculator 同口径：isfinite 过滤 + 计数 + 超阈值 raise。
+        原仅静默滤 NaN——±Inf 穿透使 ES 分位点=-inf（尾部均值=+inf 静默输出）、
+        +inf 污染 detect_jumps 的 std；数据洞恰是高波动日，静默过滤系统性低估风险。
+        """
         returns = np.asarray(returns, dtype=float)
         if returns.ndim != 1:
             raise InvalidTailRiskInputError(
@@ -787,10 +803,20 @@ class TailRiskMonitor:
             raise InvalidTailRiskInputError(
                 f"need >= {min_samples} samples, got {len(returns)}"
             )
-        if np.any(np.isnan(returns)):
-            returns = returns[~np.isnan(returns)]
+        total = len(returns)
+        finite_mask = np.isfinite(returns)
+        nonfinite_dropped = int(total - finite_mask.sum())
+        if nonfinite_dropped > 0:
+            ratio = nonfinite_dropped / total
+            if ratio > max_nonfinite_ratio:
+                raise InvalidTailRiskInputError(
+                    f"non-finite ratio {ratio:.4f} > max_nonfinite_ratio "
+                    f"{max_nonfinite_ratio} ({nonfinite_dropped}/{total} dropped)——"
+                    "数据缺口期间拒绝出尾部风险判定 (Fail-Closed)"
+                )
+            returns = returns[finite_mask]
         if len(returns) < min_samples:
             raise InvalidTailRiskInputError(
-                f"after NaN removal, need >= {min_samples} samples, got {len(returns)}"
+                f"after non-finite removal, need >= {min_samples} samples, got {len(returns)}"
             )
         return returns

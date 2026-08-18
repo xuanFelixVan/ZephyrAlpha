@@ -401,8 +401,32 @@ def test_nan_returns_filtered():
 def test_too_many_nan_after_filter():
     monitor = TailRiskMonitor(TailRiskConfig(min_samples=30))
     returns = np.full(40, np.nan)
-    with pytest.raises(InvalidTailRiskInputError, match="NaN"):
+    # 非有限值超阈值 Fail-Closed（AI-R3 复审：NaN/±Inf 同口径 isfinite 过滤）
+    with pytest.raises(InvalidTailRiskInputError, match="non-finite"):
         monitor.assess(returns, now=t())
+
+
+def test_inf_penetration_blocked():
+    """±Inf 穿透被拦截（AI-R3 复审 P1 核心）：原仅静默滤 NaN，-inf 使 ES 分位点
+    =-inf（尾部均值=+inf 静默输出）。现 isfinite 口径下超阈值直接 Fail-Closed。"""
+    monitor = TailRiskMonitor(TailRiskConfig(min_samples=30))
+    returns = np.array([0.01] * 40, dtype=float)
+    # 3/40 = 7.5% 非有限 > 5% 阈值 → raise（若静默过滤会产出被污染的 ES）
+    returns[0] = -np.inf
+    returns[1] = np.inf
+    returns[2] = np.nan
+    with pytest.raises(InvalidTailRiskInputError, match="non-finite"):
+        monitor.assess(returns, now=t())
+
+
+def test_inf_within_threshold_filtered():
+    """非有限值在阈值内被过滤且不污染结果（isfinite 口径正常路径）。"""
+    monitor = TailRiskMonitor(TailRiskConfig(min_samples=30))
+    returns = np.array([0.01] * 40, dtype=float)
+    returns[0] = np.inf  # 1/40 = 2.5% < 5% 阈值 → 过滤后正常计算
+    snapshot = monitor.assess(returns, now=t())
+    assert snapshot.var >= 0
+    assert np.isfinite(snapshot.var)
 
 
 # ── 不变量 ────────────────────────────────────────────────────────────────────

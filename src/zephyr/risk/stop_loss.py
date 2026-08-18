@@ -275,6 +275,11 @@ def reset_kill_switch(
 _LIQUIDATION_NAMESPACE = "kill_switch_liquidation"
 _LIQUIDATION_LOCK = threading.Lock()  # 进程内 check-set 临界区保护
 _LIQUIDATION_COMPLETED_KEEP = 100  # 幂等重放报告缓存上限（清算事件稀有，100 足够）
+# 陈旧锁租约（AI-R3 复审 P1 治本）：进程在"取锁后—finally 释放前"crash 会
+# 滞留 LIQUIDATING 锁，此后所有新 event_id 永久被拒（活性丧失）。超过租约
+# 的锁视为陈旧——允许新事件带 CRITICAL 告警接管（方向仍 Fail-Safe：清算
+# 本身以券商实时持仓为准+限频，接管重发不产生超额持仓风险）
+_LIQUIDATION_STALE_LEASE_SECONDS = 600.0
 
 
 def _load_liquidation_record(store: JsonStateStore) -> dict:
@@ -460,16 +465,39 @@ def execute_kill_switch_liquidation(
                 lock_record["state"] == "LIQUIDATING"
                 and lock_record["owner_event_id"] != event_id
             ):
-                # 二次进入拒绝：另一事件正在清算中
+                # 陈旧锁检测（AI-R3 复审 P1）：owner 进程 crash 后锁滞留，
+                # 超租约允许接管（CRITICAL 留痕）；租约内仍拒绝二次进入
+                stale = False
+                started_at = lock_record.get("started_at")
+                if started_at:
+                    try:
+                        elapsed = (
+                            datetime.now(UTC) - datetime.fromisoformat(started_at)
+                        ).total_seconds()
+                        stale = elapsed > _LIQUIDATION_STALE_LEASE_SECONDS
+                    except (ValueError, TypeError):
+                        stale = True  # 时间戳不可解析=视为陈旧（保守方向=恢复活性）
+                else:
+                    stale = True  # 无 started_at=无法证明在租约内，视为陈旧
+                if not stale:
+                    # 二次进入拒绝：另一事件正在清算中
+                    _logger.critical(
+                        "KILL_SWITCH_REJECTED_ALREADY_LIQUIDATING event_id=%s owner=%s (未发单)",
+                        event_id,
+                        lock_record["owner_event_id"],
+                    )
+                    result["status"] = "rejected_already_liquidating"
+                    result["all_success"] = False
+                    result["total_time_seconds"] = round(time.monotonic() - start_time, 3)
+                    return result
                 _logger.critical(
-                    "KILL_SWITCH_REJECTED_ALREADY_LIQUIDATING event_id=%s owner=%s (未发单)",
+                    "KILL_SWITCH_STALE_LOCK_TAKEOVER event_id=%s stale_owner=%s "
+                    "started_at=%s lease=%.0fs (owner 疑似 crash, 新事件接管清算)",
                     event_id,
                     lock_record["owner_event_id"],
+                    started_at,
+                    _LIQUIDATION_STALE_LEASE_SECONDS,
                 )
-                result["status"] = "rejected_already_liquidating"
-                result["all_success"] = False
-                result["total_time_seconds"] = round(time.monotonic() - start_time, 3)
-                return result
 
             # 获取锁（owner 重入=crash 恢复续跑，允许）
             lock_record["state"] = "LIQUIDATING"

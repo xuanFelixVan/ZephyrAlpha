@@ -3,7 +3,7 @@ module_id: MOD-POS-008
 title: "回撤控制器蓝图 — 系统性风险5级+策略止损+黑天鹅处置"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.2.0"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -12,7 +12,7 @@ functional_domain: position
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-02"
-last_updated: "2026-08-02"
+last_updated: "2026-08-18"
 priority: P1
 blueprint_level: module
 responsibility_domain: 

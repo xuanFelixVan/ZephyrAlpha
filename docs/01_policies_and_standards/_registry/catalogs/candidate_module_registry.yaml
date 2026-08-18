@@ -6443,6 +6443,7 @@ entries:
   source_section: "§三 深挖④ / §六 CAND 登记"
   original_id: ""
   estimated_complexity: M
+  estimated_effort: "3-5人天（arch 依赖接入+GARCH(1,1) MLE 拟合+独立性失败三触发判定+10 日冷却期防抖+小样本守卫）"
   tech_notes: "依赖 arch 库（GARCH(1,1) MLE，CPU）；施工时对齐 memo 36 §3.16 规约（含 FHS_COOLDOWN_DAYS=10 冷却期防抖 + 累计 3 次失败 FHS_PERMANENTLY_DISABLED）；GARCH 不收敛→回退 historical+标记 FHS 不可用；60 日小样本 GARCH 拟合稳定性需最小样本守卫（同 POT 小样本族问题）"
   risks: ["GARCH 小样本（60 日）拟合不稳定，ξ 抽样方差大", "arch 库新增外部依赖", "长期无 trigger 命中则维持候选态，memo §3.10 动作 4 保持未施工标注"]
   alternatives: "不施工：独立性失败时仅用 §3.10 动作 1（扩窗口至 120/250）+ 动作 2（切方法）应对——memo §3.10 触发映射已修正为该实际口径"

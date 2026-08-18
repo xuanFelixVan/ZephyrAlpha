@@ -192,11 +192,17 @@ def _build_pg_dsn(
     *,
     superuser: bool = False,
     read_only: bool = True,
+    connect_timeout: int = 5,
 ) -> dict[str, Any]:
     """构建 psycopg2.connect() 的关键字参数。
 
     裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: 角色分级访问控制
     优先级: superuser > read_only（superuser 覆盖 read_only）
+
+    connect_timeout（AI-R3 复审 P1 治本，#ARCH-119 联动）：libpq 默认
+    connect_timeout=0=无限等待——防火墙黑洞丢包场景下 gate 连接阻塞至 OS TCP
+    超时（分钟级）且按文件数×gate 数放大，commit 无界挂起。默认 5s 有界化，
+    探针（pg_probe ≤1s）已先行，本体连接同口径闭环。
 
     :param superuser: True 使用 postgres 超级用户（用于数据迁移 / SET session_replication_role）
     :param read_only: True（默认）使用 depgraph_reader 只读角色；
@@ -209,6 +215,7 @@ def _build_pg_dsn(
         "host": config["POSTGRES_HOST"],
         "port": config["POSTGRES_PORT"],
         "dbname": config["POSTGRES_DB"],
+        "connect_timeout": connect_timeout,
     }
     if superuser:
         kwargs["user"] = "postgres"

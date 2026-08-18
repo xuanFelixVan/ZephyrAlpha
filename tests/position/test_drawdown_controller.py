@@ -46,9 +46,10 @@ def test_yellow_level_new_position_halved():
     assert resp.allow_new_position is True
 
 
-def test_orange_level_no_new_and_reduce_30():
-    """橙级: 禁止新开 + 减仓。P1-4 裁定 (2026-08-16): cap 0.7→0.5 恢复单调——
-    原 0.7 致 YELLOW(0.5)→ORANGE(0.7) 风险升级上限反而放宽 (非单调倒挂)。"""
+def test_orange_level_no_new_and_reduce_to_cap_50():
+    """橙级: 禁止新开 + 减仓至上限 50%。P1-4 裁定 (2026-08-16): cap 0.7→0.5 恢复单调——
+    原 0.7 致 YELLOW(0.5)→ORANGE(0.7) 风险升级上限反而放宽 (非单调倒挂)。
+    函数名勘正 (2026-08-18 AI-R3 复审): 原 reduce_30 滞留旧值语义。"""
     ctrl = DrawdownController()
     resp = ctrl.evaluate(NO_DD, VarCvarMetrics(var_95=0.05, cvar_95=0.06))
     assert resp.risk_level == SystemicRiskLevel.ORANGE

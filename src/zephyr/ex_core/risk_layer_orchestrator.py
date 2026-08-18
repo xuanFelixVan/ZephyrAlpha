@@ -75,6 +75,7 @@ PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
 from __future__ import annotations
 
 import logging
+import math
 import threading
 import uuid
 from collections import deque
@@ -121,6 +122,7 @@ from zephyr.risk.stop_loss import (
 )
 from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderType
 from zephyr.shared.contracts.order import Order
+from zephyr.shared.state_store import JsonStateStore
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 
 _logger = logging.getLogger(__name__)
@@ -217,6 +219,9 @@ class RiskLayerSnapshot:
     systemic_signal_count: int = 0
     systemic_sentiment_breaker: bool = False
     escape_directive: dict[str, Any] | None = None
+    # 数据异常兜底停仓标志（AI-R3 复审 P2 治本）：nav 非有限/非正时兜底快照
+    # 置 True——最保守口径禁止新开仓（原 response=None 默认放行=最宽松，方向错误）
+    halt_new_position: bool = False
 
     @property
     def position_cap(self) -> float:
@@ -230,9 +235,9 @@ class RiskLayerSnapshot:
     @property
     def allow_new_position(self) -> bool:
         """是否允许新开仓（无响应=默认允许；橙/红/黑或熔断建议=禁止；
-        系统性层停开仓=禁止）。"""
+        系统性层停开仓=禁止；数据异常兜底=禁止）。"""
         base = self.response.allow_new_position if self.response is not None else True
-        return base and not self.systemic_halt
+        return base and not self.systemic_halt and not self.halt_new_position
 
 
 @dataclass(frozen=True)
@@ -358,6 +363,7 @@ class RiskLayerOrchestrator:
         systemic_input_provider: Callable[[], Mapping[str, Any] | None] | None = None,
         config: RiskLayerConfig | None = None,
         clock: Callable[[], datetime] | None = None,
+        state_store: JsonStateStore | None = None,
     ) -> None:
         self._controller = drawdown_controller
         self._tracker = drawdown_tracker
@@ -372,6 +378,9 @@ class RiskLayerOrchestrator:
         self._systemic_input_provider = systemic_input_provider
         self._config = config or RiskLayerConfig()
         self._clock = clock or (lambda: datetime.now(UTC))
+        # Crash-only 状态外部化（AI-R3 复审 P1 治本）：贯穿 trigger→liquidation
+        # 的 event_id 幂等键 + LIQUIDATING 全局锁（None=仅内存态，既有行为）
+        self._state_store = state_store
 
         self._nav_history: deque[float] = deque(maxlen=self._config.nav_history_maxlen)
         self._lock = threading.Lock()
@@ -379,6 +388,10 @@ class RiskLayerOrchestrator:
         self._recovery_completed = False
         self._kill_switch_engaged = False
         self._kill_switch_report: dict[str, object] | None = None
+        # 清算启动闩（AI-R3 复审 P1 治本）：锁内置位即拒后来者，与 report 是否
+        # 完成解耦——消除"置位 engaged 与写 report 之间隔整个清算执行"的
+        # TOCTOU 窗口（并发触发可双重清算，原守卫依赖 report 非 None）
+        self._liquidation_started = False
         self._reconcile_timer: threading.Timer | None = None
         self._reconcile_running = False
         # 系统性风险降级机状态（37 号 §3.6，复用 MOD-RK-21 恢复状态原语；
@@ -404,10 +417,28 @@ class RiskLayerOrchestrator:
         now = self._clock()
         try:
             snapshot = self._broker.get_positions()
-            holdings = dict(snapshot.holdings)
+            # 契约适配（AI-R3 复审 P0 治本）：PositionSnapshot.holdings 值=数量
+            # （Decimal），rebuild_from_broker 期望 {"qty","avg_cost"} 映射——
+            # 持仓数量以券商为准，avg_cost 保留 tracker 既有成本底档（缺失置 0，
+            # 成本底档缺失不阻断重建；持仓数量正确性优先于成本精度）
+            avg_costs = (
+                self._position_tracker.avg_costs
+                if self._position_tracker is not None
+                else {}
+            )
+            holdings = {
+                symbol: {"qty": qty, "avg_cost": avg_costs.get(symbol, Decimal("0"))}
+                for symbol, qty in snapshot.holdings.items()
+            }
             today_fills = self._query_today_fills()
             if self._position_tracker is not None:
-                self._position_tracker.rebuild_from_broker(holdings, today_fills)
+                # today_fills 元素契约适配：broker 扩展可能返回 (Fill, side) 元组
+                # 或裸 Fill；rebuild 仅消费 fill_id（去重登记），统一取 Fill 本体
+                fills = [
+                    item[0] if isinstance(item, (tuple, list)) else item
+                    for item in today_fills
+                ]
+                self._position_tracker.rebuild_from_broker(holdings, fills)
             with self._lock:
                 self._recovery_completed = True
                 if snapshot.cash is not None:
@@ -469,9 +500,11 @@ class RiskLayerOrchestrator:
         Returns:
             RiskLayerSnapshot（含 position_cap / allow_new_position / degraded）
         """
-        if nav <= 0:
-            _logger.error("nav 非正，跳过本次风控评估: nav=%s", nav)
-            return self._fallback_snapshot(nav, "nav_non_positive")
+        # nav 非有限值（NaN/±Inf）与非正同口径兜底（AI-R3 复审 P2 治本）：
+        # NaN 直通会污染 _nav_history 收益序列（VaR 侧 isfinite 口径之外的缺口）
+        if not math.isfinite(nav) or nav <= 0:
+            _logger.error("nav 非有限或非正，跳过本次风控评估（兜底停新开仓）: nav=%s", nav)
+            return self._fallback_snapshot(nav, "nav_non_finite_or_non_positive")
         now = now or self._clock()
 
         # 1. 回撤追踪（EMERGENCY 经监听链同步触发熔断，tracker 内部去抖）
@@ -568,8 +601,13 @@ class RiskLayerOrchestrator:
         return (arr[1:] - prev) / prev
 
     def _fallback_snapshot(self, nav: float, reason: str) -> RiskLayerSnapshot:
-        """评估无法执行时的兜底快照（不加仓位约束，保留既有行为）。"""
-        return RiskLayerSnapshot(
+        """评估无法执行时的兜底快照（数据异常 Fail-Closed：禁新开仓）。
+
+        AI-R3 复审 P2 治本：nav 数据异常时原"不加约束"=最宽松方向错误，
+        改为 halt_new_position=True 最保守口径（了结头寸的 SELL 不受影响）；
+        兜底快照同步写入 _latest，避免属性读旧快照的口径不一致。
+        """
+        snap = RiskLayerSnapshot(
             timestamp=self._clock(),
             nav=nav,
             drawdown_level=self._tracker.last_level,
@@ -580,7 +618,11 @@ class RiskLayerOrchestrator:
             es_pct=None,
             degraded=True,
             degrade_reason=reason,
+            halt_new_position=True,
         )
+        with self._lock:
+            self._latest = snap
+        return snap
 
     @property
     def latest_snapshot(self) -> RiskLayerSnapshot | None:
@@ -752,12 +794,20 @@ class RiskLayerOrchestrator:
 
         触发源（回撤 EMERGENCY / 尾部 EMERGENCY / BS-007）在此互斥——
         裁定书 P1「多 Protocol 无仲裁」随本仲裁点一并解。
+
+        重入守卫（AI-R3 复审 P1 治本）：锁内以 _liquidation_started 闩判定，
+        置位即拒后来者——与 report 是否完成解耦，消除清算执行期间（秒级窗口）
+        并发触发二次清算的 TOCTOU。首报完成前后来者得到占位报告。
         """
         with self._lock:
-            if self._kill_switch_engaged and self._kill_switch_report is not None:
+            if self._liquidation_started:
                 _logger.warning("Kill Switch 已触发，重复仲裁跳过: %s", reason)
-                return self._kill_switch_report
-            self._kill_switch_engaged = True  # 先置位防重入
+                if self._kill_switch_report is not None:
+                    return self._kill_switch_report
+                # 首报清算执行中（report 未落）——返回占位报告，不二次清算
+                return {"event": None, "report": None, "reason": reason, "in_progress": True}
+            self._liquidation_started = True  # 闩置位即拒后来者
+            self._kill_switch_engaged = True  # 熔断态（is_trading_allowed 消费）
 
         _logger.critical("KILL_SWITCH_ENGAGE reason=%s", reason)
 
@@ -768,10 +818,15 @@ class RiskLayerOrchestrator:
             except Exception:  # noqa: BLE001 — 状态层故障不阻断清算链
                 _logger.exception("kill_switch_owner.trigger_kill_switch 失效（继续清算）")
 
-        # 2. 事件记录层
-        event = trigger_kill_switch(reason=reason, scope=self._config.liquidation_scope)
+        # 2. 事件记录层（state_store 贯穿：触发记录落盘，event_id 供清算幂等）
+        event = trigger_kill_switch(
+            reason=reason,
+            scope=self._config.liquidation_scope,
+            state_store=self._state_store,
+        )
 
-        # 3. 清算执行（以券商实时持仓为准——Qwen P0-3 裁定）
+        # 3. 清算执行（以券商实时持仓为准——Qwen P0-3 裁定；
+        # event_id 贯穿=同一事件幂等键，LIQUIDATING 锁防二次进入）
         try:
             positions_snapshot = self._broker.get_positions()
             positions = {
@@ -796,6 +851,8 @@ class RiskLayerOrchestrator:
             open_orders,
             scope=self._config.liquidation_scope,
             max_orders_per_second=self._config.max_orders_per_second,
+            event_id=event.get("event_id"),
+            state_store=self._state_store,
         )
         result: dict[str, object] = {"event": event, "report": report, "reason": reason}
         with self._lock:
