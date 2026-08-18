@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-17T19:18:25Z'
+generated_at: '2026-08-18T08:21:35Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -98,7 +98,7 @@ gates:
   status: active
   source: pre-commit
 - gate_id: GATE-12
-  name: 'GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）'
+  name: 'GATE-12: 蓝图真源准入门禁（Wave 0 V-12）'
   entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
   description: 蓝图真源 Provenance 三件套校验（node_id/edge_id 硬编码 lint 已移至 GATE-DOC-NODE-ID）
   files_trigger: ^docs/(03_modules/.*blueprint\.md|04_construction_plans/.*\.md|01_policies_and_standards/.*\.md)$
@@ -107,7 +107,7 @@ gates:
   status: active
   source: pre-commit
 - gate_id: GATE-14
-  name: 'GATE-14: AI 自治权限注册表自校验（Wave 0 V-11 骨架）'
+  name: 'GATE-14: AI 自治权限注册表自校验（Wave 0 V-11）'
   entry: python scripts/governance/d5_architecture/validators/validate_authority_registry.py
   description: 权限注册表自校验（三层权限值 / 必填字段 / 重复模块 / 章节覆盖 / Immutable Core 最低数量），骨架阶段 warn-only
   files_trigger: ^docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry\.md$
@@ -116,7 +116,7 @@ gates:
   status: active
   source: pre-commit
 - gate_id: GATE-13
-  name: 'GATE-13: 蓝图重叠检测门禁（Wave 1 V-14 骨架）'
+  name: 'GATE-13: 蓝图重叠检测门禁（Wave 1 V-14）'
   entry: python scripts/governance/d11_compliance/validate_blueprint_overlap.py
   description: 蓝图重叠检测（同一 component_id 出现在多个草稿时 warn），骨架阶段 warn-only
   files_trigger: ^docs/19_development_workspace/drafts-and-audits/.*\.md$
@@ -127,7 +127,7 @@ gates:
 - gate_id: GATE-TRIPLE-ALIGN
   name: 'GATE-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁'
   entry: python src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py
-  description: ''
+  description: 检测蓝图↔代码↔依赖图三方漂移（module_id/属性/文件清单/依赖声明不一致即硬阻断），防蓝图与实现脱节
   files_trigger: ^(docs/03_modules/.*blueprint\.md|src/zephyr/.*\.py)$
   always_run: false
   category: unknown
@@ -694,7 +694,7 @@ gates:
   source: commit-gate
 - gate_id: CONSUMERS-ACCURACY
   name: 'CONSUMERS-ACCURACY: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）（CommitGate,
-    priority=113）'
+    priority=116）'
   entry: in-process (GitCommitGateway)
   description: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
   files_trigger: ''
@@ -997,7 +997,7 @@ gates:
   source: commit-gate
 - gate_id: ISSUE-RESOLVED-INTEGRITY
   name: 'ISSUE-RESOLVED-INTEGRITY: ISSUE-RESOLVED-INTEGRITY warn-only 门禁（CommitGate,
-    priority=117）'
+    priority=130）'
   entry: in-process (GitCommitGateway)
   description: ISSUE-RESOLVED-INTEGRITY warn-only 门禁
   files_trigger: ''
