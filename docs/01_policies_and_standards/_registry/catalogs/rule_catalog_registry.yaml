@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-18T14:25:30Z'
+generated_at: '2026-08-18T15:07:25Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 216
+total_files: 217
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2723,6 +2723,21 @@ files:
 - path: docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
   module_id: PS-REG-020
   title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
+  doc_type: register
+  status: active
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  module_id: PS-REG-018
+  title: 规则路径目录（唯一真源 SSoT）
   doc_type: register
   status: active
   version: ''

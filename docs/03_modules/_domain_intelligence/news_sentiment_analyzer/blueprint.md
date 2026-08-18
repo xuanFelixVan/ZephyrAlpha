@@ -5,11 +5,11 @@ doc_type: blueprint
 status: Active
 version: "0.1.1"
 ttl: permanent
-design_maturity: design
+design_maturity: production
 layer: L02_intelligence
 layer_name: intelligence
 functional_domain: intelligence
-responsibility_domain:
+responsibility_domain: 
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-18"
@@ -148,8 +148,8 @@ analyzer.analyze_date_range(start, end) -> (DataFrame, list[SentimentWindow], li
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INT-AISA` 的 1 个 file 节点 | design | `extract_depgraph.py --modules MOD-INT-AISA` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INT-AISA` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-INT-AISA` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -159,7 +159,7 @@ analyzer.analyze_date_range(start, end) -> (DataFrame, list[SentimentWindow], li
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INT-AISA | MOD-INT-AISA | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | N/A | — |
+| build_status | stable | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
