@@ -1839,7 +1839,9 @@ class GitCommitGateway:
         # a merge），且 staged 区合法持有 merge 结果（冲突解决内容），绝不能按
         # target_files 做 staged-clean 校验/自动 unstage（会毁掉 merge 现场）。
         # 检测 MERGE_HEAD → 强制全量 commit（无 pathspec）+ 跳过 staged-clean。
-        merge_in_progress = (self.project_root / ".git" / "MERGE_HEAD").exists()
+        # AI-R1-003 红队治本：worktree 感知检测（原 .git/MERGE_HEAD 硬编码在
+        # linked worktree 下恒 False——.git 是指针文件，见 _is_merge_in_progress）
+        merge_in_progress = self._is_merge_in_progress()
         if merge_in_progress:
             use_pathspec = False
         if use_pathspec and target_files and self._has_staged_renames(target_files):
@@ -2016,8 +2018,9 @@ class GitCommitGateway:
         # 方案：入口检测 .git/MERGE_HEAD 存在时跳过 auto-commit，保留 merge 状态
         #       供用户手动完成。实测案例（2026-07-19）：手动 git merge --no-commit --no-ff
         #       输出 "Automatic merge went well"，但随后 MERGE_HEAD 消失。
-        merge_head = self.project_root / ".git" / "MERGE_HEAD"
-        if merge_head.exists():
+        # AI-R1-003 红队治本：worktree 感知检测（原 .git/MERGE_HEAD 硬编码在
+        # linked worktree 下恒 False——.git 是指针文件，见 _is_merge_in_progress）
+        if self._is_merge_in_progress():
             logger.info(
                 "_commit_auto: skip auto-commit, merge in progress "
                 "(session=%s, files=%d) —— #ARCH-WORKTREE-002 缺陷3 治本",
@@ -2173,6 +2176,27 @@ class GitCommitGateway:
                 rel = rel.replace("\\", "/")
                 f.write(f":(icase){rel}\n")
         return path
+
+    def _is_merge_in_progress(self) -> bool:
+        """检测当前 worktree 是否处于 merge 中间态（MERGE_HEAD 存在）。
+
+        治本（AI-R1-003 红队，2026-08-18）：原实现硬编码
+        ``project_root / ".git" / "MERGE_HEAD"``——但 linked worktree 的 ``.git``
+        是指针文件（内容 ``gitdir: <common>/.git/worktrees/<name>``），该路径恒不存在，
+        检测在 worktree 内恒 False（worktree 盲区）。merge finalize 场景下网关误判
+        非 merge → 走 pathspec partial commit → git 拒绝（"cannot do a partial
+        commit during a merge"）。改用 ``git rev-parse --git-path MERGE_HEAD``
+        解析真实 per-worktree git 目录（主仓与 linked worktree 均正确），
+        再判文件存在性。git 命令失败（非 git 仓库）时回退旧路径判定，保持向后兼容。
+        """
+        result = self.run_git(["git", "rev-parse", "--git-path", "MERGE_HEAD"])
+        if result.returncode == 0 and result.stdout.strip():
+            git_path_merge_head = Path(result.stdout.strip())
+            if not git_path_merge_head.is_absolute():
+                git_path_merge_head = self.project_root / git_path_merge_head
+            return git_path_merge_head.exists()
+        # 回退：git 不可用时退回旧路径判定（主仓场景仍有效）
+        return (self.project_root / ".git" / "MERGE_HEAD").exists()
 
     def run_git(self, cmd: list[str], cwd: str | None = None) -> subprocess.CompletedProcess:
         """执行 git 命令（统一 cwd + encoding）。reconciler 禁止裸调 git commit——必须走 _commit_auto()，commit 守卫 _in_commit_flow 技术强制。

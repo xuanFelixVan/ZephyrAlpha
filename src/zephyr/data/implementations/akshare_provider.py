@@ -5196,13 +5196,16 @@ class AkshareIngestProvider(IngestProviderBase):
         """涨跌停幅度（小数），口径=沪深北交易所交易规则。
 
         科创板 20%（含ST）；创业板 2020-08-24 起 20%（含ST，改革后ST不再区别），
-        此前 10%；北交所 30%（无ST 5%规则）；主板 ST/*ST 5%、否则 10%。
+        此前 ST/*ST 5%、非ST 10%（深交所投教：特别规定实施前创业板风险警示股 5%）；
+        北交所 30%（无ST 5%规则）；主板 ST/*ST 5%、否则 10%。
         未知板块返回 None（调用方跳过，防误判）。
         """
         if code.startswith("68"):
             return 0.20
         if code.startswith("30"):
-            return 0.20 if trade_date >= cls._CHINEXT_20PCT_DATE else 0.10
+            if trade_date >= cls._CHINEXT_20PCT_DATE:
+                return 0.20
+            return 0.05 if st_flag else 0.10
         if code.startswith(("43", "83", "87", "88", "920")):
             return 0.30
         if code.startswith(("60", "00")):
@@ -5714,11 +5717,11 @@ class AkshareIngestProvider(IngestProviderBase):
             df = None
         if df is not None and len(df) > 0:
             for _, row in df.iterrows():
+                # 严格 6 位数字（AI-R1 复审加固：zfill 前无长度门禁时 5 位码
+                # 幻影串号——'00700'.zfill(6)='000700' 撞深主板前缀；对齐
+                # _suspend_rows_from_em/baidu 姊妹防御，官方清单恒 6 位）
                 code = str(row.get("证劵代码") or "").strip()
-                if not code:
-                    continue
-                code = code.zfill(6)
-                if not code.isdigit() or len(code) != 6:
+                if len(code) != 6 or not code.isdigit():
                     continue
                 name = str(row.get("证券简称") or "").strip()
                 issue_price = _num_or_none(row.get("发行价"))

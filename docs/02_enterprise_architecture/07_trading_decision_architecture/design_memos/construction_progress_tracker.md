@@ -365,6 +365,31 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 |---|---|---|---|---|
 | 128 | #ARCH-ERRCODE-001 全域收口：①补登 ②重码 ③对账门禁 | AI-ERR-001 施工批（commit 0e7c1393，[ARCH-APPROVAL:#ARCH-ERRCODE-001] 通道） | **①已闭环**：registry v2.3.0→v3.0.0——130 码补登（371 码/385 定义点全量登记=零缺口）+6 条 stale 实证退役（ZA-IF-0001 幻影登记 git -S 零命中/ZA-IG-0016 shim 收敛→ZA-SH-0033/ZA-KB-0002~0004 KB 系统 d5b6f5dde1 退役/ZA-SH-0035 #ARCH-089 已删→ZA-SH-0034）+domain_prefixes 19→32（CMP/DATA/EX/MKT/PA/PF/PLAN/POS/REGIME/SELL/SIM/TRIG/XS，域 ID 经 [DOMAIN] 头注逐一实证：PF→D_PF_CORE、PLAN→D_PLAN）。**③已闭环**：tests/governance/test_error_code_consistency.py 新建（AST 扫描器=判定 SSoT，6 用例全绿）+GATE-ERRCODE 接入 .pre-commit-config.yaml（src/**.py 或注册表变更触发硬阻断）；红队实证：注入 ZA-ZZZ-9999 未登记码即拦截（2 用例红），移除复绿。**②裁定完毕待 Owner 批准**：9 码 10 处重码 git 首引入裁定+计划改号清单落 registry known_duplicates 段（MKT-0001→0007/MKT-0003→0008+0009/REGIME-0021→0025/RK-0009→0025（原规划 0024 已被 var_calculator 新增 ExcessiveNonFiniteDataError 占用顺延）/SH-0014→0053/SH-0049→0051/SH-0050→0052/TR-0001→0019/TR-0004→0020）；已实证全仓无运行时按码字符串分支（except/raises 均按类捕获），改号连带=tests/trading/test_corporate_action_processor.py:513 一处断言+6 处蓝图文档同步。验证命令：`python -m pytest tests/governance/test_error_code_consistency.py -q --tb=line -p no:asyncio --import-mode=importlib`（6 passed）。**剩余动作**：Owner 批准 known_duplicates 段→经网关执行 10 处改号+断言/蓝图同步→清空 known_duplicates 段（白名单防腐测试强制）→#ARCH-ERRCODE-001 status 翻 resolved | 🔄 ①③闭环；②待 Owner 批准 |
 
+### P1-补12 · 2026-08-18 AI-R1-001 登记（AI-01~04 域审查修复批：IPO-001 4704f00853 / JOB-077 669066cd27 / 37号LEVEL_3 f0eb9bbc / THD统读 6c181232a3 / TICK-001 e061a3b0 五 merge 增量全量审查）【编号注记：分支原登 #128-#133 与已入 dev 的 AI-ERR-001 #128 撞号，merge 重编 #129-#134——2026-08-18 AI-R1-003 红队 merge】
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 129 | `_limit_pct_of` 创业板 2020-08-24 前 ST/*ST 涨跌停幅度 0.10→应为 0.05（算法口径缺陷，回填历史+ST 快照组合才触发） | AI-R1-001 算法审查+深交所投教官方页实证（szse.cn t20200807_580310：「特别规定实施前创业板风险警示股票价格涨跌幅限制比例为 5%」） | 原实现 `30` 前缀改革前一律 0.10 无视 st_flag，docstring/schema 注释/测试注释"此前 10%（含ST）"同错三处 | ✅ 已闭环（commit a117abec88：代码改 `0.05 if st_flag else 0.10`+双 docstring 勘正+`test_chinext_regime_change` 补改革前 ST 断言防回归；验证 `pytest tests/zephyr/data/test_akshare_market_meta.py` 52 passed） |
+| 130 | test_tick_subscriber.py 文件头双 `[TTL]` 字段冲突（L2 permanent vs L5 task_bound，TTL 治理解析歧义——task_bound 会被退役机制误盯） | AI-R1-001 TICK-001 审查 | TICK-001 入库时头注注入残留双 TTL | ✅ 已闭环（commit a117abec88：删 task_bound 行，测试对象=permanent 生产模块；验证 `pytest tests/zephyr/data/test_tick_subscriber.py` 82 passed） |
+| 131 | market_ipo_calendar.py exchange MATERIALIZED 表达式模板漂移（`substring(...,1,2) IN ('123','128')` 永假分支；全仓 69 个 schema 均 `1,3`） | AI-R1-001 schema 一致性审查（Grep 70 文件实测） | 行为恒等（123/128 转债前缀经 1-char `'1'→SZ` 落点相同；IPO 表无转债标的）；#127 实证 CH 表尚未建（8123 未运行），修复先于首次建表落地=零 live 漂移，统筹执行 apply_market_tables_ddl.py 时自然吸收正确表达式 | ✅ 已闭环（commit a117abec88 单字符修复 1,2→1,3） |
+| 132 | tasks.yaml `stk_limit_premarket` 幽灵依赖 `stock_basic_premarket` | AI-R1-001 算法-配置交叉审查 | `_fetch_stk_limit` 不消费 stock_basic（板块=代码前缀静态规则、昨收=kline_daily、ST=st_stock_list 三真源均非该任务产出）——无谓排序约束+depgraph 元数据失真 | ✅ 已闭环（commit a117abec88：dependencies 仅留 st_status_premarket 真依赖，注释留痕三真源） |
+| 133 | threshold_loader float cast 接受 bool（YAML `value: true` 笔误静默 1.0，fail-closed 小洞；int/str cast 均已拒 bool） | AI-R1-001 THD 统读审查 | tracker #87 统读加固遗漏面 | ✅ 已闭环（commit a117abec88：float 分支加 isinstance bool 拒绝+`test_bool_value_fail_closed` 全 9 统读模块参数化；验证 `pytest tests/governance/test_alert_threshold_consistency.py` 58 passed） |
+| 134 | 审查观察项（不修登记）：①market_sector_constituent.py INSERT_COLUMNS 双逗号笔误（`data_source, , fetched_at`，存量非本批引入，当前无消费者实证）；②`_stk_limit_row_for` i<5 新股判定用窗口索引（长期停牌复牌股理论上误 NULL，部分匹配"恢复上市首日无涨跌幅"真实规则）；③`int(shares_wan*1e4)` float 截断（≤1 股误差对亿元级募资分析无影响）；④ruff 存量 6 项（I001×5+SIM114×1，HEAD 基线一致非本批引入） | AI-R1-001 第 1~2 轮复检 | 全部低危/条件触发/无消费者，按"不过度修复"纪律登记备查 | ⏳ 观察项（供后续专项批评估） |
+
+> **本批验证汇总**：pytest 199 passed（market_meta 52 + ipo_calendar 7 + tick_subscriber 82 + threshold_consistency 58，含新增断言）；tasks.yaml YAML 解析通过；4 改动 .py AST 通过；ruff 零增量（基线比对实证）。**避让登记**：无（开工 `session_worktree.py list` 实证零在途 session；tracker §五表区 448+ 行有统筹在途改动，本登记落 §六 348-357 行区与在途区不相交，可自动并集）。**共享收口**：无新增（#127 CH 建表统筹执行时自动吸收 #130 修复）。
+
+### P1-补13 · 2026-08-18 AI-R1-002 登记（复审批——复核初审 #128-#133 + 漏报补登 2 项治本）【编号注记：分支原登 #134-#136 随初审批顺移重编 #135-#137；正文内引用的初审编号为分支原编号，映射见 P1-补12 注记——2026-08-18 AI-R1-003 红队 merge】
+
+复审结论：初审 6 项**全部确认**（#128 P1 定级恰当——当前日频运行全在 2020-08-24 改革日后，仅历史回填+ST 快照组合触发，不构成 P0；#130 行为恒等论证经 CH multiIf 逐分支推演成立——123/128 前缀两路径终值均 'SZ' 且跨表 JOIN 一致性反获改善；#131/#129/#132 修复完整性验证通过；#133 观察项维持）。漏报复查三面：降级机阈值真源无漂移（触发 0.005×ratio0.5=0.0025 与 37 号 §3.6 半阈值 0.25% 一致、LEVEL_2/3 内部 ×1.2=0.3% 与矩阵一致、卖压 0.50/min_hold {10,15,30} 一致——`_CHINEXT_20PCT_DATE` 般逐项比对 detector.config 与 RiskLayerConfig 真源）。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 135 | ipo_calendar `zfill(6)` 前无长度门禁——5 位数字码幻影串号（'00700'.zfill(6)='000700' 撞深主板前缀静默入库）；姊妹函数 `_suspend_rows_from_em/baidu` 均 `len!=6→skip`（JOB-077 港股串入实证后加固），防御范式不一致 | AI-R1-002 漏报复查面② | 巨潮源当前实证 402 行恒 6 位（风险=上游变更时静默串码）；官方清单恒 6 位，严格化后上游异常显式跳过（保守缺行优于幻影错值） | ✅ 已闭环（commit bc787ca8：`len(code)!=6 or not code.isdigit()` 门禁替代 zfill，注释留痕姊妹防御对齐依据；`test_invalid_code_skipped` 补 '12345' 短码幻影断言） |
+| 136 | threshold_loader float cast 接受 NaN/Inf（初审 #132 只堵 bool 未堵非有限值）——YAML `value: .nan` 静默通过后**阈值比较恒 False → 风控告警链静默失效**（比 bool→1.0 更隐蔽：NaN<threshold 与 >threshold 双向恒假，三级回撤告警全哑） | AI-R1-002 漏报复查（#132 同族遗漏面） | 触发条件同 #132（注册表笔误），但后果更重（整链静默 vs 单值错误）；数值字符串 "inf"/"1e400" 溢出同面 | ✅ 已闭环（commit bc787ca8：float 分支加 `math.isfinite` 门禁；`test_nan_inf_value_fail_closed` 9 模块×3 值参数化 + `test_numeric_string_overflow_fail_closed` loader 直测 4 字符串；注："inf" 对 cast="str"（PLV 字符串规约）是合法值，参数化已分离防误报） |
+| 137 | 复审补充观察项（不修登记）：①`_fetch_stk_limit` 45 天缓冲窗口 vs 2018 停牌新规前长停牌股（数月级）——复牌日窗口内 i=0 保守跳过不产出行（缺行而非错值，回测约束缺失偏保守方向）；②创业板 2020-08-24 前已进入退市整理期 3 股（千山退/神雾退/盛运退）改革后应保持 10%，现实现一律 20%（3 股×数月窗口，回填精度残余缺口）；③`check_recovery` docstring"active_signals 范围 0-2（双条件计数）"为 MOD-RK-21 旧口径，orchestrator 实传 detector 多信号计数（矩阵语义正确，注释滞后） | AI-R1-002 复核过程 | 全部低危/保守方向/注释级，按"不过度修复"纪律登记 | ⏳ 观察项（①②供回填专项批评估；③ RK-21 文件不属本批面，记 docstring 勘正候选） |
+
+> **复审批验证汇总**：pytest 227 passed（初审 199 + 复审新增 28：NaN/Inf 27 + loader 直测 1，ipo 短码断言并入既有用例）；ruff 零增量（3 项 I001=初审 #133④ 已登记存量）。**分支依赖**：AI-R1-002 分支已 merge ai/AI-R1-001/task-audit-r1-review（b697258c54，fast-forward 不可行因 dev 已前进——统筹 merge 本分支即同时落地初审+复审两批）。
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |

@@ -117,8 +117,9 @@ class TestLimitPctRules:
         assert AkshareIngestProvider._limit_pct_of("688001", D(2026, 8, 14), True) == 0.20
 
     def test_chinext_regime_change(self):
-        # 创业板 2020-08-24 改革：此前 10%（含ST），此后 20%（含ST）
+        # 创业板 2020-08-24 改革：此前 ST/*ST 5%、非ST 10%，此后 20%（含ST）
         assert AkshareIngestProvider._limit_pct_of("300750", D(2020, 8, 21), False) == 0.10
+        assert AkshareIngestProvider._limit_pct_of("300750", D(2020, 8, 21), True) == 0.05
         assert AkshareIngestProvider._limit_pct_of("300750", D(2020, 8, 24), False) == 0.20
         assert AkshareIngestProvider._limit_pct_of("300750", D(2020, 8, 24), True) == 0.20
 

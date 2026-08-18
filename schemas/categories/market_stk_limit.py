@@ -21,7 +21,7 @@ JOB-077 市场元数据与约束接入（DS-082，2026-08-15）：
     akshare 无全市场涨跌停价接口（实证 dir(akshare) 仅涨跌停池类函数，只覆盖触板个股），
     故按交易所规则由昨收价计算（行业标准做法，对标 tushare stk_limit 语义）：
     limit_up/down = round_half_up(pre_close × (1±pct), 0.01)。
-    pct 口径：科创板 20%（含ST）；创业板 2020-08-24 起 20%（含ST）、此前 10%；
+    pct 口径：科创板 20%（含ST）；创业板 2020-08-24 起 20%（含ST）、此前 ST 5%/非ST 10%；
     北交所 30%；主板 ST/*ST 5%、否则 10%。新股无涨跌幅限制期 limit_*=NULL。
     PIT 语义 strict：trade_date=生效交易日，pre_close 经除权除息修正
     （close_prev × adj_factor_T/adj_factor_prev）。
