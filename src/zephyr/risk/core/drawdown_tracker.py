@@ -29,14 +29,24 @@ Drawdown Real-Time Tracker — 回撤实时追踪器 (MOD-RK-011)
 
 与 POS-007 区别: POS-007 是仓位上限联动(行动导向); RK-11 是实时告警(监控导向)。
 属A类基础设施(峰值谷值+阈值判定+恢复检测, 逻辑明确), 阈值为C类可调参数。
-依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1 RK-11, §4 E-RK-03
+依据: D:\\临时工作区\\依赖图\11-D-RISK-风控域.md §1 RK-11, §4 E-RK-03
 SSoT: depgraph MOD-RK-011
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# I1: net_value(盘中组合净值) + now(时间戳, 默认 utcnow)
+# I2: DrawdownTrackerConfig(阈值唯一真源=alert_threshold_registry THD-DRAWDOWN-001/002/003, fail-closed)
+# A1: update(峰值单调非减/谷值更新→drawdown=(trough-peak)/peak≤0→_classify 三级分类 WARNING/CRITICAL/EMERGENCY)
+# A2: 事件去抖(连续相同级别不重复发射)+升级/恢复判定(is_escalation/is_recovery)
+# F1: on_drawdown_alerted 监听器注册(EMERGENCY→RK-17 Kill Switch 消费链)
+# O1: DrawdownSnapshot(peak/trough/drawdown/level) + DrawdownAlertedEvent(E-RK-03)
+# [/ALGO_FLOW]
 """
 
 from __future__ import annotations
 
 import logging
+import math
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -66,9 +76,9 @@ logger = logging.getLogger(__name__)
 class DrawdownAlertLevel(str, Enum):
     """回撤告警级别 (严重度递增)。"""
 
-    NONE = "NONE"            # < 5% 无告警
-    WARNING = "WARNING"      # 5% ~ 10%
-    CRITICAL = "CRITICAL"    # 10% ~ 15%
+    NONE = "NONE"  # < 5% 无告警
+    WARNING = "WARNING"  # 5% ~ 10%
+    CRITICAL = "CRITICAL"  # 10% ~ 15%
     EMERGENCY = "EMERGENCY"  # > 15% 触发 Kill Switch
 
     @property
@@ -112,7 +122,7 @@ _REGISTRY_DEFAULTS: Final[dict[str, float]] = _load_drawdown_thresholds()
 class DrawdownTrackerConfig:
     """回撤追踪阈值配置 (设计真源 §1 RK-11；默认值真源=alert_threshold_registry，显式传参可覆盖)。"""
 
-    warning_threshold: float = _REGISTRY_DEFAULTS["warning_threshold"]    # -5%（THD-DRAWDOWN-001）
+    warning_threshold: float = _REGISTRY_DEFAULTS["warning_threshold"]  # -5%（THD-DRAWDOWN-001）
     critical_threshold: float = _REGISTRY_DEFAULTS["critical_threshold"]  # -10%（THD-DRAWDOWN-002）
     emergency_threshold: float = _REGISTRY_DEFAULTS["emergency_threshold"]  # -15%（THD-DRAWDOWN-003）
 
@@ -125,9 +135,7 @@ class DrawdownTrackerConfig:
             if not 0 < val < 1:
                 raise InvalidDrawdownInputError(f"{name} must be in (0,1), got {val}")
         if not (self.warning_threshold < self.critical_threshold < self.emergency_threshold):
-            raise InvalidDrawdownInputError(
-                "thresholds must satisfy warning < critical < emergency"
-            )
+            raise InvalidDrawdownInputError("thresholds must satisfy warning < critical < emergency")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -139,14 +147,14 @@ class DrawdownTrackerConfig:
 class DrawdownSnapshot:
     """回撤追踪快照。"""
 
-    net_value: float                  # 当前净值
-    peak: float                        # 历史峰值 (高水位)
-    trough: float                      # 自最近峰值以来最低点
-    drawdown: float                    # 有符号回撤 (≤0, 0=无回撤)
-    level: DrawdownAlertLevel          # 当前告警级别
-    in_recovery: bool                  # 是否处于恢复期(谷底回升但未创新高)
-    peak_timestamp: datetime           # 最近峰值时间
-    duration_since_peak: float         # 自峰值以来秒数
+    net_value: float  # 当前净值
+    peak: float  # 历史峰值 (高水位)
+    trough: float  # 自最近峰值以来最低点
+    drawdown: float  # 有符号回撤 (≤0, 0=无回撤)
+    level: DrawdownAlertLevel  # 当前告警级别
+    in_recovery: bool  # 是否处于恢复期(谷底回升但未创新高)
+    peak_timestamp: datetime  # 最近峰值时间
+    duration_since_peak: float  # 自峰值以来秒数
     timestamp: datetime
 
     @property
@@ -166,7 +174,7 @@ class DrawdownAlertedEvent:
     仅在告警级别*变化*时发射 (含恢复降级)。
     """
 
-    level: DrawdownAlertLevel          # 新级别
+    level: DrawdownAlertLevel  # 新级别
     previous_level: DrawdownAlertLevel  # 旧级别
     snapshot: DrawdownSnapshot
     timestamp: datetime
@@ -212,9 +220,7 @@ class DrawdownTracker:
         clock: Callable[[], datetime] | None = None,
     ) -> None:
         if initial_net_value <= 0:
-            raise InvalidDrawdownInputError(
-                f"initial_net_value must be positive, got {initial_net_value}"
-            )
+            raise InvalidDrawdownInputError(f"initial_net_value must be positive, got {initial_net_value}")
         self._config = config or DrawdownTrackerConfig()
         self._clock = clock or (lambda: datetime.now(timezone.utc))
         self._listeners: list[Callable[[DrawdownAlertedEvent], None]] = []
@@ -259,10 +265,12 @@ class DrawdownTracker:
             DrawdownSnapshot
 
         Raises:
-            InvalidDrawdownInputError: 净值非正
+            InvalidDrawdownInputError: 净值非正或非有限值
         """
-        if net_value <= 0:
-            raise InvalidDrawdownInputError(f"net_value must be positive, got {net_value}")
+        # 非有限值门禁（AI-R2 红队 ATK-1）：NaN 所有比较为 False → 静默失明轮；
+        # +Inf 使 peak=inf 永久中毒（后续 drawdown 恒为 NaN，EMERGENCY 永不触发）
+        if not math.isfinite(net_value) or net_value <= 0:
+            raise InvalidDrawdownInputError(f"net_value must be positive and finite, got {net_value}")
         now = now or self._clock()
 
         # 1. 峰值更新 (单调非减)
@@ -282,11 +290,7 @@ class DrawdownTracker:
         level = self._classify(drawdown)
 
         # 5. 恢复检测: 谷底回升但未创新高
-        in_recovery = (
-            drawdown < 0
-            and net_value > self._trough
-            and net_value < self._peak
-        )
+        in_recovery = drawdown < 0 and net_value > self._trough and net_value < self._peak
 
         duration = (now - self._peak_ts).total_seconds()
         self._net_value = net_value

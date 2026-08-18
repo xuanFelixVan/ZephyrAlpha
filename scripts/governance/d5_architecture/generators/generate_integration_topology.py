@@ -31,12 +31,15 @@
 from __future__ import annotations
 
 # _common.py 与本文件同目录（generators/），CLI 运行时 sys.path[0]=本目录，可直接 import。
-from _common import DB_DISPLAY_NAME, idempotent_timestamp  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
+from _common import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
+    DB_DISPLAY_NAME,
+    idempotent_timestamp,
+)
 
 # 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
 __manifest__ = """
 args: []
-description: 'G4: 从 depgraph (PostgreSQL) edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)'
+description: 'G4: 从 depgraph 库 edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)'
 dimensions:
 - D5
 priority: P2
@@ -56,8 +59,8 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
-
 from domain_name_mapping import get_domain_name_zh  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram"

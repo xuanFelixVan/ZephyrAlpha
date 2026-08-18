@@ -207,9 +207,7 @@ def test_es_ge_var_small_sample_boundary():
 def test_pot_degrades_on_sixty_day_half_negative_window():
     """P1c: 60 日窗口 + 50% 负日常态 → exceedances<5 → pot=None (不硬拟合噪声)。"""
     rng = np.random.default_rng(7)
-    returns = np.concatenate(
-        [rng.normal(-0.01, 0.005, 30), rng.normal(0.01, 0.005, 30)]
-    )
+    returns = np.concatenate([rng.normal(-0.01, 0.005, 30), rng.normal(0.01, 0.005, 30)])
     monitor = TailRiskMonitor()
     pot = monitor.fit_pot(returns)
     assert pot is None  # 60 日窗口下 POT 与样本量天然不兼容, 降级而非噪声拟合
@@ -218,9 +216,7 @@ def test_pot_degrades_on_sixty_day_half_negative_window():
 def test_pot_fallback_flag_set_in_snapshot():
     """P1c: 降级路径可验证——snapshot.pot_fallback_historical=True 且入 to_dict。"""
     rng = np.random.default_rng(7)
-    returns = np.concatenate(
-        [rng.normal(-0.01, 0.005, 30), rng.normal(0.01, 0.005, 30)]
-    )
+    returns = np.concatenate([rng.normal(-0.01, 0.005, 30), rng.normal(0.01, 0.005, 30)])
     monitor = TailRiskMonitor()
     snapshot = monitor.assess(returns, now=t())
     assert snapshot.pot is None
@@ -233,9 +229,7 @@ def test_pot_fallback_flag_set_in_snapshot():
 def test_pot_fallback_logs_warning(caplog):
     """P1c: 降级路径必须告警留痕 (非静默缺失厚尾诊断)。"""
     rng = np.random.default_rng(7)
-    returns = np.concatenate(
-        [rng.normal(-0.01, 0.005, 30), rng.normal(0.01, 0.005, 30)]
-    )
+    returns = np.concatenate([rng.normal(-0.01, 0.005, 30), rng.normal(0.01, 0.005, 30)])
     monitor = TailRiskMonitor()
     with caplog.at_level("WARNING"):
         snapshot = monitor.assess(returns, now=t())
@@ -327,11 +321,13 @@ def test_assess_to_dict(normal_returns):
 
 
 def test_alert_none_for_normal(normal_returns):
-    monitor = TailRiskMonitor(TailRiskConfig(
-        heavy_tail_shape_threshold=10.0,  # 极高阈值, 不触发
-        critical_shape_threshold=20.0,
-        es_warning_ratio=10.0,
-    ))
+    monitor = TailRiskMonitor(
+        TailRiskConfig(
+            heavy_tail_shape_threshold=10.0,  # 极高阈值, 不触发
+            critical_shape_threshold=20.0,
+            es_warning_ratio=10.0,
+        )
+    )
     snapshot = monitor.assess(normal_returns, now=t())
     assert snapshot.alert_level is TailRiskAlertLevel.NONE
 
@@ -341,11 +337,13 @@ def test_alert_emergency_for_extreme():
     rng = np.random.default_rng(42)
     # 学生t df=2 极厚尾
     returns = rng.standard_t(2, 500) * 0.05
-    monitor = TailRiskMonitor(TailRiskConfig(
-        heavy_tail_shape_threshold=0.1,
-        critical_shape_threshold=0.3,
-        es_warning_ratio=1.2,
-    ))
+    monitor = TailRiskMonitor(
+        TailRiskConfig(
+            heavy_tail_shape_threshold=0.1,
+            critical_shape_threshold=0.3,
+            es_warning_ratio=1.2,
+        )
+    )
     snapshot = monitor.assess(returns, now=t())
     assert snapshot.alert_level in (
         TailRiskAlertLevel.CRITICAL,
@@ -446,3 +444,43 @@ def test_invariant_frtb_non_negative(normal_returns):
     monitor = TailRiskMonitor()
     snapshot = monitor.assess(normal_returns, now=t())
     assert snapshot.frtb_addon >= 0
+
+
+# ── _validate_returns ±inf 过滤守卫 (AI-R2-001) ──────────────────────────────
+
+
+class TestValidateReturnsInfFilter:
+    """_validate_returns 同时过滤 NaN 与 ±inf（防 VaR=inf/FRTB=inf 流入下游）。
+
+    原缺陷：只滤 NaN 不滤 inf，含 -inf 样本时历史模拟 VaR/ES/FRTB 全变 inf。
+    口径合并注记（2026-08-18 第八统筹）：R3 并入 max_nonfinite_ratio=0.05 Fail-Closed
+    阈值（超阈值 raise InvalidTailRiskInputError）——本类用例钉死"低比例过滤路径"
+    （非有限样本 ≤5% 时过滤后继续），超阈值 raise 路径由 test_too_many_nan_after_filter /
+    test_inf_penetration_blocked 覆盖。
+    """
+
+    def test_inf_returns_filtered(self):
+        """含 +inf 样本（低比例）→ 被过滤，输出全有限。"""
+        returns = np.concatenate([np.full(39, 0.01), np.full(1, np.inf)])
+        out = TailRiskMonitor._validate_returns(returns, 30)
+        assert len(out) == 39
+        assert np.all(np.isfinite(out))
+
+    def test_neg_inf_returns_filtered(self):
+        """含 -inf 样本（低比例）→ 被过滤，输出全有限。"""
+        returns = np.concatenate([np.full(39, 0.01), np.full(1, -np.inf)])
+        out = TailRiskMonitor._validate_returns(returns, 30)
+        assert len(out) == 39
+        assert np.all(np.isfinite(out))
+
+    def test_mixed_nan_inf_returns_filtered(self):
+        """NaN/+inf 混合（5% 边界）→ 全部过滤，输出全有限且数量正确。"""
+        returns = np.concatenate(
+            [
+                np.full(38, 0.01),
+                [np.nan, np.inf],
+            ]
+        )
+        out = TailRiskMonitor._validate_returns(returns, 30)
+        assert len(out) == 38
+        assert np.all(np.isfinite(out))

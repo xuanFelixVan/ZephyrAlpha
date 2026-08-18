@@ -109,6 +109,7 @@ SSoT: cross_layer_contracts.yaml -> CTR-004 + CTR-005
 from __future__ import annotations
 
 import logging
+import threading
 import uuid
 from collections import defaultdict
 from collections.abc import Callable
@@ -211,6 +212,7 @@ class OrderManager:
         # C-002 合规门禁（43 号 §7.4/§8，AI-ASM-001 装配批接线；None=未接线不校验）
         self._report_gate = report_gate
         self._declaration_guard = declaration_guard
+        self._fill_lock = threading.Lock()
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -319,6 +321,14 @@ class OrderManager:
         # 记录 order->broker 映射，供 cancel_order 治本使用（消除硬编码+反查）
         self._order_broker_map[order_id] = broker_id
 
+        # 报单侧申报计数（AI-R2 红队 ATK-5，与撤单侧 record_cancel 对称）：
+        # 指令发往券商即构成一笔申报（2026-06-08 程序化新规"申报、撤单笔数"口径），
+        # 成功/失败均计（宁多勿漏）——broker 异常时指令可能已达交易所，漏计会使
+        # 日申报 1 万笔防线被穿透。原在 session 层 submit_order 返回后计数，
+        # broker 异常时漏计。C-002 BLOCKED 的订单不会到达此处（上方已抛错）。
+        if self._declaration_guard is not None:
+            self._declaration_guard.record_submit()
+
         broker_order_id = broker.submit_order(order)
         order.broker_order_id = broker_order_id
         order.updated_at = datetime.now(UTC)
@@ -343,9 +353,7 @@ class OrderManager:
                     gate_result.missing,
                     gate_result.detail,
                 )
-                raise ComplianceGateBlockError(
-                    f"先报告后交易铁律：{gate_result.detail} (order_id={order.order_id})"
-                )
+                raise ComplianceGateBlockError(f"先报告后交易铁律：{gate_result.detail} (order_id={order.order_id})")
         if self._declaration_guard is not None:
             status = self._declaration_guard.daily_declaration_status
             count = self._declaration_guard.daily_declaration_count
@@ -458,32 +466,55 @@ class OrderManager:
         return [f for fills in self._fills.values() for f in fills]
 
     def _on_fill(self, fill: Fill) -> None:
-        self._fills[fill.order_id].append(fill)
+        with self._fill_lock:
+            # 红队防御：fill 数值校验
+            if fill.filled_quantity <= 0:
+                _logger.warning("拒收非法 fill: qty=%s <= 0 (order=%s)", fill.filled_quantity, fill.order_id)
+                return
+            # None 价拒收（AI-R2 红队 ATK-9）：契约 fill_price: Decimal 非 Optional，
+            # 但下游 avg_fill_price 计算 None*qty → TypeError 半更新（qty 已加、
+            # 状态未转 FILLED）。与 NaN 拒收同模式，边界防御一致化
+            if fill.fill_price is None:
+                _logger.warning("拒收非法 fill: price=None (order=%s)", fill.order_id)
+                return
+            if hasattr(fill.fill_price, "is_nan") and fill.fill_price.is_nan():
+                _logger.warning("拒收非法 fill: price=NaN (order=%s)", fill.order_id)
+                return
+            if fill.fill_price <= 0:
+                _logger.warning("拒收非法 fill: price=%s <= 0 (order=%s)", fill.fill_price, fill.order_id)
+                return
+            # fill_id 幂等去重
+            existing_ids = {f.fill_id for f in self._fills.get(fill.order_id, [])}
+            if fill.fill_id and fill.fill_id in existing_ids:
+                _logger.warning("重复 fill_id=%s 跳过 (order=%s)", fill.fill_id, fill.order_id)
+                return
 
-        order = self._orders.get(fill.order_id)
-        if order:
-            order.filled_quantity = (order.filled_quantity or Decimal("0")) + fill.filled_quantity
-            order.avg_fill_price = (
-                (
-                    (order.avg_fill_price or Decimal("0")) * (order.filled_quantity - fill.filled_quantity)
-                    + fill.fill_price * fill.filled_quantity
+            self._fills[fill.order_id].append(fill)
+
+            order = self._orders.get(fill.order_id)
+            if order:
+                order.filled_quantity = (order.filled_quantity or Decimal("0")) + fill.filled_quantity
+                order.avg_fill_price = (
+                    (
+                        (order.avg_fill_price or Decimal("0")) * (order.filled_quantity - fill.filled_quantity)
+                        + fill.fill_price * fill.filled_quantity
+                    )
+                    / order.filled_quantity
+                    if order.filled_quantity > 0
+                    else fill.fill_price
                 )
-                / order.filled_quantity
-                if order.filled_quantity > 0
-                else fill.fill_price
-            )
-            order.updated_at = datetime.now(UTC)
+                order.updated_at = datetime.now(UTC)
 
-            if order.filled_quantity >= order.quantity:
-                try:
-                    self._transition_status(order, OrderStatus.FILLED)
-                except ValueError as e:
-                    _logger.warning("成交回调状态转换跳过: %s", e)
-            elif order.filled_quantity > 0:
-                try:
-                    self._transition_status(order, OrderStatus.PARTIAL)
-                except ValueError as e:
-                    _logger.warning("成交回调状态转换跳过: %s", e)
+                if order.filled_quantity >= order.quantity:
+                    try:
+                        self._transition_status(order, OrderStatus.FILLED)
+                    except ValueError as e:
+                        _logger.warning("成交回调状态转换跳过: %s", e)
+                elif order.filled_quantity > 0:
+                    try:
+                        self._transition_status(order, OrderStatus.PARTIAL)
+                    except ValueError as e:
+                        _logger.warning("成交回调状态转换跳过: %s", e)
 
         for callback in self._fill_callbacks:
             try:

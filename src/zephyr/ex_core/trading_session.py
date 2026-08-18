@@ -68,6 +68,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, time, timezone
 from decimal import Decimal
 from typing import Any, Final
+from zoneinfo import ZoneInfo
 
 from zephyr.compliance.discipline_must_do_checker import (
     ChecklistAction,
@@ -102,6 +103,16 @@ from zephyr.shared.contracts.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 
 _logger = logging.getLogger(__name__)
+
+#: A 股交易时刻口径（尾盘操纵检测窗口 14:57-15:00 为北京时刻，
+#: at_time 缺省 fallback 必须同口径——UTC 时刻会导致窗口永不激活）
+_SHANGHAI_TZ: Final = ZoneInfo("Asia/Shanghai")
+
+
+def _cst_now_time() -> time:
+    """当前北京时刻（A 股交易口径，MOD-CMP-007 尾盘窗口判定用）。"""
+    return datetime.now(_SHANGHAI_TZ).time()
+
 
 SignalProvider = Callable[[list[str]], dict[str, float]]
 PriceProvider = Callable[[list[str]], dict[str, Decimal]]
@@ -213,13 +224,11 @@ class TradingSession:
         # 缺 ctx 提供器=检测不可评估=配置错误，装配期 fail-fast 优于盘中拒单）
         if (discipline_guard is None) != (discipline_ctx_provider is None):
             raise ValueError(
-                "discipline_guard 与 discipline_ctx_provider 必须成对注入"
-                "（43 号 §4.3：纪律闸缺上下文不可评估）"
+                "discipline_guard 与 discipline_ctx_provider 必须成对注入（43 号 §4.3：纪律闸缺上下文不可评估）"
             )
         if (compliance_detector is None) != (compliance_ctx_provider is None):
             raise ValueError(
-                "compliance_detector 与 compliance_ctx_provider 必须成对注入"
-                "（43 号 §7.6：合规检测缺上下文不可评估）"
+                "compliance_detector 与 compliance_ctx_provider 必须成对注入（43 号 §7.6：合规检测缺上下文不可评估）"
             )
         self._broker = broker
         self._strategy = strategy
@@ -228,14 +237,15 @@ class TradingSession:
         self._price_provider = price_provider
         self._order_manager = order_manager
         self._config = config
-        # 同实例防护（AI-R3 复审 P1 治本）：OrderManager 已注入 declaration_guard
+        # 同实例防护（AI-R3 复审 P1 治本 + AI-R2 红队 ATK-5 同点独立命中）：OrderManager 已注入 declaration_guard
         # 时复用同一实例——报单计数（record_submit）与撤单计数（record_cancel）
-        # 必须落入同一日申报硬计数器，否则 1 万笔阻断线可被双实例分裂计数绕过
+        # 必须落入同一日申报硬计数器，否则 1 万笔阻断线可被双实例分裂计数绕过；
+        # 未显式注入时自动采用 order_manager 侧实例，显式双注入不同实例 fail-fast（43 号 §8）
         om_guard = getattr(order_manager, "declaration_guard", None)
         if cancel_rate_guard is not None and om_guard is not None and cancel_rate_guard is not om_guard:
             raise ValueError(
-                "cancel_rate_guard 与 OrderManager.declaration_guard 必须是同一实例"
-                "（日申报计数分裂=1 万笔阻断线失效，AI-R3 复审 P1 裁定）"
+                "cancel_rate_guard 与 OrderManager.declaration_guard 必须同实例"
+                "（日申报计数分裂=1 万笔阻断线失效/限频窗口单侧失明，43 号 §8；AI-R3 复审 P1 + AI-R2 红队 ATK-5 双批裁定）"
             )
         self._cancel_rate_guard = cancel_rate_guard or om_guard or CancelRateGuard()
         # C-004 合规闸（None=未接线不校验，AI-ASM-001 装配批）
@@ -385,6 +395,9 @@ class TradingSession:
         if risk_snap is None:
             return target_weights
         cap = risk_snap.position_cap
+        if cap != cap:  # NaN 自检（NaN != NaN）
+            _logger.critical("风控层仓位上限为 NaN——Fail-Closed 全清")
+            return {}
         if cap >= 1.0:
             return target_weights
         if cap <= 0.0:
@@ -444,7 +457,7 @@ class TradingSession:
     ) -> Order | None:
         """单个标的的目标权重 → 买入/卖出 delta 订单（板块差异化整手）。"""
         price = prices.get(symbol)
-        if not price or price <= 0:
+        if price is None or price.is_nan() or price <= 0:
             _logger.debug("skip %s: no valid price", symbol)
             return None
         target_qty = self._calc_target_qty(symbol, total_asset, weight, price)
@@ -477,7 +490,7 @@ class TradingSession:
         必须一次性申报卖出（board_lot §决策⑰），不可滞留。
         """
         price = prices.get(symbol)
-        if not price or price <= 0:
+        if price is None or price.is_nan() or price <= 0:
             _logger.debug("skip sell-all %s: no valid price", symbol)
             return None
         if qty <= 0:
@@ -636,7 +649,8 @@ class TradingSession:
                     broker_id=self._config.broker_id,
                 )
                 self._order_manager.submit_order(registered.order_id, self._config.broker_id)
-                self._cancel_rate_guard.record_submit()
+                # 报单侧申报计数已内聚到 OrderManager.submit_order（AI-R2 红队
+                # ATK-5：与撤单侧对称，broker 异常时仍计数防漏；session 不再重复计）
                 self._submitted_orders.append(registered)
                 submitted.append(registered)
             except Exception as exc:  # noqa: BLE001 — 拒单分类处理，不阻断后续订单
@@ -742,10 +756,7 @@ class TradingSession:
         """delta 订单 → 纪律闸 OrderRequest（最小契约，43 号 §4.3）。"""
         total_asset = positions.cash + positions.total_market_value
         order_value = order.quantity * (order.limit_price or Decimal("0"))
-        is_add = (
-            order.side is OrderSide.BUY
-            and positions.holdings.get(order.symbol, Decimal("0")) > 0
-        )
+        is_add = order.side is OrderSide.BUY and positions.holdings.get(order.symbol, Decimal("0")) > 0
         return OrderRequest(
             symbol=order.symbol,
             price=float(order.limit_price or Decimal("0")),
@@ -778,7 +789,7 @@ class TradingSession:
                     qty,
                     market_ctx.pre_close_vwap,
                     market_ctx.close_window_volume,
-                    market_ctx.at_time or datetime.now(timezone.utc).time(),
+                    market_ctx.at_time or _cst_now_time(),
                 )
             )
         return detector.run_all(*verdicts)

@@ -348,9 +348,9 @@ exemptions:
     category: threshold_var
     reason: 'worktree 跳过容忍阈值（脚本专用非系统阈值，非词表成员）'
   - file: scripts/governance/d5_architecture/detect_constraint_violations.py
-    line: 86
+    line: 97
     category: business_subset
-    reason: '跨切域清单（#ARCH-CROSS-CUTTING-EXEMPT-001），非 target_layer 词表全集校验'
+    reason: '跨切域清单（#ARCH-CROSS-CUTTING-EXEMPT-001），非 target_layer 词表全集校验（行号自 L86 漂移更新：e8632b2a __manifest__ 注入下移，2026-08-18 第八统筹）'
   - file: src/zephyr/governance/persistence/battlemap_schema.py
     line: 187
     category: business_subset
@@ -372,9 +372,9 @@ exemptions:
     category: arch_concept
     reason: 'Windows API 常量 PROCESS_QUERY_LIMITED_INFORMATION，非阈值变量（_THRESHOLD_VAR_PATTERN 误匹配 LIMIT）'
   - file: scripts/governance/d3_metadata/domain_header_maint.py
-    line: 135
+    line: 146
     category: arch_concept
-    reason: 'Windows API 常量 PROCESS_QUERY_LIMITED_INFORMATION，非阈值变量'
+    reason: 'Windows API 常量 PROCESS_QUERY_LIMITED_INFORMATION，非阈值变量（行号自 L135 漂移更新：e8632b2a __manifest__ 注入下移，2026-08-18 第八统筹）'
   - file: scripts/governance/meta/backup_runtime_state.py
     line: 207
     category: arch_concept

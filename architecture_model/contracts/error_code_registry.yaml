@@ -688,6 +688,31 @@ error_codes:
   module: zephyr.intelligence.news_sentiment_analyzer
   file: src/zephyr/intelligence/news_sentiment_analyzer.py
   description: 舆情分析器参数与输入校验错误（AI-AISA-001 GLM 复审发现未登，2026-08-18 第八统筹收口批补登，tracker #140）
+- code: ZA-RK-0026
+  class: InvalidFHSConfigError
+  module: zephyr.risk.core.fhs_engine
+  file: src/zephyr/risk/core/fhs_engine.py
+  description: FHS 配置非法（如置信度不在 (0,1)）——MOD-RK-26 FHS 引擎（#ARCH-121），2026-08-18 第八统筹收编（tracker #148④）
+- code: ZA-RK-0027
+  class: InsufficientFHSHistoryError
+  module: zephyr.risk.core.fhs_engine
+  file: src/zephyr/risk/core/fhs_engine.py
+  description: 历史收益样本不足（< min_history），无法计算 FHS/对照 VaR（#ARCH-121，tracker #148④ 收编）
+- code: ZA-RK-0028
+  class: ExcessiveFHSNonFiniteDataError
+  module: zephyr.risk.core.fhs_engine
+  file: src/zephyr/risk/core/fhs_engine.py
+  description: 收益序列非有限值占比超阈值——数据缺口期间拒绝出 VaR（Fail-Closed，口径对齐 var_calculator F2+F4 裁定；#ARCH-121，tracker #148④ 收编）
+- code: ZA-RK-0029
+  class: GarchConvergenceError
+  module: zephyr.risk.core.fhs_engine
+  file: src/zephyr/risk/core/fhs_engine.py
+  description: GARCH(1,1) 拟合不收敛（fallback_to_historical=False 时抛出；#ARCH-121，tracker #148④ 收编）
+- code: ZA-REGIME-0030
+  class: RegimeCycleError
+  module: zephyr.regime.regime_cycle_analyzer
+  file: src/zephyr/regime/regime_cycle_analyzer.py
+  description: 时间周期分析错误（输入数据不足/列缺失/日期非法）——MOD-REGIME-006（#ARCH-122），2026-08-18 第八统筹收编
 - code: ZA-KB-0002
   class: MCPError
   module: zephyr.integration.mcp.tool_contracts

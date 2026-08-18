@@ -36,7 +36,7 @@ from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys
 # 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
 __manifest__ = """
 args: []
-description: 'G11: 从 depgraph (PostgreSQL) 生成能力热力图'
+description: 'G11: 从 depgraph 库生成能力热力图'
 dimensions:
 - D5
 priority: P2
@@ -54,11 +54,17 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
-
 from domain_name_mapping import get_domain_name_zh  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "global_capability_heatmap.md"
+OUTPUT_PATH = (
+    REPO_ROOT
+    / "docs"
+    / "02_enterprise_architecture"
+    / "01_global_architecture_diagram"
+    / "global_capability_heatmap.md"
+)
 
 # 能力域映射真源：architecture_model/cross_cutting/capability_heatmap.yaml
 # 裁定#210：硬编码列表已删除，改为从 YAML 动态读取，消除 SSoT 分歧
@@ -76,17 +82,20 @@ def _load_capability_domains() -> list[dict]:
       primary_domains -> domains
     """
     import yaml
+
     with open(YAML_PATH, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     result: list[dict] = []
     for cd in data.get("capability_domains", []):
-        result.append({
-            "id": cd["id"],
-            "name": cd["name"],
-            "name_en": cd.get("name_en", cd["name"]),
-            "type": "横切" if cd.get("type") == "cross_cutting" else "业务",
-            "domains": cd.get("primary_domains", []),
-        })
+        result.append(
+            {
+                "id": cd["id"],
+                "name": cd["name"],
+                "name_en": cd.get("name_en", cd["name"]),
+                "type": "横切" if cd.get("type") == "cross_cutting" else "业务",
+                "domains": cd.get("primary_domains", []),
+            }
+        )
     return result
 
 
@@ -116,7 +125,9 @@ def normalize_domain_id(domain_id: str) -> str:
 
 def table_exists(conn: PgConnExecuteWrapper, table_name: str) -> bool:
     """Check if a table exists in the database."""
-    cur = conn.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name=%s", (table_name,))
+    cur = conn.execute(
+        "SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name=%s", (table_name,)
+    )
     return cur.fetchone() is not None
 
 
@@ -221,7 +232,9 @@ def generate_heatmap() -> str:
             maturity_counts = get_domain_maturity_counts(conn)
         else:
             # Fallback: arch_domain_capacity merged into domains table in v6
-            data_source = f"{DB_DISPLAY_NAME} domains表 + nodes表 (注: arch_domain_capacity表不存在，v6已合并入domains表)"
+            data_source = (
+                f"{DB_DISPLAY_NAME} domains表 + nodes表 (注: arch_domain_capacity表不存在，v6已合并入domains表)"
+            )
             domains = get_all_domains(conn)
             maturity_counts = get_domain_maturity_counts(conn)
     finally:
@@ -231,7 +244,8 @@ def generate_heatmap() -> str:
 
     # Filter out test domains (prefix match) and governance-script domains (exact match)
     real_domains = [
-        d for d in domains
+        d
+        for d in domains
         if not any(d["domain_id"].startswith(prefix) for prefix in TEST_DOMAIN_PREFIXES)
         and d["domain_id"] not in TEST_DOMAIN_EXACT
     ]
@@ -273,7 +287,9 @@ def generate_heatmap() -> str:
     lines.append("")
     lines.append("# 能力热力图 / Capability Heatmap")
     lines.append("")
-    lines.append(f"> **文档作用 / Purpose**: 以矩阵形式展示{len(real_domains)}个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。")
+    lines.append(
+        f"> **文档作用 / Purpose**: 以矩阵形式展示{len(real_domains)}个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。"
+    )
     lines.append("")
     lines.append(f"> 本文档由 generate_capability_heatmap.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")
@@ -308,7 +324,9 @@ def generate_heatmap() -> str:
     # Maturity level legend
     lines.append("## 成熟度图例 / Maturity Legend")
     lines.append("")
-    lines.append("| 等级 / Level | 符号 / Symbol | 覆盖度 / Coverage | 中文名 / Chinese | 英文名 / English | 定义 / Definition |")
+    lines.append(
+        "| 等级 / Level | 符号 / Symbol | 覆盖度 / Coverage | 中文名 / Chinese | 英文名 / English | 定义 / Definition |"
+    )
     lines.append("|:---:|:---:|:---:|--------|--------|------|")
     for level_id in ("L0", "L1", "L2", "L3"):
         info = MATURITY_LEVELS[level_id]
@@ -322,7 +340,9 @@ def generate_heatmap() -> str:
     # Capability domain definitions
     lines.append("## 能力域定义 / Capability Domain Definitions")
     lines.append("")
-    lines.append("| 能力域ID / Capability ID | 中文名 / Chinese | 英文名 / English | 类型 / Type | 包含域数 / Domain Count | 包含域 / Included Domains |")
+    lines.append(
+        "| 能力域ID / Capability ID | 中文名 / Chinese | 英文名 / English | 类型 / Type | 包含域数 / Domain Count | 包含域 / Included Domains |"
+    )
     lines.append("|:---:|--------|--------|:---:|:---:|--------|")
     for cap in CAPABILITY_DOMAINS:
         domains_str = ", ".join(cap["domains"])
@@ -367,7 +387,9 @@ def generate_heatmap() -> str:
     # Capability domain maturity summary
     lines.append("## 能力域成熟度汇总 / Capability Domain Maturity Summary")
     lines.append("")
-    lines.append("| 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |")
+    lines.append(
+        "| 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |"
+    )
     lines.append("|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|")
 
     for cap in CAPABILITY_DOMAINS:
@@ -422,7 +444,9 @@ def generate_heatmap() -> str:
     lines.append("")
     lines.append("### P0 短板（L0-L1，需优先补齐）/ P0 Gaps (L0-L1, priority)")
     lines.append("")
-    lines.append("| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |")
+    lines.append(
+        "| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |"
+    )
     lines.append("|--------|--------|:---:|:---:|:---:|")
     p0_domains = [d for d in domain_data if d["maturity_level"] in ("L0", "L1")]  # noqa: gate-vocab  业务逻辑：L0/L1 成熟度= P0 短板（此处 maturity_level 是 L0-L3 简化体系，非 decision_layer 词表校验）
     if p0_domains:
@@ -437,7 +461,9 @@ def generate_heatmap() -> str:
 
     lines.append("### P1 关注（L2，可用未验证）/ P1 Watch (L2, usable unverified)")
     lines.append("")
-    lines.append("| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |")
+    lines.append(
+        "| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |"
+    )
     lines.append("|--------|--------|:---:|:---:|:---:|")
     p1_domains = [d for d in domain_data if d["maturity_level"] == "L2"]
     if p1_domains:
@@ -452,7 +478,9 @@ def generate_heatmap() -> str:
 
     lines.append("### 已就绪（L3，生产已验证）/ Ready (L3, verified)")
     lines.append("")
-    lines.append("| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |")
+    lines.append(
+        "| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |"
+    )
     lines.append("|--------|--------|:---:|:---:|:---:|")
     ready_domains = [d for d in domain_data if d["maturity_level"] == "L3"]
     if ready_domains:
@@ -471,9 +499,13 @@ def generate_heatmap() -> str:
         lines.append("## 未映射域 / Unmapped Domains")
         lines.append("")
         lines.append("> 以下域未归属任何能力域，可能需要更新能力域定义")
-        lines.append("> The following domains are not mapped to any capability domain; capability definitions may need updating")
+        lines.append(
+            "> The following domains are not mapped to any capability domain; capability definitions may need updating"
+        )
         lines.append("")
-        lines.append("| 架构域 / Architecture Domain | 域名称 / Domain Name | 架构层 / Layer | 节点数 / Nodes | 成熟度 / Maturity |")
+        lines.append(
+            "| 架构域 / Architecture Domain | 域名称 / Domain Name | 架构层 / Layer | 节点数 / Nodes | 成熟度 / Maturity |"
+        )
         lines.append("|--------|--------|--------|:---:|:---:|")
         for d in unmapped:
             lines.append(

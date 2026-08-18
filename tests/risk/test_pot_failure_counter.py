@@ -112,6 +112,21 @@ class TestCrossDayCounting:
         assert counter.record_failure("2026-08-10") == 1
         assert counter.record_failure("2026-08-10") == 1
 
+    def test_success_then_same_day_failure_counts(self, json_store):
+        """红队（AI-R2-001 修复实证）：同日先成功后失败必须计数。
+
+        原缺陷：record_success 把 last_failure_date 写为当天，同日随后
+        record_failure 被去重分支误吞（当日失败不计入连续失败）。
+        修复：成功时清空 last_failure_date。
+        """
+        counter = PotFailureCounter(json_store)
+        counter.record_failure("2026-08-10")
+        counter.record_success("2026-08-11")  # 成功重置
+        # 同日（08-11）随后失败：必须重新计数（原实现被误吞返回 0）
+        assert counter.record_failure("2026-08-11") == 1
+        # 同日再失败仍去重（只计当日一次）
+        assert counter.record_failure("2026-08-11") == 1
+
     def test_day_string_comparison_not_arithmetic(self, json_store):
         """非连续日历日也按"不同日期"累进 (计数器不验证日历连续性, 由调用方语义保证)。"""
         counter = PotFailureCounter(json_store)
@@ -147,6 +162,21 @@ class TestResetConditions:
         counter = PotFailureCounter(mem_store)
         counter.record_success("2026-08-10")
         assert POT_FAILURE_COUNTER_NAMESPACE not in mem_store.data
+
+    def test_success_clears_stale_date_from_legacy_state(self, mem_store):
+        """升级遗留状态（AI-R2 红队 ATK-8）：旧版 record_success 曾写
+        last_failure_date=当天——新版早退分支必须清 stale date，
+        否则同日真实失败被同日去重误吞（计数器失明）。"""
+        mem_store.data[POT_FAILURE_COUNTER_NAMESPACE] = {
+            "consecutive_failures": 0,
+            "last_failure_date": "2026-08-18",  # 旧版遗留的当天日期
+            "adjusted_threshold": BASE_THRESHOLD,
+        }
+        counter = PotFailureCounter(mem_store)
+        counter.record_success("2026-08-18")  # 早退也必须清 stale date
+        assert mem_store.data[POT_FAILURE_COUNTER_NAMESPACE]["last_failure_date"] == ""
+        # 同日真实失败必须可计数（不被去重误吞）
+        assert counter.record_failure("2026-08-18") == 1
 
 
 # ── 3. 时区跨日 ──
@@ -423,3 +453,54 @@ class TestRealRedisBackend:
         raw = redis_store.load(POT_FAILURE_COUNTER_NAMESPACE)
         assert isinstance(raw["adjusted_threshold"], float)
         assert raw["adjusted_threshold"] == POT_THRESHOLD_ADJUSTED
+
+
+# ── 10. _load 非 dict 穿透守卫 (AI-R2-001) ──
+
+
+class TestLoadNonDictGuard:
+    """store 返回合法 JSON 的非 dict 类型 → 按从未失败处理 (fail-closed, 不炸 assess 主链路)。
+
+    原缺陷：_load 只判 rec is None，list/str/int/float 穿透到缺键合并循环
+    (`k not in rec` / `rec[k] = v`) 抛 TypeError。
+    """
+
+    class _RawStore:
+        """原样返回预置 payload 的 stub。
+
+        （_MemoryStore.load 对返回值做 dict() 拷贝，无法注入非 dict 类型；
+        JsonStateStore 直写非 dict JSON 顶层值即可，但用 stub 更直白。）
+        """
+
+        def __init__(self, payload) -> None:
+            self._payload = payload
+
+        def load(self, namespace: str):
+            return self._payload
+
+        def save(self, namespace: str, payload: dict):
+            pass
+
+    def test_load_list_returns_default(self):
+        """store 返回 [1,2,3] → 默认 fresh 状态，record_failure 从 1 计。"""
+        counter = PotFailureCounter(self._RawStore([1, 2, 3]))
+        assert counter.get_adjusted_threshold() == BASE_THRESHOLD
+        assert counter.record_failure("2026-08-16") == 1
+
+    def test_load_string_returns_default(self):
+        """store 返回 "corrupt" → 默认 fresh 状态。"""
+        counter = PotFailureCounter(self._RawStore("corrupt"))
+        assert counter.get_adjusted_threshold() == BASE_THRESHOLD
+        assert counter.record_failure("2026-08-16") == 1
+
+    def test_load_int_returns_default(self):
+        """store 返回 42 → 默认 fresh 状态。"""
+        counter = PotFailureCounter(self._RawStore(42))
+        assert counter.get_adjusted_threshold() == BASE_THRESHOLD
+        assert counter.record_failure("2026-08-16") == 1
+
+    def test_load_float_returns_default(self):
+        """store 返回 0.85 → 默认 fresh 状态。"""
+        counter = PotFailureCounter(self._RawStore(0.85))
+        assert counter.get_adjusted_threshold() == BASE_THRESHOLD
+        assert counter.record_failure("2026-08-16") == 1

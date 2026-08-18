@@ -126,6 +126,7 @@ Version: 0.1.0
 from __future__ import annotations
 
 import logging
+import math
 import threading
 import time
 import uuid
@@ -166,6 +167,7 @@ except ImportError:
         def connect(self) -> None: ...
         def disconnect(self) -> None: ...
 
+
 _logger = logging.getLogger(__name__)
 
 __all__: Final = [
@@ -194,9 +196,9 @@ class SagaCompensationError(Exception):
 class _CancelOutcome(str, Enum):
     """撤单补偿结果（内部，供超时分支决定是否强制查询订单终态）。"""
 
-    CANCELLED = "CANCELLED"      # 撤单成功
-    NOT_NEEDED = "NOT_NEEDED"    # 订单已终态，无需补偿
-    FAILED = "FAILED"            # 撤单失败/异常（可能已成交，需强制查询终态）
+    CANCELLED = "CANCELLED"  # 撤单成功
+    NOT_NEEDED = "NOT_NEEDED"  # 订单已终态，无需补偿
+    FAILED = "FAILED"  # 撤单失败/异常（可能已成交，需强制查询终态）
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -274,6 +276,12 @@ class SagaConfig:
     fill_poll_interval: float = 0.05
     broker_id: str = "simulation"
 
+    def __post_init__(self) -> None:
+        if not math.isfinite(self.timeout_seconds) or self.timeout_seconds <= 0:
+            raise ValueError(f"timeout_seconds 必须为正有限数，got {self.timeout_seconds}")
+        if self.timeout_seconds > 5.0:
+            raise ValueError(f"timeout_seconds 违反 ≤5s 契约，got {self.timeout_seconds}")
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 内部: Fill 收集器 (线程安全, 一次性)
@@ -287,16 +295,33 @@ class _FillCollector:
     自动捕获并设置 Event。用于 Saga 步骤4（成交确认）的同步等待。
     """
 
-    def __init__(self, order_id: str) -> None:
+    def __init__(self, order_id: str, order_quantity: Decimal | None = None) -> None:
         self._order_id = order_id
+        self._order_quantity = order_quantity
         self._event = threading.Event()
         self._fill: Fill | None = None
 
     def __call__(self, fill: Fill) -> None:
-        """fill callback 入口——仅捕获匹配 order_id 的首个 fill。"""
-        if fill.order_id == self._order_id and not self._event.is_set():
-            self._fill = fill
-            self._event.set()
+        """fill callback 入口——匹配 order_id + 数值校验，非法 fill 拒收。"""
+        if fill.order_id != self._order_id or self._event.is_set():
+            return
+        # 红队防御：非法 fill 拒收（不 set event，让 saga 走超时补偿链）
+        if fill.filled_quantity <= 0:
+            _logger.warning("拒收非法 fill: qty=%s <= 0 (order=%s)", fill.filled_quantity, self._order_id)
+            return
+        if self._order_quantity is not None and fill.filled_quantity > self._order_quantity:
+            _logger.warning(
+                "拒收非法 fill: qty=%s > order_qty=%s (order=%s)",
+                fill.filled_quantity,
+                self._order_quantity,
+                self._order_id,
+            )
+            return
+        if fill.fill_price is not None and (fill.fill_price.is_nan() or fill.fill_price <= 0):
+            _logger.warning("拒收非法 fill: price=%s (order=%s)", fill.fill_price, self._order_id)
+            return
+        self._fill = fill
+        self._event.set()
 
     def wait(self, timeout: float) -> Fill | None:
         """等待 fill 到达（阻塞至 timeout 或 fill 到达）。"""
@@ -451,9 +476,23 @@ class OrderExecutionSaga:
             side=side,
             start_time=time.monotonic(),
         )
+        # 重复执行守卫：订单已处终态直接拒绝
+        if order.status in (OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED):
+            ctx.state = SagaState.SIGNAL_INVALID
+            ctx.error = f"订单已处终态 {order.status.value}，拒绝重复执行"
+            _logger.warning(
+                "[Saga %s] 拒绝重复执行: order=%s status=%s",
+                ctx.saga_id[:8],
+                order.order_id,
+                order.status.value,
+            )
+            return ctx.to_result()
         _logger.info(
             "[Saga %s] START order=%s symbol=%s side=%s",
-            ctx.saga_id[:8], order.order_id, order.symbol, side.value,
+            ctx.saga_id[:8],
+            order.order_id,
+            order.symbol,
+            side.value,
         )
 
         try:
@@ -515,8 +554,7 @@ class OrderExecutionSaga:
                 ctx.order.order_id,
                 ctx.order.symbol,
                 AuditSource.AUTO,
-                {"fill_id": fill.fill_id, "fill_price": str(fill.fill_price),
-                 "filled_qty": str(fill.filled_quantity)},
+                {"fill_id": fill.fill_id, "fill_price": str(fill.fill_price), "filled_qty": str(fill.filled_quantity)},
             )
 
             # 步骤5: 持仓更新
@@ -529,7 +567,8 @@ class OrderExecutionSaga:
             ctx.state = SagaState.COMPLETED
             _logger.info(
                 "[Saga %s] COMPLETED order=%s fill=%s duration=%.1fms",
-                ctx.saga_id[:8], ctx.order.order_id,
+                ctx.saga_id[:8],
+                ctx.order.order_id,
                 ctx.fill.fill_id if ctx.fill else None,
                 (time.monotonic() - ctx.start_time) * 1000,
             )
@@ -550,9 +589,7 @@ class OrderExecutionSaga:
         try:
             # 获取当前持仓用于风控校验
             snapshot = self._position_tracker.get_positions()
-            current_holdings: dict[str, float] = {
-                s: float(q) for s, q in snapshot.holdings.items()
-            }
+            current_holdings: dict[str, float] = {s: float(q) for s, q in snapshot.holdings.items()}
             # target_weight: 简化估算（实际应由调用方提供）
             total_nav = float(snapshot.cash + snapshot.total_market_value)
             target_weight = (
@@ -589,8 +626,11 @@ class OrderExecutionSaga:
                 ctx.order.order_id,
                 ctx.order.symbol,
                 AuditSource.AUTO,
-                {"qty": str(ctx.order.quantity), "side": ctx.side.value,
-                 "limit_price": str(ctx.order.limit_price) if ctx.order.limit_price else None},
+                {
+                    "qty": str(ctx.order.quantity),
+                    "side": ctx.side.value,
+                    "limit_price": str(ctx.order.limit_price) if ctx.order.limit_price else None,
+                },
             )
             return True
 
@@ -638,7 +678,7 @@ class OrderExecutionSaga:
                 ctx.order = registered  # 替换为已注册的 Order
 
             # 注册 fill collector（用实际 order_id, 在 submit 前注册防同步成交竞态）
-            ctx.collector = _FillCollector(ctx.order.order_id)
+            ctx.collector = _FillCollector(ctx.order.order_id, ctx.order.quantity)
             self._order_manager.register_fill_callback(ctx.collector)
 
             self._order_manager.submit_order(ctx.order.order_id, self._config.broker_id)
@@ -653,7 +693,9 @@ class OrderExecutionSaga:
             )
             _logger.info(
                 "[Saga %s] ORDER_SUBMITTED order=%s broker=%s",
-                ctx.saga_id[:8], ctx.order.order_id, self._config.broker_id,
+                ctx.saga_id[:8],
+                ctx.order.order_id,
+                self._config.broker_id,
             )
             return True
 
@@ -669,9 +711,7 @@ class OrderExecutionSaga:
             )
             return False
 
-    def _step4_fill_confirm(
-        self, ctx: _SagaContext, collector: _FillCollector | None, timeout: float
-    ) -> Fill | None:
+    def _step4_fill_confirm(self, ctx: _SagaContext, collector: _FillCollector | None, timeout: float) -> Fill | None:
         """步骤4: 成交确认（等待 fill 回调）。"""
         if collector is None or timeout <= 0:
             return None
@@ -698,9 +738,12 @@ class OrderExecutionSaga:
                 ctx.order.order_id,
                 ctx.order.symbol,
                 AuditSource.AUTO,
-                {"fill_id": ctx.fill.fill_id, "avg_price": str(ctx.fill.fill_price),
-                 "filled_qty": str(ctx.fill.filled_quantity),
-                 "commission": str(ctx.fill.commission)},
+                {
+                    "fill_id": ctx.fill.fill_id,
+                    "avg_price": str(ctx.fill.fill_price),
+                    "filled_qty": str(ctx.fill.filled_quantity),
+                    "commission": str(ctx.fill.commission),
+                },
             )
             return True
         except Exception as exc:  # noqa: BLE001
@@ -740,14 +783,10 @@ class OrderExecutionSaga:
                     _logger.info("[Saga %s] COMPENSATED: order cancelled", ctx.saga_id[:8])
                     return _CancelOutcome.CANCELLED
                 # 撤单失败——可能已成交（由调用方强制查询终态，不再吞掉）
-                _logger.warning(
-                    "[Saga %s] cancel returned False (may already be filled)", ctx.saga_id[:8]
-                )
+                _logger.warning("[Saga %s] cancel returned False (may already be filled)", ctx.saga_id[:8])
                 return _CancelOutcome.FAILED
             # 订单已终态（FILLED/CANCELLED/REJECTED）——无需补偿
-            _logger.info(
-                "[Saga %s] skip compensate: order status=%s", ctx.saga_id[:8], ctx.order.status
-            )
+            _logger.info("[Saga %s] skip compensate: order status=%s", ctx.saga_id[:8], ctx.order.status)
             return _CancelOutcome.NOT_NEEDED
         except Exception as exc:  # noqa: BLE001
             _logger.error("[Saga %s] compensate_order failed: %s", ctx.saga_id[:8], exc, exc_info=True)
@@ -775,6 +814,17 @@ class OrderExecutionSaga:
         # 有成交：构造恢复 Fill 补走持仓更新+报告（fill_id 确定性前缀 saga-fq-，
         # 供 fill_id 去重集识别恢复来源——去重落地归 AI-RRESIL-001，本侧只保证可识别）
         recovered_price = terminal.avg_fill_price or ctx.order.limit_price or Decimal("0")
+        # 成本不可得门禁（AI-R2 红队 ATK-6）：市价单 avg_fill_price 缺失时
+        # price=0 入账 → 后续卖出 realized_pnl 全虚盈（账面成本 0）。宁缺账
+        # （critical 告警人工对账，对账链以券商为准兜底）不错账
+        if recovered_price <= 0:
+            _logger.critical(
+                "[Saga %s] 订单已成交但成本价不可得（avg_fill_price/limit_price 均缺），"
+                "不补走持仓更新——人工对账: order=%s",
+                ctx.saga_id[:8],
+                ctx.order.order_id,
+            )
+            return False
         ctx.fill = Fill(
             fill_id=f"saga-fq-{ctx.order.order_id}",
             fill_price=recovered_price,

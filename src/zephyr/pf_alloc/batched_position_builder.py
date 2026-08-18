@@ -48,9 +48,11 @@ Version: 1.1.0（2026-08-15 AI-ASM-001 装配批：BM-BUY-08 纪律闸 gate_batc
 
 from __future__ import annotations
 
+import logging
+import math
 from dataclasses import dataclass, field
 from datetime import date, datetime, time
-from typing import Any, Final
+from typing import Any, Final, Protocol
 
 from zephyr.compliance.discipline_prohibition_checker import (
     DisciplineAction,
@@ -61,6 +63,22 @@ from zephyr.compliance.discipline_prohibition_checker import (
     KillSwitchLite,
     OrderRequest,
 )
+
+_logger = logging.getLogger(__name__)
+
+# ── 持仓对象 Protocol（GATE-ANY-ABUSE 修复：裸 Any → 结构化类型）──
+
+
+class _PositionLike(Protocol):
+    """持仓对象最小契约：入场价 + 收盘价序列 + 最低价序列。"""
+
+    @property
+    def entry_price(self) -> float: ...
+    @property
+    def close_prices(self) -> list[float]: ...
+    @property
+    def low_prices(self) -> list[float]: ...
+
 
 # ── 常量（参数来源：41_buy_flow §3.2.1/§3.4/§3.5）──
 
@@ -102,10 +120,10 @@ class Batch:
     依据: 41_buy_flow §3.2.3 输出契约。
     """
 
-    batch_id: int                       # 1=首仓, 2=确认仓
-    weight_fraction: float              # 占 total_weight 的比例（和=1.0）
-    trigger_conditions: list[str]       # 2/3 条件（41 §3.2.2）
-    status: str = "PENDING"             # PENDING / FILLED / DEGRADED / CANCELLED
+    batch_id: int  # 1=首仓, 2=确认仓
+    weight_fraction: float  # 占 total_weight 的比例（和=1.0）
+    trigger_conditions: list[str]  # 2/3 条件（41 §3.2.2）
+    status: str = "PENDING"  # PENDING / FILLED / DEGRADED / CANCELLED
 
 
 @dataclass(frozen=True)
@@ -116,10 +134,10 @@ class BatchedEntryPlan:
     """
 
     symbol: str
-    total_weight: float                 # 来自 FirmTargetPortfolio（31 产出）
-    batches: list[Batch]                # 按时序排列
-    confidence_tier: str                # AGGRESSIVE / SCALED（C-031 驱动）
-    degrade_reason: str | None = None   # A/B/C 未就绪等降级标记
+    total_weight: float  # 来自 FirmTargetPortfolio（31 产出）
+    batches: list[Batch]  # 按时序排列
+    confidence_tier: str  # AGGRESSIVE / SCALED（C-031 驱动）
+    degrade_reason: str | None = None  # A/B/C 未就绪等降级标记
 
 
 # ── 核心算法（41 §3.2.1/§3.3/§3.4/§3.5/§3.6）──
@@ -147,6 +165,8 @@ def compute_batch_split(
     依据: 41_buy_flow §3.2.1 C-031 置信度→批次比例映射算法
     """
     # A/B/C 板块回踩质量调节置信度（22号 v1.8.0 active 后启用，v1.4.0 集成）
+    if confidence_score_c031 != confidence_score_c031:  # NaN 自检
+        confidence_score_c031 = 0.0
     quality_adjustment = QUALITY_ADJUSTMENT.get(sector_quality, 0.0)
     adjusted_confidence = min(max(confidence_score_c031 + quality_adjustment, 0.0), 1.0)
 
@@ -178,7 +198,7 @@ def compute_batch_split(
 
 
 def detect_breakout_failure(
-    position: Any,
+    position: _PositionLike,
     lookback_days: int = DEFAULT_LOOKBACK_DAYS,
     confirm_bars: int = DEFAULT_CONFIRM_BARS,
 ) -> tuple[str, str, str] | None:
@@ -195,10 +215,19 @@ def detect_breakout_failure(
 
     依据: 41_buy_flow §3.3 突破失败检测算法
     """
+    # 空数据门禁（AI-R2 红队 ATK-7）：无观测证据 → 不降级（无罪推定，
+    # 与 37 号 §3.6 hysteresis 无数据=状态不变同口径）。原实现：low_prices
+    # 空 → min([]) 崩溃；close_prices 空 → all([])=True 误触发 SUPPORT_BROKEN
+    # 止损卖出（数据缺口=无罪证据被当成有罪证据）
+    if not position.low_prices or not position.close_prices:
+        return None
     # 前低定义：首仓入场前 lookback_days 日最低价
     prior_low = min(position.low_prices[-lookback_days:])
-    # 连续 confirm_bars 根确认（防日内假跌破）
+    # 连续 confirm_bars 根确认（防日内假跌破）——不足 N 根=证据不足不判定
+    # （1 根即触发违背"连续确认防假跌破"设计意图）
     recent_closes = position.close_prices[-confirm_bars:]
+    if len(recent_closes) < confirm_bars:
+        return None
     # 支撑破位（更严重）：收盘价 < 前低 → 先检查（收盘 < 前低必然也 < 入场价）
     if all(c < prior_low for c in recent_closes):
         return ("SUPPORT_BROKEN", "暂停全部后续批次", "→ BM-SELL-04-B 止损卖出")
@@ -299,6 +328,9 @@ def clip_to_available_capital(
 
     依据: 41_buy_flow §3.6 资金不足 pro-rata 削减算法
     """
+    if not math.isfinite(available_cash) or available_cash < 0:
+        _logger.warning("available_cash=%s 非法（负/NaN/Inf）——按零资金降级", available_cash)
+        available_cash = 0.0
     target_invest = sum(w for s, w in target_holdings.items() if s != "CASH") * total_account_value
     if target_invest <= available_cash:
         return target_holdings  # 资金充足，原样执行
@@ -306,9 +338,7 @@ def clip_to_available_capital(
     scale = available_cash / target_invest
     clipped = {s: (w * scale if s != "CASH" else w) for s, w in target_holdings.items()}
     clipped["CASH"] = 1.0 - sum(w for s, w in clipped.items() if s != "CASH")
-    clipped["_degrade_reason"] = (
-        f"available_cash={available_cash} < target_invest={target_invest}, scale={scale:.3f}"
-    )
+    clipped["_degrade_reason"] = f"available_cash={available_cash} < target_invest={target_invest}, scale={scale:.3f}"
     return clipped
 
 
@@ -340,14 +370,17 @@ def rank_buy_orders(
     symbols = [
         s
         for s in target_holdings
-        if s != "CASH" and not s.startswith("_")  # 排除 "_degrade_reason" 等元数据键（clip_to_available_capital 产出可含，防 KeyError）
+        if s != "CASH"
+        and not s.startswith(
+            "_"
+        )  # 排除 "_degrade_reason" 等元数据键（clip_to_available_capital 产出可含，防 KeyError）
     ]
     return sorted(
         symbols,
         key=lambda s: (
-            liquidity_scores[s],           # 1. 流动性升序（差→先挂）
-            -confidence_scores[s],         # 2. 置信度降序（高→先挂）
-            -target_holdings[s],           # 3. 权重降序（大→先挂）
+            liquidity_scores[s],  # 1. 流动性升序（差→先挂）
+            -confidence_scores[s],  # 2. 置信度降序（高→先挂）
+            -target_holdings[s],  # 3. 权重降序（大→先挂）
         ),
     )
 
@@ -407,9 +440,7 @@ class BatchedPositionBuilder:
                 "BM-BUY-08 纪律闸未接线（discipline_guard=None）——41 §2.3 "
                 "硬约束买入下单前必过四项严禁检测，buy_flow 不得绕过，Fail-Closed 拒单"
             )
-        if self._kill_switch is not None and self._kill_switch.is_blocked(
-            order.strategy_id, today or date.today()
-        ):
+        if self._kill_switch is not None and self._kill_switch.is_blocked(order.strategy_id, today or date.today()):
             return DisciplineVerdict(
                 behavior=None,
                 action=DisciplineAction.HARD_BLOCK,
@@ -476,7 +507,7 @@ class BatchedPositionBuilder:
     def check_batch2_release(
         self,
         plan: BatchedEntryPlan,
-        position: Any,
+        position: _PositionLike,
         volume_ratio: float,
         days_since_first_batch: int,
     ) -> bool:
@@ -498,9 +529,9 @@ class BatchedPositionBuilder:
         # ① 调整周期到位（降级：距首仓≥1交易日）
         if days_since_first_batch >= 1:
             conditions_met += 1
-        # ② 二次回落不破首仓入场价
+        # ② 二次回落不破首仓入场价（证据不足不计票——Fail-Closed）
         recent_closes = position.close_prices[-2:]
-        if all(c >= position.entry_price for c in recent_closes):
+        if len(recent_closes) >= 2 and all(c >= position.entry_price for c in recent_closes):
             conditions_met += 1
         # ③ 缩量企稳（量比<1）
         if volume_ratio < 1.0:
@@ -510,7 +541,7 @@ class BatchedPositionBuilder:
 
     def check_degrade(
         self,
-        position: Any,
+        position: _PositionLike,
         lookback_days: int = DEFAULT_LOOKBACK_DAYS,
         confirm_bars: int = DEFAULT_CONFIRM_BARS,
     ) -> tuple[str, str, str] | None:

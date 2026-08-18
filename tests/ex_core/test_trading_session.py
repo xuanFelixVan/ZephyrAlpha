@@ -203,7 +203,7 @@ def test_rebalance_star_board_lot_rounding() -> None:
     assert len(orders) == 1
     assert orders[0].side == OrderSide.BUY
     # 1,000,000 * 0.0025 / 10 = 250 股：科创板 200 起 +1 递增 → 250 合法保留
-    #（旧统一 100 股取整会错误截到 200）
+    # （旧统一 100 股取整会错误截到 200）
     assert orders[0].quantity == Decimal("250")
 
 
@@ -515,12 +515,8 @@ def test_sell_before_buy_with_mock_broker_recording() -> None:
     session = _make_session(
         broker=broker,
         strategy=_strategy_returning({"000001.SH": 0.05}),  # SELL 600519, BUY 000001
-        price_provider=make_mock_price_provider(
-            {"600519.SH": Decimal("100"), "000001.SH": Decimal("10")}
-        ),
-        config=TradingSessionConfig(
-            universe=["600519.SH", "000001.SH"], broker_id="test_broker"
-        ),
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100"), "000001.SH": Decimal("10")}),
+        config=TradingSessionConfig(universe=["600519.SH", "000001.SH"], broker_id="test_broker"),
     )
     session.start()
     orders = session.rebalance()
@@ -529,9 +525,7 @@ def test_sell_before_buy_with_mock_broker_recording() -> None:
     buy_indices = [i for i, c in enumerate(submit_calls) if c.startswith("BUY")]
     assert sell_indices, "应有 SELL 提交"
     assert buy_indices, "应有 BUY 提交"
-    assert max(sell_indices) < min(buy_indices), (
-        f"所有 SELL 应在 BUY 之前: SELL={sell_indices}, BUY={buy_indices}"
-    )
+    assert max(sell_indices) < min(buy_indices), f"所有 SELL 应在 BUY 之前: SELL={sell_indices}, BUY={buy_indices}"
     session.stop()
 
 
@@ -827,9 +821,7 @@ class TestDisciplineGate:
             signal_ref_price=95.0,  # 100/95-1=5.26% > 2%
             surge_30min_pct=0.06,  # > 5%
         )
-        session, broker = _make_gate_session(
-            tmp_path, discipline_guard=guard, discipline_ctx_provider=provider
-        )
+        session, broker = _make_gate_session(tmp_path, discipline_guard=guard, discipline_ctx_provider=provider)
         assert session.rebalance() == []
         broker.submit_order.assert_not_called()
 
@@ -837,9 +829,7 @@ class TestDisciplineGate:
         """被套补仓：持仓浮亏 >5% 仍加仓同标的 → Hard Block。"""
         guard = DisciplineGuard(logger=_tmp_logger(tmp_path))
         provider = lambda order, pos: _discipline_ctx(position_pnl_pct=-0.08)  # noqa: E731
-        session, broker = _make_gate_session(
-            tmp_path, discipline_guard=guard, discipline_ctx_provider=provider
-        )
+        session, broker = _make_gate_session(tmp_path, discipline_guard=guard, discipline_ctx_provider=provider)
         # 持仓中有同标的 → is_add=True（_make_position 构造持仓）
         broker.get_positions.return_value = _make_position(
             cash=Decimal("1000000"),
@@ -856,9 +846,7 @@ class TestDisciplineGate:
             win_streak=5,
             normal_exposure=0.01,  # 本单敞口 0.03 > 1.5×0.01
         )
-        session, broker = _make_gate_session(
-            tmp_path, discipline_guard=guard, discipline_ctx_provider=provider
-        )
+        session, broker = _make_gate_session(tmp_path, discipline_guard=guard, discipline_ctx_provider=provider)
         orders = session.rebalance()
         assert len(orders) == 1
         broker.submit_order.assert_called_once()
@@ -870,9 +858,7 @@ class TestDisciplineGate:
         def _boom(order, pos):
             raise RuntimeError("market data down")
 
-        session, broker = _make_gate_session(
-            tmp_path, discipline_guard=guard, discipline_ctx_provider=_boom
-        )
+        session, broker = _make_gate_session(tmp_path, discipline_guard=guard, discipline_ctx_provider=_boom)
         assert session.rebalance() == []
         broker.submit_order.assert_not_called()
 
@@ -917,9 +903,7 @@ class TestTradingComplianceGate:
         """大额成交：单笔 > 分钟均量 50% → Hard Block。"""
         detector = TradingComplianceDetector(logger=_tmp_logger(tmp_path))
         provider = lambda order: ComplianceMarketContext(minute_avg_volume=100.0)  # noqa: E731
-        session, broker = _make_gate_session(
-            tmp_path, compliance_detector=detector, compliance_ctx_provider=provider
-        )
+        session, broker = _make_gate_session(tmp_path, compliance_detector=detector, compliance_ctx_provider=provider)
         # 单 300 股 > 0.5×100=50 → 命中
         assert session.rebalance() == []
         broker.submit_order.assert_not_called()
@@ -928,9 +912,7 @@ class TestTradingComplianceGate:
         """ctx 全 None → 跳过检测放行（字段缺省语义）。"""
         detector = TradingComplianceDetector(logger=_tmp_logger(tmp_path))
         provider = lambda order: ComplianceMarketContext()  # noqa: E731
-        session, broker = _make_gate_session(
-            tmp_path, compliance_detector=detector, compliance_ctx_provider=provider
-        )
+        session, broker = _make_gate_session(tmp_path, compliance_detector=detector, compliance_ctx_provider=provider)
         assert len(session.rebalance()) == 1
 
     def test_ctx_provider_failure_fail_closed(self, tmp_path):
@@ -940,9 +922,7 @@ class TestTradingComplianceGate:
         def _boom(order):
             raise RuntimeError("tick feed down")
 
-        session, broker = _make_gate_session(
-            tmp_path, compliance_detector=detector, compliance_ctx_provider=_boom
-        )
+        session, broker = _make_gate_session(tmp_path, compliance_detector=detector, compliance_ctx_provider=_boom)
         assert session.rebalance() == []
         broker.submit_order.assert_not_called()
 
@@ -952,4 +932,83 @@ class TestTradingComplianceGate:
             _make_gate_session(
                 tmp_path,
                 compliance_detector=TradingComplianceDetector(logger=_tmp_logger(tmp_path)),
+            )
+
+
+class TestNanGuard:
+    """红队攻击：NaN cap/price 穿透。"""
+
+    def test_cap_nan_fail_closed(self) -> None:
+        """position_cap=NaN 时目标权重全清。"""
+        snap = MagicMock()
+        snap.position_cap = float("nan")
+        # 修复前：NaN 穿透 cap>=1.0/cap<=0.0 双检查 → factor=nan 污染全组合权重
+        assert TradingSession._apply_position_cap({"600519.SH": 0.10}, snap) == {}
+
+    def test_price_nan_skip_order(self) -> None:
+        """price=NaN 时不生成订单。"""
+        broker = MagicMock()
+        broker.get_positions.return_value = _make_position(cash=Decimal("1000000"))
+        session = _make_session(
+            broker=broker,
+            strategy=_strategy_returning({"600519.SH": 0.10}),
+            price_provider=make_mock_price_provider({"600519.SH": Decimal("nan")}),
+            config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+        )
+        # 修复前：not price / price<=0 对 Decimal("NaN") 均不拦截 → 生成 NaN 订单
+        assert session.rebalance() == []
+
+
+class TestCancelRateGuardSingleInstanceContract:
+    """红队（AI-R2 ATK-5 配套）：session 与 order_manager 的 CancelRateGuard
+    单实例契约——双实例 wiring 下限频/撤单率与日申报计数单侧失明。"""
+
+    def test_auto_adopt_om_guard_when_not_injected(self) -> None:
+        """session 未显式注入 → 自动采用 order_manager.declaration_guard（同实例）。"""
+        from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
+
+        guard = CancelRateGuard()
+        broker = MagicMock()
+        om = OrderManager(declaration_guard=guard)
+        om.register_broker("test_broker", broker)
+        session = _make_session(broker=broker, order_manager=om)
+        assert session._cancel_rate_guard is guard
+
+    def test_explicit_same_instance_accepted(self) -> None:
+        """显式注入同实例 → 正常构造。"""
+        from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
+
+        guard = CancelRateGuard()
+        broker = MagicMock()
+        om = OrderManager(declaration_guard=guard)
+        om.register_broker("test_broker", broker)
+        session = TradingSession(
+            broker=broker,
+            strategy=MagicMock(),
+            risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
+            signal_provider=make_mock_signal_provider({}),
+            price_provider=make_mock_price_provider({}),
+            order_manager=om,
+            config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+            cancel_rate_guard=guard,
+        )
+        assert session._cancel_rate_guard is guard
+
+    def test_explicit_different_instance_fail_fast(self) -> None:
+        """显式双注入不同实例 → 装配期 fail-fast（防盘中单侧失明）。"""
+        from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
+
+        broker = MagicMock()
+        om = OrderManager(declaration_guard=CancelRateGuard())
+        om.register_broker("test_broker", broker)
+        with pytest.raises(ValueError, match="必须同实例"):
+            TradingSession(
+                broker=broker,
+                strategy=MagicMock(),
+                risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
+                signal_provider=make_mock_signal_provider({}),
+                price_provider=make_mock_price_provider({}),
+                order_manager=om,
+                config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+                cancel_rate_guard=CancelRateGuard(),
             )

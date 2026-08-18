@@ -36,7 +36,7 @@ from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys
 # 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
 __manifest__ = """
 args: []
-description: 'G8: 从 depgraph (PostgreSQL) nodes 表生成设计态vs运营态统计报告MD文档'
+description: 'G8: 从 depgraph 库 nodes 表生成设计态vs运营态统计报告MD文档'
 dimensions:
 - D5
 priority: P2
@@ -54,8 +54,8 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
-
 from domain_name_mapping import get_domain_name_zh  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports" / "design_vs_production.md"
@@ -119,7 +119,9 @@ def generate_design_vs_production() -> str:
     lines.append("")
     lines.append("# 设计态vs运营态统计报告")
     lines.append("")
-    lines.append("> **文档作用 / Purpose**: 展示各域设计态模块与运营态模块的数量对比和迁移进度，跟踪从设计到落地的完成率。")
+    lines.append(
+        "> **文档作用 / Purpose**: 展示各域设计态模块与运营态模块的数量对比和迁移进度，跟踪从设计到落地的完成率。"
+    )
     lines.append("")
     lines.append(f"> 本文档由 generate_design_vs_production.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")
@@ -158,10 +160,12 @@ def generate_design_vs_production() -> str:
     # 各域统计
     lines.append("## 各域设计成熟度统计")
     lines.append("")
-    lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 设计态 / Design | 脚手架 / Scaffold | 生产化率 / Production Rate |")
+    lines.append(
+        "| 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 设计态 / Design | 脚手架 / Scaffold | 生产化率 / Production Rate |"
+    )
     lines.append("|------|--------|:---:|:---:|:---:|:---:|:---:|")
     for d in domain_stats:
-        production_rate = f"{d['production']/d['total']*100:.1f}%" if d["total"] > 0 else "N/A"
+        production_rate = f"{d['production'] / d['total'] * 100:.1f}%" if d["total"] > 0 else "N/A"
         lines.append(
             f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['total']} | "
             f"{d['production']} | {d['design']} | {d['scaffold']} | "
@@ -175,11 +179,15 @@ def generate_design_vs_production() -> str:
 
     lines.append("## 生产化率最低的域（Top 10，需优先推进）")
     lines.append("")
-    lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 生产化率 / Production Rate |")
+    lines.append(
+        "| 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 生产化率 / Production Rate |"
+    )
     lines.append("|------|--------|:---:|:---:|:---:|")
     for d in domains_with_nodes[:10]:
         rate = d["production"] / d["total"] * 100 if d["total"] > 0 else 0
-        lines.append(f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['total']} | {d['production']} | {rate:.1f}% |")
+        lines.append(
+            f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['total']} | {d['production']} | {rate:.1f}% |"
+        )
     lines.append("")
 
     return "\n".join(lines)

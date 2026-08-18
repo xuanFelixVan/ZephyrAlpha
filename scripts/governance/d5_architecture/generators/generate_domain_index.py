@@ -36,7 +36,7 @@ from _common import DB_DISPLAY_NAME  # noqa: E402
 # 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
 __manifest__ = """
 args: []
-description: 'G5: 从 depgraph (PostgreSQL) domains+nodes 表生成域总览索引MD文档'
+description: 'G5: 从 depgraph 库 domains+nodes 表生成域总览索引MD文档'
 dimensions:
 - D5
 priority: P2
@@ -54,8 +54,8 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+from domain_name_mapping import get_domain_name_en, get_domain_name_zh, get_layer_name_bilingual
 
-from domain_name_mapping import get_domain_name_zh, get_domain_name_en, get_layer_name_bilingual
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 # 治本（2026-07-06）：复用 generate_domain_doc 的编号映射，确保索引链接与文件名一致
@@ -167,7 +167,9 @@ def generate_domain_index() -> str:
     lines.append("")
     lines.append("# 域总览索引")
     lines.append("")
-    lines.append("> **文档作用 / Purpose**: 列出所有功能域的编号、ID、名称、层级、模块数等基本信息，是域架构文档的入口索引。")
+    lines.append(
+        "> **文档作用 / Purpose**: 列出所有功能域的编号、ID、名称、层级、模块数等基本信息，是域架构文档的入口索引。"
+    )
     lines.append("")
     lines.append(f"> 本文档由 generate_domain_index.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")
@@ -208,7 +210,9 @@ def generate_domain_index() -> str:
         layer_zh, layer_en = get_layer_name_bilingual(layer)
         lines.append(f"### {layer_zh} / {layer_en} ({len(layer_domains)} 个域 / {len(layer_domains)} domains)")
         lines.append("")
-        lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 容量 / Capacity | 文档 / Doc |")
+        lines.append(
+            "| 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 容量 / Capacity | 文档 / Doc |"
+        )
         lines.append("|------|--------|:---:|:---:|:---:|------|------|")
         for d in layer_domains:
             capacity = f"{d['actual_nodes']}/{d['max_modules']}"

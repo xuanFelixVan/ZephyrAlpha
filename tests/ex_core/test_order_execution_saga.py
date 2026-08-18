@@ -48,13 +48,15 @@ class FakeRiskValidator:
         from zephyr.governance.adapters.risk_validation_bridge import RiskViolation
 
         if self._reject:
-            return [RiskViolation(
-                constraint="test_constraint",
-                description="test rejection",
-                limit_value=Decimal("0.10"),
-                actual_value=Decimal("0.50"),
-                severity=self._severity,
-            )]
+            return [
+                RiskViolation(
+                    constraint="test_constraint",
+                    description="test rejection",
+                    limit_value=Decimal("0.10"),
+                    actual_value=Decimal("0.50"),
+                    severity=self._severity,
+                )
+            ]
         return []
 
     def validate_portfolio(self, holdings, market_values, total_nav, limits):
@@ -287,9 +289,15 @@ class TestSuccessFlow:
         tracker = PositionTracker(initial_cash=Decimal("1000000"))
         # 先买入建仓
         buy_fill = Fill(
-            fill_id="pre-fill", fill_price=Decimal("10.00"), fill_timestamp=datetime.now(UTC),
-            filled_quantity=Decimal("200"), idempotency_key="pre", order_id="pre",
-            strategy_id="test", symbol="600000.SH", commission=Decimal("3"),
+            fill_id="pre-fill",
+            fill_price=Decimal("10.00"),
+            fill_timestamp=datetime.now(UTC),
+            filled_quantity=Decimal("200"),
+            idempotency_key="pre",
+            order_id="pre",
+            strategy_id="test",
+            symbol="600000.SH",
+            commission=Decimal("3"),
         )
         tracker.apply_fill(buy_fill, OrderSide.BUY)
 
@@ -479,6 +487,108 @@ class TestFillTimeout:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# 超时恢复链成本不可得门禁（AI-R2 红队 ATK-6）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class _FilledNoPriceBroker(BrokerInterface):
+    """超时后撤单失败、查询返回已成交但均价缺失（市价单数据缺口场景）。"""
+
+    def __init__(self) -> None:
+        self._terminal: Order | None = None
+
+    @property
+    def broker_id(self) -> str:
+        return "noprice"
+
+    def connect(self) -> bool:
+        return True
+
+    def disconnect(self) -> None:
+        pass
+
+    def submit_order(self, order: Order) -> str:
+        broker_oid = f"bk-{order.order_id[:8]}"
+        # 已成交但 avg_fill_price=None（broker 数据缺口）
+        self._terminal = Order(
+            order_id=order.order_id,
+            symbol=order.symbol,
+            strategy_id=order.strategy_id,
+            side=order.side,
+            order_type=order.order_type,
+            quantity=order.quantity,
+            limit_price=order.limit_price,
+            status=OrderStatus.FILLED,
+            created_at=order.created_at,
+            broker_order_id=broker_oid,
+            idempotency_key=order.idempotency_key,
+            filled_quantity=order.quantity,
+            avg_fill_price=None,
+        )
+        return broker_oid
+
+    def cancel_order(self, broker_order_id: str) -> bool:
+        return False  # 撤单失败（已成交）
+
+    def query_order(self, broker_order_id: str) -> Order | None:
+        return self._terminal
+
+    def get_positions(self) -> PositionSnapshot:
+        return PositionSnapshot(
+            as_of_timestamp=datetime.now(UTC),
+            portfolio_id="noprice",
+            idempotency_key="noprice",
+            cash=Decimal("1000000"),
+            gross_leverage=0.0,
+            holdings={},
+            market_values={},
+            total_market_value=Decimal("0"),
+        )
+
+    def register_fill_callback(self, callback) -> None:
+        pass
+
+
+class TestRecoverFilledOrderZeroPriceGuard:
+    """红队（AI-R2 ATK-6）：市价单超时恢复，成本价不可得 → 不按 0 价入账。
+
+    实证（修复前）：recovered_price=avg_fill_price or limit_price or 0 →
+    Fill(price=0) → apply_fill 成本 0 入账 → 后续卖出 realized_pnl 全虚盈。
+    修复后：宁缺账（critical 告警人工对账，对账链以券商为准兜底）不错账。
+    """
+
+    def test_zero_cost_recovery_rejected(self):
+        broker = _FilledNoPriceBroker()
+        tracker = PositionTracker(initial_cash=Decimal("1000000"))
+        saga = make_saga(
+            broker,
+            position_tracker=tracker,
+            config=SagaConfig(timeout_seconds=0.2, broker_id="noprice"),
+        )
+        # 市价单：limit_price=None（成本兜底链最后一环也缺失）
+        order = Order(
+            order_id="atk6-mkt",
+            symbol="600000.SH",
+            strategy_id="test",
+            side=OrderSide.BUY,
+            order_type=OrderType.MARKET,
+            quantity=Decimal("1000"),
+            limit_price=None,
+            status=OrderStatus.PENDING,
+            created_at=datetime.now(UTC),
+            idempotency_key="atk6-mkt",
+        )
+
+        result = saga.execute(order, OrderSide.BUY)
+
+        # 修复前：COMPLETED + apply_fill(price=0)；修复后：保持 TIMEOUT 语义人工对账
+        assert result.state == SagaState.TIMEOUT
+        assert result.fill is None
+        assert len(tracker.holdings) == 0  # 成本 0 的持仓未入账
+        assert tracker.cash == Decimal("1000000")
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # 持仓更新失败 + 补偿回滚
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -637,10 +747,7 @@ class TestConcurrency:
             except Exception as exc:  # noqa: BLE001 — 并发测试工作线程收集一切异常到 errors 列表, 由主线程断言
                 errors.append(exc)
 
-        threads = [
-            threading.Thread(target=run_saga, args=(f"60000{i}.SH",))
-            for i in range(5)
-        ]
+        threads = [threading.Thread(target=run_saga, args=(f"60000{i}.SH",)) for i in range(5)]
         for t in threads:
             t.start()
         for t in threads:
@@ -698,3 +805,153 @@ class TestStateMachine:
         ]
         for s in failure_states:
             assert s in SagaState
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 红队：SagaConfig 超时校验（P1）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestSagaConfigValidation:
+    """SagaConfig.__post_init__ 拒绝极端/非法超时值。"""
+
+    def test_timeout_inf_rejected(self):
+        with pytest.raises(ValueError, match="正有限数"):
+            SagaConfig(timeout_seconds=float("inf"))
+
+    def test_timeout_nan_rejected(self):
+        with pytest.raises(ValueError, match="正有限数"):
+            SagaConfig(timeout_seconds=float("nan"))
+
+    def test_timeout_zero_rejected(self):
+        with pytest.raises(ValueError, match="正有限数"):
+            SagaConfig(timeout_seconds=0.0)
+
+    def test_timeout_negative_rejected(self):
+        with pytest.raises(ValueError, match="正有限数"):
+            SagaConfig(timeout_seconds=-1.0)
+
+    def test_timeout_over_5s_rejected(self):
+        with pytest.raises(ValueError, match="≤5s"):
+            SagaConfig(timeout_seconds=5.1)
+
+    def test_timeout_valid_accepted(self):
+        cfg = SagaConfig(timeout_seconds=5.0)
+        assert cfg.timeout_seconds == 5.0
+        cfg2 = SagaConfig(timeout_seconds=0.5)
+        assert cfg2.timeout_seconds == 0.5
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 红队：_FillCollector 非法 fill 拒收（P1）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _make_fill(
+    order_id: str,
+    qty: Decimal = Decimal("100"),
+    price: Decimal = Decimal("10.00"),
+    fill_id: str = "rt-fill",
+) -> Fill:
+    return Fill(
+        fill_id=fill_id,
+        fill_price=price,
+        fill_timestamp=datetime.now(UTC),
+        filled_quantity=qty,
+        idempotency_key=f"idem-{fill_id}",
+        order_id=order_id,
+        strategy_id="test",
+        symbol="600000.SH",
+    )
+
+
+class TestFillCollectorGuard:
+    """_FillCollector 对 qty/price 非法的 fill 拒收（不 set event）。"""
+
+    def test_invalid_fill_qty_zero_not_collected(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        collector(_make_fill("ord-1", qty=Decimal("0")))
+        assert not collector.collected
+
+    def test_invalid_fill_qty_negative_not_collected(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        collector(_make_fill("ord-1", qty=Decimal("-10")))
+        assert not collector.collected
+
+    def test_invalid_fill_qty_over_order_not_collected(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        collector(_make_fill("ord-1", qty=Decimal("200")))
+        assert not collector.collected
+
+    def test_invalid_fill_price_nan_not_collected(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        collector(_make_fill("ord-1", price=Decimal("NaN")))
+        assert not collector.collected
+
+    def test_valid_fill_collected(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        fill = _make_fill("ord-1", qty=Decimal("100"), price=Decimal("10.00"))
+        collector(fill)
+        assert collector.collected
+        assert collector.wait(timeout=0.1) is fill
+
+    def test_other_order_fill_ignored(self):
+        from zephyr.ex_core.order_execution_saga import _FillCollector
+
+        collector = _FillCollector("ord-1", Decimal("100"))
+        collector(_make_fill("ord-other"))
+        assert not collector.collected
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 红队：execute 终态订单重复执行守卫（P2）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestExecuteTerminalStateGuard:
+    """已处终态（FILLED/CANCELLED/REJECTED）的订单拒绝重复执行。"""
+
+    def test_execute_filled_order_rejected(self):
+        broker = InstantFillBroker()
+        saga = make_saga(broker)
+        order = make_order()
+        order.status = OrderStatus.FILLED
+
+        result = saga.execute(order, OrderSide.BUY)
+
+        assert result.state == SagaState.SIGNAL_INVALID
+        assert result.error is not None
+        assert "终态" in result.error
+        assert result.steps_completed == ()
+
+    def test_execute_cancelled_order_rejected(self):
+        broker = InstantFillBroker()
+        saga = make_saga(broker)
+        order = make_order()
+        order.status = OrderStatus.CANCELLED
+
+        result = saga.execute(order, OrderSide.BUY)
+
+        assert result.state == SagaState.SIGNAL_INVALID
+        assert "终态" in (result.error or "")
+
+    def test_execute_rejected_order_rejected(self):
+        broker = InstantFillBroker()
+        saga = make_saga(broker)
+        order = make_order()
+        order.status = OrderStatus.REJECTED
+
+        result = saga.execute(order, OrderSide.BUY)
+
+        assert result.state == SagaState.SIGNAL_INVALID
+        assert "终态" in (result.error or "")

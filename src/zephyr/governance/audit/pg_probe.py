@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_PG_PROBE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
+# [BLUEPRINT] MOD-PG_PROBE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.audit.pg_probe
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (_load_pg_config 连接参数真源); zephyr.governance.audit.reconciliation_registry (log_gate_failure/_governance_db_path 留痕链); zephyr.shared.utils.time_utils (now_utc); stdlib(socket/json)

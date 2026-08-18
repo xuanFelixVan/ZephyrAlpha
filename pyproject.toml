@@ -56,6 +56,10 @@ dependencies = [
     "plotly_resampler>=0.9.0,<1.0.0",
     # 5.30.4 修复：python-dotenv 被 __init__.py 引用但未声明（幽灵依赖）
     "python-dotenv>=1.0.0,<2.0.0",
+    # AI-R2 红队：zoneinfo.ZoneInfo("Asia/Shanghai") 被 trading_session/
+    # open_order_resolver/miniqmt_provider 直接引用——Windows 无系统 IANA 库，
+    # 不得依赖 pandas 传递依赖兜底（幽灵依赖同 python-dotenv 案）
+    "tzdata>=2024.1",
     # MOD-L00-004 数据源集成器：APScheduler 调度器 + SQLAlchemy JobStore
     "apscheduler>=3.10.0,<4.0.0",
     "sqlalchemy>=2.0.0,<3.0.0",

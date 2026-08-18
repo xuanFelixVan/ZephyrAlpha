@@ -70,6 +70,8 @@ PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
 # A3: _evaluate_systemic_risk(LEVEL_3→build_escape_directive→_engage_kill_switch; 降级候选→check_recovery门禁)
 # O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level) + RecoveryResult + 清算报告
 # [/ALGO_FLOW]
+（ALGO_FLOW 双位镜像：docstring 内本块=GATE-ALGO-FLOW 门禁 AST 读取真源，文件头注区为人工速览镜像——
+2026-08-18 第八统筹恢复 docstring 副本：AI-R2-001 删副本治本时未识门禁读取口径，头注区镜像门禁不可见）
 """
 
 from __future__ import annotations
@@ -171,9 +173,7 @@ class RiskLayerConfig:
     today_fills_probe: str = "get_today_fills"
     systemic_spread_recovery_ratio: float = 0.5
     systemic_sell_pressure_recovery: float = 0.50
-    systemic_min_hold_minutes: dict[int, int] = field(
-        default_factory=lambda: {1: 10, 2: 15, 3: 30}
-    )
+    systemic_min_hold_minutes: dict[int, int] = field(default_factory=lambda: {1: 10, 2: 15, 3: 30})
 
 
 @dataclass(frozen=True)
@@ -421,11 +421,7 @@ class RiskLayerOrchestrator:
             # （Decimal），rebuild_from_broker 期望 {"qty","avg_cost"} 映射——
             # 持仓数量以券商为准，avg_cost 保留 tracker 既有成本底档（缺失置 0，
             # 成本底档缺失不阻断重建；持仓数量正确性优先于成本精度）
-            avg_costs = (
-                self._position_tracker.avg_costs
-                if self._position_tracker is not None
-                else {}
-            )
+            avg_costs = self._position_tracker.avg_costs if self._position_tracker is not None else {}
             holdings = {
                 symbol: {"qty": qty, "avg_cost": avg_costs.get(symbol, Decimal("0"))}
                 for symbol, qty in snapshot.holdings.items()
@@ -434,16 +430,14 @@ class RiskLayerOrchestrator:
             if self._position_tracker is not None:
                 # today_fills 元素契约适配：broker 扩展可能返回 (Fill, side) 元组
                 # 或裸 Fill；rebuild 仅消费 fill_id（去重登记），统一取 Fill 本体
-                fills = [
-                    item[0] if isinstance(item, (tuple, list)) else item
-                    for item in today_fills
-                ]
+                fills = [item[0] if isinstance(item, (tuple, list)) else item for item in today_fills]
                 self._position_tracker.rebuild_from_broker(holdings, fills)
             with self._lock:
                 self._recovery_completed = True
                 if snapshot.cash is not None:
                     nav = float(snapshot.cash + snapshot.total_market_value)
-                    if nav > 0 and not self._nav_history:
+                    # 非有限门禁（AI-R2 红队）：broker 快照异常值不得入收益序列
+                    if math.isfinite(nav) and nav > 0 and not self._nav_history:
                         self._nav_history.append(nav)
             _logger.info(
                 "启动恢复完成: holdings=%d today_fills=%d（以券商为准）",
@@ -452,9 +446,7 @@ class RiskLayerOrchestrator:
             )
             return RecoveryResult(True, len(holdings), len(today_fills), None, now)
         except Exception as exc:  # noqa: BLE001 — Fail-Closed 必须全捕获，恢复失败禁止下单
-            _logger.critical(
-                "启动恢复失败，Fail-Closed 禁止下单: %s", exc, exc_info=True
-            )
+            _logger.critical("启动恢复失败，Fail-Closed 禁止下单: %s", exc, exc_info=True)
             with self._lock:
                 self._recovery_completed = False
             return RecoveryResult(False, 0, 0, str(exc), now)
@@ -463,9 +455,7 @@ class RiskLayerOrchestrator:
         """查询当日成交（broker 可选扩展能力，缺失 -> 空列表降级）。"""
         probe = getattr(self._broker, self._config.today_fills_probe, None)
         if probe is None:
-            _logger.warning(
-                "broker 无 %s 扩展，当日成交按空列表降级重建", self._config.today_fills_probe
-            )
+            _logger.warning("broker 无 %s 扩展，当日成交按空列表降级重建", self._config.today_fills_probe)
             return []
         result = probe()
         return list(result) if result is not None else []
@@ -500,11 +490,12 @@ class RiskLayerOrchestrator:
         Returns:
             RiskLayerSnapshot（含 position_cap / allow_new_position / degraded）
         """
-        # nav 非有限值（NaN/±Inf）与非正同口径兜底（AI-R3 复审 P2 治本）：
-        # NaN 直通会污染 _nav_history 收益序列（VaR 侧 isfinite 口径之外的缺口）
+        # 非有限值门禁（AI-R2 红队 ATK-2 + AI-R3 复审 P2 双批次同点治本）：NaN 穿透 nav<=0（比较恒 False）→
+        # 本轮回撤失明；+Inf 使 tracker peak=inf 永久中毒（EMERGENCY 永不触发）。
+        # 兜底快照不加约束但 degraded 留痕，回撤/VaR 链下轮恢复
         if not math.isfinite(nav) or nav <= 0:
-            _logger.error("nav 非有限或非正，跳过本次风控评估（兜底停新开仓）: nav=%s", nav)
-            return self._fallback_snapshot(nav, "nav_non_finite_or_non_positive")
+            _logger.error("nav 非正/非有限，跳过本次风控评估: nav=%s", nav)
+            return self._fallback_snapshot(nav, "nav_non_positive_or_non_finite")
         now = now or self._clock()
 
         # 1. 回撤追踪（EMERGENCY 经监听链同步触发熔断，tracker 内部去抖）
@@ -541,7 +532,9 @@ class RiskLayerOrchestrator:
                         drawdown_pct=dd_snapshot.drawdown,
                         peak_nav=dd_snapshot.peak,
                         current_nav=nav,
-                        recovered_pct=self._recovered_pct(dd_snapshot.drawdown, nav, dd_snapshot.peak, dd_snapshot.trough),
+                        recovered_pct=self._recovered_pct(
+                            dd_snapshot.drawdown, nav, dd_snapshot.peak, dd_snapshot.trough
+                        ),
                     ),
                     var_cvar=VarCvarMetrics(var_95=var_pct, cvar_95=max(es_pct, var_pct)),
                 )
@@ -574,9 +567,7 @@ class RiskLayerOrchestrator:
             systemic_cap=systemic.cap if systemic is not None else 1.0,
             systemic_halt=systemic.halt if systemic is not None else False,
             systemic_signal_count=systemic.signal_count if systemic is not None else 0,
-            systemic_sentiment_breaker=(
-                systemic.sentiment_breaker if systemic is not None else False
-            ),
+            systemic_sentiment_breaker=(systemic.sentiment_breaker if systemic is not None else False),
             escape_directive=systemic.escape_directive if systemic is not None else None,
         )
         with self._lock:
@@ -651,8 +642,9 @@ class RiskLayerOrchestrator:
 
         接线语义：systemic_detector 与 systemic_input_provider 成对注入即生效
         （任一缺失=未接线，返回 None，快照 systemic_* 走默认值不加约束）。
-        provider 失效/无输入 → 本轮跳过（状态保持，Fail-Safe-Neutral——回撤/
-        VaR 链仍保护；流动性输入缺失不应冻结交易主循环）。
+        provider 失效/空输入/detector 失效 → 本轮跳过检测但输出 state 派生
+        cap/halt（_state_hold_view，37 号 §3.6 hysteresis 无数据=状态不变——
+        危机中数据中断不放松仓位约束；回撤/VaR 链仍保护，主循环不冻结）。
 
         状态机（37 号 §3.3 触发 + §3.6 恢复双口径）：
           - 升级（alert 级别 > 当前级别）：立即迁移并重置计时；迁移进入 LEVEL_3
@@ -669,16 +661,26 @@ class RiskLayerOrchestrator:
             raw_inputs = provider()
         except Exception:  # noqa: BLE001 — 输入失效不阻断交易主循环，下轮重试
             _logger.exception("systemic_input_provider 失效，本轮跳过系统性风险检测（状态保持）")
-            return None
+            return self._state_hold_view()
+        # 类型防御（AI-R2 红队 ATK-3）：非 Mapping（如 list/tuple/str）
+        # 直接 .items() 会崩调仓主循环 → 降级空输入处理
+        if not isinstance(raw_inputs, Mapping):
+            _logger.warning(
+                "systemic_input_provider 返回非 Mapping（%s），降级空输入处理",
+                type(raw_inputs).__name__,
+            )
+            return self._state_hold_view()
         if not raw_inputs:
-            return None
+            # 空输入同异常：无观测轮保持 state 派生约束——危机中数据中断
+            # 不放松仓位上限（AI-R2-001 修复：原返回 None → cap 跳回 1.0）
+            return self._state_hold_view()
         # provider 契约：返回 detector.check() 关键字参数映射（"now" 由编排层注入）
         inputs = {k: v for k, v in raw_inputs.items() if k != "now"}
         try:
             alert = detector.check(now=now, **inputs)
         except Exception:  # noqa: BLE001 — 检测失效不阻断交易主循环（输入校验错属数据边界）
             _logger.exception("AshareSystemicRiskDetector.check 失效，本轮跳过（状态保持）")
-            return None
+            return self._state_hold_view()
 
         state = self._systemic_state
         prev_level = state.level if state.in_crisis else 0
@@ -686,14 +688,22 @@ class RiskLayerOrchestrator:
         directive: dict[str, Any] | None = None
 
         if state.in_crisis and level < state.level:
-            # 降级候选——check_recovery 门禁（复用 MOD-RK-21，真源唯一）
-            target = self._try_systemic_recovery(alert, now, inputs)
+            # 降级候选——check_recovery 门禁（复用 MOD-RK-21，真源唯一）；
+            # 门禁入参类型异常等失效隔离跳过不阻断主循环（docstring 契约，
+            # AI-R2-001 修复：原未隔离，float() 类型错会崩调仓循环）
+            try:
+                target = self._try_systemic_recovery(alert, now, inputs)
+            except Exception:  # noqa: BLE001 — 降级门禁失效保持当前级别，下轮重试
+                _logger.exception("系统性风险降级门禁失效，本轮保持当前级别")
+                target = None
             if target is not None:
                 state.exit_crisis(target, timestamp=now)
                 self._systemic_via_recovery = target >= 1
                 _logger.info(
                     "系统性风险降级: LEVEL_%d → LEVEL_%d（信号=%d）",
-                    prev_level, target, alert.signal_count,
+                    prev_level,
+                    target,
+                    alert.signal_count,
                 )
         elif level > prev_level:
             state.enter_crisis(level, timestamp=now)
@@ -739,18 +749,30 @@ class RiskLayerOrchestrator:
                 current_spread=float(spread) if spread is not None else 0.0,
                 current_sell_pressure=float(pressure) if pressure is not None else 0.0,
                 trigger_threshold_spread=dcfg.bid_ask_spread_threshold,
-                recovery_threshold_spread=(
-                    dcfg.bid_ask_spread_threshold * self._config.systemic_spread_recovery_ratio
-                ),
+                recovery_threshold_spread=(dcfg.bid_ask_spread_threshold * self._config.systemic_spread_recovery_ratio),
                 trigger_threshold_pressure=dcfg.sell_pressure_threshold,
                 recovery_threshold_pressure=self._config.systemic_sell_pressure_recovery,
-                min_hold_minutes=self._config.systemic_min_hold_minutes[
-                    self._systemic_state.level
-                ],
+                min_hold_minutes=self._config.systemic_min_hold_minutes[self._systemic_state.level],
                 elapsed=self._systemic_state.elapsed_minutes(now),
                 current_level=self._systemic_state.level,
                 active_signals=alert.signal_count,
             )
+        )
+
+    def _state_hold_view(self) -> _SystemicView:
+        """无观测轮状态保持视图（37 号 §3.6 hysteresis 语义：无数据=状态不变）。
+
+        provider 失效/空输入/detector 失效时，快照仍输出 state 派生的
+        cap/halt——危机中数据中断不放松仓位约束，也不升级（AI-R2-001）。
+        """
+        cap, halt = self._systemic_cap_halt()
+        return _SystemicView(
+            level=self.systemic_level,
+            cap=cap,
+            halt=halt,
+            signal_count=0,
+            sentiment_breaker=False,
+            escape_directive=None,
         )
 
     def _systemic_cap_halt(self) -> tuple[float, bool]:
@@ -789,7 +811,7 @@ class RiskLayerOrchestrator:
                 f"peak={event.snapshot.peak:.2f} nav={event.snapshot.net_value:.2f}"
             )
 
-    def _engage_kill_switch(self, reason: str) -> dict[str, object]:
+    def _engage_kill_switch(self, reason: str) -> dict[str, object] | None:
         """熔断单一仲裁点：状态层熔断 + 事件记录 + 清算执行（重复触发直接返回首报）。
 
         触发源（回撤 EMERGENCY / 尾部 EMERGENCY / BS-007）在此互斥——
@@ -798,6 +820,8 @@ class RiskLayerOrchestrator:
         重入守卫（AI-R3 复审 P1 治本）：锁内以 _liquidation_started 闩判定，
         置位即拒后来者——与 report 是否完成解耦，消除清算执行期间（秒级窗口）
         并发触发二次清算的 TOCTOU。首报完成前后来者得到占位报告。
+        （AI-R2-001 红队同点独立命中：宁少清算禁单人工介入，不双清算——重复卖单=A 股卖空违规风险；
+        本闩与 _kill_switch_engaged 恒同点置位，双批次语义等价合并）
         """
         with self._lock:
             if self._liquidation_started:
@@ -832,7 +856,7 @@ class RiskLayerOrchestrator:
             positions = {
                 symbol: float(qty)
                 for symbol, qty in positions_snapshot.holdings.items()
-                if qty != 0
+                if qty != 0 and math.isfinite(float(qty))
             }
         except Exception as exc:  # noqa: BLE001 — 持仓查询失效仍需熔断状态生效
             _logger.critical("清算持仓查询失效（熔断状态保持，新单已禁）: %s", exc, exc_info=True)
@@ -845,15 +869,19 @@ class RiskLayerOrchestrator:
                 _logger.exception("open_orders_provider 失效（降级为仅平仓）")
 
         adapter = _LiquidationBrokerAdapter(self._broker)
-        report = execute_kill_switch_liquidation(
-            adapter,
-            positions,
-            open_orders,
-            scope=self._config.liquidation_scope,
-            max_orders_per_second=self._config.max_orders_per_second,
-            event_id=event.get("event_id"),
-            state_store=self._state_store,
-        )
+        try:
+            report = execute_kill_switch_liquidation(
+                adapter,
+                positions,
+                open_orders,
+                scope=self._config.liquidation_scope,
+                max_orders_per_second=self._config.max_orders_per_second,
+                event_id=event.get("event_id"),
+                state_store=self._state_store,
+            )
+        except Exception:  # noqa: BLE001 — 清算执行异常不阻断熔断状态（已禁单），人工介入
+            _logger.critical("清算执行异常（熔断状态保持，新单已禁）", exc_info=True)
+            report = {"status": "liquidation_error", "reason": "execute_kill_switch_liquidation exception"}
         result: dict[str, object] = {"event": event, "report": report, "reason": reason}
         with self._lock:
             self._kill_switch_report = result

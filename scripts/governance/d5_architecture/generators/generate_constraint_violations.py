@@ -36,7 +36,7 @@ from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys
 # 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
 __manifest__ = """
 args: []
-description: 'G9: 从 depgraph (PostgreSQL) arch_constraints 表生成架构约束违规报告MD文档'
+description: 'G9: 从 depgraph 库 arch_constraints 表生成架构约束违规报告MD文档'
 dimensions:
 - D5
 priority: P2
@@ -110,7 +110,9 @@ def generate_constraint_violations() -> str:
     lines.append("")
     lines.append("# 架构约束违规报告")
     lines.append("")
-    lines.append("> **文档作用 / Purpose**: 展示架构约束违规情况，包括跨层依赖、循环依赖、命名违规等，为架构治理提供修复清单。")
+    lines.append(
+        "> **文档作用 / Purpose**: 展示架构约束违规情况，包括跨层依赖、循环依赖、命名违规等，为架构治理提供修复清单。"
+    )
     lines.append("")
     lines.append(f"> 本文档由 generate_constraint_violations.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")
@@ -165,7 +167,9 @@ def generate_constraint_violations() -> str:
     if open_violations:
         lines.append("## Open 违规清单（需处理）")
         lines.append("")
-        lines.append("| 约束ID / Constraint ID | 名称 / Name | 类型 / Type | 源域 / From Domain | 目标域 / To Domain | 严重程度 / Severity | 执行方式 / Enforcement | 描述 / Description |")
+        lines.append(
+            "| 约束ID / Constraint ID | 名称 / Name | 类型 / Type | 源域 / From Domain | 目标域 / To Domain | 严重程度 / Severity | 执行方式 / Enforcement | 描述 / Description |"
+        )
         lines.append("|--------|------|------|------|--------|---------|---------|------|")
         for c in open_violations:
             desc_short = c["description"][:60] + "..." if len(c["description"]) > 60 else c["description"]
@@ -179,7 +183,9 @@ def generate_constraint_violations() -> str:
     # 完整约束清单
     lines.append("## 完整约束清单")
     lines.append("")
-    lines.append("| 约束ID / Constraint ID | 名称 / Name | 类型 / Type | 源域 / From Domain | 目标域 / To Domain | 严重程度 / Severity | 状态 / Status |")
+    lines.append(
+        "| 约束ID / Constraint ID | 名称 / Name | 类型 / Type | 源域 / From Domain | 目标域 / To Domain | 严重程度 / Severity | 状态 / Status |"
+    )
     lines.append("|--------|------|------|------|--------|---------|------|")
     for c in constraints:
         lines.append(

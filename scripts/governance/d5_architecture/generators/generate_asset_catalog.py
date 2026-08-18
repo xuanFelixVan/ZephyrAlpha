@@ -27,7 +27,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 'G13: 从 depgraph (PostgreSQL) 生成资产清单全景图'
+description: 'G13: 从 depgraph 库生成资产清单全景图'
 dimensions:
 - D5
 priority: P2

@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-18T12:25:24Z
+# 自动生成于 2026-08-18T13:35:28Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-18T12:25:24Z'
+generated_at: '2026-08-18T13:35:28Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 404
@@ -1924,7 +1924,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G13: 从 depgraph (PostgreSQL) 生成资产清单全景图'
+  description: 'G13: 从 depgraph 库生成资产清单全景图'
   tags:
   - Critical
   - Disruptive
@@ -1972,7 +1972,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G11: 从 depgraph (PostgreSQL) 生成能力热力图'
+  description: 'G11: 从 depgraph 库生成能力热力图'
   tags:
   - Critical
   - Disruptive
@@ -1984,7 +1984,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G7: 从 depgraph (PostgreSQL) domains 表生成域容量报告MD文档'
+  description: 'G7: 从 depgraph 库 domains 表生成域容量报告MD文档'
   tags:
   - Critical
   - Disruptive
@@ -2008,7 +2008,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G9: 从 depgraph (PostgreSQL) arch_constraints 表生成架构约束违规报告MD文档'
+  description: 'G9: 从 depgraph 库 arch_constraints 表生成架构约束违规报告MD文档'
   tags:
   - Critical
   - Disruptive
@@ -2020,7 +2020,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G12: 从 depgraph (PostgreSQL) 生成契约目录全景图'
+  description: 'G12: 从 depgraph 库生成契约目录全景图'
   tags:
   - Critical
   - Disruptive
@@ -2044,7 +2044,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G6: 从 depgraph (PostgreSQL) edges 表生成域间依赖矩阵MD文档'
+  description: 'G6: 从 depgraph 库 edges 表生成域间依赖矩阵MD文档'
   tags:
   - Critical
   - Disruptive
@@ -2104,7 +2104,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G8: 从 depgraph (PostgreSQL) nodes 表生成设计态vs运营态统计报告MD文档'
+  description: 'G8: 从 depgraph 库 nodes 表生成设计态vs运营态统计报告MD文档'
   tags:
   - Critical
   - Disruptive
@@ -2116,7 +2116,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档
+  description: G2+G10 合并：从 depgraph 库 nodes+edges 表生成指定域的 MD 文档
   tags:
   - Critical
   - Disruptive
@@ -2128,7 +2128,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G5: 从 depgraph (PostgreSQL) domains+nodes 表生成域总览索引MD文档'
+  description: 'G5: 从 depgraph 库 domains+nodes 表生成域总览索引MD文档'
   tags:
   - Critical
   - Disruptive
@@ -2140,7 +2140,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G4: 从 depgraph (PostgreSQL) edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)'
+  description: 'G4: 从 depgraph 库 edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)'
   tags:
   - Critical
   - Disruptive
@@ -2188,7 +2188,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G1: 从 depgraph (PostgreSQL) arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/
+  description: 'G1: 从 depgraph 库 arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/
     目录树(中英文)输出到 generated/'
   tags:
   - Critical

@@ -132,10 +132,9 @@ class TestRedTeamDailyDeclarationBlock:
         om, broker = self._make_om(tmp_path, guard)
         for _ in range(9999):
             guard.record_submit()
-        # 9999 ≥ 5000 → WARNING 但放行
+        # 9999 ≥ 5000 → WARNING 但放行；submit 侧对称计数（AI-R2 红队 ATK-5：
+        # 指令发往券商即计）→ 该笔放行后恰好计满 1 万
         assert self._submit_one(om).startswith("broker_")
-        # 计数到 1 万（上一笔记入 C-002 前置读数已 9999，这里手动补齐）
-        guard.record_submit()
         assert guard.daily_declaration_count == 10000
         with pytest.raises(ComplianceGateBlockError, match="日申报笔数"):
             self._submit_one(om)
@@ -174,9 +173,7 @@ class TestRedTeamChecklistHardBlock:
         om.register_broker("test_broker", broker)
         session = TradingSession(
             broker=broker,
-            strategy=MagicMock(
-                generate_target_weights=MagicMock(return_value={"600519.SH": 0.03})
-            ),
+            strategy=MagicMock(generate_target_weights=MagicMock(return_value={"600519.SH": 0.03})),
             risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
             signal_provider=make_mock_signal_provider({}),
             price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
@@ -233,9 +230,7 @@ class TestRedTeamDisciplineCircuitBreaker:
         om.register_broker("test_broker", broker)
         session = TradingSession(
             broker=broker,
-            strategy=MagicMock(
-                generate_target_weights=MagicMock(return_value={"600519.SH": 0.03})
-            ),
+            strategy=MagicMock(generate_target_weights=MagicMock(return_value={"600519.SH": 0.03})),
             risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
             signal_provider=make_mock_signal_provider({}),
             price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
@@ -256,9 +251,7 @@ class TestRedTeamDisciplineCircuitBreaker:
         # 第二笔：ctx 已恢复中性，但熔断状态仍拦（KillSwitchLite 闸独立生效）
         session2 = TradingSession(
             broker=broker,
-            strategy=MagicMock(
-                generate_target_weights=MagicMock(return_value={"600519.SH": 0.03})
-            ),
+            strategy=MagicMock(generate_target_weights=MagicMock(return_value={"600519.SH": 0.03})),
             risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
             signal_provider=make_mock_signal_provider({}),
             price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
@@ -291,9 +284,43 @@ class TestRedTeamDisciplineCircuitBreaker:
         # 报复检测实证：第一笔的 verdict 行为类型留痕于合规日志
         records = _logger(tmp_path).read_all()
         revenge = [
-            r for r in records
+            r
+            for r in records
             if r.event_type == "DISCIPLINE_VERDICT"
             and r.payload.get("behavior") == ProhibitedBehavior.REVENGE_TRADING.value
         ]
         assert revenge, "合规日志应有 REVENGE_TRADING 判定留痕（自证清白证据链）"
         assert revenge[0].payload["kill_switch_triggered"] is True
+
+
+# ---------------------------------------------------------------------
+# 红队向量 4：尾盘操纵检测窗口时区口径（AI-R2-001 修复实证）
+# ---------------------------------------------------------------------
+
+
+class TestCloseWindowCstTimezone:
+    """at_time 缺省 fallback 必须北京口径（原 UTC 口径使 14:57 窗口永不激活）。"""
+
+    def test_cst_now_time_matches_shanghai(self):
+        """_cst_now_time 与 Asia/Shanghai 独立换算一致（±2min 容差防边界翻转）。"""
+        from datetime import time as dtime
+        from zoneinfo import ZoneInfo
+
+        from zephyr.ex_core.trading_session import _cst_now_time
+
+        now_cst = datetime.now(timezone.utc).astimezone(ZoneInfo("Asia/Shanghai"))
+        got = _cst_now_time()
+        assert isinstance(got, dtime)
+        delta_min = abs((got.hour * 60 + got.minute) - (now_cst.hour * 60 + now_cst.minute))
+        assert delta_min <= 2, f"fallback 口径漂移: got={got} expect≈{now_cst.time()}"
+
+    def test_utc_fallback_would_never_hit_window(self):
+        """反证原缺陷：UTC 交易时段（北京 09:30-15:00=UTC 01:30-07:00）
+        的时刻永远 < 14:57 窗口起点——检测形同虚设。"""
+        from datetime import time as dtime
+
+        from zephyr.compliance.trading_compliance_detector import ComplianceThresholds
+
+        t = ComplianceThresholds()
+        utc_times = [dtime(h) for h in range(2, 8)]  # 北京交易时段的 UTC 投影
+        assert all(ts < t.close_window_start for ts in utc_times)

@@ -36,7 +36,7 @@ from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys
 # 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
 __manifest__ = """
 args: []
-description: 'G6: 从 depgraph (PostgreSQL) edges 表生成域间依赖矩阵MD文档'
+description: 'G6: 从 depgraph 库 edges 表生成域间依赖矩阵MD文档'
 dimensions:
 - D5
 priority: P2
@@ -57,7 +57,9 @@ from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "cross_domain_matrix.md"
+OUTPUT_PATH = (
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "cross_domain_matrix.md"
+)
 
 
 def get_cross_domain_edges(conn: PgConnExecuteWrapper) -> list[dict]:
@@ -120,7 +122,9 @@ def generate_cross_domain_matrix() -> str:
     lines.append("")
     lines.append("# 域间依赖矩阵")
     lines.append("")
-    lines.append("> **文档作用 / Purpose**: 以矩阵形式展示所有功能域之间的依赖关系，识别高耦合域和独立域，为架构解耦提供依据。")
+    lines.append(
+        "> **文档作用 / Purpose**: 以矩阵形式展示所有功能域之间的依赖关系，识别高耦合域和独立域，为架构解耦提供依据。"
+    )
     lines.append("")
     lines.append(f"> 本文档由 generate_cross_domain_matrix.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")

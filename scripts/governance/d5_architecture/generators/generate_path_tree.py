@@ -31,12 +31,15 @@
 from __future__ import annotations
 
 # _common.py 与本文件同目录（generators/），CLI 运行时 sys.path[0]=本目录，可直接 import。
-from _common import DB_DISPLAY_NAME, idempotent_timestamp  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
+from _common import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
+    DB_DISPLAY_NAME,
+    idempotent_timestamp,
+)
 
 # 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
 __manifest__ = """
 args: []
-description: 'G1: 从 depgraph (PostgreSQL) arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/
+description: 'G1: 从 depgraph 库 arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/
   目录树(中英文)输出到 generated/'
 dimensions:
 - D5
@@ -70,13 +73,7 @@ TARGET_SUBTREE = "docs/02_enterprise_architecture"
 
 # 生成文件的 frontmatter（GATE-15 TTL 校验要求：.md 文件必须有 ttl 字段）
 # doc_type=architecture_view 真源：doc_type_vocabulary.yaml
-_FRONTMATTER = (
-    "---\n"
-    "doc_type: architecture_view\n"
-    "ttl: permanent\n"
-    "module_id: MOD-GOV-generate_path_tree\n"
-    "---\n\n"
-)
+_FRONTMATTER = "---\ndoc_type: architecture_view\nttl: permanent\nmodule_id: MOD-GOV-generate_path_tree\n---\n\n"
 
 # 全项目顶级目录及中文描述
 TOP_LEVEL_DIRS_ZH = {
@@ -90,9 +87,23 @@ TOP_LEVEL_DIRS_ZH = {
 
 # 全项目模式下需要跳过的目录（噪声/缓存/构建产物）
 SKIP_DIRS_FULL = {
-    "__pycache__", ".git", ".ailocks", ".audit_cache", "node_modules",
-    ".mypy_cache", ".pytest_cache", ".ruff_cache", ".tox", ".venv", "venv",
-    ".idea", ".vs", ".eggs", "cache", "telemetry", ".trae",
+    "__pycache__",
+    ".git",
+    ".ailocks",
+    ".audit_cache",
+    "node_modules",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".tox",
+    ".venv",
+    "venv",
+    ".idea",
+    ".vs",
+    ".eggs",
+    "cache",
+    "telemetry",
+    ".trae",
 }
 
 
@@ -217,7 +228,7 @@ def _sort_children_key(child_path: str, parent_path: str) -> tuple:
     其他目录按字母顺序排列。
     """
     if parent_path and child_path.startswith(parent_path + "/"):
-        child_name = child_path[len(parent_path) + 1:]
+        child_name = child_path[len(parent_path) + 1 :]
     else:
         child_name = child_path.rsplit("/", 1)[-1] if "/" in child_path else child_path
 
@@ -286,7 +297,7 @@ def get_dir_description(dir_name: str, lang: str) -> str:
     return DIR_DESCRIPTIONS_EN.get(dir_name, "")
 
 
-@functools.lru_cache(maxsize=None)
+@functools.cache
 def get_dir_files(dir_rel_path: str) -> list[str]:
     """从文件系统读取目录下的直接文件（非递归），返回排序后的文件名列表。
 
@@ -550,12 +561,14 @@ def get_file_description(filename: str, lang: str, file_path: str = "") -> str:
 
     # 域文档自动生成：01_d_infra_ops.md → 基础设施运维
     import re
+
     # 先匹配 _architecture.md 后缀（避免贪婪匹配吞掉域名）
     m = re.match(r"^\d+_d_([a-z_]+?)_architecture\.md$", filename)
     if m:
         domain_key = "D-" + m.group(1).upper()
         try:
             from domain_name_mapping import get_domain_name_zh  # noqa: import-integrity  sys.path 动态加载的本地模块
+
             domain_zh = get_domain_name_zh(domain_key, "")
             if domain_zh:
                 return f"{domain_zh}架构图" if lang == "zh" else f"{domain_zh} architecture"
@@ -568,6 +581,7 @@ def get_file_description(filename: str, lang: str, file_path: str = "") -> str:
         domain_key = "D-" + m.group(1).upper()
         try:
             from domain_name_mapping import get_domain_name_zh  # noqa: import-integrity  sys.path 动态加载的本地模块
+
             domain_zh = get_domain_name_zh(domain_key, "")
             if domain_zh:
                 return domain_zh if lang == "zh" else domain_zh
@@ -580,6 +594,7 @@ def get_file_description(filename: str, lang: str, file_path: str = "") -> str:
         domain_key = "D-" + m.group(1).upper()
         try:
             from domain_name_mapping import get_domain_name_zh  # noqa: import-integrity  sys.path 动态加载的本地模块
+
             domain_zh = get_domain_name_zh(domain_key, "")
             if domain_zh:
                 return f"{domain_zh}依赖图" if lang == "zh" else f"{domain_zh} dependency"
@@ -613,7 +628,9 @@ def get_file_description(filename: str, lang: str, file_path: str = "") -> str:
     return ""
 
 
-def render_tree(tree: dict, root_path: str, prefix: str, lines: list[str], lang: str, depth: int = 0, scope: str = "arch") -> None:
+def render_tree(
+    tree: dict, root_path: str, prefix: str, lines: list[str], lang: str, depth: int = 0, scope: str = "arch"
+) -> None:
     """递归渲染树状图（显示目录+描述+文件统计，不显示冗余域标签）。"""
     if root_path not in tree:
         return
@@ -629,7 +646,9 @@ def render_tree(tree: dict, root_path: str, prefix: str, lines: list[str], lang:
     _render_children(tree, root_path, prefix, lines, lang, depth, scope)
 
 
-def _render_children(tree: dict, parent_path: str, prefix: str, lines: list[str], lang: str, depth: int, scope: str = "arch") -> None:
+def _render_children(
+    tree: dict, parent_path: str, prefix: str, lines: list[str], lang: str, depth: int, scope: str = "arch"
+) -> None:
     """渲染子节点（子目录在前，文件在后），深度超过限制时不展开子目录。"""
     if parent_path not in tree:
         return
@@ -645,14 +664,10 @@ def _render_children(tree: dict, parent_path: str, prefix: str, lines: list[str]
             collapse_line = f"[文件列表已折叠] {file_summary}"
         else:
             collapse_line = f"[file list collapsed] {file_summary}"
-        all_items: list[tuple[str, bool]] = [(d, True) for d in child_dirs] + [
-            (collapse_line, False)
-        ]
+        all_items: list[tuple[str, bool]] = [(d, True) for d in child_dirs] + [(collapse_line, False)]
     else:
         files_display = _limit_files(files, lang)
-        all_items = [(d, True) for d in child_dirs] + [
-            (f, False) for f in files_display
-        ]
+        all_items = [(d, True) for d in child_dirs] + [(f, False) for f in files_display]
     total = len(all_items)
 
     for i, (item, is_dir) in enumerate(all_items):

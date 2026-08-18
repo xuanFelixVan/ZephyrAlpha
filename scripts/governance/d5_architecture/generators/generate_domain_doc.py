@@ -49,12 +49,17 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _common import cleanup_stale_files, DB_DISPLAY_NAME, idempotent_date, idempotent_timestamp  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
+from _common import (  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
+    DB_DISPLAY_NAME,
+    cleanup_stale_files,
+    idempotent_date,
+    idempotent_timestamp,
+)
 
 # 治本（2026-08-18）：f-string manifest 生成器不识别（提取器仅认静态三引号 YAML），静态化。
 __manifest__ = """
 args: []
-description: G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档
+description: G2+G10 合并：从 depgraph 库 nodes+edges 表生成指定域的 MD 文档
 dimensions:
 - D5
 priority: P2
@@ -70,7 +75,12 @@ import re
 from datetime import datetime
 
 import yaml
-
+from _shared.code_algorithm_extractor import (  # noqa: E402 — 模块核心算法提取器（与 08 纵览生成器共享同一派生逻辑真源）
+    AlgorithmSummary,
+    build_blueprint_index,
+    extract_algorithm_from_blueprint,
+    extract_algorithm_from_code,
+)
 from _shared.constants import (  # noqa: E402  # 零漂移真源（MOD-INF-005）
     DOC_HTTP_BASE,
     EXIT_ERROR,
@@ -78,26 +88,29 @@ from _shared.constants import (  # noqa: E402  # 零漂移真源（MOD-INF-005�
     EXIT_PASS,
     PgConnExecuteWrapper,
 )
-
-from domain_name_mapping import get_domain_name_zh, get_domain_name_zh_strict, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
 from _shared.module_translation_loader import (  # noqa: E402 — 模块级翻译真源（#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级缺口）
-    get_module_translation,
-    get_module_name_bilingual,
     get_module_desc_bilingual,
+    get_module_name_bilingual,
     get_module_plain,
-    is_generic_plain_zh,
+    get_module_translation,
     is_generic_desc_zh,
     is_generic_plain_suffix,
+    is_generic_plain_zh,
 )
-from _shared.code_algorithm_extractor import (  # noqa: E402 — 模块核心算法提取器（与 08 纵览生成器共享同一派生逻辑真源）
-    AlgorithmSummary,
-    build_blueprint_index,
-    extract_algorithm_from_blueprint,
-    extract_algorithm_from_code,
+from domain_name_mapping import (  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
+    get_domain_desc_zh,
+    get_domain_name_en,
+    get_domain_name_zh,
+    get_domain_name_zh_strict,
+    get_layer_name_bilingual,
 )
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zoomable_html import (  # noqa: E402 — 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步，reconciler 刷新 md 即刷新 HTML）  # noqa: import-integrity  sys.path动态加载的本地模块
+    HTML_SUBDIR,
+    emit_zoomable_html,
+)
+
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # Bug 6 fix: L1370 uses but not imported
-from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402 — 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步，reconciler 刷新 md 即刷新 HTML）  # noqa: import-integrity  sys.path动态加载的本地模块
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
 
@@ -130,23 +143,23 @@ def _extract_docstring_first_line(path: str) -> str:
     跳过治理标记首行（[A_module]、[BLUEPRINT]、[MODULE] 等），取第一个有意义行。
     截断到 80 字符。
     """
-    if not path or not path.endswith('.py'):
+    if not path or not path.endswith(".py"):
         return ""
     abs_path = REPO_ROOT / path
     if not abs_path.exists():
         return ""
     try:
-        content = abs_path.read_text(encoding='utf-8', errors='replace')
+        content = abs_path.read_text(encoding="utf-8", errors="replace")
         tree = ast.parse(content)
         docstring = ast.get_docstring(tree)
         if docstring:
-            lines = docstring.strip().split('\n')
+            lines = docstring.strip().split("\n")
             for line in lines:
                 line = line.strip()
                 if not line:
                     continue
                 # 跳过治理标记行（[A_module]、[BLUEPRINT]、[MODULE] 等）
-                if line.startswith('[A_') or line.startswith('[BLUEPRINT') or line.startswith('[MODULE'):
+                if line.startswith("[A_") or line.startswith("[BLUEPRINT") or line.startswith("[MODULE"):
                     continue
                 return _truncate(line, 80)
             return ""
@@ -160,18 +173,18 @@ def _extract_yaml_description(path: str) -> str:
 
     用于聚合节点展开的 items——门禁 yaml/脚本配置等。
     """
-    if not path or not path.endswith(('.yaml', '.yml')):
+    if not path or not path.endswith((".yaml", ".yml")):
         return ""
     abs_path = REPO_ROOT / path
     if not abs_path.exists():
         return ""
     try:
-        data = yaml.safe_load(abs_path.read_text(encoding='utf-8', errors='replace'))
+        data = yaml.safe_load(abs_path.read_text(encoding="utf-8", errors="replace"))
         if isinstance(data, dict):
-            desc = (data.get('description', '') or '').strip()
+            desc = (data.get("description", "") or "").strip()
             if desc:
                 # 取第一行，截断到 80 字符
-                first_line = desc.split('\n')[0].strip()
+                first_line = desc.split("\n")[0].strip()
                 return _truncate(first_line, 80)
     except Exception:  # noqa: BLE001 — 单个 YAML 读取/解析失败（YAMLError/IO）时返回空简介继续生成文档，尽力而为语义
         pass
@@ -252,7 +265,7 @@ def _node_desc_zh(n: dict) -> str:
     doc_desc = _extract_docstring_first_line(path)
     if doc_desc:
         return _truncate(doc_desc, 80)
-    if path.endswith(('.yaml', '.yml')):
+    if path.endswith((".yaml", ".yml")):
         yaml_desc = _extract_yaml_description(path)
         if yaml_desc:
             return _truncate(yaml_desc, 80)
@@ -340,23 +353,63 @@ def _wrap_label_text(text: str, max_units: int = 48) -> str:
 
 # 顶层包中文名映射（用于路径派生简介，确保跨节点唯一）
 _PKG_ZH_MAP = {
-    "shared": "共享层", "infrastructure": "基础设施", "alt_data": "另类数据",
-    "factor": "因子", "signal": "信号", "risk": "风险", "position": "仓位",
-    "trading": "交易", "execution": "执行", "reporting": "报告",
-    "governance": "治理", "security": "安全", "orchestrator": "编排",
-    "integration": "集成", "data": "数据", "market_data": "行情数据",
-    "mkt_data": "行情数据", "pf_core": "组合核心", "pf_alloc": "组合配置",
-    "sell_decision": "卖出决策", "ops": "运维", "ml_train": "机器学习训练",
-    "simulation": "仿真", "audit": "审计", "docs": "文档",
-    "enforcement": "执行", "ops_resilience": "运维韧性", "contracts": "契约",
-    "errors": "错误", "events": "事件", "models": "模型", "api": "接口",
-    "core": "核心", "services": "服务", "connectors": "连接器",
-    "actors": "执行器", "adapters": "适配器", "runtime": "运行时",
-    "generators": "生成器", "reconcilers": "对账器", "scripts": "脚本",
+    "shared": "共享层",
+    "infrastructure": "基础设施",
+    "alt_data": "另类数据",
+    "factor": "因子",
+    "signal": "信号",
+    "risk": "风险",
+    "position": "仓位",
+    "trading": "交易",
+    "execution": "执行",
+    "reporting": "报告",
+    "governance": "治理",
+    "security": "安全",
+    "orchestrator": "编排",
+    "integration": "集成",
+    "data": "数据",
+    "market_data": "行情数据",
+    "mkt_data": "行情数据",
+    "pf_core": "组合核心",
+    "pf_alloc": "组合配置",
+    "sell_decision": "卖出决策",
+    "ops": "运维",
+    "ml_train": "机器学习训练",
+    "simulation": "仿真",
+    "audit": "审计",
+    "docs": "文档",
+    "enforcement": "执行",
+    "ops_resilience": "运维韧性",
+    "contracts": "契约",
+    "errors": "错误",
+    "events": "事件",
+    "models": "模型",
+    "api": "接口",
+    "core": "核心",
+    "services": "服务",
+    "connectors": "连接器",
+    "actors": "执行器",
+    "adapters": "适配器",
+    "runtime": "运行时",
+    "generators": "生成器",
+    "reconcilers": "对账器",
+    "scripts": "脚本",
 }
 
 # 通用名集合（name_zh 为这些值时需用路径兜底）
-_GENERIC_NAMES = {"包入口", "__init__", "模块", "工具", "配置", "", "启动关机", "命令行", "连接器", "标的合约", "准入响应"}
+_GENERIC_NAMES = {
+    "包入口",
+    "__init__",
+    "模块",
+    "工具",
+    "配置",
+    "",
+    "启动关机",
+    "命令行",
+    "连接器",
+    "标的合约",
+    "准入响应",
+}
 
 # 无意义的 name_en（不显示）
 _MEANINGLESS_NAME_EN = {"__init__", "config", "utils", "helpers", "common", "base", "main", "cli", "types", "init"}
@@ -383,7 +436,7 @@ def _is_placeholder(text: str) -> bool:
         if t.startswith(p) or p in t:
             return True
     # 纯文件名（如 "detector.py"、"report.py"）
-    if re.match(r'^[a-z_][a-z0-9_]*\.py$', t):
+    if re.match(r"^[a-z_][a-z0-9_]*\.py$", t):
         return True
     return False
 
@@ -400,7 +453,7 @@ def _is_name_plus_trivial(candidate: str, name: str) -> bool:
         return False
     if not candidate.startswith(name):
         return False
-    suffix = candidate[len(name):].strip("，。.，、 ：:()-")
+    suffix = re.sub(r"^[，。.、 ：:()\-]+|[，。.、 ：:()\-]+$", "", candidate[len(name) :])
     return len(suffix) <= 3
 
 
@@ -410,7 +463,7 @@ def _clean_intro_text(text: str) -> str:
         return ""
     t = text.strip()
     # 去除尾部消费者引用（如"供GovernanceServer;run_all.py使用"）
-    t = re.sub(r'，?供[^，。]*使用[。.？?]？$', '', t)
+    t = re.sub(r"，?供[^，。]*使用[。.？?]？$", "", t)
     return t
 
 
@@ -423,7 +476,7 @@ def _blueprint_desc(path: str) -> str:
     mod = stem
     for suffix in ("_blueprint", "blueprint"):
         if mod.endswith(suffix):
-            mod = mod[:-len(suffix)].strip("_")
+            mod = mod[: -len(suffix)].strip("_")
             break
     parent = p.parent.name
     generic_parents = {"blueprints", "docs", "", "."}
@@ -532,7 +585,7 @@ def _node_mermaid_label(n: dict) -> str:
     for candidate, src in ((plain, "yaml"), (desc_zh, "yaml"), (desc, "doc")):
         if not candidate:
             continue
-        if candidate == name_zh or candidate == cn_name:
+        if candidate in (name_zh, cn_name):
             continue
         candidate = _clean_intro_text(candidate)
         if not candidate:
@@ -564,7 +617,7 @@ def _node_mermaid_label(n: dict) -> str:
 
     # 去除简介与名称的前缀重叠（治本节点内行重复：简介折行后首段与名称相同）
     if cn_intro and cn_name and cn_intro.startswith(cn_name):
-        remainder = cn_intro[len(cn_name):].strip(" ，,。.、：:—-")
+        remainder = cn_intro[len(cn_name) :].strip(" ，,。.、：:—-")
         if len(remainder) >= 4:
             cn_intro = remainder
 
@@ -597,14 +650,17 @@ def _node_mermaid_label(n: dict) -> str:
     if gate_reason and is_design:
         parts.append(f"⛔ {gate_reason}")
     # ── 英文部分（后面）——过滤无意义 name_en 与纯文件名 ──
-    if (name_en and name_en not in _MEANINGLESS_NAME_EN and len(name_en) <= 40
-            and not re.match(r'^[a-z_][a-z0-9_]*\.py$', name_en)
-            and not _is_dup(name_en, shown)):
+    if (
+        name_en
+        and name_en not in _MEANINGLESS_NAME_EN
+        and len(name_en) <= 40
+        and not re.match(r"^[a-z_][a-z0-9_]*\.py$", name_en)
+        and not _is_dup(name_en, shown)
+    ):
         parts.append(name_en)
         shown.append(name_en)
     # desc_en：与 name_en 前缀重叠则跳过（避免"name_en"+"name_en — desc"冗余）
-    if (desc_en and not _is_dup(desc_en, shown)
-            and not (name_en and len(name_en) >= 8 and desc_en.startswith(name_en))):
+    if desc_en and not _is_dup(desc_en, shown) and not (name_en and len(name_en) >= 8 and desc_en.startswith(name_en)):
         parts.append(desc_en)
         shown.append(desc_en)
     # ── 末尾：文件路径 + 成熟度（颜色已区分，放最后）──
@@ -721,7 +777,9 @@ def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     )
     edges = []
     for r in cur.fetchall():
-        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(r["to_path"] or "", r["to_maturity"] or ""):
+        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(
+            r["to_path"] or "", r["to_maturity"] or ""
+        ):
             continue
         edges.append(
             {
@@ -806,15 +864,19 @@ def get_cross_domain_deps_detail(conn: PgConnExecuteWrapper, domain_id: str) -> 
     )
     outgoing_detail = []
     for r in cur.fetchall():
-        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(r["to_path"] or "", r["to_maturity"] or ""):
+        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(
+            r["to_path"] or "", r["to_maturity"] or ""
+        ):
             continue
-        outgoing_detail.append({
-            "from_path": r["from_path"] or "",
-            "to_path": r["to_path"] or "",
-            "from_domain": r["from_domain"] or "",
-            "to_domain": r["to_domain"] or "",
-            "dep_type": r["dep_type"] or "",
-        })
+        outgoing_detail.append(
+            {
+                "from_path": r["from_path"] or "",
+                "to_path": r["to_path"] or "",
+                "from_domain": r["from_domain"] or "",
+                "to_domain": r["to_domain"] or "",
+                "dep_type": r["dep_type"] or "",
+            }
+        )
 
     # 入边明细：from_node 在外部域，to_node 在本域
     cur = conn.execute(
@@ -831,15 +893,19 @@ def get_cross_domain_deps_detail(conn: PgConnExecuteWrapper, domain_id: str) -> 
     )
     incoming_detail = []
     for r in cur.fetchall():
-        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(r["to_path"] or "", r["to_maturity"] or ""):
+        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(
+            r["to_path"] or "", r["to_maturity"] or ""
+        ):
             continue
-        incoming_detail.append({
-            "from_path": r["from_path"] or "",
-            "to_path": r["to_path"] or "",
-            "from_domain": r["from_domain"] or "",
-            "to_domain": r["to_domain"] or "",
-            "dep_type": r["dep_type"] or "",
-        })
+        incoming_detail.append(
+            {
+                "from_path": r["from_path"] or "",
+                "to_path": r["to_path"] or "",
+                "from_domain": r["from_domain"] or "",
+                "to_domain": r["to_domain"] or "",
+                "dep_type": r["dep_type"] or "",
+            }
+        )
 
     return outgoing_detail, incoming_detail
 
@@ -933,7 +999,9 @@ def get_cross_domain_edges_detail(
         params_out,
     )
     for r in cur.fetchall():
-        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(r["to_path"] or "", r["to_maturity"] or ""):
+        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(
+            r["to_path"] or "", r["to_maturity"] or ""
+        ):
             continue
         outgoing_edges.append(
             {
@@ -965,7 +1033,9 @@ def get_cross_domain_edges_detail(
         params_out,
     )
     for r in cur.fetchall():
-        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(r["to_path"] or "", r["to_maturity"] or ""):
+        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(
+            r["to_path"] or "", r["to_maturity"] or ""
+        ):
             continue
         incoming_edges.append(
             {
@@ -1081,7 +1151,9 @@ _MERMAID_GRAY_THEME = (
 _CLASSDEF_PRODUCTION = "classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000"
 _CLASSDEF_DESIGN = "classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5"
 _CLASSDEF_EXTERNAL_PROD = "classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000"
-_CLASSDEF_EXTERNAL_DESIGN = "classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5"
+_CLASSDEF_EXTERNAL_DESIGN = (
+    "classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5"
+)
 
 
 def generate_internal_mermaid(
@@ -1292,17 +1364,17 @@ def _truncate(text: str, max_len: int = 40) -> str:
         result += ch
         w += cw
     # 保护 #ARCH-XXX 引用：截断点落在引用中间时回退到引用之前
-    m = re.search(r'#ARCH-[A-Z0-9-]*$', result)
+    m = re.search(r"#ARCH-[A-Z0-9-]*$", result)
     if m:
-        full = re.match(r'#ARCH-[A-Z0-9-]+', text[m.start():])
+        full = re.match(r"#ARCH-[A-Z0-9-]+", text[m.start() :])
         if full and full.group() != m.group():
-            result = result[:m.start()].rstrip()
+            result = result[: m.start()].rstrip()
     # 保护 裁定#NNN 引用：截断点落在裁定编号中间时回退到编号之前（避免裁定编号被截断成不完整片段误触发 RULING_ATOMICITY 门禁）
-    m2 = re.search(r'裁定#\d*$', result)
+    m2 = re.search(r"裁定#\d*$", result)
     if m2:
-        full2 = re.match(r'裁定#\d+', text[m2.start():])
+        full2 = re.match(r"裁定#\d+", text[m2.start() :])
         if full2 and full2.group() != m2.group():
-            result = result[:m2.start()].rstrip('（( \t　')
+            result = result[: m2.start()].rstrip("（( \t　")
     return result + "..."
 
 
@@ -1530,7 +1602,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     if domain_desc_zh:
         lines.append(f"> **功能简介 / Overview**: {domain_desc_zh}")
         lines.append("")
-    lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。")
+    lines.append(
+        f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。"
+    )
     lines.append("")
     lines.append(f"> 本文档由 generate_domain_doc.py 从 {DB_DISPLAY_NAME} 自动生成")
     # DM-90974 Phase 2: 移除 per-second `最后更新: {now}` body 行——违反"相同 DB 输入→相同输出"幂等 invariant
@@ -1551,7 +1625,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     except ValueError:
         # output-dir 在仓库根之外时降级为相对路径（罕见，仅 --output-dir 手动覆盖时触发）
         html_url = f"{HTML_SUBDIR}/{safe_name_html}"
-    lines.append(f"> **[可缩放 HTML 版 / Zoomable HTML]({html_url})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式")
+    lines.append(
+        f"> **[可缩放 HTML 版 / Zoomable HTML]({html_url})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式"
+    )
     lines.append("")
 
     # 域基本信息（中英文对照）
@@ -1562,7 +1638,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append(f"| 编号 | {number:02d} | Number | {number:02d} |")
     lines.append(f"| 域ID | {domain_id} | Domain ID | {domain_id} |")
     lines.append(f"| 域名称 | {domain_name_zh} | Domain Name | {domain_name_en} |")
-    layer_zh, layer_en = get_layer_name_bilingual(info['layer_id'])
+    layer_zh, layer_en = get_layer_name_bilingual(info["layer_id"])
     lines.append(f"| 层级 | {layer_zh} | Layer | {layer_en} |")
     lines.append(f"| 模块数 | {len(nodes)} | Module Count | {len(nodes)} |")
     lines.append(f"| 域内依赖 | {len(edges)} | Internal Dependencies | {len(edges)} |")
@@ -1597,7 +1673,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     # 跨域边明细（仅全景图用；运营态/设计态图不显示跨域外部节点，聚焦域内结构）
     all_outgoing, all_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in nodes])
 
-    def _emit_internal_view(title: str, hint: str, view_nodes: list[dict], view_outgoing: list[dict], view_incoming: list[dict]) -> None:
+    def _emit_internal_view(
+        title: str, hint: str, view_nodes: list[dict], view_outgoing: list[dict], view_incoming: list[dict]
+    ) -> None:
         """输出单个域内依赖视图（带小标题；空节点集用占位说明，避免空 mermaid 块）。
 
         edges 传全集，generate_internal_mermaid 内部按 view_nodes 的 node_id 集自动过滤
@@ -1624,7 +1702,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     _emit_internal_view(
         "全景图（全部模块，颜色区分运营态/设计态）",
         f"展示全部 {len(nodes)} 个模块（生产态 {production_count} + 设计态 {design_count}），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。",
-        nodes, all_outgoing, all_incoming,
+        nodes,
+        all_outgoing,
+        all_incoming,
     )
 
     # 图2：运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -1632,7 +1712,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     _emit_internal_view(
         "运营态的图（仅 design_maturity=production 的模块和域内依赖）",
         f"仅展示已上线运行的模块（共 {len(prod_nodes)} 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。",
-        prod_nodes, [], [],
+        prod_nodes,
+        [],
+        [],
     )
 
     # 图3：设计态的图（仅 design_maturity=design 的模块和域内依赖）
@@ -1640,7 +1722,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     _emit_internal_view(
         "设计态的图（仅 design_maturity=design 的模块和域内依赖）",
         f"仅展示蓝图阶段、代码未写的设计态模块（共 {len(design_nodes)} 个），不含跨域外部节点。",
-        design_nodes, [], [],
+        design_nodes,
+        [],
+        [],
     )
 
     # 模块核心算法（域内检修一站式·与 08 纵览共享 code_algorithm_extractor）
@@ -1666,7 +1750,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
             tgt_domain_zh = get_domain_name_zh_strict(tgt_domain)
             tgt_domain_label = f"{tgt_domain} {tgt_domain_zh}" if tgt_domain_zh else tgt_domain
             tgt_label = _bilingual_label_from_path(d["to_path"])
-            lines.append(f"| {i} | {src_label} | → | {tgt_domain_label}: {tgt_label} | {_dep_type_display(d['dep_type'])} |")
+            lines.append(
+                f"| {i} | {src_label} | → | {tgt_domain_label}: {tgt_label} | {_dep_type_display(d['dep_type'])} |"
+            )
     else:
         lines.append("无跨域出边依赖 / No cross-domain outgoing dependencies")
     lines.append("")
@@ -1683,7 +1769,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
             src_domain_label = f"{src_domain} {src_domain_zh}" if src_domain_zh else src_domain
             src_label = _bilingual_label_from_path(d["from_path"])
             tgt_label = _bilingual_label_from_path(d["to_path"])
-            lines.append(f"| {i} | {src_domain_label}: {src_label} | → | {tgt_label} | {_dep_type_display(d['dep_type'])} |")
+            lines.append(
+                f"| {i} | {src_domain_label}: {src_label} | → | {tgt_label} | {_dep_type_display(d['dep_type'])} |"
+            )
     else:
         lines.append("无跨域入边依赖 / No cross-domain incoming dependencies")
     lines.append("")
@@ -1699,9 +1787,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     )
     lines.append("")
     if outgoing_agg or incoming_agg:
-        mermaid_code = generate_cross_domain_mermaid(
-            domain_id, domain_name_zh, outgoing_agg, incoming_agg
-        )
+        mermaid_code = generate_cross_domain_mermaid(domain_id, domain_name_zh, outgoing_agg, incoming_agg)
         lines.append("```mermaid")
         lines.append(mermaid_code)
         lines.append("```")
@@ -1716,10 +1802,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）")
     lines.append("- **维护方式 / Maintenance**: 自动生成，全景图更新时刷新")
     lines.append("- **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`")
-    lines.append(
-        "- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / "
-        "`[unknown]`=未知"
-    )
+    lines.append("- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知")
     lines.append("")
 
     return "\n".join(lines)
@@ -1757,17 +1840,21 @@ def main() -> None:
 
     class _PgConnSqliteCompat:
         """psycopg2 -> sqlite3 API compat wrapper."""
+
         def __init__(self, conn):
             """__init__ implementation."""
             self._conn = conn
+
         def execute(self, sql, params=None):
             """execute implementation."""
             cur = self._conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             cur.execute(sql) if params is None else cur.execute(sql, params)
             return cur
+
         def __getattr__(self, name):
             """__getattr__ implementation."""
             return getattr(self._conn, name)
+
         def close(self):
             """close implementation."""
             self._conn.close()
@@ -1798,25 +1885,22 @@ def main() -> None:
             # 治本：清理残留文件（解决只增不删）
             expected_docs = {
                 f"{numbering_map.get(did, 0):02d}_{did.replace('-', '_').lower()}.md"
-                for did in domain_ids if numbering_map.get(did, 0)
+                for did in domain_ids
+                if numbering_map.get(did, 0)
             }
             # 1. 清理非 _architecture 的残留 doc（编号格式不匹配的旧文件）
             deleted_docs = cleanup_stale_files(
-                output_dir, expected_docs, r'^\d{2}_d_(?!.*_architecture\.md$)[a-z0-9_]+\.md$'
+                output_dir, expected_docs, r"^\d{2}_d_(?!.*_architecture\.md$)[a-z0-9_]+\.md$"
             )
             if deleted_docs:
                 print(f"[CLEANUP] 删除 {len(deleted_docs)} 个残留文档: {deleted_docs}")
             # 2. 清理所有过时的 _architecture.md（合并后不再生成这类文件，治本消除孤儿制品）
-            deleted_arch = cleanup_stale_files(
-                output_dir, set(), r'^\d{2}_d_[a-z0-9_]+_architecture\.md$'
-            )
+            deleted_arch = cleanup_stale_files(output_dir, set(), r"^\d{2}_d_[a-z0-9_]+_architecture\.md$")
             if deleted_arch:
                 print(f"[CLEANUP] 删除 {len(deleted_arch)} 个过时 _architecture.md 孤儿制品: {deleted_arch}")
             # 3. 清理 _zoomable_html/ 子文件夹中过时的 HTML（域被删除时联动 HTML 不残留）
             expected_html = {name.replace(".md", ".html") for name in expected_docs}
-            deleted_html = cleanup_stale_files(
-                output_dir / HTML_SUBDIR, expected_html, r'^\d{2}_d_[a-z0-9_]+\.html$'
-            )
+            deleted_html = cleanup_stale_files(output_dir / HTML_SUBDIR, expected_html, r"^\d{2}_d_[a-z0-9_]+\.html$")
             if deleted_html:
                 print(f"[CLEANUP] 删除 {len(deleted_html)} 个过时 HTML: {deleted_html}")
         else:

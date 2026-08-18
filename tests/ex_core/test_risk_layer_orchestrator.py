@@ -107,11 +107,7 @@ class FakeBroker(BrokerInterface):
     def get_positions(self) -> PositionSnapshot:
         if self.fail_get_positions:
             raise RuntimeError("broker get_positions down")
-        mv = {
-            s: qty * self._costs.get(s, Decimal("0"))
-            for s, qty in self._holdings.items()
-            if qty != 0
-        }
+        mv = {s: qty * self._costs.get(s, Decimal("0")) for s, qty in self._holdings.items() if qty != 0}
         return PositionSnapshot(
             as_of_timestamp=datetime.now(UTC),
             portfolio_id="fake",
@@ -248,11 +244,11 @@ class TestEmergencyKillChain:
         orch = _make_orchestrator(broker=broker, initial_nav=1_000_000.0)
 
         orch.evaluate_intraday(1_000_000.0)
-        orch.evaluate_intraday(750_000.0)   # EMERGENCY 首次触发
+        orch.evaluate_intraday(750_000.0)  # EMERGENCY 首次触发
         assert len(broker.submitted) == 1
-        orch.evaluate_intraday(740_000.0)   # 仍 EMERGENCY（级别未变，事件去抖）
+        orch.evaluate_intraday(740_000.0)  # 仍 EMERGENCY（级别未变，事件去抖）
         orch.evaluate_intraday(1_000_000.0)  # 恢复 NONE
-        orch.evaluate_intraday(730_000.0)   # 再次 EMERGENCY（事件发射但仲裁拦截）
+        orch.evaluate_intraday(730_000.0)  # 再次 EMERGENCY（事件发射但仲裁拦截）
         assert len(broker.submitted) == 1  # 清算仅一次
 
     def test_session_level_kill_chain_blocks_rebalance(self) -> None:
@@ -896,3 +892,223 @@ class TestSystemicWiringRobustness:
         assert snap.systemic_level == 3
         snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=13))
         assert snap.systemic_level == 2
+
+    def test_data_outage_holds_crisis_constraints(self) -> None:
+        """红队（AI-R2-001 修复实证）：LEVEL_2 危机中数据中断不放松仓位约束。
+
+        原缺陷：provider 失效/空输入返回 None → 快照 systemic_cap 跳回 1.0，
+        危机约束单轮消失。修复后无观测轮输出 state 派生 cap/halt（hysteresis
+        语义：无数据=状态不变）。
+        """
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        # 进入 LEVEL_2（2 信号）
+        inputs_box["data"] = {
+            "sell_pressure": 0.80,
+            "bid_ask_spread": 0.01,
+            "external_market_change": -0.04,
+        }
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 2
+        assert snap.systemic_cap == pytest.approx(0.70)
+
+        # 数据中断轮（provider 抛异常）：level/cap/halt 全保持
+        def _feed_down() -> dict:
+            raise RuntimeError("feed down")
+
+        orch._systemic_input_provider = _feed_down  # type: ignore[assignment]
+        snap2 = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=1))
+        assert snap2.systemic_level == 2
+        assert snap2.systemic_cap == pytest.approx(0.70)
+        assert snap2.position_cap == pytest.approx(0.70)
+        # 空输入轮：同样保持
+        orch._systemic_input_provider = lambda: {}  # type: ignore[assignment]
+        snap3 = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=2))
+        assert snap3.systemic_level == 2
+        assert snap3.systemic_cap == pytest.approx(0.70)
+
+    def test_recovery_gate_exception_isolated(self) -> None:
+        """红队（AI-R2-001 修复实证）：降级门禁内部异常隔离，不崩主循环。
+
+        原缺陷：_try_systemic_recovery 内异常（float() 类型错/min_hold_minutes
+        缺级别键 KeyError 等）未捕获，传播崩 evaluate_intraday 调用方
+        （违反自身"越界输入隔离跳过"契约）。
+        构造：config.min_hold_minutes={1:10,3:30} 缺 level 2 → 降级候选轮
+        gate 内 KeyError → 新 except 分支保持当前级别（AI-R2 复审修正：
+        初审测试用 str spread 实被 detector.check 前置 except 拦截，
+        未触达本修复分支）。
+        """
+        broker = FakeBroker(cash=Decimal("1000000"))
+        config = RiskLayerConfig(systemic_min_hold_minutes={1: 10, 3: 30})  # 缺 level 2
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker, config=config)
+        inputs_box["data"] = {
+            "sell_pressure": 0.80,
+            "bid_ask_spread": 0.01,
+            "external_market_change": -0.04,
+        }
+        orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert orch.systemic_level == 2
+        # 降级候选轮（2 信号→1 信号）：gate KeyError 被隔离，级别保持，主循环不崩
+        inputs_box["data"] = {"sell_pressure": 0.80, "bid_ask_spread": 0.01}
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=45))
+        assert snap.systemic_level == 2  # 门禁失效保持当前级别
+        assert orch.kill_switch_engaged is False
+
+    def test_engage_skip_while_liquidation_inflight(self) -> None:
+        """红队（AI-R2-001 修复实证）：engaged 置位后并发二次仲裁不穿透重复清算。
+
+        构造：清算执行器抛异常（AI-R2-001 修复②后异常被隔离：熔断态保持、
+        report 落地 liquidation_error 兜底字典），后续触发源仍被仲裁点跳过
+        ——熔断态保持禁单，宁少清算不双清算。
+        """
+        import zephyr.ex_core.risk_layer_orchestrator as rlo
+
+        broker = FakeBroker(cash=Decimal("0"), holdings={"600000.SH": Decimal("1000")})
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        original = rlo.execute_kill_switch_liquidation
+
+        def _boom(*args: object, **kwargs: object) -> object:
+            raise RuntimeError("liquidation infra down")
+
+        rlo.execute_kill_switch_liquidation = _boom  # type: ignore[assignment]
+        try:
+            inputs_box["data"] = dict(_LEVEL3_INPUTS)
+            orch.evaluate_intraday(1_000_000.0, now=_T0)
+            # 清算异常被隔离：engaged 已置位，report 落地 liquidation_error 兜底
+            assert orch.kill_switch_engaged is True
+            assert orch._kill_switch_report is not None
+            assert orch._kill_switch_report["report"]["status"] == "liquidation_error"  # type: ignore[index]
+            assert orch.is_trading_allowed is False
+            # 二次触发（修复后：engaged 即跳过，不再穿透重入清算链）
+            snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(seconds=30))
+            assert orch.kill_switch_engaged is True
+            assert len(broker.submitted) == 0  # 未重复下清算单
+            assert snap.systemic_level == 3
+        finally:
+            rlo.execute_kill_switch_liquidation = original  # type: ignore[assignment]
+
+
+class TestKillSwitchNanGuard:
+    """红队攻击：NaN qty 穿透清算 + 清算异常隔离。"""
+
+    def test_liquidation_filters_nan_qty(self) -> None:
+        """broker 返回含 NaN qty 的持仓，清算字典应过滤该标的。"""
+        broker = FakeBroker(
+            cash=Decimal("0"),
+            holdings={"A": Decimal("100"), "B": Decimal("nan"), "C": Decimal("0")},
+        )
+        orch = _make_orchestrator(broker=broker)
+
+        result = orch._engage_kill_switch("redteam: nan qty penetration")
+
+        assert result is not None
+        # NaN("B") 与零持仓("C") 均被过滤——仅 "A" 真实清算
+        # （修复前 NaN 穿透：nan>0 为 False → "B" 被生成 BUY 方向清算单）
+        assert [(o.symbol, o.side) for o in broker.submitted] == [("A", OrderSide.SELL)]
+        assert broker.submitted[0].quantity == Decimal(str(100.0))
+
+    def test_liquidation_exception_keeps_engaged(self) -> None:
+        """execute_kill_switch_liquidation 抛 ValueError，熔断状态保持，report 非 None。"""
+        import zephyr.ex_core.risk_layer_orchestrator as rlo
+
+        broker = FakeBroker(cash=Decimal("0"), holdings={"600000.SH": Decimal("1000")})
+        orch = _make_orchestrator(broker=broker)
+        original = rlo.execute_kill_switch_liquidation
+
+        def _boom(*args: object, **kwargs: object) -> object:
+            raise ValueError("liquidation params invalid")
+
+        rlo.execute_kill_switch_liquidation = _boom  # type: ignore[assignment]
+        try:
+            result = orch._engage_kill_switch("redteam: liquidation exception")
+        finally:
+            rlo.execute_kill_switch_liquidation = original  # type: ignore[assignment]
+
+        # 异常被隔离：熔断已置位（禁单保持），report 落地兜底字典而非永久 None
+        assert orch.kill_switch_engaged is True
+        assert orch.is_trading_allowed is False
+        assert result is not None
+        assert result["report"] == {
+            "status": "liquidation_error",
+            "reason": "execute_kill_switch_liquidation exception",
+        }
+        assert orch._kill_switch_report is result
+
+
+class TestNonFiniteNavGuard:
+    """红队（AI-R2 ATK-2）：非有限 nav 门禁——NaN/Inf 不得穿透回撤/VaR 链。
+
+    实证（修复前）：NaN 穿透 nav<=0（比较恒 False）→ 本轮回撤失明；
+    +Inf 使 tracker peak=inf 永久中毒，后续真实 -20% 回撤 drawdown=NaN
+    → EMERGENCY 永不触发（回撤保护链静默死亡）。
+    """
+
+    def test_nan_nav_falls_back_without_poisoning(self) -> None:
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch = _make_orchestrator(broker=broker)
+        orch.evaluate_intraday(1_000_000.0, now=_T0)  # 建立峰值锚点
+        snap = orch.evaluate_intraday(float("nan"), now=_T0)
+        assert snap.degraded is True
+        assert "non_finite" in snap.degrade_reason
+        # 中毒检验：后续真实 -20% 回撤必须正常触发 EMERGENCY
+        snap2 = orch.evaluate_intraday(800_000.0, now=_T0)
+        assert snap2.drawdown_pct == pytest.approx(-0.20)
+        assert orch.kill_switch_engaged is True  # EMERGENCY 熔断链完好
+
+    def test_inf_nav_falls_back_without_poisoning(self) -> None:
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch = _make_orchestrator(broker=broker)
+        orch.evaluate_intraday(1_000_000.0, now=_T0)
+        snap = orch.evaluate_intraday(float("inf"), now=_T0)
+        assert snap.degraded is True
+        # 修复前此处 peak=inf → 下行断言必失败
+        snap2 = orch.evaluate_intraday(800_000.0, now=_T0)
+        assert snap2.drawdown_pct == pytest.approx(-0.20)
+        assert orch.kill_switch_engaged is True
+
+    def test_zero_and_negative_nav_still_falls_back(self) -> None:
+        """既有 nav<=0 口径不回归。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch = _make_orchestrator(broker=broker)
+        assert orch.evaluate_intraday(0.0, now=_T0).degraded is True
+        assert orch.evaluate_intraday(-5.0, now=_T0).degraded is True
+
+
+class TestSystemicProviderTypeGuard:
+    """红队（AI-R2 ATK-3）：provider 返回非 Mapping → 状态保持不崩主循环。
+
+    实证（修复前）：list provider → .items() AttributeError 崩 evaluate_intraday
+    （本批修复③只挡了异常/空输入，类型错位在 .items() 调用点裸奔）。
+    """
+
+    def test_non_mapping_provider_holds_state_without_crash(self) -> None:
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch = RiskLayerOrchestrator(
+            drawdown_controller=DrawdownController(),
+            drawdown_tracker=DrawdownTracker(initial_net_value=1_000_000.0),
+            var_calculator=VaRCalculator(),
+            tail_risk_monitor=TailRiskMonitor(),
+            broker=broker,
+            systemic_detector=AshareSystemicRiskDetector(),
+            systemic_input_provider=lambda: ["sell_pressure", "bid_ask_spread"],  # 类型错位
+        )
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)  # 修复前 AttributeError
+        assert snap.systemic_level == 0
+        assert snap.systemic_cap == 1.0
+        assert orch.kill_switch_engaged is False
+
+    def test_non_mapping_provider_holds_crisis_constraints(self) -> None:
+        """危机中 provider 类型错位 → 同数据中断：cap/halt 保持不放松。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = {
+            "sell_pressure": 0.80,
+            "bid_ask_spread": 0.01,
+            "external_market_change": -0.04,
+        }
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 2
+        orch._systemic_input_provider = lambda: ("not", "a", "mapping")  # type: ignore[assignment]
+        snap2 = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=1))
+        assert snap2.systemic_level == 2
+        assert snap2.systemic_cap == pytest.approx(0.70)
