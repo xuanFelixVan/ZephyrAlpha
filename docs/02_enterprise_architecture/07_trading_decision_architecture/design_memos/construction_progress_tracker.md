@@ -411,19 +411,57 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 |---|---|---|---|---|
 | 149 | CAND-CYCLE-001 时间周期分析 MVP 施工（MOD-REGIME-006）（分支原登 #128） | AI-CYCLE-001 派单 | 两件套落码：①日历效应统计（月末/月初/节后，Welch t+Bonferroni 检验族=4，对齐 CYC-STAT-013）②周年日效应（显著高低点 ±5 日窗口 \|日收益\| 检验，对齐 CYC-TIME-004）；Gann 固定间隔/几何类列扩展口 EXT-G/EXT-GEO 不落码（证据强度不足不过度工程）。自主裁定：域归属 D_SIGNAL(deprecated)→D_REGIME 修正、MOD-REGIME-006 取号（001~005 已占）、scaffold --force-override 裁定通道（包名=域别名必然误报，同 #111 先例）、边界钉死=辅助参考信号非独立交易信号（is_advisory_only 恒 True/不显著 confidence=0 下游禁消费/未过 WFA 禁挂 regime 节流）。登记链：creation_token(auto-scaffold-regime_cycle_analyzer-20260818)+translation plain_zh+depgraph 设计态节点+blueprint v0.1.0+REG-CYCLE-001 两条目 code_path/code_symbol 锚定+#ARCH-122+CAND 留痕 promoted | ✅ 已 merge（统筹串行）；遗留=真数据实证回填 evidence+WFA 验证+regime 节流接线（蓝图 §9） |
 
-### P1-补17 · 2026-08-18 第八统筹 merge 列车总账（七路收口：ERR/SEAT/AISA/FHS/CYCLE/R4/R3）
+### P1-补17 · 2026-08-18 第八统筹 merge 列车总账（九路收口：ERR/SEAT/AISA/FHS/CYCLE/R4/R3/R2/R1-003）
 
-> 2026-08-18 晚第八统筹串行 merge 六路分支 + 并行会话落地 R3，全部收口。
+> 2026-08-18 晚第八统筹串行 merge 六路分支 + 并行会话落地 R3 + 续班落地 R2-001/R1-003（含初审/复审/红队三批），全部收口。
 
 | 项 | 内容 | 实证 |
 |---|---|---|
-| merge 序列 | ①AI-ERR-001（795fa5c00f，先行）②AI-SEAT-001（180a73a27d）③AI-AISA-001（2df795a8c8）④AI-R3（d1616f1464，并行会话提交，统筹内容修正）⑤AI-FHS-001（796ab4431e）⑥AI-CYCLE-001（f84a093f12）⑦AI-R4（8c3bf463a2） | dev log 七笔在案 |
+| merge 序列 | ①AI-ERR-001（795fa5c00f，先行）②AI-SEAT-001（180a73a27d）③AI-AISA-001（2df795a8c8）④AI-R3（d1616f1464，并行会话提交，统筹内容修正）⑤AI-FHS-001（796ab4431e）⑥AI-CYCLE-001（f84a093f12）⑦AI-R4（8c3bf463a2）⑧AI-R2-001（1ae447465d，续班：8 冲突解决+门禁顺带治本四项）⑨AI-R1-003（本 merge，含初审/复审/红队三批） | dev log 九笔在案 |
 | 派生污染剔除 | AISA/R3 两分支 reconciler 在 worktree 环境重扫 unified-asset-index.yaml 均截断 -63%（273409→~101800 行）+path_ownership_map 整表重排——两次均从 HEAD 逐字节还原剔除，未入 dev | git show 行数比对实证 |
-| 编号终态 | tracker：ERR=128 / SEAT=132-135 / AISA=136-140 / R3=141-144 / FHS=145-148 / CYCLE=149；ARCH：SEAT=120 / FHS=121 / CYCLE=122 / R3=124-127 / AISA=#ARCH-AISA-001 | 各段编号注记在案 |
+| 编号终态 | tracker：ERR=128 / SEAT=132-135 / AISA=136-140 / R3=141-144 / FHS=145-148 / CYCLE=149 / R1-001=150-155 / R1-002=156-158 / R1-003=159-162（预排 #150-153 让位连续分配，见补20 注记）；ARCH：SEAT=120 / FHS=121 / CYCLE=122 / R3=124-127 / AISA=#ARCH-AISA-001 | 各段编号注记在案 |
 | CAND 翻转 | SEAT-001/AISA-001（统筹 f149219057）+ AUTONOMYCORE-002/CYCLE-001（分支预翻核验）四路全部 promoted | candidate_module_registry |
 | depgraph 收口 | 全量重扫（966 模块）后 MOD-SIG-056/MOD-INT-AISA/MOD-RK-26/MOD-REGIME-006 四设计节点全 stable；pg_probe N-17（#ARCH-124）节点刷新+文件头自动回正 | extract_depgraph 实证 |
 | 门禁顺带治本 | GATE-21：blueprint_registry.yaml 磁盘缺失去库存量→骨架引导+syncer 重生 177 条（gitignored 盘文件范式）；GATE-DOC-NODE-ID：SEAT 蓝图 node_id 硬编码改 blueprint_id 口径；GATE-ERRCODE 实测拦截 ZA-IT-0003 未登记→补登闭环（#140） | 各 gate 转绿实证 |
-| 遗留归口 | memo 36 三处（#146 ✅）；FHS 远期接线（#147 🧊）；ERR 改号清单待 Owner 批准（#128 🔄）；R3 三遗留件随对应修复批（#142-144 ⏳）；SEAT 阈值回测/词表（#133/134 ⏳）；AISA LLM 切换/持久化/symbol 级（#137-139 ⏳）；CYCLE 真数据实证/WFA（#149 ⏳）；派生 align 批（146 文件，归并行会话收口） | 见各条目 |
+| 遗留归口 | memo 36 三处（#146 ✅）；FHS 远期接线（#147 🧊）；ERR 改号清单待 Owner 批准（#128 🔄）；R3 三遗留件随对应修复批（#142-144 ⏳）；SEAT 阈值回测/词表（#133/134 ⏳）；AISA LLM 切换/持久化/symbol 级（#137-139 ⏳）；CYCLE 真数据实证/WFA（#149 ⏳）；R1 三批观察项（#155/158/162 ⏳，均低危备查）；派生 align 批（146 文件，归并行会话收口） | 见各条目 |
+
+### P1-补18 · 2026-08-18 AI-R1-001 登记（AI-01~04 域审查修复批：IPO-001 4704f00853 / JOB-077 669066cd27 / 37号LEVEL_3 f0eb9bbc / THD统读 6c181232a3 / TICK-001 e061a3b0 五 merge 增量全量审查）【编号注记：分支原登 #128-#133 与已入 dev 的 AI-ERR-001 #128 撞号，分支内曾重编 #129-#134 又与 SEAT-001 #132-134 撞号——merge 终态重编 #150-#155（原 #128→150 起顺序一一对应）；正文交叉引用保留原编号，按此映射解读——2026-08-18 第八统筹】
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 150 | `_limit_pct_of` 创业板 2020-08-24 前 ST/*ST 涨跌停幅度 0.10→应为 0.05（算法口径缺陷，回填历史+ST 快照组合才触发） | AI-R1-001 算法审查+深交所投教官方页实证（szse.cn t20200807_580310：「特别规定实施前创业板风险警示股票价格涨跌幅限制比例为 5%」） | 原实现 `30` 前缀改革前一律 0.10 无视 st_flag，docstring/schema 注释/测试注释"此前 10%（含ST）"同错三处 | ✅ 已闭环（commit a117abec88：代码改 `0.05 if st_flag else 0.10`+双 docstring 勘正+`test_chinext_regime_change` 补改革前 ST 断言防回归；验证 `pytest tests/zephyr/data/test_akshare_market_meta.py` 52 passed） |
+| 151 | test_tick_subscriber.py 文件头双 `[TTL]` 字段冲突（L2 permanent vs L5 task_bound，TTL 治理解析歧义——task_bound 会被退役机制误盯） | AI-R1-001 TICK-001 审查 | TICK-001 入库时头注注入残留双 TTL | ✅ 已闭环（commit a117abec88：删 task_bound 行，测试对象=permanent 生产模块；验证 `pytest tests/zephyr/data/test_tick_subscriber.py` 82 passed） |
+| 152 | market_ipo_calendar.py exchange MATERIALIZED 表达式模板漂移（`substring(...,1,2) IN ('123','128')` 永假分支；全仓 69 个 schema 均 `1,3`） | AI-R1-001 schema 一致性审查（Grep 70 文件实测） | 行为恒等（123/128 转债前缀经 1-char `'1'→SZ` 落点相同；IPO 表无转债标的）；#127 实证 CH 表尚未建（8123 未运行），修复先于首次建表落地=零 live 漂移，统筹执行 apply_market_tables_ddl.py 时自然吸收正确表达式 | ✅ 已闭环（commit a117abec88 单字符修复 1,2→1,3） |
+| 153 | tasks.yaml `stk_limit_premarket` 幽灵依赖 `stock_basic_premarket` | AI-R1-001 算法-配置交叉审查 | `_fetch_stk_limit` 不消费 stock_basic（板块=代码前缀静态规则、昨收=kline_daily、ST=st_stock_list 三真源均非该任务产出）——无谓排序约束+depgraph 元数据失真 | ✅ 已闭环（commit a117abec88：dependencies 仅留 st_status_premarket 真依赖，注释留痕三真源） |
+| 154 | threshold_loader float cast 接受 bool（YAML `value: true` 笔误静默 1.0，fail-closed 小洞；int/str cast 均已拒 bool） | AI-R1-001 THD 统读审查 | tracker #87 统读加固遗漏面 | ✅ 已闭环（commit a117abec88：float 分支加 isinstance bool 拒绝+`test_bool_value_fail_closed` 全 9 统读模块参数化；验证 `pytest tests/governance/test_alert_threshold_consistency.py` 58 passed） |
+| 155 | 审查观察项（不修登记）：①market_sector_constituent.py INSERT_COLUMNS 双逗号笔误（`data_source, , fetched_at`，存量非本批引入，当前无消费者实证）；②`_stk_limit_row_for` i<5 新股判定用窗口索引（长期停牌复牌股理论上误 NULL，部分匹配"恢复上市首日无涨跌幅"真实规则）；③`int(shares_wan*1e4)` float 截断（≤1 股误差对亿元级募资分析无影响）；④ruff 存量 6 项（I001×5+SIM114×1，HEAD 基线一致非本批引入） | AI-R1-001 第 1~2 轮复检 | 全部低危/条件触发/无消费者，按"不过度修复"纪律登记备查 | ⏳ 观察项（供后续专项批评估） |
+
+> **本批验证汇总**：pytest 199 passed（market_meta 52 + ipo_calendar 7 + tick_subscriber 82 + threshold_consistency 58，含新增断言）；tasks.yaml YAML 解析通过；4 改动 .py AST 通过；ruff 零增量（基线比对实证）。**避让登记**：无（开工 `session_worktree.py list` 实证零在途 session；tracker §五表区 448+ 行有统筹在途改动，本登记落 §六 348-357 行区与在途区不相交，可自动并集）。**共享收口**：无新增（#127 CH 建表统筹执行时自动吸收 #130 修复）。
+
+### P1-补19 · 2026-08-18 AI-R1-002 登记（复审批——复核初审 #128-#133 + 漏报补登 2 项治本）【编号注记：分支原登 #134-#136 随初审批顺移重编 #135-#137，与 SEAT-001 #135/AISA-001 #136-137 撞号——merge 终态重编 #156-#158（原 #134→156 起顺序一一对应）；正文内引用的初审编号为分支原编号，映射见 P1-补18 注记——2026-08-18 第八统筹】
+
+复审结论：初审 6 项**全部确认**（#128 P1 定级恰当——当前日频运行全在 2020-08-24 改革日后，仅历史回填+ST 快照组合触发，不构成 P0；#130 行为恒等论证经 CH multiIf 逐分支推演成立——123/128 前缀两路径终值均 'SZ' 且跨表 JOIN 一致性反获改善；#131/#129/#132 修复完整性验证通过；#133 观察项维持）。漏报复查三面：降级机阈值真源无漂移（触发 0.005×ratio0.5=0.0025 与 37 号 §3.6 半阈值 0.25% 一致、LEVEL_2/3 内部 ×1.2=0.3% 与矩阵一致、卖压 0.50/min_hold {10,15,30} 一致——`_CHINEXT_20PCT_DATE` 般逐项比对 detector.config 与 RiskLayerConfig 真源）。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 156 | ipo_calendar `zfill(6)` 前无长度门禁——5 位数字码幻影串号（'00700'.zfill(6)='000700' 撞深主板前缀静默入库）；姊妹函数 `_suspend_rows_from_em/baidu` 均 `len!=6→skip`（JOB-077 港股串入实证后加固），防御范式不一致 | AI-R1-002 漏报复查面② | 巨潮源当前实证 402 行恒 6 位（风险=上游变更时静默串码）；官方清单恒 6 位，严格化后上游异常显式跳过（保守缺行优于幻影错值） | ✅ 已闭环（commit bc787ca8：`len(code)!=6 or not code.isdigit()` 门禁替代 zfill，注释留痕姊妹防御对齐依据；`test_invalid_code_skipped` 补 '12345' 短码幻影断言） |
+| 157 | threshold_loader float cast 接受 NaN/Inf（初审 #132 只堵 bool 未堵非有限值）——YAML `value: .nan` 静默通过后**阈值比较恒 False → 风控告警链静默失效**（比 bool→1.0 更隐蔽：NaN<threshold 与 >threshold 双向恒假，三级回撤告警全哑） | AI-R1-002 漏报复查（#132 同族遗漏面） | 触发条件同 #132（注册表笔误），但后果更重（整链静默 vs 单值错误）；数值字符串 "inf"/"1e400" 溢出同面 | ✅ 已闭环（commit bc787ca8：float 分支加 `math.isfinite` 门禁；`test_nan_inf_value_fail_closed` 9 模块×3 值参数化 + `test_numeric_string_overflow_fail_closed` loader 直测 4 字符串；注："inf" 对 cast="str"（PLV 字符串规约）是合法值，参数化已分离防误报） |
+| 158 | 复审补充观察项（不修登记）：①`_fetch_stk_limit` 45 天缓冲窗口 vs 2018 停牌新规前长停牌股（数月级）——复牌日窗口内 i=0 保守跳过不产出行（缺行而非错值，回测约束缺失偏保守方向）；②创业板 2020-08-24 前已进入退市整理期 3 股（千山退/神雾退/盛运退）改革后应保持 10%，现实现一律 20%（3 股×数月窗口，回填精度残余缺口）；③`check_recovery` docstring"active_signals 范围 0-2（双条件计数）"为 MOD-RK-21 旧口径，orchestrator 实传 detector 多信号计数（矩阵语义正确，注释滞后） | AI-R1-002 复核过程 | 全部低危/保守方向/注释级，按"不过度修复"纪律登记 | ⏳ 观察项（①②供回填专项批评估；③ RK-21 文件不属本批面，记 docstring 勘正候选） |
+
+> **复审批验证汇总**：pytest 227 passed（初审 199 + 复审新增 28：NaN/Inf 27 + loader 直测 1，ipo 短码断言并入既有用例）；ruff 零增量（3 项 I001=初审 #133④ 已登记存量）。**分支依赖**：AI-R1-002 分支已 merge ai/AI-R1-001/task-audit-r1-review（b697258c54，fast-forward 不可行因 dev 已前进——统筹 merge 本分支即同时落地初审+复审两批）。
+
+### P1-补20 · 2026-08-18 AI-R1-003 登记（红队批——对抗构造异常输入/边界场景找茬，攻击向量=数值溢出/空数据/停牌涨跌停/除权除息/并发竞态/降级抖动/跨层契约假设）【编号注记：分支原登 #138-#141 与 AISA-001 #138-140/R3 #141 撞号——merge 终态重编 #159-#162（原 #138→159 起顺序一一对应；预排方案 #150-153 因初审/复审批同撞号需连续分配而让位，第八统筹裁定）；正文交叉引用保留原编号——2026-08-18 第八统筹】
+
+红队结论：初审+复审修复基线稳固（145 项基线全绿），但红队构造攻击新发现 3 项 P1 全部治本修复+回归沉淀（跨层契约假设类 1 + 幻影码同族 1 + 数值溢出崩溃 1）。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 159 | GitCommitGateway MERGE_HEAD 检测 worktree 盲区（跨层契约假设类 P1）：L1842/L2019 硬编码 `project_root/.git/MERGE_HEAD`——linked worktree 的 `.git` 是指针文件（`gitdir: <common>/.git/worktrees/<name>`），该路径恒不存在，检测在 worktree 内恒 False → merge finalize 误走 pathspec partial commit 被 git 拒绝（"cannot do a partial commit during a merge"），worktree 内合法 merge 流程被堵死 | AI-R1-003 红队基线 merge 实证（`.git/MERGE_HEAD` exists=False vs `git rev-parse --git-path MERGE_HEAD` 解析正确，对照实证） | 治本=新增 `_is_merge_in_progress()` 用 `git rev-parse --git-path MERGE_HEAD` 解析真实 per-worktree git 目录（主仓/worktree 均正确，git 失败回退旧路径向后兼容），替换两处硬编码；修复在真实 merge 场景即验证（本批基线 merge 3199f08b42 经修复后网关完成）；3 回归测试（主仓无 merge=False/主仓 merge=True/linked worktree merge=True+盲区对照断言） | ✅ 已闭环（随基线 merge commit 3199f08b42 落地；tests/git/test_git_commit_gateway.py 56 项全绿） |
+| 160 | `_collect_st_rows` 裸 `zfill(6)` 幻影码（与 #135 ipo_calendar 同族 P1）：无长度/数字门禁——空码 `''`→`'000000'` 幻影成平安银行、5 位码 `'00700'`→`'000700'` 撞深主板前缀静默入库；且 `if not sym` 死代码（zfill 后恒非空）；ST 幻影码污染 stk_limit 的 st_flag 口径致涨跌停幅度误判 5%/10%（跨表传导） | AI-R1-003 红队幻影码攻击（空码/短码/非数字三向量实证复现） | 治本=严格 `len(sym)!=6 or not sym.isdigit()` 门禁替代裸 zfill（对齐 _fetch_ipo_calendar/_suspend_rows_* 姊妹防御范式）；`test_phantom_code_rejected_strict_gate` 回归（三类幻影全拒+合法行保留） | ✅ 已闭环（commit 见本批；market_meta 53 项全绿） |
+| 161 | `_fetch_ipo_calendar` `_num_or_none` 仅拒 NaN 未拒 Inf（数值溢出崩溃类 P1，比 #136 threshold_loader 同族更重）：上游 `'inf'`/`'1e400'` 经 safe_float 转 inf 后，total_shares 派生 `int(inf*1e4)` 直接 OverflowError 崩整个快照循环（不是脏值入库而是整批崩溃） | AI-R1-003 红队溢出攻击（`int(float('inf')*10000)` OverflowError 实证复现） | 治本=`_num_or_none` 改 `math.isfinite` 统一拒非有限值（NaN/±Inf 同面），派生列得 None 不炸；`test_inf_value_no_overflow_crash` 回归（Inf 发行价/溢出股数/正常行三行断言） | ✅ 已闭环（commit 见本批；ipo_calendar 8 项全绿） |
+| 162 | 红队观察项（不修登记）：①threshold_loader 结构畸形（条目缺 threshold_id→KeyError/thresholds 非列表→TypeError）绕过 AlertThresholdConfigError 错误契约——失败方向仍 fail-closed（崩溃阻断启动，无静默错值），但错误类型违约；注册表有 schema 门禁前置防御，触发条件苛刻；②`_st_flag_at` CH 不可达降级 st_flag=0 系文档声明的 fail-open（日志已留痕），ST 快照缺失窗口内改革前创业板 ST 股幅度取 10% 而非 5%——保守方向偏松（幅度偏大），与 #137① 同族回填精度缺口 | AI-R1-003 红队复核 | 全部低危/条件触发/保守方向，按"不过度修复"纪律登记备查 | ⏳ 观察项 |
+
+> **红队批验证汇总**：pytest 203 passed（gateway 56 含 3 新 + ipo_calendar 8 含 1 新 + market_meta 53 含 1 新 + threshold_consistency 86）两轮全绿；基线 145 项修复前后零回归。**攻击结果**：防御通过=空数据/停牌窗口/除权修正/Decimal 精度/CH 不可达探活/阈值 NaN-Inf-bool fail-closed（初审+复审已堵）；防御击穿=3 项 P1（#138/#139/#140 全部治本+回归沉淀）。**避让登记**：开工 `session_worktree.py list` 实证 12 在途 worktree（R1-001/002、R2~R5、AISA/CYCLE/ERR/FHS/SEAT），本批仅触 data 域 akshare_provider+threshold 测试+git 网关，与在途施工面零交集。
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 

@@ -2,7 +2,6 @@
 # [TTL] permanent
 # [TESTS] zephyr.data.tick_subscriber
 # [DOMAIN] D_DATA
-# [TTL] task_bound
 """tick_subscriber 单元测试（含 Phase C: WalWriter + 批量出队 + 无锁计数）。"""
 import sys
 import os

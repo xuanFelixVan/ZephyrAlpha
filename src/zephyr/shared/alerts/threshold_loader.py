@@ -28,6 +28,7 @@ fail-closed 四类失败一律 raise AlertThresholdConfigError（禁止第二真
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Any, Final, Literal, Mapping
 
@@ -63,18 +64,33 @@ ALERT_THRESHOLD_REGISTRY_PATH: Final[Path] = (
 def _cast_value(raw: Any, cast: Literal["float", "int", "str"], tid: str) -> Any:
     """按声明类型转换阈值原始值（类型畸形 → AlertThresholdConfigError）。
 
-    - float: int/float/数值字符串 → float（对齐 strategy_deviation_monitor 范式）
+    - float: int/float/数值字符串 → float（对齐 strategy_deviation_monitor 范式；
+      拒 bool——YAML `value: true` 笔误须 fail-closed，禁止静默 1.0）
     - int:   仅接受 YAML 整数（拒 bool/浮点/字符串，防 300.5→300 静默截断）
     - str:   仅接受 YAML 字符串（PLV 字符串规约语义，不数值化）
     """
     if cast == "float":
+        if isinstance(raw, bool):
+            raise AlertThresholdConfigError(
+                "阈值条目 value 非数值",
+                details={"threshold_id": tid, "value": repr(raw)},
+            )
         try:
-            return float(raw)
+            f = float(raw)
         except (TypeError, ValueError) as exc:
             raise AlertThresholdConfigError(
                 "阈值条目 value 非数值",
                 details={"threshold_id": tid, "value": repr(raw)},
             ) from exc
+        # NaN/Inf 拒绝（AI-R1 复审加固）：NaN 使阈值比较恒 False → 告警链静默
+        # 失效（比 bool→1.0 更隐蔽）；YAML `.nan`/`.inf` 与数值字符串 "inf"
+        # （含 "1e400" 溢出）统一 fail-closed
+        if not math.isfinite(f):
+            raise AlertThresholdConfigError(
+                "阈值条目 value 非有限数值（NaN/Inf）",
+                details={"threshold_id": tid, "value": repr(raw)},
+            )
+        return f
     if cast == "int":
         if isinstance(raw, bool) or not isinstance(raw, int):
             raise AlertThresholdConfigError(

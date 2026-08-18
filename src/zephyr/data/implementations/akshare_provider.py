@@ -64,6 +64,7 @@ _diag_logging.getLogger(__name__).debug(
 import calendar
 import datetime
 import logging
+import math
 import re
 import threading
 import time
@@ -2523,8 +2524,14 @@ class AkshareIngestProvider(IngestProviderBase):
             st_type = self._classify_st_type(name)
             if not st_type:
                 continue
-            sym = str(row.get(code_col) or "").zfill(6)
-            if not sym:
+            # 严格 6 位数字门禁（AI-R1-003 红队治本）：原裸 zfill(6) 无长度/数字
+            # 门禁——空码 ''→'000000' 幻影成平安银行、5 位码 '00700'→'000700'
+            # 撞深主板前缀静默入库（与 ipo_calendar #135 同族幻影码漏洞）。
+            # 对齐 _fetch_ipo_calendar/_suspend_rows_* 姊妹防御：官方清单恒 6 位，
+            # 上游异常显式跳过（保守缺行优于幻影错值——ST 幻影码会污染
+            # stk_limit 的 st_flag 口径，致涨跌停幅度误判 5%/10%）。
+            sym = str(row.get(code_col) or "").strip()
+            if len(sym) != 6 or not sym.isdigit():
                 continue
             rows.append((iso_date, sym, name, st_type, "akshare"))
         return rows
@@ -5196,13 +5203,16 @@ class AkshareIngestProvider(IngestProviderBase):
         """涨跌停幅度（小数），口径=沪深北交易所交易规则。
 
         科创板 20%（含ST）；创业板 2020-08-24 起 20%（含ST，改革后ST不再区别），
-        此前 10%；北交所 30%（无ST 5%规则）；主板 ST/*ST 5%、否则 10%。
+        此前 ST/*ST 5%、非ST 10%（深交所投教：特别规定实施前创业板风险警示股 5%）；
+        北交所 30%（无ST 5%规则）；主板 ST/*ST 5%、否则 10%。
         未知板块返回 None（调用方跳过，防误判）。
         """
         if code.startswith("68"):
             return 0.20
         if code.startswith("30"):
-            return 0.20 if trade_date >= cls._CHINEXT_20PCT_DATE else 0.10
+            if trade_date >= cls._CHINEXT_20PCT_DATE:
+                return 0.20
+            return 0.05 if st_flag else 0.10
         if code.startswith(("43", "83", "87", "88", "920")):
             return 0.30
         if code.startswith(("60", "00")):
@@ -5692,9 +5702,15 @@ class AkshareIngestProvider(IngestProviderBase):
         t0 = time.monotonic()
 
         def _num_or_none(v) -> float | None:
-            """NaN/None/非法值→None（NaN 自检 f!=f；CH Nullable(Decimal) 不收 NaN）。"""
+            """NaN/Inf/None/非法值→None（CH Nullable(Decimal) 不收 NaN/Inf）。
+
+            AI-R1-003 红队治本：原仅拒 NaN（f!=f 自检）未拒 Inf——上游
+            'inf'/'1e400' 溢出经 safe_float 转 inf 后，total_shares 派生
+            int(inf*1e4) 直接 OverflowError 崩整个快照循环（比脏值入库更重）。
+            改用 math.isfinite 统一拒非有限值（NaN/±Inf 同面）。
+            """
             f = safe_float(v)
-            if f is None or f != f:  # noqa: PLR0124 — NaN 自检惯用法（NaN != NaN 为 True）
+            if f is None or not math.isfinite(f):
                 return None
             return f
 
@@ -5714,11 +5730,11 @@ class AkshareIngestProvider(IngestProviderBase):
             df = None
         if df is not None and len(df) > 0:
             for _, row in df.iterrows():
+                # 严格 6 位数字（AI-R1 复审加固：zfill 前无长度门禁时 5 位码
+                # 幻影串号——'00700'.zfill(6)='000700' 撞深主板前缀；对齐
+                # _suspend_rows_from_em/baidu 姊妹防御，官方清单恒 6 位）
                 code = str(row.get("证劵代码") or "").strip()
-                if not code:
-                    continue
-                code = code.zfill(6)
-                if not code.isdigit() or len(code) != 6:
+                if len(code) != 6 or not code.isdigit():
                     continue
                 name = str(row.get("证券简称") or "").strip()
                 issue_price = _num_or_none(row.get("发行价"))
