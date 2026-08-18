@@ -370,7 +370,13 @@ def ensure_daemon(project_root: str | Path, interval: int = _SCAN_INTERVAL) -> b
     """确保看门狗 daemon 在跑（post-commit reconciler 事件轨调用点）。
 
     幂等：PID 文件存活则直接返回；否则 detached spawn 并写 PID 文件。
+    B1/R1 治本（2026-08-19）：pytest 测试体内不 spawn 真实看门狗——实测单轮
+    governance 套件泄漏 61 个 daemon 驻留主仓并发扫描（xdist 尾部资源风暴放大器，
+    活体抓现场实证）。需要覆盖 daemon 生命周期的测试用 monkeypatch/真 spawn 显式管理。
     """
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        logger.debug("watchdog ensure_daemon: pytest env, skip real daemon spawn")
+        return True
     from zephyr.shared.infra.process_pool import (  # noqa: PLC0415
         is_pid_alive,
         spawn_python_hidden,

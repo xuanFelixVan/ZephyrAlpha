@@ -203,6 +203,20 @@ def main() -> int:
 
     project_root = _get_project_root()
     session_id = _get_session_id()
+
+    # 循环审计 R1 治本（2026-08-19）：unknown 桶永不升级阻断——
+    # ZEPHYR_SESSION_ID 缺失的来源=git merge 触发的 hooks（merge commit 无 session env）
+    # 与手动 pre-commit run（审计/基线跑批），两者都不是"系统性忽略 worktree"的
+    # 可归因行为；unknown 桶计数只增不减会永久毒化（merge 批打爆阈值后所有手动
+    # 全量跑恒 BLOCKED，2026-08-19 基线实证）。可识别 session 的渐进升级语义不变。
+    if session_id == "unknown":
+        print(
+            "GATE-WORKTREE-REQUIRED: WARN — 主工作区操作（无 session 归因，"
+            "merge hook/手动跑批场景），不升级阻断",
+            file=sys.stderr,
+        )
+        return EXIT_PASS
+
     count = _read_skip_count(project_root, session_id)
 
     # 阈值超限 → 升级为阻断
