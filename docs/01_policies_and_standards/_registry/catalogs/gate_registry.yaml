@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-18T08:21:35Z'
+generated_at: '2026-08-18T11:07:05Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 149
+total_gates: 150
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -278,6 +278,16 @@ gates:
   description: 测试门禁合并——GATE-18(pytest --collect-only，保留 -m not slow and not e2e) +
     GATE-19(测试结构合规)，run_gate_chain 顺序执行
   files_trigger: ^src/zephyr/.*\.py$|^tests/.*\.py$
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-ERRCODE
+  name: 'GATE-ERRCODE: error_code 注册表↔代码双向对账（#ARCH-ERRCODE-001）'
+  entry: python -m pytest tests/governance/test_error_code_consistency.py -q --tb=line
+    -p no:asyncio --import-mode=importlib
+  description: error_code 一致性门禁——代码定义点全量登记 + active 条目存活锚定 + 重码白名单外零容忍 + 前缀声明（真源 tests/governance/test_error_code_consistency.py）
+  files_trigger: ^(src/zephyr/.*\.py|architecture_model/contracts/error_code_registry\.yaml)$
   always_run: false
   category: unknown
   status: active

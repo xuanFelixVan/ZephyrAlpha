@@ -17372,3 +17372,43 @@ entries:
   related_rules: 'CAND-SEAT-001; REG-SEAT-001; DS-080/JOB-076; tracker（AI-SEAT-001 施工记录）'
   created: '2026-08-18'
   last_updated: '2026-08-18'
+
+# --- #ARCH-AISA-001: CAND-AISA-001 AI 舆情分析器 MVP 转正施工（2026-08-18）---
+- issue_id: '#ARCH-AISA-001'
+  title: AI 舆情分析器 MVP——规则法情绪打分桩+时间窗聚合+舆情事件信号（CAND-AISA-001 转正，D_INTELLIGENCE L2 非结构化数据首个业务模块）
+  severity: P2中
+  category: architecture
+  adjudication: |-
+    2026-08-18 Owner 派单转正（CAND-AISA-001 P1 候选→MVP 施工，施工线新四路之一 AI-AISA-001）。
+    【数据基础盘点结论】舆情数据源缺口小，无需新建数据接入——已建基础：
+    ①news_data 统一主表（DS-104 event.news_data，cls/eastmoney/rss/akshare/tushare 多源 event_driven 写入）
+    ②MOD-DATA-NEWS-001 news_collector（采集查询，PIT 严格）③MOD-NLP-INFERENCE-001 nlp_inference
+    （Ollama qwen3:8b 单条情感推理，零样本 F1=0.51 未达 SFT 目标）。缺口=舆情聚合信号层
+    （sentiment_aggregator 规划未建 + 无舆情分数信号产品）。
+    【MVP 范围裁定】数据接入（复用 news_collector）+ 结构化输出（冻结 dataclass 三件套）+
+    规则法情绪打分桩（A 股政策语境关键词词典，标题权重>正文，去重防刷分，±0.90 封顶）+
+    时间窗聚合器（整点对齐默认 60min）+ 事件信号（±0.30 阈值突破，连续同向防抖）+
+    LLM 打分扩展口（构造注入 callable，异常降级 llm_fallback 不阻断）。
+    【正交性裁定】与 MOD-SIG-025 market_sentiment_analyzer（价格行为情绪周期：涨跌家数/涨跌停）
+    数据源与算法零重叠，不合并——本模块是新闻文本舆情维度。与 regime overlay（bad_news_flat）
+    是生产/消费关系，非重复。
+    【四问留痕】q1（已有实现？）→ 无等价节点：grep 证实舆情聚合信号层全仓缺失；
+    q4（TRAE AI 可替代？）→ 不可替代：舆情分数需固化信号产出供回测/信号系统消费，
+    每次 AI 重分析无法进入自动化管道（26 号备忘录 G28 裁定点对齐）。
+    【遗留】①LLM 打分默认未启用（SFT F1 达标后切换）②sentiment 持久化表未建
+    （下游需求确定后走 data_asset 流程）③symbol 级舆情（标的关联）未做（MVP 市场级窗口，
+    事件标的提取留扩展）④CTR-INT-AISA 契约拟定未登记（待下游 MOD-SIG-002 定型）。
+  impact:
+    规划文件：
+    - 'src/zephyr/intelligence/news_sentiment_analyzer.py（新建，MVP 主模块）'
+    - 'tests/intelligence/test_news_sentiment_analyzer.py（新建，29 测试两轮全绿）'
+    - 'docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md（新建）'
+    关联文档：
+    - 'docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml（CAND-AISA-001 状态留痕）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md（舆情复用裁定）'
+  fix_phase: 'MVP 已施工（2026-08-18 AI-AISA-001 worktree）：模块+29 测试两轮全绿+ruff 全过；五登记链完成（creation_token 3 条+capability 1 条+plain_zh 1 条+depgraph design 节点+blueprint）；planned→production 流转待 merge 回 dev 后自动执行。GLM 复审修复批（2026-08-18 同会话换模型复审）：P0-1 LLM 扩展口字段错配 score→polarity（中性新闻伪正修复）/P0-2 ST 子串误伤→大小写敏感词边界正则/P0-3 中文反转语境（终止重大资产重组）→距离窗口正则先扣除/P1-2 死代码清理（_logger/raw_text）/P1-3 SCD 多版本 merge 去重/P1-4 S4 注入器错锚 MOD-INF-050 修正+TTL 重复行；测试 29→37 全绿两轮；blueprint v0.1.1'
+  status: in_progress
+  related_rules: 'CAND-AISA-001; #ARCH-NLP-PIPELINE-001; 26_event_driven_strategy_detail §舆情'
+  created: '2026-08-18'
+  last_updated: '2026-08-18'
+  owner_approval: '2026-08-18 Owner 派单转正（施工线新四路指令，P1 候选转正 MVP）'

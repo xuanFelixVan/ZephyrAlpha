@@ -41523,6 +41523,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "看龙虎榜上都是谁在买股票——是机构、知名游资、量化还是散户，据此判断这股能不能跟。机构和大游资一起买加分，量化和散户扎堆减分，最后给出0到100分的跟随评分和买/观望/回避三档建议。"
+- module_path: src/zephyr/intelligence/news_sentiment_analyzer.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "新闻舆情分析器"
+  name_en: "News Sentiment Analyzer"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "对已采集的财经新闻做情绪打分：先用关键词规则法算出每条新闻看多还是看空，再按小时窗口聚合成情绪指数，指数突然变正或变负时产出舆情事件信号，供下游选股信号参考。支持注入大模型打分器替换规则法。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

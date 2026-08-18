@@ -356,7 +356,6 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 123 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量（分支原登 #121） | AI-GOVB-001 提交期横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批逐条归因：①3 条 GATE-PANORAMA-ALIGNMENT=08-16 PG 停服期历史（PG 已恢复+FOPEN-001 fail-open 留痕已治理）——已按 acknowledge_critical_warns 正式 ack 消音，横幅 24h 窗未 ack 归零；②2 条 DRIFT-WATCHDOG=AI-FILL 填报会话主仓直改 tracked 文档但**未注册 SessionRegistry 写入方**（work ∅→hash 实证），自愈合机制已自动 ack——FILL 侧流程缺口供统筹知情；③另 1 条 GATE-RULE-AUDIT 08-15 存量已出 24h 窗自然消音） | ✅ |
 | 124 | session_concurrency.py [CONSUMERS] 声明漂移（reconcile_worker/runner 括号内函数名误写为消费者自身函数而非被消费的 SessionRegistry）（分支原登 #122） | AI-GOVB-001 续批提交期 CONSUMERS-ACCURACY 门禁实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批顺手修：声明勘正为 reconcile_worker (SessionRegistry) / reconcile_runner (SessionRegistry)——与 #105 同类的头注派生数据漂移） | ✅ |
 
-<<<<<<< HEAD
 ### P1-补11 · 2026-08-18 AI-ERR-001 登记（#ARCH-ERRCODE-001 全域收口批）
 
 > 任务书三步：①全域补登 ②重码治理 ③对账门禁。①③已完工落地，②裁定完毕待 Owner 批准执行改号（GAP-010 高敏区人审约束）。
@@ -376,6 +375,16 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 133 | MOD-SIG-056 阈值未经回测（拍脑袋经验值） | AI-SEAT-001 风险登记（分支原登 #129） | 跟随信号全部加减分阈值（机构+15/游资+10/量化-20/散户-15/独食-10/力度±10）取自 seat_registry 六维框架公开经验值，未经本项目数据回测校准；v0.1 信号仅作参考特征不作独立交易依据，校准依赖 DS-080 积累≥3 个月+回测批 | ⏳ v0.2 回测校准（依赖数据积累） |
 | 134 | seat_registry provider 粗分类与 registry 类型词表不同构 | AI-SEAT-001 设计登记（分支原登 #130） | akshare_provider 粗分三类 institution/connect/broker vs seat_registry 五类 institution/youzi/quant/northbound/retail——A1 回退路径产出 connect/broker 与 registry 词表混排（linkage type_set 语义稀释）；v0.2 统一词表（provider 层细分类或映射层归一） | ⏳ v0.2 词表统一 |
 | 135 | 任务书包路径字面（src/zephyr/ashare_signal/）与 depgraph 真源冲突避让 | AI-SEAT-001 避让登记（分支原登 #131） | 任务书字面 ashare_signal 与 D_ASHARE_SIGNAL 域物理包 signal_ashare（37 节点实证）冲突；裁定落 signal_ashare 包（任务书笔误避让，非推翻 active 决策；#ARCH-120 adjudication③ 留痕） | ✅ 已避让（施工落 signal_ashare） |
+
+### P1-补13 · 2026-08-18 AI-AISA-001 登记（CAND-AISA-001 舆情分析器 MVP 批）【编号注记：分支原登 P1-补11 #128-132 与 ERR-001/SEAT-001 已入 dev 的 #128/#132-135 撞号，merge 重编 P1-补13 #136-140——2026-08-18 第八统筹】
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 136 | MOD-INT-AISA depgraph 设计态节点 planned→production 流转（分支原登 #128） | AI-AISA-001（舆情 MVP 批） | worktree 施工纪律：会话内只登记不流转（design 态受重建 DELETE 豁免保护，#110 同款教训——提前手工转 production 会被主仓锚定后台重扫当孤儿收割）；merge 回 dev 后由 #ARCH-70 同身份 UPDATE 通道随第一次重建自动转 production，merge 执行人负责实证核验+闭环 | ⏳ 待 merge 后自动流转+统筹核验 |
+| 137 | LLM 打分通道默认未启用（规则法为默认打分器）（分支原登 #129） | AI-AISA-001 范围裁定 | nlp_inference 零样本 F1=0.5148 未达 SFT 目标 0.75（#ARCH-NLP-PIPELINE-001 Phase 2 实证）——MVP 默认规则法确定性打分，LLM 扩展口（构造注入 llm_scorer callable）已就位；切换条件=SFT F1≥0.75 且评估集复测通过 | ⏳ 待 SFT 达标后切换 |
+| 138 | sentiment 持久化表未建（MVP 内存态输出）（分支原登 #130） | AI-AISA-001 范围裁定 | 26 号备忘录裁定情绪分数作事件信号维度非独立 alpha，落库需求待下游确定；建表时走 data_asset_registry + CH DDL-as-Code 流程（DS-104 同族），不绕过 | ⏳ 待下游需求驱动 |
+| 139 | symbol 级舆情（标的关联）与 CTR-INT-AISA 契约登记（分支原登 #131） | AI-AISA-001 范围裁定 | MVP 产出市场级窗口 sentiment_index；symbol 级聚合需新闻→标的关联层（公告已有标的字段、新闻需 NER/规则提取，26 号备忘录 BM-SEL-19 漏斗联动候选）；契约 CTR-INT-AISA 拟定未登记，待 MOD-SIG-002 信号生成定型后对齐 | ⏳ 待 MOD-SIG-002 定型 |
+| 140 | ZA-IT-0003 错误码未登 error_code_registry.yaml（分支原登 #132；AI-AISA-001 GLM 复审发现） | AI-AISA-001 GLM 复审 | error_code_registry.yaml 系 AI-ERR-001 活跃施工面故施工侧避让；现 ERR-001 已 merge（795fa5c00f），登记格式=code/class/module/file/description，条目：ZA-IT-0003 / NewsSentimentAnalyzerError / zephyr.intelligence.news_sentiment_analyzer / 舆情分析器参数与输入校验错误 | ⏳ 移交统筹收口批补登 |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
