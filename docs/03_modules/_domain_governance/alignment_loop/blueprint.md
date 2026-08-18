@@ -67,17 +67,6 @@ design_maturity: design
 
 # 蓝图-代码对齐长效闭环引擎蓝图 — drift自动检测→自动修复→自动验证闭环
 
-### §0.6 五图对齐视图
-
-| 图 | 对齐 key | 说明 |
-|---|---|---|
-| 依赖图 (depgraph) | module_id | 见本蓝图 frontmatter |
-| 数据流图 (dataflowgraph) | module_id | 暂无独立节点 |
-| 决策图 (decisiongraph) | module_id | 暂无独立节点 |
-| 蓝图 (blueprint.md) | module_id | 即本文件 |
-
-> 本模块为概念/元模块或治理脚本，depgraph 中节点可能归属其他 module_id。
-
 ## 概述
 
 本蓝图定义 ZephyrAlpha 项目的**蓝图-代码对齐长效闭环机制**——把"人工发现 drift → 人工修复 → 手动验证"升级为"自动检测 → 自动修复 → 自动验证"的无人值守闭环。

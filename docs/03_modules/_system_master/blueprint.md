@@ -64,17 +64,6 @@ build_status: stable
 > module_id: SYS-MASTER-001 | version: 0.17.1 | status: active | layer: meta | blueprint_level: system
 > actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md | generation: 2 | construction_progress: completed | drift_status: reviewed
 
-### §0.6 五图对齐视图
-
-| 图 | 对齐 key | 说明 |
-|---|---|---|
-| 依赖图 (depgraph) | module_id | 见本蓝图 frontmatter |
-| 数据流图 (dataflowgraph) | module_id | 暂无独立节点 |
-| 决策图 (decisiongraph) | module_id | 暂无独立节点 |
-| 蓝图 (blueprint.md) | module_id | 即本文件 |
-
-> 本模块为概念/元模块或治理脚本，depgraph 中节点可能归属其他 module_id。
-
 ## 概述
 
 本蓝图是 ZephyrAlpha 系统级总蓝图（Level 0 System Master）——三级金字塔架构的顶点。核心职责：102 章全覆盖的系统拓扑定义、12 个基础设施系统的集成架构、46 个门控检查的全局管控、C-track 53 域（4值 layer_id：L0_infrastructure/L1_foundation/L2_domain/L3_application）+ B-track 12 系统的完整拓扑。AI agent 冷启动第一站——进入项目后必须先读本蓝图 §零（分派表）定位任务域。上游无依赖（ROOT 级），下游被 MOD-MASTER_BLUEPRINT（集成闭环总蓝图）和全部 L1 子系统蓝图消费。
