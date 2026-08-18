@@ -6199,6 +6199,35 @@ capabilities:
       - recover_from_broker        # 启动恢复入口(删则重启空仓错觉)
       - _engage_kill_switch        # 熔断单一仲裁点(删则EMERGENCY无清算)
 
+  # --------------------------------------------------------------------------
+  - capability_id: news_sentiment_analyzer
+    aliases:
+      - NewsSentimentAnalyzer
+      - RuleBasedSentimentScorer
+      - SentimentAggregator
+      - SentimentScore
+      - SentimentEvent
+      - MOD-INT-AISA
+      - CAND-AISA-001
+    description: >-
+      A 股舆情分析器 MVP（CAND-AISA-001 转正，2026-08-18 AI-AISA-001 施工，#ARCH-AISA-001）。
+      复用已建数据与推理基础（news_collector 取 fund_news_data 多源新闻 / nlp_inference
+      作 LLM 打分扩展口），新建舆情聚合信号层：①规则法情绪打分桩（A 股政策语境关键词
+      词典，标题权重高于正文，去重防刷分，[-1,1] 有向极性）②时间窗口聚合器（整点对齐，
+      默认 60min，产出窗口 sentiment_index/正负占比）③舆情事件信号（sentiment_index
+      突破正负阈值产 positive_spike/negative_spike，连续同向窗口防抖）④LLM 打分扩展口
+      （构造注入 llm_scorer callable，异常自动降级 llm_fallback 不阻断）。与
+      market_sentiment_analyzer（MOD-SIG-025 价格行为情绪周期）正交——本模块是新闻文本
+      舆情维度。MVP 不建表不持久化（内存态输出，下游决定落盘）。canonical =
+      src/zephyr/intelligence/news_sentiment_analyzer.py。解决发现性：新 AI 搜
+      "舆情/新闻情绪/news sentiment/政策舆情/sentiment事件" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类舆情信号层。
+    integrity_anchors:
+      - NewsSentimentAnalyzer      # 主分析器门面(删则舆情信号零产出)
+      - RuleBasedSentimentScorer   # 规则法打分桩(删则离线打分能力失效)
+      - SentimentAggregator        # 窗口聚合器(删则单条情绪无法聚合成信号)
+      - _POSITIVE_KEYWORDS         # A股利好词典(篡改则打分口径漂移)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -9435,6 +9464,19 @@ creation_tokens:
     token: "ipo001-market-ipo-calendar-20260817"
     created_by: "AI-IPO-001"
     capability: "data_source_provider_abstraction"
+  # --- CAND-AISA-001 AI 舆情分析器 MVP（2026-08-18，AI-AISA-001 施工，#ARCH-AISA-001；tests/ 豁免 token 但按 SELL-001 先例补登）---
+  - file: "src/zephyr/intelligence/news_sentiment_analyzer.py"
+    token: "auto-news-sentiment-analyzer-20260818"
+    created_by: "AI-AISA-001"
+    capability: "news_sentiment_analyzer"
+  - file: "docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md"
+    token: "auto-news-sentiment-analyzer-bp-20260818"
+    created_by: "AI-AISA-001"
+    capability: "news_sentiment_analyzer"
+  - file: "tests/intelligence/test_news_sentiment_analyzer.py"
+    token: "auto-news-sentiment-analyzer-test-20260818"
+    created_by: "AI-AISA-001"
+    capability: "news_sentiment_analyzer"
 di_seam_exemptions:
   - module_path: "zephyr.trading.auto_runtime_core.AutoRuntimeCore"
     reason: "P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）"

@@ -41516,6 +41516,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "commit/merge 前先用 TCP 摸一下 PostgreSQL 5432 通不通（1 秒超时，不通也不拦你，只把结果写进 .runtime/pg_probe_state.json）；几个 depgraph 门禁在数据库连不上被迫放行时，会查这个状态来分清是'数据库真的挂了'还是'别的错误'，并把放行记录写进治理库（同一个原因一天只记一次，防止刷屏），下次提交时横幅提醒你追账；数据库连续挂超 24 小时时，还会豁免 depgraph 新鲜度门禁的误伤"
+- module_path: src/zephyr/intelligence/news_sentiment_analyzer.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "新闻舆情分析器"
+  name_en: "News Sentiment Analyzer"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "对已采集的财经新闻做情绪打分：先用关键词规则法算出每条新闻看多还是看空，再按小时窗口聚合成情绪指数，指数突然变正或变负时产出舆情事件信号，供下游选股信号参考。支持注入大模型打分器替换规则法。"
 
 battle_map_steps:
 - step_id: BM-BUY-04
