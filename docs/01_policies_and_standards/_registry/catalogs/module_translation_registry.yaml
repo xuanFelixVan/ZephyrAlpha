@@ -41516,6 +41516,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "commit/merge 前先用 TCP 摸一下 PostgreSQL 5432 通不通（1 秒超时，不通也不拦你，只把结果写进 .runtime/pg_probe_state.json）；几个 depgraph 门禁在数据库连不上被迫放行时，会查这个状态来分清是'数据库真的挂了'还是'别的错误'，并把放行记录写进治理库（同一个原因一天只记一次，防止刷屏），下次提交时横幅提醒你追账；数据库连续挂超 24 小时时，还会豁免 depgraph 新鲜度门禁的误伤"
+- module_path: src/zephyr/regime/regime_cycle_analyzer.py
+  domain_id: D_REGIME
+  name_zh: "时间周期分析器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "分析日历上的时间规律：月末月初效应、长假节后效应、历史高低点周年日效应，用统计检验自证是否真有效，输出'什么时候可能变盘'的提醒窗口。它只是辅助参考，不直接发买卖信号"
 
 battle_map_steps:
 - step_id: BM-BUY-04

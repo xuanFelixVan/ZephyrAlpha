@@ -192,12 +192,12 @@ cycles:
     timeframe: "yearly"
     module_id: "MOD-REGIME-002"
     doc_ref: "Gann Anniversary Dates（2026-08-14 新建）"
-    code_path: ""
+    code_path: "src/zephyr/regime/regime_cycle_analyzer.py"
     used_by_factors: []
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-18"
     owner: "MOD-GOVERNANCE"
     primary_timeframe: "daily"
     applicable_timeframes: ["daily"]
@@ -207,9 +207,9 @@ cycles:
     entry_role: "state"
     applies_to: []
     tags: ["周期", "江恩", "规则", "时间窗"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/regime/regime_cycle_analyzer.py::anniversary_windows"
     code_fingerprint: null
 
   # ============================================================
@@ -507,12 +507,12 @@ cycles:
     timeframe: "yearly"
     module_id: "MOD-GOVERNANCE"
     doc_ref: "29_factor_strategy_extraction.md §F6.37（吸收 F6.11/F6.18/F6.51）"
-    code_path: ""
+    code_path: "src/zephyr/regime/regime_cycle_analyzer.py"
     used_by_factors: []
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-15"
-    updated_at: "2026-08-15"
+    updated_at: "2026-08-18"
     owner: "MOD-GOVERNANCE"
     primary_timeframe: "daily"
     applicable_timeframes: ["daily"]
@@ -522,9 +522,9 @@ cycles:
     entry_role: "state"
     applies_to: ["stock", "index"]
     tags: ["事件", "资金"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/regime/regime_cycle_analyzer.py::trading_day_features"
     code_fingerprint: null
 
 

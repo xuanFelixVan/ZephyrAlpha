@@ -355,6 +355,12 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 123 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量（分支原登 #121） | AI-GOVB-001 提交期横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批逐条归因：①3 条 GATE-PANORAMA-ALIGNMENT=08-16 PG 停服期历史（PG 已恢复+FOPEN-001 fail-open 留痕已治理）——已按 acknowledge_critical_warns 正式 ack 消音，横幅 24h 窗未 ack 归零；②2 条 DRIFT-WATCHDOG=AI-FILL 填报会话主仓直改 tracked 文档但**未注册 SessionRegistry 写入方**（work ∅→hash 实证），自愈合机制已自动 ack——FILL 侧流程缺口供统筹知情；③另 1 条 GATE-RULE-AUDIT 08-15 存量已出 24h 窗自然消音） | ✅ |
 | 124 | session_concurrency.py [CONSUMERS] 声明漂移（reconcile_worker/runner 括号内函数名误写为消费者自身函数而非被消费的 SessionRegistry）（分支原登 #122） | AI-GOVB-001 续批提交期 CONSUMERS-ACCURACY 门禁实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批顺手修：声明勘正为 reconcile_worker (SessionRegistry) / reconcile_runner (SessionRegistry)——与 #105 同类的头注派生数据漂移） | ✅ |
 
+### P1-补11 · 2026-08-18 AI-CYCLE-001 登记（CAND-CYCLE-001 时间周期 MVP 批）
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 128 | CAND-CYCLE-001 时间周期分析 MVP 施工（MOD-REGIME-006） | AI-CYCLE-001 派单 | 两件套落码：①日历效应统计（月末/月初/节后，Welch t+Bonferroni 检验族=4，对齐 CYC-STAT-013）②周年日效应（显著高低点 ±5 日窗口 |日收益| 检验，对齐 CYC-TIME-004）；Gann 固定间隔/几何类列扩展口 EXT-G/EXT-GEO 不落码（证据强度不足不过度工程）。自主裁定：域归属 D_SIGNAL(deprecated)→D_REGIME 修正、MOD-REGIME-006 取号（001~005 已占）、scaffold --force-override 裁定通道（包名=域别名必然误报，同 #111 先例）、边界钉死=辅助参考信号非独立交易信号（is_advisory_only 恒 True/不显著 confidence=0 下游禁消费/未过 WFA 禁挂 regime 节流）。登记链：creation_token(auto-scaffold-regime_cycle_analyzer-20260818)+translation plain_zh+depgraph 设计态 node_id=9823088+blueprint v0.1.0+REG-CYCLE-001 两条目 code_path/code_symbol 锚定+#ARCH-120+CAND 留痕 promoted | ✅ 已闭环（2026-08-18 AI-CYCLE-001：24 单测两轮全绿；遗留=真数据实证回填 evidence+WFA 验证+regime 节流接线，蓝图 §9） |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
