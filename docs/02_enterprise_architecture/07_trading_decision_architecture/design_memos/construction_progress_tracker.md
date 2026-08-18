@@ -363,6 +363,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 129 | LLM 打分通道默认未启用（规则法为默认打分器） | AI-AISA-001 范围裁定 | nlp_inference 零样本 F1=0.5148 未达 SFT 目标 0.75（#ARCH-NLP-PIPELINE-001 Phase 2 实证）——MVP 默认规则法确定性打分，LLM 扩展口（构造注入 llm_scorer callable）已就位；切换条件=SFT F1≥0.75 且评估集复测通过 | ⏳ 待 SFT 达标后切换 |
 | 130 | sentiment 持久化表未建（MVP 内存态输出） | AI-AISA-001 范围裁定 | 26 号备忘录裁定情绪分数作事件信号维度非独立 alpha，落库需求待下游确定；建表时走 data_asset_registry + CH DDL-as-Code 流程（DS-104 同族），不绕过 | ⏳ 待下游需求驱动 |
 | 131 | symbol 级舆情（标的关联）与 CTR-INT-AISA 契约登记 | AI-AISA-001 范围裁定 | MVP 产出市场级窗口 sentiment_index；symbol 级聚合需新闻→标的关联层（公告已有标的字段、新闻需 NER/规则提取，26 号备忘录 BM-SEL-19 漏斗联动候选）；契约 CTR-INT-AISA 拟定未登记，待 MOD-SIG-002 信号生成定型后对齐 | ⏳ 待 MOD-SIG-002 定型 |
+| 132 | ZA-IT-0003 错误码未登 error_code_registry.yaml（AI-AISA-001 GLM 复审发现） | AI-AISA-001 GLM 复审 | error_code_registry.yaml 是 AI-ERR-001 活跃施工面（error-code-reconciliation 在途大改），本批避让不碰；登记格式=code/class/module/file/description，条目：ZA-IT-0003 / NewsSentimentAnalyzerError / zephyr.intelligence.news_sentiment_analyzer / 舆情分析器参数与输入校验错误 | ⏳ 移交统筹随 ERR 批 merge 后补登（防同文件冲突） |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 

@@ -521,7 +521,7 @@ entries:
   - {id: "CTR-INT-01", note: "新闻/公告文本"}
   prerequisites:
   - {condition: "D_INTELLIGENCE 数据采集稳定", check: "MOD-INT-001=production", met: true}
-  - {condition: "确认非AI可替代", check: "", met: false, note: "待评估:TRAE AI 可能直接胜任舆情理解,无需建独立模块"}
+  - {condition: "确认非AI可替代", check: "四问q4裁定", met: true, note: "2026-08-18裁定:舆情分数需固化信号产出供回测/信号系统消费,AI运行时重分析无法进入自动化管道(26号备忘录G28裁定点对齐)"}
   design_admission:
     q1_implemented: {result: false, equivalent_nodes: [], evidence: "2026-08-18 全仓 grep 实证：舆情聚合信号层缺失（sentiment_aggregator 规划未建）；MOD-SIG-025 为价格行为情绪周期，nlp_inference 为单条推理层，均非等价节点"}
     blocking_question: answered

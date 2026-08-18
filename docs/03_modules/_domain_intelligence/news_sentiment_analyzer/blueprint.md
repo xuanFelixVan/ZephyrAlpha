@@ -3,13 +3,13 @@ module_id: MOD-INT-AISA
 title: "AI 舆情分析器蓝图 — 规则法情绪打分桩+窗口聚合+事件信号（MVP）"
 doc_type: blueprint
 status: Active
-version: "0.1.0"
+version: "0.1.1"
 ttl: permanent
 design_maturity: design
 layer: L02_intelligence
 layer_name: intelligence
 functional_domain: intelligence
-responsibility_domain: 
+responsibility_domain:
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-18"
@@ -34,9 +34,14 @@ blueprint_level: module
 ## 2. 不变量 (INVARIANTS)
 
 - **复用不重建**：数据接入复用 MOD-DATA-NEWS-001 news_collector；LLM 打分复用 MOD-NLP-INFERENCE-001（扩展口注入），本模块不新建数据源/推理引擎
+- **LLM 契约取 polarity**：LLM 通道取 `SentimentResult.polarity`（有向极性 [-1,1]），禁止误用 `score`（强度 [0,1]，neutral=0.5 会把中性伪装成 +0.5 正向）——GLM 复审 P0-1
+- **ST 词边界匹配**：ST/*ST 风险警示按大小写敏感+词边界匹配（仅大写是 A 股标记，小写 st 是英文普通词子串 steady/boost/first/best）——GLM 复审 P0-2
+- **反转语境先扣除**：终止/停止/暂停+距离窗口 12 字内的 重组/并购/收购，及 X失败 后向模式——命中计负向并从文本扣除命中段，防"终止重大资产重组"被"重组"判正向——GLM 复审 P0-3
 - **规则法离线可跑**：默认规则法打分桩零外部依赖（不依赖 Ollama/网络），任何环境可运行
 - **极性有界**：polarity ∈ [-0.90, 0.90] 硬封顶；sentiment_index ∈ [-1, 1]
+- **收词纪律**：词典不收互为子串的词（"新高"已覆盖"创新高"），防同文本双计分
 - **窗口整点对齐**：聚合窗口按整点 floor 对齐，非按首条新闻时间对齐（跨日可比）
+- **SCD 去重**：聚合侧按 news_id 去重（keep=first 最早版本，PIT 语义），防多版本修正稿膨胀 news_count——GLM 复审 P1-3
 - **去重防刷分**：同一关键词多次出现只计一次（标题重复词不放大分数）
 - **降级不阻断**：LLM 打分异常自动降级 llm_fallback（polarity=0），单条失败不阻断整体
 - **事件防抖**：连续同向超阈窗口只在首个窗口触发事件，不重复告警
@@ -61,13 +66,15 @@ blueprint_level: module
 ## 5. 打分与聚合逻辑
 
 ```
-规则法打分（RuleBasedSentimentScorer）:
-  text = title + content；关键词子串匹配（预编译正则）
-  标题命中 ±0.20/词，正文命中 ±0.08/词；同词去重；极性封顶 ±0.90
-  无命中 → 0.0 中性
+规则法打分（RuleBasedSentimentScorer，标题命中 ±0.20/词，正文 ±0.08/词，封顶 ±0.90）:
+  ① 反转语境正则（终止|停止|暂停）[≤12字，标点截断]（重组|并购|收购）
+     + 后向（重组|并购|收购）（失败|告吹|未成|折戟）→ 计负向并从文本扣除命中段
+  ② ST/*ST：大小写敏感词边界正则 → 计负向（小写 st 英文子串不命中）
+  ③ 短词典子串匹配（正 34 词 / 负 35 词，同词去重）
 
 窗口聚合（SentimentAggregator）:
   按 time_col 整点 floor 对齐，窗口=60min（可配）
+  聚合侧按 news_id 去重（SCD 多版本防膨胀，keep=first 即最早版本）
   sentiment_index = 窗口内 polarity 均值
   positive_ratio / negative_ratio = 正/负向新闻占比
 
@@ -101,17 +108,21 @@ analyzer.analyze_date_range(start, end) -> (DataFrame, list[SentimentWindow], li
 |------|------|
 | 单文件模块（非子包） | MVP 不过度工程：4 个类高内聚，~450 行；将来拆分（scorer/aggregator/store）成本低于预拆 |
 | 规则法为默认、LLM 为注入扩展口 | nlp_inference 零样本 F1=0.51 未达 SFT 目标，规则法确定性高可单测；扩展口签名对齐 SentimentResult，LLM 成熟后无缝切换 |
+| LLM 通道取 polarity 而非 score | SentimentResult 双字段语义：score=强度[0,1]（neutral=0.5）/ polarity=有向极性[-1,1]；误用 score 会把中性新闻伪装成正向（GLM 复审 P0-1） |
+| 反转语境用距离窗口正则而非固定短语 | A 股公告"终止**重大资产**重组"中间常插修饰语，固定子串匹配不到；≤12 字窗口+标点截断是中文动宾反转的标准启发式（GLM 复审 P0-3） |
 | 不建 sentiment 持久化表 | MVP 边界：26 号备忘录裁定情绪分数作事件信号维度非独立 alpha，落库需求待下游确定后再建（遗留项） |
 | 窗口整点对齐 | 跨日/跨周可比性；按首条新闻对齐会导致同一事件的窗口边界漂移 |
 | 关键词词典静态内置+构造注入 | MVP 静态表对齐"先简单静态映射后动态模型"偏好；自定义词典走构造参数，不读外部配置文件（防第二真源） |
 | 与 MOD-SIG-025 正交不合并 | 025 是价格行为情绪周期（涨跌家数/涨跌停），本模块是新闻文本舆情，数据源与算法零重叠，合并违反单一职责 |
+| 已知局限（规则法天花板） | 否定词（"承诺不减持"仍判负向）与复杂语境无法覆盖——由 LLM 通道补；词典覆盖随实盘误差分析迭代 |
 
 ## 8. 测试计划
 
 - 冻结 dataclass 不可变（3 类）
 - 规则法：正/负/中性打分、标题权重>正文、自定义词典、正负抵消、0.90 封顶、同词去重
+- GLM 复审回归：ST 词边界（大写命中/小写英文零误伤）+ 反转语境（终止重组净负向/常规重组仍正向）
 - 聚合器：空表、缺列报错、单窗口均值/占比、多窗口、整点对齐、window≤0 报错
-- 主分析器：空表、规则法链路、LLM 注入通道、LLM 异常降级、mock collect_news 全链路
+- 主分析器：空表、规则法链路、LLM 注入通道（polarity 契约+neutral 防伪正）、LLM 异常降级、mock collect_news 全链路、SCD 去重
 - 事件：正/负 spike 触发、连续同向防抖、阈值内不触发
 - 错误契约：ZA-IT-0003
 

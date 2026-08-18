@@ -1,12 +1,11 @@
-# [BLUEPRINT] MOD-INF-050 | (auto-injected by S4 reconciler) | §
-# [TTL] permanent
+# [BLUEPRINT] MOD-INT-AISA | docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md | §
 # [MODULE] zephyr.intelligence.news_sentiment_analyzer
 # [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] pandas; zephyr.data.news_collector; zephyr.nlp.nlp_inference
 # [CONSUMERS] MOD-SIG-002(信号生成器, 消费 SentimentEvent)
 # [STARTUP] imported
 # [MATURITY] design
-# [INVARIANTS] 规则法情绪打分MVP桩，LLM打分走zephyr.nlp.nlp_inference扩展口；聚合窗口默认1h，空输入返回空结果不报错
+# [INVARIANTS] 规则法情绪打分MVP桩，LLM打分走zephyr.nlp.nlp_inference扩展口（取polarity有向极性∈[-1,1]，禁用score强度∈[0,1]——neutral强度0.5会伪造正向）；ST风险警示大小写敏感词边界匹配（防英文普通词st子串误伤）；反转短语（终止重组/并购失败等）先扣除再匹配短词典（防"重组"正向误判负向公告）；聚合窗口默认1h整点对齐，空输入返回空结果不报错
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -15,7 +14,7 @@
 # [TESTS] tests/intelligence/test_news_sentiment_analyzer.py
 # [A_module] module_id=MOD-INT-AISA | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #ARCH-AISA-001 MVP 施工
+# [ARCH-REF] #ARCH-AISA-001 MVP 施工 + GLM 复审修复批
 
 """
 MOD-INT-AISA NewsSentimentAnalyzer — A股舆情分析器MVP。
@@ -32,7 +31,6 @@ MOD-INT-AISA NewsSentimentAnalyzer — A股舆情分析器MVP。
 
 from __future__ import annotations
 
-import logging
 import re
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -49,8 +47,6 @@ except Exception:  # noqa: BLE001  # pragma: no cover
 
 if TYPE_CHECKING:
     from zephyr.nlp.nlp_inference import SentimentResult
-
-_logger = logging.getLogger(__name__)
 
 # ============================================================================
 # 1. 错误契约
@@ -70,14 +66,13 @@ class NewsSentimentAnalyzerError(ZephyrBaseError):
 
 @dataclass(frozen=True, slots=True)
 class SentimentScore:
-    """单条新闻的情绪得分（规则法或LLM法产出）。"""
+    """单条新闻的情绪得分（规则法或LLM法产出，公开数据契约）。"""
 
     news_id: str
     title: str
     polarity: float  # [-1, 1]，负=看空，正=看多，0=中性
-    method: str  # "rule" | "llm" | "hybrid"
+    method: str  # "rule" | "llm" | "llm_fallback"
     keywords: tuple[str, ...] = field(default_factory=tuple)  # 规则法命中的关键词
-    raw_text: str = ""  # 截断后原文（≤200字，调试/审计用）
 
 
 @dataclass(frozen=True, slots=True)
@@ -110,6 +105,7 @@ class SentimentEvent:
 # ============================================================================
 
 # A股舆情关键词表（MVP 静态表，扩展口：支持运行时注入自定义词典）
+# 收词纪律：不收互为子串的词（如"新高"已覆盖"创新高"，防同文本双计分）
 _POSITIVE_KEYWORDS: Final[frozenset[str]] = frozenset(
     {
         "利好",
@@ -138,6 +134,11 @@ _POSITIVE_KEYWORDS: Final[frozenset[str]] = frozenset(
         "重组",
         "并购",
         "资产注入",
+        "大涨",
+        "新高",
+        "领涨",
+        "强势",
+        "中标",
     }
 )
 
@@ -167,12 +168,52 @@ _NEGATIVE_KEYWORDS: Final[frozenset[str]] = frozenset(
         "卖出评级",
         "目标价下调",
         "退市",
-        "st",
-        "*st",
+        "终止上市",
         "债务违约",
+        "质押违约",
         "信用评级下调",
+        "大跌",
+        "新低",
+        "领跌",
+        "暴跌",
+        "闪崩",
+        "爆仓",
     }
 )
+
+# 中文反转语境——动宾距离窗口正则（非固定子串：A 股公告"终止**重大资产**重组"
+# 中间常插修饰语，固定短语匹配不到）。命中即计负向并从文本扣除命中段，
+# 防"终止重大资产重组"命中正向词"重组"误判 +0.20 的语义反转。
+# 距离窗口 12 字 + 标点截断（，。；、）防跨句误连。
+_NEG_REVERSAL_PATTERN: Final[re.Pattern[str]] = re.compile(
+    r"(?:终止|停止|暂停)[^，。；、\s]{0,12}?(重组|并购|收购)"
+    r"|(重组|并购|收购)(?:失败|告吹|未成|折戟)"
+)
+
+
+def _scan_reversal(text: str) -> tuple[set[str], str]:
+    """扫描反转语境，返回 (负向标签集, 扣除命中段后的文本)。
+
+    标签按分支归一化：前向（终止X）→ "终止重组/终止并购/终止收购"；
+    后向（X失败）→ "重组失败/并购失败/收购失败"。
+    """
+    labels: set[str] = set()
+
+    def _sub(m: re.Match[str]) -> str:
+        forward_obj, backward_obj = m.group(1), m.group(2)
+        if forward_obj:
+            labels.add(f"终止{forward_obj}")
+        elif backward_obj:
+            labels.add(f"{backward_obj}失败")
+        return " "
+
+    stripped = _NEG_REVERSAL_PATTERN.sub(_sub, text)
+    return labels, stripped
+
+
+# ST 风险警示专用匹配——大小写敏感 + 词边界（仅大写 ST/*ST 是 A 股警示板标记，
+# 小写 st 是英文普通词子串 steady/boost/first/best 的一部分，禁止命中）
+_ST_PATTERN: Final[re.Pattern[str]] = re.compile(r"\*ST|(?<![A-Za-z])ST(?![A-Za-z])")
 
 # 正则预编译（提升批量性能）
 _POS_PATTERN: Final[re.Pattern[str]] = re.compile("|".join(re.escape(kw) for kw in _POSITIVE_KEYWORDS))
@@ -196,30 +237,41 @@ class RuleBasedSentimentScorer:
         """返回 (polarity, matched_keywords)。
 
         规则：
-        - 标题权重=1.0，正文权重=0.3（标题信息密度高）
-        - 每条正向关键词 +0.15，负向 -0.15，封顶 ±0.90
+        - 标题命中每词 ±0.20，正文命中每词 ±0.08（标题信息密度高）
+        - 反转短语（终止重组等）先扣除再匹配短词典，计负向
+        - ST/*ST 风险警示：大小写敏感 + 词边界匹配，计负向
+        - 同词去重（多次出现只算一次），封顶 ±0.90
         - 无匹配 → 0.0 中性
         """
         text = f"{title} {content}" if content else title
+        title_work = title
+        matched_neg: set[str] = set()
+
+        # ① 反转语境（终止X/X失败）：命中即计负向并从文本扣除命中段
+        rev_labels, text = _scan_reversal(text)
+        _, title_work = _scan_reversal(title_work)
+        matched_neg |= rev_labels
+
+        # ② ST/*ST 风险警示：大小写敏感词边界（原始大小写文本上匹配）
+        st_hits = set(_ST_PATTERN.findall(f"{title_work} {text}"))
+        matched_neg |= st_hits
+
+        # ③ 短词典匹配（扣除反转片段后的剩余文本）
         text_lower = text.lower()
+        pos_hits = set(self._pos_pat.findall(text_lower))
+        neg_hits = set(self._neg_pat.findall(text_lower))
+        matched_neg |= neg_hits
 
-        pos_hits = self._pos_pat.findall(text_lower)
-        neg_hits = self._neg_pat.findall(text_lower)
+        # 标题命中 vs 正文命中（关键词在标题中出现则权重更高）
+        title_lower = title_work.lower()
+        pos_in_title = {kw for kw in pos_hits if kw in title_lower}
+        neg_in_title = {kw for kw in matched_neg if kw in title_lower}
 
-        # 去重计数（同一关键词多次出现只算一次，防标题重复词刷分）
-        pos_unique = set(pos_hits)
-        neg_unique = set(neg_hits)
-
-        # 标题命中 vs 正文命中（简单启发：关键词在标题中出现则权重更高）
-        title_lower = title.lower()
-        pos_in_title = {kw for kw in pos_unique if kw in title_lower}
-        neg_in_title = {kw for kw in neg_unique if kw in title_lower}
-
-        pos_score = len(pos_in_title) * 0.20 + (len(pos_unique) - len(pos_in_title)) * 0.08
-        neg_score = len(neg_in_title) * 0.20 + (len(neg_unique) - len(neg_in_title)) * 0.08
+        pos_score = len(pos_in_title) * 0.20 + (len(pos_hits) - len(pos_in_title)) * 0.08
+        neg_score = len(neg_in_title) * 0.20 + (len(matched_neg) - len(neg_in_title)) * 0.08
 
         polarity = max(-0.90, min(0.90, pos_score - neg_score))
-        matched = tuple(sorted(pos_unique | neg_unique))
+        matched = tuple(sorted(pos_hits | matched_neg))
         return polarity, matched
 
 
@@ -368,10 +420,13 @@ class NewsSentimentAnalyzer:
             nid = str(row.get(news_id_col, ""))
 
             if self._llm_scorer is not None:
-                # LLM 扩展口——调用方注入的打分器
+                # LLM 扩展口——调用方注入的打分器。
+                # 契约：取 polarity（有向极性 [-1,1]）而非 score（强度 [0,1]）——
+                # nlp_inference.SentimentResult 语义：score 是强度（neutral=0.5），
+                # 误用会把中性新闻伪装成 +0.5 正向（GLM 复审 P0-1 修复）
                 try:
                     llm_result = self._llm_scorer(title, content)
-                    polarity = getattr(llm_result, "score", 0.0)
+                    polarity = float(getattr(llm_result, "polarity", 0.0))
                     method = "llm"
                     keywords = ()
                 except Exception:  # noqa: BLE001
@@ -417,12 +472,12 @@ class NewsSentimentAnalyzer:
         if scored_df.empty:
             return scored_df, [], []
 
-        # 合并时间信息（从原始 news_df 关联 publish_time）
-        merged = scored_df.merge(
-            news_df[["news_id", "publish_time"]],
-            on="news_id",
-            how="left",
-        )
+        # 合并时间信息（从原始 news_df 关联 publish_time）。
+        # news_data 为 SCD 多版本表（news_id 锚定修正稿）：打分逐条输出完整，
+        # 聚合侧按 news_id 去重防窗口 news_count 膨胀；collect_news 按
+        # publish_time 升序，keep="first" 取最早版本（PIT 语义）
+        time_map = news_df[["news_id", "publish_time"]].drop_duplicates(subset="news_id", keep="first")
+        merged = scored_df.merge(time_map, on="news_id", how="left").drop_duplicates(subset="news_id", keep="first")
         windows = self._aggregator.aggregate_from_df(merged)
         events = self._detect_events(windows)
         return scored_df, windows, events

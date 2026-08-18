@@ -17379,7 +17379,7 @@ entries:
     关联文档：
     - 'docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml（CAND-AISA-001 状态留痕）'
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md（舆情复用裁定）'
-  fix_phase: 'MVP 已施工（2026-08-18 AI-AISA-001 worktree）：模块+29 测试两轮全绿+ruff 全过；五登记链完成（creation_token 3 条+capability 1 条+plain_zh 1 条+depgraph design 节点+blueprint）；planned→production 流转待 merge 回 dev 后自动执行'
+  fix_phase: 'MVP 已施工（2026-08-18 AI-AISA-001 worktree）：模块+29 测试两轮全绿+ruff 全过；五登记链完成（creation_token 3 条+capability 1 条+plain_zh 1 条+depgraph design 节点+blueprint）；planned→production 流转待 merge 回 dev 后自动执行。GLM 复审修复批（2026-08-18 同会话换模型复审）：P0-1 LLM 扩展口字段错配 score→polarity（中性新闻伪正修复）/P0-2 ST 子串误伤→大小写敏感词边界正则/P0-3 中文反转语境（终止重大资产重组）→距离窗口正则先扣除/P1-2 死代码清理（_logger/raw_text）/P1-3 SCD 多版本 merge 去重/P1-4 S4 注入器错锚 MOD-INF-050 修正+TTL 重复行；测试 29→37 全绿两轮；blueprint v0.1.1'
   status: in_progress
   related_rules: 'CAND-AISA-001; #ARCH-NLP-PIPELINE-001; 26_event_driven_strategy_detail §舆情'
   created: '2026-08-18'
