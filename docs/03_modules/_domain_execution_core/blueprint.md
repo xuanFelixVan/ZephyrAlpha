@@ -1198,7 +1198,6 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | `tests/ex_core/test_price_cage.py` | ✅ 已实现 | |
 | `tests/ex_core/test_risk_layer_orchestrator.py` | ✅ 已实现 | |
 | `tests/ex_core/test_trading_session.py` | ✅ 已实现 | |
-| `tests/test_miniqmt_broker.py` | ✅ 已实现 | |
 | `tests/trading/pipeline/test_l06_trade_execution.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

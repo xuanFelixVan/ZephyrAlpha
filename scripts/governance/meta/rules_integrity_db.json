@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "d05b33ad75cc51f5",
+      "hash": "d21d8b6e7ad4d7d3",
       "critical": true,
       "desc": "脚本注册表"
     },

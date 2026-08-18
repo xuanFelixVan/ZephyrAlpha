@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
-# [MODULE] tests.test_event_driven_engine
+# [MODULE] tests.backtest.test_event_driven_engine
 # [DOMAIN] D_BACKTEST
 # [STABILITY] stable
 # [SAFETY] L
@@ -8,18 +8,19 @@
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """event_driven_engine 正式测试（原 scripts/tests/ 临时验证脚本转正）"""
+
 from datetime import datetime
 from decimal import Decimal
 
 import pandas as pd
 
+from zephyr.backtest.core.engine_base import BacktestResult
+from zephyr.backtest.core.tick_replay import TickEvent, TickReplayConfig
 from zephyr.backtest.implementations.event_driven_engine import (
     EventDrivenEngine,
     EventDrivenEngineError,
 )
 from zephyr.backtest.implementations.vectorized_engine import BacktestConfig
-from zephyr.backtest.core.tick_replay import TickEvent, TickReplayConfig
-from zephyr.backtest.core.engine_base import BacktestResult
 
 
 class MockTickProvider:
@@ -35,23 +36,40 @@ class MockTickProvider:
             else:
                 price = 10.5 - (i - 10) * 0.03
             row = {
-                "timestamp": ts, "last_price": price, "open": 10.0,
-                "high": price + 0.02, "low": price - 0.02,
-                "prev_close": 9.99, "amount": Decimal("1000000"),
-                "volume": Decimal("10000"), "pvolume": 0,
-                "stock_status": 0, "open_interest": 0,
-                "last_settlement": Decimal("0"), "settlement_price": Decimal("0"),
+                "timestamp": ts,
+                "last_price": price,
+                "open": 10.0,
+                "high": price + 0.02,
+                "low": price - 0.02,
+                "prev_close": 9.99,
+                "amount": Decimal("1000000"),
+                "volume": Decimal("10000"),
+                "pvolume": 0,
+                "stock_status": 0,
+                "open_interest": 0,
+                "last_settlement": Decimal("0"),
+                "settlement_price": Decimal("0"),
                 "transaction_num": 100,
-                "ask_price_1": price, "ask_price_2": price + 0.01,
-                "ask_price_3": price + 0.02, "ask_price_4": price + 0.03,
+                "ask_price_1": price,
+                "ask_price_2": price + 0.01,
+                "ask_price_3": price + 0.02,
+                "ask_price_4": price + 0.03,
                 "ask_price_5": price + 0.04,
-                "bid_price_1": price - 0.01, "bid_price_2": price - 0.02,
-                "bid_price_3": price - 0.03, "bid_price_4": price - 0.04,
+                "bid_price_1": price - 0.01,
+                "bid_price_2": price - 0.02,
+                "bid_price_3": price - 0.03,
+                "bid_price_4": price - 0.04,
                 "bid_price_5": price - 0.05,
-                "ask_vol_1": 100, "ask_vol_2": 200, "ask_vol_3": 300,
-                "ask_vol_4": 400, "ask_vol_5": 500,
-                "bid_vol_1": 100, "bid_vol_2": 200, "bid_vol_3": 300,
-                "bid_vol_4": 400, "bid_vol_5": 500,
+                "ask_vol_1": 100,
+                "ask_vol_2": 200,
+                "ask_vol_3": 300,
+                "ask_vol_4": 400,
+                "ask_vol_5": 500,
+                "bid_vol_1": 100,
+                "bid_vol_2": 200,
+                "bid_vol_3": 300,
+                "bid_vol_4": 400,
+                "bid_vol_5": 500,
                 "symbol": symbol,
             }
             rows.append(row)
@@ -82,9 +100,17 @@ def test_event_driven_tick_backtest():
     )
 
     required_fields = [
-        "annual_return", "end_date", "idempotency_key", "max_drawdown",
-        "sharpe_ratio", "start_date", "strategy_id", "timestamp",
-        "total_return", "trades_count", "win_rate",
+        "annual_return",
+        "end_date",
+        "idempotency_key",
+        "max_drawdown",
+        "sharpe_ratio",
+        "start_date",
+        "strategy_id",
+        "timestamp",
+        "total_return",
+        "trades_count",
+        "win_rate",
     ]
     for f in required_fields:
         val = getattr(result, f)

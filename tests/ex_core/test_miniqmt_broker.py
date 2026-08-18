@@ -15,6 +15,7 @@
 2026-08-17：历史循环导入已消除，改为包路径直接导入（原 importlib 按文件
 加载 workaround 拆除——绕过包 __init__ 会让模块脱离包上下文，掩盖真实问题）。
 """
+
 from decimal import Decimal
 from unittest.mock import MagicMock
 
@@ -185,7 +186,10 @@ def test_pre_trade_simulate():
     """测试回测=实盘一致性：预成交模拟"""
     logic = MatchingLogic(MatchingConfig())
     broker = MiniQmtBroker(
-        path="mock", session_id="test", account_id="test_account", matching_logic=logic,
+        path="mock",
+        session_id="test",
+        account_id="test_account",
+        matching_logic=logic,
     )
 
     ob = OrderBookSnapshot(
@@ -214,6 +218,7 @@ def test_thread_safety():
     broker = MiniQmtBroker(path="mock", session_id="test", account_id="test_account")
     assert hasattr(broker, "_lock"), "broker 必须有 _lock"
     import threading
+
     assert isinstance(broker.lock, type(threading.Lock())), "_lock 必须是 threading.Lock 实例"
 
 
@@ -270,9 +275,7 @@ def test_price_cage_clamp_in_submit():
     # 但低于涨停价 11.00（prev_close=10.00 × 1.10），不触发涨跌停拒单
     order = make_order(qty=100, limit_price=Decimal("10.80"), idempotency_key="cage-001")
     broker.submit_order(order, order_book=ob, prev_close=Decimal("10.00"))
-    assert order.limit_price == Decimal("10.71"), (
-        f"超笼子买入价应夹到 10.71，实际 {order.limit_price}"
-    )
+    assert order.limit_price == Decimal("10.71"), f"超笼子买入价应夹到 10.71，实际 {order.limit_price}"
     # 夹边后的价格必须真实发给 xttrader
     call_args = broker.xttrader.order_stock.call_args
     assert call_args.args[5] == 10.71  # price 位置参数（float）

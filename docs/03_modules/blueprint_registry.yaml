@@ -100,7 +100,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 1.3.6
+  version: 1.3.7
   generation: 1
   last_updated: '2026-07-19'
   file_path: 03_modules/_domain_backtest/blueprint.md
@@ -727,7 +727,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.1.3
+  version: 2.1.4
   generation: 9
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/audit_trail/blueprint.md

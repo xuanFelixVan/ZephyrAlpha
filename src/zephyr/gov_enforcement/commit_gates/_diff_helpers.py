@@ -37,6 +37,31 @@ Usage::
         _parse_diff_with_line_numbers,
         _read_staged_file,
     )
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: unified=0 git diff 原文 + staged 文件路径集
+#   fields: diff_stdout(str) / gateway 暂存区句柄
+#   code: _parse_diff_with_line_numbers / _get_added_lines
+# 层: 算法
+# - id: A1
+#   name_zh: diff 行号解析（幻影空行跳过）
+#   name_en: diff_line_number_parsing
+#   intro: split("\n") 逐行扫描，hunk 头锚定起始行号，" "/+ 行累加行号，裸空行跳过（\r\r\n 翻译幻影不占行号）
+#   code: _parse_diff_with_line_numbers
+# - id: A2
+#   name_zh: AST 豁免行集合提取
+#   name_en: ast_exempt_line_extraction
+#   intro: ast 解析 docstring/SQL_* 常量定义行范围，替代正则近似（R95/R96 治本）
+#   code: _extract_docstring_lines / _extract_sql_constant_lines
+# 层: 输出
+# - id: O1
+#   name: added 行号集 / 豁免行号集（供 8 个 commit gate 消费）
+#   fields: list[tuple[int,str]] / set[int]
+#   code: 各 gate 的违规行与豁免行差集判定
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; I1 --> A2 ; A1 --> O1 ; A2 --> O1
 """
 
 from __future__ import annotations
@@ -113,8 +138,7 @@ def _extract_docstring_lines(file_content: str) -> set[int]:
         tree = ast.parse(file_content)
     except SyntaxError:
         logger.warning(
-            "_extract_docstring_lines: ast.parse 失败（语法错误），"
-            "fail-open 返回空集合——所有行都不豁免",
+            "_extract_docstring_lines: ast.parse 失败（语法错误），fail-open 返回空集合——所有行都不豁免",
             exc_info=True,
         )
         return set()
@@ -122,9 +146,7 @@ def _extract_docstring_lines(file_content: str) -> set[int]:
     docstring_lines: set[int] = set()
     for node in ast.walk(tree):
         # docstring 仅出现在 Module/ClassDef/FunctionDef/AsyncFunctionDef 的 body[0]
-        if isinstance(
-            node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
-        ):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
             if not node.body:
                 continue
             first = node.body[0]
@@ -169,8 +191,7 @@ def _extract_sql_constant_lines(file_content: str) -> set[int]:
         tree = ast.parse(file_content)
     except SyntaxError:
         logger.warning(
-            "_extract_sql_constant_lines: ast.parse 失败（语法错误），"
-            "fail-open 返回空集合——所有行都不豁免",
+            "_extract_sql_constant_lines: ast.parse 失败（语法错误），fail-open 返回空集合——所有行都不豁免",
             exc_info=True,
         )
         return set()
@@ -179,10 +200,7 @@ def _extract_sql_constant_lines(file_content: str) -> set[int]:
     for node in ast.walk(tree):
         if isinstance(node, ast.Assign):
             for target in node.targets:
-                if (
-                    isinstance(target, ast.Name)
-                    and _SQL_CONSTANT_NAME_RE.match(target.id)
-                ):
+                if isinstance(target, ast.Name) and _SQL_CONSTANT_NAME_RE.match(target.id):
                     start = node.lineno
                     end = getattr(node, "end_lineno", start)
                     for i in range(start, end + 1):
@@ -246,30 +264,27 @@ def _get_staged_py_files(gateway, gate_name: str = "gate") -> list[str]:
     注意：不过滤 tests/，由调用方用 is_test_exempt() 过滤。
     """
     try:
-        result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if result.returncode != 0:
             logger.warning(
-                "%s fail-open: git diff 失败(rc=%d)。", gate_name, result.returncode,
+                "%s fail-open: git diff 失败(rc=%d)。",
+                gate_name,
+                result.returncode,
             )
             return []
-        return [
-            f.replace("\\", "/")
-            for f in result.stdout.strip().splitlines()
-            if f and f.endswith(".py")
-        ]
+        return [f.replace("\\", "/") for f in result.stdout.strip().splitlines() if f and f.endswith(".py")]
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "%s fail-open: git diff 异常(%s: %s)。",
-            gate_name, type(e).__name__, e, exc_info=True,
+            gate_name,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return []
 
 
-def _get_added_lines(
-    gateway, py_file: str, gate_name: str = "gate"
-) -> list[tuple[int, str]]:
+def _get_added_lines(gateway, py_file: str, gate_name: str = "gate") -> list[tuple[int, str]]:
     """获取文件的 added 行列表（fail-open）。
 
     失败时返回空列表并记录 warning。
@@ -277,9 +292,7 @@ def _get_added_lines(
     try:
         # --ignore-cr-at-eol：EOL 规范化提交（CRLF→LF 机械翻转）全文件行伪"added"，
         # 会把存量违规误报为新增——按内容判定 added，行尾差异不计（2026-08-16 EOL 批实证）
-        result = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
-        )
+        result = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file])
         if result.returncode != 0:
             return []
         return _parse_diff_with_line_numbers(result.stdout)

@@ -7,7 +7,7 @@
 # [TESTS] —
 # [TTL] task_bound
 """
-单元测试：src/zephyr/db/atomic_transaction_manager.py（T-2-30）
+单元测试：src/zephyr/governance/financial_governance/atomic_transaction_manager.py（T-2-30）
 ==============================================================
 覆盖矩阵：
   _utf8_lf_bytes:
@@ -42,14 +42,13 @@
 
 Safety: HIGH（数据库事务 + 文件系统原子性）
 
-注意：atomic_transaction_manager.py 通过 sys.path 注入导入
-infra.input_sanitizer，测试中使用 FakeSanitizer 替代。
+注意：FakeInputSanitizer 经构造函数注入（sanitizer= 参数）替代真实
+InputSanitizer（后者由源模块 __getattr__ 惰性导入
+zephyr.security.llm_defense.llm_security.input_sanitizer）。
 """
 
 import sqlite3
-import sys
 from pathlib import Path
-from unittest.mock import MagicMock
 
 import pytest
 
@@ -63,7 +62,7 @@ class FakeInputSanitizer:
         try:
             resolved.relative_to(self._root)
         except ValueError:
-            raise PathTraversalError(f"Path escapes root: {path}")
+            raise PathTraversalError(f"Path escapes root: {path}") from None
         return resolved
 
 
@@ -77,13 +76,6 @@ class FakeSanitizationError(Exception):
 
 PathTraversalError = FakePathTraversalError
 SanitizationError = FakeSanitizationError
-
-infra_mock = MagicMock()
-infra_mock.InputSanitizer = FakeInputSanitizer
-infra_mock.PathTraversalError = FakePathTraversalError
-infra_mock.SanitizationError = FakeSanitizationError
-sys.modules["infra"] = infra_mock
-sys.modules["infra.input_sanitizer"] = infra_mock
 
 from zephyr.governance.financial_governance.atomic_transaction_manager import (
     AtomicTransactionManager,

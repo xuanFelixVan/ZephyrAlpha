@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
-# [MODULE] tests.test_matching_engine
+# [MODULE] tests.backtest.test_matching_engine
 # [DOMAIN] D_BACKTEST
 # [STABILITY] stable
 # [SAFETY] L
@@ -8,6 +8,7 @@
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """matching_engine + matching_logic + portfolio 正式测试（原 scripts/tests/ 临时验证脚本转正）"""
+
 from decimal import Decimal
 
 from zephyr.backtest.core.matching_engine import (
@@ -25,9 +26,7 @@ from zephyr.backtest.core.portfolio import Portfolio
 
 def test_backward_compatible_generate_fills():
     """向后兼容 - generate_fills with prices (日线回测模式)"""
-    config = MatchingConfig(
-        commission_rate=Decimal("0.0003"), slippage_bps=Decimal("1")
-    )
+    config = MatchingConfig(commission_rate=Decimal("0.0003"), slippage_bps=Decimal("1"))
     engine = MatchingEngine(config=config)
     assert isinstance(engine.logic, MatchingLogic), "logic must be MatchingLogic instance"
 
@@ -51,20 +50,32 @@ def test_generate_fills_with_order_book():
     ob = OrderBookSnapshot(
         symbol="000001.SZ",
         ask_price=(
-            Decimal("10.50"), Decimal("10.51"), Decimal("10.52"),
-            Decimal("10.53"), Decimal("10.54"),
+            Decimal("10.50"),
+            Decimal("10.51"),
+            Decimal("10.52"),
+            Decimal("10.53"),
+            Decimal("10.54"),
         ),
         bid_price=(
-            Decimal("10.49"), Decimal("10.48"), Decimal("10.47"),
-            Decimal("10.46"), Decimal("10.45"),
+            Decimal("10.49"),
+            Decimal("10.48"),
+            Decimal("10.47"),
+            Decimal("10.46"),
+            Decimal("10.45"),
         ),
         ask_vol=(
-            Decimal("1000"), Decimal("2000"), Decimal("3000"),
-            Decimal("4000"), Decimal("5000"),
+            Decimal("1000"),
+            Decimal("2000"),
+            Decimal("3000"),
+            Decimal("4000"),
+            Decimal("5000"),
         ),
         bid_vol=(
-            Decimal("1000"), Decimal("2000"), Decimal("3000"),
-            Decimal("4000"), Decimal("5000"),
+            Decimal("1000"),
+            Decimal("2000"),
+            Decimal("3000"),
+            Decimal("4000"),
+            Decimal("5000"),
         ),
         last_price=Decimal("10.50"),
     )
@@ -93,20 +104,32 @@ def test_match_tick_order_level_digestion():
         amount=Decimal("1000000"),
         volume=Decimal("100000"),
         ask_price=(
-            Decimal("10.50"), Decimal("10.51"), Decimal("10.52"),
-            Decimal("10.53"), Decimal("10.54"),
+            Decimal("10.50"),
+            Decimal("10.51"),
+            Decimal("10.52"),
+            Decimal("10.53"),
+            Decimal("10.54"),
         ),
         bid_price=(
-            Decimal("10.49"), Decimal("10.48"), Decimal("10.47"),
-            Decimal("10.46"), Decimal("10.45"),
+            Decimal("10.49"),
+            Decimal("10.48"),
+            Decimal("10.47"),
+            Decimal("10.46"),
+            Decimal("10.45"),
         ),
         ask_vol=(
-            Decimal("100"), Decimal("200"), Decimal("300"),
-            Decimal("400"), Decimal("500"),
+            Decimal("100"),
+            Decimal("200"),
+            Decimal("300"),
+            Decimal("400"),
+            Decimal("500"),
         ),
         bid_vol=(
-            Decimal("100"), Decimal("200"), Decimal("300"),
-            Decimal("400"), Decimal("500"),
+            Decimal("100"),
+            Decimal("200"),
+            Decimal("300"),
+            Decimal("400"),
+            Decimal("500"),
         ),
     )
     fill_tick = engine.match_tick_order(
@@ -120,9 +143,7 @@ def test_match_tick_order_level_digestion():
     )
     assert fill_tick.filled, "Tick级5档撮合应完全成交"
     assert fill_tick.quantity == Decimal("1000"), f"expected 1000, got {fill_tick.quantity}"
-    assert Decimal("10.50") <= fill_tick.price <= Decimal("10.54"), (
-        f"加权均价应在5档区间内, got {fill_tick.price}"
-    )
+    assert Decimal("10.50") <= fill_tick.price <= Decimal("10.54"), f"加权均价应在5档区间内, got {fill_tick.price}"
 
 
 def test_match_limit_order_not_filled():
@@ -132,20 +153,32 @@ def test_match_limit_order_not_filled():
     ob = OrderBookSnapshot(
         symbol="000001.SZ",
         ask_price=(
-            Decimal("10.50"), Decimal("10.51"), Decimal("10.52"),
-            Decimal("10.53"), Decimal("10.54"),
+            Decimal("10.50"),
+            Decimal("10.51"),
+            Decimal("10.52"),
+            Decimal("10.53"),
+            Decimal("10.54"),
         ),
         bid_price=(
-            Decimal("10.49"), Decimal("10.48"), Decimal("10.47"),
-            Decimal("10.46"), Decimal("10.45"),
+            Decimal("10.49"),
+            Decimal("10.48"),
+            Decimal("10.47"),
+            Decimal("10.46"),
+            Decimal("10.45"),
         ),
         ask_vol=(
-            Decimal("1000"), Decimal("2000"), Decimal("3000"),
-            Decimal("4000"), Decimal("5000"),
+            Decimal("1000"),
+            Decimal("2000"),
+            Decimal("3000"),
+            Decimal("4000"),
+            Decimal("5000"),
         ),
         bid_vol=(
-            Decimal("1000"), Decimal("2000"), Decimal("3000"),
-            Decimal("4000"), Decimal("5000"),
+            Decimal("1000"),
+            Decimal("2000"),
+            Decimal("3000"),
+            Decimal("4000"),
+            Decimal("5000"),
         ),
         last_price=Decimal("10.50"),
     )
@@ -169,20 +202,32 @@ def test_match_limit_order_filled():
     ob = OrderBookSnapshot(
         symbol="000001.SZ",
         ask_price=(
-            Decimal("10.50"), Decimal("10.51"), Decimal("10.52"),
-            Decimal("10.53"), Decimal("10.54"),
+            Decimal("10.50"),
+            Decimal("10.51"),
+            Decimal("10.52"),
+            Decimal("10.53"),
+            Decimal("10.54"),
         ),
         bid_price=(
-            Decimal("10.49"), Decimal("10.48"), Decimal("10.47"),
-            Decimal("10.46"), Decimal("10.45"),
+            Decimal("10.49"),
+            Decimal("10.48"),
+            Decimal("10.47"),
+            Decimal("10.46"),
+            Decimal("10.45"),
         ),
         ask_vol=(
-            Decimal("1000"), Decimal("2000"), Decimal("3000"),
-            Decimal("4000"), Decimal("5000"),
+            Decimal("1000"),
+            Decimal("2000"),
+            Decimal("3000"),
+            Decimal("4000"),
+            Decimal("5000"),
         ),
         bid_vol=(
-            Decimal("1000"), Decimal("2000"), Decimal("3000"),
-            Decimal("4000"), Decimal("5000"),
+            Decimal("1000"),
+            Decimal("2000"),
+            Decimal("3000"),
+            Decimal("4000"),
+            Decimal("5000"),
         ),
         last_price=Decimal("10.50"),
     )
@@ -206,20 +251,32 @@ def test_shared_logic_reuse():
     ob = OrderBookSnapshot(
         symbol="000001.SZ",
         ask_price=(
-            Decimal("10.50"), Decimal("10.51"), Decimal("10.52"),
-            Decimal("10.53"), Decimal("10.54"),
+            Decimal("10.50"),
+            Decimal("10.51"),
+            Decimal("10.52"),
+            Decimal("10.53"),
+            Decimal("10.54"),
         ),
         bid_price=(
-            Decimal("10.49"), Decimal("10.48"), Decimal("10.47"),
-            Decimal("10.46"), Decimal("10.45"),
+            Decimal("10.49"),
+            Decimal("10.48"),
+            Decimal("10.47"),
+            Decimal("10.46"),
+            Decimal("10.45"),
         ),
         ask_vol=(
-            Decimal("1000"), Decimal("2000"), Decimal("3000"),
-            Decimal("4000"), Decimal("5000"),
+            Decimal("1000"),
+            Decimal("2000"),
+            Decimal("3000"),
+            Decimal("4000"),
+            Decimal("5000"),
         ),
         bid_vol=(
-            Decimal("1000"), Decimal("2000"), Decimal("3000"),
-            Decimal("4000"), Decimal("5000"),
+            Decimal("1000"),
+            Decimal("2000"),
+            Decimal("3000"),
+            Decimal("4000"),
+            Decimal("5000"),
         ),
         last_price=Decimal("10.50"),
     )

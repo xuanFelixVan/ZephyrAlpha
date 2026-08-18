@@ -1,6 +1,6 @@
 # [A_test] module_id: MOD-GOV_generate_dataflow_diagram | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_GENERATE_DATAFLOW_DIAGRAM | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §test
-# [MODULE] tests.test_generate_dataflow_diagram
+# [MODULE] tests.governance.test_generate_dataflow_diagram
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.generators.generate_dataflow_diagram
 # [CONSUMERS] pytest;CI_pipeline
@@ -32,15 +32,16 @@ import pytest
 
 # 动态加载 scripts/ 下的模块（非 Python 包，需 importlib）
 _SCRIPT_PATH = (
-    Path(__file__).resolve().parents[1]
-    / "scripts" / "governance" / "d5_architecture" / "generators"
+    Path(__file__).resolve().parents[2]
+    / "scripts"
+    / "governance"
+    / "d5_architecture"
+    / "generators"
     / "generate_dataflow_diagram.py"
 )
 
 try:
-    _spec = importlib.util.spec_from_file_location(
-        "generate_dataflow_diagram", _SCRIPT_PATH
-    )
+    _spec = importlib.util.spec_from_file_location("generate_dataflow_diagram", _SCRIPT_PATH)
     _mod = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_mod)
     _gen_mermaid = _mod._gen_mermaid
@@ -56,19 +57,47 @@ except Exception as e:  # noqa: BLE001
 
 # ---------- Fixtures ----------
 
+
 @pytest.fixture
 def sample_datasets():
     """3 个 Dataset：2 production + 1 backtest，全部 design_maturity=production（运营态）。"""
     return [
-        {"id": 1, "name": "market_data.tick", "scope": "production", "contract": "CTR-001",
-         "physical_type": "table", "produced_by": "JOB-001", "domain": "D_MKT_DATA",
-         "maturity": "production", "build": "generated", "pit": "strict"},
-        {"id": 2, "name": "signal.composite", "scope": "production", "contract": "CTR-002",
-         "physical_type": "table", "produced_by": "JOB-002", "domain": "D_SIGLEGACY",
-         "maturity": "production", "build": "generated", "pit": "strict"},
-        {"id": 3, "name": "backtest.fills", "scope": "backtest_internal", "contract": None,
-         "physical_type": "table", "produced_by": "JOB-003", "domain": "D_BACKTEST",
-         "maturity": "production", "build": "generated", "pit": "strict"},
+        {
+            "id": 1,
+            "name": "market_data.tick",
+            "scope": "production",
+            "contract": "CTR-001",
+            "physical_type": "table",
+            "produced_by": "JOB-001",
+            "domain": "D_MKT_DATA",
+            "maturity": "production",
+            "build": "generated",
+            "pit": "strict",
+        },
+        {
+            "id": 2,
+            "name": "signal.composite",
+            "scope": "production",
+            "contract": "CTR-002",
+            "physical_type": "table",
+            "produced_by": "JOB-002",
+            "domain": "D_SIGLEGACY",
+            "maturity": "production",
+            "build": "generated",
+            "pit": "strict",
+        },
+        {
+            "id": 3,
+            "name": "backtest.fills",
+            "scope": "backtest_internal",
+            "contract": None,
+            "physical_type": "table",
+            "produced_by": "JOB-003",
+            "domain": "D_BACKTEST",
+            "maturity": "production",
+            "build": "generated",
+            "pit": "strict",
+        },
     ]
 
 
@@ -76,15 +105,36 @@ def sample_datasets():
 def sample_jobs():
     """3 个 Job：2 production + 1 backtest，全部 design_maturity=production（运营态）。"""
     return [
-        {"id": 10, "name": "ingest.akshare_kline", "scope": "production",
-         "source": "src/zephyr/data/ingest.py", "trigger": "scheduled",
-         "context": "production", "maturity": "production", "build": "generated"},
-        {"id": 11, "name": "synthesize.signal", "scope": "production",
-         "source": "src/zephyr/signal_ashare/synthesizer.py", "trigger": "event_driven",
-         "context": "production", "maturity": "production", "build": "generated"},
-        {"id": 12, "name": "backtest.replay_ticks", "scope": "backtest_internal",
-         "source": "src/zephyr/backtest/tick_replay.py", "trigger": "manual",
-         "context": "backtest_tick", "maturity": "production", "build": "generated"},
+        {
+            "id": 10,
+            "name": "ingest.akshare_kline",
+            "scope": "production",
+            "source": "src/zephyr/data/ingest.py",
+            "trigger": "scheduled",
+            "context": "production",
+            "maturity": "production",
+            "build": "generated",
+        },
+        {
+            "id": 11,
+            "name": "synthesize.signal",
+            "scope": "production",
+            "source": "src/zephyr/signal_ashare/synthesizer.py",
+            "trigger": "event_driven",
+            "context": "production",
+            "maturity": "production",
+            "build": "generated",
+        },
+        {
+            "id": 12,
+            "name": "backtest.replay_ticks",
+            "scope": "backtest_internal",
+            "source": "src/zephyr/backtest/tick_replay.py",
+            "trigger": "manual",
+            "context": "backtest_tick",
+            "maturity": "production",
+            "build": "generated",
+        },
     ]
 
 
@@ -92,19 +142,55 @@ def sample_jobs():
 def sample_datasets_with_design():
     """4 个 Dataset：3 运营态 + 1 设计态（design_maturity=design）。"""
     return [
-        {"id": 1, "name": "market_data.tick", "scope": "production", "contract": "CTR-001",
-         "physical_type": "table", "produced_by": "JOB-001", "domain": "D_MKT_DATA",
-         "maturity": "production", "build": "generated", "pit": "strict"},
-        {"id": 2, "name": "signal.composite", "scope": "production", "contract": "CTR-002",
-         "physical_type": "table", "produced_by": "JOB-002", "domain": "D_SIGLEGACY",
-         "maturity": "production", "build": "generated", "pit": "strict"},
-        {"id": 3, "name": "backtest.fills", "scope": "backtest_internal", "contract": None,
-         "physical_type": "table", "produced_by": "JOB-003", "domain": "D_BACKTEST",
-         "maturity": "production", "build": "generated", "pit": "strict"},
+        {
+            "id": 1,
+            "name": "market_data.tick",
+            "scope": "production",
+            "contract": "CTR-001",
+            "physical_type": "table",
+            "produced_by": "JOB-001",
+            "domain": "D_MKT_DATA",
+            "maturity": "production",
+            "build": "generated",
+            "pit": "strict",
+        },
+        {
+            "id": 2,
+            "name": "signal.composite",
+            "scope": "production",
+            "contract": "CTR-002",
+            "physical_type": "table",
+            "produced_by": "JOB-002",
+            "domain": "D_SIGLEGACY",
+            "maturity": "production",
+            "build": "generated",
+            "pit": "strict",
+        },
+        {
+            "id": 3,
+            "name": "backtest.fills",
+            "scope": "backtest_internal",
+            "contract": None,
+            "physical_type": "table",
+            "produced_by": "JOB-003",
+            "domain": "D_BACKTEST",
+            "maturity": "production",
+            "build": "generated",
+            "pit": "strict",
+        },
         # 设计态节点（蓝图规划，代码未写）
-        {"id": 4, "name": "factor.alpha_factor", "scope": "production", "contract": "CTR-009",
-         "physical_type": "table", "produced_by": "JOB-004", "domain": "D_FACTOR",
-         "maturity": "design", "build": "planned", "pit": "strict"},
+        {
+            "id": 4,
+            "name": "factor.alpha_factor",
+            "scope": "production",
+            "contract": "CTR-009",
+            "physical_type": "table",
+            "produced_by": "JOB-004",
+            "domain": "D_FACTOR",
+            "maturity": "design",
+            "build": "planned",
+            "pit": "strict",
+        },
     ]
 
 
@@ -112,19 +198,47 @@ def sample_datasets_with_design():
 def sample_jobs_with_design():
     """4 个 Job：3 运营态 + 1 设计态（design_maturity=design）。"""
     return [
-        {"id": 10, "name": "ingest.akshare_kline", "scope": "production",
-         "source": "src/zephyr/data/ingest.py", "trigger": "scheduled",
-         "context": "production", "maturity": "production", "build": "generated"},
-        {"id": 11, "name": "synthesize.signal", "scope": "production",
-         "source": "src/zephyr/signal_ashare/synthesizer.py", "trigger": "event_driven",
-         "context": "production", "maturity": "production", "build": "generated"},
-        {"id": 12, "name": "backtest.replay_ticks", "scope": "backtest_internal",
-         "source": "src/zephyr/backtest/tick_replay.py", "trigger": "manual",
-         "context": "backtest_tick", "maturity": "production", "build": "generated"},
+        {
+            "id": 10,
+            "name": "ingest.akshare_kline",
+            "scope": "production",
+            "source": "src/zephyr/data/ingest.py",
+            "trigger": "scheduled",
+            "context": "production",
+            "maturity": "production",
+            "build": "generated",
+        },
+        {
+            "id": 11,
+            "name": "synthesize.signal",
+            "scope": "production",
+            "source": "src/zephyr/signal_ashare/synthesizer.py",
+            "trigger": "event_driven",
+            "context": "production",
+            "maturity": "production",
+            "build": "generated",
+        },
+        {
+            "id": 12,
+            "name": "backtest.replay_ticks",
+            "scope": "backtest_internal",
+            "source": "src/zephyr/backtest/tick_replay.py",
+            "trigger": "manual",
+            "context": "backtest_tick",
+            "maturity": "production",
+            "build": "generated",
+        },
         # 设计态节点（蓝图规划，代码未写）
-        {"id": 13, "name": "compute.alpha_factor", "scope": "production",
-         "source": "src/zephyr/factor/alpha_factor.py", "trigger": "event_driven",
-         "context": "production", "maturity": "design", "build": "planned"},
+        {
+            "id": 13,
+            "name": "compute.alpha_factor",
+            "scope": "production",
+            "source": "src/zephyr/factor/alpha_factor.py",
+            "trigger": "event_driven",
+            "context": "production",
+            "maturity": "design",
+            "build": "planned",
+        },
     ]
 
 
@@ -146,18 +260,45 @@ def sample_edges():
 def design_only_datasets():
     """3 个设计态 Dataset（含 format_summary，名称未收录于 glossary，走回退提取中文）。"""
     return [
-        {"id": 21, "name": "factor.ashare_alpha87", "scope": "production", "contract": None,
-         "physical_type": "table", "produced_by": "JOB-021", "domain": "D_FACTOR",
-         "maturity": "design", "build": "planned", "pit": "strict",
-         "format_summary": "A股Alpha#87因子信号（多因子截面排名）"},
-        {"id": 22, "name": "factor.ashare_capital_flow", "scope": "production", "contract": None,
-         "physical_type": "table", "produced_by": "JOB-022", "domain": "D_FACTOR",
-         "maturity": "design", "build": "planned", "pit": "strict",
-         "format_summary": "A股资金流向因子（主力资金净流入/流出）"},
-        {"id": 23, "name": "factor.ashare_fundamental", "scope": "production", "contract": None,
-         "physical_type": "table", "produced_by": "JOB-023", "domain": "D_FACTOR",
-         "maturity": "design", "build": "planned", "pit": "strict",
-         "format_summary": "A股基本面因子（PE/PB/ROE/股息率等）"},
+        {
+            "id": 21,
+            "name": "factor.ashare_alpha87",
+            "scope": "production",
+            "contract": None,
+            "physical_type": "table",
+            "produced_by": "JOB-021",
+            "domain": "D_FACTOR",
+            "maturity": "design",
+            "build": "planned",
+            "pit": "strict",
+            "format_summary": "A股Alpha#87因子信号（多因子截面排名）",
+        },
+        {
+            "id": 22,
+            "name": "factor.ashare_capital_flow",
+            "scope": "production",
+            "contract": None,
+            "physical_type": "table",
+            "produced_by": "JOB-022",
+            "domain": "D_FACTOR",
+            "maturity": "design",
+            "build": "planned",
+            "pit": "strict",
+            "format_summary": "A股资金流向因子（主力资金净流入/流出）",
+        },
+        {
+            "id": 23,
+            "name": "factor.ashare_fundamental",
+            "scope": "production",
+            "contract": None,
+            "physical_type": "table",
+            "produced_by": "JOB-023",
+            "domain": "D_FACTOR",
+            "maturity": "design",
+            "build": "planned",
+            "pit": "strict",
+            "format_summary": "A股基本面因子（PE/PB/ROE/股息率等）",
+        },
     ]
 
 
@@ -165,18 +306,39 @@ def design_only_datasets():
 def design_only_jobs():
     """3 个设计态 Job（含 description，名称未收录于 glossary，走回退提取中文）。"""
     return [
-        {"id": 31, "name": "compute.ashare_alpha87", "scope": "production",
-         "source": "src/zephyr/factor/ashare/alpha87.py", "trigger": "event_driven",
-         "context": "production", "maturity": "design", "build": "planned",
-         "description": "计算Alpha#87因子（消费OHLC K线，产出因子信号）"},
-        {"id": 32, "name": "compute.ashare_capital_flow", "scope": "production",
-         "source": "src/zephyr/factor/ashare/capital_flow.py", "trigger": "event_driven",
-         "context": "production", "maturity": "design", "build": "planned",
-         "description": "计算资金流因子（消费OHLC K线，产出因子信号）"},
-        {"id": 33, "name": "compute.ashare_fundamental", "scope": "production",
-         "source": "src/zephyr/factor/ashare/fundamental.py", "trigger": "event_driven",
-         "context": "production", "maturity": "design", "build": "planned",
-         "description": "计算基本面因子（消费OHLC K线，产出因子信号）"},
+        {
+            "id": 31,
+            "name": "compute.ashare_alpha87",
+            "scope": "production",
+            "source": "src/zephyr/factor/ashare/alpha87.py",
+            "trigger": "event_driven",
+            "context": "production",
+            "maturity": "design",
+            "build": "planned",
+            "description": "计算Alpha#87因子（消费OHLC K线，产出因子信号）",
+        },
+        {
+            "id": 32,
+            "name": "compute.ashare_capital_flow",
+            "scope": "production",
+            "source": "src/zephyr/factor/ashare/capital_flow.py",
+            "trigger": "event_driven",
+            "context": "production",
+            "maturity": "design",
+            "build": "planned",
+            "description": "计算资金流因子（消费OHLC K线，产出因子信号）",
+        },
+        {
+            "id": 33,
+            "name": "compute.ashare_fundamental",
+            "scope": "production",
+            "source": "src/zephyr/factor/ashare/fundamental.py",
+            "trigger": "event_driven",
+            "context": "production",
+            "maturity": "design",
+            "build": "planned",
+            "description": "计算基本面因子（消费OHLC K线，产出因子信号）",
+        },
     ]
 
 
@@ -191,6 +353,7 @@ def design_only_edges():
 
 
 # ---------- _gen_mermaid 测试 ----------
+
 
 class TestGenMermaid:
     """_gen_mermaid 返回值与过滤逻辑测试。"""
@@ -208,9 +371,7 @@ class TestGenMermaid:
 
     def test_no_filter_returns_all(self, sample_datasets, sample_jobs, sample_edges):
         """无 scope_filter 时返回全部数据。"""
-        mmd, ds_count, job_count, edge_count = _gen_mermaid(
-            sample_datasets, sample_jobs, sample_edges
-        )
+        mmd, ds_count, job_count, edge_count = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
         assert ds_count == 3
         assert job_count == 3
         assert edge_count == 5
@@ -295,38 +456,27 @@ class TestGenMermaid:
 
 # ---------- 设计态/运营态（design_maturity）测试 ----------
 
+
 class TestDesignMaturity:
     """design_maturity 维度测试：(设计态 / design) 四要素 + maturity_filter（模板 V1.2 classDef）。"""
 
-    def test_design_node_has_class_and_label(
-        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
-    ):
+    def test_design_node_has_class_and_label(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
         """design_maturity=design 的节点有 class 赋值 + (设计态 / design) 四要素标签。"""
-        mmd, _, _, _ = _gen_mermaid(
-            sample_datasets_with_design, sample_jobs_with_design, sample_edges
-        )
+        mmd, _, _, _ = _gen_mermaid(sample_datasets_with_design, sample_jobs_with_design, sample_edges)
         # DS4 是设计态 Dataset → 节点定义存在 + class design 赋值行含 DS4
         assert "DS4" in mmd
         assert "class DS4" in mmd  # design class 赋值行（如 'class DS4,JOB13 design'）
         # JOB13 是设计态 Job → 节点定义存在
         assert "JOB13" in mmd
 
-    def test_design_node_has_design_prefix(
-        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
-    ):
+    def test_design_node_has_design_prefix(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
         """design_maturity=design 的节点四要素首行含 (设计态 / design)。"""
-        mmd, _, _, _ = _gen_mermaid(
-            sample_datasets_with_design, sample_jobs_with_design, sample_edges
-        )
+        mmd, _, _, _ = _gen_mermaid(sample_datasets_with_design, sample_jobs_with_design, sample_edges)
         assert "(设计态 / design)" in mmd
 
-    def test_production_node_has_class(
-        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
-    ):
+    def test_production_node_has_class(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
         """design_maturity=production 的节点有 class production 赋值（模板 V1.2 §4.8）。"""
-        mmd, _, _, _ = _gen_mermaid(
-            sample_datasets_with_design, sample_jobs_with_design, sample_edges
-        )
+        mmd, _, _, _ = _gen_mermaid(sample_datasets_with_design, sample_jobs_with_design, sample_edges)
         # DS1 是 production scope + production maturity → 节点定义存在 + class production
         assert "DS1" in mmd
         assert "class " in mmd  # 有 class 赋值行
@@ -336,7 +486,9 @@ class TestDesignMaturity:
     ):
         """maturity_filter=production 排除设计态节点。"""
         mmd, ds_count, job_count, _ = _gen_mermaid(
-            sample_datasets_with_design, sample_jobs_with_design, sample_edges,
+            sample_datasets_with_design,
+            sample_jobs_with_design,
+            sample_edges,
             maturity_filter="production",
         )
         # 3 运营态 dataset + 3 运营态 job（设计态 DS4/JOB13 被过滤）
@@ -345,12 +497,12 @@ class TestDesignMaturity:
         assert "DS4" not in mmd
         assert "JOB13" not in mmd
 
-    def test_maturity_filter_design_only(
-        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
-    ):
+    def test_maturity_filter_design_only(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
         """maturity_filter=design 只返回设计态节点。"""
         mmd, ds_count, job_count, _ = _gen_mermaid(
-            sample_datasets_with_design, sample_jobs_with_design, sample_edges,
+            sample_datasets_with_design,
+            sample_jobs_with_design,
+            sample_edges,
             maturity_filter="design",
         )
         # 仅 1 设计态 dataset + 1 设计态 job
@@ -362,6 +514,7 @@ class TestDesignMaturity:
 
 
 # ---------- _gen_panorama_md 测试 ----------
+
 
 class TestGenPanoramaMd:
     """_gen_panorama_md 统计正确性测试（全项目数据流全景：运营态 + 设计态）。"""
@@ -376,9 +529,7 @@ class TestGenPanoramaMd:
 
     def test_design_maturity_stats_table(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
         """全景文档包含设计态/运营态统计子表（design_maturity 维度）。"""
-        md = _gen_panorama_md(
-            sample_datasets_with_design, sample_jobs_with_design, sample_edges
-        )
+        md = _gen_panorama_md(sample_datasets_with_design, sample_jobs_with_design, sample_edges)
         # 4 dataset: 3 production + 1 design（4 列：运营态/设计态/合计）
         assert "| Dataset | 3 | 1 | 4 |" in md
         # 4 job: 3 production + 1 design
@@ -388,9 +539,7 @@ class TestGenPanoramaMd:
 
     def test_contains_operation_state_diagram(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
         """全景文档包含运营态的图章节（仅 design_maturity=production，模板 V1.2 三视图）。"""
-        md = _gen_panorama_md(
-            sample_datasets_with_design, sample_jobs_with_design, sample_edges
-        )
+        md = _gen_panorama_md(sample_datasets_with_design, sample_jobs_with_design, sample_edges)
         assert "运营态的图" in md
         # 三视图铁律：全景图 → 运营态的图 → 设计态的图
         assert "### 全景图（全部模块，颜色区分运营态/设计态）" in md
@@ -431,9 +580,7 @@ class TestGenPanoramaMd:
         self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
     ):
         """全景图 Mermaid 块同时含运营态和设计态节点（用户核心需求：一张看完所有东西）。"""
-        md = _gen_panorama_md(
-            sample_datasets_with_design, sample_jobs_with_design, sample_edges
-        )
+        md = _gen_panorama_md(sample_datasets_with_design, sample_jobs_with_design, sample_edges)
         # 提取全景图 Mermaid 块（### 全景图 到 ### 运营态的图 之间）
         idx_pan = md.find("### 全景图")
         idx_op = md.find("### 运营态的图")
@@ -447,6 +594,7 @@ class TestGenPanoramaMd:
 
 
 # ---------- 模板 V1.2 对齐测试 ----------
+
 
 class TestTopologicalLayering:
     """拓扑分层（Kahn + ~~~ 不可见边）测试（模板 §4.6）。"""
@@ -474,25 +622,19 @@ class TestSolidDashedArrows:
         mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
         assert "JOB10 -->|produces" in mmd  # production→production
 
-    def test_design_to_design_dashed(
-        self, design_only_datasets, design_only_jobs, design_only_edges
-    ):
+    def test_design_to_design_dashed(self, design_only_datasets, design_only_jobs, design_only_edges):
         """两端均 design → 虚线箭头 -.->。"""
         mmd, _, _, _ = _gen_mermaid(design_only_datasets, design_only_jobs, design_only_edges)
         assert "JOB31 -.->|produces" in mmd  # design→design
 
-    def test_mixed_maturity_dashed(
-        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
-    ):
+    def test_mixed_maturity_dashed(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
         """混合 maturity 图含实线（production 间）和虚线（design 相关）。"""
         # sample_edges 无 JOB13→DS4 边，补一条 design→design 边测试虚线
         edges_with_design = sample_edges + [
             {"from_id": 13, "to_id": 4, "from_type": "job", "to_type": "dataset", "type": "produces"},
         ]
-        mmd, _, _, _ = _gen_mermaid(
-            sample_datasets_with_design, sample_jobs_with_design, edges_with_design
-        )
-        assert "JOB10 -->|produces" in mmd   # production→production 实线
+        mmd, _, _, _ = _gen_mermaid(sample_datasets_with_design, sample_jobs_with_design, edges_with_design)
+        assert "JOB10 -->|produces" in mmd  # production→production 实线
         assert "JOB13 -.->|produces" in mmd  # design→design 虚线
 
 
@@ -501,12 +643,29 @@ class TestCrossDomainExternal:
 
     def test_external_ds_rendered_with_class(self):
         """external_ds 参数传入的节点渲染为 external_prod/external_design 类。"""
-        local_ds = [{"id": 1, "name": "local.out", "scope": "production",
-                     "maturity": "production", "domain": "D_FACTOR", "contract": "CTR-1"}]
-        local_job = [{"id": 10, "name": "local.compute", "scope": "production",
-                      "maturity": "production", "source": "src/x.py"}]
-        ext_ds = [{"id": 99, "name": "ext.market", "scope": "production",
-                   "maturity": "production", "domain": "D_MKT_DATA", "contract": "CTR-9"}]
+        local_ds = [
+            {
+                "id": 1,
+                "name": "local.out",
+                "scope": "production",
+                "maturity": "production",
+                "domain": "D_FACTOR",
+                "contract": "CTR-1",
+            }
+        ]
+        local_job = [
+            {"id": 10, "name": "local.compute", "scope": "production", "maturity": "production", "source": "src/x.py"}
+        ]
+        ext_ds = [
+            {
+                "id": 99,
+                "name": "ext.market",
+                "scope": "production",
+                "maturity": "production",
+                "domain": "D_MKT_DATA",
+                "contract": "CTR-9",
+            }
+        ]
         edges = [
             {"from_id": 10, "to_id": 1, "from_type": "job", "to_type": "dataset", "type": "produces"},
             {"from_id": 99, "to_id": 10, "from_type": "dataset", "to_type": "job", "type": "consumed_by"},
@@ -543,13 +702,29 @@ class TestDomainMdTemplate:
 
     @staticmethod
     def _mk_ds():
-        return [{"id": 1, "name": "a", "scope": "production", "maturity": "production",
-                 "domain": "D_TEST", "contract": "CTR-1"}]
+        return [
+            {
+                "id": 1,
+                "name": "a",
+                "scope": "production",
+                "maturity": "production",
+                "domain": "D_TEST",
+                "contract": "CTR-1",
+            }
+        ]
 
     @staticmethod
     def _mk_job():
-        return [{"id": 10, "name": "j", "scope": "production", "maturity": "production",
-                 "source": "src/x.py", "trigger": "scheduled"}]
+        return [
+            {
+                "id": 10,
+                "name": "j",
+                "scope": "production",
+                "maturity": "production",
+                "source": "src/x.py",
+                "trigger": "scheduled",
+            }
+        ]
 
     def test_domain_md_has_html_link(self):
         """域文档顶部有 HTML 跳转链接。"""

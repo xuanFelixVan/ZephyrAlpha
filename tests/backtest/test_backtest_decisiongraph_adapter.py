@@ -22,13 +22,10 @@
 
 import hashlib
 import json
-import sys
 from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
-
-sys.path.insert(0, "src")
 
 try:
     from zephyr.backtest.core.engine_base import BacktestResult
@@ -40,7 +37,7 @@ try:
 
     _IMPORT_OK = True
     _IMPORT_REASON = ""
-except Exception as e:  # pragma: no cover
+except Exception as e:  # noqa: BLE001 — import 失败降级 skip_module，不得阻断收集  # pragma: no cover
     _IMPORT_OK = False
     _IMPORT_REASON = repr(e)
 
@@ -151,9 +148,16 @@ class TestBacktestResultToDecisionNode:
     def test_all_required_keys_present(self):
         node = backtest_result_to_decision_node(_make_result())
         required = {
-            "layer_id", "node_type", "path", "module_id",
-            "decision_name", "decision_name_en",
-            "inputs", "outputs", "conditions", "facets",
+            "layer_id",
+            "node_type",
+            "path",
+            "module_id",
+            "decision_name",
+            "decision_name_en",
+            "inputs",
+            "outputs",
+            "conditions",
+            "facets",
             "evidence_hash",
         }
         assert required.issubset(set(node.keys()))
