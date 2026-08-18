@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-TEST_STRATEGY_RUNNER_TICK | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.pf_core.test_intraday_surge_fall_strategy
 # [DOMAIN] D_PF_CORE
 # [STABILITY] stable

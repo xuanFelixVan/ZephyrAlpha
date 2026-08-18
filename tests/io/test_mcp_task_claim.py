@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-DATABASE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_mcp_task_claim | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 from __future__ import annotations

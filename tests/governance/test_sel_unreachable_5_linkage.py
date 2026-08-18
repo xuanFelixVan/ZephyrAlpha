@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """验证5个之前不可达模块（BM-SEL-06/07/09/10/15）的依赖边是否真的能跑通链路。
 
 测试目标：
