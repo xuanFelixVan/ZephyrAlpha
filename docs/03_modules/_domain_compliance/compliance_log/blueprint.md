@@ -3,7 +3,7 @@ module_id: MOD-CMP-010
 title: "合规日志落库蓝图 — compliance_log JSONL append-only 证据链"
 doc_type: blueprint
 status: Active
-version: "0.1.11"
+version: "0.1.12"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation

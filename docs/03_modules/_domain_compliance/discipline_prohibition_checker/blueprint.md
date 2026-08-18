@@ -3,7 +3,7 @@ module_id: MOD-CMP-002
 title: "四项严禁纪律闸蓝图 — 追高/补仓/骄傲/报复检测 + KillSwitchLite"
 doc_type: blueprint
 status: Active
-version: "0.1.11"
+version: "0.1.12"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation

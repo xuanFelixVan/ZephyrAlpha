@@ -3,7 +3,7 @@ module_id: MOD-CMP-007
 title: "交易合规检测器蓝图 — 异常交易 2 条 + 市场操纵 4 类"
 doc_type: blueprint
 status: Active
-version: "0.1.11"
+version: "0.1.12"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation

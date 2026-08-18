@@ -3,7 +3,7 @@ module_id: MOD-INT-AISA
 title: "AI 舆情分析器蓝图 — 规则法情绪打分桩+窗口聚合+事件信号（MVP）"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 ttl: permanent
 design_maturity: production
 layer: L02_intelligence

@@ -3,7 +3,7 @@ module_id: MOD-CMP-009
 title: "程序化交易报告登记+报送门禁蓝图 — 6 项义务 + ReportGate"
 doc_type: blueprint
 status: Active
-version: "0.1.11"
+version: "0.1.12"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
