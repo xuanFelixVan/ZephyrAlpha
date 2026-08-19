@@ -175,6 +175,10 @@ class Portfolio:
         self._positions: dict[str, Position] = {}
         self._nav_history: list[tuple[Any, float]] = []
         self._trades_log: list[dict] = []
+        # 最后已知价结转（2026-08-19 AI-NIGHT-001 阶段2 红队实证 P0）：
+        # 持仓标的停牌/缺价日不得按 0 估值（否则 NAV 幻视回撤→复牌幻视恢复，
+        # 污染 Sharpe/MDD/total_return；多标的错开停牌时 NAV 序列锯齿化）
+        self._last_prices: dict[str, Decimal] = {}
 
         # 记录初始净值
         self._nav_history.append((None, float(initial_capital)))
@@ -236,6 +240,8 @@ class Portfolio:
 
         pos.quantity = new_qty
         pos.buy_date = fill.date
+        if fill.price > 0:
+            self._last_prices[symbol] = fill.price
 
     def _apply_sell(self, fill: BacktestFill, allow_t_plus_1: bool) -> None:
         """应用卖出成交"""
@@ -261,6 +267,8 @@ class Portfolio:
 
         pos.quantity -= fill.quantity
         self._cash += fill.total_cost
+        if fill.price > 0:
+            self._last_prices[symbol] = fill.price
 
         # 清零持仓时重置成本
         if pos.quantity == 0:
@@ -276,11 +284,11 @@ class Portfolio:
         Returns:
             当日NAV(总市值)
         """
+        self._remember_prices(prices)
         market_value = Decimal("0")
         for symbol, pos in self._positions.items():
             if pos.quantity > 0:
-                price = prices.get(symbol, Decimal("0"))
-                market_value += pos.quantity * price
+                market_value += pos.quantity * self._resolve_price(symbol, prices)
 
         nav = self._cash + market_value
         self._nav_history.append((date, float(nav)))
@@ -324,12 +332,29 @@ class Portfolio:
 
     def total_market_value(self, prices: dict[str, Decimal]) -> Decimal:
         """计算当前总市值(不含现金)"""
+        self._remember_prices(prices)
         mv = Decimal("0")
         for symbol, pos in self._positions.items():
             if pos.quantity > 0:
-                price = prices.get(symbol, Decimal("0"))
-                mv += pos.quantity * price
+                mv += pos.quantity * self._resolve_price(symbol, prices)
         return mv
+
+    def _remember_prices(self, prices: dict[str, Decimal]) -> None:
+        """登记当日有效价格（>0），供缺价日结转估值。"""
+        for symbol, price in prices.items():
+            if price is not None and price > 0:
+                self._last_prices[symbol] = price
+
+    def _resolve_price(self, symbol: str, prices: dict[str, Decimal]) -> Decimal:
+        """解析持仓标的估值价：当日有效价优先，缺失/非正时结转最后已知价。
+
+        停牌/缺价日按 0 估值会产生幻视回撤（2026-08-19 AI-NIGHT-001 阶段2
+        红队实证 P0：1 万股@10 停牌日 NAV -10000，复牌日幻视恢复）。
+        """
+        price = prices.get(symbol)
+        if price is not None and price > 0:
+            return price
+        return self._last_prices.get(symbol, Decimal("0"))
 
     def total_nav(self, prices: dict[str, Decimal]) -> Decimal:
         """计算当前总NAV(现金+市值)"""

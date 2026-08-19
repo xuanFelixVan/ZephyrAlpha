@@ -114,10 +114,6 @@ def _build_target_orders(
         if ob is None or ob.last_price <= 0:
             continue  # 停牌或无数据
 
-        # 涨跌停检查（Tick 模式跳过，Tick 内已含状态）
-        if not tick_mode and prev_close and engine._is_price_limit(symbol, ob.last_price, prev_close.get(symbol)):
-            continue
-
         # 计算目标数量（100股整数倍）
         target_value = total_nav * Decimal(str(weight))
         target_qty = int(target_value / ob.last_price / engine._config.lot_size) * engine._config.lot_size
@@ -129,9 +125,32 @@ def _build_target_orders(
         # 差额
         diff = Decimal(target_qty) - current_qty
         if diff > 0:
+            # 涨停封板：买单拒成（2026-08-19 阶段2 改方向感知——原买卖对称
+            # 阻断把涨停日可成交的卖单也一并锁死）
+            if not tick_mode and prev_close and engine._is_limit_up(symbol, ob.last_price, prev_close.get(symbol)):
+                continue
             orders.append({"side": "BUY", "symbol": symbol, "quantity": diff})
         elif diff < 0:
+            # 跌停封板：卖单拒成；涨停日卖单可成交（排队买盘即时消化）
+            if not tick_mode and prev_close and engine._is_limit_down(symbol, ob.last_price, prev_close.get(symbol)):
+                continue
             orders.append({"side": "SELL", "symbol": symbol, "quantity": abs(diff)})
+
+    # 目标权重语义补全（2026-08-19 AI-NIGHT-001 阶段2 红队实证 P0）：持仓但
+    # 目标权重缺失/<=0 的标的目标仓位=0，必须生成清仓卖单——否则轮动策略
+    # 跌出信号的持仓永久滞留（实证：A 轮出后 59900 股滞留，轮入标的买入因
+    # 现金被占连续被拒），回测系统性偏离信号意图。停牌/跌停无法卖出时跳过。
+    for symbol, pos in portfolio.positions.items():
+        if pos.quantity <= 0:
+            continue
+        if target_weights.get(symbol, 0.0) > 0:
+            continue  # 已在上方差额逻辑处理
+        ob = order_books.get(symbol)
+        if ob is None or ob.last_price <= 0:
+            continue  # 停牌或无数据，无法卖出
+        if not tick_mode and prev_close and engine._is_limit_down(symbol, ob.last_price, prev_close.get(symbol)):
+            continue  # 跌停封板无法卖出（涨停日卖单可成交，不阻断清仓）
+        orders.append({"side": "SELL", "symbol": symbol, "quantity": pos.quantity})
     return orders
 
 
@@ -547,6 +566,22 @@ class MatchingEngine:
             return Decimal("0.30")
         return self._config.price_limit_pct
 
+    def _is_limit_up(self, symbol: str, price: Decimal, prev_close: Decimal | None) -> bool:
+        """是否涨停（封板价之上，买单拒成；卖单不受限）。"""
+        if prev_close is None or prev_close <= 0:
+            return False
+        pct = self._infer_limit_pct(symbol)
+        upper_limit = (prev_close * (1 + pct)).quantize(Decimal("0.01"))
+        return price >= upper_limit
+
+    def _is_limit_down(self, symbol: str, price: Decimal, prev_close: Decimal | None) -> bool:
+        """是否跌停（封板价之下，卖单拒成；买单不受限）。"""
+        if prev_close is None or prev_close <= 0:
+            return False
+        pct = self._infer_limit_pct(symbol)
+        lower_limit = (prev_close * (1 - pct)).quantize(Decimal("0.01"))
+        return price <= lower_limit
+
     def _is_price_limit(self, symbol: str, price: Decimal, prev_close: Decimal | None) -> bool:
         """检查是否涨跌停（按板块幅度，ST ±5% 待 stk_limit 表接入）
 
@@ -558,12 +593,7 @@ class MatchingEngine:
         Returns:
             True=涨跌停（不成交）, False=正常
         """
-        if prev_close is None or prev_close <= 0:
-            return False
-        pct = self._infer_limit_pct(symbol)
-        upper_limit = (prev_close * (1 + pct)).quantize(Decimal("0.01"))
-        lower_limit = (prev_close * (1 - pct)).quantize(Decimal("0.01"))
-        return price >= upper_limit or price <= lower_limit
+        return self._is_limit_up(symbol, price, prev_close) or self._is_limit_down(symbol, price, prev_close)
 
 
 # MatchingConfig / MatchingFill / MatchOrderInput / OrderBookSnapshot / TickSnapshot
