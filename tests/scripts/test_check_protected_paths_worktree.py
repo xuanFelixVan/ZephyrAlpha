@@ -81,16 +81,14 @@ def _run_staged(cwd: Path, env: dict[str, str] | None = None) -> subprocess.Comp
 
 
 class TestWorktreeIsolationWarn:
-    """L3.2: worktree 隔离 warn（方向性，不影响 exit code）。"""
+    """L3.2: worktree 隔离 warn（方向性，不影响 exit code）。
 
-    def test_warn_in_main_workspace(self, tmp_path: Path) -> None:
-        """主工作区 staging src/zephyr/**/*.py + 无 session → warn 输出，exit 0。"""
-        _init_repo(tmp_path)
-        _stage_file(tmp_path, "src/zephyr/module.py")
-
-        r = _run_staged(tmp_path)
-        assert r.returncode == 0, f"warn-only 应 exit 0: {r.stderr}"
-        assert "WORKTREE-ISOLATION" in r.stderr, f"应含 warn: {r.stderr}"
+    裁定留痕（2026-08-19 统筹，AI-00 移交清单 5）：test_warn_in_main_workspace 已删——
+    其期望的 _warn_worktree_isolation/WORKTREE-ISOLATION warn 在源码与 git 全史零命中
+    （超前孤儿测试，4eff7f2769 前序 session 只交了测试功能从未落地）；同语义已由网关
+    _warn_non_worktree_commit 覆盖（主仓 commit 活跃 session 警告实证），脚本层补函数
+    与 gate 链收敛方向（CAND-GATEMECH-004）相悖。豁免用例保留（功能补全时仍有效）。
+    """
 
     def test_no_warn_in_worktree(self, tmp_path: Path) -> None:
         """worktree 内 staging → 不 warn（豁免）。"""

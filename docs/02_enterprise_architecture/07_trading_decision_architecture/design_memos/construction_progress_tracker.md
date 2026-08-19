@@ -475,6 +475,19 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 165 | 派生抖动处置+integrity db 滞后重注册收口 | B2 commit post-commit reconciler 联动 | ①142 个 blueprint §0.6 视图段"（无节点）↔0 个 Dataset/1 个 Job"回退抖动——旧 depgraph 缓存生成（批② 34acb4e215 刷新方向的逆向），按"可再生派生物只丢不提交"纪律 git restore 丢弃零损失；②depgraph 真重扫（--output-db depgraph --force，966 模块 0 失败，FRESHNESS WARN 消除）；③rules_integrity_db.json 的 script_manifest hash 重注册（批② manifest 联动滞后）commit 95036ad7 落地——不提交则下一 commit 者 GATE-INTEGRITY 红 | ✅ 已闭环 |
 | 166 | 全仓回归终验（B2+派生收口后） | 第八统筹续班终验 | 44827 passed/196 failed（.runtime/full_regression_20260819.log，1:31:51）逐条裁定：①130 红=命令口径伪报（本次误带 -p no:asyncio 禁插件，async 用例无 runner 全红；基线 60 红口径不带该旗标——四簇定向带插件复跑 65→5 实证）；②60 红=基线存量同簇（P1-补17 基线行）；③5 红=B2 真回归（test_session_worktree_workspace_clean：_audit_index_hygiene 审计落 tmp 仓 .runtime/ 触发干净断言——生产 .gitignore L106 已豁免，测试 helper _git_porcelain_status 过滤对齐，33 passed 实证）；④1 红=test_check_protected_paths_worktree=AI-00-AUDIT B4 在途施工面（2222f9c04b/b15a50737a 窗口），归循环审计线自查 | ✅ 已闭环（新增红 6 项全处置：5 修 1 归口；扣除口径差异后与基线 60 红对齐） |
 
+### P1-补22 · 2026-08-19 统筹承接 AI-00 夜间审计收口（循环审计 R1→R2→R3 连续零新增退出条件达成，移交清单 9 项处置）
+
+> 来源：AI-00 审计侧夜间直作完工移交（.runtime/ai00_audit_pause_20260817.md §6.7-6.9）。B 类工单全治本落地（B2/B4/B5/B7/B1）+C 类裁定执行完毕。统筹承接处置留痕。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 167 | 派生收口+bak 残留裁定+机制族 CAND 登记（移交项 8/7/3） | AI-00 移交清单 | ①9 派生脏文件（blueprint/handbook 节点计数随 depgraph 964 模块重建刷新）fb187aaf 收口；②bak_pre_one_question 备份删除（HEAD 16 条目 YAML 校验完好，未跟踪零 git 影响）；③CAND-GATEMECH-001~004 登记（files-modified 聚合语义/双检测器 exit1/golden hash 派生物赛跑/gate 链只读化）387b63e7 落地 | ✅ 已闭环 |
+| 168 | 僵尸心跳 daemon 断根（移交项 4） | AI-00 移交清单 | **根因**：heartbeat_daemon 两处 `registry.get(session_id)`——SessionRegistry 真接口 get_session（Stage 4 公共化改名遗留），AttributeError 被 except 吞掉致存在性+idle 两道自退静默失效；12 僵尸 daemon（父进程 12640 死实证）14~17h 无活动仍刷心跳→registry 恒活跃→每笔 commit 被迫 --allow-non-worktree。测试盲区=mock 万物皆有 .get（mock 打不到真机接口漂移）。**修复**：get→get_session+mock 对齐 6 处+真机回归锚点测试（接口再改名立即红）13eeb06b；13 孤儿 daemon taskkill 清场，下一笔 commit 警告收敛实证 | ✅ 已闭环（13eeb06b；41 passed 两轮全绿） |
+| 169 | test_warn_in_main_workspace 失效期望裁定（移交项 5）+61 存量红基线复核 | AI-00 移交清单 | 裁定=**删测试**：_warn_worktree_isolation/WORKTREE-ISOLATION 源码与 git 全史零命中（超前孤儿测试，4eff7f2769 只交测试未交功能）；同语义由网关 _warn_non_worktree_commit 覆盖；补函数与 gate 链收敛方向相悖。基线复核：非 async 66 红=基线 60 同簇+B2 5 红（已修）+本用例 1 红（本删）——零无名新增 | ✅ 已闭环（4 passed 两轮全绿） |
+| 170 | #ARCH-130 三件套（移交项 1） | AI-00 移交清单 | ①C2 契约快照 25 文件 re-freeze ②DDL 漂移 9 项（先溯源 merge 批再补声明）③ipo_calendar 建表/摘源——**等 Owner 裁定**（涉现网 DB 不自主） | ⏳ 等 Owner 裁定 |
+| 171 | CAND-GOVTEST-001/002/003 择窗+ruff 人工批残余（移交项 2） | AI-00 移交清单 | test_all_scripts 拆分/ruff format 大爆炸/ALGO_FLOW 2186 补登三候选在册；ruff 残余 BLE001 29/F821 16/B905 16/UP037 121+W293×17（契约生成器模板漂移位，连带修模板）——择窗排期不施工 | ⏳ 择窗（CAND 在册） |
+| 172 | 存量择窗两项（移交项 6） | AI-00 移交清单 | ROOR summary 手写统计 69 vs 实测 73 漂移+翻译注册表 4450/5927 plain_zh 待覆盖——存量择窗 | ⏳ 择窗 |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
