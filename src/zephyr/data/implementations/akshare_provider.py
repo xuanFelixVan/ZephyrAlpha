@@ -291,7 +291,8 @@ _AKSHARE_CAPABILITIES = frozenset(
         "etf_list",
         "lof_list",
         "hk_stock_list",
-        "hk_trade_calendar",
+        # #ARCH-DATA-001（17号 §6.6-1，2026-08-20 清理）：hk_trade_calendar 声明残留已删——
+        # 方法体早已移除（akshare tool_trade_date_hist_sina 实为A股日历），唯一任务走 source=internal（XHKG）
         "index_list",
         "etf_benchmark",
         "etf_nav",  # #ARCH-CH-023: 替代 miniQMT get_etf_info（不支持）
@@ -527,7 +528,7 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("etf_list", supports_symbols_null=True),
             CapabilityContract("lof_list", supports_symbols_null=True),
             CapabilityContract("hk_stock_list", supports_symbols_null=True),
-            CapabilityContract("hk_trade_calendar", supports_symbols_null=True),
+            # #ARCH-DATA-001（17号 §6.6-1）：hk_trade_calendar CapabilityContract 残留已删（声明无实现防 AttributeError）
             CapabilityContract("index_list", supports_symbols_null=True),
             CapabilityContract("etf_benchmark", supports_symbols_null=True),
             CapabilityContract("etf_nav", supports_symbols_null=True),  # #ARCH-CH-023

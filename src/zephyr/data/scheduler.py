@@ -88,6 +88,7 @@ from zephyr.data.metrics import IntegratorMetrics, get_metrics
 from zephyr.data.policy_registry import PolicyRegistry, get_registry
 from zephyr.data.progress_store import ProgressStore, get_store
 from zephyr.data.provider_base import FetchPayload, FetchResult, IngestProviderBase
+from zephyr.data.source_circuit_breaker import CircuitBreakerRegistry
 from zephyr.data.task_queue import FAILED, PENDING, RUNNING, SUCCESS, TaskQueue
 from zephyr.data.trading_calendar import TRADING_DAY_GUARDED_SCHEDULES, is_trading_day
 from zephyr.shared.io.paths import REPO_ROOT
@@ -371,6 +372,9 @@ class IntegratorScheduler:
         self._alerter = Alerter()
         self._task_queue = TaskQueue()
         self._metrics: IntegratorMetrics = get_metrics()
+        # 64号 Q17：per-source 自动熔断器（连续失败 N 次/滑窗错误率超阈值→熔断 M 分钟→半开探针），
+        # 与手动 `integrator pause`（policy.enabled）互补不替代；纯内存，进程重启即复位
+        self._circuit_breakers = CircuitBreakerRegistry(on_trip=self._on_source_circuit_trip)
         self._providers: dict[str, IngestProviderBase] = {}
         self._provider_lock = threading.Lock()
         # APScheduler 实例（懒初始化）
@@ -1336,6 +1340,12 @@ class IntegratorScheduler:
                             run_id, "DEFERRED_PERSISTENCE", total_rows, writer.total_flushed, detail
                         )
                     tq.mark_deferred_persistence(task_id)
+                    # 64号 Q16/Q17：DEFERRED 属源拉取成功（数据本地持久化待回灌），熔断器记成功
+                    self._circuit_breakers.record_success(source)
+                    self._record_fetch_perf(
+                        task, task_id, source, capability, "DEFERRED_PERSISTENCE",
+                        time.time() - task_start_ts, writer.total_flushed,
+                    )
                     self.emit_event("task_completed", task_id=task_id, success=False, deferred=True)
                     return True, None
                 last_error = f"ClickHouse 写入失败(flush): {table}"
@@ -1351,6 +1361,12 @@ class IntegratorScheduler:
                 self._alerter.notify(task_id, last_error, level=LEVEL_ERROR, source=source)
                 self._metrics.record_task(task_id, source, "FAILED", task_elapsed, writer.total_flushed)
                 self._metrics.flush()
+                # 64号 Q16/Q17：熔断器记失败 + fetch_perf 被动记录
+                self._circuit_breakers.record_failure(source)
+                self._record_fetch_perf(
+                    task, task_id, source, capability, "FAILED",
+                    task_elapsed, writer.total_flushed, last_error,
+                )
                 self.emit_event("task_completed", task_id=task_id, success=False)
                 return False, last_error
             else:
@@ -1377,6 +1393,12 @@ class IntegratorScheduler:
                     log.info("任务 %s 完成: rows=%d last_key=%s", task_id, total_rows, latest_key)
                 self._metrics.record_task(task_id, source, "SUCCESS", task_elapsed, writer.total_flushed)
                 self._metrics.flush()
+                # 64号 Q16/Q17：熔断器记成功 + fetch_perf 被动记录
+                self._circuit_breakers.record_success(source)
+                self._record_fetch_perf(
+                    task, task_id, source, capability, "SUCCESS",
+                    task_elapsed, writer.total_flushed,
+                )
                 self.emit_event("task_completed", task_id=task_id, success=True)
                 return True, None
 
@@ -1392,6 +1414,12 @@ class IntegratorScheduler:
             self._alerter.notify(task_id, last_error, level=LEVEL_ERROR, source=source)
             self._metrics.record_task(task_id, source, "FAILED", task_elapsed, rows_written)
             self._metrics.flush()
+            # 64号 Q16/Q17：熔断器记失败 + fetch_perf 被动记录（异常路径）
+            self._circuit_breakers.record_failure(source)
+            self._record_fetch_perf(
+                task, task_id, source, capability, "FAILED",
+                task_elapsed, rows_written, last_error,
+            )
             self.emit_event("task_completed", task_id=task_id, success=False)
             return False, last_error
 
@@ -1439,7 +1467,61 @@ class IntegratorScheduler:
             self._alerter.notify(task_id, f"源 {source} 已熔断，任务跳过", level=LEVEL_ERROR, source=source)
             return None, None, f"源 {source} 已熔断"
 
+        # 自动熔断器检查（64号 Q17）：连续失败/错误率超阈值的源在冷却期内跳过；
+        # 跳闸瞬间已告警一次（_on_source_circuit_trip），冷却期跳过仅记日志防刷屏
+        if not self._circuit_breakers.allow_request(source):
+            log.warning("任务 %s 跳过：数据源 %s 自动熔断冷却中", task_id, source)
+            return None, None, f"源 {source} 自动熔断冷却中"
+
         return provider, policy, None
+
+    def _on_source_circuit_trip(self, source: str, reason: str) -> None:
+        """自动熔断器跳闸回调（64号 Q17）：每源每次跳闸告警一次。"""
+        log.error("数据源 %s 自动熔断: %s", source, reason)
+        try:
+            self._alerter.notify(
+                f"_circuit_breaker_{source}",
+                f"数据源 {source} 自动熔断: {reason}",
+                level=LEVEL_ERROR,
+                source=source,
+            )
+        except Exception:  # noqa: BLE001 — 告警异常不影响熔断状态机
+            pass
+
+    def _record_fetch_perf(
+        self,
+        task: dict,
+        task_id: str,
+        source: str,
+        capability: str | None,
+        status: str,
+        elapsed_sec: float,
+        rows: int,
+        error: str | None = None,
+    ) -> None:
+        """fetch_perf 被动记录（64号 Q16）：每次任务执行结束写一条 JSONL。
+
+        落 .runtime/fetch_perf/fetch_perf_YYYYMMDD.jsonl（禁新 DDL 不入 CH），
+        为 Q11 调度动态化/Q17 熔断参数校准供数据基础；失败仅告警不阻断调度。
+        """
+        try:
+            from zephyr.data.fetch_perf_recorder import record_fetch_perf
+
+            record_fetch_perf(
+                {
+                    "task_id": task_id,
+                    "source": source,
+                    "capability": capability or task.get("capability"),
+                    "table": task.get("table"),
+                    "status": status,
+                    "elapsed_sec": round(elapsed_sec, 3),
+                    "rows": rows,
+                    "error": (error or "")[:200],
+                    "channel": "scheduler_passive",
+                }
+            )
+        except Exception as e:  # noqa: BLE001 — 被动记录不得阻断调度主链路
+            log.warning("fetch_perf 被动记录异常（不影响调度）: %s", e)
 
     def _compute_start_date(
         self,

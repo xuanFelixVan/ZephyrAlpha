@@ -1,0 +1,63 @@
+# [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
+# [MODULE] zephyr.data.config.manual_calendar_events_schema
+# [DOMAIN] D_DATA
+# [TTL] permanent
+# manual 日历事件 CSV 录入格式真源（17号 §6.3 定稿裁定：方案① CSV 录入 + 一次性 IMPORT）
+# 适用 event_type：fomc_meeting / major_meeting / stamp_duty_change（calendar_event 表 manual 三类）
+# 校验函数：zephyr.data.manual_calendar_events.validate_manual_events_csv
+# 本文件仅定义格式与约束；一次性 IMPORT 执行不在本批次范围（17号 §6.3：随 calendar_event_refresh 同批）
+
+version: "1.0.0"
+last_updated: "2026-08-20"
+
+# 目标表：c1_market.calendar_event（INSERT_COLUMNS = event_date, event_type, description, data_source）
+target_table: c1_market.calendar_event
+
+# CSV 文件约定
+file:
+  encoding: utf-8-sig    # 容忍 BOM（Excel 另存 CSV 常见）
+  delimiter: ","
+  header_required: true  # 首行必须为列头（顺序不限，按列名取列）
+  comment_prefix: "#"    # # 开头行跳过（文件头注释/台账说明）
+  skip_empty_lines: true
+
+# 列定义（required=CSV 必须提供；data_source 可选、缺省补 manual）
+columns:
+  - name: event_date
+    type: date           # YYYY-MM-DD（ISO8601 严格格式）
+    required: true
+    constraints:
+      format: "%Y-%m-%d"
+      min: "1990-01-01"  # A股印花税调整最早事件 1990s；FOMC 历史回填下界
+      max: "2100-01-01"  # 前瞻录入上界（FOMC 提前一年公布日程）
+  - name: event_type
+    type: enum
+    required: true
+    constraints:
+      # 仅 manual 三类；internal 派生九类禁止走 CSV（防与派生通道双写冲突）
+      allowed: [fomc_meeting, major_meeting, stamp_duty_change]
+  - name: description
+    type: string
+    required: true
+    constraints:
+      min_length: 1      # 非空（事件必须可读描述，如 "FOMC 2026 第3次议息"）
+      max_length: 200
+  - name: data_source
+    type: enum
+    required: false      # 缺省补 manual；显式提供时必须为 manual
+    default: manual
+    constraints:
+      allowed: [manual]
+
+# 行级约束
+row_constraints:
+  unique_key: [event_date, event_type]   # 文件内同键去重（对齐 ReplacingMergeTree ORDER BY）
+
+# 录入示例（CSV 内容示例，非数据）
+example_csv: |
+  # FOMC 议息日（2026 年，美联储官网日程手工录入）
+  event_date,event_type,description
+  2026-01-28,fomc_meeting,FOMC 2026 第1次议息会议（1月27-28日）
+  2026-03-18,fomc_meeting,FOMC 2026 第2次议息会议（3月17-18日）
+  2026-03-05,major_meeting,全国两会开幕（全国政协/人大）
+  2008-09-19,stamp_duty_change,印花税改单边征收（卖出 0.1%）

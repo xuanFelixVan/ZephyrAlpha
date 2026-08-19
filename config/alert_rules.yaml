@@ -100,3 +100,16 @@ rules:
     description: "触失败指标（连续6个月亏损或回撤>25%，对齐4级Protocol Level4）→失败处置"
     notify: ["dashboard", "escalation"]
     silence_window: "1d"
+
+  # ── 64号 Q8 项（CH parts 防爆炸，2026-08-20 AI-NIGHT-001 施工）──
+  # 裁定真源 64_data_source_download_spec.md §16.2 Q8：2026-07-09 parts 爆炸致 CH merge 满载崩溃事故教训。
+  # 探测函数 zephyr.data.ch_parts_monitor.check_parts_threshold（system.parts active=1 按表聚合）。
+  - id: ALERT-CH-001
+    name: "ch_data_parts_explosion"
+    severity: critical
+    metric: "clickhouse.table_active_parts"
+    condition: "> 100"
+    duration: "5m"
+    description: "单表 active data parts 超过 100（防 2026-07-09 parts 爆炸致 CH merge 崩溃重演）"
+    notify: ["fle", "dashboard", "escalation"]
+    silence_window: "30m"

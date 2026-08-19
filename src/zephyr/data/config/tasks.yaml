@@ -1815,6 +1815,54 @@ tasks:
   extra:
     description: "港股交易日历全量刷新（exchange_calendars XHKG，港交所真日历）"
 
+  # 17号 §6.6-2（2026-08-20 AI-NIGHT-001 补登记）：calendar_event 表此前无数据填充通道
+  # （派生函数 internal_compute_provider._fetch_calendar_event 已就绪，仅缺任务登记）。
+  # 全量重算幂等（ReplacingMergeTree 按 event_date+event_type 去重），范围 [today-5年, today+2年]。
+- task_id: calendar_event_refresh
+  table: c1_market.calendar_event
+  source: internal  # 规则派生（读 CH trade_calendar/hk_trade_calendar 本地计算，不从外部API拉取）
+  schedule: monthly_static
+  incremental: false    # 全量重算幂等（9 类 event_type 规则派生，见 17号 §3.5）
+  dependencies: ["trade_calendar_refresh", "hk_trade_calendar_refresh"]    # month_end 等依赖A股日历；hk_connect_closed 依赖港股日历
+  capability: calendar_event
+  symbols:
+  fallback_sources: []    # internal 派生源天然无副源
+  extra:
+    description: "日历事件标记全量刷新（17号 §3.5：月末/季末/半年末/年末/交割日/期权到期/LPR/港股通休市 9类派生；fomc/major_meeting/stamp_duty 走 manual CSV）"
+    trading_day_only: false    # 纯 CH 查询派生，非交易日也可运行
+
+  # 16号 §3 步骤5（2026-08-20 AI-NIGHT-001 补登记）：技术指标调度闭环——
+  # InternalComputeProvider 读 CH K线→本地计算 40 指标（5大类）→写 c1_market.technical_indicator。
+- task_id: technical_indicator_incremental
+  table: c1_market.technical_indicator
+  source: internal  # 本地计算（读 CH kline_daily，不从外部API拉取）
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: ["kline_daily_incremental"]    # DAG: 日K线落库后计算日线指标
+  capability: technical_indicator
+  symbols:
+  fallback_sources: []    # internal 计算源天然无副源
+  extra:
+    description: "技术指标日线增量（internal 读 CH 日K本地计算 40 指标/58 输出列，16号 catalog §6）"
+    period: daily
+    trading_day_only: true    # 依赖当日日K已落库，非交易日无新K线跳过
+
+- task_id: technical_indicator_full_refresh
+  table: c1_market.technical_indicator
+  source: internal
+  schedule: weekend_calibration
+  incremental: false    # 全量重算（9 周期；分钟周期回算范围按 16号 §3.1/18号 §2.4 裁定）
+  date_col: trade_date
+  dependencies: []
+  capability: technical_indicator
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "技术指标全量刷新（internal 9 周期遍历：1min~monthly，120min 由 kline_60min 两根聚合）"
+    period: all
+    trading_day_only: false    # 纯 CH 读取计算，周末非交易日运行
+
 - task_id: index_list_refresh
   table: c1_market.index_list
   source: akshare

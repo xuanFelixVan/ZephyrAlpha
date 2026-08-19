@@ -795,6 +795,104 @@
   data_source: [internal]  # #ARCH-DATA-001: exchange_calendars XHKG 派生（非 akshare A股日历）
   blueprint: null
 
+# --- A股特殊交易日数据资产（17号 memo §3.2，2026-08-20 AI-NIGHT-001 补登记六条） ---
+
+- category_id: market_calendar_event
+  name: "日历事件标记（月末/季末/交割日/期权到期/LPR/港股通休市/FOMC/重要会议/印花税）"
+  engine: clickhouse
+  database: c1_market
+  table: calendar_event
+  schema_file: schemas/categories/market_calendar_event.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]  # 规则派生（calendar_event_refresh 任务）+ manual CSV（fomc/major_meeting/stamp_duty，17号 §6.3）
+  blueprint: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/17_special_trading_days_data_assets.md"
+
+- category_id: market_index_adjustment
+  name: "指数成分股调整（沪深300/中证500/中证1000，采集链暂缓——17号 §6.6-3）"
+  engine: clickhouse
+  database: c1_market
+  table: index_adjustment
+  schema_file: schemas/categories/market_index_adjustment.py
+  data_type: 预留
+  lifecycle: permanent
+  sla_level: L3
+  enabled: false  # schema 已建；akshare 采集链（provider方法+任务）暂缓施工，17号 §6.6-3 定稿裁定
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件频
+  data_source: [akshare]
+  blueprint: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/17_special_trading_days_data_assets.md"
+
+- category_id: market_ipo_schedule
+  name: "新股申购+上市日程（采集链暂缓——17号 §6.6-3）"
+  engine: clickhouse
+  database: c1_market
+  table: ipo_schedule
+  schema_file: schemas/categories/market_ipo_schedule.py
+  data_type: 预留
+  lifecycle: permanent
+  sla_level: L3
+  enabled: false  # schema 已建；akshare 采集链暂缓施工，17号 §6.6-3 定稿裁定（打新冻结资金/上市分流分析用）
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件频
+  data_source: [akshare]
+  blueprint: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/17_special_trading_days_data_assets.md"
+
+- category_id: market_margin_target_adjustment
+  name: "两融标的调整（采集链暂缓——17号 §6.6-3）"
+  engine: clickhouse
+  database: c1_market
+  table: margin_target_adjustment
+  schema_file: schemas/categories/market_margin_target_adjustment.py
+  data_type: 预留
+  lifecycle: permanent
+  sla_level: L3
+  enabled: false  # schema 已建；akshare 采集链暂缓施工，17号 §6.6-3 定稿裁定（杠杆资金被迫加减仓事件）
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件频
+  data_source: [akshare]
+  blueprint: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/17_special_trading_days_data_assets.md"
+
+- category_id: market_dividend_tax_node
+  name: "红利税节点（除息日前1月/前1年，VIEW 由 rights_issue 实时派生）"
+  engine: clickhouse
+  database: c1_market
+  table: dividend_tax_node
+  schema_file: schemas/categories/market_dividend_tax_node.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true  # VIEW 派生（无独立存储/无调度任务），注册仅作台账——17号 §3.2
+  hard_constraint: null
+  calc_mode: none
+  frequency: 事件频
+  data_source: [internal]  # c3_fundamental.rights_issue 实时派生
+  blueprint: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/17_special_trading_days_data_assets.md"
+
+- category_id: market_msci_adjustment
+  name: "MSCI/富时调整（预留，MVP 不需要——17号 §6.2 定稿裁定）"
+  engine: clickhouse
+  database: c1_market
+  table: msci_adjustment
+  schema_file: schemas/categories/market_msci_adjustment.py
+  data_type: 预留
+  lifecycle: permanent
+  sla_level: L3
+  enabled: false  # 表结构空置等效 disabled；未来事件驱动/外资流向研究启动时再审（优先 iFind 路径）
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件频
+  data_source: [manual]
+  blueprint: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/17_special_trading_days_data_assets.md"
+
 - category_id: market_hk_connect_flow
   name: "沪深港通资金流（北向/南向资金）"
   engine: clickhouse
