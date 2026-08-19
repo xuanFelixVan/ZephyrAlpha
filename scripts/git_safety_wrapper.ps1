@@ -145,7 +145,11 @@ function git {
             $blocked = $true; $reason = 'git stash moves/deletes uncommitted changes'
         } elseif ($cmd -eq 'rm' -and ($fullArgs -notmatch '--cached')) {
             $blocked = $true; $reason = 'git rm deletes files from worktree'
-        } elseif ($cmd -eq 'branch' -and ($fullArgs -match '-D|--delete-force')) {
+        } elseif ($cmd -eq 'branch' -and ($fullArgs -cmatch '(?:^|\s)-D(?:\s|$)|--delete-force')) {
+            # tracker #72: -match is case-insensitive, so safe 'git branch -d' was blocked as -D.
+            # Fix: -cmatch (case-sensitive) + boundary-anchored -D (same idiom as -n/-f rules
+            # above) - '-d' passes, branch names containing '-D' (e.g. my-D-branch) pass,
+            # only a standalone force-delete -D is blocked.
             $blocked = $true; $reason = 'git branch -D force-deletes branch (may lose unmerged code)'
         } elseif ($cmd -eq 'push' -and ($fullArgs -match '(?:^|\s)-(?:f|-force)(?:\s|$)' -and $fullArgs -notmatch '--force-with-lease')) {
             $blocked = $true; $reason = 'git push --force overwrites remote history (may lose others code)'

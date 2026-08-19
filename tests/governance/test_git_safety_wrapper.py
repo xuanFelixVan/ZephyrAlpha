@@ -207,6 +207,27 @@ def test_git_checkout_path_blocked_in_repo(installed_profile: Path, tmp_path: Pa
     assert "BLOCKED" not in out2, f"checkout 分支误拦: {out2}"
 
 
+def test_git_branch_d_allowed_uppercase_d_blocked(installed_profile: Path, tmp_path: Path):
+    """tracker #72：-d/-D 区分——PowerShell -match 大小写不敏感曾把安全删除
+    git branch -d 当 -D 误拦；修复后 -d 放行透传、-D 仍拦截、分支名含 -D 子串不误拦。"""
+    repo = tmp_path / "r3"
+    repo.mkdir()
+    _in_shell(installed_profile, "git init -q; git config user.email t@t; git config user.name t", cwd=repo)
+    (repo / "foo.py").write_text("x", encoding="utf-8")
+    _in_shell(installed_profile, "git add foo.py; git commit -qm init; git branch merged", cwd=repo)
+    # ① git branch -d <已合并分支> → 放行且真透传删除（tracker #72 核心断言）
+    out = _in_shell(installed_profile, "git branch -d merged", cwd=repo)
+    assert "BLOCKED" not in out, f"git branch -d 误拦（tracker #72）: {out}"
+    out_list = _in_shell(installed_profile, "git branch --list merged", cwd=repo)
+    assert "merged" not in out_list, f"-d 未透传真实 git 删除: {out_list}"
+    # ② git branch -D → 仍拦截（与上方 parametrize 用例互补的显式回归）
+    out_d = _in_shell(installed_profile, "git branch -D feature", cwd=repo)
+    assert "BLOCKED" in out_d, f"git branch -D 未拦截: {out_d}"
+    # ③ 分支名含 -D 子串（my-D-branch）→ -d 删除不误拦（边界锚定防子串误报）
+    out_sub = _in_shell(installed_profile, "git branch my-D-branch; git branch -d my-D-branch", cwd=repo)
+    assert "BLOCKED" not in out_sub, f"分支名含 -D 子串误拦: {out_sub}"
+
+
 # ------------------------------------------------------- 原生删除类拦截（§7.1.2 + §7.17.2）
 
 

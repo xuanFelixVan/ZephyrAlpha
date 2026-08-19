@@ -794,11 +794,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 69
+  total_registries: 73  # #172 漂移修正：手写 69 → 2026-08-19 实测本文件登记 73（漂移全在 tier_2）
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
     tier_0_core: 12
     tier_1_governance: 28
-    tier_2_runtime: 29
+    tier_2_runtime: 33  # #172 漂移修正：手写 29 → 2026-08-19 实测 33
