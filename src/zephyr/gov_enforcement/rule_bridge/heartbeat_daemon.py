@@ -83,7 +83,7 @@ Usage::
 # - id: I2
 #   name: SessionRegistry session 条目
 #   fields: last_activity / start_time 活性锚点（heartbeat 不刷新 last_activity）
-#   code: SessionRegistry(project_root).get(session_id) L186-189 / L207-209
+#   code: SessionRegistry(project_root).get_session(session_id) L258-280
 # 层: 算法
 # - id: A1
 #   name_zh: ① 心跳主循环
@@ -252,7 +252,10 @@ def _session_in_registry(session_id: str, project_root: str | Path) -> bool:
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
         registry = SessionRegistry(project_root)
-        info = registry.get(session_id)
+        # 2026-08-19 治本：SessionRegistry 只有 get_session（无 .get）——原 .get()
+        # 每轮 AttributeError 被 except 吞掉保守返 True，daemon 存在性自退静默失效
+        # （12 僵尸 daemon 实证；forged_gw_marker_gate L112 同族先例）
+        info = registry.get_session(session_id)
         return info is not None
     except Exception as e:  # noqa: BLE001 — DB 故障时保守返回 True（避免误退出）
         logger.debug("registry query failed (assume alive): %s", e)
@@ -273,7 +276,8 @@ def _session_idle_seconds(session_id: str, project_root: str | Path) -> float | 
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
         registry = SessionRegistry(project_root)
-        info = registry.get(session_id)
+        # 同族修复（2026-08-19）：get → get_session，与 _session_in_registry 一致
+        info = registry.get_session(session_id)
         if info is None:
             return None
         if isinstance(info, dict):  # 兼容 mock/旧式 dict 返回

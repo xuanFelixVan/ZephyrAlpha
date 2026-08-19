@@ -135,7 +135,7 @@ def test_session_in_registry_returns_true_when_present(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             pass
-        def get(self, sid):
+        def get_session(self, sid):
             return {"session_id": sid}  # 非 None
 
     with patch(
@@ -150,7 +150,7 @@ def test_session_in_registry_returns_false_when_absent(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             pass
-        def get(self, sid):
+        def get_session(self, sid):
             return None
 
     with patch(
@@ -165,7 +165,7 @@ def test_session_in_registry_returns_true_on_exception(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             raise RuntimeError("DB down")
-        def get(self, sid):
+        def get_session(self, sid):
             return None
 
     with patch(
@@ -190,7 +190,7 @@ def test_run_daemon_lifecycle_smoke(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             pass
-        def get(self, sid):
+        def get_session(self, sid):
             call_count["n"] += 1
             # 第 1 次查询（_session_in_registry）：返回非 None（alive）
             # 第 2 次开始返回 None，让 daemon 退出
@@ -237,7 +237,7 @@ def test_run_daemon_exits_on_idle_timeout(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             pass
-        def get(self, sid):
+        def get_session(self, sid):
             return {
                 "session_id": sid,
                 "last_activity": time.time() - 4000,  # idle 4000s > 1800s
@@ -276,7 +276,7 @@ def test_run_daemon_keeps_alive_when_recent_activity(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             pass
-        def get(self, sid):
+        def get_session(self, sid):
             calls["get"] += 1
             # 前 2 次查询返回活跃 session（idle≈0），第 3 次返回 None 让 daemon 退出
             if calls["get"] >= 3:
@@ -309,7 +309,7 @@ def test_session_idle_seconds_fallback_and_none(tmp_path: Path) -> None:
     class _NoneRegistry:
         def __init__(self, root):
             pass
-        def get(self, sid):
+        def get_session(self, sid):
             return None
 
     with patch(
@@ -321,7 +321,7 @@ def test_session_idle_seconds_fallback_and_none(tmp_path: Path) -> None:
     class _LegacyRegistry:
         def __init__(self, root):
             pass
-        def get(self, sid):
+        def get_session(self, sid):
             # 修复前旧条目：无 last_activity，仅 start_time（绝不回退 last_heartbeat）
             return {"session_id": sid, "start_time": time.time() - 100}
 
@@ -331,6 +331,50 @@ def test_session_idle_seconds_fallback_and_none(tmp_path: Path) -> None:
     ):
         idle = _session_idle_seconds("sess-legacy-001", tmp_path)
         assert idle is not None and idle >= 99, f"旧条目应回退 start_time 计算 idle，got {idle}"
+
+
+# ---------------------------------------------------------------------------
+# 真机回归（2026-08-19）：SessionRegistry 真接口 get_session——防 mock 盲区回潮
+# （mock 万物皆有 .get，生产 AttributeError 被 except 吞掉致 12 僵尸 daemon 实证）
+# ---------------------------------------------------------------------------
+
+
+def test_session_queries_against_real_registry(tmp_path: Path) -> None:
+    """真 SessionRegistry（非 mock）端到端：注册→查询→idle 计算→注销后两态。
+
+    防回归锚点：若 SessionRegistry 接口再改名（get_session→他名），本测试立即红——
+    mock 测试抓不到此类漂移（Mock 对任意方法名都返回真值）。
+    """
+    from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import (
+        _session_idle_seconds,
+        _session_in_registry,
+    )
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    # 真注册（register 刷新 last_activity=now）
+    registry = SessionRegistry(tmp_path)
+    registry.register("sess-real-001", pid=0)
+
+    assert _session_in_registry("sess-real-001", tmp_path) is True
+    idle = _session_idle_seconds("sess-real-001", tmp_path)
+    assert idle is not None, "真 registry 注册后 idle 必须可计算（None=接口断裂回潮）"
+    assert idle < 60, f"刚注册的 session idle 应接近 0，got {idle}"
+
+    # 手工把 last_activity 改陈旧（模拟死 session：无治理操作 4000s）
+    info = registry.get_session("sess-real-001")
+    assert info is not None
+    data = registry.load()
+    data["sess-real-001"]["last_activity"] = info.start_time - 4000
+    registry.save(data)
+    idle_stale = _session_idle_seconds("sess-real-001", tmp_path)
+    assert idle_stale is not None and idle_stale > 1800, (
+        f"陈旧 session idle 应超 _MAX_IDLE_SECONDS(1800)，got {idle_stale}"
+    )
+
+    # 注销后两态
+    registry.unregister("sess-real-001")
+    assert _session_in_registry("sess-real-001", tmp_path) is False
+    assert _session_idle_seconds("sess-real-001", tmp_path) is None
 
 
 # ---------------------------------------------------------------------------
@@ -525,7 +569,7 @@ def test_run_daemon_exits_on_worktree_anchor_lost(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             pass
-        def get(self, sid):
+        def get_session(self, sid):
             # registry 条目残留且活性新鲜——若无锚点检查 daemon 会永久空转
             return {"session_id": sid, "last_activity": time.time()}
         def heartbeat(self, sid):
@@ -563,7 +607,7 @@ def test_run_daemon_anchor_present_no_false_exit(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             pass
-        def get(self, sid):
+        def get_session(self, sid):
             calls["get"] += 1
             if calls["get"] >= 3:
                 return None
