@@ -206,6 +206,106 @@ benchmarks:
     code_symbol: null
     code_fingerprint: null
 
+  # ── 90 号 Phase1 项②（2026-08-19 AI-NIGHT-001 施工）：sleeve 级多基准三条目 ──
+  # 裁定真源 90_methodology_open_questions.md §13 v2.0.0：废弃 60/40 拼合基准；
+  # 打板/事件驱动→中证2000（小盘机会集）；多因子→中证1000（偏小盘）或万得全A（全市场选股）；
+  # 沪深300 保留大盘宽基锚；组合层仅报绝对收益+最大回撤。
+  - benchmark_id: BMK-INDEX-005
+    name: CSI1000 Index
+    name_zh: 中证1000指数
+    aliases: [CSI1000, 中证1000, 000852]
+    benchmark_type: index
+    underlying_universe: null
+    weight_method: cap_weighted
+    data_source: SRC-AKSHARE-001
+    used_by_strategies: []        # 多因子 sleeve（偏小盘）关联待策略注册表回填
+    module_id: MOD-MKT-DATA
+    doc_ref: 90_methodology_open_questions.md §13（v2.0.0 裁定：sleeve 级多基准，多因子偏小盘机会集）
+    code_path: src/zephyr/data/implementations/akshare_provider.py
+    status: candidate
+    version: 1.0.0
+    created_at: '2026-08-19'
+    updated_at: '2026-08-19'
+    owner: MOD-MKT-DATA
+    annual_return: null
+    sharpe: null
+    max_drawdown: null
+    last_evaluated_at: null
+    construction_method: index_provider
+    active_share: null
+    style_drift_detection: {method: none, monitoring_frequency: monthly}
+    entry_role: "reference"
+    applies_to: ["index"]
+    tags: ["指数", "基准"]
+    algorithm_status: "not_applicable"
+    evidence: "90 号 Phase1 项②"
+    code_symbol: null
+    code_fingerprint: null
+
+  - benchmark_id: BMK-INDEX-006
+    name: CSI2000 Index
+    name_zh: 中证2000指数
+    aliases: [CSI2000, 中证2000, 932000]
+    benchmark_type: index
+    underlying_universe: null
+    weight_method: cap_weighted
+    data_source: SRC-AKSHARE-001
+    used_by_strategies: []        # 打板/事件驱动 sleeve 关联待策略注册表回填
+    module_id: MOD-MKT-DATA
+    doc_ref: 90_methodology_open_questions.md §13（v2.0.0 裁定：打板/事件驱动小盘机会集基准）
+    code_path: src/zephyr/data/implementations/akshare_provider.py
+    status: candidate
+    version: 1.0.0
+    created_at: '2026-08-19'
+    updated_at: '2026-08-19'
+    owner: MOD-MKT-DATA
+    annual_return: null
+    sharpe: null
+    max_drawdown: null
+    last_evaluated_at: null
+    construction_method: index_provider
+    active_share: null
+    style_drift_detection: {method: none, monitoring_frequency: monthly}
+    entry_role: "reference"
+    applies_to: ["index"]
+    tags: ["指数", "基准"]
+    algorithm_status: "not_applicable"
+    evidence: "90 号 Phase1 项②"
+    code_symbol: null
+    code_fingerprint: null
+
+  - benchmark_id: BMK-INDEX-007
+    name: Wind All A Index
+    name_zh: 万得全A指数
+    aliases: [Wind全A, 万得全A, 881001]
+    benchmark_type: index
+    underlying_universe: null
+    weight_method: cap_weighted
+    data_source: SRC-AKSHARE-001
+    used_by_strategies: []        # 多因子 sleeve（全市场选股）关联待策略注册表回填
+    module_id: MOD-MKT-DATA
+    doc_ref: 90_methodology_open_questions.md §13（v2.0.0 裁定：全市场选股机会集基准）
+    code_path: src/zephyr/data/implementations/akshare_provider.py
+    status: candidate
+    version: 1.0.0
+    created_at: '2026-08-19'
+    updated_at: '2026-08-19'
+    owner: MOD-MKT-DATA
+    annual_return: null
+    sharpe: null
+    max_drawdown: null
+    last_evaluated_at: null
+    construction_method: index_provider
+    active_share: null
+    style_drift_detection: {method: none, monitoring_frequency: monthly}
+    entry_role: "reference"
+    applies_to: ["index"]
+    tags: ["指数", "基准"]
+    algorithm_status: "not_applicable"
+    evidence: "90 号 Phase1 项②"
+    code_symbol: null
+    code_fingerprint: null
+
   - benchmark_id: BMK-ABSOLUTE-001
     name: Absolute Return (Zero)
     name_zh: 绝对收益（零基准）

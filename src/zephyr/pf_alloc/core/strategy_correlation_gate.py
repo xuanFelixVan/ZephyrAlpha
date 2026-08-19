@@ -119,6 +119,9 @@ class CorrelationGateConfig:
     warn_sector_concentration: float = 0.50  # 且 行业集中度 > 50% → WARN
     # 尾部相关性 (EVT, 仅 same_direction 生效)
     reject_tail_correlation: float = 0.70   # > 0.7 且 same_direction → REJECT
+    # 相关性否决持久化条件（90 号 Phase2 #20：与 90 天滚动相关性剔除规则口径统一，
+    # 补"持续 30 天"避免单日噪声误剔除；pair 未提供持续天数数据时维持立即否决=向后兼容）
+    correlation_reject_sustained_days: int = 30
 
     def __post_init__(self) -> None:
         for name, val in (
@@ -139,6 +142,10 @@ class CorrelationGateConfig:
         if not (self.warn_factor_overlap < self.reject_factor_overlap):
             raise InvalidCorrelationInputError(
                 "warn_factor_overlap must be < reject_factor_overlap"
+            )
+        if self.correlation_reject_sustained_days < 0:
+            raise InvalidCorrelationInputError(
+                "correlation_reject_sustained_days must be >= 0"
             )
 
 
@@ -163,6 +170,8 @@ class StrategyPairMetrics:
     sector_concentration: float | None = None  # 行业集中度
     tail_correlation: float | None = None     # 尾部相关性 (EVT)
     same_direction: bool = False              # 是否同方向 (尾部相关 REJECT 仅对同方向生效)
+    # 相关性持续天数（90 号 Phase2 #20 持久化条件；None=未提供→维持立即否决）
+    correlation_sustained_days: int | None = None
 
 
 @dataclass(frozen=True)
@@ -317,6 +326,10 @@ class StrategyCorrelationGate:
                 raise InvalidCorrelationInputError(
                     f"{name} for ({pair.strategy_a},{pair.strategy_b}) must be in [0,1], got {val}"
                 )
+        if pair.correlation_sustained_days is not None and pair.correlation_sustained_days < 0:
+            raise InvalidCorrelationInputError(
+                f"correlation_sustained_days for ({pair.strategy_a},{pair.strategy_b}) must be >= 0, got {pair.correlation_sustained_days}"
+            )
 
     def _evaluate_pair(self, pair: StrategyPairMetrics) -> list[GateViolation]:
         """评估单个 pair, 返回所有违规 (可能多条)。"""
@@ -328,10 +341,12 @@ class StrategyCorrelationGate:
             corr = abs(pair.correlation)
             if corr > cfg.hard_reject_correlation:
                 violations.append(self._mk(pair, "hard_correlation_reject", "correlation",
-                                           corr, cfg.hard_reject_correlation, GateVerdict.HARD_REJECT))
+                                           corr, cfg.hard_reject_correlation,
+                                           self._correlation_verdict(pair, GateVerdict.HARD_REJECT)))
             elif corr > cfg.reject_correlation:
                 violations.append(self._mk(pair, "correlation_reject", "correlation",
-                                           corr, cfg.reject_correlation, GateVerdict.REJECT))
+                                           corr, cfg.reject_correlation,
+                                           self._correlation_verdict(pair, GateVerdict.REJECT)))
 
         # 因子重叠
         if pair.factor_overlap is not None:
@@ -359,6 +374,17 @@ class StrategyCorrelationGate:
                                            GateVerdict.REJECT))
 
         return violations
+
+    def _correlation_verdict(self, pair: StrategyPairMetrics, verdict: GateVerdict) -> GateVerdict:
+        """相关性否决持久化条件（90 号 Phase2 #20）。
+
+        提供了持续天数且未达 correlation_reject_sustained_days → 降级 WARN
+        （避免单日噪声误剔除）；未提供持续天数数据 → 维持原裁决（向后兼容）。
+        """
+        days = pair.correlation_sustained_days
+        if days is not None and days < self._config.correlation_reject_sustained_days:
+            return GateVerdict.WARN
+        return verdict
 
     @staticmethod
     def _mk(

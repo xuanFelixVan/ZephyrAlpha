@@ -4124,3 +4124,43 @@ risk_limits:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+
+  # ── 90 号 Phase2 项（#17 行为边界 YAML 归并，2026-08-19 AI-NIGHT-001 施工）──
+  # 裁定真源 90_methodology_open_questions.md §17：散落硬编码限额归并声明式登记。
+  # 代码真源：PositionLimitConfig.single_instrument_cap=0.05（position_limit_enforcer.py，MOD-POS-010）。
+  - risk_limit_id: "RLM-POSITION-027"
+    name: "Single Instrument NAV Cap 5%"
+    name_zh: "单票持仓≤5% NAV 硬上限"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 5.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "单票持仓市值/NAV ≤5%（position_limit_enforcer PositionLimitConfig.single_instrument_cap=0.05 硬编码默认值的声明式归并登记，90 号 §17 施工方案②）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "block"
+    module_id: "MOD-POS-010"
+    doc_ref: "90_methodology_open_questions.md §17（v2.0.0 裁定：choke point + YAML 规则归并）"
+    code_path: "src/zephyr/position/core/position_limit_enforcer.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-19"
+    updated_at: "2026-08-19"
+    owner: "MOD-POS-010"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "风控", "规则"]
+    algorithm_status: "quantized"
+    evidence: "90 号 Phase2 项（#17）；代码真源 PositionLimitConfig.single_instrument_cap=0.05"
+    code_symbol: "src/zephyr/position/core/position_limit_enforcer.py::PositionLimitConfig"
+    code_fingerprint: null

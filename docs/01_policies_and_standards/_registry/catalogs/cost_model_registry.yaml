@@ -188,6 +188,61 @@ cost_models:
     code_symbol: null
     code_fingerprint: null
 
+  # ── 90 号 Phase1 项①（2026-08-19 AI-NIGHT-001 施工）：做T成本条目 CST-T0-001 ──
+  # 裁定真源 90_methodology_open_questions.md §5 v2.0.0：做T额外成本=滑点×2+失败风险溢价；
+  # 单次往返硬成本≈0.10-0.15%，预期价差≥0.3% 才有正期望（做T开仓硬前置，联动 §21）。
+  # 最低佣金5元建模确认：✅ 已实证 src/zephyr/backtest/core/matching_logic.py
+  #   MatchingConfig.min_commission=5 且 _calc_commission 取 max(费率×成交额, 最低佣金)——检查项闭环，零修补。
+  - cost_model_id: CST-T0-001
+    name: T0 Round-Trip Cost Model
+    name_zh: 做T成本模型（日内T+0往返）
+    aliases: [做T成本, T0成本, 日内往返成本]
+    cost_model_type: astock_standard
+    components:
+      commission:
+        rate: 0.0003
+        min: 5.0           # 最低佣金5元显式建模（单笔<5万元实际费率被抬升至万5以上，小资金高频最大隐性成本）
+        mode: both_sides
+      stamp_duty:
+        rate: 0.0005
+        side: sell_only
+      transfer_fee:
+        rate: 0.00001
+        market: sh_sz_both
+      slippage:
+        model: fixed
+        params:
+          # 策略分档滑点（90 号 §5 裁定②）：bps_per_side；双边计=×2
+          tier_high_liquidity_bps: 10    # 高流动票 0.05-0.1%/边（取上限）
+          tier_daban_event_bps: 20       # 打板/事件票 0.15-0.3%/边（取中值，再乘成交概率折减=封板买不进条件成交修正）
+          round_trip_multiplier: 2       # 做T一买一卖两次滑点
+      failure_risk_premium:
+        formula: overnight_exposure * overnight_var_rate   # 失败风险溢价=隔夜底仓暴露×隔夜VaR（LVaR 简化式见 §8）
+      open_precondition:
+        min_expected_edge_rate: 0.003    # 预期价差≥0.3% 才有正期望（做T开仓硬前置）
+      market_impact:
+        model: none
+        params: null
+    slippage_model: fixed
+    impact_model: none
+    propagator_config: null
+    used_by_strategies: []       # 做T三策略（intraday_surge_fall/orderbook_imbalance/vwap_reversion）接线待排期
+    module_id: MOD-XS-T0COST
+    doc_ref: 90_methodology_open_questions.md §5（v2.0.0 裁定：做T成本条目+最低佣金确认+分档滑点，Phase 1）
+    code_path: src/zephyr/ex_sor/services/t0_cost_model.py
+    status: candidate            # testing 态；production 启用挂起待 Owner（宪章 B-007）
+    version: 1.0.0
+    created_at: '2026-08-19'
+    updated_at: '2026-08-19'
+    owner: MOD-EX-CORE
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["成本", "规则"]
+    algorithm_status: "quantized"
+    evidence: "90 号 Phase1 项①；最低佣金5元已实证 matching_logic.py MatchingConfig.min_commission=5（检查项闭环）；toy 断言 tests/ex_sor/test_t0_cost_model.py 10 例"
+    code_symbol: src/zephyr/ex_sor/services/t0_cost_model.py::calc_t0_roundtrip_cost
+    code_fingerprint: null
+
   - cost_model_id: "CST-ASTOCK-003"
     name: "A 股交易成本模型"
     name_zh: "A 股交易成本模型"

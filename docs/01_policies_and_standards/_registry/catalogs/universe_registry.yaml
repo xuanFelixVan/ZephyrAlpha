@@ -62,6 +62,9 @@ entry_schema:
   pit_constituent_construction: bool  # 成分股是否按 point-in-time 构造（true=每个调仓日只用当时可得成分；false=用当前成分回溯=生存偏差；null=未声明）
   delisted_handling: str           # include/exclude/unknown，退市股票处理（include=含退市至退市日，回测 MUST；exclude=仅存活=生存偏差）
   survivorship_free: bool          # universe 是否无生存偏差（true=含退市+PIT构造；false=仅存活股）
+  # 两维精简字段（90 号 Phase2 #15，v2.0.0 裁定，2026-08-19 增补）：交易准入×数据覆盖两维替代 P0-P3（deprecated）
+  eligibility: str                 # 交易准入 eligible/restricted/prohibited——直接驱动风控拦截
+  data_tier: str                   # 数据覆盖 realtime/eod——直接驱动订阅成本分层（miniQMT 实时流与盘后批量）
   entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
   applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
@@ -101,6 +104,8 @@ universes:
     pit_constituent_construction: true   # 每日用当日涨停/过滤数据重建（动态池日频重建天然 PIT）
     delisted_handling: exclude           # filter_rules 排除退市风险警示=仅存活，回测需注意
     survivorship_free: false             # exclude 退市=有生存偏差，打板短周期影响小但须声明
+    eligibility: eligible                # 90 号 Phase2 #15：可交易准入
+    data_tier: realtime                  # 90 号 Phase2 #15：打板日内决策需实时流
     entry_role: "reference"
     applies_to: ["stock", "market"]
     tags: ["打板", "风控", "流动性", "形态", "绩效", "股票池"]
@@ -139,6 +144,8 @@ universes:
     pit_constituent_construction: true   # 过滤规则（ST状态/上市天数/成交额）均用当日可得数据
     delisted_handling: exclude           # filter_rules 排除退市风险警示=仅存活，回测需注意
     survivorship_free: false             # exclude 退市=有生存偏差，多因子长周期回测须评估影响
+    eligibility: eligible                # 90 号 Phase2 #15：可交易准入
+    data_tier: realtime                  # 90 号 Phase2 #15：主资金池需实时行情
     entry_role: "reference"
     applies_to: ["stock", "market"]
     tags: ["资金", "风控", "流动性", "多因子", "股票池", "规则", "因子", "成交"]
@@ -171,6 +178,8 @@ universes:
     pit_constituent_construction: false  # ⚠️ components_ref（data/index_constituents/csi300.csv）未落盘，当前无 PIT 历史成分文件，用当前成分回溯=生存偏差
     delisted_handling: unknown           # 指数成分自然含调出股，但本项目无历史成分文件=未确认
     survivorship_free: false             # 无 PIT 成分文件=有生存偏差，回测 CSI300 实证前 MUST 补历史成分
+    eligibility: eligible                # 90 号 Phase2 #15：成分股可交易（池本身作基准参照）
+    data_tier: eod                       # 90 号 Phase2 #15：季度调整+基准参照，盘后批量足够
     entry_role: "reference"
     applies_to: ["stock", "index"]
     tags: ["指数", "股票池", "绩效"]
@@ -203,6 +212,8 @@ universes:
     pit_constituent_construction: false  # ⚠️ components_ref（data/index_constituents/csi800.csv）未落盘，当前无 PIT 历史成分文件
     delisted_handling: unknown           # 指数成分自然含调出股，但本项目无历史成分文件=未确认
     survivorship_free: false             # 无 PIT 成分文件=有生存偏差，回测 CSI800 实证前 MUST 补历史成分
+    eligibility: eligible                # 90 号 Phase2 #15：成分股可交易（池本身作基准参照）
+    data_tier: eod                       # 90 号 Phase2 #15：季度调整+基准参照，盘后批量足够
     entry_role: "reference"
     applies_to: ["stock", "index"]
     tags: ["指数", "股票池", "绩效"]
@@ -240,6 +251,8 @@ universes:
     pit_constituent_construction: true   # 事件触发+过滤规则均用当日可得数据（candidate 池，回测验证后确认）
     delisted_handling: exclude           # filter_rules 排除退市风险警示=仅存活
     survivorship_free: false             # exclude 退市=有生存偏差，须声明
+    eligibility: restricted              # 90 号 Phase2 #15：candidate 池待回测验证，限制准入
+    data_tier: realtime                  # 90 号 Phase2 #15：事件时效性需实时流
     entry_role: "reference"
     applies_to: ["stock"]
     tags: ["风控", "事件", "股票池", "财报", "规则", "信号"]
@@ -273,6 +286,8 @@ universes:
     pit_constituent_construction: false   # 固定 10 股篮子事后选定，非逐调仓日 PIT 重建
     delisted_handling: unknown            # 10 股均为存续大盘股，spec 未声明退市处理口径（EXP-REGIME-001 survivorship=unknown 同源诚实标注）
     survivorship_free: false              # 事后选定的大盘幸存股篮子，2015 起回溯=有生存偏差；仅用于 regime 机制验证非选股 alpha 断言
+    eligibility: restricted               # 90 号 Phase2 #15：regime 验证专用，非生产交易池
+    data_tier: eod                        # 90 号 Phase2 #15：日频回测验证，盘后批量足够
     entry_role: reference
     applies_to: [stock]
     tags: [股票池, 绩效, 风控]

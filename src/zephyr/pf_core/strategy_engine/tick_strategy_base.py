@@ -35,6 +35,7 @@ import abc
 import importlib
 import logging
 from dataclasses import dataclass, field
+from datetime import time
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
@@ -53,6 +54,61 @@ class TickStrategyMeta:
     description: str = ""
     author: str = "agent"
     tags: list[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class TRulesConfig:
+    """做T 四规则配置（90 号 Phase2 项，#21 做T方法论 v2.0.0 裁定补齐）。
+
+    裁定真源：90_methodology_open_questions.md §21（受约束 overlay）：
+      - sizing：单次做T仓位 ≤ 底仓 20-30%（取保守端默认 0.25；上限 0.30 硬约束）；
+      - regime 过滤：仅在量比 >1 且预期振幅 >2×单边成本（≈0.3%）时开仓
+        （低波/缩量日强制不做，与 §8 流动性前置检查共用阈值）；
+      - 失败处置：反T 未接回 14:30 后强制限价/市价接回（不留隔夜敞口）；
+        正T 单笔止损 -1.5%~-2%（且"买入前底仓可卖量"为硬约束，可卖量=0 禁开正T）。
+    """
+
+    max_t_position_ratio: float = 0.25      # 单次做T仓位/底仓 上限（20-30% 保守端）
+    min_volume_ratio: float = 1.0           # regime 过滤：量比须严格大于此值
+    single_side_cost_rate: float = 0.0015   # 单边成本≈0.15%（往返硬成本 0.10-0.15% 之半）
+    force_cover_time: time = time(14, 30)   # 反T 强制接回时间
+    stop_loss_pct: float = -0.015           # 正T 单笔止损（-1.5%~-2% 区间）
+
+    def __post_init__(self) -> None:
+        if not 0 < self.max_t_position_ratio <= 0.30:
+            raise ValueError(
+                f"max_t_position_ratio 须在 (0, 0.30]（裁定保守端上限），实际 {self.max_t_position_ratio}"
+            )
+        if self.min_volume_ratio < 0:
+            raise ValueError(f"min_volume_ratio 不能为负，实际 {self.min_volume_ratio}")
+        if self.single_side_cost_rate < 0:
+            raise ValueError(f"single_side_cost_rate 不能为负，实际 {self.single_side_cost_rate}")
+        if self.force_cover_time >= time(15, 0):
+            raise ValueError("force_cover_time 必须早于收盘 15:00")
+        if self.stop_loss_pct >= 0:
+            raise ValueError(f"stop_loss_pct 必须为负，实际 {self.stop_loss_pct}")
+
+    # ── 四规则判定（纯函数，供做T策略开仓/处置前置检查）──
+
+    def t_position_cap(self, base_position_value: float) -> float:
+        """sizing 规则：底仓市值 → 单次做T仓位上限。"""
+        return base_position_value * self.max_t_position_ratio
+
+    def volume_filter_ok(self, volume_ratio: float) -> bool:
+        """regime 过滤①：量比须严格 > min_volume_ratio（低波/缩量日强制不做）。"""
+        return volume_ratio > self.min_volume_ratio
+
+    def amplitude_filter_ok(self, expected_amplitude: float) -> bool:
+        """regime 过滤②：预期振幅须严格 > 2×单边成本。"""
+        return expected_amplitude > 2 * self.single_side_cost_rate
+
+    def must_force_cover(self, now: time) -> bool:
+        """失败处置①：反T 到点强制接回（宁可亏价差不留隔夜敞口）。"""
+        return now >= self.force_cover_time
+
+    def stop_loss_triggered(self, pnl_pct: float) -> bool:
+        """失败处置②：正T 单笔止损（pnl_pct ≤ stop_loss_pct 触发）。"""
+        return pnl_pct <= self.stop_loss_pct
 
 
 class TickStrategyBase(abc.ABC):
@@ -149,4 +205,4 @@ def autodiscover_tick_strategies(
     return found
 
 
-__all__ = ["TickStrategyBase", "TickStrategyMeta", "autodiscover_tick_strategies"]
+__all__ = ["TickStrategyBase", "TickStrategyMeta", "TRulesConfig", "autodiscover_tick_strategies"]

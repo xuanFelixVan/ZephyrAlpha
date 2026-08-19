@@ -76,3 +76,27 @@ rules:
     description: "MCP Gateway 限流拒绝计数 5 分钟内超过 100——可能存在配额耗尽或异常客户端（5.36.10）"
     notify: ["dashboard"]
     silence_window: "10m"
+
+  # ── 90 号 Phase2 项（#16 生存线监控，2026-08-19 AI-NIGHT-001 施工）──
+  # 裁定真源 90_methodology_open_questions.md §16：生存线=滚动12月超额>0 且 MaxDD<15% 且 Sharpe≥0.8；
+  # 失败=连续6月亏损/回撤>25%。健康/卓越线配置占位，实盘 6-12 月校准后启用。
+  # 评估模块 zephyr.risk.core.survival_line_monitor（testing 态，告警发射接线挂起待 Owner）。
+  - id: ALERT-KPI-001
+    name: "survival_line_breach"
+    severity: critical
+    metric: "kpi.survival_line.status"
+    condition: "== survival_breach"
+    duration: "1d"
+    description: "破生存线（滚动12月超额≤0 或 MaxDD≥15% 或 Sharpe<0.8）→降仓/关停评估"
+    notify: ["dashboard", "escalation"]
+    silence_window: "1d"
+
+  - id: ALERT-KPI-002
+    name: "survival_line_failure"
+    severity: critical
+    metric: "kpi.survival_line.status"
+    condition: "== failure"
+    duration: "1d"
+    description: "触失败指标（连续6个月亏损或回撤>25%，对齐4级Protocol Level4）→失败处置"
+    notify: ["dashboard", "escalation"]
+    silence_window: "1d"

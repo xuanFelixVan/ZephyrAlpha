@@ -133,6 +133,9 @@ __all__ = [
     "InvalidLiquidityInputError",
     "LiquidityMetrics",
     "LiquidityMonitor",
+    "OpeningPermission",
+    "compute_stress_exit_days",
+    "compute_lvar",
 ]
 
 
@@ -144,6 +147,14 @@ DEFAULT_VOLUME_SHRINKAGE_THRESHOLD: float = 0.5
 
 #: 默认计算窗口（交易日）
 DEFAULT_WINDOW: int = 20
+
+# ── 90 号 Phase2 项（#8 流动性扩展）常量 ──
+#: 压力情景 ADV 折扣（90 号 §8 裁定①）
+STRESS_ADV_DISCOUNT: float = 0.3
+#: 压力情景参与率（90 号 §8 裁定①）
+STRESS_PARTICIPATION_RATE: float = 0.10
+#: 压力退出时间上限（天，>1 天→禁新开仓，90 号 §8 裁定①）
+MAX_STRESS_EXIT_DAYS: float = 1.0
 
 
 class InvalidLiquidityInputError(ValueError):
@@ -176,6 +187,58 @@ class LiquidityMetrics:
     window: int
     timestamp: datetime
     idempotency_key: str
+
+
+# ── 90 号 Phase2 扩展数据模型与纯函数（#8 流动性）──
+
+
+@dataclass(frozen=True)
+class OpeningPermission:
+    """开仓许可评估结果（90 号 §8 裁定①④）。"""
+
+    symbol: str
+    allowed: bool
+    exit_days: float
+    reasons: list[str]
+
+
+def compute_stress_exit_days(
+    position_value: float,
+    adv_value: float,
+    *,
+    stress_discount: float = STRESS_ADV_DISCOUNT,
+    participation_rate: float = STRESS_PARTICIPATION_RATE,
+) -> float:
+    """压力情景退出时间（90 号 §8 裁定①）。
+
+    退出天数 = 持仓 / (ADV × 0.3 压力折扣 × 10% 参与率)
+
+    Args:
+        position_value: 持仓市值（元，≥0）
+        adv_value: 日均成交额 ADV（元；≤0 视为流动性枯竭→inf）
+        stress_discount: 压力情景 ADV 折扣（默认 0.3）
+        participation_rate: 参与率（默认 0.10）
+
+    Returns:
+        退出天数；ADV≤0 时返回 inf（必然触发禁开仓）
+    """
+    if position_value < 0:
+        raise ValueError("持仓市值不能为负")
+    capacity = adv_value * stress_discount * participation_rate
+    if capacity <= 0:
+        return float("inf")
+    return float(position_value) / capacity
+
+
+def compute_lvar(var: float, exit_days: float, half_spread: float) -> float:
+    """LVaR 简化式（90 号 §8 裁定③）。
+
+    LVaR = VaR × √退出天数 + 半价差
+    （完整 Kyle Lambda 估计器不建，日频 Amihud 已足够）
+    """
+    if var < 0 or exit_days < 0 or half_spread < 0:
+        raise ValueError("VaR/退出天数/半价差不能为负")
+    return var * float(np.sqrt(exit_days)) + half_spread
 
 
 # ── 流动性监控器 ──────────────────────────────────────────────────────
@@ -450,6 +513,62 @@ class LiquidityMonitor:
                 f"symbol={metrics.symbol}"
             ),
             severity="HALT" if metrics.is_illiquid else "info",
+        )
+
+    # ── 90 号 Phase2 扩展（#8 流动性：压力退出时间/LVaR 简化式/A股特有维度）──
+
+    def assess_opening_permission(
+        self,
+        symbol: str,
+        position_value: float,
+        adv_value: float,
+        *,
+        is_limit_down: bool = False,
+        is_suspended: bool = False,
+        is_st: bool = False,
+    ) -> "OpeningPermission":
+        """开仓许可评估（90 号 §8 裁定①④：压力退出时间>1天禁开仓+A股特有维度）。
+
+        裁定真源 90_methodology_open_questions.md §8 v2.0.0：
+          ① 退出天数 = 持仓 /(ADV×0.3 压力折扣 ×10% 参与率)，>1 天→禁新开仓
+             （精准拦截微盘股与跌停粘连票）；
+          ④ 跌停/停牌/ST 任一 → 禁开仓（比 ILLIQ 更致命）。
+
+        Args:
+            symbol: 标的代码
+            position_value: 拟持仓市值（元）
+            adv_value: 日均成交额 ADV（元）
+            is_limit_down: 跌停（粘连）标志
+            is_suspended: 停牌标志
+            is_st: ST/退市警示标志
+
+        Returns:
+            OpeningPermission（allowed + exit_days + 拒绝理由列表）
+        """
+        reasons: list[str] = []
+        exit_days = compute_stress_exit_days(position_value, adv_value)
+        if exit_days > MAX_STRESS_EXIT_DAYS:
+            reasons.append(f"压力退出时间 {exit_days:.2f} 天 > {MAX_STRESS_EXIT_DAYS} 天，禁新开仓")
+        if is_limit_down:
+            reasons.append("跌停（粘连），禁开仓")
+        if is_suspended:
+            reasons.append("停牌，禁开仓")
+        if is_st:
+            reasons.append("ST/退市警示，禁开仓")
+
+        allowed = not reasons
+        _logger.info(
+            "Opening permission assessed: symbol=%s exit_days=%.4f allowed=%s reasons=%s",
+            symbol,
+            exit_days,
+            allowed,
+            reasons,
+        )
+        return OpeningPermission(
+            symbol=symbol,
+            allowed=allowed,
+            exit_days=exit_days,
+            reasons=reasons,
         )
 
     # ── 内部工具 ──
