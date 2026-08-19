@@ -202,13 +202,32 @@ _TBL_CASHFLOW_STATEMENT = get_registry().table("fund_cashflow_statement")
 _TBL_FINANCIAL_INDICATOR = get_registry().table("fund_financial_indicator")
 
 # JOB-077 SQL 集中化（NO-BARE-SQL gate 合规，常量名匹配 ^_?SQL_\w+$ 豁免正则）
-# kline_daily 交易日序列/收盘价/每股日期数组（stk_limit 计算与 suspend 推导共用）
+# kline_daily 交易日序列/每股日期数组（stk_limit 计算与 suspend 推导共用）
 _SQL_KLINE_DAYS = (
     "SELECT DISTINCT trade_date FROM c1_market.kline_daily "
     "WHERE trade_date >= '{start}' AND trade_date <= '{end}' ORDER BY trade_date"
 )
+# #198 stk_limit 收盘价+除权乘子：kline_daily.adj_factor 列无持续生产者（2026-08-19
+# 实证全表 9,659,286 行恒 1，除权修正静默失效），改读独立 adj_factor 表——其持续
+# 生产者为 miniqmt get_divid_factors（tasks.yaml adj_factor_incremental，盘后日K时段，
+# 实证已落库 714 行最新至当日）。口径实证：miniqmt dr 为单次事件点因子（600000 除权日
+# 2026-07-16 dr=1.048054，官方昨收=前收/dr），故 SQL 侧取倒数 1/dr 输出"当日除权乘子"
+# （无事件日=1）。仅取 data_source='miniqmt'：bdpan 系为 hfq 累计口径且 2026-07-03 已
+# 停更、akshare 新浪 hfq_factor 同为累计口径（与 dr 点口径不可混算）——akshare fallback
+# 期间退化为不修正（与修复前行为一致，不引入新错误）；历史窗口重算的累计口径另行裁定。
+# 注：JOIN 用 USING 无别名写法——ch_reader.inject_final 在表名后注入 FINAL，
+# "FROM t FINAL alias" 非法（FINAL 须在别名后），USING 形态下注入后语法仍合法（实测）。
 _SQL_KLINE_BARS = (
-    "SELECT trade_date, symbol, close, adj_factor FROM c1_market.kline_daily "
+    "SELECT trade_date, symbol, close, "
+    "if(a.dr IS NULL OR a.dr <= 0, 1, 1 / a.dr) AS adj_mult "
+    "FROM c1_market.kline_daily "
+    "LEFT JOIN ("
+    "SELECT symbol, trade_date, any(adj_factor) AS dr "
+    "FROM c1_market.adj_factor "
+    "WHERE data_source = 'miniqmt' "
+    "AND trade_date >= '{start}' AND trade_date <= '{end}' "
+    "GROUP BY symbol, trade_date"
+    ") a USING (symbol, trade_date) "
     "WHERE trade_date >= '{start}' AND trade_date <= '{end}'"
 )
 _SQL_KLINE_SYMBOL_DAYS = (
@@ -6405,7 +6424,7 @@ class AkshareIngestProvider(IngestProviderBase):
             )
             return
 
-        # 2) 收盘价+复权因子（前推 45 天缓冲保证 prev_close 可得，覆盖长停牌复牌）
+        # 2) 收盘价+除权乘子（前推 45 天缓冲保证 prev_close 可得，覆盖长停牌复牌）
         buf_start = start - datetime.timedelta(days=45)
         try:
             tsv_k = _chr.query(

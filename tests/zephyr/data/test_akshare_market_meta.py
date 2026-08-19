@@ -158,7 +158,8 @@ class TestFetchStkLimit:
         def fake_query(sql, timeout=0):
             if "DISTINCT trade_date" in sql:
                 return days_tsv
-            if "close, adj_factor" in sql:
+            if "adj_mult" in sql:
+                # #198 kline×adj_factor JOIN（第 4 列=当日除权乘子，无事件=1）
                 return bars_tsv
             if "st_stock_list" in sql:
                 return st_tsv
@@ -212,7 +213,7 @@ class TestFetchStkLimit:
                     "2026-08-10\t830799\t5.00\t1.0",
                     "2026-08-11\t830799\t5.05\t1.0",
                     "2026-08-12\t830799\t5.10\t1.0",
-                    "2026-08-10\t600002\t10.00\t1.0",  # 除权日：adj 1.0→0.5
+                    "2026-08-10\t600002\t10.00\t1.0",  # 除权序列：08-12 当日乘子 0.5（=1/dr）
                     "2026-08-11\t600002\t10.10\t1.0",
                     "2026-08-12\t600002\t5.06\t0.5",
                     "2026-08-10\t900901\t9.99\t1.0",  # 未知板块（B股）应被过滤
@@ -248,7 +249,7 @@ class TestFetchStkLimit:
         # 北交所 30%：5.00→6.50/3.50
         assert by[("2026-08-11", "830799")][3] == 6.50
 
-        # 除权修正：pre_close = 10.10 × (0.5/1.0) = 5.05 → 涨停 5.56（5.055 五入）
+        # 除权修正：pre_close = 10.10 × 0.5 = 5.05 → 涨停 5.56（5.055 五入）
         r = by[("2026-08-12", "600002")]
         assert r[2] == 5.05 and r[3] == 5.56 and r[4] == 4.55
 
@@ -346,6 +347,42 @@ class TestFetchStkLimit:
         results = _call_fetch(p, "stk_limit", _payload(D(2026, 8, 12), D(2026, 8, 12)))
         assert len(results) == 1 and results[0].error
         assert "不可达" in results[0].error
+
+    def test_ex_dividend_adjusts_pre_close_198(self, monkeypatch):
+        # #198 回归：除权事件日 adj_mult≠1（独立 adj_factor 表 miniqmt dr 倒数，SQL 侧
+        # 已取倒），pre_close 必须按乘子修正而非裸昨收——修复前读 kline_daily.adj_factor
+        # （无持续生产者恒 1），除权日涨跌停价按未修正昨收计算，静默错误。
+        p = AkshareIngestProvider()
+        days = "2026-08-12\n"
+        bars = (
+            "2026-08-11\t600010\t9.31\t1.0\n"  # 股权登记日（cum-date，无事件乘子 1）
+            "2026-08-12\t600010\t8.85\t0.9542\n"  # 除权日：dr=1.048054 → 乘子 1/dr≈0.9542
+            "2026-08-11\t600011\t20.00\t1.0\n"  # 对照组：无除权事件
+            "2026-08-12\t600011\t20.10\t1.0\n"
+        )
+        self._install_ch_mock(monkeypatch, days, bars, "")
+        results = _call_fetch(p, "stk_limit", _payload(D(2026, 8, 12), D(2026, 8, 12)))
+        assert len(results) == 1 and not results[0].error
+        by = {r[1]: r for r in results[0].rows}
+        # 除权股：pre_close = round(9.31×0.9542, 4) = 8.8836（非裸昨收 9.31）
+        # → 涨停 8.8836×1.1=9.77196 → 9.77；跌停 8.8836×0.9=7.99524 → 8.00
+        r = by["600010"]
+        assert r[2] == 8.8836 and r[3] == 9.77 and r[4] == 8.00
+        # 对照组：pre_close = 裸昨收 20.00 → 涨停 22.00 / 跌停 18.00
+        r = by["600011"]
+        assert r[2] == 20.00 and r[3] == 22.00 and r[4] == 18.00
+
+    def test_kline_bars_sql_reads_adj_factor_table_198(self):
+        # #198 契约钉：stk_limit 除权来源必须是独立 adj_factor 表（miniqmt dr 单次事件
+        # 点口径，取倒数为当日乘子），防回退为读 kline_daily.adj_factor 废弃列
+        # （该列无持续生产者恒 1 = 除权修正静默失效根因）。
+        from src.zephyr.data.implementations import akshare_provider as akp
+
+        sql = akp._SQL_KLINE_BARS
+        assert "c1_market.adj_factor" in sql
+        assert "data_source = 'miniqmt'" in sql  # 累计口径源（bdpan/akshare hfq）不可混算
+        assert "1 / a.dr" in sql  # dr 为事件点因子（官方昨收=前收/dr），取倒数得乘子
+        assert "close, adj_factor FROM c1_market.kline_daily" not in sql  # 不得再读主表废弃列
 
 
 # ============== stock_basic 快照 ==============
