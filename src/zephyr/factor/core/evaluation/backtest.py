@@ -14,6 +14,16 @@
 # [TESTS] tests/factor/test_evaluation_backtest.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# [ALGO_FLOW]
+# I1: symbol 列表 + factor_id + 评估日期区间（evaluate_factor 入参）
+# I2: market_kline_daily 历史长表（ch_reader 注入 FINAL 保 PIT 去重，含 adj_factor 列）
+# F1: _adjusted_close_panel 复权价面板（close×adj_factor，NULL/0/负回退 1.0，#197：除权日前向收益不再误判腰斩）
+# A1: 数据加载+面板组装（长表→宽表，trade_date 截面对齐禁 ingested_at）
+# A2: 逐标的 FactorBase.compute 因子值调度
+# A3: _compute_forward_returns 前向收益（复权价 shift(-horizon)，仅回测评估不实盘）
+# A4: metrics 纯函数汇总（IC/IR/OOS/分组收益）
+# O1: EvaluationResult（IC/IR 等评估指标；数据不足字段为 0）
+# [/ALGO_FLOW]
 """D-FACTOR-03 因子评估回测运行器——端到端因子评估。
 
 封装 ch_reader 数据访问 + metrics 纯函数计算，实现：
@@ -30,6 +40,7 @@ INV-004 PIT 铁律落实：
 - 前向收益 shift(-horizon) 仅用于回测评估，不参与实盘信号生成
 - 不使用 ingested_at（可能引入未来函数），仅用 trade_date 做截面对齐
 """
+
 from __future__ import annotations
 
 import logging
@@ -66,8 +77,15 @@ _SQL_LOAD_HISTORY = (
 
 # TSV 列顺序（ClickHouse SELECT 返回无表头，按 SELECT 顺序映射）
 _HISTORY_COLUMNS = [
-    "trade_date", "symbol", "open", "high", "low",
-    "close", "volume", "amount", "adj_factor",
+    "trade_date",
+    "symbol",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "amount",
+    "adj_factor",
 ]
 
 
@@ -130,7 +148,10 @@ def _tsv_to_dataframe(tsv: str) -> pd.DataFrame:
     if not tsv or not tsv.strip():
         return pd.DataFrame()
     df = pd.read_csv(
-        StringIO(tsv), sep="\t", header=None, names=_HISTORY_COLUMNS,
+        StringIO(tsv),
+        sep="\t",
+        header=None,
+        names=_HISTORY_COLUMNS,
         dtype={"symbol": str},
         na_values=["\\N"],
     )
@@ -153,8 +174,11 @@ def load_history(symbols: Sequence[str], start: str, end: str) -> pd.DataFrame:
     if not symbols:
         return pd.DataFrame()
     sql = _SQL_LOAD_HISTORY.format(
-        tbl=_TBL_KLINE_DAILY, final="",
-        symbols=_format_symbols(symbols), start=start, end=end,
+        tbl=_TBL_KLINE_DAILY,
+        final="",
+        symbols=_format_symbols(symbols),
+        start=start,
+        end=end,
     )
     df = _tsv_to_dataframe(ch_reader.query(sql))
     if df.empty:
@@ -179,14 +203,36 @@ def _compute_factor_panel(factor_cls: type, history: pd.DataFrame) -> pd.DataFra
     return pd.DataFrame(values)
 
 
-def _compute_forward_returns(close_panel: pd.DataFrame, horizon: int) -> pd.DataFrame:
-    """前向收益 = close.shift(-horizon) / close - 1。"""
-    return close_panel.shift(-horizon) / close_panel - 1
+def _adjusted_close_panel(history: pd.DataFrame) -> pd.DataFrame:
+    """构建复权收盘价面板 (index=trade_date, columns=symbol)。
+
+    tracker #197：前向收益必须按复权价（adj_close = close × adj_factor）计算，
+    否则除权日（如 10送10 价格腰斩）会被计为 -50% 真实亏损，系统性偏差 IC/IR。
+
+    口径纪律——同行自洽乘法：仅保证同一行 close 与 adj_factor 自洽相乘。
+    kline_daily.adj_factor 已知混存 QMT dr / 新浪 hfq 两口径（遗留 #209②，
+    登记为 P2 后续治理），本函数不做口径归一。
+
+    防御：adj_factor 为 NULL（ClickHouse Nullable，TSV \\N）或 <= 0（无效因子，
+    裁定#ARCH-ADJFACTOR-NULL-001：0 视为 None）时回退 1.0，该行退化为不复权价
+    （对齐 baostock 主口径：不复权写入 adj_factor=1），避免 NaN 污染收益面板。
+    """
+    adj = history["adj_factor"]
+    # NaN > 0 为 False → NULL 与 0/负值一并被 where 替换为 1.0
+    adj = adj.where(adj > 0, 1.0)
+    return (history["close"] * adj).unstack(level="symbol")
 
 
-def _build_result(
-    factor_id: str, ic_series: pd.Series, oos_ratio: float
-) -> EvaluationResult:
+def _compute_forward_returns(price_panel: pd.DataFrame, horizon: int) -> pd.DataFrame:
+    """前向收益 = price.shift(-horizon) / price - 1。
+
+    tracker #197：调用方须传入复权价面板（见 _adjusted_close_panel），
+    传 raw close 会把除权日价格跳变计为真实盈亏。本函数只做位移比值纯计算。
+    """
+    return price_panel.shift(-horizon) / price_panel - 1
+
+
+def _build_result(factor_id: str, ic_series: pd.Series, oos_ratio: float) -> EvaluationResult:
     """从 IC 序列构建评估结果。"""
     if ic_series.empty:
         return EvaluationResult(factor_id, 0.0, 0.0, 0.0, 0.0, True, 0)
@@ -197,9 +243,7 @@ def _build_result(
     oos_count = max(1, int(len(ic_series) * oos_ratio))
     oos_ic_mean = float(ic_series.iloc[-oos_count:].mean())
     overfit = check_overfitting(ic_mean, oos_ic_mean)
-    return EvaluationResult(
-        factor_id, ic_mean, ic_std, ir, oos_rate, overfit, len(ic_series)
-    )
+    return EvaluationResult(factor_id, ic_mean, ic_std, ir, oos_rate, overfit, len(ic_series))
 
 
 def evaluate_factor(
@@ -232,12 +276,15 @@ def evaluate_factor(
         log.warning("evaluate_factor: 历史数据为空 factor=%s", factor_id)
         return _build_result(factor_id, pd.Series(), oos_ratio)
     factor_panel = _compute_factor_panel(factor_cls, history)
-    close_panel = history["close"].unstack(level="symbol")
-    return_panel = _compute_forward_returns(close_panel, horizon)
+    # tracker #197：前向收益按复权价面板计算（close × adj_factor），
+    # 修复除权日 raw close 腰斩被计为 -50% 真实亏损导致的 IC/IR 系统性偏差
+    adj_close_panel = _adjusted_close_panel(history)
+    return_panel = _compute_forward_returns(adj_close_panel, horizon)
     # 丢弃前向收益全 NaN 的尾部截面（无未来数据，避免注入 0 IC 噪声）
     return_panel = return_panel.dropna(how="all")
     ic_series = compute_ic_series(factor_panel, return_panel, horizon)
     return _build_result(factor_id, ic_series, oos_ratio)
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def tsv_to_dataframe(tsv) -> pd.DataFrame:
@@ -268,4 +315,3 @@ def compute_factor_panel(factor_cls: type, history: pd.DataFrame) -> pd.DataFram
         空输入返回空 DataFrame。
     """
     return _compute_factor_panel(factor_cls, history)
-

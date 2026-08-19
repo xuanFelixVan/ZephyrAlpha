@@ -20,6 +20,7 @@
 - EvaluationResult: frozen dataclass
 - _format_symbols / _tsv_to_dataframe 私有辅助
 """
+
 from __future__ import annotations
 
 from io import StringIO
@@ -65,11 +66,19 @@ def _make_tsv(n_days: int = 20, symbols: list[str] | None = None) -> str:
         for i in range(n_days):
             date = f"2026-01-{i + 1:02d}"
             close = base + i * incr
-            row = "\t".join([
-                date, sym,
-                str(close - 0.3), str(close + 0.3), str(close - 0.6), str(close),
-                str(1000 + i * 10), str(100000 + i * 1000), "1.0",
-            ])
+            row = "\t".join(
+                [
+                    date,
+                    sym,
+                    str(close - 0.3),
+                    str(close + 0.3),
+                    str(close - 0.6),
+                    str(close),
+                    str(1000 + i * 10),
+                    str(100000 + i * 1000),
+                    "1.0",
+                ]
+            )
             rows.append(row)
     return "\n".join(rows) + "\n"
 
@@ -171,8 +180,11 @@ class TestEvaluateFactorFullFlow:
         monkeypatch.setattr(backtest.ch_reader, "query", lambda sql, timeout=30: tsv)
 
         result = evaluate_factor(
-            "mom_1d", ["600519.SH", "000001.SZ"],
-            "2026-01-01", "2026-01-20", horizon=1,
+            "mom_1d",
+            ["600519.SH", "000001.SZ"],
+            "2026-01-01",
+            "2026-01-20",
+            horizon=1,
         )
         assert result.factor_id == "mom_1d"
         assert result.sample_size > 0
@@ -216,3 +228,98 @@ class TestEvaluateFactorOosRatio:
         assert isinstance(r1.oos_positive_rate, float)
         assert isinstance(r2.oos_positive_rate, float)
         assert 0.0 <= r1.oos_positive_rate <= 1.0
+
+
+def _make_ex_dividend_tsv() -> str:
+    """构造含除权日的单标的 TSV（tracker #197 回归场景）。
+
+    10送10 除权：close 从 20 腰斩到 10，乘法口径复权因子从 1 上台阶到 2
+    （QMT dr / 新浪 hfq 均为 adj_close = close × adj_factor 乘法口径，
+    除权日因子上台阶），真实持有收益应为 0，而非 raw close 口径的 -50%。
+    """
+    rows = []
+    closes = [20.0, 20.0, 20.0, 10.0, 10.0, 10.0]
+    factors = [1.0, 1.0, 1.0, 2.0, 2.0, 2.0]
+    for i, (close, factor) in enumerate(zip(closes, factors)):
+        date = f"2026-01-{i + 1:02d}"
+        rows.append(
+            "\t".join(
+                [
+                    date,
+                    "A.SH",
+                    str(close - 0.3),
+                    str(close + 0.3),
+                    str(close - 0.6),
+                    str(close),
+                    "1000",
+                    "100000",
+                    str(factor),
+                ]
+            )
+        )
+    return "\n".join(rows) + "\n"
+
+
+class TestForwardReturnsAdjusted:
+    """tracker #197 回归：前向收益按复权价（close × adj_factor）计算。"""
+
+    def _load(self, monkeypatch, tsv: str) -> pd.DataFrame:
+        monkeypatch.setattr(backtest.ch_reader, "query", lambda sql, timeout=30: tsv)
+        return load_history(["A.SH"], "2026-01-01", "2026-01-06")
+
+    def test_ex_dividend_forward_return_near_zero(self, monkeypatch):
+        """除权日 10送10：复权前向收益 ≈ 0，而非 raw close 口径的 -50%。"""
+        history = self._load(monkeypatch, _make_ex_dividend_tsv())
+        adj_panel = backtest._adjusted_close_panel(history)
+        returns = backtest._compute_forward_returns(adj_panel, horizon=1)["A.SH"].dropna()
+        # 除权日截面（01-03 → 01-04）：close 20→10 但因子 1→2，真实收益 0
+        assert returns.loc[pd.Timestamp("2026-01-03")] == pytest.approx(0.0, abs=1e-12)
+        # 平台期价格不变，收益亦为 0
+        assert (returns.abs() < 1e-12).all()
+
+    def test_raw_close_would_report_minus_50pct(self, monkeypatch):
+        """对照组：未复权口径下同一除权日被计为 -50%（证明修复必要性）。"""
+        history = self._load(monkeypatch, _make_ex_dividend_tsv())
+        raw_panel = history["close"].unstack(level="symbol")
+        raw_returns = backtest._compute_forward_returns(raw_panel, horizon=1)["A.SH"]
+        assert raw_returns.loc[pd.Timestamp("2026-01-03")] == pytest.approx(-0.5)
+
+    def test_adj_factor_null_and_zero_fallback_to_one(self, monkeypatch):
+        """adj_factor 缺失(NULL)/0 → 回退 1.0，该行复权价退化为 raw close。"""
+        rows = [
+            "2026-01-01\tA.SH\t19.7\t20.3\t19.4\t20.0\t1000\t100000\t\\N",
+            "2026-01-02\tA.SH\t21.7\t22.3\t21.4\t22.0\t1000\t100000\t0",
+            "2026-01-03\tA.SH\t23.7\t24.3\t23.4\t24.0\t1000\t100000\t1.5",
+        ]
+        history = self._load(monkeypatch, "\n".join(rows) + "\n")
+        adj_close = backtest._adjusted_close_panel(history)["A.SH"]
+        # NULL → ×1.0（退化为不复权价）
+        assert adj_close.loc[pd.Timestamp("2026-01-01")] == pytest.approx(20.0)
+        # 0（无效因子，裁定#ARCH-ADJFACTOR-NULL-001）→ ×1.0
+        assert adj_close.loc[pd.Timestamp("2026-01-02")] == pytest.approx(22.0)
+        # 正常因子 ×1.5 生效
+        assert adj_close.loc[pd.Timestamp("2026-01-03")] == pytest.approx(36.0)
+
+    def test_evaluate_factor_end_to_end_with_ex_dividend(self, monkeypatch):
+        """端到端：含除权日数据跑 evaluate_factor 不崩且产出有效截面。"""
+
+        @FactorRegistry.register
+        class CloseFactor(FactorBase):
+            meta = FactorMeta(factor_id="close_f197", name="Close", domain="technical")
+
+            def compute(self, data, **kwargs):
+                return data["close"].pct_change(1)
+
+        tsv_a = _make_ex_dividend_tsv()
+        # 第二标的：平稳上涨，保证截面 IC 可计算
+        tsv_b = _make_tsv(n_days=6, symbols=["B.SH"])
+        monkeypatch.setattr(backtest.ch_reader, "query", lambda sql, timeout=30: tsv_a + tsv_b)
+        result = evaluate_factor(
+            "close_f197",
+            ["A.SH", "B.SH"],
+            "2026-01-01",
+            "2026-01-06",
+            horizon=1,
+        )
+        assert result.factor_id == "close_f197"
+        assert result.sample_size > 0
