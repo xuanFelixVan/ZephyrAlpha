@@ -540,6 +540,26 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 194 | 9 个施工 worktree schemas/categories 物理删除事件 | 第九统筹清场实证 | 9 worktree 的 schemas/categories/ 108 文件全被物理清空（非 stat 幻影），删除从未提交（分支已 merged 零损失，dev HEAD 完好可恢复）；根因未查明（疑似生成器/清理脚本跨 worktree 误伤，R2 君子协定同族） | ⏳ 登记备查（同 #74 模式：发现功能缺失迹象再回溯） |
 | 195 | 数据域会话 WIP 两 temp shelter stash | 第九统筹 merge 保护性 stash | akshare 两文件+rules_integrity_db.json staged 版；数据域会话已自 commit b276f83b58（hk_stock_list 东财降级新浪+option_iv_surface 接 CH 降级两缺口闭环），stash 版经 diff 实证陈旧 | ✅ 已闭环（双 stash drop；数据域 WIP 随 b276f83b58 入库，#179 避让项同步释放） |
 
+> **阶段1 三路并发审查发现（子代理实证报告，2026-08-19 晚）**：数据管线 1150 测试绿/风控 1695 测试绿/因子+组合 631+445 测试绿。以下为审查新发现问题（#196-#210），定级按"回测正确性污染"口径。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 196 | **P0：baostock 降级源以前复权价写入不复权主表 kline_daily** | 数据管线审查实证 | baostock_provider.py:308 `_fetch_kline_daily` 用 adjustflag="2"（前复权）写 c1_market.kline_daily（主口径=miniQMT 不复权）；ReplacingMergeTree 同键后写覆盖先写→同一行 raw/qfq 取决于源跑序，且 qfq 锚定抓取日历史价随分红漂移不可复现；除权日附近收益信号直接错误 | 🔥 阶段1 修复对象 |
+| 197 | **P1：因子评估加载 adj_factor 但从未使用**（前向收益按未复权 close 计算） | 数据管线审查实证 | factor/core/evaluation/backtest.py:60 SELECT 含 adj_factor，L182-184 `_compute_forward_returns=close.shift(-h)/close-1` 纯 raw close；除权日（10送10 腰斩）被计为 -50% 真实亏损→IC/IR 系统性偏差 | 🔥 阶段1 修复对象 |
+| 198 | P1：kline_daily.adj_factor 无持续生产者，stk_limit 除权修正静默失效 | 数据管线审查实证 | miniqmt 写 8 列不含 adj_factor（走 DEFAULT 1）；baostock 回填恒 1；akshare_provider.py:6239 `pre_close=prev_close×adj_T/adj_prev` 依赖该列——backfill 后新除权事件 adj 恒 1→涨跌停价按未修正昨收计算 | 🔥 阶段1 修复对象 |
+| 199 | P1：CorporateActionPipeline 空壳（复权因子恒 1.0） | 数据管线审查实证 | gov_audit/corporate_actions.py:77-86 transform() 对分红/拆分/送股直接默认 bwd/fwd=1.0 从不计算；validate() 恒 []、verify() 恒 True | ⏳ 待裁定（空壳 vs 有消费方？需查消费侧再定修/退） |
+| 200 | P1：FRED 宏观数据按报告期可见而非发布期（推断） | 数据管线审查推断 | fred_provider.py:503-504 report_date=观测期；请求未带 realtime_start/vintage_dates；宏观回测经典前视风险（消费侧是否自做 lag 未审） | ⏳ 待查消费侧 |
+| 201 | P1：指数成分股仅有当前快照，历史成员不可回溯（推断） | 数据管线审查推断 | miniqmt/baostock 均返回当前成分以 payload.end 落快照；管线启动日前指数历史成分无从重建→历史 universe 回测幸存者偏差 | ⏳ 待裁定（tushare index_weight 候选源未接） |
+| 202 | P1：stk_limit 用窗口索引冒充上市龄 | 数据管线审查推断 | akshare_provider.py:6241 `if i<5 and pct_board in (科创/创业/北交)` 产出 limit=NULL；i 是查询窗口（前推 45 天）内索引非上市龄——长期停牌复牌股头 5 根 bar 被误判无涨跌幅限制→撮合可产生不可能成交 | 🔥 阶段1 修复对象 |
+| 203 | P1：recover_from_broker 未传 cash（资金账不以券商为准） | 风控审查实证 | risk_layer_orchestrator.py:419-434 重建持仓缺省 cash 参数→PositionTracker._cash 保留启动 initial_cash；持仓对账对但现金失真 | 🔥 阶段1 修复对象 |
+| 204 | P2：五态降级机 evaluate_rollback 无生产调用方（纸面就绪） | 风控审查实证 | 全仓 grep 无生产调用（除测试/导出）；状态机逻辑正确但未接 TradingSession/RiskLayerOrchestrator 评估循环 | ⏳ 登记（接线批后续） |
+| 205 | **P1：constraint_solver 软拥挤/C5 迭代重复缩放→权重几何坍缩** | 因子组合审查实证 | pf_core/core/constraint_solver.py:702-748+628-666：触发条件仅依赖静态 ρ，每轮迭代重复缩放；实证 {A:0.5,B:0.5} ρ=0.85→16 轮后 Σw≈8.3e-7 且 converged=True（静默清零组合！）；测试只断言违规记录未断言权重量级故漏网 | 🔥 阶段1 修复对象 |
+| 206 | **P1：regime_meta_allocator 全策略同轮越界 water-filling 破产 Σ≠1** | 因子组合审查实证 | regime_meta_allocator.py:498-580 _normalize_and_clip：free_sids 首轮空即 break；实证 base={0.98,0.01,0.01}→Σ=0.5（50% 资金静默闲置）；N=25 全贴 floor→Σ=1.25；违反头注 INVARIANTS Σ=1.0 | 🔥 阶段1 修复对象 |
+| 207 | P1：constraint_solver C3/C6 同号暴露下约束不可达→坍缩 | 因子组合审查实证 | constraint_solver.py:594-700：加权平均暴露对统一缩放不变，投影每轮 ×scale<1 而暴露永不满足→4 标的同号 +1σ（上限 0.3σ）实证 Σw≈1.2e-6 且 converged=True | 🔥 阶段1 修复对象（与 #205 同根因：迭代缩放收敛判据缺陷） |
+| 208 | P2 族（组合/信号边界） | 因子组合审查实证 | ①regime_meta_allocator CRISIS floor 0.05 数学不可达死代码（clamp 下界 0.3×0.3=0.09>0.05）；②constraint_solver._parse_weights NaN 权重静默通过（H 级安全模块应 fail-closed）；③w<min_pos 每轮强制抬回破坏"刻意排除"语义；④sell_signal_collector 去重键 (symbol,type,direction) 不含 timeframe→同类型跨周期共振永不触发；⑤signal_synthesis_combiner 冲突裁决文本与实际合成方向可矛盾 | ⏳ 阶段4 顺手批候选 |
+| 209 | P2 族（数据管线边界） | 数据管线审查实证 | ①PIT embargo 默认 0 且仅日粒度（晚间公告当日可见）；②adj_factor 表混存 QMT dr/新浪 hfq 两口径仅靠 data_source 区分（实测 000002 相差 7%）；③质量门 change_limit=0.20 一刀切（北交所 ±30% 合法行误标）；④miniqmt stock_list 全量刷新不闭合退市股（依赖 akshare 月度任务，最长 1 月窗口）；⑤退市 K 线覆盖缺北交所（已登记 known gap）；⑥stk_limit 未知 adj 当 1.0 掩盖缺失 | ⏳ 阶段4 顺手批候选 |
+| 210 | 指标注册数口径：实证 40 个（trend10+momentum10+volatility8+volume7+reversal5）vs 文档 41 | 因子组合审查实证 | technical_indicator_registry 41 条 vs 代码实证 40——1 个幽灵或注册滞后 | ⏳ 阶段4 顺手查 |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
