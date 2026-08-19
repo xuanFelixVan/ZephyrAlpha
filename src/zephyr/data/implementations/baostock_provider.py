@@ -310,7 +310,19 @@ class BaostockProvider(IngestProviderBase):
         """
         bs = self._tls.bs
         table = payload.table or _TBL_KLINE_DAILY
-        columns = ["date", "code", "open", "high", "low", "close", "volume", "amount"]
+        # #219 列名对齐 kline_daily schema（真源 schemas/categories/market_kline_daily.py）：
+        # 此前透传 baostock 原始列名 date/code——写层 write_result 按列名交集过滤后
+        # 仅剩 6 价格列，date/code 被丢弃 → CH 侧键列落 DEFAULT 产 symbol=''/
+        # trade_date=1970-01-01 垃圾键行。映射 date→trade_date、code→symbol；
+        # symbol 值由 baostock 小写前缀格式（sh.600000）转纯数字（600000，对齐
+        # miniqmt 主写口径与表 MATERIALIZED exchange 派生规则，保证 ReplacingMergeTree
+        # 同键 (symbol, trade_date) 去重）；补 data_source='Baostock'（同
+        # _fetch_kline_daily_delisted 链）；adj_factor 由表 DEFAULT 1 填充（#196
+        # 不复权口径）。CH 存量垃圾行清洗留 Owner 窗口，本修复只防新增。
+        columns = [
+            "trade_date", "symbol", "open", "high", "low", "close",
+            "volume", "amount", "data_source",
+        ]
         t0 = time.time()
         symbols = payload.symbols or ["sh.600000"]
         start = payload.start.isoformat() if payload.start else "2020-01-01"
@@ -331,7 +343,10 @@ class BaostockProvider(IngestProviderBase):
                 rows: list[tuple] = []
                 while rs.error_code == "0" and rs.next():
                     item = rs.get_row_data()
-                    rows.append(tuple(item))
+                    # item: [date, code(sh.600000), open..amount]（全 str）；
+                    # #219：code 取 "." 后纯数字段作 symbol（无 "." 原样，幂等）
+                    symbol6 = str(item[1]).split(".")[-1] if len(item) > 1 else ""
+                    rows.append((item[0], symbol6, *item[2:], "Baostock"))
                 if rows:
                     yield FetchResult(
                         table=table,

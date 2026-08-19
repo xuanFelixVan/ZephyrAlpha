@@ -1115,6 +1115,47 @@ class TestBaostockKlineDailyFallback:
         kwargs = p.tls.bs.query_history_k_data_plus.call_args.kwargs
         assert kwargs["adjustflag"] == "3"  # #196: 不复权，对齐 kline_daily 主口径
 
+    def test_fetch_kline_daily_columns_align_schema_219(self):
+        """#219：fallback 产出列名必须对齐 kline_daily schema，防写层交集过滤丢键列。
+
+        修复前透传 baostock 原始列名 date/code——write_result 按表列交集过滤后
+        仅剩 6 价格列，date/code 丢弃 → CH 键列落 DEFAULT 产 symbol=''/
+        trade_date=1970-01-01 垃圾键行。本用例钉住：列名对齐 DDL 真源
+        （schemas/categories/market_kline_daily.py INSERT_COLUMNS）、symbol 值
+        转纯数字（对齐 miniqmt 主写口径）、不再产垃圾键。
+        """
+        from schemas.categories.market_kline_daily import INSERT_COLUMNS
+
+        p = self._provider()
+        p.tls.bs.query_history_k_data_plus = MagicMock(
+            return_value=_FakeBsResultSet(
+                [["2026-08-01", "sh.600000", "10.0", "10.5", "9.9", "10.2", "1000", "10200.00"]]
+            )
+        )
+        payload = FetchPayload(
+            table="c1_market.kline_daily",
+            symbols=["sh.600000"],
+            start=datetime.date(2026, 8, 1),
+            end=datetime.date(2026, 8, 1),
+            extra={"capability": "kline_daily"},
+        )
+        results = list(p._fetch_kline_daily(payload, SourcePolicy()))
+        assert len(results) == 1 and not results[0].error
+        cols = results[0].columns
+        # 键列必须在（垃圾键根因=键列被交集过滤丢弃）；baostock 原始名不得透传
+        assert "trade_date" in cols and "symbol" in cols
+        assert "date" not in cols and "code" not in cols
+        # 全部产出列 ⊆ schema INSERT_COLUMNS（DDL 真源），写层交集过滤零丢弃
+        schema_cols = {c.strip() for c in INSERT_COLUMNS.strip("()").split(",")}
+        assert set(cols) <= schema_cols
+        # 行值：symbol 转纯数字 600000（sh.600000 去小写前缀），不再产垃圾键
+        row = results[0].rows[0]
+        assert row[cols.index("trade_date")] == "2026-08-01"
+        assert row[cols.index("symbol")] == "600000"
+        assert row[cols.index("symbol")] != ""
+        assert row[cols.index("trade_date")] != "1970-01-01"
+        assert row[cols.index("data_source")] == "Baostock"
+
 
 class TestBaostockDelistedKline:
     """JOB-084：退市股历史 K 线回填（universe 解析/行映射/覆盖跳过/不复权口径）。"""

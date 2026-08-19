@@ -37,7 +37,8 @@ symbol 双向转换（裁定#ARCH-SYMBOL-NORMALIZE-001, 2026-07-25）：
   trade_date   → timestamp（datetime）
   symbol       → symbol（标准化为 600519.SH 格式）
   open/high/low/close/volume/amount → Decimal
-  adj_factor   → Decimal（0 视为 None）
+  adj_factor   → Decimal（0 视为 None；#217 起改读 c1_market.adj_factor 独立表
+               miniqmt dr 点口径取倒数=当日除权乘子，无事件日=1，口径同 #198）
   quality_flag → quality_score（1→1.0 通过；0→0.5 异常）
   volume=0     → is_suspended=True（停牌日无成交）
   data_source  → data_source
@@ -63,10 +64,27 @@ _TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
 # ch_reader.query() 自动注入 FINAL（ReplacingMergeTree 去重），故 final 占位留空
+# #217 adj_factor 改读独立表：kline_daily.adj_factor 列无持续生产者（#198 实证
+# 全表 9,659,286 行恒 1，已废弃语义），改读 c1_market.adj_factor 独立表——其持续
+# 生产者为 miniqmt get_divid_factors（dr=单次事件点因子，官方昨收=前收/dr，
+# #198 实证 600000 除权日 2026-07-16 dr=1.048054），SQL 侧取倒数 1/dr 输出
+# "当日除权乘子"（无事件日=1）。仅取 data_source='miniqmt'：bdpan 系 hfq 累计
+# 口径已停更、akshare 新浪 hfq_factor 同为累计口径，与 dr 点口径不可混算。
+# JOIN 写法与口径同 #198 stk_limit：USING 无别名——ch_reader.inject_final 在
+# 表名后注入 FINAL，"FROM t FINAL alias" 非法（FINAL 须在别名后），USING
+# 形态下注入后语法仍合法（#198 真实 CH 实测）。
 _SQL_LOAD_KLINE = (
     "SELECT trade_date, symbol, open, high, low, close, volume, amount, "
-    "adj_factor, data_source, quality_flag "
+    "if(a.dr IS NULL OR a.dr <= 0, 1, 1 / a.dr) AS adj_factor, "
+    "data_source, quality_flag "
     "FROM {tbl}{final} "
+    "LEFT JOIN ("
+    "SELECT symbol, trade_date, any(adj_factor) AS dr "
+    "FROM c1_market.adj_factor "
+    "WHERE data_source = 'miniqmt' "
+    "AND trade_date >= '{start}' AND trade_date <= '{end}' "
+    "GROUP BY symbol, trade_date"
+    ") a USING (symbol, trade_date) "
     "WHERE symbol IN ({symbols}) "
     "AND trade_date >= toDate('{start}') AND trade_date <= toDate('{end}') "
     "ORDER BY symbol, trade_date"

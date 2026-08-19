@@ -253,6 +253,42 @@ class TestProduceAlias:
         assert [r.idempotency_key for r in r1] == [r.idempotency_key for r in r2]
 
 
+# === #217 回归（2026-08-19）：adj_factor 改读 c1_market.adj_factor 独立表 ===
+
+
+class TestLoadKlineAdjFactorSource217:
+    """#217：adj_factor 必须来自独立 adj_factor 表（miniqmt dr 点口径取倒数=当日除权乘子）。
+
+    修复前读 kline_daily.adj_factor 废弃列（#198 实证全表 9,659,286 行恒 1 无持续
+    生产者），除权事件日下游拿不到修正乘子，静默失效。JOIN 写法与口径同 #198
+    stk_limit（USING 无别名兼容 inject_final——FINAL 须在别名后）。
+    """
+
+    def test_sql_reads_adj_factor_table_217(self):
+        # SQL 契约钉：防回退为读 kline_daily.adj_factor 废弃列
+        sql = producer._SQL_LOAD_KLINE
+        assert "c1_market.adj_factor" in sql
+        assert "data_source = 'miniqmt'" in sql  # 累计口径源（bdpan/akshare hfq）不可混算
+        assert "1 / a.dr" in sql  # dr 为事件点因子（官方昨收=前收/dr），取倒数得当日乘子
+        # USING 无别名写法：inject_final 在表名后注入 FINAL，"FROM t FINAL alias" 非法
+        assert "USING (symbol, trade_date)" in sql
+        assert "amount, adj_factor, data_source" not in sql  # 不得再读主表废弃列
+
+    def test_ex_dividend_multiplier_propagates_217(self, monkeypatch):
+        # 除权事件日修正生效：独立表 miniqmt dr=1.048054 → SQL 侧取倒数输出乘子
+        # 0.9542（无事件日=1）；修复前废弃列恒 1 → 除权日乘子丢失
+        tsv = (
+            "2026-07-15\t600000\t9.31\t9.40\t9.30\t9.35\t1000\t9350\t1\tminiqmt\t1\n"
+            "2026-07-16\t600000\t8.85\t8.90\t8.80\t8.85\t1000\t8850\t0.9542\tminiqmt\t1\n"
+        )
+        monkeypatch.setattr(producer.ch_reader, "query", lambda sql, timeout=30: tsv)
+        records = load_kline(["600000"], "2026-07-15", "2026-07-16")
+        assert len(records) == 2
+        by_day = {r.timestamp.day: r for r in records}
+        assert by_day[15].adj_factor == Decimal("1")  # 无事件日乘子=1
+        assert by_day[16].adj_factor == Decimal("0.9542")  # 除权日乘子≠1，修正生效
+
+
 # === 裁定#ARCH-SYMBOL-NORMALIZE-001 测试（2026-07-25）===
 
 

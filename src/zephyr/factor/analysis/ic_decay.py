@@ -84,6 +84,7 @@ import numpy as np
 import pandas as pd
 
 from zephyr.factor.core.evaluation.backtest import (
+    _adjusted_close_panel,
     _compute_factor_panel,
     _compute_forward_returns,
     load_history,
@@ -121,11 +122,14 @@ def compute_ic_decay(
         return pd.Series(dtype=float)
 
     factor_panel = _compute_factor_panel(factor_cls, history)
-    close_panel = history["close"].unstack(level="symbol")
+    # tracker #218：前向收益必须按复权价面板计算（复用 #197 落地的
+    # _adjusted_close_panel：close×adj_factor，NULL/0/负回退 1.0），否则除权日
+    # （如 10送10 价格腰斩）raw close 跳变被计为真实盈亏，IC 衰减曲线系统性偏差
+    adj_close_panel = _adjusted_close_panel(history)
 
     ic_values: dict[int, float] = {}
     for lag in range(1, max_lag + 1):
-        return_panel = _compute_forward_returns(close_panel, lag).dropna(how="all")
+        return_panel = _compute_forward_returns(adj_close_panel, lag).dropna(how="all")
         if return_panel.empty:
             continue
         ic_series = compute_ic_series(factor_panel, return_panel, lag)

@@ -114,3 +114,50 @@ class TestComputeIcDecay:
         result = ic_decay.compute_ic_decay("f1", symbols, "2026-01-01", "2026-01-30", max_lag=3)
         assert isinstance(result, pd.Series)
         assert result.name == "ic_decay"
+
+
+class TestComputeIcDecayAdjustedClose218:
+    """#218：前向收益必须按复权价面板（close×adj_factor）计算。
+
+    修复前 ic_decay 以 raw close 面板调 _compute_forward_returns，除权日
+    （10送10 价格腰斩）跳变被计为真实盈亏，IC 衰减曲线系统性偏差。
+    修复复用 #197 在 backtest.py 落地的 _adjusted_close_panel（不重造）。
+    """
+
+    def test_forward_returns_use_adjusted_panel_218(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        # 构造除权事件：2026-01-06 起 10送10，raw close 20→10 腰斩，
+        # adj_factor 1→2（hfq 口径）→ 复权价 20→20 连续，无真实盈亏
+        dates = pd.date_range("2026-01-05", periods=4, freq="D")
+        raw_closes = [20.0, 10.0, 10.5, 11.0]
+        adj_factors = [1.0, 2.0, 2.0, 2.0]
+        rows = [
+            {
+                "trade_date": d, "symbol": "600010",
+                "open": c, "high": c, "low": c, "close": c,
+                "volume": 1000.0, "amount": 10000.0, "adj_factor": a,
+            }
+            for d, c, a in zip(dates, raw_closes, adj_factors)
+        ]
+        history = pd.DataFrame(rows).set_index(["symbol", "trade_date"]).sort_index()
+
+        class _FakeFactor:
+            def compute(self, data, **kwargs):
+                return pd.Series(1.0, index=data.index)
+
+        monkeypatch.setattr(ic_decay, "load_history", lambda symbols, start, end: history)
+        monkeypatch.setattr(ic_decay.FactorRegistry, "get", lambda fid: _FakeFactor)
+
+        captured: dict = {}
+        real_forward = ic_decay._compute_forward_returns
+
+        def _spy(panel, horizon):
+            captured.setdefault("panel", panel)
+            return real_forward(panel, horizon)
+
+        monkeypatch.setattr(ic_decay, "_compute_forward_returns", _spy)
+        ic_decay.compute_ic_decay("f1", ["600010"], "2026-01-05", "2026-01-08", max_lag=1)
+
+        panel = captured["panel"]
+        # 除权日（01-06）复权价 = 10.0×2.0 = 20.0（连续），非 raw close 10.0（腰斩）
+        assert panel.loc[pd.Timestamp("2026-01-06"), "600010"] == pytest.approx(20.0)
+        assert panel.loc[pd.Timestamp("2026-01-05"), "600010"] == pytest.approx(20.0)
