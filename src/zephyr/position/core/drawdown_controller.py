@@ -219,6 +219,10 @@ _BLACK_SWAN_CAP: dict[BlackSwanMode, float] = {
     BlackSwanMode.BS007_SYSTEMIC: 0.0,     # Kill Switch
 }
 
+# VaR breach 状态 → position_cap 乘性折扣 (36号 §3.15 协同表:
+# NORMAL×1.0 / BREACHED×0.8 / RECOVERY×0.9; 与回撤状态机正交, 乘性叠加)
+_VAR_BREACH_CAP_MULTIPLIER: Final = {"NORMAL": 1.0, "BREACHED": 0.8, "RECOVERY": 0.9}
+
 
 class StopLossType(str, Enum):
     """策略级止损类型。"""
@@ -473,6 +477,7 @@ class DrawdownController:
         var_cvar: VarCvarMetrics,
         black_swan: BlackSwanSignal | None = None,
         strategy_pnls: list[StrategyPnl] | None = None,
+        var_breach_state: str | None = None,
     ) -> DrawdownResponse:
         """综合评估产出分级响应指令。
 
@@ -481,16 +486,21 @@ class DrawdownController:
             var_cvar: VaR/CVaR 指标
             black_swan: 黑天鹅信号(可选, 缺省无黑天鹅)
             strategy_pnls: 策略级 PnL 列表(可选)
+            var_breach_state: VaR breach 状态机当前状态(可选, 36号 §3.15:
+                "NORMAL"/"BREACHED"/"RECOVERY" 或 VarBreachState 枚举;
+                None=未接线不加折扣; BREACHED×0.8 / RECOVERY×0.9 乘性折扣
+                作用于系统性风险仓位上限, 与回撤状态机正交乘性叠加)
 
         Returns:
             DrawdownResponse (取最严的仓位上限 + 动作列表)
 
         Raises:
-            InvalidDrawdownControlError: 输入数据非法
+            InvalidDrawdownControlError: 输入数据非法(含未知 var_breach_state)
         """
         self._validate(drawdown_info, var_cvar)
         black_swan = black_swan or BlackSwanSignal()
         strategy_pnls = strategy_pnls or []
+        breach_state_key, breach_multiplier = self._var_breach_multiplier(var_breach_state)
 
         # 1. 系统性风险级别
         risk_level = self._evaluate_risk_level(var_cvar)
@@ -501,8 +511,9 @@ class DrawdownController:
         # 4. 回撤回补恢复
         recovery_factor = self._evaluate_recovery(drawdown_info)
 
-        # 5. 取最严仓位上限
-        caps = [risk_level.position_cap]
+        # 5. 取最严仓位上限 (36号 §3.15 E3: base_cap = 风险级 cap × breach 折扣
+        #    → 与黑天鹅 cap 取 min → × 回撤恢复系数, 下限 max(0.0))
+        caps = [risk_level.position_cap * breach_multiplier]
         if bs_cap >= 0:  # -1 表示外部决定, 不参与取严
             caps.append(bs_cap)
         if kill_advised:
@@ -518,6 +529,11 @@ class DrawdownController:
         actions = self._build_actions(
             risk_level, strategy_stops, black_swan, kill_advised, recovery_factor
         )
+        if breach_multiplier < 1.0:
+            actions.append(
+                f"VaR breach 状态 {breach_state_key}: 仓位上限乘性折扣 "
+                f"×{breach_multiplier:.2f} (36号 §3.15)"
+            )
 
         return DrawdownResponse(
             risk_level=risk_level,
@@ -529,6 +545,23 @@ class DrawdownController:
             kill_switch_advised=kill_advised,
             recovery_factor=recovery_factor,
         )
+
+    @staticmethod
+    def _var_breach_multiplier(var_breach_state: object) -> tuple[str, float]:
+        """36号 §3.15 乘性折扣: NORMAL×1.0 / BREACHED×0.8 / RECOVERY×0.9。
+
+        None=未接线(×1.0 不加折扣); 接受字符串或 VarBreachState 枚举
+        (str mixin, 经 .value 归一); 未知值 fail-closed 抛错。
+        """
+        if var_breach_state is None:
+            return "NORMAL", 1.0
+        key = str(getattr(var_breach_state, "value", var_breach_state)).upper()
+        if key not in _VAR_BREACH_CAP_MULTIPLIER:
+            raise InvalidDrawdownControlError(
+                f"未知 var_breach_state: {var_breach_state!r} "
+                f"(合法值: NORMAL/BREACHED/RECOVERY)"
+            )
+        return key, _VAR_BREACH_CAP_MULTIPLIER[key]
 
     # ── 内部: 系统性风险级别 ──
 

@@ -140,6 +140,7 @@ from pathlib import Path
 from typing import Any, Final
 
 from zephyr.risk.core.risk_decomposition import DecompositionResult
+from zephyr.risk.core.var_backtester import BacktestObservation, VarBacktester
 from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
@@ -159,6 +160,9 @@ __all__: Final = [
     "AuditRequest",
     "DailyAuditor",
     "InvalidAuditInputError",
+    "VarBacktestReport",
+    "VAR_BACKTEST_MIN_SAMPLES",
+    "VAR_BACKTEST_LOW_POWER_SAMPLES",
 ]
 
 logger = logging.getLogger(__name__)
@@ -627,6 +631,37 @@ class AuditRequest:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# VaR 回测综合定级报告 (36号 §3.11 集成包装层)
+# ──────────────────────────────────────────────────────────────────────────────
+
+#: run_var_backtest 最少样本数（n<30 跳过回测强制 PASS，§3.10 样本不足处理表）
+VAR_BACKTEST_MIN_SAMPLES: Final = 30
+#: 低检验力窗口上界（30≤n<60 仅 E-backtesting 参与定级，传统 3 法标记 low_power）
+VAR_BACKTEST_LOW_POWER_SAMPLES: Final = 60
+
+
+@dataclass(frozen=True)
+class VarBacktestReport:
+    """VaR 回测综合定级报告 (36号 §3.11, daily_auditor 集成包装层产出)。
+
+    Attributes:
+        trade_date: 交易日
+        action: 综合定级 (PASS / RECALIBRATE / REBUILD, §3.10 三档响应)
+        reason: 定级理由 (命中信号人类可读摘要)
+        flags: 定级标记 (INSUFFICIENT_SAMPLE_SKIP / LOW_POWER_WARNING)
+        n_obs: 回测观测样本数
+        report: var_backtester.full_report 原始报告字典 (样本不足跳过时为 None)
+    """
+
+    trade_date: date
+    action: str
+    reason: str
+    flags: tuple[str, ...]
+    n_obs: int
+    report: dict[str, Any] | None
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # 日终审计器
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -1036,6 +1071,227 @@ class DailyAuditor:
             high_severity_count=high_count,
             generated_at=now,
         )
+
+    # ── 公开 API: VaR 回测综合定级 (36号 §3.11 集成包装层) ──
+
+    def run_var_backtest(
+        self,
+        trade_date: date,
+        observations: list[BacktestObservation],
+        backtester: VarBacktester | None = None,
+    ) -> VarBacktestReport:
+        """VaR/ES 回测综合定级 (36号 §3.11, 对齐 §3.10 三档矩阵)。
+
+        包装 var_backtester.full_report → PASS/RECALIBRATE/REBUILD:
+        - n < 30: 跳过回测, 强制 PASS + INSUFFICIENT_SAMPLE_SKIP (§3.10 样本不足表)
+        - 30 ≤ n < 60: 仅 E-backtesting 参与定级 + LOW_POWER_WARNING
+          (传统 3 法小样本检验力不足假阳性高, 标记 low_power 不参与 reject 判定)
+        - n ≥ 60: 全 4 法 + Basel 交通灯参与定级
+
+        定级矩阵 (§3.10 触发→动作映射对齐解读; §3.11 "overall_reject→REBUILD"
+        按 §3.10 矩阵吸收——单信号 reject 一律 RECALIBRATE, REBUILD 由
+        Basel red / E-backtesting black 严重信号承载):
+        - REBUILD: basel_zone=="red" 或 ebt_alert=="black"
+        - RECALIBRATE: basel_zone=="yellow" 或 kupiec/christoffersen/z2 reject
+          或 ebt_alert ∈ (yellow, red)
+        - 否则 PASS
+
+        校准动作执行 (RiskLayerOrchestrator.apply_var_backtest_action) 与
+        log_recalibration 审计留痕由调用方按 §3.10 D1 时序串联
+        (动作执行后立即补记), 本方法只产定级。
+        """
+        n_obs = len(observations)
+        if n_obs < VAR_BACKTEST_MIN_SAMPLES:
+            return VarBacktestReport(
+                trade_date=trade_date,
+                action="PASS",
+                reason=(
+                    f"样本 {n_obs} < {VAR_BACKTEST_MIN_SAMPLES}, 跳过回测强制 PASS "
+                    f"(min_history 下限, 回测无统计意义)"
+                ),
+                flags=("INSUFFICIENT_SAMPLE_SKIP",),
+                n_obs=n_obs,
+                report=None,
+            )
+        bt = backtester or VarBacktester()
+        report = bt.full_report(observations)
+        low_power = n_obs < VAR_BACKTEST_LOW_POWER_SAMPLES
+        action, reason = self._grade_var_backtest(report, low_power=low_power)
+        flags = ("LOW_POWER_WARNING",) if low_power else ()
+        logger.info(
+            "VAR_BACKTEST date=%s action=%s n_obs=%d flags=%s reason=%s",
+            trade_date.isoformat(),
+            action,
+            n_obs,
+            flags,
+            reason,
+        )
+        return VarBacktestReport(
+            trade_date=trade_date,
+            action=action,
+            reason=reason,
+            flags=flags,
+            n_obs=n_obs,
+            report=report,
+        )
+
+    @staticmethod
+    def _grade_var_backtest(report: dict[str, Any], *, low_power: bool) -> tuple[str, str]:
+        """full_report 字典 → (action, reason)。单项 error/缺失按不拒绝处理。"""
+        basel = report.get("basel_traffic_light") or {}
+        ebt = report.get("e_backtesting") or {}
+        basel_zone = basel.get("zone")
+        ebt_alert = ebt.get("alert_level")
+
+        if low_power:
+            # §3.10 样本不足表: 30≤n<60 仅 E-backtesting (anytime-valid 小样本友好) 参与定级
+            if ebt_alert == "black":
+                return "REBUILD", "low_power: E-backtesting black (决定性证据)"
+            if ebt_alert in ("yellow", "red"):
+                return "RECALIBRATE", f"low_power: E-backtesting {ebt_alert}"
+            return "PASS", "low_power: 仅 E-backtesting 参与定级, 未触发告警"
+
+        def _reject(key: str) -> bool:
+            sub = report.get(key) or {}
+            return bool(sub.get("reject", False))
+
+        if basel_zone == "red" or ebt_alert == "black":
+            return "REBUILD", f"严重信号: basel_zone={basel_zone} ebt_alert={ebt_alert}"
+        hits: list[str] = []
+        if basel_zone == "yellow":
+            hits.append("basel_yellow")
+        if _reject("kupiec_pof"):
+            hits.append("kupiec_reject")
+        if _reject("christoffersen"):
+            hits.append("christoffersen_reject")
+        if _reject("acerbi_szekely_z2"):
+            hits.append("z2_reject")
+        if ebt_alert in ("yellow", "red"):
+            hits.append(f"ebt_{ebt_alert}")
+        if hits:
+            return "RECALIBRATE", "校准信号: " + ",".join(hits)
+        return "PASS", "全 4 法 + Basel 未触发拒绝"
+
+    # ── 公开 API: clean/dirty P&L 双轨 (36号 §3.13) ──
+
+    def compute_clean_pnl(
+        self,
+        positions_prev: list[AuditPositionSnapshot],
+        positions_now: list[AuditPositionSnapshot],
+        fills: list[FillRecord],
+        *,
+        new_position_symbols: frozenset[str] | set[str] | None = None,
+    ) -> float:
+        """clean P&L (§3.13): 可平仓头寸已实现 + 未实现 MtM, 不含交易成本/融资/分红。
+
+        T+1 口径 (§3.13 T+1 表): new_position_symbols (当日新建仓标的) 的未实现
+        MtM 全部剔除——锁仓风险非可交易风险, 不纳入 VaR 回测; 不可平仓头寸当日
+        不可卖出无已实现, fills 已实现盈亏天然全属可平仓头寸。
+        MVP 近似: 标的级判定 (同日同标的旧仓+新仓混持时不拆 lot 级)。
+        持久化: backtest_store.save_pnl_dual (§3.18 阶段 4)。
+        """
+        recon = self.reconcile_pnl(positions_prev, positions_now, fills, nav=1.0)
+        locked_mtm = 0.0
+        if new_position_symbols:
+            for p in positions_now:
+                if p.symbol in new_position_symbols:
+                    # 当日新建仓: prev_close 缺省回退 avg_entry, MtM = qty×(close−entry)
+                    locked_mtm += p.qty * (p.close_price - p.avg_entry_price)
+        return recon.total_pnl - locked_mtm
+
+    def compute_dirty_pnl(
+        self,
+        positions_prev: list[AuditPositionSnapshot],
+        positions_now: list[AuditPositionSnapshot],
+        fills: list[FillRecord],
+    ) -> float:
+        """dirty P&L (§3.13): 全部头寸已实现 + 未实现 MtM − 交易成本 (实际盈亏口径)。
+
+        成本口径: FillRecord.cost 为费用正数 (佣金+滑点), 从 gross P&L 扣减;
+        融资成本/分红未建模 (MVP 范围外, 后续扩 FillRecord 字段)。
+        """
+        recon = self.reconcile_pnl(positions_prev, positions_now, fills, nav=1.0)
+        return recon.total_pnl - recon.total_cost
+
+    # ── 公开 API: VaR 审计日志 (36号 §3.11 跨文档契约, 35号 §3.15/§3.17) ──
+
+    @staticmethod
+    def _var_audit_record(event: str, trade_date: date, **fields: Any) -> dict[str, Any]:
+        rec = {
+            "event": event,
+            "trade_date": trade_date.isoformat(),
+            "logged_at": datetime.now(timezone.utc).isoformat(),
+        }
+        rec.update(fields)
+        return rec
+
+    def log_entry_var(
+        self,
+        trade_date: date,
+        entry_var: float,
+        *,
+        entry_es: float | None = None,
+    ) -> dict[str, Any]:
+        """记录入场 VaR 快照 (§3.4 入场基准; 35号 §3.11 持久化契约配套审计)。
+
+        持久化由 backtest_store.save_entry_var 承载 (§3.18 阶段 4b),
+        本方法只产审计日志记录。
+        """
+        rec = self._var_audit_record(
+            "entry_var", trade_date, entry_var=entry_var, entry_es=entry_es
+        )
+        logger.info(
+            "VAR_AUDIT entry_var date=%s entry_var=%.6f entry_es=%s",
+            trade_date.isoformat(),
+            entry_var,
+            entry_es,
+        )
+        return rec
+
+    def log_baseline(self, trade_date: date, var_95: float, es_95: float) -> dict[str, Any]:
+        """记录当日 VaR/ES 基线 (供次日回撤归因对比 + §3.12 盘中重算对比)。"""
+        rec = self._var_audit_record("baseline", trade_date, var_95=var_95, es_95=es_95)
+        logger.info(
+            "VAR_AUDIT baseline date=%s var_95=%.6f es_95=%.6f",
+            trade_date.isoformat(),
+            var_95,
+            es_95,
+        )
+        return rec
+
+    def log_recalibration(self, trade_date: date, action: str, reason: str) -> dict[str, Any]:
+        """记录校准/重构事件 (§3.10 D1 审计追溯)。
+
+        action ∈ RECALIBRATE / REBUILD / RECOVERED_FROM_REBUILD:
+        - REBUILD → CRITICAL (模型不可用, 人工审查)
+        - RECALIBRATE → WARNING
+        - 其他 (含 RECOVERED_FROM_REBUILD) → INFO
+        """
+        action_norm = action.upper()
+        rec = self._var_audit_record(
+            "recalibration", trade_date, action=action_norm, reason=reason
+        )
+        if action_norm == "REBUILD":
+            logger.critical(
+                "VAR_AUDIT recalibration date=%s action=REBUILD reason=%s",
+                trade_date.isoformat(),
+                reason,
+            )
+        elif action_norm == "RECALIBRATE":
+            logger.warning(
+                "VAR_AUDIT recalibration date=%s action=RECALIBRATE reason=%s",
+                trade_date.isoformat(),
+                reason,
+            )
+        else:
+            logger.info(
+                "VAR_AUDIT recalibration date=%s action=%s reason=%s",
+                trade_date.isoformat(),
+                action_norm,
+                reason,
+            )
+        return rec
+
 
     # ── 内部: 单项限额检查 ──
 

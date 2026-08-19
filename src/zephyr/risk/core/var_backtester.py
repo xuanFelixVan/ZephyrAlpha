@@ -185,14 +185,23 @@ class BacktestObservation:
         var_forecast: VaR 预测值（正数表示潜在损失额，与 VaRResult.value 一致）
         es_forecast: ES 预测值（正数表示潜在损失额，≥ var_forecast）
         realized_return: 实际收益（负数=损失，正数=盈利）
+        pnl_type: P&L 双轨标记（36号 §3.13 契约，默认 "clean"）——回测验证
+            只接受 clean P&L（模型纯度检验），"dirty" 构造即拒绝
+            （dirty 含交易成本/锁仓 MtM，会污染检验）
     """
 
     date: datetime
     var_forecast: float
     es_forecast: float
     realized_return: float
+    pnl_type: str = "clean"
 
     def __post_init__(self) -> None:
+        if self.pnl_type != "clean":
+            raise InvalidBacktestInputError(
+                f"pnl_type 必须为 'clean'（dirty P&L 会污染模型纯度检验，36号 §3.13），"
+                f"得到 {self.pnl_type!r}"
+            )
         if self.var_forecast < 0:
             raise InvalidBacktestInputError(
                 f"var_forecast 必须 ≥0（正数表示损失），得到 {self.var_forecast}"

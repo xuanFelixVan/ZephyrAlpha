@@ -18,6 +18,7 @@
 # I2: DrawdownController/VaRCalculator/TailRiskMonitor/DrawdownTracker(既有风控组件实例)
 # I3: broker(券商接口, 启动恢复查询+清算执行) + reconciler(持仓对账器)
 # I4: rollback_metrics_provider(五态机指标: intraday_dd/daily_loss/reject_rate/trade_count/p0_event) + state_store(姿态持久化)
+# I5: fhs_engine(36号§3.16 FHS引擎,可选) + var_breach_machine(36号§3.15 VaR breach状态机,可选)
 # F1: recover_from_broker(以券商持仓为准重建账本, 重建完成前 is_trading_allowed=False)
 # F2: evaluate_intraday(净值→回撤追踪→收益序列→VaR/ES→DrawdownController.evaluate→position_cap)
 # F3: evaluate_intraday 内嵌系统性风险评估(systemic_input_provider→MOD-RK-10 detector.check→三级警报→37号§3.6降级机)
@@ -26,7 +27,8 @@
 # A2: start/stop_reconcile_loop(盘中定时对账, 蓝图MOD-EX-056阶段2规划位, 默认300s)
 # A3: _evaluate_systemic_risk(LEVEL_3→build_escape_directive→_engage_kill_switch; 降级候选→check_recovery门禁)
 # A4: apply_var_backtest_action(36号§3.10三档校准执行者: RECALIBRATE→组件update_config探针(缺失即skipped留痕); REBUILD→静态VaR3%/CVaR5%映射+UNAVAILABLE持久化, clear_var_model_unavailable业主确认恢复)
-# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level/rollback_state/var_model_status) + RecoveryResult + 清算报告
+# A5: FHS编排(36号§3.16: should_switch_to_fhs三触发+10日冷却/3次永久禁用→try_activate_fhs→evaluate_intraday FHS产出链, 不收敛/失效自动回退既有链记失败; note_fhs_backtest_verdict次日裁决PASS保留) + var_breach_state乘性折扣注入evaluate
+# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level/rollback_state/var_model_status/fhs_active) + RecoveryResult + 清算报告
 # [/ALGO_FLOW]
 """D_EX_CORE — 风控层运行时编排器（Risk Layer Orchestrator）
 双轮审查裁定书 §六 P0 风控接线批（#ARCH-100，AI-RWIRE-001 施工）：
@@ -75,6 +77,17 @@
      不再依赖 var_calculator 动态计算）+ state_store 持久化 UNAVAILABLE
      标记（盘前初始化读取续存）；clear_var_model_unavailable 业主确认恢复
      （36 号 REBUILD→恢复流程③，未确认 PermissionError）
+  8. FHS 编排层接线 + VaR breach 状态机注入（36 号 §3.16 tracker #147 +
+     36 号 §3.15，AI-NIGHT-001 包J）：fhs_engine 注入即可切换——
+     should_switch_to_fhs 三触发（Christoffersen 独立性失败 / 连续 2 次
+     E-backtesting red / 盘中重算显著连续 3 日）→ try_activate_fhs →
+     evaluate_intraday 起 FHS 产出 VaR/ES（尾部告警链保持）；GARCH 不收敛
+     或 compute 失效 → 自动回退既有链 + 记失败（10 日冷却期，同日去重，
+     累计 3 次 FHS_PERMANENTLY_DISABLED）；note_fhs_backtest_verdict 次日
+     裁决（PASS 保留 / RECALIBRATE/REBUILD 切回记失败）；切换状态经
+     state_store 持久化（损坏 fail-closed 永久禁用）。var_breach_machine
+     注入即经 controller.evaluate(var_breach_state=...) 乘性折扣
+     （BREACHED×0.8/RECOVERY×0.9），日迁移由调用方盘前驱动 transition。
 
 边界（并发会话 AI-RRESIL-001）：DefaultRiskValidator / fill_handler /
 PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
@@ -84,6 +97,7 @@ PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
 # I2: DrawdownController/VaRCalculator/TailRiskMonitor/DrawdownTracker(既有风控组件实例)
 # I3: broker(券商接口, 启动恢复查询+清算执行) + reconciler(持仓对账器)
 # I4: rollback_metrics_provider(五态机指标: intraday_dd/daily_loss/reject_rate/trade_count/p0_event) + state_store(姿态持久化)
+# I5: fhs_engine(36号§3.16 FHS引擎,可选) + var_breach_machine(36号§3.15 VaR breach状态机,可选)
 # F1: recover_from_broker(以券商持仓为准重建账本, 重建完成前 is_trading_allowed=False)
 # F2: evaluate_intraday(净值→回撤追踪→收益序列→VaR/ES→DrawdownController.evaluate→position_cap)
 # F3: evaluate_intraday 内嵌系统性风险评估(systemic_input_provider→MOD-RK-10 detector.check→三级警报→37号§3.6降级机)
@@ -92,7 +106,8 @@ PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
 # A2: start/stop_reconcile_loop(盘中定时对账, 蓝图MOD-EX-056阶段2规划位, 默认300s)
 # A3: _evaluate_systemic_risk(LEVEL_3→build_escape_directive→_engage_kill_switch; 降级候选→check_recovery门禁)
 # A4: apply_var_backtest_action(36号§3.10三档校准执行者: RECALIBRATE→组件update_config探针(缺失即skipped留痕); REBUILD→静态VaR3%/CVaR5%映射+UNAVAILABLE持久化, clear_var_model_unavailable业主确认恢复)
-# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level/rollback_state/var_model_status) + RecoveryResult + 清算报告
+# A5: FHS编排(36号§3.16: should_switch_to_fhs三触发+10日冷却/3次永久禁用→try_activate_fhs→evaluate_intraday FHS产出链, 不收敛/失效自动回退既有链记失败; note_fhs_backtest_verdict次日裁决PASS保留) + var_breach_state乘性折扣注入evaluate
+# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level/rollback_state/var_model_status/fhs_active) + RecoveryResult + 清算报告
 # [/ALGO_FLOW]
 （ALGO_FLOW 双位镜像：docstring 内本块=GATE-ALGO-FLOW 门禁 AST 读取真源，文件头注区为人工速览镜像——
 2026-08-18 第八统筹恢复 docstring 副本：AI-R2-001 删副本治本时未识门禁读取口径，头注区镜像门禁不可见）
@@ -107,7 +122,7 @@ import uuid
 from collections import deque
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import Any, Final, Protocol
 
@@ -139,6 +154,7 @@ from zephyr.risk.core.drawdown_tracker import (
     DrawdownSnapshot,
     DrawdownTracker,
 )
+from zephyr.risk.core.fhs_engine import FHSEngine
 from zephyr.risk.core.liquidity_crisis_manager import (
     LiquidityRecoveryState,
     RecoveryCheckInput,
@@ -149,6 +165,7 @@ from zephyr.risk.core.tail_risk_monitor import (
     TailRiskMonitor,
     TailRiskSnapshot,
 )
+from zephyr.risk.core.var_breach_state_machine import VarBreachStateMachine
 from zephyr.risk.core.var_calculator import VaRCalculator
 from zephyr.risk.stop_loss import (
     execute_kill_switch_liquidation,
@@ -245,6 +262,8 @@ class RiskLayerSnapshot:
         rollback_escalated: 本轮是否发生单向更保守迁移（留痕审计）
         var_model_status: VaR 模型口径（DYNAMIC=动态计算；STATIC_REBUILD=36 号
             §3.10 REBUILD 静态映射 VaR 3%/CVaR 5%）
+        fhs_active: FHS 产出口径是否生效（36 号 §3.16：True=本轮 VaR/ES 由
+            fhs_engine GARCH 残差重采样产出；False=var_calculator 既有链）
     """
 
     timestamp: datetime
@@ -270,6 +289,7 @@ class RiskLayerSnapshot:
     rollback_halt: bool = False
     rollback_escalated: bool = False
     var_model_status: str = "DYNAMIC"
+    fhs_active: bool = False
 
     @property
     def position_cap(self) -> float:
@@ -377,6 +397,10 @@ _ROLLBACK_HALT_STATES: Final = frozenset(
 )
 # 36 号 §3.10 REBUILD 动作1 持久化命名空间（var 模型 UNAVAILABLE 标记）
 _VAR_MODEL_STATUS_NAMESPACE: Final = "var_model_status"
+# 36 号 §3.16 FHS 切换状态持久化命名空间 + 冷却期参数
+_FHS_STATE_NAMESPACE: Final = "fhs_switch_state"
+FHS_COOLDOWN_DAYS: Final = 10
+FHS_MAX_FAILURES_BEFORE_DISABLE: Final = 3
 
 
 @dataclass(frozen=True)
@@ -419,6 +443,9 @@ class RiskLayerOrchestrator:
                 "intraday_dd": ..., "daily_loss": ..., "reject_rate": ...,
                 "trade_count": ...,
             },
+            # 可选：FHS 编排（36 号 §3.16，tracker #147）+ VaR breach 状态机（§3.15）
+            fhs_engine=FHSEngine(),
+            var_breach_machine=VarBreachStateMachine.load(state_store),
         )
         session = TradingSession(..., risk_layer=orchestrator)
         session.start()  # 内部先 recover_from_broker，完成前禁止下单
@@ -443,6 +470,8 @@ class RiskLayerOrchestrator:
         systemic_detector: AshareSystemicRiskDetector | None = None,
         systemic_input_provider: Callable[[], Mapping[str, Any] | None] | None = None,
         rollback_metrics_provider: Callable[[], Mapping[str, Any] | None] | None = None,
+        fhs_engine: FHSEngine | None = None,
+        var_breach_machine: VarBreachStateMachine | None = None,
         config: RiskLayerConfig | None = None,
         clock: Callable[[], datetime] | None = None,
         state_store: JsonStateStore | None = None,
@@ -459,6 +488,12 @@ class RiskLayerOrchestrator:
         self._systemic_detector = systemic_detector
         self._systemic_input_provider = systemic_input_provider
         self._rollback_metrics_provider = rollback_metrics_provider
+        # 36 号 §3.16 FHS 编排层接线（tracker #147）：引擎注入即可切换；
+        # 切换裁决（三触发+冷却期）走 should_switch_to_fhs/try_activate_fhs
+        self._fhs_engine = fhs_engine
+        # 36 号 §3.15 VaR breach 状态机（×0.8/×0.9 乘性折扣）：注入即经
+        # controller.evaluate(var_breach_state=...) 生效，日迁移由调用方盘前驱动
+        self._var_breach_machine = var_breach_machine
         self._config = config or RiskLayerConfig()
         self._clock = clock or (lambda: datetime.now(UTC))
         # Crash-only 状态外部化（AI-R3 复审 P1 治本）：贯穿 trigger→liquidation
@@ -510,6 +545,30 @@ class RiskLayerOrchestrator:
                     isinstance(_var_status_rec, dict)
                     and _var_status_rec.get("status") == "UNAVAILABLE"
                 )
+        # 36 号 §3.16 FHS 切换状态持久化续存（冷却期跨日计数+启用态恢复）；
+        # 损坏 → fail-closed 永久禁用（FHS 为增强层，禁用=回退 Phase 1
+        # historical 保守方向，不阻断既有 var 链）
+        self._fhs_active = False
+        self._fhs_permanently_disabled = False
+        self._fhs_failure_count = 0
+        self._fhs_last_failure_date: str | None = None
+        if fhs_engine is not None and state_store is not None:
+            try:
+                _fhs_rec = state_store.load(_FHS_STATE_NAMESPACE)
+            except Exception:  # noqa: BLE001 — 损坏读取 fail-closed 永久禁用（保守口径）
+                self._fhs_permanently_disabled = True
+                _logger.critical(
+                    "fhs_switch_state 状态读取损坏，fail-closed 按 FHS_PERMANENTLY_DISABLED 运行",
+                    exc_info=True,
+                )
+            else:
+                if isinstance(_fhs_rec, dict):
+                    self._fhs_active = bool(_fhs_rec.get("active", False))
+                    self._fhs_permanently_disabled = bool(
+                        _fhs_rec.get("permanently_disabled", False)
+                    )
+                    self._fhs_failure_count = int(_fhs_rec.get("failure_count", 0) or 0)
+                    self._fhs_last_failure_date = _fhs_rec.get("last_failure_date")
 
         # EMERGENCY 监听链（E-RK-03）：级别变化去抖由 tracker 保证
         self._tracker.on_drawdown_alerted(self._on_drawdown_alerted)
@@ -623,8 +682,10 @@ class RiskLayerOrchestrator:
         tail_snapshot: TailRiskSnapshot | None = None
         degraded = False
         degrade_reason = ""
+        fhs_pair: tuple[float, float] | None = None  # 36 号 §3.16 FHS 产出对（未走 FHS 链=None）
         with self._lock:
             var_model_unavailable = self._var_model_unavailable
+            fhs_active = self._fhs_active
         if var_model_unavailable:
             # 36 号 §3.10 REBUILD 静态映射（编排层兜底，不依赖组件
             # force_static_mode 落地）：VaR 3%/CVaR 5% 固定口径喂 controller
@@ -632,11 +693,31 @@ class RiskLayerOrchestrator:
             var_pct = self._config.rebuild_static_var_pct
             es_pct = max(self._config.rebuild_static_cvar_pct, var_pct)
         elif len(returns) >= self._config.min_samples_for_var:
+            # 36 号 §3.16 FHS 产出口径（启用且引擎注入时）：GARCH 残差重采样
+            # 产出 VaR/ES；不收敛（引擎内部回退 historical）或 compute 失效
+            # → 记切换失败（冷却期）并回退既有 var_calculator 链
+            if fhs_active and self._fhs_engine is not None:
+                try:
+                    fhs_result = self._fhs_engine.compute(returns, portfolio_value=nav, now=now)
+                except Exception:  # noqa: BLE001 — FHS 失效回退既有链，保守语义不受影响
+                    _logger.exception("FHS compute 失效，本轮回退 var_calculator 链并记 FHS 切换失败")
+                    self._record_fhs_failure("fhs_compute_error", now.date())
+                else:
+                    fhs_pair = (fhs_result.var_pct, max(fhs_result.es_pct, fhs_result.var_pct))
+                    if not fhs_result.garch_converged:
+                        # GARCH 不收敛 → 切换失败：本轮用引擎 historical 回退值，
+                        # 下一轮起回既有链（36 号 §3.16 回退+标记不可用）
+                        self._record_fhs_failure("garch_not_converged", now.date())
             try:
-                var_result = self._var_calc.calculate(returns, portfolio_value=nav, now=now)
-                tail_snapshot = self._tail_monitor.assess(returns, portfolio_value=nav, now=now)
-                var_pct = var_result.value_pct
-                es_pct = tail_snapshot.expected_shortfall / nav if nav > 0 else None
+                if fhs_pair is not None:
+                    var_pct, es_pct = fhs_pair
+                    # 尾部告警链保持（EMERGENCY → 熔断仲裁点不受 FHS 切换影响）
+                    tail_snapshot = self._tail_monitor.assess(returns, portfolio_value=nav, now=now)
+                else:
+                    var_result = self._var_calc.calculate(returns, portfolio_value=nav, now=now)
+                    tail_snapshot = self._tail_monitor.assess(returns, portfolio_value=nav, now=now)
+                    var_pct = var_result.value_pct
+                    es_pct = tail_snapshot.expected_shortfall / nav if nav > 0 else None
             except Exception as exc:  # noqa: BLE001 — 评估失效降级，保留回撤链保护
                 degraded = True
                 degrade_reason = f"var_es_eval_error:{exc}"
@@ -659,6 +740,13 @@ class RiskLayerOrchestrator:
                         ),
                     ),
                     var_cvar=VarCvarMetrics(var_95=var_pct, cvar_95=max(es_pct, var_pct)),
+                    # 36 号 §3.15：VaR breach 状态机 ×0.8/×0.9 乘性折扣（注入即生效，
+                    # 日迁移由调用方盘前驱动 transition，本层只读当前状态）
+                    var_breach_state=(
+                        self._var_breach_machine.state
+                        if self._var_breach_machine is not None
+                        else None
+                    ),
                 )
             except Exception as exc:  # noqa: BLE001 — 响应合成失效降级，回撤链仍生效
                 degraded = True
@@ -699,6 +787,7 @@ class RiskLayerOrchestrator:
             rollback_halt=rollback.halt if rollback is not None else False,
             rollback_escalated=rollback.escalated if rollback is not None else False,
             var_model_status="STATIC_REBUILD" if var_model_unavailable else "DYNAMIC",
+            fhs_active=fhs_pair is not None,
         )
         with self._lock:
             self._latest = snapshot
@@ -1184,6 +1273,166 @@ class RiskLayerOrchestrator:
         """var 模型是否处于 REBUILD 静态映射态（36 号 §3.10）。"""
         with self._lock:
             return self._var_model_unavailable
+
+    # ------------------------------------------------------------------
+    # FHS 编排层接线（36 号 §3.16，tracker #147：三触发 + 冷却期）
+    # ------------------------------------------------------------------
+
+    def should_switch_to_fhs(
+        self,
+        *,
+        christoffersen_lr_ind_p: float | None = None,
+        kupiec_p: float | None = None,
+        ebt_red_streak: int = 0,
+        intraday_significant_streak: int = 0,
+        today: date | None = None,
+    ) -> bool:
+        """36 号 §3.16 D12 FHS 切换三触发（任一满足即切换）。
+
+        触发条件：
+          1. Christoffersen 独立性失败（lr_ind_p < 0.05 且 kupiec_p ≥ 0.05——
+             覆盖率正确但超限聚集，需 GARCH 残差重采样破自相关）
+          2. 连续 2 次回测 E-backtesting red（ebt_red_streak ≥ 2，波动率时变结构）
+          3. 盘中重算显著连续 3 日（intraday_significant_streak ≥ 3，§3.12
+             intraday_recalc_significant，盘前 VaR 对盘中 vol regime shift 响应不足）
+
+        冷却期（§3.16）：上次切换失败后 FHS_COOLDOWN_DAYS(10) 内直接 False +
+        log_fhs_cooldown_active（交易日历未接入，按自然日近似）；
+        永久禁用/已启用/引擎未注入 → False。
+        """
+        if self._fhs_engine is None or self._fhs_active:
+            return False
+        with self._lock:
+            permanently_disabled = self._fhs_permanently_disabled
+            last_failure_date = self._fhs_last_failure_date
+        if permanently_disabled:
+            return False
+        day = today or self._clock().date()
+        if last_failure_date is not None:
+            try:
+                last = date.fromisoformat(last_failure_date)
+            except ValueError:
+                last = None
+            if last is not None and 0 <= (day - last).days < FHS_COOLDOWN_DAYS:
+                _logger.info(
+                    "log_fhs_cooldown_active: 距上次失败 %d 日 < %d，禁止 FHS 切换",
+                    (day - last).days,
+                    FHS_COOLDOWN_DAYS,
+                )
+                return False
+        trigger1 = (
+            christoffersen_lr_ind_p is not None
+            and christoffersen_lr_ind_p < 0.05
+            and (kupiec_p is None or kupiec_p >= 0.05)
+        )
+        return trigger1 or ebt_red_streak >= 2 or intraday_significant_streak >= 3
+
+    def try_activate_fhs(self, *, reason: str = "") -> dict[str, Any]:
+        """尝试启用 FHS（should_switch_to_fhs True 后由编排驱动调用，§3.16 切换流程 1）。
+
+        启用后下一轮 evaluate_intraday 起由 fhs_engine.compute 产出 VaR/ES；
+        GARCH 收敛性在实盘 compute 时验证——不收敛（引擎内部回退 historical）
+        或 compute 失效 → 自动回退既有链 + 记切换失败（冷却期，同日去重）。
+        """
+        if self._fhs_engine is None:
+            return {"activated": False, "reason": "fhs_engine 未注入"}
+        with self._lock:
+            if self._fhs_active:
+                return {"activated": False, "reason": "FHS 已启用"}
+            if self._fhs_permanently_disabled:
+                return {"activated": False, "reason": "FHS_PERMANENTLY_DISABLED"}
+            self._fhs_active = True
+        self._persist_fhs_state()
+        _logger.warning("FHS_SWITCH activated reason=%s（下一轮 evaluate_intraday 起生效）", reason)
+        return {"activated": True, "reason": reason}
+
+    def note_fhs_backtest_verdict(self, action: str, *, today: date | None = None) -> dict[str, Any]:
+        """次日回测验证裁决（§3.16 切换流程 4）：PASS 保留；RECALIBRATE/REBUILD
+        切回既有链 + 记切换失败（冷却期）。"""
+        action_norm = action.upper()
+        with self._lock:
+            active = self._fhs_active
+        if not active:
+            return {"fhs_active": False, "verdict": action_norm, "reason": "FHS 未启用，裁决不适用"}
+        if action_norm == "PASS":
+            _logger.info("FHS_SWITCH verdict=PASS，保留 FHS 产出口径")
+            return {"fhs_active": True, "verdict": action_norm}
+        self._deactivate_fhs(f"backtest_verdict_{action_norm}", today)
+        return {
+            "fhs_active": False,
+            "verdict": action_norm,
+            "reason": "次日回测未过，切回既有链 + 记 FHS 切换失败",
+        }
+
+    def _deactivate_fhs(self, reason: str, today: date | None = None) -> None:
+        """停用 FHS 并记一次切换失败（冷却期计数入口）。"""
+        self._record_fhs_failure(reason, today or self._clock().date())
+
+    def _record_fhs_failure(self, reason: str, day: date) -> None:
+        """记一次 FHS 切换失败（§3.16 冷却期）：同日去重计数；累计
+        FHS_MAX_FAILURES_BEFORE_DISABLE(3) 次 → FHS_PERMANENTLY_DISABLED。"""
+        day_str = day.isoformat()
+        with self._lock:
+            self._fhs_active = False
+            if self._fhs_last_failure_date == day_str:
+                count = self._fhs_failure_count  # 同日多次失败不重复计数（状态仍落盘）
+            else:
+                self._fhs_last_failure_date = day_str
+                self._fhs_failure_count += 1
+                count = self._fhs_failure_count
+                if count >= FHS_MAX_FAILURES_BEFORE_DISABLE:
+                    self._fhs_permanently_disabled = True
+        if count >= FHS_MAX_FAILURES_BEFORE_DISABLE:
+            _logger.critical(
+                "FHS_PERMANENTLY_DISABLED: 累计 %d 次切换失败（reason=%s），不再尝试切换，"
+                "仅用既有链 + §3.10 RECALIBRATE 动作 1/2 替代",
+                count,
+                reason,
+            )
+        else:
+            _logger.warning(
+                "FHS_SWITCH failure #%d reason=%s，冷却 %d 日（36 号 §3.16）",
+                count,
+                reason,
+                FHS_COOLDOWN_DAYS,
+            )
+        self._persist_fhs_state()
+
+    def _persist_fhs_state(self) -> None:
+        """FHS 切换状态落盘（state_store 缺失=仅内存态；落盘失败不阻断主循环）。"""
+        if self._state_store is None:
+            return
+        with self._lock:
+            payload = {
+                "active": self._fhs_active,
+                "permanently_disabled": self._fhs_permanently_disabled,
+                "failure_count": self._fhs_failure_count,
+                "last_failure_date": self._fhs_last_failure_date,
+                "updated_at": self._clock().isoformat(),
+            }
+        try:
+            self._state_store.save(_FHS_STATE_NAMESPACE, payload)
+        except Exception:  # noqa: BLE001 — 持久化故障不阻断调仓主循环（重启 fail-closed 重载）
+            _logger.exception("fhs_switch_state 持久化失败（内存态已更新）")
+
+    @property
+    def fhs_active(self) -> bool:
+        """FHS 产出口径是否启用（36 号 §3.16）。"""
+        with self._lock:
+            return self._fhs_active
+
+    @property
+    def fhs_status(self) -> dict[str, Any]:
+        """FHS 切换状态观测（启用态/永久禁用/冷却计数/上次失败日）。"""
+        with self._lock:
+            return {
+                "engine_injected": self._fhs_engine is not None,
+                "active": self._fhs_active,
+                "permanently_disabled": self._fhs_permanently_disabled,
+                "failure_count": self._fhs_failure_count,
+                "last_failure_date": self._fhs_last_failure_date,
+                "cooldown_days": FHS_COOLDOWN_DAYS,
+            }
 
     # ------------------------------------------------------------------
     # EMERGENCY 监听链 + 熔断单一仲裁点
