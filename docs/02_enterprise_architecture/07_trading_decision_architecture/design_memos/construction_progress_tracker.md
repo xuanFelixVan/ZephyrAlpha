@@ -515,6 +515,17 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 184 | S4 接管态豁免 | generate_directory_init 遇 ALGO_FLOW 直接 SKIP——S4 注入 docstring 内 ALGO_FLOW 排版生成器无法复刻，幂等性由 S4 reconciler 负责（io/__init__.py 实证）；既有导出模块并集（`existing_mods`）防单契约模式丢兄弟模块导出 | ✅ 已闭环 |
 | 185 | 验证 | 重跑生成器 diff=零（34 文件）+ruff 六码全绿+两轮测试全绿（457 passed）+C 门禁自验通过 | ✅ 已闭环 |
 
+### P1-补25 · 2026-08-19 #ARCH-131 治本（BLUEPRINT-AMODULE-CROSS-CHECK normalize 过度阻断，2284 文件误判）
+
+> #ARCH-130 P0-A 施工连带发现：删 [A_module] 行时触发门禁硬阻断，全仓扫描发现 2284 文件 [BLUEPRINT]==[A_module] 完全相同（同模块同拼写，项目惯例）被误判为双拼写违规。裁定：normalize 相等≠双拼写，修正判定逻辑。
+
+| # | 项 | 内容 | 状态 |
+|---|---|---|---|
+| 186 | 门禁判定修正 | blueprint_amodule_cross_check_gate.py：原逻辑 normalize 相等即阻断→改为 `bp != am and normalize(bp)==normalize(am)`（仅原始不同但 normalize 相等才阻断）。同模块同拼写（bp==am）放行——SSoT 一致非违规 | ✅ 已闭环 |
+| 187 | 单测补充 | test_same_spelling_pass：bp==am=MOD-INF-016 完全相同→无违规（2284 文件惯例合法化） | ✅ 已闭环（27/27 全绿） |
+| 188 | fix_header_module_id 豁免 | codegen 产物 SKIP——生成器模板直出头注是唯一合法上游，本脚本注入 [A_module] 会被重跑回退 | ✅ 已闭环 |
+| 189 | ARCH 登记 | #ARCH-131 登记 architecture_issue_registry.yaml（第一性原理裁定：双拼写的"双"=存在两种不同拼写，bp==am 不存在"双"） | ✅ 已闭环 |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |

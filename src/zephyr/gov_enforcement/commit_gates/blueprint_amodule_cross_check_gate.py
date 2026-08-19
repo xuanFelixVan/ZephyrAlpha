@@ -5,7 +5,10 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py 文件 added 行含 [BLUEPRINT] 和 [A_module] 两头部时，若两值 normalize 后相等（仅 DASH/UNDERSCORE 差异）则阻断（同模块双拼写违规）；tests/豁免；docstring 行豁免；git diff 不可达 fail-open；检出违规则 fail-closed 阻断
+# [INVARIANTS] 硬阻断——staged .py 文件 added 行含 [BLUEPRINT] 和 [A_module] 两头部时，
+# 若两值原始字符串不同但 normalize 后相等（DASH/UNDERSCORE 差异）则阻断（同模块双拼写违规）；
+# 两值完全相同（同模块同拼写，项目 2284 文件惯例）放行；
+# tests/豁免；docstring 行豁免；git diff 不可达 fail-open；检出违规则 fail-closed 阻断
 # [MODIFY-GUARD] gate_id="BLUEPRINT-AMODULE-CROSS-CHECK"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；diff-based 只检测 added 行
 # [STABILITY] stable
 # [SAFETY] L
@@ -32,8 +35,10 @@ vs [A_module]=MOD-GOV-error_pattern_library），造成同模块双拼写，违�
 --------
 1. 提取 staged .py 文件前 20 行的 [BLUEPRINT] module_id（第 1 段）
 2. 提取 [A_module] module_id（module_id=VALUE）
-3. 若两值都存在且 normalize 后相等（`_` 和 `-` 统一为 `-`），则阻断
-4. 若两值指向不同模块（如 bp=MOD-GATE_ENGINE, am=MOD-GOV-xxx），放行（设计意图）
+3. 若两值原始字符串不同但 normalize 后相等（`_` 和 `-` 统一为 `-`），则阻断
+   （同模块双拼写：如 MOD-GOV_foo vs MOD-GOV-foo）
+4. 若两值完全相同（同模块同拼写，项目 2284 文件惯例），放行
+5. 若两值指向不同模块（如 bp=MOD-GATE_ENGINE, am=MOD-GOV-xxx），放行（设计意图）
 
 normalize 逻辑
 --------------
@@ -159,8 +164,11 @@ def _check_cross_consistency(
         if not blueprint_id or not amodule_id:
             continue
 
-        # normalize 后比较：若相等说明同模块双拼写
-        if _normalize_module_id(blueprint_id) == _normalize_module_id(amodule_id):
+        # 同模块双拼写判定：原始字符串不同但 normalize 后相等（DASH/UNDERSCORE 差异）
+        # 2026-08-19 治本（#ARCH-130 P0-A 连带）：原逻辑仅判 normalize 相等，
+        # 把"同模块同拼写"（bp==am 完全相同，项目 2284 文件惯例）误判为违规。
+        # 真正的双拼写=原始不同但 normalize 后相等（如 MOD-GOV_foo vs MOD-GOV-foo）。
+        if blueprint_id != amodule_id and _normalize_module_id(blueprint_id) == _normalize_module_id(amodule_id):
             violations.append(
                 f"  {py_file}: [BLUEPRINT] module_id='{blueprint_id}' 与 "
                 f"[A_module] module_id='{amodule_id}' 是同模块双拼写"

@@ -17679,3 +17679,31 @@ entries:
   related_rules: '#ARCH-CH-025; GATE-C2; GATE-SCHEMA-TRUTH'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+
+# --- #ARCH-131: BLUEPRINT-AMODULE-CROSS-CHECK 门禁 normalize 逻辑过度阻断（同模块同拼写 2284 文件误判） ---
+- issue_id: '#ARCH-131'
+  title: 'BLUEPRINT-AMODULE-CROSS-CHECK 门禁 normalize 相等即阻断，把同模块同拼写（bp==am 完全相同）误判为双拼写'
+  severity: P2中
+  category: architecture_governance
+  discovered: '2026-08-19 #ARCH-130 P0-A 治本连带施工：删 [A_module] 行时触发门禁硬阻断，全仓扫描发现 2284 文件均为此模式'
+  adjudication: |
+    裁定 #ARCH-MODULE-ID-DUAL-SPELLING-001 的设计意图是阻断"同模块双拼写"（如 MOD-GOV_foo vs MOD-GOV-foo，
+    原始字符串不同但 normalize 后相等），但实现逻辑仅判 normalize 相等即阻断，把"同模块同拼写"
+    （bp==am 完全相同，项目 2284 文件惯例）一并误判为违规。
+    第一性原理：双拼写的"双"=存在两种不同拼写形式。若 bp 和 am 原始字符串完全相同，
+    不存在"双"，normalize 相等是恒真命题，不构成真源歧义。
+    [A_module] 的语义是"文件自身模块身份声明"，[BLUEPRINT] 是"归属引用"——两者指向同一模块
+    且拼写完全一致时，是 SSoT 一致的合法状态，非违规。
+    修复：判定条件改为 `blueprint_id != amodule_id and normalize(bp) == normalize(am)`，
+    仅原始不同但 normalize 相等才阻断。fix_header_module_id.py 同步增加 codegen 产物豁免
+    （防未来批量脚本误改生成器产物头注）。
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_cross_check_gate.py（判定逻辑修正）'
+    - 'tests/governance/commit_gates/test_blueprint_amodule_cross_check_gate.py（新增 test_same_spelling_pass）'
+    - 'scripts/governance/fix_header_module_id.py（codegen 产物豁免）'
+  fix_phase: '施工落地（2026-08-19）：判定逻辑修正+e5992565 commit；验证：27/27 单测全绿+C 门禁幂等 34 文件零 diff'
+  status: resolved
+  resolution: '判定逻辑修正：仅原始字符串不同但 normalize 后相等才判定为同模块双拼写；同模块同拼写（bp==am 完全相同）放行；fix_header_module_id.py 增加 codegen 产物豁免'
+  related_rules: '#ARCH-MODULE-ID-DUAL-SPELLING-001; trae_047; trae_060'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'

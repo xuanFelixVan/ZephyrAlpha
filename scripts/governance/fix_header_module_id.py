@@ -316,6 +316,15 @@ def fix_file(path: Path, depgraph_mid: str, build_status: str) -> FileResult:
         result.error = f"读取失败: {e}"
         return result
 
+    # codegen 产物豁免（2026-08-19 治本）：codegen 产物的头注由生成器模板直出，
+    # 是唯一合法上游。本脚本注入/修改 [A_module] 会与生成器产物冲突
+    # （重跑生成器即回退），且 [A_module] 对 codegen 产物语义冗余（与 [BLUEPRINT] 恒等）。
+    if "DO NOT EDIT (codegen)" in content[:2000] or "BEGIN CODGEN:" in content[:2000]:
+        result.action = "SKIP"
+        result.status = "SKIPPED"
+        result.error = "codegen 产物豁免（生成器模板直出头注）"
+        return result
+
     # 分析当前状态
     old_a_id, old_bp_id = extract_module_ids(content)
     result.old_a_module_id = old_a_id

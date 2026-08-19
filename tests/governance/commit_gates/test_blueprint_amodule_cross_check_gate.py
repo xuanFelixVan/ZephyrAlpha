@@ -197,6 +197,31 @@ class TestCheckCrossConsistency:
         violations = _check_cross_consistency(gw, [py_file])
         assert violations == []
 
+    def test_same_spelling_pass(self) -> None:
+        """同模块同拼写（bp==am 完全相同，项目 2284 文件惯例）→ 无违规。
+
+        治本（#ARCH-130 P0-A 连带，2026-08-19）：原 normalize 相等即判违规，
+        把同模块同拼写（如 bp=MOD-INF-016, am=MOD-INF-016）误判为双拼写——
+        实为项目惯例且语义正确。修复后仅原始不同但 normalize 相等才阻断。
+        """
+        py_file = "src/zephyr/foo.py"
+        content = (
+            "# [BLUEPRINT] MOD-INF-016 | docs/foo.md\n"
+            "# [A_module] module_id=MOD-INF-016\n"
+        )
+        diff = (
+            "@@ -0,0 +1,2 @@\n"
+            "+# [BLUEPRINT] MOD-INF-016 | docs/foo.md\n"
+            "+# [A_module] module_id=MOD-INF-016\n"
+        )
+        gw = _make_gateway(
+            diff_files=[py_file],
+            file_diffs={py_file: diff},
+            staged_contents={py_file: content},
+        )
+        violations = _check_cross_consistency(gw, [py_file])
+        assert violations == []
+
     def test_only_blueprint_no_amodule(self) -> None:
         """仅有 [BLUEPRINT] 无 [A_module] → 无违规。"""
         py_file = "src/zephyr/foo.py"
