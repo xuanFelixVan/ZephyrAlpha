@@ -1081,6 +1081,14 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.qweather_provider import QWeatherProvider
 
                 return QWeatherProvider()
+            elif source == "internal":
+                # #222（64号 Q18，P0）：内部计算源——读 CH K线本地计算指标/港股日历，
+                # 缺失本分支时 hk_trade_calendar_refresh 等 source=internal 任务报"未知数据源"。
+                from zephyr.data.implementations.internal_compute_provider import (
+                    InternalComputeProvider,
+                )
+
+                return InternalComputeProvider()
             else:
                 log.warning("未知数据源: %s", source)
                 return None

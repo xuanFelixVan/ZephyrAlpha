@@ -161,6 +161,38 @@ class TestCreateProvider:
         """未知数据源返回 None。"""
         assert scheduler.create_provider("nonexistent") is None
 
+    def test_internal_source(self, scheduler):
+        """#222（64号 Q18，P0）：source=internal 分支接线——构造 InternalComputeProvider。
+
+        缺失该分支时 hk_trade_calendar_refresh（港股日历月度任务）等 source=internal
+        任务报"未知数据源: internal"→ Provider 不可用 → 任务 FAILED。
+        注：scheduler 内部以 `zephyr.data...` 导入而本测试文件以 `src.zephyr.data...` 导入，
+        两类加载路径产生不同类对象，故用类名断言而非 isinstance。
+        """
+        provider = scheduler.create_provider("internal")
+        assert provider is not None
+        assert type(provider).__name__ == "InternalComputeProvider"
+        assert type(provider).__module__.endswith("implementations.internal_compute_provider")
+        assert provider.source_name == "internal"
+
+    def test_internal_provider_behavior(self, scheduler):
+        """#222：internal provider 行为断言——本地计算源，connect 无外部 I/O 即就绪，
+        meta.capabilities 覆盖 tasks.yaml 中 internal 任务声明的能力。"""
+        provider = scheduler.create_provider("internal")
+        assert provider is not None
+        provider.connect()
+        assert provider._connected is True
+        # tasks.yaml 中 source=internal 任务（hk_trade_calendar_refresh）声明的能力须被覆盖
+        assert "hk_trade_calendar" in provider.meta.capabilities
+        assert "calendar_event" in provider.meta.capabilities
+        assert "technical_indicator" in provider.meta.capabilities
+
+    def test_internal_get_provider_end_to_end(self, scheduler):
+        """#222：经 _get_provider 懒初始化通路构造+连接+缓存 internal provider。"""
+        provider = scheduler._get_provider("internal")
+        assert provider is not None
+        assert scheduler.providers["internal"] is provider
+
 
 class TestRunTask:
     """run_task 测试（mock provider + ch_writer）。"""
