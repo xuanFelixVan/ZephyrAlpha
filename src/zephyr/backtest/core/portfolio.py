@@ -122,11 +122,16 @@ class BacktestFill:
 
     @property
     def total_cost(self) -> Decimal:
-        """成交总成本(买入)或总收入(卖出)"""
+        """成交总成本(买入)或总收入(卖出)
+
+        口径: price 已含滑点，gross=qty×price 已含滑点成本，不得再加
+        slippage_cost（2026-08-19 AI-NIGHT-001 审查发现双计，与
+        MatchingFill.total_cost 同根因同步修复）。
+        """
         gross = self.quantity * self.price
         if self.side == "BUY":
-            return gross + self.commission + self.slippage_cost
-        return gross - self.commission - self.slippage_cost
+            return gross + self.commission
+        return gross - self.commission
 
 
 class Portfolio:
@@ -250,8 +255,8 @@ class Portfolio:
                 f"持仓不足: 需要{fill.quantity}, 可用{pos.quantity} (symbol={symbol}, date={fill.date})"
             )
 
-        # 计算已实现盈亏
-        realized = (fill.price - pos.avg_cost) * fill.quantity - fill.commission - fill.slippage_cost
+        # 计算已实现盈亏（price 已含滑点，不得再减 slippage_cost——AI-NIGHT-001 双计修复）
+        realized = (fill.price - pos.avg_cost) * fill.quantity - fill.commission
         pos.realized_pnl += realized
 
         pos.quantity -= fill.quantity

@@ -141,7 +141,10 @@ class DefaultBacktestEngine(BacktestEngineBase):
         Args:
             data: MultiIndex DataFrame (symbol × date)，含 OHLCV
                   或 flat DataFrame 含 date/symbol/close列
-            signals: 信号 DataFrame (date × symbol)，值为目标权重(0.0-1.0)
+            signals: 信号 DataFrame (date × symbol)，值为信号强度——引擎按
+                  _normalize_day_signals 归一化至 Σ=1（满仓分配，2026-08-19
+                  AI-NIGHT-001 审查对齐口径：半仓/现金仓位意图请经 shrinkage 层
+                  或目标权重 0 值表达，Σ<1 的强度面板会被放大为满仓）
             initial_capital: 初始资金(可选,覆盖config值)
             **kwargs: 额外参数:
                 strategy_name: 策略名称(默认"default")
@@ -167,6 +170,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
         # 逐日回测
         prev_close: dict[str, Decimal] = {}
+        skipped_fills = 0  # AI-NIGHT-001：apply_fill 失败计数（原静默 debug 吞没）
 
         for date in dates:
             # 获取当日所有symbol的价格
@@ -189,14 +193,25 @@ class DefaultBacktestEngine(BacktestEngineBase):
                 for fill in fills:
                     try:
                         portfolio.apply_fill(fill, allow_t_plus_1=False)
-                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                        _logger.debug("Fill skipped: %s (date=%s)", e, date, exc_info=True)
+                    except Exception as e:  # noqa: BLE001 — fill 应用拒绝（现金不足/T+1/持仓不足）
+                        skipped_fills += 1
+                        # AI-NIGHT-001：回测偏离信号意图必须可见（原 debug 静默吞没致满仓信号零成交无感知）
+                        _logger.warning(
+                            "Fill skipped (%d 累计): %s %s qty=%s date=%s 原因=%s",
+                            skipped_fills, fill.side, fill.symbol, fill.quantity, date, e,
+                        )
 
             # 更新当日市值
             portfolio.update_market_value(date, day_prices)
 
             # 记录前一日收盘价(用于涨跌停检查)
             prev_close = dict(day_prices)
+
+        if skipped_fills > 0:
+            _logger.warning(
+                "回测完成但 %d 笔 fill 被拒绝（现金缺口/T+1/持仓不足）——结果偏离信号意图，请核查",
+                skipped_fills,
+            )
 
         # 计算绩效指标
         risk_free_rate = kwargs.get("risk_free_rate", self._config.risk_free_rate)

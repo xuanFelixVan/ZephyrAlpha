@@ -218,11 +218,17 @@ class MatchingFill:
 
     @property
     def total_cost(self) -> Decimal:
-        """成交总成本(买入)或总收入(卖出)"""
+        """成交总成本(买入)或总收入(卖出)
+
+        口径: price 已含滑点（BUY=base×(1+slip)，SELL=base×(1-slip)），故
+        gross=qty×price 已含滑点成本，不得再加 slippage_cost（2026-08-19
+        AI-NIGHT-001 审查发现双计：BUY 多扣/SELL 少收 滑点×成交额）。
+        slippage_cost 字段保留仅作信息展示。
+        """
         gross = self.quantity * self.price
         if self.side == "BUY":
-            return gross + self.commission + self.slippage_cost
-        return gross - self.commission - self.slippage_cost
+            return gross + self.commission
+        return gross - self.commission
 
 
 class MatchingLogic:

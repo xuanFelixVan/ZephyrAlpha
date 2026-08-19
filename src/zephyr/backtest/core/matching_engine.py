@@ -531,8 +531,24 @@ class MatchingEngine:
             timestamp=None,
         )
 
+    def _infer_limit_pct(self, symbol: str) -> Decimal:
+        """按代码前缀推断板块涨跌停幅度（2026-08-19 AI-NIGHT-001 #211）
+
+        原实现全板块统一 ±10%（config.price_limit_pct），与宪章约束四不符：
+        主板 ±10% / 科创板(68x) ±20% / 创业板(30x，2020-08-24 注册制起) ±20% /
+        北交所(4xx/8xx/92x) ±30%。ST 股 ±5% 需 is_st 外部数据（本接口未携带），
+        待 stk_limit 表接入后覆盖本推断（tracker #211 遗留）。
+        创业板 2020-08-24 前 ±10% 的历史分期简化取 ±20%（优于原全 10% 的失真）。
+        """
+        code = symbol.split(".")[0]
+        if code.startswith(("68", "30")):
+            return Decimal("0.20")
+        if code.startswith(("4", "8", "92")):
+            return Decimal("0.30")
+        return self._config.price_limit_pct
+
     def _is_price_limit(self, symbol: str, price: Decimal, prev_close: Decimal | None) -> bool:
-        """检查是否涨跌停（A股 ±10%，ST股 ±5% 简化统一用10%）
+        """检查是否涨跌停（按板块幅度，ST ±5% 待 stk_limit 表接入）
 
         Args:
             symbol: 标的代码
@@ -544,8 +560,9 @@ class MatchingEngine:
         """
         if prev_close is None or prev_close <= 0:
             return False
-        upper_limit = (prev_close * (1 + self._config.price_limit_pct)).quantize(Decimal("0.01"))
-        lower_limit = (prev_close * (1 - self._config.price_limit_pct)).quantize(Decimal("0.01"))
+        pct = self._infer_limit_pct(symbol)
+        upper_limit = (prev_close * (1 + pct)).quantize(Decimal("0.01"))
+        lower_limit = (prev_close * (1 - pct)).quantize(Decimal("0.01"))
         return price >= upper_limit or price <= lower_limit
 
 

@@ -291,3 +291,102 @@ def test_shared_logic_reuse():
         ob,
     )
     assert fill_direct.filled
+
+
+def _make_ob(last: str = "10.00") -> OrderBookSnapshot:
+    """构造对称 5 档盘口（测试辅助）"""
+    return OrderBookSnapshot(
+        symbol="000001.SZ",
+        ask_price=(Decimal("10.00"), Decimal("10.01"), Decimal("10.02"), Decimal("10.03"), Decimal("10.04")),
+        bid_price=(Decimal("9.99"), Decimal("9.98"), Decimal("9.97"), Decimal("9.96"), Decimal("9.95")),
+        ask_vol=(Decimal("10000"),) * 5,
+        bid_vol=(Decimal("10000"),) * 5,
+        last_price=Decimal(last),
+    )
+
+
+def test_total_cost_no_double_count_slippage():
+    """total_cost 不得双重计入滑点（fill.price 已含滑点价）——AI-NIGHT-001 审查发现"""
+    config = MatchingConfig(
+        commission_rate=Decimal("0.0003"),
+        slippage_bps=Decimal("10"),  # 10bp 放大差异便于观测
+        stamp_tax_rate=Decimal("0.001"),
+        min_commission=Decimal("5"),
+    )
+    logic = MatchingLogic(config)
+    ob = _make_ob()
+
+    # BUY: price = 10.00*(1+10/10000) = 10.01；commission = max(1000*10.01*0.0003, 5) = max(3.003, 5) = 5
+    buy_fill = logic.match_market_order(
+        MatchOrderInput(symbol="000001.SZ", side="BUY", quantity=Decimal("1000"), order_type="MARKET"), ob
+    )
+    assert buy_fill.price == Decimal("10.01")
+    expected_buy = Decimal("1000") * Decimal("10.01") + Decimal("5")
+    assert buy_fill.total_cost == expected_buy, (
+        f"BUY total_cost 双计滑点: 期望 {expected_buy}（gross+commission），实际 {buy_fill.total_cost}"
+    )
+
+    # SELL: price = 9.99*(1-10/10000) = 9.98001；commission = max(3, 5) + 印花税 9.98001*1000*0.001
+    sell_fill = logic.match_market_order(
+        MatchOrderInput(symbol="000001.SZ", side="SELL", quantity=Decimal("1000"), order_type="MARKET"), ob
+    )
+    assert sell_fill.price == Decimal("9.98001")
+    gross = Decimal("1000") * Decimal("9.98001")
+    expected_sell = gross - (Decimal("5") + gross * Decimal("0.001"))
+    assert sell_fill.total_cost == expected_sell, (
+        f"SELL total_cost 双计滑点: 期望 {expected_sell}（gross-commission-tax），实际 {sell_fill.total_cost}"
+    )
+
+
+def test_sell_realized_pnl_no_double_slippage():
+    """卖出已实现盈亏不得再减 slippage_cost（成交价已含滑点）——AI-NIGHT-001 审查发现"""
+    portfolio = Portfolio(initial_capital=Decimal("200000"))
+    config = MatchingConfig(
+        commission_rate=Decimal("0.0003"), slippage_bps=Decimal("10"), stamp_tax_rate=Decimal("0.001")
+    )
+    engine = MatchingEngine(config=config)
+    ob = _make_ob()
+
+    # d1 买入 1000 股 @10.00（ask1）
+    buy_fills = engine.generate_fills_with_order_book(
+        target_weights={"000001.SZ": 0.5}, order_books={"000001.SZ": ob}, portfolio=portfolio, date="2024-01-15"
+    )
+    for f in buy_fills:
+        portfolio.apply_fill(f, allow_t_plus_1=False)
+    pos = portfolio.get_position("000001.SZ")
+    assert pos is not None and pos.quantity > 0
+    qty_before = pos.quantity
+    avg_cost = pos.avg_cost
+
+    # d2 全部卖出 @bid1=9.99（T+1 后）
+    sell_order = MatchOrderInput(symbol="000001.SZ", side="SELL", quantity=qty_before, order_type="MARKET")
+    sell_fill = engine.logic.match_market_order(sell_order, ob)
+    from zephyr.backtest.core.portfolio import BacktestFill
+    portfolio.apply_fill(
+        BacktestFill(
+            date="2024-01-16", symbol=sell_fill.symbol, side="SELL", quantity=sell_fill.quantity,
+            price=sell_fill.price, commission=sell_fill.commission, slippage_cost=sell_fill.slippage_cost,
+        ),
+        allow_t_plus_1=False,
+    )
+    # 期望 realized = (price - avg_cost) * qty - commission（不再 - slippage_cost）
+    expected = (sell_fill.price - avg_cost) * qty_before - sell_fill.commission
+    actual = portfolio.get_position("000001.SZ").realized_pnl
+    assert abs(actual - expected) < Decimal("0.01"), f"realized_pnl 双计滑点: 期望 {expected}, 实际 {actual}"
+
+
+def test_price_limit_board_inference():
+    """涨跌停按板块幅度推断（AI-NIGHT-001 #211）：科创/创业 20%、北交所 30%、主板 10%"""
+    engine = MatchingEngine(config=MatchingConfig())
+    # 主板 60xxxx：±10%
+    assert engine._is_price_limit("600001.SH", Decimal("11.00"), Decimal("10.00")) is True
+    assert engine._is_price_limit("600001.SH", Decimal("10.50"), Decimal("10.00")) is False
+    # 科创板 68xxxx：±20%——+15% 不应判涨停（旧统一 10% 会误判不成交）
+    assert engine._is_price_limit("688001.SH", Decimal("11.50"), Decimal("10.00")) is False
+    assert engine._is_price_limit("688001.SH", Decimal("12.00"), Decimal("10.00")) is True
+    # 创业板 30xxxx：±20%
+    assert engine._is_price_limit("300001.SZ", Decimal("11.50"), Decimal("10.00")) is False
+    assert engine._is_price_limit("300001.SZ", Decimal("8.00"), Decimal("10.00")) is True
+    # 北交所 8xxxxx：±30%
+    assert engine._is_price_limit("830799.BJ", Decimal("12.50"), Decimal("10.00")) is False
+    assert engine._is_price_limit("830799.BJ", Decimal("13.00"), Decimal("10.00")) is True
