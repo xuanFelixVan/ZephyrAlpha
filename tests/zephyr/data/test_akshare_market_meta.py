@@ -21,6 +21,7 @@ stock_basic 快照/index_constituent 四指数+权重/st_stock_list 科创板扩
 suspend 东财→百度兜底/K线缺口推导。
 全部 mock akshare 与 ch_reader，不触网不触库。
 """
+
 from __future__ import annotations
 
 import datetime
@@ -40,8 +41,12 @@ D = datetime.date  # 简写
 
 def _payload(start: D, end: D, extra: dict | None = None) -> FetchPayload:
     return FetchPayload(
-        table="", symbols=None, start=start, end=end,
-        incremental=True, extra=extra or {},
+        table="",
+        symbols=None,
+        start=start,
+        end=end,
+        incremental=True,
+        extra=extra or {},
     )
 
 
@@ -86,21 +91,34 @@ def _call_fetch(provider, cap: str, payload: FetchPayload) -> list:
 
 # ============== 板块前缀规则 ==============
 
+
 class TestBoardRules:
-    @pytest.mark.parametrize("code,expected", [
-        ("600000", "沪主板"), ("601398", "沪主板"),
-        ("688001", "科创板"), ("689009", "科创板"),
-        ("000001", "深主板"), ("002594", "深主板"),
-        ("300750", "创业板"), ("301999", "创业板"),
-        ("430047", "北交所"), ("830799", "北交所"),
-        ("870199", "北交所"), ("920001", "北交所"),
-        ("900901", ""), ("200011", ""), ("110000", ""),
-    ])
+    @pytest.mark.parametrize(
+        "code,expected",
+        [
+            ("600000", "沪主板"),
+            ("601398", "沪主板"),
+            ("688001", "科创板"),
+            ("689009", "科创板"),
+            ("000001", "深主板"),
+            ("002594", "深主板"),
+            ("300750", "创业板"),
+            ("301999", "创业板"),
+            ("430047", "北交所"),
+            ("830799", "北交所"),
+            ("870199", "北交所"),
+            ("920001", "北交所"),
+            ("900901", ""),
+            ("200011", ""),
+            ("110000", ""),
+        ],
+    )
     def test_board_of_a_share(self, code, expected):
         assert AkshareIngestProvider._board_of_a_share(code) == expected
 
 
 # ============== 涨跌停幅度规则 ==============
+
 
 class TestLimitPctRules:
     def test_main_board_normal(self):
@@ -134,8 +152,9 @@ class TestLimitPctRules:
 
 # ============== stk_limit 计算（mock ch_reader） ==============
 
+
 class TestFetchStkLimit:
-    def _install_ch_mock(self, monkeypatch, days_tsv, bars_tsv, st_tsv):
+    def _install_ch_mock(self, monkeypatch, days_tsv, bars_tsv, st_tsv, ld_tsv=""):
         def fake_query(sql, timeout=0):
             if "DISTINCT trade_date" in sql:
                 return days_tsv
@@ -143,6 +162,8 @@ class TestFetchStkLimit:
                 return bars_tsv
             if "st_stock_list" in sql:
                 return st_tsv
+            if "list_date" in sql:
+                return ld_tsv  # #202 stock_basic 上市日期
             if "count()" in sql:
                 return "100\n"  # 探活（CH 可达标记）
             return ""
@@ -152,49 +173,55 @@ class TestFetchStkLimit:
     def test_limit_calc_multi_board(self, monkeypatch):
         p = AkshareIngestProvider()
         days = "2026-08-11\n2026-08-12\n"
-        # 创业/科创/北交股票需 >5 根历史 bar 逃逸新股无限制期（i<5 规则）；
-        # 缓冲窗口 bar 不在 trade_days 内不产出行，仅用于抬高序列索引
-        bars = "\n".join([
-            "2026-08-10\t600000\t10.00\t1.0",   # 沪主板基准昨收
-            "2026-08-11\t600000\t10.10\t1.0",
-            "2026-08-12\t600000\t10.20\t1.0",
-            "2026-08-10\t600001\t20.00\t1.0",   # ST 沪主板
-            "2026-08-11\t600001\t20.50\t1.0",
-            "2026-08-12\t600001\t20.60\t1.0",
-            "2026-08-03\t300750\t99.00\t1.0",   # 创业板 20%（7 根缓冲 bar）
-            "2026-08-04\t300750\t99.10\t1.0",
-            "2026-08-05\t300750\t99.20\t1.0",
-            "2026-08-06\t300750\t99.30\t1.0",
-            "2026-08-07\t300750\t99.40\t1.0",
-            "2026-08-08\t300750\t99.50\t1.0",
-            "2026-08-10\t300750\t100.00\t1.0",
-            "2026-08-11\t300750\t101.00\t1.0",
-            "2026-08-12\t300750\t102.00\t1.0",
-            "2026-08-03\t688001\t49.00\t1.0",   # 科创板 20%（7 根缓冲 bar）
-            "2026-08-04\t688001\t49.10\t1.0",
-            "2026-08-05\t688001\t49.20\t1.0",
-            "2026-08-06\t688001\t49.30\t1.0",
-            "2026-08-07\t688001\t49.40\t1.0",
-            "2026-08-08\t688001\t49.50\t1.0",
-            "2026-08-10\t688001\t50.00\t1.0",
-            "2026-08-11\t688001\t50.50\t1.0",
-            "2026-08-12\t688001\t51.00\t1.0",
-            "2026-08-03\t830799\t4.90\t1.0",    # 北交所 30%（7 根缓冲 bar）
-            "2026-08-04\t830799\t4.91\t1.0",
-            "2026-08-05\t830799\t4.92\t1.0",
-            "2026-08-06\t830799\t4.93\t1.0",
-            "2026-08-07\t830799\t4.94\t1.0",
-            "2026-08-08\t830799\t4.95\t1.0",
-            "2026-08-10\t830799\t5.00\t1.0",
-            "2026-08-11\t830799\t5.05\t1.0",
-            "2026-08-12\t830799\t5.10\t1.0",
-            "2026-08-10\t600002\t10.00\t1.0",   # 除权日：adj 1.0→0.5
-            "2026-08-11\t600002\t10.10\t1.0",
-            "2026-08-12\t600002\t5.06\t0.5",
-            "2026-08-10\t900901\t9.99\t1.0",    # 未知板块（B股）应被过滤
-            "2026-08-11\t900901\t9.99\t1.0",
-            "2026-08-12\t900901\t9.99\t1.0",
-        ]) + "\n"
+        # #202 后缓冲 bar 不再影响上市龄判定（改按 stock_basic.list_date），
+        # 此处 stock_basic 查不到（ld_tsv 默认空）→ fail-closed 按有涨跌幅限制计算；
+        # 缓冲窗口 bar 不在 trade_days 内不产出行，仅提供 prev_close
+        bars = (
+            "\n".join(
+                [
+                    "2026-08-10\t600000\t10.00\t1.0",  # 沪主板基准昨收
+                    "2026-08-11\t600000\t10.10\t1.0",
+                    "2026-08-12\t600000\t10.20\t1.0",
+                    "2026-08-10\t600001\t20.00\t1.0",  # ST 沪主板
+                    "2026-08-11\t600001\t20.50\t1.0",
+                    "2026-08-12\t600001\t20.60\t1.0",
+                    "2026-08-03\t300750\t99.00\t1.0",  # 创业板 20%（7 根缓冲 bar）
+                    "2026-08-04\t300750\t99.10\t1.0",
+                    "2026-08-05\t300750\t99.20\t1.0",
+                    "2026-08-06\t300750\t99.30\t1.0",
+                    "2026-08-07\t300750\t99.40\t1.0",
+                    "2026-08-08\t300750\t99.50\t1.0",
+                    "2026-08-10\t300750\t100.00\t1.0",
+                    "2026-08-11\t300750\t101.00\t1.0",
+                    "2026-08-12\t300750\t102.00\t1.0",
+                    "2026-08-03\t688001\t49.00\t1.0",  # 科创板 20%（7 根缓冲 bar）
+                    "2026-08-04\t688001\t49.10\t1.0",
+                    "2026-08-05\t688001\t49.20\t1.0",
+                    "2026-08-06\t688001\t49.30\t1.0",
+                    "2026-08-07\t688001\t49.40\t1.0",
+                    "2026-08-08\t688001\t49.50\t1.0",
+                    "2026-08-10\t688001\t50.00\t1.0",
+                    "2026-08-11\t688001\t50.50\t1.0",
+                    "2026-08-12\t688001\t51.00\t1.0",
+                    "2026-08-03\t830799\t4.90\t1.0",  # 北交所 30%（7 根缓冲 bar）
+                    "2026-08-04\t830799\t4.91\t1.0",
+                    "2026-08-05\t830799\t4.92\t1.0",
+                    "2026-08-06\t830799\t4.93\t1.0",
+                    "2026-08-07\t830799\t4.94\t1.0",
+                    "2026-08-08\t830799\t4.95\t1.0",
+                    "2026-08-10\t830799\t5.00\t1.0",
+                    "2026-08-11\t830799\t5.05\t1.0",
+                    "2026-08-12\t830799\t5.10\t1.0",
+                    "2026-08-10\t600002\t10.00\t1.0",  # 除权日：adj 1.0→0.5
+                    "2026-08-11\t600002\t10.10\t1.0",
+                    "2026-08-12\t600002\t5.06\t0.5",
+                    "2026-08-10\t900901\t9.99\t1.0",  # 未知板块（B股）应被过滤
+                    "2026-08-11\t900901\t9.99\t1.0",
+                    "2026-08-12\t900901\t9.99\t1.0",
+                ]
+            )
+            + "\n"
+        )
         st = "2026-08-11\t600001\n2026-08-12\t600001\n"
         self._install_ch_mock(monkeypatch, days, bars, st)
 
@@ -232,27 +259,85 @@ class TestFetchStkLimit:
         # 10.05×1.1=11.055 → ROUND_HALF_UP 11.06（银行家舍入会得 11.05，防回归）
         p = AkshareIngestProvider()
         days = "2026-08-12\n"
-        bars = ("2026-08-11\t600003\t10.05\t1.0\n"
-                "2026-08-12\t600003\t10.10\t1.0\n")
+        bars = "2026-08-11\t600003\t10.05\t1.0\n2026-08-12\t600003\t10.10\t1.0\n"
         self._install_ch_mock(monkeypatch, days, bars, "")
         results = _call_fetch(p, "stk_limit", _payload(D(2026, 8, 12), D(2026, 8, 12)))
         rows = results[0].rows
         assert len(rows) == 1
         assert rows[0][3] == 11.06  # 涨停 10.05×1.1=11.055 → 五入 11.06
-        assert rows[0][4] == 9.05   # 跌停 10.05×0.9=9.045 → 五入 9.05（非银行家舍入）
+        assert rows[0][4] == 9.05  # 跌停 10.05×0.9=9.045 → 五入 9.05（非银行家舍入）
 
     def test_new_stock_unlimited_period(self, monkeypatch):
         # 创业板新股上市前 5 个交易日无涨跌幅限制 → limit NULL
+        # #202：上市龄按 stock_basic.list_date 判定（mock 上市日=首日 bar 日）
         p = AkshareIngestProvider()
         days = "2026-08-11\n2026-08-12\n"
-        bars = ("2026-08-11\t301999\t20.00\t1.0\n"   # 上市首日（i=0，不产出行）
-                "2026-08-12\t301999\t24.00\t1.0\n")  # i=1 <5 → NULL
-        self._install_ch_mock(monkeypatch, days, bars, "")
+        bars = (
+            "2026-08-11\t301999\t20.00\t1.0\n"  # 上市首日（i=0，不产出行）
+            "2026-08-12\t301999\t24.00\t1.0\n"
+        )  # 上市第 2 个交易日 → NULL
+        self._install_ch_mock(monkeypatch, days, bars, "", "301999\t2026-08-11\n")
         results = _call_fetch(p, "stk_limit", _payload(D(2026, 8, 11), D(2026, 8, 12)))
         rows = results[0].rows
         assert len(rows) == 1
         assert rows[0][0] == "2026-08-12" and rows[0][1] == "301999"
         assert rows[0][3] is None and rows[0][4] is None and rows[0][5] is None
+
+    def test_new_stock_unlimited_window_precise(self, monkeypatch):
+        # #202 case A 真新股：上市日期在窗口中段，仅前 5 个交易日 NULL，
+        # 第 6 个交易日起恢复 20% 限制（原 i<5 窗口索引规则下 08-12 也会 NULL）
+        p = AkshareIngestProvider()
+        days = "2026-08-10\n2026-08-11\n2026-08-12\n"
+        bars = (
+            "\n".join(
+                [
+                    "2026-08-06\t301999\t20.00\t1.0",  # 上市首日（i=0，不产出行）
+                    "2026-08-07\t301999\t21.00\t1.0",  # 第 2 交易日
+                    "2026-08-08\t301999\t22.00\t1.0",  # 第 3 交易日
+                    "2026-08-10\t301999\t23.00\t1.0",  # 第 4 交易日 → NULL
+                    "2026-08-11\t301999\t24.00\t1.0",  # 第 5 交易日 → NULL
+                    "2026-08-12\t301999\t25.00\t1.0",  # 第 6 交易日 → 恢复 20% 限制
+                ]
+            )
+            + "\n"
+        )
+        self._install_ch_mock(monkeypatch, days, bars, "", "301999\t2026-08-06\n")
+        results = _call_fetch(p, "stk_limit", _payload(D(2026, 8, 10), D(2026, 8, 12)))
+        rows = results[0].rows
+        by = {(r[0], r[1]): r for r in rows}
+        assert len(rows) == 3
+        assert by[("2026-08-10", "301999")][3] is None  # 上市第 4 交易日
+        assert by[("2026-08-11", "301999")][3] is None  # 上市第 5 交易日
+        r = by[("2026-08-12", "301999")]  # 上市第 6 交易日：24.00×1.2
+        assert r[3] == 28.80 and r[4] == 19.20 and r[5] == 0.20
+
+    def test_resumed_stock_not_unlimited(self, monkeypatch):
+        # #202 case B 长期停牌复牌股：上市日期远早于窗口起点，窗口头 5 行不得为
+        # NULL（原 i<5 规则误判 i=1<5 → NULL，复牌股被当作无涨跌幅限制）
+        p = AkshareIngestProvider()
+        days = "2026-08-11\n2026-08-12\n"
+        bars = (
+            "2026-08-11\t688001\t50.00\t1.0\n"  # 复牌首日 bar（窗口内 i=0）
+            "2026-08-12\t688001\t52.00\t1.0\n"
+        )  # 窗口内 i=1，旧规则误判 NULL
+        self._install_ch_mock(monkeypatch, days, bars, "", "688001\t2019-07-22\n")
+        results = _call_fetch(p, "stk_limit", _payload(D(2026, 8, 11), D(2026, 8, 12)))
+        rows = results[0].rows
+        assert len(rows) == 1
+        r = rows[0]
+        assert r[0] == "2026-08-12" and r[1] == "688001"
+        assert r[3] == 60.00 and r[4] == 40.00 and r[5] == 0.20  # 50.00×1.2，非 NULL
+
+    def test_no_list_date_fail_closed(self, monkeypatch):
+        # #202 fail-closed：stock_basic 查不到上市日期 → 不产 NULL，按有涨跌幅限制计算
+        p = AkshareIngestProvider()
+        days = "2026-08-11\n2026-08-12\n"
+        bars = "2026-08-11\t301999\t20.00\t1.0\n2026-08-12\t301999\t22.00\t1.0\n"
+        self._install_ch_mock(monkeypatch, days, bars, "", "")
+        results = _call_fetch(p, "stk_limit", _payload(D(2026, 8, 11), D(2026, 8, 12)))
+        rows = results[0].rows
+        assert len(rows) == 1
+        assert rows[0][3] == 24.00 and rows[0][4] == 16.00  # 20.00×1.2，非 NULL
 
     def test_ch_unreachable_yields_error(self, monkeypatch):
         # ch_reader.query 对 CH 故障静默返回空串 → 探活也为空 → 必须显式 error
@@ -265,30 +350,41 @@ class TestFetchStkLimit:
 
 # ============== stock_basic 快照 ==============
 
+
 class TestFetchStockBasic:
     def test_sh_sz_snapshot(self, monkeypatch):
         def sh_fn(symbol=None, **kw):
             if symbol == "科创板":
-                return pd.DataFrame({
-                    "证券代码": ["688001"], "证券简称": ["科创示例"],
-                    "证券全称": ["科创示例"], "公司全称": ["科创示例股份有限公司"],
-                    "上市日期": ["2021-06-01"],
-                })
-            return pd.DataFrame({
-                "证券代码": ["600000"], "证券简称": ["浦发银行"],
-                "证券全称": ["浦发银行"], "公司全称": ["上海浦东发展银行股份有限公司"],
-                "上市日期": ["1999-11-10"],
-            })
+                return pd.DataFrame(
+                    {
+                        "证券代码": ["688001"],
+                        "证券简称": ["科创示例"],
+                        "证券全称": ["科创示例"],
+                        "公司全称": ["科创示例股份有限公司"],
+                        "上市日期": ["2021-06-01"],
+                    }
+                )
+            return pd.DataFrame(
+                {
+                    "证券代码": ["600000"],
+                    "证券简称": ["浦发银行"],
+                    "证券全称": ["浦发银行"],
+                    "公司全称": ["上海浦东发展银行股份有限公司"],
+                    "上市日期": ["1999-11-10"],
+                }
+            )
 
-        sz_df = pd.DataFrame({
-            "板块": ["主板", "创业板"],
-            "A股代码": ["000001", "300750"],
-            "A股简称": ["平安银行", "宁德时代"],
-            "A股上市日期": ["1991-04-03", "2018-06-11"],
-            "A股总股本": ["0", "0"],
-            "A股流通股本": ["0", "0"],
-            "所属行业": ["J 金融业", "C38 电气机械和器材制造业"],
-        })
+        sz_df = pd.DataFrame(
+            {
+                "板块": ["主板", "创业板"],
+                "A股代码": ["000001", "300750"],
+                "A股简称": ["平安银行", "宁德时代"],
+                "A股上市日期": ["1991-04-03", "2018-06-11"],
+                "A股总股本": ["0", "0"],
+                "A股流通股本": ["0", "0"],
+                "所属行业": ["J 金融业", "C38 电气机械和器材制造业"],
+            }
+        )
         p = AkshareIngestProvider()
         mock_ak = MagicMock()
         mock_ak.stock_info_sh_name_code = sh_fn
@@ -296,9 +392,7 @@ class TestFetchStockBasic:
         mock_ak.stock_info_sz_name_code = MagicMock(return_value=sz_df)
         mock_ak.stock_info_sz_name_code.__name__ = "stock_info_sz_name_code"
         # 东财行业反查模拟反爬封锁 → industry 留空不致命
-        mock_ak.stock_board_industry_name_em = MagicMock(
-            side_effect=ConnectionError("em blocked")
-        )
+        mock_ak.stock_board_industry_name_em = MagicMock(side_effect=ConnectionError("em blocked"))
         mock_ak.stock_board_industry_name_em.__name__ = "stock_board_industry_name_em"
         monkeypatch.setitem(sys.modules, "akshare", mock_ak)
         results = _call_fetch(p, "stock_basic", _payload(D(2026, 8, 14), D(2026, 8, 14)))
@@ -318,11 +412,17 @@ class TestFetchStockBasic:
 
     def test_sh_failure_sz_survives(self, monkeypatch):
         # SH 接口全挂时 SZ 数据仍产出（单源失败不致命）
-        sz_df = pd.DataFrame({
-            "板块": ["主板"], "A股代码": ["000001"], "A股简称": ["平安银行"],
-            "A股上市日期": ["1991-04-03"], "A股总股本": ["0"], "A股流通股本": ["0"],
-            "所属行业": ["J 金融业"],
-        })
+        sz_df = pd.DataFrame(
+            {
+                "板块": ["主板"],
+                "A股代码": ["000001"],
+                "A股简称": ["平安银行"],
+                "A股上市日期": ["1991-04-03"],
+                "A股总股本": ["0"],
+                "A股流通股本": ["0"],
+                "所属行业": ["J 金融业"],
+            }
+        )
         p = AkshareIngestProvider()
         _mock_ak(
             monkeypatch,
@@ -340,17 +440,27 @@ class TestCninfoIndustryFallback:
 
     def _sh_sz_frames(self):
         def sh_fn(symbol=None, **kw):
-            return pd.DataFrame({
-                "证券代码": ["600000"], "证券简称": ["浦发银行"],
-                "证券全称": ["浦发银行"], "公司全称": ["上海浦东发展银行股份有限公司"],
-                "上市日期": ["1999-11-10"],
-            })
+            return pd.DataFrame(
+                {
+                    "证券代码": ["600000"],
+                    "证券简称": ["浦发银行"],
+                    "证券全称": ["浦发银行"],
+                    "公司全称": ["上海浦东发展银行股份有限公司"],
+                    "上市日期": ["1999-11-10"],
+                }
+            )
 
-        sz_df = pd.DataFrame({
-            "板块": ["主板"], "A股代码": ["000001"], "A股简称": ["平安银行"],
-            "A股上市日期": ["1991-04-03"], "A股总股本": ["0"], "A股流通股本": ["0"],
-            "所属行业": ["J 金融业"],
-        })
+        sz_df = pd.DataFrame(
+            {
+                "板块": ["主板"],
+                "A股代码": ["000001"],
+                "A股简称": ["平安银行"],
+                "A股上市日期": ["1991-04-03"],
+                "A股总股本": ["0"],
+                "A股流通股本": ["0"],
+                "所属行业": ["J 金融业"],
+            }
+        )
         return sh_fn, sz_df
 
     def test_em_blocked_cninfo_fills(self, monkeypatch):
@@ -410,30 +520,35 @@ class TestCninfoIndustryFallback:
 
 # ============== index_constituent 四指数+权重 ==============
 
+
 class TestFetchIndexConstituent:
     def test_four_indexes_with_weight(self, monkeypatch):
         cons_calls: list[str] = []
 
         def make_cons(code):
-            return pd.DataFrame({
-                "日期": ["2026-08-14", "2026-08-14"],
-                "指数代码": [code, code],
-                "指数名称": ["X", "X"],
-                "成分券代码": ["000001", "600000"],
-                "成分券名称": ["平安银行", "浦发银行"],
-                "交易所": ["深圳证券交易所", "上海证券交易所"],
-            })
+            return pd.DataFrame(
+                {
+                    "日期": ["2026-08-14", "2026-08-14"],
+                    "指数代码": [code, code],
+                    "指数名称": ["X", "X"],
+                    "成分券代码": ["000001", "600000"],
+                    "成分券名称": ["平安银行", "浦发银行"],
+                    "交易所": ["深圳证券交易所", "上海证券交易所"],
+                }
+            )
 
         def cons_fn(symbol=None, **kw):
             cons_calls.append(symbol)
             return make_cons(symbol)
 
         def weight_fn(symbol=None, **kw):
-            return pd.DataFrame({
-                "日期": ["2026-07-31", "2026-07-31"],
-                "成分券代码": ["000001", "600000"],
-                "权重": [0.433, 1.234],
-            })
+            return pd.DataFrame(
+                {
+                    "日期": ["2026-07-31", "2026-07-31"],
+                    "成分券代码": ["000001", "600000"],
+                    "权重": [0.433, 1.234],
+                }
+            )
 
         p = AkshareIngestProvider()
         mock_ak = MagicMock()
@@ -456,19 +571,22 @@ class TestFetchIndexConstituent:
 
     def test_weight_failure_degrades_to_zero(self, monkeypatch):
         def cons_fn(symbol=None, **kw):
-            return pd.DataFrame({
-                "日期": ["2026-08-14"], "指数代码": [symbol], "指数名称": ["X"],
-                "成分券代码": ["000001"], "成分券名称": ["平安银行"],
-                "交易所": ["深圳证券交易所"],
-            })
+            return pd.DataFrame(
+                {
+                    "日期": ["2026-08-14"],
+                    "指数代码": [symbol],
+                    "指数名称": ["X"],
+                    "成分券代码": ["000001"],
+                    "成分券名称": ["平安银行"],
+                    "交易所": ["深圳证券交易所"],
+                }
+            )
 
         p = AkshareIngestProvider()
         mock_ak = MagicMock()
         mock_ak.index_stock_cons_csindex = cons_fn
         mock_ak.index_stock_cons_csindex.__name__ = "index_stock_cons_csindex"
-        mock_ak.index_stock_cons_weight_csindex = MagicMock(
-            side_effect=ConnectionError("weight down")
-        )
+        mock_ak.index_stock_cons_weight_csindex = MagicMock(side_effect=ConnectionError("weight down"))
         mock_ak.index_stock_cons_weight_csindex.__name__ = "index_stock_cons_weight_csindex"
         monkeypatch.setitem(sys.modules, "akshare", mock_ak)
 
@@ -480,6 +598,7 @@ class TestFetchIndexConstituent:
 
 # ============== st_stock_list 科创板扩展 ==============
 
+
 class TestStStockListCoverage:
     def test_star_market_included(self, monkeypatch):
         seen_args: list[str] = []
@@ -487,21 +606,37 @@ class TestStStockListCoverage:
         def sh_fn(symbol=None, **kw):
             seen_args.append(symbol)
             if symbol == "科创板":
-                return pd.DataFrame({
-                    "证券代码": ["688999"], "证券简称": ["*ST科创"],
-                    "证券全称": ["x"], "公司全称": ["x"], "上市日期": ["2020-01-01"],
-                })
-            return pd.DataFrame({
-                "证券代码": ["600000"], "证券简称": ["浦发银行"],
-                "证券全称": ["x"], "公司全称": ["x"], "上市日期": ["1999-11-10"],
-            })
+                return pd.DataFrame(
+                    {
+                        "证券代码": ["688999"],
+                        "证券简称": ["*ST科创"],
+                        "证券全称": ["x"],
+                        "公司全称": ["x"],
+                        "上市日期": ["2020-01-01"],
+                    }
+                )
+            return pd.DataFrame(
+                {
+                    "证券代码": ["600000"],
+                    "证券简称": ["浦发银行"],
+                    "证券全称": ["x"],
+                    "公司全称": ["x"],
+                    "上市日期": ["1999-11-10"],
+                }
+            )
 
         def sz_fn(symbol=None, **kw):
-            return pd.DataFrame({
-                "板块": ["主板"], "A股代码": ["000002"], "A股简称": ["ST万宝"],
-                "A股上市日期": ["1991-01-29"], "A股总股本": ["0"],
-                "A股流通股本": ["0"], "所属行业": ["K 房地产"],
-            })
+            return pd.DataFrame(
+                {
+                    "板块": ["主板"],
+                    "A股代码": ["000002"],
+                    "A股简称": ["ST万宝"],
+                    "A股上市日期": ["1991-01-29"],
+                    "A股总股本": ["0"],
+                    "A股流通股本": ["0"],
+                    "所属行业": ["K 房地产"],
+                }
+            )
 
         p = AkshareIngestProvider()
         _mock_ak(
@@ -523,26 +658,41 @@ class TestStStockListCoverage:
         #135 同族）。ST 幻影码污染 stk_limit 的 st_flag 口径致涨跌停幅度误判。
         修复=严格 6 位数字门禁（对齐 _fetch_ipo_calendar/_suspend_rows_* 姊妹防御）。
         """
+
         def sh_fn(symbol=None, **kw):
             if symbol == "科创板":
-                return pd.DataFrame({
-                    "证券代码": ["688999"], "证券简称": ["*ST科创"],
-                    "证券全称": ["x"], "公司全称": ["x"], "上市日期": ["2020-01-01"],
-                })
-            return pd.DataFrame({
-                # 空码（None）/ 5 位短码 / 非数字——三类幻影攻击
-                "证券代码": [None, "00700", "ABC123"],
-                "证券简称": ["ST空码", "ST短码", "ST非数字"],
-                "证券全称": ["x", "x", "x"], "公司全称": ["x", "x", "x"],
-                "上市日期": ["1999-11-10"] * 3,
-            })
+                return pd.DataFrame(
+                    {
+                        "证券代码": ["688999"],
+                        "证券简称": ["*ST科创"],
+                        "证券全称": ["x"],
+                        "公司全称": ["x"],
+                        "上市日期": ["2020-01-01"],
+                    }
+                )
+            return pd.DataFrame(
+                {
+                    # 空码（None）/ 5 位短码 / 非数字——三类幻影攻击
+                    "证券代码": [None, "00700", "ABC123"],
+                    "证券简称": ["ST空码", "ST短码", "ST非数字"],
+                    "证券全称": ["x", "x", "x"],
+                    "公司全称": ["x", "x", "x"],
+                    "上市日期": ["1999-11-10"] * 3,
+                }
+            )
 
         def sz_fn(symbol=None, **kw):
-            return pd.DataFrame({
-                "板块": ["主板"], "A股代码": ["000002"], "A股简称": ["ST万宝"],
-                "A股上市日期": ["1991-01-29"], "A股总股本": ["0"],
-                "A股流通股本": ["0"], "所属行业": ["K 房地产"],
-            })
+            return pd.DataFrame(
+                {
+                    "板块": ["主板"],
+                    "A股代码": ["000002"],
+                    "A股简称": ["ST万宝"],
+                    "A股上市日期": ["1991-01-29"],
+                    "A股总股本": ["0"],
+                    "A股流通股本": ["0"],
+                    "所属行业": ["K 房地产"],
+                }
+            )
 
         p = AkshareIngestProvider()
         _mock_ak(
@@ -562,20 +712,26 @@ class TestStStockListCoverage:
 
 # ============== suspend 快照+推导 ==============
 
+
 class TestFetchSuspendStatus:
     def test_em_blocked_baidu_fallback(self, monkeypatch):
         # 新鲜公告（公告日期≤30天、未复牌、源站未标跳过）→ 兜底正常产出
-        baidu_df = pd.DataFrame({
-            "股票代码": ["688536", "301073"],
-            "股票简称": ["思瑞浦", "君亭酒店"],
-            "交易所代码": ["SH", "SZ"],
-            "停牌时间": ["2026-08-13", "2026-08-14"],
-            "复牌时间": [None, None],
-            "停牌事项说明": ["拟筹划重大资产重组", "重大事项"],
-            "市值": [0, 0], "公告日期": ["2026-08-13", "2026-08-14"],
-            "公告时间": ["--", "--"], "证券类型": ["stock", "stock"],
-            "市场类型": ["ab", "ab"], "是否跳过": [0, 0],
-        })
+        baidu_df = pd.DataFrame(
+            {
+                "股票代码": ["688536", "301073"],
+                "股票简称": ["思瑞浦", "君亭酒店"],
+                "交易所代码": ["SH", "SZ"],
+                "停牌时间": ["2026-08-13", "2026-08-14"],
+                "复牌时间": [None, None],
+                "停牌事项说明": ["拟筹划重大资产重组", "重大事项"],
+                "市值": [0, 0],
+                "公告日期": ["2026-08-13", "2026-08-14"],
+                "公告时间": ["--", "--"],
+                "证券类型": ["stock", "stock"],
+                "市场类型": ["ab", "ab"],
+                "是否跳过": [0, 0],
+            }
+        )
         p = AkshareIngestProvider()
         _mock_ak(
             monkeypatch,
@@ -594,16 +750,18 @@ class TestFetchSuspendStatus:
         # 2026-08-15 二审实证：百度 feed 冻结于 2025-11-26（全量公告日期陈旧）。
         # 三重过滤各命中一行：源站是否跳过=1 / 复牌日≤快照日 / 公告>30天——
         # 宁可快照空缺，不写假停牌约束（3 行标的当日 K 线正常交易实证）。
-        baidu_df = pd.DataFrame({
-            "股票代码": ["688536", "600200", "301073"],
-            "股票简称": ["思瑞浦", "退市苏吴", "君亭酒店"],
-            "交易所代码": ["SH", "SH", "SZ"],
-            "停牌时间": ["2025-11-26", "2025-11-26", "2025-11-26"],
-            "复牌时间": [None, "2025-12-09", None],
-            "停牌事项说明": ["拟筹划重大资产重组", "重要公告", "重大事项"],
-            "公告日期": ["2025-11-26", "2025-11-26", "2025-11-26"],
-            "是否跳过": [1, 0, 0],
-        })
+        baidu_df = pd.DataFrame(
+            {
+                "股票代码": ["688536", "600200", "301073"],
+                "股票简称": ["思瑞浦", "退市苏吴", "君亭酒店"],
+                "交易所代码": ["SH", "SH", "SZ"],
+                "停牌时间": ["2025-11-26", "2025-11-26", "2025-11-26"],
+                "复牌时间": [None, "2025-12-09", None],
+                "停牌事项说明": ["拟筹划重大资产重组", "重要公告", "重大事项"],
+                "公告日期": ["2025-11-26", "2025-11-26", "2025-11-26"],
+                "是否跳过": [1, 0, 0],
+            }
+        )
         p = AkshareIngestProvider()
         _mock_ak(
             monkeypatch,
@@ -617,14 +775,16 @@ class TestFetchSuspendStatus:
     def test_hk_stock_excluded(self, monkeypatch):
         # 港股 5 位代码 zfill 后误撞深主板 00 前缀（联调实证 003389/009929 串入）——
         # 交易所代码列+长度双门禁必须排除
-        baidu_df = pd.DataFrame({
-            "股票代码": ["03389", "688536"],
-            "股票简称": ["亨得利", "思瑞浦"],
-            "交易所代码": ["HK", "SH"],
-            "停牌时间": ["2025-11-26", "2025-11-26"],
-            "复牌时间": [None, None],
-            "停牌事项说明": ["短暂停止买卖", "拟筹划重大资产重组"],
-        })
+        baidu_df = pd.DataFrame(
+            {
+                "股票代码": ["03389", "688536"],
+                "股票简称": ["亨得利", "思瑞浦"],
+                "交易所代码": ["HK", "SH"],
+                "停牌时间": ["2025-11-26", "2025-11-26"],
+                "复牌时间": [None, None],
+                "停牌事项说明": ["短暂停止买卖", "拟筹划重大资产重组"],
+            }
+        )
         p = AkshareIngestProvider()
         _mock_ak(
             monkeypatch,
@@ -673,6 +833,7 @@ class TestFetchSuspendStatus:
 
 # ============== 路由完整性 ==============
 
+
 class TestCapabilityRouting:
     def test_new_capabilities_registered(self):
         caps = {c.capability_id for c in AkshareIngestProvider.meta.capabilities}
@@ -686,18 +847,20 @@ class TestCapabilityRouting:
 
 # ============== 日期规范化空值防御（baidu NaN 实证回归） ==============
 
+
 class TestNormAkshareDate:
     @pytest.mark.parametrize("val", [float("nan"), "nan", "NaN", "NaT", "None", "--", "", None])
     def test_empty_placeholders(self, val):
         assert AkshareIngestProvider._norm_akshare_date(val) == ""
 
-    @pytest.mark.parametrize("val,expected", [
-        ("20260815", "2026-08-15"),
-        ("2026-08-15", "2026-08-15"),
-        (datetime.date(2026, 8, 15), "2026-08-15"),
-        (datetime.datetime(2026, 8, 15, 10, 30), "2026-08-15"),
-    ])
+    @pytest.mark.parametrize(
+        "val,expected",
+        [
+            ("20260815", "2026-08-15"),
+            ("2026-08-15", "2026-08-15"),
+            (datetime.date(2026, 8, 15), "2026-08-15"),
+            (datetime.datetime(2026, 8, 15, 10, 30), "2026-08-15"),
+        ],
+    )
     def test_valid_dates(self, val, expected):
         assert AkshareIngestProvider._norm_akshare_date(val) == expected
-
-

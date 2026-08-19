@@ -219,6 +219,11 @@ _SQL_KLINE_SYMBOL_DAYS = (
 _SQL_KLINE_PROBE = "SELECT count() FROM c1_market.kline_daily"
 # ST 最近可得快照加载（PIT 严格：≤T 口径，窗口前推 400 天）
 _SQL_ST_SNAPSHOTS = "SELECT trade_date, symbol FROM {table} WHERE trade_date >= '{start}' AND trade_date <= '{end}'"
+# #202 stk_limit 上市龄真源：stock_basic 上市日期批量取（每标的 ≤end 最新快照，
+# 一次查询全市场传入，不逐行查库）
+_SQL_LIST_DATES = (
+    "SELECT symbol, argMax(list_date, trade_date) FROM {table} WHERE trade_date <= '{end}' GROUP BY symbol"
+)
 _TBL_TOP10_CIRCULATING_SHAREHOLDERS = get_registry().table("fund_top10_circulating_shareholders")
 _TBL_TOP10_SHAREHOLDERS = get_registry().table("fund_top10_shareholders")
 
@@ -6190,6 +6195,56 @@ class AkshareIngestProvider(IngestProviderBase):
                 continue
         return out
 
+    def _load_list_dates(self, end: datetime.date) -> dict[str, datetime.date]:
+        """#202 批量加载 stock_basic 上市日期（symbol→list_date，每标的 ≤end 最新快照）。
+
+        stk_limit 新股无涨跌幅限制期的上市龄真源，一次查询全市场传入（不逐行查库）。
+        查询失败/为空返回 {}：调用方 fail-closed——查不到上市日期的标的一律按
+        有涨跌幅限制处理（不产 NULL），防撮合出不可能成交。
+        """
+        from zephyr.data import ch_reader as _chr
+
+        try:
+            tsv = _chr.query(_SQL_LIST_DATES.format(table=_TBL_STOCK_BASIC, end=end.isoformat()))
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"stock_basic 上市日期加载失败（fail-closed 按有涨跌幅限制）: {e}")
+            return {}
+        out: dict[str, datetime.date] = {}
+        for line in (tsv or "").strip().split("\n"):
+            parts = line.split("\t")
+            if len(parts) != 2:
+                continue
+            code = parts[0].strip().split(".")[0].zfill(6)
+            try:
+                out[code] = datetime.date.fromisoformat(parts[1][:10])
+            except ValueError:
+                continue  # NULL/坏行跳过 → 该标的不入映射（fail-closed）
+        return out
+
+    @staticmethod
+    def _in_unlimited_period(
+        code: str,
+        d: datetime.date,
+        list_dates: dict[str, datetime.date],
+        market_days: list[datetime.date],
+    ) -> bool:
+        """#202 新股无涨跌幅限制期判定（科创/创业/北交上市首 5 个交易日）。
+
+        口径取交易日（交易所规则原文为"上市之日起前 5 个交易日"，非自然日）：
+        上市日 list_date 为第 1 个交易日，按市场交易日序列（kline 开市日代理，
+        含 45 天缓冲窗）计数 [list_date, d] 内交易日数 ≤5 判定。
+        fail-closed：查不到上市日期 / 上市日早于日历覆盖范围（无法精确计数，
+        如上市数日内即长期停牌的极端情形）/ list_date 晚于 bar 日（数据异常），
+        一律返回 False（按有涨跌幅限制处理，不产 NULL）。
+        """
+        import bisect
+
+        ld = list_dates.get(code)
+        if ld is None or d < ld or not market_days or ld < market_days[0]:
+            return False
+        age = bisect.bisect_right(market_days, d) - bisect.bisect_left(market_days, ld)
+        return age <= 5
+
     def _parse_kline_bars(self, tsv: str) -> dict[str, list[tuple[datetime.date, float, float]]]:
         """解析 kline TSV（trade_date/symbol/close/adj_factor）为 per-symbol 有序序列。
 
@@ -6224,12 +6279,17 @@ class AkshareIngestProvider(IngestProviderBase):
         day_set: set[datetime.date],
         snap_dates: list[datetime.date],
         snap_map: dict[datetime.date, set[str]],
+        list_dates: dict[str, datetime.date],
+        market_days: list[datetime.date],
     ) -> tuple | None:
         """计算单股单日涨跌停行；非目标交易日/首日无昨收/未知板块返回 None。
 
         新股无涨跌幅限制期（科创/创业/北交上市前 5 个交易日）产出 NULL 行；
         除权除息日昨收经 adj_factor 前复权因子比修正，先 round(4) 再进 Decimal
         （float epsilon 会翻转 ROUND_HALF_UP 边界）。
+        #202：上市龄判定改用 stock_basic.list_date 真实上市日期（原 i<5 用窗口
+        行索引冒充上市龄，长期停牌复牌股落在窗口头 5 行被误判无限制→limit=NULL，
+        下游撮合可产生不可能成交）。
         """
         d, _close, adj = series[i]
         if d not in day_set or i == 0:
@@ -6238,7 +6298,7 @@ class AkshareIngestProvider(IngestProviderBase):
         prev_close, prev_adj = series[i - 1][1], series[i - 1][2]
         pre_close = round(prev_close * (adj / prev_adj), 4)
         st_flag = self._st_flag_at(snap_dates, snap_map, code, d)
-        if i < 5 and pct_board in ("科创板", "创业板", "北交所"):
+        if pct_board in ("科创板", "创业板", "北交所") and self._in_unlimited_period(code, d, list_dates, market_days):
             return (d.isoformat(), code, pre_close, None, None, None, st_flag, pct_board, "rule_computed")
         pct = self._limit_pct_of(code, d, bool(st_flag))
         if pct is None:
@@ -6254,13 +6314,17 @@ class AkshareIngestProvider(IngestProviderBase):
         trade_days: list[datetime.date],
         snap_dates: list[datetime.date],
         snap_map: dict[datetime.date, set[str]],
+        list_dates: dict[str, datetime.date],
     ) -> list[tuple]:
         """全市场逐股逐日计算涨跌停行（编排循环，单行逻辑在 _stk_limit_row_for）。"""
         day_set = set(trade_days)
+        # #202：全市场交易日并集（含 45 天缓冲窗）作上市龄计数的市场交易日序列
+        # （与"开市日=kline_daily 有数据日"口径一致；一次构建传入，不逐行重算）
+        market_days = sorted({d for series in bars.values() for d, _, _ in series})
         rows: list[tuple] = []
         for code, series in bars.items():
             for i in range(len(series)):
-                row = self._stk_limit_row_for(code, series, i, day_set, snap_dates, snap_map)
+                row = self._stk_limit_row_for(code, series, i, day_set, snap_dates, snap_map, list_dates, market_days)
                 if row is not None:
                     rows.append(row)
         return rows
@@ -6275,6 +6339,8 @@ class AkshareIngestProvider(IngestProviderBase):
         前复权因子比修正（pre_close = close_prev × adj_T/adj_prev）。
         ST 标记：st_stock_list 最近可得（≤T）快照（PIT 严格）。
         新股：科创板/创业板/北交所上市前 5 个交易日无涨跌幅限制 → limit=NULL；
+        #202 上市龄取 stock_basic.list_date 真实上市日期按市场交易日计数（原
+        窗口行索引 i<5 误判长期停牌复牌股），查不到上市日期 fail-closed 不产 NULL；
         主板上市首日 44% 需发行价（无数据）→ 不产出行。
         增量口径：payload.start~end 内每个交易日各算一批，同日重跑幂等替换。
         """
@@ -6360,9 +6426,10 @@ class AkshareIngestProvider(IngestProviderBase):
             return
         bars = self._parse_kline_bars(tsv_k)
 
-        # 3) ST 快照（最近可得口径）+ 4) 逐股逐日计算
+        # 3) ST 快照（最近可得口径）+ 3b) 上市日期（#202 批量一次取入）+ 4) 逐股逐日计算
         snap_dates, snap_map = self._load_st_snapshots(start, end)
-        rows = self._compute_stk_limit_rows(bars, trade_days, snap_dates, snap_map)
+        list_dates = self._load_list_dates(end)
+        rows = self._compute_stk_limit_rows(bars, trade_days, snap_dates, snap_map, list_dates)
 
         self._log.info(f"stk_limit 计算完成: {len(rows)} 行（{trade_days[0]}~{trade_days[-1]}）")
         yield FetchResult(
