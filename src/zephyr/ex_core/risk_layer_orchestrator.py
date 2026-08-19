@@ -431,7 +431,9 @@ class RiskLayerOrchestrator:
                 # today_fills 元素契约适配：broker 扩展可能返回 (Fill, side) 元组
                 # 或裸 Fill；rebuild 仅消费 fill_id（去重登记），统一取 Fill 本体
                 fills = [item[0] if isinstance(item, (tuple, list)) else item for item in today_fills]
-                self._position_tracker.rebuild_from_broker(holdings, fills)
+                # #203 修复：资金账同样以券商为准——缺省 cash 会保留启动
+                # initial_cash，导致持仓对账正确但现金失真
+                self._position_tracker.rebuild_from_broker(holdings, fills, cash=snapshot.cash)
             with self._lock:
                 self._recovery_completed = True
                 if snapshot.cash is not None:

@@ -322,6 +322,23 @@ class TestStartupRecovery:
         assert tracker.get_positions().holdings == {"600000.SH": Decimal("5000")}
         assert orch.is_trading_allowed is True
 
+    def test_rebuild_from_broker_cash_authoritative(self) -> None:
+        """#203 回归：recover 后现金以券商快照为准，不保留 initial_cash。"""
+        broker = FakeBroker(
+            cash=Decimal("234567.89"),
+            holdings={"600000.SH": Decimal("5000")},
+            cost_prices={"600000.SH": Decimal("100")},
+        )
+        tracker = PositionTracker(initial_cash=Decimal("1000000"))
+        orch = _make_orchestrator(broker=broker, tracker=tracker)
+
+        result = orch.recover_from_broker()
+
+        assert result.success is True
+        assert tracker.get_positions().holdings == {"600000.SH": Decimal("5000")}
+        assert tracker.cash == Decimal("234567.89")
+        assert tracker.cash != Decimal("1000000")
+
     def test_orders_rejected_before_recovery(self) -> None:
         """重建完成前（recover 未调用）rebalance 整批拒下。"""
         broker = FakeBroker()
