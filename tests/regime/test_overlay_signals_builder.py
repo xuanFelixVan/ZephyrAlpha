@@ -234,32 +234,38 @@ def _make_limit_up_down(
 
 
 class TestStructureContract:
-    """8 转换 key + 31 维度 key 对齐 TRANSITION_CONFIG。"""
+    """8 转换 key + 32 维度 key 对齐 TRANSITION_CONFIG（P1-E9d 后含 breadth_thrust）。"""
 
     def test_8_transitions_present(self):
         """_TRANSITION_DIMS 包含全部 8 转换（T1-T6/S1/S2）。"""
         assert set(_TRANSITION_DIMS.keys()) == set(TRANSITIONS)
 
     def test_dims_align_config(self):
-        """每个转换的维度 key 与 TRANSITION_CONFIG 的 keys_gte 完全对齐。"""
+        """每个转换的维度 key 与 TRANSITION_CONFIG 的 keys_gte/keys_or_gte 完全对齐。
+
+        P1-E9d：S2 confirm 新增 keys_or_gte 析取字段（wyckoff/breadth_thrust），
+        契约对齐须同时收集析取 key。
+        """
         for tid in TRANSITIONS:
             cfg = TRANSITION_CONFIG[tid]
             config_keys: set[str] = set()
             for stage in cfg["stages"].values():
                 config_keys.update((stage.get("keys_gte") or {}).keys())
+                config_keys.update((stage.get("keys_or_gte") or {}).keys())
             builder_keys = set(_TRANSITION_DIMS[tid])
             assert builder_keys == config_keys, f"{tid} 维度不匹配: builder={builder_keys} vs config={config_keys}"
 
     def test_31_unique_keys(self):
-        """全转换并集 = 31 个维度 key（31 可算 + 0 stub）。
+        """全转换并集 = 32 个维度 key（32 可算 + 0 stub）。
 
         Phase 2c: T3 资金/板块 4 维度从 stub 升级为可算，stub 6→2。
         P1-E3: policy/bad_news_flat 从 stub 升级为可算（关键词 NLP），stub 2→0。
+        P1-E9d: S2 新增 breadth_thrust 维度（V 反转析取通路），31→32。
         """
         all_keys: set[str] = set()
         for keys in _TRANSITION_DIMS.values():
             all_keys.update(keys)
-        assert len(all_keys) == 31, f"期望 31 维度，实际 {len(all_keys)}"
+        assert len(all_keys) == 32, f"期望 32 维度，实际 {len(all_keys)}"
         assert set() == _STUB_DIMS, f"期望 0 stub（全部已激活），实际 {_STUB_DIMS}"
 
     def test_build_for_date_has_all_transitions_and_dims(self):
@@ -505,6 +511,110 @@ class TestDegradation:
             for key in breakdown:
                 if key in _STUB_DIMS:
                     assert breakdown[key] == 0.0, f"stub {tid}.{key} 应恒 0.0"
+
+
+# ---------------------------------------------------------------------------
+# P1-E9: S2 五子项调用链集成（OHLCV+广度指数全数据 mock）
+# ---------------------------------------------------------------------------
+
+
+class TestP1E9S2Integration:
+    """P1-E9a~e 调用链迁移集成验证（14_regime_s2_diagnosis §4）。
+
+    既有 mock 仅 close/volume（走降级路径）；本类构造含 open/high/low + 广度指数
+    399106 涨跌家数的全数据 mock，验证新调用链真实生效：
+      capitulation 衰减加权簇集 > 0 / breadth_thrust 完整 thrust = 80 /
+      spring 深度分级 / three_yang 6 维分级。
+    """
+
+    def _make_full_index_df(self, dates: pd.DatetimeIndex) -> pd.DataFrame:
+        """双符号 index_df：000300 完整 OHLCV + 399106 涨跌家数（breadth thrust）。"""
+        n = len(dates)
+        # 000300：常态平盘 3000；250-252 日 3 日 capitulation 级联暴跌（-6%/日，
+        # 3×量 + 长下影 + 大实体，三过滤器全共振）
+        open_a = np.full(n, 3000.0)
+        high = np.full(n, 3005.0)
+        low = np.full(n, 2995.0)
+        close = np.full(n, 3000.0)
+        volume = np.full(n, 1e8)
+        prev = 3000.0
+        for i in (250, 251, 252):
+            o, c = prev * 0.99, prev * 0.94
+            open_a[i], close[i] = o, c
+            high[i] = prev * 1.001
+            low[i] = c * 0.92  # 下影占比 ~57%>50%
+            volume[i] = 3e8
+            prev = c
+        proxy_idx = pd.MultiIndex.from_product([["000300"], dates], names=["symbol", "trade_date"])
+        proxy_df = pd.DataFrame(
+            {"open": open_a, "high": high, "low": low, "close": close, "volume": volume},
+            index=proxy_idx,
+        )
+        # 399106：230-244 日 washout（涨 30%）→ 245 日起普涨（涨 80%）→ 完整 thrust
+        ratio = np.full(n, 0.50)
+        ratio[230:245] = 0.30
+        ratio[245:] = 0.80
+        br_idx = pd.MultiIndex.from_product([["399106"], dates], names=["symbol", "trade_date"])
+        br_df = pd.DataFrame(
+            {
+                "open": np.full(n, 1000.0),
+                "high": np.full(n, 1001.0),
+                "low": np.full(n, 999.0),
+                "close": np.full(n, 1000.0),
+                "volume": np.full(n, 1e8),
+                "advance_count": ratio * 5000.0,
+                "decline_count": (1.0 - ratio) * 5000.0,
+            },
+            index=br_idx,
+        )
+        return pd.concat([proxy_df, br_df]).sort_index()
+
+    def test_p1e9_s2_dims_via_full_chain(self):
+        """全数据 mock：capitulation 簇集>0 + breadth_thrust=80（shift(1) PIT 后）。"""
+        dates = _make_dates(300)
+        vol_anom = np.zeros(300)
+        vol_anom[250:253] = 3.5  # capitulation 日 z>3（90 分档）
+        feat = _make_features(dates, vol_pct=0.3, corr=0.5, vol_anom=0.0)
+        feat["volume_anomaly"] = vol_anom
+        idx_df = self._make_full_index_df(dates)
+        fb = _MockFeatureBuilder(feat, idx_df)
+        fb.breadth_index = "399106"  # 与生产 RegimeFeatureBuilder 属性同名
+        ctor = OverlaySignalsConstructor(
+            backtest_start="2020-01-01",
+            backtest_end="2021-03-01",
+            data_load_start="2020-01-01",
+            feature_builder=fb,
+        )
+        # 查 dates[253] → shift(1) 取 252（第 3 个 capitulation 日 / thrust 第 8 日）
+        s2 = ctor.build_for_date(dates[253])["transitions"]["S2"]
+        assert s2["capitulation"] > 0, (
+            f"P1-E9a 衰减加权簇集应 >0（3 日 90 分簇集），实际 {s2['capitulation']}"
+        )
+        assert s2["breadth_thrust"] == 80, (
+            f"P1-E9d 完整 thrust（washout→普涨）应=80，实际 {s2['breadth_thrust']}"
+        )
+        # 新维度已注册进 S2 breakdown
+        assert "breadth_thrust" in s2
+
+    def test_p1e9_degrade_without_ohlc_and_breadth(self):
+        """缺 open/399106（旧 mock 形态）→ capitulation 降级瞬时版 + breadth_thrust=0。"""
+        dates = _make_dates(300)
+        feat = _make_features(dates, vol_pct=0.3, vol_anom=3.5)
+        close = np.full(300, 3000.0)
+        close[249] = 3000 * (1 - 0.05)  # 单日暴跌 5%
+        idx_df = _make_index_df(dates, close, np.full(300, 1e8))  # 无 open，仅 000300
+        fb = _MockFeatureBuilder(feat, idx_df)
+        ctor = OverlaySignalsConstructor(
+            backtest_start="2020-01-01",
+            backtest_end="2021-03-01",
+            data_load_start="2020-01-01",
+            feature_builder=fb,
+        )
+        s2 = ctor.build_for_date(dates[250])["transitions"]["S2"]
+        # 降级瞬时两维版：z>3 & 跌>4% → 90（无衰减）
+        assert s2["capitulation"] == 90
+        assert s2["breadth_thrust"] == 0.0
+
 
 
 # ---------------------------------------------------------------------------

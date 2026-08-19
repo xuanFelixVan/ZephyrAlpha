@@ -299,7 +299,8 @@ _STATE_RISK_FACTORS: dict[str, float] = {
 #   T4 牛市态(r3)赶顶 / T5 牛市态(r3)→熊市态(r4)逃顶 / T6 熊市态(r4)冰点
 #   S1 任意态→CRISIS / S2 CRISIS→RECOVERY（S1/S2 不依赖基态语义，不变）
 # stages 阈值暂沿用原值，P1 阶段（E3 NLP+E5 T3+E6 bad_news_flat）精调
-# 每个 stage 的条件：total_gte（总分下界）/ keys_gte（关键维度下界，任一缺失即不满足）
+# 每个 stage 的条件：total_gte（总分下界）/ keys_gte（关键维度下界，任一缺失即不满足）/
+# keys_or_gte（析取下界，P1-E9d：任一 key 达阈即通过；与 keys_gte 并存时两组均须通过）
 # p_overlay：该阶段触发的特殊态概率覆盖（覆盖 HMM）；shrinkage：该阶段的 Shrinkage 锚定值
 # stage 判定优先级：strong_confirm > confirm > trigger > fail（取首个满足）
 # 维度 key 命名对齐 spec：调用方在 score_breakdown 中提供同名 key
@@ -368,9 +369,13 @@ TRANSITION_CONFIG: dict[str, dict[str, Any]] = {
     "S2": {  # CRISIS → RECOVERY（§4.12.8 八维度见底，不依赖基态语义）
         "overlay_target": "r11",
         "stages": {
-            "strong_confirm": {"total_gte": 250, "keys_gte": {"spring": 1, "three_yang": 1},
+            # P1-E9e：three_yang 升级 6 维分级后门槛 1→2（标准红三兵及以上）
+            "strong_confirm": {"total_gte": 250, "keys_gte": {"spring": 1, "three_yang": 2},
                                "p_overlay": {"r11": 0.80}, "shrinkage": 0.7},
-            "confirm":        {"keys_gte": {"wyckoff": 60, "policy": 40, "valuation": 40, "fund": 50},
+            # P1-E9d：confirm 析取通路——(wyckoff≥60 ∨ breadth_thrust≥60) ∧ 共同必要条件。
+            # V 反转/政策型复苏不走 Wyckoff 吸筹（wyckoff 合法偏低），breadth_thrust 补盲区
+            "confirm":        {"keys_or_gte": {"wyckoff": 60, "breadth_thrust": 60},
+                               "keys_gte": {"policy": 40, "valuation": 40, "fund": 50},
                                "p_overlay": {"r11": 0.65}, "shrinkage": 0.6},
             "trigger":        {"keys_gte": {"capitulation": 60, "vix": 40, "bad_news_flat": 40},
                                "p_overlay": {"r11": 0.40}, "shrinkage": 0.4},
@@ -964,8 +969,20 @@ class RegimeDetector:
     def _eval_stage(
         breakdown: dict[str, float], total: float, cond: dict[str, Any]
     ) -> bool:
-        """阶段条件判定：total_gte 与 keys_gte 同时满足（缺 key 视为不满足）。"""
+        """阶段条件判定：total_gte 与 keys_gte（+keys_or_gte）同时满足（缺 key 视为不满足）。
+
+        P1-E9d 析取逻辑（14_regime_s2_diagnosis §4.4）：keys_or_gte 内任一 key 达阈即
+        通过（析取，缺 key 计 0.0）；与 keys_gte（合取，全满足才通过）并存时两组均须
+        通过。用于 S2 confirm 的 V 反转通路——(wyckoff≥60 ∨ breadth_thrust≥60) ∧
+        policy/valuation/fund 共同必要条件。
+        """
         if total < float(cond.get("total_gte", 0)):
+            return False
+        or_keys = cond.get("keys_or_gte") or {}
+        if or_keys and not any(
+            float(breakdown.get(key, 0.0)) >= float(threshold)
+            for key, threshold in or_keys.items()
+        ):
             return False
         for key, threshold in (cond.get("keys_gte") or {}).items():
             if float(breakdown.get(key, 0.0)) < float(threshold):

@@ -44,15 +44,20 @@
   - **PIT 铁律**：_precompute 末尾对每个维度 Series shift(1)，build_for_date(dt) 取
     loc[:dt].iloc[-1] 即 ≤ dt-1 数据（与 RegimeFeatureBuilder.shift(1) 一致）。
 
-31 个维度 key（对齐 TRANSITION_CONFIG 的 keys_gte，契约守护）:
-  可算 31：vix_panic/correlation/liquidity/flash_recover（S1）
+32 个维度 key（对齐 TRANSITION_CONFIG 的 keys_gte/keys_or_gte，契约守护）:
+  可算 32：vix_panic/correlation/liquidity/flash_recover（S1）
            capitulation/vix/wyckoff/valuation/fund/spring/three_yang/
-           break_sc_low/vix_new_high/fund_outflow/policy/bad_news_flat（S2）
+           breadth_thrust/break_sc_low/vix_new_high/fund_outflow/policy/bad_news_flat（S2）
            bqs/rcs/frs（T1）, continue_decline（T2）
            volume_price/ma_trend/sentiment/money_effect/mainline/leader/
            one_day_mainline（T3）, shrink_flat（T4）
            leader_break/rebound_wrap（T5）, sudden_volume（T6）
   stub 0：全部已激活（P1-E3 关键词 NLP + P1-E4/E5 资金板块）
+
+P1-E9 升级（14_regime_s2_diagnosis §4）：capitulation 衰减加权多过滤器（E9a）/
+valuation 路 B 阈值校准（E9b，路 A CAPE 待 daily_valuation 管道）/
+spring 深度分级+velocity+0.5×ATR 失效边距（E9c）/breadth_thrust V 反转析取通路（E9d，
+数据源=广度指数 399106 advance_count/decline_count）/three_yang 6 维分级（E9e）。
 
 Phase 2c 升级：money_effect/mainline/leader/one_day_mainline 从 stub→可算
 （接入 money_flow/kline_sector/limit_up_down + hk_connect_flow 北向融合），T3 confirm/trigger/fail 解锁。
@@ -94,11 +99,12 @@ _TRANSITION_DIMS: dict[str, list[str]] = {
         "fund",
         "spring",
         "three_yang",
+        "breadth_thrust",  # P1-E9d：V 反转通路（confirm 析取 keys_or_gte）
         "break_sc_low",
         "vix_new_high",
         "fund_outflow",
         "policy",
-        "bad_news_flat",  # stub（NLP）
+        "bad_news_flat",
     ],
     "T1": ["bqs", "rcs", "frs"],
     "T2": ["continue_decline"],
@@ -236,9 +242,11 @@ class OverlaySignalsConstructor:
             self._cache = cache
             return cache
 
-        # 2. 复用代理 OHLCV（close/volume + high/low）
+        # 2. 复用代理 OHLCV（close/volume + high/low + open）
         # Phase 2c：high/low 分离加载，避免 high 缺失连累 close（与 risk_signal_builder 一致）
-        proxy_close = proxy_volume = proxy_high = proxy_low = None
+        # P1-E9a：open 分离加载（capitulation 真实体 + 下影线过滤器的数据前置）
+        proxy_close = proxy_volume = proxy_high = proxy_low = proxy_open = None
+        proxy_adv = proxy_dec = None
         try:
             index_df = self._feature_builder.get_index_kline()
             proxy = index_df.xs(self.market_proxy, level="symbol")
@@ -252,6 +260,18 @@ class OverlaySignalsConstructor:
                 proxy_low = proxy["low"].astype(float)
             except Exception as exc:  # noqa: BLE001
                 _logger.warning("代理 high/low 缺失，s2_wyckoff 回退 MVP 简化版: %s", exc)
+            try:
+                proxy_open = proxy["open"].astype(float)
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning("代理 open 缺失，capitulation/three_yang 降级: %s", exc)
+            # P1-E9d：广度指数涨跌家数（breadth_thrust 源，默认 399106 深证综指）
+            try:
+                breadth_sym = getattr(self._feature_builder, "breadth_index", "399106")
+                br = index_df.xs(breadth_sym, level="symbol")
+                proxy_adv = br["advance_count"].astype(float)
+                proxy_dec = br["decline_count"].astype(float)
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning("广度指数涨跌家数缺失，S2 breadth_thrust 降级 0.0: %s", exc)
 
         # 限定到 [data_load_start, backtest_end]
         feat = features.loc[self.data_load_start : self.backtest_end]
@@ -268,6 +288,10 @@ class OverlaySignalsConstructor:
         pct_change = close.pct_change() if close is not None else None
         high = proxy_high.reindex(feat.index) if proxy_high is not None else None
         low = proxy_low.reindex(feat.index) if proxy_low is not None else None
+        open_ = proxy_open.reindex(feat.index) if proxy_open is not None else None
+        # P1-E9d：涨跌家数 reindex 后缺日填 0（与 RegimeFeatureBuilder._load_breadth 一致）
+        adv = proxy_adv.reindex(feat.index).fillna(0.0) if proxy_adv is not None else None
+        dec = proxy_dec.reindex(feat.index).fillna(0.0) if proxy_dec is not None else None
 
         # ── Phase 2c: 合成 VIX（vix_pct，优先于 vol_pct 注入 S1/S2）──
         vix_pct = self._compute_vix_pct(feat.index)
@@ -296,7 +320,18 @@ class OverlaySignalsConstructor:
             _logger.warning("S1 flash_recover 数据缺失，降级 0.0")
 
         # ── S2: CRISIS → RECOVERY ──
-        if vol_z is not None and pct_change is not None:
+        # P1-E9a：衰减加权多过滤器版（需 OHLCV+open）；缺 OHLCV 回退瞬时两维版（治标 z>1）
+        if (
+            vol_z is not None and pct_change is not None
+            and close is not None and high is not None and low is not None
+            and volume is not None and open_ is not None
+        ):
+            # 期权 put/call + 新低占比（第 5/6 维）：Step 0 ④ 勘探无数据管道，默认关闭
+            cache["capitulation"] = overlay_features.s2_capitulation_score(
+                vol_z, pct_change, volume, high, low, open_, close
+            )
+        elif vol_z is not None and pct_change is not None:
+            _logger.warning("S2 capitulation 缺 OHLCV/open，降级瞬时两维版（治标 z>1）")
             cache["capitulation"] = overlay_features.s2_capitulation_score(vol_z, pct_change)
         else:
             _logger.warning("S2 capitulation 数据缺失，降级 0.0")
@@ -307,8 +342,10 @@ class OverlaySignalsConstructor:
         if close is not None:
             # Phase 2c：s2_wyckoff 委托 wyckoff_engine（需 high/low/volume/pct/vol_z）
             cache["wyckoff"] = overlay_features.s2_wyckoff_score(close, high, low, volume, pct_change, vol_z)
+            # P1-E9b 路 B：阈值校准版（路 A CAPE 分位待 daily_valuation 管道，Step 0 ①）
             cache["valuation"] = overlay_features.s2_valuation_score(close)
-            cache["spring"] = overlay_features.s2_spring_flag(close)
+            # P1-E9c：spring 深度分级版（需 high/low；缺失时函数内回退 close 简化版）
+            cache["spring"] = overlay_features.s2_spring_flag(close, high, low, volume)
             cache["break_sc_low"] = overlay_features.s2_break_sc_low_flag(close)
         else:
             _logger.warning("S2 wyckoff/valuation/spring/break_sc_low 数据缺失，降级 0.0")
@@ -316,10 +353,19 @@ class OverlaySignalsConstructor:
             cache["fund"] = overlay_features.s2_fund_score(volume)
         else:
             _logger.warning("S2 fund 数据缺失，降级 0.0")
-        if pct_change is not None:
-            cache["three_yang"] = overlay_features.s2_three_yang_flag(pct_change)
+        # P1-E9e：three_yang 6 维分级版（需 OHLCV 五序列；缺失降级 0.0，不回退旧宽松版）
+        if (
+            open_ is not None and high is not None and low is not None
+            and close is not None and volume is not None
+        ):
+            cache["three_yang"] = overlay_features.s2_three_yang_flag(open_, high, low, close, volume)
         else:
-            _logger.warning("S2 three_yang 数据缺失，降级 0.0")
+            _logger.warning("S2 three_yang 数据缺失（需 OHLCV），降级 0.0")
+        # P1-E9d：breadth_thrust V 反转通路（需广度指数涨跌家数，confirm 析取维度）
+        if adv is not None and dec is not None:
+            cache["breadth_thrust"] = overlay_features.s2_breadth_thrust_score(adv, dec)
+        else:
+            _logger.warning("S2 breadth_thrust 涨跌家数数据缺失，降级 0.0")
         if vol_pct is not None:
             cache["vix_new_high"] = overlay_features.s2_vix_new_high_flag(vol_pct)
         else:

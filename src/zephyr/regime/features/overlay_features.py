@@ -25,14 +25,17 @@
   - **保守阈值**：维度 >= 60（触发门槛）只在明确信号时达到，避免常态误触发
   - **PIT 由调用方负责**：本模块函数纯计算，shift(1) 在 OverlaySignalsConstructor._precompute 统一做
 
-31 个维度 key（对齐 TRANSITION_CONFIG 的 keys_gte）：
-  可算 29 个：vix_panic/correlation/liquidity/flash_recover（S1）
-              capitulation/vix/wyckoff/valuation/fund/spring/three_yang/break_sc_low/vix_new_high/fund_outflow（S2）
+32 个维度 key（对齐 TRANSITION_CONFIG 的 keys_gte/keys_or_gte）：
+  可算 30 个：vix_panic/correlation/liquidity/flash_recover（S1）
+              capitulation/vix/wyckoff/valuation/fund/spring/three_yang/breadth_thrust/
+              break_sc_low/vix_new_high/fund_outflow（S2）
               bqs/rcs/frs（T1）, continue_decline（T2）
               volume_price/ma_trend/sentiment/money_effect/mainline/leader/one_day_mainline（T3）
               shrink_flat（T4）, leader_break/rebound_wrap（T5）, sudden_volume（T6）
   stub 2 个（=0）：bad_news_flat/policy（S2, NLP，待 NLP 管道）
   Phase 2c：money_effect/mainline/leader/one_day_mainline 从 stub 升级为可算（接 money_flow/kline_sector/limit_up_down）
+  P1-E9（14_regime_s2_diagnosis §4）：capitulation 衰减加权多过滤器 / valuation 路B校准
+    +路A基本面函数 / spring 深度分级 / breadth_thrust V 反转通路 / three_yang 6 维分级
 
 依据: 10_regime_detector_spec v1.3.1 §4 / Phase 2 计划 §Phase2b
 Version: 0.1.0
@@ -54,9 +57,11 @@ __all__ = [
     "s2_vix_score",
     "s2_wyckoff_score",
     "s2_valuation_score",
+    "s2_valuation_score_fundamental",
     "s2_fund_score",
     "s2_spring_flag",
     "s2_three_yang_flag",
+    "s2_breadth_thrust_score",
     "s2_break_sc_low_flag",
     "s2_vix_new_high_flag",
     "s2_fund_outflow_flag",
@@ -189,29 +194,145 @@ def s1_flash_recover_flag(pct_change: pd.Series, vol_pct: pd.Series) -> pd.Serie
 # ---------------------------------------------------------------------------
 
 
-def s2_capitulation_score(vol_z: pd.Series, pct_change: pd.Series) -> pd.Series:
-    """S2 capitulation: 投降式抛售 → 0-100（成交量飙升 + 暴跌）。
+def _atr(high: pd.Series, low: pd.Series, close: pd.Series, window: int = 14) -> pd.Series:
+    """ATR(14)——项目无现成实现，P1-E9a 自带（14_regime_s2_diagnosis §4.1）。
 
-    Capitulation = 被动强制清算，特征为成交量 3-5 倍均量 + 长下影线 + 暴跌。
-    用 vol_z（量能异动 z-score）× pct_change（涨跌幅）交集衡量。
+    True Range = max(high-low, |high-prev_close|, |low-prev_close|)，
+    ATR = TR 的 Wilder 平滑（等价 EMA with alpha=1/window）。
 
-    映射（对齐 S2 trigger 门槛 capitulation>=60）：
-      z>3 & 跌>4%  → 90  （极端投降抛售）
-      z>1 & 跌>3%  → 70  （严重投降，过门槛）
-      z>1 & 跌>1.5%→ 50  （放量下跌，未达门槛）
-      else        → 0    （无投降信号）
-
-    注：原阈值 z>2 在持续高量危机期经验性不可达——2015 股灾期 vol_z max=1.79
-   （z-score 对持续高量滚窗均值被抬高，单日 z 被压低）。2026-08-08 降至 z>1
-   （~1σ，全局仍仅 ~16% 日达标，选择性足够）。
+    模块级私有（前缀 _）：仅 overlay_features 内 S2 维度用（capitulation 实体过滤器 +
+    spring 0.5×ATR 失效边距，§4.3）；未来 T1/T5 需 ATR 再提升到 features/_indicators.py。
     """
-    score = pd.Series(0.0, index=vol_z.index)
+    prev_close = close.shift(1)
+    tr = pd.concat(
+        [
+            (high - low).abs(),
+            (high - prev_close).abs(),
+            (low - prev_close).abs(),
+        ],
+        axis=1,
+    ).max(axis=1)
+    return tr.ewm(alpha=1.0 / window, adjust=False).mean()
+
+
+def s2_capitulation_score(
+    vol_z: pd.Series,
+    pct_change: pd.Series,
+    volume: pd.Series | None = None,
+    high: pd.Series | None = None,
+    low: pd.Series | None = None,
+    open: pd.Series | None = None,
+    close: pd.Series | None = None,
+    put_call_ratio: pd.Series | None = None,
+    new_low_ratio: pd.Series | None = None,
+    lookback: int = 20,
+    halflife: int = 10,
+    atr_window: int = 14,
+    vol_mult: float = 2.0,
+    enable_options_filter: bool = False,
+) -> pd.Series:
+    """S2 capitulation: 近 N 日 capitulation 的衰减加权和（过程信号，防粘滞）。
+
+    P1-E9a（14_regime_s2_diagnosis §4.1）：原瞬时两维信号（z>1∧pct<-1.5% 分档 50/70/90）
+    升级为"单日多维度共振 + 衰减加权过程化"。Capitulation 是危机见底的【过程】信号，
+    复苏事件日是企稳时点（当日不暴跌），故衡量"近期曾出现投降抛售"。
+
+    三层升级：
+      1. _capitulation_daily 多维度共振（量价基础分 + 量能>2.0×均量 + 实体>40%ATR
+         + 下影线>50% 三过滤器；可选 put/call>1.4 + 新低占比>90% 第 5/6 维）。
+      2. 衰减加权和替代 rolling max：rolling max 致单日高分持续 lookback 日→状态粘滞
+         （S2 是一次性转换不应持续）。权重 e^(-i/τ)，τ=halflife/0.693。
+         数值边界：halflife=10/lookback=20 时 w₀≈0.09，单日 90 分仅贡献 ~8 分，
+         trigger≥60 需多日 capitulation 簇集（设计意图，禁止降阈值凑分）。
+      3. ATR 自实现（_atr，项目无现成）。
+
+    lookback/halflife 按 stage 分参数化（§4.1 注）：trigger（近 1 月）halflife=10/
+    lookback=20（默认）；confirm（政策底→市场底滞后 1.5-3 月）halflife=30/lookback=40
+    （占位，待 §4.5 walk-forward 校准）。
+
+    降级：volume/high/low/open/close 任一缺失 → 回退原瞬时两维版（治标 z>1，
+    与 commit 93a25890 一致），保证无 OHLCV 的调用方不抛错。
+    """
+    if any(s is None for s in (volume, high, low, open, close)):
+        # 降级：原瞬时两维版（无 rolling/无过滤器）
+        score = pd.Series(0.0, index=vol_z.index)
+        z = vol_z.fillna(0.0)
+        pct = pct_change.fillna(0.0)
+        score[(z > 1) & (pct < -0.015)] = 50
+        score[(z > 1) & (pct < -0.03)] = 70
+        score[(z > 3) & (pct < -0.04)] = 90
+        return score
+    daily = _capitulation_daily(
+        vol_z,
+        pct_change,
+        volume,
+        high,
+        low,
+        open,
+        close,
+        atr_window,
+        vol_mult,
+        put_call_ratio,
+        new_low_ratio,
+        enable_options_filter,
+    )
+    # 衰减权重：rolling 窗口按时间正序传入（旧→新），权重须反序对齐——近期权重高、
+    # 远期 e^(-i/τ) 衰减（τ=halflife/0.693）。14 memo 伪码 weights 未反序系笔误，
+    # 此处按 §4.1 文字设计意图（防粘滞、信号自然消退）实现。
+    weights = np.exp(-np.arange(lookback)[::-1] / (halflife / 0.693))
+    weights = weights / weights.sum()
+    return daily.rolling(lookback).apply(lambda w: (w * weights).sum(), raw=True)
+
+
+def _capitulation_daily(
+    vol_z: pd.Series,
+    pct_change: pd.Series,
+    volume: pd.Series,
+    high: pd.Series,
+    low: pd.Series,
+    open: pd.Series,
+    close: pd.Series,
+    atr_window: int = 14,
+    vol_mult: float = 2.0,
+    put_call_ratio: pd.Series | None = None,
+    new_low_ratio: pd.Series | None = None,
+    enable_options_filter: bool = False,
+) -> pd.Series:
+    """单日 capitulation 评分（多维度共振，P1-E9a 原两维升级版）。
+
+    量价基础分（与原逻辑一致的分档）：
+      z>3 & 跌>4% → 90 / z>1 & 跌>3% → 70 / z>1 & 跌>1.5% → 50 / else → 0
+    三道过滤器（仅共振时保留基础分，否则归零）：
+      - 量能放大：当日量 > vol_mult×20 日均量（v0.4.0 校准 1.3→2.0，研究下限）
+      - 实体力度：|close-open| > 40% ATR(14)（真实体，非 close-to-close 近似）
+      - 下影线：(min(open,close)-low)/(high-low) > 0.5（卖盘被吸收信号）
+    可选第 5/6 维（enable_options_filter=True 且数据就绪时，默认关——三过滤器已
+    selective 足够，六维交集过严致永不触发）：
+      - put/call ratio > 1.4（期权市场恐慌对冲需求）
+      - 创新低占比 > 0.90（indiscriminate selling）
+    """
     z = vol_z.fillna(0.0)
     pct = pct_change.fillna(0.0)
-    score[(z > 1) & (pct < -0.015)] = 50
-    score[(z > 1) & (pct < -0.03)] = 70
-    score[(z > 3) & (pct < -0.04)] = 90
-    return score
+    base = pd.Series(0.0, index=vol_z.index)
+    base[(z > 1) & (pct < -0.015)] = 50
+    base[(z > 1) & (pct < -0.03)] = 70
+    base[(z > 3) & (pct < -0.04)] = 90
+    # 三道过滤器
+    vol_surge = volume > volume.rolling(20).mean() * vol_mult
+    atr = _atr(high, low, close, atr_window)
+    body = (close - open).abs()  # 真实体
+    big_body = body > atr * 0.4
+    lower_wick = np.minimum(open, close) - low  # 下影线
+    wick_ratio = lower_wick / (high - low + 1e-8)
+    strong_wick = wick_ratio > 0.5
+    mask = vol_surge & big_body & strong_wick
+    # 可选第 5/6 维（JournalPlus 2026 四信号 confluence）
+    if enable_options_filter:
+        if put_call_ratio is not None:
+            mask = mask & (put_call_ratio.fillna(0.0) > 1.4)
+        if new_low_ratio is not None:
+            mask = mask & (new_low_ratio.fillna(0.0) > 0.90)
+    return base.where(mask, 0.0)
 
 
 def s2_vix_score(vol_pct: pd.Series, vix_pct: pd.Series | None = None) -> pd.Series:
@@ -280,27 +401,83 @@ def s2_wyckoff_score(
 
 
 def s2_valuation_score(close: pd.Series, window: int = 250) -> pd.Series:
-    """S2 valuation: 估值极端 → 0-100（close 远低于 rolling_max = 深度折价）。
+    """S2 valuation 路 B: 价格回撤代理估值 → 0-100（MVP 改良版）。
 
-    pos = close / rolling_max(close, 250)。pos 越低 = 距高点越远 = 估值越有吸引力。
+    P1-E9b（14_regime_s2_diagnosis §4.2 路 B）：pos = close / rolling_max(close, 250)。
+    pos 越低 = 距高点越远 = 估值越有吸引力。
 
-    映射（对齐 S2 confirm 门槛 valuation>=40）：
-      pos<0.30 → 80  （距高点-70%，极端低估）
-      pos<0.40 → 60  （距高点-60%，深度折价）
-      pos<0.50 → 40  （距高点-50%，刚达门槛）
-      pos<0.60 → 20  （中度回撤，未达门槛）
+    阈值校准（P1-E9b 放宽，适配非腰斩级复苏）：原 <0.50 才给 40 过严
+    （2020/2024 复苏 pos≈0.90 得 0），整体右移+提分：
+      pos<0.50 → 80  （腰斩级仍高分）
+      pos<0.60 → 60  （距高点-40%，深度折价）
+      pos<0.70 → 40  （距高点-30% 即有估值吸引力，过 confirm 门槛）
       else     → 0   （接近高点，无估值吸引力）
+
+    注：路 B 救不了"价格没跌但估值分位已低"（须路 A s2_valuation_score_fundamental
+    接 CAPE/PB 分位；Step 0 ① 勘探 daily_valuation 无 CAPE 分位字段，管道待建）。
     """
     score = pd.Series(0.0, index=close.index)
     # min_periods=20：避免 warmup 期（数据起点 < window）rolling_max=NaN → pos=NaN → 误零。
     # 实测 000300 kline 数据起点晚于 data_load_start，2015 年 rolling(250) 不足 250 非 NaN → 全零。
     rolling_max = close.rolling(window, min_periods=20).max()
     pos = close / rolling_max
-    score[pos < 0.60] = 20
-    score[pos < 0.50] = 40
-    score[pos < 0.40] = 60
-    score[pos < 0.30] = 80
+    score[pos < 0.70] = 40
+    score[pos < 0.60] = 60
+    score[pos < 0.50] = 80
     return score
+
+
+def s2_valuation_score_fundamental(
+    cape_percentile: pd.Series,
+    pb_percentile: pd.Series | None = None,
+    broken_net_ratio: pd.Series | None = None,
+    erp_percentile: pd.Series | None = None,
+    erp_absolute: pd.Series | None = None,
+    buffett_ratio: pd.Series | None = None,
+) -> pd.Series:
+    """S2 valuation 路 A: 基本面估值评分 → 0-100（P1-E9b，对齐 §4.12.5）。
+
+    关键（雪球 2026 席勒 PE 报告）：危机期 PE_TTM 因盈利 E 崩塌而"越跌越贵"失真
+    （2008/2013 大底是盈利低谷）。S2 正是危机场景，故优先用 CAPE（5 年通胀调整
+    平均盈利平滑周期，A 股专用——10 年 CAPE 混入股权分置改革前失真数据）或
+    PB 分位，PE_TTM 分位仅辅助。
+
+    评分映射（CAPE 分位为主，对齐 confirm 门槛 40）：
+      CAPE 分位 <10% → 80（极度低估）/ <25% → 60（低估）/ <40% → 40（偏低）
+    叠加加分（封顶 100）：
+      PB 分位 <10% 或破净率 >10% → +10（pb_percentile 优先，缺省时用 broken_net_ratio）
+      ERP：分位 >95% → +5；绝对值 >5% → +5、>6%（熊末）→ +10（ERP 项封顶 10，
+        分位与绝对值双确认避免分位在长牛后失真）
+      巴菲特指标（总市值/GDP，A 股本土化阈值下调）<70% → +5
+
+    数据字段映射（待 daily_valuation CAPE 管道建成后由调用方注入）：
+      cape_percentile ← cape_5y_percentile / pb_percentile ← pb_percentile /
+      broken_net_ratio ← 全市场破净率 / erp_percentile|erp_absolute ← 风险溢价 /
+      buffett_ratio ← 总市值/GDP。ERP/巴菲特字段缺失时降级运行（仅 CAPE+PB，少 15 分加分）。
+    """
+    score = pd.Series(0.0, index=cape_percentile.index)
+    cp = cape_percentile.fillna(1.0)
+    score[cp < 0.40] = 40
+    score[cp < 0.25] = 60
+    score[cp < 0.10] = 80
+    if pb_percentile is not None:
+        score = score + (pb_percentile < 0.10).astype(float) * 10
+    elif broken_net_ratio is not None:
+        score = score + (broken_net_ratio > 0.10).astype(float) * 10
+    # ERP 分位 + 绝对值双确认
+    if erp_percentile is not None:
+        erp_bonus = (erp_percentile > 0.95).astype(float) * 5
+    else:
+        erp_bonus = pd.Series(0.0, index=cape_percentile.index)
+    if erp_absolute is not None:
+        ea = erp_absolute.fillna(0.0)
+        erp_bonus = erp_bonus + (ea > 0.05).astype(float) * 5
+        erp_bonus = erp_bonus.mask(ea > 0.06, 10.0)  # >6% 熊末直接满额
+    score = score + erp_bonus.clip(upper=10.0)
+    # 巴菲特指标 A 股本土化（<70% 深度低估）
+    if buffett_ratio is not None:
+        score = score + (buffett_ratio.fillna(1.0) < 0.70).astype(float) * 5
+    return score.clip(upper=100.0)
 
 
 def s2_fund_score(volume: pd.Series, window: int = 20) -> pd.Series:
@@ -325,34 +502,175 @@ def s2_fund_score(volume: pd.Series, window: int = 20) -> pd.Series:
     return score
 
 
-def s2_spring_flag(close: pd.Series, window: int = 20) -> pd.Series:
-    """S2 spring: Wyckoff Spring 震仓标志（0/1）。
+def s2_spring_flag(
+    close: pd.Series,
+    high: pd.Series | None = None,
+    low: pd.Series | None = None,
+    volume: pd.Series | None = None,
+    window: int = 60,
+    atr_window: int = 14,
+    atr_mult: float = 0.5,
+) -> pd.Series:
+    """S2 spring: Wyckoff Spring 震仓分级标志 → 0/1/2/3（P1-E9c 升级）。
 
-    Spring = 价格跌破近 window 日低点后收回（假跌破诱空）。
-    当日 low < rolling_min(low, window).shift(1) 但 close > rolling_min.shift(1)。
-    简化：用 close 判断（无 low 数据时），close 跌破前低后当日收回。
+    P1-E9c（14_regime_s2_diagnosis §4.3）：wyckoff_engine 的 Spring 事件是二值
+    （broke_sc∧recovered∧缩量），缺 velocity/穿透深度分级/0.5×ATR 失效边距/主尾巴
+    四要素（Step 0 ② 勘探结论），按 §4.3 步骤 4 用 high/low 自算兜底版（跨日 close
+    实现合法，FibAlgo 2026）。flag 标在【收回确认日】（信号可知时点，PIT 安全）。
+
+    判定（investing.com 2026-02 4-step 见底公式量化）：
+      1. 刺破：当日 low < rolling_min(low, window).shift(1)（前 window 日支撑）
+      2. velocity：当日收回 close>支撑（v1 最强）/ 次日收回（v2）/ 第 3 日收回（v3
+         边界）；>3 日未收回 → 不成立
+      3. 失效边距：收回前任一收盘 < 刺破日 low − atr_mult×ATR(14) → Spring 失效
+         （FibAlgo 2026 TR 支撑边距；atr_mult 敏感性见 §4.3 v0.4.3 警告）
+    深度分级（TradingWyckoff 2026，穿透深度=(支撑−low)/支撑）：
+      <1% → 1（minor，弱）/ 1-3% → 2（moderate，标准）/ >3% → 3（major，强制清算级）
+
+    降级：high/low 缺失 → 回退原 close 跨日简化版（0/1，无分级），保证旧调用方不抛错。
+    volume 参数预留（量能特征参与类型鉴别，当前兜底版不作硬条件，防交集过严）。
     """
+    if high is None or low is None:
+        # 降级：原 close 跨日简化版（前一日 close 跌破前低，当日 close 收回）
+        legacy_window = 20
+        flag = pd.Series(0.0, index=close.index)
+        prior_low = close.rolling(legacy_window).min().shift(1)
+        broke_prev = close.shift(1) < prior_low.shift(1)
+        recovered = close > prior_low
+        flag[broke_prev & recovered] = 1.0
+        return flag
+    support = low.rolling(window).min().shift(1)  # 前 window 日最低（不含当日）
+    penetrate = (low < support).fillna(False)
+    depth = ((support - low) / (support.abs() + 1e-12)).where(penetrate)
+    atr = _atr(high, low, close, atr_window)
+    # 失效线：刺破日 low − atr_mult×ATR（收回前收盘跌破此线 → Spring 失效）
+    fail_level = (low - atr_mult * atr).where(penetrate)
+    pen_support = support.where(penetrate)
+
+    # velocity 分级收回判定（flag 标在收回确认日；中间日收盘须持续低于支撑，否则
+    # 已按更快 velocity 确认过，避免同一刺破重复触发）
+    rec1 = penetrate & (close > support)  # v1：当日收回
+    pen1 = penetrate.shift(1, fill_value=False)
+    ok1 = close.shift(1) >= fail_level.shift(1)  # 刺破日收盘未失效（NaN→False）
+    still_below1 = close.shift(1) <= pen_support.shift(1)  # 刺破日未收回
+    rec2 = pen1 & ok1 & still_below1 & (close > pen_support.shift(1))  # v2：次日收回
+    pen2 = penetrate.shift(2, fill_value=False)
+    ok2 = (close.shift(2) >= fail_level.shift(2)) & (close.shift(1) >= fail_level.shift(2))
+    still_below2 = (close.shift(2) <= pen_support.shift(2)) & (close.shift(1) <= pen_support.shift(2))
+    rec3 = pen2 & ok2 & still_below2 & (close > pen_support.shift(2))  # v3：第 3 日收回（边界）
+
+    # 收回日的穿透深度（取对应刺破日 depth）
+    event_depth = depth.where(rec1).combine_first(depth.shift(1).where(rec2))
+    event_depth = event_depth.combine_first(depth.shift(2).where(rec3))
+
     flag = pd.Series(0.0, index=close.index)
-    prior_low = close.rolling(window).min().shift(1)
-    # 简化 Spring：当日 close 曾低于前低（close<prev_low.shift(1) 的 rolling min）
-    # 但最终 close > prior_low（收回）。由于只有 close，用日内 close 判断：
-    # 前一日 close < prior_low（跌破），当日 close > prior_low（收回）
-    broke_prev = close.shift(1) < prior_low.shift(1)
-    recovered = close > prior_low
-    flag[broke_prev & recovered] = 1.0
+    has_event = event_depth.notna()
+    flag[has_event & (event_depth < 0.01)] = 1.0  # minor
+    flag[has_event & (event_depth >= 0.01) & (event_depth <= 0.03)] = 2.0  # moderate
+    flag[has_event & (event_depth > 0.03)] = 3.0  # major
     return flag
 
 
-def s2_three_yang_flag(pct_change: pd.Series) -> pd.Series:
-    """S2 three_yang: 三阳开泰标志（0/1）——连续 3 日上涨。
+def s2_three_yang_flag(
+    open: pd.Series,
+    high: pd.Series,
+    low: pd.Series,
+    close: pd.Series,
+    volume: pd.Series,
+    window: int = 60,
+) -> pd.Series:
+    """S2 three_yang: 红三兵 6 维量化判定 → 0/1/2/3（P1-E9e 升级）。
 
-    底部连续 3 根阳线 = 需求信号（三阳开泰），S2 strong_confirm 条件之一。
+    P1-E9e（14_regime_s2_diagnosis §4.4b）：原"连续 3 日上涨"过宽松（任何三根小红
+    K 线即触发），无法区分"主力抢筹型红三兵"与"下跌中继三小阳假信号"。升级为
+    2026 八源汇总的 6 维标准：
+      1. 实体递增：3 阳线 + 第三根实体≥第二根 1.5× + 第二根>第一根
+      2. 开盘位置：后根开盘在前根实体内 + 收盘逐日新高
+      3. 上影线：上影 ≤ 实体 5%（光头最佳）
+      4. 量能配合：温和递增（1.1×/1.1×）+ 第三根≥前两根均量 2×，禁止巨量
+         （单根量 > 前 5 日均量 2× = 一日游风险）
+      5. 位置：60 日跌幅 >30%（底部反转；高位三连阳=诱多，排除）
+      6. 失效：三根总涨幅 >15% = 动能透支 → 排除
+
+    返回分级：3=三个白武士（第三根实体≥第二根 2× + 近乎光头，加强版），
+    2=标准红三兵，1=弱红三兵（缺量能确认），0=不满足。
+    strong_confirm 门槛 three_yang≥2（标准红三兵及以上）。
     """
-    flag = pd.Series(0.0, index=pct_change.index)
-    up = pct_change.fillna(0.0) > 0
-    three_up = up & up.shift(1) & up.shift(2)
-    flag[three_up] = 1.0
-    return flag
+    body = (close - open).abs()
+    upper_wick = high - close
+    wick_ratio = upper_wick / (body + 1e-8)
+
+    # 维度 1: 连续 3 阳线 + 实体递增
+    is_yang = close > open
+    three_yang = is_yang & is_yang.shift(1) & is_yang.shift(2)
+    body_inc = (body > body.shift(1) * 1.5) & (body.shift(1) > body.shift(2))
+    # 维度 2: 后根开盘在前根实体内
+    open_in_body = (open > open.shift(1)) & (open < close.shift(1))
+    close_new_high = (close > close.shift(1)) & (close.shift(1) > close.shift(2))
+    # 维度 3: 上影 ≤ 实体 5%
+    small_wick = wick_ratio < 0.05
+    # 维度 4: 量能温和递增 + 第三根 ≥ 前两根均量 2× + 禁止巨量
+    vol_inc = (volume > volume.shift(1) * 1.1) & (volume.shift(1) > volume.shift(2) * 1.1)
+    vol_surge = volume > (volume.shift(1) + volume.shift(2)) / 2 * 2.0
+    not_giant = volume < volume.rolling(5).mean() * 2.0
+    # 维度 5: 位置（底部反转：60 日跌幅 >30%）
+    rolling_max = close.rolling(window).max()
+    drawdown = close / rolling_max - 1.0
+    at_bottom = drawdown < -0.30
+    # 维度 6: 失效（三根总涨幅 >15% = 动能透支）
+    total_gain = close / close.shift(2) - 1.0
+    not_overbought = total_gain < 0.15
+
+    # 分级
+    score = pd.Series(0.0, index=close.index)
+    base_mask = three_yang & body_inc & open_in_body & close_new_high & at_bottom
+    weak = base_mask & small_wick & not_overbought  # 缺量能确认
+    standard = weak & vol_inc & vol_surge & not_giant
+    # 三个白武士：第三根实体显著放大（≥第二根 2×）+ 近乎光头（上影≈0）
+    warrior = standard & (body > body.shift(1) * 2.0) & (wick_ratio < 0.01)
+
+    score[weak.fillna(False)] = 1.0
+    score[standard.fillna(False)] = 2.0
+    score[warrior.fillna(False)] = 3.0
+    return score
+
+
+def s2_breadth_thrust_score(
+    adv_issues: pd.Series,
+    dec_issues: pd.Series,
+    ema_window: int = 10,
+) -> pd.Series:
+    """S2 breadth_thrust: Zweig Breadth Thrust → 0-100（V 反转/政策型复苏确认）。
+
+    P1-E9d（14_regime_s2_diagnosis §4.4）：confirm 析取通路——V 反转/政策型复苏不走
+    Wyckoff 吸筹（wyckoff 合法偏低卡死 confirm），breadth thrust 在急速普涨中触发，
+    正好补 wyckoff 盲区。
+
+    定义（Zweig）：10 日 EMA(adv/(adv+dec)) 从 <0.40 升至 >0.615 在 10 交易日内。
+    映射（对齐 confirm 析取门槛 breadth_thrust>=60）：
+      完整 thrust（10 日窗口内曾 <0.40 且当前 >0.615） → 80
+      10 日 EMA >0.615（已进入普涨区，不论起点）        → 60
+      10 日 EMA >0.55（广度改善但未达 thrust）          → 30
+      else                                              → 0
+
+    完整 thrust 判定用 rolling(ema_window).min().shift(1) 取过去 ema_window 日内最低
+    EMA（匹配"10 日内曾 washout"语义；ema.shift(ema_window) 只看恰好 −10 日会漏判
+    washout 低点落在窗口中段的情形）。
+
+    注：0.615/0.40 是美股 NYSE 标准，A 股本土化校准（0.58-0.65 区间扫描）属
+    §4.5 验证闭环（Step 0 ③ 勘探得 399106 涨跌家数可用），预注册参数禁止施工调参。
+    """
+    total = adv_issues + dec_issues + 1e-8
+    breadth_ratio = adv_issues / total
+    ema = breadth_ratio.ewm(span=ema_window, adjust=False).mean()
+    was_washout = ema.rolling(ema_window).min().shift(1) < 0.40
+    now_thrust = ema > 0.615
+    full_thrust = (was_washout & now_thrust).fillna(False)
+    score = pd.Series(0.0, index=adv_issues.index)
+    score[ema > 0.55] = 30
+    score[ema > 0.615] = 60
+    score[full_thrust] = 80
+    return score
 
 
 def s2_break_sc_low_flag(close: pd.Series, window: int = 20) -> pd.Series:

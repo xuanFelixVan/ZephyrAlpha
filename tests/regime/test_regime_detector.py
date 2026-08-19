@@ -601,7 +601,7 @@ class TestTransitionEvents:
         assert t.stage == "confirm" and t.confirmed
         t = detector.record_transition("S2", {
             "capitulation": 80, "wyckoff": 70, "vix": 60, "policy": 60, "valuation": 60,
-            "bad_news_flat": 60, "fund": 60, "chip": 50, "spring": 1, "three_yang": 1})
+            "bad_news_flat": 60, "fund": 60, "chip": 50, "spring": 1, "three_yang": 2})
         assert t.stage == "strong_confirm"
         t = detector.record_transition("S2", {"break_sc_low": 1, "vix_new_high": 1, "fund_outflow": 1})
         assert t.stage == "fail" and not t.triggered
@@ -622,6 +622,47 @@ class TestTransitionEvents:
         """非 dict 评分抛 OverlayRuleError。"""
         with pytest.raises(OverlayRuleError):
             detector.record_transition("S2", "not a dict")  # type: ignore[arg-type]
+
+
+class TestKeysOrGte:
+    """P1-E9d keys_or_gte 析取逻辑（S2 confirm V 反转通路，14_regime_s2_diagnosis §4.4）。
+
+    S2 confirm = (wyckoff≥60 ∨ breadth_thrust≥60) ∧ policy≥40 ∧ valuation≥40 ∧ fund≥50。
+    """
+
+    def test_confirm_via_wyckoff_path(self, detector: RegimeDetector):
+        """慢复苏通路：wyckoff≥60（breadth_thrust 缺失）→ confirm。"""
+        t = detector.record_transition("S2", {
+            "wyckoff": 65, "policy": 50, "valuation": 45, "fund": 55})
+        assert t.stage == "confirm" and t.confirmed
+
+    def test_confirm_via_breadth_thrust_path(self, detector: RegimeDetector):
+        """V 反转通路：wyckoff=0 但 breadth_thrust≥60 → confirm（析取）。"""
+        t = detector.record_transition("S2", {
+            "wyckoff": 0, "breadth_thrust": 80, "policy": 50, "valuation": 45, "fund": 55})
+        assert t.stage == "confirm" and t.confirmed
+
+    def test_confirm_blocked_when_or_group_all_below(self, detector: RegimeDetector):
+        """析取组全不达标（wyckoff<60 且 breadth_thrust<60）→ 非 confirm。"""
+        t = detector.record_transition("S2", {
+            "wyckoff": 59, "breadth_thrust": 59, "policy": 50, "valuation": 45, "fund": 55})
+        assert t.stage != "confirm" and t.stage != "strong_confirm"
+
+    def test_confirm_blocked_when_and_group_missing(self, detector: RegimeDetector):
+        """析取组达标但合取组缺 policy≥40 → 非 confirm（两组均须通过）。"""
+        t = detector.record_transition("S2", {
+            "breadth_thrust": 80, "policy": 30, "valuation": 45, "fund": 55})
+        assert t.stage != "confirm" and t.stage != "strong_confirm"
+
+    def test_eval_stage_keys_or_gte_unit(self):
+        """_eval_stage 单元级：析取/合取/total_gte 组合边界。"""
+        cond = {"keys_or_gte": {"a": 60, "b": 60}, "keys_gte": {"c": 40}}
+        assert RegimeDetector._eval_stage({"a": 60, "c": 40}, 100, cond)
+        assert RegimeDetector._eval_stage({"b": 61, "c": 40}, 101, cond)
+        assert not RegimeDetector._eval_stage({"a": 59, "b": 59, "c": 40}, 99, cond)
+        assert not RegimeDetector._eval_stage({"a": 60, "c": 39}, 99, cond)
+        # 缺 key 计 0.0：析取组 key 全缺 → 不满足
+        assert not RegimeDetector._eval_stage({"c": 40}, 40, cond)
 
 
 # ── 9. 完整链路（端到端）────────────────────────────────────────────
