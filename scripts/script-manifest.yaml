@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-08-19'
-total_scripts: 703
+generated_at: '2026-08-20'
+total_scripts: 708
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -198,6 +198,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: scan_forward_days.py
+  path: scan_forward_days.py
+  description: '扫描 B1 验证器的 ``forward_days`` 参数，找校准误差（ECE）最小的预测周期::'
+  domain: scanner
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: serve_docs.py
   path: serve_docs.py
   description: 本地文档服务：按需重生成派生架构文档 + 启动 HTTP 服务器浏览。
@@ -242,6 +250,14 @@ scripts:
   path: test_exam_scoring_unit.py
   description: 验证 v3.0.5 三大改造的评分逻辑正确性：
   domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: verify_sentiment_hidden_driver.py
+  path: verify_sentiment_hidden_driver.py
+  description: 验证链路：
+  domain: verify_sentiment_hidden_driver.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -4854,6 +4870,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ml/accept_nlp_pipeline.py
+  path: ml/accept_nlp_pipeline.py
+  description: '对应 13 号 §3.1.12 验收标准（产物驱动，不跑真实推理）:'
+  domain: pipeline
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ml/build_eval_set.py
   path: ml/build_eval_set.py
   description: 分层抽样（危机期/复苏期/常态期）从 ClickHouse 采集新闻，
@@ -4870,9 +4894,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ml/convert_gguf_ollama.py
+  path: ml/convert_gguf_ollama.py
+  description: 单一推理源原则（13 号 §3.1.13 H）：训练轨（SFT/RLSP）用 torch/QLoRA，产物转
+  domain: ml
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ml/eval_sentiment.py
   path: ml/eval_sentiment.py
   description: 对 ``data/eval/news_sentiment_200.jsonl`` 评估集跑零样本推理（Ollama qwen3:8b），
+  domain: ml
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ml/run_sentiment_batch.py
+  path: ml/run_sentiment_batch.py
+  description: 端到端管道（13 号 Phase 7）：news_data → nlp_inference 批量推理 →
   domain: ml
   execution_plane: warm-path
   status: registered
