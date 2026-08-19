@@ -12,7 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 L_BACKTEST — Backtest Engine Layer
@@ -83,6 +82,7 @@ AI Prompt
     当回测引擎完成一次运行后,MUST 产出 BacktestResult。 strategy_id 必须对应策略注册表中已注册的策略 key。 所有收益率指标(total_return/annual_return/sharpe_ratio/max_drawdown)使用 float 类型——这些是聚合指标,非逐笔价格,允许 float。 trades_count 是总交易笔数,win_rate 是胜率(0.0-1.0)。 Portfolio 组合构建层使用此结果做策略遴选(sharpe_ratio > 阈值才纳入候选池)。 Risk 风控层使用 max_drawdown 做风险预算校准。 若 overfitting_flag = True,下游应降低该策略权重或拒绝采纳。
 """
 
+
 @dataclass(frozen=True)
 class BacktestResult:
     annual_return: float
@@ -101,10 +101,8 @@ class BacktestResult:
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
 
+
 # ==== END CODGEN:CTR-P1-016 ====
-
-
-
 @dataclass(frozen=True)
 class FactorDiscovery:
     """因子发现记录"""

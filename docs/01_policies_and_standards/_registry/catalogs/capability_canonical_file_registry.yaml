@@ -7369,6 +7369,10 @@ creation_tokens:
   token: auto-regime-cycle-analyzer-blueprint-20260818
   created_by: AI-CYCLE-001
   capability: regime_cycle_analyzer
+- file: scripts/governance/d5_architecture/checkers/check_contracts_codegen_idempotent.py
+  token: auto-check-contracts-codegen-idempotent-20260819
+  created_by: CODEGEN-001
+  capability: contract_codegen_idempotency_gate
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

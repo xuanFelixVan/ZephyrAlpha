@@ -12,7 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -75,6 +74,7 @@ AI Prompt
     当 Factor 中的因子 compute() 方法遇到不可恢复的错误时，MUST 抛出 FactorComputationError。 常见 failure_reason：input_missing（缺少所需行情）、division_by_zero（除零）、window_insufficient（历史窗口不足）、 memory_exceeded（内存超限）、invalid_parameter（参数非法）。 不要吞掉错误返回一个 is_valid=False 的 FactorSignal——后者用于逻辑判断（如低置信度），前者用于系统级故障。
 """
 
+
 @dataclass(frozen=True)
 class FactorComputationError:
     error_id: str
@@ -86,5 +86,6 @@ class FactorComputationError:
     detail: str | None = None
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-ERR-002 ====

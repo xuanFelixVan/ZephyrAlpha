@@ -44,6 +44,7 @@ AI Prompt
     当 Signal 信号合成引擎完成因子信号聚合后，MUST 产出 SynthesizedSignal。 每个 SynthesizedSignal 代表一个标的在一个时间截面上的综合交易判断。 signal_value 是标准化后的合成信号值（-3 到 3），正值为做多信号，负值为做空信号。 contributing_factors 记录参与合成的因子 ID 及其权重——用于归因分析。 Risk 风控层使用此信号做 pre-trade risk check。Portfolio 组合构建层使用此信号做组合优化输入。 generation_latency_ms 记录信号合成耗时，用于 SLO 监控。
 """
 
+
 @dataclass(frozen=True)
 class SynthesizedSignal:
     as_of_timestamp: datetime
@@ -60,5 +61,6 @@ class SynthesizedSignal:
     schema_version: str = "1.0"
     suggested_position_pct: float = 0
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-P1-015 ====

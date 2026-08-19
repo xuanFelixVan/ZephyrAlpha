@@ -38,8 +38,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class CapitalAllocationResult:
@@ -50,5 +51,6 @@ class CapitalAllocationResult:
     rebalance_threshold: float = 0.05
     schema_version: str = "1.0"
     strategy_allocations: dict[str, float] = field(default_factory=dict)
+
 
 # ==== END CODGEN:CTR-P1-003 ====

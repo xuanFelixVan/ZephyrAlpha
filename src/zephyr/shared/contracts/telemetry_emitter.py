@@ -39,8 +39,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class TelemetryEmitter:
@@ -60,5 +61,6 @@ class TelemetryEmitter:
     severity: str = ""
     span_id: str = ""
     trace_id: str = ""
+
 
 # ==== END CODGEN:CTR-P1-013 ====

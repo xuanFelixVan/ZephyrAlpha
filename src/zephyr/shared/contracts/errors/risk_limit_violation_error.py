@@ -12,7 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 import importlib
@@ -28,6 +27,7 @@ def __getattr__(name):
     if hasattr(mod, name):
         return getattr(mod, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 # ==== BEGIN CODGEN:CTR-ERR-004 ====
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
@@ -74,6 +74,7 @@ AI Prompt
     当 Risk 风控系统检测到任何风险约束被突破时，MUST 抛出 RiskLimitViolationError。 这是一个 HALT 级别的错误——下游（Portfolio/Execution）MUST 拒绝继续处理并停止当前调仓周期。 violated_constraint 精确指出是哪条规则被突破（position_limit / leverage_limit / var_breach / drawdown_trigger / sector_concentration）。 不要降级为 WARNING——如果这是代码逻辑导致的，降级等于资金安全风险。
 """
 
+
 @dataclass(frozen=True)
 class RiskLimitViolationError:
     actual_value: float
@@ -86,5 +87,6 @@ class RiskLimitViolationError:
     violation_detail: str
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-ERR-004 ====

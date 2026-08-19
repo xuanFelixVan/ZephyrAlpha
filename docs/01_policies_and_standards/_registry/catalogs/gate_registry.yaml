@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-18T11:07:05Z'
+generated_at: '2026-08-19T04:34:44Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 150
+total_gates: 151
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -413,6 +413,17 @@ gates:
   files_trigger: ^(architecture_model/contracts/|src/zephyr/shared/contracts/|src/zephyr/governance/depgraph_schema\.py|scripts/governance/(d8_doc_sync/sync_yaml_to_depgraph|d11_compliance/verify_schema_health)\.py)$
   always_run: false
   category: contract_drift
+  status: active
+  source: pre-commit
+- gate_id: GATE-CODEGEN-IDEMPOTENT
+  name: 'GATE-CODEGEN-IDEMPOTENT: 契约生成器幂等性（C 路径防回潮）'
+  entry: python scripts/governance/d5_architecture/checkers/check_contracts_codegen_idempotent.py
+    --ci
+  description: 契约生成器幂等性——contracts YAML 或生成器变更时验证重跑产物与磁盘零 diff，防回退合法修复进 git（#ARCH-130
+    P0-A 治本）
+  files_trigger: ^(architecture_model/contracts/cross_layer_contracts\.yaml|scripts/governance/d5_architecture/generators/generate_contracts\.py)$
+  always_run: false
+  category: unknown
   status: active
   source: pre-commit
 - gate_id: GATE-CANONICAL-YAML-DRIFT

@@ -38,8 +38,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class FactorMonitorReport:
@@ -55,5 +56,6 @@ class FactorMonitorReport:
     evaluation_window: int = 63
     half_life_days: int | None = None
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-P1-001 ====

@@ -12,7 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ArtifactNotFoundError
 # [TESTS]
-# [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """result_repository · 回测产物持久化/检索模块（v1.3.0 新增，#ARCH-047）
 
@@ -30,24 +29,8 @@
   - PIT 铁律: equity_curve/trade_log 数据零前瞻偏差
   - 检索接口对 D_FRONTEND 同步暴露, 大对象延迟由调用方处理
 """
+
 from __future__ import annotations
-
-import json
-import os
-from dataclasses import asdict, dataclass, field, replace
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Optional
-
-from zephyr.backtest.io.backtest_result_sink import (
-    BacktestSinkData,
-    BenchmarkPoint,
-    DrawdownPoint,
-    EquityPoint,
-    TradeRecord,
-)
-from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.shared.utils.time_utils import now_utc, now_utc_str
 
 
 class ArtifactNotFoundError(Exception):
@@ -62,31 +45,6 @@ class ArtifactNotFoundError(Exception):
 
 
 # ===== CTR-P1-017 BacktestRunArtifact 数据模型 =====
-
-
-@dataclass(frozen=True)
-class BacktestRunArtifact:
-    """回测运行产物（CTR-P1-017, #ARCH-047）
-
-    持久化回测运行产物，包含回测结果时序数据（equity curve/trade log/tick replay data），
-    用于前端可视化消费。与 CTR-P1-016 BacktestResult（汇总指标）互补——
-    BacktestResult 是标量汇总，BacktestRunArtifact 是时序明细。
-
-    PIT 铁律: equity_curve/trade_log 数据 MUST 遵循零前瞻偏差。
-    """
-    strategy_id: str
-    run_id: str  # 与 BacktestResult.idempotency_key 关联
-    equity_curve: list[dict[str, Any]]  # [{timestamp: ISO8601, equity: float}, ...]
-    trade_log: list[dict[str, Any]]  # [{timestamp, symbol, side, price, quantity, commission}, ...]
-    schema_version: str = "1.0.0"
-    tick_replay_data: list[dict[str, Any]] | None = None  # [{timestamp, price, volume}, ...]
-    benchmark_curve: list[dict[str, Any]] | None = None  # [{timestamp, value}, ...]
-    drawdown_curve: list[dict[str, Any]] | None = None  # [{timestamp, drawdown}, ...]
-    created_at: str = ""  # ISO8601, save_artifact 时自动填充
-    metrics: dict[str, Any] | None = None  # 汇总指标快照(从 BacktestSinkData 提取)
-
-
-# ===== 存储后端 =====
 
 
 def _default_storage_path() -> Path:
@@ -270,10 +228,7 @@ def build_artifact_from_data(
         BacktestRunArtifact(可传给 save_artifact 持久化)
     """
     # 提取时序数据为 list[dict]
-    equity_curve = [
-        {"timestamp": p.timestamp, "equity": p.equity}
-        for p in data.equity_curve
-    ]
+    equity_curve = [{"timestamp": p.timestamp, "equity": p.equity} for p in data.equity_curve]
     trade_log = [
         {
             "timestamp": p.timestamp,
@@ -285,14 +240,8 @@ def build_artifact_from_data(
         }
         for p in data.trade_log
     ]
-    drawdown_curve = [
-        {"timestamp": p.timestamp, "drawdown": p.drawdown}
-        for p in data.drawdown_curve
-    ] or None
-    benchmark_curve = [
-        {"timestamp": p.timestamp, "value": p.value}
-        for p in data.benchmark_curve
-    ] or None
+    drawdown_curve = [{"timestamp": p.timestamp, "drawdown": p.drawdown} for p in data.drawdown_curve] or None
+    benchmark_curve = [{"timestamp": p.timestamp, "value": p.value} for p in data.benchmark_curve] or None
 
     return BacktestRunArtifact(
         strategy_id=data.strategy_id,
@@ -317,3 +266,77 @@ __all__ = [
     "delete_artifact",
     "build_artifact_from_data",
 ]
+
+# ==== BEGIN CODGEN:CTR-P1-017 ====
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
+# [MODULE] zephyr.backtest.io.result_repository
+# [DOMAIN] D_INFRASTRUCTURE
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] frozen dataclass; SSoT=cross_layer_contracts.yaml; DO NOT EDIT (codegen)
+# [MODIFY-GUARD] cross_layer_contracts.yaml; generate_contracts.py
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [TTL] permanent
+import json
+import os
+from dataclasses import asdict, dataclass, field, replace
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, Optional
+
+from zephyr.backtest.io.backtest_result_sink import (
+    BacktestSinkData,
+    BenchmarkPoint,
+    DrawdownPoint,
+    EquityPoint,
+    TradeRecord,
+)
+from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.time_utils import now_utc, now_utc_str
+
+# ---
+# layer: cross_cutting
+# category: data_contract
+# status: auto_generated
+# created: "2026-08-06"
+# generated_by: codegen from cross_layer_contracts.yaml
+# ---
+"""
+ZephyrAlpha — shared/contracts/result_repository.py
+
+CTR-P1-017: BacktestRunArtifact / 回测运行产物
+
+回测运行产物契约，包含回测结果时序数据（equity curve/trade log/tick replay data），用于前端可视化消费。与 CTR-P1-016 BacktestResult（汇总指标）互补——BacktestResult 是标量汇总，BacktestRunArtifact 是时序明细。
+
+SSoT: cross_layer_contracts.yaml -> CTR-P1-017
+Version: 1.0.0
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
+       Any manual changes will be overwritten by codegen.
+
+AI Prompt
+---------
+    当回测引擎完成一次运行后,MUST 产出 BacktestRunArtifact 以支撑前端可视化。 strategy_id 必须对应策略注册表中已注册的策略 key。 run_id 必须与 BacktestResult.idempotency_key 关联,保证汇总指标与时序明细可对齐。 equity_curve 与 trade_log 数据 MUST 遵循 PIT 铁律(零前瞻偏差)——任何时序点不得引用其之后时刻才能获得的信息。 tick_replay_data 为可选项,仅当回测配置启用 tick 级回放时填充。 benchmark_curve 与 drawdown_curve 为可选,用于前端叠加渲染基准对比与回撤分析。 Frontend 通过 result_repository.py (D_BACKTEST io/) 拉取本产物,使用 Panel+HoloViz 组件渲染可视化。
+"""
+
+
+@dataclass(frozen=True)
+class BacktestRunArtifact:
+    run_id: str
+    strategy_id: str
+    benchmark_curve: list[dict[str, Any]] | None = None
+    created_at: str = ""
+    drawdown_curve: list[dict[str, Any]] | None = None
+    equity_curve: list[dict[str, Any]] = field(default_factory=list)
+    metrics: dict[str, Any] | None = None
+    schema_version: str = "1.0.0"
+    tick_replay_data: list[dict[str, Any]] | None = None
+    trade_log: list[dict[str, Any]] = field(default_factory=list)
+
+
+# ==== END CODGEN:CTR-P1-017 ====

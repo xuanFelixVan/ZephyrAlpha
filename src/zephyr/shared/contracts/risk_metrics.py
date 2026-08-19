@@ -38,8 +38,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class RiskMetricsReport:
@@ -61,5 +62,6 @@ class RiskMetricsReport:
     volatility_1d: float
     volatility_1m: float
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-P1-011 ====

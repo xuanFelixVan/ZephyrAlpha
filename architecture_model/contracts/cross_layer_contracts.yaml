@@ -1167,9 +1167,11 @@ contracts:
       - {name: run_id, type: str, required: true, description: "回测运行 ID,与 BacktestResult.idempotency_key 关联"}
       - {name: equity_curve, type: "array[{timestamp: ISO8601, equity: float}]", required: true, description: "权益曲线时序数据"}
       - {name: trade_log, type: "array[{timestamp: ISO8601, symbol: string, side: string, price: float, quantity: int, commission: float}]", required: true, description: "交易记录"}
-      - {name: tick_replay_data, type: "array[{timestamp: ISO8601, price: float, volume: int}]", required: false, description: "tick 回放数据(可选,启用 tick 级回放时填充)"}
-      - {name: benchmark_curve, type: "array[{timestamp: ISO8601, value: float}]", required: false, description: "基准曲线(可选)"}
-      - {name: drawdown_curve, type: "array[{timestamp: ISO8601, drawdown: float}]", required: false, description: "回撤曲线(可选)"}
+      - {name: tick_replay_data, type: "Optional[array[{timestamp: ISO8601, price: float, volume: int}]]", required: false, description: "tick 回放数据(可选,启用 tick 级回放时填充)"}
+      - {name: benchmark_curve, type: "Optional[array[{timestamp: ISO8601, value: float}]]", required: false, description: "基准曲线(可选)"}
+      - {name: drawdown_curve, type: "Optional[array[{timestamp: ISO8601, drawdown: float}]]", required: false, description: "回撤曲线(可选)"}
+      - {name: created_at, type: str, required: false, default: "", description: "ISO8601 创建时间, save_artifact 时自动填充"}
+      - {name: metrics, type: "Optional[Dict[str, Any]]", required: false, description: "汇总指标快照(从 BacktestSinkData 提取)"}
       - {name: schema_version, type: str, required: false, default: "1.0.0", description: "契约版本,默认 1.0.0"}
   # ARCH-047
 

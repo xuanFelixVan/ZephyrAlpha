@@ -12,7 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -75,6 +74,7 @@ AI Prompt
     当 Data Source 的质量门禁检测到行情数据异常时，MUST 抛出 DataQualityError 而非普通 Exception。 每个 DataQualityError 携带 failure_reason（具体原因枚举）和 recovery_hint（恢复建议）。 禁止静默丢弃——必须显式抛出，让 Factor 和 Telemetry 感知。
 """
 
+
 @dataclass(frozen=True)
 class DataQualityError:
     error_id: str
@@ -87,5 +87,6 @@ class DataQualityError:
     failed_value: str | None = None
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-ERR-001 ====

@@ -39,8 +39,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class SystemConfiguration:
@@ -58,5 +59,6 @@ class SystemConfiguration:
     retry_policy: str = "linear"
     schema_version: str = "1.0"
     timeout_ms: int = 1000
+
 
 # ==== END CODGEN:CTR-P1-010 ====

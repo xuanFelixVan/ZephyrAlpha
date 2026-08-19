@@ -6707,6 +6707,11 @@ entries:
     ③两轮全量回归验证；④后续新文件 format 由门禁增量守住（已在守）。
     2026-08-19 循环审计 R1 已完成 ruff check 安全修复 1914 处（九批落地），
     format 仅剩风格统一价值，不阻断功能正确性，故登记候选不连夜强推。
+    2026-08-19 连带更新：#ARCH-130 P0-A 治本（A+B+C 三件套）已落地——A 模板自正
+    （import 语义级并集/类型现代化直出/_extract_hand_maintained 两状态机 bug），
+    B 管线兜底（生成后 ruff 六码 --fix 逐文件），C 防回潮门禁
+    （gate-codegen-idempotent 已注册 pre-commit）。生成器输出与 ruff 修复批
+    结构性冲突已消除，重跑 diff=零。format 大爆炸与本项无冲突，仍按原计划择窗。
   status: candidate
   priority: P3
   source: '循环审计 R1 杠杆#4（2026-08-19 AI-00 登记）'
@@ -6729,6 +6734,11 @@ entries:
   proposal: >-
     每批 200 模块：drafter 生成 → 抽查 10% 质量（算法步骤语义正确性）→ 门禁验证 → commit。
     约 11 批收敛。属体量工程非阻断债，登记候选排期。
+    2026-08-19 连带更新：#ARCH-130 P0-A 治本发现 S4 接管态 __init__.py（含 ALGO_FLOW）
+    与生成器骨架重建存在结构性冲突——生成器无法复刻 S4 注入的 docstring 内 ALGO_FLOW
+    排版。已采"检测即跳过"策略（generate_directory_init 遇 ALGO_FLOW 直接 SKIP），
+    S4 接管文件的幂等性由 S4 reconciler 负责。本项批量补登 ALGO_FLOW 时注意：
+    已接管文件不应再被生成器骨架重建覆盖。
   status: candidate
   priority: P3
   source: '循环审计 R1 杠杆#8（2026-08-19 AI-00 登记）'

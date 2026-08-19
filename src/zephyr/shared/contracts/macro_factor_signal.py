@@ -37,8 +37,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class MacroFactorSignal:
@@ -51,5 +52,6 @@ class MacroFactorSignal:
     signal_value: float
     confidence: float = 1.0
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-P1-002 ====

@@ -12,7 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 import importlib
@@ -30,6 +29,7 @@ def __getattr__(name):
     if hasattr(mod, name):
         return getattr(mod, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 # ==== BEGIN CODGEN:CTR-ERR-005 ====
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
@@ -76,6 +76,7 @@ AI Prompt
     当 Execution 的订单被券商/交易所拒绝时，MUST 抛出 ExecutionRejectionError。 拒绝原因通过 rejection_source（BROKER / EXCHANGE / CIRCUIT_BREAKER / INTERNAL）和 rejection_reason 字段精确标识。 Portfolio 可以根据此错误决定是否重新生成订单（如降低数量、改用 LIMIT 单）。 如果 rejection_reason 为 market_circuit_breaker，不要重试——等待下一周期。
 """
 
+
 @dataclass(frozen=True)
 class ExecutionRejectionError:
     error_id: str
@@ -88,5 +89,6 @@ class ExecutionRejectionError:
     broker_message: str | None = None
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-ERR-005 ====

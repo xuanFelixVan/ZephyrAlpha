@@ -502,6 +502,19 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 178 | P1-1/P1-2 | test_check_protected_paths_worktree.py 整文件删除（89b3ebed，tests/scripts 收集 211 零 error）；CAND-GATEMECH-005（批次收尾仪式）/006（迁移脚本登记制）/007（测试有效性门禁）登记（5921b0f3a4） | ✅ 已闭环 |
 | 179 | 避让登记 | src/zephyr/data/ 5 文件（tasks.yaml kline_weekly 禁用留痕+policies.yaml+miniqmt_provider/scheduler/source_health_check）=数据域在途会话活跃 WIP（10:22 写入），统筹避让不碰 | ⏳ 数据域会话自收 |
 
+### P1-补24 · 2026-08-19 #ARCH-130 P0-A 治本 A+B+C 三件套落地（模板-修复批结构性冲突根因消除）
+
+> P1-补23 #173 拦截的"生成器回退 ruff 修复批"结构性冲突，经 A（模板自正）+B（管线兜底）+C（防回潮门禁）三件套治本闭环。重跑生成器 diff=零，34 文件幂等。
+
+| # | 项 | 内容 | 状态 |
+|---|---|---|---|
+| 180 | A 模板自正 | ①import 语义级并集替代整行比对（`_parse_import_map`/`_render_import_block`/`_union_import_map`——ruff I001 合并行 vs 推导分开行整行不等→误判 missing→注入 docstring 前=段外 import，43 文件实证）；②`_modernize_type` 直出 UP006/UP045 现代化类型（`Dict→dict`/`Optional→\| None`/`array[{...}]→list[dict[str, Any]]`），B 管线 ruff fix 零动作防连带清理 typing import 行；③`_extract_hand_maintained` 两状态机 bug——skipping_old_class 最高优先级（吞 docstring 防泄漏=result_repository.py 孤立 docstring 实证）+多行 import 括号重组状态机（防续行落手写区=IndentationError 实证）；④`_collect_import_map` 双程提取（原始串+现代化串，array→Any import 防漏） | ✅ 已闭环 |
+| 181 | B 管线兜底 | 生成器末尾 ruff 六码 --fix 逐生成文件（修正：原按父目录去重越界碰手写文件=engine_base.py/io/__init__.py CRLF 抖动实证） | ✅ 已闭环 |
+| 182 | C 防回潮门禁 | check_contracts_codegen_idempotent.py 新建——调 `_render_contract_content`（纯函数零磁盘写入）+B 管线同口径 ruff --fix 内存比对，34 文件零 diff 实证；gate-codegen-idempotent 已注册 pre-commit（files: contracts YAML+生成器模板，stages: [pre-commit]） | ✅ 已闭环 |
+| 183 | YAML 契约补字段 | CTR-P1-017 补 created_at/metrics 字段+3 可选字段 Optional 语义对齐手写版（`tick_replay_data`/`benchmark_curve`/`drawdown_curve` 从 `array[...]` 改 `Optional[array[...]]`），消除生成版 vs 手写版字段缺失/语义分歧 | ✅ 已闭环 |
+| 184 | S4 接管态豁免 | generate_directory_init 遇 ALGO_FLOW 直接 SKIP——S4 注入 docstring 内 ALGO_FLOW 排版生成器无法复刻，幂等性由 S4 reconciler 负责（io/__init__.py 实证）；既有导出模块并集（`existing_mods`）防单契约模式丢兄弟模块导出 | ✅ 已闭环 |
+| 185 | 验证 | 重跑生成器 diff=零（34 文件）+ruff 六码全绿+两轮测试全绿（457 passed）+C 门禁自验通过 | ✅ 已闭环 |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |

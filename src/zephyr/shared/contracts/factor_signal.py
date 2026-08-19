@@ -44,6 +44,7 @@ AI Prompt
     当你需要在 Factor 中生成因子信号时，MUST 使用 FactorSignal 类型。 不要自行定义因子信号的数据结构。factor_id 必须对应 FactorRegistry 中已注册的因子 key。 raw_value 是因子原始计算结果，normalized_value 是截面标准化后的 z-score，rank_pct 是 0-1 分位数排名。 如果因子计算失败，不要产出 FactorSignal——应该抛出 FactorComputationError（CTR-ERR-002）。 如果 confidence < 0.5，该信号可能不可靠，下游（Signal/Risk/Portfolio）可以忽略。 is_valid = False 时下游 MUST 跳过该信号。 extra 字段用于放非标准化的扩展数据，不要滥用——能用标准字段就用标准字段。
 """
 
+
 @dataclass(frozen=True)
 class FactorSignal:
     as_of_date: datetime
@@ -63,5 +64,6 @@ class FactorSignal:
     schema_version: str = "1.0"
     timeout_ms: int = 3000
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-002 ====

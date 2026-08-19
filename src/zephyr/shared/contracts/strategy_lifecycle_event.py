@@ -38,8 +38,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class StrategyLifecycleEvent:
@@ -53,5 +54,6 @@ class StrategyLifecycleEvent:
     triggered_by: str
     performance_snapshot: dict[str, float] | None = None
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-P1-006 ====

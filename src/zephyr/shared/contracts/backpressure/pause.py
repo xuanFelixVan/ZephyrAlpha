@@ -12,7 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # Import from shared-internal _types.py — eliminates circular import to infrastructure
 
@@ -64,6 +63,7 @@ AI Prompt
     如果下游处理速度跟不上上游产生速度，你可以通过 emit PAUSE 背压信号来告诉上游暂停。 PAUSE 会暂停指定标的的数据下发 duration_ms 毫秒，到期后自动恢复。 不要静默丢弃数据——上游不知道下游爆了，只会继续发，最终内存溢出。
 """
 
+
 @dataclass(frozen=True)
 class BackpressurePause:
     duration_ms: int
@@ -74,5 +74,6 @@ class BackpressurePause:
     action: str = "PAUSE"
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-BP-001 ====

@@ -12,7 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # Import from shared-internal _types.py — eliminates circular import to infrastructure
 
@@ -64,6 +63,7 @@ AI Prompt
     THROTTLE 比 PAUSE 轻：不是完全暂停，而是降到每秒 max_rate_per_sec 条。 典型的场景是下游队列开始堆积但还没满——先降速观察，如果仍然堆积再升级为 PAUSE。
 """
 
+
 @dataclass(frozen=True)
 class BackpressureThrottle:
     idempotency_key: str
@@ -74,5 +74,6 @@ class BackpressureThrottle:
     action: str = "THROTTLE"
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-BP-002 ====

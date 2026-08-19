@@ -38,8 +38,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class ComplianceRule:
@@ -57,5 +58,6 @@ class ComplianceRule:
     updated_at: datetime
     version: str
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-P1-012 ====

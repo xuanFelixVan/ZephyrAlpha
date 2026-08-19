@@ -38,8 +38,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class PerformanceAttributionReport:
@@ -54,5 +55,6 @@ class PerformanceAttributionReport:
     transaction_cost_drag: float
     factor_contributions: dict[str, float] = field(default_factory=dict)
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-P1-009 ====

@@ -38,8 +38,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class ExecutionReport:
@@ -58,5 +59,6 @@ class ExecutionReport:
     vwap_price: Decimal
     algo_type: str = "NONE"
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-P1-007 ====

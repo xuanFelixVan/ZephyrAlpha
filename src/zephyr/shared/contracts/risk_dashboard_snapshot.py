@@ -38,8 +38,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class RiskDashboardSnapshot:
@@ -54,5 +55,6 @@ class RiskDashboardSnapshot:
     active_alerts: list[str] = field(default_factory=list)
     schema_version: str = "1.0"
     sector_concentrations: dict[str, float] = field(default_factory=dict)
+
 
 # ==== END CODGEN:CTR-P1-008 ====

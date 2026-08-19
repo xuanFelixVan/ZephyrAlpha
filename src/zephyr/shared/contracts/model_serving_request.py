@@ -38,8 +38,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class ModelServingRequest:
@@ -48,5 +49,6 @@ class ModelServingRequest:
     model_version: str
     request_id: str
     input_features: dict[str, float] = field(default_factory=dict)
+
 
 # ==== END CODGEN:CTR-P1-004 ====

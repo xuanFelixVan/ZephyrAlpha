@@ -41544,6 +41544,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "分析日历上的时间规律：月末月初效应、长假节后效应、历史高低点周年日效应，用统计检验自证是否真有效，输出'什么时候可能变盘'的提醒窗口。它只是辅助参考，不直接发买卖信号"
+- module_path: scripts/governance/d5_architecture/checkers/check_contracts_codegen_idempotent.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "契约生成器幂等性门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "contracts YAML 或生成器模板变更时，验证重跑产物与磁盘文件零差异，防回退合法修复进 git"
 
 battle_map_steps:
 - step_id: BM-BUY-04

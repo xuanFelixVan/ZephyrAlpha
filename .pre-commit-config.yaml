@@ -828,6 +828,22 @@ repos:
 
       # ── GATE-CONTRACT-PHYSICAL-PATH 已合并到 GATE-C2（见上 gate-c2）──
 
+      # ── GATE-CODEGEN-IDEMPOTENT: 契约生成器幂等性门禁（C 路径防回潮，2026-08-19 治本）──
+      # 权威依据：#ARCH-130 P0-A（重跑生成器回退 ruff 六码批修复，43 文件实证）
+      # 真源：scripts/governance/d5_architecture/checkers/check_contracts_codegen_idempotent.py
+      # 检测内容：调 _render_contract_content（纯函数零磁盘写入）+ B 管线同口径 ruff --fix，
+      #           与磁盘文件逐字节比对——不一致=重跑会回退合法修复，硬阻断
+      # 触发范围：contracts YAML 或生成器模板变更时
+      - id: gate-codegen-idempotent
+        name: "GATE-CODEGEN-IDEMPOTENT: 契约生成器幂等性（C 路径防回潮）"
+        entry: python scripts/governance/d5_architecture/checkers/check_contracts_codegen_idempotent.py --ci
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(architecture_model/contracts/cross_layer_contracts\\.yaml|scripts/governance/d5_architecture/generators/generate_contracts\\.py)$"
+        stages: [pre-commit]
+        description: "契约生成器幂等性——contracts YAML 或生成器变更时验证重跑产物与磁盘零 diff，防回退合法修复进 git（#ARCH-130 P0-A 治本）"
+
       # ── GATE-CANONICAL-YAML-DRIFT: canonical YAML SSoT 防漂移门禁（Phase B 治本，2026-07-24）──
       # 权威依据：Phase B（commit d747ae3251 遗留 5 项 YAML 陈旧问题）
       # 真源：scripts/governance/d5_architecture/checkers/check_canonical_yaml_drift.py

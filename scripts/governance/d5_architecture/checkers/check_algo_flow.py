@@ -12,7 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 永不抛异常——AST/git 异常降级为 exit 2 + stderr 提示
 # [TESTS] 无（门禁脚本，自验证）
-# [A_module] module_id=MOD-GOV_CHECK_ALGO_FLOW | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: pre-commit hook 事件触发（.pre-commit-config.yaml gate-algo-flow-marker），CLI 仅供人工排查
 """check_algo_flow.py — ALGO_FLOW 标记门禁（算法地图全量落地配套，§4.16）。
@@ -55,6 +54,20 @@ from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 
 _ALGO_FLOW_MARKER = "# [ALGO_FLOW]"
 
+# codegen 产物豁免（#ARCH-130 P0-A，2026-08-19）：
+# frozen dataclass 契约文件（DO NOT EDIT codegen）是纯数据声明，无算法流程，
+# 不纳入 ALGO_FLOW 算法全景图。判定：文件头注区含 codegen 标记。
+_CODEGEN_MARKERS = (
+    "DO NOT EDIT (codegen)",
+    "Status: AUTO-GENERATED -- DO NOT EDIT BY HAND",
+)
+
+
+def _is_codegen_artifact(src: str) -> bool:
+    """判定文件是否为 codegen 产物（纯数据契约，豁免 ALGO_FLOW）。"""
+    head = src[:2000]  # 头注区+docstring 开头
+    return any(m in head for m in _CODEGEN_MARKERS)
+
 
 def _has_algo_flow(py_path: Path) -> tuple[bool, str]:
     """检查 .py 文件 module docstring 是否含 ALGO_FLOW 标记。
@@ -65,6 +78,9 @@ def _has_algo_flow(py_path: Path) -> tuple[bool, str]:
         src = py_path.read_text(encoding="utf-8", errors="replace")
     except OSError as e:
         return False, f"读取失败: {e}"
+    # codegen 产物豁免（纯数据契约无算法流程）
+    if _is_codegen_artifact(src):
+        return True, ""
     try:
         tree = ast.parse(src, filename=str(py_path))
     except SyntaxError as e:

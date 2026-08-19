@@ -37,8 +37,9 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    
+
 """
+
 
 @dataclass(frozen=True)
 class ModelServingResponse:
@@ -50,5 +51,6 @@ class ModelServingResponse:
     prediction_type: str
     request_id: str
     schema_version: str = "1.0"
+
 
 # ==== END CODGEN:CTR-P1-005 ====

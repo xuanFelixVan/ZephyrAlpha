@@ -12,7 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # Import from shared-internal _types.py — eliminates circular import to infrastructure
 
@@ -64,6 +63,7 @@ AI Prompt
     当之前的 PAUSE/THROTTLE 条件解除后（如队列清空、GC 完成），MUST 发送 RESUME 恢复信号。 不要在 RESUME 后立即取消——先观察一个周期确认稳定。
 """
 
+
 @dataclass(frozen=True)
 class BackpressureResume:
     idempotency_key: str
@@ -73,5 +73,6 @@ class BackpressureResume:
     action: str = "RESUME"
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
+
 
 # ==== END CODGEN:CTR-BP-003 ====
