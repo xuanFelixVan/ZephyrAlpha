@@ -73,7 +73,14 @@ from zephyr.governance.persistence import decisiongraph_schema  # noqa: E402
 
 
 def parse_ddl_columns(ddl: str) -> list[str]:
-    """从 CREATE TABLE DDL 文本中解析列名列表（跳过表级约束 PRIMARY/FOREIGN/CHECK/UNIQUE/CONSTRAINT）。"""
+    """从 CREATE TABLE DDL 文本中解析列名列表（跳过表级约束 PRIMARY/FOREIGN/CHECK/UNIQUE/CONSTRAINT）。
+
+    2026-08-19 治本（#ARCH-130 裁定 P0-D）：分词前先剥离 ``--`` 行注释——
+    decision_layers DDL 含 ``-- Ruling:... P0-3 ...`` 行内注释，原实现把 ``--``
+    当列名收入，产生 "DB 缺少列 ['--']" 伪漂移。注释剥离按行处理（PG DDL
+    行注释从 ``--`` 至行尾；DDL 常量内无字符串字面量含 ``--``，安全）。
+    """
+    ddl = re.sub(r"--[^\n]*", "", ddl)
     match = re.search(r"CREATE TABLE\s+(?:IF NOT EXISTS\s+)?(\w+)\s*\((.*)\)", ddl, re.DOTALL)
     if not match:
         return []
@@ -130,6 +137,7 @@ _DDL_MAP = {
     "model_capabilities": depgraph_schema._DDL_MODEL_CAPABILITIES,
     "registries": depgraph_schema._DDL_REGISTRIES,
     "domain_mapping": depgraph_schema._DDL_DOMAIN_MAPPING,
+    "rule_ai_perception": depgraph_schema._DDL_RULE_AI_PERCEPTION,  # #ARCH-130 P0-C 补登（2026-08-19）
 }
 
 # Ruling:100PCT-AI-GOVERNANCE P1-2 (2026-07-19): 扩展 _DDL_MAP 包含 decisiongraph 表

@@ -904,3 +904,36 @@ CREATE INDEX IF NOT EXISTS idx_config_assets_path ON config_assets(file_path);
 CREATE INDEX IF NOT EXISTS idx_config_assets_name ON config_assets(file_name);
 
 COMMENT ON TABLE config_assets IS '文件系统扫描派生表（非 readonly）。真源=config/*.yaml 文件本身。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py 的 sync_config_assets 函数扫描 config/ 目录';
+
+-- =====================================================================
+-- rule_ai_perception 只读触发器补建（2026-08-19，#ARCH-130 裁定 P0-C）
+-- 表 DDL 现网已由 sync_yaml_to_depgraph.py sync_rule_ai_perception_index() 自建
+-- （Python 侧 CREATE TABLE IF NOT EXISTS，L2097）；READONLY_TABLES 已含该表、
+-- COMMENT 已宣称"readonly 触发器保护"，但本文件增补遗漏——三触发器从未落地。
+-- 此段对齐：表 DDL 声明（幂等）+ readonly 三触发器（与其他只读表同模板）。
+-- =====================================================================
+
+CREATE TABLE IF NOT EXISTS rule_ai_perception (
+    rule_id         TEXT PRIMARY KEY,
+    title           TEXT NOT NULL DEFAULT '',
+    module_id       TEXT NOT NULL DEFAULT '',
+    scope           TEXT NOT NULL DEFAULT '',
+    domain          TEXT NOT NULL DEFAULT '',
+    severity        TEXT NOT NULL DEFAULT '',
+    stability       TEXT NOT NULL DEFAULT '',
+    ai_autonomy     TEXT NOT NULL DEFAULT '',
+    safety_level    TEXT NOT NULL DEFAULT '',
+    operations      TEXT[] NOT NULL DEFAULT '{}',
+    gate_ids        TEXT[] NOT NULL DEFAULT '{}',
+    tags            TEXT[] NOT NULL DEFAULT '{}',
+    aliases         TEXT[] NOT NULL DEFAULT '{}',
+    paired_gate_id  TEXT,
+    rule_file       TEXT NOT NULL DEFAULT ''
+);
+
+CREATE TRIGGER readonly_rule_ai_perception_delete
+    BEFORE DELETE ON rule_ai_perception FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+CREATE TRIGGER readonly_rule_ai_perception_insert
+    BEFORE INSERT ON rule_ai_perception FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+CREATE TRIGGER readonly_rule_ai_perception_update
+    BEFORE UPDATE ON rule_ai_perception FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();

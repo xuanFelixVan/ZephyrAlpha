@@ -819,6 +819,29 @@ CREATE TABLE IF NOT EXISTS domain_mapping (
 )
 """
 
+# rule_ai_perception（规则AI感知索引，#183）——2026-08-19 #ARCH-130 裁定 P0-C 补登：
+# 表由 sync_yaml_to_depgraph.py Python 侧自建（L2097），本常量=DDL 真源对齐
+# （verify_schema_health._DDL_MAP 列校验消费）；只读三触发器已随 02_create_pg_schema.sql 补建落地
+_DDL_RULE_AI_PERCEPTION = """
+CREATE TABLE IF NOT EXISTS rule_ai_perception (
+    rule_id         TEXT PRIMARY KEY,
+    title           TEXT NOT NULL DEFAULT '',
+    module_id       TEXT NOT NULL DEFAULT '',
+    scope           TEXT NOT NULL DEFAULT '',
+    domain          TEXT NOT NULL DEFAULT '',
+    severity        TEXT NOT NULL DEFAULT '',
+    stability       TEXT NOT NULL DEFAULT '',
+    ai_autonomy     TEXT NOT NULL DEFAULT '',
+    safety_level    TEXT NOT NULL DEFAULT '',
+    operations      TEXT[] NOT NULL DEFAULT '{}',
+    gate_ids        TEXT[] NOT NULL DEFAULT '{}',
+    tags            TEXT[] NOT NULL DEFAULT '{}',
+    aliases         TEXT[] NOT NULL DEFAULT '{}',
+    paired_gate_id  TEXT,
+    rule_file       TEXT NOT NULL DEFAULT ''
+)
+"""
+
 # ---------------------------------------------------------------------------
 # 版本化迁移框架（P2迁移后：历史 SQLite 迁移记录，不再执行）
 # PG schema 真源：scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql
