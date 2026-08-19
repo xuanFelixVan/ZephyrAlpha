@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.risk_layer_orchestrator
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.position.core.drawdown_controller; zephyr.risk.core.drawdown_tracker; zephyr.risk.core.var_calculator; zephyr.risk.core.tail_risk_monitor; zephyr.risk.core.ashare_systemic_risk_detector; zephyr.risk.core.liquidity_crisis_manager; zephyr.risk.stop_loss; zephyr.ex_core.position_reconciler; zephyr.ex_core.position_tracker.tracker; zephyr.trading.trading_contracts.broker_interface; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums
+# [DEPENDENCIES] zephyr.position.core.drawdown_controller; zephyr.risk.core.drawdown_tracker; zephyr.risk.core.var_calculator; zephyr.risk.core.tail_risk_monitor; zephyr.risk.core.ashare_systemic_risk_detector; zephyr.risk.core.liquidity_crisis_manager; zephyr.risk.stop_loss; zephyr.ex_core.position_reconciler; zephyr.ex_core.position_tracker.tracker; zephyr.trading.trading_contracts.broker_interface; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums; zephyr.governance.lifecycle_governance.rollback_state_machine
 # [CONSUMERS] zephyr.ex_core.trading_session
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 重建完成前禁止下单(Fail-Closed); 熔断单一仲裁点(重复触发不重复清算); 清算以券商实时持仓为准; 样本不足降级标记degraded不阻断; 只编排不重造(回撤/VaR/尾部/系统性风险计算全委托既有模块); LEVEL_3必须经build_escape_directive进单一仲裁点; 降级机只迁移警报级别不解除熔断闩锁(KILL态人工复位,35号KILL态禁止37号恢复)
+# [INVARIANTS] 重建完成前禁止下单(Fail-Closed); 熔断单一仲裁点(重复触发不重复清算); 清算以券商实时持仓为准; 样本不足降级标记degraded不阻断; 只编排不重造(回撤/VaR/尾部/系统性风险计算全委托既有模块); LEVEL_3必须经build_escape_directive进单一仲裁点; 降级机只迁移警报级别不解除熔断闩锁(KILL态人工复位,35号KILL态禁止37号恢复); 五态降级机单向更保守+恢复须人工RCA双人复核(53号§3.8,UNWINDING进同一仲裁点,SOFT_HALT起禁新开仓); REBUILD静态映射VaR3%/CVaR5%由编排层兜底(36号§3.10,不依赖组件force_static_mode落地)
 # [MODIFY-GUARD] docs/_working/reviews/2026-08-16-dual-review-adjudication.md §六 (#ARCH-100)
 # [STABILITY] evolving
 # [SAFETY] H
@@ -17,13 +17,16 @@
 # I1: nav(盘中净值, cash+持仓市值) + positions(券商持仓快照) + today_fills(当日成交)
 # I2: DrawdownController/VaRCalculator/TailRiskMonitor/DrawdownTracker(既有风控组件实例)
 # I3: broker(券商接口, 启动恢复查询+清算执行) + reconciler(持仓对账器)
+# I4: rollback_metrics_provider(五态机指标: intraday_dd/daily_loss/reject_rate/trade_count/p0_event) + state_store(姿态持久化)
 # F1: recover_from_broker(以券商持仓为准重建账本, 重建完成前 is_trading_allowed=False)
 # F2: evaluate_intraday(净值→回撤追踪→收益序列→VaR/ES→DrawdownController.evaluate→position_cap)
 # F3: evaluate_intraday 内嵌系统性风险评估(systemic_input_provider→MOD-RK-10 detector.check→三级警报→37号§3.6降级机)
-# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007/系统性LEVEL_3→trigger_kill_switch+清算)
+# F4: evaluate_intraday 内嵌五态降级机(53号§3.8: provider指标→MOD-GOV-045 evaluate_rollback单向更保守迁移→SOFT_HALT/HARD_HALT禁新开仓, UNWINDING→同一仲裁点Flatten; 恢复须人工recover_rollback_posture)
+# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007/系统性LEVEL_3/五态UNWINDING→trigger_kill_switch+清算)
 # A2: start/stop_reconcile_loop(盘中定时对账, 蓝图MOD-EX-056阶段2规划位, 默认300s)
 # A3: _evaluate_systemic_risk(LEVEL_3→build_escape_directive→_engage_kill_switch; 降级候选→check_recovery门禁)
-# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level) + RecoveryResult + 清算报告
+# A4: apply_var_backtest_action(36号§3.10三档校准执行者: RECALIBRATE→组件update_config探针(缺失即skipped留痕); REBUILD→静态VaR3%/CVaR5%映射+UNAVAILABLE持久化, clear_var_model_unavailable业主确认恢复)
+# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level/rollback_state/var_model_status) + RecoveryResult + 清算报告
 # [/ALGO_FLOW]
 """D_EX_CORE — 风控层运行时编排器（Risk Layer Orchestrator）
 双轮审查裁定书 §六 P0 风控接线批（#ARCH-100，AI-RWIRE-001 施工）：
@@ -54,6 +57,24 @@
      MOD-RK-21 check_recovery（LEVEL_3→LEVEL_2 冷却 30min+信号≤2+spread<0.3%，
      逐级 hysteresis 降级）——降级只迁移警报级别（systemic_cap/halt），
      不解除熔断闩锁（KILL 态人工复位，37 号 §3.8「35 号 KILL 态禁止 37 号恢复」）
+  6. 五态降级机执行链接线（tracker #204，53 号 §3.8，MOD-GOV-045）：
+     rollback_metrics_provider 注入即生效——每轮 evaluate_intraday 内嵌调用
+     evaluate_rollback（单向更保守梯子 NORMAL→THROTTLED→SOFT_HALT→HARD_HALT，
+     ≥30 笔样本地板/P0 绕过由状态机内部保证）；SOFT_HALT/HARD_HALT →
+     rollback_halt 禁新开仓（REDUCING 态只卖不买，TradingSession 经既有
+     allow_new_position 闸门消费）；UNWINDING（4 级 Flatten，仅人工持久化
+     可达）→ _engage_kill_switch 同一仲裁点清算；迁移落盘 state_store
+     （rollback_state 命名空间，启动加载 fail-closed 缺省 SOFT_HALT）；
+     恢复无自动路径——recover_rollback_posture 人工入口（RCA+双人复核缺一
+     PermissionError，模块契约原样透传）
+  7. VaR 回测校准动作执行者（35 号 §3.10/§6.5 + 36 号 §3.10，与 36 号同项）：
+     apply_var_backtest_action(PASS/RECALIBRATE/REBUILD)——RECALIBRATE 经
+     组件 update_config 鸭子探针分发（组件方法未落地=skipped 留痕不静默，
+     与 today_fills_probe 同一探针模式）；REBUILD 由编排层兜底静态映射
+     （VaR 3%/CVaR 5% 固定口径喂 controller.evaluate → position_cap 0.5，
+     不再依赖 var_calculator 动态计算）+ state_store 持久化 UNAVAILABLE
+     标记（盘前初始化读取续存）；clear_var_model_unavailable 业主确认恢复
+     （36 号 REBUILD→恢复流程③，未确认 PermissionError）
 
 边界（并发会话 AI-RRESIL-001）：DefaultRiskValidator / fill_handler /
 PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
@@ -62,13 +83,16 @@ PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
 # I1: nav(盘中净值, cash+持仓市值) + positions(券商持仓快照) + today_fills(当日成交)
 # I2: DrawdownController/VaRCalculator/TailRiskMonitor/DrawdownTracker(既有风控组件实例)
 # I3: broker(券商接口, 启动恢复查询+清算执行) + reconciler(持仓对账器)
+# I4: rollback_metrics_provider(五态机指标: intraday_dd/daily_loss/reject_rate/trade_count/p0_event) + state_store(姿态持久化)
 # F1: recover_from_broker(以券商持仓为准重建账本, 重建完成前 is_trading_allowed=False)
 # F2: evaluate_intraday(净值→回撤追踪→收益序列→VaR/ES→DrawdownController.evaluate→position_cap)
 # F3: evaluate_intraday 内嵌系统性风险评估(systemic_input_provider→MOD-RK-10 detector.check→三级警报→37号§3.6降级机)
-# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007/系统性LEVEL_3→trigger_kill_switch+清算)
+# F4: evaluate_intraday 内嵌五态降级机(53号§3.8: provider指标→MOD-GOV-045 evaluate_rollback单向更保守迁移→SOFT_HALT/HARD_HALT禁新开仓, UNWINDING→同一仲裁点Flatten; 恢复须人工recover_rollback_posture)
+# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007/系统性LEVEL_3/五态UNWINDING→trigger_kill_switch+清算)
 # A2: start/stop_reconcile_loop(盘中定时对账, 蓝图MOD-EX-056阶段2规划位, 默认300s)
 # A3: _evaluate_systemic_risk(LEVEL_3→build_escape_directive→_engage_kill_switch; 降级候选→check_recovery门禁)
-# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level) + RecoveryResult + 清算报告
+# A4: apply_var_backtest_action(36号§3.10三档校准执行者: RECALIBRATE→组件update_config探针(缺失即skipped留痕); REBUILD→静态VaR3%/CVaR5%映射+UNAVAILABLE持久化, clear_var_model_unavailable业主确认恢复)
+# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level/rollback_state/var_model_status) + RecoveryResult + 清算报告
 # [/ALGO_FLOW]
 （ALGO_FLOW 双位镜像：docstring 内本块=GATE-ALGO-FLOW 门禁 AST 读取真源，文件头注区为人工速览镜像——
 2026-08-18 第八统筹恢复 docstring 副本：AI-R2-001 删副本治本时未识门禁读取口径，头注区镜像门禁不可见）
@@ -91,6 +115,13 @@ import numpy as np
 
 from zephyr.ex_core.position_reconciler import PositionReconciler
 from zephyr.ex_core.position_tracker.tracker import PositionTracker
+from zephyr.governance.lifecycle_governance.rollback_state_machine import (
+    RollbackState,
+    evaluate_rollback,
+    load_persisted_state,
+    persist_state,
+    recover as _rollback_fsm_recover,
+)
 from zephyr.position.core.drawdown_controller import (
     DrawdownController,
     DrawdownInfo,
@@ -105,6 +136,7 @@ from zephyr.risk.core.ashare_systemic_risk_detector import (
 from zephyr.risk.core.drawdown_tracker import (
     DrawdownAlertedEvent,
     DrawdownAlertLevel,
+    DrawdownSnapshot,
     DrawdownTracker,
 )
 from zephyr.risk.core.liquidity_crisis_manager import (
@@ -163,6 +195,9 @@ class RiskLayerConfig:
         systemic_sell_pressure_recovery: 系统性降级机卖压恢复阈值（0.50，37 号 §3.6）
         systemic_min_hold_minutes: 系统性各级别最短持续门控（分钟，
             {1:10, 2:15, 3:30}——LEVEL_3 的 30min 覆盖 Kill Switch 冷却期）
+        rebuild_static_var_pct: REBUILD 静态映射 VaR 口径（36 号 §3.10：固定 3%）
+        rebuild_static_cvar_pct: REBUILD 静态映射 CVaR 口径（36 号 §3.10：固定 5%，
+            组合 position_cap 0.5——不再用 var_calculator 动态计算）
     """
 
     reconcile_interval_seconds: float = 300.0
@@ -174,6 +209,8 @@ class RiskLayerConfig:
     systemic_spread_recovery_ratio: float = 0.5
     systemic_sell_pressure_recovery: float = 0.50
     systemic_min_hold_minutes: dict[int, int] = field(default_factory=lambda: {1: 10, 2: 15, 3: 30})
+    rebuild_static_var_pct: float = 0.03
+    rebuild_static_cvar_pct: float = 0.05
 
 
 @dataclass(frozen=True)
@@ -201,6 +238,13 @@ class RiskLayerSnapshot:
         systemic_sentiment_breaker: 本轮情绪断路器是否触发（未接线=False）
         escape_directive: 本轮迁移进入 LEVEL_3 时产出的逃生指令字典
             （build_escape_directive 产出；非 LEVEL_3 迁移=None）
+        rollback_state: 五态降级机当前姿态（53 号 §3.8，NORMAL/THROTTLED/SOFT_HALT/
+            HARD_HALT/UNWINDING；未接线=NORMAL 不加约束）
+        rollback_halt: 五态机停开仓贡献（SOFT_HALT/HARD_HALT/UNWINDING=True——
+            REDUCING 态只卖不买；THROTTLED 仅节流留痕不拦新开仓）
+        rollback_escalated: 本轮是否发生单向更保守迁移（留痕审计）
+        var_model_status: VaR 模型口径（DYNAMIC=动态计算；STATIC_REBUILD=36 号
+            §3.10 REBUILD 静态映射 VaR 3%/CVaR 5%）
     """
 
     timestamp: datetime
@@ -222,6 +266,10 @@ class RiskLayerSnapshot:
     # 数据异常兜底停仓标志（AI-R3 复审 P2 治本）：nav 非有限/非正时兜底快照
     # 置 True——最保守口径禁止新开仓（原 response=None 默认放行=最宽松，方向错误）
     halt_new_position: bool = False
+    rollback_state: str = "NORMAL"
+    rollback_halt: bool = False
+    rollback_escalated: bool = False
+    var_model_status: str = "DYNAMIC"
 
     @property
     def position_cap(self) -> float:
@@ -235,9 +283,14 @@ class RiskLayerSnapshot:
     @property
     def allow_new_position(self) -> bool:
         """是否允许新开仓（无响应=默认允许；橙/红/黑或熔断建议=禁止；
-        系统性层停开仓=禁止；数据异常兜底=禁止）。"""
+        系统性层停开仓=禁止；数据异常兜底=禁止；五态机 REDUCING 起=禁止）。"""
         base = self.response.allow_new_position if self.response is not None else True
-        return base and not self.systemic_halt and not self.halt_new_position
+        return (
+            base
+            and not self.systemic_halt
+            and not self.halt_new_position
+            and not self.rollback_halt
+        )
 
 
 @dataclass(frozen=True)
@@ -317,6 +370,29 @@ _SYSTEMIC_LEVEL_TO_INT: Final = {
     SystemicRiskAlertLevel.LEVEL_3: 3,
 }
 
+# 五态降级机停开仓姿态集（53 号 §3.8：SOFT_HALT=REDUCING 只卖不买 /
+# HARD_HALT 完全静默 / UNWINDING Flatten；THROTTLED 仅节流留痕）
+_ROLLBACK_HALT_STATES: Final = frozenset(
+    {RollbackState.SOFT_HALT, RollbackState.HARD_HALT, RollbackState.UNWINDING}
+)
+# 36 号 §3.10 REBUILD 动作1 持久化命名空间（var 模型 UNAVAILABLE 标记）
+_VAR_MODEL_STATUS_NAMESPACE: Final = "var_model_status"
+
+
+@dataclass(frozen=True)
+class _RollbackView:
+    """五态降级机一轮评估视图（编排内部，并入 RiskLayerSnapshot）。
+
+    Attributes:
+        state: 本轮评估后的当前姿态（单向更保守，无自动恢复）
+        halt: 停开仓贡献（SOFT_HALT/HARD_HALT/UNWINDING）
+        escalated: 本轮是否发生降级迁移（留痕审计 + 持久化触发点）
+    """
+
+    state: RollbackState
+    halt: bool
+    escalated: bool
+
 
 class RiskLayerOrchestrator:
     """风控层运行时编排器——组合级风控接进交易会话的唯一编排点。
@@ -337,6 +413,11 @@ class RiskLayerOrchestrator:
             systemic_detector=AshareSystemicRiskDetector(),
             systemic_input_provider=lambda: {
                 "sell_pressure": ..., "bid_ask_spread": ..., "sentiment_index": ...,
+            },
+            # 可选：五态降级机执行链（53 号 §3.8，tracker #204）——provider 注入即生效
+            rollback_metrics_provider=lambda: {
+                "intraday_dd": ..., "daily_loss": ..., "reject_rate": ...,
+                "trade_count": ...,
             },
         )
         session = TradingSession(..., risk_layer=orchestrator)
@@ -361,6 +442,7 @@ class RiskLayerOrchestrator:
         open_orders_provider: Callable[[], dict[str, dict]] | None = None,
         systemic_detector: AshareSystemicRiskDetector | None = None,
         systemic_input_provider: Callable[[], Mapping[str, Any] | None] | None = None,
+        rollback_metrics_provider: Callable[[], Mapping[str, Any] | None] | None = None,
         config: RiskLayerConfig | None = None,
         clock: Callable[[], datetime] | None = None,
         state_store: JsonStateStore | None = None,
@@ -376,6 +458,7 @@ class RiskLayerOrchestrator:
         self._open_orders_provider = open_orders_provider
         self._systemic_detector = systemic_detector
         self._systemic_input_provider = systemic_input_provider
+        self._rollback_metrics_provider = rollback_metrics_provider
         self._config = config or RiskLayerConfig()
         self._clock = clock or (lambda: datetime.now(UTC))
         # Crash-only 状态外部化（AI-R3 复审 P1 治本）：贯穿 trigger→liquidation
@@ -398,6 +481,35 @@ class RiskLayerOrchestrator:
         # 与 evaluate_intraday 同线程契约，跨评估轮次持久）
         self._systemic_state = LiquidityRecoveryState()
         self._systemic_via_recovery = False
+        # 五态降级机姿态（53 号 §3.8，tracker #204）：provider 注入即接线；
+        # 接线且带 state_store 时启动加载持久化姿态——fail-closed 缺省
+        # SOFT_HALT（无记录/损坏=停不错放，MOD-GOV-045 模块语义原样承接）；
+        # 无 store=仅内存态 NORMAL 起步（进程重启丢姿态，接线方自担）
+        self._rollback_state = RollbackState.NORMAL
+        if rollback_metrics_provider is not None and state_store is not None:
+            self._rollback_state = load_persisted_state(state_store)
+            if self._rollback_state is not RollbackState.NORMAL:
+                _logger.warning(
+                    "五态降级机启动加载姿态=%s（fail-closed/持久化续存；恢复须人工 recover_rollback_posture）",
+                    self._rollback_state.value,
+                )
+        # 36 号 §3.10 REBUILD 动作1 标记：UNAVAILABLE 持久化续存（盘前初始化
+        # 读取）；损坏读取 fail-closed 按 UNAVAILABLE 静态映射（停错<放错）
+        self._var_model_unavailable = False
+        if state_store is not None:
+            try:
+                _var_status_rec = state_store.load(_VAR_MODEL_STATUS_NAMESPACE)
+            except Exception:  # noqa: BLE001 — 损坏读取 fail-closed 静态映射（保守口径）
+                self._var_model_unavailable = True
+                _logger.critical(
+                    "var_model_status 状态读取损坏，fail-closed 按 REBUILD 静态映射运行（人工核查后 clear 恢复）",
+                    exc_info=True,
+                )
+            else:
+                self._var_model_unavailable = (
+                    isinstance(_var_status_rec, dict)
+                    and _var_status_rec.get("status") == "UNAVAILABLE"
+                )
 
         # EMERGENCY 监听链（E-RK-03）：级别变化去抖由 tracker 保证
         self._tracker.on_drawdown_alerted(self._on_drawdown_alerted)
@@ -511,7 +623,15 @@ class RiskLayerOrchestrator:
         tail_snapshot: TailRiskSnapshot | None = None
         degraded = False
         degrade_reason = ""
-        if len(returns) >= self._config.min_samples_for_var:
+        with self._lock:
+            var_model_unavailable = self._var_model_unavailable
+        if var_model_unavailable:
+            # 36 号 §3.10 REBUILD 静态映射（编排层兜底，不依赖组件
+            # force_static_mode 落地）：VaR 3%/CVaR 5% 固定口径喂 controller
+            # → position_cap 0.5；不再用 var_calculator/tail_monitor 动态计算
+            var_pct = self._config.rebuild_static_var_pct
+            es_pct = max(self._config.rebuild_static_cvar_pct, var_pct)
+        elif len(returns) >= self._config.min_samples_for_var:
             try:
                 var_result = self._var_calc.calculate(returns, portfolio_value=nav, now=now)
                 tail_snapshot = self._tail_monitor.assess(returns, portfolio_value=nav, now=now)
@@ -554,6 +674,10 @@ class RiskLayerOrchestrator:
         #    + §3.6 降级机）——独立于收益样本，VaR 降级时照常执行
         systemic = self._evaluate_systemic_risk(now)
 
+        # 5. 五态降级机（53 号 §3.8，MOD-GOV-045，tracker #204）——单向更保守梯子，
+        #    独立于收益样本/系统性链；UNWINDING 迁移进同一熔断仲裁点
+        rollback = self._evaluate_rollback_posture(dd_snapshot)
+
         snapshot = RiskLayerSnapshot(
             timestamp=now,
             nav=nav,
@@ -571,6 +695,10 @@ class RiskLayerOrchestrator:
             systemic_signal_count=systemic.signal_count if systemic is not None else 0,
             systemic_sentiment_breaker=(systemic.sentiment_breaker if systemic is not None else False),
             escape_directive=systemic.escape_directive if systemic is not None else None,
+            rollback_state=rollback.state.value if rollback is not None else "NORMAL",
+            rollback_halt=rollback.halt if rollback is not None else False,
+            rollback_escalated=rollback.escalated if rollback is not None else False,
+            var_model_status="STATIC_REBUILD" if var_model_unavailable else "DYNAMIC",
         )
         with self._lock:
             self._latest = snapshot
@@ -800,6 +928,262 @@ class RiskLayerOrchestrator:
     def systemic_level(self) -> int:
         """当前系统性风险警报级别（0=正常；未接线=0）。"""
         return self._systemic_state.level if self._systemic_state.in_crisis else 0
+
+    # ------------------------------------------------------------------
+    # 五态降级机执行链（53 号 §3.8，MOD-GOV-045，tracker #204）
+    # ------------------------------------------------------------------
+
+    def _evaluate_rollback_posture(self, dd_snapshot: DrawdownSnapshot) -> _RollbackView | None:
+        """五态降级机一轮评估：provider 指标 → evaluate_rollback 单向更保守迁移。
+
+        接线语义：rollback_metrics_provider 注入即生效（None=未接线返回 None，
+        快照 rollback_* 走默认值不加约束）。provider 契约：返回 metrics 映射
+        （intraday_dd/daily_loss/reject_rate/reject_rate_duration_s/
+        circuit_breaker/p0_event + trade_count 累计笔数）；intraday_dd 缺省
+        以回撤追踪器口径兜底（abs(dd_snapshot.drawdown)），circuit_breaker
+        缺省取本编排层熔断闩锁态；trade_count 缺省 0 → 样本地板拦截自动降级
+        （53 号 §3.8：≥30 笔才触发，P0 事件绕过）。
+        provider 失效/非 Mapping/None/状态机内部异常 → 本轮保持当前姿态
+        （hysteresis 无数据=状态不变，与系统性链同一模式，不崩调仓主循环）。
+
+        迁移语义（单向更保守，模块保证无自动恢复）：
+          - SOFT_HALT/HARD_HALT → rollback_halt 禁新开仓（REDUCING 只卖不买，
+            TradingSession 经既有 allow_new_position 闸门消费；撤单/节流
+            速率动作留执行层消费 rollback_state 姿态）
+          - UNWINDING（4 级 Flatten，仅人工持久化可达，无自动迁移路径）→
+            _engage_kill_switch 同一仲裁点（清算语义一致，仲裁点幂等）
+          - 迁移发生即持久化 state_store（rollback_state 命名空间，RCA 追溯）
+        """
+        provider = self._rollback_metrics_provider
+        if provider is None:
+            return None
+        try:
+            raw = provider()
+        except Exception:  # noqa: BLE001 — 输入失效不阻断交易主循环，姿态保持下轮重试
+            _logger.exception("rollback_metrics_provider 失效，本轮保持五态机当前姿态")
+            return self._rollback_hold_view()
+        if raw is None:
+            return self._rollback_hold_view()
+        if not isinstance(raw, Mapping):
+            _logger.warning(
+                "rollback_metrics_provider 返回非 Mapping（%s），本轮保持当前姿态",
+                type(raw).__name__,
+            )
+            return self._rollback_hold_view()
+        metrics = dict(raw)
+        try:
+            trade_count = int(metrics.pop("trade_count", 0) or 0)
+        except (TypeError, ValueError):
+            trade_count = 0
+        # 编排层兜底口径（provider 未供给时）：盘中回撤取回撤追踪器绝对值；
+        # circuit_breaker 取熔断闩锁态（provider 显式供给优先）
+        metrics.setdefault("intraday_dd", dd_snapshot.abs_drawdown)
+        metrics.setdefault("circuit_breaker", self.kill_switch_engaged)
+        try:
+            new_state = evaluate_rollback(metrics, self._rollback_state, trade_count)
+        except Exception:  # noqa: BLE001 — 状态机失效保持当前姿态，不崩主循环
+            _logger.exception("evaluate_rollback 失效，本轮保持五态机当前姿态")
+            return self._rollback_hold_view()
+
+        prev = self._rollback_state
+        escalated = new_state != prev  # 模块单向不变量：不等即更保守迁移
+        if escalated:
+            _logger.critical(
+                "五态降级机迁移: %s → %s（trade_count=%d, metrics=%s）",
+                prev.value,
+                new_state.value,
+                trade_count,
+                {k: v for k, v in metrics.items() if k != "p0_event" or v},
+            )
+            self._rollback_state = new_state
+            self._persist_rollback_state(new_state, trade_count)
+        if new_state is RollbackState.UNWINDING:
+            # 4 级 Flatten：与仲裁点既有清算语义一致（重复触发幂等）
+            self._engage_kill_switch("五态降级机 UNWINDING（53 号 §3.8 Flatten 4 级）")
+        return _RollbackView(
+            state=new_state,
+            halt=new_state in _ROLLBACK_HALT_STATES,
+            escalated=escalated,
+        )
+
+    def _rollback_hold_view(self) -> _RollbackView:
+        """无观测轮姿态保持视图（hysteresis：无数据=状态不变，不放松不升级）。"""
+        return _RollbackView(
+            state=self._rollback_state,
+            halt=self._rollback_state in _ROLLBACK_HALT_STATES,
+            escalated=False,
+        )
+
+    def _persist_rollback_state(self, state: RollbackState, trade_count: int) -> None:
+        """迁移落盘（state_store 缺失=仅内存态；落盘失败不阻断姿态迁移）。"""
+        if self._state_store is None:
+            return
+        try:
+            persist_state(
+                self._state_store,
+                state,
+                reason="orchestrator 评估循环迁移（53 号 §3.8 单向更保守）",
+                trade_count=trade_count,
+            )
+        except Exception:  # noqa: BLE001 — 持久化故障不阻断调仓主循环，内存姿态已迁移
+            _logger.exception("五态机姿态持久化失败（内存姿态已迁移，重启后 fail-closed 重载）")
+
+    def recover_rollback_posture(
+        self,
+        target: RollbackState,
+        *,
+        rca_written: bool,
+        dual_approval: bool,
+        position_flat: bool,
+    ) -> RollbackState:
+        """人工恢复降级姿态（53 号 §3.8：无自动恢复——本方法是唯一恢复入口）。
+
+        权限/方向/仓位三守卫由 MOD-GOV-045 recover() 原样承接：RCA 未写或缺
+        双人复核 → PermissionError；目标非更宽松态 / UNWINDING 仓位未平 →
+        ValueError。恢复成功即持久化（覆盖 fail-closed 重载底档）。
+        """
+        new_state = _rollback_fsm_recover(
+            self._rollback_state,
+            target,
+            rca_written,
+            dual_approval,
+            position_flat,
+        )
+        with self._lock:
+            self._rollback_state = new_state
+        _logger.warning("五态降级机人工恢复: → %s（RCA+双人复核已过）", new_state.value)
+        self._persist_rollback_state(new_state, trade_count=0)
+        return new_state
+
+    @property
+    def rollback_posture(self) -> RollbackState | None:
+        """当前五态降级姿态（未接线=None）。"""
+        if self._rollback_metrics_provider is None:
+            return None
+        with self._lock:
+            return self._rollback_state
+
+    # ------------------------------------------------------------------
+    # VaR 回测校准动作执行者（35 号 §3.10/§6.5 + 36 号 §3.10，同项）
+    # ------------------------------------------------------------------
+
+    def apply_var_backtest_action(
+        self,
+        action: str,
+        *,
+        reason: str = "",
+        recalibrate_params: Mapping[str, Mapping[str, Any]] | None = None,
+    ) -> dict[str, Any]:
+        """36 号 §3.10 三档响应执行者入口（PASS / RECALIBRATE / REBUILD）。
+
+        调用方：回测综合定级产出方（daily_auditor 包装层/人工）——本方法只做
+        编排层动作分发，审计日志（log_recalibration）由调用方按 36 号 D1 时序
+        补记（daily_auditor 未注入本编排层）。
+
+        RECALIBRATE：recalibrate_params={组件名: 参数映射} 经组件
+        update_config(**params) 鸭子探针分发（36 号动作表：扩窗口/切方法→
+        var_calculator，重校准 POT→tail_risk_monitor；探针与 today_fills_probe
+        同一模式）——组件方法未落地 → skipped 留痕不静默（fail-visible），
+        方法落地后接线即亮。
+
+        REBUILD：① var 模型 UNAVAILABLE 标记置位 + state_store 持久化
+        （盘前初始化读取续存）；② 编排层兜底静态映射（下一轮 evaluate_intraday
+        起 VaR 3%/CVaR 5% 固定口径 → position_cap 0.5，不再动态计算——组件
+        force_static_mode 未落地不影响保守语义生效）；③ 组件
+        force_static_mode 探针（落地则同步调用）。
+        """
+        action_norm = action.upper()
+        if action_norm not in ("PASS", "RECALIBRATE", "REBUILD"):
+            raise ValueError(f"未知校准动作: {action!r}（36 号 §3.10 三档：PASS/RECALIBRATE/REBUILD）")
+        applied: list[str] = []
+        skipped: list[dict[str, str]] = []
+        if action_norm == "RECALIBRATE":
+            targets: dict[str, Any] = {
+                "var_calculator": self._var_calc,
+                "tail_risk_monitor": self._tail_monitor,
+                "drawdown_controller": self._controller,
+            }
+            for name, params in (recalibrate_params or {}).items():
+                component = targets.get(name)
+                probe = getattr(component, "update_config", None) if component is not None else None
+                if probe is None:
+                    skipped.append({"target": name, "reason": "update_config 未落地（36 号 §3.10 设计契约）"})
+                    _logger.warning("RECALIBRATE 跳过 %s：update_config 未落地（fail-visible 留痕）", name)
+                    continue
+                try:
+                    probe(**dict(params))
+                except Exception as exc:  # noqa: BLE001 — 单动作失效不阻断其余动作，留痕
+                    skipped.append({"target": name, "reason": f"update_config 失效: {exc}"})
+                    _logger.exception("RECALIBRATE %s.update_config 失效（留痕续行）", name)
+                else:
+                    applied.append(f"{name}.update_config({dict(params)})")
+        elif action_norm == "REBUILD":
+            with self._lock:
+                self._var_model_unavailable = True
+            applied.append("var_model_unavailable=True（编排层静态映射下一轮起生效）")
+            probe = getattr(self._controller, "force_static_mode", None)
+            if probe is None:
+                skipped.append({
+                    "target": "drawdown_controller",
+                    "reason": "force_static_mode 未落地（编排层静态 VaR3%/CVaR5% 已兜底）",
+                })
+            else:
+                try:
+                    probe()
+                except Exception as exc:  # noqa: BLE001 — 组件级失效不阻断编排层静态兜底
+                    skipped.append({"target": "drawdown_controller", "reason": f"force_static_mode 失效: {exc}"})
+                    _logger.exception("REBUILD force_static_mode 失效（编排层静态映射已兜底）")
+                else:
+                    applied.append("drawdown_controller.force_static_mode()")
+            if self._state_store is not None:
+                try:
+                    self._state_store.save(
+                        _VAR_MODEL_STATUS_NAMESPACE,
+                        {
+                            "status": "UNAVAILABLE",
+                            "reason": reason,
+                            "updated_at": self._clock().isoformat(),
+                        },
+                    )
+                except Exception:  # noqa: BLE001 — 持久化故障不阻断内存态置位（重启 fail-closed 重载）
+                    _logger.exception("var_model_status 持久化失败（内存态已置 UNAVAILABLE）")
+                else:
+                    applied.append(f"state_store[{_VAR_MODEL_STATUS_NAMESPACE}]=UNAVAILABLE")
+            _logger.critical("VAR_MODEL_REBUILD action=REBUILD reason=%s", reason)
+        return {
+            "action": action_norm,
+            "reason": reason,
+            "applied": applied,
+            "skipped": skipped,
+            "var_model_unavailable": self.var_model_unavailable,
+        }
+
+    def clear_var_model_unavailable(self, *, owner_confirmed: bool) -> None:
+        """REBUILD → 恢复③：业主解除 UNAVAILABLE 标记，恢复 var 动态计算。
+
+        36 号 §3.10 恢复流程：业主人工审查修复根因 → 解除标记（人工确认门禁，
+        对齐 35 号 §3.14 人工复位机制）→ 次日回测 PASS 才完全恢复（验证责任
+        在调用方，本方法只恢复动态计算口径）。
+        """
+        if not owner_confirmed:
+            raise PermissionError("解除 var 模型 UNAVAILABLE 标记须业主人工确认（36 号 §3.10 REBUILD→恢复流程）")
+        with self._lock:
+            self._var_model_unavailable = False
+        if self._state_store is not None:
+            try:
+                self._state_store.save(
+                    _VAR_MODEL_STATUS_NAMESPACE,
+                    {"status": "DYNAMIC", "reason": "业主确认恢复", "updated_at": self._clock().isoformat()},
+                )
+            except Exception:  # noqa: BLE001 — 持久化故障不阻断内存态恢复
+                _logger.exception("var_model_status 恢复持久化失败（内存态已恢复 DYNAMIC）")
+        _logger.warning("var 模型 UNAVAILABLE 标记已解除（业主确认），恢复动态计算")
+
+    @property
+    def var_model_unavailable(self) -> bool:
+        """var 模型是否处于 REBUILD 静态映射态（36 号 §3.10）。"""
+        with self._lock:
+            return self._var_model_unavailable
 
     # ------------------------------------------------------------------
     # EMERGENCY 监听链 + 熔断单一仲裁点

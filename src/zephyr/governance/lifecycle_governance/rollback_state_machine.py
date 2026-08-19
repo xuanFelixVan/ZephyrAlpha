@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.lifecycle_governance.rollback_state_machine
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.state_store
-# [CONSUMERS] zephyr.governance.lifecycle_governance.paper_live_transition
+# [CONSUMERS] zephyr.governance.lifecycle_governance.paper_live_transition; zephyr.ex_core.risk_layer_orchestrator
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 自动迁移只能单向更保守(to_idx>from_idx);无自动恢复(恢复须人工+双人复核+RCA);fail-closed读取失败/无持久化默认SOFT_HALT;Hysteresis trip!=recover;自动降级须累计>=30笔交易(P0事件绕过)
