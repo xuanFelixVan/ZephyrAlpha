@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-19T04:11:46Z
+# 自动生成于 2026-08-19T05:41:56Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-19T04:11:46Z'
+generated_at: '2026-08-19T05:41:56Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 45
@@ -181,7 +181,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 150
+  entry_count: 151
   status: active
 - registry_id: CFG-governance-convergence-map
   name: governance_convergence_map
@@ -253,7 +253,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 5927
+  entry_count: 5928
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
