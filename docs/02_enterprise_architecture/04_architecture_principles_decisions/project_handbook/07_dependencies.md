@@ -56,14 +56,14 @@ governance/ (桥接层, G-CT-001~008 契约)
 | dep_type | 边数 / Edges |
 |----------|------|
 | `import_depends` | 5463 |
-| `test_depends` | 4138 |
+| `test_depends` | 4139 |
 | `import` | 2756 |
 | `config_depends` | 497 |
 | `data` | 49 |
-| `runtime` | 38 |
+| `runtime` | 40 |
 | `contract` | 6 |
 | `event` | 3 |
-| **合计 / Total** | **12950** |
+| **合计 / Total** | **12953** |
 
 **跨域边 / Cross-domain edges：3385** 条（两端节点 domain_id 不同的依赖边）。
 <!-- AUTO-END:edge_stats -->

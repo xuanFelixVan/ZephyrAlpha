@@ -6825,3 +6825,72 @@ entries:
   source: '循环审计 R3 终轮移交清单 4④（2026-08-19 AI-00 建议登记，统筹承接）'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+# --- CAND-GATEMECH-005: 网关批次收尾仪式（批量批自动联动 C2 freeze+INTEGRITY 重钉） ---
+- id: CAND-GATEMECH-005
+  name: 网关批次收尾仪式——ruff/codegen 批量批自动联动 C2 freeze + INTEGRITY 重钉
+  aliases:
+  - 批次收尾仪式
+  - 批量批联动冻结
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 提交通道
+  problem: >-
+    ruff 六码安全修复批（692172844a 等 24 文件）/codegen 批量批落码后，契约快照与
+    rules_integrity_db 黄金哈希不会自动跟进——C2 契约漂移与 INTEGRITY 赛跑双双
+    滞留到下一审计周期才暴露（#ARCH-130 实证：25 文件契约漂移+script_manifest hash 赛跑）。
+    批次施工者需手工记得跑 generate_contracts.py + --freeze + --register，无机制约束。
+  proposal: >-
+    网关在 commit 后检测批次特征（同规则码批量修复 / codegen 产物批量生成）→
+    自动触发收尾仪式链：generate_contracts.py → check_contract_code_drift.py --freeze →
+    validate_rules_integrity.py --register，三步原子化联动。消除"批次合法变更→
+    快照/基线滞后"的结构性漂移窗口。
+  status: candidate
+  priority: P2
+  source: '2026-08-19 Owner 裁定 P1-2①（#ARCH-130 施工令）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+# --- CAND-GATEMECH-006: 迁移脚本登记制（migrate_*.sql 与 _DDL_* 常量一致性门禁） ---
+- id: CAND-GATEMECH-006
+  name: 迁移脚本登记制——migrate_*.sql 与 _DDL_* 常量一致性纳入门禁
+  aliases:
+  - 迁移脚本登记制
+  - DDL 常量漂移门禁
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 迁移框架
+  problem: >-
+    11_add_gate_blocker_fields.sql（2026-08-01 18e710b798）只落 DB 未回写
+    depgraph_schema._DDL_* 常量真源→blocker_status/gate_reason 死列漂移 9 项滞留 18 天
+    才被审计发现（#ARCH-130 实证）。migrate_*.sql 落地与 _DDL_* 常量更新无一致性门禁，
+    漂移在落地瞬间即产生。
+  proposal: >-
+    pre-commit 门禁：migrate_*.sql 新增/修改时，强制核对 _DDL_MAP 常量是否同步更新
+    （AST 比对 ALTER TABLE 列清单 vs parse_ddl_columns 声明列）。漂移拦截前移到
+    落地瞬间，消除"只落 DB 不回写"的结构性通道。
+  status: candidate
+  priority: P2
+  source: '2026-08-19 Owner 裁定 P1-2②（#ARCH-130 施工令）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+# --- CAND-GATEMECH-007: 测试有效性门禁（测试引用不存在的真源符号检测） ---
+- id: CAND-GATEMECH-007
+  name: 测试有效性门禁——检测"测试引用不存在的真源符号"（超前孤儿测试断根）
+  aliases:
+  - 测试有效性门禁
+  - 孤儿测试检测
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 测试治理
+  problem: >-
+    test_warn_in_main_workspace（4eff7f2769）引用 _warn_worktree_isolation/WORKTREE-ISOLATION
+    符号在源码与 git 全史零命中——超前孤儿测试滞留存量红基线 18 天（AI-00 移交清单 5
+    实证，裁定删除整文件）。测试引用的符号不存在时无门禁拦截，失效期望持续污染回归基线。
+  proposal: >-
+    pre-commit 门禁：AST 扫描测试文件 import/引用符号，比对真源模块 __all__/函数定义——
+    引用不存在符号即红（防超前孤儿测试+接口漂移双场景）。与 test_schema_stability
+    互补（前者守数据结构快照，本候选守符号存在性）。
+  status: candidate
+  priority: P2
+  source: '2026-08-19 Owner 裁定 P1-2③（#ARCH-130 施工令）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
