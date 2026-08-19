@@ -6,6 +6,7 @@ doc_type: blueprint
 status: Draft
 version: "0.1.1"
 layer: L2_domain
+design_maturity: production
 functional_domain: ashare_signal
 responsibility_domain: 
 owner: ZephyrAlpha-Owner
