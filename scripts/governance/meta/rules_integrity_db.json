@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "c5c1cdf89e4e328a",
+      "hash": "9ca8b8de866e293d",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,7 +46,7 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "43395c94b942ed75",
+      "hash": "30ad855c4eea1e32",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
@@ -66,7 +66,7 @@
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py": {
-      "hash": "831f1c72063c9bb7",
+      "hash": "d9737a38fcf4df58",
       "critical": true,
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     },
@@ -76,21 +76,21 @@
       "desc": "ALGO_FLOW 标记解析器（parse_algo_flow/_strip_algo_flow_block，§4.16 全景图推导真源）"
     },
     "scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py": {
-      "hash": "e878cf14d0c63916",
+      "hash": "bfa220becd04349f",
       "critical": true,
       "desc": "算法全景图生成器（render_algo_flow_mermaid/_render_module_card_with_flow，Mermaid 推导流程图）"
     },
     "tests/governance/generators/test_generate_module_algorithm_overview.py": {
-      "hash": "247715435aa769ae",
+      "hash": "1ea0778395707fa0",
       "critical": false,
       "desc": "算法全景图生成器测试锚点（行为契约防回归）"
     },
     "tests/governance/shared/test_code_algorithm_extractor.py": {
-      "hash": "541f7847d8d095ff",
+      "hash": "b2ea7ff459d3948d",
       "critical": false,
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-08-18T18:28:53.905830+00:00",
+  "registered_at": "2026-08-18T23:46:33.639540+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
