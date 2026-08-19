@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-18T23:25:01Z
+# 自动生成于 2026-08-19T02:16:35Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-18T23:25:01Z'
+generated_at: '2026-08-19T02:16:35Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 45
@@ -61,7 +61,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 106
+  entry_count: 112
   status: active
 - registry_id: PS-REG-021
   name: 能力→真源文件反查注册表
