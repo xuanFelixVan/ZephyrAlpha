@@ -75,7 +75,7 @@ Version: 0.1.0
 #   name_zh: ② 单标的仓位投影 C7
 #   name_en: _project_single_position
 #   intro: 每个标的权重裁剪到 [min_pos, 个票override或max_pos] 区间
-#   desc: L387-412：w_i>limit → 记违规并 clip；w_i<min_pos → 抬到 min_pos
+#   desc: L387-412：w_i>limit → 记违规并 clip；0<w_i<min_pos → 抬到 min_pos（w=0 刻意排除不抬回，#208-③）
 #   inputs: I1 I2
 #   outputs: 裁剪后 w + C7 违规记录
 # - id: A3
@@ -541,7 +541,10 @@ class ConstraintSolver:
                     )
                 )
                 w[i] = limit
-            if w[i] < min_pos:
+            # AI-NIGHT-001 #208-③：区分"零权重刻意排除"与"小权重抬升"——
+            # w=0 是上游刻意排除（或硬拥挤清零）的语义，每轮强制抬回 min_pos
+            # 会破坏排除意图；仅 0<w<min_pos 的微量仓位抬升到 min_pos。
+            if 0.0 < w[i] < min_pos:
                 w[i] = min_pos
         return w, violations
 
@@ -868,6 +871,13 @@ class ConstraintSolver:
                 )
         if len(w) == 0:
             raise ConstraintViolationError("weights cannot be empty")
+        # AI-NIGHT-001 #208-②：NaN/Inf 权重原静默通过（np.any(w<0) 对 NaN 为 False），
+        # NaN 进入迭代投影污染全组合。H 级安全模块 fail-closed——非有限输入与
+        # 空/负权重同口径直接 raise。
+        if not np.all(np.isfinite(w)):
+            raise ConstraintViolationError(
+                f"weights must be finite (no NaN/Inf), got {w}"
+            )
         if np.any(w < 0):
             raise ConstraintViolationError(
                 f"weights must be non-negative (long-only), got {w}"

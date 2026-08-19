@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-SELL-002(评分器) ; MOD-SELL-007(融合引擎) ; D-POSITION(仓位状态反馈)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 同symbol同signal_type同direction去重保留最高confidence; confidence必须∈[0,1]; 8类信号类型不可扩展(架构硬边界)
+# [INVARIANTS] 同symbol同signal_type同direction同timeframe去重保留最高confidence(跨周期信号不去重,供共振评分,#208-④); confidence必须∈[0,1]; 8类信号类型不可扩展(架构硬边界)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -36,7 +36,8 @@ Sell Signal Collector — 卖出信号收集器 (MOD-SELL-001)
     - 聚合器模式: 各域(D-SIGNAL/D-RISK/D-PF-CORE)实现 SellSignalProvider 注册进来,
       收集器调用所有 provider 并标准化——本模块不生成具体信号, 只定义契约+聚合+去重
     - v6.0 多时间框架: 每信号标注 timeframe 来源(日线/60min/15min/5min), 供 SELL-02 共振评分
-    - 去重规则: 同 symbol+同 signal_type+同 direction → 保留 confidence 最高的
+    - 去重规则: 同 symbol+同 signal_type+同 direction+同 timeframe → 保留 confidence 最高的
+      (#208-④: 跨周期同类型信号不去重, 否则下游跨周期共振评分永不触发)
     - 属A类基础设施(管道+数据结构+聚合), 不涉及"用什么策略卖出"的决策(那是SELL-04/05)
 
 依据: D:\临时工作区\依赖图-D-SELL-DECISION-卖出决策域.md §1.1 SELL-01, §3 域间依赖
@@ -73,10 +74,10 @@ Version: 0.1.0
 #   name_zh: ③ 标准化去重排序
 #   name_en: _standardize
 #   intro: 同股票同类型同方向的重复信号只留置信度最高的，最后按置信度降序排好
-#   desc: dedup_key=(symbol,signal_type,direction)去重保留max(confidence) → 按confidence降序排序
+#   desc: dedup_key=(symbol,signal_type,direction,timeframe)去重保留max(confidence) → 按confidence降序排序
 #   inputs: A2
 #   outputs: 标准化SellSignal列表
-#   invariant: 同symbol同signal_type同direction去重保留最高confidence; confidence∈[0,1]
+#   invariant: 同symbol同signal_type同direction同timeframe去重保留最高confidence; confidence∈[0,1]
 # 层: 输出
 # - id: O1
 #   name_zh: 标准化卖出信号列表 SellSignal
@@ -222,9 +223,15 @@ class SellSignal:
             )
 
     @property
-    def dedup_key(self) -> tuple[str, str, str]:
-        """去重键 (symbol, signal_type, direction)——同键保留 confidence 最高者。"""
-        return (self.symbol, self.signal_type.value, self.direction.value)
+    def dedup_key(self) -> tuple[str, str, str, str]:
+        """去重键 (symbol, signal_type, direction, timeframe)——同键保留 confidence 最高者。
+
+        AI-NIGHT-001 #208-④：补 timeframe 维度——原 3 元键把同类型跨周期信号
+        （如 TECHNICAL 日线 + 60min）误判重复只留其一，下游 SELL-02/融合引擎
+        （_has_resonance 按"同标的同方向不同 timeframe"判共振）的跨周期共振
+        评分永不触发。同 timeframe 仍按 confidence 去重。
+        """
+        return (self.symbol, self.signal_type.value, self.direction.value, self.timeframe.value)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -274,7 +281,7 @@ class SellSignalCollector:
         signals = collector.collect("000001.SZ", now=datetime.now(timezone.utc))
 
     不变量:
-        - 同 symbol+signal_type+direction 去重, 保留 confidence 最高者
+        - 同 symbol+signal_type+direction+timeframe 去重, 保留 confidence 最高者 (#208-④)
         - 每类信号类型最多一个 provider (避免多源冲突, 由 provider 内部聚合多源)
         - 收集失败的单个 provider 不阻断其他 provider (隔离故障)
     """
@@ -360,7 +367,7 @@ class SellSignalCollector:
     @staticmethod
     def _standardize(signals: list[SellSignal]) -> list[SellSignal]:
         """标准化: 去重(同key保留最高confidence) + 按confidence降序排序。"""
-        best: dict[tuple[str, str, str], SellSignal] = {}
+        best: dict[tuple[str, str, str, str], SellSignal] = {}
         for sig in signals:
             key = sig.dedup_key
             existing = best.get(key)

@@ -41,7 +41,8 @@ def test_sell_signal_creation():
     assert sig.symbol == "000001.SZ"
     assert sig.signal_type == SellSignalType.TECHNICAL
     assert sig.confidence == 0.8
-    assert sig.dedup_key == ("000001.SZ", "TECHNICAL", "REDUCE")
+    # #208-④：去重键含 timeframe 维度（缺省 UNKNOWN）
+    assert sig.dedup_key == ("000001.SZ", "TECHNICAL", "REDUCE", "UNKNOWN")
 
 
 def test_sell_signal_confidence_out_of_range_raises():
@@ -226,3 +227,24 @@ def test_collect_passes_context_to_provider():
 def test_signal_with_timeframe():
     sig = _sig(timeframe=SignalTimeFrame.DAILY)
     assert sig.timeframe == SignalTimeFrame.DAILY
+
+
+def test_collect_dedup_keeps_cross_timeframe_same_type():
+    """AI-NIGHT-001 #208-④：去重键补 timeframe 维度——同 symbol+signal_type+direction
+    但不同时间框架的信号不互为重复。原 3 元键把 DAILY+HOUR_60 同类型信号只留其一，
+    下游 SELL-02/融合引擎（_has_resonance）的跨周期共振评分永不触发。
+    同 timeframe 仍按 confidence 去重（见 test_collect_dedup_keeps_highest_confidence）。"""
+    collector = SellSignalCollector()
+    collector.register(
+        SellSignalType.TECHNICAL,
+        lambda s, n, c: [
+            _sig(symbol=s, confidence=0.5, timeframe=SignalTimeFrame.DAILY),
+            _sig(symbol=s, confidence=0.8, timeframe=SignalTimeFrame.HOUR_60),
+        ],
+    )
+    signals = collector.collect("000001.SZ", now=T0)
+    assert len(signals) == 2, "跨周期同类型信号须共存（供融合引擎跨周期共振评分）"
+    assert {sig.timeframe for sig in signals} == {
+        SignalTimeFrame.DAILY,
+        SignalTimeFrame.HOUR_60,
+    }

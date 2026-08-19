@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-PA-003(资金分配) ; D-PF-CORE(TargetPortfolio) ; D-POSITION(仓位裁决)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 合成方向由加权投票决定; 同symbol同方向去重; 反向冲突按策略优先级裁决; 合成置信度∈[0,1]
+# [INVARIANTS] 合成方向由加权投票决定; 同symbol同方向去重; 反向冲突标记+裁决文本忠实于加权投票方向(#208-⑤,priority仅影响仓位合并截断); 合成置信度∈[0,1]
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -25,7 +25,7 @@ Signal Synthesis Combiner — 信号合成器 (MOD-PA-002)
     ② 共振融合: 全部同向→强共振 / 多数同向→中等 / 分歧→弱
     ③ 决策去重: 同标的同方向多策略重复信号→合并为一条指令
     ④ 跨策略仓位合并: 同标的多策略合并→取 sum 不超上限(按策略优先级截断)
-    ⑤ 信号冲突检测: 同标的反向信号→语义冲突+优先级裁决
+    ⑤ 信号冲突检测: 同标的反向信号→语义冲突标记+裁决说明(忠实反映加权投票实际方向, #208-⑤)
     ⑥ 信号置信度校准: 预留 calibrator 接口(Platt/Isotonic, R-96 学习系统后续接入)
 
 设计说明:
@@ -256,14 +256,20 @@ class SignalSynthesisCombiner:
         directional = long_count + short_count
         resonance = self._resonance(long_count, short_count, directional)
 
-        # ⑤ 信号冲突检测 + 优先级裁决
+        # 合成方向: 由综合得分符号决定
+        direction = self._direction_from_score(composite_score)
+
+        # ⑤ 信号冲突检测 + 裁决说明
+        # AI-NIGHT-001 #208-⑤：文本须忠实反映实际合成方向——原实现按 priority 报
+        # 胜者，与 composite_score 符号决定的方向可矛盾（priority 仅影响仓位合并
+        # 截断顺序，不裁决方向）。direction 须先于文本生成。
         conflict = long_count > 0 and short_count > 0
         conflict_resolution = ""
         if conflict:
-            conflict_resolution = self._resolve_conflict(sigs, long_count, short_count)
+            conflict_resolution = self._resolve_conflict(
+                long_count, short_count, direction, composite_score
+            )
 
-        # 合成方向: 由综合得分符号决定
-        direction = self._direction_from_score(composite_score)
         # 合成置信度: 综合得分绝对值归一化到 [0,1] (得分上限=Σweight×1×1×1=Σweight)
         max_score = sum(s.weight for s in sigs) or 1.0
         confidence = min(abs(composite_score) / max_score, 1.0)
@@ -332,14 +338,20 @@ class SignalSynthesisCombiner:
         return total
 
     @staticmethod
-    def _resolve_conflict(sigs: list[StrategySignal], long_count: int, short_count: int) -> str:
-        """冲突裁决说明: 按策略优先级最高的方向裁决, 平局按多数方向。"""
-        long_top = max((s.priority for s in sigs if s.direction == SignalDirection.LONG), default=0)
-        short_top = max((s.priority for s in sigs if s.direction == SignalDirection.SHORT), default=0)
-        if long_top > short_top:
-            winner = "LONG"
-        elif short_top > long_top:
-            winner = "SHORT"
-        else:
-            winner = "LONG" if long_count >= short_count else "SHORT"
-        return f"conflict({long_count}L vs {short_count}S) resolved by priority->{winner}"
+    def _resolve_conflict(
+        long_count: int,
+        short_count: int,
+        direction: SignalDirection,
+        composite_score: float,
+    ) -> str:
+        """冲突裁决说明: 忠实报告加权投票（composite_score 符号）裁决出的实际方向。
+
+        AI-NIGHT-001 #208-⑤：原实现按策略 priority 报"胜者"，与加权得分决定的
+        实际合成方向可矛盾（实证 LONG conf0.9/pri1 vs SHORT conf0.5/pri3 →
+        文本"priority->SHORT"但实际 direction=LONG）。priority 仅影响仓位合并
+        截断顺序（_merge_positions），不参与方向裁决。
+        """
+        return (
+            f"conflict({long_count}L vs {short_count}S) resolved by weighted_vote"
+            f"->{direction.value}(score={composite_score:+.4f})"
+        )

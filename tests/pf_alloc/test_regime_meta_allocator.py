@@ -177,6 +177,21 @@ class TestShrinkage:
         assert crisis.final_shrinkage == pytest.approx(CRISIS_SHRINKAGE_FLOOR)  # 0.05 降级
         assert crisis.is_crisis is True
 
+    def test_crisis_floor_005_unreachable_in_current_param_domain(self) -> None:
+        # AI-NIGHT-001 #208-①：CRISIS floor 0.05 在当前参数域数学不可达——
+        # conf 最小档 0.30 × risk clamp 下界 0.30 → raw≥0.09>0.05，
+        # max(floor=0.05, raw) 永不选中 0.05。极端收缩角点下 crisis 与常规态输出
+        # 一致（均为数学下界 0.09）。该 floor 系对齐 31号 §2.4.3 的前瞻口径保留
+        # （参数域放宽时生效，由上一用例 monkeypatch 验证分支可达），非误删死代码。
+        alloc = RegimeMetaAllocator()
+        normal = alloc._compute_shrinkage([0.50, 0.50], _risk(0.2, 1.0, 0.0), is_crisis=False)
+        crisis = alloc._compute_shrinkage([0.50, 0.50], _risk(0.2, 1.0, 0.0), is_crisis=True)
+        assert normal.raw_shrinkage == pytest.approx(0.09)  # 数学下界 0.30×0.30
+        assert crisis.final_shrinkage == pytest.approx(SHRINKAGE_FLOOR)  # 0.09 而非 0.05
+        assert crisis.final_shrinkage > CRISIS_SHRINKAGE_FLOOR
+        assert crisis.final_shrinkage == pytest.approx(normal.final_shrinkage)
+        assert crisis.is_crisis is True
+
     def test_detail_fields_populated(self) -> None:
         # ShrinkageDetail 审计字段齐全（归因用）
         alloc = RegimeMetaAllocator()

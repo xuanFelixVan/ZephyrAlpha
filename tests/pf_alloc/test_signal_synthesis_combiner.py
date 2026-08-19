@@ -106,19 +106,23 @@ def test_resonance_weak_diverged():
 # ── 冲突检测 + 裁决 ───────────────────────────────────────────────────────────
 
 
-def test_conflict_detected_and_resolved_by_priority():
-    # LONG 优先级 1 vs SHORT 优先级 3 → SHORT 胜
+def test_conflict_resolution_text_follows_actual_direction():
+    # AI-NIGHT-001 #208-⑤：冲突裁决文本须忠实反映实际合成方向（加权投票）——
+    # 原实现文本按 priority 报胜者，与 composite_score 决定的方向矛盾：
+    # 本场景 priority→SHORT 但加权得分 0.45-0.25=0.20→LONG，原文本声明 SHORT 而实际 LONG。
     sigs = [
         StrategySignal("a", "X", SignalDirection.LONG, 0.9, weight=0.5, priority=1),
         StrategySignal("b", "X", SignalDirection.SHORT, 0.5, weight=0.5, priority=3),
     ]
     r = SignalSynthesisCombiner().combine(sigs)[0]
     assert r.conflict is True
-    assert "priority->SHORT" in r.conflict_resolution
+    assert r.direction == SignalDirection.LONG  # composite=+0.20，加权投票 LONG 胜
+    assert "->LONG" in r.conflict_resolution
+    assert "->SHORT" not in r.conflict_resolution
 
 
-def test_conflict_priority_tie_resolved_by_majority():
-    # 2 LONG(优先级1) + 1 SHORT(优先级1) → 平局, 多数 LONG 胜
+def test_conflict_resolution_tie_majority_long():
+    # 2 LONG + 1 SHORT 等置信等权 → 加权得分 LONG 胜，文本与实际方向一致（#208-⑤）
     sigs = [
         StrategySignal("a", "X", SignalDirection.LONG, 0.5, weight=0.34, priority=1),
         StrategySignal("b", "X", SignalDirection.LONG, 0.5, weight=0.33, priority=1),
@@ -126,7 +130,20 @@ def test_conflict_priority_tie_resolved_by_majority():
     ]
     r = SignalSynthesisCombiner().combine(sigs)[0]
     assert r.conflict is True
-    assert "priority->LONG" in r.conflict_resolution
+    assert r.direction == SignalDirection.LONG
+    assert "->LONG" in r.conflict_resolution
+
+
+def test_conflict_resolution_neutral_when_score_cancels_out():
+    # #208-⑤ 边界：冲突双方加权得分恰好相消 → 实际方向 NEUTRAL，文本须报 NEUTRAL
+    sigs = [
+        StrategySignal("a", "X", SignalDirection.LONG, 0.5, weight=0.5),
+        StrategySignal("b", "X", SignalDirection.SHORT, 0.5, weight=0.5),
+    ]
+    r = SignalSynthesisCombiner().combine(sigs)[0]
+    assert r.conflict is True
+    assert r.direction == SignalDirection.NEUTRAL
+    assert "->NEUTRAL" in r.conflict_resolution
 
 
 # ── 仓位合并 + 截断 ───────────────────────────────────────────────────────────

@@ -84,7 +84,7 @@ Version: 1.0.0
 #   name_zh: ③ global_shrinkage 风险节流
 #   name_en: _compute_shrinkage
 #   intro: 置信度×风险得到全局资金收缩比例，只减不增，危机态地板降到 5%
-#   desc: raw=confidence×risk；final=max(floor, min(1.0, raw))，floor 常规 0.09 / is_crisis 0.05（L331-335）；shrinkage_enabled=False 时全 1.0（C1 验证开关，L319-327）
+#   desc: raw=confidence×risk；final=max(floor, min(1.0, raw))，floor 常规 0.09 / is_crisis 0.05（L427-436；#208-① 当前参数域 raw≥0.09，0.05 floor 前瞻保留不生效）；shrinkage_enabled=False 时全 1.0（C1 验证开关，L319-327）
 #   inputs: A1 A2 I4
 #   outputs: global_shrinkage ∈[0.05,1.0]（ShrinkageDetail）
 #   invariant: Shrinkage≤1.0 只减不增；全局共用一个值
@@ -184,6 +184,12 @@ CONFIDENCE_THRESHOLDS: list[tuple[float, float]] = [
 
 # Shrinkage floor（§3.2.2 熊市最低总暴露 + §3.2.2 危机态覆盖说明）
 SHRINKAGE_FLOOR: float = 0.09          # = 0.3 × 0.30 = 9%（r4 熊市常规态最低暴露）
+# AI-NIGHT-001 #208-①：CRISIS floor 0.05 在当前参数域数学不可达——clamp 链下界
+# conf≥0.30（四档最小档）× risk≥0.30（RISK_SIGNAL_MIN clamp）→ raw≥0.09>0.05，
+# max(0.05, raw) 永不选中 0.05。本常量为对齐 31号 §2.4.3 ⑩CRISIS cap 的前瞻口径
+# 保留（参数域放宽使 raw<0.09 可能时生效），非误删死代码——可达性由测试
+# test_crisis_floor_lowers_to_005（monkeypatch 参数域）与
+# test_crisis_floor_005_unreachable_in_current_param_domain（当前域不可达断言）双锚定。
 CRISIS_SHRINKAGE_FLOOR: float = 0.05   # CRISIS 态 floor 降至 5%（对齐 31号 §2.4.3 ⑩CRISIS cap）
 
 # RiskSignal clamp 范围（§3.2.3，[10号] §5.3.3）
@@ -408,6 +414,8 @@ class RegimeMetaAllocator:
         - shrinkage_enabled=False → 1.0（C1 验证基准，一票否决）
 
         §3.2.2 危机态覆盖：is_crisis=True 时 floor 从 0.09 降至 0.05（对齐 31号 crisis cap）。
+        #208-① 口径：当前参数域 conf≥0.30×risk≥0.30→raw≥0.09>0.05，0.05 floor
+        数学不可达（前瞻保留，参数域放宽时生效），见 CRISIS_SHRINKAGE_FLOOR 注释。
         """
         if not self.shrinkage_enabled:
             return ShrinkageDetail(
@@ -424,13 +432,16 @@ class RegimeMetaAllocator:
         raw_shrinkage = confidence_signal * risk_signal
 
         # CRISIS 态 floor 降级（§3.2.2 危机态覆盖说明 + §3.4 施工要点 #12）
+        # #208-①：当前参数域 raw_shrinkage≥0.09>0.05，crisis floor 不约束结果
+        # （前瞻口径保留），日志如实说明不夸大生效范围。
         effective_floor = CRISIS_SHRINKAGE_FLOOR if is_crisis else SHRINKAGE_FLOOR
         final_shrinkage = max(effective_floor, min(1.0, raw_shrinkage))
 
         if is_crisis:
             logger.info(
-                "CRISIS 态激活：SHRINKAGE_FLOOR %.2f → %.2f（对齐 31号 crisis cap），"
-                "ConfidenceSignal=%.2f RiskSignal=%.2f → global_shrinkage=%.4f",
+                "CRISIS 态激活：effective_floor %.2f → %.2f（对齐 31号 crisis cap；"
+                "#208-① 当前参数域数学下界 conf≥0.30×risk≥0.30→raw≥0.09，0.05 floor "
+                "前瞻保留不约束），ConfidenceSignal=%.2f RiskSignal=%.2f → global_shrinkage=%.4f",
                 SHRINKAGE_FLOOR, CRISIS_SHRINKAGE_FLOOR,
                 confidence_signal, risk_signal, final_shrinkage,
             )

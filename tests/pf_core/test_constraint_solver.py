@@ -423,3 +423,41 @@ def test_collapse_guard_not_triggered_on_legit_hard_crowding():
     total = float(np.sum(result.weights))
     assert total > 0.1, "硬拥挤保留最大者，量级正常"
     assert not any(v.constraint_id == "COLLAPSE" for v in result.violations)
+
+
+# ── AI-NIGHT-001 #208-②③：非有限输入 fail-closed + 零权重刻意排除 ─────────────
+
+
+def test_nan_weights_raise_fail_closed():
+    """#208-②：NaN 权重必须 fail-closed——原实现 np.any(w<0) 对 NaN 为 False，
+    NaN 静默通过校验进入迭代投影，全组合权重被污染为 NaN（H 级安全模块
+    最恶劣失效形态）。与空/负权重同口径 raise ConstraintViolationError。"""
+    solver = ConstraintSolver()
+    with pytest.raises(ConstraintViolationError):
+        solver.solve({"A": float("nan"), "B": 0.5}, _rl())
+
+
+def test_inf_weights_raise_fail_closed():
+    """#208-②：+Inf 权重同为非有限输入（Σw=Inf 绕过杠杆约束），同口径拒绝。"""
+    solver = ConstraintSolver()
+    with pytest.raises(ConstraintViolationError):
+        solver.solve({"A": float("inf"), "B": 0.5}, _rl())
+
+
+def test_nan_ndarray_weights_raise_fail_closed():
+    """#208-②：ndarray 输入路径同样 fail-closed（dict/ndarray 两入口同口径）。"""
+    solver = ConstraintSolver()
+    with pytest.raises(ConstraintViolationError):
+        solver.solve(np.array([0.3, float("nan"), 0.4]), _rl(), assets=["A", "B", "C"])
+
+
+def test_zero_weight_deliberate_exclusion_not_raised():
+    """#208-③：输入 w=0 是"刻意排除"语义，不应被 min_single_position 每轮强制
+    抬回——区分"零权重排除"与"小权重抬升"（0<w<min_pos 仍抬升，由既有
+    test_min_position_floor 用 w=0.01 作对照）。"""
+    solver = ConstraintSolver()
+    rl = _rl(max_single_position=0.50, min_single_position=0.05)
+    result = solver.solve({"A": 0.0, "B": 0.5}, rl)
+    assert result.weights[0] == 0.0, (
+        f"刻意排除（w=0）的标的不应被 min_pos 抬回，实际 {result.weights[0]}"
+    )
