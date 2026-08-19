@@ -1080,6 +1080,42 @@ class TestBaostockSchemaAlign:
         fake_bs.logout.assert_called_once()
 
 
+class TestBaostockKlineDailyFallback:
+    """#196：kline_daily 主表降级源必须不复权（adjustflag=3，对齐 miniQMT 主口径）。
+
+    P0 污染实证：adjustflag=2（前复权）写 c1_market.kline_daily——ReplacingMergeTree
+    同键 (symbol, trade_date) 后写覆盖先写，同一行 raw/qfq 取决于源跑序，且 qfq 锚定
+    抓取日历史价随分红漂移不可复现，除权日附近收益信号直接错误。
+    """
+
+    def _provider(self):
+        p = BaostockProvider()
+        p.tls.bs = MagicMock()
+        p.tls.logged_in = True
+        return p
+
+    def test_fetch_kline_daily_uses_no_adjust(self):
+        """写主表的降级 K 线请求必须 adjustflag=3（不复权）。"""
+        p = self._provider()
+        p.tls.bs.query_history_k_data_plus = MagicMock(
+            return_value=_FakeBsResultSet(
+                [["2026-08-01", "sh.600000", "10.0", "10.5", "9.9", "10.2", "1000", "10200.00"]]
+            )
+        )
+        payload = FetchPayload(
+            table="c1_market.kline_daily",
+            symbols=["sh.600000"],
+            start=datetime.date(2026, 8, 1),
+            end=datetime.date(2026, 8, 1),
+            extra={"capability": "kline_daily"},
+        )
+        results = list(p._fetch_kline_daily(payload, SourcePolicy()))
+        assert len(results) == 1 and not results[0].error
+        assert results[0].table == "c1_market.kline_daily"
+        kwargs = p.tls.bs.query_history_k_data_plus.call_args.kwargs
+        assert kwargs["adjustflag"] == "3"  # #196: 不复权，对齐 kline_daily 主口径
+
+
 class TestBaostockDelistedKline:
     """JOB-084：退市股历史 K 线回填（universe 解析/行映射/覆盖跳过/不复权口径）。"""
 

@@ -14,6 +14,14 @@
 # [TESTS] tests/zephyr/data/test_providers.py::TestBaostockProvider
 # [A_module] module_id=MOD-GOV-baostock_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# [ALGO_FLOW]
+# I1: FetchPayload(table/symbols/start/end) + capability 路由键 + SourcePolicy(降级策略)
+# I2: baostock SDK(bs.login/thread_local 登录态/query_history_k_data_plus/query_hs300_stocks/query_trade_date)
+# A1: fetch 路由分派(capability→_fetch_index_constituent/_fetch_trade_calendar/_fetch_kline_daily/_fetch_kline_daily_delisted)
+# A2: _fetch_kline_daily 主表口径=不复权(adjustflag=3，#196：对齐 miniQMT 主口径，防 ReplacingMergeTree 同键 raw/qfq 跑序漂移)
+# A3: 退市股回填链(_fetch_delisted_universe→_kline_span_map 缺口探测→_fetch_one_delisted_kline 逐标的补缺)
+# O1: Iterator[FetchResult](CH 表行；fetch 异常->yield FetchResult(error=str))
+# [/ALGO_FLOW]
 """Baostock 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
 封装 baostock SDK，继承 IngestProviderBase。
@@ -27,6 +35,7 @@
 - connect() 为当前线程登录；fetch() 前确认当前线程已登录
 - disconnect() 登出当前线程
 """
+
 from __future__ import annotations
 
 import datetime
@@ -53,8 +62,7 @@ _TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
 _TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
 # JOB-084 SQL（§5.160.2 SQL 集中化：裸 SQL 字面量禁入方法体，NO-BARE-SQL gate）
 _SQL_KLINE_SPAN = (
-    "SELECT symbol, min(trade_date), max(trade_date) FROM {table} "
-    "WHERE symbol IN ({symbols}) GROUP BY symbol"
+    "SELECT symbol, min(trade_date), max(trade_date) FROM {table} WHERE symbol IN ({symbols}) GROUP BY symbol"
 )
 
 
@@ -125,6 +133,7 @@ class BaostockProvider(IngestProviderBase):
         """确保当前线程已登录 baostock（若未登录则登录）。"""
         if not getattr(self._tls, "logged_in", False):
             import baostock as bs
+
             result = bs.login()
             if result.error_code != "0":
                 # #ARCH-DATA-015: 登录失败（如 10001011 IP黑名单）时 baostock 库不释放
@@ -134,9 +143,7 @@ class BaostockProvider(IngestProviderBase):
                     bs.logout()
                 except Exception:  # noqa: BLE001 — 清理动作不掩盖原始错误
                     pass
-                raise RuntimeError(
-                    f"baostock login failed: {result.error_code} {result.error_msg}"
-                )
+                raise RuntimeError(f"baostock login failed: {result.error_code} {result.error_msg}")
             self._tls.logged_in = True
             self._tls.bs = bs
             self._log.debug("baostock 线程 %s 已登录", threading.current_thread().name)
@@ -145,6 +152,7 @@ class BaostockProvider(IngestProviderBase):
         """探活：尝试 import baostock + 登录。"""
         try:
             import baostock  # noqa: F401
+
             self._ensure_login()
             return True
         except ImportError as e:
@@ -168,17 +176,19 @@ class BaostockProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 payload.extra["capability"] 路由到具体获取方法。"""
         # 确保当前线程已登录
         try:
             self._ensure_login()
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=payload.table, columns=[], rows=[],
-                last_key="", elapsed_sec=0.0, error=f"baostock login failed: {e}",
+                table=payload.table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"baostock login failed: {e}",
             )
             return
 
@@ -193,16 +203,17 @@ class BaostockProvider(IngestProviderBase):
             yield from self._fetch_kline_daily_delisted(payload, policy)
         else:
             yield FetchResult(
-                table=payload.table, columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
+                table=payload.table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
                 error=f"unsupported capability: {capability}",
             )
 
     # ---- 沪深300成分股 ----
 
-    def _fetch_index_constituent(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_index_constituent(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取沪深300成分股（bs.query_hs300_stocks）。
 
         baostock API 变更：返回 3 列（updateDate/code/code_name），无 weight 列。
@@ -223,22 +234,26 @@ class BaostockProvider(IngestProviderBase):
                 rows.append((item[0], "000300.SH", _bs_code_to_symbol(item[1]), 0, "", "baostock"))
             self._log.info(f"沪深300成分股获取完成，{len(rows)} 行")
             yield FetchResult(
-                table=table, columns=columns, rows=rows,
+                table=table,
+                columns=columns,
+                rows=rows,
                 last_key=datetime.date.today().isoformat(),
                 elapsed_sec=time.time() - t0,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"沪深300成分股获取失败: {e}")
             yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key="", elapsed_sec=time.time() - t0, error=str(e),
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.time() - t0,
+                error=str(e),
             )
 
     # ---- 交易日历 ----
 
-    def _fetch_trade_calendar(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_trade_calendar(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取交易日历（bs.query_trade_dates）。
 
         baostock API 变更：方法名 query_trade_date → query_trade_dates（加 s）。
@@ -254,9 +269,7 @@ class BaostockProvider(IngestProviderBase):
         try:
             start = payload.start.isoformat() if payload.start else "2010-01-01"
             end = payload.end.isoformat() if payload.end else datetime.date.today().isoformat()
-            rs = self._call_with_policy(
-                bs.query_trade_dates, policy, start_date=start, end_date=end
-            )
+            rs = self._call_with_policy(bs.query_trade_dates, policy, start_date=start, end_date=end)
             rows: list[tuple] = []
             last_open: str | None = None
             while rs.error_code == "0" and rs.next():
@@ -268,24 +281,32 @@ class BaostockProvider(IngestProviderBase):
                     last_open = cal_date
             self._log.info(f"交易日历获取完成，{len(rows)} 行")
             yield FetchResult(
-                table=table, columns=columns, rows=rows,
-                last_key=end, elapsed_sec=time.time() - t0,
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=end,
+                elapsed_sec=time.time() - t0,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"交易日历获取失败: {e}")
             yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key="", elapsed_sec=time.time() - t0, error=str(e),
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.time() - t0,
+                error=str(e),
             )
 
     # ---- 日K线（备选降级源）----
 
-    def _fetch_kline_daily(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_kline_daily(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取日K线（bs.query_history_k_data_plus）。
 
-        作为日K线降级源使用。数据滞后约1周。
+        作为日K线降级源使用，写入 kline_daily 主表。数据滞后约1周。
+        #196 修复（2026-08-19）：口径强制不复权（adjustflag=3，对齐主口径
+        miniQMT 不复权）——此前 adjustflag=2 前复权写主表，ReplacingMergeTree
+        同键后写覆盖先写致 raw/qfq 混杂，且 qfq 随分红漂移不可复现（P0）。
         """
         bs = self._tls.bs
         table = payload.table or _TBL_KLINE_DAILY
@@ -305,7 +326,7 @@ class BaostockProvider(IngestProviderBase):
                     start_date=start,
                     end_date=end,
                     frequency="d",
-                    adjustflag="2",  # 前复权
+                    adjustflag="3",  # 不复权（#196：写 kline_daily 主表必须对齐 miniQMT 主口径；1=后复权 2=前复权 3=不复权）
                 )
                 rows: list[tuple] = []
                 while rs.error_code == "0" and rs.next():
@@ -313,14 +334,21 @@ class BaostockProvider(IngestProviderBase):
                     rows.append(tuple(item))
                 if rows:
                     yield FetchResult(
-                        table=table, columns=columns, rows=rows,
-                        last_key=end, elapsed_sec=time.time() - t0,
+                        table=table,
+                        columns=columns,
+                        rows=rows,
+                        last_key=end,
+                        elapsed_sec=time.time() - t0,
                     )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"baostock K线 {code} 获取失败: {e}")
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key="", elapsed_sec=time.time() - t0, error=str(e),
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=time.time() - t0,
+                    error=str(e),
                 )
 
     # ---- JOB-084：退市股历史 K 线回填（DS-002 幸存者偏差治理）----
@@ -406,19 +434,26 @@ class BaostockProvider(IngestProviderBase):
             open_ = round(float(o), 4) if o else close
             amplitude = round((high - low) / preclose * 100, 4) if preclose > 0 else 0.0
             change = round(close - preclose, 4) if preclose > 0 else 0.0
-            out.append((
-                date_s, code6, open_, high, low, close,
-                int(float(vol)) if vol else 0,
-                round(float(amt), 2) if amt else 0.0,
-                amplitude,
-                round(float(pct), 4) if pct else 0.0,
-                change,
-                round(float(turn), 4) if turn else 0.0,
-                1,            # adj_factor：不复权
-                "A_share",
-                "Baostock",
-                1,            # quality_flag：正常
-            ))
+            out.append(
+                (
+                    date_s,
+                    code6,
+                    open_,
+                    high,
+                    low,
+                    close,
+                    int(float(vol)) if vol else 0,
+                    round(float(amt), 2) if amt else 0.0,
+                    amplitude,
+                    round(float(pct), 4) if pct else 0.0,
+                    change,
+                    round(float(turn), 4) if turn else 0.0,
+                    1,  # adj_factor：不复权
+                    "A_share",
+                    "Baostock",
+                    1,  # quality_flag：正常
+                )
+            )
         return out
 
     def _is_span_covered(self, span, ipo: datetime.date | None, out_d: datetime.date | None) -> bool:
@@ -454,9 +489,7 @@ class BaostockProvider(IngestProviderBase):
             self._log.warning(f"退市股 K线 {code_bs} 获取失败: {e}")
             return []
 
-    def _fetch_kline_daily_delisted(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_kline_daily_delisted(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """退市股历史 K 线回填（JOB-084，DS-002 幸存者偏差治理），写入 kline_daily。
 
         universe：bs.query_stock_basic(type=1 股票 & status=0 退市) A 股前缀过滤，
@@ -468,27 +501,42 @@ class BaostockProvider(IngestProviderBase):
         bs = self._tls.bs
         table = payload.table or _TBL_KLINE_DAILY
         columns = [
-            "trade_date", "symbol", "open", "high", "low", "close", "volume",
-            "amount", "amplitude", "pct_change", "change", "turnover",
-            "adj_factor", "market_type", "data_source", "quality_flag",
+            "trade_date",
+            "symbol",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "amount",
+            "amplitude",
+            "pct_change",
+            "change",
+            "turnover",
+            "adj_factor",
+            "market_type",
+            "data_source",
+            "quality_flag",
         ]
         t0 = time.monotonic()
         universe = self._fetch_delisted_universe(bs, policy)
         if not universe:
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
                 elapsed_sec=time.monotonic() - t0,
                 error="退市股 universe 解析为空（query_stock_basic 失败或无退市股）",
             )
             return
 
         from zephyr.data import ch_reader as _chr
+
         spans = self._kline_span_map(_chr, table, [u[1] for u in universe])
         n_done = n_skip = n_empty = 0
         for code_bs, code6, ipo_d, out_d in universe:
-            if self._is_span_covered(
-                spans.get(code6), self._iso_or_none(ipo_d), self._iso_or_none(out_d)
-            ):
+            if self._is_span_covered(spans.get(code6), self._iso_or_none(ipo_d), self._iso_or_none(out_d)):
                 n_skip += 1
                 continue
             rows = self._fetch_one_delisted_kline(bs, policy, code_bs, code6, ipo_d, out_d)
@@ -497,8 +545,11 @@ class BaostockProvider(IngestProviderBase):
                 continue
             n_done += 1
             yield FetchResult(
-                table=table, columns=columns, rows=rows,
-                last_key=out_d, elapsed_sec=time.monotonic() - t0,
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=out_d,
+                elapsed_sec=time.monotonic() - t0,
             )
         self._log.info(
             f"kline_daily_delisted: universe {len(universe)} 只 → 回填 {n_done} 只 "
