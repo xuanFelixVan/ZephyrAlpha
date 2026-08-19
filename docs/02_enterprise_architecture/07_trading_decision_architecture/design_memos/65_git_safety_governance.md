@@ -41,6 +41,8 @@ related_modules:
 > **最终成果**：git 安全多层防护生产运行——危险命令拦截（clean -fd 等实证拦下）、删除审计、worktree 四证清理、AI 通道归因全链路实证；wrapper 40+15 测试全绿。fail-open 敞口闭合（fa25c19e49，merge 8a872d0e59+48ce3d93cb，#ARCH-119 resolved）：PG 离线时 4 gate 不再静默放行——放行必留痕可查询 + banner 浮现；红队四向量实证（PG 真实停服等效）。
 >
 > **未做事项及原因**：wrapper 将 git branch -d（安全删除）误报为 -D 拦截——规则区分缺陷，归下一治理批顺手修（遗留 #72）；逃生通道已验证可绕行，非阻塞。
+>
+> **2026-08-19 复核补正（AI-NIGHT-001）**：原报告"未做事项"仅列 #72，漏登同类待修项 #69——§7.13 d6 三 hook（detect_git_dangerous/detect_shell_dangerous/detect_permanent_file_deletion）与 pre-commit 文件传参不兼容（argparse 被喂文件名参数即 exit 2 unrecognized arguments，merge 大文件集时结构性触发；网关 in-process 通道不受影响），tracker 实证 ⏳ 归下一治理批。与 #72 同为小型治理债。其余施工项（S1-S6 治本 / wrapper Phase 1 七项+激活 / lock_files Mutex+TTL / plumbing 四命令拦截 / #33 AI 通道快照注入 / FOPEN 韧性三件套）复核实证均在位，报告其余口径一致。另注：§7.31"git 并发操作串行化"P1 保留要点由 66 号 commit_queue 本体承载（待排期，见 66 号结案报告）。
 
 # Git 安全治理体系——alias 失效修复与多层防护施工总案（Trae IDE 专用）
 

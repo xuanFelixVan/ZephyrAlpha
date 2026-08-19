@@ -35,6 +35,8 @@ related_issues:
 > **最终成果**：15 数据源/130+ 下载任务/11 档调度的下载体系规范定稿（与 63 号数据利用审计配套：63 审"用得怎么样"，本档审"下得怎么样"）；2026-08-15 数据链路巡检实证下载链路正常、核心数据完整（40+ 张表 3.4 亿行回补，无可行动而未行动的缺口）。
 >
 > **未做事项及原因**：§12 的 12 项待裁定为常驻开放议题——随数据供应链演进逐项裁定，非施工缺口。
+>
+> **2026-08-19 复核补正（AI-NIGHT-001）**：原报告"未做事项"仅述 §12 常驻议题，漏核 §16.2「裁定施工」14 项的执行态。逐项实证：Q5 北向（AI-NORTH-001 已 merge 87f50a5e3f）、Q6 冷归档（AI-ARCH-001/002 已闭环）、Q13 ARCH-SPECIAL-DAYS（已登记 architecture_issue_registry）、Q14 死 fallback（tasks.yaml 实证 qmt/exchange/bdpan 已清零、local_valuation 保留 1 处在位）——4 项已闭环；**Q8 data parts>100 告警、Q16 fetch_perf scheduler 被动记录、Q17 per-source 自动熔断器、Q18 create_provider internal 接线（P0）——4 项未施工**（2026-08-19 实证：data 域无 parts 告警实现 / circuit_breaker 零命中 / fetch_perf 仅 speed_tester 写入 scheduler 零写入 / create_provider 无 internal 分支，tasks.yaml `hk_trade_calendar_refresh` source: internal 经 `_get_provider` 会报"未知数据源"失败）。Q18 为 §16.2 唯一 P0 且影响港股日历月度刷新，建议优先排期；Q8/Q16/Q17 裁定=未来工程-小型。
 
 # 数据源与下载体系规范
 

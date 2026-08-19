@@ -11,6 +11,21 @@ topic: backtest_framework_docking
 scope: 07_trading_decision_architecture
 ---
 
+## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+
+> **实际开发**：本篇性质为"已施工框架的 why 回填 + 策略侧复用裁定"，自身承诺的新施工为零。BM-BT-01~07 框架代码（引擎/撮合/PIT/过拟合/WFA/门控/io 三件套/scheduler）均已在更早批次建成 production（2026-08-19 实证：backtest/core 全部在位 + services/scheduler.py + io/decisiongraph_adapter.py 在位）；53 号 §3.1 对本篇 §3.4 的悬空引用已由本版 §3.4 补位闭环。
+>
+> **最终成果**（2026-08-19 代码实证）：`engine_base.py` / `vectorized_engine.py` / `event_driven_engine.py` / `shrinkage_engine.py` / `matching_logic.py` / `portfolio.py` / `scheduler.py` / `data_handler.py` / `metrics.py`（含 `calculate_dsr`，阈值 0.5）/ `pit_manager.py` / `overfitting_detector.py` / `walk_forward.py`（CPCV 仅配置预留）/ `decision_gate.py` / `tick_replay.py` 全生产态；`simulation/deflated_sharpe_calculator.py`（MOD-SIM-024，阈值 0.95）在位——DSR 双实现并存实证与 §3.6/§7⑤ 登记一致。⚠️ 复核发现 §3.1.1 两处滞后：`services/cache_manager.py` 与 `services/report_generator.py` 均已 MATURITY=production（文中标"design / 不抢先施工 / MD 摘要随首批施工"），系文档滞后于代码，非施工缺口。
+>
+> **未做事项及原因**：
+> - CPCV+PBO / Purged K-Fold / 03-E CRPS / 回测异常诊断（BM-BT-07-F）——§6 已逐条裁定暂缓并给重评条件（变体>50 或 DSR 频繁误报 / 标签重叠窗口策略上线 / regime 密度预测上线 / 故障样本≥10 例），属设计内延期非烂尾；裁定=未来工程-小型（03-E CRPS 依赖 91 号密度预测路线，归未来工程-大型）。
+> - 07-H result_deployer——§4 已裁定拒绝门控全自动上线（can_deploy≠部署许可，实盘部署人工审批承载）；裁定=过度工程（当前阶段人工审批即正确上限）。
+> - 策略验证流水线编排入口（§7①"随首批上线施工"）——首批策略未上线，等触发；裁定=未来工程-小型。
+> - DSR 双实现统编（backtest 版阈值 0.5 vs simulation 版 0.95）——tracker 遗留 #14 ⏳ 等 Owner 裁定唯一 SSoT 或明确分工；裁定=未来工程-小型（裁定后单行收敛）。
+> - DSR 接入 DecisionGate 判定链（§7③ 待决策：dsr≥阈值是否加为 OOS 段第四条件）——2026-08-19 实证 decision_gate.py 零 dsr 引用；裁定=未来工程-小型（随上项裁定一并落地）。
+> - 四核心模块零单测（walk_forward/decision_gate/overfitting_detector/pit_manager + calculate_dsr 无直接测试，§7 新发现 1，P1）——2026-08-19 实证 tests/ 下无对应测试文件；裁定=未来工程-小型（测试债，建议随下一测试债批清偿）。
+> - battle_map_03 滞后同步 / 00_index 版本同步（§7 新发现 2/4/5，越界登记项）——属 battle_map/00_index owner 会话范围；裁定=未来工程-小型（文档治理，随下一治理批顺手）。
+
 # 回测框架对接
 
 > **性质**：决策备忘（G23）。核心事实：BM-BT-01~07 的**框架代码已基本全部 production**（D_BACKTEST 51 模块 = 50 生产 + 1 设计），regime 侧已按 [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md) §2.1 完成对接；本文回填框架 why，并裁定**策略侧**（20 号首批 3 策略）如何复用同一框架。

@@ -18,6 +18,8 @@ scope: 07_trading_decision_architecture
 > **最终成果**：监控告警与复盘体系生产态；test_alert_threshold_consistency.py 机器锁定注册表↔代码双向一致性（32 条全量对账）；错误码 RK/RPT 两域全量补登。
 >
 > **未做事项及原因**：~~存量模块码内阈值统读改造（8 处）未做~~——**已于 2026-08-17 由 AI-THD-001 完工闭环（遗留 #87 销项）**：9 存量模块经共享加载器 shared/alerts/threshold_loader.py fail-closed 统读注册表，码内硬编码清零、数值零漂移、显式传参覆盖通道全保留；对账测试演化为接线校验+红队 fail-closed 36 用例全绿。
+>
+> **2026-08-19 复核补正（AI-NIGHT-001）**：§7"代码层新发现问题"第 3 条（Panel"实验历史"Tab 未施工）已过时——该 Tab 已由 51 号工作流 B 于 2026-08-16 建成（`frontend/dashboard/app_panel.py` v3.4.0 `_tab_experiment_history`，实证在位）；§3.4 偏离度量看板与之合并施工的选项仍成立。另：§6 四项暂缓（Email/WeChat sender 实发 / miniQMT 下单链路探针 / 偏离归因分解 H-A~D / 模板引擎固化）复核实证均未施工，均带重评条件属设计内延期，裁定=未来工程-小型。报告其余口径（三件套落码 / 33 条阈值 / 退役判据转正 / 统读闭环）与代码实证一致。
 
 # 监控告警与复盘
 

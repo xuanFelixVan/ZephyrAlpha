@@ -11,6 +11,22 @@ topic: lifecycle_multi_ai
 scope: 07_trading_decision_architecture
 ---
 
+## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+
+> **实际开发**（机制落地状态——本篇为治理/生命周期规范文档，无单一施工批次归属）：①多 AI 协作交接纪律与并发文件级冲突纪律已落地运营——GitCommitGateway 唯一提交入口 + session_worktree 物理隔离 + lock_files 文件锁 + claim 前移声明全链路 production（65/66 号基建承载）；②模块创建 4 步（creation_token + capability/translation/ARCH 登记）为现行治理常态；③§3.9 退役判据量化标准的执行体已由 55 号 AI-MON-001 落码（`governance/lifecycle_governance/strategy_retirement_evaluator.py`，五判据+评审制铁律，四条阈值已转正 active）；④BM-RES 研究知识流水线拍板（轻量 Markdown+Git+frontmatter）与研究环境否定式裁定（不建沙箱/编排/Notebook）已闭合，无代码承诺遗留。
+>
+> **最终成果**（2026-08-19 代码实证）：生命周期 6 阶段框架以 design_memo status + depgraph build_status 双字段运营（§4.3 简化方案，无独立状态机服务）；退役判据执行体在位；mSPRT / Drift Observatory 四层编排 / 退役 5 步工作流 / strategy_archive/ 目录在 src 全仓零命中——均为设计规范伪代码未落码，与 §2.4 盘点"⚠️设计规范伪代码，代码待施工"自评一致。⚠️ 复核发现跨文档漂移：本篇以 MLflow alias（@champion/@challenger/@archived）为晋升/回滚/归档载体（§3.3 纪律 1/2/7/9、§3.9 归档四件套），但 51 号已裁定完全卸载 MLflow（2026-08-16，src 零命中实证）——落地载体需重裁定（experiment_tracking FallbackBackend 或注册表状态机等价物），不影响本篇裁定的语义有效性，但伪代码不可按 MLflow 直读施工。
+>
+> **未做事项及原因**：
+> - Champion-Challenger mSPRT 晋升通道（§3.3 纪律 1 伪代码）——未施工；且因 MLflow 退役，落地形态需先重裁定载体；54 号 §6 亦标注其阻塞 BM-REC-02-B 绩效归因。裁定=未来工程-大型（需载体裁定+统计组件施工）。
+> - Drift Observatory 四层编排（§3.3 纪律 4 编排伪代码）——未施工；首批策略未上线无消费方，设计内延期。裁定=未来工程-大型（随首批上线后监控批）。
+> - 退役 5 步工作流（§3.9 伪代码）——未施工；判据执行体已由 55 号承载，工作流编排待首个退役策略触发。裁定=未来工程-小型。
+> - strategy_archive/ 目录（§3.9 归档四件套第④条）——未建；待首个退役策略触发即建，设计内延期。裁定=未来工程-小型。
+> - BM-MT-02-A/B 灰度+影子部署+对抗鲁棒性——未施工（设计态）；随策略上线 MLOps Level 2 批。裁定=未来工程-大型。
+> - AI 行为基线+异常告警（BM-RC-04-F，§3.6）——未施工；白名单/额度已由 wrapper/git_guard/Gateway 部分承载，行为统计告警为增量。裁定=未来工程-小型。
+> - 冷启动 T0/T1/T2 渐进建仓（§3.1）——设计态；随首批策略上线由 53 号迁移路径承载。裁定=未来工程-小型。
+> - LLM 驱动 alpha 挖掘远期候选（§3.2 登记表）/独立 Lifecycle Manager 服务（§4.3）/KFP-KServe-K8s（§4.2）/多 Agent 编排（§4.1）——本篇已逐项裁定 Phase 5+/暂缓/拒绝，不施工；裁定=过度工程（当前阶段）。
+
 # 策略生命周期与多 AI 协作
 > 本备忘记录策略从孵化到退役的完整生命周期规范，以及多 AI 协作的分工与交接纪律。
 > 性质：永久态设计记录，可随项目演进而修订，不是不可推翻的裁定。
