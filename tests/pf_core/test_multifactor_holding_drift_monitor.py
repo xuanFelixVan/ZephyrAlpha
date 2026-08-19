@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 """25号memo §3.7#8 HoldingDriftMonitor 测试。
 

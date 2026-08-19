@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-E2E-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 """25号memo Phase 4.1 Mask-First tradability mask 测试。
 

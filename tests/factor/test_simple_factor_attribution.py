@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-E2E-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 """25号memo §3.7#4 SimpleFactorAttribution 测试。
 

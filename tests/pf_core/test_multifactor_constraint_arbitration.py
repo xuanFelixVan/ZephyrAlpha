@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 """25号memo §3.7#2 ConstraintArbitration + C1-C7↔CTR-003 对齐测试。
 
