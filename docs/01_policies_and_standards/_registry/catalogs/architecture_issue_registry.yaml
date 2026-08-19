@@ -17673,8 +17673,9 @@ entries:
   impact:
     - 'architecture_model/contracts（契约快照 freeze）'
     - 'DDL 真源（drift 9 项 + ipo_calendar 建表/摘源）'
-  fix_phase: '裁定已落地（2026-08-19 上午，见 adjudication 终裁段）——待统筹按方案施工：C2 re-freeze + DDL 死列回滚（trae_063 三步验证）+ 触发器补建 + 解析器修复 + ipo_calendar 待 CH 窗口建表'
-  status: decided
+  fix_phase: '施工落地（2026-08-19 统筹 COORD-8）：P0-A C2 re-freeze 43ffee1fd3（yaml 基线 0e4f5c40→3094accf；生成器再生成回退 ruff 批修复已全量 restore 丢弃，--freeze 基于 HEAD 文件重冻结——生成器模板未同步六码修复的结构性冲突登记 CAND-GOVTEST-002/003 连带）；P0-B DDL 死列回滚 fc13042533（pg_dump 备份 .runtime/pg_backups/arch130_prerollback_20260819.sql；11 死列 DROP+gate_reason 活列保留实证）；P0-C rule_ai_perception 三触发器补建 fc13042533（02_create_pg_schema.sql 增补+现网 CREATE+_DDL_RULE_AI_PERCEPTION 常量入 _DDL_MAP）；P0-D parse_ddl_columns 剥 -- 注释 fc13042533（decision_layers 伪列断根）；P1-1 删测试文件 89b3ebed；P1-2 CAND-GATEMECH-005/006/007 登记 5921b0f3a4。验证：verify_schema_health 9 项→0 [PASS]+check_contract_code_drift 绿'
+  status: resolved
+  resolution: '2026-08-19 统筹施工全落地：①C2 快照重冻结（43ffee1fd3）②DDL 死列 11 列回滚+活列保留（fc13042533）③只读三触发器现网补建（fc13042533）④解析器注释剥离治本（fc13042533）⑤孤儿测试整文件删除（89b3ebed）⑥机制族 3 候选登记（5921b0f3a4）；ipo_calendar 建表挂起待 CH 8123 窗口（apply_market_tables_ddl.py 执行条件=CH 环境可达，当前连接拒绝实证），脚本已就位窗口一到即执行'
   related_rules: '#ARCH-CH-025; GATE-C2; GATE-SCHEMA-TRUTH'
   created: '2026-08-19'
   last_updated: '2026-08-19'
