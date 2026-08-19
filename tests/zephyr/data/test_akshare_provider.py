@@ -13,14 +13,14 @@
 # [TESTS] 本文件
 # [A_module] module_id=MOD-DAT-akshare_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""akshare_provider fallback 8 能力单元测试（2026-08-19 补全）。
+"""akshare_provider fallback 9 能力单元测试（2026-08-19 补全）。
 
-覆盖 P1 行情×4 + P2 财报×4：
-- adj_factor / kline_index / kline_daily_hfq / kline_cb
+覆盖 P1 行情×5 + P2 财报×4：
+- adj_factor / kline_index / kline_daily_hfq / kline_cb / kline_hk_daily
 - balance_sheet / income_statement / cashflow_statement / financial_indicator
 
 全部 mock akshare，不触网不触库。验证：正常映射、单位换算、
-日期过滤、空输入/失败路径、capability 路由一致性。
+日期过滤、空输入/失败路径、东财→新浪降级路径、capability 路由一致性。
 """
 
 from __future__ import annotations
@@ -606,3 +606,168 @@ class TestFinancialIndicatorFetch:
         from src.zephyr.data.implementations import akshare_provider as akp
 
         assert "financial_indicator" in akp._AKSHARE_CAPABILITIES
+
+
+# ============== P1-5 kline_hk_daily（东财→新浪降级） ==============
+
+
+def _hk_em_spot_df() -> pd.DataFrame:
+    """东财港股清单（列：代码/名称）。"""
+    return pd.DataFrame({"代码": ["00700"], "名称": ["腾讯控股"]})
+
+
+def _hk_em_hist_df() -> pd.DataFrame:
+    """东财港股日K（列：日期/开盘/收盘/最高/最低/成交量/成交额/...）。"""
+    return pd.DataFrame(
+        {
+            "日期": [D(2026, 8, 18)],
+            "开盘": [594.0],
+            "收盘": [587.0],
+            "最高": [596.0],
+            "最低": [587.0],
+            "成交量": [17590658],
+            "成交额": [1.040306e10],
+            "振幅": [1.52],
+            "涨跌幅": [-0.84],
+            "涨跌额": [-5.0],
+            "换手率": [0.19],
+        }
+    )
+
+
+def _hk_sina_spot_df() -> pd.DataFrame:
+    """新浪港股清单（列：代码/中文名称）。"""
+    return pd.DataFrame({"代码": ["00700"], "中文名称": ["腾讯控股"]})
+
+
+def _hk_sina_daily_df() -> pd.DataFrame:
+    """新浪港股日K（列：date/open/high/low/close/volume/amount，volume 单位股）。"""
+    return pd.DataFrame(
+        {
+            "date": [D(2026, 8, 18)],
+            "open": [444.2],
+            "high": [446.2],
+            "low": [437.6],
+            "close": [442.4],
+            "volume": [23218078.0],
+            "amount": [1.024250e10],
+        }
+    )
+
+
+class TestKlineHkDailyFetch:
+    def test_normal_em_mapping(self, monkeypatch):
+        """正常路径：东财清单+东财日K，10 列映射 + 日期过滤。"""
+        _mock_ak(monkeypatch, stock_hk_spot_em=_hk_em_spot_df(), stock_hk_hist=_hk_em_hist_df())
+        provider = AkshareIngestProvider()
+        results = _call_fetch(
+            provider,
+            "kline_hk_daily",
+            _payload(D(2026, 8, 18), D(2026, 8, 19)),
+        )
+        assert len(results) == 1
+        res = results[0]
+        assert res.error is None
+        assert len(res.rows) == 1
+        r = res.rows[0]
+        assert r[0] == "2026-08-18"
+        assert r[1] == "00700.HK"
+        assert r[2] == "腾讯控股"
+        assert r[3] == pytest.approx(594.0)
+        assert r[6] == pytest.approx(587.0)
+        assert r[7] == 17590658
+        assert r[8] == pytest.approx(1.040306e10)
+        assert r[9] == "akshare"
+
+    def test_em_list_fails_fallback_sina(self, monkeypatch):
+        """东财清单断连 → 降级新浪清单；东财日K断连 → 降级新浪日K。"""
+        _mock_ak(
+            monkeypatch,
+            stock_hk_spot_em=ConnectionError("RemoteDisconnected"),
+            stock_hk_spot=_hk_sina_spot_df(),
+            stock_hk_hist=ConnectionError("RemoteDisconnected"),
+            stock_hk_daily=_hk_sina_daily_df(),
+        )
+        provider = AkshareIngestProvider()
+        results = _call_fetch(
+            provider,
+            "kline_hk_daily",
+            _payload(D(2026, 8, 18), D(2026, 8, 19)),
+        )
+        assert len(results) == 1
+        res = results[0]
+        assert res.error is None
+        assert len(res.rows) == 1
+        r = res.rows[0]
+        assert r[0] == "2026-08-18"
+        assert r[1] == "00700.HK"
+        assert r[2] == "腾讯控股"
+        assert r[3] == pytest.approx(444.2)
+        assert r[7] == 23218078  # 新浪 volume 为股，float→int 不换算
+        assert r[8] == pytest.approx(1.024250e10)
+
+    def test_em_kline_fails_fallback_sina_kline(self, monkeypatch):
+        """东财清单正常但东财日K断连 → 单票降级新浪日K。"""
+        _mock_ak(
+            monkeypatch,
+            stock_hk_spot_em=_hk_em_spot_df(),
+            stock_hk_hist=ConnectionError("RemoteDisconnected"),
+            stock_hk_daily=_hk_sina_daily_df(),
+        )
+        provider = AkshareIngestProvider()
+        results = _call_fetch(
+            provider,
+            "kline_hk_daily",
+            _payload(D(2026, 8, 18), D(2026, 8, 19)),
+        )
+        assert len(results) == 1
+        res = results[0]
+        assert res.error is None
+        assert len(res.rows) == 1
+        assert res.rows[0][3] == pytest.approx(444.2)
+
+    def test_both_channels_fail_yields_error(self, monkeypatch):
+        """清单双通道均失败 → yield error，不抛出。"""
+        _mock_ak(
+            monkeypatch,
+            stock_hk_spot_em=ConnectionError("RemoteDisconnected"),
+            stock_hk_spot=ConnectionError("sina down"),
+        )
+        provider = AkshareIngestProvider()
+        results = _call_fetch(
+            provider,
+            "kline_hk_daily",
+            _payload(D(2026, 8, 18), D(2026, 8, 19)),
+        )
+        assert len(results) == 1
+        res = results[0]
+        assert res.rows == []
+        assert res.error is not None
+        assert "stock_hk_spot_em 失败" in res.error
+        assert "stock_hk_spot 失败" in res.error
+
+    def test_em_list_empty_fallback_sina(self, monkeypatch):
+        """东财清单返回空 → 同样触发降级新浪。"""
+        _mock_ak(
+            monkeypatch,
+            stock_hk_spot_em=pd.DataFrame(),
+            stock_hk_spot=_hk_sina_spot_df(),
+            stock_hk_hist=ConnectionError("RemoteDisconnected"),
+            stock_hk_daily=_hk_sina_daily_df(),
+        )
+        provider = AkshareIngestProvider()
+        results = _call_fetch(
+            provider,
+            "kline_hk_daily",
+            _payload(D(2026, 8, 18), D(2026, 8, 19)),
+        )
+        assert len(results) == 1
+        res = results[0]
+        assert res.error is None
+        assert len(res.rows) == 1
+        assert res.rows[0][2] == "腾讯控股"
+
+    def test_capability_routing(self, monkeypatch):
+        from src.zephyr.data.implementations import akshare_provider as akp
+
+        assert "kline_hk_daily" in akp._AKSHARE_CAPABILITIES

@@ -34,7 +34,7 @@
 # - id: A2
 #   name_zh: ② API 调用与口径规整
 #   name_en: _fetch_xxx 系列
-#   intro: 调 akshare API→单位换算（指数 volume 股→手 /100、转债 张→手 /10）→裸 6 位代码归一化（_norm_code6）→CH 表列映射；财报按东财 NOTICE_DATE 公告日窗口过滤
+#   intro: 调 akshare API→单位换算（指数 volume 股→手 /100、转债 张→手 /10）→裸 6 位代码归一化（_norm_code6）→CH 表列映射；财报按东财 NOTICE_DATE 公告日窗口过滤；港股日K东财通道失败自动降级新浪（kline_hk_daily）
 #   inputs: I1 I2
 #   outputs: 规整行列表
 # - id: A3
@@ -4327,11 +4327,105 @@ class AkshareIngestProvider(IngestProviderBase):
             "akshare",
         )
 
+    @staticmethod
+    def _parse_kline_hk_sina_row(
+        row,
+        code: str,
+        name: str,
+        start_str: str,
+        end_str: str,
+    ) -> tuple | None:
+        """解析新浪 stock_hk_daily 单行，不在日期范围内返回 None。
+
+        ak.stock_hk_daily 返回列: date, open, high, low, close, volume, amount。
+        单位口径实测（2026-08-19，00700）：volume 为股、amount 为港元，
+        与东财 stock_hk_hist 同量级同单位，落库前无需换算。
+        """
+        trade_date = AkshareIngestProvider._norm_date_str(row.get("date"))
+        if not trade_date or trade_date < start_str or trade_date > end_str:
+            return None
+        return (
+            trade_date,
+            f"{code}.HK",
+            name,
+            safe_float(row.get("open")),
+            safe_float(row.get("high")),
+            safe_float(row.get("low")),
+            safe_float(row.get("close")),
+            safe_int(row.get("volume")) or 0,
+            safe_float(row.get("amount")),
+            "akshare",
+        )
+
+    @staticmethod
+    def _extract_hk_list(spot_df, name_col: str, limit: int = 500) -> list[tuple[str, str]]:
+        """从港股行情快照 DataFrame 提取 (代码, 名称) 清单，限制前 limit 只（避免全量超时）。"""
+        hk_list = []
+        for _, r in spot_df.head(limit).iterrows():
+            code = str(r.get("代码", "") or "").strip()
+            name = str(r.get(name_col, "") or "").strip()
+            if code:
+                hk_list.append((code, name))
+        return hk_list
+
+    def _get_hk_spot_list(self, ak, policy: SourcePolicy) -> tuple[list[tuple[str, str]], str | None]:
+        """获取港股标的清单：东财 stock_hk_spot_em 失败/空时降级新浪 stock_hk_spot。
+
+        返回 (清单, 错误信息)；双通道均失败时清单为空、错误信息非 None。
+        """
+        em_err = ""
+        try:
+            spot_df = self._call_with_policy(ak.stock_hk_spot_em, policy)
+            if spot_df is not None and len(spot_df) > 0:
+                return self._extract_hk_list(spot_df, name_col="名称"), None
+            em_err = "返回空"
+        except Exception as e:  # noqa: BLE001 — 东财反爬断连须吞异常降级新浪，不让整任务失败
+            em_err = str(e)
+        self._log.warning(f"stock_hk_spot_em 不可用（{em_err}），降级 stock_hk_spot（新浪）")
+        try:
+            spot_df = self._call_with_policy(ak.stock_hk_spot, policy)
+        except Exception as e:  # noqa: BLE001 — 双通道均失败须汇总上报，不抛出
+            return [], f"stock_hk_spot_em 失败: {em_err}; stock_hk_spot 失败: {e}"
+        if spot_df is None or len(spot_df) == 0:
+            return [], f"stock_hk_spot_em 失败: {em_err}; stock_hk_spot 返回空"
+        return self._extract_hk_list(spot_df, name_col="中文名称"), None
+
+    def _fetch_hk_daily_one(
+        self, ak, policy: SourcePolicy, code: str, ak_start: str, ak_end: str
+    ) -> tuple[object | None, str]:
+        """拉单只港股日K：东财 stock_hk_hist 失败/空时降级新浪 stock_hk_daily。
+
+        返回 (DataFrame 或 None, 通道标记 "em"/"sina")；双通道均不可用返回 (None, "")。
+        """
+        try:
+            df = self._call_with_policy(
+                ak.stock_hk_hist,
+                policy,
+                symbol=code,
+                period="daily",
+                start_date=ak_start,
+                end_date=ak_end,
+                adjust="",
+            )
+            if df is not None and len(df) > 0:
+                return df, "em"
+        except Exception as e:  # noqa: BLE001 — 单票东财断连降级新浪，须吞异常保住其余标的
+            self._log.debug(f"stock_hk_hist({code}) 失败，降级新浪: {e}")
+        try:
+            df = self._call_with_policy(ak.stock_hk_daily, policy, symbol=code, adjust="")
+        except Exception as e:  # noqa: BLE001 — 双通道失败跳过该票，不影响整体批次
+            self._log.debug(f"stock_hk_daily({code}) 新浪也失败: {e}")
+            return None, ""
+        if df is None or len(df) == 0:
+            return None, ""
+        return df, "sina"
+
     def _fetch_kline_hk_daily(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取港股日K线，写入 c1_market.kline_hk_daily。
 
-        1. 调用 ak.stock_hk_spot_em() 获取港股列表（代码+名称），限制前 500 只
-        2. 对每只港股调用 ak.stock_hk_hist(symbol, period="daily", ...) 获取K线
+        1. 获取港股列表（代码+名称），限制前 500 只：东财 stock_hk_spot_em 主通道，
+           失败/空时自动降级新浪 stock_hk_spot（东财反爬断连兜底，2026-08-19）
+        2. 逐票日K同理：东财 stock_hk_hist 失败/空时降级新浪 stock_hk_daily
         """
         import akshare as ak
 
@@ -4356,61 +4450,30 @@ class AkshareIngestProvider(IngestProviderBase):
         batch_rows: list[tuple] = []
         t0 = time.monotonic()
 
-        # 步骤1：获取港股列表（代码+名称）
-        try:
-            spot_df = self._call_with_policy(ak.stock_hk_spot_em, policy)
-        except Exception as e:  # noqa: BLE001 — 5.135治标
+        # 步骤1：获取港股列表（代码+名称），东财失败自动降级新浪
+        hk_list, list_err = self._get_hk_spot_list(ak, policy)
+        if list_err is not None:
             yield FetchResult(
                 table=table,
                 columns=columns,
                 rows=[],
                 last_key=last_key,
                 elapsed_sec=time.monotonic() - t0,
-                error=f"stock_hk_spot_em 失败: {e}",
+                error=list_err,
             )
             return
-
-        if spot_df is None or len(spot_df) == 0:
-            yield FetchResult(
-                table=table,
-                columns=columns,
-                rows=[],
-                last_key=last_key,
-                elapsed_sec=time.monotonic() - t0,
-                error="stock_hk_spot_em 返回空",
-            )
-            return
-
-        # 取代码+名称，限制前 500 只（避免全量 ~2500 只超时）
-        hk_list = []
-        for _, r in spot_df.head(500).iterrows():
-            code = str(r.get("代码", "") or "").strip()
-            name = str(r.get("名称", "") or "").strip()
-            if code:
-                hk_list.append((code, name))
         self._log.info(f"港股K线: 获取 {len(hk_list)} 只标的")
 
-        # 步骤2：逐标的获取K线
+        # 步骤2：逐标的获取K线（东财失败自动降级新浪）
         for idx, (code, name) in enumerate(hk_list):
             if (idx + 1) % 50 == 0:
                 self._log.info(f"kline_hk_daily 进度: {idx + 1}/{len(hk_list)}")
-            try:
-                df = self._call_with_policy(
-                    ak.stock_hk_hist,
-                    policy,
-                    symbol=code,
-                    period="daily",
-                    start_date=ak_start,
-                    end_date=ak_end,
-                    adjust="",
-                )
-            except Exception as e:  # noqa: BLE001 — 5.135治标
-                self._log.debug(f"stock_hk_hist({code}) 失败: {e}")
+            df, channel = self._fetch_hk_daily_one(ak, policy, code, ak_start, ak_end)
+            if df is None:
                 continue
-            if df is None or len(df) == 0:
-                continue
+            parser = self._parse_kline_hk_row if channel == "em" else self._parse_kline_hk_sina_row
             for _, row in df.iterrows():
-                parsed = self._parse_kline_hk_row(row, code, name, start_str, end_str)
+                parsed = parser(row, code, name, start_str, end_str)
                 if parsed:
                     batch_rows.append(parsed)
 
