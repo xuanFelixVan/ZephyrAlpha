@@ -771,3 +771,72 @@ class TestKlineHkDailyFetch:
         from src.zephyr.data.implementations import akshare_provider as akp
 
         assert "kline_hk_daily" in akp._AKSHARE_CAPABILITIES
+
+
+# ============== hk_stock_list（东财→新浪降级，全量不截断） ==============
+
+
+class TestHkStockListFetch:
+    def test_normal_em_mapping(self, monkeypatch):
+        """正常路径：东财清单，code/name 两列映射。"""
+        _mock_ak(monkeypatch, stock_hk_spot_em=_hk_em_spot_df())
+        provider = AkshareIngestProvider()
+        results = _call_fetch(provider, "hk_stock_list", _payload(D(2026, 8, 18), D(2026, 8, 19)))
+        assert len(results) == 1
+        res = results[0]
+        assert res.error is None
+        assert res.rows == [("00700", "腾讯控股")]
+
+    def test_em_fails_fallback_sina_full_list_no_truncation(self, monkeypatch):
+        """东财断连→新浪降级；600 只全量保留（不被 kline 场景 500 上限截断），中文名称→name 归一化。"""
+        big_sina = pd.DataFrame(
+            {
+                "代码": [f"{i:05d}" for i in range(1, 601)],
+                "中文名称": [f"股票{i}" for i in range(1, 601)],
+            }
+        )
+        _mock_ak(
+            monkeypatch,
+            stock_hk_spot_em=ConnectionError("RemoteDisconnected"),
+            stock_hk_spot=big_sina,
+        )
+        provider = AkshareIngestProvider()
+        results = _call_fetch(provider, "hk_stock_list", _payload(D(2026, 8, 18), D(2026, 8, 19)))
+        res = results[0]
+        assert res.error is None
+        assert len(res.rows) == 600
+        assert res.rows[0] == ("00001", "股票1")
+        assert res.rows[-1] == ("00600", "股票600")
+
+    def test_em_empty_fallback_sina(self, monkeypatch):
+        """东财返空 → 降级新浪。"""
+        _mock_ak(
+            monkeypatch,
+            stock_hk_spot_em=pd.DataFrame(),
+            stock_hk_spot=_hk_sina_spot_df(),
+        )
+        provider = AkshareIngestProvider()
+        results = _call_fetch(provider, "hk_stock_list", _payload(D(2026, 8, 18), D(2026, 8, 19)))
+        res = results[0]
+        assert res.error is None
+        assert res.rows == [("00700", "腾讯控股")]
+
+    def test_both_channels_fail_yields_error(self, monkeypatch):
+        """双通道均失败 → yield error 聚合两路错误，不抛出。"""
+        _mock_ak(
+            monkeypatch,
+            stock_hk_spot_em=ConnectionError("RemoteDisconnected"),
+            stock_hk_spot=ConnectionError("sina down"),
+        )
+        provider = AkshareIngestProvider()
+        results = _call_fetch(provider, "hk_stock_list", _payload(D(2026, 8, 18), D(2026, 8, 19)))
+        res = results[0]
+        assert res.rows == []
+        assert res.error is not None
+        assert "stock_hk_spot_em 失败" in res.error
+        assert "stock_hk_spot 失败" in res.error
+
+    def test_capability_routing(self, monkeypatch):
+        from src.zephyr.data.implementations import akshare_provider as akp
+
+        assert "hk_stock_list" in akp._AKSHARE_CAPABILITIES

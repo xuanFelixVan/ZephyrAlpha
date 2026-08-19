@@ -106,6 +106,13 @@ _TBL_MARGIN_TRADING_QMT = get_registry().table("market_margin_trading_qmt")
 _TBL_OPTION_GREEKS = get_registry().table("market_option_greeks")
 _TBL_OPTION_IV_SURFACE = get_registry().table("market_option_iv")
 _TBL_OPTION_KLINE = get_registry().table("market_option_kline")
+# 期权 IV/Greeks 降级价格源查询（_load_option_close_from_ch 专用）：读 option_kline 收盘价序列
+_SQL_OPTION_CLOSE_FROM_CH = (
+    "SELECT trade_date, close, data_source FROM {table} FINAL "
+    "WHERE symbol = '{symbol}' "
+    "AND trade_date >= toDate('{d1}') AND trade_date <= toDate('{d2}') "
+    "ORDER BY trade_date"
+)
 _TBL_REPURCHASE = get_registry().table("fund_repurchase")
 _TBL_SECTOR_LIST = get_registry().table("market_sector_list")
 _TBL_SHAREHOLDER_COUNT = get_registry().table("fund_shareholder_count")
@@ -424,6 +431,7 @@ class _OptionCtx:
     exp_date: object | None
     r: float
     exchange: str = ""  # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 交易所代码（SHO/SZO/CFFEX/SHFE/DCE/CZCE）
+    data_source: str = "miniqmt"  # 期权价格实际来源（QMT 不可用时 CH option_kline 降级，取该表真实来源如 akshare_sina）
 
 
 def _resolve_kline_aggregated_table(freq, payload, dividend_type):
@@ -2488,14 +2496,20 @@ class MiniQmtIngestProvider(IngestProviderBase):
             exchange = opt_code.split(".")[-1]
 
         opt_df = self._download_option_price_df(opt_code, start_str, end_str, policy)
+        price_source = "miniqmt"
         if opt_df is None or len(opt_df) == 0:
-            return []
+            # QMT 期权历史K线失效时降级到 CH option_kline（akshare_sina 主源喂数）
+            opt_df, price_source = self._load_option_close_from_ch(opt_code, start_str, end_str)
+            if opt_df is None or len(opt_df) == 0:
+                return []
 
         ul_df = self._download_underlying_price_df(underlying, start_str, end_str, policy)
         if ul_df is None or len(ul_df) == 0:
             return []
 
-        ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike, expiry, opt_type, exp_date, r, exchange)
+        ctx = _OptionCtx(
+            opt_df, ul_df, symbol, underlying, strike, expiry, opt_type, exp_date, r, exchange, price_source
+        )
         return MiniQmtIngestProvider._compute_iv_rows(ctx)
 
     @staticmethod
@@ -2527,7 +2541,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     ctx.opt_type,
                     iv,
                     ctx.exchange,
-                    "miniqmt",
+                    ctx.data_source,
                 )
             )
         return rows
@@ -3880,14 +3894,19 @@ class MiniQmtIngestProvider(IngestProviderBase):
             exchange = opt_code.split(".")[-1]
 
         opt_df = self._download_option_price_df(opt_code, start_str, end_str, policy)
+        price_source = "miniqmt"
         if opt_df is None or len(opt_df) == 0:
-            return []
+            opt_df, price_source = self._load_option_close_from_ch(opt_code, start_str, end_str)
+            if opt_df is None or len(opt_df) == 0:
+                return []
 
         ul_df = self._download_underlying_price_df(underlying, start_str, end_str, policy)
         if ul_df is None or len(ul_df) == 0:
             return []
 
-        ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike, expiry, opt_type, exp_date, r, exchange)
+        ctx = _OptionCtx(
+            opt_df, ul_df, symbol, underlying, strike, expiry, opt_type, exp_date, r, exchange, price_source
+        )
         return MiniQmtIngestProvider._compute_greeks_rows(ctx)
 
     @staticmethod
@@ -3925,7 +3944,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                         greeks["theta"],
                         greeks["vega"],
                         ctx.exchange,
-                        "miniqmt",
+                        ctx.data_source,
                     )
                 )
         return rows
@@ -4007,6 +4026,54 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str,
         )
         return ul_data.get(underlying) if ul_data else None
+
+    def _load_option_close_from_ch(
+        self,
+        opt_code: str,
+        start_str: str,
+        end_str: str,
+    ) -> tuple[object | None, str]:
+        """QMT 期权行情不可用时的降级价格源：从 c1_market.option_kline 读收盘价序列。
+
+        option_kline 表自 2026-08-14 起由 akshare_sina 主源喂数（tasks.yaml 治本留痕：
+        QMT 模拟账户无期权历史K线权限），在 QMT 期权行情失效期间维持 IV 曲面计算链路。
+        返回 DataFrame 索引为 str YYYYMMDD，与 xtdata get_market_data_ex(1d) 索引一致，
+        保证与标的价格 df 的 index.intersection 对齐。
+
+        Returns:
+            (DataFrame(close 列), 实际数据来源标签)；无数据返回 (None, "")
+        """
+        import pandas as pd
+
+        symbol = opt_code.split(".")[0]
+        d1 = f"{start_str[:4]}-{start_str[4:6]}-{start_str[6:]}"
+        d2 = f"{end_str[:4]}-{end_str[4:6]}-{end_str[6:]}"
+        try:
+            tsv = ch_reader.query(
+                _SQL_OPTION_CLOSE_FROM_CH.format(table=_TBL_OPTION_KLINE, symbol=symbol, d1=d1, d2=d2)
+            )
+        except Exception as e:  # noqa: BLE001 — CH 查询失败视同无数据，走调用方 return [] 跳过本合约
+            self._log.debug(f"_load_option_close_from_ch({opt_code}) 查询失败: {e}")
+            return None, ""
+        if not tsv or not tsv.strip():
+            return None, ""
+        idx: list[str] = []
+        closes: list[float] = []
+        latest_source = ""
+        for line in tsv.strip().split("\n"):
+            parts = line.split("\t")
+            if len(parts) < 3:
+                continue
+            close = self.safe_float(parts[1])
+            if close is None:
+                continue
+            idx.append(parts[0].strip().replace("-", ""))
+            closes.append(close)
+            latest_source = parts[2].strip()
+        if not idx:
+            return None, ""
+        df = pd.DataFrame({"close": closes}, index=pd.Index(idx, dtype=object))
+        return df, latest_source or "ch_option_kline"
 
     @staticmethod
     def calc_bs_greeks(S, K, T, r, sigma, opt_type):

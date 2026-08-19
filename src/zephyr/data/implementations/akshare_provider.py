@@ -4358,26 +4358,30 @@ class AkshareIngestProvider(IngestProviderBase):
         )
 
     @staticmethod
-    def _extract_hk_list(spot_df, name_col: str, limit: int = 500) -> list[tuple[str, str]]:
-        """从港股行情快照 DataFrame 提取 (代码, 名称) 清单，限制前 limit 只（避免全量超时）。"""
+    def _extract_hk_list(spot_df, name_col: str, limit: int | None = 500) -> list[tuple[str, str]]:
+        """从港股行情快照 DataFrame 提取 (代码, 名称) 清单；limit=None 不截断（全量清单场景），默认前 500 只（避免全量超时）。"""
         hk_list = []
-        for _, r in spot_df.head(limit).iterrows():
+        df = spot_df if limit is None else spot_df.head(limit)
+        for _, r in df.iterrows():
             code = str(r.get("代码", "") or "").strip()
             name = str(r.get(name_col, "") or "").strip()
             if code:
                 hk_list.append((code, name))
         return hk_list
 
-    def _get_hk_spot_list(self, ak, policy: SourcePolicy) -> tuple[list[tuple[str, str]], str | None]:
+    def _get_hk_spot_list(
+        self, ak, policy: SourcePolicy, limit: int | None = 500
+    ) -> tuple[list[tuple[str, str]], str | None]:
         """获取港股标的清单：东财 stock_hk_spot_em 失败/空时降级新浪 stock_hk_spot。
 
         返回 (清单, 错误信息)；双通道均失败时清单为空、错误信息非 None。
+        limit 透传 _extract_hk_list：None=全量（hk_stock_list 场景），默认 500（kline 场景防超时）。
         """
         em_err = ""
         try:
             spot_df = self._call_with_policy(ak.stock_hk_spot_em, policy)
             if spot_df is not None and len(spot_df) > 0:
-                return self._extract_hk_list(spot_df, name_col="名称"), None
+                return self._extract_hk_list(spot_df, name_col="名称", limit=limit), None
             em_err = "返回空"
         except Exception as e:  # noqa: BLE001 — 东财反爬断连须吞异常降级新浪，不让整任务失败
             em_err = str(e)
@@ -4388,7 +4392,7 @@ class AkshareIngestProvider(IngestProviderBase):
             return [], f"stock_hk_spot_em 失败: {em_err}; stock_hk_spot 失败: {e}"
         if spot_df is None or len(spot_df) == 0:
             return [], f"stock_hk_spot_em 失败: {em_err}; stock_hk_spot 返回空"
-        return self._extract_hk_list(spot_df, name_col="中文名称"), None
+        return self._extract_hk_list(spot_df, name_col="中文名称", limit=limit), None
 
     def _fetch_hk_daily_one(
         self, ak, policy: SourcePolicy, code: str, ak_start: str, ak_end: str
@@ -5320,28 +5324,22 @@ class AkshareIngestProvider(IngestProviderBase):
     # ---- 29. 港股列表（hk_stock_list） ----
 
     def _fetch_hk_stock_list(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
-        """港股列表全量刷新，写入 c1_market.hk_stock_list。"""
+        """港股列表全量刷新，写入 c1_market.hk_stock_list。
+
+        清单复用 _get_hk_spot_list（SSoT：东财失败/返空自动降级新浪），limit=None 全量不截断。
+        """
         import akshare as ak
 
         table = _TBL_HK_STOCK_LIST
         columns = ["code", "name"]
         t0 = time.monotonic()
-        try:
-            df = self._call_with_policy(ak.stock_hk_spot_em, policy)
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        hk_list, list_err = self._get_hk_spot_list(ak, policy, limit=None)
+        if list_err is not None:
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="", elapsed_sec=time.monotonic() - t0, error=str(e)
+                table=table, columns=columns, rows=[], last_key="", elapsed_sec=time.monotonic() - t0, error=list_err
             )
             return
-        rows: list[tuple] = []
-        if df is not None and len(df) > 0:
-            for _, r in df.iterrows():
-                rows.append(
-                    (
-                        str(r.get("代码", "") or ""),
-                        str(r.get("名称", "") or ""),
-                    )
-                )
+        rows: list[tuple] = [(code, name) for code, name in hk_list]
         yield FetchResult(
             table=table,
             columns=columns,

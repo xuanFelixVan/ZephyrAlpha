@@ -1572,3 +1572,90 @@ class TestTushareStNamechange:
         )
         assert len(df) == 1
         assert df.iloc[0]["name"] == "ST海虹"
+
+
+# ============== MiniQmt 期权 IV 曲面 CH 降级（QMT 期权历史K线失效治本） ==============
+
+
+class TestMiniQmtOptionIvChFallback:
+    """QMT 模拟账户期权历史K线不可用时，从 CH option_kline 降级取收盘价。"""
+
+    @staticmethod
+    def _detail_stub():
+        return {
+            "Underlying": "510050.SH",
+            "ExercisePrice": 2.85,
+            "EndDelivDate": "20260923",
+            "OptType": 1,
+            "ExchangeID": "SHO",
+        }
+
+    def test_load_option_close_from_ch_parses_tsv(self, monkeypatch):
+        from src.zephyr.data.implementations import miniqmt_provider as mq
+
+        p = MiniQmtIngestProvider()
+        tsv = "2026-08-17\t0.1500\takshare_sina\n2026-08-18\t0.1439\takshare_sina"
+        monkeypatch.setattr(mq.ch_reader, "query", lambda sql: tsv)
+        df, src = p._load_option_close_from_ch("10010971.SHO", "20260814", "20260819")
+        assert src == "akshare_sina"
+        assert list(df.index) == ["20260817", "20260818"]
+        assert df.loc["20260818", "close"] == pytest.approx(0.1439)
+
+    def test_load_option_close_from_ch_empty(self, monkeypatch):
+        from src.zephyr.data.implementations import miniqmt_provider as mq
+
+        p = MiniQmtIngestProvider()
+        monkeypatch.setattr(mq.ch_reader, "query", lambda sql: "")
+        df, src = p._load_option_close_from_ch("10010971.SHO", "20260814", "20260819")
+        assert df is None and src == ""
+
+    def test_load_option_close_from_ch_query_error(self, monkeypatch):
+        from src.zephyr.data.implementations import miniqmt_provider as mq
+
+        p = MiniQmtIngestProvider()
+
+        def _raise(sql):
+            raise RuntimeError("ch down")
+
+        monkeypatch.setattr(mq.ch_reader, "query", _raise)
+        df, src = p._load_option_close_from_ch("10010971.SHO", "20260814", "20260819")
+        assert df is None and src == ""
+
+    def test_compute_iv_falls_back_to_ch(self, monkeypatch):
+        p = MiniQmtIngestProvider()
+        monkeypatch.setattr(p, "_get_option_detail_safe", lambda *a, **k: self._detail_stub())
+        monkeypatch.setattr(p, "_download_option_price_df", lambda *a, **k: None)
+        opt_df = pd.DataFrame({"close": [0.25]}, index=pd.Index(["20260817"], dtype=object))
+        monkeypatch.setattr(p, "_load_option_close_from_ch", lambda *a, **k: (opt_df, "akshare_sina"))
+        ul_df = pd.DataFrame({"close": [3.05]}, index=pd.Index(["20260817"], dtype=object))
+        monkeypatch.setattr(p, "_download_underlying_price_df", lambda *a, **k: ul_df)
+
+        rows = p._compute_iv_for_option("10010971.SHO", "20260814", "20260819", SourcePolicy())
+        assert len(rows) == 1
+        assert rows[0][0] == "2026-08-17"
+        assert rows[0][6] is not None and rows[0][6] > 0  # IV 反解成功
+        assert rows[0][-1] == "akshare_sina"  # 数据血缘标记为实际来源
+
+    def test_compute_iv_qmt_path_keeps_miniqmt_source(self, monkeypatch):
+        p = MiniQmtIngestProvider()
+        monkeypatch.setattr(p, "_get_option_detail_safe", lambda *a, **k: self._detail_stub())
+        opt_df = pd.DataFrame({"close": [0.25]}, index=pd.Index(["20260817"], dtype=object))
+        monkeypatch.setattr(p, "_download_option_price_df", lambda *a, **k: opt_df)
+        ul_df = pd.DataFrame({"close": [3.05]}, index=pd.Index(["20260817"], dtype=object))
+        monkeypatch.setattr(p, "_download_underlying_price_df", lambda *a, **k: ul_df)
+
+        def _no_ch(*a, **k):
+            raise AssertionError("QMT 有数据时不应触发 CH 降级")
+
+        monkeypatch.setattr(p, "_load_option_close_from_ch", _no_ch)
+        rows = p._compute_iv_for_option("10010971.SHO", "20260814", "20260819", SourcePolicy())
+        assert len(rows) == 1
+        assert rows[0][-1] == "miniqmt"
+
+    def test_compute_iv_empty_when_both_sources_empty(self, monkeypatch):
+        p = MiniQmtIngestProvider()
+        monkeypatch.setattr(p, "_get_option_detail_safe", lambda *a, **k: self._detail_stub())
+        monkeypatch.setattr(p, "_download_option_price_df", lambda *a, **k: None)
+        monkeypatch.setattr(p, "_load_option_close_from_ch", lambda *a, **k: (None, ""))
+        rows = p._compute_iv_for_option("10010971.SHO", "20260814", "20260819", SourcePolicy())
+        assert rows == []
