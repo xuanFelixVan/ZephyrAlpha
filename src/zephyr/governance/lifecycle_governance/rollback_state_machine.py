@@ -87,7 +87,7 @@ docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53
 # - id: A2
 #   name_zh: ② 单向更保守梯子评估
 #   name_en: evaluate_rollback one-way ladder
-#   intro: 每 tick 单步：NORMAL→THROTTLED（soft 超限）→SOFT_HALT（hard 超限/持续 60s）→HARD_HALT（daily_loss≥3%/熔断/P0）
+#   intro: 每 tick 单步：NORMAL→THROTTLED（soft 超限）→SOFT_HALT（hard 超限/daily_loss>2.5%/持续 60s）→HARD_HALT（daily_loss≥3%/熔断/P0）
 #   desc: _breach 按 _HYSTERESIS[key].trip×mult 严格大于判定；HARD_HALT→UNWINDING 不自动
 #   inputs: I1, I2
 #   outputs: 新状态（等于 current 或更保守态）
@@ -207,6 +207,7 @@ def evaluate_rollback(metrics: dict, current: RollbackState,
     if current == RollbackState.THROTTLED:
         if (_breach(metrics, "intraday_dd", mult=2.0)          # DD > 2%
                 or _breach(metrics, "reject_rate", mult=5.0)    # reject > 5%
+                or _breach(metrics, "daily_loss", mult=5.0 / 6.0)  # daily_loss > 2.5%（"接近 3%"，AI-R5 补齐 53 号迁移矩阵明文触发）
                 or _persistent(metrics, "reject_rate", 60)):    # 持续 60s
             return RollbackState.SOFT_HALT  # = REDUCING 态（仅减仓不新建）
 

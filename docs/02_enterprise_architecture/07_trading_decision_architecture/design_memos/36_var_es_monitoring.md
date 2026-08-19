@@ -5,7 +5,7 @@ title: VaR/ES 与波动率监控
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.11.1"
+version: "1.11.2"
 date: 2026-08-16
 topic: var_es_monitoring
 scope: 07_trading_decision_architecture
@@ -80,8 +80,10 @@ VaR_param = (z_α · σ - μ) · V · √T
 # 下限 0：(z·σ - μ) 可能为负（高均值低波动）→ VaR 取 0
 
 # 历史模拟法 (Historical Simulation)，经验分位数，无分布假设
-VaR_hist = -quantile(r, 1-c) · V · √T
+VaR_hist = -quantile(r, 1-c, method='lower') · V · √T
 # 取收益序列下侧 (1-c) 经验分位数（负数=损失），VaR = -该分位数 · V（正数），下限 0
+# 分位数口径统一 method='lower'（v1.11.2，AI-R5 审查批）：与 ES 同口径——v1.11.0 F1 裁定只统一了
+# ES 侧，VaR 侧遗留线性插值造成同模块双口径（es_var_ratio 分子分母不同口径、5 级分级对插值虚拟值敏感）
 
 # 保守取 max
 VaR_95 = max(VaR_param, VaR_hist)
@@ -1186,3 +1188,4 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 | 2026-08-15 | 1.10.4 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §3.14 blackswan_active 来源链相邻两处重复合并为一处（定义点 §3.5.2）；全篇扫描无其他可压缩点——VaR 2/4/6%+CVaR 10% 五级、POT 0.90/0.2/0.5/3.0、Basel 交通灯 16/17-20/21、REBUILD 静态 3%/5%/0.7、var_breach ×0.8/×0.9、GREM 四级、盘中 7 触发+冷却 5 分钟+日限 6 次、§6 待裁定/BM 锚点/35号契约/链接逐项零丢失 |
 | 2026-08-16 | 1.11.0 | 双轮审查算法修复批（AI-RFIX-001）六要素勘正——§3.2/§3.5/§3.7/§3.9.1/§3.10/§3.11/§3.15 | ①§3.2 ES 分位数 method='lower' 口径裁定（防线性插值虚拟分位值）+ POT 小样本降级 pot_fallback_historical；②§3.5 ORANGE 仓位上限 0.7→0.5（五级单调性裁定 P1-4）；③§3.7 窗口表勘正（60 日负日占比 50% 常态 exceedances≈3<5 降级而非硬拟合）；④§3.9.1 回测 4 法表；⑤§3.10 REBUILD 静态映射状态标注；⑥§3.11 示例数值勘正；⑦§3.15 VarBreachStateMachine 未落码标注。frontmatter 1.10.4→1.11.0（修订行漏登，2026-08-18 AI-R3 复审补登） |
 | 2026-08-17 | 1.11.1 | RiskOrchestrator 命名对账（AI-GOVB-001 #106）：§3.10 执行者状态标注/组件状态表/「production 口径澄清」三处同步 RWIRE-001 完工现实——编排层已建（落地名 RiskLayerOrchestrator，MOD-L06-001，盘中编排已接线），§3.10 校准动作调用点未接入仍=设计契约 | 仅命名/状态对账，零语义变更；「禁止按可执行语气直读」标注保留 |
+| 2026-08-18 | 1.11.2 | §3.1 历史模拟法 VaR 分位数口径统一 `method='lower'`（AI-R5 审查批，F1 裁定延伸） | v1.11.0 F1 裁定只统一 ES 侧，VaR 侧遗留线性插值致同模块双口径（es_var_ratio 分子分母不同口径、5 级分级对插值虚拟值敏感）；统一后 ES≥VaR 不变量同口径下更严格成立；tail_risk_monitor.compute_var 同步落码 |

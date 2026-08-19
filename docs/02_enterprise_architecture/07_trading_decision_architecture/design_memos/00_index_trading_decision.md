@@ -59,7 +59,7 @@ scope: 07_trading_decision_architecture
 | [33_budget_change_handler.md](33_budget_change_handler.md) | G14 BudgetChangeHandler 三级升级 | active v1.1.0（2026-08-14 AI-BGT-001 行号漂移修正+§7 四项闭环，1b8a774ad5） |
 | [34_regime_meta_allocator.md](34_regime_meta_allocator.md) | G15 RegimeMetaAllocator 参数（框架 active + 代码 production v1.0.0；C1 已通过；参数待首批策略 PnL 校准） | active v2.8.1 |
 | [35_drawdown_protocol_impl.md](35_drawdown_protocol_impl.md) | G16 回撤 Protocol 落地 | active v1.39.0 |
-| [36_var_es_monitoring.md](36_var_es_monitoring.md) | G17 VaR/ES 与波动率监控 | active v1.10.2 |
+| [36_var_es_monitoring.md](36_var_es_monitoring.md) | G17 VaR/ES 与波动率监控 | active v1.11.2 |
 | [37_liquidity_crisis_protocol.md](37_liquidity_crisis_protocol.md) | G18 流动性危机处理 | active v1.2.0（2026-08-17 AI-LVL3-001 LEVEL_3 生产接线完工，检测→逃生指令→Kill Switch 清算全链+降级机阶梯，c37b4b6f merge） |
 | [40_execution_broker.md](40_execution_broker.md) | 执行层下单对接（19项决策+代码已施工；§2.8 盘前检查链+订单层熔断两级） | active v2.10.1 |
 | [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec（含明日预案双层架构+上游四轨裁定） | active v1.7.0 |
@@ -68,7 +68,7 @@ scope: 07_trading_decision_architecture
 | [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | draft v1.0.2 |
 | [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active v1.2.6 |
 | [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.0（2026-08-12 重建） |
-| [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（5 态 FSM 已落码 AI-DGR-001，MOD-GOV-045 production） | active v1.7.8 |
+| [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（5 态 FSM 已落码 AI-DGR-001，MOD-GOV-045 production） | active v1.7.9 |
 | [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因 | active v1.14.0 |
 | [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.2.0（2026-08-17 AI-THD-001 存量 9 模块阈值统读完工） |
 | [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（31条仲裁→3条firm硬上限+任务系统总线+三档节奏） | active v1.1.0 |
@@ -638,12 +638,12 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 26_event_driven_strategy_detail | G10 事件驱动 | ✅ 已定稿 | active v1.8.0 |
 | 27_second_batch_strategies | G11 第二批次 | （待认领） | draft v0.2.0（暂缓讨论，说明已补） |
 | 35_drawdown_protocol_impl | G16 回撤落地 | ✅ 已定稿 | active v1.39.0 |
-| 36_var_es_monitoring | G17 VaR/ES | ✅ 已定稿 | active v1.10.2 |
+| 36_var_es_monitoring | G17 VaR/ES | ✅ 已定稿 | active v1.11.2 |
 | 37_liquidity_crisis_protocol | G18 流动性危机 | ✅ 已定稿 | active v1.2.0（2026-08-17 AI-LVL3-001 LEVEL_3 生产接线完工，检测→逃生指令→Kill Switch 清算全链） |
 | 28_sentiment_cycle_trading | G21 情绪周期 | （待重建） | 骨架 v0.1.0 ⚠️内容丢失（v1.2.0 可从 a3750b90d1 恢复） |
 | 29_factor_strategy_extraction | 潘潘课程因子策略提炼知识库（工程文档，非G主题） | 已落盘 | active v1.0.0（2026-08-14 用户裁定从 _working 迁入，原名 因子与策略提炼.md） |
 | 52_backtest_framework_docking | G23 回测对接 | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
-| 53_simulation_live_path | G24 模拟实盘 | ✅ 已定稿 | active v1.7.8 |
+| 53_simulation_live_path | G24 模拟实盘 | ✅ 已定稿 | active v1.7.9 |
 | 55_monitoring_review | G26 监控复盘 | ✅ 已定稿 | active v1.2.0（2026-08-17 AI-THD-001 阈值统读完工） |
 | 12_regime_phase2_validation | Phase 2 模型质量验证（工程文档，非G主题） | 已落地 | ✅ v0.2.2 |
 | 50_backtest_observability_workplan | 回测可观测性工作计划（工程文档，非G主题） | 已提议 | draft v1.0.2 |
