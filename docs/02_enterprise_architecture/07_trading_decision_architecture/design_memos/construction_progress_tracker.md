@@ -484,9 +484,23 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 167 | 派生收口+bak 残留裁定+机制族 CAND 登记（移交项 8/7/3） | AI-00 移交清单 | ①9 派生脏文件（blueprint/handbook 节点计数随 depgraph 964 模块重建刷新）fb187aaf 收口；②bak_pre_one_question 备份删除（HEAD 16 条目 YAML 校验完好，未跟踪零 git 影响）；③CAND-GATEMECH-001~004 登记（files-modified 聚合语义/双检测器 exit1/golden hash 派生物赛跑/gate 链只读化）387b63e7 落地 | ✅ 已闭环 |
 | 168 | 僵尸心跳 daemon 断根（移交项 4） | AI-00 移交清单 | **根因**：heartbeat_daemon 两处 `registry.get(session_id)`——SessionRegistry 真接口 get_session（Stage 4 公共化改名遗留），AttributeError 被 except 吞掉致存在性+idle 两道自退静默失效；12 僵尸 daemon（父进程 12640 死实证）14~17h 无活动仍刷心跳→registry 恒活跃→每笔 commit 被迫 --allow-non-worktree。测试盲区=mock 万物皆有 .get（mock 打不到真机接口漂移）。**修复**：get→get_session+mock 对齐 6 处+真机回归锚点测试（接口再改名立即红）13eeb06b；13 孤儿 daemon taskkill 清场，下一笔 commit 警告收敛实证 | ✅ 已闭环（13eeb06b；41 passed 两轮全绿） |
 | 169 | test_warn_in_main_workspace 失效期望裁定（移交项 5）+61 存量红基线复核 | AI-00 移交清单 | 裁定=**删测试**：_warn_worktree_isolation/WORKTREE-ISOLATION 源码与 git 全史零命中（超前孤儿测试，4eff7f2769 只交测试未交功能）；同语义由网关 _warn_non_worktree_commit 覆盖；补函数与 gate 链收敛方向相悖。基线复核：非 async 66 红=基线 60 同簇+B2 5 红（已修）+本用例 1 红（本删）——零无名新增 | ✅ 已闭环（4 passed 两轮全绿） |
-| 170 | #ARCH-130 三件套（移交项 1） | AI-00 移交清单 | ①C2 契约快照 25 文件 re-freeze ②DDL 漂移 9 项（先溯源 merge 批再补声明）③ipo_calendar 建表/摘源——**等 Owner 裁定**（涉现网 DB 不自主） | ⏳ 等 Owner 裁定 |
+| 170 | #ARCH-130 三件套（移交项 1） | AI-00 移交清单 | ①C2 契约快照 25 文件 re-freeze ②DDL 漂移 9 项（先溯源 merge 批再补声明）③ipo_calendar 建表/摘源——**等 Owner 裁定**（涉现网 DB 不自主） | ✅ 已闭环（Owner 裁定 4fa2d505 落地，施工见 P1-补23 #173-178；ipo_calendar 挂起待 CH 窗口） |
 | 171 | CAND-GOVTEST-001/002/003 择窗+ruff 人工批残余（移交项 2） | AI-00 移交清单 | test_all_scripts 拆分/ruff format 大爆炸/ALGO_FLOW 2186 补登三候选在册；ruff 残余 BLE001 29/F821 16/B905 16/UP037 121+W293×17（契约生成器模板漂移位，连带修模板）——择窗排期不施工 | ⏳ 择窗（CAND 在册） |
 | 172 | 存量择窗两项（移交项 6） | AI-00 移交清单 | ROOR summary 手写统计 69 vs 实测 73 漂移+翻译注册表 4450/5927 plain_zh 待覆盖——存量择窗 | ⏳ 择窗 |
+
+### P1-补23 · 2026-08-19 #ARCH-130 裁定施工落地（Owner 裁定 4fa2d505，统筹 COORD-8 执行）
+
+> 裁定三件套+配套全落地，schema 健康 9 项漂移清零，C2 契约一致回绿。#ARCH-130 已翻 resolved（d80ead68）。
+
+| # | 项 | 内容 | 状态 |
+|---|---|---|---|
+| 173 | P0-A C2 re-freeze | yaml 基线 0e4f5c40→3094accf 重冻结（43ffee1fd3）。**重大拦截**：generate_contracts.py 再生成输出回退 ruff 六码批修复（I001 分行/UP006 List→list/头注段缺失/created 幂等日期漂移，37 contracts+4 backtest+2 trading 文件实证）——生成器模板未同步修复批，直接提交=回退合法修复；已全量 restore 丢弃保留 HEAD 修复版，--freeze 基于 HEAD 文件重冻结（快照=真实现状 SSoT） | ✅ 已闭环（模板冲突登记 CAND-GOVTEST-002/003 连带+W293 修模板同族） |
+| 174 | P0-B DDL 死列回滚 | pg_dump 备份 8.1MB（.runtime/pg_backups/arch130_prerollback_20260819.sql）→6 表 11 死列精确 DROP（blocker_status 全系+edges/decision_* gate_reason，18e710b798 只落 DB 未回写 DDL 真源）；nodes/nodes_metadata.gate_reason 活列保留实证 | ✅ 已闭环（fc13042533） |
+| 175 | P0-C 触发器补建 | 02_create_pg_schema.sql 增补 rule_ai_perception 表 DDL+readonly 三触发器+现网 CREATE 实证+depgraph_schema._DDL_RULE_AI_PERCEPTION 常量入 verify _DDL_MAP | ✅ 已闭环（fc13042533） |
+| 176 | P0-D 解析器修复 | parse_ddl_columns 分词前剥 -- 行注释——decision_layers '--' 伪列断根（11 列精确解析实证） | ✅ 已闭环（fc13042533） |
+| 177 | P0-E ipo_calendar 建表 | CH 8123 连接拒绝（WinError 10061 实证）——apply_market_tables_ddl.py 已就位，挂起待 CH 窗口 | ⏳ 等 CH 窗口（脚本就位） |
+| 178 | P1-1/P1-2 | test_check_protected_paths_worktree.py 整文件删除（89b3ebed，tests/scripts 收集 211 零 error）；CAND-GATEMECH-005（批次收尾仪式）/006（迁移脚本登记制）/007（测试有效性门禁）登记（5921b0f3a4） | ✅ 已闭环 |
+| 179 | 避让登记 | src/zephyr/data/ 5 文件（tasks.yaml kline_weekly 禁用留痕+policies.yaml+miniqmt_provider/scheduler/source_health_check）=数据域在途会话活跃 WIP（10:22 写入），统筹避让不碰 | ⏳ 数据域会话自收 |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
