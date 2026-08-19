@@ -11,6 +11,14 @@ topic: stock_selection_engine
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+>
+> **实际开发**：L0/L1/L2-C 三层生产实证——L0 数据接入（data/ 采集调度全链）、L1 因子工厂（factor/ 池管理 n_max=64 + 8 态生命周期 + IC 衰减监控 + 治理门禁）、L2-C 打板链 4 引擎（MOD-SIG-023/033/034/035 均 production）；层间契约的 SynthesizedSignal 已建（shared/contracts/synthesized_signal.py 实证），signal_synthesizer.py（MOD-L03-001）存在。
+>
+> **最终成果**：选股引擎架构定稿（active v1.1.21）——三层切分 + 四阶段漏斗 + SelectionResult 统一接口设计 + StrategyBook 对接契约 + BM-SEL-02-J/L 与 BM-SEL-16/17/18 五环节远期/定性登记。
+>
+> **未做事项及原因**：① SelectionResult 统一接口与 3 sleeve 实现未施工——无 SelectionResult 类实证（signal_ashare 仅有局部 StockSelectionResult），pf_core/strategies/ 空壳，与 20 号 sleeve 策略类同属"首批上线主链路"缺口，待 G08/G09/G10 定型；② 漏斗三层级（BM-SEL-16 分级指标过滤/17 初筛/18 精筛评分）模块未落码（grep 实证零命中，§3.6 已裁定为批处理语义的设计态）；③ confidence 算法（待裁定-5）、事件置信度阈值（待裁定-6）、6 维权重 IC 校准（待裁定-8）未施工——登记为 G08/G09/G10 细节讨论时校准；④ 信号工厂九子阶段 + 信号聚合器按 §3.3.1 裁定远期登记不施工（激活条件=信号冲突/口径漂移实例 ≥3 例，未触发）；⑤ LLM alpha 挖掘闭环（八框架）、Cross-Sectional LSTM、BM-SEL-12 Signature 分布特征为远期登记。
+
 # 选股引擎架构
 
 > 本备忘定义多策略并发架构（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) Model A）下选股引擎的分层架构、双引擎融合定位、pipeline 标准接口与 StrategyBook 对接契约。

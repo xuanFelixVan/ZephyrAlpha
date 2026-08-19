@@ -11,6 +11,14 @@ topic: first_batch_strategies
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+>
+> **实际开发**：三策略 alpha 信号链组件全部 production 实证——打板四引擎（signal_ashare/short_term_stock_selector / youzi_relay_emotion_engine / quant_short_term_strength_engine / dual_engine_fusion_decision_engine）、因子工厂（factor/ 合成/评估/治理全链）、事件底座（news_collector + 新闻三源 + dragon_tiger 双表）；三 sleeve 载体 position/core/{strategy_book, firm_risk_aggregator, budget_change_handler}.py 与 pf_alloc/core/regime_meta_allocator.py 均已成产落码（注：§2.7 所述"budget_change_handler 骨架"与"RegimeMetaAllocator design 骨架"两状态已过时——前者经 33 号批次（AI-BGT-001）落成完整实现，后者经 34 号批次（AI-REGIME-001）落成 v1.0.0 + 55 测试套件）。
+>
+> **最终成果**：首批 3 策略（打板/多因子/事件驱动）架构定义定稿（active v1.3.2）——差异化矩阵 + 选股池交集处理原则 + intake/incubation 灰度四阶段判据 + charter §3 对齐裁定。
+>
+> **未做事项及原因**：① 3 个 sleeve 策略类（daban/multifactor/event_driven 组装策略类）未施工——pf_core/strategies/ 实证仅 __init__.py 空壳（仅 DefaultEquityStrategy wrapper），"组件就绪→首批上线"最后一公里未闭环，按 §6 登记待 G08/G09/G10 细节定型后经 G05 标准接口施工；② charter §3 约束二措辞物理修订未做（"按市场状态切换权重"→"按市场状态做风险节流"，§5 待裁定-1，04 域 owner 待认领）；③ convergence_window 校准/容量精确测算/相关性实测为待实盘或归 G07/G08-G10 的依赖项。
+
 # 首批 3 策略定义
 
 > 本备忘定义多策略并发架构（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) Model A）下首批上线的 3 个策略及其特征。

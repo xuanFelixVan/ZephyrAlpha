@@ -11,6 +11,14 @@ topic: sector_rotation_spec
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+>
+> **实际开发**：采集层全部 production 实证——sector_snapshot_collector（582 只 880xxx/881xxx 快照）+ sector_kline_downloader（market_kline_sector_880 schema 实证）+ sector_ranking_engine（5 因子 Top99 推送池）+ sector_analyzer（MOD-SIG-026 六方法 evaluate_strength/judge_continuity/warn_rotation/evaluate_launch_conditions/adapt_market_style/detect_breakdown 落码实证）+ sector_constituent SCD-2 + money_flow 五层净流入。
+>
+> **最终成果**：板块轮动 spec 定稿（active v1.9.7）——11 项讨论要点逐项裁定并公式级补全（RRG DualEma 10/26、q3/q5/q20 加权、5 状态规则映射、三级门槛 v2.1、水温 5 档响应、虹吸 HHI、回踩 A/B/C、龙头识别传导）。
+>
+> **未做事项及原因**：8 项计算层 + 2 项 v1.8.0 补全算法全部未落码（grep 实证零命中）——① RRG 轮动序列（无 rs_momentum/relative_rotation）、② 回踩 A/B/C、③ 调整周期进度（MOD-SIG-040 无）、④ 虹吸态 HHI（detect_siphon_state 无）、⑤ q3 多 TF 动量加权、⑥ 5 状态分类（CONSENSUS_CLIMAX/watch_score 无）、⑦ 三级放行门槛、⑧ 水温响应映射、⑨ 板块涨停比归一化（sector_limit_up_ratio 无）、⑩ aggregate_capital_nature_to_sector；全部为纯函数规则层、无新增数据源需求，按 §5.2 演进路径待 G05/G06 施工批次。lead-lag network / ML 转折点检测 / 板块相关性聚类为第四阶段远期登记。
+
 # 板块轮动 spec
 
 > 本备忘定义板块轮动作为选股输入特征（非独立层）的算法规格、复用边界与上限。

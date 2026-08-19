@@ -10,6 +10,14 @@ date: 2026-08-15
 topic: event_driven_strategy_detail
 scope: 07_trading_decision_architecture
 ---
+> ## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+>
+> **实际开发**：四类事件源数据链路全部 production 实证——新闻三源（eastmoney_news_provider / cls_provider / rss_provider）+ news_collector（MOD-DATA-NEWS-001）+ news_dedup 跨源去重 + dragon_tiger/dragon_tiger_seat 双表（akshare_provider stock_lhb 系）+ corporate_action_processor（MOD-TRADING-004）+ market_event_integrator（EMERGENCY 模式落码）+ intraday_buy_sell_point_analyzer（BM-SEL-05-C）+ market_sentiment_analyzer（BM-SEL-03-A）+ nlp_inference（Qwen2.5-7B）+ ipo_calendar provider（§2.5a 数据源）。
+>
+> **最终成果**：事件驱动策略细节定稿（active v1.9.7）——六类事件分类 + 经验衰减曲线 + PEAD Inversion 极端反应修正 + event_score 公式族（单/双/三因子）+ 进出场触发算法 + IPO 虹吸 + 地缘传导映射 + 龙虎榜 2026 失效校准。
+>
+> **未做事项及原因**：① sentiment_aggregator.py 未落盘（src/zephyr/nlp/ 实证仅 nlp_inference.py，§2.7 已裁定单条推理降级不阻塞 MVP）；② sleeve 内部组件全部未落码（grep 实证零命中）——event_score_single_factor / compute_event_score / event_score_dual_factor / event_score_triple_factor / should_enter_with_confirmation / should_exit / 5 辅助函数（has_contradictory_event/has_volume_confirmation 等）/ event_store/volume_series/volume_ma/trading_days_ago 四薄封装 / detect_anomaly 异动识别器 / compute_ipo_siphon_coefficient / map_geopolitical_event_to_sectors / dragon_tiger_corroboration_modifier / expectation_gap_with_revision_momentum / check_selling_pressure_absorbed；③ 六因子矩阵待施工项（dReport/Jump on PEAD/隔夜趋势/AStockEvent Feed）未落码；④ BM-SEL-19 事件驱动分布筛选漏斗（MOD-SIG-049）未施工——依赖知识图谱 BM-SEL-11（design 态）+ NLP 管道 Phase 7；⑤ Hawkes/Janus-Q 细分类/CNN 可视化/LLM 动态图谱/Data Funnel 双阶段为 §5 暂缓项与远期登记；CAND-AISA-001 待 G28 四问评估。
+
 # 事件驱动策略细节
 > 本备忘定义首批 3 策略之一——事件驱动 sleeve（[20_first_batch_strategies §2.4](20_first_batch_strategies.md) 策略C）的 alpha 信号来源、事件源、事件分类、冲击衰减曲线、事件→选股映射、换手率与多源情绪接入。性质：永久态讨论记录。管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)；路线图定位见 [00_index_trading_decision](00_index_trading_decision.md) G10（L1·Alpha 选股层，P2）。
 ## 1. 背景

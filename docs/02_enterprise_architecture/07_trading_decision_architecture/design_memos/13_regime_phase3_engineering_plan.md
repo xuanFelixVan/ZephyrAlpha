@@ -26,6 +26,14 @@ related_modules:
   - BM-BT-05 (HMM 模型质量验证)
 ---
 
+> ## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+>
+> **实际开发**：P0 两工程全部完工（2026-08-08）——P0-E1 HMM 降态 9→4（BIC Kneedle 拐点=4，walk-forward 46 季度 {4:19,5:25,7:2}）+ P0-E2 两阶段概率校准器（Temperature+Isotonic，confidence_calibrator.py 落码），Phase 2 重验全 PASS（commit 0c5ea28bb1/83c94c4f/e4fd931a：A2 OOS/IS 0.34→1.042，B1 ECE 27.6%→4.2%）；P1 数据层全部完工——E3 NLP 管道 Phase 1-4（news_collector.py / nlp_inference.py / sentiment_sft_trainer.py + scripts/ml 四脚本，SFT Macro-F1=0.7699 达标，实证文件均在）、E4 资金/板块激活（regime_feature_builder.py enable_phase2c 实证）、E5 T3 激活（overlay_features.py t3_* 评分函数 + overlay_signals_builder._STUB_DIMS=set()，64 测试用例）、E6/E7 bad_news_flat/policy 关键词字典 MVP（overlay_features.py:731/765 s2_bad_news_flat_score/s2_policy_score 实证）。
+>
+> **最终成果**：4 态 HMM 检测器 + 两阶段校准器生产态；S2 数据通路（NLP 关键词 MVP + 资金/板块）就绪；本文档保持 draft（§9-9：P1-E9 完成且 B4 S2 翻 true 后升 active）。
+>
+> **未做事项及原因**：① P1-E9 S2 评分算法重设计未施工——14 号 v0.4.5 详设就绪但 grep 实证 s2_breadth_thrust_score / keys_or_gte / s2_valuation_score_fundamental / _capitulation_daily 均无落码，Step 0 勘探门禁未启动，未排期；② NLP Phase 5-8 未施工——RLSP（带护栏实验）、GGUF 回灌 Ollama、sentiment_aggregator 端到端管道 + 离线批量、验收，scripts/ml 仅 4 个 SFT 阶段脚本实证；③ P2-E8 forward_days 参数扫描未施工（P2 级收尾，当前默认 20）。
+
 # Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/T3 数据激活
 
 > **前置**：Phase 2 验证完成（commit 14c8b9f1），A1 PASS / B4 S1 3/3 / A2 FAIL / B1 FAIL。

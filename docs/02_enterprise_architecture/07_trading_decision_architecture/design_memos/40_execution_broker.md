@@ -17,7 +17,7 @@ scope: 07_trading_decision_architecture
 >
 > **最终成果**：执行层生产态——19 项决策定型，§2.8 盘前检查链 + 订单层熔断两级体系落地；#ARCH-EXEC-001 登记的 10 项 P0 gap 全部关闭。
 >
-> **未做事项及原因**：无本科目未做项。
+> **未做事项及原因**：无本科目未做项；本档 §6.1 登记的三项按既定 Phase 暂缓（2026-08-19 复核实证）：①gap 4 拒单分类——`RejectionAction`/`classify_rejection` 已落码（order_manager.py），RETRY_ONCE/ALERT_FREEZE/ALERT_RECONCILE 实际动作待 OrderExecutionSaga 接管，当前仅记录日志并归入 `_blocked_orders`（设计内延期，未来工程-小型）；②gap 10 盘后全量对账（Phase 2，待 PositionReconciler 扩展）；③gap 16 盘后固定价格交易（Phase 1.5 可选通道，MVP 暂不施工）。三项均为文档明示延期的设计内状态，非烂尾。
 
 # 下单对接与撮合（执行层）
 

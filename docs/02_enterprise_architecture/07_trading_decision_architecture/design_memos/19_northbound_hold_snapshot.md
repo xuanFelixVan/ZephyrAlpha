@@ -24,6 +24,8 @@ related_modules:
 > **最终成果**：季度末北向持仓快照可采集落库，替代日频断档的北向持仓数据。
 >
 > **未做事项及原因**：北向日频持仓未做——数据源层面永久断档（港交所停发日频持仓），非施工缺口，本档即该断档的替代方案。
+>
+> **复核补记（AI-NIGHT-001 复核 2026-08-19）**：fetcher 链路与登记实证一致（northbound_hold_fetcher.py 落码 + tasks.yaml northbound_hold_snapshot_refresh 登记 + schemas/categories/market_northbound_hold_snapshot.py + business_data_categories.yaml 品类 + data_asset_registry.yaml 条目 + known_data_gaps.yaml 三失效接口与撞码条目均在）。§6 方法论 MVP 边界（§6.3 个股增减持排名 + §6.5 季度净流入估算，"Δ持股数量 × 当季 VWAP"单公式 pandas 数十行）**未落码**（grep 实证无对应函数/脚本）——属 fetcher 落库后的分析层，外资行为因子未立项故未排期；南向季度快照按 §8/§9 裁定暂不采集。
 
 # 北向资金季度持仓快照 fetcher 施工计划
 

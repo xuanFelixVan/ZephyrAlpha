@@ -12,6 +12,17 @@ scope: 07_trading_decision_architecture
 parent: 10_regime_detector_spec.md
 ---
 
+## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+
+> **实际开发**：M1（#ARCH-OBS-EXP-TRACK-001）于 2026-08-07~09 落地——`zephyr.experiment_tracking` 包 8 文件（config/models/experiment_tracker/fallback_tracker/query/adapters/c1_adapter）+ c1_runner 接入 track_c1_result；M2 经 [51 号](51_panel_experiment_history_mlflow_retirement.md)（2026-08-16，A/B/C 三工作流）落地——Panel「实验历史」Tab 建成 + mlflow 代码全删 + `pip uninstall mlflow 3.15.1` 执行，存储收敛为单一 FallbackBackend JSON（v1.1.0 路线逆转裁定生效）。
+>
+> **最终成果**（2026-08-19 代码实证）：`experiment_tracking` 包在位（`__init__.py` 正式包，无命名冲突）；`c1_runner.py` lazy import `track_c1_result` 接线在位；全 src `import mlflow|_MLflowBackend` grep 零命中；`app_panel.py` tabs_spec 11 项含「实验历史」（`_tab_experiment_history`）；`query.py` `download_artifact`/`download_artifact_text` 在位；`tests/experiment_tracking/test_experiment_history.py` 在位。
+>
+> **未做事项及原因**：
+> - §3 ⑥ 其余五零件接入（regime_detector / regime_feature_builder / vectorized_engine / StrategyRunner / C2C3 建时即接入 + 全链路 lineage）未施工——`adapters/` 目录仅 `c1_adapter.py` 一个适配器（2026-08-19 实证）。这是本计划明示的**核心剩余工作**（预估 1.5 天），非烂尾；裁定=未来工程-小型（逐零件 adapter + 验收"每零件跑一次 list_runs 可查"，单批可闭环）。
+> - §3 ⑤ 历史结果回灌评估未做——M1 的 2 个 smoke run 已按 51 号裁定丢弃重跑（§二.3），`logs/c1_repro/` 历史结果是否回灌 JSON 属"待评估"非承诺项，裁定=未来工程-小型（随 51 号施工时一并评估，当前无阻塞）。
+> - §3 ⑦ 治理登记收尾未竟——`07_d_infra_telemetry.md` 中 experiment_tracking 措辞仍写"MLflow 薄包装"（v1.1.0 已登记不越界改）、51 号 C2 列的 creation_token/blueprint 同步项随 51 号收口，裁定=未来工程-小型（文档级，随下一治理批顺手）。
+
 # 回测可观测性体系工作计划
 
 > 状态: 工作计划（M1 已落地；MLflow 路线已被 51 号逆转为单一 JSON 后端；剩余=其余五零件接入）

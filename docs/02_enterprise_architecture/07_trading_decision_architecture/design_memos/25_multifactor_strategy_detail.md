@@ -12,6 +12,14 @@ topic: multifactor_strategy_detail
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+>
+> **实际开发**：因子工坊 65 production 模块实证——multifactor_synthesis.py（等权/IC 加权/回归三方法+统一入口）/ ic_ir_calc / ic_ir_evaluator / correlation_dedup / layered_backtest / three_level_judgment / decay_monitor（半衰期层）/ factor_attribution / factor_optimization / factor_dag + 双执行器；治理链 factor_pool_manager（n_max=64/active=60/dormant=4）/ lifecycle_state_machine（8 态）/ abs001_gate / grayscale_rollout / six_step_flow；组合优化 portfolio_optimizer + constraint_solver（MOD-PF-002/006）；factor_registry.yaml 111 条目。
+>
+> **最终成果**：多因子策略细节定稿（active v1.13.5）——6 项讨论要点 + §3.7 八项编排算法形式化 + Phase 4.1-4.20 远期候选栈；"已建代码的 why 定型"闭环。
+>
+> **未做事项及原因**：① §3.7 八项编排算法全部未落码（grep 实证零命中）——SynthesisDegradationChain / ConstraintArbitration / DecayActionLifecycle（6 态）/ SimpleFactorAttribution / CrowdingRealTimeMonitor / RebalanceTrigger（含 Inaction Cost）/ MultifactorPITBacktestFramework / HoldingDriftMonitor，文档标"MVP 即做/首批回测前必做"未排期；② Mask-First tradability mask 未施工（~40 行，MVP 即做项）；③ CUSUM 预警层 + "连续 40 日 |IC|<0.02→休眠"自动淘汰层未施工（decay_monitor 现仅半衰期，§3.3 代码现状注记确认）；④ C1-C7 策略级约束链 ↔ MOD-PF-006 代码约束链对齐未施工（CTR-003 RiskLimits 注入，上线前项）；⑤ 6 态↔registry 5 态映射规则未定义（随 ③ 落码时回写 62 号）；⑥ Phase 4.1-4.20 ML 合成/组合/风控栈、BM-SEL-02-E LLM 语义去重、BM-SEL-02-M 因果验证、BM-RC-06-D 三深度增强均为远期登记。
+
 # 多因子策略细节
 
 > **性质**：已定型（active）。由 [00_index_trading_decision](00_index_trading_decision.md) G09 主题组派生，6 项讨论要点已逐项对齐落入 §3 决策。

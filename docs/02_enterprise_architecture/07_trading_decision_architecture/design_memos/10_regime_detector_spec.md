@@ -19,6 +19,8 @@ parent: 30_multi_strategy_concurrency.md
 > **最终成果**：检测器代码生产态；C1 四项全通过（提交 852457e9，最大回撤改善 7.37 个百分点）；Phase 2 四验证器全过（提交 93a25890：A2 样本外/样本内 0.34→1.042，B1 校准误差 27.6%→4.2%）。
 >
 > **未做事项及原因**：S2 算法重设计（P1-E9）未做——三事件 design_match=false 系设计域错配非数据缺口，重设计归 13 号 Phase 3 规划，未排期。
+>
+> **复核补记（AI-NIGHT-001 复核 2026-08-19）**：除 S2 外，代码实证以下设计项亦未落码，补登备查——① §4.7.6/§4.8.5/§4.11.10/§4.12.10 机构级数据维度（IV/COT 拥挤度/信用利差/期权异动/CAPE/巴菲特指标/Margin Debt/Put-Call）无对应数据管道与评分实现（grep 实证 lppl/credit_spread/CAPE 等零命中）；② §4.8.1 LPPL 赶顶检测未实现；③ §6.2 主线识别四阶段评分与 RRG 轮动（§6.6 采纳点）未实现（与 22 号 RRG 项同源）；④ §6.2.3 NetworkX 资金图谱 PageRank 未实现；⑤ §2.5.4 情绪周期灰度概率输出升级未实施（BM-SEL-23-B 仍为 5 阶段硬标签）；⑥ §9 备查升级路径（HSMM/Student-t/Wasserstein/层次 HMM/TVTP/Shannon/Staggered/BOCPD/Feature Saliency/Conformal/CPCV/动态调制矩阵/RARP/Causal-TS/NLP-regime 连接）均按既定裁定维持备查未施工。上述①-④为设计期"参数标定真源"的未施工部分，当前生产实现为 4 态 HMM + 简化 TRANSITION_CONFIG 维度 + RiskSignal 13 参数（含 #8 虹吸实证），Phase 2/C1 验证均基于此形态通过。
 
 # regime 检测器完整 spec
 

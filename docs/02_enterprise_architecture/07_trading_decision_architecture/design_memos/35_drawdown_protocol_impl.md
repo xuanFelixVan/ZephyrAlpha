@@ -17,7 +17,7 @@ scope: 07_trading_decision_architecture
 >
 > **最终成果**：红队双路实证（非 mock）——回撤 25% 触发 EMERGENCY、真实置位、MARKET SELL 清算全链；熔断重启存活；并发双触发只发一轮单；事件重放不重复；重建期禁单 Fail-Closed。风控层从"纸面熔断"转生产接线态。
 >
-> **未做事项及原因**：Redis 后端 state_store 未做——当前 JSON 文件后端已满足单机需求，登记后续批按同接口替换。
+> **未做事项及原因**：~~Redis 后端 state_store 未做——当前 JSON 文件后端已满足单机需求，登记后续批按同接口替换。~~ **✅ 已闭环（2026-08-17 AI-REDIS-001，merge e9d49313；2026-08-19 复核补正）**——RedisStateStore/RedisDedupSet 双后端 + 双工厂（`state_store_redis.py` 独立拆分防循环导入），与 JsonStateStore 同接口，65×2 测试全绿；db15 隔离登记已闭环。其余未做项（DrawdownStateMachine 持久化状态机/L2·L3 四层兜底/盘前-盘后持久化编排/回撤归因自动化）按本档 §6 优先级登记（P0-P4），属设计内延期非烂尾。
 
 # 回撤 Protocol 落地 spec
 

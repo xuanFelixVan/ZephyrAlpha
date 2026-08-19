@@ -11,6 +11,14 @@ topic: strategy_correlation_validation
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+>
+> **实际开发**：门禁/工具侧 production 实证——strategy_correlation_gate.py（MOD-PA-004，运营级 0.85/0.90 REJECT/HARD_REJECT 门禁）+ correlation_analyzer.py（MOD-L02-005，Spearman 因子级 + Pearson 滚动窗口）+ deflated_sharpe_calculator.py（C4 计算器）+ backtest/core/walk_forward.py。
+>
+> **最终成果**：G07 验证方法定稿（active v1.7.2）——双相关系数 + 情绪周期 4+1 分层 + multivariate stationary block-bootstrap + Neff 特征值分解 + 过拟合检测矩阵（DSR/PBO/PDR/PSI/DFR + deflated-alpha 四家）+ 正交性验证 + CUSUM/PSI 漂移监控的七部分报告模板与阈值体系（战略级 0.6 vs 运营级 0.85/0.90 分层）。
+>
+> **未做事项及原因**：计算生产侧全部未落码（grep 实证零命中）——① 数据预处理 pipeline（对数收益率+ADF+异常值+交易日对齐）与策略级相关矩阵计算；② multivariate stationary block-bootstrap 引擎（Patton-Politis-White 自动 block size，无 block_bootstrap/stationary_bootstrap 实现）；③ 情绪周期分层标签器（消费 BM-SEL-23-B）；④ Neff 特征值分解引擎（Ledoit-Wolf 前置）；⑤ 过拟合检测引擎（deflated-alpha v0.3.0 vendor 集成 + PDR/PSI/DFR）；⑥ §5.4 CUSUM/PSI 相关性漂移监控。属"门禁已就位等输入、计算模块尚缺"状态——待首批策略回测收益率序列就绪后随 G07 施工批次建设；DCC-GARCH（第二阶段）与 §5.5 半衰期/双曲衰减建模为远期登记。
+
 # 策略间相关性验证
 
 > 本备忘定义多策略上线前策略间相关性验证的方法、阈值、数据区间与报告模板（[30_multi_strategy_concurrency §6.2](30_multi_strategy_concurrency.md) 施工前必做项）。

@@ -26,6 +26,14 @@ related_issues:
   - '#ARCH-REGIME-S2-ALGORITHM-001'
 ---
 
+> ## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+>
+> **实际开发**：P0 两层处置已落地（commit 93a25890）——① 两个治标 bug 修复：`s2_capitulation_score` vol_z 阈值 z>2→z>1、`s2_valuation_score` rolling(250).max() 加 min_periods=20；② `design_match` 设计域定级字段落码（b4_transition_accuracy.py:99/212 实证），3 个 S2 事件标 `design_match: false`（historical_events.yaml:82/91/100 实证，data_ready 维持 true），B4 回 PASS(3/3)，Phase 2 闭环；`#ARCH-REGIME-S2-ALGORITHM-001` 缺陷登记完成。诊断脚本 dump_s2_scores.py 沉淀可复用。
+>
+> **最终成果**：S2 算法时点错配完整诊断 + 架构裁定（路 3：design_match 排除 + P0 治标 + P1 治本，守住验证独立性）+ P1-E9 治本详设（§4 五子项 + Step 0 勘探门禁 + §4.5 防过拟合方法论栈）定稿。
+>
+> **未做事项及原因**：P1-E9 五子项全部未施工（grep 实证零命中）——E9a capitulation 衰减加权和 + 多过滤器（_capitulation_daily 不存在）、E9b valuation 路 A CAPE/PB 分位（s2_valuation_score_fundamental 不存在）+ 路 B 阈值放宽、E9c spring 复用 wyckoff_engine + 深度分级 + velocity、E9d breadth_thrust V 反转通路（s2_breadth_thrust_score / keys_or_gte 析取字段均不存在）、E9e three_yang 6 维分级（现仅 pct_change 单参数旧版）；属 P1 工程未排期，Step 0 勘探（daily_valuation 字段/wyckoff Spring 接口/涨跌家数/期权 put-call）未启动。演进方向 6 项（AH-HMM/LVI/滞回触发器/ProRealCode FSM/EVR/flush）为远期登记。
+
 # S2 评分算法时点错配诊断与治本方案——capitulation 过程化 + valuation 基本面化 + V 反转通路
 
 > **前置**：Phase 2 验证 B4 曾因 `data_ready=False`（S2 不计分母）以 PASS(3/3) 闭环

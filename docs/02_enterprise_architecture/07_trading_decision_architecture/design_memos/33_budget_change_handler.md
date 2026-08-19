@@ -18,6 +18,8 @@ scope: 07_trading_decision_architecture
 > **最终成果**：33 测试两轮全绿；三级升级（Tier 1 封锁新仓/Tier 2 rebalance_to_budget/Tier 3 按比例强裁）与防抖双层以 MOD-POS-022 生产态落地。
 >
 > **未做事项及原因**：无本科目未做项；同期发现的 37 份蓝图 §11 代码索引漂移属全域存量治理，由统筹统一跑同步脚本（遗留 #35），与本档内容无关。
+>
+> **复核注记（AI-NIGHT-001，2026-08-19）**：本档 §6/§7 登记暂缓项的代码实证状态——①TierState 跨日持久化（DB）未落码（重评条件=多进程/跨日常态，未达成，维持暂缓）；②E-POS-40/41 事件发射未落码（无消费方，维持暂缓）；③BudgetChanged 事件链接线实证仍未接——`handle_budget_change` 全 src 无生产调用方（与本档新发现 3 一致，接线随 G15→G14 集成装配，未来工程-小型）；④`on_firm_violation()` 入口未建（维持单一超时路径裁定，待决策）；⑤convergence_window 校准等首批策略实盘换手率数据。均为设计内延期非烂尾。
 
 # BudgetChangeHandler 三级升级
 

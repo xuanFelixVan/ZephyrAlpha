@@ -12,9 +12,21 @@ scope: 07_trading_decision_architecture
 parent: 50_backtest_observability_workplan.md
 ---
 
+## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+
+> **实际开发**：2026-08-16 三工作流全部落地——A：`_MLflowBackend` 类/query.py 5 个 mlflow 函数/config.py 两字段删除，`pip uninstall mlflow 3.15.1` 执行；B：`experiment_history.py` 新建（P0-1 归一化/P0-2 对齐/P1-5 polarity/P1-6 后缀剥离/P1-7 分级降级/P2-8 lru_cache+前50），`app_panel.py` 注册第 11 Tab；C：2 个 fallback run 重生验证 + 治理登记（translation 5 条目/capability 2 token/ARCH 订正/blueprint v0.2.0）。同日浏览器实测补修 2 个 widget 层 bug（MultiSelect unhashable / Tabulator CDN 离线失败→plotly go.Table，v1.2.14）。顺手修复 2 个预存 bug（RunSummary.passed 必填位 TypeError 静默返空 / `_get_run_fallback` bytes artifact 信息丢失）。
+>
+> **最终成果**（2026-08-19 代码实证）：`src/zephyr/frontend/dashboard/components/experiment_history.py` 在位（fetch/render/dataclass 契约）；`app_panel.py` tabs_spec 11 项含「实验历史」+ `_tab_experiment_history` 方法；`query.py` `download_artifact`/`download_artifact_text` 在位；全 src `import mlflow|_MLflowBackend` grep 零命中；`tests/experiment_tracking/test_experiment_history.py` 在位；Playwright+Chrome 终验单选双曲线/多选对比表/降级 Alert 全通过（memo v1.2.14 记录）。
+>
+> **未做事项及原因**：
+> - PNG 退役 pending——`_render_nav_png` 仍在 `c1_adapter.py`（2026-08-19 实证 L132/L190）；§七.P2-10 退役条件 3「用户确认 Panel 看图够用」未达成，待 Owner 确认后删除（含 `test_with_portfolios_writes_png`），裁定=未来工程-小型（函数级删除，单批可闭环）。
+> - 前端 C4 Container Diagram 未登记（§三.C2 登记项）——「实验历史」作为第 11 个 Container 随前端图一并补，治理面文档项，裁定=未来工程-小型（文档级，随前端 C4 批次）。
+> - §八 后续增强（DTW 距离+Returns 相关性 / PBO-DSR 九门禁过拟合检测 / curve_smoothness / DuckDB 查询层 run>100 / Panel Live Server 或社区 HoloViz MCP 接入）——文档已逐项裁定"登记不做/MVP 不做"并给触发条件，非施工缺口，按既定条件评估。
+> - §九 BM-RES-02-B 可复现性管理契约（repro_manifest.json 五字段落盘）与 §九 BM-RES-02-C 实验异常检测（PSI+CUSUM+阈值注册表）为 2026-08-12 补登的设计裁定，未落码——裁定=未来工程-小型（契约级，随 C1 verdict 体系升级或实验量达标后启用，重评条件=日均 run≥50）。
+
 # Panel「实验历史」Tab + MLflow 退役施工计划
 
-> 状态: 工作计划（**待施工**，M2 实施计划；方向已由用户裁定）
+> 状态: 工作计划（**已施工**，M2 三工作流 2026-08-16 全部落地；剩余=PNG 退役 pending + §八 后续增强登记项）
 > 日期: 2026-08-08
 > 作者: AI 提议，用户已裁定方向（Panel 集成 + MLflow 退役）
 > 关联: #ARCH-OBS-EXP-TRACK-001（实验跟踪体系）→ 50_backtest_observability_workplan（上游工作计划）→ 本施工计划

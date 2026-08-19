@@ -11,6 +11,14 @@ topic: data_feature_layer_spec
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+>
+> **实际开发**：六要点中五项生产实证——① schemas/categories/ 103 个 DDL-as-Code schema + business_data_categories.yaml 三库注册 + apply_*_ddl.py 建表链；② miniQMT tick 双轨（轨 A miniqmt_provider + tick_subscriber + WAL，轨 B market_data VendorRegistry/FailoverManager）；③ PIT 双层（backtest/core/pit_manager.py 的 as_of_join/apply_embargo/pit_consistency_test/check_survivorship_bias 四函数实证 + data/pit_query.py）；⑤ 因子工程总纲（factor/ 治理流水线：factor_pool_manager/abs001_gate/ic_decay/decay_monitor + technical_indicators 7 文件）；⑥ 质量门控（gov_enforcement/rule_enforcement/quality_gate.py apply_quality_gate 实证 + cross_source_validator + known_data_gaps.yaml）。
+>
+> **最终成果**：数据与特征层规范 active v1.0.3 定稿（完整版丢失后按已施工代码重建）；"数据进来后怎么用"的统一规范落成。
+>
+> **未做事项及原因**：① 要点④特征仓库存储层未施工——轻量三层选型已定，但 schemas/categories/ 实证无特征值宽表，data_asset_registry 登记待 62 号 P1；② DQ_SPECS 八维 check_func 未绑定（data_governance/data_quality.py 注册表仅字符串、无 check_completeness 等实现实证，§6 待裁定项）；③ Embargo BDay→真交易日历未切换——依赖 calendar_event 表回填，而 calendar_event_refresh 任务未登记（tasks.yaml 实证，17 号 §6.6-2）；④ backtest 前置检查器绑定（BM-BT-02-D）未施工（暂缓：重评条件=首批回测因数据质量返工 ≥2 次）；⑤ 轨 A/轨 B 合流未施工（轨 B 无 miniQMT connector——维持双轨至多厂商需求真实出现的既定裁定）。
+
 # 数据与特征层规范
 
 > **性质**：spec / 工程规范（G01，地基层 1x 段位）。与 [64_data_source_download_spec](64_data_source_download_spec.md) 边界：**64 号管"数据怎么进来"（Provider/调度/落库/韧性），本文管"数据进来后怎么用"（schema 规范/PIT/特征/因子/质量门控）**。

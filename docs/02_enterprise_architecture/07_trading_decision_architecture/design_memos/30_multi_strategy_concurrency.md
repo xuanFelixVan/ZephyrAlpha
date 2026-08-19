@@ -11,6 +11,20 @@ topic: multi_strategy_concurrency
 scope: 07_trading_decision_architecture
 ---
 
+## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+
+> **实际开发**：Model A 四模块全部落码——StrategyBook（MOD-POS-020）/FirmRiskAggregator（MOD-POS-021）/BudgetChangeHandler（MOD-POS-022）/RegimeMetaAllocator（MOD-PA-007）。施工分四批：第一批 AI-POS-001（31 号仓位算法+§2.8 漂移再平衡）、第二批 AI-FRA-001（32 号 P0 字段名漂移修复）、第三批 AI-BGT-001（33 号三级升级）、第 4 批 AI-REGIME-001（34 号测试套件重建 55 用例+蓝图对齐）。灾后重建三项（4 测试文件丢失/capability 补登/depgraph maturity 滞后）已分别由 AI-POS/FRA/BGT/REGIME/XCUT-002/REGF-001 批次闭环，depgraph 四节点经 #ARCH-70 通道转 stable+production。
+>
+> **最终成果**（2026-08-19 代码实证）：`strategy_book.py`（688 行，`VolatilityInfo`+`_is_vol_anomaly` 4 检查链+`SentimentStageSignal`+`rebalance_to_budget`+`size_positions` 三模式，MATURITY=production）；`firm_risk_aggregator.py`（673 行，`pre_kelly_aggregate`/`post_kelly_clip` 两段+`LIQUIDITY_SEVERE_PCT=0.20`/`LIQUIDITY_MODERATE_PCT=0.10` ADV 裁剪，production）；`budget_change_handler.py`（548 行，`TierLevel`+防抖双层+`strategy_type`，production）；`regime_meta_allocator.py`（586 行，`allocate()` 5 步+CRISIS floor 0.09→0.05+water-filling 投影，production）。四测试套件重建（25/60/33/55 用例）均在位。
+>
+> **未做事项及原因**：
+> - `cold_start_ratio` 参数未落码（§6.7 施工指导要求 RegimeMetaAllocator.allocate() 增加该参数+StrategyBook 冷启动状态机）——全 src 零命中；首批策略未上线，冷启动场景尚不存在，属"等触发"设计内延期（未来工程-小型，随首批策略上线装配）。
+> - score→weight 显式转换函数未形式化（§2.2 契约③）——按文档裁定"随 `select_stocks` 抽象接口留给策略子类，待首批策略施工时形式化"，属设计内延期（未来工程-小型）。
+> - §6.2 策略间相关性验证（correlation drop rule）未施工——承载文档为 [23 号](23_strategy_correlation_validation.md)，依赖首批策略回测/实盘 PnL，属"等数据"（未来工程-小型）。
+> - §6.9 并存旧体系退役裁定（MOD-PA-003/PA-002/PA-004/pf_core 5 示例策略）——文档明示"需人裁定，本备忘不擅自定"，等 Owner 裁决。
+> - Bayesian Kelly/Conformal Kelly/Water-Filling/no-trade 半带/MPC/Relaxed Risk Parity——文档已裁 Phase 2/3 远期候选并给重评条件，非施工缺口。
+> - ~~§2.4 施工状态注记"481 行"漂移~~ ✅ 本次复核补正（遗留 #36 实证项）：实测 548 行，已就地更正。
+
 # 多策略并发架构
 
 > 本备忘记录多策略并发执行架构的选型推理与上限定义。
@@ -214,7 +228,7 @@ scope: 07_trading_decision_architecture
 - 每级是独立事件，可 log 可复盘
 - 三级升级而非直接强砍：尊重策略自主权（决定砍哪个）+ 避免随机时刻强制卖出的高成本
 
-> **施工状态（2026-08-10 核对源码）**：✅ `budget_change_handler.py`（MOD-POS-022）**已施工 production**——`TierLevel` 枚举 + `FreezeNewPositions`/`RebalanceRequest`/`ForcedTrim` 三指令 dataclass + `TierState` 状态机 + `handle_budget_change`/`check_convergence` 及三级指令生成方法全部实现（481 行，0 处 NotImplementedError）。`convergence_windows` 默认值已按 [20 §6.4](20_first_batch_strategies.md) 预置（打板 2 天 / 多因子 4 天 / 事件驱动 3 天）。**为何三级而非直接强砍**：直接强砍=随机时刻卖出高成本+剥夺策略归因；三级让策略在窗口内自选砍哪个（保留归因），超时 firm 层 dumb-but-safe 兜底（保生存）。依赖 StrategyBook 的 `rebalance_to_budget` 接口（已 production）。⚠️ **33 号骨架化（2026-08-12 核对）**：33 号在 2026-08-11 git 灾难中内容丢失回退至骨架 v0.1.0，G14 设计真源待重建；当前三级升级接口契约以 `budget_change_handler.py` 头部 docstring（INVARIANTS/TierLevel/收敛检测三条件）为临时真源，重建登记 §6.8。
+> **施工状态（2026-08-10 核对源码）**：✅ `budget_change_handler.py`（MOD-POS-022）**已施工 production**——`TierLevel` 枚举 + `FreezeNewPositions`/`RebalanceRequest`/`ForcedTrim` 三指令 dataclass + `TierState` 状态机 + `handle_budget_change`/`check_convergence` 及三级指令生成方法全部实现（548 行，0 处 NotImplementedError；2026-08-19 复核实测，原注"481 行"为 2026-08-10 旧值）。`convergence_windows` 默认值已按 [20 §6.4](20_first_batch_strategies.md) 预置（打板 2 天 / 多因子 4 天 / 事件驱动 3 天）。**为何三级而非直接强砍**：直接强砍=随机时刻卖出高成本+剥夺策略归因；三级让策略在窗口内自选砍哪个（保留归因），超时 firm 层 dumb-but-safe 兜底（保生存）。依赖 StrategyBook 的 `rebalance_to_budget` 接口（已 production）。⚠️ **33 号骨架化（2026-08-12 核对）**：33 号在 2026-08-11 git 灾难中内容丢失回退至骨架 v0.1.0，G14 设计真源待重建；当前三级升级接口契约以 `budget_change_handler.py` 头部 docstring（INVARIANTS/TierLevel/收敛检测三条件）为临时真源，重建登记 §6.8。
 >
 > **Tier 2→Tier 3 收敛检测算法（2026-08-10 补充）**：`check_convergence()` 须定义"策略是否在窗口内收敛"的判定标准。算法：
 >

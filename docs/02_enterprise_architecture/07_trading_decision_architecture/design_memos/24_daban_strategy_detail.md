@@ -11,6 +11,14 @@ topic: daban_strategy_detail
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（AI-NIGHT-001 复核 2026-08-19）
+>
+> **实际开发**：打板信号链四引擎 + 支撑设施全部 production 实证——short_term_stock_selector（7 维评分卡）/ youzi_relay_emotion_engine（6 因子+情绪周期 4+1）/ quant_short_term_strength_engine（6 维 A~E 评级）/ dual_engine_fusion_decision_engine（60/40 基准+自适应 5 档+6 类决策），均有测试；支撑设施 cash_manager（T+1 结算）/ position_sizing_engine（C12）/ drawdown_controller + kill_switch 系 / cancel_rate_guard + price_cage（2026 程序化新规，40 号 v2.6.0 已闭合）/ ex_core 执行层全 production。注：§3.6 所述"budget_change_handler.py 骨架待填充"已过时——MOD-POS-022 经 33 号批次（AI-BGT-001）落成完整实现（TierLevel/FreezeNewPositions/RebalanceRequest/ForcedTrim/BudgetChangeHandler 实证）。
+>
+> **最终成果**：打板策略细节定稿（active v1.10.6）——8 项讨论要点 + §3.13/§3.14 十二项施工算法形式化 + 8 具名函数设计，覆盖信号→定位→入场→封板→出场→风控→容量全流程。
+>
+> **未做事项及原因**：12 项形式化算法 + 8 具名函数全部未落码（grep 实证零命中）——§3.13 七项（NextDayExitDecision 含 classify_position_status / DabanInstantCircuitBreaker / classify_decision_v192 第 7 类 REFLUSH_DIVE / DabanExecutionAlgorithm / get_dragon_tiger_pit PIT 断言 / SignalDecayMonitor / reflush_next_day_exit_decision）+ §3.14 五项（pre_validate_daban_signal / HoldingPeriodMicrostructureMonitor / DabanPITBacktestFramework / DabanTimingDecision / DynamicCapacityCalculator）+ 8 具名函数（classify_echelon_health / score_consecutive_height_with_death_pool / score_auction_3d / detect_auction_paper_tiger / score_seal_structure / forecast_next_day_premium / classify_reflush_board / detect_quant_seat_warning）；按 §6 登记排期——#1/#2/#5/#8/#9 首批实盘前必做、#10 首批回测前必做、#6 实盘后即需、#3/#7 Phase 5、#4/#11/#12 Phase 3；两层分类法统一裁定（§6）与 C9 换手率分层校准待首批回测。Phase 5 ML 栈（CatBoost 破板预测/Siamese LOB/QFCQT/Hawkes/速度签名/Du 混合模型）为远期登记。
+
 # 打板策略细节
 
 > **性质**：已定型（active）。由 [00_index_trading_decision](00_index_trading_decision.md) G08 主题组派生，8 项讨论要点已逐项对齐落入 §3 决策。

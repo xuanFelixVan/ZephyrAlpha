@@ -18,8 +18,9 @@ scope: 07_trading_decision_architecture
 > **最终成果**：VaR_95/ES_95 计算、入场基准、触发减仓动作与 30 日波动率调整体系按本档契约落地，测试全绿。
 >
 > **未做事项及原因**：
-> - FHS/QbSD/Vol-Targeting 三增强未做——裁定远期项，本期不落码。
-> - 2026-08-16 双轮审查发现 F1 ES 插值口径、F2+F4 NaN/Inf 过滤等算法缺陷——已派单算法修复批 AI-RFIX-001，在途未合并，属正常迭代而非烂尾。
+> - ~~FHS/QbSD/Vol-Targeting 三增强未做——裁定远期项，本期不落码。~~ **部分已闭环（2026-08-19 复核补正）**：FHS 引擎已施工（2026-08-18 AI-FHS-001，`fhs_engine.py` MOD-RK-26，#ARCH-121，CAND-AUTONOMYCORE-002 转正 MVP）——引擎就位，编排层接线（三触发+冷却期）仍属远期（tracker #147）；QbSD/Vol-Targeting 维持远期裁定（§3.16/§6）。
+> - ~~2026-08-16 双轮审查发现 F1 ES 插值口径、F2+F4 NaN/Inf 过滤等算法缺陷——已派单算法修复批 AI-RFIX-001，在途未合并。~~ **✅ 已闭环（2026-08-17 merge f8a14cf7；2026-08-19 复核补正）**：ES/VaR 分位数 `method='lower'` 统一（v1.11.0 ES 侧 + v1.11.2 VaR 侧）、NaN/Inf Fail-Closed 过滤（`nan_dropped` 计数+超阈值 raise）、POT 小样本降级（`pot_fallback_historical`）、5 级仓位上限单调性修正（ORANGE 0.7→0.5）全部落码实证。
+> - §3.11 daily_auditor 集成包装层（`run_var_backtest` + `log_entry_var`/`log_baseline`/`log_recalibration`）未落码——2026-08-19 复核新发现文档漂移（原标"✅ 已施工"不实，已就地勘正）；回测 4 法本体已在 `var_backtester.py`，裁定=未来工程-小型（包装层+3 日志方法，单批可闭环）。
 
 # VaR/ES 与波动率监控
 
@@ -424,9 +425,9 @@ else:
 
 ### §3.11 回测验证端到端施工流程（daily_auditor 集成）
 
-✅ 已施工（daily_auditor，2 轮 27 测试全绿）：`src/zephyr/risk/core/daily_auditor.py` v0.2.0（production, MOD-RK-20）。接口级摘要：`run_var_backtest(observations)` → `VarBacktestReport(report, action)`；`log_entry_var / log_baseline / log_recalibration` 三审计方法。
+> **⚠️ 施工状态（2026-08-19 AI-NIGHT-001 复核补正）**：本节 `run_var_backtest`/`log_entry_var`/`log_baseline`/`log_recalibration` 四方法**未落码**——`daily_auditor.py` 实测 v0.1.0（production，方法集=reconcile_pnl/detect_attribution_bias/run_compliance_check/run_daily_checklist/audit/generate_risk_metrics_report），全 src+tests+git 历史 grep 均无 `run_var_backtest`（docs-only 声明，原"✅ 已施工 v0.2.0"标注不实）。**已落码部分**：回测 4 法本体在 `var_backtester.py`（`full_report`，production/evolving）。以下内容为设计契约（集成包装层待施工，裁定=未来工程-小型：var_backtester 输出 → daily_auditor 包装 + 3 审计日志方法，单批可闭环）。
 
-**综合定级**（`DailyAuditor.run_var_backtest()`，对齐 §3.10 矩阵，v1.4.0 一致性修复后含 Christoffersen reject）：
+**综合定级**（设计契约：`DailyAuditor.run_var_backtest()`，对齐 §3.10 矩阵，v1.4.0 一致性修复后含 Christoffersen reject）：
 - `basel_zone == "red"` 或 `overall_reject` 或 `ebt_alert == "black"` → action = REBUILD
 - `basel_zone == "yellow"` 或 `kupiec_pof.reject` 或 `christoffersen.reject` 或 `ebt_alert ∈ (yellow, red)` → action = RECALIBRATE
 - 否则 → action = PASS
@@ -445,7 +446,7 @@ else:
 | var_calculator.py | ✅ production v0.1.0 | 参数法 + 历史模拟 + conservative_max（v1.11.0 +非有限值 Fail-Closed：nan_dropped 计数 + 超阈值 raise） |
 | tail_risk_monitor.py | ✅ production v0.1.0 | ES（method='lower' 口径）+ POT GPD（小样本降级 pot_fallback_historical）+ 跳跃检测 + FRTB |
 | var_backtester.py | ✅ evolving v0.1.0 | MVP 4 法 + Basel traffic light |
-| daily_auditor.py | ✅ production v0.2.0 | run_var_backtest + 3 审计日志方法 |
+| daily_auditor.py | ✅ production v0.1.0（2026-08-19 复核勘正：原标 v0.2.0 + "run_var_backtest+3 审计日志方法"不实，实测无此四方法） | 日终 PnL 对账/归因偏差/合规检查/5 项清单/audit；§3.11 集成包装层未落码 |
 | drawdown_controller.py | ✅ production v0.1.0 | 5 级（v1.11.0 仓位上限单调性修正：ORANGE 0.7→0.5）+ 7 黑天鹅 + BlackSwanSignal API |
 | RiskOrchestrator（落地名 `RiskLayerOrchestrator`，MOD-L06-001） | ✅ 已建（AI-RWIRE-001，#ARCH-100） | 盘中风控编排（evaluate_intraday/Kill Switch/对账冻结）已接线；§3.10/§3.15/§3.17 动作表校准执行者语义仍=设计契约，未接入编排层 |
 | backtest_store | ⚠️ 待施工 | 回测结果持久化层 |
