@@ -6734,3 +6734,94 @@ entries:
   source: '循环审计 R1 杠杆#8（2026-08-19 AI-00 登记）'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+# --- CAND-GATEMECH-001: 门禁"内容绿但 files-modified 标 Failed"聚合语义修订 ---
+- id: CAND-GATEMECH-001
+  name: pre-commit 门禁聚合语义修订（files-modified 与内容判定解耦）
+  aliases:
+  - files-modified 伪报治本
+  - 门禁聚合语义修订
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 门禁执行框架
+  problem: >-
+    循环审计 R1~R3 实证：手动全量跑 pre-commit 时，门禁内容全绿（0 findings/PASSED）
+    却因"files were modified by this hook"被聚合层标 Failed——受害者轮转
+    （merge-marker/DOC-NODE-ID/TRIPLE-ALIGN/shell-dangerous/FRONTMATTER/VOCAB 等），
+    结构性源头=reconciler 波次运行期写 tracked 文件撞上复跑采样（§6.5#6）。
+    Failed 标签与内容判定混淆致审计轮次噪音，真实回归易被淹没。
+  proposal: >-
+    聚合层二分：内容判定（findings/exit code）与 files-modified（hook 副作用）分列呈现，
+    全量复审以内容判定为准；files-modified 降级为干扰标注而非 Failed。
+    实施点=pre-commit 输出聚合器（ai00_precommit 复跑链）+报告模板。
+  status: candidate
+  priority: P2
+  source: '循环审计 R3 终轮移交清单 4①（2026-08-19 AI-00 建议登记，统筹承接）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+# --- CAND-GATEMECH-002: 危险命令双检测器 0-findings 却 exit 1 聚合缺陷 ---
+- id: CAND-GATEMECH-002
+  name: 危险命令双检测器（git/shell-dangerous）0-findings 聚合 exit 1 缺陷治本
+  aliases:
+  - git-dangerous exit 1 伪报
+  - 双检测器聚合缺陷
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 门禁执行框架
+  problem: >-
+    R1~R3 连续三轮实证：detect_git_dangerous（0 findings×15 批）/detect_shell_dangerous
+    （0 findings×12 批）内容全绿却聚合 exit 1 标 Failed。分批执行器对"每批 0 findings"
+    的聚合逻辑缺陷（疑任一批次非零 exit 或批计数误传即标红）。
+    R1 杠杆#5 已治本上下文豁免 105+185 存量伪报，残余聚合层缺陷未修。
+  proposal: >-
+    复核分批聚合器退出码逻辑：全批 0 findings 必须 exit 0；
+    补聚合层单测（0-findings 多批/单批、混合 findings 批三态）。
+  status: candidate
+  priority: P2
+  source: '循环审计 R3 终轮移交清单 4②（2026-08-19 AI-00 建议登记，统筹承接）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+# --- CAND-GATEMECH-003: 派生物入 golden hash 锚定清单致 INTEGRITY 赛跑 ---
+- id: CAND-GATEMECH-003
+  name: GATE-INTEGRITY golden hash 锚定清单剔除可再生派生物（script_manifest 赛跑断根）
+  aliases:
+  - INTEGRITY 赛跑断根
+  - golden hash 派生物摘除
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 完整性校验
+  problem: >-
+    R3 终轮实证：script_manifest.yaml 派生再生（hash 1cf189a8→07023da9）撞上复跑采样
+    瞬间报 TAMPERED——派生物在 golden hash 锚定清单内，每次 reconciler 再生窗口期
+    INTEGRITY 必红（赛跑），需 reconciler 自愈波次重注册才回绿。结构性缺陷非偶发。
+  proposal: >-
+    两路裁定：①摘除锚定——可再生派生物（script_manifest.yaml 等）移出 golden hash
+    清单，完整性保护聚焦手写规则文件；②再生+注册原子化——派生器与 validate_rules_
+    integrity.py --register 同事务执行，消除窗口期。建议①优先（派生物本不该锚定，
+    与"派生产物禁入 git"同哲学）。
+  status: candidate
+  priority: P2
+  source: '循环审计 R3 终轮移交清单 4③（2026-08-19 AI-00 建议登记，统筹承接）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+# --- CAND-GATEMECH-004: gates 只读化或派生写迁出 gate 链 ---
+- id: CAND-GATEMECH-004
+  name: pre-commit gate 链只读化（或派生写迁出 gate 运行期）
+  aliases:
+  - gate 链只读化
+  - 派生写迁出 gate 链
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 门禁执行框架
+  problem: >-
+    §6.5#6 结构性源头：gate/reconciler 运行期写 tracked 文件（hook 运行期 tracked
+    写入），既触发 files-modified 伪报族（CAND-GATEMECH-001 受害面），又与 INTEGRITY
+    赛跑（CAND-GATEMECH-003）同根。T4-2 drift watchdog 已能捕获但仅告警不阻断。
+  proposal: >-
+    两路裁定：①gate 只读化——gate 链执行期禁写 tracked 区（违反即红，现有 watchdog
+    告警升硬）；②派生写统一迁 post-commit 波次（gate 链内零写入）。
+    涉全部门禁执行路径，需影响面评估后专项施工。
+  status: candidate
+  priority: P3
+  source: '循环审计 R3 终轮移交清单 4④（2026-08-19 AI-00 建议登记，统筹承接）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
