@@ -15,6 +15,44 @@
 # [A_module] module_id=MOD-GOV-scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: APScheduler常驻服务,由cli.py启动,启动后自动运行;非reconciler无需事件触发
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 调度与任务配置 YAML
+#   fields: schedules（cron 时段）+ tasks（table/source/capability/fallback_sources/dependencies/trading_day_only）
+#   code: IntegratorScheduler._load_config
+# - id: I2
+#   name: 源健康状态缓存
+#   fields: source_health_check._latest_results（healthy/test_fail + timestamp）
+#   code: run_task 健康门分支（超 30min TTL 先 _recheck_single_source 单源重检再判定）
+# - id: I3
+#   name: 断点游标
+#   fields: task_progress.last_key（上次推进到的日期键）
+#   code: progress_store.get_last_key → _compute_start_date
+# 层: 算法
+# - id: A1
+#   name_zh: ① cron 时段触发与交易日过滤
+#   name_en: _run_schedule_callback
+#   intro: APScheduler cron 触发时段批次；trading_day_only 任务非 A 股交易日跳过
+#   inputs: I1
+#   outputs: 本时段待执行任务清单
+# - id: A2
+#   name_zh: ② DAG 就绪并行调度
+#   name_en: _run_schedule_dag
+#   intro: TaskQueue 按 dependencies 拓扑出就绪任务，per-source 串行 + 跨源并行（线程池），未就绪任务阻塞等待
+#   inputs: I1
+#   outputs: 各任务 run_task 调用
+# - id: A3
+#   name_zh: ③ 单任务执行链（健康门→主源→fallback→重试→写库→游标）
+#   name_en: run_task/_try_source/_fetch_and_write
+#   intro: 健康门（含 TTL 重检）→主源 fetch 流→按 error_classifier 不可恢复判定切 fallback→call_with_policy 按 policies.retry_on 重试→流式写 ClickHouse→推进 last_key→FAILED 经 alerter 告警
+#   inputs: I2 I3
+#   outputs: CH 目标表行 + task_progress/task_runs 状态
+# 层: 输出
+# - id: O1
+#   name_zh: 数据落库与进度面
+#   name_en: CH rows + progress_store
+#   intro: ClickHouse 目标表行写入；SQLite task_progress.last_key 游标 + task_runs 运行记录；subscribe() 事件回调（config_changed/shutdown/task_completed）
 """数据源调度编排层（MOD-L00-004 §6）。
 
 APScheduler 常驻进程，按 cron 时段触发任务批次，管理 DAG 依赖，
@@ -1114,15 +1152,48 @@ class IntegratorScheduler:
                         "import_fail",
                         "empty_data",
                     ):
-                        log.info(
-                            "任务 %s 跳过源 %s（健康检查: %s, %s）",
-                            task_id,
-                            source,
-                            health_status,
-                            (health.get("error") or "")[:80],
+                        # 缓存 TTL 到期时对单源重检一次：QMT 恢复后不再被永久跳过
+                        from zephyr.data.source_health_check import (
+                            _HEALTH_CACHE_TTL_MINUTES,
+                            _health_check_age_minutes,
+                            _recheck_single_source,
                         )
-                        last_error = f"健康检查失败: {health.get('error', health_status)}"
-                        continue
+
+                        age_min = _health_check_age_minutes(health)
+                        if age_min is not None and age_min > _HEALTH_CACHE_TTL_MINUTES:
+                            health = _recheck_single_source(source) or health
+                            health_status = health.get("status", "unknown")
+                            if health_status not in (
+                                "connect_fail",
+                                "test_fail",
+                                "env_missing",
+                                "import_fail",
+                                "empty_data",
+                            ):
+                                log.info(
+                                    "任务 %s 源 %s 重检通过（%s），继续执行",
+                                    task_id,
+                                    source,
+                                    health_status,
+                                )
+                                # 落入下方正常执行路径
+                                health_status = "recheck_ok"
+                        if health_status in (
+                            "connect_fail",
+                            "test_fail",
+                            "env_missing",
+                            "import_fail",
+                            "empty_data",
+                        ):
+                            log.info(
+                                "任务 %s 跳过源 %s（健康检查: %s, %s）",
+                                task_id,
+                                source,
+                                health_status,
+                                (health.get("error") or "")[:80],
+                            )
+                            last_error = f"健康检查失败: {health.get('error', health_status)}"
+                            continue
             except Exception:  # noqa: BLE001 — 健康检查模块异常不影响正常调度
                 pass
             # 健康检查通过/未检查——记录即将执行（主源或 fallback，含健康状态便于排查）
@@ -1470,7 +1541,10 @@ class IntegratorScheduler:
                             break
                         log.info(
                             "任务 %s 多表写入: %s %d 行（主表 %s）",
-                            task_id, result.table, len(result.rows), writer._table,
+                            task_id,
+                            result.table,
+                            len(result.rows),
+                            writer._table,
                         )
                     except Exception as e:  # noqa: BLE001
                         last_error = f"ClickHouse 写入失败: {result.table}"

@@ -15,6 +15,40 @@
 # [A_module] module_id=MOD-DAT-miniqmt_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 抓取载荷
+#   fields: FetchPayload（table/capability/symbols/start/end/extra）
+#   code: fetch → _route_kline_capability 等路由入口
+# - id: I2
+#   name: 本地 QMT 会话
+#   fields: xtdata SDK 连接（XtMiniQmt.exe 进程在跑为前提）
+#   code: connect()/_ensure_connected（_connected=False 触发自动重连）
+# 层: 算法
+# - id: A1
+#   name_zh: ① capability 路由
+#   name_en: fetch/_route_kline_capability
+#   intro: 按 payload.extra.capability 分派到 _fetch_kline/期权/转债/财报等抓取器
+#   inputs: I1
+#   outputs: 对应抓取器调用
+# - id: A2
+#   name_zh: ② 逐标的 K 线抓取（单票跳过 + 失败率熔断 + 断连标记）
+#   name_en: fetch_kline/_fetch_kline
+#   intro: 逐标的 download_history_data + get_market_data_ex；单票非连接异常记 warning 跳过继续；连接类异常（isNetError/OSError/10054）置 _connected=False 并中止本批；收尾失败率>5%（_KLINE_BATCH_FAIL_RATE_LIMIT）才 yield error 熔断，否则 SUCCESS 留告警
+#   inputs: I1 I2
+#   outputs: FetchResult 流（rows/last_key）+ 失败计数汇总
+# - id: A3
+#   name_zh: ③ 行规整与日期窗口
+#   name_en: 行解析/_ts_to_date
+#   intro: xtdata 返回转 CH 表列序，时间戳按 UTC 解释避免跨日，last_key 推进供断点续传
+#   inputs: I1
+#   outputs: 规整行列表
+# 层: 输出
+# - id: O1
+#   name_zh: FetchResult 流
+#   name_en: Iterator[FetchResult]
+#   intro: 每标的/批次一条 FetchResult；异常路径 yield error 不抛出（见 ERROR_CONTRACT）
 """MOD-L00-004 数据源集成器 · MiniQmtIngestProvider 实现。
 
 封装 xtquant SDK（miniQMT），继承 IngestProviderBase。
@@ -26,6 +60,7 @@
 - stock_code 格式 "000001.SZ" / "600000.SH"，period 如 "1d"/"5m"/"1m"
 - start_time/end_time 格式 "YYYYMMDD"
 """
+
 from __future__ import annotations
 
 import dataclasses
@@ -78,11 +113,32 @@ _TBL_STOCK_LIST = get_registry().table("market_stock_list")
 _TBL_TICK_DATA = get_registry().table("market_tick")
 
 
-
 # === 裁定#217 Tier2 P4 Extract Method 重构（2026-07-15）===
 # 原 MiniQmtIngestProvider.fetch 166行 McCabe=42（~40个elif分支能力路由）。
 # 治本：提取为 dispatch table 模式（dict 映射 capability→handler），主函数简化为编排（McCabe≈7）。
 # 行为等价：所有路由调用签名/顺序/参数完全保留，LOF特殊处理提取到 _route_kline_capability。
+# ---- 批量抓取健壮性阈值 ----
+# 单批标的失败率上限：超过则整批判失败（yield error 让 scheduler 标 FAILED）。
+# 理由：5000+ 标的按日抓取时，停牌/退市/新股缺数据导致的单票失败属常态（实测 1%~3%），
+# 5% 阈值既容忍常态数据缺失，又能在 QMT 连接半断开（大面积失败）时及时熔断。
+_KLINE_BATCH_FAIL_RATE_LIMIT = 0.05
+
+
+def _is_connection_error(exc: BaseException) -> bool:
+    """判定异常是否为连接类错误（QMT 断连/socket 复位等）。
+
+    连接类错误特征：isNetError 标记、ConnectionError/OSError 系（含
+    ConnectionResetError/WinError 10054），或错误文本含 10054/连接关键字。
+    单票数据缺失（如停牌返回空）不会走到异常分支，不在此列。
+    """
+    if getattr(exc, "isNetError", False):
+        return True
+    if isinstance(exc, (ConnectionError, OSError, TimeoutError)):
+        return True
+    err_text = str(exc)
+    return "10054" in err_text or "远程主机强迫关闭" in err_text
+
+
 _KLINE_CAPABILITIES = {
     "kline_daily": ("1d", "沪深A股"),
     "kline_1min": ("1m", "沪深A股"),
@@ -169,9 +225,10 @@ _DIRECT_ROUTES = {
 # 治本：提取数学函数到模块级 + 逐可转债处理提取到 _process_single_cb，主函数简化为编排（McCabe≈4）。
 # 行为等价：所有计算逻辑/调用顺序/参数完全保留，_solve_cb_iv 参数校验提取到 _cb_iv_invalid_params 降低复杂度。
 
+
 def _cb_pdf(x: float) -> float:
     """标准正态分布 PDF。"""
-    return math.exp(-x ** 2 / 2) / math.sqrt(2 * math.pi)
+    return math.exp(-(x**2) / 2) / math.sqrt(2 * math.pi)
 
 
 def _cb_cdf(x: float) -> float:
@@ -183,7 +240,7 @@ def _cb_bs_call(S: float, K: float, T: float, r: float, sigma: float) -> float |
     """Black-Scholes 看涨期权理论价格。"""
     if S <= 0 or K <= 0 or T <= 0 or sigma <= 0:
         return None
-    d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+    d1 = (math.log(S / K) + (r + sigma**2 / 2) * T) / (sigma * math.sqrt(T))
     d2 = d1 - sigma * math.sqrt(T)
     return S * _cb_cdf(d1) - K * math.exp(-r * T) * _cb_cdf(d2)
 
@@ -205,8 +262,7 @@ def _cb_bond_value(coupon_rate: float, T: float, r: float, face_value: float = 1
 
 def _cb_iv_invalid_params(S, K, T, market_price) -> bool:
     """可转债 IV 求解器参数有效性检查。"""
-    return (S is None or K is None or market_price is None
-            or S <= 0 or K <= 0 or T <= 0 or market_price <= 0)
+    return S is None or K is None or market_price is None or S <= 0 or K <= 0 or T <= 0 or market_price <= 0
 
 
 def _cb_solve_iv(S, K, T, r, market_price, coupon_rate):
@@ -233,7 +289,7 @@ def _cb_solve_iv(S, K, T, r, market_price, coupon_rate):
         if opt_price is None:
             return None, bond_val, convert_val, None, None, None, None
         theory_price = floor_value + opt_price
-        d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * sqrt_T)
+        d1 = (math.log(S / K) + (r + sigma**2 / 2) * T) / (sigma * sqrt_T)
         d2 = d1 - sigma * sqrt_T
         pdf_d1 = _cb_pdf(d1)
         vega_raw = S * pdf_d1 * sqrt_T  # 原始 vega，不除100
@@ -245,9 +301,15 @@ def _cb_solve_iv(S, K, T, r, market_price, coupon_rate):
             denom = S * sigma * sqrt_T
             gamma = pdf_d1 / denom if denom > 0 else None
             theta = (-S * pdf_d1 * sigma / (2 * sqrt_T)) - r * K * math.exp(-r * T) * _cb_cdf(d2)
-            return (round(sigma, 6), bond_val, convert_val,
-                    round(delta, 6), round(gamma, 6) if gamma is not None else None,
-                    round(theta, 6), round(vega_raw, 6))
+            return (
+                round(sigma, 6),
+                bond_val,
+                convert_val,
+                round(delta, 6),
+                round(gamma, 6) if gamma is not None else None,
+                round(theta, 6),
+                round(vega_raw, 6),
+            )
         sigma = sigma - diff / vega_raw
         if sigma <= 0:
             sigma = 1e-4
@@ -264,12 +326,13 @@ _CB_COUPON_RATE = 0.005  # 票面利率 0.5%
 @dataclasses.dataclass
 class _CbIvFetchCtx:
     """可转债 IV 抓取上下文（封装跨方法共享的请求参数，治本 NO-LONG-PARAM-LIST）。"""
+
     table: str
     columns: list
     start_str: str
     end_str: str
     last_key: str
-    policy: "SourcePolicy"
+    policy: SourcePolicy
 
 
 # ============== Black-Scholes 数学函数（模块级，_fetch_option_iv_surface 使用） ==============
@@ -278,21 +341,24 @@ class _CbIvFetchCtx:
 def _bs_pdf(x: float) -> float:
     """标准正态分布概率密度函数。"""
     import math
-    return math.exp(-x ** 2 / 2) / math.sqrt(2 * math.pi)
+
+    return math.exp(-(x**2) / 2) / math.sqrt(2 * math.pi)
 
 
 def _bs_cdf(x: float) -> float:
     """标准正态分布累积分布函数。"""
     import math
+
     return 0.5 * (1 + math.erf(x / math.sqrt(2)))
 
 
 def _bs_price(S, K, T, r, sigma, opt_type):
     """Black-Scholes 期权理论价格。"""
     import math
+
     if S <= 0 or K <= 0 or T <= 0 or sigma <= 0:
         return None
-    d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+    d1 = (math.log(S / K) + (r + sigma**2 / 2) * T) / (sigma * math.sqrt(T))
     d2 = d1 - sigma * math.sqrt(T)
     if opt_type == "call":
         return S * _bs_cdf(d1) - K * math.exp(-r * T) * _bs_cdf(d2)
@@ -306,15 +372,15 @@ def _solve_iv(S, K, T, r, market_price, opt_type):
     不收敛或 vega 过小时返回 None。
     """
     import math
-    if (S is None or K is None or market_price is None
-            or S <= 0 or K <= 0 or T <= 0 or market_price <= 0):
+
+    if S is None or K is None or market_price is None or S <= 0 or K <= 0 or T <= 0 or market_price <= 0:
         return None
     sigma = 0.3
     for _ in range(100):
         price = _bs_price(S, K, T, r, sigma, opt_type)
         if price is None:
             return None
-        d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+        d1 = (math.log(S / K) + (r + sigma**2 / 2) * T) / (sigma * math.sqrt(T))
         vega = S * _bs_pdf(d1) * math.sqrt(T)
         if vega < 1e-8:
             return None
@@ -329,9 +395,10 @@ def _solve_iv(S, K, T, r, market_price, opt_type):
     return None
 
 
-def _parse_option_expiry(expiry) -> "datetime.date | None":
+def _parse_option_expiry(expiry) -> datetime.date | None:
     """解析期权到期日字符串（YYYYMMDD 或更长）为 date 对象。"""
     import datetime
+
     if not expiry:
         return None
     try:
@@ -346,20 +413,21 @@ def _parse_option_expiry(expiry) -> "datetime.date | None":
 @dataclasses.dataclass
 class _OptionCtx:
     """期权计算上下文（参数对象，避免 _compute_iv_rows/_compute_greeks_rows 长参数列表）。"""
+
     opt_df: object
     ul_df: object
     symbol: str
     underlying: str
-    strike: "float | None"
+    strike: float | None
     expiry: str
     opt_type: str
-    exp_date: "object | None"
+    exp_date: object | None
     r: float
     exchange: str = ""  # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 交易所代码（SHO/SZO/CFFEX/SHFE/DCE/CZCE）
 
 
 def _resolve_kline_aggregated_table(freq, payload, dividend_type):
-    is_hfq = (dividend_type == "back")
+    is_hfq = dividend_type == "back"
     if freq == "W":
         return payload.table or (_TBL_KLINE_WEEKLY_HFQ if is_hfq else _TBL_KLINE_WEEKLY)
     return payload.table or (_TBL_KLINE_MONTHLY_HFQ if is_hfq else _TBL_KLINE_MONTHLY)
@@ -486,6 +554,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """探活：尝试调用 xtdata.get_stock_list_in_sector 读取沪深A股列表。"""
         try:
             from xtquant import xtdata
+
             xtdata.get_stock_list_in_sector("沪深A股")
             return True
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -507,6 +576,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
             import datetime as _dt
 
             from xtquant import xtdata
+
             today = _dt.date.today().strftime("%Y%m%d")
             # 对平安银行探测，只需验证 API 可调用（返回空也算有权限）
             xtdata.get_l2_quote([], "000001.SZ", today, today, -1)
@@ -567,15 +637,22 @@ class MiniQmtIngestProvider(IngestProviderBase):
         )
 
     def _route_kline_capability(
-        self, payload: FetchPayload, policy: SourcePolicy, period: str, sector: str | None,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
+        period: str,
+        sector: str | None,
     ) -> Iterator[FetchResult]:
         """Kline 路由：处理 LOF 特殊情况（sector=None → 从 c1_market.lof_list 表加载标的）。"""
         if sector is None:
             lof_symbols = self._load_symbols_from_table(_TBL_LOF_LIST)
             if not lof_symbols:
                 yield FetchResult(
-                    table=payload.table or "", columns=[], rows=[],
-                    last_key="", elapsed_sec=0.0,
+                    table=payload.table or "",
+                    columns=[],
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=0.0,
                     error=f"{_TBL_LOF_LIST} 表无标的，请先运行 lof_list_refresh 任务",
                 )
                 return
@@ -648,11 +725,11 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """
         from xtquant import xtdata
 
-        is_hfq = (dividend_type == "back")
+        is_hfq = dividend_type == "back"
         # 后复权日K落入 kline_daily_hfq 表，普通日K落入 kline_daily 表
         default_table = _TBL_KLINE_DAILY_HFQ if is_hfq else _TBL_KLINE_DAILY
         table = payload.table or default_table
-        is_daily = (period == "1d")
+        is_daily = period == "1d"
         columns = self._kline_columns(table, is_daily, is_hfq)
 
         try:
@@ -660,8 +737,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
@@ -669,33 +750,47 @@ class MiniQmtIngestProvider(IngestProviderBase):
         try:
             symbols = payload.symbols
             if not symbols:
-                symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, sector
-                )
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, sector)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"获取标的清单失败: {e}",
             )
             return
 
         last_key = self._date_to_str(payload.end)
 
         # 2. 逐标的下载+读取
+        # 单票失败不中止整批：记日志+计数+跳过；结束按失败率阈值决定是否判整批失败。
+        failed_count = 0
+        total_count = len(symbols)
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 # 下载历史数据
                 self._call_with_policy(
                     xtdata.download_history_data,
                     policy,
-                    stock_code, period, start_str, end_str,
+                    stock_code,
+                    period,
+                    start_str,
+                    end_str,
                 )
                 # 读取行情（后复权时传 dividend_type='back'，count=-1 表示全部）
                 data = self._call_with_policy(
                     xtdata.get_market_data_ex,
                     policy,
-                    [], [stock_code], period, start_str, end_str, -1, dividend_type,
+                    [],
+                    [stock_code],
+                    period,
+                    start_str,
+                    end_str,
+                    -1,
+                    dividend_type,
                 )
 
                 # 3. DataFrame -> tuple 列表
@@ -707,22 +802,59 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     columns=columns,
                     rows=rows,
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                # 连接类异常：标记断连供 scheduler 自动重连，并中止本批
+                # （连接断了后续标的必然连续失败，无需空转；失败率汇总在下方统一收尾）
+                if _is_connection_error(e):
+                    self._connected = False
+                    failed_count += 1
+                    self._log.error(f"K线抓取断连，置 _connected=False 并中止本批: {stock_code}: {e}")
+                    yield FetchResult(
+                        table=table,
+                        columns=columns,
+                        rows=[],
+                        last_key=last_key,
+                        elapsed_sec=time.monotonic() - t0,
+                        error=f"QMT 连接断开，批次中止（{stock_code}）: {e}",
+                    )
+                    return
+                # 单票数据问题：跳过继续，不中断整批
+                failed_count += 1
+                self._log.warning(f"{stock_code} 抓取失败（跳过）: {e}")
+                continue
+
+        # 批次收尾：失败率超阈值才判整批失败，否则任务成功（附告警日志）
+        if failed_count:
+            fail_rate = failed_count / total_count if total_count else 0.0
+            if fail_rate > _KLINE_BATCH_FAIL_RATE_LIMIT:
                 yield FetchResult(
                     table=table,
                     columns=columns,
                     rows=[],
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
-                    error=f"{stock_code} 抓取失败: {e}",
+                    elapsed_sec=0.0,
+                    error=(
+                        f"K线批量抓取失败率 {fail_rate:.1%} 超阈值 "
+                        f"{_KLINE_BATCH_FAIL_RATE_LIMIT:.0%}（{failed_count}/{total_count}）"
+                    ),
+                )
+            else:
+                self._log.warning(
+                    f"K线批量抓取完成，{failed_count}/{total_count} 只标的失败（{fail_rate:.1%}），"
+                    f"未超阈值 {_KLINE_BATCH_FAIL_RATE_LIMIT:.0%}，任务判成功"
                 )
 
     # ============== 财务报表 ==============
 
     def _fetch_kline(
-        self, payload: FetchPayload, policy: SourcePolicy, period: str, dividend_type: str = "none", sector: str = "沪深A股"
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
+        period: str,
+        dividend_type: str = "none",
+        sector: str = "沪深A股",
     ) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_kline(payload, policy, period, dividend_type=dividend_type, sector=sector)
@@ -741,7 +873,19 @@ class MiniQmtIngestProvider(IngestProviderBase):
             return ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount"]
         if "kline_1min" in table:
             # kline_1min 表有 pct_change/amplitude（无 DEFAULT），需补充；data_source 有 DEFAULT
-            return ["trade_date", "trade_time", "symbol", "open", "close", "high", "low", "volume", "amount", "pct_change", "amplitude"]
+            return [
+                "trade_date",
+                "trade_time",
+                "symbol",
+                "open",
+                "close",
+                "high",
+                "low",
+                "volume",
+                "amount",
+                "pct_change",
+                "amplitude",
+            ]
         if "kline_5min" in table:
             # kline_5min 表无 trade_date，data_source 无 DEFAULT 需补充
             return ["trade_time", "symbol", "open", "high", "low", "close", "volume", "amount", "data_source"]
@@ -777,76 +921,83 @@ class MiniQmtIngestProvider(IngestProviderBase):
                 vol = int(vol) if vol is not None else None
                 if is_hfq:
                     # kline_daily_hfq 表列为 OCLH 顺序
-                    rows.append((
-                        trade_date,
-                        symbol,
-                        MiniQmtIngestProvider.safe_float(opens[i]),
-                        MiniQmtIngestProvider.safe_float(closes[i]),
-                        MiniQmtIngestProvider.safe_float(highs[i]),
-                        MiniQmtIngestProvider.safe_float(lows[i]),
-                        vol,
-                        MiniQmtIngestProvider.safe_float(amounts[i]),
-                    ))
+                    rows.append(
+                        (
+                            trade_date,
+                            symbol,
+                            MiniQmtIngestProvider.safe_float(opens[i]),
+                            MiniQmtIngestProvider.safe_float(closes[i]),
+                            MiniQmtIngestProvider.safe_float(highs[i]),
+                            MiniQmtIngestProvider.safe_float(lows[i]),
+                            vol,
+                            MiniQmtIngestProvider.safe_float(amounts[i]),
+                        )
+                    )
                 else:
-                    rows.append((
-                        trade_date,
-                        symbol,
-                        MiniQmtIngestProvider.safe_float(opens[i]),
-                        MiniQmtIngestProvider.safe_float(highs[i]),
-                        MiniQmtIngestProvider.safe_float(lows[i]),
-                        MiniQmtIngestProvider.safe_float(closes[i]),
-                        vol,
-                        MiniQmtIngestProvider.safe_float(amounts[i]),
-                    ))
+                    rows.append(
+                        (
+                            trade_date,
+                            symbol,
+                            MiniQmtIngestProvider.safe_float(opens[i]),
+                            MiniQmtIngestProvider.safe_float(highs[i]),
+                            MiniQmtIngestProvider.safe_float(lows[i]),
+                            MiniQmtIngestProvider.safe_float(closes[i]),
+                            vol,
+                            MiniQmtIngestProvider.safe_float(amounts[i]),
+                        )
+                    )
             else:
                 # 分钟K：YYYYMMDDHHMMSS（14 位）-> 拆分 date 和 datetime
                 trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
-                trade_time = (
-                    f"{s[:4]}-{s[4:6]}-{s[6:8]} "
-                    f"{s[8:10]}:{s[10:12]}:{s[12:14]}"
-                )
+                trade_time = f"{s[:4]}-{s[4:6]}-{s[6:8]} {s[8:10]}:{s[10:12]}:{s[12:14]}"
                 vol = MiniQmtIngestProvider.safe_float(volumes[i])
                 vol = int(vol) if vol is not None else None
                 if "kline_1min" in table:
                     # kline_1min: 补充 pct_change=0, amplitude=0
-                    rows.append((
-                        trade_date,
-                        trade_time,
-                        symbol,
-                        MiniQmtIngestProvider.safe_float(opens[i]),
-                        MiniQmtIngestProvider.safe_float(closes[i]),
-                        MiniQmtIngestProvider.safe_float(highs[i]),
-                        MiniQmtIngestProvider.safe_float(lows[i]),
-                        vol,
-                        MiniQmtIngestProvider.safe_float(amounts[i]),
-                        0,  # pct_change（miniQMT 不提供）
-                        0,  # amplitude（miniQMT 不提供）
-                    ))
+                    rows.append(
+                        (
+                            trade_date,
+                            trade_time,
+                            symbol,
+                            MiniQmtIngestProvider.safe_float(opens[i]),
+                            MiniQmtIngestProvider.safe_float(closes[i]),
+                            MiniQmtIngestProvider.safe_float(highs[i]),
+                            MiniQmtIngestProvider.safe_float(lows[i]),
+                            vol,
+                            MiniQmtIngestProvider.safe_float(amounts[i]),
+                            0,  # pct_change（miniQMT 不提供）
+                            0,  # amplitude（miniQMT 不提供）
+                        )
+                    )
                 elif "kline_5min" in table:
                     # kline_5min: 无 trade_date，补充 data_source
-                    rows.append((
-                        trade_time,
-                        symbol,
-                        MiniQmtIngestProvider.safe_float(opens[i]),
-                        MiniQmtIngestProvider.safe_float(highs[i]),
-                        MiniQmtIngestProvider.safe_float(lows[i]),
-                        MiniQmtIngestProvider.safe_float(closes[i]),
-                        vol,
-                        MiniQmtIngestProvider.safe_float(amounts[i]),
-                        "miniqmt",  # data_source
-                    ))
+                    rows.append(
+                        (
+                            trade_time,
+                            symbol,
+                            MiniQmtIngestProvider.safe_float(opens[i]),
+                            MiniQmtIngestProvider.safe_float(highs[i]),
+                            MiniQmtIngestProvider.safe_float(lows[i]),
+                            MiniQmtIngestProvider.safe_float(closes[i]),
+                            vol,
+                            MiniQmtIngestProvider.safe_float(amounts[i]),
+                            "miniqmt",  # data_source
+                        )
+                    )
                 else:
-                    rows.append((
-                        trade_date,
-                        trade_time,
-                        symbol,
-                        MiniQmtIngestProvider.safe_float(opens[i]),
-                        MiniQmtIngestProvider.safe_float(highs[i]),
-                        MiniQmtIngestProvider.safe_float(lows[i]),
-                        MiniQmtIngestProvider.safe_float(closes[i]),
-                        vol,
-                        MiniQmtIngestProvider.safe_float(amounts[i]),
-                    ))
+                    rows.append(
+                        (
+                            trade_date,
+                            trade_time,
+                            symbol,
+                            MiniQmtIngestProvider.safe_float(opens[i]),
+                            MiniQmtIngestProvider.safe_float(highs[i]),
+                            MiniQmtIngestProvider.safe_float(lows[i]),
+                            MiniQmtIngestProvider.safe_float(closes[i]),
+                            vol,
+                            MiniQmtIngestProvider.safe_float(amounts[i]),
+                        )
+                    )
         return rows
 
     def fetch_financial_statement(
@@ -884,13 +1035,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
         try:
             symbols = payload.symbols
             if not symbols:
-                symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
-                )
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"获取标的清单失败: {e}",
             )
             return
 
@@ -898,19 +1051,26 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         # 2. 逐标的下载+读取
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 # 下载财务数据（用 start/end 控制下载范围）
                 self._call_with_policy(
                     xtdata.download_financial_data2,
                     policy,
-                    [stock_code], '', start_str, end_str,
+                    [stock_code],
+                    "",
+                    start_str,
+                    end_str,
                 )
                 # 读取财务数据（全量读取，不传 start/end 避免 report_time 过滤）
                 fd = self._call_with_policy(
                     xtdata.get_financial_data,
                     policy,
-                    [stock_code], [table_list], '', '', 'report_time',
+                    [stock_code],
+                    [table_list],
+                    "",
+                    "",
+                    "report_time",
                 )
 
                 # 3. 转换为 rows，按 m_anntime（公告日期）过滤
@@ -921,10 +1081,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     df = stock_data[table_list]
                     if df is not None and len(df) > 0:
                         # 治本修复：按 m_anntime（公告日期）过滤，而非 xtdata 默认的 m_timetag
-                        if 'm_anntime' in df.columns:
+                        if "m_anntime" in df.columns:
                             df = df[
-                                (df['m_anntime'].astype(str) >= start_str) &
-                                (df['m_anntime'].astype(str) <= end_str)
+                                (df["m_anntime"].astype(str) >= start_str) & (df["m_anntime"].astype(str) <= end_str)
                             ]
                         if df is not None and len(df) > 0:
                             symbol = self._stock_to_symbol(stock_code)
@@ -934,7 +1093,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                                 row_values = []
                                 for col in col_names:
                                     v = row.get(col)
-                                    if col in ('date', 'announce_date', 'report_date', 'enddate'):
+                                    if col in ("date", "announce_date", "report_date", "enddate"):
                                         row_values.append(str(v) if v is not None else None)
                                     else:
                                         row_values.append(self.safe_float(v))
@@ -947,7 +1106,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     columns=columns,
                     rows=rows,
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
@@ -955,7 +1114,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     columns=["symbol"],
                     rows=[],
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"{stock_code} 财务数据抓取失败: {e}",
                 )
 
@@ -1019,11 +1178,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         for sector_name in sectors:
             index_code = self._INDEX_SECTOR_MAP.get(sector_name, sector_name)
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
-                stock_list = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, sector_name
-                )
+                stock_list = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, sector_name)
 
                 rows = []
                 if stock_list:
@@ -1037,7 +1194,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     columns=columns,
                     rows=rows,
                     last_key=self._date_to_str(payload.end),
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
@@ -1045,15 +1202,13 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     columns=columns,
                     rows=[],
                     last_key="",
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"获取指数成分失败[{sector_name}]: {e}",
                 )
 
     # ============== 指数K线 ==============
 
-    def _fetch_index_constituent(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_index_constituent(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_index_constituent(payload, policy)
 
@@ -1084,9 +1239,16 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         table = payload.table or _TBL_KLINE_INDEX
         columns = [
-            "trade_date", "symbol", "name",
-            "open", "high", "low", "close",
-            "volume", "amount", "data_source",
+            "trade_date",
+            "symbol",
+            "name",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "amount",
+            "data_source",
         ]
 
         try:
@@ -1094,8 +1256,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
@@ -1103,13 +1269,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
         try:
             index_codes = payload.symbols
             if not index_codes:
-                index_codes = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深指数"
-                )
+                index_codes = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深指数")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"获取指数清单失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"获取指数清单失败: {e}",
             )
             return
 
@@ -1117,19 +1285,26 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         # 2. 逐指数下载+读取
         for index_code in index_codes:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 # 下载历史数据
                 self._call_with_policy(
                     xtdata.download_history_data,
                     policy,
-                    index_code, "1d", start_str, end_str,
+                    index_code,
+                    "1d",
+                    start_str,
+                    end_str,
                 )
                 # 读取行情
                 data = self._call_with_policy(
                     xtdata.get_market_data_ex,
                     policy,
-                    [], [index_code], "1d", start_str, end_str,
+                    [],
+                    [index_code],
+                    "1d",
+                    start_str,
+                    end_str,
                 )
 
                 # 3. 获取指数名称
@@ -1151,7 +1326,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     columns=columns,
                     rows=rows,
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
@@ -1159,7 +1334,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     columns=columns,
                     rows=[],
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"{index_code} 指数K线抓取失败: {e}",
                 )
 
@@ -1185,18 +1360,20 @@ class MiniQmtIngestProvider(IngestProviderBase):
             if vol is not None and vol < 0:
                 vol = 0
             vol = int(vol) if vol is not None else 0
-            rows.append((
-                trade_date,
-                symbol,
-                name,
-                MiniQmtIngestProvider.safe_float(opens[i]),
-                MiniQmtIngestProvider.safe_float(highs[i]),
-                MiniQmtIngestProvider.safe_float(lows[i]),
-                MiniQmtIngestProvider.safe_float(closes[i]),
-                vol,
-                MiniQmtIngestProvider.safe_float(amounts[i]),
-                "miniqmt",  # data_source
-            ))
+            rows.append(
+                (
+                    trade_date,
+                    symbol,
+                    name,
+                    MiniQmtIngestProvider.safe_float(opens[i]),
+                    MiniQmtIngestProvider.safe_float(highs[i]),
+                    MiniQmtIngestProvider.safe_float(lows[i]),
+                    MiniQmtIngestProvider.safe_float(closes[i]),
+                    vol,
+                    MiniQmtIngestProvider.safe_float(amounts[i]),
+                    "miniqmt",  # data_source
+                )
+            )
         return rows
 
     # ============== 复权因子 ==============
@@ -1232,13 +1409,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
         try:
             symbols = payload.symbols
             if not symbols:
-                symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
-                )
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"获取标的清单失败: {e}",
             )
             return
 
@@ -1246,10 +1425,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         # 2. 逐标的获取复权因子
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 df = self._call_with_policy(
-                    xtdata.get_divid_factors, policy, stock_code,
+                    xtdata.get_divid_factors,
+                    policy,
+                    stock_code,
                 )
 
                 rows = []
@@ -1266,19 +1447,21 @@ class MiniQmtIngestProvider(IngestProviderBase):
                         # 按 payload.start/end 过滤日期范围
                         if trade_date < start_date or trade_date > end_date:
                             continue
-                        rows.append((
-                            trade_date,
-                            symbol,
-                            self.safe_float(dr),
-                            "miniqmt",  # data_source
-                        ))
+                        rows.append(
+                            (
+                                trade_date,
+                                symbol,
+                                self.safe_float(dr),
+                                "miniqmt",  # data_source
+                            )
+                        )
 
                 yield FetchResult(
                     table=table,
                     columns=columns,
                     rows=rows,
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
@@ -1286,7 +1469,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     columns=columns,
                     rows=[],
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"{stock_code} 复权因子抓取失败: {e}",
                 )
 
@@ -1322,8 +1505,18 @@ class MiniQmtIngestProvider(IngestProviderBase):
         table = _resolve_kline_aggregated_table(freq, payload, dividend_type)
 
         columns = [
-            "trade_date", "symbol", "open", "close", "high", "low",
-            "volume", "amount", "amplitude", "pct_change", "change", "turnover",
+            "trade_date",
+            "symbol",
+            "open",
+            "close",
+            "high",
+            "low",
+            "volume",
+            "amount",
+            "amplitude",
+            "pct_change",
+            "change",
+            "turnover",
         ]
 
         try:
@@ -1331,8 +1524,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
@@ -1340,13 +1537,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
         try:
             symbols = payload.symbols
             if not symbols:
-                symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
-                )
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"获取标的清单失败: {e}",
             )
             return
 
@@ -1354,19 +1553,28 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         # 2. 逐标的下载日K + 聚合
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 # 下载日K历史数据
                 self._call_with_policy(
                     xtdata.download_history_data,
                     policy,
-                    stock_code, "1d", start_str, end_str,
+                    stock_code,
+                    "1d",
+                    start_str,
+                    end_str,
                 )
                 # 读取日K行情（后复权时传 dividend_type='back'，count=-1 表示全部）
                 data = self._call_with_policy(
                     xtdata.get_market_data_ex,
                     policy,
-                    [], [stock_code], "1d", start_str, end_str, -1, dividend_type,
+                    [],
+                    [stock_code],
+                    "1d",
+                    start_str,
+                    end_str,
+                    -1,
+                    dividend_type,
                 )
 
                 rows = []
@@ -1381,42 +1589,50 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     df.index = pd.to_datetime(orig_dates, format="%Y%m%d")
 
                     # resample 聚合（W=周、ME=月）
-                    agg = df.resample(freq).agg({
-                        "open": "first",
-                        "close": "last",
-                        "high": "max",
-                        "low": "min",
-                        "volume": "sum",
-                        "amount": "sum",
-                        "_orig_date": "last",  # 周期内最后交易日的 YYYYMMDD
-                    }).dropna(subset=["open"])
+                    agg = (
+                        df.resample(freq)
+                        .agg(
+                            {
+                                "open": "first",
+                                "close": "last",
+                                "high": "max",
+                                "low": "min",
+                                "volume": "sum",
+                                "amount": "sum",
+                                "_orig_date": "last",  # 周期内最后交易日的 YYYYMMDD
+                            }
+                        )
+                        .dropna(subset=["open"])
+                    )
 
                     for _, row in agg.iterrows():
                         td_str = row["_orig_date"]
                         trade_date = f"{td_str[:4]}-{td_str[4:6]}-{td_str[6:8]}"
                         vol = self.safe_float(row["volume"])
                         vol = int(vol) if vol is not None else None
-                        rows.append((
-                            trade_date,
-                            symbol,
-                            self.safe_float(row["open"]),
-                            self.safe_float(row["close"]),
-                            self.safe_float(row["high"]),
-                            self.safe_float(row["low"]),
-                            vol,
-                            self.safe_float(row["amount"]),
-                            0,  # amplitude（miniQMT 不提供）
-                            0,  # pct_change（miniQMT 不提供）
-                            0,  # change（miniQMT 不提供）
-                            0,  # turnover（miniQMT 不提供）
-                        ))
+                        rows.append(
+                            (
+                                trade_date,
+                                symbol,
+                                self.safe_float(row["open"]),
+                                self.safe_float(row["close"]),
+                                self.safe_float(row["high"]),
+                                self.safe_float(row["low"]),
+                                vol,
+                                self.safe_float(row["amount"]),
+                                0,  # amplitude（miniQMT 不提供）
+                                0,  # pct_change（miniQMT 不提供）
+                                0,  # change（miniQMT 不提供）
+                                0,  # turnover（miniQMT 不提供）
+                            )
+                        )
 
                 yield FetchResult(
                     table=table,
                     columns=columns,
                     rows=rows,
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
@@ -1424,14 +1640,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     columns=columns,
                     rows=[],
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"{stock_code} 聚合K线抓取失败: {e}",
                 )
 
     # ============== 期货持仓 ==============
 
     def _load_futures_symbols_from_sectors(
-        self, policy: SourcePolicy,
+        self,
+        policy: SourcePolicy,
     ) -> list[str]:
         """从 QMT 商品期货+股指期货板块加载期货合约列表。
 
@@ -1441,11 +1658,14 @@ class MiniQmtIngestProvider(IngestProviderBase):
         修复：复用 _fetch_kline_futures_qmt 已验证的板块加载模式。
         """
         from xtquant import xtdata
+
         futures: list[str] = []
         try:
             for sector_name in ("商品期货", "股指期货期货板块"):
                 lst = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, sector_name,
+                    xtdata.get_stock_list_in_sector,
+                    policy,
+                    sector_name,
                 )
                 if lst:
                     futures.extend(lst)
@@ -1476,8 +1696,14 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """
         table = payload.table or _TBL_FUTURES_POSITION
         columns = [
-            "trade_date", "symbol", "long_position", "short_position",
-            "long_volume", "short_volume", "exchange", "data_source",
+            "trade_date",
+            "symbol",
+            "long_position",
+            "short_position",
+            "long_volume",
+            "short_volume",
+            "exchange",
+            "data_source",
         ]
 
         try:
@@ -1485,8 +1711,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
@@ -1494,7 +1724,10 @@ class MiniQmtIngestProvider(IngestProviderBase):
         symbols = payload.symbols or self._load_futures_symbols_from_sectors(policy)
         if not symbols:
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
                 elapsed_sec=0.0,
                 error="futures_position 无 symbols 且 QMT 期货板块加载失败",
             )
@@ -1502,25 +1735,39 @@ class MiniQmtIngestProvider(IngestProviderBase):
         last_key = end_str
 
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 rows = self._compute_futures_position_rows(
-                    stock_code, start_str, end_str, policy, payload.end,
+                    stock_code,
+                    start_str,
+                    end_str,
+                    policy,
+                    payload.end,
                 )
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"抓取失败: {e}",
                 )
 
     def _compute_futures_position_rows(
-        self, stock_code: str, start_str: str, end_str: str,
-        policy: SourcePolicy, end_date,
+        self,
+        stock_code: str,
+        start_str: str,
+        end_str: str,
+        policy: SourcePolicy,
+        end_date,
     ) -> list[tuple]:
         """处理单个期货合约的持仓数据，返回行列表。"""
         import pandas as pd
@@ -1528,21 +1775,32 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         symbol = self._stock_to_symbol(stock_code)
         detail = self._call_with_policy(
-            xtdata.get_instrument_detail, policy, stock_code,
+            xtdata.get_instrument_detail,
+            policy,
+            stock_code,
         )
         exchange = detail.get("ExchangeID", "") if detail else ""
 
         try:
             self._call_with_policy(
-                xtdata.download_history_data, policy,
-                stock_code, "1d", start_str, end_str,
+                xtdata.download_history_data,
+                policy,
+                stock_code,
+                "1d",
+                start_str,
+                end_str,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.debug(f"download_history_data({stock_code}) 失败: {e}")
 
         kline_data = self._call_with_policy(
-            xtdata.get_market_data_ex, policy,
-            [], [stock_code], "1d", start_str, end_str,
+            xtdata.get_market_data_ex,
+            policy,
+            [],
+            [stock_code],
+            "1d",
+            start_str,
+            end_str,
         )
         kline_df = kline_data.get(stock_code) if kline_data else None
 
@@ -1554,15 +1812,21 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         # K线无持仓量字段或无K线数据，fallback 到当前快照
         if detail:
-            return [self._build_futures_snapshot_row(
-                detail, symbol, end_date.isoformat(), exchange,
-            )]
+            return [
+                self._build_futures_snapshot_row(
+                    detail,
+                    symbol,
+                    end_date.isoformat(),
+                    exchange,
+                )
+            ]
         return []
 
     @staticmethod
     def _build_futures_kline_rows(kline_df, symbol: str, exchange: str) -> list[tuple] | None:
         """从K线数据构建持仓行（若有 OI 字段），无 OI 字段返回 None。"""
         import pandas as pd
+
         oi_col = None
         for col in ("open_interest", "position", "Position"):
             if col in kline_df.columns:
@@ -1573,17 +1837,26 @@ class MiniQmtIngestProvider(IngestProviderBase):
         rows = []
         for dt in kline_df.index:
             oi = MiniQmtIngestProvider.safe_float(kline_df.loc[dt, oi_col])
-            rows.append((
-                pd.Timestamp(dt).strftime("%Y-%m-%d"),
-                symbol,
-                int(oi) if oi is not None else None,
-                None, None, None,
-                exchange, "miniqmt",
-            ))
+            rows.append(
+                (
+                    pd.Timestamp(dt).strftime("%Y-%m-%d"),
+                    symbol,
+                    int(oi) if oi is not None else None,
+                    None,
+                    None,
+                    None,
+                    exchange,
+                    "miniqmt",
+                )
+            )
         return rows
 
     def _build_futures_snapshot_row(
-        self, detail: dict, symbol: str, trade_date: str, exchange: str,
+        self,
+        detail: dict,
+        symbol: str,
+        trade_date: str,
+        exchange: str,
     ) -> tuple:
         """从合约详情快照构建单行持仓数据。"""
         long_pos = self.safe_float(detail.get("LongPosition"))
@@ -1591,12 +1864,14 @@ class MiniQmtIngestProvider(IngestProviderBase):
         long_vol = self.safe_float(detail.get("LongVolume"))
         short_vol = self.safe_float(detail.get("ShortVolume"))
         return (
-            trade_date, symbol,
+            trade_date,
+            symbol,
             int(long_pos) if long_pos is not None else None,
             int(short_pos) if short_pos is not None else None,
             int(long_vol) if long_vol is not None else None,
             int(short_vol) if short_vol is not None else None,
-            exchange, "miniqmt",
+            exchange,
+            "miniqmt",
         )
 
     # ============== 股东数据 ==============
@@ -1633,68 +1908,84 @@ class MiniQmtIngestProvider(IngestProviderBase):
         try:
             symbols = payload.symbols
             if not symbols:
-                symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
-                )
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"获取标的清单失败: {e}",
             )
             return
 
         last_key = end_str
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 self._call_with_policy(
-                    xtdata.download_financial_data2, policy,
-                    [stock_code], '', start_str, end_str,
+                    xtdata.download_financial_data2,
+                    policy,
+                    [stock_code],
+                    "",
+                    start_str,
+                    end_str,
                 )
                 # 全量读取，避免 xtdata 按 m_timetag 过滤（治本修复）
                 fd = self._call_with_policy(
-                    xtdata.get_financial_data, policy,
-                    [stock_code], ['十大股东', '股东人数'],
-                    '', '', 'report_time',
+                    xtdata.get_financial_data,
+                    policy,
+                    [stock_code],
+                    ["十大股东", "股东人数"],
+                    "",
+                    "",
+                    "report_time",
                 )
                 rows = []
                 stock_data = fd.get(stock_code) if fd else None
                 if stock_data:
                     symbol = self._stock_to_symbol(stock_code)
                     # 优先取"股东人数"表
-                    holder_df = stock_data.get('股东人数')
+                    holder_df = stock_data.get("股东人数")
                     if holder_df is not None and len(holder_df) > 0:
                         # 按 m_anntime（公告日期）过滤
-                        if 'm_anntime' in holder_df.columns:
+                        if "m_anntime" in holder_df.columns:
                             holder_df = holder_df[
-                                (holder_df['m_anntime'].astype(str) >= start_str) &
-                                (holder_df['m_anntime'].astype(str) <= end_str)
+                                (holder_df["m_anntime"].astype(str) >= start_str)
+                                & (holder_df["m_anntime"].astype(str) <= end_str)
                             ]
                         if holder_df is not None and len(holder_df) > 0:
                             for _, row in holder_df.iterrows():
                                 # 截止日期：尝试多种列名
                                 end_date = None
-                                for key in ('date', 'enddate', 'end_date', '报告期'):
+                                for key in ("date", "enddate", "end_date", "报告期"):
                                     v = row.get(key)
                                     if v is not None:
                                         end_date = str(v)[:10]
                                         break
                                 # 股东户数：尝试多种列名
                                 holder_count = None
-                                for key in ('holder_number', '股东户数', 'holder_num', '股东人数'):
+                                for key in ("holder_number", "股东户数", "holder_num", "股东人数"):
                                     v = row.get(key)
                                     if v is not None:
                                         holder_count = self.safe_float(v)
                                         break
                                 rows.append((symbol, end_date, holder_count, "miniqmt"))
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"抓取失败: {e}",
                 )
 
@@ -1771,28 +2062,39 @@ class MiniQmtIngestProvider(IngestProviderBase):
         try:
             symbols = payload.symbols
             if not symbols:
-                symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
-                )
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"获取标的清单失败: {e}",
             )
             return
 
         last_key = end_str
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 self._call_with_policy(
-                    xtdata.download_financial_data2, policy,
-                    [stock_code], '', start_str, end_str,
+                    xtdata.download_financial_data2,
+                    policy,
+                    [stock_code],
+                    "",
+                    start_str,
+                    end_str,
                 )
                 # 全量读取，避免 xtdata 按 m_timetag 过滤（治本修复）
                 fd = self._call_with_policy(
-                    xtdata.get_financial_data, policy,
-                    [stock_code], [table_list], '', '', 'report_time',
+                    xtdata.get_financial_data,
+                    policy,
+                    [stock_code],
+                    [table_list],
+                    "",
+                    "",
+                    "report_time",
                 )
                 rows = []
                 columns = ["symbol"]
@@ -1801,10 +2103,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     df = stock_data[table_list]
                     if df is not None and len(df) > 0:
                         # 按 m_anntime（公告日期）过滤
-                        if 'm_anntime' in df.columns:
+                        if "m_anntime" in df.columns:
                             df = df[
-                                (df['m_anntime'].astype(str) >= start_str) &
-                                (df['m_anntime'].astype(str) <= end_str)
+                                (df["m_anntime"].astype(str) >= start_str) & (df["m_anntime"].astype(str) <= end_str)
                             ]
                         if df is not None and len(df) > 0:
                             symbol = self._stock_to_symbol(stock_code)
@@ -1813,20 +2114,26 @@ class MiniQmtIngestProvider(IngestProviderBase):
                                 row_values = []
                                 for col in col_names:
                                     v = row.get(col)
-                                    if col in ('date', 'announce_date', 'report_date', 'enddate'):
+                                    if col in ("date", "announce_date", "report_date", "enddate"):
                                         row_values.append(str(v) if v is not None else None)
                                     else:
                                         row_values.append(self.safe_float(v))
                                 rows.append(tuple([symbol] + row_values))
                             columns = ["symbol"] + col_names
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=["symbol"], rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=["symbol"],
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"抓取失败: {e}",
                 )
 
@@ -1854,8 +2161,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         table = payload.table or _TBL_DIVIDEND
         columns = [
-            "trade_date", "symbol", "divid_per_share",
-            "split_per_share", "funds_per_share", "data_source",
+            "trade_date",
+            "symbol",
+            "divid_per_share",
+            "split_per_share",
+            "funds_per_share",
+            "data_source",
         ]
         start_date = payload.start.isoformat()
         end_date = payload.end.isoformat()
@@ -1863,22 +2174,26 @@ class MiniQmtIngestProvider(IngestProviderBase):
         try:
             symbols = payload.symbols
             if not symbols:
-                symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
-                )
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"获取标的清单失败: {e}",
             )
             return
 
         last_key = self._date_to_str(payload.end)
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 df = self._call_with_policy(
-                    xtdata.get_divid_factors, policy, stock_code,
+                    xtdata.get_divid_factors,
+                    policy,
+                    stock_code,
                 )
                 rows = []
                 if df is not None and len(df) > 0:
@@ -1890,22 +2205,30 @@ class MiniQmtIngestProvider(IngestProviderBase):
                         trade_date = datetime.datetime.fromtimestamp(ts / 1000).strftime("%Y-%m-%d")
                         if trade_date < start_date or trade_date > end_date:
                             continue
-                        rows.append((
-                            trade_date,
-                            symbol,
-                            self.safe_float(row.get("divid_per_share")),
-                            self.safe_float(row.get("split_per_share")),
-                            self.safe_float(row.get("funds_per_share")),
-                            "miniqmt",
-                        ))
+                        rows.append(
+                            (
+                                trade_date,
+                                symbol,
+                                self.safe_float(row.get("divid_per_share")),
+                                self.safe_float(row.get("split_per_share")),
+                                self.safe_float(row.get("funds_per_share")),
+                                "miniqmt",
+                            )
+                        )
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"抓取失败: {e}",
                 )
 
@@ -1943,7 +2266,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
         from xtquant import xtdata
 
         detail = self._call_with_policy(
-            xtdata.get_instrument_detail, policy, opt_code,
+            xtdata.get_instrument_detail,
+            policy,
+            opt_code,
         )
         if not detail:
             return None
@@ -1984,7 +2309,8 @@ class MiniQmtIngestProvider(IngestProviderBase):
         }
 
     def _load_option_symbols_from_kline(
-        self, policy: SourcePolicy | None = None,
+        self,
+        policy: SourcePolicy | None = None,
     ) -> list[str]:
         """从 c1_market.option_kline 表加载最近30天有数据的期权合约代码。
 
@@ -2035,10 +2361,13 @@ class MiniQmtIngestProvider(IngestProviderBase):
             return []
         try:
             from xtquant import xtdata
+
             opts: list[str] = []
             for sector_name in ("上证期权", "深证期权"):
                 lst = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, sector_name,
+                    xtdata.get_stock_list_in_sector,
+                    policy,
+                    sector_name,
                 )
                 if lst:
                     opts.extend(lst)
@@ -2075,8 +2404,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """
         table = payload.table or _TBL_OPTION_IV_SURFACE
         columns = [
-            "trade_date", "symbol", "underlying", "strike", "expiry",
-            "option_type", "iv", "exchange", "data_source",
+            "trade_date",
+            "symbol",
+            "underlying",
+            "strike",
+            "expiry",
+            "option_type",
+            "iv",
+            "exchange",
+            "data_source",
         ]
         last_key = self._date_to_str(payload.end)
 
@@ -2085,29 +2421,42 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
         symbols = payload.symbols or self._load_option_symbols_from_kline(policy)
         if not symbols:
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
                 elapsed_sec=0.0,
                 error="option_iv_surface 无 symbols 且 option_kline 表无近30天数据",
             )
             return
 
         for opt_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 rows = self._compute_iv_for_option(
-                    opt_code, start_str, end_str, policy,
+                    opt_code,
+                    start_str,
+                    end_str,
+                    policy,
                 )
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 单个期权合约出错不中断整个任务（xtquant get_option_detail_data 可能有 bug）
@@ -2115,7 +2464,10 @@ class MiniQmtIngestProvider(IngestProviderBase):
                 continue
 
     def _compute_iv_for_option(
-        self, opt_code: str, start_str: str, end_str: str,
+        self,
+        opt_code: str,
+        start_str: str,
+        end_str: str,
         policy: SourcePolicy,
     ) -> list[tuple]:
         """处理单个期权合约的 IV 计算，返回行列表。"""
@@ -2143,14 +2495,14 @@ class MiniQmtIngestProvider(IngestProviderBase):
         if ul_df is None or len(ul_df) == 0:
             return []
 
-        ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike,
-                        expiry, opt_type, exp_date, r, exchange)
+        ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike, expiry, opt_type, exp_date, r, exchange)
         return MiniQmtIngestProvider._compute_iv_rows(ctx)
 
     @staticmethod
     def _compute_iv_rows(ctx: _OptionCtx) -> list[tuple]:
         """遍历对齐日期计算 IV 行。"""
         import pandas as pd
+
         rows = []
         common_dates = ctx.opt_df.index.intersection(ctx.ul_df.index)
         for dt in common_dates:
@@ -2165,12 +2517,19 @@ class MiniQmtIngestProvider(IngestProviderBase):
             else:
                 T = 0.25
             iv = _solve_iv(spot, ctx.strike, T, ctx.r, opt_close, ctx.opt_type)
-            rows.append((
-                pd.Timestamp(dt).strftime("%Y-%m-%d"),
-                ctx.symbol, ctx.underlying, ctx.strike,
-                str(ctx.expiry)[:10] if ctx.expiry else None,
-                ctx.opt_type, iv, ctx.exchange, "miniqmt",
-            ))
+            rows.append(
+                (
+                    pd.Timestamp(dt).strftime("%Y-%m-%d"),
+                    ctx.symbol,
+                    ctx.underlying,
+                    ctx.strike,
+                    str(ctx.expiry)[:10] if ctx.expiry else None,
+                    ctx.opt_type,
+                    iv,
+                    ctx.exchange,
+                    "miniqmt",
+                )
+            )
         return rows
 
     # ============== 可转债波动率 ==============
@@ -2200,8 +2559,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """
         table = payload.table or _TBL_CONVERTIBLE_BOND_IV
         columns = [
-            "trade_date", "symbol", "underlying", "iv",
-            "delta", "gamma", "theta", "vega", "conversion_premium",
+            "trade_date",
+            "symbol",
+            "underlying",
+            "iv",
+            "delta",
+            "gamma",
+            "theta",
+            "vega",
+            "conversion_premium",
             "data_source",
         ]
         trade_date = payload.end.isoformat()
@@ -2212,8 +2578,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
@@ -2223,15 +2593,21 @@ class MiniQmtIngestProvider(IngestProviderBase):
         # 原 code 无 error guard，symbols 为空时 for 循环0次 → 静默SUCCESS 0行
         if not symbols:
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
                 elapsed_sec=0.0,
                 error="convertible_bond_iv 无 symbols 且 akshare bond_zh_cov + QMT 可转债板块均失败",
             )
             return
         ctx = _CbIvFetchCtx(
-            table=table, columns=columns,
-            start_str=start_str, end_str=end_str,
-            last_key=last_key, policy=policy,
+            table=table,
+            columns=columns,
+            start_str=start_str,
+            end_str=end_str,
+            last_key=last_key,
+            policy=policy,
         )
         for cb_code in symbols:
             yield from self._process_single_cb(cb_code, cb_details_map, ctx)
@@ -2252,6 +2628,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
         # 1. 尝试 akshare bond_zh_cov
         try:
             import akshare as ak
+
             cov_df = self._call_with_policy(ak.bond_zh_cov, policy)
             for _, row in cov_df.iterrows():
                 bond_code = str(row.get("债券代码", "")).strip()
@@ -2287,8 +2664,11 @@ class MiniQmtIngestProvider(IngestProviderBase):
         # 2. Fallback: 从 QMT 可转债板块加载 + get_instrument_detail 获取详情
         try:
             from xtquant import xtdata
+
             cb_list = self._call_with_policy(
-                xtdata.get_stock_list_in_sector, policy, "可转债",
+                xtdata.get_stock_list_in_sector,
+                policy,
+                "可转债",
             )
             if not cb_list:
                 self._log.warning("_load_cb_details_map: QMT 可转债板块返回空")
@@ -2298,7 +2678,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
             for cb_code in cb_list:
                 try:
                     detail = self._call_with_policy(
-                        xtdata.get_instrument_detail, policy, cb_code,
+                        xtdata.get_instrument_detail,
+                        policy,
+                        cb_code,
                     )
                     if not detail:
                         continue
@@ -2309,6 +2691,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                         # 尝试从 ProductID 解析
                         product_id = detail.get("ProductID", "")
                         import re
+
                         m = re.search(r"\((\d{6})\)", product_id)
                         if m:
                             code = m.group(1)
@@ -2332,25 +2715,41 @@ class MiniQmtIngestProvider(IngestProviderBase):
     def _fetch_cb_price_df(self, symbol: str, start_str: str, end_str: str, policy: SourcePolicy):
         """下载并获取指定标的的历史收盘价 DataFrame。"""
         from xtquant import xtdata
+
         try:
             self._call_with_policy(
-                xtdata.download_history_data, policy,
-                symbol, "1d", start_str, end_str,
+                xtdata.download_history_data,
+                policy,
+                symbol,
+                "1d",
+                start_str,
+                end_str,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.debug(f"download_history_data({symbol}) 失败: {e}")
         data = self._call_with_policy(
-            xtdata.get_market_data_ex, policy,
-            [], [symbol], "1d", start_str, end_str,
+            xtdata.get_market_data_ex,
+            policy,
+            [],
+            [symbol],
+            "1d",
+            start_str,
+            end_str,
         )
         return data.get(symbol) if data else None
 
     def _compute_cb_iv_rows(
-        self, cb_df, ul_df, convert_price: float, underlying: str,
-        symbol: str, exp_date,
+        self,
+        cb_df,
+        ul_df,
+        convert_price: float,
+        underlying: str,
+        symbol: str,
+        exp_date,
     ) -> list:
         """对齐日期索引，遍历每个交易日计算 IV 并构建数据行。"""
         import pandas as pd
+
         rows = []
         common_dates = cb_df.index.intersection(ul_df.index)
         for dt in common_dates:
@@ -2365,31 +2764,51 @@ class MiniQmtIngestProvider(IngestProviderBase):
             else:
                 T = 0.25
             iv, bond_val, convert_val, delta, gamma, theta, vega_val = _cb_solve_iv(
-                spot, convert_price, T, _CB_R, cb_price, _CB_COUPON_RATE,
+                spot,
+                convert_price,
+                T,
+                _CB_R,
+                cb_price,
+                _CB_COUPON_RATE,
             )
             # 转股溢价率 = (可转债价 / 转换价值 - 1) × 100
             if convert_val and convert_val > 0:
                 conversion_premium = round((cb_price / convert_val - 1) * 100, 4)
             else:
                 conversion_premium = None
-            rows.append((
-                pd.Timestamp(dt).strftime("%Y-%m-%d"),
-                symbol, underlying, iv,
-                delta, gamma, theta, vega_val,
-                conversion_premium, "miniqmt",
-            ))
+            rows.append(
+                (
+                    pd.Timestamp(dt).strftime("%Y-%m-%d"),
+                    symbol,
+                    underlying,
+                    iv,
+                    delta,
+                    gamma,
+                    theta,
+                    vega_val,
+                    conversion_premium,
+                    "miniqmt",
+                )
+            )
         return rows
 
     def _process_single_cb(
-        self, cb_code: str, cb_details_map: dict, ctx: "_CbIvFetchCtx",
+        self,
+        cb_code: str,
+        cb_details_map: dict,
+        ctx: _CbIvFetchCtx,
     ) -> Iterator[FetchResult]:
         """处理单只可转债：获取详情→下载价格→计算IV→yield结果。"""
         import datetime as _dt
-        t0 = time.time()
+
+        t0 = time.monotonic()
         try:
             from xtquant import xtdata
+
             detail = self._call_with_policy(
-                xtdata.get_instrument_detail, ctx.policy, cb_code,
+                xtdata.get_instrument_detail,
+                ctx.policy,
+                cb_code,
             )
             rows = []
             if detail:
@@ -2408,17 +2827,18 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     try:
                         ed_str = str(end_date)
                         if len(ed_str) >= 8:
-                            exp_date = _dt.date(
-                                int(ed_str[:4]), int(ed_str[4:6]), int(ed_str[6:8])
-                            )
+                            exp_date = _dt.date(int(ed_str[:4]), int(ed_str[4:6]), int(ed_str[6:8]))
                     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         pass
                 # 1. 下载并获取可转债历史收盘价
                 cb_df = self._fetch_cb_price_df(cb_code, ctx.start_str, ctx.end_str, ctx.policy)
                 if cb_df is None or len(cb_df) == 0:
                     yield FetchResult(
-                        table=ctx.table, columns=ctx.columns, rows=[],
-                        last_key=ctx.last_key, elapsed_sec=time.time() - t0,
+                        table=ctx.table,
+                        columns=ctx.columns,
+                        rows=[],
+                        last_key=ctx.last_key,
+                        elapsed_sec=time.monotonic() - t0,
                     )
                     return
                 # 2. 下载并获取正股 historical 收盘价
@@ -2427,30 +2847,46 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     ul_df = self._fetch_cb_price_df(underlying, ctx.start_str, ctx.end_str, ctx.policy)
                 if ul_df is None or len(ul_df) == 0:
                     yield FetchResult(
-                        table=ctx.table, columns=ctx.columns, rows=[],
-                        last_key=ctx.last_key, elapsed_sec=time.time() - t0,
+                        table=ctx.table,
+                        columns=ctx.columns,
+                        rows=[],
+                        last_key=ctx.last_key,
+                        elapsed_sec=time.monotonic() - t0,
                     )
                     return
                 # 3. 转股价必须 > 0
                 if convert_price is None or convert_price <= 0:
                     yield FetchResult(
-                        table=ctx.table, columns=ctx.columns, rows=[],
-                        last_key=ctx.last_key, elapsed_sec=time.time() - t0,
+                        table=ctx.table,
+                        columns=ctx.columns,
+                        rows=[],
+                        last_key=ctx.last_key,
+                        elapsed_sec=time.monotonic() - t0,
                     )
                     return
                 # 4. 对齐日期索引，遍历每个交易日计算 IV
                 rows = self._compute_cb_iv_rows(
-                    cb_df, ul_df, convert_price, underlying,
-                    symbol, exp_date,
+                    cb_df,
+                    ul_df,
+                    convert_price,
+                    underlying,
+                    symbol,
+                    exp_date,
                 )
             yield FetchResult(
-                table=ctx.table, columns=ctx.columns, rows=rows,
-                last_key=ctx.last_key, elapsed_sec=time.time() - t0,
+                table=ctx.table,
+                columns=ctx.columns,
+                rows=rows,
+                last_key=ctx.last_key,
+                elapsed_sec=time.monotonic() - t0,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=ctx.table, columns=ctx.columns, rows=[],
-                last_key=ctx.last_key, elapsed_sec=time.time() - t0,
+                table=ctx.table,
+                columns=ctx.columns,
+                rows=[],
+                last_key=ctx.last_key,
+                elapsed_sec=time.monotonic() - t0,
                 error=f"{cb_code} 可转债IV抓取失败: {e}",
             )
 
@@ -2482,8 +2918,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         table = payload.table or _TBL_FUTURES_TERM_STRUCTURE
         columns = [
-            "trade_date", "symbol", "front_contract", "next_contract",
-            "front_price", "next_price", "basis", "exchange", "data_source",
+            "trade_date",
+            "symbol",
+            "front_contract",
+            "next_contract",
+            "front_price",
+            "next_price",
+            "basis",
+            "exchange",
+            "data_source",
         ]
 
         try:
@@ -2491,8 +2934,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
@@ -2500,7 +2947,10 @@ class MiniQmtIngestProvider(IngestProviderBase):
         symbols = payload.symbols or self._load_futures_symbols_from_sectors(policy)
         if not symbols:
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
                 elapsed_sec=0.0,
                 error="futures_term_structure 无 symbols 且 QMT 期货板块加载失败",
             )
@@ -2512,25 +2962,43 @@ class MiniQmtIngestProvider(IngestProviderBase):
         for i in range(len(symbols) - 1):
             front_code = symbols[i]
             next_code = symbols[i + 1]
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 # 下载并读取近月合约收盘价
                 self._call_with_policy(
-                    xtdata.download_history_data, policy,
-                    front_code, "1d", start_str, end_str,
+                    xtdata.download_history_data,
+                    policy,
+                    front_code,
+                    "1d",
+                    start_str,
+                    end_str,
                 )
                 front_data = self._call_with_policy(
-                    xtdata.get_market_data_ex, policy,
-                    [], [front_code], "1d", start_str, end_str,
+                    xtdata.get_market_data_ex,
+                    policy,
+                    [],
+                    [front_code],
+                    "1d",
+                    start_str,
+                    end_str,
                 )
                 # 下载并读取次月合约收盘价
                 self._call_with_policy(
-                    xtdata.download_history_data, policy,
-                    next_code, "1d", start_str, end_str,
+                    xtdata.download_history_data,
+                    policy,
+                    next_code,
+                    "1d",
+                    start_str,
+                    end_str,
                 )
                 next_data = self._call_with_policy(
-                    xtdata.get_market_data_ex, policy,
-                    [], [next_code], "1d", start_str, end_str,
+                    xtdata.get_market_data_ex,
+                    policy,
+                    [],
+                    [next_code],
+                    "1d",
+                    start_str,
+                    end_str,
                 )
 
                 rows = []
@@ -2538,12 +3006,16 @@ class MiniQmtIngestProvider(IngestProviderBase):
                 next_df = next_data.get(next_code) if next_data else None
                 if front_df is None or len(front_df) == 0 or next_df is None or len(next_df) == 0:
                     yield FetchResult(
-                        table=table, columns=columns, rows=[],
-                        last_key=last_key, elapsed_sec=time.time() - t0,
+                        table=table,
+                        columns=columns,
+                        rows=[],
+                        last_key=last_key,
+                        elapsed_sec=time.monotonic() - t0,
                     )
                     continue
                 # 对齐日期索引，遍历每个交易日计算基差
                 import pandas as pd
+
                 common_dates = front_df.index.intersection(next_df.index)
                 symbol = self._stock_to_symbol(front_code)
                 front_sym = self._stock_to_symbol(front_code)
@@ -2556,20 +3028,33 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     basis = None
                     if front_close is not None and next_close is not None:
                         basis = round(front_close - next_close, 4)
-                    rows.append((
-                        pd.Timestamp(dt).strftime("%Y-%m-%d"),
-                        symbol, front_sym, next_sym,
-                        front_close, next_close, basis,
-                        exchange, "miniqmt",
-                    ))
+                    rows.append(
+                        (
+                            pd.Timestamp(dt).strftime("%Y-%m-%d"),
+                            symbol,
+                            front_sym,
+                            next_sym,
+                            front_close,
+                            next_close,
+                            basis,
+                            exchange,
+                            "miniqmt",
+                        )
+                    )
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"抓取失败: {e}",
                 )
 
@@ -2600,9 +3085,19 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         table = payload.table or _TBL_TICK_DATA
         columns = [
-            "trade_date", "timestamp", "symbol", "market_type", "price",
-            "volume", "amount", "direction", "data_source",
-            "bid_price", "ask_price", "bid_volume", "ask_volume",
+            "trade_date",
+            "timestamp",
+            "symbol",
+            "market_type",
+            "price",
+            "volume",
+            "amount",
+            "direction",
+            "data_source",
+            "bid_price",
+            "ask_price",
+            "bid_volume",
+            "ask_volume",
         ]
 
         try:
@@ -2610,8 +3105,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
@@ -2619,28 +3118,43 @@ class MiniQmtIngestProvider(IngestProviderBase):
         last_key = end_str
 
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 # tick 数据量很大，先下载
                 self._call_with_policy(
-                    xtdata.download_history_data, policy,
-                    stock_code, "tick", start_str, end_str,
+                    xtdata.download_history_data,
+                    policy,
+                    stock_code,
+                    "tick",
+                    start_str,
+                    end_str,
                 )
                 data = self._call_with_policy(
-                    xtdata.get_market_data_ex, policy,
-                    [], [stock_code], "tick", start_str, end_str,
+                    xtdata.get_market_data_ex,
+                    policy,
+                    [],
+                    [stock_code],
+                    "tick",
+                    start_str,
+                    end_str,
                 )
 
                 df = data.get(stock_code) if data else None
                 rows = self._parse_tick_rows(df, stock_code, payload.end)
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"抓取失败: {e}",
                 )
 
@@ -2671,15 +3185,23 @@ class MiniQmtIngestProvider(IngestProviderBase):
             vol = self.safe_float(row.get("volume"))
             vol = int(vol) if vol is not None else None
             amt = self.safe_float(row.get("amount"))
-            rows.append((
-                trade_date, timestamp, symbol, market_type, price, vol, amt,
-                "none",  # direction: QMT 不提供买卖方向（#ARCH-CH-023: 空字符串致 CH TSV 解析错误）
-                "miniqmt",
-                self.safe_float(row.get("bid_price") or row.get("bid1")),
-                self.safe_float(row.get("ask_price") or row.get("ask1")),
-                self.safe_float(row.get("bid_volume") or row.get("bidSize1")),
-                self.safe_float(row.get("ask_volume") or row.get("askSize1")),
-            ))
+            rows.append(
+                (
+                    trade_date,
+                    timestamp,
+                    symbol,
+                    market_type,
+                    price,
+                    vol,
+                    amt,
+                    "none",  # direction: QMT 不提供买卖方向（#ARCH-CH-023: 空字符串致 CH TSV 解析错误）
+                    "miniqmt",
+                    self.safe_float(row.get("bid_price") or row.get("bid1")),
+                    self.safe_float(row.get("ask_price") or row.get("ask1")),
+                    self.safe_float(row.get("bid_volume") or row.get("bidSize1")),
+                    self.safe_float(row.get("ask_volume") or row.get("askSize1")),
+                )
+            )
         return rows
 
     @staticmethod
@@ -2725,10 +3247,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
         else:
             trade_date = end_date.isoformat()
         if len(s) >= 14:
-            timestamp = (
-                f"{s[:4]}-{s[4:6]}-{s[6:8]} "
-                f"{s[8:10]}:{s[10:12]}:{s[12:14]}"
-            )
+            timestamp = f"{s[:4]}-{s[4:6]}-{s[6:8]} {s[8:10]}:{s[10:12]}:{s[12:14]}"
         else:
             timestamp = trade_date + " 00:00:00"
         return trade_date, timestamp
@@ -2754,7 +3273,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """
         yield FetchResult(
             table=payload.table or _TBL_AUCTION_SNAPSHOT,
-            columns=[], rows=[], last_key="",
+            columns=[],
+            rows=[],
+            last_key="",
             elapsed_sec=0.0,
             error="集合竞价快照需实时订阅，暂未实现",
         )
@@ -2784,8 +3305,13 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         table = payload.table or _TBL_INDEX_QUOTE
         columns = [
-            "trade_date", "timestamp", "symbol",
-            "price", "volume", "amount", "data_source",
+            "trade_date",
+            "timestamp",
+            "symbol",
+            "price",
+            "volume",
+            "amount",
+            "data_source",
         ]
 
         # symbols 为空时自动获取"沪深指数"板块全部指数
@@ -2793,26 +3319,30 @@ class MiniQmtIngestProvider(IngestProviderBase):
         symbols = payload.symbols
         if not symbols:
             try:
-                symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深指数"
-                )
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深指数")
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=[], rows=[], last_key="",
-                    elapsed_sec=0.0, error=f"获取指数清单失败: {e}",
+                    table=table,
+                    columns=[],
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=0.0,
+                    error=f"获取指数清单失败: {e}",
                 )
                 return
 
-        t0 = time.time()
+        t0 = time.monotonic()
         try:
             trade_date = payload.end.isoformat()
             rows = []
             # get_full_tick 批量获取实时快照
             batch_size = 200
             for i in range(0, len(symbols), batch_size):
-                batch = symbols[i:i + batch_size]
+                batch = symbols[i : i + batch_size]
                 tick_data = self._call_with_policy(
-                    xtdata.get_full_tick, policy, batch,
+                    xtdata.get_full_tick,
+                    policy,
+                    batch,
                 )
                 if tick_data:
                     for index_code, tick in tick_data.items():
@@ -2832,20 +3362,33 @@ class MiniQmtIngestProvider(IngestProviderBase):
                             timestamp = f"{date_part[:4]}-{date_part[4:6]}-{date_part[6:8]} {time_part}"
                         else:
                             from datetime import datetime
+
                             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        rows.append((
-                            trade_date, timestamp, symbol,
-                            price, vol, amt, "miniqmt",
-                        ))
+                        rows.append(
+                            (
+                                trade_date,
+                                timestamp,
+                                symbol,
+                                price,
+                                vol,
+                                amt,
+                                "miniqmt",
+                            )
+                        )
             yield FetchResult(
-                table=table, columns=columns, rows=rows,
+                table=table,
+                columns=columns,
+                rows=rows,
                 last_key=self._date_to_str(payload.end),
-                elapsed_sec=time.time() - t0,
+                elapsed_sec=time.monotonic() - t0,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key="", elapsed_sec=time.time() - t0,
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
                 error=f"指数实时快照抓取失败: {e}",
             )
 
@@ -2876,16 +3419,27 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         table = payload.table or _TBL_STOCK_LIST
         columns = [
-            "ts_code", "symbol", "name", "area", "industry", "fullname",
-            "enname", "cn_spell", "market", "exchange", "currency",
-            "list_status", "list_date", "delist_date", "hs_hold",
-            "actual_controller", "controller_type",
+            "ts_code",
+            "symbol",
+            "name",
+            "area",
+            "industry",
+            "fullname",
+            "enname",
+            "cn_spell",
+            "market",
+            "exchange",
+            "currency",
+            "list_status",
+            "list_date",
+            "delist_date",
+            "hs_hold",
+            "actual_controller",
+            "controller_type",
         ]
-        t0 = time.time()
+        t0 = time.monotonic()
         try:
-            stock_codes = self._call_with_policy(
-                xtdata.get_stock_list_in_sector, policy, "沪深A股"
-            )
+            stock_codes = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
             rows = []
             if stock_codes:
                 for stock_code in stock_codes:
@@ -2893,7 +3447,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     # 获取个股详情
                     try:
                         detail = self._call_with_policy(
-                            xtdata.get_instrument_detail, policy, stock_code,
+                            xtdata.get_instrument_detail,
+                            policy,
+                            stock_code,
                         )
                     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         detail = None
@@ -2916,34 +3472,41 @@ class MiniQmtIngestProvider(IngestProviderBase):
                             ds = str(expire)
                             if len(ds) >= 8:
                                 delist_date = f"{ds[:4]}-{ds[4:6]}-{ds[6:8]}"
-                    rows.append((
-                        stock_code,  # ts_code
-                        symbol,
-                        name,
-                        "",  # area
-                        industry,
-                        "",  # fullname
-                        "",  # enname
-                        "",  # cn_spell
-                        "A股",  # market
-                        exchange,
-                        "CNY",  # currency
-                        "上市",  # list_status
-                        list_date,
-                        delist_date,
-                        "",  # hs_hold
-                        "",  # actual_controller
-                        "",  # controller_type
-                    ))
+                    rows.append(
+                        (
+                            stock_code,  # ts_code
+                            symbol,
+                            name,
+                            "",  # area
+                            industry,
+                            "",  # fullname
+                            "",  # enname
+                            "",  # cn_spell
+                            "A股",  # market
+                            exchange,
+                            "CNY",  # currency
+                            "上市",  # list_status
+                            list_date,
+                            delist_date,
+                            "",  # hs_hold
+                            "",  # actual_controller
+                            "",  # controller_type
+                        )
+                    )
             yield FetchResult(
-                table=table, columns=columns, rows=rows,
+                table=table,
+                columns=columns,
+                rows=rows,
                 last_key=self._date_to_str(payload.end),
-                elapsed_sec=time.time() - t0,
+                elapsed_sec=time.monotonic() - t0,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key="", elapsed_sec=time.time() - t0,
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
                 error=f"获取股票列表失败: {e}",
             )
 
@@ -2976,14 +3539,29 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         table = payload.table or default_table
         columns = [
-            "trade_date", "symbol", "open", "high", "low", "close",
-            "volume", "amount", "data_source",
+            "trade_date",
+            "symbol",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "amount",
+            "data_source",
         ]
         # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 期货/期权K线需交易所列消歧
         if include_exchange:
             columns = [
-                "trade_date", "symbol", "open", "high", "low", "close",
-                "volume", "amount", "exchange", "data_source",
+                "trade_date",
+                "symbol",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "amount",
+                "exchange",
+                "data_source",
             ]
 
         try:
@@ -2991,8 +3569,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
@@ -3000,15 +3582,24 @@ class MiniQmtIngestProvider(IngestProviderBase):
         last_key = end_str
 
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 self._call_with_policy(
-                    xtdata.download_history_data, policy,
-                    stock_code, "1d", start_str, end_str,
+                    xtdata.download_history_data,
+                    policy,
+                    stock_code,
+                    "1d",
+                    start_str,
+                    end_str,
                 )
                 data = self._call_with_policy(
-                    xtdata.get_market_data_ex, policy,
-                    [], [stock_code], "1d", start_str, end_str,
+                    xtdata.get_market_data_ex,
+                    policy,
+                    [],
+                    [stock_code],
+                    "1d",
+                    start_str,
+                    end_str,
                 )
 
                 rows = []
@@ -3031,43 +3622,57 @@ class MiniQmtIngestProvider(IngestProviderBase):
                         vol = self.safe_float(volumes[i])
                         vol = int(vol) if vol is not None else None
                         if include_exchange:
-                            rows.append((
-                                trade_date, symbol,
-                                self.safe_float(opens[i]),
-                                self.safe_float(highs[i]),
-                                self.safe_float(lows[i]),
-                                self.safe_float(closes[i]),
-                                vol,
-                                self.safe_float(amounts[i]),
-                                exchange,
-                                "miniqmt",
-                            ))
+                            rows.append(
+                                (
+                                    trade_date,
+                                    symbol,
+                                    self.safe_float(opens[i]),
+                                    self.safe_float(highs[i]),
+                                    self.safe_float(lows[i]),
+                                    self.safe_float(closes[i]),
+                                    vol,
+                                    self.safe_float(amounts[i]),
+                                    exchange,
+                                    "miniqmt",
+                                )
+                            )
                         else:
-                            rows.append((
-                                trade_date, symbol,
-                                self.safe_float(opens[i]),
-                                self.safe_float(highs[i]),
-                                self.safe_float(lows[i]),
-                                self.safe_float(closes[i]),
-                                vol,
-                                self.safe_float(amounts[i]),
-                                "miniqmt",
-                            ))
+                            rows.append(
+                                (
+                                    trade_date,
+                                    symbol,
+                                    self.safe_float(opens[i]),
+                                    self.safe_float(highs[i]),
+                                    self.safe_float(lows[i]),
+                                    self.safe_float(closes[i]),
+                                    vol,
+                                    self.safe_float(amounts[i]),
+                                    "miniqmt",
+                                )
+                            )
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"{stock_code} 抓取失败: {e}",
                 )
 
     # ============== 可转债K线 ==============
 
     def fetch_kline_cb(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取可转债日K线数据。
 
@@ -3087,14 +3692,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
         # symbols 为空时尝试取沪深转债板块
         if not payload.symbols:
             try:
-                cb_list = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深转债"
-                )
+                cb_list = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深转债")
                 if cb_list:
                     payload = FetchPayload(
-                        table=payload.table, symbols=cb_list,
-                        start=payload.start, end=payload.end,
-                        incremental=payload.incremental, extra=payload.extra,
+                        table=payload.table,
+                        symbols=cb_list,
+                        start=payload.start,
+                        end=payload.end,
+                        incremental=payload.incremental,
+                        extra=payload.extra,
                     )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取可转债板块失败: {e}")
@@ -3103,14 +3709,14 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
     # ============== 期权K线 ==============
 
-    def _fetch_kline_cb(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_kline_cb(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_kline_cb(payload, policy)
 
     def fetch_option_kline(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取期权日K线数据。
 
@@ -3132,35 +3738,39 @@ class MiniQmtIngestProvider(IngestProviderBase):
             try:
                 opts = []
                 for sector_name in ("上证期权", "深证期权"):
-                    lst = self._call_with_policy(
-                        xtdata.get_stock_list_in_sector, policy, sector_name
-                    )
+                    lst = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, sector_name)
                     if lst:
                         opts.extend(lst)
                 if opts:
                     # 限制前 100 个（期权合约太多）
                     payload = FetchPayload(
-                        table=payload.table, symbols=opts[:100],
-                        start=payload.start, end=payload.end,
-                        incremental=payload.incremental, extra=payload.extra,
+                        table=payload.table,
+                        symbols=opts[:100],
+                        start=payload.start,
+                        end=payload.end,
+                        incremental=payload.incremental,
+                        extra=payload.extra,
                     )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取期权列表失败: {e}")
 
         yield from self._fetch_simple_kline(
-            payload, policy, _TBL_OPTION_KLINE, include_exchange=True,
+            payload,
+            policy,
+            _TBL_OPTION_KLINE,
+            include_exchange=True,
         )
 
     # ============== 期权Greeks ==============
 
-    def _fetch_option_kline(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_option_kline(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_option_kline(payload, policy)
 
     def fetch_option_greeks(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取期权Greeks数据（delta/gamma/theta/vega）。
 
@@ -3178,15 +3788,28 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """
         table = payload.table or _TBL_OPTION_GREEKS
         columns = [
-            "trade_date", "symbol", "underlying", "strike", "expiry",
-            "opt_type", "delta", "gamma", "theta", "vega", "exchange", "data_source",
+            "trade_date",
+            "symbol",
+            "underlying",
+            "strike",
+            "expiry",
+            "opt_type",
+            "delta",
+            "gamma",
+            "theta",
+            "vega",
+            "exchange",
+            "data_source",
         ]
         # 治本修复#ARCH-OPTION-GREEKS-001（2026-07-23）：symbols=null 时自动加载
         # 与 _fetch_option_iv_surface 一致，避免 for 循环空转返回 rows=0 导致数据停滞
         symbols = payload.symbols or self._load_option_symbols_from_kline(policy)
         if not symbols:
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
                 elapsed_sec=0.0,
                 error="option_greeks 无 symbols 且 option_kline 表无近30天数据",
             )
@@ -3198,34 +3821,45 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
         for opt_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 rows = self._compute_greeks_for_option(
-                    opt_code, start_str, end_str, policy,
+                    opt_code,
+                    start_str,
+                    end_str,
+                    policy,
                 )
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 单个期权合约出错不中断整个任务（xtquant get_option_detail_data 可能有 bug）
                 self._log.warning(f"{opt_code} Greeks抓取失败，跳过: {e}")
                 continue
 
-    def _fetch_option_greeks(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_option_greeks(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_option_greeks(payload, policy)
 
     def _compute_greeks_for_option(
-        self, opt_code: str, start_str: str, end_str: str,
+        self,
+        opt_code: str,
+        start_str: str,
+        end_str: str,
         policy: SourcePolicy,
     ) -> list[tuple]:
         """处理单个期权合约的 Greeks 计算，返回行列表。"""
@@ -3253,14 +3887,14 @@ class MiniQmtIngestProvider(IngestProviderBase):
         if ul_df is None or len(ul_df) == 0:
             return []
 
-        ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike,
-                        expiry, opt_type, exp_date, r, exchange)
+        ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike, expiry, opt_type, exp_date, r, exchange)
         return MiniQmtIngestProvider._compute_greeks_rows(ctx)
 
     @staticmethod
     def _compute_greeks_rows(ctx: _OptionCtx) -> list[tuple]:
         """遍历对齐日期计算 Greeks 行。"""
         import pandas as pd
+
         ul_close = ctx.ul_df["close"].astype(float)
         ul_ret = ul_close.pct_change()
         common_dates = ctx.opt_df.index.intersection(ctx.ul_df.index)
@@ -3278,15 +3912,22 @@ class MiniQmtIngestProvider(IngestProviderBase):
             sigma = MiniQmtIngestProvider._calc_hist_vol(ctx.ul_df, ul_ret, dt)
             greeks = MiniQmtIngestProvider._calc_bs_greeks(spot, ctx.strike, T, ctx.r, sigma, ctx.opt_type)
             if greeks:
-                rows.append((
-                    pd.Timestamp(dt).strftime("%Y-%m-%d"),
-                    ctx.symbol, ctx.underlying, ctx.strike,
-                    str(ctx.expiry)[:10] if ctx.expiry else None,
-                    ctx.opt_type,
-                    greeks["delta"], greeks["gamma"],
-                    greeks["theta"], greeks["vega"],
-                    ctx.exchange, "miniqmt",
-                ))
+                rows.append(
+                    (
+                        pd.Timestamp(dt).strftime("%Y-%m-%d"),
+                        ctx.symbol,
+                        ctx.underlying,
+                        ctx.strike,
+                        str(ctx.expiry)[:10] if ctx.expiry else None,
+                        ctx.opt_type,
+                        greeks["delta"],
+                        greeks["gamma"],
+                        greeks["theta"],
+                        greeks["vega"],
+                        ctx.exchange,
+                        "miniqmt",
+                    )
+                )
         return rows
 
     @staticmethod
@@ -3298,46 +3939,72 @@ class MiniQmtIngestProvider(IngestProviderBase):
             sigma = MiniQmtIngestProvider.safe_float(hist_vol)
             if sigma is None or sigma <= 0:
                 return 0.3
-            return sigma * (244 ** 0.5)
+            return sigma * (244**0.5)
         return 0.3
 
     def _download_option_price_df(
-        self, opt_code: str, start_str: str, end_str: str,
+        self,
+        opt_code: str,
+        start_str: str,
+        end_str: str,
         policy: SourcePolicy,
     ):
         """下载并获取期权历史日K收盘价 DataFrame。"""
         from xtquant import xtdata
+
         try:
             self._call_with_policy(
-                xtdata.download_history_data, policy,
-                opt_code, "1d", start_str, end_str,
+                xtdata.download_history_data,
+                policy,
+                opt_code,
+                "1d",
+                start_str,
+                end_str,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.debug(f"download_history_data({opt_code}) 失败: {e}")
         opt_data = self._call_with_policy(
-            xtdata.get_market_data_ex, policy,
-            [], [opt_code], "1d", start_str, end_str,
+            xtdata.get_market_data_ex,
+            policy,
+            [],
+            [opt_code],
+            "1d",
+            start_str,
+            end_str,
         )
         return opt_data.get(opt_code) if opt_data else None
 
     def _download_underlying_price_df(
-        self, underlying: str, start_str: str, end_str: str,
+        self,
+        underlying: str,
+        start_str: str,
+        end_str: str,
         policy: SourcePolicy,
     ):
         """下载并获取标的 historical 日K收盘价 DataFrame。"""
         from xtquant import xtdata
+
         if not underlying:
             return None
         try:
             self._call_with_policy(
-                xtdata.download_history_data, policy,
-                underlying, "1d", start_str, end_str,
+                xtdata.download_history_data,
+                policy,
+                underlying,
+                "1d",
+                start_str,
+                end_str,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.debug(f"download_history_data({underlying}) 失败: {e}")
         ul_data = self._call_with_policy(
-            xtdata.get_market_data_ex, policy,
-            [], [underlying], "1d", start_str, end_str,
+            xtdata.get_market_data_ex,
+            policy,
+            [],
+            [underlying],
+            "1d",
+            start_str,
+            end_str,
         )
         return ul_data.get(underlying) if ul_data else None
 
@@ -3359,27 +4026,27 @@ class MiniQmtIngestProvider(IngestProviderBase):
         if S is None or K is None or S <= 0 or K <= 0 or T <= 0 or sigma <= 0:
             return None
         import math
-        d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+
+        d1 = (math.log(S / K) + (r + sigma**2 / 2) * T) / (sigma * math.sqrt(T))
         d2 = d1 - sigma * math.sqrt(T)
+
         # 标准正态分布 PDF 和 CDF
         def _pdf(x):
-            return math.exp(-x ** 2 / 2) / math.sqrt(2 * math.pi)
+            return math.exp(-(x**2) / 2) / math.sqrt(2 * math.pi)
+
         def _cdf(x):
             return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
         gamma = _pdf(d1) / (S * sigma * math.sqrt(T))
         vega = S * _pdf(d1) * math.sqrt(T) / 100  # vega per 1% vol change
         if opt_type == "call":
             delta = _cdf(d1)
             theta = (
-                -S * _pdf(d1) * sigma / (2 * math.sqrt(T))
-                - r * K * math.exp(-r * T) * _cdf(d2)
+                -S * _pdf(d1) * sigma / (2 * math.sqrt(T)) - r * K * math.exp(-r * T) * _cdf(d2)
             ) / 365  # theta per day
         else:
             delta = _cdf(d1) - 1
-            theta = (
-                -S * _pdf(d1) * sigma / (2 * math.sqrt(T))
-                + r * K * math.exp(-r * T) * _cdf(-d2)
-            ) / 365
+            theta = (-S * _pdf(d1) * sigma / (2 * math.sqrt(T)) + r * K * math.exp(-r * T) * _cdf(-d2)) / 365
         return {
             "delta": round(delta, 6),
             "gamma": round(gamma, 6),
@@ -3395,7 +4062,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
     # ============== 指数权重 ==============
 
     def fetch_index_weight(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取指数成分股权重数据。
 
@@ -3417,7 +4086,10 @@ class MiniQmtIngestProvider(IngestProviderBase):
         trade_date = payload.end.isoformat()
         # 默认核心指数
         index_codes = payload.symbols or [
-            "000016.SH", "000300.SH", "000905.SH", "000852.SH",
+            "000016.SH",
+            "000300.SH",
+            "000905.SH",
+            "000852.SH",
         ]
         last_key = self._date_to_str(payload.end)
 
@@ -3428,41 +4100,53 @@ class MiniQmtIngestProvider(IngestProviderBase):
             self._log.warning(f"download_index_weight 失败: {e}")
 
         for index_code in index_codes:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 weight_dict = self._call_with_policy(
-                    xtdata.get_index_weight, policy, index_code,
+                    xtdata.get_index_weight,
+                    policy,
+                    index_code,
                 )
                 rows = []
                 if weight_dict:
                     for stock_code, weight in weight_dict.items():
                         symbol = self._stock_to_symbol(stock_code)
-                        rows.append((
-                            trade_date, index_code, symbol,
-                            self.safe_float(weight),
-                            "miniqmt",
-                        ))
+                        rows.append(
+                            (
+                                trade_date,
+                                index_code,
+                                symbol,
+                                self.safe_float(weight),
+                                "miniqmt",
+                            )
+                        )
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"{index_code} 权重抓取失败: {e}",
                 )
 
     # ============== 板块列表 ==============
 
-    def _fetch_index_weight(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_index_weight(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_index_weight(payload, policy)
 
     def fetch_sector_list(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取板块成分股列表。
 
@@ -3495,37 +4179,41 @@ class MiniQmtIngestProvider(IngestProviderBase):
             self._log.warning(f"download_sector_data 失败: {e}")
 
         for sector_name in sectors:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
-                stock_list = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, sector_name
-                )
+                stock_list = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, sector_name)
                 rows = []
                 if stock_list:
                     for stock_code in stock_list:
                         symbol = self._stock_to_symbol(stock_code)
                         rows.append((trade_date, sector_name, symbol, "miniqmt"))
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"板块[{sector_name}]抓取失败: {e}",
                 )
 
     # ============== Level-2逐笔 ==============
 
-    def _fetch_sector_list(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_sector_list(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_sector_list(payload, policy)
 
     def fetch_l2_tick(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取 Level-2 逐笔行情数据。
 
@@ -3546,7 +4234,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
         if not self._probe_l2_permission():
             yield FetchResult(
                 table=payload.table or _TBL_L2_TICK,
-                columns=[], rows=[], last_key="",
+                columns=[],
+                rows=[],
+                last_key="",
                 elapsed_sec=0.0,
                 error="L2行情权限缺失，已自动降级到tick_snapshot五档快照",
             )
@@ -3557,8 +4247,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         table = payload.table or _TBL_L2_TICK
         columns = [
-            "trade_date", "timestamp", "symbol", "price", "volume",
-            "amount", "bid_price", "ask_price", "data_source",
+            "trade_date",
+            "timestamp",
+            "symbol",
+            "price",
+            "volume",
+            "amount",
+            "bid_price",
+            "ask_price",
+            "data_source",
         ]
 
         try:
@@ -3566,8 +4263,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             end_str = self._date_to_str(payload.end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=[], rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"日期转换失败: {e}",
             )
             return
 
@@ -3575,27 +4276,36 @@ class MiniQmtIngestProvider(IngestProviderBase):
         last_key = end_str
 
         for stock_code in symbols:
-            t0 = time.time()
+            t0 = time.monotonic()
             try:
                 data = self._call_with_policy(
-                    xtdata.get_l2_quote, policy,
-                    [], stock_code, start_str, end_str, -1,
+                    xtdata.get_l2_quote,
+                    policy,
+                    [],
+                    stock_code,
+                    start_str,
+                    end_str,
+                    -1,
                 )
                 rows = self._parse_l2_records(data, stock_code, payload.end)
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
                     error=f"{stock_code} L2抓取失败: {e}",
                 )
 
-    def _fetch_l2_tick(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_l2_tick(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_l2_tick(payload, policy)
 
@@ -3626,10 +4336,19 @@ class MiniQmtIngestProvider(IngestProviderBase):
             amt = self.safe_float(rec["amount"])
             bid_price = self._extract_first_price(rec, "bidPrice")
             ask_price = self._extract_first_price(rec, "askPrice")
-            rows.append((
-                trade_date, timestamp, symbol, price, vol, amt,
-                bid_price, ask_price, "miniqmt",
-            ))
+            rows.append(
+                (
+                    trade_date,
+                    timestamp,
+                    symbol,
+                    price,
+                    vol,
+                    amt,
+                    bid_price,
+                    ask_price,
+                    "miniqmt",
+                )
+            )
         return rows
 
     @staticmethod
@@ -3643,7 +4362,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
     # ============== 集合竞价数据 ==============
 
     def fetch_auction_data(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取集合竞价数据（实时快照）。
 
@@ -3664,34 +4385,44 @@ class MiniQmtIngestProvider(IngestProviderBase):
         table = payload.table or _TBL_AUCTION_SNAPSHOT
         # 字段名与表 schema 严格对齐（曾因字段名不一致导致写入0值）
         columns = [
-            "trade_date", "auction_time", "symbol", "auction_price",
-            "auction_volume", "auction_amount", "market_type",
-            "data_source", "quality_flag",
+            "trade_date",
+            "auction_time",
+            "symbol",
+            "auction_price",
+            "auction_volume",
+            "auction_amount",
+            "market_type",
+            "data_source",
+            "quality_flag",
         ]
 
         symbols = payload.symbols
         if not symbols:
             try:
-                symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
-                )
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=[], rows=[], last_key="",
-                    elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                    table=table,
+                    columns=[],
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=0.0,
+                    error=f"获取标的清单失败: {e}",
                 )
                 return
 
-        t0 = time.time()
+        t0 = time.monotonic()
         try:
             # get_full_tick 一次最多取一定数量标的，分批调用
             batch_size = 200
             rows = []
             trade_date = payload.end.isoformat()
             for i in range(0, len(symbols), batch_size):
-                batch = symbols[i:i + batch_size]
+                batch = symbols[i : i + batch_size]
                 tick_data = self._call_with_policy(
-                    xtdata.get_full_tick, policy, batch,
+                    xtdata.get_full_tick,
+                    policy,
+                    batch,
                 )
                 if tick_data:
                     for stock_code, tick in tick_data.items():
@@ -3717,28 +4448,39 @@ class MiniQmtIngestProvider(IngestProviderBase):
                         else:
                             # 无 timetag 时用当前时间兜底
                             from datetime import datetime
-                            auction_time = datetime.now().strftime(
-                                "%Y-%m-%d %H:%M:%S"
+
+                            auction_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # noqa: m46-time — 存量兜底口径为本地时区字符串，静默改 UTC 会破坏下游解析，留痕待裁定统一
+                        rows.append(
+                            (
+                                trade_date,
+                                auction_time,
+                                symbol,
+                                price,
+                                vol,
+                                amt,
+                                "A_share",
+                                "miniqmt",
+                                1,
                             )
-                        rows.append((
-                            trade_date, auction_time, symbol, price, vol, amt,
-                            "A_share", "miniqmt", 1,
-                        ))
+                        )
             yield FetchResult(
-                table=table, columns=columns, rows=rows,
+                table=table,
+                columns=columns,
+                rows=rows,
                 last_key=self._date_to_str(payload.end),
-                elapsed_sec=time.time() - t0,
+                elapsed_sec=time.monotonic() - t0,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key="", elapsed_sec=time.time() - t0,
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
                 error=f"集合竞价数据抓取失败: {e}",
             )
 
-    def _fetch_auction_data(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_auction_data(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_auction_data(payload, policy)
 
@@ -3746,6 +4488,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
     def _parse_timetag(timetag) -> str:
         """解析 xtdata timetag 为 'YYYY-MM-DD HH:MM:SS'。"""
         from datetime import datetime
+
         ts_str = str(timetag) if timetag else ""
         if len(ts_str) >= 17 and " " in ts_str:
             d, t = ts_str[:8], ts_str[9:17]
@@ -3777,17 +4520,45 @@ class MiniQmtIngestProvider(IngestProviderBase):
         ap = self._extract_5_levels(tick.get("askPrice"), 0.0)
         av = [int(v) for v in self._extract_5_levels(tick.get("askVol"), 0.0)]
         return (
-            trade_date, ts_value, symbol, last_price, vol, amt,
-            open_p, high, low, pre_close, upper_limit, lower_limit,
-            bp[0], bp[1], bp[2], bp[3], bp[4],
-            bv[0], bv[1], bv[2], bv[3], bv[4],
-            ap[0], ap[1], ap[2], ap[3], ap[4],
-            av[0], av[1], av[2], av[3], av[4],
+            trade_date,
+            ts_value,
+            symbol,
+            last_price,
+            vol,
+            amt,
+            open_p,
+            high,
+            low,
+            pre_close,
+            upper_limit,
+            lower_limit,
+            bp[0],
+            bp[1],
+            bp[2],
+            bp[3],
+            bp[4],
+            bv[0],
+            bv[1],
+            bv[2],
+            bv[3],
+            bv[4],
+            ap[0],
+            ap[1],
+            ap[2],
+            ap[3],
+            ap[4],
+            av[0],
+            av[1],
+            av[2],
+            av[3],
+            av[4],
             "miniqmt",
         )
 
     def _fetch_auction_book(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取集合竞价盘口快照（含五档）。
 
@@ -3809,61 +4580,95 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         table = payload.table or _TBL_AUCTION_BOOK
         columns = [
-            "trade_date", "timestamp", "symbol", "last_price", "volume",
-            "amount", "open", "high", "low", "pre_close",
-            "upper_limit", "lower_limit",
-            "bid_price1", "bid_price2", "bid_price3", "bid_price4", "bid_price5",
-            "bid_volume1", "bid_volume2", "bid_volume3", "bid_volume4", "bid_volume5",
-            "ask_price1", "ask_price2", "ask_price3", "ask_price4", "ask_price5",
-            "ask_volume1", "ask_volume2", "ask_volume3", "ask_volume4", "ask_volume5",
+            "trade_date",
+            "timestamp",
+            "symbol",
+            "last_price",
+            "volume",
+            "amount",
+            "open",
+            "high",
+            "low",
+            "pre_close",
+            "upper_limit",
+            "lower_limit",
+            "bid_price1",
+            "bid_price2",
+            "bid_price3",
+            "bid_price4",
+            "bid_price5",
+            "bid_volume1",
+            "bid_volume2",
+            "bid_volume3",
+            "bid_volume4",
+            "bid_volume5",
+            "ask_price1",
+            "ask_price2",
+            "ask_price3",
+            "ask_price4",
+            "ask_price5",
+            "ask_volume1",
+            "ask_volume2",
+            "ask_volume3",
+            "ask_volume4",
+            "ask_volume5",
             "data_source",
         ]
 
         symbols = payload.symbols
         if not symbols:
             try:
-                symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
-                )
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=[], rows=[], last_key="",
-                    elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                    table=table,
+                    columns=[],
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=0.0,
+                    error=f"获取标的清单失败: {e}",
                 )
                 return
 
-        t0 = time.time()
+        t0 = time.monotonic()
         try:
             batch_size = 200
             rows = []
             trade_date = payload.end.isoformat()
             for i in range(0, len(symbols), batch_size):
-                batch = symbols[i:i + batch_size]
+                batch = symbols[i : i + batch_size]
                 tick_data = self._call_with_policy(
-                    xtdata.get_full_tick, policy, batch,
+                    xtdata.get_full_tick,
+                    policy,
+                    batch,
                 )
                 if tick_data:
                     for stock_code, tick in tick_data.items():
                         if not tick:
                             continue
                         symbol = self._stock_to_symbol(stock_code)
-                        rows.append(
-                            self._parse_auction_book_tick(tick, symbol, trade_date)
-                        )
+                        rows.append(self._parse_auction_book_tick(tick, symbol, trade_date))
             yield FetchResult(
-                table=table, columns=columns, rows=rows,
+                table=table,
+                columns=columns,
+                rows=rows,
                 last_key=self._date_to_str(payload.end),
-                elapsed_sec=time.time() - t0,
+                elapsed_sec=time.monotonic() - t0,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key="", elapsed_sec=time.time() - t0,
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
                 error=f"集合竞价盘口抓取失败: {e}",
             )
 
     def fetch_kline_futures_qmt(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取期货日K线数据（QMT 专用表）。
 
@@ -3884,34 +4689,38 @@ class MiniQmtIngestProvider(IngestProviderBase):
             try:
                 futures = []
                 for sector_name in ("商品期货", "股指期货期货板块"):
-                    lst = self._call_with_policy(
-                        xtdata.get_stock_list_in_sector, policy, sector_name
-                    )
+                    lst = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, sector_name)
                     if lst:
                         futures.extend(lst)
                 if futures:
                     payload = FetchPayload(
-                        table=payload.table, symbols=futures,
-                        start=payload.start, end=payload.end,
-                        incremental=payload.incremental, extra=payload.extra,
+                        table=payload.table,
+                        symbols=futures,
+                        start=payload.start,
+                        end=payload.end,
+                        incremental=payload.incremental,
+                        extra=payload.extra,
                     )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取期货合约列表失败: {e}")
 
         yield from self._fetch_simple_kline(
-            payload, policy, _TBL_KLINE_FUTURES_QMT, include_exchange=True,
+            payload,
+            policy,
+            _TBL_KLINE_FUTURES_QMT,
+            include_exchange=True,
         )
 
     # ============== 港股K线 ==============
 
-    def _fetch_kline_futures_qmt(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_kline_futures_qmt(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_kline_futures_qmt(payload, policy)
 
     def fetch_hk_kline(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取港股日K线数据。
 
@@ -3930,15 +4739,16 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         if not payload.symbols:
             try:
-                hk_list = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "港股主板"
-                )
+                hk_list = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "港股主板")
                 if hk_list:
                     # 限制前 200 只（港股太多，避免超时）
                     payload = FetchPayload(
-                        table=payload.table, symbols=hk_list[:200],
-                        start=payload.start, end=payload.end,
-                        incremental=payload.incremental, extra=payload.extra,
+                        table=payload.table,
+                        symbols=hk_list[:200],
+                        start=payload.start,
+                        end=payload.end,
+                        incremental=payload.incremental,
+                        extra=payload.extra,
                     )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取港股列表失败: {e}")
@@ -3947,14 +4757,14 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
     # ============== 美股K线 ==============
 
-    def _fetch_hk_kline(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_hk_kline(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_hk_kline(payload, policy)
 
     def fetch_us_kline(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取美股日K线数据。
 
@@ -3972,7 +4782,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
         if not payload.symbols:
             yield FetchResult(
                 table=payload.table or _TBL_KLINE_US_DAILY,
-                columns=[], rows=[], last_key="",
+                columns=[],
+                rows=[],
+                last_key="",
                 elapsed_sec=0.0,
                 error="QMT 无美股板块，需在 tasks.yaml 中手动指定 symbols（如 ['AAPL.US', 'MSFT.US']），且需开通美股行情权限",
             )
@@ -3981,14 +4793,14 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
     # ============== ETF净值 ==============
 
-    def _fetch_us_kline(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_us_kline(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_us_kline(payload, policy)
 
     def fetch_etf_nav(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取 ETF 基金净值数据。
 
@@ -4006,7 +4818,8 @@ class MiniQmtIngestProvider(IngestProviderBase):
         # 返回明确错误，避免每次调度 FAILED 浪费资源
         yield FetchResult(
             table=payload.table or _TBL_ETF_NAV,
-            columns=[], rows=[],
+            columns=[],
+            rows=[],
             last_key=self._date_to_str(payload.end),
             elapsed_sec=0.0,
             error="miniQMT get_etf_info 客户端不支持（function not realize，需升级投研版）；ETF净值请改用 akshare fund_etf_fund_info_em",
@@ -4014,14 +4827,14 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
     # ============== 回购数据（占位） ==============
 
-    def _fetch_etf_nav(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_etf_nav(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_etf_nav(payload, policy)
 
     def _fetch_repurchase(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """回购数据占位方法。
 
@@ -4034,7 +4847,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """
         yield FetchResult(
             table=payload.table or _TBL_REPURCHASE,
-            columns=[], rows=[], last_key="",
+            columns=[],
+            rows=[],
+            last_key="",
             elapsed_sec=0.0,
             error="QMT无回购数据接口，建议使用AKShare stock_repurchase_em",
         )
@@ -4042,7 +4857,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
     # ============== 融资融券（QMT占位） ==============
 
     def _fetch_margin_trading_qmt(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """融资融券数据占位方法（QMT）。
 
@@ -4055,7 +4872,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """
         yield FetchResult(
             table=payload.table or _TBL_MARGIN_TRADING_QMT,
-            columns=[], rows=[], last_key="",
+            columns=[],
+            rows=[],
+            last_key="",
             elapsed_sec=0.0,
             error="QMT无融资融券接口，已由AKShare Provider覆盖（margin_trading_incremental）",
         )
@@ -4063,7 +4882,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
     # ============== 龙虎榜（QMT占位） ==============
 
     def _fetch_dragon_tiger_qmt(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """龙虎榜数据占位方法（QMT）。
 
@@ -4076,7 +4897,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """
         yield FetchResult(
             table=payload.table or _TBL_DRAGON_TIGER_QMT,
-            columns=[], rows=[], last_key="",
+            columns=[],
+            rows=[],
+            last_key="",
             elapsed_sec=0.0,
             error="QMT无龙虎榜接口，已由AKShare Provider覆盖（dragon_tiger_incremental）",
         )
@@ -4084,7 +4907,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
     # ============== 大宗交易（QMT占位） ==============
 
     def _fetch_block_trade_qmt(
-        self, payload: FetchPayload, policy: SourcePolicy,
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """大宗交易数据占位方法（QMT）。
 
@@ -4097,7 +4922,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
         """
         yield FetchResult(
             table=payload.table or _TBL_BLOCK_TRADE_QMT,
-            columns=[], rows=[], last_key="",
+            columns=[],
+            rows=[],
+            last_key="",
             elapsed_sec=0.0,
             error="QMT无大宗交易接口，已由AKShare Provider覆盖（block_trade_incremental）",
         )

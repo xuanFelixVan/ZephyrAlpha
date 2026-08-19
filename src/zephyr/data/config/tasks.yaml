@@ -265,10 +265,8 @@ tasks:
   symbols:
   extra:
     description: "周K线增量（miniQMT 日K聚合 resample W）"
-
-  fallback_sources:
-  - source: akshare
-    capability: kline_weekly
+    disabled: true
+    disabled_reason: "冗余任务：c1_market.kline_weekly 实测 100% 由 local_qfq 通道喂数，且 hfq 版 kline_weekly_hfq_incremental 独立成功；akshare fallback 无该 capability，失败为噪音。停用留痕，如需 miniqmt 通道可移除本两行。"
 - task_id: kline_monthly_incremental
   table: c1_market.kline_monthly
   source: miniqmt
@@ -280,10 +278,8 @@ tasks:
   symbols:
   extra:
     description: "月K线增量（miniQMT 日K聚合 resample M）"
-
-  fallback_sources:
-  - source: akshare
-    capability: kline_monthly
+    disabled: true
+    disabled_reason: "冗余任务：c1_market.kline_monthly 实测 100% 由 local_qfq 通道喂数，且 hfq 版 kline_monthly_hfq_incremental 独立成功；akshare fallback 无该 capability，失败为噪音。停用留痕，如需 miniqmt 通道可移除本两行。"
 - task_id: kline_1min_incremental
   table: c1_market.kline_1min
   source: miniqmt
@@ -759,11 +755,7 @@ tasks:
   capability: option_iv_surface
   symbols:
   extra:
-    description: "期权IV曲面增量（QMT 662期权+Greeks，IV需自己计算）"
-
-  fallback_sources:
-  - source: akshare
-    capability: option_iv_surface
+    description: "期权IV曲面增量（QMT 662期权+Greeks，IV需自己计算）。akshare 无现成曲面聚合 API（仅逐合约隐含波动率），假 fallback 已移除；如需兜底需自建 IV 曲面构建，候选库登记后再启用。"
 - task_id: convertible_bond_iv_incremental
   table: c1_market.convertible_bond_iv
   source: miniqmt
@@ -927,10 +919,10 @@ tasks:
   capability: kline_daily
   symbols:
   extra:
-    description: "日K线全量刷新（miniQMT，原降级源 baostock 已替换）"
+    description: "日K线全量刷新（miniQMT，fallback 为 baostock；akshare 无 kline_daily capability，假 fallback 已修正）"
 
   fallback_sources:
-  - source: akshare
+  - source: baostock
     capability: kline_daily
 - task_id: macro_data_full_refresh
   table: c1_market.macro_data

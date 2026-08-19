@@ -13,6 +13,40 @@
 # [ERROR_CONTRACT] 任何provider检查失败->记录error，不抛异常（不影响调度器启动）
 # [TESTS] tests/data/test_source_health_check.py
 # [TTL] permanent
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 源检查配置
+#   fields: _HEALTH_CHECKS（source/module/class/测试 API 探针）
+#   code: 模块级 _HEALTH_CHECKS 常量
+# - id: I2
+#   name: 内存结果缓存
+#   fields: _latest_results（各源 status + timestamp）
+#   code: get_latest_results/_health_check_age_minutes
+# 层: 算法
+# - id: A1
+#   name_zh: ① 单源三段探测
+#   name_en: _run_single_check
+#   intro: import provider→实例化 connect→测试 API 调用，逐段记耗时与错误，任意段失败记状态不抛异常（60s 超时红线）
+#   inputs: I1
+#   outputs: 单源 result 字典（status/connect_ok/耗时/error）
+# - id: A2
+#   name_zh: ② 全量检查与缓存落盘
+#   name_en: run_source_health_check
+#   intro: 遍历全部源执行 A1，单源异常不波及其他源；结果写 logs/source_health_YYYYMMDD.log + 更新 _latest_results（scheduler 启动时调用一次）
+#   inputs: I1
+#   outputs: results 列表 + 日志文件 + 缓存
+# - id: A3
+#   name_zh: ③ 缓存 TTL 单源重检
+#   name_en: _recheck_single_source
+#   intro: scheduler 因缓存 test_fail 跳过某源且距上次检查超 30min 时，仅对该源重检并更新缓存（成败均入缓存），避免 QMT 恢复后被永久跳过（8/18 分钟线零采集事故根因修复）
+#   inputs: I1 I2
+#   outputs: 该源最新 result + 缓存更新
+# 层: 输出
+# - id: O1
+#   name_zh: 健康状态查询面
+#   name_en: get_latest_results
+#   intro: 供 scheduler 健康门查询各源 healthy/test_fail；日志落盘供人工巡检
 """数据源健康检查模块（每日调度器启动时执行）。
 
 功能：
@@ -23,6 +57,7 @@
 
 集成点：scheduler.start() -> run_source_health_check()
 """
+
 from __future__ import annotations
 
 import logging
@@ -37,6 +72,10 @@ log = logging.getLogger(__name__)
 
 # 健康检查超时（秒）—— 不阻塞调度器启动太久
 _HEALTH_CHECK_TIMEOUT = 60
+
+# 健康检查缓存 TTL（分钟）—— scheduler 因健康检查跳过某源时，若距上次全量检查超过
+# 此时间，对该源单独重检一次并更新缓存，避免 QMT 恢复后仍被永久跳过。
+_HEALTH_CACHE_TTL_MINUTES = 30
 
 # ---- 同源连续失败告警（#ARCH-DATA-015） ----
 # 免费匿名源无 SLA（如 baostock 10001011 IP黑名单），异常可能持续多日无人察觉；
@@ -82,8 +121,10 @@ def _update_failure_streaks(results: list[dict]) -> None:
                         source=source,
                     )
                 streaks[source] = {
-                    "streak": 0, "alerted": False,
-                    "last_date": today, "last_status": status,
+                    "streak": 0,
+                    "alerted": False,
+                    "last_date": today,
+                    "last_status": status,
                 }
                 continue
             # 异常分支：按自然日累计连续异常
@@ -108,17 +149,16 @@ def _update_failure_streaks(results: list[dict]) -> None:
                 alerted = True
                 log.warning("数据源 %s 连续 %d 天异常，已触发告警", source, streak)
             streaks[source] = {
-                "streak": streak, "alerted": alerted,
-                "last_date": today, "last_status": status,
+                "streak": streak,
+                "alerted": alerted,
+                "last_date": today,
+                "last_status": status,
             }
 
         _STREAKS_PATH.parent.mkdir(parents=True, exist_ok=True)
-        _STREAKS_PATH.write_text(
-            json.dumps(streaks, ensure_ascii=False, indent=1), encoding="utf-8"
-        )
+        _STREAKS_PATH.write_text(json.dumps(streaks, ensure_ascii=False, indent=1), encoding="utf-8")
     except Exception as e:  # noqa: BLE001 — 告警链路故障不阻塞健康检查
         log.warning("连续失败告警更新失败（不影响健康检查）: %s", e)
-
 
 
 # ---- API 拉取探针（connect_only 源升级为真实数据拉取测试，2026-08-04）----
@@ -132,6 +172,7 @@ def _probe_miniqmt(provider) -> list:
     禁用依赖行情时段的 get_market_data_ex（午休/盘前假阴性）。
     """
     from xtquant import xtdata
+
     return xtdata.get_stock_list_in_sector("沪深A股")
 
 
@@ -149,7 +190,10 @@ def _probe_tickflow(provider):
     符号必须带 .US 后缀——裸 "AAPL" 返回空 DataFrame（实测）。
     """
     return provider._client.klines.get(
-        "SPY.US", period="1d", count=5, as_dataframe=True,
+        "SPY.US",
+        period="1d",
+        count=5,
+        as_dataframe=True,
     )
 
 
@@ -164,6 +208,7 @@ def _probe_rss(provider) -> list:
     import feedparser
 
     from zephyr.shared.foundation.constants import DEFAULT_HTTP_UA
+
     for url in ("https://36kr.com/feed", "https://www.tmtpost.com/rss.xml"):
         try:
             resp = provider._http_get(url, timeout=15, headers={"User-Agent": DEFAULT_HTTP_UA})
@@ -182,9 +227,12 @@ def _probe_cls(provider) -> list:
     属真实健康信号（cls 能力本身依赖 RSSHub 路由）。
     """
     from zephyr.data.implementations.cls_provider import _CLS_HEADERS, _CLS_RSSHUB_URL
+
     resp = provider._http_get(
-        _CLS_RSSHUB_URL, params={"format": "json"},
-        headers=_CLS_HEADERS, timeout=15,
+        _CLS_RSSHUB_URL,
+        params={"format": "json"},
+        headers=_CLS_HEADERS,
+        timeout=15,
     )
     return resp.json().get("items") or []
 
@@ -200,13 +248,22 @@ def _probe_eastmoney_news(provider) -> list:
         _EM_HEADERS,
         _EM_NEWS_URL,
     )
+
     params = {
-        "client": "web", "biz": "web_724", "column": "350", "order": "1",
-        "needInteractData": "0", "page_index": "1", "page_size": "5",
+        "client": "web",
+        "biz": "web_724",
+        "column": "350",
+        "order": "1",
+        "needInteractData": "0",
+        "page_index": "1",
+        "page_size": "5",
         "req_trace": str(int(now_utc().timestamp() * 1000)),
     }
     resp = provider._http_get(
-        _EM_NEWS_URL, params=params, headers=_EM_HEADERS, timeout=15,
+        _EM_NEWS_URL,
+        params=params,
+        headers=_EM_HEADERS,
+        timeout=15,
     )
     return (resp.json().get("data") or {}).get("list") or []
 
@@ -243,9 +300,9 @@ _HEALTH_CHECKS: list[dict[str, Any]] = [
         "source": "baostock",
         "module": "zephyr.data.implementations.baostock_provider",
         "class": "BaostockProvider",
-        "test": lambda p: __import__("baostock").query_trade_dates(
-            start_date="2026-08-01", end_date="2026-08-04"
-        ).get_data(),
+        "test": lambda p: (
+            __import__("baostock").query_trade_dates(start_date="2026-08-01", end_date="2026-08-04").get_data()
+        ),
         "test_desc": "query_trade_dates 交易日历",
         "env_required": [],
     },
@@ -316,6 +373,7 @@ def _get_lock():
     global _results_lock
     if _results_lock is None:
         import threading
+
         _results_lock = threading.Lock()
     return _results_lock
 
@@ -355,7 +413,7 @@ def _run_single_check(cfg: dict) -> dict:
     try:
         mod = __import__(cfg["module"], fromlist=[cfg["class"]])
         cls = getattr(mod, cfg["class"])
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 健康探针需兜底 provider 模块任意导入异常（缺失依赖/语法错误均须记 import_fail 不阻断调度器启动）
         result["status"] = "import_fail"
         result["error"] = f"导入失败: {e}"
         return result
@@ -369,7 +427,7 @@ def _run_single_check(cfg: dict) -> dict:
             connect_method()
         result["connect_time"] = round(time.monotonic() - t0, 2)
         result["connect_ok"] = True
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 探针需兜底 provider 连接阶段任意异常（网络/认证/第三方库），记 connect_fail 不阻断
         result["connect_time"] = round(time.monotonic() - t0, 2)
         result["status"] = "connect_fail"
         result["error"] = f"连接失败: {e}"
@@ -401,7 +459,7 @@ def _run_single_check(cfg: dict) -> dict:
         else:
             result["status"] = "empty_data"
             result["error"] = "API 返回空数据"
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 探针需兜底测试 API 调用任意异常（外部数据源行为不可枚举），记 test_fail 不阻断
         result["test_time"] = round(time.monotonic() - t0, 2)
         result["status"] = "test_fail"
         result["error"] = f"测试失败: {e}"
@@ -424,9 +482,7 @@ def _write_log(results: list[dict]) -> Path:
     ]
 
     for r in results:
-        icon = {"healthy": "✓", "connect_only": "✓", "env_missing": "⚠"}.get(
-            r["status"], "✗"
-        )
+        icon = {"healthy": "✓", "connect_only": "✓", "env_missing": "⚠"}.get(r["status"], "✗")
         detail = ""
         if r["data_count"] > 0:
             detail = f" ({r['data_count']}行, {r['test_time']}s)"
@@ -439,13 +495,15 @@ def _write_log(results: list[dict]) -> Path:
     healthy = sum(1 for r in results if r["status"] in ("healthy", "connect_only"))
     warnings = sum(1 for r in results if r["status"] == "env_missing")
     failed = sum(1 for r in results if r["status"] not in ("healthy", "connect_only", "env_missing"))
-    lines.extend([
-        "",
-        f"{'=' * 70}",
-        f"  汇总: ✓正常 {healthy}  ⚠环境缺失 {warnings}  ✗异常 {failed}",
-        f"{'=' * 70}",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            f"{'=' * 70}",
+            f"  汇总: ✓正常 {healthy}  ⚠环境缺失 {warnings}  ✗异常 {failed}",
+            f"{'=' * 70}",
+            "",
+        ]
+    )
 
     with open(log_file, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
@@ -466,7 +524,7 @@ def run_source_health_check() -> dict[str, dict]:
         source = cfg["source"]
         try:
             result = _run_single_check(cfg)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 单源检查内部兜底外的最后一道防线，任一源异常不得波及其他源检查结果
             result = {
                 "source": source,
                 "status": "unexpected_error",
@@ -494,7 +552,7 @@ def run_source_health_check() -> dict[str, dict]:
     try:
         log_file = _write_log(results)
         log.info("健康检查日志已写入: %s", log_file)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 日志落盘失败（磁盘满/权限）仅降级告警，不影响健康检查主流程返回
         log.warning("写入健康检查日志失败: %s", e)
 
     # 更新内存状态
@@ -510,11 +568,64 @@ def run_source_health_check() -> dict[str, dict]:
     failed_list = [r["source"] for r in results if r["status"] not in ("healthy", "connect_only", "env_missing")]
     log.info(
         "数据源健康检查完成: %d/%d 正常%s",
-        healthy, len(results),
+        healthy,
+        len(results),
         f"，异常: {', '.join(failed_list)}" if failed_list else "",
     )
 
     return _latest_results
+
+
+def _recheck_single_source(source: str) -> dict | None:
+    """对单个数据源执行一次健康重检并更新缓存（供 scheduler 跳过前 TTL 到期时调用）。
+
+    仅重检 _HEALTH_CHECKS 中已注册的源；未注册返回 None。
+    重检失败不影响缓存更新——新状态（含失败）同样写入 _latest_results。
+    """
+    cfg = next((c for c in _HEALTH_CHECKS if c["source"] == source), None)
+    if cfg is None:
+        return None
+    log.info("健康检查缓存已过期，对源 %s 单独重检...", source)
+    try:
+        result = _run_single_check(cfg)
+    except Exception as e:  # noqa: BLE001 — 重检异常不阻塞调度
+        result = {
+            "source": source,
+            "status": "unexpected_error",
+            "error": str(e),
+            "connect_ok": False,
+            "test_ok": False,
+            "connect_time": 0,
+            "test_time": 0,
+            "data_count": 0,
+            "test_desc": cfg["test_desc"],
+            "timestamp": now_utc().isoformat(),
+        }
+    with _get_lock():
+        _latest_results[source] = result
+    status = result["status"]
+    if status in ("healthy", "connect_only"):
+        log.info("  ✓ %s 重检结果: %s", source, status)
+    else:
+        log.warning("  ✗ %s 重检结果: %s (%s)", source, status, result.get("error", ""))
+    return result
+
+
+def _health_check_age_minutes(result: dict) -> float | None:
+    """计算健康检查结果距现在的分钟数；timestamp 缺失/解析失败返回 None。"""
+    import datetime as _dt
+
+    ts = result.get("timestamp")
+    if not ts:
+        return None
+    try:
+        checked_at = _dt.datetime.fromisoformat(ts)
+        if checked_at.tzinfo is None:
+            checked_at = checked_at.replace(tzinfo=_dt.timezone.utc)
+        age = now_utc() - checked_at
+        return age.total_seconds() / 60.0
+    except (ValueError, TypeError):
+        return None
 
 
 def get_source_health(source: str) -> dict | None:

@@ -5,6 +5,7 @@
 测试 3 个 Provider（akshare/miniqmt/tqcenter）的辅助方法（纯函数，不依赖真实 SDK）和 fetch 路由。
 不测试真实 SDK 调用（需 QMT/AKShare/通达信 环境）。
 """
+
 import datetime
 import sys
 from unittest.mock import MagicMock
@@ -31,6 +32,7 @@ from src.zephyr.data.policy_registry import SourcePolicy
 from src.zephyr.data.provider_base import FetchPayload, FetchResult
 
 # ============== AkshareIngestProvider 测试 ==============
+
 
 class TestAKShareHelpers:
     def test_quarter_to_date_q1(self):
@@ -68,8 +70,10 @@ class TestAKShareFetchRoute:
     def test_unknown_capability_yields_error(self):
         p = AkshareIngestProvider()
         payload = FetchPayload(
-            table="t", symbols=None,
-            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 2),
+            table="t",
+            symbols=None,
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 2),
             extra={"capability": "nonexistent"},
         )
         results = list(p.fetch(payload, SourcePolicy()))
@@ -79,10 +83,14 @@ class TestAKShareFetchRoute:
     def test_meta(self):
         assert AkshareIngestProvider.meta.name == "akshare"
         assert AkshareIngestProvider.source_name == "akshare"
-        assert "VPN" in AkshareIngestProvider.meta.known_issues[0] or "vpn" in AkshareIngestProvider.meta.known_issues[0].lower()
+        assert (
+            "VPN" in AkshareIngestProvider.meta.known_issues[0]
+            or "vpn" in AkshareIngestProvider.meta.known_issues[0].lower()
+        )
 
 
 # ============== MiniQmtIngestProvider 测试 ==============
+
 
 class TestMiniQMTHelpers:
     def test_date_to_str(self):
@@ -123,8 +131,10 @@ class TestMiniQMTFetchRoute:
     def test_unknown_capability_yields_error(self):
         p = MiniQmtIngestProvider()
         payload = FetchPayload(
-            table="t", symbols=["000001.SZ"],
-            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 2),
+            table="t",
+            symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 2),
             extra={"capability": "nonexistent"},
         )
         results = list(p.fetch(payload, SourcePolicy()))
@@ -140,6 +150,7 @@ class TestMiniQMTFetchRoute:
 
 # ============== TQCenterProvider 测试 ==============
 # 纯函数单测（不依赖通达信客户端 SDK，符合 test_providers.py 既有约定）
+
 
 class TestTQCenterHelpers:
     """TQCenterProvider 辅助方法（纯函数，不依赖真实 tqcenter SDK）。"""
@@ -181,21 +192,32 @@ class TestTQCenterHelpers:
         trade_date = datetime.date(2026, 7, 30)
         ts = datetime.datetime(2026, 7, 30, 15, 0, 0)
         snap = {
-            "Now": 10.5, "Open": 10.0, "Max": 10.8,
-            "Min": 9.9, "LastClose": 10.2, "Before5MinNow": 10.3,
-            "Average": 10.4, "Volume": 1000, "NowVol": 50, "Amount": 10500.0,
-            "UpHome": 100, "DownHome": 80, "Inside": 40, "Outside": 60, "Zangsu": 0.5,
+            "Now": 10.5,
+            "Open": 10.0,
+            "Max": 10.8,
+            "Min": 9.9,
+            "LastClose": 10.2,
+            "Before5MinNow": 10.3,
+            "Average": 10.4,
+            "Volume": 1000,
+            "NowVol": 50,
+            "Amount": 10500.0,
+            "UpHome": 100,
+            "DownHome": 80,
+            "Inside": 40,
+            "Outside": 60,
+            "Zangsu": 0.5,
         }
         row = TQCenterProvider._parse_snapshot("880001", snap, trade_date, ts)
         assert row is not None
-        assert row[0] == trade_date      # trade_date
-        assert row[1] == ts              # timestamp
-        assert row[2] == "880001"        # sector_code
-        assert row[3] == "sector"        # market_type
-        assert row[4] == 10.5            # now_price
-        assert row[8] == 10.2            # last_close
-        assert row[11] == 1000           # volume
-        assert row[-1] == "tqcenter"     # data_source
+        assert row[0] == trade_date  # trade_date
+        assert row[1] == ts  # timestamp
+        assert row[2] == "880001"  # sector_code
+        assert row[3] == "sector"  # market_type
+        assert row[4] == 10.5  # now_price
+        assert row[8] == 10.2  # last_close
+        assert row[11] == 1000  # volume
+        assert row[-1] == "tqcenter"  # data_source
 
     def test_parse_snapshot_none(self):
         """None 快照 → None。"""
@@ -228,11 +250,11 @@ class TestTQCenterHelpers:
         rows = p._parse_kline_df(df, ["880001"], "1d")
         assert len(rows) == 1
         row = rows[0]
-        assert row[0] == "1d"            # period
-        assert row[3] == "880001"        # sector_code
-        assert float(row[5]) == 10.0     # open (Decimal→float 比较)
-        assert float(row[6]) == 10.8     # high
-        assert row[-1] == "tqcenter"     # data_source
+        assert row[0] == "1d"  # period
+        assert row[3] == "880001"  # sector_code
+        assert float(row[5]) == 10.0  # open (Decimal→float 比较)
+        assert float(row[6]) == 10.8  # high
+        assert row[-1] == "tqcenter"  # data_source
 
 
 class TestTQCenterFetchRoute:
@@ -249,8 +271,10 @@ class TestTQCenterFetchRoute:
         """未连接时 fetch 返回 error 结果。"""
         p = TQCenterProvider()
         payload = FetchPayload(
-            table="t", symbols=["880001"],
-            start=datetime.date(2026, 7, 30), end=datetime.date(2026, 7, 31),
+            table="t",
+            symbols=["880001"],
+            start=datetime.date(2026, 7, 30),
+            end=datetime.date(2026, 7, 31),
             extra={"capability": "kline_sector_880"},
         )
         results = list(p.fetch(payload, SourcePolicy()))
@@ -264,8 +288,10 @@ class TestTQCenterFetchRoute:
         p._connected = True
         p._tq = MagicMock()
         payload = FetchPayload(
-            table="t", symbols=["880001"],
-            start=datetime.date(2026, 7, 30), end=datetime.date(2026, 7, 31),
+            table="t",
+            symbols=["880001"],
+            start=datetime.date(2026, 7, 30),
+            end=datetime.date(2026, 7, 31),
             extra={"capability": "nonexistent"},
         )
         results = list(p.fetch(payload, SourcePolicy()))
@@ -275,6 +301,7 @@ class TestTQCenterFetchRoute:
 
 
 # ============== 新能力测试（阶段4） ==============
+
 
 class TestMiniQMTNewCapabilities:
     """MiniQmtIngestProvider 新增能力（kline_1min/financial_statement/index_constituent）的单元测试。"""
@@ -297,14 +324,19 @@ class TestMiniQMTNewCapabilities:
         def fake_fetch_kline(self, payload, policy, period, **kwargs):
             called["period"] = period
             yield FetchResult(
-                table="c1_market.kline_1min", columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
+                table="c1_market.kline_1min",
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
             )
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline", fake_fetch_kline)
         payload = FetchPayload(
-            table="c1_market.kline_1min", symbols=["000001.SZ"],
-            start=datetime.date(2025, 6, 30), end=datetime.date(2025, 6, 30),
+            table="c1_market.kline_1min",
+            symbols=["000001.SZ"],
+            start=datetime.date(2025, 6, 30),
+            end=datetime.date(2025, 6, 30),
             extra={"capability": "kline_1min"},
         )
         list(p.fetch(payload, SourcePolicy()))
@@ -318,14 +350,19 @@ class TestMiniQMTNewCapabilities:
         def fake_fetch_kline(self, payload, policy, period, **kwargs):
             called["period"] = period
             yield FetchResult(
-                table="c1_market.kline_5min", columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
+                table="c1_market.kline_5min",
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
             )
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline", fake_fetch_kline)
         payload = FetchPayload(
-            table="c1_market.kline_5min", symbols=["000001.SZ"],
-            start=datetime.date(2025, 6, 30), end=datetime.date(2025, 6, 30),
+            table="c1_market.kline_5min",
+            symbols=["000001.SZ"],
+            start=datetime.date(2025, 6, 30),
+            end=datetime.date(2025, 6, 30),
             extra={"capability": "kline_5min"},
         )
         list(p.fetch(payload, SourcePolicy()))
@@ -339,14 +376,19 @@ class TestMiniQMTNewCapabilities:
         def fake_fetch_kline(self, payload, policy, period, **kwargs):
             called["period"] = period
             yield FetchResult(
-                table="c1_market.kline_daily", columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
+                table="c1_market.kline_daily",
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
             )
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline", fake_fetch_kline)
         payload = FetchPayload(
-            table="c1_market.kline_daily", symbols=["000001.SZ"],
-            start=datetime.date(2025, 6, 1), end=datetime.date(2025, 6, 30),
+            table="c1_market.kline_daily",
+            symbols=["000001.SZ"],
+            start=datetime.date(2025, 6, 1),
+            end=datetime.date(2025, 6, 30),
             extra={"capability": "kline_daily"},
         )
         list(p.fetch(payload, SourcePolicy()))
@@ -360,14 +402,19 @@ class TestMiniQMTNewCapabilities:
         def fake_fetch(self, payload, policy, table_list):
             called["table_list"] = table_list
             yield FetchResult(
-                table="c3_fundamental.balance", columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
+                table="c3_fundamental.balance",
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
             )
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_financial_statement", fake_fetch)
         payload = FetchPayload(
-            table="c3_fundamental.balance", symbols=["000001.SZ"],
-            start=datetime.date(2024, 1, 1), end=datetime.date(2025, 6, 30),
+            table="c3_fundamental.balance",
+            symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2025, 6, 30),
             extra={"capability": "balance_sheet"},
         )
         list(p.fetch(payload, SourcePolicy()))
@@ -381,14 +428,19 @@ class TestMiniQMTNewCapabilities:
         def fake_fetch(self, payload, policy):
             called.append("index_constituent")
             yield FetchResult(
-                table="c1_market.index_constituent", columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
+                table="c1_market.index_constituent",
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
             )
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_index_constituent", fake_fetch)
         payload = FetchPayload(
-            table="c1_market.index_constituent", symbols=None,
-            start=datetime.date(2025, 6, 30), end=datetime.date(2025, 6, 30),
+            table="c1_market.index_constituent",
+            symbols=None,
+            start=datetime.date(2025, 6, 30),
+            end=datetime.date(2025, 6, 30),
             extra={"capability": "index_constituent"},
         )
         list(p.fetch(payload, SourcePolicy()))
@@ -397,6 +449,7 @@ class TestMiniQMTNewCapabilities:
     def test_financial_capabilities_map(self):
         """验证财务能力映射完整性。"""
         from src.zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider as M
+
         # 检查 fetch 方法中的映射字典
         # 由于 _FINANCIAL_CAPABILITIES 是方法内局部变量，这里通过路由测试间接验证
         # 已在 test_balance_sheet_route 中验证 Balance 映射
@@ -407,6 +460,7 @@ class TestMiniQMTNewCapabilities:
 
 # ============== 第二批新增能力测试（15 个数据下载能力）==============
 
+
 class TestMiniQMTBatch2Capabilities:
     """MiniQmtIngestProvider 第二批新增能力（15 个数据下载）的单元测试。"""
 
@@ -416,10 +470,21 @@ class TestMiniQMTBatch2Capabilities:
         # 兼容 str 与 CapabilityContract（治本修复#ARCH-CAP-NULL-SYMBOLS-001）
         cap_ids = {c.capability_id if hasattr(c, "capability_id") else c for c in caps}
         new_caps = [
-            "kline_cb", "option_kline", "option_greeks", "index_weight",
-            "sector_list", "l2_tick", "auction_data", "futures_kline_qmt",
-            "hk_kline", "kline_us_daily", "etf_nav", "repurchase",
-            "margin_trading_qmt", "dragon_tiger_qmt", "block_trade_qmt",
+            "kline_cb",
+            "option_kline",
+            "option_greeks",
+            "index_weight",
+            "sector_list",
+            "l2_tick",
+            "auction_data",
+            "futures_kline_qmt",
+            "hk_kline",
+            "kline_us_daily",
+            "etf_nav",
+            "repurchase",
+            "margin_trading_qmt",
+            "dragon_tiger_qmt",
+            "block_trade_qmt",
         ]
         for cap in new_caps:
             assert cap in cap_ids, f"能力 {cap} 未注册到 meta.capabilities"
@@ -456,7 +521,13 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.cb_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline_cb", fake)
-        payload = FetchPayload(table="", symbols=["113001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "kline_cb"})
+        payload = FetchPayload(
+            table="",
+            symbols=["113001.SH"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "kline_cb"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["kline_cb"]
 
@@ -470,7 +541,13 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.option_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_option_kline", fake)
-        payload = FetchPayload(table="", symbols=["10000001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "option_kline"})
+        payload = FetchPayload(
+            table="",
+            symbols=["10000001.SH"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "option_kline"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["option_kline"]
 
@@ -484,7 +561,13 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.option_greeks", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_option_greeks", fake)
-        payload = FetchPayload(table="", symbols=["10000001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "option_greeks"})
+        payload = FetchPayload(
+            table="",
+            symbols=["10000001.SH"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "option_greeks"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["option_greeks"]
 
@@ -498,7 +581,13 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.index_weight", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_index_weight", fake)
-        payload = FetchPayload(table="", symbols=["000300.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "index_weight"})
+        payload = FetchPayload(
+            table="",
+            symbols=["000300.SH"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "index_weight"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["index_weight"]
 
@@ -512,7 +601,13 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.sector_list", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_sector_list", fake)
-        payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "sector_list"})
+        payload = FetchPayload(
+            table="",
+            symbols=None,
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "sector_list"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["sector_list"]
 
@@ -526,7 +621,13 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.l2_tick", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_l2_tick", fake)
-        payload = FetchPayload(table="", symbols=["000001.SZ"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "l2_tick"})
+        payload = FetchPayload(
+            table="",
+            symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "l2_tick"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["l2_tick"]
 
@@ -540,7 +641,13 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.auction_snapshot", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_auction_data", fake)
-        payload = FetchPayload(table="", symbols=["000001.SZ"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "auction_data"})
+        payload = FetchPayload(
+            table="",
+            symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "auction_data"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["auction_data"]
 
@@ -554,7 +661,13 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.futures_kline_qmt", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline_futures_qmt", fake)
-        payload = FetchPayload(table="", symbols=["IF2407.CFFEX"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "futures_kline_qmt"})
+        payload = FetchPayload(
+            table="",
+            symbols=["IF2407.CFFEX"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "futures_kline_qmt"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["futures_kline_qmt"]
 
@@ -568,7 +681,13 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.hk_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_hk_kline", fake)
-        payload = FetchPayload(table="", symbols=["00700.HK"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "hk_kline"})
+        payload = FetchPayload(
+            table="",
+            symbols=["00700.HK"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "hk_kline"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["hk_kline"]
 
@@ -582,7 +701,13 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.us_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_us_kline", fake)
-        payload = FetchPayload(table="", symbols=["AAPL.US"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "kline_us_daily"})
+        payload = FetchPayload(
+            table="",
+            symbols=["AAPL.US"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "kline_us_daily"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["kline_us_daily"]
 
@@ -596,14 +721,26 @@ class TestMiniQMTBatch2Capabilities:
             yield FetchResult(table="c1_market.etf_nav", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQmtIngestProvider, "fetch_etf_nav", fake)
-        payload = FetchPayload(table="", symbols=["510050.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "etf_nav"})
+        payload = FetchPayload(
+            table="",
+            symbols=["510050.SH"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "etf_nav"},
+        )
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["etf_nav"]
 
     def test_repurchase_returns_error(self):
         """repurchase 占位方法返回 error。"""
         p = MiniQmtIngestProvider()
-        payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "repurchase"})
+        payload = FetchPayload(
+            table="",
+            symbols=None,
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "repurchase"},
+        )
         results = list(p.fetch(payload, SourcePolicy()))
         assert len(results) == 1
         assert results[0].error is not None
@@ -612,7 +749,13 @@ class TestMiniQMTBatch2Capabilities:
     def test_margin_trading_qmt_returns_error(self):
         """margin_trading_qmt 占位方法返回 error。"""
         p = MiniQmtIngestProvider()
-        payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "margin_trading_qmt"})
+        payload = FetchPayload(
+            table="",
+            symbols=None,
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "margin_trading_qmt"},
+        )
         results = list(p.fetch(payload, SourcePolicy()))
         assert len(results) == 1
         assert results[0].error is not None
@@ -620,7 +763,13 @@ class TestMiniQMTBatch2Capabilities:
     def test_dragon_tiger_qmt_returns_error(self):
         """dragon_tiger_qmt 占位方法返回 error。"""
         p = MiniQmtIngestProvider()
-        payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "dragon_tiger_qmt"})
+        payload = FetchPayload(
+            table="",
+            symbols=None,
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "dragon_tiger_qmt"},
+        )
         results = list(p.fetch(payload, SourcePolicy()))
         assert len(results) == 1
         assert results[0].error is not None
@@ -628,7 +777,13 @@ class TestMiniQMTBatch2Capabilities:
     def test_block_trade_qmt_returns_error(self):
         """block_trade_qmt 占位方法返回 error。"""
         p = MiniQmtIngestProvider()
-        payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "block_trade_qmt"})
+        payload = FetchPayload(
+            table="",
+            symbols=None,
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "block_trade_qmt"},
+        )
         results = list(p.fetch(payload, SourcePolicy()))
         assert len(results) == 1
         assert results[0].error is not None
@@ -651,6 +806,7 @@ class TestMiniQMTBatch2Capabilities:
 #   / _fetch_financial_by_table(18) / _fetch_futures_term_structure(16)
 # 用 MagicMock 模拟 xtquant.xtdata，验证空数据不崩溃 + 有效数据返回正确格式。
 
+
 class TestMiniQMTSmoke:
     """miniqmt_provider 5个高复杂度函数 smoke test（P3 防回归）。"""
 
@@ -660,9 +816,12 @@ class TestMiniQMTSmoke:
         mock_xtdata = mock_xtquant.xtdata
         # 设置 __name__ 供 fake_call 按 fn 名派发（MagicMock 默认 __name__ 是子 mock）
         for fn_name in (
-            "get_market_data_ex", "download_history_data",
-            "get_stock_list_in_sector", "get_financial_data",
-            "download_financial_data2", "get_instrument_detail",
+            "get_market_data_ex",
+            "download_history_data",
+            "get_stock_list_in_sector",
+            "get_financial_data",
+            "download_financial_data2",
+            "get_instrument_detail",
         ):
             getattr(mock_xtdata, fn_name).__name__ = fn_name
         monkeypatch.setitem(sys.modules, "xtquant", mock_xtquant)
@@ -692,9 +851,15 @@ class TestMiniQMTSmoke:
         mock_ak = MagicMock()
         mock_ak.bond_zh_cov.__name__ = "bond_zh_cov"
         monkeypatch.setitem(sys.modules, "akshare", mock_ak)
-        bond_df = pd.DataFrame([{
-            "债券代码": "113001", "正股代码": "600000", "转股价": 10.5,
-        }])
+        bond_df = pd.DataFrame(
+            [
+                {
+                    "债券代码": "113001",
+                    "正股代码": "600000",
+                    "转股价": 10.5,
+                }
+            ]
+        )
 
         def fake_call(fn, policy, *a, **kw):
             if getattr(fn, "__name__", "") == "bond_zh_cov":
@@ -714,8 +879,10 @@ class TestMiniQMTSmoke:
         p, _ = self._make_provider(monkeypatch)
         monkeypatch.setattr(p, "_call_with_policy", lambda fn, pol, *a, **kw: {})
         payload = FetchPayload(
-            table="c3_fundamental.balance", symbols=["000001.SZ"],
-            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 3, 31),
+            table="c3_fundamental.balance",
+            symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 3, 31),
             extra={},
         )
         results = list(p.fetch_financial_statement(payload, SourcePolicy(), "Balance"))
@@ -726,9 +893,15 @@ class TestMiniQMTSmoke:
         """有效财务数据（m_anntime 在窗口内）→ rows 非空，首列为 symbol。"""
         pd = pytest.importorskip("pandas")
         p, _ = self._make_provider(monkeypatch)
-        df = pd.DataFrame([{
-            "m_anntime": "20240115", "m_timetag": "20231231", "total_assets": 1e9,
-        }])
+        df = pd.DataFrame(
+            [
+                {
+                    "m_anntime": "20240115",
+                    "m_timetag": "20231231",
+                    "total_assets": 1e9,
+                }
+            ]
+        )
 
         def fake_call(fn, policy, *a, **kw):
             if getattr(fn, "__name__", "") == "get_financial_data":
@@ -737,8 +910,10 @@ class TestMiniQMTSmoke:
 
         monkeypatch.setattr(p, "_call_with_policy", fake_call)
         payload = FetchPayload(
-            table="c3_fundamental.balance", symbols=["000001.SZ"],
-            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 3, 31),
+            table="c3_fundamental.balance",
+            symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 3, 31),
             extra={},
         )
         results = list(p.fetch_financial_statement(payload, SourcePolicy(), "Balance"))
@@ -753,8 +928,10 @@ class TestMiniQMTSmoke:
         p, _ = self._make_provider(monkeypatch)
         monkeypatch.setattr(p, "_call_with_policy", lambda fn, pol, *a, **kw: {})
         payload = FetchPayload(
-            table="c3_fundamental.shareholder_count", symbols=["000001.SZ"],
-            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 3, 31),
+            table="c3_fundamental.shareholder_count",
+            symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 3, 31),
             extra={},
         )
         results = list(p._fetch_shareholder(payload, SourcePolicy()))
@@ -769,8 +946,10 @@ class TestMiniQMTSmoke:
         p, _ = self._make_provider(monkeypatch)
         monkeypatch.setattr(p, "_call_with_policy", lambda fn, pol, *a, **kw: {})
         payload = FetchPayload(
-            table="c3_fundamental.performance", symbols=["000001.SZ"],
-            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 3, 31),
+            table="c3_fundamental.performance",
+            symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 3, 31),
             extra={},
         )
         results = list(p._fetch_financial_by_table(payload, SourcePolicy(), "Performance"))
@@ -797,7 +976,8 @@ class TestMiniQMTSmoke:
         payload = FetchPayload(
             table="c1_market.futures_term_structure",
             symbols=["IF2409.CFFEX", "IF2410.CFFEX"],
-            start=datetime.date(2024, 7, 1), end=datetime.date(2024, 7, 3),
+            start=datetime.date(2024, 7, 1),
+            end=datetime.date(2024, 7, 3),
             extra={},
         )
         results = list(p._fetch_futures_term_structure(payload, SourcePolicy()))
@@ -809,6 +989,7 @@ class TestMiniQMTSmoke:
 
 
 # ============== #ARCH-DATA-015: baostock 黑名单治本（schema 对齐 + 登录泄漏修复） ==============
+
 
 class _FakeBsResultSet:
     """模拟 baostock 查询结果集（error_code + next/get_row_data 迭代）。"""
@@ -831,10 +1012,12 @@ class TestBaostockSchemaAlign:
 
     def _provider(self):
         from src.zephyr.data.implementations.baostock_provider import BaostockProvider
+
         return BaostockProvider()
 
     def test_bs_code_to_symbol(self):
         from src.zephyr.data.implementations.baostock_provider import _bs_code_to_symbol
+
         assert _bs_code_to_symbol("sh.600000") == "600000.SH"
         assert _bs_code_to_symbol("sz.000001") == "000001.SZ"
         assert _bs_code_to_symbol("") == ""
@@ -847,8 +1030,10 @@ class TestBaostockSchemaAlign:
         )
         p.tls.logged_in = True
         payload = FetchPayload(
-            table="c1_market.index_constituent", symbols=None,
-            start=datetime.date(2026, 8, 1), end=datetime.date(2026, 8, 1),
+            table="c1_market.index_constituent",
+            symbols=None,
+            start=datetime.date(2026, 8, 1),
+            end=datetime.date(2026, 8, 1),
             extra={"capability": "index_constituent"},
         )
         results = list(p._fetch_index_constituent(payload, SourcePolicy()))
@@ -860,14 +1045,20 @@ class TestBaostockSchemaAlign:
         p = self._provider()
         p.tls.bs = MagicMock()
         p.tls.bs.query_trade_dates = MagicMock(
-            return_value=_FakeBsResultSet([
-                ["2026-08-13", "1"], ["2026-08-14", "1"], ["2026-08-15", "0"],
-            ])
+            return_value=_FakeBsResultSet(
+                [
+                    ["2026-08-13", "1"],
+                    ["2026-08-14", "1"],
+                    ["2026-08-15", "0"],
+                ]
+            )
         )
         p.tls.logged_in = True
         payload = FetchPayload(
-            table="c1_market.trade_calendar", symbols=None,
-            start=datetime.date(2026, 8, 13), end=datetime.date(2026, 8, 15),
+            table="c1_market.trade_calendar",
+            symbols=None,
+            start=datetime.date(2026, 8, 13),
+            end=datetime.date(2026, 8, 15),
             extra={"capability": "trade_calendar"},
         )
         results = list(p._fetch_trade_calendar(payload, SourcePolicy()))
@@ -894,28 +1085,28 @@ class TestBaostockDelistedKline:
 
     def _provider(self):
         from src.zephyr.data.implementations.baostock_provider import BaostockProvider
+
         p = BaostockProvider()
         p.tls.bs = MagicMock()
         p.tls.logged_in = True
         return p
 
-    _POLICY = staticmethod(
-        lambda: MagicMock(rpm=0, max_retries=0, retry_on=[], initial_wait_sec=0, backoff="fixed")
-    )
+    _POLICY = staticmethod(lambda: MagicMock(rpm=0, max_retries=0, retry_on=[], initial_wait_sec=0, backoff="fixed"))
 
     def _wire(self, p, monkeypatch, universe_rows, kline_rows, span_tsv=""):
         p.tls.bs.query_stock_basic = MagicMock(return_value=_FakeBsResultSet(universe_rows))
         p.tls.bs.query_history_k_data_plus = MagicMock(return_value=_FakeBsResultSet(kline_rows))
         import zephyr.data.ch_reader as provider_ch_reader
+
         monkeypatch.setattr(provider_ch_reader, "query", lambda sql, timeout=0: span_tsv)
         return p
 
     _UNIVERSE = [
-        ["sz.000005", "ST星源(退)", "1990-12-10", "2024-04-26", "1", "0"],   # 保留
-        ["sh.600000", "浦发银行", "1999-11-10", "", "1", "1"],               # 在市→剔
-        ["sh.900901", "B股退", "1992-01-01", "2020-01-01", "1", "0"],        # B股前缀→剔
-        ["sh.000001", "上证指数", "", "", "2", "1"],                          # 指数→剔
-        ["sz.150001", "基金退", "2010-01-01", "2020-01-01", "5", "0"],        # 基金→剔
+        ["sz.000005", "ST星源(退)", "1990-12-10", "2024-04-26", "1", "0"],  # 保留
+        ["sh.600000", "浦发银行", "1999-11-10", "", "1", "1"],  # 在市→剔
+        ["sh.900901", "B股退", "1992-01-01", "2020-01-01", "1", "0"],  # B股前缀→剔
+        ["sh.000001", "上证指数", "", "", "2", "1"],  # 指数→剔
+        ["sz.150001", "基金退", "2010-01-01", "2020-01-01", "5", "0"],  # 基金→剔
     ]
 
     _KLINE = [
@@ -946,8 +1137,9 @@ class TestBaostockDelistedKline:
 
     def test_fetch_full_flow_and_adjustflag(self, monkeypatch):
         p = self._wire(self._provider(), monkeypatch, self._UNIVERSE, self._KLINE)
-        payload = FetchPayload(table="", symbols=None, start=None, end=None,
-                               extra={"capability": "kline_daily_delisted"})
+        payload = FetchPayload(
+            table="", symbols=None, start=None, end=None, extra={"capability": "kline_daily_delisted"}
+        )
         results = list(p._fetch_kline_daily_delisted(payload, self._POLICY()))
         assert len(results) == 1 and not results[0].error
         assert len(results[0].rows) == 2
@@ -959,27 +1151,32 @@ class TestBaostockDelistedKline:
 
     def test_span_covered_skips_fetch(self, monkeypatch):
         # 已覆盖 [ipo+10d, out-10d] → 跳过不抓（月度幂等刷新只抓新退市股）
-        p = self._wire(self._provider(), monkeypatch, self._UNIVERSE, self._KLINE,
-                       span_tsv="000005\t1990-12-15\t2024-04-20")
-        payload = FetchPayload(table="", symbols=None, start=None, end=None,
-                               extra={"capability": "kline_daily_delisted"})
+        p = self._wire(
+            self._provider(), monkeypatch, self._UNIVERSE, self._KLINE, span_tsv="000005\t1990-12-15\t2024-04-20"
+        )
+        payload = FetchPayload(
+            table="", symbols=None, start=None, end=None, extra={"capability": "kline_daily_delisted"}
+        )
         results = list(p._fetch_kline_daily_delisted(payload, self._POLICY()))
         assert results == []
         p.tls.bs.query_history_k_data_plus.assert_not_called()
 
     def test_span_partial_coverage_still_fetches(self, monkeypatch):
         # 仅有 2020 后段（min 2020-01-02 > ipo+10d）→ 历史有洞，必须抓
-        p = self._wire(self._provider(), monkeypatch, self._UNIVERSE, self._KLINE,
-                       span_tsv="000005\t2020-01-02\t2024-04-26")
-        payload = FetchPayload(table="", symbols=None, start=None, end=None,
-                               extra={"capability": "kline_daily_delisted"})
+        p = self._wire(
+            self._provider(), monkeypatch, self._UNIVERSE, self._KLINE, span_tsv="000005\t2020-01-02\t2024-04-26"
+        )
+        payload = FetchPayload(
+            table="", symbols=None, start=None, end=None, extra={"capability": "kline_daily_delisted"}
+        )
         results = list(p._fetch_kline_daily_delisted(payload, self._POLICY()))
         assert len(results) == 1 and len(results[0].rows) == 2
 
     def test_universe_empty_yields_error(self, monkeypatch):
         p = self._wire(self._provider(), monkeypatch, [], [])
-        payload = FetchPayload(table="", symbols=None, start=None, end=None,
-                               extra={"capability": "kline_daily_delisted"})
+        payload = FetchPayload(
+            table="", symbols=None, start=None, end=None, extra={"capability": "kline_daily_delisted"}
+        )
         results = list(p._fetch_kline_daily_delisted(payload, self._POLICY()))
         assert len(results) == 1 and results[0].error and "universe" in results[0].error
 
@@ -989,11 +1186,13 @@ class TestAKShareData015Capabilities:
 
     def test_capabilities_registered(self):
         from src.zephyr.data.implementations.akshare_provider import _AKSHARE_CAPABILITIES
+
         assert "trade_calendar" in _AKSHARE_CAPABILITIES
         assert "index_constituent" in _AKSHARE_CAPABILITIES
 
     def test_cn_code_to_symbol(self):
         from src.zephyr.data.implementations.akshare_provider import _cn_code_to_symbol
+
         assert _cn_code_to_symbol("600000") == "600000.SH"
         assert _cn_code_to_symbol("000001") == "000001.SZ"
         assert _cn_code_to_symbol("300750") == "300750.SZ"
@@ -1001,15 +1200,167 @@ class TestAKShareData015Capabilities:
 
     def test_trade_calendar_fetch(self, monkeypatch):
         import pandas as pd
+
         fake_ak = MagicMock()
-        fake_ak.tool_trade_date_hist_sina = MagicMock(return_value=pd.DataFrame({
-            "trade_date": [datetime.date(2026, 8, 13), datetime.date(2026, 8, 14)],
-        }))
+        fake_ak.tool_trade_date_hist_sina = MagicMock(
+            return_value=pd.DataFrame(
+                {
+                    "trade_date": [datetime.date(2026, 8, 13), datetime.date(2026, 8, 14)],
+                }
+            )
+        )
         monkeypatch.setitem(sys.modules, "akshare", fake_ak)
         p = AkshareIngestProvider()
         payload = FetchPayload(
-            table="c1_market.trade_calendar", symbols=None,
-            start=datetime.date(2026, 8, 13), end=datetime.date(2026, 8, 14),
+            table="c1_market.trade_calendar",
+            symbols=None,
+            start=datetime.date(2026, 8, 13),
+            end=datetime.date(2026, 8, 14),
+            extra={"capability": "trade_calendar"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].error is None
+        assert len(results[0].rows) == 2
+
+
+# ============== MiniQMT 批量抓取健壮性（单票跳过/断连重连/失败率阈值）==============
+
+
+class TestMiniQMTBatchRobustness:
+    """miniQMT fetch_kline 批量抓取健壮性（4 项修复的 provider 侧）。
+
+    纯合成数据：monkeypatch xtquant 模块 + provider._call_with_policy，
+    不依赖真实 QMT。
+    """
+
+    def _wire(self, monkeypatch, call_behaviors):
+        """构造 provider + xtquant mock。
+
+        call_behaviors: dict[stock_code, "ok"|Exception 实例]，
+        _call_with_policy 按 fn 名+stock_code 派发。
+        """
+        mock_xtquant = MagicMock()
+        mock_xtdata = mock_xtquant.xtdata
+        for fn_name in ("download_history_data", "get_market_data_ex", "get_stock_list_in_sector"):
+            getattr(mock_xtdata, fn_name).__name__ = fn_name
+        monkeypatch.setitem(sys.modules, "xtquant", mock_xtquant)
+        monkeypatch.setitem(sys.modules, "xtquant.xtdata", mock_xtdata)
+
+        import pandas as pd
+
+        p = MiniQmtIngestProvider()
+        p._connected = True
+
+        def fake_call(fn, policy, *a, **kw):
+            fn_name = getattr(fn, "__name__", "")
+            if fn_name == "get_stock_list_in_sector":
+                return list(call_behaviors.keys())
+            stock_code = a[0] if fn_name == "download_history_data" else a[1][0]
+            behavior = call_behaviors[stock_code]
+            if isinstance(behavior, Exception):
+                raise behavior
+            if fn_name == "download_history_data":
+                return None
+            # get_market_data_ex 返回单条日线
+            df = pd.DataFrame(
+                {"open": [1.0], "high": [1.1], "low": [0.9], "close": [1.05], "volume": [100], "amount": [105.0]},
+                index=[20260818],
+            )
+            return {stock_code: df}
+
+        monkeypatch.setattr(p, "_call_with_policy", fake_call)
+        return p
+
+    def _payload(self, symbols):
+        return FetchPayload(
+            table="c1_market.kline_daily",
+            symbols=symbols,
+            start=datetime.date(2026, 8, 18),
+            end=datetime.date(2026, 8, 18),
+            extra={},
+        )
+
+    def test_single_stock_failure_skipped_batch_success(self, monkeypatch):
+        """a) 单票异常被跳过且任务成功：1/4 失败（25%>5% 会失败，改用 20 只 1 只失败=5%）。"""
+        # 20 只标的 1 只失败 → 失败率 5%，不超阈值（严格大于才失败）→ 任务成功
+        symbols = [f"{i:06d}.SZ" for i in range(1, 21)]
+        behaviors = dict.fromkeys(symbols, "ok")
+        behaviors["000007.SZ"] = ValueError("数据缺失")
+        p = self._wire(monkeypatch, behaviors)
+        results = list(p.fetch_kline(self._payload(symbols), SourcePolicy(), "1d"))
+        errors = [r for r in results if r.error]
+        oks = [r for r in results if not r.error]
+        assert errors == [], f"不应有 error 结果: {[r.error for r in errors]}"
+        assert len(oks) == 19, "19 只成功标的各 yield 一批"
+        # 成功的每批有 1 行数据
+        assert all(len(r.rows) == 1 for r in oks)
+
+    def test_fail_rate_over_threshold_yields_error(self, monkeypatch):
+        """b) 失败率超阈值任务失败：10 只标的 2 只失败=20%>5% → 尾部 yield error。"""
+        symbols = [f"{i:06d}.SZ" for i in range(1, 11)]
+        behaviors = dict.fromkeys(symbols, "ok")
+        behaviors["000001.SZ"] = ValueError("停牌")
+        behaviors["000002.SZ"] = RuntimeError("数据异常")
+        p = self._wire(monkeypatch, behaviors)
+        results = list(p.fetch_kline(self._payload(symbols), SourcePolicy(), "1d"))
+        errors = [r for r in results if r.error]
+        oks = [r for r in results if not r.error]
+        assert len(oks) == 8, "8 只成功标的正常 yield"
+        assert len(errors) == 1, "收尾恰好 yield 一个 error"
+        assert "失败率" in errors[0].error and "20.0%" in errors[0].error
+
+    def test_connection_error_marks_disconnected_and_aborts(self, monkeypatch):
+        """c) 断连异常置 _connected=False 并中止本批（后续标的不再尝试）。"""
+        symbols = [f"{i:06d}.SZ" for i in range(1, 6)]
+        behaviors = dict.fromkeys(symbols, "ok")
+        behaviors["000003.SZ"] = ConnectionResetError(10054, "远程主机强迫关闭了一个现有的连接")
+        p = self._wire(monkeypatch, behaviors)
+        assert p._connected is True
+        results = list(p.fetch_kline(self._payload(symbols), SourcePolicy(), "1d"))
+        assert p._connected is False, "断连必须置 _connected=False 触发 scheduler 自动重连"
+        errors = [r for r in results if r.error]
+        oks = [r for r in results if not r.error]
+        assert len(oks) == 2, "断连前 2 只成功标的正常 yield"
+        assert len(errors) == 1, "断连立即 yield error 中止"
+        assert "连接断开" in errors[0].error or "QMT" in errors[0].error
+
+    def test_is_connection_error_detection(self):
+        """连接类异常判定辅助函数。"""
+        from src.zephyr.data.implementations.miniqmt_provider import _is_connection_error
+
+        class XtNetError(Exception):
+            isNetError = True
+
+        assert _is_connection_error(XtNetError("qmt disconnected"))
+        assert _is_connection_error(ConnectionResetError(10054, "reset"))
+        assert _is_connection_error(OSError("socket error"))
+        assert _is_connection_error(Exception("WinError 10054"))
+        assert not _is_connection_error(ValueError("数据缺失"))
+        assert not _is_connection_error(KeyError("no data"))
+
+
+class TestAKShareData015CapabilitiesContinued:
+    """TestAKShareData015Capabilities 剩余用例（trade_calendar 收尾 + index_constituent）。"""
+
+    def test_trade_calendar_columns_rows(self, monkeypatch):
+        import pandas as pd
+
+        fake_ak = MagicMock()
+        fake_ak.tool_trade_date_hist_sina = MagicMock(
+            return_value=pd.DataFrame(
+                {
+                    "trade_date": [datetime.date(2026, 8, 13), datetime.date(2026, 8, 14)],
+                }
+            )
+        )
+        monkeypatch.setitem(sys.modules, "akshare", fake_ak)
+        p = AkshareIngestProvider()
+        payload = FetchPayload(
+            table="c1_market.trade_calendar",
+            symbols=None,
+            start=datetime.date(2026, 8, 13),
+            end=datetime.date(2026, 8, 14),
             extra={"capability": "trade_calendar"},
         )
         results = list(p.fetch(payload, SourcePolicy()))
@@ -1023,15 +1374,22 @@ class TestAKShareData015Capabilities:
 
     def test_index_constituent_fetch(self, monkeypatch):
         import pandas as pd
+
         fake_ak = MagicMock()
-        fake_ak.index_stock_cons_csindex = MagicMock(return_value=pd.DataFrame({
-            "成分券代码": ["600000", "000001"],
-        }))
+        fake_ak.index_stock_cons_csindex = MagicMock(
+            return_value=pd.DataFrame(
+                {
+                    "成分券代码": ["600000", "000001"],
+                }
+            )
+        )
         monkeypatch.setitem(sys.modules, "akshare", fake_ak)
         p = AkshareIngestProvider()
         payload = FetchPayload(
-            table="c1_market.index_constituent", symbols=None,
-            start=datetime.date(2026, 8, 14), end=datetime.date(2026, 8, 14),
+            table="c1_market.index_constituent",
+            symbols=None,
+            start=datetime.date(2026, 8, 14),
+            end=datetime.date(2026, 8, 14),
             extra={"capability": "index_constituent"},
         )
         results = list(p.fetch(payload, SourcePolicy()))
@@ -1047,11 +1405,15 @@ class TestAKShareData015Capabilities:
         ]
         # 四指数代码顺序固定
         assert [r.rows[0][1] for r in results] == [
-            "000300.SH", "000905.SH", "000852.SH", "000985.SH",
+            "000300.SH",
+            "000905.SH",
+            "000852.SH",
+            "000985.SH",
         ]
 
 
 # ============== TushareProvider ST 名称变更回填（JOB-083，DS-085 历史段）==============
+
 
 class TestTushareStNamechange:
     """ST 历史状态名称变更推导回填：区间推导 + 变化日快照合成 + 接缝路由。"""
@@ -1071,11 +1433,11 @@ class TestTushareStNamechange:
         assert f("600000.SH") == "600000"
         assert f("000001.SZ") == "000001"
         assert f("300750.SZ") == "300750"
-        assert f("688001.SH") == "688001"   # 科创板有 ST 实例（JOB-077 实盘快照实证 13 只）
+        assert f("688001.SH") == "688001"  # 科创板有 ST 实例（JOB-077 实盘快照实证 13 只）
         assert f("830799.BJ") == "830799"
-        assert f("00700.HK") is None    # 港股后缀排除
-        assert f("ABCDEF") is None      # 无后缀排除
-        assert f("139001.SZ") is None   # 非 A 股板块前缀排除
+        assert f("00700.HK") is None  # 港股后缀排除
+        assert f("ABCDEF") is None  # 无后缀排除
+        assert f("139001.SZ") is None  # 非 A 股板块前缀排除
 
     def test_parse_yyyymmdd(self):
         f = TushareProvider._parse_yyyymmdd
@@ -1085,12 +1447,14 @@ class TestTushareStNamechange:
         assert f("20201340") is None  # 非法月日（8 位数字）→ None 不崩溃
 
     def test_derive_st_intervals(self):
-        df = pd.DataFrame({
-            "ts_code": ["600000.SH", "000503.SZ", "688001.SH", "300750.SZ", "600001.SH"],
-            "name": ["浦发银行", "ST海虹", "ST科创", "*ST宁德", "SST坏日期"],
-            "start_date": ["20100101", "19980615", "20210101", "20200101", "baddate"],
-            "end_date": [None, "20000320", None, "20201231", None],
-        })
+        df = pd.DataFrame(
+            {
+                "ts_code": ["600000.SH", "000503.SZ", "688001.SH", "300750.SZ", "600001.SH"],
+                "name": ["浦发银行", "ST海虹", "ST科创", "*ST宁德", "SST坏日期"],
+                "start_date": ["20100101", "19980615", "20210101", "20200101", "baddate"],
+                "end_date": [None, "20000320", None, "20201231", None],
+            }
+        )
         intervals = TushareProvider()._derive_st_intervals(df)
         # 600000 非 ST 剔除；600001 起始日不可解析剔除；688001 科创板保留
         assert intervals == [
@@ -1101,8 +1465,10 @@ class TestTushareStNamechange:
 
     def test_synthesize_change_day_snapshots(self):
         days = [
-            datetime.date(2020, 1, 2), datetime.date(2020, 1, 3),
-            datetime.date(2020, 1, 6), datetime.date(2020, 1, 7),
+            datetime.date(2020, 1, 2),
+            datetime.date(2020, 1, 3),
+            datetime.date(2020, 1, 6),
+            datetime.date(2020, 1, 7),
         ]
         intervals = [
             ("600001", "ST甲", "ST", datetime.date(2020, 1, 2), datetime.date(2020, 1, 6)),
@@ -1128,44 +1494,51 @@ class TestTushareStNamechange:
         pro.namechange.__name__ = "namechange"
         p._pro = pro
         import zephyr.data.ch_reader as provider_ch_reader
+
         monkeypatch.setattr(provider_ch_reader, "query", ch_fake)
         return p
 
     def test_fetch_route_and_seam(self, monkeypatch):
-        df = pd.DataFrame({
-            "ts_code": ["000503.SZ"], "name": ["ST海虹"],
-            "start_date": ["20200102"], "end_date": ["20200110"],
-            "ann_date": ["20191231"], "change_reason": ["ST"],
-        })
+        df = pd.DataFrame(
+            {
+                "ts_code": ["000503.SZ"],
+                "name": ["ST海虹"],
+                "start_date": ["20200102"],
+                "end_date": ["20200110"],
+                "ann_date": ["20191231"],
+                "change_reason": ["ST"],
+            }
+        )
 
         def fake_query(sql, timeout=0):
             if "min(trade_date)" in sql:
                 return "2020-01-20"  # 实盘快照接缝日 → 回填窗口 [01-01, 01-19]
             if "DISTINCT trade_date" in sql:
-                return "\n".join(
-                    f"2020-01-{d:02d}" for d in (2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17)
-                )
+                return "\n".join(f"2020-01-{d:02d}" for d in (2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17))
             return ""
 
         p = self._wired_provider(monkeypatch, df, fake_query)
         payload = FetchPayload(
-            table="", symbols=None,
-            start=datetime.date(2020, 1, 1), end=None,
+            table="",
+            symbols=None,
+            start=datetime.date(2020, 1, 1),
+            end=None,
             extra={"capability": "st_namechange_backfill"},
         )
         results = list(p.fetch(payload, SourcePolicy()))
         assert len(results) == 1 and not results[0].error
         # 区间 [01-02, 01-10]：01-02 生效产出快照；01-10(五) 最后 ST 日，
         # 01-13(一) 集合变空 → 全空快照不产出（文档化限制）
-        assert results[0].rows == [
-            ("2020-01-02", "000503", "ST海虹", "ST", "tushare_namechange_derived")
-        ]
+        assert results[0].rows == [("2020-01-02", "000503", "ST海虹", "ST", "tushare_namechange_derived")]
         assert results[0].last_key == "2020-01-02"
 
     def test_seam_missing_yields_error_not_crash(self, monkeypatch):
         p = self._wired_provider(monkeypatch, pd.DataFrame(), lambda sql, timeout=0: "")
         payload = FetchPayload(
-            table="", symbols=None, start=None, end=None,
+            table="",
+            symbols=None,
+            start=None,
+            end=None,
             extra={"capability": "st_namechange_backfill"},
         )
         results = list(p.fetch(payload, SourcePolicy()))
@@ -1177,10 +1550,14 @@ class TestTushareStNamechange:
         def nc(start_date=None, end_date=None, **kw):
             year = int(str(start_date)[:4])
             if year in (2020, 2021):  # 跨年页重复行 → 必须去重
-                return pd.DataFrame({
-                    "ts_code": ["000503.SZ"], "name": ["ST海虹"],
-                    "start_date": ["20200102"], "end_date": [None],
-                })
+                return pd.DataFrame(
+                    {
+                        "ts_code": ["000503.SZ"],
+                        "name": ["ST海虹"],
+                        "start_date": ["20200102"],
+                        "end_date": [None],
+                    }
+                )
             return pd.DataFrame()
 
         p = TushareProvider()

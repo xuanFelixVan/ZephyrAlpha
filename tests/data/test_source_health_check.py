@@ -19,6 +19,7 @@
 
 测试隔离：用 sys.modules 注入 FakeProvider，零真实网络/外部依赖。
 """
+
 from __future__ import annotations
 
 import sys
@@ -31,20 +32,24 @@ import zephyr.data.source_health_check as shc
 
 # ============ Fake providers（零外部依赖）============
 
+
 class _OkProvider:
     """connect 成功的 provider。"""
+
     def connect(self) -> None:
         pass
 
 
 class _ConnectFailProvider:
     """connect 抛异常的 provider。"""
+
     def connect(self) -> None:
         raise ConnectionError("connect boom")
 
 
 class _NoConnectProvider:
     """无 connect 方法的 provider（getattr 返回 None → skip）。"""
+
     pass
 
 
@@ -80,6 +85,7 @@ def _cfg(
 
 # ============ TestCheckEnv ============
 
+
 class TestCheckEnv:
     def test_all_present(self, monkeypatch):
         monkeypatch.setenv("SHC_FOO", "1")
@@ -103,6 +109,7 @@ class TestCheckEnv:
 
 
 # ============ TestRunSingleCheck（核心分支）============
+
 
 class TestRunSingleCheck:
     def test_env_missing(self, monkeypatch):
@@ -225,6 +232,7 @@ class TestRunSingleCheck:
 
 # ============ TestRunSourceHealthCheck（整体流程 + 容错契约）============
 
+
 class TestRunSourceHealthCheck:
     def _stub_write_log(self, monkeypatch):
         """避免真实写 logs/ 目录 + 隔离 streak 状态文件/告警通道（#ARCH-DATA-015）。"""
@@ -233,10 +241,14 @@ class TestRunSourceHealthCheck:
 
     def test_returns_dict_keyed_by_source(self, monkeypatch):
         _install(monkeypatch, _OkProvider)
-        monkeypatch.setattr(shc, "_HEALTH_CHECKS", [
-            _cfg(source="s1", test=lambda p: ["x"]),
-            _cfg(source="s2", test=None),
-        ])
+        monkeypatch.setattr(
+            shc,
+            "_HEALTH_CHECKS",
+            [
+                _cfg(source="s1", test=lambda p: ["x"]),
+                _cfg(source="s2", test=None),
+            ],
+        )
         self._stub_write_log(monkeypatch)
         result = shc.run_source_health_check()
         assert isinstance(result, dict)
@@ -255,10 +267,14 @@ class TestRunSourceHealthCheck:
             return original(cfg)
 
         monkeypatch.setattr(shc, "_run_single_check", _flaky)
-        monkeypatch.setattr(shc, "_HEALTH_CHECKS", [
-            _cfg(source="s1", test=lambda p: ["x"]),
-            _cfg(source="s2", test=lambda p: ["x"]),
-        ])
+        monkeypatch.setattr(
+            shc,
+            "_HEALTH_CHECKS",
+            [
+                _cfg(source="s1", test=lambda p: ["x"]),
+                _cfg(source="s2", test=lambda p: ["x"]),
+            ],
+        )
         self._stub_write_log(monkeypatch)
         result = shc.run_source_health_check()
         assert result["s1"]["status"] == "healthy"
@@ -268,10 +284,14 @@ class TestRunSourceHealthCheck:
     def test_all_connect_failures_do_not_raise(self, monkeypatch):
         """所有源连接失败时 run 仍正常返回（不抛异常，不阻塞 scheduler 启动）。"""
         _install(monkeypatch, _ConnectFailProvider)
-        monkeypatch.setattr(shc, "_HEALTH_CHECKS", [
-            _cfg(source="bad1"),
-            _cfg(source="bad2"),
-        ])
+        monkeypatch.setattr(
+            shc,
+            "_HEALTH_CHECKS",
+            [
+                _cfg(source="bad1"),
+                _cfg(source="bad2"),
+            ],
+        )
         self._stub_write_log(monkeypatch)
         result = shc.run_source_health_check()  # 不应抛异常
         assert result["bad1"]["status"] == "connect_fail"
@@ -280,9 +300,13 @@ class TestRunSourceHealthCheck:
     def test_write_log_failure_does_not_break_run(self, monkeypatch):
         """日志写入失败不应中断健康检查（不阻塞 scheduler）。"""
         _install(monkeypatch, _OkProvider)
-        monkeypatch.setattr(shc, "_HEALTH_CHECKS", [
-            _cfg(source="s1", test=lambda p: ["x"]),
-        ])
+        monkeypatch.setattr(
+            shc,
+            "_HEALTH_CHECKS",
+            [
+                _cfg(source="s1", test=lambda p: ["x"]),
+            ],
+        )
 
         def _bad_write(results):
             raise OSError("disk full")
@@ -294,9 +318,13 @@ class TestRunSourceHealthCheck:
 
     def test_updates_latest_results(self, monkeypatch):
         _install(monkeypatch, _OkProvider)
-        monkeypatch.setattr(shc, "_HEALTH_CHECKS", [
-            _cfg(source="only", test=lambda p: ["x"]),
-        ])
+        monkeypatch.setattr(
+            shc,
+            "_HEALTH_CHECKS",
+            [
+                _cfg(source="only", test=lambda p: ["x"]),
+            ],
+        )
         self._stub_write_log(monkeypatch)
         shc.run_source_health_check()
         cached = shc.get_source_health("only")
@@ -311,6 +339,7 @@ class TestRunSourceHealthCheck:
 
 
 # ============ TestGetSourceHealth ============
+
 
 class TestGetSourceHealth:
     def test_unknown_source_returns_none(self, monkeypatch):
@@ -331,14 +360,33 @@ class TestGetSourceHealth:
 
 # ============ TestWriteLog ============
 
+
 class TestWriteLog:
     def test_writes_log_file_with_summary(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
         results = [
-            {"source": "ok", "status": "healthy", "connect_ok": True, "test_ok": True,
-             "connect_time": 0.1, "test_time": 0.2, "error": "", "data_count": 5, "test_desc": "d"},
-            {"source": "bad", "status": "connect_fail", "connect_ok": False, "test_ok": False,
-             "connect_time": 0.0, "test_time": 0.0, "error": "boom", "data_count": 0, "test_desc": "d"},
+            {
+                "source": "ok",
+                "status": "healthy",
+                "connect_ok": True,
+                "test_ok": True,
+                "connect_time": 0.1,
+                "test_time": 0.2,
+                "error": "",
+                "data_count": 5,
+                "test_desc": "d",
+            },
+            {
+                "source": "bad",
+                "status": "connect_fail",
+                "connect_ok": False,
+                "test_ok": False,
+                "connect_time": 0.0,
+                "test_time": 0.0,
+                "error": "boom",
+                "data_count": 0,
+                "test_desc": "d",
+            },
         ]
         path = shc._write_log(results)
         assert path.exists()
@@ -356,11 +404,12 @@ class TestWriteLog:
         name = path.name
         assert name.startswith("source_health_")
         assert name.endswith(".log")
-        date_part = name[len("source_health_"):-len(".log")]
+        date_part = name[len("source_health_") : -len(".log")]
         assert len(date_part) == 8 and date_part.isdigit()
 
 
 # ============ TestFailureStreaks（#ARCH-DATA-015 同源连续失败告警）============
+
 
 class _FakeAlerter:
     """记录 notify 调用的假告警器。"""
@@ -378,9 +427,11 @@ class TestFailureStreaks:
 
     def _run(self, monkeypatch, tmp_path, results, today: str, alerter):
         import datetime as dt
+
         monkeypatch.setattr(shc, "_STREAKS_PATH", tmp_path / "streaks.json")
         monkeypatch.setattr(
-            shc, "now_utc",
+            shc,
+            "now_utc",
             lambda: dt.datetime.fromisoformat(today).replace(tzinfo=dt.timezone.utc),
         )
         monkeypatch.setattr("zephyr.data.alerter.Alerter", lambda: alerter)
@@ -429,3 +480,115 @@ class TestFailureStreaks:
         # 恢复后再异常 → streak 重新从 1 计
         self._run(monkeypatch, tmp_path, [self._bad()], "2026-08-18", alerter)
         assert len(alerter.calls) == 2
+
+
+# ============ TestHealthCacheTTL（健康检查缓存 TTL 重检机制）============
+
+
+class TestHealthCacheTTL:
+    """健康检查缓存超时重检：修复 8/18 miniqmt=test_fail 缓存永不刷新导致全天跳过的问题。
+
+    契约：
+    - _health_check_age_minutes 正确计算检查时间距现在的分钟数
+    - _recheck_single_source 对已注册源单独重检并更新 _latest_results 缓存
+    - 未注册源返回 None，不抛异常
+    """
+
+    def test_age_minutes_computed_correctly(self, monkeypatch):
+        import datetime as dt
+
+        fake_now = dt.datetime(2026, 8, 19, 12, 0, tzinfo=dt.timezone.utc)
+        monkeypatch.setattr(shc, "now_utc", lambda: fake_now)
+        # 31 分钟前检查
+        checked = (fake_now - dt.timedelta(minutes=31)).isoformat()
+        assert shc._health_check_age_minutes({"timestamp": checked}) == pytest.approx(31.0, abs=0.01)
+        # 10 分钟前检查
+        checked = (fake_now - dt.timedelta(minutes=10)).isoformat()
+        assert shc._health_check_age_minutes({"timestamp": checked}) == pytest.approx(10.0, abs=0.01)
+
+    def test_age_minutes_naive_timestamp_assumed_utc(self, monkeypatch):
+        import datetime as dt
+
+        fake_now = dt.datetime(2026, 8, 19, 12, 0, tzinfo=dt.timezone.utc)
+        monkeypatch.setattr(shc, "now_utc", lambda: fake_now)
+        # naive timestamp（无时区）按 UTC 解释，不抛异常
+        naive_checked = (fake_now - dt.timedelta(minutes=45)).replace(tzinfo=None).isoformat()
+        age = shc._health_check_age_minutes({"timestamp": naive_checked})
+        assert age == pytest.approx(45.0, abs=0.01)
+
+    def test_age_minutes_missing_or_bad_timestamp_returns_none(self, monkeypatch):
+        assert shc._health_check_age_minutes({}) is None
+        assert shc._health_check_age_minutes({"timestamp": ""}) is None
+        assert shc._health_check_age_minutes({"timestamp": "not-a-date"}) is None
+        assert shc._health_check_age_minutes({"timestamp": None}) is None
+
+    def test_recheck_single_source_updates_cache(self, monkeypatch):
+        """d) 核心场景：miniqmt 上次检查 test_fail，TTL 到期后重检为 healthy，缓存更新。"""
+        import datetime as dt
+
+        # 先构造一个过期的失败缓存
+        old_ts = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(minutes=31)).isoformat()
+        monkeypatch.setattr(
+            shc,
+            "_latest_results",
+            {
+                "miniqmt": {
+                    "source": "miniqmt",
+                    "status": "test_fail",
+                    "error": "xtdata 调用失败",
+                    "timestamp": old_ts,
+                },
+            },
+        )
+        # 注册 fake 源并重检成功
+        _install(monkeypatch, _OkProvider)
+        monkeypatch.setattr(
+            shc,
+            "_HEALTH_CHECKS",
+            [
+                _cfg(source="miniqmt", test=lambda p: ["000001.SZ"]),
+            ],
+        )
+        result = shc._recheck_single_source("miniqmt")
+        assert result is not None
+        assert result["status"] == "healthy"
+        # 缓存已更新为最新状态
+        cached = shc.get_source_health("miniqmt")
+        assert cached is not None
+        assert cached["status"] == "healthy"
+        # 新 timestamp 已刷新
+        assert cached["timestamp"] != old_ts
+
+    def test_recheck_single_source_failure_updates_cache_too(self, monkeypatch):
+        """重检仍失败时也更新缓存（新 timestamp），下次 TTL 再重检。"""
+        import datetime as dt
+
+        old_ts = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(minutes=40)).isoformat()
+        monkeypatch.setattr(
+            shc,
+            "_latest_results",
+            {
+                "miniqmt": {
+                    "source": "miniqmt",
+                    "status": "test_fail",
+                    "error": "QMT 未启动",
+                    "timestamp": old_ts,
+                },
+            },
+        )
+        _install(monkeypatch, _ConnectFailProvider)
+        monkeypatch.setattr(shc, "_HEALTH_CHECKS", [_cfg(source="miniqmt")])
+        result = shc._recheck_single_source("miniqmt")
+        assert result is not None
+        assert result["status"] == "connect_fail"
+        cached = shc.get_source_health("miniqmt")
+        assert cached["status"] == "connect_fail"
+        assert cached["timestamp"] != old_ts
+
+    def test_recheck_unknown_source_returns_none(self, monkeypatch):
+        monkeypatch.setattr(shc, "_HEALTH_CHECKS", [_cfg(source="miniqmt")])
+        assert shc._recheck_single_source("nonexistent") is None
+
+    def test_ttl_constant_value(self):
+        """TTL 常量取值 30 分钟（防回归）。"""
+        assert shc._HEALTH_CACHE_TTL_MINUTES == 30
