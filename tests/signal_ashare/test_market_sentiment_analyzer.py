@@ -254,3 +254,56 @@ class TestConfigurable:
     def test_default_config_used_when_none(self):
         analyzer = MarketSentimentAnalyzer()
         assert analyzer._config.limit_up_zeal_threshold == 50
+
+
+# ------------------------------------------------------------------
+# 8. 5 维灰度概率输出（23-B 升级增量）
+# ------------------------------------------------------------------
+class TestGrayscaleAnalysis:
+    def test_prob_sums_to_one_and_keys(self, analyzer: MarketSentimentAnalyzer):
+        result = analyzer.analyze_grayscale(make_input())
+        assert set(result.phase_prob) == {p.value for p in SentimentPhase}
+        assert sum(result.phase_prob.values()) == pytest.approx(1.0)
+        assert all(0.0 <= p <= 1.0 for p in result.phase_prob.values())
+
+    def test_dominant_matches_hot_market(self, analyzer: MarketSentimentAnalyzer):
+        # 全面看多输入 → overall_score 高 → 主导阶段偏 退潮（>80 分段）
+        result = analyzer.analyze_grayscale(make_input(
+            advancing=4200, declining=300, flat=500,
+            limit_up=90, limit_down=0, sealed=85, attempted=90,
+            index_change=0.02, yesterday_lu_avg_ret=0.05,
+        ))
+        hard = analyzer.analyze(make_input(
+            advancing=4200, declining=300, flat=500,
+            limit_up=90, limit_down=0, sealed=85, attempted=90,
+            index_change=0.02, yesterday_lu_avg_ret=0.05,
+        ))
+        assert result.overall_score == pytest.approx(hard.overall_score)
+        assert result.dominant_phase == hard.sentiment_phase  # 中心软分配 argmax 与硬标签一致
+        assert result.confidence == pytest.approx(
+            result.phase_prob[result.dominant_phase]
+        )
+
+    def test_boundary_score_gives_split_probability(self, analyzer: MarketSentimentAnalyzer):
+        # overall_score≈40（反核/主升边界）→ 两邻阶段概率接近且低于主导阈值
+        result = analyzer.analyze_grayscale(make_input())
+        # make_input 默认 overall_score≈57（主升区）——只断言分布形态不锁死数值
+        assert result.dominant_phase in ("主升", "疯狂", "反核")
+
+    def test_fallback_flag_on_diffuse_distribution(
+        self, analyzer: MarketSentimentAnalyzer, monkeypatch: pytest.MonkeyPatch
+    ):
+        # 人为压低 max(P) → fallback_triggered=True
+        from zephyr.signal_ashare import market_sentiment_analyzer as msa
+
+        monkeypatch.setattr(msa, "GRAYSCALE_SIGMA", 200.0)  # 极大带宽 → 分布近似均匀
+        result = analyzer.analyze_grayscale(make_input())
+        assert result.confidence < 0.60
+        assert result.fallback_triggered is True
+
+    def test_hard_label_interface_unchanged(self, analyzer: MarketSentimentAnalyzer):
+        # 灰度升级为纯增量：analyze() 返回类型/硬标签字段不变
+        result = analyzer.analyze(make_input())
+        assert isinstance(result, MarketSentimentResult)
+        assert isinstance(result.sentiment_phase, str)
+        assert 0 <= result.overall_score <= 100

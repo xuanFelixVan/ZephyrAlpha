@@ -147,8 +147,28 @@ D-SIGNAL-25 — A股市场情绪分析引擎
 # A6 --> O1
 """
 
+# =============================================================================
+# BM-SEL-25 影响评估（BM-SEL-23-B 输出契约升级：4+1 硬标签 → 5 维灰度概率，
+# 2026-08-19 AI-NIGHT-001 包G；对齐 10_regime_detector_spec §2.5.4 用户裁定
+# "输出应为灰度概率，不是硬标签" 与 28_sentiment_cycle_trading §3.3）
+#
+# 升级内容：新增 analyze_grayscale() → MarketSentimentGrayscaleResult
+# （5 维灰度概率 P(冰点..退潮) Σ=1 + dominant_phase + confidence + fallback_triggered）。
+#
+# 评估结论：既有硬标签消费方**零影响**，灰度为**纯增量**——
+#   1. analyze() 签名/返回类型/硬标签语义（sentiment_phase 5 档）完全不变；
+#   2. BM-SEL-25 双引擎融合（MOD-SIG-035）当前经游资引擎（MOD-SIG-033）自有
+#      4+1 阶段判定消费情绪周期（grep 实证：不直接 import 本模块类），
+#      本模块新增方法不改变其任何既有输入；
+#   3. 灰度输出为新方法 + 新 dataclass，无字段删改、无行为变更、无下游迁移成本。
+# 后续：28 号 memo §3.3 locate_sentiment_phase 为灰度定位器完整版（设计态，
+# 贝叶斯+转移平滑+兜底），本方法为 production 硬标签链路的轻量灰度桥
+# （同一 overall_score 按阶段中心高斯软分配）。
+# =============================================================================
+
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -289,6 +309,34 @@ class MarketSentimentResult:
     # 综合
     overall_score: float  # 0-100
     sentiment_phase: str  # SentimentPhase enum value
+
+
+# ------------------------------------------------------------------
+# 23-B 灰度概率输出（增量契约，对齐 10_regime §2.5.4 灰度裁定）
+# ------------------------------------------------------------------
+
+# 阶段中心=硬标签分段中点（<20 冰点/20-40 反核/40-60 主升/60-80 疯狂/≥80 退潮）
+GRAYSCALE_PHASE_CENTERS: dict[SentimentPhase, float] = {
+    SentimentPhase.FREEZING: 10.0,
+    SentimentPhase.REVERSAL: 30.0,
+    SentimentPhase.MAIN_RALLY: 50.0,
+    SentimentPhase.EUPHORIA: 70.0,
+    SentimentPhase.RETREATING: 90.0,
+}
+GRAYSCALE_SIGMA = 12.0  # 高斯软分配带宽：相邻阶段在分段边界处等概率
+GRAYSCALE_CONFIDENCE_FALLBACK = 0.60  # 置信度<60%→默认保守（30 号 §6.3）
+
+
+@dataclass(frozen=True)
+class MarketSentimentGrayscaleResult:
+    """5 维灰度概率输出（23-B 升级增量契约，既有硬标签结果不受影响）"""
+
+    timestamp: datetime
+    phase_prob: dict[str, float]  # {阶段中文名: P}，Σ=1
+    dominant_phase: str  # 主导阶段（argmax）
+    confidence: float  # 置信度 = max(P)
+    overall_score: float  # 综合情绪分（与 analyze() 一致）
+    fallback_triggered: bool  # confidence < 0.60 → 建议默认保守
 
 
 class MarketSentimentDataError(Exception):
@@ -550,3 +598,32 @@ class MarketSentimentAnalyzer:
             return SentimentPhase.EUPHORIA.value
         else:
             return SentimentPhase.RETREATING.value
+
+    # ------------------------------------------------------------------
+    # 8. 5 维灰度概率输出（23-B 升级增量方法）
+    # ------------------------------------------------------------------
+    def analyze_grayscale(self, input_data: MarketSentimentInput) -> MarketSentimentGrayscaleResult:
+        """灰度概率分析（纯增量，不改 analyze() 硬标签链路）。
+
+        复用 analyze() 的 overall_score，按阶段中心高斯软分配为 5 维概率
+        P(冰点..退潮) Σ=1；confidence=max(P)，<60% 时 fallback_triggered=True
+        （建议默认保守，对齐 30 号 §6.3 兜底纪律）。
+        """
+        result = self.analyze(input_data)
+        score = result.overall_score
+        raw = {
+            phase: math.exp(-((score - center) ** 2) / (2.0 * GRAYSCALE_SIGMA**2))
+            for phase, center in GRAYSCALE_PHASE_CENTERS.items()
+        }
+        total = sum(raw.values())
+        phase_prob = {phase.value: v / total for phase, v in raw.items()}
+        dominant = max(phase_prob, key=phase_prob.get)
+        confidence = phase_prob[dominant]
+        return MarketSentimentGrayscaleResult(
+            timestamp=result.timestamp,
+            phase_prob=phase_prob,
+            dominant_phase=dominant,
+            confidence=confidence,
+            overall_score=score,
+            fallback_triggered=confidence < GRAYSCALE_CONFIDENCE_FALLBACK,
+        )
