@@ -421,6 +421,25 @@ class CapitalCurveManager:
         """订阅 E-POS-04 CapitalCurveUpdated 事件。"""
         self._listeners.append(listener)
 
+    def restore_peak(self, persisted_peak: float) -> None:
+        """启动恢复持久化 peak NAV（35 号 memo §3.15 阶段 3 基线校准）。
+
+        peak 单调非减（§3.8 不变量）——从持久化加载，不可当日重算；
+        恢复值低于内存 peak 时取 max（不变量优先，防持久化回退造成假新高）。
+
+        Args:
+            persisted_peak: 持久化的历史峰值（必须为正）
+
+        Raises:
+            InvalidCapitalCurveInputError: persisted_peak 非正
+        """
+        if persisted_peak <= 0:
+            raise InvalidCapitalCurveInputError(
+                f"persisted_peak must be positive, got {persisted_peak}"
+            )
+        if persisted_peak > self._peak:
+            self._peak = persisted_peak
+
     # ── 内部 ──
 
     def _classify(self, drawdown: float) -> DrawdownLevel:
