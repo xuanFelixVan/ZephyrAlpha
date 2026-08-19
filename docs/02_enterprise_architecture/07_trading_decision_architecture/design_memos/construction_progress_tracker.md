@@ -164,6 +164,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | **POT 升级计数器批（施工线 3/5）** | **AI-POT-001：§六 #107 POT 连续 5 日失败→阈值调整升级跨日持久化计数器（state_store 后续批，双后端）+#113 MON-001 私有 loader 收敛 threshold_loader 顺手项** | ✅ **已 merge 闭环**（2026-08-17 第八统筹，7461715bde）：3 笔施工 commit（d00b5526b0/17a286f615/e1f9efea2d）；统筹核验 commit 实证+范围无夹带+dev 复跑 31 passed（真 Redis db15 全跑，比 worktree 27+4skip 更强证据）；冲突处置=18 处全派生取 dev 侧零实质冲突；worktree 四证清理+分支已删 |
 | **治理批 B 包（施工线 4/5）** | **AI-GOVB-001：§六 #102 regime_detector MATURITY 对齐+#105 stop_loss D9 文档漂移+#106 memo36 RiskOrchestrator 命名对账+#111 scaffold module alias 裁定逃生口+#109 worktree spawn WMI 降级（随 #ARCH-105）** | ✅ **已 merge 闭环**（2026-08-17 第八统筹，e4480126ed）：4 笔施工 commit（4078c7d757/85b81749b3/dfafe2863b/1cc232d4f8）；统筹核验 commit 实证+范围无夹带+dev 复跑 113 passed；冲突处置=5 派生取 dev 侧+tracker 并集（#108 取 TDEBT 版/#109 取 GOVB 版，分支 #118-122 撞号重编 #120-124）；续批 #120-124 同批闭环（scaffold ASCII 化/worker 证3 tombstone 宽限 900s——S3-A 零窗口 reap 真凶治本/lock_files 防呆/HEALTH 横幅 ack）；memo65/66 FOPEN 结案段回填；worktree 四证清理+分支已删 |
 | **注册表一致性批（施工线 5/5）** | **AI-REGF-001：§六 #8 MOD-POS-021 capability 补登+#10 UNI-BASKET-001 dangling FK+#11 16 号指标分类对齐+#12 data_asset 13 个 E5 锚点漂移+#15 BUY 命名冲突消解+#16 MOD-PLAN-001/002/003 域归属** | ✅ **已 merge 闭环**（2026-08-17 第八统筹，30c4dc60bb）：2 笔施工 commit（774ff1b86b/c1cc179fae）；统筹核验 commit 实证+范围无夹带+dev 复跑 73 passed+全量 anchor 门禁 15 库 1217 条目 PASS；冲突处置=4 派生取 dev 侧+注册表群自动合并（IPO/REGF 交叠区 diff 实证 DS-104 归位/UNI-BASKET-001/D_PLAN 全在位）；#8 实证已在库零变更、#16 裁定 D_TRADING 维持+衍生 #126 D_PLAN 域创建（Owner 批准）同批闭环；worktree 四证清理+分支已删 |
+| **8h 夜班收口批（2026-08-19 晚 Owner 离场授权，第九统筹自施）** | **AI-NIGHT-001：阶段0 R5 收尾+11 残留 worktree 处置 → 阶段1 任务3-Tier1 算法正确性审查（回测-实盘一致性三层验证）→ 阶段2 端到端红蓝对抗 → 阶段3 design_memos 全量审查+结案报告+未来工程闸门施工 → 阶段4 波2 小项（P2 测试债真身/#172 翻译补登/ROOR 统计）** | 🔵 已开工（派发文件=docs/_working/dispatch/2026-08-19-night-shift-8h-task-pack.md——方法论三条+授权边界+施工闸门 Owner 全部认可；波 3 ruff format 大爆炸 Owner 裁定排除本批） |
 
 > **⏸ 开工时序裁定（2026-08-17 第七统筹，用户询疑触发实证）**：上述 10 路**与 AI-AUDIT01~20 旧文档审计批收口任务（16 worktree 串行 merge 回 dev）不同时开工**。实证：抽查 AUDIT09 分支 diff=161 文件（+31297/-213407）、AUDIT16=99 文件（+31910/-217386），覆盖 src/tests/scripts/docs/registries 全域——与 10 路全面重叠；且 audit 分支 fork 自陈旧 dev（RFIX/THD/DGR/GOVA/FOPEN 均在其后 merge），16 个串行 merge 冲突解决需独占专注。**正确编排：收口任务先跑完（产出干净基线+全局复审）→ 10 路再从新 dev HEAD 派生 worktree 开工**（一键复制指令不变，review 目标 commit 为历史 commit 不受基线前移影响）。⚠️ 收口 session 注意：逐分支 merge 前必须先 diff 核验——两个抽查分支均含 -21 万行级删除，须防陈旧分支吞掉后发批次内容。
 >
@@ -525,6 +526,16 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 187 | 单测补充 | test_same_spelling_pass：bp==am=MOD-INF-016 完全相同→无违规（2284 文件惯例合法化） | ✅ 已闭环（27/27 全绿） |
 | 188 | fix_header_module_id 豁免 | codegen 产物 SKIP——生成器模板直出头注是唯一合法上游，本脚本注入 [A_module] 会被重跑回退 | ✅ 已闭环 |
 | 189 | ARCH 登记 | #ARCH-131 登记 architecture_issue_registry.yaml（第一性原理裁定：双拼写的"双"=存在两种不同拼写，bp==am 不存在"双"） | ✅ 已闭环 |
+
+### P1-补26 · 2026-08-19 第九统筹夜班批登记（8h 收口批授权+闸门）
+
+> Owner 离场 8h 授权统筹全自动执行（派发文件=docs/_working/dispatch/2026-08-19-night-shift-8h-task-pack.md）。方法论三条+授权边界+施工闸门 Owner 全部认可；波 3 ruff 大爆炸裁定排除。本批新发现登记于此。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 190 | AI-R5-001 审查批成品滞留分支未 merge | 第九统筹开工实证 | 4 commit（4253758ede 审查批 5 项治本+30d9a60068 memo53/36 簿记+2 笔 reconciler 派生），会话已死超 24h（最后活动 2026-08-18 17:50） | 🔵 阶段0 merge 对象 |
+| 191 | 11 个残留 worktree 清理债 | 第九统筹开工实证 | 已 merged 8 个（AISA/CYCLE/FHS/SEAT/R1-003/R2/R3/R4）四证清理；未 merged 2 个（R1-001/R1-002）净零差异甄别后处置；R5 worktree 随 merge 清理 | 🔵 阶段0 |
+| 192 | GATE-RULE-AUDIT 8-15 超时 critical_warn 未 ack | 开工验证发现 | 根因已在 86184ba5ec 治本（timeout 60→180s），实测重跑 19.5s 通过；acknowledge_critical_warns 已 ack | ✅ 已闭环 |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 

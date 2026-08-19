@@ -7297,6 +7297,10 @@ creation_tokens:
   token: auto-fopen001-dispatch-20260817
   created_by: coord-0816-gov4
   capability: construction_dispatch
+- file: docs/_working/dispatch/2026-08-19-night-shift-8h-task-pack.md
+  token: auto-night001-dispatch-20260819
+  created_by: AI-NIGHT-001
+  capability: construction_dispatch
 - file: src/zephyr/governance/audit/pg_probe.py
   token: fopen001-pg-probe-20260817
   created_by: AI-FOPEN-001
