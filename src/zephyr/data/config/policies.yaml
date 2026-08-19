@@ -16,9 +16,6 @@ miniqmt:
   retry_on:
   - TimeoutError
   - ConnectionError
-  - ConnectionResetError
-  - OSError
-  - '10054'
   session_ttl_sec: 0
   relogin_on_auth_error: true
   extra:
