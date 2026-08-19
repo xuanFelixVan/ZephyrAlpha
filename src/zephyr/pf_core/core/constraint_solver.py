@@ -417,6 +417,8 @@ class ConstraintSolver:
 
         # 迭代投影
         converged = False
+        crowding_scaled: set[tuple[int, int]] = set()  # AI-NIGHT-001 #205：软拥挤一次性响应记忆
+        corr_scaled: set[tuple[int, int]] = set()  # AI-NIGHT-001 #205 同族：C5 相关性一次性响应记忆
         for iteration in range(cfg.max_iter):
             w_prev = w.copy()
 
@@ -443,9 +445,9 @@ class ConstraintSolver:
                 w, v = self._project_market_cap(w, assets, market_cap_exposures)
                 violations.extend(v)
 
-            # C5: 标的相关性 (≤max_correlation)
+            # C5: 标的相关性 (≤max_correlation；一次性响应 #205 同族)
             if correlation_matrix is not None:
-                w, v = self._project_correlation(w, assets, correlation_matrix)
+                w, v = self._project_correlation(w, assets, correlation_matrix, corr_scaled)
                 violations.extend(v)
 
             # C6: 风格因子暴露 (±max_style_exposure_sigma)
@@ -453,9 +455,9 @@ class ConstraintSolver:
                 w, v = self._project_style(w, assets, style_exposures)
                 violations.extend(v)
 
-            # 拥挤检测 (ρ>crowding_threshold → 减半)
+            # 拥挤检测 (ρ>crowding_threshold → 减半；一次性响应 #205)
             if correlation_matrix is not None:
-                w, v = self._apply_crowding(w, assets, correlation_matrix)
+                w, v = self._apply_crowding(w, assets, correlation_matrix, crowding_scaled)
                 violations.extend(v)
 
             # 杠杆约束: Σw ≤ max_gross_leverage
@@ -484,6 +486,26 @@ class ConstraintSolver:
 
         final_sum = float(np.sum(w))
         scaling = original_sum / final_sum if final_sum > 0 else 1.0
+
+        # AI-NIGHT-001：权重坍缩兜底检测——Σw 较原始值消失 99%+ 必为迭代缩放失控
+        # （原实现对坍缩仍报 converged=True，静默清零组合=最恶劣失效形态）
+        if original_sum > 0 and final_sum < original_sum * 0.01:
+            logger.error(
+                "约束求解权重坍缩: Σw %.6f → %.2e（迭代失控），强制标记不收敛",
+                original_sum,
+                final_sum,
+            )
+            converged = False
+            violations.append(
+                ConstraintViolation(
+                    constraint_id="COLLAPSE",
+                    constraint_name="weight_collapse_guard",
+                    symbol="portfolio",
+                    original_value=original_sum,
+                    threshold=original_sum * 0.01,
+                    scaling_applied=scaling,
+                )
+            )
 
         return ConstraintSolveResult(
             weights=w,
@@ -608,6 +630,25 @@ class ConstraintSolver:
             w[i] * exposures.get(sym, 0.0) for i, sym in enumerate(assets)
         ) / total
         if abs(weighted_exp) > max_exp:
+            # AI-NIGHT-001 #207：统一缩放仅当存在"不随缩锚"（反向或零暴露标的）时才能
+            # 改变加权平均暴露（锚侧不动、同号侧缩放→均值移动）；全同号暴露场景分子
+            # 分母同乘 scale、均值不变→迭代每轮重复缩放必致权重几何坍缩（实证 Σw→1e-6
+            # 且 converged=True）。不可达场景标 infeasible 不缩放（fail-visible）。
+            has_anchor = any(
+                exposures.get(sym, 0.0) * weighted_exp <= 0 for sym in assets
+            )
+            if not has_anchor:
+                violations.append(
+                    ConstraintViolation(
+                        constraint_id="C3",
+                        constraint_name="market_cap_exposure_infeasible",
+                        symbol="portfolio",
+                        original_value=weighted_exp,
+                        threshold=max_exp,
+                        scaling_applied=1.0,
+                    )
+                )
+                return w, violations
             scale = max_exp / abs(weighted_exp) if weighted_exp != 0 else 1.0
             for i, sym in enumerate(assets):
                 exp = exposures.get(sym, 0.0)
@@ -630,8 +671,14 @@ class ConstraintSolver:
         w: np.ndarray,
         assets: list[str],
         corr: np.ndarray,
+        already_scaled: set[tuple[int, int]] | None = None,
     ) -> tuple[np.ndarray, list[ConstraintViolation]]:
-        """C5: 标的相关性裁剪 (≤max_correlation)。"""
+        """C5: 标的相关性裁剪 (≤max_correlation)。
+
+        AI-NIGHT-001 #205 同族：触发条件仅依赖静态 ρ（相关矩阵不变）→ 原实现
+        每轮迭代重复缩放较大者，几何坍缩（与软拥挤同根因）。改为一次性响应
+        （already_scaled 记忆，同一对相关轮次不重复缩放）。
+        """
         violations: list[ConstraintViolation] = []
         max_corr = self._config.max_correlation
         n = len(assets)
@@ -644,6 +691,8 @@ class ConstraintSolver:
             for j in range(i + 1, n):
                 rho = abs(float(corr[i, j]))
                 if rho > max_corr:
+                    if already_scaled is not None and (i, j) in already_scaled:
+                        continue  # 一次性响应（#205 同族）
                     # 高相关对: 降权较大者
                     if w[i] >= w[j]:
                         scale = (1.0 - (rho - max_corr)) if rho < 1.0 else 0.5
@@ -653,6 +702,8 @@ class ConstraintSolver:
                         scale = (1.0 - (rho - max_corr)) if rho < 1.0 else 0.5
                         w[j] *= max(scale, 0.5)
                         sym = assets[j]
+                    if already_scaled is not None:
+                        already_scaled.add((i, j))
                     violations.append(
                         ConstraintViolation(
                             constraint_id="C5",
@@ -682,6 +733,23 @@ class ConstraintSolver:
             w[i] * exposures.get(sym, 0.0) for i, sym in enumerate(assets)
         ) / total
         if abs(weighted_exp) > max_exp:
+            # AI-NIGHT-001 #207：同 C3——全同号风格暴露下统一缩放数学无效，
+            # 迭代重复缩放必坍缩；标 infeasible 不缩放（fail-visible）。
+            has_anchor = any(
+                exposures.get(sym, 0.0) * weighted_exp <= 0 for sym in assets
+            )
+            if not has_anchor:
+                violations.append(
+                    ConstraintViolation(
+                        constraint_id="C6",
+                        constraint_name="style_exposure_infeasible",
+                        symbol="portfolio",
+                        original_value=weighted_exp,
+                        threshold=max_exp,
+                        scaling_applied=1.0,
+                    )
+                )
+                return w, violations
             scale = max_exp / abs(weighted_exp) if weighted_exp != 0 else 1.0
             for i, sym in enumerate(assets):
                 exp = exposures.get(sym, 0.0)
@@ -704,8 +772,14 @@ class ConstraintSolver:
         w: np.ndarray,
         assets: list[str],
         corr: np.ndarray,
+        already_scaled: set[tuple[int, int]] | None = None,
     ) -> tuple[np.ndarray, list[ConstraintViolation]]:
-        """拥挤检测: ρ>threshold → 权重减半; ρ>hard_threshold → 仅保留其一。"""
+        """拥挤检测: ρ>threshold → 权重减半; ρ>hard_threshold → 仅保留其一。
+
+        AI-NIGHT-001 #205：软拥挤缩放为一次性响应（already_scaled 记忆）——
+        原实现每轮迭代重复减半，触发条件仅依赖静态 ρ → 权重 0.5^n 几何坍缩
+        （实证 {0.5,0.5} ρ=0.85 → 16 轮 Σw≈8e-7 且 converged=True 静默）。
+        """
         violations: list[ConstraintViolation] = []
         cfg = self._config
         n = len(assets)
@@ -732,9 +806,13 @@ class ConstraintSolver:
                         )
                     )
                 elif rho > cfg.crowding_threshold:
-                    # 软拥挤: 权重减半
+                    # 软拥挤: 权重减半（一次性——同一对不重复缩放）
+                    if already_scaled is not None and (i, j) in already_scaled:
+                        continue
                     w[i] *= cfg.crowding_scale
                     w[j] *= cfg.crowding_scale
+                    if already_scaled is not None:
+                        already_scaled.add((i, j))
                     violations.append(
                         ConstraintViolation(
                             constraint_id="CROWD",

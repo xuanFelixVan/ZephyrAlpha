@@ -577,6 +577,19 @@ class RegimeMetaAllocator:
         for sid in strategies:
             alloc[sid] = max(FLOOR, min(effective_cap, alloc[sid]))
 
+        # Σ=1.0 硬不变量兜底（2026-08-19 AI-NIGHT-001 #206）：全部策略同轮越界时
+        # Step 3 循环 break（free_sids 空），裁剪后 Σ≠1——实证 base={0.98,0.01,0.01}
+        # → Σ=0.5（50% 资金静默闲置）、N=25 全贴 floor → Σ=1.25。按比例归一化，
+        # floor/cap 边界让位 Σ=1 硬不变量（头注 INVARIANTS）。
+        total_final = sum(alloc[sid] for sid in strategies)
+        if abs(total_final - 1.0) > 1e-9 and total_final > 0:
+            logger.warning(
+                "water-filling 全越界破产兜底：Σ=%.6f≠1.0，按比例归一化"
+                "（floor/cap 边界让位 Σ=1.0 硬不变量）",
+                total_final,
+            )
+            alloc = {sid: alloc[sid] / total_final for sid in strategies}
+
         return alloc
 
     # ── 静态工具方法（供上游计算 PerformanceScore）────────────────────

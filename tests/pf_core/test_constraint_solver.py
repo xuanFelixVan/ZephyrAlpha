@@ -361,3 +361,65 @@ def test_idempotent_solve():
     np.testing.assert_allclose(r1.weights, r2.weights)
     assert r1.converged == r2.converged
     assert r1.iterations == r2.iterations
+
+
+# ── AI-NIGHT-001 坍缩防护（#205/#207/兜底）────────────────────────────────
+
+
+def test_soft_crowding_one_shot_no_collapse():
+    """#205：软拥挤一次性缩放——原实现每轮迭代重复减半，{0.5,0.5} ρ=0.85 实证 16 轮
+    Σw≈8.3e-7 且 converged=True（静默清零组合）。修复后同一对只缩一次。"""
+    solver = ConstraintSolver()
+    rl = _rl(max_single_position=0.60)
+    assets = ["A", "B"]
+    w = {"A": 0.5, "B": 0.5}
+    corr = np.array([[1.0, 0.85], [0.85, 1.0]])
+    result = solver.solve(w, rl, assets=assets, correlation_matrix=corr)
+    total = float(np.sum(result.weights))
+    assert total > 0.1, f"软拥挤一次性缩放后 Σw={total} 不应坍缩（原实证 8.3e-7）"
+    assert result.converged
+    # 一次性：soft violation 仅一条（首轮响应后不重复记录）
+    soft = [v for v in result.violations if v.constraint_name == "crowding_soft"]
+    assert len(soft) == 1
+
+
+def test_same_sign_style_exposure_infeasible_no_collapse():
+    """#207：全同号风格暴露下统一缩放数学无效（加权均值对缩放不变）——原实现每轮
+    ×scale 必坍缩（实证 4 标的 +1σ → Σw≈1.2e-6 且 converged=True）。修复后标
+    infeasible 不缩放（fail-visible）。"""
+    solver = ConstraintSolver()
+    rl = _rl(max_single_position=0.40)
+    assets = ["A", "B", "C", "D"]
+    w = {"A": 0.25, "B": 0.25, "C": 0.25, "D": 0.25}
+    style = {"A": 1.0, "B": 1.0, "C": 1.0, "D": 1.0}  # 全 +1σ 同号（上限 0.3σ）
+    result = solver.solve(w, rl, assets=assets, style_exposures=style)
+    total = float(np.sum(result.weights))
+    assert total > 0.9, f"infeasible 不缩放，Σw={total} 应保持 ~1.0（原实证 1.2e-6）"
+    assert any(v.constraint_name == "style_exposure_infeasible" for v in result.violations)
+
+
+def test_mixed_sign_exposure_still_scales():
+    """#207 对照组：存在反向暴露锚时缩放仍生效（加权均值可移动，约束可达）。"""
+    solver = ConstraintSolver()
+    rl = _rl(max_single_position=0.40)
+    assets = ["A", "B", "C", "D"]
+    w = {"A": 0.25, "B": 0.25, "C": 0.25, "D": 0.25}
+    # A/B +1.5σ，C/D -1.5σ（有反向锚）→ 缩放有效，不应标 infeasible
+    style = {"A": 1.5, "B": 1.5, "C": -1.5, "D": -1.5}
+    result = solver.solve(w, rl, assets=assets, style_exposures=style)
+    assert not any(v.constraint_name == "style_exposure_infeasible" for v in result.violations)
+    assert float(np.sum(result.weights)) > 0.5  # 不坍缩
+
+
+def test_collapse_guard_not_triggered_on_legit_hard_crowding():
+    """坍缩兜底不误报：硬拥挤连环清零属合法约束响应（保留最大者），Σw 量级正常。"""
+    solver = ConstraintSolver()
+    rl = _rl(max_single_position=0.90)
+    assets = ["A", "B", "C"]
+    w = {"A": 0.34, "B": 0.33, "C": 0.33}
+    corr = np.ones((3, 3)) * 0.99
+    np.fill_diagonal(corr, 1.0)
+    result = solver.solve(w, rl, assets=assets, correlation_matrix=corr)
+    total = float(np.sum(result.weights))
+    assert total > 0.1, "硬拥挤保留最大者，量级正常"
+    assert not any(v.constraint_id == "COLLAPSE" for v in result.violations)

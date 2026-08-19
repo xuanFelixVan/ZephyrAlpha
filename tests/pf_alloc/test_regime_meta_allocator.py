@@ -525,13 +525,29 @@ class TestEdgeCases:
         assert budget.allocations["B"] == pytest.approx(0.35)
         assert budget.allocations["C"] == pytest.approx(0.30)
 
+    def test_all_breached_water_filling_sum_equals_one(self) -> None:
+        # AI-NIGHT-001 #206：全策略同轮越界时 water-filling 提前 break（free_sids 空），
+        # 原实现裁剪后 Σ≠1（实证 base={0.98,0.01,0.01} → Σ=0.5；N=25 全贴 floor →
+        # Σ=1.25）——Σ=1.0 硬不变量兜底：按比例归一化，floor/cap 让位。
+        alloc = RegimeMetaAllocator()
+        # 场景1：单极偏斜（0.98 超 cap=0.40，其余低于 floor=0.05）→ 全越界
+        result = alloc._normalize_and_clip({"A": 0.98, "B": 0.01, "C": 0.01}, ["A", "B", "C"])
+        assert sum(result.values()) == pytest.approx(1.0), f"Σ={sum(result.values())} 必须为 1.0"
+        # 场景2：N=25 全贴 floor（25×0.05=1.25>1）→ floor 不可行，兜底归一化
+        sids = [f"S{i}" for i in range(25)]
+        result2 = alloc._normalize_and_clip({sid: 1.0 for sid in sids}, sids)
+        assert sum(result2.values()) == pytest.approx(1.0), f"N=25 Σ={sum(result2.values())} 必须为 1.0"
+
     def test_degenerate_all_violate_bounds(self) -> None:
         # 退化输入（极端人工先验 0.98/0.01/0.01）：三策略同时越界全部固定，
         # water-filling 无 free 策略可重分 → 输出 0.40/0.05/0.05。
         # 代码本体行为：防饿死/防集中硬约束优先于 Σ=1.0（退化输入下两者数学不可兼得）。
+        # 2026-08-19 AI-NIGHT-001 #206 裁定反转：Σ=1.0 是头注 INVARIANTS 硬不变量，
+        # 破产时按比例归一化（floor/cap 让位）——0.40/0.05/0.05 → 0.80/0.10/0.10，
+        # Σ=1.0（原"Σ=0.5 闲置 50% 资金"静默失效形态消除）。
         alloc = RegimeMetaAllocator(base_weights={"A": 0.98, "B": 0.01, "C": 0.01})
         budget = alloc.allocate([0.90, 0.10], {"A": 1.0, "B": 1.0, "C": 1.0}, {})
-        assert budget.allocations["A"] == pytest.approx(CAP)
-        assert budget.allocations["B"] == pytest.approx(FLOOR)
-        assert budget.allocations["C"] == pytest.approx(FLOOR)
-        assert sum(budget.allocations.values()) == pytest.approx(0.50)
+        assert budget.allocations["A"] == pytest.approx(0.80)
+        assert budget.allocations["B"] == pytest.approx(0.10)
+        assert budget.allocations["C"] == pytest.approx(0.10)
+        assert sum(budget.allocations.values()) == pytest.approx(1.0)
