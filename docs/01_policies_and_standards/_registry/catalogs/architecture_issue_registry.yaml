@@ -17655,11 +17655,26 @@ entries:
     超出审计侧夜间自主权限（风险优先原则：DB 结构裁定须 Owner 知情）。登记 open 移交专项。
     审计侧建议：blocker_status/gate_reason 列溯源今晚 merge 批（疑 R 系审查线落库列未同步 DDL 真源），
     若确认则补 DDL 声明为正解；ipo_calendar 若功能已启用则按 DDL 真源建表。
+    2026-08-19 上午 Owner 授权架构裁定（考古推翻初判，终裁落地）：
+    【①C2 re-freeze=批准】25 项漂移 100% 已审来源：24 py=ruff 六码安全修复批（692172844a 等，
+    R 系 merge 批 1ae447465d/08ec342795/8c3bf463a2/f84a093f12 实测 0 触及 shared/contracts/），
+    1 yaml=a181670d7b audit-02 契约一致性治本；快照末次冻结 a51c12b231 早于两批。
+    执行=generate_contracts.py + check_contract_code_drift.py --freeze，零风险。
+    【②DDL 9 项=分三档】blocker_status 全系+edges/decision_* gate_reason=死列（全仓 0 消费方，
+    唯一引入 commit=2026-08-01 18e710b798 迁移脚本只落 DB 未回写真源，推翻"R 系"初判）→
+    回滚现网列（真源描述需要态非现存态；按 trae_063 三步验证+pg_dump 备份）；
+    decision_layers '--'=verify_schema_health.py parse_ddl_columns 解析器 bug（不剥离 -- 注释）
+    →修脚本不动 DB；rule_ai_perception 3 只读触发器=02_create_pg_schema.sql 增补遗漏
+    （READONLY_TABLES 已含该表、COMMENT 已宣称保护）→补建触发器+depgraph_schema.py 补 _DDL 常量。
+    【③ipo_calendar=建表】功能准启用实证：_fetch_ipo_calendar 写入端+tasks.yaml 调度+
+    JOB-086/DS-105 production 登记+liquidity_crisis_manager 算法消费接口+R1 三级加固全就绪，
+    唯一缺口=CH 现网未建表（8123 连接超时环境窗口）；摘源=拆 production 数据管道不可逆。
+    执行=CH 环境可达时 python scripts/ch/apply_market_tables_ddl.py。
   impact:
     - 'architecture_model/contracts（契约快照 freeze）'
     - 'DDL 真源（drift 9 项 + ipo_calendar 建表/摘源）'
-  fix_phase: '待 Owner/统筹专项裁定（审计侧已备证据链）'
-  status: open
+  fix_phase: '裁定已落地（2026-08-19 上午，见 adjudication 终裁段）——待统筹按方案施工：C2 re-freeze + DDL 死列回滚（trae_063 三步验证）+ 触发器补建 + 解析器修复 + ipo_calendar 待 CH 窗口建表'
+  status: decided
   related_rules: '#ARCH-CH-025; GATE-C2; GATE-SCHEMA-TRUTH'
   created: '2026-08-19'
   last_updated: '2026-08-19'
