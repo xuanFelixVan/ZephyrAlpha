@@ -110,6 +110,7 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
+from typing import Callable
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
@@ -242,7 +243,7 @@ def _require(value: object, field_name: str) -> object:
     return value
 
 
-# ── 分发逻辑（基础版）──
+# ── 分发逻辑（基础版 + 注入式实发）──
 
 # 基础版: ARCHIVE→SENT, WEBHOOK/EMAIL→PENDING
 _BASE_DISTRIBUTION_STATUS: dict[DistributionChannel, DistributionStatus] = {
@@ -251,20 +252,46 @@ _BASE_DISTRIBUTION_STATUS: dict[DistributionChannel, DistributionStatus] = {
     DistributionChannel.EMAIL: DistributionStatus.PENDING,
 }
 
+# 注入式 sender 类型约定：callable(ArchivedReport) -> bool（True=送达）
+# 54 号 §3.7 双渠道实发裁定：sender 未注入 → 维持 PENDING（现状不破坏）；
+# 注入后实发成功 → SENT，失败/异常 → FAILED + error_message（best-effort 不阻断归档链）。
+ReportSender = Callable[["ArchivedReport"], bool]
+
 
 def _distribute(
-    archive_id: str,
+    archived: ArchivedReport,
     channel: DistributionChannel,
+    sender: Callable[[ArchivedReport], bool] | None = None,
 ) -> DistributionRecord:
-    """执行分发（基础版）——根据渠道确定状态。"""
+    """执行分发——按渠道定状态；WEBHOOK/EMAIL 注入 sender 后实发。"""
+    distributed_at = datetime.now(UTC)
     status = _BASE_DISTRIBUTION_STATUS.get(channel, DistributionStatus.PENDING)
+    error_message = ""
+
+    if channel in (DistributionChannel.WEBHOOK, DistributionChannel.EMAIL):
+        if sender is None:
+            status = DistributionStatus.PENDING  # 未注入 sender：维持现状
+        else:
+            try:
+                delivered = bool(sender(archived))
+                status = DistributionStatus.SENT if delivered else DistributionStatus.FAILED
+                if not delivered:
+                    error_message = "sender 返回 False（软失败）"
+            except Exception as exc:  # noqa: BLE001 —— best-effort：外发失败不阻断归档
+                status = DistributionStatus.FAILED
+                error_message = f"{type(exc).__name__}: {exc}"
+                _logger.warning(
+                    "distribute sender 异常: channel=%s archive_id=%s error=%s",
+                    channel.value, archived.archive_id, error_message,
+                )
+
     return DistributionRecord(
         distribution_id=f"DIST-{uuid.uuid4().hex[:10]}",
-        archive_id=archive_id,
+        archive_id=archived.archive_id,
         channel=channel,
         status=status,
-        distributed_at=datetime.now(UTC),
-        error_message="",
+        distributed_at=distributed_at,
+        error_message=error_message,
     )
 
 
@@ -289,11 +316,20 @@ class ReportPublisher:
         assert pub.verify_chain() is True
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        webhook_sender: Callable[[ArchivedReport], bool] | None = None,
+        email_sender: Callable[[ArchivedReport], bool] | None = None,
+    ) -> None:
         self._archive: list[ArchivedReport] = []
         self._archive_by_id: dict[str, ArchivedReport] = {}
         self._distributions: dict[str, list[DistributionRecord]] = {}
         self._lock = threading.Lock()
+        # 注入式实发 sender（54 号 §3.7）：None=未配置 → 维持 PENDING 现状
+        self._senders: dict[DistributionChannel, Callable[[ArchivedReport], bool] | None] = {
+            DistributionChannel.WEBHOOK: webhook_sender,
+            DistributionChannel.EMAIL: email_sender,
+        }
 
     # ── 发布（归档 + 分发）──
 
@@ -357,8 +393,10 @@ class ReportPublisher:
             self._archive.append(archived)
             self._archive_by_id[archive_id] = archived
 
-            # 执行分发
-            dist_records = [_distribute(archive_id, ch) for ch in channels]
+            # 执行分发（WEBHOOK/EMAIL 经注入 sender 实发，未注入维持 PENDING）
+            dist_records = [
+                _distribute(archived, ch, self._senders.get(ch)) for ch in channels
+            ]
             self._distributions[archive_id] = dist_records
 
         _logger.debug(
@@ -453,5 +491,6 @@ __all__ = [
     "DistributionStatus",
     "InvalidPublishInputError",
     "ReportPublisher",
+    "ReportSender",
     "ReportSource",
 ]
