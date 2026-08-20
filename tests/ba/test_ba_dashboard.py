@@ -55,9 +55,13 @@ class TestDashboard:
         assert health == {}
 
     def test_compute_module_health_with_data(self, tmp_path):
-        audit_dir = os.path.join(str(tmp_path), "data", "drift_audit")
-        os.makedirs(audit_dir, exist_ok=True)
-        db_path = os.path.join(audit_dir, "drift_events.db")
+        # #62 裁定（2026-08-20）：tmp governance.db 布局（治自出生即红——原建
+        # data/drift_audit/drift_events.db 与 Dashboard 真读 governance.db 不符）。
+        # 路径推导与 dashboard.py:96-98 同口径（DB_PATH 相对 MAIN_REPO_ROOT 重定位）。
+        from zephyr.shared.io.paths import DB_PATH, MAIN_REPO_ROOT
+
+        db_path = os.path.join(str(tmp_path), *DB_PATH.relative_to(MAIN_REPO_ROOT).parts)
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
         conn = sqlite3.connect(db_path)
         conn.execute("CREATE TABLE drift_events (module_id TEXT, state TEXT, created_at TEXT)")
         conn.execute("INSERT INTO drift_events VALUES ('MOD-A', 'VERIFIED', '2025-01-01')")
@@ -78,9 +82,11 @@ class TestDashboard:
         assert heatmap == []
 
     def test_compute_drift_heatmap_with_data(self, tmp_path):
-        audit_dir = os.path.join(str(tmp_path), "data", "drift_audit")
-        os.makedirs(audit_dir, exist_ok=True)
-        db_path = os.path.join(audit_dir, "drift_events.db")
+        # #62 裁定（2026-08-20）：同上——tmp governance.db 布局。
+        from zephyr.shared.io.paths import DB_PATH, MAIN_REPO_ROOT
+
+        db_path = os.path.join(str(tmp_path), *DB_PATH.relative_to(MAIN_REPO_ROOT).parts)
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
         conn = sqlite3.connect(db_path)
         conn.execute("CREATE TABLE drift_events (module_id TEXT, state TEXT, created_at TEXT)")
         conn.execute("INSERT INTO drift_events VALUES ('MOD-A', 'OPEN', '2025-01-01')")
