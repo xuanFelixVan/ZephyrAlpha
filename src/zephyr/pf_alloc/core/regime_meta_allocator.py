@@ -230,18 +230,52 @@ class BudgetAllocation:
     两个层次（§3.1）：
       - allocation_i（相对占比 Σ=1.0）回答"偏向哪个策略"——由 Base×PerformanceScore 决定
       - global_shrinkage（总暴露因子）回答"现在该多谨慎"——由 regime ConfidenceSignal×RiskSignal 决定
-      - effective_budgets = allocation_i × global_shrinkage 是策略实收预算
+      - effective_budgets = allocation_i × global_shrinkage × cold_start_ratio_i 是策略实收预算
     """
 
     allocations: dict[str, float]            # {strategy_id: 相对占比}，Σ=1.0，floor 5%~cap 40%
     global_shrinkage: float                  # 全局风险节流因子（0.05~1.0）
-    effective_budgets: dict[str, float]      # {strategy_id: allocation_i × global_shrinkage}
+    effective_budgets: dict[str, float]      # {strategy_id: allocation_i × global_shrinkage × cold_start_ratio_i}
     shrinkage_detail: ShrinkageDetail
     perf_scores: dict[str, float] = field(default_factory=dict)  # 各策略 PerformanceScore（审计用）
     sortino_sharpe_gaps: dict[str, float] = field(default_factory=dict)  # gap 监控（§3.2.2 四件套 #3）
+    cold_start_ratios: dict[str, float] = field(default_factory=dict)  # 各策略冷启动执行比例（30号 §6.7，审计用；空=全 1.0）
     rebalance_allowed: bool = True           # 当日是否允许再平衡（频率控制 ≤1次/日）
     created_at: datetime = field(default_factory=datetime.now)
     schema_version: str = "1.0"
+
+
+@dataclass(frozen=True)
+class SensitivityScenario:
+    """D1 敏感性网格单场景输入（11号 §0.5.7 / 34号 §3.2.7）。"""
+
+    name: str                              # 场景名（归因展示用，如 "高确信牛市"）
+    regime_probabilities: Any              # regime 概率向量
+    performance_scores: dict[str, float]   # 各策略 PerformanceScore
+    risk_signal_inputs: dict[str, Any]     # RiskSignal 13 参数
+    is_crisis: bool = False                # CRISIS 态开关
+
+
+@dataclass(frozen=True)
+class ThresholdGridPoint:
+    """D1 网格单点结果：某扰动档位下的分配输出 + 相对 baseline 的最大变化率。"""
+
+    perturbation: float                            # 扰动比例 δ（如 -0.2/-0.1/0/+0.1/+0.2）
+    thresholds: tuple[tuple[float, float], ...]    # 扰动后阈值表（审计用）
+    global_shrinkage: float
+    effective_budgets: dict[str, float]
+    max_rel_change: float                          # max_sid |eff(δ)−eff(0)| / max(eff(0), ε)
+
+
+@dataclass(frozen=True)
+class SensitivityScenarioResult:
+    """D1 单场景敏感性结论（verdict 判定口径：11号 §4.4 D1 参数±20%扰动变化<30%→稳健）。"""
+
+    scenario: str
+    baseline_shrinkage: float
+    grid: tuple[ThresholdGridPoint, ...]
+    max_rel_change: float          # 全网格最大相对变化率
+    verdict: str                   # "robust"（稳健）/ "cliff_suspect"（悬崖型疑似，需调阈值）
 
 
 class RegimeMetaAllocator:
@@ -273,6 +307,7 @@ class RegimeMetaAllocator:
         self,
         base_weights: dict[str, float] | None = None,
         shrinkage_enabled: bool = True,
+        confidence_thresholds: list[tuple[float, float]] | None = None,
     ) -> None:
         """初始化。
 
@@ -283,9 +318,15 @@ class RegimeMetaAllocator:
             shrinkage_enabled: Shrinkage 开关（11_regime_backtest_validation_plan C1 验证，默认 True）。
                 True → global_shrinkage = ConfidenceSignal × RiskSignal
                 False → global_shrinkage = 1.0（C1 开/关对比基准，一票否决）
+            confidence_thresholds: ConfidenceSignal 四档阈值表（(max(P) 上界, 信号值)）。
+                None=用模块常量 CONFIDENCE_THRESHOLDS（默认，零行为变化）；
+                显式传入用于 D1 ±20% 敏感性网格扰动（11号 §0.5.7 / 34号 §3.2.7）。
         """
         self.base_weights: dict[str, float] = dict(base_weights) if base_weights else {}
         self.shrinkage_enabled: bool = shrinkage_enabled
+        self._confidence_thresholds: list[tuple[float, float]] = (
+            list(confidence_thresholds) if confidence_thresholds else list(CONFIDENCE_THRESHOLDS)
+        )
 
     # ── 公共接口 ──────────────────────────────────────────────────────
 
@@ -296,6 +337,7 @@ class RegimeMetaAllocator:
         risk_signal_inputs: dict[str, Any],
         strategy_sample_days: dict[str, int] | None = None,
         is_crisis: bool = False,
+        cold_start_ratios: dict[str, float] | None = None,
     ) -> BudgetAllocation:
         """主入口：Shrinkage 节流 + PerformanceScore 后验分配 → BudgetAllocation。
 
@@ -305,6 +347,7 @@ class RegimeMetaAllocator:
              （Shrinkage 是全局的，归一化时约掉，只在 effective_budget 层缩放，§3.1 实现注记）
           3. 归一化 + floor/cap 迭代裁剪（含 N=2 无解兜底，§3.2.4）
           4. effective_budget_i = allocation_i × global_shrinkage
+          5. 冷启动缩放 effective_budget_i ×= cold_start_ratio_i（30号 §6.7，默认 1.0 零缩放）
 
         Args:
             regime_probabilities: regime 检测器输出的概率向量（np.ndarray 或 list）。
@@ -318,12 +361,19 @@ class RegimeMetaAllocator:
                 若提供，额外做冷启动校验（防上游误传非中性值）。
             is_crisis: D-SIGNAL-68 overlay 是否触发 CRISIS 态（§3.2.2 危机态覆盖）。
                 True → SHRINKAGE_FLOOR 从 0.09 降至 0.05（对齐 31号 crisis cap）。
+            cold_start_ratios: 各策略冷启动执行比例（30号 §6.7 施工指导，∈(0,1]）。
+                由 StrategyBook.get_cold_start_ratio() 维护产出（上线 <30 天 ×0.3 /
+                30-60 天 ×0.6 / ≥60 天或 PerformanceScore 稳定 ×1.0）。
+                None=全部 1.0 满仓（默认，零行为变化）。只缩不放，不参与归一化
+                （在 effective_budget 层缩放，与 global_shrinkage 同层，31号 §2.4.1
+                冷启动 ×30% 在策略层 budget 分配时即生效的落点）。
 
         Returns:
             BudgetAllocation（allocations + global_shrinkage + effective_budgets）
 
         Raises:
-            AllocationError: 策略列表为空或 base_weights 无法确定。
+            AllocationError: 策略列表为空或 base_weights 无法确定，
+                或 cold_start_ratios 含越界值（∉(0,1]）。
         """
         strategies = list(performance_scores.keys())
         if not strategies:
@@ -338,6 +388,16 @@ class RegimeMetaAllocator:
         perf_scores = self._apply_cold_start_neutral(
             performance_scores, strategy_sample_days, strategies
         )
+
+        # 冷启动执行比例校验（30号 §6.7：∈(0,1]，只缩不放）
+        ratios: dict[str, float] = {}
+        if cold_start_ratios:
+            for sid, ratio in cold_start_ratios.items():
+                if not 0 < ratio <= 1.0:
+                    raise AllocationError(
+                        f"策略 {sid} cold_start_ratio={ratio} 越界（须 ∈(0,1]，只缩不放）"
+                    )
+                ratios[sid] = float(ratio)
 
         # ── Step 1: 计算 global_shrinkage（§3.2.3）──
         shrinkage = self._compute_shrinkage(regime_probabilities, risk_signal_inputs, is_crisis)
@@ -355,12 +415,19 @@ class RegimeMetaAllocator:
             sid: allocations[sid] * global_shrinkage for sid in strategies
         }
 
+        # ── Step 5: 冷启动执行比例缩放（30号 §6.7 施工指导：effective_budget 缩放步骤后乘）──
+        if ratios:
+            effective_budgets = {
+                sid: effective_budgets[sid] * ratios.get(sid, 1.0) for sid in strategies
+            }
+
         return BudgetAllocation(
             allocations=allocations,
             global_shrinkage=global_shrinkage,
             effective_budgets=effective_budgets,
             shrinkage_detail=shrinkage,
             perf_scores=dict(perf_scores),
+            cold_start_ratios=ratios,
         )
 
     # ── 子方法 ────────────────────────────────────────────────────────
@@ -469,10 +536,10 @@ class RegimeMetaAllocator:
         probs = np.asarray(regime_probabilities, dtype=float)
         max_p = float(np.max(probs))
 
-        for threshold, signal in CONFIDENCE_THRESHOLDS:
+        for threshold, signal in self._confidence_thresholds:
             if max_p < threshold:
                 return signal
-        return CONFIDENCE_THRESHOLDS[-1][1]  # 默认 1.0
+        return self._confidence_thresholds[-1][1]  # 默认 1.0
 
     def _compute_risk_signal(self, params: dict[str, Any]) -> float:
         """RiskSignal 13 参数连续值（§3.2.3，[10号] §5.3.3）。
@@ -704,3 +771,101 @@ class RegimeMetaAllocator:
                 )
 
         return (perf_score, sortino, sharpe)
+
+    # ── D1 敏感性网格（11号 §0.5.7 待完成项 / 34号 §3.2.7 四档阈值待 D1 校准）────
+
+    def confidence_threshold_sensitivity_grid(
+        self,
+        scenarios: list[SensitivityScenario],
+        perturbation: float = 0.20,
+        steps: int = 5,
+        robust_tolerance: float = 0.30,
+    ) -> list[SensitivityScenarioResult]:
+        """ConfidenceSignal 四档阈值（60/80/95%）±20% 敏感性网格（参数扰动分析）。
+
+        11号 §4.4 D1 判定口径：参数 ±20% 扰动，效果变化 <30% → 稳健（非悬崖型）；
+        存在"最优参数孤岛"（邻域效果骤降）→ 过拟合警告。本函数产出函数级代理指标：
+        对每场景 × 每扰动档跑 allocate()，度量 effective_budgets 相对 baseline（δ=0）
+        的最大相对变化率；verdict=cliff_suspect 表示该场景对阈值扰动敏感（悬崖型疑似，
+        34号 §3.2.7"若 D1 显示某档边界是悬崖型，需调整阈值"）。
+
+        扰动方式：阈值表的 max(P) 边界乘以 (1+δ)，δ ∈ linspace(-p, +p, steps)。
+        末位 sentinel 上界（1.01 捕获全区间）不参与扰动；扰动后边界钳制 [0.01, 0.99]
+        保持合法概率区间。实现经 __init__ 的 confidence_thresholds 注入完成，
+        不改动本实例状态（每扰动档克隆一个新分配器）。
+
+        Args:
+            scenarios: 场景列表（每场景一套 allocate 输入）
+            perturbation: 最大扰动比例（默认 ±20%，D1 口径）
+            steps: 网格档数（默认 5：-20%/-10%/0/+10%/+20%，须为奇数含 baseline）
+            robust_tolerance: 稳健判定阈值（默认 0.30，D1"变化<30%→稳健"）
+
+        Returns:
+            每场景的 SensitivityScenarioResult（grid 明细 + verdict）
+        """
+        if steps < 3 or steps % 2 == 0:
+            raise AllocationError(f"steps 须为 ≥3 奇数（含 δ=0 baseline），got {steps}")
+        if not 0 < perturbation < 1:
+            raise AllocationError(f"perturbation 须 ∈(0,1)，got {perturbation}")
+
+        deltas = np.linspace(-perturbation, perturbation, steps)
+        results: list[SensitivityScenarioResult] = []
+
+        for sc in scenarios:
+            # baseline（δ=0，本实例阈值表）
+            base_alloc = self.allocate(
+                regime_probabilities=sc.regime_probabilities,
+                performance_scores=sc.performance_scores,
+                risk_signal_inputs=sc.risk_signal_inputs,
+                is_crisis=sc.is_crisis,
+            )
+            base_eff = base_alloc.effective_budgets
+
+            grid: list[ThresholdGridPoint] = []
+            scenario_max_change = 0.0
+            for delta in deltas:
+                perturbed = self._perturbed_thresholds(float(delta))
+                probe = RegimeMetaAllocator(
+                    base_weights=self.base_weights,
+                    shrinkage_enabled=self.shrinkage_enabled,
+                    confidence_thresholds=perturbed,
+                )
+                out = probe.allocate(
+                    regime_probabilities=sc.regime_probabilities,
+                    performance_scores=sc.performance_scores,
+                    risk_signal_inputs=sc.risk_signal_inputs,
+                    is_crisis=sc.is_crisis,
+                )
+                rel = max(
+                    abs(out.effective_budgets[sid] - base_eff[sid]) / max(base_eff[sid], 1e-9)
+                    for sid in base_eff
+                )
+                scenario_max_change = max(scenario_max_change, rel)
+                grid.append(ThresholdGridPoint(
+                    perturbation=float(delta),
+                    thresholds=tuple(perturbed),
+                    global_shrinkage=out.global_shrinkage,
+                    effective_budgets=dict(out.effective_budgets),
+                    max_rel_change=rel,
+                ))
+
+            results.append(SensitivityScenarioResult(
+                scenario=sc.name,
+                baseline_shrinkage=base_alloc.global_shrinkage,
+                grid=tuple(grid),
+                max_rel_change=scenario_max_change,
+                verdict="robust" if scenario_max_change < robust_tolerance else "cliff_suspect",
+            ))
+
+        return results
+
+    def _perturbed_thresholds(self, delta: float) -> list[tuple[float, float]]:
+        """阈值表按 (1+δ) 扰动：边界 ×(1+δ) 并钳制 [0.01,0.99]，末位 sentinel 不动。"""
+        perturbed: list[tuple[float, float]] = []
+        last_idx = len(self._confidence_thresholds) - 1
+        for i, (bound, signal) in enumerate(self._confidence_thresholds):
+            if i == last_idx:
+                perturbed.append((bound, signal))  # sentinel 上界（1.01）不扰动
+            else:
+                perturbed.append((min(0.99, max(0.01, bound * (1.0 + delta))), signal))
+        return perturbed

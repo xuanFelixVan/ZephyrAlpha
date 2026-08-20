@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import math
+from datetime import date
 
 import pytest
 
@@ -22,6 +23,7 @@ from zephyr.position.core.strategy_book import (
     StrategyBook,
     TargetPortfolio,
     VolatilityInfo,
+    scores_to_weights,
 )
 
 
@@ -310,3 +312,135 @@ class TestPerformanceScore:
     def test_insufficient_samples_floor(self) -> None:
         book = _make_book()
         assert book.compute_performance_score([0.01]) == pytest.approx(0.5)
+
+
+# ══ 冷启动状态机（30号 §6.7 三段式 + 31号 §2.4.1）══
+
+
+class TestColdStartStateMachine:
+    """30号 §6.7：×30%→×60%→×100% 按上线天数自动晋升，PerformanceScore 稳定锁定满仓。"""
+
+    def test_no_live_start_date_full_position(self) -> None:
+        """未传 live_start_date → 非冷启动模式，恒满仓 1.0（既有策略零行为变化）。"""
+        book = _DummyBook("s1")
+        state = book.get_cold_start_state()
+        assert state.stage == "full_position"
+        assert state.ratio == pytest.approx(1.0)
+        assert state.days_live is None
+        assert state.locked_full is True
+
+    def test_cold_start_stage_ratio_030(self) -> None:
+        """上线 <30 天 → cold_start ×0.30。"""
+        book = _DummyBook("s1", live_start_date=date(2026, 8, 1))
+        state = book.get_cold_start_state(today=date(2026, 8, 20))  # 19 天
+        assert state.stage == "cold_start"
+        assert state.ratio == pytest.approx(0.30)
+        assert state.days_live == 19
+        assert state.locked_full is False
+
+    def test_half_position_stage_ratio_060(self) -> None:
+        """30≤上线<60 天 → half_position ×0.60。"""
+        book = _DummyBook("s1", live_start_date=date(2026, 6, 25))
+        state = book.get_cold_start_state(today=date(2026, 8, 20))  # 56 天
+        assert state.stage == "half_position"
+        assert state.ratio == pytest.approx(0.60)
+
+    def test_full_position_after_60_days(self) -> None:
+        """上线 ≥60 天 → full_position ×1.00（毕业）。"""
+        book = _DummyBook("s1", live_start_date=date(2026, 6, 1))
+        state = book.get_cold_start_state(today=date(2026, 8, 20))  # 80 天
+        assert state.stage == "full_position"
+        assert state.ratio == pytest.approx(1.0)
+        assert state.locked_full is True
+
+    def test_stage_boundary_days(self) -> None:
+        """边界：恰好 30 天进半仓，恰好 60 天毕业。"""
+        book = _DummyBook("s1", live_start_date=date(2026, 7, 21))
+        assert book.get_cold_start_state(today=date(2026, 8, 20)).stage == "half_position"  # 恰好 30 天
+        book2 = _DummyBook("s2", live_start_date=date(2026, 6, 21))
+        assert book2.get_cold_start_state(today=date(2026, 8, 20)).stage == "full_position"  # 恰好 60 天
+
+    def test_perf_stable_locks_full_early(self) -> None:
+        """PerformanceScore 稳定（有效观测≥40）→ 冷启动期提前锁定满仓（§6.7）。"""
+        book = _DummyBook("s1", live_start_date=date(2026, 8, 10))  # 仅 10 天
+        state = book.get_cold_start_state(today=date(2026, 8, 20), perf_valid_observations=40)
+        assert state.stage == "full_position"
+        assert state.ratio == pytest.approx(1.0)
+        assert state.locked_full is True
+
+    def test_perf_observations_below_threshold_no_lock(self) -> None:
+        """有效观测 39 < 40 → 不锁定，仍按天数走冷启动。"""
+        book = _DummyBook("s1", live_start_date=date(2026, 8, 10))
+        state = book.get_cold_start_state(today=date(2026, 8, 20), perf_valid_observations=39)
+        assert state.stage == "cold_start"
+        assert state.ratio == pytest.approx(0.30)
+
+    def test_get_cold_start_ratio_convenience(self) -> None:
+        """get_cold_start_ratio() 便捷接口与 state.ratio 一致。"""
+        book = _DummyBook("s1", live_start_date=date(2026, 8, 1))
+        assert book.get_cold_start_ratio(today=date(2026, 8, 20)) == pytest.approx(0.30)
+
+
+# ══ score→weight 显式转换（30号 §2.2 契约③）══
+
+
+class TestScoresToWeights:
+    """composite_score[-3,3] → 粗仓位权重映射（函数级形式化）。"""
+
+    def test_proportional_basic(self) -> None:
+        """proportional：线性平移 s+3 后按比例，Σ=budget。"""
+        w = scores_to_weights({"A": 3.0, "B": 0.0, "C": -3.0}, budget=0.9)
+        # 平移后 6/3/0 → A=0.6, B=0.3, C=0.0
+        assert w["A"] == pytest.approx(0.60)
+        assert w["B"] == pytest.approx(0.30)
+        assert w["C"] == pytest.approx(0.0)
+        assert sum(w.values()) == pytest.approx(0.9)
+
+    def test_equal_method(self) -> None:
+        """equal：入选标的等权 budget/N。"""
+        w = scores_to_weights({"A": 2.0, "B": 1.0}, budget=0.8, method="equal")
+        assert w["A"] == pytest.approx(0.40)
+        assert w["B"] == pytest.approx(0.40)
+
+    def test_top_n_selection(self) -> None:
+        """top_n：评分降序取前 N。"""
+        w = scores_to_weights({"A": 1.0, "B": 2.0, "C": 3.0}, budget=0.9, top_n=2, method="equal")
+        assert set(w.keys()) == {"B", "C"}
+        assert w["B"] == pytest.approx(0.45)
+
+    def test_top_n_exceeds_len(self) -> None:
+        """top_n > 标的数 → 全部入选（边界）。"""
+        w = scores_to_weights({"A": 1.0, "B": 1.0}, budget=0.6, top_n=10, method="equal")
+        assert len(w) == 2
+
+    def test_empty_scores(self) -> None:
+        """空评分 → 空权重（退化）。"""
+        assert scores_to_weights({}, budget=0.9) == {}
+
+    def test_all_min_score_fallback_equal(self) -> None:
+        """全部评分=-3（平移后全 0）→ 等权兜底（退化路径）。"""
+        w = scores_to_weights({"A": -3.0, "B": -3.0}, budget=0.8)
+        assert w["A"] == pytest.approx(0.40)
+        assert w["B"] == pytest.approx(0.40)
+
+    def test_score_out_of_range_raises(self) -> None:
+        """评分越出 [-3,3] 契约区间 → ValueError（21号 §3.3 归一化口径）。"""
+        with pytest.raises(ValueError, match="契约区间"):
+            scores_to_weights({"A": 3.5}, budget=0.9)
+        with pytest.raises(ValueError, match="契约区间"):
+            scores_to_weights({"A": -3.2}, budget=0.9)
+
+    def test_invalid_params_raise(self) -> None:
+        """budget<0 / top_n≤0 / method 未知 → ValueError。"""
+        with pytest.raises(ValueError):
+            scores_to_weights({"A": 1.0}, budget=-0.1)
+        with pytest.raises(ValueError):
+            scores_to_weights({"A": 1.0}, budget=0.9, top_n=0)
+        with pytest.raises(ValueError, match="未知"):
+            scores_to_weights({"A": 1.0}, budget=0.9, method="softmax")
+
+    def test_negative_scores_keep_small_weight(self) -> None:
+        """负分标的在 proportional 下仍得小权重（不剔除），正分标的占主导。"""
+        w = scores_to_weights({"A": 2.0, "B": -2.0}, budget=1.0)
+        # 平移后 5/1 → A≈0.833, B≈0.167
+        assert w["A"] > w["B"] > 0

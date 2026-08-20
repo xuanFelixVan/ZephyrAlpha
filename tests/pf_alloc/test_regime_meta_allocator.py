@@ -39,6 +39,7 @@ from zephyr.pf_alloc.core.regime_meta_allocator import (
     AllocationError,
     BudgetAllocation,
     RegimeMetaAllocator,
+    SensitivityScenario,
     ShrinkageDetail,
 )
 
@@ -566,3 +567,147 @@ class TestEdgeCases:
         assert budget.allocations["B"] == pytest.approx(0.10)
         assert budget.allocations["C"] == pytest.approx(0.10)
         assert sum(budget.allocations.values()) == pytest.approx(1.0)
+
+
+# ── 冷启动执行比例（30号 §6.7 施工指导：allocate() cold_start_ratios 参数）─────
+
+
+class TestColdStartRatios:
+    """cold_start_ratios：effective_budget 层缩放（只缩不放，不参与归一化）。"""
+
+    def test_default_none_zero_scaling(self) -> None:
+        """None（默认）→ 零缩放，与不传参数行为完全一致（零回归）。"""
+        alloc = RegimeMetaAllocator()
+        b1 = alloc.allocate([0.97, 0.03], {"A": 1.0, "B": 1.0}, _risk())
+        assert b1.cold_start_ratios == {}
+        assert b1.effective_budgets["A"] == pytest.approx(
+            b1.allocations["A"] * b1.global_shrinkage
+        )
+
+    def test_cold_start_scales_effective_budget(self) -> None:
+        """×0.30 只缩 effective_budget，不动 allocations 归一化（31号 §2.4.1 执行时机）。"""
+        alloc = RegimeMetaAllocator()
+        budget = alloc.allocate(
+            [0.97, 0.03],
+            {"A": 1.0, "B": 1.0},
+            _risk(),
+            cold_start_ratios={"A": 0.30},
+        )
+        # allocations 不受冷启动影响（Σ=1.0 硬不变量不受侵蚀）
+        assert sum(budget.allocations.values()) == pytest.approx(1.0)
+        # A 实收 = allocation × shrinkage × 0.30；B 未传 → ×1.0
+        assert budget.effective_budgets["A"] == pytest.approx(
+            budget.allocations["A"] * budget.global_shrinkage * 0.30
+        )
+        assert budget.effective_budgets["B"] == pytest.approx(
+            budget.allocations["B"] * budget.global_shrinkage
+        )
+        # 审计留痕
+        assert budget.cold_start_ratios == {"A": 0.30}
+
+    def test_ratio_boundary_one_and_invalid(self) -> None:
+        """ratio=1.0 边界合法；0 / 负 / >1 → AllocationError（只缩不放）。"""
+        alloc = RegimeMetaAllocator()
+        budget = alloc.allocate(
+            [0.97, 0.03], {"A": 1.0}, _risk(), cold_start_ratios={"A": 1.0}
+        )
+        assert budget.effective_budgets["A"] == pytest.approx(budget.global_shrinkage)
+        for bad in (0.0, -0.1, 1.5):
+            with pytest.raises(AllocationError, match="cold_start_ratio"):
+                alloc.allocate([0.97, 0.03], {"A": 1.0}, _risk(), cold_start_ratios={"A": bad})
+
+    def test_unknown_strategy_ratio_ignored_safely(self) -> None:
+        """cold_start_ratios 含非本轮策略的键 → 不影响本轮输出（防御性）。"""
+        alloc = RegimeMetaAllocator()
+        budget = alloc.allocate(
+            [0.97, 0.03],
+            {"A": 1.0},
+            _risk(),
+            cold_start_ratios={"GHOST": 0.3},
+        )
+        assert budget.effective_budgets["A"] == pytest.approx(budget.global_shrinkage)
+
+
+# ── D1 ±20% 敏感性网格（11号 §0.5.7 / 34号 §3.2.7 四档阈值校准）───────────────
+
+
+class TestConfidenceThresholdSensitivityGrid:
+    """confidence_threshold_sensitivity_grid：阈值 ±20% 扰动的分配敏感性分析。"""
+
+    def _scenarios(self) -> list:
+        return [
+            SensitivityScenario(
+                name="mid_confidence",
+                regime_probabilities=[0.70, 0.20, 0.10],  # max(P)=0.70 落第二档
+                performance_scores={"A": 1.0, "B": 1.0},
+                risk_signal_inputs=_risk(),
+            )
+        ]
+
+    def test_grid_shape_and_baseline(self) -> None:
+        """网格 5 档（-20%/-10%/0/+10%/+20%），δ=0 档与 baseline 一致。"""
+        alloc = RegimeMetaAllocator()
+        results = alloc.confidence_threshold_sensitivity_grid(self._scenarios())
+        assert len(results) == 1
+        res = results[0]
+        assert len(res.grid) == 5
+        deltas = [g.perturbation for g in res.grid]
+        assert deltas[2] == pytest.approx(0.0)
+        assert deltas[0] == pytest.approx(-0.20)
+        assert deltas[-1] == pytest.approx(0.20)
+        # δ=0 档与 baseline 零变化
+        assert res.grid[2].max_rel_change == pytest.approx(0.0)
+        assert res.grid[2].global_shrinkage == pytest.approx(res.baseline_shrinkage)
+
+    def test_mid_confidence_scenario_is_sensitive(self) -> None:
+        """max(P)=0.70 居二档中段：阈值扰动 ±20% 会跨档（0.48/0.56/0.64/0.72 边界移动）
+        → effective_budget 变化显著，verdict 反映敏感性（悬崖型疑似由 34号 §3.2.7 登记调阈值）。"""
+        alloc = RegimeMetaAllocator()
+        res = alloc.confidence_threshold_sensitivity_grid(self._scenarios())[0]
+        # 阈值 -20% 扰动：0.60→0.48，max(P)=0.70 仍二档；+20%：0.80→0.96，0.70 跌一档
+        # 至少一档跨档 → max_rel_change > 0
+        assert res.max_rel_change > 0
+        assert res.verdict in ("robust", "cliff_suspect")
+
+    def test_extreme_confidence_scenario_robust(self) -> None:
+        """max(P)=0.50 远低于所有扰动后阈值（最低 0.48）→ 部分档位仍变（0.50 vs 0.48 跨档），
+        max(P)=0.30 则全档位同档 → 完全稳健。"""
+        alloc = RegimeMetaAllocator()
+        res = alloc.confidence_threshold_sensitivity_grid([
+            SensitivityScenario(
+                name="deep_low",
+                regime_probabilities=[0.30, 0.30, 0.40 - 0.0],  # max(P)=0.40
+                performance_scores={"A": 1.0},
+                risk_signal_inputs=_risk(),
+            )
+        ])[0]
+        # max(P)=0.40：扰动后一档边界 ∈[0.48,0.72]，全部 > 0.40 → 恒一档 → 零变化
+        assert res.max_rel_change == pytest.approx(0.0)
+        assert res.verdict == "robust"
+
+    def test_invalid_grid_params_raise(self) -> None:
+        """steps 偶数/<3、perturbation 越界 → AllocationError。"""
+        alloc = RegimeMetaAllocator()
+        with pytest.raises(AllocationError):
+            alloc.confidence_threshold_sensitivity_grid(self._scenarios(), steps=4)
+        with pytest.raises(AllocationError):
+            alloc.confidence_threshold_sensitivity_grid(self._scenarios(), steps=2)
+        with pytest.raises(AllocationError):
+            alloc.confidence_threshold_sensitivity_grid(self._scenarios(), perturbation=1.5)
+
+    def test_grid_does_not_mutate_self(self) -> None:
+        """网格分析不改动本实例阈值表（探针克隆模式）。"""
+        alloc = RegimeMetaAllocator()
+        before = list(alloc._confidence_thresholds)
+        alloc.confidence_threshold_sensitivity_grid(self._scenarios())
+        assert alloc._confidence_thresholds == before
+
+    def test_perturbed_thresholds_clamped(self) -> None:
+        """扰动后边界钳制 [0.01,0.99]，sentinel 末位（1.01）不动。"""
+        alloc = RegimeMetaAllocator()
+        perturbed = alloc._perturbed_thresholds(0.20)
+        # 0.95×1.2=1.14 → 钳到 0.99；sentinel 1.01 不动
+        assert perturbed[2][0] == pytest.approx(0.99)
+        assert perturbed[-1][0] == pytest.approx(1.01)
+        perturbed_down = alloc._perturbed_thresholds(-0.20)
+        assert perturbed_down[0][0] == pytest.approx(0.48)  # 0.60×0.8

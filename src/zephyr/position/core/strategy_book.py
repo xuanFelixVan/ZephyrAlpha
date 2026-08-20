@@ -110,7 +110,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 # ── 常量（参数来源：30_multi_strategy_concurrency §2.5 + §2.2）──
@@ -152,6 +152,17 @@ VOL_WINDOW_DAYS = 60             # inverse-vol 波动率窗口（60 日，与 Re
 MIN_VALID_SAMPLES = 30           # 规则2 样本量门控：窗口内有效交易日 < 30 → 降级
 SIGMA_EXTREME_CAP = 1.50         # 规则3 极端值检查：年化波动率 > 150% → 降级
 MIN_LISTING_DAYS = 60            # 规则4 新股冷启：上市 < 60 个交易日 → 降级
+
+# 策略级冷启动执行比例（30_multi_strategy_concurrency §6.7 MVP 基线，v2.1.0 裁定）
+COLD_START_RATIO_COLD = 0.30     # 冷启动期 ×30%（单策略故障不致命 + PnL 信号可观测）
+COLD_START_RATIO_HALF = 0.60     # 半仓期 ×60%
+COLD_START_STAGE1_DAYS = 30      # 上线 <30 天 → 冷启动 ×30%
+COLD_START_STAGE2_DAYS = 60      # 30≤上线<60 天 → 半仓 ×60%；≥60 天 → 满仓 ×100%
+COLD_START_PERF_STABLE_OBS = 40  # 60 日窗口有效观测 ≥40 → PerformanceScore 稳定 → 锁定满仓
+
+# score→weight 转换契约（30号 §2.2 契约③：25号 IC 合成评分归一化区间）
+SCORE_MIN = -3.0                 # 复合因子评分下界（21号 §3.3 归一化 [-3,3]）
+SCORE_MAX = 3.0                  # 复合因子评分上界
 
 
 @dataclass(frozen=True)
@@ -227,6 +238,88 @@ class DrawdownLevel:
     action: str            # 动作描述
 
 
+@dataclass(frozen=True)
+class ColdStartState:
+    """策略级冷启动状态（30号 §6.7 三段式 + 31号 §2.4.1 冷启动 ×30% 执行时机）。
+
+    冷启动是策略级灰度迁移（与 53号 PARALLEL→SHADOW→GRAY_RAMP 同构的渐进放大哲学）。
+    执行比例在策略层 budget 分配时即生效（31号 §2.4.1：strategy_budget_cold =
+    strategy_budget × ratio），由 RegimeMetaAllocator.allocate() 的 cold_start_ratios
+    参数消费——求和/Kelly/裁剪全链路基于已缩减值运行，归因清晰。
+    """
+
+    stage: str             # cold_start(×0.3) / half_position(×0.6) / full_position(×1.0)
+    ratio: float           # 冷启动执行比例 ∈ (0, 1]
+    days_live: int | None  # 已上线自然日数（None=非冷启动模式，未传 live_start_date）
+    locked_full: bool      # True=PerformanceScore 稳定（有效观测≥40）锁定满仓，或满仓毕业
+
+
+def scores_to_weights(
+    scores: dict[str, float],
+    budget: float,
+    top_n: int | None = None,
+    method: str = "proportional",
+) -> dict[str, float]:
+    """score→weight 显式转换（30号 §2.2 契约③，函数级形式化）。
+
+    25号 IC 加权合成产出复合因子评分（21号 §3.3 归一化 [-3,3]），非仓位权重。
+    本函数是评分→粗仓位权重的显式映射，三维度解耦中的一环（选股=评分排序
+    top-N / 仓位=本函数 / 风控=独立参数）。策略子类可在 select_stocks 后调用。
+
+    权重口径：相对 strategy_budget 的占比（与 TargetWeight.target_weight 一致），
+    返回权重和 = budget。
+
+    Args:
+        scores: symbol → 复合因子评分，契约区间 [-3, 3]（越界 ValueError）
+        budget: 策略资金预算占比（权重总和目标）
+        top_n: 评分降序取前 N（None=全部入选）
+        method: "proportional"=线性平移 (s−SCORE_MIN)≥0 后按比例分配；
+                "equal"=入选标的等权 budget/N
+
+    Returns:
+        symbol → 权重（相对 strategy_budget 占比），Σ=budget；空输入 → {}
+
+    Raises:
+        ValueError: budget<0 / top_n≤0 / method 未知 / 评分越出 [-3,3] 契约区间
+    """
+    if budget < 0:
+        raise ValueError(f"budget 必须 ≥0，got {budget}")
+    if top_n is not None and top_n <= 0:
+        raise ValueError(f"top_n 必须为正整数，got {top_n}")
+    if method not in ("proportional", "equal"):
+        raise ValueError(f"未知 score→weight method: {method}（仅 proportional/equal）")
+    if not scores:
+        return {}
+
+    # 契约区间校验（21号 §3.3 归一化 [-3,3]，浮点容差 1e-9）
+    for sym, s in scores.items():
+        if s < SCORE_MIN - 1e-9 or s > SCORE_MAX + 1e-9:
+            raise ValueError(
+                f"{sym} 评分 {s} 越出契约区间 [{SCORE_MIN}, {SCORE_MAX}]（21号 §3.3 归一化口径）"
+            )
+
+    # 评分降序 top-N 选股
+    selected = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
+    if top_n is not None:
+        selected = selected[:top_n]
+    if not selected:
+        return {}
+
+    n = len(selected)
+    if method == "equal":
+        w = budget / n
+        return {sym: w for sym, _ in selected}
+
+    # proportional：线性平移 s−SCORE_MIN ∈ [0, 6] 后按比例（负分标的仍得小权重，不剔除）
+    shifted = {sym: s - SCORE_MIN for sym, s in selected}
+    total = sum(shifted.values())
+    if total <= 0:
+        # 全部评分=SCORE_MIN 的退化场景 → 等权兜底
+        w = budget / n
+        return {sym: w for sym, _ in selected}
+    return {sym: budget * v / total for sym, v in shifted.items()}
+
+
 class StrategyBook:
     """独立策略账本（MOD-POS-020）。
 
@@ -258,6 +351,7 @@ class StrategyBook:
         strategy_id: str,
         sizing_method: str = "equal_weight",
         strategy_type: str = "多因子",
+        live_start_date: date | None = None,
     ) -> None:
         """初始化 StrategyBook。
 
@@ -267,6 +361,8 @@ class StrategyBook:
                 （禁用 Kelly/MVO——A 模型不允许）
             strategy_type: 策略类型，用于退潮加权系数差异化
                 （打板/事件驱动/多因子，28号 §3.5）
+            live_start_date: 策略上线日期（30号 §6.7 冷启动状态机锚点）。
+                None=非冷启动模式（既有策略，执行比例恒 1.0，零行为变化）
         """
         if sizing_method not in ("equal_weight", "risk_parity", "custom"):
             raise ValueError(
@@ -275,6 +371,7 @@ class StrategyBook:
         self.strategy_id = strategy_id
         self.sizing_method = sizing_method
         self.strategy_type = strategy_type
+        self._live_start_date = live_start_date
         self._current_budget: float = 1.0  # Phase 1 等权占位，Phase 2 来自 RegimeMetaAllocator
 
         # 回撤状态（§2.5 单策略层面）
@@ -560,6 +657,68 @@ class StrategyBook:
 
         # 退潮阶段：按策略类型差异化
         return RETREAT_WEIGHT_BY_TYPE.get(self.strategy_type, RETREAT_WEIGHT_DEFAULT)
+
+    def get_cold_start_state(
+        self,
+        today: date | None = None,
+        perf_valid_observations: int = 0,
+    ) -> ColdStartState:
+        """冷启动状态机（30号 §6.7 MVP 基线 + §6.7 施工指导）。
+
+        三段式渐进放大（与 53号 PARALLEL→SHADOW→GRAY_RAMP 同构）：
+            上线 <30 天  → cold_start    ×0.30
+            30~60 天     → half_position ×0.60
+            ≥60 天       → full_position ×1.00（毕业）
+        PerformanceScore 稳定（60 日窗口有效观测 ≥40）→ 锁定满仓 ×1.00（提前毕业）。
+
+        晋升条件的质量门（无 firm 风险违例 / PnL 偏离回测 ≤30%）待 C1 实盘校准
+        （§6.7 裁定要点 2），当前按上线天数自动晋升 + 观测数锁定。
+
+        Args:
+            today: 当前日期（None=date.today()，测试可注入）
+            perf_valid_observations: PerformanceScore 60 日窗口有效观测数
+
+        Returns:
+            ColdStartState（stage/ratio/days_live/locked_full）
+        """
+        if today is None:
+            today = date.today()
+
+        # 非冷启动模式：未传 live_start_date → 既有策略恒满仓（零行为变化）
+        if self._live_start_date is None:
+            return ColdStartState(
+                stage="full_position", ratio=1.0, days_live=None, locked_full=True
+            )
+
+        days_live = (today - self._live_start_date).days
+
+        # PerformanceScore 稳定 → 锁定满仓（§6.7 裁定要点）
+        if perf_valid_observations >= COLD_START_PERF_STABLE_OBS:
+            return ColdStartState(
+                stage="full_position", ratio=1.0, days_live=days_live, locked_full=True
+            )
+
+        if days_live < COLD_START_STAGE1_DAYS:
+            return ColdStartState(
+                stage="cold_start", ratio=COLD_START_RATIO_COLD,
+                days_live=days_live, locked_full=False,
+            )
+        if days_live < COLD_START_STAGE2_DAYS:
+            return ColdStartState(
+                stage="half_position", ratio=COLD_START_RATIO_HALF,
+                days_live=days_live, locked_full=False,
+            )
+        return ColdStartState(
+            stage="full_position", ratio=1.0, days_live=days_live, locked_full=True
+        )
+
+    def get_cold_start_ratio(
+        self,
+        today: date | None = None,
+        perf_valid_observations: int = 0,
+    ) -> float:
+        """当前冷启动执行比例（供 RegimeMetaAllocator.allocate() cold_start_ratios 消费）。"""
+        return self.get_cold_start_state(today, perf_valid_observations).ratio
 
     # ── 子类实现接口 ──────────────────────────────────────────────────
 

@@ -448,6 +448,99 @@ class BudgetChangeHandler:
         """获取策略的当前 TierState。"""
         return self._active_states.get(strategy_id)
 
+    def on_budget_allocation(
+        self,
+        effective_budgets: dict[str, float],
+        previous_budgets: dict[str, float],
+        strategy_types: dict[str, str] | None = None,
+        current_date: str | None = None,
+    ) -> dict[str, BudgetChangeResult]:
+        """G15→G14 接线就绪入口适配（33号 §7 新发现3 登记：BudgetChanged 事件链）。
+
+        RegimeMetaAllocator（G15）只产 BudgetAllocation，本方法是其
+        `effective_budgets` → handle_budget_change 的接线就绪适配器：逐策略 diff
+        新旧 budget 并走既有防抖+三级升级裁决。生产编排层（G15→G14 集成位）
+        确定后直接调用本方法即可，无需再改本模块。
+
+        口径与边界：
+          - 入参用纯 dict（非 BudgetAllocation 对象）保持跨域依赖倒置——
+            调用方负责解包 BudgetAllocation.effective_budgets；
+          - 仅处理新旧两侧都存在的策略；previous 中缺失的视为新策略首配
+            （非"budget 变动"，跳过——其渐进暴露由 30号 §6.7 冷启动状态机承载）；
+          - new 中缺失的策略**不**自动按 budget→0 强裁（防数据缺口误触 Tier3，
+            Fail-Closed 保守方向）；策略下线须显式传 new_budget=0；
+          - budget 数值语义 = effective_budget（已含 Shrinkage/冷启动缩放）。
+
+        Args:
+            effective_budgets: {strategy_id: 新 budget}（BudgetAllocation.effective_budgets 解包）
+            previous_budgets: {strategy_id: 旧 budget}（上一期分配快照）
+            strategy_types: {strategy_id: 策略类型}（打板/多因子/事件驱动，窗口查询用）
+            current_date: 当前日期 YYYY-MM-DD（防抖日内/日间判定）
+
+        Returns:
+            {strategy_id: BudgetChangeResult}（含各策略指令列表，调用方负责执行）
+        """
+        results: dict[str, BudgetChangeResult] = {}
+        types = strategy_types or {}
+        for sid, new_budget in effective_budgets.items():
+            if sid not in previous_budgets:
+                continue  # 新策略首配：非 budget 变动事件（30号 §6.7 冷启动承载渐进暴露）
+            results[sid] = self.handle_budget_change(
+                strategy_id=sid,
+                old_budget=previous_budgets[sid],
+                new_budget=new_budget,
+                strategy_type=types.get(sid, "多因子"),
+                current_date=current_date,
+            )
+        return results
+
+    def on_firm_violation(
+        self,
+        strategy_id: str,
+        current_exposure: float,
+        target_budget: float | None = None,
+        violation: str = "firm 风险违例",
+        now: datetime | None = None,
+    ) -> BudgetChangeResult:
+        """firm 违例直触 Tier3 入口（30号 §2.4 Tier3 触发时机② + 33号 §7-③）。
+
+        firm 层（FirmRiskAggregator degraded 五条件 / 风险违例）检出该策略违例时，
+        不等 Tier 2 收敛窗口，直接按比例强裁（dumb but safe）。与超时路径共用
+        _escalate_to_tier3，reason 如实标记违例来源。
+
+        Args:
+            strategy_id: 策略 ID
+            current_exposure: 策略当前实际暴露占比
+            target_budget: 目标 budget（None=继承活跃状态中的 target；
+                无活跃状态且未显式传入 → ValueError）
+            violation: 违例描述（如 "单票超限未纠正" / "行业集中度违例"）
+            now: 当前时间（测试可注入）
+
+        Returns:
+            BudgetChangeResult（Tier3 ForcedTrim 指令；exposure≤target 时 CONVERGED）
+
+        Raises:
+            ValueError: target_budget 缺失且无可继承的活跃状态
+        """
+        if now is None:
+            now = datetime.now()
+
+        state = self._active_states.get(strategy_id)
+        if target_budget is None:
+            if state is None or state.target_budget <= 0:
+                raise ValueError(
+                    f"on_firm_violation({strategy_id}) 需要 target_budget"
+                    "（无活跃状态可继承，显式传入目标 budget）"
+                )
+            target_budget = state.target_budget
+
+        if state is None:
+            state = self._get_or_create_state(strategy_id, target_budget)
+        state.target_budget = target_budget
+
+        reason = f"firm 风险违例直触 Tier3（不等 Tier2 窗口）：{violation}"
+        return self._escalate_to_tier3(state, current_exposure, now, override_reason=reason)
+
     # ══ 内部方法 ══════════════════════════════════════════════════════
 
     def _get_or_create_state(
@@ -559,12 +652,17 @@ class BudgetChangeHandler:
             )
 
     def _escalate_to_tier3(
-        self, state: TierState, current_exposure: float, now: datetime
+        self,
+        state: TierState,
+        current_exposure: float,
+        now: datetime,
+        override_reason: str | None = None,
     ) -> BudgetChangeResult:
         """升级到 Tier 3：按比例强裁兜底（dumb but safe）。
 
         trim_ratio = (current_exposure - target_budget) / current_exposure
         若 current_exposure=0 则无需裁剪。
+        override_reason：非超时路径（如 on_firm_violation 直触）的触发原因覆盖。
         """
         state.current_tier = TierLevel.TIER_3_FORCE_TRIM
         state.tier3_at = now
@@ -592,7 +690,7 @@ class BudgetChangeHandler:
 
         # 计算 trim_ratio：需裁剪的比例
         trim_ratio = (current_exposure - target) / current_exposure
-        reason = f"Tier 2 超时未收敛（exposure={current_exposure:.4f} vs target={target:.4f}）"
+        reason = override_reason or f"Tier 2 超时未收敛（exposure={current_exposure:.4f} vs target={target:.4f}）"
 
         tier3_instr = self._issue_tier3_force_trim(
             state.strategy_id, trim_ratio, reason

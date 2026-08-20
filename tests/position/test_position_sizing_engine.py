@@ -925,3 +925,129 @@ class TestErrorContract:
         """cvar_threshold < var_threshold → InvalidPositionInputError。"""
         with pytest.raises(InvalidPositionInputError):
             PositionSizingConfig(var_threshold=0.05, cvar_threshold=0.03)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# sizing_basis binding constraint 命名（31号 §2.3.4，归因审计）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestSizingBasis:
+    """PositionTarget.sizing_basis：记录标的级约束级联中最终 binding 的约束名。"""
+
+    def test_kelly_budget_binding(self) -> None:
+        """无 target_weight 时半 Kelly 是唯一约束源 → kelly_budget。"""
+        engine = PositionSizingEngine()
+        # p=0.5,b=1.0 → f*=0.02 → 半Kelly=0.01 < 单票 5% 上限 → Kelly binding
+        sym = make_symbol(win_probability=0.51, win_loss_ratio=1.0, avg_daily_volume=1e8)
+        plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
+        assert plan.positions["000001.SZ"].sizing_basis == "kelly_budget"
+
+    def test_strategy_intent_binding(self) -> None:
+        """target_weight < 半 Kelly → strategy_intent（策略意愿更保守）。"""
+        engine = PositionSizingEngine()
+        # p=0.55,b=1.5 → f*=0.25 → 半Kelly=0.125；target=0.03 < 0.125 → 策略意愿 binding
+        sym = make_symbol(
+            win_probability=0.55, win_loss_ratio=1.5, target_weight=0.03, avg_daily_volume=1e8
+        )
+        plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
+        tgt = plan.positions["000001.SZ"]
+        assert tgt.sizing_basis == "strategy_intent"
+        assert tgt.target_weight <= 0.03 + 1e-9
+
+    def test_single_name_cap_binding(self) -> None:
+        """Kelly 权重 > 单票上限 5% → single_name_cap。"""
+        engine = PositionSizingEngine()
+        # 半Kelly=0.125 > 5% cap → C12 binding
+        sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
+        plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
+        tgt = plan.positions["000001.SZ"]
+        assert tgt.sizing_basis == "single_name_cap"
+        assert tgt.target_weight <= 0.05 + 1e-9
+
+    def test_var_cap_binding(self) -> None:
+        """VaR 超阈值 ×0.8 是级联最后缩减步骤 → var_cap。"""
+        engine = PositionSizingEngine()
+        # 半Kelly=0.01 < 5% cap；VaR 0.03>0.025 → ×0.8 → var_cap binding
+        sym = make_symbol(win_probability=0.51, win_loss_ratio=1.0, avg_daily_volume=1e8)
+        plan = engine.size(
+            make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, var_95=0.03)
+        )
+        assert plan.positions["000001.SZ"].sizing_basis == "var_cap"
+
+    def test_cvar_cap_binding(self) -> None:
+        """CVaR 超阈值（比 VaR 更严）→ cvar_cap。"""
+        engine = PositionSizingEngine()
+        sym = make_symbol(win_probability=0.51, win_loss_ratio=1.0, avg_daily_volume=1e8)
+        plan = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                var_95=0.03,
+                cvar_95=0.05,  # > cvar_threshold 0.04
+            )
+        )
+        assert plan.positions["000001.SZ"].sizing_basis == "cvar_cap"
+
+    def test_volatility_check_binding(self) -> None:
+        """C3 波动率超 μ+2σ 减半 → volatility_check。"""
+        engine = PositionSizingEngine()
+        sym = make_symbol(
+            win_probability=0.51,
+            win_loss_ratio=1.0,
+            avg_daily_volume=1e8,
+            current_volatility=0.60,
+            hist_vol_mean=0.20,
+            hist_vol_std=0.10,  # 阈值=0.20+2×0.10=0.40 < 0.60 → 减半
+        )
+        plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
+        assert plan.positions["000001.SZ"].sizing_basis == "volatility_check"
+
+    def test_degraded_equal_weight_basis(self) -> None:
+        """无密度预测且无 target_weight → degraded_equal_weight（多标的使等权值 < 单票 cap）。"""
+        engine = PositionSizingEngine()
+        # CALM_BULL total_cap=0.80；30 标的等权 ≈0.0267 < 5% cap → 无后续缩减
+        syms = [make_symbol(symbol=f"D{i:03d}", avg_daily_volume=1e8) for i in range(30)]
+        plan = engine.size(make_input(symbols=syms, market_regime=SizingMarketRegime.CALM_BULL))
+        assert plan.positions["D000"].sizing_basis == "degraded_equal_weight"
+
+    def test_exit_time_cap_binding(self) -> None:
+        """C7/C8 退出时间减仓是级联最后缩减 → exit_time_cap。"""
+        engine = PositionSizingEngine()
+        # 现仓 500000 股 / 日均量 400000 → exit_days=1.25 > soft 1 天（<hard 3）→ ×0.8；
+        # 减仓后 qty=800，参与率 0.002<0.15、冲击成本 0.0045<0.005 → 不触 C6/C11 否决
+        sym = make_symbol(
+            win_probability=0.51,
+            win_loss_ratio=1.0,
+            current_qty=500000,
+            avg_daily_volume=400000.0,
+        )
+        plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
+        assert plan.positions["000001.SZ"].sizing_basis == "exit_time_cap"
+
+    def test_veto_path_basis_empty(self) -> None:
+        """否决保持现仓路径（C6 参与率否决）→ sizing_basis 空串（非 sizing 裁决）。"""
+        engine = PositionSizingEngine()
+        # 参与率 = target_qty/adv：单票 5%×1e6/10 = 5000 股 / adv 10000 = 0.5 > 0.15 → 否决保持现仓
+        sym = make_symbol(
+            win_probability=0.55, win_loss_ratio=1.5, current_qty=100, avg_daily_volume=10000.0
+        )
+        plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
+        tgt = plan.positions["000001.SZ"]
+        assert tgt.sizing_basis == ""
+        assert tgt.target_qty == 100  # 保持现仓
+
+    def test_portfolio_rescale_preserves_basis(self) -> None:
+        """C2 组合级等比缩放后 sizing_basis 保留（组合级缩放在 constraints_check 记录）。"""
+        engine = PositionSizingEngine()
+        syms = [
+            make_symbol(
+                symbol=f"S{i:03d}",
+                win_probability=0.55,
+                win_loss_ratio=1.5,
+                avg_daily_volume=1e8,
+            )
+            for i in range(30)  # 30×5% cap=1.5 > total_cap 0.80 → C2 缩放
+        ]
+        plan = engine.size(make_input(symbols=syms, market_regime=SizingMarketRegime.CALM_BULL))
+        assert plan.positions["S000"].sizing_basis == "single_name_cap"

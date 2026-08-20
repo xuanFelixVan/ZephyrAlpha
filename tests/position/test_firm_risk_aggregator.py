@@ -29,6 +29,7 @@ from zephyr.position.core.firm_risk_aggregator import (
     FirmTarget,
     FirmTargetPortfolio,
     PreKellyResult,
+    build_tail_risk_check,
 )
 
 # ── fixtures ──────────────────────────────────────────────────────────────────
@@ -1045,3 +1046,184 @@ class TestAGFixes:
         )
         assert result.conflicts_resolved is not None
         assert len(result.conflicts_resolved) == 1
+
+
+# ══ 15. 行业偏离基准裁剪（§2.5.1 ±10%/±15%，注入式参数+退化路径）═════════════
+
+
+class TestSectorDeviationClip:
+    """§2.5.1 偏离基准 ±10%/±15% 裁剪（D-FACTOR 基准注入式参数）。"""
+
+    def test_deviation_clip_normal_10pct(self, aggregator):
+        """常态 ±10%：行业权重超 benchmark+10% → 行业内等比削到 benchmark+10%。"""
+        kelly_adjusted = {"600519": 0.07, "000858": 0.06}  # 白酒合计 0.13
+        industry_map = {"600519": "白酒", "000858": "白酒"}
+        # benchmark 白酒=0.02 → limit=0.02+0.10=0.12 < 0.13 → 偏离裁剪
+        result = aggregator.post_kelly_clip(
+            kelly_adjusted=kelly_adjusted,
+            total_budget=1.0,
+            industry_map=industry_map,
+            regime_cap=0.95,
+            sector_benchmark_weights={"白酒": 0.02},
+        )
+        pos1 = result["firm_positions"]["600519"]["target_weight"]
+        pos2 = result["firm_positions"]["000858"]["target_weight"]
+        assert pos1 + pos2 == pytest.approx(0.12, abs=1e-6)
+        cut = result["constraint_checks"]["sector"]["cuts"][0]
+        assert cut["type"] == "deviation_cap"
+        assert cut["dev_cap"] == pytest.approx(0.10)
+        assert result["constraint_checks"]["sector"]["triggered"] is True
+
+    def test_deviation_clip_overlay_15pct(self, aggregator):
+        """叠加态 ±15%（sector_overlay_active=True 消费）：放宽偏离档。"""
+        kelly_adjusted = {"600519": 0.07, "000858": 0.06}  # 白酒合计 0.13
+        industry_map = {"600519": "白酒", "000858": "白酒"}
+        # benchmark 0.02：常态 limit=0.12 会裁剪；overlay limit=0.17 不裁
+        result = aggregator.post_kelly_clip(
+            kelly_adjusted=kelly_adjusted,
+            total_budget=1.0,
+            industry_map=industry_map,
+            regime_cap=0.95,
+            sector_overlay_active=True,
+            sector_benchmark_weights={"白酒": 0.02},
+        )
+        assert result["constraint_checks"]["sector"]["triggered"] is False
+        assert result["constraint_checks"]["sector"]["deviation"]["dev_cap"] == pytest.approx(0.15)
+        assert result["constraint_checks"]["sector"]["deviation"]["overlay_active"] is True
+
+    def test_deviation_benchmark_missing_degrade(self, aggregator):
+        """退化路径：基准 None（D-FACTOR 未就绪）→ 跳过偏离只做绝对 30%，记录 benchmark_missing。"""
+        # 5 只白酒各 0.08（单票 cap 内）合计 0.40 > 30% 绝对上限
+        kelly_adjusted = {f"W{i}": 0.08 for i in range(5)}
+        industry_map = {f"W{i}": "白酒" for i in range(5)}
+        result = aggregator.post_kelly_clip(
+            kelly_adjusted=kelly_adjusted,
+            total_budget=1.0,
+            industry_map=industry_map,
+            regime_cap=0.95,
+        )
+        deviation = result["constraint_checks"]["sector"]["deviation"]
+        assert deviation["enabled"] is False
+        assert deviation["benchmark_missing"] is True
+        # 绝对 30% 仍兜底
+        cut = result["constraint_checks"]["sector"]["cuts"][0]
+        assert cut["type"] == "absolute_cap"
+
+    def test_deviation_sector_not_in_benchmark_skipped(self, aggregator):
+        """基准中缺失的行业（含 UNKNOWN）→ 跳过偏离裁剪（非阻断）。"""
+        kelly_adjusted = {"600519": 0.07, "X1": 0.07}  # 均在单票 cap 内
+        industry_map = {"600519": "白酒", "X1": "军工"}  # 军工无基准
+        result = aggregator.post_kelly_clip(
+            kelly_adjusted=kelly_adjusted,
+            total_budget=1.0,
+            industry_map=industry_map,
+            regime_cap=0.95,
+            sector_benchmark_weights={"白酒": 0.02},  # 白酒 limit=0.12 ≥ 0.07 不裁
+        )
+        assert result["firm_positions"]["X1"]["target_weight"] == pytest.approx(0.07, abs=1e-6)
+        assert result["constraint_checks"]["sector"]["triggered"] is False
+
+    def test_deviation_then_absolute_backstop(self, aggregator):
+        """偏离裁剪后仍超绝对 30% → 绝对上限再兜底（benchmark 0.25+0.15=0.40>0.30）。"""
+        # 6 只白酒各 0.08（单票 cap 内）合计 0.48 > 偏离 limit 0.40 → 削到 0.40；仍 > 0.30 → 绝对兜底
+        kelly_adjusted = {f"W{i}": 0.08 for i in range(6)}
+        industry_map = {f"W{i}": "白酒" for i in range(6)}
+        result = aggregator.post_kelly_clip(
+            kelly_adjusted=kelly_adjusted,
+            total_budget=1.0,
+            industry_map=industry_map,
+            regime_cap=0.95,
+            sector_overlay_active=True,  # dev_cap=0.15
+            sector_benchmark_weights={"白酒": 0.25},  # limit=0.40 > 0.30 绝对顶
+        )
+        pos_sum = sum(
+            result["firm_positions"][f"W{i}"]["target_weight"] for i in range(6)
+        )
+        assert pos_sum == pytest.approx(0.30, abs=1e-6)
+        types = [c["type"] for c in result["constraint_checks"]["sector"]["cuts"]]
+        assert "deviation_cap" in types and "absolute_cap" in types
+
+    def test_deviation_underweight_not_clipped(self, aggregator):
+        """低配偏离（weight < benchmark）不强制买入（long-only 只削超配）。"""
+        kelly_adjusted = {"600519": 0.01}  # 白酒 0.01 << benchmark 0.20
+        industry_map = {"600519": "白酒"}
+        result = aggregator.post_kelly_clip(
+            kelly_adjusted=kelly_adjusted,
+            total_budget=1.0,
+            industry_map=industry_map,
+            regime_cap=0.95,
+            sector_benchmark_weights={"白酒": 0.20},
+        )
+        assert result["firm_positions"]["600519"]["target_weight"] == pytest.approx(0.01, abs=1e-6)
+        assert result["constraint_checks"]["sector"]["triggered"] is False
+
+    def test_aggregate_entry_passes_benchmark(self, aggregator):
+        """aggregate 便捷入口透传 sector_benchmark_weights + overlay 开关。"""
+        targets = [
+            {"strategy_id": "S1", "budget_used": 1.0, "target_portfolio": {"600519": 0.13}},
+        ]
+        result = aggregator.aggregate(
+            target_portfolios=targets,
+            total_budget=1.0,
+            industry_map={"600519": "白酒"},
+            regime_cap=0.95,
+            sector_benchmark_weights={"白酒": 0.02},
+        )
+        # 单票 0.13→0.08；偏离 limit=0.12 不再削（0.08<0.12）
+        assert result.firm_positions["600519"].target_weight == pytest.approx(0.08, abs=1e-6)
+        assert result.constraint_checks["sector"]["deviation"]["enabled"] is True
+
+
+# ══ 16. CVaR 接口对齐（§2.10.1/§6：tail_risk 四轴）═════════════════════════
+
+
+class TestTailRiskCheck:
+    """build_tail_risk_check：var_calculator 输出 → constraint_checks.tail_risk 四轴。"""
+
+    def test_four_axes_normal(self):
+        """四轴齐备 + ratio ≤1.25 → normal。"""
+        tr = build_tail_risk_check(var_95=0.020, cvar_95=0.024)  # ratio=1.2
+        assert tr["var_95"] == pytest.approx(0.020)
+        assert tr["cvar_95"] == pytest.approx(0.024)
+        assert tr["cvar_var_ratio"] == pytest.approx(1.2)
+        assert tr["tail_quality"] == "normal"
+        assert tr["var_source"] == "var_calculator"
+
+    def test_tail_quality_elevated_and_heavy(self):
+        """ratio 分档：≤1.25 normal / ≤1.50 elevated / >1.50 heavy_tail。"""
+        assert build_tail_risk_check(0.02, 0.028)["tail_quality"] == "elevated"  # 1.4
+        assert build_tail_risk_check(0.02, 0.032)["tail_quality"] == "heavy_tail"  # 1.6
+
+    def test_unavailable_when_missing(self):
+        """VaR/CVaR 任一缺失 → unavailable（ratio None，退化不阻断）。"""
+        tr = build_tail_risk_check(None, 0.024)
+        assert tr["tail_quality"] == "unavailable"
+        assert tr["cvar_var_ratio"] is None
+        tr2 = build_tail_risk_check(0.02, None)
+        assert tr2["tail_quality"] == "unavailable"
+
+    def test_zero_var_normal(self):
+        """var=0（零波动/空仓）→ ratio None + normal（边界）。"""
+        tr = build_tail_risk_check(0.0, 0.0)
+        assert tr["tail_quality"] == "normal"
+        assert tr["cvar_var_ratio"] is None
+
+    def test_tail_risk_wired_into_constraint_checks(self, aggregator):
+        """post_kelly_clip(tail_risk=...) → 写入 constraint_checks["tail_risk"]（只记录不裁剪）。"""
+        tr = build_tail_risk_check(0.02, 0.024)
+        result = aggregator.post_kelly_clip(
+            kelly_adjusted={"600519": 0.05},
+            total_budget=1.0,
+            industry_map={},
+            regime_cap=0.95,
+            tail_risk=tr,
+        )
+        assert result["constraint_checks"]["tail_risk"]["tail_quality"] == "normal"
+        # 不传入 → 无 tail_risk 键（零回归）
+        result2 = aggregator.post_kelly_clip(
+            kelly_adjusted={"600519": 0.05},
+            total_budget=1.0,
+            industry_map={},
+            regime_cap=0.95,
+        )
+        assert "tail_risk" not in result2["constraint_checks"]

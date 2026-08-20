@@ -114,6 +114,19 @@ MARKET_REGIME_CAPS: Final[dict[SizingMarketRegime, float]] = {
     SizingMarketRegime.BREAKOUT: 0.70,  # ⑫趋势确立, 加仓
 }
 
+# ── sizing_basis binding constraint 命名（31号 §2.3.4，deadeye-rs 2026-06 模式）──
+# 7 值契约栈 + 代码级联现实扩展（C3 波动率/C7 退出时间/降级等权）
+SIZING_BASIS_STRATEGY_INTENT = "strategy_intent"        # 策略意愿约束（粗仓位求和×分布调整）
+SIZING_BASIS_KELLY_BUDGET = "kelly_budget"              # Kelly 风险预算约束（半 Kelly+截0）
+SIZING_BASIS_VAR_CAP = "var_cap"                        # VaR_95 上限约束（C4）
+SIZING_BASIS_CVAR_CAP = "cvar_cap"                      # CVaR_95 上限约束（C5，比 VaR 更严）
+SIZING_BASIS_SINGLE_NAME_CAP = "single_name_cap"        # 单票硬上限约束（C12，§2.4.1 三层口径）
+SIZING_BASIS_LIQUIDITY_MODERATE = "liquidity_cap_moderate"  # 流动性削半档（§2.4.4，MOD-POS-021 消费预留）
+SIZING_BASIS_LIQUIDITY_SEVERE = "liquidity_cap_severe"      # 流动性严重档（§2.4.4，MOD-POS-021 消费预留）
+SIZING_BASIS_VOLATILITY_CHECK = "volatility_check"      # C3 波动率减半（代码级联扩展）
+SIZING_BASIS_EXIT_TIME_CAP = "exit_time_cap"            # C7/C8 退出时间减仓（代码级联扩展）
+SIZING_BASIS_DEGRADED = "degraded_equal_weight"         # 无密度预测降级等权（Kelly 缺失路径）
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 错误
@@ -262,6 +275,12 @@ class PositionTarget:
     delta: int  # target - current
     target_weight: float
     reason: str
+    # sizing_basis（31号 §2.3.4 binding constraint 命名, 归因审计用）:
+    # 记录标的级约束级联中最终 binding（实际限住仓位）的约束名——级联只减不增,
+    # 最后一个实际缩减的步骤产出最终权重即 binding。空串=非 sizing 裁决路径
+    # （veto 保持现仓/日历强清）。组合级缩放（C2/POS-006/POS-007）不改写本字段,
+    # 在 plan.constraints_check 中记录。
+    sizing_basis: str = ""
 
 
 @dataclass(frozen=True)
@@ -483,6 +502,8 @@ class PositionSizingEngine:
         weight, kelly_degraded = self._compute_weight(sym, inp, ctx)
         if kelly_degraded:
             ctx.checks.append(ConstraintCheck("Kelly", False, "degraded", f"{sym.symbol} 密度预测缺失, 降级等权"))
+        # sizing_basis 初始判定（31号 §2.3.4：策略意愿 vs Kelly 预算取小者 binding）
+        basis = self._initial_sizing_basis(sym, ctx.cfg)
 
         # C3 波动率检查
         vol_adj = self._apply_volatility_check(sym, ctx.cfg, ctx.checks)
@@ -491,10 +512,24 @@ class PositionSizingEngine:
         sym_cap = ctx.single_cap
         if inp.risk_limits is not None and sym.symbol in inp.risk_limits.symbol_overrides:
             sym_cap = inp.risk_limits.symbol_overrides[sym.symbol]
+        if weight > sym_cap:
+            basis = SIZING_BASIS_SINGLE_NAME_CAP
         weight = min(weight, sym_cap) * vol_adj * ctx.var_adjust
+        # 级联只减不增——最后一个实际缩减的步骤即 binding（31号 §2.3.4 归因语义）
+        if vol_adj < 1.0:
+            basis = SIZING_BASIS_VOLATILITY_CHECK
+        if ctx.var_adjust < 1.0:
+            basis = (
+                SIZING_BASIS_CVAR_CAP
+                if inp.cvar_95 is not None and inp.cvar_95 > ctx.cfg.cvar_threshold
+                else SIZING_BASIS_VAR_CAP
+            )
 
         # C7/C8 退出时间减仓 (预筛已检查, 此处应用减仓)
-        weight = self._apply_exit_time_adjust(sym, inp, ctx.cfg, weight, ctx.checks)
+        weight_after_exit = self._apply_exit_time_adjust(sym, inp, ctx.cfg, weight, ctx.checks)
+        if weight_after_exit < weight:
+            basis = SIZING_BASIS_EXIT_TIME_CAP
+        weight = weight_after_exit
 
         # C6/C9/C11 否决 (参与率/容量/冲击成本)
         vetoed, veto_result = self._apply_veto_constraints(sym, inp, ctx, weight, vol_adj)
@@ -503,7 +538,24 @@ class PositionSizingEngine:
 
         # 重新计算目标量 (经所有调整后)
         target_qty = int(weight * inp.nav / sym.price) if sym.price > 0 else 0
-        return self._make_target(sym, target_qty, f"Kelly+约束裁决 w={weight:.4f}", inp.nav), weight, vol_adj
+        return self._make_target(sym, target_qty, f"Kelly+约束裁决 w={weight:.4f}", inp.nav, sizing_basis=basis), weight, vol_adj
+
+    def _initial_sizing_basis(self, sym: SymbolInput, cfg: PositionSizingConfig) -> str:
+        """sizing_basis 初始判定（31号 §2.3.4 min(策略意愿, Kelly 预算) 取小者 binding）。
+
+        Kelly 路径：target_weight ≤ 半Kelly → strategy_intent（策略意愿更保守），
+        否则 kelly_budget（Kelly 风险预算限住）；f*≤0 不下注亦归 kelly_budget。
+        降级路径：有目标权重 → strategy_intent；全无 → degraded_equal_weight。
+        """
+        if sym.win_probability is not None and sym.win_loss_ratio is not None:
+            f_star = _compute_kelly_fraction(sym.win_probability, sym.win_loss_ratio)
+            w_kelly = cfg.half_kelly_factor * f_star
+            if sym.target_weight is not None and sym.target_weight <= w_kelly:
+                return SIZING_BASIS_STRATEGY_INTENT
+            return SIZING_BASIS_KELLY_BUDGET
+        if sym.target_weight is not None:
+            return SIZING_BASIS_STRATEGY_INTENT
+        return SIZING_BASIS_DEGRADED
 
     # ── POS-017 日历约束 ──
 
@@ -823,6 +875,7 @@ class PositionSizingEngine:
                 delta=new_qty - tgt.current_qty,
                 target_weight=new_weight,
                 reason=tgt.reason + f" → 缩放×{scale:.4f}",
+                sizing_basis=tgt.sizing_basis,  # 保留标的级 binding（组合级缩放在 constraints_check 记录）
             )
             total_weight += new_weight
         return new_positions, total_weight
@@ -844,12 +897,15 @@ class PositionSizingEngine:
                     delta=0,
                     target_weight=tgt.target_weight,
                     reason=tgt.reason + " → defensive_only禁止加仓",
+                    sizing_basis=tgt.sizing_basis,
                 )
             else:
                 new_positions[symbol] = tgt
         return new_positions
 
-    def _make_target(self, sym: SymbolInput, target_qty: int, reason: str, nav: float) -> PositionTarget:
+    def _make_target(
+        self, sym: SymbolInput, target_qty: int, reason: str, nav: float, sizing_basis: str = ""
+    ) -> PositionTarget:
         """构造 PositionTarget (target_weight = target_qty × price / nav)。"""
         weight = target_qty * sym.price / nav if nav > 0 else 0.0
         return PositionTarget(
@@ -859,6 +915,7 @@ class PositionSizingEngine:
             delta=target_qty - sym.current_qty,
             target_weight=weight,
             reason=reason,
+            sizing_basis=sizing_basis,
         )
 
     def _make_idempotency_key(self, inp: PositionSizingInput) -> str:

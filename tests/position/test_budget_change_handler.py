@@ -346,3 +346,116 @@ def test_tier_state_dataclass_defaults() -> None:
     assert state.current_tier == TierLevel.IDLE
     assert state.strategy_type == "多因子"
     assert state.is_in_convergence() is False
+
+
+# ── G15→G14 接线就绪入口适配（33号 §7 新发现3：BudgetChanged 事件链）─────────
+
+
+class TestOnBudgetAllocation:
+    """on_budget_allocation：BudgetAllocation.effective_budgets → handle_budget_change 适配器。"""
+
+    def test_downsize_triggers_escalation(self, handler: BudgetChangeHandler) -> None:
+        """新 budget 下调 ≥5% → 触发 Tier1+Tier2 指令。"""
+        results = handler.on_budget_allocation(
+            effective_budgets={"s1": 0.20},
+            previous_budgets={"s1": 0.30},
+            strategy_types={"s1": "打板"},
+            current_date=D1,
+        )
+        assert "s1" in results
+        tiers = [i["tier"] for i in results["s1"].instructions]
+        assert tiers == [1, 2]
+
+    def test_upsize_no_action(self, handler: BudgetChangeHandler) -> None:
+        """上调 → NO_ACTION（自然部署，不防抖）。"""
+        results = handler.on_budget_allocation(
+            effective_budgets={"s1": 0.35},
+            previous_budgets={"s1": 0.30},
+            current_date=D1,
+        )
+        assert results["s1"].action.startswith("NO_ACTION")
+
+    def test_new_strategy_first_allocation_skipped(self, handler: BudgetChangeHandler) -> None:
+        """previous 缺失的策略=新策略首配 → 跳过（非 budget 变动，冷启动承载渐进暴露）。"""
+        results = handler.on_budget_allocation(
+            effective_budgets={"s_new": 0.10},
+            previous_budgets={"s1": 0.30},
+            current_date=D1,
+        )
+        assert results == {}
+        assert handler.get_state("s_new") is None
+
+    def test_missing_in_new_not_auto_zeroed(self, handler: BudgetChangeHandler) -> None:
+        """new 中缺失的策略不自动按 budget→0 强裁（防数据缺口误触 Tier3）。"""
+        results = handler.on_budget_allocation(
+            effective_budgets={},
+            previous_budgets={"s1": 0.30},
+            current_date=D1,
+        )
+        assert results == {}
+        assert handler.get_state("s1") is None
+
+    def test_multi_strategy_mixed(self, handler: BudgetChangeHandler) -> None:
+        """多策略混合：各策略独立 diff 裁决。"""
+        results = handler.on_budget_allocation(
+            effective_budgets={"s1": 0.20, "s2": 0.40, "s3": 0.28},
+            previous_budgets={"s1": 0.30, "s2": 0.35, "s3": 0.28},
+            strategy_types={"s1": "打板", "s2": "多因子"},
+            current_date=D1,
+        )
+        assert [i["tier"] for i in results["s1"].instructions] == [1, 2]  # 下调 33% → 触发
+        assert results["s2"].action.startswith("NO_ACTION")  # 上调
+        assert results["s3"].action.startswith("NO_ACTION")  # 不变
+
+
+# ── on_firm_violation firm 违例直触 Tier3（30号 §2.4 + 33号 §7-③）─────────────
+
+
+class TestOnFirmViolation:
+    """firm 违例直触 Tier3 入口：不等 Tier2 窗口，立即 ForcedTrim。"""
+
+    def test_direct_tier3_forced_trim(self, handler: BudgetChangeHandler) -> None:
+        """无活跃状态 + 显式 target → 直触 Tier3，trim_ratio 正确。"""
+        result = handler.on_firm_violation(
+            "s1", current_exposure=0.40, target_budget=0.20, violation="单票超限未纠正"
+        )
+        assert result.state.current_tier == TierLevel.TIER_3_FORCE_TRIM
+        assert len(result.instructions) == 1
+        instr = result.instructions[0]
+        assert instr["tier"] == 3
+        assert isinstance(instr["instruction"], ForcedTrim)
+        assert instr["instruction"].trim_ratio == pytest.approx(0.5)  # (0.40-0.20)/0.40
+        assert "firm 风险违例" in instr["reason"]
+        assert "单票超限未纠正" in instr["reason"]
+
+    def test_inherits_target_from_active_state(self, triggered_handler: BudgetChangeHandler) -> None:
+        """target_budget=None → 继承活跃状态的 target（Tier2 收敛中违例直触升级）。"""
+        result = triggered_handler.on_firm_violation("s1", current_exposure=0.28)
+        assert result.state.current_tier == TierLevel.TIER_3_FORCE_TRIM
+        instr = result.instructions[0]["instruction"]
+        # target=0.20（继承触发时状态）：trim=(0.28-0.20)/0.28
+        assert instr.trim_ratio == pytest.approx((0.28 - 0.20) / 0.28)
+
+    def test_no_target_no_state_raises(self, handler: BudgetChangeHandler) -> None:
+        """无 target 且无活跃状态 → ValueError（Fail-Closed 不猜目标）。"""
+        with pytest.raises(ValueError, match="target_budget"):
+            handler.on_firm_violation("s1", current_exposure=0.40)
+
+    def test_exposure_below_target_converged(self, handler: BudgetChangeHandler) -> None:
+        """exposure ≤ target → CONVERGED 无需强裁（边界）。"""
+        result = handler.on_firm_violation("s1", current_exposure=0.18, target_budget=0.20)
+        assert result.state.current_tier == TierLevel.CONVERGED
+        assert result.instructions == []
+
+    def test_zero_exposure_converged(self, handler: BudgetChangeHandler) -> None:
+        """exposure=0 → CONVERGED（退化）。"""
+        result = handler.on_firm_violation("s1", current_exposure=0.0, target_budget=0.20)
+        assert result.state.current_tier == TierLevel.CONVERGED
+
+    def test_violation_instruction_logged(self, handler: BudgetChangeHandler) -> None:
+        """Tier3 直触指令入 instructions_issued 留痕（§2.4 每级独立事件可复盘）。"""
+        handler.on_firm_violation("s1", current_exposure=0.40, target_budget=0.20)
+        state = handler.get_state("s1")
+        assert state is not None
+        tiers = [rec["tier"] for rec in state.instructions_issued]
+        assert tiers == [3]  # 直触：无 Tier1/2 记录
