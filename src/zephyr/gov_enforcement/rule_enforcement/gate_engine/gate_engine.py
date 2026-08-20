@@ -92,7 +92,7 @@ from zephyr.gov_enforcement.rule_enforcement.gate_types import (
 from zephyr.gov_enforcement.rule_enforcement.risk_ssot import load_risk_params_ssot
 from zephyr.gov_enforcement.rule_enforcement.task_types import Task
 from zephyr.shared.io.io_cache import FileCache
-from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
+from zephyr.shared.io.paths import DB_PATH, GATES_DIR, REPO_ROOT
 from zephyr.shared.utils.db_utils import ensure_schema, get_db_connection
 
 __all__ = [
@@ -108,7 +108,8 @@ __all__ = [
 # 常量
 # ---------------------------------------------------------------------------
 
-GATES_DIR: Final[Path] = Path(__file__).parent.parent  # rule_enforcement/（门禁yaml真源根：task/ invariants/ admission/ 子目录）
+# GATES_DIR 唯一真源=zephyr.shared.io.paths（#61 裁定 2026-08-20：三处拷贝收敛为一处，
+# 值与本包 Path(__file__).parent.parent 恒等，门禁 yaml 真源根 task/ invariants/ admission/ 子目录不变）
 
 _DEPRECATED_PATHS_YAML = (
     REPO_ROOT / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"

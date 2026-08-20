@@ -525,6 +525,21 @@ def _trusted_git_env() -> dict:
 
     env = dict(os.environ)
 
+    # #64 裁定（2026-08-20）：warn-only 检测进程级污染（assert 从未实现，
+    # 此处以 warn 暴露外部污染而不阻塞生产路径，fail-visible 不 fail-closed）
+    if _FAST_PATH_ENV in os.environ:
+        import logging
+
+        _warn_env = logging.getLogger(__name__)
+        _warn_env.warning(
+            "[CRITICAL] _trusted_git_env: 主进程 os.environ 已含 %s=%r——"
+            "外部污染或误设，fast-path 语义不可靠。"
+            "建议排查全局环境变量/IDE 配置/代码直接写入 os.environ。"
+            "tracker: #64",
+            _FAST_PATH_ENV,
+            os.environ[_FAST_PATH_ENV],
+        )
+
     env[_FAST_PATH_ENV] = "1"
 
     return env

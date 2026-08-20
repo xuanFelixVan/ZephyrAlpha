@@ -114,11 +114,11 @@ class TestSessionWorktreeAnchor:
 
 class TestGatesDir:
     def test_is_under_root(self):
-        # 断言对齐 paths.py 现状定义。注：GATES_DIR 指向的 governance/rule_enforcement
-        # 目录实际不存在（真源在 gov_enforcement/rule_enforcement，gate_engine 本地
-        # 常量），paths.py 版本为孤儿定义且致 scheduler_safety FLE gates 静默空转——
-        # 存量独立问题，修复引运行时行为变更，已登记后续治理批（本批不夹带）。
-        assert GATES_DIR == REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+        # 断言对齐 paths.py 现状定义（真源 gov_enforcement/rule_enforcement）。
+        # #61 裁定（2026-08-20）：孤儿值 governance/rule_enforcement 已由 AI-AUDIT11
+        # 治本（6f1c2d71b4），本用例同步对齐并补 exists() 看守防第三次漂移。
+        assert GATES_DIR == REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "rule_enforcement"
+        assert GATES_DIR.exists()
 
     def test_is_path(self):
         assert isinstance(GATES_DIR, Path)

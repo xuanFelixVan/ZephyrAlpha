@@ -100,25 +100,22 @@ class TestTrustedGitEnvIsolation:
         finally:
             monkeypatch.delenv("ZEPHYR_TEST_INHERIT", raising=False)
 
-    @pytest.mark.xfail(
-        reason="存量测试-实现漂移：_trusted_git_env 实现的'进程级隔离'assert 已在实现演进中移除"
-        "（现纯副本语义无断言），测试未跟进。补回 assert 涉生产行为变更风险"
-        "（fast-path 嵌套调用场景或误炸），已登记 tracker #59 待专项裁定（治理批③ 2026-08-15）",
-        strict=False,
-    )
-    def test_assertion_fires_when_main_process_polluted(
-        self, monkeypatch: pytest.MonkeyPatch
+    def test_warn_fires_when_main_process_polluted(
+        self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
     ) -> None:
-        """上游若污染 os.environ（契约违例），assert 触发 AssertionError。
+        """上游污染 os.environ（契约违例）时，_trusted_git_env 记 [CRITICAL] warn 并仍返回安全副本。
 
-        场景: 某段代码错误地直接写了 os.environ[ZEPHYR_GIT_GUARD_FAST_PATH]=1
-        而非用 _trusted_git_env() 返回的副本。此时 _trusted_git_env 的 assert
-        应立即报错，暴露契约违例，而非静默让 fast-path 泄漏到主进程后续所有
-        git 子调用。
+        #64 裁定（2026-08-20）：assert 从未实现（双形态 git log -S 实证），
+        采用 warn-only 检测（fail-visible 不 fail-closed），不再 xfail。
         """
         monkeypatch.setenv(_FAST_PATH_ENV, "1")
-        with pytest.raises(AssertionError, match="进程级隔离"):
-            _trusted_git_env()
+        with caplog.at_level("WARNING"):
+            env = _trusted_git_env()
+        assert any(
+            "主进程 os.environ 已含" in r.message and _FAST_PATH_ENV in r.message
+            for r in caplog.records
+        ), "污染场景应记 [CRITICAL] warn"
+        assert env[_FAST_PATH_ENV] == "1", "仍返回含标记的副本（不阻断）"
 
 
 if __name__ == "__main__":
