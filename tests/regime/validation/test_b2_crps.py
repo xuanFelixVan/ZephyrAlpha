@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-VAL | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """B2 CRPS 概率预测技能单元测试（11_regime_backtest_validation_plan §4.2 B2）."""
 

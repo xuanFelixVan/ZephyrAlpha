@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """诊断 Shrinkage schedule 分布与危机时段表现。
 
 目的：判断 C1 MaxDD 改善不足的根因

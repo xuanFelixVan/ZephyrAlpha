@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-VAL | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """E1 walk-forward MaxDD 改善 CV 正式统计单元测试（11_regime_backtest_validation_plan §4.5 E1/§5）."""
 

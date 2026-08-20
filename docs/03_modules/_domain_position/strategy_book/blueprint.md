@@ -3,7 +3,7 @@ module_id: MOD-POS-020
 title: "独立策略账本蓝图 — 选股+粗仓位+独立风控+budget适配（A模型分层·方案A）"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -290,7 +290,7 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-POS-020` 的 3 个 file 节点 | production | `extract_depgraph.py --modules MOD-POS-020` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -314,11 +314,11 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 10.1 源码文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/position/test_cold_start_progression.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

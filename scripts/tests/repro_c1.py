@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """C1 独立复现（方式 B）—— 用 dump 的 Shrinkage CSV + 本项目回测引擎对答案。
 
 复用 dump 脚本的取数逻辑（确保数据一致），但用 c1_runner.run_c1_with_provider

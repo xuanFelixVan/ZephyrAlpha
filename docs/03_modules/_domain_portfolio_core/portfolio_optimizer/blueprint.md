@@ -3,7 +3,7 @@ module_id: MOD-PF-002
 title: "组合优化器蓝图 — 风险预算为主 + 均值方差备选 + Kelly 截断"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -117,7 +117,7 @@ build_status: generated
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-PF-002` 的 5 个 file 节点 | production | `extract_depgraph.py --modules MOD-PF-002` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -141,7 +141,15 @@ build_status: generated
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 测试文件
+### 8.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/pf_core/core/multifactor_constraint_arbitration.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/core/multifactor_holding_drift_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/core/multifactor_rebalance_trigger.py` | ✅ 已实现 | |
+
+### 8.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -160,3 +168,5 @@ build_status: generated
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

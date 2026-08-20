@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.7"
+version: "0.19.8"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -413,7 +413,6 @@ build_status: generated
 | `src/zephyr/shared/contracts/execution/fill.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/execution/model_serving_request.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/execution/order.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/execution_report.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/experiment/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/experiment/experiment_result.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/external/__init__.py` | ⚠️ 骨架 | |
@@ -505,6 +504,12 @@ build_status: generated
 | `tests/observability/test_observability_logging.py` | ✅ 已实现 | |
 | `tests/observability/test_observability_metrics.py` | ✅ 已实现 | |
 | `tests/observability/test_observability_tracing.py` | ✅ 已实现 | |
+| `tests/shared/alerts/test_alert_escalation.py` | ✅ 已实现 | |
+| `tests/shared/alerts/test_alert_manager.py` | ✅ 已实现 | |
+| `tests/shared/alerts/test_alert_precision_tracker.py` | ✅ 已实现 | |
+| `tests/shared/alerts/test_alert_senders.py` | ✅ 已实现 | |
+| `tests/shared/alerts/test_dual_channel_alert.py` | ✅ 已实现 | |
+| `tests/shared/alerts/test_heartbeat_server.py` | ✅ 已实现 | |
 | `tests/shared/test_state_store.py` | ✅ 已实现 | |
 | `tests/shared/test_state_store_redis.py` | ✅ 已实现 | |
 | `tests/trading/integration/test_trading_contracts.py` | ✅ 已实现 | |

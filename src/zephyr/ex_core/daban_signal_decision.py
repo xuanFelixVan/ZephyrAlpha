@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] zephyr.ex_core.daban_signal_decision
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] stdlib

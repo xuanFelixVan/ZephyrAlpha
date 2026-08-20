@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] zephyr.ex_core.daban_instant_circuit_breaker
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] stdlib

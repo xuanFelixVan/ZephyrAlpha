@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """Turnover 抖动分析——排查 Shrinkage 序列波动对换手率的影响。
 
 C1 复现发现：基准组 1444 笔，实验组 2432 笔（+68%），但 Turnover/yr 只升 12%。

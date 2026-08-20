@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """C1 死区优化对比——无死区 vs 有死区(deadzone=0.02)。
 
 验证 DeadzoneShrinkageProvider 是否降低 Turnover + 不伤害 Sharpe/MaxDD。

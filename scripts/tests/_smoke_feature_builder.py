@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """临时冒烟：RegimeFeatureBuilder.build_features() + build_train_matrix()。用完即删。"""

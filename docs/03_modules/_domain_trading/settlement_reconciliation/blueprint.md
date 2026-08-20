@@ -3,7 +3,7 @@ module_id: MOD-TRADING-003
 title: "结算对账器蓝图 — 盘后交易级对账+差异告警+结算报告"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L03_trading
 layer_name: trading
@@ -236,6 +236,8 @@ class SettlementReconciler:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/reporting/test_reconciliation_schema.py` | ✅ 已实现 | |
+| `tests/trading/test_post_settlement_pipeline.py` | ✅ 已实现 | |
 | `tests/trading/test_settlement_reconciliation.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
@@ -251,3 +253,5 @@ class SettlementReconciler:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

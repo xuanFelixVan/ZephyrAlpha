@@ -3,7 +3,7 @@ module_id: MOD-CMP-001
 title: "四项必做清单检查器蓝图 — 盘前/盘中/盘后/晚间完成度检测"
 doc_type: blueprint
 status: Active
-version: "0.1.12"
+version: "0.1.13"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -128,7 +128,7 @@ tests/compliance/test_discipline_must_do_checker.py — 11 用例：全完成/�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-CMP-001` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-CMP-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

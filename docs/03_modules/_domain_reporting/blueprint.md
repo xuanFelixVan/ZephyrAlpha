@@ -4,7 +4,7 @@ submodule_path: src/zephyr/reporting
 title: "Post Trade Analytics Core 蓝图 — 盘后分析层"
 doc_type: blueprint
 status: Active
-version: "2.1.3"
+version: "2.1.4"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -45,7 +45,7 @@ build_status: generated
 design_maturity: production
 ---
 
-> module_id: MOD-L07-001 | version: 2.1.3 | status: active | domain: reporting
+> module_id: MOD-L07-001 | version: 2.1.4 | status: active | domain: reporting
 > actual_disk_path: src/zephyr/reporting/ | generation: 2 | construction_progress: partially_implemented
 
 # ✅ Post Trade Analytics Core 蓝图 — 盘后分析层
@@ -119,7 +119,7 @@ design_maturity: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-L07-001` 的 12 个 file 节点 | production | `extract_depgraph.py --modules MOD-L07-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -851,6 +851,8 @@ class PerformanceAttributionReport:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/reporting/test_attribution.py` | ✅ 已实现 | |
+| `tests/reporting/test_attribution_registry_mapper.py` | ✅ 已实现 | |
 | `tests/trading/pipeline/test_l07_post_trade_analytics.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

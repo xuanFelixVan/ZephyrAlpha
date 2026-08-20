@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-VAL | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """D3 聚合公式参数扰动分析单元测试（11_regime_backtest_validation_plan §0.5.7 D3）."""
 

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """诊断：各 risk 参数在 2015-2026 的触发率（%<1.0）和均值，定位过度收缩元凶。"""
 

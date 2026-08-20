@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.7"
+version: "0.13.8"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -2194,6 +2194,9 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/governance/lifecycle/test_ai_behavior_baseline.py` | ✅ 已实现 | |
+| `tests/governance/lifecycle/test_retirement_workflow.py` | ✅ 已实现 | |
+| `tests/governance/lifecycle/test_strategy_archive.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_strategy_retirement_evaluator.py` | ✅ 已实现 | |
 | `tests/governance/test_alert_threshold_consistency.py` | ✅ 已实现 | |
 | `tests/governance/test_error_code_consistency.py` | ✅ 已实现 | |

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-VAL | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """B3 置信度合理性分析单元测试（11_regime_backtest_validation_plan §4.2 B3）."""
 

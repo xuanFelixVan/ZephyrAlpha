@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """诊断 S2 recovery 触发：dump 事件日 ±7 交易日的 S2 score_breakdown + stage。
 

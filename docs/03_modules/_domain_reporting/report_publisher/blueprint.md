@@ -3,7 +3,7 @@ module_id: MOD-RPT-003
 title: "报告发布器蓝图 — 中心枢纽+归档+分发+哈希链审计(基础版)"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L07_reporting
 layer_name: reporting
@@ -216,7 +216,7 @@ class ReportPublisher:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-RPT-003` 的 3 个 file 节点 | production | `extract_depgraph.py --modules MOD-RPT-003` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -245,6 +245,7 @@ class ReportPublisher:
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/reporting/test_report_publisher.py` | ✅ 已实现 | |
+| `tests/reporting/test_report_publisher_senders.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 
@@ -259,3 +260,5 @@ class ReportPublisher:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

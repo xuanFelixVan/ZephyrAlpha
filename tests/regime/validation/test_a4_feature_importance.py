@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-VAL | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """A4 特征重要性 Permutation 主轨单元测试（11_regime_backtest_validation_plan §4.1 A4）."""
 

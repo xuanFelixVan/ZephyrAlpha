@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-VAL | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """D1 ConfidenceSignal 四档 ±20% 网格分析单元测试（11_regime_backtest_validation_plan §0.5.7 D1）."""
 

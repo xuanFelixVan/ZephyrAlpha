@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-POS-006 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 """
 

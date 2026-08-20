@@ -3,7 +3,7 @@ module_id: MOD-REGIME-002
 title: "Regime特征管道蓝图 — ClickHouse→RegimeFeatures/OverlaySignals/RiskSignalInputs（C1一票否决验证的数据地基）"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -862,7 +862,7 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-002` 的 26 个 file 节点 | production | `extract_depgraph.py --modules MOD-REGIME-002` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -899,6 +899,14 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/regime/features/test_evolution_signals.py` | ✅ 已实现 | |
+| `tests/regime/features/test_lppl_detector.py` | ✅ 已实现 | |
+| `tests/regime/features/test_s2_breadth_thrust_score.py` | ✅ 已实现 | |
+| `tests/regime/features/test_s2_capitulation_score.py` | ✅ 已实现 | |
+| `tests/regime/features/test_s2_fund_score.py` | ✅ 已实现 | |
+| `tests/regime/features/test_s2_spring_flag.py` | ✅ 已实现 | |
+| `tests/regime/features/test_s2_three_yang_flag.py` | ✅ 已实现 | |
+| `tests/regime/features/test_s2_valuation_score.py` | ✅ 已实现 | |
 | `tests/regime/test_july_case_e2e.py` | ✅ 已实现 | |
 | `tests/regime/test_overlay_features.py` | ✅ 已实现 | |
 | `tests/regime/test_overlay_signals_builder.py` | ✅ 已实现 | |
@@ -918,3 +926,5 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-VAL | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """A3 状态转移路径覆盖正式统计单元测试（11_regime_backtest_validation_plan §4.1 A3）."""
 
