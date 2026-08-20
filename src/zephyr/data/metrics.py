@@ -36,6 +36,7 @@
     m.set_uptime(3600.0)
     m.flush()  # 写入 data/metrics.prom
 """
+
 from __future__ import annotations
 
 import logging
@@ -69,7 +70,9 @@ class IntegratorMetrics:
             output_file: 输出 .prom 文件路径，默认 data/metrics.prom
         """
         self._output_file = Path(output_file) if output_file else _DEFAULT_METRICS_FILE
-        self._lock = threading.RLock()  # 可重入锁：flush持锁后调render(内部也acquire)不死锁(裁定#ARCH-METRICS-FILELOCK-001)
+        self._lock = (
+            threading.RLock()
+        )  # 可重入锁：flush持锁后调render(内部也acquire)不死锁(裁定#ARCH-METRICS-FILELOCK-001)
         # 计数器 / 直方图 内部存储
         self._task_total: dict[tuple[str, str, str], int] = {}
         self._task_duration_count: dict[tuple[str, str], int] = {}
@@ -111,9 +114,7 @@ class IntegratorMetrics:
             self._task_duration_count[dkey] = self._task_duration_count.get(dkey, 0) + 1
             self._task_duration_sum[dkey] = self._task_duration_sum.get(dkey, 0.0) + duration_sec
             # 直方图桶（Prometheus 累积桶：每个 le 桶包含所有 <= le 的样本）
-            buckets = self._task_duration_buckets.setdefault(
-                dkey, [0] * (len(_DURATION_BUCKETS) + 1)
-            )
+            buckets = self._task_duration_buckets.setdefault(dkey, [0] * (len(_DURATION_BUCKETS) + 1))
             # 该样本进入所有 le >= duration 的桶（含 +Inf）
             for i, bound in enumerate(_DURATION_BUCKETS):
                 if duration_sec <= bound:
@@ -156,9 +157,7 @@ class IntegratorMetrics:
             lines.append("# HELP integrator_task_total 任务执行总次数")
             lines.append("# TYPE integrator_task_total counter")
             for (task_id, source, status), val in sorted(self._task_total.items()):
-                lines.append(
-                    f'integrator_task_total{{task_id="{task_id}",source="{source}",status="{status}"}} {val}'
-                )
+                lines.append(f'integrator_task_total{{task_id="{task_id}",source="{source}",status="{status}"}} {val}')
 
             # task_duration_seconds
             lines.append("# HELP integrator_task_duration_seconds 任务耗时分布")
@@ -166,42 +165,32 @@ class IntegratorMetrics:
             for (task_id, source), buckets in sorted(self._task_duration_buckets.items()):
                 labels = f'task_id="{task_id}",source="{source}"'
                 for i, bound in enumerate(_DURATION_BUCKETS):
-                    lines.append(
-                        f'integrator_task_duration_seconds_bucket{{le="{bound}",{labels}}} {buckets[i]}'
-                    )
+                    lines.append(f'integrator_task_duration_seconds_bucket{{le="{bound}",{labels}}} {buckets[i]}')
+                lines.append(f'integrator_task_duration_seconds_bucket{{le="+Inf",{labels}}} {buckets[-1]}')
                 lines.append(
-                    f'integrator_task_duration_seconds_bucket{{le="+Inf",{labels}}} {buckets[-1]}'
+                    f"integrator_task_duration_seconds_count{{{labels}}} {self._task_duration_count[(task_id, source)]}"
                 )
                 lines.append(
-                    f'integrator_task_duration_seconds_count{{{labels}}} {self._task_duration_count[(task_id, source)]}'
-                )
-                lines.append(
-                    f'integrator_task_duration_seconds_sum{{{labels}}} {self._task_duration_sum[(task_id, source)]:.4f}'
+                    f"integrator_task_duration_seconds_sum{{{labels}}} {self._task_duration_sum[(task_id, source)]:.4f}"
                 )
 
             # rows_fetched_total
             lines.append("# HELP integrator_rows_fetched_total 拉取行数总计")
             lines.append("# TYPE integrator_rows_fetched_total counter")
             for (task_id, source), val in sorted(self._rows_fetched.items()):
-                lines.append(
-                    f'integrator_rows_fetched_total{{task_id="{task_id}",source="{source}"}} {val}'
-                )
+                lines.append(f'integrator_rows_fetched_total{{task_id="{task_id}",source="{source}"}} {val}')
 
             # rate_limit_hits_total
             lines.append("# HELP integrator_rate_limit_hits_total 限流命中次数")
             lines.append("# TYPE integrator_rate_limit_hits_total counter")
             for source, val in sorted(self._rate_limit_hits.items()):
-                lines.append(
-                    f'integrator_rate_limit_hits_total{{source="{source}"}} {val}'
-                )
+                lines.append(f'integrator_rate_limit_hits_total{{source="{source}"}} {val}')
 
             # retry_total
             lines.append("# HELP integrator_retry_total 重试次数总计")
             lines.append("# TYPE integrator_retry_total counter")
             for (task_id, source), val in sorted(self._retry_total.items()):
-                lines.append(
-                    f'integrator_retry_total{{task_id="{task_id}",source="{source}"}} {val}'
-                )
+                lines.append(f'integrator_retry_total{{task_id="{task_id}",source="{source}"}} {val}')
 
             # session_uptime_seconds
             lines.append("# HELP integrator_session_uptime_seconds 会话运行时长")

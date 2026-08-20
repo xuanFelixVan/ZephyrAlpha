@@ -73,7 +73,6 @@ class AgentCreationPolicy:
         """写入：child_counts（Stage 4 公共化）。"""
         self._child_counts = value
 
-
     def record_spawn(self, parent_agent_id: str) -> None:
         """记录一次子 agent 创建事件."""
         if parent_agent_id not in self._child_counts:
@@ -108,7 +107,9 @@ class AgentCreationPolicy:
         if recent >= policy.max_children:
             logger.warning(
                 "AgentCreationPolicy: spawn storm detected for %s (recent=%d max=%d)",
-                policy.parent_agent_id, recent, policy.max_children,
+                policy.parent_agent_id,
+                recent,
+                policy.max_children,
             )
             return {
                 "allowed": False,

@@ -93,7 +93,6 @@ class SkillLifecycle:
         """写入：states（Stage 4 公共化）。"""
         self._states = value
 
-
     def register(self, skill_id: str, status: str = SkillStatus.ACTIVE.value):
         self._states[skill_id] = status
 

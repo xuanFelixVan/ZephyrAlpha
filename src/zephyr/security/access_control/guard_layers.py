@@ -137,7 +137,6 @@ class ColdStartLock:
         """写入：locked（Stage 4 公共化）。"""
         self._locked = value
 
-
     def unlock(self) -> None:
         """解锁."""
         self._locked = False

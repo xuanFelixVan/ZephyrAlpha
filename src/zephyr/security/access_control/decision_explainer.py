@@ -118,9 +118,7 @@ class DecisionExplainer:
             blocked_layer="N/A",
             rule_id="AUTO_GUARD",
             reason=f"auto-guard for {operation} (timeout={timeout}s)",
-            correction_suggestion=(
-                f"Wait {timeout}s for auto-guard to release, or contact owner for manual override."
-            ),
+            correction_suggestion=(f"Wait {timeout}s for auto-guard to release, or contact owner for manual override."),
             causal_chain=["L1 RBAC", "AUTO_GUARD", operation],
         )
 

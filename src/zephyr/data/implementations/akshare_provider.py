@@ -6862,9 +6862,7 @@ class AkshareIngestProvider(IngestProviderBase):
         in_list = ",".join(f"'{c}'" for c in codes)
         try:
             tsv = _chr.query(
-                _SQL_ADJ_FACTOR_MINIQMT_KEYS.format(
-                    symbols=in_list, start=start_str, end=end_str
-                ),
+                _SQL_ADJ_FACTOR_MINIQMT_KEYS.format(symbols=in_list, start=start_str, end=end_str),
                 timeout=60,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

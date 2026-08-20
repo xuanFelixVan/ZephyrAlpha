@@ -34,7 +34,6 @@ from zephyr.autonomy_core.skills.skill_model import SkillStatus
 
 
 class SkillKillSwitch:
-
     """Skill 熔断开关 —— 紧急停用."""
 
     _killed: dict[str, dict[str, Any]] = {}

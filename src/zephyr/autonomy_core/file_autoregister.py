@@ -28,7 +28,9 @@ class FileAutoRegister:
     def __init__(self, manifest_path: Path | None = None):
         self.manifest_path = (
             manifest_path
-            or REPO_ROOT / "scripts" / "script-manifest.yaml"  # #51 裁定：登记真源连字符版（原指向不存在的 governance/script-manifest.yaml 死引用）
+            or REPO_ROOT
+            / "scripts"
+            / "script-manifest.yaml"  # #51 裁定：登记真源连字符版（原指向不存在的 governance/script-manifest.yaml 死引用）
         )
 
     def register(self, file_path: str, module: str = "unknown") -> dict[str, Any]:

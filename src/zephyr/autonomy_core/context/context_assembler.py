@@ -44,7 +44,7 @@ from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEX
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
 if TYPE_CHECKING:
-    from zephyr.orchestrator.contracts.task_card import TaskCard
+    from zephyr.shared.foundation.models import TaskCard
     from zephyr.shared.protocols.ports import RerankerProtocol
 
 __all__ = [
@@ -109,6 +109,7 @@ class AssembledContext(BaseModel):
 
 class AssemblyError(Exception):
     """上下文装配异常"""
+
     error_code = "ZA-AC-0005"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):

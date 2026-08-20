@@ -111,7 +111,6 @@ class SkillTokenomics:
         """写入：daily_budget（Stage 4 公共化）。"""
         self._daily_budget = value
 
-
     # --- Budget Management ---
 
     def set_budget(

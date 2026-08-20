@@ -96,7 +96,9 @@ def validate_manual_events_csv(
                 return [], errors  # 列头错误后续行无意义
             unknown = set(header) - REQUIRED_COLUMNS - OPTIONAL_COLUMNS
             if unknown:
-                errors.append(f"行 {lineno}: 列头含未知列 {sorted(unknown)}（仅允许 event_date/event_type/description/data_source）")
+                errors.append(
+                    f"行 {lineno}: 列头含未知列 {sorted(unknown)}（仅允许 event_date/event_type/description/data_source）"
+                )
             continue
 
         row = dict(zip(header, (f.strip() for f in fields), strict=False))

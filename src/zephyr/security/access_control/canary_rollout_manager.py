@@ -67,7 +67,6 @@ class CanaryRolloutManager:
         """写入：canaries（Stage 4 公共化）。"""
         self._canaries = value
 
-
     def register(self, name: str, rules: list[str]) -> CanaryPermission:
         """注册灰度权限.
 

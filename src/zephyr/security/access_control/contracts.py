@@ -28,6 +28,7 @@
       （``ContractViolationError``）。此时回退到 plain dict，保证 ``check_and_log``
       永不抛异常——桥接层不应因审计写入失败而阻塞 RBAC 决策。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -50,7 +51,6 @@ class RBACAuditBridge:
     def check_permission(agent_id, permission, resource) -> bool:
         """公共接口：check_permission（Stage 4 公共化）。"""
         return __class__._check_permission(agent_id, permission, resource)
-
 
     # 允许的权限白名单（lowercase 比较）。命中 -> granted=True。
     _ALLOWED_PERMISSIONS: set[str] = {"read", "write", "execute"}

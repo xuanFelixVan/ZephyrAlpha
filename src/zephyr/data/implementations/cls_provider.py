@@ -25,6 +25,7 @@
 数据转换目标表 c3_fundamental.news_data：
     pub_date, title, link, summary, source
 """
+
 from __future__ import annotations
 
 import datetime
@@ -81,6 +82,7 @@ class ClsProvider(IngestProviderBase):
     def connect(self) -> None:
         """建立连接：验证 requests 可导入。"""
         import requests  # noqa: F401
+
         self._connected = True
         self._log.info("财联社电报 已连接（匿名访问）")
 
@@ -88,6 +90,7 @@ class ClsProvider(IngestProviderBase):
         """探活：尝试 import requests。"""
         try:
             import requests  # noqa: F401
+
             return True
         except ImportError as e:
             self._log.warning(f"财联社探活失败（requests 未安装）: {e}")
@@ -100,25 +103,24 @@ class ClsProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 payload.extra["capability"] 路由到具体获取方法。"""
-        cap = (payload.extra or {}).get("capability")
-        if cap == "news_data":
+        capability = (payload.extra or {}).get("capability")  # 变量名对齐 capability_validator 路由分析约定
+        if capability == "news_data":
             yield from self._fetch_news_data(payload, policy)
         else:
             yield FetchResult(
-                table=payload.table, columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
-                error=f"unsupported capability: {cap}",
+                table=payload.table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"unsupported capability: {capability}",
             )
 
     # ---- 财联社电报 ----
 
-    def _fetch_news_data(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_news_data(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取财联社电报，写入 c3_fundamental.news_data。
 
         通过RSSHub公共实例 https://rsshub.app/cls/telegraph 获取（JSON格式）。
@@ -131,8 +133,12 @@ class ClsProvider(IngestProviderBase):
         try:
             params = {"format": "json"}
             resp = self._call_with_policy(
-                self._http_get, policy,
-                _CLS_RSSHUB_URL, params=params, headers=_CLS_HEADERS, timeout=20,
+                self._http_get,
+                policy,
+                _CLS_RSSHUB_URL,
+                params=params,
+                headers=_CLS_HEADERS,
+                timeout=20,
             )
             data = resp.json()
             items = data.get("items") or []
@@ -140,16 +146,22 @@ class ClsProvider(IngestProviderBase):
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"财联社电报获取失败: {e}")
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=time.time() - t0, error=str(e),
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.time() - t0,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
+                error=str(e),
             )
             return
 
         self._log.info(f"财联社电报: {len(rows)} 行")
         yield FetchResult(
-            table=table, columns=columns, rows=rows,
+            table=table,
+            columns=columns,
+            rows=rows,
             last_key=datetime.date.today().isoformat(),
-            elapsed_sec=time.time() - t0,
+            elapsed_sec=time.time() - t0,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
         )
 
     @staticmethod
@@ -164,19 +176,9 @@ class ClsProvider(IngestProviderBase):
         """
         rows: list[tuple] = []
         for item in items:
-            pub_date = str(
-                item.get("date_published")
-                or item.get("pubDate")
-                or item.get("published")
-                or ""
-            )
+            pub_date = str(item.get("date_published") or item.get("pubDate") or item.get("published") or "")
             title = str(item.get("title") or "")
             link = str(item.get("url") or item.get("id") or item.get("link") or "")
-            summary = str(
-                item.get("summary")
-                or item.get("content_html")
-                or item.get("description")
-                or ""
-            )
+            summary = str(item.get("summary") or item.get("content_html") or item.get("description") or "")
             rows.append(build_news_row(pub_date, title, link, summary, "cls", "cls"))
         return rows

@@ -204,15 +204,17 @@ _DATE_COLUMN_PRIORITIES = [
 # 这些列的语义是业务事件发生日（解禁日/上市日/生效日/公告日/报告期），而非采集日——
 # 用"近7个交易日必有数据"的日频口径检测必然误报（restricted_shares/share_unlock 等实证）。
 # 命中即 threshold 强制 0，按"慢变化"类别确定性跳过，不再靠零阈值偶然躲过。
-_BUSINESS_EVENT_DATE_COLS = frozenset({
-    "unlock_date",    # 解禁日（restricted_shares/share_unlock）
-    "list_date",      # 上市日（stock_list）
-    "valid_from",     # 生效日（industry_class/concept_board/lof_list 等）
-    "setup_date",     # 成立日（etf_list）
-    "end_date",       # 截止日（equity_pledge_summary/convertible_bond_list）
-    "announce_date",  # 公告日（财报表按季披露，本就应跳过日频检测）
-    "report_period",  # 报告期（main_business）
-})
+_BUSINESS_EVENT_DATE_COLS = frozenset(
+    {
+        "unlock_date",  # 解禁日（restricted_shares/share_unlock）
+        "list_date",  # 上市日（stock_list）
+        "valid_from",  # 生效日（industry_class/concept_board/lof_list 等）
+        "setup_date",  # 成立日（etf_list）
+        "end_date",  # 截止日（equity_pledge_summary/convertible_bond_list）
+        "announce_date",  # 公告日（财报表按季披露，本就应跳过日频检测）
+        "report_period",  # 报告期（main_business）
+    }
+)
 
 # 静态/全量重建类调度时段（#ARCH-DATA-017 施工项2）：
 # 月度/周末周期性全量重建的表无日频采集语义，跳过日频缺口检测。

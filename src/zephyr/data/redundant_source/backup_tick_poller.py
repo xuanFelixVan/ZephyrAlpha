@@ -82,6 +82,7 @@ Usage::
 # A1 --> O2
 # A2 --> O2
 """
+
 from __future__ import annotations
 
 import logging
@@ -172,12 +173,9 @@ class BackupTickPoller(SourceProvider):
                 log.error("TDX 备源连接失败: %s", e)
                 return False
         self._running = True
-        self._thread = threading.Thread(
-            target=self._poll_loop, daemon=True, name="tdx-backup-poller"
-        )
+        self._thread = threading.Thread(target=self._poll_loop, daemon=True, name="tdx-backup-poller")
         self._thread.start()
-        log.info("BackupTickPoller 已启动 (symbols=%d, interval=%.1fs)",
-                 len(self._symbols), self._poll_interval)
+        log.info("BackupTickPoller 已启动 (symbols=%d, interval=%.1fs)", len(self._symbols), self._poll_interval)
         return True
 
     def stop(self) -> None:

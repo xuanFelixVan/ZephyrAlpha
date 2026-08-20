@@ -320,9 +320,7 @@ class LSGSecurityGateway:
                 )
                 layer_results[name] = result
 
-                kind, should_break, decision_to_set = _classify_layer_decision(
-                    name, result, self.FAIL_OPEN_LAYERS
-                )
+                kind, should_break, decision_to_set = _classify_layer_decision(name, result, self.FAIL_OPEN_LAYERS)
                 if kind == "deny":
                     denied += 1
                 elif kind == "flag":
@@ -406,7 +404,7 @@ class LSGSecurityGateway:
 
         guard = l7.integrity_guard
         result = guard.verify_all()
-        all_passed = (result["tampered"] == 0)
+        all_passed = result["tampered"] == 0
         return {
             "integrity": "ok" if all_passed else "compromised",
             "total": result.get("total", 0),

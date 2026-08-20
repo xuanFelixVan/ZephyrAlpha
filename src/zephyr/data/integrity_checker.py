@@ -41,20 +41,19 @@ discover_backfill_tables = _discover_backfill_tables  # public alias（Stage 4 �
 log = logging.getLogger(__name__)
 
 # SQL 模板（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
-_SQL_COUNT_TODAY = (
-    "SELECT count() FROM {table} WHERE {date_col}=toDate('{d_str}')"
-)
+_SQL_COUNT_TODAY = "SELECT count() FROM {table} WHERE {date_col}=toDate('{d_str}')"
 
 # 周末/月初才跑的 schedule——工作日对账时不应期待它们当天运行
-_NON_DAILY_SCHEDULES = frozenset({
-    "weekend_calibration", "monthly_static", "weekend_backfill",
-})
+_NON_DAILY_SCHEDULES = frozenset(
+    {
+        "weekend_calibration",
+        "monthly_static",
+        "weekend_backfill",
+    }
+)
 
 # SQL 模板（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
-_SQL_RUNS_SINCE = (
-    "SELECT task_id, status, started_at FROM task_runs WHERE started_at >= ? "
-    "ORDER BY started_at DESC"
-)
+_SQL_RUNS_SINCE = "SELECT task_id, status, started_at FROM task_runs WHERE started_at >= ? ORDER BY started_at DESC"
 
 
 def _should_run_today(tasks: list[dict]) -> dict[str, str]:
@@ -76,8 +75,7 @@ def _today_latest_status(store, today: datetime.date) -> dict[str, str]:
     """查今日 task_runs 每个任务最新一次状态。返回 {task_id: status}。失败返回 {}。"""
     # UTC 窗口：本地 today 00:00 = UTC today-1 16:00；task_runs.started_at 存 UTC ISO
     day_start_utc = (
-        datetime.datetime.combine(today, datetime.time.min, tzinfo=datetime.timezone.utc)
-        - datetime.timedelta(hours=8)
+        datetime.datetime.combine(today, datetime.time.min, tzinfo=datetime.timezone.utc) - datetime.timedelta(hours=8)
     ).isoformat()
     try:
         with store._lock:
@@ -128,10 +126,7 @@ def _reconcile_task_runs(scheduler, today: datetime.date) -> dict:
 
     succeeded = {tid for tid in should_run if latest.get(tid) == "SUCCESS"}
     missing = sorted(tid for tid in should_run if tid not in latest)
-    failed = sorted(
-        tid for tid in should_run
-        if tid in latest and latest[tid] != "SUCCESS"
-    )
+    failed = sorted(tid for tid in should_run if tid in latest and latest[tid] != "SUCCESS")
 
     return {
         "should_run": len(should_run),
@@ -241,10 +236,14 @@ def run_daily_check(scheduler=None) -> dict:
             if task_gaps:
                 alerter.notify(
                     "integrity_check_task_reconcile",
-                    "任务级对账缺口: 应跑 %d, 成功 %d, 漏跑 %d, 失败 %d。漏跑=%s 失败=%s" % (
-                        recon["should_run"], recon["succeeded"],
-                        len(recon["missing"]), len(recon["failed"]),
-                        recon["missing"], recon["failed"],
+                    "任务级对账缺口: 应跑 %d, 成功 %d, 漏跑 %d, 失败 %d。漏跑=%s 失败=%s"
+                    % (
+                        recon["should_run"],
+                        recon["succeeded"],
+                        len(recon["missing"]),
+                        len(recon["failed"]),
+                        recon["missing"],
+                        recon["failed"],
                     ),
                     level="ERROR",
                     source="integrity_check",
@@ -271,8 +270,7 @@ def run_daily_check(scheduler=None) -> dict:
         "healthy_count": healthy_count,
         "skipped_count": skipped_count,
         "unhealthy_tables": [
-            {"table": r["table"], "count": r["count"], "threshold": r["threshold"]}
-            for r in unhealthy
+            {"table": r["table"], "count": r["count"], "threshold": r["threshold"]} for r in unhealthy
         ],
         # 任务级对账结果（新增维度）
         "task_should_run": recon["should_run"],
@@ -284,8 +282,14 @@ def run_daily_check(scheduler=None) -> dict:
 
     log.info(
         "巡检完成: %d 张表, %d 达标, %d 跳过(元数据), %d 不达标 | 任务级: 应跑 %d, 成功 %d, 漏跑 %d, 失败 %d",
-        total, healthy_count, skipped_count, len(unhealthy),
-        recon["should_run"], recon["succeeded"], len(recon["missing"]), len(recon["failed"]),
+        total,
+        healthy_count,
+        skipped_count,
+        len(unhealthy),
+        recon["should_run"],
+        recon["succeeded"],
+        len(recon["missing"]),
+        len(recon["failed"]),
     )
     if unhealthy:
         log.warning("不达标表: %s", [r["table"] for r in unhealthy])

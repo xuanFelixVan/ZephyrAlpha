@@ -73,18 +73,39 @@ _EMAIL_RE = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
 _SECRET_KV_RE = re.compile(r"(?i)(secret|password|token|api[_-]?key|credential)\s*[:=]\s*\S+")
 # 危险沙箱关键字
 _SANDBOX_BLOCKED = [
-    "os.system", "subprocess", "popen", "eval(", "exec(",
-    "__import__", "compile(", "os.remove", "shutil.rmtree",
+    "os.system",
+    "subprocess",
+    "popen",
+    "eval(",
+    "exec(",
+    "__import__",
+    "compile(",
+    "os.remove",
+    "shutil.rmtree",
 ]
 # 幻觉确定性标记
 _HALLUCINATION_MARKERS = [
-    "certain", "no way", "absolutely", "100%", "definitely",
-    "guaranteed", "without a doubt", "impossible to be wrong",
+    "certain",
+    "no way",
+    "absolutely",
+    "100%",
+    "definitely",
+    "guaranteed",
+    "without a doubt",
+    "impossible to be wrong",
 ]
 # 内容安全违规话题
 _UNSAFE_TOPICS = [
-    "bomb", "weapon", "explosive", "drug", "kill", "poison",
-    "methamphetamine", "firearm", "grenade", "hack",
+    "bomb",
+    "weapon",
+    "explosive",
+    "drug",
+    "kill",
+    "poison",
+    "methamphetamine",
+    "firearm",
+    "grenade",
+    "hack",
 ]
 
 
@@ -110,9 +131,7 @@ class OutputSecurityLayer:
     def sandbox_execution(self, code: str) -> SandboxExecutionResult:
         for kw in _SANDBOX_BLOCKED:
             if kw in code:
-                return SandboxExecutionResult(
-                    safe=False, output="", blocked_reason=f"Blocked keyword: {kw}"
-                )
+                return SandboxExecutionResult(safe=False, output="", blocked_reason=f"Blocked keyword: {kw}")
         # 安全代码：模拟 print 输出
         m = re.search(r"print\(['\"]([^'\"]*)['\"]\)", code)
         output = m.group(1) if m else ""
@@ -139,9 +158,7 @@ class OutputSecurityLayer:
         lowered = (text or "").lower()
         hits = sum(1 for m in _HALLUCINATION_MARKERS if m in lowered)
         confidence = min(1.0, hits * 0.35)
-        return HallucinationDetectionResult(
-            is_hallucination=confidence > 0.6, confidence=confidence
-        )
+        return HallucinationDetectionResult(is_hallucination=confidence > 0.6, confidence=confidence)
 
     def check_content_safety(self, text: str) -> ContentSafetyResult:
         lowered = (text or "").lower()

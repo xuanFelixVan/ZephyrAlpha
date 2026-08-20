@@ -198,7 +198,10 @@ class KillSwitch:
             self._blocked_agents.add(agent_id)
             logger.warning(
                 "KillSwitch: agent %s blocked (trigger=%s count=%d threshold=%d)",
-                agent_id, trigger_name, count, threshold,
+                agent_id,
+                trigger_name,
+                count,
+                threshold,
             )
 
             # 检查是否需要全局熔断（>=3个agent被阻断）

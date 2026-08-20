@@ -22,6 +22,7 @@ get_owasp_coverage: return OWASP Agentic Top 10 coverage as dict.
 
 治本(2026-07-18): 重写以匹配 tests/agent_rbac/test_adversarial_resilience.py 契约.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -138,9 +139,7 @@ class AdversarialResilience:
             risk_level=ASIRiskLevel.NONE, owasp_category="", agent_id=agent_id, operation=operation
         )
 
-    def assess_incentive_alignment(
-        self, agent_id: str, safety_events: int, violation_events: int
-    ) -> IncentiveScore:
+    def assess_incentive_alignment(self, agent_id: str, safety_events: int, violation_events: int) -> IncentiveScore:
         """Score incentive alignment based on safety vs violation events.
 
         safety_alignment = safety_events / (safety_events + violation_events).

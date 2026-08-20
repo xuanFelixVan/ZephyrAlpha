@@ -53,7 +53,6 @@ class SkillGuardrails:
         """写入：active（Stage 4 公共化）。"""
         self._active = value
 
-
     @property
     def violations(self) -> list[dict[str, Any]]:
         """只读：violations（Stage 4 公共化）。"""
@@ -63,7 +62,6 @@ class SkillGuardrails:
     def violations(self, value):
         """写入：violations（Stage 4 公共化）。"""
         self._violations = value
-
 
     @property
     def allowed(self) -> bool:

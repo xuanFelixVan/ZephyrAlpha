@@ -32,7 +32,6 @@ from typing import Any
 
 
 class SkillResilience:
-
     """Skill 韧性——重试/降级/熔断策略."""
 
     MAX_RETRIES = 3

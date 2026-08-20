@@ -57,15 +57,28 @@ MATURITY_OPERATION_MAP: dict[MaturityLevel, list[str]] = {
     MaturityLevel.L0_INTERN: ["read:docs", "read:src"],
     MaturityLevel.L1_JUNIOR: ["read:docs", "read:src", "write:tests"],
     MaturityLevel.L2_REGULAR: [
-        "read:docs", "read:src", "write:src", "write:tests", "execute:scripts",
+        "read:docs",
+        "read:src",
+        "write:src",
+        "write:tests",
+        "execute:scripts",
     ],
     MaturityLevel.L3_SENIOR: [
-        "read:docs", "read:src", "write:src", "write:tests",
-        "execute:scripts", "modify:blueprint",
+        "read:docs",
+        "read:src",
+        "write:src",
+        "write:tests",
+        "execute:scripts",
+        "modify:blueprint",
     ],
     MaturityLevel.L4_PRINCIPAL: [
-        "read:docs", "read:src", "write:src", "write:tests",
-        "execute:scripts", "modify:blueprint", "admin:override",
+        "read:docs",
+        "read:src",
+        "write:src",
+        "write:tests",
+        "execute:scripts",
+        "modify:blueprint",
+        "admin:override",
     ],
 }
 
@@ -154,9 +167,7 @@ class TLBRecord:
     limit: int = 100
 
 
-def _check_maturity_gate(
-    maturity: MaturityLevel | str | None, operation: str
-) -> tuple[bool, str] | None:
+def _check_maturity_gate(maturity: MaturityLevel | str | None, operation: str) -> tuple[bool, str] | None:
     """成熟度门控：L0_INTERN 只能读，返回拒绝元组或 None（继续）."""
     maturity_enum = _maturity_to_enum(maturity)
     if maturity_enum == MaturityLevel.L0_INTERN:
@@ -283,9 +294,7 @@ class ABACGuard:
             or operation.startswith("execute:")
         )
 
-    def _evaluate_tlb(
-        self, agent_id: str, maturity: MaturityLevel | str | None
-    ) -> tuple[bool, str] | None:
+    def _evaluate_tlb(self, agent_id: str, maturity: MaturityLevel | str | None) -> tuple[bool, str] | None:
         """评估 TLB 限额，返回拒绝元组或 None（继续）."""
         if agent_id in self._tlb:
             record = self._tlb[agent_id]

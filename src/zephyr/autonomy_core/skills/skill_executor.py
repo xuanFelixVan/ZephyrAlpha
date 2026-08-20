@@ -235,7 +235,6 @@ class SkillExecutor:
         """公共接口：write_audit（Stage 4 公共化）。"""
         return self._write_audit(event_type, skill_id, extra)
 
-
     @property
     def core_writer(self) -> _CoreAuditWriter | None:
         """只读：core_writer（Stage 4 公共化）。"""
@@ -246,11 +245,9 @@ class SkillExecutor:
         """写入：core_writer（Stage 4 公共化）。"""
         self._core_writer = value
 
-
     def infer_permission(self, tools) -> str:
         """公共接口：infer_permission（Stage 4 公共化）。"""
         return self._infer_permission(tools)
-
 
     def _write_audit(self, event_type: str, skill_id: str, extra: dict[str, Any] | None = None):
         evt = AuditEvent(event_type, skill_id)

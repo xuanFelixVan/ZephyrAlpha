@@ -149,7 +149,9 @@ def write_trigger_record(
     os.replace(tmp, final)
     logger.info(
         "commit_trigger: record written hash=%s formal=%d -> %s",
-        commit_hash[:8], len(formal_files), final.name,
+        commit_hash[:8],
+        len(formal_files),
+        final.name,
     )
     return final
 
@@ -190,11 +192,9 @@ class RedBlueTriggerConsumer:
         """写入：queue_dir（Stage 4 公共化）。"""
         self._queue_dir = value
 
-
     def drain_queue(self) -> None:
         """公共接口：drain_queue（Stage 4 公共化）。"""
         return self._drain_queue()
-
 
     @property
     def started(self):
@@ -206,7 +206,6 @@ class RedBlueTriggerConsumer:
         """写入：started（Stage 4 公共化）。"""
         self._started = value
 
-
     @property
     def circuit(self):
         """只读：circuit（Stage 4 公共化）。"""
@@ -217,11 +216,9 @@ class RedBlueTriggerConsumer:
         """写入：circuit（Stage 4 公共化）。"""
         self._circuit = value
 
-
     def process_one(self, qf) -> None:
         """公共接口：process_one（Stage 4 公共化）。"""
         return self._process_one(qf)
-
 
     @property
     def validator(self):
@@ -233,13 +230,13 @@ class RedBlueTriggerConsumer:
         """写入：validator（Stage 4 公共化）。"""
         self._validator = value
 
-
     # ── 生命周期 ──────────────────────────────────────────────────────
     def start(self) -> None:
         """幂等启动：订阅 red_blue.trigger.queued 事件。"""
         if self._started:
             return
         from zephyr.shared.event_bus import bus as _bus
+
         _bus.subscribe("red_blue.trigger.queued", self._on_trigger_queued)
         self._started = True
         logger.info("RedBlueTriggerConsumer: started (event-driven)")
@@ -248,6 +245,7 @@ class RedBlueTriggerConsumer:
         if not self._started:
             return
         from zephyr.shared.event_bus import bus as _bus
+
         _bus.unsubscribe("red_blue.trigger.queued", self._on_trigger_queued)
         self._started = False
         logger.info("RedBlueTriggerConsumer: stopped")
@@ -272,9 +270,7 @@ class RedBlueTriggerConsumer:
             try:
                 self._process_one(qf)
             except Exception as e:  # noqa: BLE001 — 单条失败不影响其他
-                logger.warning(
-                    "RedBlueTriggerConsumer: process %s failed: %s", qf.name, e, exc_info=True
-                )
+                logger.warning("RedBlueTriggerConsumer: process %s failed: %s", qf.name, e, exc_info=True)
 
     def _process_one(self, qf: Path) -> None:
         record = json.loads(qf.read_text(encoding="utf-8"))
@@ -285,9 +281,9 @@ class RedBlueTriggerConsumer:
         # 门禁检查（fail-closed：默认关）
         if os.environ.get(_GATE_ENV, "0") != "1":
             logger.info(
-                "RedBlueTriggerConsumer: trigger seen but gate closed "
-                "(hash=%s formal=%d) — 就位记录，不实跑",
-                hash8, len(formal_files),
+                "RedBlueTriggerConsumer: trigger seen but gate closed (hash=%s formal=%d) — 就位记录，不实跑",
+                hash8,
+                len(formal_files),
             )
             qf.unlink(missing_ok=True)  # 不累积，留 log 可见性
             return
@@ -298,17 +294,14 @@ class RedBlueTriggerConsumer:
             circuit.before_run()
         except Exception as e:  # CircuitBreakerOpenError  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
-                "RedBlueTriggerConsumer: circuit open, skip (hash=%s): %s — 留队列重试",
-                hash8, e, exc_info=True
+                "RedBlueTriggerConsumer: circuit open, skip (hash=%s): %s — 留队列重试", hash8, e, exc_info=True
             )
             return  # 不删队列文件，cool-down 后重试
 
         # 跑 TIER_1 全量
         validator = self._get_validator()
         if validator is None:
-            logger.warning(
-                "RedBlueTriggerConsumer: validator unavailable, drop (hash=%s)", hash8
-            )
+            logger.warning("RedBlueTriggerConsumer: validator unavailable, drop (hash=%s)", hash8)
             qf.unlink(missing_ok=True)
             return
 
@@ -328,8 +321,7 @@ class RedBlueTriggerConsumer:
             hash8,
             getattr(report, "blocked", 0),
             getattr(report, "bypassed", 0),
-            getattr(report, "total_scenarios", 0)
-            or getattr(report, "total", 0),
+            getattr(report, "total_scenarios", 0) or getattr(report, "total", 0),
         )
         qf.unlink(missing_ok=True)
 

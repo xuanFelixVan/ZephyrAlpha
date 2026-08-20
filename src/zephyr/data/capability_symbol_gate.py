@@ -42,6 +42,7 @@
 依据: 17_special_trading_days_data_assets §5.5/§5.8（#ARCH-DATA-002 施工项 4）
 Version: 0.2.0（按真实 provider 路由形态校准反向豁免规则，消除参数化路由表误报）
 """
+
 from __future__ import annotations
 
 import ast
@@ -107,7 +108,11 @@ def _has_dynamic_fetch_dispatch(tree: ast.Module) -> bool:
         for arg in node.args[1:]:
             if isinstance(arg, ast.JoinedStr):
                 for value in arg.values:
-                    if isinstance(value, ast.Constant) and isinstance(value.value, str) and _FETCH_PREFIX in value.value:
+                    if (
+                        isinstance(value, ast.Constant)
+                        and isinstance(value.value, str)
+                        and _FETCH_PREFIX in value.value
+                    ):
                         return True
     return False
 
@@ -160,8 +165,10 @@ def _collect_route_vars(tree: ast.Module) -> tuple[dict[str, set[str]], dict[str
                 for elt in value.elts:
                     _extract_str_constant(elt, caps)
             elif (
-                isinstance(value, ast.Call) and isinstance(value.func, ast.Name)
-                and value.func.id == "frozenset" and value.args
+                isinstance(value, ast.Call)
+                and isinstance(value.func, ast.Name)
+                and value.func.id == "frozenset"
+                and value.args
                 and isinstance(value.args[0], (ast.Set, ast.Tuple))
             ):
                 for elt in value.args[0].elts:
@@ -182,8 +189,10 @@ def _collect_contract_caps(tree: ast.Module) -> set[str]:
                 continue
             for elt in kw.value.elts:
                 if (
-                    isinstance(elt, ast.Call) and isinstance(elt.func, ast.Name)
-                    and elt.func.id == "CapabilityContract" and elt.args
+                    isinstance(elt, ast.Call)
+                    and isinstance(elt.func, ast.Name)
+                    and elt.func.id == "CapabilityContract"
+                    and elt.args
                 ):
                     _extract_str_constant(elt.args[0], caps)
     return caps
@@ -221,8 +230,7 @@ def check_declaration_impl_consistency_content(content: str) -> list[str]:
                 dict_routed_caps.add(cap)
                 if value not in method_defs:
                     violations.append(
-                        f"路由表 {var_name}['{cap}'] 引用方法 {value} 但类体内未定义"
-                        f"（半截工程，17 号施工项 4 正向）"
+                        f"路由表 {var_name}['{cap}'] 引用方法 {value} 但类体内未定义（半截工程，17 号施工项 4 正向）"
                     )
             else:
                 dict_routed_caps.add(cap)  # 参数化路由表（共享方法实现）
@@ -235,17 +243,14 @@ def check_declaration_impl_consistency_content(content: str) -> list[str]:
             continue  # 命名约定实现（akshare/直接路由形态）
         if cap in literal_caps:
             continue  # elif 字面量路由证据
-        if not dynamic_dispatch and any(
-            var in compared_vars and cap in caps for var, caps in set_vars.items()
-        ):
+        if not dynamic_dispatch and any(var in compared_vars and cap in caps for var, caps in set_vars.items()):
             continue  # 共享方法路由（capability in <set var>，miniqmt 形态）
         if cap in dict_routed_caps and any(
             var in compared_vars for var, entries in dict_vars.items() if cap in entries
         ):
             continue  # dict 路由表 + in <var> 路由证据（方法引用已定义或参数化共享实现）
         violations.append(
-            f"capability 声明 '{cap}' 无对应 {_FETCH_PREFIX}{cap} 方法定义且无路由证据"
-            f"（声明残留，17 号施工项 4 反向）"
+            f"capability 声明 '{cap}' 无对应 {_FETCH_PREFIX}{cap} 方法定义且无路由证据（声明残留，17 号施工项 4 反向）"
         )
     return violations
 

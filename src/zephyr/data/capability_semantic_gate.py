@@ -36,6 +36,7 @@ AST 提取 ``_fetch_<cap>`` 方法体外部 API 符号，校验 ⊆ 白名单；
 依据: 17_special_trading_days_data_assets §5.3/§5.4/§5.8（#ARCH-DATA-002 施工项 2+3）
 Version: 0.1.0
 """
+
 from __future__ import annotations
 
 import ast
@@ -59,9 +60,9 @@ class CapabilitySemanticEntry:
     """语义锚 + API 白名单（17 号 §5.3 capability_semantic_registry 条目）。"""
 
     capability_id: str
-    market: str                      # a_share / hk / us / futures / macro / cross
-    variety: str                     # stock / etf / index / calendar / classification / ...
-    allowed_apis: frozenset[str]     # 精确符号（akshare.tool_trade_date_hist_sina）或前缀通配（THS_*）
+    market: str  # a_share / hk / us / futures / macro / cross
+    variety: str  # stock / etf / index / calendar / classification / ...
+    allowed_apis: frozenset[str]  # 精确符号（akshare.tool_trade_date_hist_sina）或前缀通配（THS_*）
     rationale: str = ""
 
 
@@ -69,21 +70,29 @@ class CapabilitySemanticEntry:
 #: API 符号按规范模块名书写——akshare./baostock.（非 ak./bs. 别名），提取侧已归一化）
 DEFAULT_SEMANTIC_REGISTRY: Final[tuple[CapabilitySemanticEntry, ...]] = (
     CapabilitySemanticEntry(
-        capability_id="hk_trade_calendar", market="hk", variety="calendar",
+        capability_id="hk_trade_calendar",
+        market="hk",
+        variety="calendar",
         allowed_apis=frozenset({"exchange_calendars.XHKG"}),
         rationale="港股日历与A股日历在圣诞/复活节/佛诞差异显著，易错配",
     ),
     CapabilitySemanticEntry(
-        capability_id="trade_calendar", market="a_share", variety="calendar",
-        allowed_apis=frozenset({
-            "exchange_calendars.XSHG",
-            "akshare.tool_trade_date_hist_sina",
-            "baostock.query_trade_dates",
-        }),
+        capability_id="trade_calendar",
+        market="a_share",
+        variety="calendar",
+        allowed_apis=frozenset(
+            {
+                "exchange_calendars.XSHG",
+                "akshare.tool_trade_date_hist_sina",
+                "baostock.query_trade_dates",
+            }
+        ),
         rationale="A股交易日历主备三源",
     ),
     CapabilitySemanticEntry(
-        capability_id="industry_class", market="a_share", variety="classification",
+        capability_id="industry_class",
+        market="a_share",
+        variety="classification",
         allowed_apis=frozenset({"THS_*", "ifind.*"}),
         rationale="mootdx client.block 不在此列 → 拒（防 INDUSTRY-CLASS 重演）",
     ),
@@ -91,10 +100,22 @@ DEFAULT_SEMANTIC_REGISTRY: Final[tuple[CapabilitySemanticEntry, ...]] = (
 
 #: 外部数据源模块集合（17 号 §5.4：ak/bs/xt/THS/exchange_calendars + 常见源；
 #: stdlib/pandas 工具调用不在此列，不提取不校验）
-_DATA_SOURCE_MODULES: Final[frozenset[str]] = frozenset({
-    "akshare", "baostock", "xtquant", "xtdata", "exchange_calendars",
-    "tushare", "yfinance", "efinance", "mootdx", "iFinDPy", "THS_iFinD", "ifind",
-})
+_DATA_SOURCE_MODULES: Final[frozenset[str]] = frozenset(
+    {
+        "akshare",
+        "baostock",
+        "xtquant",
+        "xtdata",
+        "exchange_calendars",
+        "tushare",
+        "yfinance",
+        "efinance",
+        "mootdx",
+        "iFinDPy",
+        "THS_iFinD",
+        "ifind",
+    }
+)
 
 
 def _import_aliases(tree: ast.Module) -> dict[str, str]:
@@ -132,8 +153,10 @@ def _extract_called_apis(tree: ast.Module, method_name: str, aliases: dict[str, 
                 if module.split(".")[0] not in _DATA_SOURCE_MODULES:
                     continue
                 if (
-                    module == "exchange_calendars" and attr == "get_calendar"
-                    and call.args and isinstance(call.args[0], ast.Constant)
+                    module == "exchange_calendars"
+                    and attr == "get_calendar"
+                    and call.args
+                    and isinstance(call.args[0], ast.Constant)
                     and isinstance(call.args[0].value, str)
                 ):
                     apis.add(f"exchange_calendars.{call.args[0].value}")

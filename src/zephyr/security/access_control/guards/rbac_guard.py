@@ -164,9 +164,7 @@ class RBACGuard:
             )
         return None
 
-    def _check_protected_path(
-        self, agent: object, target_path: str | None
-    ) -> PermissionResult | None:
+    def _check_protected_path(self, agent: object, target_path: str | None) -> PermissionResult | None:
         """受保护路径检查（immutable_core 真源，glob 模式匹配）。
 
         ADMIN / AUDITOR 角色可读访问受保护路径（审计/管理需要）。
@@ -189,9 +187,7 @@ class RBACGuard:
                 )
         return None
 
-    def _check_reader_write(
-        self, role: object, operation: str
-    ) -> PermissionResult | None:
+    def _check_reader_write(self, role: object, operation: str) -> PermissionResult | None:
         """READER 不能写。"""
         if role == AgentRole.READER and operation.startswith("write:"):
             return PermissionResult(
@@ -201,9 +197,7 @@ class RBACGuard:
             )
         return None
 
-    def _check_intern_modify(
-        self, maturity: object, operation: str
-    ) -> PermissionResult | None:
+    def _check_intern_modify(self, maturity: object, operation: str) -> PermissionResult | None:
         """L0_INTERN 不能修改蓝图。"""
         if maturity == MaturityLevel.L0_INTERN and operation.startswith("modify:"):
             return PermissionResult(
@@ -223,9 +217,7 @@ class RBACGuard:
             )
         return None
 
-    def _check_auto_guard_op(
-        self, agent: object, operation: str
-    ) -> PermissionResult | None:
+    def _check_auto_guard_op(self, agent: object, operation: str) -> PermissionResult | None:
         """AUTO_GUARD 操作 — 在角色权限检查之前判定。"""
         if operation not in AUTO_GUARD_OPERATIONS:
             return None
@@ -251,9 +243,7 @@ class RBACGuard:
             layer="L1_rbac",
         )
 
-    def _check_role_permission(
-        self, role: object, operation: str
-    ) -> PermissionResult | None:
+    def _check_role_permission(self, role: object, operation: str) -> PermissionResult | None:
         """角色权限检查 — 精确匹配 + 通配符匹配（如 admin:*）。"""
         role_perms = ROLE_DEFAULT_PERMISSIONS.get(role, [])
         if operation in role_perms:
@@ -272,9 +262,7 @@ class RBACGuard:
                 )
         return None
 
-    def _check_explicit_permission(
-        self, agent: object, operation: str
-    ) -> PermissionResult | None:
+    def _check_explicit_permission(self, agent: object, operation: str) -> PermissionResult | None:
         """显式权限检查 — 精确匹配 + 通配符匹配。"""
         explicit_perms = getattr(agent, "permissions", None) or []
         if operation in explicit_perms:

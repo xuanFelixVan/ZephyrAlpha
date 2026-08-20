@@ -30,6 +30,7 @@
     report = validator.validate(time_window_minutes=5)
     print(report)
 """
+
 from __future__ import annotations
 
 import datetime
@@ -67,13 +68,14 @@ VALUES
 """
 
 # 默认阈值
-_PRICE_THRESHOLD = Decimal("0.001")   # 0.1% 价格偏差
-_VOLUME_THRESHOLD = Decimal("0.05")   # 5% 成交量偏差
+_PRICE_THRESHOLD = Decimal("0.001")  # 0.1% 价格偏差
+_VOLUME_THRESHOLD = Decimal("0.05")  # 5% 成交量偏差
 
 
 @dataclass
 class ValidationReport:
     """交叉校验报告。"""
+
     check_time: datetime.datetime
     total_symbols: int = 0
     passed: int = 0
@@ -127,11 +129,7 @@ class CrossSourceValidator:
         report = ValidationReport(check_time=datetime.datetime.now())
 
         # 查询 ClickHouse
-        raw = ch_reader.query(
-            _SQL_LATEST_PER_SOURCE.format(
-                tick_table=_TBL_TICK, minutes=time_window_minutes
-            )
-        )
+        raw = ch_reader.query(_SQL_LATEST_PER_SOURCE.format(tick_table=_TBL_TICK, minutes=time_window_minutes))
         if not raw or not raw.strip():
             log.info("交叉校验: 最近 %d 分钟无 tick 数据", time_window_minutes)
             return report
@@ -165,15 +163,29 @@ class CrossSourceValidator:
             elif primary and not backup:
                 report.missing_in_backup += 1
                 self._add_log_entry(
-                    log_entries, symbol, "missing", str(primary[0]), "N/A",
-                    Decimal("1"), Decimal("0"), "warn", "备源缺失此标的"
+                    log_entries,
+                    symbol,
+                    "missing",
+                    str(primary[0]),
+                    "N/A",
+                    Decimal("1"),
+                    Decimal("0"),
+                    "warn",
+                    "备源缺失此标的",
                 )
                 report.warnings += 1
             elif backup and not primary:
                 report.missing_in_primary += 1
                 self._add_log_entry(
-                    log_entries, symbol, "missing", "N/A", str(backup[0]),
-                    Decimal("1"), Decimal("0"), "fail", "主源缺失此标的"
+                    log_entries,
+                    symbol,
+                    "missing",
+                    "N/A",
+                    str(backup[0]),
+                    Decimal("1"),
+                    Decimal("0"),
+                    "fail",
+                    "主源缺失此标的",
                 )
                 report.failures += 1
 
@@ -207,8 +219,14 @@ class CrossSourceValidator:
             report.passed += 1
 
         self._add_log_entry(
-            log_entries, symbol, "price", str(p_price), str(b_price),
-            deviation, self._price_threshold, status,
+            log_entries,
+            symbol,
+            "price",
+            str(p_price),
+            str(b_price),
+            deviation,
+            self._price_threshold,
+            status,
             f"价格偏差 {deviation:.4%}" if status != "pass" else "",
         )
 
@@ -235,8 +253,14 @@ class CrossSourceValidator:
             report.passed += 1
 
         self._add_log_entry(
-            log_entries, symbol, "volume", str(p_vol), str(b_vol),
-            deviation, self._volume_threshold, status,
+            log_entries,
+            symbol,
+            "volume",
+            str(p_vol),
+            str(b_vol),
+            deviation,
+            self._volume_threshold,
+            status,
             f"成交量偏差 {deviation:.4%}" if status != "pass" else "",
         )
 
@@ -267,6 +291,7 @@ class CrossSourceValidator:
     def _write_log(entries: list[str]) -> None:
         """将校验日志写入 ClickHouse。"""
         from zephyr.data import ch_writer
+
         sql = _SQL_INSERT_LOG + ",\n".join(entries)
         try:
             ch_writer.query(sql)

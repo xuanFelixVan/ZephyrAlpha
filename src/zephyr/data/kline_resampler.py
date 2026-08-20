@@ -33,6 +33,7 @@ tqcenter 仅支持 1d/1m/5m 三周期，15m/30m/60m 需从分钟线合成。
     python -m zephyr.data.kline_resampler --period 15m         # 仅合成15m
     python -m zephyr.data.kline_resampler --start 2026-07-01 --end 2026-07-22
 """
+
 from __future__ import annotations
 
 import argparse
@@ -91,23 +92,26 @@ GROUP BY sector_code, toStartOfInterval(timestamp, INTERVAL {minutes} MINUTE) AS
 
 # ---------- SQL 构建 ----------
 
+
 def _build_delete_sql(target: str, start: str, end: str) -> str:
     """构建删除已合成数据的 SQL（幂等：先删后插）。"""
-    return SQL_DELETE_SYNTH.format(
-        table=_CH_TABLE, target=target, start=start, end=end
-    )
+    return SQL_DELETE_SYNTH.format(table=_CH_TABLE, target=target, start=start, end=end)
 
 
-def _build_synth_sql(source: str, target: str, minutes: int,
-                     start: str, end: str) -> str:
+def _build_synth_sql(source: str, target: str, minutes: int, start: str, end: str) -> str:
     """构建合成 INSERT SQL。"""
     return SQL_SYNTH_TEMPLATE.format(
-        table=_CH_TABLE, source=source, target=target,
-        minutes=minutes, start=start, end=end,
+        table=_CH_TABLE,
+        source=source,
+        target=target,
+        minutes=minutes,
+        start=start,
+        end=end,
     )
 
 
 # ---------- ClickHouse 操作 ----------
+
 
 def _get_ch_client():
     """从 ch_config 真源加载【写入账号】配置创建 ClickHouse 客户端。
@@ -119,6 +123,7 @@ def _get_ch_client():
     from clickhouse_driver import Client
 
     from zephyr.data.ch_config import load_ch_writer_config
+
     cfg = load_ch_writer_config()
     c = Client(
         host=cfg["host"],
@@ -141,8 +146,7 @@ def _synth_period(client, target: str, start: str, end: str) -> int:
       2. INSERT 聚合数据
     """
     source, minutes = _SYNTH_MAP[target]
-    log.info("=== 合成 %s (源=%s, 窗口=%dmin, %s~%s) ===",
-             target, source, minutes, start, end)
+    log.info("=== 合成 %s (源=%s, 窗口=%dmin, %s~%s) ===", target, source, minutes, start, end)
 
     # Step 1: 删除已有合成数据
     del_sql = _build_delete_sql(target, start, end)
@@ -155,8 +159,7 @@ def _synth_period(client, target: str, start: str, end: str) -> int:
 
     # 查询写入行数
     count_sql = (
-        f"SELECT count() FROM {_CH_TABLE} "
-        f"WHERE period = '{target}' AND trade_date BETWEEN '{start}' AND '{end}'"
+        f"SELECT count() FROM {_CH_TABLE} WHERE period = '{target}' AND trade_date BETWEEN '{start}' AND '{end}'"  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
     )
     rows = client.execute(count_sql)
     count = rows[0][0] if rows else 0
@@ -165,6 +168,7 @@ def _synth_period(client, target: str, start: str, end: str) -> int:
 
 
 # ---------- 日期辅助 ----------
+
 
 def _get_date_range(days: int) -> tuple[str, str]:
     """返回最近 N 天的 (start, end) 日期字符串（YYYY-MM-DD）。"""
@@ -175,15 +179,14 @@ def _get_date_range(days: int) -> tuple[str, str]:
 
 # ---------- 主流程 ----------
 
+
 def main() -> int:
     """K线合成器主入口。"""
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
     parser = argparse.ArgumentParser(description="880xxx 板块K线合成器")
     parser.add_argument("--days", type=int, default=7, help="合成最近N天（默认7）")
-    parser.add_argument("--period", default="all",
-                        help="目标周期: 15m/30m/60m/all（默认all）")
+    parser.add_argument("--period", default="all", help="目标周期: 15m/30m/60m/all（默认all）")
     parser.add_argument("--start", help="开始日期 YYYY-MM-DD（覆盖--days）")
     parser.add_argument("--end", help="结束日期 YYYY-MM-DD（覆盖--days）")
     args = parser.parse_args()

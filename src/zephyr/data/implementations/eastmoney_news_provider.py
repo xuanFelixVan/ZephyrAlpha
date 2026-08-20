@@ -24,6 +24,7 @@ HTTP直连东方财富7x24快讯API，继承IngestProviderBase。
 数据转换目标表 c3_fundamental.news_data：
     pub_date, title, link, summary, source
 """
+
 from __future__ import annotations
 
 import datetime
@@ -78,6 +79,7 @@ class EastmoneyNewsProvider(IngestProviderBase):
     def connect(self) -> None:
         """建立连接：验证 requests 可导入。"""
         import requests  # noqa: F401
+
         self._connected = True
         self._log.info("东方财富新闻 已连接（匿名访问）")
 
@@ -85,6 +87,7 @@ class EastmoneyNewsProvider(IngestProviderBase):
         """探活：尝试 import requests。"""
         try:
             import requests  # noqa: F401
+
             return True
         except ImportError as e:
             self._log.warning(f"东方财富新闻探活失败（requests 未安装）: {e}")
@@ -97,25 +100,24 @@ class EastmoneyNewsProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 payload.extra["capability"] 路由到具体获取方法。"""
-        cap = (payload.extra or {}).get("capability")
-        if cap == "news_data":
+        capability = (payload.extra or {}).get("capability")  # 变量名对齐 capability_validator 路由分析约定
+        if capability == "news_data":
             yield from self._fetch_news_data(payload, policy)
         else:
             yield FetchResult(
-                table=payload.table, columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
-                error=f"unsupported capability: {cap}",
+                table=payload.table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"unsupported capability: {capability}",
             )
 
     # ---- 东方财富7x24快讯 ----
 
-    def _fetch_news_data(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_news_data(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取东方财富7x24快讯，写入 c3_fundamental.news_data。
 
         HTTP直连 https://np-listapi.eastmoney.com/comm/web/getNewsByColumns。
@@ -138,8 +140,12 @@ class EastmoneyNewsProvider(IngestProviderBase):
                 "req_trace": str(int(time.time() * 1000)),
             }
             resp = self._call_with_policy(
-                self._http_get, policy,
-                _EM_NEWS_URL, params=params, headers=_EM_HEADERS, timeout=15,
+                self._http_get,
+                policy,
+                _EM_NEWS_URL,
+                params=params,
+                headers=_EM_HEADERS,
+                timeout=15,
             )
             data = resp.json()
             news_list = (data.get("data") or {}).get("list") or []
@@ -147,16 +153,22 @@ class EastmoneyNewsProvider(IngestProviderBase):
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"东方财富新闻获取失败: {e}")
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=time.time() - t0, error=str(e),
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.time() - t0,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
+                error=str(e),
             )
             return
 
         self._log.info(f"东方财富新闻: {len(rows)} 行")
         yield FetchResult(
-            table=table, columns=columns, rows=rows,
+            table=table,
+            columns=columns,
+            rows=rows,
             last_key=datetime.date.today().isoformat(),
-            elapsed_sec=time.time() - t0,
+            elapsed_sec=time.time() - t0,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
         )
 
     @staticmethod
@@ -168,32 +180,20 @@ class EastmoneyNewsProvider(IngestProviderBase):
         """
         rows: list[tuple] = []
         for item in news_list:
-            title = str(
-                item.get("title")
-                or item.get("Art_Title")
-                or item.get("Title")
-                or ""
-            )
+            title = str(item.get("title") or item.get("Art_Title") or item.get("Title") or "")
             pub_date = str(
-                item.get("showTime")
-                or item.get("Art_ShowTime")
-                or item.get("ShowTime")
-                or item.get("ptime")
-                or ""
+                item.get("showTime") or item.get("Art_ShowTime") or item.get("ShowTime") or item.get("ptime") or ""
             )
-            link = str(
-                item.get("uniqueUrl")
-                or item.get("url")
-                or item.get("Art_UniqueUrl")
-                or ""
+            link = str(item.get("uniqueUrl") or item.get("url") or item.get("Art_UniqueUrl") or "")
+            summary = str(item.get("summary") or item.get("digest") or item.get("Art_Summary") or "")
+            rows.append(
+                build_news_row(
+                    pub_date,
+                    title,
+                    link,
+                    summary,
+                    "eastmoney",
+                    "eastmoney_news",
+                )
             )
-            summary = str(
-                item.get("summary")
-                or item.get("digest")
-                or item.get("Art_Summary")
-                or ""
-            )
-            rows.append(build_news_row(
-                pub_date, title, link, summary, "eastmoney", "eastmoney_news",
-            ))
         return rows

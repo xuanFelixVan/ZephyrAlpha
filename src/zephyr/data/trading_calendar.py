@@ -25,6 +25,7 @@
 回退策略：exchange_calendars 未安装时降级为 weekday 判断（周一~周五），
 保证 scheduler 不因依赖缺失而崩溃。
 """
+
 from __future__ import annotations
 
 import datetime
@@ -49,13 +50,12 @@ def _get_xshg_calendar():
         return _xshg_calendar
     try:
         import exchange_calendars as xcals
+
         _xshg_calendar = xcals.get_calendar("XSHG")
         log.info("XSHG 交易日历已加载（exchange_calendars）")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _xshg_load_failed = True
-        log.warning(
-            "exchange_calendars 不可用，交易日历降级为 weekday 判断: %s", e
-        )
+        log.warning("exchange_calendars 不可用，交易日历降级为 weekday 判断: %s", e)
     return _xshg_calendar
 
 
@@ -87,14 +87,16 @@ def is_trading_day(date: datetime.date | None = None) -> bool:
 
 # 需要交易日历守卫的调度时段（盘中/盘后/夜间/巡检）
 # 事件驱动(event_driven)/周末校准(weekend_calibration)/月初静态(monthly_static)/周末补下载(weekend_backfill)不需要守卫
-TRADING_DAY_GUARDED_SCHEDULES = frozenset({
-    "intraday_realtime",    # L1 盘中实时层
-    "intraday_minute",      # L2 盘中分钟K线层
-    "daily_kline",          # L4 盘后日K线层
-    "daily_capital",        # L5 盘后资金面层
-    "daily_event",          # L6 盘后事件层
-    "nightly_financial",    # L7 夜间财务层
-    "daily_backfill",       # L10.5 每日盘后补下载层（非交易日无当日数据可补）
-    "integrity_check",      # L11 每日完整性巡检层
-    "auction_highfreq",     # L0 集合竞价高频层
-})
+TRADING_DAY_GUARDED_SCHEDULES = frozenset(
+    {
+        "intraday_realtime",  # L1 盘中实时层
+        "intraday_minute",  # L2 盘中分钟K线层
+        "daily_kline",  # L4 盘后日K线层
+        "daily_capital",  # L5 盘后资金面层
+        "daily_event",  # L6 盘后事件层
+        "nightly_financial",  # L7 夜间财务层
+        "daily_backfill",  # L10.5 每日盘后补下载层（非交易日无当日数据可补）
+        "integrity_check",  # L11 每日完整性巡检层
+        "auction_highfreq",  # L0 集合竞价高频层
+    }
+)

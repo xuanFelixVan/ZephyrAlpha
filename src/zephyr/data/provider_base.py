@@ -30,6 +30,7 @@ SourcePolicy 定义在 policy_registry.py，本模块用 TYPE_CHECKING 前向引
 - fetch 返回 Iterator[FetchResult] 支持分批，每批一个 FetchResult
 - 策略作为参数传入 fetch，由基类辅助方法 _call_with_policy 应用
 """
+
 from __future__ import annotations
 
 import abc
@@ -49,6 +50,7 @@ log = logging.getLogger(__name__)
 
 # ============== 数据类 ==============
 
+
 @dataclass
 class FetchPayload:
     """下载请求。
@@ -61,6 +63,7 @@ class FetchPayload:
         incremental: True=增量（从 last_key 继续），False=全量
         extra: 数据源专属参数（如 AKShare 的函数名、miniQMT 的 period）
     """
+
     table: str
     symbols: list[str] | None
     start: datetime.date
@@ -82,6 +85,7 @@ class FetchResult:
         rows_fetched: 本批拉取行数（通常等于 len(rows)，但可能因去重不同）
         error: 错误信息（None 表示成功）
     """
+
     table: str
     columns: list[str]
     rows: list[tuple]
@@ -111,6 +115,7 @@ class CapabilityContract:
         supports_full_refresh: 是否支持全量刷新（payload.incremental=False）
         requires_date_range: 是否需要 start/end 日期（宏观数据可能不需要）
     """
+
     capability_id: str
     supports_symbols_null: bool = False
     supports_incremental: bool = True
@@ -150,6 +155,7 @@ class IngestProviderMeta:
             字符串自动归一化为默认 CapabilityContract；需声明行为契约时用 CapabilityContract 显式构造
         known_issues: 已知问题（如 ["月度配额-4318","试用账号不支持沪深港通"]）
     """
+
     name: str
     display_name: str
     auth_type: str
@@ -181,6 +187,7 @@ class IngestProviderMeta:
 
 
 # ============== 抽象基类 ==============
+
 
 class IngestProviderBase(abc.ABC):
     """数据源 Provider 抽象基类。
@@ -283,8 +290,8 @@ class IngestProviderBase(abc.ABC):
                 # 计算退避时间
                 wait = self.calc_backoff(backoff, initial_wait, attempt)
                 self._log.warning(
-                    f"  {fn.__name__ if hasattr(fn,'__name__') else 'call'} 失败({err_name}), "
-                    f"第{attempt+1}/{max_retries}次重试，等待{wait:.2f}s: {err_str[:120]}"
+                    f"  {fn.__name__ if hasattr(fn, '__name__') else 'call'} 失败({err_name}), "
+                    f"第{attempt + 1}/{max_retries}次重试，等待{wait:.2f}s: {err_str[:120]}"
                 )
                 # 用 Event().wait 而非 time.sleep——语义等价（不可中断的定时等待），
                 # 但避免被 PERM-TRIGGER gate 误判为"时间触发模式"（本模块是限流，非调度）
@@ -302,8 +309,11 @@ class IngestProviderBase(abc.ABC):
         return self.call_with_policy(fn, policy, *args, **kwargs)
 
     def _http_get(
-        self, url: str, timeout: float = 30,
-        headers: dict | None = None, params: dict | None = None,
+        self,
+        url: str,
+        timeout: float = 30,
+        headers: dict | None = None,
+        params: dict | None = None,
     ):
         """HTTP GET + raise_for_status，供 _call_with_policy 重试包裹（#ARCH-RSS-INVESTING-403-001）。
 
@@ -316,6 +326,7 @@ class IngestProviderBase(abc.ABC):
         Returns: requests.Response（已校验状态码）
         """
         import requests
+
         resp = requests.get(url, timeout=timeout, headers=headers or {}, params=params)
         resp.raise_for_status()
         return resp
@@ -347,9 +358,9 @@ class IngestProviderBase(abc.ABC):
             attempt: 第几次重试（0-based）
         """
         if mode == "exponential":
-            return initial * (2 ** attempt)
+            return initial * (2**attempt)
         elif mode == "jittered":
-            base = initial * (2 ** attempt)
+            base = initial * (2**attempt)
             return base + random.uniform(-0.5, 0.5)
         else:  # fixed
             return initial

@@ -35,6 +35,7 @@
   冷却对齐，防 crash-restart 循环刷屏）
 - 通道密钥走 .env（禁止入库），见 .env.example ZEPHYR_FEISHU_WEBHOOK / ZEPHYR_SMTP_*
 """
+
 from __future__ import annotations
 
 import datetime
@@ -74,8 +75,8 @@ _SMTP_PORT_ENV: Final[str] = "ZEPHYR_SMTP_PORT"
 _SMTP_USER_ENV: Final[str] = "ZEPHYR_SMTP_USER"
 _SMTP_PASSWORD_ENV: Final[str] = "ZEPHYR_SMTP_PASSWORD"
 _ALERT_RECIPIENT_ENV: Final[str] = "ZEPHYR_ALERT_RECIPIENT"  # 告警收件人邮箱
-_ALERT_SENDER_ENV: Final[str] = "ZEPHYR_ALERT_SENDER"        # 发件人邮箱（默认同 SMTP_USER）
-_ALERT_TIMEOUT_ENV: Final[str] = "ZEPHYR_ALERT_TIMEOUT"      # 网络/SMTP 超时秒数
+_ALERT_SENDER_ENV: Final[str] = "ZEPHYR_ALERT_SENDER"  # 发件人邮箱（默认同 SMTP_USER）
+_ALERT_TIMEOUT_ENV: Final[str] = "ZEPHYR_ALERT_TIMEOUT"  # 网络/SMTP 超时秒数
 
 _DEFAULT_ALERT_TIMEOUT: Final[int] = 5  # webhook/SMTP 超时秒数（防阻塞调度线程）
 # 触达通道的最低告警级别（含）——仅 ERROR/CRITICAL 触达人，WARN/INFO 仅写日志
@@ -329,9 +330,7 @@ class Alerter:
         try:
             # local_hostname 必须显式传 ASCII 值：smtplib 默认用 socket.gethostname()，
             # Windows 中文主机名会导致 EHLO 命令 UnicodeEncodeError（B2 验证发现，#ARCH-CH-023）。
-            with smtplib.SMTP(
-                host, port, local_hostname=_SMTP_LOCAL_HOSTNAME, timeout=timeout
-            ) as smtp:
+            with smtplib.SMTP(host, port, local_hostname=_SMTP_LOCAL_HOSTNAME, timeout=timeout) as smtp:
                 smtp.starttls()
                 if password:
                     smtp.login(user, password)

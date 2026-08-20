@@ -42,6 +42,7 @@
 依据: 17_special_trading_days_data_assets §2.4
 Version: 0.1.0
 """
+
 from __future__ import annotations
 
 import datetime
@@ -69,7 +70,8 @@ _LOOKBACK_DAYS: Final[int] = 10  # 前向/后向查找上限（覆盖春节/国�
 
 
 def _prev_trading_day_on_or_before(
-    d: datetime.date, trading_days_set: set[datetime.date],
+    d: datetime.date,
+    trading_days_set: set[datetime.date],
 ) -> datetime.date | None:
     """d 当日或之前的第一个交易日（d 非交易日时前移，最多查找 10 天）。"""
     for i in range(_LOOKBACK_DAYS):
@@ -115,12 +117,17 @@ def derive_earnings_deadline(
     for year in years:
         for month, day in EARNINGS_DEADLINE_DATES:
             deadline = _prev_trading_day_on_or_before(
-                datetime.date(year, month, day), trading_days_set,
+                datetime.date(year, month, day),
+                trading_days_set,
             )
             if deadline and range_start <= deadline <= range_end:
                 rows.append(
-                    (deadline, "earnings_deadline",
-                     f"{year}-{month:02d}-{day:02d} 财报披露截止窗口（遇非交易日前移）", "internal")
+                    (
+                        deadline,
+                        "earnings_deadline",
+                        f"{year}-{month:02d}-{day:02d} 财报披露截止窗口（遇非交易日前移）",
+                        "internal",
+                    )
                 )
     return rows
 
@@ -135,9 +142,7 @@ def derive_mlf_operation(
     for year, month in by_month.keys():
         mlf_day = _weekday_on_or_after(year, month, 15)
         if range_start <= mlf_day <= range_end:
-            rows.append(
-                (mlf_day, "mlf_operation", f"{year}-{month:02d} MLF操作日（每月15日顺延）", "internal")
-            )
+            rows.append((mlf_day, "mlf_operation", f"{year}-{month:02d} MLF操作日（每月15日顺延）", "internal"))
     return rows
 
 
@@ -158,8 +163,12 @@ def derive_bond_futures_delivery(
         delivery_day = _next_trading_day_on_or_after(second_friday, trading_days_set)
         if delivery_day and range_start <= delivery_day <= range_end:
             rows.append(
-                (delivery_day, "bond_futures_delivery",
-                 f"{year}-{month:02d} 国债期货交割日（季月第2个周五）", "internal")
+                (
+                    delivery_day,
+                    "bond_futures_delivery",
+                    f"{year}-{month:02d} 国债期货交割日（季月第2个周五）",
+                    "internal",
+                )
             )
     return rows
 
@@ -175,7 +184,11 @@ def derive_a50_futures_delivery(
         delivery_day = _last_business_day_of_month(year, month, 2)
         if delivery_day and range_start <= delivery_day <= range_end:
             rows.append(
-                (delivery_day, "a50_futures_delivery",
-                 f"{year}-{month:02d} 富时A50期货交割日（月末倒数第2个工作日）", "internal")
+                (
+                    delivery_day,
+                    "a50_futures_delivery",
+                    f"{year}-{month:02d} 富时A50期货交割日（月末倒数第2个工作日）",
+                    "internal",
+                )
             )
     return rows

@@ -52,7 +52,6 @@ class FallbackStalenessGate:
         """写入：file（Stage 4 公共化）。"""
         self._file = value
 
-
     def check(self) -> StalenessReport:
         exists = self._file.exists()
         sha = hashlib.sha256(self._file.read_bytes()).hexdigest() if exists else ""

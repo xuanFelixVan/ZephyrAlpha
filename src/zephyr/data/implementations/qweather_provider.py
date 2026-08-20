@@ -73,13 +73,26 @@ _TBL_WEATHER_DATA = get_registry().table("market_weather_data")
 
 # weather_data 表列顺序（与 ClickHouse DDL 对齐）
 _WEATHER_COLUMNS: Final = [
-    "record_date", "location_id", "location_name",
-    "forecast_type", "forecast_date",
-    "temp", "temp_max", "temp_min", "feels_like",
-    "text", "icon_code",
-    "humidity", "precip", "pressure", "visibility",
-    "wind_dir", "wind_scale", "wind_speed",
-    "cloud", "dew_point",
+    "record_date",
+    "location_id",
+    "location_name",
+    "forecast_type",
+    "forecast_date",
+    "temp",
+    "temp_max",
+    "temp_min",
+    "feels_like",
+    "text",
+    "icon_code",
+    "humidity",
+    "precip",
+    "pressure",
+    "visibility",
+    "wind_dir",
+    "wind_scale",
+    "wind_speed",
+    "cloud",
+    "dew_point",
 ]
 
 # 和风天气 API 基址前缀（host 从环境变量读取，2026 年起公共地址已弃用）
@@ -205,14 +218,10 @@ class QWeatherProvider(IngestProviderBase):
             log.info("和风天气已配置 API key + API Host (%s)", self._api_host)
         else:
             if not self._qweather_key:
-                log.warning(
-                    "和风天气未配置 API key（免费注册 https://dev.qweather.com）"
-                )
+                log.warning("和风天气未配置 API key（免费注册 https://dev.qweather.com）")
             if not self._api_host:
                 log.warning(
-                    "和风天气未配置 API Host"
-                    "（控制台-设置 中查看专属 API Host，"
-                    "格式如 abc1234xyz.def.qweatherapi.com）"
+                    "和风天气未配置 API Host（控制台-设置 中查看专属 API Host，格式如 abc1234xyz.def.qweatherapi.com）"
                 )
         self._connected = True
 
@@ -225,24 +234,21 @@ class QWeatherProvider(IngestProviderBase):
         if not self._connected:
             return False
         if not self._qweather_key:
-            log.warning(
-                "和风天气探活失败：未配置 QWEATHER_API_KEY"
-                "（免费注册 https://dev.qweather.com）"
-            )
+            log.warning("和风天气探活失败：未配置 QWEATHER_API_KEY（免费注册 https://dev.qweather.com）")
             return False
         if not self._api_host:
-            log.warning(
-                "和风天气探活失败：未配置 QWEATHER_API_HOST"
-                "（控制台-设置 中查看专属 API Host）"
-            )
+            log.warning("和风天气探活失败：未配置 QWEATHER_API_HOST（控制台-设置 中查看专属 API Host）")
             return False
         try:
             # 用北京实时天气验证 key 有效性 + 网络连通
             url = f"https://{self._api_host}{_QWEATHER_API_PATH}/weather/now"
             headers = {"X-QW-Api-Key": self._qweather_key}
             resp = requests.get(
-                url, params={"location": "116.41,39.92"},
-                headers=headers, timeout=10, proxies=self._proxies,
+                url,
+                params={"location": "116.41,39.92"},
+                headers=headers,
+                timeout=10,
+                proxies=self._proxies,
             )
             if resp.status_code == 200:
                 data = resp.json()
@@ -263,9 +269,7 @@ class QWeatherProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 payload.extra["capability"] 路由到具体获取方法。"""
         if not self._connected:
             yield FetchResult(
@@ -298,9 +302,7 @@ class QWeatherProvider(IngestProviderBase):
 
     # ---- 实时天气 ----
 
-    def _fetch_now(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_now(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取 40 个城市的实时天气，每城市一行。"""
         if not self._qweather_key or not self._api_host:
             yield FetchResult(
@@ -323,25 +325,30 @@ class QWeatherProvider(IngestProviderBase):
             try:
                 data = self._call_api("/weather/now", location, policy)
                 now_data = data.get("now", {})
-                rows.append((
-                    iso_today, location, city_name,
-                    "now", iso_today,
-                    _safe_float(now_data.get("temp")),
-                    None,  # temp_max — 实时天气无最高温
-                    None,  # temp_min — 实时天气无最低温
-                    _safe_float(now_data.get("feelsLike")),
-                    now_data.get("text", ""),
-                    now_data.get("icon", ""),
-                    _safe_float(now_data.get("humidity")),
-                    _safe_float(now_data.get("precip")),
-                    _safe_float(now_data.get("pressure")),
-                    _safe_float(now_data.get("vis")),
-                    now_data.get("windDir", ""),
-                    now_data.get("windScale", ""),
-                    _safe_float(now_data.get("windSpeed")),
-                    now_data.get("cloud", ""),
-                    _safe_float(now_data.get("dew")),
-                ))
+                rows.append(
+                    (
+                        iso_today,
+                        location,
+                        city_name,
+                        "now",
+                        iso_today,
+                        _safe_float(now_data.get("temp")),
+                        None,  # temp_max — 实时天气无最高温
+                        None,  # temp_min — 实时天气无最低温
+                        _safe_float(now_data.get("feelsLike")),
+                        now_data.get("text", ""),
+                        now_data.get("icon", ""),
+                        _safe_float(now_data.get("humidity")),
+                        _safe_float(now_data.get("precip")),
+                        _safe_float(now_data.get("pressure")),
+                        _safe_float(now_data.get("vis")),
+                        now_data.get("windDir", ""),
+                        now_data.get("windScale", ""),
+                        _safe_float(now_data.get("windSpeed")),
+                        now_data.get("cloud", ""),
+                        _safe_float(now_data.get("dew")),
+                    )
+                )
                 self._log.info("和风天气 now %s: %s°C %s", city_name, now_data.get("temp"), now_data.get("text"))
             except Exception as e:  # noqa: BLE001 — 5.135治标
                 self._log.warning(f"和风天气 now {city_name} 获取失败: {e}")
@@ -357,9 +364,7 @@ class QWeatherProvider(IngestProviderBase):
 
     # ---- 7天预报 ----
 
-    def _fetch_forecast(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_forecast(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取 40 个城市的 7 天预报，每城市每天一行。"""
         if not self._qweather_key or not self._api_host:
             yield FetchResult(
@@ -386,25 +391,30 @@ class QWeatherProvider(IngestProviderBase):
                     fx_date = d.get("fxDate", "")
                     if not fx_date:
                         continue
-                    rows.append((
-                        iso_today, location, city_name,
-                        "forecast", fx_date,
-                        None,  # temp — 预报用 temp_max/temp_min
-                        _safe_float(d.get("tempMax")),
-                        _safe_float(d.get("tempMin")),
-                        None,  # feels_like — 预报无体感温度
-                        d.get("textDay", ""),
-                        d.get("iconDay", ""),
-                        _safe_float(d.get("humidity")),
-                        _safe_float(d.get("precip")),
-                        _safe_float(d.get("pressure")),
-                        _safe_float(d.get("vis")),
-                        d.get("windDirDay", ""),
-                        d.get("windScaleDay", ""),
-                        _safe_float(d.get("windSpeedDay")),
-                        d.get("cloud", ""),
-                        _safe_float(d.get("dew")),
-                    ))
+                    rows.append(
+                        (
+                            iso_today,
+                            location,
+                            city_name,
+                            "forecast",
+                            fx_date,
+                            None,  # temp — 预报用 temp_max/temp_min
+                            _safe_float(d.get("tempMax")),
+                            _safe_float(d.get("tempMin")),
+                            None,  # feels_like — 预报无体感温度
+                            d.get("textDay", ""),
+                            d.get("iconDay", ""),
+                            _safe_float(d.get("humidity")),
+                            _safe_float(d.get("precip")),
+                            _safe_float(d.get("pressure")),
+                            _safe_float(d.get("vis")),
+                            d.get("windDirDay", ""),
+                            d.get("windScaleDay", ""),
+                            _safe_float(d.get("windSpeedDay")),
+                            d.get("cloud", ""),
+                            _safe_float(d.get("dew")),
+                        )
+                    )
                 self._log.info("和风天气 7d %s: %d 天预报", city_name, len(daily_list))
             except Exception as e:  # noqa: BLE001 — 5.135治标
                 self._log.warning(f"和风天气 7d {city_name} 获取失败: {e}")
@@ -454,8 +464,5 @@ class QWeatherProvider(IngestProviderBase):
         data = resp.json()
         code = data.get("code")
         if code != "200":
-            raise RuntimeError(
-                f"和风天气 API 错误: code={code}, endpoint={endpoint}, "
-                f"location={location}"
-            )
+            raise RuntimeError(f"和风天气 API 错误: code={code}, endpoint={endpoint}, location={location}")  # noqa: MSG-EXPOSURE — endpoint=和风公开 API 路径段、location=城市名，均非凭据
         return data

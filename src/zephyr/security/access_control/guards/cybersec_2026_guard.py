@@ -72,24 +72,30 @@ class Cybersec2026Guard:
 
         # LMOPS 后门 — 模型权重篡改 / 对抗微调
         if context.get("model_weights_tampered") or context.get("adversarial_fine_tune"):
-            threats.append((
-                "lmops_backdoor",
-                "model weights tampered or adversarial fine-tune detected",
-            ))
+            threats.append(
+                (
+                    "lmops_backdoor",
+                    "model weights tampered or adversarial fine-tune detected",
+                )
+            )
 
         # 多模态越狱 — 图像嵌入提示
         if context.get("image_embedded_prompt"):
-            threats.append((
-                "multi_modal_jailbreak",
-                "image embedded prompt detected",
-            ))
+            threats.append(
+                (
+                    "multi_modal_jailbreak",
+                    "image embedded prompt detected",
+                )
+            )
 
         # 合成身份 — 带外身份
         if context.get("identity_out_of_band"):
-            threats.append((
-                "synthetic_identity",
-                "out-of-band identity detected",
-            ))
+            threats.append(
+                (
+                    "synthetic_identity",
+                    "out-of-band identity detected",
+                )
+            )
 
         # Agent 供应链 — 未验证模型 / 不可信包 / 未签名 agent 包 / 不可信 hub
         if (
@@ -98,17 +104,21 @@ class Cybersec2026Guard:
             or context.get("unsigned_agent_package")
             or context.get("untrusted_hub")
         ):
-            threats.append((
-                "agent_supply_chain",
-                "unverified/untrusted/unsigned component in agent supply chain",
-            ))
+            threats.append(
+                (
+                    "agent_supply_chain",
+                    "unverified/untrusted/unsigned component in agent supply chain",
+                )
+            )
 
         # 隐藏训练触发器
         if context.get("hidden_training_trigger"):
-            threats.append((
-                "hidden_training_trigger",
-                "hidden training trigger detected",
-            ))
+            threats.append(
+                (
+                    "hidden_training_trigger",
+                    "hidden training trigger detected",
+                )
+            )
 
         if not threats:
             return CyberSecVerdict(

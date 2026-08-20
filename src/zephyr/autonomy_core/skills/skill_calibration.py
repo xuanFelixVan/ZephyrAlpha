@@ -53,18 +53,17 @@ class SkillCalibration:
     @staticmethod
     def trend_direction(drifts: list[float]) -> str:
         if len(drifts) < 3:
-            return 'insufficient_data'
+            return "insufficient_data"
         recent = drifts[-3:]
         if all((d > 0 for d in recent)):
-            return 'increasing_overconfidence'
+            return "increasing_overconfidence"
         if all((d < 0 for d in recent)):
-            return 'increasing_underconfidence'
+            return "increasing_underconfidence"
         if recent[-1] > recent[-2] > recent[-3]:
-            return 'increasing_overconfidence'
+            return "increasing_overconfidence"
         if recent[-1] < recent[-2] < recent[-3]:
-            return 'increasing_underconfidence'
-        return 'stable'
-
+            return "increasing_underconfidence"
+        return "stable"
 
     _history: dict[str, list[CalibrationEntry]] = {}
     _MAX_HISTORY = 50

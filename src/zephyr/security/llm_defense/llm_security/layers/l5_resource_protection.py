@@ -39,9 +39,7 @@ class ResourceProtectionLayer:
         self._max_cost_cents = max_cost_cents
         self._token_usage: dict[str, int] = defaultdict(int)
         self._cost_usage: dict[str, float] = defaultdict(float)
-        self._rate_limiter = SlidingWindowRateLimiter(
-            max_requests=rate_max, window_seconds=rate_window_seconds
-        )
+        self._rate_limiter = SlidingWindowRateLimiter(max_requests=rate_max, window_seconds=rate_window_seconds)
         self._cost_asymmetry = CostAsymmetryDefender()
 
     def check_token_budget(self, session_id: str, tokens: int) -> tuple[bool, str]:

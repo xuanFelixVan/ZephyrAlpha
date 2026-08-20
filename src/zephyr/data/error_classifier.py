@@ -54,7 +54,7 @@ _UNRECOVERABLE_PATTERNS = [
     r"license",
     r"许可",
     # Phase 3-B: akshare API 漂移（库版本升级导致接口签名变化，重试无意义）
-    r"has no attribute",    # AttributeError: module 'akshare' has no attribute 'xxx'
+    r"has no attribute",  # AttributeError: module 'akshare' has no attribute 'xxx'
     r"AttributeError",
     r"unexpected keyword",  # akshare 函数签名变更
     r"takes \d+ positional",  # akshare 参数数量变更

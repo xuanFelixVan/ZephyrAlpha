@@ -69,7 +69,6 @@ class SkillShadowDeploy:
         """写入：shadow_runs（Stage 4 公共化）。"""
         self._shadow_runs = value
 
-
     def shadow_run(
         self,
         skill_id: str,

@@ -57,7 +57,6 @@ class IDEWatcher:
         """写入：last_mtimes（Stage 4 公共化）。"""
         self._last_mtimes = value
 
-
     def scan(self) -> dict[str, Any]:
         changes = []
         for root, dirs, files in os.walk(str(self.skills_dir)):

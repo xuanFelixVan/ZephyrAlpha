@@ -61,10 +61,12 @@ class DegradationReason(str, Enum):
     INPUT_GUARD_FAILURE = "input_guard_failure"
 
 
-_BLOCKED_LEVELS = frozenset({  # noqa: gate-vocab  无对应词表真源（无降级级别词表），取值为同文件 DegradationLevel 枚举成员（枚举即真源），非字符串字面量
-    DegradationLevel.SYSTEM_UNAVAILABLE,
-    DegradationLevel.PERMISSION_BLOCKED,
-})
+_BLOCKED_LEVELS = frozenset(
+    {  # noqa: gate-vocab  无对应词表真源（无降级级别词表），取值为同文件 DegradationLevel 枚举成员（枚举即真源），非字符串字面量
+        DegradationLevel.SYSTEM_UNAVAILABLE,
+        DegradationLevel.PERMISSION_BLOCKED,
+    }
+)
 
 
 @dataclass
@@ -88,10 +90,7 @@ class DegradationState:
     triggered_by_agent: str | None = None
 
     def __repr__(self) -> str:
-        return (
-            f"DegradationState(level={self.level.value}, "
-            f"reason={self.reason.value}, message={self.message!r})"
-        )
+        return f"DegradationState(level={self.level.value}, reason={self.reason.value}, message={self.message!r})"
 
 
 @dataclass

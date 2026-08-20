@@ -290,11 +290,9 @@ class SessionRegistry:
         """公共接口：save（Stage 4 公共化）。"""
         return self._save(data)
 
-
     def load(self) -> dict[str, dict]:
         """公共接口：load（Stage 4 公共化）。"""
         return self._load()
-
 
     def register(
         self,
@@ -329,12 +327,17 @@ class SessionRegistry:
             self._save(data)
             logger.info(
                 "SessionRegistry: registered session=%s pid=%d breaking_change=%s deps=%s",
-                session_id, info.pid, is_breaking_change, info.depends_on_sessions,
+                session_id,
+                info.pid,
+                is_breaking_change,
+                info.depends_on_sessions,
             )
             return info
 
     def register_dependency(
-        self, session_id: str, depends_on_session_id: str,
+        self,
+        session_id: str,
+        depends_on_session_id: str,
     ) -> bool:
         """为本 session 动态登记对另一 session 的依赖（#ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2 / TRAE-072）。
 
@@ -357,8 +360,12 @@ class SessionRegistry:
                     session_id,
                 )
                 data[session_id] = SessionInfo(
-                    session_id=session_id, pid=os.getpid(), start_time=now,
-                    held_files=[], last_heartbeat=now, last_activity=now,
+                    session_id=session_id,
+                    pid=os.getpid(),
+                    start_time=now,
+                    held_files=[],
+                    last_heartbeat=now,
+                    last_activity=now,
                 ).to_dict()
                 self._save(data)
 
@@ -371,12 +378,15 @@ class SessionRegistry:
             self._save(data)
             logger.info(
                 "SessionRegistry: registered dependency session=%s -> %s",
-                session_id, depends_on_session_id,
+                session_id,
+                depends_on_session_id,
             )
             return True
 
     def clear_dependency(
-        self, session_id: str, depends_on_session_id: str,
+        self,
+        session_id: str,
+        depends_on_session_id: str,
     ) -> bool:
         """清除本 session 对另一 session 的依赖登记（#ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2 / TRAE-072）。
 
@@ -396,7 +406,8 @@ class SessionRegistry:
                 self._save(data)
                 logger.info(
                     "SessionRegistry: cleared dependency session=%s -> %s",
-                    session_id, depends_on_session_id,
+                    session_id,
+                    depends_on_session_id,
                 )
             return True
 
@@ -471,7 +482,8 @@ class SessionRegistry:
                     self._save(data)
                     logger.info(
                         "SessionRegistry: reaped %d dead/expired sessions (S3-A PID+TTL, grace %ds)",
-                        reaped, _REAP_GRACE_SECONDS,
+                        reaped,
+                        _REAP_GRACE_SECONDS,
                     )
             return active
 
@@ -543,8 +555,12 @@ class SessionRegistry:
                     session_id,
                 )
                 data[session_id] = SessionInfo(
-                    session_id=session_id, pid=os.getpid(), start_time=now,
-                    held_files=[], last_heartbeat=now, last_activity=now,
+                    session_id=session_id,
+                    pid=os.getpid(),
+                    start_time=now,
+                    held_files=[],
+                    last_heartbeat=now,
+                    last_activity=now,
                 ).to_dict()
                 self._save(data)  # 立即持久化懒注册（即使后续 claim 冲突，session 仍可查询）
 
@@ -559,7 +575,9 @@ class SessionRegistry:
                 if norm in other_held_norm:
                     logger.warning(
                         "SessionRegistry: claim_file conflict — file=%s held by session=%s, requested by=%s",
-                        norm, sid, session_id,
+                        norm,
+                        sid,
+                        session_id,
                     )
                     return False
 
@@ -617,9 +635,7 @@ class SessionRegistry:
         session 假性过期反复自动重注册。per-pid tmp 从构造上消除共享名竞态；
         os.replace（MoveFileEx REPLACE_EXISTING）本身原子，JSON 不会撕裂。
         """
-        tmp_path = self._registry_path.with_name(
-            f"{self._registry_path.stem}.{os.getpid()}.tmp"
-        )
+        tmp_path = self._registry_path.with_name(f"{self._registry_path.stem}.{os.getpid()}.tmp")
         try:
             tmp_path.write_text(
                 json.dumps(data, indent=2, ensure_ascii=False),
@@ -720,9 +736,7 @@ class SessionConflictDetector:
         self._registry = registry
         self._manager = ConcurrencyManager()
 
-    def check_file_conflict(
-        self, file_path: str, session_id: str
-    ) -> ConflictType | None:
+    def check_file_conflict(self, file_path: str, session_id: str) -> ConflictType | None:
         """检测文件是否被其他 session 持有。
 
         Returns:
@@ -731,16 +745,15 @@ class SessionConflictDetector:
         holder = self._registry.find_session_by_file(file_path)
         if holder is not None and holder.session_id != session_id:
             logger.warning(
-                "SessionConflictDetector: file %s held by session=%s, "
-                "requested by session=%s",
-                file_path, holder.session_id, session_id,
+                "SessionConflictDetector: file %s held by session=%s, requested by session=%s",
+                file_path,
+                holder.session_id,
+                session_id,
             )
             return ConflictType.SAME_FILE
         return None
 
-    def acquire_files(
-        self, file_paths: list[str], session_id: str
-    ) -> list[str]:
+    def acquire_files(self, file_paths: list[str], session_id: str) -> list[str]:
         """为 session 预分配文件（冲突文件不会被分配，成功分配的写回 registry）。
 
         Returns:

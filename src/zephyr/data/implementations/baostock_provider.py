@@ -320,8 +320,15 @@ class BaostockProvider(IngestProviderBase):
         # _fetch_kline_daily_delisted 链）；adj_factor 由表 DEFAULT 1 填充（#196
         # 不复权口径）。CH 存量垃圾行清洗留 Owner 窗口，本修复只防新增。
         columns = [
-            "trade_date", "symbol", "open", "high", "low", "close",
-            "volume", "amount", "data_source",
+            "trade_date",
+            "symbol",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "amount",
+            "data_source",
         ]
         t0 = time.time()
         symbols = payload.symbols or ["sh.600000"]

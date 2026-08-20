@@ -32,7 +32,6 @@ import time
 
 
 class SkillIdempotency:
-
     """Skill 幂等性保证 —— 重复执行安全."""
 
     _execution_history: dict[str, tuple[str, float]] = {}

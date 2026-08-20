@@ -37,6 +37,7 @@
 - Violation: 校验违规（severity + message + task_id + capability_id）
 - validate_task_capability_contracts(tasks, providers): 校验入口
 """
+
 from __future__ import annotations
 
 import ast
@@ -61,6 +62,7 @@ class Violation:
         capability_id: capability 标识（如 "top10_shareholders"）
         rule_id: 规则标识（如 "CAP-NULL-SYMBOLS"）
     """
+
     severity: str  # "ERROR" or "WARN"
     message: str
     task_id: str
@@ -68,9 +70,7 @@ class Violation:
     rule_id: str
 
 
-def _get_meta_for_task(
-    task: dict, metas: dict[str, IngestProviderMeta]
-) -> IngestProviderMeta | None:
+def _get_meta_for_task(task: dict, metas: dict[str, IngestProviderMeta]) -> IngestProviderMeta | None:
     """根据 task.source 获取 Provider 的 IngestProviderMeta。"""
     source = task.get("source")
     if not source:
@@ -79,7 +79,9 @@ def _get_meta_for_task(
 
 
 def _check_capability_exists(
-    task: dict, meta: IngestProviderMeta, violations: list[Violation],
+    task: dict,
+    meta: IngestProviderMeta,
+    violations: list[Violation],
 ) -> bool:
     """规则1: task.capability 必须在 provider.meta 中（ERROR 阻断）。"""
     cap_id = task.get("capability")
@@ -87,20 +89,24 @@ def _check_capability_exists(
         return True  # 无 capability 字段的 task 不校验
     contract = meta.get_capability_contract(cap_id)
     if contract is None:
-        violations.append(Violation(
-            severity="ERROR",
-            message=f"task 声明 capability='{cap_id}' 但 provider '{meta.name}' 未声明此能力。"
-                    f"已声明: {meta.capabilities_as_strings()[:10]}...",
-            task_id=task.get("task_id") or task.get("id") or "?",
-            capability_id=cap_id,
-            rule_id="CAP-NOT-FOUND",
-        ))
+        violations.append(
+            Violation(
+                severity="ERROR",
+                message=f"task 声明 capability='{cap_id}' 但 provider '{meta.name}' 未声明此能力。"
+                f"已声明: {meta.capabilities_as_strings()[:10]}...",
+                task_id=task.get("task_id") or task.get("id") or "?",
+                capability_id=cap_id,
+                rule_id="CAP-NOT-FOUND",
+            )
+        )
         return False
     return True
 
 
 def _check_symbols_null(
-    task: dict, meta: IngestProviderMeta, violations: list[Violation],
+    task: dict,
+    meta: IngestProviderMeta,
+    violations: list[Violation],
 ) -> None:
     """规则2: task.symbols=null 时，capability 应声明 supports_symbols_null=True（WARN）。"""
     symbols = task.get("symbols")
@@ -113,20 +119,24 @@ def _check_symbols_null(
     if contract is None:
         return  # 规则1 已报 ERROR，不重复报
     if not contract.supports_symbols_null:
-        violations.append(Violation(
-            severity="WARN",
-            message=f"task '{task.get('task_id') or task.get('id') or '?'}' 声明 symbols=null 但 capability '{cap_id}' "
-                    f"未声明 supports_symbols_null=True。Provider 可能在 symbols=None 时直接报错。"
-                    f"如需支持全市场，请在 {meta.name}_provider.py 的 meta.capabilities 中用 "
-                    f"CapabilityContract('{cap_id}', supports_symbols_null=True) 显式声明。",
-            task_id=task.get("task_id") or task.get("id") or "?",
-            capability_id=cap_id,
-            rule_id="CAP-NULL-SYMBOLS",
-        ))
+        violations.append(
+            Violation(
+                severity="WARN",
+                message=f"task '{task.get('task_id') or task.get('id') or '?'}' 声明 symbols=null 但 capability '{cap_id}' "
+                f"未声明 supports_symbols_null=True。Provider 可能在 symbols=None 时直接报错。"
+                f"如需支持全市场，请在 {meta.name}_provider.py 的 meta.capabilities 中用 "
+                f"CapabilityContract('{cap_id}', supports_symbols_null=True) 显式声明。",
+                task_id=task.get("task_id") or task.get("id") or "?",
+                capability_id=cap_id,
+                rule_id="CAP-NULL-SYMBOLS",
+            )
+        )
 
 
 def _check_incremental(
-    task: dict, meta: IngestProviderMeta, violations: list[Violation],
+    task: dict,
+    meta: IngestProviderMeta,
+    violations: list[Violation],
 ) -> None:
     """规则3: task.incremental=true 时，capability 应声明 supports_incremental=True（WARN）。
 
@@ -148,14 +158,16 @@ def _check_incremental(
     if contract is None:
         return  # 规则1 已报 ERROR
     if not contract.supports_incremental:
-        violations.append(Violation(
-            severity="WARN",
-            message=f"task '{task.get('task_id') or task.get('id') or '?'}' 声明 incremental 但 capability '{cap_id}' "
-                    f"未声明 supports_incremental=True。",
-            task_id=task.get("task_id") or task.get("id") or "?",
-            capability_id=cap_id,
-            rule_id="CAP-INCREMENTAL",
-        ))
+        violations.append(
+            Violation(
+                severity="WARN",
+                message=f"task '{task.get('task_id') or task.get('id') or '?'}' 声明 incremental 但 capability '{cap_id}' "
+                f"未声明 supports_incremental=True。",
+                task_id=task.get("task_id") or task.get("id") or "?",
+                capability_id=cap_id,
+                rule_id="CAP-INCREMENTAL",
+            )
+        )
 
 
 def validate_task_capability_contracts(
@@ -214,7 +226,7 @@ def format_violations(violations: list[Violation]) -> str:
 
 # 路由能力集变量名约定：_*_CAPABILITIES 或 _*_ROUTES（如 _KLINE_CAPABILITIES / _DIRECT_ROUTES / _ROUTES）
 # 匹配 _ 开头 + 以 CAPABILITIES 或 ROUTES 结尾的变量名（覆盖 _ROUTES / _KLINE_CAPABILITIES 等所有变体）
-_ROUTE_VAR_PATTERN = re.compile(r'^_.*(CAPABILITIES|ROUTES)$')
+_ROUTE_VAR_PATTERN = re.compile(r"^_.*(CAPABILITIES|ROUTES)$")
 
 
 def _extract_str_constant(node: ast.AST, out: set[str]) -> None:
@@ -238,8 +250,9 @@ def _extract_route_keys_from_value(value: ast.expr, out: set[str]) -> None:
     elif isinstance(value, ast.Set):
         for elt in value.elts:
             _extract_str_constant(elt, out)
-    elif (isinstance(value, ast.Call) and isinstance(value.func, ast.Name)
-          and value.func.id == "frozenset" and value.args):
+    elif (
+        isinstance(value, ast.Call) and isinstance(value.func, ast.Name) and value.func.id == "frozenset" and value.args
+    ):
         # frozenset({...}) — akshare _AKSHARE_CAPABILITIES 模式
         if isinstance(value.args[0], ast.Set):
             for elt in value.args[0].elts:
@@ -321,8 +334,12 @@ def _extract_caps_from_meta_call(call: ast.Call, out: set[str]) -> None:
         for elt in kw.value.elts:
             if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
                 out.add(elt.value)
-            elif (isinstance(elt, ast.Call) and isinstance(elt.func, ast.Name)
-                  and elt.func.id == "CapabilityContract" and elt.args):
+            elif (
+                isinstance(elt, ast.Call)
+                and isinstance(elt.func, ast.Name)
+                and elt.func.id == "CapabilityContract"
+                and elt.args
+            ):
                 _extract_str_constant(elt.args[0], out)
 
 
@@ -346,8 +363,7 @@ def _meta_caps_from_tree(tree: ast.Module) -> set[str]:
                 _extract_caps_from_meta_call(node.value, meta_caps)
         elif isinstance(node, ast.Assign):
             has_meta_target = any(
-                (isinstance(t, ast.Attribute) and t.attr == "meta")
-                or (isinstance(t, ast.Name) and t.id == "meta")
+                (isinstance(t, ast.Attribute) and t.attr == "meta") or (isinstance(t, ast.Name) and t.id == "meta")
                 for t in node.targets
             )
             if not has_meta_target:
@@ -405,14 +421,10 @@ def check_route_meta_consistency_content(content: str) -> list[str]:
     violations: list[str] = []
     route_not_in_meta = route_caps - meta_caps
     if route_not_in_meta:
-        violations.append(
-            f"路由支持但 meta.capabilities 未声明: {sorted(route_not_in_meta)}"
-        )
+        violations.append(f"路由支持但 meta.capabilities 未声明: {sorted(route_not_in_meta)}")
     meta_not_in_route = meta_caps - route_caps
     if meta_not_in_route:
-        violations.append(
-            f"meta.capabilities 声明但路由不支持（死声明）: {sorted(meta_not_in_route)}"
-        )
+        violations.append(f"meta.capabilities 声明但路由不支持（死声明）: {sorted(meta_not_in_route)}")
     return violations
 
 

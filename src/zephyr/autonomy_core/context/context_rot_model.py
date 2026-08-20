@@ -102,9 +102,7 @@ class ContextRotModel:
         critical_attention: float = CRITICAL_ATTENTION_DEFAULT,
     ) -> None:
         if ref_tokens <= 0:
-            raise ValueError(
-                f"ref_tokens must be positive, got {ref_tokens}"
-            )
+            raise ValueError(f"ref_tokens must be positive, got {ref_tokens}")
         if k <= 0:
             raise ValueError(f"k must be positive, got {k}")
         # 阈值顺序约束：warn > low > critical

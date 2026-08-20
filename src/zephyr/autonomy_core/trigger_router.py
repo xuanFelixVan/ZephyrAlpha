@@ -79,11 +79,9 @@ class TriggerRouter:
         """公共接口：match_task_routing（Stage 4 公共化）。"""
         return self._match_task_routing(task_description)
 
-
     def match_domain(self, task_description) -> str | None:
         """公共接口：match_domain（Stage 4 公共化）。"""
         return self._match_domain(task_description)
-
 
     TASK_ROUTING: list[tuple[str, str, str]] = [
         (r"database|migration|sql|atm", "database-specialist", "implementer"),

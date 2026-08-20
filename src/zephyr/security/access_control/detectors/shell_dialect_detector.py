@@ -33,7 +33,7 @@ from dataclasses import dataclass, field
 _BASH_DANGEROUS_PATTERNS: list[str] = [
     r"rm\s+-rf?\s",
     r"2>&1",
-    r"\$\(",                                   # 命令替换
+    r"\$\(",  # 命令替换
     r"\beval\b",
     r"\bchmod\s+[0-7]{3,4}",
     r"\bchown\b",
@@ -97,9 +97,18 @@ class ShellDialectDetector:
         """识别命令方言."""
         # powershell 特征
         ps_markers = [
-            "IEX", "Invoke-", "New-Object", "-Command", "Set-",
-            "Get-", "Remove-Item", "Write-", "$env:", "$PS",
-            "DownloadString", "FromBase64String",
+            "IEX",
+            "Invoke-",
+            "New-Object",
+            "-Command",
+            "Set-",
+            "Get-",
+            "Remove-Item",
+            "Write-",
+            "$env:",
+            "$PS",
+            "DownloadString",
+            "FromBase64String",
         ]
         for marker in ps_markers:
             if marker in command:
@@ -107,8 +116,18 @@ class ShellDialectDetector:
 
         # bash/sh 特征
         bash_markers = [
-            "rm ", "2>&1", "$(", "`", "chmod", "chown", "mkfs",
-            "curl ", "wget ", "dd if=", "| sh", "/bin/",
+            "rm ",
+            "2>&1",
+            "$(",
+            "`",
+            "chmod",
+            "chown",
+            "mkfs",
+            "curl ",
+            "wget ",
+            "dd if=",
+            "| sh",
+            "/bin/",
         ]
         for marker in bash_markers:
             if marker in command:

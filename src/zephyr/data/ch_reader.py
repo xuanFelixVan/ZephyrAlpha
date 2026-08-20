@@ -33,6 +33,7 @@
 - count(table, where): 计数查询（自动注入 FINAL），返回 int
 - query_table(table, columns, where, ...): 便捷表查询
 """
+
 from __future__ import annotations
 
 import logging
@@ -44,10 +45,7 @@ log = logging.getLogger(__name__)
 
 # FROM 子句表名匹配模式
 # 支持: FROM table, FROM db.table, FROM `table`, FROM `db`.`table`
-_FROM_PATTERN = re.compile(
-    r'\bFROM\s+`?(?P<table>\w+(?:\.\w+)?)`?',
-    re.IGNORECASE
-)
+_FROM_PATTERN = re.compile(r"\bFROM\s+`?(?P<table>\w+(?:\.\w+)?)`?", re.IGNORECASE)
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
 _SQL_COUNT = "SELECT count() FROM {table}{final}"
@@ -73,7 +71,7 @@ def inject_final(sql: str) -> str:
         可能注入了 FINAL 的 SQL 语句
     """
     # 已有 FINAL 则跳过
-    if re.search(r'\bFINAL\b', sql, re.IGNORECASE):
+    if re.search(r"\bFINAL\b", sql, re.IGNORECASE):
         return sql
 
     def _replace(match: re.Match) -> str:

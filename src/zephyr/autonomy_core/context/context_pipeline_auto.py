@@ -116,9 +116,7 @@ class ContextPipelineAuto:
     def _on_task_started(self, event: DomainEvent) -> None:
         """事件启动：TASK_STARTED 时自动准备上下文。"""
         if self.fuse_on:
-            logger.warning(
-                "ContextPipelineAuto: fuse ON, skip TASK_STARTED for %s", event.task_id
-            )
+            logger.warning("ContextPipelineAuto: fuse ON, skip TASK_STARTED for %s", event.task_id)
             return
         logger.debug("ContextPipelineAuto: TASK_STARTED for %s", event.task_id)
 

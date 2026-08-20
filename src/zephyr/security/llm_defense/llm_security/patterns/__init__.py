@@ -18,6 +18,7 @@ __all__ = [
     "secrets",
 ]
 
+
 class PatternMatch:
     def __init__(self, pattern_type, value, confidence=1.0):
         self.pattern_type = pattern_type

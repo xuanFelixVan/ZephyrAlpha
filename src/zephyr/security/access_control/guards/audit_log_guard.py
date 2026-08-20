@@ -99,9 +99,7 @@ class AuditLogGuard:
 
 
 # 向后兼容：保留旧桩常量名（原为 None 桩）
-LOG_INJECTION_PATTERNS: Final[list[str]] = list(_CONTROL_CHAR_MAP.keys()) + list(
-    _LITERAL_ESCAPE_SEQUENCES
-)
+LOG_INJECTION_PATTERNS: Final[list[str]] = list(_CONTROL_CHAR_MAP.keys()) + list(_LITERAL_ESCAPE_SEQUENCES)
 
 
 __all__ = [

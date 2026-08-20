@@ -30,6 +30,7 @@ from zephyr.shared.infra.process_pool import run_subprocess_hidden
 # Legacy classes (kept for backward compatibility)
 # ============================================================================
 
+
 class SupplyChainValidator:
     def __init__(self, config=None):
         self.config = config or {}
@@ -159,11 +160,37 @@ _RCE_PATTERNS = [
 
 # Known popular PyPI packages for typosquatting detection
 _KNOWN_PACKAGES = {
-    "numpy", "torch", "flask", "django", "requests", "pandas", "scipy",
-    "matplotlib", "scikit-learn", "tensorflow", "pytorch", "transformers",
-    "fastapi", "starlette", "uvicorn", "gunicorn", "celery", "redis",
-    "sqlalchemy", "alembic", "pytest", "coverage", "black", "mypy", "ruff",
-    "pillow", "boto3", "openai", "anthropic", "langchain", "llama-index",
+    "numpy",
+    "torch",
+    "flask",
+    "django",
+    "requests",
+    "pandas",
+    "scipy",
+    "matplotlib",
+    "scikit-learn",
+    "tensorflow",
+    "pytorch",
+    "transformers",
+    "fastapi",
+    "starlette",
+    "uvicorn",
+    "gunicorn",
+    "celery",
+    "redis",
+    "sqlalchemy",
+    "alembic",
+    "pytest",
+    "coverage",
+    "black",
+    "mypy",
+    "ruff",
+    "pillow",
+    "boto3",
+    "openai",
+    "anthropic",
+    "langchain",
+    "llama-index",
 }
 
 
@@ -186,6 +213,7 @@ def _edit_distance(a: str, b: str) -> int:
 # ============================================================================
 # SupplyChainGuard — L0 layer
 # ============================================================================
+
 
 class SupplyChainGuard:
     """L0 Supply Chain Guard.
@@ -269,7 +297,7 @@ class SupplyChainGuard:
             for pat in _HIDDEN_DIRECTIVE_PATTERNS:
                 if re.search(pat, desc, re.IGNORECASE):
                     hidden += 1
-                    anomalies.append(f"tool:{tool.get('name','?')} hidden_directive: {pat}")
+                    anomalies.append(f"tool:{tool.get('name', '?')} hidden_directive: {pat}")
                     break
 
         # Check command for chain operators and RCE patterns
@@ -312,9 +340,7 @@ class SupplyChainGuard:
 
     # --- Model provenance recording ---
 
-    def record_model_provenance(
-        self, model_name: str, source_url: str, digest: str
-    ) -> dict[str, Any]:
+    def record_model_provenance(self, model_name: str, source_url: str, digest: str) -> dict[str, Any]:
         """Record model provenance metadata."""
         return {
             "model_name": model_name,
@@ -356,6 +382,7 @@ class SupplyChainGuard:
 # ============================================================================
 # RulesFileSecurityGuard — rules-file integrity baseline
 # ============================================================================
+
 
 class RulesFileSecurityGuard:
     """Guard for rules-file integrity via sha256 baseline matching."""
@@ -420,6 +447,7 @@ class RulesFileSecurityGuard:
 # ============================================================================
 # SlopsquattingDetector — hallucinated / typosquatted package detection
 # ============================================================================
+
 
 class SlopsquattingDetector:
     """Detects slopsquatting (hallucinated packages) and typosquatting."""
@@ -487,6 +515,7 @@ class SlopsquattingDetector:
 # ============================================================================
 # MCPDeepSupplyChainScanner — deep MCP server graph analysis
 # ============================================================================
+
 
 class MCPDeepSupplyChainScanner:
     """Deep scanner for MCP supply-chain components.

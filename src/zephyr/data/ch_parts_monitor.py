@@ -47,8 +47,7 @@ DEFAULT_PARTS_THRESHOLD = 100
 
 # NO-BARE-SQL gate 豁免：_SQL_* 前缀常量（同 scheduler._SQL_FIND_PART 既有约定）
 _SQL_ACTIVE_PARTS = (
-    "SELECT database, table, count() AS parts FROM system.parts "
-    "WHERE active = 1 GROUP BY database, table"
+    "SELECT database, table, count() AS parts FROM system.parts WHERE active = 1 GROUP BY database, table"
 )
 
 
@@ -96,9 +95,7 @@ def check_parts_threshold(
         log.warning("system.parts 查询异常: %s", e)
         return []
     violations = [
-        {"database": db, "table": tbl, "parts": parts}
-        for db, tbl, parts in parse_parts_tsv(tsv)
-        if parts > threshold
+        {"database": db, "table": tbl, "parts": parts} for db, tbl, parts in parse_parts_tsv(tsv) if parts > threshold
     ]
     violations.sort(key=lambda v: v["parts"], reverse=True)
     return violations

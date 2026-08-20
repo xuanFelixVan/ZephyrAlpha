@@ -38,7 +38,6 @@ class FreshnessDecayModel:
         """公共接口：save（Stage 4 公共化）。"""
         return self._save(data)
 
-
     def load(self) -> dict:
         """公共接口：load（Stage 4 公共化）。"""
         return self._load()

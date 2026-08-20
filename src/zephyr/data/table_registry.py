@@ -47,6 +47,7 @@ Phase 5 长期方向（不实施，登记为后续）：
     - 240 处硬编码表名替换为 TableRegistry.table() 常量引用
     - commit gate（GATE-TABLE-NAME-REGISTRY）升级为 block
 """
+
 from __future__ import annotations
 
 import logging
@@ -61,8 +62,7 @@ log = logging.getLogger(__name__)
 
 # 品类注册表 YAML 真源路径（business_data_categories.yaml）
 _CATEGORIES_PATH: Path = (
-    REPO_ROOT / "docs" / "03_modules" / "_cross_layer" / "database"
-    / "business_data_categories.yaml"
+    REPO_ROOT / "docs" / "03_modules" / "_cross_layer" / "database" / "business_data_categories.yaml"
 )
 
 # 单例锁（幂等加载）
@@ -177,8 +177,7 @@ class TableRegistry:
         warnings: list[str] = []
         if not self._by_table:
             warnings.append(
-                "品类注册表为空，无法校验 tasks.yaml 表名一致性"
-                "（business_data_categories.yaml 未加载或为空）"
+                "品类注册表为空，无法校验 tasks.yaml 表名一致性（business_data_categories.yaml 未加载或为空）"
             )
             return warnings
         for task in tasks:
@@ -188,8 +187,7 @@ class TableRegistry:
                 continue
             if not self.is_registered(table):
                 warnings.append(
-                    f"task '{task_id}' table '{table}' 未在 "
-                    f"business_data_categories.yaml 注册（双真源漂移风险）"
+                    f"task '{task_id}' table '{table}' 未在 business_data_categories.yaml 注册（双真源漂移风险）"
                 )
         return warnings
 

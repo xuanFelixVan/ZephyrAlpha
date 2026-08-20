@@ -78,7 +78,6 @@ class SpecRegistry:
         """写入：entries（Stage 4 公共化）。"""
         self._entries = value
 
-
     def _load_from_skill_registry(self) -> None:
         if not self._registry_path.exists():
             return

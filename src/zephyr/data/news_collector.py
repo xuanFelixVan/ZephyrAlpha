@@ -180,7 +180,12 @@ def collect_news(
 
     _logger.info(
         "collect_news: querying %s from %s to %s (region=%s, lang=%s, limit=%s)",
-        _TBL_NEWS, start_date, end_date, region, language, limit or "unlimited",
+        _TBL_NEWS,
+        start_date,
+        end_date,
+        region,
+        language,
+        limit or "unlimited",
     )
 
     tsv = ch_reader.query(sql)

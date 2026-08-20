@@ -20,6 +20,7 @@
 gov_enforcement.rule_enforcement.quality_gate。创建 re-export 消除 ModuleNotFoundError。
 SSoT: cross_layer_contracts.yaml -> CTR-ERR-001
 """
+
 from __future__ import annotations
 
 from zephyr.gov_enforcement.rule_enforcement.quality_gate import (

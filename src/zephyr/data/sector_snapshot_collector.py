@@ -30,6 +30,7 @@
     python -m zephyr.data.sector_snapshot_collector
     python -m zephyr.data.sector_snapshot_collector --poll-interval 30 --push-limit 99
 """
+
 from __future__ import annotations
 
 import io
@@ -106,17 +107,30 @@ ORDER BY (sector_code, timestamp)
 # 写入统一走 ch_writer.write_result（FetchResult 通道，裁定 #ARCH-CH-024 同族模式：
 # writer 账号 RBAC + 自动列过滤 + CH 不可达时本地落盘兜底），不再手写 INSERT SQL。
 _SNAPSHOT_COLUMNS = [
-    "trade_date", "timestamp", "sector_code", "market_type",
-    "now_price", "open_price", "max_price", "min_price", "last_close",
-    "before_5min_now", "average_price", "volume", "now_vol", "amount",
-    "up_home", "down_home", "inside", "outside", "zangsu",
-    "data_source", "fetched_at",
+    "trade_date",
+    "timestamp",
+    "sector_code",
+    "market_type",
+    "now_price",
+    "open_price",
+    "max_price",
+    "min_price",
+    "last_close",
+    "before_5min_now",
+    "average_price",
+    "volume",
+    "now_vol",
+    "amount",
+    "up_home",
+    "down_home",
+    "inside",
+    "outside",
+    "zangsu",
+    "data_source",
+    "fetched_at",
 ]
 
-SQL_ALL_SECTORS = (
-    f"SELECT DISTINCT sector_code FROM {_TBL_SECTOR_CONSTITUENT} "
-    f"ORDER BY sector_code"
-)
+SQL_ALL_SECTORS = f"SELECT DISTINCT sector_code FROM {_TBL_SECTOR_CONSTITUENT} ORDER BY sector_code"
 
 # 推送通知队列（tqcenter 回调入队，push_worker 出队）
 _push_queue: list[str] = []
@@ -124,6 +138,7 @@ _push_lock = threading.Lock()
 
 
 # ---------- 时间辅助 ----------
+
 
 def _now_beijing_naive() -> datetime:
     """返回北京时间的 naive datetime（供 ClickHouse DateTime 列）。"""
@@ -136,6 +151,7 @@ def _now_utc_naive() -> datetime:
 
 
 # ---------- 快照解析 ----------
+
 
 def _to_decimal(v: object, default: float = 0.0) -> float:
     """安全转 float（ClickHouse Decimal 接收 float）。"""
@@ -166,8 +182,9 @@ def classify_market_type(code: str) -> str:
     return "sector"
 
 
-def parse_snapshot(snap: dict, sector_code: str, market_type: str,
-                   data_source: str, now_bj: datetime | None = None) -> tuple | None:
+def parse_snapshot(
+    snap: dict, sector_code: str, market_type: str, data_source: str, now_bj: datetime | None = None
+) -> tuple | None:
     """把 tqcenter 快照 dict 解析为 sector_snapshot 表的行 tuple。
 
     Args:
@@ -198,7 +215,10 @@ def parse_snapshot(snap: dict, sector_code: str, market_type: str,
         ts = now_bj
 
     return (
-        today, ts, sector_code, market_type,
+        today,
+        ts,
+        sector_code,
+        market_type,
         _to_decimal(snap.get("Now")),
         _to_decimal(snap.get("Open")),
         _to_decimal(snap.get("Max")),
@@ -214,7 +234,8 @@ def parse_snapshot(snap: dict, sector_code: str, market_type: str,
         _to_uint(snap.get("Inside")),
         _to_uint(snap.get("Outside")),
         _to_decimal(snap.get("Zangsu")),
-        data_source, fetched_at,
+        data_source,
+        fetched_at,
     )
 
 
@@ -225,9 +246,11 @@ def parse_snapshot(snap: dict, sector_code: str, market_type: str,
 #   DDL → ch_writer.query（幂等 CREATE IF NOT EXISTS）
 # 禁止裸 clickhouse_driver.Client（绕过配置真源/账号分层/降级链）。
 
+
 def _create_table() -> None:
     """建表 sector_snapshot（幂等，走 ch_writer DDL 通道）。"""
     from zephyr.data import ch_writer
+
     ch_writer.query(SQL_CREATE_TABLE)
     log.info("表 sector_snapshot 已就绪")
 
@@ -242,6 +265,7 @@ def _insert_snapshots(rows: list[tuple]) -> int:
         return 0
     from zephyr.data import ch_writer
     from zephyr.data.provider_base import FetchResult
+
     result = FetchResult(
         table=_CH_TABLE,
         columns=_SNAPSHOT_COLUMNS,
@@ -260,6 +284,7 @@ def _get_all_sector_codes() -> list[str]:
     防 0 只板块假成功导致采集器静默空转，对齐原裸 Client fail-visible 语义）。
     """
     from zephyr.data import ch_reader
+
     tsv = ch_reader.query(SQL_ALL_SECTORS)
     if not tsv or not tsv.strip():
         if not (ch_reader.query("SELECT 1") or "").strip():
@@ -270,16 +295,19 @@ def _get_all_sector_codes() -> list[str]:
 
 # ---------- tqcenter 初始化 ----------
 
+
 def _init_tqcenter():
     """初始化 tqcenter 连接，返回 tq 模块。"""
     if _TQCENTER_PATH not in sys.path:
         sys.path.insert(0, _TQCENTER_PATH)
     from tqcenter import tq  # noqa: import-integrity  external-module-tqcenter-not-pip-installed
+
     tq.initialize(__file__)
     return tq
 
 
 # ---------- 轮询线程 ----------
+
 
 def _poll_worker(tq, all_codes: list[str], stop_event: threading.Event):
     """轮询线程：每 POLL_INTERVAL 秒扫一轮全量板块。"""
@@ -310,15 +338,20 @@ def _poll_worker(tq, all_codes: list[str], stop_event: threading.Event):
     log.info("轮询线程已停止")
 
 
-def _write_poll_batch(rows: list[tuple], total: int,
-                      errors: int, round_start: float) -> None:
+def _write_poll_batch(rows: list[tuple], total: int, errors: int, round_start: float) -> None:
     """写入轮询批次并日志。"""
     if not rows:
         return
     try:
         n = _insert_snapshots(rows)
-        log.info("轮询完成: 采集 %d/%d, 写入 %d, 错误 %d, 耗时 %.1fs",
-                 len(rows), total, n, errors, time.time() - round_start)
+        log.info(
+            "轮询完成: 采集 %d/%d, 写入 %d, 错误 %d, 耗时 %.1fs",
+            len(rows),
+            total,
+            n,
+            errors,
+            time.time() - round_start,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
+        )
     except Exception as e:  # noqa: BLE001
         log.error("轮询写入失败: %s", str(e)[:200])
 
@@ -334,6 +367,7 @@ def _wait_next_round(stop_event: threading.Event, round_start: float) -> None:
 
 
 # ---------- 推送线程 ----------
+
 
 def _push_callback(datas):
     """subscribe_hq 回调：收到通知后入队。"""
@@ -400,10 +434,10 @@ def _handle_push_code(tq, code: str, processed: int) -> int:
 
 # ---------- 主流程 ----------
 
+
 def main() -> int:
     """采集器主入口。"""
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
     log.info("=== 880xxx 板块实时快照采集器启动 ===")
 
     # 1. 建表
@@ -422,26 +456,23 @@ def main() -> int:
     # 4. 动态推送池（由 sector_ranking_engine 5因子排名选取）
     log.info("[步骤4] 选取推送池（5因子动态排名）...")
     from zephyr.data.sector_ranking_engine import get_push_pool
+
     push_codes = get_push_pool(top_n=PUSH_POOL_LIMIT)
     log.info("    推送池: %d 只", len(push_codes))
 
     # 5. 启动推送+轮询线程
     log.info("[步骤5] 启动采集线程...")
     stop_event = threading.Event()
-    poll_thread = threading.Thread(
-        target=_poll_worker, args=(tq, all_codes, stop_event), name="poll", daemon=True)
-    push_thread = threading.Thread(
-        target=_push_worker, args=(tq, push_codes, stop_event), name="push", daemon=True)
+    poll_thread = threading.Thread(target=_poll_worker, args=(tq, all_codes, stop_event), name="poll", daemon=True)
+    push_thread = threading.Thread(target=_push_worker, args=(tq, push_codes, stop_event), name="push", daemon=True)
     poll_thread.start()
     push_thread.start()
 
-    log.info("采集中... (Ctrl+C 停止)  轮询层:%ds/轮  推送层:%d只",
-             POLL_INTERVAL, len(push_codes))
+    log.info("采集中... (Ctrl+C 停止)  轮询层:%ds/轮  推送层:%d只", POLL_INTERVAL, len(push_codes))
     try:
         while True:
             threading.Event().wait(timeout=60)  # noqa: m10-time-trigger  采集器服务循环,非reconciler
-            log.info("运行中... poll_alive=%s push_alive=%s",
-                     poll_thread.is_alive(), push_thread.is_alive())
+            log.info("运行中... poll_alive=%s push_alive=%s", poll_thread.is_alive(), push_thread.is_alive())
     except KeyboardInterrupt:
         log.info("停止信号收到...")
 

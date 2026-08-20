@@ -125,8 +125,7 @@ _TBL_TICK_DATA = get_registry().table("market_tick")
 # 有效快照（valid_to IS NULL），消失标的凭 get_instrument_detail ExpireDate
 # 证据闭合为 list_status='退市' + valid_to=delist_date（无证据不闭合，留痕）。
 _SQL_STOCK_LIST_ACTIVE = (
-    "SELECT ts_code, symbol, name, industry, list_date, delist_date "
-    "FROM c1_market.stock_list WHERE valid_to IS NULL"
+    f"SELECT ts_code, symbol, name, industry, list_date, delist_date FROM {_TBL_STOCK_LIST} WHERE valid_to IS NULL"
 )
 # 闭合护栏 1：板块清单须非平凡完整（防局部数据缺失/QMT 接口异常时大面积误闭合）
 _STOCK_LIST_FULL_MIN = 3000
@@ -136,9 +135,23 @@ _STOCK_LIST_CLOSURE_MAX_RATIO = 0.05
 # 闭合行 INSERT 列（对齐 schemas market_stock_list.INSERT_COLUMNS：无 MATERIALIZED
 # exchange 列，显式带 valid_to）
 _STOCK_LIST_CLOSURE_COLUMNS = [
-    "ts_code", "symbol", "name", "area", "industry", "fullname", "enname",
-    "cn_spell", "market", "currency", "list_status", "list_date", "delist_date",
-    "hs_hold", "actual_controller", "controller_type", "valid_to",
+    "ts_code",
+    "symbol",
+    "name",
+    "area",
+    "industry",
+    "fullname",
+    "enname",
+    "cn_spell",
+    "market",
+    "currency",
+    "list_status",
+    "list_date",
+    "delist_date",
+    "hs_hold",
+    "actual_controller",
+    "controller_type",
+    "valid_to",
 ]
 
 
@@ -3531,17 +3544,13 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     cn_spell, market, exchange, currency, list_status,
                     list_date, delist_date, hs_hold, actual_controller,
                     controller_type)
-        #209④ 退市闭合：主批（在市标的覆盖式更新）后，对账 CH 有效快照
-        （valid_to IS NULL）补闭合消失标的——凭 ExpireDate 证据产出
-        list_status='退市'+valid_to=delist_date 的第二批；三重护栏防误闭合
-        （清单完整性/消失数阈值/逐标的证据），中止仅留日志不影响主批。
 
         Args:
             payload: 下载请求
             policy: 调用策略
 
         Yields:
-            FetchResult: 一批（全部在市股票）+ 可选一批（退市闭合行）
+            FetchResult: 一批（全部股票）
         """
         from xtquant import xtdata
 

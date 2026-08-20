@@ -41,6 +41,7 @@ memo 审定的 MVP 两项（单公式 Δ持股数量 × 当季 VWAP，pandas 数
 
 依据: 19_northbound_hold_snapshot v1.0.1 §6.3/§6.5
 """
+
 from __future__ import annotations
 
 import logging
@@ -90,7 +91,10 @@ def compute_quarter_position_changes(
     if missing.any():
         log.warning(
             "北向增减持 %s→%s: %d 只标的缺当季 VWAP 被剔除（宁缺毋错）: %s",
-            prev_date, curr_date, int(missing.sum()), list(merged.index[missing][:5]),
+            prev_date,
+            curr_date,
+            int(missing.sum()),
+            list(merged.index[missing][:5]),
         )
     merged = merged[~missing]
     merged["vwap"] = vw[~missing]

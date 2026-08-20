@@ -14,6 +14,7 @@ Usage::
     recovery = RecoveryManager(sqlite_fallback, heartbeat_monitor)
     recovery.start()  # CH 恢复后自动回灌
 """
+
 from __future__ import annotations
 
 import logging
@@ -63,9 +64,7 @@ class RecoveryManager:
         if self._running:
             return
         self._running = True
-        self._thread = threading.Thread(
-            target=self._recovery_loop, daemon=True, name="recovery-manager"
-        )
+        self._thread = threading.Thread(target=self._recovery_loop, daemon=True, name="recovery-manager")
         self._thread.start()
         log.info("RecoveryManager 已启动 (tables=%s)", self._tables)
 
@@ -95,9 +94,7 @@ class RecoveryManager:
 
     def _do_recovery(self) -> None:
         """执行回灌（CH 可达时）。"""
-        any_pending = any(
-            self._sqlite.get_pending_count(t) > 0 for t in self._tables
-        )
+        any_pending = any(self._sqlite.get_pending_count(t) > 0 for t in self._tables)
         if not any_pending:
             self._recovering = False
             return
@@ -140,14 +137,12 @@ class RecoveryManager:
                 else:
                     consecutive_failures += 1
                     backoff = min(backoff * 2, _BACKOFF_MAX)
-                    log.warning("表 %s 回灌失败 %d 次，退避 %.1fs",
-                                table, consecutive_failures, backoff)
+                    log.warning("表 %s 回灌失败 %d 次，退避 %.1fs", table, consecutive_failures, backoff)
                     self._registry.inc("zephyr_recovery_failed_total")
                     time.sleep(backoff)
             except Exception as e:  # noqa: BLE001
                 consecutive_failures += 1
                 backoff = min(backoff * 2, _BACKOFF_MAX)
-                log.error("表 %s 回灌异常: %s，退避 %.1fs",
-                          table, e, backoff)
+                log.error("表 %s 回灌异常: %s，退避 %.1fs", table, e, backoff)
                 self._registry.inc("zephyr_recovery_failed_total")
                 time.sleep(backoff)

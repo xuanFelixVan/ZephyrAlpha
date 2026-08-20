@@ -25,6 +25,7 @@
     python -m zephyr.data.sector_kline_downloader --period 1m --days 1
     python -m zephyr.data.sector_kline_downloader --period all      # 全周期
 """
+
 from __future__ import annotations
 
 import argparse
@@ -53,9 +54,19 @@ _BATCH_SIZE = 50
 _SUPPORTED_PERIODS = ["1d", "1m", "5m"]
 
 _COLUMNS = [
-    "period", "trade_date", "timestamp", "sector_code", "sector_name",
-    "open", "high", "low", "close", "volume", "amount",
-    "forward_factor", "data_source",
+    "period",
+    "trade_date",
+    "timestamp",
+    "sector_code",
+    "sector_name",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "amount",
+    "forward_factor",
+    "data_source",
 ]
 
 # 裁定 #ARCH-CH-024: 删除手写 INSERT SQL，改用 ch_writer.write_result（含列过滤+二级降级）
@@ -66,6 +77,7 @@ def _init_tqcenter():
     if _TQCENTER_PATH not in sys.path:
         sys.path.insert(0, _TQCENTER_PATH)
     from tqcenter import tq  # noqa: import-integrity  external-module-tqcenter-not-pip-installed
+
     tq.initialize(str(Path(__file__).resolve()))
     return tq
 
@@ -84,6 +96,7 @@ def _get_sector_list(tq) -> list[str]:
 def _safe_val(val, default):
     """安全提取数值，NaN/None→default。"""
     import math
+
     if val is None:
         return default
     if isinstance(val, float) and math.isnan(val):
@@ -94,6 +107,7 @@ def _safe_val(val, default):
 def _ts_to_datetime(ts, period: str) -> tuple:
     """时间戳转 (trade_date, datetime)。"""
     import pandas as pd
+
     if isinstance(ts, pd.Timestamp):
         if period == "1d":
             d = ts.date()
@@ -107,11 +121,13 @@ def _ts_to_datetime(ts, period: str) -> tuple:
 def _extract_row(ts, code, period, trade_date, dt, dfs):
     """从 DataFrame 提取单行 K线数据。"""
     from decimal import Decimal
+
     open_df, high_df, low_df, close_df, vol_df, amt_df, ff_df = dfs
     o = open_df.loc[ts, code]
     if o is None:
         return None
     import math
+
     if isinstance(o, float) and math.isnan(o):
         return None
     o_val = Decimal(str(o))
@@ -122,7 +138,11 @@ def _extract_row(ts, code, period, trade_date, dt, dfs):
     a_raw = amt_df.loc[ts, code] if amt_df is not None else 0.0
     ff_raw = ff_df.loc[ts, code] if ff_df is not None else 1.0
     return (
-        period, trade_date, dt, code, "",
+        period,
+        trade_date,
+        dt,
+        code,
+        "",
         o_val,
         Decimal(str(_safe_val(h_raw, o))),
         Decimal(str(_safe_val(l_raw, o))),
@@ -175,6 +195,7 @@ def _write_to_ch(rows: list[tuple]) -> int:
         return 0
     from zephyr.data import ch_writer
     from zephyr.data.provider_base import FetchResult
+
     result = FetchResult(
         table=_CH_TABLE,
         columns=_COLUMNS,
@@ -197,7 +218,7 @@ def download_period(tq, sector_codes: list[str], period: str, count: int) -> int
     total_batches = (len(sector_codes) + _BATCH_SIZE - 1) // _BATCH_SIZE
 
     for i in range(0, len(sector_codes), _BATCH_SIZE):
-        batch = sector_codes[i:i + _BATCH_SIZE]
+        batch = sector_codes[i : i + _BATCH_SIZE]
         batch_num = i // _BATCH_SIZE + 1
         try:
             tq.refresh_kline(stock_list=batch, period=period)

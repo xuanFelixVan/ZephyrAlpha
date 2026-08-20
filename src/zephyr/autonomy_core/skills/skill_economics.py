@@ -62,7 +62,6 @@ class SkillEconomics:
         """写入：spent（Stage 4 公共化）。"""
         self._spent = value
 
-
     def _price(self, model: str) -> dict[str, float]:
         for k, v in PRICING.items():
             if k in model.lower():

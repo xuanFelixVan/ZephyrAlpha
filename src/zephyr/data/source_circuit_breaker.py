@@ -48,19 +48,19 @@ from collections import deque
 from collections.abc import Callable
 
 # 默认参数（64号 Q17"连续失败 N 次熔断 M 分钟"；构造时可覆盖）
-DEFAULT_FAILURE_THRESHOLD = 5       # N：连续失败次数
-DEFAULT_COOLDOWN_SECONDS = 1800.0   # M：熔断冷却 30 分钟
-DEFAULT_WINDOW_SIZE = 20            # 滑窗样本数
-DEFAULT_ERROR_RATE = 0.6            # 滑窗错误率阈值
-DEFAULT_MIN_SAMPLES = 10            # 错误率判定的最小样本量（防小样本误判）
+DEFAULT_FAILURE_THRESHOLD = 5  # N：连续失败次数
+DEFAULT_COOLDOWN_SECONDS = 1800.0  # M：熔断冷却 30 分钟
+DEFAULT_WINDOW_SIZE = 20  # 滑窗样本数
+DEFAULT_ERROR_RATE = 0.6  # 滑窗错误率阈值
+DEFAULT_MIN_SAMPLES = 10  # 错误率判定的最小样本量（防小样本误判）
 
 
 class CircuitState(enum.Enum):
     """熔断器三态。"""
 
-    CLOSED = "closed"          # 正常放行
-    OPEN = "open"              # 熔断中（冷却期内拒绝）
-    HALF_OPEN = "half_open"    # 半开（放行单探针试探）
+    CLOSED = "closed"  # 正常放行
+    OPEN = "open"  # 熔断中（冷却期内拒绝）
+    HALF_OPEN = "half_open"  # 半开（放行单探针试探）
 
 
 class SourceCircuitBreaker:

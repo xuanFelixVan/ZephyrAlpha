@@ -19,6 +19,7 @@ Usage::
     tsv_bytes = encode_tsv(rows)
     rows = decode_tsv(tsv_bytes)
 """
+
 from __future__ import annotations
 
 import logging
@@ -41,6 +42,7 @@ def _escape_value(v: object) -> str:
         生产真源（裁定 #ARCH-TSV-SOT-001），wal_codec 不得自行实现转义逻辑。
     """
     from zephyr.data import ch_writer
+
     return ch_writer.tsv_escape(v)
 
 

@@ -25,6 +25,7 @@
 - SourcePolicy：单数据源策略（RPM/并发/重试/退避/反爬/登录刷新）
 - PolicyRegistry：策略注册表，从 yaml 加载，支持热更新
 """
+
 from __future__ import annotations
 
 import logging
@@ -39,6 +40,7 @@ log = logging.getLogger(__name__)
 
 
 # ============== 策略数据类 ==============
+
 
 @dataclass
 class SourcePolicy:
@@ -61,6 +63,7 @@ class SourcePolicy:
         relogin_on_auth_error: 401/登录失效时是否自动重登
         extra: 数据源专属配置（如 miniQMT 进程依赖）
     """
+
     rpm: int = 0
     concurrency: int = 1
     min_interval_sec: float = 0.0
@@ -90,41 +93,71 @@ class SourcePolicy:
 # 这些默认值对应蓝图 §5.2 跨源策略矩阵，可作为 policies.yaml 缺失时的兜底
 DEFAULT_POLICIES: Final[dict[str, dict]] = {
     "miniqmt": {
-        "rpm": 0, "concurrency": 1, "max_retries": 3, "backoff": "fixed",
-        "initial_wait_sec": 1.0, "retry_on": ["TimeoutError", "ConnectionError"],
-        "session_ttl_sec": 0, "relogin_on_auth_error": True,
+        "rpm": 0,
+        "concurrency": 1,
+        "max_retries": 3,
+        "backoff": "fixed",
+        "initial_wait_sec": 1.0,
+        "retry_on": ["TimeoutError", "ConnectionError"],
+        "session_ttl_sec": 0,
+        "relogin_on_auth_error": True,
         "extra": {"requires_process": "XtMiniQmt.exe"},
     },
     "akshare": {
-        "rpm": 60, "concurrency": 4, "max_retries": 5, "backoff": "jittered",
+        "rpm": 60,
+        "concurrency": 4,
+        "max_retries": 5,
+        "backoff": "jittered",
         # #ARCH-RSS-INVESTING-403-001 治本扩展：移除 HTTPError（dead config），akshare 逐 symbol 请求不重试 5xx
-        "initial_wait_sec": 2.0, "retry_on": ["JSONDecodeError", "ConnectionError"],
+        "initial_wait_sec": 2.0,
+        "retry_on": ["JSONDecodeError", "ConnectionError"],
         "disconnect_vpn": True,
     },
     "baostock": {
-        "rpm": 60, "concurrency": 8, "max_retries": 3, "backoff": "fixed",
-        "initial_wait_sec": 2.0, "retry_on": ["TimeoutError", "ConnectionError", "BaoStockError"],
-        "session_ttl_sec": 3600, "relogin_on_auth_error": True,
+        "rpm": 60,
+        "concurrency": 8,
+        "max_retries": 3,
+        "backoff": "fixed",
+        "initial_wait_sec": 2.0,
+        "retry_on": ["TimeoutError", "ConnectionError", "BaoStockError"],
+        "session_ttl_sec": 3600,
+        "relogin_on_auth_error": True,
         "extra": {"thread_local_login": True, "data_lag_days": 7},
     },
     "tushare": {
-        "rpm": 200, "concurrency": 2, "max_retries": 3, "backoff": "exponential",
-        "initial_wait_sec": 1.0, "retry_on": ["TPMaxQueryLimitError", "ConnectionError"],
-        "session_ttl_sec": 0, "relogin_on_auth_error": False,
+        "rpm": 200,
+        "concurrency": 2,
+        "max_retries": 3,
+        "backoff": "exponential",
+        "initial_wait_sec": 1.0,
+        "retry_on": ["TPMaxQueryLimitError", "ConnectionError"],
+        "session_ttl_sec": 0,
+        "relogin_on_auth_error": False,
         "extra": {"points_alert_threshold": 2000},
     },
     "tickflow": {
-        "rpm": 60, "concurrency": 2, "max_retries": 3, "backoff": "jittered",
+        "rpm": 60,
+        "concurrency": 2,
+        "max_retries": 3,
+        "backoff": "jittered",
         # #ARCH-RSS-INVESTING-403-001 治本扩展：移除 HTTPError（dead config，tickflow SDK 抛自定义异常）
-        "initial_wait_sec": 1.0, "retry_on": ["ConnectionError"],
+        "initial_wait_sec": 1.0,
+        "retry_on": ["ConnectionError"],
     },
     "tdx": {
-        "rpm": 0, "concurrency": 1, "max_retries": 3, "backoff": "fixed",
-        "initial_wait_sec": 0.5, "retry_on": ["ConnectionError", "TimeoutError"],
+        "rpm": 0,
+        "concurrency": 1,
+        "max_retries": 3,
+        "backoff": "fixed",
+        "initial_wait_sec": 0.5,
+        "retry_on": ["ConnectionError", "TimeoutError"],
         "extra": {"bestip": True},
     },
     "rss": {
-        "rpm": 0, "concurrency": 1, "max_retries": 3, "backoff": "exponential",
+        "rpm": 0,
+        "concurrency": 1,
+        "max_retries": 3,
+        "backoff": "exponential",
         "initial_wait_sec": 5.0,
         # #ARCH-RSS-INVESTING-403-001：仅重试网络错误 + 5xx；4xx（WAF 403）不重试
         "retry_on": ["SSLError", "ConnectionError", "500", "502", "503", "504"],
@@ -134,6 +167,7 @@ DEFAULT_POLICIES: Final[dict[str, dict]] = {
 
 
 # ============== 策略注册表 ==============
+
 
 class PolicyRegistry:
     """策略注册表：从 yaml 加载 per-source 策略，支持热更新。
@@ -165,6 +199,7 @@ class PolicyRegistry:
         yaml 格式见蓝图 §9.2 config/policies.yaml。
         """
         import yaml
+
         p = Path(path)
         if not p.exists():
             log.warning(f"策略 yaml 不存在，使用默认策略: {p}")

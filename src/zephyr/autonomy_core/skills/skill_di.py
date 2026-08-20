@@ -31,7 +31,6 @@ from typing import Any
 
 
 class SkillDI:
-
     """Skill DI——模块化 Skill 组装与依赖解析."""
 
     _registry: dict[str, dict[str, Any]] = {}

@@ -245,6 +245,7 @@ def _detect_local_proxy(port: int = 10808, timeout: float = 1.0) -> str | None:
     与 rss_provider._is_vpn_ready 同一探测模式（2026-08-14 对齐）。
     """
     import socket
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(timeout)
     try:

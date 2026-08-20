@@ -30,6 +30,7 @@
     python -m zephyr.data.sector_ranking_engine --top 99     # 指定Top N
     python -m zephyr.data.sector_ranking_engine --json       # JSON格式输出
 """
+
 from __future__ import annotations
 
 import argparse
@@ -86,11 +87,7 @@ def _query_rows(sql: str) -> list[tuple]:
     tsv = ch_reader.query(sql)
     if not tsv or not tsv.strip():
         return []
-    return [
-        tuple(line.split("\t"))
-        for line in tsv.strip().split("\n")
-        if line.strip()
-    ]
+    return [tuple(line.split("\t")) for line in tsv.strip().split("\n") if line.strip()]
 
 
 def _pct_rank(values: list[float]) -> list[float]:
@@ -219,7 +216,7 @@ def get_push_pool(top_n: int = _DEFAULT_TOP_N) -> list[str]:
 
         ranking = compute_ranking(rows)
         sector_scores = [(c, s) for c, s in ranking if c not in _MKT_INDEX_CODES]
-        selected = [c for c, _ in sector_scores[:top_n - len(_MKT_INDEX_CODES)]]
+        selected = [c for c, _ in sector_scores[: top_n - len(_MKT_INDEX_CODES)]]
 
         pool = _MKT_INDEX_CODES[:]
         for code in selected:
@@ -266,7 +263,11 @@ def main() -> int:
     pool = get_push_pool(top_n=args.top)
 
     if args.json:
-        print(json.dumps({"push_pool": pool, "count": len(pool), "time": datetime.now(UTC).isoformat()}, ensure_ascii=False))
+        print(
+            json.dumps(
+                {"push_pool": pool, "count": len(pool), "time": datetime.now(UTC).isoformat()}, ensure_ascii=False
+            )
+        )
     else:
         print(f"\n推送池 ({len(pool)} 只):")
         for i, code in enumerate(pool, 1):

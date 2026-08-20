@@ -68,7 +68,6 @@ class SkillsBenchRunner:
         """写入：history_path（Stage 4 公共化）。"""
         self._history_path = value
 
-
     def _load_history(self) -> dict[str, list[dict[str, Any]]]:
         if self._history_path.exists():
             try:
@@ -228,7 +227,6 @@ class SkillEfficacyCalibrator:
     def runner(self, value):
         """写入：runner（Stage 4 公共化）。"""
         self._runner = value
-
 
     def run_benchmark(self, skill_id: str, check_items: list[str] | None = None) -> dict[str, Any]:
         checks = check_items or [

@@ -38,7 +38,6 @@ class SkillContract:
         """公共接口：parse_contracts（Stage 4 公共化，委托到 cls._parse_contracts）。"""
         return cls._parse_contracts(body)
 
-
     @classmethod
     def _parse_contracts(cls, body: str) -> dict[str, Any]:
         contracts = {}

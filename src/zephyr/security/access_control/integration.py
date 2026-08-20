@@ -11,6 +11,7 @@
 
 治本(2026-07-18): 重写以匹配 tests/agent_rbac/test_integration_root.py 契约.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -72,7 +73,6 @@ class IntegrationManager:
     def integrations(self, value):
         """写入：integrations（Stage 4 公共化）。"""
         self._integrations = value
-
 
     def register_all(self) -> dict[str, IntegrationPoint]:
         """Register all subsystems. Returns dict[name, IntegrationPoint] with status REGISTERED."""

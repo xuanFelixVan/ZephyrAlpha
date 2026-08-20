@@ -129,7 +129,6 @@ class MemoryBank:
         """公共接口：validate_filename（Stage 4 公共化）。"""
         return __class__._validate_filename(filename)
 
-
     def read_file(self, filename: str) -> str:
         self._validate_filename(filename)
         return (self._root / _resolve_filename(filename)).read_text(encoding="utf-8")

@@ -126,7 +126,14 @@ __all__ = [
     "standalone_evaluator",
     "swid_tag",
     "unique_analyzer",
-'drift_bridge', 'escalation_bridge', 'feedback_bridge', 'judge', 'kb_bridge', 'mcp_integration', 'rbac_bridge']
+    "drift_bridge",
+    "escalation_bridge",
+    "feedback_bridge",
+    "judge",
+    "kb_bridge",
+    "mcp_integration",
+    "rbac_bridge",
+]
 
 __all__.append("DuplicateDetector")
 __all__.extend(

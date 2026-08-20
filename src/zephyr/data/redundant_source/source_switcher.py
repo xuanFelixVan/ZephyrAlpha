@@ -17,6 +17,7 @@ Usage::
     provider = switcher.get_active_provider()
     ticks = provider.fetch_ticks()
 """
+
 from __future__ import annotations
 
 import abc
@@ -60,6 +61,7 @@ class SourceProvider(abc.ABC):
 @dataclass
 class SwitchEvent:
     """切换事件记录。"""
+
     ts: float
     from_source: str
     to_source: str
@@ -108,12 +110,9 @@ class SourceSwitcher:
             with self._lock:
                 self._active_is_primary = False
         self._running = True
-        self._thread = threading.Thread(
-            target=self._switch_loop, daemon=True, name="source-switcher"
-        )
+        self._thread = threading.Thread(target=self._switch_loop, daemon=True, name="source-switcher")
         self._thread.start()
-        log.info("SourceSwitcher 已启动 (primary=%s, backup=%s)",
-                 self._primary.name(), self._backup.name())
+        log.info("SourceSwitcher 已启动 (primary=%s, backup=%s)", self._primary.name(), self._backup.name())
 
     def stop(self) -> None:
         """停止切换控制器。"""
@@ -160,19 +159,15 @@ class SourceSwitcher:
                 if primary_alive:
                     if self._primary_recover_ts is None:
                         self._primary_recover_ts = time.time()
-                        log.info("主源恢复，等待 %.0fs 稳定期",
-                                 self._recovery_stable_period)
-                    elif (time.time() - self._primary_recover_ts
-                          >= self._recovery_stable_period):
+                        log.info("主源恢复，等待 %.0fs 稳定期", self._recovery_stable_period)
+                    elif time.time() - self._primary_recover_ts >= self._recovery_stable_period:  # noqa: m46-time — 主备恢复间隔比较与时区无关
                         self._do_switch(to_primary=True, reason="主源恢复且稳定")
                         self._primary_recover_ts = None
                 else:
                     self._primary_recover_ts = None
 
             # 暴露 metrics
-            self._registry.set_gauge(
-                "zephyr_source_active", 1.0 if self._active_is_primary else 0.0
-            )
+            self._registry.set_gauge("zephyr_source_active", 1.0 if self._active_is_primary else 0.0)
 
     def _do_switch(self, to_primary: bool, reason: str) -> None:
         """执行切换。调用方已持锁。"""
@@ -194,6 +189,6 @@ class SourceSwitcher:
         old.stop()
 
         self._active_is_primary = to_primary
-        self._switch_history.append(SwitchEvent(
-            ts=time.time(), from_source=from_name, to_source=to_name, reason=reason
-        ))
+        self._switch_history.append(
+            SwitchEvent(ts=time.time(), from_source=from_name, to_source=to_name, reason=reason)  # noqa: m46-time — 切换事件 ts 同进程度量内部自洽
+        )

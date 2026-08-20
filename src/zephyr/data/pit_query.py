@@ -33,6 +33,7 @@ LIMIT 1 BY symbol, report_period（ORDER BY announce_date DESC）可取查询时
 SSoT: docs/03_modules/_domain_data/data_source_integrator_blueprint.md
       docs/03_modules/_domain_backtest/blueprint.md §5.1 PIT铁律
 """
+
 from __future__ import annotations
 
 import logging
@@ -87,8 +88,7 @@ _FINANCIAL_PIT_TABLES: dict[str, tuple[str, str | None]] = {
 
 # 解析为全限定表名（真源：business_data_categories.yaml via table_registry）
 FINANCIAL_PIT_TABLES: dict[str, str] = {
-    name: get_registry().table(cat_id)
-    for name, (cat_id, _period) in _FINANCIAL_PIT_TABLES.items()
+    name: get_registry().table(cat_id) for name, (cat_id, _period) in _FINANCIAL_PIT_TABLES.items()
 }
 
 # 幸存者偏差标的池表
@@ -287,9 +287,7 @@ class FinancialPITQuery:
         Returns:
             TSV 格式字符串（每行一条记录，按 announce_date 降序）
         """
-        sql = self._build_as_of_sql(
-            table, [symbol], query_time, columns, single=True
-        )
+        sql = self._build_as_of_sql(table, [symbol], query_time, columns, single=True)
         return ch_reader.query(sql)
 
     def as_of_panel(
@@ -311,9 +309,7 @@ class FinancialPITQuery:
             TSV 格式字符串
         """
         sym_list = list(symbols)
-        sql = self._build_as_of_sql(
-            table, sym_list, query_time, columns, single=False
-        )
+        sql = self._build_as_of_sql(table, sym_list, query_time, columns, single=False)
         return ch_reader.query(sql)
 
     def as_of_latest(
@@ -342,24 +338,25 @@ class FinancialPITQuery:
         """
         qualified, period_col = _resolve_table(table)
         if period_col is None:
-            raise PITQueryError(
-                f"表 '{table}' 无报告期列，as_of_latest 不适用"
-            )
+            raise PITQueryError(f"表 '{table}' 无报告期列，as_of_latest 不适用")
         qt = _fmt_query_time(query_time)
         sym = _escape_symbol(symbol)
         embargo = _embargo_clause(self.config.embargo_days)
         sql = _SQL_LATEST.format(
-            columns=columns, tbl=qualified, final="", sym=sym,
-            qt=qt, embargo=embargo, period_col=period_col,
+            columns=columns,
+            tbl=qualified,
+            final="",
+            sym=sym,
+            qt=qt,
+            embargo=embargo,
+            period_col=period_col,
         )
         return ch_reader.query(sql)
 
     # ------------------------------------------------------------------
     # 幸存者偏差标的池（公理3）
     # ------------------------------------------------------------------
-    def survivorship_universe(
-        self, query_time: datetime | date | str
-    ) -> list[str]:
+    def survivorship_universe(self, query_time: datetime | date | str) -> list[str]:
         """PIT 标的池：返回查询时点仍在市（含未来退市）的全部标的。
 
         落实公理3（幸存者偏差）：通过 stock_list 的 SCD-2 列（valid_from/valid_to）
@@ -382,11 +379,7 @@ class FinancialPITQuery:
         tsv = ch_reader.query(sql)
         if not tsv or not tsv.strip():
             return []
-        return [
-            line.strip()
-            for line in tsv.strip().split("\n")
-            if line.strip()
-        ]
+        return [line.strip() for line in tsv.strip().split("\n") if line.strip()]
 
     # ------------------------------------------------------------------
     # SQL 构建（纯函数，便于单测）
@@ -424,7 +417,11 @@ class FinancialPITQuery:
             symbol_clause = f"symbol IN ({_format_symbols(symbols)})"
         limit_by = _limit_by_clause(period_col)
         return _SQL_AS_OF.format(
-            columns=columns, tbl=qualified, final="",
-            symbol_clause=symbol_clause, qt=qt, embargo=embargo,
+            columns=columns,
+            tbl=qualified,
+            final="",
+            symbol_clause=symbol_clause,
+            qt=qt,
+            embargo=embargo,
             limit_by=limit_by,
         )

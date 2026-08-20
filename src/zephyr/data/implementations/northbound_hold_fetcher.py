@@ -49,6 +49,7 @@ tushare hk_hold 返回列：code/trade_date/ts_code/name/vol/ratio/exchange。
 ratio→hold_ratio, exchange→exchange, trade_date→trade_date；code（6 位原代码）
 可从 ts_code 派生，不落列（§5.2 表 schema 无 src_code 列，以表 schema 为准）。
 """
+
 from __future__ import annotations
 
 import datetime
@@ -173,10 +174,7 @@ def _resolve_code_collisions(df, quarter_end: datetime.date, exchange: str):
         return df, [], []
     dup = df[dup_mask]
     # 冲突组：同 ts_code 下 name 或 vol 不唯一（真正撞码）
-    conflict_codes = [
-        code for code, g in dup.groupby("ts_code")
-        if g["name"].nunique() > 1 or g["vol"].nunique() > 1
-    ]
+    conflict_codes = [code for code, g in dup.groupby("ts_code") if g["name"].nunique() > 1 or g["vol"].nunique() > 1]
     salvaged: list[str] = []
     dropped: list[str] = []
     drop_idx: list = []
@@ -190,16 +188,18 @@ def _resolve_code_collisions(df, quarter_end: datetime.date, exchange: str):
             salvaged.append(code)  # 保留真主行，剔除入侵行
             drop_idx.extend(g[~cons_mask].index.tolist())
         else:
-            dropped.append(code)   # 判别失效，整组剔除兜底
+            dropped.append(code)  # 判别失效，整组剔除兜底
             drop_idx.extend(g.index.tolist())
     if conflict_codes:
-        sample = dup[dup["ts_code"].isin(conflict_codes[:3])][
-            ["code", "ts_code", "name", "vol"]
-        ].to_dict("records")
+        sample = dup[dup["ts_code"].isin(conflict_codes[:3])][["code", "ts_code", "name", "vol"]].to_dict("records")
         log.warning(
             "北向持仓 %s %s: 上游撞码 %d 组——code 自洽判别救回 %d 组（保留真主行），"
             "判别失效整组剔除 %d 组（宁缺毋错，待上游修复后重拉自愈）: sample=%s",
-            quarter_end, exchange, len(conflict_codes), len(salvaged), len(dropped),
+            quarter_end,
+            exchange,
+            len(conflict_codes),
+            len(salvaged),
+            len(dropped),
             sample,
         )
     if drop_idx:
@@ -239,19 +239,23 @@ def _fetch_one_exchange(
         if hold_share <= 0 or not (0.0 <= hold_ratio <= 100.0):
             skipped += 1
             continue
-        rows.append((
-            quarter_end,
-            str(r["ts_code"]),
-            str(r["name"]),
-            hold_share,
-            hold_ratio,
-            str(r.get("exchange", exchange)),
-            "tushare",
-        ))
+        rows.append(
+            (
+                quarter_end,
+                str(r["ts_code"]),
+                str(r["name"]),
+                hold_share,
+                hold_ratio,
+                str(r.get("exchange", exchange)),
+                "tushare",
+            )
+        )
     if skipped:
         log.warning(
             "北向持仓 %s %s: %d 行质量校验未过被跳过（hold_share<=0 或 ratio 越界/类型异常）",
-            quarter_end, exchange, skipped,
+            quarter_end,
+            exchange,
+            skipped,
         )
     return rows
 
@@ -283,8 +287,11 @@ def fetch_northbound_hold_snapshot(
     quarter_ends = published_quarter_ends(today)
     if not quarter_ends:
         yield FetchResult(
-            table=table, columns=COLUMNS, rows=[],
-            last_key="", elapsed_sec=0.0,
+            table=table,
+            columns=COLUMNS,
+            rows=[],
+            last_key="",
+            elapsed_sec=0.0,
             error=f"无已发布季度（genesis={GENESIS_QUARTER_END}, today={today}）",
         )
         return
@@ -298,21 +305,30 @@ def fetch_northbound_hold_snapshot(
             if not rows:
                 # 已发布季度双侧 0 行 = 上游异常（北向每季度持股数千只，0 行非合法情形）
                 yield FetchResult(
-                    table=table, columns=COLUMNS, rows=[],
-                    last_key=qe.isoformat(), elapsed_sec=elapsed,
+                    table=table,
+                    columns=COLUMNS,
+                    rows=[],
+                    last_key=qe.isoformat(),
+                    elapsed_sec=elapsed,
                     error=f"已发布季度 {qe} SH/SZ 均返回 0 行（上游异常或接口失效）",
                 )
                 continue
             log_.info("北向持仓快照 %s: %d 行（SH+SZ）", qe, len(rows))
             yield FetchResult(
-                table=table, columns=COLUMNS, rows=rows,
-                last_key=qe.isoformat(), elapsed_sec=elapsed,
+                table=table,
+                columns=COLUMNS,
+                rows=rows,
+                last_key=qe.isoformat(),
+                elapsed_sec=elapsed,
             )
         except Exception as e:  # noqa: BLE001 — 单季度失败不阻断其余季度，下季度重跑自愈
             elapsed = (datetime.datetime.now(datetime.timezone.utc) - t0).total_seconds()
             log_.warning("北向持仓快照 %s 获取失败: %s", qe, e)
             yield FetchResult(
-                table=table, columns=COLUMNS, rows=[],
-                last_key=qe.isoformat(), elapsed_sec=elapsed,
+                table=table,
+                columns=COLUMNS,
+                rows=[],
+                last_key=qe.isoformat(),
+                elapsed_sec=elapsed,
                 error=str(e),
             )

@@ -73,17 +73,16 @@ class SkillDiscovery:
 
     @staticmethod
     def parse_frontmatter(md_file: Path) -> dict[str, Any]:
-        content = md_file.read_text(encoding='utf-8')
-        if not content.startswith('---'):
+        content = md_file.read_text(encoding="utf-8")
+        if not content.startswith("---"):
             return {}
-        parts = content.split('---', 2)
+        parts = content.split("---", 2)
         if len(parts) < 3:
             return {}
         try:
             return yaml.safe_load(parts[1]) or {}
         except yaml.YAMLError:
             return {}
-
 
     @staticmethod
     def extract_module_name(content: str, bp_file: Path) -> str:
@@ -98,14 +97,12 @@ class SkillDiscovery:
             return name
         return SkillDiscovery._derive_from_path_parts(bp_file)
 
-
     @staticmethod
     def derive_skill_id(module_name: str) -> str:
         if not module_name:
-            return ''
-        short = module_name.split('-')[-1] if '-' in module_name else module_name
-        return f'SKILL-DOM-{short[:3].upper()}-001'
-
+            return ""
+        short = module_name.split("-")[-1] if "-" in module_name else module_name
+        return f"SKILL-DOM-{short[:3].upper()}-001"
 
     @staticmethod
     def scan_modules(modules_path: str) -> list[dict[str, Any]]:

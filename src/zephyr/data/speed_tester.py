@@ -28,6 +28,7 @@
 CLI:
     integrator speed-test [--source <src>] [--capability <cap>]
 """
+
 from __future__ import annotations
 
 import datetime
@@ -102,143 +103,209 @@ _YEAR_AGO = datetime.date(2025, 7, 10)
 TEST_MATRIX: list[tuple[str, str, str, dict, list | None, datetime.date | None, datetime.date | None]] = [
     # kline_daily 两源对比
     ("miniqmt", "kline_daily", _TBL_KLINE_DAILY, {"capability": "kline_daily"}, None, None, None),
-    ("baostock", "kline_daily", _TBL_KLINE_DAILY, {"capability": "kline_daily"},
-     ["sh.600000", "sz.000001", "sz.000002"], None, None),
-
+    (
+        "baostock",
+        "kline_daily",
+        _TBL_KLINE_DAILY,
+        {"capability": "kline_daily"},
+        ["sh.600000", "sz.000001", "sz.000002"],
+        None,
+        None,
+    ),
     # daily_valuation
     ("akshare", "daily_valuation", _TBL_DAILY_VALUATION, {"capability": "daily_valuation"}, None, None, None),
-
     # kline_index
-    ("miniqmt", "kline_index", _TBL_KLINE_INDEX, {"capability": "kline_index"},
-     ["000300.SH", "000905.SH", "000001.SH"], None, None),
-
+    (
+        "miniqmt",
+        "kline_index",
+        _TBL_KLINE_INDEX,
+        {"capability": "kline_index"},
+        ["000300.SH", "000905.SH", "000001.SH"],
+        None,
+        None,
+    ),
     # index_constituent 两源对比
-    ("miniqmt", "index_constituent", _TBL_INDEX_CONSTITUENT,
-     {"capability": "index_constituent"}, None, None, None),
-    ("baostock", "index_constituent", _TBL_INDEX_CONSTITUENT,
-     {"capability": "index_constituent"}, None, None, None),
-
+    ("miniqmt", "index_constituent", _TBL_INDEX_CONSTITUENT, {"capability": "index_constituent"}, None, None, None),
+    ("baostock", "index_constituent", _TBL_INDEX_CONSTITUENT, {"capability": "index_constituent"}, None, None, None),
     # money_flow: tushare 主源
     ("tushare", "money_flow", _TBL_MONEY_FLOW, {"capability": "money_flow"}, None, None, None),
-
     # adj_factor: miniQMT 唯一（事件驱动，改用 1 年范围重测）
-    ("miniqmt", "adj_factor", _TBL_ADJ_FACTOR, {"capability": "adj_factor"},
-     ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
-
+    (
+        "miniqmt",
+        "adj_factor",
+        _TBL_ADJ_FACTOR,
+        {"capability": "adj_factor"},
+        ["000001.SZ", "600000.SH"],
+        _YEAR_AGO,
+        None,
+    ),
     # AKShare 快源
     ("akshare", "margin_trading", _TBL_MARGIN_TRADING, {"capability": "margin_trading"}, None, None, None),
     ("akshare", "block_trade", _TBL_BLOCK_TRADE, {"capability": "block_trade"}, None, None, None),
     ("akshare", "dragon_tiger", _TBL_DRAGON_TIGER, {"capability": "dragon_tiger"}, None, None, None),
     ("akshare", "macro_data", _TBL_MACRO_DATA, {"capability": "macro_data"}, None, None, None),
-
     # 财务报表（季度数据，用 1 年范围）
-    ("miniqmt", "balance_sheet", _TBL_BALANCE_SHEET,
-     {"capability": "balance_sheet"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
-    ("miniqmt", "income_statement", _TBL_INCOME_STATEMENT,
-     {"capability": "income_statement"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
-    ("miniqmt", "cashflow_statement", _TBL_CASHFLOW_STATEMENT,
-     {"capability": "cashflow_statement"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
-    ("miniqmt", "financial_indicator", _TBL_FINANCIAL_INDICATOR,
-     {"capability": "financial_indicator"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
-    ("miniqmt", "main_business", _TBL_MAIN_BUSINESS,
-     {"capability": "main_business"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
-
+    (
+        "miniqmt",
+        "balance_sheet",
+        _TBL_BALANCE_SHEET,
+        {"capability": "balance_sheet"},
+        ["000001.SZ", "600000.SH"],
+        _YEAR_AGO,
+        None,
+    ),
+    (
+        "miniqmt",
+        "income_statement",
+        _TBL_INCOME_STATEMENT,
+        {"capability": "income_statement"},
+        ["000001.SZ", "600000.SH"],
+        _YEAR_AGO,
+        None,
+    ),
+    (
+        "miniqmt",
+        "cashflow_statement",
+        _TBL_CASHFLOW_STATEMENT,
+        {"capability": "cashflow_statement"},
+        ["000001.SZ", "600000.SH"],
+        _YEAR_AGO,
+        None,
+    ),
+    (
+        "miniqmt",
+        "financial_indicator",
+        _TBL_FINANCIAL_INDICATOR,
+        {"capability": "financial_indicator"},
+        ["000001.SZ", "600000.SH"],
+        _YEAR_AGO,
+        None,
+    ),
+    (
+        "miniqmt",
+        "main_business",
+        _TBL_MAIN_BUSINESS,
+        {"capability": "main_business"},
+        ["000001.SZ", "600000.SH"],
+        _YEAR_AGO,
+        None,
+    ),
     # trade_calendar
-    ("baostock", "trade_calendar", _TBL_TRADE_CALENDAR,
-     {"capability": "trade_calendar"}, None, None, None),
-
+    ("baostock", "trade_calendar", _TBL_TRADE_CALENDAR, {"capability": "trade_calendar"}, None, None, None),
     # 复权日K
-    ("miniqmt", "kline_daily_hfq", _TBL_KLINE_DAILY_HFQ,
-     {"capability": "kline_daily_hfq"}, None, None, None),
-
+    ("miniqmt", "kline_daily_hfq", _TBL_KLINE_DAILY_HFQ, {"capability": "kline_daily_hfq"}, None, None, None),
     # 周/月K（日K聚合）
-    ("miniqmt", "kline_weekly", _TBL_KLINE_WEEKLY,
-     {"capability": "kline_weekly"}, ["000001.SZ", "600000.SH"], None, None),
-    ("miniqmt", "kline_monthly", _TBL_KLINE_MONTHLY,
-     {"capability": "kline_monthly"}, ["000001.SZ", "600000.SH"], None, None),
-
+    (
+        "miniqmt",
+        "kline_weekly",
+        _TBL_KLINE_WEEKLY,
+        {"capability": "kline_weekly"},
+        ["000001.SZ", "600000.SH"],
+        None,
+        None,
+    ),
+    (
+        "miniqmt",
+        "kline_monthly",
+        _TBL_KLINE_MONTHLY,
+        {"capability": "kline_monthly"},
+        ["000001.SZ", "600000.SH"],
+        None,
+        None,
+    ),
     # 分钟K线（数据量大，用 1 只样本）
-    ("miniqmt", "kline_1min", _TBL_KLINE_1MIN,
-     {"capability": "kline_1min"}, ["000001.SZ"], None, None),
-    ("miniqmt", "kline_5min", _TBL_KLINE_5MIN,
-     {"capability": "kline_5min"}, ["000001.SZ"], None, None),
-    ("miniqmt", "kline_15min", _TBL_KLINE_15MIN,
-     {"capability": "kline_15min"}, ["000001.SZ"], None, None),
-    ("miniqmt", "kline_30min", _TBL_KLINE_30MIN,
-     {"capability": "kline_30min"}, ["000001.SZ"], None, None),
-    ("miniqmt", "kline_60min", _TBL_KLINE_60MIN,
-     {"capability": "kline_60min"}, ["000001.SZ"], None, None),
-
+    ("miniqmt", "kline_1min", _TBL_KLINE_1MIN, {"capability": "kline_1min"}, ["000001.SZ"], None, None),
+    ("miniqmt", "kline_5min", _TBL_KLINE_5MIN, {"capability": "kline_5min"}, ["000001.SZ"], None, None),
+    ("miniqmt", "kline_15min", _TBL_KLINE_15MIN, {"capability": "kline_15min"}, ["000001.SZ"], None, None),
+    ("miniqmt", "kline_30min", _TBL_KLINE_30MIN, {"capability": "kline_30min"}, ["000001.SZ"], None, None),
+    ("miniqmt", "kline_60min", _TBL_KLINE_60MIN, {"capability": "kline_60min"}, ["000001.SZ"], None, None),
     # ===== 4 个未验证源（P2）=====
     # tickflow 美股数据
-    ("tickflow", "kline_us_daily", _TBL_KLINE_US_DAILY,
-     {"capability": "kline_us_daily"}, ["SPY.US", "AAPL.US"], None, None),
-    ("tickflow", "us_index", _TBL_US_INDEX,
-     {"capability": "us_index"}, None, None, None),
-
+    (
+        "tickflow",
+        "kline_us_daily",
+        _TBL_KLINE_US_DAILY,
+        {"capability": "kline_us_daily"},
+        ["SPY.US", "AAPL.US"],
+        None,
+        None,
+    ),
+    ("tickflow", "us_index", _TBL_US_INDEX, {"capability": "us_index"}, None, None, None),
     # tushare 新闻数据（统一写入 news_data，需 TUSHARE_TOKEN）
-    ("tushare", "news_data", _TBL_NEWS_DATA,
-     {"capability": "news_data"}, None, None, None),
-
+    ("tushare", "news_data", _TBL_NEWS_DATA, {"capability": "news_data"}, None, None, None),
     # rss 财经新闻（symbols_override 传 RSS feed URL，非股票代码）
-    ("rss", "news_data", _TBL_NEWS_DATA,
-     {"capability": "news_data"},
-     ["https://36kr.com/feed",
-      f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",
-      f"{DEFAULT_RSSHUB_URL}/yicai/news",
-      f"{DEFAULT_RSSHUB_URL}/caixin/latest"],
-     None, None),
-
+    (
+        "rss",
+        "news_data",
+        _TBL_NEWS_DATA,
+        {"capability": "news_data"},
+        [
+            "https://36kr.com/feed",
+            f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",
+            f"{DEFAULT_RSSHUB_URL}/yicai/news",
+            f"{DEFAULT_RSSHUB_URL}/caixin/latest",
+        ],
+        None,
+        None,
+    ),
     # akshare 研报/北向资金/期货
-    ("akshare", "research_report", _TBL_NEWS_DATA,
-     {"capability": "research_report"}, ["000001.SZ", "600000.SH"], None, None),
-    ("akshare", "hk_connect_flow", _TBL_HK_CONNECT_FLOW,
-     {"capability": "hk_connect_flow"}, None, None, None),
-    ("akshare", "kline_futures", _TBL_KLINE_FUTURES,
-     {"capability": "kline_futures"}, None, None, None),
-
+    (
+        "akshare",
+        "research_report",
+        _TBL_NEWS_DATA,
+        {"capability": "research_report"},
+        ["000001.SZ", "600000.SH"],
+        None,
+        None,
+    ),
+    ("akshare", "hk_connect_flow", _TBL_HK_CONNECT_FLOW, {"capability": "hk_connect_flow"}, None, None, None),
+    ("akshare", "kline_futures", _TBL_KLINE_FUTURES, {"capability": "kline_futures"}, None, None, None),
     # tdx 通达信板块数据
-    ("tdx", "kline_sector", _TBL_KLINE_SECTOR,
-     {"capability": "kline_sector"}, ["sh.000001"], None, None),
-
+    ("tdx", "kline_sector", _TBL_KLINE_SECTOR, {"capability": "kline_sector"}, ["sh.000001"], None, None),
     # tushare 申万行业分类
-    ("tushare", "industry_class", _TBL_INDUSTRY_CLASS,
-     {"capability": "industry_class"}, None, None, None),
-
+    ("tushare", "industry_class", _TBL_INDUSTRY_CLASS, {"capability": "industry_class"}, None, None, None),
     # ===== 新增能力测速（2026-07-11）=====
     # ETF 分钟K线（数据量大，用 1 只样本）
-    ("miniqmt", "kline_etf_1min", _TBL_KLINE_ETF_1MIN,
-     {"capability": "kline_etf_1min"}, ["510050.SH"], None, None),
-    ("miniqmt", "kline_etf_5min", _TBL_KLINE_ETF_5MIN,
-     {"capability": "kline_etf_5min"}, ["510050.SH"], None, None),
-    ("miniqmt", "kline_etf_15min", _TBL_KLINE_ETF_15MIN,
-     {"capability": "kline_etf_15min"}, ["510050.SH"], None, None),
-    ("miniqmt", "kline_etf_30min", _TBL_KLINE_ETF_30MIN,
-     {"capability": "kline_etf_30min"}, ["510050.SH"], None, None),
-    ("miniqmt", "kline_etf_60min", _TBL_KLINE_ETF_60MIN,
-     {"capability": "kline_etf_60min"}, ["510050.SH"], None, None),
-
+    ("miniqmt", "kline_etf_1min", _TBL_KLINE_ETF_1MIN, {"capability": "kline_etf_1min"}, ["510050.SH"], None, None),
+    ("miniqmt", "kline_etf_5min", _TBL_KLINE_ETF_5MIN, {"capability": "kline_etf_5min"}, ["510050.SH"], None, None),
+    ("miniqmt", "kline_etf_15min", _TBL_KLINE_ETF_15MIN, {"capability": "kline_etf_15min"}, ["510050.SH"], None, None),
+    ("miniqmt", "kline_etf_30min", _TBL_KLINE_ETF_30MIN, {"capability": "kline_etf_30min"}, ["510050.SH"], None, None),
+    ("miniqmt", "kline_etf_60min", _TBL_KLINE_ETF_60MIN, {"capability": "kline_etf_60min"}, ["510050.SH"], None, None),
     # LOF 分钟K线（数据量大，用 1 只样本）
-    ("miniqmt", "kline_lof_1min", _TBL_KLINE_LOF_1MIN,
-     {"capability": "kline_lof_1min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "kline_lof_5min", _TBL_KLINE_LOF_5MIN,
-     {"capability": "kline_lof_5min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "kline_lof_15min", _TBL_KLINE_LOF_15MIN,
-     {"capability": "kline_lof_15min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "kline_lof_30min", _TBL_KLINE_LOF_30MIN,
-     {"capability": "kline_lof_30min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "kline_lof_60min", _TBL_KLINE_LOF_60MIN,
-     {"capability": "kline_lof_60min"}, ["161725.SZ"], None, None),
-
+    ("miniqmt", "kline_lof_1min", _TBL_KLINE_LOF_1MIN, {"capability": "kline_lof_1min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "kline_lof_5min", _TBL_KLINE_LOF_5MIN, {"capability": "kline_lof_5min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "kline_lof_15min", _TBL_KLINE_LOF_15MIN, {"capability": "kline_lof_15min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "kline_lof_30min", _TBL_KLINE_LOF_30MIN, {"capability": "kline_lof_30min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "kline_lof_60min", _TBL_KLINE_LOF_60MIN, {"capability": "kline_lof_60min"}, ["161725.SZ"], None, None),
     # 后复权周/月K线（日K聚合）
-    ("miniqmt", "kline_weekly_hfq", _TBL_KLINE_WEEKLY_HFQ,
-     {"capability": "kline_weekly_hfq"}, ["000001.SZ", "600000.SH"], None, None),
-    ("miniqmt", "kline_monthly_hfq", _TBL_KLINE_MONTHLY_HFQ,
-     {"capability": "kline_monthly_hfq"}, ["000001.SZ", "600000.SH"], None, None),
-
+    (
+        "miniqmt",
+        "kline_weekly_hfq",
+        _TBL_KLINE_WEEKLY_HFQ,
+        {"capability": "kline_weekly_hfq"},
+        ["000001.SZ", "600000.SH"],
+        None,
+        None,
+    ),
+    (
+        "miniqmt",
+        "kline_monthly_hfq",
+        _TBL_KLINE_MONTHLY_HFQ,
+        {"capability": "kline_monthly_hfq"},
+        ["000001.SZ", "600000.SH"],
+        None,
+        None,
+    ),
     # 限售股明细
-    ("akshare", "restricted_shares", _TBL_RESTRICTED_SHARES,
-     {"capability": "restricted_shares"}, ["000001.SZ", "600000.SH"], None, None),
+    (
+        "akshare",
+        "restricted_shares",
+        _TBL_RESTRICTED_SHARES,
+        {"capability": "restricted_shares"},
+        ["000001.SZ", "600000.SH"],
+        None,
+        None,
+    ),
 ]
 
 
@@ -247,30 +314,39 @@ def _make_provider(source: str):
     """按 source 名称实例化 Provider。"""
     if source == "miniqmt":
         from zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
+
         return MiniQmtIngestProvider()
     elif source == "akshare":
         from zephyr.data.implementations.akshare_provider import AkshareIngestProvider
+
         return AkshareIngestProvider()
     elif source == "baostock":
         from zephyr.data.implementations.baostock_provider import BaostockProvider
+
         return BaostockProvider()
     elif source == "tickflow":
         from zephyr.data.implementations.tickflow_provider import TickFlowProvider
+
         return TickFlowProvider()
     elif source == "tushare":
         from zephyr.data.implementations.tushare_provider import TushareProvider
+
         return TushareProvider()
     elif source == "rss":
         from zephyr.data.implementations.rss_provider import RSSProvider
+
         return RSSProvider()
     elif source == "tdx":
         from zephyr.data.implementations.tdx_provider import TDXProvider
+
         return TDXProvider()
     elif source == "cls":
         from zephyr.data.implementations.cls_provider import ClsProvider
+
         return ClsProvider()
     elif source == "eastmoney_news":
         from zephyr.data.implementations.eastmoney_news_provider import EastmoneyNewsProvider
+
         return EastmoneyNewsProvider()
     else:
         raise ValueError("不支持的数据源类型")
@@ -279,14 +355,17 @@ def _make_provider(source: str):
 def _get_policy(source: str):
     """获取数据源策略。"""
     from zephyr.data.policy_registry import get_registry
+
     return get_registry().get_policy(source)
 
 
 # ============== 单项测速 ==============
 
+
 @dataclass
 class SpeedTestConfig:
     """测速配置参数（封装 speed_test_one 的参数）。"""
+
     source: str
     capability: str
     target_table: str
@@ -442,29 +521,47 @@ def run_speed_tests(
         source, capability, table, extra, sym_override = entry[:5]
         start_override = entry[5] if len(entry) > 5 else None
         end_override = entry[6] if len(entry) > 6 else None
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"  测速: {source} / {capability}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         try:
             cfg = SpeedTestConfig(
-                source=source, capability=capability, target_table=table,
-                extra=extra, symbols_override=sym_override,
-                sample_start=start_override, sample_end=end_override,
+                source=source,
+                capability=capability,
+                target_table=table,
+                extra=extra,
+                symbols_override=sym_override,
+                sample_start=start_override,
+                sample_end=end_override,
             )
             r = speed_test_one(cfg)
             results.append(r)
-            print(f"  rows={r['rows_fetched']} time={r['elapsed_sec']}s "
-                  f"rows/s={r['rows_per_sec']} sym/s={r['symbols_per_sec']} "
-                  f"status={r['api_status']}")
+            print(
+                f"  rows={r['rows_fetched']} time={r['elapsed_sec']}s "
+                f"rows/s={r['rows_per_sec']} sym/s={r['symbols_per_sec']} "
+                f"status={r['api_status']}"
+            )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             print(f"  [FATAL] {e}")
-            results.append({
-                "source": source, "capability": capability, "target_table": table,
-                "symbols_count": 0, "rows_fetched": 0, "elapsed_sec": 0.0,
-                "rows_per_sec": 0.0, "symbols_per_sec": 0.0, "error_count": 1,
-                "error_rate": 1.0, "rate_limited": 0, "api_status": "broken",
-                "known_issues": str(e)[:200], "notes": "", "error_detail": str(e)[:200],
-            })
+            results.append(
+                {
+                    "source": source,
+                    "capability": capability,
+                    "target_table": table,
+                    "symbols_count": 0,
+                    "rows_fetched": 0,
+                    "elapsed_sec": 0.0,
+                    "rows_per_sec": 0.0,
+                    "symbols_per_sec": 0.0,
+                    "error_count": 1,
+                    "error_rate": 1.0,
+                    "rate_limited": 0,
+                    "api_status": "broken",
+                    "known_issues": str(e)[:200],
+                    "notes": "",
+                    "error_detail": str(e)[:200],
+                }
+            )
 
     print_report(results)
     save_to_clickhouse(results)
@@ -550,10 +647,14 @@ def print_report(results: list[dict]) -> None:
             continue
         primary = valid[0]
         secondary = valid[1] if len(valid) > 1 else None
-        print(f"    主用: {primary['source']:<10} rows/s={primary['rows_per_sec']:.2f} "
-              f"sym/s={primary['symbols_per_sec']:.4f} status={primary['api_status']}")
+        print(
+            f"    主用: {primary['source']:<10} rows/s={primary['rows_per_sec']:.2f} "
+            f"sym/s={primary['symbols_per_sec']:.4f} status={primary['api_status']}"
+        )
         if secondary:
-            print(f"    备用: {secondary['source']:<10} rows/s={secondary['rows_per_sec']:.2f} "
-                  f"sym/s={secondary['symbols_per_sec']:.4f} status={secondary['api_status']}")
+            print(
+                f"    备用: {secondary['source']:<10} rows/s={secondary['rows_per_sec']:.2f} "
+                f"sym/s={secondary['symbols_per_sec']:.4f} status={secondary['api_status']}"
+            )
         else:
             print("    备用: 无（单源）")

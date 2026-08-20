@@ -32,6 +32,7 @@
   不保证并发安全；并发读未加锁会导致 SQLITE_MISUSE "bad parameter"）
 - 每次操作创建新 cursor，用完即关（连接复用）
 """
+
 from __future__ import annotations
 
 import datetime
@@ -107,12 +108,8 @@ class ProgressStore:
                 )
                 """
             )
-            self._conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_task_runs_task_id ON task_runs(task_id)"
-            )
-            self._conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_task_runs_started_at ON task_runs(started_at)"
-            )
+            self._conn.execute("CREATE INDEX IF NOT EXISTS idx_task_runs_task_id ON task_runs(task_id)")
+            self._conn.execute("CREATE INDEX IF NOT EXISTS idx_task_runs_started_at ON task_runs(started_at)")
         except sqlite3.Error as e:
             log.error("ProgressStore._init_db 失败: %s", e)
             raise
@@ -139,9 +136,7 @@ class ProgressStore:
         """
         try:
             with self._lock:
-                cur = self._conn.execute(
-                    "SELECT last_key FROM task_progress WHERE task_id=?", (task_id,)
-                )
+                cur = self._conn.execute("SELECT last_key FROM task_progress WHERE task_id=?", (task_id,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                 row = cur.fetchone()
                 cur.close()
                 return row["last_key"] if row else None
@@ -153,9 +148,7 @@ class ProgressStore:
         """查任务最新状态。"""
         try:
             with self._lock:
-                cur = self._conn.execute(
-                    "SELECT * FROM task_progress WHERE task_id=?", (task_id,)
-                )
+                cur = self._conn.execute("SELECT * FROM task_progress WHERE task_id=?", (task_id,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                 row = cur.fetchone()
                 cur.close()
                 return dict(row) if row else None
@@ -259,9 +252,7 @@ class ProgressStore:
         """查最近 N 条运行记录。"""
         try:
             with self._lock:
-                cur = self._conn.execute(
-                    "SELECT * FROM task_runs ORDER BY started_at DESC LIMIT ?", (limit,)
-                )
+                cur = self._conn.execute("SELECT * FROM task_runs ORDER BY started_at DESC LIMIT ?", (limit,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                 rows = [dict(r) for r in cur.fetchall()]
                 cur.close()
                 return rows
@@ -287,9 +278,7 @@ class ProgressStore:
         """按数据源查所有任务。"""
         try:
             with self._lock:
-                cur = self._conn.execute(
-                    "SELECT * FROM task_progress WHERE source=? ORDER BY task_id", (source,)
-                )
+                cur = self._conn.execute("SELECT * FROM task_progress WHERE source=? ORDER BY task_id", (source,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                 rows = [dict(r) for r in cur.fetchall()]
                 cur.close()
                 return rows
@@ -301,9 +290,7 @@ class ProgressStore:
         """查所有任务状态。"""
         try:
             with self._lock:
-                cur = self._conn.execute(
-                    "SELECT * FROM task_progress ORDER BY source, task_id"
-                )
+                cur = self._conn.execute("SELECT * FROM task_progress ORDER BY source, task_id")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                 rows = [dict(r) for r in cur.fetchall()]
                 cur.close()
                 return rows
@@ -337,8 +324,7 @@ class ProgressStore:
             try:
                 # Step 1: 查找卡死的 RUNNING 记录
                 cur = self._conn.execute(
-                    "SELECT run_id, task_id, started_at FROM task_runs "
-                    "WHERE status='RUNNING' AND started_at < ?",
+                    "SELECT run_id, task_id, started_at FROM task_runs WHERE status='RUNNING' AND started_at < ?",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                     (cutoff_str,),
                 )
                 stale_rows = cur.fetchall()
@@ -353,10 +339,7 @@ class ProgressStore:
                     run_id = row["run_id"]
                     task_id = row["task_id"]
                     self._conn.execute(
-                        "UPDATE task_runs SET "
-                        "  finished_at=?, status='STALE', "
-                        "  error_msg=?"
-                        " WHERE run_id=?",
+                        "UPDATE task_runs SET   finished_at=?, status='STALE',   error_msg=? WHERE run_id=?",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                         (now_str, reap_msg, run_id),
                     )
                     # Step 3: 同步 task_progress（仅当 last_status 仍为 RUNNING 时）
@@ -367,12 +350,12 @@ class ProgressStore:
                         " WHERE task_id=? AND last_status='RUNNING'",
                         (reap_msg, task_id),
                     )
-                    reaped.append(
-                        {"run_id": run_id, "task_id": task_id, "started_at": row["started_at"]}
-                    )
+                    reaped.append({"run_id": run_id, "task_id": task_id, "started_at": row["started_at"]})
                     log.warning(
                         "reap_stale_runs: 清理卡死任务 task_id=%s run_id=%s (RUNNING > %dh)",
-                        task_id, run_id, max_age_hours,
+                        task_id,
+                        run_id,
+                        max_age_hours,
                     )
 
                 if reaped:

@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-INF-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """VibeCodingQualityGate — 代码质量门禁（stub, tests 待实装后补全实现）"""
+
 import ast
 import re
 

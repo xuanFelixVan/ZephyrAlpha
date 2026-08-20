@@ -18,6 +18,7 @@
 
 re-export cli.main，等价于 `integrator` 命令。
 """
+
 import sys
 
 from zephyr.data.cli import main

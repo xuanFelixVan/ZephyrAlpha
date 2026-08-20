@@ -55,12 +55,14 @@ class FalseCompletionDetector:
             bool: True 当声明与实际匹配（非虚假完成）
         """
         is_valid = claimed == actual
-        self._claims.append({
-            "agent_id": agent_id,
-            "claimed": claimed,
-            "actual": actual,
-            "valid": is_valid,
-        })
+        self._claims.append(
+            {
+                "agent_id": agent_id,
+                "claimed": claimed,
+                "actual": actual,
+                "valid": is_valid,
+            }
+        )
         return is_valid
 
     def check_false_completion(
@@ -87,10 +89,7 @@ class FalseCompletionDetector:
             )
         return CompletionClaim(
             detected=False,
-            reason=(
-                f"ok: agent={agent_id} "
-                f"expected={expected_size} actual={actual_size}"
-            ),
+            reason=(f"ok: agent={agent_id} expected={expected_size} actual={actual_size}"),
             agent_id=agent_id,
             expected_size=expected_size,
             actual_size=actual_size,

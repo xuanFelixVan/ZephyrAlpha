@@ -31,7 +31,6 @@ from typing import Any
 
 
 class SkillTemperature:
-
     """Skill Temperature——自适应 LLM 创造性调度."""
 
     DEFAULT_TEMPERATURE = 0.3

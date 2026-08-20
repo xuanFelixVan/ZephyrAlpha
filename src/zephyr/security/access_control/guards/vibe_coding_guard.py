@@ -60,10 +60,7 @@ class VibeCodingGuard:
     """Vibe Coding 攻击面检测器."""
 
     def __init__(self) -> None:
-        self._patterns = [
-            {**p, "compiled": re.compile(p["pattern"], re.IGNORECASE)}
-            for p in VIBE_CODING_PATTERNS
-        ]
+        self._patterns = [{**p, "compiled": re.compile(p["pattern"], re.IGNORECASE)} for p in VIBE_CODING_PATTERNS]
 
     def scan(self, filename: str, content: str) -> VibeCodingAudit:
         """扫描文件内容检测 Vibe Coding 危险模式.

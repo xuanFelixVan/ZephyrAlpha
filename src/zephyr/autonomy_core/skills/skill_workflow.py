@@ -138,7 +138,6 @@ class SkillWorkflow:
         """写入：workflows（Stage 4 公共化）。"""
         self._workflows = value
 
-
     def define(
         self,
         workflow_id: str,

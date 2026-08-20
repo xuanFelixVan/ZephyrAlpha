@@ -93,7 +93,6 @@ class SilentFailureDetector:
         """写入：execution_history（Stage 4 公共化）。"""
         self._execution_history = value
 
-
     def _check_truncation(self, output: str) -> tuple[bool, dict[str, Any]]:
         for pattern in self._TRUNCATION_INDICATORS:
             found = re.findall(pattern, output[-500:], re.IGNORECASE)

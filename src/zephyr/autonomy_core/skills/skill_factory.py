@@ -177,16 +177,23 @@ class SkillFactory:
 
                 # 触发表目标是 skills 包内 AGENTS.md，审计锚仓根 .runtime/audit/
                 from zephyr.shared.io.paths import REPO_ROOT
+
                 audit_dir = REPO_ROOT / ".runtime" / "audit"
                 audit_dir.mkdir(parents=True, exist_ok=True)
                 with open(audit_dir / "skill_factory_cas.jsonl", "a", encoding="utf-8") as fh:
-                    fh.write(_json.dumps({
-                        "ts": _dt.now(_tz.utc).isoformat(),
-                        "file": str(_AGENTS_MD_PATH),
-                        "event": "cas_abort",
-                        "detail": "read-modify-write 窗口内文件被并发修改，放弃写入防吞写",
-                        "module_name": module_name,
-                    }, ensure_ascii=False) + "\n")
+                    fh.write(
+                        _json.dumps(
+                            {
+                                "ts": _dt.now(_tz.utc).isoformat(),
+                                "file": str(_AGENTS_MD_PATH),
+                                "event": "cas_abort",
+                                "detail": "read-modify-write 窗口内文件被并发修改，放弃写入防吞写",
+                                "module_name": module_name,
+                            },
+                            ensure_ascii=False,
+                        )
+                        + "\n"
+                    )
             except OSError:
                 pass
             return

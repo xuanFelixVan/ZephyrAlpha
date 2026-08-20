@@ -126,7 +126,6 @@ class OrphanDetector:
         """写入：scanner（Stage 4 公共化）。"""
         self._scanner = value
 
-
     def compute_orphan_rate(self) -> float:
         orphans = self.find_orphans()
 

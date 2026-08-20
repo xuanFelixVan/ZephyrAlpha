@@ -116,11 +116,13 @@ class OutputGuard:
         # 检查输出大小
         if len(text) > MAX_OUTPUT_SIZE:
             sanitized = text[:MAX_OUTPUT_SIZE] + "[SIZE_TRUNCATED]"
-            findings.append({
-                "type": "size_truncated",
-                "original_size": len(text),
-                "max_size": MAX_OUTPUT_SIZE,
-            })
+            findings.append(
+                {
+                    "type": "size_truncated",
+                    "original_size": len(text),
+                    "max_size": MAX_OUTPUT_SIZE,
+                }
+            )
             return OutputResult(
                 decision=OutputDecision.SANITIZED,
                 sanitized_content=sanitized,
@@ -132,35 +134,39 @@ class OutputGuard:
         for p in PII_PATTERNS:
             matches = re.findall(p["pattern"], sanitized)
             if matches:
-                sanitized = re.sub(
-                    p["pattern"], f"[{p['name']}_MASKED]", sanitized
+                sanitized = re.sub(p["pattern"], f"[{p['name']}_MASKED]", sanitized)
+                findings.append(
+                    {
+                        "type": "pii",
+                        "name": p["name"],
+                        "count": len(matches),
+                    }
                 )
-                findings.append({
-                    "type": "pii",
-                    "name": p["name"],
-                    "count": len(matches),
-                })
 
         # 检查凭证
         for p in CREDENTIAL_PATTERNS:
             matches = re.findall(p["pattern"], sanitized)
             if matches:
                 sanitized = re.sub(p["pattern"], "CREDENTIAL_MASKED", sanitized)
-                findings.append({
-                    "type": "credential",
-                    "name": p["name"],
-                    "count": len(matches),
-                })
+                findings.append(
+                    {
+                        "type": "credential",
+                        "name": p["name"],
+                        "count": len(matches),
+                    }
+                )
 
         # 检查多源信息合成泄露
         if agent_id and agent_id in self._read_history:
             sources = self._read_history[agent_id]
             if len(sources) >= 3:
-                findings.append({
-                    "type": "synthesis_leakage",
-                    "sources": list(sources),
-                    "count": len(sources),
-                })
+                findings.append(
+                    {
+                        "type": "synthesis_leakage",
+                        "sources": list(sources),
+                        "count": len(sources),
+                    }
+                )
 
         if findings:
             decision = OutputDecision.SANITIZED

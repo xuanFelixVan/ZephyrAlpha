@@ -168,9 +168,7 @@ class AgentSecurityLayer:
         self._approvals: dict[str, ApprovalRequest] = {}
         self._auto_approve = False
 
-    def authorize_tool_call(
-        self, tool_name: str, params: dict[str, Any] | None = None
-    ) -> ToolCallAuthorization:
+    def authorize_tool_call(self, tool_name: str, params: dict[str, Any] | None = None) -> ToolCallAuthorization:
         perm_risk = self._TOOL_PERMISSIONS.get(tool_name)
         if perm_risk is None:
             return ToolCallAuthorization(

@@ -47,7 +47,6 @@ class SkillLineage:
         """写入：lineages（Stage 4 公共化）。"""
         self._lineages = value
 
-
     def record_version(self, skill_id: str, version: str, parent: str | None, changes: str) -> dict[str, Any]:
         entry = {"version": version, "parent": parent, "changes": changes, "timestamp": time.time()}
         self._lineages.setdefault(skill_id, []).append(entry)

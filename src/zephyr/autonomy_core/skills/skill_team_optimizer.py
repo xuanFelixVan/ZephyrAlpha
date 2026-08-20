@@ -138,18 +138,15 @@ class SkillTeamOptimizer:
         """公共接口：team_score（Stage 4 公共化，委托到 cls._team_score）。"""
         return cls._team_score(team, task_keywords)
 
-
     @classmethod
     def coverage(cls, team, task_keywords) -> float:
         """公共接口：coverage（Stage 4 公共化，委托到 cls._coverage）。"""
         return cls._coverage(team, task_keywords)
 
-
     @classmethod
     def compat_score(cls, skill_a, skill_b) -> float:
         """公共接口：compat_score（Stage 4 公共化，委托到 cls._compat_score）。"""
         return cls._compat_score(skill_a, skill_b)
-
 
     @classmethod
     def _coverage(cls, team: list[str], task_keywords: list[str]) -> float:

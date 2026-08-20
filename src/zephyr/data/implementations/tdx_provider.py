@@ -27,6 +27,7 @@
 - connect() 用 Quotes.factory(market='std') 创建客户端，bestip 自动选择
 - fetch() 调用 client.index_bars / client.get_stock_list_in_sector
 """
+
 from __future__ import annotations
 
 import datetime
@@ -66,7 +67,12 @@ _RELIABLE_SERVERS = [
 # 880xxx 板块指数K线周期 → mootdx frequency 映射
 # mootdx index_bars frequency: 0=5min 1=15min 2=30m 3=1hour 7=1min 9=日线
 _PERIOD_TO_FREQ = {
-    "1d": 9, "5m": 0, "1m": 7, "15m": 1, "30m": 2, "60m": 3,
+    "1d": 9,
+    "5m": 0,
+    "1m": 7,
+    "15m": 1,
+    "30m": 2,
+    "60m": 3,
 }
 _MARKET_SH = 1  # 880xxx 板块指数归属沪市
 
@@ -104,13 +110,13 @@ def _patch_mootdx_to_data_coerce() -> None:
         逻辑与原版 mootdx.utils.to_data 一致，仅 to_datetime 调用加 coerce。
         若 mootdx 升级 to_data 新增列处理，需同步更新此处。
         """
-        symbol = kwargs.get('symbol')
-        adjust = kwargs.get('adjust', '').lower()
+        symbol = kwargs.get("symbol")
+        adjust = kwargs.get("adjust", "").lower()
 
-        if adjust in ('01', 'qfq', 'before'):
-            adjust = 'qfq'
-        elif adjust in ('02', 'hfq', 'after'):
-            adjust = 'hfq'
+        if adjust in ("01", "qfq", "before"):
+            adjust = "qfq"
+        elif adjust in ("02", "hfq", "after"):
+            adjust = "hfq"
         else:
             adjust = None
 
@@ -130,16 +136,17 @@ def _patch_mootdx_to_data_coerce() -> None:
             return result if result is not None else pd.DataFrame()
 
         # 关键修复：errors='coerce' 代替默认 'raise'
-        if 'datetime' in result.columns:
-            result.index = pd.to_datetime(result.datetime, errors='coerce')
-        if 'date' in result.columns:
-            result.index = pd.to_datetime(result.date, errors='coerce')
+        if "datetime" in result.columns:
+            result.index = pd.to_datetime(result.datetime, errors="coerce")
+        if "date" in result.columns:
+            result.index = pd.to_datetime(result.date, errors="coerce")
 
-        if 'vol' in result.columns:
-            result['volume'] = result.vol
+        if "vol" in result.columns:
+            result["volume"] = result.vol
 
-        if adjust and adjust in ('qfq', 'hfq') and symbol:
+        if adjust and adjust in ("qfq", "hfq") and symbol:
             from mootdx.utils.adjust import to_adjust
+
             result = to_adjust(result, symbol=symbol, adjust=adjust)
 
         return result
@@ -151,10 +158,11 @@ def _patch_mootdx_to_data_coerce() -> None:
     # （mootdx.quotes 等模块用 `from mootdx.utils import to_data` 导入，
     #  会在模块命名空间创建本地变量，必须同步替换）
     import sys
+
     for _mod_name, _mod in sys.modules.items():
-        if _mod_name.startswith('mootdx.') and _mod is not None:
+        if _mod_name.startswith("mootdx.") and _mod is not None:
             try:
-                if hasattr(_mod, 'to_data') and _mod.to_data is not _safe_to_data:
+                if hasattr(_mod, "to_data") and _mod.to_data is not _safe_to_data:
                     _mod.to_data = _safe_to_data
             except Exception:
                 pass
@@ -199,6 +207,7 @@ class TDXProvider(IngestProviderBase):
         K线能力，失败则回退到已知可靠服务器。
         """
         from mootdx.quotes import Quotes
+
         self._client = Quotes.factory(market="std")
         if self._verify_kline():
             self._connected = True
@@ -206,9 +215,7 @@ class TDXProvider(IngestProviderBase):
             return
         self._log.warning("bestip 服务器不支持K线查询，尝试回退服务器")
         for ip, port in _RELIABLE_SERVERS:
-            self._client = Quotes.factory(
-                market="std", bestip=False, server=(ip, port)
-            )
+            self._client = Quotes.factory(market="std", bestip=False, server=(ip, port))
             if self._verify_kline():
                 self._connected = True
                 self._log.info(f"通达信已连接（回退到 {ip}:{port}）")
@@ -244,14 +251,16 @@ class TDXProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 payload.extra["capability"] 路由到具体获取方法。"""
         if not self._connected or self._client is None:
             yield FetchResult(
-                table=payload.table, columns=[], rows=[],
-                last_key="", elapsed_sec=0.0, error="tdx 未连接",
+                table=payload.table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error="tdx 未连接",
             )
             return
 
@@ -260,8 +269,11 @@ class TDXProvider(IngestProviderBase):
             yield from self._fetch_kline_sector(payload, policy)
         else:
             yield FetchResult(
-                table=payload.table, columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
+                table=payload.table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
                 error=f"unsupported capability: {capability}",
             )
 
@@ -290,10 +302,7 @@ class TDXProvider(IngestProviderBase):
         """
         from .. import ch_reader
 
-        tsv = ch_reader.query(
-            f"SELECT DISTINCT sector_code FROM {_TBL_SECTOR_CONSTITUENT} "
-            "ORDER BY sector_code"
-        )
+        tsv = ch_reader.query(f"SELECT DISTINCT sector_code FROM {_TBL_SECTOR_CONSTITUENT} ORDER BY sector_code")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         if not tsv or not tsv.strip():
             # 区分"CH 不可达"与"表确实为空"：ch_reader 失败静默返回空串，
             # 探活仍为空 → CH 不可达 → 显式抛错（防 0 行假成功掩盖故障，
@@ -303,9 +312,7 @@ class TDXProvider(IngestProviderBase):
             return []
         return [line.strip() for line in tsv.strip().split("\n") if line.strip()]
 
-    def _fetch_kline_sector(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_kline_sector(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取板块指数K线（client.index_bars）。
 
         mootdx index_bars(symbol, frequency, market, start, offset) 返回 DataFrame。
@@ -347,20 +354,23 @@ class TDXProvider(IngestProviderBase):
                     rows = self._build_sector_kline_rows(bars, code, period)
                 self._log.info(f"板块K线 {code} ({period}): {len(rows)} 行")
                 if rows:
-                    last_key = (
-                        datetime.date.today().isoformat()
-                        if period == "1d" else rows[-1][0]
-                    )
+                    last_key = datetime.date.today().isoformat() if period == "1d" else rows[-1][0]
                     yield FetchResult(
-                        table=table, columns=columns, rows=rows,
+                        table=table,
+                        columns=columns,
+                        rows=rows,
                         last_key=last_key,
-                        elapsed_sec=time.time() - t0,
+                        elapsed_sec=time.time() - t0,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
                     )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"板块K线 {code} ({period}) 获取失败: {e}")
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key="", elapsed_sec=time.time() - t0, error=str(e),
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=time.time() - t0,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
+                    error=str(e),
                 )
 
     @staticmethod

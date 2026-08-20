@@ -41,6 +41,7 @@
     finally:
         writer.stop()  # flush 残留段 + 停止 drain 线程
 """
+
 from __future__ import annotations
 
 import logging
@@ -63,14 +64,14 @@ _DEFAULT_SEGMENT_MAX_ROWS = 3000
 _DEFAULT_SEGMENT_MAX_SECONDS = 5.0
 
 # WAL 容量上限（2GB）：70% warning，90% critical 背压
-_DEFAULT_WAL_DIR_MAX_BYTES = 2 * 1024 ** 3
+_DEFAULT_WAL_DIR_MAX_BYTES = 2 * 1024**3
 _WARNING_RATIO = 0.7
 _CRITICAL_RATIO = 0.9
 
 # drain 线程轮询参数
-_DRAIN_IDLE_INTERVAL = 2.0       # 无积压轮询间隔
-_DRAIN_FAST_INTERVAL = 0.5       # 有积压快速重试
-_DRAIN_BACKOFF_MAX = 60.0        # 失败指数退避封顶
+_DRAIN_IDLE_INTERVAL = 2.0  # 无积压轮询间隔
+_DRAIN_FAST_INTERVAL = 0.5  # 有积压快速重试
+_DRAIN_BACKOFF_MAX = 60.0  # 失败指数退避封顶
 
 
 def _dir_size_bytes(path: Path) -> int:
@@ -93,8 +94,7 @@ def _serialize_tsv(rows: list[tuple]) -> bytes:
     return "\n".join(lines).encode("utf-8")
 
 
-def _append_rows(segment: list[tuple], result: "FetchResult",
-                 keep_indices: list[int] | None) -> None:
+def _append_rows(segment: list[tuple], result: "FetchResult", keep_indices: list[int] | None) -> None:
     """按列过滤索引追加行到段缓冲。"""
     if keep_indices and len(keep_indices) < len(result.columns):
         for row in result.rows:
@@ -146,7 +146,6 @@ class WalWriter:
         """写入：drain_thread（Stage 4 公共化）。"""
         self._drain_thread = value
 
-
     def add(self, result: "FetchResult") -> bool:
         """添加 FetchResult 到当前段。达阈值时触发段落盘。
 
@@ -169,8 +168,10 @@ class WalWriter:
             self._total_added += len(result.rows)
             if self._segment_first_ts is None:
                 self._segment_first_ts = time.time()
-            if len(self._segment) >= self._segment_max_rows or \
-               (time.time() - self._segment_first_ts) >= self._segment_max_seconds:
+            if (
+                len(self._segment) >= self._segment_max_rows
+                or (time.time() - self._segment_first_ts) >= self._segment_max_seconds  # noqa: m46-time — 分段时长比较与时区无关
+            ):
                 return self._flush_segment_locked()
         return True
 
@@ -182,11 +183,9 @@ class WalWriter:
             common_cols = [c for c in result.columns if c in table_cols]
             if common_cols:
                 self._cols_clause = "(" + ", ".join(common_cols) + ")"
-                self._keep_indices = [i for i, c in enumerate(result.columns)
-                                      if c in table_cols]
+                self._keep_indices = [i for i, c in enumerate(result.columns) if c in table_cols]
                 if len(common_cols) < len(result.columns):
-                    log.info("WalWriter(%s): 列过滤 %d->%d",
-                             self._table, len(result.columns), len(common_cols))
+                    log.info("WalWriter(%s): 列过滤 %d->%d", self._table, len(result.columns), len(common_cols))
                 return
             log.error("WalWriter(%s): result.columns 与表列无交集", self._table)
         # CH 不可用 fallback：不固化不可信的列，落盘 None 让回灌时重新查询
@@ -203,13 +202,11 @@ class WalWriter:
             self._total_segmented += len(self._segment)
             self._segment_count += 1
             get_registry().inc("zephyr_wal_segments_total")
-            log.info("WalWriter(%s): 第%d段落盘 %d 行",
-                     self._table, self._segment_count, len(self._segment))
+            log.info("WalWriter(%s): 第%d段落盘 %d 行", self._table, self._segment_count, len(self._segment))
             self._segment.clear()
             self._segment_first_ts = None
         else:
-            log.error("WalWriter(%s): 段落盘失败，%d 行保留待重试",
-                      self._table, len(self._segment))
+            log.error("WalWriter(%s): 段落盘失败，%d 行保留待重试", self._table, len(self._segment))
         return ok
 
     def flush(self) -> bool:
@@ -232,12 +229,14 @@ class WalWriter:
     def _apply_backpressure(self, level: str) -> bool:
         """根据容量级别施加背压。critical 返回 False 阻断写入。"""
         if level == "critical":
-            log.error("WalWriter(%s): WAL 容量 critical(≥%d%%)，阻断写入触发背压",
-                      self._table, int(_CRITICAL_RATIO * 100))
+            log.error(
+                "WalWriter(%s): WAL 容量 critical(≥%d%%)，阻断写入触发背压", self._table, int(_CRITICAL_RATIO * 100)
+            )
             return False
         if level == "warning":
-            log.warning("WalWriter(%s): WAL 容量 warning(≥%d%%)，建议检查 drain 线程",
-                        self._table, int(_WARNING_RATIO * 100))
+            log.warning(
+                "WalWriter(%s): WAL 容量 warning(≥%d%%)，建议检查 drain 线程", self._table, int(_WARNING_RATIO * 100)
+            )
         return True
 
     def _drain_loop(self) -> None:
@@ -264,16 +263,14 @@ class WalWriter:
                     reg.set_gauge("zephyr_wal_backlog_files", remaining)
                     if replayed > 0:
                         reg.inc("zephyr_drain_replayed_total", n=replayed)
-                        log.info("WalWriter(%s) drain: 回灌 %d 段，剩余 %d",
-                                 self._table, replayed, remaining)
+                        log.info("WalWriter(%s) drain: 回灌 %d 段，剩余 %d", self._table, replayed, remaining)
                     if remaining > 0:
                         wait_sec = _DRAIN_FAST_INTERVAL
                 else:
                     reg.set_gauge("zephyr_wal_backlog_files", 0)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 reg.inc("zephyr_drain_failed_total")
-                log.error("WalWriter(%s) drain 异常: %s，退避 %.1fs",
-                          self._table, e, fail_backoff)
+                log.error("WalWriter(%s) drain 异常: %s，退避 %.1fs", self._table, e, fail_backoff)
                 wait_sec = fail_backoff
                 fail_backoff = min(fail_backoff * 2, _DRAIN_BACKOFF_MAX)
             self._stop_event.wait(wait_sec)
@@ -298,8 +295,9 @@ class WalWriter:
         if self._drain_thread is not None:
             self._drain_thread.join(timeout=10)
             self._drain_thread = None
-        log.info("WalWriter(%s): 已停止（累计落盘 %d 行 / %d 段）",
-                 self._table, self._total_segmented, self._segment_count)
+        log.info(
+            "WalWriter(%s): 已停止（累计落盘 %d 行 / %d 段）", self._table, self._total_segmented, self._segment_count
+        )
 
     @property
     def total_segmented(self) -> int:

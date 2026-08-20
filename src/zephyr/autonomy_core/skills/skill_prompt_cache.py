@@ -32,7 +32,6 @@ from typing import Any
 
 
 class SkillPromptCache:
-
     """Skill Prompt 缓存——减少重复 LLM 调用."""
 
     _cache: dict[str, tuple[str, float]] = {}

@@ -48,7 +48,6 @@ class ContextDriftDetector:
         """写入：contexts（Stage 4 公共化）。"""
         self._contexts = value
 
-
     def __getattr__(self, name: str) -> Any:
         # Backward-compat: `_operations` -> `_contexts` (legacy callers/tests).
         if name == "_operations":

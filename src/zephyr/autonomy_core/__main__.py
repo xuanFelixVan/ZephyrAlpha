@@ -142,6 +142,7 @@ def _cmd_self_test(args: object) -> None:
 def _cmd_status(args: object) -> None:
     pass
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def cmd_self_test(args) -> None:
     """公共接口：cmd_self_test（Stage 4 公共化）。"""
@@ -159,6 +160,7 @@ def cmd_budget(args) -> None:
     """公共接口：cmd_budget（Stage 4 公共化）。"""
     return _cmd_budget(args)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def registry_path() -> Path:
     """公共接口：registry_path（Stage 4 公共化）。"""
@@ -169,5 +171,3 @@ def registry_path() -> Path:
 def load_registry() -> dict:
     """公共接口：load_registry（Stage 4 公共化）。"""
     return _load_registry()
-
-

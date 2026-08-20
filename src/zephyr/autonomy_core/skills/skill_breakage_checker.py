@@ -38,11 +38,9 @@ class SkillBreakageChecker:
         """公共接口：extract_tools（Stage 4 公共化）。"""
         return self._extract_tools(content)
 
-
     def extract_constraints(self, content) -> set[str]:
         """公共接口：extract_constraints（Stage 4 公共化）。"""
         return self._extract_constraints(content)
-
 
     CONSTRAINT_PATTERNS = [
         (r"MUST\s+(NOT\s+)?\w+", "must_directive"),

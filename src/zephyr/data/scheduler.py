@@ -1343,8 +1343,13 @@ class IntegratorScheduler:
                     # 64号 Q16/Q17：DEFERRED 属源拉取成功（数据本地持久化待回灌），熔断器记成功
                     self._circuit_breakers.record_success(source)
                     self._record_fetch_perf(
-                        task, task_id, source, capability, "DEFERRED_PERSISTENCE",
-                        time.time() - task_start_ts, writer.total_flushed,
+                        task,
+                        task_id,
+                        source,
+                        capability,
+                        "DEFERRED_PERSISTENCE",
+                        time.time() - task_start_ts,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
+                        writer.total_flushed,
                     )
                     self.emit_event("task_completed", task_id=task_id, success=False, deferred=True)
                     return True, None
@@ -1364,8 +1369,14 @@ class IntegratorScheduler:
                 # 64号 Q16/Q17：熔断器记失败 + fetch_perf 被动记录
                 self._circuit_breakers.record_failure(source)
                 self._record_fetch_perf(
-                    task, task_id, source, capability, "FAILED",
-                    task_elapsed, writer.total_flushed, last_error,
+                    task,
+                    task_id,
+                    source,
+                    capability,
+                    "FAILED",
+                    task_elapsed,
+                    writer.total_flushed,
+                    last_error,
                 )
                 self.emit_event("task_completed", task_id=task_id, success=False)
                 return False, last_error
@@ -1396,8 +1407,13 @@ class IntegratorScheduler:
                 # 64号 Q16/Q17：熔断器记成功 + fetch_perf 被动记录
                 self._circuit_breakers.record_success(source)
                 self._record_fetch_perf(
-                    task, task_id, source, capability, "SUCCESS",
-                    task_elapsed, writer.total_flushed,
+                    task,
+                    task_id,
+                    source,
+                    capability,
+                    "SUCCESS",
+                    task_elapsed,
+                    writer.total_flushed,
                 )
                 self.emit_event("task_completed", task_id=task_id, success=True)
                 return True, None
@@ -1417,8 +1433,14 @@ class IntegratorScheduler:
             # 64号 Q16/Q17：熔断器记失败 + fetch_perf 被动记录（异常路径）
             self._circuit_breakers.record_failure(source)
             self._record_fetch_perf(
-                task, task_id, source, capability, "FAILED",
-                task_elapsed, rows_written, last_error,
+                task,
+                task_id,
+                source,
+                capability,
+                "FAILED",
+                task_elapsed,
+                rows_written,
+                last_error,
             )
             self.emit_event("task_completed", task_id=task_id, success=False)
             return False, last_error

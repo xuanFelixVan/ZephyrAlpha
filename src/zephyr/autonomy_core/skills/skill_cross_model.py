@@ -149,7 +149,6 @@ class SkillCrossModel:
         """写入：fallback_chain（Stage 4 公共化）。"""
         self._fallback_chain = value
 
-
     def get_capability(self, provider: str) -> ModelCapability | None:
         return _MODEL_CAPABILITIES.get(provider)
 

@@ -40,6 +40,7 @@
     cache = TickRedisCache(redis_conn)
     cache.write_batch([("000001.SZ", tick_dict), ("600000.SH", tick_dict2)])
 """
+
 from __future__ import annotations
 
 import logging

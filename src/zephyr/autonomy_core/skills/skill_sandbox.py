@@ -155,7 +155,6 @@ class SkillSandbox:
         """写入：skill_id（Stage 4 公共化）。"""
         self._skill_id = value
 
-
     @property
     def isolated_tools(self) -> list[str]:
         return sorted(self._allowed_tools) if self._active else []

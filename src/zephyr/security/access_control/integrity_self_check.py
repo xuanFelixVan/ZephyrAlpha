@@ -118,11 +118,13 @@ class IntegritySelfCheck:
         """检查所有模块完整性（>=55 个）."""
         self._results = []
         for module in EXPECTED_MODULES:
-            self._results.append(IntegrityCheck(
-                module=module,
-                passed=True,
-                detail=f"module {module} integrity ok",
-            ))
+            self._results.append(
+                IntegrityCheck(
+                    module=module,
+                    passed=True,
+                    detail=f"module {module} integrity ok",
+                )
+            )
         return list(self._results)
 
     def summary(self) -> dict[str, Any]:

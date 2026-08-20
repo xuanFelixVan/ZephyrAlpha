@@ -92,7 +92,6 @@ class TOCTOUGuard:
         """写入：pre_state（Stage 4 公共化）。"""
         self._pre_state = value
 
-
     def snapshot(self, file_path: str) -> dict[str, Any] | None:
         """对文件做快照.
 

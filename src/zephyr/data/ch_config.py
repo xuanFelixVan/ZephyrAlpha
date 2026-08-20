@@ -32,6 +32,7 @@
     - ensure_ch_env_loaded(): 将 .env.clickhouse 加载到 os.environ（幂等）
     - load_ch_config(): 返回 CH 连接配置字典，读不到抛 CHConfigError
 """
+
 from __future__ import annotations
 
 import logging
@@ -48,8 +49,14 @@ log = logging.getLogger(__name__)
 _CH_ENV_PATH: Path = REPO_ROOT / "config" / ".env.clickhouse"
 
 # 必须存在的配置键
-_REQUIRED_KEYS = ("CLICKHOUSE_HOST", "CLICKHOUSE_PORT", "CLICKHOUSE_HTTP_PORT",
-                  "CLICKHOUSE_USER", "CLICKHOUSE_PASSWORD", "CLICKHOUSE_DATABASE")
+_REQUIRED_KEYS = (
+    "CLICKHOUSE_HOST",
+    "CLICKHOUSE_PORT",
+    "CLICKHOUSE_HTTP_PORT",
+    "CLICKHOUSE_USER",
+    "CLICKHOUSE_PASSWORD",
+    "CLICKHOUSE_DATABASE",
+)
 
 # 幂等加载标志（避免重复解析文件）
 _loaded: bool = False

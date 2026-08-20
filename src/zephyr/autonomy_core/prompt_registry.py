@@ -138,6 +138,7 @@ def _compare_semver(a: str, b: str) -> int:
 
 class PromptRegistryError(Exception):
     """PromptRegistry 基础异常。"""
+
     error_code = "ZA-AC-0001"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -148,16 +149,19 @@ class PromptRegistryError(Exception):
 
 class TokenBudgetExceededError(PromptRegistryError):
     """渲染后的 Prompt 超出 token 预算时抛出。"""
+
     error_code = "ZA-AC-0002"
 
 
 class TemplateNotFoundError(PromptRegistryError):
     """模板 ID 或版本未注册时抛出。"""
+
     error_code = "ZA-AC-0003"
 
 
 class VariableError(PromptRegistryError):
     """必填变量缺失或未知占位符时抛出。"""
+
     error_code = "ZA-AC-0004"
 
 
@@ -218,7 +222,10 @@ class PromptTemplate(BaseModel):
     name: str = Field(description="人类可读名称")
     description: str = Field(default="", description="模板用途说明")
     version: str = Field(description="Semver 版本号")
-    stability: str = Field(default="evolving", description="stability 合法值见 stability_vocabulary.yaml（frozen | stable | evolving | volatile）")
+    stability: str = Field(
+        default="evolving",
+        description="stability 合法值见 stability_vocabulary.yaml（frozen | stable | evolving | volatile）",
+    )
     variables: list[PromptVariable] = Field(default_factory=list, description="变量声明列表")
     token_budget: int = Field(default=4000, ge=1, description="渲染后最大 token 数")
     template_text: str = Field(description="模板正文，含 {variable} 占位符")

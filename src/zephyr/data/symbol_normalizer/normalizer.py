@@ -19,47 +19,57 @@
 
 详见 zephyr.data.symbol_normalizer.__init__ 模块文档。
 """
+
 from __future__ import annotations
 
 # exchange 码常量（TRAE-082）
-EXCHANGE_SH = "SH"      # 上海证券交易所
-EXCHANGE_SZ = "SZ"      # 深圳证券交易所
-EXCHANGE_BJ = "BJ"      # 北京证券交易所
-EXCHANGE_HK = "HK"      # 港交所
-EXCHANGE_US = "US"      # 美股（纽交所/纳斯达克统一码）
+EXCHANGE_SH = "SH"  # 上海证券交易所
+EXCHANGE_SZ = "SZ"  # 深圳证券交易所
+EXCHANGE_BJ = "BJ"  # 北京证券交易所
+EXCHANGE_HK = "HK"  # 港交所
+EXCHANGE_US = "US"  # 美股（纽交所/纳斯达克统一码）
 
 # A 股裸码首位 → exchange 映射（TRAE-082 1.1.0 + #ARCH-DATA-SYMBOL-002）
 # 规则：6/5/9→SH, 0/3/1/2→SZ, 8/4→BJ
 # 1.1.0 修订：补 '2'→SZ（深市 B 股 200xxx/201xxx，实测 281K 行）；
 #            '9' 由单纯首位映射改为先查 3 位/2 位前缀消歧（见 _PREFIX3/_PREFIX2）
 _PREFIX_TO_EXCHANGE: dict[str, str] = {
-    "6": EXCHANGE_SH,   # 沪市股票（600519 贵州茅台）
-    "9": EXCHANGE_SH,   # 沪市 B 股（900901）——920xxx 等北交所由 _PREFIX2 覆盖
-    "5": EXCHANGE_SH,   # 沪市基金/ETF（510050 / 588000 / 501001 LOF）
-    "0": EXCHANGE_SZ,   # 深市股票（000001 平安银行）
-    "3": EXCHANGE_SZ,   # 深市创业板（300750 宁德时代）
-    "1": EXCHANGE_SZ,   # 深市基金/ETF（159915 / 150018 LOF）
-    "2": EXCHANGE_SZ,   # 深市 B 股（200026 / 201872）——1.1.0 新增
-    "8": EXCHANGE_BJ,   # 北交所（830799）
-    "4": EXCHANGE_BJ,   # 北交所老三板（430047）
+    "6": EXCHANGE_SH,  # 沪市股票（600519 贵州茅台）
+    "9": EXCHANGE_SH,  # 沪市 B 股（900901）——920xxx 等北交所由 _PREFIX2 覆盖
+    "5": EXCHANGE_SH,  # 沪市基金/ETF（510050 / 588000 / 501001 LOF）
+    "0": EXCHANGE_SZ,  # 深市股票（000001 平安银行）
+    "3": EXCHANGE_SZ,  # 深市创业板（300750 宁德时代）
+    "1": EXCHANGE_SZ,  # 深市基金/ETF（159915 / 150018 LOF）
+    "2": EXCHANGE_SZ,  # 深市 B 股（200026 / 201872）——1.1.0 新增
+    "8": EXCHANGE_BJ,  # 北交所（830799）
+    "4": EXCHANGE_BJ,  # 北交所老三板（430047）
 }
 
 # 3 位前缀 → exchange（消歧：9xx B股/北交所 + 11x/13x 可转债）
 # 必须在 _PREFIX_TO_EXCHANGE 之前检查（更具体优先）
 _PREFIX3_TO_EXCHANGE: dict[str, str] = {
-    "900": EXCHANGE_SH, "901": EXCHANGE_SH, "902": EXCHANGE_SH, "903": EXCHANGE_SH,
+    "900": EXCHANGE_SH,
+    "901": EXCHANGE_SH,
+    "902": EXCHANGE_SH,
+    "903": EXCHANGE_SH,
     # 可转债（1.1.1 补：'1'→SZ 是深市 ETF 159xxx 规则，但 110/113 是沪市可转债，需 3 位消歧）
-    "110": EXCHANGE_SH, "113": EXCHANGE_SH,   # 沪市可转债（110064 / 113537）
-    "123": EXCHANGE_SZ, "128": EXCHANGE_SZ,   # 深市可转债（123xxx / 128xxx，与 '1'→SZ 一致，显式记录）
+    "110": EXCHANGE_SH,
+    "113": EXCHANGE_SH,  # 沪市可转债（110064 / 113537）
+    "123": EXCHANGE_SZ,
+    "128": EXCHANGE_SZ,  # 深市可转债（123xxx / 128xxx，与 '1'→SZ 一致，显式记录）
     # 国债逆回购（'2'→SZ 是深市 B 股，但 204 是沪市国债逆回购）
-    "204": EXCHANGE_SH,                        # 沪市国债逆回购（204001 GC001）
+    "204": EXCHANGE_SH,  # 沪市国债逆回购（204001 GC001）
 }
 
 # 2 位前缀 → exchange（北交所 83/43/87/92/93/94）
 # '92'/'93'/'94' 必须在此拦截（否则 1 位 '9'→SH 误判）；83/43/87 与 1 位一致（冗余但显式）
 _PREFIX2_TO_EXCHANGE: dict[str, str] = {
-    "83": EXCHANGE_BJ, "43": EXCHANGE_BJ, "87": EXCHANGE_BJ,
-    "92": EXCHANGE_BJ, "93": EXCHANGE_BJ, "94": EXCHANGE_BJ,
+    "83": EXCHANGE_BJ,
+    "43": EXCHANGE_BJ,
+    "87": EXCHANGE_BJ,
+    "92": EXCHANGE_BJ,
+    "93": EXCHANGE_BJ,
+    "94": EXCHANGE_BJ,
 }
 
 # 指数代码 3 位前缀 → exchange（kline_index 表专用，与股票前缀规则不同）
@@ -67,10 +77,12 @@ _PREFIX2_TO_EXCHANGE: dict[str, str] = {
 #   在指数表是沪市（000001 上证指数 SH）。故指数表须用本映射而非 _PREFIX_TO_EXCHANGE。
 # 规则：000/880/930/931/932→SH，399→SZ，其余→''(未知指数前缀)
 _INDEX_PREFIX3_TO_EXCHANGE: dict[str, str] = {
-    "000": EXCHANGE_SH,   # 上证系列指数（000001 上证指数 / 000300 沪深300 / 000016 上证50）
-    "880": EXCHANGE_SH,   # 申万行业指数（880001 申万全A）
-    "930": EXCHANGE_SH, "931": EXCHANGE_SH, "932": EXCHANGE_SH,  # 中证系列指数
-    "399": EXCHANGE_SZ,   # 深证系列指数（399001 深证成指 / 399006 创业板指）
+    "000": EXCHANGE_SH,  # 上证系列指数（000001 上证指数 / 000300 沪深300 / 000016 上证50）
+    "880": EXCHANGE_SH,  # 申万行业指数（880001 申万全A）
+    "930": EXCHANGE_SH,
+    "931": EXCHANGE_SH,
+    "932": EXCHANGE_SH,  # 中证系列指数
+    "399": EXCHANGE_SZ,  # 深证系列指数（399001 深证成指 / 399006 创业板指）
 }
 
 # 前缀式 symbol 的交易所前缀映射（lof_list 旧格式：sh501001 / sz159915）
@@ -231,7 +243,7 @@ def split_prefix_symbol(symbol_with_prefix: str) -> tuple[str, str | None]:
     lower = s.lower()
     for prefix, exchange in _PREFIX_STR_TO_EXCHANGE.items():
         if lower.startswith(prefix):
-            rest = s[len(prefix):]
+            rest = s[len(prefix) :]
             # 仅当剩余部分非空才视为前缀式（避免误判 sh 等单字符）
             if rest:
                 return (rest, exchange)

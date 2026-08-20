@@ -42,9 +42,7 @@ class SessionToken:
     agent_id: str
     session_id: str
     nonce: str = field(default_factory=lambda: secrets.token_hex(8))
-    timestamp: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     signature: str = ""
 
 
@@ -104,7 +102,6 @@ class CrossSessionDetector:
         """写入：violations（Stage 4 公共化）。"""
         self._violations = value
 
-
     def _compute_signature(
         self,
         agent_id: str,
@@ -123,9 +120,7 @@ class CrossSessionDetector:
         """签名 token，返回 SignedToken 并登记到 active_sessions."""
         nonce = secrets.token_hex(8)
         timestamp = time.time()
-        signature = self._compute_signature(
-            agent_id, session_id, nonce, timestamp
-        )
+        signature = self._compute_signature(agent_id, session_id, nonce, timestamp)
         token = SignedToken(
             agent_id=agent_id,
             session_id=session_id,
@@ -163,9 +158,7 @@ class CrossSessionDetector:
                     }
                 )
                 return {"valid": False, "reason": "cross_session_forgery"}
-        expected = self._compute_signature(
-            agent_id, session_id, nonce, timestamp
-        )
+        expected = self._compute_signature(agent_id, session_id, nonce, timestamp)
         if not hmac.compare_digest(expected, signature):
             return {"valid": False, "reason": "signature_mismatch"}
         return {"valid": True, "agent_id": agent_id}

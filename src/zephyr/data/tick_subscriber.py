@@ -22,6 +22,7 @@ queue.Queue，后台 flush 线程批量出队转14字段 tuple，WalWriter 先�
 
 启动: python -m zephyr.data.tick_subscriber
 """
+
 from __future__ import annotations
 
 import json
@@ -47,9 +48,21 @@ _TBL_TICK_DATA = get_registry().table("market_tick")
 
 # tick_data 表15字段（P0-1: 新增 recorded_time）
 _TICK_COLUMNS = [
-    "trade_date", "timestamp", "recorded_time", "symbol", "market_type", "price",
-    "volume", "amount", "direction", "data_source",
-    "bid_price", "ask_price", "bid_volume", "ask_volume", "quality_flag",
+    "trade_date",
+    "timestamp",
+    "recorded_time",
+    "symbol",
+    "market_type",
+    "price",
+    "volume",
+    "amount",
+    "direction",
+    "data_source",
+    "bid_price",
+    "ask_price",
+    "bid_volume",
+    "ask_volume",
+    "quality_flag",
 ]
 
 _DATA_SOURCE = "miniqmt"
@@ -84,9 +97,9 @@ def infer_market_type(stock_code: str) -> str:
         code = stock_code[:-3]
         if code.startswith("000") or code.startswith("880"):
             return "index"
-        if code.startswith("51"):   # 510xxx-519xxx = SH ETF
+        if code.startswith("51"):  # 510xxx-519xxx = SH ETF
             return "etf"
-        if code.startswith("50"):   # 501xxx-502xxx = SH LOF
+        if code.startswith("50"):  # 501xxx-502xxx = SH LOF
             return "lof"
         return "stock"
     if stock_code.endswith(".SZ"):
@@ -185,13 +198,13 @@ def tick_to_row(stock_code: str, tick: dict, data_source: str = _DATA_SOURCE) ->
         price,
         volume,
         amount,
-        "中性盘",           # direction（QMT tick 不直接提供）
-        data_source,        # data_source（P1-3: 支持备源标识）
+        "中性盘",  # direction（QMT tick 不直接提供）
+        data_source,  # data_source（P1-3: 支持备源标识）
         bid_price,
         ask_price,
         bid_volume,
         ask_volume,
-        1,                  # quality_flag
+        1,  # quality_flag
     )
 
 
@@ -311,9 +324,7 @@ class TickSubscriber:
                     self._errors += 1
                     _get_metrics_registry().inc("zephyr_tick_dropped_total")
         # P2-5: Stage 1——on_tick 回调端到端处理耗时（含心跳记录 + 入队循环）
-        _get_metrics_registry().observe(
-            "zephyr_tick_stage_on_tick_seconds", time.perf_counter() - t0
-        )
+        _get_metrics_registry().observe("zephyr_tick_stage_on_tick_seconds", time.perf_counter() - t0)
 
     def _on_backup_tick(self, symbol: str, tick: dict) -> None:
         """备源 tick 回调——TDX BackupTickPoller 调用（P1-3）。
@@ -378,6 +389,7 @@ class TickSubscriber:
         if not rows:
             return 0
         from zephyr.data.provider_base import FetchResult
+
         result = FetchResult(
             table=_TBL_TICK_DATA,
             columns=_TICK_COLUMNS,
@@ -464,12 +476,15 @@ class TickSubscriber:
                     code = s.split(".")[0]
                     if code.startswith("159") or code.startswith("51"):
                         if s not in seen:
-                            seen.add(s); symbols.append(s); etf_added += 1
+                            seen.add(s)
+                            symbols.append(s)
+                            etf_added += 1
                     elif code.startswith("16") or code.startswith("18"):
                         if s not in seen:
-                            seen.add(s); symbols.append(s); lof_added += 1
-                log.info("板块 沪深基金: 获取 %d 只，新增 ETF %d / LOF %d",
-                         len(fund_list), etf_added, lof_added)
+                            seen.add(s)
+                            symbols.append(s)
+                            lof_added += 1
+                log.info("板块 沪深基金: 获取 %d 只，新增 ETF %d / LOF %d", len(fund_list), etf_added, lof_added)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.warning("获取板块 沪深基金 失败: %s", e)
 
@@ -500,9 +515,7 @@ class TickSubscriber:
         while time.time() < deadline:
             attempt += 1
             try:
-                data = self._xtdata.get_market_data_ex(
-                    [], ["000001.SZ"], period="1m", count=1
-                )
+                data = self._xtdata.get_market_data_ex([], ["000001.SZ"], period="1m", count=1)
                 if data and "000001.SZ" in data:
                     df = data["000001.SZ"]
                     if df is not None and len(df) > 0:
@@ -514,7 +527,9 @@ class TickSubscriber:
             if remaining > 0:
                 log.warning(
                     "QMT 未就绪 (attempt=%d)，%.0fs 后重试（剩余 %.0fs）",
-                    attempt, interval, remaining,
+                    attempt,
+                    interval,
+                    remaining,
                 )
                 time.sleep(interval)
         log.error("QMT 连通性检测超时(%.0fs)，订阅可能失败", timeout)
@@ -557,7 +572,7 @@ class TickSubscriber:
         BATCH_SIZE = 1000
         total = len(symbols)
         for i in range(0, total, BATCH_SIZE):
-            batch = symbols[i:i + BATCH_SIZE]
+            batch = symbols[i : i + BATCH_SIZE]
             try:
                 # subscribe_whole_quote(code_list, callback=None) → list[成功订阅的 stock_code]
                 subscribed_codes = whole_quote(batch, callback=self._on_tick)
@@ -568,7 +583,10 @@ class TickSubscriber:
                     self._subscribed.update(batch)
                 log.info(
                     "批量订阅 %d-%d/%d 成功（累计 %d）",
-                    i + 1, min(i + BATCH_SIZE, total), total, len(self._subscribed),
+                    i + 1,
+                    min(i + BATCH_SIZE, total),
+                    total,
+                    len(self._subscribed),
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("批量订阅失败 %d-%d: %s", i + 1, min(i + BATCH_SIZE, total), e)
@@ -613,9 +631,7 @@ class TickSubscriber:
             if self._xtdata is not None:
                 dates = self._xtdata.get_trading_dates("SH")
                 # get_trading_dates 返回毫秒时间戳列表
-                dayset = {
-                    datetime.fromtimestamp(int(d) / 1000).date() for d in (dates or [])
-                }
+                dayset = {datetime.fromtimestamp(int(d) / 1000).date() for d in (dates or [])}
                 if dayset:
                     self._is_trading_day = today in dayset
                     return
@@ -651,12 +667,10 @@ class TickSubscriber:
             "ts": datetime.now().isoformat(timespec="seconds"),
             "pid": os.getpid(),
             "started_ts": (
-                datetime.fromtimestamp(self._started_ts).isoformat(timespec="seconds")
-                if self._started_ts else None
+                datetime.fromtimestamp(self._started_ts).isoformat(timespec="seconds") if self._started_ts else None
             ),
             "last_tick_ts": (
-                datetime.fromtimestamp(self._last_tick_ts).isoformat(timespec="seconds")
-                if self._last_tick_ts else None
+                datetime.fromtimestamp(self._last_tick_ts).isoformat(timespec="seconds") if self._last_tick_ts else None
             ),
             "last_tick_age_s": round(now - self._last_tick_ts, 1) if self._last_tick_ts else None,
             "today_rows": self._written - self._hb_day_base_written,
@@ -698,7 +712,9 @@ class TickSubscriber:
                         self._resub_count += 1
                         log.warning(
                             "业务看门狗: 盘中 %.0fs 无 tick（第 %d 次周期重订阅，%d 只标的）...",
-                            idle, self._resub_count, len(self._symbols_resolved),
+                            idle,
+                            self._resub_count,
+                            len(self._symbols_resolved),
                         )
                         self._subscribed.clear()
                         self._subscribe_all_symbols(self._symbols_resolved)
@@ -738,7 +754,8 @@ class TickSubscriber:
             self._universe_retry_next_ts = time.time() + backoff
             log.warning(
                 "业务看门狗: universe 重解析仍 0 只（QMT 未恢复？），%.0fs 后第 %d 次重试",
-                backoff, retry_no + 1,
+                backoff,
+                retry_no + 1,
             )
             return
         self._symbols_resolved = list(symbols)
@@ -746,7 +763,9 @@ class TickSubscriber:
         n = self._subscribe_all_symbols(self._symbols_resolved)
         log.info(
             "业务看门狗: universe 重解析成功（%d 只），已订阅 %d 只（第 %d 次重试）",
-            len(symbols), n, retry_no,
+            len(symbols),
+            n,
+            retry_no,
         )
         # 重等首 tick（Event 已 set 时立即返回，以 last_tick_ts 刷新判恢复）
         self._first_tick_received.wait(timeout=30.0)
@@ -786,7 +805,8 @@ class TickSubscriber:
                 "  风险评估：tick_subscriber 仅订阅只读行情，不调用 xttrader 下单，"
                 "无交易风险；但违反 #ARCH-QMT-ENV-DISAMBIG-001 辨识协议。\n"
                 "  修复：关闭实盘 QMT 终端，或先启动模拟盘终端使其占据 xtdata 服务端口。",
-                source, path,
+                source,
+                path,
             )
         else:
             log.warning("QMT 实例辨识[%s]：未知实例（%s）", source, path)
@@ -828,9 +848,14 @@ class TickSubscriber:
             # 1. 本进程到 localhost 的已建立连接：收集 (本端ephemeral, 对端port)
             my_pairs: list[tuple[int, int]] = []
             for c in conns:
-                if (c.status == "ESTABLISHED" and c.pid == my_pid
-                        and c.laddr and c.laddr.ip in localhost
-                        and c.raddr and c.raddr.ip in localhost):
+                if (
+                    c.status == "ESTABLISHED"
+                    and c.pid == my_pid
+                    and c.laddr
+                    and c.laddr.ip in localhost
+                    and c.raddr
+                    and c.raddr.ip in localhost
+                ):
                     my_pairs.append((c.laddr.port, c.raddr.port))
             if not my_pairs:
                 return None
@@ -839,9 +864,17 @@ class TickSubscriber:
             peer_pids: set[int] = set()
             for my_eph, peer_port in my_pairs:
                 for c in conns:
-                    if (c.status == "ESTABLISHED" and c.pid and c.pid != my_pid
-                            and c.laddr and c.laddr.ip in localhost and c.laddr.port == peer_port
-                            and c.raddr and c.raddr.ip in localhost and c.raddr.port == my_eph):
+                    if (
+                        c.status == "ESTABLISHED"
+                        and c.pid
+                        and c.pid != my_pid
+                        and c.laddr
+                        and c.laddr.ip in localhost
+                        and c.laddr.port == peer_port
+                        and c.raddr
+                        and c.raddr.ip in localhost
+                        and c.raddr.port == my_eph
+                    ):
                         peer_pids.add(c.pid)
             # 3. 按对端进程 exe_path 分类（取首个命中 sim/live 的）
             for pid in peer_pids:
@@ -925,6 +958,7 @@ class TickSubscriber:
         # TCP 对端进程辨识才能拿到 ground truth（见 _verify_qmt_instance）
 
         from zephyr.data.wal_writer import WalWriter
+
         self._writer = WalWriter(
             _TBL_TICK_DATA,
             segment_max_rows=self._batch_rows,
@@ -971,7 +1005,9 @@ class TickSubscriber:
         # （业务心跳写出 + 盘中无 tick 周期重订阅——治本"预热后永久静默"放大器3）
         self._symbols_resolved = list(symbols)
         self._biz_thread = threading.Thread(
-            target=self._biz_watchdog_loop, daemon=True, name="tick-biz-watchdog",
+            target=self._biz_watchdog_loop,
+            daemon=True,
+            name="tick-biz-watchdog",
         )
         self._biz_thread.start()
 
@@ -1030,13 +1066,14 @@ class TickSubscriber:
             if unsub_whole is not None:
                 BATCH_SIZE = 1000
                 for i in range(0, len(subscribed_list), BATCH_SIZE):
-                    batch = subscribed_list[i:i + BATCH_SIZE]
+                    batch = subscribed_list[i : i + BATCH_SIZE]
                     try:
                         unsub_whole(batch)
                     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         log.warning(
                             "unsubscribe_whole_quote 批次失败 %d-%d（best-effort，进程退出兜底释放）",
-                            i + 1, min(i + BATCH_SIZE, len(subscribed_list)),
+                            i + 1,
+                            min(i + BATCH_SIZE, len(subscribed_list)),
                         )
             else:
                 # 本版本无批量退订 API：daemon stop 后进程退出由 xtquant 释放订阅。
@@ -1165,7 +1202,10 @@ def main() -> int:
 
     _RUN_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     _fh = RotatingFileHandler(
-        _RUN_LOG_PATH, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8",
+        _RUN_LOG_PATH,
+        maxBytes=10 * 1024 * 1024,
+        backupCount=5,
+        encoding="utf-8",
     )
     _fh.setFormatter(logging.Formatter("%(asctime)s %(levelname)s [%(name)s] %(message)s"))
     logging.getLogger().addHandler(_fh)
@@ -1181,6 +1221,7 @@ def main() -> int:
     def _signal_handler(signum, frame):
         log.info("收到信号 %s，准备退出", signum)
         raise KeyboardInterrupt()
+
     sig_module.signal(sig_module.SIGINT, _signal_handler)
     sig_module.signal(sig_module.SIGTERM, _signal_handler)
 

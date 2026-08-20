@@ -47,18 +47,12 @@ class ReplayAttackGuard:
         if nonce in self._seen_nonces:
             return {
                 "allowed": False,
-                "reason": (
-                    f"replay_blocked: duplicate nonce={nonce!r} "
-                    f"timestamp={timestamp}"
-                ),
+                "reason": (f"replay_blocked: duplicate nonce={nonce!r} timestamp={timestamp}"),
             }
         self._seen_nonces.add(nonce)
         return {
             "allowed": True,
-            "reason": (
-                f"replay_allowed: first-seen nonce={nonce!r} "
-                f"timestamp={timestamp}"
-            ),
+            "reason": (f"replay_allowed: first-seen nonce={nonce!r} timestamp={timestamp}"),
         }
 
 

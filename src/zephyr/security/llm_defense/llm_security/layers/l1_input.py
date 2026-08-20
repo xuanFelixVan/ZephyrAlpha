@@ -96,9 +96,27 @@ _ZERO_WIDTH_RE = re.compile("[" + "".join(_ZERO_WIDTH_CHARS) + "]")
 
 # 同形字映射（西里尔->拉丁）
 _HOMOGLYPH_MAP = {
-    "а": "a", "е": "e", "о": "o", "р": "p", "с": "c", "у": "y", "х": "x",
-    "А": "A", "В": "B", "Е": "E", "К": "K", "М": "M", "Н": "H", "О": "O",
-    "Р": "P", "С": "C", "Т": "T", "Х": "X", "і": "i", "ї": "i", "ё": "e",
+    "а": "a",
+    "е": "e",
+    "о": "o",
+    "р": "p",
+    "с": "c",
+    "у": "y",
+    "х": "x",
+    "А": "A",
+    "В": "B",
+    "Е": "E",
+    "К": "K",
+    "М": "M",
+    "Н": "H",
+    "О": "O",
+    "Р": "P",
+    "С": "C",
+    "Т": "T",
+    "Х": "X",
+    "і": "i",
+    "ї": "i",
+    "ё": "e",
     "0": "o",  # 数字0冒充o（仅在特定上下文）
 }
 _HOMOGLYPH_RE = re.compile("[" + "".join(re.escape(k) for k in _HOMOGLYPH_MAP if k.isalpha()) + "]")
@@ -176,12 +194,7 @@ class InputDefenseLayer:
         # 评分：每个 hit 扣分
         total_score = max(0.0, 1.0 - total_hits * 0.15)
         # jailbreak 或 direct_injection 任何命中即阻断（高危类别不应依赖阈值）
-        blocked = (
-            len(jailbreak_hits) > 0
-            or len(direct_hits) > 0
-            or total_hits >= 3
-            or total_score < 0.5
-        )
+        blocked = len(jailbreak_hits) > 0 or len(direct_hits) > 0 or total_hits >= 3 or total_score < 0.5
 
         all_hits = direct_hits + jailbreak_hits + indirect_hits
         return SanitizeResult(blocked=blocked, total_score=total_score, hits=all_hits)
@@ -276,11 +289,7 @@ class ToolResultTransformGuard:
         self.config = config or {}
 
     def wrap(self, content: str, source: str = "external") -> str:
-        return (
-            f"<!-- BEGIN EXTERNAL_TOOL_OUTPUT source={source} -->\n"
-            f"{content}\n"
-            f"<!-- END EXTERNAL_TOOL_OUTPUT -->"
-        )
+        return f"<!-- BEGIN EXTERNAL_TOOL_OUTPUT source={source} -->\n{content}\n<!-- END EXTERNAL_TOOL_OUTPUT -->"
 
     def scan(self, text: str) -> dict[str, Any]:
         lowered = text.lower()

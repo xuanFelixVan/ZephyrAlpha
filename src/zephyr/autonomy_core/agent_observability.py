@@ -43,7 +43,6 @@ class AgentObservability:
         """写入：traces（Stage 4 公共化）。"""
         self._traces = value
 
-
     def start_trace(self, skill_id: str) -> str:
         trace_id = f"trace-{skill_id}-{datetime.now(UTC).timestamp()}"
         self._traces[trace_id] = {"skill_id": skill_id, "spans": [], "start_time": datetime.now(UTC).isoformat()}

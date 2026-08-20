@@ -62,7 +62,9 @@ class InjectionEngine:
         try:
             itype = InjectionType(injection_type)
         except ValueError:
-            raise ValueError(f"Unknown injection type: {injection_type}. Valid: {[t.value for t in InjectionType]}") from None
+            raise ValueError(
+                f"Unknown injection type: {injection_type}. Valid: {[t.value for t in InjectionType]}"
+            ) from None
 
         if itype in (InjectionType.CRASH, InjectionType.EXIT_CODE):
             if self._blast_radius not in (BlastRadiusLevel.CROSS_MODULE, BlastRadiusLevel.SYSTEM):

@@ -30,7 +30,6 @@ from typing import Any
 
 
 class SkillSchemaRegistry:
-
     """Skill I/O Schema 注册与契约验证."""
 
     _schemas: dict[str, dict[str, Any]] = {}

@@ -70,7 +70,6 @@ class RedBlueValidator:
         """写入：blast（Stage 4 公共化）。"""
         self._blast = value
 
-
     @property
     def loader(self):
         """只读：loader（Stage 4 公共化）。"""
@@ -80,7 +79,6 @@ class RedBlueValidator:
     def loader(self, value):
         """写入：loader（Stage 4 公共化）。"""
         self._loader = value
-
 
     @property
     def cleanup(self):
@@ -92,7 +90,6 @@ class RedBlueValidator:
         """写入：cleanup（Stage 4 公共化）。"""
         self._cleanup = value
 
-
     @property
     def steady(self):
         """只读：steady（Stage 4 公共化）。"""
@@ -103,11 +100,9 @@ class RedBlueValidator:
         """写入：steady（Stage 4 公共化）。"""
         self._steady = value
 
-
     def load_and_filter(self, tier=None) -> list[AttackScenario]:
         """公共接口：load_and_filter（Stage 4 公共化）。"""
         return self._load_and_filter(tier)
-
 
     @property
     def defense(self) -> DefenseRunner:

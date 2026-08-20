@@ -46,7 +46,6 @@ class SkillCompliance:
         """公共接口：check_pii（Stage 4 公共化，委托到 cls._check_pii）。"""
         return cls._check_pii(content)
 
-
     @classmethod
     def check(cls, skill_id: str, content: str | None = None) -> dict[str, Any]:
         pii = cls._check_pii(content or "")

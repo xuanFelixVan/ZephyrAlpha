@@ -28,6 +28,7 @@ class ValidationLayer:
         self.config = config or {}
         self.regression_history: list[Any] = []
         from zephyr.security.llm_defense.llm_security.self_protection.code_integrity import CodeIntegrityGuard
+
         self.integrity_guard = CodeIntegrityGuard()
         self.integrity_guard.compute_full_baseline()
 
@@ -137,9 +138,7 @@ class DeepSeekSpecialRiskManager:
         detected = any(p in lower for p in self._CENSORSHIP_PATTERNS)
         return {"censorship_detected": detected}
 
-    def monitor_temperature_drift(
-        self, current_temp: float, baseline_temp: float = 0.7
-    ) -> dict[str, Any]:
+    def monitor_temperature_drift(self, current_temp: float, baseline_temp: float = 0.7) -> dict[str, Any]:
         """Detect sampling-temperature drift beyond the safe threshold."""
         drift = abs(current_temp - baseline_temp)
         return {"drift_detected": drift > self._DRIFT_THRESHOLD, "drift_amount": drift}

@@ -84,7 +84,6 @@ class AutoMaintenance:
         """写入：rules（Stage 4 公共化）。"""
         self._rules = value
 
-
     def register_rule(self, rule_id: str, healthy: bool = True, detail: str = "") -> RuleHealth:
         rule = RuleHealth(rule_id=rule_id, healthy=healthy, detail=detail)
         self._rules.append(rule)

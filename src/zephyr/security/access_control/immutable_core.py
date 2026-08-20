@@ -42,10 +42,10 @@ logger = logging.getLogger(__name__)
 # config/immutable_core.yaml，禁止在代码中硬编码操作名或路径列表。
 # 加载失败时回退空列表（fail-safe：无保护=允许通过；加载失败应被视为
 # 系统级故障，由调用方通过 verify_protected_paths_exist 检测）。
-_IMMUTABLE_CORE_CONFIG_PATH: Path = Path(
-    os.environ.get("ZEPHYR_IMMUTABLE_CORE_PATH", "")
-) if os.environ.get("ZEPHYR_IMMUTABLE_CORE_PATH") else (
-    REPO_ROOT / "config" / "immutable_core.yaml"
+_IMMUTABLE_CORE_CONFIG_PATH: Path = (
+    Path(os.environ.get("ZEPHYR_IMMUTABLE_CORE_PATH", ""))
+    if os.environ.get("ZEPHYR_IMMUTABLE_CORE_PATH")
+    else (REPO_ROOT / "config" / "immutable_core.yaml")
 )
 
 
@@ -74,9 +74,7 @@ def _load_immutable_core_config() -> dict[str, Any]:
             return {}
         return data
     except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.error(
-            "Failed to load immutable_core.yaml: %s", exc, exc_info=True
-        )
+        logger.error("Failed to load immutable_core.yaml: %s", exc, exc_info=True)
         return {}
 
 
@@ -127,6 +125,7 @@ class ImmutableCore:
     def is_protected_path(self, path: str) -> bool:
         """检查路径是否在保护列表中."""
         from fnmatch import fnmatch
+
         for pattern in self.protected_paths:
             if fnmatch(path, pattern) or path.startswith(pattern.replace("/**", "/")):
                 return True

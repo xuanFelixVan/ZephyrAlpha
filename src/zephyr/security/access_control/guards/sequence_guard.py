@@ -94,7 +94,6 @@ class SequenceGuard:
         """写入：whitelist（Stage 4 公共化）。"""
         self._whitelist = value
 
-
     def _format_op(self, event: SequenceEvent) -> str:
         """将事件格式化为 operation:target 字符串."""
         operation = getattr(event, "operation", "")

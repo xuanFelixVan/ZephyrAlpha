@@ -103,9 +103,7 @@ def _find_skill_data(layer_registry_cache: dict[str, Any] | None, skill_id: str)
     return skill_data
 
 
-def _layer1_reason_evidence(
-    symptom_category: str, skill_id: str, error_message: str
-) -> tuple[str, list[str]]:
+def _layer1_reason_evidence(symptom_category: str, skill_id: str, error_message: str) -> tuple[str, list[str]]:
     """Build the reason and evidence for the layer-1 probe."""
     evidence: list[str] = []
     if symptom_category == "registration":

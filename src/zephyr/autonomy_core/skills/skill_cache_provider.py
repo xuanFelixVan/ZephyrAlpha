@@ -57,8 +57,6 @@ class _MemoryCache:
         """写入：max（Stage 4 公共化）。"""
         self._max = value
 
-
-
     def get(self, key: str) -> object | None:
         with self._lock:
             if key in self._store:
@@ -135,7 +133,6 @@ class SkillCacheProvider:
     def backend_name(self, value):
         """写入：backend_name（Stage 4 公共化）。"""
         self._backend_name = value
-
 
     def configure(self, backend: str) -> dict[str, Any]:
         avail = backend.lower().strip() in self._BACKENDS

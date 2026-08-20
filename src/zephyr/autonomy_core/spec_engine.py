@@ -113,7 +113,6 @@ class SpecEngine:
         """公共接口：discover（Stage 4 公共化）。"""
         return self._discover(blueprint_path, result)
 
-
     def upgrade(self, blueprint_path: str) -> UpgradeResult:
         result = UpgradeResult(blueprint_path)
 

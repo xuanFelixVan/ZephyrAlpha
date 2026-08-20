@@ -59,7 +59,6 @@ class PermissionHooks:
         """写入：hooks（Stage 4 公共化）。"""
         self._hooks = value
 
-
     def register(self, event_type: str, hook_id: str, hook: Callable[..., Any] = None) -> None:
         """注册钩子.
 

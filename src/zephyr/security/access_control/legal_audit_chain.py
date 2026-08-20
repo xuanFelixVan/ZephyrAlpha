@@ -20,6 +20,7 @@
 - append(operation, actor) 追加条目, 每条哈希链接前一条
 - verify() -> {intact: bool, length: int} 校验整链哈希完整性
 """
+
 from __future__ import annotations
 
 import hashlib

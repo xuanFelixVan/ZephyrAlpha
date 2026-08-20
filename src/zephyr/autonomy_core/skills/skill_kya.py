@@ -45,11 +45,9 @@ class SkillKYA:
         """写入：certs（Stage 4 公共化）。"""
         self._certs = value
 
-
     def assess(self, tools) -> str:
         """公共接口：assess（Stage 4 公共化）。"""
         return self._assess(tools)
-
 
     def _assess(self, tools: list[str]) -> str:
         risky = sum(1 for t in tools if t in RISKY)

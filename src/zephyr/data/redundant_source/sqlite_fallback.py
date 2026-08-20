@@ -16,6 +16,7 @@ Usage::
     fallback.write_rows("tick_data", columns, rows)
     recent = fallback.query_recent("tick_data", limit=100)
 """
+
 from __future__ import annotations
 
 import logging
@@ -53,9 +54,7 @@ class SQLiteFallback:
     def _get_conn(self) -> sqlite3.Connection:
         """获取 SQLite 连接（惰性初始化）。"""
         if self._conn is None:
-            self._conn = sqlite3.connect(
-                str(self._db_path), check_same_thread=False
-            )
+            self._conn = sqlite3.connect(str(self._db_path), check_same_thread=False)
             self._conn.execute("PRAGMA journal_mode=WAL")
             self._conn.execute("PRAGMA synchronous=NORMAL")
         return self._conn
@@ -160,9 +159,7 @@ class SQLiteFallback:
         with self._lock:
             try:
                 conn = self._get_conn()
-                cursor = conn.execute(
-                    f'SELECT * FROM "{table}" ORDER BY rowid LIMIT ?', (batch_size,)
-                )
+                cursor = conn.execute(f'SELECT * FROM "{table}" ORDER BY rowid LIMIT ?', (batch_size,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                 cols = [d[0] for d in cursor.description]
                 rows = cursor.fetchall()
                 return cols, rows
@@ -176,9 +173,8 @@ class SQLiteFallback:
             try:
                 conn = self._get_conn()
                 cursor = conn.execute(
-                    f'DELETE FROM "{table}" WHERE rowid IN '
-                    f'(SELECT rowid FROM "{table}" ORDER BY rowid LIMIT ?)',
-                    (batch_size,)
+                    f'DELETE FROM "{table}" WHERE rowid IN (SELECT rowid FROM "{table}" ORDER BY rowid LIMIT ?)',  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
+                    (batch_size,),
                 )
                 conn.commit()
                 return cursor.rowcount
@@ -195,9 +191,8 @@ class SQLiteFallback:
             if count > self._max_rows:
                 excess = count - self._max_rows
                 conn.execute(
-                    f'DELETE FROM "{table}" WHERE rowid IN '
-                    f'(SELECT rowid FROM "{table}" ORDER BY rowid LIMIT ?)',
-                    (excess,)
+                    f'DELETE FROM "{table}" WHERE rowid IN (SELECT rowid FROM "{table}" ORDER BY rowid LIMIT ?)',  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
+                    (excess,),
                 )
                 conn.commit()
                 log.info("SQLiteFallback 清理 %s 旧数据 %d 行", table, excess)

@@ -29,6 +29,7 @@
 - connect() 读取 TUSHARE_TOKEN 环境变量，初始化 pro_api 客户端
 - fetch() 按 payload.extra["capability"] 路由到各 _fetch_* 方法
 """
+
 from __future__ import annotations
 
 import datetime
@@ -98,15 +99,21 @@ class TushareProvider(IngestProviderBase):
         thread_safety="shared",
         rate_limit_default=200,
         capabilities=[
-            "news_data", "industry_class", "industry_class_suppl", "lof_list",
-            "money_flow", "futures_term_structure", "etf_nav", "st_namechange_backfill",
+            "news_data",
+            "industry_class",
+            "industry_class_suppl",
+            "lof_list",
+            "money_flow",
+            "futures_term_structure",
+            "etf_nav",
+            "st_namechange_backfill",
             # 19 号 memo：北向季度持仓快照（hk_hold），逻辑在独立文件 northbound_hold_fetcher.py
             CapabilityContract(
                 "northbound_hold_snapshot",
-                supports_symbols_null=True,    # 全市场快照，symbols 无关
-                supports_incremental=False,    # 季度全量覆盖（ReplacingMergeTree 幂等）
+                supports_symbols_null=True,  # 全市场快照，symbols 无关
+                supports_incremental=False,  # 季度全量覆盖（ReplacingMergeTree 幂等）
                 supports_full_refresh=True,
-                requires_date_range=False,     # PIT 季度枚举自给自足
+                requires_date_range=False,  # PIT 季度枚举自给自足
             ),
         ],
         known_issues=["历史数据截止2024-08", "积分不足API受限"],
@@ -121,6 +128,7 @@ class TushareProvider(IngestProviderBase):
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise RuntimeError(f"TUSHARE_TOKEN 环境变量未设置: {e}") from e
         import tushare as ts
+
         ts.set_token(token)
         self._pro = ts.pro_api()
         self._connected = True
@@ -130,6 +138,7 @@ class TushareProvider(IngestProviderBase):
         """探活：尝试 import tushare + 验证 token。"""
         try:
             import tushare  # noqa: F401
+
             if not get_secret_or_default("TUSHARE_TOKEN"):
                 return False
             return self._connected
@@ -145,14 +154,16 @@ class TushareProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 payload.extra["capability"] 路由到具体获取方法。"""
         if not self._connected or self._pro is None:
             yield FetchResult(
-                table=payload.table, columns=[], rows=[],
-                last_key="", elapsed_sec=0.0, error="tushare 未连接",
+                table=payload.table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error="tushare 未连接",
             )
             return
 
@@ -176,21 +187,20 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_st_namechange_backfill(payload, policy)
         elif capability == "northbound_hold_snapshot":
             # 19 号 memo：fetcher 逻辑在独立文件（避让 akshare_provider 并行施工，tushare 侧仅路由）
-            yield from fetch_northbound_hold_snapshot(
-                self._pro, payload, policy, self._call_with_policy, self._log
-            )
+            yield from fetch_northbound_hold_snapshot(self._pro, payload, policy, self._call_with_policy, self._log)
         else:
             yield FetchResult(
-                table=payload.table, columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
+                table=payload.table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
                 error=f"unsupported capability: {capability}",
             )
 
     # ---- 新闻快讯 ----
 
-    def _fetch_news_news_info(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_news_news_info(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取新闻快讯（pro.news_info），写入 news_data 统一表。
 
         按 trade_date 分批拉取，每批一天。
@@ -215,33 +225,39 @@ class TushareProvider(IngestProviderBase):
                 rows: list[tuple] = []
                 if df is not None and not df.empty:
                     for _, row in df.iterrows():
-                        rows.append(build_news_row(
-                            pub_date=str(row.get("datetime", "")),
-                            title=str(row.get("title", "")),
-                            link="",
-                            summary=str(row.get("content", "")),
-                            source=str(row.get("src", "")),
-                            data_source="tushare",
-                        ))
+                        rows.append(
+                            build_news_row(
+                                pub_date=str(row.get("datetime", "")),
+                                title=str(row.get("title", "")),
+                                link="",
+                                summary=str(row.get("content", "")),
+                                source=str(row.get("src", "")),
+                                data_source="tushare",
+                            )
+                        )
                 self._log.info(f"新闻快讯 {trade_date}: {len(rows)} 行")
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=current.isoformat(), elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=current.isoformat(),
+                    elapsed_sec=time.time() - t0,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"新闻快讯 {trade_date} 获取失败: {e}")
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=current.isoformat(), elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=current.isoformat(),
+                    elapsed_sec=time.time() - t0,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
                     error=str(e),
                 )
             current += datetime.timedelta(days=1)
 
     # ---- 证券新闻 ----
 
-    def _fetch_news_security(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_news_security(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取证券新闻（pro.news），写入 news_data 统一表。
 
         按 trade_date 分批拉取，每批一天。
@@ -266,24 +282,32 @@ class TushareProvider(IngestProviderBase):
                 rows: list[tuple] = []
                 if df is not None and not df.empty:
                     for _, row in df.iterrows():
-                        rows.append(build_news_row(
-                            pub_date=str(row.get("datetime", "")),
-                            title=str(row.get("title", "")),
-                            link="",
-                            summary=str(row.get("content", "")),
-                            source=str(row.get("src", "")),
-                            data_source="tushare",
-                        ))
+                        rows.append(
+                            build_news_row(
+                                pub_date=str(row.get("datetime", "")),
+                                title=str(row.get("title", "")),
+                                link="",
+                                summary=str(row.get("content", "")),
+                                source=str(row.get("src", "")),
+                                data_source="tushare",
+                            )
+                        )
                 self._log.info(f"证券新闻 {trade_date}: {len(rows)} 行")
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=current.isoformat(), elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=current.isoformat(),
+                    elapsed_sec=time.time() - t0,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"证券新闻 {trade_date} 获取失败: {e}")
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=current.isoformat(), elapsed_sec=time.time() - t0,
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=current.isoformat(),
+                    elapsed_sec=time.time() - t0,  # noqa: m46-time — elapsed 差值计时与时区无关（性能埋点）
                     error=str(e),
                 )
             current += datetime.timedelta(days=1)
@@ -303,18 +327,29 @@ class TushareProvider(IngestProviderBase):
         """
         # 1. 获取 L1/L2/L3 行业列表
         l1_df = self._call_with_policy(
-            self._pro.index_classify, policy, level='L1', src='SW2021',
+            self._pro.index_classify,
+            policy,
+            level="L1",
+            src="SW2021",
         )
         l2_df = self._call_with_policy(
-            self._pro.index_classify, policy, level='L2', src='SW2021',
+            self._pro.index_classify,
+            policy,
+            level="L2",
+            src="SW2021",
         )
         l3_df = self._call_with_policy(
-            self._pro.index_classify, policy, level='L3', src='SW2021',
+            self._pro.index_classify,
+            policy,
+            level="L3",
+            src="SW2021",
         )
 
         # index_code/name 与 L3→L2→L1 parent 关系映射（抽取降复杂度）
         l1_names, l2_names, l3_names, l3_to_l2, l2_to_l1 = self._build_industry_lookups(
-            l1_df, l2_df, l3_df,
+            l1_df,
+            l2_df,
+            l3_df,
         )
 
         # 2. 遍历 L3 行业，获取成分股
@@ -323,7 +358,10 @@ class TushareProvider(IngestProviderBase):
         for l3_code, l3_name in l3_names.items():
             try:
                 members_df = self._call_with_policy(
-                    self._pro.index_member, policy, index_code=l3_code, is_new='Y',
+                    self._pro.index_member,
+                    policy,
+                    index_code=l3_code,
+                    is_new="Y",
                 )
                 api_count += 1
                 # tushare 频率控制：每 200 次暂停 60s（2000 积分限制 200次/分钟）
@@ -341,28 +379,31 @@ class TushareProvider(IngestProviderBase):
 
                 # 反推 L2/L1
                 l2_code = l3_to_l2.get(l3_code)
-                l2_name = l2_names.get(l2_code, '') if l2_code else ''
+                l2_name = l2_names.get(l2_code, "") if l2_code else ""
                 l1_code = l2_to_l1.get(l2_code) if l2_code else None
-                l1_name = l1_names.get(l1_code, '') if l1_code else ''
+                l1_name = l1_names.get(l1_code, "") if l1_code else ""
 
                 for _, m in members_df.iterrows():
-                    ts_code = str(m.get('con_code') or '')
+                    ts_code = str(m.get("con_code") or "")
                     if not ts_code:
                         continue
                     stock_map[ts_code] = {
-                        "L1": l1_name, "L2": l2_name, "L3": l3_name,
+                        "L1": l1_name,
+                        "L2": l2_name,
+                        "L3": l3_name,
                     }
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"index_member({l3_code}) 失败: {e}")
                 continue
 
-        self._log.info(
-            f"申万行业映射: {len(stock_map)} 只股票（{api_count} 次 API 调用）"
-        )
+        self._log.info(f"申万行业映射: {len(stock_map)} 只股票（{api_count} 次 API 调用）")
         return stock_map
 
     def _build_industry_lookups(
-        self, l1_df, l2_df, l3_df,
+        self,
+        l1_df,
+        l2_df,
+        l3_df,
     ) -> tuple[dict, dict, dict, dict, dict]:
         """构建申万行业查找表（从 _build_sw_industry_map 抽取降复杂度）。
 
@@ -371,28 +412,26 @@ class TushareProvider(IngestProviderBase):
         Returns:
             (l1_names, l2_names, l3_names, l3_to_l2, l2_to_l1)
         """
-        l1_names = {r['index_code']: r['industry_name'] for _, r in l1_df.iterrows()}
-        l2_names = {r['index_code']: r['industry_name'] for _, r in l2_df.iterrows()}
-        l3_names = {r['index_code']: r['industry_name'] for _, r in l3_df.iterrows()}
+        l1_names = {r["index_code"]: r["industry_name"] for _, r in l1_df.iterrows()}
+        l2_names = {r["index_code"]: r["industry_name"] for _, r in l2_df.iterrows()}
+        l3_names = {r["index_code"]: r["industry_name"] for _, r in l3_df.iterrows()}
 
         # industry_code → index_code 映射（parent_code 是 industry_code，需转换为 index_code）
-        l1_code_to_idx = {str(r['industry_code']): r['index_code'] for _, r in l1_df.iterrows()}
-        l2_code_to_idx = {str(r['industry_code']): r['index_code'] for _, r in l2_df.iterrows()}
+        l1_code_to_idx = {str(r["industry_code"]): r["index_code"] for _, r in l1_df.iterrows()}
+        l2_code_to_idx = {str(r["industry_code"]): r["index_code"] for _, r in l2_df.iterrows()}
 
         # L3→L2→L1 parent 关系（index_code → index_code，经 industry_code 中转）
         l3_to_l2: dict[str, str | None] = {}
         for _, r in l3_df.iterrows():
-            pc = str(r.get('parent_code') or '')
-            l3_to_l2[r['index_code']] = l2_code_to_idx.get(pc) if pc else None
+            pc = str(r.get("parent_code") or "")
+            l3_to_l2[r["index_code"]] = l2_code_to_idx.get(pc) if pc else None
         l2_to_l1: dict[str, str | None] = {}
         for _, r in l2_df.iterrows():
-            pc = str(r.get('parent_code') or '')
-            l2_to_l1[r['index_code']] = l1_code_to_idx.get(pc) if pc else None
+            pc = str(r.get("parent_code") or "")
+            l2_to_l1[r["index_code"]] = l1_code_to_idx.get(pc) if pc else None
         return l1_names, l2_names, l3_names, l3_to_l2, l2_to_l1
 
-    def _fetch_industry_class(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_industry_class(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取申万行业分类（L1/L2/L3 拆分），写入 c1_market.industry_class。
 
         #ARCH-IFIND-FAILOVER: 替代 iFind i问财申万行业（试用账号不可用时切换）。
@@ -410,8 +449,11 @@ class TushareProvider(IngestProviderBase):
             stock_map = self._build_sw_industry_map(policy)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key=today_str, elapsed_sec=seconds_since(t0),
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key=today_str,
+                elapsed_sec=seconds_since(t0),
                 error=f"申万行业映射构建失败: {e}",
             )
             return
@@ -426,13 +468,14 @@ class TushareProvider(IngestProviderBase):
 
         self._log.info(f"industry_class: {len(rows)} 行（tushare）")
         yield FetchResult(
-            table=table, columns=columns, rows=rows,
-            last_key=today_str, elapsed_sec=seconds_since(t0),
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=today_str,
+            elapsed_sec=seconds_since(t0),
         )
 
-    def _fetch_industry_class_suppl(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_industry_class_suppl(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取申万行业分类（完整路径），写入 c3_fundamental.industry_class_suppl。
 
         #ARCH-IFIND-FAILOVER: 替代 iFind i问财行业分类（试用账号不可用时切换）。
@@ -449,8 +492,11 @@ class TushareProvider(IngestProviderBase):
             stock_map = self._build_sw_industry_map(policy)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key=today_str, elapsed_sec=seconds_since(t0),
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key=today_str,
+                elapsed_sec=seconds_since(t0),
                 error=f"申万行业映射构建失败: {e}",
             )
             return
@@ -465,15 +511,16 @@ class TushareProvider(IngestProviderBase):
 
         self._log.info(f"industry_class_suppl: {len(rows)} 行（tushare）")
         yield FetchResult(
-            table=table, columns=columns, rows=rows,
-            last_key=today_str, elapsed_sec=seconds_since(t0),
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=today_str,
+            elapsed_sec=seconds_since(t0),
         )
 
     # ---- LOF 基金列表（2026-08-14 东财反爬替代源） ----
 
-    def _fetch_lof_list(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_lof_list(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """LOF 基金列表全量刷新，写入 c1_market.lof_list。
 
         东财反爬治本：akshare fund_lof_spot_em（东财 push2 集群）持续 RemoteDisconnected，
@@ -489,13 +536,20 @@ class TushareProvider(IngestProviderBase):
 
         try:
             df = self._call_with_policy(
-                self._pro.fund_basic, policy, market="E", status="L",
+                self._pro.fund_basic,
+                policy,
+                market="E",
+                status="L",
                 fields="ts_code,name",
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key="", elapsed_sec=seconds_since(t0), error=str(e),
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=seconds_since(t0),
+                error=str(e),
             )
             return
 
@@ -507,15 +561,16 @@ class TushareProvider(IngestProviderBase):
 
         self._log.info(f"lof_list: {len(rows)} 只 LOF（tushare 替代东财）")
         yield FetchResult(
-            table=table, columns=columns, rows=rows,
-            last_key=today_str, elapsed_sec=seconds_since(t0),
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=today_str,
+            elapsed_sec=seconds_since(t0),
         )
 
     # ---- 资金流向（2026-08-14 东财反爬替代源） ----
 
-    def _fetch_money_flow(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_money_flow(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """个股资金流向增量，写入 c1_market.money_flow。
 
         东财反爬治本：akshare stock_individual_fund_flow（东财 push2）持续 RemoteDisconnected，
@@ -532,13 +587,23 @@ class TushareProvider(IngestProviderBase):
         """
         table = "c1_market.money_flow"
         columns = [
-            "trade_date", "symbol", "close", "pct_change",
-            "main_net_inflow", "main_net_inflow_pct",
-            "super_large_net_inflow", "super_large_net_inflow_pct",
-            "large_net_inflow", "large_net_inflow_pct",
-            "medium_net_inflow", "medium_net_inflow_pct",
-            "small_net_inflow", "small_net_inflow_pct",
-            "data_source", "exchange", "symbol_canonical",
+            "trade_date",
+            "symbol",
+            "close",
+            "pct_change",
+            "main_net_inflow",
+            "main_net_inflow_pct",
+            "super_large_net_inflow",
+            "super_large_net_inflow_pct",
+            "large_net_inflow",
+            "large_net_inflow_pct",
+            "medium_net_inflow",
+            "medium_net_inflow_pct",
+            "small_net_inflow",
+            "small_net_inflow_pct",
+            "data_source",
+            "exchange",
+            "symbol_canonical",
         ]
         start = payload.start or datetime.date.today()
         end = payload.end or datetime.date.today()
@@ -551,8 +616,12 @@ class TushareProvider(IngestProviderBase):
                 df = self._call_with_policy(self._pro.moneyflow, policy, trade_date=dstr)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=current.isoformat(), elapsed_sec=seconds_since(t0), error=str(e),
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=current.isoformat(),
+                    elapsed_sec=seconds_since(t0),
+                    error=str(e),
                 )
                 current += datetime.timedelta(days=1)
                 continue
@@ -560,6 +629,7 @@ class TushareProvider(IngestProviderBase):
             rows: list[tuple] = []
             if df is not None and not df.empty:
                 for _, r in df.iterrows():
+
                     def _f(v) -> float:
                         try:
                             return float(v or 0)
@@ -580,29 +650,48 @@ class TushareProvider(IngestProviderBase):
                     md_pct = _pct(md, _f(r.get("buy_md_amount")), _f(r.get("sell_md_amount")))
                     lg_pct = _pct(lg, _f(r.get("buy_lg_amount")), _f(r.get("sell_lg_amount")))
                     elg_pct = _pct(elg, _f(r.get("buy_elg_amount")), _f(r.get("sell_elg_amount")))
-                    main_pct = _pct(main, _f(r.get("buy_lg_amount")) + _f(r.get("buy_elg_amount")),
-                                    _f(r.get("sell_lg_amount")) + _f(r.get("sell_elg_amount")))
+                    main_pct = _pct(
+                        main,
+                        _f(r.get("buy_lg_amount")) + _f(r.get("buy_elg_amount")),
+                        _f(r.get("sell_lg_amount")) + _f(r.get("sell_elg_amount")),
+                    )
 
                     ts_code = str(r.get("ts_code", "") or "")
                     symbol = ts_code.split(".")[0]
                     exchange = ts_code.split(".")[1] if "." in ts_code else ""
-                    rows.append((
-                        current.isoformat(), symbol, 0, 0,
-                        main, main_pct, elg, elg_pct, lg, lg_pct,
-                        md, md_pct, sm, sm_pct,
-                        "tushare", exchange, ts_code,
-                    ))
+                    rows.append(
+                        (
+                            current.isoformat(),
+                            symbol,
+                            0,
+                            0,
+                            main,
+                            main_pct,
+                            elg,
+                            elg_pct,
+                            lg,
+                            lg_pct,
+                            md,
+                            md_pct,
+                            sm,
+                            sm_pct,
+                            "tushare",
+                            exchange,
+                            ts_code,
+                        )
+                    )
 
             self._log.info(f"money_flow {dstr}: {len(rows)} 行（tushare 替代东财）")
             yield FetchResult(
-                table=table, columns=columns, rows=rows,
-                last_key=current.isoformat(), elapsed_sec=seconds_since(t0),
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=current.isoformat(),
+                elapsed_sec=seconds_since(t0),
             )
             current += datetime.timedelta(days=1)
 
-    def _fetch_futures_term_structure(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_futures_term_structure(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """期货期限结构（近月/次月基差）增量，写入 c1_market.futures_term_structure。
 
         QMT 模拟账户期货板块为空治本（2026-08-14）：miniqmt _load_futures_symbols_from_sectors
@@ -617,8 +706,15 @@ class TushareProvider(IngestProviderBase):
         """
         table = _TBL_FUTURES_TERM
         columns = [
-            "trade_date", "symbol", "front_contract", "next_contract",
-            "front_price", "next_price", "basis", "exchange", "data_source",
+            "trade_date",
+            "symbol",
+            "front_contract",
+            "next_contract",
+            "front_price",
+            "next_price",
+            "basis",
+            "exchange",
+            "data_source",
         ]
         start = payload.start or datetime.date.today()
         end = payload.end or datetime.date.today()
@@ -631,8 +727,12 @@ class TushareProvider(IngestProviderBase):
                 df = self._call_with_policy(self._pro.fut_daily, policy, trade_date=dstr)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=current.isoformat(), elapsed_sec=seconds_since(t0), error=str(e),
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=current.isoformat(),
+                    elapsed_sec=seconds_since(t0),
+                    error=str(e),
                 )
                 current += datetime.timedelta(days=1)
                 continue
@@ -662,21 +762,31 @@ class TushareProvider(IngestProviderBase):
                     _, front_code, front_price, front_exch = lst[0]
                     _, next_code, next_price, _ = lst[1]
                     basis = round(front_price - next_price, 4)
-                    rows.append((
-                        current.isoformat(), front_code, front_code, next_code,
-                        front_price, next_price, basis, front_exch, "tushare",
-                    ))
+                    rows.append(
+                        (
+                            current.isoformat(),
+                            front_code,
+                            front_code,
+                            next_code,
+                            front_price,
+                            next_price,
+                            basis,
+                            front_exch,
+                            "tushare",
+                        )
+                    )
 
             self._log.info(f"futures_term_structure {dstr}: {len(rows)} 品种对（tushare 替代 QMT）")
             yield FetchResult(
-                table=table, columns=columns, rows=rows,
-                last_key=current.isoformat(), elapsed_sec=seconds_since(t0),
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=current.isoformat(),
+                elapsed_sec=seconds_since(t0),
             )
             current += datetime.timedelta(days=1)
 
-    def _fetch_etf_nav(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_etf_nav(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """ETF 基金净值增量，写入 c1_market.etf_nav。
 
         东财反爬治本（2026-08-14）：akshare fund_etf_fund_info_em（东财）持续返回空
@@ -695,8 +805,11 @@ class TushareProvider(IngestProviderBase):
         symbols = payload.symbols or self._load_etf_list_symbols()
         if not symbols:
             yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key="", elapsed_sec=0.0,
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
                 error="etf_nav 无 symbols 且 etf_list 表无数据，请先运行 etf_list_refresh 任务",
             )
             return
@@ -706,8 +819,11 @@ class TushareProvider(IngestProviderBase):
             t0 = now_utc()
             try:
                 df = self._call_with_policy(
-                    self._pro.fund_nav, policy,
-                    ts_code=ts_code, start_date=start_str, end_date=end_str,
+                    self._pro.fund_nav,
+                    policy,
+                    ts_code=ts_code,
+                    start_date=start_str,
+                    end_date=end_str,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"ETF {ts_code} 净值获取失败，跳过: {e}")
@@ -715,8 +831,11 @@ class TushareProvider(IngestProviderBase):
             rows = self._parse_fund_nav_rows(df, ts_code)
             if rows:
                 yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=end_str, elapsed_sec=seconds_since(t0),
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=end_str,
+                    elapsed_sec=seconds_since(t0),
                 )
 
         self._log.info(f"etf_nav 完成（tushare 替代东财，{len(symbols)} 只）")
@@ -725,6 +844,7 @@ class TushareProvider(IngestProviderBase):
         """从 etf_list 表加载全市场 ETF 代码（新浪格式 sh510010）。"""
         try:
             from zephyr.data import ch_reader as _chr
+
             tsv = _chr.query_table(_TBL_ETF_LIST, columns="etf_code")
             if tsv and tsv.strip():
                 symbols = [line.strip() for line in tsv.strip().split("\n") if line.strip()]
@@ -742,7 +862,7 @@ class TushareProvider(IngestProviderBase):
             return code.upper()
         for prefix, exch in (("sh", "SH"), ("sz", "SZ"), ("bj", "BJ")):
             if code.lower().startswith(prefix):
-                return f"{code[len(prefix):]}.{exch}"
+                return f"{code[len(prefix) :]}.{exch}"
         return code
 
     @staticmethod
@@ -877,8 +997,7 @@ class TushareProvider(IngestProviderBase):
             keys = frozenset(active.keys())
             if keys != prev_keys:
                 rows.extend(
-                    (t.isoformat(), c, v[0], v[1], "tushare_namechange_derived")
-                    for c, v in sorted(active.items())
+                    (t.isoformat(), c, v[0], v[1], "tushare_namechange_derived") for c, v in sorted(active.items())
                 )
                 prev_keys = keys
         return rows
@@ -903,13 +1022,9 @@ class TushareProvider(IngestProviderBase):
         d = self._parse_yyyymmdd(first)
         return None if d is None or d.year <= 1971 else d
 
-    def _load_trade_days(
-        self, _chr, start: datetime.date, end: datetime.date
-    ) -> list[datetime.date]:
+    def _load_trade_days(self, _chr, start: datetime.date, end: datetime.date) -> list[datetime.date]:
         """交易日历：c1_market.kline_daily DISTINCT trade_date（对标 suspend K线推导）。"""
-        tsv = _chr.query(
-            _SQL_KLINE_TRADE_DAYS.format(start=start.isoformat(), end=end.isoformat())
-        )
+        tsv = _chr.query(_SQL_KLINE_TRADE_DAYS.format(start=start.isoformat(), end=end.isoformat()))
         days: list[datetime.date] = []
         for line in (tsv or "").strip().split("\n"):
             d = self._parse_yyyymmdd(line)
@@ -932,8 +1047,10 @@ class TushareProvider(IngestProviderBase):
         for year in range(from_year, this_year + 1):
             try:
                 df_y = self._call_with_policy(
-                    self._pro.namechange, policy,
-                    start_date=f"{year}0101", end_date=f"{year}1231",
+                    self._pro.namechange,
+                    policy,
+                    start_date=f"{year}0101",
+                    end_date=f"{year}1231",
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"namechange {year} 年拉取失败: {e}")
@@ -944,9 +1061,7 @@ class TushareProvider(IngestProviderBase):
             return None
         return pd.concat(frames).drop_duplicates(subset=["ts_code", "name", "start_date"])
 
-    def _fetch_st_namechange_backfill(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_st_namechange_backfill(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """ST 历史状态回填（DS-085 历史段，JOB-083），写入 c1_market.st_stock_list。
 
         源：tushare pro.namechange 名称变更历史，逐年分页拉取（无参调用被默认
@@ -971,7 +1086,10 @@ class TushareProvider(IngestProviderBase):
         seam = self._live_st_seam_date(_chr, extra)
         if seam is None:
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
                 elapsed_sec=time.monotonic() - t0,
                 error="实盘 ST 快照接缝日缺失（st_stock_list 无 akshare 行或 CH 不可达）",
             )
@@ -979,7 +1097,10 @@ class TushareProvider(IngestProviderBase):
         win_end = seam - datetime.timedelta(days=1)
         if win_end < win_start:
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
                 elapsed_sec=time.monotonic() - t0,
             )
             return
@@ -996,7 +1117,10 @@ class TushareProvider(IngestProviderBase):
             trade_days = self._load_trade_days(_chr, win_start, win_end)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
                 elapsed_sec=time.monotonic() - t0,
                 error=f"交易日历加载失败: {e}",
             )
@@ -1008,7 +1132,9 @@ class TushareProvider(IngestProviderBase):
             f"（{win_start}~{win_end}，接缝 {seam}）"
         )
         yield FetchResult(
-            table=table, columns=columns, rows=rows,
+            table=table,
+            columns=columns,
+            rows=rows,
             last_key=rows[-1][0] if rows else "",
             elapsed_sec=time.monotonic() - t0,
         )

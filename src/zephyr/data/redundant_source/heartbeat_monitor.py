@@ -16,6 +16,7 @@ Usage::
     if not monitor.is_primary_alive():
         ...  # 切换备源
 """
+
 from __future__ import annotations
 
 import logging
@@ -35,6 +36,7 @@ _CH_FAIL_THRESHOLD = 3  # CH 连续失败次数阈值
 
 class SourceState(Enum):
     """数据源状态。"""
+
     ALIVE = "alive"
     DEAD = "dead"
     UNKNOWN = "unknown"
@@ -43,6 +45,7 @@ class SourceState(Enum):
 @dataclass
 class HeartbeatStatus:
     """心跳状态快照。"""
+
     primary_state: SourceState = SourceState.UNKNOWN
     ch_state: SourceState = SourceState.UNKNOWN
     last_tick_ts: float = 0.0
@@ -87,6 +90,7 @@ class HeartbeatMonitor:
         """
         try:
             from zephyr.data import ch_reader
+
             # 短超时：心跳周期 10s，默认 600s 超时会让黑洞主机卡死探测线程
             return bool(ch_reader.query("SELECT 1", timeout=10).strip())
         except Exception as e:  # noqa: BLE001
@@ -131,12 +135,11 @@ class HeartbeatMonitor:
         if self._running:
             return
         self._running = True
-        self._thread = threading.Thread(
-            target=self._ch_ping_loop, daemon=True, name="heartbeat-monitor"
-        )
+        self._thread = threading.Thread(target=self._ch_ping_loop, daemon=True, name="heartbeat-monitor")
         self._thread.start()
-        log.info("HeartbeatMonitor 已启动 (tick_timeout=%.0fs, ch_ping=%.0fs)",
-                 self._tick_timeout, self._ch_ping_interval)
+        log.info(
+            "HeartbeatMonitor 已启动 (tick_timeout=%.0fs, ch_ping=%.0fs)", self._tick_timeout, self._ch_ping_interval
+        )
 
     def stop(self) -> None:
         """停止检测线程。"""
@@ -184,8 +187,7 @@ class HeartbeatMonitor:
                 self._status.ch_consecutive_failures += 1
                 if self._status.ch_consecutive_failures >= self._ch_fail_threshold:
                     new_state = SourceState.DEAD
-                    log.warning("CH 连续 %d 次 ping 失败，标记不可达",
-                                self._status.ch_consecutive_failures)
+                    log.warning("CH 连续 %d 次 ping 失败，标记不可达", self._status.ch_consecutive_failures)
                 else:
                     new_state = self._status.ch_state  # 未达阈值，保持原状态
 
@@ -201,12 +203,8 @@ class HeartbeatMonitor:
                     self._status.primary_state = SourceState.DEAD
 
             # 暴露 metrics
-            self._registry.set_gauge(
-                "zephyr_ch_heartbeat", 1.0 if ok else 0.0
-            )
-            self._registry.set_gauge(
-                "zephyr_primary_heartbeat", 1.0 if primary_alive else 0.0
-            )
+            self._registry.set_gauge("zephyr_ch_heartbeat", 1.0 if ok else 0.0)
+            self._registry.set_gauge("zephyr_primary_heartbeat", 1.0 if primary_alive else 0.0)
         return state_changed_to
 
     def _fire_ch_state_alert(self, new_state: SourceState) -> None:
@@ -221,7 +219,7 @@ class HeartbeatMonitor:
                 self._alerter.notify(
                     task_id="ch_heartbeat",
                     error=f"CH 连续 {self._ch_fail_threshold} 次 ping 失败，已标记为不可达（DEAD）。"
-                          f"灾时若在实盘运行期将导致数据中断，请立即检查 CH 服务状态。",
+                    f"灾时若在实盘运行期将导致数据中断，请立即检查 CH 服务状态。",
                     level="CRITICAL",
                     source="clickhouse",
                 )

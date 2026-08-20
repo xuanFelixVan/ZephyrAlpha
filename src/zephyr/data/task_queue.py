@@ -28,6 +28,7 @@ DAG 依赖示例（蓝图 §6.3）：
 
 线程安全：所有状态操作用 threading.Lock 保护。
 """
+
 from __future__ import annotations
 
 import logging
@@ -76,6 +77,7 @@ class TaskQueue:
             ValueError: yaml 解析失败或 DAG 有环
         """
         import yaml
+
         p = Path(path)
         with open(p, encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
@@ -158,10 +160,7 @@ class TaskQueue:
                 deps = self._dependencies.get(tid, [])
                 if not deps:
                     ready.append(tid)
-                elif all(
-                    d not in self._tasks or self._status.get(d) == SUCCESS
-                    for d in deps
-                ):
+                elif all(d not in self._tasks or self._status.get(d) == SUCCESS for d in deps):
                     ready.append(tid)
                 elif any(self._status.get(d) == FAILED for d in deps):
                     # 前置有失败 -> 标记 BLOCKED

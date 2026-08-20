@@ -101,9 +101,7 @@ class BareLLMCallError(RuntimeError):
 # ============================================================================
 
 # contextvar：异步路径隔离（每个 asyncio task 独立上下文）
-_ctx_allowance: ContextVar[tuple[float, str] | None] = ContextVar(
-    "zephyr_lsg_allowance", default=None
-)
+_ctx_allowance: ContextVar[tuple[float, str] | None] = ContextVar("zephyr_lsg_allowance", default=None)
 # threading.local：同步路径兜底（跨 asyncio.run 边界）
 _tls = threading.local()
 
@@ -157,11 +155,15 @@ def grant_allowance(request_id: str | None = None, ttl: float = _DEFAULT_TTL) ->
     try:
         _ctx_allowance.set(token)
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.warning("grant_allowance: contextvar set 失败(%s: %s)，异步路径放行令牌未生效", type(e).__name__, e, exc_info=True)
+        logger.warning(
+            "grant_allowance: contextvar set 失败(%s: %s)，异步路径放行令牌未生效", type(e).__name__, e, exc_info=True
+        )
     try:
         _tls_set(token)
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.warning("grant_allowance: thread-local set 失败(%s: %s)，同步路径放行令牌未生效", type(e).__name__, e, exc_info=True)
+        logger.warning(
+            "grant_allowance: thread-local set 失败(%s: %s)，同步路径放行令牌未生效", type(e).__name__, e, exc_info=True
+        )
 
 
 def revoke_allowance() -> None:
@@ -169,11 +171,21 @@ def revoke_allowance() -> None:
     try:
         _ctx_allowance.set(None)
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.critical("revoke_allowance: contextvar 清除失败(%s: %s)，异步路径放行令牌可能残留=授权绕过风险", type(e).__name__, e, exc_info=True)
+        logger.critical(
+            "revoke_allowance: contextvar 清除失败(%s: %s)，异步路径放行令牌可能残留=授权绕过风险",
+            type(e).__name__,
+            e,
+            exc_info=True,
+        )
     try:
         _tls_set(None)
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.critical("revoke_allowance: thread-local 清除失败(%s: %s)，同步路径放行令牌可能残留=授权绕过风险", type(e).__name__, e, exc_info=True)
+        logger.critical(
+            "revoke_allowance: thread-local 清除失败(%s: %s)，同步路径放行令牌可能残留=授权绕过风险",
+            type(e).__name__,
+            e,
+            exc_info=True,
+        )
 
 
 def reset_allowance_for_request() -> None:
@@ -217,7 +229,9 @@ def allow_llm_call(ttl: float = _DEFAULT_TTL):
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.critical(
                 "allow_llm_call: contextvar reset 失败(%s: %s)，fail-closed 清空放行令牌",
-                type(e).__name__, e, exc_info=True,
+                type(e).__name__,
+                e,
+                exc_info=True,
             )
             _ctx_allowance.set(None)
         _tls_set(prev_tls)  # 恢复进入前的 thread-local 值
@@ -242,7 +256,9 @@ async def allow_llm_call_async(ttl: float = _DEFAULT_TTL):
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.critical(
                 "allow_llm_call_async: contextvar reset 失败(%s: %s)，fail-closed 清空放行令牌",
-                type(e).__name__, e, exc_info=True,
+                type(e).__name__,
+                e,
+                exc_info=True,
             )
             _ctx_allowance.set(None)
         _tls_set(prev_tls)
@@ -251,6 +267,7 @@ async def allow_llm_call_async(ttl: float = _DEFAULT_TTL):
 # ============================================================================
 # 方法包装器（guard wrappers）
 # ============================================================================
+
 
 def _make_guard(orig_func, label: str):
     """包装同步 LLM 调用方法：无令牌->raise，有令牌->调原方法。"""
@@ -294,6 +311,7 @@ def _is_guarded(func) -> bool:
 # 各 LLM 库 patcher（防御式：任何失败均 no-op，绝不阻断导入）
 # ============================================================================
 
+
 def _patch_openai(module) -> None:
     """patch openai v1/v2 的 chat.completions.create（同步+异步）。"""
     try:
@@ -303,23 +321,19 @@ def _patch_openai(module) -> None:
     if not _is_guarded(Completions.create):
         Completions.create = _make_guard(Completions.create, "openai.chat.completions.create")
     if not _is_guarded(AsyncCompletions.create):
-        AsyncCompletions.create = _make_async_guard(
-            AsyncCompletions.create, "openai.chat.completions.create (async)"
-        )
+        AsyncCompletions.create = _make_async_guard(AsyncCompletions.create, "openai.chat.completions.create (async)")
 
 
 def _patch_anthropic(module) -> None:
     """patch anthropic 的 messages.create（同步+异步）。"""
     try:
-        from anthropic.resources.messages import AsyncMessages, Messages
+        from anthropic.resources.messages import AsyncMessages, Messages  # noqa: import-integrity  anthropic 可选依赖，守卫失败即 return 跳过 patch
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return
     if not _is_guarded(Messages.create):
         Messages.create = _make_guard(Messages.create, "anthropic.messages.create")
     if not _is_guarded(AsyncMessages.create):
-        AsyncMessages.create = _make_async_guard(
-            AsyncMessages.create, "anthropic.messages.create (async)"
-        )
+        AsyncMessages.create = _make_async_guard(AsyncMessages.create, "anthropic.messages.create (async)")
 
 
 def _patch_litellm(module) -> None:
@@ -329,13 +343,23 @@ def _patch_litellm(module) -> None:
         if completion is not None and not _is_guarded(completion):
             module.completion = _make_guard(completion, "litellm.completion")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.critical("_patch_litellm: completion patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过", type(e).__name__, e, exc_info=True)
+        logger.critical(
+            "_patch_litellm: completion patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过",
+            type(e).__name__,
+            e,
+            exc_info=True,
+        )
     try:
         acompletion = getattr(module, "acompletion", None)
         if acompletion is not None and not _is_guarded(acompletion):
             module.acompletion = _make_async_guard(acompletion, "litellm.acompletion")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.critical("_patch_litellm: acompletion patch 失败(%s: %s)，异步 LLM 裸调守卫未挂载=安全绕过", type(e).__name__, e, exc_info=True)
+        logger.critical(
+            "_patch_litellm: acompletion patch 失败(%s: %s)，异步 LLM 裸调守卫未挂载=安全绕过",
+            type(e).__name__,
+            e,
+            exc_info=True,
+        )
 
 
 def _import_chat_classes() -> list:
@@ -344,11 +368,13 @@ def _import_chat_classes() -> list:
     尝试两种 langchain 路径导入 ChatOpenAI/ChatAnthropic，失败返回空列表。
     """
     try:
-        from langchain.chat_models import ChatAnthropic, ChatOpenAI  # noqa: F401
+        from langchain.chat_models import ChatAnthropic, ChatOpenAI  # noqa: F401  # noqa: import-integrity  langchain 可选依赖，双路径 fallback 探测（守卫失败返回空表）
+
         return [ChatOpenAI, ChatAnthropic]
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         try:
-            from langchain_community.chat_models import ChatAnthropic, ChatOpenAI  # noqa: F401
+            from langchain_community.chat_models import ChatAnthropic, ChatOpenAI  # noqa: F401  # noqa: import-integrity  langchain_community 可选依赖 fallback 探测（守卫失败返回空表）
+
             return [ChatOpenAI, ChatAnthropic]
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return []
@@ -369,7 +395,13 @@ def _patch_langchain(module) -> None:
                 label = f"langchain.{cls.__name__}.invoke"
                 setattr(cls, "invoke", _make_guard(invoke, label))
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.critical("_patch_langchain: %s.invoke patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过", cls.__name__, type(e).__name__, e, exc_info=True)
+            logger.critical(
+                "_patch_langchain: %s.invoke patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过",
+                cls.__name__,
+                type(e).__name__,
+                e,
+                exc_info=True,
+            )
             continue
 
 
@@ -385,6 +417,7 @@ _PATCHERS: dict[str, callable] = {
 # ============================================================================
 # sys.meta_path 导入钩子（拦截目标库导入 -> 加载后 patch）
 # ============================================================================
+
 
 class _LLMGuardLoader(importlib.abc.Loader):
     """包装真实 loader：执行原 loader 后立即 patch 目标模块。"""
@@ -438,7 +471,13 @@ def _eager_patch_loaded() -> None:
             try:
                 patcher(mod)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.critical("_eager_patch_loaded: %s patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过", name, type(e).__name__, e, exc_info=True)
+                logger.critical(
+                    "_eager_patch_loaded: %s patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过",
+                    name,
+                    type(e).__name__,
+                    e,
+                    exc_info=True,
+                )
 
 
 def install() -> bool:

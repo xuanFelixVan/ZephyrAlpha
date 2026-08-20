@@ -83,11 +83,13 @@ ALL_PERIODS: list[str] = [
 # fetch 按 payload.table 路由，gate 仅识别 _*_CAPABILITIES 变量 / capability=="xxx" 模式，
 # 故显式声明路由能力集对齐 meta.capabilities。technical_indicator 为默认分支
 # （payload.table 非 calendar_event/hk_trade_calendar 时走指标计算）。
-_INTERNAL_COMPUTE_CAPABILITIES = frozenset({
-    "technical_indicator",
-    "calendar_event",
-    "hk_trade_calendar",
-})
+_INTERNAL_COMPUTE_CAPABILITIES = frozenset(
+    {
+        "technical_indicator",
+        "calendar_event",
+        "hk_trade_calendar",
+    }
+)
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀的常量定义行）
 _SQL_GET_SYMBOLS = "SELECT DISTINCT symbol FROM {table} WHERE {where} ORDER BY symbol"
@@ -142,9 +144,7 @@ def _derive_month_ends(by_month: dict[tuple[int, int], datetime.date]) -> list[t
     for (year, month), last_day in by_month.items():
         rows.append((last_day, "month_end", f"{year}-{month:02d} 月末（最后交易日）", "internal"))
         if month in (3, 6, 9, 12):
-            rows.append(
-                (last_day, "quarter_end", f"{year}-Q{(month - 1) // 3 + 1} 季末（最后交易日）", "internal")
-            )
+            rows.append((last_day, "quarter_end", f"{year}-Q{(month - 1) // 3 + 1} 季末（最后交易日）", "internal"))
         if month == 6:
             rows.append((last_day, "half_year_end", f"{year} 半年末（最后交易日）", "internal"))
         if month == 12:
@@ -832,7 +832,9 @@ class InternalComputeProvider(IngestProviderBase):
             select_cols = "trade_date, symbol, open, high, low, close, volume, amount"
             order_by = "symbol, trade_date"
 
-        sql = _SQL_READ_KLINE.format(select_cols=select_cols, table=source_table, where_clause=where_clause, order_by=order_by)
+        sql = _SQL_READ_KLINE.format(
+            select_cols=select_cols, table=source_table, where_clause=where_clause, order_by=order_by
+        )
 
         tsv = ch_reader.query(sql)
         if not tsv or not tsv.strip():

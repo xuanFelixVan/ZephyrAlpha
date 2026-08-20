@@ -86,7 +86,10 @@ class PromptTemplate(BaseModel):
     template_id: str = Field(min_length=1, description="模板唯一标识符")
     name: str = Field(min_length=1, description="模板名称")
     version: str = Field(default="1.0.0", description="Semver 版本号")
-    stability: str = Field(default="evolving", description="stability 合法值见 stability_vocabulary.yaml（frozen|stable|evolving|volatile）")
+    stability: str = Field(
+        default="evolving",
+        description="stability 合法值见 stability_vocabulary.yaml（frozen|stable|evolving|volatile）",
+    )
     description: str = Field(default="", description="模板用途说明")
     template_str: str = Field(min_length=1, description="模板文本——{variable} 占位符")
     variables: list[PromptVariable] = Field(default_factory=list, description="变量声明列表")

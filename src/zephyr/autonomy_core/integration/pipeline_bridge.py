@@ -77,7 +77,6 @@ class SkillContextInjector:
         """写入：loader（Stage 4 公共化）。"""
         self._loader = value
 
-
     def inject(self, domain_skill_id: str, role_skill_id: str, load_l3: bool = False) -> SkillInjectionResult:
         try:
             domain = self._loader.progressive_load(domain_skill_id)
@@ -217,7 +216,6 @@ class PipelineSkillBridge:
     def stage_map(self, value):
         """写入：stage_map（Stage 4 公共化）。"""
         self._stage_map = value
-
 
     def inject_for_task(
         self,

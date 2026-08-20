@@ -31,6 +31,7 @@
 - pyproject.toml [project.scripts]: integrator = "zephyr.data.cli:main"
 - python -m zephyr.data -> __main__.py re-export cli.main
 """
+
 from __future__ import annotations
 
 import argparse
@@ -68,10 +69,12 @@ def _load_dotenv() -> None:
 
     # CH 配置单真源加载（裁定 #ARCH-CH-017）
     from zephyr.data.ch_config import ensure_ch_env_loaded
+
     ensure_ch_env_loaded()
 
 
 # ============== 输出格式化 ==============
+
 
 def _print_table(rows: list[dict], columns: list[str], headers: list[str] | None = None) -> None:
     """简易表格打印（固定宽度，左对齐）。"""
@@ -106,6 +109,7 @@ def _fmt_status(s: dict[str, Any]) -> str:
 
 
 # ============== 子命令实现 ==============
+
 
 def _cmd_status(args: argparse.Namespace) -> int:
     """status [task_id] — 查看所有任务今日状态 / 单任务详情。"""
@@ -253,6 +257,7 @@ def _cmd_resume(args: argparse.Namespace) -> int:
 def _cmd_speed_test(args: argparse.Namespace) -> int:
     """speed-test [--source <src>] [--capability <cap>] — 数据源测速。"""
     from zephyr.data.speed_tester import run_speed_tests
+
     run_speed_tests(source_filter=args.source, cap_filter=args.capability)
     return 0
 
@@ -263,6 +268,7 @@ def _cmd_start(args: argparse.Namespace) -> int:
     sched = IntegratorScheduler()
     # 注册为全局单例（供 APScheduler _run_schedule_callback 使用）
     import zephyr.data.scheduler as sched_mod
+
     sched_mod._global_scheduler = sched
 
     # 信号处理：Ctrl+C / SIGTERM 优雅关闭
@@ -297,10 +303,12 @@ def _cmd_start(args: argparse.Namespace) -> int:
 
 # ============== 辅助 ==============
 
+
 def _get_integrator_safe() -> IntegratorScheduler | None:
     """安全获取调度器单例，失败时打印错误并返回 None。"""
     try:
         from zephyr.data import get_integrator
+
         return get_integrator()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"获取调度器失败: {e}")
@@ -309,6 +317,7 @@ def _get_integrator_safe() -> IntegratorScheduler | None:
 
 
 # ============== 入口 ==============
+
 
 def _build_parser() -> argparse.ArgumentParser:
     """构造 argparse parser（8 子命令，与表头 [INVARIANTS] 一致）。"""

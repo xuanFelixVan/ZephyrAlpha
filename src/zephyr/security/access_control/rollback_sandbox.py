@@ -21,6 +21,7 @@
 - execute(op_id, after_data) 标记已执行
 - rollback(op_id) -> {success: bool}, reversible=False 时 success=False
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -51,7 +52,6 @@ class RollbackSandbox:
     def operations(self, value):
         """写入：operations（Stage 4 公共化）。"""
         self._operations = value
-
 
     def isolate(self, op_id: str, before_data: str) -> SandboxedOperation:
         op = SandboxedOperation(op_id=op_id, before_data=before_data)

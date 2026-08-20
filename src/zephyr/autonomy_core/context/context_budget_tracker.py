@@ -157,7 +157,6 @@ class ContextBudgetTracker:
         """写入：sessions（Stage 4 公共化）。"""
         self._sessions = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def session_limit(self):
@@ -168,7 +167,6 @@ class ContextBudgetTracker:
     def session_limit(self, value):
         """写入：session_limit（Stage 4 公共化）。"""
         self._session_limit = value
-
 
     def _get_session(self, session_id: str) -> dict[str, Any]:
         self._cleanup_expired_sessions()

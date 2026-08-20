@@ -41,6 +41,7 @@ exchange 码体系（TRAE-082）：
                     2 位 92/93/94 → BJ（北交所 920xxx，避免 '9'→SH 误判）
   与 CH MATERIALIZED multiIf 表达式严格对齐（单一真源，DRY）
 """
+
 from zephyr.data.symbol_normalizer.normalizer import (
     _INDEX_PREFIX3_TO_EXCHANGE,
     _PREFIX2_TO_EXCHANGE,

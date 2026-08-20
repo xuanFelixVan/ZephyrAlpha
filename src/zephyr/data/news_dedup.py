@@ -26,6 +26,7 @@
 - 同时过滤同一批次内的重复标题
 - fail-open：去重异常时跳过去重，返回原始数据（不阻断写入）
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -45,19 +46,23 @@ _TBL_NEWS_DATA = get_registry().table("fund_news_data")
 _DEDUP_WINDOW_DAYS = 7
 
 # SQL 集中化：查询最近 N 天已有新闻标题
-_SQL_DEDUP_QUERY_TEMPLATE = (
-    f"SELECT title FROM {_TBL_NEWS_DATA} "
-    "WHERE publish_time >= now() - INTERVAL {days} DAY"
-)
+_SQL_DEDUP_QUERY_TEMPLATE = f"SELECT title FROM {_TBL_NEWS_DATA} WHERE publish_time >= now() - INTERVAL {{days}} DAY"
 
 # news_data 表标准列顺序（与 c3_fundamental.news_data schema 对齐）
 # 必填列（无 DEFAULT）：news_id, publish_time, title, content, source, data_source
 # 可选列（有 DEFAULT）：summary, source_url, category, region(默认'CN'), language(默认'zh'), ...
 # #ARCH-RSS-INVESTING-403-001：显式写入 region/language，避免海外新闻被表 DEFAULT 误标 CN/zh
 NEWS_DATA_COLUMNS = [
-    "news_id", "publish_time", "title", "content",
-    "summary", "source", "source_url", "data_source",
-    "region", "language",
+    "news_id",
+    "publish_time",
+    "title",
+    "content",
+    "summary",
+    "source",
+    "source_url",
+    "data_source",
+    "region",
+    "language",
 ]
 
 # title 在 NEWS_DATA_COLUMNS 中的索引（dedup_news_result 用）
@@ -74,6 +79,7 @@ def _parse_datetime(dt_str: str) -> str:
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
         from dateutil import parser as date_parser
+
         dt = date_parser.parse(str(dt_str))
         return dt.strftime("%Y-%m-%d %H:%M:%S")
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -121,14 +127,19 @@ def build_news_row(
     region_str = str(region) or "CN"
     language_str = str(language) or "zh"
 
-    news_id = hashlib.md5(
-        f"{source_str}{title_str}{publish_time}".encode("utf-8")
-    ).hexdigest()
+    news_id = hashlib.md5(f"{source_str}{title_str}{publish_time}".encode("utf-8")).hexdigest()
 
     return (
-        news_id, publish_time, title_str, content_str,
-        summary_str, source_str, source_url_str, data_source_str,
-        region_str, language_str,
+        news_id,
+        publish_time,
+        title_str,
+        content_str,
+        summary_str,
+        source_str,
+        source_url_str,
+        data_source_str,
+        region_str,
+        language_str,
     )
 
 
@@ -196,7 +207,9 @@ def dedup_news_result(result: FetchResult) -> FetchResult:
     if skipped > 0:
         log.info(
             "新闻去重: 原始 %d 行 -> 去重后 %d 行（跳过 %d 条重复）",
-            len(result.rows), len(deduped_rows), skipped,
+            len(result.rows),
+            len(deduped_rows),
+            skipped,
         )
 
     return FetchResult(

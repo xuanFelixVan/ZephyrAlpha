@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """AnomalyDetector - rolling z-score anomaly detection per field."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

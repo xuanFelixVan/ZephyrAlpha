@@ -21,6 +21,7 @@
 - approve(operation, approver): 累计不同 approver, 达到 quorum 时 approved=True
 - duplicate approver 被拒绝(approved=False)
 """
+
 from __future__ import annotations
 
 from typing import Any

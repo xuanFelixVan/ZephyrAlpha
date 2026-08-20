@@ -138,7 +138,6 @@ class ContextInjector:
         return self._max_sources
 
 
-
 class InjectionLayer(int, Enum):
     """INJECT-C00 四层结构化注入层序（越小越底层）。
 

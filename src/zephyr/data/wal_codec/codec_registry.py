@@ -16,6 +16,7 @@ Usage::
     codec = registry.get_codec(data)
     rows = codec.decode(data)
 """
+
 from __future__ import annotations
 
 import logging
@@ -97,7 +98,7 @@ class CodecRegistry:
         codec = self.get_codec(data)
         # Proto 段需跳过 magic 前缀
         if codec.MAGIC and data.startswith(codec.MAGIC):
-            return codec.decode(data[len(codec.MAGIC):])
+            return codec.decode(data[len(codec.MAGIC) :])
         return codec.decode(data)
 
 

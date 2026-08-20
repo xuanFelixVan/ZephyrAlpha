@@ -75,7 +75,6 @@ class SkillLearning:
         """写入：session_deltas（Stage 4 公共化）。"""
         self._session_deltas = value
 
-
     def add_execution(
         self,
         skill_id: str,

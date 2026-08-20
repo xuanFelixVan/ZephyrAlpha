@@ -85,12 +85,10 @@ class SkillTranslator:
         """公共接口：infer_source_family（Stage 4 公共化，委托到 cls._infer_source_family）。"""
         return cls._infer_source_family(body)
 
-
     @classmethod
     def apply_adaptation(cls, body, target_adaptation, source_adaptation) -> str:
         """公共接口：apply_adaptation（Stage 4 公共化，委托到 cls._apply_adaptation）。"""
         return cls._apply_adaptation(body, target_adaptation, source_adaptation)
-
 
     @classmethod
     def _infer_source_family(cls, body: str) -> str:
