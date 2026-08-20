@@ -63,13 +63,13 @@ def get_dragon_tiger_pit(symbol: str, as_of_date: date, db_session) -> list[dict
     """
     latest_available = as_of_date - timedelta(days=1)
     rows = db_session.execute(
-        "SELECT * FROM dragon_tiger WHERE symbol = :symbol AND trade_date <= :latest "
-        "ORDER BY trade_date DESC LIMIT 5",
-        {'symbol': symbol, 'latest': latest_available}
+        "SELECT * FROM dragon_tiger WHERE symbol = :symbol AND trade_date <= :latest ORDER BY trade_date DESC LIMIT 5",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
+        {"symbol": symbol, "latest": latest_available},
     ).fetchall()
     for row in rows:  # PIT断言
-        assert row.trade_date < as_of_date, \
+        assert row.trade_date < as_of_date, (
             f"PIT VIOLATION: dragon_tiger trade_date={row.trade_date} >= as_of_date={as_of_date}"
+        )
     return [dict(row) for row in rows]
 
 
@@ -81,17 +81,19 @@ class DabanPITBacktestFramework:
     data_loader/trading_days/next_trading_day 由调用方注入（DB 落库接线出范围）。
     """
 
-    data_loader: Callable[[str, date], dict] = field(default=None)  # (source, date) -> 数据 dict（须含 'date' 键供 PIT 断言）
+    data_loader: Callable[[str, date], dict] = field(
+        default=None
+    )  # (source, date) -> 数据 dict（须含 'date' 键供 PIT 断言）
     trading_days: Callable[[date, date], list] = field(default=None)  # (start, end) -> 交易日列表
     next_trading_day: Callable[[date], date] = field(default=None)  # date -> 次一交易日
 
     PIT_RULES = {
-        'dragon_tiger': {'publish_time': 'T日17:00', 'available_for': 'T+1日盘中'},  # §3.13#5
-        'emotion_cycle_score': {'publish_time': '实时计算', 'available_for': 'T日盘中'},  # 当日实时可用
-        'echelon_data': {'publish_time': '实时', 'available_for': 'T日盘中'},  # 连板梯队实时
-        'seal_data': {'publish_time': '实时', 'available_for': 'T日盘中'},  # 封单实时
-        'next_day_auction': {'publish_time': 'T+1日9:25', 'available_for': 'T+1日9:25后'},  # 次日竞价
-        'news_sentiment': {'publish_time': '实时', 'available_for': 'T日盘中'},  # 新闻实时
+        "dragon_tiger": {"publish_time": "T日17:00", "available_for": "T+1日盘中"},  # §3.13#5
+        "emotion_cycle_score": {"publish_time": "实时计算", "available_for": "T日盘中"},  # 当日实时可用
+        "echelon_data": {"publish_time": "实时", "available_for": "T日盘中"},  # 连板梯队实时
+        "seal_data": {"publish_time": "实时", "available_for": "T日盘中"},  # 封单实时
+        "next_day_auction": {"publish_time": "T+1日9:25", "available_for": "T+1日9:25后"},  # 次日竞价
+        "news_sentiment": {"publish_time": "实时", "available_for": "T日盘中"},  # 新闻实时
     }
 
     @staticmethod
@@ -100,12 +102,10 @@ class DabanPITBacktestFramework:
         rule = DabanPITBacktestFramework.PIT_RULES.get(data_source)
         if not rule:
             return
-        if data_source == 'dragon_tiger':  # 龙虎榜：决策日只能用 T-1 日及之前
-            assert data_date < decision_date, \
-                f"PIT VIOLATION: dragon_tiger {data_date} >= decision {decision_date}"
-        if data_source == 'next_day_auction':  # 次日竞价：决策日 T+1 只能用 T+1 日 9:25 后数据
-            assert data_date <= decision_date, \
-                f"PIT VIOLATION: next_day_auction {data_date} > decision {decision_date}"
+        if data_source == "dragon_tiger":  # 龙虎榜：决策日只能用 T-1 日及之前
+            assert data_date < decision_date, f"PIT VIOLATION: dragon_tiger {data_date} >= decision {decision_date}"
+        if data_source == "next_day_auction":  # 次日竞价：决策日 T+1 只能用 T+1 日 9:25 后数据
+            assert data_date <= decision_date, f"PIT VIOLATION: next_day_auction {data_date} > decision {decision_date}"
 
     def run_backtest(self, strategy_config: dict, start: date, end: date) -> dict:
         """PIT 安全回测主循环（v1.9.3 补，注入式骨架）。
@@ -115,29 +115,31 @@ class DabanPITBacktestFramework:
         退潮期仅 pre_val['pass'] is True（≥70 分）放行，CONDITIONAL 不放行（spec 语义）。
         """
         if not (self.data_loader and self.trading_days and self.next_trading_day):
-            raise RuntimeError('DabanPITBacktestFramework 骨架未注入 data_loader/trading_days/next_trading_day')
+            raise RuntimeError("DabanPITBacktestFramework 骨架未注入 data_loader/trading_days/next_trading_day")
         results = []
         for decision_date in self.trading_days(start, end):
-            dragon_tiger = self.data_loader('dragon_tiger', decision_date)  # ① 数据加载+PIT 断言
-            self.assert_pit('dragon_tiger', dragon_tiger['date'], decision_date)
-            emotion = self.data_loader('emotion_cycle_score', decision_date)
-            echelon = self.data_loader('echelon_data', decision_date)
+            dragon_tiger = self.data_loader("dragon_tiger", decision_date)  # ① 数据加载+PIT 断言
+            self.assert_pit("dragon_tiger", dragon_tiger["date"], decision_date)
+            emotion = self.data_loader("emotion_cycle_score", decision_date)
+            echelon = self.data_loader("echelon_data", decision_date)
             pre_val = pre_validate_daban_signal(  # ② 前置质量评估（§3.14 缺失#8）
-                echelon['health'], echelon['height'], echelon['sector_resonance'], echelon['follow_count'])
-            if not pre_val['pass']:
+                echelon["health"], echelon["height"], echelon["sector_resonance"], echelon["follow_count"]
+            )
+            if not pre_val["pass"]:
                 continue
-            phase = emotion['phase']  # ③ 情绪周期定位（§3.2）
-            if phase in ('退潮',) and pre_val['pass'] is not True:  # spec 原意：退潮期仅满分级（pass is True）放行，CONDITIONAL 不放行
+            phase = emotion["phase"]  # ③ 情绪周期定位（§3.2）
+            if (
+                phase in ("退潮",) and pre_val["pass"] is not True
+            ):  # spec 原意：退潮期仅满分级（pass is True）放行，CONDITIONAL 不放行
                 continue
-            decision = classify_decision_v192(emotion['score'], echelon['tech_score'], phase)  # ④ 双引擎决策（§3.5）
-            if decision not in ('BOARD', 'CONTINUE'):
+            decision = classify_decision_v192(emotion["score"], echelon["tech_score"], phase)  # ④ 双引擎决策（§3.5）
+            if decision not in ("BOARD", "CONTINUE"):
                 continue
             next_day = self.next_trading_day(decision_date)  # ⑤ 次日出场（§3.13#1）
-            auction = self.data_loader('next_day_auction', next_day)
-            self.assert_pit('next_day_auction', auction['date'], next_day)
-            exit_dec = NextDayExitDecision().decide(
-                {'cost_basis': echelon['price']}, auction, emotion, holding_days=1)
-            results.append({'date': decision_date, 'decision': decision, 'exit': exit_dec})
+            auction = self.data_loader("next_day_auction", next_day)
+            self.assert_pit("next_day_auction", auction["date"], next_day)
+            exit_dec = NextDayExitDecision().decide({"cost_basis": echelon["price"]}, auction, emotion, holding_days=1)
+            results.append({"date": decision_date, "decision": decision, "exit": exit_dec})
         return self._summarize(results)
 
     @staticmethod
@@ -145,5 +147,5 @@ class DabanPITBacktestFramework:
         """回测结果汇总（骨架级：计数+决策分布；盈亏核算待数据层接线后补全）。"""
         by_decision: dict = {}
         for r in results:
-            by_decision[r['decision']] = by_decision.get(r['decision'], 0) + 1
-        return {'total': len(results), 'by_decision': by_decision, 'trades': results}
+            by_decision[r["decision"]] = by_decision.get(r["decision"], 0) + 1
+        return {"total": len(results), "by_decision": by_decision, "trades": results}

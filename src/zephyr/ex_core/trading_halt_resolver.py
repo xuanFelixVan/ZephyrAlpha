@@ -144,9 +144,9 @@ class HaltType(str, Enum):
     """A 股临时停牌类型（上交所 2026 修订交易规则 §4.2）。"""
 
     INTRADAY_PRICE_LIMIT = "intraday_price_limit"  # 盘中临停（无涨跌幅股±30%/±60%）
-    INTRADAY_VIOLATION = "intraday_violation"      # 盘中临停（换手率/涉嫌违规）
-    CROSS_DAY_REVIEW = "cross_day_review"          # 跨日停牌核查（严重异动）
-    MAJOR_EVENT = "major_event"                    # 重大事项停牌
+    INTRADAY_VIOLATION = "intraday_violation"  # 盘中临停（换手率/涉嫌违规）
+    CROSS_DAY_REVIEW = "cross_day_review"  # 跨日停牌核查（严重异动）
+    MAJOR_EVENT = "major_event"  # 重大事项停牌
     UNKNOWN = "unknown"
 
 
@@ -154,10 +154,10 @@ class HaltStatus(str, Enum):
     """停牌状态决策结果。"""
 
     HALTED_REMOVE_FROM_TARGET = "halted_remove_from_target"  # 停牌，从目标移除
-    HALTED_KEEP_POSITION = "halted_keep_position"            # 持仓停牌，保留不动
-    HALTED_RELEASE_PREPAID = "halted_release_prepaid"        # 跨日停牌，释放资金预占
-    RESUMED_REEVALUATE = "resumed_reevaluate"                # 复牌，重新评估
-    NORMAL = "normal"                                        # 正常，无停牌
+    HALTED_KEEP_POSITION = "halted_keep_position"  # 持仓停牌，保留不动
+    HALTED_RELEASE_PREPAID = "halted_release_prepaid"  # 跨日停牌，释放资金预占
+    RESUMED_REEVALUATE = "resumed_reevaluate"  # 复牌，重新评估
+    NORMAL = "normal"  # 正常，无停牌
 
 
 @dataclass(frozen=True)
@@ -233,7 +233,10 @@ class TradingHaltResolver:
         self._halt_map[symbol] = info
         _logger.info(
             "停牌状态更新: %s halted=%s type=%s cross_day=%s",
-            symbol, info.is_halted, info.halt_type.value, info.is_cross_day,
+            symbol,
+            info.is_halted,
+            info.halt_type.value,
+            info.is_cross_day,
         )
 
     def batch_update(self, infos: list[HaltInfo]) -> None:
@@ -246,10 +249,7 @@ class TradingHaltResolver:
 
         复牌后需重新评估目标权重（调用方职责），本方法只清理停牌缓存。
         """
-        resumed = [
-            sym for sym, info in self._halt_map.items()
-            if not info.is_halted
-        ]
+        resumed = [sym for sym, info in self._halt_map.items() if not info.is_halted]
         for sym in resumed:
             self._halt_map.pop(sym, None)
             self._released_prepaid.discard(sym)
@@ -308,13 +308,15 @@ class TradingHaltResolver:
                 filtered[symbol] = weight
                 if info is not None and not info.is_halted and symbol in self._released_prepaid:
                     # 之前释放过预占，现在复牌 → 标记重新评估
-                    actions.append(HaltAction(
-                        symbol=symbol,
-                        status=HaltStatus.RESUMED_REEVALUATE,
-                        reason="复牌后重新评估（之前跨日停牌已释放预占）",
-                        remove_from_target=False,
-                        release_prepaid=False,
-                    ))
+                    actions.append(
+                        HaltAction(
+                            symbol=symbol,
+                            status=HaltStatus.RESUMED_REEVALUATE,
+                            reason="复牌后重新评估（之前跨日停牌已释放预占）",
+                            remove_from_target=False,
+                            release_prepaid=False,
+                        )
+                    )
                 continue
 
             # 停牌处理
@@ -323,23 +325,27 @@ class TradingHaltResolver:
                 should_release = symbol in held and symbol not in self._released_prepaid
                 if should_release:
                     self._released_prepaid.add(symbol)
-                actions.append(HaltAction(
-                    symbol=symbol,
-                    status=HaltStatus.HALTED_RELEASE_PREPAID,
-                    reason=f"跨日停牌（{info.halt_type.value}），从目标移除"
-                           + ("并释放资金预占" if should_release else ""),
-                    remove_from_target=True,
-                    release_prepaid=should_release,
-                ))
+                actions.append(
+                    HaltAction(
+                        symbol=symbol,
+                        status=HaltStatus.HALTED_RELEASE_PREPAID,
+                        reason=f"跨日停牌（{info.halt_type.value}），从目标移除"
+                        + ("并释放资金预占" if should_release else ""),
+                        remove_from_target=True,
+                        release_prepaid=should_release,
+                    )
+                )
             else:
                 # 盘中临停：从目标移除（无法成交）
-                actions.append(HaltAction(
-                    symbol=symbol,
-                    status=HaltStatus.HALTED_REMOVE_FROM_TARGET,
-                    reason=f"盘中临时停牌（{info.halt_type.value}），当日跳过",
-                    remove_from_target=True,
-                    release_prepaid=False,
-                ))
+                actions.append(
+                    HaltAction(
+                        symbol=symbol,
+                        status=HaltStatus.HALTED_REMOVE_FROM_TARGET,
+                        reason=f"盘中临时停牌（{info.halt_type.value}），当日跳过",
+                        remove_from_target=True,
+                        release_prepaid=False,
+                    )
+                )
 
         return filtered, actions
 

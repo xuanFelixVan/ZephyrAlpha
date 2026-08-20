@@ -170,4 +170,9 @@ __all__ = [
     "provider_data",
     "results_writer",
     "task_model_learner",
-'case_assembler', 'exam_executor', 'exam_judge', 'exam_rubric', 'job_matcher']
+    "case_assembler",
+    "exam_executor",
+    "exam_judge",
+    "exam_rubric",
+    "job_matcher",
+]

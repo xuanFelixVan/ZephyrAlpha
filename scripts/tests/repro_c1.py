@@ -7,6 +7,7 @@
   - 给定相同 Shrinkage 序列 + 相同数据 + 相同信号，不同编排入口结果是否一致
   - 排查 orchestrator 层是否有数据挑选/区间优化
 """
+
 from __future__ import annotations
 
 import json
@@ -24,8 +25,16 @@ from zephyr.data import ch_reader
 from zephyr.data.table_registry import get_registry
 
 BASKET_SYMBOLS = [
-    "600000", "000001", "600519", "600036", "601318",
-    "000651", "600276", "000858", "600887", "601166",
+    "600000",
+    "000001",
+    "600519",
+    "600036",
+    "601318",
+    "000651",
+    "600276",
+    "000858",
+    "600887",
+    "601166",
 ]
 REAL_START = "2015-01-01"
 REAL_END = "2026-06-30"
@@ -72,9 +81,7 @@ def load_shrinkage_schedule() -> dict:
 def make_equal_weight_signals(data: pd.DataFrame) -> pd.DataFrame:
     """等权信号（date × symbol = 1.0，引擎内归一化）。"""
     dates = data.index.get_level_values("date").unique().sort_values()
-    return pd.DataFrame(
-        {s: 1.0 for s in BASKET_SYMBOLS}, index=pd.DatetimeIndex(dates, name="date")
-    )
+    return pd.DataFrame({s: 1.0 for s in BASKET_SYMBOLS}, index=pd.DatetimeIndex(dates, name="date"))
 
 
 def main() -> None:
@@ -89,14 +96,17 @@ def main() -> None:
 
     print("[repro] 2/4 加载 dump 的 Shrinkage 序列...")
     schedule = load_shrinkage_schedule()
-    print(f"[repro]   Shrinkage: {len(schedule)} 日, 均值={sum(schedule.values())/len(schedule):.4f}")
+    print(f"[repro]   Shrinkage: {len(schedule)} 日, 均值={sum(schedule.values()) / len(schedule):.4f}")
 
     print("[repro] 3/4 构造等权信号 + 跑 C1 开/关对比（c1_runner 独立编排）...")
     signals = make_equal_weight_signals(data)
     provider = ScheduleShrinkageProvider(schedule)
     cfg = BacktestConfig(initial_capital=Decimal("1000000"), risk_free_rate=0.02)
     result = run_c1_with_provider(
-        data=data, signals=signals, shrinkage_provider=provider, backtest_config=cfg,
+        data=data,
+        signals=signals,
+        shrinkage_provider=provider,
+        backtest_config=cfg,
     )
 
     print("[repro] 4/4 与另一个 AI 的 c1_metrics.json 对答案...")
@@ -104,9 +114,14 @@ def main() -> None:
         expected = json.load(f)
 
     save_c1_report(
-        result, REPRO_DIR / "c1_repro_report.md", mode="regime",
-        meta={"universe": "10大盘股", "区间": f"{REAL_START}~{REAL_END}",
-              "复现方式": "B(Shrinkage CSV + c1_runner 独立编排)"},
+        result,
+        REPRO_DIR / "c1_repro_report.md",
+        mode="regime",
+        meta={
+            "universe": "10大盘股",
+            "区间": f"{REAL_START}~{REAL_END}",
+            "复现方式": "B(Shrinkage CSV + c1_runner 独立编排)",
+        },
     )
 
     # 对比表
@@ -121,9 +136,11 @@ def main() -> None:
         match = abs(diff_b) < 0.01 and abs(diff_e) < 0.01
         all_match = all_match and match
         flag = "✅一致" if match else "❌差异"
-        print(f"{v.name:<10} {v.baseline_value:<12.4f} {v.experiment_value:<12.4f} "
-              f"{exp['baseline_value']:<12.4f} {exp['experiment_value']:<12.4f} {flag} "
-              f"(Δ关={diff_b:+.4f} Δ开={diff_e:+.4f})")
+        print(
+            f"{v.name:<10} {v.baseline_value:<12.4f} {v.experiment_value:<12.4f} "
+            f"{exp['baseline_value']:<12.4f} {exp['experiment_value']:<12.4f} {flag} "
+            f"(Δ关={diff_b:+.4f} Δ开={diff_e:+.4f})"
+        )
     print("=" * 80)
     print(f"passed(我)={result.passed}  passed(它)={expected['passed']}  四项指标全一致={all_match}")
     print(f"报告: {REPRO_DIR / 'c1_repro_report.md'}")

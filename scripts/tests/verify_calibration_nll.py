@@ -17,6 +17,7 @@
   - T 方向正确（过自信→T>1，欠自信→T<1）
   - 校准后 confidence 比原始更接近 occurred 频率
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -25,16 +26,19 @@ from scipy.optimize import minimize_scalar
 
 def fit_temperature(log_proba: np.ndarray, occurred: np.ndarray) -> float:
     """T 从 IS 数据学：最小化二元交叉熵（13_regime_phase3_engineering_plan §2.2.8 B 修正版）."""
+
     def binary_cross_entropy(T: float) -> float:
         scaled = log_proba / T
         log_softmax = scaled - np.logaddexp.reduce(scaled, axis=1, keepdims=True)
         proba = np.exp(log_softmax)
         calibrated_confidence = proba.max(axis=1)
         eps = 1e-8
-        return float(-np.mean(
-            occurred * np.log(calibrated_confidence + eps)
-            + (1 - occurred) * np.log(1 - calibrated_confidence + eps)
-        ))
+        return float(
+            -np.mean(
+                occurred * np.log(calibrated_confidence + eps)
+                + (1 - occurred) * np.log(1 - calibrated_confidence + eps)
+            )
+        )
 
     result = minimize_scalar(binary_cross_entropy, bounds=(0.1, 10.0), method="bounded")
     return float(result.x)
@@ -50,7 +54,7 @@ def run_scenario(name: str, logits: np.ndarray, occurred: np.ndarray) -> None:
     log_proba = make_log_proba(logits)
     original_conf = np.exp(log_proba.max(axis=1))
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"场景: {name}")
     print(f"  样本数: {len(occurred)}")
     print(f"  occurred=1 占比: {occurred.mean():.1%}")
@@ -87,9 +91,11 @@ def run_scenario(name: str, logits: np.ndarray, occurred: np.ndarray) -> None:
         orig_err = abs(orig_mean - occ_freq)
         cal_err = abs(cal_mean - occ_freq)
         improved = "✅" if cal_err < orig_err else "❌"
-        print(f"    [{lo:.1f},{hi:.1f}): n={mask.sum():4d} | "
-              f"原始={orig_mean:.3f} 校准={cal_mean:.3f} 实际={occ_freq:.3f} | "
-              f"误差 {orig_err:.3f}→{cal_err:.3f} {improved}")
+        print(
+            f"    [{lo:.1f},{hi:.1f}): n={mask.sum():4d} | "
+            f"原始={orig_mean:.3f} 校准={cal_mean:.3f} 实际={occ_freq:.3f} | "
+            f"误差 {orig_err:.3f}→{cal_err:.3f} {improved}"
+        )
 
 
 def main() -> None:
@@ -119,7 +125,7 @@ def main() -> None:
     # 调整使 confidence 接近 60%
     for i in range(N):
         while True:
-            lp = make_log_proba(logits_calibrated[i:i+1])
+            lp = make_log_proba(logits_calibrated[i : i + 1])
             conf = float(np.exp(lp.max()))
             if 0.55 < conf < 0.65:
                 break
@@ -150,9 +156,9 @@ def main() -> None:
     run_scenario("6. occurred 是 Python list", logits_list, np.array(occurred_list))
 
     # ── 场景 7：旧 bug 复现——验证旧代码确实崩溃 ──
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("场景 7: 旧 bug 复现（occurred.argmax(axis=1) 应崩溃）")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     old_occurred = np.array([0, 1, 1, 0, 1] * 20)
     try:
         # 旧代码的写法
@@ -162,7 +168,7 @@ def main() -> None:
         print(f"  ✅ 旧代码确认崩溃: {type(exc).__name__}: {exc}")
         print("     这验证了 Bug #3 的存在——旧代码 occurred.argmax(axis=1) 对 1D 数组无效")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("验证完成")
     print("=" * 60)
 

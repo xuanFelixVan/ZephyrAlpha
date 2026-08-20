@@ -36,6 +36,7 @@ from _shared.constants import REPO_ROOT  # noqa: E402
 
 MANIFEST_REL = Path("src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json")
 
+
 def main() -> int:
     import yaml
 
@@ -79,6 +80,7 @@ def main() -> int:
             pass
     print(f"OK: wrote {len(fingerprints)} fingerprints → {MANIFEST_REL}")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

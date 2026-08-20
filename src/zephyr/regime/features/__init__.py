@@ -54,4 +54,13 @@ RegimeFeatureBuilder 生成的特征（RegimeFeatures / OverlaySignals / RiskSig
 # A1 --> O1
 """
 
-__all__: list[str] = ["chip_distribution_engine", "market_features", "overlay_features", "regime_data_loader", "risk_features", "synthetic_vix", "trend_features", "wyckoff_engine"]
+__all__: list[str] = [
+    "chip_distribution_engine",
+    "market_features",
+    "overlay_features",
+    "regime_data_loader",
+    "risk_features",
+    "synthetic_vix",
+    "trend_features",
+    "wyckoff_engine",
+]

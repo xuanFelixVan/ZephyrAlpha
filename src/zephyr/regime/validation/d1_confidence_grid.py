@@ -58,7 +58,7 @@ DEFAULT_CONFIDENCE_BANDS: tuple[tuple[float, float], ...] = (
     (0.50, 1.0),  # top1 ≥50% → 满部署
     (0.30, 0.9),  # 30-50% → 轻度收缩
     (0.15, 0.8),  # 15-30% → 中度收缩
-    (0.0, 0.7),   # <15% → 强收缩（防御保留档）
+    (0.0, 0.7),  # <15% → 强收缩（防御保留档）
 )
 
 
@@ -90,9 +90,7 @@ class D1GridReport:
     summary: str
 
 
-def apply_confidence_bands(
-    max_p: float, bands: tuple[tuple[float, float], ...] = DEFAULT_CONFIDENCE_BANDS
-) -> float:
+def apply_confidence_bands(max_p: float, bands: tuple[tuple[float, float], ...] = DEFAULT_CONFIDENCE_BANDS) -> float:
     """单点 max(P) → base_confidence（从高到低取首个 max(P)≥下界 的档）。"""
     for bound, coef in bands:
         if max_p >= bound:
@@ -149,9 +147,7 @@ def run_d1_threshold_grid(
                 if v >= bound:
                     series[i] = coef
                     break
-        shares = tuple(
-            float(np.mean(series == coef)) for coef in coefs
-        )
+        shares = tuple(float(np.mean(series == coef)) for coef in coefs)
         return float(series.mean()), shares
 
     base_bounds = tuple(b for b, _ in bands[:-1])
@@ -162,9 +158,9 @@ def run_d1_threshold_grid(
     n_skipped = 0
     for combo in itertools.product(factors, repeat=len(base_bounds)):
         thresholds = tuple(b * f for b, f in zip(base_bounds, combo, strict=True))
-        strictly_desc = all(
-            thresholds[i] > thresholds[i + 1] for i in range(len(thresholds) - 1)
-        ) and thresholds[-1] > bands[-1][0]
+        strictly_desc = (
+            all(thresholds[i] > thresholds[i + 1] for i in range(len(thresholds) - 1)) and thresholds[-1] > bands[-1][0]
+        )
         in_range = all(0.0 < t <= 1.0 for t in thresholds)
         if not (strictly_desc and in_range):
             n_skipped += 1

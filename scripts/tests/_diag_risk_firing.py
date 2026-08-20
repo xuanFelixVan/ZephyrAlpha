@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """诊断：各 risk 参数在 2015-2026 的触发率（%<1.0）和均值，定位过度收缩元凶。"""
+
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -14,7 +15,9 @@ from zephyr.regime.features import risk_features as rf
 from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
 
 builder = RegimeFeatureBuilder(
-    backtest_start="2015-01-01", backtest_end="2026-06-30", data_load_start="2010-01-01",
+    backtest_start="2015-01-01",
+    backtest_end="2026-06-30",
+    data_load_start="2010-01-01",
 )
 features = builder.build_features()
 index_df = builder.get_index_kline()
@@ -42,8 +45,10 @@ print(f"{'#':>3} {'param':<20} {'mean':>6} {'%<1.0':>7} {'%<0.85':>8} {'%<=0.6':
 print("-" * 60)
 for pid, (name, s) in params.items():
     s = s.dropna()
-    print(f"{pid:>3} {name:<20} {s.mean():>6.3f} {100*(s<1.0).mean():>6.1f}% "
-          f"{100*(s<0.85).mean():>7.1f}% {100*(s<=0.6).mean():>7.1f}%")
+    print(
+        f"{pid:>3} {name:<20} {s.mean():>6.3f} {100 * (s < 1.0).mean():>6.1f}% "
+        f"{100 * (s < 0.85).mean():>7.1f}% {100 * (s <= 0.6).mean():>7.1f}%"
+    )
 
 # min 聚合模拟
 allc = pd.DataFrame({pid: s for pid, (_, s) in params.items()})
@@ -52,6 +57,6 @@ anom = (allc < 1.0).sum(axis=1).loc[risk_base.index]
 resonance = np.maximum(0.80, 1.0 - 0.05 * np.maximum(0, anom - 1))
 risk_signal = np.clip(risk_base * resonance, 0.30, 1.00)
 print("-" * 60)
-print(f"risk_base (min)  mean={risk_base.mean():.3f}  %<1.0={100*(risk_base<1.0).mean():.1f}%")
-print(f"RiskSignal       mean={risk_signal.mean():.3f}  %<1.0={100*(risk_signal<1.0).mean():.1f}%")
+print(f"risk_base (min)  mean={risk_base.mean():.3f}  %<1.0={100 * (risk_base < 1.0).mean():.1f}%")
+print(f"RiskSignal       mean={risk_signal.mean():.3f}  %<1.0={100 * (risk_signal < 1.0).mean():.1f}%")
 print(f"anomaly_count    mean={anom.mean():.2f}")

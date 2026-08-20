@@ -305,12 +305,7 @@ class RiskLayerSnapshot:
         """是否允许新开仓（无响应=默认允许；橙/红/黑或熔断建议=禁止；
         系统性层停开仓=禁止；数据异常兜底=禁止；五态机 REDUCING 起=禁止）。"""
         base = self.response.allow_new_position if self.response is not None else True
-        return (
-            base
-            and not self.systemic_halt
-            and not self.halt_new_position
-            and not self.rollback_halt
-        )
+        return base and not self.systemic_halt and not self.halt_new_position and not self.rollback_halt
 
 
 @dataclass(frozen=True)
@@ -392,9 +387,7 @@ _SYSTEMIC_LEVEL_TO_INT: Final = {
 
 # 五态降级机停开仓姿态集（53 号 §3.8：SOFT_HALT=REDUCING 只卖不买 /
 # HARD_HALT 完全静默 / UNWINDING Flatten；THROTTLED 仅节流留痕）
-_ROLLBACK_HALT_STATES: Final = frozenset(
-    {RollbackState.SOFT_HALT, RollbackState.HARD_HALT, RollbackState.UNWINDING}
-)
+_ROLLBACK_HALT_STATES: Final = frozenset({RollbackState.SOFT_HALT, RollbackState.HARD_HALT, RollbackState.UNWINDING})
 # 36 号 §3.10 REBUILD 动作1 持久化命名空间（var 模型 UNAVAILABLE 标记）
 _VAR_MODEL_STATUS_NAMESPACE: Final = "var_model_status"
 # 36 号 §3.16 FHS 切换状态持久化命名空间 + 冷却期参数
@@ -542,8 +535,7 @@ class RiskLayerOrchestrator:
                 )
             else:
                 self._var_model_unavailable = (
-                    isinstance(_var_status_rec, dict)
-                    and _var_status_rec.get("status") == "UNAVAILABLE"
+                    isinstance(_var_status_rec, dict) and _var_status_rec.get("status") == "UNAVAILABLE"
                 )
         # 36 号 §3.16 FHS 切换状态持久化续存（冷却期跨日计数+启用态恢复）；
         # 损坏 → fail-closed 永久禁用（FHS 为增强层，禁用=回退 Phase 1
@@ -564,9 +556,7 @@ class RiskLayerOrchestrator:
             else:
                 if isinstance(_fhs_rec, dict):
                     self._fhs_active = bool(_fhs_rec.get("active", False))
-                    self._fhs_permanently_disabled = bool(
-                        _fhs_rec.get("permanently_disabled", False)
-                    )
+                    self._fhs_permanently_disabled = bool(_fhs_rec.get("permanently_disabled", False))
                     self._fhs_failure_count = int(_fhs_rec.get("failure_count", 0) or 0)
                     self._fhs_last_failure_date = _fhs_rec.get("last_failure_date")
 
@@ -742,11 +732,7 @@ class RiskLayerOrchestrator:
                     var_cvar=VarCvarMetrics(var_95=var_pct, cvar_95=max(es_pct, var_pct)),
                     # 36 号 §3.15：VaR breach 状态机 ×0.8/×0.9 乘性折扣（注入即生效，
                     # 日迁移由调用方盘前驱动 transition，本层只读当前状态）
-                    var_breach_state=(
-                        self._var_breach_machine.state
-                        if self._var_breach_machine is not None
-                        else None
-                    ),
+                    var_breach_state=(self._var_breach_machine.state if self._var_breach_machine is not None else None),
                 )
             except Exception as exc:  # noqa: BLE001 — 响应合成失效降级，回撤链仍生效
                 degraded = True
@@ -1212,10 +1198,12 @@ class RiskLayerOrchestrator:
             applied.append("var_model_unavailable=True（编排层静态映射下一轮起生效）")
             probe = getattr(self._controller, "force_static_mode", None)
             if probe is None:
-                skipped.append({
-                    "target": "drawdown_controller",
-                    "reason": "force_static_mode 未落地（编排层静态 VaR3%/CVaR5% 已兜底）",
-                })
+                skipped.append(
+                    {
+                        "target": "drawdown_controller",
+                        "reason": "force_static_mode 未落地（编排层静态 VaR3%/CVaR5% 已兜底）",
+                    }
+                )
             else:
                 try:
                     probe()

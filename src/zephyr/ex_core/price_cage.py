@@ -124,9 +124,9 @@ PRICE_TICK = Decimal("0.01")
 class CageStatus(str, Enum):
     """价格笼子校验结果状态。"""
 
-    IN_CAGE = "in_cage"            # 在笼子内，无需调整
-    CLAMPED = "clamped"            # 超限，已夹到笼子边界
-    UNKNOWN = "unknown"            # 无可用基准价，无法校验（调用方决定）
+    IN_CAGE = "in_cage"  # 在笼子内，无需调整
+    CLAMPED = "clamped"  # 超限，已夹到笼子边界
+    UNKNOWN = "unknown"  # 无可用基准价，无法校验（调用方决定）
 
 
 @dataclass(frozen=True)
@@ -153,10 +153,10 @@ class PriceCageResult:
 # ── 板块笼子参数表 ──────────────────────────────────────────────────
 # pct: 笼子幅度（百分比），floor_yuan: 0.1元兜底（None=无兜底）
 _BOARD_CAGE_PARAMS: dict[AShareBoard, tuple[Decimal, Decimal | None]] = {
-    AShareBoard.MAIN: (Decimal("0.02"), Decimal("0.10")),     # 主板 ±2% + 0.1兜底
+    AShareBoard.MAIN: (Decimal("0.02"), Decimal("0.10")),  # 主板 ±2% + 0.1兜底
     AShareBoard.CHINEXT: (Decimal("0.02"), Decimal("0.10")),  # 创业板 ±2% + 0.1兜底
-    AShareBoard.STAR: (Decimal("0.02"), None),                # 科创板 严格±2% 无兜底
-    AShareBoard.BSE: (Decimal("0.05"), None),                 # 北交所 ±5%
+    AShareBoard.STAR: (Decimal("0.02"), None),  # 科创板 严格±2% 无兜底
+    AShareBoard.BSE: (Decimal("0.05"), None),  # 北交所 ±5%
 }
 
 # 未知板块回退到主板参数（最保守的有兜底规则，避免误用严格规则废单）
@@ -275,7 +275,10 @@ def check_price_cage(
         # 超限 → 夹到上限（向下取整到 tick）
         _logger.info(
             "price_cage CLAMP buy: symbol=%s limit=%s > upper=%s → clamp to %s",
-            symbol, limit_price, upper_tick, upper_tick,
+            symbol,
+            limit_price,
+            upper_tick,
+            upper_tick,
         )
         return PriceCageResult(
             status=CageStatus.CLAMPED,
@@ -305,7 +308,10 @@ def check_price_cage(
     # 超限 → 夹到下限（向上取整到 tick）
     _logger.info(
         "price_cage CLAMP sell: symbol=%s limit=%s < lower=%s → clamp to %s",
-        symbol, limit_price, lower_tick, lower_tick,
+        symbol,
+        limit_price,
+        lower_tick,
+        lower_tick,
     )
     return PriceCageResult(
         status=CageStatus.CLAMPED,

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """A4 特征重要性 Permutation 主轨单元测试（11_regime_backtest_validation_plan §4.1 A4）."""
+
 from __future__ import annotations
 
 import unittest
@@ -36,8 +37,12 @@ class TestPermutationImportanceWindows(unittest.TestCase):
         """
         X = _make_pair(300)
         rep = permutation_importance_windows(
-            _corr_score, X, windows=[(0, 150), (150, 300)],
-            n_repeats=4, seed=1, feature_names=["vol", "slope", "noise"],
+            _corr_score,
+            X,
+            windows=[(0, 150), (150, 300)],
+            n_repeats=4,
+            seed=1,
+            feature_names=["vol", "slope", "noise"],
         )
         self.assertEqual(rep.n_windows, 2)
         self.assertEqual(set(rep.top2_features), {"vol", "slope"})
@@ -49,8 +54,12 @@ class TestPermutationImportanceWindows(unittest.TestCase):
         """F=2 双驱动：top-2=全部特征，稳定性=1.0，无可忽略 → 通过。"""
         X = _make_pair(240)[:, :2]
         rep = permutation_importance_windows(
-            _corr_score, X, windows=[(0, 120), (120, 240)],
-            n_repeats=4, seed=2, feature_names=["vol", "slope"],
+            _corr_score,
+            X,
+            windows=[(0, 120), (120, 240)],
+            n_repeats=4,
+            seed=2,
+            feature_names=["vol", "slope"],
         )
         self.assertTrue(rep.passed)
         self.assertEqual(rep.top2_stability, 1.0)
@@ -66,7 +75,7 @@ class TestPermutationImportanceWindows(unittest.TestCase):
         for w in range(3):
             base = np.cumsum(rng.normal(0, 1, W))
             cols = [rng.normal(0, 1, W) for _ in range(4)]
-            cols[1] = base.copy()             # c1 有结构
+            cols[1] = base.copy()  # c1 有结构
             cols[[0, 2, 3][w]] = base.copy()  # 本窗口唯一驱动列
             blocks.append(np.column_stack(cols))
         X = np.vstack(blocks)
@@ -79,8 +88,12 @@ class TestPermutationImportanceWindows(unittest.TestCase):
             return best
 
         rep = permutation_importance_windows(
-            score, X, windows=[(0, W), (W, 2 * W), (2 * W, 3 * W)],
-            n_repeats=4, seed=3, feature_names=["f0", "f1", "f2", "f3"],
+            score,
+            X,
+            windows=[(0, W), (W, 2 * W), (2 * W, 3 * W)],
+            n_repeats=4,
+            seed=3,
+            feature_names=["f0", "f1", "f2", "f3"],
         )
         self.assertIn("f1", rep.top2_features)
         self.assertLess(rep.top2_stability, 0.70)
@@ -130,9 +143,7 @@ class TestPermutationImportanceWindows(unittest.TestCase):
 
     def test_feature_names_mismatch_raises(self):
         with self.assertRaises(A4ImportanceError):
-            permutation_importance_windows(
-                _corr_score, _make_pair(20), feature_names=["a", "b"]
-            )
+            permutation_importance_windows(_corr_score, _make_pair(20), feature_names=["a", "b"])
 
 
 if __name__ == "__main__":

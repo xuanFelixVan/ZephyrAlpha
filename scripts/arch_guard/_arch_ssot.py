@@ -35,12 +35,8 @@ if str(_GOV_DIR) not in sys.path:
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 
 CAPACITY_SLO_PATH = _REPO_ROOT / "config" / "capacity_slo.yaml"
-INVARIANTS_PATH = _REPO_ROOT / (
-    "architecture_model/cross_cutting/invariants.yaml"
-)
-CONTRACTS_PATH = _REPO_ROOT / (
-    "architecture_model/contracts/cross_layer_contracts.yaml"
-)
+INVARIANTS_PATH = _REPO_ROOT / ("architecture_model/cross_cutting/invariants.yaml")
+CONTRACTS_PATH = _REPO_ROOT / ("architecture_model/contracts/cross_layer_contracts.yaml")
 RISK_PARAMS_PATH = _REPO_ROOT / "config" / "risk_params.yaml"
 SURVIVORSHIP_POLICY_PATH = _REPO_ROOT / "config" / "data" / "survivorship_policy.yaml"
 OCP_MANIFEST_PATH = _REPO_ROOT / ("src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json")

@@ -62,7 +62,9 @@ ALLOWED_DIMENSIONS: Final[frozenset[int]] = frozenset({512, 1024})
 
 # HOT/COLD_COLLECTIONS 已从 collection_schemas import（上方 SSoT 注释），本处不再重复定义
 
-CHUNK_STRATEGIES_HOT: Final[frozenset[str]] = frozenset({"semantic", "paragraph", "heading_aware", "rule_level", "ast_aware"})
+CHUNK_STRATEGIES_HOT: Final[frozenset[str]] = frozenset(
+    {"semantic", "paragraph", "heading_aware", "rule_level", "ast_aware"}
+)
 CHUNK_STRATEGIES_COLD: Final[frozenset[str]] = frozenset({"section_aware", "session_level", "time_window"})
 
 TTL_MAP: Final[dict[str, int]] = {
@@ -278,7 +280,9 @@ class CollectionManager:
     VMS_COLLECTION_NAMES: ClassVar[tuple[str, ...]] = COLLECTION_NAMES
     VMS_SCHEMAS: ClassVar[dict[str, dict[str, Any]]] = COLLECTION_SCHEMAS
 
-    def __init__(self, persist_dir: Path | str | None = None, embedding_router: EmbeddingRouterProtocol | None = None) -> None:
+    def __init__(
+        self, persist_dir: Path | str | None = None, embedding_router: EmbeddingRouterProtocol | None = None
+    ) -> None:
         self._persist_dir = Path(persist_dir) if persist_dir is not None else VMS_PERSIST_DIR
         self._persist_dir.mkdir(parents=True, exist_ok=True)
         self._client: Any | None = None

@@ -180,7 +180,6 @@ class ExamOrchestrator:
         """公共接口：run_breadth（Stage 4 公共化）。"""
         return self._run_breadth()
 
-
     @property
     def randomize_order(self):
         """只读：randomize_order（Stage 4 公共化）。"""
@@ -190,7 +189,6 @@ class ExamOrchestrator:
     def randomize_order(self, value):
         """写入：randomize_order（Stage 4 公共化）。"""
         self._randomize_order = value
-
 
     @property
     def optimization_suspicions(self):
@@ -202,16 +200,13 @@ class ExamOrchestrator:
         """写入：optimization_suspicions（Stage 4 公共化）。"""
         self._optimization_suspicions = value
 
-
     def infer(self, case) -> dict:
         """公共接口：infer（Stage 4 公共化）。"""
         return self._infer(case)
 
-
     def detect_optimization(self, case, result) -> bool:
         """公共接口：detect_optimization（Stage 4 公共化）。"""
         return self._detect_optimization(case, result)
-
 
     # ── Stage 4 公共化：只读 property + 公共方法别名 ────────────────────
     # 治本（2026-07-27 Stage 4 私有成员断言消除）：
@@ -373,6 +368,7 @@ class ExamOrchestrator:
         cap_order = list(CAPABILITIES)
         if self._randomize_order:
             import random
+
             random.shuffle(cap_order)
 
         for cap_name in cap_order:
@@ -429,7 +425,7 @@ class ExamOrchestrator:
         edit_distances: list[float] = []
         exact_matches: list[int] = []
         time_weights: list[float] = []  # v3.0.5: 每 case 时间折扣系数
-        weights: list[int] = []       # v3.0.5: 难度加权
+        weights: list[int] = []  # v3.0.5: 难度加权
 
         # P1-2: 每题多次采样, 提升统计显著性 (n=1 时退化为原单次行为)
         n_samples = self._depth_samples_per_case
@@ -585,9 +581,7 @@ class ExamOrchestrator:
             tracks.append((0.3, exec_result.pass_rate))
         elif getattr(case, "expected_static_assertions", []):
             # P1-4: 静态文本断言 — 检查候选答案是否包含期望的关键文本
-            static_pass_rate = self._check_static_assertions(
-                candidate, case.expected_static_assertions
-            )
+            static_pass_rate = self._check_static_assertions(candidate, case.expected_static_assertions)
             tracks.append((0.3, static_pass_rate))
 
         # Track 3: Judge (P1-4: 始终存在, LLM judge 优先, 缺省用 DeterministicJudge)
@@ -652,7 +646,9 @@ class ExamOrchestrator:
         return (0.0, 0.0, 1.0, 0)
 
     def _metrics_task_classification(
-        self, case: ExamTestCase, result: dict,
+        self,
+        case: ExamTestCase,
+        result: dict,
     ) -> tuple[float, float, float, int]:
         cat = str(result.get("category", "")).lower()
         exp = case.expected_category.lower()
@@ -660,7 +656,9 @@ class ExamOrchestrator:
         return (em, em, 0.0, em)
 
     def _metrics_tag_completion(
-        self, case: ExamTestCase, result: dict,
+        self,
+        case: ExamTestCase,
+        result: dict,
     ) -> tuple[float, float, float, int]:
         pred = set(str(t).lower() for t in result.get("tags", []))
         gold = set(case.expected_tags)
@@ -669,7 +667,9 @@ class ExamOrchestrator:
         return (p, r, 0.0, 1 if pred == gold else 0)
 
     def _metrics_summary_extraction(
-        self, case: ExamTestCase, result: dict,
+        self,
+        case: ExamTestCase,
+        result: dict,
     ) -> tuple[float, float, float, int]:
         text = str(result)
         hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
@@ -677,17 +677,25 @@ class ExamOrchestrator:
         return (rate, rate, 0.0, 1 if hits == len(case.expected_contains) else 0)
 
     def _metrics_anomaly_triage(
-        self, case: ExamTestCase, result: dict,
+        self,
+        case: ExamTestCase,
+        result: dict,
     ) -> tuple[float, float, float, int]:
         nh = bool(result.get("needs_human"))
         em = 1 if nh == case.expected_needs_human else 0
         return (em, em, 0.0, em)
 
     def _metrics_code_edit(
-        self, case: ExamTestCase, result: dict,
+        self,
+        case: ExamTestCase,
+        result: dict,
     ) -> tuple[float, float, float, int]:
         cap = case.capability
-        field = "fixes" if cap in ("code_fix", "code_edit_precision") else ("changes" if cap == "refactor" else "dead_sections")
+        field = (
+            "fixes"
+            if cap in ("code_fix", "code_edit_precision")
+            else ("changes" if cap == "refactor" else "dead_sections")
+        )
         entries = result.get(field, [])
         if not entries:
             return (0.0, 0.0, 1.0, 0)
@@ -711,7 +719,9 @@ class ExamOrchestrator:
         return (precision_rate, recall_rate, best_ed, em)
 
     def _metrics_code_generate(
-        self, case: ExamTestCase, result: dict,
+        self,
+        case: ExamTestCase,
+        result: dict,
     ) -> tuple[float, float, float, int]:
         content = result.get("content", result.get("codegen", {}).get("content", ""))
         if not content:
@@ -825,15 +835,8 @@ class ExamOrchestrator:
                 continue
             got_raw = result.get(key, [])
             extractor = dict_extractors.get(key)
-            if (
-                extractor
-                and isinstance(got_raw, list)
-                and got_raw
-                and isinstance(got_raw[0], dict)
-            ):
-                got_list = [
-                    str(item.get(extractor, "")) for item in got_raw if isinstance(item, dict)
-                ]
+            if extractor and isinstance(got_raw, list) and got_raw and isinstance(got_raw[0], dict):
+                got_list = [str(item.get(extractor, "")) for item in got_raw if isinstance(item, dict)]
             else:
                 got_list = got_raw if isinstance(got_raw, list) else [str(got_raw)]
             exp_set = {str(x).lower() for x in exp_list}
@@ -856,9 +859,7 @@ class ExamOrchestrator:
         exp_set = {tuple(sorted(g)) for g in case.expected_parallel_groups}
         got_set = (
             {tuple(sorted(g)) for g in got_raw}
-            if got_raw
-            and isinstance(got_raw, list)
-            and all(isinstance(g, list) for g in got_raw)
+            if got_raw and isinstance(got_raw, list) and all(isinstance(g, list) for g in got_raw)
             else set()
         )
         inter = len(exp_set & got_set)
@@ -901,9 +902,7 @@ class ExamOrchestrator:
             return []
         bugs = result.get("bugs", [])
         if isinstance(bugs, list):
-            loc_text = " ".join(
-                str(b.get("location", "")) for b in bugs if isinstance(b, dict)
-            ).lower()
+            loc_text = " ".join(str(b.get("location", "")) for b in bugs if isinstance(b, dict)).lower()
         else:
             loc_text = ""
         match = 1 if case.expected_bug_location.lower() in loc_text else 0
@@ -1039,10 +1038,7 @@ class ExamOrchestrator:
         total_tokens = input_tokens + output_tokens
         total_calls = len(self._all_tokens)
 
-        cost_usd = (
-            input_tokens / 1000.0 * price_in
-            + output_tokens / 1000.0 * price_out
-        )
+        cost_usd = input_tokens / 1000.0 * price_in + output_tokens / 1000.0 * price_out
 
         return CostBreakdown(
             deployment_mode=mode,
@@ -1118,6 +1114,7 @@ class ExamOrchestrator:
             return (0.0, 0.0)
         try:
             from zephyr.intelligence.model_profiling.provider_data import DEFAULT_PROVIDERS
+
             info = DEFAULT_PROVIDERS.get(provider, {})
             return (
                 float(info.get("price_per_1k_input", 0.0)),
@@ -1205,11 +1202,7 @@ class ExamOrchestrator:
             cold_tokens = set(cold_str.split())
             hot_tokens = set(hot_str.split())
             union = cold_tokens | hot_tokens
-            output_drift = (
-                1.0 - len(cold_tokens & hot_tokens) / max(len(union), 1)
-                if union
-                else 0.0
-            )
+            output_drift = 1.0 - len(cold_tokens & hot_tokens) / max(len(union), 1) if union else 0.0
 
             # 速度漂移比（hot 相对 cold 的延迟变化率）
             speed_drift_ratio = (hot_latency - cold_latency) / cold_latency if cold_latency > 0 else 0.0
@@ -1217,11 +1210,7 @@ class ExamOrchestrator:
             # 幻觉漂移增量（恶化为正）
             hallucination_drift_delta = float(hot_fab - cold_fab)
 
-            stable = (
-                output_drift < 0.3
-                and speed_drift_ratio < 1.0
-                and hallucination_drift_delta <= 0
-            )
+            stable = output_drift < 0.3 and speed_drift_ratio < 1.0 and hallucination_drift_delta <= 0
 
             return DriftResult(
                 tested=True,
@@ -1412,10 +1401,7 @@ class ExamOrchestrator:
         else:
             caps_to_test = tuple(CAPABILITIES)
 
-        caps = [
-            c for c in caps_to_test
-            if c not in breadth.failed_capabilities and c in CASES_BY_CAPABILITY
-        ]
+        caps = [c for c in caps_to_test if c not in breadth.failed_capabilities and c in CASES_BY_CAPABILITY]
         if not caps:
             return HallucinationBreakdown()
 
@@ -1475,10 +1461,8 @@ class ExamOrchestrator:
         try:
             result2 = self._infer(case)
             # context_drift: 两次输出键集不同 = 忘记指令结构
-            keys1 = set(k for k in (result.keys() if isinstance(result, dict) else [])
-                        if not k.startswith("_"))
-            keys2 = set(k for k in (result2.keys() if isinstance(result2, dict) else [])
-                        if not k.startswith("_"))
+            keys1 = set(k for k in (result.keys() if isinstance(result, dict) else []) if not k.startswith("_"))
+            keys2 = set(k for k in (result2.keys() if isinstance(result2, dict) else []) if not k.startswith("_"))
             if keys1 != keys2:
                 return {"cd": 1, "inc": 0}
             if not self._outputs_similar(result, result2):
@@ -1592,8 +1576,10 @@ class ExamOrchestrator:
 
         _log.info(
             "ExamOrchestrator: QUICK complete — grade=%s score=%.2f hallu=%.3f (%.1fs)",
-            profile.overall_grade, profile.overall_score,
-            hallu.overall_rate, profile.exam_duration_seconds,
+            profile.overall_grade,
+            profile.overall_score,
+            hallu.overall_rate,
+            profile.exam_duration_seconds,
         )
         return profile
 
@@ -1604,9 +1590,7 @@ class ExamOrchestrator:
         适合正式入职评估, 输出完整 CapabilityPassport。
         """
         if self._depth_samples_per_case != 1:
-            _log.warning(
-                "Standard mode expects n=1, got n=%d", self._depth_samples_per_case
-            )
+            _log.warning("Standard mode expects n=1, got n=%d", self._depth_samples_per_case)
         return self.run_full_exam(skip_drift=skip_drift)
 
     def run_deep_exam(self, *, judge_chat: object = None) -> CapabilityPassport:
@@ -1648,9 +1632,7 @@ class ExamOrchestrator:
         elif mode == "deep":
             return self.run_deep_exam(**kwargs)
         else:
-            raise ValueError(
-                f"unknown exam mode: {mode!r} (expected: quick/standard/deep)"
-            )
+            raise ValueError(f"unknown exam mode: {mode!r} (expected: quick/standard/deep)")
 
 
 def _normalized_edit_distance(a: str, b: str) -> float:

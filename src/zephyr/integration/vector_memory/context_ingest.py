@@ -67,7 +67,9 @@ class ContextIngest:
                     "session_id": session_id,
                 }
                 try:
-                    bridge._vms.write(mapped_collection, content, metadata=meta, doc_id=f"{mapped_collection}::{block_id}")
+                    bridge._vms.write(
+                        mapped_collection, content, metadata=meta, doc_id=f"{mapped_collection}::{block_id}"
+                    )
                     stored += 1
                 except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("[VMS-INGEST] write failed for %s: %s", block_id, exc, exc_info=True)

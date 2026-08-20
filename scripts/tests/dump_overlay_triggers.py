@@ -30,6 +30,7 @@ stage_cfg["shrinkage"] 锚定值是死代码——overlay 不直接设 Shrinkage
 Usage:
   python scripts/tests/dump_overlay_triggers.py
 """
+
 from __future__ import annotations
 
 import logging
@@ -57,17 +58,13 @@ DATA_LOAD_START = "2010-01-01"
 REPRO_DIR = Path(r"d:\ZephyrAlpha\logs\c1_repro")
 
 
-def _baseline_shrinkage(
-    detector: RegimeDetector, hmm_probs: dict[str, float], risk: float
-) -> tuple[float, str, float]:
+def _baseline_shrinkage(detector: RegimeDetector, hmm_probs: dict[str, float], risk: float) -> tuple[float, str, float]:
     """重算 baseline：overlay_probs=0（纯 HMM）下的 confidence × risk。
 
     Returns:
         (baseline_shrinkage, baseline_dominant, baseline_confidence)
     """
-    baseline_probs = detector._merge_probabilities(
-        hmm_probs, {s: 0.0 for s in OVERLAY_STATES}
-    )
+    baseline_probs = detector._merge_probabilities(hmm_probs, {s: 0.0 for s in OVERLAY_STATES})
     baseline_conf = detector._compute_confidence_signal(baseline_probs)
     val = baseline_conf * risk
     if val > 1.0:
@@ -100,6 +97,7 @@ def run_overlay_audit() -> pd.DataFrame:
     # 提前触发 _risk_ctor / _overlay_ctor 的惰性构造（复刻 build_shrinkage_schedule 逻辑）
     if builder.enable_full_risk and builder._risk_ctor is None:
         from zephyr.regime.risk_signal_builder import RiskSignalConstructor
+
         builder._risk_ctor = RiskSignalConstructor(
             backtest_start=builder.backtest_start,
             backtest_end=builder.backtest_end,
@@ -109,6 +107,7 @@ def run_overlay_audit() -> pd.DataFrame:
         )
     if builder.enable_overlay and builder._overlay_ctor is None:
         from zephyr.regime.overlay_signals_builder import OverlaySignalsConstructor
+
         builder._overlay_ctor = OverlaySignalsConstructor(
             backtest_start=builder.backtest_start,
             backtest_end=builder.backtest_end,
@@ -146,11 +145,7 @@ def run_overlay_audit() -> pd.DataFrame:
         except Exception as exc:
             logging.warning("fit Q%d [%s,%s] 失败，本季降级: %s", i + 1, train_start, train_end, exc)
 
-        next_q = (
-            quarter_ends[i + 1]
-            if i + 1 < len(quarter_ends)
-            else pd.Timestamp(REAL_END)
-        )
+        next_q = quarter_ends[i + 1] if i + 1 < len(quarter_ends) else pd.Timestamp(REAL_END)
         detect_start = max(q + pd.Timedelta(days=1), pd.Timestamp(REAL_START))
         detect_end = min(next_q, pd.Timestamp(REAL_END))
         if detect_start > detect_end:
@@ -170,11 +165,7 @@ def run_overlay_audit() -> pd.DataFrame:
                 slope=_safe(last_row.get("kalman_slope")),
                 vol_anom=_safe(last_row.get("volume_anomaly")),
             )
-            overlay_signals = (
-                builder._overlay_ctor.build_for_date(dt)
-                if builder._overlay_ctor is not None
-                else {}
-            )
+            overlay_signals = builder._overlay_ctor.build_for_date(dt) if builder._overlay_ctor is not None else {}
             X = window[FEATURE_NAMES].to_numpy(dtype=float)
             X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
             if scaler is not None:
@@ -195,33 +186,33 @@ def run_overlay_audit() -> pd.DataFrame:
             transitions = list(detector._last_transitions) if detector._last_transitions else []
             hmm_probs = probs.hmm_probabilities
             hmm_dominant = max(hmm_probs, key=hmm_probs.get)
-            baseline_shr, baseline_dom, baseline_conf = _baseline_shrinkage(
-                detector, hmm_probs, shrinkage.risk_signal
-            )
+            baseline_shr, baseline_dom, baseline_conf = _baseline_shrinkage(detector, hmm_probs, shrinkage.risk_signal)
             triggered = [t for t in transitions if t.stage != "none"]
-            audit_rows.append({
-                "date": dt.strftime("%Y-%m-%d"),
-                "n_triggered": len(triggered),
-                "triggered_tids": "|".join(f"{t.transition_type}:{t.stage}" for t in triggered) or "-",
-                "triggered_details": "; ".join(
-                    f"{t.transition_type}/{t.stage}(total={t.total_score:.0f})"
-                    for t in triggered
-                ) or "-",
-                "overlay_r10": float(probs.overlay_probabilities.get("r10", 0.0)),
-                "overlay_r11": float(probs.overlay_probabilities.get("r11", 0.0)),
-                "overlay_r12": float(probs.overlay_probabilities.get("r12", 0.0)),
-                "hmm_dominant": hmm_dominant,
-                "merged_dominant": probs.dominant_regime,
-                "baseline_dominant": baseline_dom,
-                "dominant_switched": hmm_dominant != probs.dominant_regime,
-                "confidence": float(shrinkage.confidence_signal),
-                "baseline_confidence": float(baseline_conf),
-                "risk": float(shrinkage.risk_signal),
-                "shrinkage": float(shrinkage.value),
-                "baseline_shrinkage": float(baseline_shr),
-                "delta": float(shrinkage.value - baseline_shr),
-                "is_warmup": False,
-            })
+            audit_rows.append(
+                {
+                    "date": dt.strftime("%Y-%m-%d"),
+                    "n_triggered": len(triggered),
+                    "triggered_tids": "|".join(f"{t.transition_type}:{t.stage}" for t in triggered) or "-",
+                    "triggered_details": "; ".join(
+                        f"{t.transition_type}/{t.stage}(total={t.total_score:.0f})" for t in triggered
+                    )
+                    or "-",
+                    "overlay_r10": float(probs.overlay_probabilities.get("r10", 0.0)),
+                    "overlay_r11": float(probs.overlay_probabilities.get("r11", 0.0)),
+                    "overlay_r12": float(probs.overlay_probabilities.get("r12", 0.0)),
+                    "hmm_dominant": hmm_dominant,
+                    "merged_dominant": probs.dominant_regime,
+                    "baseline_dominant": baseline_dom,
+                    "dominant_switched": hmm_dominant != probs.dominant_regime,
+                    "confidence": float(shrinkage.confidence_signal),
+                    "baseline_confidence": float(baseline_conf),
+                    "risk": float(shrinkage.risk_signal),
+                    "shrinkage": float(shrinkage.value),
+                    "baseline_shrinkage": float(baseline_shr),
+                    "delta": float(shrinkage.value - baseline_shr),
+                    "is_warmup": False,
+                }
+            )
 
     print(f"[overlay-audit] 完成: {n_detect} 日 detect, {n_warmup} 日 warmup/异常")
     return pd.DataFrame(audit_rows)
@@ -233,11 +224,19 @@ def _warmup_row(dt) -> dict:
         "n_triggered": 0,
         "triggered_tids": "-",
         "triggered_details": "-",
-        "overlay_r10": 0.0, "overlay_r11": 0.0, "overlay_r12": 0.0,
-        "hmm_dominant": "-", "merged_dominant": "-", "baseline_dominant": "-",
+        "overlay_r10": 0.0,
+        "overlay_r11": 0.0,
+        "overlay_r12": 0.0,
+        "hmm_dominant": "-",
+        "merged_dominant": "-",
+        "baseline_dominant": "-",
         "dominant_switched": False,
-        "confidence": 1.0, "baseline_confidence": 1.0, "risk": 1.0,
-        "shrinkage": 1.0, "baseline_shrinkage": 1.0, "delta": 0.0,
+        "confidence": 1.0,
+        "baseline_confidence": 1.0,
+        "risk": 1.0,
+        "shrinkage": 1.0,
+        "baseline_shrinkage": 1.0,
+        "delta": 0.0,
         "is_warmup": True,
     }
 
@@ -279,8 +278,18 @@ def summarize(df: pd.DataFrame) -> str:
 
     # 误触发 TOP 日期：delta 最负（overlay 压低 Shrinkage 最多）
     top_neg = active.nsmallest(15, "delta")[
-        ["date", "triggered_tids", "overlay_r10", "overlay_r11", "overlay_r12",
-         "hmm_dominant", "merged_dominant", "shrinkage", "baseline_shrinkage", "delta"]
+        [
+            "date",
+            "triggered_tids",
+            "overlay_r10",
+            "overlay_r11",
+            "overlay_r12",
+            "hmm_dominant",
+            "merged_dominant",
+            "shrinkage",
+            "baseline_shrinkage",
+            "delta",
+        ]
     ]
     # overlay 抬高 Shrinkage TOP（罕见，但若有说明 overlay 在低 confidence 时反而注入高 confidence 态）
     top_pos = active.nlargest(10, "delta")[
@@ -297,8 +306,8 @@ def summarize(df: pd.DataFrame) -> str:
     lines.append("## 1. 总览")
     lines.append("")
     lines.append(f"- 有效 detect 日: **{n_days}**")
-    lines.append(f"- 触发转换日（n_triggered>0）: **{n_trigger_days}** ({100*n_trigger_days/n_days:.1f}%)")
-    lines.append(f"- dominant 被 overlay 切换日: **{n_switch}** ({100*n_switch/n_days:.1f}%)")
+    lines.append(f"- 触发转换日（n_triggered>0）: **{n_trigger_days}** ({100 * n_trigger_days / n_days:.1f}%)")
+    lines.append(f"- dominant 被 overlay 切换日: **{n_switch}** ({100 * n_switch / n_days:.1f}%)")
     lines.append(f"- delta<0（overlay 压低 Shrinkage）: **{n_delta_neg}** 日")
     lines.append(f"- delta>0（overlay 抬高 Shrinkage）: **{n_delta_pos}** 日")
     lines.append(f"- delta=0（overlay 无影响）: **{n_days - n_delta_neg - n_delta_pos}** 日")
@@ -311,7 +320,7 @@ def summarize(df: pd.DataFrame) -> str:
         cnt = tid_counts.get(tid, 0)
         stages = tid_stage_counts.get(tid, {})
         stage_str = ", ".join(f"{k}:{v}" for k, v in sorted(stages.items())) or "-"
-        lines.append(f"| {tid} | {cnt} | {100*cnt/n_days:.1f}% | {stage_str} |")
+        lines.append(f"| {tid} | {cnt} | {100 * cnt / n_days:.1f}% | {stage_str} |")
     lines.append("")
     lines.append("## 3. delta 分布（Shrinkage 净影响）")
     lines.append("")

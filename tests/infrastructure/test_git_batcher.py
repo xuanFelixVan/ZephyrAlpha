@@ -20,6 +20,7 @@ ARCH-GIT-CALL-BUDGET（trae_064 GIT-BUDGET-INV-002 批量化强制）。
 
 测试隔离: 真实 git subprocess + tmp_path 临时 git 仓库（end-to-end）。
 """
+
 from __future__ import annotations
 
 import io
@@ -63,16 +64,25 @@ def _init_git_repo(repo_dir: Path) -> None:
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "config", "user.name", "Test"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     # 禁用 autocrlf——避免 Windows 上 git 自动将 \n 转 \r\n 导致内容比对失败
     subprocess.run(
         ["git", "config", "core.autocrlf", "false"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     # 使用 write_bytes 避免 Windows write_text 的 \n→\r\n 自动转换
     (repo_dir / "README.md").write_bytes(b"init\n")
@@ -91,7 +101,10 @@ def _commit_file(repo_dir: Path, path: str, content: str) -> None:
     subprocess.run(["git", "add", path], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "commit", "-m", f"add {path}"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
 
 
@@ -179,7 +192,10 @@ class TestGitDiffCachedNames:
         (tmp_path / "src" / "bar.py").write_text("v2\n", encoding="utf-8")
         subprocess.run(
             ["git", "add", "src/foo.py", "src/bar.py"],
-            cwd=str(tmp_path), capture_output=True, env=_git_env(), check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=_git_env(),
+            check=True,
         )
         batcher = GitCommandBatcher(tmp_path)
         result = set(batcher.git_diff_cached_names())
@@ -295,7 +311,10 @@ class TestGitRestoreBatch:
         (tmp_path / "src" / "foo.py").write_text("v2\n", encoding="utf-8")
         subprocess.run(
             ["git", "add", "src/foo.py"],
-            cwd=str(tmp_path), capture_output=True, env=_git_env(), check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=_git_env(),
+            check=True,
         )
         batcher = GitCommandBatcher(tmp_path)
         restored = batcher.git_restore_batch(["src/foo.py"], staged=True)
@@ -304,7 +323,10 @@ class TestGitRestoreBatch:
         # git diff --cached 应为空
         r = subprocess.run(
             ["git", "diff", "--cached", "--name-only"],
-            cwd=str(tmp_path), capture_output=True, text=True, env=_git_env(),
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            env=_git_env(),
         )
         assert r.stdout.strip() == ""
 

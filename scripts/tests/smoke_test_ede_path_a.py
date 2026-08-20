@@ -30,6 +30,7 @@
   - trades_count > 0（symbol 格式对齐修复后应能成交）
   - 无未捕获异常
 """
+
 from __future__ import annotations
 
 import sys
@@ -98,6 +99,7 @@ def _check_sim_terminal() -> bool:
 
 def main() -> int:
     import logging
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(name)s %(levelname)s: %(message)s",
@@ -160,6 +162,7 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001
         print(f"[FAIL] Path A 回测失败: {type(e).__name__}: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
@@ -184,8 +187,12 @@ def main() -> int:
         print(f"[OK] trades_count={result.trades_count} > 0（Path A 撮合正常）")
 
     required_fields = [
-        "strategy_id", "total_return", "sharpe_ratio",
-        "max_drawdown", "trades_count", "win_rate",
+        "strategy_id",
+        "total_return",
+        "sharpe_ratio",
+        "max_drawdown",
+        "trades_count",
+        "win_rate",
     ]
     missing = [f for f in required_fields if not hasattr(result, f)]
     if missing:

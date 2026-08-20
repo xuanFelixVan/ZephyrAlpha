@@ -397,9 +397,7 @@ class IsotonicCalibrator(Calibrator):
         if x and y and len(x) >= 2:
             cal._x_thresh = np.array(x, dtype=float)
             cal._y_thresh = np.array(y, dtype=float)
-            cal._fit_points = tuple(
-                (float(xi), float(yi)) for xi, yi in zip(x, y, strict=False)
-            )
+            cal._fit_points = tuple((float(xi), float(yi)) for xi, yi in zip(x, y, strict=False))
             return cal
         # 旧格式：points（binned means）—— 直接用作插值断点
         pts = d.get("points") or []

@@ -42,7 +42,9 @@ ALLOWED_DIMENSIONS: Final[frozenset[int]] = frozenset({512, 1024})
 HOT_COLLECTIONS: Final[frozenset[str]] = frozenset({"decisions", "rules", "lessons", "knowledge"})
 COLD_COLLECTIONS: Final[frozenset[str]] = frozenset({"blueprints", "session_snapshots", "execution_traces"})
 
-CHUNK_STRATEGIES_HOT: Final[frozenset[str]] = frozenset({"semantic", "paragraph", "heading_aware", "rule_level", "ast_aware"})
+CHUNK_STRATEGIES_HOT: Final[frozenset[str]] = frozenset(
+    {"semantic", "paragraph", "heading_aware", "rule_level", "ast_aware"}
+)
 CHUNK_STRATEGIES_COLD: Final[frozenset[str]] = frozenset({"section_aware", "session_level", "time_window"})
 
 TTL_MAP: Final[dict[str, int]] = {

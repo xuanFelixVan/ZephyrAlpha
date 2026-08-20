@@ -49,6 +49,7 @@ TRANSITION_CONFIG 评审（防过拟合铁律：禁止为跑分而加维度）�
 
 依据: 14_regime_s2_diagnosis v0.5.2 §4.6
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -142,14 +143,8 @@ def s2_evr_score(
     evr_core = vol_surge & tiny_body
 
     # 分量 2：ADL 经典背离——价新低 + ADL 更高低 + 收盘位置改善
-    price_ll = (
-        close.rolling(div_span).min()
-        < close.shift(div_span).rolling(div_lookback - div_span).min()
-    )
-    adl_hl = (
-        adl.rolling(div_span).min()
-        > adl.shift(div_span).rolling(div_lookback - div_span).min()
-    )
+    price_ll = close.rolling(div_span).min() < close.shift(div_span).rolling(div_lookback - div_span).min()
+    adl_hl = adl.rolling(div_span).min() > adl.shift(div_span).rolling(div_lookback - div_span).min()
     close_pos = (close - low) / (high - low + _EPS)
     divergence = price_ll & adl_hl & (close_pos > 0.5)
 

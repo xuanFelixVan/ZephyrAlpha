@@ -94,6 +94,7 @@ class EmbeddingRouterProtocol(Protocol):
 
     def shutdown(self) -> None: ...
 
+
 MODEL_DIR_BGE_M3: Final[Path] = Path("data/models/local_model/bge-m3")
 MODEL_DIR_BGE_SMALL: Final[Path] = Path("data/models/local_model/paraphrase-multilingual-MiniLM-L12-v2")
 

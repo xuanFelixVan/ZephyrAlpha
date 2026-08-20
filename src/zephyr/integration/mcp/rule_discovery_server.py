@@ -130,12 +130,7 @@ SERVER_DESCRIPTION: Final[tuple] = (
 )
 
 PERCEPTION_INDEX_PATH: Final[Path] = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "rule_ai_perception_index.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule_ai_perception_index.yaml"
 )
 
 # Phase 3.4a: audit log 目录——CAPABILITY-LOOKUP-REQUIRED gate 消费
@@ -256,12 +251,17 @@ def write_lookup_audit_log(
     except OSError as exc:
         _logger.warning(
             "rule_discovery: audit log 写入失败 (session=%s): %s",
-            session_id, exc, exc_info=True,
+            session_id,
+            exc,
+            exc_info=True,
         )
     except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning(
             "rule_discovery: audit log 写入异常 (session=%s): %s: %s",
-            session_id, type(exc).__name__, exc, exc_info=True,
+            session_id,
+            type(exc).__name__,
+            exc,
+            exc_info=True,
         )
 
 
@@ -348,7 +348,6 @@ class RuleDiscoveryServer(BaseMCPServer):
         """
         return self._discover_applicable_rules(operation, gate_id, scope, domain, tags, rule_id, session_id)
 
-
     # ------------------------------------------------------------------
     # Tool handlers
     # ------------------------------------------------------------------
@@ -378,15 +377,11 @@ class RuleDiscoveryServer(BaseMCPServer):
             }
 
         # 若无任何过滤条件，返回全部（limit 20）
-        has_filter = any(
-            v is not None and v
-            for v in (operation, gate_id, scope, domain, rule_id)
-        ) or (tags is not None and tags)
+        has_filter = any(v is not None and v for v in (operation, gate_id, scope, domain, rule_id)) or (
+            tags is not None and tags
+        )
         if has_filter:
-            matched = [
-                r for r in rules
-                if _matches_rule(r, operation, gate_id, scope, domain, tags, rule_id)
-            ]
+            matched = [r for r in rules if _matches_rule(r, operation, gate_id, scope, domain, tags, rule_id)]
         else:
             matched = rules[:20]
 
@@ -427,7 +422,9 @@ class RuleDiscoveryServer(BaseMCPServer):
             "hint": (
                 "AI MUST 阅读返回的 rule_file 路径指向的 YAML 全文后再施工。"
                 "Phase 3.4a CAPABILITY-LOOKUP-REQUIRED gate 将强制此调用。"
-            ) if summaries else "No matching rules found. Check filter values.",
+            )
+            if summaries
+            else "No matching rules found. Check filter values.",
         }
 
     # ------------------------------------------------------------------

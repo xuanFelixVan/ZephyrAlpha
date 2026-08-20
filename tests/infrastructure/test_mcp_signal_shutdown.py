@@ -24,6 +24,7 @@ Windows 兼容性说明：
   - subprocess.Popen.terminate() 在 Windows 调用 TerminateProcess（等同 SIGKILL）
   - 信号处理函数注册通过 signal.signal() 在主线程生效
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -145,11 +146,14 @@ class TestSignalHandlerRegistration:
             patch.object(launcher_module, "start_server", return_value=True),
             patch.object(launcher_module, "check_server_health", return_value=True),
             patch.object(launcher_module.time, "sleep", side_effect=fast_sleep),
-            patch.dict(sys.modules, {
-                "zephyr.shared.infra.process_lifecycle_gateway": mock_module,
-                "zephyr.shared.infra": MagicMock(),
-                "zephyr.shared": MagicMock(),
-            }),
+            patch.dict(
+                sys.modules,
+                {
+                    "zephyr.shared.infra.process_lifecycle_gateway": mock_module,
+                    "zephyr.shared.infra": MagicMock(),
+                    "zephyr.shared": MagicMock(),
+                },
+            ),
         ):
             # 直接调用 launch_all——KeyboardInterrupt 会打断 while 循环
             # except KeyboardInterrupt 捕获后，finally 执行 terminate_all+shutdown

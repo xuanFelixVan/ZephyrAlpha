@@ -61,9 +61,11 @@ EXEMPT_PATHS = [
     "conftest.py",
 ]
 
+
 def _is_exempt_path(path: Path) -> bool:
     name = path.name
     return any(e in name for e in EXEMPT_PATHS)
+
 
 def _scan_file(path: Path) -> list[tuple[int, str]]:
     findings = []
@@ -91,6 +93,7 @@ def _scan_file(path: Path) -> list[tuple[int, str]]:
                 break
 
     return findings
+
 
 def main() -> int:
     if not SRC_ROOT.exists():
@@ -123,6 +126,7 @@ def main() -> int:
 
     print("\n[OK] 未发现日志 secret 泄漏")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

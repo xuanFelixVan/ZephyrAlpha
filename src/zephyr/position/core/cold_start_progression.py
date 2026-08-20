@@ -37,6 +37,7 @@ StrategyBook 按天数自动晋升（MVP 基线），本模块是 61 号双门�
 依据: 61_lifecycle_multi_ai §3.1（渐进建仓节奏细化表 + 回退/暂停重训练纪律）
 Version: 0.1.0
 """
+
 from __future__ import annotations
 
 import logging
@@ -78,8 +79,8 @@ class ColdStartAction(str, Enum):
 
 _STAGE_RATIO: Final[dict[ColdStartStage, float]] = {
     ColdStartStage.SIMULATION: 0.0,
-    ColdStartStage.T0_OBSERVE: COLD_START_RATIO_COLD,   # 0.30（与 StrategyBook 口径一致）
-    ColdStartStage.T1_SMALL: COLD_START_RATIO_HALF,     # 0.60
+    ColdStartStage.T0_OBSERVE: COLD_START_RATIO_COLD,  # 0.30（与 StrategyBook 口径一致）
+    ColdStartStage.T1_SMALL: COLD_START_RATIO_HALF,  # 0.60
     ColdStartStage.T2_FULL: 1.0,
 }
 _ROLLBACK_TARGET: Final[dict[ColdStartStage, ColdStartStage]] = {
@@ -93,15 +94,15 @@ _ROLLBACK_TARGET: Final[dict[ColdStartStage, ColdStartStage]] = {
 class ColdStartProgressionConfig:
     """双门控参数（61 号 §3.1 表）。"""
 
-    divergence_threshold: float = 0.30   # T0：实盘 vs 模拟 divergence 阈值（对齐 30 号 §6.7 PnL 偏离 ≤30% 质量门）
-    sharpe_factor_t1: float = 0.70       # T1 晋升：Rolling Sharpe ≥ OOS × 0.7
-    sharpe_factor_t2: float = 0.85       # T2 维持：Rolling Sharpe ≥ OOS × 0.85
+    divergence_threshold: float = 0.30  # T0：实盘 vs 模拟 divergence 阈值（对齐 30 号 §6.7 PnL 偏离 ≤30% 质量门）
+    sharpe_factor_t1: float = 0.70  # T1 晋升：Rolling Sharpe ≥ OOS × 0.7
+    sharpe_factor_t2: float = 0.85  # T2 维持：Rolling Sharpe ≥ OOS × 0.85
     t0_min_days: int = 5
     t0_max_days: int = 10
     t1_min_days: int = 10
     t1_max_days: int = 20
-    loss_day_limit: int = 3              # 连续亏损日超限阈值
-    max_consecutive_rollbacks: int = 2   # 连续回退上限 → 退役评估
+    loss_day_limit: int = 3  # 连续亏损日超限阈值
+    max_consecutive_rollbacks: int = 2  # 连续回退上限 → 退役评估
 
 
 @dataclass(frozen=True)
@@ -111,12 +112,12 @@ class ColdStartEvalInput:
     stage: ColdStartStage
     days_in_stage: int
     sim_live_divergence: float | None = None  # T0 门控：实盘 vs 模拟偏离
-    risk_downgraded: bool = False             # T0 门控：风控触发降级
-    rolling_sharpe: float | None = None       # T1/T2 门控：阶段内滚动 Sharpe
-    oos_sharpe: float | None = None           # 回测 OOS Sharpe 基准
-    consecutive_loss_days: int = 0            # T1 门控：连续亏损日
-    decay_alert_active: bool = False          # T2 门控：Decay Detection 5 监控点告警
-    consecutive_rollbacks: int = 0            # 已累计连续回退次数
+    risk_downgraded: bool = False  # T0 门控：风控触发降级
+    rolling_sharpe: float | None = None  # T1/T2 门控：阶段内滚动 Sharpe
+    oos_sharpe: float | None = None  # 回测 OOS Sharpe 基准
+    consecutive_loss_days: int = 0  # T1 门控：连续亏损日
+    decay_alert_active: bool = False  # T2 门控：Decay Detection 5 监控点告警
+    consecutive_rollbacks: int = 0  # 已累计连续回退次数
 
 
 @dataclass(frozen=True)
@@ -132,7 +133,10 @@ class ColdStartEvalResult:
 
 
 def _result(
-    stage: ColdStartStage, action: ColdStartAction, rollbacks: int, detail: str,
+    stage: ColdStartStage,
+    action: ColdStartAction,
+    rollbacks: int,
+    detail: str,
 ) -> ColdStartEvalResult:
     return ColdStartEvalResult(
         stage=stage,
@@ -149,7 +153,9 @@ def _rollback(stage: ColdStartStage, rollbacks: int, cfg: ColdStartProgressionCo
     if new_rollbacks >= cfg.max_consecutive_rollbacks:
         logger.warning("冷启动 %s: 连续 %d 次回退 → 进入退役评估（61 号 §3.9）", stage.value, new_rollbacks)
         return _result(
-            stage, ColdStartAction.ESCALATE_RETIREMENT, new_rollbacks,
+            stage,
+            ColdStartAction.ESCALATE_RETIREMENT,
+            new_rollbacks,
             f"{why}；连续 {new_rollbacks} 次回退达上限 → 退役评估",
         )
     target = _ROLLBACK_TARGET[stage]
@@ -172,8 +178,11 @@ def evaluate_cold_start(
         raise ColdStartProgressionError(
             f"天数/计数须 >= 0: {inp.days_in_stage}/{inp.consecutive_loss_days}/{inp.consecutive_rollbacks}"
         )
-    for name, v in (("sim_live_divergence", inp.sim_live_divergence),
-                    ("rolling_sharpe", inp.rolling_sharpe), ("oos_sharpe", inp.oos_sharpe)):
+    for name, v in (
+        ("sim_live_divergence", inp.sim_live_divergence),
+        ("rolling_sharpe", inp.rolling_sharpe),
+        ("oos_sharpe", inp.oos_sharpe),
+    ):
         if v is not None and (math.isnan(v) or math.isinf(v)):
             raise ColdStartProgressionError(f"{name} 非法: {v}")
     if inp.sim_live_divergence is not None and inp.sim_live_divergence < 0:
@@ -190,40 +199,70 @@ def evaluate_cold_start(
 
 def _eval_t0(inp: ColdStartEvalInput, cfg: ColdStartProgressionConfig) -> ColdStartEvalResult:
     if inp.days_in_stage < cfg.t0_min_days:
-        return _result(inp.stage, ColdStartAction.HOLD, inp.consecutive_rollbacks,
-                       f"T0 观察期第 {inp.days_in_stage}/{cfg.t0_min_days} 天，未达评估窗")
+        return _result(
+            inp.stage,
+            ColdStartAction.HOLD,
+            inp.consecutive_rollbacks,
+            f"T0 观察期第 {inp.days_in_stage}/{cfg.t0_min_days} 天，未达评估窗",
+        )
     if inp.risk_downgraded:
         return _rollback(inp.stage, inp.consecutive_rollbacks, cfg, "T0 风控触发降级")
     if inp.sim_live_divergence is not None:
         if inp.sim_live_divergence < cfg.divergence_threshold:
-            return _result(ColdStartStage.T1_SMALL, ColdStartAction.PROMOTE, 0,
-                           f"T0 门控通过（divergence {inp.sim_live_divergence:.2%} < {cfg.divergence_threshold:.0%}）→ 晋升 T1")
-        return _rollback(inp.stage, inp.consecutive_rollbacks, cfg,
-                         f"T0 divergence {inp.sim_live_divergence:.2%} ≥ {cfg.divergence_threshold:.0%}")
+            return _result(
+                ColdStartStage.T1_SMALL,
+                ColdStartAction.PROMOTE,
+                0,
+                f"T0 门控通过（divergence {inp.sim_live_divergence:.2%} < {cfg.divergence_threshold:.0%}）→ 晋升 T1",
+            )
+        return _rollback(
+            inp.stage,
+            inp.consecutive_rollbacks,
+            cfg,
+            f"T0 divergence {inp.sim_live_divergence:.2%} ≥ {cfg.divergence_threshold:.0%}",
+        )
     # 数据缺失：窗内 HOLD，窗满回退
     if inp.days_in_stage < cfg.t0_max_days:
-        return _result(inp.stage, ColdStartAction.HOLD, inp.consecutive_rollbacks,
-                       "T0 门控数据缺失（divergence 未供给），观察至窗满")
+        return _result(
+            inp.stage,
+            ColdStartAction.HOLD,
+            inp.consecutive_rollbacks,
+            "T0 门控数据缺失（divergence 未供给），观察至窗满",
+        )
     return _rollback(inp.stage, inp.consecutive_rollbacks, cfg, "T0 窗满门控数据仍缺失")
 
 
 def _eval_t1(inp: ColdStartEvalInput, cfg: ColdStartProgressionConfig) -> ColdStartEvalResult:
     if inp.days_in_stage < cfg.t1_min_days:
-        return _result(inp.stage, ColdStartAction.HOLD, inp.consecutive_rollbacks,
-                       f"T1 小仓期第 {inp.days_in_stage}/{cfg.t1_min_days} 天，未达评估窗")
+        return _result(
+            inp.stage,
+            ColdStartAction.HOLD,
+            inp.consecutive_rollbacks,
+            f"T1 小仓期第 {inp.days_in_stage}/{cfg.t1_min_days} 天，未达评估窗",
+        )
     if inp.consecutive_loss_days >= cfg.loss_day_limit:
-        return _rollback(inp.stage, inp.consecutive_rollbacks, cfg,
-                         f"T1 连续 {inp.consecutive_loss_days} 日亏损超限（≥{cfg.loss_day_limit}）")
+        return _rollback(
+            inp.stage,
+            inp.consecutive_rollbacks,
+            cfg,
+            f"T1 连续 {inp.consecutive_loss_days} 日亏损超限（≥{cfg.loss_day_limit}）",
+        )
     if inp.rolling_sharpe is not None and inp.oos_sharpe is not None:
         floor = inp.oos_sharpe * cfg.sharpe_factor_t1
         if inp.rolling_sharpe >= floor:
-            return _result(ColdStartStage.T2_FULL, ColdStartAction.PROMOTE, 0,
-                           f"T1 门控通过（Rolling Sharpe {inp.rolling_sharpe:.2f} ≥ OOS×{cfg.sharpe_factor_t1}={floor:.2f}）→ 晋升 T2")
-        return _rollback(inp.stage, inp.consecutive_rollbacks, cfg,
-                         f"T1 Rolling Sharpe {inp.rolling_sharpe:.2f} < {floor:.2f}")
+            return _result(
+                ColdStartStage.T2_FULL,
+                ColdStartAction.PROMOTE,
+                0,
+                f"T1 门控通过（Rolling Sharpe {inp.rolling_sharpe:.2f} ≥ OOS×{cfg.sharpe_factor_t1}={floor:.2f}）→ 晋升 T2",
+            )
+        return _rollback(
+            inp.stage, inp.consecutive_rollbacks, cfg, f"T1 Rolling Sharpe {inp.rolling_sharpe:.2f} < {floor:.2f}"
+        )
     if inp.days_in_stage < cfg.t1_max_days:
-        return _result(inp.stage, ColdStartAction.HOLD, inp.consecutive_rollbacks,
-                       "T1 门控数据缺失（Sharpe 未供给），观察至窗满")
+        return _result(
+            inp.stage, ColdStartAction.HOLD, inp.consecutive_rollbacks, "T1 门控数据缺失（Sharpe 未供给），观察至窗满"
+        )
     return _rollback(inp.stage, inp.consecutive_rollbacks, cfg, "T1 窗满门控数据仍缺失")
 
 
@@ -233,8 +272,12 @@ def _eval_t2(inp: ColdStartEvalInput, cfg: ColdStartProgressionConfig) -> ColdSt
     if inp.rolling_sharpe is not None and inp.oos_sharpe is not None:
         floor = inp.oos_sharpe * cfg.sharpe_factor_t2
         if inp.rolling_sharpe < floor:
-            return _rollback(inp.stage, inp.consecutive_rollbacks, cfg,
-                             f"T2 Rolling Sharpe {inp.rolling_sharpe:.2f} < OOS×{cfg.sharpe_factor_t2}={floor:.2f}")
+            return _rollback(
+                inp.stage,
+                inp.consecutive_rollbacks,
+                cfg,
+                f"T2 Rolling Sharpe {inp.rolling_sharpe:.2f} < OOS×{cfg.sharpe_factor_t2}={floor:.2f}",
+            )
     return _result(inp.stage, ColdStartAction.HOLD, 0, "T2 常规阶段（门控维持）")
 
 

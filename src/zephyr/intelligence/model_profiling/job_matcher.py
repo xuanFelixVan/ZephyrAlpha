@@ -64,6 +64,7 @@ JOB_MATRIX_PATH: Final[Path] = REPO_ROOT / "data" / "brain" / "job_matrix.yaml"
 
 class JobMatcherError(Exception):
     """岗位匹配器错误。"""
+
     error_code = "ZA-IT-0001"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -95,9 +96,7 @@ class JobMatcher:
     def _load_matrix(self) -> None:
         """加载 job_matrix.yaml 真源。"""
         if not self._matrix_path.exists():
-            raise JobMatcherError(
-                f"job matrix not found: {self._matrix_path}"
-            )
+            raise JobMatcherError(f"job matrix not found: {self._matrix_path}")
         try:
             with self._matrix_path.open("r", encoding="utf-8") as f:
                 data = yaml.safe_load(f)
@@ -107,10 +106,7 @@ class JobMatcher:
         self._jobs = data.get("jobs", {}) or {}
         # 幻觉六维权重 (用于计算加权幻觉率)
         dims = data.get("hallucination_dimensions", {}) or {}
-        self._hallu_dims = {
-            name: float(d.get("weight", 0.0))
-            for name, d in dims.items()
-        }
+        self._hallu_dims = {name: float(d.get("weight", 0.0)) for name, d in dims.items()}
         # P2 Cost 轴配置 (D-MCE-07: 成本是维度非硬门)
         cost_dim = data.get("cost_dimension", {}) or {}
         self._cost_weight = float(cost_dim.get("weight", 0.10))
@@ -118,7 +114,10 @@ class JobMatcher:
         self._cost_expensive = float(cost_dim.get("expensive_threshold", 1.0))
         _log.debug(
             "JobMatcher: loaded %d jobs, %d hallu dims, cost_weight=%.2f from %s",
-            len(self._jobs), len(self._hallu_dims), self._cost_weight, self._matrix_path,
+            len(self._jobs),
+            len(self._hallu_dims),
+            self._cost_weight,
+            self._matrix_path,
         )
 
     # ── 公开 API ──────────────────────────────────────────
@@ -174,14 +173,10 @@ class JobMatcher:
         qualified, missing = self._check_required(profile.capability_grades, required)
 
         # 2. 计算 bonus 命中率
-        bonus_ratio, bonus_summary = self._compute_bonus(
-            profile.capability_grades, bonus
-        )
+        bonus_ratio, bonus_summary = self._compute_bonus(profile.capability_grades, bonus)
 
         # 3. 计算幻觉率得分 (正常评分, 非硬门)
-        hallu_score = self._compute_hallucination_score(
-            profile.hallucination, max_hallu
-        )
+        hallu_score = self._compute_hallucination_score(profile.hallucination, max_hallu)
         # 幻觉率是否低于岗位期望 (参考值, 非淘汰)
         hallu_passed = profile.hallucination.overall_rate <= max_hallu
 
@@ -334,6 +329,7 @@ class JobMatcher:
 
 
 # ── 便捷函数 ──────────────────────────────────────────────
+
 
 def match_jobs(
     profile: QuickProfile,

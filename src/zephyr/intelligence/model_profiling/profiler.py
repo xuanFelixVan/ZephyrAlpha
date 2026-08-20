@@ -129,6 +129,7 @@ class ModelProfiler:
     ) -> None:
         if ollama_url is None:
             from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
+
             ollama_url = DEFAULT_OLLAMA_URL
         self._url = ollama_url.rstrip("/")
         self._timeout = timeout_per_case_s
@@ -632,9 +633,7 @@ def _set_category_scores(profile: ModelProfile, case_results: list[CaseResult]) 
 def _set_hallucination_rate(profile: ModelProfile, case_results: list[CaseResult]) -> None:
     hallu_results = [r for r in case_results if r.category == "hallucination"]
     if hallu_results:
-        profile.hallucination_rate = round(
-            1.0 - sum(r.score for r in hallu_results) / len(hallu_results), 3
-        )
+        profile.hallucination_rate = round(1.0 - sum(r.score for r in hallu_results) / len(hallu_results), 3)
 
 
 def _compute_refusal_rate(case_results: list[CaseResult]) -> float:

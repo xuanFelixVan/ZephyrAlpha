@@ -48,32 +48,32 @@ DECAY_FACTOR_AFTER: Final[float] = 0.5
 
 # ── 地缘事件→受益板块静态映射表（26 号 §2.5b，MVP 简单映射）──
 GEOPOLITICAL_SECTOR_MAP: Final[dict[str, dict[str, Any]]] = {
-    "middle_east_conflict": {        # 中东冲突（美伊战争/霍尔木兹海峡/红海危机）
+    "middle_east_conflict": {  # 中东冲突（美伊战争/霍尔木兹海峡/红海危机）
         "beneficiary_sectors": ["油气开采", "油气炼化", "黄金", "军工", "船舶"],
         "victim_sectors": ["航空", "化工(原油成本)", "纺织(原油成本)"],
         "transmission_logic": "地缘冲突→原油/黄金避险溢价→上游资源股受益",
         "rising_half_life_days": "5-15",  # 远长于业绩/并购（§2.4 衰减表）
         "empirical_basis": "final_report_0724: 电气设备3日+123亿/有色+144亿断层领先",
     },
-    "trade_war_escalation": {         # 贸易战升级（关税/出口管制/实体清单）
+    "trade_war_escalation": {  # 贸易战升级（关税/出口管制/实体清单）
         "beneficiary_sectors": ["稀土", "农业(大豆替代)", "半导体(国产替代)", "软件(信创)"],
         "victim_sectors": ["出口导向(家电/纺服)", "苹果产业链"],
         "transmission_logic": "贸易摩擦→国产替代加速+战略资源溢价→自主可控受益",
         "rising_half_life_days": "5-10",
     },
-    "currency_depreciation": {        # 人民币贬值
+    "currency_depreciation": {  # 人民币贬值
         "beneficiary_sectors": ["出口导向(纺织/家电/机械)", "黄金"],
         "victim_sectors": ["进口导向(航空/造纸)"],
         "transmission_logic": "汇率贬值→出口竞争力提升+外币资产升值",
         "rising_half_life_days": "3-7",
     },
-    "commodity_price_surge": {        # 大宗商品价格异动（铜/锂/稀土）
+    "commodity_price_surge": {  # 大宗商品价格异动（铜/锂/稀土）
         "beneficiary_sectors": ["有色(对应金属)", "采掘"],
         "victim_sectors": ["下游制造(成本端)"],
         "transmission_logic": "大宗涨价→上游资源股直接受益+下游成本承压",
         "rising_half_life_days": "5-15",
     },
-    "tech_sanctions": {               # 科技制裁（芯片/EDA/设备出口限制）
+    "tech_sanctions": {  # 科技制裁（芯片/EDA/设备出口限制）
         "beneficiary_sectors": ["半导体(国产替代)", "软件(信创)", "军工"],
         "victim_sectors": ["被制裁企业", "依赖进口技术的企业"],
         "transmission_logic": "技术制裁→国产替代加速+自主可控战略强化",

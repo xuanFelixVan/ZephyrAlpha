@@ -33,12 +33,7 @@ if str(_GOV_DIR) not in sys.path:
 
 from _shared.constants import REPO_ROOT  # noqa: E402
 
-YAML_PATH = (
-    REPO_ROOT
-    / "architecture_model"
-    / "contracts"
-    / "cross_layer_contracts.yaml"
-)
+YAML_PATH = REPO_ROOT / "architecture_model" / "contracts" / "cross_layer_contracts.yaml"
 
 PATH_MAP: dict[str, str] = {
     "CTR-P1-001": "src/zephyr/shared/contracts/factor_monitor_report.py",
@@ -51,6 +46,7 @@ PATH_MAP: dict[str, str] = {
     "CTR-P1-008": "src/zephyr/shared/contracts/risk_dashboard_snapshot.py",
     "CTR-P1-009": "src/zephyr/shared/contracts/performance_attribution_report.py",
 }
+
 
 def main() -> int:
     if not YAML_PATH.exists():
@@ -88,6 +84,7 @@ def main() -> int:
             pass
     print(f"✅ 已为 {replaced} 个 P1 契约补齐 physical_path。")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

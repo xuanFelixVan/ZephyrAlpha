@@ -45,6 +45,7 @@ _FORBIDDEN = re.compile(
 )
 _COLD_PREFIXES = ("data", "factor", "simulation")  # noqa: gate-vocab  冷层前缀业务子集  gate-vocab豁免: 冷层前缀业务子集非词表
 
+
 def main() -> int:
     slo = load_yaml(CAPACITY_SLO_PATH)
     topo = (slo.get("arch_guard") or {}).get("deployment_topology") or {}
@@ -77,6 +78,7 @@ def main() -> int:
 
     print("OK: deployment_topology 声明满足；未发现 l00/l02/l13 路径对 l06 的直连 import")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

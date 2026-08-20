@@ -37,6 +37,8 @@ PHASE_THRESHOLDS 取值说明（spec 伪代码引用未定义，按 §3.2 阶段
 
 from __future__ import annotations
 
+from typing import Final
+
 __all__ = [
     "PHASE_THRESHOLDS",
     "pre_validate_daban_signal",
@@ -44,10 +46,12 @@ __all__ = [
 ]
 
 #: 情绪周期阶段→BOARD 决策游资分阈值（§3.2 阶段评分区间下界；退潮拉满事实禁板）
-PHASE_THRESHOLDS = {'冰点': 20, '反核': 40, '主升': 40, '疯狂': 65, '退潮': 85}
+PHASE_THRESHOLDS: Final = {"冰点": 20, "反核": 40, "主升": 40, "疯狂": 65, "退潮": 85}
 
 
-def pre_validate_daban_signal(echelon_health: str, echelon_height: int, sector_resonance: float, follow_count: int) -> dict:
+def pre_validate_daban_signal(
+    echelon_health: str, echelon_height: int, sector_resonance: float, follow_count: int
+) -> dict:
     """打板信号前置质量评估（v1.9.3 补，梯队质量→yes/no门控），在 §3.2 情绪周期定位器之前调用。
 
     理论背书：arXiv:2607.27063 羊群 agent-based 模型——信息扩散+社会强化分离机制下，
@@ -55,10 +59,10 @@ def pre_validate_daban_signal(echelon_health: str, echelon_height: int, sector_r
     """
     score = 0
     reasons = []
-    health_scores = {'PERFECT': 40, 'FRACTURE': 15, 'LONE_DRAGON': 5, 'COLLAPSE': 0}  # 梯队健康度权重 40
+    health_scores = {"PERFECT": 40, "FRACTURE": 15, "LONE_DRAGON": 5, "COLLAPSE": 0}  # 梯队健康度权重 40
     score += health_scores.get(echelon_health, 0)
-    if echelon_health in ('LONE_DRAGON', 'COLLAPSE'):
-        reasons.append(f'梯队{echelon_health}→质量极低')
+    if echelon_health in ("LONE_DRAGON", "COLLAPSE"):
+        reasons.append(f"梯队{echelon_health}→质量极低")
     # 连板高度权重 20（2板最优，>5板风险递增）
     if echelon_height == 2:
         score += 20
@@ -68,42 +72,44 @@ def pre_validate_daban_signal(echelon_health: str, echelon_height: int, sector_r
         score += 15
     else:
         score += 5
-        reasons.append(f'{echelon_height}板高度风险')
+        reasons.append(f"{echelon_height}板高度风险")
     score += int(sector_resonance * 20)  # 板块共振权重 20（板块跟风度）
     if sector_resonance < 0.3:
-        reasons.append('板块共振不足→孤板风险')
+        reasons.append("板块共振不足→孤板风险")
     score += min(follow_count * 4, 20)  # 跟风股数量权重 20
     if follow_count < 3:
-        reasons.append(f'跟风股{follow_count}只<3→梯队单薄')
+        reasons.append(f"跟风股{follow_count}只<3→梯队单薄")
     # 门控决策
     if score >= 70:
-        return {'pass': True, 'score': score, 'reason': '梯队质量合格→进入情绪周期定位'}
+        return {"pass": True, "score": score, "reason": "梯队质量合格→进入情绪周期定位"}
     elif score >= 50:
-        return {'pass': 'CONDITIONAL', 'score': score, 'reason': f'梯队质量中等({";".join(reasons)})→降仓50%'}
+        return {"pass": "CONDITIONAL", "score": score, "reason": f"梯队质量中等({';'.join(reasons)})→降仓50%"}
     else:
-        return {'pass': False, 'score': score, 'reason': f'梯队质量不合格({";".join(reasons)})→否决打板'}
+        return {"pass": False, "score": score, "reason": f"梯队质量不合格({';'.join(reasons)})→否决打板"}
 
 
-def classify_decision_v192(emotion_score: float, tech_score: float, phase: str, is_limit_down_rebound: bool = False) -> str:
+def classify_decision_v192(
+    emotion_score: float, tech_score: float, phase: str, is_limit_down_rebound: bool = False
+) -> str:
     """双引擎融合 7 类决策（v1.9.2 补第7类 REFLUSH_DIVE + 情绪周期门控切换）。
 
     §3.5 INVERSE_BOARD 是"地天反包"非"反核"，§3.12 反核无显式切换逻辑，本函数补全。
     """
-    if phase in ('冰点', '反核') and is_limit_down_rebound:  # 情绪周期门控：冰点/反核→反核路径
+    if phase in ("冰点", "反核") and is_limit_down_rebound:  # 情绪周期门控：冰点/反核→反核路径
         if emotion_score >= 40 and tech_score >= 60:
-            return 'REFLUSH_DIVE'  # 反核入场
-        return 'WAIT'
+            return "REFLUSH_DIVE"  # 反核入场
+        return "WAIT"
     # 打板路径（主升/疯狂期，原6类不变）
     threshold = PHASE_THRESHOLDS[phase]
     if emotion_score >= threshold and tech_score >= 60:
-        return 'BOARD' if phase in ('主升', '疯狂') else 'WATCH'
+        return "BOARD" if phase in ("主升", "疯狂") else "WATCH"
     elif emotion_score >= threshold * 0.8 and tech_score >= 70:
-        return 'CONTINUE'
+        return "CONTINUE"
     elif emotion_score >= 60 and tech_score >= 75:
-        return 'INVERSE_BOARD'
+        return "INVERSE_BOARD"
     elif emotion_score >= 40 and tech_score >= 50:
-        return 'WATCH'
+        return "WATCH"
     elif emotion_score < 20:
-        return 'WAIT'
+        return "WAIT"
     else:
-        return 'REJECT'
+        return "REJECT"

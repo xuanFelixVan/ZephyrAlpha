@@ -28,6 +28,7 @@ test_strategy_runner_mvp.py 的 E2E 覆盖），聚焦验证集成层：
 运行（无需盘中，历史 tick 随时可拉）：
   python scripts/tests/smoke_test_tick_backtest.py
 """
+
 from __future__ import annotations
 
 import sys
@@ -138,9 +139,17 @@ def main() -> int:
 
     # 11 必填字段（CTR-P1-016）
     required = [
-        "strategy_id", "start_date", "end_date", "idempotency_key",
-        "timestamp", "total_return", "annual_return",
-        "sharpe_ratio", "max_drawdown", "trades_count", "win_rate",
+        "strategy_id",
+        "start_date",
+        "end_date",
+        "idempotency_key",
+        "timestamp",
+        "total_return",
+        "annual_return",
+        "sharpe_ratio",
+        "max_drawdown",
+        "trades_count",
+        "win_rate",
     ]
     missing = [f for f in required if not hasattr(result, f)]
     if missing:

@@ -67,9 +67,9 @@ class EventFactorError(ZephyrBaseError):
 
 
 # ── 参数常量（G23/G10 待校准，26 号 §2.4 登记）──
-JUMP_ON_PEAD_WINDOW: Final[int] = 5          # 公告后窗口（交易日）
+JUMP_ON_PEAD_WINDOW: Final[int] = 5  # 公告后窗口（交易日）
 JUMP_ON_PEAD_THRESHOLD: Final[float] = 0.03  # 跳跃判定阈值（对齐 PEAD Inversion 3%）
-OVERNIGHT_TREND_WINDOW: Final[int] = 20      # 隔夜趋势滚动窗口（西部证券口径）
+OVERNIGHT_TREND_WINDOW: Final[int] = 20  # 隔夜趋势滚动窗口（西部证券口径）
 
 
 def compute_dreport(statutory_deadline: date, actual_disclosure_date: date) -> int:
@@ -153,9 +153,7 @@ def compute_overnight_trend(
     （数据质量归上游 DQ 治理）。
     """
     if len(opens) != len(closes):
-        raise EventFactorError(
-            f"compute_overnight_trend: 两序列长度不一致 opens={len(opens)} closes={len(closes)}"
-        )
+        raise EventFactorError(f"compute_overnight_trend: 两序列长度不一致 opens={len(opens)} closes={len(closes)}")
     if window < 1:
         raise EventFactorError(f"compute_overnight_trend: window 须 ≥1，实际 {window}")
     overnight_returns = opens / closes.shift(1) - 1.0

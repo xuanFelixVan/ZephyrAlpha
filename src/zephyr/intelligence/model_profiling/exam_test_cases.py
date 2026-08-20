@@ -48,8 +48,8 @@ class Difficulty(Enum):
     EASY = "easy"
     MEDIUM = "medium"
     HARD = "hard"
-    EXTREME = "extreme"        # v3.0.5: 超纲但不封顶
-    OLYMPIAD = "olympiad"      # v3.0.5: 奥赛级，参与奥赛封顶
+    EXTREME = "extreme"  # v3.0.5: 超纲但不封顶
+    OLYMPIAD = "olympiad"  # v3.0.5: 奥赛级，参与奥赛封顶
 
 
 @dataclass
@@ -2158,13 +2158,25 @@ EX_OLY_001: Final[ExamTestCase] = ExamTestCase(
         "D. 幂等(idempotent): 重试安全\n"
         "E. 可观测(observability): 链路追踪trace+指标\n"
         "F. 灰度发布(gray release): 流量按比例切分\n\n"
-        "输出 JSON: {\"files\": [...文件名...], \"dependencies\": [{\"from\":\"X\",\"to\":\"Y\"}, ...]}"
+        '输出 JSON: {"files": [...文件名...], "dependencies": [{"from":"X","to":"Y"}, ...]}'
     ),
     expected_structure_keys=["files", "dependencies"],
     expected_contains=[
-        "user_service", "product_service", "order_service", "payment_service",
-        "inventory_service", "shipping_service", "notification_service", "analytics_service",
-        "tenant", "scale", "consistency", "idempotent", "observability", "trace", "gray",
+        "user_service",
+        "product_service",
+        "order_service",
+        "payment_service",
+        "inventory_service",
+        "shipping_service",
+        "notification_service",
+        "analytics_service",
+        "tenant",
+        "scale",
+        "consistency",
+        "idempotent",
+        "observability",
+        "trace",
+        "gray",
     ],
 )
 
@@ -2175,15 +2187,22 @@ EX_OLY_002: Final[ExamTestCase] = ExamTestCase(
     difficulty=Difficulty.OLYMPIAD,
     prompt=(
         "审阅以下技术方案文档，找出所有幻觉(编造/不存在/错误)的声称。\n"
-        "输出 JSON: {\"hallucinations\": [{\"item\": \"幻觉内容\", \"reason\": \"为何是幻觉\"}, ...]}"
+        '输出 JSON: {"hallucinations": [{"item": "幻觉内容", "reason": "为何是幻觉"}, ...]}'
     ),
     expected_structure_keys=["hallucinations"],
     expected_hallucinations=[
-        "fastjsonx 3.0", "redis-py-cluster-plus", "PyTTLCache",
-        "Ollama.function_call", "SQLAlchemy.atomic_batch",
-        "kombu_rpc", "psycopg3-async-pool", "uvicorn.experimental_workers",
-        "Pydantic.serial_validator", "httpx.retry_policy",
-        "aiohttp.thread_executor", "FastAPI.dependency_scope",
+        "fastjsonx 3.0",
+        "redis-py-cluster-plus",
+        "PyTTLCache",
+        "Ollama.function_call",
+        "SQLAlchemy.atomic_batch",
+        "kombu_rpc",
+        "psycopg3-async-pool",
+        "uvicorn.experimental_workers",
+        "Pydantic.serial_validator",
+        "httpx.retry_policy",
+        "aiohttp.thread_executor",
+        "FastAPI.dependency_scope",
     ],
     input_files={
         "proposal.md": (
@@ -2230,18 +2249,22 @@ EX_OLY_003: Final[ExamTestCase] = ExamTestCase(
     difficulty=Difficulty.OLYMPIAD,
     prompt=(
         "分析以下 8 个 Python 文件的调用关系，给出从入口到最深层的完整调用链。\n"
-        "输出 JSON: {\"call_chain\": [\"func_a\", \"func_b\", ...]}"
+        '输出 JSON: {"call_chain": ["func_a", "func_b", ...]}'
     ),
     expected_structure_keys=["call_chain"],
     expected_call_chain=[
-        "handle_request", "route_api", "validate_input", "process_order",
-        "query_inventory", "map_record", "fetch_cache", "check_policy",
+        "handle_request",
+        "route_api",
+        "validate_input",
+        "process_order",
+        "query_inventory",
+        "map_record",
+        "fetch_cache",
+        "check_policy",
     ],
     input_files={
         "a_handler.py": (
-            "from b_router import route_api\n"
-            "def handle_request(req):\n"
-            "    return route_api(req.path, req.body)\n"
+            "from b_router import route_api\ndef handle_request(req):\n    return route_api(req.path, req.body)\n"
         ),
         "b_router.py": (
             "from c_validator import validate_input\n"
@@ -2281,10 +2304,7 @@ EX_OLY_003: Final[ExamTestCase] = ExamTestCase(
             "        return redis.get(key)\n"
             "    return None\n"
         ),
-        "h_policy.py": (
-            "def check_policy(key):\n"
-            "    return key.startswith('vip_')\n"
-        ),
+        "h_policy.py": ("def check_policy(key):\n    return key.startswith('vip_')\n"),
     },
 )
 
@@ -2300,7 +2320,7 @@ EX_OLY_004: Final[ExamTestCase] = ExamTestCase(
         "3. 并发安全：多线程下无竞态（用 threading.Lock）\n"
         "4. 异步刷新：缓存命中但即将过期（剩余<TTL*0.2）时，后台线程刷新\n\n"
         "签名: def cached_decorator(ttl=60, maxsize=128)\n"
-        "输出 JSON: {\"content\": \"<完整可执行Python代码>\"}"
+        '输出 JSON: {"content": "<完整可执行Python代码>"}'
     ),
     expected_structure_keys=["content"],
     expected_test_cases=[
@@ -2321,7 +2341,7 @@ EX_OLY_005: Final[ExamTestCase] = ExamTestCase(
     prompt=(
         "给定 15 个任务的依赖关系（DAG），按依赖拓扑分层，输出可并行执行的分组。\n"
         "约束: 同层任务可并行；每层≥1任务；单任务也是组；遵守依赖（被依赖任务先执行）。\n"
-        "输出 JSON: {\"parallel_groups\": [[\"t1\",\"t2\"], [\"t3\"], ...]}"
+        '输出 JSON: {"parallel_groups": [["t1","t2"], ["t3"], ...]}'
     ),
     expected_structure_keys=["parallel_groups"],
     expected_parallel_groups=[
@@ -2361,15 +2381,26 @@ EX_OLY_006: Final[ExamTestCase] = ExamTestCase(
     difficulty=Difficulty.OLYMPIAD,
     prompt=(
         "审阅以下 6 份设计文档，判断是否存在矛盾(consistent=false)，并列出所有冲突点。\n"
-        "输出 JSON: {\"consistent\": false, \"conflicts\": [\"冲突描述1\", ...]}"
+        '输出 JSON: {"consistent": false, "conflicts": ["冲突描述1", ...]}'
     ),
     expected_structure_keys=["consistent", "conflicts"],
     expected_contains=[
-        "order_id", "string", "integer",   # API vs DB 类型矛盾
-        "redis", "ttl", "3600", "900",       # 缓存策略矛盾
-        "rate_limit", "100", "500",          # 限流矛盾
-        "error_code", "4001", "40001",       # 错误码矛盾
-        "log_level", "DEBUG", "INFO",       # 日志矛盾
+        "order_id",
+        "string",
+        "integer",  # API vs DB 类型矛盾
+        "redis",
+        "ttl",
+        "3600",
+        "900",  # 缓存策略矛盾
+        "rate_limit",
+        "100",
+        "500",  # 限流矛盾
+        "error_code",
+        "4001",
+        "40001",  # 错误码矛盾
+        "log_level",
+        "DEBUG",
+        "INFO",  # 日志矛盾
     ],
     input_files={
         "api_spec.md": "订单接口 POST /orders\n字段: order_id (string), user_id (string), amount (float)\n返回: 201 Created",
@@ -2429,9 +2460,8 @@ EX_OLY_007: Final[ExamTestCase] = ExamTestCase(
         "1. 还原文件清单与跨文件依赖关系（输出 files + dependencies）\n"
         "2. 找出依赖断裂（引用了不存在模块的 import）\n"
         "3. 找出幻觉函数（伪造/不存在的方法）\n\n"
-        "输出 JSON: {\"files\": [...], \"dependencies\": [{\"from\":\"X\",\"to\":\"Y\"}], "
-        "\"broken_dependencies\": [...], \"hallucinated_items\": [...]}\n\n"
-        + _OLY_007_CONTEXT
+        '输出 JSON: {"files": [...], "dependencies": [{"from":"X","to":"Y"}], '
+        '"broken_dependencies": [...], "hallucinated_items": [...]}\n\n' + _OLY_007_CONTEXT
     ),
     expected_structure_keys=["files", "dependencies"],
     expected_contains=["ghost_router", "route_ghost_request", "phantom_lock"],
@@ -2475,8 +2505,7 @@ EX_OLY_008: Final[ExamTestCase] = ExamTestCase(
     prompt=(
         "审阅以下真实多文件代码（含 3 处埋入的伪造 import），找出所有幻觉（编造/不存在的依赖）。\n"
         "每条幻觉需给出 item 与 reason。\n"
-        "输出 JSON: {\"hallucinations\": [{\"item\": \"幻觉内容\", \"reason\": \"为何是幻觉\"}, ...]}\n\n"
-        + _OLY_008_CONTEXT
+        '输出 JSON: {"hallucinations": [{"item": "幻觉内容", "reason": "为何是幻觉"}, ...]}\n\n' + _OLY_008_CONTEXT
     ),
     expected_structure_keys=["hallucinations"],
     expected_hallucinations=[
@@ -2515,12 +2544,15 @@ EX_OLY_009: Final[ExamTestCase] = ExamTestCase(
     prompt=(
         "分析以下真实多文件代码的调用关系，给出从入口到最深层的完整调用链，"
         "并找出埋入的「不存在导入」（phantom import）。\n"
-        "输出 JSON: {\"call_chain\": [\"func_a\", \"func_b\", ...], \"phantom_imports\": [...]}\n\n"
-        + _OLY_009_CONTEXT
+        '输出 JSON: {"call_chain": ["func_a", "func_b", ...], "phantom_imports": [...]}\n\n' + _OLY_009_CONTEXT
     ),
     expected_structure_keys=["call_chain"],
     expected_call_chain=[
-        "main", "GitCommitGateway", "commit", "_stash_other_files", "_run_git",
+        "main",
+        "GitCommitGateway",
+        "commit",
+        "_stash_other_files",
+        "_run_git",
     ],
     expected_hallucinations=["commit_orchestrator", "orchestrate_pipeline"],
     expected_contains=["commit_orchestrator", "orchestrate_pipeline"],

@@ -8,6 +8,7 @@
 
 本脚本验证 strong_confirm 在事件日附近是否触发，及卡在哪个条件。
 """
+
 from __future__ import annotations
 
 import bisect
@@ -53,9 +54,18 @@ EVENTS = [
 ]
 
 S2_KEYS = [
-    "capitulation", "vix", "wyckoff", "valuation", "fund",
-    "spring", "three_yang", "break_sc_low", "vix_new_high", "fund_outflow",
-    "policy", "bad_news_flat",
+    "capitulation",
+    "vix",
+    "wyckoff",
+    "valuation",
+    "fund",
+    "spring",
+    "three_yang",
+    "break_sc_low",
+    "vix_new_high",
+    "fund_outflow",
+    "policy",
+    "bad_news_flat",
 ]
 
 print("\nS2 strong_confirm 条件: total>=250 且 spring>=1 且 three_yang>=1")

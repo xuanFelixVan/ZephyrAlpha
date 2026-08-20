@@ -40,21 +40,35 @@ __all__ = [
 class DabanInstantCircuitBreaker:
     """打板专用瞬时风控（v1.9.2 补，三触发器→瞬时熔断卖出）。"""
 
-    seal_collapse_threshold: float = 0.30    # 封单瞬间消失30%即熔断
+    seal_collapse_threshold: float = 0.30  # 封单瞬间消失30%即熔断
     quant_seat_hard_threshold: float = 0.70  # 量化席位买入占比>70%
     # 梯队断层动作集（spec 类属性，非 dataclass 字段）
-    echelon_fracture_actions = {'FRACTURE', 'LONE_DRAGON', 'COLLAPSE'}
+    echelon_fracture_actions = {"FRACTURE", "LONE_DRAGON", "COLLAPSE"}
 
-    def check_instant_break(self, position: dict, live_data: dict, echelon_status: str, quant_seat_ratio: float) -> dict:
+    def check_instant_break(
+        self, position: dict, live_data: dict, echelon_status: str, quant_seat_ratio: float
+    ) -> dict:
         """三触发器按序检查，任一命中→瞬时熔断全卖；全不命中→MONITOR。"""
-        seal_ratio = live_data.get('current_seal', 0) / max(live_data.get('initial_seal', 1), 1)
+        seal_ratio = live_data.get("current_seal", 0) / max(live_data.get("initial_seal", 1), 1)
         if seal_ratio < (1 - self.seal_collapse_threshold):  # 触发器①：封单崩塌
-            return {'trigger': 'SEAL_COLLAPSE', 'action': 'INSTANT_SELL', 'qty_ratio': 1.0,
-                    'reason': f'封单崩塌{(1 - seal_ratio):.0%}≥30%→瞬时熔断'}
+            return {
+                "trigger": "SEAL_COLLAPSE",
+                "action": "INSTANT_SELL",
+                "qty_ratio": 1.0,
+                "reason": f"封单崩塌{(1 - seal_ratio):.0%}≥30%→瞬时熔断",
+            }
         if echelon_status in self.echelon_fracture_actions:  # 触发器②：梯队断层
-            return {'trigger': 'ECHELON_FRACTURE', 'action': 'INSTANT_SELL', 'qty_ratio': 1.0,
-                    'reason': f'梯队{echelon_status}→瞬时熔断清仓'}
+            return {
+                "trigger": "ECHELON_FRACTURE",
+                "action": "INSTANT_SELL",
+                "qty_ratio": 1.0,
+                "reason": f"梯队{echelon_status}→瞬时熔断清仓",
+            }
         if quant_seat_ratio > self.quant_seat_hard_threshold:  # 触发器③：量化席位hard预警
-            return {'trigger': 'QUANT_SEAT_HARD', 'action': 'INSTANT_SELL', 'qty_ratio': 1.0,
-                    'reason': f'量化席位{quant_seat_ratio:.0%}>70%→瞬时熔断'}
-        return {'trigger': None, 'action': 'MONITOR'}
+            return {
+                "trigger": "QUANT_SEAT_HARD",
+                "action": "INSTANT_SELL",
+                "qty_ratio": 1.0,
+                "reason": f"量化席位{quant_seat_ratio:.0%}>70%→瞬时熔断",
+            }
+        return {"trigger": None, "action": "MONITOR"}

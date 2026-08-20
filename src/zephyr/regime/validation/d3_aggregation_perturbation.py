@@ -53,9 +53,9 @@ _logger = logging.getLogger(__name__)
 _EPS = 1e-12
 
 # 生产常数（10_regime_detector_spec §5.3.3 / regime_detector._compute_risk_signal）
-DEFAULT_RESONANCE_STEP = 0.05   # 共振惩罚步长
+DEFAULT_RESONANCE_STEP = 0.05  # 共振惩罚步长
 DEFAULT_RESONANCE_FLOOR = 0.80  # 共振惩罚下限
-DEFAULT_RECOVERY_CAP = 0.25     # 机会恢复上限
+DEFAULT_RECOVERY_CAP = 0.25  # 机会恢复上限
 _RISK_PARAM_IDS = tuple(list(range(1, 11)) + [12])  # #1-#10/#12（#11/#13 走机会恢复）
 
 
@@ -117,9 +117,7 @@ def aggregate_risk_signal(
     resonance = max(resonance_floor, 1.0 - resonance_step * max(0, anomaly_count - 1))
     recovery = 0.0
     if isinstance(opportunity, dict):
-        recovery = float(opportunity.get("news_ghost", 0.0)) + float(
-            opportunity.get("bad_news_flat", 0.0)
-        )
+        recovery = float(opportunity.get("news_ghost", 0.0)) + float(opportunity.get("bad_news_flat", 0.0))
     recovery = min(recovery, recovery_cap)
     return max(lower, min(upper, risk_base * resonance + recovery))
 

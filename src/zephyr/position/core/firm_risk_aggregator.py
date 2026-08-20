@@ -137,19 +137,19 @@ from datetime import datetime
 from typing import Any, Callable
 
 # ── 常量（参数来源：31_position_sizing §2.4）──
-SINGLE_NAME_CAP = 0.08           # 单票硬上限 8%（总资金口径，§2.4）
-SECTOR_DEVIATION_CAP = 0.10      # 单行业偏离基准 ±10%（§2.5.1）
+SINGLE_NAME_CAP = 0.08  # 单票硬上限 8%（总资金口径，§2.4）
+SECTOR_DEVIATION_CAP = 0.10  # 单行业偏离基准 ±10%（§2.5.1）
 SECTOR_DEVIATION_CAP_OVERLAY = 0.15  # 叠加态 ±15%（板块轮动 overlay 激活时）
-SECTOR_ABSOLUTE_CAP = 0.30       # 单行业绝对上限 30%（§2.5.1）
-CASH_SYMBOL = "CASH"             # 现金虚拟标的（§2.4 CASH 豁免裁剪）
+SECTOR_ABSOLUTE_CAP = 0.30  # 单行业绝对上限 30%（§2.5.1）
+CASH_SYMBOL = "CASH"  # 现金虚拟标的（§2.4 CASH 豁免裁剪）
 
 # 流动性裁剪阈值（31号 §2.4.4 ADV 口径）
-LIQUIDITY_SEVERE_PCT = 0.20      # 严重档：持仓 > 20% ADV → 削到 20% ADV
-LIQUIDITY_MODERATE_PCT = 0.10    # 削半档：持仓 > 10% ADV → 削半
+LIQUIDITY_SEVERE_PCT = 0.20  # 严重档：持仓 > 20% ADV → 削到 20% ADV
+LIQUIDITY_MODERATE_PCT = 0.10  # 削半档：持仓 > 10% ADV → 削半
 
 # tail_risk 四轴质量分档阈值（§6 CVaR 接口对齐，CVaR/VaR 比值启发式：
 # 正态 95% 下 ES/VaR≈1.13；厚尾分布比值走高）
-TAIL_QUALITY_NORMAL_MAX = 1.25   # ratio ≤ 1.25 → normal
+TAIL_QUALITY_NORMAL_MAX = 1.25  # ratio ≤ 1.25 → normal
 TAIL_QUALITY_ELEVATED_MAX = 1.50  # ratio ≤ 1.50 → elevated；> 1.50 → heavy_tail
 
 
@@ -211,9 +211,9 @@ def build_tail_risk_check(
 class FirmTarget:
     """单标的汇总后目标（含各策略贡献明细）。"""
 
-    target_weight: float                 # 裁剪后最终权重
-    contributions: dict[str, float]      # {strategy_id: 贡献权重}（归因用）
-    cut_ratio: float                     # 被裁剪比例（0=未裁剪，0.2=削了20%）
+    target_weight: float  # 裁剪后最终权重
+    contributions: dict[str, float]  # {strategy_id: 贡献权重}（归因用）
+    cut_ratio: float  # 被裁剪比例（0=未裁剪，0.2=削了20%）
 
 
 @dataclass(frozen=True)
@@ -221,9 +221,9 @@ class ConflictRecord:
     """冲突标的净额处理记录（一策略买一策略卖）。"""
 
     symbol: str
-    buy_strategies: dict[str, float]     # {strategy_id: 买方权重}
-    sell_strategies: dict[str, float]    # {strategy_id: 卖方权重}
-    net_weight: float                    # 净额
+    buy_strategies: dict[str, float]  # {strategy_id: 买方权重}
+    sell_strategies: dict[str, float]  # {strategy_id: 卖方权重}
+    net_weight: float  # 净额
 
 
 @dataclass(frozen=True)
@@ -234,10 +234,10 @@ class FirmTargetPortfolio:
     """
 
     firm_positions: dict[str, FirmTarget]
-    total_exposure: float                # 所有标的 target_weight 之和
-    total_budget: float                  # 所有策略 budget 之和
-    cash_ratio: float                    # = total_budget − total_exposure
-    constraint_checks: dict[str, Any]    # 单票/行业/总仓位检查结果（含是否触发裁剪）
+    total_exposure: float  # 所有标的 target_weight 之和
+    total_budget: float  # 所有策略 budget 之和
+    cash_ratio: float  # = total_budget − total_exposure
+    constraint_checks: dict[str, Any]  # 单票/行业/总仓位检查结果（含是否触发裁剪）
     conflicts_resolved: list[ConflictRecord] = field(default_factory=list)
     degraded: bool = False
     created_at: datetime = field(default_factory=datetime.now)
@@ -252,10 +252,12 @@ class PreKellyResult:
     交 MOD-POS-001 做 Kelly 精裁决（31号 §2.3.4 合成规则消费 summed_weights[symbol] 作为 w_i^sum）。
     """
 
-    summed_weights: dict[str, float]          # symbol → 归一后权重（budget 口径，含净额截断）
-    conflicts: list[dict[str, Any]]           # ConflictRecord 列表（§2.3 冲突标的净额处理记录）
-    total_exposure_pre_kelly: float           # 求和后总暴露（sum of summed_weights，供 Kelly 层 pro-rata 参考）
-    contributions: dict[str, dict[str, float]]  # symbol → {strategy_id: 贡献权重}（§2.2 归因用，须透传给 post_kelly_clip）
+    summed_weights: dict[str, float]  # symbol → 归一后权重（budget 口径，含净额截断）
+    conflicts: list[dict[str, Any]]  # ConflictRecord 列表（§2.3 冲突标的净额处理记录）
+    total_exposure_pre_kelly: float  # 求和后总暴露（sum of summed_weights，供 Kelly 层 pro-rata 参考）
+    contributions: dict[
+        str, dict[str, float]
+    ]  # symbol → {strategy_id: 贡献权重}（§2.2 归因用，须透传给 post_kelly_clip）
 
 
 class FirmRiskAggregator:
@@ -399,9 +401,7 @@ class FirmRiskAggregator:
         raw_summed, contributions = self._sum_by_symbol(targets, total_budget)
 
         # ── Step 2: 冲突标的净额处理（§2.3）──
-        summed_weights, conflicts = self._resolve_conflicts(
-            raw_summed, contributions, current_holdings
-        )
+        summed_weights, conflicts = self._resolve_conflicts(raw_summed, contributions, current_holdings)
 
         total_exposure_pre_kelly = sum(summed_weights.values())
 
@@ -478,21 +478,20 @@ class FirmRiskAggregator:
         self._clip_single_name(clipped, cut_ratios, constraint_checks)
 
         # ══ Step 1b: 流动性硬上限裁剪（§2.4.4 ADV 口径）══
-        self._clip_liquidity(
-            clipped, cut_ratios, constraint_checks, adv_data, industry_map, total_budget
-        )
+        self._clip_liquidity(clipped, cut_ratios, constraint_checks, adv_data, industry_map, total_budget)
 
         # ══ Step 2: 行业硬约束裁剪（§2.5.1 偏离 + 绝对上限）══
         self._clip_sector(
-            clipped, cut_ratios, constraint_checks, industry_map,
+            clipped,
+            cut_ratios,
+            constraint_checks,
+            industry_map,
             sector_benchmark_weights=sector_benchmark_weights,
             sector_overlay_active=sector_overlay_active,
         )
 
         # ══ Step 3: 总仓位硬约束裁剪（§2.5.2 等比缩放）══
-        total_exposure = self._clip_total_exposure(
-            clipped, cut_ratios, constraint_checks, regime_cap
-        )
+        total_exposure = self._clip_total_exposure(clipped, cut_ratios, constraint_checks, regime_cap)
 
         # ══ Step 4: 现金管理（CASH 残差计算，§2.5）══
         cash_weight = total_budget - total_exposure
@@ -519,12 +518,12 @@ class FirmRiskAggregator:
         # ── degraded 降级标记（§2.1 触发条件 5 条）──
         conflicts_resolved = conflicts or []
         degraded = (
-            any(c.get("truncated", False) for c in conflicts_resolved)      # 条件1: 冲突净额截断
-            or constraint_checks["single_name"]["triggered"]                # 条件2: 单票裁剪触发
-            or constraint_checks["sector"]["triggered"]                     # 条件3: 行业裁剪触发
-            or constraint_checks["total_exposure"]["triggered"]            # 条件4: 总仓位裁剪触发
-            or constraint_checks["liquidity_cap"]["triggered"]             # 条件4b: 流动性裁剪触发
-            or kelly_param_source == "historical_fallback"                 # 条件5: Kelly 参数降级传导
+            any(c.get("truncated", False) for c in conflicts_resolved)  # 条件1: 冲突净额截断
+            or constraint_checks["single_name"]["triggered"]  # 条件2: 单票裁剪触发
+            or constraint_checks["sector"]["triggered"]  # 条件3: 行业裁剪触发
+            or constraint_checks["total_exposure"]["triggered"]  # 条件4: 总仓位裁剪触发
+            or constraint_checks["liquidity_cap"]["triggered"]  # 条件4b: 流动性裁剪触发
+            or kelly_param_source == "historical_fallback"  # 条件5: Kelly 参数降级传导
         )
 
         return {
@@ -606,9 +605,7 @@ class FirmRiskAggregator:
                 if symbol not in contributions:
                     contributions[symbol] = {}
                 # 记录策略贡献方向（正=买，负=卖）
-                contributions[symbol][strategy_id] = (
-                    contributions[symbol].get(strategy_id, 0.0) + account_weight
-                )
+                contributions[symbol][strategy_id] = contributions[symbol].get(strategy_id, 0.0) + account_weight
 
         return raw_summed, contributions
 
@@ -646,9 +643,7 @@ class FirmRiskAggregator:
                     final_weight = max(0.0, net_weight + holdings_weight)
                     conflict_record["truncated"] = True
                     conflict_record["final_weight"] = final_weight
-                    conflict_record["truncated_amount"] = (
-                        net_weight + holdings_weight - final_weight
-                    )
+                    conflict_record["truncated_amount"] = net_weight + holdings_weight - final_weight
                     conflicts.append(conflict_record)
                     summed_weights[symbol] = final_weight
                 else:
@@ -680,11 +675,13 @@ class FirmRiskAggregator:
                 clipped[symbol] = cap
                 cut_ratios[symbol] = cut_ratio
                 constraint_checks["single_name"]["triggered"] = True
-                constraint_checks["single_name"]["cuts"].append({
-                    "symbol": symbol,
-                    "cut_ratio": cut_ratio,
-                    "capped_at": cap,
-                })
+                constraint_checks["single_name"]["cuts"].append(
+                    {
+                        "symbol": symbol,
+                        "cut_ratio": cut_ratio,
+                        "capped_at": cap,
+                    }
+                )
 
     def _clip_liquidity(
         self,
@@ -712,11 +709,7 @@ class FirmRiskAggregator:
             adv_val = adv_info.get("adv_20d_p25", 0)
             if adv_val > 0:
                 sector_advs.setdefault(sec, []).append(adv_val)
-        sector_adv_median = {
-            sec: sorted(vals)[len(vals) // 2]
-            for sec, vals in sector_advs.items()
-            if vals
-        }
+        sector_adv_median = {sec: sorted(vals)[len(vals) // 2] for sec, vals in sector_advs.items() if vals}
 
         for symbol in list(clipped.keys()):
             adv_i = adv_data.get(symbol, {}).get("adv_20d_p25", 0)
@@ -733,27 +726,29 @@ class FirmRiskAggregator:
                 # 严重档：削到 20% ADV
                 old = clipped[symbol]
                 clipped[symbol] = old * (LIQUIDITY_SEVERE_PCT / adv_pct)
-                cut_ratios[symbol] = 1.0 - (1.0 - cut_ratios.get(symbol, 0)) * (
-                    LIQUIDITY_SEVERE_PCT / adv_pct
-                )
+                cut_ratios[symbol] = 1.0 - (1.0 - cut_ratios.get(symbol, 0)) * (LIQUIDITY_SEVERE_PCT / adv_pct)
                 constraint_checks["liquidity_cap"]["triggered"] = True
-                constraint_checks["liquidity_cap"]["cuts"].append({
-                    "symbol": symbol,
-                    "tier": "severe",
-                    "adv_pct": adv_pct,
-                    "capped_at_adv": LIQUIDITY_SEVERE_PCT,
-                })
+                constraint_checks["liquidity_cap"]["cuts"].append(
+                    {
+                        "symbol": symbol,
+                        "tier": "severe",
+                        "adv_pct": adv_pct,
+                        "capped_at_adv": LIQUIDITY_SEVERE_PCT,
+                    }
+                )
             elif adv_pct > LIQUIDITY_MODERATE_PCT:
                 # 削半档
                 clipped[symbol] *= 0.5
                 cut_ratios[symbol] = 1.0 - (1.0 - cut_ratios.get(symbol, 0)) * 0.5
                 constraint_checks["liquidity_cap"]["triggered"] = True
-                constraint_checks["liquidity_cap"]["cuts"].append({
-                    "symbol": symbol,
-                    "tier": "moderate",
-                    "adv_pct": adv_pct,
-                    "halved": True,
-                })
+                constraint_checks["liquidity_cap"]["cuts"].append(
+                    {
+                        "symbol": symbol,
+                        "tier": "moderate",
+                        "adv_pct": adv_pct,
+                        "halved": True,
+                    }
+                )
 
     def _clip_sector(
         self,
@@ -806,14 +801,16 @@ class FirmRiskAggregator:
                         cut_ratios[symbol] = 1.0 - (1.0 - cut_ratios.get(symbol, 0)) * scale
                     sector_weights[sector] = limit
                     constraint_checks["sector"]["triggered"] = True
-                    constraint_checks["sector"]["cuts"].append({
-                        "sector": sector,
-                        "type": "deviation_cap",
-                        "scale": scale,
-                        "benchmark": benchmark,
-                        "dev_cap": dev_cap,
-                        "capped_at": limit,
-                    })
+                    constraint_checks["sector"]["cuts"].append(
+                        {
+                            "sector": sector,
+                            "type": "deviation_cap",
+                            "scale": scale,
+                            "benchmark": benchmark,
+                            "dev_cap": dev_cap,
+                            "capped_at": limit,
+                        }
+                    )
         else:
             # 退化路径：D-FACTOR 行业基准权重未就绪（§6），只做绝对 30%
             constraint_checks["sector"]["deviation"]["benchmark_missing"] = True
@@ -827,12 +824,14 @@ class FirmRiskAggregator:
                     cut_ratios[symbol] = 1.0 - (1.0 - cut_ratios.get(symbol, 0)) * scale
                 sector_weights[sector] = cap
                 constraint_checks["sector"]["triggered"] = True
-                constraint_checks["sector"]["cuts"].append({
-                    "sector": sector,
-                    "type": "absolute_cap",
-                    "scale": scale,
-                    "capped_at": cap,
-                })
+                constraint_checks["sector"]["cuts"].append(
+                    {
+                        "sector": sector,
+                        "type": "absolute_cap",
+                        "scale": scale,
+                        "capped_at": cap,
+                    }
+                )
 
     def _clip_total_exposure(
         self,
@@ -859,9 +858,7 @@ class FirmRiskAggregator:
             total_exposure = regime_cap
         return total_exposure
 
-    def _dict_to_firm_target_portfolio(
-        self, result_dict: dict[str, Any]
-    ) -> FirmTargetPortfolio:
+    def _dict_to_firm_target_portfolio(self, result_dict: dict[str, Any]) -> FirmTargetPortfolio:
         """将 post_kelly_clip 的 dict 输出转换为 FirmTargetPortfolio dataclass。"""
         firm_positions: dict[str, FirmTarget] = {}
         for symbol, pos_data in result_dict["firm_positions"].items():
@@ -874,12 +871,14 @@ class FirmRiskAggregator:
         # conflicts_resolved 中 dict → ConflictRecord
         conflicts_resolved: list[ConflictRecord] = []
         for c in result_dict.get("conflicts_resolved", []):
-            conflicts_resolved.append(ConflictRecord(
-                symbol=c["symbol"],
-                buy_strategies=dict(c.get("buy_strategies", {})),
-                sell_strategies=dict(c.get("sell_strategies", {})),
-                net_weight=c.get("net_weight", 0.0),
-            ))
+            conflicts_resolved.append(
+                ConflictRecord(
+                    symbol=c["symbol"],
+                    buy_strategies=dict(c.get("buy_strategies", {})),
+                    sell_strategies=dict(c.get("sell_strategies", {})),
+                    net_weight=c.get("net_weight", 0.0),
+                )
+            )
 
         return FirmTargetPortfolio(
             firm_positions=firm_positions,

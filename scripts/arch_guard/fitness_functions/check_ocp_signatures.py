@@ -82,5 +82,6 @@ def main() -> int:
     print(f"OK: {len(expected_ids)} 条冻结契约指纹一致（INV-009）")
     return 0
 
+
 if __name__ == "__main__":
     sys.exit(main())

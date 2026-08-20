@@ -161,9 +161,7 @@ class PerToolRateLimiter:
         self._lock = threading.Lock()
         self._config = config or {}
         # 仅在无显式参数时从 mcp.json 加载 per-server 配置
-        self._per_server: dict[str, tuple[float, float]] = (
-            {} if explicit else _load_mcp_rate_limits()
-        )
+        self._per_server: dict[str, tuple[float, float]] = {} if explicit else _load_mcp_rate_limits()
 
     @property
     def default_qps(self):
@@ -175,7 +173,6 @@ class PerToolRateLimiter:
         """写入：default_qps（Stage 4 公共化）。"""
         self._default_qps = value
 
-
     @property
     def default_burst(self):
         """只读：default_burst（Stage 4 公共化）。"""
@@ -185,7 +182,6 @@ class PerToolRateLimiter:
     def default_burst(self, value):
         """写入：default_burst（Stage 4 公共化）。"""
         self._default_burst = value
-
 
     def _make_key(self, tool_name: str, client_id: str | None = None) -> str:
         if client_id is None:
@@ -209,7 +205,8 @@ class PerToolRateLimiter:
                     qps = qps if qps is not None else resolved_qps
                     burst = burst if burst is not None else resolved_burst
                 self._buckets[key] = RateLimiter(
-                    qps, burst_size=burst,
+                    qps,
+                    burst_size=burst,
                 )
             return self._buckets[key]
 

@@ -59,18 +59,36 @@ class TestTripleTrustAnchorGateInstantiation:
 
 class TestCalculateTrust:
     def test_all_true(self):
-        assert TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": True, "audit_ok": True}) == TrustLevel.FULL
+        assert (
+            TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": True, "audit_ok": True})
+            == TrustLevel.FULL
+        )
 
     def test_two_true(self):
-        assert TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": True, "audit_ok": False}) == TrustLevel.PARTIAL
-        assert TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": False, "audit_ok": True}) == TrustLevel.PARTIAL
-        assert TripleTrustAnchorGate.calculate_trust({"git_ok": False, "test_ok": True, "audit_ok": True}) == TrustLevel.PARTIAL
+        assert (
+            TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": True, "audit_ok": False})
+            == TrustLevel.PARTIAL
+        )
+        assert (
+            TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": False, "audit_ok": True})
+            == TrustLevel.PARTIAL
+        )
+        assert (
+            TripleTrustAnchorGate.calculate_trust({"git_ok": False, "test_ok": True, "audit_ok": True})
+            == TrustLevel.PARTIAL
+        )
 
     def test_one_true(self):
-        assert TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": False, "audit_ok": False}) == TrustLevel.BROKEN
+        assert (
+            TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": False, "audit_ok": False})
+            == TrustLevel.BROKEN
+        )
 
     def test_none_true(self):
-        assert TripleTrustAnchorGate.calculate_trust({"git_ok": False, "test_ok": False, "audit_ok": False}) == TrustLevel.BROKEN
+        assert (
+            TripleTrustAnchorGate.calculate_trust({"git_ok": False, "test_ok": False, "audit_ok": False})
+            == TrustLevel.BROKEN
+        )
 
 
 class TestRecommend:

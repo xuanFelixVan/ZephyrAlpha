@@ -44,6 +44,7 @@ COLD_MODULES = {"data", "pf_core", "research", "integration"}  # noqa: gate-voca
 
 BLOCKING_PATTERNS = ["requests.get", "requests.post", "urllib.request", "subprocess.run", "subprocess.call"]
 
+
 def main() -> int:
     print("INV-019 Warm→Cold 异步通信检查\n")
 
@@ -74,6 +75,7 @@ def main() -> int:
 
     print("[OK] Warm→Cold 无同步阻塞违规")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

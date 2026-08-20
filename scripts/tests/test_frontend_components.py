@@ -23,6 +23,7 @@
   4. position_monitor: 持仓 + T+1标记
   5. trade_panel: 风控校验 + 紧急停止 + human_gated
 """
+
 from datetime import datetime
 from decimal import Decimal
 
@@ -68,6 +69,7 @@ def _ok(name, cond, detail=""):
 
 def test_backtest_results():
     print("=== Test 1: backtest_results ===")
+
     # Mock BacktestResult (CTR-P1-016, 11必填字段)
     class MockBR:
         annual_return = 0.18
@@ -133,16 +135,18 @@ def test_tick_replay():
             price = 10.45 - (i - 10) * 0.03  # 回落 10.45 → 10.15
         else:
             price = 10.15 + (i - 20) * 0.01
-        ticks.append({
-            "timestamp": str(ts),
-            "last_price": price,
-            "ask_price": [price + 0.01 * j for j in range(1, 6)],
-            "bid_price": [price - 0.01 * j for j in range(1, 6)],
-            "ask_vol": [100 * j for j in range(1, 6)],
-            "bid_vol": [100 * (6 - j) for j in range(1, 6)],
-            "volume": 1000,
-            "amount": 1000 * price,
-        })
+        ticks.append(
+            {
+                "timestamp": str(ts),
+                "last_price": price,
+                "ask_price": [price + 0.01 * j for j in range(1, 6)],
+                "bid_price": [price - 0.01 * j for j in range(1, 6)],
+                "ask_vol": [100 * j for j in range(1, 6)],
+                "bid_vol": [100 * (6 - j) for j in range(1, 6)],
+                "volume": 1000,
+                "amount": 1000 * price,
+            }
+        )
 
     # 分页：page=1, page_size=15 → 前15个 Tick
     data = fetch_tick_replay(ticks, symbol="600000.SH", page=1, page_size=15)
@@ -166,6 +170,7 @@ def test_tick_replay():
 
 def test_order_book():
     print("=== Test 3: order_book ===")
+
     # Mock MiniQmtQuoteProvider
     class MockProvider:
         def get_order_book(self, symbol):
@@ -187,7 +192,7 @@ def test_order_book():
     # bid_total = 150+250+350+450+550 = 1750
     # ask_total = 100+200+300+400+500 = 1500
     # pressure = 1750 / 1500 ≈ 1.1667
-    ok3 = _ok(f"压力比计算 ({data.pressure_ratio:.4f})", abs(data.pressure_ratio - 1750/1500) < 0.001)
+    ok3 = _ok(f"压力比计算 ({data.pressure_ratio:.4f})", abs(data.pressure_ratio - 1750 / 1500) < 0.001)
 
     payload = render_order_book(data)
     ok4 = _ok("render 返回 dict 含5档", len(payload["ask_price"]) == 5)
@@ -201,6 +206,7 @@ def test_order_book():
     class BadProvider:
         def get_order_book(self, symbol):
             raise RuntimeError("连接失败")
+
     data_err = fetch_order_book(BadProvider(), "600000.SH")
     ok7 = _ok("Provider抛异常返回空 OrderBookData", not data_err.ask_price)
 
@@ -209,6 +215,7 @@ def test_order_book():
 
 def test_position_monitor():
     print("=== Test 4: position_monitor ===")
+
     # Mock PositionSnapshot
     class MockSnapshot:
         as_of_timestamp = datetime(2024, 1, 15, 14, 0, 0)
@@ -286,6 +293,7 @@ def test_trade_panel():
     class MockEngine:
         def __init__(self):
             self.submitted = []
+
         def submit_order(self, order):
             self.submitted.append(order)
             return "broker-001"
@@ -300,10 +308,42 @@ def test_trade_panel():
 
     # 5.5 紧急停止
     orders = [
-        OrderItem(order_id="o1", broker_order_id="b1", symbol="600000.SH", side="buy", quantity=100, price=10.5, status="SUBMITTED"),
-        OrderItem(order_id="o2", broker_order_id="b2", symbol="600000.SH", side="buy", quantity=100, price=10.5, status="FILLED"),
-        OrderItem(order_id="o3", broker_order_id="b3", symbol="600000.SH", side="buy", quantity=100, price=10.5, status="PARTIALLY_FILLED"),
-        OrderItem(order_id="o4", broker_order_id="b4", symbol="600000.SH", side="buy", quantity=100, price=10.5, status="PENDING"),
+        OrderItem(
+            order_id="o1",
+            broker_order_id="b1",
+            symbol="600000.SH",
+            side="buy",
+            quantity=100,
+            price=10.5,
+            status="SUBMITTED",
+        ),
+        OrderItem(
+            order_id="o2",
+            broker_order_id="b2",
+            symbol="600000.SH",
+            side="buy",
+            quantity=100,
+            price=10.5,
+            status="FILLED",
+        ),
+        OrderItem(
+            order_id="o3",
+            broker_order_id="b3",
+            symbol="600000.SH",
+            side="buy",
+            quantity=100,
+            price=10.5,
+            status="PARTIALLY_FILLED",
+        ),
+        OrderItem(
+            order_id="o4",
+            broker_order_id="b4",
+            symbol="600000.SH",
+            side="buy",
+            quantity=100,
+            price=10.5,
+            status="PENDING",
+        ),
     ]
 
     class MockEngineCancel:
@@ -325,8 +365,21 @@ def test_trade_panel():
         DEFAULT_GREY_CAPITAL == 10000.0 and DEFAULT_GREY_MAX_QTY == 100,
     )
 
-    return all([ok_pass, ok_qty, ok_step, ok_grey, ok_cash, ok_risk,
-                ok_unconfirmed, ok_submit, ok_emergency, ok_render, ok_grey_const])
+    return all(
+        [
+            ok_pass,
+            ok_qty,
+            ok_step,
+            ok_grey,
+            ok_cash,
+            ok_risk,
+            ok_unconfirmed,
+            ok_submit,
+            ok_emergency,
+            ok_render,
+            ok_grey_const,
+        ]
+    )
 
 
 def main():

@@ -16,9 +16,7 @@ from zephyr.infrastructure.a2a_protocol.governance.governance_adapter import MCP
 
 # #ARCH-083：MCPSource(track=)、MCPAdapter.probe_track/get_features_for_track
 # 缺席——代码侧缺口待裁定，全文件 xfail 留痕（strict=False）。
-pytestmark = pytest.mark.xfail(
-    strict=False, reason="#ARCH-083 mcp_adapter 窄实现 vs 宽契约，待裁定"
-)
+pytestmark = pytest.mark.xfail(strict=False, reason="#ARCH-083 mcp_adapter 窄实现 vs 宽契约，待裁定")
 
 
 class TestMCPSource:

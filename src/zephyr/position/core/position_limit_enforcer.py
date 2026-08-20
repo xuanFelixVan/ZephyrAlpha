@@ -184,9 +184,9 @@ logger = logging.getLogger(__name__)
 class PositionAction(str, Enum):
     """持仓动作。"""
 
-    OPEN = "OPEN"      # 新开仓
-    ADD = "ADD"        # 加仓
-    HOLD = "HOLD"      # 持有
+    OPEN = "OPEN"  # 新开仓
+    ADD = "ADD"  # 加仓
+    HOLD = "HOLD"  # 持有
     REDUCE = "REDUCE"  # 减仓
 
 
@@ -194,17 +194,21 @@ class LimitVerdict(str, Enum):
     """限仓裁决级别 (严重度递增)。"""
 
     PASS = "PASS"
-    P4_WARN = "P4_WARN"                  # 建议性告警
-    P3_BLOCK_TRADE = "P3_BLOCK_TRADE"    # 否决单笔 (Hard Block)
-    P2_BLOCK_NEW = "P2_BLOCK_NEW"        # 否决新开仓
+    P4_WARN = "P4_WARN"  # 建议性告警
+    P3_BLOCK_TRADE = "P3_BLOCK_TRADE"  # 否决单笔 (Hard Block)
+    P2_BLOCK_NEW = "P2_BLOCK_NEW"  # 否决新开仓
     P1_FORCE_REDUCE = "P1_FORCE_REDUCE"  # 强制减仓
-    P0_KILL_SWITCH = "P0_KILL_SWITCH"    # Kill Switch 全否决
+    P0_KILL_SWITCH = "P0_KILL_SWITCH"  # Kill Switch 全否决
 
     @property
     def severity(self) -> int:
         return {
-            "PASS": 0, "P4_WARN": 1, "P3_BLOCK_TRADE": 2,
-            "P2_BLOCK_NEW": 3, "P1_FORCE_REDUCE": 4, "P0_KILL_SWITCH": 5,
+            "PASS": 0,
+            "P4_WARN": 1,
+            "P3_BLOCK_TRADE": 2,
+            "P2_BLOCK_NEW": 3,
+            "P1_FORCE_REDUCE": 4,
+            "P0_KILL_SWITCH": 5,
         }[self.value]
 
     @classmethod
@@ -234,12 +238,12 @@ class InvalidPositionPlanError(ZephyrBaseError):
 class PositionLimitConfig:
     """限仓约束配置 (设计真源 §1.3 POS-10)。"""
 
-    single_instrument_cap: float = 0.05        # 单票 ≤ 5% NAV
-    sector_absolute_cap: float = 0.30          # 行业 ≤ 30% (绝对)
-    sector_baseline_deviation: float = 0.10    # 行业 基准 ±10%
-    total_position_cap: float = 1.0            # 总仓位上限
-    loss_add_block_threshold: float = 0.08     # 持仓亏损 > 8% → 禁止加仓
-    stress_loss_threshold: float = 0.15        # 压力测试: 亏损 > 15% NAV
+    single_instrument_cap: float = 0.05  # 单票 ≤ 5% NAV
+    sector_absolute_cap: float = 0.30  # 行业 ≤ 30% (绝对)
+    sector_baseline_deviation: float = 0.10  # 行业 基准 ±10%
+    total_position_cap: float = 1.0  # 总仓位上限
+    loss_add_block_threshold: float = 0.08  # 持仓亏损 > 8% → 禁止加仓
+    stress_loss_threshold: float = 0.15  # 压力测试: 亏损 > 15% NAV
 
     def __post_init__(self) -> None:
         for name, val in (
@@ -264,7 +268,7 @@ class PositionEntry:
     """单只标的持仓方案条目。"""
 
     symbol: str
-    weight: float                # 占 NAV 权重
+    weight: float  # 占 NAV 权重
     sector: str
     action: PositionAction = PositionAction.HOLD
     existing_pnl_pct: float = 0.0  # 现有持仓未实现盈亏% (负=亏损)
@@ -374,10 +378,15 @@ class PositionLimitEnforcer:
 
         # P0: Kill Switch 短路 (硬边界, 不可绕过)
         if kill_switch_active:
-            violations.append(LimitViolation(
-                rule="kill_switch_active", dimension="kill_switch",
-                value=1.0, threshold=0.0, verdict=LimitVerdict.P0_KILL_SWITCH,
-            ))
+            violations.append(
+                LimitViolation(
+                    rule="kill_switch_active",
+                    dimension="kill_switch",
+                    value=1.0,
+                    threshold=0.0,
+                    verdict=LimitVerdict.P0_KILL_SWITCH,
+                )
+            )
             # Kill Switch 短路: 直接返回 P0 (不再检查其他)
             return LimitCheckResult(
                 overall_verdict=LimitVerdict.P0_KILL_SWITCH,
@@ -389,20 +398,29 @@ class PositionLimitEnforcer:
         # P1: 总仓位 > 上限 → 强制减仓
         total = plan.total_position
         if total > cfg.total_position_cap:
-            violations.append(LimitViolation(
-                rule="total_position_exceeded", dimension="total_position",
-                value=total, threshold=cfg.total_position_cap,
-                verdict=LimitVerdict.P1_FORCE_REDUCE,
-            ))
+            violations.append(
+                LimitViolation(
+                    rule="total_position_exceeded",
+                    dimension="total_position",
+                    value=total,
+                    threshold=cfg.total_position_cap,
+                    verdict=LimitVerdict.P1_FORCE_REDUCE,
+                )
+            )
 
         # P2: 单票 > 上限 (对 OPEN/ADD 动作)
         for p in plan.positions:
             if p.action in (PositionAction.OPEN, PositionAction.ADD) and p.weight > cfg.single_instrument_cap:
-                violations.append(LimitViolation(
-                    rule="single_instrument_exceeded", dimension="single_instrument",
-                    value=p.weight, threshold=cfg.single_instrument_cap,
-                    verdict=LimitVerdict.P2_BLOCK_NEW, symbol=p.symbol,
-                ))
+                violations.append(
+                    LimitViolation(
+                        rule="single_instrument_exceeded",
+                        dimension="single_instrument",
+                        value=p.weight,
+                        threshold=cfg.single_instrument_cap,
+                        verdict=LimitVerdict.P2_BLOCK_NEW,
+                        symbol=p.symbol,
+                    )
+                )
 
         # P2: 行业集中度 (绝对上限 + 基准偏离)
         sector_weights: dict[str, float] = defaultdict(float)
@@ -410,35 +428,54 @@ class PositionLimitEnforcer:
             sector_weights[p.sector] += p.weight
         for sector, w in sector_weights.items():
             if w > cfg.sector_absolute_cap:
-                violations.append(LimitViolation(
-                    rule="sector_absolute_exceeded", dimension="sector_absolute",
-                    value=w, threshold=cfg.sector_absolute_cap,
-                    verdict=LimitVerdict.P2_BLOCK_NEW, sector=sector,
-                ))
+                violations.append(
+                    LimitViolation(
+                        rule="sector_absolute_exceeded",
+                        dimension="sector_absolute",
+                        value=w,
+                        threshold=cfg.sector_absolute_cap,
+                        verdict=LimitVerdict.P2_BLOCK_NEW,
+                        sector=sector,
+                    )
+                )
             baseline = plan.sector_baselines.get(sector, 0.0)
             if abs(w - baseline) > cfg.sector_baseline_deviation:
-                violations.append(LimitViolation(
-                    rule="sector_baseline_deviation", dimension="sector_baseline",
-                    value=abs(w - baseline), threshold=cfg.sector_baseline_deviation,
-                    verdict=LimitVerdict.P2_BLOCK_NEW, sector=sector,
-                ))
+                violations.append(
+                    LimitViolation(
+                        rule="sector_baseline_deviation",
+                        dimension="sector_baseline",
+                        value=abs(w - baseline),
+                        threshold=cfg.sector_baseline_deviation,
+                        verdict=LimitVerdict.P2_BLOCK_NEW,
+                        sector=sector,
+                    )
+                )
 
         # P3: 亏损标的加仓 Hard Block (ADD 动作 + 现有亏损 > 阈值)
         for p in plan.positions:
             if p.action is PositionAction.ADD and p.existing_pnl_pct < -cfg.loss_add_block_threshold:
-                violations.append(LimitViolation(
-                    rule="loss_add_block", dimension="loss_add",
-                    value=abs(p.existing_pnl_pct), threshold=cfg.loss_add_block_threshold,
-                    verdict=LimitVerdict.P3_BLOCK_TRADE, symbol=p.symbol,
-                ))
+                violations.append(
+                    LimitViolation(
+                        rule="loss_add_block",
+                        dimension="loss_add",
+                        value=abs(p.existing_pnl_pct),
+                        threshold=cfg.loss_add_block_threshold,
+                        verdict=LimitVerdict.P3_BLOCK_TRADE,
+                        symbol=p.symbol,
+                    )
+                )
 
         # P4: 压力测试 (情景最大亏损 > 阈值 → 建议性告警/收紧上限)
         if stress_loss > cfg.stress_loss_threshold:
-            violations.append(LimitViolation(
-                rule="stress_loss_exceeded", dimension="stress_loss",
-                value=stress_loss, threshold=cfg.stress_loss_threshold,
-                verdict=LimitVerdict.P4_WARN,
-            ))
+            violations.append(
+                LimitViolation(
+                    rule="stress_loss_exceeded",
+                    dimension="stress_loss",
+                    value=stress_loss,
+                    threshold=cfg.stress_loss_threshold,
+                    verdict=LimitVerdict.P4_WARN,
+                )
+            )
 
         overall = LimitVerdict.worst([v.verdict for v in violations])
         return LimitCheckResult(
@@ -454,8 +491,6 @@ class PositionLimitEnforcer:
     def _validate_plan(plan: PositionPlan) -> None:
         for p in plan.positions:
             if not 0 <= p.weight <= 1:
-                raise InvalidPositionPlanError(
-                    f"weight for {p.symbol} must be in [0,1], got {p.weight}"
-                )
+                raise InvalidPositionPlanError(f"weight for {p.symbol} must be in [0,1], got {p.weight}")
             if not isinstance(p.action, PositionAction):
                 raise InvalidPositionPlanError(f"invalid action for {p.symbol}: {p.action}")

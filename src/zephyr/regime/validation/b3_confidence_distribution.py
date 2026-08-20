@@ -100,9 +100,7 @@ def analyze_confidence_distribution(
     if len(edges) != 3 or not (0.0 < edges[0] < edges[1] < edges[2] < 1.0):
         raise B3ConfidenceError(f"edges 须为 (0,1) 内严格升序三元组: {edges}")
     if not 0.0 < low_share_max < 1.0 or not 0.0 < high_share_max < 1.0:
-        raise B3ConfidenceError(
-            f"占比门槛须在 (0,1): low={low_share_max} high={high_share_max}"
-        )
+        raise B3ConfidenceError(f"占比门槛须在 (0,1): low={low_share_max} high={high_share_max}")
     vals = np.asarray(max_p_values, dtype=float)
     if vals.size == 0:
         raise B3ConfidenceError("max_p_values 不能为空")
@@ -113,9 +111,7 @@ def analyze_confidence_distribution(
     shares = tuple(float(np.mean(buckets == k)) for k in range(4))
     low_share, high_share = shares[0], shares[3]
     dead = tuple(name for name, s in zip(_BUCKET_NAMES, shares, strict=True) if s == 0.0)
-    passed = (
-        low_share < low_share_max and high_share < high_share_max and not dead
-    )
+    passed = low_share < low_share_max and high_share < high_share_max and not dead
     q10, q25, q50, q75, q90 = (float(q) for q in np.quantile(vals, [0.1, 0.25, 0.5, 0.75, 0.9]))
     summary = (
         f"B3 置信度合理性: {vals.size} 天, mean={float(vals.mean()):.3f} median={q50:.3f} "

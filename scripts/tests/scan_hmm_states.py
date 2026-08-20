@@ -40,6 +40,7 @@ Usage:
 
 依据: 13_regime_phase3_engineering_plan §2.1.5 / §2.1.6
 """
+
 from __future__ import annotations
 
 import argparse
@@ -59,6 +60,7 @@ try:
     from zephyr.data import ch_reader  # noqa: F401
     from zephyr.regime.core.regime_detector import RegimeDetector  # noqa: F401
     from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
+
     REAL_DEPS_OK = True
 except Exception as _exc:  # pragma: no cover
     _REAL_IMPORT_ERROR = _exc
@@ -255,11 +257,9 @@ def recommend_states(report: ScanReport) -> tuple[int, str]:
         return imp, f"改善比与 minBIC 一致（={imp}），Kneedle={k}"
     # 信号不一致 → 取 Kneedle（最保守，防过拟合），标注
     if k is not None:
-        return k, (f"信号不一致（Kneedle={k}/改善比={imp}/minBIC={mn}），"
-                   f"取 Kneedle（保守防过拟合）")
+        return k, (f"信号不一致（Kneedle={k}/改善比={imp}/minBIC={mn}），取 Kneedle（保守防过拟合）")
     if imp is not None:
-        return imp, (f"信号不一致（Kneedle={k}/改善比={imp}/minBIC={mn}），"
-                     f"取改善比拐点")
+        return imp, (f"信号不一致（Kneedle={k}/改善比={imp}/minBIC={mn}），取改善比拐点")
     return int(mn), f"仅 minBIC 可用（={mn}），Kneedle/改善比未检出，需人工复核"
 
 
@@ -317,29 +317,41 @@ def scan_bic(
     for ns in states:
         try:
             ll, converged = fit_and_score(
-                X, ns, covariance_type, n_iter, n_init, random_state,
+                X,
+                ns,
+                covariance_type,
+                n_iter,
+                n_init,
+                random_state,
             )
             k = count_hmm_params(ns, n_features, covariance_type)
             bic = -2.0 * ll + k * np.log(n_samples)
             aic = -2.0 * ll + 2.0 * k
-            results.append(StateScanResult(
-                n_states=ns,
-                log_likelihood=round(ll, 4),
-                n_params=k,
-                bic=round(bic, 4),
-                aic=round(aic, 4),
-                converged=converged,
-                n_samples=n_samples,
-            ))
-            _logger.info("n_states=%d: LL=%.2f, k=%d, BIC=%.2f, AIC=%.2f",
-                         ns, ll, k, bic, aic)
+            results.append(
+                StateScanResult(
+                    n_states=ns,
+                    log_likelihood=round(ll, 4),
+                    n_params=k,
+                    bic=round(bic, 4),
+                    aic=round(aic, 4),
+                    converged=converged,
+                    n_samples=n_samples,
+                )
+            )
+            _logger.info("n_states=%d: LL=%.2f, k=%d, BIC=%.2f, AIC=%.2f", ns, ll, k, bic, aic)
         except Exception as exc:
             _logger.warning("n_states=%d 拟合失败: %s", ns, exc)
-            results.append(StateScanResult(
-                n_states=ns, log_likelihood=float("nan"), n_params=0,
-                bic=float("nan"), aic=float("nan"), converged=False,
-                n_samples=n_samples,
-            ))
+            results.append(
+                StateScanResult(
+                    n_states=ns,
+                    log_likelihood=float("nan"),
+                    n_params=0,
+                    bic=float("nan"),
+                    aic=float("nan"),
+                    converged=False,
+                    n_samples=n_samples,
+                )
+            )
     return results
 
 
@@ -404,6 +416,7 @@ def viterbi_state_stats(
     if close is not None and len(close) >= total:
         try:
             import pandas as pd
+
             close_arr = np.asarray(close, dtype=float)
             if len(close_arr) > total:
                 close_arr = close_arr[-total:]  # 末段对齐
@@ -423,8 +436,7 @@ def viterbi_state_stats(
         freq = count / total if total > 0 else 0.0
         if count > 0:
             feat_means = {
-                fn: float(np.mean(X[mask, j])) if j < X.shape[1] else 0.0
-                for j, fn in enumerate(feature_names)
+                fn: float(np.mean(X[mask, j])) if j < X.shape[1] else 0.0 for j, fn in enumerate(feature_names)
             }
             fr1 = float(np.nanmean(fr_1d[mask])) if np.isfinite(fr_1d[mask]).any() else float("nan")
             fr5 = float(np.nanmean(fr_5d[mask])) if np.isfinite(fr_5d[mask]).any() else float("nan")
@@ -432,15 +444,17 @@ def viterbi_state_stats(
             feat_means = {fn: 0.0 for fn in feature_names}
             fr1 = float("nan")
             fr5 = float("nan")
-        stats.append(StateStats(
-            state_label=f"r{i + 1}",
-            state_idx=i,
-            count=count,
-            frequency=round(freq, 4),
-            feature_means={k: round(v, 4) for k, v in feat_means.items()},
-            forward_return_1d_mean=round(fr1, 6),
-            forward_return_5d_mean=round(fr5, 6),
-        ))
+        stats.append(
+            StateStats(
+                state_label=f"r{i + 1}",
+                state_idx=i,
+                count=count,
+                frequency=round(freq, 4),
+                feature_means={k: round(v, 4) for k, v in feat_means.items()},
+                forward_return_1d_mean=round(fr1, 6),
+                forward_return_5d_mean=round(fr5, 6),
+            )
+        )
     return stats
 
 
@@ -471,17 +485,20 @@ def walk_forward_bic_stability(
          stability: 拐点跨季度一致率}
     """
     import pandas as pd
+
     try:
         from sklearn.preprocessing import RobustScaler
     except ImportError:  # pragma: no cover
         RobustScaler = None  # type: ignore[assignment]
 
     features_shifted = features.shift(1)  # PIT
-    quarter_ends = list(pd.date_range(
-        start=pd.Timestamp(builder.data_load_start) + pd.DateOffset(years=train_years),
-        end=pd.Timestamp(builder.backtest_end),
-        freq=refit_freq,
-    ))
+    quarter_ends = list(
+        pd.date_range(
+            start=pd.Timestamp(builder.data_load_start) + pd.DateOffset(years=train_years),
+            end=pd.Timestamp(builder.backtest_end),
+            freq=refit_freq,
+        )
+    )
     per_quarter: list[dict[str, Any]] = []
     elbow_counts: dict[int, int] = {}
 
@@ -508,19 +525,20 @@ def walk_forward_bic_stability(
         q_bic = [v[1] for v in valid]
         min_states = int(q_states[int(np.argmin(q_bic))])
         kneedle = kneedle_elbow(q_states, q_bic)
-        per_quarter.append({
-            "quarter": q.strftime("%Y-%m-%d"),
-            "train_start": train_start,
-            "train_end": train_end,
-            "n_samples": int(X_train.shape[0]),
-            "min_bic_states": min_states,
-            "kneedle": kneedle,
-            "bic_by_states": {str(s): round(b, 2) for s, b in valid},
-        })
+        per_quarter.append(
+            {
+                "quarter": q.strftime("%Y-%m-%d"),
+                "train_start": train_start,
+                "train_end": train_end,
+                "n_samples": int(X_train.shape[0]),
+                "min_bic_states": min_states,
+                "kneedle": kneedle,
+                "bic_by_states": {str(s): round(b, 2) for s, b in valid},
+            }
+        )
         if kneedle is not None:
             elbow_counts[kneedle] = elbow_counts.get(kneedle, 0) + 1
-        _logger.info("walk-forward Q%d [%s]: minBIC=%d, kneedle=%s",
-                     i + 1, train_end, min_states, kneedle)
+        _logger.info("walk-forward Q%d [%s]: minBIC=%d, kneedle=%s", i + 1, train_end, min_states, kneedle)
 
     # 稳定性：拐点最常见值占比
     total_q = len(per_quarter)
@@ -542,6 +560,7 @@ def _get_feature_names(builder: Any) -> list[str]:
     if names is not None:
         return list(names)
     from zephyr.regime.regime_feature_builder import FEATURE_NAMES
+
     return list(FEATURE_NAMES)
 
 
@@ -551,6 +570,7 @@ def _get_index_close(builder: Any) -> Any:
     复刻 phase2_runner.Phase2Runner._get_index_close。
     """
     import pandas as pd
+
     try:
         kline = builder.get_index_kline()
         if kline is None or kline.empty:
@@ -562,8 +582,9 @@ def _get_index_close(builder: Any) -> Any:
             except KeyError:
                 return None
         else:
-            proxy_df = (kline[kline.index.get_level_values("symbol") == proxy]
-                        if "symbol" in kline.index.names else kline)
+            proxy_df = (
+                kline[kline.index.get_level_values("symbol") == proxy] if "symbol" in kline.index.names else kline
+            )
         close = proxy_df["close"].astype(float).sort_index()
         close = close[~close.index.duplicated(keep="last")]
         return close
@@ -599,18 +620,22 @@ def run_mock(states: list[int]) -> int:
     rng = np.random.default_rng(42)
     # 合成 3 个明显不同的高斯簇（序列拼接：前段簇0/中段簇3/末段簇-3，含时序结构）
     n_per = 500
-    X = np.vstack([
-        rng.normal([0, 0, 0, 0, 0, 0], 0.3, (n_per, 6)),
-        rng.normal([3, 3, 3, 3, 3, 3], 0.3, (n_per, 6)),
-        rng.normal([-3, -3, -3, -3, -3, -3], 0.3, (n_per, 6)),
-    ])
+    X = np.vstack(
+        [
+            rng.normal([0, 0, 0, 0, 0, 0], 0.3, (n_per, 6)),
+            rng.normal([3, 3, 3, 3, 3, 3], 0.3, (n_per, 6)),
+            rng.normal([-3, -3, -3, -3, -3, -3], 0.3, (n_per, 6)),
+        ]
+    )
     feature_names = [f"f{i}" for i in range(6)]
     results = scan_bic(X, states, n_init=mock_n_init)
     print("\n[mock] BIC 扫描结果:")
     print(f"  {'n_states':>9} {'LL':>10} {'k':>5} {'BIC':>12} {'AIC':>12} {'conv':>5}")
     for r in results:
-        print(f"  {r.n_states:>9} {r.log_likelihood:>10.2f} {r.n_params:>5} "
-              f"{r.bic:>12.2f} {r.aic:>12.2f} {str(r.converged):>5}")
+        print(
+            f"  {r.n_states:>9} {r.log_likelihood:>10.2f} {r.n_params:>5} "
+            f"{r.bic:>12.2f} {r.aic:>12.2f} {str(r.converged):>5}"
+        )
 
     valid = [(r.n_states, r.bic) for r in results if r.converged and np.isfinite(r.bic)]
     v_states = [v[0] for v in valid]
@@ -623,8 +648,10 @@ def run_mock(states: list[int]) -> int:
     # 合成 3 簇：EM 充分重启后 n=3 应找到真解（LL≈-1935），拐点 ∈ {3,4}
     # （n=4 因多 1 态参数 LL 略高但 BIC 惩罚后可能略高于 n=3，两者皆合理）
     report = ScanReport(
-        results=results, elbow_kneedle=elbow_k,
-        elbow_improvement=elbow_i, min_bic_states=min_s,
+        results=results,
+        elbow_kneedle=elbow_k,
+        elbow_improvement=elbow_i,
+        min_bic_states=min_s,
     )
     rec, reason = recommend_states(report)
     print(f"[mock] 推荐={rec}（{reason}）")
@@ -636,12 +663,12 @@ def run_mock(states: list[int]) -> int:
     stats = viterbi_state_stats(X, feature_names, n_states=stats_n, n_init=mock_n_init)
     print(f"\n[mock] Viterbi {stats_n} 态统计:")
     for s in stats:
-        print(f"  {s.state_label}: count={s.count} freq={s.frequency:.1%} "
-              f"feat_mean_f0={s.feature_means.get('f0', 0):.2f}")
+        print(
+            f"  {s.state_label}: count={s.count} freq={s.frequency:.1%} feat_mean_f0={s.feature_means.get('f0', 0):.2f}"
+        )
     # 3 簇恢复校验：每态样本应接近 500（允许 EM 偶发合并，验证至少 2 态 ≥ 400）
     big_states = [s for s in stats if s.count >= 400]
-    print(f"[mock] 3 簇恢复：≥400 样本的态数 = {len(big_states)} "
-          f"({'✓' if len(big_states) >= 2 else '⚠'})")
+    print(f"[mock] 3 簇恢复：≥400 样本的态数 = {len(big_states)} ({'✓' if len(big_states) >= 2 else '⚠'})")
     print("[mock] BIC 扫描冒烟跑通 ✓")
     return 0 if ok else 1
 
@@ -677,13 +704,16 @@ def run_real(
     feature_names = _get_feature_names(builder)
     X_full = features[feature_names].to_numpy(dtype=float)
     X_clean = _clean_matrix(X_full)
-    print(f"[real] 特征: {X_clean.shape[0]} 行 × {X_clean.shape[1]} 特征 "
-          f"[{features.index.min()} ~ {features.index.max()}]")
+    print(
+        f"[real] 特征: {X_clean.shape[0]} 行 × {X_clean.shape[1]} 特征 "
+        f"[{features.index.min()} ~ {features.index.max()}]"
+    )
     print(f"[real] 特征列: {feature_names}")
 
     # RobustScaler 标准化（全历史 fit，与 A1 一致）
     try:
         from sklearn.preprocessing import RobustScaler
+
         scaler = RobustScaler().fit(X_clean)
         X_fit = scaler.transform(X_clean)
         print("[real] RobustScaler 标准化（与 A1/walk-forward 一致）")
@@ -704,8 +734,7 @@ def run_real(
         ll_str = f"{r.log_likelihood:.2f}" if np.isfinite(r.log_likelihood) else "NaN"
         bic_str = f"{r.bic:.2f}" if np.isfinite(r.bic) else "NaN"
         aic_str = f"{r.aic:.2f}" if np.isfinite(r.aic) else "NaN"
-        print(f"  {r.n_states:>9} {ll_str:>12} {r.n_params:>6} "
-              f"{bic_str:>14} {aic_str:>14} {str(r.converged):>5}")
+        print(f"  {r.n_states:>9} {ll_str:>12} {r.n_params:>6} {bic_str:>14} {aic_str:>14} {str(r.converged):>5}")
 
     # ── 拐点判定 ──
     valid = [(r.n_states, r.bic) for r in results if r.converged and np.isfinite(r.bic)]
@@ -744,23 +773,32 @@ def run_real(
         # close 也取同范围末段。
         close_aligned = None
         if close is not None and len(close) >= len(X_clean):
-            close_aligned = close.iloc[-len(X_clean):].to_numpy(dtype=float)
+            close_aligned = close.iloc[-len(X_clean) :].to_numpy(dtype=float)
         stats = viterbi_state_stats(
-            X_fit, feature_names, n_states=rec, close=close_aligned,
-            covariance_type=covariance_type, n_iter=100, n_init=n_init,
+            X_fit,
+            feature_names,
+            n_states=rec,
+            close=close_aligned,
+            covariance_type=covariance_type,
+            n_iter=100,
+            n_init=n_init,
         )
         report.state_stats = stats
 
         print("\n  各态统计特征（供重设计 _STATE_RISK_FACTORS 态语义）:")
-        print(f"  {'态':>4} {'天数':>6} {'占比':>7} {'vol_pct':>9} {'slope':>8} "
-              f"{'ad_ratio':>9} {'vol_anom':>9} {'fr_1d':>9} {'fr_5d':>9}")
+        print(
+            f"  {'态':>4} {'天数':>6} {'占比':>7} {'vol_pct':>9} {'slope':>8} "
+            f"{'ad_ratio':>9} {'vol_anom':>9} {'fr_1d':>9} {'fr_5d':>9}"
+        )
         print("  " + "-" * 74)
         for s in stats:
             fm = s.feature_means
-            print(f"  {s.state_label:>4} {s.count:>6} {s.frequency:>6.1%} "
-                  f"{fm.get('realized_vol_pct', 0):>9.3f} {fm.get('kalman_slope', 0):>8.3f} "
-                  f"{fm.get('ad_ratio', 0):>9.3f} {fm.get('volume_anomaly', 0):>9.3f} "
-                  f"{s.forward_return_1d_mean:>9.4f} {s.forward_return_5d_mean:>9.4f}")
+            print(
+                f"  {s.state_label:>4} {s.count:>6} {s.frequency:>6.1%} "
+                f"{fm.get('realized_vol_pct', 0):>9.3f} {fm.get('kalman_slope', 0):>8.3f} "
+                f"{fm.get('ad_ratio', 0):>9.3f} {fm.get('volume_anomaly', 0):>9.3f} "
+                f"{s.forward_return_1d_mean:>9.4f} {s.forward_return_5d_mean:>9.4f}"
+            )
         print("\n  态语义判读指引:")
         print("    - forward_return_5d_mean 大正 → 牛市态（shrinkage≈1.0 不收缩）")
         print("    - forward_return_5d_mean 大负 → 熊市态（shrinkage≈0.30-0.50 大幅收缩）")
@@ -773,16 +811,20 @@ def run_real(
         print(f"\n[real] 步骤7: walk-forward 季度 BIC 稳定性验证（train_years={train_years}）...")
         print("[real] 预计 5-15 分钟（每季度 × {} 态 × n_init={}）...".format(len(states), n_init))
         wf = walk_forward_bic_stability(
-            features, feature_names, states, builder,
-            train_years=train_years, covariance_type=covariance_type,
-            n_iter=100, n_init=n_init,
+            features,
+            feature_names,
+            states,
+            builder,
+            train_years=train_years,
+            covariance_type=covariance_type,
+            n_iter=100,
+            n_init=n_init,
         )
         report.walk_forward_stability = wf
         stab = wf["stability"]
         print(f"\n  walk-forward 覆盖 {stab['total_quarters']} 个季度")
         print(f"  拐点分布: {stab['elbow_distribution']}")
-        print(f"  最常见拐点: {stab['most_common_elbow']} "
-              f"(占比 {stab['most_common_ratio']:.1%})")
+        print(f"  最常见拐点: {stab['most_common_elbow']} (占比 {stab['most_common_ratio']:.1%})")
         print(f"  拐点跨期一致性: {'✓ 稳定' if stab['most_common_ratio'] >= 0.6 else '⚠ 不稳定'}")
 
     # ── 写 JSON 报告 ──
@@ -809,16 +851,18 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     parser = argparse.ArgumentParser(description="HMM 状态数 BIC 扫描（13_regime_phase3_engineering_plan §2.1.5）")
     parser.add_argument("--mock", action="store_true", help="合成数据冒烟")
-    parser.add_argument("--walk-forward", action="store_true",
-                        help="加跑 walk-forward 季度 BIC 稳定性（步骤7）")
-    parser.add_argument("--states", type=str, default=None,
-                        help=f"自定义态数列表（逗号分隔，默认 {','.join(map(str, DEFAULT_STATES))}）")
-    parser.add_argument("--train-years", type=int, default=5,
-                        help="walk-forward 训练窗口年数（默认 5）")
-    parser.add_argument("--n-init", type=int, default=3,
-                        help="HMM n_init（多次 EM 重启取最优，默认 3，与生产一致）")
-    parser.add_argument("--covariance", type=str, default="full",
-                        help="协方差类型（full/diag/spherical/tied，默认 full）")
+    parser.add_argument("--walk-forward", action="store_true", help="加跑 walk-forward 季度 BIC 稳定性（步骤7）")
+    parser.add_argument(
+        "--states",
+        type=str,
+        default=None,
+        help=f"自定义态数列表（逗号分隔，默认 {','.join(map(str, DEFAULT_STATES))}）",
+    )
+    parser.add_argument("--train-years", type=int, default=5, help="walk-forward 训练窗口年数（默认 5）")
+    parser.add_argument("--n-init", type=int, default=3, help="HMM n_init（多次 EM 重启取最优，默认 3，与生产一致）")
+    parser.add_argument(
+        "--covariance", type=str, default="full", help="协方差类型（full/diag/spherical/tied，默认 full）"
+    )
     args = parser.parse_args()
 
     states = DEFAULT_STATES
@@ -827,13 +871,15 @@ def main() -> None:
 
     if args.mock:
         sys.exit(run_mock(list(states)))
-    sys.exit(run_real(
-        states=list(states),
-        walk_forward=args.walk_forward,
-        train_years=args.train_years,
-        n_init=args.n_init,
-        covariance_type=args.covariance,
-    ))
+    sys.exit(
+        run_real(
+            states=list(states),
+            walk_forward=args.walk_forward,
+            train_years=args.train_years,
+            n_init=args.n_init,
+            covariance_type=args.covariance,
+        )
+    )
 
 
 if __name__ == "__main__":

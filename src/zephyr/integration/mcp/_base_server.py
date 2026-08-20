@@ -112,6 +112,7 @@ from zephyr.integration.mcp.error_codes import (
 
 class MCPError(Exception):
     """MCP 协议层错误，携带 JSON-RPC error code。"""
+
     error_code = "ZA-IG-0018"
 
     def __init__(
@@ -229,7 +230,6 @@ class BaseMCPServer:
         """公共接口：read_message（Stage 4 公共化）。"""
         return __class__._read_message(inp)
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def rbac_guard(self):
@@ -241,8 +241,6 @@ class BaseMCPServer:
         """写入：rbac_guard（Stage 4 公共化）。"""
         self._rbac_guard = value
 
-
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def tools(self) -> dict[str, ToolDefinition]:
@@ -253,7 +251,6 @@ class BaseMCPServer:
     def tools(self, value):
         """写入：tools（Stage 4 公共化）。"""
         self._tools = value
-
 
     def _try_auto_enable_rbac(self) -> None:
         # 5.17.8 修复：翻转默认为 True（default-deny），未声明权限的 server 拒绝所有写
@@ -373,11 +370,14 @@ class BaseMCPServer:
         """
 
         def decorator(handler: Callable[..., Any]) -> Callable[..., Any]:
-            _set_tool_meta(handler, {
-                "name": name,
-                "description": description,
-                "input_schema": input_schema,
-            })
+            _set_tool_meta(
+                handler,
+                {
+                    "name": name,
+                    "description": description,
+                    "input_schema": input_schema,
+                },
+            )
             return handler
 
         return decorator
@@ -709,7 +709,11 @@ class BaseMCPServer:
                 # 5.100.10 修复: handle_request 改为 run_in_executor 委托线程池避免阻塞事件循环
                 response = await loop.run_in_executor(None, self.handle_request, request)
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-                response = self._err(request.get("id") if isinstance(request, dict) else None, ERR_INTERNAL_ERROR, f"Internal error: {exc}")
+                response = self._err(
+                    request.get("id") if isinstance(request, dict) else None,
+                    ERR_INTERNAL_ERROR,
+                    f"Internal error: {exc}",
+                )
             if response is None:  # notification：按 JSON-RPC 2.0 不回包
                 continue
             out.write(json.dumps(response, ensure_ascii=False) + "\n")

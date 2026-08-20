@@ -25,6 +25,7 @@
   - 限价单 price=最新收盘价（盘外不会成交）
   - stop() 自动撤所有未成交单
 """
+
 from __future__ import annotations
 
 import sys
@@ -83,9 +84,7 @@ def _make_xtdata_price_provider():
         prices: dict[str, Decimal] = {}
         for symbol in universe:
             try:
-                data = xtdata.get_market_data_ex(
-                    [], [symbol], period="1d", count=1
-                )
+                data = xtdata.get_market_data_ex([], [symbol], period="1d", count=1)
                 df = data.get(symbol) if data else None
                 if df is not None and len(df) > 0:
                     close = float(df["close"].iloc[-1])

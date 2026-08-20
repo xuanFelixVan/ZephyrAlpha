@@ -185,7 +185,9 @@ class VectorMemoryServer(BaseMCPServer):
         hits = self._vms.search(collection_name, query, k=k)
         return {"hits": hits, "collection": collection_name, "query": query}
 
-    def _write(self, collection_name: str, content: str, metadata: dict[str, Any] | None = None, doc_id: str | None = None) -> dict[str, Any]:
+    def _write(
+        self, collection_name: str, content: str, metadata: dict[str, Any] | None = None, doc_id: str | None = None
+    ) -> dict[str, Any]:
         if self._vms is None:
             return {"error": "VMS 未就绪", "written": False}
         from zephyr.integration.vector_memory.collection_manager import COLLECTION_SCHEMAS

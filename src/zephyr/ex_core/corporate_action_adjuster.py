@@ -140,10 +140,10 @@ class CorporateActionAdjusterError(Exception):
 class CorporateActionType(str, Enum):
     """公司行动类型。"""
 
-    CASH_DIVIDEND = "cash_dividend"        # 仅现金分红（除息）
-    STOCK_DIVIDEND = "stock_dividend"      # 仅送股/转增（除权）
-    CASH_AND_STOCK = "cash_and_stock"      # 现金分红 + 送转（除权除息）
-    NONE = "none"                          # 无公司行动
+    CASH_DIVIDEND = "cash_dividend"  # 仅现金分红（除息）
+    STOCK_DIVIDEND = "stock_dividend"  # 仅送股/转增（除权）
+    CASH_AND_STOCK = "cash_and_stock"  # 现金分红 + 送转（除权除息）
+    NONE = "none"  # 无公司行动
 
 
 @dataclass(frozen=True)
@@ -197,10 +197,7 @@ class CorporateAction:
         if atype is CorporateActionType.STOCK_DIVIDEND:
             return self.record_close / (Decimal("1") + self.stock_dividend_ratio)
         if atype is CorporateActionType.CASH_AND_STOCK:
-            return (
-                (self.record_close - self.cash_dividend_per_share)
-                / (Decimal("1") + self.stock_dividend_ratio)
-            )
+            return (self.record_close - self.cash_dividend_per_share) / (Decimal("1") + self.stock_dividend_ratio)
         return self.record_close  # NONE
 
 
@@ -295,8 +292,11 @@ class CorporateActionAdjuster:
         self._action_map[action.symbol] = action
         _logger.info(
             "注册除权除息: %s type=%s ex_date=%s cash=%s stock_ratio=%s",
-            action.symbol, action.action_type.value, action.ex_date,
-            action.cash_dividend_per_share, action.stock_dividend_ratio,
+            action.symbol,
+            action.action_type.value,
+            action.ex_date,
+            action.cash_dividend_per_share,
+            action.stock_dividend_ratio,
         )
 
     def batch_register(self, actions: list[CorporateAction]) -> None:
@@ -355,10 +355,12 @@ class CorporateActionAdjuster:
         """
         new_prev = self.get_adjusted_prev_close(symbol, original_prev_close)
         limit_up = (new_prev * (Decimal("1") + price_limit_pct)).quantize(
-            Decimal("0.01"), rounding=ROUND_HALF_UP,
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP,
         )
         limit_down = (new_prev * (Decimal("1") - price_limit_pct)).quantize(
-            Decimal("0.01"), rounding=ROUND_HALF_UP,
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP,
         )
         return limit_up, limit_down
 
@@ -396,16 +398,21 @@ class CorporateActionAdjuster:
         total_cost = current_qty * current_avg_cost
         cash_dividend_total = current_qty * action.cash_dividend_per_share
         if new_qty > 0:
-            new_avg_cost = (
-                (total_cost - cash_dividend_total) / new_qty
-            ).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+            new_avg_cost = ((total_cost - cash_dividend_total) / new_qty).quantize(
+                Decimal("0.0001"), rounding=ROUND_HALF_UP
+            )
         else:
             new_avg_cost = Decimal("0")
 
         _logger.info(
             "持仓调整: %s qty %s→%s cost %s→%s cash_dividend=%s new_prev=%s",
-            symbol, current_qty, new_qty, current_avg_cost, new_avg_cost,
-            cash_dividend_total, new_prev_close,
+            symbol,
+            current_qty,
+            new_qty,
+            current_avg_cost,
+            new_avg_cost,
+            cash_dividend_total,
+            new_prev_close,
         )
 
         return AdjustmentResult(

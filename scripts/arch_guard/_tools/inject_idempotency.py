@@ -39,18 +39,14 @@ if str(_GOV_DIR) not in sys.path:
 
 from _shared.constants import REPO_ROOT  # noqa: E402
 
-YAML_PATH = (
-    REPO_ROOT
-    / "architecture_model"
-    / "contracts"
-    / "cross_layer_contracts.yaml"
-)
+YAML_PATH = REPO_ROOT / "architecture_model" / "contracts" / "cross_layer_contracts.yaml"
 
 IDEMPOTENCY_FIELD = '- {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}'
 TRACE_CONTEXT_RE = re.compile(r"^\s*- \{name: trace_context,")
 SCHEMA_VERSION_RE = re.compile(r"^\s*- \{name: schema_version,")
 IDEMPOTENCY_RE = re.compile(r"^\s*- \{name: idempotency_key,")
 CONTRACT_START_RE = re.compile(r"^\s*- id: (CTR-|OCP-)")
+
 
 def process_yaml(content: str) -> tuple[str, int]:
     lines = content.splitlines(keepends=True)
@@ -128,6 +124,7 @@ def process_yaml(content: str) -> tuple[str, int]:
 
     return "".join(result), added
 
+
 def main() -> int:
     if not YAML_PATH.exists():
         print(f"文件不存在: {YAML_PATH}")
@@ -151,6 +148,7 @@ def main() -> int:
             pass
     print(f"✅ 已为 {added} 条契约添加 idempotency_key 字段。")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

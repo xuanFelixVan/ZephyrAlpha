@@ -228,9 +228,7 @@ class B1ProbabilityCalibration:
         # 是 Guo et al. 2017 / sklearn calibration_curve 的标准评估方式。
         total_n = sum(p.count for p in curve if p.count > 0)
         weighted_error = (
-            sum(p.count * abs(p.predicted - p.actual) for p in curve if p.count > 0) / total_n
-            if total_n > 0
-            else 1.0
+            sum(p.count * abs(p.predicted - p.actual) for p in curve if p.count > 0) / total_n if total_n > 0 else 1.0
         )
 
         # 判定使用 ECE（行业标准），简单均值仅作诊断

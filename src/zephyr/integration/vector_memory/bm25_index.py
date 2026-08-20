@@ -41,9 +41,8 @@ class BM25Index:
 
     @staticmethod
     def tokenize(text: str) -> list[str]:
-        tokens = re.findall('[\\u4e00-\\u9fff]+|[a-zA-Z0-9_]+', text.lower())
+        tokens = re.findall("[\\u4e00-\\u9fff]+|[a-zA-Z0-9_]+", text.lower())
         return [t for t in tokens if len(t) > 0]
-
 
     def index(self, documents: list[dict[str, Any]]) -> None:
         self._documents = documents

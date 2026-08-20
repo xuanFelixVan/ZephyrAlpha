@@ -66,7 +66,4 @@ def t1_sellable_weights(
         if not math.isfinite(w) or w < 0:
             raise ValueError(f"{sym} 今日已卖权重非法（须为有限非负值），got {w}")
 
-    return {
-        sym: max(0.0, w - sold.get(sym, 0.0))
-        for sym, w in last_session_weights.items()
-    }
+    return {sym: max(0.0, w - sold.get(sym, 0.0)) for sym, w in last_session_weights.items()}

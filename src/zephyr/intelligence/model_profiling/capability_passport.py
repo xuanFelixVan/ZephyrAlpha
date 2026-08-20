@@ -57,6 +57,7 @@ _DEFAULT_SIGNING_KEY = b"zephyr-passport-dev-key-v1"
 
 class TamperError(Exception):
     """护照篡改异常 — 签名验证失败或无签名字段时抛出。"""
+
     error_code = "ZA-IT-0002"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -106,11 +107,12 @@ def _migrate_passport_data(data: dict) -> dict:
     version = data.get("passport_version", _CURRENT_PASSPORT_VERSION)
     if version != _CURRENT_PASSPORT_VERSION:
         _log.debug(
-            "passport version_migration: loaded version=%s, current=%s "
-            "(no migration registered)",
-            version, _CURRENT_PASSPORT_VERSION,
+            "passport version_migration: loaded version=%s, current=%s (no migration registered)",
+            version,
+            _CURRENT_PASSPORT_VERSION,
         )
     return data
+
 
 DEPTH_THRESHOLDS: Final[dict[str, float]] = {
     # 原 9 能力（保留阈值）
@@ -229,15 +231,16 @@ class CostBreakdown:
         - 云端模型按 API 定价 (provider_data.py DEFAULT_PROVIDERS)
         - cost_score: 0-1, 越高越好 (越便宜); local 默认 1.0
     """
-    deployment_mode: str = "local"      # local / api
-    provider: str = "local"             # zhipu/deepseek/openai_azure/anthropic/local
+
+    deployment_mode: str = "local"  # local / api
+    provider: str = "local"  # zhipu/deepseek/openai_azure/anthropic/local
     total_calls: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
     total_tokens: int = 0
-    price_per_1k_input: float = 0.0     # USD per 1K input tokens
-    price_per_1k_output: float = 0.0    # USD per 1K output tokens
-    estimated_cost_usd: float = 0.0     # 总估算成本 (USD)
+    price_per_1k_input: float = 0.0  # USD per 1K input tokens
+    price_per_1k_output: float = 0.0  # USD per 1K output tokens
+    estimated_cost_usd: float = 0.0  # 总估算成本 (USD)
 
     @property
     def cost_score(self) -> float:
@@ -333,9 +336,7 @@ class CapabilityPassport:
         data = _migrate_passport_data(data)
         depth_caps: dict[str, DepthCapabilityResult] = {}
         for cap_name, cap_data in (data.get("depth", {}) or {}).get("capabilities", {}).items():
-            depth_caps[cap_name] = DepthCapabilityResult(
-                **_filter_dataclass_fields(DepthCapabilityResult, cap_data)
-            )
+            depth_caps[cap_name] = DepthCapabilityResult(**_filter_dataclass_fields(DepthCapabilityResult, cap_data))
 
         return CapabilityPassport(
             passport_version=data.get("passport_version", _CURRENT_PASSPORT_VERSION),
@@ -356,9 +357,7 @@ class CapabilityPassport:
             ),
             drift=DriftResult(**_filter_dataclass_fields(DriftResult, data.get("drift"))),
             cost=CostBreakdown(**_filter_dataclass_fields(CostBreakdown, data.get("cost"))),
-            recommendations=Recommendations(
-                **_filter_dataclass_fields(Recommendations, data.get("recommendations"))
-            ),
+            recommendations=Recommendations(**_filter_dataclass_fields(Recommendations, data.get("recommendations"))),
         )
 
     @staticmethod
@@ -432,14 +431,15 @@ class JobRecommendation:
 
     一个模型对一个岗位的匹配评估。
     """
-    job_id: str                            # 岗位标识 snake_case
-    job_title: str                         # 岗位中文名称
-    match_score: float = 0.0               # 匹配度 0-1
-    qualified: bool = False                # 是否满足全部 required 能力
-    hallucination_passed: bool = True      # 是否通过幻觉门
+
+    job_id: str  # 岗位标识 snake_case
+    job_title: str  # 岗位中文名称
+    match_score: float = 0.0  # 匹配度 0-1
+    qualified: bool = False  # 是否满足全部 required 能力
+    hallucination_passed: bool = True  # 是否通过幻觉门
     missing_required: list[str] = field(default_factory=list)  # 未达 required 的能力
-    bonus_summary: str = ""                # bonus 能力命中摘要
-    description: str = ""                  # 岗位职责描述
+    bonus_summary: str = ""  # bonus 能力命中摘要
+    description: str = ""  # 岗位职责描述
 
 
 @dataclass
@@ -460,6 +460,7 @@ class HallucinationBreakdown:
         format_hallucination 格式幻觉（字段值类型异常，如 list 字段给了 stringified JSON）
         quantity_hallucination 数量幻觉（输出集合异常膨胀，list/dict 长度超阈值）
     """
+
     fabrication: float = 0.0
     inconsistency: float = 0.0
     refusal: float = 0.0
@@ -473,10 +474,17 @@ class HallucinationBreakdown:
     @property
     def overall_rate(self) -> float:
         """综合幻觉率 = 九维均值（0-1，越低越好）。"""
-        vals = [self.fabrication, self.inconsistency, self.refusal,
-                self.overclaim, self.context_drift, self.source_confusion,
-                self.instruction_drift, self.format_hallucination,
-                self.quantity_hallucination]
+        vals = [
+            self.fabrication,
+            self.inconsistency,
+            self.refusal,
+            self.overclaim,
+            self.context_drift,
+            self.source_confusion,
+            self.instruction_drift,
+            self.format_hallucination,
+            self.quantity_hallucination,
+        ]
         return round(sum(vals) / len(vals), 3) if vals else 0.0
 
     @property
@@ -498,12 +506,13 @@ class QuickProfile:
     设计原则: 幻觉率正常评分，任何模型都有幻觉，只是高低问题。
               未来岗位匹配时幻觉率多考虑，但现在不做硬门槛。
     """
+
     model_id: str = ""
-    exam_mode: str = "quick"               # quick/standard/deep
+    exam_mode: str = "quick"  # quick/standard/deep
     exam_timestamp: str = ""
     exam_duration_seconds: float = 0.0
     # 能力轮廓（29 项）
-    capability_grades: dict[str, str] = field(default_factory=dict)   # {cap_name: "A"|"B"|...}
+    capability_grades: dict[str, str] = field(default_factory=dict)  # {cap_name: "A"|"B"|...}
     capability_scores: dict[str, float] = field(default_factory=dict)  # 原始分 0-1
     # 幻觉轴（六维细分，正常评分）
     hallucination: HallucinationBreakdown = field(default_factory=HallucinationBreakdown)
@@ -563,8 +572,7 @@ class QuickProfile:
             overall_grade=data.get("overall_grade", "F"),
             overall_score=data.get("overall_score", 0.0),
             recommendations=[
-                JobRecommendation(**_filter_dataclass_fields(JobRecommendation, r))
-                if isinstance(r, dict) else r
+                JobRecommendation(**_filter_dataclass_fields(JobRecommendation, r)) if isinstance(r, dict) else r
                 for r in data.get("recommendations", [])
             ],
             notes=data.get("notes", []),

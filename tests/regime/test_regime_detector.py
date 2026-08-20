@@ -51,13 +51,12 @@ from zephyr.regime.core.regime_detector import (
 
 try:
     import hmmlearn  # noqa: F401
+
     HMMLEARN_AVAILABLE = True
 except Exception:  # pragma: no cover
     HMMLEARN_AVAILABLE = False
 
-skip_no_hmmlearn = pytest.mark.skipif(
-    not HMMLEARN_AVAILABLE, reason="hmmlearn 未安装，跳过真实 HMM 拟合测试"
-)
+skip_no_hmmlearn = pytest.mark.skipif(not HMMLEARN_AVAILABLE, reason="hmmlearn 未安装，跳过真实 HMM 拟合测试")
 
 
 # ── fixtures ────────────────────────────────────────────────────────
@@ -147,7 +146,7 @@ class TestHMM9States:
     def test_walk_forward_quarterly_refit(self, synthetic_features):
         """walk-forward 季度重拟合：每季 refit，模型被替换（blueprint §3.1）。"""
         d = RegimeDetector()
-        quarters = [synthetic_features[i * 250:(i + 1) * 250] for i in range(4)]
+        quarters = [synthetic_features[i * 250 : (i + 1) * 250] for i in range(4)]
         prev = None
         for q in quarters:
             d.fit({"X": q})
@@ -258,15 +257,13 @@ class TestTemperatureScaling:
 class TestOverlay:
     def test_crisis_trigger_s1(self, detector: RegimeDetector):
         """S1 触发 → P_overlay(r10 CRISIS)=0.6（§4.1）。"""
-        op = detector._run_overlay({"transitions": {
-            "S1": {"vix_panic": 70, "correlation": 65, "liquidity": 40}}})
+        op = detector._run_overlay({"transitions": {"S1": {"vix_panic": 70, "correlation": 65, "liquidity": 40}}})
         assert abs(op["r10"] - 0.6) < 1e-9
         assert op["r11"] == 0.0 and op["r12"] == 0.0
 
     def test_recovery_trigger_s2(self, detector: RegimeDetector):
         """S2 触发 → P_overlay(r11 RECOVERY)=0.4（§4.12.8）。"""
-        op = detector._run_overlay({"transitions": {
-            "S2": {"capitulation": 65, "vix": 45, "bad_news_flat": 45}}})
+        op = detector._run_overlay({"transitions": {"S2": {"capitulation": 65, "vix": 45, "bad_news_flat": 45}}})
         assert abs(op["r11"] - 0.4) < 1e-9
 
     def test_breakout_trigger_t1(self, detector: RegimeDetector):
@@ -276,8 +273,7 @@ class TestOverlay:
 
     def test_no_trigger_degrades_to_zero(self, detector: RegimeDetector):
         """无转换触发 → P_overlay 全 0（退化为纯 HMM，blueprint §3.3）。"""
-        op = detector._run_overlay({"transitions": {
-            "S2": {"capitulation": 30, "vix": 10}}})  # 未达阈值
+        op = detector._run_overlay({"transitions": {"S2": {"capitulation": 30, "vix": 10}}})  # 未达阈值
         assert op == {"r10": 0.0, "r11": 0.0, "r12": 0.0}
 
     def test_8_transitions_all_recordable(self, detector: RegimeDetector):
@@ -443,17 +439,24 @@ class TestConfidenceSignal:
         probs = {s: rest for s in REGIME_STATES}
         probs["r1"] = max_p
         return RegimeProbabilities(
-            probabilities=probs, hmm_probabilities={}, overlay_probabilities={},
-            dominant_regime="r1", dominant_frequency=freq,
-            confidence=max_p, timestamp=datetime.now(),
+            probabilities=probs,
+            hmm_probabilities={},
+            overlay_probabilities={},
+            dominant_regime="r1",
+            dominant_frequency=freq,
+            confidence=max_p,
+            timestamp=datetime.now(),
         )
 
-    @pytest.mark.parametrize("max_p,expected_base", [
-        (0.60, 1.0),   # ≥50% → 满部署（4态下0.5已是高置信）
-        (0.40, 0.9),   # 30-50% → 轻度收缩
-        (0.20, 0.8),   # 15-30% → 中度收缩
-        (0.10, 0.7),   # <15% → 强收缩（下限0.7，避免过度压低平时Shrinkage）
-    ])
+    @pytest.mark.parametrize(
+        "max_p,expected_base",
+        [
+            (0.60, 1.0),  # ≥50% → 满部署（4态下0.5已是高置信）
+            (0.40, 0.9),  # 30-50% → 轻度收缩
+            (0.20, 0.8),  # 15-30% → 中度收缩
+            (0.10, 0.7),  # <15% → 强收缩（下限0.7，避免过度压低平时Shrinkage）
+        ],
+    )
     def test_4_bands(self, detector, max_p, expected_base):
         """四档映射（C1 验证 2026-08-06 校准后阈值，适应 4 态 HMM 概率分散）。
 
@@ -463,11 +466,14 @@ class TestConfidenceSignal:
         p = self._probs_with_confidence(detector, max_p, freq=0.15)  # 常见态
         assert abs(detector._compute_confidence_signal(p) - expected_base) < 1e-9
 
-    @pytest.mark.parametrize("freq,expected_discount", [
-        (0.10, 1.0),   # 常见态 >5%
-        (0.03, 0.85),  # 中等态 1-5%
-        (0.005, 0.7),  # 稀有态 <1%
-    ])
+    @pytest.mark.parametrize(
+        "freq,expected_discount",
+        [
+            (0.10, 1.0),  # 常见态 >5%
+            (0.03, 0.85),  # 中等态 1-5%
+            (0.005, 0.7),  # 稀有态 <1%
+        ],
+    )
     def test_rarity_discount(self, detector, freq, expected_discount):
         """稀有态折扣：max_p=0.90 → base=1.0（≥0.50），ConfidenceSignal=1.0×rarity。"""
         p = self._probs_with_confidence(detector, 0.90, freq=freq)
@@ -515,10 +521,12 @@ class TestRiskSignal:
     def test_opportunity_recovery_cap(self, detector, full_risk_params):
         """机会恢复上限 +0.25（§5.3.2）。"""
         params = {**full_risk_params["params"], 1: 0.6}
-        r = detector._compute_risk_signal({
-            "params": params,
-            "opportunity": {"news_ghost": 0.20, "bad_news_flat": 0.20},  # 合计 0.4 > 上限
-        })
+        r = detector._compute_risk_signal(
+            {
+                "params": params,
+                "opportunity": {"news_ghost": 0.20, "bad_news_flat": 0.20},  # 合计 0.4 > 上限
+            }
+        )
         assert abs(r - 0.85) < 0.02  # 0.6×1.0 + 0.25(上限)
 
     def test_clamp_030_to_100(self, detector, full_risk_params):
@@ -542,10 +550,12 @@ class TestRiskSignal:
         r = detector._compute_risk_signal({"params": {**full, 1: 0.3, 7: 0.3, 8: 0.3}})
         assert abs(r - 0.30) < 0.02
         # 8月4：机会恢复 → 0.85
-        r = detector._compute_risk_signal({
-            "params": {**full, 1: 0.6},
-            "opportunity": {"news_ghost": 0.10, "bad_news_flat": 0.15},
-        })
+        r = detector._compute_risk_signal(
+            {
+                "params": {**full, 1: 0.6},
+                "opportunity": {"news_ghost": 0.10, "bad_news_flat": 0.15},
+            }
+        )
         assert abs(r - 0.85) < 0.02
 
     def test_degraded_when_missing(self, detector: RegimeDetector):
@@ -596,13 +606,35 @@ class TestTransitionEvents:
         """S2 四阶段：trigger/confirm/strong_confirm/fail（§4.12.8）。"""
         t = detector.record_transition("S2", {"capitulation": 65, "vix": 45, "bad_news_flat": 45})
         assert t.stage == "trigger" and t.triggered and not t.confirmed
-        t = detector.record_transition("S2", {
-            "capitulation": 65, "wyckoff": 65, "vix": 45, "policy": 50,
-            "valuation": 45, "bad_news_flat": 45, "fund": 55, "chip": 40})
+        t = detector.record_transition(
+            "S2",
+            {
+                "capitulation": 65,
+                "wyckoff": 65,
+                "vix": 45,
+                "policy": 50,
+                "valuation": 45,
+                "bad_news_flat": 45,
+                "fund": 55,
+                "chip": 40,
+            },
+        )
         assert t.stage == "confirm" and t.confirmed
-        t = detector.record_transition("S2", {
-            "capitulation": 80, "wyckoff": 70, "vix": 60, "policy": 60, "valuation": 60,
-            "bad_news_flat": 60, "fund": 60, "chip": 50, "spring": 1, "three_yang": 2})
+        t = detector.record_transition(
+            "S2",
+            {
+                "capitulation": 80,
+                "wyckoff": 70,
+                "vix": 60,
+                "policy": 60,
+                "valuation": 60,
+                "bad_news_flat": 60,
+                "fund": 60,
+                "chip": 50,
+                "spring": 1,
+                "three_yang": 2,
+            },
+        )
         assert t.stage == "strong_confirm"
         t = detector.record_transition("S2", {"break_sc_low": 1, "vix_new_high": 1, "fund_outflow": 1})
         assert t.stage == "fail" and not t.triggered
@@ -633,26 +665,26 @@ class TestKeysOrGte:
 
     def test_confirm_via_wyckoff_path(self, detector: RegimeDetector):
         """慢复苏通路：wyckoff≥60（breadth_thrust 缺失）→ confirm。"""
-        t = detector.record_transition("S2", {
-            "wyckoff": 65, "policy": 50, "valuation": 45, "fund": 55})
+        t = detector.record_transition("S2", {"wyckoff": 65, "policy": 50, "valuation": 45, "fund": 55})
         assert t.stage == "confirm" and t.confirmed
 
     def test_confirm_via_breadth_thrust_path(self, detector: RegimeDetector):
         """V 反转通路：wyckoff=0 但 breadth_thrust≥60 → confirm（析取）。"""
-        t = detector.record_transition("S2", {
-            "wyckoff": 0, "breadth_thrust": 80, "policy": 50, "valuation": 45, "fund": 55})
+        t = detector.record_transition(
+            "S2", {"wyckoff": 0, "breadth_thrust": 80, "policy": 50, "valuation": 45, "fund": 55}
+        )
         assert t.stage == "confirm" and t.confirmed
 
     def test_confirm_blocked_when_or_group_all_below(self, detector: RegimeDetector):
         """析取组全不达标（wyckoff<60 且 breadth_thrust<60）→ 非 confirm。"""
-        t = detector.record_transition("S2", {
-            "wyckoff": 59, "breadth_thrust": 59, "policy": 50, "valuation": 45, "fund": 55})
+        t = detector.record_transition(
+            "S2", {"wyckoff": 59, "breadth_thrust": 59, "policy": 50, "valuation": 45, "fund": 55}
+        )
         assert t.stage != "confirm" and t.stage != "strong_confirm"
 
     def test_confirm_blocked_when_and_group_missing(self, detector: RegimeDetector):
         """析取组达标但合取组缺 policy≥40 → 非 confirm（两组均须通过）。"""
-        t = detector.record_transition("S2", {
-            "breadth_thrust": 80, "policy": 30, "valuation": 45, "fund": 55})
+        t = detector.record_transition("S2", {"breadth_thrust": 80, "policy": 30, "valuation": 45, "fund": 55})
         assert t.stage != "confirm" and t.stage != "strong_confirm"
 
     def test_eval_stage_keys_or_gte_unit(self):
@@ -680,14 +712,12 @@ class TestS2VixThresholdCalibration:
 
     def test_trigger_admits_vix_score_30(self, detector: RegimeDetector):
         """vix=30（校准后新准入带）+ capitulation/bad_news_flat 达标 → trigger。"""
-        t = detector.record_transition("S2", {
-            "capitulation": 60, "vix": 30, "bad_news_flat": 40})
+        t = detector.record_transition("S2", {"capitulation": 60, "vix": 30, "bad_news_flat": 40})
         assert t.stage == "trigger" and t.triggered
 
     def test_trigger_blocked_below_30(self, detector: RegimeDetector):
         """vix=29（校准后仍不达标）→ 非 trigger。"""
-        t = detector.record_transition("S2", {
-            "capitulation": 60, "vix": 29, "bad_news_flat": 40})
+        t = detector.record_transition("S2", {"capitulation": 60, "vix": 29, "bad_news_flat": 40})
         assert t.stage not in ("trigger", "confirm", "strong_confirm")
 
 
@@ -698,11 +728,24 @@ class TestEndToEnd:
     @pytest.mark.financial
     def test_full_chain_s2_confirm_recovery(self, detector, full_risk_params):
         """完整链路：S2 确认 + 底部机会 → dominant=r11(RECOVERY) + Shrinkage 回升（8月4场景）。"""
-        overlay = {"transitions": {"S2": {
-            "capitulation": 65, "wyckoff": 65, "vix": 45, "policy": 50,
-            "valuation": 45, "bad_news_flat": 45, "fund": 55, "chip": 40}}}
-        risk = {"params": {**full_risk_params["params"], 1: 0.6},
-                "opportunity": {"news_ghost": 0.10, "bad_news_flat": 0.15}}
+        overlay = {
+            "transitions": {
+                "S2": {
+                    "capitulation": 65,
+                    "wyckoff": 65,
+                    "vix": 45,
+                    "policy": 50,
+                    "valuation": 45,
+                    "bad_news_flat": 45,
+                    "fund": 55,
+                    "chip": 40,
+                }
+            }
+        }
+        risk = {
+            "params": {**full_risk_params["params"], 1: 0.6},
+            "opportunity": {"news_ghost": 0.10, "bad_news_flat": 0.15},
+        }
         probs, shrink = detector.detect({}, overlay, risk)
         assert probs.dominant_regime == "r11"
         # max(P)=0.65 → base 1.0（≥0.50）；r11 freq 0.02 → rarity 0.85 → conf 0.85

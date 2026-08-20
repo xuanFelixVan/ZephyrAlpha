@@ -11,6 +11,7 @@
 Usage:
   python scripts/tests/dump_s2_scores.py
 """
+
 from __future__ import annotations
 
 import logging
@@ -29,8 +30,8 @@ from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
 
 # S2 阈值（与 regime_detector.TRANSITION_CONFIG["S2"] 对齐）
 S2_THRESHOLDS = {
-    "trigger":  {"capitulation": 60, "vix": 40, "bad_news_flat": 40},
-    "confirm":  {"wyckoff": 60, "policy": 40, "valuation": 40, "fund": 50},
+    "trigger": {"capitulation": 60, "vix": 40, "bad_news_flat": 40},
+    "confirm": {"wyckoff": 60, "policy": 40, "valuation": 40, "fund": 50},
     "strong_confirm": {"spring": 1, "three_yang": 1},  # flag 类（≥1）
 }
 
@@ -59,22 +60,37 @@ def main() -> int:
     # 复刻 Phase2Runner._ensure_constructors
     from zephyr.regime.overlay_signals_builder import OverlaySignalsConstructor
     from zephyr.regime.risk_signal_builder import RiskSignalConstructor
+
     if builder._risk_ctor is None:
         builder._risk_ctor = RiskSignalConstructor(
-            backtest_start=builder.backtest_start, backtest_end=builder.backtest_end,
-            data_load_start=builder.data_load_start, feature_builder=builder,
+            backtest_start=builder.backtest_start,
+            backtest_end=builder.backtest_end,
+            data_load_start=builder.data_load_start,
+            feature_builder=builder,
             market_proxy=builder.market_proxy,
         )
     if builder._overlay_ctor is None:
         builder._overlay_ctor = OverlaySignalsConstructor(
-            backtest_start=builder.backtest_start, backtest_end=builder.backtest_end,
-            data_load_start=builder.data_load_start, feature_builder=builder,
-            risk_constructor=builder._risk_ctor, market_proxy=builder.market_proxy,
+            backtest_start=builder.backtest_start,
+            backtest_end=builder.backtest_end,
+            data_load_start=builder.data_load_start,
+            feature_builder=builder,
+            risk_constructor=builder._risk_ctor,
+            market_proxy=builder.market_proxy,
         )
     print("[s2-diag] OverlaySignalsConstructor 就绪\n")
 
-    all_dims = ["capitulation", "vix", "bad_news_flat", "wyckoff", "policy",
-                "valuation", "fund", "spring", "three_yang"]
+    all_dims = [
+        "capitulation",
+        "vix",
+        "bad_news_flat",
+        "wyckoff",
+        "policy",
+        "valuation",
+        "fund",
+        "spring",
+        "three_yang",
+    ]
 
     for eid, edate_str in EVENT_DATES:
         edate = pd.Timestamp(edate_str)
@@ -86,7 +102,7 @@ def main() -> int:
         loc = idx.get_indexer([edate], method="nearest")[0]
         start = max(0, loc - WINDOW)
         end = min(len(idx) - 1, loc + WINDOW)
-        window_dates = idx[start:end + 1]
+        window_dates = idx[start : end + 1]
 
         header = f"{'date':<12} " + " ".join(f"{d:>13}" for d in all_dims) + "  stage"
         print(header)

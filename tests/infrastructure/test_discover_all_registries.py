@@ -15,6 +15,7 @@
 返回全部 REG-* registry（含 master_index 无法覆盖的 postgresql/code_inline/directory 格式），
 且 AGENTS.md RULE-REGISTRY 不再硬编码 stale 计数。
 """
+
 from __future__ import annotations
 
 import re
@@ -51,7 +52,9 @@ class TestDiscoverAllRegistriesReadsROOR:
         regs = discover_all_registries()
         ids = [r.get("registry_id", "") for r in regs]
         # ROOR 全部为 REG-* 编号（含 REG-MOD-*/REG-STD-* 等变体）
-        assert all(rid.startswith("REG-") for rid in ids), f"非 REG-* 编号泄露: {[r for r in ids if not r.startswith('REG-')]}"
+        assert all(rid.startswith("REG-") for rid in ids), (
+            f"非 REG-* 编号泄露: {[r for r in ids if not r.startswith('REG-')]}"
+        )
 
     def test_includes_non_catalogs_formats(self):
         """ROOR 覆盖 master_index 无法自动提取的格式（postgresql/code_inline/directory）。
@@ -75,6 +78,7 @@ class TestDiscoverAllRegistriesReadsROOR:
     def test_roor_missing_returns_empty(self, monkeypatch, tmp_path):
         """ROOR 不存在时返回空 list，不抛异常（ERROR_CONTRACT）。"""
         import zephyr.infrastructure.asset_inventory.registry_adapter as mod
+
         monkeypatch.setattr(mod, "_ROOR_REL", "nonexistent/roor.yaml")
         assert discover_all_registries() == []
 

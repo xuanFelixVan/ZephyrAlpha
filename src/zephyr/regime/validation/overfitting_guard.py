@@ -44,6 +44,7 @@
 
 依据: 14_regime_s2_diagnosis v0.5.2 §4.5
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -102,20 +103,36 @@ def event_study(
         ev_ts = pd.Timestamp(ev)
         pos = int(idx.searchsorted(ev_ts, side="right")) - 1  # asof：<= ev 的最近点
         if pos < 0:
-            rows.append({"event_date": ev_ts, "aligned_date": None, "window_max": np.nan,
-                         "window_mean": np.nan, "baseline_pct": np.nan, "n_baseline": 0})
+            rows.append(
+                {
+                    "event_date": ev_ts,
+                    "aligned_date": None,
+                    "window_max": np.nan,
+                    "window_mean": np.nan,
+                    "baseline_pct": np.nan,
+                    "n_baseline": 0,
+                }
+            )
             continue
         lo, hi = max(0, pos - pre_window), min(len(values) - 1, pos + post_window)
-        window = values[lo: hi + 1]
+        window = values[lo : hi + 1]
         w_max = float(np.nanmax(window))
         w_mean = float(np.nanmean(window))
         # 基线：终点在事件窗口起点之前的滚动极值（严格 PIT）
-        baseline = rolling_max[width - 1: lo]
+        baseline = rolling_max[width - 1 : lo]
         baseline = baseline[~np.isnan(baseline)]
         n_base = len(baseline)
         pct = float((baseline <= w_max).mean()) if n_base >= min_baseline else np.nan
-        rows.append({"event_date": ev_ts, "aligned_date": idx[pos], "window_max": w_max,
-                     "window_mean": w_mean, "baseline_pct": pct, "n_baseline": n_base})
+        rows.append(
+            {
+                "event_date": ev_ts,
+                "aligned_date": idx[pos],
+                "window_max": w_max,
+                "window_mean": w_mean,
+                "baseline_pct": pct,
+                "n_baseline": n_base,
+            }
+        )
     return pd.DataFrame(rows)
 
 
@@ -145,9 +162,7 @@ class PreRegistrationRegistry:
 
     def _flush(self) -> None:
         self._path.parent.mkdir(parents=True, exist_ok=True)
-        self._path.write_text(
-            json.dumps(self._records, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+        self._path.write_text(json.dumps(self._records, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def register(self, name: str, params: dict, note: str = "") -> None:
         """登记预注册参数（同名已存在 → RuntimeError，不可覆盖）。"""

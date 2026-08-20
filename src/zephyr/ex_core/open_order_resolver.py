@@ -170,12 +170,12 @@ class Urgency(str, Enum):
 class ResolveActionType(str, Enum):
     """续接决策动作类型。"""
 
-    WAIT = "wait"                        # 继续等待（挂单未超时）
-    MAKE_OR_TAKE = "make_or_take"        # Make-or-Take 切换（撤单+对手价重挂）
-    IGNORE_PARTIAL = "ignore_partial"    # PARTIAL 剩余<min_unit，转 CANCELLED
-    LEAVE_OPEN = "leave_open"            # PARTIAL urgency低，留单等成交
-    CLOSE_OUT = "close_out"              # 14:55 尾盘清退撤单
-    SKIP_TERMINAL = "skip_terminal"      # 终态订单跳过
+    WAIT = "wait"  # 继续等待（挂单未超时）
+    MAKE_OR_TAKE = "make_or_take"  # Make-or-Take 切换（撤单+对手价重挂）
+    IGNORE_PARTIAL = "ignore_partial"  # PARTIAL 剩余<min_unit，转 CANCELLED
+    LEAVE_OPEN = "leave_open"  # PARTIAL urgency低，留单等成交
+    CLOSE_OUT = "close_out"  # 14:55 尾盘清退撤单
+    SKIP_TERMINAL = "skip_terminal"  # 终态订单跳过
     SKIP_NOT_REGISTERED = "skip_not_registered"  # 未注册到续接跟踪
 
 
@@ -310,7 +310,9 @@ class OpenOrderResolver:
         urg = urgency or self._config.default_urgency
         self._tracking[order_id] = (self._clock(), urg)
         _logger.debug(
-            "注册续接跟踪: order_id=%s urgency=%s", order_id, urg.value,
+            "注册续接跟踪: order_id=%s urgency=%s",
+            order_id,
+            urg.value,
         )
 
     def unregister_order(self, order_id: str) -> None:
@@ -344,22 +346,31 @@ class OpenOrderResolver:
                 action = self._resolve_and_execute(order, is_close_out_time)
                 actions.append(action)
                 # 终态后清理跟踪记录
-                if action.action_type in (
-                    ResolveActionType.IGNORE_PARTIAL,
-                    ResolveActionType.CLOSE_OUT,
-                ) and action.success:
+                if (
+                    action.action_type
+                    in (
+                        ResolveActionType.IGNORE_PARTIAL,
+                        ResolveActionType.CLOSE_OUT,
+                    )
+                    and action.success
+                ):
                     self.unregister_order(order.order_id)
             except Exception as exc:  # noqa: BLE001 — 5.135治标: 单笔异常不阻断其他订单
                 _logger.error(
-                    "续接处理异常 order_id=%s: %s", order.order_id, exc, exc_info=True,
+                    "续接处理异常 order_id=%s: %s",
+                    order.order_id,
+                    exc,
+                    exc_info=True,
                 )
-                actions.append(ResolveAction(
-                    order_id=order.order_id,
-                    symbol=order.symbol,
-                    action_type=ResolveActionType.WAIT,
-                    reason=f"resolve exception: {exc}",
-                    success=False,
-                ))
+                actions.append(
+                    ResolveAction(
+                        order_id=order.order_id,
+                        symbol=order.symbol,
+                        action_type=ResolveActionType.WAIT,
+                        reason=f"resolve exception: {exc}",
+                        success=False,
+                    )
+                )
 
         return actions
 
@@ -588,7 +599,11 @@ class OpenOrderResolver:
             broker_order_id = submit(new_order.order_id)
             _logger.info(
                 "Make-or-Take 重挂: symbol=%s side=%s qty=%s price=%s new_order_id=%s",
-                order.symbol, order.side.value, quantity, opponent_price, new_order.order_id,
+                order.symbol,
+                order.side.value,
+                quantity,
+                opponent_price,
+                new_order.order_id,
             )
             return broker_order_id
         except Exception as exc:  # noqa: BLE001

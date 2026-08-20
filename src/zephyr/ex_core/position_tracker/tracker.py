@@ -261,8 +261,7 @@ class PositionTracker:
                         registered_fills += 1
 
             _logger.info(
-                "rebuild_from_broker: 以券商为准重建完成 holdings=%d cash=%s "
-                "today_fills登记=%d/%d",
+                "rebuild_from_broker: 以券商为准重建完成 holdings=%d cash=%s today_fills登记=%d/%d",
                 len(self._holdings),
                 self._cash,
                 registered_fills,

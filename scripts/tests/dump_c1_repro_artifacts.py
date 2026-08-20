@@ -12,6 +12,7 @@
 用法:
   python scripts/tests/dump_c1_repro_artifacts.py
 """
+
 from __future__ import annotations
 
 import json
@@ -52,9 +53,15 @@ BASKET_SYMBOLS = [
     "601166",  # 兴业银行
 ]
 BASKET_NAMES = {
-    "600000": "浦发银行", "000001": "平安银行", "600519": "贵州茅台",
-    "600036": "招商银行", "601318": "中国平安", "000651": "格力电器",
-    "600276": "恒瑞医药", "000858": "五粮液", "600887": "伊利股份",
+    "600000": "浦发银行",
+    "000001": "平安银行",
+    "600519": "贵州茅台",
+    "600036": "招商银行",
+    "601318": "中国平安",
+    "000651": "格力电器",
+    "600276": "恒瑞医药",
+    "000858": "五粮液",
+    "600887": "伊利股份",
     "601166": "兴业银行",
 }
 REAL_START = "2015-01-01"
@@ -92,8 +99,7 @@ def main() -> None:
         if len(vals) < 7:
             continue
         rows.append(vals)
-    basket_df = pd.DataFrame(rows, columns=["trade_date", "symbol", "open", "high",
-                                             "low", "close", "volume"])
+    basket_df = pd.DataFrame(rows, columns=["trade_date", "symbol", "open", "high", "low", "close", "volume"])
     basket_df["trade_date"] = pd.to_datetime(basket_df["trade_date"])
     for c in ["open", "high", "low", "close", "volume"]:
         basket_df[c] = pd.to_numeric(basket_df[c], errors="coerce")
@@ -103,30 +109,26 @@ def main() -> None:
     spec = {
         "universe": [{"symbol": s, "name": BASKET_NAMES.get(s, "")} for s in BASKET_SYMBOLS],
         "n_symbols": len(BASKET_SYMBOLS),
-        "date_range": [str(basket_df.index.get_level_values("date").min()),
-                       str(basket_df.index.get_level_values("date").max())],
+        "date_range": [
+            str(basket_df.index.get_level_values("date").min()),
+            str(basket_df.index.get_level_values("date").max()),
+        ],
         "n_rows": len(basket_df),
         "source_table": hfq_table,
         "adjustment": "后复权 (hfq)",
         "fields": ["open", "high", "low", "close", "volume"],
         "clickhouse": "172.24.30.100:9000 / c1_market",
     }
-    (OUTPUT_DIR / "basket_data_spec.json").write_text(
-        json.dumps(spec, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    (OUTPUT_DIR / "basket_data_spec.json").write_text(json.dumps(spec, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"[dump]   篮子: {len(basket_df)} 行, {len(BASKET_SYMBOLS)} 标的")
 
     # ── 2. 构建 Shrinkage schedule + dump CSV ────────────────────────
     print("[dump] 2/5 构建 RegimeFeatureBuilder + walk-forward Shrinkage schedule...")
-    builder = RegimeFeatureBuilder(
-        backtest_start=REAL_START, backtest_end=REAL_END, data_load_start=DATA_LOAD_START
-    )
+    builder = RegimeFeatureBuilder(backtest_start=REAL_START, backtest_end=REAL_END, data_load_start=DATA_LOAD_START)
     detector = RegimeDetector(shrinkage_enabled=True)
     schedule = builder.build_shrinkage_schedule(detector, train_years=5, detect_window=60)
 
-    sched_df = pd.DataFrame(
-        [{"date": dt, "shrinkage": v} for dt, v in schedule.items()]
-    ).sort_values("date")
+    sched_df = pd.DataFrame([{"date": dt, "shrinkage": v} for dt, v in schedule.items()]).sort_values("date")
     sched_df.to_csv(OUTPUT_DIR / "shrinkage_schedule.csv", index=False)
     print(f"[dump]   Shrinkage: {len(sched_df)} 日, 均值={sched_df['shrinkage'].mean():.4f}")
 
@@ -141,9 +143,7 @@ def main() -> None:
     print("[dump] 4/5 运行 C1 开/关对比...")
     signals = pd.DataFrame(
         {sym: 1.0 for sym in sorted(basket_df.index.get_level_values("symbol").unique())},
-        index=pd.DatetimeIndex(
-            basket_df.index.get_level_values("date").unique().sort_values(), name="date"
-        ),
+        index=pd.DatetimeIndex(basket_df.index.get_level_values("date").unique().sort_values(), name="date"),
     )
     # 回测用的 data 需要 MultiIndex(symbol, date) + open/high/low/close/volume
     provider = ScheduleShrinkageProvider(schedule)
@@ -184,9 +184,7 @@ def main() -> None:
             "risk_free_rate": 0.02,
         },
     }
-    (OUTPUT_DIR / "c1_metrics.json").write_text(
-        json.dumps(metrics, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    (OUTPUT_DIR / "c1_metrics.json").write_text(json.dumps(metrics, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"[dump]   C1 passed={result.passed}")
 
     # ── 5. 生成复现说明 ──────────────────────────────────────────────
@@ -254,7 +252,7 @@ else                           → 1.00（正常，不干预）
 ## 3. 数据规格
 
 ### 可交易 universe（篮子）:
-{chr(10).join(f'- {s} {BASKET_NAMES.get(s, "")}' for s in BASKET_SYMBOLS)}
+{chr(10).join(f"- {s} {BASKET_NAMES.get(s, '')}" for s in BASKET_SYMBOLS)}
 
 - 区间: {REAL_START} ~ {REAL_END}
 - 复权: 后复权 (hfq)
@@ -270,7 +268,7 @@ else                           → 1.00（正常，不干预）
 - 数据源表: c1_market.kline_index（market_index_kline 品类）
 
 ### HMM 6 特征（X 矩阵列序）:
-{chr(10).join(f'{i+1}. {f}' for i, f in enumerate(FEATURE_NAMES))}
+{chr(10).join(f"{i + 1}. {f}" for i, f in enumerate(FEATURE_NAMES))}
 
 ## 4. 关键参数
 

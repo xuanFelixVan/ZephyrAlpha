@@ -260,7 +260,11 @@ class ExecutionAggregateManager:
         self._order_repo.save(order)
         logger.info(
             "订单创建: order_id=%s symbol=%s side=%s qty=%s type=%s",
-            order_id, symbol, side, quantity, order_type,
+            order_id,
+            symbol,
+            side,
+            quantity,
+            order_type,
         )
         return order
 
@@ -297,7 +301,10 @@ class ExecutionAggregateManager:
 
         logger.info(
             "成交全链路完成: order_id=%s filled=%s/%s status=%s",
-            order.order_id, order.filled_quantity, order.quantity, order.status,
+            order.order_id,
+            order.filled_quantity,
+            order.quantity,
+            order.status,
         )
         return summary
 
@@ -341,13 +348,13 @@ class ExecutionAggregateManager:
             已持久化的 PositionSnapshot。
         """
         if self._position_snapshot_repo is None:
-            raise AggregateManagerError(
-                "未注入 position_snapshot_repo，无法持久化持仓快照"
-            )
+            raise AggregateManagerError("未注入 position_snapshot_repo，无法持久化持仓快照")
         snapshot = self._position_tracker.get_positions()
         self._position_snapshot_repo.save(snapshot)
         logger.info(
             "持仓快照已持久化: portfolio_id=%s cash=%s holdings=%d",
-            snapshot.portfolio_id, snapshot.cash, len(snapshot.holdings),
+            snapshot.portfolio_id,
+            snapshot.cash,
+            len(snapshot.holdings),
         )
         return snapshot

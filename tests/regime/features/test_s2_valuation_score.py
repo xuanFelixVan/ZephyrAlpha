@@ -124,16 +124,12 @@ class TestValuationRouteAMapping:
 class TestValuationRouteABonus:
     def test_pb_bonus(self):
         """CAPE<10%（80）+ PB 分位<10% → +10 → 90。"""
-        out = s2_valuation_score_fundamental(
-            pd.Series([0.05]), pb_percentile=pd.Series([0.08])
-        )
+        out = s2_valuation_score_fundamental(pd.Series([0.05]), pb_percentile=pd.Series([0.08]))
         assert out.iloc[0] == 90
 
     def test_broken_net_bonus_elif_branch(self):
         """pb_percentile 缺省时走 broken_net_ratio：破净率>10% → +10。"""
-        out = s2_valuation_score_fundamental(
-            pd.Series([0.05]), broken_net_ratio=pd.Series([0.15])
-        )
+        out = s2_valuation_score_fundamental(pd.Series([0.05]), broken_net_ratio=pd.Series([0.15]))
         assert out.iloc[0] == 90
 
     def test_pb_takes_precedence_over_broken_net(self):
@@ -147,16 +143,12 @@ class TestValuationRouteABonus:
 
     def test_erp_percentile_bonus(self):
         """ERP 分位 >95% → +5。"""
-        out = s2_valuation_score_fundamental(
-            pd.Series([0.05]), erp_percentile=pd.Series([0.97])
-        )
+        out = s2_valuation_score_fundamental(pd.Series([0.05]), erp_percentile=pd.Series([0.97]))
         assert out.iloc[0] == 85
 
     def test_erp_absolute_bonus_5pct(self):
         """ERP 绝对值 >5%（历史大底）→ +5。"""
-        out = s2_valuation_score_fundamental(
-            pd.Series([0.05]), erp_absolute=pd.Series([0.055])
-        )
+        out = s2_valuation_score_fundamental(pd.Series([0.05]), erp_absolute=pd.Series([0.055]))
         assert out.iloc[0] == 85
 
     def test_erp_absolute_bear_end_full_10(self):
@@ -170,9 +162,7 @@ class TestValuationRouteABonus:
 
     def test_buffett_bonus(self):
         """巴菲特指标 <70%（A 股本土化深度低估）→ +5。"""
-        out = s2_valuation_score_fundamental(
-            pd.Series([0.05]), buffett_ratio=pd.Series([0.65])
-        )
+        out = s2_valuation_score_fundamental(pd.Series([0.05]), buffett_ratio=pd.Series([0.65]))
         assert out.iloc[0] == 85
 
     def test_total_clip_100(self):

@@ -24,6 +24,7 @@
   - 使用替身脚本（time.sleep(60)）模拟长期运行的 MCP Server
   - 不等待真实 600s 超时，而是验证机制本身
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -306,6 +307,7 @@ class TestZombieScannerBehavior:
                 subprocess.run(["taskkill", "/PID", str(pid), "/F"], capture_output=True)
             else:
                 import signal as sig_mod
+
                 os.kill(pid, sig_mod.SIGKILL)
         except Exception:
             pass

@@ -210,7 +210,6 @@ class ExecutionEngine:
         """写入：algo_orders（Stage 4 公共化）。"""
         self._algo_orders = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def broker_scores(self) -> dict[str, float]:
@@ -221,7 +220,6 @@ class ExecutionEngine:
     def broker_scores(self, value):
         """写入：broker_scores（Stage 4 公共化）。"""
         self._broker_scores = value
-
 
     def execute_order(
         self,
@@ -235,7 +233,9 @@ class ExecutionEngine:
         violations = self._risk_validator.validate_order(
             symbol=order.symbol,
             # 5.105.5 修复: 在Decimal域内计算后再转float, 避免大数量Decimal->float精度丢失
-            target_weight=float(Decimal(str(order.quantity)) / Decimal("1000000")) if not isinstance(order.quantity, Decimal) else float(order.quantity / Decimal("1000000")),
+            target_weight=float(Decimal(str(order.quantity)) / Decimal("1000000"))
+            if not isinstance(order.quantity, Decimal)
+            else float(order.quantity / Decimal("1000000")),
             current_holdings={},
             limits=RiskLimits(
                 as_of_date=datetime.now(UTC),
@@ -323,7 +323,7 @@ class ExecutionEngine:
             commission=Decimal("0"),
             start_time=start_time,
             end_time=datetime.now(UTC),
-            status=order.status.value if hasattr(order.status, 'value') else str(order.status),
+            status=order.status.value if hasattr(order.status, "value") else str(order.status),
             venue=broker_id,
         )
 
@@ -454,7 +454,9 @@ class ExecutionEngine:
         except (AlgoError, OrderTooLargeError) as exc:
             _logger.error(
                 "G7 generate_plan 失败 order=%s algo=%s: %s",
-                order.order_id, sor_algo_name, exc,
+                order.order_id,
+                sor_algo_name,
+                exc,
             )
             raise ValueError(
                 f"algo plan generation failed for {sor_algo_name}: {exc}",
@@ -467,9 +469,7 @@ class ExecutionEngine:
             if sl.quantity <= 0:
                 continue
             limit_price = sl.reference_price
-            child_order_type = (
-                OrderType.LIMIT if limit_price is not None else OrderType.MARKET
-            )
+            child_order_type = OrderType.LIMIT if limit_price is not None else OrderType.MARKET
             child = self._order_manager.create_order(
                 symbol=order.symbol,
                 strategy_id=order.strategy_id,
@@ -479,17 +479,17 @@ class ExecutionEngine:
                 limit_price=limit_price,
                 broker_id=broker_id,
             )
-            child_broker_oid = self._order_manager.submit_order(
-                child.order_id, broker_id
-            )
+            child_broker_oid = self._order_manager.submit_order(child.order_id, broker_id)
             broker_order_ids.append(child_broker_oid)
-            child_orders.append({
-                "child_order_id": child.order_id,
-                "broker_order_id": child_broker_oid,
-                "slice_index": sl.slice_index,
-                "quantity": str(sl.quantity),
-                "price_strategy": sl.price_strategy.value,
-            })
+            child_orders.append(
+                {
+                    "child_order_id": child.order_id,
+                    "broker_order_id": child_broker_oid,
+                    "slice_index": sl.slice_index,
+                    "quantity": str(sl.quantity),
+                    "price_strategy": sl.price_strategy.value,
+                }
+            )
 
         first_broker_oid = broker_order_ids[0] if broker_order_ids else ""
         self._algo_orders[order.order_id] = {
@@ -504,7 +504,10 @@ class ExecutionEngine:
         self._record_run(order, core_algo.value, first_broker_oid, broker_id, start_time)
         _logger.info(
             "G7 切片执行完成: order=%s algo=%s slices=%d child_orders=%d",
-            order.order_id, sor_algo_name, len(plan.slices), len(child_orders),
+            order.order_id,
+            sor_algo_name,
+            len(plan.slices),
+            len(child_orders),
         )
         return first_broker_oid
 

@@ -152,15 +152,15 @@ logger = logging.getLogger(__name__)
 class RebalanceTrigger(str, Enum):
     """再平衡触发类型。"""
 
-    CALENDAR = "CALENDAR"    # 日历触发(周频强制)
+    CALENDAR = "CALENDAR"  # 日历触发(周频强制)
     DEVIATION = "DEVIATION"  # 偏离触发(DriftDetected)
-    EVENT = "EVENT"          # 事件触发(资金流入/风控)
+    EVENT = "EVENT"  # 事件触发(资金流入/风控)
 
 
 class RebalanceAction(str, Enum):
     """调仓指令方向。"""
 
-    BUY = "BUY"    # 低配→买入
+    BUY = "BUY"  # 低配→买入
     SELL = "SELL"  # 超配→卖出
 
 
@@ -187,7 +187,7 @@ class RebalanceOrder:
     symbol: str
     current_weight: float
     target_weight: float
-    delta: float               # 有符号(正=买入加仓, 负=卖出减仓)
+    delta: float  # 有符号(正=买入加仓, 负=卖出减仓)
     action: RebalanceAction
 
     @property
@@ -202,10 +202,10 @@ class RebalanceDecision:
     should_rebalance: bool
     trigger: RebalanceTrigger
     orders: list[RebalanceOrder] = field(default_factory=list)
-    expected_improvement: float = 0.0   # 预期收益改善
-    transaction_cost: float = 0.0        # 交易成本
-    improvement_ratio: float = 0.0       # 改善比(改善/成本)
-    reason: str = ""                     # 跳过/执行原因
+    expected_improvement: float = 0.0  # 预期收益改善
+    transaction_cost: float = 0.0  # 交易成本
+    improvement_ratio: float = 0.0  # 改善比(改善/成本)
+    reason: str = ""  # 跳过/执行原因
 
     @property
     def turnover(self) -> float:
@@ -327,7 +327,9 @@ class RebalanceEngine:
         improvement_ratio = (
             expected_improvement / transaction_cost
             if transaction_cost > 0
-            else float("inf") if expected_improvement > 0 else 0.0
+            else float("inf")
+            if expected_improvement > 0
+            else 0.0
         )
 
         reason = ""
@@ -337,8 +339,7 @@ class RebalanceEngine:
             # 交易成本 > 预期收益改善 → 跳过(禁止亏损再平衡)
             should_rebalance = False
             reason = (
-                f"SKIP: transaction_cost({transaction_cost:.6f}) > "
-                f"expected_improvement({expected_improvement:.6f})"
+                f"SKIP: transaction_cost({transaction_cost:.6f}) > expected_improvement({expected_improvement:.6f})"
             )
         elif improvement_ratio < self._improvement_ratio_threshold:
             # 改善比 < 阈值 → 跳过
@@ -352,8 +353,7 @@ class RebalanceEngine:
             else:
                 should_rebalance = False
                 reason = (
-                    f"SKIP: improvement_ratio({improvement_ratio:.2f}) "
-                    f"< threshold({self._improvement_ratio_threshold})"
+                    f"SKIP: improvement_ratio({improvement_ratio:.2f}) < threshold({self._improvement_ratio_threshold})"
                 )
         else:
             reason = (
@@ -367,9 +367,9 @@ class RebalanceEngine:
             post_deviation = self._post_rebalance_deviation(orders)
             if post_deviation > self._post_rebalance_tolerance:
                 logger.warning(
-                    "rebalance post-deviation %.4f exceeds tolerance %.4f; "
-                    "orders may need refinement",
-                    post_deviation, self._post_rebalance_tolerance,
+                    "rebalance post-deviation %.4f exceeds tolerance %.4f; orders may need refinement",
+                    post_deviation,
+                    self._post_rebalance_tolerance,
                 )
 
         decision = RebalanceDecision(
@@ -398,9 +398,7 @@ class RebalanceEngine:
 
         return decision
 
-    def on_rebalance_triggered(
-        self, listener: Callable[[RebalanceTriggeredEvent], None]
-    ) -> None:
+    def on_rebalance_triggered(self, listener: Callable[[RebalanceTriggeredEvent], None]) -> None:
         """订阅 E-POS-03 RebalanceTriggered 事件。"""
         self._listeners.append(listener)
 
@@ -411,19 +409,13 @@ class RebalanceEngine:
         for name, weights in (("actual", actual), ("target", target)):
             for sym, w in weights.items():
                 if w < 0 or w > 1:
-                    raise InvalidRebalanceInputError(
-                        f"{name} weight for {sym} must be in [0,1], got {w}"
-                    )
+                    raise InvalidRebalanceInputError(f"{name} weight for {sym} must be in [0,1], got {w}")
         missing = set(target) - set(actual)
         if missing:
-            raise InvalidRebalanceInputError(
-                f"symbols in target missing from actual: {missing}"
-            )
+            raise InvalidRebalanceInputError(f"symbols in target missing from actual: {missing}")
 
     @staticmethod
-    def _compute_orders(
-        actual: dict[str, float], target: dict[str, float]
-    ) -> list[RebalanceOrder]:
+    def _compute_orders(actual: dict[str, float], target: dict[str, float]) -> list[RebalanceOrder]:
         """生成调仓指令: 超配→SELL, 低配→BUY。"""
         orders: list[RebalanceOrder] = []
         for symbol in target:
@@ -465,7 +457,7 @@ class RebalanceEngine:
             # 优先用 drift_event 中的告警数据
             improvement = 0.0
             for alert in drift_event.result.all_alerts:
-                improvement += alert.abs_drift ** 2
+                improvement += alert.abs_drift**2
             if improvement > 0:
                 return improvement
         # 降级: 直接从权重差计算

@@ -47,6 +47,7 @@ _BAD_FETCH = re.compile(
     re.IGNORECASE,
 )
 
+
 def main() -> int:
     fe_files: list[Path] = []
     for p in REPO_ROOT.rglob("*"):
@@ -77,6 +78,7 @@ def main() -> int:
 
     print(f"OK: 已扫描 {len(fe_files)} 个前端文件，未发现典型内网裸连 fetch")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -60,15 +60,15 @@ def classify_echelon_health(height_counts: dict) -> str:
     """
     counts = {h: c for h, c in height_counts.items() if c > 0 and h >= 1}
     if not counts:
-        return 'COLLAPSE'
+        return "COLLAPSE"
     total = sum(counts.values())
     if total == 1:
-        return 'LONE_DRAGON'  # 全场仅存一只，无任何跟风梯队
+        return "LONE_DRAGON"  # 全场仅存一只，无任何跟风梯队
     max_height = max(counts)
     for h in range(1, max_height + 1):  # 中位断层：1板→最高板链路存在断档
         if counts.get(h, 0) == 0:
-            return 'FRACTURE'
-    return 'PERFECT'
+            return "FRACTURE"
+    return "PERFECT"
 
 
 def score_consecutive_height_with_death_pool(base_score: float, echelon_height: int, echelon_health: str) -> dict:
@@ -77,14 +77,19 @@ def score_consecutive_height_with_death_pool(base_score: float, echelon_height: 
     COLLAPSE 比 FRACTURE 更凶险（梯队全崩），按同一死亡池口径扣分（保守方向，memo 扣分语义延伸）。
     """
     deduction = 0
-    if echelon_health in ('FRACTURE', 'LONE_DRAGON', 'COLLAPSE'):
+    if echelon_health in ("FRACTURE", "LONE_DRAGON", "COLLAPSE"):
         if echelon_height == 3:
             deduction = 40
         elif echelon_height == 4:
             deduction = 30
     score = max(base_score - deduction, 0)  # 死亡池扣分下限 0（不为负分）
-    return {'score': score, 'deduction': deduction,
-            'reason': f'{echelon_health}梯队{echelon_height}板→扣{deduction}分' if deduction else f'{echelon_health}梯队→维持原评分'}
+    return {
+        "score": score,
+        "deduction": deduction,
+        "reason": f"{echelon_health}梯队{echelon_height}板→扣{deduction}分"
+        if deduction
+        else f"{echelon_health}梯队→维持原评分",
+    }
 
 
 def score_auction_3d(market_score: float, sector_score: float, stock_score: float) -> dict:
@@ -97,13 +102,19 @@ def score_auction_3d(market_score: float, sector_score: float, stock_score: floa
     stock = min(max(stock_score, 0), 40)
     total = market + sector + stock
     if total >= 80:
-        decision = 'CONFIRM'
+        decision = "CONFIRM"
     elif total >= 60:
-        decision = 'WATCH'
+        decision = "WATCH"
     else:
-        decision = 'REJECT'
-    return {'total': total, 'market': market, 'sector': sector, 'stock': stock,
-            'decision': decision, 'reason': f'竞价三维{total:.0f}分→{decision}'}
+        decision = "REJECT"
+    return {
+        "total": total,
+        "market": market,
+        "sector": sector,
+        "stock": stock,
+        "decision": decision,
+        "reason": f"竞价三维{total:.0f}分→{decision}",
+    }
 
 
 def detect_auction_paper_tiger(auction_gain: float, matched_volume_ratio: float) -> dict:
@@ -112,8 +123,12 @@ def detect_auction_paper_tiger(auction_gain: float, matched_volume_ratio: float)
     auction_gain: 竞价涨幅（小数，0.075=7.5%）；matched_volume_ratio: 匹配量/总量（小数）。
     """
     is_paper_tiger = (0.07 <= auction_gain <= 0.08) and matched_volume_ratio < 0.03
-    return {'is_paper_tiger': is_paper_tiger, 'veto': is_paper_tiger,
-            'reason': f'竞价涨幅{auction_gain:.1%}+匹配量{matched_volume_ratio:.1%}' + ('→纸老虎一票否决' if is_paper_tiger else '→非纸老虎')}
+    return {
+        "is_paper_tiger": is_paper_tiger,
+        "veto": is_paper_tiger,
+        "reason": f"竞价涨幅{auction_gain:.1%}+匹配量{matched_volume_ratio:.1%}"
+        + ("→纸老虎一票否决" if is_paper_tiger else "→非纸老虎"),
+    }
 
 
 def score_seal_structure(seal_flow_ratio: float, seal_success_ratio: float) -> dict:
@@ -122,26 +137,29 @@ def score_seal_structure(seal_flow_ratio: float, seal_success_ratio: float) -> d
     双指标各 50 分：封流比≥5%→50 / 2%-5%→25 / <2%→0；封成比>10→50 / 1-10→25 / ≤1→0。
     """
     if seal_flow_ratio >= 0.05:
-        flow_pts, flow_label = 50, '稳定'
+        flow_pts, flow_label = 50, "稳定"
     elif seal_flow_ratio >= 0.02:
-        flow_pts, flow_label = 25, '一般'
+        flow_pts, flow_label = 25, "一般"
     else:
-        flow_pts, flow_label = 0, '薄弱'
+        flow_pts, flow_label = 0, "薄弱"
     if seal_success_ratio > 10:
-        success_pts, success_label = 50, '稳定'
+        success_pts, success_label = 50, "稳定"
     elif seal_success_ratio > 1:
-        success_pts, success_label = 25, '一般'
+        success_pts, success_label = 25, "一般"
     else:
-        success_pts, success_label = 0, '不牢'
+        success_pts, success_label = 0, "不牢"
     score = flow_pts + success_pts
     if score >= 80:
-        label = 'STABLE'
+        label = "STABLE"
     elif score >= 50:
-        label = 'NEUTRAL'
+        label = "NEUTRAL"
     else:
-        label = 'WEAK'
-    return {'score': score, 'label': label,
-            'reason': f'封流比{seal_flow_ratio:.1%}({flow_label})+封成比{seal_success_ratio:.1f}({success_label})→{label}'}
+        label = "WEAK"
+    return {
+        "score": score,
+        "label": label,
+        "reason": f"封流比{seal_flow_ratio:.1%}({flow_label})+封成比{seal_success_ratio:.1f}({success_label})→{label}",
+    }
 
 
 def forecast_next_day_premium(seal_time: str, volume_surge: float, seal_strength: float) -> dict:
@@ -151,7 +169,7 @@ def forecast_next_day_premium(seal_time: str, volume_surge: float, seal_strength
     经验映射（首批回测校准）：封板时间 40（首封≤10:00 满分，14:30 后尾盘偷袭板 0 分——
     §3.1 尾盘偷袭板炸板率 52%）+ 量能 30（量比 2-5 最佳）+ 封单 30（封流比≥5% 满分）。
     """
-    hour, minute = (int(x) for x in seal_time.split(':'))
+    hour, minute = (int(x) for x in seal_time.split(":"))
     if (hour, minute) <= (10, 0):
         time_pts = 40
     elif (hour, minute) <= (13, 30):
@@ -169,28 +187,45 @@ def forecast_next_day_premium(seal_time: str, volume_surge: float, seal_strength
     seal_pts = 30 if seal_strength >= 0.05 else (15 if seal_strength >= 0.02 else 5)
     score = time_pts + volume_pts + seal_pts
     if score >= 70:
-        low, high, advice = 0.02, 0.05, '溢价预期强→可持有至高开止盈'
+        low, high, advice = 0.02, 0.05, "溢价预期强→可持有至高开止盈"
     elif score >= 40:
-        low, high, advice = -0.01, 0.02, '溢价预期中性→竞价观察'
+        low, high, advice = -0.01, 0.02, "溢价预期中性→竞价观察"
     else:
-        low, high, advice = -0.05, -0.01, '溢价预期弱→低开预警，竞价减仓'
-    return {'premium_low': low, 'premium_high': high, 'score': score, 'advice': advice,
-            'reason': f'封板{seal_time}({time_pts})+量比{volume_surge:.1f}({volume_pts})+封单{seal_strength:.1%}({seal_pts})→溢价[{low:.0%},{high:.0%}]'}
+        low, high, advice = -0.05, -0.01, "溢价预期弱→低开预警，竞价减仓"
+    return {
+        "premium_low": low,
+        "premium_high": high,
+        "score": score,
+        "advice": advice,
+        "reason": f"封板{seal_time}({time_pts})+量比{volume_surge:.1f}({volume_pts})+封单{seal_strength:.1%}({seal_pts})→溢价[{low:.0%},{high:.0%}]",
+    }
 
 
 def classify_reflush_board(resealed: bool, minutes_since_break: float, seal_increasing: bool) -> dict:
     """回封生死线决策（§3.11③，v1.8.0）：15 分钟内回封+封单递增=良性；20-30 分钟无法回封=承接崩塌。"""
     if resealed:
         if minutes_since_break <= 15 and seal_increasing:
-            return {'label': 'BENIGN_RESEAL', 'action': 'HOLD',
-                    'reason': f'{minutes_since_break:.0f}分钟内回封+封单递增→良性'}
-        return {'label': 'WEAK_RESEAL', 'action': 'ALERT',
-                'reason': f'回封耗时{minutes_since_break:.0f}分钟或封单未递增→弱回封预警'}
+            return {
+                "label": "BENIGN_RESEAL",
+                "action": "HOLD",
+                "reason": f"{minutes_since_break:.0f}分钟内回封+封单递增→良性",
+            }
+        return {
+            "label": "WEAK_RESEAL",
+            "action": "ALERT",
+            "reason": f"回封耗时{minutes_since_break:.0f}分钟或封单未递增→弱回封预警",
+        }
     if minutes_since_break >= 20:
-        return {'label': 'SUPPORT_COLLAPSE', 'action': 'EXIT',
-                'reason': f'{minutes_since_break:.0f}分钟无法回封→承接崩塌离场'}
-    return {'label': 'OBSERVE', 'action': 'WATCH',
-            'reason': f'炸板{minutes_since_break:.0f}分钟未回封→生死线观察（15-20分钟窗口）'}
+        return {
+            "label": "SUPPORT_COLLAPSE",
+            "action": "EXIT",
+            "reason": f"{minutes_since_break:.0f}分钟无法回封→承接崩塌离场",
+        }
+    return {
+        "label": "OBSERVE",
+        "action": "WATCH",
+        "reason": f"炸板{minutes_since_break:.0f}分钟未回封→生死线观察（15-20分钟窗口）",
+    }
 
 
 def detect_quant_seat_warning(quant_seat_ratio: float) -> dict:
@@ -199,10 +234,22 @@ def detect_quant_seat_warning(quant_seat_ratio: float) -> dict:
     PIT 注意：本函数只判定占比，龙虎榜数据的 T-1 可见性由 §3.13#5 get_dragon_tiger_pit 保证。
     """
     if quant_seat_ratio > 0.70:
-        return {'level': 'HARD', 'weight_discount': 0.30, 'alert': True,
-                'reason': f'量化席位{quant_seat_ratio:.0%}>70%→hard 降权30%+预警'}
+        return {
+            "level": "HARD",
+            "weight_discount": 0.30,
+            "alert": True,
+            "reason": f"量化席位{quant_seat_ratio:.0%}>70%→hard 降权30%+预警",
+        }
     if quant_seat_ratio > 0.58:
-        return {'level': 'SOFT', 'weight_discount': 0.15, 'alert': False,
-                'reason': f'量化席位{quant_seat_ratio:.0%}>58%→soft 降权15%'}
-    return {'level': 'NONE', 'weight_discount': 0.0, 'alert': False,
-            'reason': f'量化席位{quant_seat_ratio:.0%}≤58%→正常'}
+        return {
+            "level": "SOFT",
+            "weight_discount": 0.15,
+            "alert": False,
+            "reason": f"量化席位{quant_seat_ratio:.0%}>58%→soft 降权15%",
+        }
+    return {
+        "level": "NONE",
+        "weight_discount": 0.0,
+        "alert": False,
+        "reason": f"量化席位{quant_seat_ratio:.0%}≤58%→正常",
+    }

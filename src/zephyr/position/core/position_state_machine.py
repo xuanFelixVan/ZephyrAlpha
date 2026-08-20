@@ -161,31 +161,31 @@ logger = logging.getLogger(__name__)
 class PositionState(str, Enum):
     """仓位生命周期状态 (D-POSITION §1.1 POS-02)。"""
 
-    NONE = "NONE"             # 无持仓
-    BUILDING = "BUILDING"     # 建仓中(含灰度发布4阶段)
-    ACTIVE = "ACTIVE"         # 持仓就绪
-    OBSERVING = "OBSERVING"   # 观察期(软止损/异常开盘/暴跌, 禁止新买入)
-    REDUCING = "REDUCING"     # 减仓中
-    EXITING = "EXITING"       # 清仓中
-    CLOSED = "CLOSED"         # 已平仓(进入冷却期)
+    NONE = "NONE"  # 无持仓
+    BUILDING = "BUILDING"  # 建仓中(含灰度发布4阶段)
+    ACTIVE = "ACTIVE"  # 持仓就绪
+    OBSERVING = "OBSERVING"  # 观察期(软止损/异常开盘/暴跌, 禁止新买入)
+    REDUCING = "REDUCING"  # 减仓中
+    EXITING = "EXITING"  # 清仓中
+    CLOSED = "CLOSED"  # 已平仓(进入冷却期)
 
 
 class ObservingReason(str, Enum):
     """进入观察期的原因 (POS-02 OBSERVING)。"""
 
-    SOFT_STOP = "SOFT_STOP"           # 软止损触发
-    ABNORMAL_OPEN = "ABNORMAL_OPEN"   # 异常开盘(高开/低开异常)
-    PLUNGE = "PLUNGE"                 # 暴跌
+    SOFT_STOP = "SOFT_STOP"  # 软止损触发
+    ABNORMAL_OPEN = "ABNORMAL_OPEN"  # 异常开盘(高开/低开异常)
+    PLUNGE = "PLUNGE"  # 暴跌
 
 
 class GraduationStage(str, Enum):
     """灰度发布4阶段 (POS-02 建仓期逐步放量)。"""
 
-    NONE = "NONE"                       # 非建仓期
-    STAGE_1_5PCT = "STAGE_1_5PCT"       # 第一阶段 5%
-    STAGE_2_20PCT = "STAGE_2_20PCT"     # 第二阶段 20%
-    STAGE_3_50PCT = "STAGE_3_50PCT"     # 第三阶段 50%
-    STAGE_4_100PCT = "STAGE_4_100PCT"   # 第四阶段 100% (满仓, 转ACTIVE)
+    NONE = "NONE"  # 非建仓期
+    STAGE_1_5PCT = "STAGE_1_5PCT"  # 第一阶段 5%
+    STAGE_2_20PCT = "STAGE_2_20PCT"  # 第二阶段 20%
+    STAGE_3_50PCT = "STAGE_3_50PCT"  # 第三阶段 50%
+    STAGE_4_100PCT = "STAGE_4_100PCT"  # 第四阶段 100% (满仓, 转ACTIVE)
 
 
 # 灰度阶段→目标权重比例
@@ -468,9 +468,7 @@ class PositionStateMachine:
         """
         now = now or self._clock()
         if self._ctx.state != PositionState.BUILDING:
-            raise GraduationRegressionError(
-                f"[{self._symbol}] cannot advance graduation in state {self._ctx.state}"
-            )
+            raise GraduationRegressionError(f"[{self._symbol}] cannot advance graduation in state {self._ctx.state}")
         if self._ctx.graduation_stage == GraduationStage.STAGE_4_100PCT:
             raise GraduationRegressionError(f"[{self._symbol}] already at full graduation stage")
         # 校验当前阶段最短持续天数
@@ -487,7 +485,10 @@ class PositionStateMachine:
         self._enter_graduation(next_stage, now)
         logger.info(
             "[%s] graduation %s → %s (weight=%.2f)",
-            self._symbol, _GRADUATION_ORDER[current_idx].value, next_stage.value, _GRADUATION_WEIGHTS[next_stage],
+            self._symbol,
+            _GRADUATION_ORDER[current_idx].value,
+            next_stage.value,
+            _GRADUATION_WEIGHTS[next_stage],
         )
         # 满仓阶段完成 → 自动转 ACTIVE (不作为单独 StateChanged, 同步切换)
         if next_stage == GraduationStage.STAGE_4_100PCT:
@@ -510,9 +511,7 @@ class PositionStateMachine:
             self._enter_graduation(GraduationStage.STAGE_4_100PCT, now)
         return self._transition(PositionState.ACTIVE, now=now, reason="activate")
 
-    def enter_observing(
-        self, reason: ObservingReason, now: datetime | None = None
-    ) -> StateChangedEvent:
+    def enter_observing(self, reason: ObservingReason, now: datetime | None = None) -> StateChangedEvent:
         """ACTIVE/BUILDING → OBSERVING, 进入观察期。
 
         观察期确认窗口 = observing_confirm_minutes (默认15min)。
@@ -525,9 +524,7 @@ class PositionStateMachine:
         self._ctx.observing_confirm_by = now + timedelta(minutes=self._config.observing_confirm_minutes)
         return event
 
-    def exit_observing(
-        self, *, confirm: bool, now: datetime | None = None
-    ) -> StateChangedEvent:
+    def exit_observing(self, *, confirm: bool, now: datetime | None = None) -> StateChangedEvent:
         """退出观察期。
 
         Args:
@@ -603,9 +600,7 @@ class PositionStateMachine:
 
     # ── 内部实现 ──
 
-    def _transition(
-        self, target: PositionState, *, now: datetime, reason: str
-    ) -> StateChangedEvent:
+    def _transition(self, target: PositionState, *, now: datetime, reason: str) -> StateChangedEvent:
         """执行底层状态转换并产出 E-POS-05 事件。"""
         from_state = self._ctx.state
         self._fsm.transition(target, context={"reason": reason, "now": now.isoformat()})
@@ -644,6 +639,4 @@ class PositionStateMachine:
             try:
                 listener(event)
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.error(
-                    "[%s] state changed listener error: %s", self._symbol, exc, exc_info=True
-                )
+                logger.error("[%s] state changed listener error: %s", self._symbol, exc, exc_info=True)

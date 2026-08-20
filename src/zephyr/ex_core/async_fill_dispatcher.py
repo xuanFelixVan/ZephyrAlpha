@@ -175,11 +175,11 @@ class AsyncFillDispatcherError(Exception):
 class DispatchStats:
     """派发统计（线程安全快照，可能略有竞态但足够监控）。"""
 
-    enqueued: int = 0          # 入队总数
-    dispatched: int = 0        # 已派发（处理成功）
-    deduplicated: int = 0      # 重复 fill_id 去重数
-    errors: int = 0            # 处理异常数
-    queue_size: int = 0        # 当前队列长度
+    enqueued: int = 0  # 入队总数
+    dispatched: int = 0  # 已派发（处理成功）
+    deduplicated: int = 0  # 重复 fill_id 去重数
+    errors: int = 0  # 处理异常数
+    queue_size: int = 0  # 当前队列长度
     last_dispatch_at: datetime | None = None  # 最后派发时间
 
 
@@ -305,12 +305,14 @@ class AsyncFillDispatcher:
         if exited:
             _logger.info(
                 "AsyncFillDispatcher 停机完成: %s (dispatched=%d)",
-                self._consumer_name, self._stats.dispatched,
+                self._consumer_name,
+                self._stats.dispatched,
             )
         else:
             _logger.error(
                 "AsyncFillDispatcher 停机超时: %s (queue_size=%d)",
-                self._consumer_name, self._queue.qsize(),
+                self._consumer_name,
+                self._queue.qsize(),
             )
         return exited
 
@@ -332,9 +334,7 @@ class AsyncFillDispatcher:
             AsyncFillDispatcherError: 停机后入队
         """
         if not self._running.is_set():
-            raise AsyncFillDispatcherError(
-                f"派发器已停机，拒绝入队 fill_id={fill.fill_id}"
-            )
+            raise AsyncFillDispatcherError(f"派发器已停机，拒绝入队 fill_id={fill.fill_id}")
 
         # fill_id 幂等去重（回调内快速判断，set 查询 O(1)）
         if not self._is_new_fill(fill.fill_id):
@@ -348,9 +348,9 @@ class AsyncFillDispatcher:
             self._queue.put_nowait(fill)
         except queue.Full:
             _logger.error(
-                "成交队列满（backpressure），丢弃 fill_id=%s "
-                "(queue_maxsize=%d)——这是严重错误，需检查消费速度",
-                fill.fill_id, self._queue.maxsize,
+                "成交队列满（backpressure），丢弃 fill_id=%s (queue_maxsize=%d)——这是严重错误，需检查消费速度",
+                fill.fill_id,
+                self._queue.maxsize,
             )
             return False
 
@@ -381,7 +381,9 @@ class AsyncFillDispatcher:
                     self._stats.errors += 1
                 _logger.error(
                     "派发 fill 异常 fill_id=%s: %s",
-                    getattr(fill, "fill_id", "?"), exc, exc_info=True,
+                    getattr(fill, "fill_id", "?"),
+                    exc,
+                    exc_info=True,
                 )
             finally:
                 self._queue.task_done()
@@ -394,7 +396,8 @@ class AsyncFillDispatcher:
         if order is None:
             _logger.warning(
                 "成交回报对应订单不存在，跳过 fill_id=%s order_id=%s",
-                fill.fill_id, getattr(fill, "order_id", "?"),
+                fill.fill_id,
+                getattr(fill, "order_id", "?"),
             )
             with self._stats_lock:
                 self._stats.errors += 1

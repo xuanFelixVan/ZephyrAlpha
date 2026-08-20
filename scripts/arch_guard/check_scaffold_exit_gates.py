@@ -48,6 +48,7 @@ AUDIT_DB_PATH = REPO_ROOT / "data" / "audit.db"
 DETECT_SECRETS_SCRIPT = REPO_ROOT / "scripts" / "governance" / "d6_security" / "detect_secrets.py"
 SECRET_LEAK_SCAN_SCRIPT = REPO_ROOT / "scripts" / "governance" / "d6_security" / "scan_secret_leak.py"
 
+
 def check_git_secrets_hook() -> tuple[bool, str]:
     if not GIT_SECRETS_HOOK.exists():
         return False, "git-secrets pre_commit hook 未部署 (.git/hooks/pre_commit 不存在)"
@@ -60,6 +61,7 @@ def check_git_secrets_hook() -> tuple[bool, str]:
     if not found:
         return False, "pre_commit hook 存在但未包含 ZEPHYR_SECRET_* pattern"
     return True, f"git-secrets hook 已部署 (含 {', '.join(found)})"
+
 
 def check_scan_secret_leak() -> tuple[bool, str]:
     scanner = SECRET_LEAK_SCAN_SCRIPT if SECRET_LEAK_SCAN_SCRIPT.exists() else DETECT_SECRETS_SCRIPT
@@ -83,13 +85,16 @@ def check_scan_secret_leak() -> tuple[bool, str]:
     except Exception as e:
         return False, f"secret 扫描执行失败: {e}"
 
+
 def check_audit_db() -> tuple[bool, str]:
     if AUDIT_DB_PATH.exists() and AUDIT_DB_PATH.stat().st_size > 0:
         return True, f"audit.db 已创建 ({AUDIT_DB_PATH.stat().st_size} bytes)"
     return False, "audit.db 未物理创建或为空"
 
+
 INVARIANTS_PATH = REPO_ROOT / "architecture_model" / "cross_cutting" / "invariants.yaml"
 _SECURITY_CATEGORIES = {"capital_safety", "boundary_integrity"}
+
 
 def check_security_invariants_active() -> tuple[bool, str]:
     """G4: invariants.yaml 安全不变量已定义且有 owner+enforcement。
@@ -106,19 +111,14 @@ def check_security_invariants_active() -> tuple[bool, str]:
     invariants = data.get("invariants", [])
     if not isinstance(invariants, list) or not invariants:
         return False, "invariants.yaml 无 invariant 条目"
-    sec_invs = [
-        i for i in invariants
-        if isinstance(i, dict) and i.get("category") in _SECURITY_CATEGORIES
-    ]
+    sec_invs = [i for i in invariants if isinstance(i, dict) and i.get("category") in _SECURITY_CATEGORIES]
     if not sec_invs:
         return False, "invariants.yaml 无 capital_safety/boundary_integrity 条目"
-    missing = [
-        i.get("id", "?") for i in sec_invs
-        if not i.get("owner") or not i.get("enforcement")
-    ]
+    missing = [i.get("id", "?") for i in sec_invs if not i.get("owner") or not i.get("enforcement")]
     if missing:
         return False, f"安全不变量缺少 owner/enforcement: {', '.join(missing)}"
     return True, f"{len(sec_invs)} 条安全不变量已定义且有 owner+enforcement"
+
 
 GATES = [
     ("G1", "git-secrets hook", check_git_secrets_hook),
@@ -126,6 +126,7 @@ GATES = [
     ("G3", "audit.db 创建", check_audit_db),
     ("G4", "安全不变量治理", check_security_invariants_active),
 ]
+
 
 def main() -> int:
     print("scaffold→experimental 安全门禁检查\n")
@@ -160,6 +161,7 @@ def main() -> int:
 
     print("\n[OK] 所有安全门禁通过。scaffold→experimental 过渡条件满足。")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

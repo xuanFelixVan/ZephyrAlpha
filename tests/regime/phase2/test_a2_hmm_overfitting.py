@@ -10,6 +10,7 @@
   - validate() 端到端（同分布 IS/OOS → PASS；不同分布 → 低 ratio）
   - 异常路径（样本不足 / 全 NaN）
 """
+
 from __future__ import annotations
 
 import unittest
@@ -127,9 +128,7 @@ class TestA2Accuracy(unittest.TestCase):
 
     def test_length_mismatch(self):
         """长度不一致 → 0.0。"""
-        acc = A2HmmOverfitting._accuracy(
-            np.array([0, 1, 2]), np.array([0, 1]), {0: 0, 1: 1, 2: 2}
-        )
+        acc = A2HmmOverfitting._accuracy(np.array([0, 1, 2]), np.array([0, 1]), {0: 0, 1: 1, 2: 2})
         self.assertAlmostEqual(acc, 0.0)
 
 
@@ -190,28 +189,36 @@ class TestA2ValidateReal(unittest.TestCase):
         """
         rng = np.random.default_rng(42)
         # 2 态，各 500 样本（IS+OOS 共 2000），同分布
-        X_is = np.vstack([
-            rng.normal(0, 1, (500, 3)),
-            rng.normal(5, 1, (500, 3)),
-        ])
-        X_oos = np.vstack([
-            rng.normal(0, 1, (500, 3)),
-            rng.normal(5, 1, (500, 3)),
-        ])
+        X_is = np.vstack(
+            [
+                rng.normal(0, 1, (500, 3)),
+                rng.normal(5, 1, (500, 3)),
+            ]
+        )
+        X_oos = np.vstack(
+            [
+                rng.normal(0, 1, (500, 3)),
+                rng.normal(5, 1, (500, 3)),
+            ]
+        )
         X = np.vstack([X_is, X_oos])
         is_end_idx = len(X_is)
 
-        a2 = A2HmmOverfitting(hmm_params={
-            "n_states": 2, "covariance_type": "full",
-            "n_iter": 50, "n_init": 3, "random_state": 42,
-        })
+        a2 = A2HmmOverfitting(
+            hmm_params={
+                "n_states": 2,
+                "covariance_type": "full",
+                "n_iter": 50,
+                "n_init": 3,
+                "random_state": 42,
+            }
+        )
         report = a2.validate(X, is_end_idx=is_end_idx, standardize=True)
         self.assertFalse(report.degraded)
         self.assertEqual(report.is_samples, 1000)
         self.assertEqual(report.oos_samples, 1000)
         # 同分布 → OOS/IS 应较高
-        self.assertGreaterEqual(report.ratio, 0.5,
-                                f"同分布 ratio={report.ratio:.3f} 应 ≥0.5")
+        self.assertGreaterEqual(report.ratio, 0.5, f"同分布 ratio={report.ratio:.3f} 应 ≥0.5")
 
     def test_different_distribution_runs(self):
         """IS/OOS 不同分布 → validate 正常完成（不 crash），产出有效报告。
@@ -222,22 +229,31 @@ class TestA2ValidateReal(unittest.TestCase):
         """
         rng = np.random.default_rng(42)
         # IS: 2 态均值 [0, 5]
-        X_is = np.vstack([
-            rng.normal(0, 1, (500, 3)),
-            rng.normal(5, 1, (500, 3)),
-        ])
+        X_is = np.vstack(
+            [
+                rng.normal(0, 1, (500, 3)),
+                rng.normal(5, 1, (500, 3)),
+            ]
+        )
         # OOS: 2 态均值 [0, 20]（分布差异大）
-        X_oos = np.vstack([
-            rng.normal(0, 1, (500, 3)),
-            rng.normal(20, 1, (500, 3)),
-        ])
+        X_oos = np.vstack(
+            [
+                rng.normal(0, 1, (500, 3)),
+                rng.normal(20, 1, (500, 3)),
+            ]
+        )
         X = np.vstack([X_is, X_oos])
         is_end_idx = len(X_is)
 
-        a2 = A2HmmOverfitting(hmm_params={
-            "n_states": 2, "covariance_type": "full",
-            "n_iter": 50, "n_init": 3, "random_state": 42,
-        })
+        a2 = A2HmmOverfitting(
+            hmm_params={
+                "n_states": 2,
+                "covariance_type": "full",
+                "n_iter": 50,
+                "n_init": 3,
+                "random_state": 42,
+            }
+        )
         report = a2.validate(X, is_end_idx=is_end_idx, standardize=True)
         self.assertFalse(report.degraded)
         self.assertEqual(report.is_samples, 1000)
@@ -249,18 +265,28 @@ class TestA2ValidateReal(unittest.TestCase):
     def test_sample_too_small_raises(self):
         """IS 或 OOS < 100 → A2ValidationError。"""
         X = np.random.default_rng(0).normal(0, 1, (50, 3))
-        a2 = A2HmmOverfitting(hmm_params={
-            "n_states": 2, "n_iter": 10, "n_init": 1, "random_state": 0,
-        })
+        a2 = A2HmmOverfitting(
+            hmm_params={
+                "n_states": 2,
+                "n_iter": 10,
+                "n_init": 1,
+                "random_state": 0,
+            }
+        )
         with self.assertRaises(A2ValidationError):
             a2.validate(X, is_end_idx=25, standardize=False)
 
     def test_all_nan_raises(self):
         """全 NaN → A2ValidationError。"""
         X = np.full((200, 3), np.nan)
-        a2 = A2HmmOverfitting(hmm_params={
-            "n_states": 2, "n_iter": 10, "n_init": 1, "random_state": 0,
-        })
+        a2 = A2HmmOverfitting(
+            hmm_params={
+                "n_states": 2,
+                "n_iter": 10,
+                "n_init": 1,
+                "random_state": 0,
+            }
+        )
         with self.assertRaises(A2ValidationError):
             a2.validate(X, is_end_idx=100, standardize=False)
 

@@ -83,10 +83,7 @@ def _check_blacklisted_path(path: str) -> list[str]:
                 pass
             # 回退：路径分量序列匹配
             frag_parts = [p for p in frag.split("/") if p]
-            if any(
-                parts[i : i + len(frag_parts)] == frag_parts
-                for i in range(len(parts) - len(frag_parts) + 1)
-            ):
+            if any(parts[i : i + len(frag_parts)] == frag_parts for i in range(len(parts) - len(frag_parts) + 1)):
                 hits.append(fragment)
         else:
             # 名称型fragment（如 temp_、.backup）：按路径分量检查，非裸子串

@@ -167,9 +167,9 @@ class PricingTier(str, Enum):
     决定挂单价的"主动程度"——越主动越保证成交但成本越高。
     """
 
-    PASSIVE = "passive"        # 被动档：买一/卖一，省 spread，排队等成交
-    ACTIVE = "active"          # 主动档：对手价（卖一/买一），跨价吃单保证成交
-    LIMIT_UP_SELL = "limit_up_sell"   # 涨停板卖单：挂涨停价（唯一可成交价位）
+    PASSIVE = "passive"  # 被动档：买一/卖一，省 spread，排队等成交
+    ACTIVE = "active"  # 主动档：对手价（卖一/买一），跨价吃单保证成交
+    LIMIT_UP_SELL = "limit_up_sell"  # 涨停板卖单：挂涨停价（唯一可成交价位）
     LIMIT_DOWN_BUY = "limit_down_buy"  # 跌停板买单：挂跌停价（唯一可成交价位）
     ONE_TICK_INSIDE = "one_tick_inside"  # 提1tick中间档（Phase 1.5 候选）
 
@@ -281,20 +281,20 @@ class PricingPolicy:
 
         # PASSIVE / ACTIVE / ONE_TICK_INSIDE 都需要盘口
         opponent = self._opponent_price(ctx)  # 主动档对手价
-        own = self._own_price(ctx)            # 被动档己方价
+        own = self._own_price(ctx)  # 被动档己方价
 
         if tier is PricingTier.ACTIVE:
             price, fallback, reason = self._pick_active(ctx, opponent, own)
-            return PricingDecision(price=_round_to_tick(price), tier=tier,
-                                   fallback_used=fallback, reason=reason)
+            return PricingDecision(price=_round_to_tick(price), tier=tier, fallback_used=fallback, reason=reason)
 
         if tier is PricingTier.ONE_TICK_INSIDE:
             return self._decide_one_tick_inside(ctx, own)
 
         # 默认 PASSIVE
         price, fallback, reason = self._pick_passive(ctx, own, opponent)
-        return PricingDecision(price=_round_to_tick(price), tier=PricingTier.PASSIVE,
-                               fallback_used=fallback, reason=reason)
+        return PricingDecision(
+            price=_round_to_tick(price), tier=PricingTier.PASSIVE, fallback_used=fallback, reason=reason
+        )
 
     # ── 档位实现 ──
 
@@ -307,12 +307,12 @@ class PricingPolicy:
                 price = ctx.prev_close * (Decimal("1") + _DEFAULT_LIMIT_UP_PCT)
                 _logger.warning(
                     "涨停价未知 symbol=%s，用 prev_close×1.1 估算=%s",
-                    ctx.symbol, price,
+                    ctx.symbol,
+                    price,
                 )
             else:
                 raise PricingPolicyError(
-                    f"涨停板卖单无法计算涨停价：symbol={ctx.symbol} "
-                    f"limit_up_price 和 prev_close 均无"
+                    f"涨停板卖单无法计算涨停价：symbol={ctx.symbol} limit_up_price 和 prev_close 均无"
                 )
         return PricingDecision(
             price=_round_to_tick(price),
@@ -329,12 +329,12 @@ class PricingPolicy:
                 price = ctx.prev_close * (Decimal("1") - _DEFAULT_LIMIT_DOWN_PCT)
                 _logger.warning(
                     "跌停价未知 symbol=%s，用 prev_close×0.9 估算=%s",
-                    ctx.symbol, price,
+                    ctx.symbol,
+                    price,
                 )
             else:
                 raise PricingPolicyError(
-                    f"跌停板买单无法计算跌停价：symbol={ctx.symbol} "
-                    f"limit_down_price 和 prev_close 均无"
+                    f"跌停板买单无法计算跌停价：symbol={ctx.symbol} limit_down_price 和 prev_close 均无"
                 )
         return PricingDecision(
             price=_round_to_tick(price),
@@ -343,9 +343,7 @@ class PricingPolicy:
             reason=f"跌停板买单挂跌停价 {price}（排队等成交）",
         )
 
-    def _decide_one_tick_inside(
-        self, ctx: PricingContext, own: Decimal | None
-    ) -> PricingDecision:
+    def _decide_one_tick_inside(self, ctx: PricingContext, own: Decimal | None) -> PricingDecision:
         """提1tick中间档：买单挂买一+1tick、卖单挂卖一-1tick。
 
         Phase 1.5 候选策略：以极小成本（0.01元/股）换取成交确定性，避开盘口拥堵区。
@@ -353,9 +351,7 @@ class PricingPolicy:
         """
         if own is None or own <= 0:
             # 无盘口回退到被动档逻辑
-            price, fallback, reason = self._pick_passive(
-                ctx, own, self._opponent_price(ctx)
-            )
+            price, fallback, reason = self._pick_passive(ctx, own, self._opponent_price(ctx))
             return PricingDecision(
                 price=_round_to_tick(price),
                 tier=PricingTier.ONE_TICK_INSIDE,
@@ -392,9 +388,7 @@ class PricingPolicy:
             return ctx.last_price, True, f"无盘口回退最新价 {ctx.last_price}"
         if ctx.prev_close is not None and ctx.prev_close > 0:
             return ctx.prev_close, True, f"无盘口回退前收盘价 {ctx.prev_close}"
-        raise PricingPolicyError(
-            f"被动档无可用价格 symbol={ctx.symbol} side={ctx.side.value}"
-        )
+        raise PricingPolicyError(f"被动档无可用价格 symbol={ctx.symbol} side={ctx.side.value}")
 
     def _pick_active(
         self,
@@ -415,9 +409,7 @@ class PricingPolicy:
         if own is not None and own > 0:
             estimated = own + PRICE_TICK if ctx.side is OrderSide.BUY else own - PRICE_TICK
             return estimated, True, f"主动档无对手价用己方价±1tick估算 {estimated}"
-        raise PricingPolicyError(
-            f"主动档无可用价格 symbol={ctx.symbol} side={ctx.side.value}"
-        )
+        raise PricingPolicyError(f"主动档无可用价格 symbol={ctx.symbol} side={ctx.side.value}")
 
     # ── 盘口解析 ──
 
@@ -437,6 +429,7 @@ class PricingPolicy:
 
 
 # ── 函数式入口 ──
+
 
 def compute_quote_price(
     ctx: PricingContext,

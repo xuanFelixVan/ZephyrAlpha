@@ -367,7 +367,9 @@ def get_unified_memory_api(
                     resolved_backend = create_vms_backend()
                     _logger.info("get_unified_memory_api: using VMSMemoryBackend")
                 except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    _logger.info("get_unified_memory_api: VMS unavailable, falling back to ChromaDB: %s", exc, exc_info=True)
+                    _logger.info(
+                        "get_unified_memory_api: VMS unavailable, falling back to ChromaDB: %s", exc, exc_info=True
+                    )
             _singleton_api = UnifiedMemoryAPI(
                 backend=resolved_backend,
                 enforce_capability=enforce_capability,

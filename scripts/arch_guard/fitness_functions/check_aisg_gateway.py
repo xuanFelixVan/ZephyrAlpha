@@ -120,5 +120,6 @@ def main() -> int:
     print("OK: AISG 门禁全部通过（含 sandbox 安全测试）")
     return 0
 
+
 if __name__ == "__main__":
     sys.exit(main())

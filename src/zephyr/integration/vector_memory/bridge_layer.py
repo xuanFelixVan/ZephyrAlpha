@@ -95,9 +95,7 @@ COLLECTION_ALIASES: Final[dict[str, str]] = {
 }
 
 
-def _query_vms_collection(
-    vms_cm: CollectionManager, vms_collection: str, query: str, k: int
-) -> list[dict[str, Any]]:
+def _query_vms_collection(vms_cm: CollectionManager, vms_collection: str, query: str, k: int) -> list[dict[str, Any]]:
     """Query the VMS collection and return list of result dicts.
 
     Extracted from BridgeLayer.search_both to reduce complexity.
@@ -122,9 +120,7 @@ def _query_vms_collection(
     return results
 
 
-def _query_kb_collection(
-    kb_client: object, kb_collection_name: str, query: str, k: int
-) -> list[dict[str, Any]]:
+def _query_kb_collection(kb_client: object, kb_collection_name: str, query: str, k: int) -> list[dict[str, Any]]:
     """Query the kb/ collection and return list of result dicts.
 
     Extracted from BridgeLayer.search_both to reduce complexity.
@@ -143,9 +139,7 @@ def _query_kb_collection(
                                 "id": f"kb::{doc_id}",
                                 "content": res.get("documents", [[""]])[0][i] if res.get("documents") else "",
                                 "source": "kb",
-                                "distance": res.get("distances", [[0.0]])[0][i]
-                                if res.get("distances")
-                                else 0.0,
+                                "distance": res.get("distances", [[0.0]])[0][i] if res.get("distances") else 0.0,
                             }
                         )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

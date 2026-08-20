@@ -61,69 +61,76 @@ _PSI_BINS = [-np.inf, -0.05, 0.0, 0.03, 0.06, np.inf]
 class HoldingPeriodMicrostructureMonitor:
     """持仓期间微结构监控（v1.9.3 补，封板后→收盘持续监控+渐进降仓）。"""
 
-    sar_threshold_alert: float = 0.01    # SaR>1% 预警
-    sar_threshold_reduce: float = 0.02   # SaR>2% 降仓
+    sar_threshold_alert: float = 0.01  # SaR>1% 预警
+    sar_threshold_reduce: float = 0.02  # SaR>2% 降仓
     ofi_window: deque = field(default_factory=lambda: deque(maxlen=20))
     latent_buildup_detected: bool = False
 
     def monitor(self, position: dict, order_book: dict, seal_data: dict) -> dict:
-        bid_levels = order_book.get('bid_levels', [])
-        depth = sum(l['volume'] for l in bid_levels[:5])  # ① SaR 前瞻性滑点评估
-        concentration = (max(l['volume'] for l in bid_levels) / max(depth, 1)) if bid_levels else 0.0
-        sar = (position.get('qty', 0) / max(depth, 1)) * (1 + concentration) * 0.001
-        ofi = order_book.get('ofi', 0)  # ② 订单流不平衡（OFI）latent build-up 检测
+        bid_levels = order_book.get("bid_levels", [])
+        depth = sum(l["volume"] for l in bid_levels[:5])  # ① SaR 前瞻性滑点评估
+        concentration = (max(l["volume"] for l in bid_levels) / max(depth, 1)) if bid_levels else 0.0
+        sar = (position.get("qty", 0) / max(depth, 1)) * (1 + concentration) * 0.001
+        ofi = order_book.get("ofi", 0)  # ② 订单流不平衡（OFI）latent build-up 检测
         self.ofi_window.append(ofi)
         if len(self.ofi_window) >= 10:
             ofi_trend = np.mean(list(self.ofi_window)[-5:]) - np.mean(list(self.ofi_window)[:-5])
             if ofi_trend < -0.3:  # OFI 持续下降=latent build-up
                 self.latent_buildup_detected = True
-        seal_ratio = seal_data.get('current', 0) / max(seal_data.get('initial', 1), 1)  # ③ 封单持续监控
+        seal_ratio = seal_data.get("current", 0) / max(seal_data.get("initial", 1), 1)  # ③ 封单持续监控
         if sar > self.sar_threshold_reduce or (self.latent_buildup_detected and seal_ratio < 0.5):  # 分级响应
-            return {'action': 'REDUCE_50', 'reason': f'SaR={sar:.3f}>2%或latent+封单<50%→降仓50%'}
+            return {"action": "REDUCE_50", "reason": f"SaR={sar:.3f}>2%或latent+封单<50%→降仓50%"}
         if sar > self.sar_threshold_alert or self.latent_buildup_detected:
-            return {'action': 'ALERT', 'reason': f'SaR={sar:.3f}>1%或latent build-up→预警'}
+            return {"action": "ALERT", "reason": f"SaR={sar:.3f}>1%或latent build-up→预警"}
         if seal_ratio < 0.7:
-            return {'action': 'ALERT', 'reason': f'封单剩余{seal_ratio:.0%}<70%→监控'}
-        return {'action': 'MONITOR', 'reason': '持仓微结构正常'}
+            return {"action": "ALERT", "reason": f"封单剩余{seal_ratio:.0%}<70%→监控"}
+        return {"action": "MONITOR", "reason": "持仓微结构正常"}
 
 
 @dataclass
 class SignalDecayMonitor:
     """打板信号失效监控（v1.9.2 补 CUSUM+PSI，v1.9.3 升级 two-type+方差压缩）。分级响应：OK→REDUCE→STOP。"""
 
-    cusum_k: float = 0.5       # 偏移容差（0.5σ）——内生型
-    cusum_h: float = 4.0       # 触发阈值（4σ）
-    cusum_S: float = 0.0       # 累积和
-    psi_alert: float = 0.1     # 轻微漂移
-    psi_critical: float = 0.25 # 严重漂移
+    cusum_k: float = 0.5  # 偏移容差（0.5σ）——内生型
+    cusum_h: float = 4.0  # 触发阈值（4σ）
+    cusum_S: float = 0.0  # 累积和
+    psi_alert: float = 0.1  # 轻微漂移
+    psi_critical: float = 0.25  # 严重漂移
     variance_compression_threshold: float = 0.6  # v1.9.3 新增：方差压缩至历史 60% 触发预警（外生型兜底）
     variance_window: deque = field(default_factory=lambda: deque(maxlen=60))
     baseline_window: deque = field(default_factory=lambda: deque(maxlen=30))
-    cascade_type: str = 'UNKNOWN'  # v1.9.3 新增：two-type classification——ENDOGENOUS / EXOGENOUS / UNKNOWN
+    cascade_type: str = "UNKNOWN"  # v1.9.3 新增：two-type classification——ENDOGENOUS / EXOGENOUS / UNKNOWN
 
     def update(self, win: bool, premium: float, taker_bs_ratio_var: float = None) -> dict:
         self.baseline_window.append(premium)
         mu, sigma = 0.55, 0.5
-        self.cusum_S = max(0, self.cusum_S + ((1.0 if win else 0.0) - mu - self.cusum_k * sigma))  # CUSUM：监控胜率累积偏移（内生型）
+        self.cusum_S = max(
+            0, self.cusum_S + ((1.0 if win else 0.0) - mu - self.cusum_k * sigma)
+        )  # CUSUM：监控胜率累积偏移（内生型）
         if self.cusum_S > self.cusum_h * sigma:
-            self.cascade_type = 'ENDOGENOUS'
-            return {'level': 'REDUCE', 'type': 'ENDOGENOUS', 'reason': f'CUSUM={self.cusum_S / sigma:.1f}σ>4σ→仓位减半'}
+            self.cascade_type = "ENDOGENOUS"
+            return {"level": "REDUCE", "type": "ENDOGENOUS", "reason": f"CUSUM={self.cusum_S / sigma:.1f}σ>4σ→仓位减半"}
         if taker_bs_ratio_var is not None:  # v1.9.3 新增：方差压缩检测器（外生型兜底，跨 6/7 事件）
-            self.variance_window.append(taker_bs_ratio_var)  # spec 死锁修正：先累积样本再评估（原式 len>=30 才 append 永远不触发）
+            self.variance_window.append(
+                taker_bs_ratio_var
+            )  # spec 死锁修正：先累积样本再评估（原式 len>=30 才 append 永远不触发）
             if len(self.variance_window) >= 30:
                 hist_var = np.var(list(self.variance_window)[:-10])
                 curr_var = np.var(list(self.variance_window)[-10:])
                 if curr_var < hist_var * self.variance_compression_threshold:
-                    self.cascade_type = 'EXOGENOUS'
-                    return {'level': 'REDUCE', 'type': 'EXOGENOUS',
-                            'reason': f'方差压缩{curr_var / hist_var:.0%}<60%→外生冲击预警+仓位减半'}
+                    self.cascade_type = "EXOGENOUS"
+                    return {
+                        "level": "REDUCE",
+                        "type": "EXOGENOUS",
+                        "reason": f"方差压缩{curr_var / hist_var:.0%}<60%→外生冲击预警+仓位减半",
+                    }
         if len(self.baseline_window) >= 30:  # PSI：监控次日溢价分布漂移
             psi = self._compute_psi()
             if psi > self.psi_critical:
-                return {'level': 'STOP', 'reason': f'PSI={psi:.2f}>0.25→停止打板+重新校准'}
+                return {"level": "STOP", "reason": f"PSI={psi:.2f}>0.25→停止打板+重新校准"}
             elif psi > self.psi_alert:
-                return {'level': 'REDUCE', 'reason': f'PSI={psi:.2f}>0.1→仓位减半'}
-        return {'level': 'OK', 'reason': '信号质量正常'}
+                return {"level": "REDUCE", "reason": f"PSI={psi:.2f}>0.1→仓位减半"}
+        return {"level": "OK", "reason": "信号质量正常"}
 
     def _compute_psi(self) -> float:
         """PSI 人口稳定性指数：baseline_window 前半=参考分布，后半=当前分布，

@@ -30,6 +30,7 @@ Usage:
 
 依据: 11_regime_backtest_validation_plan §4.3 C1 + §5 验证标准（Morwane OOS 行业基准）
 """
+
 from __future__ import annotations
 
 import argparse
@@ -60,6 +61,7 @@ try:
     from zephyr.regime.core.regime_detector import RegimeDetector
     from zephyr.regime.features.regime_data_loader import RegimeDataLoader
     from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
+
     REAL_DEPS_OK = True
 except Exception as _exc:  # pragma: no cover
     _REAL_IMPORT_ERROR = _exc
@@ -87,7 +89,7 @@ DATA_LOAD_START = "2010-01-01"  # walk-forward 5年训练历史
 
 
 def make_synthetic_market(
-    n_days: int = 504,          # 2 年交易日
+    n_days: int = 504,  # 2 年交易日
     n_symbols: int = 3,
     seed: int = 42,
 ) -> pd.DataFrame:
@@ -108,17 +110,19 @@ def make_synthetic_market(
         rows = []
         for t in range(n_days):
             vol = 0.01 if t < half else 0.035  # 前低波后高波
-            ret = rng.normal(0.0005, vol)        # 微正漂移
+            ret = rng.normal(0.0005, vol)  # 微正漂移
             close = close * (1 + ret)
-            rows.append({
-                "symbol": sym,
-                "date": dates[t],
-                "open": close * (1 + rng.normal(0, 0.002)),
-                "high": close * (1 + abs(rng.normal(0, 0.005))),
-                "low": close * (1 - abs(rng.normal(0, 0.005))),
-                "close": close,
-                "volume": float(rng.integers(500_000, 2_000_000)),
-            })
+            rows.append(
+                {
+                    "symbol": sym,
+                    "date": dates[t],
+                    "open": close * (1 + rng.normal(0, 0.002)),
+                    "high": close * (1 + abs(rng.normal(0, 0.005))),
+                    "low": close * (1 - abs(rng.normal(0, 0.005))),
+                    "close": close,
+                    "volume": float(rng.integers(500_000, 2_000_000)),
+                }
+            )
         frames.append(pd.DataFrame(rows))
 
     return pd.concat(frames, ignore_index=True).set_index(["symbol", "date"]).sort_index()
@@ -134,26 +138,22 @@ def make_equal_weight_signals(data: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def compute_market_volatility_schedule(
-    data: pd.DataFrame, window: int = 20
-) -> dict[datetime, float]:
+def compute_market_volatility_schedule(data: pd.DataFrame, window: int = 20) -> dict[datetime, float]:
     """算市场平均年化波动率序列（跨标的 20 日 rolling std 均值 × √252）。
 
     供 MockShrinkageProvider：年化 vol<15%→1.0 / 15-25%→0.85 / 25-40%→0.6 / ≥40%→0.3。
     """
-    closes = data["close"].unstack("symbol")               # date × symbol
+    closes = data["close"].unstack("symbol")  # date × symbol
     returns = np.log(closes / closes.shift(1))
     rolling_vol = returns.rolling(window).std().mean(axis=1).dropna()
-    annual_vol = rolling_vol * np.sqrt(252)                # 年化
+    annual_vol = rolling_vol * np.sqrt(252)  # 年化
     return {dt.to_pydatetime(): float(v) for dt, v in annual_vol.items()}
 
 
 # ── 真实数据加载（real 模式）─────────────────────────────────────────
 
 
-def load_basket_hfq(
-    symbols: list[str], start: str, end: str
-) -> pd.DataFrame:
+def load_basket_hfq(symbols: list[str], start: str, end: str) -> pd.DataFrame:
     """从 ClickHouse 加载篮子股票后复权日K（real 模式可交易 universe）。
 
     Returns:
@@ -181,18 +181,20 @@ def load_basket_hfq(
         if len(vals) < 7:
             continue
         rows.append(vals)
-    df = pd.DataFrame(rows, columns=["trade_date", "symbol", "open", "high",
-                                      "low", "close", "volume"])
+    df = pd.DataFrame(rows, columns=["trade_date", "symbol", "open", "high", "low", "close", "volume"])
     df["trade_date"] = pd.to_datetime(df["trade_date"])
     for c in ["open", "high", "low", "close", "volume"]:
         df[c] = pd.to_numeric(df[c], errors="coerce")
     # 重命名 trade_date → date（对齐回测引擎期望的 index level 名）
     df = df.rename(columns={"trade_date": "date"})
     df = df.set_index(["symbol", "date"]).sort_index()
-    logging.info("basket hfq 加载: %d 行, %d 标的, %s~%s",
-                 len(df), df.index.get_level_values("symbol").nunique(),
-                 df.index.get_level_values("date").min(),
-                 df.index.get_level_values("date").max())
+    logging.info(
+        "basket hfq 加载: %d 行, %d 标的, %s~%s",
+        len(df),
+        df.index.get_level_values("symbol").nunique(),
+        df.index.get_level_values("date").min(),
+        df.index.get_level_values("date").max(),
+    )
     return df
 
 
@@ -240,8 +242,10 @@ def run_mock_smoke() -> C1ComparisonResult:
 
     print("[mock] 计算市场年化波动率序列（20日 rolling std × √252）...")
     vol_schedule = compute_market_volatility_schedule(data)
-    print(f"[mock] 波动率序列：{len(vol_schedule)} 天，"
-          f"年化 vol 范围 [{min(vol_schedule.values()):.4f}, {max(vol_schedule.values()):.4f}]")
+    print(
+        f"[mock] 波动率序列：{len(vol_schedule)} 天，"
+        f"年化 vol 范围 [{min(vol_schedule.values()):.4f}, {max(vol_schedule.values()):.4f}]"
+    )
 
     print("[mock] 构建 MockShrinkageProvider（年化 vol → 4档 Shrinkage）...")
     provider = MockShrinkageProvider(volatility_schedule=vol_schedule)
@@ -251,8 +255,8 @@ def run_mock_smoke() -> C1ComparisonResult:
     # BacktestConfig 的资金/费率字段为 Decimal 类型，须用 Decimal 构造（float 会破坏撮合引擎契约）
     config = BacktestConfig(
         initial_capital=Decimal("1000000"),
-        commission_rate=Decimal("0.0003"),    # 万三
-        slippage_bps=Decimal("1"),            # 1bp
+        commission_rate=Decimal("0.0003"),  # 万三
+        slippage_bps=Decimal("1"),  # 1bp
         risk_free_rate=0.02,
     )
     result = comparator.compare(
@@ -266,8 +270,7 @@ def run_mock_smoke() -> C1ComparisonResult:
     return result
 
 
-def run_real(risk_mode: str = "simple", overlay: str = "off",
-             temperature: float = 1.0) -> C1ComparisonResult:
+def run_real(risk_mode: str = "simple", overlay: str = "off", temperature: float = 1.0) -> C1ComparisonResult:
     """真实模式：真实数据 + RegimeFeatureBuilder walk-forward HMM Shrinkage。
 
     数据链（2015-2026）:
@@ -290,33 +293,40 @@ def run_real(risk_mode: str = "simple", overlay: str = "off",
     warnings.filterwarnings("ignore", message=".*not converging.*")
     logging.getLogger("hmmlearn").setLevel(logging.ERROR)
 
-    enable_full_risk = (risk_mode == "full")
-    enable_overlay = (overlay == "on")
-    print(f"[real] 配置: risk_mode={risk_mode}, overlay={overlay} "
-          f"(enable_full_risk={enable_full_risk}, enable_overlay={enable_overlay})")
+    enable_full_risk = risk_mode == "full"
+    enable_overlay = overlay == "on"
+    print(
+        f"[real] 配置: risk_mode={risk_mode}, overlay={overlay} "
+        f"(enable_full_risk={enable_full_risk}, enable_overlay={enable_overlay})"
+    )
 
-    print(f"[real] 加载篮子后复权日K（{len(BASKET_SYMBOLS)} 大盘股, "
-          f"{REAL_START}~{REAL_END}）...")
+    print(f"[real] 加载篮子后复权日K（{len(BASKET_SYMBOLS)} 大盘股, {REAL_START}~{REAL_END}）...")
     data = load_basket_hfq(BASKET_SYMBOLS, REAL_START, REAL_END)
     signals = make_equal_weight_signals(data)
-    print(f"[real] 篮子: {len(data)} 行, {signals.shape[1]} 标的, "
-          f"{signals.index.min()}~{signals.index.max()}")
+    print(f"[real] 篮子: {len(data)} 行, {signals.shape[1]} 标的, {signals.index.min()}~{signals.index.max()}")
 
     print("[real] 构建 RegimeFeatureBuilder + walk-forward HMM Shrinkage schedule...")
     print(f"[real]   （指数K线→6特征→季度重拟合5年训练→逐日detect，预计2-3分钟，T={temperature}）")
     data_loader = RegimeDataLoader(
-        data_load_start=DATA_LOAD_START, backtest_end=REAL_END,
+        data_load_start=DATA_LOAD_START,
+        backtest_end=REAL_END,
     )
     builder = RegimeFeatureBuilder(
-        backtest_start=REAL_START, backtest_end=REAL_END, data_load_start=DATA_LOAD_START,
-        enable_full_risk=enable_full_risk, enable_overlay=enable_overlay,
-        enable_phase2c=True, data_loader=data_loader,
+        backtest_start=REAL_START,
+        backtest_end=REAL_END,
+        data_load_start=DATA_LOAD_START,
+        enable_full_risk=enable_full_risk,
+        enable_overlay=enable_overlay,
+        enable_phase2c=True,
+        data_loader=data_loader,
     )
     detector = RegimeDetector(shrinkage_enabled=True, temperature=temperature)
     schedule = builder.build_shrinkage_schedule(detector, train_years=5, detect_window=60)
     vals = np.array(list(schedule.values()))
-    print(f"[real] Shrinkage schedule: {len(schedule)} 日, "
-          f"均值={vals.mean():.3f}, <1.0占比={100*(vals<1.0).mean():.1f}%")
+    print(
+        f"[real] Shrinkage schedule: {len(schedule)} 日, "
+        f"均值={vals.mean():.3f}, <1.0占比={100 * (vals < 1.0).mean():.1f}%"
+    )
     provider = ScheduleShrinkageProvider(schedule)
 
     print("[real] 运行 C1ShrinkageComparator.compare()（开/关对比）...")
@@ -344,30 +354,37 @@ def main() -> None:
         description="C1 Shrinkage 开/关对比验证（11_regime_backtest_validation_plan Phase 1）"
     )
     parser.add_argument(
-        "--mode", choices=["mock", "real"], default="mock",
+        "--mode",
+        choices=["mock", "real"],
+        default="mock",
         help="mock=合成数据冒烟（默认）；real=真实数据 2015-2026",
     )
     parser.add_argument(
-        "--risk-mode", choices=["simple", "full"], default="full",
+        "--risk-mode",
+        choices=["simple", "full"],
+        default="full",
         help="risk参数模式：simple=Phase1简化版(1参数#1)；full=Phase2a全量(13参数，"
-             "生产默认——#ARCH-REGIME-RISK-FULL-001 C1验证不退化)",
+        "生产默认——#ARCH-REGIME-RISK-FULL-001 C1验证不退化)",
     )
     parser.add_argument(
-        "--overlay", choices=["off", "on"], default="off",
+        "--overlay",
+        choices=["off", "on"],
+        default="off",
         help="overlay信号开关：off=无覆盖层(纯HMM)；on=Phase2b启用8转换",
     )
     parser.add_argument(
-        "--temperature", type=float, default=1.0,
+        "--temperature",
+        type=float,
+        default=1.0,
         help="HMM 概率温度缩放 T（13_regime_phase3_engineering_plan §2.2 P0-E2）：1.0=不缩放（基准）；"
-             ">1 降温摊平后验验证 C1 不退化；仅 real 模式生效",
+        ">1 降温摊平后验验证 C1 不退化；仅 real 模式生效",
     )
     args = parser.parse_args()
 
     if args.mode == "mock":
         result = run_mock_smoke()
     else:
-        result = run_real(risk_mode=args.risk_mode, overlay=args.overlay,
-                          temperature=args.temperature)
+        result = run_real(risk_mode=args.risk_mode, overlay=args.overlay, temperature=args.temperature)
 
     print_result(result, args.mode)
 

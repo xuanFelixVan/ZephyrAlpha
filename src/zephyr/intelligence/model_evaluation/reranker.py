@@ -132,7 +132,9 @@ class Reranker:
                 self._model = CrossEncoder(self._model_name, trust_remote_code=True)
                 _log.info("Reranker loaded: %s", self._model_name)
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-                _log.warning("Reranker model load failed (%s): %s, rerank disabled", self._model_name, exc, exc_info=True)
+                _log.warning(
+                    "Reranker model load failed (%s): %s, rerank disabled", self._model_name, exc, exc_info=True
+                )
                 self._model = None
 
 

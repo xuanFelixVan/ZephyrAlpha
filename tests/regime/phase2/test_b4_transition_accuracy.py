@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """B4 转换触发准确性验证器单元测试（12_regime_phase2_validation §2.2）."""
+
 from __future__ import annotations
 
 import unittest
@@ -42,18 +43,21 @@ class TestB4TransitionAccuracy(unittest.TestCase):
         self.event_date = self.dates[14]
 
     def _make_events(self, transition_type: str = "S1", in_range: bool = True) -> list[HistoricalEvent]:
-        return [HistoricalEvent(
-            id="EVT-TEST", date=self.event_date,
-            transition_type=transition_type,
-            expected_stage=["trigger", "confirm"],
-            desc="test", in_data_range=in_range,
-        )]
+        return [
+            HistoricalEvent(
+                id="EVT-TEST",
+                date=self.event_date,
+                transition_type=transition_type,
+                expected_stage=["trigger", "confirm"],
+                desc="test",
+                in_data_range=in_range,
+            )
+        ]
 
     def test_exact_day_match(self):
         """触发日 == 事件日 → 命中（delta=0）。"""
         daily = {self.event_date: [_make_transition("S1", "trigger")]}
-        report = self.b4.validate(daily, events=self._make_events(),
-                                   trading_dates=self.dates)
+        report = self.b4.validate(daily, events=self._make_events(), trading_dates=self.dates)
         self.assertEqual(report.verdict, B4Verdict.PASS)
         self.assertEqual(report.hit_count, 1)
         self.assertEqual(report.total_evaluated, 1)
@@ -67,8 +71,7 @@ class TestB4TransitionAccuracy(unittest.TestCase):
         # 事件日 +3 交易日触发
         trig_date = self.dates[17]
         daily = {trig_date: [_make_transition("S1", "confirm")]}
-        report = self.b4.validate(daily, events=self._make_events(),
-                                   trading_dates=self.dates)
+        report = self.b4.validate(daily, events=self._make_events(), trading_dates=self.dates)
         self.assertEqual(report.hit_count, 1)
         m = report.matches[0]
         self.assertEqual(m.delta_days, 3)
@@ -77,8 +80,7 @@ class TestB4TransitionAccuracy(unittest.TestCase):
         """触发日 >5 交易日外 → 未命中。"""
         trig_date = self.dates[20]  # +6 交易日
         daily = {trig_date: [_make_transition("S1", "trigger")]}
-        report = self.b4.validate(daily, events=self._make_events(),
-                                   trading_dates=self.dates)
+        report = self.b4.validate(daily, events=self._make_events(), trading_dates=self.dates)
         self.assertEqual(report.hit_count, 0)
         self.assertEqual(report.verdict, B4Verdict.FAIL)
         m = report.matches[0]
@@ -88,26 +90,23 @@ class TestB4TransitionAccuracy(unittest.TestCase):
     def test_wrong_transition_type_no_match(self):
         """触发的是 S2 但事件要 S1 → 未命中。"""
         daily = {self.event_date: [_make_transition("S2", "trigger")]}
-        report = self.b4.validate(daily, events=self._make_events(),
-                                   trading_dates=self.dates)
+        report = self.b4.validate(daily, events=self._make_events(), trading_dates=self.dates)
         self.assertEqual(report.hit_count, 0)
 
     def test_wrong_stage_no_match(self):
         """触发的是 fail 阶段但事件要 trigger/confirm → 未命中。"""
         daily = {self.event_date: [_make_transition("S1", "fail", triggered=False)]}
-        report = self.b4.validate(daily, events=self._make_events(),
-                                   trading_dates=self.dates)
+        report = self.b4.validate(daily, events=self._make_events(), trading_dates=self.dates)
         self.assertEqual(report.hit_count, 0)
 
     def test_nearest_match_selected(self):
         """多日触发取 |delta| 最小的。"""
         daily = {
             self.dates[10]: [_make_transition("S1", "trigger")],  # -4
-            self.dates[16]: [_make_transition("S1", "confirm")],   # +2 ← 最近
-            self.dates[19]: [_make_transition("S1", "trigger")],   # +5
+            self.dates[16]: [_make_transition("S1", "confirm")],  # +2 ← 最近
+            self.dates[19]: [_make_transition("S1", "trigger")],  # +5
         }
-        report = self.b4.validate(daily, events=self._make_events(),
-                                   trading_dates=self.dates)
+        report = self.b4.validate(daily, events=self._make_events(), trading_dates=self.dates)
         self.assertEqual(report.hit_count, 1)
         self.assertEqual(report.matches[0].delta_days, 2)
         self.assertEqual(report.matches[0].matched_stage, "confirm")
@@ -118,9 +117,12 @@ class TestB4TransitionAccuracy(unittest.TestCase):
         offsets = [i * 11 for i in range(8)]
         events = [
             HistoricalEvent(
-                id=f"EVT-{i}", date=self.dates[off],
-                transition_type="S1", expected_stage=["trigger", "confirm"],
-                desc=f"evt{i}", in_data_range=True,
+                id=f"EVT-{i}",
+                date=self.dates[off],
+                transition_type="S1",
+                expected_stage=["trigger", "confirm"],
+                desc=f"evt{i}",
+                in_data_range=True,
             )
             for i, off in enumerate(offsets)
         ]
@@ -141,9 +143,12 @@ class TestB4TransitionAccuracy(unittest.TestCase):
         offsets = [i * 11 for i in range(8)]
         events = [
             HistoricalEvent(
-                id=f"EVT-{i}", date=self.dates[off],
-                transition_type="S1", expected_stage=["trigger", "confirm"],
-                desc=f"evt{i}", in_data_range=True,
+                id=f"EVT-{i}",
+                date=self.dates[off],
+                transition_type="S1",
+                expected_stage=["trigger", "confirm"],
+                desc=f"evt{i}",
+                in_data_range=True,
             )
             for i, off in enumerate(offsets)
         ]
@@ -178,17 +183,35 @@ class TestB4TransitionAccuracy(unittest.TestCase):
     def test_per_transition_stats(self):
         """按转换类型统计命中（间距 11 天避免交叉）。"""
         events = [
-            HistoricalEvent(id="E1", date=self.dates[0], transition_type="S1",
-                            expected_stage=["trigger"], desc="", in_data_range=True),
-            HistoricalEvent(id="E2", date=self.dates[11], transition_type="S1",
-                            expected_stage=["trigger"], desc="", in_data_range=True),
-            HistoricalEvent(id="E3", date=self.dates[22], transition_type="S2",
-                            expected_stage=["trigger"], desc="", in_data_range=True),
+            HistoricalEvent(
+                id="E1",
+                date=self.dates[0],
+                transition_type="S1",
+                expected_stage=["trigger"],
+                desc="",
+                in_data_range=True,
+            ),
+            HistoricalEvent(
+                id="E2",
+                date=self.dates[11],
+                transition_type="S1",
+                expected_stage=["trigger"],
+                desc="",
+                in_data_range=True,
+            ),
+            HistoricalEvent(
+                id="E3",
+                date=self.dates[22],
+                transition_type="S2",
+                expected_stage=["trigger"],
+                desc="",
+                in_data_range=True,
+            ),
         ]
         daily = {
-            self.dates[0]: [_make_transition("S1", "trigger")],   # hit
-            self.dates[11]: [],                                   # miss
-            self.dates[22]: [_make_transition("S2", "trigger")], # hit
+            self.dates[0]: [_make_transition("S1", "trigger")],  # hit
+            self.dates[11]: [],  # miss
+            self.dates[22]: [_make_transition("S2", "trigger")],  # hit
         }
         report = self.b4.validate(daily, events=events, trading_dates=self.dates)
         self.assertEqual(report.per_transition_hits["S1"], {"hit": 1, "total": 2})
@@ -204,14 +227,26 @@ class TestB4TransitionAccuracy(unittest.TestCase):
         （B4 FAIL 3/6）。修复后 S2 data_ready=False 不计入 → B4 PASS 3/3。
         """
         events = [
-            HistoricalEvent(id="E1", date=self.dates[0], transition_type="S1",
-                            expected_stage=["trigger"], desc="", in_data_range=True),
-            HistoricalEvent(id="E2", date=self.dates[11], transition_type="S2",
-                            expected_stage=["trigger"], desc="", in_data_range=True,
-                            data_ready=False),  # S2 数据未就绪，不计入分母
+            HistoricalEvent(
+                id="E1",
+                date=self.dates[0],
+                transition_type="S1",
+                expected_stage=["trigger"],
+                desc="",
+                in_data_range=True,
+            ),
+            HistoricalEvent(
+                id="E2",
+                date=self.dates[11],
+                transition_type="S2",
+                expected_stage=["trigger"],
+                desc="",
+                in_data_range=True,
+                data_ready=False,
+            ),  # S2 数据未就绪，不计入分母
         ]
         daily = {
-            self.dates[0]: [_make_transition("S1", "trigger")],   # S1 hit
+            self.dates[0]: [_make_transition("S1", "trigger")],  # S1 hit
             self.dates[11]: [_make_transition("S2", "trigger")],  # S2 触发但不计入
         }
         report = self.b4.validate(daily, events=events, trading_dates=self.dates)
@@ -227,10 +262,10 @@ class TestB4TransitionAccuracy(unittest.TestCase):
     def test_to_dict_serializable(self):
         """to_dict 可 JSON 序列化。"""
         daily = {self.event_date: [_make_transition("S1", "trigger")]}
-        report = self.b4.validate(daily, events=self._make_events(),
-                                   trading_dates=self.dates)
+        report = self.b4.validate(daily, events=self._make_events(), trading_dates=self.dates)
         d = report.to_dict()
         import json
+
         json.dumps(d)
         self.assertEqual(d["hit_count"], 1)
         self.assertEqual(d["verdict"], "PASS")
@@ -238,6 +273,7 @@ class TestB4TransitionAccuracy(unittest.TestCase):
     def test_load_events_yaml(self):
         """从默认 YAML 加载事件库（若存在）。"""
         from zephyr.regime.validation.phase2.b4_transition_accuracy import DEFAULT_EVENTS_PATH
+
         if not DEFAULT_EVENTS_PATH.exists():
             self.skipTest(f"事件库 YAML 不存在: {DEFAULT_EVENTS_PATH}")
         events = self.b4.load_events()
@@ -250,19 +286,17 @@ class TestB4TransitionAccuracy(unittest.TestCase):
         e = events[0]
         self.assertTrue(e.id)
         self.assertIsInstance(e.date, pd.Timestamp)
-        self.assertIn(e.transition_type, ["T1","T2","T3","T4","T5","T6","S1","S2"])
+        self.assertIn(e.transition_type, ["T1", "T2", "T3", "T4", "T5", "T6", "S1", "S2"])
 
     def test_window_boundary_5_days(self):
         """±5 交易日边界（第 5 天命中，第 6 天不命中）。"""
         # 事件日 +5 交易日 → 命中
         daily_hit = {self.dates[19]: [_make_transition("S1", "trigger")]}
-        report = self.b4.validate(daily_hit, events=self._make_events(),
-                                    trading_dates=self.dates)
+        report = self.b4.validate(daily_hit, events=self._make_events(), trading_dates=self.dates)
         self.assertTrue(report.matches[0].hit)
         # 事件日 +6 交易日 → 未命中
         daily_miss = {self.dates[20]: [_make_transition("S1", "trigger")]}
-        report2 = self.b4.validate(daily_miss, events=self._make_events(),
-                                    trading_dates=self.dates)
+        report2 = self.b4.validate(daily_miss, events=self._make_events(), trading_dates=self.dates)
         self.assertFalse(report2.matches[0].hit)
 
 

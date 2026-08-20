@@ -60,5 +60,6 @@ def main() -> int:
     print(f"OK: {len(contracts)} 条契约条目扫描，shared/contracts physical_path 均存在")
     return 0
 
+
 if __name__ == "__main__":
     sys.exit(main())

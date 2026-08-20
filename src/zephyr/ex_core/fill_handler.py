@@ -203,9 +203,7 @@ class FillHandler:
                 None=纯内存 set（既有行为）。
         """
         self._fills: dict[str, list[Fill]] = defaultdict(list)
-        self._processed_fill_ids: set[str] | AppendOnlyDedupSet = (
-            dedup_store if dedup_store is not None else set()
-        )
+        self._processed_fill_ids: set[str] | AppendOnlyDedupSet = dedup_store if dedup_store is not None else set()
         self._summaries: dict[str, FillSummary] = {}
         self._callbacks: list[Callable[[Fill, FillSummary], None]] = []
         # 幂等门原子化锁（AI-R3 复审 P2 治本）：纯内存 set 场景下
@@ -251,13 +249,9 @@ class FillHandler:
         """
         # ── 校验 ──
         if fill.filled_quantity <= 0:
-            raise InvalidFillError(
-                f"成交数量必须 > 0, 实际={fill.filled_quantity} (fill_id={fill.fill_id})"
-            )
+            raise InvalidFillError(f"成交数量必须 > 0, 实际={fill.filled_quantity} (fill_id={fill.fill_id})")
         if fill.order_id != order.order_id:
-            raise OrderNotFoundError(
-                f"成交回报 order_id={fill.order_id} 与传入订单 order_id={order.order_id} 不匹配"
-            )
+            raise OrderNotFoundError(f"成交回报 order_id={fill.order_id} 与传入订单 order_id={order.order_id} 不匹配")
 
         # ── 幂等检查（原子单步门，AI-R3 复审 P2 治本）──
         # 认领即登记（at-most-once）：登记后入账前 crash 该 fill 视为已处理，
@@ -298,9 +292,7 @@ class FillHandler:
         # 加权均价
         old_avg = order.avg_fill_price or Decimal("0")
         if old_filled > 0:
-            new_avg = (
-                old_avg * old_filled + fill.fill_price * fill.filled_quantity
-            ) / new_filled
+            new_avg = (old_avg * old_filled + fill.fill_price * fill.filled_quantity) / new_filled
         else:
             new_avg = fill.fill_price
 
@@ -322,7 +314,10 @@ class FillHandler:
         if new_filled > total_qty:
             logger.warning(
                 "成交超量: order_id=%s total=%s filled=%s (over=%s)",
-                order.order_id, total_qty, new_filled, new_filled - total_qty,
+                order.order_id,
+                total_qty,
+                new_filled,
+                new_filled - total_qty,
             )
 
         # ── 计算佣金 ──
@@ -347,10 +342,15 @@ class FillHandler:
         self._summaries[order.order_id] = summary
 
         logger.info(
-            "成交处理: order_id=%s fill_id=%s qty=%s filled=%s/%s avg=%s "
-            "commission=%s status=%s",
-            order.order_id, fill.fill_id, fill.filled_quantity,
-            new_filled, total_qty, new_avg, total_commission, order.status,
+            "成交处理: order_id=%s fill_id=%s qty=%s filled=%s/%s avg=%s commission=%s status=%s",
+            order.order_id,
+            fill.fill_id,
+            fill.filled_quantity,
+            new_filled,
+            total_qty,
+            new_avg,
+            total_commission,
+            order.status,
         )
 
         # ── 通知回调 ──
@@ -360,7 +360,9 @@ class FillHandler:
             except Exception:  # noqa: BLE001 — 回调失败不阻断处理
                 logger.warning(
                     "成交回调异常: %s <- %s",
-                    order.order_id, cb.__qualname__, exc_info=True,
+                    order.order_id,
+                    cb.__qualname__,
+                    exc_info=True,
                 )
 
         return summary
@@ -384,9 +386,7 @@ class FillHandler:
 
     # ── 回调 ──────────────────────────────────────────────────────────────
 
-    def register_callback(
-        self, callback: Callable[[Fill, FillSummary], None]
-    ) -> None:
+    def register_callback(self, callback: Callable[[Fill, FillSummary], None]) -> None:
         """注册成交回调——每次 process_fill 后同步调用。"""
         self._callbacks.append(callback)
 
@@ -416,7 +416,9 @@ class FillHandler:
         if target not in allowed:
             logger.warning(
                 "状态转换跳过: %s -> %s 不在合法路径 (order_id=%s)",
-                order.status, target, order.order_id,
+                order.status,
+                target,
+                order.order_id,
             )
             return
         order.status = target

@@ -117,7 +117,6 @@ class InProcessVectorMemory:
         """公共接口：maintenance_loop（Stage 4 公共化，委托到 self._maintenance_loop）。"""
         return self._maintenance_loop()
 
-
     @staticmethod
     def _init_chunk_router() -> ChunkStrategyRouter:
         from zephyr.integration.vector_memory.chunk_strategy_router import ChunkStrategyRouter

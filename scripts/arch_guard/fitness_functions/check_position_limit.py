@@ -73,5 +73,6 @@ def main() -> int:
     print(f"OK: INV-002 单一持仓限制 — max_single_position_nav_ratio={limit_ratio}（≤ 5% NAV）")
     return 0
 
+
 if __name__ == "__main__":
     sys.exit(main())

@@ -579,7 +579,7 @@ class DeepSeekV4Chat:
                         max_retries,
                     )
                     # 5.72.3 修复：exponential backoff + jitter 替代固定延迟
-                    _delay = (2 ** attempt) + _random.uniform(0, 1)
+                    _delay = (2**attempt) + _random.uniform(0, 1)
                     _time.sleep(_delay)
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 if attempt < max_retries - 1:
@@ -588,17 +588,15 @@ class DeepSeekV4Chat:
                         work_type,
                         attempt + 1,
                         max_retries,
-                        exc, exc_info=True
+                        exc,
+                        exc_info=True,
                     )
                     # 5.72.3 修复：exponential backoff + jitter 替代固定延迟
-                    _delay = (2 ** attempt) + _random.uniform(0, 1)
+                    _delay = (2**attempt) + _random.uniform(0, 1)
                     _time.sleep(_delay)
                 else:
                     _log.error(
-                        "DeepSeekV4Chat: %s all %d attempts failed: %s",
-                        work_type,
-                        max_retries,
-                        exc, exc_info=True
+                        "DeepSeekV4Chat: %s all %d attempts failed: %s", work_type, max_retries, exc, exc_info=True
                     )
         _log.warning("DeepSeekV4Chat: %s all %d attempts returned empty", work_type, max_retries)
         return "{}"

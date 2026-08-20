@@ -151,22 +151,22 @@ MICRO_CAP_THRESHOLD_YI = 50.0
 class CalendarEventType(str, Enum):
     """A股风险日历事件类型。"""
 
-    INDEX_OPTION_EXPIRY = "INDEX_OPTION_EXPIRY"        # 股指期权交割日
-    INDEX_FUTURE_EXPIRY = "INDEX_FUTURE_EXPIRY"         # 股指期货交割日
+    INDEX_OPTION_EXPIRY = "INDEX_OPTION_EXPIRY"  # 股指期权交割日
+    INDEX_FUTURE_EXPIRY = "INDEX_FUTURE_EXPIRY"  # 股指期货交割日
     ANNUAL_FORECAST_DEADLINE = "ANNUAL_FORECAST_DEADLINE"  # 年报预告截止
-    ANNUAL_REPORT_DEADLINE = "ANNUAL_REPORT_DEADLINE"    # 年报+一季报截止
+    ANNUAL_REPORT_DEADLINE = "ANNUAL_REPORT_DEADLINE"  # 年报+一季报截止
     INTERIM_FORECAST_DEADLINE = "INTERIM_FORECAST_DEADLINE"  # 半年报预告截止
-    SHAREHOLDER_BLACKOUT = "SHAREHOLDER_BLACKOUT"       # 股东信息空窗期
-    EARNINGS_RELEASE = "EARNINGS_RELEASE"               # 财报发布
+    SHAREHOLDER_BLACKOUT = "SHAREHOLDER_BLACKOUT"  # 股东信息空窗期
+    EARNINGS_RELEASE = "EARNINGS_RELEASE"  # 财报发布
 
 
 class ConstraintAction(str, Enum):
     """约束动作。"""
 
-    BLOCK_NEW = "BLOCK_NEW"        # 否决新开仓
-    FORCE_CLEAR = "FORCE_CLEAR"    # 强制清仓
-    REDUCE_CAP = "REDUCE_CAP"      # 仓位上限下调
-    TIGHTEN_CAP = "TIGHTEN_CAP"    # 仓位上限收紧
+    BLOCK_NEW = "BLOCK_NEW"  # 否决新开仓
+    FORCE_CLEAR = "FORCE_CLEAR"  # 强制清仓
+    REDUCE_CAP = "REDUCE_CAP"  # 仓位上限下调
+    TIGHTEN_CAP = "TIGHTEN_CAP"  # 仓位上限收紧
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -191,9 +191,9 @@ class PositionInfo:
 
     symbol: str
     is_st: bool = False
-    market_cap_yi: float = 0.0                   # 市值 (亿元)
-    has_forecast: bool = True                    # 是否已出业绩预告
-    earnings_release_date: date | None = None    # 财报发布日
+    market_cap_yi: float = 0.0  # 市值 (亿元)
+    has_forecast: bool = True  # 是否已出业绩预告
+    earnings_release_date: date | None = None  # 财报发布日
 
 
 @dataclass(frozen=True)
@@ -203,7 +203,7 @@ class CalendarConstraint:
     rule: str
     event_type: CalendarEventType
     action: ConstraintAction
-    cap_adjustment: float                          # 1.0=不变, 0.5=收紧50%, 0.0=清零
+    cap_adjustment: float  # 1.0=不变, 0.5=收紧50%, 0.0=清零
     description: str
     affected_symbols: tuple[str, ...] | None = None  # None=全标的, 空tuple=无受影响
 
@@ -226,8 +226,7 @@ class CalendarPositionAlert:
     def block_new_positions(self) -> bool:
         """是否全面否决新开仓 (全标的 BLOCK_NEW)。"""
         return any(
-            c.action is ConstraintAction.BLOCK_NEW and c.affected_symbols is None
-            for c in self.active_constraints
+            c.action is ConstraintAction.BLOCK_NEW and c.affected_symbols is None for c in self.active_constraints
         )
 
     @property
@@ -285,9 +284,7 @@ class CalendarPositionConstraint:
             CalendarPositionAlert
         """
         if not isinstance(current_date, date):
-            raise InvalidCalendarInputError(
-                f"current_date must be a date, got {type(current_date).__name__}"
-            )
+            raise InvalidCalendarInputError(f"current_date must be a date, got {type(current_date).__name__}")
         positions = positions or []
         constraints: list[CalendarConstraint] = []
 
@@ -312,89 +309,91 @@ class CalendarPositionConstraint:
 
         # 交割日当天: 否决新开仓
         if d == expiry:
-            constraints.append(CalendarConstraint(
-                rule="option_expiry_day",
-                event_type=CalendarEventType.INDEX_OPTION_EXPIRY,
-                action=ConstraintAction.BLOCK_NEW,
-                cap_adjustment=1.0,
-                description=f"期权交割日 {expiry}: 否决新开仓, 仅允许减仓",
-            ))
+            constraints.append(
+                CalendarConstraint(
+                    rule="option_expiry_day",
+                    event_type=CalendarEventType.INDEX_OPTION_EXPIRY,
+                    action=ConstraintAction.BLOCK_NEW,
+                    cap_adjustment=1.0,
+                    description=f"期权交割日 {expiry}: 否决新开仓, 仅允许减仓",
+                )
+            )
         # 前2天 + 后1天: 仓位上限下调10%
         elif expiry - timedelta(days=2) <= d <= expiry + timedelta(days=1):
-            constraints.append(CalendarConstraint(
-                rule="option_expiry_window",
-                event_type=CalendarEventType.INDEX_OPTION_EXPIRY,
-                action=ConstraintAction.REDUCE_CAP,
-                cap_adjustment=0.9,
-                description=f"期权交割日 {expiry} 窗口期: 仓位上限下调10%",
-            ))
+            constraints.append(
+                CalendarConstraint(
+                    rule="option_expiry_window",
+                    event_type=CalendarEventType.INDEX_OPTION_EXPIRY,
+                    action=ConstraintAction.REDUCE_CAP,
+                    cap_adjustment=0.9,
+                    description=f"期权交割日 {expiry} 窗口期: 仓位上限下调10%",
+                )
+            )
         return constraints
 
     # ── 年报预告截止 ──
 
-    def _check_annual_forecast_deadline(
-        self, d: date, positions: list[PositionInfo]
-    ) -> list[CalendarConstraint]:
+    def _check_annual_forecast_deadline(self, d: date, positions: list[PositionInfo]) -> list[CalendarConstraint]:
         """年报预告截止日前5日 (1月26-31日): 未出预告个股否决新买入。"""
         if d.month != 1 or d.day < 26:
             return []
         no_forecast = [p.symbol for p in positions if not p.has_forecast]
         if not no_forecast:
             return []
-        return [CalendarConstraint(
-            rule="annual_forecast_deadline",
-            event_type=CalendarEventType.ANNUAL_FORECAST_DEADLINE,
-            action=ConstraintAction.BLOCK_NEW,
-            cap_adjustment=1.0,
-            description="年报预告截止日前5日: 否决未出预告个股新买入",
-            affected_symbols=tuple(no_forecast),
-        )]
+        return [
+            CalendarConstraint(
+                rule="annual_forecast_deadline",
+                event_type=CalendarEventType.ANNUAL_FORECAST_DEADLINE,
+                action=ConstraintAction.BLOCK_NEW,
+                cap_adjustment=1.0,
+                description="年报预告截止日前5日: 否决未出预告个股新买入",
+                affected_symbols=tuple(no_forecast),
+            )
+        ]
 
     # ── 年报+一季报截止 ──
 
-    def _check_annual_report_deadline(
-        self, d: date, positions: list[PositionInfo]
-    ) -> list[CalendarConstraint]:
+    def _check_annual_report_deadline(self, d: date, positions: list[PositionInfo]) -> list[CalendarConstraint]:
         """4月下旬 (4月20-30日): ST股强制清零。"""
         if d.month != 4 or d.day < 20:
             return []
         st_symbols = [p.symbol for p in positions if p.is_st]
         if not st_symbols:
             return []
-        return [CalendarConstraint(
-            rule="annual_report_st_clear",
-            event_type=CalendarEventType.ANNUAL_REPORT_DEADLINE,
-            action=ConstraintAction.FORCE_CLEAR,
-            cap_adjustment=0.0,
-            description="年报截止日4月下旬: ST股仓位强制清零",
-            affected_symbols=tuple(st_symbols),
-        )]
+        return [
+            CalendarConstraint(
+                rule="annual_report_st_clear",
+                event_type=CalendarEventType.ANNUAL_REPORT_DEADLINE,
+                action=ConstraintAction.FORCE_CLEAR,
+                cap_adjustment=0.0,
+                description="年报截止日4月下旬: ST股仓位强制清零",
+                affected_symbols=tuple(st_symbols),
+            )
+        ]
 
     # ── 半年报预告截止 ──
 
-    def _check_interim_forecast_deadline(
-        self, d: date, positions: list[PositionInfo]
-    ) -> list[CalendarConstraint]:
+    def _check_interim_forecast_deadline(self, d: date, positions: list[PositionInfo]) -> list[CalendarConstraint]:
         """半年报预告截止日前5日 (7月10-15日): 未出预告个股否决新买入。"""
         if d.month != 7 or d.day < 10:
             return []
         no_forecast = [p.symbol for p in positions if not p.has_forecast]
         if not no_forecast:
             return []
-        return [CalendarConstraint(
-            rule="interim_forecast_deadline",
-            event_type=CalendarEventType.INTERIM_FORECAST_DEADLINE,
-            action=ConstraintAction.BLOCK_NEW,
-            cap_adjustment=1.0,
-            description="半年报预告截止日前5日: 否决未出预告个股新买入",
-            affected_symbols=tuple(no_forecast),
-        )]
+        return [
+            CalendarConstraint(
+                rule="interim_forecast_deadline",
+                event_type=CalendarEventType.INTERIM_FORECAST_DEADLINE,
+                action=ConstraintAction.BLOCK_NEW,
+                cap_adjustment=1.0,
+                description="半年报预告截止日前5日: 否决未出预告个股新买入",
+                affected_symbols=tuple(no_forecast),
+            )
+        ]
 
     # ── 股东信息空窗期 ──
 
-    def _check_shareholder_blackout(
-        self, d: date, positions: list[PositionInfo]
-    ) -> list[CalendarConstraint]:
+    def _check_shareholder_blackout(self, d: date, positions: list[PositionInfo]) -> list[CalendarConstraint]:
         """股东信息空窗期 (11月-次年4月30日): 微盘股(<50亿)上限收紧50%。"""
         in_blackout = d.month >= 11 or d.month <= 4 and d.day <= 30
         if d.month in (11, 12):
@@ -406,26 +405,23 @@ class CalendarPositionConstraint:
 
         if not in_blackout:
             return []
-        micro_caps = [
-            p.symbol for p in positions
-            if 0 < p.market_cap_yi < MICRO_CAP_THRESHOLD_YI
-        ]
+        micro_caps = [p.symbol for p in positions if 0 < p.market_cap_yi < MICRO_CAP_THRESHOLD_YI]
         if not micro_caps:
             return []
-        return [CalendarConstraint(
-            rule="shareholder_blackout_micro_cap",
-            event_type=CalendarEventType.SHAREHOLDER_BLACKOUT,
-            action=ConstraintAction.TIGHTEN_CAP,
-            cap_adjustment=0.5,
-            description="股东信息空窗期: 微盘股(<50亿)仓位上限收紧50%",
-            affected_symbols=tuple(micro_caps),
-        )]
+        return [
+            CalendarConstraint(
+                rule="shareholder_blackout_micro_cap",
+                event_type=CalendarEventType.SHAREHOLDER_BLACKOUT,
+                action=ConstraintAction.TIGHTEN_CAP,
+                cap_adjustment=0.5,
+                description="股东信息空窗期: 微盘股(<50亿)仓位上限收紧50%",
+                affected_symbols=tuple(micro_caps),
+            )
+        ]
 
     # ── 财报发布 ──
 
-    def _check_earnings_release(
-        self, d: date, positions: list[PositionInfo]
-    ) -> list[CalendarConstraint]:
+    def _check_earnings_release(self, d: date, positions: list[PositionInfo]) -> list[CalendarConstraint]:
         """财报发布前3天: 该标的上限下调+禁止新建。"""
         constraints: list[CalendarConstraint] = []
         for p in positions:
@@ -433,14 +429,16 @@ class CalendarPositionConstraint:
                 continue
             days_before = (p.earnings_release_date - d).days
             if 0 < days_before <= 3:
-                constraints.append(CalendarConstraint(
-                    rule="earnings_release_soon",
-                    event_type=CalendarEventType.EARNINGS_RELEASE,
-                    action=ConstraintAction.BLOCK_NEW,
-                    cap_adjustment=0.9,
-                    description=f"{p.symbol} 财报发布前{days_before}天: 禁止新建+上限下调",
-                    affected_symbols=(p.symbol,),
-                ))
+                constraints.append(
+                    CalendarConstraint(
+                        rule="earnings_release_soon",
+                        event_type=CalendarEventType.EARNINGS_RELEASE,
+                        action=ConstraintAction.BLOCK_NEW,
+                        cap_adjustment=0.9,
+                        description=f"{p.symbol} 财报发布前{days_before}天: 禁止新建+上限下调",
+                        affected_symbols=(p.symbol,),
+                    )
+                )
         return constraints
 
     # ── 日期计算工具 ──

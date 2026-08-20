@@ -207,10 +207,10 @@ class TradingMode(str, Enum):
 class CheckOutcome(str, Enum):
     """校验结果——决定是否放行下单/启动。"""
 
-    ALLOWED = "allowed"            # 通过（已报备或豁免模式）
-    BLOCKED_UNREGISTERED = "blocked_unregistered"      # 实盘未报备
-    BLOCKED_CONFIG_DRIFT = "blocked_config_drift"      # 报备信息漂移（风控配置变了）
-    BLOCKED_LIVE_BROKER = "blocked_live_broker"        # 未识别 broker_id，保守拒绝
+    ALLOWED = "allowed"  # 通过（已报备或豁免模式）
+    BLOCKED_UNREGISTERED = "blocked_unregistered"  # 实盘未报备
+    BLOCKED_CONFIG_DRIFT = "blocked_config_drift"  # 报备信息漂移（风控配置变了）
+    BLOCKED_LIVE_BROKER = "blocked_live_broker"  # 未识别 broker_id，保守拒绝
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -454,13 +454,9 @@ class ProgrammaticTradingGuard:
         if not strategy_id:
             raise ProgrammaticTradingGuardError("strategy_id 不能为空")
         if max_total_orders_per_day <= 0:
-            raise ProgrammaticTradingGuardError(
-                f"max_total_orders_per_day 必须 > 0, 实际={max_total_orders_per_day}"
-            )
+            raise ProgrammaticTradingGuardError(f"max_total_orders_per_day 必须 > 0, 实际={max_total_orders_per_day}")
         if not (0 < cancel_rate_limit <= 1):
-            raise ProgrammaticTradingGuardError(
-                f"cancel_rate_limit 必须在 (0, 1] 区间, 实际={cancel_rate_limit}"
-            )
+            raise ProgrammaticTradingGuardError(f"cancel_rate_limit 必须在 (0, 1] 区间, 实际={cancel_rate_limit}")
 
         algos = tuple(algorithm_types)
         if not algos:
@@ -484,8 +480,12 @@ class ProgrammaticTradingGuard:
         self._registration = info
         _logger.info(
             "程序化交易报备信息已记录: id=%s strategy=%s algos=%s hash=%s... orders_limit=%d cancel_limit=%.2f",
-            registration_id, strategy_id, algos,
-            risk_config_hash[:8], max_total_orders_per_day, cancel_rate_limit,
+            registration_id,
+            strategy_id,
+            algos,
+            risk_config_hash[:8],
+            max_total_orders_per_day,
+            cancel_rate_limit,
         )
         return info
 
@@ -564,7 +564,8 @@ class ProgrammaticTradingGuard:
                 _logger.warning(
                     "报备信息漂移（仅告警模式）：报备 hash=%s... 当前 hash=%s... "
                     "实际部署风控配置与报备时声明不一致，建议尽快重新报备",
-                    self._registration.risk_config_hash[:8], drift_hash[:8],
+                    self._registration.risk_config_hash[:8],
+                    drift_hash[:8],
                 )
                 return CheckResult(
                     outcome=CheckOutcome.ALLOWED,
@@ -616,11 +617,11 @@ class ProgrammaticTradingGuard:
             if self._config.enforce_on_start:
                 _logger.error(
                     "启动报备校验失败: broker=%s outcome=%s reason=%s",
-                    broker_id, result.outcome.value, result.reason,
+                    broker_id,
+                    result.outcome.value,
+                    result.reason,
                 )
-                raise ProgrammaticTradingGuardError(
-                    f"[启动校验] {result.reason} (broker={broker_id})"
-                )
+                raise ProgrammaticTradingGuardError(f"[启动校验] {result.reason} (broker={broker_id})")
             _logger.warning(
                 "启动报备校验失败但 enforce_on_start=False（宽松模式，跳过）: %s",
                 result.reason,
@@ -628,7 +629,8 @@ class ProgrammaticTradingGuard:
         else:
             _logger.info(
                 "启动报备校验通过: broker=%s %s",
-                broker_id, result.reason,
+                broker_id,
+                result.reason,
             )
         return result
 
@@ -652,11 +654,11 @@ class ProgrammaticTradingGuard:
             if self._config.enforce_on_submit:
                 _logger.error(
                     "下单报备校验失败: broker=%s outcome=%s reason=%s",
-                    broker_id, result.outcome.value, result.reason,
+                    broker_id,
+                    result.outcome.value,
+                    result.reason,
                 )
-                raise ProgrammaticTradingGuardError(
-                    f"[下单校验] {result.reason} (broker={broker_id})"
-                )
+                raise ProgrammaticTradingGuardError(f"[下单校验] {result.reason} (broker={broker_id})")
             _logger.warning(
                 "下单报备校验失败但 enforce_on_submit=False（宽松模式，跳过）: %s",
                 result.reason,
@@ -686,7 +688,9 @@ class ProgrammaticTradingGuard:
             )
         except Exception as exc:  # noqa: BLE001 — 查询失败保守放行（不阻断交易）
             _logger.warning(
-                "风控配置查询失败，跳过漂移检测（保守放行）: %s", exc, exc_info=True,
+                "风控配置查询失败，跳过漂移检测（保守放行）: %s",
+                exc,
+                exc_info=True,
             )
             return None
         if current_hash != self._registration.risk_config_hash:

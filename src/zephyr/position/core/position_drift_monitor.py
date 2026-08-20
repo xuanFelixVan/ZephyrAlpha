@@ -143,15 +143,15 @@ class DriftScope(str, Enum):
     """漂移检测范围。"""
 
     PORTFOLIO = "PORTFOLIO"  # 组合级
-    SYMBOL = "SYMBOL"       # 标的级
+    SYMBOL = "SYMBOL"  # 标的级
 
 
 class TriageLevel(str, Enum):
     """持仓分级 (来自 SELL-00, 决定监控频率)。"""
 
-    WATCH = "WATCH"       # 红色: 实时秒级
-    MONITOR = "MONITOR"   # 黄色: 5分钟级
-    HOLD = "HOLD"         # 绿色: 仅重大事件
+    WATCH = "WATCH"  # 红色: 实时秒级
+    MONITOR = "MONITOR"  # 黄色: 5分钟级
+    HOLD = "HOLD"  # 绿色: 仅重大事件
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -175,11 +175,11 @@ class DriftAlert:
     """单条漂移告警。"""
 
     scope: DriftScope
-    symbol: str | None         # 组合级为 None
+    symbol: str | None  # 组合级为 None
     actual_weight: float
     target_weight: float
-    drift: float               # 有符号漂移(正=超配, 负=低配)
-    threshold: float           # 触发阈值
+    drift: float  # 有符号漂移(正=超配, 负=低配)
+    threshold: float  # 触发阈值
     triage: TriageLevel = TriageLevel.MONITOR
 
     @property

@@ -15,6 +15,7 @@
 测试库隔离：用 pytest tmp_path fixture 创建生产库副本，测试后自动清理。
 符合 project_memory 强制约束："测试脚本必须严格隔离生产库"。
 """
+
 import os
 import shutil
 import sqlite3
@@ -75,12 +76,8 @@ class TestBlueTeam:
         # new_id 存在，old_id 消失
         conn = sqlite3.connect(test_db)
         try:
-            assert conn.execute(
-                "SELECT COUNT(*) FROM domains WHERE domain_id='D-TEST_B1'"
-            ).fetchone()[0] == 1
-            assert conn.execute(
-                "SELECT COUNT(*) FROM domains WHERE domain_id='D_GOV_DOCS'"
-            ).fetchone()[0] == 0
+            assert conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id='D-TEST_B1'").fetchone()[0] == 1
+            assert conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id='D_GOV_DOCS'").fetchone()[0] == 0
         finally:
             conn.close()
 
@@ -103,21 +100,18 @@ class TestRedTeam:
 
     def test_r1_rename_to_existing_blocked(self, test_db):
         """R1: 改名到已存在 new_id 应失败（禁止覆盖）。"""
-        n = cmd_rename_domain(
-            "D_SECURITY_LLM", "D_GOV_ENFORCEMENT", dry_run=False, db_path=test_db
-        )
+        n = cmd_rename_domain("D_SECURITY_LLM", "D_GOV_ENFORCEMENT", dry_run=False, db_path=test_db)
         assert n == -1, f"应禁止覆盖已存在 new_id，但 return={n}"
 
     def test_r2_rename_nonexistent_old_fails(self, test_db):
         """R2: 改名不存在 old_id 应失败。"""
-        n = cmd_rename_domain(
-            "D-NONEXISTENT", "D-WHATEVER", dry_run=False, db_path=test_db
-        )
+        n = cmd_rename_domain("D-NONEXISTENT", "D-WHATEVER", dry_run=False, db_path=test_db)
         assert n == -1, f"不存在的 old_id 应失败，但 return={n}"
 
     def test_r3_import_fail_graceful(self, test_db, monkeypatch, capsys):
         """R3: audit_rename_completeness import 失败应 graceful 降级，不崩溃。"""
         import builtins
+
         orig_import = builtins.__import__
 
         def fail_import(name, *args, **kwargs):

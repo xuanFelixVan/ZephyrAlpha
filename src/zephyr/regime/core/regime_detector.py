@@ -259,16 +259,16 @@ TRANSITIONS: list[str] = ["T1", "T2", "T3", "T4", "T5", "T6", "S1", "S2"]
 # ⚠️ 4 态降维后（13_regime_phase3_engineering_plan §2.1）：均匀分布 max(P)=0.25，有信号时 0.4-0.7。
 # 当前阈值沿用 9 态校准值，步骤8 C1 验证后根据 4 态 max(P) 分布精调。
 _CONFIDENCE_BANDS: tuple[tuple[float, float], ...] = (
-    (0.50, 1.0),   # top1 ≥50% → 满部署（4态下0.5已是高置信）
-    (0.30, 0.9),   # 30-50% → 轻度收缩
-    (0.15, 0.8),   # 15-30% → 中度收缩（4态均匀分布=0.25，此档极少触发）
-    (0.0, 0.7),    # <15% → 强收缩（4态下不可能低于0.25，此档为防御保留）
+    (0.50, 1.0),  # top1 ≥50% → 满部署（4态下0.5已是高置信）
+    (0.30, 0.9),  # 30-50% → 轻度收缩
+    (0.15, 0.8),  # 15-30% → 中度收缩（4态均匀分布=0.25，此档极少触发）
+    (0.0, 0.7),  # <15% → 强收缩（4态下不可能低于0.25，此档为防御保留）
 )
 # 稀有态折扣（30_multi_strategy_concurrency §2.2）：(频率下界, discount)
 _RARITY_BANDS: tuple[tuple[float, float], ...] = (
-    (0.05, 1.0),   # 常见态 >5%
+    (0.05, 1.0),  # 常见态 >5%
     (0.01, 0.85),  # 中等态 1-5%
-    (0.0, 0.7),    # 稀有态 <1%
+    (0.0, 0.7),  # 稀有态 <1%
 )
 # 状态风险因子（13_regime_phase3_engineering_plan §2.1.6.2 重设计，基于 4 态 Viterbi 统计特征）
 # ⚠️ DEPRECATED — C1 验证 2026-08-06 从 ConfidenceSignal 移除，不再参与 Shrinkage 计算。
@@ -285,10 +285,10 @@ _RARITY_BANDS: tuple[tuple[float, float], ...] = (
 _STATE_RISK_FACTORS: dict[str, float] = {
     "r1": 0.90,  # 低波震荡  低波动横盘，轻微正收益 → 轻微收缩
     "r2": 0.85,  # 中波震荡  中波动温和偏强，正收益 → 轻微收缩
-    "r3": 1.0,   # 牛市趋势  强涨量增，最高正收益 → 不收缩
+    "r3": 1.0,  # 牛市趋势  强涨量增，最高正收益 → 不收缩
     "r4": 0.50,  # 熊市阴跌  唯一负收益，阴跌 → 大幅收缩
-    "r10": 0.30, # CRISIS    系统性危机（overlay）→ 最强收缩
-    "r11": 0.50, # RECOVERY  危机复苏过渡 → 中强收缩
+    "r10": 0.30,  # CRISIS    系统性危机（overlay）→ 最强收缩
+    "r11": 0.50,  # RECOVERY  危机复苏过渡 → 中强收缩
     "r12": 1.0,  # BREAKOUT  突破主升苗头 → 满部署
 }
 
@@ -308,82 +308,103 @@ TRANSITION_CONFIG: dict[str, dict[str, Any]] = {
     "T1": {  # 震荡态(r1/r2) → BREAKOUT（§4.6 三阶段评分，4态下降维后原 Neutral-Medium 合并到 r1/r2）
         "overlay_target": "r12",
         "stages": {
-            "confirm":       {"keys_gte": {"bqs": 60, "rcs": 60}, "p_overlay": {}, "shrinkage": 1.0},
-            "trigger":       {"keys_gte": {"bqs": 60}, "p_overlay": {"r12": 0.80}, "shrinkage": 0.85},
-            "fail":          {"keys_gte": {"frs": 60}, "p_overlay": {}, "shrinkage": 0.6},
+            "confirm": {"keys_gte": {"bqs": 60, "rcs": 60}, "p_overlay": {}, "shrinkage": 1.0},
+            "trigger": {"keys_gte": {"bqs": 60}, "p_overlay": {"r12": 0.80}, "shrinkage": 0.85},
+            "fail": {"keys_gte": {"frs": 60}, "p_overlay": {}, "shrinkage": 0.6},
         },
     },
     "T2": {  # 熊市态(r4) → RECOVERY（§4.7 冰点反核，4态下原 Bear-Low 合并到 r4）
         "overlay_target": "r11",
         "stages": {
-            "confirm":  {"total_gte": 180, "p_overlay": {"r11": 0.65}, "shrinkage": 0.6},
-            "trigger":  {"total_gte": 120, "p_overlay": {"r11": 0.35}, "shrinkage": 0.6},
-            "fail":     {"keys_gte": {"continue_decline": 1}, "p_overlay": {}, "shrinkage": 0.3},
+            "confirm": {"total_gte": 180, "p_overlay": {"r11": 0.65}, "shrinkage": 0.6},
+            "trigger": {"total_gte": 120, "p_overlay": {"r11": 0.35}, "shrinkage": 0.6},
+            "fail": {"keys_gte": {"continue_decline": 1}, "p_overlay": {}, "shrinkage": 0.3},
         },
     },
     "T3": {  # RECOVERY → BREAKOUT（§4.10.8 主升确立，不依赖基态语义）
         "overlay_target": "r12",
         "stages": {
             "strong_confirm": {"total_gte": 200, "p_overlay": {}, "shrinkage": 1.0},
-            "confirm":        {"keys_gte": {"volume_price": 60, "ma_trend": 50, "money_effect": 50},
-                               "p_overlay": {}, "shrinkage": 0.85},
-            "trigger":        {"keys_gte": {"sentiment": 60, "mainline": 60, "leader": 60},
-                               "p_overlay": {"r12": 0.55}, "shrinkage": 0.7},
-            "fail":           {"keys_gte": {"one_day_mainline": 1}, "p_overlay": {"r11": 0.60}, "shrinkage": 0.6},
+            "confirm": {
+                "keys_gte": {"volume_price": 60, "ma_trend": 50, "money_effect": 50},
+                "p_overlay": {},
+                "shrinkage": 0.85,
+            },
+            "trigger": {
+                "keys_gte": {"sentiment": 60, "mainline": 60, "leader": 60},
+                "p_overlay": {"r12": 0.55},
+                "shrinkage": 0.7,
+            },
+            "fail": {"keys_gte": {"one_day_mainline": 1}, "p_overlay": {"r11": 0.60}, "shrinkage": 0.6},
         },
     },
     "T4": {  # 牛市态(r3) 赶顶（§4.8 疯狂期赶顶，4态下无 Bull-Med/Bull-High 细分，改为 r3 内部赶顶信号）
         "overlay_target": None,
         "stages": {
-            "confirm":  {"total_gte": 180, "p_overlay": {}, "shrinkage": 0.85},
-            "trigger":  {"total_gte": 120, "p_overlay": {}, "shrinkage": 0.85},
-            "fail":     {"keys_gte": {"shrink_flat": 1}, "p_overlay": {}, "shrinkage": 0.85},
+            "confirm": {"total_gte": 180, "p_overlay": {}, "shrinkage": 0.85},
+            "trigger": {"total_gte": 120, "p_overlay": {}, "shrinkage": 0.85},
+            "fail": {"keys_gte": {"shrink_flat": 1}, "p_overlay": {}, "shrinkage": 0.85},
         },
     },
     "T5": {  # 牛市态(r3) → 熊市态(r4) 逃顶（§4.11.8 逃顶退潮，4态下原 Bull-High→Bear-Med 映射为 r3→r4）
         "overlay_target": None,
         "stages": {
-            "confirm":  {"total_gte": 180, "p_overlay": {}, "shrinkage": 0.6},
-            "trigger":  {"keys_gte": {"leader_break": 60}, "p_overlay": {}, "shrinkage": 0.6},
-            "fail":     {"keys_gte": {"rebound_wrap": 1}, "p_overlay": {}, "shrinkage": 0.85},
+            "confirm": {"total_gte": 180, "p_overlay": {}, "shrinkage": 0.6},
+            "trigger": {"keys_gte": {"leader_break": 60}, "p_overlay": {}, "shrinkage": 0.6},
+            "fail": {"keys_gte": {"rebound_wrap": 1}, "p_overlay": {}, "shrinkage": 0.85},
         },
     },
     "T6": {  # 熊市态(r4) 冰点（§4.7 退潮冰点，4态下无 Bear-Med/Bear-Low 细分，改为 r4 内部冰点信号）
         "overlay_target": None,
         "stages": {
-            "confirm":  {"total_gte": 180, "p_overlay": {}, "shrinkage": 0.3},
-            "trigger":  {"total_gte": 120, "p_overlay": {}, "shrinkage": 0.3},
-            "fail":     {"keys_gte": {"sudden_volume": 1}, "p_overlay": {"r11": 0.40}, "shrinkage": 0.6},
+            "confirm": {"total_gte": 180, "p_overlay": {}, "shrinkage": 0.3},
+            "trigger": {"total_gte": 120, "p_overlay": {}, "shrinkage": 0.3},
+            "fail": {"keys_gte": {"sudden_volume": 1}, "p_overlay": {"r11": 0.40}, "shrinkage": 0.6},
         },
     },
     "S1": {  # Any → CRISIS（§4.9 VIX Panic + 相关性 + 流动性，不依赖基态语义）
         "overlay_target": "r10",
         "stages": {
-            "confirm":  {"keys_gte": {"vix_panic": 60, "correlation": 60, "liquidity": 60},
-                         "p_overlay": {"r10": 0.80}, "shrinkage": 0.3},
-            "trigger":  {"keys_gte": {"vix_panic": 60, "correlation": 60},
-                         "p_overlay": {"r10": 0.60}, "shrinkage": 0.3},
-            "fail":     {"keys_gte": {"flash_recover": 1}, "p_overlay": {}, "shrinkage": 0.6},
+            "confirm": {
+                "keys_gte": {"vix_panic": 60, "correlation": 60, "liquidity": 60},
+                "p_overlay": {"r10": 0.80},
+                "shrinkage": 0.3,
+            },
+            "trigger": {"keys_gte": {"vix_panic": 60, "correlation": 60}, "p_overlay": {"r10": 0.60}, "shrinkage": 0.3},
+            "fail": {"keys_gte": {"flash_recover": 1}, "p_overlay": {}, "shrinkage": 0.6},
         },
     },
     "S2": {  # CRISIS → RECOVERY（§4.12.8 八维度见底，不依赖基态语义）
         "overlay_target": "r11",
         "stages": {
             # P1-E9e：three_yang 升级 6 维分级后门槛 1→2（标准红三兵及以上）
-            "strong_confirm": {"total_gte": 250, "keys_gte": {"spring": 1, "three_yang": 2},
-                               "p_overlay": {"r11": 0.80}, "shrinkage": 0.7},
+            "strong_confirm": {
+                "total_gte": 250,
+                "keys_gte": {"spring": 1, "three_yang": 2},
+                "p_overlay": {"r11": 0.80},
+                "shrinkage": 0.7,
+            },
             # P1-E9d：confirm 析取通路——(wyckoff≥60 ∨ breadth_thrust≥60) ∧ 共同必要条件。
             # V 反转/政策型复苏不走 Wyckoff 吸筹（wyckoff 合法偏低），breadth_thrust 补盲区
-            "confirm":        {"keys_or_gte": {"wyckoff": 60, "breadth_thrust": 60},
-                               "keys_gte": {"policy": 40, "valuation": 40, "fund": 50},
-                               "p_overlay": {"r11": 0.65}, "shrinkage": 0.6},
+            "confirm": {
+                "keys_or_gte": {"wyckoff": 60, "breadth_thrust": 60},
+                "keys_gte": {"policy": 40, "valuation": 40, "fund": 50},
+                "p_overlay": {"r11": 0.65},
+                "shrinkage": 0.6,
+            },
             # vix 门槛校准（14 号 §4.0/开放问题 11，跨 P1-E7）：A 股合成 VIX>25 即触发
             # 8/8 胜率信号（沪深300 期权 CBOE 方差互换法 2026 实证），≥40 为美股 3-sigma
             # 标准（数年一遇）对沪深300 偏高 → 校准至 30（25-30 区间上限保守端）。
-            "trigger":        {"keys_gte": {"capitulation": 60, "vix": 30, "bad_news_flat": 40},
-                               "p_overlay": {"r11": 0.40}, "shrinkage": 0.4},
-            "fail":           {"keys_gte": {"break_sc_low": 1, "vix_new_high": 1, "fund_outflow": 1},
-                               "p_overlay": {"r10": 0.60}, "shrinkage": 0.3},
+            "trigger": {
+                "keys_gte": {"capitulation": 60, "vix": 30, "bad_news_flat": 40},
+                "p_overlay": {"r11": 0.40},
+                "shrinkage": 0.4,
+            },
+            "fail": {
+                "keys_gte": {"break_sc_low": 1, "vix_new_high": 1, "fund_outflow": 1},
+                "p_overlay": {"r10": 0.60},
+                "shrinkage": 0.3,
+            },
         },
     },
 }
@@ -399,12 +420,12 @@ class RegimeProbabilities:
     probabilities 必须 Σ=1.0（INVARIANTS）。
     """
 
-    probabilities: dict[str, float]          # {r1..r4, r10..r12: P(ri)}，Σ=1.0
-    hmm_probabilities: dict[str, float]      # {r1..r4: P_hmm(ri)}（归因用）
+    probabilities: dict[str, float]  # {r1..r4, r10..r12: P(ri)}，Σ=1.0
+    hmm_probabilities: dict[str, float]  # {r1..r4: P_hmm(ri)}（归因用）
     overlay_probabilities: dict[str, float]  # {r10..r12: P_overlay(ri)}（归因用）
-    dominant_regime: str                     # max(P) 对应的态
-    dominant_frequency: float                # dominant_regime 历史频率（稀有态判断用）
-    confidence: float                        # max(P) 值
+    dominant_regime: str  # max(P) 对应的态
+    dominant_frequency: float  # dominant_regime 历史频率（稀有态判断用）
+    confidence: float  # max(P) 值
     timestamp: datetime
     schema_version: str = "1.0"
 
@@ -419,10 +440,10 @@ class ShrinkageResult:
     value ≤ 1.0（只减不增，INVARIANTS）。
     """
 
-    value: float                  # Shrinkage 最终值，≤1.0
-    confidence_signal: float      # max(P) → 4 档映射 + 稀有态折扣
-    risk_signal: float            # 13 参数聚合
-    shrinkage_enabled: bool       # 验证开关（C1 一票否决）
+    value: float  # Shrinkage 最终值，≤1.0
+    confidence_signal: float  # max(P) → 4 档映射 + 稀有态折扣
+    risk_signal: float  # 13 参数聚合
+    shrinkage_enabled: bool  # 验证开关（C1 一票否决）
     timestamp: datetime
     schema_version: str = "1.0"
 
@@ -434,13 +455,13 @@ class TransitionTriggered:
     满足 11_regime_backtest_validation_plan 验证需求 ③：8 转换触发可记录，供 B4 转换触发准确性。
     """
 
-    transition_type: str          # T1-T6 / S1 / S2
+    transition_type: str  # T1-T6 / S1 / S2
     timestamp: datetime
     score_breakdown: dict[str, float]  # 各维度评分明细（如 S2 八维度）
-    triggered: bool               # 是否达到触发阈值
-    confirmed: bool               # 是否达到确认阈值
-    stage: str                    # strong_confirm/confirm/trigger/fail/none
-    total_score: float            # 总分（score_breakdown 求和）
+    triggered: bool  # 是否达到触发阈值
+    confirmed: bool  # 是否达到确认阈值
+    stage: str  # strong_confirm/confirm/trigger/fail/none
+    total_score: float  # 总分（score_breakdown 求和）
     schema_version: str = "1.0"
 
 
@@ -528,10 +549,18 @@ class RegimeDetector:
         # 各态历史频率（稀有态判断用），默认按 13_regime_phase3_engineering_plan §2.1 Viterbi 全历史统计
         # r1 低波震荡 27.6% / r2 中波震荡 37.4% / r3 牛市 14.9% / r4 熊市 20.2%
         # overlay 态 r10-r12 为规则触发，频率低（稀有态折扣生效）
-        self._state_frequencies: dict[str, float] = dict(state_frequencies or {
-            "r1": 0.28, "r2": 0.37, "r3": 0.15, "r4": 0.20,
-            "r10": 0.02, "r11": 0.02, "r12": 0.01,
-        })
+        self._state_frequencies: dict[str, float] = dict(
+            state_frequencies
+            or {
+                "r1": 0.28,
+                "r2": 0.37,
+                "r3": 0.15,
+                "r4": 0.20,
+                "r10": 0.02,
+                "r11": 0.02,
+                "r12": 0.01,
+            }
+        )
         self._last_transitions: list[TransitionTriggered] = []  # 最近一次 detect 的转换事件
 
     # ── 公共接口 ──────────────────────────────────────────────────────
@@ -594,15 +623,14 @@ class RegimeDetector:
         except Exception as exc:  # pragma: no cover
             self._hmm_degraded = True
             self._hmm_model = None
-            raise HMMFittingError(
-                "hmmlearn 不可用，HMM 降级为均匀分布（blueprint §7.4）"
-            ) from exc
+            raise HMMFittingError("hmmlearn 不可用，HMM 降级为均匀分布（blueprint §7.4）") from exc
 
         X = train_features.get("X")
         if X is None:
             raise HMMFittingError("train_features 缺少 'X' 观测矩阵")
         try:
             import numpy as np
+
             if not isinstance(X, np.ndarray):
                 X = np.asarray(X, dtype=float)
             if X.ndim != 2:
@@ -691,9 +719,7 @@ class RegimeDetector:
             _logger.warning("predict_log_proba 推断异常，降级均匀分布: %s", exc)
             return np.full((X.shape[0], n_states), np.log(1.0 / n_states))
 
-    def record_transition(
-        self, transition_type: str, score_breakdown: dict[str, float]
-    ) -> TransitionTriggered:
+    def record_transition(self, transition_type: str, score_breakdown: dict[str, float]) -> TransitionTriggered:
         """记录 8 转换触发事件（动态评分制聚合）。
 
         满足 11_regime_backtest_validation_plan 验证需求 ③：8 转换触发可记录，供 B4 转换触发准确性。
@@ -721,7 +747,7 @@ class RegimeDetector:
                 break
         return TransitionTriggered(
             transition_type=transition_type,
-            timestamp=datetime.now(),
+            timestamp=datetime.now(),  # noqa: m46-time — 存量 naive 时间戳契约（消费方按本地时间解析），UTC 迁移登记专项
             score_breakdown=dict(score_breakdown),
             triggered=stage in ("trigger", "confirm", "strong_confirm"),
             confirmed=stage in ("confirm", "strong_confirm"),
@@ -746,6 +772,7 @@ class RegimeDetector:
             return {s: 1.0 / n_states for s in HMM_STATES}
         try:
             import numpy as np
+
             if not isinstance(X, np.ndarray):
                 X = np.asarray(X, dtype=float)
             if X.ndim == 1:
@@ -809,16 +836,14 @@ class RegimeDetector:
 
     # ── 子模块 ③④⑤ Shrinkage 链 ─────────────────────────────────────
 
-    def _merge_probabilities(
-        self, hmm_probs: dict[str, float], overlay_probs: dict[str, float]
-    ) -> RegimeProbabilities:
+    def _merge_probabilities(self, hmm_probs: dict[str, float], overlay_probs: dict[str, float]) -> RegimeProbabilities:
         """7 维合并归一化（blueprint §3.3）：覆盖层概率压缩 HMM 概率质量。
 
-            overlay_mass = Σ P_overlay(r10..r12)
-            hmm_scale = 1 − overlay_mass
-            P(r1..r4) = P_hmm(r_i) × hmm_scale
-            P(r10..r12) = P_overlay(r_i)
-            normalize → Σ=1.0
+        overlay_mass = Σ P_overlay(r10..r12)
+        hmm_scale = 1 − overlay_mass
+        P(r1..r4) = P_hmm(r_i) × hmm_scale
+        P(r10..r12) = P_overlay(r_i)
+        normalize → Σ=1.0
         """
         overlay_mass = sum(overlay_probs.get(s, 0.0) for s in OVERLAY_STATES)
         if overlay_mass > 1.0:
@@ -845,7 +870,7 @@ class RegimeDetector:
             dominant_regime=dominant,
             dominant_frequency=freq,
             confidence=confidence,
-            timestamp=datetime.now(),
+            timestamp=datetime.now(),  # noqa: m46-time — 存量 naive 时间戳契约（消费方按本地时间解析），UTC 迁移登记专项
         )
 
     def _compute_confidence_signal(self, probs: RegimeProbabilities) -> float:
@@ -935,9 +960,7 @@ class RegimeDetector:
         risk = risk_base * resonance + recovery
         return max(0.30, min(1.00, risk))
 
-    def _compute_shrinkage(
-        self, confidence: float, risk: float
-    ) -> ShrinkageResult:
+    def _compute_shrinkage(self, confidence: float, risk: float) -> ShrinkageResult:
         """子模块⑤：Shrinkage = ConfidenceSignal × RiskSignal（可开关）。
 
         - shrinkage_enabled=True  → value = confidence × risk
@@ -946,15 +969,21 @@ class RegimeDetector:
         """
         if not self.shrinkage_enabled:
             return ShrinkageResult(
-                value=1.0, confidence_signal=confidence, risk_signal=risk,
-                shrinkage_enabled=False, timestamp=datetime.now(),
+                value=1.0,
+                confidence_signal=confidence,
+                risk_signal=risk,
+                shrinkage_enabled=False,
+                timestamp=datetime.now(),  # noqa: m46-time — 存量 naive 时间戳契约（消费方按本地时间解析），UTC 迁移登记专项
             )
         value = confidence * risk
         if value > 1.0:  # 理论上不会（两者均 ≤1.0），防浮点误差
             value = 1.0
         return ShrinkageResult(
-            value=value, confidence_signal=confidence, risk_signal=risk,
-            shrinkage_enabled=True, timestamp=datetime.now(),
+            value=value,
+            confidence_signal=confidence,
+            risk_signal=risk,
+            shrinkage_enabled=True,
+            timestamp=datetime.now(),  # noqa: m46-time — 存量 naive 时间戳契约（消费方按本地时间解析），UTC 迁移登记专项
         )
 
     # ── 辅助 ─────────────────────────────────────────────────────────
@@ -969,9 +998,7 @@ class RegimeDetector:
         return {k: v / total for k, v in probs.items()}
 
     @staticmethod
-    def _eval_stage(
-        breakdown: dict[str, float], total: float, cond: dict[str, Any]
-    ) -> bool:
+    def _eval_stage(breakdown: dict[str, float], total: float, cond: dict[str, Any]) -> bool:
         """阶段条件判定：total_gte 与 keys_gte（+keys_or_gte）同时满足（缺 key 视为不满足）。
 
         P1-E9d 析取逻辑（14_regime_s2_diagnosis §4.4）：keys_or_gte 内任一 key 达阈即
@@ -983,8 +1010,7 @@ class RegimeDetector:
             return False
         or_keys = cond.get("keys_or_gte") or {}
         if or_keys and not any(
-            float(breakdown.get(key, 0.0)) >= float(threshold)
-            for key, threshold in or_keys.items()
+            float(breakdown.get(key, 0.0)) >= float(threshold) for key, threshold in or_keys.items()
         ):
             return False
         for key, threshold in (cond.get("keys_gte") or {}).items():

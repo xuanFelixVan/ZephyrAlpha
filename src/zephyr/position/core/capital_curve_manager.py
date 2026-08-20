@@ -166,9 +166,9 @@ logger = logging.getLogger(__name__)
 class DrawdownLevel(str, Enum):
     """回撤分级 (决定仓位上限)。"""
 
-    NORMAL = "NORMAL"        # < 5%        仓位上限 100%
-    WARNING = "WARNING"      # 5% ~ 10%    仓位上限 80%
-    CRITICAL = "CRITICAL"    # 10% ~ 15%   仓位上限 50%
+    NORMAL = "NORMAL"  # < 5%        仓位上限 100%
+    WARNING = "WARNING"  # 5% ~ 10%    仓位上限 80%
+    CRITICAL = "CRITICAL"  # 10% ~ 15%   仓位上限 50%
     EMERGENCY = "EMERGENCY"  # > 15%       仓位上限 30% + 仅防御
 
 
@@ -196,8 +196,8 @@ class CapitalCurveConfig:
     """
 
     # 回撤分级阈值 (正数, 表示回撤幅度)
-    warning_threshold: float = 0.05    # -5%
-    critical_threshold: float = 0.10   # -10%
+    warning_threshold: float = 0.05  # -5%
+    critical_threshold: float = 0.10  # -10%
     emergency_threshold: float = 0.15  # -15%
     # 仓位上限 (per drawdown level)
     normal_cap: float = 1.00
@@ -205,10 +205,10 @@ class CapitalCurveConfig:
     critical_cap: float = 0.50
     emergency_cap: float = 0.30
     # 盈利扩张
-    profit_expansion_step: float = 0.05         # 每次新高 +5%
-    profit_expansion_hard_limit: float = 2.00   # 框架硬上限 (2x 初始本金)
+    profit_expansion_step: float = 0.05  # 每次新高 +5%
+    profit_expansion_hard_limit: float = 2.00  # 框架硬上限 (2x 初始本金)
     # 亏损收缩
-    loss_contraction_5pct: float = 0.10   # 回撤 > 5% 缩减 10%
+    loss_contraction_5pct: float = 0.10  # 回撤 > 5% 缩减 10%
     loss_contraction_10pct: float = 0.20  # 回撤 > 10% 缩减 20%
 
     def __post_init__(self) -> None:
@@ -220,9 +220,7 @@ class CapitalCurveConfig:
             if not 0 < val < 1:
                 raise InvalidCapitalCurveInputError(f"{name} must be in (0,1), got {val}")
         if not (self.warning_threshold < self.critical_threshold < self.emergency_threshold):
-            raise InvalidCapitalCurveInputError(
-                "thresholds must satisfy warning < critical < emergency"
-            )
+            raise InvalidCapitalCurveInputError("thresholds must satisfy warning < critical < emergency")
         for name, val in (
             ("normal_cap", self.normal_cap),
             ("warning_cap", self.warning_cap),
@@ -246,15 +244,15 @@ class CapitalCurveConfig:
 class CapitalCurveSnapshot:
     """资金曲线快照 (一次 update 的结果)。"""
 
-    net_value: float                       # 当前净值 (本金基准)
-    peak: float                            # 历史峰值
-    drawdown: float                        # 有符号回撤 (≤0, 0=无回撤)
-    drawdown_level: DrawdownLevel           # 回撤分级
-    position_cap: float                    # 仓位上限 (0.3~1.0), 联动 POS-01
-    capital_curve_discount: float          # 缩放系数 (>1 盈利扩张, <1 回撤收缩)
-    is_new_high: bool                      # 本次是否创新高
-    defensive_only: bool                   # EMERGENCY 时仅防御(禁止新开仓)
-    expansion_factor: float                # 当前累计扩张因子 (≥1, 受硬上限封顶)
+    net_value: float  # 当前净值 (本金基准)
+    peak: float  # 历史峰值
+    drawdown: float  # 有符号回撤 (≤0, 0=无回撤)
+    drawdown_level: DrawdownLevel  # 回撤分级
+    position_cap: float  # 仓位上限 (0.3~1.0), 联动 POS-01
+    capital_curve_discount: float  # 缩放系数 (>1 盈利扩张, <1 回撤收缩)
+    is_new_high: bool  # 本次是否创新高
+    defensive_only: bool  # EMERGENCY 时仅防御(禁止新开仓)
+    expansion_factor: float  # 当前累计扩张因子 (≥1, 受硬上限封顶)
     timestamp: datetime
 
     @property
@@ -310,9 +308,7 @@ class CapitalCurveManager:
         if initial_capital <= 0:
             raise InvalidCapitalCurveInputError(f"initial_capital must be positive, got {initial_capital}")
         if not 0 < framework_hard_cap <= 1:
-            raise InvalidCapitalCurveInputError(
-                f"framework_hard_cap must be in (0,1], got {framework_hard_cap}"
-            )
+            raise InvalidCapitalCurveInputError(f"framework_hard_cap must be in (0,1], got {framework_hard_cap}")
         self._config = config or CapitalCurveConfig()
         self._framework_hard_cap = framework_hard_cap
         self._clock = clock or (lambda: datetime.now(timezone.utc))
@@ -434,9 +430,7 @@ class CapitalCurveManager:
             InvalidCapitalCurveInputError: persisted_peak 非正
         """
         if persisted_peak <= 0:
-            raise InvalidCapitalCurveInputError(
-                f"persisted_peak must be positive, got {persisted_peak}"
-            )
+            raise InvalidCapitalCurveInputError(f"persisted_peak must be positive, got {persisted_peak}")
         if persisted_peak > self._peak:
             self._peak = persisted_peak
 

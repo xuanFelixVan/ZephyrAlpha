@@ -290,7 +290,9 @@ class InMemoryPositionSnapshotRepository(PositionSnapshotRepository):
         history.sort(key=lambda s: s.as_of_timestamp)
         logger.debug(
             "快照保存: portfolio_id=%s timestamp=%s (history=%d)",
-            snapshot.portfolio_id, snapshot.as_of_timestamp, len(history),
+            snapshot.portfolio_id,
+            snapshot.as_of_timestamp,
+            len(history),
         )
 
     def get_latest(self, portfolio_id: str) -> PositionSnapshot | None:
@@ -304,11 +306,7 @@ class InMemoryPositionSnapshotRepository(PositionSnapshotRepository):
 
     def get_all(self) -> list[PositionSnapshot]:
         """返回所有组合的最新快照。"""
-        return [
-            history[-1]
-            for history in self._snapshots.values()
-            if history
-        ]
+        return [history[-1] for history in self._snapshots.values() if history]
 
     def delete(self, portfolio_id: str) -> bool:
         if portfolio_id in self._snapshots:
@@ -340,9 +338,7 @@ def create_order_repository(backend: str = "memory") -> OrderRepository:
     """
     if backend == "memory":
         return InMemoryOrderRepository()
-    raise RepositoryError(
-        f"不支持的订单仓储后端: {backend!r}（当前仅支持 'memory'）"
-    )
+    raise RepositoryError(f"不支持的订单仓储后端: {backend!r}（当前仅支持 'memory'）")
 
 
 def create_position_snapshot_repository(
@@ -361,6 +357,4 @@ def create_position_snapshot_repository(
     """
     if backend == "memory":
         return InMemoryPositionSnapshotRepository()
-    raise RepositoryError(
-        f"不支持的快照仓储后端: {backend!r}（当前仅支持 'memory'）"
-    )
+    raise RepositoryError(f"不支持的快照仓储后端: {backend!r}（当前仅支持 'memory'）")

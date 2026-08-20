@@ -166,6 +166,7 @@ class TestPhase3MCPLifecycle:
             total += len(tools)
         assert total >= 8, f"4 servers should collectively expose ≥ 8 tools; got {total}"
 
+
 # ===========================================================================
 # 2. 幻觉检测：CoVe 四步 + 降级级联 + 拦截率 ≥ 70%
 # ===========================================================================
@@ -586,6 +587,7 @@ class TestPhase3KnowledgePipelineContracts:
         )
         assert "error" in resp
         assert resp["error"]["code"] == -32412
+
 
 # ===========================================================================
 # 7. Fitness Functions：5 类度量全部可产出

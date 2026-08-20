@@ -463,9 +463,7 @@ class TestShutdownStatePersistence:
         try:
             task = repo2.get("DM-40040")
             assert task is not None
-            assert task.status == TaskStatus.COMPLETED, (
-                f"Task state not persisted, got {task.status}"
-            )
+            assert task.status == TaskStatus.COMPLETED, f"Task state not persisted, got {task.status}"
         finally:
             repo2.close()
 
@@ -506,6 +504,7 @@ class TestShutdownStatePersistence:
         repo = TaskRepository(db_path=db_path, auto_init=True, enable_gate=False)
 
         try:
+
             def create_task(i):
                 task = _make_taskcard(f"DM-{40060 + i}")
                 repo.create(task, allow_direct_create=True)

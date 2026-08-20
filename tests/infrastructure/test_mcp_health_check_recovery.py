@@ -24,6 +24,7 @@
   - 本测试在测试层实现简化的健康检查逻辑，验证底层机制正确性
   - 使用替身脚本（time.sleep(60)）代替真实 MCP Server
 """
+
 from __future__ import annotations
 
 import os
@@ -326,9 +327,7 @@ class TestProcessRestartRecovery:
         # 轮询宽限消除负载抖动；真死进程不会复活，回归力不变。
         deadline = time.monotonic() + 10.0
         while not _is_pid_alive(new_entry.pid):
-            assert time.monotonic() < deadline, (
-                f"New PID {new_entry.pid} should be alive in OS"
-            )
+            assert time.monotonic() < deadline, f"New PID {new_entry.pid} should be alive in OS"
             time.sleep(0.5)
 
 
@@ -447,9 +446,7 @@ class TestRedBlueExtremeScenarios:
         server_ids = [f"mcp{i}" for i in range(10)]
         entries = {}
         for sid in server_ids:
-            entries[sid] = gateway.launch(
-                f"mcp-{sid}", [sys.executable, str(standin_script)], idle_timeout_s=600.0
-            )
+            entries[sid] = gateway.launch(f"mcp-{sid}", [sys.executable, str(standin_script)], idle_timeout_s=600.0)
         time.sleep(0.5)
 
         # 同时杀死所有进程

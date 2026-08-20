@@ -48,6 +48,7 @@ from _shared.constants import REPO_ROOT  # noqa: E402
 
 LEDGER_RELATIVE = "data/ledger/policy_decision_ledger.jsonl"
 
+
 def main() -> int:
     ledger_path = REPO_ROOT / LEDGER_RELATIVE
 
@@ -75,6 +76,7 @@ def main() -> int:
     print("   ⚠ JSONL 格式本身不保证 append-only（文件可被编辑/删除行）。")
     print("   完整篡改检测需依赖 hash chain + HMAC 签名验证 + Git hook / CI 哈希校验。")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

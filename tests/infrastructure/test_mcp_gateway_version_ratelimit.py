@@ -154,9 +154,7 @@ class TestRetryAfter:
     """5.36.7：限流拒绝响应携带 retry_after_seconds。"""
 
     def test_rejection_response_has_retry_after(self, gw: MCPGateway) -> None:
-        gw.rate_limiter = PerToolRateLimiter(
-            0.01, 1.0, config={"rate_limit": {"retry_after_header": True}}
-        )
+        gw.rate_limiter = PerToolRateLimiter(0.01, 1.0, config={"rate_limit": {"retry_after_header": True}})
         assert _call(gw, "mcp_gateway.list_servers").get("result")
         resp = _call(gw, "mcp_gateway.list_servers", req_id=2)
         err = resp.get("error", {})

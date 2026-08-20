@@ -32,6 +32,7 @@ __all__ = ["hurst_dfa", "kalman_slope", "detect_hurst_decay"]
 # F2a: Hurst 指数（DFA 法）
 # ---------------------------------------------------------------------------
 
+
 def hurst_dfa(prices: np.ndarray, window: int | None = None) -> float:
     """DFA (Detrended Fluctuation Analysis) 法计算 Hurst 指数。
 
@@ -75,9 +76,7 @@ def hurst_dfa(prices: np.ndarray, window: int | None = None) -> float:
     # 3. 选择窗口尺度（scales）：对数等间距，从 4 到 n//4
     min_scale = 4
     max_scale = max(min_scale + 1, n // 4)
-    scales = np.unique(
-        np.logspace(np.log10(min_scale), np.log10(max_scale), 20).astype(int)
-    )
+    scales = np.unique(np.logspace(np.log10(min_scale), np.log10(max_scale), 20).astype(int))
     scales = scales[scales >= min_scale]
 
     valid_scales = []
@@ -109,7 +108,7 @@ def _detrended_rms(segments: np.ndarray, s: int) -> float:
     x = np.arange(s, dtype=float)
     x_mean = x.mean()
     x_dev = x - x_mean
-    x_var = float((x_dev ** 2).sum())
+    x_var = float((x_dev**2).sum())
 
     if x_var < 1e-15:
         return 0.0
@@ -121,13 +120,14 @@ def _detrended_rms(segments: np.ndarray, s: int) -> float:
     intercepts = y_mean.flatten() - slopes * x_mean
     trends = slopes[:, None] * x[None, :] + intercepts[:, None]
     residuals = segments - trends
-    rms_per_window = np.sqrt((residuals ** 2).mean(axis=1))
-    return float(np.sqrt((rms_per_window ** 2).mean()))
+    rms_per_window = np.sqrt((residuals**2).mean(axis=1))
+    return float(np.sqrt((rms_per_window**2).mean()))
 
 
 # ---------------------------------------------------------------------------
 # F2b: Kalman 滤波自适应斜率
 # ---------------------------------------------------------------------------
+
 
 def kalman_slope(prices: np.ndarray) -> float:
     """Kalman 滤波估计趋势斜率，归一化至 [-1, 1]。
@@ -165,9 +165,9 @@ def kalman_slope(prices: np.ndarray) -> float:
     # Q/R = 0.01 → 稳态增益 K ≈ 0.095，有效平滑窗口 ~10 期
     # （Q 固定值会导致 R 小时增益过高，追踪噪声而非趋势）
     Q = 0.01 * obs_var  # 过程噪声（斜率漂移）
-    R = obs_var          # 观测噪声
-    s = 0.0              # 初始斜率估计
-    P = 1.0              # 初始估计不确定度
+    R = obs_var  # 观测噪声
+    s = 0.0  # 初始斜率估计
+    P = 1.0  # 初始估计不确定度
 
     for y in returns:
         # Predict
@@ -189,6 +189,7 @@ def kalman_slope(prices: np.ndarray) -> float:
 # ---------------------------------------------------------------------------
 # #10 趋势衰竭：Hurst 衰退检测
 # ---------------------------------------------------------------------------
+
 
 def detect_hurst_decay(h_early: float, h_late: float) -> bool:
     """检测 Hurst 指数衰退（趋势衰竭信号）。

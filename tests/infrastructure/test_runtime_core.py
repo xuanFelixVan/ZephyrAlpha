@@ -216,7 +216,9 @@ class TestAutoRuntimeCoreInit:
         mock_cfg = MagicMock()
         mock_cfg.audit_log_dir = Path("/tmp/test_audit")
         mock_cfg.capability_card_dir = MagicMock()
-        mock_cfg.night_shift_storage_path = Path("/tmp/test_night")  # 生产跟进：ensure_runtime_dirs 取 .parent，契约为 Path
+        mock_cfg.night_shift_storage_path = Path(
+            "/tmp/test_night"
+        )  # 生产跟进：ensure_runtime_dirs 取 .parent，契约为 Path
         mock_cfg.dream_archive_dir = Path("/tmp/test_dream")
         mock_cfg.feedback_proposal_dir = Path("/tmp/test_feedback")
         mock_cfg.health_snapshot_dir = Path("/tmp/test_health")
@@ -275,7 +277,9 @@ class TestAutoRuntimeCoreInit:
         mock_cfg = MagicMock()
         mock_cfg.audit_log_dir = Path("/tmp/test_audit")
         mock_cfg.capability_card_dir = MagicMock()
-        mock_cfg.night_shift_storage_path = Path("/tmp/test_night")  # 生产跟进：ensure_runtime_dirs 取 .parent，契约为 Path
+        mock_cfg.night_shift_storage_path = Path(
+            "/tmp/test_night"
+        )  # 生产跟进：ensure_runtime_dirs 取 .parent，契约为 Path
         mock_cfg.dream_archive_dir = Path("/tmp/test_dream")
         mock_cfg.feedback_proposal_dir = Path("/tmp/test_feedback")
         mock_cfg.health_snapshot_dir = Path("/tmp/test_health")
@@ -331,7 +335,9 @@ class TestAutoRuntimeCoreInit:
         mock_cfg = MagicMock()
         mock_cfg.audit_log_dir = Path("/tmp/test_audit")
         mock_cfg.capability_card_dir = MagicMock()
-        mock_cfg.night_shift_storage_path = Path("/tmp/test_night")  # 生产跟进：ensure_runtime_dirs 取 .parent，契约为 Path
+        mock_cfg.night_shift_storage_path = Path(
+            "/tmp/test_night"
+        )  # 生产跟进：ensure_runtime_dirs 取 .parent，契约为 Path
         mock_cfg.dream_archive_dir = Path("/tmp/test_dream")
         mock_cfg.feedback_proposal_dir = Path("/tmp/test_feedback")
         mock_cfg.health_snapshot_dir = Path("/tmp/test_health")

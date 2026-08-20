@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """D1 ConfidenceSignal 四档 ±20% 网格分析单元测试（11_regime_backtest_validation_plan §0.5.7 D1）."""
+
 from __future__ import annotations
 
 import unittest
@@ -16,13 +17,13 @@ class TestApplyConfidenceBands(unittest.TestCase):
     """单点映射（镜像 detector 四档语义）。"""
 
     def test_band_boundaries(self):
-        self.assertEqual(apply_confidence_bands(0.60), 1.0)   # ≥0.50 满部署
-        self.assertEqual(apply_confidence_bands(0.50), 1.0)   # 边界命中高档
-        self.assertEqual(apply_confidence_bands(0.40), 0.9)   # 30-50%
+        self.assertEqual(apply_confidence_bands(0.60), 1.0)  # ≥0.50 满部署
+        self.assertEqual(apply_confidence_bands(0.50), 1.0)  # 边界命中高档
+        self.assertEqual(apply_confidence_bands(0.40), 0.9)  # 30-50%
         self.assertEqual(apply_confidence_bands(0.30), 0.9)
-        self.assertEqual(apply_confidence_bands(0.20), 0.8)   # 15-30%
+        self.assertEqual(apply_confidence_bands(0.20), 0.8)  # 15-30%
         self.assertEqual(apply_confidence_bands(0.15), 0.8)
-        self.assertEqual(apply_confidence_bands(0.10), 0.7)   # <15% 防御档
+        self.assertEqual(apply_confidence_bands(0.10), 0.7)  # <15% 防御档
         self.assertEqual(apply_confidence_bands(0.0), 0.7)
 
     def test_empty_bands_fallback(self):
@@ -51,8 +52,7 @@ class TestRunD1ThresholdGrid(unittest.TestCase):
     def test_mass_near_boundary_moves_bands(self):
         """全部 max(P)=0.32：基线落 0.9 档；t2×1.2=0.36 后跌落到 0.8 档。"""
         rep = run_d1_threshold_grid([0.32] * 80)
-        moved = [p for p in rep.points if abs(p.thresholds[1] - 0.36) < 1e-9
-                 and abs(p.thresholds[0] - 0.50) < 1e-9]
+        moved = [p for p in rep.points if abs(p.thresholds[1] - 0.36) < 1e-9 and abs(p.thresholds[0] - 0.50) < 1e-9]
         self.assertTrue(moved)
         for p in moved:
             self.assertAlmostEqual(p.mean_confidence, 0.8)

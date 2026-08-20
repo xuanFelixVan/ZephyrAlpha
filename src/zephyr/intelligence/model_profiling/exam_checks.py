@@ -61,6 +61,7 @@ __all__ = [
 # 静态文本检测函数（原 ExamOrchestrator._check_* staticmethod）
 # ============================================================================
 
+
 def check_static_assertions(candidate: str, assertions: list[str]) -> float:
     """P1-4: 静态文本断言 — 检查候选答案是否包含期望的关键文本。
 
@@ -145,8 +146,18 @@ def check_overclaim(case: ExamTestCase, result: dict) -> bool:
     if not isinstance(result, dict):
         return False
     claim_keywords = [
-        "已完成", "已修复", "已创建", "已删除", "已重构", "已实现",
-        "completed", "fixed", "created", "removed", "refactored", "implemented",
+        "已完成",
+        "已修复",
+        "已创建",
+        "已删除",
+        "已重构",
+        "已实现",
+        "completed",
+        "fixed",
+        "created",
+        "removed",
+        "refactored",
+        "implemented",
     ]
     text = json.dumps(result, ensure_ascii=False).lower()
     has_claim = any(kw in text for kw in claim_keywords)
@@ -178,10 +189,10 @@ def check_source_confusion(case: ExamTestCase, result: dict) -> bool:
     if not isinstance(result, dict):
         return False
     result_text = json.dumps(result, ensure_ascii=False)
-    referenced = set(re.findall(r'[\w/\\]+\.py', result_text))
+    referenced = set(re.findall(r"[\w/\\]+\.py", result_text))
     if not referenced:
         return False
-    prompt_files = set(re.findall(r'[\w/\\]+\.py', case.prompt))
+    prompt_files = set(re.findall(r"[\w/\\]+\.py", case.prompt))
     input_files = set(case.input_files.keys())
     legit = prompt_files | input_files
     # 通用文件名豁免 (常见但不视为混淆)
@@ -254,6 +265,7 @@ def check_quantity_hallucination(case: ExamTestCase, result: dict) -> bool:
 # 数学工具函数（原 exam_orchestrator 模块级 _normalized_edit_distance / _percentile）
 # ============================================================================
 
+
 def normalized_edit_distance(a: str, b: str) -> float:
     """计算两个字符串的归一化编辑距离 (Levenshtein / max(len) )。
 
@@ -297,6 +309,7 @@ def percentile(sorted_data: list[float], p: float) -> float:
 # 奥赛题通过率（原 ExamOrchestrator._compute_olympiad_pass_rate 实例方法）
 # ============================================================================
 
+
 def compute_olympiad_pass_rate(case_results: list[bool]) -> float:
     """v3.0.5: 奥赛题通过率——用于奥赛封顶机制（纯函数版，Stage 4 公共化提取）。
 
@@ -338,7 +351,7 @@ def compute_overall_score(passport: object, case_results: list[bool]) -> float:
     elif pass_rate < 0.75:
         cap = 0.88  # A-
     else:
-        cap = 1.0   # A+ 解锁
+        cap = 1.0  # A+ 解锁
 
     return round(min(raw, cap), 3)
 
@@ -346,6 +359,7 @@ def compute_overall_score(passport: object, case_results: list[bool]) -> float:
 # ============================================================================
 # 结果验证（原 ExamOrchestrator._validate_result staticmethod）
 # ============================================================================
+
 
 def validate_result(result: dict, case: ExamTestCase) -> bool:
     """验证模型返回结果是否有效（防作弊检测，纯函数版，Stage 4 公共化提取）。
@@ -364,9 +378,14 @@ def validate_result(result: dict, case: ExamTestCase) -> bool:
         return False
 
     # 检测泄露答案字段
-    suspicious_keys = {"expected_category", "expected_tags", "expected_old_str",
-                      "expected_contains", "expected_needs_human",
-                      "expected_structure_keys"}
+    suspicious_keys = {
+        "expected_category",
+        "expected_tags",
+        "expected_old_str",
+        "expected_contains",
+        "expected_needs_human",
+        "expected_structure_keys",
+    }
     leaked = suspicious_keys & set(result.keys())
     if leaked:
         return False

@@ -190,11 +190,7 @@ def _build_signal_panel(
     symbols = first.columns
     rows: dict = {}
     for as_of in dates:
-        factor_values = {
-            fid: fp.loc[as_of]
-            for fid, fp in factor_panels.items()
-            if as_of in fp.index
-        }
+        factor_values = {fid: fp.loc[as_of] for fid, fp in factor_panels.items() if as_of in fp.index}
         if not factor_values:
             continue
         rows[as_of] = synthesize(factor_values, method=method, **kwargs)

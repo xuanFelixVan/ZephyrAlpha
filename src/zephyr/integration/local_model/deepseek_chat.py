@@ -143,10 +143,7 @@ class DeepSeekChat:
 
     # 5.110.2 修复: 显式 __repr__ 排除 _api_key, 防止调试/日志泄露
     def __repr__(self) -> str:
-        return (
-            f"DeepSeekChat(model={self._model!r}, base_url={self._base_url!r}, "
-            f"verified={self._verified!r})"
-        )
+        return f"DeepSeekChat(model={self._model!r}, base_url={self._base_url!r}, verified={self._verified!r})"
 
     @property
     def model(self) -> str:
@@ -248,20 +245,25 @@ class DeepSeekChat:
                 if attempt < max_retries - 1:
                     _log.warning(
                         "DeepSeekChat: %s empty response attempt %d/%d, retrying...",
-                        work_type, attempt + 1, max_retries,
+                        work_type,
+                        attempt + 1,
+                        max_retries,
                     )
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 if attempt < max_retries - 1:
                     _log.warning(
                         "DeepSeekChat: %s error attempt %d/%d: %s, retrying...",
-                        work_type, attempt + 1, max_retries, exc,
+                        work_type,
+                        attempt + 1,
+                        max_retries,
+                        exc,
                         exc_info=True,
                     )
                 else:
                     raise
             # 5.72.1 修复：exponential backoff + jitter 避免请求风暴
             if attempt < max_retries - 1:
-                delay = (2 ** attempt) + random.uniform(0, 1)
+                delay = (2**attempt) + random.uniform(0, 1)
                 time.sleep(delay)
         _log.warning("DeepSeekChat: %s all %d attempts returned empty", work_type, max_retries)
         return "{}"
@@ -366,8 +368,8 @@ class DeepSeekChat:
                 return {}
             except json.JSONDecodeError:
                 if attempt == 0:
-                    text = text[text.index("{") if "{" in text else 0:]
-                    text = text[:text.rindex("}") + 1] if "}" in text else text
+                    text = text[text.index("{") if "{" in text else 0 :]
+                    text = text[: text.rindex("}") + 1] if "}" in text else text
                 else:
                     break
         _log.warning("DeepSeekChat JSON parse failed; raw=%s", raw[:200])

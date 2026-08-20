@@ -90,31 +90,31 @@ class EventScoreError(ZephyrBaseError):
 
 # ── 26 号 §2.5 常量（首版裁定值）──
 EVENT_CLASS_WEIGHT: Final[dict[str, float]] = {
-    "earnings": 1.0,      # 业绩
-    "ma": 1.2,            # 并购
-    "policy": 0.8,        # 政策
-    "surprise": 1.5,      # 突发
-    "ipo": 1.3,           # IPO/再融资（v1.6.0）
+    "earnings": 1.0,  # 业绩
+    "ma": 1.2,  # 并购
+    "policy": 0.8,  # 政策
+    "surprise": 1.5,  # 突发
+    "ipo": 1.3,  # IPO/再融资（v1.6.0）
     "geopolitical": 1.4,  # 地缘/宏观（v1.6.0）
 }
 
 # decay_exit_window（§2.4 衰减表 rising+decay 总长 = 持仓天数上限，v1.7.0 程序化）
 DECAY_EXIT_WINDOW: Final[dict[str, int]] = {
-    "earnings": 10,      # 业绩：rising 5 + decay 5
-    "ma": 15,            # 并购：rising 7 + decay 8
-    "policy": 20,        # 政策：rising 10 + decay 10
-    "surprise": 5,       # 突发：rising 2 + decay 3
-    "ipo": 15,           # IPO：上市后 day1-5 虹吸期 + day6-15 衰减
+    "earnings": 10,  # 业绩：rising 5 + decay 5
+    "ma": 15,  # 并购：rising 7 + decay 8
+    "policy": 20,  # 政策：rising 10 + decay 10
+    "surprise": 5,  # 突发：rising 2 + decay 3
+    "ipo": 15,  # IPO：上市后 day1-5 虹吸期 + day6-15 衰减
     "geopolitical": 25,  # 地缘：rising 5-15 远长于业绩/并购
 }
 DEFAULT_DECAY_EXIT_WINDOW: Final[int] = 10  # 未知事件类保守默认
 
-SIGNAL_NOISE_THRESHOLD: Final[float] = 0.2       # |score| < 0.2 → 噪声不动作
+SIGNAL_NOISE_THRESHOLD: Final[float] = 0.2  # |score| < 0.2 → 噪声不动作
 EXTREME_REACTION_THRESHOLD: Final[float] = 0.03  # §2.4 PEAD Inversion 3% 阈值
-WINSORIZE_Z_LIMIT: Final[float] = 3.0            # SUE winsorize ±3
-DEFAULT_MIN_VOLUME_RATIO: Final[float] = 1.5     # 量比阈值（1.5×20 日均量）
-VOLUME_BASELINE_WINDOW: Final[int] = 20          # 均量基线窗口
-CONTRADICT_LOOKBACK_DAYS: Final[int] = 5         # 反向事件回溯交易日数
+WINSORIZE_Z_LIMIT: Final[float] = 3.0  # SUE winsorize ±3
+DEFAULT_MIN_VOLUME_RATIO: Final[float] = 1.5  # 量比阈值（1.5×20 日均量）
+VOLUME_BASELINE_WINDOW: Final[int] = 20  # 均量基线窗口
+CONTRADICT_LOOKBACK_DAYS: Final[int] = 5  # 反向事件回溯交易日数
 
 # 报告期权重（中邮证券 2026-06：一季报最优，年报 A 股不定价利好降权）
 REPORT_PERIOD_WEIGHT: Final[dict[str, float]] = {
@@ -277,9 +277,7 @@ def expectation_gap_with_revision_momentum(
     （A 股不定价业绩利好）。gap > 0 = 超预期，< 0 = 不及预期。
     """
     static_gap = (actual_eps - consensus) / abs(consensus) if consensus != 0 else 0.0
-    revision_momentum = (
-        (consensus_after - consensus_before) / abs(consensus_before) if consensus_before != 0 else 0.0
-    )
+    revision_momentum = (consensus_after - consensus_before) / abs(consensus_before) if consensus_before != 0 else 0.0
     if report_type != "annual":
         return revision_momentum
     return static_gap * REPORT_PERIOD_WEIGHT.get(report_type, DEFAULT_REPORT_WEIGHT)
@@ -324,8 +322,8 @@ def event_score_triple_factor(event: EventRecord, data: EarningsFactorData) -> f
     reversal_weight = min(reaction_extremity, 1.0)
     return (
         sue_z * (1 - reversal_weight * 0.3)  # SUE 漂移（极端反应时降权）
-        + orj_signal * 2.0                    # ORJ 隔夜第一反应（温和时加权）
-        - data.ear * reversal_weight * 10     # EAR 过度反应反转修正
+        + orj_signal * 2.0  # ORJ 隔夜第一反应（温和时加权）
+        - data.ear * reversal_weight * 10  # EAR 过度反应反转修正
     )
 
 
@@ -520,7 +518,9 @@ def check_selling_pressure_absorbed(
     )
     cvd = np.cumsum(delta)
     baseline = day2_3_data["volume"].rolling(5).mean().mean()
-    volume_ratio = float(day2_3_data["volume"].mean() / baseline) if baseline and not np.isnan(baseline) else float("nan")
+    volume_ratio = (
+        float(day2_3_data["volume"].mean() / baseline) if baseline and not np.isnan(baseline) else float("nan")
+    )
     price_stabilized = bool(
         day2_3_data["close"].iloc[-1] >= day2_3_data["close"].iloc[0] * 0.98  # 跌幅<2%
     )
@@ -543,10 +543,7 @@ def check_selling_pressure_absorbed(
 _SYMBOL_RE: Final[re.Pattern[str]] = re.compile(r"^[A-Za-z0-9.]{1,20}$")
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀，同 pit_query 约定）
-_SQL_VOLUME = (
-    "SELECT trade_date, volume FROM {table} "
-    "WHERE symbol = '{symbol}' ORDER BY trade_date DESC LIMIT {limit}"
-)
+_SQL_VOLUME = "SELECT trade_date, volume FROM {table} WHERE symbol = '{symbol}' ORDER BY trade_date DESC LIMIT {limit}"
 
 
 class ClickHouseKlineVolumeProvider:

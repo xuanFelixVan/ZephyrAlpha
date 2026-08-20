@@ -160,17 +160,13 @@ class TestConcurrent100Tasks:
             )
 
             # 验证：所有100个任务都被认领
-            assert len(claimed_tasks) == 100, (
-                f"Not all tasks claimed! claimed={len(claimed_tasks)}, expected=100"
-            )
+            assert len(claimed_tasks) == 100, f"Not all tasks claimed! claimed={len(claimed_tasks)}, expected=100"
 
             # 验证：所有被认领的任务状态为 IN_PROGRESS
             in_progress_count = repo.conn.execute(
                 "SELECT COUNT(*) FROM tasks WHERE batch_id='extreme-batch' AND status='IN_PROGRESS'"
             ).fetchone()[0]
-            assert in_progress_count == 100, (
-                f"IN_PROGRESS count mismatch: {in_progress_count}/100"
-            )
+            assert in_progress_count == 100, f"IN_PROGRESS count mismatch: {in_progress_count}/100"
         finally:
             repo.close()
 
@@ -222,9 +218,7 @@ class TestConcurrent100Tasks:
             # 同时启动生产者和消费者
             with ThreadPoolExecutor(max_workers=12) as executor:
                 producer_future = executor.submit(producer)
-                consumer_futures = [
-                    executor.submit(consumer, f"cons-{i}") for i in range(10)
-                ]
+                consumer_futures = [executor.submit(consumer, f"cons-{i}") for i in range(10)]
                 producer_future.result()
                 for f in as_completed(consumer_futures):
                     f.result()
@@ -233,9 +227,7 @@ class TestConcurrent100Tasks:
             assert not errors, f"Errors during mixed create+claim: {errors[:5]}"
 
             # 验证数据一致性
-            total = repo.conn.execute(
-                "SELECT COUNT(*) FROM tasks WHERE batch_id='mixed-batch'"
-            ).fetchone()[0]
+            total = repo.conn.execute("SELECT COUNT(*) FROM tasks WHERE batch_id='mixed-batch'").fetchone()[0]
             assert total == 50, f"Expected 50 tasks, got {total}"
         finally:
             repo.close()
@@ -268,9 +260,7 @@ class TestDLQOverflow:
 
         # 验证所有消息都在DLQ中
         all_messages = dlq.list_all()
-        assert len(all_messages) == 1000, (
-            f"DLQ lost messages! enqueued=1000, in_dlq={len(all_messages)}"
-        )
+        assert len(all_messages) == 1000, f"DLQ lost messages! enqueued=1000, in_dlq={len(all_messages)}"
 
         # 验证消息ID匹配
         dlq_ids = {m.message_id for m in all_messages}
@@ -329,9 +319,7 @@ class TestDLQOverflow:
         # 验证所有消息都入队成功
         assert enqueued_count == 1000, f"Enqueue count mismatch: {enqueued_count}/1000"
         all_msgs = dlq.list_all()
-        assert len(all_msgs) == 1000, (
-            f"DLQ concurrent enqueue lost messages! expected=1000, got={len(all_msgs)}"
-        )
+        assert len(all_msgs) == 1000, f"DLQ concurrent enqueue lost messages! expected=1000, got={len(all_msgs)}"
 
 
 # ============================================================================
@@ -363,9 +351,7 @@ class TestBackpressureCascade:
 
         # 验证所有symbol都处于PAUSED状态
         paused = bpm.get_all_paused()
-        assert len(paused) == 100, (
-            f"Paused count mismatch: {len(paused)}/100"
-        )
+        assert len(paused) == 100, f"Paused count mismatch: {len(paused)}/100"
 
         # 级联RESUME
         for i, sym in enumerate(symbols):
@@ -379,9 +365,7 @@ class TestBackpressureCascade:
 
         # 验证所有symbol都恢复NORMAL
         paused_after = bpm.get_all_paused()
-        assert len(paused_after) == 0, (
-            f"Resumed but still paused: {len(paused_after)}"
-        )
+        assert len(paused_after) == 0, f"Resumed but still paused: {len(paused_after)}"
 
     def test_concurrent_pause_resume_no_deadlock(self):
         """多线程并发PAUSE/RESUME，验证无死锁。"""
@@ -464,9 +448,7 @@ class TestBackpressureCascade:
         # 验证状态
         state = bpm.get_state("SYM-THROTTLE")
         assert state is not None, "Throttle state should exist"
-        assert state.state.value in ["THROTTLED", "throttled"], (
-            f"State should be THROTTLED, got {state.state}"
-        )
+        assert state.state.value in ["THROTTLED", "throttled"], f"State should be THROTTLED, got {state.state}"
 
 
 # ============================================================================
@@ -665,10 +647,7 @@ class TestFeedbackLoopAnomaly:
         error_lock = threading.Lock()
 
         def analyze_worker(worker_id: int):
-            entries = [
-                {"id": f"concurrent-{worker_id}-{i}", "pattern": f"pat-{i}"}
-                for i in range(50)
-            ]
+            entries = [{"id": f"concurrent-{worker_id}-{i}", "pattern": f"pat-{i}"} for i in range(50)]
             try:
                 fl.analyze_pending(entries)
             except Exception as e:

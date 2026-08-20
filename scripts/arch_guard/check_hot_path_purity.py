@@ -72,5 +72,6 @@ def main() -> int:
     print("OK: Hot 路径扫描根目录下无 asyncio 用法")
     return 0
 
+
 if __name__ == "__main__":
     sys.exit(main())

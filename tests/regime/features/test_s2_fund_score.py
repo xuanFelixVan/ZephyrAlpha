@@ -31,6 +31,7 @@
 
 依据: 14_regime_s2_diagnosis v0.5.2 §4.0/§6-10
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -100,8 +101,8 @@ class TestFundUpgradedPath:
     def test_three_sources_resonance_high_score(self):
         """三源共振（融资余额攀升 + 超大单净流入放大 + 量能跃升）→ ≥50（过 confirm 门槛）。"""
         volume = _late_shift_series(300, 1000.0, 50.0, seed=1)
-        margin = _late_shift_series(300, 1.2e11, 5e9, seed=2)   # 融资余额末段攀升
-        xl = _late_shift_series(300, 1e8, 5e7, seed=3)          # 超大单净流入末段放大
+        margin = _late_shift_series(300, 1.2e11, 5e9, seed=2)  # 融资余额末段攀升
+        xl = _late_shift_series(300, 1e8, 5e7, seed=3)  # 超大单净流入末段放大
         s = s2_fund_score(volume, margin_balance=margin, xl_order_inflow=xl)
         assert s.iloc[-1] >= 50
 
@@ -115,9 +116,9 @@ class TestFundUpgradedPath:
 
     def test_volume_only_proxy_capped(self):
         """成交量代理偏弱（memo 核心批评）：量升但融资余额/超大单不升 → 加权分远低于纯量路径。"""
-        volume = _late_shift_series(300, 1000.0, 50.0, seed=1)   # 量能末段跃升
-        margin = _late_shift_series(300, 1.2e11, -5e9, seed=2)   # 融资余额末段骤降（散户接盘式上涨）
-        xl = _late_shift_series(300, 1e8, -5e7, seed=3)          # 超大单末段流出
+        volume = _late_shift_series(300, 1000.0, 50.0, seed=1)  # 量能末段跃升
+        margin = _late_shift_series(300, 1.2e11, -5e9, seed=2)  # 融资余额末段骤降（散户接盘式上涨）
+        xl = _late_shift_series(300, 1e8, -5e7, seed=3)  # 超大单末段流出
         s_upgraded = s2_fund_score(volume, margin_balance=margin, xl_order_inflow=xl)
         s_legacy = s2_fund_score(volume)
         # 升级路径识别"散户接盘"（两资金源低迷拖累加权分），评分显著低于纯量路径
@@ -126,7 +127,7 @@ class TestFundUpgradedPath:
     def test_margin_only_injection_renormalized(self):
         """仅注入融资余额：权重按可用源归一化（margin 0.4 + volume 0.25 → 0.615/0.385）。"""
         volume = _late_shift_series(300, 1000.0, -50.0, seed=1)  # 缩量（分位低）
-        margin = _late_shift_series(300, 1.2e11, 5e9, seed=2)    # 融资余额末段攀升（分位高）
+        margin = _late_shift_series(300, 1.2e11, 5e9, seed=2)  # 融资余额末段攀升（分位高）
         s = s2_fund_score(volume, margin_balance=margin)
         # composite ≈ 0.615×1.0 + 0.385×~0 ≈ 0.615 → 落 >0.60 档 = 50
         assert s.iloc[-1] == 50

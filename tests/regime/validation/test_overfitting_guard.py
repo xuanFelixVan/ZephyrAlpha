@@ -33,6 +33,7 @@
 依据: 14_regime_s2_diagnosis v0.5.2 §4.5（Bailey & López de Prado 2014 /
       Neyt How-To-Backtest-Correctly 2026-03 / digitalninjasystems 2026-07 WFE≥0.6）
 """
+
 from __future__ import annotations
 
 import numpy as np

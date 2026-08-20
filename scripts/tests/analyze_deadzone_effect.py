@@ -10,6 +10,7 @@
   2. |Δ| 分布对比
   3. 估算 Shrinkage 变化贡献的调仓量占比（若 << 价格漂移贡献，则死区无效）
 """
+
 from __future__ import annotations
 
 import logging
@@ -91,7 +92,7 @@ def main() -> None:
     shrink_contrib = avg_abs_delta_s * avg_s  # 粗估单边
     print(f"  shrinkage 日均 |Δs|={avg_abs_delta_s:.5f}, 均值 s={avg_s:.4f}")
     print(f"  shrinkage 变化贡献的单边调仓比例(粗估): {shrink_contrib:.6f}/日")
-    print(f"  实测 Turnover(无死区)=2.5522/yr → 日均 {2.5522/252:.6f}/日")
+    print(f"  实测 Turnover(无死区)=2.5522/yr → 日均 {2.5522 / 252:.6f}/日")
     print(f"  shrinkage 贡献占比 ≈ {shrink_contrib / (2.5522 / 252) * 100:.1f}%")
     print()
     print("  → 若 shrinkage 贡献占比很低，说明 Turnover 主驱是价格漂移，")

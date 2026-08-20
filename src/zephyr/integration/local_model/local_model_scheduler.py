@@ -285,7 +285,8 @@ class LocalModelScheduler:
                     task.retries,
                     task.max_retries,
                     backoff_s,
-                    err_msg, exc_info=True
+                    err_msg,
+                    exc_info=True,
                 )
                 time.sleep(backoff_s)
                 self._task_queue.put(task)

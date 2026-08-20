@@ -587,12 +587,8 @@ class TestP1E9S2Integration:
         )
         # 查 dates[253] → shift(1) 取 252（第 3 个 capitulation 日 / thrust 第 8 日）
         s2 = ctor.build_for_date(dates[253])["transitions"]["S2"]
-        assert s2["capitulation"] > 0, (
-            f"P1-E9a 衰减加权簇集应 >0（3 日 90 分簇集），实际 {s2['capitulation']}"
-        )
-        assert s2["breadth_thrust"] == 80, (
-            f"P1-E9d 完整 thrust（washout→普涨）应=80，实际 {s2['breadth_thrust']}"
-        )
+        assert s2["capitulation"] > 0, f"P1-E9a 衰减加权簇集应 >0（3 日 90 分簇集），实际 {s2['capitulation']}"
+        assert s2["breadth_thrust"] == 80, f"P1-E9d 完整 thrust（washout→普涨）应=80，实际 {s2['breadth_thrust']}"
         # 新维度已注册进 S2 breakdown
         assert "breadth_thrust" in s2
 
@@ -614,7 +610,6 @@ class TestP1E9S2Integration:
         # 降级瞬时两维版：z>3 & 跌>4% → 90（无衰减）
         assert s2["capitulation"] == 90
         assert s2["breadth_thrust"] == 0.0
-
 
 
 # ---------------------------------------------------------------------------

@@ -40,19 +40,21 @@ from zephyr.position.core.position_limit_enforcer import PositionLimitConfig
 from zephyr.position.core.position_sizing_engine import PositionSizingConfig
 
 # ── 三层口径映射常量（31号 §2.4.1 分层关系真源表）──
-LAYER_STRATEGY = "MOD-POS-001"   # 策略层裁决（PositionSizingEngine）
-LAYER_FIRM_AGG = "MOD-POS-021"   # firm 聚合后中间裁剪（FirmRiskAggregator）
+LAYER_STRATEGY = "MOD-POS-001"  # 策略层裁决（PositionSizingEngine）
+LAYER_FIRM_AGG = "MOD-POS-021"  # firm 聚合后中间裁剪（FirmRiskAggregator）
 LAYER_FINAL_HARD = "MOD-POS-010"  # 最终硬限执行器（PositionLimitEnforcer）
 
 SINGLE_NAME_CAP_LAYERS: dict[str, float] = {
-    LAYER_STRATEGY: 0.05,    # 策略层裁决默认 5% NAV
-    LAYER_FIRM_AGG: 0.08,    # firm 聚合后 8%（跨策略求和口径）
+    LAYER_STRATEGY: 0.05,  # 策略层裁决默认 5% NAV
+    LAYER_FIRM_AGG: 0.08,  # firm 聚合后 8%（跨策略求和口径）
     LAYER_FINAL_HARD: 0.05,  # 最终硬限 5% NAV（兜底）
 }
 
 # 层级流水线顺序（上游→下游）
 LAYER_PIPELINE_ORDER: tuple[str, str, str] = (
-    LAYER_STRATEGY, LAYER_FIRM_AGG, LAYER_FINAL_HARD,
+    LAYER_STRATEGY,
+    LAYER_FIRM_AGG,
+    LAYER_FINAL_HARD,
 )
 
 
@@ -110,7 +112,5 @@ def check_production_consistency() -> list[str]:
     for layer, prod_val in production.items():
         mapped = SINGLE_NAME_CAP_LAYERS[layer]
         if abs(prod_val - mapped) > 1e-12:
-            issues.append(
-                f"ERROR: {layer} 生产默认 {prod_val:.4f} 与口径映射表 {mapped:.4f} 漂移"
-            )
+            issues.append(f"ERROR: {layer} 生产默认 {prod_val:.4f} 与口径映射表 {mapped:.4f} 漂移")
     return issues

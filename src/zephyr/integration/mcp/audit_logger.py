@@ -108,7 +108,6 @@ class AuditLogger:
         """写入：core_writer（Stage 4 公共化）。"""
         self._core_writer = value
 
-
     def hash_args(self, arguments: dict[str, Any]) -> str:
         raw = json.dumps(arguments, sort_keys=True, ensure_ascii=False)
         return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12]

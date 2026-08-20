@@ -95,17 +95,14 @@ class TaskManagerMCP:
         """公共接口：next_seq（Stage 4 公共化）。"""
         return self._next_seq(namespace)
 
-
     def load(self, task_id) -> TaskCard | None:
         """公共接口：load（Stage 4 公共化）。"""
         return self._load(task_id)
-
 
     # ── Stage 4 公共化（2026-07-29）：public wrapper ──
     def persist(self, tc) -> None:
         """公共接口：persist（Stage 4 公共化，委托到 self._persist）。"""
         return self._persist(tc)
-
 
     @property
     def server(self) -> object:
@@ -141,9 +138,7 @@ class TaskManagerMCP:
         except PermissionError:
             raise
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-            raise PermissionError(
-                f"RBAC 检查异常: action={action} — {type(exc).__name__}: {exc}"
-            ) from exc
+            raise PermissionError(f"RBAC 检查异常: action={action} — {type(exc).__name__}: {exc}") from exc
 
     def _register_tools(self) -> None:
         mgr = self
@@ -419,8 +414,7 @@ class TaskManagerMCP:
     def _persist(self, tc: TaskCard) -> None:
         if self.task_repo is None:
             raise RuntimeError(
-                "MCP _persist 失败: task_repo 未注入，"
-                "数据将丢失。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
+                "MCP _persist 失败: task_repo 未注入，数据将丢失。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
             )
         try:
             existing = self.task_repo.get(tc.task_id)
@@ -446,8 +440,7 @@ class TaskManagerMCP:
     def _load(self, task_id: str) -> TaskCard | None:
         if self.task_repo is None:
             raise RuntimeError(
-                "MCP _load 失败: task_repo 未注入，"
-                "无法查询任务。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
+                "MCP _load 失败: task_repo 未注入，无法查询任务。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
             )
         try:
             return self.task_repo.get(task_id)
@@ -726,9 +719,18 @@ def _split_tags(tags: list[str]) -> dict[str, object]:
 
 class _LegacyMdState:
     """legacy MD 解析中间状态（_parse_legacy_md_to_taskcard 专用）。"""
+
     __slots__ = (
-        "title", "kv", "description_lines", "upstream_files", "downstream_outputs",
-        "completed_gates", "blocked_gates", "created_at_str", "updated_at_str", "section",
+        "title",
+        "kv",
+        "description_lines",
+        "upstream_files",
+        "downstream_outputs",
+        "completed_gates",
+        "blocked_gates",
+        "created_at_str",
+        "updated_at_str",
+        "section",
     )
 
     def __init__(self) -> None:

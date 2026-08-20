@@ -6,6 +6,7 @@
 测试通过 ``from zephyr.integration.mcp.base_server import BaseMCPServer`` 导入，
 本模块提供公共路径，实际实现在 ``_base_server.py``。
 """
+
 from zephyr.integration.mcp._base_server import (  # noqa: F401
     ERR_GATE_FAILED,
     ERR_INTERNAL_ERROR,

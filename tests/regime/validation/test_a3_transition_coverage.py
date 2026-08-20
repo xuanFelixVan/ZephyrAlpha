@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """A3 状态转移路径覆盖正式统计单元测试（11_regime_backtest_validation_plan §4.1 A3）."""
+
 from __future__ import annotations
 
 import unittest
@@ -11,15 +12,21 @@ from zephyr.regime.validation.a3_transition_coverage import (
 
 # 4 态 + overlay 的 spec §4 合法路径样例（测试用，非生产真源）
 SPEC_PATHS = {
-    ("r1", "r12"), ("r2", "r12"),   # T1 震荡→BREAKOUT
-    ("r4", "r11"),                  # T2 熊市→RECOVERY
-    ("r11", "r12"),                 # T3 RECOVERY→BREAKOUT
-    ("r3", "r4"),                   # T5 牛市→熊市
-    ("r4", "r10"),                  # S1 恐慌触发
-    ("r10", "r11"),                 # S2 复苏确认
-    ("r1", "r2"), ("r2", "r1"),     # 震荡互转
-    ("r1", "r3"), ("r2", "r3"), ("r3", "r2"), ("r3", "r1"),  # 常规迁移
-    ("r4", "r1"), ("r4", "r2"),
+    ("r1", "r12"),
+    ("r2", "r12"),  # T1 震荡→BREAKOUT
+    ("r4", "r11"),  # T2 熊市→RECOVERY
+    ("r11", "r12"),  # T3 RECOVERY→BREAKOUT
+    ("r3", "r4"),  # T5 牛市→熊市
+    ("r4", "r10"),  # S1 恐慌触发
+    ("r10", "r11"),  # S2 复苏确认
+    ("r1", "r2"),
+    ("r2", "r1"),  # 震荡互转
+    ("r1", "r3"),
+    ("r2", "r3"),
+    ("r3", "r2"),
+    ("r3", "r1"),  # 常规迁移
+    ("r4", "r1"),
+    ("r4", "r2"),
 }
 
 

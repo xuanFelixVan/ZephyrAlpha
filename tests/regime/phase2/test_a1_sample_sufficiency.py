@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """A1 样本充足性验证器单元测试（12_regime_phase2_validation §2.1）."""
+
 from __future__ import annotations
 
 import unittest
@@ -56,10 +57,14 @@ class TestA1SampleSufficiency(unittest.TestCase):
 
     def test_one_insufficient_fail(self):
         """存在 <50 天态 → FAIL。"""
-        seq = np.concatenate([
-            np.repeat(0, 200), np.repeat(1, 200), np.repeat(2, 200),
-            np.repeat(3, 30),  # 不足
-        ])
+        seq = np.concatenate(
+            [
+                np.repeat(0, 200),
+                np.repeat(1, 200),
+                np.repeat(2, 200),
+                np.repeat(3, 30),  # 不足
+            ]
+        )
         detector = _make_detector_mock(seq)
         X = _make_X(len(seq))
         a1 = A1SampleSufficiency()
@@ -71,10 +76,14 @@ class TestA1SampleSufficiency(unittest.TestCase):
 
     def test_moderate_only_review(self):
         """存在 50-100 天态但无 <50 → REVIEW。"""
-        seq = np.concatenate([
-            np.repeat(0, 200), np.repeat(1, 200), np.repeat(2, 200),
-            np.repeat(3, 70),  # 中等
-        ])
+        seq = np.concatenate(
+            [
+                np.repeat(0, 200),
+                np.repeat(1, 200),
+                np.repeat(2, 200),
+                np.repeat(3, 70),  # 中等
+            ]
+        )
         detector = _make_detector_mock(seq)
         X = _make_X(len(seq))
         a1 = A1SampleSufficiency()
@@ -85,12 +94,14 @@ class TestA1SampleSufficiency(unittest.TestCase):
 
     def test_nan_rows_dropped(self):
         """含 NaN 的行被 dropna 清除。"""
-        X = np.array([
-            [np.nan, 1, 2, 3, 4, 5],  # warmup NaN 行，应丢
-            [1, 2, 3, 4, 5, 6],
-            [np.nan, np.nan, 1, 2, 3, 4],  # 应丢
-            [2, 3, 4, 5, 6, 7],
-        ])
+        X = np.array(
+            [
+                [np.nan, 1, 2, 3, 4, 5],  # warmup NaN 行，应丢
+                [1, 2, 3, 4, 5, 6],
+                [np.nan, np.nan, 1, 2, 3, 4],  # 应丢
+                [2, 3, 4, 5, 6, 7],
+            ]
+        )
         seq = np.array([0, 1])  # 2 行解码
         detector = _make_detector_mock(seq)
         a1 = A1SampleSufficiency()
@@ -144,6 +155,7 @@ class TestA1SampleSufficiency(unittest.TestCase):
         self.assertEqual(d["overall"], "PASS")
         # JSON 可序列化
         import json
+
         json.dumps(d)
 
     def test_min_state_count_property(self):

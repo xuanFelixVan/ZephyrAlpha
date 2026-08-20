@@ -3,6 +3,7 @@
 C1 复现发现：基准组 1444 笔，实验组 2432 笔（+68%），但 Turnover/yr 只升 12%。
 根因假设：Shrinkage 序列波动导致权重频繁微调。本脚本分析抖动分布 + 模拟死区效果。
 """
+
 from __future__ import annotations
 
 from pathlib import Path

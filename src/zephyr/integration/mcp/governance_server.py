@@ -63,7 +63,6 @@ from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 a
 __all__ = ["GovernanceServer", "create_server"]
 
 
-
 def _run_script(script_rel: str, *args: str) -> dict[str, Any]:
     script_path = REPO_ROOT / script_rel
     cmd = [sys.executable, str(script_path), *args]
@@ -580,9 +579,7 @@ class GovernanceServer(BaseMCPServer):
                 level, ScanLevel.STANDARD
             )
             target_dir = (
-                str(REPO_ROOT / module_dir)
-                if module_dir
-                else str(REPO_ROOT / "src" / "zephyr" / "behavioral-auditor")
+                str(REPO_ROOT / module_dir) if module_dir else str(REPO_ROOT / "src" / "zephyr" / "behavioral-auditor")
             )
             result = run_sync(scan(level=scan_level, scope=[target_dir] if module_dir else None))
             return {

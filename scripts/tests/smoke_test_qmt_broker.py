@@ -23,6 +23,7 @@ subscribe 必要性、session int 要求），本脚本对接真实模拟盘验�
   connect() → get_positions()（查资金）→ 挂远期限价单（不成交）→
   query_order()（查委托）→ cancel_order()（撤单）→ query_order()（查撤单状态）
 """
+
 from __future__ import annotations
 
 import os

@@ -129,8 +129,11 @@ class TestFakePatternsExcluded:
         n = _N
         close = np.full(n, 3000.0)
         d = {
-            "open": close.copy(), "high": close.copy(), "low": close.copy(),
-            "close": close.copy(), "volume": np.full(n, 1e8),
+            "open": close.copy(),
+            "high": close.copy(),
+            "low": close.copy(),
+            "close": close.copy(),
+            "volume": np.full(n, 1e8),
         }
         _set_yang(d, 67, 3000.0, 3040.0, 1.00e8)
         _set_yang(d, 68, 3020.0, 3080.0, 1.15e8)

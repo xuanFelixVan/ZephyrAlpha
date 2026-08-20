@@ -82,19 +82,19 @@ class RegimeCycleError(ZephyrBaseError):
 # 参数常量（blueprint §5 参数表唯一真源——改动必须同步蓝图）
 # ──────────────────────────────────────────────────────────────────────────────
 
-MIN_OBSERVATIONS = 60          # 输入序列最短交易日数（不足抛 ZA-REGIME-0030）
-MIN_EVENTS = 8                 # 事件研究最少事件样本数（不足判不显著）
-ALPHA_STRONG = 0.01            # 强显著阈值
-ALPHA_MEDIUM = 0.05            # 中显著阈值（significant 判定线）
-ALPHA_WEAK = 0.10              # 弱显著阈值
-N_HYPOTHESES = 4               # Bonferroni 检验族大小：月末/月初/节后/周年日
-MONTH_EDGE_K = 2               # 月末最后/月初前 K 个交易日（对齐 CYC-STAT-013 "月末最后两个交易日"）
+MIN_OBSERVATIONS = 60  # 输入序列最短交易日数（不足抛 ZA-REGIME-0030）
+MIN_EVENTS = 8  # 事件研究最少事件样本数（不足判不显著）
+ALPHA_STRONG = 0.01  # 强显著阈值
+ALPHA_MEDIUM = 0.05  # 中显著阈值（significant 判定线）
+ALPHA_WEAK = 0.10  # 弱显著阈值
+N_HYPOTHESES = 4  # Bonferroni 检验族大小：月末/月初/节后/周年日
+MONTH_EDGE_K = 2  # 月末最后/月初前 K 个交易日（对齐 CYC-STAT-013 "月末最后两个交易日"）
 POST_HOLIDAY_MIN_GAP_DAYS = 5  # 长假判定：相邻交易日历间隔 ≥5 自然日（春节/国庆）
-ANNIVERSARY_TOLERANCE = 5      # 周年日窗口 ±5 自然日（对齐 CYC-TIME-004 params.tolerance=5）
-ANNIVERSARY_MAX_YEARS = 10     # 周年回溯最大年数
-SWING_LOOKBACK = 20            # 显著高低点局部极值窗口（±20 交易日）
-SWING_MIN_MOVE_PCT = 0.20      # 显著性过滤：窗口内波段幅度 ≥20%
-DEFAULT_HORIZON_DAYS = 10      # upcoming 窗口前视自然日数
+ANNIVERSARY_TOLERANCE = 5  # 周年日窗口 ±5 自然日（对齐 CYC-TIME-004 params.tolerance=5）
+ANNIVERSARY_MAX_YEARS = 10  # 周年回溯最大年数
+SWING_LOOKBACK = 20  # 显著高低点局部极值窗口（±20 交易日）
+SWING_MIN_MOVE_PCT = 0.20  # 显著性过滤：窗口内波段幅度 ≥20%
+DEFAULT_HORIZON_DAYS = 10  # upcoming 窗口前视自然日数
 
 _WINDOW_MONTH_END = "month_end"
 _WINDOW_MONTH_START = "month_start"
@@ -126,8 +126,8 @@ class CycleEvidence:
     """
 
     n_events: int
-    mean_event: float          # 事件组均值（日历效应=日收益；周年日=|日收益|）
-    mean_benchmark: float      # 基准组均值
+    mean_event: float  # 事件组均值（日历效应=日收益；周年日=|日收益|）
+    mean_benchmark: float  # 基准组均值
     t_stat: float
     p_value: float
     p_adj: float
@@ -277,7 +277,13 @@ def event_study(
     p_adj = float(min(1.0, p_value * n_hypotheses))
     significant = p_adj <= ALPHA_MEDIUM
     return CycleEvidence(
-        n_events, mean_event, mean_bench, t_stat, p_value, p_adj, significant,
+        n_events,
+        mean_event,
+        mean_bench,
+        t_stat,
+        p_value,
+        p_adj,
+        significant,
         confidence_from_p_adj(p_adj),
     )
 
@@ -332,7 +338,11 @@ def detect_swing_extremes(
         last_kept_idx = -1
         for row_idx, row in sub.iterrows():
             if last_kept_date is not None and (row["date"] - last_kept_date).days <= lookback * 2:
-                better = row["price"] > sub.loc[last_kept_idx, "price"] if kind == "high" else row["price"] < sub.loc[last_kept_idx, "price"]
+                better = (
+                    row["price"] > sub.loc[last_kept_idx, "price"]
+                    if kind == "high"
+                    else row["price"] < sub.loc[last_kept_idx, "price"]
+                )
                 if better:
                     keep.remove(last_kept_idx)
                     keep.append(row_idx)
@@ -501,7 +511,5 @@ class RegimeCycleAnalyzer:
         close = close[close.index <= as_of]  # PIT：只用 ≤as_of 数据
         close = close.dropna()
         if len(close) < MIN_OBSERVATIONS:
-            raise RegimeCycleError(
-                f"analyze: ≤as_of 有效观测 {len(close)} < {MIN_OBSERVATIONS}（数据不足）"
-            )
+            raise RegimeCycleError(f"analyze: ≤as_of 有效观测 {len(close)} < {MIN_OBSERVATIONS}（数据不足）")
         return close

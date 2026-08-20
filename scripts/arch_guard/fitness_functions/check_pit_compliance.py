@@ -69,6 +69,7 @@ PIT_SUSPECT_PATTERNS = [
 
 EXCLUDE_DIRS = {"__pycache__", ".git", "tests", "docs"}
 
+
 def check_file(file_path: Path) -> list[str]:
     warnings_found = []
     try:
@@ -86,6 +87,7 @@ def check_file(file_path: Path) -> list[str]:
                 warnings_found.append(f'  {file_path.relative_to(REPO_ROOT)}:{i}: {explanation} — "{stripped[:120]}"')
                 break
     return warnings_found
+
 
 def main() -> int:
     if not FACTOR_DIR.exists():
@@ -112,6 +114,7 @@ def main() -> int:
     print("✅ INV-004 PIT 铁律 —— 无可疑模式")
     print(f"   已扫描 {FACTOR_DIR.relative_to(REPO_ROOT)}/ 下所有 .py 文件。")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

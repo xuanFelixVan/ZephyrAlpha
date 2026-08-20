@@ -27,6 +27,7 @@
   - 由于 launcher.py 导入路径限制，MCP 进程启动可能失败但不影响 boot 流程
   - 测试验证流程完整性 + MCP 机制可用性
 """
+
 from __future__ import annotations
 
 import importlib
@@ -493,10 +494,7 @@ class TestRedBlueExtremeScenarios:
             except Exception as e:
                 errors.append(e)
 
-        threads = [
-            threading.Thread(target=launch_one, args=(f"mcp-conc{i}",))
-            for i in range(5)
-        ]
+        threads = [threading.Thread(target=launch_one, args=(f"mcp-conc{i}",)) for i in range(5)]
         for t in threads:
             t.start()
         for t in threads:

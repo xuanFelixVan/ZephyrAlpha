@@ -32,6 +32,7 @@
     res = executor.execute(code_string, ["assert f(1)==2", "assert f(2)==4"])
     print(res.pass_rate, res.passed, res.total, res.errors)
 """
+
 from __future__ import annotations
 
 import logging
@@ -49,6 +50,7 @@ from dataclasses import dataclass, field
 @dataclass
 class ExecResult:
     """执行式评测结果。"""
+
     pass_rate: float  # passed / total，0.0~1.0
     passed: int
     total: int

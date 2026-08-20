@@ -161,9 +161,7 @@ def _parse_version(version: str) -> tuple[int, ...]:
     try:
         return tuple(int(p) for p in parts)
     except ValueError as exc:
-        raise InvalidVersionError(
-            f"版本号格式非法: {version!r} (期望 'X.Y' 或 'X.Y.Z' 语义版本)"
-        ) from exc
+        raise InvalidVersionError(f"版本号格式非法: {version!r} (期望 'X.Y' 或 'X.Y.Z' 语义版本)") from exc
 
 
 @dataclass(frozen=True)
@@ -190,9 +188,7 @@ class _ContractEntry:
     """可变内部状态——注册表内使用的可变条目（不对外暴露）。"""
 
     schema: ContractSchema
-    consumer_callbacks: list[Callable[[ContractSchema], None]] = field(
-        default_factory=list
-    )
+    consumer_callbacks: list[Callable[[ContractSchema], None]] = field(default_factory=list)
     audit_log: list[str] = field(default_factory=list)
 
 
@@ -220,9 +216,7 @@ class MultiContractRegistry:
             ContractAlreadyRegisteredError: contract_id 已存在。
         """
         if schema.contract_id in self._entries:
-            raise ContractAlreadyRegisteredError(
-                f"契约 {schema.contract_id} 已注册，不可重复注册"
-            )
+            raise ContractAlreadyRegisteredError(f"契约 {schema.contract_id} 已注册，不可重复注册")
         entry = _ContractEntry(schema=schema)
         entry.audit_log.append(
             f"REGISTER: {schema.contract_id} v{schema.version} "
@@ -253,12 +247,8 @@ class MultiContractRegistry:
         """
         entry = self._require_entry(contract_id)
         entry.consumer_callbacks.append(callback)
-        entry.audit_log.append(
-            f"CONSUMER_REGISTER: callback={callback.__qualname__}"
-        )
-        logger.debug(
-            "消费者注册: %s <- %s", contract_id, callback.__qualname__
-        )
+        entry.audit_log.append(f"CONSUMER_REGISTER: callback={callback.__qualname__}")
+        logger.debug("消费者注册: %s <- %s", contract_id, callback.__qualname__)
 
     # ── 版本演进 ──────────────────────────────────────────────────────────
 
@@ -292,23 +282,17 @@ class MultiContractRegistry:
         # 冻结检查
         if old_schema.frozen and not force:
             raise ContractFrozenError(
-                f"契约 {contract_id} 已冻结 (frozen=True)，"
-                f"禁止版本升级。如需强制升级，使用 force=True"
+                f"契约 {contract_id} 已冻结 (frozen=True)，禁止版本升级。如需强制升级，使用 force=True"
             )
 
         # 版本降级检查
         old_parsed = _parse_version(old_schema.version)
         new_parsed = _parse_version(new_version)
         if new_parsed <= old_parsed:
-            raise InvalidVersionError(
-                f"版本降级或未变: {old_schema.version} -> {new_version} "
-                f"(新版本必须大于当前版本)"
-            )
+            raise InvalidVersionError(f"版本降级或未变: {old_schema.version} -> {new_version} (新版本必须大于当前版本)")
 
         # 生成新 schema
-        new_changelog = old_schema.changelog + (
-            f"v{old_schema.version}→v{new_version}: {changelog_entry}",
-        )
+        new_changelog = old_schema.changelog + (f"v{old_schema.version}→v{new_version}: {changelog_entry}",)
         new_schema = replace(
             old_schema,
             version=new_version,
@@ -345,9 +329,7 @@ class MultiContractRegistry:
                     cb.__qualname__,
                     exc_info=True,
                 )
-        entry.audit_log.append(
-            f"NOTIFY: {notified}/{len(entry.consumer_callbacks)} consumers notified"
-        )
+        entry.audit_log.append(f"NOTIFY: {notified}/{len(entry.consumer_callbacks)} consumers notified")
 
         return new_schema
 
@@ -367,19 +349,11 @@ class MultiContractRegistry:
 
     def list_by_producer(self, domain: str) -> list[ContractSchema]:
         """按生产域查询契约。"""
-        return [
-            e.schema
-            for e in self._entries.values()
-            if e.schema.producer_domain == domain
-        ]
+        return [e.schema for e in self._entries.values() if e.schema.producer_domain == domain]
 
     def list_by_consumer(self, domain: str) -> list[ContractSchema]:
         """按消费域查询契约。"""
-        return [
-            e.schema
-            for e in self._entries.values()
-            if domain in e.schema.consumer_domains
-        ]
+        return [e.schema for e in self._entries.values() if domain in e.schema.consumer_domains]
 
     def get_audit_log(self, contract_id: str) -> list[str]:
         """获取契约的审计日志。
@@ -400,9 +374,7 @@ class MultiContractRegistry:
         """获取条目，不存在则抛 ContractNotFoundError。"""
         entry = self._entries.get(contract_id)
         if entry is None:
-            raise ContractNotFoundError(
-                f"契约 {contract_id} 未注册"
-            )
+            raise ContractNotFoundError(f"契约 {contract_id} 未注册")
         return entry
 
 

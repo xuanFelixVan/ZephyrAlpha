@@ -32,6 +32,7 @@
 
 依据: 10_regime_detector_spec §4.8.1（Johansen & Sornette / 国金宏观 2026-06 实证）
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -41,8 +42,7 @@ import pytest
 from zephyr.regime.features.lppl_detector import LPPLResult, lppl_blowoff_score
 
 
-def _synthetic_lppl(n: int = 180, tc_ahead: float = 10.0,
-                    m: float = 0.5, omega: float = 8.0) -> pd.Series:
+def _synthetic_lppl(n: int = 180, tc_ahead: float = 10.0, m: float = 0.5, omega: float = 8.0) -> pd.Series:
     """按 LPPL 公式合成泡沫价格序列（已知参数）。"""
     t = np.arange(1, n + 1, dtype=float)
     tc = n + tc_ahead

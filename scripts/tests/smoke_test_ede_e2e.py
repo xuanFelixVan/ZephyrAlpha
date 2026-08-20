@@ -38,6 +38,7 @@
   - Buy-and-Hold trades_count > 0（撮合引擎正常生成成交）
   - 无未捕获异常
 """
+
 from __future__ import annotations
 
 import sys
@@ -112,9 +113,11 @@ def _print_result(label: str, result, counters: dict | None = None) -> None:
     if counters:
         print(f"  ticks_seen={counters.get('ticks_seen', 0)}")
         if "signals" in counters:
-            print(f"  signals={counters['signals']} "
-                  f"(buy={counters.get('buy_signals', 0)}, "
-                  f"sell={counters.get('sell_signals', 0)})")
+            print(
+                f"  signals={counters['signals']} "
+                f"(buy={counters.get('buy_signals', 0)}, "
+                f"sell={counters.get('sell_signals', 0)})"
+            )
     print(f"  total_return={result.total_return:.4f}")
     print(f"  annual_return={result.annual_return:.4f}")
     print(f"  sharpe_ratio={result.sharpe_ratio:.4f}")
@@ -125,6 +128,7 @@ def _print_result(label: str, result, counters: dict | None = None) -> None:
 
 def main() -> int:
     import logging
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(name)s %(levelname)s: %(message)s",
@@ -198,6 +202,7 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001
         print(f"[FAIL] 测试 A 回测失败: {type(e).__name__}: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
@@ -228,6 +233,7 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001
         print(f"[FAIL] 测试 B 回测失败: {type(e).__name__}: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
@@ -237,7 +243,7 @@ def main() -> int:
     print("\n--- 测试 C: VWAPReversionStrategy（VWAP回归做T）---")
     vwap_strategy = VWAPReversionStrategy(
         entry_threshold=0.003,  # 价格低于 VWAP 0.3% 买入
-        exit_threshold=0.0,     # 回归 VWAP 即卖
+        exit_threshold=0.0,  # 回归 VWAP 即卖
         base_weight=0.95,
         use_order_book=True,
         ob_block_threshold=-0.3,
@@ -269,6 +275,7 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001
         print(f"[FAIL] 测试 C 回测失败: {type(e).__name__}: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
@@ -277,8 +284,8 @@ def main() -> int:
     # --- 测试 D: OrderBookImbalanceStrategy（路径 B 盘口失衡反转做T）---
     print("\n--- 测试 D: OrderBookImbalanceStrategy（盘口失衡反转做T）---")
     ob_strategy = OrderBookImbalanceStrategy(
-        entry_threshold=0.5,   # ob<=-0.5（卖盘占~75%）时买入
-        exit_threshold=0.0,    # ob>=0（盘口恢复）时卖出
+        entry_threshold=0.5,  # ob<=-0.5（卖盘占~75%）时买入
+        exit_threshold=0.0,  # ob>=0（盘口恢复）时卖出
         base_weight=0.95,
         use_5levels=True,
     )
@@ -309,6 +316,7 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001
         print(f"[FAIL] 测试 D 回测失败: {type(e).__name__}: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
@@ -335,8 +343,12 @@ def main() -> int:
 
     # 检查 3: BacktestResult 字段完整性
     required_fields = [
-        "strategy_id", "total_return", "sharpe_ratio",
-        "max_drawdown", "trades_count", "win_rate",
+        "strategy_id",
+        "total_return",
+        "sharpe_ratio",
+        "max_drawdown",
+        "trades_count",
+        "win_rate",
     ]
     missing = [f for f in required_fields if not hasattr(result_a, f)]
     if missing:
@@ -350,8 +362,7 @@ def main() -> int:
 
     if all_pass:
         print("\n=== EDE 端到端验证通过 ===")
-        print("结论: 真实 tick → TickReplayEngine → EDE → MatchingEngine → "
-              "Portfolio → BacktestResult 全链路跑通")
+        print("结论: 真实 tick → TickReplayEngine → EDE → MatchingEngine → Portfolio → BacktestResult 全链路跑通")
         print("      EDE 可用真实 tick 数据进行模拟真实交易回测")
     else:
         print("\n=== EDE 端到端验证失败 ===")

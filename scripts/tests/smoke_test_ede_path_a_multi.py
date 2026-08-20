@@ -32,6 +32,7 @@
   - trades_count > 0（多标的撮合正常）
   - 无未捕获异常
 """
+
 from __future__ import annotations
 
 import sys
@@ -104,6 +105,7 @@ SYMBOLS = ["600000.SH", "600036.SH", "000001.SZ"]
 
 def main() -> int:
     import logging
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(name)s %(levelname)s: %(message)s",
@@ -158,6 +160,7 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001
         print(f"[FAIL] build_weight_panel 失败: {type(e).__name__}: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
@@ -203,6 +206,7 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001
         print(f"[FAIL] Path A 多标的回测失败: {type(e).__name__}: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
@@ -235,8 +239,12 @@ def main() -> int:
 
     # 6c. BacktestResult 字段完整
     required_fields = [
-        "strategy_id", "total_return", "sharpe_ratio",
-        "max_drawdown", "trades_count", "win_rate",
+        "strategy_id",
+        "total_return",
+        "sharpe_ratio",
+        "max_drawdown",
+        "trades_count",
+        "win_rate",
     ]
     missing = [f for f in required_fields if not hasattr(result, f)]
     if missing:

@@ -209,9 +209,7 @@ class TestSchema:
 
         from zephyr.shared.io.paths import REPO_ROOT
 
-        data = yaml.safe_load(
-            (REPO_ROOT / "config" / "metrics_schema.yaml").read_text(encoding="utf-8")
-        )
+        data = yaml.safe_load((REPO_ROOT / "config" / "metrics_schema.yaml").read_text(encoding="utf-8"))
         return str(data["version"])
 
     def test_get_version(self):

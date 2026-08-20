@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """D3 聚合公式参数扰动分析单元测试（11_regime_backtest_validation_plan §0.5.7 D3）."""
+
 from __future__ import annotations
 
 import unittest
@@ -39,9 +40,7 @@ class TestAggregateRiskSignal(unittest.TestCase):
         """机会恢复叠加且封顶 +0.25。"""
         base = aggregate_risk_signal({1: 0.9}, opportunity={"news_ghost": 0.10})
         self.assertAlmostEqual(base, 0.9 + 0.10)
-        capped = aggregate_risk_signal(
-            {1: 0.9}, opportunity={"news_ghost": 0.20, "bad_news_flat": 0.20}
-        )
+        capped = aggregate_risk_signal({1: 0.9}, opportunity={"news_ghost": 0.20, "bad_news_flat": 0.20})
         self.assertAlmostEqual(capped, 1.0)  # 0.9+0.25=1.15 → clamp 1.00
 
     def test_lower_clamp(self):
@@ -59,16 +58,13 @@ class TestAggregateRiskSignal(unittest.TestCase):
         detector = RegimeDetector(shrinkage_enabled=False)
         cases = [
             {"params": {1: 0.85, 2: 1.0, 5: 0.6}},
-            {"params": {1: 0.7, 3: 0.8, 12: 0.9},
-             "opportunity": {"news_ghost": 0.10, "bad_news_flat": 0.05}},
+            {"params": {1: 0.7, 3: 0.8, 12: 0.9}, "opportunity": {"news_ghost": 0.10, "bad_news_flat": 0.05}},
             {"params": {1: 1.0, 7: 0.5}},
             {"params": {}},
         ]
         for risk_inputs in cases:
             prod = detector._compute_risk_signal(risk_inputs)  # noqa: SLF001
-            mine = aggregate_risk_signal(
-                risk_inputs.get("params") or {}, risk_inputs.get("opportunity")
-            )
+            mine = aggregate_risk_signal(risk_inputs.get("params") or {}, risk_inputs.get("opportunity"))
             self.assertAlmostEqual(mine, prod, places=12, msg=f"不一致: {risk_inputs}")
 
 
@@ -84,9 +80,7 @@ class TestRunD3Perturbation(unittest.TestCase):
 
     def test_mild_series_robust(self):
         """温和收缩序列：生产 clamp 结构下扰动影响天然 <30% → 稳健。"""
-        series = [{"params": {1: 0.9, 2: 0.7}}] * 20 + [
-            {"params": {1: 0.8}, "opportunity": {"news_ghost": 0.10}}
-        ] * 20
+        series = [{"params": {1: 0.9, 2: 0.7}}] * 20 + [{"params": {1: 0.8}, "opportunity": {"news_ghost": 0.10}}] * 20
         rep = run_d3_perturbation(series)
         self.assertTrue(rep.passed)
         self.assertLess(rep.max_rel_change, 0.30)
@@ -106,9 +100,7 @@ class TestRunD3Perturbation(unittest.TestCase):
 
     def test_recovery_cap_direction(self):
         """recovery_cap ×0.8 降低含机会项序列的均值（方向正确，且结果低于 clamp 上限）。"""
-        series = [
-            {"params": {1: 0.6}, "opportunity": {"news_ghost": 0.20, "bad_news_flat": 0.20}}
-        ] * 25
+        series = [{"params": {1: 0.6}, "opportunity": {"news_ghost": 0.20, "bad_news_flat": 0.20}}] * 25
         # 基线: 0.6×1.0 + min(0.4, 0.25)=0.25 → 0.85; cap×0.8=0.2 → 0.6+0.2=0.80
         rep = run_d3_perturbation(series)
         self.assertAlmostEqual(rep.baseline_mean, 0.85)

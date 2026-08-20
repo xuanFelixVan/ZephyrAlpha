@@ -83,9 +83,7 @@ def _run(d: dict[str, np.ndarray], vol_z_val: float = 3.5, **kw) -> pd.Series:
     pct = s["close"].pct_change().fillna(0.0)
     crash_mask = pct < -0.04
     vol_z[crash_mask] = vol_z_val  # 暴跌日给 z>3（90 分档）
-    return s2_capitulation_score(
-        vol_z, pct, s["volume"], s["high"], s["low"], s["open"], s["close"], **kw
-    )
+    return s2_capitulation_score(vol_z, pct, s["volume"], s["high"], s["low"], s["open"], s["close"], **kw)
 
 
 # ---------------------------------------------------------------------------
@@ -214,8 +212,15 @@ class TestOptionsFilter:
         pct = s["close"].pct_change().fillna(0.0)
         pc_low = pd.Series(1.0, index=s["close"].index)  # put/call 未达 1.4
         out = s2_capitulation_score(
-            vol_z, pct, s["volume"], s["high"], s["low"], s["open"], s["close"],
-            put_call_ratio=pc_low, enable_options_filter=True,
+            vol_z,
+            pct,
+            s["volume"],
+            s["high"],
+            s["low"],
+            s["open"],
+            s["close"],
+            put_call_ratio=pc_low,
+            enable_options_filter=True,
         )
         assert out.iloc[60] == 0.0
 
@@ -229,8 +234,16 @@ class TestOptionsFilter:
         pc = pd.Series(1.5, index=s["close"].index)
         nl = pd.Series(0.95, index=s["close"].index)
         out = s2_capitulation_score(
-            vol_z, pct, s["volume"], s["high"], s["low"], s["open"], s["close"],
-            put_call_ratio=pc, new_low_ratio=nl, enable_options_filter=True,
+            vol_z,
+            pct,
+            s["volume"],
+            s["high"],
+            s["low"],
+            s["open"],
+            s["close"],
+            put_call_ratio=pc,
+            new_low_ratio=nl,
+            enable_options_filter=True,
         )
         assert out.iloc[60] > 0
 
@@ -270,9 +283,7 @@ class TestFallbackAndRobustness:
         s = _series(d)
         vol_z = pd.Series(np.nan, index=s["close"].index)
         pct = s["close"].pct_change()  # 首值 NaN
-        out = s2_capitulation_score(
-            vol_z, pct, s["volume"], s["high"], s["low"], s["open"], s["close"]
-        )
+        out = s2_capitulation_score(vol_z, pct, s["volume"], s["high"], s["low"], s["open"], s["close"])
         # vol_z 全 NaN → 基础分 0 → 输出非正（warmup NaN 或 0）
         assert (out.fillna(0.0) == 0.0).all()
 

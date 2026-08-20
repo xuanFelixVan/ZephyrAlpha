@@ -180,6 +180,7 @@ _MIGRATION_RATES = {"ultra_short": 0.5, "short": 0.125, "medium": 0.02}
 # 3.1 VWAP 中心三角分布
 # ---------------------------------------------------------------------------
 
+
 def triangular_pdf(p: float, center: float, low: float, high: float) -> float:
     """三角分布概率密度函数（VWAP 为中心）。
 
@@ -220,13 +221,10 @@ def compute_vwap(row: dict | pd.Series) -> float:
     amount = float(row["amount"])
     if volume > 0 and amount > 0:
         return amount / volume
-    return (float(row["open"]) + float(row["high"])
-            + float(row["low"]) + float(row["close"])) / 4.0
+    return (float(row["open"]) + float(row["high"]) + float(row["low"]) + float(row["close"])) / 4.0
 
 
-def compute_daily_distribution(
-    vwap: float, low: float, high: float, prices: np.ndarray
-) -> np.ndarray:
+def compute_daily_distribution(vwap: float, low: float, high: float, prices: np.ndarray) -> np.ndarray:
     """计算当日三角分布密度并离散化到价格网格，归一化 Σ=1.0。
 
     Parameters
@@ -276,9 +274,8 @@ def compute_daily_distribution(
 # 3.2 换手递推
 # ---------------------------------------------------------------------------
 
-def turnover_recurse(
-    old: np.ndarray, new: np.ndarray, tau: float
-) -> np.ndarray:
+
+def turnover_recurse(old: np.ndarray, new: np.ndarray, tau: float) -> np.ndarray:
     """换手递推公式 C_t = (1-τ)×C_{t-1} + τ×D_t。
 
     纯公式实现，不做额外归一化——当 old 和 new 均归一化（Σ=1）时，
@@ -304,6 +301,7 @@ def turnover_recurse(
 # 3.5 32 相对网格映射
 # ---------------------------------------------------------------------------
 
+
 def build_grid_prices(low: float, high: float, n_grids: int = 32) -> np.ndarray:
     """构建 n 个等间距网格价格，grid[0]=low, grid[n-1]=high。
 
@@ -316,9 +314,8 @@ def build_grid_prices(low: float, high: float, n_grids: int = 32) -> np.ndarray:
 # 3.6 衍生指标计算
 # ---------------------------------------------------------------------------
 
-def compute_metrics(
-    dist: np.ndarray, age_layers: dict[str, np.ndarray] | None = None
-) -> dict[str, float]:
+
+def compute_metrics(dist: np.ndarray, age_layers: dict[str, np.ndarray] | None = None) -> dict[str, float]:
     """计算衍生指标（供 RegimeFeatureBuilder 直接消费）。
 
     Parameters
@@ -337,20 +334,16 @@ def compute_metrics(
     dist = np.asarray(dist, dtype=float)
     n = len(dist)
     bottom_n = max(1, n // 4)  # 底部 1/4
-    top_n = max(1, n // 4)     # 顶部 1/4
+    top_n = max(1, n // 4)  # 顶部 1/4
 
     dist_sum = dist.sum()
 
     # 底部堆积度
-    bottom_accumulation = (
-        float(dist[:bottom_n].sum() / dist_sum) if dist_sum > 0 else 0.0
-    )
+    bottom_accumulation = float(dist[:bottom_n].sum() / dist_sum) if dist_sum > 0 else 0.0
 
     # 上方套牢峰强度（高位异常堆积的峰值超出均值的部分）
-    top_section = dist[n - top_n:]
-    upper_trap_peak = (
-        float(top_section.max() - top_section.mean()) if len(top_section) > 0 else 0.0
-    )
+    top_section = dist[n - top_n :]
+    upper_trap_peak = float(top_section.max() - top_section.mean()) if len(top_section) > 0 else 0.0
 
     # 长期筹码底部占比 & 筹码迁移方向
     long_term_bottom_ratio = 0.0
@@ -360,9 +353,7 @@ def compute_metrics(
         long_sum = long_layer.sum()
         if long_sum > 0:
             long_term_bottom_ratio = float(long_layer[:bottom_n].sum() / long_sum)
-            distribution_migration = float(
-                (long_layer[n - top_n:].sum() - long_layer[:bottom_n].sum()) / long_sum
-            )
+            distribution_migration = float((long_layer[n - top_n :].sum() - long_layer[:bottom_n].sum()) / long_sum)
 
     return {
         "long_term_bottom_ratio": long_term_bottom_ratio,
@@ -375,6 +366,7 @@ def compute_metrics(
 # ---------------------------------------------------------------------------
 # 筹码分布引擎（端到端）
 # ---------------------------------------------------------------------------
+
 
 class ChipDistributionEngine:
     """筹码分布引擎——从 OHLCV 计算筹码分布（华泰2026前沿算法）。
@@ -450,9 +442,7 @@ class ChipDistributionEngine:
         for t in range(n):
             row = df.iloc[t]
             vwap = compute_vwap(row)
-            daily_dist = compute_daily_distribution(
-                vwap, float(row["low"]), float(row["high"]), grid_prices
-            )
+            daily_dist = compute_daily_distribution(vwap, float(row["low"]), float(row["high"]), grid_prices)
             t_now = float(tau[t])
 
             # 总分布换手递推
@@ -512,8 +502,7 @@ class ChipDistributionEngine:
     def _uniform_result(self, symbol: str, date: Any = None) -> dict[str, Any]:
         """降级：均匀分布（32网格各 1/32）。"""
         uniform = np.ones(self.n_grids) / self.n_grids
-        age = {k: uniform.copy() for k in
-               ["ultra_short", "short", "medium", "long"]}
+        age = {k: uniform.copy() for k in ["ultra_short", "short", "medium", "long"]}
         return {
             "symbol": symbol,
             "date": date,

@@ -129,7 +129,10 @@ class TestLockError:
 class TestMemoryLockTTL:
     """5.40.9：TTL 过期强释语义。"""
 
-    @pytest.mark.xfail(strict=False, reason="#ARCH-071 MemoryLock ttl_seconds 签名占位未实现（TTL 强释语义缺席）——代码侧缺口待裁定补实现")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-071 MemoryLock ttl_seconds 签名占位未实现（TTL 强释语义缺席）——代码侧缺口待裁定补实现",
+    )
     def test_expired_lock_can_be_stolen(self):
         lock = MemoryLock()
 
@@ -171,7 +174,10 @@ class TestMemoryLockTTL:
 
         run_coroutine_sync(run())
 
-    @pytest.mark.xfail(strict=False, reason="#ARCH-071 MemoryLock ttl_seconds 签名占位未实现（TTL 强释语义缺席）——代码侧缺口待裁定补实现")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-071 MemoryLock ttl_seconds 签名占位未实现（TTL 强释语义缺席）——代码侧缺口待裁定补实现",
+    )
     def test_wait_timeout_acquires_after_holder_ttl_expires(self):
         lock = MemoryLock()
 

@@ -149,10 +149,10 @@ logger = logging.getLogger(__name__)
 class CashFlowType(str, Enum):
     """资金流水类型。"""
 
-    DEPOSIT = "DEPOSIT"        # 入金 (+)
+    DEPOSIT = "DEPOSIT"  # 入金 (+)
     WITHDRAWAL = "WITHDRAWAL"  # 出金 (−)
-    BUY = "BUY"                # 买入 (−, 立即扣减)
-    SELL = "SELL"              # 卖出 (+, T+1 结算)
+    BUY = "BUY"  # 买入 (−, 立即扣减)
+    SELL = "SELL"  # 卖出 (+, T+1 结算)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -175,9 +175,9 @@ class InvalidCashFlowError(ZephyrBaseError):
 class CashReserveConfig:
     """储备金配置 (设计真源 §1.1 POS-06)。"""
 
-    min_reserve: float = 100_000.0                  # 最低储备金 (绝对金额)
-    opportunity_reserve_ratio: float = 0.10          # 机会储备 10%
-    holiday_reserve_ratio: float = 0.10              # 节假日储备 10% (holiday_mode 时)
+    min_reserve: float = 100_000.0  # 最低储备金 (绝对金额)
+    opportunity_reserve_ratio: float = 0.10  # 机会储备 10%
+    holiday_reserve_ratio: float = 0.10  # 节假日储备 10% (holiday_mode 时)
 
     def __post_init__(self) -> None:
         if self.min_reserve < 0:
@@ -200,7 +200,7 @@ class CashFlow:
     """单条资金流水。"""
 
     flow_type: CashFlowType
-    amount: float          # 正数 (符号由类型决定)
+    amount: float  # 正数 (符号由类型决定)
     timestamp: datetime
     note: str = ""
 
@@ -209,13 +209,13 @@ class CashFlow:
 class CashState:
     """资金状态快照。"""
 
-    total_cash: float               # 账户总资金 (Σ流水)
-    pending_settlement: float        # T+1 未结算 (今日卖出, 次日可用)
-    available_cash: float            # 可用资金 = total_cash - pending_settlement
-    min_reserve: float               # 最低储备
-    opportunity_reserve: float       # 机会储备
-    holiday_reserve: float           # 节假日储备
-    max_investable: float            # 可投资上限 = max(0, available - 各储备)
+    total_cash: float  # 账户总资金 (Σ流水)
+    pending_settlement: float  # T+1 未结算 (今日卖出, 次日可用)
+    available_cash: float  # 可用资金 = total_cash - pending_settlement
+    min_reserve: float  # 最低储备
+    opportunity_reserve: float  # 机会储备
+    holiday_reserve: float  # 节假日储备
+    max_investable: float  # 可投资上限 = max(0, available - 各储备)
     in_holiday_mode: bool
     timestamp: datetime
 

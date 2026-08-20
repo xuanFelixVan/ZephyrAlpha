@@ -111,33 +111,33 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 from datetime import date, datetime
-from typing import Any
+from typing import Any, Final
 
 # ── 常量（参数来源：30_multi_strategy_concurrency §2.5 + §2.2）──
 
 # 四级回撤阈值（§2.5.1 行业基准 LedgerMind/ARKA/Sina FOF 2026）
-DRAWDOWN_L1_WARN = 0.08       # Level 1 警告：回撤 > 8%
-DRAWDOWN_L2_REDUCE = 0.15     # Level 2 减仓：回撤 > 15%
-DRAWDOWN_L3_HALT = 0.20       # Level 3 停仓：回撤 > 20%
+DRAWDOWN_L1_WARN = 0.08  # Level 1 警告：回撤 > 8%
+DRAWDOWN_L2_REDUCE = 0.15  # Level 2 减仓：回撤 > 15%
+DRAWDOWN_L3_HALT = 0.20  # Level 3 停仓：回撤 > 20%
 DRAWDOWN_L4_LIQUIDATE = 0.25  # Level 4 清仓：回撤 > 25%
 
 # 各级别动作参数（§2.5.1）
-L1_RISK_SCALAR = 0.75         # Level 1：新仓风险敞口降至 75%
-L2_POSITION_SCALAR = 0.75     # Level 2：仓位缩减至 75%
+L1_RISK_SCALAR = 0.75  # Level 1：新仓风险敞口降至 75%
+L2_POSITION_SCALAR = 0.75  # Level 2：仓位缩减至 75%
 # Level 3：停开新仓（仅允许平仓调仓）
 # Level 4：关闭所有仓位 + 强制休息 5 天
 
 # PerformanceScore 映射参数（§2.2 RegimeMetaAllocator 配套）
-PERF_SCORE_FLOOR = 0.5        # PerformanceScore 下限（防饿死）
-PERF_SCORE_CAP = 1.5          # PerformanceScore 上限（防集中）
-PERF_SCORE_LOOKBACK = 60      # 60 日滚动 Sortino（§2.2 口径对齐 34号 §3.1）
+PERF_SCORE_FLOOR = 0.5  # PerformanceScore 下限（防饿死）
+PERF_SCORE_CAP = 1.5  # PerformanceScore 上限（防集中）
+PERF_SCORE_LOOKBACK = 60  # 60 日滚动 Sortino（§2.2 口径对齐 34号 §3.1）
 # Sortino → [0.5, 1.5] 线性映射基准点
-SORTINO_LOW = 0.0             # Sortino=0 → score=0.5
-SORTINO_HIGH = 2.0            # Sortino≥2 → score=1.5
+SORTINO_LOW = 0.0  # Sortino=0 → score=0.5
+SORTINO_HIGH = 2.0  # Sortino≥2 → score=1.5
 
 # 退潮加权系数默认值（28号 §3.5 → 30号 链路2）
 RETREAT_WEIGHT_DEFAULT = 1.5
-RETREAT_WEIGHT_BY_TYPE = {    # 按策略类型差异化（28号 §3.5）
+RETREAT_WEIGHT_BY_TYPE: Final = {  # 按策略类型差异化（28号 §3.5）
     "打板": 1.5,
     "事件驱动": 1.3,
     "多因子": 1.2,
@@ -148,21 +148,21 @@ SENTIMENT_DEGRADE_THRESHOLD = 0.6  # confidence < 0.6 触发降级（28号 §3.5
 STRATEGY_DAILY_LOSS_HALT = 0.05  # 单策略单日亏损 > 5% → 暂停 1 天
 
 # σ_i 异常判定阈值（31_position_sizing §2.2.2，2026-08-10 施工流程补充）
-VOL_WINDOW_DAYS = 60             # inverse-vol 波动率窗口（60 日，与 RegimeMetaAllocator 口径对齐）
-MIN_VALID_SAMPLES = 30           # 规则2 样本量门控：窗口内有效交易日 < 30 → 降级
-SIGMA_EXTREME_CAP = 1.50         # 规则3 极端值检查：年化波动率 > 150% → 降级
-MIN_LISTING_DAYS = 60            # 规则4 新股冷启：上市 < 60 个交易日 → 降级
+VOL_WINDOW_DAYS = 60  # inverse-vol 波动率窗口（60 日，与 RegimeMetaAllocator 口径对齐）
+MIN_VALID_SAMPLES = 30  # 规则2 样本量门控：窗口内有效交易日 < 30 → 降级
+SIGMA_EXTREME_CAP = 1.50  # 规则3 极端值检查：年化波动率 > 150% → 降级
+MIN_LISTING_DAYS = 60  # 规则4 新股冷启：上市 < 60 个交易日 → 降级
 
 # 策略级冷启动执行比例（30_multi_strategy_concurrency §6.7 MVP 基线，v2.1.0 裁定）
-COLD_START_RATIO_COLD = 0.30     # 冷启动期 ×30%（单策略故障不致命 + PnL 信号可观测）
-COLD_START_RATIO_HALF = 0.60     # 半仓期 ×60%
-COLD_START_STAGE1_DAYS = 30      # 上线 <30 天 → 冷启动 ×30%
-COLD_START_STAGE2_DAYS = 60      # 30≤上线<60 天 → 半仓 ×60%；≥60 天 → 满仓 ×100%
+COLD_START_RATIO_COLD = 0.30  # 冷启动期 ×30%（单策略故障不致命 + PnL 信号可观测）
+COLD_START_RATIO_HALF = 0.60  # 半仓期 ×60%
+COLD_START_STAGE1_DAYS = 30  # 上线 <30 天 → 冷启动 ×30%
+COLD_START_STAGE2_DAYS = 60  # 30≤上线<60 天 → 半仓 ×60%；≥60 天 → 满仓 ×100%
 COLD_START_PERF_STABLE_OBS = 40  # 60 日窗口有效观测 ≥40 → PerformanceScore 稳定 → 锁定满仓
 
 # score→weight 转换契约（30号 §2.2 契约③：25号 IC 合成评分归一化区间）
-SCORE_MIN = -3.0                 # 复合因子评分下界（21号 §3.3 归一化 [-3,3]）
-SCORE_MAX = 3.0                  # 复合因子评分上界
+SCORE_MIN = -3.0  # 复合因子评分下界（21号 §3.3 归一化 [-3,3]）
+SCORE_MAX = 3.0  # 复合因子评分上界
 
 
 @dataclass(frozen=True)
@@ -173,9 +173,9 @@ class VolatilityInfo:
     （元数据缺失≠异常，信息不足不降级，仅规则1/3始终可判）。
     """
 
-    sigma: float                      # 年化波动率（60 日窗口，日收益标准差×√252）
+    sigma: float  # 年化波动率（60 日窗口，日收益标准差×√252）
     valid_samples: int | None = None  # 60 日窗口内有效交易日数（None=未知，跳过规则2）
-    listing_days: int | None = None   # 上市交易日数（None=未知，跳过规则4）
+    listing_days: int | None = None  # 上市交易日数（None=未知，跳过规则4）
 
 
 @dataclass(frozen=True)
@@ -186,9 +186,9 @@ class TargetWeight:
     FirmRiskAggregator §2.2 据此做 budget 口径归一化。
     """
 
-    target_weight: float   # 目标权重（粗仓位，未经 Kelly，相对 strategy_budget）
-    reason: str            # 选入理由
-    confidence: float      # 策略自信度 [0, 1]
+    target_weight: float  # 目标权重（粗仓位，未经 Kelly，相对 strategy_budget）
+    reason: str  # 选入理由
+    confidence: float  # 策略自信度 [0, 1]
 
 
 @dataclass(frozen=True)
@@ -203,10 +203,10 @@ class TargetPortfolio:
 
     strategy_id: str
     positions: dict[str, TargetWeight]
-    total_weight: float                       # ≤ budget，未满部分为现金
-    budget: float                             # 当前资金预算占比（来自 RegimeMetaAllocator）
-    cash_ratio: float                         # = budget − total_weight
-    sizing_method: str                        # equal_weight / risk_parity / custom
+    total_weight: float  # ≤ budget，未满部分为现金
+    budget: float  # 当前资金预算占比（来自 RegimeMetaAllocator）
+    cash_ratio: float  # = budget − total_weight
+    sizing_method: str  # equal_weight / risk_parity / custom
     created_at: datetime = field(default_factory=datetime.now)
     idempotency_key: str = ""
     schema_version: str = "1.0"
@@ -223,8 +223,8 @@ class SentimentStageSignal:
     regime ⑧加速下跌信号，retreat_weight 回退为 1.0（不加权）。
     """
 
-    stage: str             # 当前情绪阶段 ∈ {冰点, 反核, 主升, 疯狂, 退潮}
-    confidence: float      # BOCPD 后验概率 [0,1]，<0.6 触发降级
+    stage: str  # 当前情绪阶段 ∈ {冰点, 反核, 主升, 疯狂, 退潮}
+    confidence: float  # BOCPD 后验概率 [0,1]，<0.6 触发降级
     retreat_weight: float  # 退潮加权系数，仅退潮阶段非 1.0
     timestamp: datetime = field(default_factory=datetime.now)
 
@@ -233,9 +233,9 @@ class SentimentStageSignal:
 class DrawdownLevel:
     """单策略回撤级别（§2.5.3 单策略层面，独立于组合层 drawdown_controller）。"""
 
-    level: int             # 0=正常, 1=警告, 2=减仓, 3=停仓, 4=清仓
-    drawdown: float        # 当前回撤比例
-    action: str            # 动作描述
+    level: int  # 0=正常, 1=警告, 2=减仓, 3=停仓, 4=清仓
+    drawdown: float  # 当前回撤比例
+    action: str  # 动作描述
 
 
 @dataclass(frozen=True)
@@ -248,10 +248,10 @@ class ColdStartState:
     参数消费——求和/Kelly/裁剪全链路基于已缩减值运行，归因清晰。
     """
 
-    stage: str             # cold_start(×0.3) / half_position(×0.6) / full_position(×1.0)
-    ratio: float           # 冷启动执行比例 ∈ (0, 1]
+    stage: str  # cold_start(×0.3) / half_position(×0.6) / full_position(×1.0)
+    ratio: float  # 冷启动执行比例 ∈ (0, 1]
     days_live: int | None  # 已上线自然日数（None=非冷启动模式，未传 live_start_date）
-    locked_full: bool      # True=PerformanceScore 稳定（有效观测≥40）锁定满仓，或满仓毕业
+    locked_full: bool  # True=PerformanceScore 稳定（有效观测≥40）锁定满仓，或满仓毕业
 
 
 def scores_to_weights(
@@ -294,9 +294,7 @@ def scores_to_weights(
     # 契约区间校验（21号 §3.3 归一化 [-3,3]，浮点容差 1e-9）
     for sym, s in scores.items():
         if s < SCORE_MIN - 1e-9 or s > SCORE_MAX + 1e-9:
-            raise ValueError(
-                f"{sym} 评分 {s} 越出契约区间 [{SCORE_MIN}, {SCORE_MAX}]（21号 §3.3 归一化口径）"
-            )
+            raise ValueError(f"{sym} 评分 {s} 越出契约区间 [{SCORE_MIN}, {SCORE_MAX}]（21号 §3.3 归一化口径）")
 
     # 评分降序 top-N 选股
     selected = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
@@ -365,9 +363,7 @@ class StrategyBook:
                 None=非冷启动模式（既有策略，执行比例恒 1.0，零行为变化）
         """
         if sizing_method not in ("equal_weight", "risk_parity", "custom"):
-            raise ValueError(
-                f"sizing_method 禁用 {sizing_method}（A 模型不允许 Kelly/MVO）"
-            )
+            raise ValueError(f"sizing_method 禁用 {sizing_method}（A 模型不允许 Kelly/MVO）")
         self.strategy_id = strategy_id
         self.sizing_method = sizing_method
         self.strategy_type = strategy_type
@@ -526,9 +522,7 @@ class StrategyBook:
 
         # Budget 下调：砍最不自信的仓位（§2.4 Budget 减少 Tier 2——策略自主）
         # 按 confidence 降序排列，从最自信的开始保留，最不自信的被砍
-        sorted_positions = sorted(
-            old_positions.items(), key=lambda x: x[1].confidence, reverse=True
-        )
+        sorted_positions = sorted(old_positions.items(), key=lambda x: x[1].confidence, reverse=True)
 
         new_positions: dict[str, TargetWeight] = {}
         accumulated = 0.0
@@ -567,9 +561,7 @@ class StrategyBook:
         self._last_target_portfolio = portfolio
         return portfolio
 
-    def compute_performance_score(
-        self, pnl_history: list[float], risk_free_rate: float = 0.0
-    ) -> float:
+    def compute_performance_score(self, pnl_history: list[float], risk_free_rate: float = 0.0) -> float:
         """计算 60 日滚动 Sortino → PerformanceScore [0.5, 1.5]。
 
         供 RegimeMetaAllocator 后验分配（Phase 2，34号 §3.1 口径对齐）。
@@ -596,9 +588,7 @@ class StrategyBook:
 
         # 下行偏差（Sortino 分母）：只惩罚负收益
         downside_returns = [min(0, e) for e in excess]
-        downside_deviation = math.sqrt(
-            sum(d ** 2 for d in downside_returns) / len(downside_returns)
-        )
+        downside_deviation = math.sqrt(sum(d**2 for d in downside_returns) / len(downside_returns))
 
         if downside_deviation == 0:
             # 无下行波动：若均值正则给 cap，否则 floor
@@ -614,9 +604,9 @@ class StrategyBook:
             score = PERF_SCORE_CAP
         else:
             # 线性插值
-            score = PERF_SCORE_FLOOR + (sortino - SORTINO_LOW) / (
-                SORTINO_HIGH - SORTINO_LOW
-            ) * (PERF_SCORE_CAP - PERF_SCORE_FLOOR)
+            score = PERF_SCORE_FLOOR + (sortino - SORTINO_LOW) / (SORTINO_HIGH - SORTINO_LOW) * (
+                PERF_SCORE_CAP - PERF_SCORE_FLOOR
+            )
 
         return max(PERF_SCORE_FLOOR, min(PERF_SCORE_CAP, score))
 
@@ -686,31 +676,29 @@ class StrategyBook:
 
         # 非冷启动模式：未传 live_start_date → 既有策略恒满仓（零行为变化）
         if self._live_start_date is None:
-            return ColdStartState(
-                stage="full_position", ratio=1.0, days_live=None, locked_full=True
-            )
+            return ColdStartState(stage="full_position", ratio=1.0, days_live=None, locked_full=True)
 
         days_live = (today - self._live_start_date).days
 
         # PerformanceScore 稳定 → 锁定满仓（§6.7 裁定要点）
         if perf_valid_observations >= COLD_START_PERF_STABLE_OBS:
-            return ColdStartState(
-                stage="full_position", ratio=1.0, days_live=days_live, locked_full=True
-            )
+            return ColdStartState(stage="full_position", ratio=1.0, days_live=days_live, locked_full=True)
 
         if days_live < COLD_START_STAGE1_DAYS:
             return ColdStartState(
-                stage="cold_start", ratio=COLD_START_RATIO_COLD,
-                days_live=days_live, locked_full=False,
+                stage="cold_start",
+                ratio=COLD_START_RATIO_COLD,
+                days_live=days_live,
+                locked_full=False,
             )
         if days_live < COLD_START_STAGE2_DAYS:
             return ColdStartState(
-                stage="half_position", ratio=COLD_START_RATIO_HALF,
-                days_live=days_live, locked_full=False,
+                stage="half_position",
+                ratio=COLD_START_RATIO_HALF,
+                days_live=days_live,
+                locked_full=False,
             )
-        return ColdStartState(
-            stage="full_position", ratio=1.0, days_live=days_live, locked_full=True
-        )
+        return ColdStartState(stage="full_position", ratio=1.0, days_live=days_live, locked_full=True)
 
     def get_cold_start_ratio(
         self,
@@ -806,8 +794,8 @@ class StrategyBook:
 
         n = len(symbols)
         degraded_reasons: dict[str, str] = {}  # 异常标的 → 降级原因（审计归因）
-        inv_vols: dict[str, float] = {}        # 正常标的 → 1/σ
-        sigmas: dict[str, float] = {}          # 正常标的 → σ（reason 展示用）
+        inv_vols: dict[str, float] = {}  # 正常标的 → 1/σ
+        sigmas: dict[str, float] = {}  # 正常标的 → σ（reason 展示用）
 
         for sym in symbols:
             info = self._parse_vol_info(volatility_data.get(sym))
@@ -816,7 +804,7 @@ class StrategyBook:
                 degraded_reasons[sym] = reason
             else:
                 inv_vols[sym] = 1.0 / info.sigma  # type: ignore[union-attr]
-                sigmas[sym] = info.sigma          # type: ignore[union-attr]
+                sigmas[sym] = info.sigma  # type: ignore[union-attr]
 
         # 边界：全部异常 → 整体等权（与"无波动率数据"语义一致）
         if not inv_vols:
@@ -875,9 +863,7 @@ class StrategyBook:
             return f"新股冷启({info.listing_days}<{MIN_LISTING_DAYS}日)"
         return None
 
-    def _apply_drawdown_protocol(
-        self, positions: dict[str, TargetWeight]
-    ) -> dict[str, TargetWeight]:
+    def _apply_drawdown_protocol(self, positions: dict[str, TargetWeight]) -> dict[str, TargetWeight]:
         """回撤 Protocol 仓位缩放（§2.5 单策略层面）。
 
         Level 1 (回撤>8%): 新仓风险敞口降至 75%——对新仓权重 ×0.75
@@ -909,9 +895,7 @@ class StrategyBook:
 
         return scaled
 
-    def _clip_to_budget(
-        self, positions: dict[str, TargetWeight]
-    ) -> dict[str, TargetWeight]:
+    def _clip_to_budget(self, positions: dict[str, TargetWeight]) -> dict[str, TargetWeight]:
         """budget 裁剪（total_weight ≤ budget）。
 
         若总权重超过 budget，按比例缩放（pro-rata，与 32号 §2.4 单票裁剪哲学一致）。
@@ -943,7 +927,7 @@ class StrategyBook:
         cumulative = 1.0
         peak = 1.0
         for r in pnl_history:
-            cumulative *= (1.0 + r)
+            cumulative *= 1.0 + r
             if cumulative > peak:
                 peak = cumulative
 

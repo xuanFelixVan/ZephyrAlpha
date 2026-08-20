@@ -27,6 +27,7 @@ Vocabulary 同步链路回归测试（议题 #ARCH-008 / 裁定#206）
   3. 静态兜底——锁保护 / DB_PATH 引用等无法行为测试的做源码静态断言
   4. 子集容忍——triage.py 等子集消费者只校验"无非法值"，不强制全等
 """
+
 from __future__ import annotations
 
 import json
@@ -62,6 +63,7 @@ _CONSTANTS_MODULE = _SCRIPTS_GOV / "_shared" / "constants.py"
 # ---------------------------------------------------------------------------
 # 辅助函数
 # ---------------------------------------------------------------------------
+
 
 def _load_vocab(vocab_file: str) -> dict:
     """加载 vocabulary YAML 并返回解析后的字典。"""
@@ -100,6 +102,7 @@ def _vocab_deprecated_values(vocab_file: str) -> set[str]:
 # Bug A 回归：generate_derived_files.py 路径常量使用 snake_case + 正确扩展名
 # ===========================================================================
 
+
 class TestBugAPathConstants:
     """Bug A 回归——路径常量必须指向磁盘上真实存在的 snake_case 文件。
 
@@ -134,18 +137,15 @@ class TestBugAPathConstants:
         from d3_metadata.generate_derived_files import VOCAB_FIELD_MAP
 
         for field_name, vocab_file in VOCAB_FIELD_MAP.items():
-            assert "-" not in vocab_file, (
-                f"VOCAB_FIELD_MAP[{field_name!r}]={vocab_file!r} 含连字符（应为 snake_case）"
-            )
-            assert vocab_file.endswith("_vocabulary.yaml"), (
-                f"VOCAB_FIELD_MAP[{field_name!r}]={vocab_file!r} 命名不规范"
-            )
+            assert "-" not in vocab_file, f"VOCAB_FIELD_MAP[{field_name!r}]={vocab_file!r} 含连字符（应为 snake_case）"
+            assert vocab_file.endswith("_vocabulary.yaml"), f"VOCAB_FIELD_MAP[{field_name!r}]={vocab_file!r} 命名不规范"
             assert (_VOCAB_DIR / vocab_file).exists(), f"vocabulary 文件不存在: {vocab_file}"
 
 
 # ===========================================================================
 # Bug B 回归：sync_yaml_to_depgraph.py 使用 vocabulary_name 键
 # ===========================================================================
+
 
 class TestBugBVocabularyNameKey:
     """Bug B 回归——sync 必须用 vocabulary_name 键提取字段名。
@@ -175,16 +175,11 @@ class TestBugBVocabularyNameKey:
             pytest.skip("depgraph (PostgreSQL) 不可用")
         try:
             with conn.cursor() as cur:
-                cur.execute(
-                    "SELECT DISTINCT field_name FROM field_vocabularies "
-                    "WHERE field_name LIKE '%_vocabulary'"
-                )
+                cur.execute("SELECT DISTINCT field_name FROM field_vocabularies WHERE field_name LIKE '%_vocabulary'")
                 rows = cur.fetchall()
         finally:
             conn.close()
-        assert rows == [], (
-            f"field_vocabularies 表存在脏值 field_name（应不含 _vocabulary 后缀）: {rows}"
-        )
+        assert rows == [], f"field_vocabularies 表存在脏值 field_name（应不含 _vocabulary 后缀）: {rows}"
 
     def test_field_vocabularies_has_expected_vocab_names(self) -> None:
         """DB field_vocabularies 表包含核心 vocabulary 的裸字段名。"""
@@ -201,14 +196,13 @@ class TestBugBVocabularyNameKey:
         present = {r[0] for r in rows}
         # 核心词汇表必须在 DB 中以裸字段名出现（非 xxx_vocabulary）
         for expected in ["doc_type", "layer", "ttl", "status", "rule_form"]:
-            assert expected in present, (
-                f"field_vocabularies 表缺少裸字段名 {expected!r}（可能仍是 Bug B 脏值）"
-            )
+            assert expected in present, f"field_vocabularies 表缺少裸字段名 {expected!r}（可能仍是 Bug B 脏值）"
 
 
 # ===========================================================================
 # Bug C/D/E/F 回归：generate_derived_files.py --check 行为验证
 # ===========================================================================
+
 
 class TestBugCDEFGenerateDerivedCheck:
     """Bug C/D/E/F 回归——generate_derived_files.py --check 必须真实执行。
@@ -256,7 +250,7 @@ class TestBugCDEFGenerateDerivedCheck:
         """Bug C 回归——源码必须含 enum_values apply 分支。"""
         src = _GENERATE_SCRIPT.read_text(encoding="utf-8")
         # 修复后增加了 elif apply and "enum_values" in field 分支
-        assert 'enum_values' in src and 'apply' in src, (
+        assert "enum_values" in src and "apply" in src, (
             "generate_derived_files.py 缺少 enum_values apply 分支（Bug C 回归）"
         )
 
@@ -266,18 +260,15 @@ class TestBugCDEFGenerateDerivedCheck:
         # 三个 _sync_* 函数都写 tmp 文件，必须用 "w" 模式
         # 检查至少 3 处 open(..., "w", ...)
         import re
+
         write_opens = re.findall(r'open\([^)]*["\']w["\']', src)
-        assert len(write_opens) >= 3, (
-            f"_sync_* 函数 open() 写模式不足 3 处（Bug D 回归）: 找到 {len(write_opens)} 处"
-        )
+        assert len(write_opens) >= 3, f"_sync_* 函数 open() 写模式不足 3 处（Bug D 回归）: 找到 {len(write_opens)} 处"
 
     def test_exception_handling_includes_oserror(self) -> None:
         """Bug F 回归——异常捕获必须覆盖 OSError（非仅 PermissionError）。"""
         src = _GENERATE_SCRIPT.read_text(encoding="utf-8")
         # 修复后 except (PermissionError, OSError)
-        assert "OSError" in src, (
-            "generate_derived_files.py 异常捕获未覆盖 OSError（Bug F 回归）"
-        )
+        assert "OSError" in src, "generate_derived_files.py 异常捕获未覆盖 OSError（Bug F 回归）"
 
     def test_tmp_cleanup_in_finally(self) -> None:
         """Bug F 回归——tmp 文件必须在 finally 块中清理。"""
@@ -291,6 +282,7 @@ class TestBugCDEFGenerateDerivedCheck:
 # ===========================================================================
 # Bug G 回归：sync_yaml_to_depgraph.py 锁机制（P2 PG 迁移后语义反转）
 # ===========================================================================
+
 
 class TestBugGLockProtection:
     """Bug G 回归——P2 PG 迁移后，sync 必须删除文件锁（PG MVCC 替代）。
@@ -357,6 +349,7 @@ class TestBugGLockProtection:
 # Bug H 回归：constants.py DEPGRAPH_DB_PATH（P0/P1 治本后语义反转）
 # ===========================================================================
 
+
 class TestBugHDepgraphDbPath:
     """Bug H 回归——P0/P1 治本后 DEPGRAPH_DB_PATH 常量已删除 + PG 入口为真源。
 
@@ -381,14 +374,10 @@ class TestBugHDepgraphDbPath:
             if isinstance(node, ast.Assign):
                 for target in node.targets:
                     if isinstance(target, ast.Name) and target.id == "DEPGRAPH_DB_PATH":
-                        raise AssertionError(
-                            "_shared/constants.py 仍定义 DEPGRAPH_DB_PATH 常量（P0/P1 治本回退）"
-                        )
+                        raise AssertionError("_shared/constants.py 仍定义 DEPGRAPH_DB_PATH 常量（P0/P1 治本回退）")
             if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
                 if node.target.id == "DEPGRAPH_DB_PATH":
-                    raise AssertionError(
-                        "_shared/constants.py 仍定义 DEPGRAPH_DB_PATH 常量（P0/P1 治本回退）"
-                    )
+                    raise AssertionError("_shared/constants.py 仍定义 DEPGRAPH_DB_PATH 常量（P0/P1 治本回退）")
 
     def test_constants_defines_pg_connection_entry(self) -> None:
         """P2 迁移后 _shared/constants.py 必须定义 get_depgraph_pg_connection 入口。"""
@@ -429,14 +418,13 @@ class TestBugHDepgraphDbPath:
             "sync_yaml_to_depgraph.py 未使用 get_depgraph_pg_connection（P2 迁移回归）"
         )
         # 不应再用 sqlite3 直连 depgraph
-        assert "sqlite3.connect" not in src, (
-            "sync_yaml_to_depgraph.py 仍用 sqlite3.connect（P2 迁移回归）"
-        )
+        assert "sqlite3.connect" not in src, "sync_yaml_to_depgraph.py 仍用 sqlite3.connect（P2 迁移回归）"
 
 
 # ===========================================================================
 # 派生文件 ↔ vocabulary YAML 一致性（同步链路恢复后不得回退）
 # ===========================================================================
+
 
 class TestDerivedFileConsistency:
     """派生文件与 vocabulary YAML 的双向一致性校验。
@@ -467,9 +455,7 @@ class TestDerivedFileConsistency:
         """frontmatter_field_registry.yaml 的 layer enum_values 必须是 vocabulary 的子集。"""
         vocab_values = _vocab_active_values("layer_vocabulary.yaml")
         deprecated = _vocab_deprecated_values("layer_vocabulary.yaml")
-        registry = yaml.safe_load(
-            (_CATALOGS_DIR / "frontmatter_field_registry.yaml").read_text(encoding="utf-8")
-        )
+        registry = yaml.safe_load((_CATALOGS_DIR / "frontmatter_field_registry.yaml").read_text(encoding="utf-8"))
         registry_values: set[str] = set()
         for field in registry.get("fields", []):
             if (field.get("field_name") or field.get("name")) != "layer":
@@ -488,9 +474,7 @@ class TestDerivedFileConsistency:
             break
         # 派生文件不得出现 vocabulary 中不存在的值（含废弃值）
         extra = registry_values - vocab_values - deprecated
-        assert not extra, (
-            f"field_registry.layer 出现 vocabulary 中不存在的值: {sorted(extra)}"
-        )
+        assert not extra, f"field_registry.layer 出现 vocabulary 中不存在的值: {sorted(extra)}"
 
     def test_triage_valid_layers_subset_of_vocab(self) -> None:
         """triage.py VALID_LAYERS 必须是 layer_vocabulary.yaml 活跃值的子集。
@@ -504,14 +488,10 @@ class TestDerivedFileConsistency:
         deprecated = _vocab_deprecated_values("layer_vocabulary.yaml")
         # 不得有非法值（既不在活跃值也不在废弃值中）
         illegal = set(VALID_LAYERS) - vocab_values - deprecated
-        assert not illegal, (
-            f"triage.py VALID_LAYERS 含非法值（不在 layer_vocabulary.yaml 中）: {sorted(illegal)}"
-        )
+        assert not illegal, f"triage.py VALID_LAYERS 含非法值（不在 layer_vocabulary.yaml 中）: {sorted(illegal)}"
         # 不得含废弃值
         deprecated_in_use = set(VALID_LAYERS) & deprecated
-        assert not deprecated_in_use, (
-            f"triage.py VALID_LAYERS 含已废弃值: {sorted(deprecated_in_use)}"
-        )
+        assert not deprecated_in_use, f"triage.py VALID_LAYERS 含已废弃值: {sorted(deprecated_in_use)}"
 
     def test_triage_valid_doc_types_subset_of_vocab(self) -> None:
         """triage.py VALID_DOC_TYPES 必须是 doc_type_vocabulary.yaml 活跃值的子集。"""
@@ -520,13 +500,9 @@ class TestDerivedFileConsistency:
         vocab_values = _vocab_active_values("doc_type_vocabulary.yaml")
         deprecated = _vocab_deprecated_values("doc_type_vocabulary.yaml")
         illegal = set(VALID_DOC_TYPES) - vocab_values - deprecated
-        assert not illegal, (
-            f"triage.py VALID_DOC_TYPES 含非法值（含幽灵值）: {sorted(illegal)}"
-        )
+        assert not illegal, f"triage.py VALID_DOC_TYPES 含非法值（含幽灵值）: {sorted(illegal)}"
         deprecated_in_use = set(VALID_DOC_TYPES) & deprecated
-        assert not deprecated_in_use, (
-            f"triage.py VALID_DOC_TYPES 含已废弃值: {sorted(deprecated_in_use)}"
-        )
+        assert not deprecated_in_use, f"triage.py VALID_DOC_TYPES 含已废弃值: {sorted(deprecated_in_use)}"
 
     def test_all_vocab_yamls_use_vocabulary_name_key(self) -> None:
         """所有核心 vocabulary YAML 必须用 vocabulary_name 键（非 field_name）。"""
@@ -538,17 +514,14 @@ class TestDerivedFileConsistency:
             "layer_vocabulary.yaml",
         ]:
             data = _load_vocab(vocab_file)
-            assert data.get("vocabulary_name"), (
-                f"{vocab_file} 缺少 vocabulary_name 键（Bug B 根因再现）"
-            )
-            assert "field_name" not in data, (
-                f"{vocab_file} 含遗留 field_name 键（应为 vocabulary_name）"
-            )
+            assert data.get("vocabulary_name"), f"{vocab_file} 缺少 vocabulary_name 键（Bug B 根因再现）"
+            assert "field_name" not in data, f"{vocab_file} 含遗留 field_name 键（应为 vocabulary_name）"
 
 
 # ===========================================================================
 # 数据库连接函数命名约定（真源冲突治本——F1 改名回归保护）
 # ===========================================================================
+
 
 class TestDbConnectionNamingConvention:
     """数据库连接函数命名约定断言（防真源冲突回归）。
@@ -570,25 +543,20 @@ class TestDbConnectionNamingConvention:
         import zephyr.governance.depgraph_schema as mod  # noqa: PLC0415
 
         assert not hasattr(mod, "get_db_connection"), (
-            "depgraph_schema.py 仍存在 get_db_connection 别名（5.61.7 治本回归："
-            "与 SQLite 同名函数冲突，禁止恢复）"
+            "depgraph_schema.py 仍存在 get_db_connection 别名（5.61.7 治本回归：与 SQLite 同名函数冲突，禁止恢复）"
         )
 
     def test_sqlite_get_db_connection_exists_in_db_utils(self) -> None:
         """F3 必须定义 get_db_connection（SQLite governance.db 入口）。"""
         import zephyr.shared.utils.db_utils as mod  # noqa: PLC0415
 
-        assert hasattr(mod, "get_db_connection"), (
-            "db_utils.py 未定义 get_db_connection（SQLite 入口缺失）"
-        )
+        assert hasattr(mod, "get_db_connection"), "db_utils.py 未定义 get_db_connection（SQLite 入口缺失）"
 
     def test_sqlite_get_db_connection_exists_in_sqlite_schema(self) -> None:
         """F2 必须定义 get_db_connection（SQLite governance.db 入口）。"""
         import zephyr.governance.persistence.sqlite_schema as mod  # noqa: PLC0415
 
-        assert hasattr(mod, "get_db_connection"), (
-            "sqlite_schema.py 未定义 get_db_connection（SQLite 入口缺失）"
-        )
+        assert hasattr(mod, "get_db_connection"), "sqlite_schema.py 未定义 get_db_connection（SQLite 入口缺失）"
 
     def test_depgraph_pg_connection_returns_psycopg2(self) -> None:
         """F1 返回类型必须是 psycopg2 connection（非 sqlite3）。"""
@@ -597,9 +565,7 @@ class TestDbConnectionNamingConvention:
         import zephyr.governance.depgraph_schema as mod  # noqa: PLC0415
 
         src = inspect.getsource(mod.get_depgraph_pg_connection)
-        assert "psycopg2.connect" in src, (
-            "get_depgraph_pg_connection 未使用 psycopg2.connect（PG 入口被篡改）"
-        )
+        assert "psycopg2.connect" in src, "get_depgraph_pg_connection 未使用 psycopg2.connect（PG 入口被篡改）"
 
     def test_sqlite_get_db_connection_uses_sqlite3(self) -> None:
         """F3 必须使用 sqlite3.connect（非 psycopg2）。"""
@@ -608,9 +574,7 @@ class TestDbConnectionNamingConvention:
         import zephyr.shared.utils.db_utils as mod  # noqa: PLC0415
 
         src = inspect.getsource(mod.get_db_connection)
-        assert "sqlite3.connect" in src, (
-            "db_utils.get_db_connection 未使用 sqlite3.connect（SQLite 入口被篡改）"
-        )
+        assert "sqlite3.connect" in src, "db_utils.get_db_connection 未使用 sqlite3.connect（SQLite 入口被篡改）"
 
     def test_f4_wrapper_no_infinite_recursion(self) -> None:
         """F4 constants.get_depgraph_pg_connection 不得无限递归自调用。
@@ -653,4 +617,3 @@ class TestDbConnectionNamingConvention:
             assert dict(row)["ok"] == 1
         finally:
             conn.close()
-

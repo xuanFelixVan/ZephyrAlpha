@@ -48,6 +48,7 @@ RSI 极端/MACD 背离/斜率加速等，§4.8.2）；接入 T4 评分链需经�
 
 依据: 10_regime_detector_spec §4.8.1
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -110,9 +111,7 @@ def _lppl_fit_window(
                 f3 = dt_m * np.sin(omega * ln_dt)
                 x = np.column_stack([np.ones(n), f1, f2, f3])
                 coef, residuals, *_ = np.linalg.lstsq(x, y, rcond=None)
-                sse = float(residuals[0]) if len(residuals) else float(
-                    np.sum((y - x @ coef) ** 2)
-                )
+                sse = float(residuals[0]) if len(residuals) else float(np.sum((y - x @ coef) ** 2))
                 if sse < best[0]:
                     boundary = (
                         m in (m_grid[0], m_grid[-1])
@@ -161,9 +160,7 @@ def lppl_blowoff_score(
 
     fits = []
     for w in usable:
-        m, omega, tc_ahead, b, boundary = _lppl_fit_window(
-            y_all[-w:], m_grid, omega_grid, tc_ahead_grid
-        )
+        m, omega, tc_ahead, b, boundary = _lppl_fit_window(y_all[-w:], m_grid, omega_grid, tc_ahead_grid)
         fits.append((m, omega, tc_ahead, b, boundary))
 
     n_windows = len(fits)

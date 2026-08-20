@@ -65,8 +65,7 @@ def sample_ohlcv_250d() -> pd.DataFrame:
     volume = rng.uniform(1e6, 5e6, 250)
     amount = volume * close
     return pd.DataFrame(
-        {"date": dates, "open": open_, "high": high, "low": low,
-         "close": close, "volume": volume, "amount": amount}
+        {"date": dates, "open": open_, "high": high, "low": low, "close": close, "volume": volume, "amount": amount}
     )
 
 
@@ -83,6 +82,7 @@ class TestTriangularDistribution:
         from zephyr.regime.features.chip_distribution_engine import (
             triangular_pdf,
         )
+
         vwap, low, high = 10.0, 9.0, 11.0
         # VWAP 处密度应该最大
         density_at_vwap = triangular_pdf(vwap, vwap, low, high)
@@ -94,6 +94,7 @@ class TestTriangularDistribution:
         from zephyr.regime.features.chip_distribution_engine import (
             triangular_pdf,
         )
+
         vwap, low, high = 10.0, 9.0, 11.0
         assert triangular_pdf(8.0, vwap, low, high) == 0.0
         assert triangular_pdf(12.0, vwap, low, high) == 0.0
@@ -106,6 +107,7 @@ class TestTriangularDistribution:
         from zephyr.regime.features.chip_distribution_engine import (
             compute_daily_distribution,
         )
+
         vwap, low, high = 10.0, 9.0, 11.0
         prices = np.linspace(9.0, 11.0, 32)
         dist = compute_daily_distribution(vwap, low, high, prices)
@@ -125,6 +127,7 @@ class TestTurnoverRecursion:
         from zephyr.regime.features.chip_distribution_engine import (
             turnover_recurse,
         )
+
         old = np.array([0.1] * 32)
         new = np.array([0.0] * 16 + [0.0625] * 16)
         result = turnover_recurse(old, new, tau=0.0)
@@ -135,6 +138,7 @@ class TestTurnoverRecursion:
         from zephyr.regime.features.chip_distribution_engine import (
             turnover_recurse,
         )
+
         old = np.array([0.1] * 32)
         new = np.array([0.0] * 16 + [0.0625] * 16)
         result = turnover_recurse(old, new, tau=1.0)
@@ -145,6 +149,7 @@ class TestTurnoverRecursion:
         from zephyr.regime.features.chip_distribution_engine import (
             turnover_recurse,
         )
+
         old = np.array([0.1] * 32)  # 均匀
         new = np.array([0.0] * 16 + [0.0625] * 16)  # 上半
         result = turnover_recurse(old, new, tau=0.5)
@@ -156,6 +161,7 @@ class TestTurnoverRecursion:
         from zephyr.regime.features.chip_distribution_engine import (
             turnover_recurse,
         )
+
         old = np.random.dirichlet(np.ones(32))
         new = np.random.dirichlet(np.ones(32))
         for tau in [0.1, 0.3, 0.5, 0.7, 0.9]:
@@ -176,6 +182,7 @@ class TestGridMapping:
         from zephyr.regime.features.chip_distribution_engine import (
             build_grid_prices,
         )
+
         low, high = 5.0, 15.0
         grid = build_grid_prices(low, high, n_grids=32)
         assert len(grid) == 32
@@ -187,6 +194,7 @@ class TestGridMapping:
         from zephyr.regime.features.chip_distribution_engine import (
             build_grid_prices,
         )
+
         # linspace(0, 31, 32) → 步长 = 31/31 = 1.0
         grid = build_grid_prices(0.0, 31.0, n_grids=32)
         diffs = np.diff(grid)
@@ -206,11 +214,16 @@ class TestChipDistributionEngine:
         from zephyr.regime.features.chip_distribution_engine import (
             ChipDistributionEngine,
         )
+
         engine = ChipDistributionEngine()
         result = engine.compute(sample_ohlcv_250d, symbol="000300.SH")
         required_keys = [
-            "symbol", "date", "grid_prices", "total_distribution",
-            "age_layers", "metrics",
+            "symbol",
+            "date",
+            "grid_prices",
+            "total_distribution",
+            "age_layers",
+            "metrics",
         ]
         for key in required_keys:
             assert key in result, f"Missing key: {key}"
@@ -220,6 +233,7 @@ class TestChipDistributionEngine:
         from zephyr.regime.features.chip_distribution_engine import (
             ChipDistributionEngine,
         )
+
         engine = ChipDistributionEngine()
         result = engine.compute(sample_ohlcv_250d, symbol="000300.SH")
         assert abs(sum(result["total_distribution"]) - 1.0) < 1e-10
@@ -229,6 +243,7 @@ class TestChipDistributionEngine:
         from zephyr.regime.features.chip_distribution_engine import (
             ChipDistributionEngine,
         )
+
         engine = ChipDistributionEngine()
         result = engine.compute(sample_ohlcv_250d, symbol="000300.SH")
         for layer_name, layer_dist in result["age_layers"].items():
@@ -239,6 +254,7 @@ class TestChipDistributionEngine:
         from zephyr.regime.features.chip_distribution_engine import (
             ChipDistributionEngine,
         )
+
         engine = ChipDistributionEngine()
         result = engine.compute(sample_ohlcv_250d, symbol="000300.SH")
         assert len(result["total_distribution"]) == 32
@@ -251,6 +267,7 @@ class TestChipDistributionEngine:
         from zephyr.regime.features.chip_distribution_engine import (
             ChipDistributionEngine,
         )
+
         engine = ChipDistributionEngine()
         result = engine.compute(sample_ohlcv_250d, symbol="000300.SH")
         m = result["metrics"]
@@ -276,6 +293,7 @@ class TestDerivedMetrics:
         from zephyr.regime.features.chip_distribution_engine import (
             compute_metrics,
         )
+
         # 底部8格占80%
         dist = np.array([0.1] * 8 + [0.005] * 24)
         metrics = compute_metrics(dist, age_layers=None)
@@ -286,9 +304,9 @@ class TestDerivedMetrics:
         from zephyr.regime.features.chip_distribution_engine import (
             compute_metrics,
         )
+
         long_layer = np.array([0.1] * 8 + [0.005] * 24)
-        age_layers = {"long": long_layer, "ultra_short": long_layer,
-                      "short": long_layer, "medium": long_layer}
+        age_layers = {"long": long_layer, "ultra_short": long_layer, "short": long_layer, "medium": long_layer}
         metrics = compute_metrics(long_layer, age_layers=age_layers)
         assert metrics["distribution_migration"] < 0
 
@@ -297,9 +315,9 @@ class TestDerivedMetrics:
         from zephyr.regime.features.chip_distribution_engine import (
             compute_metrics,
         )
+
         long_layer = np.array([0.005] * 24 + [0.1] * 8)
-        age_layers = {"long": long_layer, "ultra_short": long_layer,
-                      "short": long_layer, "medium": long_layer}
+        age_layers = {"long": long_layer, "ultra_short": long_layer, "short": long_layer, "medium": long_layer}
         metrics = compute_metrics(long_layer, age_layers=age_layers)
         assert metrics["distribution_migration"] > 0
 
@@ -317,10 +335,9 @@ class TestDegradation:
         from zephyr.regime.features.chip_distribution_engine import (
             ChipDistributionEngine,
         )
+
         engine = ChipDistributionEngine()
-        empty_df = pd.DataFrame(
-            columns=["date", "open", "high", "low", "close", "volume", "amount"]
-        )
+        empty_df = pd.DataFrame(columns=["date", "open", "high", "low", "close", "volume", "amount"])
         result = engine.compute(empty_df, symbol="000300.SH")
         assert abs(sum(result["total_distribution"]) - 1.0) < 1e-10
         # 均匀分布：每格 1/32
@@ -333,8 +350,8 @@ class TestDegradation:
         from zephyr.regime.features.chip_distribution_engine import (
             compute_vwap,
         )
-        row = {"open": 10.0, "high": 11.0, "low": 9.0, "close": 10.5,
-               "volume": 0.0, "amount": 0.0}
+
+        row = {"open": 10.0, "high": 11.0, "low": 9.0, "close": 10.5, "volume": 0.0, "amount": 0.0}
         vwap = compute_vwap(row)
         expected = (10.0 + 11.0 + 9.0 + 10.5) / 4
         assert abs(vwap - expected) < 1e-10
@@ -354,6 +371,7 @@ class TestPerformance:
         from zephyr.regime.features.chip_distribution_engine import (
             ChipDistributionEngine,
         )
+
         engine = ChipDistributionEngine()
         start = time.perf_counter()
         engine.compute(sample_ohlcv_250d, symbol="000300.SH")

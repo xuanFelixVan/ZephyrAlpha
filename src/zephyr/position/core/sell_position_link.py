@@ -139,26 +139,26 @@ logger = logging.getLogger(__name__)
 class PositionPnLState(str, Enum):
     """仓位盈亏状态。"""
 
-    PROFIT = "PROFIT"        # 盈利
-    LOSS = "LOSS"            # 亏损
+    PROFIT = "PROFIT"  # 盈利
+    LOSS = "LOSS"  # 亏损
     BREAKEVEN = "BREAKEVEN"  # 持平
 
 
 class ThresholdDirection(str, Enum):
     """阈值调整方向。"""
 
-    LOOSEN = "LOOSEN"    # 放宽(盈利)
+    LOOSEN = "LOOSEN"  # 放宽(盈利)
     TIGHTEN = "TIGHTEN"  # 收紧(亏损)
-    HOLD = "HOLD"        # 不变(持平)
+    HOLD = "HOLD"  # 不变(持平)
 
 
 class PostBuyAlertLevel(int, Enum):
     """买入后告警级别(值越大优先级越高)。"""
 
-    NORMAL = 0       # 正常
-    OBSERVE = 1      # 观察
-    REDUCE_50 = 2    # 减仓50%
-    FULL_STOP = 3    # 全部止损
+    NORMAL = 0  # 正常
+    OBSERVE = 1  # 观察
+    REDUCE_50 = 2  # 减仓50%
+    FULL_STOP = 3  # 全部止损
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -185,11 +185,11 @@ class SellThresholdAdjustment:
 
     symbol: str
     pnl_state: PositionPnLState
-    pnl_ratio: float                    # 盈亏比例(正=盈利, 负=亏损)
-    original_threshold: float           # 原始卖出阈值
-    adjusted_threshold: float           # 调整后阈值
+    pnl_ratio: float  # 盈亏比例(正=盈利, 负=亏损)
+    original_threshold: float  # 原始卖出阈值
+    adjusted_threshold: float  # 调整后阈值
     direction: ThresholdDirection
-    factor: float                       # 实际应用的因子
+    factor: float  # 实际应用的因子
 
     @property
     def delta(self) -> float:
@@ -291,25 +291,17 @@ class SellPositionLink:
         clock: Callable[[], datetime] | None = None,
     ) -> None:
         if profit_loosen_factor < 1.0:
-            raise InvalidSellPositionLinkInputError(
-                "profit_loosen_factor must be >= 1.0"
-            )
+            raise InvalidSellPositionLinkInputError("profit_loosen_factor must be >= 1.0")
         if loss_tighten_factor > 1.0 or loss_tighten_factor <= 0:
-            raise InvalidSellPositionLinkInputError(
-                "loss_tighten_factor must be in (0, 1.0]"
-            )
+            raise InvalidSellPositionLinkInputError("loss_tighten_factor must be in (0, 1.0]")
         if drop_threshold <= 0:
             raise InvalidSellPositionLinkInputError("drop_threshold must be positive")
         if volume_spike_ratio <= 1.0:
-            raise InvalidSellPositionLinkInputError(
-                "volume_spike_ratio must be > 1.0"
-            )
+            raise InvalidSellPositionLinkInputError("volume_spike_ratio must be > 1.0")
         if reduce_ma_minutes <= 0:
             raise InvalidSellPositionLinkInputError("reduce_ma_minutes must be positive")
         if full_stop_atr_multiple <= 0:
-            raise InvalidSellPositionLinkInputError(
-                "full_stop_atr_multiple must be positive"
-            )
+            raise InvalidSellPositionLinkInputError("full_stop_atr_multiple must be positive")
         self._profit_loosen_factor = profit_loosen_factor
         self._loss_tighten_factor = loss_tighten_factor
         self._breakeven_tolerance = breakeven_tolerance
@@ -350,9 +342,7 @@ class SellPositionLink:
             InvalidSellPositionLinkInputError: 阈值非正
         """
         if sell_threshold < 0:
-            raise InvalidSellPositionLinkInputError(
-                f"sell_threshold must be >= 0, got {sell_threshold}"
-            )
+            raise InvalidSellPositionLinkInputError(f"sell_threshold must be >= 0, got {sell_threshold}")
 
         pnl_state = self._classify_pnl(pnl_ratio)
 
@@ -414,9 +404,7 @@ class SellPositionLink:
         if current_price <= 0:
             raise InvalidSellPositionLinkInputError("current_price must be positive")
         if minutes_since_entry < 0:
-            raise InvalidSellPositionLinkInputError(
-                "minutes_since_entry must be >= 0"
-            )
+            raise InvalidSellPositionLinkInputError("minutes_since_entry must be >= 0")
 
         drop_ratio = (entry_price - current_price) / entry_price  # 正=下跌
         is_volume_spike = volume_ratio > self._volume_spike_ratio
@@ -439,8 +427,7 @@ class SellPositionLink:
         ):
             alert_level = PostBuyAlertLevel.FULL_STOP
             reason = (
-                f"FULL_STOP: 30min内反向运动 {reverse_movement:.4f} > "
-                f"{self._full_stop_atr_multiple}×ATR({atr:.4f})"
+                f"FULL_STOP: 30min内反向运动 {reverse_movement:.4f} > {self._full_stop_atr_multiple}×ATR({atr:.4f})"
             )
             detail["atr"] = atr
             detail["reverse_movement"] = reverse_movement
@@ -460,11 +447,7 @@ class SellPositionLink:
             detail["intraday_ma"] = intraday_ma
             detail["current_ma"] = current_ma
         # 5min 窗口: 跌破买入价>1%且放量 → OBSERVE
-        elif (
-            minutes_since_entry <= 5
-            and drop_ratio > self._drop_threshold
-            and is_volume_spike
-        ):
+        elif minutes_since_entry <= 5 and drop_ratio > self._drop_threshold and is_volume_spike:
             alert_level = PostBuyAlertLevel.OBSERVE
             reason = (
                 f"OBSERVE: 5min内跌破买入价 {drop_ratio:.2%} > "
@@ -500,9 +483,7 @@ class SellPositionLink:
             self._emit(feedback)
         return feedback
 
-    def on_feedback(
-        self, listener: Callable[[PositionStateFeedback], None]
-    ) -> None:
+    def on_feedback(self, listener: Callable[[PositionStateFeedback], None]) -> None:
         """订阅 PositionStateFeedback 事件。"""
         self._listeners.append(listener)
 

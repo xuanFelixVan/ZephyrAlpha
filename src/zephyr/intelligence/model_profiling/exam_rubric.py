@@ -30,6 +30,7 @@
     result = rubric.score("architecture_design", model_output_dict)
     print(result.score, result.items)
 """
+
 from __future__ import annotations
 
 import ast
@@ -42,6 +43,7 @@ from typing import Any
 @dataclass
 class RubricItem:
     """单维度评分项。"""
+
     criterion: str
     weight: float
     checker: Callable[[dict], float]
@@ -50,6 +52,7 @@ class RubricItem:
 @dataclass
 class RubricResult:
     """多维清单评分结果。"""
+
     score: float  # 加权总分 0.0~1.0
     items: list[tuple[str, float, float]] = field(default_factory=list)  # (维度, 得分, 权重)
 
@@ -148,10 +151,7 @@ def _hd_reasoning_quality(result: dict) -> float:
     hallucinations = result.get("hallucinations", [])
     if not hallucinations:
         return 0.0
-    with_reason = sum(
-        1 for h in hallucinations
-        if isinstance(h, dict) and h.get("reason", "").strip()
-    )
+    with_reason = sum(1 for h in hallucinations if isinstance(h, dict) and h.get("reason", "").strip())
     return with_reason / len(hallucinations)
 
 
@@ -286,10 +286,7 @@ def _pp_dep_respect(result: dict) -> float:
     gold_layers = [set(t.lower() for t in layer) for layer in expected]
     if len(pred_layers) != len(gold_layers):
         return 0.0
-    matches = sum(
-        1 for p, g in zip(pred_layers, gold_layers, strict=True)
-        if p == g
-    )
+    matches = sum(1 for p, g in zip(pred_layers, gold_layers, strict=True) if p == g)
     return matches / len(gold_layers)
 
 

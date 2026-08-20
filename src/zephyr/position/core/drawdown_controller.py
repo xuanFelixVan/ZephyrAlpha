@@ -163,11 +163,11 @@ logger = logging.getLogger(__name__)
 class SystemicRiskLevel(str, Enum):
     """系统性风险 5 级 (基于 VaR/CVaR)。"""
 
-    GREEN = "GREEN"      # VaR < 2%: 正常
-    YELLOW = "YELLOW"    # VaR 2%-4%: 新开仓减半
-    ORANGE = "ORANGE"    # VaR 4%-6%: 禁止新开 + 减仓(上限 50%)
-    RED = "RED"          # VaR > 6%: 减仓 50% + 只平不开
-    BLACK = "BLACK"      # CVaR > 10%: 全部清仓
+    GREEN = "GREEN"  # VaR < 2%: 正常
+    YELLOW = "YELLOW"  # VaR 2%-4%: 新开仓减半
+    ORANGE = "ORANGE"  # VaR 4%-6%: 禁止新开 + 减仓(上限 50%)
+    RED = "RED"  # VaR > 6%: 减仓 50% + 只平不开
+    BLACK = "BLACK"  # CVaR > 10%: 全部清仓
 
     @property
     def position_cap(self) -> float:
@@ -177,13 +177,13 @@ class SystemicRiskLevel(str, Enum):
 
 _RISK_LEVEL_CAP: dict[SystemicRiskLevel, float] = {
     SystemicRiskLevel.GREEN: 1.0,
-    SystemicRiskLevel.YELLOW: 0.5,   # 新开仓减半
+    SystemicRiskLevel.YELLOW: 0.5,  # 新开仓减半
     # 2026-08-16 双轮审查 P1-4 裁定: ORANGE 原值 0.7 致序列非单调
     # (YELLOW 0.5 → ORANGE 0.7 风险升级上限反而放宽), 降为 0.5 恢复单调;
     # 级别严格度由动作语义区分 (ORANGE 禁新开/RED 只平不开), 非由 cap 数值区分
-    SystemicRiskLevel.ORANGE: 0.5,   # 禁止新开 + 减仓 (cap 与 YELLOW/RED 同档)
-    SystemicRiskLevel.RED: 0.5,      # 减仓 50% + 只平不开
-    SystemicRiskLevel.BLACK: 0.0,    # 全部清仓
+    SystemicRiskLevel.ORANGE: 0.5,  # 禁止新开 + 减仓 (cap 与 YELLOW/RED 同档)
+    SystemicRiskLevel.RED: 0.5,  # 减仓 50% + 只平不开
+    SystemicRiskLevel.BLACK: 0.0,  # 全部清仓
 }
 
 # 级别严重度排序(用于取最严)
@@ -199,24 +199,24 @@ _RISK_SEVERITY: dict[SystemicRiskLevel, int] = {
 class BlackSwanMode(str, Enum):
     """黑天鹅 7 模式 (§14.3)。"""
 
-    BS001_LIQUIDITY = "BS001_LIQUIDITY"   # 流动性蒸发
+    BS001_LIQUIDITY = "BS001_LIQUIDITY"  # 流动性蒸发
     BS002_CORRELATION = "BS002_CORRELATION"  # 相关性崩塌
-    BS003_VOLATILITY = "BS003_VOLATILITY"   # 波动率爆发
-    BS004_MARGIN = "BS004_MARGIN"          # 融资盘踩踏
-    BS005_CONTAGION = "BS005_CONTAGION"    # 跨市场传导
-    BS006_POLICY = "BS006_POLICY"          # 政策黑天鹅
-    BS007_SYSTEMIC = "BS007_SYSTEMIC"      # 系统性风险(多模式同触发)
+    BS003_VOLATILITY = "BS003_VOLATILITY"  # 波动率爆发
+    BS004_MARGIN = "BS004_MARGIN"  # 融资盘踩踏
+    BS005_CONTAGION = "BS005_CONTAGION"  # 跨市场传导
+    BS006_POLICY = "BS006_POLICY"  # 政策黑天鹅
+    BS007_SYSTEMIC = "BS007_SYSTEMIC"  # 系统性风险(多模式同触发)
 
 
 # 黑天鹅模式 → 仓位上限系数
 _BLACK_SWAN_CAP: dict[BlackSwanMode, float] = {
-    BlackSwanMode.BS001_LIQUIDITY: 0.05,   # 参与率收紧至 5%
+    BlackSwanMode.BS001_LIQUIDITY: 0.05,  # 参与率收紧至 5%
     BlackSwanMode.BS002_CORRELATION: 0.5,  # 降总仓位
-    BlackSwanMode.BS003_VOLATILITY: 0.5,   # 仓位减半
-    BlackSwanMode.BS004_MARGIN: 0.5,       # 降杠杆敞口
-    BlackSwanMode.BS005_CONTAGION: -1.0,   # 市场状态对应档位(动态, -1=外部决定)
-    BlackSwanMode.BS006_POLICY: -1.0,      # 暂停受影响标的(动态)
-    BlackSwanMode.BS007_SYSTEMIC: 0.0,     # Kill Switch
+    BlackSwanMode.BS003_VOLATILITY: 0.5,  # 仓位减半
+    BlackSwanMode.BS004_MARGIN: 0.5,  # 降杠杆敞口
+    BlackSwanMode.BS005_CONTAGION: -1.0,  # 市场状态对应档位(动态, -1=外部决定)
+    BlackSwanMode.BS006_POLICY: -1.0,  # 暂停受影响标的(动态)
+    BlackSwanMode.BS007_SYSTEMIC: 0.0,  # Kill Switch
 }
 
 # VaR breach 状态 → position_cap 乘性折扣 (36号 §3.15 协同表:
@@ -227,9 +227,9 @@ _VAR_BREACH_CAP_MULTIPLIER: Final = {"NORMAL": 1.0, "BREACHED": 0.8, "RECOVERY":
 class StopLossType(str, Enum):
     """策略级止损类型。"""
 
-    NONE = "NONE"    # 未触发
-    SOFT = "SOFT"    # 单策略回撤 > 5%: 砍仓
-    HARD = "HARD"    # 单策略回撤 > 10%: 关闭策略
+    NONE = "NONE"  # 未触发
+    SOFT = "SOFT"  # 单策略回撤 > 5%: 砍仓
+    HARD = "HARD"  # 单策略回撤 > 10%: 关闭策略
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -295,10 +295,7 @@ class BlackSwanSignal:
     @property
     def is_systemic(self) -> bool:
         """是否触发 BS-007 系统性风险(多模式同触发或显式 BS-007)。"""
-        return (
-            BlackSwanMode.BS007_SYSTEMIC in self.active_modes
-            or len(self.active_modes) >= 2
-        )
+        return BlackSwanMode.BS007_SYSTEMIC in self.active_modes or len(self.active_modes) >= 2
 
 
 @dataclass(frozen=True)
@@ -365,11 +362,15 @@ class DrawdownResponse:
     @property
     def allow_new_position(self) -> bool:
         """是否允许新开仓(橙/红/黑禁止新开)。"""
-        return self.risk_level not in (
-            SystemicRiskLevel.ORANGE,
-            SystemicRiskLevel.RED,
-            SystemicRiskLevel.BLACK,
-        ) and not self.kill_switch_advised
+        return (
+            self.risk_level
+            not in (
+                SystemicRiskLevel.ORANGE,
+                SystemicRiskLevel.RED,
+                SystemicRiskLevel.BLACK,
+            )
+            and not self.kill_switch_advised
+        )
 
     @property
     def only_close(self) -> bool:
@@ -526,13 +527,10 @@ class DrawdownController:
         reduce_ratio = 1.0 - position_cap
 
         # 7. 动作列表
-        actions = self._build_actions(
-            risk_level, strategy_stops, black_swan, kill_advised, recovery_factor
-        )
+        actions = self._build_actions(risk_level, strategy_stops, black_swan, kill_advised, recovery_factor)
         if breach_multiplier < 1.0:
             actions.append(
-                f"VaR breach 状态 {breach_state_key}: 仓位上限乘性折扣 "
-                f"×{breach_multiplier:.2f} (36号 §3.15)"
+                f"VaR breach 状态 {breach_state_key}: 仓位上限乘性折扣 ×{breach_multiplier:.2f} (36号 §3.15)"
             )
 
         return DrawdownResponse(
@@ -558,8 +556,7 @@ class DrawdownController:
         key = str(getattr(var_breach_state, "value", var_breach_state)).upper()
         if key not in _VAR_BREACH_CAP_MULTIPLIER:
             raise InvalidDrawdownControlError(
-                f"未知 var_breach_state: {var_breach_state!r} "
-                f"(合法值: NORMAL/BREACHED/RECOVERY)"
+                f"未知 var_breach_state: {var_breach_state!r} (合法值: NORMAL/BREACHED/RECOVERY)"
             )
         return key, _VAR_BREACH_CAP_MULTIPLIER[key]
 
@@ -582,32 +579,22 @@ class DrawdownController:
 
     # ── 内部: 策略级止损 ──
 
-    def _evaluate_strategy_stops(
-        self, strategy_pnls: list[StrategyPnl]
-    ) -> list[StrategyStopLoss]:
+    def _evaluate_strategy_stops(self, strategy_pnls: list[StrategyPnl]) -> list[StrategyStopLoss]:
         """评估每个策略的止损状态。"""
         stops: list[StrategyStopLoss] = []
         for sp in strategy_pnls:
             abs_dd = abs(sp.drawdown_pct)
             if abs_dd > self._hard_stop:
-                stops.append(
-                    StrategyStopLoss(sp.strategy_id, StopLossType.HARD, sp.drawdown_pct)
-                )
+                stops.append(StrategyStopLoss(sp.strategy_id, StopLossType.HARD, sp.drawdown_pct))
             elif abs_dd > self._soft_stop:
-                stops.append(
-                    StrategyStopLoss(sp.strategy_id, StopLossType.SOFT, sp.drawdown_pct)
-                )
+                stops.append(StrategyStopLoss(sp.strategy_id, StopLossType.SOFT, sp.drawdown_pct))
             else:
-                stops.append(
-                    StrategyStopLoss(sp.strategy_id, StopLossType.NONE, sp.drawdown_pct)
-                )
+                stops.append(StrategyStopLoss(sp.strategy_id, StopLossType.NONE, sp.drawdown_pct))
         return stops
 
     # ── 内部: 黑天鹅处置 ──
 
-    def _evaluate_black_swan(
-        self, bs: BlackSwanSignal
-    ) -> tuple[float, list[str], bool]:
+    def _evaluate_black_swan(self, bs: BlackSwanSignal) -> tuple[float, list[str], bool]:
         """评估黑天鹅模式 → (仓位上限系数, 动作列表, 是否建议 Kill Switch)。
 
         Returns:
@@ -713,18 +700,12 @@ class DrawdownController:
     @staticmethod
     def _validate(di: DrawdownInfo, vc: VarCvarMetrics) -> None:
         if di.drawdown_pct > 0:
-            raise InvalidDrawdownControlError(
-                f"drawdown_pct must be <= 0, got {di.drawdown_pct}"
-            )
+            raise InvalidDrawdownControlError(f"drawdown_pct must be <= 0, got {di.drawdown_pct}")
         if di.drawdown_pct < -1.0:
-            raise InvalidDrawdownControlError(
-                f"drawdown_pct must be >= -1.0, got {di.drawdown_pct}"
-            )
+            raise InvalidDrawdownControlError(f"drawdown_pct must be >= -1.0, got {di.drawdown_pct}")
         if vc.var_95 < 0:
             raise InvalidDrawdownControlError(f"var_95 must be >= 0, got {vc.var_95}")
         if vc.cvar_95 < vc.var_95:
-            raise InvalidDrawdownControlError(
-                f"cvar_95({vc.cvar_95}) must be >= var_95({vc.var_95})"
-            )
+            raise InvalidDrawdownControlError(f"cvar_95({vc.cvar_95}) must be >= var_95({vc.var_95})")
         if di.peak_nav <= 0:
             raise InvalidDrawdownControlError(f"peak_nav must be > 0, got {di.peak_nav}")

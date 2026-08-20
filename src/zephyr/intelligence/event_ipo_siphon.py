@@ -46,8 +46,8 @@ _log = logging.getLogger(__name__)
 
 # ── 虹吸分级阈值（final_report 实证 + A 股历史 IPO 虹吸案例校准，§2.5a）──
 SIPHON_RATIO_MODERATE_MAX: Final[float] = 0.01  # <1% 日均成交额 → 可忽略
-SIPHON_RATIO_SEVERE_MAX: Final[float] = 0.02    # 1-2% → 局部扰动
-SIPHON_RATIO_EXTREME_MIN: Final[float] = 0.03   # >3% → 极端虹吸（历史罕见）
+SIPHON_RATIO_SEVERE_MAX: Final[float] = 0.02  # 1-2% → 局部扰动
+SIPHON_RATIO_EXTREME_MIN: Final[float] = 0.03  # >3% → 极端虹吸（历史罕见）
 
 SIPHON_LEVEL_NEGLIGIBLE: Final[str] = "NEGLIGIBLE"
 SIPHON_LEVEL_MODERATE: Final[str] = "MODERATE"
@@ -56,8 +56,8 @@ SIPHON_LEVEL_EXTREME: Final[str] = "EXTREME"
 
 # ── 仓位调整动作 ──
 ACTION_ACCELERATE_ENTRY: Final[str] = "ACCELERATE_ENTRY"  # 上市前 3-5 天加速建仓
-ACTION_HOLD_CASH: Final[str] = "HOLD_CASH"                # 上市前 1-2 天保留现金
-ACTION_REDUCE_EXISTING: Final[str] = "REDUCE_EXISTING"    # 上市后 day 0-5 降仓避险
+ACTION_HOLD_CASH: Final[str] = "HOLD_CASH"  # 上市前 1-2 天保留现金
+ACTION_REDUCE_EXISTING: Final[str] = "REDUCE_EXISTING"  # 上市后 day 0-5 降仓避险
 ACTION_NORMAL: Final[str] = "NORMAL"
 
 CASH_RESERVE_PCT: Final[float] = 0.25  # HOLD_CASH 现金保留比例（final_report 实证 25%）

@@ -116,16 +116,16 @@ MARKET_REGIME_CAPS: Final[dict[SizingMarketRegime, float]] = {
 
 # ── sizing_basis binding constraint 命名（31号 §2.3.4，deadeye-rs 2026-06 模式）──
 # 7 值契约栈 + 代码级联现实扩展（C3 波动率/C7 退出时间/降级等权）
-SIZING_BASIS_STRATEGY_INTENT = "strategy_intent"        # 策略意愿约束（粗仓位求和×分布调整）
-SIZING_BASIS_KELLY_BUDGET = "kelly_budget"              # Kelly 风险预算约束（半 Kelly+截0）
-SIZING_BASIS_VAR_CAP = "var_cap"                        # VaR_95 上限约束（C4）
-SIZING_BASIS_CVAR_CAP = "cvar_cap"                      # CVaR_95 上限约束（C5，比 VaR 更严）
-SIZING_BASIS_SINGLE_NAME_CAP = "single_name_cap"        # 单票硬上限约束（C12，§2.4.1 三层口径）
+SIZING_BASIS_STRATEGY_INTENT = "strategy_intent"  # 策略意愿约束（粗仓位求和×分布调整）
+SIZING_BASIS_KELLY_BUDGET = "kelly_budget"  # Kelly 风险预算约束（半 Kelly+截0）
+SIZING_BASIS_VAR_CAP = "var_cap"  # VaR_95 上限约束（C4）
+SIZING_BASIS_CVAR_CAP = "cvar_cap"  # CVaR_95 上限约束（C5，比 VaR 更严）
+SIZING_BASIS_SINGLE_NAME_CAP = "single_name_cap"  # 单票硬上限约束（C12，§2.4.1 三层口径）
 SIZING_BASIS_LIQUIDITY_MODERATE = "liquidity_cap_moderate"  # 流动性削半档（§2.4.4，MOD-POS-021 消费预留）
-SIZING_BASIS_LIQUIDITY_SEVERE = "liquidity_cap_severe"      # 流动性严重档（§2.4.4，MOD-POS-021 消费预留）
-SIZING_BASIS_VOLATILITY_CHECK = "volatility_check"      # C3 波动率减半（代码级联扩展）
-SIZING_BASIS_EXIT_TIME_CAP = "exit_time_cap"            # C7/C8 退出时间减仓（代码级联扩展）
-SIZING_BASIS_DEGRADED = "degraded_equal_weight"         # 无密度预测降级等权（Kelly 缺失路径）
+SIZING_BASIS_LIQUIDITY_SEVERE = "liquidity_cap_severe"  # 流动性严重档（§2.4.4，MOD-POS-021 消费预留）
+SIZING_BASIS_VOLATILITY_CHECK = "volatility_check"  # C3 波动率减半（代码级联扩展）
+SIZING_BASIS_EXIT_TIME_CAP = "exit_time_cap"  # C7/C8 退出时间减仓（代码级联扩展）
+SIZING_BASIS_DEGRADED = "degraded_equal_weight"  # 无密度预测降级等权（Kelly 缺失路径）
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -538,7 +538,11 @@ class PositionSizingEngine:
 
         # 重新计算目标量 (经所有调整后)
         target_qty = int(weight * inp.nav / sym.price) if sym.price > 0 else 0
-        return self._make_target(sym, target_qty, f"Kelly+约束裁决 w={weight:.4f}", inp.nav, sizing_basis=basis), weight, vol_adj
+        return (
+            self._make_target(sym, target_qty, f"Kelly+约束裁决 w={weight:.4f}", inp.nav, sizing_basis=basis),
+            weight,
+            vol_adj,
+        )
 
     def _initial_sizing_basis(self, sym: SymbolInput, cfg: PositionSizingConfig) -> str:
         """sizing_basis 初始判定（31号 §2.3.4 min(策略意愿, Kelly 预算) 取小者 binding）。

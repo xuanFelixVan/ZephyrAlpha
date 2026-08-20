@@ -13,6 +13,7 @@
 2. 路径穿越——构造../../../etc/passwd等路径测试路径校验
 3. 权限提升——测试脚本是否以最小权限运行
 """
+
 from __future__ import annotations
 
 import os
@@ -37,6 +38,7 @@ for p in [_SRC_DIR, _GOV_DIR]:
 # ============================================================================
 # 1. 脚本注入测试 (Script Injection)
 # ============================================================================
+
 
 class TestScriptInjection:
     """红队: 构造恶意输入注入治理脚本. 蓝队: 验证脚本安全处理."""
@@ -75,6 +77,7 @@ class TestScriptInjection:
         )
         # 蓝队: 验证 YAML 被安全解析, 不执行 Python 对象注入
         import yaml
+
         data = yaml.safe_load(malicious_yaml.read_text(encoding="utf-8"))
         # safe_load 不执行 !!python/object 标签
         assert isinstance(data, dict)
@@ -87,7 +90,7 @@ class TestScriptInjection:
         # 红队: 构造 Unicode 空字符/控制字符注入
         malicious_names = [
             "file\x00.py",  # null byte
-            "file\n.py",    # newline
+            "file\n.py",  # newline
             "file\r\n.py",  # CRLF
         ]
         for name in malicious_names:
@@ -102,6 +105,7 @@ class TestScriptInjection:
 # ============================================================================
 # 2. 路径穿越测试 (Path Traversal)
 # ============================================================================
+
 
 class TestPathTraversal:
     """红队: 构造路径穿越攻击. 蓝队: 验证脚本路径校验."""
@@ -162,6 +166,7 @@ class TestPathTraversal:
 # 3. 权限提升测试 (Privilege Escalation)
 # ============================================================================
 
+
 class TestPrivilegeEscalation:
     """红队: 检测权限提升风险. 蓝队: 验证最小权限原则."""
 
@@ -170,8 +175,14 @@ class TestPrivilegeEscalation:
         # 红队: 扫描所有治理脚本中的权限提升关键词
         gov_dir = _PROJECT_ROOT / "scripts" / "governance"
         dangerous_patterns = [
-            "sudo ", "su -", "runas ", "os.setuid(", "os.setgid(",
-            "os.chmod(", "subprocess.run(['sudo'", "subprocess.Popen(['sudo'",
+            "sudo ",
+            "su -",
+            "runas ",
+            "os.setuid(",
+            "os.setgid(",
+            "os.chmod(",
+            "subprocess.run(['sudo'",
+            "subprocess.Popen(['sudo'",
         ]
         findings = []
         for py_file in gov_dir.rglob("*.py"):
@@ -196,12 +207,17 @@ class TestPrivilegeEscalation:
         gov_dir = _PROJECT_ROOT / "scripts" / "governance"
         # 检测脚本豁免 (提及危险函数作为检测目标)
         detection_scripts = {
-            "detect_shell_true.py", "validate_script_quality.py",
-            "detect_shell_dangerous.py", "detect_git_dangerous.py",
+            "detect_shell_true.py",
+            "validate_script_quality.py",
+            "detect_shell_dangerous.py",
+            "detect_git_dangerous.py",
             "validate_python_syntax.py",  # py_compile.compile 合法
         }
         dangerous_patterns = [
-            "eval(", "exec(", "os.system(", "subprocess.call('",
+            "eval(",
+            "exec(",
+            "os.system(",
+            "subprocess.call('",
             "__import__('os')",
         ]
         findings = []
@@ -220,7 +236,9 @@ class TestPrivilegeEscalation:
                             if pattern == "exec(" and "def _exec" in line:
                                 continue
                             # 排除描述性字符串
-                            if pattern == "os.system(" and ("description" in line or "Python:" in line or "-" in stripped[:3]):
+                            if pattern == "os.system(" and (
+                                "description" in line or "Python:" in line or "-" in stripped[:3]
+                            ):
                                 continue
                             findings.append((py_file.name, pattern, stripped))
             except Exception:
@@ -236,8 +254,10 @@ class TestPrivilegeEscalation:
         gov_dir = _PROJECT_ROOT / "scripts" / "governance"
         # 检测脚本本身会提及 shell=True (作为检测目标)
         detection_scripts = {
-            "detect_shell_true.py", "validate_script_quality.py",
-            "detect_shell_dangerous.py", "detect_git_dangerous.py",
+            "detect_shell_true.py",
+            "validate_script_quality.py",
+            "detect_shell_dangerous.py",
+            "detect_git_dangerous.py",
         }
         findings = []
         for py_file in gov_dir.rglob("*.py"):
@@ -277,8 +297,12 @@ class TestPrivilegeEscalation:
         gov_dir = _PROJECT_ROOT / "scripts" / "governance"
         project_root_str = str(_PROJECT_ROOT).replace("\\", "/").lower()
         dangerous_paths = [
-            "/etc/", "/var/", "/tmp/", "/root/",
-            "C:\\Windows\\", "C:\\Users\\Public\\",
+            "/etc/",
+            "/var/",
+            "/tmp/",
+            "/root/",
+            "C:\\Windows\\",
+            "C:\\Users\\Public\\",
         ]
         findings = []
         for py_file in gov_dir.rglob("*.py"):
@@ -305,6 +329,7 @@ class TestPrivilegeEscalation:
 # ============================================================================
 # 4. 综合极端测试 (Extreme Combined Tests)
 # ============================================================================
+
 
 class TestExtremeCombined:
     """综合极端场景测试."""
@@ -334,7 +359,7 @@ class TestExtremeCombined:
         """测试二进制输入处理."""
         # 红队: 构造二进制内容文件
         binary_file = tmp_path / "binary.py"
-        binary_file.write_bytes(b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR')
+        binary_file.write_bytes(b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR")
         # 蓝队: 读取时应处理编码错误
         try:
             text = binary_file.read_text(encoding="utf-8")

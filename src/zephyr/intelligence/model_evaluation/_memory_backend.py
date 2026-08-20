@@ -118,6 +118,7 @@ __all__ = [  # noqa: n114-final  n114-final豁免: __all__是Python导出约定�
 
 class MemoryBackendError(RuntimeError):
     """Raised when a memory backend is unavailable or an operation fails."""
+
     error_code = "ZA-GV-0038"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):

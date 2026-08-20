@@ -30,4 +30,6 @@
 # A1 --> O1
 """
 
-__all__ = ['position_reconciler']
+from typing import Final
+
+__all__: Final = ["position_reconciler"]

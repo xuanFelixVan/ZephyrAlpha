@@ -29,6 +29,7 @@
 - 真实文件缺失时用占位符降级（保证模块可导入、mock 测试不抛异常），
   真实模型重跑时文件必然存在（同仓库）。
 """
+
 from __future__ import annotations
 
 import logging
@@ -43,7 +44,7 @@ _logger = logging.getLogger(__name__)
 # 白名单基目录（仅这些目录下的文件可被读取）
 _WHITELIST_DIRS: tuple[Path, ...] = (
     REPO_ROOT / "scripts" / "governance",
-    REPO_ROOT / "scripts",                 # scripts/git_commit.py 等顶层脚本
+    REPO_ROOT / "scripts",  # scripts/git_commit.py 等顶层脚本
     REPO_ROOT / "src" / "zephyr" / "trading",
     REPO_ROOT / "src" / "zephyr" / "governance",
 )

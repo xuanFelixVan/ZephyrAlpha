@@ -33,6 +33,7 @@
   - 列名含 ask_price_1 / bid_price_1（5档盘口字段存在）
   - timestamp 为 datetime 类型，且落在请求区间内
 """
+
 from __future__ import annotations
 
 import sys
@@ -124,8 +125,12 @@ def main() -> int:
     columns = list(df.columns)
     print(f"columns={columns}")
     required_5level = [
-        "ask_price_1", "bid_price_1", "ask_vol_1", "bid_vol_1",
-        "ask_price_5", "bid_price_5",
+        "ask_price_1",
+        "bid_price_1",
+        "ask_vol_1",
+        "bid_vol_1",
+        "ask_price_5",
+        "bid_price_5",
     ]
     missing = [c for c in required_5level if c not in columns]
     if missing:
@@ -158,12 +163,19 @@ def main() -> int:
     # 5. 数据抽样
     print("\n=== STEP 5: 数据抽样（前 3 行关键字段）===")
     sample_cols = [
-        "timestamp", "last_price", "volume", "amount",
-        "ask_price_1", "bid_price_1", "ask_vol_1", "bid_vol_1",
+        "timestamp",
+        "last_price",
+        "volume",
+        "amount",
+        "ask_price_1",
+        "bid_price_1",
+        "ask_vol_1",
+        "bid_vol_1",
     ]
     avail = [c for c in sample_cols if c in columns]
     with __import__("contextlib").suppress(Exception):
         import pandas as pd
+
         pd.set_option("display.width", 200)
         pd.set_option("display.max_columns", 20)
     print(df[avail].head(3).to_string(index=False))

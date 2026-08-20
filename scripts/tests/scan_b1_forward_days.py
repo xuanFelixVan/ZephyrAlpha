@@ -11,6 +11,7 @@ B1 基线误差 17.7%，80-100% 桶预测 0.982 实际 0.524（HMM 过度自信�
 Usage:
     python scripts/tests/scan_b1_forward_days.py
 """
+
 from __future__ import annotations
 
 import logging
@@ -45,8 +46,12 @@ def main() -> None:
 
     print("[scan] walk-forward 逐日 detect 收集 detect_records（约 3 分钟）...")
     _daily, _dates, detect_records = runner._collect_daily_transitions(  # noqa: SLF001
-        builder, features, feature_names,
-        train_years=5, detect_window=60, refit_freq="QE",
+        builder,
+        features,
+        feature_names,
+        train_years=5,
+        detect_window=60,
+        refit_freq="QE",
     )
     print(f"[scan] 收集 {len(detect_records)} 条 detect_records")
 
@@ -69,12 +74,11 @@ def main() -> None:
         report = b1.validate(detect_records, close, forward_days=fd)
         # 找 80-100% 桶
         hi = next((p for p in report.reliability_curve if p.bucket == "80-100%" and p.count > 0), None)
-        hi_str = (
-            f"{hi.predicted:.3f}/{hi.actual:.3f}/{hi.error:.3f}/n={hi.count}"
-            if hi else "—"
+        hi_str = f"{hi.predicted:.3f}/{hi.actual:.3f}/{hi.error:.3f}/n={hi.count}" if hi else "—"
+        print(
+            f"{fd:>12} {report.calibration_error:>7.1%} {report.max_bucket_error:>9.1%} "
+            f"{report.verdict.value:>8}   {hi_str}"
         )
-        print(f"{fd:>12} {report.calibration_error:>7.1%} {report.max_bucket_error:>9.1%} "
-              f"{report.verdict.value:>8}   {hi_str}")
 
     print("=" * 78)
     print("解读：若长窗口（60/120日）误差显著下降 → HMM 非过度自信，20日窗口太短")

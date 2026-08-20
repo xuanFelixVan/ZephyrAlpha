@@ -100,8 +100,7 @@ class TestTradingDayFeatures:
     def test_post_holiday_flag_after_long_gap(self) -> None:
         # 注入 9 自然日长假（模拟春节/国庆）
         dates = pd.DatetimeIndex(
-            list(pd.bdate_range("2024-01-01", periods=30))
-            + list(pd.bdate_range("2024-02-19", periods=30))
+            list(pd.bdate_range("2024-01-01", periods=30)) + list(pd.bdate_range("2024-02-19", periods=30))
         )
         feats = trading_day_features(dates)
         gap_day = dates[30]
@@ -176,9 +175,9 @@ class TestAnniversary:
         # 人造 V 形：上涨 → 显著低点（跌幅 >20%）→ 反弹
         n = 120
         close = np.full(n, 100.0)
-        close[:40] = np.linspace(100, 130, 40)   # 涨到 130
+        close[:40] = np.linspace(100, 130, 40)  # 涨到 130
         close[40:70] = np.linspace(130, 95, 30)  # 跌到 95（振幅 >20%）
-        close[70:] = np.linspace(95, 120, 50)    # 反弹
+        close[70:] = np.linspace(95, 120, 50)  # 反弹
         df = detect_swing_extremes(_make_ohlc(close)["close"])
         kinds = set(df["kind"])
         assert "high" in kinds or "low" in kinds
@@ -199,9 +198,7 @@ class TestAnniversary:
         assert df.empty or df["date"].max() < _make_ohlc(close).index[-1]
 
     def test_anniversary_windows_tolerance(self) -> None:
-        extremes = pd.DataFrame(
-            {"date": [pd.Timestamp("2023-03-15")], "kind": ["high"], "price": [130.0]}
-        )
+        extremes = pd.DataFrame({"date": [pd.Timestamp("2023-03-15")], "kind": ["high"], "price": [130.0]})
         wins = anniversary_windows(extremes, tolerance=ANNIVERSARY_TOLERANCE, max_years=2)
         first = wins.iloc[0]
         assert first["start"] == pd.Timestamp("2024-03-15") - pd.Timedelta(days=5)

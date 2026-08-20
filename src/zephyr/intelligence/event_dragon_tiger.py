@@ -49,21 +49,21 @@ from dataclasses import dataclass, field
 from typing import Final
 
 # ── 校准常量（2026 实证，26 号 §2.5 / 24 号 §3.5 同步口径）──
-NET_BUY_RATIO_STRONG: Final[float] = 0.12      # 净买率极端值硬阈值（+5.11% 20日均收仍有效）
-MODIFIER_STRONG: Final[float] = 1.2            # 强佐证加分
-MODIFIER_NEUTRAL: Final[float] = 1.0           # 机构净买入方向失效→不加分
-QUANT_SEAT_TYPE: Final[str] = "quant_inst"     # 量化席位类型标识（dragon_tiger_seat 表）
-QUANT_SEAT_COUNT_MIN: Final[int] = 3           # 量化席位同现阈值
-QUANT_BUY_RATIO_HARD: Final[float] = 0.30      # 量化买入占比 hard 阈值
-MODIFIER_QUANT_HARD: Final[float] = 0.7        # hard：量化主导→佐证无效化
-MODIFIER_QUANT_SOFT: Final[float] = 0.85       # soft：量化同现→佐证弱化
+NET_BUY_RATIO_STRONG: Final[float] = 0.12  # 净买率极端值硬阈值（+5.11% 20日均收仍有效）
+MODIFIER_STRONG: Final[float] = 1.2  # 强佐证加分
+MODIFIER_NEUTRAL: Final[float] = 1.0  # 机构净买入方向失效→不加分
+QUANT_SEAT_TYPE: Final[str] = "quant_inst"  # 量化席位类型标识（dragon_tiger_seat 表）
+QUANT_SEAT_COUNT_MIN: Final[int] = 3  # 量化席位同现阈值
+QUANT_BUY_RATIO_HARD: Final[float] = 0.30  # 量化买入占比 hard 阈值
+MODIFIER_QUANT_HARD: Final[float] = 0.7  # hard：量化主导→佐证无效化
+MODIFIER_QUANT_SOFT: Final[float] = 0.85  # soft：量化同现→佐证弱化
 
 
 @dataclass(frozen=True, slots=True)
 class DragonTigerSeat:
     """龙虎榜席位记录（dragon_tiger_seat 表口径，Top5 买卖席位合并去重）。"""
 
-    type: str          # 席位类型（quant_inst=量化机构 / foreign=外资 / hot_money=游资 / ...）
+    type: str  # 席位类型（quant_inst=量化机构 / foreign=外资 / hot_money=游资 / ...）
     buy_amount: float  # 买入金额
 
 
@@ -94,9 +94,7 @@ def dragon_tiger_corroboration_modifier(data: DragonTigerData | None) -> float:
     # ② 量化席位过滤（24 号 §3.10 + §3.11 双阈值预警）
     quant_seats = [s for s in data.buyer_seats if s.type == QUANT_SEAT_TYPE]
     quant_count = len(quant_seats)
-    quant_buy_ratio = (
-        sum(s.buy_amount for s in quant_seats) / data.total_buy if data.total_buy > 0 else 0.0
-    )
+    quant_buy_ratio = sum(s.buy_amount for s in quant_seats) / data.total_buy if data.total_buy > 0 else 0.0
     if quant_count >= QUANT_SEAT_COUNT_MIN and quant_buy_ratio > QUANT_BUY_RATIO_HARD:
         base_modifier *= MODIFIER_QUANT_HARD
     elif quant_count >= QUANT_SEAT_COUNT_MIN:

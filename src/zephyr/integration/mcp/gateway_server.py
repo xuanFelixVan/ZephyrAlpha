@@ -97,6 +97,7 @@ def _load_mcp_config() -> dict[str, Any]:
         _MCP_CONFIG_CACHE = {}
         return _MCP_CONFIG_CACHE
 
+
 _lsg_gateway = None
 
 
@@ -171,8 +172,6 @@ class CircuitBreaker:
         """写入：recovery（Stage 4 公共化）。"""
         self._recovery = value
 
-
-
     @property
     def state(self) -> str:
         with self._lock:
@@ -182,7 +181,6 @@ class CircuitBreaker:
     def state(self, value):
         """写入：state（Stage 4 公共化）。"""
         self._state = value
-
 
     @property
     def is_open(self) -> bool:
@@ -302,11 +300,9 @@ class MCPGateway(BaseMCPServer):
         """写入：rate_limiter（Stage 4 公共化）。"""
         self._rate_limiter = value
 
-
     def route_tool_name(self, tool_name) -> str | None:
         """公共接口：route_tool_name（Stage 4 公共化）。"""
         return self._route_tool_name(tool_name)
-
 
     @property
     def routes(self):
@@ -318,7 +314,6 @@ class MCPGateway(BaseMCPServer):
         """写入：routes（Stage 4 公共化）。"""
         self._routes = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def server_instances(self) -> dict[str, BaseMCPServer | Any]:
@@ -329,7 +324,6 @@ class MCPGateway(BaseMCPServer):
     def server_instances(self, value):
         """写入：server_instances（Stage 4 公共化）。"""
         self._server_instances = value
-
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -351,7 +345,6 @@ class MCPGateway(BaseMCPServer):
     def circuit_breakers(self, value):
         """写入：circuit_breakers（Stage 4 公共化）。"""
         self._circuit_breakers = value
-
 
     def _init_server_handlers(self) -> None:
         try:
@@ -599,8 +592,13 @@ class MCPGateway(BaseMCPServer):
         return None
 
     def _try_gateway_local_tool(
-        self, routed_sid: str, tool_name: str, params: dict[str, Any],
-        req_id: str | int | None, session_id: str, t0: float,
+        self,
+        routed_sid: str,
+        tool_name: str,
+        params: dict[str, Any],
+        req_id: str | int | None,
+        session_id: str,
+        t0: float,
     ) -> dict[str, Any] | None:
         """处理 gateway 自身工具（mcp_gateway），返回响应 dict 或 None（非本地工具）。"""
         if routed_sid != "mcp_gateway":
@@ -631,8 +629,13 @@ class MCPGateway(BaseMCPServer):
             return self._err(req_id, ERR_TOOL_EXECUTION, "internal error")
 
     def _audit_and_track(
-        self, error: dict | None, tool_name: str, arguments: dict,
-        session_id: str, cb: CircuitBreaker | None, duration_ms: int,
+        self,
+        error: dict | None,
+        tool_name: str,
+        arguments: dict,
+        session_id: str,
+        cb: CircuitBreaker | None,
+        duration_ms: int,
     ) -> None:
         """记录审计日志并更新熔断器状态。"""
         status = "error" if error else "success"
@@ -669,7 +672,10 @@ class MCPGateway(BaseMCPServer):
         return str(role_assignment.get("ai_agent_default", "operator"))
 
     def _check_permission_acl(
-        self, role: str, tool_name: str, routed_sid: str,
+        self,
+        role: str,
+        tool_name: str,
+        routed_sid: str,
     ) -> tuple[bool, str]:
         """5.36.8：Permission 阶段——按 mcp.json auth.acl_by_server 校验。
 
@@ -706,7 +712,10 @@ class MCPGateway(BaseMCPServer):
         return False, f"role {role!r} not allowed for {tool_name!r} on {routed_sid!r}"
 
     def _check_sunset(
-        self, tool_name: str, routed_sid: str, req_id: str | int | None,
+        self,
+        tool_name: str,
+        routed_sid: str,
+        req_id: str | int | None,
     ) -> dict[str, Any] | None:
         """5.35.4：APIVersionContract——sunset_date 已过的工具被拦截。
 
@@ -820,11 +829,7 @@ class MCPGateway(BaseMCPServer):
         # （L 工具低风险，Permission ACL 已校验；admin 高权限；gateway 内部管理工具）
         tool_params = params.get("arguments", {})
         tool_safety = self._lookup_safety_level(tool_name, routed_sid)
-        if (
-            routed_sid != "mcp_gateway"
-            and role != "admin"
-            and tool_safety not in (None, "L")
-        ):
+        if routed_sid != "mcp_gateway" and role != "admin" and tool_safety not in (None, "L"):
             lsg_text = json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name
             lsg_blocked = _lsg_scan_tool_call_sync(tool_name, tool_params, lsg_text)
             if lsg_blocked:
@@ -909,7 +914,9 @@ class MCPGateway(BaseMCPServer):
                 return sid
         return None
 
-    def _check_safety_level(self, tool_name: str, routed_sid: str, session_id: str, req_id: str | int | None = None) -> dict[str, Any] | None:
+    def _check_safety_level(
+        self, tool_name: str, routed_sid: str, session_id: str, req_id: str | int | None = None
+    ) -> dict[str, Any] | None:
         """检查工具 safety_level 并执行 RBAC 强制（R2 修复）。
 
         - L (Low): 直接放行，返回 None

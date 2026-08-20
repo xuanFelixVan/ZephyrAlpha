@@ -67,13 +67,13 @@ class EventAnomalyError(ZephyrBaseError):
 
 
 # ── G23 校准参数（26 号 §5 暂缓项 3——回测校准前为首版裁定常量）──
-ANOMALY_ROLLING_WINDOW: Final[int] = 20       # 滚动相关窗口（分钟）
-ANOMALY_CORR_THRESHOLD: Final[float] = 0.0    # 相关系数阈值（<0 判脱钩）
+ANOMALY_ROLLING_WINDOW: Final[int] = 20  # 滚动相关窗口（分钟）
+ANOMALY_CORR_THRESHOLD: Final[float] = 0.0  # 相关系数阈值（<0 判脱钩）
 ANOMALY_EXCESS_THRESHOLD: Final[float] = 0.03  # 超额收益显著性阈值
 
 ANOMALY_TYPE_POSITIVE: Final[str] = "positive"  # 异动上涨
 ANOMALY_TYPE_NEGATIVE: Final[str] = "negative"  # 异动下跌
-ANOMALY_TYPE_NONE: Final[str] = ""              # 无异动/降级
+ANOMALY_TYPE_NONE: Final[str] = ""  # 无异动/降级
 
 
 @dataclass(frozen=True, slots=True)

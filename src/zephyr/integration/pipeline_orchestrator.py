@@ -92,6 +92,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from zephyr.infrastructure.pipeline.models import PipelineRouteDecision
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
     from zephyr.intelligence.model_profiling.profiler import ModelProfiler
     from zephyr.shared.foundation.models import TaskCard
@@ -449,7 +450,6 @@ class PipelineOrchestrator:
         """写入：token_budget_total（Stage 4 公共化）。"""
         self._token_budget_total = value
 
-
     @property
     def failure_log(self) -> dict[str, int]:
         """只读：failure_log（Stage 4 公共化）。"""
@@ -459,7 +459,6 @@ class PipelineOrchestrator:
     def failure_log(self, value):
         """写入：failure_log（Stage 4 公共化）。"""
         self._failure_log = value
-
 
     @property
     def active_dispatches(self) -> set[str]:
@@ -471,7 +470,6 @@ class PipelineOrchestrator:
         """写入：active_dispatches（Stage 4 公共化）。"""
         self._active_dispatches = value
 
-
     @property
     def cfg(self):
         """只读：cfg（Stage 4 公共化）。"""
@@ -482,21 +480,17 @@ class PipelineOrchestrator:
         """写入：cfg（Stage 4 公共化）。"""
         self._cfg = value
 
-
     def resolve_experiment(self, task_card) -> ABExperimentRoute | None:
         """公共接口：resolve_experiment（Stage 4 公共化）。"""
         return self._resolve_experiment(task_card)
-
 
     def emergency_fallback(self, results, task_card) -> EmergencyFallbackPlan:
         """公共接口：emergency_fallback（Stage 4 公共化）。"""
         return self._emergency_fallback(results, task_card)
 
-
     def check_rate_limit(self, model) -> tuple[bool, float]:
         """公共接口：check_rate_limit（Stage 4 公共化）。"""
         return self._check_rate_limit(model)
-
 
     @property
     def cb_manager(self):
@@ -508,53 +502,50 @@ class PipelineOrchestrator:
         """写入：cb_manager（Stage 4 公共化）。"""
         self._cb_manager = value
 
-
     def assess_impact(self, task_card) -> AIImpactAssessment:
         """公共接口：assess_impact（Stage 4 公共化）。"""
         return self._assess_impact(task_card)
 
-
     @staticmethod
-    @staticmethod
-    def call_model(module_id, pipeline, model, task, *, token_divisor, prior_artifacts=None, dry_run=False, skill_injection=None) -> dict:
+    def call_model(  # noqa: long-param-list  Stage 4 公共化包装器与 _call_model 签名契约绑定，参数对象重构属破坏性变更登记专项
+        module_id, pipeline, model, task, *, token_divisor, prior_artifacts=None, dry_run=False, skill_injection=None
+    ) -> dict:
         """公共接口：call_model（Stage 4 公共化）。"""
-        return __class__._call_model(module_id, pipeline, model, task, token_divisor=token_divisor, prior_artifacts=prior_artifacts, dry_run=dry_run, skill_injection=skill_injection)
+        return __class__._call_model(
+            module_id,
+            pipeline,
+            model,
+            task,
+            token_divisor=token_divisor,
+            prior_artifacts=prior_artifacts,
+            dry_run=dry_run,
+            skill_injection=skill_injection,
+        )
 
-
-    @staticmethod
     @staticmethod
     def lsg_scan_agent_action(tool_name, tool_params) -> str | None:
         """公共接口：lsg_scan_agent_action（Stage 4 公共化）。"""
         return __class__._lsg_scan_agent_action(tool_name, tool_params)
 
-
-    @staticmethod
     @staticmethod
     def lsg_sanitize_output(module_id, output) -> dict:
         """公共接口：lsg_sanitize_output（Stage 4 公共化）。"""
         return __class__._lsg_sanitize_output(module_id, output)
 
-
-    @staticmethod
     @staticmethod
     def lsg_sanitize_input(text) -> str:
         """公共接口：lsg_sanitize_input（Stage 4 公共化）。"""
         return __class__._lsg_sanitize_input(text)
 
-
-    @staticmethod
     @staticmethod
     def text_similarity(a, b) -> float:
         """公共接口：text_similarity（Stage 4 公共化）。"""
         return __class__._text_similarity(a, b)
 
-
-    @staticmethod
     @staticmethod
     def determine_status(results) -> PipelineStatus:
         """公共接口：determine_status（Stage 4 公共化）。"""
         return __class__._determine_status(results)
-
 
     # ------------------------------------------------------------------
     # Stage 4 公共化 — @property 暴露（保留 _attr 作为 backing store）
@@ -896,9 +887,7 @@ class PipelineOrchestrator:
         # 5.142.1 修复: 用 _state dict 跨 try/except/finally 共享 lock_acquired/final_status
         _state: dict[str, Any] = {"lock_acquired": False, "final_status": None}
         try:
-            setup = self._setup_lock_and_skills(
-                task_card, hints, ct_decision, ct_warnings, dry_run, modules, _state
-            )
+            setup = self._setup_lock_and_skills(task_card, hints, ct_decision, ct_warnings, dry_run, modules, _state)
             if isinstance(setup, PipelineResult):
                 return setup
             route, execution_mode, night_shift_log, task_type, skill_injection = setup
@@ -906,9 +895,16 @@ class PipelineOrchestrator:
             manifest = PipelineArtifactManifest(run_id=task_card.task_id)
             executed_module_ids: list[str] = []
             results = self._execute_modules_loop(
-                task_card, modules, pipeline, route, manifest,
-                lineage_chain, executed_module_ids, skill_injection,
-                dry_run, ct_warnings,
+                task_card,
+                modules,
+                pipeline,
+                route,
+                manifest,
+                lineage_chain,
+                executed_module_ids,
+                skill_injection,
+                dry_run,
+                ct_warnings,
             )
 
             return self._finalize_and_build_result(
@@ -1186,13 +1182,26 @@ class PipelineOrchestrator:
             {"modules_executed": len(ctx.results), "cost_total_usd": sum(c.cost_usd for c in cost_records)},
         )
         return self._build_dispatch_result(
-            task_card=task_card, pipeline=ctx.pipeline, execution_mode=ctx.execution_mode,
-            results=ctx.results, status=status, rescue=rescue, collapse_alert=collapse_alert,
-            dry_run=ctx.dry_run, ct_decision=ctx.ct_decision, ct_warnings=ctx.ct_warnings,
-            manifest=ctx.manifest, lineage_chain=ctx.lineage_chain, impact=ctx.impact,
-            skill_injection=ctx.skill_injection, cost_records=cost_records,
-            emergency_fallback=emergency_fallback, dead_letter=dead_letter,
-            cb_state=cb_state, bridge_result=bridge_result, night_shift_log=ctx.night_shift_log,
+            task_card=task_card,
+            pipeline=ctx.pipeline,
+            execution_mode=ctx.execution_mode,
+            results=ctx.results,
+            status=status,
+            rescue=rescue,
+            collapse_alert=collapse_alert,
+            dry_run=ctx.dry_run,
+            ct_decision=ctx.ct_decision,
+            ct_warnings=ctx.ct_warnings,
+            manifest=ctx.manifest,
+            lineage_chain=ctx.lineage_chain,
+            impact=ctx.impact,
+            skill_injection=ctx.skill_injection,
+            cost_records=cost_records,
+            emergency_fallback=emergency_fallback,
+            dead_letter=dead_letter,
+            cb_state=cb_state,
+            bridge_result=bridge_result,
+            night_shift_log=ctx.night_shift_log,
         )
 
     def _handle_dispatch_exception(
@@ -1274,9 +1283,7 @@ class PipelineOrchestrator:
             pipeline_action = get_pipeline_action(gate_action)
             if gate_action in ("BLOCK", "BLOCK_AUTO", "FAIL", "L3_KILL", "L2_KILL"):
                 self._active_dispatches.discard(task_card.task_id)
-                _exit_detail = (
-                    f"Rollback exit code {exit_code} blocked dispatch: {gate_action} -> {pipeline_action}"
-                )
+                _exit_detail = f"Rollback exit code {exit_code} blocked dispatch: {gate_action} -> {pipeline_action}"
                 self._log("WARN", f"dispatch[{task_card.task_id}] {_exit_detail}")
                 return PipelineResult(
                     task_id=task_card.task_id,
@@ -1288,13 +1295,12 @@ class PipelineOrchestrator:
                     ct_pipe_warnings=[_exit_detail],
                 ), warnings
             elif gate_action in ("WARN", "ROLLBACK", "PAUSE_AGENT", "PAUSE_AUTO", "REDUCE_TIER"):
-                warnings.append(
-                    f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} pipeline={pipeline_action}"
-                )
+                warnings.append(f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} pipeline={pipeline_action}")
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 rollback_exit 门禁决策失败（安全门禁失效不可见）
-            logger.warning("rollback_exit gate parse failed for task=%s exit_code=%s",
-                           task_card.task_id, exit_code, exc_info=True)
+            logger.warning(
+                "rollback_exit gate parse failed for task=%s exit_code=%s", task_card.task_id, exit_code, exc_info=True
+            )
         return None, warnings
 
     def _check_rbac(self, task_card: TaskCard, dry_run: bool) -> PipelineResult | None:
@@ -1971,9 +1977,7 @@ class PipelineOrchestrator:
     # Claude 特种救援 — GOV-AI-002 §三
     # ------------------------------------------------------------------
 
-    def _populate_claude_trigger_flags(
-        self, trigger: ClaudeRescueTrigger, task_card: TaskCard
-    ) -> None:
+    def _populate_claude_trigger_flags(self, trigger: ClaudeRescueTrigger, task_card: TaskCard) -> None:
         """Set tag/owner-based flags on the trigger object."""
         if "experimental" in (task_card.tags or ()):
             trigger.is_experimental = True
@@ -2288,8 +2292,19 @@ class PipelineOrchestrator:
             )
 
         return PipelineOrchestrator._assemble_and_cache_output(
-            module_id, pipeline, model, model_version, task, tokens_used, cost_usd,
-            summary_content, simulated, provider_used, prior_artifacts, skill_context, cache_key
+            module_id,
+            pipeline,
+            model,
+            model_version,
+            task,
+            tokens_used,
+            cost_usd,
+            summary_content,
+            simulated,
+            provider_used,
+            prior_artifacts,
+            skill_context,
+            cache_key,
         )
 
     @staticmethod
@@ -2468,7 +2483,9 @@ class PipelineOrchestrator:
             EventBusBackpressure().emit("TASK_EVENT", payload=payload)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 TASK_EVENT 发布失败（状态变更信号丢失）
-            logger.debug("EventBus TASK_EVENT emit failed for task=%s %s->%s", task_id, from_status, to_status, exc_info=True)
+            logger.debug(
+                "EventBus TASK_EVENT emit failed for task=%s %s->%s", task_id, from_status, to_status, exc_info=True
+            )
 
     # ------------------------------------------------------------------
     # Zone Crossing 防线 —— B70（AP2: A区->B区 M6边界标记校验）
@@ -3187,8 +3204,7 @@ def _on_pipeline_start(payload: object) -> None:
         detail = data.get("detail", str(payload))
         source = data.get("source_function", "unknown")
         logger.info(
-            "PipelineOrchestrator: pipeline_start event received "
-            "(source=%s, detail=%s) — dispatch deferred to caller",
+            "PipelineOrchestrator: pipeline_start event received (source=%s, detail=%s) — dispatch deferred to caller",
             source,
             detail,
         )

@@ -105,9 +105,7 @@ def permutation_importance_windows(
     if n_repeats < 1:
         raise A4ImportanceError(f"n_repeats 需 ≥1: {n_repeats}")
     if not 0.0 < stability_threshold <= 1.0 or not 0.0 < negligible_share < 1.0:
-        raise A4ImportanceError(
-            f"门槛非法: stability={stability_threshold} negligible={negligible_share}"
-        )
+        raise A4ImportanceError(f"门槛非法: stability={stability_threshold} negligible={negligible_share}")
     T, F = X.shape
     names = tuple(feature_names) if feature_names else tuple(f"f{j}" for j in range(F))
     if len(names) != F:

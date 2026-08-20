@@ -3,6 +3,7 @@
 验证 DeadzoneShrinkageProvider 是否降低 Turnover + 不伤害 Sharpe/MaxDD。
 基准组（关）两组相同（ConstShrinkageProvider(1.0)），差异在实验组（开）。
 """
+
 from __future__ import annotations
 
 import logging
@@ -22,8 +23,16 @@ from zephyr.data import ch_reader
 from zephyr.data.table_registry import get_registry
 
 BASKET_SYMBOLS = [
-    "600000", "000001", "600519", "600036", "601318",
-    "000651", "600276", "000858", "600887", "601166",
+    "600000",
+    "000001",
+    "600519",
+    "600036",
+    "601318",
+    "000651",
+    "600276",
+    "000858",
+    "600887",
+    "601166",
 ]
 REAL_START = "2015-01-01"
 REAL_END = "2026-06-30"
@@ -72,12 +81,16 @@ def main() -> None:
 
     print("[deadzone] 跑无死区 C1（原 baseline）...")
     r_no = run_c1_with_provider(
-        data, signals, ScheduleShrinkageProvider(schedule), backtest_config=cfg,
+        data,
+        signals,
+        ScheduleShrinkageProvider(schedule),
+        backtest_config=cfg,
     )
 
     print("[deadzone] 跑有死区 C1（deadzone=0.02）...")
     r_dz = run_c1_with_provider(
-        data, signals,
+        data,
+        signals,
         DeadzoneShrinkageProvider(ScheduleShrinkageProvider(schedule), deadzone=0.02),
         backtest_config=cfg,
     )
@@ -94,10 +107,16 @@ def main() -> None:
         flag = "✅改善" if better else ("≈持平" if abs(delta) < 0.005 else "⚠️退化")
         print(f"{vn.name:<10} {vn.experiment_value:<14.4f} {vd.experiment_value:<14.4f} {delta:+.4f}{'':<8} {flag}")
     print("-" * 78)
-    print(f"trades(开): 无死区={r_no.experiment_result.trades_count}  有死区={r_dz.experiment_result.trades_count}"
-          f"  (减少 {(1-r_dz.experiment_result.trades_count/r_no.experiment_result.trades_count)*100:.0f}%)")
-    print(f"Sharpe(开): 无死区={r_no.experiment_result.sharpe_ratio:.4f}  有死区={r_dz.experiment_result.sharpe_ratio:.4f}")
-    print(f"MaxDD(开):  无死区={r_no.experiment_result.max_drawdown:.4f}  有死区={r_dz.experiment_result.max_drawdown:.4f}")
+    print(
+        f"trades(开): 无死区={r_no.experiment_result.trades_count}  有死区={r_dz.experiment_result.trades_count}"
+        f"  (减少 {(1 - r_dz.experiment_result.trades_count / r_no.experiment_result.trades_count) * 100:.0f}%)"
+    )
+    print(
+        f"Sharpe(开): 无死区={r_no.experiment_result.sharpe_ratio:.4f}  有死区={r_dz.experiment_result.sharpe_ratio:.4f}"
+    )
+    print(
+        f"MaxDD(开):  无死区={r_no.experiment_result.max_drawdown:.4f}  有死区={r_dz.experiment_result.max_drawdown:.4f}"
+    )
     print(f"passed:     无死区={r_no.passed}  有死区={r_dz.passed}")
     print("=" * 78)
 

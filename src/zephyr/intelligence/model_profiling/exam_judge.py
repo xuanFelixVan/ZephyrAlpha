@@ -38,12 +38,13 @@ _log = logging.getLogger(__name__)
 @dataclass
 class JudgeResult:
     """LLM裁判评分结果。"""
-    correctness: float = 0.0       # 事实正确性 0-1
-    completeness: float = 0.0     # 要点覆盖完整性 0-1
-    depth: float = 0.0            # 推理深度 0-1
+
+    correctness: float = 0.0  # 事实正确性 0-1
+    completeness: float = 0.0  # 要点覆盖完整性 0-1
+    depth: float = 0.0  # 推理深度 0-1
     hallucination_detected: bool = False  # 是否检测到幻觉
-    overall: float = 0.0          # 综合分 0-1
-    reasoning: str = ""           # 裁判理由
+    overall: float = 0.0  # 综合分 0-1
+    reasoning: str = ""  # 裁判理由
 
 
 JUDGE_SYSTEM_PROMPT: Final[str] = """You are an expert judge evaluating AI model responses.
@@ -222,8 +223,12 @@ def _score_tool_seq(text_lower: str, tool_seq: list) -> float:
 
 
 def _score_tool_axis(
-    text: str, text_lower: str, func_args: dict, tool_seq: list,
-    expected_contains: list, keyword_cov: float,
+    text: str,
+    text_lower: str,
+    func_args: dict,
+    tool_seq: list,
+    expected_contains: list,
+    keyword_cov: float,
 ) -> tuple[float, str]:
     """Tool 轴评分 + 并入 keyword_cov。返回 (updated_keyword_cov, tool_diag)。"""
     if not func_args and not tool_seq:
@@ -309,9 +314,7 @@ class DeterministicJudge:
 
         func_args = getattr(case, "expected_function_args", {}) or {}
         tool_seq = getattr(case, "expected_tool_sequence", []) or []
-        keyword_cov, tool_diag = _score_tool_axis(
-            text, text_lower, func_args, tool_seq, expected_contains, keyword_cov
-        )
+        keyword_cov, tool_diag = _score_tool_axis(text, text_lower, func_args, tool_seq, expected_contains, keyword_cov)
 
         expected_keys = getattr(case, "expected_structure_keys", []) or []
         structure_score = _score_structure(text, text_lower, expected_keys)

@@ -49,6 +49,7 @@ _REF_PATTERNS = [
     re.compile(r"risk_params"),
 ]
 
+
 def main() -> int:
     if not RISK_PARAMS_PATH.is_file():
         print("FAIL: 缺少 config/risk_params.yaml（INV-013 真源）")
@@ -87,6 +88,7 @@ def main() -> int:
         print(f"OK: risk_params 真源存在；发现 {hits} 个源码文件含风险参数 / 契约引用")
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

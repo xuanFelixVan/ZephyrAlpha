@@ -20,6 +20,7 @@ overlay_signals 置空，平时不干预，危机期才允许 overlay 改概率�
 Usage:
   python scripts/tests/validate_overlay_gated.py
 """
+
 from __future__ import annotations
 
 import logging
@@ -41,8 +42,16 @@ from zephyr.regime.core.regime_detector import RegimeDetector
 from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
 
 BASKET_SYMBOLS = [
-    "600000", "000001", "600519", "600036", "601318",
-    "000651", "600276", "000858", "600887", "601166",
+    "600000",
+    "000001",
+    "600519",
+    "600036",
+    "601318",
+    "000651",
+    "600276",
+    "000858",
+    "600887",
+    "601166",
 ]
 REAL_START = "2015-01-01"
 REAL_END = "2026-06-30"
@@ -61,10 +70,8 @@ def load_basket_hfq(symbols, start, end) -> pd.DataFrame:
         f"ORDER BY symbol, trade_date"
     )
     tsv = ch_reader.query(sql)
-    rows = [l.split("\t") for l in tsv.strip().split("\n")
-            if l.strip() and len(l.split("\t")) >= 7]
-    df = pd.DataFrame(rows, columns=["trade_date", "symbol", "open", "high",
-                                      "low", "close", "volume"])
+    rows = [l.split("\t") for l in tsv.strip().split("\n") if l.strip() and len(l.split("\t")) >= 7]
+    df = pd.DataFrame(rows, columns=["trade_date", "symbol", "open", "high", "low", "close", "volume"])
     df["trade_date"] = pd.to_datetime(df["trade_date"])
     for c in ["open", "high", "low", "close", "volume"]:
         df[c] = pd.to_numeric(df[c], errors="coerce")
@@ -92,9 +99,11 @@ def build_gated_schedule() -> dict:
 
     print("[gated] 构建 RegimeFeatureBuilder（enable_overlay=True, risk=simple）...")
     builder = RegimeFeatureBuilder(
-        backtest_start=REAL_START, backtest_end=REAL_END,
+        backtest_start=REAL_START,
+        backtest_end=REAL_END,
         data_load_start=DATA_LOAD_START,
-        enable_full_risk=False, enable_overlay=True,
+        enable_full_risk=False,
+        enable_overlay=True,
     )
     detector = RegimeDetector(shrinkage_enabled=True)
 
@@ -114,8 +123,7 @@ def build_gated_schedule() -> dict:
     print("[gated] 跑 walk-forward（#1 门控 overlay，预计 2-3 分钟）...")
     schedule = builder.build_shrinkage_schedule(detector, train_years=5, detect_window=60)
     vals = np.array(list(schedule.values()))
-    print(f"[gated] schedule: {len(schedule)} 日, 均值={vals.mean():.3f}, "
-          f"<1.0占比={100*(vals<1.0).mean():.1f}%")
+    print(f"[gated] schedule: {len(schedule)} 日, 均值={vals.mean():.3f}, <1.0占比={100 * (vals < 1.0).mean():.1f}%")
     return schedule
 
 
@@ -130,9 +138,9 @@ def main() -> None:
     # 方案 A：#1 门控 overlay schedule
     gated_schedule = build_gated_schedule()
     # 持久化（派生产物不入 git）
-    pd.DataFrame(
-        [{"date": d.strftime("%Y-%m-%d"), "shrinkage": v} for d, v in gated_schedule.items()]
-    ).to_csv(REPRO_DIR / "shrinkage_schedule_gated.csv", index=False)
+    pd.DataFrame([{"date": d.strftime("%Y-%m-%d"), "shrinkage": v} for d, v in gated_schedule.items()]).to_csv(
+        REPRO_DIR / "shrinkage_schedule_gated.csv", index=False
+    )
 
     cfg = BacktestConfig(
         initial_capital=Decimal("1000000"),
@@ -143,8 +151,11 @@ def main() -> None:
 
     print("\n[gated] 跑 C1（方案 A: #1 门控 overlay）...")
     r_gated = run_c1_with_provider(
-        data, signals, ScheduleShrinkageProvider(gated_schedule),
-        backtest_config=cfg, strategy_name="c1-real-gated-overlay",
+        data,
+        signals,
+        ScheduleShrinkageProvider(gated_schedule),
+        backtest_config=cfg,
+        strategy_name="c1-real-gated-overlay",
         initial_capital=Decimal("1000000"),
     )
 
@@ -158,15 +169,21 @@ def main() -> None:
     print("-" * 80)
     print(f"{'baseline simple/off':<24} {0.3474:<10.4f} {0.1485:<10.4f} {0.3694:<10.4f} {2.5522:<10.4f} {'✅'}")
     print(f"{'A3 simple/on (ungated)':<24} {0.3278:<10.4f} {0.1471:<10.4f} {0.3546:<10.4f} {2.5049:<10.4f} {'✅'}")
-    print(f"{'方案A gated (#1<1.0)':<24} {gv.get('Sharpe',0):<10.4f} {gv.get('MaxDD',0):<10.4f} "
-          f"{gv.get('Calmar',0):<10.4f} {gv.get('Turnover',0):<10.4f} {'✅' if r_gated.passed else '❌'}")
+    print(
+        f"{'方案A gated (#1<1.0)':<24} {gv.get('Sharpe', 0):<10.4f} {gv.get('MaxDD', 0):<10.4f} "
+        f"{gv.get('Calmar', 0):<10.4f} {gv.get('Turnover', 0):<10.4f} {'✅' if r_gated.passed else '❌'}"
+    )
     print("-" * 80)
     # 退化判定
-    sharpe_gated = gv.get('Sharpe', 0)
-    calmar_gated = gv.get('Calmar', 0)
+    sharpe_gated = gv.get("Sharpe", 0)
+    calmar_gated = gv.get("Calmar", 0)
     print("\n退化判定（方案A vs baseline）:")
-    print(f"  Sharpe  差 {sharpe_gated - 0.3474:+.4f}  ({'噪声范围✅' if abs(sharpe_gated-0.3474)<0.005 else '退化⚠️' if sharpe_gated<0.3474 else '改善'})")
-    print(f"  Calmar  差 {calmar_gated - 0.3694:+.4f}  ({'噪声范围✅' if abs(calmar_gated-0.3694)<0.005 else '退化⚠️' if calmar_gated<0.3694 else '改善'})")
+    print(
+        f"  Sharpe  差 {sharpe_gated - 0.3474:+.4f}  ({'噪声范围✅' if abs(sharpe_gated - 0.3474) < 0.005 else '退化⚠️' if sharpe_gated < 0.3474 else '改善'})"
+    )
+    print(
+        f"  Calmar  差 {calmar_gated - 0.3694:+.4f}  ({'噪声范围✅' if abs(calmar_gated - 0.3694) < 0.005 else '退化⚠️' if calmar_gated < 0.3694 else '改善'})"
+    )
     print(f"\n方案A passed={r_gated.passed}")
     print("\n方案 A 详细 verdicts:")
     for v in r_gated.metric_verdicts:

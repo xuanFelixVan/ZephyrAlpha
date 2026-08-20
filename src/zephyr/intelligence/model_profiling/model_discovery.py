@@ -69,6 +69,7 @@ class ModelDiscovery:
     ) -> None:
         if ollama_url is None:
             from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
+
             ollama_url = DEFAULT_OLLAMA_URL
         self._url = ollama_url.rstrip("/")
         self._timeout = timeout_s
@@ -93,7 +94,6 @@ class ModelDiscovery:
     def url(self, value):
         """写入：url（Stage 4 公共化）。"""
         self._url = value
-
 
     def discover_ollama(self) -> list[DiscoveredModel]:
         """通过 Ollama API 列出所有本地模型。"""

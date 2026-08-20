@@ -116,10 +116,10 @@ _logger = logging.getLogger(__name__)
 class AShareBoard(str, Enum):
     """A 股板块分类。"""
 
-    MAIN = "main"        # 沪深主板
+    MAIN = "main"  # 沪深主板
     CHINEXT = "chinext"  # 创业板
-    STAR = "star"        # 科创板
-    BSE = "bse"          # 北交所
+    STAR = "star"  # 科创板
+    BSE = "bse"  # 北交所
     UNKNOWN = "unknown"
 
 
@@ -142,18 +142,10 @@ class BoardLotRule:
 
 # 板块整手规则表（2026-07-06 最新，§决策⑰）
 _BOARD_LOT_RULES: dict[AShareBoard, BoardLotRule] = {
-    AShareBoard.MAIN: BoardLotRule(
-        AShareBoard.MAIN, lot_size=100, min_unit=100, increment=100
-    ),
-    AShareBoard.CHINEXT: BoardLotRule(
-        AShareBoard.CHINEXT, lot_size=100, min_unit=100, increment=100
-    ),
-    AShareBoard.STAR: BoardLotRule(
-        AShareBoard.STAR, lot_size=200, min_unit=200, increment=1
-    ),
-    AShareBoard.BSE: BoardLotRule(
-        AShareBoard.BSE, lot_size=100, min_unit=100, increment=100
-    ),
+    AShareBoard.MAIN: BoardLotRule(AShareBoard.MAIN, lot_size=100, min_unit=100, increment=100),
+    AShareBoard.CHINEXT: BoardLotRule(AShareBoard.CHINEXT, lot_size=100, min_unit=100, increment=100),
+    AShareBoard.STAR: BoardLotRule(AShareBoard.STAR, lot_size=200, min_unit=200, increment=1),
+    AShareBoard.BSE: BoardLotRule(AShareBoard.BSE, lot_size=100, min_unit=100, increment=100),
 }
 
 # 主板规则作为未知板块的安全回退
@@ -281,9 +273,7 @@ def is_odd_lot(qty: Decimal, symbol: str) -> bool:
     return qty < rule.min_unit
 
 
-def adjust_sell_for_odd_lot(
-    sell_qty: Decimal, current_qty: Decimal, symbol: str
-) -> Decimal:
+def adjust_sell_for_odd_lot(sell_qty: Decimal, current_qty: Decimal, symbol: str) -> Decimal:
     """卖出数量调整：若卖出后剩余 < min_unit（零股），则全部一次性卖出。
 
     A 股规则：卖出后剩余持仓不足一个最小申报单位时，剩余零股必须一次性
@@ -306,7 +296,11 @@ def adjust_sell_for_odd_lot(
         # 卖出后剩余零股 → 必须一次性清仓
         _logger.info(
             "odd-lot sell adjustment: symbol=%s current=%s sell=%s remaining=%s<%d → sell all",
-            symbol, current_qty, sell_qty, remaining, rule.min_unit,
+            symbol,
+            current_qty,
+            sell_qty,
+            remaining,
+            rule.min_unit,
         )
         return current_qty
     return sell_qty

@@ -22,6 +22,7 @@
 不启动真实 MCP Server 进程（避免依赖项缺失导致测试不稳定），
 而是用简单 Python 进程验证 ProcessLifecycleGateway 的进程管理能力。
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -53,6 +54,7 @@ def launcher_module():
 def boot_hooks_module():
     """导入 boot_hooks 模块。"""
     from zephyr.trading import boot_hooks
+
     return boot_hooks
 
 
@@ -244,8 +246,7 @@ class TestLauncherDAGTopology:
         """验证 layer_1 包含5个基础 Server。"""
         order = launcher_module.topological_order()
         layer_1 = order[0]
-        expected = {"gate_engine", "blueprint_search",
-                    "governance", "vector_memory", "telemetry"}
+        expected = {"gate_engine", "blueprint_search", "governance", "vector_memory", "telemetry"}
         assert set(layer_1) == expected, f"Layer 1 mismatch: {layer_1}"
         assert len(layer_1) == 5
 

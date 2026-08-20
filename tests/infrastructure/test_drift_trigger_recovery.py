@@ -32,9 +32,7 @@ import pytest
 # #ARCH-079：trigger_recovery 为桩（return True，-> bool），未实现测试契约的
 # dict 恢复编排——代码侧缺口待裁定；另 zephyr.orchestrator 包重构漂移
 # （trigger_router 属性缺席）。全文件 xfail 留痕（strict=False）。
-pytestmark = pytest.mark.xfail(
-    strict=False, reason="#ARCH-079 trigger_recovery 桩未实现恢复编排契约，待裁定补实现"
-)
+pytestmark = pytest.mark.xfail(strict=False, reason="#ARCH-079 trigger_recovery 桩未实现恢复编排契约，待裁定补实现")
 
 
 def test_trigger_recovery_importable():

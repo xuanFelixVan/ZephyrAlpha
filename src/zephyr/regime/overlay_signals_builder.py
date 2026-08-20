@@ -322,9 +322,13 @@ class OverlaySignalsConstructor:
         # ── S2: CRISIS → RECOVERY ──
         # P1-E9a：衰减加权多过滤器版（需 OHLCV+open）；缺 OHLCV 回退瞬时两维版（治标 z>1）
         if (
-            vol_z is not None and pct_change is not None
-            and close is not None and high is not None and low is not None
-            and volume is not None and open_ is not None
+            vol_z is not None
+            and pct_change is not None
+            and close is not None
+            and high is not None
+            and low is not None
+            and volume is not None
+            and open_ is not None
         ):
             # 期权 put/call + 新低占比（第 5/6 维）：Step 0 ④ 勘探无数据管道，默认关闭
             cache["capitulation"] = overlay_features.s2_capitulation_score(
@@ -354,10 +358,7 @@ class OverlaySignalsConstructor:
         else:
             _logger.warning("S2 fund 数据缺失，降级 0.0")
         # P1-E9e：three_yang 6 维分级版（需 OHLCV 五序列；缺失降级 0.0，不回退旧宽松版）
-        if (
-            open_ is not None and high is not None and low is not None
-            and close is not None and volume is not None
-        ):
+        if open_ is not None and high is not None and low is not None and close is not None and volume is not None:
             cache["three_yang"] = overlay_features.s2_three_yang_flag(open_, high, low, close, volume)
         else:
             _logger.warning("S2 three_yang 数据缺失（需 OHLCV），降级 0.0")

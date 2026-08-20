@@ -31,6 +31,7 @@
 
 依据: 14_regime_s2_diagnosis v0.5.2 §4.6 #3/#5/#6
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -139,7 +140,7 @@ class TestEvrScore:
     def test_adl_accumulation_pulse(self):
         """吸筹脉冲：大跌日（<-3%）ADL 暴增（收近高位+巨量）→ 70。"""
         bars = _flat_bars(250)
-        bars.append(_bar(104.5, 105.0, 103.5, 104.0, 1000.0))   # bar250 抬高基准
+        bars.append(_bar(104.5, 105.0, 103.5, 104.0, 1000.0))  # bar250 抬高基准
         # bar251：大跌 -3.85% 但收近当日高位 + 巨量 → mfm≈0.89×20000，ADL 暴增
         bars.append(_bar(95.0, 100.4, 93.0, 100.0, 20000.0))
         d = _to_ohlcv(bars)
@@ -150,9 +151,9 @@ class TestEvrScore:
         """隐形吸筹：价格阴跌 7-10 日 + ADL 走平/微升 → 50。"""
         # 前置构造一个更低的价格低点（bar200 附近 98.0）防误判经典背离（price_ll 须 False）
         bars = _flat_bars(180)
-        bars.append(_bar(98.5, 99.0, 97.8, 98.0, 1500.0))       # bar180 深谷 98.0
+        bars.append(_bar(98.5, 99.0, 97.8, 98.0, 1500.0))  # bar180 深谷 98.0
         price = 98.0
-        for _ in range(70):                                      # 回升到 100.5
+        for _ in range(70):  # 回升到 100.5
             price += 0.036
             bars.append(_bar(price, price + 0.5, price - 0.5, price, 1000.0))
         # 8 日阴跌（每日 -0.2）但每日收近高位（mfm>0）→ ADL 微升
