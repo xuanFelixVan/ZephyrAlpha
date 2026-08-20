@@ -22,6 +22,7 @@
 
 测试隔离：使用 tmp_path 构造 mock gateway，不污染真实 .runtime/。
 """
+
 from __future__ import annotations
 
 import json
@@ -64,6 +65,7 @@ class TestTrigger:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         # trigger 是 ReconcilerSpec.trigger
         assert spec.trigger([str(tmp_path / "src" / "zephyr" / "foo.py")]) is True
@@ -73,6 +75,7 @@ class TestTrigger:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         assert spec.trigger([str(tmp_path / "scripts" / "foo.py")]) is False
 
@@ -81,6 +84,7 @@ class TestTrigger:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         assert spec.trigger([str(tmp_path / "src" / "zephyr" / "foo.yaml")]) is False
 
@@ -89,6 +93,7 @@ class TestTrigger:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         assert spec.trigger([str(tmp_path / "docs" / "foo.py")]) is False
 
@@ -106,6 +111,7 @@ class TestBypassAuditLogging:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
         msg = "fix(scoped): test [no-lookup:trivial-doc-fix]"
@@ -115,10 +121,7 @@ class TestBypassAuditLogging:
         # 验证 bypass_audit.jsonl 已写入
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
         assert bypass_log.is_file()
-        entries = [
-            json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        entries = [json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert len(entries) == 1
         assert entries[0]["session_id"] == "sess-test-001"
         assert entries[0]["reason"] == "trivial-doc-fix"
@@ -129,6 +132,7 @@ class TestBypassAuditLogging:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         # 先放一个 session audit log 避免 warn（isolate bypass 行为）
         audit_dir = tmp_path / ".runtime" / "lookup_audit"
@@ -156,6 +160,7 @@ class TestBypassEscalation:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         # 预填充 6 条 bypass 记录
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
         bypass_log.parent.mkdir(parents=True, exist_ok=True)
@@ -182,6 +187,7 @@ class TestBypassEscalation:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
         bypass_log.parent.mkdir(parents=True, exist_ok=True)
         for i in range(5):
@@ -218,6 +224,7 @@ class TestAuditLogHealthCheck:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
         # 无 bypass marker，无 audit log
@@ -230,11 +237,11 @@ class TestAuditLogHealthCheck:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         audit_dir = tmp_path / ".runtime" / "lookup_audit"
         audit_dir.mkdir(parents=True, exist_ok=True)
         (audit_dir / "sess-real-001.jsonl").write_text(
-            json.dumps({"ts": "2026-07-19T00:00:00Z", "operation": "discover_applicable_rules"})
-            + "\n",
+            json.dumps({"ts": "2026-07-19T00:00:00Z", "operation": "discover_applicable_rules"}) + "\n",
             encoding="utf-8",
         )
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
@@ -247,6 +254,7 @@ class TestAuditLogHealthCheck:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         audit_dir = tmp_path / ".runtime" / "lookup_audit"
         audit_dir.mkdir(parents=True, exist_ok=True)
         # 只有 bypass_audit.jsonl，没有 session log
@@ -273,6 +281,7 @@ class TestReconcilerSpec:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         assert spec.gate_id == "CAPABILITY-LOOKUP-HEALTH"
 
@@ -280,6 +289,7 @@ class TestReconcilerSpec:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         assert spec.priority == 220
 
@@ -290,11 +300,11 @@ class TestReconcilerSpec:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         sig = inspect.signature(spec.reconcile)
         assert len(sig.parameters) >= 3, (
-            f"reconcile should accept >=3 args, got {len(sig.parameters)}: "
-            f"{list(sig.parameters)}"
+            f"reconcile should accept >=3 args, got {len(sig.parameters)}: {list(sig.parameters)}"
         )
 
 
@@ -310,26 +320,32 @@ class TestRegistrationInGateway:
         """GitCommitGateway 实例化后，registry 中包含 CAPABILITY-LOOKUP-HEALTH。"""
         # 初始化最小 git 仓库
         import subprocess
-        env = {**os.environ, "GIT_AUTHOR_NAME": "test", "GIT_AUTHOR_EMAIL": "test@x",
-               "GIT_COMMITTER_NAME": "test", "GIT_COMMITTER_EMAIL": "test@x"}
-        subprocess.run(["git", "init"], cwd=str(tmp_path),
-                       capture_output=True, env=env, check=True)
-        subprocess.run(["git", "config", "user.name", "test"], cwd=str(tmp_path),
-                       capture_output=True, env=env, check=True)
-        subprocess.run(["git", "config", "user.email", "test@x"], cwd=str(tmp_path),
-                       capture_output=True, env=env, check=True)
+
+        env = {
+            **os.environ,
+            "GIT_AUTHOR_NAME": "test",
+            "GIT_AUTHOR_EMAIL": "test@x",
+            "GIT_COMMITTER_NAME": "test",
+            "GIT_COMMITTER_EMAIL": "test@x",
+        }
+        subprocess.run(["git", "init"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        subprocess.run(
+            ["git", "config", "user.name", "test"], cwd=str(tmp_path), capture_output=True, env=env, check=True
+        )
+        subprocess.run(
+            ["git", "config", "user.email", "test@x"], cwd=str(tmp_path), capture_output=True, env=env, check=True
+        )
         (tmp_path / "README.md").write_text("init\n", encoding="utf-8")
-        subprocess.run(["git", "add", "README.md"], cwd=str(tmp_path),
-                       capture_output=True, env=env, check=True)
-        subprocess.run(["git", "commit", "-m", "init", "--no-verify"],
-                       cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        subprocess.run(["git", "add", "README.md"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        subprocess.run(
+            ["git", "commit", "-m", "init", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env, check=True
+        )
 
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
+
         gw = GitCommitGateway(project_root=tmp_path)
         gate_ids = [s.gate_id for s in gw.reconciliation_registry.specs]
-        assert "CAPABILITY-LOOKUP-HEALTH" in gate_ids, (
-            f"CAPABILITY-LOOKUP-HEALTH not registered, got: {gate_ids}"
-        )
+        assert "CAPABILITY-LOOKUP-HEALTH" in gate_ids, f"CAPABILITY-LOOKUP-HEALTH not registered, got: {gate_ids}"
 
 
 import os  # noqa: E402 — late import for test_reconciler_registered_in_gateway env
@@ -353,16 +369,14 @@ class TestBypassSceneClassification:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
         msg = "fix(governance): gate bug [no-lookup:gate-fix]"
         result = spec.reconcile([py_file], "sess-exempt-001", msg)
         assert result.action == "clean"
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
-        entries = [
-            json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        entries = [json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert len(entries) == 1
         assert entries[0]["scene"] == "exempt"
         assert entries[0]["reason"] == "gate-fix"
@@ -372,16 +386,14 @@ class TestBypassSceneClassification:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
         msg = "feat: new feature [no-lookup:new-feature-xxx]"
         result = spec.reconcile([py_file], "sess-violation-001", msg)
         assert result.action == "clean"  # 1 violation < 5
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
-        entries = [
-            json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        entries = [json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert len(entries) == 1
         assert entries[0]["scene"] == "violation"
         assert entries[0]["reason"] == "new-feature-xxx"
@@ -391,11 +403,20 @@ class TestBypassSceneClassification:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
         bypass_log.parent.mkdir(parents=True, exist_ok=True)
         # 预填充 8 条全部白名单 bypass（gate-fix/test-fix/merge-prep 轮换）
-        whitelist_reasons = ["gate-fix", "test-fix", "merge-prep", "continuation",
-                             "investigated", "auto-fix", "batch-treatment", "sync"]
+        whitelist_reasons = [
+            "gate-fix",
+            "test-fix",
+            "merge-prep",
+            "continuation",
+            "investigated",
+            "auto-fix",
+            "batch-treatment",
+            "sync",
+        ]
         for i, reason in enumerate(whitelist_reasons):
             entry = {
                 "ts": f"2026-07-19T0{i}:00:00Z",
@@ -420,6 +441,7 @@ class TestBypassSceneClassification:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
         bypass_log.parent.mkdir(parents=True, exist_ok=True)
         # 预填充 6 条全部非白名单 bypass（违规场景）
@@ -447,6 +469,7 @@ class TestBypassSceneClassification:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
         bypass_log.parent.mkdir(parents=True, exist_ok=True)
         # 预填充：4 白名单 + 3 违规 = 7 条
@@ -483,16 +506,14 @@ class TestBypassSceneClassification:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
         msg = "fix: gate bug [no-lookup:GATE-FIX]"
         result = spec.reconcile([py_file], "sess-case-insensitive", msg)
         assert result.action == "clean"
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
-        entries = [
-            json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        entries = [json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert entries[0]["scene"] == "exempt"
 
     def test_substring_matching(self, tmp_path):
@@ -500,16 +521,14 @@ class TestBypassSceneClassification:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
         msg = "fix: gate bug [no-lookup:gate-fix-urgent-123]"
         result = spec.reconcile([py_file], "sess-substring", msg)
         assert result.action == "clean"
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
-        entries = [
-            json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        entries = [json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert entries[0]["scene"] == "exempt"
         assert entries[0]["reason"] == "gate-fix-urgent-123"
 
@@ -518,15 +537,29 @@ class TestBypassSceneClassification:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         whitelist_keywords = [
-            "gate-fix", "test-fix", "merge-prep", "continuation", "investigated",
-            "auto-fix", "batch-treatment", "batch-governance",
-            "architectural-refactor", "sync",
-            "mechanical", "completing", "research", "bugfix", "root-cause", "调研",
+            "gate-fix",
+            "test-fix",
+            "merge-prep",
+            "continuation",
+            "investigated",
+            "auto-fix",
+            "batch-treatment",
+            "batch-governance",
+            "architectural-refactor",
+            "sync",
+            "mechanical",
+            "completing",
+            "research",
+            "bugfix",
+            "root-cause",
+            "调研",
         ]
         for keyword in whitelist_keywords:
             # 每个关键词独立 tmp_path（避免 bypass_audit.jsonl 累积）
             import tempfile
+
             sub_tmp = Path(tempfile.mkdtemp())
             spec = make_capability_lookup_health_reconciler(_MockGateway(sub_tmp))
             py_file = str(sub_tmp / "src" / "zephyr" / "foo.py")
@@ -534,29 +567,22 @@ class TestBypassSceneClassification:
             result = spec.reconcile([py_file], f"sess-kw-{keyword}", msg)
             assert result.action == "clean", f"keyword={keyword} should be clean"
             bypass_log = sub_tmp / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
-            entries = [
-                json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
-                if line.strip()
-            ]
-            assert entries[0]["scene"] == "exempt", (
-                f"keyword={keyword} should be exempt, got {entries[0]['scene']}"
-            )
+            entries = [json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines() if line.strip()]
+            assert entries[0]["scene"] == "exempt", f"keyword={keyword} should be exempt, got {entries[0]['scene']}"
 
     def test_normalization_underscore_to_hyphen(self, tmp_path):
         """归一化匹配：root_cause_fix（_ → -）匹配 root-cause → exempt。"""
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
         msg = "fix: root cause [no-lookup:root_cause_fix]"
         result = spec.reconcile([py_file], "sess-normalize", msg)
         assert result.action == "clean"
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
-        entries = [
-            json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        entries = [json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert entries[0]["scene"] == "exempt"
         assert entries[0]["reason"] == "root_cause_fix"
 
@@ -565,16 +591,14 @@ class TestBypassSceneClassification:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
         msg = "fix: mechanical [no-lookup:mechanical-header-format-fix-batch-3]"
         result = spec.reconcile([py_file], "sess-mechanical", msg)
         assert result.action == "clean"
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
-        entries = [
-            json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        entries = [json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert entries[0]["scene"] == "exempt"
         assert entries[0]["reason"] == "mechanical-header-format-fix-batch-3"
 
@@ -583,6 +607,7 @@ class TestBypassSceneClassification:
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
+
         spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
         py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
         # [no-lookup:] 紧跟 ] → reason 为空
@@ -590,9 +615,6 @@ class TestBypassSceneClassification:
         result = spec.reconcile([py_file], "sess-empty-reason", msg)
         assert result.action == "clean"  # 1 violation < 5
         bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
-        entries = [
-            json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        entries = [json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert entries[0]["scene"] == "violation"
         assert entries[0]["reason"] == ""

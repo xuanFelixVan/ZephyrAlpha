@@ -5,6 +5,7 @@
 
 #ARCH-CONSUMERS-ACCURACY-003 Phase 2 / #ARCH-ISSUE-RESOLVED-INTEGRITY-001 治本
 """
+
 from __future__ import annotations
 
 import os

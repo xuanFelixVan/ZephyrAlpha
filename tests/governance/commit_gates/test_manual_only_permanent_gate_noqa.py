@@ -25,6 +25,7 @@
 测试隔离：MagicMock 模拟 gateway.run_git；tmp_path 创建真实 .py 文件。
 复用 test_perm_trigger_gate.py 的 _MockResult / _make_gateway 范式。
 """
+
 from __future__ import annotations
 
 import os
@@ -50,14 +51,14 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # 
 # 测试辅助（复用 test_perm_trigger_gate.py 范式）
 # ===========================================================================
 
+
 @dataclass
 class _MockResult:
     returncode: int = 0
     stdout: str = ""
 
 
-def _make_gateway(tmp_path, staged_files=None, added_files=None,
-                  diff_fails=False, diff_raises=False, diff_stdout=""):
+def _make_gateway(tmp_path, staged_files=None, added_files=None, diff_fails=False, diff_raises=False, diff_stdout=""):
     """构造 mock gateway。
 
     - staged_files: --diff-filter=AM 返回的文件列表
@@ -70,8 +71,10 @@ def _make_gateway(tmp_path, staged_files=None, added_files=None,
     gw.project_root = str(tmp_path)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -109,6 +112,7 @@ def _shadow_open(monkeypatch):
     """源文件用 open(path).read() 未关闭文件句柄（ResourceWarning）。
     注入 shadow open：read() 后立即关闭真实 fd。复用 test_perm_trigger_gate.py 范式。"""
     import builtins
+
     _real_open = builtins.open
 
     class _AutoClose:
@@ -134,6 +138,7 @@ def _shadow_open(monkeypatch):
         return _AutoClose(_real_open(file, mode, *args, **kwargs))
 
     import zephyr.gov_enforcement.commit_gates.manual_only_permanent_gate as mod
+
     monkeypatch.setattr(mod, "open", _shadow, raising=False)
 
 
@@ -279,9 +284,7 @@ class TestHasM11Exemption:
     def test_m11_in_multiline_content(self):
         """m11 标记在多行文件中（第 2 行）→ True。"""
         content = (
-            "# [TTL] permanent\n"
-            "# noqa: m11-perm-manual-legitimate  M11豁免: AI/CI 按需调用的 runner\n"
-            "import argparse\n"
+            "# [TTL] permanent\n# noqa: m11-perm-manual-legitimate  M11豁免: AI/CI 按需调用的 runner\nimport argparse\n"
         )
         assert _has_m11_exemption(content) is True
 
@@ -452,9 +455,7 @@ class TestGateM11ExemptionModified:
 
         gate = make_manual_only_permanent_gate()
         passed, msg = gate.check(gw, [rel])
-        assert passed is True, (
-            f"should pass (m11 exempt even when added line triggers quick_hit): {msg}"
-        )
+        assert passed is True, f"should pass (m11 exempt even when added line triggers quick_hit): {msg}"
 
     def test_modified_adds_argparse_namespace_no_m11_blocked(self, tmp_path):
         """修改文件新增含 `argparse.Namespace` 行（触发 quick_hit）+ 无 m11 → 阻断。

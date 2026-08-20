@@ -76,36 +76,51 @@ class TestRegisterEnforcement:
     def test_empty_file_ops_rejected(self):
         reg = ReconciliationRegistry()
         with pytest.raises(ValueError, match="file_ops"):
-            reg.register(ReconcilerSpec(
-                gate_id="G1", trigger=lambda f: True,
-                reconcile=lambda f, s: ReconcileResult(action="clean"),
-            ))
+            reg.register(
+                ReconcilerSpec(
+                    gate_id="G1",
+                    trigger=lambda f: True,
+                    reconcile=lambda f, s: ReconcileResult(action="clean"),
+                )
+            )
 
     def test_invalid_file_ops_rejected(self):
         reg = ReconciliationRegistry()
         with pytest.raises(ValueError, match="非法值"):
-            reg.register(ReconcilerSpec(
-                gate_id="G2", trigger=lambda f: True,
-                reconcile=lambda f, s: ReconcileResult(action="clean"),
-                file_ops=frozenset({"read", "bogus"}),
-            ))
+            reg.register(
+                ReconcilerSpec(
+                    gate_id="G2",
+                    trigger=lambda f: True,
+                    reconcile=lambda f, s: ReconcileResult(action="clean"),
+                    file_ops=frozenset({"read", "bogus"}),
+                )
+            )
 
     def test_valid_file_ops_accepted(self):
         reg = ReconciliationRegistry()
-        reg.register(ReconcilerSpec(
-            gate_id="G3", trigger=lambda f: True,
-            reconcile=lambda f, s: ReconcileResult(action="clean"),
-            file_ops=frozenset({"read", "write"}),
-        ))
+        reg.register(
+            ReconcilerSpec(
+                gate_id="G3",
+                trigger=lambda f: True,
+                reconcile=lambda f, s: ReconcileResult(action="clean"),
+                file_ops=frozenset({"read", "write"}),
+            )
+        )
         assert reg.spec_count == 1
 
     def test_compose_unions_file_ops(self):
-        a = ReconcilerSpec(gate_id="A", trigger=lambda f: True,
-                           reconcile=lambda f, s: ReconcileResult(action="clean"),
-                           file_ops=frozenset({"read"}))
-        b = ReconcilerSpec(gate_id="B", trigger=lambda f: True,
-                           reconcile=lambda f, s: ReconcileResult(action="clean"),
-                           file_ops=frozenset({"read", "delete"}))
+        a = ReconcilerSpec(
+            gate_id="A",
+            trigger=lambda f: True,
+            reconcile=lambda f, s: ReconcileResult(action="clean"),
+            file_ops=frozenset({"read"}),
+        )
+        b = ReconcilerSpec(
+            gate_id="B",
+            trigger=lambda f: True,
+            reconcile=lambda f, s: ReconcileResult(action="clean"),
+            file_ops=frozenset({"read", "delete"}),
+        )
         combo = _compose_reconcilers("COMBO", a, b)
         assert combo.file_ops == frozenset({"read", "delete"})
 
@@ -124,10 +139,14 @@ class TestReconcilerContextEnforcement:
             return ReconcileResult(action="clean")
 
         reg = ReconciliationRegistry()
-        reg.register(ReconcilerSpec(
-            gate_id="EVIL", trigger=lambda f: True, reconcile=evil_reconcile,
-            file_ops=frozenset({"read", "write"}),
-        ))
+        reg.register(
+            ReconcilerSpec(
+                gate_id="EVIL",
+                trigger=lambda f: True,
+                reconcile=evil_reconcile,
+                file_ops=frozenset({"read", "write"}),
+            )
+        )
         results = reg.reconcile_for(["x"], "red-team")
         assert results[0].action == "critical_warn"
         assert "file_ops" in results[0].detail
@@ -144,10 +163,14 @@ class TestReconcilerContextEnforcement:
             return ReconcileResult(action="clean")
 
         reg = ReconciliationRegistry()
-        reg.register(ReconcilerSpec(
-            gate_id="OK", trigger=lambda f: True, reconcile=ok_reconcile,
-            file_ops=frozenset({"read", "delete"}),
-        ))
+        reg.register(
+            ReconcilerSpec(
+                gate_id="OK",
+                trigger=lambda f: True,
+                reconcile=ok_reconcile,
+                file_ops=frozenset({"read", "delete"}),
+            )
+        )
         results = reg.reconcile_for(["x"], "red-team")
         assert results[0].action == "clean"
         assert not target.exists()
@@ -165,10 +188,14 @@ class TestReconcilerContextEnforcement:
             return ReconcileResult(action="clean")
 
         reg = ReconciliationRegistry()
-        reg.register(ReconcilerSpec(gate_id="R1", priority=1, trigger=lambda f: True,
-                                    reconcile=r1, file_ops=frozenset({"read", "delete"})))
-        reg.register(ReconcilerSpec(gate_id="R2", priority=2, trigger=lambda f: True,
-                                    reconcile=r2, file_ops=frozenset({"read"})))
+        reg.register(
+            ReconcilerSpec(
+                gate_id="R1", priority=1, trigger=lambda f: True, reconcile=r1, file_ops=frozenset({"read", "delete"})
+            )
+        )
+        reg.register(
+            ReconcilerSpec(gate_id="R2", priority=2, trigger=lambda f: True, reconcile=r2, file_ops=frozenset({"read"}))
+        )
         reg.reconcile_for(["x"], "s")
         # R2 执行时上下文应为 R2 自己的声明（非 R1 的 delete）
         assert leaked[0] == ("R2", frozenset({"read"}))
@@ -182,8 +209,11 @@ class TestReconcilerContextEnforcement:
             return ReconcileResult(action="clean")
 
         reg = ReconciliationRegistry()
-        reg.register(ReconcilerSpec(gate_id="EVIL2", trigger=lambda f: True,
-                                    reconcile=evil, file_ops=frozenset({"read", "delete"})))
+        reg.register(
+            ReconcilerSpec(
+                gate_id="EVIL2", trigger=lambda f: True, reconcile=evil, file_ops=frozenset({"read", "delete"})
+            )
+        )
         results = reg.reconcile_for(["x"], "s")
         assert results[0].action in ("critical_warn", "warn")  # DeleteBlockedError→critical_warn；OSError→warn
 
@@ -245,10 +275,7 @@ class TestInprocessEnforcement:
         with pytest.raises(DeleteBlockedError):
             os.remove("docs/x.md")
         entries = _read_audit(tmp_path)
-        blocked = [
-            e for e in entries
-            if e.get("action") in ("inprocess_block", "docs_untracked_block")
-        ]
+        blocked = [e for e in entries if e.get("action") in ("inprocess_block", "docs_untracked_block")]
         assert blocked, "阻断事件未落审计"
 
     def test_audit_stats_counted(self, tmp_path, monkeypatch):
@@ -294,9 +321,9 @@ class TestDocsUntrackedEnforcement:
             os.remove("docs/draft.md")
         assert victim.exists(), "被拦文件不应消失"
         entries = _read_audit(tmp_path)
-        assert any(
-            e.get("action") == "docs_untracked_block" for e in entries
-        ), "docs_untracked 阻断未落审计（T3 验收：无记录事件=0）"
+        assert any(e.get("action") == "docs_untracked_block" for e in entries), (
+            "docs_untracked 阻断未落审计（T3 验收：无记录事件=0）"
+        )
 
     def test_inprocess_force_allows_untracked(self, tmp_path, monkeypatch):
         """人工确认标记 ZEPHYR_FORCE_DELETE=1 → 放行执行（审计照落）。"""
@@ -384,6 +411,7 @@ class TestStaticScanGate:
         from zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate import (
             scan_file_for_bare_primitives,
         )
+
         f = tmp_path / "evil.py"
         f.write_text("import os\nos.remove('x')\n", encoding="utf-8")
         hits = scan_file_for_bare_primitives(f)
@@ -393,6 +421,7 @@ class TestStaticScanGate:
         from zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate import (
             scan_file_for_bare_primitives,
         )
+
         f = tmp_path / "good.py"
         f.write_text(
             "from scripts.ops_guard import guard_remove\nguard_remove('x')\n",
@@ -404,6 +433,7 @@ class TestStaticScanGate:
         from zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate import (
             scan_file_for_bare_primitives,
         )
+
         f = tmp_path / "exempt.py"
         f.write_text("os.remove('x')  # ops-guard-exempt: 补丁真源自测\n", encoding="utf-8")
         assert scan_file_for_bare_primitives(f) == []

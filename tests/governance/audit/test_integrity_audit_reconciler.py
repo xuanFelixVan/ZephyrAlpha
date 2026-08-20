@@ -32,6 +32,7 @@ compose 策略说明（P1-4 文档化）：
 
 测试隔离: 所有测试用 tmp_path 临时 git 仓库，不污染生产库。
 """
+
 from __future__ import annotations
 
 import os
@@ -73,7 +74,9 @@ def _init_git_repo(repo_dir: Path) -> None:
     # 初始 commit
     (repo_dir / ".gitignore").write_text("*.tmp\n.runtime/\n", encoding="utf-8")
     subprocess.run(["git", "add", ".gitignore"], cwd=str(repo_dir), capture_output=True, check=True)
-    subprocess.run(["git", "commit", "-m", "init [GW:setup]", "--no-verify"], cwd=str(repo_dir), capture_output=True, check=True)
+    subprocess.run(
+        ["git", "commit", "-m", "init [GW:setup]", "--no-verify"], cwd=str(repo_dir), capture_output=True, check=True
+    )
 
 
 def _make_commit(repo_dir: Path, message: str) -> None:
@@ -334,7 +337,9 @@ class TestAuditCommitHistory:
         subprocess.run(["git", "checkout", main_branch], cwd=str(tmp_path), capture_output=True, check=True)
         subprocess.run(
             ["git", "merge", "--no-ff", "feature", "-m", "Merge branch 'feature' [GW:merge]"],
-            cwd=str(tmp_path), capture_output=True, check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            check=True,
         )
         violations, err = _audit_commit_history(tmp_path, audit_window=20, gw_marker="[GW:")
         assert err is None
@@ -352,7 +357,9 @@ class TestAuditCommitHistory:
         subprocess.run(["git", "checkout", main_branch], cwd=str(tmp_path), capture_output=True, check=True)
         subprocess.run(
             ["git", "merge", "--no-ff", "feature", "-m", "Merge branch 'feature'"],  # 无 [GW: 标记
-            cwd=str(tmp_path), capture_output=True, check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            check=True,
         )
         violations, err = _audit_commit_history(tmp_path, audit_window=20, gw_marker="[GW:")
         assert err is None
@@ -369,7 +376,9 @@ class TestAuditCommitHistory:
         subprocess.run(["git", "add", ".gitignore"], cwd=str(tmp_path), capture_output=True, check=True)
         subprocess.run(
             ["git", "commit", "-m", "feat: body test", "-m", "[GW:sess-body]", "--no-verify"],
-            cwd=str(tmp_path), capture_output=True, check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            check=True,
         )
         violations, err = _audit_commit_history(tmp_path, audit_window=20, gw_marker="[GW:")
         assert err is None
@@ -461,9 +470,7 @@ class TestArchRefs:
         """在 tmp_path 创建 architecture_issue_registry.yaml。"""
         registry_dir = repo_dir / "docs/01_policies_and_standards/_registry/catalogs"
         registry_dir.mkdir(parents=True, exist_ok=True)
-        (registry_dir / "architecture_issue_registry.yaml").write_text(
-            entries_yaml, encoding="utf-8"
-        )
+        (registry_dir / "architecture_issue_registry.yaml").write_text(entries_yaml, encoding="utf-8")
 
     def test_arch_no_refs(self, tmp_path):
         """committed_files 无 #ARCH-XXX 引用 → detail 含 'no #ARCH-XXX refs'。"""

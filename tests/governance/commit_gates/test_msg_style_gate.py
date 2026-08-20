@@ -24,7 +24,7 @@
   - 字面量消息 raise Foo("literal")
   - bare raise / raise var
   - Exception()/BaseException() 无参
-- TestNoqaExemption: # noqa: MSG-STYLE 行级豁免
+- TestNoqaExemption: # noqa: MSG-STYLE 行级豁免场景覆盖与断言
 - TestGatewayIntegration: mock gateway 流程
   - 新增文件全文件检测
   - 修改文件只检测 diff 新增行
@@ -33,6 +33,7 @@
   - fail-open on git diff 失败
   - fail-open on AST 解析失败
 """
+
 from __future__ import annotations
 
 import ast
@@ -151,22 +152,22 @@ class TestSafePatterns:
         assert _detect_msg_style(tree) == []
 
     def test_bare_raise_safe(self):
-        code = 'raise'
+        code = "raise"
         tree = ast.parse(code)
         assert _detect_msg_style(tree) == []
 
     def test_raise_variable_safe(self):
-        code = 'raise some_exception_var'
+        code = "raise some_exception_var"
         tree = ast.parse(code)
         assert _detect_msg_style(tree) == []
 
     def test_exception_no_args_safe(self):
-        code = 'raise Exception()'
+        code = "raise Exception()"
         tree = ast.parse(code)
         assert _detect_msg_style(tree) == []
 
     def test_non_string_first_arg_safe(self):
-        code = 'raise FooError(some_var)'
+        code = "raise FooError(some_var)"
         tree = ast.parse(code)
         assert _detect_msg_style(tree) == []
 
@@ -188,7 +189,7 @@ class TestSafePatterns:
 # ---------------------------------------------------------------------------
 class TestNoqaExemption:
     def test_noqa_line_exempted(self):
-        code = 'raise ValueError(f"x → y")  # noqa: MSG-STYLE\n'
+        code = 'raise ValueError(f"x → y")  # noqa: MSG-STYLE\n'  # 测试夹具：样例代码串内含行级豁免标记
         violations = _detect_msg_style(ast.parse(code))
         filtered = _filter_noqa_violations(code, violations)
         assert filtered == []
@@ -200,7 +201,7 @@ class TestNoqaExemption:
         assert len(filtered) == 1
 
     def test_is_line_noqa_positive(self):
-        content = 'raise ValueError(f"x → y")  # noqa: MSG-STYLE'
+        content = 'raise ValueError(f"x → y")  # noqa: MSG-STYLE'  # 测试夹具：样例代码串内含行级豁免标记
         assert _is_line_noqa(content, 1)
 
     def test_is_line_noqa_negative(self):
@@ -321,9 +322,9 @@ class TestExtractStringParts:
         assert parts == ["prefix ", " suffix"]
 
     def test_non_string_constant(self):
-        node = ast.parse('42', mode="eval").body
+        node = ast.parse("42", mode="eval").body
         assert _extract_string_parts(node) == []
 
     def test_variable(self):
-        node = ast.parse('some_var', mode="eval").body
+        node = ast.parse("some_var", mode="eval").body
         assert _extract_string_parts(node) == []

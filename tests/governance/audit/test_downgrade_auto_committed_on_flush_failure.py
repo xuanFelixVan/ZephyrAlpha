@@ -23,6 +23,7 @@ COMMIT_FAILED 失败。此时 auto_committed 是误报，需降级为 warn。
 - TestSelectiveDowngrade: 仅降级 auto_committed，其他 action 不变
 - TestEdgeCases: 空列表/长消息截断/缺属性
 """
+
 from __future__ import annotations
 
 import sys

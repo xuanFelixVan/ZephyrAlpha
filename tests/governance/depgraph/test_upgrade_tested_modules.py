@@ -17,6 +17,7 @@ upgrade_tested_modules 只升级 build_status（production+test → stable），
 
 测试隔离：使用内存 dict/list 构造假 nodes/edges，不触碰生产 depgraph。
 """
+
 import sys
 from pathlib import Path
 
@@ -249,9 +250,8 @@ class TestTwoStateMaturitySmoke:
         _PANORAMA_COMMON = _GOV_SCRIPTS / "d5_architecture" / "panorama_common.py"
         if _PANORAMA_COMMON.exists():
             import importlib.util
-            spec = importlib.util.spec_from_file_location(
-                "panorama_common", _PANORAMA_COMMON
-            )
+
+            spec = importlib.util.spec_from_file_location("panorama_common", _PANORAMA_COMMON)
             mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod)
             assert mod.MATURITY_RANK == {"design": 0, "production": 1}

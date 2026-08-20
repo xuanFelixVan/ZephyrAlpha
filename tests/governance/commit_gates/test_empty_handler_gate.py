@@ -26,6 +26,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，tmp_path 创建真实 .py 文件。
 """
+
 from __future__ import annotations
 
 import ast
@@ -65,8 +66,10 @@ def _make_gateway(tmp_path, staged_files=None, diff_fails=False, diff_raises=Fal
     gw.project_root = str(tmp_path)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -97,6 +100,7 @@ def _shadow_open(monkeypatch):
     """源文件用 open(path).read() 未关闭文件句柄（ResourceWarning）。
     注入 shadow open：read() 后立即关闭真实 fd。"""
     import builtins
+
     _real_open = builtins.open
 
     class _AutoClose:
@@ -122,6 +126,7 @@ def _shadow_open(monkeypatch):
         return _AutoClose(_real_open(file, mode, *args, **kwargs))
 
     import zephyr.gov_enforcement.commit_gates.empty_handler_gate as mod
+
     monkeypatch.setattr(mod, "open", _shadow, raising=False)
 
 
@@ -178,10 +183,7 @@ class TestEmptyBody:
         assert _is_empty_handler_body(func)
 
     def test_logger_only_is_empty(self):
-        func = ast.parse(
-            "def on_x(e):\n"
-            "    logger.info('got event')\n"
-        ).body[0]
+        func = ast.parse("def on_x(e):\n    logger.info('got event')\n").body[0]
         assert _is_empty_handler_body(func)
 
     def test_return_none_is_empty(self):
@@ -189,18 +191,11 @@ class TestEmptyBody:
         assert _is_empty_handler_body(func)
 
     def test_docstring_only_is_empty(self):
-        func = ast.parse(
-            'def on_x(e):\n'
-            '    """handle event"""\n'
-        ).body[0]
+        func = ast.parse('def on_x(e):\n    """handle event"""\n').body[0]
         assert _is_empty_handler_body(func)
 
     def test_has_logic_not_empty(self):
-        func = ast.parse(
-            "def on_x(e):\n"
-            "    process(e)\n"
-            "    return result\n"
-        ).body[0]
+        func = ast.parse("def on_x(e):\n    process(e)\n    return result\n").body[0]
         assert not _is_empty_handler_body(func)
 
     def test_empty_logger_call_detected(self):
@@ -222,11 +217,7 @@ class TestEmptyBody:
 class TestGatewayIntegration:
     def test_empty_handler_blocked(self, tmp_path):
         red = "src/zephyr/trading/mod.py"
-        content = (
-            "@subscriber\n"
-            "def on_event(event):\n"
-            "    pass\n"
-        )
+        content = "@subscriber\ndef on_event(event):\n    pass\n"
         _write_file(tmp_path, red, content)
         gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_empty_handler_gate().check(gw, [])
@@ -236,12 +227,7 @@ class TestGatewayIntegration:
 
     def test_handler_with_logic_passes(self, tmp_path):
         blue = "src/zephyr/trading/mod.py"
-        content = (
-            "@subscriber\n"
-            "def on_event(event):\n"
-            "    process(event)\n"
-            "    return result\n"
-        )
+        content = "@subscriber\ndef on_event(event):\n    process(event)\n    return result\n"
         _write_file(tmp_path, blue, content)
         gw = _make_gateway(tmp_path, staged_files=[blue])
         passed, msg = make_empty_handler_gate().check(gw, [])
@@ -250,10 +236,7 @@ class TestGatewayIntegration:
 
     def test_non_handler_pass_passes(self, tmp_path):
         blue = "src/zephyr/trading/mod.py"
-        content = (
-            "def helper():\n"
-            "    pass\n"
-        )
+        content = "def helper():\n    pass\n"
         _write_file(tmp_path, blue, content)
         gw = _make_gateway(tmp_path, staged_files=[blue])
         passed, msg = make_empty_handler_gate().check(gw, [])
@@ -262,11 +245,7 @@ class TestGatewayIntegration:
 
     def test_logger_only_handler_blocked(self, tmp_path):
         red = "src/zephyr/trading/mod.py"
-        content = (
-            "@event_handler\n"
-            "def handle_click(event):\n"
-            "    logger.info('clicked')\n"
-        )
+        content = "@event_handler\ndef handle_click(event):\n    logger.info('clicked')\n"
         _write_file(tmp_path, red, content)
         gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_empty_handler_gate().check(gw, [])
@@ -274,10 +253,7 @@ class TestGatewayIntegration:
 
     def test_on_prefix_empty_blocked(self, tmp_path):
         red = "src/zephyr/trading/mod.py"
-        content = (
-            "def on_signal(event):\n"
-            "    return\n"
-        )
+        content = "def on_signal(event):\n    return\n"
         _write_file(tmp_path, red, content)
         gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_empty_handler_gate().check(gw, [])
@@ -285,11 +261,7 @@ class TestGatewayIntegration:
 
     def test_tests_dir_exempt(self, tmp_path):
         red = "tests/governance/test_handler.py"
-        content = (
-            "@subscriber\n"
-            "def on_event(event):\n"
-            "    pass\n"
-        )
+        content = "@subscriber\ndef on_event(event):\n    pass\n"
         _write_file(tmp_path, red, content)
         gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_empty_handler_gate().check(gw, [])
@@ -323,10 +295,7 @@ class TestGatewayIntegration:
 
     def test_no_handler_in_file_passes(self, tmp_path):
         blue = "src/zephyr/trading/mod.py"
-        content = (
-            "def compute(x):\n"
-            "    return x + 1\n"
-        )
+        content = "def compute(x):\n    return x + 1\n"
         _write_file(tmp_path, blue, content)
         gw = _make_gateway(tmp_path, staged_files=[blue])
         passed, msg = make_empty_handler_gate().check(gw, [])

@@ -10,15 +10,14 @@
     test_working_in_skip_dirs_code —— 代码 fallback（_N16_DOCS_SKIP_DIRS_FALLBACK）含 _working
                                        （human_gated MOD-INF-005，diff 批准落盘后由红转绿）
 """
+
 from __future__ import annotations
 
 import pathlib
 import re
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
-TRAEE_028_YAML = (
-    ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
-)
+TRAEE_028_YAML = ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
 GATE_SRC = ROOT / "scripts" / "governance" / "d3_metadata" / "check_naming_convention.py"
 
 
@@ -51,8 +50,7 @@ def test_working_in_skip_dirs_yaml():
     """trae_028 n16_config.skip_dirs_docs 必须含 _working（草稿区豁免）。"""
     skip_dirs = _load_skip_dirs_from_yaml()
     assert "_working" in skip_dirs, (
-        f"trae_028 n16_config.skip_dirs_docs 必须含 _working（草稿区豁免），"
-        f"实际 skip_dirs_docs={sorted(skip_dirs)}"
+        f"trae_028 n16_config.skip_dirs_docs 必须含 _working（草稿区豁免），实际 skip_dirs_docs={sorted(skip_dirs)}"
     )
 
 

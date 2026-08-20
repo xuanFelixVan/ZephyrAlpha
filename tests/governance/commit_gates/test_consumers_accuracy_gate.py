@@ -27,6 +27,7 @@
   - fail-open（git 异常 / ast 解析失败）
   - 多文件汇总
 """
+
 from __future__ import annotations
 
 import sys
@@ -63,16 +64,17 @@ class _MockResult:
     stdout: str = ""
 
 
-def _make_gateway(staged_files=None, project_root=None, diff_fails=False,
-                  diff_raises=False, staged_content_map=None):
+def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_raises=False, staged_content_map=None):
     """构造 mock gateway：--name-only 返回 staged 文件列表；
     git show :path 返回 staged 内容。"""
     gw = MagicMock()
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -210,28 +212,16 @@ class TestCheckConsumersAccuracyOrphan:
     def test_orphan_function_violation(self, tmp_path):
         """括号内函数名不存在于当前文件 → orphan 违规。"""
         self._create_consumer_module(tmp_path)
-        content = (
-            "# [CONSUMERS] zephyr.foo.bar (nonexistent_function)\n"
-            "def existing_function():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.foo.bar (nonexistent_function)\ndef existing_function():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert len(violations) == 1
         assert "orphan function 'nonexistent_function'" in violations[0]
 
     def test_orphan_multiple_violations(self, tmp_path):
         """多个 orphan 函数名 → 多条违规。"""
         self._create_consumer_module(tmp_path, "zephyr/foo.py")
-        content = (
-            "# [CONSUMERS] zephyr.foo (ghost1, ghost2)\n"
-            "def real_func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.foo (ghost1, ghost2)\ndef real_func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert len(violations) == 2
         assert any("ghost1" in v for v in violations)
         assert any("ghost2" in v for v in violations)
@@ -239,29 +229,15 @@ class TestCheckConsumersAccuracyOrphan:
     def test_existing_function_no_orphan(self, tmp_path):
         """括号内函数名都存在于当前文件 → 无违规。"""
         self._create_consumer_module(tmp_path, "zephyr/foo.py")
-        content = (
-            "# [CONSUMERS] zephyr.foo (func1, func2)\n"
-            "def func1():\n"
-            "    pass\n"
-            "def func2():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.foo (func1, func2)\ndef func1():\n    pass\ndef func2():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert violations == []
 
     def test_async_function_recognized(self, tmp_path):
         """async 函数也能被识别——不算 orphan。"""
         self._create_consumer_module(tmp_path, "zephyr/foo.py")
-        content = (
-            "# [CONSUMERS] zephyr.foo (async_func)\n"
-            "async def async_func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.foo (async_func)\nasync def async_func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert violations == []
 
 
@@ -273,27 +249,15 @@ class TestCheckConsumersAccuracyPhantom:
 
     def test_phantom_module_violation(self, tmp_path):
         """消费者模块路径在项目内不存在 → phantom 违规。"""
-        content = (
-            "# [CONSUMERS] zephyr.nonexistent.module.path\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.nonexistent.module.path\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert len(violations) == 1
         assert "phantom consumer 'zephyr.nonexistent.module.path'" in violations[0]
 
     def test_phantom_no_orphan_check(self, tmp_path):
         """phantom 违规时不检测 orphan（模块都不存在，orphan 无意义）。"""
-        content = (
-            "# [CONSUMERS] zephyr.nonexistent.module (ghost_func)\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.nonexistent.module (ghost_func)\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         # 只应有 1 条 phantom 违规，不应有 orphan 违规
         assert len(violations) == 1
         assert "phantom" in violations[0]
@@ -305,14 +269,8 @@ class TestCheckConsumersAccuracyPhantom:
         module_path.parent.mkdir(parents=True, exist_ok=True)
         module_path.write_text("# fake module\n", encoding="utf-8")
 
-        content = (
-            "# [CONSUMERS] zephyr.foo.bar\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/baz.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.foo.bar\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/baz.py", content, tmp_path)
         assert violations == []
 
     def test_existing_module_as_init_file(self, tmp_path):
@@ -322,14 +280,8 @@ class TestCheckConsumersAccuracyPhantom:
         init_path.parent.mkdir(parents=True, exist_ok=True)
         init_path.write_text("# package init\n", encoding="utf-8")
 
-        content = (
-            "# [CONSUMERS] zephyr.foo\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/baz.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.foo\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/baz.py", content, tmp_path)
         assert violations == []
 
 
@@ -407,52 +359,28 @@ class TestConsumersAccuracyFilepathFormat:
         """
         (tmp_path / "scripts").mkdir(exist_ok=True)
         (tmp_path / "scripts" / "git_commit.py").write_text("# fake\n", encoding="utf-8")
-        content = (
-            "# [CONSUMERS] scripts/git_commit.py\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/gateway.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] scripts/git_commit.py\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/gateway.py", content, tmp_path)
         assert violations == []
 
     def test_filepath_consumer_not_exists_phantom(self, tmp_path):
         """文件路径格式的 consumer 文件不存在 → 报 phantom。"""
-        content = (
-            "# [CONSUMERS] scripts/nonexistent.py\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/gateway.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] scripts/nonexistent.py\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/gateway.py", content, tmp_path)
         assert len(violations) == 1
         assert "phantom consumer 'scripts/nonexistent.py'" in violations[0]
         assert "文件路径" in violations[0]
 
     def test_glob_consumer_exempt(self, tmp_path):
         """glob 模式的 consumer 豁免（不检测 phantom）。"""
-        content = (
-            "# [CONSUMERS] scripts/governance/*\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] scripts/governance/*\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert violations == []
 
     def test_descriptive_consumer_exempt(self, tmp_path):
         """描述性文字的 consumer 豁免（不检测 phantom）。"""
-        content = (
-            "# [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert violations == []
 
     def test_mixed_formats(self, tmp_path):
@@ -467,9 +395,7 @@ class TestConsumersAccuracyFilepathFormat:
             "def func():\n"
             "    pass\n"
         )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         # 4 种格式：dotted 存在 + filepath 存在 + glob 豁免 + descriptive 豁免 → 无违规
         assert violations == []
 
@@ -491,8 +417,7 @@ class TestConsumersAccuracyFilepathFormat:
             "    pass\n"
         )
         violations = check_consumers_accuracy(
-            "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py",
-            content, tmp_path
+            "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py", content, tmp_path
         )
         assert violations == []
 
@@ -505,38 +430,20 @@ class TestCheckConsumersAccuracyExempt:
 
     def test_abstract_code_mod_exempt(self, tmp_path):
         """MOD-XXX 抽象代号豁免——不检测 phantom/orphan。"""
-        content = (
-            "# [CONSUMERS] MOD-INF-027(audit-orchestrator)\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] MOD-INF-027(audit-orchestrator)\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert violations == []
 
     def test_abstract_code_sh_exempt(self, tmp_path):
         """SH-XXX 抽象代号豁免。"""
-        content = (
-            "# [CONSUMERS] SH-ABBR-001\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] SH-ABBR-001\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert violations == []
 
     def test_abstract_code_cfg_exempt(self, tmp_path):
         """CFG-XXX 抽象代号豁免。"""
-        content = (
-            "# [CONSUMERS] CFG-noqa-exempt-registry\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] CFG-noqa-exempt-registry\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert violations == []
 
     def test_is_abstract_code_all_prefixes(self):
@@ -551,14 +458,8 @@ class TestCheckConsumersAccuracyExempt:
 
     def test_cjk_in_parens_skipped(self, tmp_path):
         """括号内含 CJK 字符 → 视为描述性文字，跳过 orphan 检测。"""
-        content = (
-            "# [CONSUMERS] zephyr.nonexistent.module (审计编排器)\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.nonexistent.module (审计编排器)\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         # 仍有 phantom 违规（模块不存在），但无 orphan 违规（CJK 跳过）
         assert len(violations) == 1
         assert "phantom" in violations[0]
@@ -579,22 +480,14 @@ class TestCheckConsumersAccuracyExempt:
             "# noqa: consumers-accuracy  过渡期豁免：历史漂移文件待修复\n"
         )
         noqa_files = {"src/zephyr/foo.py"}
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path, noqa_files=noqa_files
-        )
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path, noqa_files=noqa_files)
         assert violations == []
 
     def test_noqa_other_file_not_exempt(self, tmp_path):
         """noqa 文件级豁免只对集合内文件生效——其他文件仍检测。"""
-        content = (
-            "# [CONSUMERS] zephyr.nonexistent.module\n"
-            "def func():\n"
-            "    pass\n"
-        )
+        content = "# [CONSUMERS] zephyr.nonexistent.module\ndef func():\n    pass\n"
         noqa_files = {"src/zephyr/other.py"}
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path, noqa_files=noqa_files
-        )
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path, noqa_files=noqa_files)
         assert len(violations) == 1
         assert "phantom" in violations[0]
 
@@ -612,26 +505,14 @@ class TestCheckConsumersAccuracyMethodLevel:
         module_path.parent.mkdir(parents=True, exist_ok=True)
         module_path.write_text("# fake module\n", encoding="utf-8")
 
-        content = (
-            "# [CONSUMERS] zephyr.foo.bar.ClassName.method_name\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/baz.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.foo.bar.ClassName.method_name\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/baz.py", content, tmp_path)
         assert violations == []
 
     def test_method_level_all_shortened_fail(self, tmp_path):
         """逐级缩短全部失败 → phantom 违规。"""
-        content = (
-            "# [CONSUMERS] zephyr.nonexistent.ClassName.method_name\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.nonexistent.ClassName.method_name\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert len(violations) == 1
         assert "phantom" in violations[0]
 
@@ -644,27 +525,14 @@ class TestCheckConsumersAccuracyPass:
 
     def test_no_consumers_field_passes(self, tmp_path):
         """无 [CONSUMERS] 字段 → 通过（CREATE-GUARD 负责存在性）。"""
-        content = (
-            "# [BLUEPRINT] MOD-X\n"
-            "# [MODULE] foo\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [BLUEPRINT] MOD-X\n# [MODULE] foo\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert violations == []
 
     def test_empty_consumers_passes(self, tmp_path):
         """[CONSUMERS] 空内容 → 通过。"""
-        content = (
-            "# [CONSUMERS]\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS]\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert violations == []
 
     def test_real_world_scenario_passes(self, tmp_path):
@@ -681,9 +549,7 @@ class TestCheckConsumersAccuracyPass:
             "def _internal_helper():\n"
             "    pass\n"
         )
-        violations = check_consumers_accuracy(
-            "src/zephyr/gov_enforcement/bar.py", content, tmp_path
-        )
+        violations = check_consumers_accuracy("src/zephyr/gov_enforcement/bar.py", content, tmp_path)
         assert violations == []
 
 
@@ -717,11 +583,7 @@ class TestGatewayIntegration:
 
     def test_warn_only_does_not_block(self):
         """warn-only——检出违规但仍 passed=True（不阻断 commit）。"""
-        content = (
-            "# [CONSUMERS] zephyr.nonexistent.module\n"
-            "def func():\n"
-            "    pass\n"
-        )
+        content = "# [CONSUMERS] zephyr.nonexistent.module\ndef func():\n    pass\n"
         gw = _make_gateway(
             staged_files=["src/zephyr/foo.py"],
             staged_content_map={"src/zephyr/foo.py": content},
@@ -737,17 +599,14 @@ class TestGatewayIntegration:
         """无违规 → passed=True + 空 detail。"""
         # 创建存在的模块
         import tempfile
+
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             module_path = tmp_path / "src" / "zephyr" / "foo.py"
             module_path.parent.mkdir(parents=True, exist_ok=True)
             module_path.write_text("# module\n", encoding="utf-8")
 
-            content = (
-                "# [CONSUMERS] zephyr.foo\n"
-                "def func():\n"
-                "    pass\n"
-            )
+            content = "# [CONSUMERS] zephyr.foo\ndef func():\n    pass\n"
             gw = _make_gateway(
                 staged_files=["src/zephyr/bar.py"],
                 staged_content_map={"src/zephyr/bar.py": content},
@@ -760,11 +619,7 @@ class TestGatewayIntegration:
 
     def test_tests_directory_exempt(self):
         """tests/ 目录豁免——不检测。"""
-        content = (
-            "# [CONSUMERS] zephyr.nonexistent.module\n"
-            "def func():\n"
-            "    pass\n"
-        )
+        content = "# [CONSUMERS] zephyr.nonexistent.module\ndef func():\n    pass\n"
         gw = _make_gateway(
             staged_files=["tests/test_foo.py"],
             staged_content_map={"tests/test_foo.py": content},
@@ -776,11 +631,7 @@ class TestGatewayIntegration:
 
     def test_non_scanned_prefix_skipped(self):
         """非 _SCAN_PREFIXES 路径的文件跳过——如 docs/。"""
-        content = (
-            "# [CONSUMERS] zephyr.nonexistent.module\n"
-            "def func():\n"
-            "    pass\n"
-        )
+        content = "# [CONSUMERS] zephyr.nonexistent.module\ndef func():\n    pass\n"
         gw = _make_gateway(
             staged_files=["docs/some_file.py"],  # 不在 scripts/governance/ 或 src/
             staged_content_map={"docs/some_file.py": content},
@@ -792,11 +643,7 @@ class TestGatewayIntegration:
 
     def test_scripts_governance_scanned(self):
         """scripts/governance/ 路径在扫描范围内。"""
-        content = (
-            "# [CONSUMERS] zephyr.nonexistent.module\n"
-            "def func():\n"
-            "    pass\n"
-        )
+        content = "# [CONSUMERS] zephyr.nonexistent.module\ndef func():\n    pass\n"
         gw = _make_gateway(
             staged_files=["scripts/governance/foo.py"],
             staged_content_map={"scripts/governance/foo.py": content},
@@ -828,9 +675,7 @@ class TestGatewayIntegration:
         gw = MagicMock()
         gw.project_root = None
         # _get_staged_py_files 需要的 _run_git
-        gw.run_git.return_value = _MockResult(
-            0, "src/zephyr/foo.py"
-        )
+        gw.run_git.return_value = _MockResult(0, "src/zephyr/foo.py")
         gate = make_consumers_accuracy_gate()
         passed, detail = gate.check(gw, ["src/zephyr/foo.py"])
         assert passed is True
@@ -838,16 +683,8 @@ class TestGatewayIntegration:
 
     def test_multiple_files_aggregated(self):
         """多文件违规 → 汇总到一条 detail。"""
-        content1 = (
-            "# [CONSUMERS] zephyr.nonexistent1.module\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        content2 = (
-            "# [CONSUMERS] zephyr.nonexistent2.module\n"
-            "def func():\n"
-            "    pass\n"
-        )
+        content1 = "# [CONSUMERS] zephyr.nonexistent1.module\ndef func():\n    pass\n"
+        content2 = "# [CONSUMERS] zephyr.nonexistent2.module\ndef func():\n    pass\n"
         gw = _make_gateway(
             staged_files=["src/zephyr/foo.py", "src/zephyr/bar.py"],
             staged_content_map={
@@ -856,9 +693,7 @@ class TestGatewayIntegration:
             },
         )
         gate = make_consumers_accuracy_gate()
-        passed, detail = gate.check(
-            gw, ["src/zephyr/foo.py", "src/zephyr/bar.py"]
-        )
+        passed, detail = gate.check(gw, ["src/zephyr/foo.py", "src/zephyr/bar.py"])
         assert passed is True
         assert "nonexistent1" in detail
         assert "nonexistent2" in detail
@@ -883,14 +718,8 @@ class TestGatewayIntegration:
     def test_warning_truncation_at_50(self):
         """违规超过 50 条时截断 + 显示 more 计数。"""
         # 构造 60 个 phantom 违规（60 个不存在的模块）
-        consumers = "; ".join(
-            f"zephyr.nonexistent{i}.module" for i in range(60)
-        )
-        content = (
-            f"# [CONSUMERS] {consumers}\n"
-            "def func():\n"
-            "    pass\n"
-        )
+        consumers = "; ".join(f"zephyr.nonexistent{i}.module" for i in range(60))
+        content = f"# [CONSUMERS] {consumers}\ndef func():\n    pass\n"
         gw = _make_gateway(
             staged_files=["src/zephyr/foo.py"],
             staged_content_map={"src/zephyr/foo.py": content},
@@ -902,11 +731,7 @@ class TestGatewayIntegration:
 
     def test_warning_detail_contains_remediation_hint(self):
         """违规 detail 含修复提示（病根 + 修复步骤）。"""
-        content = (
-            "# [CONSUMERS] zephyr.nonexistent.module\n"
-            "def func():\n"
-            "    pass\n"
-        )
+        content = "# [CONSUMERS] zephyr.nonexistent.module\ndef func():\n    pass\n"
         gw = _make_gateway(
             staged_files=["src/zephyr/foo.py"],
             staged_content_map={"src/zephyr/foo.py": content},
@@ -940,9 +765,7 @@ class TestFailOpenEdgeCases:
             "def func1(\n"  # 语法错误：缺少右括号
             "    pass\n"
         )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         # ast 失败 → defined_functions=set() → func1 视为 orphan
         # 但这只是 fail-open 的"向下安全"（不漏检），实际场景中语法错误文件
         # 会在更早阶段（如 syntax check）失败
@@ -955,14 +778,8 @@ class TestFailOpenEdgeCases:
         module_path.parent.mkdir(parents=True, exist_ok=True)
         module_path.write_text("# module\n", encoding="utf-8")
 
-        content = (
-            "# [CONSUMERS] zephyr.foo.bar ()\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/baz.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.foo.bar ()\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/baz.py", content, tmp_path)
         assert violations == []
 
     def test_check_consumers_accuracy_multiple_consumers_mixed(self, tmp_path):
@@ -972,14 +789,8 @@ class TestFailOpenEdgeCases:
         module_path.parent.mkdir(parents=True, exist_ok=True)
         module_path.write_text("# module\n", encoding="utf-8")
 
-        content = (
-            "# [CONSUMERS] zephyr.good.module; zephyr.bad.nonexistent\n"
-            "def func():\n"
-            "    pass\n"
-        )
-        violations = check_consumers_accuracy(
-            "src/zephyr/foo.py", content, tmp_path
-        )
+        content = "# [CONSUMERS] zephyr.good.module; zephyr.bad.nonexistent\ndef func():\n    pass\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert len(violations) == 1
         assert "phantom" in violations[0]
         assert "bad.nonexistent" in violations[0]

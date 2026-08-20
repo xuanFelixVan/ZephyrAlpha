@@ -22,6 +22,7 @@
 - TestWildcardImportSkipped: wildcard import 跳过
 - TestFailOpen: ast 失败 / 无 staged 文件 → fail-open
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -193,9 +194,7 @@ class TestProjectModuleResolvable:
         gw = _make_gateway()
         # 模拟 staged 文件含 src/zephyr/foo/bar.py
         staged_files = {"src/zephyr/foo/bar.py"}
-        result = _check_project_module_resolvable(
-            "zephyr.foo.bar", staged_files, gw
-        )
+        result = _check_project_module_resolvable("zephyr.foo.bar", staged_files, gw)
         assert result is True
         # 不应调用 git show（staged 命中即返回）
         gw.run_git.assert_not_called()
@@ -210,9 +209,7 @@ class TestProjectModuleResolvable:
         # 模拟 git show HEAD:src/zephyr/foo/bar.py 成功
         gw.run_git.return_value = MagicMock(returncode=0, stdout="content", stderr="")
         staged_files: set[str] = set()
-        result = _check_project_module_resolvable(
-            "zephyr.foo.bar", staged_files, gw
-        )
+        result = _check_project_module_resolvable("zephyr.foo.bar", staged_files, gw)
         assert result is True
 
     def test_not_resolvable_anywhere(self):
@@ -225,9 +222,7 @@ class TestProjectModuleResolvable:
         # git show HEAD 全部 rc=1
         gw.run_git.return_value = MagicMock(returncode=1, stdout="", stderr="")
         staged_files: set[str] = set()
-        result = _check_project_module_resolvable(
-            "zephyr.foo.nonexistent", staged_files, gw
-        )
+        result = _check_project_module_resolvable("zephyr.foo.nonexistent", staged_files, gw)
         assert result is False
 
 
@@ -285,9 +280,7 @@ foo()
         # git show HEAD 全部 rc=1（模块不存在）
         gw.run_git.return_value = MagicMock(returncode=1, stdout="", stderr="")
         staged_files: set[str] = set()
-        violations = scan_content_for_dangling_imports(
-            "src/test.py", content, staged_files, gw
-        )
+        violations = scan_content_for_dangling_imports("src/test.py", content, staged_files, gw)
         assert len(violations) == 1
         assert "nonexistent_module" in violations[0]
         assert "dangling import" in violations[0]
@@ -300,9 +293,7 @@ this_module_does_not_exist_xyz_12345.do_something()
 """
         gw = _make_gateway()
         staged_files: set[str] = set()
-        violations = scan_content_for_dangling_imports(
-            "src/test.py", content, staged_files, gw
-        )
+        violations = scan_content_for_dangling_imports("src/test.py", content, staged_files, gw)
         assert len(violations) == 1
         assert "this_module_does_not_exist_xyz_12345" in violations[0]
 
@@ -316,6 +307,7 @@ from zephyr.gov_enforcement.commit_gates.import_integrity_gate import make_impor
 print(os.getcwd())
 """
         gw = _make_gateway()
+
         # 模拟 git show HEAD:src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py 成功
         def _mock_run_git(cmd):
             # cmd = ["git", "show", "HEAD:src/zephyr/.../import_integrity_gate.py"]
@@ -325,9 +317,7 @@ print(os.getcwd())
 
         gw.run_git.side_effect = _mock_run_git
         staged_files: set[str] = set()
-        violations = scan_content_for_dangling_imports(
-            "src/test.py", content, staged_files, gw
-        )
+        violations = scan_content_for_dangling_imports("src/test.py", content, staged_files, gw)
         assert len(violations) == 0
 
     def test_staged_target_file_passes(self):
@@ -339,9 +329,7 @@ make_new_gate()
         gw = _make_gateway()
         # staged 含目标文件
         staged_files = {"src/zephyr/gov_enforcement/commit_gates/new_gate.py"}
-        violations = scan_content_for_dangling_imports(
-            "src/test.py", content, staged_files, gw
-        )
+        violations = scan_content_for_dangling_imports("src/test.py", content, staged_files, gw)
         assert len(violations) == 0
 
 
@@ -363,9 +351,7 @@ bar()
 """
         gw = _make_gateway()
         staged_files: set[str] = set()
-        violations = scan_content_for_dangling_imports(
-            "src/test.py", content, staged_files, gw
-        )
+        violations = scan_content_for_dangling_imports("src/test.py", content, staged_files, gw)
         assert len(violations) == 0
 
 
@@ -385,9 +371,7 @@ do_something()
 """
         gw = _make_gateway()
         staged_files: set[str] = set()
-        violations = scan_content_for_dangling_imports(
-            "src/test.py", content, staged_files, gw
-        )
+        violations = scan_content_for_dangling_imports("src/test.py", content, staged_files, gw)
         assert len(violations) == 0
 
 
@@ -406,9 +390,7 @@ class TestFailOpen:
 """
         gw = _make_gateway()
         staged_files: set[str] = set()
-        violations = scan_content_for_dangling_imports(
-            "src/test.py", content, staged_files, gw
-        )
+        violations = scan_content_for_dangling_imports("src/test.py", content, staged_files, gw)
         assert len(violations) == 0
 
     def test_no_staged_files_passes(self):
@@ -446,6 +428,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_forged_gw_marker_gate())
 """
         gw = _make_gateway()
+
         # 模拟 git show HEAD:src/zephyr/gov_enforcement/commit_gates/forged_gw_marker_gate.py 失败
         # （文件尚未创建，ba40fa5b75 时刻的真实状态）
         def _mock_run_git(cmd):
@@ -474,6 +457,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_forged_gw_marker_gate())
 """
         gw = _make_gateway()
+
         # 模拟 git show HEAD:src/zephyr/gov_enforcement/commit_gates/forged_gw_marker_gate.py 成功
         # （文件已在 main HEAD 中，ce81f1077f merge 后的状态）
         def _mock_run_git(cmd):
@@ -516,6 +500,7 @@ class TestFindTargetInActiveSessions:
     def test_target_in_other_active_session_held_files(self, tmp_path):
         """目标模块在其他活跃 session held_files 中 → 命中。"""
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         reg = SessionRegistry(project_root=tmp_path)
         # session-B 持有 forged_gw_marker_gate.py
         target_file = str(tmp_path / "src" / "zephyr" / "gov_enforcement" / "commit_gates" / "forged_gw_marker_gate.py")
@@ -533,6 +518,7 @@ class TestFindTargetInActiveSessions:
     def test_target_not_in_any_active_session(self, tmp_path):
         """目标模块不在任何活跃 session held_files 中 → 空列表。"""
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         reg = SessionRegistry(project_root=tmp_path)
         reg.register("sess-B", pid=0, held_files=[str(tmp_path / "other.py")])
         hits = find_target_in_active_sessions(
@@ -545,6 +531,7 @@ class TestFindTargetInActiveSessions:
     def test_exclude_current_session(self, tmp_path):
         """排除自身 session——自身 commit 的文件已在 staged_set，不应命中。"""
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         reg = SessionRegistry(project_root=tmp_path)
         target_file = str(tmp_path / "src" / "zephyr" / "forged_gw_marker_gate.py")
         # sess-A（自身）持有目标文件
@@ -570,12 +557,15 @@ class TestFindTargetInActiveSessions:
         # 用一个不存在的 project_root 触发异常（无写权限等）
         # 实际上 SessionRegistry 对异常 fail-open，但为保险用 monkeypatch
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
         original = gate_mod.find_target_in_active_sessions
         try:
             # 模拟 SessionRegistry 构造抛异常
             with pytest.MonkeyPatch.context() as mp:
+
                 def _boom(*args, **kwargs):
                     raise RuntimeError("simulated registry failure")
+
                 mp.setattr(
                     "zephyr.security.access_control.session_concurrency.SessionRegistry",
                     _boom,
@@ -592,6 +582,7 @@ class TestFindTargetInActiveSessions:
     def test_multiple_candidates_match(self, tmp_path):
         """多候选路径匹配——module.py 或 module/__init__.py。"""
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         reg = SessionRegistry(project_root=tmp_path)
         # session-B 持有 __init__.py 形式（包模块）
         target_file = str(tmp_path / "src" / "zephyr" / "my_package" / "__init__.py")
@@ -607,6 +598,7 @@ class TestFindTargetInActiveSessions:
     def test_windows_backslash_normalization(self, tmp_path):
         """Windows 反斜杠路径分隔符归一化匹配。"""
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         reg = SessionRegistry(project_root=tmp_path)
         # held_file 用 Windows 反斜杠（SessionRegistry.normalize_file_path 会 resolve，
         # 但测试直接构造反斜杠路径验证 endswith 匹配）
@@ -623,6 +615,7 @@ class TestFindTargetInActiveSessions:
     def test_multiple_sessions_one_holds_target(self, tmp_path):
         """多活跃 session，其中之一持有目标模块。"""
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         reg = SessionRegistry(project_root=tmp_path)
         reg.register("sess-B", pid=0, held_files=[str(tmp_path / "other1.py")])
         target_file = str(tmp_path / "src" / "zephyr" / "gov_enforcement" / "commit_gates" / "forged_gw_marker_gate.py")
@@ -656,6 +649,7 @@ class TestCheckClosurePhase25Hint:
     def test_block_with_hint_when_target_in_other_session(self, tmp_path):
         """悬空 import + 目标模块在其他活跃 session held → 阻断消息含 Phase 2.5 hint。"""
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         # 准备：session-B 持有 forged_gw_marker_gate.py
         reg = SessionRegistry(project_root=tmp_path)
         target_file = str(tmp_path / "src" / "zephyr" / "gov_enforcement" / "commit_gates" / "forged_gw_marker_gate.py")
@@ -667,17 +661,18 @@ class TestCheckClosurePhase25Hint:
         # _get_staged_py_files 返回含悬空 import 的文件
         staged_py = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         staged_content = (
-            "from zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate "
-            "import make_forged_gw_marker_gate\n"
+            "from zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate import make_forged_gw_marker_gate\n"
         )
 
         def _mock_run_git(args):
             # git show HEAD:path → 找不到目标模块（rc=1）
             return MagicMock(returncode=1, stdout="", stderr="")
+
         gw.run_git = _mock_run_git
 
         # mock _get_staged_py_files 和 _read_staged_file
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
         with pytest.MonkeyPatch.context() as mp:
             mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [staged_py])
             mp.setattr(gate_mod, "_read_staged_file", lambda g, f: staged_content)
@@ -693,16 +688,15 @@ class TestCheckClosurePhase25Hint:
         gw = MagicMock()
         gw.project_root = tmp_path
         staged_py = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-        staged_content = (
-            "from zephyr.gov_enforcement.commit_gates.nonexistent_module "
-            "import something\n"
-        )
+        staged_content = "from zephyr.gov_enforcement.commit_gates.nonexistent_module import something\n"
 
         def _mock_run_git(args):
             return MagicMock(returncode=1, stdout="", stderr="")
+
         gw.run_git = _mock_run_git
 
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
         with pytest.MonkeyPatch.context() as mp:
             mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [staged_py])
             mp.setattr(gate_mod, "_read_staged_file", lambda g, f: staged_content)
@@ -716,16 +710,15 @@ class TestCheckClosurePhase25Hint:
         gw = MagicMock()
         gw.project_root = tmp_path
         staged_py = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-        staged_content = (
-            "from zephyr.gov_enforcement.commit_gates.nonexistent_module "
-            "import something\n"
-        )
+        staged_content = "from zephyr.gov_enforcement.commit_gates.nonexistent_module import something\n"
 
         def _mock_run_git(args):
             return MagicMock(returncode=1, stdout="", stderr="")
+
         gw.run_git = _mock_run_git
 
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
         with pytest.MonkeyPatch.context() as mp:
             mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [staged_py])
             mp.setattr(gate_mod, "_read_staged_file", lambda g, f: staged_content)
@@ -737,6 +730,7 @@ class TestCheckClosurePhase25Hint:
     def test_no_kwargs_session_id_still_works(self, tmp_path):
         """不传 session_id kwargs → find_target_in_active_sessions 不排除自身（仍正常工作）。"""
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         reg = SessionRegistry(project_root=tmp_path)
         target_file = str(tmp_path / "src" / "zephyr" / "gov_enforcement" / "commit_gates" / "forged_gw_marker_gate.py")
         reg.register("sess-B", pid=0, held_files=[target_file])
@@ -745,15 +739,16 @@ class TestCheckClosurePhase25Hint:
         gw.project_root = tmp_path
         staged_py = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         staged_content = (
-            "from zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate "
-            "import make_forged_gw_marker_gate\n"
+            "from zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate import make_forged_gw_marker_gate\n"
         )
 
         def _mock_run_git(args):
             return MagicMock(returncode=1, stdout="", stderr="")
+
         gw.run_git = _mock_run_git
 
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
         with pytest.MonkeyPatch.context() as mp:
             mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [staged_py])
             mp.setattr(gate_mod, "_read_staged_file", lambda g, f: staged_content)
@@ -813,11 +808,7 @@ class TestSysPathInjectionResolvable:
             _extract_sys_path_dirs,
         )
 
-        content = (
-            "import sys\n"
-            "from pathlib import Path\n"
-            "sys.path.insert(0, str(Path(__file__).resolve().parent))\n"
-        )
+        content = "import sys\nfrom pathlib import Path\nsys.path.insert(0, str(Path(__file__).resolve().parent))\n"
         tree = ast.parse(content)
         # py_file 是相对路径，_extract_sys_path_dirs 内部转绝对路径
         dirs = _extract_sys_path_dirs(tree, "scripts/governance/test.py")
@@ -835,11 +826,7 @@ class TestSysPathInjectionResolvable:
             _extract_sys_path_dirs,
         )
 
-        content = (
-            "import sys\n"
-            "from pathlib import Path\n"
-            "sys.path.insert(0, str(Path(__file__).resolve().parents[4]))\n"
-        )
+        content = "import sys\nfrom pathlib import Path\nsys.path.insert(0, str(Path(__file__).resolve().parents[4]))\n"
         tree = ast.parse(content)
         py_file = "scripts/governance/d5_architecture/generators/test.py"
         dirs = _extract_sys_path_dirs(tree, py_file)
@@ -1027,12 +1014,11 @@ class TestSysPathInjectionResolvable:
 
         # 需要 chdir 到 tmp_path 使相对路径解析正确
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
         original_cwd = os.getcwd()
         try:
             os.chdir(tmp_path)
-            violations = gate_mod.scan_content_for_dangling_imports(
-                py_file_rel, content, staged_files, gw
-            )
+            violations = gate_mod.scan_content_for_dangling_imports(py_file_rel, content, staged_files, gw)
         finally:
             os.chdir(original_cwd)
         assert len(violations) == 0, f"Expected no violations, got: {violations}"
@@ -1054,6 +1040,7 @@ class TestSysPathInjectionResolvable:
         staged_files: set[str] = set()
 
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
         original_cwd = os.getcwd()
         try:
             os.chdir(tmp_path)
@@ -1073,9 +1060,7 @@ class TestSysPathInjectionResolvable:
         content = "import this_module_does_not_exist_xyz_12345\n"
         gw = _make_gateway()
         staged_files: set[str] = set()
-        violations = scan_content_for_dangling_imports(
-            "src/test.py", content, staged_files, gw
-        )
+        violations = scan_content_for_dangling_imports("src/test.py", content, staged_files, gw)
         assert len(violations) == 1
         assert "this_module_does_not_exist_xyz_12345" in violations[0]
 
@@ -1087,10 +1072,7 @@ class TestSysPathInjectionResolvable:
             _extract_sys_path_dirs,
         )
 
-        content = (
-            "import sys\n"
-            "sys.path.append('/abs/append/path')\n"
-        )
+        content = "import sys\nsys.path.append('/abs/append/path')\n"
         tree = ast.parse(content)
         dirs = _extract_sys_path_dirs(tree, "scripts/test.py")
         assert "/abs/append/path" in dirs

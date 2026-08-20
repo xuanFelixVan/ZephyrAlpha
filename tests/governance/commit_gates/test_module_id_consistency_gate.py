@@ -18,6 +18,7 @@
 - TestCrossFileUniqueness: 跨文件 module_id 唯一性（git grep 全仓检测）
 - TestGateSpecFields: gate_id / priority 字段正确
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -32,10 +33,7 @@ from zephyr.gov_enforcement.commit_gates.module_id_consistency_gate import (
 # registry 在 project_root 下的相对路径（对标 module_id_consistency_gate._REGISTRY_REL）
 _REGISTRY_REL = "architecture_model/module_id_registry.yaml"
 _TEMPLATE_REGISTRY_REL = "docs/03_modules/template_registry.yaml"
-_DEP_REGISTRY_REL = (
-    "docs/01_policies_and_standards/_registry/catalogs/"
-    "cross_module_dependency_registry.yaml"
-)
+_DEP_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml"
 
 
 def _make_gateway(project_root: Path) -> MagicMock:
@@ -76,8 +74,7 @@ class TestTripleDeclarationConsistency:
         target = tmp_path / _REGISTRY_REL
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(
-            "# [A_config] module_id=CFG-REG-001\n"
-            "total_registered: 0\n",
+            "# [A_config] module_id=CFG-REG-001\ntotal_registered: 0\n",
             encoding="utf-8",
         )
         passed, detail = gate.check(gw, [str(target)])
@@ -91,9 +88,7 @@ class TestTripleDeclarationConsistency:
         target = tmp_path / _REGISTRY_REL
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(
-            "# [A_config] module_id=CFG-REG-001\n"
-            "# module_id: MOD-REG-001\n"
-            "total_registered: 0\n",
+            "# [A_config] module_id=CFG-REG-001\n# module_id: MOD-REG-001\ntotal_registered: 0\n",
             encoding="utf-8",
         )
         passed, detail = gate.check(gw, [str(target)])
@@ -105,8 +100,7 @@ class TestTripleDeclarationConsistency:
         gate = make_module_id_consistency_gate()
         target = tmp_path / "some_other.yaml"
         target.write_text(
-            "# [A_config] module_id=CFG-X-001\n"
-            "total_registered: 0\n",
+            "# [A_config] module_id=CFG-X-001\ntotal_registered: 0\n",
             encoding="utf-8",
         )
         passed, detail = gate.check(gw, [str(target)])
@@ -202,26 +196,21 @@ class TestCrossFileUniqueness:
         # mock: git grep 返回两个文件（含当前文件）
         class _FakeResult:
             returncode = 0
-            stdout = (
-                "tests/fake/test_current.py\n"
-                "tests/other/test_other.py\n"
-            )
+            stdout = "tests/fake/test_current.py\ntests/other/test_other.py\n"
 
         gw.run_git.return_value = _FakeResult()
         gate = make_module_id_consistency_gate()
         target = tmp_path / "tests/fake/test_current.py"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(
-            "# [A_test] module_id: SRC-TST-9999 | layer=test\n"
-            "x = 1\n",
+            "# [A_test] module_id: SRC-TST-9999 | layer=test\nx = 1\n",
             encoding="utf-8",
         )
         # 候选文件也声明相同 module_id（精确验证治本：必须 [A_*] 头声明才算碰撞）
         other = tmp_path / "tests/other/test_other.py"
         other.parent.mkdir(parents=True, exist_ok=True)
         other.write_text(
-            "# [A_test] module_id: SRC-TST-9999 | layer=test\n"
-            "y = 2\n",
+            "# [A_test] module_id: SRC-TST-9999 | layer=test\ny = 2\n",
             encoding="utf-8",
         )
         passed, detail = gate.check(gw, [str(target)])
@@ -247,10 +236,7 @@ class TestCrossFileUniqueness:
         # mock: git grep 返回源文件（含 [BLUEPRINT] 引用，但 [A_module] 声明不同 id）
         class _FakeResult:
             returncode = 0
-            stdout = (
-                "tests/fake/test_current.py\n"
-                "src/zephyr/gov_enforcement/commit_gates/fake_gate.py\n"
-            )
+            stdout = "tests/fake/test_current.py\nsrc/zephyr/gov_enforcement/commit_gates/fake_gate.py\n"
 
         gw.run_git.return_value = _FakeResult()
         gate = make_module_id_consistency_gate()
@@ -333,28 +319,21 @@ class TestCrossFileUniqueness:
 
         class _FakeResult:
             returncode = 0
-            stdout = (
-                "src/new_file.py\n"
-                "src/colliding_file.py\n"
-            )
+            stdout = "src/new_file.py\nsrc/colliding_file.py\n"
 
         gw.run_git.return_value = _FakeResult()
         gate = make_module_id_consistency_gate()
         target = tmp_path / "src/new_file.py"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(
-            "# [BLUEPRINT] MOD-FOO | docs/foo.md | §0.1\n"
-            "# [A_module] module_id=MOD-FOO | layer=module\n"
-            "x = 1\n",
+            "# [BLUEPRINT] MOD-FOO | docs/foo.md | §0.1\n# [A_module] module_id=MOD-FOO | layer=module\nx = 1\n",
             encoding="utf-8",
         )
         # 碰撞文件：不同 [BLUEPRINT] 但相同 [A_module] module_id → 真碰撞
         colliding = tmp_path / "src/colliding_file.py"
         colliding.parent.mkdir(parents=True, exist_ok=True)
         colliding.write_text(
-            "# [BLUEPRINT] MOD-BAR | docs/bar.md | §0.1\n"
-            "# [A_module] module_id=MOD-FOO | layer=module\n"
-            "y = 2\n",
+            "# [BLUEPRINT] MOD-BAR | docs/bar.md | §0.1\n# [A_module] module_id=MOD-FOO | layer=module\ny = 2\n",
             encoding="utf-8",
         )
         passed, detail = gate.check(gw, [str(target)])
@@ -380,8 +359,7 @@ class TestCrossFileUniqueness:
         target = tmp_path / "tests/fake/test_unique.py"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(
-            "# [A_test] module_id: SRC-TST-8888 | layer=test\n"
-            "x = 1\n",
+            "# [A_test] module_id: SRC-TST-8888 | layer=test\nx = 1\n",
             encoding="utf-8",
         )
         passed, detail = gate.check(gw, [str(target)])
@@ -412,8 +390,7 @@ class TestCrossFileUniqueness:
         target = tmp_path / "tests/fake/test_tracked.py"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(
-            "# [A_test] module_id: SRC-TST-7777 | layer=test\n"
-            "x = 1\n",
+            "# [A_test] module_id: SRC-TST-7777 | layer=test\nx = 1\n",
             encoding="utf-8",
         )
         passed, detail = gate.check(gw, [str(target)])
@@ -432,8 +409,7 @@ class TestCrossFileUniqueness:
         target = tmp_path / "tests/fake/test_no_header.py"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(
-            "# plain comment\n"
-            "x = 1\n",
+            "# plain comment\nx = 1\n",
             encoding="utf-8",
         )
         passed, detail = gate.check(gw, [str(target)])
@@ -457,8 +433,7 @@ class TestCrossFileUniqueness:
         target = tmp_path / "tests/fake/test_timeout.py"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(
-            "# [A_test] module_id: SRC-TST-6666 | layer=test\n"
-            "x = 1\n",
+            "# [A_test] module_id: SRC-TST-6666 | layer=test\nx = 1\n",
             encoding="utf-8",
         )
         passed, detail = gate.check(gw, [str(target)])

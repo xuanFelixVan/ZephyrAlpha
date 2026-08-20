@@ -26,7 +26,7 @@
   - bare raise / raise var
   - Exception()/BaseException() 无参
   - details 字段正确用法 raise Foo("msg", details={"path": str(p)})
-- TestNoqaExemption: # noqa: MSG-EXPOSURE 行级豁免
+- TestNoqaExemption: # noqa: MSG-EXPOSURE 行级豁免场景覆盖与断言
 - TestGatewayIntegration: mock gateway 流程
   - 新增文件全文件检测
   - 修改文件只检测 diff 新增行
@@ -35,6 +35,7 @@
   - fail-open on git diff 失败
   - fail-open on AST 解析失败
 """
+
 from __future__ import annotations
 
 import ast
@@ -87,86 +88,86 @@ class TestDetectMsgExposure:
         return _detect_msg_exposure(tree)
 
     def test_path_variable_detected(self):
-        violations = self._detect('''
+        violations = self._detect("""
             raise FileNotFoundError(f"file not found: {path}")
-        ''')
+        """)
         assert len(violations) == 1
         assert violations[0][1] == "FileNotFoundError"
         assert "path" in violations[0][2]
 
     def test_file_path_attribute_detected(self):
-        violations = self._detect('''
+        violations = self._detect("""
             raise IOError(f"cannot read {self.file_path}")
-        ''')
+        """)
         assert len(violations) == 1
         assert "file_path" in violations[0][2]
 
     def test_tx_id_detected(self):
-        violations = self._detect('''
+        violations = self._detect("""
             raise TransactionError(f"[{tx_id}] timeout")
-        ''')
+        """)
         assert len(violations) == 1
         assert "tx_id" in violations[0][2]
 
     def test_self_tx_id_attribute_detected(self):
-        violations = self._detect('''
+        violations = self._detect("""
             raise TransactionError(f"[{self.tx_id}] failed")
-        ''')
+        """)
         assert len(violations) == 1
         assert "tx_id" in violations[0][2]
 
     def test_password_detected(self):
-        violations = self._detect('''
+        violations = self._detect("""
             raise AuthError(f"invalid password: {password}")
-        ''')
+        """)
         assert len(violations) == 1
         assert "password" in violations[0][2]
 
     def test_secret_detected(self):
-        violations = self._detect('''
+        violations = self._detect("""
             raise ValueError(f"bad secret {secret}")
-        ''')
+        """)
         assert len(violations) == 1
         assert "secret" in violations[0][2]
 
     def test_token_detected(self):
-        violations = self._detect('''
+        violations = self._detect("""
             raise PermissionError(f"token expired: {token}")
-        ''')
+        """)
         assert len(violations) == 1
         assert "token" in violations[0][2]
 
     def test_str_wrapper_detected(self):
         # f"{str(path)}" 模式
-        violations = self._detect('''
+        violations = self._detect("""
             raise RuntimeError(f"failed at {str(path)}")
-        ''')
+        """)
         assert len(violations) == 1
         assert "path" in violations[0][2]
 
     def test_binop_detected(self):
         # f"{prefix + path}" 模式
-        violations = self._detect('''
+        violations = self._detect("""
             raise OSError(f"err: {prefix + path}")
-        ''')
+        """)
         assert len(violations) == 1
         assert "path" in violations[0][2]
 
     def test_multiple_sensitive_in_one_string(self):
-        violations = self._detect('''
+        violations = self._detect("""
             raise RuntimeError(f"{path} {tx_id} {password}")
-        ''')
+        """)
         assert len(violations) == 1
         hits = set(violations[0][2])
         assert {"path", "tx_id", "password"}.issubset(hits)
 
     def test_multiple_raise_statements(self):
-        violations = self._detect('''
+        violations = self._detect("""
             if x:
                 raise FooError(f"a {path}")
             else:
                 raise BarError(f"b {tx_id}")
-        ''')
+        """)
         assert len(violations) == 2
 
 
@@ -180,64 +181,64 @@ class TestSafePatterns:
 
     def test_literal_string_not_detected(self):
         # 字面量消息（非 f-string）不命中
-        violations = self._detect('''
+        violations = self._detect("""
             raise ValueError("file not found")
-        ''')
+        """)
         assert violations == []
 
     def test_format_method_not_detected(self):
         # .format() 不是 f-string，不命中（保守起见）
-        violations = self._detect('''
+        violations = self._detect("""
             raise ValueError("err: {}".format(path))
-        ''')
+        """)
         assert violations == []
 
     def test_non_sensitive_var_not_detected(self):
         # 非敏感变量名不命中
-        violations = self._detect('''
+        violations = self._detect("""
             raise ValueError(f"bad value: {value}")
-        ''')
+        """)
         assert violations == []
 
     def test_bare_raise_not_detected(self):
-        violations = self._detect('''
+        violations = self._detect("""
             try:
                 pass
             except Exception:
                 raise
-        ''')
+        """)
         assert violations == []
 
     def test_raise_variable_not_detected(self):
         # raise some_var（非构造）不检测
-        violations = self._detect('''
+        violations = self._detect("""
             exc = ValueError("msg")
             raise exc
-        ''')
+        """)
         assert violations == []
 
     def test_no_args_exception_not_detected(self):
         # Exception() 无参构造不算
-        violations = self._detect('''
+        violations = self._detect("""
             raise Exception()
-        ''')
+        """)
         assert violations == []
 
     def test_details_kwarg_safe(self):
         # details 字段正确用法不命中（消息文本无敏感变量）
-        violations = self._detect('''
+        violations = self._detect("""
             raise TransactionError(
                 "transaction timeout",
                 details={"tx_id": tx_id, "path": str(file_path)},
             )
-        ''')
+        """)
         assert violations == []
 
     def test_non_exception_function_not_detected(self):
         # 函数名不以 Error/Exception 结尾不算
-        violations = self._detect('''
+        violations = self._detect("""
             raise log_event(f"processing {path}")
-        ''')
+        """)
         assert violations == []
 
 
@@ -246,7 +247,7 @@ class TestSafePatterns:
 # ---------------------------------------------------------------------------
 class TestNoqaExemption:
     def test_is_line_noqa_detects_marker(self):
-        content = 'raise Foo(f"x {path}")  # noqa: MSG-EXPOSURE\n'
+        content = 'raise Foo(f"x {path}")  # noqa: MSG-EXPOSURE\n'  # 测试夹具：样例代码串内含行级豁免标记
         assert _is_line_noqa(content, 1) is True
 
     def test_is_line_noqa_without_marker(self):
@@ -254,10 +255,10 @@ class TestNoqaExemption:
         assert _is_line_noqa(content, 1) is False
 
     def test_filter_noqa_removes_marked_violations(self):
-        content = textwrap.dedent('''
-            raise FooError(f"x {path}")  # noqa: MSG-EXPOSURE
+        content = textwrap.dedent("""
+            raise FooError(f"x {path}")  # noqa: MSG-EXPOSURE — 夹具内行级豁免样例
             raise BarError(f"y {tx_id}")
-        ''')
+        """)
         tree = ast.parse(content)
         violations = _detect_msg_exposure(tree)
         filtered = _filter_noqa_violations(content, violations)
@@ -361,20 +362,14 @@ class TestGatewayIntegration:
         py_file = tmp_path / "mod.py"
         # 完整文件 3 行：raise 在 line 2（存量），x = 1 在 line 3（新增）
         py_file.write_text(
-            'import os\n'
+            "import os\n"
             'raise RuntimeError(f"old {path}")\n'  # line 2：存量代码
-            'x = 1\n',  # line 3：diff 新增
+            "x = 1\n",  # line 3：diff 新增
             encoding="utf-8",
         )
         rel = "mod.py"
         # diff: line 1-2 是 context，line 3 是 added
-        diff = (
-            f"+++ b/{rel}\n"
-            "@@ -1,2 +1,3 @@\n"
-            " import os\n"
-            " raise RuntimeError(f\"old {path}\")\n"
-            "+x = 1\n"
-        )
+        diff = f'+++ b/{rel}\n@@ -1,2 +1,3 @@\n import os\n raise RuntimeError(f"old {{path}}")\n+x = 1\n'
         gw = _make_mock_gateway(
             staged_files_am=[rel],
             staged_files_a=[],  # 修改
@@ -391,16 +386,11 @@ class TestGatewayIntegration:
         # 修改文件：diff 新增行含违规 → 阻断
         py_file = tmp_path / "mod2.py"
         py_file.write_text(
-            'import os\n'
-            'raise RuntimeError(f"new {path}")\n',  # 行 2：diff 新增
+            'import os\nraise RuntimeError(f"new {path}")\n',  # 行 2：diff 新增
             encoding="utf-8",
         )
         rel = "mod2.py"
-        diff = (
-            f"+++ b/{rel}\n"
-            "@@ -1,0 +2,1 @@\n"
-            "+raise RuntimeError(f\"new {path}\")\n"
-        )
+        diff = f'+++ b/{rel}\n@@ -1,0 +2,1 @@\n+raise RuntimeError(f"new {{path}}")\n'
         gw = _make_mock_gateway(
             staged_files_am=[rel],
             staged_files_a=[],
@@ -467,7 +457,7 @@ class TestGatewayIntegration:
     def test_noqa_line_passes(self, tmp_path):
         py_file = tmp_path / "noqa.py"
         py_file.write_text(
-            'raise ValueError(f"bad {path}")  # noqa: MSG-EXPOSURE\n',
+            'raise ValueError(f"bad {path}")  # noqa: MSG-EXPOSURE\n',  # 测试夹具：写入 tmp 文件的含豁免标记样例行
             encoding="utf-8",
         )
         rel = "noqa.py"

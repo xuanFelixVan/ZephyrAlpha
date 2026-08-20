@@ -22,6 +22,7 @@ worktree_manager.py（底层 git worktree 操作）
 - test_cleanup_stale_removes_old: cleanup_stale 清理超龄 worktree
 - test_session_worktree_start_uses_pool: session_worktree_start 优先使用 pool lease
 """
+
 from __future__ import annotations
 
 import os
@@ -42,6 +43,7 @@ _TEST_SID_2 = "sess-pytest-pool-B"
 
 def _force_rmtree(path: Path) -> None:
     """Windows 文件锁兜底强删目录（对标 test_session_worktree.force_rmtree）。"""
+
     def _on_error(func, p, exc_info):  # noqa: ANN001
         for attempt in range(3):
             try:
@@ -62,14 +64,17 @@ def _cleanup_pool_artifacts(repo: Path) -> None:
         # 先用 git worktree remove 清理每个 pool worktree
         r = subprocess.run(
             ["git", "worktree", "list", "--porcelain"],
-            cwd=repo, capture_output=True, text=True,
+            cwd=repo,
+            capture_output=True,
+            text=True,
         )
         for line in r.stdout.splitlines():
             if line.startswith("worktree ") and ".aidrafts_pool" in line:
                 wt_path = line.split(" ", 1)[1]
                 subprocess.run(
                     ["git", "worktree", "remove", "--force", wt_path],
-                    cwd=repo, capture_output=True,
+                    cwd=repo,
+                    capture_output=True,
                 )
         subprocess.run(["git", "worktree", "prune"], cwd=repo, capture_output=True)
         # 物理删除 pool 目录残留
@@ -82,18 +87,21 @@ def _cleanup_pool_artifacts(repo: Path) -> None:
         if wt.exists():
             subprocess.run(
                 ["git", "worktree", "remove", "--force", str(wt)],
-                cwd=repo, capture_output=True,
+                cwd=repo,
+                capture_output=True,
             )
             if wt.exists():
                 _force_rmtree(wt)
         subprocess.run(
             ["git", "branch", "-D", f"session/{sid}"],
-            cwd=repo, capture_output=True,
+            cwd=repo,
+            capture_output=True,
         )
         # 同时清理 pool-sid 命名的分支（lease 失败回滚时可能残留）
         subprocess.run(
             ["git", "branch", "-D", f"session/pool-{sid}"],
-            cwd=repo, capture_output=True,
+            cwd=repo,
+            capture_output=True,
         )
 
     subprocess.run(["git", "worktree", "prune"], cwd=repo, capture_output=True)
@@ -101,14 +109,17 @@ def _cleanup_pool_artifacts(repo: Path) -> None:
     # 清理 pool-sid 命名的所有残留分支
     r = subprocess.run(
         ["git", "branch", "--list", "session/pool-*"],
-        cwd=repo, capture_output=True, text=True,
+        cwd=repo,
+        capture_output=True,
+        text=True,
     )
     for line in r.stdout.splitlines():
         branch = line.strip()
         if branch:
             subprocess.run(
                 ["git", "branch", "-D", branch],
-                cwd=repo, capture_output=True,
+                cwd=repo,
+                capture_output=True,
             )
 
     # 清理 registry 残留
@@ -116,11 +127,9 @@ def _cleanup_pool_artifacts(repo: Path) -> None:
     if reg_file.exists():
         try:
             import json
+
             data = json.loads(reg_file.read_text(encoding="utf-8"))
-            data = {
-                k: v for k, v in data.items()
-                if not k.startswith("sess-pytest-pool")
-            }
+            data = {k: v for k, v in data.items() if not k.startswith("sess-pytest-pool")}
             reg_file.write_text(
                 json.dumps(data, ensure_ascii=False, indent=2),
                 encoding="utf-8",
@@ -136,9 +145,8 @@ def clean_pool():
     # 清理 get_pool singleton 缓存（避免上次测试状态污染）
     # 直接 import 模块（避免 TEST-SOURCE-CONSISTENCY gate 误判 __init__.py 符号缺失）
     import importlib
-    wp_module = importlib.import_module(
-        "zephyr.gov_enforcement.rule_bridge.worktree_pool"
-    )
+
+    wp_module = importlib.import_module("zephyr.gov_enforcement.rule_bridge.worktree_pool")
     wp_module.pool_instances.clear()
     yield
     _cleanup_pool_artifacts(REPO_ROOT)
@@ -169,7 +177,9 @@ def test_prefetch_creates_worktree(clean_pool):
     # 分支存在
     r = subprocess.run(
         ["git", "rev-parse", "--verify", idle[0]["branch"]],
-        cwd=REPO_ROOT, capture_output=True, text=True,
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
     )
     assert r.returncode == 0
 
@@ -194,14 +204,18 @@ def test_lease_relocates_worktree(clean_pool):
     # session 分支存在
     r = subprocess.run(
         ["git", "rev-parse", "--verify", f"session/{_TEST_SID}"],
-        cwd=REPO_ROOT, capture_output=True, text=True,
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
     )
     assert r.returncode == 0
 
     # pool 分支已重命名（不再存在）
     r_pool_branch = subprocess.run(
         ["git", "rev-parse", "--verify", "session/pool-*"],
-        cwd=REPO_ROOT, capture_output=True, text=True,
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
     )
     # 没有以 session/pool- 开头的分支
     assert r_pool_branch.stdout.strip() == ""

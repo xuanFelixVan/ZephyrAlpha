@@ -29,10 +29,7 @@ if str(_SRC) not in sys.path:
 # ── check_directory_contract.py 纯函数加载 ──
 # check_directory_contract.py 在 scripts/ 下（非包模块），用 importlib 从文件路径加载。
 # 模块自身有 bootstrap 把 _shared 所在目录加到 sys.path，exec_module 时自动执行。
-_SCRIPT_DIR = (
-    Path(__file__).resolve().parent.parent.parent.parent
-    / "scripts" / "governance" / "d1_structure"
-)
+_SCRIPT_DIR = Path(__file__).resolve().parent.parent.parent.parent / "scripts" / "governance" / "d1_structure"
 _spec = importlib.util.spec_from_file_location(
     "_check_directory_contract_dcr008_under_test",
     _SCRIPT_DIR / "check_directory_contract.py",
@@ -52,6 +49,7 @@ def _real_contract() -> dict:
 # ════════════════════════════════════════════════════════════════════════════
 # .runtime/tmp/ 合法扩展名通过（purpose_allowed_extensions: .ps1/.py/.sh/.txt/.log）
 # ════════════════════════════════════════════════════════════════════════════
+
 
 class TestRuntimeTmpPass:
     """.runtime/tmp/ 合法扩展名通过——LAW-2 运行时辅助脚本区。"""
@@ -80,6 +78,7 @@ class TestRuntimeTmpPass:
 # ════════════════════════════════════════════════════════════════════════════
 # .runtime/tmp/ 非法扩展名阻断（.md 任务文档应放 docs/_working/，LAW-1）
 # ════════════════════════════════════════════════════════════════════════════
+
 
 class TestRuntimeTmpBlock:
     """.runtime/tmp/ 非法扩展名阻断——LAW-1 任务文档必放 docs/_working/。"""
@@ -112,6 +111,7 @@ class TestRuntimeTmpBlock:
 # docs/_working/ 合法扩展名通过（purpose_allowed_extensions: .md/.csv/.yaml）
 # ════════════════════════════════════════════════════════════════════════════
 
+
 class TestDocsWorkingPass:
     """docs/_working/ 合法扩展名通过——LAW-1 任务文档区。"""
 
@@ -131,6 +131,7 @@ class TestDocsWorkingPass:
 # ════════════════════════════════════════════════════════════════════════════
 # docs/_working/ 非法扩展名阻断（.py/.ps1 应放 .runtime/tmp/，LAW-2）
 # ════════════════════════════════════════════════════════════════════════════
+
 
 class TestDocsWorkingBlock:
     """docs/_working/ 非法扩展名阻断——LAW-2 运行时辅助脚本必放 .runtime/tmp/。"""
@@ -155,19 +156,16 @@ class TestDocsWorkingBlock:
 # .aidrafts/ 无 directory_extensions 规则 → 放行（worktree 目录，LAW-3）
 # ════════════════════════════════════════════════════════════════════════════
 
+
 class TestAidraftsPass:
     """.aidrafts/ 无规则放行——LAW-3 AI session worktree 区。"""
 
     def test_py_pass(self):
-        findings = check_purpose_extension(
-            ".aidrafts/sess-xxx/file.py", _real_contract()
-        )
+        findings = check_purpose_extension(".aidrafts/sess-xxx/file.py", _real_contract())
         assert findings == []
 
     def test_md_pass(self):
-        findings = check_purpose_extension(
-            ".aidrafts/sess-xxx/note.md", _real_contract()
-        )
+        findings = check_purpose_extension(".aidrafts/sess-xxx/note.md", _real_contract())
         assert findings == []
 
 
@@ -175,34 +173,27 @@ class TestAidraftsPass:
 # docs/_working/research_notes/ 子目录继承（longest-prefix match）
 # ════════════════════════════════════════════════════════════════════════════
 
+
 class TestResearchNotesPass:
     """docs/_working/research_notes/ 子目录继承——longest-prefix match 取最具体规则。"""
 
     def test_txt_pass(self):
         # research_notes/ purpose_allowed_extensions: [".md", ".txt", ".yaml"]
         # 比 docs/_working/ 的 [".md", ".csv", ".yaml"] 更具体，.txt 在 research_notes 允许
-        findings = check_purpose_extension(
-            "docs/_working/research_notes/note.txt", _real_contract()
-        )
+        findings = check_purpose_extension("docs/_working/research_notes/note.txt", _real_contract())
         assert findings == []
 
     def test_md_pass(self):
-        findings = check_purpose_extension(
-            "docs/_working/research_notes/note.md", _real_contract()
-        )
+        findings = check_purpose_extension("docs/_working/research_notes/note.md", _real_contract())
         assert findings == []
 
     def test_yaml_pass(self):
-        findings = check_purpose_extension(
-            "docs/_working/research_notes/notes.yaml", _real_contract()
-        )
+        findings = check_purpose_extension("docs/_working/research_notes/notes.yaml", _real_contract())
         assert findings == []
 
     def test_csv_blocked_in_research_notes(self):
         # research_notes/ purpose_allowed_extensions 不含 .csv，应阻断
-        findings = check_purpose_extension(
-            "docs/_working/research_notes/data.csv", _real_contract()
-        )
+        findings = check_purpose_extension("docs/_working/research_notes/data.csv", _real_contract())
         assert len(findings) == 1
         assert findings[0]["rule"] == "DCR-008"
 
@@ -211,33 +202,29 @@ class TestResearchNotesPass:
 # 豁免区（docs/_archive/、templates/）不强制用途匹配
 # ════════════════════════════════════════════════════════════════════════════
 
+
 class TestExemptPrefixes:
     """豁免区不强制用途匹配——_DCR_EXTENSION_EXEMPT_PREFIXES。"""
 
     def test_archive_py_pass(self):
         # docs/_archive/ 在 _DCR_EXTENSION_EXEMPT_PREFIXES 中（历史归档，不强制扩展名）
-        findings = check_purpose_extension(
-            "docs/_archive/legacy/script.py", _real_contract()
-        )
+        findings = check_purpose_extension("docs/_archive/legacy/script.py", _real_contract())
         assert findings == []
 
     def test_archive_md_pass(self):
-        findings = check_purpose_extension(
-            "docs/_archive/legacy/old.md", _real_contract()
-        )
+        findings = check_purpose_extension("docs/_archive/legacy/old.md", _real_contract())
         assert findings == []
 
     def test_templates_py_pass(self):
         # templates/ 在 _DCR_EXTENSION_EXEMPT_PREFIXES 中（模板区，可能含多种格式示例）
-        findings = check_purpose_extension(
-            "docs/01_policies_and_standards/templates/tpl.py", _real_contract()
-        )
+        findings = check_purpose_extension("docs/01_policies_and_standards/templates/tpl.py", _real_contract())
         assert findings == []
 
 
 # ════════════════════════════════════════════════════════════════════════════
 # scan_files 集成——验证 scan_files 调用 check_purpose_extension（防漏调）
 # ════════════════════════════════════════════════════════════════════════════
+
 
 class TestScanFilesIntegration:
     """scan_files 集成——验证 scan_files 调用 check_purpose_extension（防漏调）。"""
@@ -261,16 +248,16 @@ class TestScanFilesIntegration:
 
     def test_scan_files_propagates_dcr008_findings(self, monkeypatch):
         """scan_files 应将 check_purpose_extension 的 finding 传播到结果中。"""
-        fake_findings = [{
-            "rule": "DCR-008",
-            "severity": "error",
-            "file": ".runtime/tmp/task.md",
-            "detail": "test",
-        }]
+        fake_findings = [
+            {
+                "rule": "DCR-008",
+                "severity": "error",
+                "file": ".runtime/tmp/task.md",
+                "detail": "test",
+            }
+        ]
 
-        monkeypatch.setattr(
-            _mod, "check_purpose_extension", lambda *a, **k: fake_findings
-        )
+        monkeypatch.setattr(_mod, "check_purpose_extension", lambda *a, **k: fake_findings)
         monkeypatch.setattr(_mod, "check_doc_type_directory", lambda *a, **k: [])
         monkeypatch.setattr(_mod, "check_extension", lambda *a, **k: [])
         monkeypatch.setattr(_mod, "check_root_whitelist", lambda *a, **k: [])

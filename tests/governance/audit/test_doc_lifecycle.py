@@ -97,7 +97,9 @@ class TestWatchlistMechanics:
     def test_permanent_never_watched(self, tmp_repo):
         """ttl: permanent 文档即使引用全断也不进观察。"""
         _write_doc(
-            tmp_repo, "policy.md", "引用不存在 src/no/such/file.py 和 docs/no/such.md",
+            tmp_repo,
+            "policy.md",
+            "引用不存在 src/no/such/file.py 和 docs/no/such.md",
             ttl="permanent",
         )
         r = _evaluate(tmp_repo)
@@ -118,7 +120,8 @@ class TestWatchlistMechanics:
     def test_ephemeral_ghost_not_watched(self, tmp_repo):
         """只引用短命路径（.worktrees/.runtime）断裂 → 不进观察（tracker 类文档保护）。"""
         _write_doc(
-            tmp_repo, "tracker.md",
+            tmp_repo,
+            "tracker.md",
             "merge 自 .worktrees/AI-GIT-001 完成，快照在 .runtime/quarantine/x.bundle",
         )
         r = _evaluate(tmp_repo)
@@ -223,8 +226,12 @@ class TestWatchlistPersistence:
 
         entries = {
             "docs/_working/a.md": WatchEntry(
-                state="watch", first_seen=1000, baseline_mtime=900.0,
-                last_checked=1000, ghost_refs=["src/x.py"], reason="t",
+                state="watch",
+                first_seen=1000,
+                baseline_mtime=900.0,
+                last_checked=1000,
+                ghost_refs=["src/x.py"],
+                reason="t",
             )
         }
         save_watchlist(tmp_repo, entries)

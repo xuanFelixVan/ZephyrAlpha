@@ -33,6 +33,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch 模拟 DB 查询。
 """
+
 from __future__ import annotations
 
 import sys
@@ -65,6 +66,7 @@ class _MockResult:
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """gate_id / priority / isinstance(GateSpec)。"""
 
@@ -85,24 +87,21 @@ class TestGateSpecFields:
 # TestGetStagedRenames
 # ---------------------------------------------------------------------------
 
+
 class TestGetStagedRenames:
     """_get_staged_renamed_py_files 解析逻辑。"""
 
     def test_normal_rename(self, tmp_path: Path) -> None:
         """正常 .py 重命名 → 返回 (old, new) 列表。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0, "R100\told_module.py\tnew_module.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "R100\told_module.py\tnew_module.py\n"))
         result = _get_staged_renamed_py_files(gw)
         assert result == [("old_module.py", "new_module.py")]
 
     def test_multiple_renames(self, tmp_path: Path) -> None:
         """多个重命名 → 全部返回。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0, "R100\ta/old.py\ta/new.py\nR080\tb/old.py\tb/new.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "R100\ta/old.py\ta/new.py\nR080\tb/old.py\tb/new.py\n"))
         result = _get_staged_renamed_py_files(gw)
         assert len(result) == 2
         assert result[0] == ("a/old.py", "a/new.py")
@@ -111,18 +110,16 @@ class TestGetStagedRenames:
     def test_non_py_skipped(self) -> None:
         """非 .py 文件跳过。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0, "R100\told.md\tnew.md\nR100\told.py\tnew.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "R100\told.md\tnew.md\nR100\told.py\tnew.py\n"))
         result = _get_staged_renamed_py_files(gw)
         assert result == [("old.py", "new.py")]
 
     def test_tests_exempt(self) -> None:
         """tests/ 路径豁免。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0, "R100\ttests/test_old.py\ttests/test_new.py\nR100\tsrc/old.py\tsrc/new.py\n"
-        ))
+        gw.run_git = MagicMock(
+            return_value=_MockResult(0, "R100\ttests/test_old.py\ttests/test_new.py\nR100\tsrc/old.py\tsrc/new.py\n")
+        )
         result = _get_staged_renamed_py_files(gw)
         assert result == [("src/old.py", "src/new.py")]
 
@@ -152,19 +149,30 @@ class TestGetStagedRenames:
 # TestCheckDepgraphHasFile
 # ---------------------------------------------------------------------------
 
+
 class TestCheckDepgraphHasFile:
     """_check_depgraph_has_file DB 查询逻辑。"""
 
     def test_file_exists(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """depgraph 有记录 → True。"""
-        class _FakeCursor:
-            def execute(self, sql, params): pass
-            def fetchone(self): return (1,)
-        class _FakeConn:
-            def cursor(self): return _FakeCursor()
-            def close(self): pass
 
-        def _fake_conn(*a, **k): return _FakeConn()
+        class _FakeCursor:
+            def execute(self, sql, params):
+                pass
+
+            def fetchone(self):
+                return (1,)
+
+        class _FakeConn:
+            def cursor(self):
+                return _FakeCursor()
+
+            def close(self):
+                pass
+
+        def _fake_conn(*a, **k):
+            return _FakeConn()
+
         monkeypatch.setattr(
             "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
             _fake_conn,
@@ -173,12 +181,20 @@ class TestCheckDepgraphHasFile:
 
     def test_file_missing(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """depgraph 无记录 → False。"""
+
         class _FakeCursor:
-            def execute(self, sql, params): pass
-            def fetchone(self): return None
+            def execute(self, sql, params):
+                pass
+
+            def fetchone(self):
+                return None
+
         class _FakeConn:
-            def cursor(self): return _FakeCursor()
-            def close(self): pass
+            def cursor(self):
+                return _FakeCursor()
+
+            def close(self):
+                pass
 
         monkeypatch.setattr(
             "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
@@ -188,8 +204,10 @@ class TestCheckDepgraphHasFile:
 
     def test_db_error_returns_none(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """DB 异常 → None (fail-open)。"""
+
         def _fake_conn(*a, **k):
             raise ConnectionError("DB unreachable")
+
         monkeypatch.setattr(
             "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
             _fake_conn,
@@ -200,6 +218,7 @@ class TestCheckDepgraphHasFile:
 # ---------------------------------------------------------------------------
 # TestFormatViolationDetail
 # ---------------------------------------------------------------------------
+
 
 class TestFormatViolationDetail:
     """_format_violation_detail 格式化。"""
@@ -219,6 +238,7 @@ class TestFormatViolationDetail:
 # TestGatewayIntegration
 # ---------------------------------------------------------------------------
 
+
 class TestGatewayIntegration:
     """mock gateway + monkeypatch DB 的完整流程测试。"""
 
@@ -234,16 +254,21 @@ class TestGatewayIntegration:
     def test_synced_rename_passes(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """重命名已同步 depgraph → 放行。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0, "R100\told.py\tnew.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "R100\told.py\tnew.py\n"))
 
         class _FakeCursor:
-            def execute(self, sql, params): pass
-            def fetchone(self): return (1,)
+            def execute(self, sql, params):
+                pass
+
+            def fetchone(self):
+                return (1,)
+
         class _FakeConn:
-            def cursor(self): return _FakeCursor()
-            def close(self): pass
+            def cursor(self):
+                return _FakeCursor()
+
+            def close(self):
+                pass
 
         monkeypatch.setattr(
             "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
@@ -256,16 +281,21 @@ class TestGatewayIntegration:
     def test_unsynced_rename_blocks(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """重命名未同步 depgraph → 阻断。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0, "R100\tsrc/old.py\tsrc/new.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "R100\tsrc/old.py\tsrc/new.py\n"))
 
         class _FakeCursor:
-            def execute(self, sql, params): pass
-            def fetchone(self): return None  # depgraph 无记录
+            def execute(self, sql, params):
+                pass
+
+            def fetchone(self):
+                return None  # depgraph 无记录
+
         class _FakeConn:
-            def cursor(self): return _FakeCursor()
-            def close(self): pass
+            def cursor(self):
+                return _FakeCursor()
+
+            def close(self):
+                pass
 
         monkeypatch.setattr(
             "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
@@ -281,9 +311,7 @@ class TestGatewayIntegration:
     def test_db_unreachable_fail_open(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """DB 不可达 → fail-open 放行。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0, "R100\told.py\tnew.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "R100\told.py\tnew.py\n"))
         monkeypatch.setattr(
             "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
             lambda *a, **k: (_ for _ in ()).throw(ConnectionError("DB down")),
@@ -305,15 +333,19 @@ class TestGatewayIntegration:
 # TestFailopenPersistence（tracker #116 B1/B2，#ARCH-119）
 # ---------------------------------------------------------------------------
 
+
 def _plant_probe_state(project_root: Path, *, reachable: bool) -> None:
     """写入探针状态文件（模拟网关前置探针结果）。"""
     import json as _json
     from datetime import datetime
     from datetime import timezone as _tz
+
     state = {
         "reachable": reachable,
         "checked_at": datetime.now(_tz.utc).isoformat(),
-        "host": "localhost", "port": 5432, "error": "" if reachable else "refused",
+        "host": "localhost",
+        "port": 5432,
+        "error": "" if reachable else "refused",
         "last_reachable_at": datetime.now(_tz.utc).isoformat() if reachable else None,
         "first_offline_at": None if reachable else datetime.now(_tz.utc).isoformat(),
     }
@@ -324,14 +356,13 @@ def _plant_probe_state(project_root: Path, *, reachable: bool) -> None:
 
 def _read_log_rows(project_root: Path) -> list[tuple]:
     import sqlite3 as _sqlite3
+
     db_path = project_root / "data" / "databases" / "governance.db"
     if not db_path.is_file():
         return []
     conn = _sqlite3.connect(str(db_path))
     try:
-        return conn.execute(
-            "SELECT gate_id, action, detail FROM reconcile_execution_log"
-        ).fetchall()
+        return conn.execute("SELECT gate_id, action, detail FROM reconcile_execution_log").fetchall()
     finally:
         conn.close()
 
@@ -346,14 +377,10 @@ class TestFailopenPersistence:
     def _make_gateway(self, tmp_path: Path) -> MagicMock:
         gw = MagicMock()
         gw.project_root = tmp_path
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0, "R100\tsrc/old.py\tsrc/new.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "R100\tsrc/old.py\tsrc/new.py\n"))
         return gw
 
-    def test_db_offline_passes_and_persists(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_db_offline_passes_and_persists(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """探针证实离线 + DB 连接失败 → 放行 + critical_warn 落盘（DB_OFFLINE）。"""
         _plant_probe_state(tmp_path, reachable=False)
         monkeypatch.setattr(
@@ -372,9 +399,7 @@ class TestFailopenPersistence:
         assert "DB 离线降级" in detail
         assert "src/old.py -> src/new.py" in detail
 
-    def test_db_offline_dedup_same_day(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_db_offline_dedup_same_day(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """探针离线——同签名当日去重（两次 check 只落一条）。"""
         _plant_probe_state(tmp_path, reachable=False)
         monkeypatch.setattr(
@@ -388,9 +413,7 @@ class TestFailopenPersistence:
             assert passed is True
         assert len(_read_log_rows(tmp_path)) == 1
 
-    def test_probe_online_real_error_not_silent(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_probe_online_real_error_not_silent(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """探针在线而 gate 连接失败=真实错误 → 逐次留痕（不静默，不去重）。"""
         _plant_probe_state(tmp_path, reachable=True)
         monkeypatch.setattr(

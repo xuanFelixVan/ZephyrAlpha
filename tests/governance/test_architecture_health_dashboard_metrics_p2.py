@@ -24,6 +24,7 @@
 测试隔离：mock iter_prod_py_files() 返回 tmp_path 下的合成 .py 文件；
 不依赖真实仓库状态。M31 测试 mock MCP_JSON_CANDIDATES 路径。
 """
+
 from __future__ import annotations
 
 import json
@@ -69,14 +70,11 @@ class TestMetric24FieldShadowing:
 
     def test_dataclass_field_shadowing_detected(self, tmp_path):
         """dataclass 字段遮蔽 id 被检测。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "from dataclasses import dataclass\n"
-            "\n"
-            "@dataclass\n"
-            "class Foo:\n"
-            "    id: int\n"
-            "    name: str\n"
-        ))
+        fp = _write_py(
+            tmp_path,
+            "mod.py",
+            ("from dataclasses import dataclass\n\n@dataclass\nclass Foo:\n    id: int\n    name: str\n"),
+        )
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_24_field_shadowing()
@@ -86,14 +84,11 @@ class TestMetric24FieldShadowing:
 
     def test_dataclass_field_no_shadow_passes(self, tmp_path):
         """dataclass 字段不遮蔽内置名通过。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "from dataclasses import dataclass\n"
-            "\n"
-            "@dataclass\n"
-            "class Foo:\n"
-            "    name: str\n"
-            "    value: int\n"
-        ))
+        fp = _write_py(
+            tmp_path,
+            "mod.py",
+            ("from dataclasses import dataclass\n\n@dataclass\nclass Foo:\n    name: str\n    value: int\n"),
+        )
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_24_field_shadowing()
@@ -101,11 +96,7 @@ class TestMetric24FieldShadowing:
 
     def test_basemodel_field_shadowing_detected(self, tmp_path):
         """Pydantic BaseModel 子类字段遮蔽 type 被检测。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "class Foo(BaseModel):\n"
-            "    type: str\n"
-            "    format: str\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("class Foo(BaseModel):\n    type: str\n    format: str\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_24_field_shadowing()
@@ -113,11 +104,7 @@ class TestMetric24FieldShadowing:
 
     def test_non_dataclass_class_not_scanned(self, tmp_path):
         """普通类（无 @dataclass / 非 BaseModel）不扫描。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "class Foo:\n"
-            "    id: int = 0\n"
-            "    type: str = ''\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("class Foo:\n    id: int = 0\n    type: str = ''\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_24_field_shadowing()
@@ -125,16 +112,20 @@ class TestMetric24FieldShadowing:
 
     def test_multiple_violations_all_reported(self, tmp_path):
         """多违规全部报告。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "from dataclasses import dataclass\n"
-            "\n"
-            "@dataclass\n"
-            "class Foo:\n"
-            "    id: int\n"
-            "    file: str\n"
-            "    type: str\n"
-            "    format: str\n"
-        ))
+        fp = _write_py(
+            tmp_path,
+            "mod.py",
+            (
+                "from dataclasses import dataclass\n"
+                "\n"
+                "@dataclass\n"
+                "class Foo:\n"
+                "    id: int\n"
+                "    file: str\n"
+                "    type: str\n"
+                "    format: str\n"
+            ),
+        )
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_24_field_shadowing()
@@ -151,10 +142,7 @@ class TestMetric25ModuleConstMissingFinal:
 
     def test_bare_const_no_final_detected(self, tmp_path):
         """裸常量赋值（无 Final 标注）被检测。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "MAX_RETRIES = 5\n"
-            "TIMEOUT = 30.0\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("MAX_RETRIES = 5\nTIMEOUT = 30.0\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
@@ -163,12 +151,11 @@ class TestMetric25ModuleConstMissingFinal:
 
     def test_final_annotated_const_passes(self, tmp_path):
         """Final 标注的常量通过。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "from typing import Final\n"
-            "\n"
-            "MAX_RETRIES: Final[int] = 5\n"
-            "TIMEOUT: Final[float] = 30.0\n"
-        ))
+        fp = _write_py(
+            tmp_path,
+            "mod.py",
+            ("from typing import Final\n\nMAX_RETRIES: Final[int] = 5\nTIMEOUT: Final[float] = 30.0\n"),
+        )
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
@@ -176,9 +163,7 @@ class TestMetric25ModuleConstMissingFinal:
 
     def test_non_literal_const_passes(self, tmp_path):
         """非字面量常量（函数调用）通过。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "CONFIG = load_config()\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("CONFIG = load_config()\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
@@ -186,10 +171,7 @@ class TestMetric25ModuleConstMissingFinal:
 
     def test_lowercase_name_not_counted(self, tmp_path):
         """非大写命名风格不计数。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "retries = 5\n"
-            "timeout = 30.0\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("retries = 5\ntimeout = 30.0\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
@@ -197,9 +179,7 @@ class TestMetric25ModuleConstMissingFinal:
 
     def test_annassign_non_final_annotation_detected(self, tmp_path):
         """AnnAssign 注解非 Final 被检测。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "MAX_RETRIES: int = 5\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("MAX_RETRIES: int = 5\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
@@ -208,10 +188,7 @@ class TestMetric25ModuleConstMissingFinal:
 
     def test_no_module_const_passes(self, tmp_path):
         """无模块级常量通过。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "def foo():\n"
-            "    return 42\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("def foo():\n    return 42\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
@@ -228,16 +205,20 @@ class TestMetric28SingletonNoLock:
 
     def test_singleton_no_lock_detected(self, tmp_path):
         """单例类无 Lock 被检测。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "class Foo:\n"
-            "    _instance = None\n"
-            "\n"
-            "    @classmethod\n"
-            "    def get(cls):\n"
-            "        if cls._instance is None:\n"
-            "            cls._instance = cls()\n"
-            "        return cls._instance\n"
-        ))
+        fp = _write_py(
+            tmp_path,
+            "mod.py",
+            (
+                "class Foo:\n"
+                "    _instance = None\n"
+                "\n"
+                "    @classmethod\n"
+                "    def get(cls):\n"
+                "        if cls._instance is None:\n"
+                "            cls._instance = cls()\n"
+                "        return cls._instance\n"
+            ),
+        )
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_28_singleton_no_lock()
@@ -247,20 +228,24 @@ class TestMetric28SingletonNoLock:
 
     def test_singleton_with_lock_passes(self, tmp_path):
         """单例类有 Lock 通过。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "import threading\n"
-            "\n"
-            "class Foo:\n"
-            "    _instance = None\n"
-            "    _lock = threading.Lock()\n"
-            "\n"
-            "    @classmethod\n"
-            "    def get(cls):\n"
-            "        with cls._lock:\n"
-            "            if cls._instance is None:\n"
-            "                cls._instance = cls()\n"
-            "        return cls._instance\n"
-        ))
+        fp = _write_py(
+            tmp_path,
+            "mod.py",
+            (
+                "import threading\n"
+                "\n"
+                "class Foo:\n"
+                "    _instance = None\n"
+                "    _lock = threading.Lock()\n"
+                "\n"
+                "    @classmethod\n"
+                "    def get(cls):\n"
+                "        with cls._lock:\n"
+                "            if cls._instance is None:\n"
+                "                cls._instance = cls()\n"
+                "        return cls._instance\n"
+            ),
+        )
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_28_singleton_no_lock()
@@ -268,10 +253,7 @@ class TestMetric28SingletonNoLock:
 
     def test_no_singleton_passes(self, tmp_path):
         """无单例模式通过。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "class Foo:\n"
-            "    pass\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("class Foo:\n    pass\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_28_singleton_no_lock()
@@ -279,10 +261,7 @@ class TestMetric28SingletonNoLock:
 
     def test_dunder_instance_detected(self, tmp_path):
         """__instance 私有变量也被检测。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "class Foo:\n"
-            "    __instance = None\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("class Foo:\n    __instance = None\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_28_singleton_no_lock()
@@ -290,10 +269,7 @@ class TestMetric28SingletonNoLock:
 
     def test_instance_not_none_passes(self, tmp_path):
         """_instance 非 None 不被检测。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "class Foo:\n"
-            "    _instance = Foo()\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("class Foo:\n    _instance = Foo()\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_28_singleton_no_lock()
@@ -310,10 +286,7 @@ class TestMetric30ZephyrEnvEnumConsistency:
 
     def test_os_environ_subscript_detected(self, tmp_path):
         """os.environ['ZEPHYR_ENV'] 被检测。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "import os\n"
-            "env = os.environ['ZEPHYR_ENV']\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("import os\nenv = os.environ['ZEPHYR_ENV']\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_30_zephyr_env_enum_consistency()
@@ -322,10 +295,7 @@ class TestMetric30ZephyrEnvEnumConsistency:
 
     def test_os_environ_get_detected(self, tmp_path):
         """os.environ.get('ZEPHYR_ENV') 被检测。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "import os\n"
-            "env = os.environ.get('ZEPHYR_ENV')\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("import os\nenv = os.environ.get('ZEPHYR_ENV')\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_30_zephyr_env_enum_consistency()
@@ -333,10 +303,7 @@ class TestMetric30ZephyrEnvEnumConsistency:
 
     def test_os_getenv_detected(self, tmp_path):
         """os.getenv('ZEPHYR_ENV') 被检测。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "import os\n"
-            "env = os.getenv('ZEPHYR_ENV')\n"
-        ))
+        fp = _write_py(tmp_path, "mod.py", ("import os\nenv = os.getenv('ZEPHYR_ENV')\n"))
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_30_zephyr_env_enum_consistency()
@@ -344,11 +311,9 @@ class TestMetric30ZephyrEnvEnumConsistency:
 
     def test_no_direct_access_passes(self, tmp_path):
         """无直接访问（通过 is_prod() canonical 入口）通过。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "from zephyr.shared.foundation.environment import is_prod\n"
-            "if is_prod():\n"
-            "    pass\n"
-        ))
+        fp = _write_py(
+            tmp_path, "mod.py", ("from zephyr.shared.foundation.environment import is_prod\nif is_prod():\n    pass\n")
+        )
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_30_zephyr_env_enum_consistency()
@@ -356,12 +321,16 @@ class TestMetric30ZephyrEnvEnumConsistency:
 
     def test_multiple_accesses_all_reported(self, tmp_path):
         """多处直接访问全部报告。"""
-        fp = _write_py(tmp_path, "mod.py", (
-            "import os\n"
-            "a = os.environ['ZEPHYR_ENV']\n"
-            "b = os.getenv('ZEPHYR_ENV')\n"
-            "c = os.environ.get('ZEPHYR_ENV')\n"
-        ))
+        fp = _write_py(
+            tmp_path,
+            "mod.py",
+            (
+                "import os\n"
+                "a = os.environ['ZEPHYR_ENV']\n"
+                "b = os.getenv('ZEPHYR_ENV')\n"
+                "c = os.environ.get('ZEPHYR_ENV')\n"
+            ),
+        )
         with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_30_zephyr_env_enum_consistency()
@@ -379,12 +348,17 @@ class TestMetric31McpVersionCoverage:
     def test_tool_missing_version_detected(self, tmp_path):
         """工具缺 version 字段被检测。"""
         mcp_path = tmp_path / "mcp.json"
-        mcp_path.write_text(json.dumps({
-            "tools": [
-                {"name": "tool1"},  # 缺 version
-                {"name": "tool2", "version": "1.0.0"},
-            ]
-        }), encoding="utf-8")
+        mcp_path.write_text(
+            json.dumps(
+                {
+                    "tools": [
+                        {"name": "tool1"},  # 缺 version
+                        {"name": "tool2", "version": "1.0.0"},
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
         with patch("architecture_health_dashboard.MCP_JSON_CANDIDATES", (mcp_path,)):
             result = metric_31_mcp_version_coverage()
         assert result["metric_id"] == "M31"
@@ -394,12 +368,17 @@ class TestMetric31McpVersionCoverage:
     def test_all_tools_have_version_passes(self, tmp_path):
         """所有工具有 version 通过。"""
         mcp_path = tmp_path / "mcp.json"
-        mcp_path.write_text(json.dumps({
-            "tools": [
-                {"name": "tool1", "version": "1.0.0"},
-                {"name": "tool2", "version": "2.0.0"},
-            ]
-        }), encoding="utf-8")
+        mcp_path.write_text(
+            json.dumps(
+                {
+                    "tools": [
+                        {"name": "tool1", "version": "1.0.0"},
+                        {"name": "tool2", "version": "2.0.0"},
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
         with patch("architecture_health_dashboard.MCP_JSON_CANDIDATES", (mcp_path,)):
             result = metric_31_mcp_version_coverage()
         assert result["count"] == 0
@@ -415,14 +394,19 @@ class TestMetric31McpVersionCoverage:
     def test_multiple_tools_missing_version(self, tmp_path):
         """多工具缺 version 全部报告。"""
         mcp_path = tmp_path / "mcp.json"
-        mcp_path.write_text(json.dumps({
-            "tools": [
-                {"name": "a"},
-                {"name": "b"},
-                {"name": "c", "version": "1.0.0"},
-                {"name": "d"},
-            ]
-        }), encoding="utf-8")
+        mcp_path.write_text(
+            json.dumps(
+                {
+                    "tools": [
+                        {"name": "a"},
+                        {"name": "b"},
+                        {"name": "c", "version": "1.0.0"},
+                        {"name": "d"},
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
         with patch("architecture_health_dashboard.MCP_JSON_CANDIDATES", (mcp_path,)):
             result = metric_31_mcp_version_coverage()
         assert result["count"] == 3

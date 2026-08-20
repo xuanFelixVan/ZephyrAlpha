@@ -24,6 +24,7 @@
 - TestGateSpecFields: gate_id / priority 字段正确
 - TestAllProtectedFiles: 受保护清单全覆盖（blueprint_registry + path_ownership_map）
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -71,7 +72,10 @@ class TestNoDeletionPasses:
         gw = _make_gateway(tmp_path, deleted_files_stdout="")
         gate = make_derived_file_deletion_gate()
         passed, detail = gate.check(
-            gw, ["src/a.py"], session_id="s1", allow_derived_deletion=False,
+            gw,
+            ["src/a.py"],
+            session_id="s1",
+            allow_derived_deletion=False,
         )
         assert passed is True
         assert detail == ""
@@ -88,8 +92,10 @@ class TestProtectedDeletionBlocked:
         )
         gate = make_derived_file_deletion_gate()
         passed, detail = gate.check(
-            gw, ["docs/03_modules/blueprint_registry.yaml"],
-            session_id="s1", allow_derived_deletion=False,
+            gw,
+            ["docs/03_modules/blueprint_registry.yaml"],
+            session_id="s1",
+            allow_derived_deletion=False,
         )
         assert passed is False
         assert "DERIVED_FILE_DELETION_VIOLATION" in detail
@@ -103,8 +109,10 @@ class TestProtectedDeletionBlocked:
         )
         gate = make_derived_file_deletion_gate()
         passed, detail = gate.check(
-            gw, ["docs/03_modules/path_ownership_map.yaml"],
-            session_id="s1", allow_derived_deletion=False,
+            gw,
+            ["docs/03_modules/path_ownership_map.yaml"],
+            session_id="s1",
+            allow_derived_deletion=False,
         )
         assert passed is False
         assert "DERIVED_FILE_DELETION_VIOLATION" in detail
@@ -114,16 +122,14 @@ class TestProtectedDeletionBlocked:
         """多文件删除中含受保护文件 → 阻断，detail 仅列受保护文件。"""
         gw = _make_gateway(
             tmp_path,
-            deleted_files_stdout=(
-                "src/old_module.py\n"
-                "docs/03_modules/blueprint_registry.yaml\n"
-                "tests/test_old.py\n"
-            ),
+            deleted_files_stdout=("src/old_module.py\ndocs/03_modules/blueprint_registry.yaml\ntests/test_old.py\n"),
         )
         gate = make_derived_file_deletion_gate()
         passed, detail = gate.check(
-            gw, ["src/old_module.py", "docs/03_modules/blueprint_registry.yaml"],
-            session_id="s1", allow_derived_deletion=False,
+            gw,
+            ["src/old_module.py", "docs/03_modules/blueprint_registry.yaml"],
+            session_id="s1",
+            allow_derived_deletion=False,
         )
         assert passed is False
         assert "blueprint_registry.yaml" in detail
@@ -137,12 +143,15 @@ class TestNonProtectedDeletionPasses:
     def test_regular_file_deletion_passes(self, tmp_path):
         """暂存删除普通源文件 → passed=True（gate 只保护派生文件）。"""
         gw = _make_gateway(
-            tmp_path, deleted_files_stdout="src/legacy/old_module.py\n",
+            tmp_path,
+            deleted_files_stdout="src/legacy/old_module.py\n",
         )
         gate = make_derived_file_deletion_gate()
         passed, detail = gate.check(
-            gw, ["src/legacy/old_module.py"],
-            session_id="s1", allow_derived_deletion=False,
+            gw,
+            ["src/legacy/old_module.py"],
+            session_id="s1",
+            allow_derived_deletion=False,
         )
         assert passed is True
         assert detail == ""
@@ -159,8 +168,10 @@ class TestEscapeHatchPasses:
         )
         gate = make_derived_file_deletion_gate()
         passed, detail = gate.check(
-            gw, ["docs/03_modules/blueprint_registry.yaml"],
-            session_id="s1", allow_derived_deletion=True,
+            gw,
+            ["docs/03_modules/blueprint_registry.yaml"],
+            session_id="s1",
+            allow_derived_deletion=True,
         )
         assert passed is True
         assert detail == ""
@@ -172,12 +183,16 @@ class TestGitDiffFailOpen:
     def test_nonzero_returncode_passes(self, tmp_path):
         """git diff 失败（rc=1）→ 降级为放行（治标不卡死工作流）。"""
         gw = _make_gateway(
-            tmp_path, deleted_files_stdout="", returncode=1,
+            tmp_path,
+            deleted_files_stdout="",
+            returncode=1,
         )
         gate = make_derived_file_deletion_gate()
         passed, detail = gate.check(
-            gw, ["docs/03_modules/blueprint_registry.yaml"],
-            session_id="s1", allow_derived_deletion=False,
+            gw,
+            ["docs/03_modules/blueprint_registry.yaml"],
+            session_id="s1",
+            allow_derived_deletion=False,
         )
         assert passed is True
         assert detail == ""
@@ -189,12 +204,15 @@ class TestGitDiffExceptionFailOpen:
     def test_exception_degrades_to_pass(self, tmp_path):
         """run_git 抛 RuntimeError → 降级为放行（检测器失效不卡死 commit）。"""
         gw = _make_gateway(
-            tmp_path, raise_exc=RuntimeError("git binary not found"),
+            tmp_path,
+            raise_exc=RuntimeError("git binary not found"),
         )
         gate = make_derived_file_deletion_gate()
         passed, detail = gate.check(
-            gw, ["docs/03_modules/blueprint_registry.yaml"],
-            session_id="s1", allow_derived_deletion=False,
+            gw,
+            ["docs/03_modules/blueprint_registry.yaml"],
+            session_id="s1",
+            allow_derived_deletion=False,
         )
         assert passed is True
         assert detail == ""
@@ -212,8 +230,10 @@ class TestPathNormalization:
         )
         gate = make_derived_file_deletion_gate()
         passed, detail = gate.check(
-            gw, ["docs/03_modules/blueprint_registry.yaml"],
-            session_id="s1", allow_derived_deletion=False,
+            gw,
+            ["docs/03_modules/blueprint_registry.yaml"],
+            session_id="s1",
+            allow_derived_deletion=False,
         )
         assert passed is False
         assert "blueprint_registry.yaml" in detail
@@ -238,10 +258,14 @@ class TestAllProtectedFiles:
         gate = make_derived_file_deletion_gate()
         for protected in _PROTECTED_DERIVED_FILES:
             gw = _make_gateway(
-                tmp_path, deleted_files_stdout=protected + "\n",
+                tmp_path,
+                deleted_files_stdout=protected + "\n",
             )
             passed, detail = gate.check(
-                gw, [protected], session_id="s1", allow_derived_deletion=False,
+                gw,
+                [protected],
+                session_id="s1",
+                allow_derived_deletion=False,
             )
             assert passed is False, f"受保护文件 {protected} 删除未被拦截"
             assert protected in detail

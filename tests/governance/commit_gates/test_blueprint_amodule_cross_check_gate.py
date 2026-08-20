@@ -31,6 +31,7 @@
   - 双拼写 → 阻断
   - tests/ 路径豁免
 """
+
 from __future__ import annotations
 
 import sys
@@ -64,6 +65,7 @@ class _MockResult:
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """gate_id / priority / isinstance(GateSpec)。"""
 
@@ -84,6 +86,7 @@ class TestGateSpecFields:
 # TestNormalizeModuleId
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeModuleId:
     """_normalize_module_id 将 _ 替换为 -。"""
 
@@ -103,6 +106,7 @@ class TestNormalizeModuleId:
 # ---------------------------------------------------------------------------
 # TestExtractHeaders
 # ---------------------------------------------------------------------------
+
 
 class TestExtractHeaders:
     """_extract_headers 从文件内容前 20 行提取两头部。"""
@@ -152,6 +156,7 @@ class TestExtractHeaders:
 # TestCheckCrossConsistency
 # ---------------------------------------------------------------------------
 
+
 class TestCheckCrossConsistency:
     """_check_cross_consistency diff-based 交叉校验。"""
 
@@ -180,10 +185,7 @@ class TestCheckCrossConsistency:
     def test_different_modules_pass(self) -> None:
         """不同模块（GATE_ENGINE vs GOV-xxx）→ 无违规。"""
         py_file = "src/zephyr/foo.py"
-        content = (
-            "# [BLUEPRINT] MOD-GATE_ENGINE | docs/foo.md\n"
-            "# [A_module] module_id=MOD-GOV-domain_fk_gate\n"
-        )
+        content = "# [BLUEPRINT] MOD-GATE_ENGINE | docs/foo.md\n# [A_module] module_id=MOD-GOV-domain_fk_gate\n"
         diff = (
             "@@ -0,0 +1,2 @@\n"
             "+# [BLUEPRINT] MOD-GATE_ENGINE | docs/foo.md\n"
@@ -205,15 +207,8 @@ class TestCheckCrossConsistency:
         实为项目惯例且语义正确。修复后仅原始不同但 normalize 相等才阻断。
         """
         py_file = "src/zephyr/foo.py"
-        content = (
-            "# [BLUEPRINT] MOD-INF-016 | docs/foo.md\n"
-            "# [A_module] module_id=MOD-INF-016\n"
-        )
-        diff = (
-            "@@ -0,0 +1,2 @@\n"
-            "+# [BLUEPRINT] MOD-INF-016 | docs/foo.md\n"
-            "+# [A_module] module_id=MOD-INF-016\n"
-        )
+        content = "# [BLUEPRINT] MOD-INF-016 | docs/foo.md\n# [A_module] module_id=MOD-INF-016\n"
+        diff = "@@ -0,0 +1,2 @@\n+# [BLUEPRINT] MOD-INF-016 | docs/foo.md\n+# [A_module] module_id=MOD-INF-016\n"
         gw = _make_gateway(
             diff_files=[py_file],
             file_diffs={py_file: diff},
@@ -301,6 +296,7 @@ class TestCheckCrossConsistency:
 # TestFormatViolations
 # ---------------------------------------------------------------------------
 
+
 class TestFormatViolations:
     """_format_violations 格式化。"""
 
@@ -328,6 +324,7 @@ class TestFormatViolations:
 # TestGatewayIntegration
 # ---------------------------------------------------------------------------
 
+
 class TestGatewayIntegration:
     """mock gateway 完整流程测试。"""
 
@@ -342,10 +339,7 @@ class TestGatewayIntegration:
     def test_different_modules_passes(self) -> None:
         """不同模块 → 放行。"""
         py_file = "src/zephyr/foo.py"
-        content = (
-            "# [BLUEPRINT] MOD-GATE_ENGINE | docs/foo.md\n"
-            "# [A_module] module_id=MOD-GOV-domain_fk_gate\n"
-        )
+        content = "# [BLUEPRINT] MOD-GATE_ENGINE | docs/foo.md\n# [A_module] module_id=MOD-GOV-domain_fk_gate\n"
         diff = (
             "@@ -0,0 +1,2 @@\n"
             "+# [BLUEPRINT] MOD-GATE_ENGINE | docs/foo.md\n"
@@ -386,14 +380,9 @@ class TestGatewayIntegration:
     def test_tests_path_exempt(self) -> None:
         """tests/ 路径豁免。"""
         py_file = "tests/governance/test_foo.py"
-        content = (
-            "# [BLUEPRINT] MOD-GOV_test_foo | docs/foo.md\n"
-            "# [A_module] module_id=MOD-GOV-test_foo\n"
-        )
+        content = "# [BLUEPRINT] MOD-GOV_test_foo | docs/foo.md\n# [A_module] module_id=MOD-GOV-test_foo\n"
         diff = (
-            "@@ -0,0 +1,2 @@\n"
-            "+# [BLUEPRINT] MOD-GOV_test_foo | docs/foo.md\n"
-            "+# [A_module] module_id=MOD-GOV-test_foo\n"
+            "@@ -0,0 +1,2 @@\n+# [BLUEPRINT] MOD-GOV_test_foo | docs/foo.md\n+# [A_module] module_id=MOD-GOV-test_foo\n"
         )
         gw = _make_gateway(
             diff_files=[py_file],
@@ -409,6 +398,7 @@ class TestGatewayIntegration:
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_gateway(
     diff_files: list[str],
     file_diffs: dict[str, str],
@@ -421,6 +411,7 @@ def _make_gateway(
         file_diffs: {py_file: diff_stdout} 每个文件的 added 行 diff。
         staged_contents: {py_file: content} 每个文件的 staged 内容。
     """
+
     def _run_git(args):
         cmd = list(args)
         if "diff" in cmd and "--name-only" in cmd:

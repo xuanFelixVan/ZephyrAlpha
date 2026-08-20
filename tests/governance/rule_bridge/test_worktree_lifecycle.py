@@ -58,8 +58,7 @@ def tmp_lifecycle(tmp_path, monkeypatch):
     config_data = {
         "module_id": "MOD-GOV_ENFORCEMENT_worktree_lifecycle",
         "states": [
-            {"name": s, "description": f"state {s}"}
-            for s in ["created", "active", "idle", "quarantined", "swept"]
+            {"name": s, "description": f"state {s}"} for s in ["created", "active", "idle", "quarantined", "swept"]
         ],
         "transitions": [
             {"from": "created", "to": "active"},
@@ -82,6 +81,7 @@ def tmp_lifecycle(tmp_path, monkeypatch):
 
     # patch DEFAULT paths in module to use tmp
     import zephyr.gov_enforcement.rule_bridge.worktree_lifecycle as wl_mod
+
     monkeypatch.setattr(wl_mod, "DEFAULT_STATE_MACHINE_PATH", config_path)
     monkeypatch.setattr(wl_mod, "DEFAULT_RECORDS_DIR", records_dir)
 
@@ -102,6 +102,7 @@ class TestWorktreeStateEnum:
 
     def test_all_states(self):
         from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import WorktreeState
+
         assert WorktreeState.CREATED.value == "created"
         assert WorktreeState.ACTIVE.value == "active"
         assert WorktreeState.IDLE.value == "idle"
@@ -110,11 +111,13 @@ class TestWorktreeStateEnum:
 
     def test_state_count(self):
         from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import WorktreeState
+
         assert len(WorktreeState) == 5
 
     def test_inherits_str_enum(self):
         """WorktreeState 是 str Enum，可直接与字符串比较。"""
         from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import WorktreeState
+
         assert WorktreeState.CREATED == "created"
 
 
@@ -137,6 +140,7 @@ class TestLoadStateMachineConfig:
         from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import (
             load_state_machine_config,
         )
+
         with pytest.raises(FileNotFoundError):
             load_state_machine_config(tmp_path / "nonexistent.yaml")
 
@@ -214,6 +218,7 @@ class TestTransition:
         from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import (
             WorktreeTransitionError,
         )
+
         with pytest.raises(WorktreeTransitionError):
             wl.transition("sess-t5", "idle")
 
@@ -226,6 +231,7 @@ class TestTransition:
         from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import (
             WorktreeTransitionError,
         )
+
         with pytest.raises(WorktreeTransitionError):
             wl.transition("sess-t6", "active")
 
@@ -234,6 +240,7 @@ class TestTransition:
         from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import (
             WorktreeLifecycleError,
         )
+
         with pytest.raises(WorktreeLifecycleError):
             wl.transition("nonexistent", "active")
 
@@ -267,6 +274,7 @@ class TestGetStateAndHistory:
         from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import (
             WorktreeLifecycleError,
         )
+
         with pytest.raises(WorktreeLifecycleError):
             wl.get_state("nonexistent")
 
@@ -299,6 +307,7 @@ class TestListByState:
     def test_list_by_enum_state(self, tmp_lifecycle):
         """传入 WorktreeState enum 也可。"""
         from zephyr.gov_enforcement.rule_bridge.worktree_lifecycle import WorktreeState
+
         wl, _, _ = tmp_lifecycle
         wl.register("sess-l1")
         created = wl.list_by_state(WorktreeState.CREATED)

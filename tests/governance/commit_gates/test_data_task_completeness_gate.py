@@ -137,8 +137,15 @@ class TestCheckNewTaskWithFallback:
 
         tasks = [{"task_id": "new_task_incremental", "fallback_sources": [{"source": "akshare"}]}]
 
-        with patch("zephyr.gov_enforcement.commit_gates.data_task_completeness_gate.subprocess.run", return_value=mock_subprocess), \
-             patch("zephyr.gov_enforcement.commit_gates.data_task_completeness_gate._load_tasks_yaml", return_value=tasks):
+        with (
+            patch(
+                "zephyr.gov_enforcement.commit_gates.data_task_completeness_gate.subprocess.run",
+                return_value=mock_subprocess,
+            ),
+            patch(
+                "zephyr.gov_enforcement.commit_gates.data_task_completeness_gate._load_tasks_yaml", return_value=tasks
+            ),
+        ):
             passed, detail = spec.check(gw, ["src/zephyr/data/config/tasks.yaml"])
 
         assert passed is True
@@ -159,8 +166,15 @@ class TestCheckNewTaskWithoutFallback:
 
         tasks = [{"task_id": "new_task_incremental"}]  # 无 fallback_sources
 
-        with patch("zephyr.gov_enforcement.commit_gates.data_task_completeness_gate.subprocess.run", return_value=mock_subprocess), \
-             patch("zephyr.gov_enforcement.commit_gates.data_task_completeness_gate._load_tasks_yaml", return_value=tasks):
+        with (
+            patch(
+                "zephyr.gov_enforcement.commit_gates.data_task_completeness_gate.subprocess.run",
+                return_value=mock_subprocess,
+            ),
+            patch(
+                "zephyr.gov_enforcement.commit_gates.data_task_completeness_gate._load_tasks_yaml", return_value=tasks
+            ),
+        ):
             passed, detail = spec.check(gw, ["src/zephyr/data/config/tasks.yaml"])
 
         # warn 级——始终 passed=True（不阻断 commit）
@@ -179,7 +193,10 @@ class TestCheckNewTaskWithoutFallback:
         mock_subprocess.returncode = 0
         mock_subprocess.stdout = mock_diff
 
-        with patch("zephyr.gov_enforcement.commit_gates.data_task_completeness_gate.subprocess.run", return_value=mock_subprocess):
+        with patch(
+            "zephyr.gov_enforcement.commit_gates.data_task_completeness_gate.subprocess.run",
+            return_value=mock_subprocess,
+        ):
             passed, detail = spec.check(gw, ["src/zephyr/data/config/tasks.yaml"])
 
         assert passed is True

@@ -46,6 +46,7 @@ from _shared.staged_files import iter_staged_files  # noqa: E402, I001
 # 辅助
 # ============================================================================
 
+
 def _mock_git_output(lines: list[str], returncode: int = 0) -> MagicMock:
     """构造 subprocess.run 的 mock 返回值."""
     mock = MagicMock()
@@ -66,27 +67,34 @@ def _create_files(root: Path, rel_paths: list[str]) -> None:
 # iter_staged_files() 单元测试
 # ============================================================================
 
+
 class TestIterStagedFiles:
     """iter_staged_files() 共享函数——变更检测核心（真源 _shared/staged_files.py）。"""
 
     def test_empty_staged_returns_empty(self, tmp_path: Path) -> None:
         """无 staged 文件时返回空列表。"""
-        with patch("_shared.staged_files.REPO_ROOT", tmp_path), \
-             patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output([])):
+        with (
+            patch("_shared.staged_files.REPO_ROOT", tmp_path),
+            patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output([])),
+        ):
             assert iter_staged_files() == []
 
     def test_git_failure_returns_empty(self, tmp_path: Path) -> None:
         """git 命令失败（returncode != 0）时返回空列表（fail-open，不阻断 pre-commit）。"""
-        with patch("_shared.staged_files.REPO_ROOT", tmp_path), \
-             patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output([], returncode=1)):
+        with (
+            patch("_shared.staged_files.REPO_ROOT", tmp_path),
+            patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output([], returncode=1)),
+        ):
             assert iter_staged_files() == []
 
     def test_returns_staged_files(self, tmp_path: Path) -> None:
         """正确返回 staged 文件的绝对 Path 列表。"""
         files = ["src/zephyr/foo.py", "docs/bar.md"]
         _create_files(tmp_path, files)
-        with patch("_shared.staged_files.REPO_ROOT", tmp_path), \
-             patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(files)):
+        with (
+            patch("_shared.staged_files.REPO_ROOT", tmp_path),
+            patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(files)),
+        ):
             result = iter_staged_files()
             assert len(result) == 2
             assert all(p.exists() for p in result)
@@ -96,8 +104,10 @@ class TestIterStagedFiles:
         """extensions 参数过滤非目标扩展名。"""
         files = ["src/zephyr/a.py", "src/zephyr/b.md", "src/zephyr/c.yaml"]
         _create_files(tmp_path, files)
-        with patch("_shared.staged_files.REPO_ROOT", tmp_path), \
-             patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(files)):
+        with (
+            patch("_shared.staged_files.REPO_ROOT", tmp_path),
+            patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(files)),
+        ):
             result = iter_staged_files(extensions=frozenset({".py"}))
             assert len(result) == 1
             assert result[0].suffix == ".py"
@@ -106,8 +116,10 @@ class TestIterStagedFiles:
         """path_prefix 参数只保留匹配前缀的文件。"""
         files = ["src/zephyr/a.py", "tests/b.py", "scripts/c.py"]
         _create_files(tmp_path, files)
-        with patch("_shared.staged_files.REPO_ROOT", tmp_path), \
-             patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(files)):
+        with (
+            patch("_shared.staged_files.REPO_ROOT", tmp_path),
+            patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(files)),
+        ):
             result = iter_staged_files(path_prefix="src/zephyr/")
             assert len(result) == 1
             assert "src/zephyr" in str(result[0]).replace("\\", "/")
@@ -116,8 +128,10 @@ class TestIterStagedFiles:
         """git diff 返回的已删除文件（工作区不存在）被排除。"""
         files = ["src/zephyr/exists.py", "src/zephyr/deleted.py"]
         _create_files(tmp_path, ["src/zephyr/exists.py"])  # 只创建 exists.py
-        with patch("_shared.staged_files.REPO_ROOT", tmp_path), \
-             patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(files)):
+        with (
+            patch("_shared.staged_files.REPO_ROOT", tmp_path),
+            patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(files)),
+        ):
             result = iter_staged_files()
             assert len(result) == 1
             assert result[0].name == "exists.py"
@@ -126,8 +140,10 @@ class TestIterStagedFiles:
         """重复路径去重，结果排序。"""
         files = ["src/zephyr/b.py", "src/zephyr/a.py", "src/zephyr/a.py"]
         _create_files(tmp_path, ["src/zephyr/a.py", "src/zephyr/b.py"])
-        with patch("_shared.staged_files.REPO_ROOT", tmp_path), \
-             patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(files)):
+        with (
+            patch("_shared.staged_files.REPO_ROOT", tmp_path),
+            patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(files)),
+        ):
             result = iter_staged_files(extensions=frozenset({".py"}))
             assert len(result) == 2
             # 排序：a.py 在 b.py 前
@@ -138,9 +154,10 @@ class TestIterStagedFiles:
         """Windows 反斜杠路径被正反斜杠归一化后匹配 path_prefix。"""
         _create_files(tmp_path, ["src/zephyr/win.py"])
         # git 在 Windows 可能返回反斜杠路径
-        with patch("_shared.staged_files.REPO_ROOT", tmp_path), \
-             patch("_shared.staged_files.subprocess.run",
-                   return_value=_mock_git_output(["src\\zephyr\\win.py"])):
+        with (
+            patch("_shared.staged_files.REPO_ROOT", tmp_path),
+            patch("_shared.staged_files.subprocess.run", return_value=_mock_git_output(["src\\zephyr\\win.py"])),
+        ):
             result = iter_staged_files(path_prefix="src/zephyr/")
             assert len(result) == 1
 
@@ -148,6 +165,7 @@ class TestIterStagedFiles:
 # ============================================================================
 # 扫描器 --staged 模式集成测试
 # ============================================================================
+
 
 class TestScanDebtStaged:
     """scan_debt.py --staged 模式——变更检测集成。"""
@@ -165,8 +183,7 @@ class TestScanDebtStaged:
 
         bad_file = tmp_path / "bad.py"
         bad_file.write_text(
-            "def calculate_trust(git_ok: bool, test_ok: bool, audit_ok: bool) -> None:\n"
-            "    pass\n",
+            "def calculate_trust(git_ok: bool, test_ok: bool, audit_ok: bool) -> None:\n    pass\n",
             encoding="utf-8",
         )
         with patch("scan_debt.iter_staged_files", return_value=[bad_file]):

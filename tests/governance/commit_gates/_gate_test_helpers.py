@@ -14,6 +14,7 @@
     "纯 added 行拼接"的简化文件内容（行号从 1 开始）。
   - diff_fail: True 时 git diff --name-only 返回非 0 returncode（模拟 fail-open）。
 """
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock

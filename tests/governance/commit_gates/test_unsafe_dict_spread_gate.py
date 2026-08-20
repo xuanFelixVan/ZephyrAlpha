@@ -33,6 +33,7 @@
 测试隔离：MagicMock 模拟 gateway.run_git 返回预设 staged 文件列表 + diff content；
 不读/不写真实仓库，不依赖真实 registry。
 """
+
 from __future__ import annotations
 
 import sys
@@ -149,9 +150,7 @@ class TestUnsafeSpreadDetected:
     def test_simple_data_spread_warns(self, capsys):
         """SomeClass(**data) → warn（passed=True + detail 含提示）"""
         red_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [red_file], {red_file: ["obj = WorkDAG(**data)"]}
-        )
+        gw = _make_mock_gateway([red_file], {red_file: ["obj = WorkDAG(**data)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         # warn 级：不阻断
@@ -167,9 +166,7 @@ class TestUnsafeSpreadDetected:
     def test_payload_spread_warns(self):
         """SomeClass(**payload) → warn"""
         red_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [red_file], {red_file: ["entry = NightShiftEntry(**payload)"]}
-        )
+        gw = _make_mock_gateway([red_file], {red_file: ["entry = NightShiftEntry(**payload)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -179,9 +176,7 @@ class TestUnsafeSpreadDetected:
     def test_row_spread_warns(self):
         """SomeClass(**row) → warn（DB row 场景）"""
         red_file = "src/zephyr/infrastructure/some_module.py"
-        gw = _make_mock_gateway(
-            [red_file], {red_file: ["rec = PreemptionRecord(**row)"]}
-        )
+        gw = _make_mock_gateway([red_file], {red_file: ["rec = PreemptionRecord(**row)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -191,9 +186,7 @@ class TestUnsafeSpreadDetected:
     def test_nested_attribute_not_matched(self):
         """SomeClass(**data.get('x')) 不匹配（非纯标识符）—— 留给 AI 判断"""
         red_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [red_file], {red_file: ["obj = WorkDAG(**data.get('config'))"]}
-        )
+        gw = _make_mock_gateway([red_file], {red_file: ["obj = WorkDAG(**data.get('config'))"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -202,9 +195,7 @@ class TestUnsafeSpreadDetected:
     def test_return_stmt_warns(self):
         """return SomeClass(**data) → warn"""
         red_file = "src/zephyr/autonomy_core/some_module.py"
-        gw = _make_mock_gateway(
-            [red_file], {red_file: ["    return FeedbackSignal(**data)"]}
-        )
+        gw = _make_mock_gateway([red_file], {red_file: ["    return FeedbackSignal(**data)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -220,9 +211,7 @@ class TestWarnLevelNotBlocking:
     def test_warn_always_passes(self):
         """warn 级 gate passed 始终 True（不阻断 commit）"""
         red_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [red_file], {red_file: ["obj = WorkDAG(**data)", "obj2 = Other(**payload)"]}
-        )
+        gw = _make_mock_gateway([red_file], {red_file: ["obj = WorkDAG(**data)", "obj2 = Other(**payload)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed  # 永远 True
@@ -232,9 +221,7 @@ class TestWarnLevelNotBlocking:
     def test_no_violation_empty_detail(self):
         """无违规 → passed=True + detail 空"""
         blue_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["obj = WorkDAG(**kwargs)"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["obj = WorkDAG(**kwargs)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -249,9 +236,7 @@ class TestWarnLevelNotBlocking:
 class TestKwargsExemption:
     def test_kwargs_passes(self):
         blue_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["obj = WorkDAG(**kwargs)"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["obj = WorkDAG(**kwargs)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -259,9 +244,7 @@ class TestKwargsExemption:
 
     def test_kwds_passes(self):
         blue_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["obj = WorkDAG(**kwds)"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["obj = WorkDAG(**kwds)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -270,9 +253,7 @@ class TestKwargsExemption:
     def test_mixed_kwargs_and_field_passes(self):
         """field=val, **kwargs → kwargs 豁免，整行不报"""
         blue_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["obj = WorkDAG(name='x', **kwargs)"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["obj = WorkDAG(name='x', **kwargs)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -331,9 +312,7 @@ class TestDictLiteralExemption:
     def test_empty_dict_literal_not_matched(self):
         """SomeClass(**{}) 正则不匹配"""
         blue_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["obj = WorkDAG(**{})"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["obj = WorkDAG(**{})"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -349,9 +328,7 @@ class TestFuncCallExemption:
     def test_func_call_not_matched(self):
         """SomeClass(**build_kwargs()) 正则不匹配（** 后跟函数调用，结尾是 ))）"""
         blue_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["obj = WorkDAG(**build_kwargs())"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["obj = WorkDAG(**build_kwargs())"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -377,9 +354,7 @@ class TestImportExemption:
 
     def test_plain_import_passes(self):
         blue_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["import json"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["import json"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -394,9 +369,7 @@ class TestImportExemption:
 class TestCommentExemption:
     def test_comment_with_spread_passes(self):
         blue_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["# obj = WorkDAG(**data)  # 旧代码"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["# obj = WorkDAG(**data)  # 旧代码"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -411,10 +384,7 @@ class TestCommentExemption:
 class TestDocstringExemption:
     def test_docstring_with_spread_passes(self):
         blue_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file],
-            {blue_file: ['"""obj = WorkDAG(**data)"""']}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ['"""obj = WorkDAG(**data)"""']})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -422,10 +392,7 @@ class TestDocstringExemption:
 
     def test_triple_single_quote_passes(self):
         blue_file = "src/zephyr/trading/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file],
-            {blue_file: ["'''obj = WorkDAG(**data)'''"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["'''obj = WorkDAG(**data)'''"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -435,12 +402,7 @@ class TestDocstringExemption:
         """多行 docstring 中间的 ``**data`` 示例不报（行号在 docstring 集合内）"""
         blue_file = "src/zephyr/gov_enforcement/commit_gates/unsafe_dict_spread_gate.py"
         # 完整文件内容：第 2-4 行在 docstring 内
-        full_content = (
-            '"""模块 docstring\n'
-            '检测 SomeClass(**varname) 模式\n'
-            '以及 Other(**payload) 模式\n'
-            '"""'
-        )
+        full_content = '"""模块 docstring\n检测 SomeClass(**varname) 模式\n以及 Other(**payload) 模式\n"""'
         # added 行是第 3 行（docstring 内）
         gw = _make_mock_gateway(
             [blue_file],
@@ -455,11 +417,7 @@ class TestDocstringExemption:
     def test_multiline_docstring_triple_single_quote_exempt(self):
         """多行 ''' docstring 中间的 ``**data`` 示例不报"""
         blue_file = "src/zephyr/trading/some_module.py"
-        full_content = (
-            "'''模块 docstring\n"
-            "示例: WorkDAG(**data)\n"
-            "'''"
-        )
+        full_content = "'''模块 docstring\n示例: WorkDAG(**data)\n'''"
         gw = _make_mock_gateway(
             [blue_file],
             {blue_file: ["示例: WorkDAG(**data)"]},
@@ -473,12 +431,7 @@ class TestDocstringExemption:
     def test_code_after_docstring_still_detected(self):
         """docstring 结束后的代码行仍检测——确保 docstring 跟踪正确闭合"""
         red_file = "src/zephyr/trading/some_module.py"
-        full_content = (
-            '"""模块 docstring\n'
-            '示例: WorkDAG(**data)\n'
-            '"""\n'
-            "obj = RealCode(**payload)  # 这行应被检测"
-        )
+        full_content = '"""模块 docstring\n示例: WorkDAG(**data)\n"""\nobj = RealCode(**payload)  # 这行应被检测'
         # added 行是第 4 行（docstring 外）
         gw = _make_mock_gateway(
             [red_file],
@@ -499,13 +452,7 @@ class TestDocstringExemption:
         新方案：ast 只识别真正 docstring，__manifest__ 是 Assign 节点不豁免。
         """
         red_file = "src/zephyr/trading/some_module.py"
-        full_content = (
-            '__manifest__ = """\n'
-            'args: []\n'
-            '"""\n'
-            '\n'
-            'obj = RealCode(**payload)  # 这行应被检测\n'
-        )
+        full_content = '__manifest__ = """\nargs: []\n"""\n\nobj = RealCode(**payload)  # 这行应被检测\n'
         gw = _make_mock_gateway(
             [red_file],
             {red_file: ["obj = RealCode(**payload)  # 这行应被检测"]},
@@ -523,9 +470,9 @@ class TestDocstringExemption:
         # 模拟 gate 文件的真实 docstring 片段
         full_content = (
             '"""unsafe_dict_spread_gate.py\n'
-            '\n'
-            '检测 SomeClass(**varname) 直接展开模式。\n'
-            '豁免 **kwargs / **kwds、**filter_dataclass_fields(...)。\n'
+            "\n"
+            "检测 SomeClass(**varname) 直接展开模式。\n"
+            "豁免 **kwargs / **kwds、**filter_dataclass_fields(...)。\n"
             '"""'
         )
         gw = _make_mock_gateway(
@@ -547,9 +494,7 @@ class TestDocstringExemption:
 class TestTestExempt:
     def test_tests_dir_passes(self):
         blue_file = "tests/governance/test_something.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["obj = WorkDAG(**data)"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["obj = WorkDAG(**data)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -563,18 +508,14 @@ class TestTestExempt:
 
 class TestNonPyFile:
     def test_yaml_file_passes(self):
-        gw = _make_mock_gateway(
-            ["docs/registry.yaml"], {"docs/registry.yaml": ["WorkDAG(**data)"]}
-        )
+        gw = _make_mock_gateway(["docs/registry.yaml"], {"docs/registry.yaml": ["WorkDAG(**data)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
         assert detail == ""
 
     def test_md_file_passes(self):
-        gw = _make_mock_gateway(
-            ["docs/readme.md"], {"docs/readme.md": ["WorkDAG(**data)"]}
-        )
+        gw = _make_mock_gateway(["docs/readme.md"], {"docs/readme.md": ["WorkDAG(**data)"]})
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed

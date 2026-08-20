@@ -89,7 +89,9 @@ class TestStatusFileIO:
         )
 
         write_status_file(
-            tmp_repo, "abc123", STATUS_DONE,
+            tmp_repo,
+            "abc123",
+            STATUS_DONE,
             session_id="sess-test",
             started_at=1000,
             finished_at=1010,
@@ -128,7 +130,9 @@ class TestStatusFileIO:
         # 模拟 31 分钟前 started
         old_started = int(time.time()) - 1860  # 31 分钟前
         write_status_file(
-            tmp_repo, "stale_sha", STATUS_RUNNING,
+            tmp_repo,
+            "stale_sha",
+            STATUS_RUNNING,
             session_id="sess-stale",
             started_at=old_started,
         )
@@ -145,7 +149,9 @@ class TestStatusFileIO:
         )
 
         write_status_file(
-            tmp_repo, "fresh_sha", STATUS_RUNNING,
+            tmp_repo,
+            "fresh_sha",
+            STATUS_RUNNING,
             session_id="sess-fresh",
             started_at=int(time.time()) - 60,  # 1 分钟前
         )
@@ -181,7 +187,9 @@ class TestLaunchReconcileAsync:
         monkeypatch.setattr(subprocess, "Popen", fake_popen)
 
         result = launch_reconcile_async(
-            tmp_repo, "sha_launch1", "sess-launch",
+            tmp_repo,
+            "sha_launch1",
+            "sess-launch",
             ["d:/fake/file1.py", "d:/fake/file2.py"],
             commit_message="test commit",
         )
@@ -217,7 +225,9 @@ class TestLaunchReconcileAsync:
         monkeypatch.setattr(subprocess, "Popen", fake_popen)
 
         result = launch_reconcile_async(
-            tmp_repo, "sha_fail", "sess-fail",
+            tmp_repo,
+            "sha_fail",
+            "sess-fail",
             ["d:/fake/file.py"],
         )
         assert result["ok"] is False
@@ -250,11 +260,14 @@ class TestLaunchReconcileAsync:
         monkeypatch.setattr(subprocess, "Popen", fake_popen)
 
         launch_reconcile_async(
-            tmp_repo, "sha_recursion", "sess-rec",
+            tmp_repo,
+            "sha_recursion",
+            "sess-rec",
             ["d:/fake.py"],
         )
-        assert captured_env.get("ZEPHYR_RECONCILE_SYNC") == "1", \
+        assert captured_env.get("ZEPHYR_RECONCILE_SYNC") == "1", (
             "worker env 必须设 ZEPHYR_RECONCILE_SYNC=1 阻断递归 spawn"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -286,7 +299,9 @@ class TestQueryReconcileStatus:
 
         started = int(time.time()) - 30
         write_status_file(
-            tmp_repo, "running_sha", STATUS_RUNNING,
+            tmp_repo,
+            "running_sha",
+            STATUS_RUNNING,
             session_id="sess-run",
             started_at=started,
         )
@@ -305,7 +320,9 @@ class TestQueryReconcileStatus:
         )
 
         write_status_file(
-            tmp_repo, "done_sha", STATUS_DONE,
+            tmp_repo,
+            "done_sha",
+            STATUS_DONE,
             session_id="sess-done",
             started_at=1000,
             finished_at=1050,
@@ -340,7 +357,8 @@ class TestWorkerLoadPayload:
             "started_at": 12345,
         }
         payload_path.write_text(
-            json.dumps(payload_data, ensure_ascii=False), encoding="utf-8",
+            json.dumps(payload_data, ensure_ascii=False),
+            encoding="utf-8",
         )
 
         data = _load_payload(str(payload_path))
@@ -391,6 +409,7 @@ class TestGitCommitGatewayDispatcher:
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
             GitCommitGateway,
         )
+
         fake_gw = FakeGateway()
         # 把真实方法绑定到 fake 实例（unbound function调用）
         # 确保 scripts/governance/d1_structure 存在以通过 skip 检查
@@ -401,7 +420,11 @@ class TestGitCommitGatewayDispatcher:
         monkeypatch.setenv("ZEPHYR_RECONCILE_SYNC", "1")
         # 用 unbound 方法调用
         GitCommitGateway.run_post_commit_reconcile(
-            fake_gw, ["d:/fake.py"], "sess-sync", result, commit_message="msg",
+            fake_gw,
+            ["d:/fake.py"],
+            "sess-sync",
+            result,
+            commit_message="msg",
         )
         assert call_log == ["sync"], f"expected ['sync'], got {call_log}"
 
@@ -431,7 +454,11 @@ class TestGitCommitGatewayDispatcher:
         result = CommitResult(status=CommitStatus.OK, commit_hash="sha_async_test")
         monkeypatch.delenv("ZEPHYR_RECONCILE_SYNC", raising=False)
         GitCommitGateway.run_post_commit_reconcile(
-            fake_gw, ["d:/fake.py"], "sess-async", result, commit_message="msg",
+            fake_gw,
+            ["d:/fake.py"],
+            "sess-async",
+            result,
+            commit_message="msg",
         )
         assert call_log == ["async"], f"expected ['async'], got {call_log}"
 
@@ -457,7 +484,11 @@ class TestGitCommitGatewayDispatcher:
         fake_gw = FakeGateway()
         result = CommitResult(status=CommitStatus.COMMIT_FAILED, commit_hash="")
         GitCommitGateway.run_post_commit_reconcile(
-            fake_gw, [], "sess-fail", result, commit_message="",
+            fake_gw,
+            [],
+            "sess-fail",
+            result,
+            commit_message="",
         )
         assert call_log == [], "FAILED commit 不应触发 reconcile"
 
@@ -483,7 +514,11 @@ class TestGitCommitGatewayDispatcher:
         fake_gw = FakeGateway()
         result = CommitResult(status=CommitStatus.OK, commit_hash="sha")
         GitCommitGateway.run_post_commit_reconcile(
-            fake_gw, [], "sess", result, commit_message="",
+            fake_gw,
+            [],
+            "sess",
+            result,
+            commit_message="",
         )
         assert call_log == [], "非 Zephyr 项目应跳过 reconcile"
 
@@ -514,7 +549,11 @@ class TestAsyncFallback:
         fake_gw = FakeGateway()
         # 绑定真实 _run_post_commit_reconcile_async 方法
         GitCommitGateway.run_post_commit_reconcile_async(
-            fake_gw, ["d:/fake.py"], "sess-no-sha", "", "msg",
+            fake_gw,
+            ["d:/fake.py"],
+            "sess-no-sha",
+            "",
+            "msg",
         )
         assert call_log == ["sync"], "空 commit_sha 应回退 sync"
 
@@ -539,11 +578,16 @@ class TestAsyncFallback:
 
         # patch import inside _run_post_commit_reconcile_async
         import zephyr.governance.audit.reconcile_runner as runner_mod
+
         monkeypatch.setattr(runner_mod, "launch_reconcile_async", fake_launch)
 
         fake_gw = FakeGateway()
         GitCommitGateway.run_post_commit_reconcile_async(
-            fake_gw, ["d:/fake.py"], "sess-launch-fail", "sha_launch_fail", "msg",
+            fake_gw,
+            ["d:/fake.py"],
+            "sess-launch-fail",
+            "sha_launch_fail",
+            "msg",
         )
         assert call_log == ["sync"], "launch 失败应回退 sync"
 
@@ -566,11 +610,16 @@ class TestAsyncFallback:
             raise RuntimeError("mocked launch exception")
 
         import zephyr.governance.audit.reconcile_runner as runner_mod
+
         monkeypatch.setattr(runner_mod, "launch_reconcile_async", fake_launch)
 
         fake_gw = FakeGateway()
         GitCommitGateway.run_post_commit_reconcile_async(
-            fake_gw, ["d:/fake.py"], "sess-launch-exc", "sha_exc", "msg",
+            fake_gw,
+            ["d:/fake.py"],
+            "sess-launch-exc",
+            "sha_exc",
+            "msg",
         )
         assert call_log == ["sync"], "launch 异常应回退 sync"
 
@@ -592,8 +641,11 @@ class TestHeartbeat:
         )
 
         write_status_file(
-            tmp_repo, "hb_sha", STATUS_RUNNING,
-            session_id="sess-hb", started_at=int(time.time()),
+            tmp_repo,
+            "hb_sha",
+            STATUS_RUNNING,
+            session_id="sess-hb",
+            started_at=int(time.time()),
         )
         write_heartbeat(tmp_repo, "hb_sha", "MANIFEST-RECONCILER")
         data = read_status_file(tmp_repo, "hb_sha")
@@ -619,8 +671,11 @@ class TestHeartbeat:
         )
 
         write_status_file(
-            tmp_repo, "done_sha", STATUS_DONE,
-            session_id="sess", started_at=int(time.time()),
+            tmp_repo,
+            "done_sha",
+            STATUS_DONE,
+            session_id="sess",
+            started_at=int(time.time()),
             finished_at=int(time.time()),
         )
         before = read_status_file(tmp_repo, "done_sha")
@@ -639,24 +694,33 @@ class TestHeartbeat:
 
         calls: list[str] = []
         reg = ReconciliationRegistry()
-        reg.register(ReconcilerSpec(
-            gate_id="A", priority=10,
-            trigger=lambda files: True,
-            reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
-            file_ops=frozenset({"read"}),
-        ))
-        reg.register(ReconcilerSpec(
-            gate_id="B", priority=20,
-            trigger=lambda files: True,
-            reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
-            file_ops=frozenset({"read"}),
-        ))
-        reg.register(ReconcilerSpec(
-            gate_id="C-skip", priority=30,
-            trigger=lambda files: False,  # trigger 不命中
-            reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
-            file_ops=frozenset({"read"}),
-        ))
+        reg.register(
+            ReconcilerSpec(
+                gate_id="A",
+                priority=10,
+                trigger=lambda files: True,
+                reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
+                file_ops=frozenset({"read"}),
+            )
+        )
+        reg.register(
+            ReconcilerSpec(
+                gate_id="B",
+                priority=20,
+                trigger=lambda files: True,
+                reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
+                file_ops=frozenset({"read"}),
+            )
+        )
+        reg.register(
+            ReconcilerSpec(
+                gate_id="C-skip",
+                priority=30,
+                trigger=lambda files: False,  # trigger 不命中
+                reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
+                file_ops=frozenset({"read"}),
+            )
+        )
         reg.reconcile_for(["x.py"], "sess", heartbeat=lambda g: calls.append(g))
         # A、B 命中并触发心跳，C-skip trigger 不命中不触发
         assert calls == ["A", "B"]
@@ -670,12 +734,15 @@ class TestHeartbeat:
         )
 
         reg = ReconciliationRegistry()
-        reg.register(ReconcilerSpec(
-            gate_id="X", priority=10,
-            trigger=lambda files: True,
-            reconcile=lambda files, sid: ReconcileResult(action="clean", detail="ok"),
-            file_ops=frozenset({"read"}),
-        ))
+        reg.register(
+            ReconcilerSpec(
+                gate_id="X",
+                priority=10,
+                trigger=lambda files: True,
+                reconcile=lambda files, sid: ReconcileResult(action="clean", detail="ok"),
+                file_ops=frozenset({"read"}),
+            )
+        )
         results = reg.reconcile_for(["x.py"], "sess", heartbeat=None)
         assert len(results) == 1
         assert results[0].action == "clean"
@@ -692,12 +759,15 @@ class TestHeartbeat:
             raise RuntimeError("heartbeat boom")
 
         reg = ReconciliationRegistry()
-        reg.register(ReconcilerSpec(
-            gate_id="Y", priority=10,
-            trigger=lambda files: True,
-            reconcile=lambda files, sid: ReconcileResult(action="clean", detail="ran"),
-            file_ops=frozenset({"read"}),
-        ))
+        reg.register(
+            ReconcilerSpec(
+                gate_id="Y",
+                priority=10,
+                trigger=lambda files: True,
+                reconcile=lambda files, sid: ReconcileResult(action="clean", detail="ran"),
+                file_ops=frozenset({"read"}),
+            )
+        )
         results = reg.reconcile_for(["x.py"], "sess", heartbeat=bad_hb)
         assert len(results) == 1
         assert results[0].detail == "ran"  # reconciler 仍执行成功
@@ -719,8 +789,12 @@ class TestSweepStaleWorkers:
         # 模拟 31 分钟前 started + 一个绝对不存在的 pid
         old = int(time.time()) - 1860
         write_status_file(
-            tmp_repo, "orphan_sha", STATUS_RUNNING,
-            session_id="sess-orphan", started_at=old, worker_pid=99999999,
+            tmp_repo,
+            "orphan_sha",
+            STATUS_RUNNING,
+            session_id="sess-orphan",
+            started_at=old,
+            worker_pid=99999999,
         )
         # pid 99999999 不存在
         n = sweep_stale_workers(tmp_repo)
@@ -751,8 +825,12 @@ class TestSweepStaleWorkers:
         # 死孤儿：31min 前 started + 绝对不存在的 pid
         old = int(time.time()) - 1860
         write_status_file(
-            tmp_repo, "orphan_clean_sha", STATUS_RUNNING,
-            session_id="sess-clean-test", started_at=old, worker_pid=99999999,
+            tmp_repo,
+            "orphan_clean_sha",
+            STATUS_RUNNING,
+            session_id="sess-clean-test",
+            started_at=old,
+            worker_pid=99999999,
         )
         n = sweep_stale_workers(tmp_repo)
         assert n == 1
@@ -780,9 +858,7 @@ class TestSweepStaleWorkers:
         # clean 不应进 critical_warn banner 查询（自愈闭环验证）
         warns = _check_recent_critical_warns(tmp_repo)
         stale_warns = [w for w in warns if w["gate_id"] == "RECONCILE-WORKER-STALE"]
-        assert not stale_warns, (
-            f"clean 记录不应出现在 critical_warn 查询中，实际={stale_warns}"
-        )
+        assert not stale_warns, f"clean 记录不应出现在 critical_warn 查询中，实际={stale_warns}"
 
     def test_does_not_sweep_live_worker(self, tmp_repo, monkeypatch):
         """running + 超阈值但 pid 仍存活 → 不改写（避免误杀慢 worker）。"""
@@ -796,8 +872,12 @@ class TestSweepStaleWorkers:
         # 当前进程的 pid 必然存活
         old = int(time.time()) - 1860
         write_status_file(
-            tmp_repo, "live_sha", STATUS_RUNNING,
-            session_id="sess-live", started_at=old, worker_pid=os.getpid(),
+            tmp_repo,
+            "live_sha",
+            STATUS_RUNNING,
+            session_id="sess-live",
+            started_at=old,
+            worker_pid=os.getpid(),
         )
         n = sweep_stale_workers(tmp_repo)
         assert n == 0
@@ -826,8 +906,12 @@ class TestSweepStaleWorkers:
         # 活进程超时：31min 前 started + 当前进程 PID（必存活）
         old = int(time.time()) - 1860
         write_status_file(
-            tmp_repo, "live_timeout_sha", STATUS_RUNNING,
-            session_id="sess-live-timeout", started_at=old, worker_pid=os.getpid(),
+            tmp_repo,
+            "live_timeout_sha",
+            STATUS_RUNNING,
+            session_id="sess-live-timeout",
+            started_at=old,
+            worker_pid=os.getpid(),
         )
         n = sweep_stale_workers(tmp_repo)
         # live worker 不改写 status file → swept=0（swept 只计 dead-orphan reaped）
@@ -862,9 +946,7 @@ class TestSweepStaleWorkers:
         # critical_warn 应进活跃告警查询（真活跃告警，无配对 clean）
         warns = _check_recent_critical_warns(tmp_repo)
         stale_warns = [w for w in warns if w["gate_id"] == "RECONCILE-WORKER-STALE"]
-        assert len(stale_warns) == 1, (
-            f"活进程超时 critical_warn 应为活跃告警，实际={stale_warns}"
-        )
+        assert len(stale_warns) == 1, f"活进程超时 critical_warn 应为活跃告警，实际={stale_warns}"
 
     def test_live_timeout_self_heals_on_completion(self, tmp_repo):
         """#ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001：活进程超时 critical_warn + worker 终态 clean → 自愈 ack。
@@ -889,8 +971,12 @@ class TestSweepStaleWorkers:
         (tmp_repo / "data" / "databases").mkdir(parents=True, exist_ok=True)
         old = int(time.time()) - 1860
         write_status_file(
-            tmp_repo, "live_heal_sha", STATUS_RUNNING,
-            session_id="sess-heal", started_at=old, worker_pid=os.getpid(),
+            tmp_repo,
+            "live_heal_sha",
+            STATUS_RUNNING,
+            session_id="sess-heal",
+            started_at=old,
+            worker_pid=os.getpid(),
         )
         # 1. sweep 记 live-timeout critical_warn
         sweep_stale_workers(tmp_repo)
@@ -906,9 +992,7 @@ class TestSweepStaleWorkers:
             unacked_before = cur.fetchone()[0]
         finally:
             conn.close()
-        assert unacked_before == 1, (
-            f"应有 1 条未 ack 的 live-timeout critical_warn，实际={unacked_before}"
-        )
+        assert unacked_before == 1, f"应有 1 条未 ack 的 live-timeout critical_warn，实际={unacked_before}"
 
         # 2. worker 到达终态（超阈值）→ _write_stale_healed_clean 写 clean + auto-ack
         _write_stale_healed_clean(tmp_repo, "live_heal_sha", "sess-heal", old)
@@ -916,8 +1000,7 @@ class TestSweepStaleWorkers:
         conn = sqlite3.connect(db_path, timeout=10.0)
         try:
             cur = conn.execute(
-                "SELECT COUNT(*) FROM reconcile_execution_log "
-                "WHERE gate_id='RECONCILE-WORKER-STALE' AND action='clean'"
+                "SELECT COUNT(*) FROM reconcile_execution_log WHERE gate_id='RECONCILE-WORKER-STALE' AND action='clean'"
             )
             clean_count = cur.fetchone()[0]
             cur = conn.execute(
@@ -936,9 +1019,7 @@ class TestSweepStaleWorkers:
         # 3. 活跃告警查询应不含 STALE（自愈完成）
         warns = _check_recent_critical_warns(tmp_repo)
         stale_warns = [w for w in warns if w["gate_id"] == "RECONCILE-WORKER-STALE"]
-        assert not stale_warns, (
-            f"终态 clean 后 STALE 不应进活跃告警，实际={stale_warns}"
-        )
+        assert not stale_warns, f"终态 clean 后 STALE 不应进活跃告警，实际={stale_warns}"
 
     def test_does_not_sweep_fresh_running(self, tmp_repo):
         """running 未超阈值 → 不 sweep。"""
@@ -950,8 +1031,11 @@ class TestSweepStaleWorkers:
         )
 
         write_status_file(
-            tmp_repo, "fresh_sha", STATUS_RUNNING,
-            session_id="sess", started_at=int(time.time()) - 60,
+            tmp_repo,
+            "fresh_sha",
+            STATUS_RUNNING,
+            session_id="sess",
+            started_at=int(time.time()) - 60,
             worker_pid=99999999,
         )
         n = sweep_stale_workers(tmp_repo)
@@ -971,8 +1055,12 @@ class TestSweepStaleWorkers:
 
         old = int(time.time()) - 100000
         write_status_file(
-            tmp_repo, "old_done", STATUS_DONE,
-            session_id="sess", started_at=old, finished_at=old + 10,
+            tmp_repo,
+            "old_done",
+            STATUS_DONE,
+            session_id="sess",
+            started_at=old,
+            finished_at=old + 10,
         )
         n = sweep_stale_workers(tmp_repo)
         assert n == 0
@@ -990,8 +1078,12 @@ class TestSweepStaleWorkers:
 
         old = int(time.time()) - 100000  # started 很久以前
         write_status_file(
-            tmp_repo, "hb_sha", STATUS_RUNNING,
-            session_id="sess", started_at=old, worker_pid=99999999,
+            tmp_repo,
+            "hb_sha",
+            STATUS_RUNNING,
+            session_id="sess",
+            started_at=old,
+            worker_pid=99999999,
         )
         # 写一个新鲜心跳（刚刚）
         write_heartbeat(tmp_repo, "hb_sha", "SOME-RECONCILER")
@@ -1071,8 +1163,12 @@ class TestSweepPendingDead:
 
         old = int(time.time()) - 300  # 5 分钟前（超 120s 阈值）
         write_status_file(
-            tmp_repo, "pending_dead_sha", STATUS_PENDING,
-            session_id="sess-pending-dead", started_at=old, worker_pid=99999999,
+            tmp_repo,
+            "pending_dead_sha",
+            STATUS_PENDING,
+            session_id="sess-pending-dead",
+            started_at=old,
+            worker_pid=99999999,
         )
         n = sweep_stale_workers(tmp_repo)
         assert n == 1
@@ -1092,8 +1188,12 @@ class TestSweepPendingDead:
 
         young = int(time.time()) - 30  # 30s（阈值 120s 内）
         write_status_file(
-            tmp_repo, "pending_young_sha", STATUS_PENDING,
-            session_id="sess-pending-young", started_at=young, worker_pid=99999999,
+            tmp_repo,
+            "pending_young_sha",
+            STATUS_PENDING,
+            session_id="sess-pending-young",
+            started_at=young,
+            worker_pid=99999999,
         )
         n = sweep_stale_workers(tmp_repo)
         assert n == 0
@@ -1112,8 +1212,12 @@ class TestSweepPendingDead:
 
         old = int(time.time()) - 300
         write_status_file(
-            tmp_repo, "pending_live_sha", STATUS_PENDING,
-            session_id="sess-pending-live", started_at=old, worker_pid=os.getpid(),
+            tmp_repo,
+            "pending_live_sha",
+            STATUS_PENDING,
+            session_id="sess-pending-live",
+            started_at=old,
+            worker_pid=os.getpid(),
         )
         n = sweep_stale_workers(tmp_repo)
         assert n == 0
@@ -1133,8 +1237,12 @@ class TestSweepPendingDead:
 
         old = int(time.time()) - 300
         write_status_file(
-            tmp_repo, "pending_npid_sha", STATUS_PENDING,
-            session_id="sess-pending-npid", started_at=old, worker_pid=0,
+            tmp_repo,
+            "pending_npid_sha",
+            STATUS_PENDING,
+            session_id="sess-pending-npid",
+            started_at=old,
+            worker_pid=0,
         )
         n = sweep_stale_workers(tmp_repo)
         assert n == 1
@@ -1161,8 +1269,12 @@ class TestSweepPendingDead:
         (tmp_repo / "data" / "databases").mkdir(parents=True, exist_ok=True)
         old = int(time.time()) - 300
         write_status_file(
-            tmp_repo, "pending_clean_sha", STATUS_PENDING,
-            session_id="sess-pending-clean", started_at=old, worker_pid=99999999,
+            tmp_repo,
+            "pending_clean_sha",
+            STATUS_PENDING,
+            session_id="sess-pending-clean",
+            started_at=old,
+            worker_pid=99999999,
         )
         n = sweep_stale_workers(tmp_repo)
         assert n == 1
@@ -1179,9 +1291,7 @@ class TestSweepPendingDead:
             conn.close()
         assert row is not None, "pending 即死收割应写 RECONCILE-WORKER-STALE DB 记录"
         action, gate_id = row
-        assert action == "clean", (
-            f"pending 即死属死孤儿（收割即自愈），应记 clean，实际 action={action}"
-        )
+        assert action == "clean", f"pending 即死属死孤儿（收割即自愈），应记 clean，实际 action={action}"
         assert gate_id == "RECONCILE-WORKER-STALE"
 
 
@@ -1190,15 +1300,18 @@ class TestIsPidAlive:
 
     def test_current_pid_alive(self):
         from zephyr.governance.audit.reconcile_runner import _is_pid_alive
+
         assert _is_pid_alive(os.getpid()) is True
 
     def test_nonexistent_pid_dead(self):
         from zephyr.governance.audit.reconcile_runner import _is_pid_alive
+
         # 99999999 几乎不可能存在
         assert _is_pid_alive(99999999) is False
 
     def test_zero_pid_dead(self):
         from zephyr.governance.audit.reconcile_runner import _is_pid_alive
+
         assert _is_pid_alive(0) is False
         assert _is_pid_alive(-1) is False
 
@@ -1242,9 +1355,7 @@ class TestWorkerAdmission:
         from zephyr.governance.audit.reconcile_worker import _check_worker_admission
 
         wt = str(tmp_repo / ".worktrees" / "AI-GONE-001")
-        ok, reason = _check_worker_admission(
-            self._payload(tmp_repo, project_root=wt)
-        )
+        ok, reason = _check_worker_admission(self._payload(tmp_repo, project_root=wt))
         assert not ok
         assert "证1" in reason and "不存在" in reason
 
@@ -1254,9 +1365,7 @@ class TestWorkerAdmission:
 
         wt = tmp_repo / ".worktrees" / "AI-BROKEN-001"
         wt.mkdir(parents=True)  # 目录存在但无 .git 指针
-        ok, reason = _check_worker_admission(
-            self._payload(tmp_repo, project_root=str(wt))
-        )
+        ok, reason = _check_worker_admission(self._payload(tmp_repo, project_root=str(wt)))
         assert not ok
         assert "证1" in reason and ".git" in reason
 
@@ -1267,9 +1376,7 @@ class TestWorkerAdmission:
         wt = tmp_repo / ".worktrees" / "AI-DEAD-001"
         wt.mkdir(parents=True)
         (wt / ".git").write_text("gitdir: x", encoding="utf-8")
-        ok, reason = _check_worker_admission(
-            self._payload(tmp_repo, project_root=str(wt), session_id="AI-DEAD-001")
-        )
+        ok, reason = _check_worker_admission(self._payload(tmp_repo, project_root=str(wt), session_id="AI-DEAD-001"))
         assert not ok
         assert "证3" in reason
 
@@ -1282,9 +1389,7 @@ class TestWorkerAdmission:
         wt.mkdir(parents=True)
         (wt / ".git").write_text("gitdir: x", encoding="utf-8")
         SessionRegistry(tmp_repo).register("AI-LIVE-001", pid=os.getpid())
-        ok, reason = _check_worker_admission(
-            self._payload(tmp_repo, project_root=str(wt), session_id="AI-LIVE-001")
-        )
+        ok, reason = _check_worker_admission(self._payload(tmp_repo, project_root=str(wt), session_id="AI-LIVE-001"))
         assert ok, f"三证齐全应放行，实际拒：{reason}"
 
     def test_accepts_recently_active_session_dead_pid(self, tmp_repo):
@@ -1303,9 +1408,7 @@ class TestWorkerAdmission:
         (wt / ".git").write_text("gitdir: x", encoding="utf-8")
         # 死 pid（网关进程已退出）+ 新鲜心跳（commit 时刻刚 claim 刷新）
         SessionRegistry(tmp_repo).register("AI-ONESHOT-001", pid=99999999)
-        ok, reason = _check_worker_admission(
-            self._payload(tmp_repo, project_root=str(wt), session_id="AI-ONESHOT-001")
-        )
+        ok, reason = _check_worker_admission(self._payload(tmp_repo, project_root=str(wt), session_id="AI-ONESHOT-001"))
         assert ok, f"近期活跃（心跳在宽限窗内）应放行，实际拒：{reason}"
 
     def test_rejects_ancient_session_record(self, tmp_repo):
@@ -1322,9 +1425,7 @@ class TestWorkerAdmission:
         data = registry.load()
         data["AI-ANCIENT-001"]["last_heartbeat"] = time.time() - 20 * 60
         registry.save(data)
-        ok, reason = _check_worker_admission(
-            self._payload(tmp_repo, project_root=str(wt), session_id="AI-ANCIENT-001")
-        )
+        ok, reason = _check_worker_admission(self._payload(tmp_repo, project_root=str(wt), session_id="AI-ANCIENT-001"))
         assert not ok
         assert "证3" in reason
 
@@ -1335,61 +1436,61 @@ class TestWorkerAdmission:
 
 
 class TestDenialStatusPlacement:
-    '''#109 治本回归：worker 拒启（三证）时 status 落点按拒启类型分诊。
+    """#109 治本回归：worker 拒启（三证）时 status 落点按拒启类型分诊。
 
     病灶（2026-08-17 AI-GOVB-001 复现）：launch 在 worktree 写 pending，
     证2/证3 拒启却把 failed 写主仓（anchor_main_root 无条件剥离）——
     pending@worktree 永不更新 + failed@主仓双文件分裂，外部观测即
     「worktree 状态文件未落盘」。分诊：worktree 根存活→落 worktree 原位；
     根已失（证1）→落主仓（原行为）。
-    '''
+    """
 
     def _wt_payload(self, tmp_repo, sid, **over):
-        wt = tmp_repo / '.worktrees' / sid
+        wt = tmp_repo / ".worktrees" / sid
         wt.mkdir(parents=True)
-        (wt / '.git').write_text('gitdir: x', encoding='utf-8')
-        (wt / '.runtime' / 'reconcile_reports').mkdir(parents=True)
+        (wt / ".git").write_text("gitdir: x", encoding="utf-8")
+        (wt / ".runtime" / "reconcile_reports").mkdir(parents=True)
         base = {
-            'commit_sha': 'sha_deny_' + sid.lower(),
-            'session_id': sid,
-            'project_root': str(wt),
-            'committed_files': [],
-            'commit_message': 'm',
-            'started_at': int(time.time()),
+            "commit_sha": "sha_deny_" + sid.lower(),
+            "session_id": sid,
+            "project_root": str(wt),
+            "committed_files": [],
+            "commit_message": "m",
+            "started_at": int(time.time()),
         }
         base.update(over)
         return wt, base
 
     def test_denial_writes_failed_status_to_live_worktree(self, tmp_repo):
-        '''证3 拒启（session 无活跃）且 worktree 存活 → failed status 落 worktree 原位。'''
+        """证3 拒启（session 无活跃）且 worktree 存活 → failed status 落 worktree 原位。"""
         from zephyr.governance.audit.reconcile_worker import _run_worker
 
-        wt, payload = self._wt_payload(tmp_repo, 'AI-DENY-001')
+        wt, payload = self._wt_payload(tmp_repo, "AI-DENY-001")
         rc = _run_worker(payload)
         assert rc == 1
-        sf = wt / '.runtime' / 'reconcile_reports' / ('reconcile_status_' + payload['commit_sha'] + '.json')
-        assert sf.is_file(), 'worktree 原位应有 failed status（#109 split-brain 回归）'
-        data = json.loads(sf.read_text(encoding='utf-8'))
-        assert data['status'] == 'failed'
-        assert any('三证拒启' in e for e in data['errors'])
+        sf = wt / ".runtime" / "reconcile_reports" / ("reconcile_status_" + payload["commit_sha"] + ".json")
+        assert sf.is_file(), "worktree 原位应有 failed status（#109 split-brain 回归）"
+        data = json.loads(sf.read_text(encoding="utf-8"))
+        assert data["status"] == "failed"
+        assert any("三证拒启" in e for e in data["errors"])
 
     def test_denial_writes_failed_status_to_main_when_worktree_gone(self, tmp_repo):
-        '''证1 拒启（worktree 目录不存在）→ failed status 落主仓（原行为保留）。'''
+        """证1 拒启（worktree 目录不存在）→ failed status 落主仓（原行为保留）。"""
         from zephyr.governance.audit.reconcile_worker import _run_worker
 
-        wt = tmp_repo / '.worktrees' / 'AI-GONE-002'
+        wt = tmp_repo / ".worktrees" / "AI-GONE-002"
         payload = {
-            'commit_sha': 'sha_gone_002',
-            'session_id': 'AI-GONE-002',
-            'project_root': str(wt),
-            'committed_files': [],
-            'commit_message': 'm',
-            'started_at': int(time.time()),
+            "commit_sha": "sha_gone_002",
+            "session_id": "AI-GONE-002",
+            "project_root": str(wt),
+            "committed_files": [],
+            "commit_message": "m",
+            "started_at": int(time.time()),
         }
         rc = _run_worker(payload)
         assert rc == 1
-        sf = tmp_repo / '.runtime' / 'reconcile_reports' / 'reconcile_status_sha_gone_002.json'
-        assert sf.is_file(), '主仓应有 failed status（证1 原行为保留）'
-        data = json.loads(sf.read_text(encoding='utf-8'))
-        assert data['status'] == 'failed'
-        assert any('三证拒启' in e for e in data['errors'])
+        sf = tmp_repo / ".runtime" / "reconcile_reports" / "reconcile_status_sha_gone_002.json"
+        assert sf.is_file(), "主仓应有 failed status（证1 原行为保留）"
+        data = json.loads(sf.read_text(encoding="utf-8"))
+        assert data["status"] == "failed"
+        assert any("三证拒启" in e for e in data["errors"])

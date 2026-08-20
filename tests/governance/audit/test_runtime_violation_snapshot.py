@@ -21,6 +21,7 @@
 
 测试隔离：用 tmp_path + mock subprocess，不触碰生产 data/ 目录。
 """
+
 from __future__ import annotations
 
 import json
@@ -116,29 +117,34 @@ def _make_dashboard_stdout(metric_counts: dict[str, int]) -> str:
         "M10": "时间触发残留数",
     }
     for mid, count in metric_counts.items():
-        metrics_list.append({
-            "metric_id": mid,
-            "name": name_map.get(mid, mid),
-            "count": count,
-            "target": 0,
-            "details": [],
-            "source": "test",
-            "error": "",
-        })
-    return json.dumps({
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "dashboard": "architecture_health",
-        "phase": "test",
-        "metrics": metrics_list,
-        "total_auto": sum(metric_counts.values()),
-        "manual_baseline_total": 3193,
-        "note": "test mock",
-    })
+        metrics_list.append(
+            {
+                "metric_id": mid,
+                "name": name_map.get(mid, mid),
+                "count": count,
+                "target": 0,
+                "details": [],
+                "source": "test",
+                "error": "",
+            }
+        )
+    return json.dumps(
+        {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "dashboard": "architecture_health",
+            "phase": "test",
+            "metrics": metrics_list,
+            "total_auto": sum(metric_counts.values()),
+            "manual_baseline_total": 3193,
+            "note": "test mock",
+        }
+    )
 
 
 # ---------------------------------------------------------------------------
 # 测试：generate_snapshot
 # ---------------------------------------------------------------------------
+
 
 class TestGenerateSnapshot:
     """generate_snapshot 函数测试。"""
@@ -147,9 +153,7 @@ class TestGenerateSnapshot:
     def test_generate_snapshot_basic_structure(self, mock_run, tmp_path):
         """生成快照包含所有必需字段。"""
         _setup_baseline(tmp_path)
-        mock_run.return_value = (0, _make_dashboard_stdout({
-            "M01": 0, "M02": 0, "M03": 3, "M10": 0
-        }), "")
+        mock_run.return_value = (0, _make_dashboard_stdout({"M01": 0, "M02": 0, "M03": 3, "M10": 0}), "")
 
         snapshot = generate_snapshot(tmp_path, session_id="test-sess", commit_sha="abc123")
 
@@ -167,9 +171,7 @@ class TestGenerateSnapshot:
         _setup_baseline(tmp_path)
         # claimed: vocab=64, time=14, manual=25, merge=6
         # detected: vocab=0, time=0, manual=0, merge=3
-        mock_run.return_value = (0, _make_dashboard_stdout({
-            "M01": 0, "M02": 0, "M03": 3, "M10": 0
-        }), "")
+        mock_run.return_value = (0, _make_dashboard_stdout({"M01": 0, "M02": 0, "M03": 3, "M10": 0}), "")
 
         snapshot = generate_snapshot(tmp_path)
 
@@ -183,9 +185,11 @@ class TestGenerateSnapshot:
     def test_generate_snapshot_drift_count(self, mock_run, tmp_path):
         """drift_count = |drift|>0 的类别数。"""
         _setup_baseline(tmp_path)
-        mock_run.return_value = (0, _make_dashboard_stdout({
-            "M01": 64, "M02": 25, "M03": 6, "M10": 14
-        }), "")  # 完全匹配，drift=0
+        mock_run.return_value = (
+            0,
+            _make_dashboard_stdout({"M01": 64, "M02": 25, "M03": 6, "M10": 14}),
+            "",
+        )  # 完全匹配，drift=0
 
         snapshot = generate_snapshot(tmp_path)
         assert snapshot["summary"]["drift_count"] == 0
@@ -194,9 +198,11 @@ class TestGenerateSnapshot:
     def test_generate_snapshot_new_violations(self, mock_run, tmp_path):
         """drift 正值表示新增违规。"""
         _setup_baseline(tmp_path)
-        mock_run.return_value = (0, _make_dashboard_stdout({
-            "M01": 100, "M02": 25, "M03": 6, "M10": 14
-        }), "")  # vocab 新增 36 处
+        mock_run.return_value = (
+            0,
+            _make_dashboard_stdout({"M01": 100, "M02": 25, "M03": 6, "M10": 14}),
+            "",
+        )  # vocab 新增 36 处
 
         snapshot = generate_snapshot(tmp_path)
         vmap = {v["category"]: v for v in snapshot["violations"]}
@@ -221,9 +227,7 @@ class TestGenerateSnapshot:
     def test_generate_snapshot_baseline_missing(self, mock_run, tmp_path):
         """baseline 文件不存在时，claimed=0，drift=detected。"""
         # 不创建 baseline
-        mock_run.return_value = (0, _make_dashboard_stdout({
-            "M01": 5, "M02": 0, "M03": 0, "M10": 0
-        }), "")
+        mock_run.return_value = (0, _make_dashboard_stdout({"M01": 5, "M02": 0, "M03": 0, "M10": 0}), "")
 
         snapshot = generate_snapshot(tmp_path)
 
@@ -248,6 +252,7 @@ class TestGenerateSnapshot:
 # 测试：save_snapshot / load_snapshot
 # ---------------------------------------------------------------------------
 
+
 class TestSnapshotPersistence:
     """save_snapshot / load_snapshot 持久化测试。"""
 
@@ -255,9 +260,7 @@ class TestSnapshotPersistence:
     def test_save_and_load_roundtrip(self, mock_run, tmp_path):
         """保存后加载应得到相同数据。"""
         _setup_baseline(tmp_path)
-        mock_run.return_value = (0, _make_dashboard_stdout({
-            "M01": 1, "M02": 2, "M03": 3, "M10": 4
-        }), "")
+        mock_run.return_value = (0, _make_dashboard_stdout({"M01": 1, "M02": 2, "M03": 3, "M10": 4}), "")
 
         snapshot = generate_snapshot(tmp_path, session_id="roundtrip-test")
         latest_path = save_snapshot(snapshot, tmp_path)
@@ -274,9 +277,7 @@ class TestSnapshotPersistence:
     def test_save_snapshot_creates_archive(self, mock_run, tmp_path):
         """save_snapshot 同时创建时间戳归档文件。"""
         _setup_baseline(tmp_path)
-        mock_run.return_value = (0, _make_dashboard_stdout({
-            "M01": 0, "M02": 0, "M03": 0, "M10": 0
-        }), "")
+        mock_run.return_value = (0, _make_dashboard_stdout({"M01": 0, "M02": 0, "M03": 0, "M10": 0}), "")
 
         snapshot = generate_snapshot(tmp_path)
         save_snapshot(snapshot, tmp_path)
@@ -294,6 +295,7 @@ class TestSnapshotPersistence:
 # ---------------------------------------------------------------------------
 # 测试：compute_drift_count
 # ---------------------------------------------------------------------------
+
 
 class TestComputeDriftCount:
     """compute_drift_count 测试。"""
@@ -341,6 +343,7 @@ class TestComputeDriftCount:
 # 测试：is_snapshot_fresh
 # ---------------------------------------------------------------------------
 
+
 class TestIsSnapshotFresh:
     """is_snapshot_fresh 测试。"""
 
@@ -378,6 +381,7 @@ class TestIsSnapshotFresh:
 # 测试：compare_baseline_with_live
 # ---------------------------------------------------------------------------
 
+
 class TestCompareBaselineWithLive:
     """compare_baseline_with_live 测试。"""
 
@@ -393,9 +397,7 @@ class TestCompareBaselineWithLive:
     def test_fresh_with_drift(self, mock_run, tmp_path):
         """fresh 快照有 drift 时正确报告。"""
         _setup_baseline(tmp_path)
-        mock_run.return_value = (0, _make_dashboard_stdout({
-            "M01": 0, "M02": 0, "M03": 3, "M10": 0
-        }), "")
+        mock_run.return_value = (0, _make_dashboard_stdout({"M01": 0, "M02": 0, "M03": 3, "M10": 0}), "")
 
         snapshot = generate_snapshot(tmp_path)
         save_snapshot(snapshot, tmp_path)
@@ -410,9 +412,7 @@ class TestCompareBaselineWithLive:
     def test_stale_snapshot_reported(self, mock_run, tmp_path):
         """stale 快照（>24h）在 error 中报告。"""
         _setup_baseline(tmp_path)
-        mock_run.return_value = (0, _make_dashboard_stdout({
-            "M01": 0, "M02": 0, "M03": 0, "M10": 0
-        }), "")
+        mock_run.return_value = (0, _make_dashboard_stdout({"M01": 0, "M02": 0, "M03": 0, "M10": 0}), "")
 
         snapshot = generate_snapshot(tmp_path)
         old = (datetime.now(timezone.utc) - timedelta(hours=25)).isoformat()
@@ -428,13 +428,17 @@ class TestCompareBaselineWithLive:
 # 测试：_CATEGORY_TO_METRIC 映射完整性
 # ---------------------------------------------------------------------------
 
+
 class TestCategoryMetricMapping:
     """类别 → metric_id 映射完整性测试。"""
 
     def test_all_four_categories_present(self):
         """4 类违规全部有映射。"""
         assert set(_CATEGORY_TO_METRIC.keys()) == {
-            "vocab_hardcode", "time_trigger", "manual_trigger", "mergeable_clusters"
+            "vocab_hardcode",
+            "time_trigger",
+            "manual_trigger",
+            "mergeable_clusters",
         }
 
     def test_metric_ids_valid(self):

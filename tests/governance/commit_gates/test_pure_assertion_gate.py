@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-GOV_COMMIT_GATES | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """test_pure_assertion_gate.py — pure_assertion_gate.py 闭包测试。"""
+
 from unittest.mock import MagicMock, patch
 
 from zephyr.gov_enforcement.commit_gates.pure_assertion_gate import make_pure_assertion_gate
@@ -15,12 +16,14 @@ def _make_gateway(staged_md=None, wt_root="/fake"):
             returncode = 0
             stdout = ""
             stderr = ""
+
         r = R()
         if cmd[0:4] == ["git", "diff", "--cached", "--name-only"]:
             r.stdout = "\n".join(calls["diff"])
         elif cmd[0:2] == ["git", "rev-parse"] and "--show-toplevel" in cmd:
             r.stdout = wt_root
         return r
+
     gw.run_git = _run_git
     gw.project_root = wt_root
     return gw
@@ -43,7 +46,9 @@ def test_pass_all_excluded():
 @patch("zephyr.gov_enforcement.commit_gates.pure_assertion_gate.subprocess.run")
 def test_block_added_violation(mock_run):
     """staged .md added 行含违规 → block。"""
-    mock_run.return_value = MagicMock(returncode=1, stderr="AGENTS.md: line 5: [已废止/已废弃/已弃用] 已废止的规则", stdout="")
+    mock_run.return_value = MagicMock(
+        returncode=1, stderr="AGENTS.md: line 5: [已废止/已废弃/已弃用] 已废止的规则", stdout=""
+    )
     gw = _make_gateway(staged_md=["AGENTS.md"], wt_root="/fake")
     with patch("zephyr.gov_enforcement.commit_gates.pure_assertion_gate.os.path.isfile", return_value=True):
         with patch("zephyr.gov_enforcement.commit_gates.pure_assertion_gate.os.path.exists", return_value=True):
@@ -79,6 +84,7 @@ def test_failopen_exit2(mock_run):
 def test_failopen_timeout(mock_run):
     """checker 超时 → fail-open。"""
     import subprocess as sp
+
     mock_run.side_effect = sp.TimeoutExpired(cmd="check", timeout=60)
     gw = _make_gateway(staged_md=["AGENTS.md"], wt_root="/fake")
     with patch("zephyr.gov_enforcement.commit_gates.pure_assertion_gate.os.path.isfile", return_value=True):

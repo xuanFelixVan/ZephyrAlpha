@@ -7,6 +7,7 @@ via the script's --help output.
 
 Intentionally minimal — this is a test oracle, not production code.
 """
+
 import argparse
 
 

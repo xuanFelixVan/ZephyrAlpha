@@ -33,6 +33,7 @@
 - orphans / state_drifts 超阈值 → warn-only（passed=True）
 - run_alignment / git diff 异常 → fail-open（passed=True）
 """
+
 from __future__ import annotations
 
 import sys
@@ -122,9 +123,7 @@ def _install_fake_align_module(
     else:
         fake.run_alignment = run_alignment
 
-    monkeypatch.setitem(
-        sys.modules, "governance.d5_architecture.generators.align_panoramas", fake
-    )
+    monkeypatch.setitem(sys.modules, "governance.d5_architecture.generators.align_panoramas", fake)
     return fake
 
 
@@ -154,18 +153,14 @@ class TestShouldTrigger:
     """_should_trigger 路径匹配。"""
 
     def test_matching_path_triggers(self):
-        assert _should_trigger(
-            ["src/zephyr/governance/depgraph_schema.py"]
-        ) is True
+        assert _should_trigger(["src/zephyr/governance/depgraph_schema.py"]) is True
 
     def test_non_matching_path_no_trigger(self):
         assert _should_trigger(["README.md", "docs/index.md"]) is False
 
     def test_windows_backslash_normalized(self):
         # Windows 反斜杠路径也应命中
-        assert _should_trigger(
-            ["src\\zephyr\\governance\\depgraph_schema.py"]
-        ) is True
+        assert _should_trigger(["src\\zephyr\\governance\\depgraph_schema.py"]) is True
 
     def test_trigger_patterns_nonempty(self):
         # 健全性：触发模式表非空（防止配置丢失静默失效）
@@ -197,12 +192,8 @@ class TestCheckTriggerClean:
     """触发但报告无问题 → passed=True。"""
 
     def test_trigger_clean_report(self, tmp_path, monkeypatch):
-        _install_fake_align_module(
-            monkeypatch, run_alignment=lambda *a, **k: FakeReport()
-        )
-        gw = _make_gateway(
-            tmp_path, diff_stdout="src/zephyr/governance/depgraph_schema.py\n"
-        )
+        _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: FakeReport())
+        gw = _make_gateway(tmp_path, diff_stdout="src/zephyr/governance/depgraph_schema.py\n")
         gate = make_panorama_alignment_gate()
         passed, detail = gate.check(gw, [])
         assert passed is True
@@ -216,14 +207,11 @@ class TestCheckTriggerBlockDomainMismatch:
         # 三图内部不一致（depgraph vs dataflow）→ 阻断
         report = FakeReport(
             domain_mismatches=[
-                {"module_id": "MOD-X", "depgraph": "D_A", "dataflow": "D_B",
-                 "decision": "-", "blueprint": "-"}
+                {"module_id": "MOD-X", "depgraph": "D_A", "dataflow": "D_B", "decision": "-", "blueprint": "-"}
             ]
         )
         _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: report)
-        gw = _make_gateway(
-            tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n"
-        )
+        gw = _make_gateway(tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n")
         gate = make_panorama_alignment_gate()
         passed, detail = gate.check(gw, [])
         assert passed is False
@@ -235,18 +223,13 @@ class TestCheckTriggerBlockDomainMismatch:
         # 3 处三图内部不一致 → 阻断
         report = FakeReport(
             domain_mismatches=[
-                {"module_id": "MOD-A", "depgraph": "D_A", "dataflow": "D_X",
-                 "decision": "-", "blueprint": "-"},
-                {"module_id": "MOD-B", "depgraph": "D_B", "dataflow": "D_Y",
-                 "decision": "-", "blueprint": "-"},
-                {"module_id": "MOD-C", "depgraph": "D_C", "decision": "D_Z",
-                 "dataflow": "-", "blueprint": "-"},
+                {"module_id": "MOD-A", "depgraph": "D_A", "dataflow": "D_X", "decision": "-", "blueprint": "-"},
+                {"module_id": "MOD-B", "depgraph": "D_B", "dataflow": "D_Y", "decision": "-", "blueprint": "-"},
+                {"module_id": "MOD-C", "depgraph": "D_C", "decision": "D_Z", "dataflow": "-", "blueprint": "-"},
             ]
         )
         _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: report)
-        gw = _make_gateway(
-            tmp_path, diff_stdout="scripts/governance/generate_project_depgraph.py\n"
-        )
+        gw = _make_gateway(tmp_path, diff_stdout="scripts/governance/generate_project_depgraph.py\n")
         gate = make_panorama_alignment_gate()
         passed, detail = gate.check(gw, [])
         assert passed is False
@@ -259,14 +242,13 @@ class TestCheckTriggerBlockDomainMismatchWithOrphans:
     def test_domain_mismatch_with_orphans_still_blocks(self, tmp_path, monkeypatch):
         # 三图内部不一致 + orphans → 仍阻断（domain_mismatch 优先）
         report = FakeReport(
-            domain_mismatches=[{"module_id": "MOD-X", "depgraph": "D_A",
-                                "dataflow": "D_B", "decision": "-", "blueprint": "-"}],
+            domain_mismatches=[
+                {"module_id": "MOD-X", "depgraph": "D_A", "dataflow": "D_B", "decision": "-", "blueprint": "-"}
+            ],
             orphans=[{"m": "x"}] * (_ORPHAN_WARN_THRESHOLD + 5),
         )
         _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: report)
-        gw = _make_gateway(
-            tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n"
-        )
+        gw = _make_gateway(tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n")
         gate = make_panorama_alignment_gate()
         passed, detail = gate.check(gw, [])
         assert passed is False
@@ -284,14 +266,11 @@ class TestCheckTriggerBlueprintOnlyMismatchWarns:
         # 仅 depgraph vs blueprint 不一致（dataflow/decision 一致）→ warn-only
         report = FakeReport(
             domain_mismatches=[
-                {"module_id": "MOD-X", "depgraph": "D_A", "dataflow": "D_A",
-                 "decision": "D_A", "blueprint": "D_B"}
+                {"module_id": "MOD-X", "depgraph": "D_A", "dataflow": "D_A", "decision": "D_A", "blueprint": "D_B"}
             ]
         )
         _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: report)
-        gw = _make_gateway(
-            tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n"
-        )
+        gw = _make_gateway(tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n")
         gate = make_panorama_alignment_gate()
         passed, detail = gate.check(gw, [])
         assert passed is True  # blueprint-only 不阻断
@@ -301,16 +280,12 @@ class TestCheckTriggerBlueprintOnlyMismatchWarns:
         # 多处 blueprint-only 不一致 → 仍 warn-only
         report = FakeReport(
             domain_mismatches=[
-                {"module_id": "MOD-A", "depgraph": "D_A", "dataflow": "D_A",
-                 "decision": "D_A", "blueprint": "D_X"},
-                {"module_id": "MOD-B", "depgraph": "D_B", "dataflow": "D_B",
-                 "decision": "D_B", "blueprint": "D_Y"},
+                {"module_id": "MOD-A", "depgraph": "D_A", "dataflow": "D_A", "decision": "D_A", "blueprint": "D_X"},
+                {"module_id": "MOD-B", "depgraph": "D_B", "dataflow": "D_B", "decision": "D_B", "blueprint": "D_Y"},
             ]
         )
         _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: report)
-        gw = _make_gateway(
-            tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n"
-        )
+        gw = _make_gateway(tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n")
         gate = make_panorama_alignment_gate()
         passed, detail = gate.check(gw, [])
         assert passed is True
@@ -323,9 +298,7 @@ class TestCheckTriggerWarnOrphans:
     def test_orphans_over_threshold_warns_only(self, tmp_path, monkeypatch):
         report = FakeReport(orphans=[{"m": "x"}] * (_ORPHAN_WARN_THRESHOLD + 1))
         _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: report)
-        gw = _make_gateway(
-            tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n"
-        )
+        gw = _make_gateway(tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n")
         gate = make_panorama_alignment_gate()
         passed, detail = gate.check(gw, [])
         assert passed is True  # warn-only 不阻断
@@ -336,9 +309,7 @@ class TestCheckTriggerWarnDrift:
     """触发且状态漂移超阈值 → warn-only（passed=True）。"""
 
     def test_drift_over_threshold_warns_only(self, tmp_path, monkeypatch):
-        report = FakeReport(
-            state_drifts=[{"m": "x"}] * (_STATE_DRIFT_WARN_THRESHOLD + 1)
-        )
+        report = FakeReport(state_drifts=[{"m": "x"}] * (_STATE_DRIFT_WARN_THRESHOLD + 1))
         _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: report)
         gw = _make_gateway(
             tmp_path,
@@ -388,9 +359,7 @@ class TestCheckGitDiffFails:
 
     def test_git_diff_nonzero_fail_open(self, tmp_path, monkeypatch):
         # 即使触发模式命中，git diff 失败也应 fail-open
-        _install_fake_align_module(
-            monkeypatch, run_alignment=lambda *a, **k: FakeReport()
-        )
+        _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: FakeReport())
         gw = _make_gateway(
             tmp_path,
             diff_stdout="src/zephyr/governance/depgraph_schema.py\n",
@@ -406,9 +375,7 @@ class TestCheckGitDiffRaises:
     """git diff 抛异常 → fail-open（passed=True）。"""
 
     def test_git_diff_raises_fail_open(self, tmp_path, monkeypatch):
-        _install_fake_align_module(
-            monkeypatch, run_alignment=lambda *a, **k: FakeReport()
-        )
+        _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: FakeReport())
         gw = _make_gateway(
             tmp_path,
             diff_raises=OSError("spawn failed"),
@@ -438,8 +405,7 @@ def _query_reconcile_log(project_root: Path) -> list[dict]:
     try:
         conn.row_factory = sqlite3.Row
         rows = conn.execute(
-            "SELECT log_id, gate_id, session_id, trigger_source, action, detail "
-            "FROM reconcile_execution_log"
+            "SELECT log_id, gate_id, session_id, trigger_source, action, detail FROM reconcile_execution_log"
         ).fetchall()
         return [dict(r) for r in rows]
     finally:
@@ -478,9 +444,7 @@ class TestCheckFailOpenPersists:
 
     def test_git_diff_nonzero_persists(self, tmp_path, monkeypatch):
         # git diff rc!=0 → fail-open 且持久化
-        _install_fake_align_module(
-            monkeypatch, run_alignment=lambda *a, **k: FakeReport()
-        )
+        _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: FakeReport())
         gw = _make_gateway(
             tmp_path,
             diff_stdout="src/zephyr/governance/depgraph_schema.py\n",
@@ -502,9 +466,7 @@ class TestCheckFailOpenPersists:
 
     def test_git_diff_raises_persists(self, tmp_path, monkeypatch):
         # git diff 抛异常 → fail-open 且持久化
-        _install_fake_align_module(
-            monkeypatch, run_alignment=lambda *a, **k: FakeReport()
-        )
+        _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: FakeReport())
         gw = _make_gateway(
             tmp_path,
             diff_raises=OSError("spawn failed"),
@@ -543,12 +505,8 @@ class TestCheckFailOpenPersists:
 
     def test_clean_check_does_not_persist(self, tmp_path, monkeypatch):
         # 触发但报告无问题 → 不应持久化
-        _install_fake_align_module(
-            monkeypatch, run_alignment=lambda *a, **k: FakeReport()
-        )
-        gw = _make_gateway(
-            tmp_path, diff_stdout="src/zephyr/governance/depgraph_schema.py\n"
-        )
+        _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: FakeReport())
+        gw = _make_gateway(tmp_path, diff_stdout="src/zephyr/governance/depgraph_schema.py\n")
         gate = make_panorama_alignment_gate()
         passed, detail = gate.check(gw, [])
         assert passed is True

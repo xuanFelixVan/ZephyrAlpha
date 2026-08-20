@@ -33,6 +33,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，按 git 子命令路由返回不同结果。
 """
+
 from __future__ import annotations
 
 import sys
@@ -66,6 +67,7 @@ class _MockResult:
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """gate_id / priority / isinstance(GateSpec)。"""
 
@@ -85,6 +87,7 @@ class TestGateSpecFields:
 # ---------------------------------------------------------------------------
 # TestLoadValidDomains
 # ---------------------------------------------------------------------------
+
 
 class TestLoadValidDomains:
     """_load_valid_domains 从 functional_domain_registry.yaml 解析有效域集合。"""
@@ -121,6 +124,7 @@ class TestLoadValidDomains:
 # ---------------------------------------------------------------------------
 # TestCheckDomainFk
 # ---------------------------------------------------------------------------
+
 
 class TestCheckDomainFk:
     """_check_domain_fk diff-based 检测逻辑。"""
@@ -161,13 +165,9 @@ class TestCheckDomainFk:
         """docstring 内的 [DOMAIN] 行豁免。"""
         py_file = "src/zephyr/foo.py"
         # [DOMAIN] 在 docstring 内（模块 docstring 第 2-4 行）
-        file_content = (
-            '"""模块文档\n'
-            "# [DOMAIN] D_INVALID_DOCSTRING\n"
-            '"""\n'
-        )
+        file_content = '"""模块文档\n# [DOMAIN] D_INVALID_DOCSTRING\n"""\n'
         # diff 显示第 2 行被加入
-        diff = "@@ -0,0 +1,3 @@\n+\"\"\"模块文档\n+# [DOMAIN] D_INVALID_DOCSTRING\n+\"\"\"\n"
+        diff = '@@ -0,0 +1,3 @@\n+"""模块文档\n+# [DOMAIN] D_INVALID_DOCSTRING\n+"""\n'
         gw = _make_full_gateway(
             diff_files=[py_file],
             file_diffs={py_file: diff},
@@ -182,6 +182,7 @@ class TestCheckDomainFk:
 # ---------------------------------------------------------------------------
 # TestFormatViolations
 # ---------------------------------------------------------------------------
+
 
 class TestFormatViolations:
     """_format_domain_fk_violations 格式化。"""
@@ -208,13 +209,17 @@ class TestFormatViolations:
 # TestGatewayIntegration
 # ---------------------------------------------------------------------------
 
+
 class TestGatewayIntegration:
     """mock gateway 完整流程测试。"""
 
     def test_no_py_files_passes(self) -> None:
         """无 staged .py → 放行。"""
         gw = _make_full_gateway(
-            diff_files=[], file_diffs={}, staged_contents={}, yaml_content=_SAMPLE_YAML,
+            diff_files=[],
+            file_diffs={},
+            staged_contents={},
+            yaml_content=_SAMPLE_YAML,
         )
         gate = make_domain_fk_gate()
         passed, msg = gate.check(gw, [])
@@ -308,10 +313,12 @@ _SAMPLE_YAML = (
 
 def _make_yaml_gateway(yaml_content: str) -> MagicMock:
     """构造只响应 YAML 读取的 gateway（用于 _load_valid_domains 单测）。"""
+
     def _run_git(args):
         if "show" in args and args[2] == ":" + _DOMAIN_REGISTRY_REL:
             return _MockResult(0, yaml_content)
         return _MockResult(1, "")
+
     gw = MagicMock()
     gw.run_git = MagicMock(side_effect=_run_git)
     return gw
@@ -331,6 +338,7 @@ def _make_full_gateway(
         staged_contents: {py_file: content} 每个文件的 staged 内容。
         yaml_content: functional_domain_registry.yaml 内容；None=不可读。
     """
+
     def _run_git(args):
         cmd = list(args)
         if "diff" in cmd and "--name-only" in cmd:

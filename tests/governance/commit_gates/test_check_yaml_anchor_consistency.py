@@ -20,6 +20,7 @@
   P1_LEGACY_A_CONFIG / P2_ANCHOR_BODY_MISMATCH / P3_MISSING_ANCHOR_BLOCK / P4_MISSING_BLUEPRINT
 以及豁免第三方配置（grafana/prometheus/docker-compose）。
 """
+
 from __future__ import annotations
 
 import importlib.util

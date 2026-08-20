@@ -19,6 +19,7 @@
 - node 不存在 → 不调用
 - sync 异常 → 不抛出（warn-only）
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -28,20 +29,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
-_SCRIPT_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "scripts"
-    / "governance"
-    / "apply_depgraph.py"
-)
+_SCRIPT_PATH = Path(__file__).resolve().parents[2] / "scripts" / "governance" / "apply_depgraph.py"
 
 
 @pytest.fixture(scope="module")
 def adg():
     """动态加载 apply_depgraph.py（避免 __init__.py 依赖问题）"""
-    spec = importlib.util.spec_from_file_location(
-        "apply_depgraph_under_test", _SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("apply_depgraph_under_test", _SCRIPT_PATH)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -71,9 +65,7 @@ class TestSyncPanoramaAfterTransition:
 
     def test_sync_called_when_blueprint_id_exists(self, adg, monkeypatch):
         """blueprint_id 非空 → sync_module_panorama 被调用"""
-        conn = _mock_depgraph_conn(
-            fetchone_result={"blueprint_id": "MOD-TEST"}
-        )
+        conn = _mock_depgraph_conn(fetchone_result={"blueprint_id": "MOD-TEST"})
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: conn)
         sync_mock = _inject_sync_mock(monkeypatch, adg)
 
@@ -83,9 +75,7 @@ class TestSyncPanoramaAfterTransition:
 
     def test_sync_skipped_when_blueprint_id_empty(self, adg, monkeypatch):
         """blueprint_id 为空 → 不调用 sync"""
-        conn = _mock_depgraph_conn(
-            fetchone_result={"blueprint_id": ""}
-        )
+        conn = _mock_depgraph_conn(fetchone_result={"blueprint_id": ""})
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: conn)
         sync_mock = _inject_sync_mock(monkeypatch, adg)
 
@@ -105,9 +95,7 @@ class TestSyncPanoramaAfterTransition:
 
     def test_sync_exception_does_not_raise(self, adg, monkeypatch):
         """sync_module_panorama 抛异常 → 不传播（warn-only）"""
-        conn = _mock_depgraph_conn(
-            fetchone_result={"blueprint_id": "MOD-TEST"}
-        )
+        conn = _mock_depgraph_conn(fetchone_result={"blueprint_id": "MOD-TEST"})
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: conn)
         sync_mock = _inject_sync_mock(monkeypatch, adg)
         sync_mock.side_effect = RuntimeError("DB down")

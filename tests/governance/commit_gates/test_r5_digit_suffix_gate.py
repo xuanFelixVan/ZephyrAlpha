@@ -72,7 +72,9 @@ def _init_git_repo(repo_dir: Path) -> None:
         timeout=30,
     )
     (repo_dir / ".gitignore").write_text("*.tmp\n", encoding="utf-8")
-    subprocess.run(["git", "add", ".gitignore"], cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30)
+    subprocess.run(
+        ["git", "add", ".gitignore"], cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30
+    )
     subprocess.run(
         ["git", "commit", "-m", "init", "--no-verify"],
         cwd=str(repo_dir),

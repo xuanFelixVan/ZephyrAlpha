@@ -183,9 +183,7 @@ class TestClaimAndExecuteCycle:
     def test_dependency_blocks_claim(self, repo: TaskRepository, autopilot: AutoPilot):
         t_parent = _make_test_task("DW-9210", "父任务", Priority.P1)
         r_parent = repo.create(t_parent, allow_direct_create=True)
-        repo.execute_sql(
-            "UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r_parent.task_id,)
-        )
+        repo.execute_sql("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r_parent.task_id,))
 
         t_child = _make_test_task("DW-9211", "子任务（依赖父任务）", Priority.P1)
         t_child.depends_on = ["DW-9210"]

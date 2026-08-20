@@ -23,6 +23,7 @@
 - TestFailOpenGitDiff: git diff 失败 → 通过
 - TestMultipleMcpJson: 多个 mcp.json 全缺 version → 全报告
 """
+
 from __future__ import annotations
 
 import sys
@@ -70,7 +71,8 @@ class TestVersionMissingBlocked:
         mcp_file = "config/mcp.json"
         json_content = '{"tools": [{"name": "foo"}]}'
         gw = make_mock_gateway(
-            [mcp_file], {},
+            [mcp_file],
+            {},
             file_contents={mcp_file: json_content},
         )
         gate = make_mcp_version_field_gate()
@@ -84,7 +86,8 @@ class TestVersionMissingBlocked:
         mcp_file = "config/mcp.json"
         json_content = "{}"
         gw = make_mock_gateway(
-            [mcp_file], {},
+            [mcp_file],
+            {},
             file_contents={mcp_file: json_content},
         )
         gate = make_mcp_version_field_gate()
@@ -96,7 +99,8 @@ class TestVersionMissingBlocked:
         mcp_file = "src/zephyr/integration/mcp/mcp.json"
         json_content = '{"server": {"name": "test"}}'
         gw = make_mock_gateway(
-            [mcp_file], {},
+            [mcp_file],
+            {},
             file_contents={mcp_file: json_content},
         )
         gate = make_mcp_version_field_gate()
@@ -115,7 +119,8 @@ class TestVersionPresentPasses:
         mcp_file = "config/mcp.json"
         json_content = '{"version": "1.0.0", "tools": [{"name": "foo"}]}'
         gw = make_mock_gateway(
-            [mcp_file], {},
+            [mcp_file],
+            {},
             file_contents={mcp_file: json_content},
         )
         gate = make_mcp_version_field_gate()
@@ -128,7 +133,8 @@ class TestVersionPresentPasses:
         mcp_file = "config/mcp.json"
         json_content = '{"version": "2.3.1-beta"}'
         gw = make_mock_gateway(
-            [mcp_file], {},
+            [mcp_file],
+            {},
             file_contents={mcp_file: json_content},
         )
         gate = make_mcp_version_field_gate()
@@ -147,7 +153,8 @@ class TestNoMcpJsonPasses:
         """staged 全是 .py 文件 → 通过"""
         py_file = "src/zephyr/trading/foo.py"
         gw = make_mock_gateway(
-            [py_file], {py_file: ["x = 1"]},
+            [py_file],
+            {py_file: ["x = 1"]},
         )
         gate = make_mcp_version_field_gate()
         passed, detail = gate.check(gw, [])
@@ -174,7 +181,8 @@ class TestInvalidJsonFailOpen:
         mcp_file = "config/mcp.json"
         json_content = "{invalid json content"
         gw = make_mock_gateway(
-            [mcp_file], {},
+            [mcp_file],
+            {},
             file_contents={mcp_file: json_content},
         )
         gate = make_mcp_version_field_gate()
@@ -194,7 +202,8 @@ class TestNonDictTopLevelFailOpen:
         mcp_file = "config/mcp.json"
         json_content = "[1, 2, 3]"
         gw = make_mock_gateway(
-            [mcp_file], {},
+            [mcp_file],
+            {},
             file_contents={mcp_file: json_content},
         )
         gate = make_mcp_version_field_gate()
@@ -207,7 +216,8 @@ class TestNonDictTopLevelFailOpen:
         mcp_file = "config/mcp.json"
         json_content = '"just a string"'
         gw = make_mock_gateway(
-            [mcp_file], {},
+            [mcp_file],
+            {},
             file_contents={mcp_file: json_content},
         )
         gate = make_mcp_version_field_gate()
@@ -241,7 +251,8 @@ class TestMultipleMcpJson:
         mcp1 = "config/mcp.json"
         mcp2 = "src/zephyr/integration/mcp/mcp.json"
         gw = make_mock_gateway(
-            [mcp1, mcp2], {},
+            [mcp1, mcp2],
+            {},
             file_contents={
                 mcp1: '{"tools": []}',
                 mcp2: '{"server": {}}',
@@ -258,7 +269,8 @@ class TestMultipleMcpJson:
         mcp1 = "config/mcp.json"
         mcp2 = "src/zephyr/integration/mcp/mcp.json"
         gw = make_mock_gateway(
-            [mcp1, mcp2], {},
+            [mcp1, mcp2],
+            {},
             file_contents={
                 mcp1: '{"version": "1.0.0", "tools": []}',
                 mcp2: '{"server": {}}',

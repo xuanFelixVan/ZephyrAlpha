@@ -38,13 +38,17 @@ class TestClockGuard:
 
     def test_is_suspicious_true_with_drift(self):
         guard = ClockGuard()
-        with patch("zephyr.governance.ops_governance.clock_guard.time.monotonic", return_value=guard.monotonic_start + 100):
+        with patch(
+            "zephyr.governance.ops_governance.clock_guard.time.monotonic", return_value=guard.monotonic_start + 100
+        ):
             with patch("zephyr.governance.ops_governance.clock_guard.time.time", return_value=guard.wall_start + 110):
                 assert guard.is_suspicious() is True
 
     def test_detect_drift_with_mock(self):
         guard = ClockGuard()
-        with patch("zephyr.governance.ops_governance.clock_guard.time.monotonic", return_value=guard.monotonic_start + 50):
+        with patch(
+            "zephyr.governance.ops_governance.clock_guard.time.monotonic", return_value=guard.monotonic_start + 50
+        ):
             with patch("zephyr.governance.ops_governance.clock_guard.time.time", return_value=guard.wall_start + 55):
                 drift = guard.detect_drift()
                 assert drift == pytest.approx(5.0)

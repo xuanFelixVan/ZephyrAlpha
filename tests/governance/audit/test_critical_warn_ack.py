@@ -14,6 +14,7 @@
 - TestSelfHealingSilence: 同 gate_id 之后 clean 记录 → 旧 warn 自动消音
 - TestAcknowledge: 手动 ack 消音 / 幂等 / 按 gate_id 过滤
 """
+
 from __future__ import annotations
 
 import sqlite3
@@ -81,8 +82,7 @@ def _insert(root: Path, gate_id: str, action: str, logged_at: str, log_id: str) 
     try:
         conn.execute(
             SQL_INSERT_RECONCILE_LOG,
-            (log_id, logged_at, gate_id, "sess-test", "pytest", action,
-             f"{action} detail for {gate_id}", "x.py"),
+            (log_id, logged_at, gate_id, "sess-test", "pytest", action, f"{action} detail for {gate_id}", "x.py"),
         )
         conn.commit()
     finally:
@@ -115,24 +115,20 @@ class TestSelfHealingSilence:
 
     def test_clean_after_warn_silences(self, tmp_path: Path) -> None:
         _init_db(tmp_path)
-        _insert(tmp_path, "GATE-DEPGRAPH-OPS", "critical_warn",
-                _iso(timedelta(hours=-2)), "rc-w1")
-        _insert(tmp_path, "GATE-DEPGRAPH-OPS", "clean",
-                _iso(timedelta(hours=-1)), "rc-c1")
+        _insert(tmp_path, "GATE-DEPGRAPH-OPS", "critical_warn", _iso(timedelta(hours=-2)), "rc-w1")
+        _insert(tmp_path, "GATE-DEPGRAPH-OPS", "clean", _iso(timedelta(hours=-1)), "rc-c1")
         assert _check_recent_critical_warns(tmp_path, hours=24) == []
 
     def test_clean_before_warn_does_not_silence(self, tmp_path: Path) -> None:
         _init_db(tmp_path)
         _insert(tmp_path, "GATE-X", "clean", _iso(timedelta(hours=-2)), "rc-c2")
-        _insert(tmp_path, "GATE-X", "critical_warn",
-                _iso(timedelta(hours=-1)), "rc-w2")
+        _insert(tmp_path, "GATE-X", "critical_warn", _iso(timedelta(hours=-1)), "rc-w2")
         warns = _check_recent_critical_warns(tmp_path, hours=24)
         assert len(warns) == 1
 
     def test_clean_of_other_gate_does_not_silence(self, tmp_path: Path) -> None:
         _init_db(tmp_path)
-        _insert(tmp_path, "GATE-X", "critical_warn",
-                _iso(timedelta(hours=-2)), "rc-w3")
+        _insert(tmp_path, "GATE-X", "critical_warn", _iso(timedelta(hours=-2)), "rc-w3")
         _insert(tmp_path, "GATE-Y", "clean", _iso(timedelta(hours=-1)), "rc-c3")
         warns = _check_recent_critical_warns(tmp_path, hours=24)
         assert len(warns) == 1
@@ -171,8 +167,7 @@ class TestAcknowledge:
 
     def test_ack_window_filter(self, tmp_path: Path) -> None:
         _init_db(tmp_path)
-        _insert(tmp_path, "GATE-OLD", "critical_warn",
-                _iso(timedelta(hours=-72)), "rc-old3")
+        _insert(tmp_path, "GATE-OLD", "critical_warn", _iso(timedelta(hours=-72)), "rc-old3")
         result = acknowledge_critical_warns(tmp_path, hours=24)
         assert result["acknowledged"] == 0  # 72h 前不在 24h 窗口内
 

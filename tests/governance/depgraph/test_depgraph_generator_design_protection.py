@@ -32,9 +32,7 @@ _TEST_DOMAIN = "D_AUTONOMY_CORE"
 def _cleanup_test_nodes(conn):
     """清理测试插入的节点（幂等，可重复调用）。"""
     cur = conn.cursor()
-    cur.execute(
-        "DELETE FROM nodes WHERE path LIKE 'test/design_protection/%'"
-    )
+    cur.execute("DELETE FROM nodes WHERE path LIKE 'test/design_protection/%'")
     cur.execute(
         "DELETE FROM edges WHERE from_node_id IN "
         "(SELECT node_id FROM nodes WHERE path LIKE 'test/design_protection/%') "
@@ -64,16 +62,17 @@ def red_team_tests():
 
     # 1. 插入测试设计态节点（module/rule/template 三种）
     print("\n[红方] 插入设计态测试节点（module/rule/template 三种）...")
-    cursor.execute("""
+    cursor.execute(
+        """
         INSERT INTO nodes
         (node_type, domain_id, path, design_maturity, deployment_lifecycle, impact_level, modification_permission)
         VALUES
         ('module', %s, %s, 'design', 'stable', 'M', 'human_gated'),
         ('rule', %s, %s, 'design', 'stable', 'M', 'human_gated'),
         ('template', %s, %s, 'design', 'stable', 'M', 'human_gated')
-    """, (_TEST_DOMAIN, _TEST_PATH_MODULE,
-          _TEST_DOMAIN, _TEST_PATH_RULE,
-          _TEST_DOMAIN, _TEST_PATH_TEMPLATE))
+    """,
+        (_TEST_DOMAIN, _TEST_PATH_MODULE, _TEST_DOMAIN, _TEST_PATH_RULE, _TEST_DOMAIN, _TEST_PATH_TEMPLATE),
+    )
     conn.commit()
 
     # 验证插入成功

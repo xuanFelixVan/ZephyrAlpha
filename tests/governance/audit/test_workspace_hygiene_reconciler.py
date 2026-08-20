@@ -24,6 +24,7 @@ ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002 消除（2026-07-20）。
 
 测试隔离：用 tmp_path + mock + 真实 git 仓库（end-to-end）。
 """
+
 from __future__ import annotations
 
 import os
@@ -74,16 +75,25 @@ def _init_git_repo(repo_dir: Path) -> None:
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "config", "user.name", "Test"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     # 禁用 autocrlf——避免 Windows 上 git 自动将 \n 转 \r\n 导致内容比对失败
     subprocess.run(
         ["git", "config", "core.autocrlf", "false"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     (repo_dir / "README.md").write_bytes(b"init\n")
     subprocess.run(["git", "add", "README.md"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
@@ -100,7 +110,10 @@ def _commit_file(repo_dir: Path, path: str, content: str) -> None:
     subprocess.run(["git", "add", path], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "commit", "-m", f"add {path}"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
 
 
@@ -164,36 +177,29 @@ class TestIsAutoSyncProduct:
 
     def test_prefix_match_overview_entry_dir(self):
         # 新增 auto-sync 路径：docs/02_enterprise_architecture/00_overview_entry/
-        assert _is_auto_sync_product(
-            "docs/02_enterprise_architecture/00_overview_entry/index.md"
-        ) is True
-        assert _is_auto_sync_product(
-            "docs/02_enterprise_architecture/00_overview_entry/sub/file.yaml"
-        ) is True
+        assert _is_auto_sync_product("docs/02_enterprise_architecture/00_overview_entry/index.md") is True
+        assert _is_auto_sync_product("docs/02_enterprise_architecture/00_overview_entry/sub/file.yaml") is True
 
     def test_prefix_match_generated_dir(self):
-        assert _is_auto_sync_product(
-            "docs/02_enterprise_architecture/generated/diagram.mmd"
-        ) is True
+        assert _is_auto_sync_product("docs/02_enterprise_architecture/generated/diagram.mmd") is True
 
     def test_prefix_match_domain_architecture_docs(self):
-        assert _is_auto_sync_product(
-            "docs/02_enterprise_architecture/02_domain_architecture_docs/d_foo.md"
-        ) is True
+        assert _is_auto_sync_product("docs/02_enterprise_architecture/02_domain_architecture_docs/d_foo.md") is True
 
     def test_prefix_match_full_project_tree(self):
-        assert _is_auto_sync_product(
-            "docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_root.txt"
-        ) is True
+        assert (
+            _is_auto_sync_product(
+                "docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_root.txt"
+            )
+            is True
+        )
 
     def test_prefix_match_telemetry_dir(self):
         assert _is_auto_sync_product("data/telemetry/dev/metrics.jsonl") is True
         assert _is_auto_sync_product("data/telemetry/blueprint_reads.jsonl") is True
 
     def test_prefix_match_runtime_violation_snapshot(self):
-        assert _is_auto_sync_product(
-            "data/runtime_violation_snapshot/latest.json"
-        ) is True
+        assert _is_auto_sync_product("data/runtime_violation_snapshot/latest.json") is True
 
     def test_prefix_match_reports(self):
         assert _is_auto_sync_product("data/reports/dashboard.json") is True
@@ -222,9 +228,7 @@ class TestIsAutoSyncProduct:
         # 该文件是 validate_rules_integrity.py --register 的写入产物（golden hash DB），
         # 列入 auto-sync 导致 register() 写入的新 hash 被 git restore 还原回 HEAD，
         # 形成"写入→还原"循环。post-flush re-register 负责提交 DB 变更。
-        assert _is_auto_sync_product(
-            "scripts/governance/meta/rules_integrity_db.json"
-        ) is False
+        assert _is_auto_sync_product("scripts/governance/meta/rules_integrity_db.json") is False
         assert _is_auto_sync_product("scripts/governance/script_manifest.yaml") is True
         assert _is_auto_sync_product("scripts/script_manifest.yaml") is True
 
@@ -232,17 +236,11 @@ class TestIsAutoSyncProduct:
         assert _is_auto_sync_product("architecture_model/index.yaml") is True
 
     def test_prefix_match_pg_schema_migration(self):
-        assert _is_auto_sync_product(
-            "scripts/governance/migrate_sqlite_to_pg/03_create_dataflow_schema.sql"
-        ) is True
-        assert _is_auto_sync_product(
-            "scripts/governance/migrate_sqlite_to_pg/03_create_decision_schema.sql"
-        ) is True
+        assert _is_auto_sync_product("scripts/governance/migrate_sqlite_to_pg/03_create_dataflow_schema.sql") is True
+        assert _is_auto_sync_product("scripts/governance/migrate_sqlite_to_pg/03_create_decision_schema.sql") is True
 
     def test_prefix_match_debt_registry(self):
-        assert _is_auto_sync_product(
-            "docs/_archive/architecture_debt_registry_v2.md"
-        ) is True
+        assert _is_auto_sync_product("docs/_archive/architecture_debt_registry_v2.md") is True
 
     def test_blueprint_md_in_modules_dir(self):
         # #ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001 (2026-07-21): blueprint.md 已从 auto-sync 清单移除
@@ -289,18 +287,18 @@ class TestIsAutoSyncProduct:
     def test_registry_catalogs_yaml(self):
         # 特殊规则：docs/01_policies_and_standards/_registry/catalogs/ 下的
         # rule_catalog_registry.yaml 和 registry_master_index.yaml 是 auto-sync 产物
-        assert _is_auto_sync_product(
-            "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
-        ) is True
-        assert _is_auto_sync_product(
-            "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml"
-        ) is True
+        assert (
+            _is_auto_sync_product("docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml")
+            is True
+        )
+        assert (
+            _is_auto_sync_product("docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml")
+            is True
+        )
 
     def test_registry_catalogs_other_yaml_not_matched(self):
         # 其他 YAML 不应匹配
-        assert _is_auto_sync_product(
-            "docs/01_policies_and_standards/_registry/catalogs/other.yaml"
-        ) is False
+        assert _is_auto_sync_product("docs/01_policies_and_standards/_registry/catalogs/other.yaml") is False
 
     def test_real_code_changes_not_matched(self):
         # 真实代码修改不应匹配（关键：避免误 restore 真实改动）
@@ -491,18 +489,12 @@ class TestReconcile:
         _init_git_repo(tmp_path)
         _commit_file(tmp_path, "data/telemetry/dev/metrics.jsonl", "v1\n")
         # 修改 auto-sync 产物
-        (tmp_path / "data" / "telemetry" / "dev" / "metrics.jsonl").parent.mkdir(
-            parents=True, exist_ok=True
-        )
-        (tmp_path / "data" / "telemetry" / "dev" / "metrics.jsonl").write_text(
-            "v2-modified\n", encoding="utf-8"
-        )
+        (tmp_path / "data" / "telemetry" / "dev" / "metrics.jsonl").parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / "data" / "telemetry" / "dev" / "metrics.jsonl").write_text("v2-modified\n", encoding="utf-8")
         gw = _FakeGateway(tmp_path)
         # 必须在 patch 上下文内创建 spec，否则 factory 会创建真实 GitCommandBatcher 实例
         # （patch 类对已创建的实例无效）
-        with patch(
-            "zephyr.governance.audit.workspace_hygiene_reconciler.GitCommandBatcher"
-        ) as mock_batcher_cls:
+        with patch("zephyr.governance.audit.workspace_hygiene_reconciler.GitCommandBatcher") as mock_batcher_cls:
             mock_batcher = mock_batcher_cls.return_value
             mock_batcher.git_restore_batch.return_value = []
             spec = make_workspace_hygiene_reconciler(gw)
@@ -533,9 +525,7 @@ class TestReconcile:
         _init_git_repo(tmp_path)
         _commit_file(tmp_path, "data/reports/dashboard.json", '{"v":1}\n')
         (tmp_path / "data" / "reports").mkdir(parents=True, exist_ok=True)
-        (tmp_path / "data" / "reports" / "dashboard.json").write_text(
-            '{"v":2}\n', encoding="utf-8"
-        )
+        (tmp_path / "data" / "reports" / "dashboard.json").write_text('{"v":2}\n', encoding="utf-8")
         gw = _FakeGateway(tmp_path)
         spec = make_workspace_hygiene_reconciler(gw)
         result = spec.reconcile(["data/reports/dashboard.json"], "test-session")
@@ -552,23 +542,17 @@ class TestReconcile:
         _commit_file(tmp_path, "src/foo.py", "v1\n")
         # 修改两类文件
         (tmp_path / "data" / "telemetry" / "dev").mkdir(parents=True, exist_ok=True)
-        (tmp_path / "data" / "telemetry" / "dev" / "metrics.jsonl").write_text(
-            "v2-auto\n", encoding="utf-8"
-        )
+        (tmp_path / "data" / "telemetry" / "dev" / "metrics.jsonl").write_text("v2-auto\n", encoding="utf-8")
         (tmp_path / "src" / "foo.py").write_text("v2-real\n", encoding="utf-8")
         gw = _FakeGateway(tmp_path)
         spec = make_workspace_hygiene_reconciler(gw)
-        result = spec.reconcile(
-            ["data/telemetry/dev/metrics.jsonl", "src/foo.py"], "test-session"
-        )
+        result = spec.reconcile(["data/telemetry/dev/metrics.jsonl", "src/foo.py"], "test-session")
         # 有真实代码修改 → warn
         assert result.action == "warn"
         assert "non-auto-sync" in result.detail.lower() or "real" in result.detail.lower()
         assert "restored" in result.detail  # auto-sync 仍被 restore
         # auto-sync 文件被还原
-        auto_content = (tmp_path / "data" / "telemetry" / "dev" / "metrics.jsonl").read_text(
-            encoding="utf-8"
-        )
+        auto_content = (tmp_path / "data" / "telemetry" / "dev" / "metrics.jsonl").read_text(encoding="utf-8")
         assert auto_content == "v1\n"
         # 真实代码文件不被还原
         real_content = (tmp_path / "src" / "foo.py").read_text(encoding="utf-8")
@@ -604,14 +588,10 @@ class TestGitBudgetCompliance:
         _init_git_repo(tmp_path)
         _commit_file(tmp_path, "data/telemetry/dev/metrics.jsonl", "v1\n")
         (tmp_path / "data" / "telemetry" / "dev").mkdir(parents=True, exist_ok=True)
-        (tmp_path / "data" / "telemetry" / "dev" / "metrics.jsonl").write_text(
-            "v2\n", encoding="utf-8"
-        )
+        (tmp_path / "data" / "telemetry" / "dev" / "metrics.jsonl").write_text("v2\n", encoding="utf-8")
         gw = _FakeGateway(tmp_path)
         # 必须在 patch 上下文内创建 spec，否则 factory 会创建真实 GitCommandBatcher 实例
-        with patch(
-            "zephyr.governance.audit.workspace_hygiene_reconciler.GitCommandBatcher"
-        ) as mock_batcher_cls:
+        with patch("zephyr.governance.audit.workspace_hygiene_reconciler.GitCommandBatcher") as mock_batcher_cls:
             mock_batcher = mock_batcher_cls.return_value
             mock_batcher.git_restore_batch.return_value = ["data/telemetry/dev/metrics.jsonl"]
             spec = make_workspace_hygiene_reconciler(gw)
@@ -640,9 +620,7 @@ class TestGitBudgetCompliance:
             (tmp_path / f).write_text("v2\n", encoding="utf-8")
         gw = _FakeGateway(tmp_path)
         # 必须在 patch 上下文内创建 spec，否则 factory 会创建真实 GitCommandBatcher 实例
-        with patch(
-            "zephyr.governance.audit.workspace_hygiene_reconciler.GitCommandBatcher"
-        ) as mock_batcher_cls:
+        with patch("zephyr.governance.audit.workspace_hygiene_reconciler.GitCommandBatcher") as mock_batcher_cls:
             mock_batcher = mock_batcher_cls.return_value
             mock_batcher.git_restore_batch.return_value = []
             spec = make_workspace_hygiene_reconciler(gw)

@@ -57,21 +57,29 @@ def isolated_repo(tmp_path_factory, monkeypatch):
     subprocess.run(["git", "init"], cwd=repo, capture_output=True, check=True)
     subprocess.run(
         ["git", "config", "user.email", "test@zephyr.local"],
-        cwd=repo, capture_output=True, check=True,
+        cwd=repo,
+        capture_output=True,
+        check=True,
     )
     subprocess.run(
         ["git", "config", "user.name", "Zephyr Test"],
-        cwd=repo, capture_output=True, check=True,
+        cwd=repo,
+        capture_output=True,
+        check=True,
     )
     # 初始 commit（emergency_commit 需要 HEAD 作为 parent）
     (repo / ".gitkeep").write_text("", encoding="utf-8")
     subprocess.run(["git", "add", ".gitkeep"], cwd=repo, capture_output=True, check=True)
     subprocess.run(
-        ["git", "commit", "-m", "init"], cwd=repo, capture_output=True, check=True,
+        ["git", "commit", "-m", "init"],
+        cwd=repo,
+        capture_output=True,
+        check=True,
     )
 
     # monkeypatch emergency_commit 模块的 REPO_ROOT
     import zephyr.gov_enforcement.rule_bridge.emergency_commit as ec_mod
+
     monkeypatch.setattr(ec_mod, "REPO_ROOT", repo)
 
     return repo
@@ -84,7 +92,10 @@ def _make_tracked_file(repo: Path, name: str, content: str) -> Path:
     f.write_text(content, encoding="utf-8")
     subprocess.run(["git", "add", name], cwd=repo, capture_output=True, check=True)
     subprocess.run(
-        ["git", "commit", "-m", f"add {name}"], cwd=repo, capture_output=True, check=True,
+        ["git", "commit", "-m", f"add {name}"],
+        cwd=repo,
+        capture_output=True,
+        check=True,
     )
     return f
 
@@ -93,7 +104,10 @@ def _get_commit_message(repo: Path, ref: str = "HEAD") -> str:
     """获取指定 ref 的完整 commit message。"""
     r = subprocess.run(
         ["git", "log", "-1", "--format=%B", ref],
-        cwd=repo, capture_output=True, text=True, check=True,
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=True,
     )
     return r.stdout
 
@@ -102,7 +116,10 @@ def _get_head_sha(repo: Path) -> str:
     """获取 HEAD SHA。"""
     r = subprocess.run(
         ["git", "rev-parse", "HEAD"],
-        cwd=repo, capture_output=True, text=True, check=True,
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=True,
     )
     return r.stdout.strip()
 
@@ -136,6 +153,7 @@ class TestInputValidation:
 
     def test_empty_files_returns_failed(self, isolated_repo):
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         result = emergency_commit(
             files=[],
             message="test",
@@ -148,6 +166,7 @@ class TestInputValidation:
 
     def test_empty_session_id_returns_failed(self, isolated_repo):
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         result = emergency_commit(
             files=[".gitkeep"],
             message="test",
@@ -159,6 +178,7 @@ class TestInputValidation:
 
     def test_nonexistent_file_returns_failed(self, isolated_repo):
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         result = emergency_commit(
             files=["nonexistent_file.py"],
             message="test",
@@ -180,6 +200,7 @@ class TestBasicCommit:
     def test_single_file_modification(self, isolated_repo):
         """修改已跟踪文件并提交。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         # 创建已跟踪文件
         f = _make_tracked_file(isolated_repo, "src/module.py", "old content\n")
         # 修改文件
@@ -211,6 +232,7 @@ class TestBasicCommit:
     def test_new_file_creation(self, isolated_repo):
         """创建新文件（不在 HEAD tree 中，测试 --add flag）。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         new_file = isolated_repo / "src" / "new_module.py"
         new_file.parent.mkdir(parents=True, exist_ok=True)
         new_file.write_text("# new module\n", encoding="utf-8")
@@ -231,15 +253,17 @@ class TestBasicCommit:
         # 不污染主 index。用 git ls-tree HEAD 验证文件在 commit tree 中。
         r = subprocess.run(
             ["git", "ls-tree", "-r", "--name-only", "HEAD"],
-            cwd=isolated_repo, capture_output=True, text=True,
+            cwd=isolated_repo,
+            capture_output=True,
+            text=True,
         )
         tracked_files = r.stdout.strip().split("\n")
-        assert "src/new_module.py" in tracked_files, \
-            f"new file should be in HEAD tree, got: {tracked_files}"
+        assert "src/new_module.py" in tracked_files, f"new file should be in HEAD tree, got: {tracked_files}"
 
     def test_multiple_files(self, isolated_repo):
         """多文件提交。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f1 = _make_tracked_file(isolated_repo, "file1.py", "content1\n")
         f2 = _make_tracked_file(isolated_repo, "file2.py", "content2\n")
         f1.write_text("updated1\n", encoding="utf-8")
@@ -259,7 +283,9 @@ class TestBasicCommit:
         # 验证两个文件都在最新 commit 中
         r = subprocess.run(
             ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD"],
-            cwd=isolated_repo, capture_output=True, text=True,
+            cwd=isolated_repo,
+            capture_output=True,
+            text=True,
         )
         changed = r.stdout.strip().split("\n")
         assert "file1.py" in changed
@@ -277,6 +303,7 @@ class TestAuditPersistence:
     def test_gw_emergency_marker_in_message(self, isolated_repo):
         """commit message 必须含 [GW:{session_id}:emergency] 标记。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "audit_test.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
 
@@ -291,12 +318,12 @@ class TestAuditPersistence:
         assert result["ok"] is True
 
         msg = _get_commit_message(isolated_repo)
-        assert "[GW:sess-audit-001:emergency]" in msg, \
-            f"GW emergency marker missing in: {msg}"
+        assert "[GW:sess-audit-001:emergency]" in msg, f"GW emergency marker missing in: {msg}"
 
     def test_reason_in_message(self, isolated_repo):
         """commit message 应包含 reason（便于事后审计）。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "reason_test.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
 
@@ -317,6 +344,7 @@ class TestAuditPersistence:
     def test_persisted_to_reconcile_log(self, isolated_repo):
         """emergency_commit 必须持久化到 reconcile_execution_log 表。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "db_test.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
 
@@ -332,8 +360,7 @@ class TestAuditPersistence:
 
         rows = _query_reconcile_log(isolated_repo)
         ec_rows = [r for r in rows if r.get("action") == "emergency_commit"]
-        assert len(ec_rows) >= 1, \
-            f"expected >=1 emergency_commit row, got: {rows}"
+        assert len(ec_rows) >= 1, f"expected >=1 emergency_commit row, got: {rows}"
 
         row = ec_rows[-1]
         assert row["gate_id"] == "EMERGENCY-COMMIT"
@@ -345,6 +372,7 @@ class TestAuditPersistence:
     def test_report_file_generated(self, isolated_repo):
         """审计报告文件应生成在 .runtime/reconcile_reports/。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "report_test.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
 
@@ -360,10 +388,10 @@ class TestAuditPersistence:
 
         reports_dir = isolated_repo / ".runtime" / "reconcile_reports"
         report_files = list(reports_dir.glob("emergency_commit_*.json"))
-        assert len(report_files) >= 1, \
-            f"expected >=1 report file, got: {report_files}"
+        assert len(report_files) >= 1, f"expected >=1 report file, got: {report_files}"
 
         import json
+
         report = json.loads(report_files[-1].read_text(encoding="utf-8"))
         assert report["gate_id"] == "EMERGENCY-COMMIT"
         assert report["session_id"] == "sess-report-001"
@@ -383,6 +411,7 @@ class TestEdgeCases:
     def test_relative_path_input(self, isolated_repo):
         """支持相对路径输入（相对 project_root）。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "rel_path_test.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
 
@@ -399,6 +428,7 @@ class TestEdgeCases:
     def test_commit_hash_is_short_sha(self, isolated_repo):
         """commit_hash 应为短 SHA（10 位）。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "sha_test.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
 
@@ -411,17 +441,16 @@ class TestEdgeCases:
         )
         assert result["ok"] is True
         short_sha = result["commit_hash"]
-        assert len(short_sha) == 10, \
-            f"short SHA should be 10 chars, got {len(short_sha)}: {short_sha}"
+        assert len(short_sha) == 10, f"short SHA should be 10 chars, got {len(short_sha)}: {short_sha}"
 
         # 验证短 SHA 是真实 commit SHA 的前缀
         full_sha = _get_head_sha(isolated_repo)
-        assert full_sha.startswith(short_sha), \
-            f"full SHA {full_sha} should start with {short_sha}"
+        assert full_sha.startswith(short_sha), f"full SHA {full_sha} should start with {short_sha}"
 
     def test_branch_field_in_result(self, isolated_repo):
         """结果应包含 branch 字段。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "branch_test.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
 
@@ -435,8 +464,7 @@ class TestEdgeCases:
         assert result["ok"] is True
         assert result["branch"], "branch field should be non-empty"
         # 临时仓库默认在 master 或 main 分支
-        assert result["branch"] in ("master", "main"), \
-            f"unexpected branch: {result['branch']}"
+        assert result["branch"] in ("master", "main"), f"unexpected branch: {result['branch']}"
 
 
 # ---------------------------------------------------------------------------
@@ -464,16 +492,16 @@ class TestAgentBucketId:
         monkeypatch.setenv("ZEPHYR_AGENT_ID", "ai-glm-5.2-instance-1")
         # 即使有 git config user.email，也应优先用环境变量
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import _agent_bucket_id
+
         bucket = _agent_bucket_id(isolated_repo)
-        assert bucket == "ai-glm-5.2-instance-1", (
-            f"ZEPHYR_AGENT_ID 应优先，实际: {bucket}"
-        )
+        assert bucket == "ai-glm-5.2-instance-1", f"ZEPHYR_AGENT_ID 应优先，实际: {bucket}"
 
     def test_git_config_email_fallback(self, isolated_repo, monkeypatch):
         """无 ZEPHYR_AGENT_ID 时，fallback 到 git config user.email。"""
         monkeypatch.delenv("ZEPHYR_AGENT_ID", raising=False)
         # isolated_repo fixture 设置了 user.email = test@zephyr.local
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import _agent_bucket_id
+
         bucket = _agent_bucket_id(isolated_repo)
         assert bucket == "email:test@zephyr.local", (
             f"应 fallback 到 git config user.email（前缀 email:），实际: {bucket}"
@@ -488,11 +516,10 @@ class TestAgentBucketId:
         # Windows 上 USERNAME 才是真正的环境变量
         monkeypatch.setenv("USERNAME", "test-user-p1-2")
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import _agent_bucket_id
+
         bucket = _agent_bucket_id(tmp_path)
         # 应为 user:test-user-p1-2（git config 失败 → fallback USER/USERNAME）
-        assert bucket == "user:test-user-p1-2", (
-            f"git 失败时应 fallback 到 USER/USERNAME，实际: {bucket}"
-        )
+        assert bucket == "user:test-user-p1-2", f"git 失败时应 fallback 到 USER/USERNAME，实际: {bucket}"
 
     def test_default_fallback(self, tmp_path, monkeypatch):
         """所有标识都缺失时，fallback 到 "default"。"""
@@ -501,15 +528,15 @@ class TestAgentBucketId:
         monkeypatch.delenv("USERNAME", raising=False)
         # tmp_path 不是 git 仓库，git config 会失败
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import _agent_bucket_id
+
         bucket = _agent_bucket_id(tmp_path)
-        assert bucket == "default", (
-            f"所有标识缺失时应 fallback 到 'default'，实际: {bucket}"
-        )
+        assert bucket == "default", f"所有标识缺失时应 fallback 到 'default'，实际: {bucket}"
 
     def test_bucket_id_stable_across_calls(self, isolated_repo, monkeypatch):
         """同一 agent 的多次调用应返回相同 bucket_id（持久性验证）。"""
         monkeypatch.setenv("ZEPHYR_AGENT_ID", "stable-agent-id-12345")
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import _agent_bucket_id
+
         b1 = _agent_bucket_id(isolated_repo)
         b2 = _agent_bucket_id(isolated_repo)
         b3 = _agent_bucket_id(isolated_repo)
@@ -538,11 +565,10 @@ class TestEmergencyCountBucketing:
             _agent_bucket_id,
             _emergency_count_path,
         )
+
         bucket = _agent_bucket_id(isolated_repo)
         path = _emergency_count_path(isolated_repo, bucket)
-        assert path.name == "test-bucket-path-agent.json", (
-            f"文件名应为 bucket_id.json，实际: {path.name}"
-        )
+        assert path.name == "test-bucket-path-agent.json", f"文件名应为 bucket_id.json，实际: {path.name}"
         assert path.parent.name == "emergency_counts", (
             f"父目录应为 emergency_counts/（与 sessions/ 分离），实际: {path.parent.name}"
         )
@@ -561,6 +587,7 @@ class TestEmergencyCountBucketing:
             _increment_emergency_count,
             _read_emergency_count,
         )
+
         bucket = _agent_bucket_id(isolated_repo)
 
         # session-1: increment 到 1
@@ -574,9 +601,7 @@ class TestEmergencyCountBucketing:
 
         # session-2: read 应看到 1（累积），increment 后变 2
         data = _read_emergency_count(isolated_repo, bucket)
-        assert data["count"] == 1, (
-            f"session-2 应看到 session-1 的计数（累积），实际: {data['count']}"
-        )
+        assert data["count"] == 1, f"session-2 应看到 session-1 的计数（累积），实际: {data['count']}"
         n2 = _increment_emergency_count(isolated_repo, bucket)
         assert n2 == 2, f"第二次 increment 应返回 2（累积），实际: {n2}"
 
@@ -608,6 +633,7 @@ class TestEmergencyCountBucketing:
             _check_emergency_escalation,
             _increment_emergency_count,
         )
+
         bucket = _agent_bucket_id(isolated_repo)
         assert _EMERGENCY_BLOCK_THRESHOLD == 5
 
@@ -634,6 +660,7 @@ class TestEmergencyCountBucketing:
             _check_emergency_escalation,
             _increment_emergency_count,
         )
+
         bucket = _agent_bucket_id(isolated_repo)
         assert _EMERGENCY_REASON_THRESHOLD == 3
 
@@ -665,6 +692,7 @@ class TestEmergencyCommitScenario:
     def test_default_scenario_is_production(self, isolated_repo):
         """默认 scenario=production（向后兼容）。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "scenario_default.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
         result = emergency_commit(
@@ -677,13 +705,12 @@ class TestEmergencyCommitScenario:
         )
         assert result["ok"] is True
         msg = _get_commit_message(isolated_repo)
-        assert "[SCENARIO:production]" in msg, (
-            f"默认应含 [SCENARIO:production] 标记，msg: {msg}"
-        )
+        assert "[SCENARIO:production]" in msg, f"默认应含 [SCENARIO:production] 标记，msg: {msg}"
 
     def test_dogfood_scenario_marker(self, isolated_repo):
         """scenario=dogfood 时 commit message 含 [SCENARIO:dogfood]。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "scenario_dogfood.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
         result = emergency_commit(
@@ -697,13 +724,12 @@ class TestEmergencyCommitScenario:
         )
         assert result["ok"] is True
         msg = _get_commit_message(isolated_repo)
-        assert "[SCENARIO:dogfood]" in msg, (
-            f"应含 [SCENARIO:dogfood] 标记，msg: {msg}"
-        )
+        assert "[SCENARIO:dogfood]" in msg, f"应含 [SCENARIO:dogfood] 标记，msg: {msg}"
 
     def test_governance_fix_scenario_marker(self, isolated_repo):
         """scenario=governance_fix 时 commit message 含 [SCENARIO:governance_fix]。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "scenario_govfix.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
         result = emergency_commit(
@@ -717,13 +743,12 @@ class TestEmergencyCommitScenario:
         )
         assert result["ok"] is True
         msg = _get_commit_message(isolated_repo)
-        assert "[SCENARIO:governance_fix]" in msg, (
-            f"应含 [SCENARIO:governance_fix] 标记，msg: {msg}"
-        )
+        assert "[SCENARIO:governance_fix]" in msg, f"应含 [SCENARIO:governance_fix] 标记，msg: {msg}"
 
     def test_scenario_marker_after_gw_marker(self, isolated_repo):
         """[SCENARIO:] 标记应在 [GW:...] 之后（abuse_monitor 解析顺序）。"""
         from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
         f = _make_tracked_file(isolated_repo, "scenario_order.py", "old\n")
         f.write_text("new\n", encoding="utf-8")
         result = emergency_commit(
@@ -740,9 +765,5 @@ class TestEmergencyCommitScenario:
         # [GW:] 必须在 [SCENARIO:] 之前（abuse_monitor 先匹配 [GW:emergency]，再解析 scenario）
         gw_pos = msg.find("[GW:")
         scenario_pos = msg.find("[SCENARIO:")
-        assert gw_pos >= 0 and scenario_pos >= 0, (
-            f"两个标记都应存在，msg: {msg}"
-        )
-        assert gw_pos < scenario_pos, (
-            f"[GW:] 应在 [SCENARIO:] 之前（gw_pos={gw_pos}, scenario_pos={scenario_pos}）"
-        )
+        assert gw_pos >= 0 and scenario_pos >= 0, f"两个标记都应存在，msg: {msg}"
+        assert gw_pos < scenario_pos, f"[GW:] 应在 [SCENARIO:] 之前（gw_pos={gw_pos}, scenario_pos={scenario_pos}）"

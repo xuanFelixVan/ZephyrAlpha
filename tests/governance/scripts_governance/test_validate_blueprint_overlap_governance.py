@@ -12,7 +12,10 @@ import textwrap
 from pathlib import Path
 from unittest.mock import patch
 
-import sys; sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts" / "governance")); from _shared.frontmatter import parse_frontmatter_from_file
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts" / "governance"))
+from _shared.frontmatter import parse_frontmatter_from_file
 
 from scripts.governance.d11_compliance.validate_blueprint_overlap import (
     detect_overlaps,

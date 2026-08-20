@@ -24,6 +24,7 @@
 - TestAddedLinesOnly: 存量违规非 added → 通过
 - TestFailOpenGitDiff: git diff 失败 → 通过
 """
+
 from __future__ import annotations
 
 import sys
@@ -71,7 +72,8 @@ class TestBareOpenBlocked:
         src_file = "src/zephyr/trading/foo.py"
         content = 'f = open("x")\n'
         gw = make_mock_gateway(
-            [src_file], {src_file: ['f = open("x")']},
+            [src_file],
+            {src_file: ['f = open("x")']},
             file_contents={src_file: content},
         )
         gate = make_open_without_with_gate()
@@ -85,7 +87,8 @@ class TestBareOpenBlocked:
         src_file = "src/zephyr/trading/foo.py"
         content = 'data = open("x").read()\n'
         gw = make_mock_gateway(
-            [src_file], {src_file: ['data = open("x").read()']},
+            [src_file],
+            {src_file: ['data = open("x").read()']},
             file_contents={src_file: content},
         )
         gate = make_open_without_with_gate()
@@ -97,7 +100,8 @@ class TestBareOpenBlocked:
         src_file = "src/zephyr/trading/foo.py"
         content = 'process(open("x"))\n'
         gw = make_mock_gateway(
-            [src_file], {src_file: ['process(open("x"))']},
+            [src_file],
+            {src_file: ['process(open("x"))']},
             file_contents={src_file: content},
         )
         gate = make_open_without_with_gate()
@@ -116,7 +120,8 @@ class TestWithOpenPasses:
         src_file = "src/zephyr/trading/foo.py"
         content = 'with open("x") as f:\n    data = f.read()\n'
         gw = make_mock_gateway(
-            [src_file], {src_file: ['with open("x") as f:', "    data = f.read()"]},
+            [src_file],
+            {src_file: ['with open("x") as f:', "    data = f.read()"]},
             file_contents={src_file: content},
         )
         gate = make_open_without_with_gate()
@@ -129,7 +134,8 @@ class TestWithOpenPasses:
         src_file = "src/zephyr/trading/foo.py"
         content = 'with open("a") as fa, open("b") as fb:\n    pass\n'
         gw = make_mock_gateway(
-            [src_file], {src_file: ['with open("a") as fa, open("b") as fb:', "    pass"]},
+            [src_file],
+            {src_file: ['with open("a") as fa, open("b") as fb:', "    pass"]},
             file_contents={src_file: content},
         )
         gate = make_open_without_with_gate()
@@ -140,11 +146,7 @@ class TestWithOpenPasses:
     def test_nested_with_open_passes(self):
         """嵌套 with 内的 open → 通过"""
         src_file = "src/zephyr/trading/foo.py"
-        content = (
-            'with open("a") as fa:\n'
-            '    with open("b") as fb:\n'
-            "        pass\n"
-        )
+        content = 'with open("a") as fa:\n    with open("b") as fb:\n        pass\n'
         gw = make_mock_gateway(
             [src_file],
             {src_file: ['with open("a") as fa:', '    with open("b") as fb:', "        pass"]},
@@ -188,7 +190,8 @@ class TestOsOpenPasses:
         src_file = "src/zephyr/trading/foo.py"
         content = 'fd = os.open("x", os.O_RDONLY)\n'
         gw = make_mock_gateway(
-            [src_file], {src_file: ['fd = os.open("x", os.O_RDONLY)']},
+            [src_file],
+            {src_file: ['fd = os.open("x", os.O_RDONLY)']},
             file_contents={src_file: content},
         )
         gate = make_open_without_with_gate()
@@ -208,7 +211,8 @@ class TestNoqaExemption:
         src_file = "src/zephyr/trading/foo.py"
         content = 'f = open("x")  # noqa: r144-open  低层封装手动管理生命周期\n'
         gw = make_mock_gateway(
-            [src_file], {src_file: ['f = open("x")  # noqa: r144-open  低层封装手动管理生命周期']},
+            [src_file],
+            {src_file: ['f = open("x")  # noqa: r144-open  低层封装手动管理生命周期']},
             file_contents={src_file: content},
         )
         gate = make_open_without_with_gate()
@@ -228,7 +232,8 @@ class TestTestExempt:
         test_file = "tests/governance/foo.py"
         content = 'f = open("x")\n'
         gw = make_mock_gateway(
-            [test_file], {test_file: ['f = open("x")']},
+            [test_file],
+            {test_file: ['f = open("x")']},
             file_contents={test_file: content},
         )
         gate = make_open_without_with_gate()
@@ -246,14 +251,7 @@ class TestAddedLinesOnly:
     def test_existing_violation_not_added_passes(self):
         """存量裸 open（非 added 行）→ 通过（由 M27 监控）"""
         src_file = "src/zephyr/trading/legacy.py"
-        full_content = (
-            "# header comment\n"
-            "\n"
-            'f = open("x")  # 存量违规，非 added 行\n'
-            "\n"
-            "def new_func():\n"
-            "    pass\n"
-        )
+        full_content = '# header comment\n\nf = open("x")  # 存量违规，非 added 行\n\ndef new_func():\n    pass\n'
         gw = make_mock_gateway(
             [src_file],
             {src_file: ["# header comment", "def new_func():", "    pass"]},

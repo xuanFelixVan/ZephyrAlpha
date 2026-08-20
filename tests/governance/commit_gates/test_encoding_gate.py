@@ -38,21 +38,13 @@ class _MockGateway:
         self.project_root = project_root
 
 
-def _make_checker_stub(
-    repo_dir: Path, exit_code: int = 0, stdout_msg: str = "", stderr_msg: str = ""
-) -> Path:
+def _make_checker_stub(repo_dir: Path, exit_code: int = 0, stdout_msg: str = "", stderr_msg: str = "") -> Path:
     """在 repo_dir/scripts/governance/d7_code/ 创建 check_encoding.py stub。
 
     stub 行为由 exit_code + stdout_msg + stderr_msg 参数控制，模拟真 checker
     的 exit 0/1/2（与 check_encoding.py 一致：0=通过，1=有违规，2=脚本异常）。
     """
-    checker = (
-        repo_dir
-        / "scripts"
-        / "governance"
-        / "d7_code"
-        / "check_encoding.py"
-    )
+    checker = repo_dir / "scripts" / "governance" / "d7_code" / "check_encoding.py"
     checker.parent.mkdir(parents=True, exist_ok=True)
     lines = ["#!/usr/bin/env python", "import sys"]
     if stdout_msg:
@@ -129,9 +121,7 @@ class TestCheckSuffixFilter:
         _make_target_file(tmp_path, "foo.py")
         _make_target_file(tmp_path, "image.png")
         spec = make_encoding_gate()
-        passed, detail = spec.check(
-            gw, [str(tmp_path / "foo.py"), str(tmp_path / "image.png")]
-        )
+        passed, detail = spec.check(gw, [str(tmp_path / "foo.py"), str(tmp_path / "image.png")])
         assert passed is True
         assert "1 file" in detail  # 只校验了 1 个文件
 
@@ -178,9 +168,7 @@ class TestCheckViolation:
     def test_checker_exit_1_returns_false_with_detail(self, tmp_path):
         """违规 detail 在 stdout（check_encoding.py 输出 findings 到 stdout）。"""
         gw = _MockGateway(tmp_path)
-        _make_checker_stub(
-            tmp_path, exit_code=1, stdout_msg="non-ASCII bytes in foo.ps1"
-        )
+        _make_checker_stub(tmp_path, exit_code=1, stdout_msg="non-ASCII bytes in foo.ps1")
         _make_target_file(tmp_path, "foo.ps1")
         spec = make_encoding_gate()
         passed, detail = spec.check(gw, [str(tmp_path / "foo.ps1")])
@@ -190,9 +178,7 @@ class TestCheckViolation:
     def test_checker_exit_1_empty_stdout_falls_back_to_stderr(self, tmp_path):
         """stdout 空时 fallback 到 stderr。"""
         gw = _MockGateway(tmp_path)
-        _make_checker_stub(
-            tmp_path, exit_code=1, stdout_msg="", stderr_msg="mojibake detected"
-        )
+        _make_checker_stub(tmp_path, exit_code=1, stdout_msg="", stderr_msg="mojibake detected")
         _make_target_file(tmp_path, "foo.py")
         spec = make_encoding_gate()
         passed, detail = spec.check(gw, [str(tmp_path / "foo.py")])
@@ -205,9 +191,7 @@ class TestCheckScriptError:
 
     def test_checker_exit_2_returns_true_with_stderr(self, tmp_path):
         gw = _MockGateway(tmp_path)
-        _make_checker_stub(
-            tmp_path, exit_code=2, stderr_msg="Traceback: FileNotFoundError"
-        )
+        _make_checker_stub(tmp_path, exit_code=2, stderr_msg="Traceback: FileNotFoundError")
         _make_target_file(tmp_path, "foo.py")
         spec = make_encoding_gate()
         passed, detail = spec.check(gw, [str(tmp_path / "foo.py")])
@@ -260,9 +244,7 @@ class TestCheckMultipleFiles:
         _make_target_file(tmp_path, "foo.py")
         _make_target_file(tmp_path, "bar.md")
         spec = make_encoding_gate()
-        passed, detail = spec.check(
-            gw, [str(tmp_path / "foo.py"), str(tmp_path / "bar.md")]
-        )
+        passed, detail = spec.check(gw, [str(tmp_path / "foo.py"), str(tmp_path / "bar.md")])
         assert passed is True
         assert "2 file" in detail
 
@@ -270,14 +252,10 @@ class TestCheckMultipleFiles:
         """多文件部分违规——第一个违规直接返回（按当前实现）。"""
         gw = _MockGateway(tmp_path)
         # 同一 stub 对所有调用返回相同 exit code——模拟 foo.py 违规
-        _make_checker_stub(
-            tmp_path, exit_code=1, stdout_msg="non-ASCII in foo.py"
-        )
+        _make_checker_stub(tmp_path, exit_code=1, stdout_msg="non-ASCII in foo.py")
         _make_target_file(tmp_path, "foo.py")
         _make_target_file(tmp_path, "bar.py")
         spec = make_encoding_gate()
-        passed, detail = spec.check(
-            gw, [str(tmp_path / "foo.py"), str(tmp_path / "bar.py")]
-        )
+        passed, detail = spec.check(gw, [str(tmp_path / "foo.py"), str(tmp_path / "bar.py")])
         assert passed is False
         assert "non-ASCII in foo.py" in detail

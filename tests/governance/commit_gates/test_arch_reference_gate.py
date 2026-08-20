@@ -26,6 +26,7 @@
 - TestL3NonNumericWarning: L3 新条目数字制检测（ARCH_NON_NUMERIC_WARNING，不阻断）（2026-08-05 铁律#7 冻结条款）
 - TestIsNumericSuffix: _is_numeric_suffix 数字制判定单元测试（2026-08-05 铁律#7 冻结条款）
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -60,10 +61,7 @@ entries:
 """
 
 # registry 在 project_root 下的相对路径（对标 arch_reference_gate._REGISTRY_REL）
-_REGISTRY_REL = (
-    "docs/01_policies_and_standards/_registry/catalogs/"
-    "architecture_issue_registry.yaml"
-)
+_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml"
 
 
 def _make_gateway(project_root: Path) -> MagicMock:
@@ -166,9 +164,7 @@ class TestIncrementalOnly:
         # mock 需打在 _reference_helpers 模块上（scan_file_violations 内部调用）。
         import zephyr.gov_enforcement.commit_gates._reference_helpers as helpers
 
-        monkeypatch.setattr(
-            helpers, "get_head_content", lambda pr, rel: "# see #ARCH-999\n"
-        )
+        monkeypatch.setattr(helpers, "get_head_content", lambda pr, rel: "# see #ARCH-999\n")
 
         passed, detail = gate.check(gw, [str(target)])
         assert passed  # 历史悬空引用不阻断
@@ -302,6 +298,7 @@ class TestDescriptiveRef:
         # tmp_path 位于真实 git 仓库内，L2 会读取真实 HEAD registry（不含未提交的
         # DOC-REF-FILE-URL），误报原子性违规。跳过 L2 隔离测试环境。
         import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+
         monkeypatch.setattr(gate_mod, "load_head_registered_nums", lambda *a, **kw: None)
         passed, detail = gate.check(gw, [str(target)])
         assert passed
@@ -427,6 +424,7 @@ class TestL3NonNumericWarning:
         # mock load_head_registered_nums 返回仅数字制 ID（HEAD 无描述性 ID）
         # 模拟工作区 registry 新增了 DOC-REF-FILE-URL / IFIND-FAILOVER
         import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+
         monkeypatch.setattr(
             gate_mod,
             "load_head_registered_nums",
@@ -449,6 +447,7 @@ class TestL3NonNumericWarning:
 
         # HEAD 有 008/019/描述性 ID，工作区新增 GOV-SHIM-001（数字制）
         import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+
         monkeypatch.setattr(
             gate_mod,
             "load_head_registered_nums",
@@ -468,6 +467,7 @@ class TestL3NonNumericWarning:
         gate = make_arch_reference_gate()
 
         import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+
         monkeypatch.setattr(
             gate_mod,
             "load_head_registered_nums",
@@ -488,6 +488,7 @@ class TestL3NonNumericWarning:
         gate = make_arch_reference_gate()
 
         import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+
         monkeypatch.setattr(
             gate_mod,
             "load_head_registered_nums",
@@ -507,6 +508,7 @@ class TestL3NonNumericWarning:
 
         # HEAD 只有 008，工作区新增 019/GOV-SHIM-001（数字）+ DOC-REF-FILE-URL/IFIND-FAILOVER（描述性）
         import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+
         monkeypatch.setattr(
             gate_mod,
             "load_head_registered_nums",
@@ -522,10 +524,7 @@ class TestL3NonNumericWarning:
         assert "IFIND-FAILOVER" in detail
         # 数字制新条目不出现在 warning 的列表项中
         warning_section = detail.split("ARCH_NON_NUMERIC_WARNING", 1)[1]
-        listed_items = [
-            ln.strip() for ln in warning_section.split("\n")
-            if ln.strip().startswith("- #ARCH-")
-        ]
+        listed_items = [ln.strip() for ln in warning_section.split("\n") if ln.strip().startswith("- #ARCH-")]
         listed_ids = [item.replace("- #ARCH-", "") for item in listed_items]
         assert "019" not in listed_ids
         assert "GOV-SHIM-001" not in listed_ids

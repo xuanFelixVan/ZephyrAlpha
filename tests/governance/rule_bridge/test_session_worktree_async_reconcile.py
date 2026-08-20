@@ -26,6 +26,7 @@
 3. launch 异常 → 回退 sync
 4. SHA 获取失败 → 用 session_id 派生 key（保持异步）
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -60,17 +61,18 @@ class TestRunReconcilersAfterMergeAsync:
             "error": "",
         }
 
-        with patch("subprocess.run", return_value=fake_sha_result), \
-             patch(
-                 "zephyr.governance.audit.reconcile_runner.launch_reconcile_async",
-                 return_value=fake_launch_result,
-             ) as mock_launch, \
-             patch(
-                 "zephyr.gov_enforcement.rule_bridge.session_worktree."
-                 "_run_reconcilers_after_merge_sync"
-             ) as mock_sync:
+        with (
+            patch("subprocess.run", return_value=fake_sha_result),
+            patch(
+                "zephyr.governance.audit.reconcile_runner.launch_reconcile_async",
+                return_value=fake_launch_result,
+            ) as mock_launch,
+            patch("zephyr.gov_enforcement.rule_bridge.session_worktree._run_reconcilers_after_merge_sync") as mock_sync,
+        ):
             result = _run_reconcilers_after_merge(
-                ["file1.py", "file2.py"], "sess-test", tmp_path,
+                ["file1.py", "file2.py"],
+                "sess-test",
+                tmp_path,
             )
 
         assert len(result) == 1
@@ -97,18 +99,21 @@ class TestRunReconcilersAfterMergeAsync:
             "error": "spawn failed: EPERM",
         }
 
-        with patch("subprocess.run", return_value=fake_sha_result), \
-             patch(
-                 "zephyr.governance.audit.reconcile_runner.launch_reconcile_async",
-                 return_value=fake_launch_result,
-             ), \
-             patch(
-                 "zephyr.gov_enforcement.rule_bridge.session_worktree."
-                 "_run_reconcilers_after_merge_sync",
-                 return_value=[{"action": "warn", "detail": "sync fallback"}],
-             ) as mock_sync:
+        with (
+            patch("subprocess.run", return_value=fake_sha_result),
+            patch(
+                "zephyr.governance.audit.reconcile_runner.launch_reconcile_async",
+                return_value=fake_launch_result,
+            ),
+            patch(
+                "zephyr.gov_enforcement.rule_bridge.session_worktree._run_reconcilers_after_merge_sync",
+                return_value=[{"action": "warn", "detail": "sync fallback"}],
+            ) as mock_sync,
+        ):
             result = _run_reconcilers_after_merge(
-                ["file1.py"], "sess-test", tmp_path,
+                ["file1.py"],
+                "sess-test",
+                tmp_path,
             )
 
         assert result == [{"action": "warn", "detail": "sync fallback"}]
@@ -120,18 +125,21 @@ class TestRunReconcilersAfterMergeAsync:
         fake_sha_result.returncode = 0
         fake_sha_result.stdout = "abc123\n"
 
-        with patch("subprocess.run", return_value=fake_sha_result), \
-             patch(
-                 "zephyr.governance.audit.reconcile_runner.launch_reconcile_async",
-                 side_effect=OSError("disk full"),
-             ), \
-             patch(
-                 "zephyr.gov_enforcement.rule_bridge.session_worktree."
-                 "_run_reconcilers_after_merge_sync",
-                 return_value=[{"action": "warn", "detail": "sync fallback"}],
-             ) as mock_sync:
+        with (
+            patch("subprocess.run", return_value=fake_sha_result),
+            patch(
+                "zephyr.governance.audit.reconcile_runner.launch_reconcile_async",
+                side_effect=OSError("disk full"),
+            ),
+            patch(
+                "zephyr.gov_enforcement.rule_bridge.session_worktree._run_reconcilers_after_merge_sync",
+                return_value=[{"action": "warn", "detail": "sync fallback"}],
+            ) as mock_sync,
+        ):
             result = _run_reconcilers_after_merge(
-                ["file1.py"], "sess-test", tmp_path,
+                ["file1.py"],
+                "sess-test",
+                tmp_path,
             )
 
         assert result == [{"action": "warn", "detail": "sync fallback"}]
@@ -154,17 +162,18 @@ class TestRunReconcilersAfterMergeAsync:
             "error": "",
         }
 
-        with patch("subprocess.run", return_value=fake_sha_result), \
-             patch(
-                 "zephyr.governance.audit.reconcile_runner.launch_reconcile_async",
-                 return_value=fake_launch_result,
-             ) as mock_launch, \
-             patch(
-                 "zephyr.gov_enforcement.rule_bridge.session_worktree."
-                 "_run_reconcilers_after_merge_sync"
-             ) as mock_sync:
+        with (
+            patch("subprocess.run", return_value=fake_sha_result),
+            patch(
+                "zephyr.governance.audit.reconcile_runner.launch_reconcile_async",
+                return_value=fake_launch_result,
+            ) as mock_launch,
+            patch("zephyr.gov_enforcement.rule_bridge.session_worktree._run_reconcilers_after_merge_sync") as mock_sync,
+        ):
             result = _run_reconcilers_after_merge(
-                ["file1.py"], "sess-test", tmp_path,
+                ["file1.py"],
+                "sess-test",
+                tmp_path,
             )
 
         # 仍然走异步路径（不因 SHA 失败而阻塞 merge）
@@ -192,13 +201,17 @@ class TestRunReconcilersAfterMergeAsync:
             "error": "",
         }
 
-        with patch("subprocess.run", return_value=fake_sha_result), \
-             patch(
-                 "zephyr.governance.audit.reconcile_runner.launch_reconcile_async",
-                 return_value=fake_launch_result,
-             ) as mock_launch:
+        with (
+            patch("subprocess.run", return_value=fake_sha_result),
+            patch(
+                "zephyr.governance.audit.reconcile_runner.launch_reconcile_async",
+                return_value=fake_launch_result,
+            ) as mock_launch,
+        ):
             result = _run_reconcilers_after_merge(
-                [], "sess-test", tmp_path,
+                [],
+                "sess-test",
+                tmp_path,
             )
 
         assert len(result) == 1
@@ -217,12 +230,10 @@ class TestRunReconcilersAfterMergeSyncFallback:
         """sync fallback 函数存在且可调用（不抛异常即视为基本可用）。"""
         # 不实际执行 reconciler（需要完整 GitCommitGateway 环境），
         # 仅验证函数签名和异常处理。mock 内部依赖。
-        with patch(
-            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway"
-        ) as mock_gw_cls, \
-             patch(
-                 "zephyr.governance.audit.reconciliation_registry._log_reconcile_results"
-             ):
+        with (
+            patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as mock_gw_cls,
+            patch("zephyr.governance.audit.reconciliation_registry._log_reconcile_results"),
+        ):
             mock_gw = MagicMock()
             mock_gw_cls.return_value = mock_gw
             mock_registry = MagicMock()
@@ -232,7 +243,9 @@ class TestRunReconcilersAfterMergeSyncFallback:
             mock_gw._batcher = mock_batcher
 
             result = _run_reconcilers_after_merge_sync(
-                ["file1.py"], "sess-test", tmp_path,
+                ["file1.py"],
+                "sess-test",
+                tmp_path,
             )
 
         assert isinstance(result, list)
@@ -246,7 +259,9 @@ class TestRunReconcilersAfterMergeSyncFallback:
             side_effect=RuntimeError("gateway init failed"),
         ):
             result = _run_reconcilers_after_merge_sync(
-                ["file1.py"], "sess-test", tmp_path,
+                ["file1.py"],
+                "sess-test",
+                tmp_path,
             )
 
         assert len(result) == 1

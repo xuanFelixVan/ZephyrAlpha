@@ -48,20 +48,28 @@ def isolated_repo(tmp_path_factory, monkeypatch):
     subprocess.run(["git", "init"], cwd=repo, capture_output=True, check=True)
     subprocess.run(
         ["git", "config", "user.email", "test@zephyr.local"],
-        cwd=repo, capture_output=True, check=True,
+        cwd=repo,
+        capture_output=True,
+        check=True,
     )
     subprocess.run(
         ["git", "config", "user.name", "Zephyr Test"],
-        cwd=repo, capture_output=True, check=True,
+        cwd=repo,
+        capture_output=True,
+        check=True,
     )
     (repo / ".gitkeep").write_text("", encoding="utf-8")
     subprocess.run(["git", "add", ".gitkeep"], cwd=repo, capture_output=True, check=True)
     subprocess.run(
-        ["git", "commit", "-m", "init"], cwd=repo, capture_output=True, check=True,
+        ["git", "commit", "-m", "init"],
+        cwd=repo,
+        capture_output=True,
+        check=True,
     )
 
     # monkeypatch session_worktree 模块的 REPO_ROOT
     import zephyr.gov_enforcement.rule_bridge.session_worktree as sw_mod
+
     monkeypatch.setattr(sw_mod, "REPO_ROOT", repo)
     return repo
 
@@ -77,7 +85,10 @@ def _make_tracked_file(repo: Path, name: str, content: str) -> Path:
     f.write_bytes(content.encode("utf-8"))
     subprocess.run(["git", "add", name], cwd=repo, capture_output=True, check=True)
     subprocess.run(
-        ["git", "commit", "-m", f"add {name}"], cwd=repo, capture_output=True, check=True,
+        ["git", "commit", "-m", f"add {name}"],
+        cwd=repo,
+        capture_output=True,
+        check=True,
     )
     return f
 
@@ -89,7 +100,10 @@ def _make_branch_with_file(repo: Path, branch: str, name: str, content: str) -> 
     无需 worktree（HEAD 已有文件，branch 直接指向 HEAD 即可）。
     """
     subprocess.run(
-        ["git", "branch", branch], cwd=repo, capture_output=True, check=True,
+        ["git", "branch", branch],
+        cwd=repo,
+        capture_output=True,
+        check=True,
     )
 
 
@@ -126,6 +140,7 @@ class TestClaimFilesForEdit:
     def test_claim_empty_files_list(self, isolated_repo):
         """空文件列表返回 ok=True。"""
         from zephyr.gov_enforcement.rule_bridge import session_worktree as sw
+
         result = sw.claim_files_for_edit(
             session_id="sess-a-002",
             files=[],
@@ -201,7 +216,10 @@ class TestCollectTrackedCleanupsSkipFiles:
         # 这里用 skip_files 测试跳过逻辑
         skip_files = {"skip_me.py"}
         cleaned, skipped, to_checkout = _collect_tracked_cleanups(
-            isolated_repo, "session/test-branch", changed_files, dirty_files,
+            isolated_repo,
+            "session/test-branch",
+            changed_files,
+            dirty_files,
             skip_files=skip_files,
         )
         assert cleaned == 0, "skip_files 中的文件不应被清理"
@@ -225,7 +243,10 @@ class TestCollectTrackedCleanupsSkipFiles:
 
         # 无 skip_files（None）—— 正常逻辑
         cleaned, skipped, to_checkout = _collect_tracked_cleanups(
-            isolated_repo, branch, changed_files, dirty_files,
+            isolated_repo,
+            branch,
+            changed_files,
+            dirty_files,
             skip_files=None,
         )
         # content 一致 → 应加入 to_checkout
@@ -250,7 +271,10 @@ class TestCollectTrackedCleanupsSkipFiles:
         skip_files = {"skip_me.py"}  # 只 skip 第一个
 
         cleaned, skipped, to_checkout = _collect_tracked_cleanups(
-            isolated_repo, branch, changed_files, dirty_files,
+            isolated_repo,
+            branch,
+            changed_files,
+            dirty_files,
             skip_files=skip_files,
         )
         assert "skip_me.py" in skipped
@@ -320,6 +344,7 @@ class TestGetOtherSessionClaimedFiles:
         # mock _get_registry 抛异常
         def _raise(*args, **kwargs):
             raise RuntimeError("mocked registry failure")
+
         monkeypatch.setattr(sw, "_get_registry", _raise)
 
         result = sw.get_other_session_claimed_files(isolated_repo, "sess-test")
@@ -355,14 +380,16 @@ class TestPreMergeAutoCleanRespectsClaims:
         # 注意：_pre_merge_auto_clean 需要 session B 有 worktree branch，
         # 这里直接测试 _get_other_session_claimed_files 集成效果
         skip_files = sw.get_other_session_claimed_files(isolated_repo, "sess-b-merger")
-        assert "protected.py" in skip_files, \
-            "session A claim 的文件应在 session B 的 skip_files 中"
+        assert "protected.py" in skip_files, "session A claim 的文件应在 session B 的 skip_files 中"
 
         # 验证 _collect_tracked_cleanups 尊重 skip_files
         changed_files = ["protected.py"]
         dirty_files = {"protected.py"}
         cleaned, skipped, to_checkout = sw.collect_tracked_cleanups(
-            isolated_repo, "session/sess-b-merger", changed_files, dirty_files,
+            isolated_repo,
+            "session/sess-b-merger",
+            changed_files,
+            dirty_files,
             skip_files=skip_files,
         )
         assert cleaned == 0, "claimed 文件不应被清理"
@@ -395,7 +422,10 @@ class TestPreMergeAutoCleanRespectsClaims:
         changed_files = ["claimed.py", "unclaimed.py"]
         dirty_files = {"claimed.py", "unclaimed.py"}
         cleaned, skipped, to_checkout = sw.collect_tracked_cleanups(
-            isolated_repo, "session/sess-b-mix", changed_files, dirty_files,
+            isolated_repo,
+            "session/sess-b-mix",
+            changed_files,
+            dirty_files,
             skip_files=skip_files,
         )
         assert "claimed.py" in skipped

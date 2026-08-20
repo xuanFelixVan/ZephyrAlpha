@@ -101,8 +101,17 @@ def test_generate_source_field_in_output_dict():
 def test_extract_commit_gates_all_have_required_fields():
     """每条 CommitGate 应含全部必需字段。"""
     gates = extract_commit_gates()
-    required = {"gate_id", "name", "entry", "description", "files_trigger",
-                "always_run", "category", "status", "source"}
+    required = {
+        "gate_id",
+        "name",
+        "entry",
+        "description",
+        "files_trigger",
+        "always_run",
+        "category",
+        "status",
+        "source",
+    }
     for g in gates:
         missing = required - set(g.keys())
         assert not missing, f"gate {g.get('gate_id')} 缺字段: {missing}"

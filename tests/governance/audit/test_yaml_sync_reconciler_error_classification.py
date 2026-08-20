@@ -33,6 +33,7 @@
 
 测试隔离：用 tmp_path 构造 fake gateway，重试队列写入 tmp_path/data/cache/。
 """
+
 from __future__ import annotations
 
 import json
@@ -70,24 +71,27 @@ class TestClassifySyncFailure:
 
     # --- deterministic 模式 ---
 
-    @pytest.mark.parametrize("err_text", [
-        "unrecognized configuration parameter app.allow_design_maturity_delete",
-        'psycopg2.errors.UndefinedObject: 未认可的配置参数 "app.allow_design_maturity_delete"',
-        "UndefinedObject: relation does not exist",
-        "UndefinedColumn: column foo does not exist",
-        "UndefinedTable: relation does not exist",
-        "UndefinedFunction: function does not exist",
-        "syntax error at or near SELECT",
-        "DuplicateTable: relation already exists",
-        "DuplicateColumn: column already exists",
-        "DuplicateObject: object already exists",
-        "permission denied for table users",
-        "not-null constraint failed",
-        "foreign key constraint violation",
-        "unique constraint violation",
-        "check constraint failed",
-        "invalid input syntax for type integer",
-    ])
+    @pytest.mark.parametrize(
+        "err_text",
+        [
+            "unrecognized configuration parameter app.allow_design_maturity_delete",
+            'psycopg2.errors.UndefinedObject: 未认可的配置参数 "app.allow_design_maturity_delete"',
+            "UndefinedObject: relation does not exist",
+            "UndefinedColumn: column foo does not exist",
+            "UndefinedTable: relation does not exist",
+            "UndefinedFunction: function does not exist",
+            "syntax error at or near SELECT",
+            "DuplicateTable: relation already exists",
+            "DuplicateColumn: column already exists",
+            "DuplicateObject: object already exists",
+            "permission denied for table users",
+            "not-null constraint failed",
+            "foreign key constraint violation",
+            "unique constraint violation",
+            "check constraint failed",
+            "invalid input syntax for type integer",
+        ],
+    )
     def test_deterministic_patterns(self, err_text):
         """确定性错误模式匹配 → deterministic。"""
         assert _classify_sync_failure(err_text) == "deterministic", f"应识别为 deterministic: {err_text}"
@@ -103,28 +107,34 @@ class TestClassifySyncFailure:
 
     # --- transient 模式 ---
 
-    @pytest.mark.parametrize("err_text", [
-        "OperationalError: connection refused",
-        "deadlock detected",
-        "could not serialize access due to concurrent update",
-        "connection timeout expired",
-        "could not connect to server",
-        "server closed the connection unexpectedly",
-        "terminating connection due to administrator command",
-    ])
+    @pytest.mark.parametrize(
+        "err_text",
+        [
+            "OperationalError: connection refused",
+            "deadlock detected",
+            "could not serialize access due to concurrent update",
+            "connection timeout expired",
+            "could not connect to server",
+            "server closed the connection unexpectedly",
+            "terminating connection due to administrator command",
+        ],
+    )
     def test_transient_patterns(self, err_text):
         """瞬态错误模式匹配 → transient。"""
         assert _classify_sync_failure(err_text) == "transient", f"应识别为 transient: {err_text}"
 
     # --- unknown ---
 
-    @pytest.mark.parametrize("err_text", [
-        "some weird unknown error",
-        "KeyError: 'foo'",
-        "ValueError: invalid argument",
-        "",
-        None,
-    ])
+    @pytest.mark.parametrize(
+        "err_text",
+        [
+            "some weird unknown error",
+            "KeyError: 'foo'",
+            "ValueError: invalid argument",
+            "",
+            None,
+        ],
+    )
     def test_unknown_patterns(self, err_text):
         """未知错误/边界条件 → unknown。"""
         assert _classify_sync_failure(err_text) == "unknown"
@@ -161,38 +171,44 @@ class TestClassifyError:
 
     # --- 异常类型匹配 ---
 
-    @pytest.mark.parametrize("exc_type,exc_msg", [
-        ("UndefinedObject", "GUC not registered"),
-        ("UndefinedColumn", "column missing"),
-        ("UndefinedTable", "table missing"),
-        ("UndefinedFunction", "function missing"),
-        ("SyntaxError", "syntax error"),
-        ("DuplicateTable", "table exists"),
-        ("DuplicateColumn", "column exists"),
-        ("DuplicateObject", "object exists"),
-        ("PermissionDenied", "no access"),
-        ("NotNullViolation", "null not allowed"),
-        ("ForeignKeyViolation", "fk failed"),
-        ("UniqueViolation", "dup value"),
-        ("CheckViolation", "check failed"),
-        ("InvalidTextRepresentation", "bad format"),
-        ("InvalidParameterValue", "bad param"),
-        ("UndefinedParameter", "param missing"),
-        ("DuplicateAlias", "alias exists"),
-        ("InvalidColumnReference", "bad col ref"),
-        ("GroupingError", "group error"),
-        ("WrongObjectType", "wrong type"),
-    ])
+    @pytest.mark.parametrize(
+        "exc_type,exc_msg",
+        [
+            ("UndefinedObject", "GUC not registered"),
+            ("UndefinedColumn", "column missing"),
+            ("UndefinedTable", "table missing"),
+            ("UndefinedFunction", "function missing"),
+            ("SyntaxError", "syntax error"),
+            ("DuplicateTable", "table exists"),
+            ("DuplicateColumn", "column exists"),
+            ("DuplicateObject", "object exists"),
+            ("PermissionDenied", "no access"),
+            ("NotNullViolation", "null not allowed"),
+            ("ForeignKeyViolation", "fk failed"),
+            ("UniqueViolation", "dup value"),
+            ("CheckViolation", "check failed"),
+            ("InvalidTextRepresentation", "bad format"),
+            ("InvalidParameterValue", "bad param"),
+            ("UndefinedParameter", "param missing"),
+            ("DuplicateAlias", "alias exists"),
+            ("InvalidColumnReference", "bad col ref"),
+            ("GroupingError", "group error"),
+            ("WrongObjectType", "wrong type"),
+        ],
+    )
     def test_deterministic_exception_types(self, exc_type, exc_msg):
         """确定性异常类型匹配 → deterministic。"""
         assert _classify_error(exc_type, exc_msg) == "deterministic"
 
-    @pytest.mark.parametrize("exc_type,exc_msg", [
-        ("OperationalError", "connection refused"),
-        ("DeadlockDetected", "deadlock"),
-        ("SerializationFailure", "could not serialize"),
-        ("InternalError", "internal"),
-    ])
+    @pytest.mark.parametrize(
+        "exc_type,exc_msg",
+        [
+            ("OperationalError", "connection refused"),
+            ("DeadlockDetected", "deadlock"),
+            ("SerializationFailure", "could not serialize"),
+            ("InternalError", "internal"),
+        ],
+    )
     def test_transient_exception_types(self, exc_type, exc_msg):
         """瞬态异常类型匹配 → transient。"""
         assert _classify_error(exc_type, exc_msg) == "transient"
@@ -370,11 +386,16 @@ class TestReconcileErrorClassification:
         # 预置已达 max-1 次的队列（下次是第 max 次）
         qpath = tmp_path / "data" / "cache" / "yaml_sync_retry_queue.json"
         qpath.parent.mkdir(parents=True, exist_ok=True)
-        qpath.write_text(json.dumps({
-            "attempt": 2,  # _MAX_RETRY_ATTEMPTS=3，下次是第 3 次
-            "error": "prev transient",
-            "error_class": "transient",
-        }), encoding="utf-8")
+        qpath.write_text(
+            json.dumps(
+                {
+                    "attempt": 2,  # _MAX_RETRY_ATTEMPTS=3，下次是第 3 次
+                    "error": "prev transient",
+                    "error_class": "transient",
+                }
+            ),
+            encoding="utf-8",
+        )
 
         transient_err = "OperationalError: connection timeout"
         with patch(
@@ -397,7 +418,7 @@ class TestReconcileErrorClassification:
         """
         gw = _FakeGateway(tmp_path)
         spec = make_yaml_sync_reconciler(gw)
-        guc_err = 'UndefinedObject: unrecognized configuration parameter app.x'
+        guc_err = "UndefinedObject: unrecognized configuration parameter app.x"
 
         for _ in range(2):
             with patch(

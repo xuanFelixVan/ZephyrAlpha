@@ -28,6 +28,7 @@
 测试隔离：MagicMock 模拟 gateway.run_git，tmp_path 创建真实 .py 文件（gate
 通过 os.path.join(wt_root, rel) 读取磁盘文件 + os.listdir 扫描同目录兄弟文件）。
 """
+
 from __future__ import annotations
 
 import ast
@@ -65,8 +66,10 @@ def _make_gateway(tmp_path, staged_files=None, diff_fails=False, diff_raises=Fal
     gw.project_root = str(tmp_path)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -97,6 +100,7 @@ def _shadow_open(monkeypatch):
     """源文件用 open(path).read() 未关闭文件句柄（ResourceWarning）。
     注入 shadow open：read() 后立即关闭真实 fd，消除 ResourceWarning。"""
     import builtins
+
     _real_open = builtins.open
 
     class _AutoClose:
@@ -122,6 +126,7 @@ def _shadow_open(monkeypatch):
         return _AutoClose(_real_open(file, mode, *args, **kwargs))
 
     import zephyr.gov_enforcement.commit_gates.function_dup_gate as mod
+
     monkeypatch.setattr(mod, "open", _shadow, raising=False)
 
 
@@ -148,9 +153,7 @@ class TestBodyHash:
         func = tree.body[0]
         h = _function_body_hash(func)
         # 仅 return 42 参与 hash，docstring 被排除
-        assert h == _function_body_hash(
-            ast.parse("def foo():\n    return 42\n").body[0]
-        )
+        assert h == _function_body_hash(ast.parse("def foo():\n    return 42\n").body[0])
 
     def test_same_body_same_hash(self):
         a = ast.parse("def foo():\n    x = 1\n    return x\n").body[0]
@@ -177,11 +180,7 @@ class TestExtractFunctions:
         assert set(result.keys()) == {"foo", "bar"}
 
     def test_skips_methods_inside_class(self):
-        tree = ast.parse(
-            "class C:\n"
-            "    def foo(self):\n"
-            "        return 1\n"
-        )
+        tree = ast.parse("class C:\n    def foo(self):\n        return 1\n")
         result = _extract_top_level_functions(tree)
         assert result == {}  # 方法不计入顶层函数
 

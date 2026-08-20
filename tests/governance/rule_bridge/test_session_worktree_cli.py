@@ -16,6 +16,7 @@
 - test_cli_list_json: list --json 输出合法 JSON
 - test_cli_no_subcommand_errors: 无子命令时 exit 非 0（argparse required=True）
 """
+
 from __future__ import annotations
 
 import json
@@ -33,7 +34,9 @@ def _run_cli(*args: str) -> subprocess.CompletedProcess:
     """执行 CLI 脚本，返回 CompletedProcess。"""
     return subprocess.run(
         [sys.executable, str(_CLI_SCRIPT), *args],
-        capture_output=True, text=True, timeout=60,
+        capture_output=True,
+        text=True,
+        timeout=60,
     )
 
 

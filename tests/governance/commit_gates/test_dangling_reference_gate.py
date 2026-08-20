@@ -22,6 +22,7 @@
 - TestIncrementalOnly: HEAD 已有悬空引用 → 通过（增量检测不阻断历史）
 - TestGateSpecFields: gate_id / priority 字段正确
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -140,9 +141,7 @@ class TestBlueprintRefIgnored:
         gate = make_dangling_reference_gate()
         target = tmp_path / "module.py"
         # blueprint.md §9.9 引用不应被检测（不是 AGENTS.md 引用）
-        target.write_text(
-            f"# see blueprint.md {_SEC}9.9 and AGENTS.md {_SEC}6\n", encoding="utf-8"
-        )
+        target.write_text(f"# see blueprint.md {_SEC}9.9 and AGENTS.md {_SEC}6\n", encoding="utf-8")
         passed, detail = gate.check(gw, [str(target)])
         assert passed  # blueprint §9.9 不检测，AGENTS.md §6 合法
 
@@ -164,9 +163,7 @@ class TestIncrementalOnly:
         # 在本模块命名空间创建绑定，故 mock 需打在本模块上（调用方查找路径）。
         import zephyr.gov_enforcement.commit_gates.dangling_reference_gate as mod
 
-        monkeypatch.setattr(
-            mod, "get_head_content", lambda pr, rel: f"# see AGENTS.md {_SEC}6.9\n"
-        )
+        monkeypatch.setattr(mod, "get_head_content", lambda pr, rel: f"# see AGENTS.md {_SEC}6.9\n")
 
         passed, detail = gate.check(gw, [str(target)])
         assert passed  # 历史悬空引用不阻断

@@ -330,8 +330,12 @@ class TestExtractDepMapModules:
 
     def test_returns_modules_from_database(self):
         fake_rows = [
-            ('MOD-GATE_ENGINE', 'src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py', 'docs/03_modules/.../blueprint.md'),
-            ('MOD-INF-020', 'src/zephyr/audit_trail/audit.py', None),
+            (
+                "MOD-GATE_ENGINE",
+                "src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py",
+                "docs/03_modules/.../blueprint.md",
+            ),
+            ("MOD-INF-020", "src/zephyr/audit_trail/audit.py", None),
         ]
         mock_conn = MagicMock()
         mock_cur = MagicMock()
@@ -339,21 +343,24 @@ class TestExtractDepMapModules:
         mock_conn.cursor.return_value = mock_cur
 
         with patch(
-            'zephyr.governance.depgraph_schema.get_depgraph_pg_connection',
+            "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
             return_value=mock_conn,
         ):
             modules = _extract_dep_map_modules()
 
-        assert 'MOD-GATE_ENGINE' in modules
-        assert modules['MOD-GATE_ENGINE']['source_path'] == 'src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py'
-        assert 'MOD-INF-020' in modules
-        assert modules['MOD-INF-020']['blueprint_path'] == ''
+        assert "MOD-GATE_ENGINE" in modules
+        assert (
+            modules["MOD-GATE_ENGINE"]["source_path"]
+            == "src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py"
+        )
+        assert "MOD-INF-020" in modules
+        assert modules["MOD-INF-020"]["blueprint_path"] == ""
 
     def test_deduplicates_by_blueprint_id(self):
         """一个模块有多行（多文件），只保留第一行的路径。"""
         fake_rows = [
-            ('MOD-GATE_ENGINE', 'src/file1.py', 'bp.md'),
-            ('MOD-GATE_ENGINE', 'src/file2.py', 'bp.md'),
+            ("MOD-GATE_ENGINE", "src/file1.py", "bp.md"),
+            ("MOD-GATE_ENGINE", "src/file2.py", "bp.md"),
         ]
         mock_conn = MagicMock()
         mock_cur = MagicMock()
@@ -361,19 +368,19 @@ class TestExtractDepMapModules:
         mock_conn.cursor.return_value = mock_cur
 
         with patch(
-            'zephyr.governance.depgraph_schema.get_depgraph_pg_connection',
+            "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
             return_value=mock_conn,
         ):
             modules = _extract_dep_map_modules()
 
         assert len(modules) == 1
-        assert 'MOD-GATE_ENGINE' in modules
-        assert modules['MOD-GATE_ENGINE']['source_path'] == 'src/file1.py'
+        assert "MOD-GATE_ENGINE" in modules
+        assert modules["MOD-GATE_ENGINE"]["source_path"] == "src/file1.py"
 
     def test_returns_empty_on_connection_error(self):
         with patch(
-            'zephyr.governance.depgraph_schema.get_depgraph_pg_connection',
-            side_effect=Exception('conn failed'),
+            "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
+            side_effect=Exception("conn failed"),
         ):
             modules = _extract_dep_map_modules()
         assert modules == {}
@@ -385,7 +392,7 @@ class TestExtractDepMapModules:
         mock_conn.cursor.return_value = mock_cur
 
         with patch(
-            'zephyr.governance.depgraph_schema.get_depgraph_pg_connection',
+            "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
             return_value=mock_conn,
         ):
             modules = _extract_dep_map_modules()
@@ -441,8 +448,12 @@ class TestCheckTripleAlignment:
         assert all(isinstance(v, dict) and "file_path" in v for v in entries.values())
 
     def test_empty_blueprints_list(self):
-        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value={"blueprints": []}):
-            with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}):
+        with patch(
+            "zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value={"blueprints": []}
+        ):
+            with patch(
+                "zephyr.gov_enforcement.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}
+            ):
                 result = check_triple_alignment()
                 assert result.checked_modules == 0
                 assert result.passed is True
@@ -457,7 +468,9 @@ class TestCheckTripleAlignment:
             ]
         }
         with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
-            with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}):
+            with patch(
+                "zephyr.gov_enforcement.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}
+            ):
                 result = check_triple_alignment(warn_only=True)
                 assert result.passed is True
 
@@ -469,7 +482,9 @@ class TestCheckTripleAlignment:
             ]
         }
         with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
-            with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}):
+            with patch(
+                "zephyr.gov_enforcement.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}
+            ):
                 result = check_triple_alignment(specific_module="MOD-GATE_ENGINE")
                 assert result.checked_modules == 1
 
@@ -483,7 +498,9 @@ class TestCheckTripleAlignment:
             ]
         }
         with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
-            with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}):
+            with patch(
+                "zephyr.gov_enforcement.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}
+            ):
                 result = check_triple_alignment()
                 bp_missing = [v for v in result.violations if v.check == "blueprint_file_missing"]
                 assert len(bp_missing) == 1
@@ -495,7 +512,10 @@ class TestCheckTripleAlignment:
             "MOD-INF-099": {"source_path": "src/orphan/", "blueprint_path": "bp.md"},
         }
         with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
-            with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value=dep_map_modules):
+            with patch(
+                "zephyr.gov_enforcement.rule_enforcement.triple_alignment._extract_dep_map_modules",
+                return_value=dep_map_modules,
+            ):
                 result = check_triple_alignment()
                 orphans = [v for v in result.violations if v.check == "dep_map_orphan_module"]
                 assert len(orphans) == 1

@@ -26,6 +26,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，按 git 子命令路由返回不同结果。
 """
+
 from __future__ import annotations
 
 import sys
@@ -76,6 +77,7 @@ def _make_gateway(staged_files: list[str], file_contents: dict[str, str]) -> Mag
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """gate_id / priority / isinstance(GateSpec)。"""
 
@@ -95,6 +97,7 @@ class TestGateSpecFields:
 # ---------------------------------------------------------------------------
 # TestCheckDetection
 # ---------------------------------------------------------------------------
+
 
 class TestCheckDetection:
     """_check 闭包检测逻辑（mock gateway）。"""
@@ -146,9 +149,7 @@ class TestCheckDetection:
             ["scripts/governance/d5_architecture/wild.py"],
             {
                 "scripts/governance/d5_architecture/wild.py": (
-                    "from _shared.constants import *\n"
-                    "\n"
-                    'VOCAB_PATH = REPO_ROOT / "docs"\n'
+                    'from _shared.constants import *\n\nVOCAB_PATH = REPO_ROOT / "docs"\n'
                 ),
             },
         )
@@ -161,11 +162,7 @@ class TestCheckDetection:
         gw = _make_gateway(
             ["scripts/governance/_shared/constants.py"],
             {
-                "scripts/governance/_shared/constants.py": (
-                    'REPO_ROOT = "/some/path"\n'
-                    "\n"
-                    'X = REPO_ROOT / "foo"\n'
-                ),
+                "scripts/governance/_shared/constants.py": ('REPO_ROOT = "/some/path"\n\nX = REPO_ROOT / "foo"\n'),
             },
         )
         gate = make_scripts_import_integrity_gate()
@@ -178,9 +175,7 @@ class TestCheckDetection:
             ["scripts/governance/d5_architecture/local.py"],
             {
                 "scripts/governance/d5_architecture/local.py": (
-                    'REPO_ROOT = "/some/path"\n'
-                    "\n"
-                    'VOCAB_PATH = REPO_ROOT / "docs"\n'
+                    'REPO_ROOT = "/some/path"\n\nVOCAB_PATH = REPO_ROOT / "docs"\n'
                 ),
             },
         )
@@ -214,9 +209,7 @@ class TestCheckDetection:
         gw = _make_gateway(
             ["src/zephyr/some_module.py"],
             {
-                "src/zephyr/some_module.py": (
-                    'X = REPO_ROOT / "docs"\n'
-                ),
+                "src/zephyr/some_module.py": ('X = REPO_ROOT / "docs"\n'),
             },
         )
         gate = make_scripts_import_integrity_gate()

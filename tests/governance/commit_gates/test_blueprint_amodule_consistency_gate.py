@@ -31,6 +31,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，按 git 子命令路由返回不同结果。
 """
+
 from __future__ import annotations
 
 import sys
@@ -62,6 +63,7 @@ class _MockResult:
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """gate_id / priority / isinstance(GateSpec)。"""
 
@@ -82,6 +84,7 @@ class TestGateSpecFields:
 # TestCheckAmoduleFormat
 # ---------------------------------------------------------------------------
 
+
 class TestCheckAmoduleFormat:
     """_check_amodule_format diff-based 检测逻辑。"""
 
@@ -90,13 +93,8 @@ class TestCheckAmoduleFormat:
         py_file = "src/zephyr/foo.py"
         gw = _make_gateway(
             diff_files=[py_file],
-            file_diffs={
-                py_file: "@@ -0,0 +1,1 @@\n"
-                "+# [A_module] module_id=MOD-GOV-domain_fk_gate\n"
-            },
-            staged_contents={
-                py_file: "# [A_module] module_id=MOD-GOV-domain_fk_gate\n"
-            },
+            file_diffs={py_file: "@@ -0,0 +1,1 @@\n+# [A_module] module_id=MOD-GOV-domain_fk_gate\n"},
+            staged_contents={py_file: "# [A_module] module_id=MOD-GOV-domain_fk_gate\n"},
         )
         violations = _check_amodule_format(gw, [py_file])
         assert violations == []
@@ -106,13 +104,8 @@ class TestCheckAmoduleFormat:
         py_file = "src/zephyr/foo.py"
         gw = _make_gateway(
             diff_files=[py_file],
-            file_diffs={
-                py_file: "@@ -0,0 +1,1 @@\n"
-                "+# [A_module] module_id=MOD-INF-025\n"
-            },
-            staged_contents={
-                py_file: "# [A_module] module_id=MOD-INF-025\n"
-            },
+            file_diffs={py_file: "@@ -0,0 +1,1 @@\n+# [A_module] module_id=MOD-INF-025\n"},
+            staged_contents={py_file: "# [A_module] module_id=MOD-INF-025\n"},
         )
         violations = _check_amodule_format(gw, [py_file])
         assert violations == []
@@ -125,13 +118,8 @@ class TestCheckAmoduleFormat:
         py_file = "src/zephyr/foo.py"
         gw = _make_gateway(
             diff_files=[py_file],
-            file_diffs={
-                py_file: "@@ -0,0 +1,1 @@\n"
-                "+# [A_module] module_id=MOD-INFRA_A2A-005\n"
-            },
-            staged_contents={
-                py_file: "# [A_module] module_id=MOD-INFRA_A2A-005\n"
-            },
+            file_diffs={py_file: "@@ -0,0 +1,1 @@\n+# [A_module] module_id=MOD-INFRA_A2A-005\n"},
+            staged_contents={py_file: "# [A_module] module_id=MOD-INFRA_A2A-005\n"},
         )
         violations = _check_amodule_format(gw, [py_file])
         assert violations == []
@@ -141,13 +129,8 @@ class TestCheckAmoduleFormat:
         py_file = "src/zephyr/foo.py"
         gw = _make_gateway(
             diff_files=[py_file],
-            file_diffs={
-                py_file: "@@ -0,0 +1,1 @@\n"
-                "+# [A_module] module_id=MOD-INF_a2a_agent_blocklist\n"
-            },
-            staged_contents={
-                py_file: "# [A_module] module_id=MOD-INF_a2a_agent_blocklist\n"
-            },
+            file_diffs={py_file: "@@ -0,0 +1,1 @@\n+# [A_module] module_id=MOD-INF_a2a_agent_blocklist\n"},
+            staged_contents={py_file: "# [A_module] module_id=MOD-INF_a2a_agent_blocklist\n"},
         )
         violations = _check_amodule_format(gw, [py_file])
         assert len(violations) == 1
@@ -159,13 +142,8 @@ class TestCheckAmoduleFormat:
         py_file = "src/zephyr/foo.py"
         gw = _make_gateway(
             diff_files=[py_file],
-            file_diffs={
-                py_file: "@@ -0,0 +1,1 @@\n"
-                "+# [A_module] module_id:MOD-INF_bad_name\n"
-            },
-            staged_contents={
-                py_file: "# [A_module] module_id:MOD-INF_bad_name\n"
-            },
+            file_diffs={py_file: "@@ -0,0 +1,1 @@\n+# [A_module] module_id:MOD-INF_bad_name\n"},
+            staged_contents={py_file: "# [A_module] module_id:MOD-INF_bad_name\n"},
         )
         violations = _check_amodule_format(gw, [py_file])
         assert len(violations) == 1
@@ -173,17 +151,8 @@ class TestCheckAmoduleFormat:
     def test_docstring_line_exempt(self) -> None:
         """docstring 内的 [A_module] 行豁免。"""
         py_file = "src/zephyr/foo.py"
-        file_content = (
-            '"""模块文档\n'
-            "# [A_module] module_id=MOD-INF_bad_name\n"
-            '"""\n'
-        )
-        diff = (
-            "@@ -0,0 +1,3 @@\n"
-            '+"""模块文档\n'
-            "+# [A_module] module_id=MOD-INF_bad_name\n"
-            '+"""\n'
-        )
+        file_content = '"""模块文档\n# [A_module] module_id=MOD-INF_bad_name\n"""\n'
+        diff = '@@ -0,0 +1,3 @@\n+"""模块文档\n+# [A_module] module_id=MOD-INF_bad_name\n+"""\n'
         gw = _make_gateway(
             diff_files=[py_file],
             file_diffs={py_file: diff},
@@ -197,13 +166,12 @@ class TestCheckAmoduleFormat:
 # TestFormatViolations
 # ---------------------------------------------------------------------------
 
+
 class TestFormatViolations:
     """_format_amodule_violations 格式化。"""
 
     def test_single_violation(self) -> None:
-        passed, msg = _format_amodule_violations(
-            ["  foo.py:1: [A_module] module_id='MOD-INF_bad' 格式错误"]
-        )
+        passed, msg = _format_amodule_violations(["  foo.py:1: [A_module] module_id='MOD-INF_bad' 格式错误"])
         assert passed is False
         assert "BLUEPRINT-AMODULE-CONSISTENCY" in msg
         assert "ARCH-DRIFT-PREVENTION-001" in msg
@@ -224,6 +192,7 @@ class TestFormatViolations:
 # TestGatewayIntegration
 # ---------------------------------------------------------------------------
 
+
 class TestGatewayIntegration:
     """mock gateway 完整流程测试。"""
 
@@ -240,13 +209,8 @@ class TestGatewayIntegration:
         py_file = "src/zephyr/foo.py"
         gw = _make_gateway(
             diff_files=[py_file],
-            file_diffs={
-                py_file: "@@ -0,0 +1,1 @@\n"
-                "+# [A_module] module_id=MOD-GOV-domain_fk_gate\n"
-            },
-            staged_contents={
-                py_file: "# [A_module] module_id=MOD-GOV-domain_fk_gate\n"
-            },
+            file_diffs={py_file: "@@ -0,0 +1,1 @@\n+# [A_module] module_id=MOD-GOV-domain_fk_gate\n"},
+            staged_contents={py_file: "# [A_module] module_id=MOD-GOV-domain_fk_gate\n"},
         )
         gate = make_blueprint_amodule_consistency_gate()
         passed, msg = gate.check(gw, [py_file])
@@ -257,13 +221,8 @@ class TestGatewayIntegration:
         py_file = "src/zephyr/foo.py"
         gw = _make_gateway(
             diff_files=[py_file],
-            file_diffs={
-                py_file: "@@ -0,0 +1,1 @@\n"
-                "+# [A_module] module_id=MOD-INF_a2a_agent_blocklist\n"
-            },
-            staged_contents={
-                py_file: "# [A_module] module_id=MOD-INF_a2a_agent_blocklist\n"
-            },
+            file_diffs={py_file: "@@ -0,0 +1,1 @@\n+# [A_module] module_id=MOD-INF_a2a_agent_blocklist\n"},
+            staged_contents={py_file: "# [A_module] module_id=MOD-INF_a2a_agent_blocklist\n"},
         )
         gate = make_blueprint_amodule_consistency_gate()
         passed, msg = gate.check(gw, [py_file])
@@ -276,13 +235,8 @@ class TestGatewayIntegration:
         py_file = "tests/governance/test_foo.py"
         gw = _make_gateway(
             diff_files=[py_file],
-            file_diffs={
-                py_file: "@@ -0,0 +1,1 @@\n"
-                "+# [A_module] module_id=MOD-INF_bad_name\n"
-            },
-            staged_contents={
-                py_file: "# [A_module] module_id=MOD-INF_bad_name\n"
-            },
+            file_diffs={py_file: "@@ -0,0 +1,1 @@\n+# [A_module] module_id=MOD-INF_bad_name\n"},
+            staged_contents={py_file: "# [A_module] module_id=MOD-INF_bad_name\n"},
         )
         gate = make_blueprint_amodule_consistency_gate()
         passed, msg = gate.check(gw, [py_file])
@@ -297,9 +251,7 @@ class TestGatewayIntegration:
         gw = _make_gateway(
             diff_files=[py_file],
             file_diffs={py_file: "@@ -4,0 +5,1 @@\n+print('new')\n"},
-            staged_contents={
-                py_file: "# [A_module] module_id=MOD-INF_bad_name\nprint('new')\n"
-            },
+            staged_contents={py_file: "# [A_module] module_id=MOD-INF_bad_name\nprint('new')\n"},
         )
         gate = make_blueprint_amodule_consistency_gate()
         passed, msg = gate.check(gw, [py_file])
@@ -309,6 +261,7 @@ class TestGatewayIntegration:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_gateway(
     diff_files: list[str],
@@ -322,6 +275,7 @@ def _make_gateway(
         file_diffs: {py_file: diff_stdout} 每个文件的 added 行 diff。
         staged_contents: {py_file: content} 每个文件的 staged 内容。
     """
+
     def _run_git(args):
         cmd = list(args)
         if "diff" in cmd and "--name-only" in cmd:

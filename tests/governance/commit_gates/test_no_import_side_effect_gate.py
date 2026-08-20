@@ -31,6 +31,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import ast
@@ -110,8 +111,10 @@ def _make_gateway(
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -214,7 +217,7 @@ class TestSideEffectDetection:
         assert hit
 
     def test_detects_socket_socket(self):
-        call = self._first_call('import socket\nsocket.socket()')
+        call = self._first_call("import socket\nsocket.socket()")
         hit, _ = _is_side_effect_call(call)
         assert hit
 
@@ -235,7 +238,7 @@ class TestSideEffectDetection:
         assert hit
 
     def test_ignores_len(self):
-        call = self._first_call('len([1, 2, 3])')
+        call = self._first_call("len([1, 2, 3])")
         hit, _ = _is_side_effect_call(call)
         assert not hit
 
@@ -258,18 +261,18 @@ class TestSideEffectDetection:
     # --- _is_eager_singleton ---
 
     def test_eager_singleton_detected(self):
-        assign = self._first_assign('TELEMETRY = InventorySelfMetrics()')
+        assign = self._first_assign("TELEMETRY = InventorySelfMetrics()")
         hit, desc = _is_eager_singleton(assign)
         assert hit
         assert "TELEMETRY" in desc
 
     def test_eager_singleton_attr_call(self):
-        assign = self._first_assign('CLIENT = factory.HttpClient()')
+        assign = self._first_assign("CLIENT = factory.HttpClient()")
         hit, _ = _is_eager_singleton(assign)
         assert hit
 
     def test_eager_singleton_ignores_lowercase_target(self):
-        assign = self._first_assign('logger = logging.getLogger()')
+        assign = self._first_assign("logger = logging.getLogger()")
         hit, _ = _is_eager_singleton(assign)
         assert not hit  # target lowercase
 
@@ -295,12 +298,12 @@ class TestSideEffectDetection:
 
     def test_eager_singleton_ignores_single_uppercase(self):
         """单字母目标不匹配 _UPPER_NAME_RE（至少 2 个大写字符）。"""
-        assign = self._first_assign('X = Foo()')
+        assign = self._first_assign("X = Foo()")
         hit, _ = _is_eager_singleton(assign)
         assert not hit  # 'X' doesn't match ^[A-Z][A-Z0-9_]+$
 
     def test_eager_singleton_ignores_non_call_value(self):
-        assign = self._first_assign('DATA = [1, 2, 3]')
+        assign = self._first_assign("DATA = [1, 2, 3]")
         hit, _ = _is_eager_singleton(assign)
         assert not hit  # value not a Call
 
@@ -311,7 +314,7 @@ class TestSideEffectDetection:
         assert _is_name_main_guard(tree.body[0].test)
 
     def test_non_guard_not_detected(self):
-        tree = ast.parse('if x == 1:\n    pass')
+        tree = ast.parse("if x == 1:\n    pass")
         assert not _is_name_main_guard(tree.body[0].test)
 
     def test_name_main_guard_wrong_comparator(self):
@@ -383,12 +386,12 @@ class TestCheckFile:
     # --- 急切单例阻断 ---
 
     def test_eager_singleton_blocked(self):
-        v = self._check('TELEMETRY = InventorySelfMetrics()\n')
+        v = self._check("TELEMETRY = InventorySelfMetrics()\n")
         assert len(v) == 1
         assert "TELEMETRY" in v[0]
 
     def test_eager_singleton_attr_blocked(self):
-        v = self._check('CLIENT = factory.HttpClient()\n')
+        v = self._check("CLIENT = factory.HttpClient()\n")
         assert len(v) == 1
         assert "CLIENT" in v[0]
 
@@ -423,7 +426,7 @@ class TestCheckFile:
 
     def test_logger_passes(self):
         """logger = logging.getLogger() — 目标小写 + logging 非副作用 → 放行。"""
-        v = self._check('import logging\nlogger = logging.getLogger(__name__)\n')
+        v = self._check("import logging\nlogger = logging.getLogger(__name__)\n")
         assert v == []
 
     def test_re_compile_passes(self):
@@ -433,20 +436,20 @@ class TestCheckFile:
 
     def test_defaultdict_passes(self):
         """DEFAULT = defaultdict(list) — func 小写 → 放行。"""
-        v = self._check('from collections import defaultdict\nDEFAULT = defaultdict(list)\n')
+        v = self._check("from collections import defaultdict\nDEFAULT = defaultdict(list)\n")
         assert v == []
 
     # --- added-lines-only ---
 
     def test_added_lines_only_violation_not_in_added(self):
         """违规在第 2 行但 added_lines 只含第 1 行 → 放行（存量不检测）。"""
-        code = 'x = 1\nTELEMETRY = InventorySelfMetrics()\n'
+        code = "x = 1\nTELEMETRY = InventorySelfMetrics()\n"
         v = _check_file(code, "src/mod.py", {1})
         assert v == []
 
     def test_added_lines_only_violation_in_added(self):
         """违规在第 2 行且 added_lines 含第 2 行 → 阻断。"""
-        code = 'x = 1\nTELEMETRY = InventorySelfMetrics()\n'
+        code = "x = 1\nTELEMETRY = InventorySelfMetrics()\n"
         v = _check_file(code, "src/mod.py", {1, 2})
         assert len(v) == 1
         assert "TELEMETRY" in v[0]
@@ -459,7 +462,7 @@ class TestCheckFile:
 
     def test_empty_added_lines_no_violation(self):
         """added_lines 为空集 → 无违规（gate 会跳过此文件）。"""
-        code = 'TELEMETRY = InventorySelfMetrics()\n'
+        code = "TELEMETRY = InventorySelfMetrics()\n"
         v = _check_file(code, "src/mod.py", set())
         assert v == []
 
@@ -484,7 +487,7 @@ class TestGatewayIntegration:
 
     def test_eager_singleton_blocked(self, tmp_path):
         rel = "src/mod.py"
-        code = 'TELEMETRY = InventorySelfMetrics()\n'
+        code = "TELEMETRY = InventorySelfMetrics()\n"
         gw = _make_gateway(
             staged_files=[rel],
             file_contents={rel: code},
@@ -508,7 +511,7 @@ class TestGatewayIntegration:
 
     def test_safe_code_passes(self, tmp_path):
         rel = "src/mod.py"
-        code = 'x = 1\n'
+        code = "x = 1\n"
         gw = _make_gateway(
             staged_files=[rel],
             file_contents={rel: code},
@@ -520,7 +523,7 @@ class TestGatewayIntegration:
 
     def test_logger_passes(self, tmp_path):
         rel = "src/mod.py"
-        code = 'import logging\nlogger = logging.getLogger(__name__)\n'
+        code = "import logging\nlogger = logging.getLogger(__name__)\n"
         gw = _make_gateway(
             staged_files=[rel],
             file_contents={rel: code},
@@ -610,7 +613,7 @@ class TestGatewayIntegration:
     def test_no_added_lines_passes(self, tmp_path):
         """staged 文件存在但无 added 行（纯删除/修改注释）→ 放行。"""
         rel = "src/mod.py"
-        code = 'x = 1\n'
+        code = "x = 1\n"
         gw = _make_gateway(
             staged_files=[rel],
             file_contents={rel: code},
@@ -646,14 +649,16 @@ class TestGatewayIntegration:
 
     def test_multiple_violations_blocked(self, tmp_path):
         rel = "src/mod.py"
-        code = 'import subprocess\nTELEMETRY = InventorySelfMetrics()\n'
+        code = "import subprocess\nTELEMETRY = InventorySelfMetrics()\n"
         gw = _make_gateway(
             staged_files=[rel],
             file_contents={rel: code},
-            added_lines_map={rel: [
-                (1, "import subprocess"),
-                (2, "TELEMETRY = InventorySelfMetrics()"),
-            ]},
+            added_lines_map={
+                rel: [
+                    (1, "import subprocess"),
+                    (2, "TELEMETRY = InventorySelfMetrics()"),
+                ]
+            },
         )
         passed, msg = make_no_import_side_effect_gate().check(gw, [])
         assert not passed
@@ -662,7 +667,7 @@ class TestGatewayIntegration:
     def test_added_lines_only_integration(self, tmp_path):
         """违规在第 2 行但 diff 只标记第 1 行为 added → 放行（存量不检测）。"""
         rel = "src/mod.py"
-        code = 'x = 1\nTELEMETRY = InventorySelfMetrics()\n'
+        code = "x = 1\nTELEMETRY = InventorySelfMetrics()\n"
         gw = _make_gateway(
             staged_files=[rel],
             file_contents={rel: code},

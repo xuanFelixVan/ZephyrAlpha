@@ -27,6 +27,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，tmp_path 创建真实 .py 文件。
 """
+
 from __future__ import annotations
 
 import ast
@@ -63,8 +64,10 @@ def _make_gateway(tmp_path, staged_files=None, diff_fails=False, diff_raises=Fal
     gw.project_root = str(tmp_path)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -95,6 +98,7 @@ def _shadow_open(monkeypatch):
     """源文件用 open(path).read() 未关闭文件句柄（ResourceWarning）。
     注入 shadow open：read() 后立即关闭真实 fd。"""
     import builtins
+
     _real_open = builtins.open
 
     class _AutoClose:
@@ -120,6 +124,7 @@ def _shadow_open(monkeypatch):
         return _AutoClose(_real_open(file, mode, *args, **kwargs))
 
     import zephyr.gov_enforcement.commit_gates.import_direction_gate as mod
+
     monkeypatch.setattr(mod, "open", _shadow, raising=False)
 
 
@@ -143,35 +148,24 @@ class TestGateSpecFields:
 class TestTypeCheckingExempt:
     def test_type_checking_block_collected(self):
         tree = ast.parse(
-            "from typing import TYPE_CHECKING\n"
-            "if TYPE_CHECKING:\n"
-            "    from zephyr.trading.enums import Side\n"
+            "from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from zephyr.trading.enums import Side\n"
         )
         exempt = _collect_type_checking_imports(tree)
         # 应收集到 1 个 ImportFrom（TYPE_CHECKING 块内）
         assert len(exempt) == 1
 
     def test_typing_type_checking_attr_collected(self):
-        tree = ast.parse(
-            "import typing\n"
-            "if typing.TYPE_CHECKING:\n"
-            "    from zephyr.governance.types import T\n"
-        )
+        tree = ast.parse("import typing\nif typing.TYPE_CHECKING:\n    from zephyr.governance.types import T\n")
         exempt = _collect_type_checking_imports(tree)
         assert len(exempt) == 1
 
     def test_no_type_checking_block_empty(self):
-        tree = ast.parse(
-            "from zephyr.trading.enums import Side\n"
-        )
+        tree = ast.parse("from zephyr.trading.enums import Side\n")
         exempt = _collect_type_checking_imports(tree)
         assert exempt == set()
 
     def test_non_type_checking_if_not_collected(self):
-        tree = ast.parse(
-            "if True:\n"
-            "    from zephyr.trading.enums import Side\n"
-        )
+        tree = ast.parse("if True:\n    from zephyr.trading.enums import Side\n")
         exempt = _collect_type_checking_imports(tree)
         assert exempt == set()
 
@@ -219,11 +213,7 @@ class TestGatewayIntegration:
 
     def test_type_checking_exempt(self, tmp_path):
         blue = "src/zephyr/shared/types.py"
-        content = (
-            "from typing import TYPE_CHECKING\n"
-            "if TYPE_CHECKING:\n"
-            "    from zephyr.trading.enums import Side\n"
-        )
+        content = "from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from zephyr.trading.enums import Side\n"
         _write_file(tmp_path, blue, content)
         gw = _make_gateway(tmp_path, staged_files=[blue])
         passed, msg = make_import_direction_gate().check(gw, [])
@@ -272,10 +262,7 @@ class TestGatewayIntegration:
 
     def test_multiple_upward_imports_blocked(self, tmp_path):
         red = "src/zephyr/shared/types.py"
-        content = (
-            "from zephyr.trading.enums import Side\n"
-            "from zephyr.governance.types import T\n"
-        )
+        content = "from zephyr.trading.enums import Side\nfrom zephyr.governance.types import T\n"
         _write_file(tmp_path, red, content)
         gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_import_direction_gate().check(gw, [])

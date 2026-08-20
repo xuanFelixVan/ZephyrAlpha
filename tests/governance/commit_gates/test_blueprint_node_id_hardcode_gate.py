@@ -30,6 +30,7 @@ subprocess thin wrapper（对标 pure_shim_gate.py → check_pure_shim.py 模式
 测试隔离：MagicMock 模拟 gateway.run_git + tmp_path 真实文件 + 真实 subprocess 调用
 check_doc_node_id_hardcode.py（检测真源），不 mock subprocess（集成测试价值 > 速度）。
 """
+
 from __future__ import annotations
 
 import sys
@@ -62,8 +63,10 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_r
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -102,9 +105,7 @@ class TestGatewayIntegration:
         """staged blueprint.md 含 node_id=数字 → 阻断。"""
         mods = tmp_path / "docs" / "03_modules" / "foo"
         mods.mkdir(parents=True)
-        (mods / "blueprint.md").write_text(
-            "**depgraph**: MOD-EX-049 (node_id=8005442)", encoding="utf-8"
-        )
+        (mods / "blueprint.md").write_text("**depgraph**: MOD-EX-049 (node_id=8005442)", encoding="utf-8")
         rel = "docs/03_modules/foo/blueprint.md"
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_blueprint_node_id_hardcode_gate().check(gw, [])
@@ -212,6 +213,7 @@ class TestGatewayIntegration:
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         # monkeypatch 脚本路径为不存在的文件
         from zephyr.gov_enforcement.commit_gates import blueprint_node_id_hardcode_gate as gate_mod
+
         monkeypatch.setattr(gate_mod, "_CHECKER_SCRIPT", str(tmp_path / "nonexistent.py"))
         passed, msg = make_blueprint_node_id_hardcode_gate().check(gw, [])
         assert passed

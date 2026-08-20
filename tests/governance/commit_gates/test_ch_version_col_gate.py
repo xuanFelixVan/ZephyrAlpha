@@ -27,6 +27,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import sys

@@ -18,6 +18,7 @@
 测试隔离：tmp_path 夹具 + MagicMock gateway + monkeypatch checker 模块 REPO_ROOT/_CATALOGS，
 不读/不写真实仓库（checker 经 importlib 按文件位置加载）。
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -112,74 +113,72 @@ def ws(tmp_path, monkeypatch):
 
 # ---------------------------------------------------------------- anchor checker
 
+
 class TestAnchorChecker:
     def test_valid_file_anchor(self, ws):
         _write(ws, "src/a.py", _PY_CODE)
-        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(
-            code_path="src/a.py", code_symbol="null"))
+        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(code_path="src/a.py", code_symbol="null"))
         v: list[str] = []
         anchor.check_registry_file(reg, v)
         assert v == []
 
     def test_missing_code_path(self, ws):
-        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(
-            code_path="src/missing.py", code_symbol="null"))
+        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(code_path="src/missing.py", code_symbol="null"))
         v: list[str] = []
         anchor.check_registry_file(reg, v)
         assert len(v) == 1 and "FCT-T-001" in v[0] and "code_path 不存在" in v[0]
 
     def test_directory_anchor_ok(self, ws):
         _write(ws, "src/pkg/__init__.py", "")
-        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(
-            code_path="src/pkg/", code_symbol="null"))
+        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(code_path="src/pkg/", code_symbol="null"))
         v: list[str] = []
         anchor.check_registry_file(reg, v)
         assert v == []
 
     def test_annotation_suffix_stripped(self, ws):
         _write(ws, "src/a.py", _PY_CODE)
-        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(
-            code_path="src/a.py（主力实现）", code_symbol="null"))
+        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(code_path="src/a.py（主力实现）", code_symbol="null"))
         v: list[str] = []
         anchor.check_registry_file(reg, v)
         assert v == []
 
     def test_deprecated_entry_exempt(self, ws):
         # FCT-T-002 deprecated + code_path 不存在 → 豁免
-        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(
-            code_path="src/missing.py", code_symbol="null"))
+        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(code_path="src/missing.py", code_symbol="null"))
         v: list[str] = []
         anchor.check_registry_file(reg, v)
         assert all("FCT-T-002" not in x for x in v)
 
     def test_code_symbol_valid(self, ws):
         _write(ws, "src/a.py", _PY_CODE)
-        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(
-            code_path="src/a.py", code_symbol='"src/a.py::calc_alpha"'))
+        reg = _write(
+            ws, "factor_registry.yaml", _REG_YAML.format(code_path="src/a.py", code_symbol='"src/a.py::calc_alpha"')
+        )
         v: list[str] = []
         anchor.check_registry_file(reg, v)
         assert v == []
 
     def test_code_symbol_method_valid(self, ws):
         _write(ws, "src/a.py", _PY_CODE)
-        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(
-            code_path="src/a.py", code_symbol='"src/a.py::Runner.run"'))
+        reg = _write(
+            ws, "factor_registry.yaml", _REG_YAML.format(code_path="src/a.py", code_symbol='"src/a.py::Runner.run"')
+        )
         v: list[str] = []
         anchor.check_registry_file(reg, v)
         assert v == []
 
     def test_code_symbol_missing_symbol(self, ws):
         _write(ws, "src/a.py", _PY_CODE)
-        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(
-            code_path="src/a.py", code_symbol='"src/a.py::nope"'))
+        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(code_path="src/a.py", code_symbol='"src/a.py::nope"'))
         v: list[str] = []
         anchor.check_registry_file(reg, v)
         assert len(v) == 1 and "符号不存在" in v[0]
 
     def test_code_symbol_bad_format(self, ws):
         _write(ws, "src/a.py", _PY_CODE)
-        reg = _write(ws, "factor_registry.yaml", _REG_YAML.format(
-            code_path="src/a.py", code_symbol='"src/a.py#calc_alpha"'))
+        reg = _write(
+            ws, "factor_registry.yaml", _REG_YAML.format(code_path="src/a.py", code_symbol='"src/a.py#calc_alpha"')
+        )
         v: list[str] = []
         anchor.check_registry_file(reg, v)
         assert len(v) == 1 and "::" in v[0]
@@ -200,8 +199,9 @@ class TestListPurity:
     """#118（2026-08-17，DS-104 错位实证治本）：条目 id 键 vs 所在列表纯净性。"""
 
     def _write_dar(self, ws, datasets_block: str, jobs_block: str):
-        return _write(ws, "data_asset_registry.yaml", _DAR_YAML.format(
-            datasets_block=datasets_block, jobs_block=jobs_block))
+        return _write(
+            ws, "data_asset_registry.yaml", _DAR_YAML.format(datasets_block=datasets_block, jobs_block=jobs_block)
+        )
 
     def test_dataset_misplaced_into_jobs_flagged(self, ws):
         """dataset 条目混入 jobs 列表（DS-104 形态）→ [List-Purity] 违规。"""
@@ -265,6 +265,7 @@ class TestListPurity:
 
 # ---------------------------------------------------------------- fingerprint
 
+
 class TestFingerprint:
     def test_docstring_change_stable(self, ws):
         p1 = _write(ws, "a.py", _PY_CODE)
@@ -287,13 +288,17 @@ class TestFingerprint:
 
     def _mk_registry(self, ws, fp_value):
         (ws / "cat").mkdir(parents=True, exist_ok=True)
-        return _write(ws, "cat/factor_registry.yaml", f"""module_id: M
+        return _write(
+            ws,
+            "cat/factor_registry.yaml",
+            f"""module_id: M
 factors:
 - factor_id: "FCT-T-001"
   status: "active"
   code_symbol: "src/a.py::calc_alpha"
   code_fingerprint: {fp_value}
-""")
+""",
+        )
 
     def test_reconcile_missing_snapshot_fix(self, ws, monkeypatch):
         _write(ws, "src/a.py", _PY_CODE)
@@ -314,6 +319,7 @@ factors:
 
 
 # ---------------------------------------------------------------- gate
+
 
 @dataclass
 class _MockResult:
@@ -354,7 +360,9 @@ class TestGateTrigger:
 
     def test_staged_registry_runs_checker(self, ws, monkeypatch):
         cat = ws / "docs/01_policies_and_standards/_registry/catalogs"
-        reg = _write(ws, "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", "module_id: M\nfactors: []\n")
+        reg = _write(
+            ws, "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", "module_id: M\nfactors: []\n"
+        )
         _write(ws, "scripts/governance/d5_architecture/checkers/check_registry_code_anchor.py", "# stub")
         calls = {}
 
@@ -373,7 +381,9 @@ class TestGateTrigger:
         assert "--files" in calls["args"]
 
     def test_staged_registry_violation_blocks(self, ws, monkeypatch):
-        reg = _write(ws, "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", "module_id: M\nfactors: []\n")
+        reg = _write(
+            ws, "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", "module_id: M\nfactors: []\n"
+        )
         _write(ws, "scripts/governance/d5_architecture/checkers/check_registry_code_anchor.py", "# stub")
         monkeypatch.setattr(
             "zephyr.gov_enforcement.commit_gates.registry_code_anchor_gate.run_checker_script",
@@ -386,7 +396,9 @@ class TestGateTrigger:
         assert "REGISTRY_CODE_ANCHOR_VIOLATION" in detail
 
     def test_checker_error_fail_open(self, ws, monkeypatch):
-        reg = _write(ws, "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", "module_id: M\nfactors: []\n")
+        reg = _write(
+            ws, "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", "module_id: M\nfactors: []\n"
+        )
         _write(ws, "scripts/governance/d5_architecture/checkers/check_registry_code_anchor.py", "# stub")
         monkeypatch.setattr(
             "zephyr.gov_enforcement.commit_gates.registry_code_anchor_gate.run_checker_script",
@@ -398,12 +410,16 @@ class TestGateTrigger:
         assert ok is True
 
     def test_deleted_py_with_reference_blocks(self, ws):
-        _write(ws, "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", (
-            "module_id: M\nfactors:\n"
-            '- factor_id: "FCT-T-001"\n'
-            '  status: "active"\n'
-            '  code_path: "src/zephyr/factor/mom.py"\n'
-        ))
+        _write(
+            ws,
+            "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml",
+            (
+                "module_id: M\nfactors:\n"
+                '- factor_id: "FCT-T-001"\n'
+                '  status: "active"\n'
+                '  code_path: "src/zephyr/factor/mom.py"\n'
+            ),
+        )
         gw = _make_gateway(ws, deleted=["src/zephyr/factor/mom.py"])
         spec = make_registry_code_anchor_gate()
         ok, detail = spec.check(gw, [str(ws / "src/zephyr/factor/mom.py")])
@@ -411,19 +427,25 @@ class TestGateTrigger:
         assert "FCT-T-001" in detail
 
     def test_deleted_py_deprecated_reference_pass(self, ws):
-        _write(ws, "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", (
-            "module_id: M\nfactors:\n"
-            '- factor_id: "FCT-T-001"\n'
-            '  status: "deprecated"\n'
-            '  code_path: "src/zephyr/factor/mom.py"\n'
-        ))
+        _write(
+            ws,
+            "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml",
+            (
+                "module_id: M\nfactors:\n"
+                '- factor_id: "FCT-T-001"\n'
+                '  status: "deprecated"\n'
+                '  code_path: "src/zephyr/factor/mom.py"\n'
+            ),
+        )
         gw = _make_gateway(ws, deleted=["src/zephyr/factor/mom.py"])
         spec = make_registry_code_anchor_gate()
         ok, _ = spec.check(gw, [str(ws / "src/zephyr/factor/mom.py")])
         assert ok is True
 
     def test_deleted_py_no_reference_pass(self, ws):
-        _write(ws, "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", "module_id: M\nfactors: []\n")
+        _write(
+            ws, "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", "module_id: M\nfactors: []\n"
+        )
         gw = _make_gateway(ws, deleted=["src/zephyr/factor/other.py"])
         spec = make_registry_code_anchor_gate()
         ok, _ = spec.check(gw, [str(ws / "src/zephyr/factor/other.py")])
@@ -433,18 +455,22 @@ class TestGateTrigger:
 class TestDeletedPyParse:
     def test_rename_old_path(self, ws):
         gw = _make_gateway(ws)
+
         def _run_git(cmd):
             if "diff" in " ".join(cmd):
                 return _MockResult(0, "R100\tsrc/old/mom.py\tsrc/new/mom.py\n")
             return _MockResult(0, "")
+
         gw.run_git = _run_git
         assert _deleted_or_renamed_py(gw) == ["src/old/mom.py"]
 
     def test_non_py_ignored(self, ws):
         gw = _make_gateway(ws)
+
         def _run_git(cmd):
             if "diff" in " ".join(cmd):
                 return _MockResult(0, "D\tsrc/data/x.csv\nD\tdocs/a.md\n")
             return _MockResult(0, "")
+
         gw.run_git = _run_git
         assert _deleted_or_renamed_py(gw) == []

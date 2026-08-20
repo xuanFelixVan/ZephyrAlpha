@@ -25,6 +25,7 @@
 - TestAddedLinesOnly: 存量违规非 added → 通过
 - TestFailOpenGitDiff: git diff 失败 → 通过
 """
+
 from __future__ import annotations
 
 import sys
@@ -70,9 +71,7 @@ class TestEnvSubscriptBlocked:
     def test_double_quote_subscript_blocked(self):
         """os.environ["ZEPHYR_ENV"] → hard-block"""
         src_file = "src/zephyr/trading/foo.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ['    env = os.environ["ZEPHYR_ENV"]']}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ['    env = os.environ["ZEPHYR_ENV"]']})
         gate = make_zephyr_env_direct_access_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -81,9 +80,7 @@ class TestEnvSubscriptBlocked:
     def test_single_quote_subscript_blocked(self):
         """os.environ['ZEPHYR_ENV'] → hard-block"""
         src_file = "src/zephyr/trading/foo.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ["    env = os.environ['ZEPHYR_ENV']"]}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ["    env = os.environ['ZEPHYR_ENV']"]})
         gate = make_zephyr_env_direct_access_gate()
         passed, _ = gate.check(gw, [])
         assert not passed
@@ -98,9 +95,7 @@ class TestEnvGetBlocked:
     def test_env_get_double_quote_blocked(self):
         """os.environ.get("ZEPHYR_ENV") → hard-block"""
         src_file = "src/zephyr/trading/foo.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ['    env = os.environ.get("ZEPHYR_ENV")']}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ['    env = os.environ.get("ZEPHYR_ENV")']})
         gate = make_zephyr_env_direct_access_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -109,9 +104,7 @@ class TestEnvGetBlocked:
     def test_env_get_single_quote_blocked(self):
         """os.environ.get('ZEPHYR_ENV') → hard-block"""
         src_file = "src/zephyr/trading/foo.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ["    env = os.environ.get('ZEPHYR_ENV')"]}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ["    env = os.environ.get('ZEPHYR_ENV')"]})
         gate = make_zephyr_env_direct_access_gate()
         passed, _ = gate.check(gw, [])
         assert not passed
@@ -126,9 +119,7 @@ class TestConfigLayerPasses:
     def test_config_layer_subscript_passes(self):
         """src/zephyr/shared/foundation/config/ 下的 os.environ["ZEPHYR_ENV"] → 豁免"""
         config_file = "src/zephyr/shared/foundation/config/settings.py"
-        gw = make_mock_gateway(
-            [config_file], {config_file: ['    env = os.environ["ZEPHYR_ENV"]']}
-        )
+        gw = make_mock_gateway([config_file], {config_file: ['    env = os.environ["ZEPHYR_ENV"]']})
         gate = make_zephyr_env_direct_access_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -137,9 +128,7 @@ class TestConfigLayerPasses:
     def test_config_layer_get_passes(self):
         """src/zephyr/shared/foundation/config/ 下的 os.environ.get → 豁免"""
         config_file = "src/zephyr/shared/foundation/config/loader.py"
-        gw = make_mock_gateway(
-            [config_file], {config_file: ['    env = os.environ.get("ZEPHYR_ENV", "dev")']}
-        )
+        gw = make_mock_gateway([config_file], {config_file: ['    env = os.environ.get("ZEPHYR_ENV", "dev")']})
         gate = make_zephyr_env_direct_access_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -155,9 +144,7 @@ class TestCleanFilePasses:
     def test_clean_src_zephyr_passes(self):
         """src/zephyr/ 中无 ZEPHYR_ENV 直访 → 通过"""
         src_file = "src/zephyr/trading/clean.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ["    x = 1 + 2"]}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ["    x = 1 + 2"]})
         gate = make_zephyr_env_direct_access_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -166,9 +153,7 @@ class TestCleanFilePasses:
     def test_other_env_var_passes(self):
         """os.environ["OTHER_VAR"]（非 ZEPHYR_ENV）→ 通过"""
         src_file = "src/zephyr/trading/foo.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ['    path = os.environ["PATH"]']}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ['    path = os.environ["PATH"]']})
         gate = make_zephyr_env_direct_access_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -203,9 +188,7 @@ class TestTestExempt:
     def test_tests_dir_exempt(self):
         """tests/ 下文件中的 os.environ["ZEPHYR_ENV"] → 豁免"""
         test_file = "tests/governance/foo.py"
-        gw = make_mock_gateway(
-            [test_file], {test_file: ['    env = os.environ["ZEPHYR_ENV"]']}
-        )
+        gw = make_mock_gateway([test_file], {test_file: ['    env = os.environ["ZEPHYR_ENV"]']})
         gate = make_zephyr_env_direct_access_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -221,9 +204,7 @@ class TestNonSrcZephyrPasses:
     def test_non_src_zephyr_passes(self):
         """非 src/zephyr/ 文件中的 os.environ["ZEPHYR_ENV"] → 豁免"""
         ext_file = "scripts/ops/foo.py"
-        gw = make_mock_gateway(
-            [ext_file], {ext_file: ['    env = os.environ["ZEPHYR_ENV"]']}
-        )
+        gw = make_mock_gateway([ext_file], {ext_file: ['    env = os.environ["ZEPHYR_ENV"]']})
         gate = make_zephyr_env_direct_access_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -240,12 +221,7 @@ class TestAddedLinesOnly:
         """存量 os.environ["ZEPHYR_ENV"]（非 added 行）→ 通过（由 M30 监控）"""
         src_file = "src/zephyr/trading/legacy.py"
         full_content = (
-            "# header comment\n"
-            "\n"
-            'env = os.environ["ZEPHYR_ENV"]  # 存量违规，非 added 行\n'
-            "\n"
-            "def new_func():\n"
-            "    pass\n"
+            '# header comment\n\nenv = os.environ["ZEPHYR_ENV"]  # 存量违规，非 added 行\n\ndef new_func():\n    pass\n'
         )
         gw = make_mock_gateway(
             [src_file],

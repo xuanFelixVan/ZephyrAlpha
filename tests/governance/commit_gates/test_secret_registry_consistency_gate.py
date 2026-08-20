@@ -28,6 +28,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git + tmp_path 真实文件，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import sys
@@ -67,8 +68,10 @@ def _make_gateway(
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -144,12 +147,7 @@ class TestKeyExtraction:
 
     def test_extract_registry_no_env_file(self):
         """key 没有 env_file 字段时不提取。"""
-        content = (
-            "secrets:\n"
-            "  - key: ORPHAN_KEY\n"
-            "  - key: GOOD_KEY\n"
-            "    env_file: .env\n"
-        )
+        content = "secrets:\n  - key: ORPHAN_KEY\n  - key: GOOD_KEY\n    env_file: .env\n"
         keys = _extract_registry_dotenv_keys(content)
         assert keys == {"GOOD_KEY"}
 
@@ -171,22 +169,14 @@ class TestGatewayIntegration:
     def test_keys_consistent_pass(self, tmp_path):
         """.env.example 和 registry KEY 一致 → 放行。"""
         env_example = tmp_path / ".env.example"
-        env_example.write_text(
-            "TUSHARE_TOKEN=\nDEEPSEEK_API_KEY=\n", encoding="utf-8"
-        )
+        env_example.write_text("TUSHARE_TOKEN=\nDEEPSEEK_API_KEY=\n", encoding="utf-8")
         registry = tmp_path / "config" / "secret_registry.yaml"
         registry.parent.mkdir(parents=True, exist_ok=True)
         registry.write_text(
-            "secrets:\n"
-            "  - key: TUSHARE_TOKEN\n"
-            "    env_file: .env\n"
-            "  - key: DEEPSEEK_API_KEY\n"
-            "    env_file: .env\n",
+            "secrets:\n  - key: TUSHARE_TOKEN\n    env_file: .env\n  - key: DEEPSEEK_API_KEY\n    env_file: .env\n",
             encoding="utf-8",
         )
-        gw = _make_gateway(
-            staged_files=[".env.example"], project_root=str(tmp_path)
-        )
+        gw = _make_gateway(staged_files=[".env.example"], project_root=str(tmp_path))
         spec = make_secret_registry_consistency_gate()
         passed, detail = spec.check(gw, [])
         assert passed is True
@@ -194,20 +184,14 @@ class TestGatewayIntegration:
     def test_only_in_example_blocks(self, tmp_path):
         """.env.example 有但 registry 未登记 → 阻断。"""
         env_example = tmp_path / ".env.example"
-        env_example.write_text(
-            "TUSHARE_TOKEN=\nNEW_SECRET=\n", encoding="utf-8"
-        )
+        env_example.write_text("TUSHARE_TOKEN=\nNEW_SECRET=\n", encoding="utf-8")
         registry = tmp_path / "config" / "secret_registry.yaml"
         registry.parent.mkdir(parents=True, exist_ok=True)
         registry.write_text(
-            "secrets:\n"
-            "  - key: TUSHARE_TOKEN\n"
-            "    env_file: .env\n",
+            "secrets:\n  - key: TUSHARE_TOKEN\n    env_file: .env\n",
             encoding="utf-8",
         )
-        gw = _make_gateway(
-            staged_files=[".env.example"], project_root=str(tmp_path)
-        )
+        gw = _make_gateway(staged_files=[".env.example"], project_root=str(tmp_path))
         spec = make_secret_registry_consistency_gate()
         passed, detail = spec.check(gw, [])
         assert passed is False
@@ -220,11 +204,7 @@ class TestGatewayIntegration:
         registry = tmp_path / "config" / "secret_registry.yaml"
         registry.parent.mkdir(parents=True, exist_ok=True)
         registry.write_text(
-            "secrets:\n"
-            "  - key: TUSHARE_TOKEN\n"
-            "    env_file: .env\n"
-            "  - key: HIDDEN_KEY\n"
-            "    env_file: .env\n",
+            "secrets:\n  - key: TUSHARE_TOKEN\n    env_file: .env\n  - key: HIDDEN_KEY\n    env_file: .env\n",
             encoding="utf-8",
         )
         gw = _make_gateway(
@@ -239,17 +219,11 @@ class TestGatewayIntegration:
     def test_bidirectional_mismatch_blocks(self, tmp_path):
         """双向不一致 → 阻断（两条违规都报告）。"""
         env_example = tmp_path / ".env.example"
-        env_example.write_text(
-            "KEY_A=\nKEY_B=\n", encoding="utf-8"
-        )
+        env_example.write_text("KEY_A=\nKEY_B=\n", encoding="utf-8")
         registry = tmp_path / "config" / "secret_registry.yaml"
         registry.parent.mkdir(parents=True, exist_ok=True)
         registry.write_text(
-            "secrets:\n"
-            "  - key: KEY_B\n"
-            "    env_file: .env\n"
-            "  - key: KEY_C\n"
-            "    env_file: .env\n",
+            "secrets:\n  - key: KEY_B\n    env_file: .env\n  - key: KEY_C\n    env_file: .env\n",
             encoding="utf-8",
         )
         gw = _make_gateway(
@@ -278,9 +252,7 @@ class TestGatewayIntegration:
             "    env_file: config/.env.clickhouse\n",
             encoding="utf-8",
         )
-        gw = _make_gateway(
-            staged_files=[".env.example"], project_root=str(tmp_path)
-        )
+        gw = _make_gateway(staged_files=[".env.example"], project_root=str(tmp_path))
         spec = make_secret_registry_consistency_gate()
         passed, detail = spec.check(gw, [])
         assert passed is True
@@ -309,9 +281,7 @@ class TestGatewayIntegration:
             "secrets:\n  - key: TUSHARE_TOKEN\n    env_file: .env\n",
             encoding="utf-8",
         )
-        gw = _make_gateway(
-            staged_files=[".env.example"], project_root=str(tmp_path)
-        )
+        gw = _make_gateway(staged_files=[".env.example"], project_root=str(tmp_path))
         spec = make_secret_registry_consistency_gate()
         passed, detail = spec.check(gw, [])
         assert passed is True  # fail-open

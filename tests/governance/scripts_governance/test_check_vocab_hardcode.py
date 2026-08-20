@@ -81,7 +81,7 @@ def test_detection7_noqa_exempt(tmp_path, monkeypatch):
     """检测7: # noqa: gate-vocab 行 → 不检出（内联豁免）。"""
     monkeypatch.setattr(cvh, "REPO_ROOT", tmp_path)
     # 拼接避免源代码中直接出现 noqa: gate-vocab 文本（NOQA-VALIDATION 门禁误报）
-    content = '_EXEMPT = "tests/"  # noqa: ' + 'gate-vocab\n'
+    content = '_EXEMPT = "tests/"  # noqa: ' + "gate-vocab\n"
     fp = _make_commit_gate_file(tmp_path, "fake_gate.py", content)
     issues = cvh.check_file(fp, tmp_path / "vocabs")
     d7 = _detection7_issues(issues)
@@ -214,9 +214,7 @@ class TestNoqaRegistrySmoke:
         keys = cvh._registered_exemption_keys(registry)
         reason_map = cvh._registered_reason_map(registry)
         # 完全未登记的 file + line + reason
-        result = cvh._is_noqa_registered(
-            "nonexistent/file.py", 9999, "完全未登记的豁免理由", keys, reason_map
-        )
+        result = cvh._is_noqa_registered("nonexistent/file.py", 9999, "完全未登记的豁免理由", keys, reason_map)
         assert result is False, "未登记的 noqa 应返回 False"
 
     def test_main_exits_zero_warn_only(self, monkeypatch, capsys):
@@ -333,6 +331,7 @@ class TestLoadAllVocabularyValues:
         # 找到真实 vocab_dir
         from _shared.constants import REPO_ROOT
         from _shared.yaml_utils import load_all_vocabulary_values
+
         vocab_dir = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
 
         # SSoT 原始值

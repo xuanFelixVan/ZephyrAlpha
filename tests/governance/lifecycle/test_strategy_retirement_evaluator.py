@@ -76,8 +76,8 @@ class TestCriteria:
 
     def test_rolling_underperformance_trigger(self):
         ev = StrategyRetirementEvaluator()
-        live = _steady(80, 0.0)   # 20 日累计 0%
-        bench = _steady(80, 0.01) # 20 日累计约 22%，跑输 >5%
+        live = _steady(80, 0.0)  # 20 日累计 0%
+        bench = _steady(80, 0.01)  # 20 日累计约 22%，跑输 >5%
         report = ev.evaluate(_inp("STR-A", live, bench))
         assert report is not None
         criteria = {t.criterion for t in report.triggered}
@@ -105,9 +105,7 @@ class TestCriteria:
 
     def test_backtest_live_deviation_trigger(self):
         ev = StrategyRetirementEvaluator()
-        report = ev.evaluate(
-            _inp("STR-A", _steady(30, 0.001), _steady(30, 0.001), backtest_live_deviation=0.62)
-        )
+        report = ev.evaluate(_inp("STR-A", _steady(30, 0.001), _steady(30, 0.001), backtest_live_deviation=0.62))
         assert report is not None
         criteria = {t.criterion for t in report.triggered}
         assert RetirementCriterion.BACKTEST_LIVE_DEVIATION in criteria
@@ -116,8 +114,11 @@ class TestCriteria:
         ev = StrategyRetirementEvaluator()
         report = ev.evaluate(
             _inp(
-                "STR-A", _steady(30, 0.001), _steady(30, 0.001),
-                alpha_falsified=True, falsified_factors=("FCT-MOM-001",),
+                "STR-A",
+                _steady(30, 0.001),
+                _steady(30, 0.001),
+                alpha_falsified=True,
+                falsified_factors=("FCT-MOM-001",),
             )
         )
         assert report is not None
@@ -128,7 +129,7 @@ class TestCriteria:
     def test_insufficient_window_skips_criterion(self):
         """样本不足窗口的判据跳过（不产生误报）。"""
         ev = StrategyRetirementEvaluator()
-        live = _steady(10, 0.0)    # < 20 日窗口
+        live = _steady(10, 0.0)  # < 20 日窗口
         bench = _steady(10, 0.05)  # 10 日暴升——若误判会触发跑输
         assert ev.evaluate(_inp("STR-A", live, bench)) is None
 
@@ -165,8 +166,6 @@ class TestPublishIntegration:
     def test_no_trigger_no_archive(self):
         publisher = ReportPublisher()
         ev = StrategyRetirementEvaluator(publisher=publisher)
-        result = ev.evaluate(
-            _inp("STR-A", _steady(80, 0.001), _steady(80, 0.001), publish=True)
-        )
+        result = ev.evaluate(_inp("STR-A", _steady(80, 0.001), _steady(80, 0.001), publish=True))
         assert result is None
         assert publisher.list_by_source(ReportSource.TRADING_REVIEW) == []

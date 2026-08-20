@@ -39,6 +39,7 @@ load_move_map = _mod.load_move_map
 # Fixtures
 # ------------------------------------------------------------------
 
+
 @pytest.fixture
 def simple_moves() -> list[MoveEntry]:
     return [
@@ -66,10 +67,13 @@ def rewriter(simple_moves: list[MoveEntry]) -> ImportRewriter:
 # _find_replacement
 # ------------------------------------------------------------------
 
+
 class TestFindReplacement:
     def test_exact_match(self, rewriter: ImportRewriter):
-        assert rewriter.find_replacement("zephyr.governance.escalation_api") == \
-            "zephyr.governance.escalation.escalation_api"
+        assert (
+            rewriter.find_replacement("zephyr.governance.escalation_api")
+            == "zephyr.governance.escalation.escalation_api"
+        )
 
     def test_no_match(self, rewriter: ImportRewriter):
         assert rewriter.find_replacement("zephyr.governance.unknown") is None
@@ -91,15 +95,19 @@ class TestFindReplacement:
 # rewrite_file: ImportFrom
 # ------------------------------------------------------------------
 
+
 class TestRewriteImportFrom:
     def test_basic_from_import(self, rewriter: ImportRewriter, tmp_path: Path):
         f = tmp_path / "consumer.py"
-        f.write_text(textwrap.dedent("""\
+        f.write_text(
+            textwrap.dedent("""\
             from zephyr.governance.escalation_api import trigger
 
             def use():
                 trigger()
-            """), encoding="utf-8")
+            """),
+            encoding="utf-8",
+        )
         r = rewriter.rewrite_file(f, dry_run=False)
         assert r.modified
         assert len(r.changes) == 1
@@ -134,6 +142,7 @@ class TestRewriteImportFrom:
 # rewrite_file: Import (plain)
 # ------------------------------------------------------------------
 
+
 class TestRewriteImport:
     def test_basic_import(self, rewriter: ImportRewriter, tmp_path: Path):
         f = tmp_path / "consumer.py"
@@ -163,14 +172,18 @@ class TestRewriteImport:
 # rewrite_file: MODULE header
 # ------------------------------------------------------------------
 
+
 class TestRewriteModuleHeader:
     def test_module_header_updated(self, rewriter: ImportRewriter, tmp_path: Path):
         f = tmp_path / "moved.py"
-        f.write_text(textwrap.dedent("""\
+        f.write_text(
+            textwrap.dedent("""\
             # [MODULE] zephyr.governance.escalation_api
             # [DOMAIN] D_GOVERNANCE
             \"\"\"Escalation API.\"\"\"
-            """), encoding="utf-8")
+            """),
+            encoding="utf-8",
+        )
         r = rewriter.rewrite_file(f, dry_run=False)
         assert r.modified
         header_changes = [c for c in r.changes if c.change_type == "MODULE_HEADER"]
@@ -182,6 +195,7 @@ class TestRewriteModuleHeader:
 # ------------------------------------------------------------------
 # rewrite_file: dry-run & idempotency
 # ------------------------------------------------------------------
+
 
 class TestDryRunAndIdempotency:
     def test_dry_run_no_modification(self, rewriter: ImportRewriter, tmp_path: Path):
@@ -224,16 +238,20 @@ class TestDryRunAndIdempotency:
 # rewrite_file: formatting preservation
 # ------------------------------------------------------------------
 
+
 class TestFormattingPreservation:
     def test_comments_preserved(self, rewriter: ImportRewriter, tmp_path: Path):
         f = tmp_path / "consumer.py"
-        f.write_text(textwrap.dedent("""\
+        f.write_text(
+            textwrap.dedent("""\
             # This is a comment
             from zephyr.governance.escalation_api import trigger  # inline comment
 
             # Another comment
             x = 1
-            """), encoding="utf-8")
+            """),
+            encoding="utf-8",
+        )
         r = rewriter.rewrite_file(f, dry_run=False)
         assert r.modified
         content = f.read_text(encoding="utf-8")
@@ -244,12 +262,15 @@ class TestFormattingPreservation:
 
     def test_multiline_from_import(self, rewriter: ImportRewriter, tmp_path: Path):
         f = tmp_path / "consumer.py"
-        f.write_text(textwrap.dedent("""\
+        f.write_text(
+            textwrap.dedent("""\
             from zephyr.governance.escalation_api import (
                 trigger,
                 cancel,
             )
-            """), encoding="utf-8")
+            """),
+            encoding="utf-8",
+        )
         r = rewriter.rewrite_file(f, dry_run=False)
         assert r.modified
         content = f.read_text(encoding="utf-8")
@@ -260,10 +281,12 @@ class TestFormattingPreservation:
 # load_move_map
 # ------------------------------------------------------------------
 
+
 class TestLoadMoveMap:
     def test_load_yaml(self, tmp_path: Path):
         yaml_file = tmp_path / "moves.yaml"
-        yaml_file.write_text(textwrap.dedent("""\
+        yaml_file.write_text(
+            textwrap.dedent("""\
             moves:
               - old_module: zephyr.governance.foo
                 new_module: zephyr.governance.sub.foo
@@ -273,7 +296,9 @@ class TestLoadMoveMap:
                 new_module: zephyr.governance.sub.bar
                 old_path: src/zephyr/governance/bar.py
                 new_path: src/zephyr/governance/sub/bar.py
-            """), encoding="utf-8")
+            """),
+            encoding="utf-8",
+        )
         moves = load_move_map(yaml_file)
         assert len(moves) == 2
         assert moves[0].old_module == "zephyr.governance.foo"
@@ -285,10 +310,12 @@ class TestLoadMoveMap:
 # Integration: multiple changes in one file
 # ------------------------------------------------------------------
 
+
 class TestIntegration:
     def test_multiple_imports_one_file(self, rewriter: ImportRewriter, tmp_path: Path):
         f = tmp_path / "consumer.py"
-        f.write_text(textwrap.dedent("""\
+        f.write_text(
+            textwrap.dedent("""\
             # [MODULE] zephyr.governance.escalation_api
             from zephyr.governance.escalation_api import trigger
             from zephyr.governance.cost_budget import Budget
@@ -298,7 +325,9 @@ class TestIntegration:
                 trigger()
                 b = Budget()
                 ea.cancel()
-            """), encoding="utf-8")
+            """),
+            encoding="utf-8",
+        )
         r = rewriter.rewrite_file(f, dry_run=False)
         assert r.modified
         # Should have: 2 ImportFrom + 1 Import + 1 MODULE_HEADER = 4 changes

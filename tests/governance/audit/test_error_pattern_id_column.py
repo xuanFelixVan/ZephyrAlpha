@@ -26,6 +26,7 @@ Usage::
 
     py -3.12 -m pytest tests/governance/audit/test_error_pattern_id_column.py -v
 """
+
 from __future__ import annotations
 
 import sqlite3
@@ -129,9 +130,7 @@ class TestErrorPatternIdColumnMigration:
         _init_db(tmp_path, _SQL_CREATE_OLD_NO_EPID)
         # 确认老库无 error_pattern_id 列
         cols_before = _get_columns(tmp_path)
-        assert "error_pattern_id" not in cols_before, (
-            "老库不应有 error_pattern_id 列（测试前置条件）"
-        )
+        assert "error_pattern_id" not in cols_before, "老库不应有 error_pattern_id 列（测试前置条件）"
         # 触发写入路径（_log_reconcile_results 内部调 _ensure_error_pattern_id_column）
         _insert_log(tmp_path)
         # 写入后应自动补列
@@ -144,9 +143,7 @@ class TestErrorPatternIdColumnMigration:
         """新库（用最新 CREATE TABLE 创建）直接含 error_pattern_id 列。"""
         _init_db(tmp_path, reg_mod.SQL_CREATE_RECONCILE_EXECUTION_LOG)
         cols = _get_columns(tmp_path)
-        assert "error_pattern_id" in cols, (
-            "新库（SQL_CREATE_RECONCILE_EXECUTION_LOG）应直接含 error_pattern_id 列"
-        )
+        assert "error_pattern_id" in cols, "新库（SQL_CREATE_RECONCILE_EXECUTION_LOG）应直接含 error_pattern_id 列"
 
     def test_migration_is_idempotent(self, tmp_path: Path) -> None:
         """幂等：已有 error_pattern_id 列的库不重复 ALTER（不报错）。"""
@@ -161,9 +158,7 @@ class TestErrorPatternIdColumnMigration:
         # 幂等：没有产生重复列（SQLite ALTER TABLE ADD COLUMN 不支持 IF NOT EXISTS，
         # 但 _ensure_error_pattern_id_column 用 PRAGMA 检测避免重复 ALTER）
         epid_count = sum(1 for c in cols_after if c == "error_pattern_id")
-        assert epid_count == 1, (
-            f"error_pattern_id 列应只有 1 个，实际 {epid_count}（幂等检测失效）"
-        )
+        assert epid_count == 1, f"error_pattern_id 列应只有 1 个，实际 {epid_count}（幂等检测失效）"
 
 
 # ============================================================================
@@ -188,9 +183,7 @@ class TestErrorPatternIdDefaultAndUpdate:
         finally:
             conn.close()
         assert row is not None, "记录未写入"
-        assert row[0] is None, (
-            f"P4-1a 阶段 error_pattern_id 应为 NULL，实际: {row[0]}"
-        )
+        assert row[0] is None, f"P4-1a 阶段 error_pattern_id 应为 NULL，实际: {row[0]}"
 
     def test_update_error_pattern_id(self, tmp_path: Path) -> None:
         """SQL_UPDATE_ERROR_PATTERN_ID 可回填值（供 P4-1 模式库使用）。"""
@@ -211,9 +204,7 @@ class TestErrorPatternIdDefaultAndUpdate:
         finally:
             conn.close()
         assert row is not None, "记录未写入"
-        assert row[0] == "EPID-001-import-error-pattern", (
-            f"SQL_UPDATE_ERROR_PATTERN_ID 回填失败，实际: {row[0]}"
-        )
+        assert row[0] == "EPID-001-import-error-pattern", f"SQL_UPDATE_ERROR_PATTERN_ID 回填失败，实际: {row[0]}"
 
     def test_update_error_pattern_id_idempotent(self, tmp_path: Path) -> None:
         """多次 UPDATE 同一记录的 error_pattern_id 不报错（幂等）。"""
@@ -239,9 +230,7 @@ class TestErrorPatternIdDefaultAndUpdate:
             ).fetchone()
         finally:
             conn.close()
-        assert row[0] == "EPID-B", (
-            f"多次 UPDATE 后 error_pattern_id 应为最新值 EPID-B，实际: {row[0]}"
-        )
+        assert row[0] == "EPID-B", f"多次 UPDATE 后 error_pattern_id 应为最新值 EPID-B，实际: {row[0]}"
 
 
 # ============================================================================
@@ -275,6 +264,4 @@ class TestP41aLandingIntegrity:
     def test_create_table_includes_error_pattern_id(self) -> None:
         """SQL_CREATE_RECONCILE_EXECUTION_LOG 含 error_pattern_id 列定义。"""
         sql = reg_mod.SQL_CREATE_RECONCILE_EXECUTION_LOG
-        assert "error_pattern_id TEXT" in sql, (
-            f"CREATE TABLE 应含 error_pattern_id TEXT 列定义，实际: {sql}"
-        )
+        assert "error_pattern_id TEXT" in sql, f"CREATE TABLE 应含 error_pattern_id TEXT 列定义，实际: {sql}"

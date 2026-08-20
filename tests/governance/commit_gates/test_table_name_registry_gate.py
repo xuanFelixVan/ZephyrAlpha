@@ -5,6 +5,7 @@
 
 裁定 #ARCH-CH-024 Phase 4：SSoT 真源强制闭环。
 """
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
@@ -26,18 +27,20 @@ from zephyr.gov_enforcement.commit_gates.table_name_registry_gate import (
 
 def _make_test_registry() -> TableRegistry:
     """构造测试用 TableRegistry（2 条品类）。"""
-    return TableRegistry(categories=[
-        {
-            "category_id": "market_kline_daily",
-            "database": "c1_market",
-            "table": "kline_daily",
-        },
-        {
-            "category_id": "market_adj_factor",
-            "database": "c1_market",
-            "table": "adj_factor",
-        },
-    ])
+    return TableRegistry(
+        categories=[
+            {
+                "category_id": "market_kline_daily",
+                "database": "c1_market",
+                "table": "kline_daily",
+            },
+            {
+                "category_id": "market_adj_factor",
+                "database": "c1_market",
+                "table": "adj_factor",
+            },
+        ]
+    )
 
 
 def _make_mock_gateway(staged_files: dict[str, str] | None = None) -> MagicMock:
@@ -67,10 +70,7 @@ def _make_mock_gateway(staged_files: dict[str, str] | None = None) -> MagicMock:
             content = staged.get(path, "")
             lines = content.splitlines()
             if lines:
-                result.stdout = (
-                    f"@@ -0,0 +1,{len(lines)} @@\n"
-                    + "".join(f"+{l}\n" for l in lines)
-                )
+                result.stdout = f"@@ -0,0 +1,{len(lines)} @@\n" + "".join(f"+{l}\n" for l in lines)
             else:
                 result.stdout = ""
             result.returncode = 0
@@ -134,24 +134,18 @@ class TestCheckHardcodedTablesInFile:
         gw = _make_mock_gateway({"src/zephyr/data/foo.py": content})
         tables = {"c1_market.kline_daily", "c1_market.adj_factor"}
         pattern = _build_table_name_pattern(tables)
-        violations = check_hardcoded_tables_in_file(
-            gw, "src/zephyr/data/foo.py", tables, pattern
-        )
+        violations = check_hardcoded_tables_in_file(gw, "src/zephyr/data/foo.py", tables, pattern)
         assert len(violations) == 1
         assert "c1_market.kline_daily" in violations[0]
         assert "TableRegistry" in violations[0]
 
     def test_substring_match_in_sql(self):
         """子串匹配：SQL 字符串含表名 → 违规。"""
-        content = (
-            'sql = "SELECT * FROM c1_market.kline_daily WHERE trade_date > ?"\n'
-        )
+        content = 'sql = "SELECT * FROM c1_market.kline_daily WHERE trade_date > ?"\n'
         gw = _make_mock_gateway({"src/zephyr/data/foo.py": content})
         tables = {"c1_market.kline_daily"}
         pattern = _build_table_name_pattern(tables)
-        violations = check_hardcoded_tables_in_file(
-            gw, "src/zephyr/data/foo.py", tables, pattern
-        )
+        violations = check_hardcoded_tables_in_file(gw, "src/zephyr/data/foo.py", tables, pattern)
         assert len(violations) == 1
         assert "c1_market.kline_daily" in violations[0]
 
@@ -161,25 +155,16 @@ class TestCheckHardcodedTablesInFile:
         gw = _make_mock_gateway({"src/zephyr/data/foo.py": content})
         tables = {"c1_market.kline_daily"}
         pattern = _build_table_name_pattern(tables)
-        violations = check_hardcoded_tables_in_file(
-            gw, "src/zephyr/data/foo.py", tables, pattern
-        )
+        violations = check_hardcoded_tables_in_file(gw, "src/zephyr/data/foo.py", tables, pattern)
         assert violations == []
 
     def test_docstring_exempt(self):
         """docstring 中的表名 → 豁免。"""
-        content = (
-            '"""Module docstring.\n\n'
-            '    Uses c1_market.kline_daily table.\n'
-            '    """\n'
-            'x = 1\n'
-        )
+        content = '"""Module docstring.\n\n    Uses c1_market.kline_daily table.\n    """\nx = 1\n'
         gw = _make_mock_gateway({"src/zephyr/data/foo.py": content})
         tables = {"c1_market.kline_daily"}
         pattern = _build_table_name_pattern(tables)
-        violations = check_hardcoded_tables_in_file(
-            gw, "src/zephyr/data/foo.py", tables, pattern
-        )
+        violations = check_hardcoded_tables_in_file(gw, "src/zephyr/data/foo.py", tables, pattern)
         assert violations == []
 
     def test_empty_file_content(self):
@@ -187,9 +172,7 @@ class TestCheckHardcodedTablesInFile:
         gw = _make_mock_gateway({"src/zephyr/data/foo.py": ""})
         tables = {"c1_market.kline_daily"}
         pattern = _build_table_name_pattern(tables)
-        violations = check_hardcoded_tables_in_file(
-            gw, "src/zephyr/data/foo.py", tables, pattern
-        )
+        violations = check_hardcoded_tables_in_file(gw, "src/zephyr/data/foo.py", tables, pattern)
         assert violations == []
 
     def test_no_added_lines(self):
@@ -198,41 +181,30 @@ class TestCheckHardcodedTablesInFile:
         gw = _make_mock_gateway({"src/zephyr/data/foo.py": content})
         # Override _get_added_lines to return empty
         with patch(
-            "zephyr.gov_enforcement.commit_gates.table_name_registry_gate"
-            "._get_added_lines",
+            "zephyr.gov_enforcement.commit_gates.table_name_registry_gate._get_added_lines",
             return_value=[],
         ):
             tables = {"c1_market.kline_daily"}
             pattern = _build_table_name_pattern(tables)
-            violations = check_hardcoded_tables_in_file(
-                gw, "src/zephyr/data/foo.py", tables, pattern
-            )
+            violations = check_hardcoded_tables_in_file(gw, "src/zephyr/data/foo.py", tables, pattern)
             assert violations == []
 
     def test_multiple_violations(self):
         """多行硬编码表名 → 多条违规。"""
-        content = (
-            'T1 = "c1_market.kline_daily"\n'
-            'T2 = "c1_market.adj_factor"\n'
-            'T3 = "not_a_table"\n'
-        )
+        content = 'T1 = "c1_market.kline_daily"\nT2 = "c1_market.adj_factor"\nT3 = "not_a_table"\n'
         gw = _make_mock_gateway({"src/zephyr/data/foo.py": content})
         tables = {"c1_market.kline_daily", "c1_market.adj_factor"}
         pattern = _build_table_name_pattern(tables)
-        violations = check_hardcoded_tables_in_file(
-            gw, "src/zephyr/data/foo.py", tables, pattern
-        )
+        violations = check_hardcoded_tables_in_file(gw, "src/zephyr/data/foo.py", tables, pattern)
         assert len(violations) == 2
 
     def test_syntax_error_fail_open(self):
         """语法错误 → fail-open 返回空。"""
-        content = 'def broken(:\n'
+        content = "def broken(:\n"
         gw = _make_mock_gateway({"src/zephyr/data/foo.py": content})
         tables = {"c1_market.kline_daily"}
         pattern = _build_table_name_pattern(tables)
-        violations = check_hardcoded_tables_in_file(
-            gw, "src/zephyr/data/foo.py", tables, pattern
-        )
+        violations = check_hardcoded_tables_in_file(gw, "src/zephyr/data/foo.py", tables, pattern)
         assert violations == []
 
 
@@ -246,11 +218,7 @@ class TestCheckTasksYamlTables:
 
     def test_registered_table_pass(self):
         """tasks.yaml 表名已注册 → 通过。"""
-        content = (
-            "tasks:\n"
-            "  - task_id: test_task\n"
-            "    table: c1_market.kline_daily\n"
-        )
+        content = "tasks:\n  - task_id: test_task\n    table: c1_market.kline_daily\n"
         gw = _make_mock_gateway({"src/zephyr/data/config/tasks.yaml": content})
         registry = _make_test_registry()
         warnings = check_tasks_yaml_tables(gw, registry)
@@ -258,11 +226,7 @@ class TestCheckTasksYamlTables:
 
     def test_unregistered_table_warn(self):
         """tasks.yaml 表名未注册 → 警告。"""
-        content = (
-            "tasks:\n"
-            "  - task_id: test_task\n"
-            "    table: c1_market.nonexistent\n"
-        )
+        content = "tasks:\n  - task_id: test_task\n    table: c1_market.nonexistent\n"
         gw = _make_mock_gateway({"src/zephyr/data/config/tasks.yaml": content})
         registry = _make_test_registry()
         warnings = check_tasks_yaml_tables(gw, registry)
@@ -279,11 +243,7 @@ class TestCheckTasksYamlTables:
 
     def test_no_table_field(self):
         """任务无 table 字段 → 跳过。"""
-        content = (
-            "tasks:\n"
-            "  - task_id: no_table_task\n"
-            "    source: test\n"
-        )
+        content = "tasks:\n  - task_id: no_table_task\n    source: test\n"
         gw = _make_mock_gateway({"src/zephyr/data/config/tasks.yaml": content})
         registry = _make_test_registry()
         warnings = check_tasks_yaml_tables(gw, registry)
@@ -332,9 +292,7 @@ class TestGateSpecFields:
 class TestCheckClosure:
     """测试 _check 闭包行为。"""
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_no_staged_py_files(self, mock_get_registry, tmp_path):
         """无 staged .py 文件且无 tasks.yaml → 放行。"""
         mock_get_registry.return_value = _make_test_registry()
@@ -344,9 +302,7 @@ class TestCheckClosure:
         assert passed is True
         assert detail == ""
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_hardcoded_table_block(self, mock_get_registry, tmp_path):
         """staged .py 含硬编码表名 → block（passed=False 阻断 commit）。"""
         mock_get_registry.return_value = _make_test_registry()
@@ -358,9 +314,7 @@ class TestCheckClosure:
         assert "c1_market.kline_daily" in detail
         assert "TableRegistry" in detail
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_no_hardcoded_table_pass(self, mock_get_registry, tmp_path):
         """staged .py 不含表名 → 放行。"""
         mock_get_registry.return_value = _make_test_registry()
@@ -371,9 +325,7 @@ class TestCheckClosure:
         assert passed is True
         assert detail == ""
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_tests_exempt(self, mock_get_registry, tmp_path):
         """tests/ 文件豁免 → 放行（即使含硬编码表名）。"""
         mock_get_registry.return_value = _make_test_registry()
@@ -384,68 +336,40 @@ class TestCheckClosure:
         assert passed is True
         assert detail == ""
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_table_registry_exempt(self, mock_get_registry, tmp_path):
         """table_registry.py 自身豁免 → 放行。"""
         mock_get_registry.return_value = _make_test_registry()
         content = 'TABLE = "c1_market.kline_daily"\n'
-        gw = _make_mock_gateway(
-            {"src/zephyr/data/table_registry.py": content}
-        )
+        gw = _make_mock_gateway({"src/zephyr/data/table_registry.py": content})
         gate = make_table_name_registry_gate()
-        passed, detail = gate.check(
-            gw, ["src/zephyr/data/table_registry.py"]
-        )
+        passed, detail = gate.check(gw, ["src/zephyr/data/table_registry.py"])
         assert passed is True
         assert detail == ""
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_tasks_yaml_unregistered_block(self, mock_get_registry, tmp_path):
         """tasks.yaml 含未注册表名 → block（passed=False 阻断 commit）。"""
         mock_get_registry.return_value = _make_test_registry()
-        tasks_content = (
-            "tasks:\n"
-            "  - task_id: bad_task\n"
-            "    table: c1_market.nonexistent\n"
-        )
-        gw = _make_mock_gateway(
-            {"src/zephyr/data/config/tasks.yaml": tasks_content}
-        )
+        tasks_content = "tasks:\n  - task_id: bad_task\n    table: c1_market.nonexistent\n"
+        gw = _make_mock_gateway({"src/zephyr/data/config/tasks.yaml": tasks_content})
         gate = make_table_name_registry_gate()
-        passed, detail = gate.check(
-            gw, ["src/zephyr/data/config/tasks.yaml"]
-        )
+        passed, detail = gate.check(gw, ["src/zephyr/data/config/tasks.yaml"])
         assert passed is False  # block
         assert "nonexistent" in detail
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_tasks_yaml_registered_pass(self, mock_get_registry, tmp_path):
         """tasks.yaml 表名全部已注册 → 放行。"""
         mock_get_registry.return_value = _make_test_registry()
-        tasks_content = (
-            "tasks:\n"
-            "  - task_id: good_task\n"
-            "    table: c1_market.kline_daily\n"
-        )
-        gw = _make_mock_gateway(
-            {"src/zephyr/data/config/tasks.yaml": tasks_content}
-        )
+        tasks_content = "tasks:\n  - task_id: good_task\n    table: c1_market.kline_daily\n"
+        gw = _make_mock_gateway({"src/zephyr/data/config/tasks.yaml": tasks_content})
         gate = make_table_name_registry_gate()
-        passed, detail = gate.check(
-            gw, ["src/zephyr/data/config/tasks.yaml"]
-        )
+        passed, detail = gate.check(gw, ["src/zephyr/data/config/tasks.yaml"])
         assert passed is True
         assert detail == ""
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_empty_registry_fail_open(self, mock_get_registry, tmp_path):
         """TableRegistry 为空 → fail-open。"""
         mock_get_registry.return_value = TableRegistry(categories=[])
@@ -456,9 +380,7 @@ class TestCheckClosure:
         assert passed is True
         assert detail == ""
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_registry_load_error_fail_open(self, mock_get_registry, tmp_path):
         """TableRegistry 加载异常 → fail-open。"""
         mock_get_registry.side_effect = RuntimeError("DB down")
@@ -469,22 +391,18 @@ class TestCheckClosure:
         assert passed is True
         assert detail == ""
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_both_detection_modes(self, mock_get_registry, tmp_path):
         """同时触发两种检测模式（.py 硬编码 + tasks.yaml 未注册）。"""
         mock_get_registry.return_value = _make_test_registry()
         py_content = 'TABLE = "c1_market.kline_daily"\n'
-        tasks_content = (
-            "tasks:\n"
-            "  - task_id: bad_task\n"
-            "    table: c1_market.nonexistent\n"
+        tasks_content = "tasks:\n  - task_id: bad_task\n    table: c1_market.nonexistent\n"
+        gw = _make_mock_gateway(
+            {
+                "src/zephyr/data/foo.py": py_content,
+                "src/zephyr/data/config/tasks.yaml": tasks_content,
+            }
         )
-        gw = _make_mock_gateway({
-            "src/zephyr/data/foo.py": py_content,
-            "src/zephyr/data/config/tasks.yaml": tasks_content,
-        })
         gate = make_table_name_registry_gate()
         passed, detail = gate.check(
             gw,
@@ -494,20 +412,12 @@ class TestCheckClosure:
         assert "c1_market.kline_daily" in detail  # Detection 1
         assert "nonexistent" in detail  # Detection 2
 
-    @patch(
-        "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
-    )
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
     def test_windows_path_normalization(self, mock_get_registry, tmp_path):
         """Windows 反斜杠路径归一化（tasks.yaml 触发）。"""
         mock_get_registry.return_value = _make_test_registry()
-        tasks_content = (
-            "tasks:\n"
-            "  - task_id: bad_task\n"
-            "    table: c1_market.nonexistent\n"
-        )
-        gw = _make_mock_gateway(
-            {"src/zephyr/data/config/tasks.yaml": tasks_content}
-        )
+        tasks_content = "tasks:\n  - task_id: bad_task\n    table: c1_market.nonexistent\n"
+        gw = _make_mock_gateway({"src/zephyr/data/config/tasks.yaml": tasks_content})
         gate = make_table_name_registry_gate()
         passed, detail = gate.check(
             gw,

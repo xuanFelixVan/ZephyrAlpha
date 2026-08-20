@@ -26,6 +26,7 @@
 注意：gate 用 subprocess.run 调用 check 脚本——monkeypatch 隔离，不执行真实脚本。
 配置文件用 tmp_path 真实创建（os.path.isfile 检查需要）。
 """
+
 from __future__ import annotations
 
 import sys
@@ -60,6 +61,7 @@ def _install_subprocess(monkeypatch, returncode=0, stdout="", stderr=""):
     def _run(cmd, **kwargs):
         class _R:
             pass
+
         r = _R()
         r.returncode = returncode
         r.stdout = stdout
@@ -116,9 +118,7 @@ class TestGatewayIntegration:
     def test_exit_one_blocked(self, tmp_path, monkeypatch):
         cfg = tmp_path / _CONFIG_REL
         cfg.write_text("repos: []\n", encoding="utf-8")
-        _install_subprocess(
-            monkeypatch, returncode=1, stdout="duplicate id: my-hook"
-        )
+        _install_subprocess(monkeypatch, returncode=1, stdout="duplicate id: my-hook")
         gw = _make_gateway(project_root=str(tmp_path))
         passed, msg = make_id_uniqueness_gate().check(gw, [str(cfg)])
         assert not passed  # fail-closed
@@ -145,9 +145,7 @@ class TestGatewayIntegration:
     def test_exit_one_message_contains_duplicate(self, tmp_path, monkeypatch):
         cfg = tmp_path / _CONFIG_REL
         cfg.write_text("repos: []\n", encoding="utf-8")
-        _install_subprocess(
-            monkeypatch, returncode=1, stdout="duplicate hook id: foo"
-        )
+        _install_subprocess(monkeypatch, returncode=1, stdout="duplicate hook id: foo")
         gw = _make_gateway(project_root=str(tmp_path))
         passed, msg = make_id_uniqueness_gate().check(gw, [str(cfg)])
         assert not passed
@@ -157,9 +155,7 @@ class TestGatewayIntegration:
         cfg = tmp_path / _CONFIG_REL
         cfg.write_text("repos: []\n", encoding="utf-8")
         # exit 2 即使 stdout 含 "duplicate" 也不阻断
-        _install_subprocess(
-            monkeypatch, returncode=2, stdout="duplicate id"
-        )
+        _install_subprocess(monkeypatch, returncode=2, stdout="duplicate id")
         gw = _make_gateway(project_root=str(tmp_path))
         passed, msg = make_id_uniqueness_gate().check(gw, [str(cfg)])
         assert passed

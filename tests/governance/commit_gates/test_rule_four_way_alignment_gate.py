@@ -31,6 +31,7 @@ docs/01_policies_and_standards/ 下规则文件或 rule_catalog_registry.yaml。
 
 测试隔离：MagicMock 模拟 gateway.run_git + monkeypatch subprocess.run，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import subprocess
@@ -102,8 +103,10 @@ def _create_checker(tmp_path):
 def _patch_subprocess(monkeypatch, result=None, raises=None):
     """patch subprocess.run：返回固定 result 或抛指定异常。"""
     if raises is not None:
+
         def _raise(*a, **k):
             raise raises
+
         monkeypatch.setattr(subprocess, "run", _raise)
     else:
         res = result or _SubResult(0, "", "")
@@ -250,6 +253,7 @@ class TestGatewayIntegration:
         def _spy(*a, **k):
             called["n"] += 1
             return _SubResult(1, "should not happen\n", "")
+
         monkeypatch.setattr(subprocess, "run", _spy)
         gw = _make_gateway(tmp_path, toplevel=str(tmp_path))
         passed, msg = make_rule_four_way_alignment_gate().check(gw, [f])

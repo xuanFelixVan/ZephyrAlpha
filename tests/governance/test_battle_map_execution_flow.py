@@ -45,6 +45,7 @@ Usage::
     py -3.12 -m pytest tests/governance/test_battle_map_execution_flow.py -k "not e2e"  # 跳过 DB
     py -3.12 -m pytest tests/governance/test_battle_map_execution_flow.py::TestExecutionDataFlowSimulation -v
 """
+
 from __future__ import annotations
 
 import sys
@@ -95,7 +96,12 @@ EXPECTED_FEEDBACK_EDGE: tuple[str, str] = ("BM-EXE-03", "BM-EXE-05")
 
 # indicators 6 件套必需字段
 REQUIRED_INDICATOR_KEYS = {
-    "trigger", "consumes", "params", "data_flow", "code_mapping", "degradation",
+    "trigger",
+    "consumes",
+    "params",
+    "data_flow",
+    "code_mapping",
+    "degradation",
 }
 # data_flow 子结构必需字段
 REQUIRED_DATA_FLOW_KEYS = {"input", "output", "process", "downstream"}
@@ -142,10 +148,7 @@ class TestExecutionTopology:
         finally:
             reader.close()
         exe_ids = set(exe_steps.keys())
-        return [
-            e for e in edges
-            if e["from_step_id"] in exe_ids or e["to_step_id"] in exe_ids
-        ]
+        return [e for e in edges if e["from_step_id"] in exe_ids or e["to_step_id"] in exe_ids]
 
     @pytest.fixture(scope="class")
     def exe_anchors(self, exe_steps):
@@ -165,18 +168,13 @@ class TestExecutionTopology:
 
     def test_exactly_6_execution_steps(self, exe_steps):
         """execution 阶段恰好 6 个环节（无多余/无遗漏）。"""
-        assert len(exe_steps) == 6, (
-            f"execution 阶段应有 6 环节，实际 {len(exe_steps)}: "
-            f"{sorted(exe_steps.keys())}"
-        )
+        assert len(exe_steps) == 6, f"execution 阶段应有 6 环节，实际 {len(exe_steps)}: {sorted(exe_steps.keys())}"
 
     def test_sort_order_chain(self, exe_steps):
         """sort_order 按主链顺序递增（10/20/30/40/50/60）。"""
         for sid, expected_sort in EXPECTED_SORT_ORDERS.items():
             actual = exe_steps[sid].get("sort_order")
-            assert actual == expected_sort, (
-                f"{sid} sort_order 应为 {expected_sort}，实际 {actual}"
-            )
+            assert actual == expected_sort, f"{sid} sort_order 应为 {expected_sort}，实际 {actual}"
 
     def test_sort_order_monotonic(self, exe_steps):
         """按 sort_order 排列后，环节序列等于预期主链。"""
@@ -188,26 +186,15 @@ class TestExecutionTopology:
 
     def test_data_flow_main_chain(self, exe_edges):
         """5 条 data_flow 边构成主链 BM-EXE-01→04→05→02→06→03。"""
-        data_flow_edges = {
-            (e["from_step_id"], e["to_step_id"])
-            for e in exe_edges
-            if e["edge_type"] == "data_flow"
-        }
+        data_flow_edges = {(e["from_step_id"], e["to_step_id"]) for e in exe_edges if e["edge_type"] == "data_flow"}
         for expected in EXPECTED_DATA_FLOW_EDGES:
-            assert expected in data_flow_edges, (
-                f"缺少 data_flow 边 {expected[0]}→{expected[1]}"
-            )
+            assert expected in data_flow_edges, f"缺少 data_flow 边 {expected[0]}→{expected[1]}"
 
     def test_degradation_feedback_loop(self, exe_edges):
         """degradation 反馈边 BM-EXE-03→BM-EXE-05 存在（闭环）。"""
-        degradation_edges = {
-            (e["from_step_id"], e["to_step_id"])
-            for e in exe_edges
-            if e["edge_type"] == "degradation"
-        }
+        degradation_edges = {(e["from_step_id"], e["to_step_id"]) for e in exe_edges if e["edge_type"] == "degradation"}
         assert EXPECTED_FEEDBACK_EDGE in degradation_edges, (
-            f"缺少 degradation 反馈边 {EXPECTED_FEEDBACK_EDGE[0]}→{EXPECTED_FEEDBACK_EDGE[1]}，"
-            f"闭环断裂"
+            f"缺少 degradation 反馈边 {EXPECTED_FEEDBACK_EDGE[0]}→{EXPECTED_FEEDBACK_EDGE[1]}，闭环断裂"
         )
 
     def test_no_old_shortcut_edges(self, exe_edges):
@@ -217,9 +204,7 @@ class TestExecutionTopology:
             ("BM-EXE-02", "BM-EXE-03"),  # 旧：成交回报直连TCA
             ("BM-EXE-03", "BM-EXE-02"),  # 旧：TCA反馈直连交易执行
         }
-        actual_edges = {
-            (e["from_step_id"], e["to_step_id"]) for e in exe_edges
-        }
+        actual_edges = {(e["from_step_id"], e["to_step_id"]) for e in exe_edges}
         leftover = removed_edges & actual_edges
         assert not leftover, f"旧旁路边未删除: {leftover}"
 
@@ -227,9 +212,7 @@ class TestExecutionTopology:
         """每个执行环节至少一个锚点（BM-INV-001）。"""
         anchored_steps = {a["step_id"] for a in exe_anchors}
         for sid in EXPECTED_CHAIN:
-            assert sid in anchored_steps, (
-                f"{sid} 无锚点（违反 BM-INV-001，悬空决策）"
-            )
+            assert sid in anchored_steps, f"{sid} 无锚点（违反 BM-INV-001，悬空决策）"
 
     def test_indicators_6件套_complete(self, exe_steps):
         """每个环节 indicators 含 6 件套全部字段。"""
@@ -267,8 +250,7 @@ class TestExecutionTopology:
             downstream_input = df_down.get("input", "")
             # 至少一个非空（设计完整性）
             assert upstream_output or downstream_input, (
-                f"{from_sid}→{to_sid} 数据流断裂: 上游 output='{upstream_output}'，"
-                f"下游 input='{downstream_input}'"
+                f"{from_sid}→{to_sid} 数据流断裂: 上游 output='{upstream_output}'，下游 input='{downstream_input}'"
             )
 
 
@@ -373,11 +355,13 @@ def _process_trade_execution(pkt: DataPacket) -> DataPacket:
     assert pkt.type == "child_orders", f"BM-EXE-02 输入应为 child_orders，实际 {pkt.type}"
     fills = []
     for child in pkt.payload["children"]:
-        fills.append({
-            "child_id": child["child_id"],
-            "filled_qty": child["qty"],
-            "fill_price": 10.0 + child["child_id"] * 0.01,  # 模拟成交价
-        })
+        fills.append(
+            {
+                "child_id": child["child_id"],
+                "filled_qty": child["qty"],
+                "fill_price": 10.0 + child["child_id"] * 0.01,  # 模拟成交价
+            }
+        )
     return DataPacket(
         type="fill_report",
         payload={
@@ -430,8 +414,7 @@ def _process_tca_analysis(pkt: DataPacket) -> DataPacket:
     # 模拟滑点：成交价偏差
     arrival_price = 10.0
     slippage_bps = sum(
-        abs(f["fill_price"] - arrival_price) / arrival_price * 10000 * f["filled_qty"]
-        for f in fills
+        abs(f["fill_price"] - arrival_price) / arrival_price * 10000 * f["filled_qty"] for f in fills
     ) / max(1, sum(f["filled_qty"] for f in fills))
     return DataPacket(
         type="tca_report",
@@ -488,9 +471,7 @@ class TestExecutionDataFlowSimulation:
         assert "is_cost" in pkt.payload
 
         # 验证：经过的环节序列等于主链
-        assert pkt.history == EXPECTED_CHAIN, (
-            f"流转路径不符:\n预期 {EXPECTED_CHAIN}\n实际 {pkt.history}"
-        )
+        assert pkt.history == EXPECTED_CHAIN, f"流转路径不符:\n预期 {EXPECTED_CHAIN}\n实际 {pkt.history}"
 
     def test_data_type_handoff_correct(self):
         """相邻环节的数据类型交接正确（上游 output type = 下游 input type）。"""
@@ -509,17 +490,13 @@ class TestExecutionDataFlowSimulation:
             payload={"symbol": "000001", "target_qty": 500, "side": "buy"},
         )
         for input_type, sid, output_type in expected_handoffs:
-            assert pkt.type == input_type, (
-                f"{sid} 输入类型应为 {input_type}，实际 {pkt.type}"
-            )
+            assert pkt.type == input_type, f"{sid} 输入类型应为 {input_type}，实际 {pkt.type}"
             processor = STEP_PROCESSORS[sid]
             if sid == "BM-EXE-05":
                 pkt = processor(pkt, tca_feedback=None)
             else:
                 pkt = processor(pkt)
-            assert pkt.type == output_type, (
-                f"{sid} 输出类型应为 {output_type}，实际 {pkt.type}"
-            )
+            assert pkt.type == output_type, f"{sid} 输出类型应为 {output_type}，实际 {pkt.type}"
 
     def test_tca_feedback_closes_loop(self):
         """TCA 反馈闭环：BM-EXE-03 产出 → 回到 BM-EXE-05 调整拆单参数。
@@ -540,12 +517,8 @@ class TestExecutionDataFlowSimulation:
 
         # 第二轮：带反馈，参与率降到 5%、算法切 VWAP（闭环优化）
         second_round = _process_smart_routing(order, tca_feedback=tca_feedback)
-        assert second_round.payload["participation_rate"] == 0.05, (
-            "TCA 反馈应将参与率从 10% 降到 5%（滑点过高降级）"
-        )
-        assert second_round.payload["algo"] == "VWAP", (
-            "TCA 反馈应将算法从 TWAP 切换到 VWAP"
-        )
+        assert second_round.payload["participation_rate"] == 0.05, "TCA 反馈应将参与率从 10% 降到 5%（滑点过高降级）"
+        assert second_round.payload["algo"] == "VWAP", "TCA 反馈应将算法从 TWAP 切换到 VWAP"
 
     def test_full_closed_loop_two_iterations(self):
         """完整闭环两轮迭代：主链跑通→TCA反馈→第二轮拆单优化。

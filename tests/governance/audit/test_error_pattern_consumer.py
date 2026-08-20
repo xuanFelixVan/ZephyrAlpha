@@ -14,6 +14,7 @@
 - TestPersistenceAndIdempotency: 输出文件有效 JSON / 多次运行幂等
 - TestReconcilerFactory: reconciler trigger / clean / warn
 """
+
 from __future__ import annotations
 
 import json
@@ -277,6 +278,7 @@ class TestReconcilerFactory:
     def test_trigger_always_true(self, tmp_path: Path) -> None:
         class _FakeGateway:
             project_root = tmp_path
+
         spec = make_error_pattern_consumer_reconciler(_FakeGateway())
         assert spec.gate_id == "GATE-ERROR-PATTERN-CONSUMER"
         assert spec.priority == 880
@@ -286,6 +288,7 @@ class TestReconcilerFactory:
     def test_reconcile_clean_when_no_events(self, tmp_path: Path) -> None:
         class _FakeGateway:
             project_root = tmp_path
+
         spec = make_error_pattern_consumer_reconciler(_FakeGateway())
         result: ReconcileResult = spec.reconcile(["file.py"], "sess-test")
         assert result.action == "clean"
@@ -295,9 +298,11 @@ class TestReconcilerFactory:
     def test_reconcile_clean_when_events_aggregated(self, tmp_path: Path) -> None:
         class _FakeGateway:
             project_root = tmp_path
+
         telemetry_dir = tmp_path / "data" / "telemetry" / "prod" / "logs"
-        _write_jsonl(telemetry_dir, "telemetry_2026-07-20.jsonl",
-                     [_make_event(), _make_event(error_type="TimeoutError")])
+        _write_jsonl(
+            telemetry_dir, "telemetry_2026-07-20.jsonl", [_make_event(), _make_event(error_type="TimeoutError")]
+        )
         spec = make_error_pattern_consumer_reconciler(_FakeGateway())
         result = spec.reconcile(["file.py"], "sess-test")
         assert result.action == "clean"
@@ -308,6 +313,7 @@ class TestReconcilerFactory:
 
     def test_reconcile_warn_on_aggregation_failure(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """aggregate_error_patterns 抛异常时降级为 warn（reconciler 永不抛异常）。"""
+
         class _FakeGateway:
             project_root = tmp_path
 

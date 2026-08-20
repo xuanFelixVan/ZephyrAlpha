@@ -32,6 +32,7 @@ AGENTS.md §11.1.1 时间戳约定
 测试隔离：MagicMock 模拟 gateway.run_git 返回预设 staged 文件列表 + diff content；
 不读/不写真实仓库，不依赖真实 registry。
 """
+
 from __future__ import annotations
 
 import sys
@@ -184,9 +185,7 @@ class TestDatetimeNowDetected:
     def test_simple_datetime_now_blocked(self):
         """生成器中 datetime.now() → hard-block"""
         gen_file = "scripts/governance/d5_architecture/generators/generate_domain_doc.py"
-        gw = _make_mock_gateway(
-            [gen_file], {gen_file: ["    ts = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([gen_file], {gen_file: ["    ts = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed  # hard-block
@@ -196,9 +195,7 @@ class TestDatetimeNowDetected:
     def test_datetime_now_with_tz(self):
         """datetime.now(tz) → 亦命中（正则只匹配 datetime.now( 前缀）"""
         gen_file = "scripts/governance/d5_architecture/generators/foo.py"
-        gw = _make_mock_gateway(
-            [gen_file], {gen_file: ["    ts = datetime.now(timezone.utc)"]}
-        )
+        gw = _make_mock_gateway([gen_file], {gen_file: ["    ts = datetime.now(timezone.utc)"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -207,9 +204,7 @@ class TestDatetimeNowDetected:
     def test_datetime_now_in_assignment(self):
         """ts = datetime.now() → 命中"""
         gen_file = "scripts/governance/generators/bar.py"
-        gw = _make_mock_gateway(
-            [gen_file], {gen_file: ["ts = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([gen_file], {gen_file: ["ts = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -217,9 +212,7 @@ class TestDatetimeNowDetected:
     def test_generate_prefix_file_blocked(self):
         """文件名以 generate_ 开头（不在 generators/ 目录）→ 亦阻断"""
         gen_file = "scripts/governance/generate_project_depgraph.py"
-        gw = _make_mock_gateway(
-            [gen_file], {gen_file: ["    updated = datetime.now().isoformat()"]}
-        )
+        gw = _make_mock_gateway([gen_file], {gen_file: ["    updated = datetime.now().isoformat()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -234,9 +227,7 @@ class TestDatetimeDatetimeNow:
     def test_datetime_datetime_now(self):
         """datetime.datetime.now() → 正则引擎匹配第二个 datetime.now( → 命中"""
         gen_file = "scripts/governance/d5_architecture/generators/foo.py"
-        gw = _make_mock_gateway(
-            [gen_file], {gen_file: ["    ts = datetime.datetime.now()"]}
-        )
+        gw = _make_mock_gateway([gen_file], {gen_file: ["    ts = datetime.datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -252,9 +243,7 @@ class TestHardBlockBehavior:
     def test_hard_block_returns_false(self):
         """检出违规 → passed=False（hard-block，非 warn）"""
         gen_file = "scripts/governance/generators/foo.py"
-        gw = _make_mock_gateway(
-            [gen_file], {gen_file: ["x = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([gen_file], {gen_file: ["x = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, _ = gate.check(gw, [])
         assert passed is False
@@ -262,9 +251,7 @@ class TestHardBlockBehavior:
     def test_detail_contains_fix_hint(self):
         """detail 含修复指引"""
         gen_file = "scripts/governance/generators/foo.py"
-        gw = _make_mock_gateway(
-            [gen_file], {gen_file: ["x = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([gen_file], {gen_file: ["x = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         _, detail = gate.check(gw, [])
         assert "now_utc" in detail or "datetime.now(UTC)" in detail  # 修复指引
@@ -272,9 +259,7 @@ class TestHardBlockBehavior:
     def test_detail_contains_file_path(self):
         """detail 含违规文件路径"""
         gen_file = "scripts/governance/generators/foo.py"
-        gw = _make_mock_gateway(
-            [gen_file], {gen_file: ["x = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([gen_file], {gen_file: ["x = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         _, detail = gate.check(gw, [])
         assert gen_file in detail
@@ -289,9 +274,7 @@ class TestNonGeneratorFileExemption:
     def test_non_generator_non_src_zephyr_file_passes(self):
         """非生成器非 src/zephyr/ 文件中的 datetime.now() → 豁免"""
         non_gen = "scripts/ops/some_tool.py"
-        gw = _make_mock_gateway(
-            [non_gen], {non_gen: ["    ts = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([non_gen], {non_gen: ["    ts = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed  # 豁免
@@ -300,9 +283,7 @@ class TestNonGeneratorFileExemption:
     def test_runtime_module_outside_src_zephyr_passes(self):
         """src/zephyr/ 之外的运行时模块中的 datetime.now() → 豁免"""
         non_gen = "scripts/governance/some_runtime.py"
-        gw = _make_mock_gateway(
-            [non_gen], {non_gen: ["    now = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([non_gen], {non_gen: ["    now = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -317,9 +298,7 @@ class TestTestExempt:
     def test_tests_dir_exempt(self):
         """tests/ 下生成器文件中的 datetime.now() → 豁免"""
         test_file = "tests/governance/commit_gates/test_datetime_now_forbidden_gate.py"
-        gw = _make_mock_gateway(
-            [test_file], {test_file: ["    ts = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([test_file], {test_file: ["    ts = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -335,9 +314,7 @@ class TestImportExemption:
     def test_import_datetime_now_passes(self):
         """import 行中的 datetime.now → 豁免（误判保护）"""
         gen_file = "scripts/governance/generators/foo.py"
-        gw = _make_mock_gateway(
-            [gen_file], {gen_file: ["from datetime import datetime.now"]}
-        )
+        gw = _make_mock_gateway([gen_file], {gen_file: ["from datetime import datetime.now"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -353,9 +330,7 @@ class TestCommentExemption:
     def test_comment_passes(self):
         """注释行中的 datetime.now() → 豁免"""
         gen_file = "scripts/governance/generators/foo.py"
-        gw = _make_mock_gateway(
-            [gen_file], {gen_file: ["# x = datetime.now()  # 已禁用"]}
-        )
+        gw = _make_mock_gateway([gen_file], {gen_file: ["# x = datetime.now()  # 已禁用"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -382,7 +357,16 @@ def foo():
 '''
         gw = _make_mock_gateway(
             [gen_file],
-            {gen_file: ['"""foo.py 生成器', "示例（禁止使用）::", "    ts = datetime.now()  # 违规，仅文档示例", '"""', "def foo():", "    pass"]},
+            {
+                gen_file: [
+                    '"""foo.py 生成器',
+                    "示例（禁止使用）::",
+                    "    ts = datetime.now()  # 违规，仅文档示例",
+                    '"""',
+                    "def foo():",
+                    "    pass",
+                ]
+            },
             file_contents={gen_file: file_content},
         )
         gate = make_datetime_now_forbidden_gate()
@@ -398,13 +382,7 @@ def foo():
         新方案：ast 只识别真正 docstring，__manifest__ 是 Assign 节点不豁免。
         """
         gen_file = "scripts/governance/generators/foo.py"
-        full_content = (
-            '__manifest__ = """\n'
-            'args: []\n'
-            '"""\n'
-            '\n'
-            'ts = datetime.now()  # 这行应被检测\n'
-        )
+        full_content = '__manifest__ = """\nargs: []\n"""\n\nts = datetime.now()  # 这行应被检测\n'
         gw = _make_mock_gateway(
             [gen_file],
             {gen_file: ["ts = datetime.now()  # 这行应被检测"]},
@@ -426,9 +404,7 @@ class TestNonPyFile:
     def test_yaml_file_passes(self):
         """非 .py 文件（如 .yaml）→ 豁免"""
         yaml_file = "scripts/governance/generators/config.yaml"
-        gw = _make_mock_gateway(
-            [yaml_file], {yaml_file: ["ts: datetime.now()"]}
-        )
+        gw = _make_mock_gateway([yaml_file], {yaml_file: ["ts: datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -437,9 +413,7 @@ class TestNonPyFile:
     def test_md_file_passes(self):
         """非 .py 文件（如 .md）→ 豁免"""
         md_file = "scripts/governance/generators/README.md"
-        gw = _make_mock_gateway(
-            [md_file], {md_file: ["ts = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([md_file], {md_file: ["ts = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -462,9 +436,7 @@ class TestNoStagedFile:
     def test_no_generator_files_passes(self):
         """staged 全是非生成器非 src/zephyr/ .py → 通过"""
         non_gen = "scripts/ops/foo.py"
-        gw = _make_mock_gateway(
-            [non_gen], {non_gen: ["x = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([non_gen], {non_gen: ["x = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -531,9 +503,7 @@ class TestSrcZephyrTimeTimeDetection:
     def test_time_time_in_src_zephyr_blocked(self):
         """src/zephyr/ 中 time.time() → hard-block"""
         src_file = "src/zephyr/trading/some_service.py"
-        gw = _make_mock_gateway(
-            [src_file], {src_file: ["    ts = time.time()"]}
-        )
+        gw = _make_mock_gateway([src_file], {src_file: ["    ts = time.time()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -543,9 +513,7 @@ class TestSrcZephyrTimeTimeDetection:
     def test_time_time_with_args_still_blocked(self):
         """time.time() 不接受参数，任何形式都命中"""
         src_file = "src/zephyr/gov_enforcement/foo.py"
-        gw = _make_mock_gateway(
-            [src_file], {src_file: ["    start = time.time()  # 性能计时"]}
-        )
+        gw = _make_mock_gateway([src_file], {src_file: ["    start = time.time()  # 性能计时"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -553,9 +521,7 @@ class TestSrcZephyrTimeTimeDetection:
     def test_time_time_outside_src_zephyr_passes(self):
         """src/zephyr/ 之外的 time.time() → 豁免"""
         ext_file = "scripts/ops/benchmark.py"
-        gw = _make_mock_gateway(
-            [ext_file], {ext_file: ["    ts = time.time()"]}
-        )
+        gw = _make_mock_gateway([ext_file], {ext_file: ["    ts = time.time()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -573,9 +539,7 @@ class TestSrcZephyrNaiveDatetimeDetection:
     def test_naive_datetime_now_in_src_zephyr_blocked(self):
         """src/zephyr/ 中 datetime.now() 无参数 → hard-block"""
         src_file = "src/zephyr/trading/some_service.py"
-        gw = _make_mock_gateway(
-            [src_file], {src_file: ["    ts = datetime.now()"]}
-        )
+        gw = _make_mock_gateway([src_file], {src_file: ["    ts = datetime.now()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -584,9 +548,7 @@ class TestSrcZephyrNaiveDatetimeDetection:
     def test_datetime_now_with_utc_passes(self):
         """src/zephyr/ 中 datetime.now(UTC) → 通过（aware datetime 合法）"""
         src_file = "src/zephyr/trading/some_service.py"
-        gw = _make_mock_gateway(
-            [src_file], {src_file: ["    ts = datetime.now(UTC)"]}
-        )
+        gw = _make_mock_gateway([src_file], {src_file: ["    ts = datetime.now(UTC)"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -595,9 +557,7 @@ class TestSrcZephyrNaiveDatetimeDetection:
     def test_datetime_now_with_timezone_utc_passes(self):
         """src/zephyr/ 中 datetime.now(timezone.utc) → 通过"""
         src_file = "src/zephyr/gov_enforcement/foo.py"
-        gw = _make_mock_gateway(
-            [src_file], {src_file: ["    ts = datetime.now(timezone.utc)"]}
-        )
+        gw = _make_mock_gateway([src_file], {src_file: ["    ts = datetime.now(timezone.utc)"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -606,9 +566,7 @@ class TestSrcZephyrNaiveDatetimeDetection:
     def test_datetime_now_with_tz_arg_passes(self):
         """src/zephyr/ 中 datetime.now(tz=foo) → 通过"""
         src_file = "src/zephyr/data/handler.py"
-        gw = _make_mock_gateway(
-            [src_file], {src_file: ["    ts = datetime.now(tz=cst_tz)"]}
-        )
+        gw = _make_mock_gateway([src_file], {src_file: ["    ts = datetime.now(tz=cst_tz)"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -637,7 +595,8 @@ class TestNoqaExemption:
         """src/zephyr/ 中 datetime.now() + noqa:m46-time 标记 → 豁免"""
         src_file = "src/zephyr/trading/legacy.py"
         gw = _make_mock_gateway(
-            [src_file], {src_file: ["    ts = datetime.now()  # noqa: m46-time  M46豁免: 第三方 API 强制 naive datetime"]}
+            [src_file],
+            {src_file: ["    ts = datetime.now()  # noqa: m46-time  M46豁免: 第三方 API 强制 naive datetime"]},
         )
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
@@ -649,9 +608,7 @@ class TestNoqaExemption:
         src_file = "src/zephyr/trading/foo.py"
         # 用字符串拼接打断 NOQA-VALIDATION regex（避免源码扫描误判未登记标记）
         wrong_noqa = "# no" + "qa: m99-xxx  错误标记"
-        gw = _make_mock_gateway(
-            [src_file], {src_file: ["    ts = time.time()  " + wrong_noqa]}
-        )
+        gw = _make_mock_gateway([src_file], {src_file: ["    ts = time.time()  " + wrong_noqa]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed  # 错误标记不豁免
@@ -671,9 +628,7 @@ class TestSrcZephyrBackslashPath:
         # 测试通过 mock 反斜杠输入，验证 normalize 后检测命中
         src_file = "src\\zephyr\\trading\\foo.py"
         # mock file_diffs key 用正斜杠（normalize 后的形式）
-        gw = _make_mock_gateway(
-            [src_file], {"src/zephyr/trading/foo.py": ["    ts = time.time()"]}
-        )
+        gw = _make_mock_gateway([src_file], {"src/zephyr/trading/foo.py": ["    ts = time.time()"]})
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed

@@ -26,7 +26,7 @@ import pytest
 from zephyr.shared.io.paths import REPO_ROOT
 
 # 用 importlib 直接加载，绕过 governance 命名冲突
-#（src/zephyr/governance/ 与 scripts/governance/ 同名导致包解析歧义）
+# （src/zephyr/governance/ 与 scripts/governance/ 同名导致包解析歧义）
 _DFR_PATH = REPO_ROOT / "scripts" / "governance" / "d7_code" / "detect_forward_reference.py"
 _spec = importlib.util.spec_from_file_location("detect_forward_reference", _DFR_PATH)
 _dfr = importlib.util.module_from_spec(_spec)
@@ -73,11 +73,7 @@ class TestFindSelfReferences:
 
     def test_method_body_reference_not_detected(self):
         """方法体内引用自身类名——不应检测到（方法运行时类已定义）。"""
-        code = (
-            "class Member:\n"
-            "    def __eq__(self, other):\n"
-            "        return isinstance(other, Member)\n"
-        )
+        code = "class Member:\n    def __eq__(self, other):\n        return isinstance(other, Member)\n"
         tree = ast.parse(code)
         class_node = tree.body[0]
         refs = find_self_references(class_node)
@@ -93,11 +89,7 @@ class TestFindSelfReferences:
 
     def test_decorator_reference_detected(self):
         """方法装饰器引用自身——应检测到（装饰器在类定义时执行）。"""
-        code = (
-            "class Meta:\n"
-            "    @Meta.register\n"
-            "    def foo(self): pass\n"
-        )
+        code = "class Meta:\n    @Meta.register\n    def foo(self): pass\n"
         tree = ast.parse(code)
         class_node = tree.body[0]
         refs = find_self_references(class_node)
@@ -161,9 +153,7 @@ class TestScanFile:
         """有 from __future__ import annotations 的文件——不报告违规。"""
         fpath = tmp_path / "good_future.py"
         fpath.write_text(
-            "from __future__ import annotations\n"
-            "class Node:\n"
-            "    instances = Node()\n",
+            "from __future__ import annotations\nclass Node:\n    instances = Node()\n",
             encoding="utf-8",
         )
         violations, has_future, error = scan_file(str(fpath))
@@ -193,9 +183,7 @@ class TestScanFile:
         """方法体内的 isinstance 引用——不报告违规。"""
         fpath = tmp_path / "method_ref.py"
         fpath.write_text(
-            "class Member:\n"
-            "    def __eq__(self, other):\n"
-            "        return isinstance(other, Member)\n",
+            "class Member:\n    def __eq__(self, other):\n        return isinstance(other, Member)\n",
             encoding="utf-8",
         )
         violations, has_future, error = scan_file(str(fpath))

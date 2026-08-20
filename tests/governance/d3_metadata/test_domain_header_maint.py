@@ -27,6 +27,7 @@
 测试隔离：tmp_path 构造临时文件，monkeypatch 替换模块级 REPO/SCAN_DIRS/COMMIT_LOCK_FILE，
 不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -103,6 +104,7 @@ def _write(tmp_path: Path, name: str, content: str) -> Path:
 # ---------------------------------------------------------------------------
 # TestClassifyFile
 # ---------------------------------------------------------------------------
+
 
 class TestClassifyFile:
     """验证 classify_file() 在各种文件内容下的分类。"""
@@ -205,11 +207,7 @@ class TestClassifyFile:
 
     def test_domain_after_docstring(self, tmp_path):
         """[DOMAIN] 在 docstring 之后（50行内）→ ok（classify 不检查位置）。"""
-        content = (
-            "# [MODULE] tests.foo\n"
-            '"""docstring\nmulti line\n"""\n'
-            "# [DOMAIN] D_LATE\n"
-        )
+        content = '# [MODULE] tests.foo\n"""docstring\nmulti line\n"""\n# [DOMAIN] D_LATE\n'
         p = _write(tmp_path, "dom_after_doc.py", content)
         status, dom = classify_file(p)
         assert status == "ok"
@@ -219,6 +217,7 @@ class TestClassifyFile:
 # ---------------------------------------------------------------------------
 # TestVerifyFile
 # ---------------------------------------------------------------------------
+
 
 class TestVerifyFile:
     """验证 _verify_file() header 格式校验。"""
@@ -271,11 +270,7 @@ class TestVerifyFile:
     def test_ok_with_warn(self, tmp_path, monkeypatch):
         """MODULE 和 DOMAIN 之间有内容 → ok_with_warn。"""
         monkeypatch.setattr(dhm, "REPO", tmp_path)
-        content = (
-            "# [MODULE] foo\n"
-            "# [STABILITY] evolving\n"
-            "# [DOMAIN] D_BAR\n"
-        )
+        content = "# [MODULE] foo\n# [STABILITY] evolving\n# [DOMAIN] D_BAR\n"
         _write(tmp_path, "warn.py", content)
         status, detail = _verify_file("warn.py")
         assert status == "ok_with_warn"
@@ -295,8 +290,8 @@ class TestVerifyFile:
             "# [MODULE] foo\n"
             "# [DOMAIN] D_BAR\n"
             "# [TTL] permanent\n"
-            "\"\"\"docstring\"\"\"\n"
-            "_TEMPLATE = \"\"\"# [DOMAIN] D_FAKE\"\"\"\n"
+            '"""docstring"""\n'
+            '_TEMPLATE = """# [DOMAIN] D_FAKE"""\n'
         )
         _write(tmp_path, "tmpl.py", content)
         status, dom = _verify_file("tmpl.py")
@@ -311,11 +306,7 @@ class TestVerifyFile:
         - _verify_file 额外检查 MODULE 和 DOMAIN 之间有无内容 → ok_with_warn
         """
         monkeypatch.setattr(dhm, "REPO", tmp_path)
-        content = (
-            "# [MODULE] tests.foo\n"
-            '"""docstring\nmulti line\n"""\n'
-            "# [DOMAIN] D_LATE\n"
-        )
+        content = '# [MODULE] tests.foo\n"""docstring\nmulti line\n"""\n# [DOMAIN] D_LATE\n'
         _write(tmp_path, "dom_after_doc.py", content)
         status, detail = _verify_file("dom_after_doc.py")
         assert status == "ok_with_warn"
@@ -339,6 +330,7 @@ class TestVerifyFile:
 # ---------------------------------------------------------------------------
 # TestReadHead
 # ---------------------------------------------------------------------------
+
 
 class TestReadHead:
     """验证 _read_head() 读取头部逻辑。"""
@@ -381,6 +373,7 @@ class TestReadHead:
 # TestIsProcessAlive
 # ---------------------------------------------------------------------------
 
+
 class TestIsProcessAlive:
     """验证 is_process_alive() 进程检测。"""
 
@@ -405,6 +398,7 @@ class TestIsProcessAlive:
 # ---------------------------------------------------------------------------
 # TestShouldSkip
 # ---------------------------------------------------------------------------
+
 
 class TestShouldSkip:
     """验证 _should_skip() 跳过逻辑。"""
@@ -434,6 +428,7 @@ class TestShouldSkip:
 # ---------------------------------------------------------------------------
 # TestCleanLock
 # ---------------------------------------------------------------------------
+
 
 class TestCleanLock:
     """验证 cmd_clean_lock() 孤儿锁清理。"""
@@ -477,9 +472,7 @@ class TestCleanLock:
     def test_active_lock_not_removed(self, tmp_path, monkeypatch, capsys):
         """活跃锁（当前进程）→ 报告但不清理，exit 1。"""
         lock_file = tmp_path / "git_commit_global.lock"
-        lock_file.write_text(
-            json.dumps({"pid": os.getpid(), "acquired_at": 0}), encoding="utf-8"
-        )
+        lock_file.write_text(json.dumps({"pid": os.getpid(), "acquired_at": 0}), encoding="utf-8")
         monkeypatch.setattr(dhm, "COMMIT_LOCK_FILE", lock_file)
         monkeypatch.setattr(dhm, "REPO", tmp_path)
         args = argparse.Namespace(remove=False, force=False)
@@ -492,9 +485,7 @@ class TestCleanLock:
     def test_active_lock_force_removed(self, tmp_path, monkeypatch, capsys):
         """活跃锁 + --force → 强制清理，exit 0。"""
         lock_file = tmp_path / "git_commit_global.lock"
-        lock_file.write_text(
-            json.dumps({"pid": os.getpid(), "acquired_at": 0}), encoding="utf-8"
-        )
+        lock_file.write_text(json.dumps({"pid": os.getpid(), "acquired_at": 0}), encoding="utf-8")
         monkeypatch.setattr(dhm, "COMMIT_LOCK_FILE", lock_file)
         monkeypatch.setattr(dhm, "REPO", tmp_path)
         args = argparse.Namespace(remove=False, force=True)
@@ -533,6 +524,7 @@ class TestCleanLock:
 # ---------------------------------------------------------------------------
 # TestCmdScan
 # ---------------------------------------------------------------------------
+
 
 class TestCmdScan:
     """验证 cmd_scan() 扫描子命令。"""
@@ -609,9 +601,7 @@ class TestCmdScan:
     def test_domain_distribution(self, tmp_path, monkeypatch, capsys):
         """域分布统计正确。"""
         _write(tmp_path, "a.py", _OK_HEADER)  # D_GOVERNANCE
-        content_b = (
-            "# [MODULE] foo\n# [DOMAIN] D_DATA\n"
-        )
+        content_b = "# [MODULE] foo\n# [DOMAIN] D_DATA\n"
         _write(tmp_path, "b.py", content_b)
         monkeypatch.setattr(dhm, "SCAN_DIRS", [tmp_path])
         monkeypatch.setattr(dhm, "REPO", tmp_path)

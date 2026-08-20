@@ -59,6 +59,7 @@ def _conn_or_skip():
     """
     try:
         from psycopg2.extras import RealDictCursor
+
         conn = get_depgraph_pg_connection(autocommit=False, read_only=False)
         conn.cursor_factory = RealDictCursor
         return conn
@@ -111,12 +112,28 @@ def _run_convert_sql(conn, node_id: int, conv_build_status: str) -> None:
     cur.execute(
         gen._SQL_CONVERT_DESIGN_NODE,
         (
-            n["type"], n["granularity"], n["domain_id"], n["subdomain_id"],
-            n["blueprint_id"], n["belongs_to"], n["change_policy"], n["impact_level"],
-            n["modification_permission"], n["file_header_score"], n["tags"],
-            n["architecture_layer"], n["deployment_lifecycle"], n["type_specific_data"],
-            datetime.now().isoformat(), n["node_name"], _TEST_PATH, 1, conv_build_status,
-            n["content_hash"], n["public_api"], node_id,
+            n["type"],
+            n["granularity"],
+            n["domain_id"],
+            n["subdomain_id"],
+            n["blueprint_id"],
+            n["belongs_to"],
+            n["change_policy"],
+            n["impact_level"],
+            n["modification_permission"],
+            n["file_header_score"],
+            n["tags"],
+            n["architecture_layer"],
+            n["deployment_lifecycle"],
+            n["type_specific_data"],
+            datetime.now().isoformat(),
+            n["node_name"],
+            _TEST_PATH,
+            1,
+            conv_build_status,
+            n["content_hash"],
+            n["public_api"],
+            node_id,
         ),
     )
     conn.commit()
@@ -154,15 +171,34 @@ class TestConvertDesignNodeSQL:
         # 第二次转换：行已 production → WHERE 不命中 → 0 行更新，不报错
         cur = conn.cursor()
         from datetime import datetime
+
         n = _PROBE_NODE
         cur.execute(
             gen._SQL_CONVERT_DESIGN_NODE,
-            (n["type"], n["granularity"], n["domain_id"], n["subdomain_id"],
-             n["blueprint_id"], n["belongs_to"], n["change_policy"], n["impact_level"],
-             n["modification_permission"], n["file_header_score"], n["tags"],
-             n["architecture_layer"], n["deployment_lifecycle"], n["type_specific_data"],
-             datetime.now().isoformat(), n["node_name"], _TEST_PATH, 1, "generated",
-             n["content_hash"], n["public_api"], nid),
+            (
+                n["type"],
+                n["granularity"],
+                n["domain_id"],
+                n["subdomain_id"],
+                n["blueprint_id"],
+                n["belongs_to"],
+                n["change_policy"],
+                n["impact_level"],
+                n["modification_permission"],
+                n["file_header_score"],
+                n["tags"],
+                n["architecture_layer"],
+                n["deployment_lifecycle"],
+                n["type_specific_data"],
+                datetime.now().isoformat(),
+                n["node_name"],
+                _TEST_PATH,
+                1,
+                "generated",
+                n["content_hash"],
+                n["public_api"],
+                nid,
+            ),
         )
         assert cur.rowcount == 0, "已转 production 的行不应再被 UPDATE（幂等守卫）"
         conn.commit()
@@ -210,9 +246,7 @@ class TestGateMessageCliAccuracy:
         try:
             # files 必须与 staged 新增交集非空（gate L229-240 的 commit 范围收窄）
             probe_abs = str(_REPO_ROOT / "src" / "zephyr" / "_arch70_gate_probe.py")
-            ok, detail = spec.check(
-                _FakeGateway(), [probe_abs], commit_message="", session_id="t"
-            )
+            ok, detail = spec.check(_FakeGateway(), [probe_abs], commit_message="", session_id="t")
         finally:
             gate_mod._check_depgraph_has_file = orig
         assert not ok, "强制 missing 时门禁必须阻断"

@@ -20,6 +20,7 @@
 - 综合评分 clamp [0, 1]
 - fail-safe：异常输入不抛异常
 """
+
 from __future__ import annotations
 
 import sys
@@ -74,8 +75,12 @@ class TestDefaultWeights:
     def test_six_dimensions_present(self):
         """6 维都有权重。"""
         expected = {
-            "warn_only_24h", "emergency_commit_24h", "allow_overlap_7d",
-            "forged_gw_marker_24h", "non_gw_commit_24h", "force_merge_7d",
+            "warn_only_24h",
+            "emergency_commit_24h",
+            "allow_overlap_7d",
+            "forged_gw_marker_24h",
+            "non_gw_commit_24h",
+            "force_merge_7d",
         }
         assert set(_DEFAULT_WEIGHTS.keys()) == expected
 
@@ -150,21 +155,33 @@ class TestThresholdZeroFailSafe:
 
     def test_threshold_zero_dim_score_zero(self):
         """threshold=0 → 该维得分=0.0（fail-safe，不抛异常）。"""
-        metrics = {"warn_only_24h": 100, "emergency_commit_24h": 0,
-                   "allow_overlap_7d": 0, "forged_gw_marker_24h": 0,
-                   "non_gw_commit_24h": 0}
-        thresholds = {"warn_only_24h": 0, "emergency_commit_24h": 5,
-                      "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-                      "non_gw_commit_24h": 10}
+        metrics = {
+            "warn_only_24h": 100,
+            "emergency_commit_24h": 0,
+            "allow_overlap_7d": 0,
+            "forged_gw_marker_24h": 0,
+            "non_gw_commit_24h": 0,
+        }
+        thresholds = {
+            "warn_only_24h": 0,
+            "emergency_commit_24h": 5,
+            "allow_overlap_7d": 30,
+            "forged_gw_marker_24h": 3,
+            "non_gw_commit_24h": 10,
+        }
         result = calculate_health_score(metrics, thresholds)
         assert result.dimension_scores["warn_only_24h"] == 0.0
         assert "warn_only_24h" not in result.triggered_dimensions
 
     def test_all_thresholds_zero_returns_zero_score(self):
         """所有 threshold=0 → score=0.0（fail-safe）。"""
-        metrics = {"warn_only_24h": 100, "emergency_commit_24h": 10,
-                   "allow_overlap_7d": 60, "forged_gw_marker_24h": 6,
-                   "non_gw_commit_24h": 20}
+        metrics = {
+            "warn_only_24h": 100,
+            "emergency_commit_24h": 10,
+            "allow_overlap_7d": 60,
+            "forged_gw_marker_24h": 6,
+            "non_gw_commit_24h": 20,
+        }
         thresholds = {dim: 0 for dim in metrics}
         result = calculate_health_score(metrics, thresholds)
         assert result.score == 0.0
@@ -174,9 +191,12 @@ class TestCustomWeights:
     """自定义权重测试。"""
 
     THRESHOLDS = {
-        "warn_only_24h": 50, "emergency_commit_24h": 5,
-        "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-        "non_gw_commit_24h": 10, "force_merge_7d": 5,
+        "warn_only_24h": 50,
+        "emergency_commit_24h": 5,
+        "allow_overlap_7d": 30,
+        "forged_gw_marker_24h": 3,
+        "non_gw_commit_24h": 10,
+        "force_merge_7d": 5,
     }
 
     def test_custom_weights_used(self):
@@ -231,9 +251,12 @@ class TestUnknownDimensionsFiltered:
             "adaptive_thresholds": {"warn_only_sustained_24h": 75.0},
         }
         thresholds = {
-            "warn_only_24h": 50, "emergency_commit_24h": 5,
-            "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-            "non_gw_commit_24h": 10, "force_merge_7d": 5,
+            "warn_only_24h": 50,
+            "emergency_commit_24h": 5,
+            "allow_overlap_7d": 30,
+            "forged_gw_marker_24h": 3,
+            "non_gw_commit_24h": 10,
+            "force_merge_7d": 5,
         }
         result = calculate_health_score(metrics, thresholds)
         # 只应包含 6 维得分
@@ -301,9 +324,12 @@ class TestAbuseMonitorIntegration:
     """模拟 abuse_monitor metrics 场景，验证 P3-2 设计满足 P3-3 接入需求。"""
 
     THRESHOLDS = {
-        "warn_only_24h": 50, "emergency_commit_24h": 5,
-        "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-        "non_gw_commit_24h": 10, "force_merge_7d": 5,
+        "warn_only_24h": 50,
+        "emergency_commit_24h": 5,
+        "allow_overlap_7d": 30,
+        "forged_gw_marker_24h": 3,
+        "non_gw_commit_24h": 10,
+        "force_merge_7d": 5,
     }
 
     def test_clean_scenario_low_score(self):

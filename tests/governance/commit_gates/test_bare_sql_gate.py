@@ -29,6 +29,7 @@ docstring/注释/import 行级豁免由 _extract_docstring_lines / _is_exempt_li
 
 测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import sys
@@ -62,8 +63,10 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     gw.project_root = str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -180,14 +183,10 @@ class TestSqlPatternExtended:
         assert _SQL_PATTERN.search('"SELECT COUNT(DISTINCT scan_run_id) FROM findings"')
 
     def test_select_with_join(self):
-        assert _SQL_PATTERN.search(
-            '"SELECT a.col FROM tbl_a a JOIN tbl_b b ON a.id = b.id"'
-        )
+        assert _SQL_PATTERN.search('"SELECT a.col FROM tbl_a a JOIN tbl_b b ON a.id = b.id"')
 
     def test_select_with_where(self):
-        assert _SQL_PATTERN.search(
-            '"SELECT col FROM tbl WHERE id = ? AND status = ?"'
-        )
+        assert _SQL_PATTERN.search('"SELECT col FROM tbl WHERE id = ? AND status = ?"')
 
     def test_multi_table_update(self):
         assert _SQL_PATTERN.search('"UPDATE tasks SET status = ? WHERE id = ?"')
@@ -196,9 +195,7 @@ class TestSqlPatternExtended:
         assert _SQL_PATTERN.search('"UPDATE schema.tasks SET status = ?"')
 
     def test_insert_into_with_columns(self):
-        assert _SQL_PATTERN.search(
-            '"INSERT INTO tbl (col1, col2) VALUES (?, ?)"'
-        )
+        assert _SQL_PATTERN.search('"INSERT INTO tbl (col1, col2) VALUES (?, ?)"')
 
     def test_delete_from_with_where(self):
         assert _SQL_PATTERN.search('"DELETE FROM tbl WHERE id = ?"')
@@ -230,9 +227,7 @@ class TestSqlPatternExtended:
         assert _SQL_PATTERN.search('"SELECT * FROM tbl"')
 
     def test_select_with_subquery(self):
-        assert _SQL_PATTERN.search(
-            '"SELECT col FROM (SELECT * FROM sub) t"'
-        )
+        assert _SQL_PATTERN.search('"SELECT col FROM (SELECT * FROM sub) t"')
 
 
 # ---------------------------------------------------------------------------
@@ -276,11 +271,7 @@ class TestGatewayIntegration:
 
     def test_docstring_line_exempt(self):
         blue = "src/zephyr/trading/mod.py"
-        content = (
-            '"""module docstring\n'
-            'sql = "SELECT col FROM tbl"\n'
-            '"""\n'
-        )
+        content = '"""module docstring\nsql = "SELECT col FROM tbl"\n"""\n'
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_bare_sql_gate().check(gw, [])
         assert passed  # docstring 内行豁免
@@ -306,9 +297,7 @@ class TestGatewayIntegration:
     def test_private_sql_pattern_def_exempt(self):
         """_SQL_PATTERN = re.compile(...) 行应豁免（gate 自身定义）。"""
         blue = "src/zephyr/trading/mod.py"
-        content = (
-            '_SQL_PATTERN = re.compile(r"""SELECT col FROM tbl""")\n'
-        )
+        content = '_SQL_PATTERN = re.compile(r"""SELECT col FROM tbl""")\n'
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_bare_sql_gate().check(gw, [])
         assert passed  # _SQL_* 常量定义行豁免
@@ -323,13 +312,7 @@ class TestGatewayIntegration:
         新方案：ast 只识别真正 docstring，__manifest__ 是 Assign 节点不豁免。
         """
         red = "src/zephyr/trading/mod.py"
-        content = (
-            '__manifest__ = """\n'
-            'args: []\n'
-            '"""\n'
-            '\n'
-            'sql = "SELECT col FROM tbl"\n'
-        )
+        content = '__manifest__ = """\nargs: []\n"""\n\nsql = "SELECT col FROM tbl"\n'
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_bare_sql_gate().check(gw, [])
         assert not passed  # 应被阻断（R95 修复）
@@ -344,12 +327,12 @@ class TestGatewayIntegration:
         """
         red = "src/zephyr/trading/mod.py"
         content = (
-            '"""module docstring"""\n'      # L1 — 识别为 docstring
-            '\n'                             # L2
-            '__manifest__ = """\n'          # L3 — Assign，不识别
-            'args: []\n'                     # L4
-            '"""\n'                          # L5 — manifest 结束
-            '\n'                             # L6
+            '"""module docstring"""\n'  # L1 — 识别为 docstring
+            "\n"  # L2
+            '__manifest__ = """\n'  # L3 — Assign，不识别
+            "args: []\n"  # L4
+            '"""\n'  # L5 — manifest 结束
+            "\n"  # L6
             'sql = "UPDATE tasks SET x=1"\n'  # L7 — 应被检测
         )
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
@@ -367,9 +350,9 @@ class TestGatewayIntegration:
         """
         blue = "src/zephyr/trading/mod.py"
         content = (
-            'SQL_SELECT = (\n'                                                # L1
-            '    "SELECT task_id FROM task_files WHERE file_path = ?"\n'      # L2
-            ')\n'                                                             # L3
+            "SQL_SELECT = (\n"  # L1
+            '    "SELECT task_id FROM task_files WHERE file_path = ?"\n'  # L2
+            ")\n"  # L3
         )
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_bare_sql_gate().check(gw, [])
@@ -380,8 +363,8 @@ class TestGatewayIntegration:
         """R96 修复：三引号多行 SQL 常量定义不误报。"""
         blue = "src/zephyr/trading/mod.py"
         content = (
-            'SQL_INSERT = """INSERT INTO tasks\n'     # L1
-            '    (id, name) VALUES (?, ?)"""\n'       # L2
+            'SQL_INSERT = """INSERT INTO tasks\n'  # L1
+            '    (id, name) VALUES (?, ?)"""\n'  # L2
         )
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_bare_sql_gate().check(gw, [])
@@ -392,8 +375,8 @@ class TestGatewayIntegration:
         """R96 修复：反斜杠续行 SQL 常量定义不误报。"""
         blue = "src/zephyr/trading/mod.py"
         content = (
-            'SQL_X = \\\n'                                # L1
-            '    "UPDATE tasks SET x=1 WHERE id=?"\n'     # L2
+            "SQL_X = \\\n"  # L1
+            '    "UPDATE tasks SET x=1 WHERE id=?"\n'  # L2
         )
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_bare_sql_gate().check(gw, [])

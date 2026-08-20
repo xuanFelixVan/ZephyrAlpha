@@ -40,6 +40,7 @@
 测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 mock 真源：test_hardcoded_url_gate.py._make_gateway（同 _diff_helpers 模式）。
 """
+
 from __future__ import annotations
 
 import sys
@@ -76,8 +77,10 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     gw.project_root = str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -244,7 +247,7 @@ class TestGatewayIntegration:
 
     def test_env_example_exempt(self):
         red = ".env.example"
-        content = 'TUSHARE_TOKEN=sk-1234567890abcdef1234567890abcdef\n'
+        content = "TUSHARE_TOKEN=sk-1234567890abcdef1234567890abcdef\n"
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_secret_hardcode_gate().check(gw, [])
         assert passed  # .env.example 豁免
@@ -270,11 +273,7 @@ class TestGatewayIntegration:
 
     def test_docstring_line_exempt(self):
         blue = "src/zephyr/trading/mod.py"
-        content = (
-            '"""module docstring\n'
-            'api_key = "12345678abcdef"\n'
-            '"""\n'
-        )
+        content = '"""module docstring\napi_key = "12345678abcdef"\n"""\n'
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_secret_hardcode_gate().check(gw, [])
         assert passed  # docstring 内行豁免
@@ -290,7 +289,7 @@ class TestGatewayIntegration:
 
     def test_import_line_exempt(self):
         blue = "src/zephyr/trading/mod.py"
-        content = 'from x import api_key  # noqa\n'
+        content = "from x import api_key  # noqa\n"
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_secret_hardcode_gate().check(gw, [])
         assert passed  # import 行豁免
@@ -316,7 +315,7 @@ class TestGatewayIntegration:
             staged_files=[red, blue],
             file_contents={
                 red: 'api_key = "12345678abcdef"\n',
-                blue: 'x = 1\n',
+                blue: "x = 1\n",
             },
         )
         passed, msg = make_secret_hardcode_gate().check(gw, [])

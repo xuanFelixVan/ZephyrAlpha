@@ -42,6 +42,7 @@ Usage::
 
     py -3.12 -m pytest tests/governance/audit/test_p3_integration_smoke.py -v
 """
+
 from __future__ import annotations
 
 import pytest
@@ -84,9 +85,7 @@ class TestAdaptiveThresholdCountMode:
         at.set_count_config("test_dim", static_floor=50.0, factor=1.5)
         state = at.get_state("test_dim")
         assert state is not None, "set_count_config 未创建 state"
-        assert state.mode == ThresholdMode.COUNT, (
-            f"mode 应为 COUNT，实际: {state.mode}"
-        )
+        assert state.mode == ThresholdMode.COUNT, f"mode 应为 COUNT，实际: {state.mode}"
         assert state.static_floor == 50.0
         assert state.factor == 1.5
 
@@ -101,11 +100,8 @@ class TestAdaptiveThresholdCountMode:
         # EWMA 应在 10-30 之间，threshold = max(ewma * 1.5, 50)
         ewma_val = at.ewma("test_dim")
         expected_threshold = max(ewma_val * 1.5, 50.0)
-        assert state.current_threshold == pytest.approx(
-            expected_threshold, rel=1e-6
-        ), (
-            f"threshold={state.current_threshold} != max(ewma*factor, floor)="
-            f"{expected_threshold} (ewma={ewma_val})"
+        assert state.current_threshold == pytest.approx(expected_threshold, rel=1e-6), (
+            f"threshold={state.current_threshold} != max(ewma*factor, floor)={expected_threshold} (ewma={ewma_val})"
         )
 
     def test_static_floor_prevents_threshold_below_floor(self):
@@ -116,9 +112,7 @@ class TestAdaptiveThresholdCountMode:
         for count in [1, 1, 1]:
             at.observe_count("test_dim", count)
         threshold = at.get_threshold("test_dim")
-        assert threshold >= 50.0, (
-            f"static_floor 失效：threshold={threshold} < 50.0（应 >= static_floor）"
-        )
+        assert threshold >= 50.0, f"static_floor 失效：threshold={threshold} < 50.0（应 >= static_floor）"
 
     def test_count_mode_is_immutable(self):
         """COUNT 模式不可变更为 PROBABILITY（fail-safe）。"""
@@ -148,47 +142,57 @@ class TestComputeAdaptiveThresholds:
         # 构造 7d baseline daily_records
         daily_records = []
         for day in range(7):
-            daily_records.append({
-                "date": f"2026-07-{13+day:02d}",
-                "metrics": {
-                    "warn_only_24h": 30,
-                    "emergency_commit_24h": 2,
-                    "allow_overlap_7d": 10,
-                    "forged_gw_marker_24h": 0,
-                    "non_gw_commit_24h": 5,
-                    "force_merge_7d": 0,
-                },
-            })
+            daily_records.append(
+                {
+                    "date": f"2026-07-{13 + day:02d}",
+                    "metrics": {
+                        "warn_only_24h": 30,
+                        "emergency_commit_24h": 2,
+                        "allow_overlap_7d": 10,
+                        "forged_gw_marker_24h": 0,
+                        "non_gw_commit_24h": 5,
+                        "force_merge_7d": 0,
+                    },
+                }
+            )
         result = reconciler_mod.compute_adaptive_thresholds(daily_records)
         # 应返回 6 维阈值
         assert len(result) == 6, f"应返回 6 维阈值，实际: {len(result)} 个"
         # 每维阈值应 >= static_floor（_DEFAULT_THRESHOLDS 值）
         for dim_name, threshold in result.items():
             static_val = reconciler_mod._DEFAULT_THRESHOLDS.get(dim_name, 0)
-            assert threshold >= static_val, (
-                f"{dim_name}: threshold={threshold} < static_floor={static_val}"
-            )
+            assert threshold >= static_val, f"{dim_name}: threshold={threshold} < static_floor={static_val}"
 
     def test_high_baseline_produces_higher_thresholds(self):
         """高基线产生更高阈值（EWMA 跟随趋势）。"""
         # 高基线场景：每日计数远超静态阈值
         high_records = [
-            {"metrics": {
-                "warn_only_24h": 100, "emergency_commit_24h": 10,
-                "allow_overlap_7d": 50, "forged_gw_marker_24h": 5,
-                "non_gw_commit_24h": 20, "force_merge_7d": 10,
-            }}
+            {
+                "metrics": {
+                    "warn_only_24h": 100,
+                    "emergency_commit_24h": 10,
+                    "allow_overlap_7d": 50,
+                    "forged_gw_marker_24h": 5,
+                    "non_gw_commit_24h": 20,
+                    "force_merge_7d": 10,
+                }
+            }
             for _ in range(7)
         ]
         high_thresholds = reconciler_mod.compute_adaptive_thresholds(high_records)
 
         # 低基线场景
         low_records = [
-            {"metrics": {
-                "warn_only_24h": 5, "emergency_commit_24h": 0,
-                "allow_overlap_7d": 2, "forged_gw_marker_24h": 0,
-                "non_gw_commit_24h": 1, "force_merge_7d": 0,
-            }}
+            {
+                "metrics": {
+                    "warn_only_24h": 5,
+                    "emergency_commit_24h": 0,
+                    "allow_overlap_7d": 2,
+                    "forged_gw_marker_24h": 0,
+                    "non_gw_commit_24h": 1,
+                    "force_merge_7d": 0,
+                }
+            }
             for _ in range(7)
         ]
         low_thresholds = reconciler_mod.compute_adaptive_thresholds(low_records)
@@ -196,8 +200,7 @@ class TestComputeAdaptiveThresholds:
         # 高基线的阈值应 >= 低基线的阈值（EWMA 跟随）
         for dim_name in reconciler_mod._DEFAULT_THRESHOLDS:
             assert high_thresholds[dim_name] >= low_thresholds[dim_name], (
-                f"{dim_name}: high={high_thresholds[dim_name]} < "
-                f"low={low_thresholds[dim_name]}（EWMA 未跟随趋势）"
+                f"{dim_name}: high={high_thresholds[dim_name]} < low={low_thresholds[dim_name]}（EWMA 未跟随趋势）"
             )
 
 
@@ -220,12 +223,8 @@ class TestHealthScoreIntegration:
             "force_merge_7d": 0,
         }
         health = calculate_health_score(metrics, dict(_SHORT_THRESHOLDS))
-        assert health.score < 0.3, (
-            f"clean 场景 score={health.score} 应 < 0.3"
-        )
-        assert len(health.triggered_dimensions) == 0, (
-            f"clean 场景不应有触发维度，实际: {health.triggered_dimensions}"
-        )
+        assert health.score < 0.3, f"clean 场景 score={health.score} 应 < 0.3"
+        assert len(health.triggered_dimensions) == 0, f"clean 场景不应有触发维度，实际: {health.triggered_dimensions}"
 
     def test_critical_scenario_high_score(self):
         """critical 场景：多维度超阈 → 高 score。"""
@@ -238,12 +237,8 @@ class TestHealthScoreIntegration:
             "force_merge_7d": 0,  # 未触发
         }
         health = calculate_health_score(metrics, dict(_SHORT_THRESHOLDS))
-        assert health.score > 0.5, (
-            f"critical 场景 score={health.score} 应 > 0.5"
-        )
-        assert len(health.triggered_dimensions) >= 3, (
-            f"critical 场景应 >=3 维触发，实际: {health.triggered_dimensions}"
-        )
+        assert health.score > 0.5, f"critical 场景 score={health.score} 应 > 0.5"
+        assert len(health.triggered_dimensions) >= 3, f"critical 场景应 >=3 维触发，实际: {health.triggered_dimensions}"
 
     def test_block_next_scenario_max_score(self):
         """block_next 场景：全部维度超阈 → score 接近 1.0。"""
@@ -256,9 +251,7 @@ class TestHealthScoreIntegration:
             "force_merge_7d": 10,  # 2x threshold
         }
         health = calculate_health_score(metrics, dict(_SHORT_THRESHOLDS))
-        assert health.score > 0.9, (
-            f"block_next 场景 score={health.score} 应 > 0.9"
-        )
+        assert health.score > 0.9, f"block_next 场景 score={health.score} 应 > 0.9"
         assert len(health.triggered_dimensions) == 6, (
             f"block_next 场景应 6 维全触发，实际: {health.triggered_dimensions}"
         )
@@ -309,13 +302,9 @@ class TestClassifyAbuseIntegration:
             },
         )
         # 无违规 → 0 维度触发
-        assert len(result["dimensions_triggered"]) == 0, (
-            f"无违规不应触发维度，实际: {result['dimensions_triggered']}"
-        )
+        assert len(result["dimensions_triggered"]) == 0, f"无违规不应触发维度，实际: {result['dimensions_triggered']}"
         # metrics 应包含 effective_thresholds（P3-1 产出）
-        assert "effective_thresholds" in result["metrics"], (
-            "metrics 缺少 effective_thresholds（P3-1 产出）"
-        )
+        assert "effective_thresholds" in result["metrics"], "metrics 缺少 effective_thresholds（P3-1 产出）"
 
     def test_classify_abuse_without_adaptive_falls_back_to_static(self):
         """无 adaptive_thresholds 时降级为纯静态阈值（向后兼容）。"""
@@ -331,9 +320,7 @@ class TestClassifyAbuseIntegration:
         # effective_thresholds 应等于静态阈值（short names）
         eff = result["metrics"].get("effective_thresholds", {})
         for dim_name, static_val in _SHORT_THRESHOLDS.items():
-            assert eff.get(dim_name) == static_val, (
-                f"{dim_name}: effective={eff.get(dim_name)} != static={static_val}"
-            )
+            assert eff.get(dim_name) == static_val, f"{dim_name}: effective={eff.get(dim_name)} != static={static_val}"
 
 
 # ============================================================================
@@ -368,9 +355,7 @@ class TestFullPipelineIntegration:
             (health_score, classify_result)
         """
         # Step 1: 7d baseline → adaptive thresholds（P3-1）
-        adaptive_thresholds = reconciler_mod.compute_adaptive_thresholds(
-            baseline_records
-        )
+        adaptive_thresholds = reconciler_mod.compute_adaptive_thresholds(baseline_records)
 
         # Step 2: _classify_abuse 产出 effective_thresholds（P3-1/P3-3）
         # 传 emergency_count + allow_overlap_count 以覆盖维度 2/3
@@ -390,9 +375,7 @@ class TestFullPipelineIntegration:
         # forged/non_gw 在空报告下为 0。这里用 today_metrics 覆盖，模拟真实场景。
         merged_metrics = dict(classify_result["metrics"])
         merged_metrics.update(today_metrics)
-        effective_thresholds = merged_metrics.get(
-            "effective_thresholds"
-        ) or merged_metrics.get("thresholds", {})
+        effective_thresholds = merged_metrics.get("effective_thresholds") or merged_metrics.get("thresholds", {})
         health = calculate_health_score(merged_metrics, effective_thresholds)
 
         return health, classify_result
@@ -400,22 +383,28 @@ class TestFullPipelineIntegration:
     def test_clean_pipeline(self):
         """全链路 clean 场景：低基线 + 低今日计数 → score < 0.7 → clean。"""
         baseline = [
-            {"metrics": {
-                "warn_only_24h": 5, "emergency_commit_24h": 0,
-                "allow_overlap_7d": 2, "forged_gw_marker_24h": 0,
-                "non_gw_commit_24h": 1, "force_merge_7d": 0,
-            }}
+            {
+                "metrics": {
+                    "warn_only_24h": 5,
+                    "emergency_commit_24h": 0,
+                    "allow_overlap_7d": 2,
+                    "forged_gw_marker_24h": 0,
+                    "non_gw_commit_24h": 1,
+                    "force_merge_7d": 0,
+                }
+            }
             for _ in range(7)
         ]
         today = {
-            "warn_only_24h": 5, "emergency_commit_24h": 0,
-            "allow_overlap_7d": 2, "forged_gw_marker_24h": 0,
-            "non_gw_commit_24h": 1, "force_merge_7d": 0,
+            "warn_only_24h": 5,
+            "emergency_commit_24h": 0,
+            "allow_overlap_7d": 2,
+            "forged_gw_marker_24h": 0,
+            "non_gw_commit_24h": 1,
+            "force_merge_7d": 0,
         }
         health, result = self._run_full_pipeline(baseline, today)
-        assert health.score < 0.7, (
-            f"clean pipeline score={health.score} 应 < 0.7（_CRITICAL_WARN_SCORE）"
-        )
+        assert health.score < 0.7, f"clean pipeline score={health.score} 应 < 0.7（_CRITICAL_WARN_SCORE）"
         assert len(result["dimensions_triggered"]) == 0
 
     def test_critical_pipeline(self):
@@ -433,11 +422,16 @@ class TestFullPipelineIntegration:
         （emergency + allow_overlap 2 维，由参数传入）。
         """
         baseline = [
-            {"metrics": {
-                "warn_only_24h": 30, "emergency_commit_24h": 2,
-                "allow_overlap_7d": 10, "forged_gw_marker_24h": 0,
-                "non_gw_commit_24h": 5, "force_merge_7d": 0,
-            }}
+            {
+                "metrics": {
+                    "warn_only_24h": 30,
+                    "emergency_commit_24h": 2,
+                    "allow_overlap_7d": 10,
+                    "forged_gw_marker_24h": 0,
+                    "non_gw_commit_24h": 5,
+                    "force_merge_7d": 0,
+                }
+            }
             for _ in range(7)
         ]
         today = {
@@ -449,27 +443,28 @@ class TestFullPipelineIntegration:
             "force_merge_7d": 0,  # 未触发
         }
         health, result = self._run_full_pipeline(baseline, today)
-        assert health.score > 0.7, (
-            f"critical pipeline score={health.score} 应 > 0.7（_CRITICAL_WARN_SCORE）"
-        )
+        assert health.score > 0.7, f"critical pipeline score={health.score} 应 > 0.7（_CRITICAL_WARN_SCORE）"
         assert health.score <= 0.9, (
-            f"critical pipeline score={health.score} 应 <= 0.9（_BLOCK_NEXT_SCORE），"
-            f"超过则应归入 block_next 场景"
+            f"critical pipeline score={health.score} 应 <= 0.9（_BLOCK_NEXT_SCORE），超过则应归入 block_next 场景"
         )
         # _classify_abuse 空报告下仅 emergency + allow_overlap 2 维触发（参数传入）
         assert len(result["dimensions_triggered"]) >= 2, (
-            f"critical pipeline 应 >=2 维触发（emergency + allow_overlap），"
-            f"实际: {result['dimensions_triggered']}"
+            f"critical pipeline 应 >=2 维触发（emergency + allow_overlap），实际: {result['dimensions_triggered']}"
         )
 
     def test_block_next_pipeline(self):
         """全链路 block_next 场景：全维度超阈 → score > 0.9 → block_next。"""
         baseline = [
-            {"metrics": {
-                "warn_only_24h": 50, "emergency_commit_24h": 5,
-                "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-                "non_gw_commit_24h": 10, "force_merge_7d": 5,
-            }}
+            {
+                "metrics": {
+                    "warn_only_24h": 50,
+                    "emergency_commit_24h": 5,
+                    "allow_overlap_7d": 30,
+                    "forged_gw_marker_24h": 3,
+                    "non_gw_commit_24h": 10,
+                    "force_merge_7d": 5,
+                }
+            }
             for _ in range(7)
         ]
         today = {
@@ -481,9 +476,7 @@ class TestFullPipelineIntegration:
             "force_merge_7d": 10,  # 2x threshold
         }
         health, result = self._run_full_pipeline(baseline, today)
-        assert health.score > 0.9, (
-            f"block_next pipeline score={health.score} 应 > 0.9（_BLOCK_NEXT_SCORE）"
-        )
+        assert health.score > 0.9, f"block_next pipeline score={health.score} 应 > 0.9（_BLOCK_NEXT_SCORE）"
         assert len(health.triggered_dimensions) == 6, (
             f"block_next pipeline 应 6 维全触发，实际: {health.triggered_dimensions}"
         )
@@ -495,35 +488,44 @@ class TestFullPipelineIntegration:
         """
         # 高基线：每日计数 = 静态阈值
         high_baseline = [
-            {"metrics": {
-                "warn_only_24h": 50, "emergency_commit_24h": 5,
-                "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-                "non_gw_commit_24h": 10, "force_merge_7d": 5,
-            }}
+            {
+                "metrics": {
+                    "warn_only_24h": 50,
+                    "emergency_commit_24h": 5,
+                    "allow_overlap_7d": 30,
+                    "forged_gw_marker_24h": 3,
+                    "non_gw_commit_24h": 10,
+                    "force_merge_7d": 5,
+                }
+            }
             for _ in range(7)
         ]
         # 今日计数 = 静态阈值（刚好等于，不应触发——因为自适应阈值 > 静态）
         today_at_static = {
-            "warn_only_24h": 50, "emergency_commit_24h": 5,
-            "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-            "non_gw_commit_24h": 10, "force_merge_7d": 5,
+            "warn_only_24h": 50,
+            "emergency_commit_24h": 5,
+            "allow_overlap_7d": 30,
+            "forged_gw_marker_24h": 3,
+            "non_gw_commit_24h": 10,
+            "force_merge_7d": 5,
         }
-        health_high_baseline, _ = self._run_full_pipeline(
-            high_baseline, today_at_static
-        )
+        health_high_baseline, _ = self._run_full_pipeline(high_baseline, today_at_static)
 
         # 低基线场景：今日计数 = 静态阈值（应触发——因为阈值就是静态值）
         low_baseline = [
-            {"metrics": {
-                "warn_only_24h": 1, "emergency_commit_24h": 0,
-                "allow_overlap_7d": 0, "forged_gw_marker_24h": 0,
-                "non_gw_commit_24h": 0, "force_merge_7d": 0,
-            }}
+            {
+                "metrics": {
+                    "warn_only_24h": 1,
+                    "emergency_commit_24h": 0,
+                    "allow_overlap_7d": 0,
+                    "forged_gw_marker_24h": 0,
+                    "non_gw_commit_24h": 0,
+                    "force_merge_7d": 0,
+                }
+            }
             for _ in range(7)
         ]
-        health_low_baseline, _ = self._run_full_pipeline(
-            low_baseline, today_at_static
-        )
+        health_low_baseline, _ = self._run_full_pipeline(low_baseline, today_at_static)
 
         # 高基线下 score 应更低（自适应阈值提高了，同样计数不再超阈）
         assert health_high_baseline.score <= health_low_baseline.score, (
@@ -572,12 +574,8 @@ class TestCodeYamlConsistency:
         for dim_name, code_val in code_thresholds.items():
             yaml_dim = yaml_thresholds.get(dim_name, {})
             yaml_val = yaml_dim.get("value")
-            assert yaml_val is not None, (
-                f"{dim_name}: YAML thresholds 段缺失该维度"
-            )
-            assert code_val == yaml_val, (
-                f"{dim_name}: code={code_val} != yaml={yaml_val}（SSoT 违规）"
-            )
+            assert yaml_val is not None, f"{dim_name}: YAML thresholds 段缺失该维度"
+            assert code_val == yaml_val, f"{dim_name}: code={code_val} != yaml={yaml_val}（SSoT 违规）"
 
     def test_score_constants_match_yaml(self):
         """_CRITICAL_WARN_SCORE / _BLOCK_NEXT_SCORE 与 YAML 一致。"""

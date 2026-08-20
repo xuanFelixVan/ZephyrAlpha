@@ -440,11 +440,14 @@ def foo(x: Any) -> None:
 def test_scan_file(tmp_path):
     """scan_file 读取真实文件并扫描。"""
     f = tmp_path / "test.py"
-    f.write_text("""
+    f.write_text(
+        """
 from typing import Any
 def foo(x: Any) -> Any:
     return x.upper()
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     findings = ati.scan_file(f)
     assert len(findings) == 2  # ANY-1 + ANY-2
     kinds = {f.kind for f in findings}
@@ -454,20 +457,29 @@ def foo(x: Any) -> Any:
 def test_scan_directory(tmp_path):
     """scan_directory 递归扫描目录。"""
     (tmp_path / "a").mkdir()
-    (tmp_path / "a" / "mod.py").write_text("""
+    (tmp_path / "a" / "mod.py").write_text(
+        """
 from typing import Any
 def foo(x: Any) -> None: pass
-""", encoding="utf-8")
-    (tmp_path / "b.py").write_text("""
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "b.py").write_text(
+        """
 from typing import Any
 def bar(x: Any) -> None: pass
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     # __pycache__ 应被排除
     (tmp_path / "__pycache__").mkdir()
-    (tmp_path / "__pycache__" / "ignored.py").write_text("""
+    (tmp_path / "__pycache__" / "ignored.py").write_text(
+        """
 from typing import Any
 def ignored(x: Any) -> None: pass
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
 
     findings = ati.scan_directory(tmp_path)
     funcs = {f.function for f in findings}
@@ -491,8 +503,12 @@ def test_write_report(tmp_path):
     """write_report 输出有效 JSON。"""
     findings = [
         ati.AnyInferenceFinding(
-            file="test.py", line=1, col=0, kind="ANY-1",
-            function="foo", param_or_return="x",
+            file="test.py",
+            line=1,
+            col=0,
+            kind="ANY-1",
+            function="foo",
+            param_or_return="x",
             current_annotation="Any",
             evidence=[ati.TypeEvidence("method_call", "x.upper()", "str", 1.0)],
             inferred_candidates=[("str", 1.0)],
@@ -517,11 +533,14 @@ def test_cli_main_smoke(tmp_path, capsys):
     """main() CLI 可执行并生成报告。"""
     src = tmp_path / "src"
     src.mkdir()
-    (src / "test.py").write_text("""
+    (src / "test.py").write_text(
+        """
 from typing import Any
 def foo(x: Any) -> Any:
     return x.upper()
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     output = tmp_path / "report.json"
 
     exit_code = ati.main(["--src", str(src), "--output", str(output)])
@@ -541,21 +560,29 @@ def test_cli_ci_mode_with_high_confidence(tmp_path):
     """--ci 模式 + 高置信度 → exit 1。"""
     src = tmp_path / "src"
     src.mkdir()
-    (src / "test.py").write_text("""
+    (src / "test.py").write_text(
+        """
 from typing import Any
 def foo(x: Any) -> Any:
     return x.upper()
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     output = tmp_path / "report.json"
 
     # --threshold 0.5 + 高置信度 str → exit 1
-    exit_code = ati.main([
-        "--src", str(src),
-        "--output", str(output),
-        "--ci",
-        "--threshold", "0.5",
-        "--quiet",
-    ])
+    exit_code = ati.main(
+        [
+            "--src",
+            str(src),
+            "--output",
+            str(output),
+            "--ci",
+            "--threshold",
+            "0.5",
+            "--quiet",
+        ]
+    )
     assert exit_code == 1
 
 

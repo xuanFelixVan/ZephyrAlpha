@@ -25,6 +25,7 @@
 
 测试隔离：monkeypatch _query_depgraph_nodes / _load_translation_loader / _DRIFT_REPORT_PATH。
 """
+
 from __future__ import annotations
 
 import json
@@ -51,6 +52,7 @@ from zephyr.governance.audit.translation_coverage_reconciler import (  # noqa: E
 # TestReconcilerSpec
 # ---------------------------------------------------------------------------
 
+
 class TestReconcilerSpec:
     """gate_id / priority / isinstance(ReconcilerSpec)。"""
 
@@ -70,6 +72,7 @@ class TestReconcilerSpec:
 # ---------------------------------------------------------------------------
 # TestIsInScope
 # ---------------------------------------------------------------------------
+
 
 class TestIsInScope:
     """_is_in_scope 范围判断（与 translation_coverage_gate._is_in_scope 同范围铁律）。
@@ -121,6 +124,7 @@ class TestIsInScope:
 # TestTrigger
 # ---------------------------------------------------------------------------
 
+
 class TestTrigger:
     """trigger 文件触发判断。"""
 
@@ -149,12 +153,11 @@ class TestTrigger:
 # TestReconcile
 # ---------------------------------------------------------------------------
 
+
 class TestReconcile:
     """reconcile 主逻辑（monkeypatch DB + loader）。"""
 
-    def test_no_drift_returns_clean(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_no_drift_returns_clean(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """无漂移 → action=clean。"""
         import zephyr.governance.audit.translation_coverage_reconciler as rec_mod
 
@@ -184,9 +187,7 @@ class TestReconcile:
         assert result.action == "clean"
         assert result.gate_id == "TRANSLATION-COVERAGE"
 
-    def test_drift_returns_warn(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_drift_returns_warn(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """有漂移 → action=warn。"""
         import zephyr.governance.audit.translation_coverage_reconciler as rec_mod
 
@@ -212,9 +213,7 @@ class TestReconcile:
         assert "drift" in result.detail.lower()
         assert result.gate_id == "TRANSLATION-COVERAGE"
 
-    def test_drift_report_written(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_drift_report_written(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """漂移报告落盘 → drift_report.json 生成。"""
         import zephyr.governance.audit.translation_coverage_reconciler as rec_mod
 
@@ -243,9 +242,7 @@ class TestReconcile:
         assert "src/zephyr/missing.py" in data["missing_plain"]
         assert data["summary"]["total_drift"] == 1
 
-    def test_db_unreachable_fail_open(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_db_unreachable_fail_open(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """DB 不可达 → action=warn（fail-open）。"""
         import zephyr.governance.audit.translation_coverage_reconciler as rec_mod
 
@@ -257,9 +254,7 @@ class TestReconcile:
         assert result.action == "warn"
         assert "depgraph" in result.detail.lower() or "不可达" in result.detail
 
-    def test_loader_unreachable_fail_open(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_loader_unreachable_fail_open(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """loader 不可达 → action=warn（fail-open）。"""
         import zephyr.governance.audit.translation_coverage_reconciler as rec_mod
 
@@ -276,9 +271,7 @@ class TestReconcile:
         assert result.action == "warn"
         assert "loader" in result.detail.lower() or "不可达" in result.detail
 
-    def test_out_of_scope_skipped(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_out_of_scope_skipped(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """file_path 不在范围（docs/）→ 跳过，无漂移。"""
         import zephyr.governance.audit.translation_coverage_reconciler as rec_mod
 

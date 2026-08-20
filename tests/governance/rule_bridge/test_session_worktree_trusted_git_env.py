@@ -22,6 +22,7 @@
 
 测试隔离: 纯函数测试，无 git 仓库依赖；env 清理用 monkeypatch 确保不残留。
 """
+
 from __future__ import annotations
 
 import os
@@ -61,9 +62,7 @@ class TestTrustedGitEnvIsolation:
         # 返回的 env 含标记
         assert env.get(_FAST_PATH_ENV) == "1", "返回 dict 应含 fast-path=1"
         # 但主进程 os.environ 仍干净
-        assert _FAST_PATH_ENV not in os.environ, (
-            "主进程 os.environ 不应被污染——fast-path 必须进程级隔离"
-        )
+        assert _FAST_PATH_ENV not in os.environ, "主进程 os.environ 不应被污染——fast-path 必须进程级隔离"
 
     def test_returned_env_has_fast_path_flag(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """返回的 dict 含 ZEPHYR_GIT_GUARD_FAST_PATH=1。"""
@@ -77,9 +76,7 @@ class TestTrustedGitEnvIsolation:
         for i in range(5):
             env = _trusted_git_env()
             assert env[_FAST_PATH_ENV] == "1", f"第 {i + 1} 次调用返回 dict 应含标记"
-            assert _FAST_PATH_ENV not in os.environ, (
-                f"第 {i + 1} 次调用后主进程不应被污染"
-            )
+            assert _FAST_PATH_ENV not in os.environ, f"第 {i + 1} 次调用后主进程不应被污染"
 
     def test_returned_dict_is_copy_not_reference(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """返回的 dict 是 os.environ 的浅拷贝，非同一对象。"""
@@ -111,10 +108,9 @@ class TestTrustedGitEnvIsolation:
         monkeypatch.setenv(_FAST_PATH_ENV, "1")
         with caplog.at_level("WARNING"):
             env = _trusted_git_env()
-        assert any(
-            "主进程 os.environ 已含" in r.message and _FAST_PATH_ENV in r.message
-            for r in caplog.records
-        ), "污染场景应记 [CRITICAL] warn"
+        assert any("主进程 os.environ 已含" in r.message and _FAST_PATH_ENV in r.message for r in caplog.records), (
+            "污染场景应记 [CRITICAL] warn"
+        )
         assert env[_FAST_PATH_ENV] == "1", "仍返回含标记的副本（不阻断）"
 
 

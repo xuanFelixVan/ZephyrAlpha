@@ -27,6 +27,7 @@
 
 测试隔离：tmp_path fixture 提供 project_root，每个测试独立 .runtime/ 目录。
 """
+
 from __future__ import annotations
 
 import json
@@ -68,6 +69,7 @@ def _write_cache(project_root: Path, saved_at: str | None) -> None:
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """gate_id / priority / isinstance(GateSpec)。"""
 
@@ -87,6 +89,7 @@ class TestGateSpecFields:
 # ---------------------------------------------------------------------------
 # TestParseSavedAt
 # ---------------------------------------------------------------------------
+
 
 class TestParseSavedAt:
     """_parse_saved_at ISO 时间戳解析。"""
@@ -115,6 +118,7 @@ class TestParseSavedAt:
 # ---------------------------------------------------------------------------
 # TestCheckDualThreshold
 # ---------------------------------------------------------------------------
+
 
 class TestCheckDualThreshold:
     """_check 闭包 dual-threshold 检测逻辑（mock gateway + tmp cache）。"""
@@ -201,19 +205,27 @@ class TestCheckDualThreshold:
 # TestPgOfflineExemption（tracker #116 B2，#ARCH-119，报告 §1.3 联动修复）
 # ---------------------------------------------------------------------------
 
+
 def _write_probe_state(project_root: Path, *, offline_hours: float | None) -> None:
     """写入探针状态文件。offline_hours=None 表示在线；否则离线时长（小时）。"""
     now = datetime.now(timezone.utc)
     if offline_hours is None:
         state = {
-            "reachable": True, "checked_at": now.isoformat(),
-            "host": "localhost", "port": 5432, "error": "",
-            "last_reachable_at": now.isoformat(), "first_offline_at": None,
+            "reachable": True,
+            "checked_at": now.isoformat(),
+            "host": "localhost",
+            "port": 5432,
+            "error": "",
+            "last_reachable_at": now.isoformat(),
+            "first_offline_at": None,
         }
     else:
         state = {
-            "reachable": False, "checked_at": now.isoformat(),
-            "host": "localhost", "port": 5432, "error": "refused",
+            "reachable": False,
+            "checked_at": now.isoformat(),
+            "host": "localhost",
+            "port": 5432,
+            "error": "refused",
             "last_reachable_at": None,
             "first_offline_at": (now - timedelta(hours=offline_hours)).isoformat(),
         }
@@ -224,14 +236,13 @@ def _write_probe_state(project_root: Path, *, offline_hours: float | None) -> No
 
 def _read_log_rows(project_root: Path) -> list[tuple]:
     import sqlite3 as _sqlite3
+
     db_path = project_root / "data" / "databases" / "governance.db"
     if not db_path.is_file():
         return []
     conn = _sqlite3.connect(str(db_path))
     try:
-        return conn.execute(
-            "SELECT gate_id, action, detail FROM reconcile_execution_log"
-        ).fetchall()
+        return conn.execute("SELECT gate_id, action, detail FROM reconcile_execution_log").fetchall()
     finally:
         conn.close()
 

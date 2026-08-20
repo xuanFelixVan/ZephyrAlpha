@@ -25,6 +25,7 @@
 测试隔离：tmp_path 作 project_root；TCP 探测用真实 loopback socket/关闭端口；
 governance.db 落 tmp_path/data/databases/（anchor_main_root 对非 worktree 原样返回）。
 """
+
 from __future__ import annotations
 
 import json
@@ -82,9 +83,7 @@ def _read_log_rows(project_root: Path) -> list[tuple]:
         return []
     conn = sqlite3.connect(str(db_path))
     try:
-        return conn.execute(
-            "SELECT gate_id, action, detail FROM reconcile_execution_log"
-        ).fetchall()
+        return conn.execute("SELECT gate_id, action, detail FROM reconcile_execution_log").fetchall()
     finally:
         conn.close()
 
@@ -92,6 +91,7 @@ def _read_log_rows(project_root: Path) -> list[tuple]:
 # ---------------------------------------------------------------------------
 # TestProbePgTcp
 # ---------------------------------------------------------------------------
+
 
 class TestProbePgTcp:
     """纯 TCP 探测。"""
@@ -125,12 +125,11 @@ class TestProbePgTcp:
 # TestRefreshState
 # ---------------------------------------------------------------------------
 
+
 class TestRefreshState:
     """refresh_pg_probe_state 状态文件读写。"""
 
-    def test_refresh_offline_writes_state(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_refresh_offline_writes_state(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """端点不可达 → reachable=False 落盘，可读回。"""
         monkeypatch.setattr(
             "zephyr.governance.audit.pg_probe._resolve_pg_endpoint",
@@ -144,9 +143,7 @@ class TestRefreshState:
         assert on_disk is not None
         assert on_disk["reachable"] is False
 
-    def test_refresh_online_clears_offline_anchor(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_refresh_online_clears_offline_anchor(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """离线后恢复可达 → first_offline_at 清空、last_reachable_at 更新。"""
         _write_state(tmp_path, reachable=False)
         srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -165,9 +162,7 @@ class TestRefreshState:
         assert state["first_offline_at"] is None
         assert state["last_reachable_at"] is not None
 
-    def test_refresh_offline_keeps_first_offline_anchor(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_refresh_offline_keeps_first_offline_anchor(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """持续离线 → first_offline_at 保留首次观测值（不被刷新）。"""
         old_anchor = (datetime.now(_UTC) - timedelta(hours=30)).isoformat()
         _write_state(tmp_path, reachable=False, first_offline_at=old_anchor)
@@ -179,15 +174,15 @@ class TestRefreshState:
         assert state["reachable"] is False
         assert state["first_offline_at"] == old_anchor
 
-    def test_refresh_config_failure_never_raises(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_refresh_config_failure_never_raises(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """配置解析失败 → reachable=False 落盘（config_unresolved），不抛异常。"""
+
         def _raise():
             raise FileNotFoundError("no config")
 
         monkeypatch.setattr(
-            "zephyr.governance.audit.pg_probe._resolve_pg_endpoint", _raise,
+            "zephyr.governance.audit.pg_probe._resolve_pg_endpoint",
+            _raise,
         )
         state = refresh_pg_probe_state(tmp_path)
         assert state["reachable"] is False
@@ -197,6 +192,7 @@ class TestRefreshState:
 # ---------------------------------------------------------------------------
 # TestReadState
 # ---------------------------------------------------------------------------
+
 
 class TestReadState:
     """read_pg_probe_state 容错。"""
@@ -214,6 +210,7 @@ class TestReadState:
 # ---------------------------------------------------------------------------
 # TestProbeShowsOffline
 # ---------------------------------------------------------------------------
+
 
 class TestProbeShowsOffline:
     """pg_probe_shows_offline 判定。"""
@@ -238,6 +235,7 @@ class TestProbeShowsOffline:
 # ---------------------------------------------------------------------------
 # TestOfflineBeyond
 # ---------------------------------------------------------------------------
+
 
 class TestOfflineBeyond:
     """pg_offline_beyond 豁免判据。"""
@@ -264,15 +262,19 @@ class TestOfflineBeyond:
 # TestLogDbFailopen
 # ---------------------------------------------------------------------------
 
+
 class TestLogDbFailopen:
     """log_db_failopen 统一留痕（critical_warn + 签名 + 去重）。"""
 
     def test_offline_persists_critical_warn(self, tmp_path: Path) -> None:
         """DB 离线降级 → critical_warn 落盘，含 gate_id/原因/受影响文件/签名。"""
         log_db_failopen(
-            tmp_path, "RENAME-DEPGRAPH-SYNC",
-            db_offline=True, reason="depgraph 查询失败，降级放行（探针证实 PG 离线）",
-            affected_files=["a.py -> b.py"], session_id="sess-x",
+            tmp_path,
+            "RENAME-DEPGRAPH-SYNC",
+            db_offline=True,
+            reason="depgraph 查询失败，降级放行（探针证实 PG 离线）",
+            affected_files=["a.py -> b.py"],
+            session_id="sess-x",
         )
         rows = _read_log_rows(tmp_path)
         assert len(rows) == 1
@@ -287,8 +289,10 @@ class TestLogDbFailopen:
         """同签名当日去重——两次调用只落一条（防 PG 长期离线告警疲劳）。"""
         for _ in range(2):
             log_db_failopen(
-                tmp_path, "NEW-FILE-DEPGRAPH-ENFORCEMENT",
-                db_offline=True, reason="降级放行（探针证实 PG 离线）",
+                tmp_path,
+                "NEW-FILE-DEPGRAPH-ENFORCEMENT",
+                db_offline=True,
+                reason="降级放行（探针证实 PG 离线）",
                 affected_files=["x.py"],
             )
         rows = _read_log_rows(tmp_path)
@@ -298,8 +302,10 @@ class TestLogDbFailopen:
         """探针在线而 gate 失败=真实错误 → 逐次留痕（不静默，不去重）。"""
         for _ in range(2):
             log_db_failopen(
-                tmp_path, "RENAME-DEPGRAPH-SYNC",
-                db_offline=False, reason="探针未证实离线——真实连接错误",
+                tmp_path,
+                "RENAME-DEPGRAPH-SYNC",
+                db_offline=False,
+                reason="探针未证实离线——真实连接错误",
                 affected_files=["a.py -> b.py"],
             )
         rows = _read_log_rows(tmp_path)
@@ -309,7 +315,9 @@ class TestLogDbFailopen:
     def test_invalid_project_root_skips(self, tmp_path: Path) -> None:
         """project_root 非真实目录 → 跳过不落盘、不抛异常。"""
         log_db_failopen(
-            tmp_path / "nonexistent" / "deep", "GATE-X",
-            db_offline=True, reason="test",
+            tmp_path / "nonexistent" / "deep",
+            "GATE-X",
+            db_offline=True,
+            reason="test",
         )
         assert not (tmp_path / "nonexistent").exists()

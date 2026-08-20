@@ -23,6 +23,7 @@
 
 测试隔离：用 tmp_path + 真实 git 仓库（end-to-end）。
 """
+
 from __future__ import annotations
 
 import os
@@ -69,11 +70,17 @@ def _init_git_repo(repo_dir: Path) -> None:
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "config", "user.name", "Test"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
 
 
@@ -87,22 +94,30 @@ def _commit_initial(repo_dir: Path) -> None:
     (repo_dir / "data").mkdir(exist_ok=True)
     (repo_dir / "data" / "reports").mkdir(exist_ok=True)
     (repo_dir / "data" / "reports" / "dashboard.json").write_text(
-        '{"v": 1}\n', encoding="utf-8",
+        '{"v": 1}\n',
+        encoding="utf-8",
     )
     subprocess.run(
         ["git", "add", "-A"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     subprocess.run(
         ["git", "commit", "-m", "init"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
 
 
 def _make_auto_sync_dirty(repo_dir: Path) -> None:
     """让 auto-sync 产物变 dirty。"""
     (repo_dir / "data" / "reports" / "dashboard.json").write_text(
-        '{"v": 2}\n', encoding="utf-8",
+        '{"v": 2}\n',
+        encoding="utf-8",
     )
 
 
@@ -119,11 +134,17 @@ def _commit_file(repo_dir: Path, rel_path: str, content: str) -> None:
     fpath.write_bytes(content.encode("utf-8"))
     subprocess.run(
         ["git", "add", rel_path],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     subprocess.run(
         ["git", "commit", "-m", f"add {rel_path}"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
 
 
@@ -178,7 +199,9 @@ class TestCheckWorkspaceCleanMerge:
         _make_real_code_dirty(tmp_path)  # 创建 src/real_code.py modified
         # 把 src/real_code.py 列入 session_files → 应被排除，merge 通过
         passed, detail = _check_workspace_clean(
-            tmp_path, "sess-test", context="merge",
+            tmp_path,
+            "sess-test",
+            context="merge",
             session_files=["src/real_code.py"],
         )
         assert passed is True, f"session_files 排除失败: {detail}"
@@ -192,7 +215,9 @@ class TestCheckWorkspaceCleanMerge:
         _commit_file(tmp_path, "src/other.py", "initial\n")
         (tmp_path / "src" / "other.py").write_bytes(b"modified\n")
         passed, detail = _check_workspace_clean(
-            tmp_path, "sess-test", context="merge",
+            tmp_path,
+            "sess-test",
+            context="merge",
             session_files=["src/real_code.py"],  # 只排除 real_code.py
         )
         assert passed is False, f"未排除的真实代码修改应阻断: {detail}"
@@ -261,7 +286,9 @@ class TestCheckWorkspaceCleanFailOpen:
         _make_real_code_dirty(tmp_path)
         # 无效 context 不走 fail-closed 分支（仅 merge 才阻断）
         passed, detail = _check_workspace_clean(
-            tmp_path, "sess-test", context="invalid",
+            tmp_path,
+            "sess-test",
+            context="invalid",
         )
         assert passed is True  # 非 merge context 不阻断
 
@@ -269,7 +296,9 @@ class TestCheckWorkspaceCleanFailOpen:
         """不存在的仓库 → fail-open 返回 True。"""
         nonexistent = tmp_path / "nonexistent"
         passed, detail = _check_workspace_clean(
-            nonexistent, "sess-test", context="merge",
+            nonexistent,
+            "sess-test",
+            context="merge",
         )
         assert passed is True
         assert "skip" in detail or "failed" in detail
@@ -380,20 +409,26 @@ class TestEndToEndScenario:
         # 模拟多个真实代码修改
         for i in range(5):
             (repo_dir := tmp_path / "src" / f"file_{i}.py").write_text(
-                f"x = {i}\n", encoding="utf-8",
+                f"x = {i}\n",
+                encoding="utf-8",
             )
             subprocess.run(
                 ["git", "add", "-A"],
-                cwd=str(tmp_path), capture_output=True, check=True,
+                cwd=str(tmp_path),
+                capture_output=True,
+                check=True,
                 env=_git_env(),
             )
             subprocess.run(
                 ["git", "commit", "-m", f"add file_{i}"],
-                cwd=str(tmp_path), capture_output=True, check=True,
+                cwd=str(tmp_path),
+                capture_output=True,
+                check=True,
                 env=_git_env(),
             )
             (tmp_path / "src" / f"file_{i}.py").write_text(
-                f"x = {i * 10}\n", encoding="utf-8",
+                f"x = {i * 10}\n",
+                encoding="utf-8",
             )
         passed, detail = _workspace_clean_check_merge(tmp_path, "sess-test")
         assert passed is False
@@ -422,11 +457,14 @@ class TestEndToEndScenario:
 def _make_auto_sync_staged(repo_dir: Path) -> None:
     """让 auto-sync 产物变 staged（M 状态）。"""
     (repo_dir / "data" / "reports" / "dashboard.json").write_text(
-        '{"v": 99}\n', encoding="utf-8",
+        '{"v": 99}\n',
+        encoding="utf-8",
     )
     subprocess.run(
         ["git", "add", "data/reports/dashboard.json"],
-        cwd=str(repo_dir), capture_output=True, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        check=True,
         env=_git_env(),
     )
 
@@ -435,16 +473,20 @@ def _make_auto_sync_mm_state(repo_dir: Path) -> None:
     """让 auto-sync 产物变 MM 状态（staged + worktree 同时 modified）。"""
     # 先 staged
     (repo_dir / "data" / "reports" / "dashboard.json").write_text(
-        '{"v": 100}\n', encoding="utf-8",
+        '{"v": 100}\n',
+        encoding="utf-8",
     )
     subprocess.run(
         ["git", "add", "data/reports/dashboard.json"],
-        cwd=str(repo_dir), capture_output=True, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        check=True,
         env=_git_env(),
     )
     # 再 worktree modified
     (repo_dir / "data" / "reports" / "dashboard.json").write_text(
-        '{"v": 101}\n', encoding="utf-8",
+        '{"v": 101}\n',
+        encoding="utf-8",
     )
 
 
@@ -458,11 +500,15 @@ def _git_porcelain_status(repo_dir: Path) -> str:
     """
     r = subprocess.run(
         ["git", "status", "--porcelain"],
-        cwd=str(repo_dir), capture_output=True, text=True, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        text=True,
+        check=True,
         env=_git_env(),
     )
     return "".join(
-        ln for ln in r.stdout.splitlines(keepends=True)
+        ln
+        for ln in r.stdout.splitlines(keepends=True)
         if not ln.rstrip("\n").endswith(" .runtime/") and ln.strip() != "?? .runtime/"
     )
 
@@ -475,6 +521,7 @@ class TestRestoreAutoSyncBatchStagedHandling:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _restore_auto_sync_batch,
         )
+
         _init_git_repo(tmp_path)
         _commit_initial(tmp_path)
         _make_auto_sync_staged(tmp_path)
@@ -482,7 +529,9 @@ class TestRestoreAutoSyncBatchStagedHandling:
         assert _git_porcelain_status(tmp_path).startswith("M  ")
 
         restored_count, failed = _restore_auto_sync_batch(
-            tmp_path, ["data/reports/dashboard.json"], "test",
+            tmp_path,
+            ["data/reports/dashboard.json"],
+            "test",
         )
         assert restored_count == 1
         assert failed == []
@@ -494,6 +543,7 @@ class TestRestoreAutoSyncBatchStagedHandling:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _restore_auto_sync_batch,
         )
+
         _init_git_repo(tmp_path)
         _commit_initial(tmp_path)
         _make_auto_sync_mm_state(tmp_path)
@@ -501,7 +551,9 @@ class TestRestoreAutoSyncBatchStagedHandling:
         assert _git_porcelain_status(tmp_path).startswith("MM ")
 
         restored_count, failed = _restore_auto_sync_batch(
-            tmp_path, ["data/reports/dashboard.json"], "test",
+            tmp_path,
+            ["data/reports/dashboard.json"],
+            "test",
         )
         assert restored_count == 1
         assert failed == []
@@ -513,27 +565,34 @@ class TestRestoreAutoSyncBatchStagedHandling:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _restore_auto_sync_batch,
         )
+
         _init_git_repo(tmp_path)
         _commit_initial(tmp_path)
         # 创建第二个 auto-sync 产物（mock 路径模式）
         (tmp_path / "data" / "reports" / "summary.json").write_text(
-            '{"s": 1}\n', encoding="utf-8",
+            '{"s": 1}\n',
+            encoding="utf-8",
         )
         subprocess.run(
             ["git", "add", "-A"],
-            cwd=str(tmp_path), capture_output=True, check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            check=True,
             env=_git_env(),
         )
         subprocess.run(
             ["git", "commit", "-m", "add summary"],
-            cwd=str(tmp_path), capture_output=True, check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            check=True,
             env=_git_env(),
         )
         # dashboard.json 设为 staged（M ）
         _make_auto_sync_staged(tmp_path)
         # summary.json 设为 worktree modified（ M）
         (tmp_path / "data" / "reports" / "summary.json").write_text(
-            '{"s": 2}\n', encoding="utf-8",
+            '{"s": 2}\n',
+            encoding="utf-8",
         )
         # 验证状态
         status = _git_porcelain_status(tmp_path)
@@ -555,6 +614,7 @@ class TestRestoreAutoSyncBatchStagedHandling:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _restore_auto_sync_batch,
         )
+
         restored_count, failed = _restore_auto_sync_batch(tmp_path, [], "test")
         assert restored_count == 0
         assert failed == []
@@ -593,7 +653,9 @@ class TestCheckWorkspaceCleanStagedIntegration:
         (tmp_path / "src" / "real_code.py").write_text("x = 99\n", encoding="utf-8")
         subprocess.run(
             ["git", "add", "src/real_code.py"],
-            cwd=str(tmp_path), capture_output=True, check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            check=True,
             env=_git_env(),
         )
         passed, detail = _check_workspace_clean(tmp_path, "sess-test", context="merge")
@@ -607,7 +669,9 @@ class TestCheckWorkspaceCleanStagedIntegration:
         (tmp_path / "src" / "real_code.py").write_text("x = 99\n", encoding="utf-8")
         subprocess.run(
             ["git", "add", "src/real_code.py"],
-            cwd=str(tmp_path), capture_output=True, check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            check=True,
             env=_git_env(),
         )
         passed, _ = _check_workspace_clean(tmp_path, "sess-test", context="abort")

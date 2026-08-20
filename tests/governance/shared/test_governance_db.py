@@ -278,9 +278,7 @@ def test_tasks_crud(gov_conn: sqlite3.Connection):
         (_TASK_ID, "Test Task", "Test desc", "PENDING", "HIGH", now, now),
     )
     gov_conn.commit()
-    row = gov_conn.execute(
-        "SELECT * FROM tasks WHERE task_id=?", (_TASK_ID,)
-    ).fetchone()
+    row = gov_conn.execute("SELECT * FROM tasks WHERE task_id=?", (_TASK_ID,)).fetchone()
     assert row is not None, "tasks INSERT+SELECT: row not found"
     assert row["title"] == "Test Task", f"tasks INSERT+SELECT: title mismatch={row['title']!r}"
 
@@ -289,9 +287,7 @@ def test_tasks_crud(gov_conn: sqlite3.Connection):
         (now, _TASK_ID),
     )
     gov_conn.commit()
-    row = gov_conn.execute(
-        "SELECT status FROM tasks WHERE task_id=?", (_TASK_ID,)
-    ).fetchone()
+    row = gov_conn.execute("SELECT status FROM tasks WHERE task_id=?", (_TASK_ID,)).fetchone()
     assert row["status"] == "IN_PROGRESS", f"tasks UPDATE status: got {row['status']!r}"
 
     gov_conn.execute(
@@ -300,9 +296,7 @@ def test_tasks_crud(gov_conn: sqlite3.Connection):
         (_TASK_ID, "TASK_IN_PROGRESS", '{"old":"PENDING","new":"IN_PROGRESS","actor":"test"}', now, "session-001"),
     )
     gov_conn.commit()
-    ev = gov_conn.execute(
-        "SELECT * FROM task_events WHERE task_id=?", (_TASK_ID,)
-    ).fetchone()
+    ev = gov_conn.execute("SELECT * FROM task_events WHERE task_id=?", (_TASK_ID,)).fetchone()
     assert ev is not None, "task_events INSERT: row not found"
 
     gov_conn.execute(
@@ -310,9 +304,7 @@ def test_tasks_crud(gov_conn: sqlite3.Connection):
         (_TASK_ID, '{"status":"IN_PROGRESS"}', now),
     )
     gov_conn.commit()
-    n = gov_conn.execute(
-        "SELECT COUNT(*) FROM task_snapshots WHERE task_id=?", (_TASK_ID,)
-    ).fetchone()[0]
+    n = gov_conn.execute("SELECT COUNT(*) FROM task_snapshots WHERE task_id=?", (_TASK_ID,)).fetchone()[0]
     assert n > 0, "task_snapshots INSERT: no rows"
 
     gov_conn.execute(
@@ -320,9 +312,7 @@ def test_tasks_crud(gov_conn: sqlite3.Connection):
         (_TASK_ID, "test.py", "in_scope"),
     )
     gov_conn.commit()
-    n = gov_conn.execute(
-        "SELECT COUNT(*) FROM task_files WHERE task_id=?", (_TASK_ID,)
-    ).fetchone()[0]
+    n = gov_conn.execute("SELECT COUNT(*) FROM task_files WHERE task_id=?", (_TASK_ID,)).fetchone()[0]
     assert n > 0, "task_files INSERT: no rows"
 
 
@@ -337,9 +327,7 @@ def test_gates_insert(gov_conn: sqlite3.Connection):
         ("GATE-RUN-TEST-001", _GATE_ID, 1, "all checks passed", _TASK_ID, now),
     )
     gov_conn.commit()
-    row = gov_conn.execute(
-        "SELECT * FROM gates WHERE gate_id=?", (_GATE_ID,)
-    ).fetchone()
+    row = gov_conn.execute("SELECT * FROM gates WHERE gate_id=?", (_GATE_ID,)).fetchone()
     assert row is not None, "gates INSERT+SELECT: row not found"
 
 
@@ -354,9 +342,7 @@ def test_audit_subsystem(gov_conn: sqlite3.Connection):
         (now, "test_agent", "file_write", "test.py", "test write", "session-001"),
     )
     gov_conn.commit()
-    n = gov_conn.execute(
-        "SELECT COUNT(*) FROM audit_entries WHERE actor='test_agent'"
-    ).fetchone()[0]
+    n = gov_conn.execute("SELECT COUNT(*) FROM audit_entries WHERE actor='test_agent'").fetchone()[0]
     assert n > 0, "audit_entries INSERT: no rows"
 
     gov_conn.execute(
@@ -388,9 +374,7 @@ def test_drift_subsystem(gov_conn: sqlite3.Connection):
         ("schema_drift", _DRIFT_TARGET, "v1", "v2", "medium", now),
     )
     gov_conn.commit()
-    n = gov_conn.execute(
-        f"SELECT COUNT(*) FROM drift_events WHERE target='{_DRIFT_TARGET}'"
-    ).fetchone()[0]
+    n = gov_conn.execute(f"SELECT COUNT(*) FROM drift_events WHERE target='{_DRIFT_TARGET}'").fetchone()[0]
     assert n > 0, "drift_events INSERT: no rows"
 
     gov_conn.execute(
@@ -398,9 +382,7 @@ def test_drift_subsystem(gov_conn: sqlite3.Connection):
         (_SCAN_TYPE, "nodes_test", "PASS", "test scan", now),
     )
     gov_conn.commit()
-    n = gov_conn.execute(
-        f"SELECT COUNT(*) FROM scan_results WHERE scan_type='{_SCAN_TYPE}'"
-    ).fetchone()[0]
+    n = gov_conn.execute(f"SELECT COUNT(*) FROM scan_results WHERE scan_type='{_SCAN_TYPE}'").fetchone()[0]
     assert n > 0, "scan_results INSERT: no rows"
 
     gov_conn.execute(
@@ -437,7 +419,9 @@ def test_fle_subsystem(gov_conn: sqlite3.Connection):
         ("scan", '{"type":"orphan"}', now, "completed"),
     )
     gov_conn.commit()
-    assert gov_conn.execute("SELECT COUNT(*) FROM fle_dispatch_log").fetchone()[0] > 0, "fle_dispatch_log INSERT: no rows"
+    assert gov_conn.execute("SELECT COUNT(*) FROM fle_dispatch_log").fetchone()[0] > 0, (
+        "fle_dispatch_log INSERT: no rows"
+    )
 
     gov_conn.execute(
         """INSERT INTO judgment_records (judgment_type, context, decision, reasoning, recorded_at)
@@ -445,7 +429,9 @@ def test_fle_subsystem(gov_conn: sqlite3.Connection):
         ("orphan_delete", "test.py", "KEEP", "has functional value", now),
     )
     gov_conn.commit()
-    assert gov_conn.execute("SELECT COUNT(*) FROM judgment_records").fetchone()[0] > 0, "judgment_records INSERT: no rows"
+    assert gov_conn.execute("SELECT COUNT(*) FROM judgment_records").fetchone()[0] > 0, (
+        "judgment_records INSERT: no rows"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -477,9 +463,7 @@ def test_infrastructure_tables(gov_conn: sqlite3.Connection):
         (_IDEMP_KEY, "create_task", "success", now),
     )
     gov_conn.commit()
-    row = gov_conn.execute(
-        "SELECT * FROM tx_idempotency WHERE idempotency_key=?", (_IDEMP_KEY,)
-    ).fetchone()
+    row = gov_conn.execute("SELECT * FROM tx_idempotency WHERE idempotency_key=?", (_IDEMP_KEY,)).fetchone()
     assert row is not None, "tx_idempotency INSERT: row not found"
 
     gov_conn.execute(
@@ -518,9 +502,7 @@ def test_rule_enforcement_log(gov_conn: sqlite3.Connection):
 # ---------------------------------------------------------------------------
 def test_schema_version(gov_conn: sqlite3.Connection):
     """_schema_version 表存在且 version >= 1。"""
-    row = gov_conn.execute(
-        "SELECT version FROM _schema_version ORDER BY version DESC LIMIT 1"
-    ).fetchone()
+    row = gov_conn.execute("SELECT version FROM _schema_version ORDER BY version DESC LIMIT 1").fetchone()
     assert row is not None, "_schema_version: no rows"
     assert row["version"] >= 1, f"_schema_version: version < 1 (got {row['version']})"
 

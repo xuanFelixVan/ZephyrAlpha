@@ -25,6 +25,7 @@
 
 测试隔离：使用 tmp_path + monkeypatch 替换 LOOKUP_AUDIT_DIR，不污染真实 .runtime/。
 """
+
 from __future__ import annotations
 
 import json
@@ -71,10 +72,9 @@ class TestWriteLookupAuditLog:
     def test_writes_jsonl_entry(self, tmp_path: Path):
         """write_lookup_audit_log 写入 JSONL 条目，格式与 rule_discovery_server 对称。"""
         from zephyr.governance.capability_lookup import write_lookup_audit_log
+
         audit_dir = tmp_path / "lookup_audit"
-        with patch(
-            "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-        ):
+        with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
             write_lookup_audit_log(
                 session_id="sess-test-001",
                 query={"query": "session handoff"},
@@ -95,10 +95,9 @@ class TestWriteLookupAuditLog:
     def test_appends_to_existing_log(self, tmp_path: Path):
         """多次调用追加到同一 session log 文件（不覆盖）。"""
         from zephyr.governance.capability_lookup import write_lookup_audit_log
+
         audit_dir = tmp_path / "lookup_audit"
-        with patch(
-            "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-        ):
+        with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
             write_lookup_audit_log(
                 session_id="sess-append",
                 query={"query": "first"},
@@ -112,10 +111,7 @@ class TestWriteLookupAuditLog:
                 capability_ids=[],
             )
         log_path = audit_dir / "sess-append.jsonl"
-        lines = [
-            line for line in log_path.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        lines = [line for line in log_path.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert len(lines) == 2, f"应有 2 条 entry（追加模式），实际 {len(lines)}"
         first = json.loads(lines[0])
         second = json.loads(lines[1])
@@ -125,10 +121,9 @@ class TestWriteLookupAuditLog:
     def test_empty_session_id_skipped(self, tmp_path: Path):
         """空 session_id / 'unknown' / 'none' / 'null' → 跳过 audit log。"""
         from zephyr.governance.capability_lookup import write_lookup_audit_log
+
         audit_dir = tmp_path / "lookup_audit"
-        with patch(
-            "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-        ):
+        with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
             for invalid_sid in ["", "unknown", "none", "null"]:
                 write_lookup_audit_log(
                     session_id=invalid_sid,
@@ -136,18 +131,16 @@ class TestWriteLookupAuditLog:
                     result_count=0,
                     capability_ids=[],
                 )
-        assert not audit_dir.exists() or not any(audit_dir.iterdir()), \
-            "无效 session_id 不应写入任何 audit log"
+        assert not audit_dir.exists() or not any(audit_dir.iterdir()), "无效 session_id 不应写入任何 audit log"
 
     def test_fail_open_on_os_error(self, tmp_path: Path):
         """OSError 时 fail-open（logger.warning 不抛异常）。"""
         from zephyr.governance.capability_lookup import write_lookup_audit_log
+
         # 模拟 mkdir 失败（路径是文件而非目录）
         blocker = tmp_path / "lookup_audit"
         blocker.write_text("blocker", encoding="utf-8")
-        with patch(
-            "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", blocker
-        ):
+        with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", blocker):
             # 不应抛异常
             write_lookup_audit_log(
                 session_id="sess-fail",
@@ -168,11 +161,10 @@ class TestFindWritesAuditLog:
     def test_find_with_session_id_writes_log(self, tmp_path: Path):
         """find(query, session_id='xxx') 写入 audit log。"""
         from zephyr.governance.capability_lookup import CapabilityLookup
+
         yaml_path = _write_yaml(tmp_path)
         audit_dir = tmp_path / "lookup_audit"
-        with patch(
-            "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-        ):
+        with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
             reg = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
             results = reg.find("test", session_id="sess-find-001")
         assert len(results) >= 1, "find 应至少命中 test_cap"
@@ -187,19 +179,17 @@ class TestFindWritesAuditLog:
     def test_find_without_session_id_no_log(self, tmp_path: Path):
         """find(query) 无 session_id 且无 env var → 不写 audit log（向后兼容）。"""
         from zephyr.governance.capability_lookup import CapabilityLookup
+
         yaml_path = _write_yaml(tmp_path)
         audit_dir = tmp_path / "lookup_audit"
         # 确保 env var 未设置
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop("ZEPHYR_SESSION_ID", None)
-            with patch(
-                "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-            ):
+            with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
                 reg = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
                 results = reg.find("test")
         assert len(results) >= 1, "find 仍应正常返回结果"
-        assert not audit_dir.exists() or not any(audit_dir.iterdir()), \
-            "无 session_id 时不应写 audit log"
+        assert not audit_dir.exists() or not any(audit_dir.iterdir()), "无 session_id 时不应写 audit log"
 
 
 # ---------------------------------------------------------------------------
@@ -213,11 +203,10 @@ class TestGetWritesAuditLog:
     def test_get_existing_writes_log(self, tmp_path: Path):
         """get(capability_id, session_id='xxx') 写入 audit log，含命中条目。"""
         from zephyr.governance.capability_lookup import CapabilityLookup
+
         yaml_path = _write_yaml(tmp_path)
         audit_dir = tmp_path / "lookup_audit"
-        with patch(
-            "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-        ):
+        with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
             reg = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
             result = reg.get("test_cap", session_id="sess-get-001")
         assert result is not None, "test_cap 应存在"
@@ -232,11 +221,10 @@ class TestGetWritesAuditLog:
     def test_get_not_found_writes_log(self, tmp_path: Path):
         """get(不存在的 id, session_id='xxx') 也写 audit log（result_count=0）。"""
         from zephyr.governance.capability_lookup import CapabilityLookup
+
         yaml_path = _write_yaml(tmp_path)
         audit_dir = tmp_path / "lookup_audit"
-        with patch(
-            "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-        ):
+        with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
             reg = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
             result = reg.get("nonexistent", session_id="sess-get-404")
         assert result is None
@@ -258,12 +246,11 @@ class TestSessionIdResolution:
     def test_param_overrides_env(self, tmp_path: Path):
         """session_id 参数优先于 ZEPHYR_SESSION_ID 环境变量。"""
         from zephyr.governance.capability_lookup import CapabilityLookup
+
         yaml_path = _write_yaml(tmp_path)
         audit_dir = tmp_path / "lookup_audit"
         with patch.dict(os.environ, {"ZEPHYR_SESSION_ID": "env-session"}):
-            with patch(
-                "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-            ):
+            with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
                 reg = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
                 reg.find("test", session_id="param-session")
         # 参数优先 → log 文件名应是 param-session
@@ -273,16 +260,14 @@ class TestSessionIdResolution:
     def test_env_var_fallback(self, tmp_path: Path):
         """无 session_id 参数时回退到 ZEPHYR_SESSION_ID 环境变量。"""
         from zephyr.governance.capability_lookup import CapabilityLookup
+
         yaml_path = _write_yaml(tmp_path)
         audit_dir = tmp_path / "lookup_audit"
         with patch.dict(os.environ, {"ZEPHYR_SESSION_ID": "env-fallback"}):
-            with patch(
-                "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-            ):
+            with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
                 reg = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
                 reg.find("test")
-        assert (audit_dir / "env-fallback.jsonl").is_file(), \
-            "无参数时应回退到 ZEPHYR_SESSION_ID 环境变量"
+        assert (audit_dir / "env-fallback.jsonl").is_file(), "无参数时应回退到 ZEPHYR_SESSION_ID 环境变量"
 
 
 # ---------------------------------------------------------------------------
@@ -299,11 +284,10 @@ class TestGateIntegration:
             _count_valid_log_entries,
         )
         from zephyr.governance.capability_lookup import CapabilityLookup
+
         yaml_path = _write_yaml(tmp_path)
         audit_dir = tmp_path / "lookup_audit"
-        with patch(
-            "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-        ):
+        with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
             reg = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
             reg.find("test", session_id="sess-e2e")
         # 验证 gate 能读取并计数
@@ -317,6 +301,7 @@ class TestGateIntegration:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             _count_valid_log_entries,
         )
+
         log_path = tmp_path / "never-called.jsonl"
         count, err = _count_valid_log_entries(log_path)
         assert err is None
@@ -334,6 +319,7 @@ class TestBackwardCompat:
     def test_find_returns_same_results_with_or_without_session(self, tmp_path: Path):
         """find(query) 与 find(query, session_id='x') 返回相同结果。"""
         from zephyr.governance.capability_lookup import CapabilityLookup
+
         yaml_path = _write_yaml(tmp_path)
         audit_dir = tmp_path / "lookup_audit"
         # 无 session_id
@@ -342,25 +328,21 @@ class TestBackwardCompat:
             reg1 = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
             results_no_sid = reg1.find("test")
         # 有 session_id
-        with patch(
-            "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-        ):
+        with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
             reg2 = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
             results_with_sid = reg2.find("test", session_id="sess-bc")
-        assert results_no_sid == results_with_sid, \
-            "session_id 参数不应影响 find() 返回结果"
+        assert results_no_sid == results_with_sid, "session_id 参数不应影响 find() 返回结果"
 
     def test_get_returns_same_results_with_or_without_session(self, tmp_path: Path):
         """get(id) 与 get(id, session_id='x') 返回相同结果。"""
         from zephyr.governance.capability_lookup import CapabilityLookup
+
         yaml_path = _write_yaml(tmp_path)
         audit_dir = tmp_path / "lookup_audit"
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop("ZEPHYR_SESSION_ID", None)
             reg1 = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
             r1 = reg1.get("test_cap")
-        with patch(
-            "zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir
-        ):
+        with patch("zephyr.governance.capability_lookup.LOOKUP_AUDIT_DIR", audit_dir):
             reg2 = CapabilityLookup(yaml_path=yaml_path, scan_root=tmp_path, scan=False)
             r2 = reg2.get("test_cap", session_id="sess-bc")

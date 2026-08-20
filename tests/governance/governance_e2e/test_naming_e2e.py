@@ -187,7 +187,9 @@ class TestWhitelistProtection:
         m = re.search(r"FILENAME_UPPERCASE_WHITELIST[^=]*=\s*\[(.*?)\]", content, re.DOTALL)
         assert m, "FILENAME_UPPERCASE_WHITELIST 定义未找到"
         whitelist_block = m.group(1)
-        assert '"README.md"' not in whitelist_block, "README.md 不应在 N-01 大写白名单中（由 _GITHUB_CONVENTION_RE 处理）"
+        assert '"README.md"' not in whitelist_block, (
+            "README.md 不应在 N-01 大写白名单中（由 _GITHUB_CONVENTION_RE 处理）"
+        )
         assert '"index.md"' not in whitelist_block, "index.md 不应在 N-01 大写白名单中"
         assert '"CHANGELOG.md"' not in whitelist_block, "CHANGELOG.md 不应在 N-01 大写白名单中"
         assert '"AGENTS.md"' in whitelist_block, "AGENTS.md 应保留在 N-01 大写白名单中"

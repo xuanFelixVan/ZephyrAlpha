@@ -38,6 +38,7 @@
   - 测试结束（无论成功/失败）都用 escape hatch 强制清理测试行
   - 测试使用独立连接，不影响其他 session
 """
+
 from __future__ import annotations
 
 import sys
@@ -107,12 +108,8 @@ class TestGucTriggerFix:
             for r in rows:
                 name = _get_val(r, 0)
                 func_def = _get_val(r, 1)
-                assert "SHOW app." not in func_def, (
-                    f"{name} still uses SHOW (BROKEN)"
-                )
-                assert "current_setting" in func_def, (
-                    f"{name} does not use current_setting (not fixed)"
-                )
+                assert "SHOW app." not in func_def, f"{name} still uses SHOW (BROKEN)"
+                assert "current_setting" in func_def, f"{name} does not use current_setting (not fixed)"
         finally:
             cur.close()
             conn.close()
@@ -122,14 +119,10 @@ class TestGucTriggerFix:
         conn = _get_conn()
         cur = conn.cursor()
         try:
-            cur.execute(
-                "SELECT current_setting('app.allow_design_maturity_delete', true) as val"
-            )
+            cur.execute("SELECT current_setting('app.allow_design_maturity_delete', true) as val")
             val = _get_val(cur.fetchone(), 0)
             # GUC 可能未注册（NULL）或被 SET 为 'off'，两者都表示保护激活
-            assert val is None or val == "off", (
-                f"Expected NULL or 'off', got {val!r}"
-            )
+            assert val is None or val == "off", f"Expected NULL or 'off', got {val!r}"
         finally:
             cur.close()
             conn.close()
@@ -171,12 +164,8 @@ class TestGucTriggerFix:
 
             # 尝试 DELETE（应失败）
             with pytest.raises(Exception) as exc_info:
-                cur.execute(
-                    "DELETE FROM dataflow_jobs WHERE job_name = '__guc_fix_test_delete__'"
-                )
-            assert "ARCH-053" in str(exc_info.value), (
-                f"Expected ARCH-053 error, got: {exc_info.value}"
-            )
+                cur.execute("DELETE FROM dataflow_jobs WHERE job_name = '__guc_fix_test_delete__'")
+            assert "ARCH-053" in str(exc_info.value), f"Expected ARCH-053 error, got: {exc_info.value}"
         finally:
             _cleanup_test_rows(cur, conn)
             cur.close()
@@ -209,9 +198,7 @@ class TestGucTriggerFix:
             cur.execute("ROLLBACK TO SAVEPOINT sp_update_test")
 
             # 验证 design_maturity 仍为 design
-            cur.execute(
-                "SELECT design_maturity FROM dataflow_jobs WHERE job_name = '__guc_fix_test_update__'"
-            )
+            cur.execute("SELECT design_maturity FROM dataflow_jobs WHERE job_name = '__guc_fix_test_update__'")
             row = cur.fetchone()
             assert row is not None
             dm = _get_val(row, 0)
@@ -236,16 +223,12 @@ class TestGucTriggerFix:
             )
             # 启用逃生通道
             cur.execute("SET app.allow_design_maturity_delete = 'on'")
-            cur.execute(
-                "DELETE FROM dataflow_jobs WHERE job_name = '__guc_fix_test_escape__'"
-            )
+            cur.execute("DELETE FROM dataflow_jobs WHERE job_name = '__guc_fix_test_escape__'")
             cur.execute("SET app.allow_design_maturity_delete = 'off'")
             conn.commit()
 
             # 验证行已被删除
-            cur.execute(
-                "SELECT count(*) FROM dataflow_jobs WHERE job_name = '__guc_fix_test_escape__'"
-            )
+            cur.execute("SELECT count(*) FROM dataflow_jobs WHERE job_name = '__guc_fix_test_escape__'")
             count = _get_val(cur.fetchone(), 0)
             assert count == 0, f"Expected 0 rows after escape hatch delete, got {count}"
         finally:

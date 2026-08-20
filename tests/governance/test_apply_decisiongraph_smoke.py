@@ -32,6 +32,7 @@ Usage::
     py -3.12 -m pytest tests/governance/test_apply_decisiongraph_smoke.py -v
     py -3.12 -m pytest tests/governance/test_apply_decisiongraph_smoke.py -k "not e2e"  # 跳过 DB 连接
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -52,9 +53,7 @@ def adg():
 
     真实执行模块级代码（含 import 语句）——若 import 缺失会立即抛 ImportError/NameError。
     """
-    spec = importlib.util.spec_from_file_location(
-        "apply_decisiongraph_smoke_under_test", _SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("apply_decisiongraph_smoke_under_test", _SCRIPT_PATH)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -75,6 +74,7 @@ def _make_mock_conn(fetchone_result=None, fetchall_result=None):
 # ============================================================================
 # Test 1: Import smoke —— 检测 NameError（import 缺失）
 # ============================================================================
+
 
 class TestImportSmoke:
     """验证 apply_decisiongraph.py 模块能正常 import。"""
@@ -127,6 +127,7 @@ class TestImportSmoke:
 # Test 2: CLI smoke —— 检测 CLI 入口可运行
 # ============================================================================
 
+
 class TestCLISmoke:
     """验证 apply_decisiongraph.py CLI 入口可运行。"""
 
@@ -134,12 +135,15 @@ class TestCLISmoke:
         """--list-ops CLI 命令能正常运行（returncode=0）。"""
         result = subprocess.run(
             [sys.executable, str(_SCRIPT_PATH), "--list-ops"],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(_REPO_ROOT),
         )
         assert result.returncode == 0, (
-            f"--list-ops CLI 失败 rc={result.returncode}\n"
-            f"stdout: {result.stdout[:500]}\nstderr: {result.stderr[:500]}"
+            f"--list-ops CLI 失败 rc={result.returncode}\nstdout: {result.stdout[:500]}\nstderr: {result.stderr[:500]}"
         )
         # --list-ops 输出应包含 op 名称
         assert "add_design_node" in result.stdout or "Node ops" in result.stdout, (
@@ -150,20 +154,23 @@ class TestCLISmoke:
         """无参数调用打印 help（非崩溃退出）。"""
         result = subprocess.run(
             [sys.executable, str(_SCRIPT_PATH)],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(_REPO_ROOT),
         )
         # 无参数时打印 "ERROR: Must specify an operation." + usage
         assert result.returncode != 0, "无参数应返回非零 rc"
         combined = result.stdout + result.stderr
-        assert "usage:" in combined or "operation" in combined.lower(), (
-            "help 输出缺少 usage 行"
-        )
+        assert "usage:" in combined or "operation" in combined.lower(), "help 输出缺少 usage 行"
 
 
 # ============================================================================
 # Test 3: DB connection smoke —— 真实连接 PostgreSQL（@pytest.mark.e2e）
 # ============================================================================
+
 
 @pytest.mark.e2e
 class TestDBConnectionSmoke:
@@ -205,6 +212,7 @@ class TestDBConnectionSmoke:
 # ============================================================================
 # Test 4: Function callable smoke —— mock DB，真实调用函数逻辑
 # ============================================================================
+
 
 class TestFunctionCallableSmoke:
     """验证核心 op_* 函数能被调用（mock DB，检测 NameError/签名漂移）。

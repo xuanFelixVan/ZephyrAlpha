@@ -21,6 +21,7 @@
 - TestIsEmergencyBypass: 环境变量检测
 - TestLoadBypassPolicy: YAML 加载（正常 / 缺失 fail-open / 字段非法 fail-open）
 """
+
 from __future__ import annotations
 
 import os
@@ -48,18 +49,21 @@ class TestConstants:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             BYPASS_MARKER_PREFIX,
         )
+
         assert BYPASS_MARKER_PREFIX == "[no-lookup:"
 
     def test_bypass_env_var(self):
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             BYPASS_ENV_VAR,
         )
+
         assert BYPASS_ENV_VAR == "ZEPHYR_BYPASS_LOOKUP"
 
     def test_exempt_keywords_loaded(self):
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             EXEMPT_KEYWORDS,
         )
+
         assert isinstance(EXEMPT_KEYWORDS, frozenset)
         # v2.0.0: 16 项关键词
         assert len(EXEMPT_KEYWORDS) >= 16
@@ -69,6 +73,7 @@ class TestConstants:
             ESCALATION_THRESHOLD,
             WINDOW,
         )
+
         assert ESCALATION_THRESHOLD == 5
         assert WINDOW == 10
 
@@ -83,18 +88,21 @@ class TestIsExemptReason:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         assert is_exempt_reason("gate-fix-urgent-patch") is True
 
     def test_whitelist_reason_test_fix(self):
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         assert is_exempt_reason("test-fix-flaky") is True
 
     def test_whitelist_reason_sync(self):
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         assert is_exempt_reason("sync-yaml-to-db") is True
 
     def test_normalization_underscore_to_hyphen(self):
@@ -102,6 +110,7 @@ class TestIsExemptReason:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         assert is_exempt_reason("root_cause_fix") is True
 
     def test_normalization_mechanical_batch(self):
@@ -109,6 +118,7 @@ class TestIsExemptReason:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         assert is_exempt_reason("mechanical-header-format-fix-batch-3") is True
 
     def test_normalization_research_done(self):
@@ -116,6 +126,7 @@ class TestIsExemptReason:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         assert is_exempt_reason("extensive-research-done") is True
 
     def test_chinese_keyword(self):
@@ -123,24 +134,28 @@ class TestIsExemptReason:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         assert is_exempt_reason("已充分调研TableRegistry接口") is True
 
     def test_non_whitelist_reason_rejected(self):
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         assert is_exempt_reason("new-feature-xxx") is False
 
     def test_non_whitelist_reason_random(self):
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         assert is_exempt_reason("random-reason") is False
 
     def test_empty_reason_rejected(self):
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         assert is_exempt_reason("") is False
 
     def test_custom_keywords_override(self):
@@ -148,6 +163,7 @@ class TestIsExemptReason:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_exempt_reason,
         )
+
         custom = frozenset({"my-custom-keyword"})
         assert is_exempt_reason("my-custom-keyword-xxx", keywords=custom) is True
         assert is_exempt_reason("gate-fix", keywords=custom) is False
@@ -163,6 +179,7 @@ class TestHasBypassMarker:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             has_bypass_marker,
         )
+
         hit, reason = has_bypass_marker("fix: patch [no-lookup:gate-fix-xxx]")
         assert hit is True
         assert reason == "gate-fix-xxx"
@@ -171,6 +188,7 @@ class TestHasBypassMarker:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             has_bypass_marker,
         )
+
         hit, reason = has_bypass_marker("fix [no-lookup:  gate-fix  ]")
         assert hit is True
         assert reason == "gate-fix"
@@ -179,6 +197,7 @@ class TestHasBypassMarker:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             has_bypass_marker,
         )
+
         hit, reason = has_bypass_marker("fix: patch without bypass")
         assert hit is False
         assert reason == ""
@@ -187,6 +206,7 @@ class TestHasBypassMarker:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             has_bypass_marker,
         )
+
         hit, reason = has_bypass_marker(None)
         assert hit is False
         assert reason == ""
@@ -196,6 +216,7 @@ class TestHasBypassMarker:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             has_bypass_marker,
         )
+
         hit, reason = has_bypass_marker("fix [no-lookup:gate-fix")
         assert hit is False
         assert reason == ""
@@ -205,6 +226,7 @@ class TestHasBypassMarker:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             has_bypass_marker,
         )
+
         hit, reason = has_bypass_marker("fix [no-lookup:]")
         assert hit is True
         assert reason == ""
@@ -220,6 +242,7 @@ class TestIsEmergencyBypass:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_emergency_bypass,
         )
+
         monkeypatch.setenv("ZEPHYR_BYPASS_LOOKUP", "1")
         assert is_emergency_bypass() is True
 
@@ -227,6 +250,7 @@ class TestIsEmergencyBypass:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_emergency_bypass,
         )
+
         monkeypatch.delenv("ZEPHYR_BYPASS_LOOKUP", raising=False)
         assert is_emergency_bypass() is False
 
@@ -234,6 +258,7 @@ class TestIsEmergencyBypass:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             is_emergency_bypass,
         )
+
         monkeypatch.setenv("ZEPHYR_BYPASS_LOOKUP", "0")
         assert is_emergency_bypass() is False
 
@@ -249,6 +274,7 @@ class TestLoadBypassPolicy:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
             load_bypass_policy,
         )
+
         policy = load_bypass_policy()
         assert len(policy["exempt_keywords"]) == 16
         assert policy["escalation_threshold"] == 5
@@ -257,6 +283,7 @@ class TestLoadBypassPolicy:
     def test_yaml_missing_fails_open(self, tmp_path):
         """YAML 文件缺失 → fail-open 返回默认值。"""
         from zephyr.gov_enforcement.commit_gates import capability_lookup_bypass_policy as mod
+
         with patch.object(mod, "_POLICY_YAML_PATH", tmp_path / "nonexistent.yaml"):
             policy = mod.load_bypass_policy()
         assert len(policy["exempt_keywords"]) >= 16  # 默认值
@@ -268,6 +295,7 @@ class TestLoadBypassPolicy:
         bad_yaml = tmp_path / "bad.yaml"
         bad_yaml.write_text("::: not valid yaml :::")
         from zephyr.gov_enforcement.commit_gates import capability_lookup_bypass_policy as mod
+
         with patch.object(mod, "_POLICY_YAML_PATH", bad_yaml):
             policy = mod.load_bypass_policy()
         assert len(policy["exempt_keywords"]) >= 16
@@ -278,6 +306,7 @@ class TestLoadBypassPolicy:
         bad_yaml = tmp_path / "list.yaml"
         bad_yaml.write_text("- item1\n- item2\n")
         from zephyr.gov_enforcement.commit_gates import capability_lookup_bypass_policy as mod
+
         with patch.object(mod, "_POLICY_YAML_PATH", bad_yaml):
             policy = mod.load_bypass_policy()
         assert isinstance(policy["exempt_keywords"], frozenset)
@@ -294,6 +323,7 @@ class TestLoadBypassPolicy:
             "  window: 7\n"
         )
         from zephyr.gov_enforcement.commit_gates import capability_lookup_bypass_policy as mod
+
         with patch.object(mod, "_POLICY_YAML_PATH", custom_yaml):
             policy = mod.load_bypass_policy()
         assert "custom-kw1" in policy["exempt_keywords"]
@@ -304,12 +334,9 @@ class TestLoadBypassPolicy:
     def test_yaml_string_keywords_loaded(self, tmp_path):
         """YAML 关键词列表项为纯字符串也被正确加载。"""
         custom_yaml = tmp_path / "str_kw.yaml"
-        custom_yaml.write_text(
-            "bypass_exempt_keywords:\n"
-            "  - str-kw1\n"
-            "  - str-kw2\n"
-        )
+        custom_yaml.write_text("bypass_exempt_keywords:\n  - str-kw1\n  - str-kw2\n")
         from zephyr.gov_enforcement.commit_gates import capability_lookup_bypass_policy as mod
+
         with patch.object(mod, "_POLICY_YAML_PATH", custom_yaml):
             policy = mod.load_bypass_policy()
         assert "str-kw1" in policy["exempt_keywords"]
@@ -318,12 +345,9 @@ class TestLoadBypassPolicy:
     def test_yaml_invalid_threshold_fails_open(self, tmp_path):
         """阈值字段非法 → 用默认值。"""
         custom_yaml = tmp_path / "bad_thresh.yaml"
-        custom_yaml.write_text(
-            "thresholds:\n"
-            "  escalation_threshold: 'not-a-number'\n"
-            "  window: -5\n"
-        )
+        custom_yaml.write_text("thresholds:\n  escalation_threshold: 'not-a-number'\n  window: -5\n")
         from zephyr.gov_enforcement.commit_gates import capability_lookup_bypass_policy as mod
+
         with patch.object(mod, "_POLICY_YAML_PATH", custom_yaml):
             policy = mod.load_bypass_policy()
         assert policy["escalation_threshold"] == 5  # 默认

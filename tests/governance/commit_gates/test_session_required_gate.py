@@ -25,6 +25,7 @@
 注意：本 gate 不读 git diff，只读 gateway.registry.get_session(session_id)。
 测试隔离：MagicMock 模拟 gateway.registry，不触碰真实 session registry。
 """
+
 from __future__ import annotations
 
 import sys
@@ -98,9 +99,7 @@ class TestReservedIds:
 class TestGatewayIntegration:
     def test_allow_overlap_passes(self):
         gw = _make_gateway(session_info=None)
-        passed, msg = make_session_required_gate().check(
-            gw, [], session_id="", allow_overlap=True
-        )
+        passed, msg = make_session_required_gate().check(gw, [], session_id="", allow_overlap=True)
         assert passed
         assert msg == ""
 
@@ -112,9 +111,7 @@ class TestGatewayIntegration:
 
     def test_unknown_session_id_blocked(self):
         gw = _make_gateway(session_info=None)
-        passed, msg = make_session_required_gate().check(
-            gw, [], session_id="unknown"
-        )
+        passed, msg = make_session_required_gate().check(gw, [], session_id="unknown")
         assert not passed
         assert "unknown" in msg
 
@@ -132,9 +129,7 @@ class TestGatewayIntegration:
 
     def test_unregistered_session_blocked(self):
         gw = _make_gateway(session_info=None)
-        passed, msg = make_session_required_gate().check(
-            gw, [], session_id="sess-123"
-        )
+        passed, msg = make_session_required_gate().check(gw, [], session_id="sess-123")
         assert not passed
         assert "sess-123" in msg
         assert "未注册" in msg
@@ -142,17 +137,13 @@ class TestGatewayIntegration:
     def test_registered_session_passes(self):
         info = {"session_id": "sess-123"}
         gw = _make_gateway(session_info=info)
-        passed, msg = make_session_required_gate().check(
-            gw, [], session_id="sess-123"
-        )
+        passed, msg = make_session_required_gate().check(gw, [], session_id="sess-123")
         assert passed
         assert msg == ""
 
     def test_registry_exception_passes(self):
         gw = _make_gateway(get_session_raises=True)
-        passed, msg = make_session_required_gate().check(
-            gw, [], session_id="sess-123"
-        )
+        passed, msg = make_session_required_gate().check(gw, [], session_id="sess-123")
         assert passed  # registry 故障安全降级放行
         assert msg == ""
 
@@ -171,8 +162,6 @@ class TestGatewayIntegration:
     def test_reserved_checked_before_registry(self):
         # reserved session_id 应在调用 registry 前阻断——registry 不应被调用
         gw = _make_gateway(session_info=None)
-        passed, msg = make_session_required_gate().check(
-            gw, [], session_id="unknown"
-        )
+        passed, msg = make_session_required_gate().check(gw, [], session_id="unknown")
         assert not passed
         gw.registry.get_session.assert_not_called()

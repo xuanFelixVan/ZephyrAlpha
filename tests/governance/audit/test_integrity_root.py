@@ -115,6 +115,7 @@ class TestIntegrityVerifierInit:
         # 治本（裁定#6 路径SSoT）：默认路径必须为绝对路径（项目硬约束"禁止相对路径"），
         # 真源为 zephyr.shared.io.paths.AUDIT_DATA_DIR。
         from zephyr.shared.io.paths import AUDIT_DATA_DIR
+
         verifier = IntegrityVerifier()
         assert verifier.event_log_path == AUDIT_DATA_DIR / "events.jsonl"
 

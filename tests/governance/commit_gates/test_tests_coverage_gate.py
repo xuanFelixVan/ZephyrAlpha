@@ -30,6 +30,7 @@
 测试隔离：tmp_path 构造临时 gate 目录，MagicMock 模拟 gateway.project_root，
 不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import os
@@ -84,6 +85,7 @@ def _make_gateway(project_root: str):
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """验证 make_tests_coverage_gate() 返回的 GateSpec 字段。"""
 
@@ -107,6 +109,7 @@ class TestGateSpecFields:
 # ---------------------------------------------------------------------------
 # TestHeaderRegex
 # ---------------------------------------------------------------------------
+
 
 class TestHeaderRegex:
     """验证 _TESTS_HEADER_RE 正则提取逻辑。"""
@@ -152,7 +155,7 @@ class TestHeaderRegex:
         旧正则用 \\s* 会匹配 \\n，导致从 '# [TESTS]\\nfoo' 中提取 'foo'。
         新正则用 [ \\t]* 只匹配空格和 tab，正确提取空字符串。
         """
-        head = "# [TESTS]\n\"\"\"docstring\"\"\"\n"
+        head = '# [TESTS]\n"""docstring"""\n'
         m = _TESTS_HEADER_RE.search(head)
         assert m is not None
         # 应提取空字符串，而非 '"""docstring"""'
@@ -165,11 +168,7 @@ class TestHeaderRegex:
         assert m.group(1).strip() == "tests/foo.py"
 
     def test_multiple_lines_finds_first(self):
-        head = (
-            "# [MODULE] foo\n"
-            "# [TESTS] tests/foo/test_bar.py\n"
-            "# [TTL] permanent\n"
-        )
+        head = "# [MODULE] foo\n# [TESTS] tests/foo/test_bar.py\n# [TTL] permanent\n"
         m = _TESTS_HEADER_RE.search(head)
         assert m is not None
         assert m.group(1).strip() == "tests/foo/test_bar.py"
@@ -184,6 +183,7 @@ class TestHeaderRegex:
 # ---------------------------------------------------------------------------
 # TestExemptValues
 # ---------------------------------------------------------------------------
+
 
 class TestExemptValues:
     """验证 _EXEMPT_VALUES 豁免集合。"""
@@ -202,6 +202,7 @@ class TestExemptValues:
 # ---------------------------------------------------------------------------
 # TestGatewayIntegration
 # ---------------------------------------------------------------------------
+
 
 class TestGatewayIntegration:
     """mock gateway + tmp_path 文件系统集成测试。"""
@@ -274,9 +275,7 @@ class TestGatewayIntegration:
         """无 [TESTS] 头部的文件跳过（不声明就不检测）。"""
         gate_dir = tmp_path / _GATE_DIR_REL
         gate_dir.mkdir(parents=True, exist_ok=True)
-        (gate_dir / "no_header.py").write_text(
-            "# [MODULE] foo\n# just a comment\n", encoding="utf-8"
-        )
+        (gate_dir / "no_header.py").write_text("# [MODULE] foo\n# just a comment\n", encoding="utf-8")
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
         ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/no_header.py"])

@@ -40,6 +40,7 @@ from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo, SS
 # 辅助 fixture
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def skip_dim1_dim2(monkeypatch):
     """跳过维度1/2（功能域注册表 + 蓝图关键词匹配），隔离维度3测试。
@@ -53,6 +54,7 @@ def skip_dim1_dim2(monkeypatch):
 # ---------------------------------------------------------------------------
 # 测试组 1：find_files_by_module_path 反查正确性
 # ---------------------------------------------------------------------------
+
 
 class TestFindFilesByModulePath:
     """测试 capability_lookup.find_files_by_module_path 反查正确性。"""
@@ -91,6 +93,7 @@ class TestFindFilesByModulePath:
 # 测试组 2：scaffold 维度3 阻断
 # ---------------------------------------------------------------------------
 
+
 class TestScaffoldSSoTGate:
     """测试 scaffold.check_duplicate_functionality 维度3 阻断。"""
 
@@ -124,6 +127,7 @@ class TestScaffoldSSoTGate:
 # 测试组 3：强不变量——force_override 不跳过维度3
 # ---------------------------------------------------------------------------
 
+
 class TestForceOverrideInvariant:
     """强不变量：force_override 不跳过维度3。
 
@@ -146,6 +150,7 @@ class TestForceOverrideInvariant:
 # ---------------------------------------------------------------------------
 # 测试组 4：红蓝变异测试（falsifiability）
 # ---------------------------------------------------------------------------
+
 
 class TestMutationFalsifiability:
     """红蓝变异测试：验证门禁确实在起作用（falsifiability）。
@@ -211,6 +216,7 @@ class TestMutationFalsifiability:
 # 测试组 5：GitCommitGateway L2 兜底门禁
 # ---------------------------------------------------------------------------
 
+
 class TestGitCommitGatewaySSoT:
     """测试 GitCommitGateway.check_ssot_canonical L2 兜底门禁。
 
@@ -248,7 +254,8 @@ class TestGitCommitGatewaySSoT:
         existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # mock find_files_by_module_path 返回已有文件冲突
@@ -256,7 +263,8 @@ class TestGitCommitGatewaySSoT:
         #  find 的正确性在 L1 测试组 TestFindFilesByModulePath 已覆盖）
         existing_conflict = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
+            CapabilityLookup,
+            "find_files_by_module_path",
             lambda self, mp: [existing_conflict] if mp == existing_mp else [],
         )
 
@@ -279,13 +287,15 @@ class TestGitCommitGatewaySSoT:
         new_mp = "zephyr.governance.fake_new_module_xyz_999"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=new_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # mock find_files_by_module_path 返回空（新 module_path 无冲突）
         # （_disk_headers 被 mock 的 parse_header 污染，故需控制 find 返回值）
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
+            CapabilityLookup,
+            "find_files_by_module_path",
             lambda self, mp: [],
         )
 
@@ -318,7 +328,8 @@ class TestGitCommitGatewaySSoT:
         # mock parse_header 返回空 module_path（无 [MODULE] 头）
         fake_header = HeaderInfo(path=fake_new_rel, module_path="")
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
 
@@ -383,6 +394,7 @@ class TestGitCommitGatewaySSoT:
 # 测试组 6：L2 红蓝变异测试
 # ---------------------------------------------------------------------------
 
+
 class TestL2MutationFalsifiability:
     """L2 红蓝变异测试：验证 check_ssot_canonical 确实在起作用。"""
 
@@ -403,12 +415,14 @@ class TestL2MutationFalsifiability:
         existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # 注入 find_files_by_module_path 返回空（变异：门禁失效）
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
+            CapabilityLookup,
+            "find_files_by_module_path",
             lambda self, mp: [],
         )
 
@@ -428,7 +442,8 @@ class TestL2MutationFalsifiability:
         existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # 不注入 find_files_by_module_path——真实运行，返回已有文件
@@ -450,13 +465,15 @@ class TestL2MutationFalsifiability:
         new_mp = "zephyr.totally.new.module_xyz_999"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=new_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # 注入假冲突
         fake_conflicts = ["src/zephyr/fake/injected_conflict.py"]
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
+            CapabilityLookup,
+            "find_files_by_module_path",
             lambda self, mp: fake_conflicts,
         )
 
@@ -468,6 +485,7 @@ class TestL2MutationFalsifiability:
 # ---------------------------------------------------------------------------
 # 测试组 7：共享检测函数 check_ssot_conflicts（L2/L3 唯一真源）
 # ---------------------------------------------------------------------------
+
 
 class TestCheckSsotConflicts:
     """测试 capability_lookup.check_ssot_conflicts 共享检测函数。
@@ -486,7 +504,8 @@ class TestCheckSsotConflicts:
         lookup = CapabilityLookup()
         fake_header = HeaderInfo(path="src/zephyr/fake.py", module_path="")
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         result = lookup.check_ssot_conflicts([("/abs/fake.py", "src/zephyr/fake.py")])
@@ -498,11 +517,13 @@ class TestCheckSsotConflicts:
         new_mp = "zephyr.totally.new.module_xyz_999"
         fake_header = HeaderInfo(path="src/zephyr/fake.py", module_path=new_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
+            CapabilityLookup,
+            "find_files_by_module_path",
             lambda self, mp: [],
         )
         result = lookup.check_ssot_conflicts([("/abs/fake.py", "src/zephyr/fake.py")])
@@ -514,12 +535,14 @@ class TestCheckSsotConflicts:
         existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path="src/zephyr/fake_new.py", module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         existing_file = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
+            CapabilityLookup,
+            "find_files_by_module_path",
             lambda self, mp: [existing_file] if mp == existing_mp else [],
         )
         result = lookup.check_ssot_conflicts([("/abs/fake_new.py", "src/zephyr/fake_new.py")])
@@ -538,12 +561,14 @@ class TestCheckSsotConflicts:
         new_rel = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         fake_header = HeaderInfo(path=new_rel, module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # find 返回包含新文件自己的列表
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
+            CapabilityLookup,
+            "find_files_by_module_path",
             lambda self, mp: [new_rel],
         )
         result = lookup.check_ssot_conflicts([("/abs/git_commit_gateway.py", new_rel)])
@@ -562,12 +587,14 @@ class TestCheckSsotConflicts:
             "src/zephyr/conflict.py": HeaderInfo(path="src/zephyr/conflict.py", module_path=existing_mp),
         }
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))),
         )
         existing_file = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
+            CapabilityLookup,
+            "find_files_by_module_path",
             lambda self, mp: [existing_file] if mp == existing_mp else [],
         )
 
@@ -588,11 +615,13 @@ class TestCheckSsotConflicts:
         existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path="src/zephyr/fake.py", module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
+            CapabilityLookup,
+            "find_files_by_module_path",
             lambda self, mp: ["src/zephyr/existing.py"],
         )
         result = lookup.check_ssot_conflicts([("/abs/fake.py", "src/zephyr/fake.py")])
@@ -606,6 +635,7 @@ class TestCheckSsotConflicts:
 # ---------------------------------------------------------------------------
 # 测试组 8：红蓝极限对抗（模拟刚进项目的 AI）
 # ---------------------------------------------------------------------------
+
 
 class TestRedBlueExtreme:
     """红蓝极限对抗——模拟刚进项目的 AI 尝试绕过 SSoT 门禁。
@@ -621,6 +651,7 @@ class TestRedBlueExtreme:
     def _mock_l3_git_diff(self, monkeypatch, new_files: list[str]):
         """mock check_ssot_gate 的 git diff 返回指定新文件列表。"""
         import scripts.governance.check_ssot_gate as gate_module
+
         mock_result = MagicMock()
         mock_result.returncode = 0
         mock_result.stdout = "\n".join(new_files) + "\n" if new_files else ""
@@ -632,21 +663,25 @@ class TestRedBlueExtreme:
         """mock CapabilityLookup 避免 scan 磁盘 + 控制解析/反查。"""
         monkeypatch.setattr(CapabilityLookup, "scan_disk_headers", lambda self: {})
         monkeypatch.setattr(
-            CapabilityLookup, "parse_header",
+            CapabilityLookup,
+            "parse_header",
             staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))),
         )
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
+            CapabilityLookup,
+            "find_files_by_module_path",
             lambda self, mp: conflicts.get(mp, []),
         )
 
     def _mock_path_exists(self, monkeypatch, fake_names: set[str]):
         """mock Path.exists 对指定文件名返回 True，其余用真实 exists。"""
         real_exists = Path.exists
+
         def mock_exists(self):
             if any(name in str(self) for name in fake_names):
                 return True
             return real_exists(self)
+
         monkeypatch.setattr(Path, "exists", mock_exists)
 
     # ---- L3 pre-commit hook 直接测试 ----
@@ -660,11 +695,17 @@ class TestRedBlueExtreme:
         self._mock_path_exists(monkeypatch, {"fake_red"})
         self._mock_capability_lookup(
             monkeypatch,
-            headers={"src/zephyr/governance/fake_red.py": HeaderInfo(
-                path="src/zephyr/governance/fake_red.py",
-                module_path="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
-            )},
-            conflicts={"zephyr.gov_enforcement.rule_bridge.git_commit_gateway": ["src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"]},
+            headers={
+                "src/zephyr/governance/fake_red.py": HeaderInfo(
+                    path="src/zephyr/governance/fake_red.py",
+                    module_path="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
+                )
+            },
+            conflicts={
+                "zephyr.gov_enforcement.rule_bridge.git_commit_gateway": [
+                    "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
+                ]
+            },
         )
         exit_code = gate_module.main()
         assert exit_code == 1, "L3 应阻断直接 git commit 的重复文件"
@@ -683,8 +724,10 @@ class TestRedBlueExtreme:
         """
         gate_module = self._mock_l3_git_diff(monkeypatch, ["src/zephyr/governance/fake_err.py"])
         self._mock_path_exists(monkeypatch, {"fake_err"})
+
         def fake_init(self, *args, **kwargs):
             raise RuntimeError("mock init fail")
+
         monkeypatch.setattr(CapabilityLookup, "__init__", fake_init)
         assert gate_module.main() == 0, "L3 应 fail-open 放行"
 
@@ -702,7 +745,9 @@ class TestRedBlueExtreme:
             "src/zephyr/fake_a.py": HeaderInfo(path="src/zephyr/fake_a.py", module_path=new_mp),
             "src/zephyr/fake_b.py": HeaderInfo(path="src/zephyr/fake_b.py", module_path=new_mp),
         }
-        monkeypatch.setattr(CapabilityLookup, "parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))))
+        monkeypatch.setattr(
+            CapabilityLookup, "parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel)))
+        )
         monkeypatch.setattr(CapabilityLookup, "find_files_by_module_path", lambda self, mp: [])
         files = [("/abs/fake_a.py", "src/zephyr/fake_a.py"), ("/abs/fake_b.py", "src/zephyr/fake_b.py")]
         result = lookup.check_ssot_conflicts(files)
@@ -718,6 +763,7 @@ class TestRedBlueExtreme:
         """
         import os
         import tempfile
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
             f.write("# [module] zephyr.gov_enforcement.rule_bridge.git_commit_gateway\n")
             tmp = f.name
@@ -731,6 +777,7 @@ class TestRedBlueExtreme:
         """红方攻击6：`# [MODULE]` 无内容 → module_path 为空 → 跳过。"""
         import os
         import tempfile
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
             f.write("# [MODULE]\n")
             tmp = f.name
@@ -744,6 +791,7 @@ class TestRedBlueExtreme:
         """红方攻击7：空文件 → 无头 → 跳过。"""
         import os
         import tempfile
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
             f.write("")
             tmp = f.name
@@ -765,13 +813,22 @@ class TestRedBlueExtreme:
         lookup = CapabilityLookup()
         wrong_case_mp = "Zephyr.Governance.Git_Commit_Gateway"
         headers = {"src/zephyr/fake_case.py": HeaderInfo(path="src/zephyr/fake_case.py", module_path=wrong_case_mp)}
-        monkeypatch.setattr(CapabilityLookup, "parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))))
         monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
-            lambda self, mp: ["src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"] if mp == "zephyr.gov_enforcement.rule_bridge.git_commit_gateway" else [],
+            CapabilityLookup, "parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel)))
+        )
+        monkeypatch.setattr(
+            CapabilityLookup,
+            "find_files_by_module_path",
+            lambda self, mp: (
+                ["src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"]
+                if mp == "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
+                else []
+            ),
         )
         result = lookup.check_ssot_conflicts([("/abs/fake_case.py", "src/zephyr/fake_case.py")])
         assert result == [], "大小写不同的 module_path 应不匹配（检测能力限制）"
+
+
 # ---------------------------------------------------------------------------
 # 测试组 5：#111 维度1 alias 裁定通道（module 子命令 --force-override）
 # 背景：AI-DGR-001 实证 rollback_state_machine 命中注册 alias rollback 被硬阻断，
@@ -795,7 +852,7 @@ class _StubRegistry:
         self._exact = list(exact_details)
         self._alias = list(alias_details)
 
-    def check_overlap(self, domain, subdomain, covers=None, name='', description='', skip_alias=False):
+    def check_overlap(self, domain, subdomain, covers=None, name="", description="", skip_alias=False):
         details = list(self._exact) + ([] if skip_alias else list(self._alias))
         return _overlap_result(details)
 
@@ -803,7 +860,7 @@ class _StubRegistry:
 @pytest.fixture
 def skip_dim2(monkeypatch):
     # 仅跳过维度2（蓝图关键词匹配），保留维度1/维度3 真实逻辑
-    monkeypatch.setitem(sys.modules, 'zephyr.integration.mcp', None)
+    monkeypatch.setitem(sys.modules, "zephyr.integration.mcp", None)
 
 
 class TestDim1AliasForceOverride:
@@ -812,42 +869,42 @@ class TestDim1AliasForceOverride:
     def _patch_registry(self, monkeypatch, exact, alias):
         stub = _StubRegistry(exact, alias)
         monkeypatch.setattr(
-            'zephyr.infrastructure.registry_governance.FunctionalDomainRegistry',
+            "zephyr.infrastructure.registry_governance.FunctionalDomainRegistry",
             lambda: stub,
         )
 
     def test_alias_match_blocks_without_force(self, monkeypatch, skip_dim2):
         # alias 命中 + 无 force_override → 阻断（含逃生口提示）
-        self._patch_registry(monkeypatch, [], ['Alias match rollback -> D_GOV_REPAIR (MOD-INF-021)'])
-        with pytest.raises(ScaffoldError, match='功能域重叠'):
+        self._patch_registry(monkeypatch, [], ["Alias match rollback -> D_GOV_REPAIR (MOD-INF-021)"])
+        with pytest.raises(ScaffoldError, match="功能域重叠"):
             check_duplicate_functionality(
-                name='rollback_state_machine',
-                description='回滚状态机探针',
-                expected_module_path='',
+                name="rollback_state_machine",
+                description="回滚状态机探针",
+                expected_module_path="",
             )
 
     def test_alias_match_passed_with_force_override(self, monkeypatch, skip_dim2, capsys):
         # alias 命中 + force_override=True → 放行且打印留痕
-        self._patch_registry(monkeypatch, [], ['Alias match rollback -> D_GOV_REPAIR (MOD-INF-021)'])
+        self._patch_registry(monkeypatch, [], ["Alias match rollback -> D_GOV_REPAIR (MOD-INF-021)"])
         check_duplicate_functionality(
-            name='rollback_state_machine',
-            description='回滚状态机探针',
+            name="rollback_state_machine",
+            description="回滚状态机探针",
             force_override=True,
-            expected_module_path='',
+            expected_module_path="",
         )
         out = capsys.readouterr().out
-        assert '裁定通道放行' in out
-        assert 'Alias match rollback' in out
+        assert "裁定通道放行" in out
+        assert "Alias match rollback" in out
 
     def test_exact_overlap_not_skipped_by_force(self, monkeypatch, skip_dim2):
         # exact domain/subdomain 冲突 + force_override=True → 仍阻断（不误放开）
-        self._patch_registry(monkeypatch, ['Exact domain/subdomain overlap: D_GOV/repair -> MOD-INF-021'], [])
-        with pytest.raises(ScaffoldError, match='功能域重叠'):
+        self._patch_registry(monkeypatch, ["Exact domain/subdomain overlap: D_GOV/repair -> MOD-INF-021"], [])
+        with pytest.raises(ScaffoldError, match="功能域重叠"):
             check_duplicate_functionality(
-                name='rollback_state_machine',
-                description='回滚状态机探针',
+                name="rollback_state_machine",
+                description="回滚状态机探针",
                 force_override=True,
-                expected_module_path='',
+                expected_module_path="",
             )
 
 
@@ -860,40 +917,40 @@ class TestCheckOverlapSkipAlias:
         from zephyr.infrastructure.registry_governance import FunctionalDomainRegistry
 
         data = {
-            'registry_id': 'REG-FUNC-DOMAIN-001',
-            'entries': [
+            "registry_id": "REG-FUNC-DOMAIN-001",
+            "entries": [
                 {
-                    'domain': 'D_GOV_REPAIR',
-                    'subdomain': 'gov_repair',
-                    'ssot_module': 'MOD-INF-021',
-                    'ssot_path': 'src/zephyr/gov_repair/x.py',
-                    'covers': [],
-                    'aliases': ['rollback'],
-                    'change_policy': 'evolving',
-                    'modification_permission': 'human_gated',
+                    "domain": "D_GOV_REPAIR",
+                    "subdomain": "gov_repair",
+                    "ssot_module": "MOD-INF-021",
+                    "ssot_path": "src/zephyr/gov_repair/x.py",
+                    "covers": [],
+                    "aliases": ["rollback"],
+                    "change_policy": "evolving",
+                    "modification_permission": "human_gated",
                 }
             ],
         }
-        p = tmp_path / 'functional_domain_registry.yaml'
-        p.write_text(yaml.safe_dump(data, allow_unicode=True), encoding='utf-8')
+        p = tmp_path / "functional_domain_registry.yaml"
+        p.write_text(yaml.safe_dump(data, allow_unicode=True), encoding="utf-8")
         return FunctionalDomainRegistry(registry_path=p)
 
     def test_alias_hit_when_not_skipped(self, tmp_path):
         reg = self._make_registry(tmp_path)
-        r = reg.check_overlap(domain='', subdomain='', name='rollback_state_machine', description='', skip_alias=False)
+        r = reg.check_overlap(domain="", subdomain="", name="rollback_state_machine", description="", skip_alias=False)
         assert r.has_overlap is True
-        assert any('Alias match' in d for d in r.overlap_details)
+        assert any("Alias match" in d for d in r.overlap_details)
 
     def test_alias_filtered_when_skipped(self, tmp_path):
         reg = self._make_registry(tmp_path)
-        r = reg.check_overlap(domain='', subdomain='', name='rollback_state_machine', description='', skip_alias=True)
+        r = reg.check_overlap(domain="", subdomain="", name="rollback_state_machine", description="", skip_alias=True)
         assert r.has_overlap is False
 
     def test_exact_hit_regardless_of_skip_alias(self, tmp_path):
         reg = self._make_registry(tmp_path)
-        r = reg.check_overlap(domain='D_GOV_REPAIR', subdomain='gov_repair', name='', description='', skip_alias=True)
+        r = reg.check_overlap(domain="D_GOV_REPAIR", subdomain="gov_repair", name="", description="", skip_alias=True)
         assert r.has_overlap is True
-        assert any('Exact domain/subdomain overlap' in d for d in r.overlap_details)
+        assert any("Exact domain/subdomain overlap" in d for d in r.overlap_details)
 
 
 class TestModuleCliForceOverrideWiring:
@@ -908,25 +965,24 @@ class TestModuleCliForceOverrideWiring:
             def __init__(self, dry_run=False):
                 pass
 
-            def create_module(self, package, name, description='', domain='', subdomain='', force_override=False):
-                captured['force_override'] = force_override
+            def create_module(self, package, name, description="", domain="", subdomain="", force_override=False):
+                captured["force_override"] = force_override
 
-        monkeypatch.setattr(sc, 'ScaffoldEngine', _FakeEngine)
-        monkeypatch.setattr('sys.argv', argv)
+        monkeypatch.setattr(sc, "ScaffoldEngine", _FakeEngine)
+        monkeypatch.setattr("sys.argv", argv)
         sc.main()
         return captured
 
     def test_module_force_override_flag_wired(self, monkeypatch):
         captured = self._run_main(
             monkeypatch,
-            ['scaffold.py', 'module', 'governance', 'probe_govb001_xyz', '--force-override'],
+            ["scaffold.py", "module", "governance", "probe_govb001_xyz", "--force-override"],
         )
-        assert captured['force_override'] is True
+        assert captured["force_override"] is True
 
     def test_module_force_override_default_off(self, monkeypatch):
         captured = self._run_main(
             monkeypatch,
-            ['scaffold.py', 'module', 'governance', 'probe_govb001_xyz'],
+            ["scaffold.py", "module", "governance", "probe_govb001_xyz"],
         )
-        assert captured['force_override'] is False
-
+        assert captured["force_override"] is False

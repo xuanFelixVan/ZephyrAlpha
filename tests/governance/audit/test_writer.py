@@ -241,12 +241,14 @@ class TestAuditWriter:
     def test_write_strips_producer_reserved_fields(self, writer, data_dir):
         """回归（AI-AUDIT12）：生产方预注入的 entry_hash/hmac_signature 必须被剔除，
         由 writer 统一重算——外来哈希值会把 canonical 绑死为不可验证状态。"""
-        writer.write({
-            "event_type": "file_write",
-            "agent_id": "a",
-            "entry_hash": "f" * 64,
-            "hmac_signature": "forged",
-        })
+        writer.write(
+            {
+                "event_type": "file_write",
+                "agent_id": "a",
+                "entry_hash": "f" * 64,
+                "hmac_signature": "forged",
+            }
+        )
         with open(writer.event_log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert written["entry_hash"] != "f" * 64

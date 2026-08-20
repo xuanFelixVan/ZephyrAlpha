@@ -36,6 +36,7 @@
   - user-manual- 永不被清理
   - 非 aggressive 模式下，age < TTL 的 AI stash 保留
 """
+
 from __future__ import annotations
 
 import re
@@ -126,40 +127,47 @@ class TestDropSessionPreMergeStash:
 class TestAiStashRegex:
     """_AI_STASH_RE 正则匹配测试。"""
 
-    @pytest.mark.parametrize("message", [
-        "session_worktree_pre_merge: sess-123",
-        "session_worktree_abort: sess-456",
-        "pre-merge stash retry 4",
-        "pre-merge-stash sess-49896-wiki-md",
-        "phase6.2-merge-tmp",
-        "phase-b5-merge-prep-4: 4 more files",
-        "merge-prep-2: 3 more files",
-        "temp-stash-for-issue23-merge",
-        "stash-for-merge",
-        "test-fix-merge-stash",
-        "pre-cherry-pick-stash",
-        "pre-merge-batch5-stash3",
-        "pre-merge-batch5-stash2",
-    ])
+    @pytest.mark.parametrize(
+        "message",
+        [
+            "session_worktree_pre_merge: sess-123",
+            "session_worktree_abort: sess-456",
+            "pre-merge stash retry 4",
+            "pre-merge-stash sess-49896-wiki-md",
+            "phase6.2-merge-tmp",
+            "phase-b5-merge-prep-4: 4 more files",
+            "merge-prep-2: 3 more files",
+            "temp-stash-for-issue23-merge",
+            "stash-for-merge",
+            "test-fix-merge-stash",
+            "pre-cherry-pick-stash",
+            "pre-merge-batch5-stash3",
+            "pre-merge-batch5-stash2",
+        ],
+    )
     def test_ai_stash_patterns_match(self, message: str) -> None:
         """已知 AI stash 命名模式全部匹配。"""
         assert _AI_STASH_RE.match(message), f"应匹配但未匹配: {message!r}"
 
-    @pytest.mark.parametrize("message", [
-        "pre-merge 2 reconcilers",
-        "unrelated gov_audit/governance/trading work-in-progress",
-        "CONSUMERS-ACCURACY work-in-progress from previous session",
-        "auto-sync temp file lifecycle changes",
-        "other-sessions-changes-before-merge",
-        "user-manual-my-important-work",
-        "user-manual-anything",
-    ])
+    @pytest.mark.parametrize(
+        "message",
+        [
+            "pre-merge 2 reconcilers",
+            "unrelated gov_audit/governance/trading work-in-progress",
+            "CONSUMERS-ACCURACY work-in-progress from previous session",
+            "auto-sync temp file lifecycle changes",
+            "other-sessions-changes-before-merge",
+            "user-manual-my-important-work",
+            "user-manual-anything",
+        ],
+    )
     def test_wip_and_protected_stashes_do_not_match(self, message: str) -> None:
         """WIP stash 和 user-manual- 不匹配。"""
         assert not _AI_STASH_RE.match(message), f"不应匹配但匹配了: {message!r}"
 
 
 # —— 辅助函数 ——
+
 
 def _init_git_repo(path: Path) -> None:
     """在 tmp_path 初始化一个空 git 仓库。"""
@@ -191,7 +199,9 @@ def _create_stash(path: Path, message: str, filename: str = "README.md") -> None
     target.write_text(f"modified for {message}", encoding="utf-8")
     subprocess.run(
         ["git", "stash", "push", "-m", message, "--", filename],
-        cwd=str(path), capture_output=True, timeout=10,
+        cwd=str(path),
+        capture_output=True,
+        timeout=10,
     )
 
 
@@ -199,7 +209,10 @@ def _get_stash_list(path: Path) -> list[str]:
     """获取 stash list。"""
     result = subprocess.run(
         ["git", "stash", "list", "--format=%s"],
-        cwd=str(path), capture_output=True, text=True, timeout=10,
+        cwd=str(path),
+        capture_output=True,
+        text=True,
+        timeout=10,
     )
     if result.returncode != 0 or not result.stdout.strip():
         return []
@@ -393,4 +406,3 @@ class TestStashLifecycleReconcilerReverseMatch:
         spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
         result = spec.reconcile(["some-file.py"], "test-session")
         assert result.action == "skip", f"expected skip, got {result.action}: {result.detail}"
-

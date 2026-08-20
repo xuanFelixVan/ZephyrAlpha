@@ -46,18 +46,11 @@ def test_warn_only_shows_warn_only_count_and_exits_zero(tmp_path):
     bad = _make_bad_name_file(tmp_path)
     r = _run(["--warn-only", str(bad)])
     assert r.returncode == 0, (
-        f"warn-only 模式 other 违规应 exit 0（不阻断），实际 {r.returncode}。"
-        f"stdout={r.stdout} stderr={r.stderr}"
+        f"warn-only 模式 other 违规应 exit 0（不阻断），实际 {r.returncode}。stdout={r.stdout} stderr={r.stderr}"
     )
-    assert "warn-only 命名违规" in r.stdout, (
-        f"应输出 warn-only 计数提示。stdout={r.stdout}"
-    )
-    assert "不阻断 commit" in r.stdout, (
-        f"应明示不阻断 commit。stdout={r.stdout}"
-    )
-    assert "阻断性命名违规" not in r.stdout, (
-        f"warn-only 模式不应显示'阻断性命名违规'（误导）。stdout={r.stdout}"
-    )
+    assert "warn-only 命名违规" in r.stdout, f"应输出 warn-only 计数提示。stdout={r.stdout}"
+    assert "不阻断 commit" in r.stdout, f"应明示不阻断 commit。stdout={r.stdout}"
+    assert "阻断性命名违规" not in r.stdout, f"warn-only 模式不应显示'阻断性命名违规'（误导）。stdout={r.stdout}"
 
 
 def test_blocking_mode_shows_actual_blocking_and_exits_nonzero(tmp_path):
@@ -68,12 +61,9 @@ def test_blocking_mode_shows_actual_blocking_and_exits_nonzero(tmp_path):
     bad = _make_bad_name_file(tmp_path)
     r = _run([str(bad)])
     assert r.returncode != 0, (
-        f"非 warn-only 模式 other 违规应 exit 非零（阻断），实际 {r.returncode}。"
-        f"stdout={r.stdout} stderr={r.stderr}"
+        f"非 warn-only 模式 other 违规应 exit 非零（阻断），实际 {r.returncode}。stdout={r.stdout} stderr={r.stderr}"
     )
-    assert "阻断性命名违规" in r.stdout, (
-        f"应输出阻断性计数提示。stdout={r.stdout}"
-    )
+    assert "阻断性命名违规" in r.stdout, f"应输出阻断性计数提示。stdout={r.stdout}"
     assert "不阻断 commit" not in r.stdout, (
         f"非 warn-only 模式不应显示'不阻断 commit'（与 exit 1 矛盾）。stdout={r.stdout}"
     )

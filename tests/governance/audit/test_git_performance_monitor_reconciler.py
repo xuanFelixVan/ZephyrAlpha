@@ -24,6 +24,7 @@ ARCH-GIT-CALL-BUDGET P3.5（git status 计时持续监控 + 早期预警）
 
 测试隔离：用 tmp_path + mock，不触碰生产 .runtime/ 目录。
 """
+
 from __future__ import annotations
 
 import json
@@ -234,9 +235,11 @@ class TestPerfLog:
         log_path = tmp_path / Path(PERF_LOG_SUBPATH)
         log_path.parent.mkdir(parents=True, exist_ok=True)
         log_path.write_text(
-            json.dumps({"ts": "t1", "elapsed_s": 0.1}) + "\n"
+            json.dumps({"ts": "t1", "elapsed_s": 0.1})
+            + "\n"
             + "CORRUPT_NOT_JSON\n"
-            + json.dumps({"ts": "t2", "elapsed_s": 0.2}) + "\n",
+            + json.dumps({"ts": "t2", "elapsed_s": 0.2})
+            + "\n",
             encoding="utf-8",
         )
         recent = read_recent_perf_entries(tmp_path, 10)
@@ -387,10 +390,13 @@ class TestReconcile:
         """最近 N 次计时连续递增 → warn。"""
         # 预先写入 N 条递增的历史日志
         for i in range(DEGRADATION_TREND_COUNT):
-            append_perf_log(tmp_path, {
-                "ts": f"2026-07-19T00:00:0{i}Z",
-                "elapsed_s": 1.0 + i * 0.5,  # 1.0, 1.5, 2.0 递增
-            })
+            append_perf_log(
+                tmp_path,
+                {
+                    "ts": f"2026-07-19T00:00:0{i}Z",
+                    "elapsed_s": 1.0 + i * 0.5,  # 1.0, 1.5, 2.0 递增
+                },
+            )
         # 本次测量值继续递增
         mock_measure.return_value = (2.5, 0, "")
         mock_count.return_value = 0

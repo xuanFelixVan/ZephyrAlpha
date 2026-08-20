@@ -24,6 +24,7 @@
 测试隔离：mock iter_prod_py_files() 返回 tmp_path 下的合成 .py 文件；
 不依赖真实仓库状态。
 """
+
 from __future__ import annotations
 
 import sys

@@ -37,6 +37,7 @@
   - 文件不存在 → fail-open
   - 读取失败 → fail-open
 """
+
 from __future__ import annotations
 
 import sys
@@ -401,9 +402,7 @@ class TestGatewayIntegration:
         # tmp_path 下不创建 scripts/governance/d1_structure
         config_path = tmp_path / ".pre-commit-config.yaml"
         config_path.write_text(
-            "repos:\n"
-            "  - repo: https://github.com/external/repo\n"
-            "    hooks: []\n",
+            "repos:\n  - repo: https://github.com/external/repo\n    hooks: []\n",
             encoding="utf-8",
         )
         gw = _make_gateway(tmp_path, [str(config_path)])

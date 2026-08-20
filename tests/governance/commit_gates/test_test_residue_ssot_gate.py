@@ -31,6 +31,7 @@ trae_071 §test_residue_reclaim.covered_patterns.dir_prefixes 精确匹配 → �
 真实 _load_dir_prefixes（读 trae_071 YAML，不 mock 检测逻辑——集成测试价值 > 速度）。
 fixture 内容通过 write_text 写入（字符串参数，非 Tuple 赋值——本测试文件自身不触发 gate）。
 """
+
 from __future__ import annotations
 
 import sys
@@ -63,10 +64,10 @@ def _two_dir_prefixes() -> list[str]:
     """
     # 延迟 import 避免收集阶段触发 YAML 读取
     from zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate import _load_dir_prefixes
+
     dps = _load_dir_prefixes()
     assert dps is not None and len(dps) >= 2, (
-        "测试依赖 trae_071 §test_residue_reclaim.covered_patterns.dir_prefixes（≥2 个），"
-        "YAML 不可达或前缀不足。"
+        "测试依赖 trae_071 §test_residue_reclaim.covered_patterns.dir_prefixes（≥2 个），YAML 不可达或前缀不足。"
     )
     return sorted(dps)[:2]
 
@@ -78,8 +79,10 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_r
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -121,9 +124,7 @@ class TestDetection:
         p1, p2 = _two_dir_prefixes()
         pkg = tmp_path / "scripts"
         pkg.mkdir()
-        (pkg / "bad.py").write_text(
-            f'_PREFIXES = ("{p1}", "{p2}")\n', encoding="utf-8"
-        )
+        (pkg / "bad.py").write_text(f'_PREFIXES = ("{p1}", "{p2}")\n', encoding="utf-8")
         gw = _make_gateway(staged_files=["scripts/bad.py"], project_root=str(tmp_path))
         passed, msg = make_test_residue_ssot_gate().check(gw, [])
         assert not passed
@@ -135,9 +136,7 @@ class TestDetection:
         p1, p2 = _two_dir_prefixes()
         pkg = tmp_path / "scripts"
         pkg.mkdir()
-        (pkg / "bad.py").write_text(
-            f'_DIRS = ["{p1}", "{p2}", "other"]\n', encoding="utf-8"
-        )
+        (pkg / "bad.py").write_text(f'_DIRS = ["{p1}", "{p2}", "other"]\n', encoding="utf-8")
         gw = _make_gateway(staged_files=["scripts/bad.py"], project_root=str(tmp_path))
         passed, msg = make_test_residue_ssot_gate().check(gw, [])
         assert not passed
@@ -147,9 +146,7 @@ class TestDetection:
         p1, p2 = _two_dir_prefixes()
         pkg = tmp_path / "scripts"
         pkg.mkdir()
-        (pkg / "bad.py").write_text(
-            f'_SET = {{{p1!r}, {p2!r}}}\n', encoding="utf-8"
-        )
+        (pkg / "bad.py").write_text(f"_SET = {{{p1!r}, {p2!r}}}\n", encoding="utf-8")
         gw = _make_gateway(staged_files=["scripts/bad.py"], project_root=str(tmp_path))
         passed, msg = make_test_residue_ssot_gate().check(gw, [])
         assert not passed
@@ -159,9 +156,7 @@ class TestDetection:
         p1, p2 = _two_dir_prefixes()
         pkg = tmp_path / "scripts"
         pkg.mkdir()
-        (pkg / "bad.py").write_text(
-            f'_PREFIXES: tuple = ("{p1}", "{p2}")\n', encoding="utf-8"
-        )
+        (pkg / "bad.py").write_text(f'_PREFIXES: tuple = ("{p1}", "{p2}")\n', encoding="utf-8")
         gw = _make_gateway(staged_files=["scripts/bad.py"], project_root=str(tmp_path))
         passed, msg = make_test_residue_ssot_gate().check(gw, [])
         assert not passed
@@ -171,9 +166,7 @@ class TestDetection:
         p1, _ = _two_dir_prefixes()
         pkg = tmp_path / "scripts"
         pkg.mkdir()
-        (pkg / "ok.py").write_text(
-            f'_P = ("{p1}",)\n', encoding="utf-8"
-        )
+        (pkg / "ok.py").write_text(f'_P = ("{p1}",)\n', encoding="utf-8")
         gw = _make_gateway(staged_files=["scripts/ok.py"], project_root=str(tmp_path))
         passed, msg = make_test_residue_ssot_gate().check(gw, [])
         assert passed
@@ -200,9 +193,7 @@ class TestDetection:
         """非 dir_prefix 字符串集合 → 放行。"""
         pkg = tmp_path / "src"
         pkg.mkdir()
-        (pkg / "ok.py").write_text(
-            '_NAMES = ("alice", "bob", "charlie")\n', encoding="utf-8"
-        )
+        (pkg / "ok.py").write_text('_NAMES = ("alice", "bob", "charlie")\n', encoding="utf-8")
         gw = _make_gateway(staged_files=["src/ok.py"], project_root=str(tmp_path))
         passed, msg = make_test_residue_ssot_gate().check(gw, [])
         assert passed
@@ -213,9 +204,7 @@ class TestDetection:
         p1, _ = _two_dir_prefixes()
         pkg = tmp_path / "scripts"
         pkg.mkdir()
-        (pkg / "ok.py").write_text(
-            f'_MIX = ("{p1}", "not_a_prefix")\n', encoding="utf-8"
-        )
+        (pkg / "ok.py").write_text(f'_MIX = ("{p1}", "not_a_prefix")\n', encoding="utf-8")
         gw = _make_gateway(staged_files=["scripts/ok.py"], project_root=str(tmp_path))
         passed, msg = make_test_residue_ssot_gate().check(gw, [])
         assert passed
@@ -230,9 +219,7 @@ class TestDetection:
         pkg = tmp_path / "tests"
         pkg.mkdir()
         (pkg / "helper.py").write_text(
-            'import tempfile\n'
-            'from pathlib import Path\n'
-            'root = Path(tempfile.mkdtemp(prefix="git_guard_test_"))\n',
+            'import tempfile\nfrom pathlib import Path\nroot = Path(tempfile.mkdtemp(prefix="git_guard_test_"))\n',
             encoding="utf-8",
         )
         gw = _make_gateway(staged_files=["tests/helper.py"], project_root=str(tmp_path))
@@ -245,9 +232,7 @@ class TestDetection:
         p1, p2 = _two_dir_prefixes()
         docs = tmp_path / "docs"
         docs.mkdir()
-        (docs / "note.md").write_text(
-            f'prefixes = ("{p1}", "{p2}")\n', encoding="utf-8"
-        )
+        (docs / "note.md").write_text(f'prefixes = ("{p1}", "{p2}")\n', encoding="utf-8")
         gw = _make_gateway(staged_files=["docs/note.md"], project_root=str(tmp_path))
         passed, msg = make_test_residue_ssot_gate().check(gw, [])
         assert passed
@@ -259,8 +244,7 @@ class TestDetection:
         pkg = tmp_path / "scripts"
         pkg.mkdir()
         (pkg / "bad.py").write_text(
-            f'_A = ("{p1}", "{p2}")\n'
-            f'_B = ["{p1}", "{p2}"]\n',
+            f'_A = ("{p1}", "{p2}")\n_B = ["{p1}", "{p2}"]\n',
             encoding="utf-8",
         )
         gw = _make_gateway(staged_files=["scripts/bad.py"], project_root=str(tmp_path))
@@ -275,9 +259,7 @@ class TestDetection:
         pkg = tmp_path / "scripts"
         pkg.mkdir()
         for name in ("a.py", "b.py"):
-            (pkg / name).write_text(
-                f'_X = ("{p1}", "{p2}")\n', encoding="utf-8"
-            )
+            (pkg / name).write_text(f'_X = ("{p1}", "{p2}")\n', encoding="utf-8")
         gw = _make_gateway(
             staged_files=["scripts/a.py", "scripts/b.py"],
             project_root=str(tmp_path),
@@ -315,11 +297,10 @@ class TestFailOpen:
         p1, p2 = _two_dir_prefixes()
         pkg = tmp_path / "scripts"
         pkg.mkdir()
-        (pkg / "bad.py").write_text(
-            f'_PREFIXES = ("{p1}", "{p2}")\n', encoding="utf-8"
-        )
+        (pkg / "bad.py").write_text(f'_PREFIXES = ("{p1}", "{p2}")\n', encoding="utf-8")
         gw = _make_gateway(staged_files=["scripts/bad.py"], project_root=str(tmp_path))
         import zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate as gate_mod
+
         monkeypatch.setattr(gate_mod, "_load_dir_prefixes", lambda: None)
         passed, msg = make_test_residue_ssot_gate().check(gw, [])
         assert passed
@@ -329,9 +310,7 @@ class TestFailOpen:
         """staged .py 语法错误 → 跳过该文件（fail-open，不阻断 commit）。"""
         pkg = tmp_path / "scripts"
         pkg.mkdir()
-        (pkg / "broken.py").write_text(
-            "def (:  # 语法错误\n", encoding="utf-8"
-        )
+        (pkg / "broken.py").write_text("def (:  # 语法错误\n", encoding="utf-8")
         gw = _make_gateway(staged_files=["scripts/broken.py"], project_root=str(tmp_path))
         passed, msg = make_test_residue_ssot_gate().check(gw, [])
         assert passed
@@ -350,9 +329,7 @@ class TestFailOpen:
         p1, p2 = _two_dir_prefixes()
         pkg = tmp_path / "scripts"
         pkg.mkdir()
-        (pkg / "bad.py").write_text(
-            f'_PREFIXES = ("{p1}", "{p2}")\n', encoding="utf-8"
-        )
+        (pkg / "bad.py").write_text(f'_PREFIXES = ("{p1}", "{p2}")\n', encoding="utf-8")
         # git diff 返回反斜杠路径
         rel = r"scripts\bad.py"
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))

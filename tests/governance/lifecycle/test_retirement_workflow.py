@@ -15,6 +15,7 @@
   - Step5 五骑士归因：默认规则（mismatch→REGIME_CHANGE，否则 OVERFITTING）+ 显式指定 + record_methodology
   - 输入非法：空 strategy_id / 阈值 <1 → RetirementWorkflowError
 """
+
 from __future__ import annotations
 
 import pytest
@@ -99,9 +100,7 @@ class TestDiagnosis:
     def test_diagnosis_supplied_by_ports(self):
         ports, _ = _ports(alerts=SUSTAINED, oos_sharpe=-0.5, peers=True, mismatch=True)
         result = run_retirement_workflow("s1", ports)
-        assert result.diagnosis == RetirementDiagnosis(
-            oos_sharpe=-0.5, is_regime_wide=True, regime_mismatch=True
-        )
+        assert result.diagnosis == RetirementDiagnosis(oos_sharpe=-0.5, is_regime_wide=True, regime_mismatch=True)
 
 
 class TestDecisionMatrix:
@@ -110,13 +109,13 @@ class TestDecisionMatrix:
     @pytest.mark.parametrize(
         "oos,wide,mismatch,expected",
         [
-            (0.5, False, True, RetirementDecision.REOPTIMIZE),   # oos>0 & mismatch
+            (0.5, False, True, RetirementDecision.REOPTIMIZE),  # oos>0 & mismatch
             (0.5, False, False, RetirementDecision.PAUSE_CUT_SIZE),  # oos>0 非 mismatch → pause
             (0.0, False, False, RetirementDecision.PAUSE_CUT_SIZE),  # 边界 oos=0 > -0.2
-            (-0.2, False, False, RetirementDecision.RETIRE),     # 边界 oos=-0.2 不> -0.2
-            (-0.1, True, False, RetirementDecision.RETIRE),      # 全策略坏 → retire
-            (0.5, True, False, RetirementDecision.RETIRE),       # oos>0 但全策略坏且非 mismatch → retire
-            (-0.5, False, True, RetirementDecision.RETIRE),      # oos<0 mismatch 也非 reoptimize
+            (-0.2, False, False, RetirementDecision.RETIRE),  # 边界 oos=-0.2 不> -0.2
+            (-0.1, True, False, RetirementDecision.RETIRE),  # 全策略坏 → retire
+            (0.5, True, False, RetirementDecision.RETIRE),  # oos>0 但全策略坏且非 mismatch → retire
+            (-0.5, False, True, RetirementDecision.RETIRE),  # oos<0 mismatch 也非 reoptimize
         ],
     )
     def test_matrix(self, oos, wide, mismatch, expected):
@@ -140,8 +139,11 @@ class TestRetireExecution:
             ("methodology", DecayKnight.OVERFITTING),
         ]
         assert result.executed_actions[:5] == (
-            "scale_position_0.5", "disable_new_entries", "flatten_positions",
-            "archive", "set_state_archived",
+            "scale_position_0.5",
+            "disable_new_entries",
+            "flatten_positions",
+            "archive",
+            "set_state_archived",
         )
         assert result.escalation_required is False
 
@@ -170,7 +172,10 @@ class TestRetireExecution:
         result = run_retirement_workflow("s1", ports, human_approved=True)
         assert result.decision is RetirementDecision.RETIRE
         assert set(result.skipped_ports) == {
-            "scale_position_0.5", "disable_new_entries", "flatten_positions", "archive",
+            "scale_position_0.5",
+            "disable_new_entries",
+            "flatten_positions",
+            "archive",
         }
         assert ("state", "ARCHIVED") not in calls
 
@@ -186,9 +191,7 @@ class TestKnight:
 
     def test_explicit_knight_overrides(self):
         ports, calls = _ports(alerts=SUSTAINED, oos_sharpe=-0.5)
-        result = run_retirement_workflow(
-            "s1", ports, human_approved=True, knight=DecayKnight.REGULATORY_CHANGE
-        )
+        result = run_retirement_workflow("s1", ports, human_approved=True, knight=DecayKnight.REGULATORY_CHANGE)
         assert result.knight is DecayKnight.REGULATORY_CHANGE
         assert ("methodology", DecayKnight.REGULATORY_CHANGE) in calls
 

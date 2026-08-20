@@ -75,7 +75,9 @@ def _init_git_repo(repo_dir: Path) -> None:
         timeout=30,
     )
     (repo_dir / ".gitignore").write_text("*.tmp\n", encoding="utf-8")
-    subprocess.run(["git", "add", ".gitignore"], cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30)
+    subprocess.run(
+        ["git", "add", ".gitignore"], cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30
+    )
     subprocess.run(
         ["git", "commit", "-m", "init", "--no-verify"],
         cwd=str(repo_dir),
@@ -175,6 +177,7 @@ class TestNonPyFileNotBlocked:
         _init_git_repo(tmp_path)
         f = _stage_file(tmp_path, "docs/__create_guard_test_md_registered_20260717__.md", "# readme\n")
         import yaml
+
         registry_data = {
             "creation_tokens": [
                 {
@@ -203,6 +206,7 @@ class TestNonPyFileNotBlocked:
 # 治本：YAML 不可达 + git diff 失败全改 fail-closed（return False + 修复指引）。
 # 对标 directory_contract_gate.py fail-closed 设计。
 # ===========================================================================
+
 
 class TestFailClosedRegistryMissing:
     """registry 缺失 → fail-closed 阻断（治本1，防删 registry 绕过 token 检查）。"""
@@ -257,9 +261,7 @@ class TestFailClosedRegistryParseError:
 class TestFailClosedGitDiffFailure:
     """git diff 失败 → fail-closed 阻断（治本1，对标 directory_contract_gate）。"""
 
-    def test_git_diff_nonzero_returncode_blocks(
-        self, tmp_path: Path, monkeypatch
-    ) -> None:
+    def test_git_diff_nonzero_returncode_blocks(self, tmp_path: Path, monkeypatch) -> None:
         """git diff returncode=1 → passed=False + detail 含修复指引。"""
         from unittest.mock import MagicMock
 
@@ -281,9 +283,7 @@ class TestFailClosedGitDiffFailure:
         assert "fail-closed" in detail
         assert "git diff" in detail
 
-    def test_git_diff_exception_blocks(
-        self, tmp_path: Path, monkeypatch
-    ) -> None:
+    def test_git_diff_exception_blocks(self, tmp_path: Path, monkeypatch) -> None:
         """git diff 抛异常 → passed=False + detail 含修复指引。"""
         from unittest.mock import MagicMock
 
@@ -310,14 +310,13 @@ class TestFailClosedGitDiffFailure:
 # 规避自指递归：不新增门禁，只扩展已有 create_guard。
 # ===========================================================================
 
+
 class TestNewReconcilerMarker:
     """新增 make_*_reconciler 需 # trae_060-reviewed 标记（元问题3治本）。"""
 
     _RECONCILER_REL = "src/zephyr/governance/audit/reconciliation_registry.py"
 
-    def _setup_reconciler_registry(
-        self, repo_dir: Path, head_content: str, staged_content: str
-    ) -> Path:
+    def _setup_reconciler_registry(self, repo_dir: Path, head_content: str, staged_content: str) -> Path:
         """在 repo_dir 下创建 reconciliation_registry.py：先 commit head_content 到 HEAD，
         再 stage staged_content（模拟修改新增 make_*_reconciler）。"""
         env = os.environ.copy()
@@ -329,17 +328,29 @@ class TestNewReconcilerMarker:
         f.write_text(head_content, encoding="utf-8")
         subprocess.run(
             ["git", "add", self._RECONCILER_REL],
-            cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30,
+            cwd=str(repo_dir),
+            capture_output=True,
+            env=env,
+            check=True,
+            timeout=30,
         )
         subprocess.run(
             ["git", "commit", "-m", "head version", "--no-verify"],
-            cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30,
+            cwd=str(repo_dir),
+            capture_output=True,
+            env=env,
+            check=True,
+            timeout=30,
         )
         # staged 修改版
         f.write_text(staged_content, encoding="utf-8")
         subprocess.run(
             ["git", "add", self._RECONCILER_REL],
-            cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30,
+            cwd=str(repo_dir),
+            capture_output=True,
+            env=env,
+            check=True,
+            timeout=30,
         )
         return f
 
@@ -347,11 +358,7 @@ class TestNewReconcilerMarker:
         """staged 新增 make_test_reconciler 无 # trae_060-reviewed 标记 → 阻断。"""
         _init_git_repo(tmp_path)
         head = '"""mod"""\n\ndef make_existing_reconciler():\n    pass\n'
-        staged = (
-            '"""mod"""\n\n'
-            'def make_existing_reconciler():\n    pass\n\n'
-            'def make_test_reconciler():\n    pass\n'
-        )
+        staged = '"""mod"""\n\ndef make_existing_reconciler():\n    pass\n\ndef make_test_reconciler():\n    pass\n'
         f = self._setup_reconciler_registry(tmp_path, head, staged)
         gw = GitCommitGateway(project_root=tmp_path)
         gate = make_create_guard()
@@ -366,9 +373,9 @@ class TestNewReconcilerMarker:
         head = '"""mod"""\n\ndef make_existing_reconciler():\n    pass\n'
         staged = (
             '"""mod"""\n\n'
-            'def make_existing_reconciler():\n    pass\n\n'
-            '# trae_060-reviewed: 该存在+治本\n'
-            'def make_test_reconciler():\n    pass\n'
+            "def make_existing_reconciler():\n    pass\n\n"
+            "# trae_060-reviewed: 该存在+治本\n"
+            "def make_test_reconciler():\n    pass\n"
         )
         f = self._setup_reconciler_registry(tmp_path, head, staged)
         gw = GitCommitGateway(project_root=tmp_path)
@@ -408,6 +415,7 @@ class TestNewReconcilerMarker:
 # .yaml 文件单段 name（缺主题前缀）→ 硬阻断。
 # 规避自指递归：不新增门禁，只扩展已有 create_guard（同 reconciler 审查标记检测先例）。
 # ===========================================================================
+
 
 class TestRulesYamlNamingBlocked:
     """rules/ 新增 .yaml 单段 name → 硬阻断（ARCH-037 DIM-5 commit-time 强制）。"""
@@ -463,9 +471,7 @@ class TestRulesYamlNamingBlocked:
         assert "creation_token" in detail
         assert "造第二真源" in detail
 
-    def test_non_rules_dir_yaml_with_token_passes(
-        self, tmp_path: Path, monkeypatch
-    ) -> None:
+    def test_non_rules_dir_yaml_with_token_passes(self, tmp_path: Path, monkeypatch) -> None:
         """staged 非 rules/ 目录 .yaml 有 token → 放行。"""
         _init_git_repo(tmp_path)
         yaml_rel = "docs/02_other/trae_999_test_desc.yaml"
@@ -474,10 +480,10 @@ class TestRulesYamlNamingBlocked:
         registry_file = tmp_path / "registry.yaml"
         registry_file.write_text(
             f"creation_tokens:\n"
-            f"  - file: \"{yaml_rel}\"\n"
-            f"    token: \"auto-yaml-test-20260701\"\n"
-            f"    created_by: \"test\"\n"
-            f"    capability: \"test\"\n",
+            f'  - file: "{yaml_rel}"\n'
+            f'    token: "auto-yaml-test-20260701"\n'
+            f'    created_by: "test"\n'
+            f'    capability: "test"\n',
             encoding="utf-8",
         )
         monkeypatch.setattr(
@@ -511,13 +517,19 @@ class TestRulesYamlNamingBlocked:
         _stage_file(tmp_path, old_rel, "rule_id: trae_999\n")
         subprocess.run(
             ["git", "commit", "-m", "init rule", "--no-verify"],
-            cwd=str(tmp_path), capture_output=True, check=True, timeout=30,
+            cwd=str(tmp_path),
+            capture_output=True,
+            check=True,
+            timeout=30,
         )
         # rename 为单段 name
         new_rel = f"{self._RULES_DIR}/trae_999_new.yaml"
         subprocess.run(
             ["git", "mv", old_rel, new_rel],
-            cwd=str(tmp_path), capture_output=True, check=True, timeout=30,
+            cwd=str(tmp_path),
+            capture_output=True,
+            check=True,
+            timeout=30,
         )
         new_file = tmp_path / new_rel
         gw = GitCommitGateway(project_root=tmp_path)
@@ -536,6 +548,7 @@ class TestRulesYamlNamingBlocked:
 # 防复发：禁止在 governance/ 根直接新增 .py（清单随治本进化，真源在磁盘现有文件）。
 # 治本：扩展已有 create_guard 检测范围（不新增门禁，规避自指递归——同 reconciler 先例）。
 # ===========================================================================
+
 
 class TestGovernanceRootNewPyBlocked:
     """governance/ 根新增 .py 文件 → 硬阻断（ARCH-031 防复发）。"""
@@ -568,7 +581,8 @@ class TestGovernanceRootNewPyBlocked:
         target = tmp_path / "src/zephyr/governance/renamed_to_root_test.py"
         subprocess.run(
             ["git", "mv", str(original), str(target)],
-            cwd=tmp_path, check=True,
+            cwd=tmp_path,
+            check=True,
         )
         gw = GitCommitGateway(project_root=tmp_path)
         gate = make_create_guard()
@@ -595,9 +609,7 @@ class TestGovernanceSubdirNewPyNotAntiRelapse:
         gate = make_create_guard()
         passed, detail = gate.check(gw, [str(f)])
         if not passed:
-            assert "防复发" not in detail, (
-                f"governance 子目录新增 .py 不应触发 ARCH-031 防复发: {detail}"
-            )
+            assert "防复发" not in detail, f"governance 子目录新增 .py 不应触发 ARCH-031 防复发: {detail}"
 
 
 # ===========================================================================
@@ -606,6 +618,7 @@ class TestGovernanceSubdirNewPyNotAntiRelapse:
 # 和 Block 10 (字段头完整性) 的 violation 路径从未被测试。Extract Method 重构前
 # MUST 补充分支测试，确保重构后 violation 路径行为等价。
 # ===========================================================================
+
 
 class TestClassUniquenessBlocked:
     """类名跨模块冲突 → 硬阻断（ARCH-034 CLASS-UNIQUENESS）。
@@ -619,9 +632,7 @@ class TestClassUniquenessBlocked:
         # 1. 先 commit 一个已有文件，定义 _TestConflictClass20260715
         existing = tmp_path / "src/zephyr/gov_enforcement/existing_module_for_test.py"
         existing.parent.mkdir(parents=True, exist_ok=True)
-        existing.write_text(
-            "class _TestConflictClass20260715:\n    pass\n", encoding="utf-8"
-        )
+        existing.write_text("class _TestConflictClass20260715:\n    pass\n", encoding="utf-8")
         env = os.environ.copy()
         env["GIT_AUTHOR_NAME"] = "Test"
         env["GIT_AUTHOR_EMAIL"] = "test@test.com"
@@ -629,11 +640,17 @@ class TestClassUniquenessBlocked:
         env["GIT_COMMITTER_EMAIL"] = "test@test.com"
         subprocess.run(
             ["git", "add", "src/zephyr/gov_enforcement/existing_module_for_test.py"],
-            cwd=str(tmp_path), capture_output=True, timeout=30, env=env,
+            cwd=str(tmp_path),
+            capture_output=True,
+            timeout=30,
+            env=env,
         )
         subprocess.run(
             ["git", "commit", "-m", "add existing", "--no-verify"],
-            cwd=str(tmp_path), capture_output=True, timeout=30, env=env,
+            cwd=str(tmp_path),
+            capture_output=True,
+            timeout=30,
+            env=env,
         )
         # 2. Stage 新文件，定义同名 class（无 alias 标记）
         f = _stage_file(
@@ -652,9 +669,7 @@ class TestClassUniquenessBlocked:
         _init_git_repo(tmp_path)
         existing = tmp_path / "src/zephyr/gov_enforcement/existing_module_for_test2.py"
         existing.parent.mkdir(parents=True, exist_ok=True)
-        existing.write_text(
-            "class _TestAliasedClass20260715:\n    pass\n", encoding="utf-8"
-        )
+        existing.write_text("class _TestAliasedClass20260715:\n    pass\n", encoding="utf-8")
         env = os.environ.copy()
         env["GIT_AUTHOR_NAME"] = "Test"
         env["GIT_AUTHOR_EMAIL"] = "test@test.com"
@@ -662,18 +677,23 @@ class TestClassUniquenessBlocked:
         env["GIT_COMMITTER_EMAIL"] = "test@test.com"
         subprocess.run(
             ["git", "add", "src/zephyr/gov_enforcement/existing_module_for_test2.py"],
-            cwd=str(tmp_path), capture_output=True, timeout=30, env=env,
+            cwd=str(tmp_path),
+            capture_output=True,
+            timeout=30,
+            env=env,
         )
         subprocess.run(
             ["git", "commit", "-m", "add existing2", "--no-verify"],
-            cwd=str(tmp_path), capture_output=True, timeout=30, env=env,
+            cwd=str(tmp_path),
+            capture_output=True,
+            timeout=30,
+            env=env,
         )
         # Stage 新文件，定义同名 class 但有 alias 标记
         f = _stage_file(
             tmp_path,
             "src/zephyr/gov_enforcement/commit_gates/__test_class_alias_20260715__.py",
-            "# class-name-alias: legitimate re-export for testing\n"
-            "class _TestAliasedClass20260715:\n    pass\n",
+            "# class-name-alias: legitimate re-export for testing\nclass _TestAliasedClass20260715:\n    pass\n",
         )
         gw = GitCommitGateway(project_root=tmp_path)
         gate = make_create_guard()
@@ -681,9 +701,7 @@ class TestClassUniquenessBlocked:
         # 应通过类名检测（有 alias 标记），但可能被后续 token 检测阻断
         # 关键断言：不因 CLASS-UNIQUENESS 被阻断
         if not passed:
-            assert "CLASS-UNIQUENESS" not in detail, (
-                f"有 alias 标记的类名不应触发 CLASS-UNIQUENESS: {detail}"
-            )
+            assert "CLASS-UNIQUENESS" not in detail, f"有 alias 标记的类名不应触发 CLASS-UNIQUENESS: {detail}"
 
 
 class TestFieldHeaderIncomplete:
@@ -702,10 +720,10 @@ class TestFieldHeaderIncomplete:
         registry_file = tmp_path / "registry.yaml"
         registry_file.write_text(
             f"creation_tokens:\n"
-            f"  - file: \"{rel}\"\n"
-            f"    token: \"auto-field-header-test-20260715\"\n"
-            f"    created_by: \"test\"\n"
-            f"    capability: \"test\"\n",
+            f'  - file: "{rel}"\n'
+            f'    token: "auto-field-header-test-20260715"\n'
+            f'    created_by: "test"\n'
+            f'    capability: "test"\n',
             encoding="utf-8",
         )
         monkeypatch.setattr(

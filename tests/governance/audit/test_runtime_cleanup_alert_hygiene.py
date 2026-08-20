@@ -15,6 +15,7 @@ make_tmp_cleanup_reconciler（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 裁定5）
 裁定语义：锁定跳过=clean——PermissionError（WinError 32/5 文件被占用）
 不计入 errors、不触发 warn；仅真异常（其他 OSError）计入 errors。
 """
+
 from __future__ import annotations
 
 import os
@@ -52,9 +53,7 @@ class TestLockedSkipCleanSemantics:
     def test_locked_file_does_not_warn(self, tmp_path: Path, monkeypatch):
         """锁定文件（PermissionError）→ clean，locked_skipped 计数。"""
         _make_stale_file(tmp_path / ".runtime" / "handoffs", "old.md")
-        monkeypatch.setattr(
-            os, "remove", MagicMock(side_effect=PermissionError("file in use"))
-        )
+        monkeypatch.setattr(os, "remove", MagicMock(side_effect=PermissionError("file in use")))
         spec = make_runtime_cleanup_reconciler(_make_gateway(tmp_path))
         result = spec.reconcile([], "sess-t5")
         assert result.action == "clean"
@@ -64,9 +63,7 @@ class TestLockedSkipCleanSemantics:
     def test_genuine_error_still_warns(self, tmp_path: Path, monkeypatch):
         """真异常（非 PermissionError 的 OSError）→ warn 照常报（T5 不吞真告警）。"""
         _make_stale_file(tmp_path / ".runtime" / "handoffs", "old.md")
-        monkeypatch.setattr(
-            os, "remove", MagicMock(side_effect=OSError("disk io error"))
-        )
+        monkeypatch.setattr(os, "remove", MagicMock(side_effect=OSError("disk io error")))
         spec = make_runtime_cleanup_reconciler(_make_gateway(tmp_path))
         result = spec.reconcile([], "sess-t5")
         assert result.action == "warn"

@@ -52,6 +52,7 @@ Usage::
     py -3.12 -m pytest tests/governance/test_battle_map_simulation_validation.py -k "not e2e"  # 跳过 DB
     py -3.12 -m pytest tests/governance/test_battle_map_simulation_validation.py::TestBMSim07ClosedLoop -v
 """
+
 from __future__ import annotations
 
 import sys
@@ -106,11 +107,13 @@ EXPECTED_SIM07_TRANSLATION = {
 
 # ── DB fixture ────────────────────────────────────────────────────────────────
 
+
 @pytest.fixture(scope="module")
 def bm_reader():
     """BattleMapReader fixture — DB 不可达时 skip 整个 module。"""
     try:
         from zephyr.governance.persistence.battle_map_reader import BattleMapReader
+
         reader = BattleMapReader()
         # 验证连接可用
         _ = reader.get_edge_count()
@@ -124,6 +127,7 @@ def dep_reader():
     """DepgraphReader fixture — DB 不可达时 skip。"""
     try:
         from zephyr.governance.persistence.depgraph_reader import DepgraphReader
+
         return DepgraphReader()
     except Exception as e:
         pytest.skip(f"DepgraphReader 不可达: {e}")
@@ -133,6 +137,7 @@ def dep_reader():
 def translation_registry():
     """加载 module_translation_registry.yaml 的 battle_map_steps 段。"""
     import yaml
+
     yaml_path = _REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml"
     with open(yaml_path, "r", encoding="utf-8") as f:
         registry = yaml.safe_load(f)
@@ -140,6 +145,7 @@ def translation_registry():
 
 
 # ── 1. 拓扑验证 ───────────────────────────────────────────────────────────────
+
 
 @pytest.mark.e2e
 class TestSimulationValidationTopology:
@@ -181,6 +187,7 @@ class TestSimulationValidationTopology:
 
 
 # ── 2. BM-SIM-07 闭环验证（核心测试） ─────────────────────────────────────────
+
 
 @pytest.mark.e2e
 class TestBMSim07ClosedLoop:
@@ -227,8 +234,9 @@ class TestBMSim07ClosedLoop:
         sim03_edge = [e for e in in_edges if e["from_step_id"] == "BM-SIM-03"]
         assert len(sim03_edge) == 1, f"期望 BM-SIM-03→BM-SIM-07 边，实际入边: {in_edges}"
         assert sim03_edge[0]["edge_type"] == "data_flow"
-        assert "蒙特卡洛" in sim03_edge[0].get("label", ""), \
+        assert "蒙特卡洛" in sim03_edge[0].get("label", ""), (
             f"边 label 应含'蒙特卡洛'，实际: {sim03_edge[0].get('label')}"
+        )
 
     def test_sim07_outgoing_edge_to_sim06(self, bm_reader):
         """出边：BM-SIM-07 → BM-SIM-06 (风控仿真→结果分析)。"""
@@ -238,8 +246,9 @@ class TestBMSim07ClosedLoop:
         sim06_edge = [e for e in out_edges if e["to_step_id"] == "BM-SIM-06"]
         assert len(sim06_edge) == 1, f"期望 BM-SIM-07→BM-SIM-06 边，实际出边: {out_edges}"
         assert sim06_edge[0]["edge_type"] == "data_flow"
-        assert "风控仿真" in sim06_edge[0].get("label", ""), \
+        assert "风控仿真" in sim06_edge[0].get("label", ""), (
             f"边 label 应含'风控仿真'，实际: {sim06_edge[0].get('label')}"
+        )
 
     def test_sim07_closed_loop_flow(self, bm_reader):
         """闭环验证：BM-SIM-03 → BM-SIM-07 → BM-SIM-06 完整链路。
@@ -269,6 +278,7 @@ class TestBMSim07ClosedLoop:
 
 
 # ── 3. YAML 叙事验证 ──────────────────────────────────────────────────────────
+
 
 @pytest.mark.e2e
 class TestBMSim07Translation:
@@ -307,11 +317,13 @@ class TestBMSim07Translation:
         """indicators_zh 的 ⑤代码 段提及 MOD-SIM-003 / risk_simulator.py。"""
         t = translation_registry.get("BM-SIM-07", {})
         indicators = t.get("indicators_zh", "")
-        assert "MOD-SIM-003" in indicators or "risk_simulator" in indicators, \
+        assert "MOD-SIM-003" in indicators or "risk_simulator" in indicators, (
             "indicators_zh ⑤代码段应提及 MOD-SIM-003 或 risk_simulator.py"
+        )
 
 
 # ── 4. 6 件套指标结构验证 ─────────────────────────────────────────────────────
+
 
 @pytest.mark.e2e
 class TestBMSim07Indicators:
@@ -329,6 +341,7 @@ class TestBMSim07Indicators:
 
 
 # ── 5. 生成器渲染防御性验证（纯逻辑，无 DB 依赖） ─────────────────────────────
+
 
 class TestSim07GeneratorRendering:
     """BM-SIM-07 生成器渲染防御性验证（纯逻辑，不依赖 DB）。

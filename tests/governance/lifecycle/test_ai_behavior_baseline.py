@@ -12,6 +12,7 @@
   - std=0 退化：等于均值零异常，偏离均值即异常（inf z）
   - 边界：duration_hours=0 / 全零文件计数 → 不抛；z_threshold 非法 → 拒
 """
+
 from __future__ import annotations
 
 import pytest
@@ -28,8 +29,12 @@ def _sessions(n=5):
     """5 个正常基线会话：commits/hour≈4，docs/code/registry≈5/3/2，模块 m1/m2。"""
     return [
         SessionBehavior(
-            session_id=f"hist-{i}", commits=8 + (i % 2), duration_hours=2.0,
-            files_docs=5, files_code=3, files_registry=2,
+            session_id=f"hist-{i}",
+            commits=8 + (i % 2),
+            duration_hours=2.0,
+            files_docs=5,
+            files_code=3,
+            files_registry=2,
             modules_touched=("m1", "m2"),
         )
         for i in range(n)
@@ -53,9 +58,7 @@ class TestComputeBaseline:
         # 边界：恰好 3 个样本 → 可判
         assert compute_baseline(_sessions(3)).n_sessions == 3
 
-    @pytest.mark.parametrize(
-        "kw", [{"commits": -1}, {"duration_hours": -0.5}, {"files_docs": -1}]
-    )
+    @pytest.mark.parametrize("kw", [{"commits": -1}, {"duration_hours": -0.5}, {"files_docs": -1}])
     def test_negative_values_rejected(self, kw):
         sessions = _sessions() + [SessionBehavior(session_id="bad", **{**dict(commits=1, duration_hours=1.0), **kw})]
         with pytest.raises(BehaviorBaselineError):
@@ -66,8 +69,13 @@ class TestDetectAnomalies:
     def test_normal_session_no_anomaly(self):
         b = compute_baseline(_sessions())
         normal = SessionBehavior(
-            session_id="cur", commits=8, duration_hours=2.0,
-            files_docs=5, files_code=3, files_registry=2, modules_touched=("m1",),
+            session_id="cur",
+            commits=8,
+            duration_hours=2.0,
+            files_docs=5,
+            files_code=3,
+            files_registry=2,
+            modules_touched=("m1",),
         )
         assert detect_anomalies(normal, b) == []
 
@@ -75,8 +83,13 @@ class TestDetectAnomalies:
         """单会话突增 commit 频率 → commit_frequency 告警。"""
         b = compute_baseline(_sessions())
         burst = SessionBehavior(
-            session_id="cur", commits=80, duration_hours=2.0,  # 40/h vs 基线 4.2/h
-            files_docs=5, files_code=3, files_registry=2, modules_touched=("m1",),
+            session_id="cur",
+            commits=80,
+            duration_hours=2.0,  # 40/h vs 基线 4.2/h
+            files_docs=5,
+            files_code=3,
+            files_registry=2,
+            modules_touched=("m1",),
         )
         rules = {a.rule for a in detect_anomalies(burst, b)}
         assert "commit_frequency" in rules
@@ -85,8 +98,13 @@ class TestDetectAnomalies:
         """类型分布剧变（全注册表修改）→ type_distribution 告警。"""
         b = compute_baseline(_sessions())
         shifted = SessionBehavior(
-            session_id="cur", commits=8, duration_hours=2.0,
-            files_docs=0, files_code=0, files_registry=20, modules_touched=("m1",),
+            session_id="cur",
+            commits=8,
+            duration_hours=2.0,
+            files_docs=0,
+            files_code=0,
+            files_registry=20,
+            modules_touched=("m1",),
         )
         anomalies = detect_anomalies(shifted, b)
         metrics = {a.metric for a in anomalies if a.rule == "type_distribution"}
@@ -96,8 +114,12 @@ class TestDetectAnomalies:
         """首次触碰基线外模块 → 逐模块告警。"""
         b = compute_baseline(_sessions())
         novel = SessionBehavior(
-            session_id="cur", commits=8, duration_hours=2.0,
-            files_docs=5, files_code=3, files_registry=2,
+            session_id="cur",
+            commits=8,
+            duration_hours=2.0,
+            files_docs=5,
+            files_code=3,
+            files_registry=2,
             modules_touched=("m1", "prod_risk_engine", "prod_order_manager"),
         )
         first_touch = [a for a in detect_anomalies(novel, b) if a.rule == "first_touch_module"]
@@ -106,8 +128,9 @@ class TestDetectAnomalies:
     def test_std_zero_degenerate(self):
         """退化：基线 std=0（全同会话）——等于均值零异常，偏离即异常。"""
         same = [
-            SessionBehavior(session_id=f"h{i}", commits=8, duration_hours=2.0,
-                            files_docs=5, files_code=3, files_registry=2)
+            SessionBehavior(
+                session_id=f"h{i}", commits=8, duration_hours=2.0, files_docs=5, files_code=3, files_registry=2
+            )
             for i in range(4)
         ]
         b = compute_baseline(same)

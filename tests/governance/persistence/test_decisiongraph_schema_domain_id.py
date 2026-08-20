@@ -13,6 +13,7 @@
 
 验证 DDL 常量中包含 domain_id 字段，用于五图模块同步引擎的核心字段对齐。
 """
+
 from __future__ import annotations
 
 from zephyr.governance.persistence.decisiongraph_schema import (

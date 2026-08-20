@@ -237,6 +237,7 @@ def test_render_stage_doc_contains_cards_and_anchors():
 
     stage_rows = anchored["stock_selection"]
     from generate_module_algorithm_overview import _build_consumers
+
     consumers = _build_consumers(edges)
 
     doc = render_stage_doc("stock_selection", stage_rows, edges, consumers)
@@ -268,6 +269,7 @@ def test_render_stage_doc_stats():
 
     stage_rows = anchored["stock_selection"]
     from generate_module_algorithm_overview import _build_consumers
+
     consumers = _build_consumers(edges)
 
     doc = render_stage_doc("stock_selection", stage_rows, edges, consumers)
@@ -287,6 +289,7 @@ def test_render_system_foundation_doc_contains_unanchored():
     _, unanchored = classify_rows_by_stage(rows, mod_to_stages)
 
     from generate_module_algorithm_overview import _build_consumers
+
     consumers = _build_consumers(edges)
 
     doc = render_system_foundation_doc(unanchored, edges, consumers)
@@ -407,12 +410,7 @@ def test_algo_steps_marker_lines_stripped_with_flow():
 def test_algo_steps_human_text_kept_markers_stripped():
     """算法步骤人读文字+标记混合：保留人读文字，剥离标记行（无推导图）。"""
     rows = _make_rows()
-    rows[0]["summary"].algo_steps = (
-        "① 先做人读步骤\n"
-        "# - id: A1\n"
-        "#   name_zh: 机器标记\n"
-        "② 再做第二步"
-    )
+    rows[0]["summary"].algo_steps = "① 先做人读步骤\n# - id: A1\n#   name_zh: 机器标记\n② 再做第二步"
     consumers = _build_consumers([])
 
     doc = render_stage_doc("stock_selection", [rows[0]], [], consumers)

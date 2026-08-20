@@ -43,6 +43,7 @@ from scripts.governance.d3_metadata.check_frontmatter_metadata import (
 
 # ── fixtures ──
 
+
 @pytest.fixture
 def vocab_cache():
     """预加载所有字段的词表缓存。"""
@@ -58,9 +59,7 @@ def deprecated_cache():
     cache = {}
     for field, rule in _FIELD_RULES.items():
         if "deprecated_key" in rule:
-            cache[field] = load_vocabulary_deprecated_map(
-                rule["vocab_file"], deprecated_key=rule["deprecated_key"]
-            )
+            cache[field] = load_vocabulary_deprecated_map(rule["vocab_file"], deprecated_key=rule["deprecated_key"])
     return cache
 
 
@@ -72,6 +71,7 @@ def _make_md(tmp_path: Path, frontmatter: str, body: str = "# test") -> Path:
 
 
 # ── ttl 测试 ──
+
 
 def test_ttl_valid(tmp_path, vocab_cache, deprecated_cache):
     """合法 ttl → 无 issues。"""
@@ -97,6 +97,7 @@ def test_ttl_invalid(tmp_path, vocab_cache, deprecated_cache):
 
 
 # ── doc_type 测试 ──
+
 
 def test_doctype_valid(tmp_path, vocab_cache, deprecated_cache):
     """合法 doc_type → 无 issues。"""
@@ -142,6 +143,7 @@ def test_doctype_deprecated_warn(tmp_path, vocab_cache, deprecated_cache, capsys
 
 # ── 通用加载器回归测试 ──
 
+
 def test_generic_loader_ttl_regression():
     """load_vocabulary_values("ttl_vocabulary.yaml") 返回与旧 _load_ttl_values() 相同的集合。
 
@@ -170,6 +172,7 @@ def test_generic_loader_doctype():
 # ── zone-aware fail-open 测试（治本 #ARCH-TTL-FAILOPEN-001）──
 # 不可能三角解法验证：temporary zone 跳过 doc_type 但保留 ttl；
 #   permanent/temporary zone 无 frontmatter → HARD BLOCK
+
 
 def test_no_fm_permanent_zone_blocks(tmp_path, vocab_cache, deprecated_cache, monkeypatch):
     """permanent zone .md 无 frontmatter → HARD BLOCK。"""
@@ -225,6 +228,7 @@ def test_temporary_zone_ttl_still_required(tmp_path, vocab_cache, deprecated_cac
 # ── archive_zone 解耦测试（治本 #ARCH-TTL-EXEMPT-DECOUPLE）──
 # 归档区（docs/_archive/）有 frontmatter 时跳过 doc_type（与 EXEMPT-ZONE-FM 解耦），
 # 但 ttl 仍必填；归档区无 frontmatter → PASS
+
 
 def test_archive_zone_skips_doctype(tmp_path, vocab_cache, deprecated_cache, monkeypatch):
     """archive_zone .md 有 ttl 无 doc_type, strict=True → PASS（doc_type 跳过）。"""

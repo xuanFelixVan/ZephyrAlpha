@@ -27,6 +27,7 @@
 
 测试隔离：monkeypatch is_generic_* / REGISTRY_YAML；tmp_path 构造临时 YAML。
 """
+
 from __future__ import annotations
 
 import sys
@@ -54,6 +55,7 @@ from add_module_translation import (  # noqa: E402
 # TestValidatePlain
 # ---------------------------------------------------------------------------
 
+
 class TestValidatePlain:
     """_validate_plain 合规校验。"""
 
@@ -77,6 +79,7 @@ class TestValidatePlain:
     def test_generic_plain(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """通用模板 → ok=False。"""
         import add_module_translation as mod
+
         monkeypatch.setattr(mod, "is_generic_plain_zh", lambda s: True)
         ok, reason = _validate_plain("这是一个通用模板的大白话简介测试", "测试模块")
         assert ok is False
@@ -85,6 +88,7 @@ class TestValidatePlain:
     def test_generic_suffix(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """通用后缀 → ok=False。"""
         import add_module_translation as mod
+
         monkeypatch.setattr(mod, "is_generic_plain_zh", lambda s: False)
         monkeypatch.setattr(mod, "is_generic_plain_suffix", lambda s, n: True)
         ok, reason = _validate_plain("测试模块的实现相关功能", "测试模块")
@@ -95,6 +99,7 @@ class TestValidatePlain:
 # ---------------------------------------------------------------------------
 # TestYamlQuote
 # ---------------------------------------------------------------------------
+
 
 class TestYamlQuote:
     """_yaml_quote 转义。"""
@@ -125,6 +130,7 @@ class TestYamlQuote:
 # ---------------------------------------------------------------------------
 # TestUpsertEntry
 # ---------------------------------------------------------------------------
+
 
 class TestUpsertEntry:
     """_upsert_entry upsert 逻辑。"""
@@ -175,14 +181,7 @@ entries:
 
     def test_split_entries_section(self) -> None:
         """_split_entries_section 正确切分段落。"""
-        yaml_text = (
-            "header: value\n"
-            "entries:\n"
-            "- module_path: a.py\n"
-            "  plain_zh: \"aaa\"\n"
-            "battle_map_steps:\n"
-            "  step1: foo\n"
-        )
+        yaml_text = 'header: value\nentries:\n- module_path: a.py\n  plain_zh: "aaa"\nbattle_map_steps:\n  step1: foo\n'
         preamble, body, tail = _split_entries_section(yaml_text)
         assert "entries:" in preamble
         assert "module_path: a.py" in body
@@ -193,12 +192,14 @@ entries:
 # TestAddTranslationDryRun
 # ---------------------------------------------------------------------------
 
+
 class TestAddTranslationDryRun:
     """add_translation dry-run 模式（不写盘）。"""
 
     def test_dry_run_valid(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """校验通过 → exit 0（不写盘）。"""
         import add_module_translation as mod
+
         # is_generic 返回 False（合格简介）
         monkeypatch.setattr(mod, "is_generic_plain_zh", lambda s: False)
         monkeypatch.setattr(mod, "is_generic_plain_suffix", lambda s, n: False)

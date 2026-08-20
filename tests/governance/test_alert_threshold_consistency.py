@@ -174,8 +174,17 @@ class TestDesignEntriesExist:
         assert len(e) == 35
         cats = {entry["category"] for entry in e.values()}
         assert cats == {
-            "drawdown", "health", "gpu", "deviation", "plv", "alert",
-            "audit", "report", "oprisk", "drift", "retirement",
+            "drawdown",
+            "health",
+            "gpu",
+            "deviation",
+            "plv",
+            "alert",
+            "audit",
+            "report",
+            "oprisk",
+            "drift",
+            "retirement",
         }
 
 
@@ -209,8 +218,8 @@ _FIRST_TID = {
 
 #: 类型畸形攻击值（缺省 "abc"——float cast 拒绝；int cast 拒浮点/字符串；str cast 拒数值）
 _TYPE_ERROR_VALUE = {
-    "health_monitor": 70.5,      # int cast 拒绝浮点（防 90.5→90 静默截断）
-    "alert_escalation": "abc",   # int cast 拒绝字符串
+    "health_monitor": 70.5,  # int cast 拒绝浮点（防 90.5→90 静默截断）
+    "alert_escalation": "abc",  # int cast 拒绝字符串
     "post_live_verification": 1,  # str cast 拒绝数值（PLV 字符串规约不数值化）
 }
 
@@ -274,9 +283,7 @@ class TestFailClosedRedTeam:
 
     @pytest.mark.parametrize("module_name", sorted(_FAIL_CLOSED_LOADERS))
     def test_missing_entry_fail_closed(self, module_name: str, tmp_path: Path):
-        reg = self._write_registry(
-            tmp_path, [{"threshold_id": "THD-UNRELATED-001", "value": 1.0}]
-        )
+        reg = self._write_registry(tmp_path, [{"threshold_id": "THD-UNRELATED-001", "value": 1.0}])
         with pytest.raises(AlertThresholdConfigError):
             _FAIL_CLOSED_LOADERS[module_name](reg)
 
@@ -310,9 +317,7 @@ class TestFailClosedRedTeam:
 
     @pytest.mark.parametrize("bad_value", [float("nan"), float("inf"), float("-inf")])
     @pytest.mark.parametrize("module_name", sorted(_FAIL_CLOSED_LOADERS))
-    def test_nan_inf_value_fail_closed(
-        self, module_name: str, bad_value: float, tmp_path: Path
-    ):
+    def test_nan_inf_value_fail_closed(self, module_name: str, bad_value: float, tmp_path: Path):
         """NaN/Inf 攻击面（AI-R1 复审）：YAML `.nan`/`.inf` 一律 fail-closed——
         NaN 使阈值比较恒 False → 告警链静默失效（比 bool→1.0 更隐蔽的
         fail-closed 洞）；float cast 拒非有限值、int/str cast 拒非 int/str。
@@ -335,10 +340,6 @@ class TestFailClosedRedTeam:
         from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 
         for bad in ("inf", "-inf", "1e400", "nan"):
-            reg = self._write_registry(
-                tmp_path, [{"threshold_id": "THD-X-001", "value": bad}]
-            )
+            reg = self._write_registry(tmp_path, [{"threshold_id": "THD-X-001", "value": bad}])
             with pytest.raises(AlertThresholdConfigError):
-                load_alert_thresholds(
-                    {"THD-X-001": "x"}, registry_path=reg, cast="float"
-                )
+                load_alert_thresholds({"THD-X-001": "x"}, registry_path=reg, cast="float")

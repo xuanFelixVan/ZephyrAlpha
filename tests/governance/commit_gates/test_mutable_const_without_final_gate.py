@@ -24,6 +24,7 @@
 - TestFailOpenGitDiff: git diff 失败 → 通过
 - TestFunctionLocalNotDetected: 函数内局部变量 → 通过（非模块级）
 """
+
 from __future__ import annotations
 
 import sys
@@ -71,7 +72,8 @@ class TestMutableConstBlocked:
         src_file = "src/zephyr/trading/foo.py"
         content = "_X = [1, 2, 3]\n"
         gw = make_mock_gateway(
-            [src_file], {src_file: ["_X = [1, 2, 3]"]},
+            [src_file],
+            {src_file: ["_X = [1, 2, 3]"]},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -85,7 +87,8 @@ class TestMutableConstBlocked:
         src_file = "src/zephyr/trading/foo.py"
         content = '_D = {"a": 1}\n'
         gw = make_mock_gateway(
-            [src_file], {src_file: ['_D = {"a": 1}']},
+            [src_file],
+            {src_file: ['_D = {"a": 1}']},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -97,7 +100,8 @@ class TestMutableConstBlocked:
         src_file = "src/zephyr/trading/foo.py"
         content = "_S = {1, 2}\n"
         gw = make_mock_gateway(
-            [src_file], {src_file: ["_S = {1, 2}"]},
+            [src_file],
+            {src_file: ["_S = {1, 2}"]},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -109,7 +113,8 @@ class TestMutableConstBlocked:
         src_file = "src/zephyr/trading/foo.py"
         content = "_L = list()\n"
         gw = make_mock_gateway(
-            [src_file], {src_file: ["_L = list()"]},
+            [src_file],
+            {src_file: ["_L = list()"]},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -121,7 +126,8 @@ class TestMutableConstBlocked:
         src_file = "src/zephyr/trading/foo.py"
         content = "_D = dict()\n"
         gw = make_mock_gateway(
-            [src_file], {src_file: ["_D = dict()"]},
+            [src_file],
+            {src_file: ["_D = dict()"]},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -140,7 +146,8 @@ class TestFinalAnnotatedPasses:
         src_file = "src/zephyr/trading/foo.py"
         content = "from typing import Final\n\n_X: Final = [1, 2, 3]\n"
         gw = make_mock_gateway(
-            [src_file], {src_file: ["_X: Final = [1, 2, 3]"]},
+            [src_file],
+            {src_file: ["_X: Final = [1, 2, 3]"]},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -153,7 +160,8 @@ class TestFinalAnnotatedPasses:
         src_file = "src/zephyr/trading/foo.py"
         content = "from typing import Final\n\n_X: Final[list] = [1, 2, 3]\n"
         gw = make_mock_gateway(
-            [src_file], {src_file: ["_X: Final[list] = [1, 2, 3]"]},
+            [src_file],
+            {src_file: ["_X: Final[list] = [1, 2, 3]"]},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -173,7 +181,8 @@ class TestImmutableValuePasses:
         src_file = "src/zephyr/trading/foo.py"
         content = "_X = 42\n"
         gw = make_mock_gateway(
-            [src_file], {src_file: ["_X = 42"]},
+            [src_file],
+            {src_file: ["_X = 42"]},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -186,7 +195,8 @@ class TestImmutableValuePasses:
         src_file = "src/zephyr/trading/foo.py"
         content = '_X = "hello"\n'
         gw = make_mock_gateway(
-            [src_file], {src_file: ['_X = "hello"']},
+            [src_file],
+            {src_file: ['_X = "hello"']},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -198,7 +208,8 @@ class TestImmutableValuePasses:
         src_file = "src/zephyr/trading/foo.py"
         content = "_T = (1, 2)\n"
         gw = make_mock_gateway(
-            [src_file], {src_file: ["_T = (1, 2)"]},
+            [src_file],
+            {src_file: ["_T = (1, 2)"]},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -217,7 +228,8 @@ class TestNoqaExemption:
         src_file = "src/zephyr/trading/foo.py"
         content = "_X = [1, 2, 3]  # noqa: n114-final  注册表需运行时修改\n"
         gw = make_mock_gateway(
-            [src_file], {src_file: ["_X = [1, 2, 3]  # noqa: n114-final  注册表需运行时修改"]},
+            [src_file],
+            {src_file: ["_X = [1, 2, 3]  # noqa: n114-final  注册表需运行时修改"]},
             file_contents={src_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -237,7 +249,8 @@ class TestTestExempt:
         test_file = "tests/governance/foo.py"
         content = "_X = [1, 2, 3]\n"
         gw = make_mock_gateway(
-            [test_file], {test_file: ["_X = [1, 2, 3]"]},
+            [test_file],
+            {test_file: ["_X = [1, 2, 3]"]},
             file_contents={test_file: content},
         )
         gate = make_mutable_const_without_final_gate()
@@ -255,14 +268,7 @@ class TestAddedLinesOnly:
     def test_existing_violation_not_added_passes(self):
         """存量模块级可变常量（非 added 行）→ 通过（由 M25 监控）"""
         src_file = "src/zephyr/trading/legacy.py"
-        full_content = (
-            "# header comment\n"
-            "\n"
-            "_OLD = [1, 2, 3]  # 存量违规，非 added 行\n"
-            "\n"
-            "def new_func():\n"
-            "    pass\n"
-        )
+        full_content = "# header comment\n\n_OLD = [1, 2, 3]  # 存量违规，非 added 行\n\ndef new_func():\n    pass\n"
         # 只 added 注释行 + new_func，不 added 存量违规行
         gw = make_mock_gateway(
             [src_file],
@@ -299,11 +305,7 @@ class TestFunctionLocalNotDetected:
     def test_function_local_list_passes(self):
         """函数内 _X = [1, 2, 3]（局部变量）→ 通过（非模块级）"""
         src_file = "src/zephyr/trading/foo.py"
-        full_content = (
-            "def foo():\n"
-            "    _X = [1, 2, 3]\n"
-            "    return _X\n"
-        )
+        full_content = "def foo():\n    _X = [1, 2, 3]\n    return _X\n"
         gw = make_mock_gateway(
             [src_file],
             {src_file: ["def foo():", "    _X = [1, 2, 3]", "    return _X"]},

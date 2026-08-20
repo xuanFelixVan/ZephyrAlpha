@@ -22,6 +22,7 @@
 - TestGateSpecFields: gate_id / priority 字段正确
 - TestSuffixRef: 带字母后缀的引用（裁定#19-A / 裁定#203-B 等）检测
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -53,10 +54,7 @@ entries:
 """
 
 # registry 在 project_root 下的相对路径（对标 ruling_reference_gate._REGISTRY_REL）
-_REGISTRY_REL = (
-    "docs/01_policies_and_standards/_registry/catalogs/"
-    "ruling_registry.yaml"
-)
+_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml"
 
 
 def _make_gateway(project_root: Path) -> MagicMock:
@@ -213,6 +211,7 @@ class TestExtractRegisteredNums:
         from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
             _extract_registered_nums,
         )
+
         # entries 是真源字段（对标 architecture_issue_registry.yaml）
         data = {"entries": [{"ruling_id": "裁定#6"}, {"ruling_id": "裁定#19"}]}
         nums = _extract_registered_nums(data)
@@ -223,6 +222,7 @@ class TestExtractRegisteredNums:
         from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
             _extract_registered_nums,
         )
+
         data = {"entries": [{"ruling_id": "裁定#19-A"}, {"ruling_id": "裁定#203-B"}]}
         nums = _extract_registered_nums(data)
         assert "19-A" in nums
@@ -233,6 +233,7 @@ class TestExtractRegisteredNums:
         from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
             _extract_registered_nums,
         )
+
         data = {"rulings": [{"ruling_id": "裁定#6"}]}
         nums = _extract_registered_nums(data)
         assert "6" in nums
@@ -241,6 +242,7 @@ class TestExtractRegisteredNums:
         from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
             _extract_registered_nums,
         )
+
         nums = _extract_registered_nums({})
         assert nums == set()
 
@@ -252,6 +254,7 @@ class TestExtractRefs:
         from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
             _extract_refs,
         )
+
         content = "见裁定#6 和裁定#19 的说明"
         refs = _extract_refs(content)
         assert "6" in refs
@@ -261,6 +264,7 @@ class TestExtractRefs:
         from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
             _extract_refs,
         )
+
         content = "裁定#19-A 和 裁定#203-B"
         refs = _extract_refs(content)
         assert "19-A" in refs
@@ -270,6 +274,7 @@ class TestExtractRefs:
         from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
             _extract_refs,
         )
+
         content = "no ruling reference here"
         refs = _extract_refs(content)
         assert refs == set()

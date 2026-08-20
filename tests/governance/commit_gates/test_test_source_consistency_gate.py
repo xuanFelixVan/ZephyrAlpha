@@ -43,6 +43,7 @@
 测试隔离：monkeypatch 设置 _SRC_ROOT 指向 tmp_path，MagicMock 模拟 gateway.run_git，
 不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import ast
@@ -81,8 +82,10 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     gw.project_root = str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -142,9 +145,7 @@ class TestHasModuleLevelSkip:
         assert _has_module_level_skip(tree) is False
 
     def test_pytest_skip_module_level(self):
-        tree = ast.parse(
-            'import pytest\npytest.skip("drift known", allow_module_level=True)\n'
-        )
+        tree = ast.parse('import pytest\npytest.skip("drift known", allow_module_level=True)\n')
         assert _has_module_level_skip(tree) is True
 
     def test_pytest_importorskip(self):
@@ -153,23 +154,17 @@ class TestHasModuleLevelSkip:
 
     def test_skip_inside_function_not_exempt(self):
         """函数内的 pytest.skip 不是模块级，不豁免。"""
-        tree = ast.parse(
-            'import pytest\n\ndef test_foo():\n    pytest.skip("skip this test")\n'
-        )
+        tree = ast.parse('import pytest\n\ndef test_foo():\n    pytest.skip("skip this test")\n')
         assert _has_module_level_skip(tree) is False
 
     def test_assign_skip_detected(self):
         """赋值形式 _ = pytest.skip(...) 也应被检测为模块级 skip。"""
-        tree = ast.parse(
-            'import pytest\n_ = pytest.skip("drift", allow_module_level=True)\n'
-        )
+        tree = ast.parse('import pytest\n_ = pytest.skip("drift", allow_module_level=True)\n')
         assert _has_module_level_skip(tree) is True
 
     def test_skip_inside_class_not_exempt(self):
         """类内的 pytest.skip 不是模块级，不豁免。"""
-        tree = ast.parse(
-            'import pytest\n\nclass TestFoo:\n    pytest.skip("skip")\n'
-        )
+        tree = ast.parse('import pytest\n\nclass TestFoo:\n    pytest.skip("skip")\n')
         assert _has_module_level_skip(tree) is False
 
 
@@ -232,9 +227,7 @@ class TestExtractSourceSymbols:
     def test_does_not_extract_method_inside_class(self, tmp_path):
         """类内方法不提取（只提取顶层符号）。"""
         f = tmp_path / "mod.py"
-        f.write_text(
-            "class Foo:\n    def method(self):\n        pass\n", encoding="utf-8"
-        )
+        f.write_text("class Foo:\n    def method(self):\n        pass\n", encoding="utf-8")
         syms = _extract_source_symbols(f)
         assert "Foo" in syms
         assert "method" not in syms
@@ -247,9 +240,7 @@ class TestExtractSourceSymbols:
         """
         f = tmp_path / "mod.py"
         f.write_text(
-            '__all__ = ["PUBLIC"]\n'
-            'PUBLIC = 1\n'
-            'PRIVATE = 2\n',
+            '__all__ = ["PUBLIC"]\nPUBLIC = 1\nPRIVATE = 2\n',
             encoding="utf-8",
         )
         syms = _extract_source_symbols(f)
@@ -291,8 +282,7 @@ class TestExtractSourceSymbols:
         """Import 引入的符号也提取（取 asname 或首段模块名）。"""
         f = tmp_path / "mod.py"
         f.write_text(
-            "import os\n"
-            "import zephyr.shared.models as models\n",
+            "import os\nimport zephyr.shared.models as models\n",
             encoding="utf-8",
         )
         syms = _extract_source_symbols(f)
@@ -339,7 +329,7 @@ class TestExtractAllList:
         assert _extract_all_list(assign.value) is None
 
     def test_empty_list_returns_none(self):
-        tree = ast.parse('__all__ = []')
+        tree = ast.parse("__all__ = []")
         assign = tree.body[0]
         assert isinstance(assign, ast.Assign)
         assert _extract_all_list(assign.value) is None
@@ -381,9 +371,7 @@ class TestGatewayIntegration:
         (src_dir / "foo.py").write_text("class Foo:\n    pass\n", encoding="utf-8")
         test_file = "tests/test_foo.py"
         test_content = "from zephyr.mod.foo import Foo\n"
-        gw = _make_gateway(
-            staged_files=[test_file], file_contents={test_file: test_content}
-        )
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
         passed, msg = make_test_source_consistency_gate().check(gw, [])
         assert passed is True
         assert msg == ""
@@ -396,9 +384,7 @@ class TestGatewayIntegration:
         (src_dir / "foo.py").write_text("class Foo:\n    pass\n", encoding="utf-8")
         test_file = "tests/test_foo.py"
         test_content = "from zephyr.mod.foo import Bar\n"
-        gw = _make_gateway(
-            staged_files=[test_file], file_contents={test_file: test_content}
-        )
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
         passed, msg = make_test_source_consistency_gate().check(gw, [])
         assert passed is False
         assert "TEST-SOURCE-CONSISTENCY" in msg
@@ -409,13 +395,9 @@ class TestGatewayIntegration:
         monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
         test_file = "tests/test_foo.py"
         test_content = (
-            'import pytest\n'
-            'pytest.skip("drift known", allow_module_level=True)\n'
-            'from zephyr.nonexistent import Bar\n'
+            'import pytest\npytest.skip("drift known", allow_module_level=True)\nfrom zephyr.nonexistent import Bar\n'
         )
-        gw = _make_gateway(
-            staged_files=[test_file], file_contents={test_file: test_content}
-        )
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
         passed, msg = make_test_source_consistency_gate().check(gw, [])
         assert passed is True
         assert msg == ""
@@ -425,9 +407,7 @@ class TestGatewayIntegration:
         monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
         test_file = "tests/test_foo.py"
         test_content = "from . import foo\n"
-        gw = _make_gateway(
-            staged_files=[test_file], file_contents={test_file: test_content}
-        )
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
         passed, msg = make_test_source_consistency_gate().check(gw, [])
         assert passed is True
         assert msg == ""
@@ -440,9 +420,7 @@ class TestGatewayIntegration:
         (src_dir / "foo.py").write_text("x = 1\n", encoding="utf-8")
         test_file = "tests/test_foo.py"
         test_content = "from zephyr.mod.foo import *\n"
-        gw = _make_gateway(
-            staged_files=[test_file], file_contents={test_file: test_content}
-        )
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
         passed, msg = make_test_source_consistency_gate().check(gw, [])
         assert passed is True
         assert msg == ""
@@ -452,9 +430,7 @@ class TestGatewayIntegration:
         monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
         test_file = "tests/test_foo.py"
         test_content = "from os import path\nfrom unittest.mock import MagicMock\n"
-        gw = _make_gateway(
-            staged_files=[test_file], file_contents={test_file: test_content}
-        )
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
         passed, msg = make_test_source_consistency_gate().check(gw, [])
         assert passed is True
         assert msg == ""
@@ -464,9 +440,7 @@ class TestGatewayIntegration:
         monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
         test_file = "tests/test_foo.py"
         test_content = "from zephyr.deleted.module import Foo\n"
-        gw = _make_gateway(
-            staged_files=[test_file], file_contents={test_file: test_content}
-        )
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
         passed, msg = make_test_source_consistency_gate().check(gw, [])
         assert passed is False
         assert "TEST-SOURCE-CONSISTENCY" in msg
@@ -482,16 +456,12 @@ class TestGatewayIntegration:
         src_dir = tmp_path / "zephyr" / "mod"
         src_dir.mkdir(parents=True)
         (src_dir / "foo.py").write_text(
-            '__all__ = ["PUBLIC"]\n'
-            'PUBLIC = 1\n'
-            'PRIVATE = 2\n',
+            '__all__ = ["PUBLIC"]\nPUBLIC = 1\nPRIVATE = 2\n',
             encoding="utf-8",
         )
         test_file = "tests/test_foo.py"
         test_content = "from zephyr.mod.foo import PRIVATE\n"
-        gw = _make_gateway(
-            staged_files=[test_file], file_contents={test_file: test_content}
-        )
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
         passed, msg = make_test_source_consistency_gate().check(gw, [])
         assert passed is True
         assert msg == ""
@@ -513,9 +483,7 @@ class TestGatewayIntegration:
         )
         test_file = "tests/test_foo.py"
         test_content = "from zephyr.mod.foo import CacheStats, HealthCheckResult\n"
-        gw = _make_gateway(
-            staged_files=[test_file], file_contents={test_file: test_content}
-        )
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
         passed, msg = make_test_source_consistency_gate().check(gw, [])
         assert passed is True
         assert msg == ""
@@ -562,9 +530,6 @@ class TestAddedLinesFilter:
         src_dir = tmp_path / "zephyr" / "valid"
         src_dir.mkdir(parents=True)
         (src_dir / "mod.py").write_text("class Foo:\n    pass\n", encoding="utf-8")
-        test_content = (
-            "from zephyr.deleted.module import OldSymbol\n"
-            "from zephyr.valid.mod import Foo\n"
-        )
+        test_content = "from zephyr.deleted.module import OldSymbol\nfrom zephyr.valid.mod import Foo\n"
         violations = _check_test_file(test_content, "tests/test_foo.py", added_lines={2})
         assert violations == []

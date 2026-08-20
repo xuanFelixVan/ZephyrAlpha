@@ -75,6 +75,7 @@ Usage::
     py -3.12 -m pytest tests/governance/test_battle_map_research_incubation.py -k "not e2e"  # 跳过 DB
     py -3.12 -m pytest tests/governance/test_battle_map_research_incubation.py::TestResearchDataFlowSimulation -v
 """
+
 from __future__ import annotations
 
 import sys
@@ -164,16 +165,34 @@ CHILD_TO_D_RESEARCH: dict[str, str] = {
 
 # 全部 18 个 D-RESEARCH 子模块（验证 100% 覆盖）
 ALL_D_RESEARCH_MODULES: list[str] = [
-    "D-RESEARCH-01", "D-RESEARCH-02", "D-RESEARCH-03", "D-RESEARCH-04",
-    "D-RESEARCH-05", "D-RESEARCH-06", "D-RESEARCH-07", "D-RESEARCH-08",
-    "D-RESEARCH-09", "D-RESEARCH-10", "D-RESEARCH-11", "D-RESEARCH-12",
-    "D-RESEARCH-13", "D-RESEARCH-14", "D-RESEARCH-15", "D-RESEARCH-16",
-    "D-RESEARCH-17", "D-RESEARCH-18",
+    "D-RESEARCH-01",
+    "D-RESEARCH-02",
+    "D-RESEARCH-03",
+    "D-RESEARCH-04",
+    "D-RESEARCH-05",
+    "D-RESEARCH-06",
+    "D-RESEARCH-07",
+    "D-RESEARCH-08",
+    "D-RESEARCH-09",
+    "D-RESEARCH-10",
+    "D-RESEARCH-11",
+    "D-RESEARCH-12",
+    "D-RESEARCH-13",
+    "D-RESEARCH-14",
+    "D-RESEARCH-15",
+    "D-RESEARCH-16",
+    "D-RESEARCH-17",
+    "D-RESEARCH-18",
 ]
 
 # indicators 6 件套必需字段
 REQUIRED_INDICATOR_KEYS = {
-    "trigger", "consumes", "params", "data_flow", "code_mapping", "degradation",
+    "trigger",
+    "consumes",
+    "params",
+    "data_flow",
+    "code_mapping",
+    "degradation",
 }
 # data_flow 子结构必需字段
 REQUIRED_DATA_FLOW_KEYS = {"input", "output", "process", "downstream"}
@@ -223,10 +242,7 @@ class TestResearchIncubationTopology:
         finally:
             reader.close()
         res_ids = set(res_steps.keys())
-        return [
-            e for e in edges
-            if e["from_step_id"] in res_ids or e["to_step_id"] in res_ids
-        ]
+        return [e for e in edges if e["from_step_id"] in res_ids or e["to_step_id"] in res_ids]
 
     @pytest.fixture(scope="class")
     def res_anchors(self, res_steps):
@@ -249,8 +265,7 @@ class TestResearchIncubationTopology:
     def test_exactly_33_steps(self, res_steps):
         """research_incubation 阶段恰好 33 环节（11 根 + 22 子，#ARCH-093 裁定后跟进）。"""
         assert len(res_steps) == 33, (
-            f"research_incubation 阶段应有 33 环节，实际 {len(res_steps)}: "
-            f"{sorted(res_steps.keys())}"
+            f"research_incubation 阶段应有 33 环节，实际 {len(res_steps)}: {sorted(res_steps.keys())}"
         )
 
     def test_11_root_22_child(self, res_steps):
@@ -265,18 +280,14 @@ class TestResearchIncubationTopology:
     def test_root_steps_have_no_parent(self, res_steps):
         """7 根环节 parent_step_id 为 None。"""
         for sid in EXPECTED_ROOT_CHAIN:
-            assert res_steps[sid].get("parent_step_id") is None, (
-                f"{sid} 是根环节，parent_step_id 应为 None"
-            )
+            assert res_steps[sid].get("parent_step_id") is None, f"{sid} 是根环节，parent_step_id 应为 None"
 
     def test_child_parent_mapping(self, res_steps):
         """每个子环节的 parent_step_id 指向正确的根环节。"""
         for parent_id, expected_children in EXPECTED_CHILDREN.items():
             for child_id in expected_children:
                 actual_parent = res_steps[child_id].get("parent_step_id")
-                assert actual_parent == parent_id, (
-                    f"{child_id} 的 parent 应为 {parent_id}，实际 {actual_parent}"
-                )
+                assert actual_parent == parent_id, f"{child_id} 的 parent 应为 {parent_id}，实际 {actual_parent}"
 
     def test_child_depth_is_1(self, res_steps):
         """所有子环节 depth=1（未超 max_depth=3 限制）。"""
@@ -287,12 +298,8 @@ class TestResearchIncubationTopology:
 
     def test_all_children_accounted_for(self, res_steps):
         """22 个子环节全部在 EXPECTED_CHILDREN 映射中（无遗漏/无多余）。"""
-        actual_children = {
-            sid for sid in res_steps if sid not in EXPECTED_ROOT_CHAIN
-        }
-        expected_children = {
-            child for children in EXPECTED_CHILDREN.values() for child in children
-        }
+        actual_children = {sid for sid in res_steps if sid not in EXPECTED_ROOT_CHAIN}
+        expected_children = {child for children in EXPECTED_CHILDREN.values() for child in children}
         missing = expected_children - actual_children
         extra = actual_children - expected_children
         assert not missing, f"DB 缺少预期子环节: {missing}"
@@ -304,9 +311,7 @@ class TestResearchIncubationTopology:
         """7 根环节 sort_order 单调递增（主链顺序）。"""
         roots = [res_steps[sid] for sid in EXPECTED_ROOT_CHAIN]
         sort_orders = [s["sort_order"] for s in roots]
-        assert sort_orders == sorted(sort_orders), (
-            f"根环节 sort_order 非单调递增: {sort_orders}"
-        )
+        assert sort_orders == sorted(sort_orders), f"根环节 sort_order 非单调递增: {sort_orders}"
 
     def test_child_sort_order_after_parent(self, res_steps):
         """子环节 sort_order 紧跟父环节（子 > 父）。"""
@@ -334,19 +339,13 @@ class TestResearchIncubationTopology:
             and e["to_step_id"] in EXPECTED_ROOT_CHAIN
         }
         for expected in EXPECTED_DATA_FLOW_EDGES:
-            assert expected in main_chain_edges, (
-                f"缺少主链边 {expected[0]}→{expected[1]}"
-            )
+            assert expected in main_chain_edges, f"缺少主链边 {expected[0]}→{expected[1]}"
 
     def test_no_reverse_edges(self, res_edges):
         """主链无反向边（如 BM-RES-07→01 逆转流程）。"""
-        reverse_edges = {
-            (to, frm) for frm, to in EXPECTED_DATA_FLOW_EDGES
-        }
+        reverse_edges = {(to, frm) for frm, to in EXPECTED_DATA_FLOW_EDGES}
         actual_edges = {
-            (e["from_step_id"], e["to_step_id"])
-            for e in res_edges
-            if e["edge_type"] in ("data_flow", "trigger")
+            (e["from_step_id"], e["to_step_id"]) for e in res_edges if e["edge_type"] in ("data_flow", "trigger")
         }
         leftover = reverse_edges & actual_edges
         assert not leftover, f"存在反向流转边: {leftover}"
@@ -361,19 +360,15 @@ class TestResearchIncubationTopology:
         """每个环节至少一个锚点（BM-INV-001：无锚点=悬空决策）。"""
         anchored_steps = {a["step_id"] for a in res_anchors}
         for sid in EXPECTED_ALL_STEPS:
-            assert sid in anchored_steps, (
-                f"{sid} 无锚点（违反 BM-INV-001，悬空决策）"
-            )
+            assert sid in anchored_steps, f"{sid} 无锚点（违反 BM-INV-001，悬空决策）"
 
     def test_anchors_target_candidate_pool(self, res_anchors):
         """所有锚点指向候选池（target_graph=candidate），因 D-RESEARCH 模块未建。"""
-        non_candidate = [
-            a for a in res_anchors if a["target_graph"] != "candidate"
-        ]
+        non_candidate = [a for a in res_anchors if a["target_graph"] != "candidate"]
         # 允许少量 depgraph 锚点（若后续模块晋升），但当前应全为 candidate
-        assert len(non_candidate) == 0 or all(
-            a["target_graph"] == "depgraph" for a in non_candidate
-        ), f"存在非法 target_graph 锚点: {[(a['step_id'], a['target_graph']) for a in non_candidate]}"
+        assert len(non_candidate) == 0 or all(a["target_graph"] == "depgraph" for a in non_candidate), (
+            f"存在非法 target_graph 锚点: {[(a['step_id'], a['target_graph']) for a in non_candidate]}"
+        )
 
     @pytest.mark.xfail(
         strict=False,
@@ -381,18 +376,14 @@ class TestResearchIncubationTopology:
     )
     def test_anchor_count_at_least_25(self, res_anchors):
         """锚点总数 ≥ 33（每环节至少 1 个，部分有 supplement 锚点）。"""
-        assert len(res_anchors) >= 33, (
-            f"锚点总数应 ≥ 33（每环节至少 1 个），实际 {len(res_anchors)}"
-        )
+        assert len(res_anchors) >= 33, f"锚点总数应 ≥ 33（每环节至少 1 个），实际 {len(res_anchors)}"
 
     # ── flow_stage 一致性 ────────────────────────────────────────────
 
     def test_all_steps_research_incubation(self, res_steps):
         """所有 25 环节 flow_stage 均为 research_incubation（BM-INV-006 跨阶段检查）。"""
         for sid, step in res_steps.items():
-            assert step["flow_stage"] == FLOW_STAGE, (
-                f"{sid} flow_stage 应为 {FLOW_STAGE}，实际 {step['flow_stage']}"
-            )
+            assert step["flow_stage"] == FLOW_STAGE, f"{sid} flow_stage 应为 {FLOW_STAGE}，实际 {step['flow_stage']}"
 
 
 # ============================================================================
@@ -473,21 +464,15 @@ class TestResearchIncubationIndicators:
                 f"{sid} params 应为 list，实际 {type(params).__name__}（字符串 params 会崩溃生成器）"
             )
             for i, p in enumerate(params):
-                assert isinstance(p, dict), (
-                    f"{sid} params[{i}] 应为 dict，实际 {type(p).__name__}"
-                )
+                assert isinstance(p, dict), f"{sid} params[{i}] 应为 dict，实际 {type(p).__name__}"
 
     def test_consumes_is_list_of_dicts(self, res_steps):
         """indicators.consumes 应为 list[dict]（每项含 item 字段）。"""
         for sid in EXPECTED_ALL_STEPS:
             consumes = (res_steps[sid].get("indicators") or {}).get("consumes")
-            assert isinstance(consumes, list), (
-                f"{sid} consumes 应为 list，实际 {type(consumes).__name__}"
-            )
+            assert isinstance(consumes, list), f"{sid} consumes 应为 list，实际 {type(consumes).__name__}"
             for i, c in enumerate(consumes):
-                assert isinstance(c, dict), (
-                    f"{sid} consumes[{i}] 应为 dict，实际 {type(c).__name__}"
-                )
+                assert isinstance(c, dict), f"{sid} consumes[{i}] 应为 dict，实际 {type(c).__name__}"
 
     def test_data_flow_chain_consistency(self, res_steps):
         """主链相邻环节的 output→input 语义一致（上游 output 非空，下游 input 非空）。"""
@@ -496,12 +481,8 @@ class TestResearchIncubationIndicators:
             downstream_df = (res_steps[to_sid].get("indicators") or {}).get("data_flow") or {}
             upstream_output = upstream_df.get("output", "")
             downstream_input = downstream_df.get("input", "")
-            assert upstream_output, (
-                f"{from_sid} data_flow.output 为空（上游产出缺失）"
-            )
-            assert downstream_input, (
-                f"{to_sid} data_flow.input 为空（下游输入缺失）"
-            )
+            assert upstream_output, f"{from_sid} data_flow.output 为空（上游产出缺失）"
+            assert downstream_input, f"{to_sid} data_flow.input 为空（下游输入缺失）"
 
 
 # ============================================================================
@@ -558,9 +539,7 @@ class TestResearchIncubationNarratives:
             entry = narratives.get(sid, {})
             for field in REQUIRED_NARRATIVE_KEYS:
                 val = entry.get(field, "")
-                assert val and str(val).strip(), (
-                    f"{sid} 叙事字段 {field} 为空"
-                )
+                assert val and str(val).strip(), f"{sid} 叙事字段 {field} 为空"
 
     def test_narrative_flow_stage_matches(self, narratives):
         """叙事条目的 flow_stage 与 DB 一致（research_incubation）。"""
@@ -597,10 +576,7 @@ class TestResearchIncubationDResearchCoverage:
             assert step is not None, f"子环节 {child_id} 不在 DB 中"
             cm = (step.get("indicators") or {}).get("code_mapping") or {}
             module_id = cm.get("module_id", "")
-            assert expected_mod in module_id, (
-                f"{child_id} code_mapping.module_id='{module_id}' "
-                f"应包含 {expected_mod}"
-            )
+            assert expected_mod in module_id, f"{child_id} code_mapping.module_id='{module_id}' 应包含 {expected_mod}"
             covered.add(expected_mod)
         # 验证全部 18 个模块都被覆盖
         uncovered = set(ALL_D_RESEARCH_MODULES) - covered
@@ -616,15 +592,12 @@ class TestResearchIncubationDResearchCoverage:
                 covered += 1
         total = len(ALL_D_RESEARCH_MODULES)
         rate = covered / total * 100
-        assert rate == 100.0, (
-            f"D-RESEARCH 覆盖率 {covered}/{total} = {rate:.0f}%（应 100%）"
-        )
+        assert rate == 100.0, f"D-RESEARCH 覆盖率 {covered}/{total} = {rate:.0f}%（应 100%）"
 
     def test_child_step_count_matches_d_research(self):
         """子环节数（18）= D-RESEARCH 模块数（18），一一对应。"""
         assert len(CHILD_TO_D_RESEARCH) == len(ALL_D_RESEARCH_MODULES) == 18, (
-            f"子环节({len(CHILD_TO_D_RESEARCH)}) / D-RESEARCH({len(ALL_D_RESEARCH_MODULES)}) "
-            f"数量不匹配"
+            f"子环节({len(CHILD_TO_D_RESEARCH)}) / D-RESEARCH({len(ALL_D_RESEARCH_MODULES)}) 数量不匹配"
         )
 
 
@@ -640,10 +613,17 @@ def _import_generator():
         sys.path.insert(0, str(_gov_dir))
     try:
         import importlib.util
+
         spec = importlib.util.spec_from_file_location(
             "gen_battle_map",
-            str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "generators"
-                / "generate_battle_map_diagram.py"),
+            str(
+                _REPO_ROOT
+                / "scripts"
+                / "governance"
+                / "d5_architecture"
+                / "generators"
+                / "generate_battle_map_diagram.py"
+            ),
         )
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
@@ -671,11 +651,9 @@ class TestGeneratorRenderingDefensive:
                 "trigger": {"condition": "测试触发", "threshold": "阈值X"},
                 "consumes": [{"item": "数据A", "source": "BM-TEST"}],
                 "params": [
-                    {"name": "p1", "default": "v1", "range": "0-1",
-                     "current_code_value": "—", "status": "proposed"},
+                    {"name": "p1", "default": "v1", "range": "0-1", "current_code_value": "—", "status": "proposed"},
                 ],
-                "data_flow": {"input": "原始", "process": "处理",
-                              "output": "结果", "downstream": "下游"},
+                "data_flow": {"input": "原始", "process": "处理", "output": "结果", "downstream": "下游"},
                 "code_mapping": {"module_id": "MOD-X", "source_ref": "§1"},
                 "degradation": {"condition": "异常", "action": "降级"},
             },
@@ -903,9 +881,7 @@ class TestResearchDataFlowSimulation:
             processor = PROCESSORS[sid]
             pkt = processor(pkt)
         assert pkt.type == "iterated_strategy", f"最终产物类型应为 iterated_strategy，实际 {pkt.type}"
-        assert pkt.history == MAIN_CHAIN, (
-            f"history 轨迹不完整:\n预期 {EXPECTED_ROOT_CHAIN}\n实际 {pkt.history}"
-        )
+        assert pkt.history == MAIN_CHAIN, f"history 轨迹不完整:\n预期 {EXPECTED_ROOT_CHAIN}\n实际 {pkt.history}"
 
     def test_each_stage_output_type(self):
         """每个阶段的输出类型符合预期。"""
@@ -921,18 +897,14 @@ class TestResearchDataFlowSimulation:
         pkt = ResearchArtifact(type="raw_data", payload={})
         for sid in MAIN_CHAIN:
             pkt = PROCESSORS[sid](pkt)
-        assert pkt.type == expected_outputs[sid], (
-                f"{sid} 输出类型应为 {expected_outputs[sid]}，实际 {pkt.type}"
-            )
+        assert pkt.type == expected_outputs[sid], f"{sid} 输出类型应为 {expected_outputs[sid]}，实际 {pkt.type}"
 
     def test_history_accumulates(self):
         """history 随环节流转逐步累积。"""
         pkt = ResearchArtifact(type="raw_data", payload={})
         for i, sid in enumerate(MAIN_CHAIN):
             pkt = PROCESSORS[sid](pkt)
-            assert len(pkt.history) == i + 1, (
-                f"经过 {sid} 后 history 应有 {i + 1} 项，实际 {len(pkt.history)}"
-            )
+            assert len(pkt.history) == i + 1, f"经过 {sid} 后 history 应有 {i + 1} 项，实际 {len(pkt.history)}"
 
     def test_payload_preserved_through_chain(self):
         """原始 payload 数据在管线中保留（不丢失）。"""
@@ -940,9 +912,7 @@ class TestResearchDataFlowSimulation:
         pkt = ResearchArtifact(type="raw_data", payload={"source": original_source})
         for sid in MAIN_CHAIN:
             pkt = PROCESSORS[sid](pkt)
-        assert pkt.payload["source"] == original_source, (
-            "原始 payload 数据在管线中丢失"
-        )
+        assert pkt.payload["source"] == original_source, "原始 payload 数据在管线中丢失"
 
     def test_wrong_input_type_raises(self):
         """输入类型错误时处理器抛出 AssertionError（类型守卫）。"""
@@ -962,22 +932,16 @@ class TestResearchDataFlowSimulation:
         """BM-RES-01 产出含 pit_validated=True（PIT 正确性是回测可信硬约束）。"""
         pkt = ResearchArtifact(type="raw_data", payload={})
         result = _process_data_and_features(pkt)
-        assert result.payload.get("pit_validated") is True, (
-            "BM-RES-01 产出未含 pit_validated=True（PIT 正确性缺失）"
-        )
+        assert result.payload.get("pit_validated") is True, "BM-RES-01 产出未含 pit_validated=True（PIT 正确性缺失）"
 
     def test_reproducibility_in_experiment(self):
         """BM-RES-02 产出含 reproducible=True（可复现是上线硬门禁）。"""
         pkt = ResearchArtifact(type="versioned_features", payload={})
         result = _process_experiment_tracking(pkt)
-        assert result.payload.get("reproducible") is True, (
-            "BM-RES-02 产出未含 reproducible=True（可复现性缺失）"
-        )
+        assert result.payload.get("reproducible") is True, "BM-RES-02 产出未含 reproducible=True（可复现性缺失）"
 
     def test_strategy_iteration_produces_new_factor(self):
         """BM-RES-07 产出含 new_factor_mined（策略进化不是一锤子买卖）。"""
         pkt = ResearchArtifact(type="research_finding", payload={})
         result = _process_strategy_iteration(pkt)
-        assert "new_factor_mined" in result.payload, (
-            "BM-RES-07 产出未含 new_factor_mined（策略未进化）"
-        )
+        assert "new_factor_mined" in result.payload, "BM-RES-07 产出未含 new_factor_mined（策略未进化）"

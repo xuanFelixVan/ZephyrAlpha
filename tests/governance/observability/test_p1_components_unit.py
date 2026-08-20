@@ -25,6 +25,7 @@
 
 组件在 pn=None 时 render 返回 dict payload（无 panel 依赖），测试主要走此路径。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -36,11 +37,13 @@ import pytest
 # 1. backtest_results 单元测试
 # =========================================================================
 
+
 class TestBacktestResults:
     """backtest_results.py 组件测试（蓝图 §16.7.1）"""
 
     def test_backtest_metrics_defaults(self) -> None:
         from zephyr.frontend.dashboard.components.backtest_results import BacktestMetrics
+
         m = BacktestMetrics()
         assert m.sharpe == 0.0
         assert m.sortino == 0.0
@@ -52,6 +55,7 @@ class TestBacktestResults:
 
     def test_gate_status_all_passed(self) -> None:
         from zephyr.frontend.dashboard.components.backtest_results import BacktestGateStatus
+
         gs = BacktestGateStatus()
         assert not gs.all_passed
         gs.is_passed = True
@@ -63,6 +67,7 @@ class TestBacktestResults:
         from zephyr.frontend.dashboard.components.backtest_results import (
             fetch_backtest_results,
         )
+
         data = fetch_backtest_results(backtest_result=None)
         assert data.backtest_id == ""
         assert data.strategy_id == ""
@@ -82,6 +87,7 @@ class TestBacktestResults:
         from zephyr.frontend.dashboard.components.backtest_results import (
             fetch_backtest_results,
         )
+
         data = fetch_backtest_results(
             backtest_result=MockBR(),
             nav_series=[1.0, 1.02, 1.01, 1.03],
@@ -101,6 +107,7 @@ class TestBacktestResults:
 
     def test_render_returns_payload(self, monkeypatch) -> None:
         import zephyr.frontend.dashboard.components.backtest_results as mod
+
         monkeypatch.setattr(mod, "pn", None)
         from zephyr.frontend.dashboard.components.backtest_results import (
             BacktestGateStatus,
@@ -108,6 +115,7 @@ class TestBacktestResults:
             BacktestResultData,
             render_backtest_results,
         )
+
         data = BacktestResultData(
             backtest_id="bt-test",
             strategy_id="strat-X",
@@ -131,17 +139,20 @@ class TestBacktestResults:
 # 2. tick_replay 单元测试
 # =========================================================================
 
+
 class TestTickReplay:
     """tick_replay.py 组件测试（蓝图 §16.7.2）"""
 
     def test_replay_speed_enum(self) -> None:
         from zephyr.frontend.dashboard.components.tick_replay import ReplaySpeed
+
         assert ReplaySpeed.REAL_TIME.value == "real_time"
         assert ReplaySpeed.FAST_FORWARD.value == "fast_forward"
         assert ReplaySpeed.MAX_SPEED.value == "max_speed"
 
     def test_tick_snapshot_view_defaults(self) -> None:
         from zephyr.frontend.dashboard.components.tick_replay import TickSnapshotView
+
         t = TickSnapshotView()
         assert t.timestamp == ""
         assert t.last_price == 0.0
@@ -150,6 +161,7 @@ class TestTickReplay:
 
     def test_fetch_empty(self) -> None:
         from zephyr.frontend.dashboard.components.tick_replay import fetch_tick_replay
+
         data = fetch_tick_replay(tick_data=[], symbol="600000.SH")
         assert data.symbol == "600000.SH"
         assert data.ticks == []
@@ -160,10 +172,8 @@ class TestTickReplay:
             TickSnapshotView,
             fetch_tick_replay,
         )
-        raw_ticks = [
-            {"timestamp": f"t{i}", "last_price": 10.0 + i * 0.01, "volume": 100 + i}
-            for i in range(2500)
-        ]
+
+        raw_ticks = [{"timestamp": f"t{i}", "last_price": 10.0 + i * 0.01, "volume": 100 + i} for i in range(2500)]
         data = fetch_tick_replay(raw_ticks, symbol="000001.SZ", page=1, page_size=1000)
         assert data.total_ticks == 2500
         assert len(data.ticks) == 1000
@@ -176,6 +186,7 @@ class TestTickReplay:
 
     def test_detect_t_scenarios_empty(self) -> None:
         from zephyr.frontend.dashboard.components.tick_replay import detect_t_scenarios
+
         assert detect_t_scenarios([]) == []
 
     def test_detect_t_scenarios_spike(self) -> None:
@@ -183,6 +194,7 @@ class TestTickReplay:
             TickSnapshotView,
             detect_t_scenarios,
         )
+
         ticks = [
             TickSnapshotView(timestamp=f"t{i}", last_price=p)
             for i, p in enumerate([10.0, 10.5, 11.0, 10.2, 9.8, 10.0, 10.1, 10.2])
@@ -193,6 +205,7 @@ class TestTickReplay:
 
     def test_render_returns_payload(self, monkeypatch) -> None:
         import zephyr.frontend.dashboard.components.tick_replay as mod
+
         monkeypatch.setattr(mod, "pn", None)
         from zephyr.frontend.dashboard.components.tick_replay import (
             ReplaySpeed,
@@ -200,6 +213,7 @@ class TestTickReplay:
             TickSnapshotView,
             render_tick_replay,
         )
+
         data = TickReplayData(
             symbol="600000.SH",
             ticks=[TickSnapshotView(timestamp="t1", last_price=10.0, volume=100)],
@@ -217,11 +231,13 @@ class TestTickReplay:
 # 3. order_book 单元测试
 # =========================================================================
 
+
 class TestOrderBook:
     """order_book.py 组件测试（蓝图 §16.7.3）"""
 
     def test_order_book_data_defaults(self) -> None:
         from zephyr.frontend.dashboard.components.order_book import OrderBookData
+
         ob = OrderBookData()
         assert ob.symbol == ""
         assert ob.ask_price == []
@@ -232,6 +248,7 @@ class TestOrderBook:
 
     def test_order_book_pressure_ratio(self) -> None:
         from zephyr.frontend.dashboard.components.order_book import OrderBookData
+
         # pressure_ratio 是 plain field（非 property），需显式设值
         # ask_vol_total/bid_vol_total 是 @property，自动计算
         ob = OrderBookData(
@@ -245,6 +262,7 @@ class TestOrderBook:
 
     def test_fetch_with_none(self) -> None:
         from zephyr.frontend.dashboard.components.order_book import fetch_order_book
+
         data = fetch_order_book(miniqmt_provider=None, symbol="600000.SH")
         assert data.symbol == "600000.SH"
         assert data.ask_price == []
@@ -262,6 +280,7 @@ class TestOrderBook:
                 }
 
         from zephyr.frontend.dashboard.components.order_book import fetch_order_book
+
         data = fetch_order_book(MockProvider(), "600000.SH")
         assert len(data.ask_price) == 5
         assert len(data.bid_price) == 5
@@ -273,6 +292,7 @@ class TestOrderBook:
             OrderBookData,
             render_order_book,
         )
+
         data = OrderBookData(
             symbol="600000.SH",
             ask_price=[10.05, 10.06],
@@ -293,11 +313,13 @@ class TestOrderBook:
 # 4. position_monitor 单元测试
 # =========================================================================
 
+
 class TestPositionMonitor:
     """position_monitor.py 组件测试（蓝图 §16.7.4）"""
 
     def test_position_item_defaults(self) -> None:
         from zephyr.frontend.dashboard.components.position_monitor import PositionItem
+
         p = PositionItem()
         assert p.symbol == ""
         assert p.quantity == 0
@@ -305,6 +327,7 @@ class TestPositionMonitor:
 
     def test_position_item_market_value(self) -> None:
         from zephyr.frontend.dashboard.components.position_monitor import PositionItem
+
         p = PositionItem(quantity=100, last_price=10.5)
         assert p.market_value == 1050.0
 
@@ -312,6 +335,7 @@ class TestPositionMonitor:
         from zephyr.frontend.dashboard.components.position_monitor import (
             fetch_position_monitor,
         )
+
         data = fetch_position_monitor(miniqmt_broker=None)
         assert data.positions == []
         assert data.total_asset == 0.0
@@ -340,6 +364,7 @@ class TestPositionMonitor:
         from zephyr.frontend.dashboard.components.position_monitor import (
             fetch_position_monitor,
         )
+
         data = fetch_position_monitor(
             MockBroker(),
             today_bought_map={"600000.SH": 100},
@@ -360,6 +385,7 @@ class TestPositionMonitor:
             PositionMonitorData,
             render_position_monitor,
         )
+
         data = PositionMonitorData(
             account_id="acc-001",
             total_asset=100000.0,
@@ -382,6 +408,7 @@ class TestPositionMonitor:
 # 5. trade_panel 单元测试
 # =========================================================================
 
+
 class TestTradePanelValidation:
     """trade_panel.py 风控校验测试（蓝图 §16.7.5 D）"""
 
@@ -390,6 +417,7 @@ class TestTradePanelValidation:
             OrderSubmission,
             validate_order_submission,
         )
+
         ok, msg = validate_order_submission(OrderSubmission(symbol=""))
         assert not ok
         assert "空" in msg
@@ -399,6 +427,7 @@ class TestTradePanelValidation:
             OrderSubmission,
             validate_order_submission,
         )
+
         ok, msg = validate_order_submission(OrderSubmission(symbol="600000.SH", side="invalid"))
         assert not ok
         assert "方向" in msg
@@ -408,9 +437,8 @@ class TestTradePanelValidation:
             OrderSubmission,
             validate_order_submission,
         )
-        ok, msg = validate_order_submission(
-            OrderSubmission(symbol="600000.SH", side="buy", quantity=50)
-        )
+
+        ok, msg = validate_order_submission(OrderSubmission(symbol="600000.SH", side="buy", quantity=50))
         assert not ok
         assert "100" in msg
 
@@ -419,9 +447,8 @@ class TestTradePanelValidation:
             OrderSubmission,
             validate_order_submission,
         )
-        ok, msg = validate_order_submission(
-            OrderSubmission(symbol="600000.SH", side="buy", quantity=150)
-        )
+
+        ok, msg = validate_order_submission(OrderSubmission(symbol="600000.SH", side="buy", quantity=150))
         assert not ok
         assert "整数倍" in msg
 
@@ -430,6 +457,7 @@ class TestTradePanelValidation:
             OrderSubmission,
             validate_order_submission,
         )
+
         ok, msg = validate_order_submission(
             OrderSubmission(symbol="600000.SH", side="buy", quantity=100, price=0.0, order_type="limit")
         )
@@ -441,6 +469,7 @@ class TestTradePanelValidation:
             OrderSubmission,
             validate_order_submission,
         )
+
         ok, msg = validate_order_submission(
             OrderSubmission(symbol="600000.SH", side="buy", quantity=200, price=10.0),
             enable_grey=True,
@@ -453,6 +482,7 @@ class TestTradePanelValidation:
             OrderSubmission,
             validate_order_submission,
         )
+
         ok, msg = validate_order_submission(
             OrderSubmission(symbol="600000.SH", side="buy", quantity=100, price=10.0),
             available_cash=10000.0,
@@ -469,6 +499,7 @@ class TestTradePanelRiskWarning:
             OrderSubmission,
             build_risk_warning,
         )
+
         sub = OrderSubmission(symbol="600000.SH", side="buy", quantity=100, price=10.0)
         text = build_risk_warning(sub, available_cash=50000.0)
         assert "600000.SH" in text
@@ -481,6 +512,7 @@ class TestTradePanelRiskWarning:
             OrderSubmission,
             build_risk_warning,
         )
+
         sub = OrderSubmission(symbol="600000.SH", side="sell", quantity=100, price=10.0)
         text = build_risk_warning(sub, available_cash=50000.0, is_t_plus_1_relevant=True)
         assert "SELL" in text
@@ -495,6 +527,7 @@ class TestTradePanelSubmitOrder:
             OrderSubmission,
             submit_order,
         )
+
         ok, msg, risk = submit_order(
             execution_engine=None,
             order_submission=OrderSubmission(symbol="600000.SH", side="buy", quantity=100, price=10.0),
@@ -508,6 +541,7 @@ class TestTradePanelSubmitOrder:
             OrderSubmission,
             submit_order,
         )
+
         ok, msg, risk = submit_order(
             execution_engine=None,
             order_submission=OrderSubmission(symbol="600000.SH", side="buy", quantity=100, price=10.0),
@@ -521,6 +555,7 @@ class TestTradePanelSubmitOrder:
             OrderSubmission,
             submit_order,
         )
+
         ok, msg, risk = submit_order(
             execution_engine=object(),
             order_submission=OrderSubmission(symbol="", side="buy", quantity=100, price=10.0),
@@ -560,12 +595,14 @@ class TestTradePanelRender:
 
     def test_render_returns_payload(self, monkeypatch) -> None:
         import zephyr.frontend.dashboard.components.trade_panel as mod
+
         monkeypatch.setattr(mod, "pn", None)
         from zephyr.frontend.dashboard.components.trade_panel import (
             OrderItem,
             TradePanelData,
             render_trade_panel,
         )
+
         data = TradePanelData(
             orders=[
                 OrderItem(order_id="o1", symbol="600000.SH", side="buy", quantity=100, price=10.0, status="FILLED"),

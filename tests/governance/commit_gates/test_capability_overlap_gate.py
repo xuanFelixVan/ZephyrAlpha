@@ -25,6 +25,7 @@
 注意：warn-only gate 永远返回 (True, "")——fail-closed 语义=告警而非阻断。
 REGISTRY_YAML 通过 monkeypatch 指向 tmp_path 文件，不读真实仓库。
 """
+
 from __future__ import annotations
 
 import sys
@@ -58,8 +59,10 @@ def _make_gateway(staged_files=None, diff_fails=False, diff_raises=False):
     gw.project_root = _PROJECT_ROOT  # Path object — gate code uses project_root / "scripts"
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 

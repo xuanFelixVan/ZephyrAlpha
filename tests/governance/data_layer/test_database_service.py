@@ -83,7 +83,5 @@ class TestHealthCheck:
         仅断言键存在不断言 True。
         """
         result = db_service.health_check()
-        assert result["governance"] is True and result["depgraph"] is True, (
-            f"核心数据库健康检查失败: {result}"
-        )
+        assert result["governance"] is True and result["depgraph"] is True, f"核心数据库健康检查失败: {result}"
         assert "clickhouse" in result and "redis" in result

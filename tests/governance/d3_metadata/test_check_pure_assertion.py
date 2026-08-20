@@ -1,14 +1,16 @@
 """test_check_pure_assertion.py — check_pure_assertion.py 检测逻辑测试。"""
+
 import importlib.util
 import os
 import sys
 
 # 加载 scripts/ 下的 checker（不可从 src/ import）
 _SCRIPT = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
-        os.path.abspath(__file__)
-    )))),
-    "scripts", "governance", "d3_metadata", "check_pure_assertion.py",
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
+    "scripts",
+    "governance",
+    "d3_metadata",
+    "check_pure_assertion.py",
 )
 _spec = importlib.util.spec_from_file_location("check_pure_assertion", _SCRIPT)
 _mod = importlib.util.module_from_spec(_spec)
@@ -94,12 +96,15 @@ def test_get_added_lines_ci_parses_diff(tmp_path, monkeypatch):
  unchanged
 +另一新增行
 """
+
     def fake_run(*args, **kwargs):
         class R:
             returncode = 0
             stdout = fake_diff
             stderr = ""
+
         return R()
+
     monkeypatch.setattr(_mod.subprocess, "run", fake_run)
     added = _mod.get_added_lines_ci("fake.md")
     assert added == {2, 7}
@@ -122,6 +127,7 @@ def test_walk_scope_files_finds_md(tmp_path):
 # ---------------------------------------------------------------------------
 # 豁免测试（Task 5：表格行/受控词表/文件树/词汇 bullet/生命周期枚举）
 # ---------------------------------------------------------------------------
+
 
 def test_check_file_exempt_table_row_deprecated():
     """表格行中的'已废弃'状态值豁免（当前态描述，非历史过渡）。"""

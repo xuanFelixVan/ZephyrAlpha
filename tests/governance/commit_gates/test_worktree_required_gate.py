@@ -27,6 +27,7 @@
 注意：本 gate 不读 git diff，只读 gateway._get_worktree_manager() + gateway.registry.list_active()。
 测试隔离：MagicMock 模拟 gateway，不触碰真实 worktree/session registry。
 """
+
 from __future__ import annotations
 
 import sys
@@ -103,17 +104,13 @@ class TestGateSpecFields:
 class TestEscapeHatches:
     def test_allow_overlap_passes(self):
         gw = _make_gateway(wt_session=None, active_sessions=[_FakeSession("sess-other")])
-        passed, msg = make_worktree_required_gate().check(
-            gw, [], session_id="sess-1", allow_overlap=True
-        )
+        passed, msg = make_worktree_required_gate().check(gw, [], session_id="sess-1", allow_overlap=True)
         assert passed
         assert msg == ""
 
     def test_allow_non_worktree_passes(self):
         gw = _make_gateway(wt_session=None, active_sessions=[_FakeSession("sess-other")])
-        passed, msg = make_worktree_required_gate().check(
-            gw, [], session_id="sess-1", allow_non_worktree=True
-        )
+        passed, msg = make_worktree_required_gate().check(gw, [], session_id="sess-1", allow_non_worktree=True)
         assert passed
         assert msg == ""
 

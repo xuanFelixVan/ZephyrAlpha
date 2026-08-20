@@ -31,6 +31,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import ast
@@ -68,8 +69,10 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     gw.project_root = str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -214,11 +217,7 @@ class TestFindEnclosingFor:
 
     def test_nested_inside_for(self):
         """嵌套循环：write_result 在内层 for 循环内。"""
-        code = (
-            "for outer in items:\n"
-            "    for inner in outer:\n"
-            "        write_result(inner)\n"
-        )
+        code = "for outer in items:\n    for inner in outer:\n        write_result(inner)\n"
         tree = ast.parse(code)
         parent_map = _build_parent_map(tree)
         call_node = None
@@ -283,9 +282,7 @@ class TestGatewayIntegration:
         """for 循环内 ch_writer.write_result() 调用 → 阻断。"""
         red = "src/zephyr/data/scheduler.py"
         content = (
-            "from zephyr.data import ch_writer\n"
-            "for result in provider.fetch():\n"
-            "    ch_writer.write_result(result)\n"
+            "from zephyr.data import ch_writer\nfor result in provider.fetch():\n    ch_writer.write_result(result)\n"
         )
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
@@ -295,10 +292,7 @@ class TestGatewayIntegration:
     def test_outside_for_passes(self):
         """for 循环外调用 write_result → 放行。"""
         blue = "src/zephyr/data/scheduler.py"
-        content = (
-            "from zephyr.data.ch_writer import write_result\n"
-            "write_result(single_result)\n"
-        )
+        content = "from zephyr.data.ch_writer import write_result\nwrite_result(single_result)\n"
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
         assert passed
@@ -322,10 +316,7 @@ class TestGatewayIntegration:
     def test_tests_dir_exempt(self):
         """tests/ 目录豁免。"""
         red = "tests/governance/test_something.py"
-        content = (
-            "for result in items:\n"
-            "    write_result(result)\n"
-        )
+        content = "for result in items:\n    write_result(result)\n"
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
         assert passed
@@ -334,12 +325,7 @@ class TestGatewayIntegration:
     def test_ch_writer_exempt(self):
         """ch_writer.py 自身豁免（write_result 定义处）。"""
         red = "src/zephyr/data/ch_writer.py"
-        content = (
-            "def write_result(result):\n"
-            "    pass\n"
-            "for r in items:\n"
-            "    write_result(r)\n"
-        )
+        content = "def write_result(result):\n    pass\nfor r in items:\n    write_result(r)\n"
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
         assert passed
@@ -348,10 +334,7 @@ class TestGatewayIntegration:
     def test_buffered_writer_file_exempt(self):
         """buffered_writer.py 自身豁免。"""
         red = "src/zephyr/data/buffered_writer.py"
-        content = (
-            "for r in items:\n"
-            "    write_result(r)\n"
-        )
+        content = "for r in items:\n    write_result(r)\n"
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
         assert passed
@@ -360,11 +343,7 @@ class TestGatewayIntegration:
     def test_async_for_blocked(self):
         """async for 循环内调用 → 阻断。"""
         red = "src/zephyr/data/scheduler.py"
-        content = (
-            "async def download():\n"
-            "    async for result in provider.fetch():\n"
-            "        write_result(result)\n"
-        )
+        content = "async def download():\n    async for result in provider.fetch():\n        write_result(result)\n"
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
         assert not passed
@@ -373,11 +352,7 @@ class TestGatewayIntegration:
     def test_nested_loop_blocked(self):
         """嵌套循环内层调用 → 阻断。"""
         red = "src/zephyr/data/scheduler.py"
-        content = (
-            "for outer in items:\n"
-            "    for inner in outer:\n"
-            "        write_result(inner)\n"
-        )
+        content = "for outer in items:\n    for inner in outer:\n        write_result(inner)\n"
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
         assert not passed
@@ -386,11 +361,7 @@ class TestGatewayIntegration:
     def test_while_loop_passes(self):
         """while 循环内调用 → 放行（只检测 for/async for）。"""
         blue = "src/zephyr/data/scheduler.py"
-        content = (
-            "while True:\n"
-            "    write_result(r)\n"
-            "    break\n"
-        )
+        content = "while True:\n    write_result(r)\n    break\n"
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
         assert passed
@@ -399,10 +370,7 @@ class TestGatewayIntegration:
     def test_if_block_passes(self):
         """if 语句内调用（非 for 循环）→ 放行。"""
         blue = "src/zephyr/data/scheduler.py"
-        content = (
-            "if condition:\n"
-            "    write_result(r)\n"
-        )
+        content = "if condition:\n    write_result(r)\n"
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
         assert passed
@@ -441,10 +409,7 @@ class TestGatewayIntegration:
     def test_write_result_in_function_outside_for_passes(self):
         """write_result 在函数内但不在 for 循环内 → 放行。"""
         blue = "src/zephyr/data/scheduler.py"
-        content = (
-            "def process(result):\n"
-            "    write_result(result)\n"
-        )
+        content = "def process(result):\n    write_result(result)\n"
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
         assert passed
@@ -453,12 +418,7 @@ class TestGatewayIntegration:
     def test_multiple_violations_reported(self):
         """多个违规都应报告。"""
         red = "src/zephyr/data/scheduler.py"
-        content = (
-            "for r in items1:\n"
-            "    write_result(r)\n"
-            "for r in items2:\n"
-            "    write_result(r)\n"
-        )
+        content = "for r in items1:\n    write_result(r)\nfor r in items2:\n    write_result(r)\n"
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_ch_batch_size_gate().check(gw, [])
         assert not passed

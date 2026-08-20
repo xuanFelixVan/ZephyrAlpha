@@ -27,6 +27,7 @@ GATE-REGENERATE reconciler 的 _trigger_domain_doc 检测 flag 存在即 fire，
 
 测试隔离: monkeypatch 真源 paths.DEPGRAPH_DIRTY_FLAG + re-export _shared.constants.DEPGRAPH_DIRTY_FLAG 到 tmp_path，不污染生产。
 """
+
 from __future__ import annotations
 
 import os
@@ -80,6 +81,7 @@ def isolated_flag(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path
     # 治本：monkeypatch 真源 paths.DEPGRAPH_DIRTY_FLAG（reconciler 闭包从此处捕获）
     # 用直接 submodule import（不查 __init__.py 符号），避免 TEST-SOURCE-CONSISTENCY 误报。
     import zephyr.shared.io.paths as _paths_mod
+
     monkeypatch.setattr(_paths_mod, "DEPGRAPH_DIRTY_FLAG", fake_flag, raising=True)
     # 写入端 _shared.constants.DEPGRAPH_DIRTY_FLAG 是 import 时绑定的 re-export，
     # monkeypatch paths 不会反向同步，需独立 patch 使 mark_depgraph_dirty() 写 tmp_path
@@ -87,9 +89,7 @@ def isolated_flag(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path
     return tmp_path, fake_flag
 
 
-def _make_spec(
-    project_root: Path, gateway: MagicMock | None = None
-):
+def _make_spec(project_root: Path, gateway: MagicMock | None = None):
     """构造 GATE-REGENERATE reconciler spec，用 fake gateway.project_root 控制 flag 路径。
 
     可选传入 gateway 参数：reconcile 测试需要预设 _run_git / _commit_auto 等方法返回值，
@@ -147,9 +147,7 @@ class TestMarkDepgraphDirty:
 class TestRegenerateTrigger:
     """验证 GATE-REGENERATE 组合 trigger 的 flag 检测逻辑。"""
 
-    def test_trigger_fires_when_flag_exists(
-        self, isolated_flag: tuple[Path, Path]
-    ) -> None:
+    def test_trigger_fires_when_flag_exists(self, isolated_flag: tuple[Path, Path]) -> None:
         """DM-90974 Phase 2 核心：flag 存在即触发，即使 committed_files 为空。
 
         治本盲区覆盖：apply_depgraph --delete-nodes 运行时 DB 写入后落 flag，
@@ -162,17 +160,13 @@ class TestRegenerateTrigger:
         spec = _make_spec(tmp_path)
         assert spec.trigger([]) is True
 
-    def test_trigger_no_fire_when_no_flag_no_files(
-        self, isolated_flag: tuple[Path, Path]
-    ) -> None:
+    def test_trigger_no_fire_when_no_flag_no_files(self, isolated_flag: tuple[Path, Path]) -> None:
         """flag 不存在 + committed_files 空 → 不触发（不误触发 reconciler）。"""
         tmp_path, _ = isolated_flag
         spec = _make_spec(tmp_path)
         assert spec.trigger([]) is False
 
-    def test_trigger_fires_on_pg_write_script_commit(
-        self, isolated_flag: tuple[Path, Path]
-    ) -> None:
+    def test_trigger_fires_on_pg_write_script_commit(self, isolated_flag: tuple[Path, Path]) -> None:
         """向后兼容：flag 不存在时，commit apply_depgraph.py 仍触发（原 trigger 逻辑）。
 
         确保治本不退化原有行为：开发者 commit PG-write 脚本本身时仍触发重生。
@@ -182,20 +176,14 @@ class TestRegenerateTrigger:
         committed = [str(tmp_path / "scripts" / "governance" / "apply_depgraph.py")]
         assert spec.trigger(committed) is True
 
-    def test_trigger_fires_on_sync_yaml_script_commit(
-        self, isolated_flag: tuple[Path, Path]
-    ) -> None:
+    def test_trigger_fires_on_sync_yaml_script_commit(self, isolated_flag: tuple[Path, Path]) -> None:
         """sync_yaml_to_depgraph.py 同属 PG-write 脚本白名单，commit 时也触发。"""
         tmp_path, _ = isolated_flag
         spec = _make_spec(tmp_path)
-        committed = [
-            str(tmp_path / "scripts" / "governance" / "d8_doc_sync" / "sync_yaml_to_depgraph.py")
-        ]
+        committed = [str(tmp_path / "scripts" / "governance" / "d8_doc_sync" / "sync_yaml_to_depgraph.py")]
         assert spec.trigger(committed) is True
 
-    def test_trigger_fires_on_file_deletion(
-        self, isolated_flag: tuple[Path, Path]
-    ) -> None:
+    def test_trigger_fires_on_file_deletion(self, isolated_flag: tuple[Path, Path]) -> None:
         """向后兼容：删除 .py/.yaml 文件也触发（layer 1 ghost 过滤）。"""
         tmp_path, _ = isolated_flag
         spec = _make_spec(tmp_path)
@@ -204,9 +192,7 @@ class TestRegenerateTrigger:
         assert not os.path.isfile(deleted_file)
         assert spec.trigger([deleted_file]) is True
 
-    def test_trigger_no_fire_on_unrelated_commit(
-        self, isolated_flag: tuple[Path, Path]
-    ) -> None:
+    def test_trigger_no_fire_on_unrelated_commit(self, isolated_flag: tuple[Path, Path]) -> None:
         """flag 不存在 + commit 无关 .py 文件（实际存在的） → 不触发。"""
         tmp_path, _ = isolated_flag
         unrelated_file = tmp_path / "docs" / "readme.md"
@@ -247,9 +233,7 @@ class TestClearDepgraphDirtyFlag:
             result.stderr = ""
             return result
 
-        monkeypatch.setattr(
-            reconciliation_registry, "_run_subprocess", _fake_run_subprocess
-        )
+        monkeypatch.setattr(reconciliation_registry, "_run_subprocess", _fake_run_subprocess)
 
         # 模拟 git diff 无漂移（必须传入同一 gateway 对象，否则 mock 不生效）
         gateway = MagicMock()
@@ -279,9 +263,7 @@ class TestClearDepgraphDirtyFlag:
             result.stderr = ""
             return result
 
-        monkeypatch.setattr(
-            reconciliation_registry, "_run_subprocess", _fake_run_subprocess
-        )
+        monkeypatch.setattr(reconciliation_registry, "_run_subprocess", _fake_run_subprocess)
 
         gateway = MagicMock()
         # git diff 有漂移
@@ -319,9 +301,7 @@ class TestClearDepgraphDirtyFlag:
             result.stderr = "NameError: something broke"
             return result
 
-        monkeypatch.setattr(
-            reconciliation_registry, "_run_subprocess", _fake_run_subprocess
-        )
+        monkeypatch.setattr(reconciliation_registry, "_run_subprocess", _fake_run_subprocess)
 
         gateway = MagicMock()
         spec = _make_spec(tmp_path, gateway=gateway)

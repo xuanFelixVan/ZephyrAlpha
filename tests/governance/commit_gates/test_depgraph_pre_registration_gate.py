@@ -32,6 +32,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch 模拟 DB 查询 + 文件读取。
 """
+
 from __future__ import annotations
 
 import sys
@@ -63,6 +64,7 @@ class _MockResult:
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """gate_id / priority / isinstance(GateSpec)。"""
 
@@ -86,6 +88,7 @@ class TestGateSpecFields:
 # ---------------------------------------------------------------------------
 # TestExtractTtl
 # ---------------------------------------------------------------------------
+
 
 class TestExtractTtl:
     """_extract_ttl [TTL] 头部提取。"""
@@ -113,18 +116,14 @@ class TestExtractTtl:
 # TestCountImplLines
 # ---------------------------------------------------------------------------
 
+
 class TestCountImplLines:
     """_count_impl_lines 实质行数统计。"""
 
     def test_counts_code_lines(self, tmp_path: Path) -> None:
         f = tmp_path / "mod.py"
         f.write_text(
-            "# comment line\n"
-            "\n"
-            "x = 1\n"
-            "y = 2\n"
-            "# another comment\n"
-            "z = 3\n",
+            "# comment line\n\nx = 1\ny = 2\n# another comment\nz = 3\n",
             encoding="utf-8",
         )
         assert _count_impl_lines(str(f)) == 3
@@ -146,6 +145,7 @@ class TestCountImplLines:
 # ---------------------------------------------------------------------------
 # TestCheckClosure
 # ---------------------------------------------------------------------------
+
 
 class TestCheckClosure:
     """_check 闭包测试（mock gateway + monkeypatch DB）。"""
@@ -198,33 +198,35 @@ class TestCheckClosure:
 
     def test_non_src_zephyr_skipped(self) -> None:
         """非 src/zephyr/ 下的 .py → 跳过。"""
-        gw = self._make_mock_gateway(
-            git_diff_output="scripts/foo.py\n"
-        )
+        gw = self._make_mock_gateway(git_diff_output="scripts/foo.py\n")
         gate = make_depgraph_pre_registration_gate()
         passed, detail = gate.check(gw, ["scripts/foo.py"])
         assert passed is True
 
     def test_tests_exempt(self) -> None:
         """tests/ 下的 .py → 豁免。"""
-        gw = self._make_mock_gateway(
-            git_diff_output="src/zephyr/foo.py\ntests/test_foo.py\n"
-        )
+        gw = self._make_mock_gateway(git_diff_output="src/zephyr/foo.py\ntests/test_foo.py\n")
         # Mock TTL extraction + DB to ensure tests/ is not checked
         gate = make_depgraph_pre_registration_gate()
         # Even with mocked DB returning planned, tests/ should be exempt
         with (
-            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate._extract_ttl", return_value="permanent"),
-            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status", return_value="planned"),
-            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.count_impl_lines", return_value=100),
+            patch(
+                "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate._extract_ttl",
+                return_value="permanent",
+            ),
+            patch(
+                "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status",
+                return_value="planned",
+            ),
+            patch(
+                "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.count_impl_lines", return_value=100
+            ),
         ):
             passed, detail = gate.check(gw, ["src/zephyr/foo.py", "tests/test_foo.py"])
         # src/zephyr/foo.py would block (planned + 100 lines), but tests/ exempt
         assert passed is False
 
-    def test_planned_with_many_lines_blocks(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_planned_with_many_lines_blocks(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """planned + 行数 > 50 → 阻断。"""
         # Create file at the path git diff reports (src/zephyr/mod.py under project_root)
         src_dir = tmp_path / "src" / "zephyr"
@@ -251,16 +253,12 @@ class TestCheckClosure:
         assert "planned" in detail
         assert "production" in detail
 
-    def test_planned_with_few_lines_passes(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_planned_with_few_lines_passes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """planned + 行数 <= 50 → 放行（骨架/桩代码）。"""
         src_dir = tmp_path / "src" / "zephyr"
         src_dir.mkdir(parents=True, exist_ok=True)
         mod_file = src_dir / "mod.py"
-        mod_file.write_text(
-            "# [TTL] permanent\nx = 1\ny = 2\n", encoding="utf-8"
-        )
+        mod_file.write_text("# [TTL] permanent\nx = 1\ny = 2\n", encoding="utf-8")
 
         gw = self._make_mock_gateway(
             git_diff_output="src/zephyr/mod.py\n",
@@ -276,9 +274,7 @@ class TestCheckClosure:
         passed, detail = gate.check(gw, ["src/zephyr/mod.py"])
         assert passed is True
 
-    def test_non_planned_passes(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_non_planned_passes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """build_status 非 planned（如 stable/generated）→ 放行。"""
         src_dir = tmp_path / "src" / "zephyr"
         src_dir.mkdir(parents=True, exist_ok=True)
@@ -302,9 +298,7 @@ class TestCheckClosure:
         passed, detail = gate.check(gw, ["src/zephyr/mod.py"])
         assert passed is True
 
-    def test_non_permanent_ttl_passes(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_non_permanent_ttl_passes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """[TTL] 非 permanent（如 task_bound）→ 放行。"""
         src_dir = tmp_path / "src" / "zephyr"
         src_dir.mkdir(parents=True, exist_ok=True)
@@ -323,9 +317,7 @@ class TestCheckClosure:
         passed, detail = gate.check(gw, ["src/zephyr/mod.py"])
         assert passed is True
 
-    def test_db_unreachable_fail_open(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_db_unreachable_fail_open(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """DB 查询失败 → fail-open 放行。"""
         src_dir = tmp_path / "src" / "zephyr"
         src_dir.mkdir(parents=True, exist_ok=True)
@@ -354,15 +346,19 @@ class TestCheckClosure:
 # TestFailopenPersistence（tracker #116 B1/B2，#ARCH-119）
 # ---------------------------------------------------------------------------
 
+
 def _plant_probe_state(project_root: Path, *, reachable: bool) -> None:
     """写入探针状态文件（模拟网关前置探针结果）。"""
     import json as _json
     from datetime import datetime
     from datetime import timezone as _tz
+
     state = {
         "reachable": reachable,
         "checked_at": datetime.now(_tz.utc).isoformat(),
-        "host": "localhost", "port": 5432, "error": "" if reachable else "refused",
+        "host": "localhost",
+        "port": 5432,
+        "error": "" if reachable else "refused",
         "last_reachable_at": datetime.now(_tz.utc).isoformat() if reachable else None,
         "first_offline_at": None if reachable else datetime.now(_tz.utc).isoformat(),
     }
@@ -373,14 +369,13 @@ def _plant_probe_state(project_root: Path, *, reachable: bool) -> None:
 
 def _read_log_rows(project_root: Path) -> list[tuple]:
     import sqlite3 as _sqlite3
+
     db_path = project_root / "data" / "databases" / "governance.db"
     if not db_path.is_file():
         return []
     conn = _sqlite3.connect(str(db_path))
     try:
-        return conn.execute(
-            "SELECT gate_id, action, detail FROM reconcile_execution_log"
-        ).fetchall()
+        return conn.execute("SELECT gate_id, action, detail FROM reconcile_execution_log").fetchall()
     finally:
         conn.close()
 
@@ -400,9 +395,7 @@ class TestFailopenPersistence:
         gw.run_git = lambda cmd: _MockResult(returncode=0, stdout="src/zephyr/mod.py\n")
         return gw
 
-    def test_probe_offline_none_status_logs_db_offline(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_probe_offline_none_status_logs_db_offline(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """探针证实离线 + query None → 放行 + DB_OFFLINE critical_warn 落盘。"""
         _plant_probe_state(tmp_path, reachable=False)
         gw = self._setup_permanent_file(tmp_path)
@@ -421,9 +414,7 @@ class TestFailopenPersistence:
         assert "DB 离线降级" in detail
         assert "src/zephyr/mod.py" in detail
 
-    def test_probe_online_conn_failure_logs_real_error(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_probe_online_conn_failure_logs_real_error(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """探针在线而单发连接失败=真实错误 → REAL_ERROR 留痕（不静默）。"""
         _plant_probe_state(tmp_path, reachable=True)
         gw = self._setup_permanent_file(tmp_path)
@@ -431,8 +422,10 @@ class TestFailopenPersistence:
             "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status",
             lambda _fp: None,
         )
+
         def _raise_conn(*a, **k):
             raise ConnectionError("auth failed")
+
         monkeypatch.setattr(
             "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
             _raise_conn,
@@ -445,17 +438,18 @@ class TestFailopenPersistence:
         assert "真实错误" in rows[0][2]
         assert "REAL_ERROR" in rows[0][2]
 
-    def test_probe_unknown_conn_ok_no_log(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_probe_unknown_conn_ok_no_log(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """探针状态未知 + 单发连接成功 → None 属「无记录」正常语义，不留痕。"""
         gw = self._setup_permanent_file(tmp_path)
         monkeypatch.setattr(
             "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status",
             lambda _fp: None,
         )
+
         class _FakeConn:
-            def close(self): pass
+            def close(self):
+                pass
+
         monkeypatch.setattr(
             "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
             lambda *a, **k: _FakeConn(),

@@ -86,7 +86,8 @@ class TestCheckBehavior:
         gw = self._make_gateway(tmp_path)
         spec = make_rule_execution_pairing_gate()
         ok, _ = spec.check(
-            gw, [],
+            gw,
+            [],
             commit_message="test [no-pairing:emergency-fix]",
         )
         assert ok

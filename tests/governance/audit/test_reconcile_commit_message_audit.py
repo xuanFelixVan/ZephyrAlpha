@@ -23,6 +23,7 @@
 
 测试隔离：使用 tmp_path + monkeypatch，不污染真实 governance.db。
 """
+
 from __future__ import annotations
 
 import os
@@ -54,6 +55,7 @@ class TestReconcileForAcceptsCommitMessage:
             ReconcilerSpec,
             ReconciliationRegistry,
         )
+
         registry = ReconciliationRegistry()
 
         def _trigger(files):
@@ -62,13 +64,15 @@ class TestReconcileForAcceptsCommitMessage:
         def _reconcile(files, sid):
             return ReconcileResult(action="clean", detail="ok")
 
-        registry.register(ReconcilerSpec(
-            gate_id="TEST-MSG-001",
-            trigger=_trigger,
-            reconcile=_reconcile,
-            priority=100,
-            file_ops=frozenset({"none"}),
-        ))
+        registry.register(
+            ReconcilerSpec(
+                gate_id="TEST-MSG-001",
+                trigger=_trigger,
+                reconcile=_reconcile,
+                priority=100,
+                file_ops=frozenset({"none"}),
+            )
+        )
         # 不抛异常 = 签名兼容
         results = registry.reconcile_for(["test.py"], "sess-001", commit_message="test message")
         assert len(results) == 1
@@ -81,6 +85,7 @@ class TestReconcileForAcceptsCommitMessage:
             ReconcilerSpec,
             ReconciliationRegistry,
         )
+
         registry = ReconciliationRegistry()
 
         def _trigger(files):
@@ -89,12 +94,14 @@ class TestReconcileForAcceptsCommitMessage:
         def _reconcile(files, sid):
             return ReconcileResult(action="clean")
 
-        registry.register(ReconcilerSpec(
-            gate_id="TEST-MSG-002",
-            trigger=_trigger,
-            reconcile=_reconcile,
-            file_ops=frozenset({"none"}),
-        ))
+        registry.register(
+            ReconcilerSpec(
+                gate_id="TEST-MSG-002",
+                trigger=_trigger,
+                reconcile=_reconcile,
+                file_ops=frozenset({"none"}),
+            )
+        )
         # 不传 commit_message = 向后兼容
         results = registry.reconcile_for(["test.py"], "sess-002")
         assert len(results) == 1
@@ -115,6 +122,7 @@ class TestThreeArgReconcilerReceivesCommitMessage:
             ReconcilerSpec,
             ReconciliationRegistry,
         )
+
         registry = ReconciliationRegistry()
         received_messages: list[str] = []
 
@@ -125,12 +133,14 @@ class TestThreeArgReconcilerReceivesCommitMessage:
             received_messages.append(commit_message)
             return ReconcileResult(action="clean", detail=f"msg={commit_message}")
 
-        registry.register(ReconcilerSpec(
-            gate_id="TEST-MSG-003",
-            trigger=_trigger,
-            reconcile=_reconcile,
-            file_ops=frozenset({"none"}),
-        ))
+        registry.register(
+            ReconcilerSpec(
+                gate_id="TEST-MSG-003",
+                trigger=_trigger,
+                reconcile=_reconcile,
+                file_ops=frozenset({"none"}),
+            )
+        )
         test_msg = "[no-lookup:dogfooding capability lookup mechanism]"
         results = registry.reconcile_for(["test.py"], "sess-003", commit_message=test_msg)
         assert len(results) == 1
@@ -144,6 +154,7 @@ class TestThreeArgReconcilerReceivesCommitMessage:
             ReconcilerSpec,
             ReconciliationRegistry,
         )
+
         registry = ReconciliationRegistry()
 
         def _trigger(files):
@@ -158,14 +169,17 @@ class TestThreeArgReconcilerReceivesCommitMessage:
                 return ReconcileResult(action="clean", detail=f"bypass reason: {reason}")
             return ReconcileResult(action="warn", detail="no bypass marker")
 
-        registry.register(ReconcilerSpec(
-            gate_id="TEST-MSG-004",
-            trigger=_trigger,
-            reconcile=_reconcile,
-            file_ops=frozenset({"none"}),
-        ))
+        registry.register(
+            ReconcilerSpec(
+                gate_id="TEST-MSG-004",
+                trigger=_trigger,
+                reconcile=_reconcile,
+                file_ops=frozenset({"none"}),
+            )
+        )
         results = registry.reconcile_for(
-            ["test.py"], "sess-004",
+            ["test.py"],
+            "sess-004",
             commit_message="fix: emergency hotfix [no-lookup:emergency]",
         )
         assert results[0].action == "clean"
@@ -187,6 +201,7 @@ class TestTwoArgReconcilerBackwardCompat:
             ReconcilerSpec,
             ReconciliationRegistry,
         )
+
         registry = ReconciliationRegistry()
 
         def _trigger(files):
@@ -196,15 +211,18 @@ class TestTwoArgReconcilerBackwardCompat:
             # 2-arg 签名，不接收 commit_message
             return ReconcileResult(action="clean", detail="2-arg ok")
 
-        registry.register(ReconcilerSpec(
-            gate_id="TEST-MSG-005",
-            trigger=_trigger,
-            reconcile=_reconcile,
-            file_ops=frozenset({"none"}),
-        ))
+        registry.register(
+            ReconcilerSpec(
+                gate_id="TEST-MSG-005",
+                trigger=_trigger,
+                reconcile=_reconcile,
+                file_ops=frozenset({"none"}),
+            )
+        )
         # 传 commit_message 但 reconciler 是 2-arg，应向后兼容
         results = registry.reconcile_for(
-            ["test.py"], "sess-005",
+            ["test.py"],
+            "sess-005",
             commit_message="this should not reach 2-arg reconciler",
         )
         assert len(results) == 1
@@ -225,6 +243,7 @@ class TestLogReconcileResultsStoresCommitMessage:
             ReconcileResult,
             _log_reconcile_results,
         )
+
         # 准备 governance.db 路径
         db_dir = tmp_path / "data" / "databases"
         db_dir.mkdir(parents=True, exist_ok=True)
@@ -234,7 +253,9 @@ class TestLogReconcileResultsStoresCommitMessage:
         test_msg = "feat: test commit [no-lookup:dogfooding]"
 
         _log_reconcile_results(
-            tmp_path, results, "sess-log-001",
+            tmp_path,
+            results,
+            "sess-log-001",
             trigger_source="post_commit",
             committed_files=["src/test.py"],
             commit_message=test_msg,
@@ -242,6 +263,7 @@ class TestLogReconcileResultsStoresCommitMessage:
 
         # 验证 DB 中有 commit_message
         import sqlite3
+
         conn = sqlite3.connect(str(db_path))
         try:
             row = conn.execute(
@@ -258,17 +280,21 @@ class TestLogReconcileResultsStoresCommitMessage:
             ReconcileResult,
             _log_reconcile_results,
         )
+
         db_dir = tmp_path / "data" / "databases"
         db_dir.mkdir(parents=True, exist_ok=True)
 
         results = [ReconcileResult(action="warn", detail="test", gate_id="TEST-LOG-002")]
         # 不传 commit_message
         _log_reconcile_results(
-            tmp_path, results, "sess-log-002",
+            tmp_path,
+            results,
+            "sess-log-002",
             trigger_source="post_merge",
         )
 
         import sqlite3
+
         db_path = db_dir / "governance.db"
         conn = sqlite3.connect(str(db_path))
         try:
@@ -297,6 +323,7 @@ class TestEnsureCommitMessageColumn:
             SQL_CREATE_RECONCILE_EXECUTION_LOG,
             _ensure_commit_message_column,
         )
+
         db_path = tmp_path / "test.db"
         conn = sqlite3.connect(str(db_path))
         try:
@@ -332,6 +359,7 @@ class TestEnsureCommitMessageColumn:
         from zephyr.governance.audit.reconciliation_registry import (
             _ensure_commit_message_column,
         )
+
         db_path = tmp_path / "test2.db"
         conn = sqlite3.connect(str(db_path))
         try:

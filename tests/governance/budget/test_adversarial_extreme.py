@@ -2,6 +2,7 @@
 
 DM-201501 验收测试: 覆盖4类真实压力场景，验证 BudgetEngine 在极端负载下的真实行为。
 """
+
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
@@ -33,7 +34,9 @@ class TestDegradationChainStress:
 
         # 验证级别单调递增
         for i in range(len(levels) - 1):
-            assert levels[i].value < levels[i + 1].value, f"Level not monotonic at index {i}: {levels[i]} -> {levels[i+1]}"
+            assert levels[i].value < levels[i + 1].value, (
+                f"Level not monotonic at index {i}: {levels[i]} -> {levels[i + 1]}"
+            )
 
         # 验证到达最高级后再advance返回False
         over = engine.advance_degradation()
@@ -88,9 +91,7 @@ class TestMultiProviderRace:
         results_lock = threading.Lock()
 
         def _claim(provider: str) -> None:
-            ok, ver, reason = engine.try_claim_budget(
-                provider, BudgetDimension.COST, 5.0, expected_version=v1
-            )
+            ok, ver, reason = engine.try_claim_budget(provider, BudgetDimension.COST, 5.0, expected_version=v1)
             with results_lock:
                 results.append((ok, ver, reason))
 

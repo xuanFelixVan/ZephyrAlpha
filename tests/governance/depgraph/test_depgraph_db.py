@@ -126,8 +126,11 @@ def test_all():
     # 改用 D_INFRA_RUNTIME（YAML domain_name_zh=运行时集成，sync 后 DB domain_name 同步）。
     c.execute("SELECT * FROM domains WHERE domain_id='D_INFRA_RUNTIME'")
     d = c.fetchone()
-    check("domains SELECT by id", d is not None and d["domain_name"] == "运行时集成",
-         f"got domain_name={d['domain_name'] if d else None}")
+    check(
+        "domains SELECT by id",
+        d is not None and d["domain_name"] == "运行时集成",
+        f"got domain_name={d['domain_name'] if d else None}",
+    )
 
     # === 2. nodes 表 (23列) ===
     print("\n=== 2. nodes (23 columns) ===")
@@ -354,10 +357,7 @@ def test_get_status_and_gate_map():
         # 显式用 RealDictCursor——_make_connection 回退生产库时默认 cursor 是 tuple
         c = conn.cursor(cursor_factory=RealDictCursor)
         # 取 5 个有 path 的现有节点作为测试样本
-        c.execute(
-            "SELECT path, blueprint_id, build_status, gate_reason "
-            "FROM nodes WHERE path IS NOT NULL LIMIT 5"
-        )
+        c.execute("SELECT path, blueprint_id, build_status, gate_reason FROM nodes WHERE path IS NOT NULL LIMIT 5")
         existing = c.fetchall()
         if not existing:
             if _in_pytest():
@@ -388,12 +388,10 @@ def test_get_status_and_gate_map():
         for tid, exp in expected.items():
             assert tid in result, f"{tid} not in result"
             assert result[tid]["build_status"] == exp["build_status"], (
-                f"{tid} build_status: got {result[tid]['build_status']}, "
-                f"expected {exp['build_status']}"
+                f"{tid} build_status: got {result[tid]['build_status']}, expected {exp['build_status']}"
             )
             assert result[tid]["gate_reason"] == exp["gate_reason"], (
-                f"{tid} gate_reason: got {result[tid]['gate_reason']!r}, "
-                f"expected {exp['gate_reason']!r}"
+                f"{tid} gate_reason: got {result[tid]['gate_reason']!r}, expected {exp['gate_reason']!r}"
             )
             # 必须含 build_status + gate_reason 两个核心 key；
             # 允许返回结果新增元数据字段（如 acquisition_method/acquisition_source），

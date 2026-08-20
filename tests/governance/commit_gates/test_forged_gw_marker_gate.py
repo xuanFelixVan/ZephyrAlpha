@@ -24,6 +24,7 @@
 - TestGateSpecFields: gate_id / priority 字段正确
 - TestSessionIdExtraction: _extract_session_id 正则正确（多种标记格式）
 """
+
 from __future__ import annotations
 
 import os
@@ -70,9 +71,7 @@ class TestRegisteredSessionPass:
             "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.is_session_registered",
             return_value=True,
         ):
-            passed, detail = gate.check(
-                gw, [], commit_message="feat: add\n\n[GW:sess-test-12345678]"
-            )
+            passed, detail = gate.check(gw, [], commit_message="feat: add\n\n[GW:sess-test-12345678]")
         assert passed is True
         assert "session registered" in detail
 
@@ -89,9 +88,7 @@ class TestUnregisteredSessionWithEnvPass:
             "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.is_session_registered",
             return_value=False,
         ):
-            passed, detail = gate.check(
-                gw, [], commit_message="feat: add\n\n[GW:sess-fake-12345678]"
-            )
+            passed, detail = gate.check(gw, [], commit_message="feat: add\n\n[GW:sess-fake-12345678]")
         assert passed is True
         assert "emergency escape" in detail
 
@@ -108,9 +105,7 @@ class TestForgedMarkerBlocked:
             "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.is_session_registered",
             return_value=False,
         ):
-            passed, detail = gate.check(
-                gw, [], commit_message="feat: add\n\n[GW:sess-fake-12345678]"
-            )
+            passed, detail = gate.check(gw, [], commit_message="feat: add\n\n[GW:sess-fake-12345678]")
         assert passed is False
         assert "FORGED-GW-MARKER" in detail
         assert "sess-fake-12345678" in detail
@@ -148,9 +143,7 @@ class TestMissingProjectRootPass:
         """gateway.project_root=None → passed=True（无法校验，保守放行）。"""
         gw = _make_gateway(None)
         gate = make_forged_gw_marker_gate()
-        passed, detail = gate.check(
-            gw, [], commit_message="feat: add\n\n[GW:sess-test-12345678]"
-        )
+        passed, detail = gate.check(gw, [], commit_message="feat: add\n\n[GW:sess-test-12345678]")
         assert passed is True
         assert "project_root missing" in detail
 
@@ -166,15 +159,11 @@ class TestRegistryExceptionSafe:
         # _is_session_registered 内部 try/except 会捕获并返回 False（保守阻断）
         # 注：mock get_session（非 .get）——SessionRegistry 真实 API 是 get_session，
         # 原 .get 调用是 bug（#7 修复：forge_gw_marker_gate._is_session_registered）
-        with patch(
-            "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry"
-        ) as mock_reg:
+        with patch("zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry") as mock_reg:
             mock_reg.return_value.get_session.side_effect = RuntimeError("registry corrupted")
             gw = _make_gateway(tmp_path)
             gate = make_forged_gw_marker_gate()
-            passed, detail = gate.check(
-                gw, [], commit_message="feat: add\n\n[GW:sess-test-12345678]"
-            )
+            passed, detail = gate.check(gw, [], commit_message="feat: add\n\n[GW:sess-test-12345678]")
         assert passed is False
         assert "FORGED-GW-MARKER" in detail
 
@@ -235,27 +224,21 @@ class TestIsSessionRegistered:
 
     def test_registered_session_returns_true(self, tmp_path):
         """已注册 session_id → True（用真实 SessionRegistry mock）。"""
-        with patch(
-            "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry"
-        ) as mock_reg:
+        with patch("zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry") as mock_reg:
             mock_reg.return_value.get_session.return_value = MagicMock()
             result = _is_session_registered(tmp_path, "sess-test-12345678")
         assert result is True
 
     def test_unregistered_session_returns_false(self, tmp_path):
         """未注册 session_id → False。"""
-        with patch(
-            "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry"
-        ) as mock_reg:
+        with patch("zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry") as mock_reg:
             mock_reg.return_value.get_session.return_value = None
             result = _is_session_registered(tmp_path, "sess-test-12345678")
         assert result is False
 
     def test_registry_exception_returns_false(self, tmp_path):
         """SessionRegistry 异常 → False（保守阻断）。"""
-        with patch(
-            "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry"
-        ) as mock_reg:
+        with patch("zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry") as mock_reg:
             mock_reg.return_value.get_session.side_effect = RuntimeError("corrupted")
             result = _is_session_registered(tmp_path, "sess-test-12345678")
         assert result is False

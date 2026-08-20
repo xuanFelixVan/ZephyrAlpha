@@ -24,6 +24,7 @@
   - 只扫 scripts/governance/ + src/ 下文件（其他路径忽略）
   - scan 异常 → warn 降级（monkeypatch 注入）
 """
+
 from __future__ import annotations
 
 import sys
@@ -265,6 +266,7 @@ class TestReconcile:
         # lazy import 路径：reconciler 内部 `from ...undefined_name_gate import scan_all_for_undefined_names`
         # monkeypatch 替换模块属性，使后续 from-import 拿到抛异常的版本
         from zephyr.gov_enforcement.commit_gates import undefined_name_gate
+
         monkeypatch.setattr(undefined_name_gate, "scan_all_for_undefined_names", _raise)
 
         gw = _make_gateway(tmp_path)

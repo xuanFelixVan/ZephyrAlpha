@@ -27,6 +27,7 @@
 - TestImportExemption: import 行豁免
 - TestDocstringExemption: docstring 行豁免
 """
+
 from __future__ import annotations
 
 import sys
@@ -72,9 +73,7 @@ class TestAsyncioRunDetected:
     def test_asyncio_run_blocked(self):
         """src/zephyr/ 中 asyncio.run() → hard-block"""
         src_file = "src/zephyr/trading/foo.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ["    result = asyncio.run(coro())"]}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ["    result = asyncio.run(coro())"]})
         gate = make_asyncio_run_in_context_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -84,9 +83,7 @@ class TestAsyncioRunDetected:
     def test_asyncio_run_in_assignment(self):
         """result = asyncio.run(...) → 命中"""
         src_file = "src/zephyr/gov_enforcement/bar.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ["result = asyncio.run(main())"]}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ["result = asyncio.run(main())"]})
         gate = make_asyncio_run_in_context_gate()
         passed, _ = gate.check(gw, [])
         assert not passed
@@ -96,9 +93,7 @@ class TestAsyncioGetEventLoopDetected:
     def test_get_event_loop_blocked(self):
         """asyncio.get_event_loop() → hard-block"""
         src_file = "src/zephyr/infrastructure/foo.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ["    loop = asyncio.get_event_loop()"]}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ["    loop = asyncio.get_event_loop()"]})
         gate = make_asyncio_run_in_context_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -109,9 +104,7 @@ class TestAsyncioNewEventLoopDetected:
     def test_new_event_loop_blocked(self):
         """asyncio.new_event_loop() → hard-block"""
         src_file = "src/zephyr/integration/foo.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ["    loop = asyncio.new_event_loop()"]}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ["    loop = asyncio.new_event_loop()"]})
         gate = make_asyncio_run_in_context_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -127,9 +120,7 @@ class TestCleanFilePasses:
     def test_clean_src_zephyr_passes(self):
         """src/zephyr/ 中无 asyncio 调用 → 通过"""
         src_file = "src/zephyr/trading/clean.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ["    x = 1 + 2"]}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ["    x = 1 + 2"]})
         gate = make_asyncio_run_in_context_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -138,9 +129,7 @@ class TestCleanFilePasses:
     def test_run_coroutine_sync_passes(self):
         """canonical 替代 async_utils.run_coroutine_sync → 通过"""
         src_file = "src/zephyr/trading/good.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ["    result = async_utils.run_coroutine_sync(coro())"]}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ["    result = async_utils.run_coroutine_sync(coro())"]})
         gate = make_asyncio_run_in_context_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -175,9 +164,7 @@ class TestTestExempt:
     def test_tests_dir_exempt(self):
         """tests/ 下文件中的 asyncio.run() → 豁免"""
         test_file = "tests/governance/commit_gates/test_foo.py"
-        gw = make_mock_gateway(
-            [test_file], {test_file: ["    result = asyncio.run(coro())"]}
-        )
+        gw = make_mock_gateway([test_file], {test_file: ["    result = asyncio.run(coro())"]})
         gate = make_asyncio_run_in_context_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -193,9 +180,7 @@ class TestNonSrcZephyrExempt:
     def test_non_src_zephyr_passes(self):
         """非 src/zephyr/ 文件中的 asyncio.run() → 豁免"""
         ext_file = "scripts/ops/foo.py"
-        gw = make_mock_gateway(
-            [ext_file], {ext_file: ["    result = asyncio.run(coro())"]}
-        )
+        gw = make_mock_gateway([ext_file], {ext_file: ["    result = asyncio.run(coro())"]})
         gate = make_asyncio_run_in_context_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -212,12 +197,7 @@ class TestAddedLinesOnly:
         """存量 asyncio.run（非 added 行）→ 通过（由 M23 监控）"""
         src_file = "src/zephyr/trading/legacy.py"
         full_content = (
-            "# header comment\n"
-            "\n"
-            "result = asyncio.run(coro())  # 存量违规，非 added 行\n"
-            "\n"
-            "def new_func():\n"
-            "    pass\n"
+            "# header comment\n\nresult = asyncio.run(coro())  # 存量违规，非 added 行\n\ndef new_func():\n    pass\n"
         )
         # 只 added 注释行 + new_func，不 added 存量违规行
         gw = make_mock_gateway(
@@ -255,9 +235,7 @@ class TestImportExemption:
     def test_import_line_passes(self):
         """import 行中的 asyncio.run → 豁免（误判保护）"""
         src_file = "src/zephyr/trading/foo.py"
-        gw = make_mock_gateway(
-            [src_file], {src_file: ["from asyncio import run"]}
-        )
+        gw = make_mock_gateway([src_file], {src_file: ["from asyncio import run"]})
         gate = make_asyncio_run_in_context_gate()
         passed, detail = gate.check(gw, [])
         assert passed
@@ -284,7 +262,16 @@ class TestDocstringExemption:
         )
         gw = make_mock_gateway(
             [src_file],
-            {src_file: ['"""foo.py 模块', "示例（禁止使用）::", "    result = asyncio.run(coro())  # 违规示例", '"""', "def foo():", "    pass"]},
+            {
+                src_file: [
+                    '"""foo.py 模块',
+                    "示例（禁止使用）::",
+                    "    result = asyncio.run(coro())  # 违规示例",
+                    '"""',
+                    "def foo():",
+                    "    pass",
+                ]
+            },
             file_contents={src_file: full_content},
         )
         gate = make_asyncio_run_in_context_gate()

@@ -26,6 +26,7 @@ N-16 豁免清单 YAML 加载器单测（红蓝对抗核心场景永久化）
 红蓝对抗历史：本文件由红蓝测试脚本 n16_rb.py（19 项场景）提取核心场景永久化，
 防止类型混淆漏洞（B5-B5e）回退后无回归保护。原始红蓝测试 2026-06-26 全 PASS。
 """
+
 from __future__ import annotations
 
 import sys
@@ -51,6 +52,7 @@ from check_naming_convention import (  # noqa: E402
 # ---------------------------------------------------------------------------
 # 辅助：monkeypatch _N16_YAML_PATH 后调用加载函数
 # ---------------------------------------------------------------------------
+
 
 def _load_with_content(monkeypatch, tmp_path, content: str | None):
     """写入 content 到临时 YAML，monkeypatch _N16_YAML_PATH，调用加载函数。"""
@@ -90,6 +92,7 @@ FALLBACK_QUAD = (
 # TestFailOpen：YAML 异常 → fail-open 回退
 # ===========================================================================
 
+
 class TestFailOpen:
     """YAML 缺失/空/语法错误/缺键/空文件 → 回退到 _N16_*_FALLBACK 安全值。"""
 
@@ -98,20 +101,28 @@ class TestFailOpen:
         assert r == FALLBACK_QUAD
 
     def test_empty_tests_list(self, monkeypatch, tmp_path):
-        r = _load_with_content(monkeypatch, tmp_path, """sections:
+        r = _load_with_content(
+            monkeypatch,
+            tmp_path,
+            """sections:
   gov_doc_003_filename_uniqueness:
     n16_config:
       exempt_names_tests: []
       exempt_names_docs_extra: [index.md]
       skip_dirs_docs: [_archive]
-""")
+""",
+        )
         assert r == FALLBACK_QUAD
 
     def test_missing_n16_config_key(self, monkeypatch, tmp_path):
-        r = _load_with_content(monkeypatch, tmp_path, """sections:
+        r = _load_with_content(
+            monkeypatch,
+            tmp_path,
+            """sections:
   gov_doc_003_filename_uniqueness:
     title: no config here
-""")
+""",
+        )
         assert r == FALLBACK_QUAD
 
     def test_yaml_syntax_error(self, monkeypatch, tmp_path):
@@ -127,6 +138,7 @@ class TestFailOpen:
 # TestTypeConfusion：类型混淆 5 变体 → 回退防垃圾集合（红蓝漏洞防护核心）
 # ===========================================================================
 
+
 class TestTypeConfusion:
     """类型混淆场景必须回退，防止 string 标量被迭代成 char set 绕过检测。
 
@@ -135,53 +147,73 @@ class TestTypeConfusion:
     """
 
     def test_string_scalar_instead_of_list(self, monkeypatch, tmp_path):
-        r = _load_with_content(monkeypatch, tmp_path, """sections:
+        r = _load_with_content(
+            monkeypatch,
+            tmp_path,
+            """sections:
   gov_doc_003_filename_uniqueness:
     n16_config:
       exempt_names_tests: conftest.py
       exempt_names_docs_extra: [index.md]
       skip_dirs_docs: [_archive]
-""")
+""",
+        )
         assert r == FALLBACK_QUAD
 
     def test_int_elements(self, monkeypatch, tmp_path):
-        r = _load_with_content(monkeypatch, tmp_path, """sections:
+        r = _load_with_content(
+            monkeypatch,
+            tmp_path,
+            """sections:
   gov_doc_003_filename_uniqueness:
     n16_config:
       exempt_names_tests: [123, 456]
       exempt_names_docs_extra: [index.md]
       skip_dirs_docs: [_archive]
-""")
+""",
+        )
         assert r == FALLBACK_QUAD
 
     def test_none_elements(self, monkeypatch, tmp_path):
-        r = _load_with_content(monkeypatch, tmp_path, """sections:
+        r = _load_with_content(
+            monkeypatch,
+            tmp_path,
+            """sections:
   gov_doc_003_filename_uniqueness:
     n16_config:
       exempt_names_tests: [null, conftest.py]
       exempt_names_docs_extra: [index.md]
       skip_dirs_docs: [_archive]
-""")
+""",
+        )
         assert r == FALLBACK_QUAD
 
     def test_nested_list(self, monkeypatch, tmp_path):
-        r = _load_with_content(monkeypatch, tmp_path, """sections:
+        r = _load_with_content(
+            monkeypatch,
+            tmp_path,
+            """sections:
   gov_doc_003_filename_uniqueness:
     n16_config:
       exempt_names_tests: [[conftest.py]]
       exempt_names_docs_extra: [index.md]
       skip_dirs_docs: [_archive]
-""")
+""",
+        )
         assert r == FALLBACK_QUAD
 
     def test_mixed_types(self, monkeypatch, tmp_path):
-        r = _load_with_content(monkeypatch, tmp_path, """sections:
+        r = _load_with_content(
+            monkeypatch,
+            tmp_path,
+            """sections:
   gov_doc_003_filename_uniqueness:
     n16_config:
       exempt_names_tests: [123, conftest.py]
       exempt_names_docs_extra: [index.md]
       skip_dirs_docs: [_archive]
-""")
+""",
+        )
         assert r == FALLBACK_QUAD
 
 
@@ -189,8 +221,8 @@ class TestTypeConfusion:
 # TestValidLoad：合法 YAML 正常加载 + 未知键忽略 + 重复值去重
 # ===========================================================================
 
-class TestValidLoad:
 
+class TestValidLoad:
     def test_valid_yaml_loads_correctly(self, monkeypatch, tmp_path):
         r = _load_with_content(monkeypatch, tmp_path, VALID_YAML)
         assert r[0] == frozenset({"conftest.py", "__init__.py"})
@@ -199,7 +231,10 @@ class TestValidLoad:
         assert r[3] == {"_tmp_"}
 
     def test_unknown_key_ignored(self, monkeypatch, tmp_path):
-        r = _load_with_content(monkeypatch, tmp_path, """sections:
+        r = _load_with_content(
+            monkeypatch,
+            tmp_path,
+            """sections:
   gov_doc_003_filename_uniqueness:
     n16_config:
       exempt_names_tests: [conftest.py, __init__.py]
@@ -207,18 +242,23 @@ class TestValidLoad:
       skip_dirs_docs: [_archive]
       skip_dir_prefixes: [_tmp_]
       unknown_key: foo
-""")
+""",
+        )
         assert r[0] == frozenset({"conftest.py", "__init__.py"})
 
     def test_duplicate_values_deduped(self, monkeypatch, tmp_path):
-        r = _load_with_content(monkeypatch, tmp_path, """sections:
+        r = _load_with_content(
+            monkeypatch,
+            tmp_path,
+            """sections:
   gov_doc_003_filename_uniqueness:
     n16_config:
       exempt_names_tests: [conftest.py, conftest.py, __init__.py]
       exempt_names_docs_extra: [index.md, index.md]
       skip_dirs_docs: [_archive, _archive, _backups]
       skip_dir_prefixes: [_tmp_, _tmp_]
-""")
+""",
+        )
         assert r[0] == frozenset({"conftest.py", "__init__.py"})
         assert r[1] == frozenset({"index.md"})
         assert r[3] == {"_tmp_"}
@@ -227,6 +267,7 @@ class TestValidLoad:
 # ===========================================================================
 # TestInheritance：docs 豁免继承 tests 基线
 # ===========================================================================
+
 
 class TestInheritance:
     """_N16_DOCS_EXEMPT_NAMES = _N16_TESTS_EXEMPT_NAMES | _N16_DOCS_EXEMPT_EXTRA_RAW"""
@@ -240,6 +281,7 @@ class TestInheritance:
 # TestModuleCache：模块级缓存进程内不变
 # ===========================================================================
 
+
 class TestModuleCache:
     """模块级加载在 import 时执行一次，进程内不随 YAML 变化更新。
 
@@ -249,14 +291,17 @@ class TestModuleCache:
     def test_module_cache_stale_within_process(self, monkeypatch, tmp_path):
         stale = _N16_TESTS_EXEMPT_NAMES
         monkeypatch.setattr("check_naming_convention._N16_YAML_PATH", tmp_path / "changed.yaml")
-        tmp_path.joinpath("changed.yaml").write_text("""sections:
+        tmp_path.joinpath("changed.yaml").write_text(
+            """sections:
   gov_doc_003_filename_uniqueness:
     n16_config:
       exempt_names_tests: [new_only.py]
       exempt_names_docs_extra: [x.md]
       skip_dirs_docs: [y]
       skip_dir_prefixes: [_tmp_z]
-""", encoding="utf-8")
+""",
+            encoding="utf-8",
+        )
         fresh = _load_n16_exemptions_from_yaml()
         # 模块级变量不变（陈旧）
         assert _N16_TESTS_EXEMPT_NAMES == stale
@@ -268,8 +313,8 @@ class TestModuleCache:
 # TestDetection：N-16 检测逻辑 + 豁免 + 硬阻断
 # ===========================================================================
 
-class TestDetection:
 
+class TestDetection:
     def _make_proj(self, tmp_path, dup_basename):
         """创建含两个同名文件的 tests/ 目录。"""
         tdir = tmp_path / "tests"
@@ -302,13 +347,14 @@ class TestDetection:
         assert n16_viol[0].rule == "N-16"
         # 复现 main() 返回逻辑
         warn_only = True
-        returns_findings = (not warn_only or len(n16_viol) > 0)
+        returns_findings = not warn_only or len(n16_viol) > 0
         assert returns_findings is True
 
 
 # ===========================================================================
 # TestSsotConsistency：N-16 fallback 与 YAML n16_config 一致性（自动触发）
 # ===========================================================================
+
 
 class TestSsotConsistency:
     """_validate_ssot_linkage() 扩展校验：N-16 fallback 与 YAML n16_config 一致。
@@ -320,4 +366,3 @@ class TestSsotConsistency:
     def test_n16_fallback_matches_yaml(self):
         ok, msg = _validate_ssot_linkage()
         assert ok, f"SSoT 一致性校验失败（N-16 fallback 与 YAML n16_config 漂移）:\n{msg}"
-

@@ -20,6 +20,7 @@
 - TestGetSessionExceptionSafe: get_session 异常安全降级为放行
 - TestGateSpecFields: gate_id / priority 字段正确
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -66,7 +67,10 @@ class TestSessionUnregistered:
         target = tmp_path / "a.py"
         target.touch()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True
         assert detail == ""
@@ -83,7 +87,10 @@ class TestClaimedPasses:
         gw = _make_gateway(get_session_return=info)
         gate = make_claim_required_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True
         assert detail == ""
@@ -103,7 +110,10 @@ class TestUnclaimedBlocked:
         gw = _make_gateway(get_session_return=info)
         gate = make_claim_required_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is False
         assert "claim" in detail.lower()
@@ -120,7 +130,10 @@ class TestUnclaimedBlocked:
         gw = _make_gateway(get_session_return=info)
         gate = make_claim_required_gate()
         passed, detail = gate.check(
-            gw, [str(a), str(b)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(a), str(b)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is False
         assert "b.py" in detail  # b.py 未 claim
@@ -137,7 +150,10 @@ class TestAllowOverlapEscape:
         gw = _make_gateway(get_session_return=info)
         gate = make_claim_required_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=True,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=True,
         )
         assert passed is True
         assert detail == ""
@@ -153,7 +169,10 @@ class TestGetSessionExceptionSafe:
         gw = _make_gateway(get_session_exc=RuntimeError("registry down"))
         gate = make_claim_required_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True
         assert detail == ""

@@ -132,9 +132,11 @@ def test_append_heartbeat_log_appends_multiple(tmp_path: Path) -> None:
 
 def test_session_in_registry_returns_true_when_present(tmp_path: Path) -> None:
     """session 在 registry 中时返回 True。"""
+
     class _FakeRegistry:
         def __init__(self, root):
             pass
+
         def get_session(self, sid):
             return {"session_id": sid}  # 非 None
 
@@ -147,9 +149,11 @@ def test_session_in_registry_returns_true_when_present(tmp_path: Path) -> None:
 
 def test_session_in_registry_returns_false_when_absent(tmp_path: Path) -> None:
     """session 不在 registry 中时返回 False（daemon 应退出）。"""
+
     class _FakeRegistry:
         def __init__(self, root):
             pass
+
         def get_session(self, sid):
             return None
 
@@ -162,9 +166,11 @@ def test_session_in_registry_returns_false_when_absent(tmp_path: Path) -> None:
 
 def test_session_in_registry_returns_true_on_exception(tmp_path: Path) -> None:
     """registry 查询异常时返回 True（保守不退出，避免误判）。"""
+
     class _FakeRegistry:
         def __init__(self, root):
             raise RuntimeError("DB down")
+
         def get_session(self, sid):
             return None
 
@@ -190,6 +196,7 @@ def test_run_daemon_lifecycle_smoke(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             pass
+
         def get_session(self, sid):
             call_count["n"] += 1
             # 第 1 次查询（_session_in_registry）：返回非 None（alive）
@@ -197,6 +204,7 @@ def test_run_daemon_lifecycle_smoke(tmp_path: Path) -> None:
             if call_count["n"] == 1:
                 return {"session_id": sid}
             return None
+
         def heartbeat(self, sid):
             pass
 
@@ -205,10 +213,9 @@ def test_run_daemon_lifecycle_smoke(tmp_path: Path) -> None:
         _FakeRegistry,
     ):
         # patch INITIAL_DELAY 和 interval 都缩短到 0.05s
-        with patch(
-            "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05
-        ), patch(
-            "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._HEARTBEAT_INTERVAL", 0.05
+        with (
+            patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05),
+            patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._HEARTBEAT_INTERVAL", 0.05),
         ):
             rc = run_daemon("sess-life-001", tmp_path, interval=0.05)
 
@@ -234,25 +241,28 @@ def test_run_daemon_exits_on_idle_timeout(tmp_path: Path) -> None:
     停留在 4000s 前。daemon 首次循环即检测 idle > _MAX_IDLE_SECONDS(1800s)，
     停止心跳并退出——registry 条目 90s 后过期，held_files 自动释放。
     """
+
     class _FakeRegistry:
         def __init__(self, root):
             pass
+
         def get_session(self, sid):
             return {
                 "session_id": sid,
                 "last_activity": time.time() - 4000,  # idle 4000s > 1800s
                 "start_time": time.time() - 5000,
             }
+
         def heartbeat(self, sid):
             pass
 
-    with patch(
-        "zephyr.security.access_control.session_concurrency.SessionRegistry",
-        _FakeRegistry,
-    ), patch(
-        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05
-    ), patch(
-        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._MAX_IDLE_SECONDS", 1800
+    with (
+        patch(
+            "zephyr.security.access_control.session_concurrency.SessionRegistry",
+            _FakeRegistry,
+        ),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._MAX_IDLE_SECONDS", 1800),
     ):
         rc = run_daemon("sess-idle-001", tmp_path, interval=0.05)
 
@@ -276,20 +286,23 @@ def test_run_daemon_keeps_alive_when_recent_activity(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             pass
+
         def get_session(self, sid):
             calls["get"] += 1
             # 前 2 次查询返回活跃 session（idle≈0），第 3 次返回 None 让 daemon 退出
             if calls["get"] >= 3:
                 return None
             return {"session_id": sid, "last_activity": time.time()}
+
         def heartbeat(self, sid):
             pass
 
-    with patch(
-        "zephyr.security.access_control.session_concurrency.SessionRegistry",
-        _FakeRegistry,
-    ), patch(
-        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05
+    with (
+        patch(
+            "zephyr.security.access_control.session_concurrency.SessionRegistry",
+            _FakeRegistry,
+        ),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05),
     ):
         rc = run_daemon("sess-active-001", tmp_path, interval=0.05)
 
@@ -309,6 +322,7 @@ def test_session_idle_seconds_fallback_and_none(tmp_path: Path) -> None:
     class _NoneRegistry:
         def __init__(self, root):
             pass
+
         def get_session(self, sid):
             return None
 
@@ -321,6 +335,7 @@ def test_session_idle_seconds_fallback_and_none(tmp_path: Path) -> None:
     class _LegacyRegistry:
         def __init__(self, root):
             pass
+
         def get_session(self, sid):
             # 修复前旧条目：无 last_activity，仅 start_time（绝不回退 last_heartbeat）
             return {"session_id": sid, "start_time": time.time() - 100}
@@ -382,23 +397,26 @@ def test_session_queries_against_real_registry(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("error_text,expected", [
-    # deterministic（不重试）
-    ("automatic merge failed; fix conflicts", "deterministic"),
-    ("CONFLICT (content): Merge conflict", "deterministic"),
-    ("fatal: not something we can merge", "deterministic"),
-    ("worktree 不存在", "deterministic"),
-    ("session_id 不能为空", "deterministic"),
-    # transient（重试）
-    ("fatal: Unable to create index.lock", "transient"),
-    ("another git process seems to be running", "transient"),
-    ("error: could not lock config file", "transient"),
-    ("TimeoutExpired: command timed out", "transient"),
-    # unknown
-    ("some weird error", "unknown"),
-    ("", "unknown"),
-    (None, "unknown"),
-])
+@pytest.mark.parametrize(
+    "error_text,expected",
+    [
+        # deterministic（不重试）
+        ("automatic merge failed; fix conflicts", "deterministic"),
+        ("CONFLICT (content): Merge conflict", "deterministic"),
+        ("fatal: not something we can merge", "deterministic"),
+        ("worktree 不存在", "deterministic"),
+        ("session_id 不能为空", "deterministic"),
+        # transient（重试）
+        ("fatal: Unable to create index.lock", "transient"),
+        ("another git process seems to be running", "transient"),
+        ("error: could not lock config file", "transient"),
+        ("TimeoutExpired: command timed out", "transient"),
+        # unknown
+        ("some weird error", "unknown"),
+        ("", "unknown"),
+        (None, "unknown"),
+    ],
+)
 def test_classify_merge_failure(error_text, expected) -> None:
     """_classify_merge_failure 正确分类 deterministic / transient / unknown。"""
     assert _classify_merge_failure(error_text) == expected
@@ -507,9 +525,7 @@ def test_check_start_blocked_skips_corrupt_json(tmp_path: Path) -> None:
     """损坏的 JSON 文件被跳过（不阻断扫描）。"""
     counts_dir = tmp_path / ".runtime" / "emergency_counts"
     counts_dir.mkdir(parents=True)
-    (counts_dir / "agent-corrupt.json").write_text(
-        'not valid json {{{', encoding="utf-8"
-    )
+    (counts_dir / "agent-corrupt.json").write_text("not valid json {{{", encoding="utf-8")
 
     blocked, reason = check_start_blocked(tmp_path)
     assert blocked is False
@@ -566,24 +582,31 @@ def test_run_daemon_exits_on_worktree_anchor_lost(tmp_path: Path) -> None:
     但所属 worktree 早已退役删除——daemon 空转制造假活性。
     失锚自退：首次循环即检测锚点缺失，停止心跳并退出。
     """
+
     class _FakeRegistry:
         def __init__(self, root):
             pass
+
         def get_session(self, sid):
             # registry 条目残留且活性新鲜——若无锚点检查 daemon 会永久空转
             return {"session_id": sid, "last_activity": time.time()}
+
         def heartbeat(self, sid):
             pass
 
     missing_wt = tmp_path / "retired_worktree"  # 从不创建=已退役删除
-    with patch(
-        "zephyr.security.access_control.session_concurrency.SessionRegistry",
-        _FakeRegistry,
-    ), patch(
-        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05
+    with (
+        patch(
+            "zephyr.security.access_control.session_concurrency.SessionRegistry",
+            _FakeRegistry,
+        ),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05),
     ):
         rc = run_daemon(
-            "sess-anchor-001", tmp_path, interval=0.05, worktree_path=missing_wt,
+            "sess-anchor-001",
+            tmp_path,
+            interval=0.05,
+            worktree_path=missing_wt,
         )
 
     assert rc == 0, "daemon 应正常退出（rc=0）"
@@ -607,24 +630,30 @@ def test_run_daemon_anchor_present_no_false_exit(tmp_path: Path) -> None:
     class _FakeRegistry:
         def __init__(self, root):
             pass
+
         def get_session(self, sid):
             calls["get"] += 1
             if calls["get"] >= 3:
                 return None
             return {"session_id": sid, "last_activity": time.time()}
+
         def heartbeat(self, sid):
             pass
 
     alive_wt = tmp_path / "active_worktree"
     alive_wt.mkdir()  # 锚点存活
-    with patch(
-        "zephyr.security.access_control.session_concurrency.SessionRegistry",
-        _FakeRegistry,
-    ), patch(
-        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05
+    with (
+        patch(
+            "zephyr.security.access_control.session_concurrency.SessionRegistry",
+            _FakeRegistry,
+        ),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05),
     ):
         rc = run_daemon(
-            "sess-anchor-002", tmp_path, interval=0.05, worktree_path=alive_wt,
+            "sess-anchor-002",
+            tmp_path,
+            interval=0.05,
+            worktree_path=alive_wt,
         )
 
     assert rc == 0
@@ -633,8 +662,9 @@ def test_run_daemon_anchor_present_no_false_exit(tmp_path: Path) -> None:
     statuses = [r["status"] for r in recs]
     assert "alive" in statuses, "锚点存活的活跃 session 应有 alive 心跳记录"
     exited = [r for r in recs if r["status"] == "exited"]
-    assert exited and exited[0]["reason"] == "session not in registry", \
+    assert exited and exited[0]["reason"] == "session not in registry", (
         "退出原因必须是 registry 注销，不得是 worktree anchor lost"
+    )
 
 
 if __name__ == "__main__":

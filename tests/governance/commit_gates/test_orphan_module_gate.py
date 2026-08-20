@@ -29,6 +29,7 @@
 测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch 模拟 subprocess.run（git grep）；
 tmp_path 创建真实 .py 文件（gate 通过 os.path.join(wt_root, rel) 读盘）。
 """
+
 from __future__ import annotations
 
 import os
@@ -64,8 +65,10 @@ def _make_gateway(tmp_path, staged_files=None, diff_fails=False, diff_raises=Fal
     gw.project_root = str(tmp_path)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = MagicMock(side_effect=_raise)
         return gw
 
@@ -106,10 +109,12 @@ def _patch_grep(gateway, returncode=1, stdout="", raises=None):
     original_side_effect = gateway.run_git.side_effect
 
     if raises is not None:
+
         def _grep_run(cmd, cwd=None):
             if len(cmd) >= 2 and cmd[0:2] == ["git", "grep"]:
                 raise raises
             return original_side_effect(cmd)
+
         gateway.run_git.side_effect = _grep_run
         return
 
@@ -126,6 +131,7 @@ def _shadow_open(monkeypatch):
     """源文件用 open(path).read() 未关闭文件句柄（ResourceWarning）。
     注入 shadow open：read() 后立即关闭真实 fd。"""
     import builtins
+
     _real_open = builtins.open
 
     class _AutoClose:
@@ -151,6 +157,7 @@ def _shadow_open(monkeypatch):
         return _AutoClose(_real_open(file, mode, *args, **kwargs))
 
     import zephyr.gov_enforcement.commit_gates.orphan_module_gate as mod
+
     monkeypatch.setattr(mod, "open", _shadow, raising=False)
 
 
@@ -185,10 +192,7 @@ class TestEntryPoint:
         assert _is_entry_point("scripts/run.py", "x = 1\n")
 
     def test_main_block_exempt(self):
-        content = (
-            'if __name__ == "__main__":\n'
-            '    main()\n'
-        )
+        content = 'if __name__ == "__main__":\n    main()\n'
         assert _is_entry_point("src/zephyr/cli/app.py", content)
 
     def test_regular_file_not_entry(self):

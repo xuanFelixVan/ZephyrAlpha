@@ -124,6 +124,7 @@ def _make_file(repo_dir: Path, rel: str, content: str = "# stub\n") -> Path:
 # 测试组
 # ============================================================
 
+
 class TestGateSpecAttributes:
     """GateSpec 属性。"""
 
@@ -224,7 +225,8 @@ class TestRule2TtlZoneConsistency:
         """ttl=task_bound 但在永久区 → 阻断。"""
         repo = _setup_repo(tmp_path)
         f = _make_file(
-            repo, "docs/01_policies_and_standards/rule.yaml",
+            repo,
+            "docs/01_policies_and_standards/rule.yaml",
             content="---\nttl: task_bound\n---\n",
         )
         gw = _make_gateway(repo, tracked_files={"docs/01_policies_and_standards/rule.yaml"})

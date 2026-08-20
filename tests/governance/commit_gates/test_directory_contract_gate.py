@@ -50,20 +50,12 @@ class _MockGateway:
         self.project_root = project_root
 
 
-def _make_checker_stub(
-    repo_dir: Path, exit_code: int = 0, stderr_msg: str = ""
-) -> Path:
+def _make_checker_stub(repo_dir: Path, exit_code: int = 0, stderr_msg: str = "") -> Path:
     """在 repo_dir/scripts/governance/d1_structure/ 创建 check_directory_contract.py stub。
 
     stub 行为由 exit_code + stderr_msg 参数控制，模拟真 checker 的 exit 0/1/2。
     """
-    checker = (
-        repo_dir
-        / "scripts"
-        / "governance"
-        / "d1_structure"
-        / "check_directory_contract.py"
-    )
+    checker = repo_dir / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
     checker.parent.mkdir(parents=True, exist_ok=True)
     lines = ["#!/usr/bin/env python", "import sys"]
     if stderr_msg:
@@ -160,9 +152,7 @@ class TestCheckViolation:
 
     def test_checker_exit_1_returns_false_with_detail(self, tmp_path):
         gw = _MockGateway(tmp_path)
-        _make_checker_stub(
-            tmp_path, exit_code=1, stderr_msg="DCR-001 violation: foo.py in wrong dir"
-        )
+        _make_checker_stub(tmp_path, exit_code=1, stderr_msg="DCR-001 violation: foo.py in wrong dir")
         _make_target_file(tmp_path, "foo.py")
         spec = make_directory_contract_gate()
         passed, detail = spec.check(gw, [str(tmp_path / "foo.py")])
@@ -230,10 +220,12 @@ class TestRelativePathHandling:
 
         def _capture_cmd(*args, **kwargs):
             captured_cmd.extend(args[0])
+
             class _R:
                 returncode = 0
                 stderr = b""
                 stdout = b""
+
             return _R()
 
         monkeypatch.setattr(subprocess, "run", _capture_cmd)
@@ -268,9 +260,7 @@ class TestCheckDeprecatedDirectory:
         # monkeypatch REPO_ROOT 指向 tmp_path（check_deprecated_directory 用 REPOROOT / rel_path 检查存在性）
         monkeypatch.setattr(_mod, "REPO_ROOT", tmp_path)
         contract = {
-            "deprecated_directories": [
-                {"path": "docs/_archive", "reason": "已迁移", "migrated_to": "docs/01_policies"}
-            ]
+            "deprecated_directories": [{"path": "docs/_archive", "reason": "已迁移", "migrated_to": "docs/01_policies"}]
         }
         findings = check_deprecated_directory("docs/_archive/old.md", contract)
         assert len(findings) == 1
@@ -280,18 +270,14 @@ class TestCheckDeprecatedDirectory:
     def test_file_in_safe_dir_not_flagged(self):
         """文件在安全目录 → 放行（无 finding）。"""
         contract = {
-            "deprecated_directories": [
-                {"path": "docs/_archive", "reason": "已迁移", "migrated_to": "docs/01_policies"}
-            ]
+            "deprecated_directories": [{"path": "docs/_archive", "reason": "已迁移", "migrated_to": "docs/01_policies"}]
         }
         findings = check_deprecated_directory("docs/01_policies/new.md", contract)
         assert findings == []
 
     def test_exact_deprecated_path_detected(self):
         """精确路径命中（rel_path 本身就是废弃目录路径）。"""
-        contract = {
-            "deprecated_directories": [{"path": "docs/_archive"}]
-        }
+        contract = {"deprecated_directories": [{"path": "docs/_archive"}]}
         findings = check_deprecated_directory("docs/_archive", contract)
         assert len(findings) == 1
 
@@ -301,9 +287,7 @@ class TestCheckDeprecatedDirectory:
         边界匹配：rel_norm == dep_path or rel_norm.startswith(dep_path + "/")。
         docs/09_audit_other 不以 "docs/09_audit/" 开头，故不误报。
         """
-        contract = {
-            "deprecated_directories": [{"path": "docs/09_audit"}]
-        }
+        contract = {"deprecated_directories": [{"path": "docs/09_audit"}]}
         findings = check_deprecated_directory("docs/09_audit_other/foo.md", contract)
         assert findings == []
 

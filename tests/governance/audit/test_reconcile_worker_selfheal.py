@@ -105,13 +105,16 @@ def _insert_critical_warn(repo: Path, commit_sha: str = "old123") -> str:
         ReconcileResult,
         _log_reconcile_results,
     )
+
     _log_reconcile_results(
         str(repo),
-        [ReconcileResult(
-            action="critical_warn",
-            detail=f"reconcile_worker boot failed (commit={commit_sha}): old failure",
-            gate_id="RECONCILE-WORKER-BOOT",
-        )],
+        [
+            ReconcileResult(
+                action="critical_warn",
+                detail=f"reconcile_worker boot failed (commit={commit_sha}): old failure",
+                gate_id="RECONCILE-WORKER-BOOT",
+            )
+        ],
         "sess-old",
         trigger_source="post_commit_async",
     )
@@ -196,11 +199,13 @@ class TestWriteBootSuccessClean:
         # 插入其他 gate 的 critical_warn
         _log_reconcile_results(
             str(tmp_repo_with_db),
-            [ReconcileResult(
-                action="critical_warn",
-                detail="other gate failure",
-                gate_id="SOME-OTHER-GATE",
-            )],
+            [
+                ReconcileResult(
+                    action="critical_warn",
+                    detail="other gate failure",
+                    gate_id="SOME-OTHER-GATE",
+                )
+            ],
             "sess-x",
             trigger_source="post_commit_async",
         )
@@ -239,8 +244,10 @@ class TestRunWorkerSelfHealIntegration:
 
         # mock 掉 GitCommitGateway 构造 + reconcile（只验证自愈写入被调用）
         # GitCommitGateway/write_status_file 是函数内 import，patch 源模块
-        with patch.object(gtw_mod, "GitCommitGateway") as mock_gw_class, \
-             patch.object(rr_mod, "write_status_file") as mock_write_status:
+        with (
+            patch.object(gtw_mod, "GitCommitGateway") as mock_gw_class,
+            patch.object(rr_mod, "write_status_file") as mock_write_status,
+        ):
             mock_gw = mock_gw_class.return_value
             mock_gw._run_post_commit_reconcile_sync_worker.return_value = []
 

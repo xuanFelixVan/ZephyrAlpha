@@ -29,6 +29,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import sys
@@ -62,8 +63,10 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     gw.project_root = str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -181,8 +184,7 @@ class TestGatewayIntegration:
     def test_new_file_safe_helper_passes(self):
         blue = "scripts/governance/d5_architecture/generators/generate_domain_doc.py"
         content = (
-            "from domain_name_mapping import get_domain_name_zh_strict\n"
-            "ext_name_zh = get_domain_name_zh_strict(ext)\n"
+            "from domain_name_mapping import get_domain_name_zh_strict\next_name_zh = get_domain_name_zh_strict(ext)\n"
         )
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_domain_name_zh_direct_access_gate().check(gw, [])
@@ -212,11 +214,7 @@ class TestGatewayIntegration:
 
     def test_docstring_line_exempt(self):
         blue = "scripts/governance/d5_architecture/generators/generate_domain_doc.py"
-        content = (
-            '"""module docstring\n'
-            "DOMAIN_NAME_ZH.get(ext, '') is legacy pattern\n"
-            '"""\n'
-        )
+        content = '"""module docstring\nDOMAIN_NAME_ZH.get(ext, \'\') is legacy pattern\n"""\n'
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_domain_name_zh_direct_access_gate().check(gw, [])
         assert passed  # docstring 内行豁免
@@ -263,11 +261,7 @@ class TestGatewayIntegration:
 
     def test_multiple_violations_all_reported(self):
         red = "scripts/governance/d5_architecture/generators/generate_domain_doc.py"
-        content = (
-            "a = DOMAIN_NAME_ZH.get(ext, '')\n"
-            "b = DOMAIN_NAME_ZH['D_FACTOR']\n"
-            "c = DOMAIN_NAME_ZH.items()\n"
-        )
+        content = "a = DOMAIN_NAME_ZH.get(ext, '')\nb = DOMAIN_NAME_ZH['D_FACTOR']\nc = DOMAIN_NAME_ZH.items()\n"
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_domain_name_zh_direct_access_gate().check(gw, [])
         assert not passed

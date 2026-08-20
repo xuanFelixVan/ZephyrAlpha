@@ -26,6 +26,7 @@ ARCH-FRONTMATTER-STATE-001 Phase 2 (Link B fix)。
 
 测试隔离：用 mock 模拟 subprocess/git 操作，不触碰生产库或真实 git 仓库。
 """
+
 from __future__ import annotations
 
 import sys
@@ -50,8 +51,7 @@ from zephyr.governance.audit.reconciliation_registry import (  # noqa: E402
 class _FakeGateway:
     """模拟 GitCommitGateway，仅提供 project_root / _run_git / _commit_auto。"""
 
-    def __init__(self, project_root: Path, diff_files: list[str] | None = None,
-                 commit_status: str = "OK"):
+    def __init__(self, project_root: Path, diff_files: list[str] | None = None, commit_status: str = "OK"):
         self.project_root = project_root
         self._diff_files = diff_files or []
         self._commit_status = commit_status
@@ -180,9 +180,7 @@ class TestReconcile:
     @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
     def test_subprocess_failure_returns_warn(self, mock_sub, tmp_path):
         """subprocess 失败时应返回 warn。"""
-        mock_sub.return_value = _make_subprocess_result(
-            returncode=1, stderr="connection error"
-        )
+        mock_sub.return_value = _make_subprocess_result(returncode=1, stderr="connection error")
         gw = _FakeGateway(tmp_path)
         spec = make_blueprint_frontmatter_reconciler(gw)
         result = spec.reconcile(["foo.py"], "sess-test")
@@ -268,6 +266,7 @@ class TestReconcile:
         """git diff 命令失败时应返回 warn。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
         gw = _FakeGateway(tmp_path)
+
         # 覆盖 _run_git 让 diff 返回失败
         def failing_git(cmd):
             mock = MagicMock()
@@ -275,6 +274,7 @@ class TestReconcile:
             mock.stderr = "git error"
             mock.stdout = ""
             return mock
+
         gw.run_git = failing_git
         spec = make_blueprint_frontmatter_reconciler(gw)
         result = spec.reconcile(["foo.py"], "sess-test")

@@ -26,6 +26,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，tmp_path 创建真实 .py 文件。
 """
+
 from __future__ import annotations
 
 import ast
@@ -57,16 +58,17 @@ class _MockResult:
     stdout: str = ""
 
 
-def _make_gateway(tmp_path, staged_files=None, added_files=None,
-                  diff_fails=False, diff_raises=False):
+def _make_gateway(tmp_path, staged_files=None, added_files=None, diff_fails=False, diff_raises=False):
     """构造 mock gateway：--diff-filter=AM 返回文件列表；--diff-filter=A 返回新增集；
     --show-toplevel 返回 tmp_path。added_files 默认与 staged_files 相同（全为新增）。"""
     gw = MagicMock()
     gw.project_root = str(tmp_path)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -102,6 +104,7 @@ def _shadow_open(monkeypatch):
     """源文件用 open(path).read() 未关闭文件句柄（ResourceWarning）。
     注入 shadow open：read() 后立即关闭真实 fd。"""
     import builtins
+
     _real_open = builtins.open
 
     class _AutoClose:
@@ -127,6 +130,7 @@ def _shadow_open(monkeypatch):
         return _AutoClose(_real_open(file, mode, *args, **kwargs))
 
     import zephyr.gov_enforcement.commit_gates.perm_trigger_gate as mod
+
     monkeypatch.setattr(mod, "open", _shadow, raising=False)
 
 
@@ -215,12 +219,7 @@ class TestDetectTrigger:
 class TestGatewayIntegration:
     def test_perm_trigger_blocked(self, tmp_path):
         red = "src/zephyr/trading/daemon.py"
-        content = (
-            "# [TTL] permanent\n"
-            "import time\n"
-            "while True:\n"
-            "    time.sleep(1)\n"
-        )
+        content = "# [TTL] permanent\nimport time\nwhile True:\n    time.sleep(1)\n"
         _write_file(tmp_path, red, content)
         gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_perm_trigger_gate().check(gw, [])
@@ -230,11 +229,7 @@ class TestGatewayIntegration:
     def test_perm_trigger_with_event_passes(self, tmp_path):
         blue = "src/zephyr/trading/daemon.py"
         content = (
-            "# [TTL] permanent\n"
-            "import time\n"
-            "event_bus.subscribe('topic', handler)\n"
-            "while True:\n"
-            "    time.sleep(1)\n"
+            "# [TTL] permanent\nimport time\nevent_bus.subscribe('topic', handler)\nwhile True:\n    time.sleep(1)\n"
         )
         _write_file(tmp_path, blue, content)
         gw = _make_gateway(tmp_path, staged_files=[blue])
@@ -244,12 +239,7 @@ class TestGatewayIntegration:
 
     def test_non_perm_passes(self, tmp_path):
         blue = "src/zephyr/trading/daemon.py"
-        content = (
-            "# [TTL] task_bound\n"
-            "import time\n"
-            "while True:\n"
-            "    time.sleep(1)\n"
-        )
+        content = "# [TTL] task_bound\nimport time\nwhile True:\n    time.sleep(1)\n"
         _write_file(tmp_path, blue, content)
         gw = _make_gateway(tmp_path, staged_files=[blue])
         passed, msg = make_perm_trigger_gate().check(gw, [])
@@ -258,14 +248,7 @@ class TestGatewayIntegration:
 
     def test_perm_with_subscriber_decorator_passes(self, tmp_path):
         blue = "src/zephyr/trading/handler.py"
-        content = (
-            "# [TTL] permanent\n"
-            "while True:\n"
-            "    pass\n"
-            "@subscriber\n"
-            "def on_event(e):\n"
-            "    process(e)\n"
-        )
+        content = "# [TTL] permanent\nwhile True:\n    pass\n@subscriber\ndef on_event(e):\n    process(e)\n"
         _write_file(tmp_path, blue, content)
         gw = _make_gateway(tmp_path, staged_files=[blue])
         passed, msg = make_perm_trigger_gate().check(gw, [])
@@ -274,11 +257,7 @@ class TestGatewayIntegration:
 
     def test_tests_dir_exempt(self, tmp_path):
         red = "tests/governance/test_daemon.py"
-        content = (
-            "# [TTL] permanent\n"
-            "while True:\n"
-            "    pass\n"
-        )
+        content = "# [TTL] permanent\nwhile True:\n    pass\n"
         _write_file(tmp_path, red, content)
         gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_perm_trigger_gate().check(gw, [])

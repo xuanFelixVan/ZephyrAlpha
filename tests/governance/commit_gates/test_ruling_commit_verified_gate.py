@@ -22,6 +22,7 @@
 
 测试隔离：用 tmp_path + 真实 git 仓库（end-to-end）。
 """
+
 from __future__ import annotations
 
 import os
@@ -69,11 +70,17 @@ def _init_git_repo(repo_dir: Path) -> None:
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "config", "user.name", "Test"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     # 标记为 Zephyr 项目（gate 用 scripts/governance/d1_structure 判断）
     (repo_dir / "scripts" / "governance" / "d1_structure").mkdir(parents=True, exist_ok=True)
@@ -88,15 +95,25 @@ def _commit_file(repo_dir: Path, rel_path: str, content: str) -> str:
     fpath.write_text(content, encoding="utf-8")
     subprocess.run(
         ["git", "add", rel_path],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     subprocess.run(
         ["git", "commit", "-m", f"add {rel_path}"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     r = subprocess.run(
         ["git", "rev-parse", "HEAD"],
-        cwd=str(repo_dir), capture_output=True, text=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        text=True,
+        env=env,
+        check=True,
     )
     return r.stdout.strip()
 
@@ -105,7 +122,10 @@ def _get_head_hash(repo_dir: Path) -> str:
     """获取当前 HEAD commit hash。"""
     r = subprocess.run(
         ["git", "rev-parse", "HEAD"],
-        cwd=str(repo_dir), capture_output=True, text=True, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        text=True,
+        check=True,
     )
     return r.stdout.strip()
 
@@ -203,9 +223,10 @@ class TestIsTriggerFile:
         assert _is_trigger_file("docs/02_enterprise_architecture/ruling_100pct_ai_governance_hardening.md") is True
 
     def test_architecture_issue_registry(self):
-        assert _is_trigger_file(
-            "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml"
-        ) is True
+        assert (
+            _is_trigger_file("docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml")
+            is True
+        )
 
     def test_non_trigger_py(self):
         assert _is_trigger_file("src/zephyr/foo.py") is False
@@ -215,9 +236,7 @@ class TestIsTriggerFile:
 
     def test_windows_backslash(self):
         """Windows 反斜杠路径"""
-        assert _is_trigger_file(
-            "docs\\02_enterprise_architecture\\ruling_test.md"
-        ) is True
+        assert _is_trigger_file("docs\\02_enterprise_architecture\\ruling_test.md") is True
 
 
 # ============================================================================
@@ -399,11 +418,17 @@ class TestRulingCommitVerifiedGate:
         subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
         subprocess.run(
             ["git", "config", "user.name", "Test"],
-            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+            cwd=str(repo_dir),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         subprocess.run(
             ["git", "config", "user.email", "test@test.com"],
-            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+            cwd=str(repo_dir),
+            capture_output=True,
+            env=env,
+            check=True,
         )
 
         ruling_path = "docs/02_enterprise_architecture/ruling_test.md"
@@ -447,10 +472,12 @@ class TestRulingCommitVerifiedGate:
 
         (tmp_path / ruling1_path).parent.mkdir(parents=True, exist_ok=True)
         (tmp_path / ruling1_path).write_text(
-            "# 已完成（commit aaaaaaa）\n", encoding="utf-8",
+            "# 已完成（commit aaaaaaa）\n",
+            encoding="utf-8",
         )
         (tmp_path / ruling2_path).write_text(
-            "# 已完成（commit bbbbbbb）\n", encoding="utf-8",
+            "# 已完成（commit bbbbbbb）\n",
+            encoding="utf-8",
         )
 
         gateway = _make_gateway(tmp_path)
@@ -510,6 +537,7 @@ class TestEscapeMarker:
         from zephyr.gov_enforcement.commit_gates.ruling_commit_verified_gate import (
             _check_escape_marker,
         )
+
         assert _check_escape_marker({"commit_message": "test [no-verify-ruling:reason]"}) is True
 
     def test_escape_marker_not_in_message(self):
@@ -517,6 +545,7 @@ class TestEscapeMarker:
         from zephyr.gov_enforcement.commit_gates.ruling_commit_verified_gate import (
             _check_escape_marker,
         )
+
         assert _check_escape_marker({"commit_message": "normal commit"}) is False
 
     def test_escape_marker_empty_message(self):
@@ -524,5 +553,6 @@ class TestEscapeMarker:
         from zephyr.gov_enforcement.commit_gates.ruling_commit_verified_gate import (
             _check_escape_marker,
         )
+
         assert _check_escape_marker({"commit_message": ""}) is False
         assert _check_escape_marker({}) is False

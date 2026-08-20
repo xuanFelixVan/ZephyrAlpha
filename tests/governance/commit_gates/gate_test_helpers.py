@@ -7,6 +7,7 @@
 测试通过 ``from tests.governance.commit_gates.gate_test_helpers import ...`` 导入，
 本模块提供公共路径，实际实现在 ``_gate_test_helpers.py``。
 """
+
 from tests.governance.commit_gates._gate_test_helpers import *  # noqa: F401,F403
 from tests.governance.commit_gates._gate_test_helpers import (  # noqa: F401
     make_mock_gateway,

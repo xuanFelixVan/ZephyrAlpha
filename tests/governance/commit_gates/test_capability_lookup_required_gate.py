@@ -28,6 +28,7 @@
 
 测试隔离：使用 tmp_path fixture 隔离 audit log 目录，不污染真实 .runtime/。
 """
+
 from __future__ import annotations
 
 import json
@@ -54,6 +55,7 @@ if str(_SRC_ROOT) not in sys.path:
 def _make_gateway(project_root: Path):
     """构造 mock gateway with project_root."""
     from unittest.mock import MagicMock
+
     gw = MagicMock()
     gw.project_root = project_root
     return gw
@@ -89,18 +91,21 @@ class TestGateSpecFields:
             make_capability_lookup_required_gate,
         )
         from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+
         assert isinstance(make_capability_lookup_required_gate(), GateSpec)
 
     def test_gate_id(self):
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         assert make_capability_lookup_required_gate().gate_id == "CAPABILITY-LOOKUP-REQUIRED"
 
     def test_priority(self):
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         assert make_capability_lookup_required_gate().priority == 110
 
 
@@ -114,6 +119,7 @@ class TestExemptions:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_gateway(tmp_path)  # 无 scripts/governance/d1_structure
         spec = make_capability_lookup_required_gate()
         passed, msg = spec.check(gw, [], session_id="sess-test")
@@ -124,6 +130,7 @@ class TestExemptions:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         spec = make_capability_lookup_required_gate()
         passed, msg = spec.check(gw, [], session_id="sess-test")
@@ -134,6 +141,7 @@ class TestExemptions:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         spec = make_capability_lookup_required_gate()
         # 仅 .md 文件
@@ -151,6 +159,7 @@ class TestExemptions:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         spec = make_capability_lookup_required_gate()
         # 仅 tests/ 下的 .py 文件
@@ -163,6 +172,7 @@ class TestExemptions:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         spec = make_capability_lookup_required_gate()
         files = [str(tmp_path / "src" / "zephyr" / "config.yaml")]
@@ -181,6 +191,7 @@ class TestBypass:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         monkeypatch.setenv("ZEPHYR_BYPASS_LOOKUP", "1")
         spec = make_capability_lookup_required_gate()
@@ -194,11 +205,14 @@ class TestBypass:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         spec = make_capability_lookup_required_gate()
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         passed, msg = spec.check(
-            gw, files, session_id="sess-test",
+            gw,
+            files,
+            session_id="sess-test",
             commit_message="fix: urgent patch [no-lookup:gate-fix-urgent]",
         )
         assert passed is True
@@ -209,11 +223,14 @@ class TestBypass:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         spec = make_capability_lookup_required_gate()
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         passed, msg = spec.check(
-            gw, files, session_id="sess-test",
+            gw,
+            files,
+            session_id="sess-test",
             commit_message="fix: urgent patch [no-lookup:]",
         )
         assert passed is False
@@ -223,11 +240,14 @@ class TestBypass:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         spec = make_capability_lookup_required_gate()
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         passed, msg = spec.check(
-            gw, files, session_id="sess-test",
+            gw,
+            files,
+            session_id="sess-test",
             commit_message="merge session/sess-12345",
         )
         assert passed is True
@@ -238,11 +258,14 @@ class TestBypass:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         spec = make_capability_lookup_required_gate()
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         passed, msg = spec.check(
-            gw, files, session_id="sess-test",
+            gw,
+            files,
+            session_id="sess-test",
             commit_message="feat: new feature [no-lookup:new-feature-xxx]",
         )
         assert passed is False
@@ -253,11 +276,14 @@ class TestBypass:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         spec = make_capability_lookup_required_gate()
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         passed, msg = spec.check(
-            gw, files, session_id="sess-test",
+            gw,
+            files,
+            session_id="sess-test",
             commit_message="fix: root cause [no-lookup:root_cause_fix]",
         )
         assert passed is True
@@ -275,15 +301,19 @@ class TestAuditLog:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         # 模拟 audit log 目录不存在
         gw = _make_zephyr_gateway(tmp_path)
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
-        with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
-            tmp_path,
-        ), patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.audit_log_dir_exists",
-            return_value=False,
+        with (
+            patch(
+                "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
+                tmp_path,
+            ),
+            patch(
+                "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.audit_log_dir_exists",
+                return_value=False,
+            ),
         ):
             spec = make_capability_lookup_required_gate()
             passed, msg = spec.check(gw, files, session_id="sess-test")
@@ -296,18 +326,23 @@ class TestAuditLog:
             _get_audit_log_path,
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         # 模拟 audit log 目录存在但 session log 文件不存在
-        with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
-            tmp_path,
-        ), patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.audit_log_dir_exists",
-            return_value=True,
-        ), patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.get_audit_log_path",
-            return_value=tmp_path / "nonexistent.jsonl",
+        with (
+            patch(
+                "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
+                tmp_path,
+            ),
+            patch(
+                "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.audit_log_dir_exists",
+                return_value=True,
+            ),
+            patch(
+                "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.get_audit_log_path",
+                return_value=tmp_path / "nonexistent.jsonl",
+            ),
         ):
             spec = make_capability_lookup_required_gate()
             passed, msg = spec.check(gw, files, session_id="sess-test")
@@ -319,13 +354,23 @@ class TestAuditLog:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         # 创建 audit log 文件
         audit_dir = tmp_path / ".runtime" / "lookup_audit"
-        _write_audit_log(audit_dir, "sess-test", [
-            {"ts": "2026-07-19T08:00:00Z", "tool": "rule_discovery.discover_applicable_rules",
-             "query": {"operation": "file_write"}, "result_count": 1, "rule_ids": ["TRAE-001"]},
-        ])
+        _write_audit_log(
+            audit_dir,
+            "sess-test",
+            [
+                {
+                    "ts": "2026-07-19T08:00:00Z",
+                    "tool": "rule_discovery.discover_applicable_rules",
+                    "query": {"operation": "file_write"},
+                    "result_count": 1,
+                    "rule_ids": ["TRAE-001"],
+                },
+            ],
+        )
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         # patch REPO_ROOT 让 gate 找到 tmp_path 下的 audit log
         with patch(
@@ -342,6 +387,7 @@ class TestAuditLog:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         audit_dir = tmp_path / ".runtime" / "lookup_audit"
         audit_dir.mkdir(parents=True, exist_ok=True)
@@ -362,6 +408,7 @@ class TestAuditLog:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         audit_dir = tmp_path / ".runtime" / "lookup_audit"
         audit_dir.mkdir(parents=True, exist_ok=True)
@@ -389,6 +436,7 @@ class TestSessionIdMissing:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         spec = make_capability_lookup_required_gate()
@@ -404,6 +452,7 @@ class TestSessionIdMissing:
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
+
         gw = _make_zephyr_gateway(tmp_path)
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         spec = make_capability_lookup_required_gate()
@@ -444,9 +493,7 @@ class TestEndToEnd:
 
         # Step 1: AI 调 rule_discovery
         server = RuleDiscoveryServer()
-        result = server.discover_applicable_rules(
-            operation="file_write", session_id="sess-e2e"
-        )
+        result = server.discover_applicable_rules(operation="file_write", session_id="sess-e2e")
         assert result["count"] >= 1, "rule_discovery should return ≥1 rule for file_write"
 
         # 验证 audit log 已写入

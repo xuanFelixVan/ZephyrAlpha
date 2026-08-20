@@ -19,6 +19,7 @@
 - TestRegistryExceptionSafe: other_held_files 异常安全降级为空集（不阻断 commit）
 - TestGateSpecFields: gate_id / priority 字段正确
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -63,7 +64,10 @@ class TestNoConflict:
         target = tmp_path / "a.py"
         target.touch()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True
         assert detail == ""
@@ -80,7 +84,10 @@ class TestConflictBlocked:
         gw = _make_gateway(tmp_path, other_held={str(target.resolve())})
         gate = make_held_overlap_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is False
         assert "搭便车防护" in detail
@@ -96,7 +103,10 @@ class TestConflictBlocked:
         gw = _make_gateway(tmp_path, other_held={str(a.resolve())})
         gate = make_held_overlap_gate()
         passed, detail = gate.check(
-            gw, [str(a), str(b)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(a), str(b)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is False
         assert "a.py" in detail
@@ -112,7 +122,10 @@ class TestAllowOverlapEscape:
         gw = _make_gateway(tmp_path, other_held={str(target.resolve())})
         gate = make_held_overlap_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=True,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=True,
         )
         assert passed is True
         assert detail == ""
@@ -126,11 +139,15 @@ class TestRegistryExceptionSafe:
         target = tmp_path / "a.py"
         target.touch()
         gw = _make_gateway(
-            tmp_path, raise_exc=RuntimeError("registry down"),
+            tmp_path,
+            raise_exc=RuntimeError("registry down"),
         )
         gate = make_held_overlap_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True
         assert detail == ""

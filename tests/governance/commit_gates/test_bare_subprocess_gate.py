@@ -28,6 +28,7 @@
   - git diff 失败/异常 fail-open
   - 存量违规（非 added 行）放行
 """
+
 from __future__ import annotations
 
 import ast
@@ -63,16 +64,17 @@ class _MockResult:
     stdout: str = ""
 
 
-def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_raises=False,
-                  staged_content_map=None):
+def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_raises=False, staged_content_map=None):
     """构造 mock gateway：--name-only 返回 staged 文件列表；
     --unified=0 diff 返回 added 行；git show :path 返回 staged 内容。"""
     gw = MagicMock()
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -100,8 +102,7 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_r
                 f"new file mode 100644\n"
                 f"--- /dev/null\n"
                 f"+++ b/{path}\n"
-                f"@@ -0,0 +1,{len(diff_lines)} @@\n"
-                + "\n".join(diff_lines)
+                f"@@ -0,0 +1,{len(diff_lines)} @@\n" + "\n".join(diff_lines)
             )
             return _MockResult(0, diff_output)
         return _MockResult(0, "")
@@ -199,9 +200,9 @@ class TestIsBareSubprocessRef:
     def test_detects_executor_submit_subprocess_run(self):
         """executor.submit(subprocess.run, ...) — 引用传递检测"""
         code = (
-            'import subprocess\n'
-            'from concurrent.futures import ThreadPoolExecutor\n'
-            'ex = ThreadPoolExecutor()\n'
+            "import subprocess\n"
+            "from concurrent.futures import ThreadPoolExecutor\n"
+            "ex = ThreadPoolExecutor()\n"
             'ex.submit(subprocess.run, ["ls"])\n'
         )
         node = self._find_ref(code)
@@ -210,24 +211,21 @@ class TestIsBareSubprocessRef:
 
     def test_detects_assignment_subprocess_run(self):
         """fn = subprocess.run — 赋值引用检测"""
-        code = 'import subprocess\nfn = subprocess.run\n'
+        code = "import subprocess\nfn = subprocess.run\n"
         node = self._find_ref(code)
         assert node is not None
         assert node.attr == "run"
 
     def test_detects_callback_subprocess_popen(self):
         """callback(subprocess.Popen, ...) — 参数传递检测"""
-        code = 'import subprocess\ncallback(subprocess.Popen, extra=True)\n'
+        code = "import subprocess\ncallback(subprocess.Popen, extra=True)\n"
         node = self._find_ref(code)
         assert node is not None
         assert node.attr == "Popen"
 
     def test_detects_alias_sp_ref(self):
         """import subprocess as sp; ex.submit(sp.run, ...) — 别名引用检测"""
-        code = (
-            'import subprocess as sp\n'
-            'ex.submit(sp.run, ["ls"])\n'
-        )
+        code = 'import subprocess as sp\nex.submit(sp.run, ["ls"])\n'
         node = self._find_ref(code)
         assert node is not None
         assert node.attr == "run"
@@ -240,13 +238,13 @@ class TestIsBareSubprocessRef:
 
     def test_ignores_non_subprocess_ref(self):
         """os.run 作为引用传递不检测（非 subprocess 模块）"""
-        code = 'import os\nfn = os.run\n'
+        code = "import os\nfn = os.run\n"
         node = self._find_ref(code)
         assert node is None
 
     def test_ignores_object_method_ref(self):
         """obj.run 作为引用传递不检测（非模块级）"""
-        code = 'fn = obj.run\n'
+        code = "fn = obj.run\n"
         node = self._find_ref(code)
         assert node is None
 
@@ -260,9 +258,9 @@ class TestRefPassGatewayIntegration:
     def test_executor_submit_subprocess_run_blocks(self):
         """executor.submit(subprocess.run, ...) → 阻断 commit"""
         content = (
-            'import subprocess\n'
-            'from concurrent.futures import ThreadPoolExecutor\n'
-            'ex = ThreadPoolExecutor()\n'
+            "import subprocess\n"
+            "from concurrent.futures import ThreadPoolExecutor\n"
+            "ex = ThreadPoolExecutor()\n"
             'ex.submit(subprocess.run, ["ls"])\n'
         )
         gw = _make_gateway(
@@ -277,7 +275,7 @@ class TestRefPassGatewayIntegration:
 
     def test_assignment_subprocess_run_blocks(self):
         """fn = subprocess.run → 阻断 commit"""
-        content = 'import subprocess\nfn = subprocess.run\n'
+        content = "import subprocess\nfn = subprocess.run\n"
         gw = _make_gateway(
             staged_files=["src/foo.py"],
             staged_content_map={"src/foo.py": content},
@@ -336,16 +334,13 @@ class TestIsBareSubprocessExemptFile:
 # ---------------------------------------------------------------------------
 class TestExtractNoqaLines:
     def test_detects_noqa_with_reason(self):
-        content = (
-            'import subprocess\n'
-            'subprocess.run(["ls"])  # noqa: bare-subprocess  legit reason here\n'
-        )
+        content = 'import subprocess\nsubprocess.run(["ls"])  # noqa: bare-subprocess  legit reason here\n'
         lines = _extract_noqa_lines(content, _NOQA_PATTERN)
         assert 2 in lines
 
     def test_ignores_noqa_without_reason(self):
         content = (
-            'import subprocess\n'
+            "import subprocess\n"
             'subprocess.run(["ls"])  # noqa: bare-subprocess\n'  # 无 reason
         )
         lines = _extract_noqa_lines(content, _NOQA_PATTERN)
@@ -353,7 +348,7 @@ class TestExtractNoqaLines:
 
     def test_ignores_noqa_single_space(self):
         content = (
-            'import subprocess\n'
+            "import subprocess\n"
             'subprocess.run(["ls"])  # noqa: bare-subprocess reason\n'  # 单空格
         )
         lines = _extract_noqa_lines(content, _NOQA_PATTERN)
@@ -385,7 +380,7 @@ class TestGatewayIntegration:
 
     def test_safe_file_passes(self):
         """新增 .py 安全（无 subprocess 调用）→ 放行"""
-        content = 'import os\nprint(os.getcwd())\n'
+        content = "import os\nprint(os.getcwd())\n"
         gw = _make_gateway(
             staged_files=["src/foo.py"],
             staged_content_map={"src/foo.py": content},
@@ -421,10 +416,7 @@ class TestGatewayIntegration:
 
     def test_noqa_escape(self):
         """noqa 行级逃生"""
-        content = (
-            'import subprocess\n'
-            'subprocess.run(["ls"])  # noqa: bare-subprocess  legit reason here\n'
-        )
+        content = 'import subprocess\nsubprocess.run(["ls"])  # noqa: bare-subprocess  legit reason here\n'
         gw = _make_gateway(
             staged_files=["src/foo.py"],
             staged_content_map={"src/foo.py": content},
@@ -465,13 +457,7 @@ class TestGatewayIntegration:
     def test_existing_violation_not_added_passes(self):
         """存量违规（非 added 行）放行——只检测 added 行"""
         # 模拟非新增文件：subprocess.run 在第 2 行，但 diff 只显示第 5 行 added
-        content = (
-            'import subprocess\n'
-            'subprocess.run(["ls"])  # 第 2 行，存量\n'
-            'x = 1\n'
-            'y = 2\n'
-            'z = 3  # 第 5 行，新增\n'
-        )
+        content = 'import subprocess\nsubprocess.run(["ls"])  # 第 2 行，存量\nx = 1\ny = 2\nz = 3  # 第 5 行，新增\n'
         gw = MagicMock()
         gw.project_root = str(_PROJECT_ROOT)
 
@@ -484,13 +470,16 @@ class TestGatewayIntegration:
                 return _MockResult(0, content)
             if "--unified=0" in cmd:
                 # 只有第 5 行是 added
-                return _MockResult(0, (
-                    "diff --git a/src/foo.py b/src/foo.py\n"
-                    "--- a/src/foo.py\n"
-                    "+++ b/src/foo.py\n"
-                    "@@ -4,0 +5 @@\n"
-                    "+z = 3  # 第 5 行，新增\n"
-                ))
+                return _MockResult(
+                    0,
+                    (
+                        "diff --git a/src/foo.py b/src/foo.py\n"
+                        "--- a/src/foo.py\n"
+                        "+++ b/src/foo.py\n"
+                        "@@ -4,0 +5 @@\n"
+                        "+z = 3  # 第 5 行，新增\n"
+                    ),
+                )
             return _MockResult(0, "")
 
         gw.run_git = _run_git
@@ -502,7 +491,7 @@ class TestGatewayIntegration:
     def test_multiple_violations(self):
         """多个违规一起报告"""
         content = (
-            'import subprocess\n'
+            "import subprocess\n"
             'subprocess.run(["ls"])\n'
             'subprocess.Popen(["echo", "hi"])\n'
             'subprocess.check_output(["pwd"])\n'

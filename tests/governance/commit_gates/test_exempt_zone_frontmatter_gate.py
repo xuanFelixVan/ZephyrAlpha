@@ -27,6 +27,7 @@ subprocess.run 用 monkeypatch 隔离，不触碰真实 git。
 
 测试隔离：MagicMock gateway + tmp_path 真实文件，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import sys
@@ -69,8 +70,10 @@ def _install_ls_tree(monkeypatch, historical=None, raises=False):
     import zephyr.gov_enforcement.commit_gates.exempt_zone_frontmatter_gate as mod
 
     if raises:
+
         def _raise(*a, **k):
             raise OSError("git not available")
+
         monkeypatch.setattr(mod.subprocess, "run", _raise)
         return
 
@@ -81,6 +84,7 @@ def _install_ls_tree(monkeypatch, historical=None, raises=False):
             returncode = 0
             stdout = (rel + "\n") if rel in historical else ""
             stderr = ""
+
         return _R()
 
     monkeypatch.setattr(mod.subprocess, "run", _run)
@@ -226,9 +230,7 @@ class TestGatewayIntegration:
     def test_missing_file_skipped(self, tmp_path, monkeypatch):
         _install_ls_tree(monkeypatch)
         gw = _make_gateway(project_root=str(tmp_path))
-        passed, msg = make_exempt_zone_frontmatter_gate().check(
-            gw, [str(tmp_path / "nonexistent.md")]
-        )
+        passed, msg = make_exempt_zone_frontmatter_gate().check(gw, [str(tmp_path / "nonexistent.md")])
         assert passed
 
     def test_empty_files_passes(self, tmp_path, monkeypatch):

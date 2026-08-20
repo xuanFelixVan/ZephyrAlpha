@@ -32,6 +32,7 @@ shared/foundation/constants.py 作为 SSoT 定义位置文件级豁免。
 
 测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import sys
@@ -65,8 +66,10 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     gw.project_root = str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -189,11 +192,7 @@ class TestGatewayIntegration:
 
     def test_docstring_line_exempt(self):
         blue = "src/zephyr/trading/mod.py"
-        content = (
-            '"""module docstring\n'
-            'url = "http://localhost:11434"\n'
-            '"""\n'
-        )
+        content = '"""module docstring\nurl = "http://localhost:11434"\n"""\n'
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_hardcoded_url_gate().check(gw, [])
         assert passed  # docstring 内行豁免
@@ -207,13 +206,7 @@ class TestGatewayIntegration:
         新方案：ast 只识别真正 docstring，__manifest__ 是 Assign 节点不豁免。
         """
         red = "src/zephyr/trading/mod.py"
-        content = (
-            '__manifest__ = """\n'
-            'args: []\n'
-            '"""\n'
-            '\n'
-            'url = "http://localhost:11434"\n'
-        )
+        content = '__manifest__ = """\nargs: []\n"""\n\nurl = "http://localhost:11434"\n'
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_hardcoded_url_gate().check(gw, [])
         assert not passed  # 应被阻断（R95 修复）
@@ -230,7 +223,7 @@ class TestGatewayIntegration:
 
     def test_import_line_exempt(self):
         blue = "src/zephyr/trading/mod.py"
-        content = 'from x import y  # http://localhost:11434\n'
+        content = "from x import y  # http://localhost:11434\n"
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_hardcoded_url_gate().check(gw, [])
         assert passed  # import 行豁免

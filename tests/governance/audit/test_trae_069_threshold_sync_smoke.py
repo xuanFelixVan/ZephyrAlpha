@@ -32,6 +32,7 @@ Usage::
 
     py -3.12 -m pytest tests/governance/audit/test_trae_069_threshold_sync_smoke.py -v
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -41,11 +42,7 @@ import yaml
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _YAML_PATH = (
-    _REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "rules"
-    / "trae_069_commit_gateway_abuse_thresholds.yaml"
+    _REPO_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_069_commit_gateway_abuse_thresholds.yaml"
 )
 
 
@@ -88,23 +85,17 @@ class TestYamlStructure:
 
     def test_health_score_classification_section_exists(self, trae_069_yaml):
         """P3-4 新增 health_score_classification 段必须存在。"""
-        assert "health_score_classification" in trae_069_yaml, (
-            "health_score_classification 段缺失（P3-4 应新增）"
-        )
+        assert "health_score_classification" in trae_069_yaml, "health_score_classification 段缺失（P3-4 应新增）"
 
     def test_health_score_classification_enabled(self, trae_069_yaml):
         """health_score_classification.enabled 必须为 true。"""
         hsc = trae_069_yaml["health_score_classification"]
-        assert hsc["enabled"] is True, (
-            f"health_score_classification.enabled 应为 true，实际: {hsc['enabled']}"
-        )
+        assert hsc["enabled"] is True, f"health_score_classification.enabled 应为 true，实际: {hsc['enabled']}"
 
     def test_health_score_classification_thresholds(self, trae_069_yaml):
         """health_score_classification 三档阈值正确（clean<0.7/critical>=0.7/block>=0.9）。"""
         hsc = trae_069_yaml["health_score_classification"]
-        assert hsc["clean"]["score_max"] == 0.7, (
-            f"clean.score_max 应为 0.7，实际: {hsc['clean']['score_max']}"
-        )
+        assert hsc["clean"]["score_max"] == 0.7, f"clean.score_max 应为 0.7，实际: {hsc['clean']['score_max']}"
         assert hsc["critical_warn"]["score_min"] == 0.7, (
             f"critical_warn.score_min 应为 0.7，实际: {hsc['critical_warn']['score_min']}"
         )
@@ -124,24 +115,18 @@ class TestYamlStructure:
 
     def test_adaptive_health_score_section_exists(self, trae_069_yaml):
         """P3-4 新增 adaptive.health_score 段必须存在。"""
-        assert "health_score" in trae_069_yaml["adaptive"], (
-            "adaptive.health_score 段缺失（P3-4 应新增）"
-        )
+        assert "health_score" in trae_069_yaml["adaptive"], "adaptive.health_score 段缺失（P3-4 应新增）"
 
     def test_adaptive_health_score_enabled(self, trae_069_yaml):
         """adaptive.health_score.enabled 必须为 true。"""
         hs = trae_069_yaml["adaptive"]["health_score"]
-        assert hs["enabled"] is True, (
-            f"adaptive.health_score.enabled 应为 true，实际: {hs['enabled']}"
-        )
+        assert hs["enabled"] is True, f"adaptive.health_score.enabled 应为 true，实际: {hs['enabled']}"
 
     def test_adaptive_health_score_calculator_path(self, trae_069_yaml):
         """adaptive.health_score.calculator 路径正确。"""
         hs = trae_069_yaml["adaptive"]["health_score"]
         expected = "zephyr.governance.audit.health_score_calculator.calculate_health_score"
-        assert hs["calculator"] == expected, (
-            f"calculator 应为 {expected}，实际: {hs['calculator']}"
-        )
+        assert hs["calculator"] == expected, f"calculator 应为 {expected}，实际: {hs['calculator']}"
 
     def test_adaptive_health_score_weights(self, trae_069_yaml):
         """adaptive.health_score.weights 6 维权重正确（forged=0.30 最高，v1.3.0 6 维扩展）。"""
@@ -163,9 +148,7 @@ class TestYamlStructure:
         hs = trae_069_yaml["adaptive"]["health_score"]
         weights = hs["weights"]
         total = sum(weights.values())
-        assert abs(total - 1.0) < 1e-6, (
-            f"权重总和应为 1.0，实际: {total}（误差 > 1e-6）"
-        )
+        assert abs(total - 1.0) < 1e-6, f"权重总和应为 1.0，实际: {total}（误差 > 1e-6）"
 
     def test_adaptive_health_score_score_thresholds(self, trae_069_yaml):
         """adaptive.health_score.score_thresholds 与 health_score_classification 一致。"""
@@ -190,12 +173,8 @@ class TestYamlStructure:
     def test_adaptive_health_score_fail_safe(self, trae_069_yaml):
         """adaptive.health_score.fail_safe 策略正确。"""
         hs = trae_069_yaml["adaptive"]["health_score"]
-        assert "threshold <= 0" in hs["fail_safe"], (
-            f"fail_safe 应包含 'threshold <= 0'，实际: {hs['fail_safe']}"
-        )
-        assert "dim_score = 0.0" in hs["fail_safe"], (
-            f"fail_safe 应包含 'dim_score = 0.0'，实际: {hs['fail_safe']}"
-        )
+        assert "threshold <= 0" in hs["fail_safe"], f"fail_safe 应包含 'threshold <= 0'，实际: {hs['fail_safe']}"
+        assert "dim_score = 0.0" in hs["fail_safe"], f"fail_safe 应包含 'dim_score = 0.0'，实际: {hs['fail_safe']}"
 
 
 # ============================================================================
@@ -213,18 +192,12 @@ class TestChangelog:
 
     def test_v1_2_0_adjudication_is_p3_4(self, trae_069_yaml):
         """v1.2.0 条目 adjudication 必须为 #ARCH-PREVENTABILITY-LAYER-001 Phase 3 (P3-4)。"""
-        v120 = next(
-            e for e in trae_069_yaml["changelog"] if e["version"] == "1.2.0"
-        )
-        assert "P3-4" in v120["adjudication"], (
-            f"v1.2.0 adjudication 应包含 'P3-4'，实际: {v120['adjudication']}"
-        )
+        v120 = next(e for e in trae_069_yaml["changelog"] if e["version"] == "1.2.0")
+        assert "P3-4" in v120["adjudication"], f"v1.2.0 adjudication 应包含 'P3-4'，实际: {v120['adjudication']}"
 
     def test_v1_2_0_change_mentions_health_score(self, trae_069_yaml):
         """v1.2.0 change 必须提及 health_score_classification 和 adaptive.health_score。"""
-        v120 = next(
-            e for e in trae_069_yaml["changelog"] if e["version"] == "1.2.0"
-        )
+        v120 = next(e for e in trae_069_yaml["changelog"] if e["version"] == "1.2.0")
         assert "health_score_classification" in v120["change"], (
             f"v1.2.0 change 应提及 health_score_classification，实际: {v120['change']}"
         )
@@ -243,9 +216,7 @@ class TestYamlToCodeSync:
 
     def test_code_block_next_score_matches_yaml(self, trae_069_yaml, reconciler_module):
         """代码 _BLOCK_NEXT_SCORE 必须与 YAML block_next.score_min 一致。"""
-        yaml_block_next = trae_069_yaml["health_score_classification"]["block_next"][
-            "score_min"
-        ]
+        yaml_block_next = trae_069_yaml["health_score_classification"]["block_next"]["score_min"]
         code_block_next = reconciler_module._BLOCK_NEXT_SCORE
         assert code_block_next == yaml_block_next, (
             f"_BLOCK_NEXT_SCORE={code_block_next} 与 YAML block_next.score_min="
@@ -254,9 +225,7 @@ class TestYamlToCodeSync:
 
     def test_code_critical_warn_score_matches_yaml(self, trae_069_yaml, reconciler_module):
         """代码 _CRITICAL_WARN_SCORE 必须与 YAML critical_warn.score_min 一致。"""
-        yaml_critical = trae_069_yaml["health_score_classification"]["critical_warn"][
-            "score_min"
-        ]
+        yaml_critical = trae_069_yaml["health_score_classification"]["critical_warn"]["score_min"]
         code_critical = reconciler_module._CRITICAL_WARN_SCORE
         assert code_critical == yaml_critical, (
             f"_CRITICAL_WARN_SCORE={code_critical} 与 YAML critical_warn.score_min="
@@ -274,9 +243,7 @@ class TestYamlToCodeSync:
             # 具体字段名映射由 reconciler 内部 _load_thresholds_from_yaml 处理
             # smoke test 只验证关键不变量：YAML 6 维阈值都是正整数
             for dim_name, config in yaml_thresholds.items():
-                assert config["value"] > 0, (
-                    f"YAML thresholds.{dim_name}.value 应 > 0，实际: {config['value']}"
-                )
+                assert config["value"] > 0, f"YAML thresholds.{dim_name}.value 应 > 0，实际: {config['value']}"
 
     def test_calculate_health_score_importable(self, reconciler_module):
         """calculate_health_score 必须可从 reconciler 模块导入（P3-3 接入链路完整）。"""
@@ -286,16 +253,12 @@ class TestYamlToCodeSync:
             calculate_health_score,
         )
 
-        assert callable(calculate_health_score), (
-            "calculate_health_score 不可调用（P3-2 接口损坏）"
-        )
+        assert callable(calculate_health_score), "calculate_health_score 不可调用（P3-2 接口损坏）"
         # 验证 reconciler 模块内有引用（通过 inspect 源码）
         import inspect
 
         src = inspect.getsource(reconciler_module)
-        assert "calculate_health_score" in src, (
-            "reconciler 模块源码未引用 calculate_health_score（P3-3 接入断链）"
-        )
+        assert "calculate_health_score" in src, "reconciler 模块源码未引用 calculate_health_score（P3-3 接入断链）"
 
 
 # ============================================================================
@@ -322,23 +285,15 @@ class TestP34LandingAnnotations:
         """adaptive.description 必须提及 P3-4 已落地。"""
         desc = trae_069_yaml["adaptive"]["description"]
         assert "P3-4" in desc, "adaptive.description 未提及 P3-4"
-        assert "已落地" in desc, (
-            "adaptive.description 未标注 P3-4 已落地"
-        )
+        assert "已落地" in desc, "adaptive.description 未标注 P3-4 已落地"
 
     def test_adaptive_description_mentions_commit_hash(self, trae_069_yaml):
         """adaptive.description 必须提及 P3-2/P3-3 落地 commit hash。"""
         desc = trae_069_yaml["adaptive"]["description"]
-        assert "b160c82a03" in desc, (
-            "adaptive.description 未提及 P3-2/P3-3 commit b160c82a03"
-        )
-        assert "19dd6661c6" in desc, (
-            "adaptive.description 未提及 P3-2/P3-3 merge 19dd6661c6"
-        )
+        assert "b160c82a03" in desc, "adaptive.description 未提及 P3-2/P3-3 commit b160c82a03"
+        assert "19dd6661c6" in desc, "adaptive.description 未提及 P3-2/P3-3 merge 19dd6661c6"
 
     def test_adaptive_description_mentions_test_count(self, trae_069_yaml):
         """adaptive.description 必须提及 98/98 测试通过。"""
         desc = trae_069_yaml["adaptive"]["description"]
-        assert "98/98" in desc, (
-            "adaptive.description 未提及 98/98 测试通过（P3-2/P3-3 落地验证）"
-        )
+        assert "98/98" in desc, "adaptive.description 未提及 98/98 测试通过（P3-2/P3-3 落地验证）"

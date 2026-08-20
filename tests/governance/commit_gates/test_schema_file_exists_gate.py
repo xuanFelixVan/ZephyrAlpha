@@ -33,6 +33,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch os.path.exists 模拟文件存在性。
 """
+
 from __future__ import annotations
 
 import sys
@@ -76,6 +77,7 @@ def _make_mock_gateway(
         project_root: 项目根路径。
         git_show_rc: git show returncode。
     """
+
     def _run_git(cmd):
         if "show" in cmd and ":" + _YAML_REL in cmd:
             return _MockResult(
@@ -141,9 +143,7 @@ class TestCheckSchemaFilesExist:
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert result == []
 
-    def test_all_schema_files_exist_returns_empty(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_all_schema_files_exist_returns_empty(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """所有 schema_file 存在 → [] (通过)。"""
         yaml_content = (
             "- category_id: cat_a\n"
@@ -160,9 +160,7 @@ class TestCheckSchemaFilesExist:
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert result == []
 
-    def test_broken_schema_file_returns_violation(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_broken_schema_file_returns_violation(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """单个 schema_file 不存在 → 违规消息。"""
         # 在 tmp_path 下创建 market_tick.py（存在的），nonexistent.py 不创建
         (tmp_path / "schemas" / "categories").mkdir(parents=True, exist_ok=True)
@@ -182,14 +180,9 @@ class TestCheckSchemaFilesExist:
         assert "nonexistent.py" in result[0]
         assert "声明层→存在层断裂" in result[0]
 
-    def test_null_schema_file_skipped(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_null_schema_file_skipped(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """schema_file=null → 跳过。"""
-        yaml_content = (
-            "- category_id: null_cat\n"
-            "  schema_file: null\n"
-        )
+        yaml_content = "- category_id: null_cat\n  schema_file: null\n"
         gw = _make_mock_gateway(yaml_content=yaml_content)
         monkeypatch.setattr(
             "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
@@ -198,14 +191,9 @@ class TestCheckSchemaFilesExist:
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert result == []
 
-    def test_missing_schema_file_field_skipped(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_missing_schema_file_field_skipped(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """缺 schema_file 字段 → 跳过。"""
-        yaml_content = (
-            "- category_id: no_field_cat\n"
-            "  description: some metadata table\n"
-        )
+        yaml_content = "- category_id: no_field_cat\n  description: some metadata table\n"
         gw = _make_mock_gateway(yaml_content=yaml_content)
         monkeypatch.setattr(
             "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
@@ -214,14 +202,9 @@ class TestCheckSchemaFilesExist:
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert result == []
 
-    def test_empty_schema_file_skipped(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_empty_schema_file_skipped(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """schema_file='' → 跳过（falsy）。"""
-        yaml_content = (
-            "- category_id: empty_cat\n"
-            "  schema_file: ''\n"
-        )
+        yaml_content = "- category_id: empty_cat\n  schema_file: ''\n"
         gw = _make_mock_gateway(yaml_content=yaml_content)
         monkeypatch.setattr(
             "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
@@ -230,16 +213,11 @@ class TestCheckSchemaFilesExist:
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert result == []
 
-    def test_multiple_violations_all_returned(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_multiple_violations_all_returned(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """多违规全部返回。"""
         yaml_lines = []
         for i in range(3):
-            yaml_lines.append(
-                f"- category_id: broken_cat_{i}\n"
-                f"  schema_file: schemas/categories/broken_{i}.py\n"
-            )
+            yaml_lines.append(f"- category_id: broken_cat_{i}\n  schema_file: schemas/categories/broken_{i}.py\n")
         yaml_content = "".join(yaml_lines)
         gw = _make_mock_gateway(yaml_content=yaml_content)
         monkeypatch.setattr(
@@ -269,14 +247,9 @@ class TestCheckClosure:
         assert passed is True
         assert detail == ""
 
-    def test_all_schema_files_exist_passes(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_all_schema_files_exist_passes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """files 含 YAML，所有 schema_file 存在 → pass。"""
-        yaml_content = (
-            "- category_id: cat_a\n"
-            "  schema_file: schemas/categories/market_tick.py\n"
-        )
+        yaml_content = "- category_id: cat_a\n  schema_file: schemas/categories/market_tick.py\n"
         gw = _make_mock_gateway(yaml_content=yaml_content, project_root=str(tmp_path))
         monkeypatch.setattr(
             "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
@@ -287,14 +260,9 @@ class TestCheckClosure:
         assert passed is True
         assert detail == ""
 
-    def test_broken_schema_file_blocks(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_broken_schema_file_blocks(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """files 含 YAML 含悬空 schema_file → block。"""
-        yaml_content = (
-            "- category_id: broken_cat\n"
-            "  schema_file: schemas/categories/nonexistent.py\n"
-        )
+        yaml_content = "- category_id: broken_cat\n  schema_file: schemas/categories/nonexistent.py\n"
         gw = _make_mock_gateway(yaml_content=yaml_content, project_root=str(tmp_path))
         monkeypatch.setattr(
             "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
@@ -308,9 +276,7 @@ class TestCheckClosure:
         assert "nonexistent.py" in detail
         assert "ARCH-SSOT-REFERENCE-INTEGRITY-001" in detail
 
-    def test_yaml_parse_error_fail_open(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_yaml_parse_error_fail_open(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """YAML 解析失败 → fail-open pass。"""
         gw = _make_mock_gateway(
             yaml_content="invalid: yaml: [",
@@ -333,14 +299,9 @@ class TestCheckClosure:
         assert passed is True
         assert detail == ""
 
-    def test_windows_path_separator_normalized(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_windows_path_separator_normalized(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Windows 反斜杠路径归一化（files 含反斜杠）。"""
-        yaml_content = (
-            "- category_id: cat_a\n"
-            "  schema_file: schemas/categories/market_tick.py\n"
-        )
+        yaml_content = "- category_id: cat_a\n  schema_file: schemas/categories/market_tick.py\n"
         gw = _make_mock_gateway(yaml_content=yaml_content, project_root=str(tmp_path))
         monkeypatch.setattr(
             "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
@@ -352,16 +313,11 @@ class TestCheckClosure:
         passed, detail = gate.check(gw, files=[win_path])
         assert passed is True
 
-    def test_multiple_violations_truncated(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_multiple_violations_truncated(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """多于 30 条违规 → 截断到 30 + (...+N more)。"""
         yaml_lines = []
         for i in range(35):
-            yaml_lines.append(
-                f"- category_id: cat_{i}\n"
-                f"  schema_file: schemas/categories/broken_{i}.py\n"
-            )
+            yaml_lines.append(f"- category_id: cat_{i}\n  schema_file: schemas/categories/broken_{i}.py\n")
         yaml_content = "".join(yaml_lines)
         gw = _make_mock_gateway(yaml_content=yaml_content, project_root=str(tmp_path))
         monkeypatch.setattr(
@@ -392,9 +348,7 @@ class TestCheckClosure:
 class TestIntegrationWithRealYaml:
     """集成测试：使用真实 business_data_categories.yaml 验证（已知 10/10 valid）。"""
 
-    def test_real_yaml_all_valid(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_real_yaml_all_valid(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """真实 business_data_categories.yaml 所有 schema_file 都存在 → pass。
 
         前置：项目根 d:\\ZephyrAlpha 包含完整 schemas/ 目录。

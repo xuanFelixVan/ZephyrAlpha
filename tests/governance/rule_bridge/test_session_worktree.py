@@ -26,6 +26,7 @@ validate_commit_gateway.py（GATE-COMMIT-GW worktree 放行）
 - test_worktree_merge_releases_claims: merge 后 unregister 自动释放 claim，其他 session 可 commit
 - test_end_to_end_lifecycle: 完整生命周期（建→commit→merge→abort→清理）
 """
+
 from __future__ import annotations
 
 import json
@@ -62,6 +63,7 @@ def _force_rmtree(path: Path) -> None:
     ``onerror`` 回调：清除只读位 → sleep 500ms 等句柄释放 → 重试，最多 3 轮。
     最终静默忽略（物理残留无害，git 元数据才是真源，下轮 fixture 会再试）。
     """
+
     def _on_error(func, p, exc_info):  # noqa: ANN001
         for attempt in range(3):
             try:
@@ -95,7 +97,8 @@ def _cleanup_artifacts(repo: Path, orig_head: str | None = None) -> None:
         if wt.exists():
             subprocess.run(
                 ["git", "worktree", "remove", "--force", str(wt)],
-                cwd=repo, capture_output=True,
+                cwd=repo,
+                capture_output=True,
             )
             # Windows 文件锁兜底：git worktree remove --force 可能因 [WinError 32]
             # （.gitignore/index 等句柄延迟释放或防病毒扫描占用）失败。
@@ -105,7 +108,8 @@ def _cleanup_artifacts(repo: Path, orig_head: str | None = None) -> None:
                 _force_rmtree(wt)
         subprocess.run(
             ["git", "branch", "-D", f"session/{sid}"],
-            cwd=repo, capture_output=True,
+            cwd=repo,
+            capture_output=True,
         )
     subprocess.run(["git", "worktree", "prune"], cwd=repo, capture_output=True)
 
@@ -124,7 +128,8 @@ def _cleanup_artifacts(repo: Path, orig_head: str | None = None) -> None:
         subprocess.run(["git", "reset", "--soft", orig_head], cwd=repo, capture_output=True)
         subprocess.run(
             ["git", "reset", "HEAD", "--"] + [_TEST_FILE_A, _TEST_FILE_B],
-            cwd=repo, capture_output=True,
+            cwd=repo,
+            capture_output=True,
         )
 
     # 清理 marker 文件（主工作区，merge 后可能残留）
@@ -200,17 +205,14 @@ def _create_gate_source_stubs(repo: Path) -> None:
     # #ARCH-DEP-001 第二期 pre-merge 拓扑硬阻断）。stub 输出合法 clean JSON（0 findings，
     # depgraph_module_ids=1 非 0 避免 DB-down fail-open 误判），使隔离仓库的 merge 测试
     # 不被 topo check 阻断。真实 checker 逻辑由 test_pre_merge_topo_check_* 单元测试覆盖。
-    topo_stub = (
-        repo / "scripts" / "governance" / "d5_architecture" / "checkers"
-        / "check_blueprint_code_alignment.py"
-    )
+    topo_stub = repo / "scripts" / "governance" / "d5_architecture" / "checkers" / "check_blueprint_code_alignment.py"
     topo_stub.parent.mkdir(parents=True, exist_ok=True)
     topo_stub.write_text(
-        '#!/usr/bin/env python\n'
-        'import json, sys\n'
+        "#!/usr/bin/env python\n"
+        "import json, sys\n"
         'print(json.dumps({"findings": [], "high": 0, "medium": 0, "low": 0,'
         ' "depgraph_module_ids": 1}))\n'
-        'sys.exit(0)\n',
+        "sys.exit(0)\n",
         encoding="utf-8",
     )
 
@@ -238,7 +240,8 @@ def _isolated_repo(tmp_path_factory):
     subprocess.run(["git", "add", "-A"], cwd=repo, capture_output=True)
     subprocess.run(
         ["git", "commit", "--no-verify", "-m", "test: add gate source stubs"],
-        cwd=repo, capture_output=True,
+        cwd=repo,
+        capture_output=True,
     )
     return repo
 
@@ -256,6 +259,7 @@ def _clean_worktree_env(_isolated_repo, monkeypatch):
 
     import zephyr.gov_enforcement.rule_bridge.session_worktree as sw_mod
     import zephyr.gov_enforcement.rule_bridge.worktree_manager as wm_mod
+
     test_mod = sys.modules[__name__]
     monkeypatch.setattr(sw_mod, "REPO_ROOT", _isolated_repo)
     monkeypatch.setattr(wm_mod, "REPO_ROOT", _isolated_repo)
@@ -318,7 +322,8 @@ def test_worktree_commit_file_deletion():
     subprocess.run(["git", "add", "--", _TEST_FILE_A], cwd=REPO_ROOT, capture_output=True)
     subprocess.run(
         ["git", "commit", "--no-verify", "-m", "test: add marker for deletion test"],
-        cwd=REPO_ROOT, capture_output=True,
+        cwd=REPO_ROOT,
+        capture_output=True,
     )
 
     # 2. 启动 worktree（继承 HEAD，含 _TEST_FILE_A）
@@ -467,31 +472,30 @@ def test_worktree_abort_stashes_tracked_files(_isolated_repo):
         assert a.get("main_cleaned") == 1, f"应 stash 1 个 tracked 文件: {a}"
 
         # 4. 文件应还原到 HEAD（original_content）
-        assert tracked_path.read_text(encoding="utf-8") == original_content, \
+        assert tracked_path.read_text(encoding="utf-8") == original_content, (
             "tracked 文件未还原到 HEAD（stash 应使工作区回到 HEAD 状态）"
+        )
 
         # 5. stash 栈应有 1 个条目，message 含 session_id（S3-B 核心断言：可恢复）
-        stash_list = subprocess.run(
-            ["git", "stash", "list"], cwd=repo, capture_output=True, text=True
-        ).stdout.strip()
-        assert "session_worktree_abort" in stash_list, \
-            f"stash 栈未包含 abort 保存的修改: {stash_list!r}"
-        assert sid in stash_list, \
-            f"stash message 未含 session_id 溯源: {stash_list!r}"
+        stash_list = subprocess.run(["git", "stash", "list"], cwd=repo, capture_output=True, text=True).stdout.strip()
+        assert "session_worktree_abort" in stash_list, f"stash 栈未包含 abort 保存的修改: {stash_list!r}"
+        assert sid in stash_list, f"stash message 未含 session_id 溯源: {stash_list!r}"
 
         # 6. 验证可恢复性：stash 内容确实包含 AI 修改
         stash_show = subprocess.run(
             ["git", "stash", "show", "-p", "stash@{0}"],
-            cwd=repo, capture_output=True, text=True,
+            cwd=repo,
+            capture_output=True,
+            text=True,
         ).stdout
-        assert "AI modified content" in stash_show, \
-            f"stash 内容不含 AI 修改（不可恢复）: {stash_show!r}"
+        assert "AI modified content" in stash_show, f"stash 内容不含 AI 修改（不可恢复）: {stash_show!r}"
     finally:
         # 清理 stash + 还原 .gitkeep（避免污染其他测试）
         subprocess.run(["git", "stash", "clear"], cwd=repo, capture_output=True)
         subprocess.run(
             ["git", "checkout", "--", tracked_file],
-            cwd=repo, capture_output=True,
+            cwd=repo,
+            capture_output=True,
         )
 
 
@@ -574,7 +578,9 @@ def test_worktree_commit_allow_overlap():
     marker_b.parent.mkdir(parents=True, exist_ok=True)
     marker_b.write_text('{"session": "B"}\n', encoding="utf-8")
     cB = session_worktree_commit(
-        "sess-pytest-B", files=[_TEST_FILE_A], message="test: B overlap escape",
+        "sess-pytest-B",
+        files=[_TEST_FILE_A],
+        message="test: B overlap escape",
         allow_overlap=True,
     )
     assert cB["status"] == "OK", f"B allow_overlap 应放行: {cB}"
@@ -583,6 +589,7 @@ def test_worktree_commit_allow_overlap():
 def test_worktree_merge_releases_claims():
     """merge 后 unregister 自动释放 claim，其他 session 可 commit 同文件。"""
     from zephyr.security.access_control.session_concurrency import SessionRegistry
+
     registry = SessionRegistry(REPO_ROOT)
 
     # Session A commit _TEST_FILE_A（auto-claim）
@@ -686,6 +693,7 @@ def test_end_to_end_lifecycle():
 # 验证三重安全保护：age + active registry + 分支 tip（核心两重：age + active）
 # ---------------------------------------------------------------------------
 
+
 def test_sweep_cleans_stale_orphan():
     """sweep 清理老化的孤儿物理目录（git worktree 未注册，判据通过）。"""
     from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_stale_worktrees
@@ -783,14 +791,17 @@ def test_sweep_quarantine_refs_cleans_expired():
     import time as _time
 
     from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_quarantine_refs
+
     old_ts = str(int(_time.time() - 100 * 3600))
     new_ts = str(int(_time.time() - 1 * 3600))
     for_each_output = f"refs/quarantine/sess-old {old_ts}\nrefs/quarantine/sess-new {new_ts}\n"
     # 第一次 _run_git = for-each-ref，第二次 = update-ref -d（删旧的）
-    mgr = _MockManager([
-        _git_result(stdout=for_each_output, returncode=0),
-        _git_result(returncode=0),  # delete sess-old
-    ])
+    mgr = _MockManager(
+        [
+            _git_result(stdout=for_each_output, returncode=0),
+            _git_result(returncode=0),  # delete sess-old
+        ]
+    )
     r = _sweep_quarantine_refs(mgr, max_age_hours=72)
     assert r["deleted"] == 1
     assert r["skipped"] == 1
@@ -814,13 +825,15 @@ def test_sweep_one_dir_force_clean_skips_when_disabled():
     # 需要 mock: _branch_name, _run_git (rev-parse, merge-base, cherry, log)
     # 使用 _MockManager 不够（缺 _branch_name / _worktree_exists）
     # 验证 force_clean_threshold=0 时行为不变——跳过
-    mgr = _MockManager([
-        _git_result(returncode=0),  # rev-parse --verify branch (exists)
-        _git_result(returncode=1),  # merge-base --is-ancestor (NOT ancestor = has unmerged)
-        _git_result(stdout="+ abc1234\n", returncode=0),  # git cherry (1 not superseded)
-        _git_result(stdout="subject1", returncode=0),  # git log -1 format=%s
-        _git_result(stdout="", returncode=0),  # git log HEAD --format=%s (head_subjects empty → not superseded)
-    ])
+    mgr = _MockManager(
+        [
+            _git_result(returncode=0),  # rev-parse --verify branch (exists)
+            _git_result(returncode=1),  # merge-base --is-ancestor (NOT ancestor = has unmerged)
+            _git_result(stdout="+ abc1234\n", returncode=0),  # git cherry (1 not superseded)
+            _git_result(stdout="subject1", returncode=0),  # git log -1 format=%s
+            _git_result(stdout="", returncode=0),  # git log HEAD --format=%s (head_subjects empty → not superseded)
+        ]
+    )
     mgr.branch_name = lambda sid: f"session/{sid}"
     mgr.worktree_exists = lambda sid: False
     mgr.repo_root = Path(REPO_ROOT)
@@ -832,9 +845,15 @@ def test_sweep_one_dir_force_clean_skips_when_disabled():
     os.utime(old_dir, (old, old))
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         registry = SessionRegistry(REPO_ROOT)
         swept, skipped, warnings = _sweep_one_dir(
-            mgr, registry, old_dir, time.time(), 1800, set(),
+            mgr,
+            registry,
+            old_dir,
+            time.time(),
+            1800,
+            set(),
             force_clean_threshold=0,  # 禁用 force-clean
         )
         assert swept == 0, f"force_clean=0 时不应清理: {warnings}"
@@ -859,17 +878,19 @@ def test_sweep_one_dir_force_clean_triggers_when_over_age():
     # 7. git worktree prune (worktree not registered)
     # 8. git worktree prune (again)
     # 9. git branch -D <branch> → success
-    mgr = _MockManager([
-        _git_result(returncode=0),  # rev-parse --verify
-        _git_result(returncode=1),  # merge-base --is-ancestor (NOT ancestor)
-        _git_result(stdout="+ abc1234\n", returncode=0),  # cherry
-        _git_result(stdout="subject1", returncode=0),  # log -1 %s
-        _git_result(stdout="", returncode=0),  # log HEAD %s (empty → not superseded)
-        _git_result(returncode=0),  # update-ref (quarantine ref)
-        _git_result(returncode=0),  # worktree prune
-        _git_result(returncode=0),  # worktree prune (again)
-        _git_result(returncode=0),  # branch -D
-    ])
+    mgr = _MockManager(
+        [
+            _git_result(returncode=0),  # rev-parse --verify
+            _git_result(returncode=1),  # merge-base --is-ancestor (NOT ancestor)
+            _git_result(stdout="+ abc1234\n", returncode=0),  # cherry
+            _git_result(stdout="subject1", returncode=0),  # log -1 %s
+            _git_result(stdout="", returncode=0),  # log HEAD %s (empty → not superseded)
+            _git_result(returncode=0),  # update-ref (quarantine ref)
+            _git_result(returncode=0),  # worktree prune
+            _git_result(returncode=0),  # worktree prune (again)
+            _git_result(returncode=0),  # branch -D
+        ]
+    )
     mgr.branch_name = lambda sid: f"session/{sid}"
     mgr.worktree_exists = lambda sid: False
     mgr.repo_root = Path(REPO_ROOT)
@@ -880,10 +901,16 @@ def test_sweep_one_dir_force_clean_triggers_when_over_age():
     os.utime(old_dir, (old, old))
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         registry = SessionRegistry(REPO_ROOT)
         # force_clean_threshold = 86400 (24h), age = 100000s (~28h) → triggers
         swept, skipped, warnings = _sweep_one_dir(
-            mgr, registry, old_dir, time.time(), 1800, set(),
+            mgr,
+            registry,
+            old_dir,
+            time.time(),
+            1800,
+            set(),
             force_clean_threshold=86400,
         )
         assert swept == 1, f"force-clean 应清理超龄 worktree: {warnings}"
@@ -899,7 +926,8 @@ def test_sweep_one_dir_force_clean_triggers_when_over_age():
         # 清理可能创建的 quarantine ref
         subprocess.run(
             ["git", "update-ref", "-d", "refs/quarantine/sess-force-clean-trigger"],
-            cwd=str(REPO_ROOT), capture_output=True,
+            cwd=str(REPO_ROOT),
+            capture_output=True,
         )
 
 
@@ -955,7 +983,12 @@ def test_sweep_skips_when_active_lockfile_fresh():
         registry = SessionRegistry(REPO_ROOT)
         # active_sids=set() 模拟 session 不在 active registry（passes 判据 2）
         swept, skipped, warnings = _sweep_one_dir(
-            manager, registry, old_dir, time.time(), 1800, set(),
+            manager,
+            registry,
+            old_dir,
+            time.time(),
+            1800,
+            set(),
         )
         assert swept == 0, f"fresh lockfile 应阻止 sweep: {warnings}"
         assert skipped == 1
@@ -997,7 +1030,12 @@ def test_sweep_proceeds_when_lockfile_stale():
         manager = WorktreeManager(REPO_ROOT)
         registry = SessionRegistry(REPO_ROOT)
         swept, skipped, warnings = _sweep_one_dir(
-            manager, registry, old_dir, time.time(), 1800, set(),
+            manager,
+            registry,
+            old_dir,
+            time.time(),
+            1800,
+            set(),
         )
         assert swept >= 1, f"stale lockfile 应允许 sweep 继续: {warnings}"
         assert not old_dir.exists(), "orphan worktree 应被清理"
@@ -1033,7 +1071,12 @@ def test_sweep_proceeds_when_lockfile_corrupted():
         manager = WorktreeManager(REPO_ROOT)
         registry = SessionRegistry(REPO_ROOT)
         swept, skipped, warnings = _sweep_one_dir(
-            manager, registry, old_dir, time.time(), 1800, set(),
+            manager,
+            registry,
+            old_dir,
+            time.time(),
+            1800,
+            set(),
         )
         assert swept >= 1, f"corrupted lockfile 应允许 sweep 继续: {warnings}"
         assert not old_dir.exists(), "orphan worktree 应被清理"
@@ -1137,11 +1180,13 @@ def test_branch_commits_superseded_mixed_patch_and_message():
     """_branch_commits_superseded: patch-id 部分匹配 + message 补充匹配 → 全取代 True。"""
     from zephyr.gov_enforcement.rule_bridge.session_worktree import _branch_commits_superseded
 
-    m = _MockManager([
-        _git_result(stdout="- abc123\n+ def456\n"),  # cherry: 1 patch-id ok, 1 not
-        _git_result(stdout="fix: patch-id ok commit\nfix: message matched commit\n"),  # HEAD subjects
-        _git_result(stdout="fix: message matched commit"),  # def456 的 subject
-    ])
+    m = _MockManager(
+        [
+            _git_result(stdout="- abc123\n+ def456\n"),  # cherry: 1 patch-id ok, 1 not
+            _git_result(stdout="fix: patch-id ok commit\nfix: message matched commit\n"),  # HEAD subjects
+            _git_result(stdout="fix: message matched commit"),  # def456 的 subject
+        ]
+    )
     result, reason = _branch_commits_superseded("test-branch", m)
     assert result is True, f"混合匹配应全取代 True: {reason}"
     assert "1 patch-id + 1 message" in reason
@@ -1151,12 +1196,14 @@ def test_branch_commits_superseded_not_all():
     """_branch_commits_superseded: 部分未取代 → False。"""
     from zephyr.gov_enforcement.rule_bridge.session_worktree import _branch_commits_superseded
 
-    m = _MockManager([
-        _git_result(stdout="+ abc123\n+ def456\n"),  # cherry: 全 '+'
-        _git_result(stdout="some other subject\n"),  # HEAD subjects
-        _git_result(stdout="abc123 subject"),  # abc123 的 subject → 不匹配
-        _git_result(stdout="def456 subject"),  # def456 的 subject → 不匹配
-    ])
+    m = _MockManager(
+        [
+            _git_result(stdout="+ abc123\n+ def456\n"),  # cherry: 全 '+'
+            _git_result(stdout="some other subject\n"),  # HEAD subjects
+            _git_result(stdout="abc123 subject"),  # abc123 的 subject → 不匹配
+            _git_result(stdout="def456 subject"),  # def456 的 subject → 不匹配
+        ]
+    )
     result, reason = _branch_commits_superseded("test-branch", m)
     assert result is False, f"全未取代应返回 False: {reason}"
     assert "0/2 superseded" in reason
@@ -1186,10 +1233,12 @@ def test_branch_commits_superseded_no_head_subjects():
     """_branch_commits_superseded: head_subjects 获取失败 → False（保守跳过）。"""
     from zephyr.gov_enforcement.rule_bridge.session_worktree import _branch_commits_superseded
 
-    m = _MockManager([
-        _git_result(stdout="+ abc123\n"),  # cherry: 1 未取代
-        _git_result(returncode=1, stdout=""),  # git log HEAD 失败
-    ])
+    m = _MockManager(
+        [
+            _git_result(stdout="+ abc123\n"),  # cherry: 1 未取代
+            _git_result(returncode=1, stdout=""),  # git log HEAD 失败
+        ]
+    )
     result, reason = _branch_commits_superseded("test-branch", m)
     assert result is False, f"head_subjects 失败应返回 False: {reason}"
     assert "no head_subjects" in reason
@@ -1402,6 +1451,7 @@ def test_session_worktree_sweep_public_wrapper():
 def test_sweep_type_validation_rejects_path():
     """_sweep_stale_worktrees 传入 Path（非 WorktreeManager）返回 error dict 而非 AttributeError。"""
     from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_stale_worktrees
+
     r = _sweep_stale_worktrees(REPO_ROOT, None, max_age_minutes=30)
     assert r["swept"] == 0
     assert r["skipped"] == 0
@@ -1432,10 +1482,7 @@ from zephyr.gov_enforcement.rule_bridge.session_worktree import _run_pre_merge_t
 
 def _topo_checker_path(repo: Path) -> Path:
     """返回临时仓库下 topo checker 的标准路径。"""
-    return (
-        repo / "scripts" / "governance" / "d5_architecture" / "checkers"
-        / "check_blueprint_code_alignment.py"
-    )
+    return repo / "scripts" / "governance" / "d5_architecture" / "checkers" / "check_blueprint_code_alignment.py"
 
 
 def _ensure_topo_checker_stub(repo: Path) -> None:
@@ -1469,21 +1516,38 @@ def _topo_json(*findings, depgraph_module_ids: int = 149) -> str:
     """构造 checker --json 输出。"""
     high = sum(1 for f in findings if f.get("severity") == "HIGH")
     low = sum(1 for f in findings if f.get("severity") == "LOW")
-    return json.dumps({
-        "total_findings": len(findings), "high": high, "medium": 0, "low": low,
-        "findings": list(findings), "code_headers_scanned": 100,
-        "blueprints_in_registry": 61, "depgraph_module_ids": depgraph_module_ids,
-    }, ensure_ascii=False)
+    return json.dumps(
+        {
+            "total_findings": len(findings),
+            "high": high,
+            "medium": 0,
+            "low": low,
+            "findings": list(findings),
+            "code_headers_scanned": 100,
+            "blueprints_in_registry": 61,
+            "depgraph_module_ids": depgraph_module_ids,
+        },
+        ensure_ascii=False,
+    )
 
 
 def test_pre_merge_topo_check_clean(_isolated_repo, monkeypatch):
     """checker 返回 0 HIGH → 放行。"""
     _ensure_topo_checker_stub(_isolated_repo)
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=0, stdout=_topo_json(), stderr="",
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=_topo_json(),
+            stderr="",
+        ),
+    )
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        [],
     )
     assert passed is True
     assert violations == []
@@ -1493,16 +1557,26 @@ def test_pre_merge_topo_check_blocks_session_high(_isolated_repo, monkeypatch):
     """session 变更文件引入 HIGH drift（ORPHAN_MODULE_ID）→ 阻断 merge。"""
     _ensure_topo_checker_stub(_isolated_repo)
     high_finding = {
-        "type": "ORPHAN_MODULE_ID", "severity": "HIGH",
+        "type": "ORPHAN_MODULE_ID",
+        "severity": "HIGH",
         "file": "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py",
         "detail": "[BLUEPRINT] 引用 MOD-XXX 不在 registry 或 depgraph 中",
     }
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=1, stdout=_topo_json(high_finding), stderr="",
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=1,
+            stdout=_topo_json(high_finding),
+            stderr="",
+        ),
+    )
     rel_files = ["src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"]
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", rel_files,
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        rel_files,
     )
     assert passed is False
     assert len(violations) == 1
@@ -1515,16 +1589,26 @@ def test_pre_merge_topo_check_blocks_session_module_id_drift(_isolated_repo, mon
     """session 变更文件引入 HIGH drift（MODULE_ID_DRIFT）→ 阻断 merge。"""
     _ensure_topo_checker_stub(_isolated_repo)
     high_finding = {
-        "type": "MODULE_ID_DRIFT", "severity": "HIGH",
+        "type": "MODULE_ID_DRIFT",
+        "severity": "HIGH",
         "file": "src/zephyr/foo/bar.py",
         "detail": "包 foo 应属 MOD-FOO，但 [BLUEPRINT] 标注 MOD-BAR",
     }
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=1, stdout=_topo_json(high_finding), stderr="",
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=1,
+            stdout=_topo_json(high_finding),
+            stderr="",
+        ),
+    )
     rel_files = ["src/zephyr/foo/bar.py"]
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", rel_files,
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        rel_files,
     )
     assert passed is False
     assert len(violations) == 1
@@ -1535,16 +1619,26 @@ def test_pre_merge_topo_check_passes_preexisting_high(_isolated_repo, monkeypatc
     """HIGH drift 不在 session 变更文件中（预存漂移）→ 放行（过滤到 rel_files）。"""
     _ensure_topo_checker_stub(_isolated_repo)
     high_finding = {
-        "type": "ORPHAN_MODULE_ID", "severity": "HIGH",
+        "type": "ORPHAN_MODULE_ID",
+        "severity": "HIGH",
         "file": "src/zephyr/some/other/file.py",  # 不在 rel_files——预存漂移
         "detail": "预存漂移",
     }
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=1, stdout=_topo_json(high_finding), stderr="",
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=1,
+            stdout=_topo_json(high_finding),
+            stderr="",
+        ),
+    )
     rel_files = ["src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"]
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", rel_files,
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        rel_files,
     )
     assert passed is True
     assert violations == []
@@ -1554,16 +1648,26 @@ def test_pre_merge_topo_check_low_drift_does_not_block(_isolated_repo, monkeypat
     """LOW drift（CODE_NOT_IN_DEPGRAPH）不阻断（暂态容忍，post-merge reconciler 兜底）。"""
     _ensure_topo_checker_stub(_isolated_repo)
     low_finding = {
-        "type": "CODE_NOT_IN_DEPGRAPH", "severity": "LOW",
+        "type": "CODE_NOT_IN_DEPGRAPH",
+        "severity": "LOW",
         "file": "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py",
         "detail": "代码文件不在 depgraph 模块节点列表中（暂态滞后）",
     }
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=0, stdout=_topo_json(low_finding), stderr="",  # LOW→exit 0
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=_topo_json(low_finding),
+            stderr="",  # LOW→exit 0
+        ),
+    )
     rel_files = ["src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"]
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", rel_files,
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        rel_files,
     )
     assert passed is True
     assert violations == []
@@ -1576,7 +1680,10 @@ def test_pre_merge_topo_check_missing_checker_fail_closed(_isolated_repo):
     if check_script.exists():
         check_script.unlink()
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        [],
     )
     assert passed is False
     assert len(violations) == 1
@@ -1588,10 +1695,14 @@ def test_pre_merge_topo_check_timeout_fail_open(_isolated_repo, monkeypatch):
     """checker 超时（TimeoutExpired）→ fail-open 放行（不卡死业务流程）。"""
     _ensure_topo_checker_stub(_isolated_repo)
     _patch_topo_checker_run(
-        monkeypatch, subprocess.TimeoutExpired(cmd=[], timeout=120),
+        monkeypatch,
+        subprocess.TimeoutExpired(cmd=[], timeout=120),
     )
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        [],
     )
     assert passed is True
     assert violations == []
@@ -1601,17 +1712,26 @@ def test_pre_merge_topo_check_db_down_fail_open(_isolated_repo, monkeypatch):
     """DB 不可用（depgraph_module_ids==0）→ fail-open 放行（无法可靠拓扑检查）。"""
     _ensure_topo_checker_stub(_isolated_repo)
     high_finding = {
-        "type": "ORPHAN_MODULE_ID", "severity": "HIGH",
+        "type": "ORPHAN_MODULE_ID",
+        "severity": "HIGH",
         "file": "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py",
         "detail": "假阳性（DB down 导致 depgraph_module_ids 为空）",
     }
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=1,
-        stdout=_topo_json(high_finding, depgraph_module_ids=0), stderr="[WARN] depgraph 连接失败",
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=1,
+            stdout=_topo_json(high_finding, depgraph_module_ids=0),
+            stderr="[WARN] depgraph 连接失败",
+        ),
+    )
     rel_files = ["src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"]
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", rel_files,
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        rel_files,
     )
     assert passed is True
     assert violations == []
@@ -1620,11 +1740,20 @@ def test_pre_merge_topo_check_db_down_fail_open(_isolated_repo, monkeypatch):
 def test_pre_merge_topo_check_json_parse_fail_open(_isolated_repo, monkeypatch):
     """checker 输出非 JSON → fail-open 放行（保留诊断 warning）。"""
     _ensure_topo_checker_stub(_isolated_repo)
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=0, stdout="not json at all", stderr="",
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout="not json at all",
+            stderr="",
+        ),
+    )
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        [],
     )
     assert passed is True
     assert violations == []
@@ -1633,11 +1762,20 @@ def test_pre_merge_topo_check_json_parse_fail_open(_isolated_repo, monkeypatch):
 def test_pre_merge_topo_check_error_exit_fail_open(_isolated_repo, monkeypatch):
     """checker exit 2 (ERROR) → fail-open 放行。"""
     _ensure_topo_checker_stub(_isolated_repo)
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=2, stdout="", stderr="some internal error",
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=2,
+            stdout="",
+            stderr="some internal error",
+        ),
+    )
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        [],
     )
     assert passed is True
     assert violations == []
@@ -1651,14 +1789,19 @@ def test_pre_merge_topo_check_error_exit_fail_open(_isolated_repo, monkeypatch):
 # 注意 _isolated_repo 模块级共享——断言用「前后行数差」而非绝对行数。
 # ---------------------------------------------------------------------------
 
+
 def _plant_probe_state(repo, *, reachable: bool) -> None:
     """在临时仓库植入探针状态文件（并冻结 refresh 为 no-op）。"""
     from datetime import datetime
     from datetime import timezone as _tz
+
     now = datetime.now(_tz.utc).isoformat()
     state = {
-        "reachable": reachable, "checked_at": now,
-        "host": "localhost", "port": 5432, "error": "" if reachable else "refused",
+        "reachable": reachable,
+        "checked_at": now,
+        "host": "localhost",
+        "port": 5432,
+        "error": "" if reachable else "refused",
         "last_reachable_at": now if reachable else None,
         "first_offline_at": None if reachable else now,
     }
@@ -1685,14 +1828,14 @@ def _reset_failopen_log(repo) -> None:
 
 def _count_failopen_rows(repo, gate_id: str = "PRE-MERGE-TOPO-CHECK") -> int:
     import sqlite3 as _sqlite3
+
     db_path = repo / "data" / "databases" / "governance.db"
     if not db_path.is_file():
         return 0
     conn = _sqlite3.connect(str(db_path))
     try:
         return conn.execute(
-            "SELECT COUNT(*) FROM reconcile_execution_log "
-            "WHERE gate_id = ? AND action = 'critical_warn'",
+            "SELECT COUNT(*) FROM reconcile_execution_log WHERE gate_id = ? AND action = 'critical_warn'",
             (gate_id,),
         ).fetchone()[0]
     finally:
@@ -1701,6 +1844,7 @@ def _count_failopen_rows(repo, gate_id: str = "PRE-MERGE-TOPO-CHECK") -> int:
 
 def _read_last_failopen_detail(repo, gate_id: str = "PRE-MERGE-TOPO-CHECK") -> str:
     import sqlite3 as _sqlite3
+
     db_path = repo / "data" / "databases" / "governance.db"
     conn = _sqlite3.connect(str(db_path))
     try:
@@ -1721,13 +1865,21 @@ def test_topo_failopen_db_down_persists_db_offline(_isolated_repo, monkeypatch):
     _reset_failopen_log(_isolated_repo)
     _plant_probe_state(_isolated_repo, reachable=False)
     _freeze_probe_refresh(monkeypatch)
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=1, stdout=_topo_json(depgraph_module_ids=0),
-        stderr="[WARN] depgraph 连接失败",
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=1,
+            stdout=_topo_json(depgraph_module_ids=0),
+            stderr="[WARN] depgraph 连接失败",
+        ),
+    )
     before = _count_failopen_rows(_isolated_repo)
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", ["src/zephyr/x/y.py"],
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        ["src/zephyr/x/y.py"],
     )
     assert passed is True
     assert violations == []
@@ -1744,11 +1896,15 @@ def test_topo_failopen_timeout_real_error_when_probe_online(_isolated_repo, monk
     _plant_probe_state(_isolated_repo, reachable=True)
     _freeze_probe_refresh(monkeypatch)
     _patch_topo_checker_run(
-        monkeypatch, subprocess.TimeoutExpired(cmd=[], timeout=120),
+        monkeypatch,
+        subprocess.TimeoutExpired(cmd=[], timeout=120),
     )
     before = _count_failopen_rows(_isolated_repo)
     passed, violations = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        [],
     )
     assert passed is True
     assert violations == []
@@ -1766,20 +1922,38 @@ def test_topo_failopen_exit2_and_json_persist(_isolated_repo, monkeypatch):
     _freeze_probe_refresh(monkeypatch)
     before = _count_failopen_rows(_isolated_repo)
 
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=2, stdout="", stderr="boom",
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=2,
+            stdout="",
+            stderr="boom",
+        ),
+    )
     passed, _ = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        [],
     )
     assert passed is True
     assert _count_failopen_rows(_isolated_repo) == before + 1  # DB_OFFLINE 首次落盘
 
-    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
-        args=[], returncode=0, stdout="not json", stderr="",
-    ))
+    _patch_topo_checker_run(
+        monkeypatch,
+        subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout="not json",
+            stderr="",
+        ),
+    )
     passed, _ = _run_pre_merge_topo_check(
-        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+        _isolated_repo,
+        "sess-test",
+        _isolated_repo / "wt",
+        [],
     )
     assert passed is True
     # 同签名（PRE-MERGE-TOPO-CHECK:DB_OFFLINE）当日去重——不新增
@@ -1822,8 +1996,12 @@ class TestPreCommitGatesRetry:
         monkeypatch.setattr(_sw_mod_retry, "_GATE_RETRY_DELAYS", (0, 0, 0))
 
         result = _run_pre_commit_gates(
-            tmp_path, tmp_path / "wt", [], "sess-test",
-            allow_promote=False, allow_migration=False,
+            tmp_path,
+            tmp_path / "wt",
+            [],
+            "sess-test",
+            allow_promote=False,
+            allow_migration=False,
         )
         assert result is None
         assert call_count[0] == 1
@@ -1846,8 +2024,12 @@ class TestPreCommitGatesRetry:
         monkeypatch.setattr(_sw_mod_retry, "_GATE_RETRY_DELAYS", (0, 0, 0))
 
         result = _run_pre_commit_gates(
-            tmp_path, tmp_path / "wt", [], "sess-test",
-            allow_promote=False, allow_migration=False,
+            tmp_path,
+            tmp_path / "wt",
+            [],
+            "sess-test",
+            allow_promote=False,
+            allow_migration=False,
         )
         assert result is violation
         assert call_count[0] == 1, "deterministic 违规不应重试"
@@ -1874,8 +2056,12 @@ class TestPreCommitGatesRetry:
         monkeypatch.setattr(_sw_mod_retry, "_cleanup_worktree_locks", lambda wt: None)
 
         result = _run_pre_commit_gates(
-            tmp_path, tmp_path / "wt", [], "sess-test",
-            allow_promote=False, allow_migration=False,
+            tmp_path,
+            tmp_path / "wt",
+            [],
+            "sess-test",
+            allow_promote=False,
+            allow_migration=False,
         )
         assert result is None
         assert call_count[0] == 2, "应重试 1 次后通过"
@@ -1899,13 +2085,15 @@ class TestPreCommitGatesRetry:
         monkeypatch.setattr(_sw_mod_retry, "_cleanup_worktree_locks", lambda wt: None)
 
         result = _run_pre_commit_gates(
-            tmp_path, tmp_path / "wt", [], "sess-test",
-            allow_promote=False, allow_migration=False,
+            tmp_path,
+            tmp_path / "wt",
+            [],
+            "sess-test",
+            allow_promote=False,
+            allow_migration=False,
         )
         assert result is None, "3 次重试耗尽应 fail-open 返回 None"
-        assert call_count[0] == _GATE_RETRY_MAX_ATTEMPTS, (
-            f"应重试 {_GATE_RETRY_MAX_ATTEMPTS} 次: {call_count[0]}"
-        )
+        assert call_count[0] == _GATE_RETRY_MAX_ATTEMPTS, f"应重试 {_GATE_RETRY_MAX_ATTEMPTS} 次: {call_count[0]}"
 
     def test_retry_constants_unchanged(self):
         """重试常量未被意外修改。"""
@@ -1983,13 +2171,13 @@ class TestCleanupWorktreeLocks:
             monkeypatch.setattr(type(index_lock), "unlink", original_unlink)
 
 
-
 class TestBaseFreshnessFullLifecycle:
     """#ARCH-WORKTREE-BASE-FRESHNESS-001 Phase 4: base 新鲜度全生命周期测试。"""
 
     def test_stage_param_accepted(self, _isolated_repo):
         """_ensure_worktree_base_fresh 接受 stage 参数。"""
         from zephyr.gov_enforcement.rule_bridge.session_worktree import _ensure_worktree_base_fresh
+
         r = _ensure_worktree_base_fresh(_isolated_repo, _isolated_repo, "sess-test-stage", stage="commit")
         assert r is None, f"Expected None for consistent base, got: {r}"
 
@@ -1998,7 +2186,10 @@ class TestBaseFreshnessFullLifecycle:
         import json
 
         from zephyr.gov_enforcement.rule_bridge.session_worktree import _log_base_freshness_event
-        _log_base_freshness_event(_isolated_repo, "sess-test-telemetry", "commit", "pass", main_head="abc12345", wt_head="abc12345")
+
+        _log_base_freshness_event(
+            _isolated_repo, "sess-test-telemetry", "commit", "pass", main_head="abc12345", wt_head="abc12345"
+        )
         log_path = _isolated_repo / ".runtime" / "worktree_ops_log.jsonl"
         assert log_path.exists(), f"Telemetry log not created: {log_path}"
         lines = log_path.read_text(encoding="utf-8").strip().split("\n")
@@ -2010,6 +2201,7 @@ class TestBaseFreshnessFullLifecycle:
     def test_run_git_with_retry_returns_on_success(self, _isolated_repo):
         """_run_git_with_retry 成功时立即返回。"""
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+
         r = sw.run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=_isolated_repo, retries=3)
         assert r is not None, "Expected CompletedProcess, got None"
         assert r.returncode == 0
@@ -2019,14 +2211,17 @@ class TestBaseFreshnessFullLifecycle:
         import subprocess
 
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+
         call_count = [0]
         original_run = subprocess.run
+
         def _mock_run(*args, **kwargs):
             cmd = args[0] if args else kwargs.get("args", [])
             if cmd and "rev-parse" in " ".join(cmd):
                 call_count[0] += 1
                 raise OSError("test transient error")
             return original_run(*args, **kwargs)
+
         monkeypatch.setattr(sw.subprocess, "run", _mock_run)
         r = sw.run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=_isolated_repo, retries=3)
         assert r is None, f"Expected None after OSError, got: {r}"
@@ -2035,8 +2230,10 @@ class TestBaseFreshnessFullLifecycle:
     def test_fail_closed_on_rev_parse_failure(self, _isolated_repo, monkeypatch):
         """_ensure_worktree_base_fresh 在 git 失败时 fail-closed。"""
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+
         def _failing_retry(cmd, cwd, retries=3, timeout=10):
             return subprocess.CompletedProcess(args=cmd, returncode=1, stdout="", stderr="fatal: error")
+
         monkeypatch.setattr(sw, "_run_git_with_retry", _failing_retry)
         r = sw.ensure_worktree_base_fresh(_isolated_repo, _isolated_repo, "sess-test-fail", stage="commit")
         assert r is not None, "Expected error dict (fail-closed), got None"
@@ -2051,6 +2248,7 @@ class TestBaseFreshnessFullLifecycle:
         测试场景），干扰本测试 base freshness 检测路径。
         """
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+
         monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
         monkeypatch.setattr(sw, "_workspace_clean_check_start", lambda *a, **kw: (True, "stubbed"))
         r_start = session_worktree_start(_TEST_SIDS[0])
@@ -2059,7 +2257,9 @@ class TestBaseFreshnessFullLifecycle:
         marker = wt_path / _TEST_FILE_A
         marker.parent.mkdir(parents=True, exist_ok=True)
         marker.write_text('{"session": "merge-bf"}\n', encoding="utf-8")
-        r_commit = session_worktree_commit(_TEST_SIDS[0], files=[_TEST_FILE_A], message="test: merge base freshness check")
+        r_commit = session_worktree_commit(
+            _TEST_SIDS[0], files=[_TEST_FILE_A], message="test: merge base freshness check"
+        )
         assert r_commit["status"] == "OK", f"commit failed: {r_commit}"
         r_merge = session_worktree_merge(_TEST_SIDS[0])
         assert r_merge.get("merged") is True, f"merge failed: {r_merge}"
@@ -2072,6 +2272,7 @@ class TestBaseFreshnessFullLifecycle:
         理由：无 post-merge 替代 + 跳过后不可挽回（薛定谔的回退）。
         """
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+
         monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
         monkeypatch.setattr(sw, "_workspace_clean_check_start", lambda *a, **kw: (True, "stubbed"))
         r_start = session_worktree_start(_TEST_SIDS[1])
@@ -2080,10 +2281,20 @@ class TestBaseFreshnessFullLifecycle:
         marker = wt_path / _TEST_FILE_B
         marker.parent.mkdir(parents=True, exist_ok=True)
         marker.write_text('{"session": "merge-force-noskip"}\n', encoding="utf-8")
-        r_commit = session_worktree_commit(_TEST_SIDS[1], files=[_TEST_FILE_B], message="test: merge force does not skip base check")
+        r_commit = session_worktree_commit(
+            _TEST_SIDS[1], files=[_TEST_FILE_B], message="test: merge force does not skip base check"
+        )
         assert r_commit["status"] == "OK", f"commit failed: {r_commit}"
+
         def _failing_bf(root, wt_path, session_id, stage="commit"):
-            return {"session_id": session_id, "status": "FAILED", "message": "simulated stale base (force cannot bypass)", "base_sync_failed": True, "stage": stage}
+            return {
+                "session_id": session_id,
+                "status": "FAILED",
+                "message": "simulated stale base (force cannot bypass)",
+                "base_sync_failed": True,
+                "stage": stage,
+            }
+
         monkeypatch.setattr(sw, "_ensure_worktree_base_fresh", _failing_bf)
         r_merge = session_worktree_merge(_TEST_SIDS[1], force=True)
         # force=True 不再跳过 base freshness check——应被阻断
@@ -2100,6 +2311,7 @@ class TestBaseFreshnessFullLifecycle:
         改为"force 不可跳过"。理由：无 post-merge 替代 + 跳过后不可挽回。
         """
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+
         monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
         monkeypatch.setattr(sw, "_workspace_clean_check_start", lambda *a, **kw: (True, "stubbed"))
         r_start = session_worktree_start(_TEST_SIDS[0])
@@ -2108,7 +2320,9 @@ class TestBaseFreshnessFullLifecycle:
         marker = wt_path / _TEST_FILE_A
         marker.parent.mkdir(parents=True, exist_ok=True)
         marker.write_text('{"session": "merge-force-persist"}\n', encoding="utf-8")
-        r_commit = session_worktree_commit(r_start["session_id"], files=[_TEST_FILE_A], message="test: merge force commit persistence")
+        r_commit = session_worktree_commit(
+            r_start["session_id"], files=[_TEST_FILE_A], message="test: merge force commit persistence"
+        )
         assert r_commit["status"] == "OK", f"commit failed: {r_commit}"
         # 模拟薛定谔的回退：commit 持久性标记存在但 tip hash 不匹配
         _fake_marker = {"commit_hash": "deadbeef", "session_id": r_start["session_id"]}
@@ -2129,6 +2343,7 @@ class TestBaseFreshnessFullLifecycle:
         monkeypatch WORKSPACE-CLEAN-CHECK 放行——同 test_merge_base_freshness_check_invoked。
         """
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+
         monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
         monkeypatch.setattr(sw, "_workspace_clean_check_start", lambda *a, **kw: (True, "stubbed"))
         r_start = session_worktree_start(_TEST_SIDS[0])
@@ -2137,10 +2352,20 @@ class TestBaseFreshnessFullLifecycle:
         marker = wt_path / _TEST_FILE_A
         marker.parent.mkdir(parents=True, exist_ok=True)
         marker.write_text('{"session": "merge-block"}\n', encoding="utf-8")
-        r_commit = session_worktree_commit(_TEST_SIDS[0], files=[_TEST_FILE_A], message="test: merge block on stale base")
+        r_commit = session_worktree_commit(
+            _TEST_SIDS[0], files=[_TEST_FILE_A], message="test: merge block on stale base"
+        )
         assert r_commit["status"] == "OK", f"commit failed: {r_commit}"
+
         def _failing_bf(root, wt_path, session_id, stage="commit"):
-            return {"session_id": session_id, "status": "FAILED", "message": "simulated stale base for merge", "base_sync_failed": True, "stage": stage}
+            return {
+                "session_id": session_id,
+                "status": "FAILED",
+                "message": "simulated stale base for merge",
+                "base_sync_failed": True,
+                "stage": stage,
+            }
+
         monkeypatch.setattr(sw, "_ensure_worktree_base_fresh", _failing_bf)
         r_merge = session_worktree_merge(_TEST_SIDS[0], force=False)
         assert r_merge.get("merged") is False, f"Expected merge blocked, got: {r_merge}"
@@ -2162,6 +2387,7 @@ class TestRetireClassifier:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _classify_retire_file_content,
         )
+
         old = "# title\nline1\nline2\n"
         new = "# title\r\nline1\r\nline2\r\n"
         assert _classify_retire_file_content(old, new) == "crlf_phantom"
@@ -2171,6 +2397,7 @@ class TestRetireClassifier:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _classify_retire_file_content,
         )
+
         old = (
             "# blueprint\n"
             "<!-- AUTO-START:depgraph_stats -->\n"
@@ -2192,14 +2419,9 @@ class TestRetireClassifier:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _classify_retire_file_content,
         )
-        old = (
-            "<!-- AUTO-START:s -->\n6500\n<!-- AUTO-END:s -->\n"
-            "正文原版\n"
-        )
-        new = (
-            "<!-- AUTO-START:s -->\n6508\n<!-- AUTO-END:s -->\n"
-            "正文被 AI 改过\n"
-        )
+
+        old = "<!-- AUTO-START:s -->\n6500\n<!-- AUTO-END:s -->\n正文原版\n"
+        new = "<!-- AUTO-START:s -->\n6508\n<!-- AUTO-END:s -->\n正文被 AI 改过\n"
         assert _classify_retire_file_content(old, new) == "substantive"
 
     def test_substantive_no_auto_markers(self):
@@ -2207,6 +2429,7 @@ class TestRetireClassifier:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _classify_retire_file_content,
         )
+
         assert _classify_retire_file_content("a = 1\n", "a = 2\n") == "substantive"
 
     def test_substantive_on_none_sides(self):
@@ -2214,6 +2437,7 @@ class TestRetireClassifier:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _classify_retire_file_content,
         )
+
         assert _classify_retire_file_content(None, "new file\n") == "substantive"
         assert _classify_retire_file_content("old file\n", None) == "substantive"
 
@@ -2222,14 +2446,14 @@ class TestRetireClassifier:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _strip_auto_block_lines,
         )
+
         text = "head\n<!-- TREE-AUTO-START -->\nx\ny\n<!-- TREE-AUTO-END -->\ntail\n"
         stripped = _strip_auto_block_lines(text)
         assert "x" not in stripped and "y" not in stripped, "块内容行应剔除"
         assert "head" in stripped and "tail" in stripped, "骨架行应保留"
         assert any("TREE-AUTO-START" in l for l in stripped), "标记行属骨架应保留"
         unclosed = "head\n<!-- AUTO-START:s -->\nx\ny\n"
-        assert _strip_auto_block_lines(unclosed) == ["head", "<!-- AUTO-START:s -->"], \
-            "未闭合块应剔到文件尾"
+        assert _strip_auto_block_lines(unclosed) == ["head", "<!-- AUTO-START:s -->"], "未闭合块应剔到文件尾"
 
 
 class TestRetirePatchEvidence:
@@ -2244,8 +2468,11 @@ class TestRetirePatchEvidence:
         test_merge_base_freshness_check_invoked 同款处置）。
         """
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+
         monkeypatch.setattr(
-            sw, "_workspace_clean_check_start", lambda *a, **kw: (True, "stubbed"),
+            sw,
+            "_workspace_clean_check_start",
+            lambda *a, **kw: (True, "stubbed"),
         )
 
     def test_abort_generates_patch_and_audit_when_dirty(self, _isolated_repo):
@@ -2273,8 +2500,9 @@ class TestRetirePatchEvidence:
         assert patch_path.parent.name == "quarantine", "patch 应落 .runtime/quarantine/"
         content = patch_path.read_text(encoding="utf-8")
         assert "AI 实质新增一行" in content, "patch 应含 tracked 修改 diff"
-        assert "wip_note.md" in content and "AI 未提交工作" in content, \
+        assert "wip_note.md" in content and "AI 未提交工作" in content, (
             "patch 应含 untracked 新文件全文（git add -N 纳管）"
+        )
         counts = ev.get("counts", {})
         assert counts.get("substantive", 0) == 2, f"两文件均应判实质: {counts}"
         assert "退役存证" in a.get("message", ""), "message 应含存证摘要"
@@ -2297,8 +2525,7 @@ class TestRetirePatchEvidence:
         a = session_worktree_abort(sid)
         assert a.get("aborted"), f"abort 失败: {a}"
         ev = a.get("retire_evidence", {})
-        assert ev.get("generated") is False and ev.get("reason") == "clean", \
-            f"干净工作区不应生成存证: {ev}"
+        assert ev.get("generated") is False and ev.get("reason") == "clean", f"干净工作区不应生成存证: {ev}"
         q_dir = _isolated_repo / ".runtime" / "quarantine"
         leftovers = list(q_dir.glob(f"{sid}-retire-*.patch")) if q_dir.exists() else []
         assert not leftovers, f"干净 abort 不应有 patch: {leftovers}"
@@ -2314,31 +2541,32 @@ class TestRetirePatchEvidence:
         sid = "sess-pytest-retire-p1"
         old_crlf = subprocess.run(
             ["git", "config", "--get", "core.autocrlf"],
-            cwd=_isolated_repo, capture_output=True, text=True,
+            cwd=_isolated_repo,
+            capture_output=True,
+            text=True,
         ).stdout.strip()
         subprocess.run(
             ["git", "config", "core.autocrlf", "false"],
-            cwd=_isolated_repo, capture_output=True,
+            cwd=_isolated_repo,
+            capture_output=True,
         )
         try:
             r = session_worktree_start(sid)
             assert r.get("created") or r.get("registered"), f"start 失败: {r}"
             wt = Path(r["worktree_path"])
             # AGENTS.md stub HEAD 版为 LF；工作区改写为 CRLF（内容零变化）
-            (wt / "AGENTS.md").write_bytes(
-                b"# AGENTS.md (test stub)\r\n## 1 Test Section\r\n"
-            )
+            (wt / "AGENTS.md").write_bytes(b"# AGENTS.md (test stub)\r\n## 1 Test Section\r\n")
             a = session_worktree_abort(sid)
             assert a.get("aborted"), f"abort 失败: {a}"
             ev = a.get("retire_evidence", {})
             assert ev.get("generated") is True, f"幻影也是脏，应生成存证: {a}"
             files = {f["path"]: f["classification"] for f in ev.get("files", [])}
-            assert files.get("AGENTS.md") == "crlf_phantom", \
-                f"CRLF 翻转应判幻影: {files}"
+            assert files.get("AGENTS.md") == "crlf_phantom", f"CRLF 翻转应判幻影: {files}"
         finally:
             subprocess.run(
                 ["git", "config", "core.autocrlf", old_crlf or "true"],
-                cwd=_isolated_repo, capture_output=True,
+                cwd=_isolated_repo,
+                capture_output=True,
             )
             kill_all_heartbeat_daemons(_isolated_repo)
 
@@ -2358,9 +2586,9 @@ class TestRetirePatchEvidence:
 
         real_fn = sw._generate_retire_patch_evidence
         monkeypatch.setattr(
-            sw, "_generate_retire_patch_evidence",
-            lambda *a, **kw: {"generated": False, "source": "abort",
-                              "error": "simulated git failure"},
+            sw,
+            "_generate_retire_patch_evidence",
+            lambda *a, **kw: {"generated": False, "source": "abort", "error": "simulated git failure"},
         )
         a = session_worktree_abort(sid)
         assert a.get("aborted") is False, f"存证失败应阻断 abort: {a}"
@@ -2375,5 +2603,3 @@ class TestRetirePatchEvidence:
         assert a2.get("aborted"), f"恢复后真实 abort 应成功: {a2}"
         assert a2.get("retire_evidence", {}).get("generated") is True
         kill_all_heartbeat_daemons(_isolated_repo)
-
-

@@ -69,7 +69,9 @@ class TestGCT005DriftToRollback:
 
         from zephyr.gov_drift.events import ManagedDriftEvent
 
-        event = ManagedDriftEvent(drift_id="DR-001", target="module_a", auto_fixable=True, fix_suggestion="revert to baseline")
+        event = ManagedDriftEvent(
+            drift_id="DR-001", target="module_a", auto_fixable=True, fix_suggestion="revert to baseline"
+        )
         handler = DriftFixHandler()
         result = handler.on_drift_fix(event)
         assert result["fixed"] is True

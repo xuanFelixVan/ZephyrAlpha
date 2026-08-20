@@ -26,6 +26,7 @@
 测试隔离：patch zephyr.security.access_control.session_concurrency.SessionRegistry 源类，
 不读写真实 .runtime/session_registry.json，避免污染并发 session 状态。
 """
+
 from __future__ import annotations
 
 import sys
@@ -37,7 +38,9 @@ import pytest
 # 导入 pre_write_gate（迁移后位于 scripts/governance/d5_architecture/pre_write_gate.py）
 _REPO_ROOT = Path(__file__).resolve().parents[3]  # tests/governance/scripts_governance/ -> repo root
 _SCRIPTS_DIR = _REPO_ROOT / "scripts"
-sys.path.insert(0, str(_SCRIPTS_DIR / "governance"))  # 供 _shared.constants（_shared 在 scripts/governance/_shared/，迁移后 pre_write_gate.py 在 d5_architecture/ 子目录）
+sys.path.insert(
+    0, str(_SCRIPTS_DIR / "governance")
+)  # 供 _shared.constants（_shared 在 scripts/governance/_shared/，迁移后 pre_write_gate.py 在 d5_architecture/ 子目录）
 sys.path.insert(0, str(_SCRIPTS_DIR / "governance" / "d5_architecture"))  # 供 import pre_write_gate
 
 import pre_write_gate as pwg  # noqa: E402
@@ -63,9 +66,7 @@ class TestCheckSessionOverlap:
         reg_mock = MagicMock()
         reg_mock.find_session_by_file.return_value = holder
         with patch(_SESSION_REG, return_value=reg_mock):
-            ok, msg = pwg.check_session_overlap(
-                str(_REPO_ROOT / "scripts" / "git_commit.py"), "session-me-1"
-            )
+            ok, msg = pwg.check_session_overlap(str(_REPO_ROOT / "scripts" / "git_commit.py"), "session-me-1")
         assert ok is False
         assert "HELD_BY_OTHER" in msg
         assert "session-other-1" in msg

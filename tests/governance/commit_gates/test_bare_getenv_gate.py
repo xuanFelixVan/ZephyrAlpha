@@ -35,6 +35,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git + tmp_path 真实文件，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import ast
@@ -91,16 +92,18 @@ def _make_gateway(
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
     # 构建 --name-status 输出（A\tpath / M\tpath）
     name_status_lines = []
-    for f in (staged_files or []):
+    for f in staged_files or []:
         name_status_lines.append(f"A\t{f}")
-    for f in (modified_files or []):
+    for f in modified_files or []:
         name_status_lines.append(f"M\t{f}")
     name_status_output = "\n".join(name_status_lines)
 
@@ -222,11 +225,7 @@ class TestBareGetenvVisitor:
         assert v == []  # 非 os.getenv
 
     def test_detects_multiple_violations(self):
-        code = (
-            'import os\n'
-            'a = os.getenv("API_KEY")\n'
-            'b = os.environ.get("DB_PASSWORD")\n'
-        )
+        code = 'import os\na = os.getenv("API_KEY")\nb = os.environ.get("DB_PASSWORD")\n'
         v = self._violations(code)
         assert len(v) == 2
 
@@ -238,9 +237,7 @@ class TestGatewayIntegration:
     def test_new_py_with_bare_getenv_blocked(self, tmp_path):
         src = tmp_path / "src"
         src.mkdir()
-        (src / "mod.py").write_text(
-            'import os\nx = os.getenv("API_KEY")\n', encoding="utf-8"
-        )
+        (src / "mod.py").write_text('import os\nx = os.getenv("API_KEY")\n', encoding="utf-8")
         rel = "src/mod.py"
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_bare_getenv_gate().check(gw, [])
@@ -260,9 +257,7 @@ class TestGatewayIntegration:
     def test_variable_arg_passes(self, tmp_path):
         src = tmp_path / "src"
         src.mkdir()
-        (src / "mod.py").write_text(
-            'import os\nkey = "API_KEY"\nx = os.getenv(key)\n', encoding="utf-8"
-        )
+        (src / "mod.py").write_text('import os\nkey = "API_KEY"\nx = os.getenv(key)\n', encoding="utf-8")
         rel = "src/mod.py"
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_bare_getenv_gate().check(gw, [])
@@ -272,9 +267,7 @@ class TestGatewayIntegration:
     def test_os_environ_subscript_blocked(self, tmp_path):
         src = tmp_path / "src"
         src.mkdir()
-        (src / "mod.py").write_text(
-            'import os\nx = os.environ["DB_PASSWORD"]\n', encoding="utf-8"
-        )
+        (src / "mod.py").write_text('import os\nx = os.environ["DB_PASSWORD"]\n', encoding="utf-8")
         rel = "src/mod.py"
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_bare_getenv_gate().check(gw, [])
@@ -284,9 +277,7 @@ class TestGatewayIntegration:
     def test_tests_dir_exempt(self, tmp_path):
         tests_dir = tmp_path / "tests"
         tests_dir.mkdir()
-        (tests_dir / "test_x.py").write_text(
-            'import os\nx = os.getenv("API_KEY")\n', encoding="utf-8"
-        )
+        (tests_dir / "test_x.py").write_text('import os\nx = os.getenv("API_KEY")\n', encoding="utf-8")
         rel = "tests/test_x.py"
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_bare_getenv_gate().check(gw, [])
@@ -296,9 +287,7 @@ class TestGatewayIntegration:
     def test_non_py_file_ignored(self, tmp_path):
         src = tmp_path / "src"
         src.mkdir()
-        (src / "mod.txt").write_text(
-            'os.getenv("API_KEY")', encoding="utf-8"
-        )
+        (src / "mod.txt").write_text('os.getenv("API_KEY")', encoding="utf-8")
         rel = "src/mod.txt"
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_bare_getenv_gate().check(gw, [])
@@ -330,9 +319,7 @@ class TestGatewayIntegration:
     def test_non_secret_getenv_passes(self, tmp_path):
         src = tmp_path / "src"
         src.mkdir()
-        (src / "mod.py").write_text(
-            'import os\nx = os.getenv("HOME")\n', encoding="utf-8"
-        )
+        (src / "mod.py").write_text('import os\nx = os.getenv("HOME")\n', encoding="utf-8")
         rel = "src/mod.py"
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_bare_getenv_gate().check(gw, [])
@@ -342,9 +329,7 @@ class TestGatewayIntegration:
     def test_os_environ_get_blocked(self, tmp_path):
         src = tmp_path / "src"
         src.mkdir()
-        (src / "mod.py").write_text(
-            'import os\nx = os.environ.get("API_TOKEN")\n', encoding="utf-8"
-        )
+        (src / "mod.py").write_text('import os\nx = os.environ.get("API_TOKEN")\n', encoding="utf-8")
         rel = "src/mod.py"
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_bare_getenv_gate().check(gw, [])
@@ -354,7 +339,7 @@ class TestGatewayIntegration:
 
 # ---------------------------------------------------------------------------
 # TestDiffAwareModifiedFiles — diff-aware 修改文件检测
-#（#ARCH-SECRETS-GOV-001 Phase 2-S3）
+# （#ARCH-SECRETS-GOV-001 Phase 2-S3）
 # ---------------------------------------------------------------------------
 class TestDiffAwareModifiedFiles:
     """diff-aware 修改文件检测——只报告 git diff 新增行中的违规。"""
@@ -363,17 +348,10 @@ class TestDiffAwareModifiedFiles:
         """修改文件新增行含裸 getenv → 阻断。"""
         src = tmp_path / "src"
         src.mkdir()
-        (src / "mod.py").write_text(
-            'import os\nx = os.getenv("API_KEY")\ny = 1\n', encoding="utf-8"
-        )
+        (src / "mod.py").write_text('import os\nx = os.getenv("API_KEY")\ny = 1\n', encoding="utf-8")
         rel = "src/mod.py"
         # diff: 第 2 行是新增行（+ 前缀）
-        diff_output = (
-            "@@ -1,1 +1,3 @@\n"
-            " import os\n"
-            '+x = os.getenv("API_KEY")\n'
-            "+y = 1\n"
-        )
+        diff_output = '@@ -1,1 +1,3 @@\n import os\n+x = os.getenv("API_KEY")\n+y = 1\n'
         gw = _make_gateway(
             modified_files=[rel],
             added_lines={rel: diff_output},
@@ -387,17 +365,10 @@ class TestDiffAwareModifiedFiles:
         """修改文件存量行含裸 getenv → 放行（不触碰存量基线）。"""
         src = tmp_path / "src"
         src.mkdir()
-        (src / "mod.py").write_text(
-            'import os\nx = os.getenv("API_KEY")\ny = 2\n', encoding="utf-8"
-        )
+        (src / "mod.py").write_text('import os\nx = os.getenv("API_KEY")\ny = 2\n', encoding="utf-8")
         rel = "src/mod.py"
         # diff: 第 2 行是 context（存量），第 3 行是新增行
-        diff_output = (
-            "@@ -1,2 +1,3 @@\n"
-            " import os\n"
-            ' x = os.getenv("API_KEY")\n'
-            "+y = 2\n"
-        )
+        diff_output = '@@ -1,2 +1,3 @@\n import os\n x = os.getenv("API_KEY")\n+y = 2\n'
         gw = _make_gateway(
             modified_files=[rel],
             added_lines={rel: diff_output},
@@ -411,15 +382,9 @@ class TestDiffAwareModifiedFiles:
         """修改文件新增行安全 → 放行。"""
         src = tmp_path / "src"
         src.mkdir()
-        (src / "mod.py").write_text(
-            'import os\nx = 1\n', encoding="utf-8"
-        )
+        (src / "mod.py").write_text("import os\nx = 1\n", encoding="utf-8")
         rel = "src/mod.py"
-        diff_output = (
-            "@@ -1,1 +1,2 @@\n"
-            " import os\n"
-            "+x = 1\n"
-        )
+        diff_output = "@@ -1,1 +1,2 @@\n import os\n+x = 1\n"
         gw = _make_gateway(
             modified_files=[rel],
             added_lines={rel: diff_output},
@@ -433,9 +398,7 @@ class TestDiffAwareModifiedFiles:
         """-U0 git diff 失败 → fail-open（跳过该文件检测）。"""
         src = tmp_path / "src"
         src.mkdir()
-        (src / "mod.py").write_text(
-            'import os\nx = os.getenv("API_KEY")\n', encoding="utf-8"
-        )
+        (src / "mod.py").write_text('import os\nx = os.getenv("API_KEY")\n', encoding="utf-8")
         rel = "src/mod.py"
         gw = _make_gateway(
             modified_files=[rel],
@@ -451,19 +414,10 @@ class TestDiffAwareModifiedFiles:
         src = tmp_path / "src"
         src.mkdir()
         # 新增文件：含裸 getenv → 应阻断
-        (src / "new.py").write_text(
-            'import os\nx = os.getenv("NEW_TOKEN")\n', encoding="utf-8"
-        )
+        (src / "new.py").write_text('import os\nx = os.getenv("NEW_TOKEN")\n', encoding="utf-8")
         # 修改文件：存量行含裸 getenv，新增行安全 → 应放行
-        (src / "mod.py").write_text(
-            'import os\nx = os.getenv("OLD_KEY")\ny = 2\n', encoding="utf-8"
-        )
-        diff_output = (
-            "@@ -1,2 +1,3 @@\n"
-            " import os\n"
-            ' x = os.getenv("OLD_KEY")\n'
-            "+y = 2\n"
-        )
+        (src / "mod.py").write_text('import os\nx = os.getenv("OLD_KEY")\ny = 2\n', encoding="utf-8")
+        diff_output = '@@ -1,2 +1,3 @@\n import os\n x = os.getenv("OLD_KEY")\n+y = 2\n'
         gw = _make_gateway(
             staged_files=["src/new.py"],
             modified_files=["src/mod.py"],

@@ -310,12 +310,7 @@ class TestCheckC2:
     def test_fail_missing_declared_path(self, tmp_repo: Path) -> None:
         # 往注册表中写一个不存在的文件路径
         registry = (
-            tmp_repo
-            / "docs"
-            / "01_policies_and_standards"
-            / "_registry"
-            / "catalogs"
-            / "rule_catalog_registry.yaml"
+            tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule_catalog_registry.yaml"
         )
         registry.write_text(
             "  path: scripts/hooks/nonexistent_hook.py\n",
@@ -353,12 +348,7 @@ class TestCheckC4Format:
 
     def test_fail_absolute_path_in_registry(self, tmp_repo: Path) -> None:
         registry = (
-            tmp_repo
-            / "docs"
-            / "01_policies_and_standards"
-            / "_registry"
-            / "catalogs"
-            / "rule_catalog_registry.yaml"
+            tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule_catalog_registry.yaml"
         )
         registry.write_text(
             "  path: /absolute/path/to/file.py\n",
@@ -370,12 +360,7 @@ class TestCheckC4Format:
 
     def test_fail_backslash_path_in_registry(self, tmp_repo: Path) -> None:
         registry = (
-            tmp_repo
-            / "docs"
-            / "01_policies_and_standards"
-            / "_registry"
-            / "catalogs"
-            / "rule_catalog_registry.yaml"
+            tmp_repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule_catalog_registry.yaml"
         )
         registry.write_text(
             "  path: scripts\\hooks\\hook.py\n",

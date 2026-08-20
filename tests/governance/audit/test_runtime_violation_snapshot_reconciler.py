@@ -20,6 +20,7 @@
 
 测试隔离：用 tmp_path + mock，不触碰生产 data/ 目录或真实 git 仓库。
 """
+
 from __future__ import annotations
 
 import sys
@@ -104,9 +105,7 @@ class TestMatchesTrigger:
         assert _matches_trigger("scripts/governance/d3_metadata/check.py") is True
 
     def test_trae_060_yaml_triggers(self):
-        assert _matches_trigger(
-            "docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml"
-        ) is True
+        assert _matches_trigger("docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml") is True
 
     def test_other_yaml_does_not_trigger(self):
         assert _matches_trigger("docs/01_policies_and_standards/rules/trae_057.yaml") is False

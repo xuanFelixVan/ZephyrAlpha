@@ -22,6 +22,7 @@
 - TestFailOpen: 文件读取异常 → fail-open（passed=True）
 - TestAccidentReplay: 复现 13a5e1d512 事故 5 文件跨域场景
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -220,9 +221,7 @@ class TestAccidentReplay:
 
         gw = _make_gateway(tmp_path)
         gate = make_commit_scope_gate()
-        passed, detail = gate.check(
-            gw, [str(f_b4), str(f_runner), str(f_dq), str(f_test)]
-        )
+        passed, detail = gate.check(gw, [str(f_b4), str(f_runner), str(f_dq), str(f_test)])
         assert passed is False
         assert "D_REGIME" in detail
         assert "D_GOVERNANCE" in detail

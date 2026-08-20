@@ -48,6 +48,7 @@ Usage::
     py -3.12 -m pytest tests/governance/test_apply_depgraph_smoke.py -v
     py -3.12 -m pytest tests/governance/test_apply_depgraph_smoke.py -k "not e2e"  # 跳过 DB 连接
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -69,9 +70,7 @@ def adg():
     真实执行模块级代码（含 import 语句）——若 import 缺失会立即抛 ImportError/NameError，
     这正是 Phase 1 类 bug 的检测点。
     """
-    spec = importlib.util.spec_from_file_location(
-        "apply_depgraph_smoke_under_test", _SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("apply_depgraph_smoke_under_test", _SCRIPT_PATH)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -99,6 +98,7 @@ def _make_mock_conn(fetchone_result=None, fetchall_result=None):
 # ============================================================================
 # Test 1: Import smoke —— 检测 Phase 1 类 NameError（import 缺失）
 # ============================================================================
+
 
 class TestImportSmoke:
     """验证 apply_depgraph.py 模块能正常 import（所有依赖符号可用）。
@@ -147,6 +147,7 @@ class TestImportSmoke:
 # Test 2: CLI smoke —— 检测 CLI 入口可运行（argparse 配置错误）
 # ============================================================================
 
+
 class TestCLISmoke:
     """验证 apply_depgraph.py CLI 入口可运行。
 
@@ -158,35 +159,40 @@ class TestCLISmoke:
         """--list-ops CLI 命令能正常运行（returncode=0）。"""
         result = subprocess.run(
             [sys.executable, str(_SCRIPT_PATH), "--list-ops"],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(_REPO_ROOT),
         )
         assert result.returncode == 0, (
-            f"--list-ops CLI 失败 rc={result.returncode}\n"
-            f"stdout: {result.stdout[:500]}\nstderr: {result.stderr[:500]}"
+            f"--list-ops CLI 失败 rc={result.returncode}\nstdout: {result.stdout[:500]}\nstderr: {result.stderr[:500]}"
         )
         assert "cmd_batch 支持的 op" in result.stdout, (
-            f"--list-ops 输出格式异常，缺少 'cmd_batch 支持的 op'\n"
-            f"stdout: {result.stdout[:500]}"
+            f"--list-ops 输出格式异常，缺少 'cmd_batch 支持的 op'\nstdout: {result.stdout[:500]}"
         )
 
     def test_no_args_prints_help(self):
         """无参数调用打印 help（returncode=3，非崩溃）。"""
         result = subprocess.run(
             [sys.executable, str(_SCRIPT_PATH)],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(_REPO_ROOT),
         )
         # 无参数时 parser.print_help() + sys.exit(3)
-        assert result.returncode == 3, (
-            f"无参数调用应返回 rc=3（print_help+exit），实际 rc={result.returncode}"
-        )
+        assert result.returncode == 3, f"无参数调用应返回 rc=3（print_help+exit），实际 rc={result.returncode}"
         assert "usage:" in result.stdout, "help 输出缺少 usage 行"
 
 
 # ============================================================================
 # Test 3: DB connection smoke —— 真实连接 PostgreSQL（@pytest.mark.e2e）
 # ============================================================================
+
 
 @pytest.mark.e2e
 class TestDBConnectionSmoke:
@@ -231,6 +237,7 @@ class TestDBConnectionSmoke:
 # ============================================================================
 # Test 4: Function callable smoke —— mock DB，真实调用函数逻辑
 # ============================================================================
+
 
 class TestFunctionCallableSmoke:
     """验证核心函数能被调用（mock DB，检测 NameError/签名漂移）。
@@ -300,9 +307,7 @@ class TestFunctionCallableSmoke:
 
         result = adg.transition_build_status(node_id=999999, to="stable")
         # node 不存在或状态转换无效时返回 False
-        assert result is False, (
-            f"transition_build_status 应返回 False（node 不存在），实际 {result}"
-        )
+        assert result is False, f"transition_build_status 应返回 False（node 不存在），实际 {result}"
 
     def test_remove_design_node_callable_with_mock_db(self, adg, monkeypatch):
         """remove_design_node 能被调用（mock DB，检测 NameError）。"""
@@ -311,14 +316,13 @@ class TestFunctionCallableSmoke:
 
         result = adg.remove_design_node(node_id=999999)
         # node 不存在时返回 False
-        assert result is False, (
-            f"remove_design_node 应返回 False（node 不存在），实际 {result}"
-        )
+        assert result is False, f"remove_design_node 应返回 False（node 不存在），实际 {result}"
 
 
 # ============================================================================
 # Test 5: 真实 DB 只读查询 smoke —— 验证函数与真实 schema 对齐
 # ============================================================================
+
 
 @pytest.mark.e2e
 class TestRealDBReadOnlySmoke:
@@ -345,8 +349,14 @@ class TestRealDBReadOnlySmoke:
                 columns = {row["column_name"] for row in cur.fetchall()}
             # add_design_node 写入的列必须存在
             required_cols = {
-                "path", "blueprint_id", "domain_id", "build_status",
-                "design_maturity", "granularity", "node_type", "blueprint_path",
+                "path",
+                "blueprint_id",
+                "domain_id",
+                "build_status",
+                "design_maturity",
+                "granularity",
+                "node_type",
+                "blueprint_path",
             }
             missing = required_cols - columns
             assert not missing, (
@@ -376,6 +386,7 @@ class TestRealDBReadOnlySmoke:
 # Test 6: ARCH-MM-002 gate smoke —— [MATURITY] header 校验门禁（2 态）
 # ============================================================================
 
+
 class TestMaturityHeaderGateSmoke:
     """验证 transition_design_maturity 的 [MATURITY] header 校验门禁。
 
@@ -393,9 +404,7 @@ class TestMaturityHeaderGateSmoke:
     def test_read_maturity_header_returns_value(self, adg):
         """_read_maturity_header 能从真实文件读取 [MATURITY] 值。"""
         header_val = adg.read_maturity_header(_SCRIPT_PATH)
-        assert header_val is not None, (
-            f"_read_maturity_header 返回 None——{_SCRIPT_PATH} 应有 [MATURITY] header"
-        )
+        assert header_val is not None, f"_read_maturity_header 返回 None——{_SCRIPT_PATH} 应有 [MATURITY] header"
         assert header_val in ("design", "production"), (
             f"[MATURITY] 值 '{header_val}' 不在合法枚举 design/production 中（ARCH-MM-002 两档化）"
         )
@@ -403,7 +412,10 @@ class TestMaturityHeaderGateSmoke:
     def test_gate_blocks_when_header_mismatches(self, adg, monkeypatch):
         """gate 硬阻断：DB design→TO production 合法转换，但 header=design != TO=production → 返回 False。"""
         mock_conn = _make_mock_conn(
-            fetchone_result={"design_maturity": "design", "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/")}
+            fetchone_result={
+                "design_maturity": "design",
+                "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/"),
+            }
         )
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: mock_conn)
         from contextlib import contextmanager
@@ -418,14 +430,16 @@ class TestMaturityHeaderGateSmoke:
 
         result = adg.transition_design_maturity(node_id=999999, to="production")
         assert result is False, (
-            "gate 应阻断 header=design != TO=production 的 transition，"
-            "但返回了 True——ARCH-MM-002 门禁失效"
+            "gate 应阻断 header=design != TO=production 的 transition，但返回了 True——ARCH-MM-002 门禁失效"
         )
 
     def test_gate_allows_when_header_matches(self, adg, monkeypatch):
         """gate 放行：header==TO_MATURITY → 返回 True。"""
         mock_conn = _make_mock_conn(
-            fetchone_result={"design_maturity": "design", "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/")}
+            fetchone_result={
+                "design_maturity": "design",
+                "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/"),
+            }
         )
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: mock_conn)
         from contextlib import contextmanager
@@ -440,15 +454,15 @@ class TestMaturityHeaderGateSmoke:
 
         # design→production 是合法转换，header=production==TO=production → 放行
         result = adg.transition_design_maturity(node_id=999999, to="production")
-        assert result is True, (
-            "gate 应放行 header=production == TO=production 的 transition，"
-            "但返回了 False——门禁误判"
-        )
+        assert result is True, "gate 应放行 header=production == TO=production 的 transition，但返回了 False——门禁误判"
 
     def test_force_bypasses_gate_with_warning(self, adg, monkeypatch, capsys):
         """--force 逃生通道：header != TO 但 force=True → 放行 + stderr 警告。"""
         mock_conn = _make_mock_conn(
-            fetchone_result={"design_maturity": "design", "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/")}
+            fetchone_result={
+                "design_maturity": "design",
+                "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/"),
+            }
         )
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: mock_conn)
         from contextlib import contextmanager
@@ -464,9 +478,7 @@ class TestMaturityHeaderGateSmoke:
         # design→production 合法转换，header=design != TO=production
         # force=True → 应放行 + stderr 含 WARNING
         result = adg.transition_design_maturity(node_id=999999, to="production", force=True)
-        assert result is True, (
-            "--force 应放行 header mismatch 的 transition，但返回了 False"
-        )
+        assert result is True, "--force 应放行 header mismatch 的 transition，但返回了 False"
         captured = capsys.readouterr()
         assert "WARNING" in captured.err or "--force" in captured.err, (
             f"--force 放行时应在 stderr 输出 WARNING，实际 stderr: {captured.err[:200]}"
@@ -474,9 +486,7 @@ class TestMaturityHeaderGateSmoke:
 
     def test_gate_no_block_when_file_missing(self, adg, monkeypatch):
         """gate 不阻断：文件不存在 → 无法校验 → 放行。"""
-        mock_conn = _make_mock_conn(
-            fetchone_result={"design_maturity": "design", "path": "nonexistent/file.py"}
-        )
+        mock_conn = _make_mock_conn(fetchone_result={"design_maturity": "design", "path": "nonexistent/file.py"})
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: mock_conn)
         from contextlib import contextmanager
 
@@ -489,14 +499,15 @@ class TestMaturityHeaderGateSmoke:
         # 文件不存在 → _read_maturity_header 返回 None → gate 不阻断
         # design→production 是合法转换
         result = adg.transition_design_maturity(node_id=999999, to="production")
-        assert result is True, (
-            "文件不存在时 gate 不应阻断（无法校验），但返回了 False"
-        )
+        assert result is True, "文件不存在时 gate 不应阻断（无法校验），但返回了 False"
 
     def test_invalid_transition_blocked(self, adg, monkeypatch):
         """ARCH-MM-002: 倒退 production→design 被合法转换表阻断（非 header gate）。"""
         mock_conn = _make_mock_conn(
-            fetchone_result={"design_maturity": "production", "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/")}
+            fetchone_result={
+                "design_maturity": "production",
+                "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/"),
+            }
         )
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: mock_conn)
         from contextlib import contextmanager
@@ -509,14 +520,13 @@ class TestMaturityHeaderGateSmoke:
 
         # production→design 不在 valid_transitions={(design,production)} → 阻断
         result = adg.transition_design_maturity(node_id=999999, to="design")
-        assert result is False, (
-            "production→design 是非法倒退，应被合法转换表阻断，但返回了 True"
-        )
+        assert result is False, "production→design 是非法倒退，应被合法转换表阻断，但返回了 True"
 
 
 # ============================================================================
 # Test 7: SQL 占位符契约 smoke —— 防列名/VALUES/%s 不匹配（治本 #ARCH-GOV-SQL-001）
 # ============================================================================
+
 
 class TestSqlPlaceholderContract:
     """SQL INSERT 常量的列名/VALUES/%s 占位符静态契约（治本 #ARCH-GOV-SQL-001）。
@@ -564,6 +574,7 @@ class TestSqlPlaceholderContract:
     def test_design_edge_placeholder_matches_function_params(self, adg):
         """SQL_INSERT_DESIGN_EDGE 的 %s 数 == add_design_edge 参数数（排除 db_path）。"""
         import inspect
+
         _, _, ph_ct = self._parse_insert_sql(adg.SQL_INSERT_DESIGN_EDGE)
         sig = inspect.signature(adg.add_design_edge)
         param_ct = len([p for p in sig.parameters.values() if p.name != "db_path"])
@@ -577,33 +588,32 @@ class TestSqlPlaceholderContract:
         """SQL_INSERT_PRODUCTION_EDGE: 列名数 == VALUES 项数。"""
         col_ct, val_ct, _ = self._parse_insert_sql(adg.SQL_INSERT_PRODUCTION_EDGE)
         assert col_ct == val_ct, (
-            f"SQL_INSERT_PRODUCTION_EDGE 列/值不匹配: 列={col_ct} VALUES={val_ct}。"
-            f"治本#ARCH-GOV-SQL-001"
+            f"SQL_INSERT_PRODUCTION_EDGE 列/值不匹配: 列={col_ct} VALUES={val_ct}。治本#ARCH-GOV-SQL-001"
         )
 
     def test_production_edge_placeholder_matches_function_params(self, adg):
         """SQL_INSERT_PRODUCTION_EDGE 的 %s 数 == add_edge 参数数（含 dep_maturity，排除 db_path）。"""
         import inspect
+
         _, _, ph_ct = self._parse_insert_sql(adg.SQL_INSERT_PRODUCTION_EDGE)
         sig = inspect.signature(adg.add_edge)
         param_ct = len([p for p in sig.parameters.values() if p.name != "db_path"])
         assert ph_ct == param_ct, (
-            f"SQL_INSERT_PRODUCTION_EDGE %s数={ph_ct} != add_edge 参数数={param_ct}。"
-            f"治本#ARCH-GOV-SQL-001"
+            f"SQL_INSERT_PRODUCTION_EDGE %s数={ph_ct} != add_edge 参数数={param_ct}。治本#ARCH-GOV-SQL-001"
         )
 
     def test_design_edge_hardcoded_dep_maturity_is_design(self, adg):
         """SQL_INSERT_DESIGN_EDGE 硬编码 dep_maturity='design'（设计态边契约）。"""
         vals = adg.SQL_INSERT_DESIGN_EDGE.split("VALUES", 1)[1].split("RETURNING", 1)[0]
         assert "'design'" in vals, (
-            "设计态边 SQL 应硬编码 dep_maturity='design'——"
-            "add_design_edge 的核心契约（设计态边只能连设计态节点）"
+            "设计态边 SQL 应硬编码 dep_maturity='design'——add_design_edge 的核心契约（设计态边只能连设计态节点）"
         )
 
 
 # ============================================================================
 # Test 6: design 节点删除双源门禁 —— 治本 RSK/RPT 误删（2026-07-31）
 # ============================================================================
+
 
 def _make_mock_conn_seq(fetchone_seq=None, fetchall_result=None):
     """构造 mock depgraph 连接，fetchone 按序返回（支持多查询序列）。
@@ -643,11 +653,18 @@ class TestDesignNodeDeleteDualSourceGate:
 
     def test_deprecate_blocks_design_node(self, adg, monkeypatch, capsys):
         """design 节点走 --deprecate-node 后门（无 force）→ 硬阻断。"""
-        mock_conn = _make_mock_conn_seq([{
-            "node_id": 999, "path": "x.py", "file_path": "",
-            "blueprint_id": "MOD-RSK-009",
-            "design_maturity": "design", "build_status": "planned",
-        }])
+        mock_conn = _make_mock_conn_seq(
+            [
+                {
+                    "node_id": 999,
+                    "path": "x.py",
+                    "file_path": "",
+                    "blueprint_id": "MOD-RSK-009",
+                    "design_maturity": "design",
+                    "build_status": "planned",
+                }
+            ]
+        )
         _patch_db(adg, monkeypatch, mock_conn)
 
         result = adg.deprecate_node(node_id=999)
@@ -659,12 +676,19 @@ class TestDesignNodeDeleteDualSourceGate:
 
     def test_deprecate_force_allows_design_node(self, adg, monkeypatch):
         """design 节点 + --force → 放行（逃生通道），且落审计日志。"""
-        mock_conn = _make_mock_conn_seq([
-            {"node_id": 999, "path": "x.py", "file_path": "",
-             "blueprint_id": "MOD-TEST",
-             "design_maturity": "design", "build_status": "planned"},
-            {"count": 0},  # edge_count
-        ])
+        mock_conn = _make_mock_conn_seq(
+            [
+                {
+                    "node_id": 999,
+                    "path": "x.py",
+                    "file_path": "",
+                    "blueprint_id": "MOD-TEST",
+                    "design_maturity": "design",
+                    "build_status": "planned",
+                },
+                {"count": 0},  # edge_count
+            ]
+        )
         _patch_db(adg, monkeypatch, mock_conn)
         audit_spy = MagicMock()
         monkeypatch.setattr(adg, "_audit_design_node_delete", audit_spy)
@@ -678,12 +702,19 @@ class TestDesignNodeDeleteDualSourceGate:
 
     def test_deprecate_allows_production_node(self, adg, monkeypatch):
         """production 节点走 --deprecate-node → 放行（不受 design 门禁影响）。"""
-        mock_conn = _make_mock_conn_seq([
-            {"node_id": 888, "path": "y.py", "file_path": "",
-             "blueprint_id": "MOD-X",
-             "design_maturity": "production", "build_status": "stable"},
-            {"count": 0},  # edge_count
-        ])
+        mock_conn = _make_mock_conn_seq(
+            [
+                {
+                    "node_id": 888,
+                    "path": "y.py",
+                    "file_path": "",
+                    "blueprint_id": "MOD-X",
+                    "design_maturity": "production",
+                    "build_status": "stable",
+                },
+                {"count": 0},  # edge_count
+            ]
+        )
         _patch_db(adg, monkeypatch, mock_conn)
         audit_spy = MagicMock()
         monkeypatch.setattr(adg, "_audit_design_node_delete", audit_spy)
@@ -694,10 +725,17 @@ class TestDesignNodeDeleteDualSourceGate:
 
     def test_remove_design_node_blocks_without_evidence(self, adg, monkeypatch, capsys):
         """design 节点走正门但无 design_evidence → 硬阻断（治本核心）。"""
-        mock_conn = _make_mock_conn_seq([{
-            "node_id": 999, "path": "x.py", "blueprint_id": "MOD-RSK-009",
-            "design_maturity": "design", "build_status": "planned",
-        }])
+        mock_conn = _make_mock_conn_seq(
+            [
+                {
+                    "node_id": 999,
+                    "path": "x.py",
+                    "blueprint_id": "MOD-RSK-009",
+                    "design_maturity": "design",
+                    "build_status": "planned",
+                }
+            ]
+        )
         _patch_db(adg, monkeypatch, mock_conn)
 
         result = adg.remove_design_node(node_id=999)  # design_evidence 默认 None
@@ -709,19 +747,24 @@ class TestDesignNodeDeleteDualSourceGate:
 
     def test_remove_design_node_allows_with_evidence(self, adg, monkeypatch):
         """design 节点 + design_evidence → 放行，且落审计日志（含证据）。"""
-        mock_conn = _make_mock_conn_seq([
-            {"node_id": 999, "path": "x.py", "blueprint_id": "MOD-RSK-009",
-             "design_maturity": "design", "build_status": "planned"},
-            {"count": 0},  # duplicates
-            {"count": 0},  # edge_count
-        ])
+        mock_conn = _make_mock_conn_seq(
+            [
+                {
+                    "node_id": 999,
+                    "path": "x.py",
+                    "blueprint_id": "MOD-RSK-009",
+                    "design_maturity": "design",
+                    "build_status": "planned",
+                },
+                {"count": 0},  # duplicates
+                {"count": 0},  # edge_count
+            ]
+        )
         _patch_db(adg, monkeypatch, mock_conn)
         audit_spy = MagicMock()
         monkeypatch.setattr(adg, "_audit_design_node_delete", audit_spy)
 
-        result = adg.remove_design_node(
-            node_id=999, design_evidence="11-D-RISK §1.4 RK-09 P0核心"
-        )
+        result = adg.remove_design_node(node_id=999, design_evidence="11-D-RISK §1.4 RK-09 P0核心")
         assert result is True, "有 design_evidence 应放行"
         audit_spy.assert_called_once()
         assert audit_spy.call_args.kwargs.get("op") == "remove_design_node"
@@ -730,17 +773,20 @@ class TestDesignNodeDeleteDualSourceGate:
 
     def test_remove_design_node_blocks_non_design(self, adg, monkeypatch, capsys):
         """非 design 节点走正门 → 阻断（原有逻辑，design 检查在 evidence 之前）。"""
-        mock_conn = _make_mock_conn_seq([{
-            "node_id": 999, "path": "x.py", "blueprint_id": "MOD-X",
-            "design_maturity": "production", "build_status": "stable",
-        }])
+        mock_conn = _make_mock_conn_seq(
+            [
+                {
+                    "node_id": 999,
+                    "path": "x.py",
+                    "blueprint_id": "MOD-X",
+                    "design_maturity": "production",
+                    "build_status": "stable",
+                }
+            ]
+        )
         _patch_db(adg, monkeypatch, mock_conn)
 
-        result = adg.remove_design_node(
-            node_id=999, design_evidence="某文档引用"
-        )
+        result = adg.remove_design_node(node_id=999, design_evidence="某文档引用")
         assert result is False, "非 design 节点应阻断（design 检查在 evidence 之前）"
         err = capsys.readouterr().err
-        assert "非设计态节点" in err, (
-            f"应提示非设计态节点禁止删除，实际 stderr: {err[:300]}"
-        )
+        assert "非设计态节点" in err, f"应提示非设计态节点禁止删除，实际 stderr: {err[:300]}"

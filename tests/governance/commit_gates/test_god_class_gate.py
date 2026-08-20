@@ -25,6 +25,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import ast
@@ -60,8 +61,10 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     gw.project_root = str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -134,11 +137,7 @@ class TestCountMethods:
         assert self._count(_make_class_with_methods(0)) == 0
 
     def test_async_methods_counted(self):
-        code = (
-            "class C:\n"
-            "    async def a(self): pass\n"
-            "    async def b(self): pass\n"
-        )
+        code = "class C:\n    async def a(self): pass\n    async def b(self): pass\n"
         assert self._count(code) == 2
 
     def test_nested_class_methods_not_counted(self):

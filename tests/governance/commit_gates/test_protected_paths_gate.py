@@ -23,6 +23,7 @@
 - TestGateSpecFields: gate_id / priority 字段正确
 - TestIsProtected: is_protected 公共接口
 """
+
 from __future__ import annotations
 
 import os
@@ -85,7 +86,7 @@ class TestNoProtectedFilesPass:
 
 
 class TestGitignoreBlocked:
-    """ .gitignore staged 无逃生通道 → 阻断。"""
+    """.gitignore staged 无逃生通道 → 阻断。"""
 
     def test_gitignore_blocked(self, tmp_path):
         """.gitignore staged 无逃生 → passed=False。"""
@@ -98,7 +99,7 @@ class TestGitignoreBlocked:
 
 
 class TestGitattributesBlocked:
-    """ .gitattributes staged 无逃生通道 → 阻断。"""
+    """.gitattributes staged 无逃生通道 → 阻断。"""
 
     def test_gitattributes_blocked(self, tmp_path):
         """.gitattributes staged 无逃生 → passed=False。"""
@@ -111,7 +112,7 @@ class TestGitattributesBlocked:
 
 
 class TestAgentsMdBlocked:
-    """ AGENTS.md staged 无逃生通道 → 阻断。"""
+    """AGENTS.md staged 无逃生通道 → 阻断。"""
 
     def test_agents_md_blocked(self, tmp_path):
         """AGENTS.md staged 无逃生 → passed=False。"""
@@ -131,7 +132,8 @@ class TestApprovalMarkerPass:
         gw = _make_gateway(tmp_path)
         gate = make_protected_paths_gate()
         passed, detail = gate.check(
-            gw, [".gitignore"],
+            gw,
+            [".gitignore"],
             commit_message="fix: update gitignore [ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001]",
         )
         assert passed is True
@@ -142,7 +144,8 @@ class TestApprovalMarkerPass:
         gw = _make_gateway(tmp_path)
         gate = make_protected_paths_gate()
         passed, detail = gate.check(
-            gw, [".gitattributes"],
+            gw,
+            [".gitattributes"],
             commit_message="chore: tweak lfs [ARCH-APPROVAL:#ARCH-007]",
         )
         assert passed is True
@@ -152,7 +155,8 @@ class TestApprovalMarkerPass:
         gw = _make_gateway(tmp_path)
         gate = make_protected_paths_gate()
         gate.check(
-            gw, [".gitignore"],
+            gw,
+            [".gitignore"],
             commit_message="fix: update [ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001]",
         )
         audit_file = tmp_path / ".runtime" / "gate_audit" / "protected_paths_bypass.jsonl"
@@ -230,8 +234,13 @@ class TestMergeBranchApprovalGate:
         env["GIT_COMMITTER_NAME"] = "Test"
         env["GIT_COMMITTER_EMAIL"] = "test@test.com"
         return subprocess.run(
-            ["git", *args], cwd=str(repo),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", *args],
+            cwd=str(repo),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         )
 
     def _make_merge_scene(self, repo: Path, approved: bool) -> None:
@@ -247,10 +256,7 @@ class TestMergeBranchApprovalGate:
         self._git(repo, "checkout", "-qb", "side")
         (repo / ".gitignore").write_text("*.log\n*.tmp\n", encoding="utf-8")
         self._git(repo, "add", ".gitignore")
-        msg = (
-            "chore: gitignore [ARCH-APPROVAL:ARCH-TEST-010]"
-            if approved else "chore: gitignore (no approval)"
-        )
+        msg = "chore: gitignore [ARCH-APPROVAL:ARCH-TEST-010]" if approved else "chore: gitignore (no approval)"
         self._git(repo, "commit", "-m", msg, "--no-verify")
         self._git(repo, "checkout", "-q", base_ref)
         (repo / "main2.py").write_text("y = 2\n", encoding="utf-8")

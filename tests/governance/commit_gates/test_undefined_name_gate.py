@@ -21,6 +21,7 @@ GATE-DEPGRAPH-OPS 治本 Phase 1，F821 零防护缺口）
 
 测试隔离：MagicMock 模拟 gateway.run_git；scan_all 用 tmp_path 构造文件树。
 """
+
 from __future__ import annotations
 
 import sys
@@ -71,6 +72,7 @@ def _make_gateway(staged_files: list[str], file_contents: dict[str, str]) -> Mag
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """gate_id / priority / isinstance(GateSpec)。"""
 
@@ -87,6 +89,7 @@ class TestGateSpecFields:
 # ---------------------------------------------------------------------------
 # TestScanContent — 单文件内容扫描
 # ---------------------------------------------------------------------------
+
 
 class TestScanContent:
     """scan_content_for_undefined_names 检测逻辑。"""
@@ -115,11 +118,7 @@ class TestScanContent:
         assert scan_content_for_undefined_names("src/zephyr/foo.py", content) == []
 
     def test_function_and_class_defs_pass(self) -> None:
-        content = (
-            "class Foo:\n    pass\n\n"
-            "def bar():\n    return Foo()\n\n"
-            "async def baz():\n    return bar()\n"
-        )
+        content = "class Foo:\n    pass\n\ndef bar():\n    return Foo()\n\nasync def baz():\n    return bar()\n"
         assert scan_content_for_undefined_names("src/zephyr/foo.py", content) == []
 
     def test_params_and_locals_pass(self) -> None:
@@ -176,25 +175,15 @@ class TestScanContent:
         assert scan_content_for_undefined_names("src/zephyr/foo.py", content) == []
 
     def test_walrus_passes(self) -> None:
-        content = (
-            "def main(data):\n"
-            "    if (n := len(data)) > 0:\n"
-            "        return n\n"
-        )
+        content = "def main(data):\n    if (n := len(data)) > 0:\n        return n\n"
         assert scan_content_for_undefined_names("src/zephyr/foo.py", content) == []
 
     def test_builtins_pass(self) -> None:
-        content = (
-            "def main(items):\n"
-            "    return len([str(x) for x in items if isinstance(x, int)])\n"
-        )
+        content = "def main(items):\n    return len([str(x) for x in items if isinstance(x, int)])\n"
         assert scan_content_for_undefined_names("src/zephyr/foo.py", content) == []
 
     def test_dunder_names_pass(self) -> None:
-        content = (
-            "if __name__ == '__main__':\n"
-            "    print(__file__, __doc__)\n"
-        )
+        content = "if __name__ == '__main__':\n    print(__file__, __doc__)\n"
         assert scan_content_for_undefined_names("src/zephyr/foo.py", content) == []
 
     def test_wildcard_import_skipped(self) -> None:
@@ -218,6 +207,7 @@ class TestScanContent:
 # ---------------------------------------------------------------------------
 # TestCheckGate — mock gateway 完整流程
 # ---------------------------------------------------------------------------
+
 
 class TestCheckGate:
     """_check 闭包（mock gateway）。"""
@@ -269,6 +259,7 @@ class TestCheckGate:
 # ---------------------------------------------------------------------------
 # TestScanAll — 全仓 baseline 扫描（tmp_path 隔离）
 # ---------------------------------------------------------------------------
+
 
 class TestScanAll:
     """scan_all_for_undefined_names（磁盘全扫）。"""

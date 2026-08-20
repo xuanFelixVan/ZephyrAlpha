@@ -30,6 +30,7 @@
 - TestPostClaimAuditNoChange: P1——无变化不记审计
 - TestPostClaimAuditFailOpen: P1——审计失败不阻断commit
 """
+
 from __future__ import annotations
 
 import json
@@ -76,7 +77,10 @@ class TestNoSnapshotPasses:
         target = tmp_path / "a.py"
         target.touch()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True
         assert detail == ""
@@ -93,7 +97,10 @@ class TestCleanBaselinePasses:
         gw = _make_gateway(tmp_path, session_snapshots={abs_target: ""})
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True
         assert detail == ""
@@ -108,11 +115,15 @@ class TestDirtyBaselineBlocked:
         target.touch()
         abs_target = os.path.abspath(str(target))
         gw = _make_gateway(
-            tmp_path, session_snapshots={abs_target: "-old foreign line\n+new foreign line"},
+            tmp_path,
+            session_snapshots={abs_target: "-old foreign line\n+new foreign line"},
         )
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is False
         assert "FOREIGN_CHANGE_VIOLATION" in detail
@@ -128,11 +139,15 @@ class TestDirtyBaselineBlocked:
         abs_b = os.path.abspath(str(b))
         # a 干净，b 脏
         gw = _make_gateway(
-            tmp_path, session_snapshots={abs_a: "", abs_b: "dirty diff content"},
+            tmp_path,
+            session_snapshots={abs_a: "", abs_b: "dirty diff content"},
         )
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
-            gw, [str(a), str(b)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(a), str(b)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is False
         assert "b.py" in detail
@@ -148,11 +163,15 @@ class TestAllowOverlapEscape:
         target.touch()
         abs_target = os.path.abspath(str(target))
         gw = _make_gateway(
-            tmp_path, session_snapshots={abs_target: "dirty foreign content"},
+            tmp_path,
+            session_snapshots={abs_target: "dirty foreign content"},
         )
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=True,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=True,
         )
         assert passed is True
         assert detail == ""
@@ -168,7 +187,10 @@ class TestNoSessionIdPasses:
         gw = _make_gateway(tmp_path)
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="",
+            allow_overlap=False,
         )
         assert passed is True
         assert detail == ""
@@ -182,11 +204,15 @@ class TestSnapshotExceptionSafe:
         target = tmp_path / "a.py"
         target.touch()
         gw = _make_gateway(
-            tmp_path, raise_exc=RuntimeError("snapshots dict corrupted"),
+            tmp_path,
+            raise_exc=RuntimeError("snapshots dict corrupted"),
         )
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True
         assert detail == ""
@@ -206,6 +232,7 @@ class TestGateSpecFields:
 # ---------------------------------------------------------------------------
 # S3-C 治本（2026-07-17）：claim 快照磁盘持久化测试
 # ---------------------------------------------------------------------------
+
 
 def _make_minimal_gateway(project_root: Path) -> GitCommitGateway:
     """构造最小化 GitCommitGateway（跳过 __init__ 的重量级注册），仅设置快照相关属性。
@@ -272,7 +299,8 @@ class TestSnapshotDiskPersistence:
         )
         # 写入损坏快照
         (gw.claim_snapshots_dir / "sess-corrupt.json").write_text(
-            "{invalid json!!!", encoding="utf-8",
+            "{invalid json!!!",
+            encoding="utf-8",
         )
         gw.load_claim_snapshots_from_disk()
         assert "sess-good" in gw.claim_snapshots
@@ -310,9 +338,7 @@ class TestAdoptPriorWork:
     commit 时绕 gate。
     """
 
-    def _make_claimable_gateway(
-        self, project_root: Path, baseline_map: dict[str, str]
-    ) -> GitCommitGateway:
+    def _make_claimable_gateway(self, project_root: Path, baseline_map: dict[str, str]) -> GitCommitGateway:
         """构造可 claim 的 gateway：_registry.claim_file 返回 True，
         _capture_baseline_diff 按 baseline_map 返回基线（绕过真实 git diff）。"""
         gw = GitCommitGateway.__new__(GitCommitGateway)
@@ -337,7 +363,10 @@ class TestAdoptPriorWork:
         gate = make_foreign_change_gate()
         gw_mock = _make_gateway(tmp_path, session_snapshots={abs_target: ""})
         passed, detail = gate.check(
-            gw_mock, [str(target)], session_id="s1", allow_overlap=False,
+            gw_mock,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True
         assert detail == ""
@@ -351,11 +380,7 @@ class TestAdoptPriorWork:
         gw.claim_files("s1", [str(target)], adopt_prior_work=True)
         audit_file = gw.claim_snapshots_dir / "s1_adopted.jsonl"
         assert audit_file.exists(), "adopt 审计日志未创建"
-        records = [
-            json.loads(line)
-            for line in audit_file.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        records = [json.loads(line) for line in audit_file.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert len(records) == 1
         assert records[0]["file"] == abs_target
         assert records[0]["diff_size"] > 0
@@ -373,11 +398,7 @@ class TestAdoptPriorWork:
         gw = self._make_claimable_gateway(tmp_path, {abs_target: "-old\n+new dirty work"})
         gw.claim_files("s1", [str(target)], adopt_prior_work=True)
         audit_file = gw.claim_snapshots_dir / "s1_adopted.jsonl"
-        records = [
-            json.loads(line)
-            for line in audit_file.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        records = [json.loads(line) for line in audit_file.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert len(records) == 1
         assert records[0]["domain"] == "D_REGIME"
 
@@ -407,7 +428,10 @@ class TestAdoptPriorWork:
         gate = make_foreign_change_gate()
         gw_mock = _make_gateway(tmp_path, session_snapshots={abs_target: dirty})
         passed, detail = gate.check(
-            gw_mock, [str(target)], session_id="s1", allow_overlap=False,
+            gw_mock,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is False
         assert "FOREIGN_CHANGE_VIOLATION" in detail
@@ -497,8 +521,9 @@ class TestIdempotentClaimPreservesBaseline:
         assert passed is True
         # adopt 审计不因重跑重复记录
         records = [
-            line for line in (gw.claim_snapshots_dir / "s1_adopted.jsonl")
-            .read_text(encoding="utf-8").splitlines() if line.strip()
+            line
+            for line in (gw.claim_snapshots_dir / "s1_adopted.jsonl").read_text(encoding="utf-8").splitlines()
+            if line.strip()
         ]
         assert len(records) == 1
 
@@ -523,6 +548,7 @@ class TestIdempotentClaimPreservesBaseline:
 # ---------------------------------------------------------------------------
 # P1（13a5e1d512 治本补强）：post-claim 修改审计测试
 # ---------------------------------------------------------------------------
+
 
 def _make_audit_gateway(
     project_root: Path,
@@ -566,11 +592,7 @@ def _read_audit_log(project_root: Path) -> list[dict]:
     audit_path = project_root / ".runtime" / "gate_audit" / "post_claim_modifications.jsonl"
     if not audit_path.is_file():
         return []
-    return [
-        json.loads(line)
-        for line in audit_path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    return [json.loads(line) for line in audit_path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 class TestPostClaimAuditNormalSelfEditSkipped:
@@ -607,7 +629,10 @@ class TestPostClaimAuditDirtyBaselineChanged:
         )
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is False  # gate 阻断（基线非空）
         records = _read_audit_log(tmp_path)
@@ -631,17 +656,22 @@ class TestPostClaimAuditAdoptedChanged:
             tmp_path,
             session_snapshots={abs_target: ""},  # adopt 清空了基线
             capture_map={abs_target: "+adopted work visible at commit"},  # commit 时有 diff
-            adopted_records=[{  # adopt 审计日志
-                "timestamp": 1700000000.0,
-                "session_id": "s1",
-                "file": abs_target,
-                "diff_size": 50,
-                "diff_sha256": "abc123def456abc7",
-            }],
+            adopted_records=[
+                {  # adopt 审计日志
+                    "timestamp": 1700000000.0,
+                    "session_id": "s1",
+                    "file": abs_target,
+                    "diff_size": 50,
+                    "diff_sha256": "abc123def456abc7",
+                }
+            ],
         )
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True  # 空基线 → gate 放行
         records = _read_audit_log(tmp_path)
@@ -688,6 +718,9 @@ class TestPostClaimAuditFailOpen:
         gw.capture_baseline_diff = lambda abs_f: 42  # int，非 str
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
-            gw, [str(target)], session_id="s1", allow_overlap=False,
+            gw,
+            [str(target)],
+            session_id="s1",
+            allow_overlap=False,
         )
         assert passed is True  # 空基线 → 放行，审计异常不影响决策

@@ -33,20 +33,12 @@ class _MockGateway:
         self.project_root = project_root
 
 
-def _make_checker_stub(
-    repo_dir: Path, exit_code: int = 0, stderr_msg: str = ""
-) -> Path:
+def _make_checker_stub(repo_dir: Path, exit_code: int = 0, stderr_msg: str = "") -> Path:
     """在 repo_dir/scripts/governance/d3_metadata/ 创建 check_frontmatter_metadata.py stub。
 
     stub 行为由 exit_code + stderr_msg 参数控制，模拟真 checker 的 exit 0/1/2。
     """
-    checker = (
-        repo_dir
-        / "scripts"
-        / "governance"
-        / "d3_metadata"
-        / "check_frontmatter_metadata.py"
-    )
+    checker = repo_dir / "scripts" / "governance" / "d3_metadata" / "check_frontmatter_metadata.py"
     checker.parent.mkdir(parents=True, exist_ok=True)
     lines = ["#!/usr/bin/env python", "import sys"]
     if stderr_msg:
@@ -143,9 +135,7 @@ class TestCheckViolation:
 
     def test_checker_exit_1_returns_false_with_detail(self, tmp_path):
         gw = _MockGateway(tmp_path)
-        _make_checker_stub(
-            tmp_path, exit_code=1, stderr_msg="ttl missing in foo.py"
-        )
+        _make_checker_stub(tmp_path, exit_code=1, stderr_msg="ttl missing in foo.py")
         _make_target_file(tmp_path, "foo.py")
         spec = make_ttl_gate()
         passed, detail = spec.check(gw, [str(tmp_path / "foo.py")])

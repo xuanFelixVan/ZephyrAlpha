@@ -41,6 +41,7 @@ R96 修复背景：
 
 测试隔离：纯函数测试，无 mock/无 git/无文件 I/O。
 """
+
 from __future__ import annotations
 
 import sys
@@ -83,13 +84,7 @@ class TestExtractDocstringLinesCore:
 
     def test_function_docstring_multiline(self):
         """多行函数 docstring 被识别。"""
-        content = (
-            'def foo():\n'
-            '    """func\n'
-            '    multi\n'
-            '    """\n'
-            '    pass\n'
-        )
+        content = 'def foo():\n    """func\n    multi\n    """\n    pass\n'
         assert _extract_docstring_lines(content) == {2, 3, 4}
 
     def test_class_docstring(self):
@@ -99,37 +94,28 @@ class TestExtractDocstringLinesCore:
 
     def test_async_function_docstring(self):
         """async 函数 docstring 被识别。"""
-        content = (
-            'async def foo():\n'
-            '    """async func docstring"""\n'
-            '    pass\n'
-        )
+        content = 'async def foo():\n    """async func docstring"""\n    pass\n'
         assert _extract_docstring_lines(content) == {2}
 
     def test_method_docstring(self):
         """类方法 docstring 被识别。"""
-        content = (
-            'class Foo:\n'
-            '    def method(self):\n'
-            '        """method docstring"""\n'
-            '        pass\n'
-        )
+        content = 'class Foo:\n    def method(self):\n        """method docstring"""\n        pass\n'
         assert _extract_docstring_lines(content) == {3}
 
     def test_nested_docstrings_all_recognized(self):
         """嵌套场景下所有 docstring 全部被识别。"""
         content = (
-            '"""module docstring"""\n'             # L1
-            '\n'                                     # L2
-            'def foo():\n'                           # L3
-            '    """func docstring"""\n'            # L4
-            '    pass\n'                              # L5
-            '\n'                                     # L6
-            'class Bar:\n'                            # L7
-            '    """class docstring"""\n'            # L8
-            '    def method(self):\n'                # L9
-            '        """method docstring"""\n'       # L10
-            '        pass\n'                          # L11
+            '"""module docstring"""\n'  # L1
+            "\n"  # L2
+            "def foo():\n"  # L3
+            '    """func docstring"""\n'  # L4
+            "    pass\n"  # L5
+            "\n"  # L6
+            "class Bar:\n"  # L7
+            '    """class docstring"""\n'  # L8
+            "    def method(self):\n"  # L9
+            '        """method docstring"""\n'  # L10
+            "        pass\n"  # L11
         )
         assert _extract_docstring_lines(content) == {1, 4, 8, 10}
 
@@ -140,15 +126,15 @@ class TestExtractDocstringLinesCore:
 
     def test_no_docstring_returns_empty(self):
         """无 docstring 文件返回空集合。"""
-        content = 'x = 1\ny = 2\n'
+        content = "x = 1\ny = 2\n"
         assert _extract_docstring_lines(content) == set()
 
     def test_second_statement_string_not_docstring(self):
         """非 body[0] 的独立字符串表达式不被识别为 docstring。"""
         content = (
-            'x = 1\n'                          # L1
-            '"""not a docstring"""\n'          # L2 — 模块 body[1]，非 body[0]
-            'y = 2\n'                          # L3
+            "x = 1\n"  # L1
+            '"""not a docstring"""\n'  # L2 — 模块 body[1]，非 body[0]
+            "y = 2\n"  # L3
         )
         # 只有 body[0] 是 docstring；L2 是独立 Expr(Constant(str)) 但不是 body[0]
         assert _extract_docstring_lines(content) == set()
@@ -172,12 +158,7 @@ class TestExtractDocstringLinesManifestBug:
 
     def test_manifest_inline_string_not_exempt(self):
         """__manifest__ 行内赋值字符串内容不被识别为 docstring。"""
-        content = (
-            '__manifest__ = """\n'
-            'args: []\n'
-            '"""\n'
-            'sql = "SELECT col FROM tbl"\n'
-        )
+        content = '__manifest__ = """\nargs: []\n"""\nsql = "SELECT col FROM tbl"\n'
         # manifest 内容 L2/L3 和后续代码 L4 都不应被豁免
         assert _extract_docstring_lines(content) == set()
 
@@ -190,9 +171,9 @@ class TestExtractDocstringLinesManifestBug:
         不是 docstring，所有行都不豁免。
         """
         content = (
-            '__manifest__ = """\n'      # L1
-            'args: []\n'                 # L2
-            '"""\n'                      # L3 — manifest 结束（独立三引号行）
+            '__manifest__ = """\n'  # L1
+            "args: []\n"  # L2
+            '"""\n'  # L3 — manifest 结束（独立三引号行）
             'sql = "SELECT col FROM tbl"\n'  # L4 — 不应被豁免
         )
         # 期望：所有行都不被豁免（manifest 不是 docstring）
@@ -204,10 +185,10 @@ class TestExtractDocstringLinesManifestBug:
     def test_manifest_with_following_independent_docstring_not_cascaded(self):
         """R95 修复 Bug B 级联场景：manifest 结束后跟独立 docstring 不级联误判。"""
         content = (
-            '__manifest__ = """\n'      # L1
-            'args: []\n'                 # L2
-            '"""\n'                       # L3 — manifest 结束
-            '\n'                          # L4
+            '__manifest__ = """\n'  # L1
+            "args: []\n"  # L2
+            '"""\n'  # L3 — manifest 结束
+            "\n"  # L4
             '"""independent docstring"""\n'  # L5 — 独立 Expr，不是 body[0]
             'sql = "SELECT col FROM tbl"\n'  # L6
         )
@@ -220,14 +201,14 @@ class TestExtractDocstringLinesManifestBug:
     def test_cleanup_p0_auto_bridged_scenario(self):
         """cleanup_p0_auto_bridged.py 实际场景：L36-105 不应被错误豁免。"""
         content = (
-            '"""module docstring"""\n'       # L1 — 模块 docstring
-            '\n'                              # L2
-            '__manifest__ = """\n'           # L3
-            'args: []\n'                      # L4
-            '"""\n'                           # L5 — manifest 结束
-            '\n'                              # L6
-            '"""second docstring"""\n'       # L7 — 独立 Expr
-            '\n'                              # L8
+            '"""module docstring"""\n'  # L1 — 模块 docstring
+            "\n"  # L2
+            '__manifest__ = """\n'  # L3
+            "args: []\n"  # L4
+            '"""\n'  # L5 — manifest 结束
+            "\n"  # L6
+            '"""second docstring"""\n'  # L7 — 独立 Expr
+            "\n"  # L8
             'sql = "UPDATE tasks SET x=1"\n'  # L9 — 裸 SQL（不应被豁免）
         )
         result = _extract_docstring_lines(content)
@@ -242,14 +223,7 @@ class TestExtractDocstringLinesManifestBug:
         旧 bug：manifest 内 SQL 被错误豁免
         新方案：manifest 是 Assign 节点，不是 docstring，不豁免
         """
-        content = (
-            '__manifest__ = """\n'
-            'description: >\n'
-            '    SELECT col FROM tbl\n'
-            '"""\n'
-            '\n'
-            'sql = "UPDATE tasks SET x=1"\n'
-        )
+        content = '__manifest__ = """\ndescription: >\n    SELECT col FROM tbl\n"""\n\nsql = "UPDATE tasks SET x=1"\n'
         result = _extract_docstring_lines(content)
         assert result == set(), f"FAIL: expected empty set, got {sorted(result)}"
         # L7 裸 SQL 不应被豁免
@@ -258,11 +232,11 @@ class TestExtractDocstringLinesManifestBug:
     def test_module_docstring_then_manifest(self):
         """模块 docstring + manifest 共存场景：只豁免模块 docstring。"""
         content = (
-            '"""module docstring"""\n'      # L1 — 识别
-            '\n'                            # L2
-            '__manifest__ = """\n'         # L3 — 不识别（Assign 节点）
-            'args: []\n'                    # L4 — 不识别
-            '"""\n'                         # L5 — 不识别
+            '"""module docstring"""\n'  # L1 — 识别
+            "\n"  # L2
+            '__manifest__ = """\n'  # L3 — 不识别（Assign 节点）
+            "args: []\n"  # L4 — 不识别
+            '"""\n'  # L5 — 不识别
             'code = "UPDATE tbl SET x=1"\n'  # L6 — 不应被豁免
         )
         result = _extract_docstring_lines(content)
@@ -271,12 +245,7 @@ class TestExtractDocstringLinesManifestBug:
 
     def test_string_assignment_not_docstring(self):
         """普通字符串赋值（var = \"\"\"...\"\"\"）不被识别为 docstring。"""
-        content = (
-            'description = """\n'
-            'multi-line string\n'
-            '"""\n'
-            'sql = "SELECT col FROM tbl"\n'
-        )
+        content = 'description = """\nmulti-line string\n"""\nsql = "SELECT col FROM tbl"\n'
         # 所有行都不应被豁免（description 是 Assign，不是 docstring）
         assert _extract_docstring_lines(content) == set()
 
@@ -300,7 +269,7 @@ class TestExtractDocstringLinesEdgeCases:
 
     def test_only_comments(self):
         """只有注释的文件返回空集合。"""
-        content = '# comment 1\n# comment 2\n'
+        content = "# comment 1\n# comment 2\n"
         assert _extract_docstring_lines(content) == set()
 
     def test_unclosed_triple_quote_syntax_error(self):
@@ -312,7 +281,7 @@ class TestExtractDocstringLinesEdgeCases:
 
     def test_binary_like_content_fail_open(self):
         """非 Python 内容（二进制/乱码）触发 SyntaxError，fail-open。"""
-        content = '\x00\x01\x02\n'
+        content = "\x00\x01\x02\n"
         result = _extract_docstring_lines(content)
         assert result == set()
 
@@ -324,18 +293,18 @@ class TestExtractDocstringLinesEdgeCases:
         内容和函数体内的裸 SQL。
         """
         content = (
-            '# [BLUEPRINT] MOD-X\n'                          # L1 frontmatter
-            '# [MODULE] test\n'                              # L2 frontmatter
-            '"""module docstring"""\n'                       # L3 模块 docstring
-            '\n'                                              # L4
-            '__manifest__ = """\n'                           # L5 manifest 起
-            'args: []\n'                                      # L6
-            '"""\n'                                           # L7 manifest 终
-            '\n'                                              # L8
-            'def foo():\n'                                    # L9
-            '    """func docstring"""\n'                     # L10 函数 docstring
-            '    sql = "SELECT col FROM tbl"\n'              # L11 — 不应被豁免
-            '    return sql\n'                                # L12
+            "# [BLUEPRINT] MOD-X\n"  # L1 frontmatter
+            "# [MODULE] test\n"  # L2 frontmatter
+            '"""module docstring"""\n'  # L3 模块 docstring
+            "\n"  # L4
+            '__manifest__ = """\n'  # L5 manifest 起
+            "args: []\n"  # L6
+            '"""\n'  # L7 manifest 终
+            "\n"  # L8
+            "def foo():\n"  # L9
+            '    """func docstring"""\n'  # L10 函数 docstring
+            '    sql = "SELECT col FROM tbl"\n'  # L11 — 不应被豁免
+            "    return sql\n"  # L12
         )
         result = _extract_docstring_lines(content)
         # L3 模块 docstring + L10 函数 docstring 被识别
@@ -358,19 +327,19 @@ class TestIsExemptLine:
         assert _is_exempt_line('# sql = "SELECT col FROM tbl"') is True
 
     def test_indented_comment_exempt(self):
-        assert _is_exempt_line('    # comment') is True
+        assert _is_exempt_line("    # comment") is True
 
     def test_import_line_exempt(self):
-        assert _is_exempt_line('from foo import bar') is True
+        assert _is_exempt_line("from foo import bar") is True
 
     def test_plain_import_exempt(self):
-        assert _is_exempt_line('import os') is True
+        assert _is_exempt_line("import os") is True
 
     def test_code_not_exempt(self):
         assert _is_exempt_line('sql = "SELECT col FROM tbl"') is False
 
     def test_empty_line_not_exempt(self):
-        assert _is_exempt_line('') is False
+        assert _is_exempt_line("") is False
 
 
 # ---------------------------------------------------------------------------
@@ -380,28 +349,28 @@ class TestParseDiffWithLineNumbers:
     """git diff --unified=0 输出解析为 [(line_no, content), ...]。"""
 
     def test_simple_added_line(self):
-        diff = '+++ b/file.py\n@@ -0,0 +1,1 @@\n+code = 1\n'
+        diff = "+++ b/file.py\n@@ -0,0 +1,1 @@\n+code = 1\n"
         result = _parse_diff_with_line_numbers(diff)
-        assert result == [(1, 'code = 1')]
+        assert result == [(1, "code = 1")]
 
     def test_multiple_added_lines(self):
-        diff = '+++ b/file.py\n@@ -0,0 +1,3 @@\n+a = 1\n+b = 2\nc = 3\n'
+        diff = "+++ b/file.py\n@@ -0,0 +1,3 @@\n+a = 1\n+b = 2\nc = 3\n"
         result = _parse_diff_with_line_numbers(diff)
         # +a, +b 是 added，c 是 context（无 + 前缀，unified=0 通常无 context）
-        assert (1, 'a = 1') in result
-        assert (2, 'b = 2') in result
+        assert (1, "a = 1") in result
+        assert (2, "b = 2") in result
 
     def test_hunk_header_parsed(self):
-        diff = '+++ b/file.py\n@@ -10,2 +12,3 @@\n+code = 1\n'
+        diff = "+++ b/file.py\n@@ -10,2 +12,3 @@\n+code = 1\n"
         result = _parse_diff_with_line_numbers(diff)
         # 行号从 12 开始
-        assert result == [(12, 'code = 1')]
+        assert result == [(12, "code = 1")]
 
     def test_empty_diff(self):
-        assert _parse_diff_with_line_numbers('') == []
+        assert _parse_diff_with_line_numbers("") == []
 
     def test_no_added_lines(self):
-        diff = '+++ b/file.py\n@@ -0,0 +1,0 @@\n'
+        diff = "+++ b/file.py\n@@ -0,0 +1,0 @@\n"
         assert _parse_diff_with_line_numbers(diff) == []
 
 
@@ -425,9 +394,9 @@ class TestExtractSqlConstantLines:
         file_task_mapper.py L66-68 实际场景。
         """
         content = (
-            'SQL_SELECT = (\n'           # L1
+            "SQL_SELECT = (\n"  # L1
             '    "SELECT task_id FROM task_files WHERE file_path = ?"\n'  # L2
-            ')\n'                         # L3
+            ")\n"  # L3
         )
         assert _extract_sql_constant_lines(content) == {1, 2, 3}
 
@@ -435,34 +404,34 @@ class TestExtractSqlConstantLines:
         """三引号多行定义（模式3）：整个三引号范围豁免。"""
         content = (
             'SQL_INSERT = """INSERT INTO tasks\n'  # L1
-            '    (id, name) VALUES (?, ?)"""\n'   # L2
+            '    (id, name) VALUES (?, ?)"""\n'  # L2
         )
         assert _extract_sql_constant_lines(content) == {1, 2}
 
     def test_backslash_continuation(self):
         """反斜杠续行定义：续行也被豁免。"""
         content = (
-            'SQL_X = \\\n'                          # L1
-            '    "SELECT * FROM users"\n'            # L2
+            "SQL_X = \\\n"  # L1
+            '    "SELECT * FROM users"\n'  # L2
         )
         assert _extract_sql_constant_lines(content) == {1, 2}
 
     def test_paren_multiline_sql_fragments(self):
         """括号多行 + SQL 跨行拼接（模式2）：每行都被豁免。"""
         content = (
-            'SQL_JOIN = (\n'                              # L1
-            '    "SELECT tf.task_id, tf.file_path "\n'    # L2
-            '    "FROM task_files tf JOIN tasks t "\n'    # L3
-            '    "WHERE tf.task_id = ?"\n'                 # L4
-            ')\n'                                         # L5
+            "SQL_JOIN = (\n"  # L1
+            '    "SELECT tf.task_id, tf.file_path "\n'  # L2
+            '    "FROM task_files tf JOIN tasks t "\n'  # L3
+            '    "WHERE tf.task_id = ?"\n'  # L4
+            ")\n"  # L5
         )
         assert _extract_sql_constant_lines(content) == {1, 2, 3, 4, 5}
 
     def test_multiple_sql_constants(self):
         """多个 SQL 常量混合：每个 Assign 节点都被识别。"""
         content = (
-            'SQL_A = "SELECT 1"\n'           # L1
-            'foo = "not sql"\n'              # L2（非 SQL_* 前缀）
+            'SQL_A = "SELECT 1"\n'  # L1
+            'foo = "not sql"\n'  # L2（非 SQL_* 前缀）
             'SQL_B = "INSERT INTO t VALUES(1)"\n'  # L3
         )
         assert _extract_sql_constant_lines(content) == {1, 3}
@@ -470,8 +439,8 @@ class TestExtractSqlConstantLines:
     def test_non_sql_prefix_not_exempt(self):
         """非 SQL_* 前缀变量不豁免。"""
         content = (
-            'QUERY = "SELECT * FROM tbl"\n'     # L1
-            'FOO_SQL = "SELECT 1"\n'            # L2（SQL 不在开头）
+            'QUERY = "SELECT * FROM tbl"\n'  # L1
+            'FOO_SQL = "SELECT 1"\n'  # L2（SQL 不在开头）
         )
         assert _extract_sql_constant_lines(content) == set()
 
@@ -487,4 +456,4 @@ class TestExtractSqlConstantLines:
 
     def test_empty_file(self):
         """空文件返回空集合。"""
-        assert _extract_sql_constant_lines('') == set()
+        assert _extract_sql_constant_lines("") == set()

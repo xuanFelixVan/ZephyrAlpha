@@ -27,6 +27,7 @@
 测试隔离：tmp_path 构造独立 src/zephyr/ 目录 + stub validate_module_id_naming.py，
 不依赖真实项目结构。
 """
+
 from __future__ import annotations
 
 import sys
@@ -273,6 +274,7 @@ class TestReconcile:
         report_files = list(reports_dir.glob("blueprint_id_legacy_*.json"))
         assert len(report_files) == 1
         import json
+
         report = json.loads(report_files[0].read_text(encoding="utf-8"))
         assert report["gate_id"] == "GATE-BLUEPRINT-ID-LEGACY"
         assert report["session_id"] == "test-session-report"
@@ -291,6 +293,7 @@ class TestReconcile:
         report_files = list(reports_dir.glob("blueprint_id_legacy_*.json"))
         assert len(report_files) == 1
         import json
+
         report = json.loads(report_files[0].read_text(encoding="utf-8"))
         assert report["violation_count"] == 0
 
@@ -315,6 +318,7 @@ class TestReconcile:
         assert result.action == "clean"
         assert "0 violations" in result.detail
         import json
+
         reports_dir = stub_validator / ".runtime" / "reconcile_reports"
         report = json.loads(list(reports_dir.glob("*.json"))[0].read_text(encoding="utf-8"))
         assert report["files_with_blueprint_header"] == 0

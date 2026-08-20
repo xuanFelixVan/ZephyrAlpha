@@ -33,6 +33,7 @@ gateway.project_root（主仓库根，非 worktree root）。
 
 测试隔离：MagicMock 模拟 gateway.run_git + monkeypatch subprocess.run，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import subprocess
@@ -75,8 +76,10 @@ def _make_gateway(staged_new=None, project_root=None, diff_fails=False, diff_rai
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -111,8 +114,10 @@ def _patch_script(monkeypatch, tmp_path, exists=True):
 def _patch_subprocess(monkeypatch, result=None, raises=None):
     """patch subprocess.run：返回固定 result 或抛指定异常。"""
     if raises is not None:
+
         def _raise(*a, **k):
             raise raises
+
         monkeypatch.setattr(subprocess, "run", _raise)
     else:
         res = result or _SubResult(0, "", "")
@@ -258,16 +263,14 @@ class TestGatewayIntegration:
 
     def test_git_diff_failure_fail_open(self, tmp_path, monkeypatch):
         _patch_script(monkeypatch, tmp_path)
-        gw = _make_gateway(staged_new=["src/x.py"], project_root=str(tmp_path),
-                           diff_fails=True)
+        gw = _make_gateway(staged_new=["src/x.py"], project_root=str(tmp_path), diff_fails=True)
         passed, msg = make_file_copy_gate().check(gw, [])
         assert passed
         assert msg == ""
 
     def test_git_diff_exception_fail_open(self, tmp_path, monkeypatch):
         _patch_script(monkeypatch, tmp_path)
-        gw = _make_gateway(staged_new=["src/x.py"], project_root=str(tmp_path),
-                           diff_raises=True)
+        gw = _make_gateway(staged_new=["src/x.py"], project_root=str(tmp_path), diff_raises=True)
         passed, msg = make_file_copy_gate().check(gw, [])
         assert passed
         assert msg == ""

@@ -33,6 +33,7 @@
 MagicMock 模拟 gateway.run_git 返回预设 staged 文件列表 + diff content；
 不读/不写真实仓库，不依赖真实 registry。
 """
+
 from __future__ import annotations
 
 import sys
@@ -78,6 +79,7 @@ def setup_registry(tmp_path, monkeypatch):
     registry_path = tmp_path / "capability_registry.yaml"
     registry_path.write_text(_REGISTRY_YAML, encoding="utf-8")
     from zephyr.governance import capability_lookup
+
     monkeypatch.setattr(capability_lookup, "REGISTRY_YAML", registry_path)
     return registry_path
 
@@ -179,9 +181,7 @@ class TestRedefinitionBlocked:
 
     def test_assignment_blocked(self, setup_registry):
         red_file = "src/zephyr/gov_audit/kb_gate.py"
-        gw = _make_mock_gateway(
-            [red_file], {red_file: ["POISONING_INDICATORS = []"]}
-        )
+        gw = _make_mock_gateway([red_file], {red_file: ["POISONING_INDICATORS = []"]})
         gate = make_ssot_redefinition_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -189,9 +189,7 @@ class TestRedefinitionBlocked:
 
     def test_type_annotation_blocked(self, setup_registry):
         red_file = "src/zephyr/governance/some_module.py"
-        gw = _make_mock_gateway(
-            [red_file], {red_file: ["PII_PATTERNS: dict = {}"]}
-        )
+        gw = _make_mock_gateway([red_file], {red_file: ["PII_PATTERNS: dict = {}"]})
         gate = make_ssot_redefinition_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
@@ -272,18 +270,14 @@ class TestImportExemption:
 class TestCommentExemption:
     def test_comment_class_passes(self, setup_registry):
         blue_file = "src/zephyr/governance/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["# class PIICategory was here"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["# class PIICategory was here"]})
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed
 
     def test_comment_assignment_passes(self, setup_registry):
         blue_file = "src/zephyr/governance/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["# PIICategory = ..."]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["# PIICategory = ..."]})
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed
@@ -317,9 +311,7 @@ class TestDocstringExemption:
 class TestTestExempt:
     def test_tests_dir_passes(self, setup_registry):
         blue_file = "tests/governance/test_something.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["class PIICategory(str):"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["class PIICategory(str):"]})
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed
@@ -332,17 +324,13 @@ class TestTestExempt:
 
 class TestNonPyFile:
     def test_yaml_file_passes(self, setup_registry):
-        gw = _make_mock_gateway(
-            ["docs/registry.yaml"], {"docs/registry.yaml": ["PIICategory: foo"]}
-        )
+        gw = _make_mock_gateway(["docs/registry.yaml"], {"docs/registry.yaml": ["PIICategory: foo"]})
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed
 
     def test_md_file_passes(self, setup_registry):
-        gw = _make_mock_gateway(
-            ["docs/readme.md"], {"docs/readme.md": ["# PIICategory"]}
-        )
+        gw = _make_mock_gateway(["docs/readme.md"], {"docs/readme.md": ["# PIICategory"]})
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed
@@ -377,6 +365,7 @@ class TestFailClosedRegistryMissing:
         # registry 文件不存在 → fail-closed（阻断）
         missing_path = tmp_path / "nonexistent.yaml"
         from zephyr.governance import capability_lookup
+
         monkeypatch.setattr(capability_lookup, "REGISTRY_YAML", missing_path)
         gw = _make_mock_gateway(
             ["src/zephyr/governance/some_module.py"],
@@ -400,6 +389,7 @@ class TestFailClosedRegistryUnparseable:
         bad_path = tmp_path / "bad.yaml"
         bad_path.write_text("{{not valid yaml: [unclosed", encoding="utf-8")
         from zephyr.governance import capability_lookup
+
         monkeypatch.setattr(capability_lookup, "REGISTRY_YAML", bad_path)
         gw = _make_mock_gateway(
             ["src/zephyr/governance/some_module.py"],
@@ -423,6 +413,7 @@ class TestRegistryStagedExemption:
         registry_path = tmp_path / "capability_canonical_file_registry.yaml"
         # 不创建文件（缺失）
         from zephyr.governance import capability_lookup
+
         monkeypatch.setattr(capability_lookup, "REGISTRY_YAML", registry_path)
         gw = _make_mock_gateway(
             [
@@ -441,6 +432,7 @@ class TestRegistryStagedExemption:
         registry_path = tmp_path / "capability_canonical_file_registry.yaml"
         registry_path.write_text("{{broken", encoding="utf-8")
         from zephyr.governance import capability_lookup
+
         monkeypatch.setattr(capability_lookup, "REGISTRY_YAML", registry_path)
         gw = _make_mock_gateway(
             [
@@ -487,27 +479,21 @@ class TestFailOpenGitDiffFails:
 class TestUnrelatedSymbolPasses:
     def test_unrelated_class_passes(self, setup_registry):
         blue_file = "src/zephyr/governance/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["class MyLocalClass:"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["class MyLocalClass:"]})
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed
 
     def test_unrelated_var_passes(self, setup_registry):
         blue_file = "src/zephyr/governance/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["MY_LOCAL_VAR = 42"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["MY_LOCAL_VAR = 42"]})
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed
 
     def test_lowercase_var_passes(self, setup_registry):
         blue_file = "src/zephyr/governance/some_module.py"
-        gw = _make_mock_gateway(
-            [blue_file], {blue_file: ["pii_category = None"]}
-        )
+        gw = _make_mock_gateway([blue_file], {blue_file: ["pii_category = None"]})
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed  # 小写不是 SSoT 符号

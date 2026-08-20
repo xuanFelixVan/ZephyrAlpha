@@ -58,9 +58,7 @@ _PROJECT_ROOT = REPO_ROOT
 _DEFAULT_SSOt = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "architecture_governance" / "post_sync_validator.py"
 _SSoT_PATH = Path(os.environ.get("PSV_UNDER_TEST", str(_DEFAULT_SSOt)))
 
-_spec = importlib.util.spec_from_file_location(
-    "post_sync_validator_under_test", _SSoT_PATH
-)
+_spec = importlib.util.spec_from_file_location("post_sync_validator_under_test", _SSoT_PATH)
 assert _spec is not None and _spec.loader is not None, f"无法加载 SSoT: {_SSoT_PATH}"
 _psv = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_psv)
@@ -374,23 +372,15 @@ def test_scenario(cmd: str, expected_none: bool, expected_substr: str | None) ->
     """
     reason = validate_post_sync_command(cmd, _PROJECT_ROOT)
     if expected_none:
-        assert reason is None, (
-            f"预期通过（reason=None），实际被拒：{reason!r}\n命令: {cmd!r}"
-        )
+        assert reason is None, f"预期通过（reason=None），实际被拒：{reason!r}\n命令: {cmd!r}"
     else:
-        assert reason is not None, (
-            f"预期拒绝（reason 非 None），实际通过——假阴性！命令: {cmd!r}"
-        )
+        assert reason is not None, f"预期拒绝（reason 非 None），实际通过——假阴性！命令: {cmd!r}"
         assert expected_substr is not None
-        assert expected_substr in reason, (
-            f"失败原因未命中预期子串 {expected_substr!r}；实际: {reason!r}\n命令: {cmd!r}"
-        )
+        assert expected_substr in reason, f"失败原因未命中预期子串 {expected_substr!r}；实际: {reason!r}\n命令: {cmd!r}"
 
 
 @pytest.mark.parametrize("validator_name,text,expected_none,expected_substr", _W3_SCENARIOS)
-def test_w3_scenario(
-    validator_name: str, text: str, expected_none: bool, expected_substr: str | None
-) -> None:
+def test_w3_scenario(validator_name: str, text: str, expected_none: bool, expected_substr: str | None) -> None:
     """W3 孪生字段场景：按 validator_name 路由到 specific / rollback 校验。
 
     R28-R30 走 validate_post_sync_specific（委托 standard，同型同语义）。
@@ -401,13 +391,9 @@ def test_w3_scenario(
     else:
         reason = validate_rollback_instructions(text, _PROJECT_ROOT)
     if expected_none:
-        assert reason is None, (
-            f"预期通过（reason=None），实际被拒：{reason!r}\n输入: {text!r}"
-        )
+        assert reason is None, f"预期通过（reason=None），实际被拒：{reason!r}\n输入: {text!r}"
     else:
-        assert reason is not None, (
-            f"预期拒绝（reason 非 None），实际通过——假阴性！输入: {text!r}"
-        )
+        assert reason is not None, f"预期拒绝（reason 非 None），实际通过——假阴性！输入: {text!r}"
         assert expected_substr is not None
         assert expected_substr in reason, (
             f"失败原因未命中预期子串 {expected_substr!r}；实际: {reason!r}\n输入: {text!r}"
@@ -430,9 +416,7 @@ def test_R24_help_timeout_does_not_block(monkeypatch: pytest.MonkeyPatch) -> Non
         )
 
     monkeypatch.setattr(_psv.subprocess, "run", _fake_run)
-    reason = validate_post_sync_command(
-        f"python {_FIXTURE} --foo", _PROJECT_ROOT
-    )
+    reason = validate_post_sync_command(f"python {_FIXTURE} --foo", _PROJECT_ROOT)
     assert reason is None, f"--help 超时应不阻断，实际拒绝: {reason!r}"
 
 
@@ -444,20 +428,17 @@ def test_scenario_count_is_exactly_36() -> None:
     R24 因需 monkeypatch 单列为独立函数；合计 36。
     """
     assert len(_SCENARIOS) == 26, (
-        f"parametrize 场景数应为 26（R01-R23 + R25-R27），实际 {len(_SCENARIOS)}；"
-        f"R24 为独立函数"
+        f"parametrize 场景数应为 26（R01-R23 + R25-R27），实际 {len(_SCENARIOS)}；R24 为独立函数"
     )
-    assert len(_W3_SCENARIOS) == 9, (
-        f"W3 孪生字段场景数应为 9（R28-R36），实际 {len(_W3_SCENARIOS)}"
-    )
+    assert len(_W3_SCENARIOS) == 9, f"W3 孪生字段场景数应为 9（R28-R36），实际 {len(_W3_SCENARIOS)}"
 
 
 def test_validate_post_sync_commands_batch() -> None:
     """批量接口语义：返回 [(cmd, reason|None), ...]，与输入一一对应。"""
     cmds = [
-        f"python {_FIXTURE} --foo",                     # pass
-        f"python {_FIXTURE} --hallucinated",            # fail
-        "echo ok",                                      # pass (non-.py)
+        f"python {_FIXTURE} --foo",  # pass
+        f"python {_FIXTURE} --hallucinated",  # fail
+        "echo ok",  # pass (non-.py)
     ]
     results = validate_post_sync_commands(cmds, _PROJECT_ROOT)
     assert len(results) == 3

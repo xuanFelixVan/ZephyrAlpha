@@ -41,6 +41,7 @@ from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import (
 
 # ========== load_gate_entries 测试 ==========
 
+
 class TestLoadGateEntries:
     """load_gate_entries 函数测试。"""
 
@@ -106,7 +107,7 @@ class TestLoadGateEntries:
             "  - gate_id: VALID\n"
             "    module_path: zephyr.test\n"
             "    factory_function: make_test\n"
-            "  - \"not a dict\"\n"
+            '  - "not a dict"\n'
             "  - 42\n",
             encoding="utf-8",
         )
@@ -116,6 +117,7 @@ class TestLoadGateEntries:
 
 
 # ========== auto_register_gates 测试 ==========
+
 
 class TestAutoRegisterGates:
     """auto_register_gates 函数测试。"""
@@ -135,12 +137,17 @@ class TestAutoRegisterGates:
 
     def test_register_success(self, tmp_path: Path) -> None:
         """成功注册一个 gate。"""
-        self._make_registry_yaml(tmp_path, [{
-            "gate_id": "TEST-SUCCESS",
-            "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
-            "factory_function": "make_held_overlap_gate",
-            "enabled": True,
-        }])
+        self._make_registry_yaml(
+            tmp_path,
+            [
+                {
+                    "gate_id": "TEST-SUCCESS",
+                    "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
+                    "factory_function": "make_held_overlap_gate",
+                    "enabled": True,
+                }
+            ],
+        )
         registry = CommitGateRegistry()
         failures = auto_register_gates(registry, tmp_path)
         assert failures == []
@@ -148,12 +155,17 @@ class TestAutoRegisterGates:
 
     def test_register_disabled_skipped(self, tmp_path: Path) -> None:
         """enabled=false 的 gate 被跳过。"""
-        self._make_registry_yaml(tmp_path, [{
-            "gate_id": "TEST-DISABLED",
-            "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
-            "factory_function": "make_held_overlap_gate",
-            "enabled": False,
-        }])
+        self._make_registry_yaml(
+            tmp_path,
+            [
+                {
+                    "gate_id": "TEST-DISABLED",
+                    "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
+                    "factory_function": "make_held_overlap_gate",
+                    "enabled": False,
+                }
+            ],
+        )
         registry = CommitGateRegistry()
         failures = auto_register_gates(registry, tmp_path)
         assert failures == []
@@ -162,12 +174,17 @@ class TestAutoRegisterGates:
 
     def test_register_import_failure_fail_open(self, tmp_path: Path) -> None:
         """import 失败时 fail-open（返回失败列表，不抛异常）。"""
-        self._make_registry_yaml(tmp_path, [{
-            "gate_id": "TEST-IMPORT-FAIL",
-            "module_path": "zephyr.nonexistent.module",
-            "factory_function": "make_nonexistent",
-            "enabled": True,
-        }])
+        self._make_registry_yaml(
+            tmp_path,
+            [
+                {
+                    "gate_id": "TEST-IMPORT-FAIL",
+                    "module_path": "zephyr.nonexistent.module",
+                    "factory_function": "make_nonexistent",
+                    "enabled": True,
+                }
+            ],
+        )
         registry = CommitGateRegistry()
         failures = auto_register_gates(registry, tmp_path)
         assert len(failures) == 1
@@ -176,12 +193,17 @@ class TestAutoRegisterGates:
 
     def test_register_factory_not_found_fail_open(self, tmp_path: Path) -> None:
         """工厂函数不存在时 fail-open。"""
-        self._make_registry_yaml(tmp_path, [{
-            "gate_id": "TEST-NO-FACTORY",
-            "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
-            "factory_function": "make_nonexistent_function",
-            "enabled": True,
-        }])
+        self._make_registry_yaml(
+            tmp_path,
+            [
+                {
+                    "gate_id": "TEST-NO-FACTORY",
+                    "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
+                    "factory_function": "make_nonexistent_function",
+                    "enabled": True,
+                }
+            ],
+        )
         registry = CommitGateRegistry()
         failures = auto_register_gates(registry, tmp_path)
         assert len(failures) == 1
@@ -190,12 +212,17 @@ class TestAutoRegisterGates:
 
     def test_register_missing_fields(self, tmp_path: Path) -> None:
         """缺失必填字段返回失败。"""
-        self._make_registry_yaml(tmp_path, [{
-            "gate_id": "",
-            "module_path": "zephyr.test",
-            "factory_function": "make_test",
-            "enabled": True,
-        }])
+        self._make_registry_yaml(
+            tmp_path,
+            [
+                {
+                    "gate_id": "",
+                    "module_path": "zephyr.test",
+                    "factory_function": "make_test",
+                    "enabled": True,
+                }
+            ],
+        )
         registry = CommitGateRegistry()
         failures = auto_register_gates(registry, tmp_path)
         assert len(failures) == 1
@@ -212,20 +239,23 @@ class TestAutoRegisterGates:
 
     def test_register_idempotent_coexistence(self, tmp_path: Path) -> None:
         """幂等共存：同 gate_id 重复注册不冲突。"""
-        self._make_registry_yaml(tmp_path, [
-            {
-                "gate_id": "HELD-OVERLAP",
-                "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
-                "factory_function": "make_held_overlap_gate",
-                "enabled": True,
-            },
-            {
-                "gate_id": "HELD-OVERLAP-DUPLICATE",
-                "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
-                "factory_function": "make_held_overlap_gate",
-                "enabled": True,
-            },
-        ])
+        self._make_registry_yaml(
+            tmp_path,
+            [
+                {
+                    "gate_id": "HELD-OVERLAP",
+                    "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
+                    "factory_function": "make_held_overlap_gate",
+                    "enabled": True,
+                },
+                {
+                    "gate_id": "HELD-OVERLAP-DUPLICATE",
+                    "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
+                    "factory_function": "make_held_overlap_gate",
+                    "enabled": True,
+                },
+            ],
+        )
         registry = CommitGateRegistry()
         # 第一次注册
         failures1 = auto_register_gates(registry, tmp_path)
@@ -238,26 +268,29 @@ class TestAutoRegisterGates:
 
     def test_register_partial_failure(self, tmp_path: Path) -> None:
         """部分失败：3 个 gate，1 个成功 1 个 import 失败 1 个 factory 不存在。"""
-        self._make_registry_yaml(tmp_path, [
-            {
-                "gate_id": "TEST-OK",
-                "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
-                "factory_function": "make_held_overlap_gate",
-                "enabled": True,
-            },
-            {
-                "gate_id": "TEST-IMPORT-FAIL",
-                "module_path": "zephyr.nonexistent",
-                "factory_function": "make_nonexistent",
-                "enabled": True,
-            },
-            {
-                "gate_id": "TEST-NO-FACTORY",
-                "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
-                "factory_function": "make_wrong_name",
-                "enabled": True,
-            },
-        ])
+        self._make_registry_yaml(
+            tmp_path,
+            [
+                {
+                    "gate_id": "TEST-OK",
+                    "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
+                    "factory_function": "make_held_overlap_gate",
+                    "enabled": True,
+                },
+                {
+                    "gate_id": "TEST-IMPORT-FAIL",
+                    "module_path": "zephyr.nonexistent",
+                    "factory_function": "make_nonexistent",
+                    "enabled": True,
+                },
+                {
+                    "gate_id": "TEST-NO-FACTORY",
+                    "module_path": "zephyr.gov_enforcement.commit_gates.held_overlap_gate",
+                    "factory_function": "make_wrong_name",
+                    "enabled": True,
+                },
+            ],
+        )
         registry = CommitGateRegistry()
         failures = auto_register_gates(registry, tmp_path)
         assert len(failures) == 2
@@ -270,18 +303,21 @@ class TestAutoRegisterGates:
 
 # ========== 真实项目集成测试（smoke test） ==========
 
+
 class TestRealProjectIntegration:
     """真实项目集成测试——使用真实 in_process_gate_registry.yaml。"""
 
     def test_load_real_yaml_entries(self) -> None:
         """真实 YAML 可加载且条目数与 registry 演进同步（2026-08-15：83→92，治理批②新增 RECONCILER-FILE-OPS 等 9 gate；2026-08-16：92→93；2026-08-17：93→97，AI-AUDIT11 补登 4 个死 gate）。"""
         from zephyr.shared.io.paths import REPO_ROOT
+
         entries = load_gate_entries(Path(REPO_ROOT))
         assert len(entries) == 97, f"expected 97 entries, got {len(entries)}"
 
     def test_real_yaml_all_enabled(self) -> None:
         """真实 YAML 所有 gate enabled=true。"""
         from zephyr.shared.io.paths import REPO_ROOT
+
         entries = load_gate_entries(Path(REPO_ROOT))
         for entry in entries:
             assert entry.get("enabled") is True, f"gate {entry.get('gate_id')} not enabled"
@@ -289,6 +325,7 @@ class TestRealProjectIntegration:
     def test_real_yaml_all_have_required_fields(self) -> None:
         """真实 YAML 所有条目有必填字段。"""
         from zephyr.shared.io.paths import REPO_ROOT
+
         entries = load_gate_entries(Path(REPO_ROOT))
         for entry in entries:
             assert entry.get("gate_id"), f"missing gate_id: {entry}"
@@ -298,6 +335,7 @@ class TestRealProjectIntegration:
     def test_auto_register_all_83_gates(self) -> None:
         """auto_register_gates 注册全部 83 个 gate（无失败）。"""
         from zephyr.shared.io.paths import REPO_ROOT
+
         registry = CommitGateRegistry()
         failures = auto_register_gates(registry, Path(REPO_ROOT))
         # 可能有少量失败（如某些 gate 依赖运行时上下文），但应少于 5 个

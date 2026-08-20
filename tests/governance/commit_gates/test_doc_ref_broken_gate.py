@@ -27,6 +27,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git + tmp_path 真实文件，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import builtins
@@ -63,8 +64,10 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_r
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 

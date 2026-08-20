@@ -25,6 +25,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch 模拟翻译查询。
 """
+
 from __future__ import annotations
 
 import sys
@@ -56,6 +57,7 @@ class _MockResult:
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """gate_id / priority / isinstance(GateSpec)。"""
 
@@ -75,6 +77,7 @@ class TestGateSpecFields:
 # ---------------------------------------------------------------------------
 # TestIsInScope
 # ---------------------------------------------------------------------------
+
 
 class TestIsInScope:
     """_is_in_scope 范围判断。"""
@@ -139,6 +142,7 @@ class TestIsInScope:
 # TestCheckTranslationEntry
 # ---------------------------------------------------------------------------
 
+
 class TestCheckTranslationEntry:
     """_check_translation_entry 翻译查询（monkeypatch loader）。"""
 
@@ -190,6 +194,7 @@ class TestCheckTranslationEntry:
 # TestGatewayIntegration
 # ---------------------------------------------------------------------------
 
+
 class TestGatewayIntegration:
     """mock gateway + monkeypatch 翻译查询。"""
 
@@ -209,32 +214,26 @@ class TestGatewayIntegration:
         passed, msg = gate.check(gw, files=[])
         assert passed is True
 
-    def test_new_py_with_valid_translation_passes(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_new_py_with_valid_translation_passes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """新增 .py 有合格简介 → 放行。"""
-        gw = self._make_gateway(
-            tmp_path, diff_stdout="src/zephyr/new_module.py\n"
-        )
+        gw = self._make_gateway(tmp_path, diff_stdout="src/zephyr/new_module.py\n")
         import zephyr.gov_enforcement.commit_gates.translation_coverage_gate as gate_mod
+
         monkeypatch.setattr(gate_mod, "_check_translation_entry", lambda f: "")
         gate = make_translation_coverage_gate()
         files = [str(tmp_path / "src/zephyr/new_module.py")]
         passed, msg = gate.check(gw, files=files)
         assert passed is True
 
-    def test_new_py_missing_translation_blocked(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_new_py_missing_translation_blocked(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """新增 .py 缺简介 → 硬阻断（pass=False）。
 
         2026-08-02 观察期结束转硬阻断（_OBSERVATION_PERIOD=False）：
         Step 1 收窄范围 + Step B 补齐 108 条 missing，drift 清零，无误报风险。
         """
-        gw = self._make_gateway(
-            tmp_path, diff_stdout="src/zephyr/new_module.py\n"
-        )
+        gw = self._make_gateway(tmp_path, diff_stdout="src/zephyr/new_module.py\n")
         import zephyr.gov_enforcement.commit_gates.translation_coverage_gate as gate_mod
+
         monkeypatch.setattr(gate_mod, "_check_translation_entry", lambda f: "missing")
         gate = make_translation_coverage_gate()
         files = [str(tmp_path / "src/zephyr/new_module.py")]
@@ -263,10 +262,9 @@ class TestGatewayIntegration:
 
     def test_commit_files_filter(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """staged 含非 commit files → 只检测 commit files 中的新增 .py。"""
-        gw = self._make_gateway(
-            tmp_path, diff_stdout="src/zephyr/new_module.py\n"
-        )
+        gw = self._make_gateway(tmp_path, diff_stdout="src/zephyr/new_module.py\n")
         import zephyr.gov_enforcement.commit_gates.translation_coverage_gate as gate_mod
+
         monkeypatch.setattr(gate_mod, "_check_translation_entry", lambda f: "")
         gate = make_translation_coverage_gate()
         # files 为空（commit 不含 new_module.py）→ 过滤后无文件 → 放行

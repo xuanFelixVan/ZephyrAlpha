@@ -25,6 +25,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import ast
@@ -60,8 +61,10 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     gw.project_root = str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -134,22 +137,12 @@ class TestCyclomaticComplexity:
         assert self._complexity(_make_func_with_n_ifs(15)) == _MAX_COMPLEXITY + 1
 
     def test_for_and_while_counted(self):
-        code = (
-            "def f():\n"
-            "    for x in y: pass\n"
-            "    while a: pass\n"
-        )
+        code = "def f():\n    for x in y: pass\n    while a: pass\n"
         # base 1 + For 1 + While 1 = 3
         assert self._complexity(code) == 3
 
     def test_except_handler_counted(self):
-        code = (
-            "def f():\n"
-            "    try:\n"
-            "        pass\n"
-            "    except Exception:\n"
-            "        pass\n"
-        )
+        code = "def f():\n    try:\n        pass\n    except Exception:\n        pass\n"
         # base 1 + ExceptHandler 1 = 2
         assert self._complexity(code) == 2
 

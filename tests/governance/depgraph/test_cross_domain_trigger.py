@@ -53,10 +53,7 @@ def _make_connection():
     test_cfg = _resolve_test_pg_config()
     if _in_pytest():
         if test_cfg is None:
-            pytest.skip(
-                "PG 测试库未配置（ZEPHYR_TEST_PG_* 或 config/.env.postgres.test），"
-                "跳过以防测试写生产表"
-            )
+            pytest.skip("PG 测试库未配置（ZEPHYR_TEST_PG_* 或 config/.env.postgres.test），跳过以防测试写生产表")
         try:
             conn = psycopg2.connect(cursor_factory=RealDictCursor, **test_cfg)
         except psycopg2.OperationalError as exc:
@@ -69,6 +66,7 @@ def _make_connection():
         print(f"[INFO] 使用 PG 测试库: {test_cfg['host']}:{test_cfg['port']}/{test_cfg['dbname']}")
         return conn
     from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
     print("[WARNING] 未配置 PG 测试库，回退连接生产 depgraph——操作员显式选择")
     return get_depgraph_pg_connection(autocommit=True, read_only=False)
 
@@ -138,16 +136,17 @@ def test_insert_cross_domain_edge_auto_computed(conn):
         if not pair:
             pytest.skip("无可用的跨域节点对")
         # dep_maturity='active' 不触发 apply_depgraph design-edge 保护
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO edges (from_node_id, to_node_id, dep_type, dep_maturity, cross_domain)
             VALUES (%s, %s, 'import_depends', 'active', 999)
             RETURNING edge_id, cross_domain
-        """, (pair["from_id"], pair["to_id"]))
+        """,
+            (pair["from_id"], pair["to_id"]),
+        )
         row = cur.fetchone()
         try:
-            assert row["cross_domain"] == 1, (
-                f"跨域边 cross_domain 应=1（触发器覆盖），实际={row['cross_domain']}"
-            )
+            assert row["cross_domain"] == 1, f"跨域边 cross_domain 应=1（触发器覆盖），实际={row['cross_domain']}"
         finally:
             cur.execute("DELETE FROM edges WHERE edge_id=%s", (row["edge_id"],))
 
@@ -160,16 +159,17 @@ def test_insert_same_domain_edge_auto_computed(conn):
         pair = _find_same_domain_pair(cur)
         if not pair:
             pytest.skip("无可用的同域节点对")
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO edges (from_node_id, to_node_id, dep_type, dep_maturity, cross_domain)
             VALUES (%s, %s, 'import_depends', 'active', 999)
             RETURNING edge_id, cross_domain
-        """, (pair["from_id"], pair["to_id"]))
+        """,
+            (pair["from_id"], pair["to_id"]),
+        )
         row = cur.fetchone()
         try:
-            assert row["cross_domain"] == 0, (
-                f"同域边 cross_domain 应=0（触发器覆盖），实际={row['cross_domain']}"
-            )
+            assert row["cross_domain"] == 0, f"同域边 cross_domain 应=0（触发器覆盖），实际={row['cross_domain']}"
         finally:
             cur.execute("DELETE FROM edges WHERE edge_id=%s", (row["edge_id"],))
 
@@ -183,11 +183,14 @@ def test_node_domain_id_update_recomputes_edges(conn):
         if not pair:
             pytest.skip("无可用的跨域节点对")
         # 插入跨域边（cross_domain=1）
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO edges (from_node_id, to_node_id, dep_type, dep_maturity)
             VALUES (%s, %s, 'import_depends', 'active')
             RETURNING edge_id
-        """, (pair["from_id"], pair["to_id"]))
+        """,
+            (pair["from_id"], pair["to_id"]),
+        )
         edge_id = cur.fetchone()["edge_id"]
         try:
             # 把 to_node 的域改成与 from_node 相同 → 边应变同域 cross_domain=0
@@ -199,9 +202,7 @@ def test_node_domain_id_update_recomputes_edges(conn):
             )
             cur.execute("SELECT cross_domain FROM edges WHERE edge_id=%s", (edge_id,))
             cd = cur.fetchone()["cross_domain"]
-            assert cd == 0, (
-                f"域合并后 cross_domain 应=0，实际={cd}（nodes AU 触发器未重算）"
-            )
+            assert cd == 0, f"域合并后 cross_domain 应=0，实际={cd}（nodes AU 触发器未重算）"
         finally:
             # 恢复 to_node 原域 + 删测试边
             cur.execute(
@@ -224,9 +225,7 @@ def test_no_false_negative_after_backfill(conn):
               AND n1.domain_id <> n2.domain_id
         """)
         false_neg = cur.fetchone()["c"]
-        assert false_neg == 0, (
-            f"仍存在 {false_neg} 条 FALSE NEGATIVE（跨域但 cross_domain=0）——触发器/回填未生效"
-        )
+        assert false_neg == 0, f"仍存在 {false_neg} 条 FALSE NEGATIVE（跨域但 cross_domain=0）——触发器/回填未生效"
 
 
 if __name__ == "__main__":
@@ -243,4 +242,5 @@ if __name__ == "__main__":
         c.close()
     # 运行全部测试（__main__ 下不 skip）
     import subprocess
+
     sys.exit(subprocess.call([sys.executable, "-m", "pytest", __file__, "-v", "-s"]))

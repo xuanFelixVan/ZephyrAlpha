@@ -17,6 +17,7 @@ ALGO_FLOW:
 NOTE: 本套件不执行任何 git 写操作（clean 用例在 wrapper 层被 BLOCKED，不触达真 git），
       tmp_path（仓内 .runtime/tmp）使用安全；审计经 USERPROFILE 重定向隔离到 tmp。
 """
+
 from __future__ import annotations
 
 import re
@@ -38,6 +39,7 @@ def _clean_env() -> dict[str, str]:
     """剔除继承的 ZEPHYR_SESSION_ID（AI 会话内跑 pytest 时父链会带上已注入的 session），
     让每个用例从'无 session'起点验证 wrapper 自身的归因分支。"""
     import os
+
     env = dict(os.environ)
     env.pop("ZEPHYR_SESSION_ID", None)
     env.pop("ZEPHYR_SESSION_START", None)
@@ -47,7 +49,11 @@ def _clean_env() -> dict[str, str]:
 def _run_ps(args: list[str], timeout: int = 90) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [PS, "-NoProfile", "-ExecutionPolicy", "Bypass"] + args,
-        capture_output=True, text=True, timeout=timeout, encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+        encoding="utf-8",
+        errors="replace",
         env=_clean_env(),
     )
 
@@ -163,7 +169,8 @@ def test_snapshot_passthrough_git_status(injected_snapshot: Path, tmp_path: Path
 
 def test_snapshot_remove_item_recurse_force_blocked(injected_snapshot: Path, tmp_path: Path):
     out = _in_snapshot_shell(
-        injected_snapshot, tmp_path,
+        injected_snapshot,
+        tmp_path,
         "Remove-Item -Recurse -Force 'D:\\nonexistent-zeph58-target'",
     )
     assert "BLOCKED" in out
@@ -189,7 +196,11 @@ def test_ai_channel_attribution_via_toolhost_parent(tmp_path: Path):
     launcher = f"$env:USERPROFILE='{tmp_path}'; & powershell -NoProfile -ExecutionPolicy Bypass -File '{child}'"
     r = subprocess.run(
         [str(fake_host), "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", launcher],
-        capture_output=True, text=True, timeout=90, encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=90,
+        encoding="utf-8",
+        errors="replace",
         env=_clean_env(),
     )
     out = r.stdout + r.stderr
@@ -198,11 +209,13 @@ def test_ai_channel_attribution_via_toolhost_parent(tmp_path: Path):
 
 def test_interactive_parent_keeps_uuid(tmp_path: Path):
     """普通父进程（pytest->powershell）保持 UUID + interactive channel。"""
-    r = _run_ps([
-        "-Command",
-        f"$env:USERPROFILE='{tmp_path}'; . '{WRAPPER}'; "
-        "Write-Output ($env:ZEPHYR_SESSION_ID + '|' + $global:_zephyrChannel)",
-    ])
+    r = _run_ps(
+        [
+            "-Command",
+            f"$env:USERPROFILE='{tmp_path}'; . '{WRAPPER}'; "
+            "Write-Output ($env:ZEPHYR_SESSION_ID + '|' + $global:_zephyrChannel)",
+        ]
+    )
     out = r.stdout + r.stderr
     assert re.search(r"[0-9a-f-]{36}\|interactive", out), f"unexpected identity: {out}"
 
@@ -219,7 +232,11 @@ def test_ai_channel_audit_channel_field(tmp_path: Path):
     launcher = f"$env:USERPROFILE='{tmp_path}'; & powershell -NoProfile -ExecutionPolicy Bypass -File '{child}'"
     subprocess.run(
         [str(fake_host), "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", launcher],
-        capture_output=True, text=True, timeout=90, encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=90,
+        encoding="utf-8",
+        errors="replace",
         env=_clean_env(),
     )
     audit_dir = tmp_path / ".zephyr_audit"
@@ -228,6 +245,7 @@ def test_ai_channel_audit_channel_field(tmp_path: Path):
     lines = [l for l in files[0].read_text(encoding="utf-8").splitlines() if l.strip()]
     assert len(lines) == 2  # 两条 BLOCKED 聚合进同一文件
     import json
+
     for line in lines:
         entry = json.loads(line)
         assert entry["action"] == "BLOCKED"
@@ -240,7 +258,10 @@ def test_ai_channel_audit_channel_field(tmp_path: Path):
 
 def test_keepalive_scheduled_task_registered():
     r = subprocess.run(
-        ["schtasks", "/query", "/tn", TASK_NAME], capture_output=True, text=True, timeout=30,
+        ["schtasks", "/query", "/tn", TASK_NAME],
+        capture_output=True,
+        text=True,
+        timeout=30,
     )
     assert r.returncode == 0, f"keepalive task missing: {r.stdout}{r.stderr}"
     assert TASK_NAME in r.stdout

@@ -23,6 +23,7 @@
 
 测试隔离：用 tmp_path 构造最小项目结构，不依赖真实代码库。
 """
+
 from __future__ import annotations
 
 import ast
@@ -307,12 +308,15 @@ class TestFindDeadPublicWrappers:
     def test_detects_dead_wrapper(self, tmp_path):
         """无外部调用方的 trivial wrapper → 检测为 dead。"""
         src = tmp_path / "src" / "zephyr"
-        _write_py(src / "mod.py", """
+        _write_py(
+            src / "mod.py",
+            """
             def foo(x):
                 return _foo(x)
             def _foo(x):
                 return x + 1
-        """)
+        """,
+        )
         dead = _find_dead_public_wrappers(tmp_path)
         assert len(dead) == 1
         assert dead[0]["function"] == "foo"
@@ -321,65 +325,86 @@ class TestFindDeadPublicWrappers:
     def test_not_dead_when_called_externally(self, tmp_path):
         """有外部调用方 → 非 dead。"""
         src = tmp_path / "src" / "zephyr"
-        _write_py(src / "mod.py", """
+        _write_py(
+            src / "mod.py",
+            """
             def foo(x):
                 return _foo(x)
             def _foo(x):
                 return x + 1
-        """)
-        _write_py(src / "caller.py", """
+        """,
+        )
+        _write_py(
+            src / "caller.py",
+            """
             from .mod import foo
             def use():
                 return foo(42)
-        """)
+        """,
+        )
         dead = _find_dead_public_wrappers(tmp_path)
         assert len(dead) == 0
 
     def test_not_dead_when_called_in_tests(self, tmp_path):
         """tests/ 中的调用也计入 → 非 dead。"""
         src = tmp_path / "src" / "zephyr"
-        _write_py(src / "mod.py", """
+        _write_py(
+            src / "mod.py",
+            """
             def foo(x):
                 return _foo(x)
             def _foo(x):
                 return x + 1
-        """)
+        """,
+        )
         tests = tmp_path / "tests"
-        _write_py(tests / "test_mod.py", """
+        _write_py(
+            tests / "test_mod.py",
+            """
             from zephyr.mod import foo
             def test_foo():
                 assert foo(1) == 2
-        """)
+        """,
+        )
         dead = _find_dead_public_wrappers(tmp_path)
         assert len(dead) == 0
 
     def test_not_dead_when_called_in_scripts(self, tmp_path):
         """scripts/ 中的调用也计入 → 非 dead。"""
         src = tmp_path / "src" / "zephyr"
-        _write_py(src / "mod.py", """
+        _write_py(
+            src / "mod.py",
+            """
             def foo(x):
                 return _foo(x)
             def _foo(x):
                 return x + 1
-        """)
+        """,
+        )
         scripts = tmp_path / "scripts"
-        _write_py(scripts / "run.py", """
+        _write_py(
+            scripts / "run.py",
+            """
             from zephyr.mod import foo
             print(foo(1))
-        """)
+        """,
+        )
         dead = _find_dead_public_wrappers(tmp_path)
         assert len(dead) == 0
 
     def test_class_method_dead_wrapper(self, tmp_path):
         """类方法 dead wrapper 检测。"""
         src = tmp_path / "src" / "zephyr"
-        _write_py(src / "mod.py", """
+        _write_py(
+            src / "mod.py",
+            """
             class MyClass:
                 def bar(self, x):
                     return self._bar(x)
                 def _bar(self, x):
                     return x * 2
-        """)
+        """,
+        )
         dead = _find_dead_public_wrappers(tmp_path)
         assert len(dead) == 1
         assert dead[0]["function"] == "bar"
@@ -388,45 +413,57 @@ class TestFindDeadPublicWrappers:
     def test_skips_non_trivial_wrapper(self, tmp_path):
         """非 trivial wrapper（含额外逻辑）不检测为 dead。"""
         src = tmp_path / "src" / "zephyr"
-        _write_py(src / "mod.py", """
+        _write_py(
+            src / "mod.py",
+            """
             def foo(x):
                 if x > 0:
                     return _foo(x)
                 return 0
             def _foo(x):
                 return x + 1
-        """)
+        """,
+        )
         dead = _find_dead_public_wrappers(tmp_path)
         assert len(dead) == 0
 
     def test_skips_dunder_methods(self, tmp_path):
         """__dunder__ 方法不检测。"""
         src = tmp_path / "src" / "zephyr"
-        _write_py(src / "mod.py", """
+        _write_py(
+            src / "mod.py",
+            """
             class MyClass:
                 def __len__(self):
                     return self._len()
                 def _len(self):
                     return 0
-        """)
+        """,
+        )
         dead = _find_dead_public_wrappers(tmp_path)
         assert len(dead) == 0
 
     def test_multiple_dead_wrappers(self, tmp_path):
         """多文件多 dead wrapper 检测。"""
         src = tmp_path / "src" / "zephyr"
-        _write_py(src / "a.py", """
+        _write_py(
+            src / "a.py",
+            """
             def alpha(x):
                 return _alpha(x)
             def _alpha(x):
                 return x
-        """)
-        _write_py(src / "b.py", """
+        """,
+        )
+        _write_py(
+            src / "b.py",
+            """
             def beta(x):
                 return _beta(x)
             def _beta(x):
                 return x
-        """)
+        """,
+        )
         dead = _find_dead_public_wrappers(tmp_path)
         names = {d["function"] for d in dead}
         assert names == {"alpha", "beta"}
@@ -439,12 +476,15 @@ class TestFindDeadPublicWrappers:
     def test_self_call_in_body_counts(self, tmp_path):
         """wrapper body 中的 _foo() 调用不计入 foo 的外部调用方。"""
         src = tmp_path / "src" / "zephyr"
-        _write_py(src / "mod.py", """
+        _write_py(
+            src / "mod.py",
+            """
             def foo(x):
                 return _foo(x)
             def _foo(x):
                 return x + 1
-        """)
+        """,
+        )
         # _foo() 在 body 中被调用，但 regex 搜的是 foo(，不是 _foo(
         # 所以 foo 的 call_count 应为 1（仅 def 行）→ dead
         dead = _find_dead_public_wrappers(tmp_path)
@@ -470,12 +510,15 @@ class TestReconcile:
     def test_reconcile_warn_when_dead_found(self, tmp_path):
         """有死 wrapper → action=warn。"""
         src = tmp_path / "src" / "zephyr"
-        _write_py(src / "mod.py", """
+        _write_py(
+            src / "mod.py",
+            """
             def foo(x):
                 return _foo(x)
             def _foo(x):
                 return x + 1
-        """)
+        """,
+        )
         gw = _FakeGateway(tmp_path)
         spec = make_dead_public_wrapper_reconciler(gw)
         result = spec.reconcile(["src/zephyr/mod.py"], "test-session")
@@ -510,8 +553,7 @@ class TestReconcile:
         # 模拟 _find_dead_public_wrappers 抛异常
         with pytest.MonkeyPatch().context() as mp:
             mp.setattr(
-                "zephyr.governance.audit.dead_public_wrapper_reconciler."
-                "_find_dead_public_wrappers",
+                "zephyr.governance.audit.dead_public_wrapper_reconciler._find_dead_public_wrappers",
                 MagicMock(side_effect=RuntimeError("boom")),
             )
             result = spec.reconcile(["src/zephyr/foo.py"], "test-session")

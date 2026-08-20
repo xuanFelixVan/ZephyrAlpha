@@ -22,6 +22,7 @@
 
 测试隔离: 用 tmp_path 临时 git 仓库，构造 reflog + 审计日志场景。
 """
+
 from __future__ import annotations
 
 import json
@@ -63,9 +64,7 @@ def _init_repo(repo_dir: Path) -> None:
     repo_dir.mkdir(parents=True, exist_ok=True)
     env = _git_env()
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
-    subprocess.run(
-        ["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True
-    )
+    subprocess.run(["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
         cwd=str(repo_dir),

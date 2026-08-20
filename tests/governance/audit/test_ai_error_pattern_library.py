@@ -121,16 +121,12 @@ class TestErrorPatternDataclass:
         assert pat.severity_dist == {"fatal": 3, "blocking": 2}  # 字符串数字强转
 
     def test_dominant_severity_basic(self) -> None:
-        pat = ErrorPattern.from_dict(
-            _make_pattern_dict(severity_dist={"degraded": 1, "blocking": 4, "fatal": 2})
-        )
+        pat = ErrorPattern.from_dict(_make_pattern_dict(severity_dist={"degraded": 1, "blocking": 4, "fatal": 2}))
         assert pat.dominant_severity == "blocking"
 
     def test_dominant_severity_tie(self) -> None:
         """平局取字典序最小（degraded < fatal）。"""
-        pat = ErrorPattern.from_dict(
-            _make_pattern_dict(severity_dist={"fatal": 3, "degraded": 3})
-        )
+        pat = ErrorPattern.from_dict(_make_pattern_dict(severity_dist={"fatal": 3, "degraded": 3}))
         assert pat.dominant_severity == "degraded"
 
     def test_dominant_severity_empty(self) -> None:
@@ -146,9 +142,7 @@ class TestErrorPatternDataclass:
         assert pat.unexpected_ratio == pytest.approx(0.3)
 
     def test_unexpected_ratio_zero_unexpected(self) -> None:
-        pat = ErrorPattern.from_dict(
-            _make_pattern_dict(expectation_dist={"expected": 5, "unknown": 5})
-        )
+        pat = ErrorPattern.from_dict(_make_pattern_dict(expectation_dist={"expected": 5, "unknown": 5}))
         assert pat.unexpected_ratio == 0.0
 
     def test_unexpected_ratio_zero_total(self) -> None:
@@ -231,9 +225,15 @@ class TestLibraryQuery:
         pid_bbb = compute_error_pattern_id("ValueError", "permanent", "internal")
         pid_ccc = compute_error_pattern_id("ConnectionError", "intermittent", "server")
         patterns = [
-            _make_pattern_dict(pattern_id=pid_aaa, error_type="ConnectionError", persistence="transient", source="dependency", count=3),
-            _make_pattern_dict(pattern_id=pid_bbb, error_type="ValueError", persistence="permanent", source="internal", count=10),
-            _make_pattern_dict(pattern_id=pid_ccc, error_type="ConnectionError", persistence="intermittent", source="server", count=5),
+            _make_pattern_dict(
+                pattern_id=pid_aaa, error_type="ConnectionError", persistence="transient", source="dependency", count=3
+            ),
+            _make_pattern_dict(
+                pattern_id=pid_bbb, error_type="ValueError", persistence="permanent", source="internal", count=10
+            ),
+            _make_pattern_dict(
+                pattern_id=pid_ccc, error_type="ConnectionError", persistence="intermittent", source="server", count=5
+            ),
         ]
         path = tmp_path / "aggregated_patterns.json"
         _write_aggregate(path, patterns, total_events=18)
@@ -344,10 +344,15 @@ class TestSuggestAction:
 
     def test_permanent_blocking(self, tmp_path: Path) -> None:
         pid = compute_error_pattern_id("E1", "permanent", "internal")
-        lib = self._make_lib_with(tmp_path, _make_pattern_dict(
-            pattern_id=pid, persistence="permanent", source="internal",
-            severity_dist={"blocking": 5},
-        ))
+        lib = self._make_lib_with(
+            tmp_path,
+            _make_pattern_dict(
+                pattern_id=pid,
+                persistence="permanent",
+                source="internal",
+                severity_dist={"blocking": 5},
+            ),
+        )
         action = lib.suggest_action(pid)
         assert "立即修复" in action
         assert "permanent" in action
@@ -355,29 +360,44 @@ class TestSuggestAction:
 
     def test_permanent_fatal(self, tmp_path: Path) -> None:
         pid = compute_error_pattern_id("E2", "permanent", "internal")
-        lib = self._make_lib_with(tmp_path, _make_pattern_dict(
-            pattern_id=pid, persistence="permanent", source="internal",
-            severity_dist={"fatal": 5},
-        ))
+        lib = self._make_lib_with(
+            tmp_path,
+            _make_pattern_dict(
+                pattern_id=pid,
+                persistence="permanent",
+                source="internal",
+                severity_dist={"fatal": 5},
+            ),
+        )
         action = lib.suggest_action(pid)
         assert "立即修复" in action
         assert "fatal" in action
 
     def test_permanent_degraded(self, tmp_path: Path) -> None:
         pid = compute_error_pattern_id("E3", "permanent", "internal")
-        lib = self._make_lib_with(tmp_path, _make_pattern_dict(
-            pattern_id=pid, persistence="permanent", source="internal",
-            severity_dist={"degraded": 5},
-        ))
+        lib = self._make_lib_with(
+            tmp_path,
+            _make_pattern_dict(
+                pattern_id=pid,
+                persistence="permanent",
+                source="internal",
+                severity_dist={"degraded": 5},
+            ),
+        )
         action = lib.suggest_action(pid)
         assert "排查根因" in action
 
     def test_intermittent(self, tmp_path: Path) -> None:
         pid = compute_error_pattern_id("E4", "intermittent", "server")
-        lib = self._make_lib_with(tmp_path, _make_pattern_dict(
-            pattern_id=pid, persistence="intermittent", source="server",
-            severity_dist={"blocking": 5},
-        ))
+        lib = self._make_lib_with(
+            tmp_path,
+            _make_pattern_dict(
+                pattern_id=pid,
+                persistence="intermittent",
+                source="server",
+                severity_dist={"blocking": 5},
+            ),
+        )
         action = lib.suggest_action(pid)
         assert "监控" in action
         assert "intermittent" in action
@@ -385,10 +405,15 @@ class TestSuggestAction:
 
     def test_transient_blocking(self, tmp_path: Path) -> None:
         pid = compute_error_pattern_id("E5", "transient", "dependency")
-        lib = self._make_lib_with(tmp_path, _make_pattern_dict(
-            pattern_id=pid, persistence="transient", source="dependency",
-            severity_dist={"blocking": 5},
-        ))
+        lib = self._make_lib_with(
+            tmp_path,
+            _make_pattern_dict(
+                pattern_id=pid,
+                persistence="transient",
+                source="dependency",
+                severity_dist={"blocking": 5},
+            ),
+        )
         action = lib.suggest_action(pid)
         assert "重试" in action
         assert "指数退避" in action
@@ -397,39 +422,59 @@ class TestSuggestAction:
     def test_transient_fatal(self, tmp_path: Path) -> None:
         """transient + fatal 同样走 '重试 + 指数退避' 分支。"""
         pid = compute_error_pattern_id("E6", "transient", "dependency")
-        lib = self._make_lib_with(tmp_path, _make_pattern_dict(
-            pattern_id=pid, persistence="transient", source="dependency",
-            severity_dist={"fatal": 5},
-        ))
+        lib = self._make_lib_with(
+            tmp_path,
+            _make_pattern_dict(
+                pattern_id=pid,
+                persistence="transient",
+                source="dependency",
+                severity_dist={"fatal": 5},
+            ),
+        )
         action = lib.suggest_action(pid)
         assert "重试" in action
         assert "fatal" in action
 
     def test_transient_degraded(self, tmp_path: Path) -> None:
         pid = compute_error_pattern_id("E7", "transient", "internal")
-        lib = self._make_lib_with(tmp_path, _make_pattern_dict(
-            pattern_id=pid, persistence="transient", source="internal",
-            severity_dist={"degraded": 5},
-        ))
+        lib = self._make_lib_with(
+            tmp_path,
+            _make_pattern_dict(
+                pattern_id=pid,
+                persistence="transient",
+                source="internal",
+                severity_dist={"degraded": 5},
+            ),
+        )
         action = lib.suggest_action(pid)
         assert "监控趋势" in action
 
     def test_source_client_hint(self, tmp_path: Path) -> None:
         pid = compute_error_pattern_id("E8", "permanent", "client")
-        lib = self._make_lib_with(tmp_path, _make_pattern_dict(
-            pattern_id=pid, persistence="permanent", source="client",
-            severity_dist={"blocking": 5},
-        ))
+        lib = self._make_lib_with(
+            tmp_path,
+            _make_pattern_dict(
+                pattern_id=pid,
+                persistence="permanent",
+                source="client",
+                severity_dist={"blocking": 5},
+            ),
+        )
         action = lib.suggest_action(pid)
         assert "客户端输入" in action
 
     def test_unknown_source_no_hint(self, tmp_path: Path) -> None:
         """未知 source 不追加 hint。"""
         pid = compute_error_pattern_id("E9", "transient", "weird_source")
-        lib = self._make_lib_with(tmp_path, _make_pattern_dict(
-            pattern_id=pid, persistence="transient", source="weird_source",
-            severity_dist={"degraded": 5},
-        ))
+        lib = self._make_lib_with(
+            tmp_path,
+            _make_pattern_dict(
+                pattern_id=pid,
+                persistence="transient",
+                source="weird_source",
+                severity_dist={"degraded": 5},
+            ),
+        )
         action = lib.suggest_action(pid)
         assert "监控趋势" in action
         assert "；" not in action  # 无 hint 不加分号
@@ -442,10 +487,15 @@ class TestSuggestAction:
     def test_unknown_persistence(self, tmp_path: Path) -> None:
         """persistence 不在已知枚举中走 '未知 persistence' 分支。"""
         pid = compute_error_pattern_id("E10", "weird_persistence", "internal")
-        lib = self._make_lib_with(tmp_path, _make_pattern_dict(
-            pattern_id=pid, persistence="weird_persistence", source="internal",
-            severity_dist={"degraded": 5},
-        ))
+        lib = self._make_lib_with(
+            tmp_path,
+            _make_pattern_dict(
+                pattern_id=pid,
+                persistence="weird_persistence",
+                source="internal",
+                severity_dist={"degraded": 5},
+            ),
+        )
         action = lib.suggest_action(pid)
         assert "未知 persistence" in action
 
@@ -565,15 +615,18 @@ class TestComputePatternIdIntegration:
         expected_pid = compute_error_pattern_id(error_type, persistence, source)
 
         path = tmp_path / "aggregated_patterns.json"
-        _write_aggregate(path, [
-            _make_pattern_dict(
-                pattern_id=expected_pid,
-                error_type=error_type,
-                persistence=persistence,
-                source=source,
-                count=99,
-            )
-        ])
+        _write_aggregate(
+            path,
+            [
+                _make_pattern_dict(
+                    pattern_id=expected_pid,
+                    error_type=error_type,
+                    persistence=persistence,
+                    source=source,
+                    count=99,
+                )
+            ],
+        )
         lib = AIErrorPatternLibrary(path)
 
         # 使用三元组 match，应命中 expected_pid 对应的 pattern

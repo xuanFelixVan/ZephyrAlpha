@@ -70,6 +70,7 @@ class TestScanActualGates:
         mod, gates_dir, _ = drift_module
         # 删除目录模拟不存在
         import shutil
+
         shutil.rmtree(gates_dir)
         assert mod.scan_actual_gates() == set()
 

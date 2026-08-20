@@ -23,6 +23,7 @@
 - TestStartReturnsHealthCheck: session_worktree_start 返回值含 health_check 字段
 - TestHealthCheckNonBlocking: 健康检查失败不阻断 session 创建（warn-only）
 """
+
 from __future__ import annotations
 
 import os
@@ -52,6 +53,7 @@ class TestRunStartupHealthCheck:
     def test_returns_ok_on_healthy_environment(self, tmp_path: Path):
         """健康环境 → status='ok' + 3 项检查全 pass。"""
         from zephyr.gov_enforcement.rule_bridge.session_worktree import _run_startup_health_check
+
         result = _run_startup_health_check(tmp_path)
         assert result["status"] == "ok", f"健康环境应返回 ok: {result}"
         assert len(result["checks"]) == 3, f"应有 3 项检查，实际 {len(result['checks'])}"
@@ -63,6 +65,7 @@ class TestRunStartupHealthCheck:
     def test_check_names_cover_three_paths(self, tmp_path: Path):
         """3 项检查覆盖 gate import / audit dir / write_lookup_audit_log。"""
         from zephyr.gov_enforcement.rule_bridge.session_worktree import _run_startup_health_check
+
         result = _run_startup_health_check(tmp_path)
         names = {c["name"] for c in result["checks"]}
         assert "capability_lookup_required_gate import" in names
@@ -72,6 +75,7 @@ class TestRunStartupHealthCheck:
     def test_creates_audit_dir_if_missing(self, tmp_path: Path):
         """.runtime/lookup_audit/ 目录不存在时自动创建。"""
         from zephyr.gov_enforcement.rule_bridge.session_worktree import _run_startup_health_check
+
         audit_dir = tmp_path / ".runtime" / "lookup_audit"
         assert not audit_dir.exists(), "前置：目录应不存在"
         _run_startup_health_check(tmp_path)
@@ -80,6 +84,7 @@ class TestRunStartupHealthCheck:
     def test_returns_failed_when_audit_dir_unwritable(self, tmp_path: Path):
         """audit dir 不可写时 → status='failed'（但仍不抛异常）。"""
         from zephyr.gov_enforcement.rule_bridge.session_worktree import _run_startup_health_check
+
         # 模拟不可写：.runtime 路径被一个文件占位（mkdir 失败）
         runtime_blocker = tmp_path / ".runtime"
         runtime_blocker.write_text("blocker", encoding="utf-8")
@@ -90,8 +95,7 @@ class TestRunStartupHealthCheck:
             None,
         )
         assert audit_check is not None
-        assert audit_check["passed"] is False, \
-            f"audit dir 被文件占位时检查应失败: {audit_check}"
+        assert audit_check["passed"] is False, f"audit dir 被文件占位时检查应失败: {audit_check}"
         assert result["status"] == "failed"
 
 
@@ -106,6 +110,7 @@ class TestStartReturnsHealthCheck:
     def test_start_returns_health_check_field(self, tmp_path: Path):
         """session_worktree_start 成功时返回值含 health_check 字段。"""
         from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_start
+
         _init_test_repo(tmp_path)
         result = session_worktree_start(
             session_id="sess-hc-001",
@@ -120,6 +125,7 @@ class TestStartReturnsHealthCheck:
         # 清理
         try:
             from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_abort
+
             session_worktree_abort("sess-hc-001", project_root=tmp_path)
         except Exception:
             pass
@@ -136,13 +142,13 @@ class TestHealthCheckNonBlocking:
     def test_start_succeeds_even_if_health_check_fails(self, tmp_path: Path):
         """即使健康检查失败，session 仍应创建（非阻断）。"""
         from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_start
+
         _init_test_repo(tmp_path)
         # mock _run_startup_health_check 返回失败
         failed_hc = {
             "status": "failed",
             "checks": [
-                {"name": "capability_lookup_required_gate import",
-                 "passed": False, "detail": "mocked failure"},
+                {"name": "capability_lookup_required_gate import", "passed": False, "detail": "mocked failure"},
             ],
         }
         with patch(
@@ -155,13 +161,15 @@ class TestHealthCheckNonBlocking:
                 allow_concurrent=True,
             )
         # session 仍应创建成功（健康检查不阻断）
-        assert result.get("registered") is True or result.get("created") is True, \
+        assert result.get("registered") is True or result.get("created") is True, (
             f"健康检查失败时 session 仍应创建: {result}"
+        )
         # health_check 字段应反映失败状态
         assert result["health_check"]["status"] == "failed"
         # 清理
         try:
             from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_abort
+
             session_worktree_abort("sess-hc-fail", project_root=tmp_path)
         except Exception:
             pass
@@ -175,6 +183,7 @@ class TestHealthCheckNonBlocking:
 def _init_test_repo(repo_dir: Path) -> None:
     """初始化一个 git 仓库用于测试（含必要 stub）。"""
     import subprocess
+
     repo_dir.mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env["GIT_AUTHOR_NAME"] = "Test"
@@ -184,15 +193,24 @@ def _init_test_repo(repo_dir: Path) -> None:
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "config", "user.name", "Test"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )
     (repo_dir / ".gitignore").write_text("*.tmp\n", encoding="utf-8")
     subprocess.run(["git", "add", "-A"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "commit", "-m", "init", "--no-verify"],
-        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
     )

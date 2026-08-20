@@ -57,16 +57,16 @@ _PY_WITH_DOCSTRING = '''"""TestModule — 测试用模块（算法提取器验�
 # [DOMAIN] D_TEST
 '''
 
-_PY_NO_DOCSTRING = '''# [BLUEPRINT] MOD-TEST-002 | docs/03_modules/test/blueprint.md
+_PY_NO_DOCSTRING = """# [BLUEPRINT] MOD-TEST-002 | docs/03_modules/test/blueprint.md
 # [MODULE] tests.test_no_docstring
 
 def helper():
     pass
-'''
+"""
 
-_PY_BROKEN_AST = '''def broken(
+_PY_BROKEN_AST = """def broken(
     # 缺少右括号和冒号
-'''
+"""
 
 # 真文字 + ALGO_FLOW 标记块（含 # 边: 段）混合的 docstring
 _PY_WITH_ALGO_FLOW = '''"""价格笼子校验模块。
@@ -154,6 +154,7 @@ def test_extract_from_code_basic(tmp_path, monkeypatch):
 
     # patch REPO_ROOT 使 relative_to(tmp_path) 可行
     import _shared.code_algorithm_extractor as ext
+
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
 
     result = extract_algorithm_from_code(py, module_id="MOD-TEST-001")
@@ -176,13 +177,13 @@ def test_extract_from_code_truncate_false(tmp_path, monkeypatch):
     py.write_text(long_docstring, encoding="utf-8")
 
     import _shared.code_algorithm_extractor as ext
+
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
 
     result_trunc = extract_algorithm_from_code(py, module_id="MOD-LONG", truncate=True)
     result_full = extract_algorithm_from_code(py, module_id="MOD-LONG", truncate=False)
 
-    assert len(result_full.algo_steps) > len(result_trunc.algo_steps), \
-        "truncate=False 应返回更长文本"
+    assert len(result_full.algo_steps) > len(result_trunc.algo_steps), "truncate=False 应返回更长文本"
     assert "…" not in result_full.algo_steps, "truncate=False 不应有截断省略号"
     assert result_trunc.algo_steps.endswith("…"), "truncate=True 应有截断省略号"
 
@@ -193,6 +194,7 @@ def test_extract_from_code_no_docstring(tmp_path, monkeypatch):
     py.write_text(_PY_NO_DOCSTRING, encoding="utf-8")
 
     import _shared.code_algorithm_extractor as ext
+
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
 
     result = extract_algorithm_from_code(py, module_id="MOD-TEST-002")
@@ -213,6 +215,7 @@ def test_extract_from_code_broken_ast(tmp_path, monkeypatch):
     py.write_text(_PY_BROKEN_AST, encoding="utf-8")
 
     import _shared.code_algorithm_extractor as ext
+
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
 
     result = extract_algorithm_from_code(py, module_id="MOD-BROKEN")
@@ -228,6 +231,7 @@ def test_algo_flow_markers_stripped_from_text_fields(tmp_path, monkeypatch):
     py.write_text(_PY_WITH_ALGO_FLOW, encoding="utf-8")
 
     import _shared.code_algorithm_extractor as ext
+
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
 
     result = extract_algorithm_from_code(py, module_id="MOD-FLOW-001")
@@ -249,6 +253,7 @@ def test_algo_flow_only_docstring_yields_empty_text(tmp_path, monkeypatch):
     py.write_text(_PY_ONLY_ALGO_FLOW, encoding="utf-8")
 
     import _shared.code_algorithm_extractor as ext
+
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
 
     result = extract_algorithm_from_code(py, module_id="MOD-FLOW-002")
@@ -269,6 +274,7 @@ def test_extract_from_blueprint_basic(tmp_path, monkeypatch):
     bp.write_text(_BLUEPRINT_MD, encoding="utf-8")
 
     import _shared.code_algorithm_extractor as ext
+
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
 
     result = extract_algorithm_from_blueprint(bp, module_id="MOD-TEST-BP-001")
@@ -296,6 +302,7 @@ def test_extract_from_blueprint_truncate_false(tmp_path, monkeypatch):
     bp.write_text("---\nmodule_id: MOD-LONG-BP\ntitle: 长蓝图\n---\n\n" + long_body, encoding="utf-8")
 
     import _shared.code_algorithm_extractor as ext
+
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
 
     result_trunc = extract_algorithm_from_blueprint(bp, truncate=True)
@@ -323,6 +330,7 @@ def test_build_blueprint_index(tmp_path, monkeypatch):
     # 清缓存确保干净状态
     clear_blueprint_cache()
     import _shared.code_algorithm_extractor as ext
+
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
 
     index = build_blueprint_index(blueprints_root=tmp_path)
@@ -339,13 +347,12 @@ def test_build_blueprint_index_cached(tmp_path, monkeypatch):
     """build_blueprint_index 模块级缓存：第二次调用不重新扫描。"""
     clear_blueprint_cache()
     import _shared.code_algorithm_extractor as ext
+
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
 
     bp_dir = tmp_path / "MOD-CACHE"
     bp_dir.mkdir()
-    (bp_dir / "blueprint.md").write_text(
-        "---\nmodule_id: MOD-CACHE\n---\n\n# Cache Test\n", encoding="utf-8"
-    )
+    (bp_dir / "blueprint.md").write_text("---\nmodule_id: MOD-CACHE\n---\n\n# Cache Test\n", encoding="utf-8")
 
     idx1 = build_blueprint_index(blueprints_root=tmp_path)
     assert "MOD-CACHE" in idx1
@@ -353,9 +360,7 @@ def test_build_blueprint_index_cached(tmp_path, monkeypatch):
     # 新增一个 blueprint（缓存应不会感知）
     bp2_dir = tmp_path / "MOD-CACHE-2"
     bp2_dir.mkdir()
-    (bp2_dir / "blueprint.md").write_text(
-        "---\nmodule_id: MOD-CACHE-2\n---\n\n# Cache Test 2\n", encoding="utf-8"
-    )
+    (bp2_dir / "blueprint.md").write_text("---\nmodule_id: MOD-CACHE-2\n---\n\n# Cache Test 2\n", encoding="utf-8")
 
     idx2 = build_blueprint_index()  # 不传 root，用缓存
     assert "MOD-CACHE-2" not in idx2, "缓存应未感知新增 blueprint"

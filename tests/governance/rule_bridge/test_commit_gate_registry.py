@@ -21,6 +21,7 @@
 - TestGet: get(gate_id) 按 gate_id 获取已注册 GateSpec（_commit_auto 复用 DCR gate 用，2026-06-30 治本）
 - TestPriorityConflictBlock: 同 priority 不同 gate_id 抛 GateRegistrationError 阻断（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2 fail-closed 治本）
 """
+
 from __future__ import annotations
 
 import pytest
@@ -39,12 +40,20 @@ class TestRegister:
     def test_register_idempotent_same_gate_id_overrides(self):
         """同 gate_id 注册两次，后者覆盖前者。"""
         registry = CommitGateRegistry()
-        registry.register(GateSpec(
-            gate_id="G1", check=lambda gw, f, **kw: (True, "old"), priority=100,
-        ))
-        registry.register(GateSpec(
-            gate_id="G1", check=lambda gw, f, **kw: (False, "override"), priority=100,
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="G1",
+                check=lambda gw, f, **kw: (True, "old"),
+                priority=100,
+            )
+        )
+        registry.register(
+            GateSpec(
+                gate_id="G1",
+                check=lambda gw, f, **kw: (False, "override"),
+                priority=100,
+            )
+        )
         results = registry.check_all(None, [])
         assert len(results) == 1
         assert results[0].gate_id == "G1"
@@ -67,16 +76,20 @@ class TestCheckAllOrder:
         """priority 数字小先执行。"""
         order: list[str] = []
         registry = CommitGateRegistry()
-        registry.register(GateSpec(
-            gate_id="late",
-            check=lambda gw, f, **kw: (order.append("late"), (True, ""))[1],
-            priority=200,
-        ))
-        registry.register(GateSpec(
-            gate_id="early",
-            check=lambda gw, f, **kw: (order.append("early"), (True, ""))[1],
-            priority=50,
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="late",
+                check=lambda gw, f, **kw: (order.append("late"), (True, ""))[1],
+                priority=200,
+            )
+        )
+        registry.register(
+            GateSpec(
+                gate_id="early",
+                check=lambda gw, f, **kw: (order.append("early"), (True, ""))[1],
+                priority=50,
+            )
+        )
         registry.check_all(None, [])
         assert order == ["early", "late"]
 
@@ -118,14 +131,20 @@ class TestSkipGates:
         """命中的 gate 不执行，结果保留 skipped 记录（passed=True 不阻断）。"""
         executed: list[str] = []
         registry = CommitGateRegistry()
-        registry.register(GateSpec(
-            gate_id="HELD-OVERLAP", priority=100,
-            check=lambda gw, f, **kw: (executed.append("HELD-OVERLAP"), (False, "would-block"))[1],
-        ))
-        registry.register(GateSpec(
-            gate_id="OTHER-GATE", priority=101,
-            check=lambda gw, f, **kw: (executed.append("OTHER-GATE"), (True, ""))[1],
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="HELD-OVERLAP",
+                priority=100,
+                check=lambda gw, f, **kw: (executed.append("HELD-OVERLAP"), (False, "would-block"))[1],
+            )
+        )
+        registry.register(
+            GateSpec(
+                gate_id="OTHER-GATE",
+                priority=101,
+                check=lambda gw, f, **kw: (executed.append("OTHER-GATE"), (True, ""))[1],
+            )
+        )
         results = registry.check_all(None, [], skip_gates=frozenset({"HELD-OVERLAP"}))
         # 被跳过的 gate 未执行（不会误拦），其余 gate 正常执行
         assert executed == ["OTHER-GATE"]
@@ -138,10 +157,13 @@ class TestSkipGates:
         """默认空集合 → 全量执行（非 worktree 路径向后兼容回归锁）。"""
         executed: list[str] = []
         registry = CommitGateRegistry()
-        registry.register(GateSpec(
-            gate_id="G1", priority=100,
-            check=lambda gw, f, **kw: (executed.append("G1"), (False, "still-blocks"))[1],
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="G1",
+                priority=100,
+                check=lambda gw, f, **kw: (executed.append("G1"), (False, "still-blocks"))[1],
+            )
+        )
         results = registry.check_all(None, [])
         assert executed == ["G1"]
         assert results[0].passed is False  # 未跳过：阻断语义完整保留
@@ -219,13 +241,21 @@ class TestPriorityConflictBlock:
     def test_same_priority_different_gate_id_raises(self):
         """同 priority 不同 gate_id 抛 GateRegistrationError。"""
         registry = CommitGateRegistry()
-        registry.register(GateSpec(
-            gate_id="FIRST", check=lambda gw, f, **kw: (True, ""), priority=77,
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="FIRST",
+                check=lambda gw, f, **kw: (True, ""),
+                priority=77,
+            )
+        )
         with pytest.raises(GateRegistrationError) as exc_info:
-            registry.register(GateSpec(
-                gate_id="SECOND", check=lambda gw, f, **kw: (True, ""), priority=77,
-            ))
+            registry.register(
+                GateSpec(
+                    gate_id="SECOND",
+                    check=lambda gw, f, **kw: (True, ""),
+                    priority=77,
+                )
+            )
         # 错误信息含 priority 值 + 两个 gate_id
         msg = str(exc_info.value)
         assert "77" in msg
@@ -235,13 +265,21 @@ class TestPriorityConflictBlock:
     def test_same_priority_same_gate_id_no_raise(self):
         """同 priority 同 gate_id（幂等覆盖）不抛异常。"""
         registry = CommitGateRegistry()
-        registry.register(GateSpec(
-            gate_id="G1", check=lambda gw, f, **kw: (True, "old"), priority=100,
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="G1",
+                check=lambda gw, f, **kw: (True, "old"),
+                priority=100,
+            )
+        )
         # 不应抛异常——幂等覆盖语义
-        registry.register(GateSpec(
-            gate_id="G1", check=lambda gw, f, **kw: (False, "new"), priority=100,
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="G1",
+                check=lambda gw, f, **kw: (False, "new"),
+                priority=100,
+            )
+        )
         got = registry.get("G1")
         assert got.check(None, [])[0] is False  # 新 spec 生效
 
@@ -256,13 +294,21 @@ class TestPriorityConflictBlock:
     def test_blocked_gate_not_registered(self):
         """抛异常后，撞号 gate 未被注册（_specs 不含 SECOND）。"""
         registry = CommitGateRegistry()
-        registry.register(GateSpec(
-            gate_id="FIRST", check=lambda gw, f, **kw: (True, ""), priority=77,
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="FIRST",
+                check=lambda gw, f, **kw: (True, ""),
+                priority=77,
+            )
+        )
         with pytest.raises(GateRegistrationError):
-            registry.register(GateSpec(
-                gate_id="SECOND", check=lambda gw, f, **kw: (True, ""), priority=77,
-            ))
+            registry.register(
+                GateSpec(
+                    gate_id="SECOND",
+                    check=lambda gw, f, **kw: (True, ""),
+                    priority=77,
+                )
+            )
         # SECOND 未被注册
         assert registry.get("SECOND") is None
         assert registry.get("FIRST") is not None
@@ -270,13 +316,21 @@ class TestPriorityConflictBlock:
     def test_error_message_contains_historical_precedent(self):
         """错误信息含历史先例（后到者让位），引导新 AI 选择空闲 priority。"""
         registry = CommitGateRegistry()
-        registry.register(GateSpec(
-            gate_id="EXISTING", check=lambda gw, f, **kw: (True, ""), priority=85,
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="EXISTING",
+                check=lambda gw, f, **kw: (True, ""),
+                priority=85,
+            )
+        )
         with pytest.raises(GateRegistrationError) as exc_info:
-            registry.register(GateSpec(
-                gate_id="NEW", check=lambda gw, f, **kw: (True, ""), priority=85,
-            ))
+            registry.register(
+                GateSpec(
+                    gate_id="NEW",
+                    check=lambda gw, f, **kw: (True, ""),
+                    priority=85,
+                )
+            )
         msg = str(exc_info.value)
         # 含至少一个历史先例
         assert "RULING-COMMIT-VERIFIED 77->109" in msg or "DATA-TASK 78->41" in msg
@@ -284,25 +338,41 @@ class TestPriorityConflictBlock:
     def test_error_code_attribute(self):
         """GateRegistrationError 含 error_code 属性（对标 GatewayError 模式）。"""
         registry = CommitGateRegistry()
-        registry.register(GateSpec(
-            gate_id="FIRST", check=lambda gw, f, **kw: (True, ""), priority=50,
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="FIRST",
+                check=lambda gw, f, **kw: (True, ""),
+                priority=50,
+            )
+        )
         with pytest.raises(GateRegistrationError) as exc_info:
-            registry.register(GateSpec(
-                gate_id="SECOND", check=lambda gw, f, **kw: (True, ""), priority=50,
-            ))
+            registry.register(
+                GateSpec(
+                    gate_id="SECOND",
+                    check=lambda gw, f, **kw: (True, ""),
+                    priority=50,
+                )
+            )
         assert exc_info.value.error_code == "ZA-GV-0050"
 
     def test_first_registration_unaffected(self):
         """第一个 gate 注册成功，不受后续撞号影响。"""
         registry = CommitGateRegistry()
-        registry.register(GateSpec(
-            gate_id="FIRST", check=lambda gw, f, **kw: (True, "first"), priority=77,
-        ))
+        registry.register(
+            GateSpec(
+                gate_id="FIRST",
+                check=lambda gw, f, **kw: (True, "first"),
+                priority=77,
+            )
+        )
         with pytest.raises(GateRegistrationError):
-            registry.register(GateSpec(
-                gate_id="SECOND", check=lambda gw, f, **kw: (True, "second"), priority=77,
-            ))
+            registry.register(
+                GateSpec(
+                    gate_id="SECOND",
+                    check=lambda gw, f, **kw: (True, "second"),
+                    priority=77,
+                )
+            )
         # FIRST 仍可正常 check
         results = registry.check_all(None, [])
         assert len(results) == 1

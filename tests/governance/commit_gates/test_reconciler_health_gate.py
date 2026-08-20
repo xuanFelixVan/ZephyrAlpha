@@ -23,6 +23,7 @@
 测试隔离：monkeypatch 替换 _check_recent_blocks / _check_recent_critical_warns，
 不依赖真实 governance.db。
 """
+
 from __future__ import annotations
 
 import sys
@@ -275,8 +276,7 @@ class TestWarnBannerDedup:
         capsys.readouterr()
         self._patch_warns(
             monkeypatch,
-            self._WARNS
-            + [{"gate_id": "GATE-NEW", "logged_at": "2026-08-14T01:00:00Z", "detail": "new failure"}],
+            self._WARNS + [{"gate_id": "GATE-NEW", "logged_at": "2026-08-14T01:00:00Z", "detail": "new failure"}],
         )
         passed, _ = gate.check(gw, [])
         assert passed is True

@@ -14,6 +14,7 @@
   - 取回：manifest 字段 + files 清单；归档不存在 → 拒；畸形 manifest → 拒
   - list_archived_strategies：多策略排序；根目录不存在 → 空列表
 """
+
 from __future__ import annotations
 
 import json

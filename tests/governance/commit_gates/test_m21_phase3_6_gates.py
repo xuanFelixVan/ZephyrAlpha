@@ -7,6 +7,7 @@
 
 #ARCH-GOV-CONVERGENCE-META Phase 3.6
 """
+
 import json
 import os
 import sys
@@ -41,6 +42,7 @@ from zephyr.gov_enforcement.commit_gates.vocab_chain_gate import (
 )
 
 # ── SNAPSHOT-DRIFT gate tests ──────────────────────────────────────────────
+
 
 class TestSnapshotDriftGate:
     def test_validate_structure_valid(self):
@@ -96,6 +98,7 @@ class TestSnapshotDriftGate:
 
 # ── VOCAB-CHAIN gate tests ─────────────────────────────────────────────────
 
+
 class TestVocabChainGate:
     def test_matches_ssot_pattern_yaml(self):
         assert _matches_ssot_pattern("docs/01_policies_and_standards/rules/trae_001.yaml")
@@ -111,10 +114,10 @@ class TestVocabChainGate:
         assert not _matches_ssot_pattern("docs/random.txt")
 
     def test_detect_ssot_hardcoding_finds_violation(self):
-        code = '''
+        code = """
 PATH = "docs/01_policies_and_standards/rules/trae_001.yaml"
 OTHER = "regular string"
-'''
+"""
         violations = _detect_ssot_hardcoding("<test>", code)
         assert any("trae_001.yaml" in v for v in violations)
 
@@ -137,6 +140,7 @@ OTHER = "regular string"
 
 # ── MANUAL-ONLY-PERMANENT gate tests ───────────────────────────────────────
 
+
 class TestManualOnlyPermanentGate:
     def test_has_permanent_ttl(self):
         content = "# [TTL] permanent\n# rest of file\n"
@@ -155,11 +159,11 @@ class TestManualOnlyPermanentGate:
         assert _detect_manual_trigger(tree) is True
 
     def test_detect_main_guard_with_argv(self):
-        code = '''
+        code = """
 import sys
 if __name__ == "__main__":
     cmd = sys.argv[1]
-'''
+"""
         tree = ast.parse(code)
         assert _detect_manual_trigger(tree) is True
 

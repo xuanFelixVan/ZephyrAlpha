@@ -41,6 +41,7 @@
 
 测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch 模拟 DB 查询。
 """
+
 from __future__ import annotations
 
 import sys
@@ -74,6 +75,7 @@ class _MockResult:
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
 
+
 class TestGateSpecFields:
     """gate_id / priority / isinstance(GateSpec)。"""
 
@@ -93,6 +95,7 @@ class TestGateSpecFields:
 # ---------------------------------------------------------------------------
 # TestIsInScope
 # ---------------------------------------------------------------------------
+
 
 class TestIsInScope:
     """_is_in_scope 范围判断。"""
@@ -117,61 +120,44 @@ class TestIsInScope:
 # TestGetStagedNewPyFiles
 # ---------------------------------------------------------------------------
 
+
 class TestGetStagedNewPyFiles:
     """_get_staged_new_py_files 解析逻辑。"""
 
     def test_normal_new_py_file(self) -> None:
         """正常新增 .py 文件 → 返回列表。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0, "src/zephyr/governance/audit/new_module.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "src/zephyr/governance/audit/new_module.py\n"))
         result = _get_staged_new_py_files(gw)
         assert result == ["src/zephyr/governance/audit/new_module.py"]
 
     def test_multiple_new_py_files(self) -> None:
         """多个新增 .py 文件 → 全部返回。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0,
-            "src/zephyr/foo.py\n"
-            "scripts/governance/bar.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "src/zephyr/foo.py\nscripts/governance/bar.py\n"))
         result = _get_staged_new_py_files(gw)
         assert result == ["src/zephyr/foo.py", "scripts/governance/bar.py"]
 
     def test_non_py_file_skipped(self) -> None:
         """非 .py 文件跳过。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0,
-            "src/zephyr/foo.py\n"
-            "src/zephyr/bar.md\n"
-            "src/zephyr/baz.yaml\n"
-        ))
+        gw.run_git = MagicMock(
+            return_value=_MockResult(0, "src/zephyr/foo.py\nsrc/zephyr/bar.md\nsrc/zephyr/baz.yaml\n")
+        )
         result = _get_staged_new_py_files(gw)
         assert result == ["src/zephyr/foo.py"]
 
     def test_tests_exempt(self) -> None:
         """tests/ 下 .py 文件豁免。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0,
-            "tests/governance/test_foo.py\n"
-            "src/zephyr/foo.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "tests/governance/test_foo.py\nsrc/zephyr/foo.py\n"))
         result = _get_staged_new_py_files(gw)
         assert result == ["src/zephyr/foo.py"]
 
     def test_out_of_scope_skipped(self) -> None:
         """其他目录跳过（docs/ / 根级）。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0,
-            "docs/foo.py\n"
-            "foo.py\n"
-            "src/zephyr/bar.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "docs/foo.py\nfoo.py\nsrc/zephyr/bar.py\n"))
         result = _get_staged_new_py_files(gw)
         assert result == ["src/zephyr/bar.py"]
 
@@ -199,9 +185,7 @@ class TestGetStagedNewPyFiles:
     def test_windows_path_normalized(self) -> None:
         """Windows 反斜杠路径归一化为正斜杠。"""
         gw = MagicMock()
-        gw.run_git = MagicMock(return_value=_MockResult(
-            0, "src\\zephyr\\foo.py\n"
-        ))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "src\\zephyr\\foo.py\n"))
         result = _get_staged_new_py_files(gw)
         assert result == ["src/zephyr/foo.py"]
 
@@ -209,6 +193,7 @@ class TestGetStagedNewPyFiles:
 # ---------------------------------------------------------------------------
 # TestCheckDepgraphHasFile
 # ---------------------------------------------------------------------------
+
 
 class TestCheckDepgraphHasFile:
     """_check_depgraph_has_file DB 查询。"""
@@ -224,6 +209,7 @@ class TestCheckDepgraphHasFile:
             return mock_conn
 
         import zephyr.governance.depgraph_schema as schema_mod
+
         monkeypatch.setattr(schema_mod, "get_depgraph_pg_connection", _mock_get_conn)
         result = _check_depgraph_has_file("src/zephyr/foo.py")
         assert result is True
@@ -239,16 +225,19 @@ class TestCheckDepgraphHasFile:
             return mock_conn
 
         import zephyr.governance.depgraph_schema as schema_mod
+
         monkeypatch.setattr(schema_mod, "get_depgraph_pg_connection", _mock_get_conn)
         result = _check_depgraph_has_file("src/zephyr/foo.py")
         assert result is False
 
     def test_db_exception_returns_none(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """DB 异常 → None (fail-open)。"""
+
         def _mock_get_conn(**kwargs):
             raise RuntimeError("DB connection failed")
 
         import zephyr.governance.depgraph_schema as schema_mod
+
         monkeypatch.setattr(schema_mod, "get_depgraph_pg_connection", _mock_get_conn)
         result = _check_depgraph_has_file("src/zephyr/foo.py")
         assert result is None
@@ -257,6 +246,7 @@ class TestCheckDepgraphHasFile:
 # ---------------------------------------------------------------------------
 # TestGatewayIntegration
 # ---------------------------------------------------------------------------
+
 
 class TestGatewayIntegration:
     """mock gateway + monkeypatch DB 的集成测试。"""
@@ -277,9 +267,7 @@ class TestGatewayIntegration:
         passed, msg = gate.check(gw, files=[])
         assert passed is True
 
-    def test_new_py_registered_in_depgraph_passes(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_new_py_registered_in_depgraph_passes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """新增 .py 已登记 depgraph → 放行。"""
         gw = self._make_gateway(
             tmp_path,
@@ -287,6 +275,7 @@ class TestGatewayIntegration:
         )
         # mock DB 查询返回 True（已登记）
         import zephyr.gov_enforcement.commit_gates.new_file_depgraph_gate as gate_mod
+
         monkeypatch.setattr(gate_mod, "_check_depgraph_has_file", lambda f: True)
 
         gate = make_new_file_depgraph_gate()
@@ -295,9 +284,7 @@ class TestGatewayIntegration:
         passed, msg = gate.check(gw, files=files)
         assert passed is True
 
-    def test_new_py_not_in_depgraph_blocks(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_new_py_not_in_depgraph_blocks(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """新增 .py 未登记 depgraph → 阻断。"""
         gw = self._make_gateway(
             tmp_path,
@@ -305,6 +292,7 @@ class TestGatewayIntegration:
         )
         # mock DB 查询返回 False（未登记）
         import zephyr.gov_enforcement.commit_gates.new_file_depgraph_gate as gate_mod
+
         monkeypatch.setattr(gate_mod, "_check_depgraph_has_file", lambda f: False)
 
         gate = make_new_file_depgraph_gate()
@@ -315,9 +303,7 @@ class TestGatewayIntegration:
         assert "src/zephyr/new_module.py" in msg
         assert "apply_depgraph.py" in msg or "generate_project_depgraph.py" in msg
 
-    def test_db_unreachable_fail_open(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_db_unreachable_fail_open(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """DB 不可达 → fail-open 放行。"""
         gw = self._make_gateway(
             tmp_path,
@@ -325,6 +311,7 @@ class TestGatewayIntegration:
         )
         # mock DB 查询返回 None（DB 不可达）
         import zephyr.gov_enforcement.commit_gates.new_file_depgraph_gate as gate_mod
+
         monkeypatch.setattr(gate_mod, "_check_depgraph_has_file", lambda f: None)
 
         gate = make_new_file_depgraph_gate()
@@ -339,9 +326,7 @@ class TestGatewayIntegration:
         passed, msg = gate.check(gw, files=[])
         assert passed is True
 
-    def test_db_offline_failopen_persists(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_db_offline_failopen_persists(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """tracker #116 B1/B2：探针证实 PG 离线 + DB 查询失败 → 放行 +
         critical_warn 落盘（DB 离线降级，含受影响文件清单）。"""
         import json as _json
@@ -351,8 +336,11 @@ class TestGatewayIntegration:
 
         # 植入探针状态：离线
         _state = {
-            "reachable": False, "checked_at": datetime.now(_tz.utc).isoformat(),
-            "host": "localhost", "port": 5432, "error": "refused",
+            "reachable": False,
+            "checked_at": datetime.now(_tz.utc).isoformat(),
+            "host": "localhost",
+            "port": 5432,
+            "error": "refused",
             "last_reachable_at": None,
             "first_offline_at": datetime.now(_tz.utc).isoformat(),
         }
@@ -362,6 +350,7 @@ class TestGatewayIntegration:
 
         gw = self._make_gateway(tmp_path, diff_stdout="src/zephyr/new_module.py\n")
         import zephyr.gov_enforcement.commit_gates.new_file_depgraph_gate as gate_mod
+
         monkeypatch.setattr(gate_mod, "_check_depgraph_has_file", lambda f: None)
 
         gate = make_new_file_depgraph_gate()
@@ -373,9 +362,7 @@ class TestGatewayIntegration:
         assert db_path.is_file()
         conn = _sqlite3.connect(str(db_path))
         try:
-            rows = conn.execute(
-                "SELECT gate_id, action, detail FROM reconcile_execution_log"
-            ).fetchall()
+            rows = conn.execute("SELECT gate_id, action, detail FROM reconcile_execution_log").fetchall()
         finally:
             conn.close()
         assert len(rows) == 1
@@ -395,9 +382,7 @@ class TestGatewayIntegration:
         assert passed is True
         assert "non-Zephyr project" in msg
 
-    def test_commit_files_filter(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_commit_files_filter(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """staged 区含非 commit files → 只检测 commit files（gateway 选择性提交）。"""
         gw = self._make_gateway(
             tmp_path,
@@ -405,6 +390,7 @@ class TestGatewayIntegration:
             diff_stdout="src/zephyr/a.py\nsrc/zephyr/b.py\n",
         )
         import zephyr.gov_enforcement.commit_gates.new_file_depgraph_gate as gate_mod
+
         # mock DB: a.py 未登记（False），b.py 已登记（True）
         monkeypatch.setattr(
             gate_mod,
@@ -421,15 +407,14 @@ class TestGatewayIntegration:
         assert "src/zephyr/a.py" in msg
         assert "b.py" not in msg
 
-    def test_mixed_registered_and_unregistered_blocks(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_mixed_registered_and_unregistered_blocks(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """混合新增：部分已登记部分未登记 → 阻断并显示未登记文件。"""
         gw = self._make_gateway(
             tmp_path,
             diff_stdout="src/zephyr/registered.py\nsrc/zephyr/unregistered.py\n",
         )
         import zephyr.gov_enforcement.commit_gates.new_file_depgraph_gate as gate_mod
+
         # 精确路径匹配：registered.py 已登记，unregistered.py 未登记
         # （不能用 "registered" 子串，否则 "unregistered" 也匹配）
         _registered = {"src/zephyr/registered.py"}
@@ -455,6 +440,7 @@ class TestGatewayIntegration:
 # ---------------------------------------------------------------------------
 # TestFormatViolationDetail
 # ---------------------------------------------------------------------------
+
 
 class TestFormatViolationDetail:
     """_format_violation_detail 格式化。"""

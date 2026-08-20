@@ -13,6 +13,7 @@
 测试 DashboardPanelApp / create_dashboard / _demo_backtest_data / build_tabs。
 panel 未安装时自动 skip（pytest.importorskip）。
 """
+
 from __future__ import annotations
 
 import pytest

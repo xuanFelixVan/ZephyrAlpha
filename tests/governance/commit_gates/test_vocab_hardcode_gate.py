@@ -33,6 +33,7 @@ subprocess.run，不调用真实脚本；用 tmp_path 创建真实文件使 os.p
 
 测试隔离：MagicMock 模拟 gateway.run_git + monkeypatch subprocess.run，不读/不写真实仓库。
 """
+
 from __future__ import annotations
 
 import subprocess
@@ -67,16 +68,19 @@ class _SubResult:
     stderr: str = ""
 
 
-def _make_gateway(staged_new=None, project_root=None, toplevel=None,
-                  toplevel_fails=False, diff_fails=False, diff_raises=False):
+def _make_gateway(
+    staged_new=None, project_root=None, toplevel=None, toplevel_fails=False, diff_fails=False, diff_raises=False
+):
     """构造 mock gateway：--diff-filter=A --name-only 返回新增文件列表；
     git rev-parse --show-toplevel 返回 worktree root。"""
     gw = MagicMock()
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
     if diff_raises:
+
         def _raise(*a, **k):
             raise RuntimeError("git not found")
+
         gw.run_git = _raise
         return gw
 
@@ -115,8 +119,10 @@ def _patch_script(monkeypatch, tmp_path, exists=True):
 def _patch_subprocess(monkeypatch, result=None, raises=None):
     """patch subprocess.run：返回固定 result 或抛指定异常。"""
     if raises is not None:
+
         def _raise(*a, **k):
             raise raises
+
         monkeypatch.setattr(subprocess, "run", _raise)
     else:
         res = result or _SubResult(0, "", "")
@@ -146,8 +152,7 @@ class TestSubprocessContract:
         _create_files(tmp_path, [rel])
         _patch_script(monkeypatch, tmp_path)
         _patch_subprocess(monkeypatch, _SubResult(0, "", ""))
-        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path),
-                           toplevel=str(tmp_path))
+        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path), toplevel=str(tmp_path))
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert passed
         assert msg == ""
@@ -157,8 +162,7 @@ class TestSubprocessContract:
         _create_files(tmp_path, [rel])
         _patch_script(monkeypatch, tmp_path)
         _patch_subprocess(monkeypatch, _SubResult(1, "WARN: new_mod.py hardcodes vocab\n", ""))
-        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path),
-                           toplevel=str(tmp_path))
+        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path), toplevel=str(tmp_path))
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert not passed
         assert "词表硬编码" in msg
@@ -169,8 +173,7 @@ class TestSubprocessContract:
         _patch_script(monkeypatch, tmp_path)
         # 无 WARN: 前缀行 → detail_str 走默认
         _patch_subprocess(monkeypatch, _SubResult(1, "some raw output\n", ""))
-        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path),
-                           toplevel=str(tmp_path))
+        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path), toplevel=str(tmp_path))
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert not passed
         assert "词表硬编码违规（见 check_vocab_hardcode.py 输出）" in msg
@@ -180,8 +183,7 @@ class TestSubprocessContract:
         _create_files(tmp_path, [rel])
         _patch_script(monkeypatch, tmp_path)
         _patch_subprocess(monkeypatch, _SubResult(2, "", "script error"))
-        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path),
-                           toplevel=str(tmp_path))
+        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path), toplevel=str(tmp_path))
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert passed  # 脚本异常 fail-open
         assert msg == ""
@@ -194,8 +196,7 @@ class TestSubprocessContract:
             monkeypatch,
             raises=subprocess.TimeoutExpired(cmd=["x"], timeout=60),
         )
-        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path),
-                           toplevel=str(tmp_path))
+        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path), toplevel=str(tmp_path))
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert passed
         assert msg == ""
@@ -205,8 +206,7 @@ class TestSubprocessContract:
         _create_files(tmp_path, [rel])
         _patch_script(monkeypatch, tmp_path)
         _patch_subprocess(monkeypatch, raises=OSError("boom"))
-        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path),
-                           toplevel=str(tmp_path))
+        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path), toplevel=str(tmp_path))
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert passed
         assert msg == ""
@@ -222,8 +222,7 @@ class TestGatewayIntegration:
         _patch_script(monkeypatch, tmp_path)
         # 即使脚本会检出违规，tests/ 豁免不应触发检测
         _patch_subprocess(monkeypatch, _SubResult(1, "WARN: x\n", ""))
-        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path),
-                           toplevel=str(tmp_path))
+        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path), toplevel=str(tmp_path))
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert passed
         assert msg == ""
@@ -249,8 +248,7 @@ class TestGatewayIntegration:
         _create_files(tmp_path, [rel])
         _patch_script(monkeypatch, tmp_path, exists=False)  # 脚本不存在
         _patch_subprocess(monkeypatch, _SubResult(1, "WARN: x\n", ""))
-        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path),
-                           toplevel=str(tmp_path))
+        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path), toplevel=str(tmp_path))
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert passed  # 脚本缺失 fail-open
         assert msg == ""
@@ -260,24 +258,21 @@ class TestGatewayIntegration:
         # 不创建文件 → os.path.isfile False → abs_files 空 → 放行
         _patch_script(monkeypatch, tmp_path)
         _patch_subprocess(monkeypatch, _SubResult(1, "WARN: x\n", ""))
-        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path),
-                           toplevel=str(tmp_path))
+        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path), toplevel=str(tmp_path))
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert passed
         assert msg == ""
 
     def test_git_diff_failure_fail_open(self, tmp_path, monkeypatch):
         _patch_script(monkeypatch, tmp_path)
-        gw = _make_gateway(staged_new=["src/x.py"], project_root=str(tmp_path),
-                           diff_fails=True)
+        gw = _make_gateway(staged_new=["src/x.py"], project_root=str(tmp_path), diff_fails=True)
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert passed
         assert msg == ""
 
     def test_git_diff_exception_fail_open(self, tmp_path, monkeypatch):
         _patch_script(monkeypatch, tmp_path)
-        gw = _make_gateway(staged_new=["src/x.py"], project_root=str(tmp_path),
-                           diff_raises=True)
+        gw = _make_gateway(staged_new=["src/x.py"], project_root=str(tmp_path), diff_raises=True)
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert passed
         assert msg == ""
@@ -288,8 +283,7 @@ class TestGatewayIntegration:
         _patch_script(monkeypatch, tmp_path)
         _patch_subprocess(monkeypatch, _SubResult(0, "", ""))
         # toplevel 解析失败 → 回退 project_root，文件仍可达
-        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path),
-                           toplevel_fails=True)
+        gw = _make_gateway(staged_new=[rel], project_root=str(tmp_path), toplevel_fails=True)
         passed, msg = make_vocab_hardcode_gate().check(gw, [])
         assert passed
         assert msg == ""

@@ -22,8 +22,11 @@ import zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog as wd
 
 def _git(repo: Path, *args: str) -> None:
     subprocess.run(
-        ["git", *args], cwd=str(repo), check=True,
-        capture_output=True, text=True,
+        ["git", *args],
+        cwd=str(repo),
+        check=True,
+        capture_output=True,
+        text=True,
     )
 
 
@@ -34,12 +37,25 @@ def git_repo(tmp_path: Path) -> Path:
     repo.mkdir()
     (repo / "data" / "databases").mkdir(parents=True)  # reconcile_execution_log 落库目录
     _git(repo, "init", "-q", "-b", "dev")
-    _git(repo, "-c", "user.email=t@t", "-c", "user.name=t", "-c", "core.autocrlf=false",
-         "commit", "--allow-empty", "-q", "-m", "init")
+    _git(
+        repo,
+        "-c",
+        "user.email=t@t",
+        "-c",
+        "user.name=t",
+        "-c",
+        "core.autocrlf=false",
+        "commit",
+        "--allow-empty",
+        "-q",
+        "-m",
+        "init",
+    )
     (repo / "hot.txt").write_text("v1\n", encoding="utf-8")
     _git(repo, "add", "hot.txt")
-    _git(repo, "-c", "user.email=t@t", "-c", "user.name=t", "-c", "core.autocrlf=false",
-         "commit", "-q", "-m", "add hot")
+    _git(
+        repo, "-c", "user.email=t@t", "-c", "user.name=t", "-c", "core.autocrlf=false", "commit", "-q", "-m", "add hot"
+    )
     return repo
 
 
@@ -56,9 +72,7 @@ def _read_log_actions(repo: Path) -> list[tuple]:
         return []
     conn = sqlite3.connect(str(db))
     try:
-        return conn.execute(
-            "SELECT gate_id, action, detail FROM reconcile_execution_log"
-        ).fetchall()
+        return conn.execute("SELECT gate_id, action, detail FROM reconcile_execution_log").fetchall()
     finally:
         conn.close()
 
@@ -116,7 +130,8 @@ def test_self_heal_on_resolve(git_repo: Path) -> None:
 def test_claimed_file_exempt(git_repo: Path, monkeypatch) -> None:
     """文件在活跃 session 的 claim 快照中 → claimed 豁免不告警。"""
     monkeypatch.setattr(
-        wd, "_active_sessions_and_claims",
+        wd,
+        "_active_sessions_and_claims",
         lambda root: (["sess-x"], {"hot.txt": "sess-x"}),
     )
     (git_repo / "hot.txt").write_text("v2\n", encoding="utf-8")
@@ -146,7 +161,9 @@ def test_reconciler_ensure_daemon_idempotent(git_repo: Path, monkeypatch) -> Non
     """reconciler：ensure_daemon 幂等 + 返回合法 ReconcileResult。"""
     spawned: list[str] = []
     monkeypatch.setattr(
-        wd, "ensure_daemon", lambda root, interval=60: spawned.append(str(root)) or True,
+        wd,
+        "ensure_daemon",
+        lambda root, interval=60: spawned.append(str(root)) or True,
     )
 
     class _GW:
@@ -169,8 +186,11 @@ def test_merge_head_suppresses_alert(git_repo: Path) -> None:
     """MERGE_HEAD 存续期 drift → merge_suppressed（audit 照记），零 critical_warn。"""
     (git_repo / "hot.txt").write_text("v2\n", encoding="utf-8")
     head = subprocess.run(
-        ["git", "rev-parse", "HEAD"], cwd=str(git_repo),
-        capture_output=True, text=True, check=True,
+        ["git", "rev-parse", "HEAD"],
+        cwd=str(git_repo),
+        capture_output=True,
+        text=True,
+        check=True,
     ).stdout.strip()
     (git_repo / ".git" / "MERGE_HEAD").write_bytes((head + "\n").encode("ascii"))
     s = wd.scan_once(git_repo, grace_seconds=0)
@@ -178,17 +198,18 @@ def test_merge_head_suppresses_alert(git_repo: Path) -> None:
     audit = _read_audit(git_repo)
     assert any(r.get("verdict") == "merge_suppressed" for r in audit)
     actions = _read_log_actions(git_repo)
-    assert not any(a[1] == "critical_warn" for a in actions), (
-        f"merge 存续期不得产生 critical_warn: {actions}"
-    )
+    assert not any(a[1] == "critical_warn" for a in actions), f"merge 存续期不得产生 critical_warn: {actions}"
 
 
 def test_merge_head_cleared_resumes_watch(git_repo: Path) -> None:
     """MERGE_HEAD 消解后新 drift → 恢复 alert（豁免不卡死）。"""
     (git_repo / "hot.txt").write_text("v2\n", encoding="utf-8")
     head = subprocess.run(
-        ["git", "rev-parse", "HEAD"], cwd=str(git_repo),
-        capture_output=True, text=True, check=True,
+        ["git", "rev-parse", "HEAD"],
+        cwd=str(git_repo),
+        capture_output=True,
+        text=True,
+        check=True,
     ).stdout.strip()
     mh = git_repo / ".git" / "MERGE_HEAD"
     mh.write_bytes((head + "\n").encode("ascii"))
@@ -218,9 +239,7 @@ def test_reflog_anchor_extends_grace(git_repo: Path, monkeypatch) -> None:
 
     monkeypatch.setattr(wd, "_git", fake_git)
     s = wd.scan_once(git_repo, grace_seconds=600)
-    assert s["alerted"] == 0 and s["grace_suppressed"] == 1, (
-        f"stash reflog 新近活跃应延 grace: {s}"
-    )
+    assert s["alerted"] == 0 and s["grace_suppressed"] == 1, f"stash reflog 新近活跃应延 grace: {s}"
 
 
 def test_grace_expired_still_alerts(git_repo: Path, monkeypatch) -> None:
