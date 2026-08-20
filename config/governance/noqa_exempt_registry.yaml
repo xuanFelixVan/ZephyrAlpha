@@ -348,9 +348,10 @@ exemptions:
     category: threshold_var
     reason: 'worktree 跳过容忍阈值（脚本专用非系统阈值，非词表成员）'
   - file: scripts/governance/d5_architecture/detect_constraint_violations.py
-    line: 97
+    line: 99  # 行号自 L97 漂移更新：波3 ruff format 重排（2026-08-21 波3 回归归因）
     category: business_subset
-    reason: '跨切域清单（#ARCH-CROSS-CUTTING-EXEMPT-001），非 target_layer 词表全集校验（行号自 L86 漂移更新：e8632b2a __manifest__ 注入下移，2026-08-18 第八统筹）'
+    # reason 与代码行内注释逐字一致（reason fallback 漂移免疫关键——旧值夹带漂移日志致 fallback 失效）
+    reason: '业务子集：跨切域清单（#ARCH-CROSS-CUTTING-EXEMPT-001），非 target_layer 词表全集校验'
   - file: src/zephyr/governance/persistence/battlemap_schema.py
     line: 187
     category: business_subset
@@ -372,9 +373,10 @@ exemptions:
     category: arch_concept
     reason: 'Windows API 常量 PROCESS_QUERY_LIMITED_INFORMATION，非阈值变量（_THRESHOLD_VAR_PATTERN 误匹配 LIMIT）'
   - file: scripts/governance/d3_metadata/domain_header_maint.py
-    line: 146
+    line: 155  # 行号自 L146 漂移更新：波3 ruff format 重排（2026-08-21 波3 回归归因）
     category: arch_concept
-    reason: 'Windows API 常量 PROCESS_QUERY_LIMITED_INFORMATION，非阈值变量（行号自 L135 漂移更新：e8632b2a __manifest__ 注入下移，2026-08-18 第八统筹）'
+    # reason 与代码行内注释逐字一致（reason fallback 漂移免疫关键——旧值与代码理由完全不同致 fallback 失效）
+    reason: 'Win32 API 常量名为平台既定术语非治理词表违规'
   - file: scripts/governance/meta/backup_runtime_state.py
     line: 207
     category: arch_concept

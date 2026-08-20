@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.persistence.battle_map_reader
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.battlemap_schema (get_battle_map_pg_connection); zephyr.governance.persistence.pg_wrapper (_PgConnExecuteWrapper)
-# [CONSUMERS] scripts/governance/apply_battle_map.py; scripts/governance/align_battle_map.py; scripts/governance/generate_battle_map_diagram.py
+# [CONSUMERS] scripts/governance/apply_battle_map.py; scripts/governance/align_battle_map.py; scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 只读查询; 参数化防注入; 懒加载连接; 与 depgraph 共享 PG 实例（不同表）; 双向查询是核心
