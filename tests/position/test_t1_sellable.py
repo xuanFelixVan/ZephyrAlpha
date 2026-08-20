@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-POS-009 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """t1_sellable（T+1 可卖持仓口径工具）单元测试。
 
 覆盖：31号 遗留 #30 / 32号 §6 T+1 口径行——

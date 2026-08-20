@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-POS-009 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.position.test_budget_change_handler
 # [DOMAIN] D_POSITION
 # [MATURITY] production

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-POS-009 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """single_name_cap_caliber（单票上限三层口径映射+校验）单元测试。
 
 覆盖：31号 §2.4.1/§5——

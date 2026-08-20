@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-POS-009 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """StrategyBook (MOD-POS-020) 单元测试。
 
 覆盖：31_position_sizing §2.2 策略层粗仓位契约——
