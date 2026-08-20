@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CMP-007 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-CMP-001 四项必做清单完成度检测 单元测试（43 号 §3，BM-BUY-08-A）。"""
 
 from __future__ import annotations

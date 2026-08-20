@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CMP-007 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-CMP-007 交易合规检测 单元测试（43 号 §7，BM-BUY-15）。"""
 
 from __future__ import annotations

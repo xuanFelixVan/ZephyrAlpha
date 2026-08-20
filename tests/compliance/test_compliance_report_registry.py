@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CMP-007 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-CMP-009 程序化交易报告登记+报送门禁 单元测试（43 号 §7.4/§7.5）。"""
 
 from __future__ import annotations

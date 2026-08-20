@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SELL-017 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """SellSignalFusionEngine 单元测试 (MOD-SELL-007)。"""
 
 from __future__ import annotations

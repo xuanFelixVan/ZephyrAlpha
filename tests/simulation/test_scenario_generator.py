@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIM-003 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIM-005 Scenario Generator — 场景生成器单元测试。
 
 覆盖: 三种生成模式、GBM 可复现性、历史切片正确性、自定义冲击叠加、

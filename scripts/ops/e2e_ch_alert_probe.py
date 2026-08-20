@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python
 # [TTL] task_bound
 """R5 端到端告警验证脚本（#ARCH-DR-CH-RESTART-001）。

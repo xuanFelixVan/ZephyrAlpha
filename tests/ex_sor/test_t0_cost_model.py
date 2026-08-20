@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX_SOR_EXT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_t0_cost_model | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ex_sor.test_t0_cost_model
 # [TESTS] src/zephyr/ex_sor/services/t0_cost_model.py

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SELL-017 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """SellConflictArbitrator 单元测试 (MOD-SELL-008)。"""
 
 from __future__ import annotations

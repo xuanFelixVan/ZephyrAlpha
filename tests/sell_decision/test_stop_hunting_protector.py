@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SELL-017 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SELL-015 止损猎杀防护器 单元测试。"""
 
 from __future__ import annotations

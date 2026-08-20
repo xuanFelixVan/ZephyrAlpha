@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_instrument_master | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.data.test_instrument_master
 # [TESTS] src/zephyr/data/instrument_master.py
