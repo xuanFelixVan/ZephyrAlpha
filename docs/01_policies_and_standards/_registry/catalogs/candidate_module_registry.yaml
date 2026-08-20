@@ -16,9 +16,10 @@ tier: tier_1_governance
 status: active
 version: 1.1.1
 created: '2026-07-31'
-last_updated: '2026-08-18'
+last_updated: '2026-08-20'
 # 2026-08-16: +CAND-AUTONOMYCORE-002（FHS 引擎，双轮审查深挖④裁定，AI-RFIX-001）
 # 2026-08-18: +CAND-SEC-001（Whistleblower Agent MVP，裁定 9 联动降级远期 P4，AI-ADJ-004）
+# 2026-08-20: +40 条（AI-NIGHT-001 阶段3 未来工程-大型登记批，tracker #223 承接，均不施工附触发条件）
 
 # ============================================================
 # 设计原则
@@ -6904,3 +6905,542 @@ entries:
   source: '2026-08-19 Owner 裁定 P1-2③（#ARCH-130 施工令）'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+
+# ============================================================
+# AI-NIGHT-001 阶段3 未来工程-大型登记批（2026-08-20，tracker #223 承接）
+# 来源：design_memos 全量审查三包（pack1/pack2/pack3）未来工程-大型 ≈39 条，
+# 合并同族后 40 条登记；均不施工，附排期触发条件。格式从简（GATEMECH 族惯例）。
+# ============================================================
+- id: CAND-GOVAUDIT-002
+  name: 审查机制运营族——队列节奏/存量回补优先级/红队场景库（68号 §5）
+  aliases: [审查运营三件套]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 审查流水线运营
+  problem: 审查队列节奏/存量回补优先级清单/红队场景库物理形态三运营项待触发条件（首批 3~5 批完成后/增量队列清空时/红队场景 ≥10 条）。
+  proposal: 触发条件达成后按 68 号 §5 框架立项；2026-08-20 已在 68 号 memo 登记运营口径与默认建议。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 68号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-GOVAUDIT-003
+  name: 归因引擎双实现收敛（54号 §6 置顶，待 Owner 裁定基底后施工）
+  aliases: [attribution 双实现收敛, default_attribution_engine 退役]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 对账归因
+  problem: reporting/default_attribution_engine.py 全桩（三方法 return 0.0）与 pf_core/core/performance_attribution_engine.py（真实 BHB）双实现冲突未收敛，须 Owner 裁定基底/canonical/契约接线方向。
+  proposal: Owner 裁定后收敛施工=未来工程-小型（桩实现退役或接线 canonical）；裁定前维持现状不消费桩实现。
+  status: deferred
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节（待 Owner 裁定项）'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-023
+  name: 机构级数据维度管道与评分（10号 §4.7.6/§4.8.5/§4.11.10/§4.12.10）
+  aliases: [IV/COT/信用利差/期权异动/CAPE/巴菲特指标/Margin Debt/Put-Call 数据管道]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: regime 特征层
+  problem: 机构级数据维度（期权 IV/COT 持仓/信用利差/CAPE 等 8 类）无数据管道，regime 检测器高分位维度缺失。
+  proposal: 新数据基础设施级；当前生产形态不依赖其通过验证。触发=regime 检测器维度不足实证或对应数据源采购落地。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 10号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-024
+  name: regime 检测器备查升级路径包（10号 §9：HSMM/Student-t/Wasserstein/层次 HMM 等 15 法）
+  aliases: [regime 检测器远期升级包]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: regime 检测引擎
+  problem: 4 态 HMM 当前满足生产；15 种升级路径（HMM 引擎重写级/新基础设施级）维持备查。
+  proposal: 触发=4 态 HMM 实证失效（walk-forward 持续不达标）或对应基础设施因他项落地；逐法独立评估，不打包施工。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 10号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-025
+  name: Kill Switch L3 看门狗独立进程（35号 §6.11）
+  aliases: [watchdog 独立进程, kill switch 第三层]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: 风控基础设施
+  problem: L3 看门狗需独立进程基础设施（主进程崩溃时仍能触发全清），当前 L1/L2 覆盖主路径。
+  proposal: 新基础设施级；触发=实盘上线窗口（SHADOW→LIVE 迁移批），与 53 号迁移路径同批评估。
+  status: candidate
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 35号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-026
+  name: L2 broker 端 bracket 单（35号 §6.11，外部依赖登记）
+  aliases: [broker bracket 第二层]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: 执行层风控
+  problem: L2 broker 端 bracket 依赖 miniQMT 能力（券商端止损单），能力未确认。
+  proposal: 外部依赖；触发=miniQMT bracket 能力确认（Owner/券商窗口）。
+  status: deferred
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 35号节（外部依赖）'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-027
+  name: BOCPD 概率型 kill switch（53号④，≥200 笔 PnL 先验校准）
+  aliases: [贝叶斯变点 kill switch]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: 风控算法
+  problem: 概率型 kill switch（BOCPD 变点检测）需 ≥200 笔实盘 PnL 先验校准，数据未积累。
+  proposal: 触发=实盘 PnL 样本 ≥200 笔；先验校准方案随 36 号 VaR 校准批同评。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 53号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-028
+  name: C10 偏度/峰度分布感知仓位（31号 §2.3.3）
+  aliases: [分布感知 sizing]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: 仓位算法
+  problem: 依赖 BM-SEL-13 密度 PDF 高阶矩基础设施（远期路线）。
+  proposal: 触发=密度预测基础设施落地（91 号路线 Phase 推进）；当前 Kelly 口径满足生产。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 31号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-029
+  name: 密度感知止损/止盈（42号⑤）
+  aliases: [density-aware stop]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: 卖出决策
+  problem: 同依赖 BM-SEL-13 密度 PDF；MVP 四族止损止盈已 production 覆盖主路径。
+  proposal: 触发=密度预测验证通过（91 号 BM-SEL-15 激活条件同源）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 42号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-030
+  name: regime 演进大型组——AH-HMM 元体制门控/LVI 强平级联/ProRealCode 16 事件 FSM（14号 §5a）
+  aliases: [regime 演进三大型]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: regime 检测引擎
+  problem: 三项演进方向均为多模块/新基础设施级。
+  proposal: 触发=对应痛点实证（元体制误判/强平级联事件/事件 FSM 需求）；逐项独立立项。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 14号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-012
+  name: 3 个 sleeve 策略类（20号①：daban/multifactor/event_driven 组装策略类）
+  aliases: [sleeve 策略类三件套, 首批上线最后一公里]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 策略组装层
+  problem: 首批上线主链路最后一公里，跨 signal/position/pf_core 多模块组装；依赖 G08/G09/G10 细节定型与 G05 标准接口。
+  proposal: 触发=G08/G09/G10 定型（首批策略回测校准完成）；与 CAND-SIG-013 统一接口同批。
+  status: candidate
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 20号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-013
+  name: SelectionResult 统一接口（21号①，与 20号① 同源主链路）
+  aliases: [选股统一接口]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 选股引擎
+  problem: L0/L1/L2-C 三层 production 但无统一 SelectionResult 接口（仅局部 StockSelectionResult）。
+  proposal: 触发=G05 标准接口定型；与 sleeve 策略类同批施工。
+  status: candidate
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-014
+  name: 信号工厂九子阶段流水线+信号聚合器（21号⑥）
+  aliases: [信号工厂]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 信号层
+  problem: 新信号层基础设施；激活条件=信号冲突实例 ≥3 例（未触发）。
+  proposal: 触发=信号冲突实例实证积累达标；当前 TriggerList+硬边界承载。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-015
+  name: LLM alpha 挖掘闭环（21号⑦：Hubble/AlphaEvolve/XAlpha 等八框架评估）
+  aliases: [LLM alpha 挖掘]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 离线研发基础设施
+  problem: 离线研发基础设施级，远期。
+  proposal: 触发=首批策略实盘稳定 + 因子工厂产能瓶颈实证；逐框架评估不打包。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-016
+  name: Cross-Sectional LSTM baseline（21号⑧）
+  aliases: [截面 LSTM]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: ML 因子层
+  problem: 远期 ML 基础设施；重评条件=因子工厂稳定 6+ 月。
+  proposal: 触发=重评条件达成；当前规则/IC 加权路径覆盖。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-017
+  name: BM-SEL-12 分布特征工程（Signature 路径签名，21号⑨）
+  aliases: [Signature 路径签名]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 特征工程
+  problem: signatory 依赖+密度预测配套，远期。
+  proposal: 触发=密度预测基础设施落地（91 号路线）；与 CAND-SIM-007 共形预测同评。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-018
+  name: BM-SEL-19 事件驱动分布筛选漏斗（26号⑥，MOD-SIG-049）
+  aliases: [事件驱动筛选漏斗]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 事件驱动策略
+  problem: 依赖知识图谱 BM-SEL-11 design 态+NLP 管道就绪，依赖链未闭合。
+  proposal: 触发=NLP 管道 Phase 8 验收通过+知识图谱落地；当前 event_score 公式族已函数级承载。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 26号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-019
+  name: 打板 Phase 5 ML 栈（24号⑧：CatBoost 破板/Siamese LOB/Du 混合/QFCQT/Hawkes/速度域签名）
+  aliases: [打板 ML 栈]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 打板策略
+  problem: ML 基础设施级，远期；规则层四引擎已 production。
+  proposal: 触发=首批实盘 3-6 月样本积累+规则层边际收益枯竭实证。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 24号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-020
+  name: 多因子 Phase 4 ML 栈+LLM 语义去重+因果验证（25号⑥）
+  aliases: [多因子 ML 栈]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 多因子策略
+  problem: 远期 ML/基础设施；各有重评条件。
+  proposal: 触发=对应重评条件达成（因子工厂稳定/语义重复实证/因果需求实例）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 25号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-021
+  name: 事件驱动远期组（26号⑦a：Hawkes 自激发/CNN 可视化盈余/LLM 动态知识图谱/Data Funnel）
+  aliases: [事件驱动远期四件]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 事件驱动策略
+  problem: §5 暂缓项，各有重评条件。
+  proposal: 触发=对应重评条件达成；当前规则层事件评分族覆盖。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 26号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-022
+  name: 价值反转/动量趋势两策略重启（27号①，第二批策略）
+  aliases: [第二批策略重启]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 策略层
+  problem: 主动暂缓非缺口；重启条件=首批 3 策略实盘 ≥3 月+复盘 ≥12 期+因子衰减基线。
+  proposal: 触发=重启条件满足；重启时施工 alpha 信号定稿+财报 PIT 面板深加工+全市场时序扫描+相关性实测。
+  status: deferred
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 27号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-BT-002
+  name: Phase 5 决策门控（11号⑨，BM-BT-07 适配）
+  aliases: [回测决策门控 Phase5]
+  domain: D_BACKTEST
+  domain_status: active
+  sub_layer: 回测验证
+  problem: 依赖首批策略层就绪（sleeve 策略类落地）。
+  proposal: 触发=首批策略层就绪；届时 DecisionGate 接入 regime/shrinkage 判定（DSR 注入点已就位）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 11号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIM-004
+  name: 五态降级机执行侧动作接线（53号②，tracker #112）
+  aliases: [rollback 执行侧接线]
+  domain: D_SIMULATION
+  domain_status: active
+  sub_layer: 模拟实盘迁移
+  problem: 撤单/阻断/减仓/平仓执行侧动作接交易运行时；待 SHADOW 阶段（评估循环侧已接线 #204 闭环）。
+  proposal: 触发=SHADOW 阶段开启；评估循环侧（禁新开仓/清算联动）已落地，执行侧动作随 paper matching 整合批施工。
+  status: candidate
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 53号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIM-005
+  name: propagator 传播子滑点模型（53号⑦）
+  aliases: [传播子滑点]
+  domain: D_SIMULATION
+  domain_status: active
+  sub_layer: 撮合模型
+  problem: 需逐笔订单流+L2 接入。
+  proposal: 触发=L2 数据管道落地；当前 volume-aware 冲击模型已函数级承载。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 53号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIM-006
+  name: CRPS 密度预测验证（52号③，03-E）
+  aliases: [CRPS 验证]
+  domain: D_SIMULATION
+  domain_status: active
+  sub_layer: 回测验证
+  problem: 重评=regime 密度预测上线（91 号路线）。
+  proposal: 触发=密度预测上线；B2 离散 CRPS 分析函数已就位可直接消费。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 52号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIM-007
+  name: BM-SEL-14 共形预测 Phase 0（91号①，slow unweighted+RWC 变体）
+  aliases: [共形预测 Phase0]
+  domain: D_SIMULATION
+  domain_status: active
+  sub_layer: 密度预测
+  problem: 栈收敛待 90 号 P-2 裁定（Conformal 栈选型）。
+  proposal: 触发=90 号 P-2 裁定落地（待 Owner）；仓内 conformal_prediction.py 简易骨架可复用。
+  status: deferred
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 91号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RPT-002
+  name: regime-conditional/MCR-CCR 归因（54号⑩，Phase 2/2.5）
+  aliases: [高级归因族]
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: 绩效归因
+  problem: Phase 2/2.5 高级归因；Shapley 已函数级落地（2026-08-20 包P）。
+  proposal: 触发=首批实盘 12 月数据+基础归因消费稳定。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RPT-003
+  name: Merkle/VCP v1.2 审计轨迹升级（54号⑫）
+  aliases: [审计轨迹升级]
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: 审计轨迹
+  problem: 远期审计基础设施。
+  proposal: 触发=审计合规需求升级或外部审计要求。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RPT-004
+  name: 微信入站指令解析（54号⑭，归 buy_flow 域）
+  aliases: [微信入站指令]
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: 指令通道
+  problem: 出站实发后评估；入站指令解析涉交易安全边界。
+  proposal: 触发=WeChat 出站实发稳定+入站需求实证；须安全评审（指令白名单+二次确认）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-MLT-006
+  name: Champion-Challenger mSPRT 晋升通道（61号①）
+  aliases: [mSPRT 晋升通道]
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: 策略生命周期
+  problem: 需先裁定 MLflow 退役后的载体（experiment_tracking 包为候选承载）。
+  proposal: 触发=载体裁定（建议 experiment_tracking，2026-08-20 五零件 adapter 已就位）+首批策略上线。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 61号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-MLT-007
+  name: Drift Observatory 四层编排（61号②）
+  aliases: [漂移观测台]
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: 策略生命周期
+  problem: 随首批上线后监控批。
+  proposal: 触发=首批策略上线；CUSUM/PSI 漂移监控函数级组件已就位可编排。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 61号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-MLT-008
+  name: BM-MT-02-A/B 灰度+影子+对抗鲁棒性（61号⑤，MLOps Level 2）
+  aliases: [MLOps Level2 灰度影子]
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: 模型运维
+  problem: MLOps Level 2 批。
+  proposal: 触发=ML 模型首批上线（当前无生产 ML 模型）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 61号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-MLT-009
+  name: NLP Phase 5 RLSP（13号②，带护栏 RL 实验）
+  aliases: [RLSP 强化学习 sentiment]
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: NLP 管道
+  problem: RL 训练基础设施+GPU 实验管线；memo 已定其为可选护栏实验。
+  proposal: 触发=SFT 路径验收后仍有缺口实证+GPU 管线就绪。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 13号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-MLT-010
+  name: DCC-GARCH 时变相关（23号⑦，第二阶段）
+  aliases: [DCC-GARCH]
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: 相关性建模
+  problem: arch 库两步估计；Markov-switching DCC 已裁定拒绝。
+  proposal: 触发=静态相关矩阵实证不足（策略 ≥4 且 PnL 样本 ≥6 月）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 23号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-PFALLOC-004
+  name: Alpha 半衰期定理/双曲衰减拥挤度建模（23号⑧）
+  aliases: [alpha 半衰期拥挤度]
+  domain: D_PF_ALLOC
+  domain_status: active
+  sub_layer: 组合分配
+  problem: 远期；需首批实盘 12 月数据。
+  proposal: 触发=首批实盘 12 月数据积累；当前 decay_monitor+CUSUM 覆盖。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 23号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-FAC-003
+  name: 因子量化落码+IC 实证回填（29号①=62号①，tracker #56）
+  aliases: [因子落码批, IC 回填]
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: 因子工厂
+  problem: factor_registry 140 条 candidate 待落码+experiment_registry 跑批回填 IC/IR；依赖回测跑批基础设施。
+  proposal: 触发=回测跑批基础设施就绪（walkforward/CPCV 已函数级就位）+Owner 排期；建议按因子族分批。
+  status: candidate
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 29号节/pack3 62号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RES-028
+  name: BM-SEL-15 Survival 止盈止损（91号③，AFT）
+  aliases: [生存分析止盈止损]
+  domain: D_RESEARCH
+  domain_status: active
+  sub_layer: 密度预测应用
+  problem: 激活=密度预测验证通过。
+  proposal: 触发=密度预测验证通过（91 号路线）；survival_line_monitor 简易骨架已在库。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 91号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RES-029
+  name: 板块 lead-lag network/ML 转折点检测/相关性聚类（22号⑪，第四阶段）
+  aliases: [板块研究远期三件]
+  domain: D_RESEARCH
+  domain_status: active
+  sub_layer: 板块研究
+  problem: 第四阶段远期；规则层 10 项已函数级落地（2026-08-20 包B）。
+  proposal: 触发=规则层实证不足+板块数据积累 ≥12 月。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 22号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-DAT-003
+  name: 轨 A/轨 B 合流（15号⑤，轨 B miniQMT connector）
+  aliases: [双轨合流]
+  domain: D_DATA
+  domain_status: active
+  sub_layer: 数据特征层
+  problem: 多厂商抽象实现；既定裁定=需求真实出现前维持双轨。
+  proposal: 触发=第二数据轨真实需求出现（多厂商接入）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 15号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-GOVTEST-004
+  name: commit queue 本体 MVP（66号①，提交队列串行化）
+  aliases: [commit queue MVP]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: git 安全治理
+  problem: 队列目录协议+enqueue/status/drain CLI+入队自举排空+专用 worktree 落盘+compaction+_commit_auto 改道入队；大工程量单项。
+  proposal: 触发=Owner 排期（66号 §10 验收：3 会话 50 提交零丢失/零搭便车/FIFO 序）；当前 GitCommitGateway+锁承载主路径。
+  status: candidate
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 66号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-GOVTEST-005
+  name: commit queue P1 级联+P2 监控（66号②③，随 MVP 验收后）
+  aliases: [commit queue 扩展]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: git 安全治理
+  problem: P1 级联标记+死信重入队+done TTL+worktree 强制升硬联动；P2 监控接入+temp-index+多分支评估。
+  proposal: 触发=CAND-GOVTEST-004 MVP 验收通过。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 66号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
