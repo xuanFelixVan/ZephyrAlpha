@@ -116,11 +116,17 @@ class TestHashRiskConfig:
     def test_extra_order_independent(self):
         """extra dict 顺序不影响 hash（按 key 排序）。"""
         h1 = hash_risk_config(
-            0.04, 10, 50, 0.15,
+            0.04,
+            10,
+            50,
+            0.15,
             extra={"a": "1", "b": "2"},
         )
         h2 = hash_risk_config(
-            0.04, 10, 50, 0.15,
+            0.04,
+            10,
+            50,
+            0.15,
             extra={"b": "2", "a": "1"},
         )
         assert h1 == h2
@@ -310,6 +316,7 @@ class TestConfigDrift:
 
     def test_drift_provider_exception_does_not_block(self):
         """risk_config_provider 抛异常时保守放行（不阻断交易）。"""
+
         def bad_provider():
             raise RuntimeError("风控配置查询失败")
 
@@ -545,7 +552,8 @@ class TestCheckResultProperties:
         # UNREGISTERED
         guard1 = ProgrammaticTradingGuard(
             config=ProgrammaticTradingGuardConfig(
-                mode=TradingMode.LIVE, live_broker_ids={"miniqmt"},
+                mode=TradingMode.LIVE,
+                live_broker_ids={"miniqmt"},
             ),
         )
         assert guard1.check_can_trade("miniqmt").outcome is CheckOutcome.BLOCKED_UNREGISTERED

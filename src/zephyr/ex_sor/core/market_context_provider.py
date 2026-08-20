@@ -269,7 +269,12 @@ class RedisKlineMarketContextProvider:
 
         logger.info(
             "MarketContext: symbol=%s last=%s adv=%s bid=%s ask=%s (tick=%s)",
-            symbol, last_price, adv, bid_price, ask_price, bool(tick),
+            symbol,
+            last_price,
+            adv,
+            bid_price,
+            ask_price,
+            bool(tick),
         )
         return MarketContext(
             symbol=symbol,
@@ -300,9 +305,7 @@ class RedisKlineMarketContextProvider:
 
     # ── 内部: ADV + 最近 close ──
 
-    def _compute_adv_and_close(
-        self, symbol: str
-    ) -> tuple[Decimal | None, Decimal | None]:
+    def _compute_adv_and_close(self, symbol: str) -> tuple[Decimal | None, Decimal | None]:
         """从 ClickHouse 日K计算 ADV (近 N 个非停牌交易日 volume 均值) + 最近 close。
 
         Returns:
@@ -325,7 +328,7 @@ class RedisKlineMarketContextProvider:
         if not active:
             return None, ordered[-1].close
 
-        recent = active[-self._adv_lookback:]
+        recent = active[-self._adv_lookback :]
         adv = Decimal(str(mean(float(r.volume) for r in recent)))
         # Decimal 均值更精确: 用 sum/len
         total = sum((r.volume for r in recent), Decimal("0"))

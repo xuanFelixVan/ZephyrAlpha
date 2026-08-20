@@ -25,6 +25,7 @@
 谁来管"的断裂点——每日盘后监控因子暴露偏差（C6 边界 ±10%）与行业偏离
 （C2 边界 ±5%），critical 时触发 RebalanceTrigger 强制换仓（覆盖三触发器）。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -43,19 +44,19 @@ __all__ = [
 class HoldingDriftParams:
     """持仓偏差监控阈值（25号memo §3.7#8 参数表）。"""
 
-    factor_drift_alert: float = 0.05      # 因子暴露偏差>5%→预警
-    factor_drift_critical: float = 0.10   # 偏差>10%→触发换仓（C6 约束边界）
-    industry_drift_alert: float = 0.03    # 行业偏离>3%→预警
+    factor_drift_alert: float = 0.05  # 因子暴露偏差>5%→预警
+    factor_drift_critical: float = 0.10  # 偏差>10%→触发换仓（C6 约束边界）
+    industry_drift_alert: float = 0.03  # 行业偏离>3%→预警
     industry_drift_critical: float = 0.05  # 偏差>5%→触发换仓（C2 约束边界）
-    weight_drift_alert: float = 0.10      # 权重漂移>10%→预警（喂 RebalanceTrigger 15%）
+    weight_drift_alert: float = 0.10  # 权重漂移>10%→预警（喂 RebalanceTrigger 15%）
 
 
 class DriftAlertType(str, Enum):
-    FACTOR_CRITICAL = "FACTOR_CRITICAL"      # →TRIGGER_REBALANCE
-    FACTOR_ALERT = "FACTOR_ALERT"            # →MONITOR
+    FACTOR_CRITICAL = "FACTOR_CRITICAL"  # →TRIGGER_REBALANCE
+    FACTOR_ALERT = "FACTOR_ALERT"  # →MONITOR
     INDUSTRY_CRITICAL = "INDUSTRY_CRITICAL"  # →TRIGGER_REBALANCE
-    INDUSTRY_ALERT = "INDUSTRY_ALERT"        # →MONITOR
-    WEIGHT_DRIFT = "WEIGHT_DRIFT"            # →FEED_REBALANCE_TRIGGER
+    INDUSTRY_ALERT = "INDUSTRY_ALERT"  # →MONITOR
+    WEIGHT_DRIFT = "WEIGHT_DRIFT"  # →FEED_REBALANCE_TRIGGER
 
 
 @dataclass(frozen=True)
@@ -63,8 +64,8 @@ class DriftAlert:
     """单条偏差警报。"""
 
     alert_type: DriftAlertType
-    name: str          # 因子名/行业名/组合级 "portfolio"
-    deviation: float   # |current - target|
+    name: str  # 因子名/行业名/组合级 "portfolio"
+    deviation: float  # |current - target|
 
 
 @dataclass(frozen=True)
@@ -113,19 +114,26 @@ def monitor(
     p = params or HoldingDriftParams()
     alerts: list[DriftAlert] = []
     alerts += _check_exposures(
-        current_factor_exposure or {}, target_factor_exposure or {},
-        p.factor_drift_alert, p.factor_drift_critical,
-        DriftAlertType.FACTOR_ALERT, DriftAlertType.FACTOR_CRITICAL,
+        current_factor_exposure or {},
+        target_factor_exposure or {},
+        p.factor_drift_alert,
+        p.factor_drift_critical,
+        DriftAlertType.FACTOR_ALERT,
+        DriftAlertType.FACTOR_CRITICAL,
     )
     alerts += _check_exposures(
-        current_industry_exposure or {}, target_industry_exposure or {},
-        p.industry_drift_alert, p.industry_drift_critical,
-        DriftAlertType.INDUSTRY_ALERT, DriftAlertType.INDUSTRY_CRITICAL,
+        current_industry_exposure or {},
+        target_industry_exposure or {},
+        p.industry_drift_alert,
+        p.industry_drift_critical,
+        DriftAlertType.INDUSTRY_ALERT,
+        DriftAlertType.INDUSTRY_CRITICAL,
     )
     if weight_drift > p.weight_drift_alert:
         alerts.append(DriftAlert(DriftAlertType.WEIGHT_DRIFT, "portfolio", float(weight_drift)))
-    critical = sum(1 for a in alerts if a.alert_type in
-                   (DriftAlertType.FACTOR_CRITICAL, DriftAlertType.INDUSTRY_CRITICAL))
+    critical = sum(
+        1 for a in alerts if a.alert_type in (DriftAlertType.FACTOR_CRITICAL, DriftAlertType.INDUSTRY_CRITICAL)
+    )
     return HoldingDriftReport(
         alerts=tuple(alerts),
         critical_count=critical,

@@ -31,6 +31,7 @@ v3.0.0 变更 (#ARCH-047):
   - 中下: 5档盘口快照(ask红/bid绿)
   - 底部: 做T场景标记(垂直线+标注)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -50,20 +51,22 @@ from zephyr.frontend.dashboard.components.chart_factory import (
 
 class ReplaySpeed(str, Enum):
     """回放速度"""
-    REAL_TIME = "real_time"        # 实时(1x)
+
+    REAL_TIME = "real_time"  # 实时(1x)
     FAST_FORWARD = "fast_forward"  # 快进(10x)
-    MAX_SPEED = "max_speed"        # 最大(无延迟)
+    MAX_SPEED = "max_speed"  # 最大(无延迟)
 
 
 @dataclass
 class TickSnapshotView:
     """前端展示用的 Tick 快照（剥离 Decimal 依赖，纯 float）"""
+
     timestamp: str = ""
     last_price: float = 0.0
     ask_price: list[float] = field(default_factory=list)  # 5档卖价
     bid_price: list[float] = field(default_factory=list)  # 5档买价
-    ask_vol: list[int] = field(default_factory=list)      # 5档卖量
-    bid_vol: list[int] = field(default_factory=list)      # 5档买量
+    ask_vol: list[int] = field(default_factory=list)  # 5档卖量
+    bid_vol: list[int] = field(default_factory=list)  # 5档买量
     volume: int = 0
     amount: float = 0.0
 
@@ -71,6 +74,7 @@ class TickSnapshotView:
 @dataclass
 class TScenarioMark:
     """做T场景标记（30秒冲高回落 / 5秒级快照）"""
+
     timestamp: str = ""
     scenario_type: str = ""  # "30s_spike_drop" / "5s_spike"
     description: str = ""
@@ -79,6 +83,7 @@ class TScenarioMark:
 @dataclass
 class TickReplayData:
     """Tick 回放可视化数据模型"""
+
     symbol: str = ""
     ticks: list[TickSnapshotView] = field(default_factory=list)
     replay_speed: ReplaySpeed = ReplaySpeed.MAX_SPEED
@@ -102,6 +107,7 @@ def _to_int_list(values: object) -> list[int]:
 
 def _normalize_tick(raw: object) -> TickSnapshotView:
     """把异构 Tick 对象（dataclass / dict / DataFrame row）归一化为 TickSnapshotView"""
+
     def _get(key: str, default: object = 0) -> object:
         if hasattr(raw, key):
             return getattr(raw, key)
@@ -155,11 +161,13 @@ def detect_t_scenarios(
 
         drop_pct = (local_max - local_min) / local_max
         if drop_pct >= spike_threshold_pct and cur >= local_max * 0.999:
-            marks.append(TScenarioMark(
-                timestamp=ticks[i].timestamp,
-                scenario_type="30s_spike_drop",
-                description=f"冲高回落 高={local_max:.3f} 低={local_min:.3f} 跌幅={drop_pct:.2%}",
-            ))
+            marks.append(
+                TScenarioMark(
+                    timestamp=ticks[i].timestamp,
+                    scenario_type="30s_spike_drop",
+                    description=f"冲高回落 高={local_max:.3f} 低={local_min:.3f} 跌幅={drop_pct:.2%}",
+                )
+            )
 
     return marks
 
@@ -224,8 +232,7 @@ def render_tick_replay(data: TickReplayData) -> dict[str, Any]:
         "replay_speed": data.replay_speed.value,
         "t_scenario_count": len(data.t_scenario_marks),
         "scenarios": [
-            {"timestamp": m.timestamp, "type": m.scenario_type, "desc": m.description}
-            for m in data.t_scenario_marks
+            {"timestamp": m.timestamp, "type": m.scenario_type, "desc": m.description} for m in data.t_scenario_marks
         ],
         "renderer": "panel" if pn is not None else "dict",
     }
@@ -279,11 +286,7 @@ def render_tick_replay(data: TickReplayData) -> dict[str, Any]:
         for i, t in enumerate(data.ticks[:20]):  # 仅展示前20条避免过长
             vol_lines.append(f"| {t.timestamp} | {t.volume} | {t.amount:.0f} |")
         if vol_lines:
-            vol_md = (
-                "### 成交量(前20条)\n\n"
-                "| Timestamp | Volume | Amount |\n|---|---|---|\n"
-                + "\n".join(vol_lines)
-            )
+            vol_md = "### 成交量(前20条)\n\n| Timestamp | Volume | Amount |\n|---|---|---|\n" + "\n".join(vol_lines)
             layout_items.append(pn.pane.Markdown(vol_md))
 
         # ===== 中下：5档盘口快照（取最后一个 Tick）=====

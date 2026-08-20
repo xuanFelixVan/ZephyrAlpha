@@ -9,6 +9,7 @@
   4. run_plan 执行 —— 子进程失败返回 1（mock subprocess.run）
   5. main 守卫 —— adapter 缺失 exit 1；执行模式缺 llama.cpp exit 1
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -19,7 +20,8 @@ import pytest
 
 _ROOT = pathlib.Path(__file__).resolve().parents[2]
 _spec = importlib.util.spec_from_file_location(
-    "convert_gguf_ollama", _ROOT / "scripts" / "ml" / "convert_gguf_ollama.py",
+    "convert_gguf_ollama",
+    _ROOT / "scripts" / "ml" / "convert_gguf_ollama.py",
 )
 cgo = importlib.util.module_from_spec(_spec)
 sys.modules["convert_gguf_ollama"] = cgo  # dataclass 字符串注解解析需模块在册
@@ -117,7 +119,8 @@ class TestRunPlanExec:
     def test_writes_modelfile_and_runs_all_steps(self, tmp_path, monkeypatch):
         calls: list[list[str]] = []
         monkeypatch.setattr(
-            cgo.subprocess, "run",
+            cgo.subprocess,
+            "run",
             lambda cmd, check=False: (calls.append(list(cmd)), _FakeProc(0))[1],
         )
         (tmp_path / "out").mkdir(parents=True)
@@ -130,7 +133,8 @@ class TestRunPlanExec:
     def test_step_failure_short_circuits(self, tmp_path, monkeypatch):
         calls: list[list[str]] = []
         monkeypatch.setattr(
-            cgo.subprocess, "run",
+            cgo.subprocess,
+            "run",
             lambda cmd, check=False: (calls.append(list(cmd)), _FakeProc(3))[1],
         )
         (tmp_path / "out").mkdir(parents=True)
@@ -146,7 +150,8 @@ class TestRunPlanExec:
 class TestMainGuards:
     def test_missing_adapter_exits_1(self, tmp_path, monkeypatch, capsys):
         monkeypatch.setattr(
-            cgo.sys, "argv",
+            cgo.sys,
+            "argv",
             ["convert_gguf_ollama.py", "--adapter-dir", str(tmp_path / "nope"), "--dry-run"],
         )
         with pytest.raises(SystemExit) as exc:
@@ -156,7 +161,8 @@ class TestMainGuards:
     def test_exec_mode_requires_llama_cpp_dir(self, tmp_path, monkeypatch):
         (tmp_path / "adapter").mkdir()
         monkeypatch.setattr(
-            cgo.sys, "argv",
+            cgo.sys,
+            "argv",
             ["convert_gguf_ollama.py", "--adapter-dir", str(tmp_path / "adapter")],
         )
         with pytest.raises(SystemExit) as exc:
@@ -166,7 +172,8 @@ class TestMainGuards:
     def test_dry_run_main_returns_zero(self, tmp_path, monkeypatch):
         (tmp_path / "adapter").mkdir()
         monkeypatch.setattr(
-            cgo.sys, "argv",
+            cgo.sys,
+            "argv",
             ["convert_gguf_ollama.py", "--adapter-dir", str(tmp_path / "adapter"), "--dry-run"],
         )
         with pytest.raises(SystemExit) as exc:

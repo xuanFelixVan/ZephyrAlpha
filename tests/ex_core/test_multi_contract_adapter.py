@@ -144,9 +144,7 @@ class TestVersionUpgrade:
     def test_upgrade_frozen_force(self):
         reg = MultiContractRegistry()
         reg.register(make_schema(frozen=True))
-        new_schema = reg.upgrade_version(
-            "CTR-TEST", "1.1", "强制升级", force=True
-        )
+        new_schema = reg.upgrade_version("CTR-TEST", "1.1", "强制升级", force=True)
         assert new_schema.version == "1.1"
         assert new_schema.frozen is False  # force 升级解除冻结
 
@@ -223,9 +221,7 @@ class TestQuery:
 
     def test_list_by_consumer(self):
         reg = MultiContractRegistry()
-        reg.register(
-            make_schema("CTR-A", consumers=("D_RISK", "D_REPORTING"))
-        )
+        reg.register(make_schema("CTR-A", consumers=("D_RISK", "D_REPORTING")))
         reg.register(make_schema("CTR-B", consumers=("D_REPORTING",)))
         risk_result = reg.list_by_consumer("D_RISK")
         assert len(risk_result) == 1

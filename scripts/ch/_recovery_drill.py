@@ -13,11 +13,12 @@
 # [ERROR_CONTRACT] CH不可达->退出码2; 备份未完成->等待+退出码1; 恢复成功->退出码0; 行数不匹配->退出码3
 # [TESTS] python scripts/ch/_recovery_drill.py (smoke: 轮询+恢复+校验+清理)
 # [TTL] permanent
-# noqa: m02-manual  一次性恢复演练脚本
+# noqa: m02-manual  一次性恢复演练脚本（人工触发专用）
 """恢复演练：轮询备份完成 → 恢复小表到临时库 → 行数校验 → 清理。
 
 非破坏性：不碰 live 表，恢复到 _restore_drill 临时库。
 """
+
 from __future__ import annotations
 
 import os
@@ -56,9 +57,7 @@ DRILL_RENAMED = f"{DRILL_DB}.trade_calendar"
 
 def get_latest_backup_s3_url() -> str | None:
     """从 system.backups 获取最新备份的 S3 URL。"""
-    r = c.execute(
-        "SELECT name, status FROM system.backups ORDER BY start_time DESC LIMIT 1"
-    )
+    r = c.execute("SELECT name, status FROM system.backups ORDER BY start_time DESC LIMIT 1")
     if r:
         return str(r[0][0]), str(r[0][1])
     return None, None
@@ -72,13 +71,12 @@ def wait_for_backup_complete(timeout: int = 7200) -> tuple[str, str] | None:
     while time.time() - start < timeout:
         try:
             r = c.execute(
-                "SELECT id, name, status, total_size, num_files "
-                "FROM system.backups ORDER BY start_time DESC LIMIT 1"
+                "SELECT id, name, status, total_size, num_files FROM system.backups ORDER BY start_time DESC LIMIT 1"
             )
             if r:
                 bid, name, status, size, files = r[0]
                 if status != last_status:
-                    print(f"  [{int(time.time()-start)}s] status={status} size={size} files={files}")
+                    print(f"  [{int(time.time() - start)}s] status={status} size={size} files={files}")
                     last_status = status
                 if status == "BACKUP_CREATED":
                     print(f"  [OK] 备份完成! id={bid}")
@@ -95,9 +93,9 @@ def wait_for_backup_complete(timeout: int = 7200) -> tuple[str, str] | None:
 
 def run_recovery_drill(s3_name: str) -> bool:
     """恢复 trade_calendar 到 _restore_drill 库，校验行数。"""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"恢复演练开始 — {datetime.now().strftime('%H:%M:%S')}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"S3 backup: {s3_name[:80]}...")
 
     # 1. 创建临时库
@@ -108,10 +106,7 @@ def run_recovery_drill(s3_name: str) -> bool:
 
     # 2. 恢复小表（用备份的 S3 name 作为恢复源）
     print(f"\n[2] RESTORE TABLE {DRILL_TABLE} -> {DRILL_RENAMED}")
-    restore_sql = (
-        f"RESTORE TABLE {DRILL_TABLE} AS {DRILL_RENAMED} "
-        f"FROM S3('{s3_name}', '{S3_KEY}', '{S3_SECRET}')"
-    )
+    restore_sql = f"RESTORE TABLE {DRILL_TABLE} AS {DRILL_RENAMED} FROM S3('{s3_name}', '{S3_KEY}', '{S3_SECRET}')"
     print(f"  SQL: RESTORE TABLE ... AS {DRILL_RENAMED} FROM S3(...)")
     try:
         c.execute(restore_sql, settings={"async": False})
@@ -126,9 +121,7 @@ def run_recovery_drill(s3_name: str) -> bool:
                 print("  [OK] async 恢复已触发，等待完成...")
                 for i in range(120):
                     time.sleep(10)
-                    r = c.execute(
-                        "SELECT status, error FROM system.backups ORDER BY start_time DESC LIMIT 1"
-                    )
+                    r = c.execute("SELECT status, error FROM system.backups ORDER BY start_time DESC LIMIT 1")
                     if r:
                         st = r[0][0]
                         if "RESTORED" in st:
@@ -138,7 +131,7 @@ def run_recovery_drill(s3_name: str) -> bool:
                             print(f"  [FAIL] 恢复失败: {st} | {r[0][1][:200]}")
                             return False
                         if i % 6 == 0:
-                            print(f"  [{i*10}s] {st}...")
+                            print(f"  [{i * 10}s] {st}...")
             except Exception as e2:
                 print(f"  [FAIL] async 也失败: {e2}")
                 return False
@@ -152,7 +145,7 @@ def run_recovery_drill(s3_name: str) -> bool:
     drill_count = c.execute(f"SELECT count() FROM {DRILL_RENAMED}")[0][0]
     print(f"  live ({DRILL_TABLE}):  {live_count:,}")
     print(f"  drill ({DRILL_RENAMED}): {drill_count:,}")
-    match = (live_count == drill_count)
+    match = live_count == drill_count
     if match:
         print("  [OK] 行数一致!")
     else:
@@ -161,12 +154,8 @@ def run_recovery_drill(s3_name: str) -> bool:
     # 4. 数据抽样对比
     print("\n[4] 数据抽样对比（最新 3 行）")
     try:
-        live_sample = c.execute(
-            f"SELECT * FROM {DRILL_TABLE} ORDER BY trade_date DESC LIMIT 3"
-        )
-        drill_sample = c.execute(
-            f"SELECT * FROM {DRILL_RENAMED} ORDER BY trade_date DESC LIMIT 3"
-        )
+        live_sample = c.execute(f"SELECT * FROM {DRILL_TABLE} ORDER BY trade_date DESC LIMIT 3")
+        drill_sample = c.execute(f"SELECT * FROM {DRILL_RENAMED} ORDER BY trade_date DESC LIMIT 3")
         if live_sample == drill_sample:
             print("  [OK] 抽样数据完全一致")
         else:
@@ -182,12 +171,12 @@ def run_recovery_drill(s3_name: str) -> bool:
     print("  [OK] _restore_drill 已删除")
 
     # 6. 结论
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     if match:
         print("恢复演练: PASS — 备份完整可恢复 ✓")
     else:
         print("恢复演练: WARN — 行数有差异，需调查")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     return match
 
 

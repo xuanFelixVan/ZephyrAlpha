@@ -37,6 +37,7 @@ validate_strategy_pnl_invariant / shapley_strategy_attribution）；本模块把
 依据: 62_business_registry_construction §7.2（attribution_result schema）+ 54 号 §3.5/§3.12
 Version: 0.1.0
 """
+
 from __future__ import annotations
 
 import logging
@@ -51,7 +52,10 @@ logger = logging.getLogger(__name__)
 ALLOWED_METHODS: Final[tuple[str, ...]] = ("brinson", "factor_based", "none")
 #: 数值字段（shape 校验用）
 _NUMERIC_FIELDS: Final[tuple[str, ...]] = (
-    "allocation_effect", "selection_effect", "interaction_effect", "alpha",
+    "allocation_effect",
+    "selection_effect",
+    "interaction_effect",
+    "alpha",
 )
 
 
@@ -86,9 +90,7 @@ def build_attribution_result(
         AttributionMappingError: method 越枚举 / 数值 NaN / factor_contributions 非数值。
     """
     if method not in ALLOWED_METHODS:
-        raise AttributionMappingError(
-            f"method 越枚举: {method!r}（允许 {ALLOWED_METHODS}，62 号 §7.2）"
-        )
+        raise AttributionMappingError(f"method 越枚举: {method!r}（允许 {ALLOWED_METHODS}，62 号 §7.2）")
     out: dict = {"method": method}
     for name, value in (
         ("allocation_effect", allocation_effect),
@@ -100,8 +102,7 @@ def build_attribution_result(
             out[name] = _check_number(name, value)
     if factor_contributions is not None:
         out["factor_contributions"] = {
-            str(k): _check_number(f"factor_contributions[{k!r}]", v)
-            for k, v in factor_contributions.items()
+            str(k): _check_number(f"factor_contributions[{k!r}]", v) for k, v in factor_contributions.items()
         }
     return out
 

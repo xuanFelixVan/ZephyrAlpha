@@ -154,17 +154,17 @@ logger = logging.getLogger(__name__)
 class FusionMethod(str, Enum):
     """融合算法 (SELL-07)。"""
 
-    WEIGHTED_AVG = "WEIGHTED_AVG"             # 加权平均(默认)
-    BAYESIAN = "BAYESIAN"                     # 贝叶斯融合(预留)
-    DEMPSTER_SHAFER = "DEMPSTER_SHAFER"       # D-S证据理论(预留)
+    WEIGHTED_AVG = "WEIGHTED_AVG"  # 加权平均(默认)
+    BAYESIAN = "BAYESIAN"  # 贝叶斯融合(预留)
+    DEMPSTER_SHAFER = "DEMPSTER_SHAFER"  # D-S证据理论(预留)
 
 
 class ConsistencyLevel(str, Enum):
     """信号一致性等级 (SELL-07)。"""
 
-    HIGH = "HIGH"       # 同方向 >80%
-    MEDIUM = "MEDIUM"   # 50-80%
-    LOW = "LOW"         # <50%
+    HIGH = "HIGH"  # 同方向 >80%
+    MEDIUM = "MEDIUM"  # 50-80%
+    LOW = "LOW"  # <50%
 
 
 # ──────────────────────────────────────────────────────────────────────────────

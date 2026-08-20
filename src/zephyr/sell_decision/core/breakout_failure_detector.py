@@ -127,9 +127,9 @@ logger = logging.getLogger(__name__)
 class BreakoutStatus(str, Enum):
     """突破成败状态。"""
 
-    SUCCESS = "SUCCESS"               # 突破成功(价格确认突破压力位)
-    FAILURE = "FAILURE"               # 突破失败(触及压力位但回落)
-    FORCED_CLEAR = "FORCED_CLEAR"     # 强制清仓(第K次挑战失败 K≥3)
+    SUCCESS = "SUCCESS"  # 突破成功(价格确认突破压力位)
+    FAILURE = "FAILURE"  # 突破失败(触及压力位但回落)
+    FORCED_CLEAR = "FORCED_CLEAR"  # 强制清仓(第K次挑战失败 K≥3)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -182,21 +182,13 @@ class BreakoutResult:
         if not self.symbol:
             raise InvalidBreakoutInputError("BreakoutResult.symbol must not be empty")
         if self.resistance_level <= 0:
-            raise InvalidBreakoutInputError(
-                f"resistance_level must be > 0, got {self.resistance_level}"
-            )
+            raise InvalidBreakoutInputError(f"resistance_level must be > 0, got {self.resistance_level}")
         if self.current_price <= 0:
-            raise InvalidBreakoutInputError(
-                f"current_price must be > 0, got {self.current_price}"
-            )
+            raise InvalidBreakoutInputError(f"current_price must be > 0, got {self.current_price}")
         if self.challenge_count < 0:
-            raise InvalidBreakoutInputError(
-                f"challenge_count must be >= 0, got {self.challenge_count}"
-            )
+            raise InvalidBreakoutInputError(f"challenge_count must be >= 0, got {self.challenge_count}")
         if not 0.0 <= self.confidence <= 1.0:
-            raise InvalidBreakoutInputError(
-                f"confidence must be in [0,1], got {self.confidence}"
-            )
+            raise InvalidBreakoutInputError(f"confidence must be in [0,1], got {self.confidence}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -251,13 +243,9 @@ class BreakoutFailureDetector:
             clock: 时钟函数(测试注入用), 默认 utcnow
         """
         if forced_clear_threshold < 1:
-            raise InvalidBreakoutInputError(
-                f"forced_clear_threshold must be >= 1, got {forced_clear_threshold}"
-            )
+            raise InvalidBreakoutInputError(f"forced_clear_threshold must be >= 1, got {forced_clear_threshold}")
         if not 0.0 <= success_confidence <= 1.0:
-            raise InvalidBreakoutInputError(
-                f"success_confidence must be in [0,1], got {success_confidence}"
-            )
+            raise InvalidBreakoutInputError(f"success_confidence must be in [0,1], got {success_confidence}")
         self._threshold = forced_clear_threshold
         self._success_confidence = success_confidence
         self._clock = clock or (lambda: datetime.now(timezone.utc))
@@ -291,17 +279,11 @@ class BreakoutFailureDetector:
         if not symbol:
             raise InvalidBreakoutInputError("symbol must not be empty")
         if resistance_level <= 0:
-            raise InvalidBreakoutInputError(
-                f"resistance_level must be > 0, got {resistance_level}"
-            )
+            raise InvalidBreakoutInputError(f"resistance_level must be > 0, got {resistance_level}")
         if current_price <= 0:
-            raise InvalidBreakoutInputError(
-                f"current_price must be > 0, got {current_price}"
-            )
+            raise InvalidBreakoutInputError(f"current_price must be > 0, got {current_price}")
         if challenge_count < 0:
-            raise InvalidBreakoutInputError(
-                f"challenge_count must be >= 0, got {challenge_count}"
-            )
+            raise InvalidBreakoutInputError(f"challenge_count must be >= 0, got {challenge_count}")
 
         now = now or self._clock()
         new_challenge_count = challenge_count + 1 if current_price <= resistance_level else challenge_count

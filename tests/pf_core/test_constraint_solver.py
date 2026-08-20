@@ -205,9 +205,7 @@ def test_crowding_soft_halve():
     w = {"A": 0.40, "B": 0.40, "C": 0.20}
     corr = np.array([[1.0, 0.85, 0.2], [0.85, 1.0, 0.3], [0.2, 0.3, 1.0]])
     result = solver.solve(w, rl, assets=assets, correlation_matrix=corr)
-    assert any(
-        v.constraint_name == "crowding_soft" for v in result.violations
-    )
+    assert any(v.constraint_name == "crowding_soft" for v in result.violations)
 
 
 def test_crowding_hard_zero():
@@ -220,9 +218,7 @@ def test_crowding_hard_zero():
     result = solver.solve(w, rl, assets=assets, correlation_matrix=corr)
     # B 应被清零 (A 权重更大)
     assert result.weights[1] == 0.0
-    assert any(
-        v.constraint_name == "crowding_hard" for v in result.violations
-    )
+    assert any(v.constraint_name == "crowding_hard" for v in result.violations)
 
 
 # ── 杠杆约束 ────────────────────────────────────────────────────────────────
@@ -243,9 +239,7 @@ def test_leverage_clip():
 def test_converges_with_valid_input():
     solver = ConstraintSolver()
     rl = _rl()
-    w = {"A": 0.05, "B": 0.05, "C": 0.05, "D": 0.05,
-         "E": 0.05, "F": 0.05, "G": 0.05, "H": 0.05,
-         "I": 0.05, "J": 0.05}
+    w = {"A": 0.05, "B": 0.05, "C": 0.05, "D": 0.05, "E": 0.05, "F": 0.05, "G": 0.05, "H": 0.05, "I": 0.05, "J": 0.05}
     result = solver.solve(w, rl)
     assert result.converged
     assert result.iterations <= 100
@@ -337,8 +331,7 @@ def test_invariant_non_negative():
 def test_result_to_dict():
     solver = ConstraintSolver()
     rl = _rl(max_single_position=0.10)
-    w = {"A": 0.15, "B": 0.15, "C": 0.15, "D": 0.15,
-         "E": 0.15, "F": 0.15, "G": 0.05, "H": 0.05}
+    w = {"A": 0.15, "B": 0.15, "C": 0.15, "D": 0.15, "E": 0.15, "F": 0.15, "G": 0.05, "H": 0.05}
     result = solver.solve(w, rl)
     d = result.to_dict()
     assert "weights" in d
@@ -458,6 +451,4 @@ def test_zero_weight_deliberate_exclusion_not_raised():
     solver = ConstraintSolver()
     rl = _rl(max_single_position=0.50, min_single_position=0.05)
     result = solver.solve({"A": 0.0, "B": 0.5}, rl)
-    assert result.weights[0] == 0.0, (
-        f"刻意排除（w=0）的标的不应被 min_pos 抬回，实际 {result.weights[0]}"
-    )
+    assert result.weights[0] == 0.0, f"刻意排除（w=0）的标的不应被 min_pos 抬回，实际 {result.weights[0]}"

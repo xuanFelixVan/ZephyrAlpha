@@ -110,15 +110,11 @@ class TestSigmaAnomalyDegradation:
     def test_rule3_extreme_sigma(self) -> None:
         """规则3 极端值：σ 年化 > 150% → 降级。"""
         book = _make_book(budget=0.90)
-        pos = book.size_positions(
-            ["A", "B"], {"A": VolatilityInfo(0.20), "B": VolatilityInfo(1.80)}
-        )
+        pos = book.size_positions(["A", "B"], {"A": VolatilityInfo(0.20), "B": VolatilityInfo(1.80)})
         assert pos["B"].target_weight == pytest.approx(0.45)
         assert "极端" in pos["B"].reason
         # 边界值不触发
-        pos = book.size_positions(
-            ["A", "B"], {"A": VolatilityInfo(0.20), "B": VolatilityInfo(SIGMA_EXTREME_CAP)}
-        )
+        pos = book.size_positions(["A", "B"], {"A": VolatilityInfo(0.20), "B": VolatilityInfo(SIGMA_EXTREME_CAP)})
         assert "降级" not in pos["B"].reason
 
     def test_rule2_insufficient_samples(self) -> None:
@@ -229,9 +225,7 @@ class TestDrawdownProtocol:
         """回撤 ≥25% → L4 清仓空仓。"""
         book = _make_book()
         pnl = [0.05] * 10 + [-0.30]  # 峰值后 -30%
-        tp = book.build_target_portfolio(
-            {"symbols": ["A"]}, strategy_pnl_history=pnl
-        )
+        tp = book.build_target_portfolio({"symbols": ["A"]}, strategy_pnl_history=pnl)
         assert tp.positions == {}
         assert book.get_drawdown_level().level == 4
 
@@ -240,9 +234,7 @@ class TestDrawdownProtocol:
         book = _make_book(sizing="equal_weight", budget=0.80)
         # 构造峰值 1.16 → 当前 0.97，回撤约 16%
         pnl = [0.04] * 4 + [-0.16]
-        tp = book.build_target_portfolio(
-            {"symbols": ["A", "B"]}, strategy_pnl_history=pnl
-        )
+        tp = book.build_target_portfolio({"symbols": ["A", "B"]}, strategy_pnl_history=pnl)
         assert book.get_drawdown_level().level == 2
         for tw in tp.positions.values():
             # 等权 0.4 × 0.75 = 0.3
@@ -250,9 +242,7 @@ class TestDrawdownProtocol:
 
     def test_no_drawdown_no_scaling(self) -> None:
         book = _make_book(sizing="equal_weight", budget=0.80)
-        tp = book.build_target_portfolio(
-            {"symbols": ["A", "B"]}, strategy_pnl_history=[0.01] * 5
-        )
+        tp = book.build_target_portfolio({"symbols": ["A", "B"]}, strategy_pnl_history=[0.01] * 5)
         assert book.get_drawdown_level().level == 0
         for tw in tp.positions.values():
             assert tw.target_weight == pytest.approx(0.40)

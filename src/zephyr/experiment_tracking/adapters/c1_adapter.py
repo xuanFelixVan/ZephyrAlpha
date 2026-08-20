@@ -44,6 +44,7 @@ Zephyr 语义 → 实验跟踪映射:
 依据: 11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md M1-3
 Version: 0.1.0
 """
+
 from __future__ import annotations
 
 import logging
@@ -136,6 +137,7 @@ def _render_nav_png(nav_data: dict[str, Any]) -> bytes | None:
     """
     try:
         import matplotlib
+
         matplotlib.use("Agg")  # 非交互后端，不弹窗
         import matplotlib.pyplot as plt
     except ImportError:
@@ -153,6 +155,7 @@ def _render_nav_png(nav_data: dict[str, Any]) -> bytes | None:
     ax.grid(True, alpha=0.3)
 
     from io import BytesIO
+
     buf = BytesIO()
     fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
     plt.close(fig)
@@ -209,8 +212,7 @@ def _build_summary_md(result: "C1ComparisonResult") -> str:
     ]
     for v in result.metric_verdicts:
         lines.append(
-            f"| {v.name} | {v.baseline_value} | {v.experiment_value} | "
-            f"{'✅' if v.passed else '❌'} | {v.detail} |"
+            f"| {v.name} | {v.baseline_value} | {v.experiment_value} | {'✅' if v.passed else '❌'} | {v.detail} |"
         )
     lines.extend(["", "## 总结", "", result.summary])
     return "\n".join(lines)

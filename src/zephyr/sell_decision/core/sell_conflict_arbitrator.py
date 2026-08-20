@@ -146,25 +146,25 @@ logger = logging.getLogger(__name__)
 class ConflictLevel(str, Enum):
     """冲突等级 (D-SELL §1.4 SELL-08)。"""
 
-    STRONG = "STRONG"   # 强冲突: 主力出货/突破失败/风控 → 立即执行
-    WEAK = "WEAK"       # 弱冲突: 止盈/技术面等 → 延迟1 Tick观察
-    NONE = "NONE"       # 无冲突: 无买入对手
+    STRONG = "STRONG"  # 强冲突: 主力出货/突破失败/风控 → 立即执行
+    WEAK = "WEAK"  # 弱冲突: 止盈/技术面等 → 延迟1 Tick观察
+    NONE = "NONE"  # 无冲突: 无买入对手
 
 
 class ArbitrationVerdict(str, Enum):
     """仲裁裁决 (CTR-SELL-001 conflict_arbitration 字段)。"""
 
-    SELL_PRIORITY = "sell_priority"           # 卖出优先(强冲突, 立即执行)
-    DELAYED_OBSERVE = "delayed_observe"       # 延迟观察(弱冲突, 延迟1 Tick)
-    NO_CONFLICT = "no_conflict"               # 无冲突(卖出信号直通)
+    SELL_PRIORITY = "sell_priority"  # 卖出优先(强冲突, 立即执行)
+    DELAYED_OBSERVE = "delayed_observe"  # 延迟观察(弱冲突, 延迟1 Tick)
+    NO_CONFLICT = "no_conflict"  # 无冲突(卖出信号直通)
 
 
 class Side(str, Enum):
     """仲裁胜出方。"""
 
-    SELL = "SELL"     # 卖出方胜出(冲突时永远卖出优先)
-    BUY = "BUY"       # 买入方(本模块永不裁买入胜出, 保留枚举完整性)
-    NONE = "NONE"     # 无对手(无冲突)
+    SELL = "SELL"  # 卖出方胜出(冲突时永远卖出优先)
+    BUY = "BUY"  # 买入方(本模块永不裁买入胜出, 保留枚举完整性)
+    NONE = "NONE"  # 无对手(无冲突)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -208,9 +208,7 @@ class BuySignal:
         if not self.symbol:
             raise InvalidArbitrationInputError("BuySignal.symbol must not be empty")
         if not 0.0 <= self.confidence <= 1.0:
-            raise InvalidArbitrationInputError(
-                f"confidence must be in [0,1], got {self.confidence} for {self.symbol}"
-            )
+            raise InvalidArbitrationInputError(f"confidence must be in [0,1], got {self.confidence} for {self.symbol}")
 
 
 @dataclass(frozen=True)
@@ -258,10 +256,12 @@ class SellArbitratedEvent:
 
 
 # 强冲突信号类型: 主力出货 + 突破失败 (D-SELL §1.4)
-_DEFAULT_STRONG_TYPES: frozenset[SellSignalType] = frozenset({
-    SellSignalType.MAIN_FORCE_DISTRIBUTION,
-    SellSignalType.BREAKOUT_FAILURE,
-})
+_DEFAULT_STRONG_TYPES: frozenset[SellSignalType] = frozenset(
+    {
+        SellSignalType.MAIN_FORCE_DISTRIBUTION,
+        SellSignalType.BREAKOUT_FAILURE,
+    }
+)
 
 # 风控来源标识: source 含此子串视为风控强制卖出
 _DEFAULT_RISK_MARKER = "RISK"
@@ -300,9 +300,7 @@ class SellConflictArbitrator:
         if not strong_conflict_types:
             raise InvalidArbitrationInputError("strong_conflict_types must not be empty")
         if weak_delay_ticks < 0:
-            raise InvalidArbitrationInputError(
-                f"weak_delay_ticks must be >= 0, got {weak_delay_ticks}"
-            )
+            raise InvalidArbitrationInputError(f"weak_delay_ticks must be >= 0, got {weak_delay_ticks}")
         self._strong_types = strong_conflict_types
         self._risk_marker = risk_source_marker.upper()
         self._weak_delay_ticks = weak_delay_ticks
@@ -360,9 +358,7 @@ class SellConflictArbitrator:
                 if result.conflict_level is not ConflictLevel.NONE:
                     self._emit_event(result, now)
             except Exception as exc:  # noqa: BLE001 — 单标的异常隔离
-                logger.error(
-                    "Arbitration failed for %s: %s", symbol, exc, exc_info=True
-                )
+                logger.error("Arbitration failed for %s: %s", symbol, exc, exc_info=True)
         return results
 
     # ── 单标的仲裁 ──

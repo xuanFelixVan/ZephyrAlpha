@@ -71,8 +71,13 @@ class TestStamp:
         tracker = WatermarkTracker()
         wm = tracker.stamp("rpt", {"a": 1}, "Src")
         expected = _compute_record_hash(
-            wm.watermark_id, wm.report_id, wm.source, wm.timestamp,
-            wm.content_hash, wm.watermark_signature, wm.prev_watermark_hash,
+            wm.watermark_id,
+            wm.report_id,
+            wm.source,
+            wm.timestamp,
+            wm.content_hash,
+            wm.watermark_signature,
+            wm.prev_watermark_hash,
         )
         assert wm.record_hash == expected
 
@@ -241,9 +246,7 @@ class TestVerifyChain:
         tracker = WatermarkTracker()
         tracker.stamp("rpt", {"a": 1}, "SrcA")
         tracker.stamp("rpt", {"a": 2}, "SrcB")
-        tracker._store["rpt"][1] = dataclasses.replace(
-            tracker._store["rpt"][1], record_hash="fake_record_hash"
-        )
+        tracker._store["rpt"][1] = dataclasses.replace(tracker._store["rpt"][1], record_hash="fake_record_hash")
         assert tracker.verify_chain("rpt") is False
 
     def test_detect_prev_hash_break(self) -> None:
@@ -251,18 +254,14 @@ class TestVerifyChain:
         tracker = WatermarkTracker()
         tracker.stamp("rpt", {"a": 1}, "SrcA")
         tracker.stamp("rpt", {"a": 2}, "SrcB")
-        tracker._store["rpt"][1] = dataclasses.replace(
-            tracker._store["rpt"][1], prev_watermark_hash="wrong_prev"
-        )
+        tracker._store["rpt"][1] = dataclasses.replace(tracker._store["rpt"][1], prev_watermark_hash="wrong_prev")
         assert tracker.verify_chain("rpt") is False
 
     def test_detect_signature_tamper(self) -> None:
         """签名篡改 → False。"""
         tracker = WatermarkTracker()
         tracker.stamp("rpt", {"a": 1}, "SrcA")
-        tracker._store["rpt"][0] = dataclasses.replace(
-            tracker._store["rpt"][0], watermark_signature="forged_sig"
-        )
+        tracker._store["rpt"][0] = dataclasses.replace(tracker._store["rpt"][0], watermark_signature="forged_sig")
         assert tracker.verify_chain("rpt") is False
 
     def test_multi_report_chains_independent(self) -> None:
@@ -274,9 +273,7 @@ class TestVerifyChain:
         assert tracker.verify_chain("rpt_a") is True
         assert tracker.verify_chain("rpt_b") is True
         # 篡改 rpt_a 不影响 rpt_b
-        tracker._store["rpt_a"][0] = dataclasses.replace(
-            tracker._store["rpt_a"][0], record_hash="tampered"
-        )
+        tracker._store["rpt_a"][0] = dataclasses.replace(tracker._store["rpt_a"][0], record_hash="tampered")
         assert tracker.verify_chain("rpt_a") is False
         assert tracker.verify_chain("rpt_b") is True
 
@@ -338,10 +335,7 @@ class TestThreadSafety:
             for i in range(n_per):
                 tracker.stamp(rid, {"v": i}, "Src")
 
-        threads = [
-            threading.Thread(target=worker, args=(f"rpt_{r}",))
-            for r in range(n_reports)
-        ]
+        threads = [threading.Thread(target=worker, args=(f"rpt_{r}",)) for r in range(n_reports)]
         for t in threads:
             t.start()
         for t in threads:
@@ -370,6 +364,7 @@ class TestHashUtils:
     def test_signature_includes_source(self) -> None:
         """签名含 source, 不同 source 签名不同。"""
         from datetime import UTC, datetime
+
         ts = datetime.now(UTC)
         ch = "abc123"
         sig1 = _compute_signature("SrcA", ch, ts)
@@ -379,6 +374,7 @@ class TestHashUtils:
     def test_record_hash_includes_all_fields(self) -> None:
         """record_hash 含所有字段, 任一变化则不同。"""
         from datetime import UTC, datetime
+
         ts = datetime.now(UTC)
         base = _compute_record_hash("wid", "rpt", "Src", ts, "ch", "sig", "")
         assert base != _compute_record_hash("wid2", "rpt", "Src", ts, "ch", "sig", "")

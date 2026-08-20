@@ -27,6 +27,7 @@ v3.1.0 变更 (#ARCH-047):
   - callback仅编排: 数据计算在 fetch_knowledge_overview(纯函数)
   - 测试环境(无 panel)仅返回 dict payload, 便于断言
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -62,8 +63,13 @@ def _metric_card(label: str, value: str, color: str = "#333") -> object:
         return {"label": label, "value": value, "color": color}
     return pn.pane.Markdown(
         f"**{label}**\n\n## {value}",
-        styles={"color": color, "text-align": "center", "padding": "8px",
-                "border": "1px solid #e0e0e0", "border-radius": "4px"},
+        styles={
+            "color": color,
+            "text-align": "center",
+            "padding": "8px",
+            "border": "1px solid #e0e0e0",
+            "border-radius": "4px",
+        },
     )
 
 

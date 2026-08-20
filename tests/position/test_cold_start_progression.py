@@ -17,6 +17,7 @@
   - retrain_paused：SIMULATION/T0/T1 为 True，T2 为 False
   - 边界：negative days / NaN / divergence <0 → ColdStartProgressionError
 """
+
 from __future__ import annotations
 
 import math
@@ -36,8 +37,10 @@ from zephyr.position.core.cold_start_progression import (
 class TestT0:
     def test_promote_t1(self):
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T0_OBSERVE, days_in_stage=5,
-            sim_live_divergence=0.10, risk_downgraded=False,
+            stage=ColdStartStage.T0_OBSERVE,
+            days_in_stage=5,
+            sim_live_divergence=0.10,
+            risk_downgraded=False,
         )
         r = evaluate_cold_start(inp)
         assert r.action is ColdStartAction.PROMOTE
@@ -48,8 +51,10 @@ class TestT0:
 
     def test_risk_downgraded_rollback(self):
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T0_OBSERVE, days_in_stage=5,
-            sim_live_divergence=0.10, risk_downgraded=True,
+            stage=ColdStartStage.T0_OBSERVE,
+            days_in_stage=5,
+            sim_live_divergence=0.10,
+            risk_downgraded=True,
         )
         r = evaluate_cold_start(inp)
         assert r.action is ColdStartAction.ROLLBACK
@@ -57,16 +62,20 @@ class TestT0:
 
     def test_divergence_above_rollback(self):
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T0_OBSERVE, days_in_stage=5,
-            sim_live_divergence=0.35, risk_downgraded=False,
+            stage=ColdStartStage.T0_OBSERVE,
+            days_in_stage=5,
+            sim_live_divergence=0.35,
+            risk_downgraded=False,
         )
         r = evaluate_cold_start(inp)
         assert r.action is ColdStartAction.ROLLBACK
 
     def test_below_window_hold(self):
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T0_OBSERVE, days_in_stage=3,
-            sim_live_divergence=0.10, risk_downgraded=False,
+            stage=ColdStartStage.T0_OBSERVE,
+            days_in_stage=3,
+            sim_live_divergence=0.10,
+            risk_downgraded=False,
         )
         r = evaluate_cold_start(inp)
         assert r.action is ColdStartAction.HOLD
@@ -75,7 +84,9 @@ class TestT0:
     def test_missing_data_window_not_full_hold(self):
         """数据缺失但窗未满 → HOLD 观察。"""
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T0_OBSERVE, days_in_stage=6, sim_live_divergence=None,
+            stage=ColdStartStage.T0_OBSERVE,
+            days_in_stage=6,
+            sim_live_divergence=None,
         )
         r = evaluate_cold_start(inp)
         assert r.action is ColdStartAction.HOLD
@@ -83,7 +94,9 @@ class TestT0:
     def test_missing_data_window_full_rollback(self):
         """窗满（max_days=10）仍无数据 → 回退。"""
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T0_OBSERVE, days_in_stage=10, sim_live_divergence=None,
+            stage=ColdStartStage.T0_OBSERVE,
+            days_in_stage=10,
+            sim_live_divergence=None,
         )
         r = evaluate_cold_start(inp)
         assert r.action is ColdStartAction.ROLLBACK
@@ -92,8 +105,10 @@ class TestT0:
 class TestT1:
     def test_promote_t2(self):
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T1_SMALL, days_in_stage=10,
-            rolling_sharpe=1.4, oos_sharpe=2.0,
+            stage=ColdStartStage.T1_SMALL,
+            days_in_stage=10,
+            rolling_sharpe=1.4,
+            oos_sharpe=2.0,
             consecutive_loss_days=0,
         )
         r = evaluate_cold_start(inp)
@@ -105,8 +120,10 @@ class TestT1:
     def test_sharpe_below_rollback(self):
         """Rolling Sharpe < OOS×0.7 → 回退 T0。"""
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T1_SMALL, days_in_stage=10,
-            rolling_sharpe=0.5, oos_sharpe=2.0,
+            stage=ColdStartStage.T1_SMALL,
+            days_in_stage=10,
+            rolling_sharpe=0.5,
+            oos_sharpe=2.0,
         )
         r = evaluate_cold_start(inp)
         assert r.action is ColdStartAction.ROLLBACK
@@ -114,8 +131,10 @@ class TestT1:
 
     def test_loss_days_exceeded_rollback(self):
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T1_SMALL, days_in_stage=10,
-            rolling_sharpe=1.4, oos_sharpe=2.0,
+            stage=ColdStartStage.T1_SMALL,
+            days_in_stage=10,
+            rolling_sharpe=1.4,
+            oos_sharpe=2.0,
             consecutive_loss_days=3,
         )
         r = evaluate_cold_start(inp)
@@ -123,8 +142,10 @@ class TestT1:
 
     def test_below_window_hold(self):
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T1_SMALL, days_in_stage=5,
-            rolling_sharpe=1.4, oos_sharpe=2.0,
+            stage=ColdStartStage.T1_SMALL,
+            days_in_stage=5,
+            rolling_sharpe=1.4,
+            oos_sharpe=2.0,
         )
         r = evaluate_cold_start(inp)
         assert r.action is ColdStartAction.HOLD
@@ -133,8 +154,10 @@ class TestT1:
 class TestT2:
     def test_hold_healthy(self):
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T2_FULL, days_in_stage=30,
-            rolling_sharpe=1.8, oos_sharpe=2.0,
+            stage=ColdStartStage.T2_FULL,
+            days_in_stage=30,
+            rolling_sharpe=1.8,
+            oos_sharpe=2.0,
             decay_alert_active=False,
         )
         r = evaluate_cold_start(inp)
@@ -143,8 +166,10 @@ class TestT2:
 
     def test_decay_alert_rollback(self):
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T2_FULL, days_in_stage=30,
-            rolling_sharpe=1.8, oos_sharpe=2.0,
+            stage=ColdStartStage.T2_FULL,
+            days_in_stage=30,
+            rolling_sharpe=1.8,
+            oos_sharpe=2.0,
             decay_alert_active=True,
         )
         r = evaluate_cold_start(inp)
@@ -154,8 +179,10 @@ class TestT2:
     def test_sharpe_below_rollback(self):
         """Sharpe < OOS×0.85 → 回退 T1。"""
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T2_FULL, days_in_stage=30,
-            rolling_sharpe=1.6, oos_sharpe=2.0,
+            stage=ColdStartStage.T2_FULL,
+            days_in_stage=30,
+            rolling_sharpe=1.6,
+            oos_sharpe=2.0,
             decay_alert_active=False,
         )
         r = evaluate_cold_start(inp)
@@ -173,8 +200,10 @@ class TestEscalation:
     def test_consecutive_rollbacks_2(self):
         """连续 2 次回退 → ESCALATE_RETIREMENT。"""
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T1_SMALL, days_in_stage=10,
-            rolling_sharpe=0.5, oos_sharpe=2.0,
+            stage=ColdStartStage.T1_SMALL,
+            days_in_stage=10,
+            rolling_sharpe=0.5,
+            oos_sharpe=2.0,
             consecutive_rollbacks=1,
         )
         r = evaluate_cold_start(inp)
@@ -183,8 +212,10 @@ class TestEscalation:
 
     def test_t0_to_simulation_first_rollback(self):
         inp = ColdStartEvalInput(
-            stage=ColdStartStage.T0_OBSERVE, days_in_stage=5,
-            sim_live_divergence=0.35, risk_downgraded=False,
+            stage=ColdStartStage.T0_OBSERVE,
+            days_in_stage=5,
+            sim_live_divergence=0.35,
+            risk_downgraded=False,
             consecutive_rollbacks=0,
         )
         r = evaluate_cold_start(inp)
@@ -193,7 +224,9 @@ class TestEscalation:
 
 
 class TestInvalidInput:
-    @pytest.mark.parametrize("kw", [{"days_in_stage": -1}, {"consecutive_loss_days": -1}, {"consecutive_rollbacks": -1}])
+    @pytest.mark.parametrize(
+        "kw", [{"days_in_stage": -1}, {"consecutive_loss_days": -1}, {"consecutive_rollbacks": -1}]
+    )
     def test_negative_values(self, kw):
         base = dict(stage=ColdStartStage.T0_OBSERVE, days_in_stage=5)
         base.update(kw)
@@ -202,21 +235,31 @@ class TestInvalidInput:
 
     def test_nan_divergence(self):
         with pytest.raises(ColdStartProgressionError):
-            evaluate_cold_start(ColdStartEvalInput(
-                stage=ColdStartStage.T0_OBSERVE, days_in_stage=5,
-                sim_live_divergence=float("nan"),
-            ))
+            evaluate_cold_start(
+                ColdStartEvalInput(
+                    stage=ColdStartStage.T0_OBSERVE,
+                    days_in_stage=5,
+                    sim_live_divergence=float("nan"),
+                )
+            )
 
     def test_negative_divergence(self):
         with pytest.raises(ColdStartProgressionError):
-            evaluate_cold_start(ColdStartEvalInput(
-                stage=ColdStartStage.T0_OBSERVE, days_in_stage=5,
-                sim_live_divergence=-0.1,
-            ))
+            evaluate_cold_start(
+                ColdStartEvalInput(
+                    stage=ColdStartStage.T0_OBSERVE,
+                    days_in_stage=5,
+                    sim_live_divergence=-0.1,
+                )
+            )
 
     def test_inf_sharpe(self):
         with pytest.raises(ColdStartProgressionError):
-            evaluate_cold_start(ColdStartEvalInput(
-                stage=ColdStartStage.T1_SMALL, days_in_stage=10,
-                rolling_sharpe=math.inf, oos_sharpe=2.0,
-            ))
+            evaluate_cold_start(
+                ColdStartEvalInput(
+                    stage=ColdStartStage.T1_SMALL,
+                    days_in_stage=10,
+                    rolling_sharpe=math.inf,
+                    oos_sharpe=2.0,
+                )
+            )

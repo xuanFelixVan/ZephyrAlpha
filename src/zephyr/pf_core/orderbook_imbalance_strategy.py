@@ -93,8 +93,7 @@ class OrderBookImbalanceStrategy(TickStrategyBase):
         strategy_id="orderbook-imbalance",
         name="盘口失衡反转做T策略",
         description=(
-            "Tick 级订单流反转：极端卖盘压力买入（押注卖压耗尽反弹），"
-            "盘口恢复平衡卖出。5档全量失衡计算。路径 B 策略。"
+            "Tick 级订单流反转：极端卖盘压力买入（押注卖压耗尽反弹），盘口恢复平衡卖出。5档全量失衡计算。路径 B 策略。"
         ),
         author="zephyr-agent",
         tags=["intraday", "t_plus_0", "orderbook", "imbalance", "reversal", "a_share", "path_b"],
@@ -171,7 +170,9 @@ class OrderBookImbalanceStrategy(TickStrategyBase):
         self._states[sym] = _STATE_LONG
         _logger.debug(
             "orderbook-imbalance: BUY %s price=%s ob=%.4f",
-            sym, price, ob,
+            sym,
+            price,
+            ob,
         )
         return {sym: self._base_weight}
 
@@ -183,7 +184,9 @@ class OrderBookImbalanceStrategy(TickStrategyBase):
         self._states[sym] = _STATE_FLAT
         _logger.debug(
             "orderbook-imbalance: SELL %s price=%s ob=%.4f",
-            sym, price, ob,
+            sym,
+            price,
+            ob,
         )
         return {sym: 0.0}
 

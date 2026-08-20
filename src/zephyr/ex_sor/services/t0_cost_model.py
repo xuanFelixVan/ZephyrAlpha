@@ -54,7 +54,7 @@ class SlippageTier(str, Enum):
     """策略分档滑点（90 号 §5 裁定②）。"""
 
     HIGH_LIQUIDITY = "high_liquidity"  # 高流动票 0.05-0.1%/边（默认取上限 10bps）
-    DABAN_EVENT = "daban_event"        # 打板/事件票 0.15-0.3%/边（默认取中值 20bps）
+    DABAN_EVENT = "daban_event"  # 打板/事件票 0.15-0.3%/边（默认取中值 20bps）
 
 
 #: 分档默认滑点（bps/边）；打板档可再乘成交概率折减（封板买不进概率，条件成交修正）
@@ -68,22 +68,22 @@ _TIER_SLIPPAGE_BPS: dict[SlippageTier, Decimal] = {
 class T0CostConfig:
     """做T成本配置（费率按账户配置不硬编码——默认值对齐 CST-ASTOCK-001）。"""
 
-    commission_rate: Decimal = Decimal("0.0003")   # 佣金万3（双边）
-    min_commission: Decimal = Decimal("5")         # 最低佣金 5 元/笔（显式建模）
-    stamp_duty_rate: Decimal = Decimal("0.0005")   # 印花税万5（卖出单边）
+    commission_rate: Decimal = Decimal("0.0003")  # 佣金万3（双边）
+    min_commission: Decimal = Decimal("5")  # 最低佣金 5 元/笔（显式建模）
+    stamp_duty_rate: Decimal = Decimal("0.0005")  # 印花税万5（卖出单边）
     slippage_tier: SlippageTier = SlippageTier.HIGH_LIQUIDITY
-    fill_probability: Decimal = Decimal("1.0")     # 打板成交概率折减（<1 时滑点按条件成交修正）
+    fill_probability: Decimal = Decimal("1.0")  # 打板成交概率折减（<1 时滑点按条件成交修正）
 
 
 @dataclass(frozen=True)
 class T0CostBreakdown:
     """单次做T往返成本分解（元）。"""
 
-    commission_total: Decimal      # 双边佣金合计（含最低佣金抬升）
-    stamp_duty: Decimal            # 卖出边印花税
-    slippage_total: Decimal        # 双边滑点合计
+    commission_total: Decimal  # 双边佣金合计（含最低佣金抬升）
+    stamp_duty: Decimal  # 卖出边印花税
+    slippage_total: Decimal  # 双边滑点合计
     failure_risk_premium: Decimal  # 失败风险溢价（隔夜暴露×隔夜VaR）
-    total: Decimal                 # 总成本
+    total: Decimal  # 总成本
 
 
 def _commission(notional: Decimal, cfg: T0CostConfig) -> Decimal:

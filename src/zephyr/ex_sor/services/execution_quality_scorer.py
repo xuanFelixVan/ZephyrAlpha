@@ -131,10 +131,10 @@ logger = logging.getLogger(__name__)
 # ──────────────────────────────────────────────────────────────────────────────
 
 # 各维度 "最差" 阈值 (达到此值 → score=0)
-_DEFAULT_PRICE_THRESHOLD_BPS: Final[float] = 50.0   # 50bps 滑点 = 最差
-_DEFAULT_TIME_THRESHOLD_S: Final[float] = 300.0      # 300 秒 = 最差
-_DEFAULT_COST_THRESHOLD_BPS: Final[float] = 30.0     # 30bps 总成本 = 最差
-_DEFAULT_IMPACT_THRESHOLD_BPS: Final[float] = 20.0   # 20bps 冲击 = 最差
+_DEFAULT_PRICE_THRESHOLD_BPS: Final[float] = 50.0  # 50bps 滑点 = 最差
+_DEFAULT_TIME_THRESHOLD_S: Final[float] = 300.0  # 300 秒 = 最差
+_DEFAULT_COST_THRESHOLD_BPS: Final[float] = 30.0  # 30bps 总成本 = 最差
+_DEFAULT_IMPACT_THRESHOLD_BPS: Final[float] = 20.0  # 20bps 冲击 = 最差
 
 # 评定阈值
 _VERDICT_GOOD: Final[float] = 0.8
@@ -178,10 +178,10 @@ class QualityDimension(Enum):
     def __str__(self) -> str:
         return self.value
 
-    PRICE = "PRICE"      # 价格维度 (滑点)
-    TIME = "TIME"        # 时间维度 (执行速度)
-    COST = "COST"        # 成本维度 (总交易成本)
-    IMPACT = "IMPACT"    # 市场影响维度
+    PRICE = "PRICE"  # 价格维度 (滑点)
+    TIME = "TIME"  # 时间维度 (执行速度)
+    COST = "COST"  # 成本维度 (总交易成本)
+    IMPACT = "IMPACT"  # 市场影响维度
 
 
 @dataclass(frozen=True)
@@ -407,29 +407,37 @@ class ExecutionQualityScorer:
         dim_scores: list[ExecutionDimensionScore] = []
 
         if slippage_bps is not None:
-            dim_scores.append(self._score_dimension(
-                QualityDimension.PRICE,
-                abs(float(slippage_bps)),
-                self._benchmark.price_threshold_bps(),
-            ))
+            dim_scores.append(
+                self._score_dimension(
+                    QualityDimension.PRICE,
+                    abs(float(slippage_bps)),
+                    self._benchmark.price_threshold_bps(),
+                )
+            )
         if duration_seconds is not None:
-            dim_scores.append(self._score_dimension(
-                QualityDimension.TIME,
-                float(duration_seconds),
-                self._benchmark.time_threshold_s(),
-            ))
+            dim_scores.append(
+                self._score_dimension(
+                    QualityDimension.TIME,
+                    float(duration_seconds),
+                    self._benchmark.time_threshold_s(),
+                )
+            )
         if total_cost_bps is not None:
-            dim_scores.append(self._score_dimension(
-                QualityDimension.COST,
-                abs(float(total_cost_bps)),
-                self._benchmark.cost_threshold_bps(),
-            ))
+            dim_scores.append(
+                self._score_dimension(
+                    QualityDimension.COST,
+                    abs(float(total_cost_bps)),
+                    self._benchmark.cost_threshold_bps(),
+                )
+            )
         if impact_bps is not None:
-            dim_scores.append(self._score_dimension(
-                QualityDimension.IMPACT,
-                abs(float(impact_bps)),
-                self._benchmark.impact_threshold_bps(),
-            ))
+            dim_scores.append(
+                self._score_dimension(
+                    QualityDimension.IMPACT,
+                    abs(float(impact_bps)),
+                    self._benchmark.impact_threshold_bps(),
+                )
+            )
 
         if not dim_scores:
             raise InsufficientMetricsError(
@@ -453,7 +461,10 @@ class ExecutionQualityScorer:
         self._history.append(result)
         logger.info(
             "QualityScored: order=%s overall=%.4f (%s) dims=%d",
-            order_id, overall, verdict, len(dim_scores),
+            order_id,
+            overall,
+            verdict,
+            len(dim_scores),
         )
         return result
 
@@ -492,7 +503,9 @@ class ExecutionQualityScorer:
             )
         """
         return self.score(
-            order_id, symbol, side,
+            order_id,
+            symbol,
+            side,
             slippage_bps=slippage_bps,
             duration_seconds=duration_seconds,
             total_cost_bps=total_cost_bps,

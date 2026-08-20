@@ -5,6 +5,7 @@
 
 覆盖: 单笔/多笔成交累积、加权均价、状态转换、幂等、佣金、查询、回调、异常。
 """
+
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -386,12 +387,8 @@ class TestQuery:
         ts1 = datetime(2026, 1, 1, 10, 0, 0, tzinfo=UTC)
         ts2 = datetime(2026, 1, 1, 11, 0, 0, tzinfo=UTC)
 
-        handler.process_fill(
-            make_fill(fill_id="f1", qty=Decimal("30"), timestamp=ts1), order
-        )
-        s2 = handler.process_fill(
-            make_fill(fill_id="f2", qty=Decimal("70"), timestamp=ts2), order
-        )
+        handler.process_fill(make_fill(fill_id="f1", qty=Decimal("30"), timestamp=ts1), order)
+        s2 = handler.process_fill(make_fill(fill_id="f2", qty=Decimal("70"), timestamp=ts2), order)
 
         assert s2.last_fill_timestamp == ts2
 
@@ -487,14 +484,10 @@ class TestStats:
         order1 = make_order(order_id="ord-1", quantity=Decimal("100"))
         order2 = make_order(order_id="ord-2", quantity=Decimal("200"))
 
-        handler.process_fill(
-            make_fill(fill_id="f1", order_id="ord-1", qty=Decimal("50")), order1
-        )
+        handler.process_fill(make_fill(fill_id="f1", order_id="ord-1", qty=Decimal("50")), order1)
         assert handler.order_count == 1
 
-        handler.process_fill(
-            make_fill(fill_id="f2", order_id="ord-2", qty=Decimal("100")), order2
-        )
+        handler.process_fill(make_fill(fill_id="f2", order_id="ord-2", qty=Decimal("100")), order2)
         assert handler.order_count == 2
 
     def test_total_fill_count(self):

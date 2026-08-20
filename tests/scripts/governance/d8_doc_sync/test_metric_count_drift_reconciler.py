@@ -20,6 +20,7 @@
 测试隔离：mock _read_text / _get_metric_count 隔离真实文件系统；
 不依赖真实仓库状态。
 """
+
 from __future__ import annotations
 
 import sys

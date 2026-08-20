@@ -150,13 +150,9 @@ def test_tier2_rebalance_instruction_contract(triggered_handler: BudgetChangeHan
     ("strategy_type", "days"),
     [("打板", 2), ("多因子", 4), ("事件驱动", 3), ("未知类型", 3)],
 )
-def test_convergence_window_differentiated(
-    handler: BudgetChangeHandler, strategy_type: str, days: int
-) -> None:
+def test_convergence_window_differentiated(handler: BudgetChangeHandler, strategy_type: str, days: int) -> None:
     """打板 2 天 / 多因子 4 天 / 事件驱动 3 天 / 未知缺省 3 天。"""
-    result = handler.handle_budget_change(
-        "s1", 0.30, 0.20, strategy_type=strategy_type, current_date=D1
-    )
+    result = handler.handle_budget_change("s1", 0.30, 0.20, strategy_type=strategy_type, current_date=D1)
     instr = result.instructions[1]["instruction"]
     assert isinstance(instr, RebalanceRequest)
     assert instr.convergence_window == timedelta(days=days)
@@ -198,7 +194,7 @@ def test_convergence_resets_on_deviation() -> None:
     handler = BudgetChangeHandler(eps_days=2)
     handler.handle_budget_change("s1", 0.30, 0.20, current_date=D1)
     handler.check_convergence("s1", current_exposure=0.205)  # 贴近，计数 1
-    handler.check_convergence("s1", current_exposure=0.28)   # 偏离，清零
+    handler.check_convergence("s1", current_exposure=0.28)  # 偏离，清零
     result = handler.check_convergence("s1", current_exposure=0.205)  # 再贴近，计数 1
     assert result.action.startswith("WAITING")
     assert result.state.convergence_days_satisfied == 1
@@ -418,9 +414,7 @@ class TestOnFirmViolation:
 
     def test_direct_tier3_forced_trim(self, handler: BudgetChangeHandler) -> None:
         """无活跃状态 + 显式 target → 直触 Tier3，trim_ratio 正确。"""
-        result = handler.on_firm_violation(
-            "s1", current_exposure=0.40, target_budget=0.20, violation="单票超限未纠正"
-        )
+        result = handler.on_firm_violation("s1", current_exposure=0.40, target_budget=0.20, violation="单票超限未纠正")
         assert result.state.current_tier == TierLevel.TIER_3_FORCE_TRIM
         assert len(result.instructions) == 1
         instr = result.instructions[0]

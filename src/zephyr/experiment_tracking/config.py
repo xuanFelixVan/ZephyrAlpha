@@ -29,6 +29,7 @@ SSoT=zephyr.shared.io.paths §MAIN_REPO_ROOT 裁定），禁止 CWD 相对路径
 依据: 11_regime_backtest_validation_plan §3 ② 薄包装层设计 + 51_panel_experiment_history_mlflow_retirement.md 工作流 A3
 Version: 0.2.1（fallback_dir 绝对路径锚定治本）
 """
+
 from __future__ import annotations
 
 import os
@@ -45,9 +46,10 @@ class ExperimentTrackingConfig:
     环境变量覆盖（优先级高于默认值）:
       ZEPHYR_EXPERIMENT_TRACKING=0  → enable_tracking=False（全局关闭，NullBackend）
     """
+
     fallback_dir: Path = MAIN_REPO_ROOT / "logs" / "experiment_tracking_fallback"
-    enable_tracking: bool = True                  # 全局开关
-    artifact_logging: bool = True                 # 是否落净值曲线 CSV（大数据量可关）
+    enable_tracking: bool = True  # 全局开关
+    artifact_logging: bool = True  # 是否落净值曲线 CSV（大数据量可关）
 
 
 def load_config() -> ExperimentTrackingConfig:

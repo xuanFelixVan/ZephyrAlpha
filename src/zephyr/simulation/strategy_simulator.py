@@ -155,29 +155,21 @@ class StrategySimulatorConfig:
     默认值对齐 A 股约束(万三佣金/5 元起步/1bp 滑点), 与 BT-04 matching_logic 一致。
     """
 
-    initial_capital: float = 1_000_000.0     # 初始资金
-    commission_rate: float = 0.0003          # 佣金费率(万三)
-    min_commission: float = 5.0              # 单笔最小佣金(5 元)
-    slippage: float = 0.001                  # 滑点(1bp)
-    allow_short: bool = False                # 是否允许做空
+    initial_capital: float = 1_000_000.0  # 初始资金
+    commission_rate: float = 0.0003  # 佣金费率(万三)
+    min_commission: float = 5.0  # 单笔最小佣金(5 元)
+    slippage: float = 0.001  # 滑点(1bp)
+    allow_short: bool = False  # 是否允许做空
 
     def __post_init__(self) -> None:
         if self.initial_capital <= 0:
-            raise StrategySimulationError(
-                f"initial_capital must be > 0, got {self.initial_capital}"
-            )
+            raise StrategySimulationError(f"initial_capital must be > 0, got {self.initial_capital}")
         if self.commission_rate < 0:
-            raise StrategySimulationError(
-                f"commission_rate must be >= 0, got {self.commission_rate}"
-            )
+            raise StrategySimulationError(f"commission_rate must be >= 0, got {self.commission_rate}")
         if self.min_commission < 0:
-            raise StrategySimulationError(
-                f"min_commission must be >= 0, got {self.min_commission}"
-            )
+            raise StrategySimulationError(f"min_commission must be >= 0, got {self.min_commission}")
         if self.slippage < 0:
-            raise StrategySimulationError(
-                f"slippage must be >= 0, got {self.slippage}"
-            )
+            raise StrategySimulationError(f"slippage must be >= 0, got {self.slippage}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -199,8 +191,8 @@ class Signal:
 
     symbol: str
     action: Action
-    target_weight: float = 0.0       # 目标仓位占比 [0,1] (BUY 时生效)
-    confidence: float = 0.0          # 信号置信度 [0,1]
+    target_weight: float = 0.0  # 目标仓位占比 [0,1] (BUY 时生效)
+    confidence: float = 0.0  # 信号置信度 [0,1]
 
 
 @dataclass(frozen=True)
@@ -210,12 +202,12 @@ class SignalContext:
     PIT 保证: market_window 仅含 bar i 之前的数据 (data.iloc[:i])。
     """
 
-    bar_index: int                          # 当前 bar 索引
-    market_window: pd.DataFrame             # bar i 之前的数据 (含多标的)
-    holdings: dict[str, float]              # 当前持仓 {symbol: quantity}
-    cash: float                             # 当前现金
-    total_equity: float                     # 当前总权益(现金+持仓市值)
-    timestamp: Any = None                   # 当前 bar 时间戳
+    bar_index: int  # 当前 bar 索引
+    market_window: pd.DataFrame  # bar i 之前的数据 (含多标的)
+    holdings: dict[str, float]  # 当前持仓 {symbol: quantity}
+    cash: float  # 当前现金
+    total_equity: float  # 当前总权益(现金+持仓市值)
+    timestamp: Any = None  # 当前 bar 时间戳
 
 
 @dataclass(frozen=True)
@@ -243,9 +235,9 @@ class SimulatedTrade:
 
     timestamp: Any
     symbol: str
-    side: Action                  # BUY / SELL
+    side: Action  # BUY / SELL
     quantity: float
-    price: float                  # 执行价(含滑点)
+    price: float  # 执行价(含滑点)
     commission: float
 
 
@@ -341,10 +333,14 @@ class StrategySimulator:
         total_bars = max((len(df) for _, df in bars), default=0)
         if total_bars < 2:
             return SimulationResult(
-                equity_curve=[EquityPoint(
-                    timestamp=None, equity=cfg.initial_capital,
-                    cash=cfg.initial_capital, positions_value=0.0,
-                )],
+                equity_curve=[
+                    EquityPoint(
+                        timestamp=None,
+                        equity=cfg.initial_capital,
+                        cash=cfg.initial_capital,
+                        positions_value=0.0,
+                    )
+                ],
                 trade_log=[],
                 signal_log=[],
                 initial_capital=cfg.initial_capital,
@@ -368,9 +364,11 @@ class StrategySimulator:
         for i in range(1, len(timeline)):
             ts = timeline[i]
             # PIT: market_window = bar i 之前的数据
-            window = market_data.loc[market_data.index.get_level_values(-1) < ts] \
-                if isinstance(market_data.index, pd.MultiIndex) \
+            window = (
+                market_data.loc[market_data.index.get_level_values(-1) < ts]
+                if isinstance(market_data.index, pd.MultiIndex)
                 else market_data.iloc[:i]
+            )
 
             # 当前总权益(用上一 bar 收盘价标记)
             prev_ts = timeline[i - 1]
@@ -398,22 +396,20 @@ class StrategySimulator:
             close_prices = self._bar_prices(bars, ts, "close")
 
             for sig in signals:
-                trades, cash = self._execute_signal(
-                    sig, holdings, cash, total_equity, open_prices, ts
-                )
+                trades, cash = self._execute_signal(sig, holdings, cash, total_equity, open_prices, ts)
                 trade_log.extend(trades)
 
             # 标记 bar i 收盘权益
-            positions_value = sum(
-                holdings[sym] * close_prices.get(sym, 0.0) for sym in holdings
-            )
+            positions_value = sum(holdings[sym] * close_prices.get(sym, 0.0) for sym in holdings)
             total_equity = cash + positions_value
-            equity_curve.append(EquityPoint(
-                timestamp=ts,
-                equity=total_equity,
-                cash=cash,
-                positions_value=positions_value,
-            ))
+            equity_curve.append(
+                EquityPoint(
+                    timestamp=ts,
+                    equity=total_equity,
+                    cash=cash,
+                    positions_value=positions_value,
+                )
+            )
 
         final_equity = equity_curve[-1].equity if equity_curve else cfg.initial_capital
         total_return = (final_equity - cfg.initial_capital) / cfg.initial_capital
@@ -433,20 +429,15 @@ class StrategySimulator:
 
     def _validate(self, data: pd.DataFrame, strategy: StrategySpec) -> None:
         if not isinstance(data, pd.DataFrame):
-            raise StrategySimulationError(
-                f"market_data must be a DataFrame, got {type(data).__name__}"
-            )
+            raise StrategySimulationError(f"market_data must be a DataFrame, got {type(data).__name__}")
         required = {"open", "close"}
         missing = required - set(data.columns)
         if missing:
             raise StrategySimulationError(
-                f"market_data missing required columns: {sorted(missing)}; "
-                f"got columns={list(data.columns)}"
+                f"market_data missing required columns: {sorted(missing)}; got columns={list(data.columns)}"
             )
         if not callable(strategy.signal_fn):
-            raise StrategySimulationError(
-                "strategy.signal_fn must be callable"
-            )
+            raise StrategySimulationError("strategy.signal_fn must be callable")
 
     # ── 内部: 数据切分 ──
 
@@ -454,10 +445,7 @@ class StrategySimulator:
     def _split_by_symbol(data: pd.DataFrame) -> list[tuple[str, pd.DataFrame]]:
         """拆分为 [(symbol, sub_df date-indexed)]。单标的 → [("_default", data)]。"""
         if isinstance(data.index, pd.MultiIndex):
-            return [
-                (str(sym), grp.droplevel(0))
-                for sym, grp in data.groupby(level=0, sort=False)
-            ]
+            return [(str(sym), grp.droplevel(0)) for sym, grp in data.groupby(level=0, sort=False)]
         return [("_default", data)]
 
     @staticmethod
@@ -469,9 +457,7 @@ class StrategySimulator:
         return sorted(timestamps)
 
     @staticmethod
-    def _bar_prices(
-        bars: list[tuple[str, pd.DataFrame]], ts: pd.Timestamp, col: str
-    ) -> dict[str, float]:
+    def _bar_prices(bars: list[tuple[str, pd.DataFrame]], ts: pd.Timestamp, col: str) -> dict[str, float]:
         """取时间戳 ts 处各标的的指定列价格。"""
         prices: dict[str, float] = {}
         for sym, df in bars:
@@ -530,10 +516,16 @@ class StrategySimulator:
                 commission = max(cost * cfg.commission_rate, cfg.min_commission)
             holdings[sig.symbol] = holdings.get(sig.symbol, 0.0) + delta
             cash -= cost + commission
-            trades.append(SimulatedTrade(
-                timestamp=ts, symbol=sig.symbol, side=Action.BUY,
-                quantity=delta, price=exec_price, commission=commission,
-            ))
+            trades.append(
+                SimulatedTrade(
+                    timestamp=ts,
+                    symbol=sig.symbol,
+                    side=Action.BUY,
+                    quantity=delta,
+                    price=exec_price,
+                    commission=commission,
+                )
+            )
 
         elif sig.action is Action.SELL:
             exec_price = price * (1 - cfg.slippage)
@@ -546,9 +538,15 @@ class StrategySimulator:
             commission = max(proceeds * cfg.commission_rate, cfg.min_commission)
             holdings[sig.symbol] = holdings.get(sig.symbol, 0.0) - delta
             cash += proceeds - commission
-            trades.append(SimulatedTrade(
-                timestamp=ts, symbol=sig.symbol, side=Action.SELL,
-                quantity=delta, price=exec_price, commission=commission,
-            ))
+            trades.append(
+                SimulatedTrade(
+                    timestamp=ts,
+                    symbol=sig.symbol,
+                    side=Action.SELL,
+                    quantity=delta,
+                    price=exec_price,
+                    commission=commission,
+                )
+            )
 
         return trades, cash

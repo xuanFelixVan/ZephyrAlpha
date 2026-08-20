@@ -24,6 +24,7 @@ Panel/AI/脚本只消费统一模型。
 依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 A2/B1
 Version: 0.2.0（MLflow 退役，单一 JSON 源 + download_artifact）
 """
+
 from __future__ import annotations
 
 import json

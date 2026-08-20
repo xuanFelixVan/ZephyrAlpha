@@ -74,11 +74,12 @@ class TestReturnAudit:
         """正收益率 → 无收益率审计发现。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
-        return_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.RETURN.value
-        ]
+        return_findings = [f for f in report.findings if f["category"] == AuditCategory.RETURN.value]
         assert len(return_findings) == 0
 
     def test_negative_return_warning(self) -> None:
@@ -86,9 +87,7 @@ class TestReturnAudit:
         auditor = ASharePerformanceAuditor()
         metrics = {**_GOOD_METRICS, "return_pct": -0.02}
         report = auditor.audit("PF-001", "2026-Q3", metrics, _GOOD_ATTRIBUTION)
-        return_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.RETURN.value
-        ]
+        return_findings = [f for f in report.findings if f["category"] == AuditCategory.RETURN.value]
         assert len(return_findings) == 1
         assert return_findings[0]["severity"] == AuditSeverity.WARNING.value
 
@@ -97,9 +96,7 @@ class TestReturnAudit:
         auditor = ASharePerformanceAuditor()
         metrics = {**_GOOD_METRICS, "return_pct": -0.06}
         report = auditor.audit("PF-001", "2026-Q3", metrics, _GOOD_ATTRIBUTION)
-        return_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.RETURN.value
-        ]
+        return_findings = [f for f in report.findings if f["category"] == AuditCategory.RETURN.value]
         assert len(return_findings) == 1
         assert return_findings[0]["severity"] == AuditSeverity.CRITICAL.value
 
@@ -108,9 +105,7 @@ class TestReturnAudit:
         auditor = ASharePerformanceAuditor()
         metrics = {**_GOOD_METRICS, "return_pct": -0.01}
         report = auditor.audit("PF-001", "2026-Q3", metrics, _GOOD_ATTRIBUTION)
-        return_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.RETURN.value
-        ]
+        return_findings = [f for f in report.findings if f["category"] == AuditCategory.RETURN.value]
         assert len(return_findings) == 0
 
 
@@ -122,11 +117,12 @@ class TestDrawdownAudit:
         """小回撤 → 无发现。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
-        dd_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.DRAWDOWN.value
-        ]
+        dd_findings = [f for f in report.findings if f["category"] == AuditCategory.DRAWDOWN.value]
         assert len(dd_findings) == 0
 
     def test_warning_drawdown(self) -> None:
@@ -134,9 +130,7 @@ class TestDrawdownAudit:
         auditor = ASharePerformanceAuditor()
         metrics = {**_GOOD_METRICS, "max_drawdown": -0.12}
         report = auditor.audit("PF-001", "2026-Q3", metrics, _GOOD_ATTRIBUTION)
-        dd_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.DRAWDOWN.value
-        ]
+        dd_findings = [f for f in report.findings if f["category"] == AuditCategory.DRAWDOWN.value]
         assert len(dd_findings) == 1
         assert dd_findings[0]["severity"] == AuditSeverity.WARNING.value
 
@@ -145,9 +139,7 @@ class TestDrawdownAudit:
         auditor = ASharePerformanceAuditor()
         metrics = {**_GOOD_METRICS, "max_drawdown": -0.18}
         report = auditor.audit("PF-001", "2026-Q3", metrics, _GOOD_ATTRIBUTION)
-        dd_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.DRAWDOWN.value
-        ]
+        dd_findings = [f for f in report.findings if f["category"] == AuditCategory.DRAWDOWN.value]
         assert len(dd_findings) == 1
         assert dd_findings[0]["severity"] == AuditSeverity.CRITICAL.value
 
@@ -160,11 +152,12 @@ class TestRiskAdjustedAudit:
         """Sharpe >= 0.5 → 无发现。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
-        ra_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.RISK_ADJUSTED.value
-        ]
+        ra_findings = [f for f in report.findings if f["category"] == AuditCategory.RISK_ADJUSTED.value]
         assert len(ra_findings) == 0
 
     def test_sharpe_info(self) -> None:
@@ -173,8 +166,9 @@ class TestRiskAdjustedAudit:
         metrics = {**_GOOD_METRICS, "sharpe_ratio": 0.3}
         report = auditor.audit("PF-001", "2026-Q3", metrics, _GOOD_ATTRIBUTION)
         ra_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.RISK_ADJUSTED.value
-            and f["metric_name"] == "sharpe_ratio"
+            f
+            for f in report.findings
+            if f["category"] == AuditCategory.RISK_ADJUSTED.value and f["metric_name"] == "sharpe_ratio"
         ]
         assert len(ra_findings) == 1
         assert ra_findings[0]["severity"] == AuditSeverity.INFO.value
@@ -185,8 +179,9 @@ class TestRiskAdjustedAudit:
         metrics = {**_GOOD_METRICS, "sharpe_ratio": -0.5}
         report = auditor.audit("PF-001", "2026-Q3", metrics, _GOOD_ATTRIBUTION)
         ra_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.RISK_ADJUSTED.value
-            and f["metric_name"] == "sharpe_ratio"
+            f
+            for f in report.findings
+            if f["category"] == AuditCategory.RISK_ADJUSTED.value and f["metric_name"] == "sharpe_ratio"
         ]
         assert len(ra_findings) == 1
         assert ra_findings[0]["severity"] == AuditSeverity.WARNING.value
@@ -197,9 +192,9 @@ class TestRiskAdjustedAudit:
         metrics = {**_GOOD_METRICS, "sortino_ratio": -0.5}
         report = auditor.audit("PF-001", "2026-Q3", metrics, _GOOD_ATTRIBUTION)
         sortino_findings = [
-            f for f in report.findings
-            if f["category"] == AuditCategory.RISK_ADJUSTED.value
-            and f["metric_name"] == "sortino_ratio"
+            f
+            for f in report.findings
+            if f["category"] == AuditCategory.RISK_ADJUSTED.value and f["metric_name"] == "sortino_ratio"
         ]
         assert len(sortino_findings) == 1
         assert sortino_findings[0]["severity"] == AuditSeverity.WARNING.value
@@ -213,11 +208,12 @@ class TestAttributionConsistency:
         """归因自洽（误差 < tolerance）→ 无发现。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
-        attr_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.ATTRIBUTION.value
-        ]
+        attr_findings = [f for f in report.findings if f["category"] == AuditCategory.ATTRIBUTION.value]
         assert len(attr_findings) == 0
 
     def test_inconsistent_attribution_warning(self) -> None:
@@ -228,9 +224,7 @@ class TestAttributionConsistency:
             "total_return": 0.20,  # 0.05+0.06+0.01=0.12 ≠ 0.20, 误差=0.08
         }
         report = auditor.audit("PF-001", "2026-Q3", _GOOD_METRICS, attribution)
-        attr_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.ATTRIBUTION.value
-        ]
+        attr_findings = [f for f in report.findings if f["category"] == AuditCategory.ATTRIBUTION.value]
         assert len(attr_findings) == 1
         assert attr_findings[0]["severity"] == AuditSeverity.WARNING.value
 
@@ -242,9 +236,7 @@ class TestAttributionConsistency:
             "total_return": 0.1201,  # 误差 0.0001 < 0.001
         }
         report = auditor.audit("PF-001", "2026-Q3", _GOOD_METRICS, attribution)
-        attr_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.ATTRIBUTION.value
-        ]
+        attr_findings = [f for f in report.findings if f["category"] == AuditCategory.ATTRIBUTION.value]
         assert len(attr_findings) == 0
 
 
@@ -256,36 +248,39 @@ class TestCostAudit:
         """expected_cost=None → 跳过成本审计。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
             expected_cost=None,
         )
-        cost_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.COST.value
-        ]
+        cost_findings = [f for f in report.findings if f["category"] == AuditCategory.COST.value]
         assert len(cost_findings) == 0
 
     def test_zero_expected_cost_skips_audit(self) -> None:
         """expected_cost=0 → 跳过成本审计（避免除零）。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
             expected_cost=0.0,
         )
-        cost_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.COST.value
-        ]
+        cost_findings = [f for f in report.findings if f["category"] == AuditCategory.COST.value]
         assert len(cost_findings) == 0
 
     def test_normal_cost_no_finding(self) -> None:
         """成本比例 < 1.5x → 无发现。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
             expected_cost=0.001,  # 0.001/0.001 = 1.0x
         )
-        cost_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.COST.value
-        ]
+        cost_findings = [f for f in report.findings if f["category"] == AuditCategory.COST.value]
         assert len(cost_findings) == 0
 
     def test_cost_warning(self) -> None:
@@ -293,12 +288,13 @@ class TestCostAudit:
         auditor = ASharePerformanceAuditor()
         attribution = {**_GOOD_ATTRIBUTION, "transaction_cost_drag": 0.002}
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, attribution,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            attribution,
             expected_cost=0.001,  # 0.002/0.001 = 2.0x → 但 > 1.5 → WARNING
         )
-        cost_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.COST.value
-        ]
+        cost_findings = [f for f in report.findings if f["category"] == AuditCategory.COST.value]
         assert len(cost_findings) == 1
         assert cost_findings[0]["severity"] == AuditSeverity.WARNING.value
 
@@ -307,12 +303,13 @@ class TestCostAudit:
         auditor = ASharePerformanceAuditor()
         attribution = {**_GOOD_ATTRIBUTION, "transaction_cost_drag": 0.003}
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, attribution,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            attribution,
             expected_cost=0.001,  # 0.003/0.001 = 3.0x → CRITICAL
         )
-        cost_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.COST.value
-        ]
+        cost_findings = [f for f in report.findings if f["category"] == AuditCategory.COST.value]
         assert len(cost_findings) == 1
         assert cost_findings[0]["severity"] == AuditSeverity.CRITICAL.value
 
@@ -325,7 +322,10 @@ class TestOptimizationRecommendations:
         """无审计发现 → 无优化建议。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
         assert len(report.findings) == 0
         assert len(report.recommendations) == 0
@@ -355,7 +355,10 @@ class TestOptimizationRecommendations:
         auditor = ASharePerformanceAuditor()
         attribution = {**_GOOD_ATTRIBUTION, "transaction_cost_drag": 0.003}
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, attribution,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            attribution,
             expected_cost=0.001,
         )
         cost_recs = [r for r in report.recommendations if r["type"] == RecommendationType.COST_CONTROL.value]
@@ -408,9 +411,7 @@ class TestCustomThresholds:
         auditor = ASharePerformanceAuditor(thresholds=thresholds)
         metrics = {**_GOOD_METRICS, "return_pct": -0.05}
         report = auditor.audit("PF-001", "2026-Q3", metrics, _GOOD_ATTRIBUTION)
-        return_findings = [
-            f for f in report.findings if f["category"] == AuditCategory.RETURN.value
-        ]
+        return_findings = [f for f in report.findings if f["category"] == AuditCategory.RETURN.value]
         # -0.05 > -0.10 (宽松阈值), 无发现
         assert len(return_findings) == 0
 
@@ -436,7 +437,10 @@ class TestDataHashAndValidation:
         """未篡改的报告 → validate_report 返回 True。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
         assert auditor.validate_report(report) is True
 
@@ -444,7 +448,10 @@ class TestDataHashAndValidation:
         """篡改 content → validate_report 返回 False。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
         tampered = dataclasses.replace(
             report,
@@ -467,7 +474,10 @@ class TestDataHashAndValidation:
         """data_hash 是 64 位 hex 字符串。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
         assert len(report.data_hash) == 64
         int(report.data_hash, 16)
@@ -510,7 +520,10 @@ class TestImmutability:
         """PerformanceAuditReport frozen——不可修改字段。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
         with pytest.raises(dataclasses.FrozenInstanceError):
             report.portfolio_id = "PF-999"  # type: ignore[misc]
@@ -585,7 +598,10 @@ class TestEdgeCases:
         """report_id 格式: AUDIT-<hex10>。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
         assert report.report_id.startswith("AUDIT-")
         hex_part = report.report_id.split("AUDIT-")[1]
@@ -597,7 +613,10 @@ class TestEdgeCases:
         auditor = ASharePerformanceAuditor()
         before = datetime.now(UTC)
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
         after = datetime.now(UTC)
         assert report.generated_at.tzinfo is not None
@@ -607,7 +626,10 @@ class TestEdgeCases:
         """schema_version = "1.0"。"""
         auditor = ASharePerformanceAuditor()
         report = auditor.audit(
-            "PF-001", "2026-Q3", _GOOD_METRICS, _GOOD_ATTRIBUTION,
+            "PF-001",
+            "2026-Q3",
+            _GOOD_METRICS,
+            _GOOD_ATTRIBUTION,
         )
         assert report.schema_version == "1.0"
 
@@ -615,18 +637,21 @@ class TestEdgeCases:
         """多类审计发现同时存在时正确聚合。"""
         auditor = ASharePerformanceAuditor()
         metrics = {
-            "return_pct": -0.06,        # CRITICAL → STRATEGY_ADJUST HIGH
-            "max_drawdown": -0.18,      # CRITICAL → RISK_TIGHTEN HIGH
-            "sharpe_ratio": -0.5,       # WARNING → PARAM_OPTIMIZE MEDIUM
-            "sortino_ratio": -0.5,      # WARNING → PARAM_OPTIMIZE MEDIUM (但复用映射)
+            "return_pct": -0.06,  # CRITICAL → STRATEGY_ADJUST HIGH
+            "max_drawdown": -0.18,  # CRITICAL → RISK_TIGHTEN HIGH
+            "sharpe_ratio": -0.5,  # WARNING → PARAM_OPTIMIZE MEDIUM
+            "sortino_ratio": -0.5,  # WARNING → PARAM_OPTIMIZE MEDIUM (但复用映射)
         }
         attribution = {
             **_GOOD_ATTRIBUTION,
-            "total_return": 0.20,       # 归因不一致 → STRATEGY_ADJUST MEDIUM
+            "total_return": 0.20,  # 归因不一致 → STRATEGY_ADJUST MEDIUM
             "transaction_cost_drag": 0.003,  # 成本 CRITICAL
         }
         report = auditor.audit(
-            "PF-001", "2026-Q3", metrics, attribution,
+            "PF-001",
+            "2026-Q3",
+            metrics,
+            attribution,
             expected_cost=0.001,
         )
         # 至少 5 个发现（收益率+回撤+Sharpe+Sortino+归因+成本=6）

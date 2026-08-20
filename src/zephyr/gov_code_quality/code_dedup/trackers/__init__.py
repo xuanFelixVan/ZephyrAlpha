@@ -19,5 +19,13 @@
 从 code_dedup/ 根目录迁入以符合 GOV-DOC-018 阈值（根目录 ≤ 60）.
 """
 
-__all__ = ['blind_spot_tracker', 'consequence_tracker', 'hotspot_tracker', 'import_surface_tracker', 'question_tracker', 'risk_mitigation_tracker']
+from typing import Final
 
+__all__: Final = [
+    "blind_spot_tracker",
+    "consequence_tracker",
+    "hotspot_tracker",
+    "import_surface_tracker",
+    "question_tracker",
+    "risk_mitigation_tracker",
+]

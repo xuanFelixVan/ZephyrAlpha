@@ -219,7 +219,10 @@ def _build_report(
 
     _logger.debug(
         "build_report: type=%s period=%s portfolio=%s data_hash=%s",
-        report_type.value, reporting_period, portfolio_id, report.data_hash[:8],
+        report_type.value,
+        reporting_period,
+        portfolio_id,
+        report.data_hash[:8],
     )
     return report
 
@@ -269,9 +272,7 @@ class RegulatoryReportGenerator:
             "strategy_count": len(strategies),
             "risk_rule_count": len(risk_rules),
         }
-        return _build_report(
-            ReportType.PROGRAMMATIC_TRADING, reporting_period, portfolio_id, content
-        )
+        return _build_report(ReportType.PROGRAMMATIC_TRADING, reporting_period, portfolio_id, content)
 
     # ── 异常交易自报 ──
 
@@ -299,9 +300,7 @@ class RegulatoryReportGenerator:
             "event_count": len(events),
             "event_types": list({e.get("event_type", "unknown") for e in events}),
         }
-        return _build_report(
-            ReportType.ABNORMAL_TRADING, reporting_period, portfolio_id, content
-        )
+        return _build_report(ReportType.ABNORMAL_TRADING, reporting_period, portfolio_id, content)
 
     # ── 持仓报告 ──
 
@@ -325,18 +324,14 @@ class RegulatoryReportGenerator:
 
         total_value = sum(h.get("market_value", 0) for h in holdings)
         # 集中度: 最大持仓占比
-        max_position = max(
-            (h.get("market_value", 0) for h in holdings), default=0
-        )
+        max_position = max((h.get("market_value", 0) for h in holdings), default=0)
         top_concentration = max_position / total_value if total_value > 0 else 0.0
         # 行业分布
         sector_values: dict[str, float] = {}
         for h in holdings:
             sector = h.get("sector", "unknown")
             sector_values[sector] = sector_values.get(sector, 0) + h.get("market_value", 0)
-        sector_concentrations = {
-            s: v / total_value for s, v in sector_values.items()
-        } if total_value > 0 else {}
+        sector_concentrations = {s: v / total_value for s, v in sector_values.items()} if total_value > 0 else {}
 
         content = {
             "report_category": "position",
@@ -346,9 +341,7 @@ class RegulatoryReportGenerator:
             "top_position_concentration": top_concentration,
             "sector_concentrations": sector_concentrations,
         }
-        return _build_report(
-            ReportType.POSITION, reporting_period, portfolio_id, content
-        )
+        return _build_report(ReportType.POSITION, reporting_period, portfolio_id, content)
 
     # ── 绩效报告 ──
 
@@ -385,9 +378,7 @@ class RegulatoryReportGenerator:
             "max_drawdown": metrics["max_drawdown"],
             "sharpe_ratio": metrics["sharpe_ratio"],
         }
-        return _build_report(
-            ReportType.PERFORMANCE, reporting_period, portfolio_id, content
-        )
+        return _build_report(ReportType.PERFORMANCE, reporting_period, portfolio_id, content)
 
     # ── 完整性校验 ──
 

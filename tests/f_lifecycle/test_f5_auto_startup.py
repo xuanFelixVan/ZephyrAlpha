@@ -231,6 +231,7 @@ class TestRunPeriodicChecks:
         integration.deadlock_detector.try_acquire("resource-1", "holder-1")
         # Backdate the timestamp
         import time as _time
+
         integration.deadlock_detector.lock_timestamps["resource-1"] = _time.monotonic() - 400
         result = integration.run_health_checks()
         assert "resource-1" in result["expired_locks"]
@@ -245,6 +246,7 @@ class TestRunPeriodicChecks:
             EscalationState,
             RuleCategory,
         )
+
         event = EscalationEvent(
             category=RuleCategory.DEADLOCK,
             description="test deadlock for periodic check",

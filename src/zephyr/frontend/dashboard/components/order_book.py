@@ -30,6 +30,7 @@ v3.0.0 变更 (#ARCH-047):
   - 中间: 最新价 + 压力比仪表盘
   - 右侧: 5档买盘(绿色, 价格降序 bid1->bid5)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -52,12 +53,13 @@ class OrderBookData:
 
     蓝图 §16.7.3: askPrice/bidPrice/askVol/bidVol 均为5档
     """
+
     symbol: str = ""
     timestamp: str = ""
     ask_price: list[float] = field(default_factory=list)  # 5档卖价 [ask1~ask5]
     bid_price: list[float] = field(default_factory=list)  # 5档买价 [bid1~bid5]
-    ask_vol: list[int] = field(default_factory=list)      # 5档卖量
-    bid_vol: list[int] = field(default_factory=list)      # 5档买量
+    ask_vol: list[int] = field(default_factory=list)  # 5档卖量
+    bid_vol: list[int] = field(default_factory=list)  # 5档买量
     last_price: float = 0.0
     pressure_ratio: float = 0.0  # 盘口压力比 = bid_vol_total / ask_vol_total
 

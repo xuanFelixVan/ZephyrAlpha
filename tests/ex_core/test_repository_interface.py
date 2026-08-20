@@ -5,6 +5,7 @@
 
 覆盖: OrderRepository / PositionSnapshotRepository 抽象接口 + 内存实现 + 工厂。
 """
+
 from __future__ import annotations
 
 from datetime import UTC, datetime

@@ -53,6 +53,7 @@ v3.4.0（51 号工作流 B）: 新增「实验历史」Tab（C1 回测历史 + �
     - 依赖注入: 数据源通过构造函数传入, 禁止直接 import 业务层
     - 可选依赖: panel/holoviews/plotly 通过 try/except 导入
 """
+
 from __future__ import annotations
 
 from typing import Any, Optional
@@ -64,6 +65,7 @@ except ImportError:  # 测试环境无 panel
 
 try:
     import holoviews as hv
+
     hv.extension("bokeh")
 except ImportError:
     hv = None
@@ -194,7 +196,6 @@ class DashboardPanelApp:
         """写入：task_repo（Stage 4 公共化）。"""
         self._task_repo = value
 
-
     @property
     def olap_engine(self):
         """只读：olap_engine（Stage 4 公共化）。"""
@@ -204,7 +205,6 @@ class DashboardPanelApp:
     def olap_engine(self, value):
         """写入：olap_engine（Stage 4 公共化）。"""
         self._olap_engine = value
-
 
     @property
     def backtest_result(self):
@@ -216,20 +216,45 @@ class DashboardPanelApp:
         """写入：backtest_result（Stage 4 公共化）。"""
         self._backtest_result = value
 
-
     @staticmethod
     def demo_backtest_data() -> BacktestResultData:
-        '生成演示用回测数据（净值/回撤曲线），证明 backtest_results Tab 可渲染'
+        "生成演示用回测数据（净值/回撤曲线），证明 backtest_results Tab 可渲染"
         nav = [1.0]
-        for r in [0.012, -0.008, 0.015, -0.005, 0.02, -0.012, 0.018, -0.003, 0.01, -0.007, 0.022, -0.01, 0.016, -0.004, 0.014]:
+        for r in [
+            0.012,
+            -0.008,
+            0.015,
+            -0.005,
+            0.02,
+            -0.012,
+            0.018,
+            -0.003,
+            0.01,
+            -0.007,
+            0.022,
+            -0.01,
+            0.016,
+            -0.004,
+            0.014,
+        ]:
             nav.append(nav[-1] * (1 + r))
         peak = 0.0
         drawdown = []
         for v in nav:
             peak = max(peak, v)
             drawdown.append(v - peak)
-        return BacktestResultData(backtest_id='demo-001', strategy_id='demo-strategy', net_value_curve=nav, drawdown_curve=drawdown, timestamps=[f'2026-01-{i:02d}' for i in range(1, len(nav) + 1)], metrics=BacktestMetrics(sharpe=1.85, sortino=2.31, max_drawdown=-0.034, ic=0.062, ir=0.78, win_rate=0.56, annual_return=0.235), gate_status=BacktestGateStatus(is_passed=True, wfa_passed=True, oos_passed=False), overfitting_flag=False)
-
+        return BacktestResultData(
+            backtest_id="demo-001",
+            strategy_id="demo-strategy",
+            net_value_curve=nav,
+            drawdown_curve=drawdown,
+            timestamps=[f"2026-01-{i:02d}" for i in range(1, len(nav) + 1)],
+            metrics=BacktestMetrics(
+                sharpe=1.85, sortino=2.31, max_drawdown=-0.034, ic=0.062, ir=0.78, win_rate=0.56, annual_return=0.235
+            ),
+            gate_status=BacktestGateStatus(is_passed=True, wfa_passed=True, oos_passed=False),
+            overfitting_flag=False,
+        )
 
     # ===== 治理类 Tab =====
 
@@ -266,7 +291,8 @@ class DashboardPanelApp:
         # v3.3.0: 优先用真实 BacktestResult+Portfolio, 无注入时回退 demo
         if self._backtest_result is not None and self._backtest_portfolio is not None:
             perf_data = backtest_result_to_performance_data(
-                self._backtest_result, self._backtest_portfolio,
+                self._backtest_result,
+                self._backtest_portfolio,
             )
         else:
             perf_data = generate_demo_performance_data()
@@ -328,9 +354,7 @@ class DashboardPanelApp:
             try:
                 tab_objects.append((name, builder()))
             except Exception as e:  # 单 Tab 失败不影响其他 Tab  # noqa: BLE001 — 5.135治标: broad exception catch
-                tab_objects.append((name, pn.pane.Alert(
-                    f"❌ Tab '{name}' 渲染异常: {e}", alert_type="danger"
-                )))
+                tab_objects.append((name, pn.pane.Alert(f"❌ Tab '{name}' 渲染异常: {e}", alert_type="danger")))
         return pn.Tabs(
             *tab_objects,
             tabs_location="left",
@@ -365,8 +389,7 @@ def create_dashboard(
     tabs = app.build_tabs()
 
     header = pn.pane.Markdown(
-        "# ZephyrAlpha Dashboard\n"
-        "Panel+HoloViz 仪表盘 (v3.4.0, #ARCH-047) — 11 Tab 治理+交易/回测",
+        "# ZephyrAlpha Dashboard\nPanel+HoloViz 仪表盘 (v3.4.0, #ARCH-047) — 11 Tab 治理+交易/回测",
     )
     layout = pn.Column(header, tabs, sizing_mode="stretch_width")
     return layout
@@ -386,8 +409,11 @@ if pn is not None:
     try:
         _DASHBOARD = create_dashboard()
         _DASHBOARD.servable()
-    except Exception as _e:  # pragma: no cover — servable 失败不阻断 import  # noqa: BLE001 — 5.135治标: broad exception catch
+    except (
+        Exception
+    ) as _e:  # pragma: no cover — servable 失败不阻断 import  # noqa: BLE001 — 5.135治标: broad exception catch
         import sys
+
         print(f"[app_panel] servable 初始化警告: {_e}", file=sys.stderr)
 
 

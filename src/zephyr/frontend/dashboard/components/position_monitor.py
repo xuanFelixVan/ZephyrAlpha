@@ -30,6 +30,7 @@ v3.0.0 变更 (#ARCH-047):
   - 中部: 持仓表格(ChartFactory.make_position)
   - T+1锁定行: 红色背景标记
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -52,12 +53,13 @@ class PositionItem:
 
     蓝图 §16.7.4: 含 T+1 标记（today_bought > 0 -> is_t_plus_1_locked=True）
     """
+
     symbol: str = ""
     name: str = ""
-    quantity: int = 0                # 总持仓
-    available_quantity: int = 0      # 可用数量（扣除冻结）
-    frozen_quantity: int = 0         # 冻结数量
-    today_bought: int = 0            # 当日买入（T+1锁定）
+    quantity: int = 0  # 总持仓
+    available_quantity: int = 0  # 可用数量（扣除冻结）
+    frozen_quantity: int = 0  # 冻结数量
+    today_bought: int = 0  # 当日买入（T+1锁定）
     cost_price: float = 0.0
     last_price: float = 0.0
     unrealized_pnl: float = 0.0
@@ -72,11 +74,12 @@ class PositionItem:
 @dataclass
 class PositionMonitorData:
     """实盘持仓监控数据模型"""
+
     account_id: str = ""
-    total_asset: float = 0.0          # 总资产 = cash + 持仓市值
-    available_cash: float = 0.0       # 可用资金
-    market_value_total: float = 0.0   # 持仓总市值
-    today_pnl: float = 0.0            # 当日盈亏
+    total_asset: float = 0.0  # 总资产 = cash + 持仓市值
+    available_cash: float = 0.0  # 可用资金
+    market_value_total: float = 0.0  # 持仓总市值
+    today_pnl: float = 0.0  # 当日盈亏
     positions: list[PositionItem] = field(default_factory=list)
     timestamp: str = ""
 
@@ -258,23 +261,25 @@ def render_position_monitor(data: PositionMonitorData) -> dict[str, Any]:
     metric_cards = [
         pn.pane.Markdown(
             f"**总资产**\n\n## {data.total_asset:,.2f}",
-            styles={"text-align": "center", "padding": "8px",
-                    "border": "1px solid #e0e0e0", "border-radius": "4px"},
+            styles={"text-align": "center", "padding": "8px", "border": "1px solid #e0e0e0", "border-radius": "4px"},
         ),
         pn.pane.Markdown(
             f"**可用资金**\n\n## {data.available_cash:,.2f}",
-            styles={"text-align": "center", "padding": "8px",
-                    "border": "1px solid #e0e0e0", "border-radius": "4px"},
+            styles={"text-align": "center", "padding": "8px", "border": "1px solid #e0e0e0", "border-radius": "4px"},
         ),
         pn.pane.Markdown(
             f"**持仓市值**\n\n## {data.market_value_total:,.2f}",
-            styles={"text-align": "center", "padding": "8px",
-                    "border": "1px solid #e0e0e0", "border-radius": "4px"},
+            styles={"text-align": "center", "padding": "8px", "border": "1px solid #e0e0e0", "border-radius": "4px"},
         ),
         pn.pane.Markdown(
             f"**当日盈亏**\n\n## {pnl_prefix}{data.today_pnl:,.2f}",
-            styles={"text-align": "center", "padding": "8px", "color": pnl_color,
-                    "border": f"1px solid {pnl_color}", "border-radius": "4px"},
+            styles={
+                "text-align": "center",
+                "padding": "8px",
+                "color": pnl_color,
+                "border": f"1px solid {pnl_color}",
+                "border-radius": "4px",
+            },
         ),
     ]
     metrics_row = pn.Row(*metric_cards, sizing_mode="stretch_width")
@@ -319,11 +324,13 @@ def render_position_monitor(data: PositionMonitorData) -> dict[str, Any]:
         # T+1 锁定警告
         locked = [p for p in data.positions if p.is_t_plus_1_locked]
         if locked:
-            layout_items.append(pn.pane.Alert(
-                f"⚠ **T+1 锁定**：以下 {len(locked)} 个标的存在当日买入，次日才能卖出 — "
-                + ", ".join(p.symbol for p in locked),
-                alert_type="warning",
-            ))
+            layout_items.append(
+                pn.pane.Alert(
+                    f"⚠ **T+1 锁定**：以下 {len(locked)} 个标的存在当日买入，次日才能卖出 — "
+                    + ", ".join(p.symbol for p in locked),
+                    alert_type="warning",
+                )
+            )
 
     layout = pn.Column(*layout_items, sizing_mode="stretch_width")
     payload["_layout"] = layout

@@ -136,10 +136,10 @@ class StrategyType(str, Enum):
     完整五类(趋势/均值回归/高频/Carry/套利)归 MOD-SELL-014(待G04校准)。
     """
 
-    SHORT_TERM = "short_term"              # 短线/高频(降级4%, M不调整)
-    TREND = "trend"                        # 趋势(M+0.5, 宽止损防被震出)
-    MEAN_REVERSION = "mean_reversion"      # 均值回归(M-0.5, 紧止损)
-    OTHER = "other"                        # 其他/默认(降级8%, M不调整)
+    SHORT_TERM = "short_term"  # 短线/高频(降级4%, M不调整)
+    TREND = "trend"  # 趋势(M+0.5, 宽止损防被震出)
+    MEAN_REVERSION = "mean_reversion"  # 均值回归(M-0.5, 紧止损)
+    OTHER = "other"  # 其他/默认(降级8%, M不调整)
 
 
 @dataclass(frozen=True)
@@ -198,8 +198,8 @@ def _triage_atr(
     current = position.current_price
 
     # 绝对价格量纲
-    profit_abs = current - entry                    # 有利移动(可负)
-    distance_abs = abs(current - stop_loss_price)   # 距止损绝对距离
+    profit_abs = current - entry  # 有利移动(可负)
+    distance_abs = abs(current - stop_loss_price)  # 距止损绝对距离
 
     # 应用 threshold_delta(双向反馈契约, §3.3 BM-POS-09)
     # delta 正值=放宽(更难WATCH+更易HOLD, 给利润奔跑), 负值=收紧(更敏感)
@@ -252,9 +252,7 @@ class PositionTriage:
         if atr_value is None or atr_value <= 0:
             # ATR缺失降级: 无法判定接近程度, 默认MONITOR正常监控档
             # (WATCH过度监控/HOLD漏监控, MONITOR是spec §3.2"正常持仓"中间档)
-            logger.debug(
-                "ATR缺失, symbol=%s 降级默认MONITOR", position.symbol
-            )
+            logger.debug("ATR缺失, symbol=%s 降级默认MONITOR", position.symbol)
             return TriageLevel.MONITOR
 
         return _triage_atr(position, atr_value, stop_loss_price, delta)

@@ -11,6 +11,7 @@
 治本病根（2026-08-01，AI-01 P1）：reconciler 已实现+已注册 git_commit_gateway，唯一缺口是
 header [TESTS] 声明的测试文件不存在。本文件兑现声明，建立回归保护。
 """
+
 from __future__ import annotations
 
 import sys
@@ -66,8 +67,10 @@ demo = [{demo_deps}]
 
 def _write_pyproject(tmp_path: Path, main_deps: list[str], dev_deps: list[str], demo_deps: list[str]) -> Path:
     """在 tmp_path 下写 pyproject.toml，返回路径。"""
+
     def _fmt(deps: list[str]) -> str:
         return ", ".join(f'"{d}"' for d in deps)
+
     content = _PYPROJECT_TEMPLATE.format(
         main_deps=_fmt(main_deps),
         dev_deps=_fmt(dev_deps),
@@ -86,6 +89,7 @@ def _write_requirements(tmp_path: Path, name: str, lines: list[str]) -> Path:
 
 
 # ── 单元测试：解析函数 ──
+
 
 class TestNormalizeName:
     """包名规范化（PEP 508 大小写/分隔符不敏感）。"""
@@ -155,67 +159,96 @@ class TestParseRequirementsFile:
     """requirements 文件解析（跳过注释/-r/空行/行内注释/环境标记）。"""
 
     def test_basic_parse(self, tmp_path):
-        p = _write_requirements(tmp_path, "requirements.txt", [
-            "pydantic>=2.0.0",
-            "pytest>=8.0.0",
-        ])
+        p = _write_requirements(
+            tmp_path,
+            "requirements.txt",
+            [
+                "pydantic>=2.0.0",
+                "pytest>=8.0.0",
+            ],
+        )
         deps = _parse_requirements_file(p)
         assert deps == {"pydantic": ">=2.0.0", "pytest": ">=8.0.0"}
 
     def test_skip_comments(self, tmp_path):
-        p = _write_requirements(tmp_path, "requirements.txt", [
-            "# This is a comment",
-            "pydantic>=2.0.0",
-            "# Another comment",
-        ])
+        p = _write_requirements(
+            tmp_path,
+            "requirements.txt",
+            [
+                "# This is a comment",
+                "pydantic>=2.0.0",
+                "# Another comment",
+            ],
+        )
         deps = _parse_requirements_file(p)
         assert deps == {"pydantic": ">=2.0.0"}
 
     def test_skip_dash_r(self, tmp_path):
-        p = _write_requirements(tmp_path, "requirements-dev.txt", [
-            "-r requirements.txt",
-            "ruff>=0.5.0",
-        ])
+        p = _write_requirements(
+            tmp_path,
+            "requirements-dev.txt",
+            [
+                "-r requirements.txt",
+                "ruff>=0.5.0",
+            ],
+        )
         deps = _parse_requirements_file(p)
         assert deps == {"ruff": ">=0.5.0"}
 
     def test_skip_dash_e(self, tmp_path):
-        p = _write_requirements(tmp_path, "requirements.txt", [
-            "-e .",
-            "pytest>=8.0.0",
-        ])
+        p = _write_requirements(
+            tmp_path,
+            "requirements.txt",
+            [
+                "-e .",
+                "pytest>=8.0.0",
+            ],
+        )
         deps = _parse_requirements_file(p)
         assert deps == {"pytest": ">=8.0.0"}
 
     def test_skip_inline_comment(self, tmp_path):
-        p = _write_requirements(tmp_path, "requirements.txt", [
-            "pydantic>=2.0.0 # ORM",
-            "pytest>=8.0.0",
-        ])
+        p = _write_requirements(
+            tmp_path,
+            "requirements.txt",
+            [
+                "pydantic>=2.0.0 # ORM",
+                "pytest>=8.0.0",
+            ],
+        )
         deps = _parse_requirements_file(p)
         assert deps == {"pydantic": ">=2.0.0", "pytest": ">=8.0.0"}
 
     def test_strip_env_marker(self, tmp_path):
-        p = _write_requirements(tmp_path, "requirements.txt", [
-            "pydantic>=2.0.0; python_version>='3.12'",
-        ])
+        p = _write_requirements(
+            tmp_path,
+            "requirements.txt",
+            [
+                "pydantic>=2.0.0; python_version>='3.12'",
+            ],
+        )
         deps = _parse_requirements_file(p)
         assert deps == {"pydantic": ">=2.0.0"}
 
     def test_skip_empty_lines(self, tmp_path):
-        p = _write_requirements(tmp_path, "requirements.txt", [
-            "",
-            "pydantic>=2.0.0",
-            "",
-            "",
-            "pytest>=8.0.0",
-            "",
-        ])
+        p = _write_requirements(
+            tmp_path,
+            "requirements.txt",
+            [
+                "",
+                "pydantic>=2.0.0",
+                "",
+                "",
+                "pytest>=8.0.0",
+                "",
+            ],
+        )
         deps = _parse_requirements_file(p)
         assert deps == {"pydantic": ">=2.0.0", "pytest": ">=8.0.0"}
 
 
 # ── 单元测试：对比函数 ──
+
 
 class TestCheckPair:
     """依赖集对比（缺失/多余/版本不一致）。"""
@@ -252,6 +285,7 @@ class TestCheckPair:
 
 # ── 单元测试：触发条件 ──
 
+
 class TestTrigger:
     """触发条件：pyproject.toml 或 requirements*.txt 变更才触发。"""
 
@@ -284,6 +318,7 @@ class TestTrigger:
 
 # ── 集成测试：reconciler 端到端 ──
 
+
 class TestReconcilerEndToEnd:
     """reconciler 工厂 + _reconcile 端到端（用 tmp_path 构造完整场景）。"""
 
@@ -295,18 +330,30 @@ class TestReconcilerEndToEnd:
             dev_deps=["ruff>=0.5.0"],
             demo_deps=["streamlit>=1.30.0"],
         )
-        _write_requirements(tmp_path, "requirements.txt", [
-            "pydantic>=2.0.0",
-            "pytest>=8.0.0",
-        ])
-        _write_requirements(tmp_path, "requirements-dev.txt", [
-            "-r requirements.txt",
-            "ruff>=0.5.0",
-        ])
-        _write_requirements(tmp_path, "requirements-demo.txt", [
-            "-r requirements.txt",
-            "streamlit>=1.30.0",
-        ])
+        _write_requirements(
+            tmp_path,
+            "requirements.txt",
+            [
+                "pydantic>=2.0.0",
+                "pytest>=8.0.0",
+            ],
+        )
+        _write_requirements(
+            tmp_path,
+            "requirements-dev.txt",
+            [
+                "-r requirements.txt",
+                "ruff>=0.5.0",
+            ],
+        )
+        _write_requirements(
+            tmp_path,
+            "requirements-demo.txt",
+            [
+                "-r requirements.txt",
+                "streamlit>=1.30.0",
+            ],
+        )
 
         spec = make_requirements_version_sync_reconciler(tmp_path)
         result = spec.reconcile([str(tmp_path / "pyproject.toml")], "test-session")
@@ -343,10 +390,14 @@ class TestReconcilerEndToEnd:
             demo_deps=[],
         )
         # requirements.txt 多了 orphan
-        _write_requirements(tmp_path, "requirements.txt", [
-            "pydantic>=2.0.0",
-            "orphan>=1.0.0",
-        ])
+        _write_requirements(
+            tmp_path,
+            "requirements.txt",
+            [
+                "pydantic>=2.0.0",
+                "orphan>=1.0.0",
+            ],
+        )
         _write_requirements(tmp_path, "requirements-dev.txt", ["-r requirements.txt"])
         _write_requirements(tmp_path, "requirements-demo.txt", ["-r requirements.txt"])
 
@@ -385,10 +436,14 @@ class TestReconcilerEndToEnd:
         )
         _write_requirements(tmp_path, "requirements.txt", ["pydantic>=2.0.0"])
         # requirements-dev.txt 缺 mypy
-        _write_requirements(tmp_path, "requirements-dev.txt", [
-            "-r requirements.txt",
-            "ruff>=0.5.0",
-        ])
+        _write_requirements(
+            tmp_path,
+            "requirements-dev.txt",
+            [
+                "-r requirements.txt",
+                "ruff>=0.5.0",
+            ],
+        )
         _write_requirements(tmp_path, "requirements-demo.txt", ["-r requirements.txt"])
 
         spec = make_requirements_version_sync_reconciler(tmp_path)
@@ -412,6 +467,7 @@ class TestReconcilerEndToEnd:
 
 
 # ── 工厂函数测试 ──
+
 
 class TestFactory:
     """make_requirements_version_sync_reconciler 工厂函数。"""

@@ -79,7 +79,10 @@ _LAZY_IMPORTS = {
     "DefaultEquityStrategy": ("zephyr.pf_core.default_equity_strategy", "DefaultEquityStrategy"),
     "RebalanceMode": ("zephyr.pf_core.default_equity_strategy", "RebalanceMode"),
     "ComplianceRule": ("zephyr.shared.contracts.compliance_rule", "ComplianceRule"),
-    "PerformanceAttributionReport": ("zephyr.shared.contracts.performance_attribution_report", "PerformanceAttributionReport"),
+    "PerformanceAttributionReport": (
+        "zephyr.shared.contracts.performance_attribution_report",
+        "PerformanceAttributionReport",
+    ),
     # ARCH-GOV-SHIM-001 阶段2：RiskLimits 直接指向 canonical 路径（原 pf_core.risk_limits shim 已删除）
     # 2026-08-17 修正：canonical 以 cross_layer_contracts.yaml CTR-003 physical_path 为准
     # （src/zephyr/shared/contracts/risk_limits.py），与 pf_core 核心模块实际 import 真源一致

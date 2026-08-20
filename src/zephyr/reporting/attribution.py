@@ -111,9 +111,7 @@ class StrategyPnlAccountant:
     """
 
     def __init__(self, fee_calculator: FeeCalculator | None = None) -> None:
-        self._fee_calculator: FeeCalculator = (
-            fee_calculator if fee_calculator is not None else AShareFeeCalculator()
-        )
+        self._fee_calculator: FeeCalculator = fee_calculator if fee_calculator is not None else AShareFeeCalculator()
         # (strategy_id, symbol) -> FIFO lot 队列
         self._lots: dict[tuple[str, str], deque[_Lot]] = defaultdict(deque)
         # (strategy_id, symbol) -> 累计已实现净 PnL
@@ -330,9 +328,8 @@ def shapley_strategy_attribution(
         for size in range(n):
             weight = factorial(size) * factorial(n - size - 1) / n_factorial
             for coalition in combinations(others, size):
-                marginal = (
-                    coalition_return(tuple(sorted((*coalition, target))))
-                    - coalition_return(tuple(sorted(coalition)))
+                marginal = coalition_return(tuple(sorted((*coalition, target)))) - coalition_return(
+                    tuple(sorted(coalition))
                 )
                 shapley[target] += weight * marginal
 

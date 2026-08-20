@@ -27,6 +27,7 @@ M4（50 号 §3 ⑥ 五零件接入）: regime_adapter（regime_detector 检测�
 （lineage_regime_run_id / lineage_feature_run_id / lineage_c1_run_id ...），
 供 query/Panel 按 run 串联 regime→feature→backtest→C1 链。
 """
+
 from __future__ import annotations
 
 from typing import Final

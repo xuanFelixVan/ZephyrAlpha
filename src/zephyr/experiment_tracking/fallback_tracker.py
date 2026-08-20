@@ -21,6 +21,7 @@
 依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 A（单一 JSON 后端）
 Version: 0.2.0（MLflow 退役）
 """
+
 from __future__ import annotations
 
 import json
@@ -78,10 +79,12 @@ class FallbackBackend:
         if current is None:
             return
         # 只记录路径引用，不复制（fallback query 层按 local_path 解析）
-        current["artifacts"].append({
-            "local_path": str(local_path),
-            "artifact_path": artifact_path,
-        })
+        current["artifacts"].append(
+            {
+                "local_path": str(local_path),
+                "artifact_path": artifact_path,
+            }
+        )
 
     def log_artifact_bytes(self, data: bytes, filename: str, artifact_path: str | None) -> None:
         current = getattr(self, "_current", None)
@@ -91,10 +94,12 @@ class FallbackBackend:
         target_dir = current_dir if artifact_path is None else current_dir / artifact_path
         target_dir.mkdir(parents=True, exist_ok=True)
         (target_dir / filename).write_bytes(data)
-        current["artifacts"].append({
-            "filename": filename,
-            "artifact_path": artifact_path,
-        })
+        current["artifacts"].append(
+            {
+                "filename": filename,
+                "artifact_path": artifact_path,
+            }
+        )
 
     def end_run(self, status: str) -> None:
         current = getattr(self, "_current", None)
@@ -104,8 +109,6 @@ class FallbackBackend:
         current["status"] = status
         current["end_time"] = datetime.now(UTC).isoformat()
         meta_path = current_dir / "run_meta.json"
-        meta_path.write_text(
-            json.dumps(current, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+        meta_path.write_text(json.dumps(current, ensure_ascii=False, indent=2), encoding="utf-8")
         del self._current
         del self._current_dir

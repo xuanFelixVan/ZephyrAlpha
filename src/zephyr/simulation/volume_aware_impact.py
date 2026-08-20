@@ -71,9 +71,7 @@ def _validate_common(notional: float, impact_coef: float) -> tuple[float, float]
         notional_f = float(notional)
         coef_f = float(impact_coef)
     except (TypeError, ValueError) as exc:
-        raise VolumeAwareImpactError(
-            f"notional/impact_coef必须是数值: {notional!r}, {impact_coef!r}"
-        ) from exc
+        raise VolumeAwareImpactError(f"notional/impact_coef必须是数值: {notional!r}, {impact_coef!r}") from exc
     if notional_f < 0:
         raise VolumeAwareImpactError(f"notional必须>=0, got {notional_f}")
     if coef_f < 0:
@@ -150,7 +148,4 @@ def volume_aware_sqrt_impact_batch(
         raise VolumeAwareImpactError(
             f"delta_weights与dollar_volumes长度必须一致, got {len(delta_weights)} vs {len(dollar_volumes)}"
         )
-    return [
-        volume_aware_sqrt_impact(dw, notional, dv, impact_coef)
-        for dw, dv in zip(delta_weights, dollar_volumes)
-    ]
+    return [volume_aware_sqrt_impact(dw, notional, dv, impact_coef) for dw, dv in zip(delta_weights, dollar_volumes)]

@@ -28,6 +28,7 @@
 元组分区键表（如 c1_market.technical_indicator，PARTITION BY (period, YYYYMM)）
 必须指定 --period；Parquet 按周期子目录分层（technical_indicator/60min/201901.parquet）。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -155,9 +156,7 @@ def _get_partition_expr(table: str) -> str:
 
 def _get_partitions(table: str, from_yyyymm: str, to_yyyymm: str, period: str | None = None) -> list[str]:
     """查询表在指定范围内的活跃分区列表（元组键表按 period 过滤并抽取 YYYYMM 段）。"""
-    r = ch_reader.query(
-        _SQL_LIST_PARTITIONS.format(db=table.split('.')[0], tbl=table.split('.')[1])
-    )
+    r = ch_reader.query(_SQL_LIST_PARTITIONS.format(db=table.split(".")[0], tbl=table.split(".")[1]))
     out: list[str] = []
     for line in r.strip().split("\n"):
         p = line.strip()
@@ -185,7 +184,10 @@ def _parquet_path(table: str, partition: str, period: str | None = None) -> path
 
 # ============== 三阶段原子操作 ==============
 
-def export_partition(table: str, partition: str, dry_run: bool = False, period: str | None = None) -> pathlib.Path | None:
+
+def export_partition(
+    table: str, partition: str, dry_run: bool = False, period: str | None = None
+) -> pathlib.Path | None:
     """阶段1: 从 ClickHouse 导出分区为 Parquet 到 E 盘。
 
     用 ClickHouse HTTP API 的 SELECT ... FORMAT Parquet 直接获取 Parquet 字节流，
@@ -244,7 +246,9 @@ def export_partition(table: str, partition: str, dry_run: bool = False, period: 
 
         elapsed = time.time() - t0
         size_mb = total_bytes / 1024 / 1024
-        log.info("  export 完成: %.1f MiB, %.1fs (%.1f MiB/s)", size_mb, elapsed, size_mb / elapsed if elapsed > 0 else 0)
+        log.info(
+            "  export 完成: %.1f MiB, %.1fs (%.1f MiB/s)", size_mb, elapsed, size_mb / elapsed if elapsed > 0 else 0
+        )
         return pq_path
 
     except Exception as e:
@@ -318,8 +322,7 @@ def _compare_sample_rows(ch_rows: list[dict], pq_path: pathlib.Path) -> bool:
     from collections import Counter
 
     pq_counter: Counter = Counter(
-        tuple(_normalize_val(v) for v in row)
-        for row in df[cols].itertuples(index=False, name=None)
+        tuple(_normalize_val(v) for v in row) for row in df[cols].itertuples(index=False, name=None)
     )
     for r in ch_rows:
         key = tuple(_normalize_val(r.get(c)) for c in cols)
@@ -350,9 +353,7 @@ def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: 
         return False
 
     # 2. ClickHouse 行数
-    r = ch_reader.query(
-        _SQL_COUNT_PARTITION.format(table=table, where=where)
-    ).strip()
+    r = ch_reader.query(_SQL_COUNT_PARTITION.format(table=table, where=where)).strip()
     ch_count = int(r) if r else 0
 
     # 行数比对（大分区允许 ±1 行容差：ClickHouse count() 元数据优化 vs FORMAT Parquet 已知差异）
@@ -372,9 +373,7 @@ def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: 
     #    防未合并重复幻影行被采中造成误判。
     if ch_count > 0 and ch_count <= 10_000_000:
         try:
-            sample_sql = ch_reader.inject_final(
-                _SQL_SAMPLE_RANDOM.format(table=table, where=where)
-            )
+            sample_sql = ch_reader.inject_final(_SQL_SAMPLE_RANDOM.format(table=table, where=where))
             ch_rows = json.loads(ch_reader.query(sample_sql)).get("data", [])
         except Exception as e:
             log.error("  verify 失败: 抽样查询异常: %s", e)
@@ -407,6 +406,7 @@ def drop_partition(table: str, partition: str, dry_run: bool = False, period: st
 
 # ============== 归档清单 ==============
 
+
 def _append_manifest(record: dict) -> None:
     """append-only 写入归档清单。"""
     MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -436,14 +436,14 @@ def _is_archived(table: str, partition: str, period: str | None = None) -> dict 
     旧清单记录无 period 键（get 返回 None），与非元组表 period=None 天然匹配。
     """
     for record in _read_manifest():
-        if (record.get("table") == table and record.get("partition") == partition
-                and record.get("period") == period):
+        if record.get("table") == table and record.get("partition") == partition and record.get("period") == period:
             if record.get("dropped"):
                 return record
     return None
 
 
 # ============== 原子归档操作 ==============
+
 
 def archive_partition(table: str, partition: str, dry_run: bool = False, period: str | None = None) -> bool:
     """三阶段原子归档: export → verify → drop。"""
@@ -483,17 +483,31 @@ def archive_partition(table: str, partition: str, dry_run: bool = False, period:
     if not drop_partition(table, partition, dry_run=dry_run, period=period):
         log.error("drop 失败，Parquet 已保留，可手动重试 drop")
         # 仍然记录清单（verified=true, dropped=false）
-        _append_manifest(_manifest_record(
-            table, partition, pq_path, dropped=False, period=period,
-            rows=rows, ch_size_bytes=ch_size,
-        ))
+        _append_manifest(
+            _manifest_record(
+                table,
+                partition,
+                pq_path,
+                dropped=False,
+                period=period,
+                rows=rows,
+                ch_size_bytes=ch_size,
+            )
+        )
         return False
 
     # 记录归档清单
-    _append_manifest(_manifest_record(
-        table, partition, pq_path, dropped=True, period=period,
-        rows=rows, ch_size_bytes=ch_size,
-    ))
+    _append_manifest(
+        _manifest_record(
+            table,
+            partition,
+            pq_path,
+            dropped=True,
+            period=period,
+            rows=rows,
+            ch_size_bytes=ch_size,
+        )
+    )
 
     log.info("归档完成: %s partition=%s period=%s ✓", table, partition, period)
     return True
@@ -519,11 +533,17 @@ def export_only_partition(table: str, partition: str, dry_run: bool = False, per
         if pq_path.exists():
             pq_path.unlink()
         return False
-    _append_manifest(_manifest_record(
-        table, partition, pq_path, dropped=False, period=period,
-        rows=_parquet_rows(pq_path),
-        ch_size_bytes=_ch_partition_size_bytes(table, partition, period),
-    ))
+    _append_manifest(
+        _manifest_record(
+            table,
+            partition,
+            pq_path,
+            dropped=False,
+            period=period,
+            rows=_parquet_rows(pq_path),
+            ch_size_bytes=_ch_partition_size_bytes(table, partition, period),
+        )
+    )
     log.info("纯备份完成: %s partition=%s period=%s ✓（分区未删除）", table, partition, period)
     return True
 
@@ -560,8 +580,12 @@ def _ch_partition_size_bytes(table: str, partition: str, period: str | None = No
 def _manifest_checksum(table: str, partition: str, period: str | None = None) -> str | None:
     """取该分区最新一条含 checksum_md5 的清单记录（restore 前校验用；存量记录无则 None）。"""
     for record in reversed(_read_manifest()):
-        if (record.get("table") == table and record.get("partition") == partition
-                and record.get("period") == period and record.get("checksum_md5")):
+        if (
+            record.get("table") == table
+            and record.get("partition") == partition
+            and record.get("period") == period
+            and record.get("checksum_md5")
+        ):
             return record["checksum_md5"]
     return None
 
@@ -597,17 +621,24 @@ def _manifest_record(
             record["checksum_md5"] = _file_md5(pq_path)
     if ch_size_bytes is not None:
         record["ch_size_bytes"] = ch_size_bytes
-        record["compress_ratio"] = (
-            round(record["parquet_size_bytes"] / ch_size_bytes, 4) if ch_size_bytes > 0 else None
-        )
+        record["compress_ratio"] = round(record["parquet_size_bytes"] / ch_size_bytes, 4) if ch_size_bytes > 0 else None
     return record
 
 
-def archive_range(table: str, from_yyyymm: str, to_yyyymm: str, dry_run: bool = False, period: str | None = None) -> None:
+def archive_range(
+    table: str, from_yyyymm: str, to_yyyymm: str, dry_run: bool = False, period: str | None = None
+) -> None:
     """批量归档指定范围内的分区。"""
     _require_period(table, period)
     partitions = _get_partitions(table, from_yyyymm, to_yyyymm, period=period)
-    log.info("=== 批量归档 %s period=%s, 范围 %s~%s, 共 %d 个分区 ===", table, period, from_yyyymm, to_yyyymm, len(partitions))
+    log.info(
+        "=== 批量归档 %s period=%s, 范围 %s~%s, 共 %d 个分区 ===",
+        table,
+        period,
+        from_yyyymm,
+        to_yyyymm,
+        len(partitions),
+    )
 
     if dry_run:
         for p in partitions:
@@ -639,6 +670,7 @@ def archive_range(table: str, from_yyyymm: str, to_yyyymm: str, dry_run: bool = 
 
 # ============== 查询/恢复 ==============
 
+
 def list_archived(table: str | None = None) -> None:
     """列出已归档分区。"""
     records = _read_manifest()
@@ -653,10 +685,12 @@ def list_archived(table: str | None = None) -> None:
     print("-" * 100)
     for r in records:
         size_mb = r.get("parquet_size_bytes", 0) / 1024 / 1024
-        print(f"{r.get('table',''):<35} {r.get('partition',''):<10} "
-              f"{'✓' if r.get('verified') else '✗':<6} "
-              f"{'✓' if r.get('dropped') else '✗':<6} "
-              f"{size_mb:<15.1f} {r.get('archived_at',''):<25}")
+        print(
+            f"{r.get('table', ''):<35} {r.get('partition', ''):<10} "
+            f"{'✓' if r.get('verified') else '✗':<6} "
+            f"{'✓' if r.get('dropped') else '✗':<6} "
+            f"{size_mb:<15.1f} {r.get('archived_at', ''):<25}"
+        )
 
 
 def stats() -> None:
@@ -689,13 +723,16 @@ def stats() -> None:
         total_count += info["count"]
 
     print("-" * 70)
-    print(f"{'合计':<35} {total_count:<10} {'':<8} {total_size/1024/1024:<15.1f} MiB")
+    print(f"{'合计':<35} {total_count:<10} {'':<8} {total_size / 1024 / 1024:<15.1f} MiB")
 
     # E 盘目录实际占用
     try:
         import shutil
+
         u = shutil.disk_usage("E:\\")
-        print(f"\nE 盘: 总计 {u.total/1024**3:.1f} GB, 已用 {(u.total-u.free)/1024**3:.1f} GB, 可用 {u.free/1024**3:.1f} GB")
+        print(
+            f"\nE 盘: 总计 {u.total / 1024**3:.1f} GB, 已用 {(u.total - u.free) / 1024**3:.1f} GB, 可用 {u.free / 1024**3:.1f} GB"
+        )
     except Exception:
         pass
 
@@ -726,7 +763,9 @@ def restore_partition(table: str, partition: str, period: str | None = None) -> 
         if actual_md5 != expected_md5:
             log.error(
                 "restore 拒绝: Parquet checksum 不符（manifest=%s, 实际=%s）——文件疑静默腐坏: %s",
-                expected_md5, actual_md5, pq_path,
+                expected_md5,
+                actual_md5,
+                pq_path,
             )
             return False
         log.info("  checksum 校验通过: %s", actual_md5)
@@ -755,7 +794,7 @@ def restore_partition(table: str, partition: str, period: str | None = None) -> 
         cols_clause = "(" + ", ".join(cols) + ")"
         chunk_size = 100_000
         for i in range(0, len(rows), chunk_size):
-            chunk = rows[i:i + chunk_size]
+            chunk = rows[i : i + chunk_size]
             client.execute(f"INSERT INTO {table} {cols_clause} VALUES", chunk)
             log.info("  写入 %d/%d 行", min(i + chunk_size, len(rows)), len(rows))
 
@@ -768,6 +807,7 @@ def restore_partition(table: str, partition: str, period: str | None = None) -> 
 
 
 # ============== CLI ==============
+
 
 def main():
     parser = argparse.ArgumentParser(description="ClickHouse 冷数据归档工具 (INV-RET-002)")

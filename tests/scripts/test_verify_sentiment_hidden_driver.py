@@ -1,6 +1,7 @@
 # [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md §3.7.4
 # [TTL] permanent
 """Hawkes+block-bootstrap 隐形驱动验证脚本测试（合成模式 + CSV 模式 + 退化输入）。"""
+
 from __future__ import annotations
 
 import importlib.util
@@ -28,10 +29,7 @@ class TestSyntheticMode:
         assert report["n_bootstrap"] == 50
         assert set(report["driver_verdict"]) == {"daban", "event_driven", "multifactor"}
         # 合成数据打板为强驱动设计 → ρ 应显著高于多因子
-        assert (
-            report["driver_verdict"]["daban"]["rho"]
-            > report["driver_verdict"]["multifactor"]["rho"]
-        )
+        assert report["driver_verdict"]["daban"]["rho"] > report["driver_verdict"]["multifactor"]["rho"]
         # 分层结果覆盖 5 阶段
         assert len(report["stratification"]) == 5
 
@@ -53,8 +51,11 @@ class TestSyntheticMode:
 
 class TestCsvMode:
     def _write_csv(self, path: pathlib.Path, n: int = 60, with_phase: bool = True):
-        lines = ["daban,multifactor,event_driven,intensity,phase" if with_phase
-                 else "daban,multifactor,event_driven,intensity"]
+        lines = [
+            "daban,multifactor,event_driven,intensity,phase"
+            if with_phase
+            else "daban,multifactor,event_driven,intensity"
+        ]
         for i in range(n):
             lam = 0.5 + (i % 10) * 0.1
             phase = ["冰点", "反核", "主升", "疯狂", "退潮"][i % 5]

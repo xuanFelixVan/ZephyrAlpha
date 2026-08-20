@@ -71,9 +71,9 @@ def test_5min_drop_with_volume_spike_triggers_observe():
     val = link.validate_post_buy(
         symbol="000001.SZ",
         entry_price=10.0,
-        current_price=9.85,   # 跌 1.5% > 1%
+        current_price=9.85,  # 跌 1.5% > 1%
         minutes_since_entry=4,
-        volume_ratio=1.8,     # > 1.5 放量
+        volume_ratio=1.8,  # > 1.5 放量
     )
     assert val.alert_level == PostBuyAlertLevel.OBSERVE
     assert "OBSERVE" in val.reason
@@ -87,7 +87,7 @@ def test_5min_drop_no_volume_spike_no_alert():
         entry_price=10.0,
         current_price=9.85,
         minutes_since_entry=4,
-        volume_ratio=1.2,     # < 1.5 未放量
+        volume_ratio=1.2,  # < 1.5 未放量
     )
     assert val.alert_level == PostBuyAlertLevel.NORMAL
 
@@ -98,7 +98,7 @@ def test_5min_small_drop_no_alert():
     val = link.validate_post_buy(
         symbol="000001.SZ",
         entry_price=10.0,
-        current_price=9.95,   # 跌 0.5% < 1%
+        current_price=9.95,  # 跌 0.5% < 1%
         minutes_since_entry=3,
         volume_ratio=2.0,
     )
@@ -113,8 +113,8 @@ def test_15min_break_ma_triggers_reduce_50():
         entry_price=10.0,
         current_price=9.80,
         minutes_since_entry=12,
-        intraday_ma=9.90,    # 分时均线
-        current_ma=9.85,     # 当前均线 < 分时均线(反弹无力)
+        intraday_ma=9.90,  # 分时均线
+        current_ma=9.85,  # 当前均线 < 分时均线(反弹无力)
     )
     assert val.alert_level == PostBuyAlertLevel.REDUCE_50
     assert "REDUCE_50" in val.reason
@@ -129,7 +129,7 @@ def test_15min_above_ma_no_alert():
         current_price=9.95,
         minutes_since_entry=12,
         intraday_ma=9.90,
-        current_ma=9.95,     # 当前均线 >= 分时均线
+        current_ma=9.95,  # 当前均线 >= 分时均线
     )
     assert val.alert_level == PostBuyAlertLevel.NORMAL
 
@@ -140,9 +140,9 @@ def test_30min_reverse_exceeds_2atr_triggers_full_stop():
     val = link.validate_post_buy(
         symbol="000001.SZ",
         entry_price=10.0,
-        current_price=9.60,   # 反向运动 0.40
+        current_price=9.60,  # 反向运动 0.40
         minutes_since_entry=25,
-        atr=0.15,             # 2×ATR = 0.30 < 0.40
+        atr=0.15,  # 2×ATR = 0.30 < 0.40
     )
     assert val.alert_level == PostBuyAlertLevel.FULL_STOP
     assert "FULL_STOP" in val.reason
@@ -154,9 +154,9 @@ def test_30min_reverse_below_2atr_no_alert():
     val = link.validate_post_buy(
         symbol="000001.SZ",
         entry_price=10.0,
-        current_price=9.85,   # 反向运动 0.15
+        current_price=9.85,  # 反向运动 0.15
         minutes_since_entry=28,
-        atr=0.15,             # 2×ATR = 0.30 > 0.15
+        atr=0.15,  # 2×ATR = 0.30 > 0.15
     )
     assert val.alert_level == PostBuyAlertLevel.NORMAL
 
@@ -171,7 +171,7 @@ def test_full_stop_priority_over_reduce_50():
     val = link.validate_post_buy(
         symbol="000001.SZ",
         entry_price=10.0,
-        current_price=9.50,    # 反向 0.50 > 2×ATR(0.15×2=0.30)
+        current_price=9.50,  # 反向 0.50 > 2×ATR(0.15×2=0.30)
         minutes_since_entry=14,  # <= 15 且 <= 30
         intraday_ma=9.90,
         current_ma=9.80,
@@ -186,7 +186,7 @@ def test_normal_when_no_conditions_met():
     val = link.validate_post_buy(
         symbol="000001.SZ",
         entry_price=10.0,
-        current_price=10.05,   # 微涨
+        current_price=10.05,  # 微涨
         minutes_since_entry=20,
     )
     assert val.alert_level == PostBuyAlertLevel.NORMAL

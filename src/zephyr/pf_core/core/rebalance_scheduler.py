@@ -181,17 +181,17 @@ logger = logging.getLogger(__name__)
 class RebalanceTriggerSource(str, Enum):
     """再平衡触发源 (优先级: risk_breach > drift > event > calendar)。"""
 
-    RISK_BREACH = "risk_breach"        # 风控告警 (E-RK-01/03, 最高优先级)
+    RISK_BREACH = "risk_breach"  # 风控告警 (E-RK-01/03, 最高优先级)
     DRIFT_THRESHOLD = "drift_threshold"  # 漂移阈值
-    EVENT = "event"                    # 外部事件
-    CALENDAR = "calendar"              # 日历 (周五)
-    NONE = "none"                      # 未触发
+    EVENT = "event"  # 外部事件
+    CALENDAR = "calendar"  # 日历 (周五)
+    NONE = "none"  # 未触发
 
 
 class RebalanceDecision(str, Enum):
     """再平衡决策结果。"""
 
-    REBALANCE = "rebalance"            # 触发+成本收益通过 → 执行再平衡
+    REBALANCE = "rebalance"  # 触发+成本收益通过 → 执行再平衡
     SKIP_NO_TRIGGER = "skip_no_trigger"  # 无触发源
     SKIP_COST_BENEFIT = "skip_cost_benefit"  # 触发但成本收益不通过
 
@@ -382,14 +382,10 @@ class RebalanceScheduler:
         self._validate_weights(current_weights, target_weights)
 
         # 1. 计算漂移
-        portfolio_drift, max_single_drift = self._compute_drift(
-            current_weights, target_weights
-        )
+        portfolio_drift, max_single_drift = self._compute_drift(current_weights, target_weights)
 
         # 2. 触发源评估 (优先级: risk > drift > event > calendar)
-        trigger_source = self._check_triggers(
-            portfolio_drift, max_single_drift, now, risk_alert, event_trigger
-        )
+        trigger_source = self._check_triggers(portfolio_drift, max_single_drift, now, risk_alert, event_trigger)
         triggered = trigger_source != RebalanceTriggerSource.NONE
 
         # 3. 成本收益分析
@@ -414,9 +410,15 @@ class RebalanceScheduler:
             and risk_limits is not None
         ):
             new_tp = self._reoptimize(
-                target_weights, covariance, risk_limits,
-                list(target_weights.keys()), current_weights,
-                strategy_id, portfolio_id, trigger_source, now,
+                target_weights,
+                covariance,
+                risk_limits,
+                list(target_weights.keys()),
+                current_weights,
+                strategy_id,
+                portfolio_id,
+                trigger_source,
+                now,
             )
 
         return RebalanceEvaluation(
@@ -448,10 +450,7 @@ class RebalanceScheduler:
         # 优先级: risk_breach > drift > event > calendar
         if risk_alert:
             return RebalanceTriggerSource.RISK_BREACH
-        if (
-            portfolio_drift > cfg.portfolio_drift_threshold
-            or max_single_drift > cfg.single_asset_drift_threshold
-        ):
+        if portfolio_drift > cfg.portfolio_drift_threshold or max_single_drift > cfg.single_asset_drift_threshold:
             return RebalanceTriggerSource.DRIFT_THRESHOLD
         if event_trigger:
             return RebalanceTriggerSource.EVENT
@@ -481,11 +480,7 @@ class RebalanceScheduler:
             for s in set(current_weights) | set(target_weights)
         )
         # 压力市场成本系数
-        multiplier = (
-            cfg.stress_cost_multiplier
-            if market_state in cfg.stress_market_states
-            else 1.0
-        )
+        multiplier = cfg.stress_cost_multiplier if market_state in cfg.stress_market_states else 1.0
         cost = turnover * cfg.cost_rate * multiplier
         benefit = portfolio_drift
         passed = benefit > cfg.improvement_ratio * cost
@@ -508,6 +503,7 @@ class RebalanceScheduler:
         """调用 PC-02 组合优化器重新优化, 返回新 TargetPortfolio。"""
         try:
             import numpy as np  # 延迟导入
+
             result = self._optimizer.optimize(  # type: ignore[union-attr]
                 candidate_weights=target_weights,
                 risk_limits=risk_limits,
@@ -527,9 +523,7 @@ class RebalanceScheduler:
     # ── 内部: 工具 ──
 
     @staticmethod
-    def _compute_drift(
-        current: dict[str, float], target: dict[str, float]
-    ) -> tuple[float, float]:
+    def _compute_drift(current: dict[str, float], target: dict[str, float]) -> tuple[float, float]:
         """计算组合漂移 (portfolio_drift, max_single_drift)。
 
         portfolio_drift = Σ|Δw| / 2 (归一化漂移)
@@ -546,18 +540,12 @@ class RebalanceScheduler:
         return total_delta / 2.0, max_delta
 
     @staticmethod
-    def _validate_weights(
-        current: dict[str, float], target: dict[str, float]
-    ) -> None:
+    def _validate_weights(current: dict[str, float], target: dict[str, float]) -> None:
         if not current and not target:
             raise InvalidRebalanceInputError("weights cannot both be empty")
         for name, w in current.items():
             if w < 0:
-                raise InvalidRebalanceInputError(
-                    f"current weight for {name} must be non-negative, got {w}"
-                )
+                raise InvalidRebalanceInputError(f"current weight for {name} must be non-negative, got {w}")
         for name, w in target.items():
             if w < 0:
-                raise InvalidRebalanceInputError(
-                    f"target weight for {name} must be non-negative, got {w}"
-                )
+                raise InvalidRebalanceInputError(f"target weight for {name} must be non-negative, got {w}")

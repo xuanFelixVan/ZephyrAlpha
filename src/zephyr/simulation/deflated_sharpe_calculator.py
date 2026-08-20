@@ -246,7 +246,7 @@ def _skewness(values: list[float]) -> float:
     m3 = sum((v - m) ** 3 for v in values) / n
     if m2 == 0:
         return 0.0
-    return m3 / (m2 ** 1.5)
+    return m3 / (m2**1.5)
 
 
 def _kurtosis(values: list[float]) -> float:
@@ -262,7 +262,7 @@ def _kurtosis(values: list[float]) -> float:
     m4 = sum((v - m) ** 4 for v in values) / n
     if m2 == 0:
         return 0.0
-    return m4 / (m2 ** 2) - 3.0
+    return m4 / (m2**2) - 3.0
 
 
 def _expected_max_sharpe(num_trials: int) -> float:
@@ -289,9 +289,7 @@ def _expected_max_sharpe(num_trials: int) -> float:
     return sqrt_2ln - numerator / (2.0 * sqrt_2ln)
 
 
-def _variance_of_sharpe(
-    sharpe: float, skewness: float, kurtosis: float, num_obs: int
-) -> float:
+def _variance_of_sharpe(sharpe: float, skewness: float, kurtosis: float, num_obs: int) -> float:
     """Sharpe 估计量方差 V[SR] (非正态修正)。
 
     V[SR] = (1 - γ·SR + (κ-1)/4·SR²) / (T - 1)
@@ -308,9 +306,7 @@ def _variance_of_sharpe(
     if num_obs <= 1:
         return 0.0
     sr = sharpe
-    return (1.0 - skewness * sr + (kurtosis - 1.0) / 4.0 * sr * sr) / (
-        num_obs - 1
-    )
+    return (1.0 - skewness * sr + (kurtosis - 1.0) / 4.0 * sr * sr) / (num_obs - 1)
 
 
 class DeflatedSharpeCalculator:
@@ -424,7 +420,12 @@ class DeflatedSharpeCalculator:
         )
         _logger.debug(
             "DSR计算: SR=%.4f SR_ann=%.4f DSR=%.4f N=%d T=%d significant=%s",
-            sr, sr_annual, dsr, num_trials, n, is_significant,
+            sr,
+            sr_annual,
+            dsr,
+            num_trials,
+            n,
+            is_significant,
         )
         return result
 
@@ -463,13 +464,15 @@ class DeflatedSharpeCalculator:
 
         trend: list[DSRTrendPoint] = []
         for i in range(window, len(returns) + 1):
-            window_returns = returns[i - window:i]
+            window_returns = returns[i - window : i]
             result = self.calculate(window_returns, num_trials=num_trials)
-            trend.append(DSRTrendPoint(
-                index=i - 1,
-                dsr=result.dsr,
-                sharpe=result.sharpe_annualized,
-            ))
+            trend.append(
+                DSRTrendPoint(
+                    index=i - 1,
+                    dsr=result.dsr,
+                    sharpe=result.sharpe_annualized,
+                )
+            )
         return trend
 
 

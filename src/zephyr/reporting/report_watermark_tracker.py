@@ -153,10 +153,7 @@ def _compute_record_hash(
     prev_hash: str,
 ) -> str:
     """计算链指纹——链接前水印形成哈希链。"""
-    raw = (
-        f"{watermark_id}|{report_id}|{source}|{timestamp.isoformat()}|"
-        f"{content_hash}|{signature}|{prev_hash}"
-    )
+    raw = f"{watermark_id}|{report_id}|{source}|{timestamp.isoformat()}|{content_hash}|{signature}|{prev_hash}"
     return _sha256(raw)
 
 
@@ -215,8 +212,13 @@ class WatermarkTracker:
             content_hash = _compute_content_hash(content)
             signature = _compute_signature(source, content_hash, timestamp)
             record_hash = _compute_record_hash(
-                watermark_id, report_id, source, timestamp,
-                content_hash, signature, prev_hash,
+                watermark_id,
+                report_id,
+                source,
+                timestamp,
+                content_hash,
+                signature,
+                prev_hash,
             )
 
             wm = ReportWatermark(
@@ -233,7 +235,10 @@ class WatermarkTracker:
 
             _logger.debug(
                 "stamp: report_id=%s source=%s content_hash=%s record_hash=%s",
-                report_id, wm.source, content_hash[:8], record_hash[:8],
+                report_id,
+                wm.source,
+                content_hash[:8],
+                record_hash[:8],
             )
             return wm
 
@@ -279,9 +284,7 @@ class WatermarkTracker:
             )
             return False
         # 校验签名一致性
-        expected_sig = _compute_signature(
-            watermark.source, watermark.content_hash, watermark.timestamp
-        )
+        expected_sig = _compute_signature(watermark.source, watermark.content_hash, watermark.timestamp)
         if expected_sig != watermark.watermark_signature:
             _logger.warning(
                 "verify_watermark FAIL: report_id=%s signature 不匹配（水印被伪造）",
@@ -312,28 +315,34 @@ class WatermarkTracker:
                 if wm.prev_watermark_hash != expected_prev:
                     _logger.warning(
                         "verify_chain FAIL: report_id=%s wm#%d prev_hash 不匹配",
-                        report_id, i,
+                        report_id,
+                        i,
                     )
                     return False
                 # signature 重算
-                expected_sig = _compute_signature(
-                    wm.source, wm.content_hash, wm.timestamp
-                )
+                expected_sig = _compute_signature(wm.source, wm.content_hash, wm.timestamp)
                 if wm.watermark_signature != expected_sig:
                     _logger.warning(
                         "verify_chain FAIL: report_id=%s wm#%d signature 不匹配",
-                        report_id, i,
+                        report_id,
+                        i,
                     )
                     return False
                 # record_hash 重算
                 expected_record = _compute_record_hash(
-                    wm.watermark_id, wm.report_id, wm.source, wm.timestamp,
-                    wm.content_hash, wm.watermark_signature, wm.prev_watermark_hash,
+                    wm.watermark_id,
+                    wm.report_id,
+                    wm.source,
+                    wm.timestamp,
+                    wm.content_hash,
+                    wm.watermark_signature,
+                    wm.prev_watermark_hash,
                 )
                 if wm.record_hash != expected_record:
                     _logger.warning(
                         "verify_chain FAIL: report_id=%s wm#%d record_hash 不匹配",
-                        report_id, i,
+                        report_id,
+                        i,
                     )
                     return False
                 expected_prev = wm.record_hash

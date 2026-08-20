@@ -27,6 +27,7 @@ v3.1.0 变更 (#ARCH-047):
   - 图表生成委托 ChartFactory.make_trend_line (callback仅编排)
   - 测试环境(无 panel)仅返回 dict payload, 便于断言
 """
+
 from __future__ import annotations
 
 import logging

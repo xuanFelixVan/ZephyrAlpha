@@ -144,9 +144,7 @@ class TestPreKellyAggregate:
                 "target_portfolio": {"600519": 0.06, CASH_SYMBOL: 0.44},
             },
         ]
-        pre = aggregator.pre_kelly_aggregate(
-            targets=targets, current_holdings={}, total_budget=1.0, industry_map={}
-        )
+        pre = aggregator.pre_kelly_aggregate(targets=targets, current_holdings={}, total_budget=1.0, industry_map={})
         assert CASH_SYMBOL not in pre.summed_weights
         assert pre.summed_weights["600519"] == pytest.approx(0.03, abs=1e-6)
 
@@ -160,9 +158,7 @@ class TestPreKellyAggregate:
 
     def test_empty_targets(self, aggregator):
         """空 targets 输入 → 空 summed_weights。"""
-        pre = aggregator.pre_kelly_aggregate(
-            targets=[], current_holdings={}, total_budget=1.0, industry_map={}
-        )
+        pre = aggregator.pre_kelly_aggregate(targets=[], current_holdings={}, total_budget=1.0, industry_map={})
         assert pre.summed_weights == {}
         assert pre.conflicts == []
         assert pre.total_exposure_pre_kelly == 0.0
@@ -176,9 +172,7 @@ class TestPreKellyAggregate:
                 "target_portfolio": {"600519": 0.06},
             },
         ]
-        pre = aggregator.pre_kelly_aggregate(
-            targets=targets, current_holdings={}, total_budget=0.0, industry_map={}
-        )
+        pre = aggregator.pre_kelly_aggregate(targets=targets, current_holdings={}, total_budget=0.0, industry_map={})
         assert pre.summed_weights["600519"] == 0.0
 
 
@@ -300,9 +294,7 @@ class TestPostKellyClipSingleName:
             industry_map={},
             regime_cap=0.95,
         )
-        assert result["firm_positions"]["600519"]["target_weight"] == pytest.approx(
-            SINGLE_NAME_CAP, abs=1e-6
-        )
+        assert result["firm_positions"]["600519"]["target_weight"] == pytest.approx(SINGLE_NAME_CAP, abs=1e-6)
         assert result["constraint_checks"]["single_name"]["triggered"] is True
         assert len(result["constraint_checks"]["single_name"]["cuts"]) == 1
 
@@ -315,9 +307,7 @@ class TestPostKellyClipSingleName:
             industry_map={},
             regime_cap=0.95,
         )
-        assert result["firm_positions"]["600519"]["target_weight"] == pytest.approx(
-            0.06, abs=1e-6
-        )
+        assert result["firm_positions"]["600519"]["target_weight"] == pytest.approx(0.06, abs=1e-6)
         assert result["constraint_checks"]["single_name"]["triggered"] is False
 
     def test_cut_ratio_recorded(self, aggregator):
@@ -383,9 +373,7 @@ class TestPostKellyClipLiquidity:
             adv_data=adv_data,
         )
         # adv_pct=0.08/0.60≈0.133 → moderate → 削半
-        assert result["firm_positions"]["600519"]["target_weight"] == pytest.approx(
-            0.04, abs=1e-6
-        )
+        assert result["firm_positions"]["600519"]["target_weight"] == pytest.approx(0.04, abs=1e-6)
         cut = result["constraint_checks"]["liquidity_cap"]["cuts"][0]
         assert cut["tier"] == "moderate"
 
@@ -440,8 +428,7 @@ class TestPostKellyClipSector:
         # 白酒合计 0.32 > 0.30 → scale=0.30/0.32=0.9375
         assert result["constraint_checks"]["sector"]["triggered"] is True
         total_sector = sum(
-            result["firm_positions"][sym]["target_weight"]
-            for sym in ["600519", "000001", "600036", "601318"]
+            result["firm_positions"][sym]["target_weight"] for sym in ["600519", "000001", "600036", "601318"]
         )
         assert total_sector == pytest.approx(SECTOR_ABSOLUTE_CAP, abs=1e-6)
 
@@ -536,9 +523,7 @@ class TestPostKellyClipCash:
         )
         # 总暴露=0.16，CASH=1.0-0.16=0.84
         assert result["cash_ratio"] == pytest.approx(0.84, abs=1e-6)
-        assert result["firm_positions"][CASH_SYMBOL]["target_weight"] == pytest.approx(
-            0.84, abs=1e-6
-        )
+        assert result["firm_positions"][CASH_SYMBOL]["target_weight"] == pytest.approx(0.84, abs=1e-6)
 
     def test_cash_negative_fallback_zero(self, aggregator):
         """总暴露 > total_budget 时 CASH 兜底为 0。"""
@@ -564,11 +549,7 @@ class TestPostKellyClipCash:
             industry_map={},
             regime_cap=0.95,
         )
-        stock_sum = sum(
-            pos["target_weight"]
-            for sym, pos in result["firm_positions"].items()
-            if sym != CASH_SYMBOL
-        )
+        stock_sum = sum(pos["target_weight"] for sym, pos in result["firm_positions"].items() if sym != CASH_SYMBOL)
         assert stock_sum + result["cash_ratio"] == pytest.approx(1.0, abs=1e-6)
 
 
@@ -783,6 +764,7 @@ class TestAggregatePassthrough:
 
     def test_aggregate_with_kelly_fn(self, aggregator, two_targets_dict):
         """有 kelly_fn → 使用外部 Kelly 结果。"""
+
         def mock_kelly(weights: dict) -> dict:
             return {k: v * 0.5 for k, v in weights.items()}  # 减半
 
@@ -794,9 +776,7 @@ class TestAggregatePassthrough:
             kelly_fn=mock_kelly,
         )
         # 600519 原 0.055 → Kelly 后 0.0275
-        assert result.firm_positions["600519"].target_weight == pytest.approx(
-            0.0275, abs=1e-6
-        )
+        assert result.firm_positions["600519"].target_weight == pytest.approx(0.0275, abs=1e-6)
 
 
 # ══ 11. 字段名漂移适配（P0 修复验证） ═════════════════════════════════════
@@ -825,9 +805,7 @@ class TestFieldNameAdaptation:
             regime_cap=0.95,
         )
         # 应有非 CASH 持仓
-        non_cash = {
-            k: v for k, v in result.firm_positions.items() if k != CASH_SYMBOL
-        }
+        non_cash = {k: v for k, v in result.firm_positions.items() if k != CASH_SYMBOL}
         assert len(non_cash) > 0
         assert result.total_exposure > 0
 
@@ -835,6 +813,7 @@ class TestFieldNameAdaptation:
         """positions 值为 TargetWeight 对象时取 .target_weight。"""
         # 模拟 TargetWeight 对象（用 namedtuple 模拟）
         from collections import namedtuple
+
         MockTW = namedtuple("MockTW", ["target_weight", "reason", "confidence"])
         targets = [
             {
@@ -843,9 +822,7 @@ class TestFieldNameAdaptation:
                 "positions": {"600519": MockTW(0.06, "test", 0.9)},
             },
         ]
-        pre = aggregator.pre_kelly_aggregate(
-            targets=targets, current_holdings={}, total_budget=1.0, industry_map={}
-        )
+        pre = aggregator.pre_kelly_aggregate(targets=targets, current_holdings={}, total_budget=1.0, industry_map={})
         assert pre.summed_weights["600519"] == pytest.approx(0.03, abs=1e-6)
 
 
@@ -862,9 +839,7 @@ class TestInvariants:
             {"strategy_id": "S2", "budget_used": 1.0, "target_portfolio": {"X": 0.05}},
         ]
         # total_budget=2.0 → scale 各 0.5 → 0.015+0.025=0.04
-        pre = aggregator.pre_kelly_aggregate(
-            targets=targets, current_holdings={}, total_budget=2.0, industry_map={}
-        )
+        pre = aggregator.pre_kelly_aggregate(targets=targets, current_holdings={}, total_budget=2.0, industry_map={})
         assert pre.summed_weights["X"] == pytest.approx(0.04, abs=1e-6)
 
     def test_pro_rata_not_priority(self, aggregator):
@@ -883,6 +858,7 @@ class TestInvariants:
     def test_no_mvo_no_covariance(self, aggregator):
         """代码无 scipy/numpy 优化器依赖，无协方差计算。"""
         import inspect
+
         source = inspect.getsource(type(aggregator))
         assert "cvxpy" not in source
         assert "scipy.optimize" not in source
@@ -900,10 +876,9 @@ class TestInvariants:
             for i in range(3)
         ]
         import time
+
         start = time.perf_counter()
-        pre = aggregator.pre_kelly_aggregate(
-            targets=targets, current_holdings={}, total_budget=1.0, industry_map={}
-        )
+        pre = aggregator.pre_kelly_aggregate(targets=targets, current_holdings={}, total_budget=1.0, industry_map={})
         elapsed = time.perf_counter() - start
         assert elapsed < 0.01  # <10ms
         assert len(pre.summed_weights) == 5
@@ -1136,9 +1111,7 @@ class TestSectorDeviationClip:
             sector_overlay_active=True,  # dev_cap=0.15
             sector_benchmark_weights={"白酒": 0.25},  # limit=0.40 > 0.30 绝对顶
         )
-        pos_sum = sum(
-            result["firm_positions"][f"W{i}"]["target_weight"] for i in range(6)
-        )
+        pos_sum = sum(result["firm_positions"][f"W{i}"]["target_weight"] for i in range(6))
         assert pos_sum == pytest.approx(0.30, abs=1e-6)
         types = [c["type"] for c in result["constraint_checks"]["sector"]["cuts"]]
         assert "deviation_cap" in types and "absolute_cap" in types

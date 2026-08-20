@@ -60,7 +60,6 @@ class SymbolIndex:
         """写入：imports（Stage 4 公共化）。"""
         self._imports = value
 
-
     def index_file(self, file_path: str | Path) -> None:
         """索引单个文件."""
         path = Path(file_path)

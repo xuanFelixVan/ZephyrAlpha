@@ -55,6 +55,7 @@ def full_subscriber(isolated_bus: EventBusBackpressure) -> F5EventSubscriber:
     """
     from zephyr.governance.escalation.escalation_models import EscalationEvent, RuleCategory
     from zephyr.governance.resilience_governance.f5_boot_integration import F5BootIntegration
+
     integration = F5BootIntegration()
     boot = integration.on_startup()
     assert boot.success is True, f"F5 boot failed: {boot.errors}"
@@ -134,6 +135,7 @@ class TestF5EventTopics:
 class TestConstruction:
     def test_default_construction_uses_global_bus(self):
         from zephyr.governance.resilience_governance.f5_event_subscriber import default_bus
+
         sub = F5EventSubscriber()
         assert sub.bus is default_bus
 
@@ -225,7 +227,9 @@ class TestSubscribeAll:
             assert r.topic in F5_EVENT_TOPICS
             assert r.handler_name in ("handle_deadlock", "handle_escalation", "handle_conflict")
 
-    def test_subscribe_registers_handler_in_bus(self, subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure):
+    def test_subscribe_registers_handler_in_bus(
+        self, subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure
+    ):
         subscriber.subscribe_all()
         assert TOPIC_DEADLOCK_DETECTED in isolated_bus.subscribed_topics
         assert TOPIC_ESCALATION_NEEDED in isolated_bus.subscribed_topics
@@ -553,7 +557,9 @@ class TestCreateF5EventSubscriber:
 
 
 class TestEndToEndEventFlow:
-    def test_deadlock_event_triggers_break_deadlock(self, full_subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure):
+    def test_deadlock_event_triggers_break_deadlock(
+        self, full_subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure
+    ):
         full_subscriber.subscribe_all()
         ddl = full_subscriber.deadlock_detector
         ddl.add_edge("a", "b")
@@ -565,7 +571,9 @@ class TestEndToEndEventFlow:
         assert log[0].topic == TOPIC_DEADLOCK_DETECTED
         assert log[0].handled is True
 
-    def test_escalation_event_triggers_evaluate(self, full_subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure):
+    def test_escalation_event_triggers_evaluate(
+        self, full_subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure
+    ):
         full_subscriber.subscribe_all()
         ok = full_subscriber.emit_escalation_event(
             category="deadlock",
@@ -578,7 +586,9 @@ class TestEndToEndEventFlow:
         assert log[0].topic == TOPIC_ESCALATION_NEEDED
         assert log[0].success is True
 
-    def test_conflict_event_triggers_arbitrate(self, full_subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure):
+    def test_conflict_event_triggers_arbitrate(
+        self, full_subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure
+    ):
         full_subscriber.subscribe_all()
         ok = full_subscriber.emit_conflict_event(
             agent_a={"agent_id": "agent-a", "role": "builder", "tasks_completed": 3},

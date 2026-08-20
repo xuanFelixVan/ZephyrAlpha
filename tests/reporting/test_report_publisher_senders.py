@@ -35,9 +35,7 @@ def _publish(pub: ReportPublisher, channels: list[DistributionChannel]):
 class TestDefaultPendingUnchanged:
     def test_no_sender_webhook_email_stay_pending(self):
         pub = ReportPublisher()
-        _, dists = _publish(
-            pub, [DistributionChannel.ARCHIVE, DistributionChannel.WEBHOOK, DistributionChannel.EMAIL]
-        )
+        _, dists = _publish(pub, [DistributionChannel.ARCHIVE, DistributionChannel.WEBHOOK, DistributionChannel.EMAIL])
         by_channel = {d.channel: d.status for d in dists}
         assert by_channel[DistributionChannel.ARCHIVE] is DistributionStatus.SENT
         assert by_channel[DistributionChannel.WEBHOOK] is DistributionStatus.PENDING
@@ -47,9 +45,7 @@ class TestDefaultPendingUnchanged:
 class TestInjectedSenders:
     def test_webhook_sender_success_marks_sent(self):
         seen: list[str] = []
-        pub = ReportPublisher(
-            webhook_sender=lambda archived: seen.append(archived.archive_id) or True
-        )
+        pub = ReportPublisher(webhook_sender=lambda archived: seen.append(archived.archive_id) or True)
         archived, dists = _publish(pub, [DistributionChannel.WEBHOOK])
         assert dists[0].status is DistributionStatus.SENT
         assert seen == [archived.archive_id]
@@ -71,9 +67,7 @@ class TestInjectedSenders:
             raise ConnectionError("webhook unreachable")
 
         pub = ReportPublisher(email_sender=_boom)
-        archived, dists = _publish(
-            pub, [DistributionChannel.ARCHIVE, DistributionChannel.EMAIL]
-        )
+        archived, dists = _publish(pub, [DistributionChannel.ARCHIVE, DistributionChannel.EMAIL])
         email_dist = next(d for d in dists if d.channel is DistributionChannel.EMAIL)
         assert email_dist.status is DistributionStatus.FAILED
         assert "ConnectionError" in email_dist.error_message

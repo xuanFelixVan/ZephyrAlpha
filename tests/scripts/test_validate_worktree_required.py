@@ -22,6 +22,7 @@
 
 测试隔离: 用 tmp_path 临时 git 仓库 + 子进程调用脚本。
 """
+
 from __future__ import annotations
 
 import json
@@ -53,9 +54,7 @@ def _init_repo(repo_dir: Path) -> None:
     repo_dir.mkdir(parents=True, exist_ok=True)
     env = _git_env()
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
-    subprocess.run(
-        ["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True
-    )
+    subprocess.run(["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
         cwd=str(repo_dir),
@@ -135,9 +134,7 @@ class TestWorktreeRequiredGate:
         skip_log.parent.mkdir(parents=True, exist_ok=True)
         with skip_log.open("a", encoding="utf-8") as f:
             for i in range(5):
-                f.write(
-                    json.dumps({"timestamp": 0, "session_id": "sess-repeat", "cwd": str(tmp_path)}) + "\n"
-                )
+                f.write(json.dumps({"timestamp": 0, "session_id": "sess-repeat", "cwd": str(tmp_path)}) + "\n")
 
         r = _run_hook(tmp_path, env=env)
         assert r.returncode == 1, f"超阈值应阻断 exit 1: {r.stderr}"
@@ -171,9 +168,7 @@ class TestWorktreeRequiredGate:
         skip_log.parent.mkdir(parents=True, exist_ok=True)
         with skip_log.open("a", encoding="utf-8") as f:
             for i in range(5):
-                f.write(
-                    json.dumps({"timestamp": 0, "session_id": "sess-A", "cwd": str(tmp_path)}) + "\n"
-                )
+                f.write(json.dumps({"timestamp": 0, "session_id": "sess-A", "cwd": str(tmp_path)}) + "\n")
 
         # session-B 应从 0 开始（warn 而非 block）
         env = _git_env()

@@ -13,11 +13,12 @@
 # [ERROR_CONTRACT] CH不可达->退出码2; 盘点完成->退出码0
 # [TESTS] python scripts/ch/_data_inventory.py (smoke: 全库扫描+输出报告)
 # [TTL] permanent
-# noqa: m02-manual  一次性诊断脚本
+# noqa: m02-manual  一次性诊断脚本（人工触发专用）
 """全库数据盘点：逐表审计行数/日期范围/空表/缺失日期/引擎/大小。
 
 输出完整数据资产清单，用于"收口"——确认数据完整性 + 识别缺口。
 """
+
 from __future__ import annotations
 
 import os
@@ -99,9 +100,7 @@ def main() -> None:
     for db, tbl, date_col in key_tables:
         try:
             # 检查表是否存在
-            exists = c.execute(
-                f"SELECT count() FROM system.tables WHERE database='{db}' AND name='{tbl}'"
-            )[0][0]
+            exists = c.execute(f"SELECT count() FROM system.tables WHERE database='{db}' AND name='{tbl}'")[0][0]
             if not exists:
                 print(f"{db}.{tbl:30s} (表不存在)")
                 continue
@@ -152,9 +151,7 @@ def main() -> None:
     print("\n[6] 磁盘空间")
     print("-" * 90)
     disk = c.execute(
-        "SELECT name, free_space/1024/1024/1024 AS free_gb, "
-        "total_space/1024/1024/1024 AS total_gb "
-        "FROM system.disks"
+        "SELECT name, free_space/1024/1024/1024 AS free_gb, total_space/1024/1024/1024 AS total_gb FROM system.disks"
     )
     for n, free, total in disk:
         pct = free / total * 100 if total else 0

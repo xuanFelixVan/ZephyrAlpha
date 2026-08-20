@@ -35,26 +35,31 @@ class TestFinalizerAutoShutdown:
     def setup_method(self) -> None:
         """每个测试前重置状态。"""
         import zephyr.trading.finalizer as fin_mod
+
         fin_mod._monitoring_finalizers_registered = False  # real private; Stage-4 alias is an import-time snapshot
         fin_mod._global_finalizer = None  # real singleton slot
 
     def test_finalizer_importable(self) -> None:
         """Finalizer 可导入。"""
         from zephyr.trading.finalizer import Finalizer
+
         assert Finalizer is not None
 
     def test_finalizer_instantiable(self) -> None:
         """Finalizer 可实例化。"""
         from zephyr.trading.finalizer import Finalizer
+
         f = Finalizer()
         assert f is not None
 
     def test_finalizer_register(self) -> None:
         """Finalizer 可注册 cleanup 函数。"""
         from zephyr.trading.finalizer import Finalizer
+
         f = Finalizer()
 
         called = []
+
         def _cleanup():
             called.append(True)
 
@@ -64,6 +69,7 @@ class TestFinalizerAutoShutdown:
     def test_finalizer_run(self) -> None:
         """Finalizer run 执行所有 cleanup。"""
         from zephyr.trading.finalizer import Finalizer
+
         f = Finalizer()
 
         called = []
@@ -79,6 +85,7 @@ class TestFinalizerAutoShutdown:
     def test_finalizer_exception_safety(self) -> None:
         """Finalizer cleanup 异常安全。"""
         from zephyr.trading.finalizer import Finalizer
+
         f = Finalizer()
 
         def _bad_cleanup():
@@ -97,6 +104,7 @@ class TestFinalizerAutoShutdown:
     def test_get_finalizer_singleton(self) -> None:
         """get_finalizer 返回单例。"""
         from zephyr.trading.finalizer import get_finalizer
+
         f1 = get_finalizer()
         f2 = get_finalizer()
         assert f1 is f2
@@ -104,6 +112,7 @@ class TestFinalizerAutoShutdown:
     def test_register_monitoring_finalizers(self) -> None:
         """register_monitoring_finalizers 注册监控 cleanup。"""
         from zephyr.trading.finalizer import Finalizer, register_monitoring_finalizers
+
         f = Finalizer()
 
         initial = len(f.cleanup_fns)
@@ -115,6 +124,7 @@ class TestFinalizerAutoShutdown:
     def test_register_monitoring_finalizers_idempotent(self) -> None:
         """register_monitoring_finalizers 幂等。"""
         from zephyr.trading.finalizer import Finalizer, register_monitoring_finalizers
+
         f = Finalizer()
 
         register_monitoring_finalizers(f)
@@ -127,6 +137,7 @@ class TestFinalizerAutoShutdown:
     def test_register_monitoring_finalizers_auto(self) -> None:
         """register_monitoring_finalizers_auto 使用全局单例。"""
         from zephyr.trading.finalizer import get_finalizer, register_monitoring_finalizers_auto
+
         register_monitoring_finalizers_auto()
         f = get_finalizer()
         assert len(f.cleanup_fns) == 2
@@ -134,6 +145,7 @@ class TestFinalizerAutoShutdown:
     def test_monitor_flush_cleanup(self) -> None:
         """monitor-flush cleanup 执行成功。"""
         from zephyr.trading.finalizer import get_finalizer, register_monitoring_finalizers_auto
+
         register_monitoring_finalizers_auto()
         f = get_finalizer()
         results = f.run()
@@ -142,6 +154,7 @@ class TestFinalizerAutoShutdown:
     def test_monitor_health_snapshot_cleanup(self) -> None:
         """monitor-health-snapshot cleanup 执行成功。"""
         from zephyr.trading.finalizer import get_finalizer, register_monitoring_finalizers_auto
+
         register_monitoring_finalizers_auto()
         f = get_finalizer()
         results = f.run()
@@ -153,6 +166,7 @@ class TestFinalizerAutoShutdown:
         from zephyr.shared.event_bus import bus
         from zephyr.shared.lifecycle.health import get_event_health_log, subscribe_monitoring_events
         from zephyr.trading.finalizer import get_finalizer, register_monitoring_finalizers_auto
+
         health_mod.monitoring_events_subscribed = False
         health_mod.event_health_log = []
 
@@ -180,12 +194,14 @@ class TestFinalizerAutoShutdown:
         import inspect
 
         from zephyr.trading import boot_hooks
+
         src = inspect.getsource(boot_hooks)
         assert "register_monitoring_finalizers_auto" in src, "boot_hooks 未集成 finalizer"
 
     def test_finalizer_cleanup_order(self) -> None:
         """Finalizer cleanup 按注册顺序执行。"""
         from zephyr.trading.finalizer import Finalizer
+
         f = Finalizer()
 
         order = []
@@ -199,6 +215,7 @@ class TestFinalizerAutoShutdown:
     def test_finalizer_empty_run(self) -> None:
         """Finalizer 无 cleanup 时 run 返回空结果。"""
         from zephyr.trading.finalizer import Finalizer
+
         f = Finalizer()
         results = f.run()
         assert results == {}

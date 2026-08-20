@@ -177,8 +177,8 @@ class StrategyStatus(str, Enum):
     """策略生命周期状态 (单调推进, DEPRECATED 为终态不可复活)。"""
 
     REGISTERED = "registered"  # 已注册, 未测试
-    TESTING = "testing"        # 模拟盘测试中
-    ACTIVE = "active"          # 已激活 (可能处冷启动期)
+    TESTING = "testing"  # 模拟盘测试中
+    ACTIVE = "active"  # 已激活 (可能处冷启动期)
     DEPRECATED = "deprecated"  # 已废弃 (终态)
 
     @property
@@ -195,9 +195,9 @@ class DecisionDimension(str, Enum):
     """策略四维决策维度。"""
 
     SELECTION = "selection"  # 选股: 标的选择
-    BUY = "buy"              # 买入: 买入信号
-    SELL = "sell"            # 卖出: 卖出信号
-    POSITION = "position"    # 仓位: 目标权重
+    BUY = "buy"  # 买入: 买入信号
+    SELL = "sell"  # 卖出: 卖出信号
+    POSITION = "position"  # 仓位: 目标权重
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -250,25 +250,15 @@ class StrategyEngineConfig:
 
     def __post_init__(self) -> None:
         if not 0 < self.cold_start_factor <= 1:
-            raise ColdStartViolationError(
-                f"cold_start_factor must be in (0,1], got {self.cold_start_factor}"
-            )
+            raise ColdStartViolationError(f"cold_start_factor must be in (0,1], got {self.cold_start_factor}")
         if self.cold_start_days < 0:
-            raise ColdStartViolationError(
-                f"cold_start_days must be >=0, got {self.cold_start_days}"
-            )
+            raise ColdStartViolationError(f"cold_start_days must be >=0, got {self.cold_start_days}")
         if self.max_strategies < 1:
-            raise StrategyLifecycleError(
-                f"max_strategies must be >=1, got {self.max_strategies}"
-            )
+            raise StrategyLifecycleError(f"max_strategies must be >=1, got {self.max_strategies}")
         if self.min_testing_days < 0:
-            raise StrategyLifecycleError(
-                f"min_testing_days must be >=0, got {self.min_testing_days}"
-            )
+            raise StrategyLifecycleError(f"min_testing_days must be >=0, got {self.min_testing_days}")
         if not 0 < self.ic_decay_threshold <= 1:
-            raise StrategyLifecycleError(
-                f"ic_decay_threshold must be in (0,1], got {self.ic_decay_threshold}"
-            )
+            raise StrategyLifecycleError(f"ic_decay_threshold must be in (0,1], got {self.ic_decay_threshold}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -428,20 +418,14 @@ class StrategyEngine:
         existing = self._records.get(meta.strategy_id)
         if existing is not None:
             if existing.version == meta.version:
-                raise StrategyLifecycleError(
-                    f"strategy {meta.strategy_id} v{meta.version} already registered"
-                )
+                raise StrategyLifecycleError(f"strategy {meta.strategy_id} v{meta.version} already registered")
             # 版本变更: 旧版本归档为 DEPRECATED
             self._archive_record(existing, reason="version_bump", now=now)
 
         if len(self._records) >= self._config.max_strategies and meta.strategy_id not in self._records:
-            active_count = sum(
-                1 for r in self._records.values() if not r.status.is_terminal
-            )
+            active_count = sum(1 for r in self._records.values() if not r.status.is_terminal)
             if active_count >= self._config.max_strategies:
-                raise StrategyLifecycleError(
-                    f"max_strategies ({self._config.max_strategies}) reached"
-                )
+                raise StrategyLifecycleError(f"max_strategies ({self._config.max_strategies}) reached")
 
         record = StrategyRecord(
             strategy_id=meta.strategy_id,
@@ -487,7 +471,7 @@ class StrategyEngine:
         elif (current, to) not in _VALID_TRANSITIONS:
             raise StrategyLifecycleError(
                 f"illegal transition {current.value} -> {to.value} for {strategy_id}"
-                f" (valid: {[t[1].value for t in _VALID_TRANSITIONS if t[0]==current]})"
+                f" (valid: {[t[1].value for t in _VALID_TRANSITIONS if t[0] == current]})"
             )
 
         # TESTING → ACTIVE 门禁: 须满足 min_testing_days
@@ -497,8 +481,7 @@ class StrategyEngine:
             and not self._testing_period_satisfied(record)
         ):
             raise StrategyLifecycleError(
-                f"cannot promote {strategy_id}: testing period "
-                f"({self._config.min_testing_days}d) not satisfied"
+                f"cannot promote {strategy_id}: testing period ({self._config.min_testing_days}d) not satisfied"
             )
 
         now = self._clock()
@@ -520,7 +503,10 @@ class StrategyEngine:
         self._lifecycle_log.append(event)
         logger.info(
             "StrategyEngine: %s %s -> %s (%s)",
-            strategy_id, prev_status, to.value, reason or "",
+            strategy_id,
+            prev_status,
+            to.value,
+            reason or "",
         )
         return event
 
@@ -528,9 +514,7 @@ class StrategyEngine:
 
     def select_active(self) -> list[StrategyRecord]:
         """返回所有 ACTIVE 策略记录 (PC-02 消费其 target_weights)。"""
-        return [
-            r for r in self._records.values() if r.status == StrategyStatus.ACTIVE
-        ]
+        return [r for r in self._records.values() if r.status == StrategyStatus.ACTIVE]
 
     def select_runnable(self) -> list[StrategyRecord]:
         """返回所有可运行策略 (TESTING + ACTIVE, 含模拟盘)。"""
@@ -570,9 +554,7 @@ class StrategyEngine:
         """
         record = self._require(strategy_id)
         if not record.status.is_runnable:
-            raise StrategyLifecycleError(
-                f"strategy {strategy_id} not runnable (status={record.status.value})"
-            )
+            raise StrategyLifecycleError(f"strategy {strategy_id} not runnable (status={record.status.value})")
 
         now = now or self._clock()
         strategy = self._strategies[strategy_id]
@@ -582,11 +564,7 @@ class StrategyEngine:
         raw_weights = strategy.generate_target_weights(universe, signals, constraints)
 
         # 2. 过滤宇宙外 + 非正权重
-        target_weights = {
-            sym: float(w)
-            for sym, w in raw_weights.items()
-            if sym in universe and float(w) > 0
-        }
+        target_weights = {sym: float(w) for sym, w in raw_weights.items() if sym in universe and float(w) > 0}
 
         # 3. 冷启动约束
         cold_start_active = self._in_cold_start(record, now)
@@ -659,9 +637,7 @@ class StrategyEngine:
         self._require(strategy_id)
         if len(ic_history) < 2:
             return False
-        baseline = sum(ic_history[: max(1, len(ic_history) // 2)]) / max(
-            1, len(ic_history) // 2
-        )
+        baseline = sum(ic_history[: max(1, len(ic_history) // 2)]) / max(1, len(ic_history) // 2)
         recent = ic_history[-1]
         if baseline <= 0:
             return False
@@ -670,7 +646,9 @@ class StrategyEngine:
         if degraded:
             logger.warning(
                 "StrategyEngine: %s degraded (IC decay=%.2f > %.2f)",
-                strategy_id, decay, self._config.ic_decay_threshold,
+                strategy_id,
+                decay,
+                self._config.ic_decay_threshold,
             )
         return degraded
 
@@ -722,9 +700,7 @@ class StrategyEngine:
         if m is None:
             m = strategy.meta()
         if m is None:
-            raise StrategyLifecycleError(
-                f"strategy {type(strategy).__name__} has no StrategyMeta"
-            )
+            raise StrategyLifecycleError(f"strategy {type(strategy).__name__} has no StrategyMeta")
         return m
 
     def _in_cold_start(self, record: StrategyRecord, now: datetime) -> bool:
@@ -757,9 +733,7 @@ class StrategyEngine:
     def _compute_decay(ic_history: list[float]) -> float:
         if len(ic_history) < 2:
             return 0.0
-        baseline = sum(ic_history[: max(1, len(ic_history) // 2)]) / max(
-            1, len(ic_history) // 2
-        )
+        baseline = sum(ic_history[: max(1, len(ic_history) // 2)]) / max(1, len(ic_history) // 2)
         if baseline <= 0:
             return 0.0
         return (baseline - ic_history[-1]) / baseline

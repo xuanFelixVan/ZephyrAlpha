@@ -5,6 +5,7 @@
 
 覆盖: 订单创建/成交全链路/状态查询/持仓快照/开放订单/Facade协调行为。
 """
+
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -62,9 +63,7 @@ def make_manager(
         order_repo=InMemoryOrderRepository(),
         position_tracker=PositionTracker(initial_cash=initial_cash),
         fill_handler=fill_handler,
-        position_snapshot_repo=(
-            InMemoryPositionSnapshotRepository() if with_snapshot_repo else None
-        ),
+        position_snapshot_repo=(InMemoryPositionSnapshotRepository() if with_snapshot_repo else None),
     )
 
 
@@ -77,15 +76,23 @@ class TestCreateOrder:
     def test_create_order_persists(self):
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         assert mgr.get_order(order.order_id) is order
 
     def test_create_order_fields(self):
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "strat-1", OrderSide.SELL, OrderType.MARKET, Decimal("200"),
+            "600000",
+            "strat-1",
+            OrderSide.SELL,
+            OrderType.MARKET,
+            Decimal("200"),
         )
         assert order.symbol == "600000"
         assert order.strategy_id == "strat-1"
@@ -121,13 +128,19 @@ class TestProcessFill:
     def test_full_chain_single_fill(self):
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
         fill = make_fill(
-            order_id=order.order_id, qty=Decimal("100"),
-            price=Decimal("10.00"), commission=Decimal("5"),
+            order_id=order.order_id,
+            qty=Decimal("100"),
+            price=Decimal("10.00"),
+            commission=Decimal("5"),
         )
 
         summary = mgr.process_fill(fill, order)
@@ -146,14 +159,20 @@ class TestProcessFill:
     def test_partial_then_complete(self):
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
 
         f1 = make_fill(
-            fill_id="f1", order_id=order.order_id,
-            qty=Decimal("30"), price=Decimal("10.00"),
+            fill_id="f1",
+            order_id=order.order_id,
+            qty=Decimal("30"),
+            price=Decimal("10.00"),
         )
         s1 = mgr.process_fill(f1, order)
         assert s1.is_complete is False
@@ -161,8 +180,10 @@ class TestProcessFill:
         assert order.filled_quantity == Decimal("30")
 
         f2 = make_fill(
-            fill_id="f2", order_id=order.order_id,
-            qty=Decimal("70"), price=Decimal("11.00"),
+            fill_id="f2",
+            order_id=order.order_id,
+            qty=Decimal("70"),
+            price=Decimal("11.00"),
         )
         s2 = mgr.process_fill(f2, order)
         assert s2.is_complete is True
@@ -174,24 +195,25 @@ class TestProcessFill:
         """蓝图 §8 用例：3笔fill → order FILLED + position 正确。"""
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
 
         mgr.process_fill(
-            make_fill(fill_id="f1", order_id=order.order_id,
-                      qty=Decimal("30"), price=Decimal("10.00")),
+            make_fill(fill_id="f1", order_id=order.order_id, qty=Decimal("30"), price=Decimal("10.00")),
             order,
         )
         mgr.process_fill(
-            make_fill(fill_id="f2", order_id=order.order_id,
-                      qty=Decimal("50"), price=Decimal("11.00")),
+            make_fill(fill_id="f2", order_id=order.order_id, qty=Decimal("50"), price=Decimal("11.00")),
             order,
         )
         s3 = mgr.process_fill(
-            make_fill(fill_id="f3", order_id=order.order_id,
-                      qty=Decimal("20"), price=Decimal("12.00")),
+            make_fill(fill_id="f3", order_id=order.order_id, qty=Decimal("20"), price=Decimal("12.00")),
             order,
         )
 
@@ -205,24 +227,30 @@ class TestProcessFill:
         mgr = make_manager(initial_cash=Decimal("1000000"))
         # 先买入 100 股 @10（佣金5）
         buy = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         buy.status = OrderStatus.SUBMITTED
         mgr.process_fill(
-            make_fill(fill_id="b1", order_id=buy.order_id,
-                      qty=Decimal("100"), price=Decimal("10.00")),
+            make_fill(fill_id="b1", order_id=buy.order_id, qty=Decimal("100"), price=Decimal("10.00")),
             buy,
         )
         # 卖出 60 股 @11（佣金5）
         sell = mgr.create_order(
-            "600000", "test", OrderSide.SELL, OrderType.LIMIT,
-            Decimal("60"), Decimal("11.00"),
+            "600000",
+            "test",
+            OrderSide.SELL,
+            OrderType.LIMIT,
+            Decimal("60"),
+            Decimal("11.00"),
         )
         sell.status = OrderStatus.SUBMITTED
         mgr.process_fill(
-            make_fill(fill_id="s1", order_id=sell.order_id,
-                      qty=Decimal("60"), price=Decimal("11.00")),
+            make_fill(fill_id="s1", order_id=sell.order_id, qty=Decimal("60"), price=Decimal("11.00")),
             sell,
         )
 
@@ -234,8 +262,12 @@ class TestProcessFill:
     def test_process_fill_persists_order(self):
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
         mgr.process_fill(make_fill(order_id=order.order_id, qty=Decimal("50")), order)
@@ -247,13 +279,16 @@ class TestProcessFill:
     def test_process_fill_returns_summary(self):
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
         summary = mgr.process_fill(
-            make_fill(order_id=order.order_id, qty=Decimal("40"),
-                      price=Decimal("10.50"), commission=Decimal("3")),
+            make_fill(order_id=order.order_id, qty=Decimal("40"), price=Decimal("10.50"), commission=Decimal("3")),
             order,
         )
         assert summary.order_id == order.order_id
@@ -273,8 +308,12 @@ class TestOrderStateQuery:
     def test_get_order_state_with_fill(self):
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
         mgr.process_fill(make_fill(order_id=order.order_id, qty=Decimal("30")), order)
@@ -288,8 +327,12 @@ class TestOrderStateQuery:
     def test_get_order_state_no_fill(self):
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         state = mgr.get_order_state(order.order_id)
         assert state is not None
@@ -304,8 +347,12 @@ class TestOrderStateQuery:
     def test_order_state_is_frozen(self):
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
         mgr.process_fill(make_fill(order_id=order.order_id, qty=Decimal("30")), order)
@@ -324,13 +371,16 @@ class TestPositionSnapshot:
         """蓝图 §8 用例：持仓快照查询返回正确 holdings/cash。"""
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
         mgr.process_fill(
-            make_fill(order_id=order.order_id, qty=Decimal("100"),
-                      price=Decimal("10.00")),
+            make_fill(order_id=order.order_id, qty=Decimal("100"), price=Decimal("10.00")),
             order,
         )
 
@@ -343,13 +393,16 @@ class TestPositionSnapshot:
         """蓝图 §8 用例：持仓快照持久化 → position_repo 有记录。"""
         mgr = make_manager(with_snapshot_repo=True)
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
         mgr.process_fill(
-            make_fill(order_id=order.order_id, qty=Decimal("100"),
-                      price=Decimal("10.00")),
+            make_fill(order_id=order.order_id, qty=Decimal("100"), price=Decimal("10.00")),
             order,
         )
 
@@ -405,13 +458,16 @@ class TestOpenOrders:
     def test_get_open_orders_after_fill(self):
         mgr = make_manager()
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
         mgr.process_fill(
-            make_fill(order_id=order.order_id, qty=Decimal("100"),
-                      price=Decimal("10.00")),
+            make_fill(order_id=order.order_id, qty=Decimal("100"), price=Decimal("10.00")),
             order,
         )
         # 完全成交后不再开放
@@ -428,12 +484,17 @@ class TestFacadeBehavior:
         """不注入 fill_handler，内部应自动创建可用实例。"""
         mgr = make_manager(fill_handler=None)
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
         summary = mgr.process_fill(
-            make_fill(order_id=order.order_id, qty=Decimal("100")), order,
+            make_fill(order_id=order.order_id, qty=Decimal("100")),
+            order,
         )
         assert summary.is_complete is True
 
@@ -442,8 +503,12 @@ class TestFacadeBehavior:
         shared = FillHandler()
         mgr = make_manager(fill_handler=shared)
         order = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         order.status = OrderStatus.SUBMITTED
         mgr.process_fill(make_fill(order_id=order.order_id, qty=Decimal("100")), order)
@@ -459,23 +524,29 @@ class TestFacadeBehavior:
         """两笔不同标的的订单，持仓互不干扰。"""
         mgr = make_manager()
         o1 = mgr.create_order(
-            "600000", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("100"), Decimal("10.00"),
+            "600000",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("100"),
+            Decimal("10.00"),
         )
         o1.status = OrderStatus.SUBMITTED
         mgr.process_fill(
-            make_fill(fill_id="f1", order_id=o1.order_id, symbol="600000",
-                      qty=Decimal("100"), price=Decimal("10.00")),
+            make_fill(fill_id="f1", order_id=o1.order_id, symbol="600000", qty=Decimal("100"), price=Decimal("10.00")),
             o1,
         )
         o2 = mgr.create_order(
-            "600001", "test", OrderSide.BUY, OrderType.LIMIT,
-            Decimal("50"), Decimal("20.00"),
+            "600001",
+            "test",
+            OrderSide.BUY,
+            OrderType.LIMIT,
+            Decimal("50"),
+            Decimal("20.00"),
         )
         o2.status = OrderStatus.SUBMITTED
         mgr.process_fill(
-            make_fill(fill_id="f2", order_id=o2.order_id, symbol="600001",
-                      qty=Decimal("50"), price=Decimal("20.00")),
+            make_fill(fill_id="f2", order_id=o2.order_id, symbol="600001", qty=Decimal("50"), price=Decimal("20.00")),
             o2,
         )
 

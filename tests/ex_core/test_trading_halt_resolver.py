@@ -63,19 +63,25 @@ class TestStatusQuery:
     def test_intraday_halt_remove_from_target(self):
         """盘中临停 → HALTED_REMOVE_FROM_TARGET。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            halt_type=HaltType.INTRADAY_PRICE_LIMIT,
-            is_cross_day=False,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                halt_type=HaltType.INTRADAY_PRICE_LIMIT,
+                is_cross_day=False,
+            ),
+        )
         assert resolver.check_order_allowed("600000.SH") is HaltStatus.HALTED_REMOVE_FROM_TARGET
 
     def test_cross_day_halt_release_prepaid(self):
         """跨日停牌 → HALTED_RELEASE_PREPAID。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            halt_type=HaltType.CROSS_DAY_REVIEW,
-            is_cross_day=True,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                halt_type=HaltType.CROSS_DAY_REVIEW,
+                is_cross_day=True,
+            ),
+        )
         assert resolver.check_order_allowed("600000.SH") is HaltStatus.HALTED_RELEASE_PREPAID
 
     def test_halted_symbols_list(self):
@@ -91,12 +97,20 @@ class TestStatusQuery:
     def test_cross_day_halted_symbols(self):
         """cross_day_halted_symbols 只返回跨日停牌票。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            symbol="600000.SH", is_cross_day=True,
-        ))
-        resolver.update_halt_status("000001.SZ", _make_halt_info(
-            symbol="000001.SZ", is_cross_day=False,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                symbol="600000.SH",
+                is_cross_day=True,
+            ),
+        )
+        resolver.update_halt_status(
+            "000001.SZ",
+            _make_halt_info(
+                symbol="000001.SZ",
+                is_cross_day=False,
+            ),
+        )
 
         cross_day = resolver.cross_day_halted_symbols()
         assert cross_day == ["600000.SH"]
@@ -121,9 +135,13 @@ class TestFilterTargetWeights:
     def test_intraday_halt_removed_from_target(self):
         """盘中临停票从目标移除。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            symbol="600000.SH", is_cross_day=False,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                symbol="600000.SH",
+                is_cross_day=False,
+            ),
+        )
         targets = {"600000.SH": 0.1, "000001.SZ": 0.2}
 
         filtered, actions = resolver.filter_target_weights(targets)
@@ -137,13 +155,18 @@ class TestFilterTargetWeights:
     def test_cross_day_halt_removed_and_release_prepaid_for_held(self):
         """持仓票跨日停牌 → 移除目标 + 释放预占。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            symbol="600000.SH", is_cross_day=True,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                symbol="600000.SH",
+                is_cross_day=True,
+            ),
+        )
         targets = {"600000.SH": 0.1, "000001.SZ": 0.2}
 
         filtered, actions = resolver.filter_target_weights(
-            targets, held_symbols={"600000.SH"},
+            targets,
+            held_symbols={"600000.SH"},
         )
 
         assert "600000.SH" not in filtered
@@ -154,13 +177,18 @@ class TestFilterTargetWeights:
     def test_cross_day_halt_no_release_for_non_held(self):
         """非持仓票跨日停牌 → 移除目标但不释放预占（无持仓可释放）。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            symbol="600000.SH", is_cross_day=True,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                symbol="600000.SH",
+                is_cross_day=True,
+            ),
+        )
         targets = {"600000.SH": 0.1}
 
         filtered, actions = resolver.filter_target_weights(
-            targets, held_symbols=set(),  # 不持仓
+            targets,
+            held_symbols=set(),  # 不持仓
         )
 
         assert "600000.SH" not in filtered
@@ -169,9 +197,13 @@ class TestFilterTargetWeights:
     def test_prepaid_released_only_once(self):
         """同一票跨日停牌，预占只释放一次（幂等）。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            symbol="600000.SH", is_cross_day=True,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                symbol="600000.SH",
+                is_cross_day=True,
+            ),
+        )
         targets = {"600000.SH": 0.1}
 
         # 第一次过滤：释放预占
@@ -192,17 +224,25 @@ class TestPositionHalt:
     def test_intraday_keep_position(self):
         """持仓票盘中临停 → HALTED_KEEP_POSITION（不动）。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            symbol="600000.SH", is_cross_day=False,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                symbol="600000.SH",
+                is_cross_day=False,
+            ),
+        )
         assert resolver.check_position_halt("600000.SH") is HaltStatus.HALTED_KEEP_POSITION
 
     def test_cross_day_release_prepaid(self):
         """持仓票跨日停牌 → HALTED_RELEASE_PREPAID。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            symbol="600000.SH", is_cross_day=True,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                symbol="600000.SH",
+                is_cross_day=True,
+            ),
+        )
         assert resolver.check_position_halt("600000.SH") is HaltStatus.HALTED_RELEASE_PREPAID
 
     def test_normal_position(self):
@@ -220,12 +260,20 @@ class TestClearResumed:
     def test_clear_resumed_returns_resumed_symbols(self):
         """clear_resumed 返回已复牌的 symbol。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            symbol="600000.SH", is_halted=True,
-        ))
-        resolver.update_halt_status("000001.SZ", _make_halt_info(
-            symbol="000001.SZ", is_halted=False,  # 已复牌
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                symbol="600000.SH",
+                is_halted=True,
+            ),
+        )
+        resolver.update_halt_status(
+            "000001.SZ",
+            _make_halt_info(
+                symbol="000001.SZ",
+                is_halted=False,  # 已复牌
+            ),
+        )
 
         resumed = resolver.clear_resumed()
         assert "000001.SZ" in resumed
@@ -235,17 +283,25 @@ class TestClearResumed:
     def test_resumed_after_prepaid_release_reevaluate(self):
         """跨日停牌释放预占后复牌 → 标记 RESUMED_REEVALUATE。"""
         resolver = TradingHaltResolver()
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            symbol="600000.SH", is_cross_day=True,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                symbol="600000.SH",
+                is_cross_day=True,
+            ),
+        )
         targets = {"600000.SH": 0.1}
         # 第一次：跨日停牌释放预占
         resolver.filter_target_weights(targets, held_symbols={"600000.SH"})
 
         # 复牌
-        resolver.update_halt_status("600000.SH", _make_halt_info(
-            symbol="600000.SH", is_halted=False,
-        ))
+        resolver.update_halt_status(
+            "600000.SH",
+            _make_halt_info(
+                symbol="600000.SH",
+                is_halted=False,
+            ),
+        )
 
         # 第二次：应标记重新评估
         filtered, actions = resolver.filter_target_weights(targets, held_symbols={"600000.SH"})

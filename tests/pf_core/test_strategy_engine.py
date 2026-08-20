@@ -121,10 +121,7 @@ def test_register_version_bump_archives_old():
     assert record.version == "2.0.0"
     assert record.status == StrategyStatus.REGISTERED
     # 旧版本被归档为 DEPRECATED (在生命周期日志中)
-    deprecate_events = [
-        e for e in engine.lifecycle_log
-        if e.new_status == "deprecated" and e.reason == "version_bump"
-    ]
+    deprecate_events = [e for e in engine.lifecycle_log if e.new_status == "deprecated" and e.reason == "version_bump"]
     assert len(deprecate_events) == 1
 
 
@@ -421,8 +418,10 @@ def test_auto_degrade_no_action_when_not_degraded():
 def test_select_active_returns_only_active():
     clock = _FixedClock()
     engine = StrategyEngine(clock=clock)
-    s1 = _StubStrategy(); s1._meta = _meta(sid="s1")
-    s2 = _StubStrategy(); s2._meta = _meta(sid="s2")
+    s1 = _StubStrategy()
+    s1._meta = _meta(sid="s1")
+    s2 = _StubStrategy()
+    s2._meta = _meta(sid="s2")
     engine.register(s1)
     engine.register(s2)
     engine.transition("s1", StrategyStatus.TESTING)
@@ -432,8 +431,10 @@ def test_select_active_returns_only_active():
 
 def test_count_and_list_all():
     engine = StrategyEngine(clock=_FixedClock())
-    s1 = _StubStrategy(); s1._meta = _meta(sid="s1")
-    s2 = _StubStrategy(); s2._meta = _meta(sid="s2")
+    s1 = _StubStrategy()
+    s1._meta = _meta(sid="s1")
+    s2 = _StubStrategy()
+    s2._meta = _meta(sid="s2")
     engine.register(s1)
     engine.register(s2)
     assert engine.count() == 2

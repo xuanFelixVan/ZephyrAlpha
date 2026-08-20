@@ -22,6 +22,7 @@
   - 盘口失衡计算 + 构造参数校验
   - 注册表发现（strategy_id="intraday-surge-fall"）
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -150,11 +151,15 @@ class TestOnTickDecisions:
         """冲高+回落+卖盘压力（ask>bid）→ 卖出 target_weight=0。"""
         # 10.00 → 10.06(+0.6% 冲高) → 10.04(从峰值 10.06 回落 0.198%)
         s = IntradaySurgeFallStrategy(
-            surge_threshold=0.003, fall_threshold=0.001, use_order_book=True,
+            surge_threshold=0.003,
+            fall_threshold=0.001,
+            use_order_book=True,
         )
         results = _feed(
-            s, [10.00, 10.06, 10.04],
-            bid_vol_1=50.0, ask_vol_1=200.0,  # 卖盘压力（ob_imbalance<0）
+            s,
+            [10.00, 10.06, 10.04],
+            bid_vol_1=50.0,
+            ask_vol_1=200.0,  # 卖盘压力（ob_imbalance<0）
         )
         sells = [r for r in results if r]
         assert len(sells) == 1
@@ -164,8 +169,10 @@ class TestOnTickDecisions:
         """冲高+回落但买盘支撑（ob_imbalance>=0）→ 盘口滤子拦截，不卖。"""
         s = IntradaySurgeFallStrategy(use_order_book=True)
         results = _feed(
-            s, [10.00, 10.06, 10.04],
-            bid_vol_1=200.0, ask_vol_1=50.0,  # 买盘支撑（ob_imbalance>0）
+            s,
+            [10.00, 10.06, 10.04],
+            bid_vol_1=200.0,
+            ask_vol_1=50.0,  # 买盘支撑（ob_imbalance>0）
         )
         assert all(r == {} for r in results)
 
@@ -189,7 +196,9 @@ class TestOnTickDecisions:
     def test_flat_sufficient_dip_buys_back(self) -> None:
         """flat 态下较卖出价回落 >= dip → 买回 target_weight=base_weight。"""
         s = IntradaySurgeFallStrategy(
-            use_order_book=False, dip_threshold=0.003, base_weight=0.8,
+            use_order_book=False,
+            dip_threshold=0.003,
+            base_weight=0.8,
         )
         # 卖出（卖出价 10.04）
         _feed(s, [10.00, 10.06, 10.04])
@@ -229,8 +238,10 @@ class TestWindowEviction:
     def test_old_ticks_evicted_baseline_updates(self) -> None:
         """30s 窗口外的旧 tick 被淘汰，baseline 更新为新窗口最旧价。"""
         s = IntradaySurgeFallStrategy(
-            window_seconds=30, use_order_book=False,
-            surge_threshold=0.003, fall_threshold=0.001,
+            window_seconds=30,
+            use_order_book=False,
+            surge_threshold=0.003,
+            fall_threshold=0.001,
         )
         base = datetime(2026, 7, 31, 10, 0, 0)
         # 10.00 起步，10s 后到 10.05，再过 25s（距首 tick 35s）回 10.04
@@ -254,7 +265,7 @@ class TestWindowEviction:
         base = datetime(2026, 7, 31, 10, 0, 0)
         prices_ts = [
             (10.00, base),
-            (10.06, base + timedelta(seconds=5)),   # +0.6% 冲高
+            (10.06, base + timedelta(seconds=5)),  # +0.6% 冲高
             (10.04, base + timedelta(seconds=10)),  # 从峰值 10.06 回落 0.198%
         ]
         results = []

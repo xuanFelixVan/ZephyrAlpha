@@ -208,9 +208,7 @@ class DetectionResult:
 
 def _build_result(issues: list[BiasIssue]) -> DetectionResult:
     """从偏差清单构建不可变结果(排序 + 统计)。"""
-    ordered = sorted(
-        issues, key=lambda x: _SEVERITY_ORDER[x.severity], reverse=True
-    )
+    ordered = sorted(issues, key=lambda x: _SEVERITY_ORDER[x.severity], reverse=True)
     critical = sum(1 for i in ordered if i.severity == BiasSeverity.CRITICAL)
     max_sev = ordered[0].severity if ordered else None
     return DetectionResult(
@@ -290,9 +288,9 @@ class LookAheadBiasDetector:
 
         if feature_columns is None:
             feature_columns = [
-                c for c in df.columns
-                if c != label_column and c != timestamp_column
-                and pd.api.types.is_numeric_dtype(df[c])
+                c
+                for c in df.columns
+                if c != label_column and c != timestamp_column and pd.api.types.is_numeric_dtype(df[c])
             ]
 
         # 列存在性校验
@@ -311,9 +309,7 @@ class LookAheadBiasDetector:
         issues: list[BiasIssue] = []
 
         # 1. 列名扫描
-        issues.extend(
-            self._scan_column_names(feature_columns, label_column)
-        )
+        issues.extend(self._scan_column_names(feature_columns, label_column))
 
         # 2. 标签泄露
         if label_column and label_column in feature_columns:
@@ -342,21 +338,17 @@ class LookAheadBiasDetector:
         result = _build_result(issues)
         _logger.debug(
             "Look-ahead扫描: clean=%s issues=%d critical=%d",
-            result.is_clean, result.total_issues, result.critical_count,
+            result.is_clean,
+            result.total_issues,
+            result.critical_count,
         )
         return result
 
-    def _scan_column_names(
-        self, feature_columns: list[str], label_column: str | None
-    ) -> list[BiasIssue]:
+    def _scan_column_names(self, feature_columns: list[str], label_column: str | None) -> list[BiasIssue]:
         """按列名模式扫描前瞻特征。"""
         issues: list[BiasIssue] = []
-        lowered_targets = tuple(
-            p.lower() for p in self._config.target_name_patterns
-        )
-        lowered_forwards = tuple(
-            p.lower() for p in self._config.forward_name_patterns
-        )
+        lowered_targets = tuple(p.lower() for p in self._config.target_name_patterns)
+        lowered_forwards = tuple(p.lower() for p in self._config.forward_name_patterns)
         for col in feature_columns:
             cl = col.lower()
             for pat in lowered_targets:
@@ -366,10 +358,7 @@ class LookAheadBiasDetector:
                             bias_type=BiasType.FORWARD_COLUMN_NAME,
                             severity=BiasSeverity.HIGH,
                             column=col,
-                            description=(
-                                f"特征列 '{col}' 名称匹配目标模式 '{pat}'"
-                                "——疑似标签/目标泄露"
-                            ),
+                            description=(f"特征列 '{col}' 名称匹配目标模式 '{pat}'——疑似标签/目标泄露"),
                             evidence=f"name='{col}' matches '{pat}'",
                         )
                     )
@@ -382,10 +371,7 @@ class LookAheadBiasDetector:
                                 bias_type=BiasType.FORWARD_COLUMN_NAME,
                                 severity=BiasSeverity.MEDIUM,
                                 column=col,
-                                description=(
-                                    f"特征列 '{col}' 名称匹配前瞻模式 '{pat}'"
-                                    "——疑似使用未来数据"
-                                ),
+                                description=(f"特征列 '{col}' 名称匹配前瞻模式 '{pat}'——疑似使用未来数据"),
                                 evidence=f"name='{col}' matches '{pat}'",
                             )
                         )
@@ -417,16 +403,11 @@ class LookAheadBiasDetector:
             bias_type=BiasType.FUTURE_SHIFT,
             severity=BiasSeverity.HIGH,
             column=col,
-            description=(
-                f"特征列 '{col}' 末尾 {k} 行连续 NaN(前部干净)"
-                "——疑似 shift(-{k}) 前瞻窗口"
-            ).format(k=k),
+            description=(f"特征列 '{col}' 末尾 {k} 行连续 NaN(前部干净)——疑似 shift(-{{k}}) 前瞻窗口").format(k=k),
             evidence=f"trailing_nan_count={k}, last_valid_pos={last_valid_pos}",
         )
 
-    def _check_timestamp_monotonic(
-        self, df: pd.DataFrame, timestamp_column: str
-    ) -> BiasIssue | None:
+    def _check_timestamp_monotonic(self, df: pd.DataFrame, timestamp_column: str) -> BiasIssue | None:
         """检查时间戳单调递增(含重复检测)。"""
         ts = df[timestamp_column]
         n = len(ts)
@@ -451,10 +432,7 @@ class LookAheadBiasDetector:
             bias_type=BiasType.NON_MONOTONIC_TIMESTAMP,
             severity=BiasSeverity.MEDIUM,
             column=timestamp_column,
-            description=(
-                f"时间戳列 '{timestamp_column}' 非严格单调递增: "
-                + ", ".join(parts)
-            ),
+            description=(f"时间戳列 '{timestamp_column}' 非严格单调递增: " + ", ".join(parts)),
             evidence=f"non_monotonic={non_monotonic}, duplicates={duplicates}",
         )
 
@@ -521,13 +499,9 @@ class LookAheadBiasDetector:
                         bias_type=BiasType.TRUNCATION_MISMATCH,
                         severity=BiasSeverity.CRITICAL,
                         column=None,
-                        description=(
-                            f"截断重算不一致: 位置 {idx} "
-                            f"全样本值={full_val} 截断值={trunc_val}"
-                        ),
+                        description=(f"截断重算不一致: 位置 {idx} 全样本值={full_val} 截断值={trunc_val}"),
                         evidence=(
-                            f"diff={diff:.2e} > tolerance={tol}"
-                            f" (full[{idx}]={full_val}, trunc[{idx}]={trunc_val})"
+                            f"diff={diff:.2e} > tolerance={tol} (full[{idx}]={full_val}, trunc[{idx}]={trunc_val})"
                         ),
                     )
                 )
@@ -536,7 +510,8 @@ class LookAheadBiasDetector:
         result = _build_result(issues)
         _logger.debug(
             "截断重算验证: clean=%s test_points=%d",
-            result.is_clean, len(test_indices),
+            result.is_clean,
+            len(test_indices),
         )
         return result
 
@@ -574,9 +549,7 @@ class LookAheadBiasDetector:
             lines.append("偏差清单(按严重度降序):")
             for i, issue in enumerate(result.issues, 1):
                 col = f" col={issue.column}" if issue.column else ""
-                lines.append(
-                    f"  {i}. [{issue.severity.value}] {issue.bias_type.value}{col}"
-                )
+                lines.append(f"  {i}. [{issue.severity.value}] {issue.bias_type.value}{col}")
                 lines.append(f"     {issue.description}")
                 lines.append(f"     证据: {issue.evidence}")
         return "\n".join(lines)

@@ -71,7 +71,10 @@ class TestPublish:
         """首条归档 prev_hash=""（空串）。"""
         pub = ReportPublisher()
         archived = pub.publish(
-            "RPT-001", ReportSource.RISK, "daily_risk", {"level": "LOW"},
+            "RPT-001",
+            ReportSource.RISK,
+            "daily_risk",
+            {"level": "LOW"},
         )
         assert archived.prev_hash == ""
 
@@ -97,9 +100,13 @@ class TestPublish:
         pub = ReportPublisher()
         archived = pub.publish("RPT-1", ReportSource.RISK, "daily", {"v": 1})
         expected = _compute_record_hash(
-            archived.archive_id, archived.archived_at, archived.report_id,
-            archived.source.value, archived.report_type,
-            archived.content_hash, archived.prev_hash,
+            archived.archive_id,
+            archived.archived_at,
+            archived.report_id,
+            archived.source.value,
+            archived.report_type,
+            archived.content_hash,
+            archived.prev_hash,
         )
         assert archived.record_hash == expected
 
@@ -128,7 +135,10 @@ class TestDistribution:
         """channels=None 默认 [ARCHIVE]。"""
         pub = ReportPublisher()
         archived = pub.publish(
-            "RPT-1", ReportSource.RISK, "daily", {"v": 1},
+            "RPT-1",
+            ReportSource.RISK,
+            "daily",
+            {"v": 1},
         )
         dists = pub.list_distributions(archived.archive_id)
         assert len(dists) == 1
@@ -138,7 +148,10 @@ class TestDistribution:
         """ARCHIVE 渠道 → SENT 状态。"""
         pub = ReportPublisher()
         archived = pub.publish(
-            "RPT-1", ReportSource.RISK, "daily", {"v": 1},
+            "RPT-1",
+            ReportSource.RISK,
+            "daily",
+            {"v": 1},
             channels=[DistributionChannel.ARCHIVE],
         )
         dists = pub.list_distributions(archived.archive_id)
@@ -148,7 +161,10 @@ class TestDistribution:
         """WEBHOOK 渠道 → PENDING 状态（基础版需外部服务）。"""
         pub = ReportPublisher()
         archived = pub.publish(
-            "RPT-1", ReportSource.RISK, "daily", {"v": 1},
+            "RPT-1",
+            ReportSource.RISK,
+            "daily",
+            {"v": 1},
             channels=[DistributionChannel.WEBHOOK],
         )
         dists = pub.list_distributions(archived.archive_id)
@@ -158,7 +174,10 @@ class TestDistribution:
         """EMAIL 渠道 → PENDING 状态。"""
         pub = ReportPublisher()
         archived = pub.publish(
-            "RPT-1", ReportSource.RISK, "daily", {"v": 1},
+            "RPT-1",
+            ReportSource.RISK,
+            "daily",
+            {"v": 1},
             channels=[DistributionChannel.EMAIL],
         )
         dists = pub.list_distributions(archived.archive_id)
@@ -168,21 +187,25 @@ class TestDistribution:
         """多渠道分发——每渠道一条记录。"""
         pub = ReportPublisher()
         archived = pub.publish(
-            "RPT-1", ReportSource.RISK, "daily", {"v": 1},
-            channels=[DistributionChannel.ARCHIVE, DistributionChannel.WEBHOOK,
-                      DistributionChannel.EMAIL],
+            "RPT-1",
+            ReportSource.RISK,
+            "daily",
+            {"v": 1},
+            channels=[DistributionChannel.ARCHIVE, DistributionChannel.WEBHOOK, DistributionChannel.EMAIL],
         )
         dists = pub.list_distributions(archived.archive_id)
         assert len(dists) == 3
         channels = {d.channel for d in dists}
-        assert channels == {DistributionChannel.ARCHIVE, DistributionChannel.WEBHOOK,
-                            DistributionChannel.EMAIL}
+        assert channels == {DistributionChannel.ARCHIVE, DistributionChannel.WEBHOOK, DistributionChannel.EMAIL}
 
     def test_distribution_links_to_archive(self) -> None:
         """分发记录关联到正确的 archive_id。"""
         pub = ReportPublisher()
         archived = pub.publish(
-            "RPT-1", ReportSource.RISK, "daily", {"v": 1},
+            "RPT-1",
+            ReportSource.RISK,
+            "daily",
+            {"v": 1},
             channels=[DistributionChannel.ARCHIVE],
         )
         dists = pub.list_distributions(archived.archive_id)
@@ -197,7 +220,10 @@ class TestDistribution:
         """DistributionRecord frozen。"""
         pub = ReportPublisher()
         archived = pub.publish(
-            "RPT-1", ReportSource.RISK, "daily", {"v": 1},
+            "RPT-1",
+            ReportSource.RISK,
+            "daily",
+            {"v": 1},
         )
         dists = pub.list_distributions(archived.archive_id)
         with pytest.raises(dataclasses.FrozenInstanceError):
@@ -299,7 +325,8 @@ class TestVerifyChain:
         a1 = pub.publish("RPT-1", ReportSource.RISK, "daily", {"v": 1})
         # 篡改 content（用 dataclasses.replace 绕过 frozen）
         tampered = dataclasses.replace(
-            a1, content={"v": 999},
+            a1,
+            content={"v": 999},
         )
         # 手动替换归档中的报告
         pub._archive[0] = tampered
@@ -341,7 +368,9 @@ class TestThreadSafety:
             for i in range(n_per_thread):
                 pub.publish(
                     f"RPT-{threading.get_ident()}-{i}",
-                    ReportSource.RISK, "daily", {"i": i},
+                    ReportSource.RISK,
+                    "daily",
+                    {"i": i},
                 )
 
         threads = [threading.Thread(target=_publish_batch) for _ in range(n_threads)]
@@ -398,9 +427,18 @@ class TestEdgeCases:
     def test_all_source_enum_values(self) -> None:
         """ReportSource 12个枚举值正确。"""
         expected = {
-            "tca", "attribution", "realtime_pnl", "regulatory", "risk",
-            "explainability", "trading_review", "performance_audit",
-            "version", "watermark", "trade_record", "execution_audit",
+            "tca",
+            "attribution",
+            "realtime_pnl",
+            "regulatory",
+            "risk",
+            "explainability",
+            "trading_review",
+            "performance_audit",
+            "version",
+            "watermark",
+            "trade_record",
+            "execution_audit",
         }
         actual = {s.value for s in ReportSource}
         assert actual == expected

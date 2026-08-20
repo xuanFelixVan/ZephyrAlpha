@@ -41,6 +41,7 @@ DDL-as-Code 模式：对所有证券表 ADD COLUMN exchange + symbol_canonical�
     1 = 有不一致
     2 = ClickHouse 不可达
 """
+
 from __future__ import annotations
 
 import argparse
@@ -149,6 +150,7 @@ def _build_index_multiif_expr() -> str:
 
 # ========== DDL 生成（每层独立函数，复杂度<15） ==========
 
+
 def _ddl_add_exchange_materialized(table: str, expr: str) -> str:
     """Tier-1/2：exchange MATERIALIZED + symbol_canonical MATERIALIZED。"""
     return (
@@ -196,6 +198,7 @@ def _ddl_add_canonical(table: str) -> str:
 
 # ========== 运行时表发现 ==========
 
+
 def _query_tables_with_symbol() -> list[str]:
     """查询 c1_market 中所有含 symbol 列的表（运行时发现，避免硬编码遗漏）。"""
     out = ch_writer.query(
@@ -236,6 +239,7 @@ def _resolve_tier1(tables: list[str]) -> list[str]:
 
 # ========== 部署 + 验证 ==========
 
+
 def _exec_ddl(sql: str, dry_run: bool) -> bool:
     """执行单条 DDL（dry_run 时仅打印）。返回是否成功。"""
     if dry_run:
@@ -270,13 +274,18 @@ def apply(dry_run: bool = False, upgrade: bool = False) -> dict[str, list[str]]:
     tier1 = _resolve_tier1(tables)
     tier1_index = [t for t in tables if t in TIER1_INDEX_TABLES]
     result: dict[str, list[str]] = {
-        "tier1": [], "tier1_index": [], "tier2": [], "tier3": [],
+        "tier1": [],
+        "tier1_index": [],
+        "tier2": [],
+        "tier3": [],
     }
 
-    print(f"[apply] 发现 {len(tables)} 张含 symbol 列的表："
-          f"Tier-1(股票)={len(tier1)} / Tier-1(指数)={len(tier1_index)} / "
-          f"Tier-2={len(TIER2_TABLES)} / Tier-3={len(TIER3_TABLES)}"
-          f"{' [UPGRADE 模式：DROP+re-ADD]' if upgrade else ''}")
+    print(
+        f"[apply] 发现 {len(tables)} 张含 symbol 列的表："
+        f"Tier-1(股票)={len(tier1)} / Tier-1(指数)={len(tier1_index)} / "
+        f"Tier-2={len(TIER2_TABLES)} / Tier-3={len(TIER3_TABLES)}"
+        f"{' [UPGRADE 模式：DROP+re-ADD]' if upgrade else ''}"
+    )
 
     def _deploy(table: str, exchange_ddl: str) -> None:
         """部署 exchange+canonical（upgrade 模式先 DROP）。"""
@@ -340,20 +349,20 @@ def verify() -> tuple[bool, list[str]]:
         diffs.append("碰撞消歧失败：000001 在 kline_daily/kline_index 的 symbol_canonical 未区分")
 
     passed = not diffs
-    print(f"[verify] {ok_count}/{len(tables)} 表含 exchange+symbol_canonical 列，"
-          f"碰撞消歧={'通过' if collision_ok else '失败'}")
+    print(
+        f"[verify] {ok_count}/{len(tables)} 表含 exchange+symbol_canonical 列，"
+        f"碰撞消歧={'通过' if collision_ok else '失败'}"
+    )
     return passed, diffs
 
 
 def _verify_collision_disambiguation() -> bool:
     """验证 000001 跨表碰撞已消歧（kline_daily→SZ vs kline_index→SH）。"""
     daily = ch_writer.query(
-        f"SELECT DISTINCT symbol_canonical FROM {DB}.kline_daily "
-        f"WHERE symbol = '000001' LIMIT 1"
+        f"SELECT DISTINCT symbol_canonical FROM {DB}.kline_daily WHERE symbol = '000001' LIMIT 1"
     ).strip()
     index = ch_writer.query(
-        f"SELECT DISTINCT symbol_canonical FROM {DB}.kline_index "
-        f"WHERE symbol = '000001' LIMIT 1"
+        f"SELECT DISTINCT symbol_canonical FROM {DB}.kline_index WHERE symbol = '000001' LIMIT 1"
     ).strip()
     if not daily or not index:
         return False
@@ -371,7 +380,8 @@ def main() -> int:
     parser.add_argument("--verify", action="store_true", help="仅验证（smoke test）")
     parser.add_argument("--dry-run", action="store_true", help="仅打印 DDL 不执行")
     parser.add_argument(
-        "--upgrade", action="store_true",
+        "--upgrade",
+        action="store_true",
         help="升级模式：对已有列的表先 DROP 再 ADD（修复旧简单表达式的垃圾 canonical）",
     )
     args = parser.parse_args()
@@ -393,9 +403,11 @@ def main() -> int:
         return 0
 
     result = apply(dry_run=args.dry_run, upgrade=args.upgrade)
-    print(f"[apply] 完成：Tier-1(股票)={len(result['tier1'])} / "
-          f"Tier-1(指数)={len(result['tier1_index'])} / "
-          f"Tier-2={len(result['tier2'])} / Tier-3={len(result['tier3'])}")
+    print(
+        f"[apply] 完成：Tier-1(股票)={len(result['tier1'])} / "
+        f"Tier-1(指数)={len(result['tier1_index'])} / "
+        f"Tier-2={len(result['tier2'])} / Tier-3={len(result['tier3'])}"
+    )
 
     passed, diffs = verify()
     if not passed:

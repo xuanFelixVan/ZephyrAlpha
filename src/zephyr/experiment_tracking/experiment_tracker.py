@@ -34,6 +34,7 @@ Zephyr 语义 → 存储映射:
 SSoT: depgraph MOD-OBS-001
 Version: 0.2.0（MLflow 退役，单一 JSON 后端）
 """
+
 from __future__ import annotations
 
 import logging
@@ -120,11 +121,20 @@ class _NullBackend:
     def start_run(self, component: str, run_name: str | None, tags: dict | None) -> str:
         return "null-run"
 
-    def log_params(self, params: dict[str, Any]) -> None: pass
-    def log_metrics(self, metrics: dict[str, float], step: int | None) -> None: pass
-    def log_artifact(self, local_path: str, artifact_path: str | None) -> None: pass
-    def log_artifact_bytes(self, data: bytes, filename: str, artifact_path: str | None) -> None: pass
-    def end_run(self, status: str) -> None: pass
+    def log_params(self, params: dict[str, Any]) -> None:
+        pass
+
+    def log_metrics(self, metrics: dict[str, float], step: int | None) -> None:
+        pass
+
+    def log_artifact(self, local_path: str, artifact_path: str | None) -> None:
+        pass
+
+    def log_artifact_bytes(self, data: bytes, filename: str, artifact_path: str | None) -> None:
+        pass
+
+    def end_run(self, status: str) -> None:
+        pass
 
 
 # ──────────────────────────────────────────────────────────────────────────────

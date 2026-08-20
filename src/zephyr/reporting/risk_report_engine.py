@@ -149,18 +149,18 @@ class InvalidRiskReportInputError(ZephyrBaseError):
 class RiskLevel(str, Enum):
     """风险等级——基于 overall_risk_score 4 档判定。"""
 
-    LOW = "LOW"            # score < 0.3
-    MEDIUM = "MEDIUM"      # 0.3 <= score < 0.6
-    HIGH = "HIGH"          # 0.6 <= score < 0.8
+    LOW = "LOW"  # score < 0.3
+    MEDIUM = "MEDIUM"  # 0.3 <= score < 0.6
+    HIGH = "HIGH"  # 0.6 <= score < 0.8
     CRITICAL = "CRITICAL"  # score >= 0.8
 
 
 class TrendDirection(str, Enum):
     """趋势方向——周度报告前后半段比对。"""
 
-    RISING = "RISING"    # 后半段风险上升
+    RISING = "RISING"  # 后半段风险上升
     FALLING = "FALLING"  # 后半段风险下降
-    STABLE = "STABLE"    # 变化不显著
+    STABLE = "STABLE"  # 变化不显著
 
 
 # ── 风险等级判定 ──
@@ -239,7 +239,7 @@ class DailyRiskSummary:
     """日度风险摘要——单日风险全貌快照。"""
 
     report_id: str
-    report_date: str          # YYYY-MM-DD
+    report_date: str  # YYYY-MM-DD
     portfolio_id: str
     risk_level: RiskLevel
     var_1d_95: float
@@ -305,7 +305,7 @@ class MonthlyRiskGovernance:
     """月度风险治理——月度风险统计与分布。"""
 
     report_id: str
-    month: str                # YYYY-MM
+    month: str  # YYYY-MM
     portfolio_id: str
     trading_days: int
     avg_var_1d_95: float
@@ -350,9 +350,7 @@ class RiskReportEngine:
             trend_threshold: 趋势平稳判定阈值（None=注册表加载值 _TREND_THRESHOLD；显式传参可覆盖）
         """
         self._risk_thresholds = risk_thresholds or _RISK_THRESHOLDS
-        self._trend_threshold = (
-            trend_threshold if trend_threshold is not None else _TREND_THRESHOLD
-        )
+        self._trend_threshold = trend_threshold if trend_threshold is not None else _TREND_THRESHOLD
 
     # ── 日度风险摘要 ──
 
@@ -375,8 +373,7 @@ class RiskReportEngine:
         """
         if snapshot.portfolio_id != metrics.portfolio_id:
             raise InvalidRiskReportInputError(
-                f"portfolio_id 不一致: snapshot={snapshot.portfolio_id} "
-                f"metrics={metrics.portfolio_id}",
+                f"portfolio_id 不一致: snapshot={snapshot.portfolio_id} metrics={metrics.portfolio_id}",
                 details={
                     "snapshot_portfolio": snapshot.portfolio_id,
                     "metrics_portfolio": metrics.portfolio_id,
@@ -412,7 +409,10 @@ class RiskReportEngine:
 
         _logger.debug(
             "generate_daily: date=%s portfolio=%s level=%s alerts=%d",
-            report_date, report.portfolio_id, risk_level.value, report.alert_count,
+            report_date,
+            report.portfolio_id,
+            risk_level.value,
+            report.alert_count,
         )
         return report
 
@@ -453,7 +453,10 @@ class RiskReportEngine:
 
         _logger.warning(
             "generate_event_flash: portfolio=%s level=%s alerts=%d impact=%s",
-            report.portfolio_id, risk_level.value, report.alert_count, impact,
+            report.portfolio_id,
+            risk_level.value,
+            report.alert_count,
+            impact,
         )
         return report
 
@@ -468,8 +471,7 @@ class RiskReportEngine:
         }[level]
         breadth = "单点" if alert_count == 1 else f"多点({alert_count}条)"
         return (
-            f"风险等级={level.value}({severity}), 告警{breadth}, "
-            f"overall_risk_score 反映当前组合风险处于{severity}水平"
+            f"风险等级={level.value}({severity}), 告警{breadth}, overall_risk_score 反映当前组合风险处于{severity}水平"
         )
 
     # ── 周度风险深度 ──
@@ -527,8 +529,11 @@ class RiskReportEngine:
 
         _logger.debug(
             "generate_weekly: %s~%s days=%d trend=%s avg_score=%.4f",
-            report.week_start, report.week_end, report.daily_count,
-            trend.value, report.avg_risk_score,
+            report.week_start,
+            report.week_end,
+            report.daily_count,
+            trend.value,
+            report.avg_risk_score,
         )
         return report
 
@@ -623,7 +628,11 @@ class RiskReportEngine:
 
         _logger.debug(
             "generate_monthly: month=%s days=%d high=%d critical=%d alerts=%d",
-            report.month, report.trading_days, high_days, critical_days, total_alerts,
+            report.month,
+            report.trading_days,
+            high_days,
+            critical_days,
+            total_alerts,
         )
         return report
 

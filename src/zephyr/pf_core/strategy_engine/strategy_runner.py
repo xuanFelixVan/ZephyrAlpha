@@ -132,13 +132,9 @@ class StrategyRunner:
         # 故用 MultiIndex.rename({old: new}) 显式重命名 level 名。
         if isinstance(data.index, pd.MultiIndex) and "trade_date" in (data.index.names or []):
             data.index = data.index.rename({"trade_date": "date"})
-        bt_config = config.backtest_config or BacktestConfig(
-            initial_capital=Decimal(str(config.initial_capital))
-        )
+        bt_config = config.backtest_config or BacktestConfig(initial_capital=Decimal(str(config.initial_capital)))
         engine = DefaultBacktestEngine(config=bt_config)
-        return engine.run(
-            data=data, signals=signals, strategy_name=config.strategy_id
-        )
+        return engine.run(data=data, signals=signals, strategy_name=config.strategy_id)
 
     def run_tick_backtest(
         self,
@@ -201,9 +197,7 @@ class StrategyRunner:
 
         strategy_callback = self._build_tick_callback(weight_panel)
 
-        bt_config = config.backtest_config or BacktestConfig(
-            initial_capital=Decimal(str(config.initial_capital))
-        )
+        bt_config = config.backtest_config or BacktestConfig(initial_capital=Decimal(str(config.initial_capital)))
         engine = EventDrivenEngine(config=bt_config)
         start_dt = _dt.strptime(start, "%Y-%m-%d")
         end_dt = _dt.strptime(end, "%Y-%m-%d")
@@ -282,9 +276,7 @@ class StrategyRunner:
             raise KeyError(f"TickStrategy '{strategy_id}' 未注册")
 
         strategy = cls()
-        bt_config = backtest_config or BacktestConfig(
-            initial_capital=Decimal(str(initial_capital))
-        )
+        bt_config = backtest_config or BacktestConfig(initial_capital=Decimal(str(initial_capital)))
         engine = EventDrivenEngine(config=bt_config)
         start_dt = _dt.strptime(start, "%Y-%m-%d")
         end_dt = _dt.strptime(end, "%Y-%m-%d")
@@ -372,9 +364,7 @@ class StrategyRunner:
         weight_panel = self._build_weight_panel(signal_panel, history, config)
         return history, weight_panel
 
-    def _compute_all_factors(
-        self, history: pd.DataFrame, config: StrategyRunnerConfig
-    ) -> dict[str, pd.DataFrame]:
+    def _compute_all_factors(self, history: pd.DataFrame, config: StrategyRunnerConfig) -> dict[str, pd.DataFrame]:
         """逐因子计算面板，返回 {factor_id: DataFrame(date×symbol)}。"""
         factor_panels: dict[str, pd.DataFrame] = {}
         for fid in config.factor_ids:
@@ -386,20 +376,14 @@ class StrategyRunner:
             factor_panels[fid] = panel
         return factor_panels
 
-    def _build_signal_panel(
-        self, factor_panels: dict[str, pd.DataFrame], config: StrategyRunnerConfig
-    ) -> pd.DataFrame:
+    def _build_signal_panel(self, factor_panels: dict[str, pd.DataFrame], config: StrategyRunnerConfig) -> pd.DataFrame:
         """逐截面合成信号 + PIT 平移。返回 DataFrame(date×symbol)。"""
         first = next(iter(factor_panels.values()))
         dates = first.index
         symbols = first.columns
         rows: dict = {}
         for as_of in dates:
-            factor_values = {
-                fid: fp.loc[as_of]
-                for fid, fp in factor_panels.items()
-                if as_of in fp.index
-            }
+            factor_values = {fid: fp.loc[as_of] for fid, fp in factor_panels.items() if as_of in fp.index}
             if not factor_values:
                 continue
             rows[as_of] = synthesize(
@@ -422,15 +406,11 @@ class StrategyRunner:
         config: StrategyRunnerConfig,
     ) -> pd.DataFrame:
         """逐调仓日调策略产权重，组装权重面板（非调仓日 ffill）。"""
-        weight_panel = pd.DataFrame(
-            0.0, index=signal_panel.index, columns=signal_panel.columns
-        )
+        weight_panel = pd.DataFrame(0.0, index=signal_panel.index, columns=signal_panel.columns)
         if signal_panel.empty:
             return weight_panel
         strategy = self._ensure_strategy(config.strategy_id)
-        rebalance_dates = self._select_rebalance_dates(
-            signal_panel.index, config.rebalance_freq
-        )
+        rebalance_dates = self._select_rebalance_dates(signal_panel.index, config.rebalance_freq)
         for d in rebalance_dates:
             weights = self._rebalance_one_day(strategy, signal_panel, d, config)
             for sym, w in weights.items():
@@ -458,9 +438,7 @@ class StrategyRunner:
         )
 
     @staticmethod
-    def _select_rebalance_dates(
-        dates: pd.DatetimeIndex, freq: str
-    ) -> list:
+    def _select_rebalance_dates(dates: pd.DatetimeIndex, freq: str) -> list:
         """选取每个 freq 周期的最后一个交易日（对节假日鲁棒）。
 
         freq="B" 或空 = 每个交易日都调仓。

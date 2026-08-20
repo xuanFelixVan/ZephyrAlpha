@@ -48,8 +48,8 @@ class ExecutionRoute(str, Enum):
     """执行路由（90 号 §19 裁定②③⑦）。"""
 
     DIRECT_LIMIT = "direct_limit"  # 默认：单笔限价单直投
-    DABAN_LIMIT = "daban_limit"    # 打板专用：涨停价单笔限价申报（不可拆单）
-    ALGO = "algo"                  # 算法执行（TWAP/VWAP/POV/ICEBERG）——远期，默认不启用
+    DABAN_LIMIT = "daban_limit"  # 打板专用：涨停价单笔限价申报（不可拆单）
+    ALGO = "algo"  # 算法执行（TWAP/VWAP/POV/ICEBERG）——远期，默认不启用
 
 
 @dataclass(frozen=True)
@@ -57,11 +57,11 @@ class ExecutionRoutePolicy:
     """执行路由策略配置（C 类可调参数）。"""
 
     default_route: ExecutionRoute = ExecutionRoute.DIRECT_LIMIT
-    algo_enabled: bool = False                       # ⑦ 算法族降级远期
+    algo_enabled: bool = False  # ⑦ 算法族降级远期
     daban_seal_ratio_min: Decimal = Decimal("0.05")  # ③ 封成比≥5% 过滤
     abnormal_volume_multiplier: Decimal = Decimal("5")  # ④ 分钟级均量 5 倍阈值
-    split_parts: int = 3                             # ④ 分 2-3 笔（取 3）
-    split_interval_seconds: int = 3                  # ④ 间隔 3-5 秒（取 3）
+    split_parts: int = 3  # ④ 分 2-3 笔（取 3）
+    split_interval_seconds: int = 3  # ④ 间隔 3-5 秒（取 3）
 
 
 @dataclass(frozen=True)
@@ -69,8 +69,8 @@ class RouteDecision:
     """路由决策（可审计）。"""
 
     route: ExecutionRoute
-    allowed: bool                # 打板封单强度过滤=False 时禁止申报
-    parts: int                   # 拆分笔数（1=不拆）
+    allowed: bool  # 打板封单强度过滤=False 时禁止申报
+    parts: int  # 拆分笔数（1=不拆）
     split_interval_seconds: int  # 拆单间隔（秒；不拆=0）
     reason: str
 

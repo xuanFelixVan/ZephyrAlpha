@@ -13,6 +13,7 @@
 覆盖: 期权交割日/窗口期/年报预告/年报ST清零/半年报预告/股东空窗/财报发布/
        无约束日期/多约束叠加/标的级vs全标的否决/日期计算工具。
 """
+
 from __future__ import annotations
 
 from datetime import date
@@ -47,8 +48,7 @@ class TestOptionExpiry:
         alert = constraint.check(expiry)
         assert alert.block_new_positions is True
         assert any(
-            c.event_type is CalendarEventType.INDEX_OPTION_EXPIRY
-            and c.action is ConstraintAction.BLOCK_NEW
+            c.event_type is CalendarEventType.INDEX_OPTION_EXPIRY and c.action is ConstraintAction.BLOCK_NEW
             for c in alert.active_constraints
         )
 
@@ -166,8 +166,7 @@ class TestShareholderBlackout:
         ]
         alert = constraint.check(date(2026, 11, 15), positions)
         assert any(
-            c.action is ConstraintAction.TIGHTEN_CAP
-            and "MICRO.SZ" in (c.affected_symbols or ())
+            c.action is ConstraintAction.TIGHTEN_CAP and "MICRO.SZ" in (c.affected_symbols or ())
             for c in alert.active_constraints
         )
         assert alert.overall_cap_adjustment == pytest.approx(0.5)
@@ -182,10 +181,7 @@ class TestShareholderBlackout:
         """7月不在空窗期。"""
         positions = [PositionInfo("MICRO.SZ", market_cap_yi=20.0)]
         alert = constraint.check(date(2026, 7, 5), positions)
-        assert all(
-            c.event_type is not CalendarEventType.SHAREHOLDER_BLACKOUT
-            for c in alert.active_constraints
-        )
+        assert all(c.event_type is not CalendarEventType.SHAREHOLDER_BLACKOUT for c in alert.active_constraints)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -221,10 +217,7 @@ class TestEarningsRelease:
         """无财报发布日→跳过。"""
         positions = [PositionInfo("000001.SZ", earnings_release_date=None)]
         alert = constraint.check(date(2026, 3, 17), positions)
-        assert all(
-            c.event_type is not CalendarEventType.EARNINGS_RELEASE
-            for c in alert.active_constraints
-        )
+        assert all(c.event_type is not CalendarEventType.EARNINGS_RELEASE for c in alert.active_constraints)
 
 
 # ──────────────────────────────────────────────────────────────────────────────

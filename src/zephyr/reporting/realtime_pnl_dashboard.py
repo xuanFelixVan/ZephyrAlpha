@@ -218,9 +218,7 @@ class RealtimePnlDashboard:
         self._realized_pnl_total: Decimal = Decimal("0")
         self._fees_total: Decimal = Decimal("0")
         self._fill_count: int = 0
-        self._recent_fills: deque[tuple[Fill, OrderSide]] = deque(
-            maxlen=recent_fills_limit
-        )
+        self._recent_fills: deque[tuple[Fill, OrderSide]] = deque(maxlen=recent_fills_limit)
 
         # 可选风控状态
         self._risk_snapshot: RiskDashboardSnapshot | None = None
@@ -252,9 +250,7 @@ class RealtimePnlDashboard:
 
     # ── 核心方法 ──
 
-    def record_fill(
-        self, fill: Fill, side: OrderSide, avg_cost: Decimal | None = None
-    ) -> RealizedPnl:
+    def record_fill(self, fill: Fill, side: OrderSide, avg_cost: Decimal | None = None) -> RealizedPnl:
         """记录成交——计算已实现盈亏并累加。
 
         Args:
@@ -336,9 +332,7 @@ class RealtimePnlDashboard:
                 # 市价缺失回退 avg_cost（unrealized=0）
                 current_price = market_prices.get(symbol, avg_cost)
                 market_value = qty * current_price
-                upnl = self._pnl_calc.calculate_unrealized(
-                    symbol, qty, avg_cost, current_price
-                )
+                upnl = self._pnl_calc.calculate_unrealized(symbol, qty, avg_cost, current_price)
                 unrealized_total += upnl.gross_pnl
                 total_market_value += market_value
 
@@ -362,11 +356,7 @@ class RealtimePnlDashboard:
 
             total_pnl = self._realized_pnl_total + unrealized_total
             total_assets = pos_snapshot.cash + total_market_value
-            return_pct = (
-                float(total_pnl / self._initial_capital * Decimal("100"))
-                if self._initial_capital > 0
-                else 0.0
-            )
+            return_pct = float(total_pnl / self._initial_capital * Decimal("100")) if self._initial_capital > 0 else 0.0
 
             snapshot = DashboardSnapshot(
                 timestamp=datetime.now(UTC),

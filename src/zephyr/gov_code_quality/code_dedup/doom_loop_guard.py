@@ -76,7 +76,6 @@ class DoomLoopGuard:
         """写入：frozen（Stage 4 公共化）。"""
         self._frozen = value
 
-
     # ── 公共 API ──────────────────────────────────────────────
 
     def escalate(

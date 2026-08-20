@@ -37,6 +37,7 @@ RBAC-as-Code 模式：
     1 = 有不一致
     2 = ClickHouse 不可达
 """
+
 from __future__ import annotations
 
 import os
@@ -133,10 +134,8 @@ def apply() -> bool:
     writer_cfg = load_ch_writer_config()
 
     create_sqls = [
-        f"CREATE USER IF NOT EXISTS zephyr_reader "
-        f"IDENTIFIED WITH plaintext_password BY '{reader_cfg['password']}'",
-        f"CREATE USER IF NOT EXISTS zephyr_writer "
-        f"IDENTIFIED WITH plaintext_password BY '{writer_cfg['password']}'",
+        f"CREATE USER IF NOT EXISTS zephyr_reader IDENTIFIED WITH plaintext_password BY '{reader_cfg['password']}'",
+        f"CREATE USER IF NOT EXISTS zephyr_writer IDENTIFIED WITH plaintext_password BY '{writer_cfg['password']}'",
     ]
     for sql in create_sqls:
         try:
@@ -239,8 +238,7 @@ def verify() -> bool:
     # 5. writer system.data_skipping_indices
     try:
         rows = c_w.execute(
-            "SELECT count() FROM system.data_skipping_indices "
-            "WHERE database='c1_market' AND table='tick_data'"
+            "SELECT count() FROM system.data_skipping_indices WHERE database='c1_market' AND table='tick_data'"
         )
         _check("zephyr_writer system.data_skipping_indices", rows[0][0] >= 0, f"count={rows[0][0]}")
     except Exception as e:  # noqa: BLE001
@@ -249,9 +247,7 @@ def verify() -> bool:
 
     # 6. writer system.users
     try:
-        rows = c_w.execute(
-            "SELECT count() FROM system.users WHERE name IN ('zephyr_reader','zephyr_writer')"
-        )
+        rows = c_w.execute("SELECT count() FROM system.users WHERE name IN ('zephyr_reader','zephyr_writer')")
         _check("zephyr_writer system.users", rows[0][0] == 2, f"count={rows[0][0]}")
     except Exception as e:  # noqa: BLE001
         _check("zephyr_writer system.users", False, str(e))

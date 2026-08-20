@@ -312,9 +312,8 @@ def route_order(
         raise LimitBoardQueueError(f"封板态limit_price必须>0, got {limit_price}")
 
     # 封板时同向单排队, 逆向单即成交
-    same_direction = (
-        (board_state is BoardState.LIMIT_UP and side is OrderSide.BUY)
-        or (board_state is BoardState.LIMIT_DOWN and side is OrderSide.SELL)
+    same_direction = (board_state is BoardState.LIMIT_UP and side is OrderSide.BUY) or (
+        board_state is BoardState.LIMIT_DOWN and side is OrderSide.SELL
     )
     if not same_direction:
         board_name = "涨停" if board_state is BoardState.LIMIT_UP else "跌停"
@@ -360,9 +359,7 @@ class LimitBoardQueue:
 
     def __post_init__(self) -> None:
         if not isinstance(self.board_state, BoardState):
-            raise LimitBoardQueueError(
-                f"board_state必须是BoardState: {self.board_state!r}"
-            )
+            raise LimitBoardQueueError(f"board_state必须是BoardState: {self.board_state!r}")
         if self.board_state is BoardState.NORMAL:
             raise LimitBoardQueueError("NORMAL板态无排队语义,拒绝建队")
         if self.limit_price <= 0:
@@ -383,13 +380,9 @@ class LimitBoardQueue:
         Raises:
             LimitBoardQueueError: side 与队列方向不符或 qty 非法
         """
-        expected_side = (
-            OrderSide.BUY if self.board_state is BoardState.LIMIT_UP else OrderSide.SELL
-        )
+        expected_side = OrderSide.BUY if self.board_state is BoardState.LIMIT_UP else OrderSide.SELL
         if side is not expected_side:
-            raise LimitBoardQueueError(
-                f"{self.board_state.value}队列只接受{expected_side.value}单, got {side.value}"
-            )
+            raise LimitBoardQueueError(f"{self.board_state.value}队列只接受{expected_side.value}单, got {side.value}")
         if qty <= 0:
             raise LimitBoardQueueError(f"qty必须>0, got {qty}")
         self._seq += 1

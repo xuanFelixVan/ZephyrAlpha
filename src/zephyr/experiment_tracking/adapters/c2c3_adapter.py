@@ -31,6 +31,7 @@
 依据: 50_backtest_observability_workplan §3 ⑥
 Version: 0.1.0
 """
+
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -103,7 +104,9 @@ def track_c3_result(
         "total_days": float(report.total_days),
         "total_avoided": float(report.total_avoided),
         "defensive_share": float(report.defensive_share),
-        "bull_mean_shrinkage": float(report.bull_mean_shrinkage) if report.bull_mean_shrinkage is not None else float("nan"),
+        "bull_mean_shrinkage": float(report.bull_mean_shrinkage)
+        if report.bull_mean_shrinkage is not None
+        else float("nan"),
         "passed": 1.0 if report.passed else 0.0,
     }
     for s in report.states:

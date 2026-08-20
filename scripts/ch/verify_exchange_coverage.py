@@ -40,6 +40,7 @@
     1 = 有不达标（Tier-1/2 覆盖率 < 阈值）
     2 = ClickHouse 不可达（--ci 模式降级为 0 + WARN）
 """
+
 from __future__ import annotations
 
 import argparse
@@ -101,15 +102,21 @@ def _query_coverage(table: str) -> dict | None:
     try:
         # 从 system.tables 获取总行数（O(1)，不扫描数据）
         total_row = ch_writer.query(
-            f"SELECT total_rows FROM system.tables "
-            f"WHERE database='{DB}' AND name='{table}' FORMAT TabSeparated"
+            f"SELECT total_rows FROM system.tables WHERE database='{DB}' AND name='{table}' FORMAT TabSeparated"
         ).strip()
         total = int(total_row) if total_row else 0
 
         if total == 0:
-            return {"total": 0, "exchange_coverage": 1.0, "canonical_coverage": 1.0,
-                    "exchange_nonempty": 0, "exchange_empty": 0, "canonical_nonempty": 0,
-                    "empty_symbols_sample": [], "sampled": False}
+            return {
+                "total": 0,
+                "exchange_coverage": 1.0,
+                "canonical_coverage": 1.0,
+                "exchange_nonempty": 0,
+                "exchange_empty": 0,
+                "canonical_nonempty": 0,
+                "empty_symbols_sample": [],
+                "sampled": False,
+            }
 
         # 大表采样（100K 样本），小表精确统计
         sample_size = 100_000
@@ -139,9 +146,16 @@ def _query_coverage(table: str) -> dict | None:
             sampled = False
 
         if not result:
-            return {"total": total, "exchange_coverage": 1.0, "canonical_coverage": 1.0,
-                    "exchange_nonempty": 0, "exchange_empty": 0, "canonical_nonempty": 0,
-                    "empty_symbols_sample": [], "sampled": sampled}
+            return {
+                "total": total,
+                "exchange_coverage": 1.0,
+                "canonical_coverage": 1.0,
+                "exchange_nonempty": 0,
+                "exchange_empty": 0,
+                "canonical_nonempty": 0,
+                "empty_symbols_sample": [],
+                "sampled": sampled,
+            }
 
         parts = result.split("\t")
         sample_total = int(parts[0])
@@ -162,8 +176,7 @@ def _query_coverage(table: str) -> dict | None:
                 ).strip()
             else:
                 diag = ch_writer.query(
-                    f"SELECT DISTINCT symbol FROM {DB}.{table} "
-                    f"WHERE exchange = '' LIMIT 5 FORMAT TabSeparated"
+                    f"SELECT DISTINCT symbol FROM {DB}.{table} WHERE exchange = '' LIMIT 5 FORMAT TabSeparated"
                 ).strip()
             empty_sample = [s for s in diag.splitlines() if s.strip()]
 
@@ -237,8 +250,7 @@ def verify(table_filter: str | None = None) -> tuple[bool, list[dict]]:
 
         if cols is None:
             failures.append(f"{tbl}: 列定义查询失败")
-            results.append({"table": tbl, "tier": tier, "status": "ERROR",
-                            "coverage": cov})
+            results.append({"table": tbl, "tier": tier, "status": "ERROR", "coverage": cov})
             continue
 
         entry = {
@@ -259,8 +271,7 @@ def verify(table_filter: str | None = None) -> tuple[bool, list[dict]]:
             if cols.get("exchange_kind") != "MATERIALIZED":
                 entry["status"] = "FAIL"
                 failures.append(
-                    f"{tbl} (tier={tier}): exchange default_kind="
-                    f"{cols.get('exchange_kind')} 应为 MATERIALIZED"
+                    f"{tbl} (tier={tier}): exchange default_kind={cols.get('exchange_kind')} 应为 MATERIALIZED"
                 )
             elif cov["total"] > 0 and cov["exchange_coverage"] < TIER12_COVERAGE_THRESHOLD:
                 entry["status"] = "WARN"
@@ -274,17 +285,12 @@ def verify(table_filter: str | None = None) -> tuple[bool, list[dict]]:
         elif tier == "tier3":
             if cols.get("exchange_kind") == "MATERIALIZED":
                 entry["status"] = "FAIL"
-                failures.append(
-                    f"{tbl} (tier3): exchange default_kind=MATERIALIZED 应为 DEFAULT（regular列）"
-                )
+                failures.append(f"{tbl} (tier3): exchange default_kind=MATERIALIZED 应为 DEFAULT（regular列）")
 
         # symbol_canonical 应始终为 MATERIALIZED
         if cols.get("canonical_kind") != "MATERIALIZED":
             entry["status"] = "FAIL"
-            failures.append(
-                f"{tbl}: symbol_canonical default_kind="
-                f"{cols.get('canonical_kind')} 应为 MATERIALIZED"
-            )
+            failures.append(f"{tbl}: symbol_canonical default_kind={cols.get('canonical_kind')} 应为 MATERIALIZED")
 
         results.append(entry)
 
@@ -315,8 +321,10 @@ def _print_report(results: list[dict], failures: list[str]) -> None:
         if tier not in by_tier:
             continue
         print(f"\n--- {tier_labels.get(tier, tier)} ({len(by_tier[tier])} 表) ---")
-        print(f"{'表名':30s} {'行数':>12s} {'exch覆盖':>8s} {'canon覆盖':>8s} "
-              f"{'ex_kind':>13s} {'can_kind':>13s} {'采样':>4s} {'状态':>5s}")
+        print(
+            f"{'表名':30s} {'行数':>12s} {'exch覆盖':>8s} {'canon覆盖':>8s} "
+            f"{'ex_kind':>13s} {'can_kind':>13s} {'采样':>4s} {'状态':>5s}"
+        )
         for r in sorted(by_tier[tier], key=lambda x: x["table"]):
             total = r.get("total", 0)
             ex_cov = r.get("exchange_coverage", 0)
@@ -325,8 +333,10 @@ def _print_report(results: list[dict], failures: list[str]) -> None:
             can_kind = r.get("canonical_kind", "?")
             status = r.get("status", "?")
             sampled = "Y" if r.get("sampled") else "N"
-            print(f"{r['table']:30s} {total:>12d} {ex_cov:>7.1%} {canon_cov:>7.1%} "
-                  f"{ex_kind:>13s} {can_kind:>13s} {sampled:>4s} {status:>5s}")
+            print(
+                f"{r['table']:30s} {total:>12d} {ex_cov:>7.1%} {canon_cov:>7.1%} "
+                f"{ex_kind:>13s} {can_kind:>13s} {sampled:>4s} {status:>5s}"
+            )
 
             # 打印空 exchange 样本（诊断用）
             empty = r.get("empty_symbols", [])
@@ -345,6 +355,7 @@ def _print_report(results: list[dict], failures: list[str]) -> None:
 def _write_markdown(path: Path, results: list[dict], failures: list[str]) -> None:
     """写 markdown 报告。"""
     import datetime as _dt
+
     lines = [
         "---",
         "ttl: task_bound",
@@ -380,8 +391,7 @@ def _write_markdown(path: Path, results: list[dict], failures: list[str]) -> Non
 def main() -> int:
     ap = argparse.ArgumentParser(description="exchange+symbol_canonical 覆盖率校验")
     ap.add_argument("--table", help="只校验指定表名")
-    ap.add_argument("--ci", action="store_true",
-                    help="CI 门禁模式：CH 不可达不阻断（exit 0 + WARN）")
+    ap.add_argument("--ci", action="store_true", help="CI 门禁模式：CH 不可达不阻断（exit 0 + WARN）")
     ap.add_argument("--output", help="把 markdown 报告写到指定路径")
     args = ap.parse_args()
 
@@ -406,10 +416,7 @@ def main() -> int:
         elif r.get("status") == "FAIL":
             fail_msgs.append(f"{r['table']}: 列类型不符 Tier 预期")
         elif r.get("status") == "WARN":
-            fail_msgs.append(
-                f"{r['table']}: exchange 覆盖率 "
-                f"{r.get('exchange_coverage', 0):.1%} 低于阈值"
-            )
+            fail_msgs.append(f"{r['table']}: exchange 覆盖率 {r.get('exchange_coverage', 0):.1%} 低于阈值")
 
     _print_report(results, fail_msgs)
 

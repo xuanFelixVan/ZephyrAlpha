@@ -25,17 +25,16 @@ class ThematicClusterer:
 
     @staticmethod
     def classify(paths: list[str]) -> str:
-        combined = '/'.join(paths).lower()
-        if 'test' in combined:
-            return 'Test Patterns'
-        if 'shared' in combined:
-            return 'Shared Library'
-        if any((kw in combined for kw in ('infrastructure', 'l01_'))):
-            return 'Infrastructure'
-        if any((kw in combined for kw in ('pipeline', 'workflow'))):
-            return 'Pipeline'
-        return 'General'
-
+        combined = "/".join(paths).lower()
+        if "test" in combined:
+            return "Test Patterns"
+        if "shared" in combined:
+            return "Shared Library"
+        if any((kw in combined for kw in ("infrastructure", "l01_"))):
+            return "Infrastructure"
+        if any((kw in combined for kw in ("pipeline", "workflow"))):
+            return "Pipeline"
+        return "General"
 
     def cluster(self, duplicate_groups: list[dict], max_clusters: int = 5) -> dict:
         """元组->主题"""

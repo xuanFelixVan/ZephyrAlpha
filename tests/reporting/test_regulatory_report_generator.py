@@ -80,13 +80,12 @@ class TestProgrammaticTradingReport:
         """data_hash = SHA-256(canonical_json(content))。"""
         gen = RegulatoryReportGenerator()
         report = gen.generate_programmatic_trading(
-            "PF-001", "2026",
+            "PF-001",
+            "2026",
             strategies=[{"name": "s1", "parameters": {}, "status": "active"}],
             risk_rules=[{"name": "r1", "threshold": 0.1, "action": "warn"}],
         )
-        expected = hashlib.sha256(
-            _canonical_json(report.content).encode("utf-8")
-        ).hexdigest()
+        expected = hashlib.sha256(_canonical_json(report.content).encode("utf-8")).hexdigest()
         assert report.data_hash == expected
 
     def test_missing_strategies_raises(self) -> None:
@@ -94,7 +93,8 @@ class TestProgrammaticTradingReport:
         gen = RegulatoryReportGenerator()
         with pytest.raises(InvalidRegulatoryReportError) as exc:
             gen.generate_programmatic_trading(
-                "PF-001", "2026",
+                "PF-001",
+                "2026",
                 strategies=[],
                 risk_rules=[{"name": "r1", "threshold": 0.1, "action": "warn"}],
             )
@@ -105,7 +105,8 @@ class TestProgrammaticTradingReport:
         gen = RegulatoryReportGenerator()
         with pytest.raises(InvalidRegulatoryReportError) as exc:
             gen.generate_programmatic_trading(
-                "PF-001", "2026",
+                "PF-001",
+                "2026",
                 strategies=[{"name": "s1", "parameters": {}, "status": "active"}],
                 risk_rules=[],
             )
@@ -116,7 +117,8 @@ class TestProgrammaticTradingReport:
         gen = RegulatoryReportGenerator()
         with pytest.raises(InvalidRegulatoryReportError):
             gen.generate_programmatic_trading(
-                "  ", "2026",
+                "  ",
+                "2026",
                 strategies=[{"name": "s1"}],
                 risk_rules=[{"name": "r1"}],
             )
@@ -269,7 +271,8 @@ class TestPerformanceReport:
         gen = RegulatoryReportGenerator()
         with pytest.raises(InvalidRegulatoryReportError) as exc:
             gen.generate_performance(
-                "PF-001", "2026-Q3",
+                "PF-001",
+                "2026-Q3",
                 metrics={"max_drawdown": -5.0, "sharpe_ratio": 1.5},
             )
         assert "return_pct" in str(exc.value)
@@ -279,7 +282,8 @@ class TestPerformanceReport:
         gen = RegulatoryReportGenerator()
         with pytest.raises(InvalidRegulatoryReportError):
             gen.generate_performance(
-                "PF-001", "2026-Q3",
+                "PF-001",
+                "2026-Q3",
                 metrics={"return_pct": 10.0, "sharpe_ratio": 1.5},
             )
 
@@ -288,7 +292,8 @@ class TestPerformanceReport:
         gen = RegulatoryReportGenerator()
         with pytest.raises(InvalidRegulatoryReportError):
             gen.generate_performance(
-                "PF-001", "2026-Q3",
+                "PF-001",
+                "2026-Q3",
                 metrics={"return_pct": 10.0, "max_drawdown": -5.0},
             )
 
@@ -307,7 +312,8 @@ class TestValidateReport:
         """未篡改的报告 → validate_report 返回 True。"""
         gen = RegulatoryReportGenerator()
         report = gen.generate_position(
-            "PF-001", "2026-08",
+            "PF-001",
+            "2026-08",
             holdings=[{"symbol": "600519", "quantity": 100, "market_value": 200000, "sector": "consumer"}],
         )
         assert gen.validate_report(report) is True
@@ -316,7 +322,8 @@ class TestValidateReport:
         """篡改 content → validate_report 返回 False。"""
         gen = RegulatoryReportGenerator()
         report = gen.generate_position(
-            "PF-001", "2026-08",
+            "PF-001",
+            "2026-08",
             holdings=[{"symbol": "600519", "quantity": 100, "market_value": 200000, "sector": "consumer"}],
         )
         # 用 dataclasses.replace 构造篡改版本（frozen 不可直接改）
@@ -330,20 +337,24 @@ class TestValidateReport:
         """4类报告都通过完整性校验。"""
         gen = RegulatoryReportGenerator()
         r1 = gen.generate_programmatic_trading(
-            "PF-001", "2026",
+            "PF-001",
+            "2026",
             strategies=[{"name": "s1"}],
             risk_rules=[{"name": "r1"}],
         )
         r2 = gen.generate_abnormal_trading(
-            "PF-001", "2026",
+            "PF-001",
+            "2026",
             events=[{"event_type": "x", "trigger": "t", "action": "a"}],
         )
         r3 = gen.generate_position(
-            "PF-001", "2026-08",
+            "PF-001",
+            "2026-08",
             holdings=[{"symbol": "A", "quantity": 1, "market_value": 100, "sector": "x"}],
         )
         r4 = gen.generate_performance(
-            "PF-001", "2026",
+            "PF-001",
+            "2026",
             metrics={"return_pct": 1.0, "max_drawdown": -1.0, "sharpe_ratio": 1.0},
         )
         for r in (r1, r2, r3, r4):
@@ -373,11 +384,13 @@ class TestDataHashDeterminism:
         """不同输入 → 不同 data_hash。"""
         gen = RegulatoryReportGenerator()
         r1 = gen.generate_performance(
-            "PF-001", "2026",
+            "PF-001",
+            "2026",
             metrics={"return_pct": 10.0, "max_drawdown": -5.0, "sharpe_ratio": 1.5},
         )
         r2 = gen.generate_performance(
-            "PF-001", "2026",
+            "PF-001",
+            "2026",
             metrics={"return_pct": 11.0, "max_drawdown": -5.0, "sharpe_ratio": 1.5},
         )
         assert r1.data_hash != r2.data_hash
@@ -393,7 +406,8 @@ class TestDataHashDeterminism:
         """data_hash 是 64 位 hex 字符串（SHA-256）。"""
         gen = RegulatoryReportGenerator()
         report = gen.generate_performance(
-            "PF-001", "2026",
+            "PF-001",
+            "2026",
             metrics={"return_pct": 1.0, "max_drawdown": -1.0, "sharpe_ratio": 1.0},
         )
         assert len(report.data_hash) == 64
@@ -408,7 +422,8 @@ class TestImmutability:
         """RegulatoryReport frozen——不可修改字段赋值。"""
         gen = RegulatoryReportGenerator()
         report = gen.generate_position(
-            "PF-001", "2026-08",
+            "PF-001",
+            "2026-08",
             holdings=[{"symbol": "A", "quantity": 1, "market_value": 100, "sector": "x"}],
         )
         # frozen dataclass 阻止字段重新赋值
@@ -433,7 +448,8 @@ class TestReportIdAndMetadata:
         """report_id 格式: REG-<TYPE前缀>-<hex10>。"""
         gen = RegulatoryReportGenerator()
         report = gen.generate_position(
-            "PF-001", "2026-08",
+            "PF-001",
+            "2026-08",
             holdings=[{"symbol": "A", "quantity": 1, "market_value": 100, "sector": "x"}],
         )
         # REG-POS-<10 hex chars>
@@ -446,20 +462,24 @@ class TestReportIdAndMetadata:
         """4类报告的 report_id 前缀正确。"""
         gen = RegulatoryReportGenerator()
         r1 = gen.generate_programmatic_trading(
-            "PF-001", "2026",
+            "PF-001",
+            "2026",
             strategies=[{"name": "s1"}],
             risk_rules=[{"name": "r1"}],
         )
         r2 = gen.generate_abnormal_trading(
-            "PF-001", "2026",
+            "PF-001",
+            "2026",
             events=[{"event_type": "x"}],
         )
         r3 = gen.generate_position(
-            "PF-001", "2026-08",
+            "PF-001",
+            "2026-08",
             holdings=[{"symbol": "A", "quantity": 1, "market_value": 100, "sector": "x"}],
         )
         r4 = gen.generate_performance(
-            "PF-001", "2026",
+            "PF-001",
+            "2026",
             metrics={"return_pct": 1.0, "max_drawdown": -1.0, "sharpe_ratio": 1.0},
         )
         assert r1.report_id.startswith("REG-PRO-")
@@ -472,7 +492,8 @@ class TestReportIdAndMetadata:
         gen = RegulatoryReportGenerator()
         before = datetime.now(UTC)
         report = gen.generate_position(
-            "PF-001", "2026-08",
+            "PF-001",
+            "2026-08",
             holdings=[{"symbol": "A", "quantity": 1, "market_value": 100, "sector": "x"}],
         )
         after = datetime.now(UTC)
@@ -483,7 +504,8 @@ class TestReportIdAndMetadata:
         """schema_version = "1.0"。"""
         gen = RegulatoryReportGenerator()
         report = gen.generate_position(
-            "PF-001", "2026-08",
+            "PF-001",
+            "2026-08",
             holdings=[{"symbol": "A", "quantity": 1, "market_value": 100, "sector": "x"}],
         )
         assert report.schema_version == "1.0"
@@ -498,7 +520,8 @@ class TestEdgeCases:
         gen = RegulatoryReportGenerator()
         with pytest.raises(InvalidRegulatoryReportError):
             gen.generate_position(
-                "PF-001", "  ",
+                "PF-001",
+                "  ",
                 holdings=[{"symbol": "A", "quantity": 1, "market_value": 100, "sector": "x"}],
             )
 
@@ -507,7 +530,8 @@ class TestEdgeCases:
         gen = RegulatoryReportGenerator()
         with pytest.raises(InvalidRegulatoryReportError):
             gen.generate_abnormal_trading(
-                "", "2026",
+                "",
+                "2026",
                 events=[{"event_type": "x"}],
             )
 

@@ -138,7 +138,6 @@ class ReportGenerator:
         """写入：exit_code（Stage 4 公共化）。"""
         self._exit_code = value
 
-
     # ── 公共 API ──────────────────────────────────────────────
 
     def generate(

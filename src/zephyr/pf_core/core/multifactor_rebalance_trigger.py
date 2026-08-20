@@ -33,6 +33,7 @@
 
 触发后调用 §3.5 七约束链重优化 + §3.7#2 约束仲裁。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -50,22 +51,22 @@ __all__ = [
 class RebalanceTriggerParams:
     """换仓触发参数（25号memo §3.7#6 参数表）。"""
 
-    convergence_window_max: int = 5       # 保底换仓周期
-    convergence_window_min: int = 3       # 最短换仓间隔（防过度换仓）
-    drift_threshold: float = 0.15         # 组合权重漂移>15%→触发
-    rank_change_threshold: float = 10.0   # top-30 因子排名变化>10 位→触发
-    rank_normalization: float = 30.0      # 排名变化 ×30 归一化
-    cost_aware: bool = True               # 换仓成本感知
+    convergence_window_max: int = 5  # 保底换仓周期
+    convergence_window_min: int = 3  # 最短换仓间隔（防过度换仓）
+    drift_threshold: float = 0.15  # 组合权重漂移>15%→触发
+    rank_change_threshold: float = 10.0  # top-30 因子排名变化>10 位→触发
+    rank_normalization: float = 30.0  # 排名变化 ×30 归一化
+    cost_aware: bool = True  # 换仓成本感知
     transaction_cost_rate: float = 0.004  # A 股往返交易成本 0.4%
     daily_alpha_estimate: float = 0.0005  # 日均因子 alpha 估计 0.05%（IC~0.03 保守）
 
 
 class RebalanceTriggerType(str, Enum):
-    WAIT = "WAIT"      # 最短间隔保护
-    TIME = "TIME"      # 保底换仓（不受成本门控）
-    DRIFT = "DRIFT"    # 漂移触发
+    WAIT = "WAIT"  # 最短间隔保护
+    TIME = "TIME"  # 保底换仓（不受成本门控）
+    DRIFT = "DRIFT"  # 漂移触发
     SIGNAL = "SIGNAL"  # 排名变化触发
-    HOLD = "HOLD"      # 不换仓
+    HOLD = "HOLD"  # 不换仓
 
 
 @dataclass(frozen=True)
@@ -122,14 +123,16 @@ def should_rebalance(
     # ① 最短间隔保护
     if days_since_last < p.convergence_window_min:
         return RebalanceDecision(
-            RebalanceTriggerType.WAIT, False,
+            RebalanceTriggerType.WAIT,
+            False,
             f"距上次换仓 {days_since_last}<{p.convergence_window_min} 天（最短间隔保护）",
             rank_change_score=rank_score,
         )
     # ② TIME 保底换仓（不受成本门控）
     if days_since_last >= p.convergence_window_max:
         return RebalanceDecision(
-            RebalanceTriggerType.TIME, True,
+            RebalanceTriggerType.TIME,
+            True,
             f"距上次换仓 {days_since_last}≥{p.convergence_window_max} 天→保底换仓",
             rank_change_score=rank_score,
         )
@@ -144,31 +147,49 @@ def should_rebalance(
         ok, ina, act = _gate()
         if ok:
             return RebalanceDecision(
-                RebalanceTriggerType.DRIFT, True,
+                RebalanceTriggerType.DRIFT,
+                True,
                 f"权重漂移 {drift:.1%}>{p.drift_threshold:.0%} 且 Inaction Cost 通过",
-                ina, act, p.cost_aware, rank_score,
+                ina,
+                act,
+                p.cost_aware,
+                rank_score,
             )
         return RebalanceDecision(
-            RebalanceTriggerType.HOLD, False,
+            RebalanceTriggerType.HOLD,
+            False,
             f"漂移 {drift:.1%} 超阈但 Inaction {ina:.5f}≤Action {act:.5f}→等保底省成本",
-            ina, act, p.cost_aware, rank_score,
+            ina,
+            act,
+            p.cost_aware,
+            rank_score,
         )
     # ④ 信号触发（成本门控）
     if rank_change > p.rank_change_threshold:
         ok, ina, act = _gate()
         if ok:
             return RebalanceDecision(
-                RebalanceTriggerType.SIGNAL, True,
+                RebalanceTriggerType.SIGNAL,
+                True,
                 f"top-30 排名变化 {rank_change:.1f}>{p.rank_change_threshold:.0f} 位且成本门控通过",
-                ina, act, p.cost_aware, rank_score,
+                ina,
+                act,
+                p.cost_aware,
+                rank_score,
             )
         return RebalanceDecision(
-            RebalanceTriggerType.HOLD, False,
+            RebalanceTriggerType.HOLD,
+            False,
             f"排名变化 {rank_change:.1f} 超阈但成本门控未通过→等保底",
-            ina, act, p.cost_aware, rank_score,
+            ina,
+            act,
+            p.cost_aware,
+            rank_score,
         )
     # ⑤ 均未达
     return RebalanceDecision(
-        RebalanceTriggerType.HOLD, False, "未达触发条件",
+        RebalanceTriggerType.HOLD,
+        False,
+        "未达触发条件",
         rank_change_score=rank_score,
     )

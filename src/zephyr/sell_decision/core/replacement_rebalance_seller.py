@@ -123,8 +123,8 @@ logger = logging.getLogger(__name__)
 class SellOrderType(str, Enum):
     """置换/再平衡卖出类型。"""
 
-    REPLACEMENT = "REPLACEMENT"   # 置换卖出(卖A买B, 机会成本驱动)
-    REBALANCE = "REBALANCE"       # 再平衡卖出(权重偏离驱动)
+    REPLACEMENT = "REPLACEMENT"  # 置换卖出(卖A买B, 机会成本驱动)
+    REBALANCE = "REBALANCE"  # 再平衡卖出(权重偏离驱动)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -175,21 +175,13 @@ class ReplacementRebalanceOrder:
         if not self.symbol:
             raise InvalidRebalanceInputError("symbol must not be empty")
         if not 0.0 <= self.current_weight <= 1.0:
-            raise InvalidRebalanceInputError(
-                f"current_weight must be in [0,1], got {self.current_weight}"
-            )
+            raise InvalidRebalanceInputError(f"current_weight must be in [0,1], got {self.current_weight}")
         if not 0.0 <= self.target_weight <= 1.0:
-            raise InvalidRebalanceInputError(
-                f"target_weight must be in [0,1], got {self.target_weight}"
-            )
+            raise InvalidRebalanceInputError(f"target_weight must be in [0,1], got {self.target_weight}")
         if not 0.0 <= self.confidence <= 1.0:
-            raise InvalidRebalanceInputError(
-                f"confidence must be in [0,1], got {self.confidence}"
-            )
+            raise InvalidRebalanceInputError(f"confidence must be in [0,1], got {self.confidence}")
         if self.order_type is SellOrderType.REPLACEMENT and not self.replace_with:
-            raise InvalidRebalanceInputError(
-                "replace_with must be set for REPLACEMENT order"
-            )
+            raise InvalidRebalanceInputError("replace_with must be set for REPLACEMENT order")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -235,9 +227,7 @@ class ReplacementRebalanceSeller:
         clock: Callable[[], datetime] | None = None,
     ) -> None:
         if not 0.0 < rebalance_threshold <= 1.0:
-            raise InvalidRebalanceInputError(
-                f"rebalance_threshold must be in (0,1], got {rebalance_threshold}"
-            )
+            raise InvalidRebalanceInputError(f"rebalance_threshold must be in (0,1], got {rebalance_threshold}")
         if not 0.0 <= replacement_score_threshold <= 1.0:
             raise InvalidRebalanceInputError(
                 f"replacement_score_threshold must be in [0,1], got {replacement_score_threshold}"
@@ -270,13 +260,9 @@ class ReplacementRebalanceSeller:
         if not symbol:
             raise InvalidRebalanceInputError("symbol must not be empty")
         if not 0.0 <= current_weight <= 1.0:
-            raise InvalidRebalanceInputError(
-                f"current_weight must be in [0,1], got {current_weight}"
-            )
+            raise InvalidRebalanceInputError(f"current_weight must be in [0,1], got {current_weight}")
         if not 0.0 <= target_weight <= 1.0:
-            raise InvalidRebalanceInputError(
-                f"target_weight must be in [0,1], got {target_weight}"
-            )
+            raise InvalidRebalanceInputError(f"target_weight must be in [0,1], got {target_weight}")
 
         now = now or self._clock()
         drift = current_weight - target_weight
@@ -332,13 +318,9 @@ class ReplacementRebalanceSeller:
         if not replace_with:
             raise InvalidRebalanceInputError("replace_with must not be empty")
         if not 0.0 <= current_score <= 1.0:
-            raise InvalidRebalanceInputError(
-                f"current_score must be in [0,1], got {current_score}"
-            )
+            raise InvalidRebalanceInputError(f"current_score must be in [0,1], got {current_score}")
         if not 0.0 <= candidate_score <= 1.0:
-            raise InvalidRebalanceInputError(
-                f"candidate_score must be in [0,1], got {candidate_score}"
-            )
+            raise InvalidRebalanceInputError(f"candidate_score must be in [0,1], got {candidate_score}")
 
         now = now or self._clock()
         score_diff = candidate_score - current_score
@@ -356,7 +338,7 @@ class ReplacementRebalanceSeller:
         order = ReplacementRebalanceOrder(
             symbol=symbol,
             order_type=SellOrderType.REPLACEMENT,
-            current_weight=current_score,   # 复用字段存评分
+            current_weight=current_score,  # 复用字段存评分
             target_weight=candidate_score,
             direction=SellDirection.REPLACE,
             confidence=confidence,

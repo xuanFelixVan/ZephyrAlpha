@@ -96,8 +96,7 @@ def _make_event(
 
 @pytest.fixture(autouse=True)
 def _mock_lsg():
-    with patch.object(DelegationEngine, "lsg_verify_delegation"), \
-         patch.object(EscalationEngine, "lsg_scan_input"):
+    with patch.object(DelegationEngine, "lsg_verify_delegation"), patch.object(EscalationEngine, "lsg_scan_input"):
         yield
 
 

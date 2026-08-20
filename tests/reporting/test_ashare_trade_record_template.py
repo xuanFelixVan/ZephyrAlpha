@@ -80,10 +80,12 @@ class TestValidEntry:
     def test_valid_sell_entry(self) -> None:
         """合法卖出记录(含印花税)。"""
         tpl = AShareTradeRecordTemplate()
-        entry = tpl.validate(make_valid_entry(
-            side="SELL",
-            stamp_duty="0.50",
-        ))
+        entry = tpl.validate(
+            make_valid_entry(
+                side="SELL",
+                stamp_duty="0.50",
+            )
+        )
         assert entry.side == "SELL"
         assert entry.stamp_duty == Decimal("0.50")
 
@@ -96,48 +98,56 @@ class TestValidEntry:
     def test_quantity_large_lot(self) -> None:
         """大批量(1000股)。"""
         tpl = AShareTradeRecordTemplate()
-        entry = tpl.validate(make_valid_entry(
-            quantity="1000",
-            amount="10000.00",
-        ))
+        entry = tpl.validate(
+            make_valid_entry(
+                quantity="1000",
+                amount="10000.00",
+            )
+        )
         assert entry.quantity == Decimal("1000")
 
     def test_int_values_coerced(self) -> None:
         """int 值自动转 Decimal。"""
         tpl = AShareTradeRecordTemplate()
-        entry = tpl.validate(make_valid_entry(
-            quantity=100,
-            price=10,
-            amount=1000,
-            commission=5,
-            stamp_duty=0,
-            transfer_fee=0,
-        ))
+        entry = tpl.validate(
+            make_valid_entry(
+                quantity=100,
+                price=10,
+                amount=1000,
+                commission=5,
+                stamp_duty=0,
+                transfer_fee=0,
+            )
+        )
         assert entry.quantity == Decimal("100")
         assert entry.price == Decimal("10")
 
     def test_float_values_coerced(self) -> None:
         """float 值自动转 Decimal。"""
         tpl = AShareTradeRecordTemplate()
-        entry = tpl.validate(make_valid_entry(
-            quantity=100.0,
-            price=10.5,
-            amount=1050.0,
-            commission=5.0,
-            stamp_duty=0.0,
-            transfer_fee=0.1,
-        ))
+        entry = tpl.validate(
+            make_valid_entry(
+                quantity=100.0,
+                price=10.5,
+                amount=1050.0,
+                commission=5.0,
+                stamp_duty=0.0,
+                transfer_fee=0.1,
+            )
+        )
         assert entry.price == Decimal("10.5")
         assert entry.amount == Decimal("1050.0")
 
     def test_decimal_values_pass_through(self) -> None:
         """Decimal 值直接通过。"""
         tpl = AShareTradeRecordTemplate()
-        entry = tpl.validate(make_valid_entry(
-            quantity=Decimal("200"),
-            price=Decimal("15.50"),
-            amount=Decimal("3100.00"),
-        ))
+        entry = tpl.validate(
+            make_valid_entry(
+                quantity=Decimal("200"),
+                price=Decimal("15.50"),
+                amount=Decimal("3100.00"),
+            )
+        )
         assert entry.quantity == Decimal("200")
         assert entry.price == Decimal("15.50")
 
@@ -152,11 +162,22 @@ class TestValidEntry:
 
 
 class TestMissingFields:
-    @pytest.mark.parametrize("missing_field", [
-        "trade_date", "symbol", "side", "quantity", "price",
-        "amount", "commission", "stamp_duty", "transfer_fee",
-        "strategy_id", "account_id",
-    ])
+    @pytest.mark.parametrize(
+        "missing_field",
+        [
+            "trade_date",
+            "symbol",
+            "side",
+            "quantity",
+            "price",
+            "amount",
+            "commission",
+            "stamp_duty",
+            "transfer_fee",
+            "strategy_id",
+            "account_id",
+        ],
+    )
     def test_missing_each_field(self, missing_field: str) -> None:
         """缺任一必填字段拒绝。"""
         tpl = AShareTradeRecordTemplate()
@@ -241,10 +262,12 @@ class TestNumericValidation:
         """quantity 非100整数倍拒绝。"""
         tpl = AShareTradeRecordTemplate()
         with pytest.raises(InvalidTradeRecordError) as exc_info:
-            tpl.validate(make_valid_entry(
-                quantity="150",
-                amount="1500.00",
-            ))
+            tpl.validate(
+                make_valid_entry(
+                    quantity="150",
+                    amount="1500.00",
+                )
+            )
         assert "100" in exc_info.value.message
 
     def test_price_zero(self) -> None:
@@ -286,31 +309,37 @@ class TestBusinessRules:
         """amount ≠ quantity × price 拒绝。"""
         tpl = AShareTradeRecordTemplate()
         with pytest.raises(InvalidTradeRecordError) as exc_info:
-            tpl.validate(make_valid_entry(
-                quantity="100",
-                price="10.00",
-                amount="999.00",  # 应为 1000.00
-            ))
+            tpl.validate(
+                make_valid_entry(
+                    quantity="100",
+                    price="10.00",
+                    amount="999.00",  # 应为 1000.00
+                )
+            )
         assert "amount" in exc_info.value.message.lower() or "不一致" in exc_info.value.message
 
     def test_amount_mismatch_large(self) -> None:
         """amount 严重不一致拒绝。"""
         tpl = AShareTradeRecordTemplate()
         with pytest.raises(InvalidTradeRecordError):
-            tpl.validate(make_valid_entry(
-                quantity="100",
-                price="10.00",
-                amount="5000.00",
-            ))
+            tpl.validate(
+                make_valid_entry(
+                    quantity="100",
+                    price="10.00",
+                    amount="5000.00",
+                )
+            )
 
     def test_stamp_duty_on_buy_rejected(self) -> None:
         """买入时 stamp_duty>0 拒绝。"""
         tpl = AShareTradeRecordTemplate()
         with pytest.raises(InvalidTradeRecordError) as exc_info:
-            tpl.validate(make_valid_entry(
-                side="BUY",
-                stamp_duty="0.50",
-            ))
+            tpl.validate(
+                make_valid_entry(
+                    side="BUY",
+                    stamp_duty="0.50",
+                )
+            )
         assert "stamp_duty" in exc_info.value.message
 
     def test_stamp_duty_zero_on_buy_ok(self) -> None:
@@ -322,10 +351,12 @@ class TestBusinessRules:
     def test_stamp_duty_positive_on_sell_ok(self) -> None:
         """卖出时 stamp_duty>0 通过。"""
         tpl = AShareTradeRecordTemplate()
-        entry = tpl.validate(make_valid_entry(
-            side="SELL",
-            stamp_duty="0.50",
-        ))
+        entry = tpl.validate(
+            make_valid_entry(
+                side="SELL",
+                stamp_duty="0.50",
+            )
+        )
         assert entry.stamp_duty == Decimal("0.50")
 
     def test_stamp_duty_zero_on_sell_ok(self) -> None:
@@ -337,11 +368,13 @@ class TestBusinessRules:
     def test_amount_consistent_with_decimal_precision(self) -> None:
         """amount 一致性含小数精度。"""
         tpl = AShareTradeRecordTemplate()
-        entry = tpl.validate(make_valid_entry(
-            quantity="200",
-            price="15.50",
-            amount="3100.00",
-        ))
+        entry = tpl.validate(
+            make_valid_entry(
+                quantity="200",
+                price="15.50",
+                amount="3100.00",
+            )
+        )
         assert entry.amount == Decimal("3100.00")
 
 
@@ -383,9 +416,17 @@ class TestTemplateVersion:
         tpl = AShareTradeRecordTemplate()
         fields = set(tpl.get_required_fields())
         expected = {
-            "trade_date", "symbol", "side", "quantity", "price",
-            "amount", "commission", "stamp_duty", "transfer_fee",
-            "strategy_id", "account_id",
+            "trade_date",
+            "symbol",
+            "side",
+            "quantity",
+            "price",
+            "amount",
+            "commission",
+            "stamp_duty",
+            "transfer_fee",
+            "strategy_id",
+            "account_id",
         }
         assert fields == expected
 

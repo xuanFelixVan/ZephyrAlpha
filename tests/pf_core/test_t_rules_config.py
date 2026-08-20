@@ -22,11 +22,11 @@ from zephyr.pf_core.strategy_engine.tick_strategy_base import TRulesConfig
 class TestDefaults:
     def test_defaults_match_ruling(self):
         cfg = TRulesConfig()
-        assert cfg.max_t_position_ratio == 0.25        # 底仓 20-30% 保守端
-        assert cfg.min_volume_ratio == 1.0             # 量比>1
-        assert cfg.single_side_cost_rate == 0.0015     # 单边成本≈0.15%
-        assert cfg.force_cover_time == time(14, 30)    # 14:30 强制接回
-        assert cfg.stop_loss_pct == -0.015             # 单笔止损 -1.5%
+        assert cfg.max_t_position_ratio == 0.25  # 底仓 20-30% 保守端
+        assert cfg.min_volume_ratio == 1.0  # 量比>1
+        assert cfg.single_side_cost_rate == 0.0015  # 单边成本≈0.15%
+        assert cfg.force_cover_time == time(14, 30)  # 14:30 强制接回
+        assert cfg.stop_loss_pct == -0.015  # 单笔止损 -1.5%
 
 
 class TestRuleChecks:
@@ -37,7 +37,7 @@ class TestRuleChecks:
     def test_volume_filter(self):
         cfg = TRulesConfig()
         assert cfg.volume_filter_ok(0.8) is False
-        assert cfg.volume_filter_ok(1.0) is False   # 须严格 >1
+        assert cfg.volume_filter_ok(1.0) is False  # 须严格 >1
         assert cfg.volume_filter_ok(1.2) is True
 
     def test_amplitude_filter(self):

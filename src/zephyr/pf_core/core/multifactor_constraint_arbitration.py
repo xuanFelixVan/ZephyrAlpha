@@ -35,6 +35,7 @@ C1-C7 策略级约束链 ↔ MOD-PF-006 对齐（memo §6 待裁定项，CTR-003
   C2→max_sector_concentration=0.05）；C3/C4/C5/C6/C7 为策略侧运行时检查项，
   不在 CTR-003 schema 内，由策略层（本模块违规检测/RebalanceTrigger）消费。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -57,13 +58,13 @@ __all__ = [
 ]
 
 # ── C1-C7 策略级约束链参数（25号memo §3.5 裁定目标态，CTR-003 注入对齐）──
-C1_SINGLE_POSITION_MAX = 0.02   # C1 单票 ≤ 2% NAV
+C1_SINGLE_POSITION_MAX = 0.02  # C1 单票 ≤ 2% NAV
 C2_INDUSTRY_EXPOSURE_MAX = 0.05  # C2 单行业 ≤ ±5%（申万一级，相对基准）
-C3_PORTFOLIO_VOL_MAX = 0.25     # C3 组合年化波动 ≤ 25%（滚动 60 日）
-C4_DAILY_TURNOVER_MAX = 0.30    # C4 日均换手 ≤ 30%
+C3_PORTFOLIO_VOL_MAX = 0.25  # C3 组合年化波动 ≤ 25%（滚动 60 日）
+C4_DAILY_TURNOVER_MAX = 0.30  # C4 日均换手 ≤ 30%
 C5_ADV_PARTICIPATION_MAX = 0.05  # C5 单票 ≤ 日成交 5%
-C6_FACTOR_EXPOSURE_MAX = 0.10   # C6 合成因子暴露 ≤ 指数 ±10%
-C7_MIN_HOLDINGS = 20            # C7 最小持仓 ≥ 20 只
+C6_FACTOR_EXPOSURE_MAX = 0.10  # C6 合成因子暴露 ≤ 指数 ±10%
+C7_MIN_HOLDINGS = 20  # C7 最小持仓 ≥ 20 只
 
 STRATEGY_CONSTRAINTS: dict[str, float] = {
     "C1_single_position_max": C1_SINGLE_POSITION_MAX,
@@ -78,9 +79,9 @@ STRATEGY_CONSTRAINTS: dict[str, float] = {
 HARD_CONSTRAINTS: frozenset[str] = frozenset({"C1", "C5", "C7"})
 SOFT_CONSTRAINTS: frozenset[str] = frozenset({"C2", "C3", "C4", "C6"})
 
-SOFT_PENALTY_WEIGHT = 100.0   # 软约束松弛惩罚权重（cvxpy 松弛变量系数）
-MAX_UNIVERSE_SHRINK = 5       # 硬约束不可行时最多剔 5 只标的重解
-REDUCED_GROSS_CAP = 0.80      # universe 不可缩时总仓位降至 80% 保硬约束
+SOFT_PENALTY_WEIGHT = 100.0  # 软约束松弛惩罚权重（cvxpy 松弛变量系数）
+MAX_UNIVERSE_SHRINK = 5  # 硬约束不可行时最多剔 5 只标的重解
+REDUCED_GROSS_CAP = 0.80  # universe 不可缩时总仓位降至 80% 保硬约束
 
 
 @dataclass(frozen=True)

@@ -177,25 +177,19 @@ class SimulationAnalysisError(ZephyrBaseError):
 class AnalysisConfig:
     """仿真结果分析配置——不可变。"""
 
-    confidence_level: float = 0.95       # 置信水平
-    risk_free_rate: float = 0.0          # 无风险利率(年化)
-    annualization_factor: int = 252      # 年化因子(交易日)
-    histogram_bins: int = 10             # 直方图分桶数
-    jb_critical_value: float = 5.99      # Jarque-Bera 5% 临界值(chi2, df=2)
+    confidence_level: float = 0.95  # 置信水平
+    risk_free_rate: float = 0.0  # 无风险利率(年化)
+    annualization_factor: int = 252  # 年化因子(交易日)
+    histogram_bins: int = 10  # 直方图分桶数
+    jb_critical_value: float = 5.99  # Jarque-Bera 5% 临界值(chi2, df=2)
 
     def __post_init__(self) -> None:
         if not 0 < self.confidence_level < 1:
-            raise SimulationAnalysisError(
-                f"confidence_level must be in (0,1), got {self.confidence_level}"
-            )
+            raise SimulationAnalysisError(f"confidence_level must be in (0,1), got {self.confidence_level}")
         if self.annualization_factor <= 0:
-            raise SimulationAnalysisError(
-                f"annualization_factor must be > 0, got {self.annualization_factor}"
-            )
+            raise SimulationAnalysisError(f"annualization_factor must be > 0, got {self.annualization_factor}")
         if self.histogram_bins <= 0:
-            raise SimulationAnalysisError(
-                f"histogram_bins must be > 0, got {self.histogram_bins}"
-            )
+            raise SimulationAnalysisError(f"histogram_bins must be > 0, got {self.histogram_bins}")
 
 
 # 置信水平 → z 值
@@ -238,8 +232,8 @@ class MetricAggregate:
     p50: float
     p75: float
     p95: float
-    ci_lower: float | None     # 均值置信区间下界 (None=N<2)
-    ci_upper: float | None     # 均值置信区间上界 (None=N<2)
+    ci_lower: float | None  # 均值置信区间下界 (None=N<2)
+    ci_upper: float | None  # 均值置信区间上界 (None=N<2)
 
 
 @dataclass(frozen=True)
@@ -254,13 +248,13 @@ class AggregateAnalysis:
 class DistributionAnalysis:
     """收益率分布分析——不可变。"""
 
-    histogram_bins: list[float]        # 分桶边界
-    histogram_counts: list[int]        # 各桶计数
+    histogram_bins: list[float]  # 分桶边界
+    histogram_counts: list[int]  # 各桶计数
     skewness: float
-    kurtosis: float                    # 超额峰度(正态=0)
+    kurtosis: float  # 超额峰度(正态=0)
     jarque_bera_stat: float
-    is_normal: bool                    # JB < 临界值 → 正态
-    total_returns: int                 # 收益率样本数
+    is_normal: bool  # JB < 临界值 → 正态
+    total_returns: int  # 收益率样本数
 
 
 @dataclass(frozen=True)
@@ -268,7 +262,7 @@ class VisualizationData:
     """可视化数据——不可变。"""
 
     equity_curve_ensemble: list[list[tuple[Any, float]]]  # 各场景 [(ts, equity), ...]
-    metric_summary: dict[str, float]   # 各指标均值(供箱线图/摘要)
+    metric_summary: dict[str, float]  # 各指标均值(供箱线图/摘要)
 
 
 @dataclass(frozen=True)
@@ -287,8 +281,13 @@ class SimulationAnalysisReport:
 
 # 待聚合的指标名
 _METRIC_NAMES: Final = [
-    "total_return", "annualized_return", "volatility", "sharpe",
-    "max_drawdown", "win_rate", "trades_count",
+    "total_return",
+    "annualized_return",
+    "volatility",
+    "sharpe",
+    "max_drawdown",
+    "win_rate",
+    "trades_count",
 ]
 
 
@@ -331,14 +330,10 @@ class SimulationResultAnalyzer:
             SimulationAnalysisError: results 非 list / 元素非 SimulationResult
         """
         if not isinstance(results, list):
-            raise SimulationAnalysisError(
-                f"results must be a list, got {type(results).__name__}"
-            )
+            raise SimulationAnalysisError(f"results must be a list, got {type(results).__name__}")
         for i, r in enumerate(results):
             if not isinstance(r, SimulationResult):
-                raise SimulationAnalysisError(
-                    f"results[{i}] must be SimulationResult, got {type(r).__name__}"
-                )
+                raise SimulationAnalysisError(f"results[{i}] must be SimulationResult, got {type(r).__name__}")
 
         # 单场景指标
         scenario_metrics = [self._compute_scenario_metrics(r) for r in results]
@@ -366,9 +361,7 @@ class SimulationResultAnalyzer:
     def analyze_single(self, result: SimulationResult) -> ScenarioMetrics:
         """计算单个 SimulationResult 的指标。"""
         if not isinstance(result, SimulationResult):
-            raise SimulationAnalysisError(
-                f"result must be SimulationResult, got {type(result).__name__}"
-            )
+            raise SimulationAnalysisError(f"result must be SimulationResult, got {type(result).__name__}")
         return self._compute_scenario_metrics(result)
 
     # ── 内部: 单场景指标 ──
@@ -430,9 +423,7 @@ class SimulationResultAnalyzer:
 
     # ── 内部: 跨场景聚合 ──
 
-    def _aggregate(
-        self, scenario_metrics: list[ScenarioMetrics]
-    ) -> AggregateAnalysis:
+    def _aggregate(self, scenario_metrics: list[ScenarioMetrics]) -> AggregateAnalysis:
         n = len(scenario_metrics)
         if n == 0:
             return AggregateAnalysis(scenario_count=0, metrics={})
@@ -499,7 +490,7 @@ class SimulationResultAnalyzer:
                 skewness=0.0,
                 kurtosis=0.0,
                 jarque_bera_stat=0.0,
-                is_normal=True,   # 样本不足默认不拒绝
+                is_normal=True,  # 样本不足默认不拒绝
                 total_returns=n,
             )
 
@@ -516,7 +507,7 @@ class SimulationResultAnalyzer:
             kurt = 0.0
 
         # Jarque-Bera: JB = N/6 * (S² + K²/4)
-        jb = (n / 6.0) * (skew ** 2 + (kurt ** 2) / 4.0)
+        jb = (n / 6.0) * (skew**2 + (kurt**2) / 4.0)
         is_normal = jb < cfg.jb_critical_value
 
         return DistributionAnalysis(
@@ -531,16 +522,9 @@ class SimulationResultAnalyzer:
 
     # ── 内部: 可视化数据 ──
 
-    def _build_visualization(
-        self, results: list[SimulationResult], aggregate: AggregateAnalysis
-    ) -> VisualizationData:
-        ensemble = [
-            [(p.timestamp, p.equity) for p in r.equity_curve]
-            for r in results
-        ]
-        metric_summary = {
-            name: agg.mean for name, agg in aggregate.metrics.items()
-        }
+    def _build_visualization(self, results: list[SimulationResult], aggregate: AggregateAnalysis) -> VisualizationData:
+        ensemble = [[(p.timestamp, p.equity) for p in r.equity_curve] for r in results]
+        metric_summary = {name: agg.mean for name, agg in aggregate.metrics.items()}
         return VisualizationData(
             equity_curve_ensemble=ensemble,
             metric_summary=metric_summary,
@@ -548,9 +532,7 @@ class SimulationResultAnalyzer:
 
     # ── 内部: 摘要 ──
 
-    def _build_summary(
-        self, aggregate: AggregateAnalysis, distribution: DistributionAnalysis
-    ) -> str:
+    def _build_summary(self, aggregate: AggregateAnalysis, distribution: DistributionAnalysis) -> str:
         cfg = self._config
         n = aggregate.scenario_count
         if n == 0:
@@ -560,13 +542,10 @@ class SimulationResultAnalyzer:
         sharpe = aggregate.metrics.get("sharpe")
         parts = [
             f"共分析 {n} 个仿真场景。",
-            f"平均总收益: {tr.mean:.2%} (std={tr.std:.2%})"
-            if tr else "平均总收益: N/A",
+            f"平均总收益: {tr.mean:.2%} (std={tr.std:.2%})" if tr else "平均总收益: N/A",
         ]
         if tr and tr.ci_lower is not None:
-            parts.append(
-                f"{int(cfg.confidence_level*100)}% 置信区间: [{tr.ci_lower:.2%}, {tr.ci_upper:.2%}]"
-            )
+            parts.append(f"{int(cfg.confidence_level * 100)}% 置信区间: [{tr.ci_lower:.2%}, {tr.ci_upper:.2%}]")
         if sharpe:
             parts.append(f"平均 Sharpe: {sharpe.mean:.3f}")
         parts.append(

@@ -14,6 +14,7 @@
 # [TESTS] tests/test_code_dedup_engine.py
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: pre-commit GATE-DEDUP 事件触发（verify_dedup.py→cli verify 链路在案），非人工 manual
 
 """code-dedup-engine CLI——子命令映射+退出码+扫描入口."""
 
@@ -141,9 +142,7 @@ def _print_scan_summary(
             print(f"  ... and {len(duplicates) - 20} more")
 
 
-def _determine_scan_exit_code(
-    args: argparse.Namespace, high_count: int, med_count: int
-) -> ExitCode:
+def _determine_scan_exit_code(args: argparse.Namespace, high_count: int, med_count: int) -> ExitCode:
     """根据重复严重度与开关裁定 scan 子命令退出码。"""
     if args.fail_on_duplicates and high_count > 0:
         return ExitCode.ERROR

@@ -158,9 +158,7 @@ def test_multiple_strategies_independent_stops():
 def test_soft_threshold_boundary():
     """回撤恰好等于 soft 阈值不触发(严格大于)。"""
     ctrl = DrawdownController()
-    resp = ctrl.evaluate(
-        NO_DD, VarCvarMetrics(0.01, 0.015), strategy_pnls=[StrategyPnl("s", -0.05)]
-    )
+    resp = ctrl.evaluate(NO_DD, VarCvarMetrics(0.01, 0.015), strategy_pnls=[StrategyPnl("s", -0.05)])
     assert resp.strategy_stops[0].stop_type == StopLossType.NONE
 
 
@@ -213,9 +211,7 @@ def test_multiple_bs_modes_trigger_systemic():
     resp = ctrl.evaluate(
         NO_DD,
         VarCvarMetrics(0.01, 0.015),
-        black_swan=BlackSwanSignal(
-            frozenset({BlackSwanMode.BS001_LIQUIDITY, BlackSwanMode.BS003_VOLATILITY})
-        ),
+        black_swan=BlackSwanSignal(frozenset({BlackSwanMode.BS001_LIQUIDITY, BlackSwanMode.BS003_VOLATILITY})),
     )
     assert resp.kill_switch_advised is True
     assert resp.position_cap == pytest.approx(0.0)
@@ -339,17 +335,13 @@ def test_kill_switch_only_from_bs007():
 def test_positive_drawdown_raises():
     ctrl = DrawdownController()
     with pytest.raises(InvalidDrawdownControlError):
-        ctrl.evaluate(
-            DrawdownInfo(0.05, 1.0, 1.05), VarCvarMetrics(0.01, 0.015)
-        )
+        ctrl.evaluate(DrawdownInfo(0.05, 1.0, 1.05), VarCvarMetrics(0.01, 0.015))
 
 
 def test_drawdown_below_minus_one_raises():
     ctrl = DrawdownController()
     with pytest.raises(InvalidDrawdownControlError):
-        ctrl.evaluate(
-            DrawdownInfo(-1.5, 1.0, -0.5), VarCvarMetrics(0.01, 0.015)
-        )
+        ctrl.evaluate(DrawdownInfo(-1.5, 1.0, -0.5), VarCvarMetrics(0.01, 0.015))
 
 
 def test_negative_var_raises():
@@ -367,9 +359,7 @@ def test_cvar_less_than_var_raises():
 def test_non_positive_peak_nav_raises():
     ctrl = DrawdownController()
     with pytest.raises(InvalidDrawdownControlError):
-        ctrl.evaluate(
-            DrawdownInfo(-0.05, 0.0, 0.0), VarCvarMetrics(0.01, 0.015)
-        )
+        ctrl.evaluate(DrawdownInfo(-0.05, 0.0, 0.0), VarCvarMetrics(0.01, 0.015))
 
 
 # ── 构造器校验 ──────────────────────────────────────────────────────────────────
@@ -377,29 +367,21 @@ def test_non_positive_peak_nav_raises():
 
 def test_soft_must_be_less_than_hard():
     with pytest.raises(InvalidDrawdownControlError):
-        DrawdownController(
-            DrawdownControllerConfig(soft_stop_threshold=0.10, hard_stop_threshold=0.05)
-        )
+        DrawdownController(DrawdownControllerConfig(soft_stop_threshold=0.10, hard_stop_threshold=0.05))
 
 
 def test_thresholds_must_be_positive():
     with pytest.raises(InvalidDrawdownControlError):
-        DrawdownController(
-            DrawdownControllerConfig(soft_stop_threshold=0, hard_stop_threshold=0.10)
-        )
+        DrawdownController(DrawdownControllerConfig(soft_stop_threshold=0, hard_stop_threshold=0.10))
 
 
 def test_var_thresholds_ordered():
     with pytest.raises(InvalidDrawdownControlError):
-        DrawdownController(
-            DrawdownControllerConfig(var_yellow=0.06, var_orange=0.04, var_red=0.02)
-        )
+        DrawdownController(DrawdownControllerConfig(var_yellow=0.06, var_orange=0.04, var_red=0.02))
 
 
 def test_custom_thresholds_used():
-    ctrl = DrawdownController(
-        DrawdownControllerConfig(soft_stop_threshold=0.03, hard_stop_threshold=0.08)
-    )
+    ctrl = DrawdownController(DrawdownControllerConfig(soft_stop_threshold=0.03, hard_stop_threshold=0.08))
     resp = ctrl.evaluate(
         NO_DD,
         VarCvarMetrics(0.01, 0.015),

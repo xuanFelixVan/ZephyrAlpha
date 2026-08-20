@@ -31,6 +31,7 @@
 依据: 50_backtest_observability_workplan §3 ⑥
 Version: 0.1.0
 """
+
 from __future__ import annotations
 
 from datetime import UTC, datetime

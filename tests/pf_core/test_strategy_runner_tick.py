@@ -20,6 +20,7 @@
 last_price<=0 守卫由 EDE on_tick 保证，此处不重复测。
 端到端验证见 scripts/tests/smoke_test_tick_backtest.py（真实 QMT）。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -44,9 +45,7 @@ def _make_weight_panel() -> pd.DataFrame:
     """两交易日权重面板：调仓日 0.5，次日 ffill 0.5。"""
     return pd.DataFrame(
         {"600000.SH": [0.5, 0.5]},
-        index=pd.DatetimeIndex(
-            [pd.Timestamp("2026-07-23"), pd.Timestamp("2026-07-24")], name="date"
-        ),
+        index=pd.DatetimeIndex([pd.Timestamp("2026-07-23"), pd.Timestamp("2026-07-24")], name="date"),
     )
 
 

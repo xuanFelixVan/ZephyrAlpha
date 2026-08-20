@@ -192,10 +192,7 @@ def _compute_record_hash(
     prev_hash: str,
 ) -> str:
     """计算链指纹——链接前版本形成哈希链。"""
-    raw = (
-        f"{version_id}|{timestamp.isoformat()}|{report_id}|"
-        f"{version_number}|{content_hash}|{prev_hash}"
-    )
+    raw = f"{version_id}|{timestamp.isoformat()}|{report_id}|{version_number}|{content_hash}|{prev_hash}"
     return _sha256(raw)
 
 
@@ -309,9 +306,7 @@ class ReportVersionManager:
 
     # ── 差异引擎 ──
 
-    def diff(
-        self, report_id: str, from_version: int, to_version: int
-    ) -> VersionDiff:
+    def diff(self, report_id: str, from_version: int, to_version: int) -> VersionDiff:
         """计算两个版本的差异（键级 diff）。
 
         Args:
@@ -385,32 +380,41 @@ class ReportVersionManager:
                 if v.version_number != i + 1:
                     _logger.warning(
                         "verify_chain FAIL: report_id=%s 版本号不连续 expected=%d actual=%d",
-                        report_id, i + 1, v.version_number,
+                        report_id,
+                        i + 1,
+                        v.version_number,
                     )
                     return False
                 # prev_hash 链接
                 if v.prev_hash != expected_prev:
                     _logger.warning(
                         "verify_chain FAIL: report_id=%s v%d prev_hash 不匹配",
-                        report_id, v.version_number,
+                        report_id,
+                        v.version_number,
                     )
                     return False
                 # content_hash 重算
                 if _compute_content_hash(v.content) != v.content_hash:
                     _logger.warning(
                         "verify_chain FAIL: report_id=%s v%d content_hash 不匹配（内容被篡改）",
-                        report_id, v.version_number,
+                        report_id,
+                        v.version_number,
                     )
                     return False
                 # record_hash 重算
                 expected_record = _compute_record_hash(
-                    v.version_id, v.timestamp, v.report_id,
-                    v.version_number, v.content_hash, v.prev_hash,
+                    v.version_id,
+                    v.timestamp,
+                    v.report_id,
+                    v.version_number,
+                    v.content_hash,
+                    v.prev_hash,
                 )
                 if v.record_hash != expected_record:
                     _logger.warning(
                         "verify_chain FAIL: report_id=%s v%d record_hash 不匹配",
-                        report_id, v.version_number,
+                        report_id,
+                        v.version_number,
                     )
                     return False
                 expected_prev = v.record_hash

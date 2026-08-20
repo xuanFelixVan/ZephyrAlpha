@@ -66,17 +66,15 @@ class DiffDetector:
         """写入：repo_root（Stage 4 公共化）。"""
         self._repo_root = value
 
-
     def git_diff_files(self, cached) -> list[str]:
         """公共接口：git_diff_files（Stage 4 公共化）。"""
         return self._git_diff_files(cached)
 
-
     @staticmethod
     def extract_functions(file_path: Path) -> list[ChangedFunction]:
-        'AST 解析——提取文件中所有顶层函数和方法.'
+        "AST 解析——提取文件中所有顶层函数和方法."
         try:
-            source = file_path.read_text(encoding='utf-8')
+            source = file_path.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
             return []
         try:
@@ -84,20 +82,36 @@ class DiffDetector:
         except SyntaxError:
             return []
         functions: list[ChangedFunction] = []
-        class _FunctionVisitor(ast.NodeVisitor):
 
+        class _FunctionVisitor(ast.NodeVisitor):
             def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
                 end = node.end_lineno or node.lineno
-                functions.append(ChangedFunction(file='', name=node.name, lineno=node.lineno, end_lineno=end, source=ast.get_source_segment(source, node) or ''))
+                functions.append(
+                    ChangedFunction(
+                        file="",
+                        name=node.name,
+                        lineno=node.lineno,
+                        end_lineno=end,
+                        source=ast.get_source_segment(source, node) or "",
+                    )
+                )
                 self.generic_visit(node)
 
             def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
                 end = node.end_lineno or node.lineno
-                functions.append(ChangedFunction(file='', name=node.name, lineno=node.lineno, end_lineno=end, source=ast.get_source_segment(source, node) or ''))
+                functions.append(
+                    ChangedFunction(
+                        file="",
+                        name=node.name,
+                        lineno=node.lineno,
+                        end_lineno=end,
+                        source=ast.get_source_segment(source, node) or "",
+                    )
+                )
                 self.generic_visit(node)
+
         _FunctionVisitor().visit(tree)
         return functions
-
 
     # ── 公共 API ──────────────────────────────────────────────
 

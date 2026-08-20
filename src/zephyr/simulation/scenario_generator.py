@@ -177,29 +177,21 @@ class MonteCarloParams:
 
     start_price: float
     n_bars: int
-    drift: float = 0.0             # 年化漂移率
-    volatility: float = 0.20       # 年化波动率
-    dt: float = 1.0 / 252.0        # 年化时间步
+    drift: float = 0.0  # 年化漂移率
+    volatility: float = 0.20  # 年化波动率
+    dt: float = 1.0 / 252.0  # 年化时间步
     seed: int = 42
     symbol: str = "SIM"
 
     def __post_init__(self) -> None:
         if self.start_price <= 0:
-            raise ScenarioGenerationError(
-                f"start_price must be > 0, got {self.start_price}"
-            )
+            raise ScenarioGenerationError(f"start_price must be > 0, got {self.start_price}")
         if self.n_bars <= 0:
-            raise ScenarioGenerationError(
-                f"n_bars must be > 0, got {self.n_bars}"
-            )
+            raise ScenarioGenerationError(f"n_bars must be > 0, got {self.n_bars}")
         if self.volatility < 0:
-            raise ScenarioGenerationError(
-                f"volatility must be >= 0, got {self.volatility}"
-            )
+            raise ScenarioGenerationError(f"volatility must be >= 0, got {self.volatility}")
         if self.dt <= 0:
-            raise ScenarioGenerationError(
-                f"dt must be > 0, got {self.dt}"
-            )
+            raise ScenarioGenerationError(f"dt must be > 0, got {self.dt}")
 
 
 @dataclass(frozen=True)
@@ -208,29 +200,21 @@ class HistoricalParams:
 
     source_data: pd.DataFrame
     start_idx: int = 0
-    n_bars: int = 0                # 0 = 到末尾
+    n_bars: int = 0  # 0 = 到末尾
     symbol: str = "HIST"
 
     def __post_init__(self) -> None:
         if not isinstance(self.source_data, pd.DataFrame):
-            raise ScenarioGenerationError(
-                f"source_data must be a DataFrame, got {type(self.source_data).__name__}"
-            )
+            raise ScenarioGenerationError(f"source_data must be a DataFrame, got {type(self.source_data).__name__}")
         required = {"open", "high", "low", "close", "volume"}
         missing = required - set(self.source_data.columns)
         if missing:
-            raise ScenarioGenerationError(
-                f"source_data missing columns: {sorted(missing)}"
-            )
+            raise ScenarioGenerationError(f"source_data missing columns: {sorted(missing)}")
         if self.start_idx < 0:
-            raise ScenarioGenerationError(
-                f"start_idx must be >= 0, got {self.start_idx}"
-            )
+            raise ScenarioGenerationError(f"start_idx must be >= 0, got {self.start_idx}")
         end = len(self.source_data) if self.n_bars == 0 else self.start_idx + self.n_bars
         if self.start_idx >= len(self.source_data):
-            raise ScenarioGenerationError(
-                f"start_idx {self.start_idx} out of range (len={len(self.source_data)})"
-            )
+            raise ScenarioGenerationError(f"start_idx {self.start_idx} out of range (len={len(self.source_data)})")
         if end > len(self.source_data):
             raise ScenarioGenerationError(
                 f"slice [{self.start_idx}:{end}] exceeds source length {len(self.source_data)}"
@@ -243,25 +227,19 @@ class CustomParams:
 
     start_price: float
     n_bars: int
-    shocks: tuple[tuple[int, float], ...] = ()   # [(bar_idx, pct_shock), ...]
-    trend: float = 0.0                            # 每期线性漂移
+    shocks: tuple[tuple[int, float], ...] = ()  # [(bar_idx, pct_shock), ...]
+    trend: float = 0.0  # 每期线性漂移
     seed: int = 42
     symbol: str = "CUST"
 
     def __post_init__(self) -> None:
         if self.start_price <= 0:
-            raise ScenarioGenerationError(
-                f"start_price must be > 0, got {self.start_price}"
-            )
+            raise ScenarioGenerationError(f"start_price must be > 0, got {self.start_price}")
         if self.n_bars <= 0:
-            raise ScenarioGenerationError(
-                f"n_bars must be > 0, got {self.n_bars}"
-            )
+            raise ScenarioGenerationError(f"n_bars must be > 0, got {self.n_bars}")
         for bar_idx, pct in self.shocks:
             if bar_idx < 0 or bar_idx >= self.n_bars:
-                raise ScenarioGenerationError(
-                    f"shock bar_idx {bar_idx} out of range [0,{self.n_bars})"
-                )
+                raise ScenarioGenerationError(f"shock bar_idx {bar_idx} out of range [0,{self.n_bars})")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -274,7 +252,7 @@ class ScenarioGeneratorConfig:
     """场景生成器配置——不可变。"""
 
     default_seed: int = 42
-    default_volume: float = 10000.0   # 默认成交量
+    default_volume: float = 10000.0  # 默认成交量
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -295,7 +273,7 @@ class SimulationScenario:
     symbol: str
     market_data: pd.DataFrame
     params: dict[str, Any]
-    generated_at: str                 # ISO8601
+    generated_at: str  # ISO8601
     description: str = ""
 
     @property
@@ -345,9 +323,7 @@ class ScenarioGenerator:
 
     # ── 蒙特卡洛 (GBM) ──
 
-    def generate_monte_carlo(
-        self, params: MonteCarloParams
-    ) -> SimulationScenario:
+    def generate_monte_carlo(self, params: MonteCarloParams) -> SimulationScenario:
         """基于几何布朗运动生成随机价格路径。
 
         S_t = S_{t-1} * exp((drift - 0.5*vol²)*dt + vol*sqrt(dt)*Z)
@@ -356,7 +332,7 @@ class ScenarioGenerator:
         n = params.n_bars
         # 布朗增量
         z = rng.standard_normal(n)
-        drift_term = (params.drift - 0.5 * params.volatility ** 2) * params.dt
+        drift_term = (params.drift - 0.5 * params.volatility**2) * params.dt
         diffusion = params.volatility * np.sqrt(params.dt) * z
         log_returns = drift_term + diffusion
 
@@ -387,13 +363,11 @@ class ScenarioGenerator:
 
     # ── 历史场景 ──
 
-    def generate_historical(
-        self, params: HistoricalParams
-    ) -> SimulationScenario:
+    def generate_historical(self, params: HistoricalParams) -> SimulationScenario:
         """从真实历史数据切片封装为可重放场景。"""
         end = len(params.source_data) if params.n_bars == 0 else params.start_idx + params.n_bars
         # 切片拷贝, 不修改源数据
-        df = params.source_data.iloc[params.start_idx:end].copy()
+        df = params.source_data.iloc[params.start_idx : end].copy()
         df.index = pd.RangeIndex(start=0, stop=len(df), step=1)
 
         return SimulationScenario(
@@ -424,7 +398,7 @@ class ScenarioGenerator:
         for i in range(n):
             ret = params.trend + noise[i]
             if i in shock_map:
-                ret += shock_map[i]   # 叠加冲击
+                ret += shock_map[i]  # 叠加冲击
             price = price * (1 + ret)
             closes[i] = price
 
@@ -455,21 +429,15 @@ class ScenarioGenerator:
         """按类型分发到对应生成方法。"""
         if scenario_type is ScenarioType.MONTE_CARLO:
             if not isinstance(params, MonteCarloParams):
-                raise ScenarioGenerationError(
-                    f"MONTE_CARLO requires MonteCarloParams, got {type(params).__name__}"
-                )
+                raise ScenarioGenerationError(f"MONTE_CARLO requires MonteCarloParams, got {type(params).__name__}")
             return self.generate_monte_carlo(params)
         if scenario_type is ScenarioType.HISTORICAL:
             if not isinstance(params, HistoricalParams):
-                raise ScenarioGenerationError(
-                    f"HISTORICAL requires HistoricalParams, got {type(params).__name__}"
-                )
+                raise ScenarioGenerationError(f"HISTORICAL requires HistoricalParams, got {type(params).__name__}")
             return self.generate_historical(params)
         if scenario_type is ScenarioType.CUSTOM:
             if not isinstance(params, CustomParams):
-                raise ScenarioGenerationError(
-                    f"CUSTOM requires CustomParams, got {type(params).__name__}"
-                )
+                raise ScenarioGenerationError(f"CUSTOM requires CustomParams, got {type(params).__name__}")
             return self.generate_custom(params)
         raise ScenarioGenerationError(f"unknown scenario_type: {scenario_type}")
 
@@ -488,11 +456,13 @@ class ScenarioGenerator:
         lows = np.minimum(opens, closes) * 0.999
         volumes = np.full(n, self._config.default_volume)
 
-        df = pd.DataFrame({
-            "open": opens,
-            "high": highs,
-            "low": lows,
-            "close": closes,
-            "volume": volumes,
-        })
+        df = pd.DataFrame(
+            {
+                "open": opens,
+                "high": highs,
+                "low": lows,
+                "close": closes,
+                "volume": volumes,
+            }
+        )
         return df

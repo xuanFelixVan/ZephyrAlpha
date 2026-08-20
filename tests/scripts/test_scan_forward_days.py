@@ -8,6 +8,7 @@
   2. 加载器 —— detect_records JSONL 解析 / close CSV 校验（缺列报错）
   3. main 守卫 —— 输入文件缺失 exit 1；正常跑通写报告
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -20,7 +21,8 @@ import pytest
 
 _ROOT = pathlib.Path(__file__).resolve().parents[2]
 _spec = importlib.util.spec_from_file_location(
-    "scan_forward_days", _ROOT / "scripts" / "scan_forward_days.py",
+    "scan_forward_days",
+    _ROOT / "scripts" / "scan_forward_days.py",
 )
 sfd = importlib.util.module_from_spec(_spec)
 sys.modules["scan_forward_days"] = sfd  # dataclass 字符串注解解析需模块在册
@@ -139,9 +141,15 @@ class TestMain:
 
     def test_missing_input_exits_1(self, tmp_path, monkeypatch):
         monkeypatch.setattr(
-            sfd.sys, "argv",
-            ["scan_forward_days.py", "--detect-records", str(tmp_path / "no.jsonl"),
-             "--close-csv", str(tmp_path / "no.csv")],
+            sfd.sys,
+            "argv",
+            [
+                "scan_forward_days.py",
+                "--detect-records",
+                str(tmp_path / "no.jsonl"),
+                "--close-csv",
+                str(tmp_path / "no.csv"),
+            ],
         )
         with pytest.raises(SystemExit) as exc:
             sfd.main()
@@ -151,9 +159,17 @@ class TestMain:
         rec_path, close_path = self._inputs(tmp_path)
         out_path = tmp_path / "report.json"
         monkeypatch.setattr(
-            sfd.sys, "argv",
-            ["scan_forward_days.py", "--detect-records", str(rec_path),
-             "--close-csv", str(close_path), "--out", str(out_path)],
+            sfd.sys,
+            "argv",
+            [
+                "scan_forward_days.py",
+                "--detect-records",
+                str(rec_path),
+                "--close-csv",
+                str(close_path),
+                "--out",
+                str(out_path),
+            ],
         )
         sfd.main()
         report = json.loads(out_path.read_text(encoding="utf-8"))

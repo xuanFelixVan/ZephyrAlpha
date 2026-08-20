@@ -140,8 +140,10 @@ class TestInstall:
             db_path=temp_db,
             idle_timeout_seconds=60.0,
         )
-        with patch("zephyr.governance.resilience_governance.f5_shutdown_manager.signal.signal") as mock_signal, \
-             patch("zephyr.governance.resilience_governance.f5_shutdown_manager.atexit.register") as mock_atexit:
+        with (
+            patch("zephyr.governance.resilience_governance.f5_shutdown_manager.signal.signal") as mock_signal,
+            patch("zephyr.governance.resilience_governance.f5_shutdown_manager.atexit.register") as mock_atexit,
+        ):
             mock_signal.return_value = None
             result = mgr.install()
             assert result.success is True
@@ -225,9 +227,7 @@ class TestPersistState:
         manager.persist_state()
         conn = sqlite3.connect(str(manager.db_path))
         try:
-            cursor = conn.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='f5_state'"
-            )
+            cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='f5_state'")
             assert cursor.fetchone() is not None
         finally:
             conn.close()
@@ -247,6 +247,7 @@ class TestPersistState:
             row = cursor.fetchone()
             assert row is not None
             import json
+
             state = json.loads(row[0])
             assert "a" in state["wait_graph"]
             assert "resource-1" in state["locks"]
@@ -259,6 +260,7 @@ class TestPersistState:
             AgentMeta,
             AgentRole,
         )
+
         arb = manager.integration.arbitrator
         arb.arbitrate(
             AgentMeta(agent_id="a", role=AgentRole.SUPERADMIN),
@@ -275,6 +277,7 @@ class TestPersistState:
             EscalationEvent,
             RuleCategory,
         )
+
         delegation = manager.integration.delegation_engine
         delegation.register_delegate("delegate-1", expertise=["deadlock"])
 
@@ -306,6 +309,7 @@ class TestPersistState:
             cursor = conn.execute("SELECT value FROM f5_state WHERE key='deadlock_state'")
             row = cursor.fetchone()
             import json
+
             state = json.loads(row[0])
             assert "x" in state["wait_graph"]
             assert "a" not in state["wait_graph"]
@@ -385,9 +389,7 @@ class TestRestoreState:
 class TestSignalHandler:
     def test_signal_handler_calls_shutdown(self, manager: F5ShutdownManager):
         with patch.object(manager, "shutdown") as mock_shutdown:
-            mock_shutdown.return_value = ShutdownResult(
-                success=True, component="f5_shutdown"
-            )
+            mock_shutdown.return_value = ShutdownResult(success=True, component="f5_shutdown")
             manager.on_signal(signal.SIGTERM, None)
             mock_shutdown.assert_called_once()
 
@@ -398,9 +400,7 @@ class TestSignalHandler:
 
     def test_signal_handler_logs_signal_name(self, manager: F5ShutdownManager):
         with patch.object(manager, "shutdown") as mock_shutdown:
-            mock_shutdown.return_value = ShutdownResult(
-                success=True, component="f5_shutdown"
-            )
+            mock_shutdown.return_value = ShutdownResult(success=True, component="f5_shutdown")
             # SIGINT = 2
             manager.on_signal(2, None)
             mock_shutdown.assert_called_once()
@@ -409,9 +409,7 @@ class TestSignalHandler:
 class TestAtexitHandler:
     def test_atexit_handler_calls_shutdown(self, manager: F5ShutdownManager):
         with patch.object(manager, "shutdown") as mock_shutdown:
-            mock_shutdown.return_value = ShutdownResult(
-                success=True, component="f5_shutdown"
-            )
+            mock_shutdown.return_value = ShutdownResult(success=True, component="f5_shutdown")
             manager.on_atexit()
             mock_shutdown.assert_called_once()
 

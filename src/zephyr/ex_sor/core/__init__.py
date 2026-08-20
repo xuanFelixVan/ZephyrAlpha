@@ -45,6 +45,7 @@
 # I1 --> A1
 # A1 --> O1
 """
+
 from typing import Final
 
 from zephyr.ex_sor.core.broker_adapter_manager import (

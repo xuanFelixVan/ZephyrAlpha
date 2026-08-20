@@ -35,6 +35,7 @@ class TestAutoStartup:
     def test_boot_hooks_module_importable(self) -> None:
         """boot_hooks 模块可导入。"""
         from zephyr.trading import boot_hooks
+
         assert boot_hooks is not None
 
     def test_init_function_exists(self) -> None:
@@ -42,12 +43,14 @@ class TestAutoStartup:
         import inspect
 
         from zephyr.trading import boot_hooks
+
         src = inspect.getsource(boot_hooks)
         assert "_init_shared_monitoring_modules" in src, "boot_hooks 缺少 _init_shared_monitoring_modules"
 
     def test_init_function_callable(self) -> None:
         """_init_shared_monitoring_modules 可调用（不抛异常）。"""
         from zephyr.trading import boot_hooks
+
         fn = getattr(boot_hooks, "_init_shared_monitoring_modules", None)
         if fn is not None:
             # 调用不应抛异常（内部有 try/except 保护）
@@ -58,38 +61,45 @@ class TestAutoStartup:
     def test_longevity_monitor_importable(self) -> None:
         """LongevityMonitor 模块可导入。"""
         from zephyr.shared.lifecycle.longevity_monitor import LongevityMonitor
+
         assert LongevityMonitor is not None
 
     def test_healthcheck_service_importable(self) -> None:
         """HealthcheckService 模块可导入。"""
         from zephyr.shared.lifecycle.healthcheck_service import HealthcheckService
+
         assert HealthcheckService is not None
 
     def test_health_discovery_importable(self) -> None:
         """HealthDiscovery 模块可导入。"""
         from zephyr.shared.lifecycle.health_discovery import HealthDiscovery
+
         assert HealthDiscovery is not None
 
     def test_metrics_registry_importable(self) -> None:
         """MetricsRegistry 模块可导入。"""
         from zephyr.shared.observability.metrics import MetricsRegistry
+
         assert MetricsRegistry is not None
 
     def test_autonomy_monitor_importable(self) -> None:
         """AutonomyMonitor 模块可导入。"""
         from zephyr.shared.maintenance.autonomy_monitor import AutonomyMonitor
+
         assert AutonomyMonitor is not None
 
     def test_event_subscription_importable(self) -> None:
         """事件订阅函数可导入。"""
         from zephyr.shared.lifecycle.health import subscribe_monitoring_events
         from zephyr.shared.observability.metrics import subscribe_metrics_events
+
         assert callable(subscribe_monitoring_events)
         assert callable(subscribe_metrics_events)
 
     def test_finalizer_registration_importable(self) -> None:
         """Finalizer 自动注册函数可导入。"""
         from zephyr.trading.finalizer import register_monitoring_finalizers_auto
+
         assert callable(register_monitoring_finalizers_auto)
 
     def test_boot_hooks_source_contains_all_6_modules(self) -> None:
@@ -97,6 +107,7 @@ class TestAutoStartup:
         import inspect
 
         from zephyr.trading import boot_hooks
+
         src = inspect.getsource(boot_hooks)
 
         # 6 个监控模块的导入/初始化
@@ -117,6 +128,7 @@ class TestAutoStartup:
     def test_boot_hooks_idempotent(self) -> None:
         """boot_hooks 初始化幂等（重复调用不抛异常）。"""
         from zephyr.trading import boot_hooks
+
         fn = getattr(boot_hooks, "_init_shared_monitoring_modules", None)
         if fn is not None:
             fn()
@@ -126,6 +138,7 @@ class TestAutoStartup:
     def test_boot_hooks_exception_safety(self) -> None:
         """boot_hooks 初始化异常安全（即使部分模块失败也不影响整体）。"""
         from zephyr.trading import boot_hooks
+
         fn = getattr(boot_hooks, "_init_shared_monitoring_modules", None)
         if fn is not None:
             # 应该不抛任何异常

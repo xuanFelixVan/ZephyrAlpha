@@ -32,6 +32,7 @@
   - 中英双语: 所有 Tab 名/指标名/图表标题 中英并列
   - mock优先: 无真实 BacktestResult 注入时, 用 generate_demo_performance_data() 生成掘金风格示例
 """
+
 from __future__ import annotations
 
 import math
@@ -59,18 +60,18 @@ except ImportError:
 
 
 # ===== 暗色主题调色板 (匹配 app_panel.py) =====
-_BG = "#2b2b2b"          # 深灰背景
-_CARD_BG = "#383838"     # 卡片中灰
-_INPUT_BG = "#1e1e1e"    # 输入框更深灰
-_BORDER = "#555555"      # 灰边框
-_TEXT = "#e0e0e0"        # 浅灰白文字
-_TEXT_DIM = "#a0a0a0"    # 暗灰文字
-_GREEN = "#26a69a"      # 涨/盈利 ( teal )
-_RED = "#ef5350"        # 跌/亏损 ( red )
-_BLUE = "#42a5f5"       # 策略收益
-_ORANGE = "#ff9800"     # 超额收益
-_PURPLE = "#ab47bc"     # 基准
-_YELLOW = "#ffd54f"     # 高亮
+_BG = "#2b2b2b"  # 深灰背景
+_CARD_BG = "#383838"  # 卡片中灰
+_INPUT_BG = "#1e1e1e"  # 输入框更深灰
+_BORDER = "#555555"  # 灰边框
+_TEXT = "#e0e0e0"  # 浅灰白文字
+_TEXT_DIM = "#a0a0a0"  # 暗灰文字
+_GREEN = "#26a69a"  # 涨/盈利 ( teal )
+_RED = "#ef5350"  # 跌/亏损 ( red )
+_BLUE = "#42a5f5"  # 策略收益
+_ORANGE = "#ff9800"  # 超额收益
+_PURPLE = "#ab47bc"  # 基准
+_YELLOW = "#ffd54f"  # 高亮
 
 
 def _dark_template() -> object:
@@ -98,68 +99,72 @@ _DARK_TEMPLATE = _dark_template() if go is not None else None
 
 # ===== 数据模型 (参照掘金绩效分析字段定义) =====
 
+
 @dataclass
 class PerformanceMetrics:
     """16 绩效指标 (掘金绩效概览)"""
-    initial_asset: float = 10_000_000.0   # 期初资产 (元)
-    final_asset: float = 0.0              # 期末资产 (元)
-    cumulative_pnl: float = 0.0           # 累计盈亏 (元)
-    cumulative_fee: float = 0.0           # 累计手续费 (元)
-    cumulative_return: float = 0.0        # 累计收益率 %
-    benchmark_return: float = 0.0         # 基准收益率 %
-    excess_return: float = 0.0            # 超额收益率 %
-    annual_return: float = 0.0            # 年化收益率 %
-    max_drawdown: float = 0.0             # 最大回撤 % (负数)
-    annual_volatility: float = 0.0        # 年化波动率 %
-    win_rate: float = 0.0                 # 胜率 %
+
+    initial_asset: float = 10_000_000.0  # 期初资产 (元)
+    final_asset: float = 0.0  # 期末资产 (元)
+    cumulative_pnl: float = 0.0  # 累计盈亏 (元)
+    cumulative_fee: float = 0.0  # 累计手续费 (元)
+    cumulative_return: float = 0.0  # 累计收益率 %
+    benchmark_return: float = 0.0  # 基准收益率 %
+    excess_return: float = 0.0  # 超额收益率 %
+    annual_return: float = 0.0  # 年化收益率 %
+    max_drawdown: float = 0.0  # 最大回撤 % (负数)
+    annual_volatility: float = 0.0  # 年化波动率 %
+    win_rate: float = 0.0  # 胜率 %
     alpha: float = 0.0
     beta: float = 0.0
-    sharpe: float = 0.0                   # 夏普比率
-    sortino: float = 0.0                  # 索提诺比率
-    calmar: float = 0.0                   # 卡玛比率
-    information_ratio: float = 0.0        # 信息比率
-    treynor: float = 0.0                  # 特雷诺比率
-    risk_free_rate: float = 2.0           # 无风险利率 %
-    trading_days: int = 0                 # 交易天数
+    sharpe: float = 0.0  # 夏普比率
+    sortino: float = 0.0  # 索提诺比率
+    calmar: float = 0.0  # 卡玛比率
+    information_ratio: float = 0.0  # 信息比率
+    treynor: float = 0.0  # 特雷诺比率
+    risk_free_rate: float = 2.0  # 无风险利率 %
+    trading_days: int = 0  # 交易天数
 
 
 @dataclass
 class TradeStatistics:
     """28 交易统计指标 (掘金交易统计)"""
-    trading_days: int = 0                    # 交易天数
-    up_days: int = 0                         # 上涨天数
-    down_days: int = 0                       # 下跌天数
-    max_consecutive_up_days: int = 0          # 最大连续上涨天数
-    max_consecutive_down_days: int = 0        # 最大连续下跌天数
-    close_count: int = 0                     # 平仓次数
-    profit_count: int = 0                    # 盈利次数
-    loss_count: int = 0                     # 亏损次数
-    daily_win_rate: float = 0.0              # 日胜率 %
-    win_rate: float = 0.0                    # 胜率 %
-    max_single_profit: float = 0.0           # 最大单次盈利 (元)
-    avg_profit: float = 0.0                  # 平均单次盈利 (元)
-    max_single_loss: float = 0.0             # 最大单次亏损 (元)
-    avg_loss: float = 0.0                   # 平均单次亏损 (元)
-    profit_loss_ratio: float = 0.0           # 盈亏比
-    max_drawdown_duration: int = 0           # 最大回撤持续天数
-    max_consecutive_drawdown: float = 0.0    # 最大连续回撤 %
-    max_daily_drawdown: float = 0.0          # 最大日回撤 %
-    max_weekly_drawdown: float = 0.0         # 最大周回撤 %
-    max_monthly_drawdown: float = 0.0        # 最大月回撤 %
-    max_drawdown_start: str = ""             # 最大回撤起始日
-    max_drawdown_end: str = ""               # 最大回撤结束日
-    max_no_new_high_days: int = 0            # 最长不创新高天数
-    max_daily_gain: float = 0.0             # 单日最大上涨 %
-    max_daily_loss: float = 0.0             # 单日最大下跌 %
-    annual_turnover: float = 0.0            # 年换手率
+
+    trading_days: int = 0  # 交易天数
+    up_days: int = 0  # 上涨天数
+    down_days: int = 0  # 下跌天数
+    max_consecutive_up_days: int = 0  # 最大连续上涨天数
+    max_consecutive_down_days: int = 0  # 最大连续下跌天数
+    close_count: int = 0  # 平仓次数
+    profit_count: int = 0  # 盈利次数
+    loss_count: int = 0  # 亏损次数
+    daily_win_rate: float = 0.0  # 日胜率 %
+    win_rate: float = 0.0  # 胜率 %
+    max_single_profit: float = 0.0  # 最大单次盈利 (元)
+    avg_profit: float = 0.0  # 平均单次盈利 (元)
+    max_single_loss: float = 0.0  # 最大单次亏损 (元)
+    avg_loss: float = 0.0  # 平均单次亏损 (元)
+    profit_loss_ratio: float = 0.0  # 盈亏比
+    max_drawdown_duration: int = 0  # 最大回撤持续天数
+    max_consecutive_drawdown: float = 0.0  # 最大连续回撤 %
+    max_daily_drawdown: float = 0.0  # 最大日回撤 %
+    max_weekly_drawdown: float = 0.0  # 最大周回撤 %
+    max_monthly_drawdown: float = 0.0  # 最大月回撤 %
+    max_drawdown_start: str = ""  # 最大回撤起始日
+    max_drawdown_end: str = ""  # 最大回撤结束日
+    max_no_new_high_days: int = 0  # 最长不创新高天数
+    max_daily_gain: float = 0.0  # 单日最大上涨 %
+    max_daily_loss: float = 0.0  # 单日最大下跌 %
+    annual_turnover: float = 0.0  # 年换手率
 
 
 @dataclass
 class PerfTradeRecord:
     """交易记录 (信号分析用, 绩效分析专用模型)"""
+
     timestamp: str = ""
     symbol: str = ""
-    side: str = ""        # buy / sell
+    side: str = ""  # buy / sell
     price: float = 0.0
     quantity: int = 0
     amount: float = 0.0
@@ -169,6 +174,7 @@ class PerfTradeRecord:
 @dataclass
 class OHLCBar:
     """K线数据 (信号分析用)"""
+
     timestamp: str = ""
     open: float = 0.0
     high: float = 0.0
@@ -180,12 +186,13 @@ class OHLCBar:
 @dataclass
 class PerfPositionSnapshot:
     """持仓快照 (持仓分析/每日明细用, 绩效分析专用模型)"""
+
     date: str = ""
     symbol: str = ""
-    side: str = ""          # long / short
+    side: str = ""  # long / short
     quantity: int = 0
-    vwap: float = 0.0      # 持仓均价
-    price: float = 0.0     # 当前价
+    vwap: float = 0.0  # 持仓均价
+    price: float = 0.0  # 当前价
     market_value: float = 0.0
     floating_pnl: float = 0.0
 
@@ -193,6 +200,7 @@ class PerfPositionSnapshot:
 @dataclass
 class DailyCapitalRow:
     """当日资金明细 (每日明细用)"""
+
     date: str = ""
     total_asset: float = 0.0
     cash_balance: float = 0.0
@@ -209,6 +217,7 @@ class DailyCapitalRow:
 @dataclass
 class OrderRecord:
     """当日委托 (每日明细用)"""
+
     order_time: str = ""
     fill_time: str = ""
     symbol: str = ""
@@ -225,6 +234,7 @@ class OrderRecord:
 @dataclass
 class BacktestPerformanceData:
     """回测绩效完整数据模型 (掘金风格)"""
+
     # 基本信息
     backtest_id: str = ""
     strategy_id: str = ""
@@ -235,10 +245,10 @@ class BacktestPerformanceData:
 
     # 时间序列 (掘金净值数据字段)
     timestamps: list[str] = field(default_factory=list)
-    nav_curve: list[float] = field(default_factory=list)                # 单位净值
-    strategy_yield: list[float] = field(default_factory=list)           # 累计收益率 %
-    strategy_yield_daily: list[float] = field(default_factory=list)     # 每日收益率 %
-    strategy_drawdown: list[float] = field(default_factory=list)        # 回撤 %
+    nav_curve: list[float] = field(default_factory=list)  # 单位净值
+    strategy_yield: list[float] = field(default_factory=list)  # 累计收益率 %
+    strategy_yield_daily: list[float] = field(default_factory=list)  # 每日收益率 %
+    strategy_drawdown: list[float] = field(default_factory=list)  # 回撤 %
     benchmark_price: list[float] = field(default_factory=list)
     benchmark_yield: list[float] = field(default_factory=list)
     benchmark_yield_daily: list[float] = field(default_factory=list)
@@ -250,7 +260,7 @@ class BacktestPerformanceData:
     positions: list[PerfPositionSnapshot] = field(default_factory=list)
     daily_capital: list[DailyCapitalRow] = field(default_factory=list)
     orders: list[OrderRecord] = field(default_factory=list)
-    monthly_returns: list[list[float]] = field(default_factory=list)    # [year][month] %
+    monthly_returns: list[list[float]] = field(default_factory=list)  # [year][month] %
 
     # 指标
     performance: PerformanceMetrics = field(default_factory=PerformanceMetrics)
@@ -296,7 +306,8 @@ def _gen_strategy_daily_ret(rng: random.Random, n: int) -> list[float]:
 
 
 def _compute_nav_yield_drawdown(
-    daily_ret: list[float], n: int,
+    daily_ret: list[float],
+    n: int,
 ) -> tuple[list[float], list[float], list[float], list[float]]:
     """计算累计净值、累计收益率%、每日收益率%、回撤%。"""
     nav = [1.0]
@@ -316,7 +327,8 @@ def _compute_nav_yield_drawdown(
 
 
 def _simulate_benchmark(
-    rng: random.Random, n: int,
+    rng: random.Random,
+    n: int,
 ) -> tuple[list[float], list[float], list[float], list[float], list[float], list[float]]:
     """模拟基准 (沪深300)。返回 (bench_ret, bench_nav, price, yield, yield_daily, drawdown)。"""
     bench_ret: list[float] = []
@@ -328,7 +340,7 @@ def _simulate_benchmark(
     bench_nav = [1.0]
     for r in bench_ret:
         bench_nav.append(bench_nav[-1] * (1 + r))
-    bench_nav = bench_nav[1:n+1] if len(bench_nav) >= n else bench_nav + [bench_nav[-1]] * (n - len(bench_nav))
+    bench_nav = bench_nav[1 : n + 1] if len(bench_nav) >= n else bench_nav + [bench_nav[-1]] * (n - len(bench_nav))
     bench_nav = bench_nav[:n]
     benchmark_price = [3500 * v for v in bench_nav]
     benchmark_yield = [(v - 1) * 100 for v in bench_nav]
@@ -342,8 +354,12 @@ def _simulate_benchmark(
 
 
 def _compute_perf_metrics(
-    nav: list[float], daily_ret: list[float], bench_ret: list[float],
-    bench_nav: list[float], n: int, max_dd: float,
+    nav: list[float],
+    daily_ret: list[float],
+    bench_ret: list[float],
+    bench_nav: list[float],
+    n: int,
+    max_dd: float,
 ) -> PerformanceMetrics:
     """计算绩效指标 (16指标, 参照掘金截图)。"""
     final_asset = 10_000_000.0 * nav[-1]
@@ -351,7 +367,7 @@ def _compute_perf_metrics(
     bench_ret_total = (bench_nav[-1] - 1) * 100
     excess = cum_ret - bench_ret_total
     annual_ret = (nav[-1] ** (250.0 / n) - 1) * 100
-    vol = math.sqrt(250) * (math.sqrt(sum(r ** 2 for r in daily_ret) / n - (sum(daily_ret) / n) ** 2)) * 100
+    vol = math.sqrt(250) * (math.sqrt(sum(r**2 for r in daily_ret) / n - (sum(daily_ret) / n) ** 2)) * 100
     sharpe = (annual_ret - 2.0) / vol if vol > 0 else 0
     mean_dr = sum(daily_ret) / n
     mean_br = sum(bench_ret) / n
@@ -360,11 +376,11 @@ def _compute_perf_metrics(
     beta = cov / var_b if var_b > 0 else 1.0
     alpha = annual_ret - 2.0 - beta * (bench_ret_total * (250.0 / n) / 100 * 100 - 2.0)
     downside = [min(r, 0) for r in daily_ret]
-    downside_vol = math.sqrt(250) * (math.sqrt(sum(r ** 2 for r in downside) / n)) * 100
+    downside_vol = math.sqrt(250) * (math.sqrt(sum(r**2 for r in downside) / n)) * 100
     sortino = (annual_ret - 2.0) / downside_vol if downside_vol > 0 else 0
     calmar = annual_ret / abs(max_dd) if max_dd != 0 else 0
     excess_daily = [daily_ret[i] - bench_ret[i] for i in range(n)]
-    excess_vol = math.sqrt(250) * (math.sqrt(sum(r ** 2 for r in excess_daily) / n - (sum(excess_daily) / n) ** 2)) * 100
+    excess_vol = math.sqrt(250) * (math.sqrt(sum(r**2 for r in excess_daily) / n - (sum(excess_daily) / n) ** 2)) * 100
     ir = (annual_ret - bench_ret_total) / excess_vol if excess_vol > 0 else 0
     treynor = (annual_ret - 2.0) / beta if beta != 0 else 0
     return PerformanceMetrics(
@@ -392,8 +408,10 @@ def _compute_perf_metrics(
 
 
 def _compute_trade_stats(
-    daily_ret: list[float], strategy_yield_daily: list[float],
-    n: int, max_dd: float,
+    daily_ret: list[float],
+    strategy_yield_daily: list[float],
+    n: int,
+    max_dd: float,
 ) -> TradeStatistics:
     """计算交易统计 (28指标)。"""
     up_days = sum(1 for r in daily_ret if r > 0)
@@ -447,15 +465,17 @@ def _gen_trades(rng: random.Random, dates: list[datetime], n: int) -> list[PerfT
         sym = _DEMO_SYMBOLS[i % len(_DEMO_SYMBOLS)]
         price = 10 + rng.random() * 50
         qty = 1000 + rng.randint(0, 5000)
-        trades.append(PerfTradeRecord(
-            timestamp=dt.strftime("%Y-%m-%d %H:%M:%S"),
-            symbol=sym,
-            side=side,
-            price=round(price, 3),
-            quantity=qty,
-            amount=round(price * qty, 2),
-            fee=round(price * qty * 0.0003, 2),
-        ))
+        trades.append(
+            PerfTradeRecord(
+                timestamp=dt.strftime("%Y-%m-%d %H:%M:%S"),
+                symbol=sym,
+                side=side,
+                price=round(price, 3),
+                quantity=qty,
+                amount=round(price * qty, 2),
+                fee=round(price * qty * 0.0003, 2),
+            )
+        )
     return trades
 
 
@@ -469,14 +489,16 @@ def _gen_ohlc_daily(rng: random.Random, dates: list[datetime], daily_ret: list[f
         hi = max(op, close) * (1 + abs(rng.gauss(0, 0.005)))
         lo = min(op, close) * (1 - abs(rng.gauss(0, 0.005)))
         vol = rng.randint(500000, 5000000)
-        ohlc_daily.append(OHLCBar(
-            timestamp=dt.strftime("%Y-%m-%d"),
-            open=round(op, 3),
-            high=round(hi, 3),
-            low=round(lo, 3),
-            close=round(close, 3),
-            volume=vol,
-        ))
+        ohlc_daily.append(
+            OHLCBar(
+                timestamp=dt.strftime("%Y-%m-%d"),
+                open=round(op, 3),
+                high=round(hi, 3),
+                low=round(lo, 3),
+                close=round(close, 3),
+                volume=vol,
+            )
+        )
         base_price = close
     return ohlc_daily
 
@@ -493,22 +515,27 @@ def _gen_positions(rng: random.Random, dates: list[datetime], n: int) -> list[Pe
             price = vwap * (1 + rng.gauss(0, 0.05))
             mv = price * qty
             fpnl = (price - vwap) * qty
-            positions.append(PerfPositionSnapshot(
-                date=dt.strftime("%Y-%m-%d"),
-                symbol=sym,
-                side="long",
-                quantity=qty,
-                vwap=round(vwap, 3),
-                price=round(price, 3),
-                market_value=round(mv, 2),
-                floating_pnl=round(fpnl, 2),
-            ))
+            positions.append(
+                PerfPositionSnapshot(
+                    date=dt.strftime("%Y-%m-%d"),
+                    symbol=sym,
+                    side="long",
+                    quantity=qty,
+                    vwap=round(vwap, 3),
+                    price=round(price, 3),
+                    market_value=round(mv, 2),
+                    floating_pnl=round(fpnl, 2),
+                )
+            )
     return positions
 
 
 def _gen_daily_capital(
-    rng: random.Random, dates: list[datetime], nav: list[float],
-    daily_ret: list[float], n: int,
+    rng: random.Random,
+    dates: list[datetime],
+    nav: list[float],
+    daily_ret: list[float],
+    n: int,
 ) -> list[DailyCapitalRow]:
     """生成每日资金 (每3天采样)。"""
     daily_capital: list[DailyCapitalRow] = []
@@ -517,19 +544,21 @@ def _gen_daily_capital(
         total = 10_000_000.0 * nav[i]
         pos_val = total * (0.3 + rng.random() * 0.4)
         cash = total - pos_val
-        daily_capital.append(DailyCapitalRow(
-            date=dt.strftime("%Y-%m-%d"),
-            total_asset=round(total, 2),
-            cash_balance=round(cash, 2),
-            position_value=round(pos_val, 2),
-            floating_pnl=round(pos_val * rng.gauss(0, 0.02), 2),
-            daily_pnl=round(total * daily_ret[i], 2),
-            buy_open_amount=round(rng.random() * 500000, 2) if i % 8 == 0 else 0,
-            buy_close_amount=0,
-            sell_open_amount=0,
-            sell_close_amount=round(rng.random() * 500000, 2) if i % 8 == 4 else 0,
-            fee=round(rng.random() * 2000, 2),
-        ))
+        daily_capital.append(
+            DailyCapitalRow(
+                date=dt.strftime("%Y-%m-%d"),
+                total_asset=round(total, 2),
+                cash_balance=round(cash, 2),
+                position_value=round(pos_val, 2),
+                floating_pnl=round(pos_val * rng.gauss(0, 0.02), 2),
+                daily_pnl=round(total * daily_ret[i], 2),
+                buy_open_amount=round(rng.random() * 500000, 2) if i % 8 == 0 else 0,
+                buy_close_amount=0,
+                sell_open_amount=0,
+                sell_close_amount=round(rng.random() * 500000, 2) if i % 8 == 4 else 0,
+                fee=round(rng.random() * 2000, 2),
+            )
+        )
     return daily_capital
 
 
@@ -537,19 +566,21 @@ def _gen_orders(trades: list[PerfTradeRecord]) -> list[OrderRecord]:
     """生成委托记录 (前50笔)。"""
     orders: list[OrderRecord] = []
     for t in trades[:50]:
-        orders.append(OrderRecord(
-            order_time=t.timestamp,
-            fill_time=t.timestamp,
-            symbol=t.symbol,
-            name=f"标的{t.symbol[:6]}",
-            side=t.side,
-            price=t.price,
-            quantity=t.quantity,
-            filled_quantity=t.quantity,
-            avg_fill_price=t.price,
-            fee=t.fee,
-            status="FILLED",
-        ))
+        orders.append(
+            OrderRecord(
+                order_time=t.timestamp,
+                fill_time=t.timestamp,
+                symbol=t.symbol,
+                name=f"标的{t.symbol[:6]}",
+                side=t.side,
+                price=t.price,
+                quantity=t.quantity,
+                filled_quantity=t.quantity,
+                avg_fill_price=t.price,
+                fee=t.fee,
+                status="FILLED",
+            )
+        )
     return orders
 
 
@@ -577,10 +608,12 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
     end = datetime(2020, 12, 31)
     dates = _gen_trading_dates(start, end)
     n = len(dates)
-    timestamps = [dt.strftime('%Y-%m-%d') for dt in dates]
+    timestamps = [dt.strftime("%Y-%m-%d") for dt in dates]
     daily_ret = _gen_strategy_daily_ret(rng, n)
     nav, strategy_yield, strategy_yield_daily, strategy_drawdown = _compute_nav_yield_drawdown(daily_ret, n)
-    bench_ret, bench_nav, benchmark_price, benchmark_yield, benchmark_yield_daily, benchmark_drawdown = _simulate_benchmark(rng, n)
+    bench_ret, bench_nav, benchmark_price, benchmark_yield, benchmark_yield_daily, benchmark_drawdown = (
+        _simulate_benchmark(rng, n)
+    )
     max_dd = min(strategy_drawdown)
     perf = _compute_perf_metrics(nav, daily_ret, bench_ret, bench_nav, n, max_dd)
     trade_stats = _compute_trade_stats(daily_ret, strategy_yield_daily, n, max_dd)
@@ -591,12 +624,12 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
     orders = _gen_orders(trades)
     monthly_returns = _compute_monthly_returns(dates, daily_ret)
     return BacktestPerformanceData(
-        backtest_id='demo-perf-001',
-        strategy_id='行业轮动替换fundamental',
-        start_date='2019-01-02',
-        end_date='2020-12-31',
+        backtest_id="demo-perf-001",
+        strategy_id="行业轮动替换fundamental",
+        start_date="2019-01-02",
+        end_date="2020-12-31",
         initial_asset=10_000_000.0,
-        benchmark_symbol='沪深300',
+        benchmark_symbol="沪深300",
         timestamps=timestamps,
         nav_curve=nav,
         strategy_yield=strategy_yield,
@@ -655,20 +688,24 @@ def _trades_log_to_records(trades_log: list) -> list[PerfTradeRecord]:
     for t in trades_log:
         price = float(t.get("price", 0))
         qty = int(t.get("quantity", 0))
-        records.append(PerfTradeRecord(
-            timestamp=str(t.get("date", "")),
-            symbol=str(t.get("symbol", "")),
-            side=str(t.get("side", "")).lower(),
-            price=price,
-            quantity=qty,
-            amount=price * qty,
-            fee=float(t.get("commission", 0)),
-        ))
+        records.append(
+            PerfTradeRecord(
+                timestamp=str(t.get("date", "")),
+                symbol=str(t.get("symbol", "")),
+                side=str(t.get("side", "")).lower(),
+                price=price,
+                quantity=qty,
+                amount=price * qty,
+                fee=float(t.get("commission", 0)),
+            )
+        )
     return records
 
 
 def _build_perf_metrics_from_result(
-    result: object, nav_curve: list[float], initial: float,
+    result: object,
+    nav_curve: list[float],
+    initial: float,
 ) -> PerformanceMetrics:
     """从 BacktestResult 标量 + 单位净值构造 PerformanceMetrics"""
     final_asset = nav_curve[-1] * initial if nav_curve and initial > 0 else initial
@@ -700,7 +737,8 @@ def _build_trade_stats_from_nav(daily_yields: list[float], n: int) -> TradeStati
 
 
 def backtest_result_to_performance_data(
-    result: object, portfolio: object,
+    result: object,
+    portfolio: object,
 ) -> BacktestPerformanceData:
     """从 BacktestResult + Portfolio 构造 BacktestPerformanceData (真实数据适配器)
 
@@ -718,10 +756,7 @@ def backtest_result_to_performance_data(
     initial = float(portfolio.initial_capital)
     # 归一化为单位净值 (首日 = 1.0), 匹配 BacktestPerformanceData.nav_curve 语义
     nav_curve = [float(v) / initial for v in raw_nav.values] if initial > 0 else [1.0]
-    timestamps = [
-        str(d) if d is not None else f"day_{i}"
-        for i, d in enumerate(raw_nav.index)
-    ]
+    timestamps = [str(d) if d is not None else f"day_{i}" for i, d in enumerate(raw_nav.index)]
     strategy_yield = _nav_to_yield_series(nav_curve)
     strategy_yield_daily = _nav_to_daily_yield(nav_curve)
     strategy_drawdown = _nav_to_drawdown(nav_curve)
@@ -747,6 +782,7 @@ def backtest_result_to_performance_data(
 
 
 # ===== UI 辅助函数 =====
+
 
 def _kpi_card(label_zh: str, label_en: str, value: str, color: str = _TEXT) -> object:
     """生成单个 KPI 卡片 (掘金风格: 标签 + 大号数值)"""
@@ -802,28 +838,44 @@ def _render_overview_performance_chart(data: BacktestPerformanceData, items: lis
     """收益图: 策略收益 / 基准收益 / 超额收益 三线图"""
     if go is not None and data.strategy_yield:
         fig1 = go.Figure()
-        fig1.add_trace(go.Scatter(
-            x=data.timestamps, y=data.strategy_yield, name="策略收益 Strategy",
-            line=dict(color=_BLUE, width=1.5),
-            hovertemplate="日期: %{x}<br>收益: %{y:.2f}%<extra></extra>",
-        ))
-        fig1.add_trace(go.Scatter(
-            x=data.timestamps, y=data.benchmark_yield, name="沪深300 Benchmark",
-            line=dict(color=_PURPLE, width=1.5),
-            hovertemplate="日期: %{x}<br>基准: %{y:.2f}%<extra></extra>",
-        ))
+        fig1.add_trace(
+            go.Scatter(
+                x=data.timestamps,
+                y=data.strategy_yield,
+                name="策略收益 Strategy",
+                line=dict(color=_BLUE, width=1.5),
+                hovertemplate="日期: %{x}<br>收益: %{y:.2f}%<extra></extra>",
+            )
+        )
+        fig1.add_trace(
+            go.Scatter(
+                x=data.timestamps,
+                y=data.benchmark_yield,
+                name="沪深300 Benchmark",
+                line=dict(color=_PURPLE, width=1.5),
+                hovertemplate="日期: %{x}<br>基准: %{y:.2f}%<extra></extra>",
+            )
+        )
         excess_line = [s - b for s, b in zip(data.strategy_yield, data.benchmark_yield)]
-        fig1.add_trace(go.Scatter(
-            x=data.timestamps, y=excess_line, name="超额收益 Excess",
-            line=dict(color=_ORANGE, width=1.5, dash="dot"),
-            hovertemplate="日期: %{x}<br>超额: %{y:.2f}%<extra></extra>",
-        ))
+        fig1.add_trace(
+            go.Scatter(
+                x=data.timestamps,
+                y=excess_line,
+                name="超额收益 Excess",
+                line=dict(color=_ORANGE, width=1.5, dash="dot"),
+                hovertemplate="日期: %{x}<br>超额: %{y:.2f}%<extra></extra>",
+            )
+        )
         fig1.update_layout(
             title="收益图 Performance Chart",
-            xaxis_title="时间 Time", yaxis_title="收益率 Yield (%)",
-            template=_DARK_TEMPLATE, height=400,
-            hovermode="x unified", legend=dict(orientation="h", y=-0.2),
-            dragmode="zoom", clickmode="event+select",
+            xaxis_title="时间 Time",
+            yaxis_title="收益率 Yield (%)",
+            template=_DARK_TEMPLATE,
+            height=400,
+            hovermode="x unified",
+            legend=dict(orientation="h", y=-0.2),
+            dragmode="zoom",
+            clickmode="event+select",
         )
         items.append(pn.pane.Plotly(fig1, sizing_mode="stretch_width"))
 
@@ -832,21 +884,34 @@ def _render_overview_drawdown_chart(data: BacktestPerformanceData, items: list[A
     """回撤图: 策略回撤 / 基准回撤 填充图"""
     if go is not None and data.strategy_drawdown:
         fig2 = go.Figure()
-        fig2.add_trace(go.Scatter(
-            x=data.timestamps, y=data.strategy_drawdown, name="策略回撤 Strategy DD",
-            fill="tozeroy", line=dict(color=_RED, width=1),
-            hovertemplate="日期: %{x}<br>回撤: %{y:.2f}%<extra></extra>",
-        ))
-        fig2.add_trace(go.Scatter(
-            x=data.timestamps, y=data.benchmark_drawdown, name="沪深300回撤 Benchmark DD",
-            fill="tozeroy", line=dict(color=_PURPLE, width=1),
-            hovertemplate="日期: %{x}<br>基准回撤: %{y:.2f}%<extra></extra>",
-        ))
+        fig2.add_trace(
+            go.Scatter(
+                x=data.timestamps,
+                y=data.strategy_drawdown,
+                name="策略回撤 Strategy DD",
+                fill="tozeroy",
+                line=dict(color=_RED, width=1),
+                hovertemplate="日期: %{x}<br>回撤: %{y:.2f}%<extra></extra>",
+            )
+        )
+        fig2.add_trace(
+            go.Scatter(
+                x=data.timestamps,
+                y=data.benchmark_drawdown,
+                name="沪深300回撤 Benchmark DD",
+                fill="tozeroy",
+                line=dict(color=_PURPLE, width=1),
+                hovertemplate="日期: %{x}<br>基准回撤: %{y:.2f}%<extra></extra>",
+            )
+        )
         fig2.update_layout(
             title="回撤图 Drawdown Chart",
-            xaxis_title="时间 Time", yaxis_title="回撤 Drawdown (%)",
-            template=_DARK_TEMPLATE, height=300,
-            hovermode="x unified", legend=dict(orientation="h", y=-0.2),
+            xaxis_title="时间 Time",
+            yaxis_title="回撤 Drawdown (%)",
+            template=_DARK_TEMPLATE,
+            height=300,
+            hovermode="x unified",
+            legend=dict(orientation="h", y=-0.2),
         )
         items.append(pn.pane.Plotly(fig2, sizing_mode="stretch_width"))
 
@@ -859,22 +924,34 @@ def _render_overview_daily_returns_chart(data: BacktestPerformanceData, items: l
             fig3 = FigureResampler(default_n_shown_samples=500)
         else:
             fig3 = go.Figure()
-        fig3.add_trace(go.Bar(
-            x=data.timestamps, y=data.strategy_yield_daily, name="策略日收益率 Strategy",
-            marker_color=[_GREEN if v >= 0 else _RED for v in data.strategy_yield_daily],
-            opacity=0.7,
-            hovertemplate="日期: %{x}<br>日收益: %{y:.2f}%<extra></extra>",
-        ))
-        fig3.add_trace(go.Scatter(
-            x=data.timestamps, y=data.benchmark_yield_daily, name="沪深300日收益率 Benchmark",
-            line=dict(color=_PURPLE, width=1),
-            hovertemplate="日期: %{x}<br>基准日收益: %{y:.2f}%<extra></extra>",
-        ))
+        fig3.add_trace(
+            go.Bar(
+                x=data.timestamps,
+                y=data.strategy_yield_daily,
+                name="策略日收益率 Strategy",
+                marker_color=[_GREEN if v >= 0 else _RED for v in data.strategy_yield_daily],
+                opacity=0.7,
+                hovertemplate="日期: %{x}<br>日收益: %{y:.2f}%<extra></extra>",
+            )
+        )
+        fig3.add_trace(
+            go.Scatter(
+                x=data.timestamps,
+                y=data.benchmark_yield_daily,
+                name="沪深300日收益率 Benchmark",
+                line=dict(color=_PURPLE, width=1),
+                hovertemplate="日期: %{x}<br>基准日收益: %{y:.2f}%<extra></extra>",
+            )
+        )
         fig3.update_layout(
             title="日收益率 Daily Returns",
-            xaxis_title="时间 Time", yaxis_title="日收益率 Daily Return (%)",
-            template=_DARK_TEMPLATE, height=300,
-            barmode="group", hovermode="x unified", legend=dict(orientation="h", y=-0.2),
+            xaxis_title="时间 Time",
+            yaxis_title="日收益率 Daily Return (%)",
+            template=_DARK_TEMPLATE,
+            height=300,
+            barmode="group",
+            hovermode="x unified",
+            legend=dict(orientation="h", y=-0.2),
         )
         items.append(pn.pane.Plotly(fig3, sizing_mode="stretch_width"))
 
@@ -912,18 +989,26 @@ def _render_overview_metrics_table(data: BacktestPerformanceData, items: list[An
         col2_vals = [r[1] for r in metrics_data[half:]]
         col2_names = [r[0] for r in metrics_data[half:]]
 
-        fig4 = go.Figure(data=[go.Table(
-            header=dict(
-                values=["指标 Metric", "值 Value", "指标 Metric", "值 Value"],
-                fill_color=_CARD_BG, font=dict(color=_TEXT, size=12),
-                align="left", height=28,
-            ),
-            cells=dict(
-                values=[col1_names, col1_vals, col2_names, col2_vals],
-                fill_color=_INPUT_BG, font=dict(color=_TEXT, size=11),
-                align="left", height=24,
-            ),
-        )])
+        fig4 = go.Figure(
+            data=[
+                go.Table(
+                    header=dict(
+                        values=["指标 Metric", "值 Value", "指标 Metric", "值 Value"],
+                        fill_color=_CARD_BG,
+                        font=dict(color=_TEXT, size=12),
+                        align="left",
+                        height=28,
+                    ),
+                    cells=dict(
+                        values=[col1_names, col1_vals, col2_names, col2_vals],
+                        fill_color=_INPUT_BG,
+                        font=dict(color=_TEXT, size=11),
+                        align="left",
+                        height=24,
+                    ),
+                )
+            ]
+        )
         fig4.update_layout(template=_DARK_TEMPLATE, height=500, margin=dict(l=10, r=10, t=30, b=10))
         items.append(_section_header("绩效指标明细 Performance Metrics Detail"))
         items.append(pn.pane.Plotly(fig4, sizing_mode="stretch_width"))
@@ -950,7 +1035,12 @@ def _render_overview(data: BacktestPerformanceData) -> object:
 
     # 6 KPI 卡片
     kpi_row1 = pn.Row(
-        _kpi_card("累计收益率", "Cumulative Return", _fmt_pct(p.cumulative_return), _GREEN if p.cumulative_return >= 0 else _RED),
+        _kpi_card(
+            "累计收益率",
+            "Cumulative Return",
+            _fmt_pct(p.cumulative_return),
+            _GREEN if p.cumulative_return >= 0 else _RED,
+        ),
         _kpi_card("年化收益率", "Annual Return", _fmt_pct(p.annual_return), _GREEN if p.annual_return >= 0 else _RED),
         _kpi_card("最大回撤", "Max Drawdown", _fmt_pct(p.max_drawdown), _RED),
         _kpi_card("夏普比率", "Sharpe Ratio", f"{p.sharpe:.2f}", _BLUE),
@@ -971,6 +1061,7 @@ def _render_overview(data: BacktestPerformanceData) -> object:
 
 # ===== Tab 2: 持仓分析 =====
 
+
 def _render_positions(data: BacktestPerformanceData) -> object:
     """Tab 2 持仓分析: 仓位分布堆叠图 + 每日快照表"""
     items: list[Any] = []
@@ -990,15 +1081,23 @@ def _render_positions(data: BacktestPerformanceData) -> object:
         fig = go.Figure()
         for sym in all_symbols:
             vals = [dates_map[d].get(sym, 0) for d in sorted_dates]
-            fig.add_trace(go.Scatter(
-                x=sorted_dates, y=vals, name=sym, stackgroup="one",
-                hovertemplate=f"{sym}<br>日期: %{{x}}<br>市值: ¥%{{y:,.0f}}<extra></extra>",
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=sorted_dates,
+                    y=vals,
+                    name=sym,
+                    stackgroup="one",
+                    hovertemplate=f"{sym}<br>日期: %{{x}}<br>市值: ¥%{{y:,.0f}}<extra></extra>",
+                )
+            )
         fig.update_layout(
             title="仓位资金分布图 Position Value Distribution",
-            xaxis_title="时间 Time", yaxis_title="持仓市值 Position Value (¥)",
-            template=_DARK_TEMPLATE, height=400,
-            hovermode="x unified", legend=dict(orientation="h", y=-0.2),
+            xaxis_title="时间 Time",
+            yaxis_title="持仓市值 Position Value (¥)",
+            template=_DARK_TEMPLATE,
+            height=400,
+            hovermode="x unified",
+            legend=dict(orientation="h", y=-0.2),
         )
         items.append(pn.pane.Plotly(fig, sizing_mode="stretch_width"))
 
@@ -1007,26 +1106,44 @@ def _render_positions(data: BacktestPerformanceData) -> object:
     if go is not None and data.positions:
         # 取最近20条
         recent = data.positions[-20:]
-        fig2 = go.Figure(data=[go.Table(
-            header=dict(
-                values=["日期 Date", "代码 Symbol", "方向 Side", "数量 Qty",
-                        "均价 VWAP", "当前价 Price", "市值 Market Value", "浮动盈亏 Float PnL"],
-                fill_color=_CARD_BG, font=dict(color=_TEXT, size=12), align="center", height=28,
-            ),
-            cells=dict(
-                values=[
-                    [p.date for p in recent],
-                    [p.symbol for p in recent],
-                    [p.side for p in recent],
-                    [p.quantity for p in recent],
-                    [f"{p.vwap:.3f}" for p in recent],
-                    [f"{p.price:.3f}" for p in recent],
-                    [f"{p.market_value:,.0f}" for p in recent],
-                    [f"{p.floating_pnl:+,.0f}" for p in recent],
-                ],
-                fill_color=_INPUT_BG, font=dict(color=_TEXT, size=11), align="center", height=22,
-            ),
-        )])
+        fig2 = go.Figure(
+            data=[
+                go.Table(
+                    header=dict(
+                        values=[
+                            "日期 Date",
+                            "代码 Symbol",
+                            "方向 Side",
+                            "数量 Qty",
+                            "均价 VWAP",
+                            "当前价 Price",
+                            "市值 Market Value",
+                            "浮动盈亏 Float PnL",
+                        ],
+                        fill_color=_CARD_BG,
+                        font=dict(color=_TEXT, size=12),
+                        align="center",
+                        height=28,
+                    ),
+                    cells=dict(
+                        values=[
+                            [p.date for p in recent],
+                            [p.symbol for p in recent],
+                            [p.side for p in recent],
+                            [p.quantity for p in recent],
+                            [f"{p.vwap:.3f}" for p in recent],
+                            [f"{p.price:.3f}" for p in recent],
+                            [f"{p.market_value:,.0f}" for p in recent],
+                            [f"{p.floating_pnl:+,.0f}" for p in recent],
+                        ],
+                        fill_color=_INPUT_BG,
+                        font=dict(color=_TEXT, size=11),
+                        align="center",
+                        height=22,
+                    ),
+                )
+            ]
+        )
         fig2.update_layout(template=_DARK_TEMPLATE, height=500, margin=dict(l=10, r=10, t=30, b=10))
         items.append(pn.pane.Plotly(fig2, sizing_mode="stretch_width"))
 
@@ -1034,6 +1151,7 @@ def _render_positions(data: BacktestPerformanceData) -> object:
 
 
 # ===== Tab 3: 交易统计 =====
+
 
 def _render_trade_stats(data: BacktestPerformanceData) -> object:
     """Tab 3 交易统计: 28指标网格 + 月度收益热力图"""
@@ -1074,7 +1192,7 @@ def _render_trade_stats(data: BacktestPerformanceData) -> object:
     # 每6个一行
     rows = []
     for i in range(0, len(metrics), 6):
-        batch = metrics[i:i + 6]
+        batch = metrics[i : i + 6]
         cards = []
         for m in batch:
             color = m[3] if len(m) > 3 else _TEXT
@@ -1087,24 +1205,31 @@ def _render_trade_stats(data: BacktestPerformanceData) -> object:
     items.append(_section_header("月度收益热力图 Monthly Returns Heatmap"))
     if go is not None and data.monthly_returns:
         years = [2019 + i for i in range(len(data.monthly_returns))]
-        months = [f"{i+1}月\nJan" if i < 3 else f"{i+1}月" for i in range(12)]
-        months_full = [f"{m}月\n{['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][i]}" for i, m in enumerate(range(1, 13))]
+        months = [f"{i + 1}月\nJan" if i < 3 else f"{i + 1}月" for i in range(12)]
+        months_full = [
+            f"{m}月\n{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}"
+            for i, m in enumerate(range(1, 13))
+        ]
 
-        fig = go.Figure(data=go.Heatmap(
-            z=data.monthly_returns,
-            x=months_full,
-            y=[str(y) for y in years],
-            colorscale="RdYlGn",
-            zmid=0,
-            text=[[f"{v:.2f}%" for v in row] for row in data.monthly_returns],
-            texttemplate="%{text}",
-            textfont=dict(size=11),
-            hovertemplate="年份: %{y}<br>月份: %{x}<br>收益: %{z:.2f}%<extra></extra>",
-        ))
+        fig = go.Figure(
+            data=go.Heatmap(
+                z=data.monthly_returns,
+                x=months_full,
+                y=[str(y) for y in years],
+                colorscale="RdYlGn",
+                zmid=0,
+                text=[[f"{v:.2f}%" for v in row] for row in data.monthly_returns],
+                texttemplate="%{text}",
+                textfont=dict(size=11),
+                hovertemplate="年份: %{y}<br>月份: %{x}<br>收益: %{z:.2f}%<extra></extra>",
+            )
+        )
         fig.update_layout(
             title="月度收益率 Monthly Returns",
-            xaxis_title="月份 Month", yaxis_title="年份 Year",
-            template=_DARK_TEMPLATE, height=250,
+            xaxis_title="月份 Month",
+            yaxis_title="年份 Year",
+            template=_DARK_TEMPLATE,
+            height=250,
         )
         items.append(pn.pane.Plotly(fig, sizing_mode="stretch_width"))
 
@@ -1112,6 +1237,7 @@ def _render_trade_stats(data: BacktestPerformanceData) -> object:
 
 
 # ===== Tab 4: 每日明细 =====
+
 
 def _render_daily_detail(data: BacktestPerformanceData) -> object:
     """Tab 4 每日明细: 日期选择器 + 当日资金/持仓/委托三表"""
@@ -1146,25 +1272,53 @@ def _render_daily_detail(data: BacktestPerformanceData) -> object:
         # 当日资金
         cap = next((c for c in data.daily_capital if c.date == sel), None)
         if cap and go is not None:
-            fig1 = go.Figure(data=[go.Table(
-                header=dict(
-                    values=["字段 Field", "值 Value"],
-                    fill_color=_CARD_BG, font=dict(color=_TEXT, size=12), align="left", height=28,
-                ),
-                cells=dict(
-                    values=[
-                        ["日期 Date", "总资产 Total Asset", "资金余额 Cash Balance", "当日持仓 Position Value",
-                         "浮动盈亏 Float PnL", "当日盈亏 Daily PnL", "买开金额 Buy Open", "买平金额 Buy Close",
-                         "卖开金额 Sell Open", "卖平金额 Sell Close", "手续费 Fee"],
-                        [cap.date, f"¥{cap.total_asset:,.2f}", f"¥{cap.cash_balance:,.2f}",
-                         f"¥{cap.position_value:,.2f}", f"¥{cap.floating_pnl:+,.2f}",
-                         f"¥{cap.daily_pnl:+,.2f}", f"¥{cap.buy_open_amount:,.2f}",
-                         f"¥{cap.buy_close_amount:,.2f}", f"¥{cap.sell_open_amount:,.2f}",
-                         f"¥{cap.sell_close_amount:,.2f}", f"¥{cap.fee:,.2f}"],
-                    ],
-                    fill_color=_INPUT_BG, font=dict(color=_TEXT, size=11), align="left", height=22,
-                ),
-            )])
+            fig1 = go.Figure(
+                data=[
+                    go.Table(
+                        header=dict(
+                            values=["字段 Field", "值 Value"],
+                            fill_color=_CARD_BG,
+                            font=dict(color=_TEXT, size=12),
+                            align="left",
+                            height=28,
+                        ),
+                        cells=dict(
+                            values=[
+                                [
+                                    "日期 Date",
+                                    "总资产 Total Asset",
+                                    "资金余额 Cash Balance",
+                                    "当日持仓 Position Value",
+                                    "浮动盈亏 Float PnL",
+                                    "当日盈亏 Daily PnL",
+                                    "买开金额 Buy Open",
+                                    "买平金额 Buy Close",
+                                    "卖开金额 Sell Open",
+                                    "卖平金额 Sell Close",
+                                    "手续费 Fee",
+                                ],
+                                [
+                                    cap.date,
+                                    f"¥{cap.total_asset:,.2f}",
+                                    f"¥{cap.cash_balance:,.2f}",
+                                    f"¥{cap.position_value:,.2f}",
+                                    f"¥{cap.floating_pnl:+,.2f}",
+                                    f"¥{cap.daily_pnl:+,.2f}",
+                                    f"¥{cap.buy_open_amount:,.2f}",
+                                    f"¥{cap.buy_close_amount:,.2f}",
+                                    f"¥{cap.sell_open_amount:,.2f}",
+                                    f"¥{cap.sell_close_amount:,.2f}",
+                                    f"¥{cap.fee:,.2f}",
+                                ],
+                            ],
+                            fill_color=_INPUT_BG,
+                            font=dict(color=_TEXT, size=11),
+                            align="left",
+                            height=22,
+                        ),
+                    )
+                ]
+            )
             fig1.update_layout(template=_DARK_TEMPLATE, height=350, margin=dict(l=10, r=10, t=30, b=10))
             tables_col.append(_section_header(f"当日资金 Daily Capital ({sel})"))
             tables_col.append(pn.pane.Plotly(fig1, sizing_mode="stretch_width"))
@@ -1172,25 +1326,42 @@ def _render_daily_detail(data: BacktestPerformanceData) -> object:
         # 当日持仓
         day_positions = [p for p in data.positions if p.date == sel]
         if day_positions and go is not None:
-            fig2 = go.Figure(data=[go.Table(
-                header=dict(
-                    values=["代码 Symbol", "方向 Side", "数量 Qty", "均价 VWAP",
-                            "当前价 Price", "市值 Market Value", "浮动盈亏 Float PnL"],
-                    fill_color=_CARD_BG, font=dict(color=_TEXT, size=12), align="center", height=28,
-                ),
-                cells=dict(
-                    values=[
-                        [p.symbol for p in day_positions],
-                        [p.side for p in day_positions],
-                        [p.quantity for p in day_positions],
-                        [f"{p.vwap:.3f}" for p in day_positions],
-                        [f"{p.price:.3f}" for p in day_positions],
-                        [f"{p.market_value:,.0f}" for p in day_positions],
-                        [f"{p.floating_pnl:+,.0f}" for p in day_positions],
-                    ],
-                    fill_color=_INPUT_BG, font=dict(color=_TEXT, size=11), align="center", height=22,
-                ),
-            )])
+            fig2 = go.Figure(
+                data=[
+                    go.Table(
+                        header=dict(
+                            values=[
+                                "代码 Symbol",
+                                "方向 Side",
+                                "数量 Qty",
+                                "均价 VWAP",
+                                "当前价 Price",
+                                "市值 Market Value",
+                                "浮动盈亏 Float PnL",
+                            ],
+                            fill_color=_CARD_BG,
+                            font=dict(color=_TEXT, size=12),
+                            align="center",
+                            height=28,
+                        ),
+                        cells=dict(
+                            values=[
+                                [p.symbol for p in day_positions],
+                                [p.side for p in day_positions],
+                                [p.quantity for p in day_positions],
+                                [f"{p.vwap:.3f}" for p in day_positions],
+                                [f"{p.price:.3f}" for p in day_positions],
+                                [f"{p.market_value:,.0f}" for p in day_positions],
+                                [f"{p.floating_pnl:+,.0f}" for p in day_positions],
+                            ],
+                            fill_color=_INPUT_BG,
+                            font=dict(color=_TEXT, size=11),
+                            align="center",
+                            height=22,
+                        ),
+                    )
+                ]
+            )
             fig2.update_layout(template=_DARK_TEMPLATE, height=200, margin=dict(l=10, r=10, t=30, b=10))
             tables_col.append(_section_header(f"当日持仓 Daily Positions ({sel})"))
             tables_col.append(pn.pane.Plotly(fig2, sizing_mode="stretch_width"))
@@ -1198,29 +1369,48 @@ def _render_daily_detail(data: BacktestPerformanceData) -> object:
         # 当日委托
         day_orders = [o for o in data.orders if o.order_time.startswith(sel)]
         if day_orders and go is not None:
-            fig3 = go.Figure(data=[go.Table(
-                header=dict(
-                    values=["委托时间 Order Time", "代码 Symbol", "名称 Name", "方向 Side",
-                            "价格 Price", "数量 Qty", "已成交 Filled", "均价 Avg Price",
-                            "手续费 Fee", "状态 Status"],
-                    fill_color=_CARD_BG, font=dict(color=_TEXT, size=12), align="center", height=28,
-                ),
-                cells=dict(
-                    values=[
-                        [o.order_time for o in day_orders],
-                        [o.symbol for o in day_orders],
-                        [o.name for o in day_orders],
-                        [o.side for o in day_orders],
-                        [f"{o.price:.3f}" for o in day_orders],
-                        [o.quantity for o in day_orders],
-                        [o.filled_quantity for o in day_orders],
-                        [f"{o.avg_fill_price:.3f}" for o in day_orders],
-                        [f"{o.fee:.2f}" for o in day_orders],
-                        [o.status for o in day_orders],
-                    ],
-                    fill_color=_INPUT_BG, font=dict(color=_TEXT, size=11), align="center", height=22,
-                ),
-            )])
+            fig3 = go.Figure(
+                data=[
+                    go.Table(
+                        header=dict(
+                            values=[
+                                "委托时间 Order Time",
+                                "代码 Symbol",
+                                "名称 Name",
+                                "方向 Side",
+                                "价格 Price",
+                                "数量 Qty",
+                                "已成交 Filled",
+                                "均价 Avg Price",
+                                "手续费 Fee",
+                                "状态 Status",
+                            ],
+                            fill_color=_CARD_BG,
+                            font=dict(color=_TEXT, size=12),
+                            align="center",
+                            height=28,
+                        ),
+                        cells=dict(
+                            values=[
+                                [o.order_time for o in day_orders],
+                                [o.symbol for o in day_orders],
+                                [o.name for o in day_orders],
+                                [o.side for o in day_orders],
+                                [f"{o.price:.3f}" for o in day_orders],
+                                [o.quantity for o in day_orders],
+                                [o.filled_quantity for o in day_orders],
+                                [f"{o.avg_fill_price:.3f}" for o in day_orders],
+                                [f"{o.fee:.2f}" for o in day_orders],
+                                [o.status for o in day_orders],
+                            ],
+                            fill_color=_INPUT_BG,
+                            font=dict(color=_TEXT, size=11),
+                            align="center",
+                            height=22,
+                        ),
+                    )
+                ]
+            )
             fig3.update_layout(template=_DARK_TEMPLATE, height=250, margin=dict(l=10, r=10, t=30, b=10))
             tables_col.append(_section_header(f"当日委托 Daily Orders ({sel})"))
             tables_col.append(pn.pane.Plotly(fig3, sizing_mode="stretch_width"))
@@ -1244,6 +1434,7 @@ def _collect_filtered_trades(trades, side, ts_set):
 
 
 # ===== Tab 5: 信号分析 (bt-visualizer 风格) =====
+
 
 def _render_signal_analysis(data: BacktestPerformanceData) -> object:
     """Tab 5 信号分析: K线 + 买卖点打点 + 频度切换 (bt-visualizer hover/click/zoom)"""
@@ -1304,29 +1495,43 @@ def _render_signal_analysis(data: BacktestPerformanceData) -> object:
 
         # K线图
         fig = make_subplots(
-            rows=2, cols=1, shared_xaxes=True,
-            vertical_spacing=0.05, row_heights=[0.7, 0.3],
+            rows=2,
+            cols=1,
+            shared_xaxes=True,
+            vertical_spacing=0.05,
+            row_heights=[0.7, 0.3],
             subplot_titles=("K线 + 买卖信号 K-Line + Trade Signals", "成交量 Volume"),
         )
 
-        fig.add_trace(go.Candlestick(
-            x=ts_list,
-            open=[b.open for b in ohlc_show],
-            high=[b.high for b in ohlc_show],
-            low=[b.low for b in ohlc_show],
-            close=[b.close for b in ohlc_show],
-            name="K线 K-Line",
-            increasing_line_color=_GREEN, decreasing_line_color=_RED,
-            increasing_fillcolor=_GREEN, decreasing_fillcolor=_RED,
-            whiskerwidth=0.5,
-        ), row=1, col=1)
+        fig.add_trace(
+            go.Candlestick(
+                x=ts_list,
+                open=[b.open for b in ohlc_show],
+                high=[b.high for b in ohlc_show],
+                low=[b.low for b in ohlc_show],
+                close=[b.close for b in ohlc_show],
+                name="K线 K-Line",
+                increasing_line_color=_GREEN,
+                decreasing_line_color=_RED,
+                increasing_fillcolor=_GREEN,
+                decreasing_fillcolor=_RED,
+                whiskerwidth=0.5,
+            ),
+            row=1,
+            col=1,
+        )
 
-        fig.add_trace(go.Bar(
-            x=ts_list, y=[b.volume for b in ohlc_show],
-            name="成交量 Volume",
-            marker_color=[_GREEN if b.close >= b.open else _RED for b in ohlc_show],
-            opacity=0.5,
-        ), row=2, col=1)
+        fig.add_trace(
+            go.Bar(
+                x=ts_list,
+                y=[b.volume for b in ohlc_show],
+                name="成交量 Volume",
+                marker_color=[_GREEN if b.close >= b.open else _RED for b in ohlc_show],
+                opacity=0.5,
+            ),
+            row=2,
+            col=1,
+        )
 
         # 买卖点打点 (bt-visualizer 核心: hover 交易信息) — 过滤到K线显示范围内
         ts_set = set(ts_list)
@@ -1334,33 +1539,49 @@ def _render_signal_analysis(data: BacktestPerformanceData) -> object:
         sell_filtered = _collect_filtered_trades(data.trades, "sell", ts_set)
 
         if buy_filtered:
-            fig.add_trace(go.Scatter(
-                x=[b[0] for b in buy_filtered],
-                y=[b[1] for b in buy_filtered],
-                mode="markers",
-                marker=dict(symbol="triangle-up", size=12, color=_GREEN, line=dict(width=1, color=_TEXT)),
-                name="买入 Buy",
-                # bt-visualizer 风格: hover 显示完整交易信息
-                hovertemplate="<b>买入 BUY</b><br>"
-                              "日期: %{x}<br>"
-                              "价格: %{y:.3f}<br>"
-                              + "数量: " + ", ".join([f"{b[2]}" for b in buy_filtered]) + "<br>"
-                              + "金额: ¥" + ", ".join([f"{b[3]:,.0f}" for b in buy_filtered]) + "<extra></extra>",
-            ), row=1, col=1)
+            fig.add_trace(
+                go.Scatter(
+                    x=[b[0] for b in buy_filtered],
+                    y=[b[1] for b in buy_filtered],
+                    mode="markers",
+                    marker=dict(symbol="triangle-up", size=12, color=_GREEN, line=dict(width=1, color=_TEXT)),
+                    name="买入 Buy",
+                    # bt-visualizer 风格: hover 显示完整交易信息
+                    hovertemplate="<b>买入 BUY</b><br>"
+                    "日期: %{x}<br>"
+                    "价格: %{y:.3f}<br>"
+                    + "数量: "
+                    + ", ".join([f"{b[2]}" for b in buy_filtered])
+                    + "<br>"
+                    + "金额: ¥"
+                    + ", ".join([f"{b[3]:,.0f}" for b in buy_filtered])
+                    + "<extra></extra>",
+                ),
+                row=1,
+                col=1,
+            )
 
         if sell_filtered:
-            fig.add_trace(go.Scatter(
-                x=[s[0] for s in sell_filtered],
-                y=[s[1] for s in sell_filtered],
-                mode="markers",
-                marker=dict(symbol="triangle-down", size=12, color=_RED, line=dict(width=1, color=_TEXT)),
-                name="卖出 Sell",
-                hovertemplate="<b>卖出 SELL</b><br>"
-                              "日期: %{x}<br>"
-                              "价格: %{y:.3f}<br>"
-                              + "数量: " + ", ".join([f"{s[2]}" for s in sell_filtered]) + "<br>"
-                              + "金额: ¥" + ", ".join([f"{s[3]:,.0f}" for s in sell_filtered]) + "<extra></extra>",
-            ), row=1, col=1)
+            fig.add_trace(
+                go.Scatter(
+                    x=[s[0] for s in sell_filtered],
+                    y=[s[1] for s in sell_filtered],
+                    mode="markers",
+                    marker=dict(symbol="triangle-down", size=12, color=_RED, line=dict(width=1, color=_TEXT)),
+                    name="卖出 Sell",
+                    hovertemplate="<b>卖出 SELL</b><br>"
+                    "日期: %{x}<br>"
+                    "价格: %{y:.3f}<br>"
+                    + "数量: "
+                    + ", ".join([f"{s[2]}" for s in sell_filtered])
+                    + "<br>"
+                    + "金额: ¥"
+                    + ", ".join([f"{s[3]:,.0f}" for s in sell_filtered])
+                    + "<extra></extra>",
+                ),
+                row=1,
+                col=1,
+            )
 
         # bt-visualizer 交互特性:
         #   - clickmode: 点击下钻
@@ -1383,25 +1604,42 @@ def _render_signal_analysis(data: BacktestPerformanceData) -> object:
 
         # 交易信号明细表
         recent_trades = data.trades[:30]
-        fig2 = go.Figure(data=[go.Table(
-            header=dict(
-                values=["时间 Time", "代码 Symbol", "方向 Side", "价格 Price",
-                        "数量 Qty", "金额 Amount", "手续费 Fee"],
-                fill_color=_CARD_BG, font=dict(color=_TEXT, size=12), align="center", height=28,
-            ),
-            cells=dict(
-                values=[
-                    [t.timestamp for t in recent_trades],
-                    [t.symbol for t in recent_trades],
-                    [t.side for t in recent_trades],
-                    [f"{t.price:.3f}" for t in recent_trades],
-                    [t.quantity for t in recent_trades],
-                    [f"{t.amount:,.0f}" for t in recent_trades],
-                    [f"{t.fee:.2f}" for t in recent_trades],
-                ],
-                fill_color=_INPUT_BG, font=dict(color=_TEXT, size=11), align="center", height=22,
-            ),
-        )])
+        fig2 = go.Figure(
+            data=[
+                go.Table(
+                    header=dict(
+                        values=[
+                            "时间 Time",
+                            "代码 Symbol",
+                            "方向 Side",
+                            "价格 Price",
+                            "数量 Qty",
+                            "金额 Amount",
+                            "手续费 Fee",
+                        ],
+                        fill_color=_CARD_BG,
+                        font=dict(color=_TEXT, size=12),
+                        align="center",
+                        height=28,
+                    ),
+                    cells=dict(
+                        values=[
+                            [t.timestamp for t in recent_trades],
+                            [t.symbol for t in recent_trades],
+                            [t.side for t in recent_trades],
+                            [f"{t.price:.3f}" for t in recent_trades],
+                            [t.quantity for t in recent_trades],
+                            [f"{t.amount:,.0f}" for t in recent_trades],
+                            [f"{t.fee:.2f}" for t in recent_trades],
+                        ],
+                        fill_color=_INPUT_BG,
+                        font=dict(color=_TEXT, size=11),
+                        align="center",
+                        height=22,
+                    ),
+                )
+            ]
+        )
         fig2.update_layout(template=_DARK_TEMPLATE, height=400, margin=dict(l=10, r=10, t=30, b=10))
         trade_table_col.append(_section_header("交易信号明细 Trade Signal Detail"))
         trade_table_col.append(pn.pane.Plotly(fig2, sizing_mode="stretch_width"))
@@ -1416,6 +1654,7 @@ def _render_signal_analysis(data: BacktestPerformanceData) -> object:
 
 
 # ===== 主渲染函数 =====
+
 
 def render_backtest_performance(data: BacktestPerformanceData) -> dict[str, Any]:
     """渲染掘金风格 5-Tab 绩效分析布局

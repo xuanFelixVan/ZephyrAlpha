@@ -261,9 +261,7 @@ class StopLossStrategy:
         # ATR缺失降级: 固定%止损(42号 §3.3)
         if atr_value is None or atr_value <= 0:
             fallback_pct = (
-                _FALLBACK_PCT_SHORT
-                if position.strategy_type == StrategyType.SHORT_TERM
-                else _FALLBACK_PCT_LONG
+                _FALLBACK_PCT_SHORT if position.strategy_type == StrategyType.SHORT_TERM else _FALLBACK_PCT_LONG
             )
             logger.debug(
                 "ATR缺失, symbol=%s 降级固定%%止损 %.2f%%",

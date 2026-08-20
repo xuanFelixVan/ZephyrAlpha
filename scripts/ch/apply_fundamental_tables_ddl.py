@@ -35,6 +35,7 @@ DDL-as-Code 模式：
     1 = 有不一致
     2 = ClickHouse 不可达
 """
+
 from __future__ import annotations
 
 import os
@@ -66,33 +67,75 @@ _ALL_DDL = [
 # 金额字段（必须为 Decimal，audit 1.2 精度校验真源）
 _MONEY_FIELDS = {
     "income_statement": {
-        "Decimal(18,2)": ["total_revenue", "operating_revenue", "total_cost", "operating_cost",
-                          "tax_surcharge", "selling_expense", "admin_expense", "financial_expense",
-                          "rd_expense", "operating_profit", "non_op_income", "non_op_expense",
-                          "total_profit", "income_tax", "net_profit_incl_minority",
-                          "net_profit_excl_minority", "minority_interest", "comprehensive_income"],
+        "Decimal(18,2)": [
+            "total_revenue",
+            "operating_revenue",
+            "total_cost",
+            "operating_cost",
+            "tax_surcharge",
+            "selling_expense",
+            "admin_expense",
+            "financial_expense",
+            "rd_expense",
+            "operating_profit",
+            "non_op_income",
+            "non_op_expense",
+            "total_profit",
+            "income_tax",
+            "net_profit_incl_minority",
+            "net_profit_excl_minority",
+            "minority_interest",
+            "comprehensive_income",
+        ],
         "Decimal(18,4)": ["eps_basic", "eps_diluted"],
     },
     "balance_sheet": {
-        "Decimal(18,2)": ["monetary_capital", "accounts_receivable", "inventory", "total_current_assets",
-                          "fixed_assets", "intangible_assets", "goodwill", "total_non_current_assets",
-                          "total_assets", "short_term_loan", "long_term_loan", "accounts_payable",
-                          "total_current_liabilities", "total_non_current_liabilities", "total_liabilities",
-                          "equity_excl_minority", "equity_incl_minority", "capital_reserve",
-                          "retained_earnings", "surplus_reserve"],
+        "Decimal(18,2)": [
+            "monetary_capital",
+            "accounts_receivable",
+            "inventory",
+            "total_current_assets",
+            "fixed_assets",
+            "intangible_assets",
+            "goodwill",
+            "total_non_current_assets",
+            "total_assets",
+            "short_term_loan",
+            "long_term_loan",
+            "accounts_payable",
+            "total_current_liabilities",
+            "total_non_current_liabilities",
+            "total_liabilities",
+            "equity_excl_minority",
+            "equity_incl_minority",
+            "capital_reserve",
+            "retained_earnings",
+            "surplus_reserve",
+        ],
     },
     "cashflow_statement": {
-        "Decimal(18,2)": ["ocf_net", "cash_from_sales", "ocf_inflow", "ocf_outflow", "icf_net",
-                          "icf_inflow", "icf_outflow", "fcf_net", "fcf_inflow", "fcf_outflow",
-                          "net_cash_increase", "ending_cash_balance", "fcff"],
+        "Decimal(18,2)": [
+            "ocf_net",
+            "cash_from_sales",
+            "ocf_inflow",
+            "ocf_outflow",
+            "icf_net",
+            "icf_inflow",
+            "icf_outflow",
+            "fcf_net",
+            "fcf_inflow",
+            "fcf_outflow",
+            "net_cash_increase",
+            "ending_cash_balance",
+            "fcff",
+        ],
     },
 }
 
 # SQL 常量集中化（NO-BARE-SQL gate 豁免 SQL_* 前缀）
 SQL_CREATE_DB = "CREATE DATABASE IF NOT EXISTS {db}"
 SQL_TABLES_ENGINE = "SELECT name, engine FROM system.tables WHERE database = '{db}' ORDER BY name"
-SQL_COLUMNS_TYPE = ("SELECT name, type FROM system.columns "
-                     "WHERE database='{db}' AND table='{table}' FORMAT TabSeparated")
+SQL_COLUMNS_TYPE = "SELECT name, type FROM system.columns WHERE database='{db}' AND table='{table}' FORMAT TabSeparated"
 
 
 def apply() -> int:
@@ -145,8 +188,9 @@ def _verify_engines(actual_engine: dict[str, str]) -> bool:
     return all_match
 
 
-def _check_table_precision(table: str, prec_map: dict[str, list[str]],
-                           col_types: dict[str, str]) -> tuple[int, int, list[str]]:
+def _check_table_precision(
+    table: str, prec_map: dict[str, list[str]], col_types: dict[str, str]
+) -> tuple[int, int, list[str]]:
     """校验单表金额字段 Decimal 精度。返回 (total, decimal_ok, bad_list)。"""
     total = 0
     decimal_ok = 0

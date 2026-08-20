@@ -342,10 +342,7 @@ class ParameterRobustnessTester:
             )
 
         # 1. 计算各参数点的目标值
-        points = [
-            ParameterPoint(param_value=v, objective=float(objective_func(v)))
-            for v in param_values
-        ]
+        points = [ParameterPoint(param_value=v, objective=float(objective_func(v))) for v in param_values]
         objectives = [p.objective for p in points]
 
         # 2. 基准与最优
@@ -386,7 +383,9 @@ class ParameterRobustnessTester:
         )
         _logger.debug(
             "参数鲁棒性[%s]: ratio=%.3f risk=%s stable=%s",
-            param_name, stability_ratio, risk.value,
+            param_name,
+            stability_ratio,
+            risk.value,
             f"[{stable_region.low},{stable_region.high}]" if stable_region else "None",
         )
         return result
@@ -424,13 +423,11 @@ class ParameterRobustnessTester:
             else:
                 cur_len = 0
 
-        region_pts = sorted_pts[best_start: best_start + best_len]
+        region_pts = sorted_pts[best_start : best_start + best_len]
         low = region_pts[0].param_value
         high = region_pts[-1].param_value
         width = high - low
-        return StableRegion(
-            low=low, high=high, width=width, point_count=best_len
-        )
+        return StableRegion(low=low, high=high, width=width, point_count=best_len)
 
     def _classify_risk(self, stability_ratio: float) -> OverfitRisk:
         """按稳定性比率分级过拟合风险。"""
@@ -470,11 +467,7 @@ class ParameterRobustnessTester:
                 "baseline_value=0 无法施加比例扰动",
                 details={"param_name": param_name},
             )
-        perts = (
-            tuple(perturbations)
-            if perturbations is not None
-            else self._config.default_perturbations
-        )
+        perts = tuple(perturbations) if perturbations is not None else self._config.default_perturbations
         baseline_obj = float(objective_func(baseline_value))
         objectives: list[float] = []
         max_deg = 0.0
@@ -497,16 +490,16 @@ class ParameterRobustnessTester:
         )
         _logger.debug(
             "扰动测试[%s]: max_deg=%.4f stable=%s",
-            param_name, max_deg, is_stable,
+            param_name,
+            max_deg,
+            is_stable,
         )
         return result
 
     # ------------------------------------------------------------------
     # 汇总评估
     # ------------------------------------------------------------------
-    def assess(
-        self, sensitivities: list[ParameterSensitivity]
-    ) -> RobustnessReport:
+    def assess(self, sensitivities: list[ParameterSensitivity]) -> RobustnessReport:
         """汇总多参数鲁棒性。
 
         Args:
@@ -537,7 +530,9 @@ class ParameterRobustnessTester:
         )
         _logger.debug(
             "鲁棒性汇总: stability=%.3f risk=%s robust=%s",
-            overall_stability, overall_risk.value, is_robust,
+            overall_stability,
+            overall_risk.value,
+            is_robust,
         )
         return report
 
@@ -551,8 +546,7 @@ class ParameterRobustnessTester:
         verdict = "PASS(参数鲁棒)" if report.is_robust else "FAIL(参数过拟合风险)"
         lines.append(f"结论: {verdict}")
         lines.append(
-            f"总体稳定性: {report.overall_stability:.3f} | "
-            f"总体过拟合风险: {report.overall_overfit_risk.value}"
+            f"总体稳定性: {report.overall_stability:.3f} | 总体过拟合风险: {report.overall_overfit_risk.value}"
         )
         lines.append(f"参数数: {len(report.sensitivities)}")
         if report.sensitivities:
@@ -560,10 +554,7 @@ class ParameterRobustnessTester:
             lines.append("各参数明细:")
             for s in report.sensitivities:
                 sr = s.stable_region
-                region_str = (
-                    f"[{sr.low:.4g}, {sr.high:.4g}] (width={sr.width:.4g}, {sr.point_count}点)"
-                    if sr else "无"
-                )
+                region_str = f"[{sr.low:.4g}, {sr.high:.4g}] (width={sr.width:.4g}, {sr.point_count}点)" if sr else "无"
                 lines.append(
                     f"  - {s.param_name}: ratio={s.stability_ratio:.3f} "
                     f"risk={s.overfit_risk.value} optimal={s.optimal_value:.4g} "

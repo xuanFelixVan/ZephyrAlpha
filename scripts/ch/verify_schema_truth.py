@@ -39,6 +39,7 @@ CI 模式语义（接入 pre-commit 门禁用）：
     - CH 不可达    → exit 0 + 显式 WARN（不阻断无关提交；防止本地基建故障卡死所有工作）
     非 --ci 模式下 CH 不可达仍返回 exit 2（便于人工诊断时区分"基建故障"与"通过"）。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -57,6 +58,7 @@ if str(_SRC_DIR) not in sys.path:
 
 
 # ==================== 真源加载 ====================
+
 
 def _discover_truth_files() -> list[Path]:
     """枚举 schemas/categories/*.py 真源文件。"""
@@ -83,6 +85,7 @@ def _find_ddl_constant(mod) -> str | None:
 
 
 # ==================== DDL 解析 ====================
+
 
 def _split_top_level(s: str, sep: str = ",") -> list[str]:
     """按 sep 切分，忽略括号内嵌套的 sep。"""
@@ -164,13 +167,13 @@ def _parse_column_def(seg: str) -> tuple[str, str] | None:
             depth += 1
         elif ch == ")":
             depth -= 1
-        if depth == 0 and upper[i:i + 7] == "DEFAULT":
+        if depth == 0 and upper[i : i + 7] == "DEFAULT":
             break
-        if depth == 0 and upper[i:i + 12] == "MATERIALIZED":
+        if depth == 0 and upper[i : i + 12] == "MATERIALIZED":
             break
-        if depth == 0 and upper[i:i + 5] == "ALIAS" and (i == 0 or not (rest[i - 1].isalnum() or rest[i - 1] == "_")):
+        if depth == 0 and upper[i : i + 5] == "ALIAS" and (i == 0 or not (rest[i - 1].isalnum() or rest[i - 1] == "_")):
             break
-        if depth == 0 and upper[i:i + 7] == "COMMENT":
+        if depth == 0 and upper[i : i + 7] == "COMMENT":
             break
         type_chars.append(ch)
         i += 1
@@ -196,8 +199,7 @@ def _parse_truth_table(ddl: str) -> dict:
     partition = pm.group(1).strip() if pm else ""
     om = re.search(r"ORDER\s+BY\s+([^\n]+)", ddl, re.IGNORECASE)
     order = om.group(1).strip() if om else ""
-    return {"db": db, "table": table, "columns": cols,
-            "engine": engine, "partition": partition, "order": order}
+    return {"db": db, "table": table, "columns": cols, "engine": engine, "partition": partition, "order": order}
 
 
 def _load_truth_schemas() -> list[dict]:
@@ -219,15 +221,20 @@ def _load_truth_schemas() -> list[dict]:
 
 # ==================== DB 加载 ====================
 
+
 def _make_client():
     """构建只读 ClickHouse 客户端（过滤 native driver 不支持的键）。"""
     import clickhouse_driver
 
     from zephyr.data.ch_config import load_ch_reader_config
+
     c = load_ch_reader_config()
     return clickhouse_driver.Client(
-        host=c["host"], port=int(c["port"]),
-        user=c["user"], password=c["password"], database=c["database"],
+        host=c["host"],
+        port=int(c["port"]),
+        user=c["user"],
+        password=c["password"],
+        database=c["database"],
     )
 
 
@@ -241,17 +248,21 @@ def _load_db_schema(client, db: str, table: str) -> dict | None:
         return None
     row = exists[0]
     cols_rows = client.execute(
-        "SELECT name, type FROM system.columns WHERE database='{d}' AND table='{t}' "
-        "ORDER BY position".format(d=db, t=table)
+        "SELECT name, type FROM system.columns WHERE database='{d}' AND table='{t}' ORDER BY position".format(
+            d=db, t=table
+        )
     )
     return {
         "columns": {r[0]: r[1] for r in cols_rows},
-        "engine": row[1], "engine_full": row[2],
-        "partition": row[3] or "", "order": row[4] or "",
+        "engine": row[1],
+        "engine_full": row[2],
+        "partition": row[3] or "",
+        "order": row[4] or "",
     }
 
 
 # ==================== 比对 ====================
+
 
 def _compare(truth: dict, db: dict | None) -> list[str]:
     """返回该表的漂移条目列表（空=零漂移）。"""
@@ -281,8 +292,11 @@ def _compare(truth: dict, db: dict | None) -> list[str]:
 
 # ==================== 主流程 ====================
 
+
 def _write_markdown_report(
-    path: Path, per_table: list[tuple[dict, list[str]]], all_drifts: list[str],
+    path: Path,
+    per_table: list[tuple[dict, list[str]]],
+    all_drifts: list[str],
 ) -> None:
     """把校验结果写到 markdown 报告（供 CI/审计留证）。
 
@@ -292,6 +306,7 @@ def _write_markdown_report(
         all_drifts: 全量漂移条目（用于明细）
     """
     import datetime as _dt
+
     checked = len(per_table)
     lines = [
         "---",

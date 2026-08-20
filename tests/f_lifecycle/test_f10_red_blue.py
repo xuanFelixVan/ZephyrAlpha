@@ -148,9 +148,7 @@ class TestExamCheatingAttack:
         case = _find_case("code_edit_precision")
 
         # 攻击者返回的 old_str 与 expected_old_str 完全一致（无推理过程）
-        malicious_result = {
-            "fixes": [{"old_str": case.expected_old_str, "new_str": "replacement"}]
-        }
+        malicious_result = {"fixes": [{"old_str": case.expected_old_str, "new_str": "replacement"}]}
 
         is_suspicious = orch.detect_optimization(case, malicious_result)
         assert is_suspicious is True, "防护失败: 精确匹配 old_str 未被检测为优化"
@@ -337,7 +335,7 @@ class TestPassportForgeryAttack:
             path = tmp_path / "tampered-sig.json"
             data = json.loads(path.read_text(encoding="utf-8"))
             data["overall_score"] = 0.99  # 篡改分数
-            data["overall_grade"] = "A+"   # 篡改等级
+            data["overall_grade"] = "A+"  # 篡改等级
             path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
             # 验证: 签名不匹配 → TamperError
@@ -517,9 +515,7 @@ class TestCombinedAttack:
 
         # 层次3: 反优化检测
         code_case = _find_case("code_edit_precision")
-        optimized_result = {
-            "fixes": [{"old_str": code_case.expected_old_str, "new_str": "x"}]
-        }
+        optimized_result = {"fixes": [{"old_str": code_case.expected_old_str, "new_str": "x"}]}
         assert orch.detect_optimization(code_case, optimized_result) is True
 
         # 层次4: HMAC 签名

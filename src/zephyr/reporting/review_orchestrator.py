@@ -165,15 +165,10 @@ class ReviewOrchestrator:
         human_attention: tuple[str, ...] = ()
         if audit_report.overall_status is not AuditStatus.PASS:
             human_attention = tuple(
-                f"[{issue.severity.value}] {issue.category}: {issue.description}"
-                for issue in audit_report.issues
+                f"[{issue.severity.value}] {issue.category}: {issue.description}" for issue in audit_report.issues
             ) or (f"日终审计 {audit_report.overall_status.value}（无 IssueRecord 明细）",)
 
-        verdicts = (
-            self._deviation_monitor.get_latest_verdicts()
-            if self._deviation_monitor is not None
-            else {}
-        )
+        verdicts = self._deviation_monitor.get_latest_verdicts() if self._deviation_monitor is not None else {}
         archived = None
         if publish:
             archived = self._publisher.publish(
@@ -191,9 +186,7 @@ class ReviewOrchestrator:
                     "current_drawdown": daily_summary.current_drawdown,
                     "alert_count": daily_summary.alert_count,
                     "human_attention": list(human_attention),
-                    "deviation_actions": {
-                        sid: v.action.value for sid, v in verdicts.items()
-                    },
+                    "deviation_actions": {sid: v.action.value for sid, v in verdicts.items()},
                 },
             )
         logger.info(
@@ -291,11 +284,7 @@ class ReviewOrchestrator:
         action_items: tuple[str, ...],
     ) -> str:
         """四段式周复盘文档渲染（模板结构固定=55 号 §3.6 决策五）。"""
-        verdicts = (
-            self._deviation_monitor.get_latest_verdicts()
-            if self._deviation_monitor is not None
-            else {}
-        )
+        verdicts = self._deviation_monitor.get_latest_verdicts() if self._deviation_monitor is not None else {}
         lines: list[str] = [
             f"# 周复盘 {period}",
             "",
@@ -314,16 +303,8 @@ class ReviewOrchestrator:
             lines.append("| 策略 | 偏离度 | 日收益相关 | 动作 |")
             lines.append("|---|---|---|---|")
             for sid, v in sorted(verdicts.items()):
-                deviation = (
-                    f"{v.cum_relative_deviation:.2%}"
-                    if v.cum_relative_deviation is not None
-                    else "NA"
-                )
-                corr = (
-                    f"{v.daily_return_correlation:.3f}"
-                    if v.daily_return_correlation is not None
-                    else "NA"
-                )
+                deviation = f"{v.cum_relative_deviation:.2%}" if v.cum_relative_deviation is not None else "NA"
+                corr = f"{v.daily_return_correlation:.3f}" if v.daily_return_correlation is not None else "NA"
                 flag = "（相关破下限）" if v.correlation_below_floor else ""
                 lines.append(f"| {sid} | {deviation} | {corr} | {v.action.value}{flag} |")
         else:
@@ -402,9 +383,7 @@ class ReviewOrchestrator:
                     "retirement_strategy_ids": [r.strategy_id for r in retirement_reports],
                 },
             )
-        logger.info(
-            "月复盘完成 %s: 退役评估报告 %d 份", month, len(retirement_reports)
-        )
+        logger.info("月复盘完成 %s: 退役评估报告 %d 份", month, len(retirement_reports))
         return MonthlyReviewResult(
             month=month,
             monthly_governance=monthly,

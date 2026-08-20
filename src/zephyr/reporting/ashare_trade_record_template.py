@@ -275,8 +275,7 @@ class AShareTradeRecordTemplate:
         expected_amount = quantity * price
         if amount != expected_amount:
             raise InvalidTradeRecordError(
-                f"amount 不一致: 期望={expected_amount} 实际={amount} "
-                f"(quantity={quantity} × price={price})",
+                f"amount 不一致: 期望={expected_amount} 实际={amount} (quantity={quantity} × price={price})",
                 details={
                     "field": "amount",
                     "expected": str(expected_amount),
@@ -346,8 +345,12 @@ class AShareTradeRecordTemplate:
 
         _logger.debug(
             "validate: date=%s symbol=%s side=%s qty=%s price=%s amount=%s",
-            record.trade_date, record.symbol, record.side,
-            record.quantity, record.price, record.amount,
+            record.trade_date,
+            record.symbol,
+            record.side,
+            record.quantity,
+            record.price,
+            record.amount,
         )
         return record
 

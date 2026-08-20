@@ -38,6 +38,7 @@ A股约束:
   - min_order_qty=100 (100股整数倍)
   - price_tick=0.01
 """
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -60,6 +61,7 @@ from zephyr.shared.utils.time_utils import now_utc
 
 class TradePanelError(Exception):
     """交易面板错误"""
+
     error_code = "ZA-FE-0002"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -69,10 +71,10 @@ class TradePanelError(Exception):
 
 
 # 默认灰度约束（蓝图 §16.7.5 D: 小资金灰度）
-DEFAULT_GREY_CAPITAL: Final[int] = 10000.0   # 1万元
-DEFAULT_GREY_MAX_QTY: Final[int] = 100       # 100股
-DEFAULT_MIN_ORDER_QTY: Final[int] = 100      # A股最小1手
-DEFAULT_QTY_STEP: Final[int] = 100           # 100股整数倍
+DEFAULT_GREY_CAPITAL: Final[int] = 10000.0  # 1万元
+DEFAULT_GREY_MAX_QTY: Final[int] = 100  # 100股
+DEFAULT_MIN_ORDER_QTY: Final[int] = 100  # A股最小1手
+DEFAULT_QTY_STEP: Final[int] = 100  # 100股整数倍
 
 
 @dataclass
@@ -81,11 +83,12 @@ class OrderSubmission:
 
     蓝图 §16.7.5 B: quantity >= 100 (A股1手起)
     """
+
     symbol: str = ""
-    side: str = "buy"             # "buy" / "sell"
+    side: str = "buy"  # "buy" / "sell"
     quantity: int = 100
     price: float = 0.0
-    order_type: str = "limit"     # "market" / "limit" / "twap" / "vwap"
+    order_type: str = "limit"  # "market" / "limit" / "twap" / "vwap"
     broker_id: str = "miniqmt"
     strategy_id: str = "manual"
     idempotency_key: str = ""
@@ -98,6 +101,7 @@ class OrderSubmission:
 @dataclass
 class OrderItem:
     """订单列表项（实时状态更新）"""
+
     order_id: str = ""
     broker_order_id: str = ""
     symbol: str = ""
@@ -116,6 +120,7 @@ class OrderItem:
 @dataclass
 class TradePanelData:
     """实盘交易面板数据模型"""
+
     orders: list[OrderItem] = field(default_factory=list)
     available_cash: float = 0.0
     total_asset: float = 0.0
@@ -123,6 +128,7 @@ class TradePanelData:
 
 
 # ----- 风控校验（纯函数，便于测试） -----
+
 
 def _check_grey_constraints(
     sub: OrderSubmission,
@@ -209,6 +215,7 @@ def build_risk_warning(
 
 # ----- Broker 抽象（依赖注入，支持 MiniQmtBroker 或 mock） -----
 
+
 class _BrokerLike(Protocol):
     def submit_order(self, order: object) -> str: ...
     def cancel_order(self, broker_order_id: str) -> bool: ...
@@ -216,6 +223,7 @@ class _BrokerLike(Protocol):
 
 
 # ----- 下单/撤单 -----
+
 
 def submit_order(
     execution_engine: object,
@@ -269,12 +277,12 @@ def submit_order(
     type_map = {
         "market": OrderType.MARKET,
         "limit": OrderType.LIMIT,
-        "twap": OrderType.LIMIT,      # TWAP/VWAP 算法单基础为限价
+        "twap": OrderType.LIMIT,  # TWAP/VWAP 算法单基础为限价
         "vwap": OrderType.LIMIT,
     }
     order_type_enum = type_map.get(order_submission.order_type, OrderType.LIMIT)
 
-    idem = order_submission.idempotency_key or f"tp-{order_submission.symbol}-{int(now_utc().timestamp()*1000)}"
+    idem = order_submission.idempotency_key or f"tp-{order_submission.symbol}-{int(now_utc().timestamp() * 1000)}"
 
     order = Order(
         idempotency_key=idem,
@@ -291,7 +299,8 @@ def submit_order(
     try:
         if hasattr(execution_engine, "execute_order"):
             broker_order_id = execution_engine.execute_order(
-                order, broker_id=order_submission.broker_id,
+                order,
+                broker_id=order_submission.broker_id,
             )
         else:
             broker_order_id = execution_engine.submit_order(order)
@@ -340,6 +349,7 @@ def emergency_stop(
 
 
 # ----- Panel 渲染（v3.0.0, #ARCH-047） -----
+
 
 def render_trade_panel(
     data: TradePanelData,
@@ -399,19 +409,23 @@ def render_trade_panel(
     # ===== 顶部：紧急停止 =====
     layout_items.append(pn.pane.Markdown("### 🚨 紧急停止"))
     if data.emergency_stopped:
-        layout_items.append(pn.pane.Alert(
-            "⚠ 已紧急停止：禁止所有新订单，未完成订单已撤单",
-            alert_type="danger",
-        ))
+        layout_items.append(
+            pn.pane.Alert(
+                "⚠ 已紧急停止：禁止所有新订单，未完成订单已撤单",
+                alert_type="danger",
+            )
+        )
     emergency_btn = pn.widgets.Button(
         name="🚨 紧急停止所有订单",
         button_type="danger",
         width=300,
     )
     if on_emergency_stop is not None:
+
         def _on_emergency(event: object) -> None:
             cancelled, errs = on_emergency_stop()
             # 结果通过 Alert 展示（简化实现，实际 app 层可扩展）
+
         emergency_btn.on_click(_on_emergency)
     layout_items.append(emergency_btn)
 
@@ -430,7 +444,10 @@ def render_trade_panel(
     )
     price_input = pn.widgets.FloatInput(name="价格", start=0.01, value=10.00, step=0.01, width=150)
     order_type_select = pn.widgets.Select(
-        name="算法", options=["limit", "market", "twap", "vwap"], value="limit", width=120,
+        name="算法",
+        options=["limit", "market", "twap", "vwap"],
+        value="limit",
+        width=120,
     )
     broker_input = pn.widgets.TextInput(name="Broker ID", value="miniqmt", width=120)
     strategy_input = pn.widgets.TextInput(name="Strategy ID", value="manual", width=120)
@@ -468,6 +485,7 @@ def render_trade_panel(
     confirm_checkbox.param.watch(_on_confirm, "value")
 
     if on_submit is not None:
+
         def _on_submit(event: object) -> None:
             sub = OrderSubmission(
                 symbol=symbol_input.value,
@@ -520,10 +538,12 @@ def render_trade_panel(
         # 错误订单详情
         for o in data.orders:
             if o.error_message:
-                layout_items.append(pn.pane.Alert(
-                    f"订单 {o.broker_order_id or o.order_id} 错误: {o.error_message}",
-                    alert_type="danger",
-                ))
+                layout_items.append(
+                    pn.pane.Alert(
+                        f"订单 {o.broker_order_id or o.order_id} 错误: {o.error_message}",
+                        alert_type="danger",
+                    )
+                )
 
     layout = pn.Column(*layout_items, sizing_mode="stretch_width")
     payload["_layout"] = layout

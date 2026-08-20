@@ -49,6 +49,7 @@
 
 退出码：0=成功/一致  1=有差异/未完成  2=CH不可达  3=未备份拒绝破坏性操作
 """
+
 from __future__ import annotations
 
 import argparse
@@ -70,7 +71,8 @@ _admin_config = load_ch_config()
 
 def _client() -> Client:
     return Client(
-        host=_admin_config["host"], port=_admin_config.get("port", 9000),
+        host=_admin_config["host"],
+        port=_admin_config.get("port", 9000),
         user=_admin_config.get("user", "default"),
         password=_admin_config.get("password", ""),
         connect_timeout=5,
@@ -80,10 +82,16 @@ def _client() -> Client:
 # ========== 分类真源（SSoT）==========
 
 # 系统时间戳列名——now()/now_utc() 生成，真 UTC，仅需类型标注（无偏移）
-SYSTEM_COL_NAMES: frozenset[str] = frozenset({
-    "ingest_ts", "updated_at", "fetched_at", "crawl_time", "recorded_time",
-    "check_time",  # cross_validation_log 校验执行时间（系统生成，真 UTC）
-})
+SYSTEM_COL_NAMES: frozenset[str] = frozenset(
+    {
+        "ingest_ts",
+        "updated_at",
+        "fetched_at",
+        "crawl_time",
+        "recorded_time",
+        "check_time",  # cross_validation_log 校验执行时间（系统生成，真 UTC）
+    }
+)
 
 # 业务时间戳列——北京墙钟按 UTC epoch 存储（晚 8h），需偏移 -8h + Asia/Shanghai
 # (database, table, column)
@@ -133,10 +141,7 @@ SYSTEM_TZ = "DateTime64(3, 'UTC')"
 
 def _table_key_info(c: Client, db: str, table: str) -> tuple[str, str]:
     """返回 (partition_key, sorting_key)。db/table 为受控标识符（来自本脚本目录）。"""
-    r = c.execute(
-        f"SELECT partition_key, sorting_key FROM system.tables "
-        f"WHERE database='{db}' AND name='{table}'"
-    )
+    r = c.execute(f"SELECT partition_key, sorting_key FROM system.tables WHERE database='{db}' AND name='{table}'")
     if not r:
         return ("", "")
     return (r[0][0] or "", r[0][1] or "")
@@ -153,10 +158,12 @@ def _col_is_in_key(col: str, partition_key: str, sorting_key: str) -> bool:
 
 def _columns(c: Client, db: str, table: str) -> list[tuple[str, str]]:
     """返回 [(col, type), ...]。db/table 为受控标识符。"""
-    return [(r[0], r[1]) for r in c.execute(
-        f"SELECT name, type FROM system.columns WHERE database='{db}' AND table='{table}' "
-        f"ORDER BY position"
-    )]
+    return [
+        (r[0], r[1])
+        for r in c.execute(
+            f"SELECT name, type FROM system.columns WHERE database='{db}' AND table='{table}' ORDER BY position"
+        )
+    ]
 
 
 def _business_cols_for(db: str, table: str) -> list[str]:
@@ -255,9 +262,7 @@ def _migrate_business_plain(c: Client, db: str, table: str, business_cols: list[
 
 
 def _col_type(c: Client, db: str, table: str, col: str) -> str | None:
-    r = c.execute(
-        f"SELECT type FROM system.columns WHERE database='{db}' AND table='{table}' AND name='{col}'"
-    )
+    r = c.execute(f"SELECT type FROM system.columns WHERE database='{db}' AND table='{table}' AND name='{col}'")
     return r[0][0] if r else None
 
 
@@ -362,22 +367,23 @@ def _recreate_table(c: Client, db: str, table: str, business_cols: list[str], dr
     # 但 -8h 偏移导致 trade_time 分区键的行跨月移动（old_parts != new_parts 是
     # 预期行为，非数据丢失）。只对当月分区做 fixup（只有当月有并发写入）。
     if pk_expr:
-        old_parts = dict(c.execute(
-            f"SELECT partition, sum(rows) FROM system.parts "
-            f"WHERE database='{db}' AND table='{table}_tzold' AND active=1 "
-            f"GROUP BY partition"
-        ))
-        new_parts = dict(c.execute(
-            f"SELECT partition, sum(rows) FROM system.parts "
-            f"WHERE database='{db}' AND table='{table}' AND active=1 "
-            f"GROUP BY partition"
-        ))
+        old_parts = dict(
+            c.execute(
+                f"SELECT partition, sum(rows) FROM system.parts "
+                f"WHERE database='{db}' AND table='{table}_tzold' AND active=1 "
+                f"GROUP BY partition"
+            )
+        )
+        new_parts = dict(
+            c.execute(
+                f"SELECT partition, sum(rows) FROM system.parts "
+                f"WHERE database='{db}' AND table='{table}' AND active=1 "
+                f"GROUP BY partition"
+            )
+        )
         # 只对当月分区做 fixup（历史分区无并发写入）
         current_month = str(c.execute("SELECT toYYYYMM(now())")[0][0])
-        mismatch = [
-            p for p in old_parts
-            if str(p) == current_month and old_parts[p] > new_parts.get(p, 0)
-        ]
+        mismatch = [p for p in old_parts if str(p) == current_month and old_parts[p] > new_parts.get(p, 0)]
         if mismatch:
             print(f"  [FIXUP] {len(mismatch)} partition(s) need re-INSERT (current month concurrent writes)")
             for part_id in mismatch:
@@ -420,15 +426,22 @@ def _recreate_table(c: Client, db: str, table: str, business_cols: list[str], dr
             old_rc = c.execute(f"SELECT count() FROM {old_bak} WHERE {where}")[0][0]
             new_rc = c.execute(f"SELECT count() FROM {old_full} WHERE {where}")[0][0]
             # unique symbol count (trade_time shifted, can't compare directly)
-            old_sym = c.execute(
-                f"SELECT count() FROM (SELECT DISTINCT symbol FROM {old_bak} WHERE {where})"
-            )[0][0] if "symbol" in [col for col, _ in _columns(c, db, table)] else 0
-            new_sym = c.execute(
-                f"SELECT count() FROM (SELECT DISTINCT symbol FROM {old_full} WHERE {where})"
-            )[0][0] if "symbol" in [col for col, _ in _columns(c, db, table)] else 0
-            print(f"  [VERIFY] partition={verify_part}: "
-                  f"old_raw={old_rc:,} new_raw={new_rc:,} "
-                  f"old_sym={old_sym:,} new_sym={new_sym:,}", end="")
+            old_sym = (
+                c.execute(f"SELECT count() FROM (SELECT DISTINCT symbol FROM {old_bak} WHERE {where})")[0][0]
+                if "symbol" in [col for col, _ in _columns(c, db, table)]
+                else 0
+            )
+            new_sym = (
+                c.execute(f"SELECT count() FROM (SELECT DISTINCT symbol FROM {old_full} WHERE {where})")[0][0]
+                if "symbol" in [col for col, _ in _columns(c, db, table)]
+                else 0
+            )
+            print(
+                f"  [VERIFY] partition={verify_part}: "
+                f"old_raw={old_rc:,} new_raw={new_rc:,} "
+                f"old_sym={old_sym:,} new_sym={new_sym:,}",
+                end="",
+            )
             if old_rc == new_rc and old_sym == new_sym:
                 print(" -- MATCH")
             else:
@@ -482,9 +495,7 @@ def _recreate_tick_data_batched(c: Client, dry: bool) -> list[str]:
     cols_list = ", ".join(f"`{col}`" for col, _ in _columns(c, db, table))
 
     # 分区清单（toYYYYMM(trade_date)）—— trade_date 是 Date，不受 timestamp 偏移影响
-    parts = c.execute(
-        f"SELECT DISTINCT toYYYYMM(trade_date) m, count() r FROM {old_full} GROUP BY m ORDER BY m"
-    )
+    parts = c.execute(f"SELECT DISTINCT toYYYYMM(trade_date) m, count() r FROM {old_full} GROUP BY m ORDER BY m")
     # 当月分区（不 DROP，保留以接收并发写入）
     current_month = c.execute("SELECT toYYYYMM(now())")[0][0]
 
@@ -513,7 +524,7 @@ def _recreate_tick_data_batched(c: Client, dry: bool) -> list[str]:
         rows = int(_r)
         total_before += rows
 
-        print(f"  [{i+1}/{len(parts)}] month={m} rows={rows:,} ...", end=" ", flush=True)
+        print(f"  [{i + 1}/{len(parts)}] month={m} rows={rows:,} ...", end=" ", flush=True)
         # INSERT shifted data
         c.execute(
             f"INSERT INTO {new_full} ({cols_list}) SELECT {select_cols} FROM {old_full} "
@@ -540,8 +551,10 @@ def _recreate_tick_data_batched(c: Client, dry: bool) -> list[str]:
     old_curr = c.execute(f"SELECT count() FROM {old_bak} WHERE {where_current}")[0][0]
     new_curr = c.execute(f"SELECT count() FROM {old_full} WHERE {where_current}")[0][0]
     if old_curr > new_curr:
-        print(f"  [FIXUP] current month {current_month}: old={old_curr:,} new={new_curr:,} "
-              f"missing={old_curr - new_curr:,}")
+        print(
+            f"  [FIXUP] current month {current_month}: old={old_curr:,} new={new_curr:,} "
+            f"missing={old_curr - new_curr:,}"
+        )
         c.execute(
             f"INSERT INTO {old_full} ({cols_list}) SELECT {select_cols} FROM {old_bak} "
             f"WHERE {where_current} "
@@ -555,11 +568,11 @@ def _recreate_tick_data_batched(c: Client, dry: bool) -> list[str]:
     after = c.execute(f"SELECT count() FROM {old_full}")[0][0]
     # after should be >= total_before (concurrent writes may have added rows)
     if after < total_before:
-        print(f"  [WARN] Row count: before={total_before:,} after={after:,} "
-              f"(lost {total_before - after:,} rows)")
+        print(f"  [WARN] Row count: before={total_before:,} after={after:,} (lost {total_before - after:,} rows)")
     else:
-        print(f"  [OK] Row count: before={total_before:,} after={after:,} "
-              f"(+{after - total_before:,} concurrent writes)")
+        print(
+            f"  [OK] Row count: before={total_before:,} after={after:,} (+{after - total_before:,} concurrent writes)"
+        )
 
     # ---- Step 7: DROP _tzold (safe, handles >50GB) ----
     _safe_drop_table(c, old_bak)
@@ -573,8 +586,7 @@ def _recreate_tick_data_batched(c: Client, dry: bool) -> list[str]:
 def _recent_backup_ok(c: Client) -> tuple[bool, str]:
     """检查近 24h 内有成功的 CH BACKUP。"""
     r = c.execute(
-        "SELECT status, start_time FROM system.backups "
-        "WHERE status = 'BACKUP_CREATED' ORDER BY start_time DESC LIMIT 1"
+        "SELECT status, start_time FROM system.backups WHERE status = 'BACKUP_CREATED' ORDER BY start_time DESC LIMIT 1"
     )
     if not r:
         return (False, "无任何成功备份记录")
@@ -642,8 +654,7 @@ def _tables_needing_version_col_migration(c: Client) -> list[tuple[str, str]]:
         if (db, table) in business_tables:
             continue
         for col, typ in _columns(c, db, table):
-            if (col in SYSTEM_COL_NAMES and typ.startswith("DateTime")
-                    and "DateTime64" not in typ):
+            if col in SYSTEM_COL_NAMES and typ.startswith("DateTime") and "DateTime64" not in typ:
                 result.append((db, table))
                 break
     return result
@@ -705,7 +716,7 @@ def cmd_verify(c: Client) -> int:
     for db, table in _all_tables_with_dt(c):
         for col, typ in _columns(c, db, table):
             if col in SYSTEM_COL_NAMES and typ.startswith("DateTime"):
-                good = (typ == SYSTEM_TZ)
+                good = typ == SYSTEM_TZ
                 ok = ok and good
                 print(f"  {'OK ' if good else 'BAD'} {db}.{table}.{col} = {typ}")
     # 业务列
@@ -715,7 +726,7 @@ def cmd_verify(c: Client) -> int:
         if typ is None:
             print(f"  SKIP {db}.{table}.{col} (列不存在)")
             continue
-        good = (typ == BUSINESS_TZ)
+        good = typ == BUSINESS_TZ
         ok = ok and good
         print(f"  {'OK ' if good else 'BAD'} {db}.{table}.{col} = {typ}")
     print("\n" + ("全部一致" if ok else "存在差异"))

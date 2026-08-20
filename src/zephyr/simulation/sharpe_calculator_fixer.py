@@ -222,7 +222,7 @@ def _jarque_bera(skewness: float, kurtosis: float, n: int) -> float:
     """
     if n == 0:
         return 0.0
-    return n / 6.0 * (skewness ** 2 + kurtosis ** 2 / 4.0)
+    return n / 6.0 * (skewness**2 + kurtosis**2 / 4.0)
 
 
 class SharpeCalculatorFixer:
@@ -287,11 +287,7 @@ class SharpeCalculatorFixer:
         if not returns:
             raise SimulationError("returns 不能为空")
 
-        rf = (
-            risk_free_rate
-            if risk_free_rate is not None
-            else self._config.risk_free_rate
-        )
+        rf = risk_free_rate if risk_free_rate is not None else self._config.risk_free_rate
         n = len(returns)
 
         # 1. 样本量门禁
@@ -342,16 +338,12 @@ class SharpeCalculatorFixer:
         # 5. DSR
         dsr: float | None = None
         try:
-            dsr_result = self._dsr_calc.calculate(
-                returns, num_trials=num_trials, risk_free_rate=rf
-            )
+            dsr_result = self._dsr_calc.calculate(returns, num_trials=num_trials, risk_free_rate=rf)
             dsr = dsr_result.dsr
         except Exception:  # noqa: BLE001 — DSR 为可选增强指标, 计算失败降级跳过(dsr=None)且有日志, 不阻断主指标
             _logger.warning("DSR 计算失败, 跳过", exc_info=True)
 
-        method = (
-            SharpeMethod.SORTINO if is_non_normal else SharpeMethod.SHARPE
-        )
+        method = SharpeMethod.SORTINO if is_non_normal else SharpeMethod.SHARPE
 
         result = SharpeResult(
             sharpe=sharpe,
@@ -413,10 +405,8 @@ class SharpeCalculatorFixer:
 
         results: list[SharpeResult] = []
         for i in range(effective_window, len(returns) + 1):
-            window_returns = returns[i - effective_window:i]
-            results.append(
-                self.calculate(window_returns, num_trials=num_trials)
-            )
+            window_returns = returns[i - effective_window : i]
+            results.append(self.calculate(window_returns, num_trials=num_trials))
         return results
 
 

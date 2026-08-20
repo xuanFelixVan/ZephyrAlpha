@@ -182,41 +182,31 @@ class TestGenerateDaily:
     def test_risk_level_low(self) -> None:
         """score < 0.3 → LOW。"""
         engine = RiskReportEngine()
-        daily = engine.generate_daily(
-            make_snapshot(overall_risk_score=0.29), make_metrics()
-        )
+        daily = engine.generate_daily(make_snapshot(overall_risk_score=0.29), make_metrics())
         assert daily.risk_level == RiskLevel.LOW
 
     def test_risk_level_medium(self) -> None:
         """0.3 <= score < 0.6 → MEDIUM。"""
         engine = RiskReportEngine()
-        daily = engine.generate_daily(
-            make_snapshot(overall_risk_score=0.3), make_metrics()
-        )
+        daily = engine.generate_daily(make_snapshot(overall_risk_score=0.3), make_metrics())
         assert daily.risk_level == RiskLevel.MEDIUM
 
     def test_risk_level_high(self) -> None:
         """0.6 <= score < 0.8 → HIGH。"""
         engine = RiskReportEngine()
-        daily = engine.generate_daily(
-            make_snapshot(overall_risk_score=0.7), make_metrics()
-        )
+        daily = engine.generate_daily(make_snapshot(overall_risk_score=0.7), make_metrics())
         assert daily.risk_level == RiskLevel.HIGH
 
     def test_risk_level_critical(self) -> None:
         """score >= 0.8 → CRITICAL。"""
         engine = RiskReportEngine()
-        daily = engine.generate_daily(
-            make_snapshot(overall_risk_score=0.8), make_metrics()
-        )
+        daily = engine.generate_daily(make_snapshot(overall_risk_score=0.8), make_metrics())
         assert daily.risk_level == RiskLevel.CRITICAL
 
     def test_risk_level_boundary_zero(self) -> None:
         """score=0 → LOW。"""
         engine = RiskReportEngine()
-        daily = engine.generate_daily(
-            make_snapshot(overall_risk_score=0.0), make_metrics()
-        )
+        daily = engine.generate_daily(make_snapshot(overall_risk_score=0.0), make_metrics())
         assert daily.risk_level == RiskLevel.LOW
 
     def test_portfolio_id_mismatch_rejected(self) -> None:
@@ -308,9 +298,7 @@ class TestGenerateEventFlash:
     def test_recommendations_by_level_low(self) -> None:
         """LOW 级处置建议。"""
         engine = RiskReportEngine()
-        flash = engine.generate_event_flash(
-            make_snapshot(overall_risk_score=0.1, active_alerts=["info"])
-        )
+        flash = engine.generate_event_flash(make_snapshot(overall_risk_score=0.1, active_alerts=["info"]))
         assert flash is not None
         assert len(flash.recommendations) >= 1
         assert any("监控" in r for r in flash.recommendations)
@@ -318,18 +306,14 @@ class TestGenerateEventFlash:
     def test_recommendations_by_level_critical(self) -> None:
         """CRITICAL 级处置建议含止损/Kill Switch。"""
         engine = RiskReportEngine()
-        flash = engine.generate_event_flash(
-            make_snapshot(overall_risk_score=0.9, active_alerts=["critical alert"])
-        )
+        flash = engine.generate_event_flash(make_snapshot(overall_risk_score=0.9, active_alerts=["critical alert"]))
         assert flash is not None
         assert any("止损" in r or "Kill Switch" in r for r in flash.recommendations)
 
     def test_impact_assessment_contains_level(self) -> None:
         """影响评估含风险等级。"""
         engine = RiskReportEngine()
-        flash = engine.generate_event_flash(
-            make_snapshot(overall_risk_score=0.65, active_alerts=["alert"])
-        )
+        flash = engine.generate_event_flash(make_snapshot(overall_risk_score=0.65, active_alerts=["alert"]))
         assert flash is not None
         assert "HIGH" in flash.impact_assessment
 
@@ -342,9 +326,14 @@ class TestGenerateWeekly:
         """5天聚合: avg/max/min 正确。"""
         engine = RiskReportEngine()
         dailies = [
-            make_daily(report_date=f"2026-08-{d:02d}", var_1d_95=0.01 * d,
-                       overall_risk_score=0.1 * d, current_drawdown=-0.01 * d,
-                       max_drawdown=-0.12, alert_count=d - 1)
+            make_daily(
+                report_date=f"2026-08-{d:02d}",
+                var_1d_95=0.01 * d,
+                overall_risk_score=0.1 * d,
+                current_drawdown=-0.01 * d,
+                max_drawdown=-0.12,
+                alert_count=d - 1,
+            )
             for d in range(1, 6)
         ]
         weekly = engine.generate_weekly(dailies)
@@ -365,12 +354,8 @@ class TestGenerateWeekly:
     def test_trend_rising(self) -> None:
         """后半段风险上升 → RISING。"""
         engine = RiskReportEngine()
-        dailies = [
-            make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.1)
-            for d in range(1, 4)
-        ] + [
-            make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.8)
-            for d in range(4, 7)
+        dailies = [make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.1) for d in range(1, 4)] + [
+            make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.8) for d in range(4, 7)
         ]
         weekly = engine.generate_weekly(dailies)
         assert weekly.trend_direction == TrendDirection.RISING
@@ -378,12 +363,8 @@ class TestGenerateWeekly:
     def test_trend_falling(self) -> None:
         """后半段风险下降 → FALLING。"""
         engine = RiskReportEngine()
-        dailies = [
-            make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.8)
-            for d in range(1, 4)
-        ] + [
-            make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.1)
-            for d in range(4, 7)
+        dailies = [make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.8) for d in range(1, 4)] + [
+            make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.1) for d in range(4, 7)
         ]
         weekly = engine.generate_weekly(dailies)
         assert weekly.trend_direction == TrendDirection.FALLING
@@ -391,10 +372,7 @@ class TestGenerateWeekly:
     def test_trend_stable(self) -> None:
         """前后半段变化不显著 → STABLE。"""
         engine = RiskReportEngine()
-        dailies = [
-            make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.3)
-            for d in range(1, 6)
-        ]
+        dailies = [make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.3) for d in range(1, 6)]
         weekly = engine.generate_weekly(dailies)
         assert weekly.trend_direction == TrendDirection.STABLE
 
@@ -433,8 +411,9 @@ class TestGenerateMonthly:
         """月度聚合基本字段。"""
         engine = RiskReportEngine()
         dailies = [
-            make_daily(report_date=f"2026-08-{d:02d}", overall_risk_score=0.2,
-                       var_1d_95=0.01, var_1d_99=0.02, alert_count=0)
+            make_daily(
+                report_date=f"2026-08-{d:02d}", overall_risk_score=0.2, var_1d_95=0.01, var_1d_99=0.02, alert_count=0
+            )
             for d in range(1, 21)
         ]
         monthly = engine.generate_monthly(dailies)
@@ -452,10 +431,10 @@ class TestGenerateMonthly:
         """风险评分分布: 4档统计。"""
         engine = RiskReportEngine()
         dailies = [
-            make_daily(report_date="2026-08-01", overall_risk_score=0.1),   # LOW
-            make_daily(report_date="2026-08-02", overall_risk_score=0.4),   # MEDIUM
-            make_daily(report_date="2026-08-03", overall_risk_score=0.7),   # HIGH
-            make_daily(report_date="2026-08-04", overall_risk_score=0.9),   # CRITICAL
+            make_daily(report_date="2026-08-01", overall_risk_score=0.1),  # LOW
+            make_daily(report_date="2026-08-02", overall_risk_score=0.4),  # MEDIUM
+            make_daily(report_date="2026-08-03", overall_risk_score=0.7),  # HIGH
+            make_daily(report_date="2026-08-04", overall_risk_score=0.9),  # CRITICAL
         ]
         monthly = engine.generate_monthly(dailies)
         assert monthly.risk_score_distribution["LOW"] == 1
@@ -467,11 +446,11 @@ class TestGenerateMonthly:
         """high_risk_days / critical_risk_days 统计。"""
         engine = RiskReportEngine()
         dailies = [
-            make_daily(report_date="2026-08-01", overall_risk_score=0.1),   # LOW
+            make_daily(report_date="2026-08-01", overall_risk_score=0.1),  # LOW
             make_daily(report_date="2026-08-02", overall_risk_score=0.65),  # HIGH
             make_daily(report_date="2026-08-03", overall_risk_score=0.85),  # CRITICAL
-            make_daily(report_date="2026-08-04", overall_risk_score=0.7),   # HIGH
-            make_daily(report_date="2026-08-05", overall_risk_score=0.9),   # CRITICAL
+            make_daily(report_date="2026-08-04", overall_risk_score=0.7),  # HIGH
+            make_daily(report_date="2026-08-05", overall_risk_score=0.9),  # CRITICAL
         ]
         monthly = engine.generate_monthly(dailies)
         assert monthly.high_risk_days == 2
@@ -527,9 +506,7 @@ class TestImmutability:
     def test_event_flash_frozen(self) -> None:
         """EventRiskFlash frozen。"""
         engine = RiskReportEngine()
-        flash = engine.generate_event_flash(
-            make_snapshot(overall_risk_score=0.7, active_alerts=["a"])
-        )
+        flash = engine.generate_event_flash(make_snapshot(overall_risk_score=0.7, active_alerts=["a"]))
         assert flash is not None
         with pytest.raises(dataclasses.FrozenInstanceError):
             flash.alert_count = 999  # type: ignore[misc]

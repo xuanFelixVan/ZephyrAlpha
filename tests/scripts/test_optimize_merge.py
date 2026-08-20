@@ -7,6 +7,7 @@
   - 分区标识两形态：裸月份 201901 / 元组键 ('60min',201901)
   - 非时间分区必须跳过（防对非月份分区误 OPTIMIZE）
 """
+
 from __future__ import annotations
 
 import datetime
@@ -22,14 +23,17 @@ _spec.loader.exec_module(om)
 
 
 class TestExtractMonth:
-    @pytest.mark.parametrize("partition,expected", [
-        ("201901", "201901"),
-        ("('60min',201901)", "201901"),
-        ("('120min',202108)", "202108"),
-        ("2026", None),
-        ("abc", None),
-        ("all", None),
-    ])
+    @pytest.mark.parametrize(
+        "partition,expected",
+        [
+            ("201901", "201901"),
+            ("('60min',201901)", "201901"),
+            ("('120min',202108)", "202108"),
+            ("2026", None),
+            ("abc", None),
+            ("all", None),
+        ],
+    )
     def test_extract(self, partition, expected):
         assert om.extract_month(partition) == expected
 
@@ -82,5 +86,6 @@ class TestOptimizePartition:
     def test_failure_isolated(self, monkeypatch):
         def boom(sql, **kw):
             raise RuntimeError("CH down")
+
         monkeypatch.setattr(om.ch_reader, "query", boom)
         assert om.optimize_partition("c1_market.kline_5min", "202101") is False

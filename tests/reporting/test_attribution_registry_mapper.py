@@ -15,6 +15,7 @@
   - validate_attribution_result：合规空列表 / method 越枚举 / NaN / 非 dict fc
   - 端到端：用 reporting.attribution 真实产出喂映射（不 mock）
 """
+
 from __future__ import annotations
 
 import pytest
@@ -39,8 +40,10 @@ class TestBuild:
     def test_full_fields(self):
         out = build_attribution_result(
             "brinson",
-            allocation_effect=0.01, selection_effect=0.02,
-            interaction_effect=0.003, alpha=0.005,
+            allocation_effect=0.01,
+            selection_effect=0.02,
+            interaction_effect=0.003,
+            alpha=0.005,
             factor_contributions={"value": 0.6, "momentum": 0.4},
         )
         assert out["method"] == "brinson"
@@ -65,10 +68,12 @@ class TestBuild:
 
 class TestShapleyMap:
     def test_pass_maps(self):
-        shap = shapley_strategy_attribution({
-            "s1": [0.01, 0.02, -0.01],
-            "s2": [0.005, -0.01, 0.02],
-        })
+        shap = shapley_strategy_attribution(
+            {
+                "s1": [0.01, 0.02, -0.01],
+                "s2": [0.005, -0.01, 0.02],
+            }
+        )
         out = map_shapley_to_attribution_result(shap)
         assert out["method"] == "factor_based"
         assert set(out["factor_contributions"]) == {"s1", "s2"}
@@ -124,7 +129,5 @@ class TestValidateShape:
         assert violations != []
 
     def test_bad_factor_contributions(self):
-        violations = validate_attribution_result(
-            {"method": "factor_based", "factor_contributions": [1, 2]}
-        )
+        violations = validate_attribution_result({"method": "factor_based", "factor_contributions": [1, 2]})
         assert violations != []

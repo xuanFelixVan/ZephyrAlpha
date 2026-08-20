@@ -150,9 +150,7 @@ def test_stress_market_state_cost_multiplier():
         now=T0,
     )
     # 压力状态成本 = 正常状态成本 × 1.5
-    assert dec_stress.transaction_cost == pytest.approx(
-        dec_normal.transaction_cost * 1.5
-    )
+    assert dec_stress.transaction_cost == pytest.approx(dec_normal.transaction_cost * 1.5)
 
 
 def test_normal_market_state_no_multiplier():
@@ -168,8 +166,7 @@ def test_normal_market_state_no_multiplier():
             now=T0,
         )
         # 正常状态 multiplier=1.0
-        turnover = sum(abs(t - a) for a, t in
-                       zip((0.10, 0.20), (0.05, 0.30)))
+        turnover = sum(abs(t - a) for a, t in zip((0.10, 0.20), (0.05, 0.30)))
         assert decision.transaction_cost == pytest.approx(turnover * 0.001 * 1.0)
 
 

@@ -21,6 +21,7 @@
 4. 非 merge 场景 → 原逻辑拦截（回归防破）
 5. MERGE_HEAD 内容损坏 → fail-closed 拦截
 """
+
 from __future__ import annotations
 
 import os
@@ -45,8 +46,13 @@ def _git_env() -> dict:
 
 def _git(repo: Path, *args: str) -> subprocess.CompletedProcess:
     return subprocess.run(
-        ["git", *args], cwd=str(repo),
-        capture_output=True, text=True, encoding="utf-8", env=_git_env(), check=True,
+        ["git", *args],
+        cwd=str(repo),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env=_git_env(),
+        check=True,
     )
 
 
@@ -105,9 +111,13 @@ class TestMergeBranchApproval:
     def test_merge_with_branch_approval_passes(self, tmp_path: Path) -> None:
         """分支侧 commit 带 [ARCH-APPROVAL] → merge 场景放行。"""
         base = _init_repo(tmp_path)
-        _make_merge_scene(tmp_path, base, [
-            (".gitignore", "*.log\n*.tmp\n", "chore: gitignore tmp rule [ARCH-APPROVAL:ARCH-TEST-001]"),
-        ])
+        _make_merge_scene(
+            tmp_path,
+            base,
+            [
+                (".gitignore", "*.log\n*.tmp\n", "chore: gitignore tmp rule [ARCH-APPROVAL:ARCH-TEST-001]"),
+            ],
+        )
         r = _run_staged(tmp_path)
         assert r.returncode == 0, f"分支侧已审批应放行: rc={r.returncode} out={r.stdout} err={r.stderr}"
         assert "分支侧审批标记核验通过" in r.stderr
@@ -115,9 +125,13 @@ class TestMergeBranchApproval:
     def test_merge_without_branch_approval_blocks(self, tmp_path: Path) -> None:
         """分支侧 commit 无标记 → 拦截且列出分支侧 sha。"""
         base = _init_repo(tmp_path)
-        _make_merge_scene(tmp_path, base, [
-            (".gitignore", "*.log\n*.tmp\n", "chore: gitignore tmp rule (no approval)"),
-        ])
+        _make_merge_scene(
+            tmp_path,
+            base,
+            [
+                (".gitignore", "*.log\n*.tmp\n", "chore: gitignore tmp rule (no approval)"),
+            ],
+        )
         r = _run_staged(tmp_path)
         assert r.returncode == 1, f"无审批应拦截: rc={r.returncode} out={r.stdout}"
         assert "IRN-010 FAIL" in r.stdout and ".gitignore" in r.stdout
@@ -126,19 +140,21 @@ class TestMergeBranchApproval:
     def test_merge_partial_approval_blocks(self, tmp_path: Path) -> None:
         """逐文件粒度：.gitignore 已审批 + AGENTS.md 未审批 → 只拦 AGENTS.md。"""
         base = _init_repo(tmp_path)
-        _make_merge_scene(tmp_path, base, [
-            (".gitignore", "*.log\n*.tmp\n", "chore: gitignore [ARCH-APPROVAL:ARCH-TEST-002]"),
-            ("AGENTS.md", "# stub v2\n", "docs: agents tweak (no approval)"),
-        ])
+        _make_merge_scene(
+            tmp_path,
+            base,
+            [
+                (".gitignore", "*.log\n*.tmp\n", "chore: gitignore [ARCH-APPROVAL:ARCH-TEST-002]"),
+                ("AGENTS.md", "# stub v2\n", "docs: agents tweak (no approval)"),
+            ],
+        )
         r = _run_staged(tmp_path)
         assert r.returncode == 1, f"部分未审批应拦截: rc={r.returncode} out={r.stdout}"
         assert "AGENTS.md" in r.stdout, f"未审批文件应在 findings: {r.stdout}"
         assert "'AGENTS.md'" in r.stdout or "AGENTS.md'" in r.stdout
         # 已审批的 .gitignore 不出现在 findings 行
         fail_lines = [ln for ln in r.stdout.splitlines() if "IRN-010 FAIL" in ln]
-        assert all(".gitignore" not in ln for ln in fail_lines), (
-            f"已审批文件不得入 findings: {fail_lines}"
-        )
+        assert all(".gitignore" not in ln for ln in fail_lines), f"已审批文件不得入 findings: {fail_lines}"
 
     def test_non_merge_still_blocks(self, tmp_path: Path) -> None:
         """回归防破：非 merge 场景 staged 受保护路径 → 原逻辑拦截。"""

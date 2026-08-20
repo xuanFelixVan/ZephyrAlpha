@@ -218,47 +218,31 @@ class TestAdjustSellForOddLot:
     def test_no_odd_lot_remaining(self):
         # 卖出后剩余 >= min_unit，不调整
         # current=300, sell=100, remaining=200 >= 100 → sell=100
-        assert adjust_sell_for_odd_lot(
-            Decimal("100"), Decimal("300"), "600519.SH"
-        ) == Decimal("100")
+        assert adjust_sell_for_odd_lot(Decimal("100"), Decimal("300"), "600519.SH") == Decimal("100")
 
     def test_odd_lot_triggers_sell_all(self):
         # current=150, sell=100, remaining=50 < 100 → 全部卖出 150
-        assert adjust_sell_for_odd_lot(
-            Decimal("100"), Decimal("150"), "600519.SH"
-        ) == Decimal("150")
+        assert adjust_sell_for_odd_lot(Decimal("100"), Decimal("150"), "600519.SH") == Decimal("150")
 
     def test_sell_all_no_adjustment(self):
         # 清仓卖出：current=150, sell=150, remaining=0 → 不触发（remaining=0 非零股）
-        assert adjust_sell_for_odd_lot(
-            Decimal("150"), Decimal("150"), "600519.SH"
-        ) == Decimal("150")
+        assert adjust_sell_for_odd_lot(Decimal("150"), Decimal("150"), "600519.SH") == Decimal("150")
 
     def test_star_odd_lot(self):
         # 科创板 current=250, sell=100, remaining=150 < 200 → 全部卖出 250
-        assert adjust_sell_for_odd_lot(
-            Decimal("100"), Decimal("250"), "688001.SH"
-        ) == Decimal("250")
+        assert adjust_sell_for_odd_lot(Decimal("100"), Decimal("250"), "688001.SH") == Decimal("250")
 
     def test_star_no_odd_lot(self):
         # 科创板 current=400, sell=100, remaining=300 >= 200 → 不调整
-        assert adjust_sell_for_odd_lot(
-            Decimal("100"), Decimal("400"), "688001.SH"
-        ) == Decimal("100")
+        assert adjust_sell_for_odd_lot(Decimal("100"), Decimal("400"), "688001.SH") == Decimal("100")
 
     def test_exact_boundary_remaining(self):
         # remaining 恰好 = min_unit，不触发（边界：>=min_unit 非零股）
         # current=200, sell=100, remaining=100 = min_unit → 不调整
-        assert adjust_sell_for_odd_lot(
-            Decimal("100"), Decimal("200"), "600519.SH"
-        ) == Decimal("100")
+        assert adjust_sell_for_odd_lot(Decimal("100"), Decimal("200"), "600519.SH") == Decimal("100")
 
     def test_zero_sell(self):
-        assert adjust_sell_for_odd_lot(
-            Decimal("0"), Decimal("100"), "600519.SH"
-        ) == Decimal("0")
+        assert adjust_sell_for_odd_lot(Decimal("0"), Decimal("100"), "600519.SH") == Decimal("0")
 
     def test_zero_current(self):
-        assert adjust_sell_for_odd_lot(
-            Decimal("100"), Decimal("0"), "600519.SH"
-        ) == Decimal("0")
+        assert adjust_sell_for_odd_lot(Decimal("100"), Decimal("0"), "600519.SH") == Decimal("0")

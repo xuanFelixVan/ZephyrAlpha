@@ -31,9 +31,7 @@ _FCT_ENTRY = {
 }
 
 
-def _make_feature_node(
-    registry: str, name_zh: str = "连板高度评分", intro: str = "连板越多越强"
-) -> AlgoFlowNode:
+def _make_feature_node(registry: str, name_zh: str = "连板高度评分", intro: str = "连板越多越强") -> AlgoFlowNode:
     return AlgoFlowNode(id="F1", layer="特征", name_zh=name_zh, intro=intro, registry=registry)
 
 

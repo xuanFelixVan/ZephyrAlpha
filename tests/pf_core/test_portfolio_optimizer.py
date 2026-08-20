@@ -93,7 +93,10 @@ def test_expected_returns_shape_mismatch():
     opt = PortfolioOptimizer()
     with pytest.raises(InvalidOptimizationInputError):
         opt.optimize(
-            {"A": 0.5, "B": 0.5}, _rl(), np.eye(2), ["A", "B"],
+            {"A": 0.5, "B": 0.5},
+            _rl(),
+            np.eye(2),
+            ["A", "B"],
             expected_returns=np.array([0.1, 0.2, 0.3]),
         )
 
@@ -104,8 +107,10 @@ def test_expected_returns_shape_mismatch():
 def test_risk_budget_method_label():
     opt = PortfolioOptimizer()
     result = opt.optimize(
-        {"A": 0.5, "B": 0.5}, _rl(),
-        np.array([[0.04, 0.01], [0.01, 0.09]]), ["A", "B"],
+        {"A": 0.5, "B": 0.5},
+        _rl(),
+        np.array([[0.04, 0.01], [0.01, 0.09]]),
+        ["A", "B"],
         now=T0,
     )
     assert result.method_used == OptimizationMethod.RISK_BUDGET
@@ -128,8 +133,12 @@ def test_mean_variance_method():
     cov = np.array([[0.04, 0.01], [0.01, 0.09]])
     er = np.array([0.10, 0.05])  # A 期望收益高
     result = opt.optimize(
-        {"A": 0.5, "B": 0.5}, _rl(max_single_position=0.99), cov, ["A", "B"],
-        expected_returns=er, now=T0,
+        {"A": 0.5, "B": 0.5},
+        _rl(max_single_position=0.99),
+        cov,
+        ["A", "B"],
+        expected_returns=er,
+        now=T0,
     )
     assert result.method_used == OptimizationMethod.MEAN_VARIANCE
     tw = result.target_portfolio.target_weights
@@ -141,7 +150,11 @@ def test_mean_variance_without_expected_returns_falls_back():
         config=OptimizerConfig(default_method=OptimizationMethod.MEAN_VARIANCE, kelly_cap_enabled=False)
     )
     result = opt.optimize(
-        {"A": 0.5, "B": 0.5}, _rl(max_single_position=0.99), np.eye(2), ["A", "B"], now=T0,
+        {"A": 0.5, "B": 0.5},
+        _rl(max_single_position=0.99),
+        np.eye(2),
+        ["A", "B"],
+        now=T0,
     )
     # 无期望收益 → 等权 fallback
     tw = result.target_portfolio.target_weights
@@ -154,7 +167,11 @@ def test_equal_weight_method():
         config=OptimizerConfig(default_method=OptimizationMethod.EQUAL_WEIGHT, kelly_cap_enabled=False)
     )
     result = opt.optimize(
-        {"A": 0.7, "B": 0.3}, _rl(), np.eye(2), ["A", "B"], now=T0,
+        {"A": 0.7, "B": 0.3},
+        _rl(),
+        np.eye(2),
+        ["A", "B"],
+        now=T0,
     )
     tw = result.target_portfolio.target_weights
     assert tw["A"] == pytest.approx(tw["B"], rel=1e-6)
@@ -165,14 +182,16 @@ def test_equal_weight_method():
 
 def test_kelly_cap_only_reduces():
     """Kelly 只减不增: 高期望+低波动资产 Kelly 可能小于优化权重 → 截断。"""
-    opt = PortfolioOptimizer(
-        config=OptimizerConfig(kelly_fraction=0.1, kelly_cap_enabled=True)
-    )
+    opt = PortfolioOptimizer(config=OptimizerConfig(kelly_fraction=0.1, kelly_cap_enabled=True))
     cov = np.diag([0.0001, 0.09])  # A 极低波动
     er = np.array([0.001, 0.05])
     result = opt.optimize(
-        {"A": 0.5, "B": 0.5}, _rl(max_single_position=0.99), cov, ["A", "B"],
-        expected_returns=er, now=T0,
+        {"A": 0.5, "B": 0.5},
+        _rl(max_single_position=0.99),
+        cov,
+        ["A", "B"],
+        expected_returns=er,
+        now=T0,
     )
     # Kelly 应用与否取决于具体数值, 但不应报错
     assert isinstance(result.kelly_applied, bool)
@@ -181,7 +200,11 @@ def test_kelly_cap_only_reduces():
 def test_kelly_disabled_when_no_expected_returns():
     opt = PortfolioOptimizer(config=OptimizerConfig(kelly_cap_enabled=True))
     result = opt.optimize(
-        {"A": 0.5, "B": 0.5}, _rl(), np.eye(2), ["A", "B"], now=T0,
+        {"A": 0.5, "B": 0.5},
+        _rl(),
+        np.eye(2),
+        ["A", "B"],
+        now=T0,
     )
     assert result.kelly_applied is False
 
@@ -189,8 +212,12 @@ def test_kelly_disabled_when_no_expected_returns():
 def test_kelly_cap_disabled_config():
     opt = PortfolioOptimizer(config=OptimizerConfig(kelly_cap_enabled=False))
     result = opt.optimize(
-        {"A": 0.5, "B": 0.5}, _rl(), np.eye(2), ["A", "B"],
-        expected_returns=np.array([0.1, 0.2]), now=T0,
+        {"A": 0.5, "B": 0.5},
+        _rl(),
+        np.eye(2),
+        ["A", "B"],
+        expected_returns=np.array([0.1, 0.2]),
+        now=T0,
     )
     assert result.kelly_applied is False
 
@@ -200,13 +227,14 @@ def test_kelly_cap_disabled_config():
 
 def test_max_single_position_enforced():
     """CTR-003 max_single_position 被约束求解器强制。"""
-    opt = PortfolioOptimizer(
-        config=OptimizerConfig(kelly_cap_enabled=False)
-    )
+    opt = PortfolioOptimizer(config=OptimizerConfig(kelly_cap_enabled=False))
     # 候选权重 A=0.8 超 max_single_position=0.30
     result = opt.optimize(
-        {"A": 0.8, "B": 0.2}, _rl(max_single_position=0.30),
-        np.eye(2), ["A", "B"], now=T0,
+        {"A": 0.8, "B": 0.2},
+        _rl(max_single_position=0.30),
+        np.eye(2),
+        ["A", "B"],
+        now=T0,
     )
     tw = result.target_portfolio.target_weights
     assert tw["A"] <= 0.30 + 1e-6
@@ -218,8 +246,11 @@ def test_max_gross_leverage_enforced():
     """CTR-003 max_gross_leverage 被强制 (Σw ≤ max_gross_leverage)。"""
     opt = PortfolioOptimizer(config=OptimizerConfig(kelly_cap_enabled=False))
     result = opt.optimize(
-        {"A": 0.5, "B": 0.5}, _rl(max_gross_leverage=0.8),
-        np.eye(2), ["A", "B"], now=T0,
+        {"A": 0.5, "B": 0.5},
+        _rl(max_gross_leverage=0.8),
+        np.eye(2),
+        ["A", "B"],
+        now=T0,
     )
     tw = result.target_portfolio.target_weights
     assert sum(tw.values()) <= 0.8 + 1e-6
@@ -228,8 +259,11 @@ def test_max_gross_leverage_enforced():
 def test_constraint_violations_recorded():
     opt = PortfolioOptimizer(config=OptimizerConfig(kelly_cap_enabled=False))
     result = opt.optimize(
-        {"A": 0.9, "B": 0.1}, _rl(max_single_position=0.30),
-        np.eye(2), ["A", "B"], now=T0,
+        {"A": 0.9, "B": 0.1},
+        _rl(max_single_position=0.30),
+        np.eye(2),
+        ["A", "B"],
+        now=T0,
     )
     assert len(result.constraint_result.violations) >= 1
 
@@ -240,7 +274,11 @@ def test_constraint_violations_recorded():
 def test_target_portfolio_is_frozen():
     opt = PortfolioOptimizer()
     result = opt.optimize(
-        {"A": 0.5, "B": 0.5}, _rl(), np.eye(2), ["A", "B"], now=T0,
+        {"A": 0.5, "B": 0.5},
+        _rl(),
+        np.eye(2),
+        ["A", "B"],
+        now=T0,
     )
     tp = result.target_portfolio
     with pytest.raises(Exception):
@@ -266,9 +304,14 @@ def test_target_portfolio_carries_risk_limits():
 def test_target_portfolio_metadata():
     opt = PortfolioOptimizer()
     result = opt.optimize(
-        {"A": 0.5, "B": 0.5}, _rl(), np.eye(2), ["A", "B"],
-        strategy_id="s1", portfolio_id="p1",
-        rebalance_reason="calendar", now=T0,
+        {"A": 0.5, "B": 0.5},
+        _rl(),
+        np.eye(2),
+        ["A", "B"],
+        strategy_id="s1",
+        portfolio_id="p1",
+        rebalance_reason="calendar",
+        now=T0,
     )
     tp = result.target_portfolio
     assert tp.strategy_id == "s1"
@@ -284,9 +327,12 @@ def test_target_portfolio_metadata():
 def test_drift_pct_zero_when_matching():
     opt = PortfolioOptimizer(config=OptimizerConfig(kelly_cap_enabled=False))
     result = opt.optimize(
-        {"A": 0.5, "B": 0.5}, _rl(max_single_position=0.99),
-        np.eye(2), ["A", "B"],
-        current_weights={"A": 0.5, "B": 0.5}, now=T0,
+        {"A": 0.5, "B": 0.5},
+        _rl(max_single_position=0.99),
+        np.eye(2),
+        ["A", "B"],
+        current_weights={"A": 0.5, "B": 0.5},
+        now=T0,
     )
     assert result.target_portfolio.drift_pct == pytest.approx(0.0, abs=1e-6)
 
@@ -294,9 +340,12 @@ def test_drift_pct_zero_when_matching():
 def test_drift_pct_nonzero_when_drifted():
     opt = PortfolioOptimizer(config=OptimizerConfig(kelly_cap_enabled=False))
     result = opt.optimize(
-        {"A": 0.6, "B": 0.4}, _rl(max_single_position=0.99),
-        np.eye(2), ["A", "B"],
-        current_weights={"A": 0.4, "B": 0.6}, now=T0,
+        {"A": 0.6, "B": 0.4},
+        _rl(max_single_position=0.99),
+        np.eye(2),
+        ["A", "B"],
+        current_weights={"A": 0.4, "B": 0.6},
+        now=T0,
     )
     assert result.target_portfolio.drift_pct > 0
 
@@ -328,8 +377,11 @@ def test_zero_weights_filtered_from_target():
     opt = PortfolioOptimizer(config=OptimizerConfig(kelly_cap_enabled=False))
     # A=1.0, B=0.0 (B 候选为零)
     result = opt.optimize(
-        {"A": 1.0, "B": 0.0}, _rl(max_single_position=0.99),
-        np.eye(2), ["A", "B"], now=T0,
+        {"A": 1.0, "B": 0.0},
+        _rl(max_single_position=0.99),
+        np.eye(2),
+        ["A", "B"],
+        now=T0,
     )
     tw = result.target_portfolio.target_weights
     # B 权重为零 → 不出现 (或为零, 关键是不影响 A)
@@ -343,8 +395,11 @@ def test_invariant_weights_within_leverage():
     opt = PortfolioOptimizer(config=OptimizerConfig(kelly_cap_enabled=False))
     for _ in range(5):
         result = opt.optimize(
-            {"A": 0.4, "B": 0.3, "C": 0.3}, _rl(max_single_position=0.40),
-            np.eye(3), ["A", "B", "C"], now=T0,
+            {"A": 0.4, "B": 0.3, "C": 0.3},
+            _rl(max_single_position=0.40),
+            np.eye(3),
+            ["A", "B", "C"],
+            now=T0,
         )
         tw = result.target_portfolio.target_weights
         assert sum(tw.values()) <= 1.0 + 1e-6
@@ -353,8 +408,11 @@ def test_invariant_weights_within_leverage():
 def test_invariant_single_position_respected():
     opt = PortfolioOptimizer(config=OptimizerConfig(kelly_cap_enabled=False))
     result = opt.optimize(
-        {"A": 0.5, "B": 0.3, "C": 0.2}, _rl(max_single_position=0.35),
-        np.eye(3), ["A", "B", "C"], now=T0,
+        {"A": 0.5, "B": 0.3, "C": 0.2},
+        _rl(max_single_position=0.35),
+        np.eye(3),
+        ["A", "B", "C"],
+        now=T0,
     )
     tw = result.target_portfolio.target_weights
     for w in tw.values():
@@ -368,8 +426,11 @@ def test_invariant_three_assets_risk_budget():
     A = np.random.randn(100, 3)
     cov = np.cov(A.T)
     result = opt.optimize(
-        {"A": 0.4, "B": 0.3, "C": 0.3}, _rl(max_single_position=0.99),
-        cov, ["A", "B", "C"], now=T0,
+        {"A": 0.4, "B": 0.3, "C": 0.3},
+        _rl(max_single_position=0.99),
+        cov,
+        ["A", "B", "C"],
+        now=T0,
     )
     tw = result.target_portfolio.target_weights
     assert sum(tw.values()) == pytest.approx(1.0, rel=1e-3)

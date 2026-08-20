@@ -202,10 +202,7 @@ class TestTimeoutRecovery:
         assert tracker.cash == Decimal("999000")
         # 审计留痕：恢复来源可识别
         events = list(audit.query())
-        fill_events = [
-            r for r in events
-            if r.event_type.value == "FILL_RECEIVED"
-        ]
+        fill_events = [r for r in events if r.event_type.value == "FILL_RECEIVED"]
         assert fill_events, "FILL_RECEIVED 审计事件缺失"
         assert any("force_query" in str(r.detail) for r in fill_events)
 

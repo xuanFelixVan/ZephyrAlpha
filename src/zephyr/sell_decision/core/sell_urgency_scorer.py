@@ -140,17 +140,17 @@ logger = logging.getLogger(__name__)
 class UrgencyLevel(str, Enum):
     """紧迫度等级 (D-SELL §1.4 SELL-09)。"""
 
-    URGENT = "URGENT"       # 紧急清仓(1.0)
-    MODERATE = "MODERATE"   # 中等(0.6)
-    RELAXED = "RELAXED"     # 从容(0.3)
+    URGENT = "URGENT"  # 紧急清仓(1.0)
+    MODERATE = "MODERATE"  # 中等(0.6)
+    RELAXED = "RELAXED"  # 从容(0.3)
 
 
 class ExecutionStrategy(str, Enum):
     """执行策略 (紧迫度→执行方式匹配)。"""
 
-    MARKET_FAST = "MARKET_FAST"           # 市价单快速执行(urgency>0.8)
-    LIMITED_TIME = "LIMITED_TIME"         # 限价单+时间限制(0.5<urgency≤0.8)
-    PATIENT_LIMIT = "PATIENT_LIMIT"       # 限价单+耐心等待(urgency≤0.5)
+    MARKET_FAST = "MARKET_FAST"  # 市价单快速执行(urgency>0.8)
+    LIMITED_TIME = "LIMITED_TIME"  # 限价单+时间限制(0.5<urgency≤0.8)
+    PATIENT_LIMIT = "PATIENT_LIMIT"  # 限价单+耐心等待(urgency≤0.5)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -203,14 +203,14 @@ class SellUrgencyScore:
 
 # 默认 signal_type → 紧迫度映射 (D-SELL §1.4 SELL-09)
 _DEFAULT_URGENCY_MAP: dict[SellSignalType, float] = {
-    SellSignalType.MAIN_FORCE_DISTRIBUTION: 1.0,    # 主力弃庄→紧急
-    SellSignalType.BREAKOUT_FAILURE: 1.0,           # 第K次挑战失败→强制清仓
-    SellSignalType.FUNDAMENTAL: 0.6,                # 基本面恶化→中等
-    SellSignalType.TECHNICAL: 0.6,                  # 技术面→中等
-    SellSignalType.VOLUME_PRICE_DIVERGENCE: 0.6,    # 量价背离→中等
-    SellSignalType.RELATIVE_STRENGTH: 0.6,          # 相对强弱→中等
-    SellSignalType.OPPORTUNITY_COST: 0.3,           # 止盈/置换→从容
-    SellSignalType.TIME_STOP: 0.3,                  # 时间止损→从容
+    SellSignalType.MAIN_FORCE_DISTRIBUTION: 1.0,  # 主力弃庄→紧急
+    SellSignalType.BREAKOUT_FAILURE: 1.0,  # 第K次挑战失败→强制清仓
+    SellSignalType.FUNDAMENTAL: 0.6,  # 基本面恶化→中等
+    SellSignalType.TECHNICAL: 0.6,  # 技术面→中等
+    SellSignalType.VOLUME_PRICE_DIVERGENCE: 0.6,  # 量价背离→中等
+    SellSignalType.RELATIVE_STRENGTH: 0.6,  # 相对强弱→中等
+    SellSignalType.OPPORTUNITY_COST: 0.3,  # 止盈/置换→从容
+    SellSignalType.TIME_STOP: 0.3,  # 时间止损→从容
 }
 
 # 风控来源标识
@@ -220,8 +220,8 @@ _DEFAULT_RISK_MARKER = "RISK"
 _CONFLICT_ENHANCE_FLOOR = 0.9
 
 # 执行策略阈值
-_MARKET_THRESHOLD = 0.8     # > 此值 → MARKET_FAST
-_LIMITED_THRESHOLD = 0.5    # > 此值 → LIMITED_TIME, 否则 PATIENT_LIMIT
+_MARKET_THRESHOLD = 0.8  # > 此值 → MARKET_FAST
+_LIMITED_THRESHOLD = 0.5  # > 此值 → LIMITED_TIME, 否则 PATIENT_LIMIT
 
 
 class SellUrgencyScorer:

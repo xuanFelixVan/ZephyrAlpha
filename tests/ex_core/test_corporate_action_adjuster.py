@@ -83,7 +83,9 @@ class TestExDividendPrice:
     def test_cash_and_stock(self):
         """现金分红 + 送股：参考价 = (收盘价 - 现金红利) / (1 + 送转比例)。"""
         action = _make_action(
-            cash=Decimal("0.50"), stock_ratio=Decimal("0.1"), record_close=Decimal("10.00"),
+            cash=Decimal("0.50"),
+            stock_ratio=Decimal("0.1"),
+            record_close=Decimal("10.00"),
         )
         price = compute_ex_dividend_price(action)
         # (10 - 0.5) / 1.1 = 9.5/1.1 = 8.6363... → 8.64
@@ -142,7 +144,9 @@ class TestAdjustedLimitPrices:
         """自定义涨跌幅（ST 5%）。"""
         adjuster = CorporateActionAdjuster()
         up, down = adjuster.get_adjusted_limit_prices(
-            "600000.SH", Decimal("10.00"), price_limit_pct=Decimal("0.05"),
+            "600000.SH",
+            Decimal("10.00"),
+            price_limit_pct=Decimal("0.05"),
         )
         assert up == Decimal("10.50")
         assert down == Decimal("9.50")
@@ -201,9 +205,12 @@ class TestAdjustPosition:
     def test_avg_cost_diluted_after_cash_and_stock(self):
         """现金分红 + 送股后成本摊薄。"""
         adjuster = CorporateActionAdjuster()
-        adjuster.register_action(_make_action(
-            cash=Decimal("0.50"), stock_ratio=Decimal("0.1"),
-        ))
+        adjuster.register_action(
+            _make_action(
+                cash=Decimal("0.50"),
+                stock_ratio=Decimal("0.1"),
+            )
+        )
         result = adjuster.adjust_position("600000.SH", Decimal("1000"), Decimal("10.00"))
 
         # 总成本 = 1000 × 10 = 10000，现金红利 = 500

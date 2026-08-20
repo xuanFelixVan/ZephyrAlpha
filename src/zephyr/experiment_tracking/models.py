@@ -21,6 +21,7 @@
 依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 A2 + backtest_observability_mlflow_plan.md M1 query.py 设计
 Version: 0.1.1（RunDetail.artifact_paths=dict[str,str] 契约实证归一，见 query.py 治本留痕）
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -31,13 +32,14 @@ from typing import Any
 @dataclass(frozen=True)
 class RunSummary:
     """单次运行的摘要（列表查询用）。"""
+
     run_id: str
-    component: str               # c1-validation / regime-detector / ...
+    component: str  # c1-validation / regime-detector / ...
     run_name: str
-    status: str                  # RUNNING / FINISHED / FAILED
+    status: str  # RUNNING / FINISHED / FAILED
     start_time: datetime
     end_time: datetime | None
-    passed: bool | None          # C1 等有 passed；无则为 None
+    passed: bool | None  # C1 等有 passed；无则为 None
     metrics: dict[str, float] = field(default_factory=dict)
     tags: dict[str, str] = field(default_factory=dict)
     artifact_uris: list[str] = field(default_factory=list)
@@ -46,5 +48,6 @@ class RunSummary:
 @dataclass(frozen=True)
 class RunDetail(RunSummary):
     """单次运行详情（含 params + artifact 本地路径）。"""
+
     params: dict[str, Any] = field(default_factory=dict)
-    artifact_paths: dict[str, str] = field(default_factory=dict)   # artifact_name → 本地路径
+    artifact_paths: dict[str, str] = field(default_factory=dict)  # artifact_name → 本地路径

@@ -130,32 +130,32 @@ class SellSignalType(str, Enum):
     新增信号类型需架构评审, 因为卖出信号种类影响融合仲裁的完整性。
     """
 
-    FUNDAMENTAL = "FUNDAMENTAL"                       # ① 基本面恶化
-    TECHNICAL = "TECHNICAL"                           # ② 技术面卖出
+    FUNDAMENTAL = "FUNDAMENTAL"  # ① 基本面恶化
+    TECHNICAL = "TECHNICAL"  # ② 技术面卖出
     VOLUME_PRICE_DIVERGENCE = "VOLUME_PRICE_DIVERGENCE"  # ③ 量价背离
     MAIN_FORCE_DISTRIBUTION = "MAIN_FORCE_DISTRIBUTION"  # ④ 主力出货
-    RELATIVE_STRENGTH = "RELATIVE_STRENGTH"           # ⑤ 相对强弱卖出
-    OPPORTUNITY_COST = "OPPORTUNITY_COST"             # ⑥ 机会成本
-    TIME_STOP = "TIME_STOP"                           # ⑦ 时间止损
-    BREAKOUT_FAILURE = "BREAKOUT_FAILURE"             # ⑧ 突破成败
+    RELATIVE_STRENGTH = "RELATIVE_STRENGTH"  # ⑤ 相对强弱卖出
+    OPPORTUNITY_COST = "OPPORTUNITY_COST"  # ⑥ 机会成本
+    TIME_STOP = "TIME_STOP"  # ⑦ 时间止损
+    BREAKOUT_FAILURE = "BREAKOUT_FAILURE"  # ⑧ 突破成败
 
 
 class SellDirection(str, Enum):
     """卖出方向。"""
 
-    REDUCE = "REDUCE"       # 减仓(部分卖出)
-    CLEAR = "CLEAR"         # 清仓(全部卖出)
-    REPLACE = "REPLACE"     # 置换(卖A买B)
+    REDUCE = "REDUCE"  # 减仓(部分卖出)
+    CLEAR = "CLEAR"  # 清仓(全部卖出)
+    REPLACE = "REPLACE"  # 置换(卖A买B)
 
 
 class SignalTimeFrame(str, Enum):
     """信号时间框架来源 (v6.0 多时间框架共振)。"""
 
-    DAILY = "DAILY"         # 日线
-    HOUR_60 = "HOUR_60"     # 60分钟
-    MIN_15 = "MIN_15"       # 15分钟
-    MIN_5 = "MIN_5"         # 5分钟
-    UNKNOWN = "UNKNOWN"     # 未标注(兼容旧信号源)
+    DAILY = "DAILY"  # 日线
+    HOUR_60 = "HOUR_60"  # 60分钟
+    MIN_15 = "MIN_15"  # 15分钟
+    MIN_5 = "MIN_5"  # 5分钟
+    UNKNOWN = "UNKNOWN"  # 未标注(兼容旧信号源)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -218,9 +218,7 @@ class SellSignal:
         if not isinstance(self.signal_type, SellSignalType):
             raise InvalidSellSignalError(f"signal_type must be SellSignalType, got {type(self.signal_type)}")
         if not 0.0 <= self.confidence <= 1.0:
-            raise InvalidSellSignalError(
-                f"confidence must be in [0,1], got {self.confidence} for {self.symbol}"
-            )
+            raise InvalidSellSignalError(f"confidence must be in [0,1], got {self.confidence} for {self.symbol}")
 
     @property
     def dedup_key(self) -> tuple[str, str, str, str]:
@@ -307,18 +305,14 @@ class SellSignalCollector:
             InvalidSellSignalError: provider 既非 callable 也无 provide 方法
         """
         if signal_type in self._providers:
-            raise DuplicateProviderError(
-                f"signal_type {signal_type.value} already registered"
-            )
+            raise DuplicateProviderError(f"signal_type {signal_type.value} already registered")
         provide_method = getattr(provider, "provide", None)
         if callable(provide_method):
             self._providers[signal_type] = provide_method
         elif callable(provider):
             self._providers[signal_type] = provider
         else:
-            raise InvalidSellSignalError(
-                f"provider for {signal_type.value} must be callable or have .provide()"
-            )
+            raise InvalidSellSignalError(f"provider for {signal_type.value} must be callable or have .provide()")
         logger.info("Registered sell signal provider: %s", signal_type.value)
 
     def unregister(self, signal_type: SellSignalType) -> None:
@@ -358,7 +352,10 @@ class SellSignalCollector:
             except Exception as exc:  # noqa: BLE001 — 5.135治标: 隔离单provider故障
                 logger.error(
                     "Sell signal provider %s failed for %s: %s",
-                    signal_type.value, symbol, exc, exc_info=True,
+                    signal_type.value,
+                    symbol,
+                    exc,
+                    exc_info=True,
                 )
         return self._standardize(raw)
 
@@ -376,4 +373,3 @@ class SellSignalCollector:
         result = list(best.values())
         result.sort(key=lambda s: s.confidence, reverse=True)
         return result
-

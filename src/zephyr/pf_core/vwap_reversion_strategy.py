@@ -105,8 +105,7 @@ class VWAPReversionStrategy(TickStrategyBase):
         strategy_id="vwap-reversion",
         name="VWAP回归做T策略",
         description=(
-            "Tick 级均值回归：价格低于 VWAP 买入，回归 VWAP 卖出，"
-            "5 档盘口卖盘压力过滤防接飞刀。路径 B 策略。"
+            "Tick 级均值回归：价格低于 VWAP 买入，回归 VWAP 卖出，5 档盘口卖盘压力过滤防接飞刀。路径 B 策略。"
         ),
         author="zephyr-agent",
         tags=["intraday", "t_plus_0", "vwap", "mean_reversion", "a_share", "path_b"],
@@ -175,9 +174,7 @@ class VWAPReversionStrategy(TickStrategyBase):
     # 状态转移
     # ------------------------------------------------------------------
 
-    def _maybe_buy(
-        self, sym: str, vd: _VwapDeviation, tick: TickSnapshot
-    ) -> dict[str, float]:
+    def _maybe_buy(self, sym: str, vd: _VwapDeviation, tick: TickSnapshot) -> dict[str, float]:
         """价格低于 VWAP 超过阈值 → 买入（flat→long）。"""
         # 价格需低于 VWAP 超过 entry_threshold
         if vd.deviation > -self._entry_threshold:
@@ -190,7 +187,10 @@ class VWAPReversionStrategy(TickStrategyBase):
         self._states[sym] = _STATE_LONG
         _logger.debug(
             "vwap-reversion: BUY %s price=%s vwap=%s dev=%.4f",
-            sym, tick.last_price, vd.vwap, vd.deviation,
+            sym,
+            tick.last_price,
+            vd.vwap,
+            vd.deviation,
         )
         return {sym: self._base_weight}
 
@@ -202,7 +202,10 @@ class VWAPReversionStrategy(TickStrategyBase):
         self._states[sym] = _STATE_FLAT
         _logger.debug(
             "vwap-reversion: SELL %s price=%s vwap=%s dev=%.4f",
-            sym, price, vd.vwap, vd.deviation,
+            sym,
+            price,
+            vd.vwap,
+            vd.deviation,
         )
         return {sym: 0.0}
 
@@ -211,9 +214,7 @@ class VWAPReversionStrategy(TickStrategyBase):
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _compute_vwap_deviation(
-        price: Decimal, tick: TickSnapshot
-    ) -> _VwapDeviation | None:
+    def _compute_vwap_deviation(price: Decimal, tick: TickSnapshot) -> _VwapDeviation | None:
         """计算 VWAP 及价格偏离。
 
         VWAP = tick.amount / tick.volume（日内累计值）。

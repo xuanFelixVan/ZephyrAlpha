@@ -174,23 +174,13 @@ class TakeProfitStrategy:
                 "ATR缺失, symbol=%s 降级固定%%退出价(委托005)",
                 position.symbol,
             )
-            return StopLossStrategy.compute_stop_loss(
-                position, None, highest_close_fn, PositionPhase.LOSS
-            )
+            return StopLossStrategy.compute_stop_loss(position, None, highest_close_fn, PositionPhase.LOSS)
 
         # 自动判定phase: 盈利超1×ATR → profit(紧trailing锁定利润)
-        unrealized_pnl_pct = (
-            position.current_price - position.entry_price
-        ) / position.entry_price
+        unrealized_pnl_pct = (position.current_price - position.entry_price) / position.entry_price
         atr_pct = atr_value / position.entry_price
 
-        phase = (
-            PositionPhase.PROFIT
-            if unrealized_pnl_pct >= atr_pct
-            else PositionPhase.LOSS
-        )
+        phase = PositionPhase.PROFIT if unrealized_pnl_pct >= atr_pct else PositionPhase.LOSS
 
         # 委托005 Chandelier核心(真源唯一)
-        return StopLossStrategy.compute_stop_loss(
-            position, atr_value, highest_close_fn, phase
-        )
+        return StopLossStrategy.compute_stop_loss(position, atr_value, highest_close_fn, phase)

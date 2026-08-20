@@ -63,10 +63,12 @@ def test_kill_switch_short_circuits_to_p0():
 
 def test_total_position_exceeded_p1():
     enforcer = PositionLimitEnforcer()
-    p = plan([
-        PositionEntry("A", 0.60, "银行", PositionAction.HOLD),
-        PositionEntry("B", 0.70, "科技", PositionAction.HOLD),
-    ])
+    p = plan(
+        [
+            PositionEntry("A", 0.60, "银行", PositionAction.HOLD),
+            PositionEntry("B", 0.70, "科技", PositionAction.HOLD),
+        ]
+    )
     result = enforcer.check(p, now=T0)
     assert result.overall_verdict is LimitVerdict.P1_FORCE_REDUCE
     assert result.force_reduce is True
@@ -95,10 +97,12 @@ def test_add_action_checked_for_single_cap():
 
 def test_sector_absolute_exceeded_p2():
     enforcer = PositionLimitEnforcer()
-    p = plan([
-        PositionEntry("A", 0.15, "银行", PositionAction.HOLD),
-        PositionEntry("B", 0.16, "银行", PositionAction.HOLD),
-    ])  # 银行 0.31 > 0.30
+    p = plan(
+        [
+            PositionEntry("A", 0.15, "银行", PositionAction.HOLD),
+            PositionEntry("B", 0.16, "银行", PositionAction.HOLD),
+        ]
+    )  # 银行 0.31 > 0.30
     result = enforcer.check(p, now=T0)
     assert result.overall_verdict is LimitVerdict.P2_BLOCK_NEW
     assert any(v.rule == "sector_absolute_exceeded" for v in result.violations)
@@ -106,8 +110,7 @@ def test_sector_absolute_exceeded_p2():
 
 def test_sector_baseline_deviation_p2():
     enforcer = PositionLimitEnforcer()
-    p = plan([PositionEntry("A", 0.20, "银行", PositionAction.HOLD)],
-             baselines={"银行": 0.05})  # 偏离 0.15 > 0.10
+    p = plan([PositionEntry("A", 0.20, "银行", PositionAction.HOLD)], baselines={"银行": 0.05})  # 偏离 0.15 > 0.10
     result = enforcer.check(p, now=T0)
     assert result.overall_verdict is LimitVerdict.P2_BLOCK_NEW
     assert any(v.rule == "sector_baseline_deviation" for v in result.violations)
@@ -157,10 +160,12 @@ def test_stress_loss_warn_p4():
 
 def test_overall_verdict_is_worst():
     enforcer = PositionLimitEnforcer()
-    p = plan([
-        PositionEntry("A", 0.06, "银行", PositionAction.OPEN),   # P2 单票
-        PositionEntry("B", 0.70, "科技", PositionAction.HOLD),   # P1 总仓位 (0.76>1? no)
-    ])
+    p = plan(
+        [
+            PositionEntry("A", 0.06, "银行", PositionAction.OPEN),  # P2 单票
+            PositionEntry("B", 0.70, "科技", PositionAction.HOLD),  # P1 总仓位 (0.76>1? no)
+        ]
+    )
     # total = 0.76 < 1.0, 单票 A 0.06>0.05 → P2
     result = enforcer.check(p, stress_loss=0.20, now=T0)  # P4
     assert result.overall_verdict is LimitVerdict.P2_BLOCK_NEW  # P2 > P4
@@ -168,9 +173,11 @@ def test_overall_verdict_is_worst():
 
 def test_multiple_violations_aggregate():
     enforcer = PositionLimitEnforcer()
-    p = plan([
-        PositionEntry("A", 0.06, "银行", PositionAction.OPEN, existing_pnl_pct=-0.10),
-    ])
+    p = plan(
+        [
+            PositionEntry("A", 0.06, "银行", PositionAction.OPEN, existing_pnl_pct=-0.10),
+        ]
+    )
     # P2 (单票) + P3 (loss add? action=OPEN 不是ADD, no P3)
     # 实际只有 P2
     result = enforcer.check(p, now=T0)

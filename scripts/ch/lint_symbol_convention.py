@@ -36,6 +36,7 @@
     0 = 全部通过
     1 = 有违规（阻断提交）
 """
+
 from __future__ import annotations
 
 import argparse
@@ -123,23 +124,18 @@ def lint() -> tuple[bool, list[str]]:
 
         # 检查 exchange 列
         if not _has_column(ddl, "exchange"):
-            violations.append(
-                f"{path.name} ({table_name}): 缺 exchange 列（TRAE-082 INV-002）"
-            )
+            violations.append(f"{path.name} ({table_name}): 缺 exchange 列（TRAE-082 INV-002）")
         else:
             # 检查 exchange 列类型
             ex_type = _get_column_type(ddl, "exchange")
             if ex_type and "LowCardinality(String)" not in ex_type:
                 violations.append(
-                    f"{path.name} ({table_name}): exchange 列类型 '{ex_type}' "
-                    f"应为 LowCardinality(String)"
+                    f"{path.name} ({table_name}): exchange 列类型 '{ex_type}' 应为 LowCardinality(String)"
                 )
 
         # 检查 symbol_canonical 列
         if not _has_column(ddl, "symbol_canonical"):
-            violations.append(
-                f"{path.name} ({table_name}): 缺 symbol_canonical 列（TRAE-082 INV-003）"
-            )
+            violations.append(f"{path.name} ({table_name}): 缺 symbol_canonical 列（TRAE-082 INV-003）")
 
     return not violations, violations
 
@@ -153,8 +149,7 @@ def main() -> int:
     passed, violations = lint()
 
     if not args.quiet or not passed:
-        print(f" lint {len(_discover_truth_files())} schema 文件，"
-              f"发现 {len(violations)} 处违规。")
+        print(f" lint {len(_discover_truth_files())} schema 文件，发现 {len(violations)} 处违规。")
 
     if violations:
         print("\n=== 违规明细 ===")

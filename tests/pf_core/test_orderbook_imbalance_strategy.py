@@ -22,6 +22,7 @@
   - 5 档 vs 1 档失衡计算
   - 构造参数校验（含状态抖动防护）+ 注册表发现
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -166,7 +167,9 @@ class TestOnTickDecisions:
     def test_flat_extreme_sell_pressure_buys(self) -> None:
         """flat 态下 ob<=-entry_threshold（极端卖压）→ 买入 base_weight。"""
         s = OrderBookImbalanceStrategy(
-            entry_threshold=0.5, base_weight=0.9, use_5levels=False,
+            entry_threshold=0.5,
+            base_weight=0.9,
+            use_5levels=False,
         )
         # bid=100, ask=300 → ob=-0.5 <= -0.5 → 买入
         results = _feed(s, [(10.0, [100, 0, 0, 0, 0], [300, 0, 0, 0, 0])])
@@ -177,24 +180,26 @@ class TestOnTickDecisions:
     def test_long_not_recovered_holds(self) -> None:
         """long 态下 ob<exit_threshold（未恢复）→ 持仓不变。"""
         s = OrderBookImbalanceStrategy(
-            entry_threshold=0.5, exit_threshold=0.0, use_5levels=False,
+            entry_threshold=0.5,
+            exit_threshold=0.0,
+            use_5levels=False,
         )
         # 先买入进入 long
         _feed(s, [(10.0, [100, 0, 0, 0, 0], [300, 0, 0, 0, 0])])
         # ob=-0.2 < 0 → 不卖
-        results = _feed(s, [(10.0, [200, 0, 0, 0, 0], [300, 0, 0, 0, 0])],
-                        start=datetime(2026, 7, 31, 10, 0, 10))
+        results = _feed(s, [(10.0, [200, 0, 0, 0, 0], [300, 0, 0, 0, 0])], start=datetime(2026, 7, 31, 10, 0, 10))
         assert all(r == {} for r in results)
 
     def test_long_recovered_sells(self) -> None:
         """long 态下 ob>=exit_threshold（盘口恢复）→ 卖出。"""
         s = OrderBookImbalanceStrategy(
-            entry_threshold=0.5, exit_threshold=0.0, use_5levels=False,
+            entry_threshold=0.5,
+            exit_threshold=0.0,
+            use_5levels=False,
         )
         _feed(s, [(10.0, [100, 0, 0, 0, 0], [300, 0, 0, 0, 0])])  # 买入
         # bid=100, ask=100 → ob=0 >= 0 → 卖出
-        results = _feed(s, [(10.0, [100, 0, 0, 0, 0], [100, 0, 0, 0, 0])],
-                        start=datetime(2026, 7, 31, 10, 0, 10))
+        results = _feed(s, [(10.0, [100, 0, 0, 0, 0], [100, 0, 0, 0, 0])], start=datetime(2026, 7, 31, 10, 0, 10))
         sells = [r for r in results if r]
         assert len(sells) == 1
         assert sells[0] == {"600000.SH": 0.0}
@@ -202,12 +207,13 @@ class TestOnTickDecisions:
     def test_long_buy_pressure_sells(self) -> None:
         """long 态下 ob>0（买盘转强，>=exit_threshold=0）→ 卖出。"""
         s = OrderBookImbalanceStrategy(
-            entry_threshold=0.5, exit_threshold=0.0, use_5levels=False,
+            entry_threshold=0.5,
+            exit_threshold=0.0,
+            use_5levels=False,
         )
         _feed(s, [(10.0, [100, 0, 0, 0, 0], [300, 0, 0, 0, 0])])  # 买入
         # bid=300, ask=100 → ob=+0.5 >= 0 → 卖出
-        results = _feed(s, [(10.0, [300, 0, 0, 0, 0], [100, 0, 0, 0, 0])],
-                        start=datetime(2026, 7, 31, 10, 0, 10))
+        results = _feed(s, [(10.0, [300, 0, 0, 0, 0], [100, 0, 0, 0, 0])], start=datetime(2026, 7, 31, 10, 0, 10))
         sells = [r for r in results if r]
         assert len(sells) == 1
         assert sells[0] == {"600000.SH": 0.0}
@@ -215,16 +221,16 @@ class TestOnTickDecisions:
     def test_positive_exit_threshold_requires_buy_pressure(self) -> None:
         """exit_threshold>0 时需买盘转强（ob>=正值）才卖。"""
         s = OrderBookImbalanceStrategy(
-            entry_threshold=0.6, exit_threshold=0.2, use_5levels=False,
+            entry_threshold=0.6,
+            exit_threshold=0.2,
+            use_5levels=False,
         )
         _feed(s, [(10.0, [100, 0, 0, 0, 0], [400, 0, 0, 0, 0])])  # ob=-0.6 买入
         # ob=0 < 0.2 → 不卖
-        r1 = _feed(s, [(10.0, [100, 0, 0, 0, 0], [100, 0, 0, 0, 0])],
-                   start=datetime(2026, 7, 31, 10, 0, 10))
+        r1 = _feed(s, [(10.0, [100, 0, 0, 0, 0], [100, 0, 0, 0, 0])], start=datetime(2026, 7, 31, 10, 0, 10))
         assert all(r == {} for r in r1)
         # bid=300, ask=100 → ob=+0.5 >= 0.2 → 卖
-        r2 = _feed(s, [(10.0, [300, 0, 0, 0, 0], [100, 0, 0, 0, 0])],
-                   start=datetime(2026, 7, 31, 10, 0, 20))
+        r2 = _feed(s, [(10.0, [300, 0, 0, 0, 0], [100, 0, 0, 0, 0])], start=datetime(2026, 7, 31, 10, 0, 20))
         sells = [r for r in r2 if r]
         assert len(sells) == 1
         assert sells[0] == {"600000.SH": 0.0}
@@ -239,35 +245,35 @@ class TestRoundTrip:
     def test_full_round_trip_flat_buy_sell_buy(self) -> None:
         """完整做 T：flat → 买入 → 卖出 → flat → 再买入。"""
         s = OrderBookImbalanceStrategy(
-            entry_threshold=0.5, exit_threshold=0.0,
-            base_weight=1.0, use_5levels=False,
+            entry_threshold=0.5,
+            exit_threshold=0.0,
+            base_weight=1.0,
+            use_5levels=False,
         )
         # 阶段1：极端卖压买入
         r1 = _feed(s, [(10.0, [100, 0, 0, 0, 0], [300, 0, 0, 0, 0])])
         assert any(r == {"600000.SH": 1.0} for r in r1)
         # 阶段2：盘口恢复卖出
-        r2 = _feed(s, [(10.0, [100, 0, 0, 0, 0], [100, 0, 0, 0, 0])],
-                   start=datetime(2026, 7, 31, 10, 0, 10))
+        r2 = _feed(s, [(10.0, [100, 0, 0, 0, 0], [100, 0, 0, 0, 0])], start=datetime(2026, 7, 31, 10, 0, 10))
         assert any(r == {"600000.SH": 0.0} for r in r2)
         # 阶段3：再次极端卖压买入
-        r3 = _feed(s, [(10.0, [100, 0, 0, 0, 0], [300, 0, 0, 0, 0])],
-                   start=datetime(2026, 7, 31, 10, 0, 20))
+        r3 = _feed(s, [(10.0, [100, 0, 0, 0, 0], [300, 0, 0, 0, 0])], start=datetime(2026, 7, 31, 10, 0, 20))
         assert any(r == {"600000.SH": 1.0} for r in r3)
 
     def test_multi_symbol_state_isolation(self) -> None:
         """多 symbol 状态独立：A 买入不影响 B。"""
         s = OrderBookImbalanceStrategy(
-            entry_threshold=0.5, use_5levels=False, base_weight=0.9,
+            entry_threshold=0.5,
+            use_5levels=False,
+            base_weight=0.9,
         )
         ts = datetime(2026, 7, 31, 10, 0, 0)
         # A 触发买入
-        tick_a = _make_tick(10.0, bid_vols=[100, 0, 0, 0, 0], ask_vols=[300, 0, 0, 0, 0],
-                            ts=ts, symbol="600000.SH")
+        tick_a = _make_tick(10.0, bid_vols=[100, 0, 0, 0, 0], ask_vols=[300, 0, 0, 0, 0], ts=ts, symbol="600000.SH")
         r_a = s.on_tick(_FakeEvent(timestamp=ts, symbol="600000.SH", tick_data=tick_a))
         assert r_a == {"600000.SH": 0.9}
         # B 卖压不足，不调仓
-        tick_b = _make_tick(10.0, bid_vols=[200, 0, 0, 0, 0], ask_vols=[300, 0, 0, 0, 0],
-                            ts=ts, symbol="600001.SH")
+        tick_b = _make_tick(10.0, bid_vols=[200, 0, 0, 0, 0], ask_vols=[300, 0, 0, 0, 0], ts=ts, symbol="600001.SH")
         r_b = s.on_tick(_FakeEvent(timestamp=ts, symbol="600001.SH", tick_data=tick_b))
         assert r_b == {}
 
@@ -280,22 +286,19 @@ class TestRoundTrip:
 class TestOrderBookImbalance:
     def test_balanced_5level_zero(self) -> None:
         s = OrderBookImbalanceStrategy(use_5levels=True)
-        tick = _make_tick(10.0, bid_vols=[100, 100, 100, 100, 100],
-                          ask_vols=[100, 100, 100, 100, 100])
+        tick = _make_tick(10.0, bid_vols=[100, 100, 100, 100, 100], ask_vols=[100, 100, 100, 100, 100])
         assert s._order_book_imbalance(tick) == pytest.approx(0.0)
 
     def test_sell_pressure_5level_negative(self) -> None:
         s = OrderBookImbalanceStrategy(use_5levels=True)
         # bid_sum=500, ask_sum=1500 → (500-1500)/2000 = -0.5
-        tick = _make_tick(10.0, bid_vols=[100, 100, 100, 100, 100],
-                          ask_vols=[300, 300, 300, 300, 300])
+        tick = _make_tick(10.0, bid_vols=[100, 100, 100, 100, 100], ask_vols=[300, 300, 300, 300, 300])
         assert s._order_book_imbalance(tick) == pytest.approx(-0.5)
 
     def test_5level_vs_1level_differ(self) -> None:
         """5 档全量与仅 1 档结果不同：验证 use_5levels 开关生效。"""
         # 1档平衡，但 5档卖压重
-        tick = _make_tick(10.0, bid_vols=[100, 50, 50, 50, 50],
-                          ask_vols=[100, 200, 200, 200, 200])
+        tick = _make_tick(10.0, bid_vols=[100, 50, 50, 50, 50], ask_vols=[100, 200, 200, 200, 200])
         s5 = OrderBookImbalanceStrategy(use_5levels=True)
         s1 = OrderBookImbalanceStrategy(use_5levels=False)
         # 1档：bid1=ask1=100 → ob=0

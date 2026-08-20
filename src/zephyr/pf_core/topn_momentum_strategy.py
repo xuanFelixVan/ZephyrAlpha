@@ -143,7 +143,10 @@ class TopNMomentumStrategy(StrategyBase):
 
         _logger.info(
             "topn-momentum: 选出 %d 只（top_n=%d, w=%.4f, max_single=%.4f）",
-            len(picks), top_n, weight, max_single,
+            len(picks),
+            top_n,
+            weight,
+            max_single,
         )
         return weights
 

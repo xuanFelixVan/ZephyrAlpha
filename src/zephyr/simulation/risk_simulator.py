@@ -319,11 +319,7 @@ class RiskSimulator:
                 f"样本数不足: {len(returns)} < 2(无法计算 VaR)",
                 details={"num_obs": len(returns)},
             )
-        levels = (
-            confidence_levels
-            if confidence_levels is not None
-            else list(self._config.confidence_levels)
-        )
+        levels = confidence_levels if confidence_levels is not None else list(self._config.confidence_levels)
         results: list[VaRResult] = []
         for conf in levels:
             if method == RiskMethod.HISTORICAL:
@@ -335,9 +331,7 @@ class RiskSimulator:
             results.append(vr)
         return results
 
-    def _historical_var(
-        self, returns: list[float], confidence: float
-    ) -> VaRResult:
+    def _historical_var(self, returns: list[float], confidence: float) -> VaRResult:
         """历史 VaR: 经验分位数。"""
         n = len(returns)
         sorted_r = sorted(returns)
@@ -349,19 +343,21 @@ class RiskSimulator:
         tail = sorted_r[: idx + 1]
         cvar = -(_mean(tail)) if tail else var
         return VaRResult(
-            confidence=confidence, var=var, cvar=cvar,
+            confidence=confidence,
+            var=var,
+            cvar=cvar,
             method=RiskMethod.HISTORICAL,
         )
 
-    def _parametric_var(
-        self, returns: list[float], confidence: float
-    ) -> VaRResult:
+    def _parametric_var(self, returns: list[float], confidence: float) -> VaRResult:
         """参数 VaR: 正态假设。"""
         mu = _mean(returns)
         sigma = _std(returns, ddof=1)
         if sigma == 0:
             return VaRResult(
-                confidence=confidence, var=max(0.0, -mu), cvar=max(0.0, -mu),
+                confidence=confidence,
+                var=max(0.0, -mu),
+                cvar=max(0.0, -mu),
                 method=RiskMethod.PARAMETRIC,
             )
         z = _normal_inv_cdf(confidence)  # 正数(如 95%→1.645)
@@ -369,19 +365,21 @@ class RiskSimulator:
         # CVaR (Expected Shortfall, 正态): -μ + σ·φ(z)/(1-α)
         cvar = -mu + sigma * _normal_pdf(z) / (1.0 - confidence)
         return VaRResult(
-            confidence=confidence, var=var, cvar=cvar,
+            confidence=confidence,
+            var=var,
+            cvar=cvar,
             method=RiskMethod.PARAMETRIC,
         )
 
-    def _monte_carlo_var(
-        self, returns: list[float], confidence: float
-    ) -> VaRResult:
+    def _monte_carlo_var(self, returns: list[float], confidence: float) -> VaRResult:
         """蒙特卡洛 VaR: 拟合正态后模拟。"""
         mu = _mean(returns)
         sigma = _std(returns, ddof=1)
         if sigma == 0:
             return VaRResult(
-                confidence=confidence, var=max(0.0, -mu), cvar=max(0.0, -mu),
+                confidence=confidence,
+                var=max(0.0, -mu),
+                cvar=max(0.0, -mu),
                 method=RiskMethod.MONTE_CARLO,
             )
         rng = random.Random(self._config.mc_seed)
@@ -416,7 +414,7 @@ class RiskSimulator:
         wealth = [0.0] * n
         w = 1.0
         for i, r in enumerate(returns):
-            w *= (1.0 + r)
+            w *= 1.0 + r
             wealth[i] = w
         peak = wealth[0]
         peak_pos = 0
@@ -443,9 +441,7 @@ class RiskSimulator:
                 break
         # 当前回撤(相对全局峰)
         global_peak = max(wealth)
-        current_dd = (
-            (wealth[-1] - global_peak) / global_peak if global_peak > 0 else 0.0
-        )
+        current_dd = (wealth[-1] - global_peak) / global_peak if global_peak > 0 else 0.0
         return DrawdownResult(
             max_drawdown=max_dd,
             max_dd_duration=duration,
@@ -481,7 +477,7 @@ class RiskSimulator:
         wealth = [0.0] * n
         w = 1.0
         for i, r in enumerate(returns):
-            w *= (1.0 + r)
+            w *= 1.0 + r
             wealth[i] = w
         peak = wealth[0]
         drawdowns = [0.0] * n
@@ -557,10 +553,7 @@ class RiskSimulator:
             lines.append("")
             lines.append("VaR / CVaR:")
             for vr in result.var_results:
-                lines.append(
-                    f"  @{vr.confidence:.0%}: VaR={vr.var:.4f} "
-                    f"CVaR={vr.cvar:.4f}"
-                )
+                lines.append(f"  @{vr.confidence:.0%}: VaR={vr.var:.4f} CVaR={vr.cvar:.4f}")
         if result.drawdown:
             dd = result.drawdown
             rec = f"{dd.recovery_duration}" if dd.recovery_duration is not None else "未恢复"

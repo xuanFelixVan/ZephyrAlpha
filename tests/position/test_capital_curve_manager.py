@@ -90,7 +90,7 @@ def test_new_high_triggers_expansion():
 
 def test_multiple_new_highs_compound():
     mgr = CapitalCurveManager(initial_capital=CAP)
-    mgr.record(1_050_000.0, now=T0)        # expansion 1.05
+    mgr.record(1_050_000.0, now=T0)  # expansion 1.05
     snap = mgr.record(1_102_500.0, now=T0)  # expansion 1.10
     assert snap.expansion_factor == pytest.approx(1.10)
     assert snap.capital_curve_discount == pytest.approx(1.10)
@@ -156,7 +156,7 @@ def test_recovery_clears_contraction_preserves_expansion():
 def test_recovery_via_new_high_grows_expansion():
     mgr = CapitalCurveManager(initial_capital=CAP)
     mgr.record(1_050_000.0, now=T0)  # expansion 1.05, peak 1.05M
-    mgr.record(935_000.0, now=T0)   # 回撤
+    mgr.record(935_000.0, now=T0)  # 回撤
     snap = mgr.record(1_102_500.0, now=T0)  # 新高
     assert snap.is_new_high is True
     assert snap.expansion_factor == pytest.approx(1.10)
@@ -191,7 +191,7 @@ def test_event_emitted_on_every_record():
     events: list[CapitalCurveUpdatedEvent] = []
     mgr.on_capital_curve_updated(events.append)
     mgr.record(1_050_000.0, now=T0)  # peak 1.05M
-    mgr.record(990_000.0, now=T0)    # (0.99-1.05)/1.05 = -5.7% → WARNING
+    mgr.record(990_000.0, now=T0)  # (0.99-1.05)/1.05 = -5.7% → WARNING
     assert len(events) == 2
     assert events[0].context_snapshot["is_new_high"] is True
     assert events[1].context_snapshot["drawdown_level"] == "WARNING"

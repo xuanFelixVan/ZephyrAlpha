@@ -124,17 +124,17 @@ logger = logging.getLogger(__name__)
 class StopHuntOffsetDirection(str, Enum):
     """止损位偏移方向。"""
 
-    BELOW = "BELOW"   # 偏移到技术位下方(止损位下移, 防向上猎杀)
-    ABOVE = "ABOVE"   # 偏移到技术位上方(止损位上移)
+    BELOW = "BELOW"  # 偏移到技术位下方(止损位下移, 防向上猎杀)
+    ABOVE = "ABOVE"  # 偏移到技术位上方(止损位上移)
 
 
 class SoftStopState(str, Enum):
     """软止损状态机。"""
 
-    NORMAL = "NORMAL"           # 正常(价格 > 止损位)
-    OBSERVING = "OBSERVING"     # 观察期(价格触及止损位, 等待确认)
-    CONFIRMED = "CONFIRMED"     # 确认跌破(收盘价 < 止损位, 执行卖出)
-    CLEARED = "CLEARED"         # 解除(观察期收回, 价格回升)
+    NORMAL = "NORMAL"  # 正常(价格 > 止损位)
+    OBSERVING = "OBSERVING"  # 观察期(价格触及止损位, 等待确认)
+    CONFIRMED = "CONFIRMED"  # 确认跌破(收盘价 < 止损位, 执行卖出)
+    CLEARED = "CLEARED"  # 解除(观察期收回, 价格回升)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -189,21 +189,13 @@ class AdjustedStopLevel:
         if not self.symbol:
             raise InvalidStopHuntInputError("symbol must not be empty")
         if self.original_stop <= 0:
-            raise InvalidStopHuntInputError(
-                f"original_stop must be > 0, got {self.original_stop}"
-            )
+            raise InvalidStopHuntInputError(f"original_stop must be > 0, got {self.original_stop}")
         if self.adjusted_stop <= 0:
-            raise InvalidStopHuntInputError(
-                f"adjusted_stop must be > 0, got {self.adjusted_stop}"
-            )
+            raise InvalidStopHuntInputError(f"adjusted_stop must be > 0, got {self.adjusted_stop}")
         if not 0.0 <= self.offset_pct <= 1.0:
-            raise InvalidStopHuntInputError(
-                f"offset_pct must be in [0,1], got {self.offset_pct}"
-            )
+            raise InvalidStopHuntInputError(f"offset_pct must be in [0,1], got {self.offset_pct}")
         if not 0.0 <= self.confidence <= 1.0:
-            raise InvalidStopHuntInputError(
-                f"confidence must be in [0,1], got {self.confidence}"
-            )
+            raise InvalidStopHuntInputError(f"confidence must be in [0,1], got {self.confidence}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -248,9 +240,7 @@ class StopHuntingProtector:
         clock: Callable[[], datetime] | None = None,
     ) -> None:
         if not 0.0 < default_offset_pct <= 0.1:
-            raise InvalidStopHuntInputError(
-                f"default_offset_pct must be in (0, 0.1], got {default_offset_pct}"
-            )
+            raise InvalidStopHuntInputError(f"default_offset_pct must be in (0, 0.1], got {default_offset_pct}")
         self._default_offset_pct = default_offset_pct
         self._clock = clock or (lambda: datetime.now(timezone.utc))
         self._adjusted_callbacks: list[Callable[[AdjustedStopLevel], None]] = []
@@ -280,14 +270,10 @@ class StopHuntingProtector:
         if not symbol:
             raise InvalidStopHuntInputError("symbol must not be empty")
         if original_stop <= 0:
-            raise InvalidStopHuntInputError(
-                f"original_stop must be > 0, got {original_stop}"
-            )
+            raise InvalidStopHuntInputError(f"original_stop must be > 0, got {original_stop}")
         pct = offset_pct if offset_pct is not None else self._default_offset_pct
         if not 0.0 <= pct <= 1.0:
-            raise InvalidStopHuntInputError(
-                f"offset_pct must be in [0,1], got {pct}"
-            )
+            raise InvalidStopHuntInputError(f"offset_pct must be in [0,1], got {pct}")
 
         now = now or self._clock()
         if direction is StopHuntOffsetDirection.BELOW:
@@ -346,17 +332,11 @@ class StopHuntingProtector:
         if not symbol:
             raise InvalidStopHuntInputError("symbol must not be empty")
         if stop_level <= 0:
-            raise InvalidStopHuntInputError(
-                f"stop_level must be > 0, got {stop_level}"
-            )
+            raise InvalidStopHuntInputError(f"stop_level must be > 0, got {stop_level}")
         if current_price <= 0:
-            raise InvalidStopHuntInputError(
-                f"current_price must be > 0, got {current_price}"
-            )
+            raise InvalidStopHuntInputError(f"current_price must be > 0, got {current_price}")
         if close_price <= 0:
-            raise InvalidStopHuntInputError(
-                f"close_price must be > 0, got {close_price}"
-            )
+            raise InvalidStopHuntInputError(f"close_price must be > 0, got {close_price}")
 
         now = now or self._clock()
         new_state = self._transition(current_state, stop_level, current_price, close_price)

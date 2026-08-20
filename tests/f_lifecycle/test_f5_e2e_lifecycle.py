@@ -47,6 +47,7 @@ from zephyr.shared.event_bus import bus as default_bus
 
 # ── Fixtures ────────────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def event_bus() -> EventBusBackpressure:
     """独立 EventBus 实例, 避免污染全局 bus。"""
@@ -76,12 +77,15 @@ def patched_lsg(integration: F5BootIntegration):
     """
     esc_engine = integration.escalation_engine
     del_engine = integration.delegation_engine
-    with patch.object(esc_engine, "lsg_scan_input", lambda desc: None), \
-         patch.object(del_engine, "lsg_verify_delegation", lambda evt: None):
+    with (
+        patch.object(esc_engine, "lsg_scan_input", lambda desc: None),
+        patch.object(del_engine, "lsg_verify_delegation", lambda evt: None),
+    ):
         yield
 
 
 # ── 1. Boot 阶段 ────────────────────────────────────────────────────────
+
 
 class TestBootPhase:
     """boot 阶段: F5BootIntegration.on_startup() 初始化 4 组件。"""
@@ -157,12 +161,11 @@ class TestBootPhase:
 
 # ── 2. Run 阶段 ─────────────────────────────────────────────────────────
 
+
 class TestRunPhase:
     """run 阶段: F5EventSubscriber 事件触发升级/委托/仲裁。"""
 
-    def test_subscriber_binds_four_components(
-        self, integration: F5BootIntegration, event_bus: EventBusBackpressure
-    ):
+    def test_subscriber_binds_four_components(self, integration: F5BootIntegration, event_bus: EventBusBackpressure):
         sub = F5EventSubscriber(event_bus=event_bus)
         sub.bind_components(
             escalation_engine=integration.escalation_engine,
@@ -177,9 +180,7 @@ class TestRunPhase:
         assert bound["deadlock_detector"] is True
         assert bound["arbitrator"] is True
 
-    def test_subscribe_all_three_topics(
-        self, integration: F5BootIntegration, event_bus: EventBusBackpressure
-    ):
+    def test_subscribe_all_three_topics(self, integration: F5BootIntegration, event_bus: EventBusBackpressure):
         sub = F5EventSubscriber(event_bus=event_bus)
         sub.bind_components(
             escalation_engine=integration.escalation_engine,
@@ -255,9 +256,7 @@ class TestRunPhase:
         # 取决于熔断器/经济守卫/规则匹配, 但 handler 实际调用了 evaluate)
         assert entry.details.get("state") != ""
 
-    def test_conflict_event_triggers_arbitrate(
-        self, integration: F5BootIntegration, event_bus: EventBusBackpressure
-    ):
+    def test_conflict_event_triggers_arbitrate(self, integration: F5BootIntegration, event_bus: EventBusBackpressure):
         """冲突事件触发 Arbitrator.arbitrate (A2A Protocol 事件驱动)。"""
         sub = F5EventSubscriber(event_bus=event_bus)
         sub.bind_components(
@@ -341,13 +340,12 @@ class TestRunPhase:
 
 # ── 3. Shutdown 阶段 ────────────────────────────────────────────────────
 
+
 class TestShutdownPhase:
     """shutdown 阶段: F5ShutdownManager.shutdown() 资源清理 + 状态持久化。"""
 
     @pytest.fixture
-    def manager(
-        self, integration: F5BootIntegration, temp_db: Path
-    ) -> F5ShutdownManager:
+    def manager(self, integration: F5BootIntegration, temp_db: Path) -> F5ShutdownManager:
         """已安装的 F5ShutdownManager (短 idle timeout)。"""
         mgr = F5ShutdownManager(
             integration=integration,
@@ -399,9 +397,7 @@ class TestShutdownPhase:
         finally:
             conn.close()
 
-    def test_shutdown_persists_deadlock_state(
-        self, manager: F5ShutdownManager, patched_lsg
-    ):
+    def test_shutdown_persists_deadlock_state(self, manager: F5ShutdownManager, patched_lsg):
         """shutdown 前添加 deadlock 状态, 验证持久化。"""
         integration = manager.integration
         integration.deadlock_detector.add_edge("a", "b")
@@ -421,14 +417,13 @@ class TestShutdownPhase:
         finally:
             conn.close()
 
-    def test_shutdown_persists_arbitrator_audit_log(
-        self, manager: F5ShutdownManager
-    ):
+    def test_shutdown_persists_arbitrator_audit_log(self, manager: F5ShutdownManager):
         """shutdown 前产生仲裁, 验证审计日志持久化。"""
         from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import (
             AgentMeta,
             AgentRole,
         )
+
         arb = manager.integration.arbitrator
         arb.arbitrate(
             AgentMeta(agent_id="a", role=AgentRole.SUPERADMIN),
@@ -442,9 +437,7 @@ class TestShutdownPhase:
 
         conn = sqlite3.connect(str(manager.db_path))
         try:
-            cursor = conn.execute(
-                "SELECT value FROM f5_state WHERE key='arbitrator_audit_log'"
-            )
+            cursor = conn.execute("SELECT value FROM f5_state WHERE key='arbitrator_audit_log'")
             row = cursor.fetchone()
             assert row is not None
             audit = json.loads(row[0])
@@ -464,21 +457,18 @@ class TestShutdownPhase:
     def test_shutdown_calls_integration_on_shutdown(self, manager: F5ShutdownManager):
         integration = manager.integration
         with patch.object(integration, "on_shutdown") as mock_on_shutdown:
-            mock_on_shutdown.return_value = BootResult(
-                success=True, component="f5_shutdown", details={}
-            )
+            mock_on_shutdown.return_value = BootResult(success=True, component="f5_shutdown", details={})
             manager.shutdown()
             mock_on_shutdown.assert_called_once()
 
 
 # ── 4. Restart 阶段 ─────────────────────────────────────────────────────
 
+
 class TestRestartPhase:
     """restart 阶段: F5ShutdownManager.restore_state() 状态恢复。"""
 
-    def test_restore_state_returns_success_result(
-        self, integration: F5BootIntegration, temp_db: Path
-    ):
+    def test_restore_state_returns_success_result(self, integration: F5BootIntegration, temp_db: Path):
         mgr = F5ShutdownManager(integration=integration, db_path=temp_db)
         mgr.persist_state()
         result = mgr.restore_state()
@@ -493,9 +483,7 @@ class TestRestartPhase:
         assert result.success is True
         assert result.details.get("db_exists") is False
 
-    def test_restore_state_restores_deadlock_wait_graph(
-        self, integration: F5BootIntegration, temp_db: Path
-    ):
+    def test_restore_state_restores_deadlock_wait_graph(self, integration: F5BootIntegration, temp_db: Path):
         """验证 wait_graph 完整恢复。"""
         deadlock = integration.deadlock_detector
         deadlock.add_edge("a", "b")
@@ -522,9 +510,7 @@ class TestRestartPhase:
         assert deadlock.wait_graph["b"] == {"c"}
         assert deadlock.wait_graph["c"] == {"a"}
 
-    def test_restore_state_restores_locks(
-        self, integration: F5BootIntegration, temp_db: Path
-    ):
+    def test_restore_state_restores_locks(self, integration: F5BootIntegration, temp_db: Path):
         """验证 locks 恢复 + lock_timestamps 重建。"""
         deadlock = integration.deadlock_detector
         deadlock.try_acquire("res-1", "holder-1")
@@ -544,9 +530,7 @@ class TestRestartPhase:
         assert "res-1" in deadlock.lock_timestamps
         assert "res-2" in deadlock.lock_timestamps
 
-    def test_restore_state_restores_preemption_order(
-        self, integration: F5BootIntegration, temp_db: Path
-    ):
+    def test_restore_state_restores_preemption_order(self, integration: F5BootIntegration, temp_db: Path):
         """验证 preemption_order 恢复。"""
         deadlock = integration.deadlock_detector
         deadlock.add_edge("a", "b")
@@ -562,18 +546,14 @@ class TestRestartPhase:
         mgr.restore_state()
         assert deadlock.preemption_order == expected_order
 
-    def test_restore_state_never_raises_on_empty_state(
-        self, integration: F5BootIntegration, temp_db: Path
-    ):
+    def test_restore_state_never_raises_on_empty_state(self, integration: F5BootIntegration, temp_db: Path):
         """空状态恢复不应抛异常。"""
         mgr = F5ShutdownManager(integration=integration, db_path=temp_db)
         mgr.persist_state()
         result = mgr.restore_state()
         assert result.success is True
 
-    def test_restore_state_across_new_integration(
-        self, integration: F5BootIntegration, temp_db: Path
-    ):
+    def test_restore_state_across_new_integration(self, integration: F5BootIntegration, temp_db: Path):
         """跨 integration 实例恢复: 模拟重启后新进程恢复状态。
 
         场景: 进程 A 持久化状态 → 进程 B 启动新 integration → 进程 B 恢复状态。
@@ -596,9 +576,7 @@ class TestRestartPhase:
         assert "x" in integration_b.deadlock_detector.wait_graph
         assert integration_b.deadlock_detector.locks["shared-res"] == "proc-a"
 
-    def test_restored_state_supports_continued_operation(
-        self, integration: F5BootIntegration, temp_db: Path
-    ):
+    def test_restored_state_supports_continued_operation(self, integration: F5BootIntegration, temp_db: Path):
         """恢复后组件可继续工作 (detect_cycle / try_acquire 等)。"""
         deadlock = integration.deadlock_detector
         deadlock.add_edge("a", "b")
@@ -625,12 +603,11 @@ class TestRestartPhase:
 
 # ── 5. 端到端全链路: boot→run→shutdown→restart→run_again ───────────────
 
+
 class TestEndToEndLifecycle:
     """完整生命周期: boot → run → shutdown → restart → run_again。"""
 
-    def test_full_lifecycle_cycle(
-        self, integration: F5BootIntegration, temp_db: Path, patched_lsg
-    ):
+    def test_full_lifecycle_cycle(self, integration: F5BootIntegration, temp_db: Path, patched_lsg):
         """验证完整 boot→run→shutdown→restart→run_again 链路。
 
         Step 1 (boot): integration 已启动 (fixture)
@@ -649,6 +626,7 @@ class TestEndToEndLifecycle:
             AgentMeta,
             AgentRole,
         )
+
         integration.arbitrator.arbitrate(
             AgentMeta(agent_id="alpha", role=AgentRole.SUPERADMIN),
             AgentMeta(agent_id="beta", role=AgentRole.BUILDER),
@@ -695,9 +673,7 @@ class TestEndToEndLifecycle:
             assert "a" in state["wait_graph"]
             assert state["locks"]["lifecycle-res"] == "lifecycle-holder"
 
-            cursor = conn.execute(
-                "SELECT value FROM f5_state WHERE key='arbitrator_audit_log'"
-            )
+            cursor = conn.execute("SELECT value FROM f5_state WHERE key='arbitrator_audit_log'")
             audit = json.loads(cursor.fetchone()[0])
             assert len(audit) >= 1
             assert audit[-1]["winner"] == "alpha"
@@ -720,8 +696,10 @@ class TestEndToEndLifecycle:
 
         # ── Step 5: run_again — 恢复后继续处理事件 ──────────────────
         # 绕过新 integration 的 LSG
-        with patch.object(integration2.escalation_engine, "lsg_scan_input", lambda d: None), \
-             patch.object(integration2.delegation_engine, "lsg_verify_delegation", lambda e: None):
+        with (
+            patch.object(integration2.escalation_engine, "lsg_scan_input", lambda d: None),
+            patch.object(integration2.delegation_engine, "lsg_verify_delegation", lambda e: None),
+        ):
             sub2 = F5EventSubscriber(event_bus=EventBusBackpressure())
             sub2.bind_components(
                 escalation_engine=integration2.escalation_engine,
@@ -765,9 +743,7 @@ class TestEndToEndLifecycle:
         mgr2.shutdown()
         assert integration2.is_initialized is False
 
-    def test_lifecycle_state_consistency_across_cycles(
-        self, integration: F5BootIntegration, temp_db: Path
-    ):
+    def test_lifecycle_state_consistency_across_cycles(self, integration: F5BootIntegration, temp_db: Path):
         """多次 shutdown→restart 循环后状态一致。"""
         # 第一次持久化
         integration.deadlock_detector.add_edge("n1", "n2")
@@ -803,9 +779,7 @@ class TestEndToEndLifecycle:
         assert state_v2["locks"] == state_v1["locks"]
         assert "n1" in state_v2["wait_graph"]
 
-    def test_lifecycle_with_signal_triggered_shutdown(
-        self, integration: F5BootIntegration, temp_db: Path
-    ):
+    def test_lifecycle_with_signal_triggered_shutdown(self, integration: F5BootIntegration, temp_db: Path):
         """信号触发 shutdown 后, 状态仍可恢复。"""
         integration.deadlock_detector.add_edge("sig-a", "sig-b")
         integration.deadlock_detector.try_acquire("sig-res", "sig-holder")
@@ -819,6 +793,7 @@ class TestEndToEndLifecycle:
 
         # 模拟信号触发
         import signal as sig_mod
+
         mgr.on_signal(sig_mod.SIGTERM, None)
 
         assert mgr.is_shutdown is True

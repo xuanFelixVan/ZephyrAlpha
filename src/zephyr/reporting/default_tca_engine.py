@@ -115,7 +115,10 @@ class DefaultTCAEngine(TCAEngineBase):
         return reports
 
     def _calc_slippage_bps(
-        self, fill_price: Decimal, intended_price: Decimal, side: object,
+        self,
+        fill_price: Decimal,
+        intended_price: Decimal,
+        side: object,
     ) -> Decimal:
         """方向感知滑点计算（40_execution_broker §2.4 决策③）。
 
@@ -130,7 +133,10 @@ class DefaultTCAEngine(TCAEngineBase):
         return raw
 
     def _calc_is_decomposition(
-        self, fill: Fill, order: Order, slippage_bps: Decimal,
+        self,
+        fill: Fill,
+        order: Order,
+        slippage_bps: Decimal,
     ) -> dict[str, Decimal]:
         """IS 4 桶分解（40_execution_broker §2.4 决策③，Perold 1988）。
 

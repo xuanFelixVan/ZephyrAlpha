@@ -230,9 +230,9 @@ class TestMonthlyReview:
         orch, _ = _orchestrator()
         dailies = [_daily_summary(f"2026-08-{d:02d}") for d in range(1, 15)]
         result = orch.run_monthly(
-            "2026-08", dailies,
-            retirement_inputs=[{"strategy_id": "STR-A", "live_returns": [0.0] * 80,
-                                "benchmark_returns": [0.01] * 80}],
+            "2026-08",
+            dailies,
+            retirement_inputs=[{"strategy_id": "STR-A", "live_returns": [0.0] * 80, "benchmark_returns": [0.01] * 80}],
         )
         assert result.retirement_report_count == 0
 

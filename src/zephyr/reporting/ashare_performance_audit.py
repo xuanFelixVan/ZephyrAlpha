@@ -513,7 +513,10 @@ class ASharePerformanceAuditor:
 
         _logger.debug(
             "audit: portfolio=%s period=%s findings=%d recommendations=%d",
-            portfolio_id, audit_period, len(findings), len(recommendations),
+            portfolio_id,
+            audit_period,
+            len(findings),
+            len(recommendations),
         )
         return report
 
@@ -528,17 +531,27 @@ class ASharePerformanceAuditor:
             return findings
 
         if return_pct < self._thresholds.return_critical:
-            findings.append(self._make_finding(
-                AuditCategory.RETURN, AuditSeverity.CRITICAL,
-                "return_pct", return_pct, self._thresholds.return_critical,
-                f"收益率 {return_pct:.2%} 低于临界阈值 {self._thresholds.return_critical:.2%}",
-            ))
+            findings.append(
+                self._make_finding(
+                    AuditCategory.RETURN,
+                    AuditSeverity.CRITICAL,
+                    "return_pct",
+                    return_pct,
+                    self._thresholds.return_critical,
+                    f"收益率 {return_pct:.2%} 低于临界阈值 {self._thresholds.return_critical:.2%}",
+                )
+            )
         elif return_pct < self._thresholds.return_warning:
-            findings.append(self._make_finding(
-                AuditCategory.RETURN, AuditSeverity.WARNING,
-                "return_pct", return_pct, self._thresholds.return_warning,
-                f"收益率 {return_pct:.2%} 低于警告阈值 {self._thresholds.return_warning:.2%}",
-            ))
+            findings.append(
+                self._make_finding(
+                    AuditCategory.RETURN,
+                    AuditSeverity.WARNING,
+                    "return_pct",
+                    return_pct,
+                    self._thresholds.return_warning,
+                    f"收益率 {return_pct:.2%} 低于警告阈值 {self._thresholds.return_warning:.2%}",
+                )
+            )
         return findings
 
     def _audit_drawdown(self, metrics: dict) -> list[AuditFinding]:
@@ -550,17 +563,27 @@ class ASharePerformanceAuditor:
             return findings
 
         if max_drawdown < self._thresholds.drawdown_critical:
-            findings.append(self._make_finding(
-                AuditCategory.DRAWDOWN, AuditSeverity.CRITICAL,
-                "max_drawdown", max_drawdown, self._thresholds.drawdown_critical,
-                f"最大回撤 {max_drawdown:.2%} 超过临界阈值 {self._thresholds.drawdown_critical:.2%}",
-            ))
+            findings.append(
+                self._make_finding(
+                    AuditCategory.DRAWDOWN,
+                    AuditSeverity.CRITICAL,
+                    "max_drawdown",
+                    max_drawdown,
+                    self._thresholds.drawdown_critical,
+                    f"最大回撤 {max_drawdown:.2%} 超过临界阈值 {self._thresholds.drawdown_critical:.2%}",
+                )
+            )
         elif max_drawdown < self._thresholds.drawdown_warning:
-            findings.append(self._make_finding(
-                AuditCategory.DRAWDOWN, AuditSeverity.WARNING,
-                "max_drawdown", max_drawdown, self._thresholds.drawdown_warning,
-                f"最大回撤 {max_drawdown:.2%} 超过警告阈值 {self._thresholds.drawdown_warning:.2%}",
-            ))
+            findings.append(
+                self._make_finding(
+                    AuditCategory.DRAWDOWN,
+                    AuditSeverity.WARNING,
+                    "max_drawdown",
+                    max_drawdown,
+                    self._thresholds.drawdown_warning,
+                    f"最大回撤 {max_drawdown:.2%} 超过警告阈值 {self._thresholds.drawdown_warning:.2%}",
+                )
+            )
         return findings
 
     def _audit_risk_adjusted(self, metrics: dict) -> list[AuditFinding]:
@@ -571,17 +594,27 @@ class ASharePerformanceAuditor:
         try:
             sharpe = _get_float(metrics, "sharpe_ratio")
             if sharpe < self._thresholds.sharpe_warning:
-                findings.append(self._make_finding(
-                    AuditCategory.RISK_ADJUSTED, AuditSeverity.WARNING,
-                    "sharpe_ratio", sharpe, self._thresholds.sharpe_warning,
-                    f"Sharpe比率 {sharpe:.4f} 低于警告阈值 {self._thresholds.sharpe_warning}",
-                ))
+                findings.append(
+                    self._make_finding(
+                        AuditCategory.RISK_ADJUSTED,
+                        AuditSeverity.WARNING,
+                        "sharpe_ratio",
+                        sharpe,
+                        self._thresholds.sharpe_warning,
+                        f"Sharpe比率 {sharpe:.4f} 低于警告阈值 {self._thresholds.sharpe_warning}",
+                    )
+                )
             elif sharpe < self._thresholds.sharpe_info:
-                findings.append(self._make_finding(
-                    AuditCategory.RISK_ADJUSTED, AuditSeverity.INFO,
-                    "sharpe_ratio", sharpe, self._thresholds.sharpe_info,
-                    f"Sharpe比率 {sharpe:.4f} 低于信息阈值 {self._thresholds.sharpe_info}",
-                ))
+                findings.append(
+                    self._make_finding(
+                        AuditCategory.RISK_ADJUSTED,
+                        AuditSeverity.INFO,
+                        "sharpe_ratio",
+                        sharpe,
+                        self._thresholds.sharpe_info,
+                        f"Sharpe比率 {sharpe:.4f} 低于信息阈值 {self._thresholds.sharpe_info}",
+                    )
+                )
         except InvalidAuditInputError:
             pass
 
@@ -589,11 +622,16 @@ class ASharePerformanceAuditor:
         try:
             sortino = _get_float(metrics, "sortino_ratio")
             if sortino < self._thresholds.sortino_warning:
-                findings.append(self._make_finding(
-                    AuditCategory.RISK_ADJUSTED, AuditSeverity.WARNING,
-                    "sortino_ratio", sortino, self._thresholds.sortino_warning,
-                    f"Sortino比率 {sortino:.4f} 低于警告阈值 {self._thresholds.sortino_warning}",
-                ))
+                findings.append(
+                    self._make_finding(
+                        AuditCategory.RISK_ADJUSTED,
+                        AuditSeverity.WARNING,
+                        "sortino_ratio",
+                        sortino,
+                        self._thresholds.sortino_warning,
+                        f"Sortino比率 {sortino:.4f} 低于警告阈值 {self._thresholds.sortino_warning}",
+                    )
+                )
         except InvalidAuditInputError:
             pass
 
@@ -614,18 +652,21 @@ class ASharePerformanceAuditor:
         diff = abs(decomposed_sum - total_return)
 
         if diff > self._thresholds.attribution_tolerance:
-            findings.append(self._make_finding(
-                AuditCategory.ATTRIBUTION, AuditSeverity.WARNING,
-                "attribution_consistency", diff, self._thresholds.attribution_tolerance,
-                f"归因分解不自洽: allocation+selection+interaction={decomposed_sum:.6f}"
-                f" vs total_return={total_return:.6f}, 误差={diff:.6f}"
-                f" > 容忍阈值={self._thresholds.attribution_tolerance}",
-            ))
+            findings.append(
+                self._make_finding(
+                    AuditCategory.ATTRIBUTION,
+                    AuditSeverity.WARNING,
+                    "attribution_consistency",
+                    diff,
+                    self._thresholds.attribution_tolerance,
+                    f"归因分解不自洽: allocation+selection+interaction={decomposed_sum:.6f}"
+                    f" vs total_return={total_return:.6f}, 误差={diff:.6f}"
+                    f" > 容忍阈值={self._thresholds.attribution_tolerance}",
+                )
+            )
         return findings
 
-    def _audit_cost(
-        self, attribution: dict, expected_cost: float | None
-    ) -> list[AuditFinding]:
+    def _audit_cost(self, attribution: dict, expected_cost: float | None) -> list[AuditFinding]:
         """交易成本审计——实际成本 vs 预期成本比例。"""
         findings: list[AuditFinding] = []
         if expected_cost is None or expected_cost <= 0:
@@ -639,21 +680,31 @@ class ASharePerformanceAuditor:
         cost_ratio = abs(cost_drag) / expected_cost
 
         if cost_ratio > self._thresholds.cost_critical_ratio:
-            findings.append(self._make_finding(
-                AuditCategory.COST, AuditSeverity.CRITICAL,
-                "cost_ratio", cost_ratio, self._thresholds.cost_critical_ratio,
-                f"交易成本比例 {cost_ratio:.2f}x 超过临界阈值"
-                f" {self._thresholds.cost_critical_ratio}x"
-                f" (实际={abs(cost_drag):.6f}, 预期={expected_cost:.6f})",
-            ))
+            findings.append(
+                self._make_finding(
+                    AuditCategory.COST,
+                    AuditSeverity.CRITICAL,
+                    "cost_ratio",
+                    cost_ratio,
+                    self._thresholds.cost_critical_ratio,
+                    f"交易成本比例 {cost_ratio:.2f}x 超过临界阈值"
+                    f" {self._thresholds.cost_critical_ratio}x"
+                    f" (实际={abs(cost_drag):.6f}, 预期={expected_cost:.6f})",
+                )
+            )
         elif cost_ratio > self._thresholds.cost_warning_ratio:
-            findings.append(self._make_finding(
-                AuditCategory.COST, AuditSeverity.WARNING,
-                "cost_ratio", cost_ratio, self._thresholds.cost_warning_ratio,
-                f"交易成本比例 {cost_ratio:.2f}x 超过警告阈值"
-                f" {self._thresholds.cost_warning_ratio}x"
-                f" (实际={abs(cost_drag):.6f}, 预期={expected_cost:.6f})",
-            ))
+            findings.append(
+                self._make_finding(
+                    AuditCategory.COST,
+                    AuditSeverity.WARNING,
+                    "cost_ratio",
+                    cost_ratio,
+                    self._thresholds.cost_warning_ratio,
+                    f"交易成本比例 {cost_ratio:.2f}x 超过警告阈值"
+                    f" {self._thresholds.cost_warning_ratio}x"
+                    f" (实际={abs(cost_drag):.6f}, 预期={expected_cost:.6f})",
+                )
+            )
         return findings
 
     # ── 完整性校验 ──

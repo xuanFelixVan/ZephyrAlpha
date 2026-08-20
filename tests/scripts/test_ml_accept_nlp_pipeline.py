@@ -10,6 +10,7 @@
   5. check_weights_persisted / check_rlsp_weights —— 存在/缺失（WARN 不阻塞）
   6. summarize / main —— 全 PASS exit 0；任一必需 FAIL exit 1；WARN 不阻塞
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -21,7 +22,8 @@ import pytest
 
 _ROOT = pathlib.Path(__file__).resolve().parents[2]
 _spec = importlib.util.spec_from_file_location(
-    "accept_nlp_pipeline", _ROOT / "scripts" / "ml" / "accept_nlp_pipeline.py",
+    "accept_nlp_pipeline",
+    _ROOT / "scripts" / "ml" / "accept_nlp_pipeline.py",
 )
 acp = importlib.util.module_from_spec(_spec)
 sys.modules["accept_nlp_pipeline"] = acp  # dataclass 字符串注解解析需模块在册
@@ -39,9 +41,19 @@ def _write_jsonl(path: pathlib.Path, rows: list[dict]) -> None:
 
 
 def _daily_row(day: str = "2010-01-04") -> dict:
-    return {"day": day, "n_news": 5, "n_positive": 1, "n_negative": 2, "n_neutral": 2,
-            "negative_count": 2, "mean_polarity": -0.1, "vote_direction": -1,
-            "vote_score": -0.5, "vote_strength": "strong", "symbol": ""}
+    return {
+        "day": day,
+        "n_news": 5,
+        "n_positive": 1,
+        "n_negative": 2,
+        "n_neutral": 2,
+        "negative_count": 2,
+        "mean_polarity": -0.1,
+        "vote_direction": -1,
+        "vote_score": -0.5,
+        "vote_strength": "strong",
+        "symbol": "",
+    }
 
 
 # ============ 1. check_sft_f1 ============
@@ -169,8 +181,13 @@ def _all_pass_dir(tmp_path: pathlib.Path) -> dict[str, pathlib.Path]:
     (adapter / "adapter_model.safetensors").write_bytes(b"x")
     rlsp = tmp_path / "rlsp"
     rlsp.mkdir()
-    return {"metrics_path": metrics, "benchmark_path": bench, "daily_path": daily,
-            "adapter_dir": adapter, "rlsp_dir": rlsp}
+    return {
+        "metrics_path": metrics,
+        "benchmark_path": bench,
+        "daily_path": daily,
+        "adapter_dir": adapter,
+        "rlsp_dir": rlsp,
+    }
 
 
 class TestSummarize:
@@ -196,14 +213,20 @@ class TestMain:
     def test_main_exit_0(self, tmp_path, monkeypatch):
         paths = _all_pass_dir(tmp_path)
         monkeypatch.setattr(
-            acp.sys, "argv",
+            acp.sys,
+            "argv",
             [
                 "accept_nlp_pipeline.py",
-                "--metrics", str(paths["metrics_path"]),
-                "--benchmark", str(paths["benchmark_path"]),
-                "--daily", str(paths["daily_path"]),
-                "--adapter-dir", str(paths["adapter_dir"]),
-                "--rlsp-dir", str(paths["rlsp_dir"]),
+                "--metrics",
+                str(paths["metrics_path"]),
+                "--benchmark",
+                str(paths["benchmark_path"]),
+                "--daily",
+                str(paths["daily_path"]),
+                "--adapter-dir",
+                str(paths["adapter_dir"]),
+                "--rlsp-dir",
+                str(paths["rlsp_dir"]),
             ],
         )
         with pytest.raises(SystemExit) as exc:
@@ -212,14 +235,20 @@ class TestMain:
 
     def test_main_exit_1_on_missing_artifacts(self, tmp_path, monkeypatch):
         monkeypatch.setattr(
-            acp.sys, "argv",
+            acp.sys,
+            "argv",
             [
                 "accept_nlp_pipeline.py",
-                "--metrics", str(tmp_path / "no1.json"),
-                "--benchmark", str(tmp_path / "no2.json"),
-                "--daily", str(tmp_path / "no3.jsonl"),
-                "--adapter-dir", str(tmp_path / "no4"),
-                "--rlsp-dir", str(tmp_path / "no5"),
+                "--metrics",
+                str(tmp_path / "no1.json"),
+                "--benchmark",
+                str(tmp_path / "no2.json"),
+                "--daily",
+                str(tmp_path / "no3.jsonl"),
+                "--adapter-dir",
+                str(tmp_path / "no4"),
+                "--rlsp-dir",
+                str(tmp_path / "no5"),
             ],
         )
         with pytest.raises(SystemExit) as exc:

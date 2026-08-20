@@ -110,8 +110,15 @@ class TestSchemaDefinition:
                 conn.execute(ddl)
             cols = _sqlite_columns(conn, "attribution_results")
             # 两层归因（strategy/firm）+ Brinson 3 因子 + 求和不变量 + 幂等键
-            assert {"layer", "portfolio_id", "allocation_effect", "selection_effect",
-                    "interaction_effect", "invariant_status", "idempotency_key"} <= cols
+            assert {
+                "layer",
+                "portfolio_id",
+                "allocation_effect",
+                "selection_effect",
+                "interaction_effect",
+                "invariant_status",
+                "idempotency_key",
+            } <= cols
         finally:
             conn.close()
 

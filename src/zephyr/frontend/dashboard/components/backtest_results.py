@@ -31,6 +31,7 @@ v3.0.0 变更 (#ARCH-047):
   - 中部: 净值曲线(HoloViews)+回撤曲线(plotly_resampler)
   - 底部: 3阶段门控状态(IS->WFA->OOS, 绿色=通过/红色=未通过)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -51,6 +52,7 @@ from zephyr.frontend.dashboard.components.chart_factory import (
 @dataclass
 class BacktestMetrics:
     """绩效指标（用于可视化展示）"""
+
     sharpe: float = 0.0
     sortino: float = 0.0
     max_drawdown: float = 0.0
@@ -67,6 +69,7 @@ class BacktestGateStatus:
     蓝图约束: 回测流程必须包含3阶段决策门控
     命名: BacktestGateStatus（避免与 gate_context.GateStatus 同名，ARCH-034 CLASS-UNIQUENESS）
     """
+
     is_passed: bool = False  # 样本内（In-Sample）
     wfa_passed: bool = False  # Walk-Forward Analysis
     oos_passed: bool = False  # 样本外（Out-of-Sample）
@@ -80,6 +83,7 @@ class BacktestGateStatus:
 @dataclass
 class BacktestResultData:
     """回测结果可视化数据模型"""
+
     backtest_id: str = ""
     strategy_id: str = ""
     net_value_curve: list[float] = field(default_factory=list)
@@ -159,8 +163,13 @@ def _metric_card(label: str, value: str, color: str = "#333") -> object:
         return {"label": label, "value": value, "color": color}
     return pn.pane.Markdown(
         f"**{label}**\n\n## {value}",
-        styles={"color": color, "text-align": "center", "padding": "8px",
-                "border": "1px solid #e0e0e0", "border-radius": "4px"},
+        styles={
+            "color": color,
+            "text-align": "center",
+            "padding": "8px",
+            "border": "1px solid #e0e0e0",
+            "border-radius": "4px",
+        },
     )
 
 
@@ -172,8 +181,13 @@ def _gate_indicator(label: str, passed: bool) -> object:
         return {"label": label, "status": status, "color": color}
     return pn.pane.Markdown(
         f"**{label}**\n\n## {status}",
-        styles={"color": color, "text-align": "center", "padding": "8px",
-                "border": f"2px solid {color}", "border-radius": "4px"},
+        styles={
+            "color": color,
+            "text-align": "center",
+            "padding": "8px",
+            "border": f"2px solid {color}",
+            "border-radius": "4px",
+        },
     )
 
 

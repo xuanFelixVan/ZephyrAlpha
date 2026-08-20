@@ -43,6 +43,7 @@ ARCH-047: Streamlit->Panel+HoloViz技术栈切换, ChartFactory 作为图表生�
   - lightweight-charts v5.2 (policy, JS原生不引入Python封装包)
   - datashader >=0.16.0,<1.0.0 (factory, 仅阈值触发>50万点)
 """
+
 from __future__ import annotations
 
 from typing import Final, Optional
@@ -72,6 +73,7 @@ except ImportError:  # 测试环境无 panel
 
 class ChartFactoryError(Exception):
     """图表工厂错误"""
+
     error_code = "ZA-FE-0001"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -532,22 +534,48 @@ def make_position(
     # T+1 锁定行红色背景
     row_colors = ["#ffe6e6" if p.get("is_t_plus_1_locked") else "white" for p in positions]
 
-    fig = go.Figure(data=[go.Table(
-        header=dict(
-            values=["Symbol", "名称", "持仓", "可用", "冻结", "当日买入",
-                    "成本价", "最新价", "盈亏", "盈亏%", "T+1"],
-            fill_color="#f0f0f0",
-            align="center",
-            font=dict(size=12, color="#333"),
-        ),
-        cells=dict(
-            values=[symbols, names, quantities, availables, frozens, today_boughts,
-                    cost_prices, last_prices, pnl_text, pnl_pct_text, t1_flags],
-            fill_color=[row_colors],
-            align="center",
-            font=dict(size=11),
-        ),
-    )])
+    fig = go.Figure(
+        data=[
+            go.Table(
+                header=dict(
+                    values=[
+                        "Symbol",
+                        "名称",
+                        "持仓",
+                        "可用",
+                        "冻结",
+                        "当日买入",
+                        "成本价",
+                        "最新价",
+                        "盈亏",
+                        "盈亏%",
+                        "T+1",
+                    ],
+                    fill_color="#f0f0f0",
+                    align="center",
+                    font=dict(size=12, color="#333"),
+                ),
+                cells=dict(
+                    values=[
+                        symbols,
+                        names,
+                        quantities,
+                        availables,
+                        frozens,
+                        today_boughts,
+                        cost_prices,
+                        last_prices,
+                        pnl_text,
+                        pnl_pct_text,
+                        t1_flags,
+                    ],
+                    fill_color=[row_colors],
+                    align="center",
+                    font=dict(size=11),
+                ),
+            )
+        ]
+    )
 
     fig.update_layout(
         title=title,
@@ -592,13 +620,13 @@ def make_orderflow(
 
     # 状态颜色映射
     status_colors = {
-        "FILLED": "#28a745",       # 绿色
-        "CANCELLED": "#6c757d",    # 灰色
-        "REJECTED": "#dc3545",     # 红色
-        "EXPIRED": "#343a40",      # 黑色
-        "PENDING": "#ffc107",      # 黄色
-        "SUBMITTED": "#17a2b8",    # 青色
-        "ACCEPTED": "#007bff",     # 蓝色
+        "FILLED": "#28a745",  # 绿色
+        "CANCELLED": "#6c757d",  # 灰色
+        "REJECTED": "#dc3545",  # 红色
+        "EXPIRED": "#343a40",  # 黑色
+        "PENDING": "#ffc107",  # 黄色
+        "SUBMITTED": "#17a2b8",  # 青色
+        "ACCEPTED": "#007bff",  # 蓝色
         "PARTIALLY_FILLED": "#fd7e14",  # 橙色
     }
 
@@ -626,22 +654,46 @@ def make_orderflow(
         else:
             light_colors.append("white")
 
-    fig = go.Figure(data=[go.Table(
-        header=dict(
-            values=["Order ID", "Symbol", "Side", "Qty", "Price",
-                    "Type", "Status", "Filled", "Avg Price", "Timestamp"],
-            fill_color="#f0f0f0",
-            align="center",
-            font=dict(size=12, color="#333"),
-        ),
-        cells=dict(
-            values=[order_ids, symbols, sides, quantities, prices,
-                    order_types, statuses, filled_qtys, avg_prices, timestamps],
-            fill_color=[light_colors],
-            align="center",
-            font=dict(size=11),
-        ),
-    )])
+    fig = go.Figure(
+        data=[
+            go.Table(
+                header=dict(
+                    values=[
+                        "Order ID",
+                        "Symbol",
+                        "Side",
+                        "Qty",
+                        "Price",
+                        "Type",
+                        "Status",
+                        "Filled",
+                        "Avg Price",
+                        "Timestamp",
+                    ],
+                    fill_color="#f0f0f0",
+                    align="center",
+                    font=dict(size=12, color="#333"),
+                ),
+                cells=dict(
+                    values=[
+                        order_ids,
+                        symbols,
+                        sides,
+                        quantities,
+                        prices,
+                        order_types,
+                        statuses,
+                        filled_qtys,
+                        avg_prices,
+                        timestamps,
+                    ],
+                    fill_color=[light_colors],
+                    align="center",
+                    font=dict(size=11),
+                ),
+            )
+        ]
+    )
 
     fig.update_layout(
         title=title,
@@ -686,10 +738,12 @@ def make_gate_chart(
     pass_rates = [float(g.get("pass_rate", 0.0)) for g in gate_stats]
     block_rates = [float(g.get("block_rate", 0.0)) for g in gate_stats]
 
-    fig = go.Figure(data=[
-        go.Bar(name="Pass Rate", x=gate_ids, y=pass_rates, marker_color="#28a745"),
-        go.Bar(name="Block Rate", x=gate_ids, y=block_rates, marker_color="#dc3545"),
-    ])
+    fig = go.Figure(
+        data=[
+            go.Bar(name="Pass Rate", x=gate_ids, y=pass_rates, marker_color="#28a745"),
+            go.Bar(name="Block Rate", x=gate_ids, y=block_rates, marker_color="#dc3545"),
+        ]
+    )
     fig.update_layout(
         title=title,
         barmode="stack",

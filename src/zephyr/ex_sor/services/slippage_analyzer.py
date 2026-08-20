@@ -277,11 +277,7 @@ class SlippageAttribution:
     @property
     def total_attributed_bps(self) -> Decimal:
         """已归因总量 (不含残差)。"""
-        return (
-            self.market_impact_bps
-            + self.timing_bps
-            + self.spread_bps
-        )
+        return self.market_impact_bps + self.timing_bps + self.spread_bps
 
 
 @dataclass(frozen=True)

@@ -37,6 +37,7 @@ DDL-as-Code 模式：
     1 = 有不一致
     2 = ClickHouse 不可达
 """
+
 from __future__ import annotations
 
 import os

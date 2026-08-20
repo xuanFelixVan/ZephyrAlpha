@@ -36,17 +36,20 @@ class TestHealthMonitorAutoRun:
     def test_health_monitor_importable(self) -> None:
         """HealthMonitor 可导入。"""
         from zephyr.trading.health_monitor import HealthMonitor
+
         assert HealthMonitor is not None
 
     def test_health_monitor_instantiable(self) -> None:
         """HealthMonitor 可实例化。"""
         from zephyr.trading.health_monitor import HealthMonitor
+
         hm = HealthMonitor()
         assert hm is not None
 
     def test_health_monitor_start_stop(self) -> None:
         """HealthMonitor 可启动和停止。"""
         from zephyr.trading.health_monitor import HealthMonitor
+
         hm = HealthMonitor(health_check_interval=0.1, metrics_interval=0.05)
         hm.start()
         time.sleep(0.2)  # 让监控循环跑一会
@@ -56,6 +59,7 @@ class TestHealthMonitorAutoRun:
     def test_health_monitor_event_driven_no_daemon_thread(self) -> None:
         """Event-driven contract (2026-07-05 P1): start() spawns no polling thread."""
         from zephyr.trading.health_monitor import HealthMonitor
+
         hm = HealthMonitor(health_check_interval=0.1, metrics_interval=0.05)
         hm.start()
 
@@ -69,6 +73,7 @@ class TestHealthMonitorAutoRun:
     def test_health_monitor_register_probe(self) -> None:
         """HealthMonitor 可注册 probe。"""
         from zephyr.trading.health_monitor import HealthMonitor, ProbeResult
+
         hm = HealthMonitor()
 
         def _test_probe():
@@ -80,6 +85,7 @@ class TestHealthMonitorAutoRun:
     def test_health_monitor_register_shared_monitoring_probes(self) -> None:
         """HealthMonitor 可注册 shared/ 监控模块 probe。"""
         from zephyr.trading.health_monitor import HealthMonitor
+
         hm = HealthMonitor()
         hm.register_shared_monitoring_probes()
         assert True  # 不抛异常即可
@@ -87,6 +93,7 @@ class TestHealthMonitorAutoRun:
     def test_health_monitor_reconcile(self) -> None:
         """HealthMonitor reconcile 可调用。"""
         from zephyr.trading.health_monitor import HealthMonitor
+
         hm = HealthMonitor()
         report = hm.reconcile()
         assert report is not None
@@ -94,6 +101,7 @@ class TestHealthMonitorAutoRun:
     def test_health_monitor_collect_metrics(self) -> None:
         """HealthMonitor _collect_metrics 可调用。"""
         from zephyr.trading.health_monitor import HealthMonitor
+
         hm = HealthMonitor()
         hm.collect_metrics()
         assert True  # 不抛异常即可
@@ -105,12 +113,14 @@ class TestCircadianSchedulerAutoRun:
     def test_sla_hourly_report_not_registered(self) -> None:
         """Cron scheduling abolished: boot_cron_jobs module retired in dfd117dbba."""
         import importlib
+
         with pytest.raises(ImportError):
             importlib.import_module("zephyr.trading.boot_cron_jobs")
 
     def test_health_monitor_tick_exception_safety(self) -> None:
         """Event-driven mode: tick() never kills the monitor (no loop to die)."""
         from zephyr.trading.health_monitor import HealthMonitor
+
         hm = HealthMonitor(health_check_interval=0.05, metrics_interval=0.02)
         hm.start()
         hm.tick()

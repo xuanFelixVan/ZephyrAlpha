@@ -35,33 +35,39 @@ class TestEventDrivenMonitoring:
     def setup_method(self) -> None:
         """每个测试前重置订阅状态。"""
         import zephyr.shared.lifecycle.health as health_mod
+
         health_mod._monitoring_events_subscribed = False  # real private; alias is a snapshot
         # 使用 .clear() 而非重新赋值，保持 handler 闭包引用同一 list
         health_mod.event_health_log.clear()
 
         import zephyr.shared.observability.metrics as metrics_mod
+
         metrics_mod._metrics_events_subscribed = False  # real private; alias is a snapshot
 
     def test_event_bus_importable(self) -> None:
         """EventBus 可导入。"""
         from zephyr.shared.event_bus import bus
+
         assert bus is not None
 
     def test_event_bus_subscribe_api(self) -> None:
         """EventBus subscribe API 存在。"""
         from zephyr.shared.event_bus import bus
+
         assert hasattr(bus, "subscribe"), "bus 缺少 subscribe 方法"
         assert hasattr(bus, "emit"), "bus 缺少 emit 方法"
 
     def test_subscribe_monitoring_events_callable(self) -> None:
         """subscribe_monitoring_events 可调用。"""
         from zephyr.shared.lifecycle.health import subscribe_monitoring_events
+
         subscribe_monitoring_events()
         assert True
 
     def test_subscribe_metrics_events_callable(self) -> None:
         """subscribe_metrics_events 可调用。"""
         from zephyr.shared.observability.metrics import subscribe_metrics_events
+
         subscribe_metrics_events()
         assert True
 
@@ -134,8 +140,9 @@ class TestEventDrivenMonitoring:
         snapshots = registry.snapshot()
         # 应有 counter 记录
         counter_names = [s.name for s in snapshots if s.type.value == "counter"]
-        assert "zephyr_event_f5_deadlock_total" in counter_names or len(snapshots) > 0, \
+        assert "zephyr_event_f5_deadlock_total" in counter_names or len(snapshots) > 0, (
             f"事件未触发 metrics counter: snapshots={snapshots}"
+        )
 
     def test_multiple_events_all_recorded(self) -> None:
         """多个事件全部被记录。"""
@@ -149,6 +156,7 @@ class TestEventDrivenMonitoring:
 
         # 重置订阅状态
         import zephyr.shared.lifecycle.health as health_mod
+
         health_mod._monitoring_events_subscribed = False  # real private; alias is a snapshot
         health_mod.event_health_log.clear()
 

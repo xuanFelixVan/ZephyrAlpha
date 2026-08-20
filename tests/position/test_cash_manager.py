@@ -126,12 +126,12 @@ def test_max_investable_never_negative():
 
 def test_combined_buy_sell_and_settle():
     mgr = CashManager(initial_cash=INIT)
-    mgr.record_buy(300_000.0, T0)     # total 700K, available 700K
-    mgr.record_sell(200_000.0, T0)    # total 900K, pending 200K, available 700K
+    mgr.record_buy(300_000.0, T0)  # total 700K, available 700K
+    mgr.record_sell(200_000.0, T0)  # total 900K, pending 200K, available 700K
     state1 = mgr.compute_state(T0)
     assert state1.total_cash == pytest.approx(900_000.0)
     assert state1.available_cash == pytest.approx(700_000.0)
-    mgr.settle()                       # 释放 200K
+    mgr.settle()  # 释放 200K
     state2 = mgr.compute_state(T0)
     assert state2.available_cash == pytest.approx(900_000.0)
 
@@ -139,9 +139,7 @@ def test_combined_buy_sell_and_settle():
 def test_total_reserve_property():
     mgr = CashManager(initial_cash=INIT)
     state = mgr.compute_state(T0, in_holiday_mode=True)
-    assert state.total_reserve == pytest.approx(
-        state.min_reserve + state.opportunity_reserve + state.holiday_reserve
-    )
+    assert state.total_reserve == pytest.approx(state.min_reserve + state.opportunity_reserve + state.holiday_reserve)
 
 
 # ── 输入校验 ──────────────────────────────────────────────────────────────────
@@ -171,6 +169,6 @@ def test_custom_config():
     mgr = CashManager(initial_cash=INIT, config=cfg)
     state = mgr.compute_state(T0, in_holiday_mode=True)
     assert state.min_reserve == pytest.approx(50_000.0)
-    assert state.opportunity_reserve == pytest.approx(50_000.0)   # 5% of 1M
-    assert state.holiday_reserve == pytest.approx(150_000.0)      # 15% of 1M
-    assert state.max_investable == pytest.approx(750_000.0)       # 1M - 50K - 50K - 150K
+    assert state.opportunity_reserve == pytest.approx(50_000.0)  # 5% of 1M
+    assert state.holiday_reserve == pytest.approx(150_000.0)  # 15% of 1M
+    assert state.max_investable == pytest.approx(750_000.0)  # 1M - 50K - 50K - 150K

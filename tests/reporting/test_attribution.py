@@ -159,9 +159,7 @@ class TestShapleyAttribution:
     def test_identical_strategies_equal_split(self):
         returns = {"S1": [0.01, 0.02], "S2": [0.01, 0.02]}
         result = shapley_strategy_attribution(returns)
-        assert result["shapley_values"]["S1"] == pytest.approx(
-            result["shapley_values"]["S2"], abs=1e-12
-        )
+        assert result["shapley_values"]["S1"] == pytest.approx(result["shapley_values"]["S2"], abs=1e-12)
 
     def test_single_strategy_gets_full_return(self):
         returns = {"S1": [0.01, 0.02]}

@@ -40,18 +40,15 @@ class FakeModule:
         """只读：startup_raises（R5 公共化）。"""
         return self._startup_raises
 
-
     @property
     def init_raises(self):
         """只读：init_raises（R5 公共化）。"""
         return self._init_raises
 
-
     @property
     def healthy(self):
         """只读：healthy（R5 公共化）。"""
         return self._healthy
-
 
     async def on_init(self) -> None:
         self.init_called = True

@@ -6,6 +6,7 @@
 - INV-09: 双条件触发（重要文件变更 + 8h间隔）
 - INV-10: 状态持久化到backup_state.json
 """
+
 import json
 import os
 import tempfile
@@ -27,10 +28,12 @@ def temp_state_file(tmp_path):
 def reconciler_module(tmp_path, monkeypatch):
     """导入backup_reconciler模块，patch项目根路径"""
     import sys
+
     # 将scripts/backup加入sys.path
     backup_dir = Path(__file__).parent.parent.parent.parent / "scripts" / "backup"
     monkeypatch.syspath_prepend(str(backup_dir))
     import backup_reconciler
+
     return backup_reconciler
 
 

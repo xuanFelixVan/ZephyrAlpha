@@ -112,10 +112,7 @@ def _create_db_without_columns(db_path: Path) -> None:
     """创建 gates 表但缺少 event_driven/auto_start 列。"""
     conn = sqlite3.connect(str(db_path))
     try:
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS gates ("
-            "gate_id TEXT, name TEXT, category TEXT, status TEXT)"
-        )
+        conn.execute("CREATE TABLE IF NOT EXISTS gates (gate_id TEXT, name TEXT, category TEXT, status TEXT)")
         conn.execute("INSERT INTO gates VALUES ('g1', 'n1', 'd1_metadata', 'active')")
         conn.commit()
     finally:
@@ -283,7 +280,6 @@ class TestResourceLeak:
 class TestAuditLogFailure:
     """红队：审计日志写入异常。蓝队：_write_audit_log 捕获不崩溃。"""
 
-
     def test_audit_log_huge_errors_list(self) -> None:
         """errors 列表超大时截断到前 10 条。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
@@ -296,7 +292,6 @@ class TestAuditLogFailure:
         runner.write_audit_log()
         # 验证写入成功（不崩溃即通过）
         assert runner.result.audit_logged is True or len(runner.result.errors) > 0
-
 
 
 # ============================================================================
@@ -331,7 +326,6 @@ class TestConcurrentRun:
         assert len(errors) == 0, f"Concurrent errors: {errors}"
         assert all(results), "All concurrent runs should complete"
 
-
     def test_concurrent_event_driven_query(self) -> None:
         """并发查询 event_driven 不死锁。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
@@ -351,7 +345,6 @@ class TestConcurrentRun:
 
         assert len(errors) == 0
         assert all(len(r) > 0 for r in results)
-
 
 
 # ============================================================================
@@ -383,7 +376,6 @@ class TestEventDrivenEdgeCases:
         result = GovernanceAutoRunner.get_gates_by_event("on_nonexistent_event")
         assert isinstance(result, list)
         assert len(result) == 0
-
 
     def test_all_event_types_returns_list(self) -> None:
         """get_all_event_types() 返回列表。"""
@@ -425,8 +417,6 @@ class TestIdempotency:
         assert all(r.total_gates == results[0].total_gates for r in results)
 
 
-
-
 # ============================================================================
 # 9. 边界值测试
 # ============================================================================
@@ -434,9 +424,6 @@ class TestIdempotency:
 
 class TestBoundaryValues:
     """红队：边界值。蓝队：不崩溃。"""
-
-
-
 
     def test_super_long_errors_in_audit(self, tmp_path: Path) -> None:
         """超长 errors 字符串写入 audit_logs 不崩溃。"""
@@ -446,7 +433,6 @@ class TestBoundaryValues:
         runner.result.errors.append("E" * 100000)
         runner.write_audit_log()
         # 不崩溃即通过
-
 
     def test_thread_safety_with_shared_runner(self) -> None:
         """共享 runner 实例在多线程中不崩溃（虽然不推荐）。"""

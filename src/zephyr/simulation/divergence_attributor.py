@@ -86,25 +86,15 @@ class DivergenceThresholds:
 
     def __post_init__(self) -> None:
         if not 0 < self.signal_match_min <= 1:
-            raise DivergenceAttributionError(
-                f"signal_match_min必须在(0,1], got {self.signal_match_min}"
-            )
+            raise DivergenceAttributionError(f"signal_match_min必须在(0,1], got {self.signal_match_min}")
         if self.slippage_diff_max_bps <= 0:
-            raise DivergenceAttributionError(
-                f"slippage_diff_max_bps必须>0, got {self.slippage_diff_max_bps}"
-            )
+            raise DivergenceAttributionError(f"slippage_diff_max_bps必须>0, got {self.slippage_diff_max_bps}")
         if self.data_lag_max_ms is not None and self.data_lag_max_ms <= 0:
-            raise DivergenceAttributionError(
-                f"data_lag_max_ms必须>0或None, got {self.data_lag_max_ms}"
-            )
+            raise DivergenceAttributionError(f"data_lag_max_ms必须>0或None, got {self.data_lag_max_ms}")
         if self.latency_max_ms <= 0:
-            raise DivergenceAttributionError(
-                f"latency_max_ms必须>0, got {self.latency_max_ms}"
-            )
+            raise DivergenceAttributionError(f"latency_max_ms必须>0, got {self.latency_max_ms}")
         if not 0 < self.pnl_correlation_min <= 1:
-            raise DivergenceAttributionError(
-                f"pnl_correlation_min必须在(0,1], got {self.pnl_correlation_min}"
-            )
+            raise DivergenceAttributionError(f"pnl_correlation_min必须在(0,1], got {self.pnl_correlation_min}")
 
 
 @dataclass(frozen=True)
@@ -168,31 +158,40 @@ class DivergenceReport:
     n_failed: int = 0
 
 
-def _verdict_below(
-    factor: str, value: float | None, threshold: float | None, name_zh: str
-) -> FactorVerdict:
-    """"值<=阈值"型因子判定(滑点A/数据滞后B/执行时延D)"""
+def _verdict_below(factor: str, value: float | None, threshold: float | None, name_zh: str) -> FactorVerdict:
+    """ "值<=阈值"型因子判定(滑点A/数据滞后B/执行时延D)"""
     if value is None:
         return FactorVerdict(
-            factor=factor, observed=False, value=None, threshold=threshold,
-            passed=True, reason=f"{name_zh}未观测,跳过判定",
+            factor=factor,
+            observed=False,
+            value=None,
+            threshold=threshold,
+            passed=True,
+            reason=f"{name_zh}未观测,跳过判定",
         )
     v = float(value)
     if v < 0:
         raise DivergenceAttributionError(f"{name_zh}观测值必须>=0, got {value}")
     if threshold is None:
         return FactorVerdict(
-            factor=factor, observed=True, value=v, threshold=None,
-            passed=True, reason=f"{name_zh}={v}已记录(无门禁阈值,待实盘校准)",
+            factor=factor,
+            observed=True,
+            value=v,
+            threshold=None,
+            passed=True,
+            reason=f"{name_zh}={v}已记录(无门禁阈值,待实盘校准)",
         )
     passed = v <= threshold
     excess = 0.0 if passed else (v - threshold) / threshold
     return FactorVerdict(
-        factor=factor, observed=True, value=v, threshold=threshold, passed=passed,
+        factor=factor,
+        observed=True,
+        value=v,
+        threshold=threshold,
+        passed=passed,
         excess_ratio=excess,
         reason=(
-            f"{name_zh}={v} <= {threshold} 通过" if passed
-            else f"{name_zh}={v} > {threshold} 未通过(超出{excess:.2%})"
+            f"{name_zh}={v} <= {threshold} 通过" if passed else f"{name_zh}={v} > {threshold} 未通过(超出{excess:.2%})"
         ),
     )
 
@@ -200,25 +199,30 @@ def _verdict_below(
 def _verdict_above(
     factor: str, value: float | None, threshold: float, name_zh: str, lo: float, hi: float
 ) -> FactorVerdict:
-    """"值>=阈值"型因子判定(前瞻残留C/PnL相关总值)"""
+    """ "值>=阈值"型因子判定(前瞻残留C/PnL相关总值)"""
     if value is None:
         return FactorVerdict(
-            factor=factor, observed=False, value=None, threshold=threshold,
-            passed=True, reason=f"{name_zh}未观测,跳过判定",
+            factor=factor,
+            observed=False,
+            value=None,
+            threshold=threshold,
+            passed=True,
+            reason=f"{name_zh}未观测,跳过判定",
         )
     v = float(value)
     if not lo <= v <= hi:
-        raise DivergenceAttributionError(
-            f"{name_zh}观测值必须在[{lo},{hi}], got {value}"
-        )
+        raise DivergenceAttributionError(f"{name_zh}观测值必须在[{lo},{hi}], got {value}")
     passed = v >= threshold
     excess = 0.0 if passed else (threshold - v) / threshold
     return FactorVerdict(
-        factor=factor, observed=True, value=v, threshold=threshold, passed=passed,
+        factor=factor,
+        observed=True,
+        value=v,
+        threshold=threshold,
+        passed=passed,
         excess_ratio=excess,
         reason=(
-            f"{name_zh}={v} >= {threshold} 通过" if passed
-            else f"{name_zh}={v} < {threshold} 未通过(缺口{excess:.2%})"
+            f"{name_zh}={v} >= {threshold} 通过" if passed else f"{name_zh}={v} < {threshold} 未通过(缺口{excess:.2%})"
         ),
     )
 
@@ -240,22 +244,15 @@ def attribute_divergence(
         DivergenceAttributionError: observation 非法或观测值越界
     """
     if not isinstance(observation, DivergenceObservation):
-        raise DivergenceAttributionError(
-            f"observation必须是DivergenceObservation: {type(observation).__name__}"
-        )
+        raise DivergenceAttributionError(f"observation必须是DivergenceObservation: {type(observation).__name__}")
     th = thresholds if thresholds is not None else DivergenceThresholds()
 
     factors = (
-        _verdict_below("A_SLIPPAGE", observation.slippage_diff_bps,
-                       th.slippage_diff_max_bps, "滑点偏差(bps)"),
-        _verdict_below("B_DATA_LAG", observation.data_lag_ms,
-                       th.data_lag_max_ms, "数据滞后(ms)"),
-        _verdict_above("C_LOOKAHEAD", observation.signal_match_pct,
-                       th.signal_match_min, "信号一致率", 0.0, 1.0),
-        _verdict_below("D_LATENCY", observation.latency_ms,
-                       th.latency_max_ms, "执行时延(ms)"),
-        _verdict_above("TOTAL_PNL", observation.pnl_correlation,
-                       th.pnl_correlation_min, "PnL相关", -1.0, 1.0),
+        _verdict_below("A_SLIPPAGE", observation.slippage_diff_bps, th.slippage_diff_max_bps, "滑点偏差(bps)"),
+        _verdict_below("B_DATA_LAG", observation.data_lag_ms, th.data_lag_max_ms, "数据滞后(ms)"),
+        _verdict_above("C_LOOKAHEAD", observation.signal_match_pct, th.signal_match_min, "信号一致率", 0.0, 1.0),
+        _verdict_below("D_LATENCY", observation.latency_ms, th.latency_max_ms, "执行时延(ms)"),
+        _verdict_above("TOTAL_PNL", observation.pnl_correlation, th.pnl_correlation_min, "PnL相关", -1.0, 1.0),
     )
 
     failed = [f for f in factors if f.observed and not f.passed]

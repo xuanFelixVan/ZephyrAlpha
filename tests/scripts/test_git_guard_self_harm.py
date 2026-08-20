@@ -66,9 +66,7 @@ def _init_repo(repo_dir: Path) -> None:
     env["GIT_COMMITTER_NAME"] = "Test"
     env["GIT_COMMITTER_EMAIL"] = "test@test.com"
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
-    subprocess.run(
-        ["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True
-    )
+    subprocess.run(["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
         cwd=str(repo_dir),
@@ -259,9 +257,7 @@ class TestCheckoutRestoreSelfHarm:
         r = _run_guard(tmp_path, ["checkout", "branch2"])
 
         # 不被自伤检测阻断（returncode 不应是 1 因自伤；stderr 不含"自伤防护"）
-        assert "自伤防护" not in r.stderr, (
-            f"checkout <branch> 不应触发自伤检测: {r.stderr}"
-        )
+        assert "自伤防护" not in r.stderr, f"checkout <branch> 不应触发自伤检测: {r.stderr}"
 
     def test_restore_clean_file_passthrough(self, tmp_path: Path) -> None:
         """restore <file> 文件无未提交修改 → 透传 exit 0。"""

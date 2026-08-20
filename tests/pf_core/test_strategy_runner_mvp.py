@@ -18,6 +18,7 @@
 - StrategyRunner.run_backtest 端到端（mock ch_reader + 真实 momentum_20d 因子）
 - PIT shift 改变权重面板（未来函数因子 pit_shift=0 vs 1 产出不同）
 """
+
 from __future__ import annotations
 
 import pytest
@@ -83,11 +84,19 @@ def _make_tsv_multi(n_syms: int = 20, n_days: int = 80) -> str:
         close = base
         for j, dt in enumerate(dates):
             close = base * (1.0 + trend) ** j
-            row = "\t".join([
-                dt.strftime("%Y-%m-%d"), sym,
-                f"{close - 0.3:.4f}", f"{close + 0.3:.4f}", f"{close - 0.6:.4f}",
-                f"{close:.4f}", str(10000 + j * 100), str(1000000 + j * 10000), "1.0",
-            ])
+            row = "\t".join(
+                [
+                    dt.strftime("%Y-%m-%d"),
+                    sym,
+                    f"{close - 0.3:.4f}",
+                    f"{close + 0.3:.4f}",
+                    f"{close - 0.6:.4f}",
+                    f"{close:.4f}",
+                    str(10000 + j * 100),
+                    str(1000000 + j * 10000),
+                    "1.0",
+                ]
+            )
             rows.append(row)
     return "\n".join(rows) + "\n"
 
@@ -99,9 +108,7 @@ class TestTopNMomentumStrategy:
         s = TopNMomentumStrategy()
         universe = [f"S{i}" for i in range(20)]
         signals = {f"S{i}": float(i) for i in range(20)}  # S19 最高
-        weights = s.generate_target_weights(
-            universe, signals, constraints={"top_n": 5, "max_single": 0.25}
-        )
+        weights = s.generate_target_weights(universe, signals, constraints={"top_n": 5, "max_single": 0.25})
         # 取前5（S15-S19），等权 1/5=0.2，未触 max_single 0.25
         assert len(weights) == 5
         assert set(weights.keys()) == {"S15", "S16", "S17", "S18", "S19"}
@@ -110,7 +117,8 @@ class TestTopNMomentumStrategy:
     def test_max_single_cap(self):
         s = TopNMomentumStrategy()
         weights = s.generate_target_weights(
-            ["A", "B"], {"A": 1.0, "B": 2.0},
+            ["A", "B"],
+            {"A": 1.0, "B": 2.0},
             constraints={"top_n": 2, "max_single": 0.10},
         )
         # 等权 0.5 触发 max_single 0.10 上限
@@ -126,6 +134,7 @@ class TestTopNMomentumStrategy:
     def test_nan_signals_filtered(self):
         s = TopNMomentumStrategy()
         import math
+
         weights = s.generate_target_weights(
             ["A", "B", "C"],
             {"A": 1.0, "B": float("nan"), "C": 0.5},
@@ -170,9 +179,7 @@ class TestPitShiftMechanism:
         """pit_shift=0 时 signal[t]=factor[t]（无延迟，仅用于对比）。"""
         dates = pd.bdate_range("2024-01-01", periods=3)
         fp = pd.DataFrame({"A": [1.0, 2.0, 3.0]}, index=dates)
-        config = StrategyRunnerConfig(
-            strategy_id="topn-momentum", factor_ids=("f",), pit_shift=0
-        )
+        config = StrategyRunnerConfig(strategy_id="topn-momentum", factor_ids=("f",), pit_shift=0)
         signal = StrategyRunner()._build_signal_panel({"f": fp}, config)
         assert signal.iloc[0]["A"] == 1.0
         assert signal.iloc[2]["A"] == 3.0
@@ -196,9 +203,7 @@ class TestMvpE2e:
             max_single=0.20,
             initial_capital=1_000_000.0,
         )
-        result = StrategyRunner().run_backtest(
-            symbols=symbols, start="2024-01-01", end="2024-06-30", config=config
-        )
+        result = StrategyRunner().run_backtest(symbols=symbols, start="2024-01-01", end="2024-06-30", config=config)
         assert isinstance(result, BacktestResult)
         assert result.strategy_id == "topn-momentum"
         assert result.trades_count > 0, "回测应产生交易"
@@ -217,9 +222,7 @@ class TestMvpE2e:
             pit_shift=1,
             top_n=3,
         )
-        data, signals = StrategyRunner().build_weight_panel(
-            symbols, "2024-01-01", "2024-06-30", config
-        )
+        data, signals = StrategyRunner().build_weight_panel(symbols, "2024-01-01", "2024-06-30", config)
         assert not data.empty
         assert not signals.empty
         # data 是 MultiIndex(symbol, trade_date)
@@ -239,10 +242,9 @@ class TestPitShiftChangesWeights:
 
         证 PIT 平移确实改变了信号→权重的映射时点，消除 1 日 lookahead。
         """
+
         class FutureReturnFactor(FactorBase):
-            meta = FactorMeta(
-                factor_id="future_return_test", name="未来收益测试因子", domain="technical"
-            )
+            meta = FactorMeta(factor_id="future_return_test", name="未来收益测试因子", domain="technical")
 
             def compute(self, data, **kwargs):
                 # 明日收益率 = lookahead bias
@@ -256,12 +258,18 @@ class TestPitShiftChangesWeights:
         symbols = [f"{600000 + i}.SH" for i in range(15)]
 
         cfg0 = StrategyRunnerConfig(
-            strategy_id="topn-momentum", factor_ids=("future_return_test",),
-            pit_shift=0, top_n=5, rebalance_freq="W-FRI",
+            strategy_id="topn-momentum",
+            factor_ids=("future_return_test",),
+            pit_shift=0,
+            top_n=5,
+            rebalance_freq="W-FRI",
         )
         cfg1 = StrategyRunnerConfig(
-            strategy_id="topn-momentum", factor_ids=("future_return_test",),
-            pit_shift=1, top_n=5, rebalance_freq="W-FRI",
+            strategy_id="topn-momentum",
+            factor_ids=("future_return_test",),
+            pit_shift=1,
+            top_n=5,
+            rebalance_freq="W-FRI",
         )
         runner = StrategyRunner()
         _, w0 = runner.build_weight_panel(symbols, "2024-01-01", "2024-06-30", cfg0)

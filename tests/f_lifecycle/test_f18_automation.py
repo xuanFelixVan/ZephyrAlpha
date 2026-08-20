@@ -48,12 +48,14 @@ class TestAutoStartup:
     def test_phase_manager_importable(self) -> None:
         """PhaseManager 可导入。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
+
         pm = PhaseManager()
         assert pm is not None
 
     def test_phase_manager_has_phases(self) -> None:
         """PhaseManager 包含所有施工阶段（PHASE_SEQUENCE）。"""
         from zephyr.governance.ops_governance.phase_manager import PHASE_SEQUENCE, ConstructionPhase
+
         assert ConstructionPhase.PHASE_0_SKELETON in PHASE_SEQUENCE
         assert ConstructionPhase.PHASE_1_FUNCTIONAL in PHASE_SEQUENCE
         assert ConstructionPhase.PHASE_2_E2E in PHASE_SEQUENCE
@@ -62,6 +64,7 @@ class TestAutoStartup:
     def test_all_phases_auto_start(self) -> None:
         """所有 gate 的 auto_start=1（从 depgraph 查询）。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
+
         pm = PhaseManager()
         auto_start_map = pm.verify_auto_start()
         # 所有 gate 的 auto_start 都应为 True
@@ -72,6 +75,7 @@ class TestAutoStartup:
     def test_verify_auto_start_returns_dict(self) -> None:
         """verify_auto_start() 返回非空 dict。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
+
         pm = PhaseManager()
         result = pm.verify_auto_start()
         assert isinstance(result, dict)
@@ -81,6 +85,7 @@ class TestAutoStartup:
     def test_status_report_contains_governance(self) -> None:
         """status_report() 包含 governance 维度信息。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
+
         pm = PhaseManager()
         report = pm.status_report()
         assert isinstance(report, dict)
@@ -91,6 +96,7 @@ class TestAutoStartup:
     def test_get_governance_gates_returns_dict(self) -> None:
         """get_governance_gates() 返回非空 dict（8维度）。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
+
         pm = PhaseManager()
         gates = pm.get_governance_gates()
         assert isinstance(gates, dict)
@@ -100,9 +106,15 @@ class TestAutoStartup:
     def test_governance_gate_dimensions_has_8_dimensions(self) -> None:
         """GOVERNANCE_GATE_DIMENSIONS 包含 8 个维度（含 d8_functional）。"""
         from zephyr.governance.ops_governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
+
         expected_dims = {
-            "d1_metadata", "d2_architecture", "d3_code_quality",
-            "d4_testing", "d5_security", "d6_governance", "d7_operations",
+            "d1_metadata",
+            "d2_architecture",
+            "d3_code_quality",
+            "d4_testing",
+            "d5_security",
+            "d6_governance",
+            "d7_operations",
             "d8_functional",
         }
         assert set(GOVERNANCE_GATE_DIMENSIONS.keys()) == expected_dims
@@ -111,6 +123,7 @@ class TestAutoStartup:
     def test_each_dimension_has_gates(self) -> None:
         """每个维度至少有 1 个 gate。"""
         from zephyr.governance.ops_governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
+
         for dim, gates in GOVERNANCE_GATE_DIMENSIONS.items():
             assert len(gates) > 0, f"{dim} should have at least 1 gate"
 
@@ -126,11 +139,17 @@ class TestEventDriven:
     def test_event_driven_triggers_defined(self) -> None:
         """event_driven 触发器类型已定义。"""
         expected_triggers = {
-            "on_file_change", "on_commit", "on_structure_change",
-            "on_session_start", "on_session_end", "on_rule_change",
+            "on_file_change",
+            "on_commit",
+            "on_structure_change",
+            "on_session_start",
+            "on_session_end",
+            "on_rule_change",
         }
         # 验证触发器类型在规则文件中定义
-        rule_file = _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_056_module_creation_workflow.yaml"
+        rule_file = (
+            _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_056_module_creation_workflow.yaml"
+        )
         if rule_file.exists():
             content = rule_file.read_text(encoding="utf-8")
             assert "event_driven" in content
@@ -141,6 +160,7 @@ class TestEventDriven:
     def test_governance_dimensions_support_events(self) -> None:
         """治理维度支持事件驱动触发。"""
         from zephyr.governance.ops_governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
+
         # 每个维度的 gate 可被事件触发
         total_gates = sum(len(gates) for gates in GOVERNANCE_GATE_DIMENSIONS.values())
         assert total_gates > 0
@@ -150,6 +170,7 @@ class TestEventDriven:
     def test_auto_runner_supports_event_driven(self) -> None:
         """GovernanceAutoRunner 支持事件驱动执行。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
+
         runner = GovernanceAutoRunner()
         # run() 可被事件触发调用
         assert hasattr(runner, "run")
@@ -174,12 +195,14 @@ class TestAutoRun:
     def test_auto_runner_importable(self) -> None:
         """GovernanceAutoRunner 可导入。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
+
         runner = GovernanceAutoRunner()
         assert runner is not None
 
     def test_auto_runner_result_class_exists(self) -> None:
         """AutoRunnerResult 类存在。"""
         from zephyr.governance.ops_governance.auto_runner import AutoRunnerResult
+
         result = AutoRunnerResult()
         assert result is not None
         assert result.total_gates == 0
@@ -189,6 +212,7 @@ class TestAutoRun:
     def test_run_returns_auto_runner_result(self) -> None:
         """run() 返回 AutoRunnerResult。"""
         from zephyr.governance.ops_governance.auto_runner import AutoRunnerResult, GovernanceAutoRunner
+
         runner = GovernanceAutoRunner()
         result = runner.run()
         assert isinstance(result, AutoRunnerResult)
@@ -196,6 +220,7 @@ class TestAutoRun:
     def test_run_executes_gates(self) -> None:
         """run() 执行了 gate(total_gates > 0)。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
+
         runner = GovernanceAutoRunner()
         result = runner.run()
         assert result.total_gates > 0
@@ -203,6 +228,7 @@ class TestAutoRun:
     def test_run_completes_without_exception(self) -> None:
         """run() 完成后 finished_at 已设置。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
+
         runner = GovernanceAutoRunner()
         result = runner.run()
         assert result.finished_at is not None
@@ -212,6 +238,7 @@ class TestAutoRun:
         """run() 覆盖 8 维度 gate。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
         from zephyr.governance.ops_governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
+
         runner = GovernanceAutoRunner()
         result = runner.run()
         expected_total = sum(len(gates) for gates in GOVERNANCE_GATE_DIMENSIONS.values())
@@ -229,6 +256,7 @@ class TestAutoClose:
     def test_auto_close_sets_cleanup_done(self) -> None:
         """run() 后 cleanup_done=True。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
+
         runner = GovernanceAutoRunner()
         result = runner.run()
         assert result.cleanup_done is True
@@ -236,6 +264,7 @@ class TestAutoClose:
     def test_auto_close_sets_audit_logged(self) -> None:
         """run() 后 audit_logged=True。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
+
         runner = GovernanceAutoRunner()
         result = runner.run()
         assert result.audit_logged is True
@@ -243,6 +272,7 @@ class TestAutoClose:
     def test_audit_log_written_to_depgraph(self) -> None:
         """审计日志写入 depgraph governance_audit_logs 表（P2迁移后：PostgreSQL）。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
+
         runner = GovernanceAutoRunner()
         runner.run()
         # 验证审计日志表有记录（P2迁移后查询 PostgreSQL）
@@ -271,6 +301,7 @@ class TestAutoClose:
                 self.closed = True
 
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
+
         runner = GovernanceAutoRunner()
         resource = FakeResource()
         runner.register_resource(resource)
@@ -280,6 +311,7 @@ class TestAutoClose:
     def test_auto_close_cleans_temp_files(self, tmp_path: Path) -> None:
         """auto_close 清理注册的临时文件。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
+
         temp_file = tmp_path / "test_temp.txt"
         temp_file.write_text("test", encoding="utf-8")
         assert temp_file.exists()
@@ -292,6 +324,7 @@ class TestAutoClose:
     def test_run_idempotent(self) -> None:
         """多次 run() 都能成功完成自动关闭。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
+
         for _ in range(2):
             runner = GovernanceAutoRunner()
             result = runner.run()

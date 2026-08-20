@@ -29,6 +29,7 @@ EDE callback 契约：Callable[[TickEvent], dict[str, float]]，与本基类 on_
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7（EDE 做T场景）
 """
+
 from __future__ import annotations
 
 import abc
@@ -68,17 +69,15 @@ class TRulesConfig:
         正T 单笔止损 -1.5%~-2%（且"买入前底仓可卖量"为硬约束，可卖量=0 禁开正T）。
     """
 
-    max_t_position_ratio: float = 0.25      # 单次做T仓位/底仓 上限（20-30% 保守端）
-    min_volume_ratio: float = 1.0           # regime 过滤：量比须严格大于此值
-    single_side_cost_rate: float = 0.0015   # 单边成本≈0.15%（往返硬成本 0.10-0.15% 之半）
-    force_cover_time: time = time(14, 30)   # 反T 强制接回时间
-    stop_loss_pct: float = -0.015           # 正T 单笔止损（-1.5%~-2% 区间）
+    max_t_position_ratio: float = 0.25  # 单次做T仓位/底仓 上限（20-30% 保守端）
+    min_volume_ratio: float = 1.0  # regime 过滤：量比须严格大于此值
+    single_side_cost_rate: float = 0.0015  # 单边成本≈0.15%（往返硬成本 0.10-0.15% 之半）
+    force_cover_time: time = time(14, 30)  # 反T 强制接回时间
+    stop_loss_pct: float = -0.015  # 正T 单笔止损（-1.5%~-2% 区间）
 
     def __post_init__(self) -> None:
         if not 0 < self.max_t_position_ratio <= 0.30:
-            raise ValueError(
-                f"max_t_position_ratio 须在 (0, 0.30]（裁定保守端上限），实际 {self.max_t_position_ratio}"
-            )
+            raise ValueError(f"max_t_position_ratio 须在 (0, 0.30]（裁定保守端上限），实际 {self.max_t_position_ratio}")
         if self.min_volume_ratio < 0:
             raise ValueError(f"min_volume_ratio 不能为负，实际 {self.min_volume_ratio}")
         if self.single_side_cost_rate < 0:

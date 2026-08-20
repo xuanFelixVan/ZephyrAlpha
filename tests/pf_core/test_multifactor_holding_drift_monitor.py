@@ -6,6 +6,7 @@
 覆盖：因子/行业/权重三通道 alert/critical 分级 / should_trigger_rebalance /
 空输入退化 / 边界阈值（恰好等于阈值不触发）。
 """
+
 from __future__ import annotations
 
 import pytest
@@ -76,9 +77,9 @@ class TestCombined:
             weight_drift=0.15,
         )
         types = {a.alert_type for a in r.alerts}
-        assert DriftAlertType.FACTOR_CRITICAL in types      # f1 0.15
-        assert DriftAlertType.FACTOR_ALERT not in types     # f2 0.02<0.05 静默
-        assert DriftAlertType.INDUSTRY_CRITICAL in types    # 银行 0.14
+        assert DriftAlertType.FACTOR_CRITICAL in types  # f1 0.15
+        assert DriftAlertType.FACTOR_ALERT not in types  # f2 0.02<0.05 静默
+        assert DriftAlertType.INDUSTRY_CRITICAL in types  # 银行 0.14
         assert DriftAlertType.WEIGHT_DRIFT in types
         assert r.critical_count == 2
         assert r.should_trigger_rebalance

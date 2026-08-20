@@ -146,27 +146,27 @@ _TAIL_BATCH_WINDOW: Final[str] = "14:50-14:57"
 class SellExecutionSignal(str, Enum):
     """卖出执行信号类型(执行编排层分类, 与收集器8类信号正交)。"""
 
-    KILL_SWITCH = "KILL_SWITCH"                # Kill Switch 强制清仓
-    BLACK_SWAN = "BLACK_SWAN"                  # 黑天鹅事件(L2-D)
-    BREAKOUT_FAIL_K = "BREAKOUT_FAIL_K"        # 第K次突破失败(K≥3)
-    ATR_STOP = "ATR_STOP"                      # ATR止损触发
-    CHANDELIER_STOP = "CHANDELIER_STOP"        # Chandelier移动止损触发
-    SUPPORT_BROKEN = "SUPPORT_BROKEN"          # 支撑位破位
-    TRAILING_TP = "TRAILING_TP"                # 移动止盈触发
-    REBALANCE = "REBALANCE"                    # 置换/再平衡卖出
-    SENTIMENT_EBB = "SENTIMENT_EBB"            # 情绪退潮减仓
+    KILL_SWITCH = "KILL_SWITCH"  # Kill Switch 强制清仓
+    BLACK_SWAN = "BLACK_SWAN"  # 黑天鹅事件(L2-D)
+    BREAKOUT_FAIL_K = "BREAKOUT_FAIL_K"  # 第K次突破失败(K≥3)
+    ATR_STOP = "ATR_STOP"  # ATR止损触发
+    CHANDELIER_STOP = "CHANDELIER_STOP"  # Chandelier移动止损触发
+    SUPPORT_BROKEN = "SUPPORT_BROKEN"  # 支撑位破位
+    TRAILING_TP = "TRAILING_TP"  # 移动止盈触发
+    REBALANCE = "REBALANCE"  # 置换/再平衡卖出
+    SENTIMENT_EBB = "SENTIMENT_EBB"  # 情绪退潮减仓
 
 
 class SellOrderAction(str, Enum):
     """卖出执行动作。"""
 
-    MARKET_ORDER_NOW = "MARKET_ORDER_NOW"                  # 市价单立即执行
-    LIMIT_ORDER_NOW = "LIMIT_ORDER_NOW"                    # 限价单立即挂出
-    CLOSING_AUCTION_LIMIT = "CLOSING_AUCTION_LIMIT"        # 收盘集合竞价限价单
-    TAIL_BATCH_14_50 = "TAIL_BATCH_14_50"                  # 尾盘14:50-14:57集中挂限价单
-    LIMIT_DOWN_QUEUE = "LIMIT_DOWN_QUEUE"                  # 跌停不提交, 排队次日集合竞价
-    BLOCKED_T1 = "BLOCKED_T1"                              # 当日买入T+1不可卖
-    HOLD = "HOLD"                                          # 无信号继续持有
+    MARKET_ORDER_NOW = "MARKET_ORDER_NOW"  # 市价单立即执行
+    LIMIT_ORDER_NOW = "LIMIT_ORDER_NOW"  # 限价单立即挂出
+    CLOSING_AUCTION_LIMIT = "CLOSING_AUCTION_LIMIT"  # 收盘集合竞价限价单
+    TAIL_BATCH_14_50 = "TAIL_BATCH_14_50"  # 尾盘14:50-14:57集中挂限价单
+    LIMIT_DOWN_QUEUE = "LIMIT_DOWN_QUEUE"  # 跌停不提交, 排队次日集合竞价
+    BLOCKED_T1 = "BLOCKED_T1"  # 当日买入T+1不可卖
+    HOLD = "HOLD"  # 无信号继续持有
 
 
 @dataclass(frozen=True)
@@ -174,8 +174,8 @@ class SellOrderPlan:
     """卖出执行计划——喂给40号执行层订单分解。"""
 
     action: SellOrderAction
-    order_type: str        # MARKET / LIMIT / NONE
-    window_note: str       # 时序窗口说明
+    order_type: str  # MARKET / LIMIT / NONE
+    window_note: str  # 时序窗口说明
     reason: str
 
 
@@ -184,9 +184,9 @@ class LimitDownPosition:
     """跌停持仓——排队优先级排序输入。"""
 
     symbol: str
-    urgency_score: float        # 紧迫度(来自MOD-SELL-009)
-    unrealized_pnl_pct: float   # 浮动盈亏比例(负=亏损)
-    position_value: float       # 持仓金额
+    urgency_score: float  # 紧迫度(来自MOD-SELL-009)
+    unrealized_pnl_pct: float  # 浮动盈亏比例(负=亏损)
+    position_value: float  # 持仓金额
 
 
 @dataclass(frozen=True)
@@ -194,9 +194,9 @@ class LiquidationPosition:
     """Kill Switch 待清仓持仓——清仓排序输入。"""
 
     symbol: str
-    liquidity_score: float      # 流动性评分(低=流动性差)
-    position_value: float       # 持仓金额
-    unrealized_pnl_pct: float   # 浮动盈亏比例(负=亏损)
+    liquidity_score: float  # 流动性评分(低=流动性差)
+    position_value: float  # 持仓金额
+    unrealized_pnl_pct: float  # 浮动盈亏比例(负=亏损)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -215,25 +215,31 @@ class InvalidExecutionPlanInputError(ZephyrBaseError):
 # ──────────────────────────────────────────────────────────────────────────────
 
 # 强制清仓信号集(绕过融合, 紧迫度1.0, 市价单)
-_FORCED_CLEAR_SIGNALS: Final[frozenset[SellExecutionSignal]] = frozenset({
-    SellExecutionSignal.KILL_SWITCH,
-    SellExecutionSignal.BLACK_SWAN,
-    SellExecutionSignal.BREAKOUT_FAIL_K,
-})
+_FORCED_CLEAR_SIGNALS: Final[frozenset[SellExecutionSignal]] = frozenset(
+    {
+        SellExecutionSignal.KILL_SWITCH,
+        SellExecutionSignal.BLACK_SWAN,
+        SellExecutionSignal.BREAKOUT_FAIL_K,
+    }
+)
 
 # 止损类信号集(盘中触发立即执行)
-_STOP_LOSS_SIGNALS: Final[frozenset[SellExecutionSignal]] = frozenset({
-    SellExecutionSignal.ATR_STOP,
-    SellExecutionSignal.CHANDELIER_STOP,
-    SellExecutionSignal.SUPPORT_BROKEN,
-})
+_STOP_LOSS_SIGNALS: Final[frozenset[SellExecutionSignal]] = frozenset(
+    {
+        SellExecutionSignal.ATR_STOP,
+        SellExecutionSignal.CHANDELIER_STOP,
+        SellExecutionSignal.SUPPORT_BROKEN,
+    }
+)
 
 # 止盈/换仓/退潮信号集(尾盘集中执行)
-_TAIL_BATCH_SIGNALS: Final[frozenset[SellExecutionSignal]] = frozenset({
-    SellExecutionSignal.TRAILING_TP,
-    SellExecutionSignal.REBALANCE,
-    SellExecutionSignal.SENTIMENT_EBB,
-})
+_TAIL_BATCH_SIGNALS: Final[frozenset[SellExecutionSignal]] = frozenset(
+    {
+        SellExecutionSignal.TRAILING_TP,
+        SellExecutionSignal.REBALANCE,
+        SellExecutionSignal.SENTIMENT_EBB,
+    }
+)
 
 
 class SellExecutionPlanner:
@@ -267,9 +273,7 @@ class SellExecutionPlanner:
             InvalidExecutionPlanInputError: 输入非法
         """
         if not isinstance(signal_type, SellExecutionSignal):
-            raise InvalidExecutionPlanInputError(
-                "signal_type 必须是 SellExecutionSignal 枚举"
-            )
+            raise InvalidExecutionPlanInputError("signal_type 必须是 SellExecutionSignal 枚举")
         if not isinstance(current_time, time):
             raise InvalidExecutionPlanInputError("current_time 必须是 time 对象")
 
@@ -303,10 +307,7 @@ class SellExecutionPlanner:
                 action=SellOrderAction.LIMIT_DOWN_QUEUE,
                 order_type="NONE",
                 window_note="次日集合竞价",
-                reason=(
-                    f"信号 {signal_type.value} 遇跌停板, 无法成交不提交, "
-                    "标记跌停待执行排队次日集合竞价(§3.8)"
-                ),
+                reason=(f"信号 {signal_type.value} 遇跌停板, 无法成交不提交, 标记跌停待执行排队次日集合竞价(§3.8)"),
             )
 
         # 止损触发: 盘中触发立即挂限价单(14:57前可撤改挂, 后吃收盘价)
@@ -331,10 +332,7 @@ class SellExecutionPlanner:
                 action=SellOrderAction.TAIL_BATCH_14_50,
                 order_type="LIMIT",
                 window_note=f"{_TAIL_BATCH_WINDOW} 尾盘集中挂限价单",
-                reason=(
-                    f"信号 {signal_type.value} 非紧急, 尾盘U型高流动性段成交更优, "
-                    "与41号建仓窗口错峰(方向相反)"
-                ),
+                reason=(f"信号 {signal_type.value} 非紧急, 尾盘U型高流动性段成交更优, 与41号建仓窗口错峰(方向相反)"),
             )
 
         return SellOrderPlan(

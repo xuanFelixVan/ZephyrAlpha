@@ -195,7 +195,7 @@ class TestRefreshUnrealized:
         dash.record_fill(buy2, OrderSide.BUY)
 
         snapshot = dash.refresh({"600000": Decimal("12")})
-        # realized = BUY(-5.01)+SELL(94.439)+BUY2(-5.005... ) 
+        # realized = BUY(-5.01)+SELL(94.439)+BUY2(-5.005... )
         # total_pnl = realized + unrealized
         assert snapshot.total_pnl == snapshot.realized_pnl + snapshot.unrealized_pnl
 
@@ -402,9 +402,7 @@ class TestMultiSymbol:
         dash._tracker.apply_fill(f2, OrderSide.BUY)
         dash.record_fill(f2, OrderSide.BUY)
 
-        snapshot = dash.refresh(
-            {"600000": Decimal("11"), "000001": Decimal("18")}
-        )
+        snapshot = dash.refresh({"600000": Decimal("11"), "000001": Decimal("18")})
         assert len(snapshot.positions) == 2
         # 600000: unrealized=(11-10)*100=100
         # 000001: unrealized=(18-20)*100=-200

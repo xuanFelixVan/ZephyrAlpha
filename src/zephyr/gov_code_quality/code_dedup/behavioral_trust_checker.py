@@ -47,7 +47,6 @@ class BehavioralTrustChecker:
         """写入：signatures（Stage 4 公共化）。"""
         self._signatures = value
 
-
     def register(self, function_name: str, behavior_signature: str) -> None:
         self._signatures[function_name] = behavior_signature
 

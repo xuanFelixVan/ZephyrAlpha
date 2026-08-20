@@ -6,6 +6,7 @@
 覆盖：WAIT/TIME/DRIFT/SIGNAL/HOLD 五分支 + 成本门控通过/拦截 +
 Inaction Cost 公式 + 优先级（最短间隔>保底>漂移>信号）。
 """
+
 from __future__ import annotations
 
 import pytest
@@ -64,8 +65,7 @@ class TestDriftTrigger:
 class TestSignalTrigger:
     def test_signal_triggered(self):
         p = RebalanceTriggerParams(cost_aware=False)
-        d = should_rebalance(days_since_last=3, weight_drift=0.0,
-                             top30_rank_change=12.0, params=p)
+        d = should_rebalance(days_since_last=3, weight_drift=0.0, top30_rank_change=12.0, params=p)
         assert d.trigger is RebalanceTriggerType.SIGNAL
         assert d.rank_change_score == pytest.approx(360.0)  # 12×30 归一化
 
@@ -75,8 +75,7 @@ class TestSignalTrigger:
 
     def test_signal_cost_gate_blocks(self):
         # days=4: expected_days=1 → inaction=0 漂移 → 成本门控拦截
-        d = should_rebalance(days_since_last=4, weight_drift=0.0,
-                             top30_rank_change=15.0)
+        d = should_rebalance(days_since_last=4, weight_drift=0.0, top30_rank_change=15.0)
         assert d.trigger is RebalanceTriggerType.HOLD
         assert "成本门控" in d.reason
 

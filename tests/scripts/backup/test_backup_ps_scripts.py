@@ -9,6 +9,7 @@ PowerShell 脚本不在任何测试/门禁射程内，只在真实备份时才�
 
 运行前提：Windows + powershell.exe 可用（非 Windows 环境自动 skip）。
 """
+
 from __future__ import annotations
 
 import shutil

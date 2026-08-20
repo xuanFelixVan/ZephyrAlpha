@@ -19,6 +19,7 @@
 覆盖蓝图 §7 测试计划全部 11 项用例：
 双源比对/差异检测/冻结解冻/容差/on_drift回调/多标的混合/线程安全/真实对象集成。
 """
+
 from __future__ import annotations
 
 import threading
@@ -249,18 +250,22 @@ def test_on_drift_exception_does_not_block_reconcile():
 
 
 def test_mixed_symbols_partial_match():
-    sys_src = FakeSource({
-        "A": Decimal("100"),   # 一致
-        "B": Decimal("200"),   # 漂移（系统多）
-        "C": Decimal("300"),   # 一致
-        "D": Decimal("400"),   # 漂移（系统少）
-    })
-    brk_src = FakeSource({
-        "A": Decimal("100"),
-        "B": Decimal("150"),
-        "C": Decimal("300"),
-        "D": Decimal("450"),
-    })
+    sys_src = FakeSource(
+        {
+            "A": Decimal("100"),  # 一致
+            "B": Decimal("200"),  # 漂移（系统多）
+            "C": Decimal("300"),  # 一致
+            "D": Decimal("400"),  # 漂移（系统少）
+        }
+    )
+    brk_src = FakeSource(
+        {
+            "A": Decimal("100"),
+            "B": Decimal("150"),
+            "C": Decimal("300"),
+            "D": Decimal("450"),
+        }
+    )
     rec = PositionReconciler(sys_src, brk_src)
 
     result = rec.reconcile()

@@ -88,8 +88,12 @@ class TestStore:
         mgr = ReportVersionManager()
         v = mgr.store("rpt", {"x": 1})
         expected = _compute_record_hash(
-            v.version_id, v.timestamp, v.report_id,
-            v.version_number, v.content_hash, v.prev_hash,
+            v.version_id,
+            v.timestamp,
+            v.report_id,
+            v.version_number,
+            v.content_hash,
+            v.prev_hash,
         )
         assert v.record_hash == expected
 
@@ -335,9 +339,7 @@ class TestVerifyChain:
         mgr.store("rpt", {"a": 1})
         mgr.store("rpt", {"a": 2})
         # 篡改：绕过 frozen 替换内部存储的 content
-        mgr._store["rpt"][0] = dataclasses.replace(
-            mgr._store["rpt"][0], content={"a": 999}
-        )
+        mgr._store["rpt"][0] = dataclasses.replace(mgr._store["rpt"][0], content={"a": 999})
         assert mgr.verify_chain("rpt") is False
 
     def test_verify_chain_detects_record_hash_tamper(self) -> None:
@@ -346,9 +348,7 @@ class TestVerifyChain:
         mgr.store("rpt", {"a": 1})
         mgr.store("rpt", {"a": 2})
         # 篡改 record_hash（但保持 content_hash 不变 → record_hash 重算不匹配）
-        mgr._store["rpt"][1] = dataclasses.replace(
-            mgr._store["rpt"][1], record_hash="fake_hash_value"
-        )
+        mgr._store["rpt"][1] = dataclasses.replace(mgr._store["rpt"][1], record_hash="fake_hash_value")
         assert mgr.verify_chain("rpt") is False
 
     def test_verify_chain_detects_prev_hash_break(self) -> None:
@@ -357,9 +357,7 @@ class TestVerifyChain:
         mgr.store("rpt", {"a": 1})
         mgr.store("rpt", {"a": 2})
         # 篡改 v2 的 prev_hash（不再指向 v1.record_hash）
-        mgr._store["rpt"][1] = dataclasses.replace(
-            mgr._store["rpt"][1], prev_hash="wrong_prev_hash"
-        )
+        mgr._store["rpt"][1] = dataclasses.replace(mgr._store["rpt"][1], prev_hash="wrong_prev_hash")
         assert mgr.verify_chain("rpt") is False
 
     def test_verify_chain_detects_version_number_gap(self) -> None:
@@ -368,9 +366,7 @@ class TestVerifyChain:
         mgr.store("rpt", {"a": 1})
         mgr.store("rpt", {"a": 2})
         # 篡改 v2 的 version_number 为 5（跳号）
-        mgr._store["rpt"][1] = dataclasses.replace(
-            mgr._store["rpt"][1], version_number=5
-        )
+        mgr._store["rpt"][1] = dataclasses.replace(mgr._store["rpt"][1], version_number=5)
         assert mgr.verify_chain("rpt") is False
 
 
@@ -518,10 +514,7 @@ class TestThreadSafety:
             for i in range(n_per_report):
                 mgr.store(rid, {"v": i})
 
-        threads = [
-            threading.Thread(target=worker, args=(f"rpt_{r}",))
-            for r in range(n_reports)
-        ]
+        threads = [threading.Thread(target=worker, args=(f"rpt_{r}",)) for r in range(n_reports)]
         for t in threads:
             t.start()
         for t in threads:

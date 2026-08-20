@@ -53,7 +53,6 @@ class Verifier:
         """写入：root（Stage 4 公共化）。"""
         self._root = value
 
-
     def verify_file(self, file_path: str | Path) -> VerifyResult:
         """验证单个文件——import可用 + 语法正确."""
         path = Path(file_path)

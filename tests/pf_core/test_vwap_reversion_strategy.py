@@ -23,6 +23,7 @@
   - 盘口失衡计算 + 构造参数校验
   - 注册表发现（strategy_id="vwap-reversion"）
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -107,8 +108,13 @@ def _feed(
     for i, (p, vwap) in enumerate(series):
         ts = base + timedelta(seconds=i)
         tick = _make_tick(
-            p, vwap=vwap, volume=volume,
-            bid_vol_1=bid_vol_1, ask_vol_1=ask_vol_1, ts=ts, symbol=symbol,
+            p,
+            vwap=vwap,
+            volume=volume,
+            bid_vol_1=bid_vol_1,
+            ask_vol_1=ask_vol_1,
+            ts=ts,
+            symbol=symbol,
         )
         results.append(strategy.on_tick(_FakeEvent(timestamp=ts, symbol=symbol, tick_data=tick)))
     return results
@@ -173,7 +179,9 @@ class TestOnTickDecisions:
     def test_flat_sufficient_deviation_buys(self) -> None:
         """flat 态下价格低于 VWAP >= entry_threshold → 买入 base_weight。"""
         s = VWAPReversionStrategy(
-            entry_threshold=0.003, base_weight=0.9, use_order_book=False,
+            entry_threshold=0.003,
+            base_weight=0.9,
+            use_order_book=False,
         )
         # VWAP=10.00, price=9.96 → deviation=-0.004 <= -0.003 → 买入
         results = _feed(s, [(9.96, 10.00)])
@@ -184,24 +192,32 @@ class TestOnTickDecisions:
     def test_flat_deviation_but_sell_pressure_blocks_buy(self) -> None:
         """价格低于 VWAP 够多，但卖盘压力 ob<block_threshold → 滤子拦截不买。"""
         s = VWAPReversionStrategy(
-            entry_threshold=0.003, use_order_book=True, ob_block_threshold=-0.3,
+            entry_threshold=0.003,
+            use_order_book=True,
+            ob_block_threshold=-0.3,
         )
         # bid1=100, ask1=300 → ob=(100-300)/400=-0.5 < -0.3 → 阻断
         results = _feed(
-            s, [(9.96, 10.00)],
-            bid_vol_1=100.0, ask_vol_1=300.0,
+            s,
+            [(9.96, 10.00)],
+            bid_vol_1=100.0,
+            ask_vol_1=300.0,
         )
         assert all(r == {} for r in results)
 
     def test_flat_deviation_with_neutral_order_book_buys(self) -> None:
         """价格低于 VWAP 够多，盘口中性（ob=0 >= block_threshold）→ 买入。"""
         s = VWAPReversionStrategy(
-            entry_threshold=0.003, use_order_book=True, ob_block_threshold=-0.3,
+            entry_threshold=0.003,
+            use_order_book=True,
+            ob_block_threshold=-0.3,
         )
         # bid1=100, ask1=100 → ob=0 >= -0.3 → 放行
         results = _feed(
-            s, [(9.96, 10.00)],
-            bid_vol_1=100.0, ask_vol_1=100.0,
+            s,
+            [(9.96, 10.00)],
+            bid_vol_1=100.0,
+            ask_vol_1=100.0,
         )
         buys = [r for r in results if r]
         assert len(buys) == 1
@@ -211,8 +227,10 @@ class TestOnTickDecisions:
         """关闭盘口滤子后，即使卖盘压力极大也凭偏离买入。"""
         s = VWAPReversionStrategy(entry_threshold=0.003, use_order_book=False)
         results = _feed(
-            s, [(9.96, 10.00)],
-            bid_vol_1=0.0, ask_vol_1=1000.0,  # 极端卖压
+            s,
+            [(9.96, 10.00)],
+            bid_vol_1=0.0,
+            ask_vol_1=1000.0,  # 极端卖压
         )
         buys = [r for r in results if r]
         assert len(buys) == 1
@@ -221,7 +239,9 @@ class TestOnTickDecisions:
     def test_long_below_vwap_holds(self) -> None:
         """long 态下价格仍低于 VWAP（deviation<exit_threshold）→ 持仓不变。"""
         s = VWAPReversionStrategy(
-            entry_threshold=0.003, exit_threshold=0.0, use_order_book=False,
+            entry_threshold=0.003,
+            exit_threshold=0.0,
+            use_order_book=False,
         )
         # 先买入进入 long 态（卖出价无关，本策略不记卖出价）
         _feed(s, [(9.96, 10.00)])
@@ -232,7 +252,9 @@ class TestOnTickDecisions:
     def test_long_reverts_to_vwap_sells(self) -> None:
         """long 态下价格回归到 VWAP（deviation>=exit_threshold）→ 卖出。"""
         s = VWAPReversionStrategy(
-            entry_threshold=0.003, exit_threshold=0.0, use_order_book=False,
+            entry_threshold=0.003,
+            exit_threshold=0.0,
+            use_order_book=False,
         )
         _feed(s, [(9.96, 10.00)])  # 买入进入 long
         # price=10.00, VWAP=10.00 → deviation=0.0 >= 0 → 卖出
@@ -244,7 +266,9 @@ class TestOnTickDecisions:
     def test_long_above_vwap_sells(self) -> None:
         """long 态下价格升破 VWAP（deviation>0 >= exit_threshold=0）→ 卖出。"""
         s = VWAPReversionStrategy(
-            entry_threshold=0.003, exit_threshold=0.0, use_order_book=False,
+            entry_threshold=0.003,
+            exit_threshold=0.0,
+            use_order_book=False,
         )
         _feed(s, [(9.96, 10.00)])  # 买入
         # price=10.02, VWAP=10.00 → deviation=+0.002 >= 0 → 卖出
@@ -256,7 +280,9 @@ class TestOnTickDecisions:
     def test_positive_exit_threshold_requires_above_vwap(self) -> None:
         """exit_threshold>0 时需价格升破 VWAP 足够幅度才卖。"""
         s = VWAPReversionStrategy(
-            entry_threshold=0.003, exit_threshold=0.002, use_order_book=False,
+            entry_threshold=0.003,
+            exit_threshold=0.002,
+            use_order_book=False,
         )
         _feed(s, [(9.96, 10.00)])  # 买入
         # price=10.01 → deviation=+0.001 < 0.002 → 不卖
@@ -278,8 +304,10 @@ class TestRoundTrip:
     def test_full_round_trip_flat_buy_sell_buy(self) -> None:
         """完整做 T：flat → 买入 → 卖出 → flat → 再买入。"""
         s = VWAPReversionStrategy(
-            entry_threshold=0.003, exit_threshold=0.0,
-            base_weight=1.0, use_order_book=False,
+            entry_threshold=0.003,
+            exit_threshold=0.0,
+            base_weight=1.0,
+            use_order_book=False,
         )
         # 阶段1：flat→买入（price 9.96 < VWAP 10.00，dev=-0.4%）
         r1 = _feed(s, [(9.96, 10.00)])
@@ -294,7 +322,9 @@ class TestRoundTrip:
     def test_multi_symbol_state_isolation(self) -> None:
         """多 symbol 状态独立：A 买入不影响 B。"""
         s = VWAPReversionStrategy(
-            entry_threshold=0.003, use_order_book=False, base_weight=0.9,
+            entry_threshold=0.003,
+            use_order_book=False,
+            base_weight=0.9,
         )
         ts = datetime(2026, 7, 31, 10, 0, 0)
         # A 触发买入

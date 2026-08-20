@@ -175,9 +175,7 @@ class IntradaySurgeFallStrategy(TickStrategyBase):
     # 状态转移
     # ------------------------------------------------------------------
 
-    def _maybe_sell(
-        self, sym: str, price: Decimal, tick: TickSnapshot
-    ) -> dict[str, float]:
+    def _maybe_sell(self, sym: str, price: Decimal, tick: TickSnapshot) -> dict[str, float]:
         """冲高回落 → 卖出（long→flat）。"""
         ws = self._window_stats(sym)
         if ws.baseline is None or ws.baseline <= 0 or ws.peak is None or ws.peak <= 0:
@@ -197,7 +195,10 @@ class IntradaySurgeFallStrategy(TickStrategyBase):
         self._sell_prices[sym] = price
         _logger.debug(
             "intraday-surge-fall: SELL %s price=%s surge=%.4f fall=%.4f",
-            sym, price, surge_pct, fall_pct,
+            sym,
+            price,
+            surge_pct,
+            fall_pct,
         )
         return {sym: 0.0}
 
@@ -215,7 +216,9 @@ class IntradaySurgeFallStrategy(TickStrategyBase):
         self._sell_prices.pop(sym, None)
         _logger.debug(
             "intraday-surge-fall: BUY %s price=%s dip=%.4f",
-            sym, price, dip_pct,
+            sym,
+            price,
+            dip_pct,
         )
         return {sym: self._base_weight}
 

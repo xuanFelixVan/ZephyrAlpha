@@ -947,9 +947,7 @@ class TestSizingBasis:
         """target_weight < 半 Kelly → strategy_intent（策略意愿更保守）。"""
         engine = PositionSizingEngine()
         # p=0.55,b=1.5 → f*=0.25 → 半Kelly=0.125；target=0.03 < 0.125 → 策略意愿 binding
-        sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5, target_weight=0.03, avg_daily_volume=1e8
-        )
+        sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, target_weight=0.03, avg_daily_volume=1e8)
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         tgt = plan.positions["000001.SZ"]
         assert tgt.sizing_basis == "strategy_intent"
@@ -970,9 +968,7 @@ class TestSizingBasis:
         engine = PositionSizingEngine()
         # 半Kelly=0.01 < 5% cap；VaR 0.03>0.025 → ×0.8 → var_cap binding
         sym = make_symbol(win_probability=0.51, win_loss_ratio=1.0, avg_daily_volume=1e8)
-        plan = engine.size(
-            make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, var_95=0.03)
-        )
+        plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, var_95=0.03))
         assert plan.positions["000001.SZ"].sizing_basis == "var_cap"
 
     def test_cvar_cap_binding(self) -> None:
@@ -1029,9 +1025,7 @@ class TestSizingBasis:
         """否决保持现仓路径（C6 参与率否决）→ sizing_basis 空串（非 sizing 裁决）。"""
         engine = PositionSizingEngine()
         # 参与率 = target_qty/adv：单票 5%×1e6/10 = 5000 股 / adv 10000 = 0.5 > 0.15 → 否决保持现仓
-        sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5, current_qty=100, avg_daily_volume=10000.0
-        )
+        sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, current_qty=100, avg_daily_volume=10000.0)
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         tgt = plan.positions["000001.SZ"]
         assert tgt.sizing_basis == ""

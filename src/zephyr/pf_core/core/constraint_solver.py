@@ -226,27 +226,19 @@ class ConstraintSolverConfig:
 
     def __post_init__(self) -> None:
         if self.max_iter < 1:
-            raise ConstraintViolationError(
-                f"max_iter must be >=1, got {self.max_iter}"
-            )
+            raise ConstraintViolationError(f"max_iter must be >=1, got {self.max_iter}")
         if self.tol <= 0:
             raise ConstraintViolationError(f"tol must be >0, got {self.tol}")
         if not 0 <= self.crowding_threshold <= 1:
-            raise ConstraintViolationError(
-                f"crowding_threshold must be in [0,1], got {self.crowding_threshold}"
-            )
+            raise ConstraintViolationError(f"crowding_threshold must be in [0,1], got {self.crowding_threshold}")
         if not 0 <= self.crowding_hard_threshold <= 1:
             raise ConstraintViolationError(
                 f"crowding_hard_threshold must be in [0,1], got {self.crowding_hard_threshold}"
             )
         if self.crowding_hard_threshold < self.crowding_threshold:
-            raise ConstraintViolationError(
-                "crowding_hard_threshold must be >= crowding_threshold"
-            )
+            raise ConstraintViolationError("crowding_hard_threshold must be >= crowding_threshold")
         if not 0 < self.crowding_scale <= 1:
-            raise ConstraintViolationError(
-                f"crowding_scale must be in (0,1], got {self.crowding_scale}"
-            )
+            raise ConstraintViolationError(f"crowding_scale must be in (0,1], got {self.crowding_scale}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -428,16 +420,12 @@ class ConstraintSolver:
 
             # C1: 行业绝对集中度 (CTR-003 max_sector_concentration)
             if sector_mapping:
-                w, v = self._project_sector_absolute(
-                    w, assets, sector_mapping, risk_limits
-                )
+                w, v = self._project_sector_absolute(w, assets, sector_mapping, risk_limits)
                 violations.extend(v)
 
             # C2: 行业相对偏移 (±sector_relative_deviation)
             if sector_mapping and benchmark_sector_weights:
-                w, v = self._project_sector_relative(
-                    w, assets, sector_mapping, benchmark_sector_weights
-                )
+                w, v = self._project_sector_relative(w, assets, sector_mapping, benchmark_sector_weights)
                 violations.extend(v)
 
             # C3: 市值暴露 (±max_market_cap_exposure_sigma)
@@ -480,9 +468,7 @@ class ConstraintSolver:
 
         iterations = iteration + 1 if not converged else iteration + 1
         if not converged:
-            logger.warning(
-                "Constraint solver did not converge after %d iterations", cfg.max_iter
-            )
+            logger.warning("Constraint solver did not converge after %d iterations", cfg.max_iter)
 
         final_sum = float(np.sum(w))
         scaling = original_sum / final_sum if final_sum > 0 else 1.0
@@ -629,17 +615,13 @@ class ConstraintSolver:
         if total <= 0:
             return w, violations
 
-        weighted_exp = sum(
-            w[i] * exposures.get(sym, 0.0) for i, sym in enumerate(assets)
-        ) / total
+        weighted_exp = sum(w[i] * exposures.get(sym, 0.0) for i, sym in enumerate(assets)) / total
         if abs(weighted_exp) > max_exp:
             # AI-NIGHT-001 #207：统一缩放仅当存在"不随缩锚"（反向或零暴露标的）时才能
             # 改变加权平均暴露（锚侧不动、同号侧缩放→均值移动）；全同号暴露场景分子
             # 分母同乘 scale、均值不变→迭代每轮重复缩放必致权重几何坍缩（实证 Σw→1e-6
             # 且 converged=True）。不可达场景标 infeasible 不缩放（fail-visible）。
-            has_anchor = any(
-                exposures.get(sym, 0.0) * weighted_exp <= 0 for sym in assets
-            )
+            has_anchor = any(exposures.get(sym, 0.0) * weighted_exp <= 0 for sym in assets)
             if not has_anchor:
                 violations.append(
                     ConstraintViolation(
@@ -686,9 +668,7 @@ class ConstraintSolver:
         max_corr = self._config.max_correlation
         n = len(assets)
         if corr.shape[0] != n or corr.shape[1] != n:
-            raise CorrelationGateFailure(
-                f"correlation_matrix shape {corr.shape} != ({n},{n})"
-            )
+            raise CorrelationGateFailure(f"correlation_matrix shape {corr.shape} != ({n},{n})")
 
         for i in range(n):
             for j in range(i + 1, n):
@@ -732,15 +712,11 @@ class ConstraintSolver:
         if total <= 0:
             return w, violations
 
-        weighted_exp = sum(
-            w[i] * exposures.get(sym, 0.0) for i, sym in enumerate(assets)
-        ) / total
+        weighted_exp = sum(w[i] * exposures.get(sym, 0.0) for i, sym in enumerate(assets)) / total
         if abs(weighted_exp) > max_exp:
             # AI-NIGHT-001 #207：同 C3——全同号风格暴露下统一缩放数学无效，
             # 迭代重复缩放必坍缩；标 infeasible 不缩放（fail-visible）。
-            has_anchor = any(
-                exposures.get(sym, 0.0) * weighted_exp <= 0 for sym in assets
-            )
+            has_anchor = any(exposures.get(sym, 0.0) * weighted_exp <= 0 for sym in assets)
             if not has_anchor:
                 violations.append(
                     ConstraintViolation(
@@ -828,9 +804,7 @@ class ConstraintSolver:
                     )
         return w, violations
 
-    def _project_leverage(
-        self, w: np.ndarray, risk_limits: RiskLimits
-    ) -> tuple[np.ndarray, list[ConstraintViolation]]:
+    def _project_leverage(self, w: np.ndarray, risk_limits: RiskLimits) -> tuple[np.ndarray, list[ConstraintViolation]]:
         """杠杆约束: Σw ≤ max_gross_leverage。"""
         violations: list[ConstraintViolation] = []
         total = float(np.sum(w))
@@ -866,22 +840,16 @@ class ConstraintSolver:
             if assets is None:
                 assets = [f"asset_{i}" for i in range(len(w))]
             if len(assets) != len(w):
-                raise ConstraintViolationError(
-                    f"assets count ({len(assets)}) != weights length ({len(w)})"
-                )
+                raise ConstraintViolationError(f"assets count ({len(assets)}) != weights length ({len(w)})")
         if len(w) == 0:
             raise ConstraintViolationError("weights cannot be empty")
         # AI-NIGHT-001 #208-②：NaN/Inf 权重原静默通过（np.any(w<0) 对 NaN 为 False），
         # NaN 进入迭代投影污染全组合。H 级安全模块 fail-closed——非有限输入与
         # 空/负权重同口径直接 raise。
         if not np.all(np.isfinite(w)):
-            raise ConstraintViolationError(
-                f"weights must be finite (no NaN/Inf), got {w}"
-            )
+            raise ConstraintViolationError(f"weights must be finite (no NaN/Inf), got {w}")
         if np.any(w < 0):
-            raise ConstraintViolationError(
-                f"weights must be non-negative (long-only), got {w}"
-            )
+            raise ConstraintViolationError(f"weights must be non-negative (long-only), got {w}")
         return assets, w
 
     @staticmethod

@@ -36,6 +36,7 @@ news_data 几乎全部热分区、technical_indicator 全热窗口约 1.7x 物�
   - 表清单自发现（system.tables 查 ReplacingMergeTree，无硬编码 SSoT 漂移）
   - 仅含 YYYYMM 月份段的分区才纳入（非时间分区跳过并记日志）
 """
+
 from __future__ import annotations
 
 import argparse
@@ -153,7 +154,9 @@ def optimize_partition(table: str, partition: str, dry_run: bool = False) -> boo
         return False
 
 
-def optimize_table(table: str, from_yyyymm: str | None, to_yyyymm: str | None, dry_run: bool = False) -> tuple[int, int]:
+def optimize_table(
+    table: str, from_yyyymm: str | None, to_yyyymm: str | None, dry_run: bool = False
+) -> tuple[int, int]:
     """表级批量 OPTIMIZE，返回 (成功, 失败)。"""
     partitions = list_partitions(table, from_yyyymm, to_yyyymm)
     log.info("=== %s: %d 个分区待 OPTIMIZE ===", table, len(partitions))

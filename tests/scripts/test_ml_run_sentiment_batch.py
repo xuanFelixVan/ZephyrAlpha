@@ -9,6 +9,7 @@
   4. write_daily —— 日级产物落盘字段（negative_count/vote_score）
   5. main 守卫 —— jsonl 源缺 --input  exit 1
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -20,7 +21,8 @@ import pytest
 
 _ROOT = pathlib.Path(__file__).resolve().parents[2]
 _spec = importlib.util.spec_from_file_location(
-    "run_sentiment_batch", _ROOT / "scripts" / "ml" / "run_sentiment_batch.py",
+    "run_sentiment_batch",
+    _ROOT / "scripts" / "ml" / "run_sentiment_batch.py",
 )
 rsb = importlib.util.module_from_spec(_spec)
 sys.modules["run_sentiment_batch"] = rsb  # dataclass 字符串注解解析需模块在册
@@ -124,7 +126,7 @@ class TestAggregateFromPredictions:
         assert [d.day for d in daily] == ["2026-08-18", "2026-08-19"]
         assert daily[0].negative_count == 2
         assert daily[0].vote_strength == "strong"  # 两源同向
-        assert daily[1].vote_strength == "weak"    # 单源孤证
+        assert daily[1].vote_strength == "weak"  # 单源孤证
 
     def test_missing_file_returns_empty(self, tmp_path):
         assert rsb.aggregate_from_predictions(tmp_path / "nope.jsonl") == []
@@ -158,7 +160,8 @@ class TestWriteDaily:
 class TestMainGuards:
     def test_jsonl_source_missing_input_exits_1(self, monkeypatch, tmp_path):
         monkeypatch.setattr(
-            rsb.sys, "argv",
+            rsb.sys,
+            "argv",
             ["run_sentiment_batch.py", "--source", "jsonl", "--input", str(tmp_path / "nope.jsonl")],
         )
         with pytest.raises(SystemExit) as exc:

@@ -44,7 +44,6 @@ class CanaryRegister:
         """写入：canaries（Stage 4 公共化）。"""
         self._canaries = value
 
-
     def register(self, function_name: str, module: str, stage: str = "active") -> None:
         self._canaries.append(
             {

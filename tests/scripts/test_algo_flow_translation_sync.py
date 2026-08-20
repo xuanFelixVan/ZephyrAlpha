@@ -21,6 +21,7 @@
 4. _validated_write：YAML 损坏→抛异常不写文件（ERROR_CONTRACT）
 5. _sync_mtr_algo_submodules 端到端（monkeypatch _MTR）：人工段零漂移
 """
+
 from __future__ import annotations
 
 import sys
@@ -72,16 +73,25 @@ class TestReplaceTopLevelSection:
         import yaml
 
         new_section = yaml.safe_dump(
-            {"algo_submodules": [{"module_path": "src/zephyr/new.py", "module_id": "MOD-NEW",
-                                  "node_id": "A1", "name_zh": "新节点", "name_en": "new_node",
-                                  "plain_zh": "新解释"}]},
-            allow_unicode=True, sort_keys=False, width=120,
+            {
+                "algo_submodules": [
+                    {
+                        "module_path": "src/zephyr/new.py",
+                        "module_id": "MOD-NEW",
+                        "node_id": "A1",
+                        "name_zh": "新节点",
+                        "name_en": "new_node",
+                        "plain_zh": "新解释",
+                    }
+                ]
+            },
+            allow_unicode=True,
+            sort_keys=False,
+            width=120,
         )
         out = _replace_top_level_section(_SYNTHETIC_MTR, "algo_submodules", new_section)
         head = out.split("algo_submodules:", 1)[0]
-        assert head == _SYNTHETIC_MTR.split("algo_submodules:", 1)[0], (
-            "人工段（含引号/空串/折行）必须字节级原样"
-        )
+        assert head == _SYNTHETIC_MTR.split("algo_submodules:", 1)[0], "人工段（含引号/空串/折行）必须字节级原样"
         assert "MOD-NEW" in out and "MOD-OLD" not in out
         yaml.safe_load(out)  # 产物可解析
 
@@ -89,10 +99,17 @@ class TestReplaceTopLevelSection:
         """幂等：同内容二次替换零 diff（dump 同参数确定性）。"""
         import yaml
 
-        entries = [{"module_path": "a.py", "module_id": "M", "node_id": "A1",
-                    "name_zh": "甲", "name_en": "a", "plain_zh": "乙"}]
-        section = yaml.safe_dump({"algo_submodules": entries},
-                                 allow_unicode=True, sort_keys=False, width=120)
+        entries = [
+            {
+                "module_path": "a.py",
+                "module_id": "M",
+                "node_id": "A1",
+                "name_zh": "甲",
+                "name_en": "a",
+                "plain_zh": "乙",
+            }
+        ]
+        section = yaml.safe_dump({"algo_submodules": entries}, allow_unicode=True, sort_keys=False, width=120)
         once = _replace_top_level_section(_SYNTHETIC_MTR, "algo_submodules", section)
         twice = _replace_top_level_section(once, "algo_submodules", section)
         assert once == twice
@@ -125,13 +142,15 @@ factors:
         """空字段就地回填；已有值不覆盖（只填空铁律）；其余行字节不动。"""
         new_text, counts = _fill_factor_fields_textual(
             self._REG,
-            {("FCT-TEST-001", "name_zh"): "新名字",
-             ("FCT-TEST-001", "alpha_source"): "新来源",
-             ("FCT-TEST-002", "name_zh"): "不应覆盖"},
+            {
+                ("FCT-TEST-001", "name_zh"): "新名字",
+                ("FCT-TEST-001", "alpha_source"): "新来源",
+                ("FCT-TEST-002", "name_zh"): "不应覆盖",
+            },
         )
         assert counts == {"name_zh": 1, "alpha_source": 1}
-        assert 'name_zh: 新名字' in new_text
-        assert 'alpha_source: 新来源' in new_text
+        assert "name_zh: 新名字" in new_text
+        assert "alpha_source: 新来源" in new_text
         assert '"已有中文名"' in new_text, "非空字段不得覆盖"
         assert "  other: 不动我\n" in new_text
         # 未触及行字节级原样
@@ -139,16 +158,14 @@ factors:
 
     def test_missing_field_line_inserted(self) -> None:
         """字段行缺失 → 条目块内插入。"""
-        reg = "factors:\n- factor_id: \"FCT-X-001\"\n  weight: 1\n"
+        reg = 'factors:\n- factor_id: "FCT-X-001"\n  weight: 1\n'
         new_text, counts = _fill_factor_fields_textual(reg, {("FCT-X-001", "name_zh"): "插入名"})
         assert counts == {"name_zh": 1}
         assert '- factor_id: "FCT-X-001"\n  name_zh: 插入名\n' in new_text
 
     def test_unknown_factor_skipped(self) -> None:
         """条目不存在 → 跳过不计数，文本零变化。"""
-        new_text, counts = _fill_factor_fields_textual(
-            self._REG, {("FCT-NOPE-999", "name_zh"): "x"}
-        )
+        new_text, counts = _fill_factor_fields_textual(self._REG, {("FCT-NOPE-999", "name_zh"): "x"})
         assert counts == {} and new_text == self._REG
 
 
@@ -172,10 +189,18 @@ class TestSyncMtrEndToEnd:
         mtr = tmp_path / "mtr.yaml"
         mtr.write_text(_SYNTHETIC_MTR, encoding="utf-8")
         monkeypatch.setattr(m, "_MTR", mtr)
-        r = m._sync_mtr_algo_submodules([{
-            "module_path": "src/zephyr/new.py", "module_id": "MOD-NEW", "node_id": "A9",
-            "name_zh": "新节点", "name_en": "new_node", "intro": "新解释",
-        }])
+        r = m._sync_mtr_algo_submodules(
+            [
+                {
+                    "module_path": "src/zephyr/new.py",
+                    "module_id": "MOD-NEW",
+                    "node_id": "A9",
+                    "name_zh": "新节点",
+                    "name_en": "new_node",
+                    "intro": "新解释",
+                }
+            ]
+        )
         assert r == {"algo_submodules": 1}
         out = mtr.read_text(encoding="utf-8")
         assert out.split("algo_submodules:", 1)[0] == _SYNTHETIC_MTR.split("algo_submodules:", 1)[0], (

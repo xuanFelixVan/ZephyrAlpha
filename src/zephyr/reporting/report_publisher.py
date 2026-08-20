@@ -216,10 +216,7 @@ def _compute_record_hash(
     prev_hash: str,
 ) -> str:
     """计算哈希链指纹——SHA-256(链指纹)。"""
-    raw = (
-        f"{archive_id}|{archived_at.isoformat()}|{report_id}|{source}"
-        f"|{report_type}|{content_hash}|{prev_hash}"
-    )
+    raw = f"{archive_id}|{archived_at.isoformat()}|{report_id}|{source}|{report_type}|{content_hash}|{prev_hash}"
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
@@ -282,7 +279,9 @@ def _distribute(
                 error_message = f"{type(exc).__name__}: {exc}"
                 _logger.warning(
                     "distribute sender 异常: channel=%s archive_id=%s error=%s",
-                    channel.value, archived.archive_id, error_message,
+                    channel.value,
+                    archived.archive_id,
+                    error_message,
                 )
 
     return DistributionRecord(
@@ -373,8 +372,13 @@ class ReportPublisher:
             prev_hash = self._archive[-1].record_hash if self._archive else ""
 
             record_hash = _compute_record_hash(
-                archive_id, archived_at, report_id, source.value,
-                report_type, content_hash, prev_hash,
+                archive_id,
+                archived_at,
+                report_id,
+                source.value,
+                report_type,
+                content_hash,
+                prev_hash,
             )
 
             archived = ArchivedReport(
@@ -394,14 +398,16 @@ class ReportPublisher:
             self._archive_by_id[archive_id] = archived
 
             # 执行分发（WEBHOOK/EMAIL 经注入 sender 实发，未注入维持 PENDING）
-            dist_records = [
-                _distribute(archived, ch, self._senders.get(ch)) for ch in channels
-            ]
+            dist_records = [_distribute(archived, ch, self._senders.get(ch)) for ch in channels]
             self._distributions[archive_id] = dist_records
 
         _logger.debug(
             "publish: report_id=%s source=%s type=%s archive_id=%s channels=%d",
-            report_id, source.value, report_type, archive_id, len(channels),
+            report_id,
+            source.value,
+            report_type,
+            archive_id,
+            len(channels),
         )
         return archived
 
@@ -463,8 +469,13 @@ class ReportPublisher:
                     return False
                 # 3. 校验 record_hash
                 actual_record_hash = _compute_record_hash(
-                    r.archive_id, r.archived_at, r.report_id, r.source.value,
-                    r.report_type, r.content_hash, r.prev_hash,
+                    r.archive_id,
+                    r.archived_at,
+                    r.report_id,
+                    r.source.value,
+                    r.report_type,
+                    r.content_hash,
+                    r.prev_hash,
                 )
                 if actual_record_hash != r.record_hash:
                     _logger.warning(

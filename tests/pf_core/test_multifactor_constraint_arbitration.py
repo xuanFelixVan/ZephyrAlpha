@@ -7,6 +7,7 @@
 - arbitrate: 无违反/仅软违反/硬违反可缩/硬违反不可缩 四分支
 - build_multifactor_risk_limits: CTR-003 注入参数
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -77,7 +78,7 @@ class TestBuildRiskLimits:
             as_of_date=datetime(2026, 8, 20, tzinfo=timezone.utc),
             idempotency_key="test-key",
         )
-        assert rl.max_single_position == 0.02   # C1
+        assert rl.max_single_position == 0.02  # C1
         assert rl.max_sector_concentration == 0.05  # C2 严于默认 0.30
         assert rl.max_gross_leverage == 1.0
 

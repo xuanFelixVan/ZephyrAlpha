@@ -179,9 +179,9 @@ logger = logging.getLogger(__name__)
 class OptimizationMethod(str, Enum):
     """组合优化方法 (风险预算为主选)。"""
 
-    RISK_BUDGET = "risk_budget"      # 风险预算 (主选, 复用 RK-08)
+    RISK_BUDGET = "risk_budget"  # 风险预算 (主选, 复用 RK-08)
     MEAN_VARIANCE = "mean_variance"  # 均值方差 (备选)
-    EQUAL_WEIGHT = "equal_weight"    # 等权 (fallback)
+    EQUAL_WEIGHT = "equal_weight"  # 等权 (fallback)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -226,17 +226,11 @@ class OptimizerConfig:
 
     def __post_init__(self) -> None:
         if not 0 < self.kelly_fraction <= 1:
-            raise InvalidOptimizationInputError(
-                f"kelly_fraction must be in (0,1], got {self.kelly_fraction}"
-            )
+            raise InvalidOptimizationInputError(f"kelly_fraction must be in (0,1], got {self.kelly_fraction}")
         if self.risk_aversion <= 0:
-            raise InvalidOptimizationInputError(
-                f"risk_aversion must be >0, got {self.risk_aversion}"
-            )
+            raise InvalidOptimizationInputError(f"risk_aversion must be >0, got {self.risk_aversion}")
         if self.drift_threshold <= 0:
-            raise InvalidOptimizationInputError(
-                f"drift_threshold must be >0, got {self.drift_threshold}"
-            )
+            raise InvalidOptimizationInputError(f"drift_threshold must be >0, got {self.drift_threshold}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -367,29 +361,18 @@ class PortfolioOptimizer:
         current_weights = current_weights or {}
 
         # 输入校验
-        assets, candidate_arr = self._validate_inputs(
-            candidate_weights, covariance, assets, expected_returns
-        )
+        assets, candidate_arr = self._validate_inputs(candidate_weights, covariance, assets, expected_returns)
 
         # 1. 优化方法计算基础权重
-        base_weights = self._compute_base_weights(
-            method, candidate_arr, covariance, expected_returns, assets
-        )
+        base_weights = self._compute_base_weights(method, candidate_arr, covariance, expected_returns, assets)
 
         # 2. Kelly 截断 (只减不增)
         kelly_applied = False
-        if (
-            self._config.kelly_cap_enabled
-            and expected_returns is not None
-        ):
-            base_weights, kelly_applied = self._apply_kelly_cap(
-                base_weights, expected_returns, covariance
-            )
+        if self._config.kelly_cap_enabled and expected_returns is not None:
+            base_weights, kelly_applied = self._apply_kelly_cap(base_weights, expected_returns, covariance)
 
         # 转回 dict 用于约束求解
-        pre_constraint = {
-            assets[i]: float(base_weights[i]) for i in range(len(assets))
-        }
+        pre_constraint = {assets[i]: float(base_weights[i]) for i in range(len(assets))}
 
         # 3. 约束求解 (PC-04 强制 CTR-003)
         constraint_result = self._constraint_solver.solve(
@@ -400,11 +383,7 @@ class PortfolioOptimizer:
         post_weights = constraint_result.weights
 
         # 4. 构建 target_weights dict (只保留非零)
-        target_weights = {
-            assets[i]: float(post_weights[i])
-            for i in range(len(assets))
-            if post_weights[i] > 1e-9
-        }
+        target_weights = {assets[i]: float(post_weights[i]) for i in range(len(assets)) if post_weights[i] > 1e-9}
 
         # 5. 计算 drift_pct (加权漂移)
         drift_pct = self._compute_drift(target_weights, current_weights, assets)
@@ -462,9 +441,7 @@ class PortfolioOptimizer:
             return self._equal_weights(len(assets))
         raise InvalidOptimizationInputError(f"unknown method: {method}")
 
-    def _risk_budget_weights(
-        self, candidate: np.ndarray, cov: np.ndarray, assets: list[str]
-    ) -> np.ndarray:
+    def _risk_budget_weights(self, candidate: np.ndarray, cov: np.ndarray, assets: list[str]) -> np.ndarray:
         """风险预算: 候选权重作风险预算目标 (复用 RK-08)。"""
         # 候选权重作预算目标 (须全正, 自动归一化)
         budgets = np.where(candidate > 0, candidate, 1e-6)
@@ -479,9 +456,7 @@ class PortfolioOptimizer:
             logger.warning("risk_budget optimization failed (%s), fallback to equal_weight", exc)
             return self._equal_weights(len(assets))
 
-    def _mean_variance_weights(
-        self, cov: np.ndarray, expected_returns: np.ndarray | None
-    ) -> np.ndarray:
+    def _mean_variance_weights(self, cov: np.ndarray, expected_returns: np.ndarray | None) -> np.ndarray:
         """均值方差: w ∝ Σ^-1 μ (max Sharpe 近似), 归一化 long-only。"""
         if expected_returns is None:
             logger.warning("mean_variance needs expected_returns, fallback to equal_weight")
@@ -558,27 +533,19 @@ class PortfolioOptimizer:
         cov = np.asarray(covariance, dtype=float)
         n = len(assets)
         if cov.shape != (n, n):
-            raise InvalidOptimizationInputError(
-                f"covariance shape {cov.shape} != ({n},{n})"
-            )
+            raise InvalidOptimizationInputError(f"covariance shape {cov.shape} != ({n},{n})")
         # 协方差对角线非负
         if np.any(np.diag(cov) < 0):
             raise InvalidOptimizationInputError("covariance diagonal must be non-negative")
         # 候选权重对齐 assets
-        candidate_arr = np.array(
-            [float(candidate_weights.get(a, 0.0)) for a in assets], dtype=float
-        )
+        candidate_arr = np.array([float(candidate_weights.get(a, 0.0)) for a in assets], dtype=float)
         if np.any(candidate_arr < 0):
-            raise InvalidOptimizationInputError(
-                "candidate_weights must be non-negative (long-only)"
-            )
+            raise InvalidOptimizationInputError("candidate_weights must be non-negative (long-only)")
         # 期望收益维度
         if expected_returns is not None:
             er = np.asarray(expected_returns, dtype=float)
             if er.shape != (n,):
-                raise InvalidOptimizationInputError(
-                    f"expected_returns shape {er.shape} != ({n},)"
-                )
+                raise InvalidOptimizationInputError(f"expected_returns shape {er.shape} != ({n},)")
         return assets, candidate_arr
 
     @staticmethod
