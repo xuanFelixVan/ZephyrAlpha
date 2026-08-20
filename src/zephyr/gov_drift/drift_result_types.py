@@ -46,6 +46,7 @@ logger = logging.getLogger(__name__)
 
 # ── §6.2 Semantic Drift ─────────────────────────────────────
 
+
 @dataclass
 class SemanticDriftResult:
     """语义漂移检测结果（§6.2）。
@@ -79,6 +80,7 @@ class SemanticDriftResult:
     drift_detected: bool = False
 
     detail: str = ""
+
 
 def detect_concept_cardinality(yaml_a_path: str, yaml_b_path: str, key_path: str) -> SemanticDriftResult:
     """检测概念基数漂移 — 对比两 YAML 在 key_path 下的条目数。
@@ -126,6 +128,7 @@ def detect_concept_cardinality(yaml_a_path: str, yaml_b_path: str, key_path: str
     result.detail = f"A:{count_a} vs B:{count_b} at {key_path}"
 
     return result
+
 
 def detect_enum_value_sync(yaml_a_path: str, yaml_b_path: str, field_path: str) -> SemanticDriftResult:
     """检测枚举值同步 — 对比两 YAML 在 field_path 下的枚举集合是否一致。
@@ -177,6 +180,7 @@ def detect_enum_value_sync(yaml_a_path: str, yaml_b_path: str, field_path: str) 
     result.drift_detected = va != vb
 
     return result
+
 
 def detect_ownership_consistency(paths: list[str], owner_field: str = "owner") -> list[SemanticDriftResult]:
     """检测所有权一致性 — 同一文件在被多次读取期间 owner 字段是否漂移。
@@ -232,6 +236,7 @@ def detect_ownership_consistency(paths: list[str], owner_field: str = "owner") -
 
     return results
 
+
 def _count_entries(data: dict[str, object], key_path: str) -> int:
     v = _get_field(data, key_path)
 
@@ -239,6 +244,7 @@ def _count_entries(data: dict[str, object], key_path: str) -> int:
         return len(v)
 
     return 0
+
 
 def _get_field(data: dict[str, object], path: str) -> object | None:
     c: object = data
@@ -252,7 +258,9 @@ def _get_field(data: dict[str, object], path: str) -> object | None:
 
     return c
 
+
 # ── §6.3 DB Schema Drift ─────────────────────────────────────
+
 
 @dataclass
 class DBSchemaDriftResult:
@@ -277,6 +285,7 @@ class DBSchemaDriftResult:
     orm_vs_migration_drifts: list[dict[str, object]] = field(default_factory=list)
 
     index_inconsistencies: list[dict[str, object]] = field(default_factory=list)
+
 
 def _parse_orm_models(orm_model_files: list[Path]) -> dict[str, set[str]]:
     """解析 ORM 模型文件，提取 表名 -> 字段集合 映射。"""
@@ -312,6 +321,7 @@ def _parse_orm_models(orm_model_files: list[Path]) -> dict[str, set[str]]:
             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
     return orm_tables
+
 
 def _scan_db_schema_files(db_files: list[Path], orm_tables: dict[str, set[str]]) -> list[DriftEvent]:
     """扫描 DB 文件，对比实际 schema 与 ORM 模型，返回 schema 不匹配事件。"""
@@ -364,6 +374,7 @@ def _scan_db_schema_files(db_files: list[Path], orm_tables: dict[str, set[str]])
                     logger.warning("conn close failed (%s: %s)", type(e).__name__, e, exc_info=True)
     return events
 
+
 def _scan_migration_dirs(migration_dirs: list[Path], orm_tables: dict[str, set[str]]) -> list[DriftEvent]:
     """扫描迁移目录，检查 ORM 表是否在最新迁移脚本中声明。"""
     events: list[DriftEvent] = []
@@ -397,6 +408,7 @@ def _scan_migration_dirs(migration_dirs: list[Path], orm_tables: dict[str, set[s
             continue
     return events
 
+
 def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
     """检测 DB Schema 三方对账漂移 — SQLite 实际 schema vs ORM 模型 vs 迁移脚本。
 
@@ -427,7 +439,9 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
     events.extend(_scan_migration_dirs(migration_dirs, orm_tables))
     return events
 
+
 # ── §6.4 Dep Version Drift ──────────────────────────────────
+
 
 @dataclass
 class DepVersionDriftResult:
@@ -453,6 +467,7 @@ class DepVersionDriftResult:
 
     extra_in_requirements: list[str] = field(default_factory=list)
 
+
 def _find_requirements_file(project_root: str) -> Path | None:
     """Locate ``requirements.txt``; fall back to glob search when absent at root."""
     req_file = Path(project_root) / "requirements.txt"
@@ -460,6 +475,7 @@ def _find_requirements_file(project_root: str) -> Path | None:
         candidates = list(Path(project_root).glob("**/requirements*.txt"))
         req_file = candidates[0] if candidates else None
     return req_file
+
 
 def _parse_requirements(req_file: Path) -> dict[str, str] | None:
     """Parse ``requirements.txt`` into ``{package: constraint}``; ``None`` on failure."""
@@ -477,6 +493,7 @@ def _parse_requirements(req_file: Path) -> dict[str, str] | None:
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
     return defined
+
 
 def _get_installed_packages() -> dict[str, str] | None:
     """Return ``{package: version}`` via ``pip freeze``; ``None`` on failure."""
@@ -498,6 +515,7 @@ def _get_installed_packages() -> dict[str, str] | None:
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
     return installed
+
 
 def detect_dep_version_drift(project_root: str) -> list[DriftEvent]:
     """检测依赖版本漂移 — ``requirements.txt`` vs ``pip freeze`` 三方对账。
@@ -585,6 +603,7 @@ def detect_dep_version_drift(project_root: str) -> list[DriftEvent]:
 
     return events
 
+
 # ── §6.5 Security Policy Drift ──────────────────────────────
 
 _SECRET_PATTERNS: list[tuple[str, str]] = [
@@ -626,6 +645,7 @@ _AUTH_KEYWORDS: list[str] = [
     "jwt_required",
 ]
 
+
 @dataclass
 class SecurityPolicyDriftResult:
     """安全策略漂移结果（§6.5）。
@@ -649,6 +669,7 @@ class SecurityPolicyDriftResult:
     auth_middleware_gaps: list[str] = field(default_factory=list)
 
     secrets_found: list[str] = field(default_factory=list)
+
 
 def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
     """检测安全策略漂移 — 端点安全检查与密钥泄露扫描。
@@ -776,7 +797,9 @@ def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
 
     return events
 
+
 # ── §6.6 Doc-Code Coevolution Drift ────────────────────────
+
 
 @dataclass
 class DocCodeCoevolutionResult:
@@ -798,6 +821,7 @@ class DocCodeCoevolutionResult:
 
     interface_drifts: list[dict[str, str]] = field(default_factory=list)
 
+
 def _find_related_code_files(bp: Path, code_files: list[Path]) -> list[Path]:
     """查找与蓝图相关的代码文件：路径前缀匹配 >=3 段，否则回退到名称关键字匹配。"""
     bp_dir_parts = list(bp.parent.parts)
@@ -813,6 +837,7 @@ def _find_related_code_files(bp: Path, code_files: list[Path]) -> list[Path]:
             if bp_name_key in str(cf).lower():
                 related_code.append(cf)
     return related_code
+
 
 def _detect_temporal_drift(blueprint_files: list[Path], code_files: list[Path], seven_days: float) -> list[DriftEvent]:
     """检测时序漂移：代码文件 mtime 比对应蓝图晚 >7 天则视为蓝图过期。"""
@@ -850,6 +875,7 @@ def _detect_temporal_drift(blueprint_files: list[Path], code_files: list[Path], 
                 logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
                 continue
     return events
+
 
 def _detect_interface_drift(blueprint_files: list[Path], code_files: list[Path]) -> list[DriftEvent]:
     """检测接口漂移：蓝图中声明的函数签名在代码中找不到定义。"""
@@ -897,6 +923,7 @@ def _detect_interface_drift(blueprint_files: list[Path], code_files: list[Path])
                     )
     return events
 
+
 def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
     """检测文档-代码共演化漂移 — 蓝图与代码的双向同步检查。
 
@@ -934,7 +961,9 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
     events.extend(_detect_interface_drift(blueprint_files, code_files))
     return events
 
+
 # ── §6.7 Test Coverage Drift ────────────────────────────────
+
 
 @dataclass
 class TestCoverageDriftResult:
@@ -955,6 +984,7 @@ class TestCoverageDriftResult:
     module_coverage_ratio: dict[str, float] = field(default_factory=dict)
 
     degradation_warnings: list[str] = field(default_factory=list)
+
 
 def detect_test_coverage_drift(project_root: str) -> list[DriftEvent]:
     """检测测试覆盖漂移 — 模块级 test/src 行数比低于 30% 阈值即告警。
@@ -1044,7 +1074,9 @@ def detect_test_coverage_drift(project_root: str) -> list[DriftEvent]:
 
     return events
 
+
 # ── §6.10 Knowledge Graph Sync ──────────────────────────────
+
 
 @dataclass
 class KnowledgeGraphSyncResult:
@@ -1069,6 +1101,7 @@ class KnowledgeGraphSyncResult:
     relations_created: int = 0
 
     orphans_found: int = 0
+
 
 def detect_knowledge_graph_sync(
     project_root: str,

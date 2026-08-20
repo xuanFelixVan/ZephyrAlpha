@@ -46,12 +46,14 @@ def make_runs(n: int = 5, **param_overrides) -> list[ParamRun]:
     for i in range(n):
         params = {"fast": 5 + i * 5, "slow": 20}
         params.update(param_overrides)
-        runs.append(ParamRun(
-            params=params,
-            objective=1.0 + i * 0.1,
-            in_sample=1.5 + i * 0.1,
-            out_of_sample=1.0 + i * 0.05,
-        ))
+        runs.append(
+            ParamRun(
+                params=params,
+                objective=1.0 + i * 0.1,
+                in_sample=1.5 + i * 0.1,
+                out_of_sample=1.0 + i * 0.05,
+            )
+        )
     return runs
 
 
@@ -255,10 +257,7 @@ class TestStability:
     def test_stable_results(self):
         """top_n 结果 CV 很小 → 稳定。"""
         analyzer = ParameterAnalyzer(ParamAnalysisConfig(top_n=3, stability_cv_threshold=0.1))
-        runs = [
-            ParamRun(params={"p": i}, objective=1.00 + i * 0.001)
-            for i in range(5)
-        ]
+        runs = [ParamRun(params={"p": i}, objective=1.00 + i * 0.001) for i in range(5)]
         report = analyzer.analyze(runs)
         assert report.stability is not None
         assert report.stability.is_stable is True
@@ -267,10 +266,7 @@ class TestStability:
     def test_unstable_results(self):
         """top_n 结果 CV 很大 → 不稳定。"""
         analyzer = ParameterAnalyzer(ParamAnalysisConfig(top_n=3, stability_cv_threshold=0.05))
-        runs = [
-            ParamRun(params={"p": i}, objective=1.0 + i * 1.0)
-            for i in range(5)
-        ]
+        runs = [ParamRun(params={"p": i}, objective=1.0 + i * 1.0) for i in range(5)]
         report = analyzer.analyze(runs)
         assert report.stability is not None
         assert report.stability.is_stable is False
@@ -336,12 +332,14 @@ class TestConfigReadonly:
 
 class TestIntegration:
     def test_full_analysis(self):
-        analyzer = ParameterAnalyzer(ParamAnalysisConfig(
-            sensitivity_threshold=0.3,
-            overfit_threshold=0.4,
-            stability_cv_threshold=0.15,
-            top_n=3,
-        ))
+        analyzer = ParameterAnalyzer(
+            ParamAnalysisConfig(
+                sensitivity_threshold=0.3,
+                overfit_threshold=0.4,
+                stability_cv_threshold=0.15,
+                top_n=3,
+            )
+        )
         runs = [
             ParamRun(params={"fast": 5, "slow": 20}, objective=1.5, in_sample=2.0, out_of_sample=1.2),
             ParamRun(params={"fast": 5, "slow": 30}, objective=1.4, in_sample=1.9, out_of_sample=1.1),

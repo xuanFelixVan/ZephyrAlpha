@@ -231,9 +231,7 @@ def load_entry_var(store: JsonStateStore) -> float | None:
     return float(data["var_95"])
 
 
-def save_attribution_result(
-    store: JsonStateStore, trade_date: date, attribution: Mapping[str, Any]
-) -> None:
+def save_attribution_result(store: JsonStateStore, trade_date: date, attribution: Mapping[str, Any]) -> None:
     """保存归因结果（§3.18 阶段 4c，供次日盘前加载参考）。"""
     store.save(
         ATTRIBUTION_NAMESPACE,
@@ -250,9 +248,7 @@ def load_attribution_result(store: JsonStateStore) -> dict[str, Any] | None:
     return dict(result) if isinstance(result, Mapping) else None
 
 
-def save_strategy_state(
-    store: JsonStateStore, trade_date: date, holdings: Mapping[str, Any]
-) -> None:
+def save_strategy_state(store: JsonStateStore, trade_date: date, holdings: Mapping[str, Any]) -> None:
     """保存策略目标持仓快照（§3.18 阶段 4d，次日 Ghost 检测基准）。"""
     store.save(
         STRATEGY_STATE_NAMESPACE,
@@ -371,7 +367,9 @@ def premarket_initialization(
         # 历史不足 → 保守冷启动（§3.15）：强制 conservative cap + 审计标记
         _logger.warning(
             "COLD_START_INSUFFICIENT_HISTORY available=%d required=%d cap=%.2f",
-            len(nav_history), min_history, conservative_cap,
+            len(nav_history),
+            min_history,
+            conservative_cap,
         )
     entry_var = load_entry_var(store)
     prev_attribution = load_attribution_result(store)
@@ -448,7 +446,8 @@ def postmarket_persist(
     if not audit_passed:
         _logger.warning(
             "POSTMARKET_PERSIST_SKIPPED date=%s reason=%s",
-            trade_date, audit_failure_reason,
+            trade_date,
+            audit_failure_reason,
         )
         mark_persistable(store, trade_date, STATUS_AUDIT_FAILED_SKIP)
         peak = load_peak_nav(store)
@@ -471,7 +470,9 @@ def postmarket_persist(
     is_new_high = old_peak is None or new_peak > old_peak
     _logger.info(
         "POSTMARKET_PEAK_UPDATE old=%s new=%s is_new_high=%s",
-        old_peak, new_peak, is_new_high,
+        old_peak,
+        new_peak,
+        is_new_high,
     )
 
     # ── 阶段 3 状态机快照（§3.11 5 态 + recovery_step + kill_switch）──
@@ -497,7 +498,9 @@ def postmarket_persist(
     mark_persistable(store, trade_date, STATUS_DRAWDOWN_COMPLETE)
     _logger.info(
         "POSTMARKET_PERSIST date=%s closing_nav=%s peak=%s",
-        trade_date, closing_nav, new_peak,
+        trade_date,
+        closing_nav,
+        new_peak,
     )
     return PostmarketResult(
         status="PERSISTED",

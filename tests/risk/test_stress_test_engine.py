@@ -88,9 +88,7 @@ def test_historical_missing_sector_uses_zero():
 
 def test_run_all_historical():
     engine = StressTestEngine()
-    results = engine.run_all_historical(
-        weights={"financial": 0.5, "tech": 0.5}, portfolio_value=PV, now=t()
-    )
+    results = engine.run_all_historical(weights={"financial": 0.5, "tech": 0.5}, portfolio_value=PV, now=t())
     assert len(results) == 3
     assert all(r.scenario.scenario_type is StressScenarioType.HISTORICAL for r in results)
 
@@ -213,16 +211,16 @@ def test_sensitivity_basic():
 def test_sensitivity_factor_not_in_weights():
     engine = StressTestEngine()
     with pytest.raises(InvalidStressTestInputError, match="not in weights"):
-        engine.sensitivity_analysis(
-            weights={"A": 1.0}, portfolio_value=PV, factor="B"
-        )
+        engine.sensitivity_analysis(weights={"A": 1.0}, portfolio_value=PV, factor="B")
 
 
 def test_sensitivity_invalid_range():
     engine = StressTestEngine()
     with pytest.raises(InvalidStressTestInputError, match="increasing"):
         engine.sensitivity_analysis(
-            weights={"A": 1.0}, portfolio_value=PV, factor="A",
+            weights={"A": 1.0},
+            portfolio_value=PV,
+            factor="A",
             shock_range=(0.10, -0.10),
         )
 
@@ -230,9 +228,7 @@ def test_sensitivity_invalid_range():
 def test_sensitivity_invalid_steps():
     engine = StressTestEngine()
     with pytest.raises(InvalidStressTestInputError, match="steps"):
-        engine.sensitivity_analysis(
-            weights={"A": 1.0}, portfolio_value=PV, factor="A", steps=1
-        )
+        engine.sensitivity_analysis(weights={"A": 1.0}, portfolio_value=PV, factor="A", steps=1)
 
 
 # ── 传染效应 ──────────────────────────────────────────────────────────────────
@@ -350,9 +346,7 @@ def test_var_not_exceeded():
 
 def test_no_var_baseline():
     engine = StressTestEngine()
-    result = engine.run_hypothetical(
-        weights={"A": 1.0}, portfolio_value=PV, shocks={"A": -0.08}, now=t()
-    )
+    result = engine.run_hypothetical(weights={"A": 1.0}, portfolio_value=PV, shocks={"A": -0.08}, now=t())
     assert result.var_exceeded is False
     assert result.var_baseline is None
 
@@ -363,25 +357,19 @@ def test_no_var_baseline():
 def test_invalid_portfolio_value_zero():
     engine = StressTestEngine()
     with pytest.raises(InvalidStressTestInputError):
-        engine.run_hypothetical(
-            weights={"A": 1.0}, portfolio_value=0, shocks={"A": -0.08}, now=t()
-        )
+        engine.run_hypothetical(weights={"A": 1.0}, portfolio_value=0, shocks={"A": -0.08}, now=t())
 
 
 def test_empty_weights():
     engine = StressTestEngine()
     with pytest.raises(InvalidStressTestInputError, match="non-empty"):
-        engine.run_hypothetical(
-            weights={}, portfolio_value=PV, shocks={"A": -0.08}, now=t()
-        )
+        engine.run_hypothetical(weights={}, portfolio_value=PV, shocks={"A": -0.08}, now=t())
 
 
 def test_empty_shocks():
     engine = StressTestEngine()
     with pytest.raises(InvalidStressTestInputError, match="non-empty"):
-        engine.run_hypothetical(
-            weights={"A": 1.0}, portfolio_value=PV, shocks={}, now=t()
-        )
+        engine.run_hypothetical(weights={"A": 1.0}, portfolio_value=PV, shocks={}, now=t())
 
 
 # ── to_dict ──────────────────────────────────────────────────────────────────

@@ -20,9 +20,7 @@ from zephyr.risk.core.survival_line_monitor import (
     evaluate_survival_line,
 )
 
-_GOOD = SurvivalInput(
-    excess_return_12m=0.05, max_drawdown=0.10, sharpe=1.2, consecutive_loss_months=0
-)
+_GOOD = SurvivalInput(excess_return_12m=0.05, max_drawdown=0.10, sharpe=1.2, consecutive_loss_months=0)
 
 
 class TestSurvivalLine:

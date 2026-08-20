@@ -8,6 +8,7 @@
 覆盖: 配置校验、指标比较(better/worse/中性)、相对差异、
 显著性检验(交易不足/足够/缺std)、报告生成、空输入、输入校验。
 """
+
 from __future__ import annotations
 
 import pytest
@@ -82,12 +83,8 @@ class TestConfig:
 class TestCompare:
     def test_compare_better_metrics(self):
         comparator = ResultComparator()
-        baseline = make_result(
-            annual_return=0.15, sharpe_ratio=1.2, max_drawdown=-0.2, trades_count=10
-        )
-        candidate = make_result(
-            annual_return=0.20, sharpe_ratio=1.5, max_drawdown=-0.15, trades_count=10
-        )
+        baseline = make_result(annual_return=0.15, sharpe_ratio=1.2, max_drawdown=-0.2, trades_count=10)
+        candidate = make_result(annual_return=0.20, sharpe_ratio=1.5, max_drawdown=-0.15, trades_count=10)
         comp = comparator.compare(baseline, candidate)
 
         # 年化收益/Sharpe 更好(更高), 最大回撤更好(更高, -0.15 > -0.2)
@@ -189,53 +186,33 @@ class TestInputValidation:
 
 class TestSignificance:
     def test_insufficient_trades_not_significant(self):
-        comparator = ResultComparator(
-            ResultComparisonConfig(min_trades_for_significance=30)
-        )
-        baseline = make_result(
-            trades_count=20, annual_return=0.10, annual_return_std=0.02
-        )
-        candidate = make_result(
-            trades_count=20, annual_return=0.50, annual_return_std=0.02
-        )
+        comparator = ResultComparator(ResultComparisonConfig(min_trades_for_significance=30))
+        baseline = make_result(trades_count=20, annual_return=0.10, annual_return_std=0.02)
+        candidate = make_result(trades_count=20, annual_return=0.50, annual_return_std=0.02)
         comp = comparator.compare(baseline, candidate)
         # 交易不足 → 不显著
         assert all(not m.is_significant for m in comp.metrics)
 
     def test_significant_when_diff_exceeds_se(self):
-        comparator = ResultComparator(
-            ResultComparisonConfig(min_trades_for_significance=30, significance_level=0.05)
-        )
+        comparator = ResultComparator(ResultComparisonConfig(min_trades_for_significance=30, significance_level=0.05))
         # n=100, std=0.01, diff=0.10 → se≈0.001414, z*se≈0.00277 << 0.10 → 显著
-        baseline = make_result(
-            trades_count=100, annual_return=0.10, annual_return_std=0.01
-        )
-        candidate = make_result(
-            trades_count=100, annual_return=0.20, annual_return_std=0.01
-        )
+        baseline = make_result(trades_count=100, annual_return=0.10, annual_return_std=0.01)
+        candidate = make_result(trades_count=100, annual_return=0.20, annual_return_std=0.01)
         comp = comparator.compare(baseline, candidate)
         annual = next(m for m in comp.metrics if m.name == "年化收益")
         assert annual.is_significant is True
 
     def test_not_significant_when_diff_within_se(self):
-        comparator = ResultComparator(
-            ResultComparisonConfig(min_trades_for_significance=30, significance_level=0.05)
-        )
+        comparator = ResultComparator(ResultComparisonConfig(min_trades_for_significance=30, significance_level=0.05))
         # n=100, std=0.5, diff=0.001 → se≈0.0707, z*se≈0.1386 >> 0.001 → 不显著
-        baseline = make_result(
-            trades_count=100, annual_return=0.100, annual_return_std=0.5
-        )
-        candidate = make_result(
-            trades_count=100, annual_return=0.101, annual_return_std=0.5
-        )
+        baseline = make_result(trades_count=100, annual_return=0.100, annual_return_std=0.5)
+        candidate = make_result(trades_count=100, annual_return=0.101, annual_return_std=0.5)
         comp = comparator.compare(baseline, candidate)
         annual = next(m for m in comp.metrics if m.name == "年化收益")
         assert annual.is_significant is False
 
     def test_missing_std_not_significant(self):
-        comparator = ResultComparator(
-            ResultComparisonConfig(min_trades_for_significance=30)
-        )
+        comparator = ResultComparator(ResultComparisonConfig(min_trades_for_significance=30))
         baseline = make_result(trades_count=100, annual_return=0.10)
         candidate = make_result(trades_count=100, annual_return=0.50)
         comp = comparator.compare(baseline, candidate)
@@ -243,18 +220,20 @@ class TestSignificance:
         assert all(not m.is_significant for m in comp.metrics)
 
     def test_significant_count(self):
-        comparator = ResultComparator(
-            ResultComparisonConfig(min_trades_for_significance=30, significance_level=0.05)
-        )
+        comparator = ResultComparator(ResultComparisonConfig(min_trades_for_significance=30, significance_level=0.05))
         baseline = make_result(
             trades_count=100,
-            annual_return=0.10, annual_return_std=0.01,
-            sharpe_ratio=1.0, sharpe_ratio_std=0.01,
+            annual_return=0.10,
+            annual_return_std=0.01,
+            sharpe_ratio=1.0,
+            sharpe_ratio_std=0.01,
         )
         candidate = make_result(
             trades_count=100,
-            annual_return=0.20, annual_return_std=0.01,
-            sharpe_ratio=2.0, sharpe_ratio_std=0.01,
+            annual_return=0.20,
+            annual_return_std=0.01,
+            sharpe_ratio=2.0,
+            sharpe_ratio_std=0.01,
         )
         comp = comparator.compare(baseline, candidate)
         # 年化 + Sharpe 均显著
@@ -289,9 +268,7 @@ class TestReport:
             assert name in report.detailed_table
 
     def test_report_significance_notes_warn_low_trades(self):
-        comparator = ResultComparator(
-            ResultComparisonConfig(min_trades_for_significance=30)
-        )
+        comparator = ResultComparator(ResultComparisonConfig(min_trades_for_significance=30))
         report = comparator.generate_diff_report(
             make_result(trades_count=5, annual_return=0.1),
             make_result(trades_count=5, annual_return=0.2),
@@ -300,9 +277,7 @@ class TestReport:
         assert any("不足" in n for n in report.significance_notes)
 
     def test_report_no_significance_note_when_sufficient(self):
-        comparator = ResultComparator(
-            ResultComparisonConfig(min_trades_for_significance=30)
-        )
+        comparator = ResultComparator(ResultComparisonConfig(min_trades_for_significance=30))
         report = comparator.generate_diff_report(
             make_result(trades_count=100, annual_return=0.1, annual_return_std=0.5),
             make_result(trades_count=100, annual_return=0.101, annual_return_std=0.5),

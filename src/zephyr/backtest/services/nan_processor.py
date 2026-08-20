@@ -119,12 +119,12 @@ logger = logging.getLogger(__name__)
 class FillStrategy(str, Enum):
     """NaN填充策略。"""
 
-    FFILL = "ffill"        # 前向填充
-    BFILL = "bfill"        # 后向填充
-    MEAN = "mean"          # 均值填充
-    MEDIAN = "median"      # 中位数填充
-    LINEAR = "linear"      # 线性插值
-    ZERO = "zero"          # 零填充
+    FFILL = "ffill"  # 前向填充
+    BFILL = "bfill"  # 后向填充
+    MEAN = "mean"  # 均值填充
+    MEDIAN = "median"  # 中位数填充
+    LINEAR = "linear"  # 线性插值
+    ZERO = "zero"  # 零填充
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -148,20 +148,16 @@ class NaNProcessorConfig:
     """NaN处理配置。"""
 
     fill_strategy: FillStrategy = FillStrategy.FFILL
-    drop_all_nan_rows: bool = True       # 删除全NaN行
-    drop_all_nan_cols: bool = False       # 删除全NaN列
-    max_nan_ratio: float = 0.5            # 行/列NaN比例超此值则删除 (0=不按比例删除)
-    fill_limit: int = 0                   # 连续填充上限 (0=无限制)
+    drop_all_nan_rows: bool = True  # 删除全NaN行
+    drop_all_nan_cols: bool = False  # 删除全NaN列
+    max_nan_ratio: float = 0.5  # 行/列NaN比例超此值则删除 (0=不按比例删除)
+    fill_limit: int = 0  # 连续填充上限 (0=无限制)
 
     def __post_init__(self) -> None:
         if not 0 <= self.max_nan_ratio <= 1:
-            raise InvalidDataFormatError(
-                f"max_nan_ratio must be in [0,1], got {self.max_nan_ratio}"
-            )
+            raise InvalidDataFormatError(f"max_nan_ratio must be in [0,1], got {self.max_nan_ratio}")
         if self.fill_limit < 0:
-            raise InvalidDataFormatError(
-                f"fill_limit must be >= 0, got {self.fill_limit}"
-            )
+            raise InvalidDataFormatError(f"fill_limit must be >= 0, got {self.fill_limit}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -235,9 +231,7 @@ class NaNProcessor:
         """
         cfg = config or self._config
         if not isinstance(data, pd.DataFrame):
-            raise InvalidDataFormatError(
-                f"data must be a pandas DataFrame, got {type(data).__name__}"
-            )
+            raise InvalidDataFormatError(f"data must be a pandas DataFrame, got {type(data).__name__}")
 
         df = data.copy()
         original_shape = df.shape

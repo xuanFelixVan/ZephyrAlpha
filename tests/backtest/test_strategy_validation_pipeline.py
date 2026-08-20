@@ -18,6 +18,7 @@
 (SIM-56语义)、DSR 经门控可选判定器注入(默认关闭/启用)、输入校验、
 可注入 gate/detector 实例。
 """
+
 from __future__ import annotations
 
 import pytest
@@ -49,7 +50,9 @@ def _clean_request(**overrides) -> StrategyValidationRequest:
         "param_sensitivity": _stable_sensitivity(),
         "perturbed_results": [{"sharpe_ratio": 0.95}, {"sharpe_ratio": 1.02}],
         "period_results": [
-            {"sharpe_ratio": 0.7}, {"sharpe_ratio": 0.8}, {"sharpe_ratio": 0.9},
+            {"sharpe_ratio": 0.7},
+            {"sharpe_ratio": 0.8},
+            {"sharpe_ratio": 0.9},
         ],
     }
     base.update(overrides)
@@ -113,16 +116,12 @@ class TestOverfittingVetoPropagation:
         assert verdict.can_deploy is False
 
     def test_param_unstable_blocks_deploy(self):
-        verdict = run_strategy_validation(
-            _clean_request(perturbed_results=[{"sharpe_ratio": 0.4}])
-        )
+        verdict = run_strategy_validation(_clean_request(perturbed_results=[{"sharpe_ratio": 0.4}]))
         assert verdict.overfitting["parameter_stable"] is False
         assert verdict.can_deploy is False
 
     def test_overfitting_reason_recorded(self):
-        verdict = run_strategy_validation(
-            _clean_request(perturbed_results=[{"sharpe_ratio": 0.4}])
-        )
+        verdict = run_strategy_validation(_clean_request(perturbed_results=[{"sharpe_ratio": 0.4}]))
         assert any("过拟合检测否决" in x for x in verdict.reasons)
 
 

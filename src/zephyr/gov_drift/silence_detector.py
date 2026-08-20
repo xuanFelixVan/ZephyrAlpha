@@ -51,7 +51,6 @@ class SilenceDetector:
         """写入：timeout_s（Stage 4 公共化）。"""
         self._timeout_s = value
 
-
     def record_activity(self, agent_id: str):
         self._last_activity[agent_id] = time.time()
 

@@ -236,9 +236,7 @@ class ModelRiskAuditor:
         from zephyr.intelligence.model_drift_detector import ModelDriftDetector
 
         self._drift_threshold = (
-            drift_threshold
-            if drift_threshold is not None
-            else ModelDriftDetector.DIVERGENCE_THRESHOLD
+            drift_threshold if drift_threshold is not None else ModelDriftDetector.DIVERGENCE_THRESHOLD
         )
         self._ic_decay_threshold = ic_decay_threshold
         self._bias_threshold = bias_threshold
@@ -268,7 +266,8 @@ class ModelRiskAuditor:
             result = self._drift_detector.detect_drift(model_outputs)
         except Exception as exc:  # noqa: BLE001 — 检测器异常不阻断审计
             _logger.warning(
-                "ModelDriftDetector failed: %s; treating as no drift", exc,
+                "ModelDriftDetector failed: %s; treating as no drift",
+                exc,
             )
             return False, 0.0, {"error": str(exc)}
 
@@ -281,7 +280,9 @@ class ModelRiskAuditor:
         }
         _logger.debug(
             "Drift detection: drift=%s divergence=%.4f threshold=%.4f",
-            result.drift_detected, result.divergence_score, result.threshold,
+            result.drift_detected,
+            result.divergence_score,
+            result.threshold,
         )
         return result.drift_detected, float(result.divergence_score), details
 
@@ -336,7 +337,10 @@ class ModelRiskAuditor:
         }
         _logger.debug(
             "IC decay: initial=%.6f final=%.6f decay_pct=%.4f half_life=%.4f",
-            initial_ic, final_ic, ic_decay_pct, ic_half_life,
+            initial_ic,
+            final_ic,
+            ic_decay_pct,
+            ic_half_life,
         )
         return float(ic_decay_pct), float(ic_half_life), details
 
@@ -435,10 +439,13 @@ class ModelRiskAuditor:
         )
 
         _logger.info(
-            "Model risk audited: drift=%s divergence=%.4f ic_decay_pct=%.4f "
-            "ic_half_life=%.4f bias=%s risk_level=%s",
-            drift_detected, divergence_score, ic_decay_pct, ic_half_life,
-            bias_detected, risk_level,
+            "Model risk audited: drift=%s divergence=%.4f ic_decay_pct=%.4f ic_half_life=%.4f bias=%s risk_level=%s",
+            drift_detected,
+            divergence_score,
+            ic_decay_pct,
+            ic_half_life,
+            bias_detected,
+            risk_level,
         )
         return report
 

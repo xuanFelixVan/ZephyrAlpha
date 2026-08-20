@@ -86,16 +86,16 @@ class InvalidAttributionInputError(ZephyrBaseError):
 class DrawdownType(str, Enum):
     """回撤类型（§3.12 二分）。"""
 
-    STATISTICAL = "STATISTICAL"      # 统计性：正期望策略的方差亏损簇 → 减仓继续
-    BEHAVIOURAL = "BEHAVIOURAL"      # 行为性：AI 执行偏差 → 停实盘+修执行
-    UNDETERMINED = "UNDETERMINED"    # 证据不足（全部维度未知）
+    STATISTICAL = "STATISTICAL"  # 统计性：正期望策略的方差亏损簇 → 减仓继续
+    BEHAVIOURAL = "BEHAVIOURAL"  # 行为性：AI 执行偏差 → 停实盘+修执行
+    UNDETERMINED = "UNDETERMINED"  # 证据不足（全部维度未知）
 
 
 class ResponseRouting(str, Enum):
     """响应分流（§3.16 对照表）。"""
 
-    RISK_BASED_REDUCTION = "RISK_BASED_REDUCTION"          # VaR 恶化前馈减仓
-    GLOBAL_CONTRACTION = "GLOBAL_CONTRACTION"              # 系统性 → 全局收缩
+    RISK_BASED_REDUCTION = "RISK_BASED_REDUCTION"  # VaR 恶化前馈减仓
+    GLOBAL_CONTRACTION = "GLOBAL_CONTRACTION"  # 系统性 → 全局收缩
     PER_STRATEGY_CONTRACTION = "PER_STRATEGY_CONTRACTION"  # 策略特定 → 单策略收缩
     STOP_LIVE_AND_FIX_EXECUTION = "STOP_LIVE_AND_FIX_EXECUTION"  # 行为性 → 停实盘修执行
 
@@ -144,9 +144,7 @@ class AttributionResult:
             "per_strategy_contribution": self.per_strategy_contribution,
             "root_cause": self.root_cause,
             "response_routing": self.response_routing,
-            "attribution_bias": (
-                self.attribution_bias.to_dict() if self.attribution_bias else None
-            ),
+            "attribution_bias": (self.attribution_bias.to_dict() if self.attribution_bias else None),
             "risk_deterioration_ratio": self.risk_deterioration_ratio,
             "recommended_reduction": self.recommended_reduction,
         }
@@ -186,8 +184,11 @@ def diagnose_drawdown_type(
         violations.append("交易频率超出计划（过度交易）")
 
     known = [
-        signals_follow_rules, avg_loss_r, position_sizing_consistent,
-        trade_frequency_in_plan, market_structure_changed,
+        signals_follow_rules,
+        avg_loss_r,
+        position_sizing_consistent,
+        trade_frequency_in_plan,
+        market_structure_changed,
     ]
     if violations:
         drawdown_type = DrawdownType.BEHAVIOURAL
@@ -204,9 +205,7 @@ def diagnose_drawdown_type(
     )
 
 
-def _avg_correlation(
-    strategy_pnls_history: Mapping[str, Sequence[float]], window: int
-) -> float:
+def _avg_correlation(strategy_pnls_history: Mapping[str, Sequence[float]], window: int) -> float:
     """20 日窗策略 PnL 两两 Pearson 相关均值（orstac correlation-aware）。
 
     除零/样本不足守卫：任一序列方差为 0 或有效窗 < 2 → 该对跳过；
@@ -291,7 +290,10 @@ def drawdown_attribution_flow(
             reduction = min(ratio - 1.0, max_reduction)
             _logger.warning(
                 "RISK_DETERIORATION entry_var=%.4f current_var=%.4f ratio=%.2f reduction=%.2f",
-                entry_var, current_var, ratio, reduction,
+                entry_var,
+                current_var,
+                ratio,
+                reduction,
             )
             return AttributionResult(
                 systemic_pct=1.0,  # VaR 是组合度量 → 风险恶化是组合级
@@ -312,34 +314,33 @@ def drawdown_attribution_flow(
     pnls = dict(strategy_pnls or {})
     if len(pnls) <= 1 or strategy_pnls_history is None:
         systemic_pct = 0.0
-        root_cause = (
-            "STRATEGY_SPECIFIC_SINGLE_STRATEGY" if len(pnls) <= 1
-            else "STRATEGY_SPECIFIC_INSUFFICIENT_HISTORY"
-        )
+        root_cause = "STRATEGY_SPECIFIC_SINGLE_STRATEGY" if len(pnls) <= 1 else "STRATEGY_SPECIFIC_INSUFFICIENT_HISTORY"
         per_strategy = {next(iter(pnls)): 1.0} if pnls else {}
     else:
         avg_corr = _avg_correlation(strategy_pnls_history, corr_window)
         if avg_corr > systemic_corr:
             systemic_pct, root_cause, per_strategy = (
-                1.0, "SYSTEMIC_HIGH_CORRELATION", None,
+                1.0,
+                "SYSTEMIC_HIGH_CORRELATION",
+                None,
             )
         elif avg_corr < specific_corr:
             systemic_pct, root_cause, per_strategy = (
-                0.0, "STRATEGY_SPECIFIC_LOW_CORRELATION", None,
+                0.0,
+                "STRATEGY_SPECIFIC_LOW_CORRELATION",
+                None,
             )
         else:
             total_abs = sum(abs(v) for v in pnls.values())
             per_strategy = (
                 {sid: abs(v) / total_abs for sid, v in pnls.items()}
-                if total_abs > 1e-10 else {sid: 0.0 for sid in pnls}
+                if total_abs > 1e-10
+                else {sid: 0.0 for sid in pnls}
             )
             systemic_pct, root_cause = avg_corr, "MIXED_PARTIAL_SYSTEMIC"
 
     # ── 2. 因子归因（AttributionBias BIASED=行为性最高优先级，§3.12 分流）──
-    if (
-        attribution_bias is not None
-        and attribution_bias.status is AttributionStatus.BIASED
-    ):
+    if attribution_bias is not None and attribution_bias.status is AttributionStatus.BIASED:
         root_cause = "BEHAVIOURAL_ATTRIBUTION_BIAS"
         routing = ResponseRouting.STOP_LIVE_AND_FIX_EXECUTION
     elif root_cause.startswith("SYSTEMIC"):
@@ -348,9 +349,7 @@ def drawdown_attribution_flow(
         routing = ResponseRouting.PER_STRATEGY_CONTRACTION
 
     # ── 3. regime 交叉验证（§3.9：只追加后缀不改主因）──
-    root_cause += (
-        "_REGIME_ALIGNED" if regime in REGIME_ALIGNED_SET else "_REGIME_MISALIGNED"
-    )
+    root_cause += "_REGIME_ALIGNED" if regime in REGIME_ALIGNED_SET else "_REGIME_MISALIGNED"
     result = AttributionResult(
         systemic_pct=systemic_pct,
         per_strategy_contribution=per_strategy,
@@ -360,6 +359,9 @@ def drawdown_attribution_flow(
     )
     _logger.info(
         "DRAWDOWN_ATTRIBUTION dd=%.4f root_cause=%s routing=%s systemic=%.2f",
-        dd, result.root_cause, result.response_routing, result.systemic_pct,
+        dd,
+        result.root_cause,
+        result.response_routing,
+        result.systemic_pct,
     )
     return result

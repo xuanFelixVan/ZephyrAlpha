@@ -263,40 +263,30 @@ class TestControllerDiscount:
     def test_breached_discount_0_8(self) -> None:
         """GREEN(1.0) × BREACHED(0.8) = 0.8 (VaR breach 额外保守)。"""
         ctl = DrawdownController()
-        resp = ctl.evaluate(
-            _dd_info(), VarCvarMetrics(0.01, 0.015), var_breach_state="BREACHED"
-        )
+        resp = ctl.evaluate(_dd_info(), VarCvarMetrics(0.01, 0.015), var_breach_state="BREACHED")
         assert resp.position_cap == pytest.approx(0.8)
         assert any("×0.80" in a for a in resp.actions)
 
     def test_recovery_discount_0_9(self) -> None:
         ctl = DrawdownController()
-        resp = ctl.evaluate(
-            _dd_info(), VarCvarMetrics(0.01, 0.015), var_breach_state="RECOVERY"
-        )
+        resp = ctl.evaluate(_dd_info(), VarCvarMetrics(0.01, 0.015), var_breach_state="RECOVERY")
         assert resp.position_cap == pytest.approx(0.9)
 
     def test_normal_no_discount(self) -> None:
         ctl = DrawdownController()
-        resp = ctl.evaluate(
-            _dd_info(), VarCvarMetrics(0.01, 0.015), var_breach_state="NORMAL"
-        )
+        resp = ctl.evaluate(_dd_info(), VarCvarMetrics(0.01, 0.015), var_breach_state="NORMAL")
         assert resp.position_cap == 1.0
 
     def test_enum_accepted(self) -> None:
         """VarBreachState 枚举 (str mixin) 直接传入可用。"""
         ctl = DrawdownController()
-        resp = ctl.evaluate(
-            _dd_info(), VarCvarMetrics(0.01, 0.015), var_breach_state=VarBreachState.BREACHED
-        )
+        resp = ctl.evaluate(_dd_info(), VarCvarMetrics(0.01, 0.015), var_breach_state=VarBreachState.BREACHED)
         assert resp.position_cap == pytest.approx(0.8)
 
     def test_discount_stacks_on_risk_level_cap(self) -> None:
         """YELLOW(0.5) × BREACHED(0.8) = 0.4 (与风险级 cap 乘性叠加)。"""
         ctl = DrawdownController()
-        resp = ctl.evaluate(
-            _dd_info(), VarCvarMetrics(0.03, 0.04), var_breach_state="BREACHED"
-        )
+        resp = ctl.evaluate(_dd_info(), VarCvarMetrics(0.03, 0.04), var_breach_state="BREACHED")
         assert resp.position_cap == pytest.approx(0.4)
 
     def test_black_swan_min_wins(self) -> None:
@@ -313,9 +303,7 @@ class TestControllerDiscount:
     def test_lower_bound_zero(self) -> None:
         """下限保护 max(0.0): BLACK(0.0) × 0.8 = 0.0 不为负。"""
         ctl = DrawdownController()
-        resp = ctl.evaluate(
-            _dd_info(), VarCvarMetrics(0.09, 0.11), var_breach_state="BREACHED"
-        )
+        resp = ctl.evaluate(_dd_info(), VarCvarMetrics(0.09, 0.11), var_breach_state="BREACHED")
         assert resp.position_cap == 0.0
 
     def test_unknown_state_rejected(self) -> None:
@@ -325,16 +313,12 @@ class TestControllerDiscount:
 
     def test_case_insensitive(self) -> None:
         ctl = DrawdownController()
-        resp = ctl.evaluate(
-            _dd_info(), VarCvarMetrics(0.01, 0.015), var_breach_state="breached"
-        )
+        resp = ctl.evaluate(_dd_info(), VarCvarMetrics(0.01, 0.015), var_breach_state="breached")
         assert resp.position_cap == pytest.approx(0.8)
 
     def test_dual_recovery_stacks(self) -> None:
         """双 RECOVERY 叠加 (§3.15 E3): 回撤阶梯 0.5 × VaR RECOVERY 0.9 = 0.45。"""
         ctl = DrawdownController()
-        info = DrawdownInfo(
-            drawdown_pct=-0.05, peak_nav=1.0, current_nav=0.975, recovered_pct=0.5
-        )
+        info = DrawdownInfo(drawdown_pct=-0.05, peak_nav=1.0, current_nav=0.975, recovered_pct=0.5)
         resp = ctl.evaluate(info, VarCvarMetrics(0.01, 0.015), var_breach_state="RECOVERY")
         assert resp.position_cap == pytest.approx(0.5 * 0.9)

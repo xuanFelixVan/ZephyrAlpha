@@ -373,14 +373,10 @@ class BacktestCacheManager:
         if not strategy_id:
             return 0
         with self._lock:
-            keys_to_remove = [
-                k for k in self._store if k.strategy_id == strategy_id
-            ]
+            keys_to_remove = [k for k in self._store if k.strategy_id == strategy_id]
             for k in keys_to_remove:
                 del self._store[k]
-            _logger.debug(
-                "策略 %s 缓存失效: 删除 %d 条", strategy_id, len(keys_to_remove)
-            )
+            _logger.debug("策略 %s 缓存失效: 删除 %d 条", strategy_id, len(keys_to_remove))
             return len(keys_to_remove)
 
     def clear(self) -> int:

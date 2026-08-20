@@ -56,6 +56,7 @@ class ForensicsTimelineEntry:
 
     diff_summary: str
 
+
 @dataclass
 class ForensicsReport:
     report_id: str
@@ -80,6 +81,7 @@ class ForensicsReport:
 
     generated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
+
 @dataclass
 class ForensicsConfig:
     state_dir: str = ""
@@ -88,7 +90,9 @@ class ForensicsConfig:
 
     include_blame: bool = True
 
+
 FORENSICS_CONFIG: Final[ForensicsConfig] = ForensicsConfig()
+
 
 def replay_baseline_history(
     file_path: str,
@@ -185,6 +189,7 @@ def replay_baseline_history(
         dependency_impact=dep_impact,
     )
 
+
 def git_checkout_snapshot(
     commit_hash: str,
     file_path: str,
@@ -208,6 +213,7 @@ def git_checkout_snapshot(
         logger.warning("suppressed error in forensics_engine", exc_info=True)
 
     return None
+
 
 def generate_forensics_report(
     drift_event_id: str,
@@ -248,6 +254,7 @@ def generate_forensics_report(
 
     return report
 
+
 def serialize_report(report: ForensicsReport, output_dir: str) -> str:
     """序列化取证报告为JSON。"""
 
@@ -282,7 +289,7 @@ def serialize_report(report: ForensicsReport, output_dir: str) -> str:
         "generated_at": report.generated_at.isoformat(),
     }
 
-    content = dumps(report_dict, indent=2,  ensure_ascii=False)
+    content = dumps(report_dict, indent=2, ensure_ascii=False)
 
     tmp_path = f"{path}.{os.getpid()}.tmp"
 

@@ -99,9 +99,15 @@ class TestCrowdingMetrics:
 
     def test_frozen_immutability(self):
         m = CrowdingMetrics(
-            factor_name="f", crowding_score=0, position_overlap=0,
-            direction_consensus=0, n_strategies=1, is_crowded=False,
-            threshold=0.6, timestamp=datetime.now(UTC), idempotency_key="k",
+            factor_name="f",
+            crowding_score=0,
+            position_overlap=0,
+            direction_consensus=0,
+            n_strategies=1,
+            is_crowded=False,
+            threshold=0.6,
+            timestamp=datetime.now(UTC),
+            idempotency_key="k",
         )
         with pytest.raises(AttributeError):
             m.factor_name = "other"
@@ -307,10 +313,12 @@ class TestAssessBatch:
 
     def test_batch_without_exposures(self):
         mon = CrowdingMonitor()
-        results = mon.assess_batch({
-            "f1": MOCK_CROWDED,
-            "f2": MOCK_NOT_CROWDED,
-        })
+        results = mon.assess_batch(
+            {
+                "f1": MOCK_CROWDED,
+                "f2": MOCK_NOT_CROWDED,
+            }
+        )
         assert len(results) == 2
         # 无暴露 → consensus=0 → crowding=0.5*overlap
         for m in results:
@@ -319,10 +327,12 @@ class TestAssessBatch:
     def test_batch_skips_invalid(self):
         """单策略因子被跳过"""
         mon = CrowdingMonitor()
-        results = mon.assess_batch({
-            "valid": MOCK_CROWDED,
-            "invalid": MOCK_SINGLE,
-        })
+        results = mon.assess_batch(
+            {
+                "valid": MOCK_CROWDED,
+                "invalid": MOCK_SINGLE,
+            }
+        )
         # invalid 的 assess 返回默认值（不 raise），所以也在结果中
         assert len(results) == 2
         invalid_metric = next(m for m in results if m.factor_name == "invalid")
@@ -336,10 +346,15 @@ class TestToRiskCheckResult:
     def test_crowded_to_halt(self):
         mon = CrowdingMonitor()
         m = CrowdingMetrics(
-            factor_name="momentum", crowding_score=0.8,
-            position_overlap=0.7, direction_consensus=0.9,
-            n_strategies=3, is_crowded=True, threshold=0.6,
-            timestamp=datetime.now(UTC), idempotency_key="k",
+            factor_name="momentum",
+            crowding_score=0.8,
+            position_overlap=0.7,
+            direction_consensus=0.9,
+            n_strategies=3,
+            is_crowded=True,
+            threshold=0.6,
+            timestamp=datetime.now(UTC),
+            idempotency_key="k",
         )
         r = mon.to_risk_check_result(m)
         assert r.passed is False
@@ -349,10 +364,15 @@ class TestToRiskCheckResult:
     def test_not_crowded_to_pass(self):
         mon = CrowdingMonitor()
         m = CrowdingMetrics(
-            factor_name="value", crowding_score=0.3,
-            position_overlap=0.2, direction_consensus=0.4,
-            n_strategies=3, is_crowded=False, threshold=0.6,
-            timestamp=datetime.now(UTC), idempotency_key="k",
+            factor_name="value",
+            crowding_score=0.3,
+            position_overlap=0.2,
+            direction_consensus=0.4,
+            n_strategies=3,
+            is_crowded=False,
+            threshold=0.6,
+            timestamp=datetime.now(UTC),
+            idempotency_key="k",
         )
         r = mon.to_risk_check_result(m)
         assert r.passed is True

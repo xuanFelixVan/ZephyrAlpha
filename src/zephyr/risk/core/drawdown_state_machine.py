@@ -193,12 +193,21 @@ class DrawdownStateMachineConfig:
         if not 0 < self.hysteresis_ratio < 1:
             raise InvalidDrawdownStateError("hysteresis_ratio 须在 (0,1)")
         for name in (
-            "sustained_warn", "sustained_danger", "sustained_crisis",
-            "min_hold_warn", "min_hold_danger", "min_hold_crisis",
-            "min_hold_recovery_step", "recovery_freeze_days",
-            "graduation_min_trades", "graduation_min_profit_streak",
-            "graduation_window", "reset_window_days", "max_resets_per_window",
-            "reset_cooldown_days", "permanent_lock_threshold",
+            "sustained_warn",
+            "sustained_danger",
+            "sustained_crisis",
+            "min_hold_warn",
+            "min_hold_danger",
+            "min_hold_crisis",
+            "min_hold_recovery_step",
+            "recovery_freeze_days",
+            "graduation_min_trades",
+            "graduation_min_profit_streak",
+            "graduation_window",
+            "reset_window_days",
+            "max_resets_per_window",
+            "reset_cooldown_days",
+            "permanent_lock_threshold",
         ):
             if getattr(self, name) < 1:
                 raise InvalidDrawdownStateError(f"{name} 须 >= 1")
@@ -375,19 +384,18 @@ class DrawdownStateMachine:
             pass  # KILL 无自动出口（§3.7；仅 request_manual_reset）
         elif self._current is DrawdownState.RECOVERY:
             transition = self._evaluate_recovery_state(
-                trade_date, abs(drawdown_pct), recovered_pct, strategy_pnls,
+                trade_date,
+                abs(drawdown_pct),
+                recovered_pct,
+                strategy_pnls,
                 frozen_today=frozen_today,
             )
         else:
             target = self._escalation_target(abs(drawdown_pct), var_95, cvar_95, black_swan_systemic)
             if _SEVERITY_ORDER[target] > _SEVERITY_ORDER[self._current]:
-                transition = self._transition(
-                    target, f"escalate_dd_{abs(drawdown_pct):.4f}", trade_date, to_step=0
-                )
+                transition = self._transition(target, f"escalate_dd_{abs(drawdown_pct):.4f}", trade_date, to_step=0)
             elif _SEVERITY_ORDER[target] < _SEVERITY_ORDER[self._current]:
-                transition = self._try_hysteresis_deescalation(
-                    trade_date, abs(drawdown_pct), var_95
-                )
+                transition = self._try_hysteresis_deescalation(trade_date, abs(drawdown_pct), var_95)
 
         if transition is not None or is_new_day:
             self.persist()
@@ -404,9 +412,7 @@ class DrawdownStateMachine:
     ) -> DrawdownState:
         """多源 OR 取最严（§3.11 升级触发条件表）。"""
         cfg = self._config
-        if black_swan_systemic or dd > cfg.kill_dd or (
-            cvar_95 is not None and cvar_95 > cfg.kill_cvar
-        ):
+        if black_swan_systemic or dd > cfg.kill_dd or (cvar_95 is not None and cvar_95 > cfg.kill_cvar):
             return DrawdownState.KILL
         if dd > cfg.crisis_dd or (var_95 is not None and var_95 > cfg.crisis_var):
             return DrawdownState.CRISIS
@@ -416,21 +422,31 @@ class DrawdownStateMachine:
             return DrawdownState.WARN
         return DrawdownState.NORMAL
 
-    def _try_hysteresis_deescalation(
-        self, trade_date: date, dd: float, var_95: float | None
-    ) -> StateTransition | None:
+    def _try_hysteresis_deescalation(self, trade_date: date, dd: float, var_95: float | None) -> StateTransition | None:
         """hysteresis 三重守卫降级（§3.20）：min_hold + 半阈值持续窗 + VaR 交叉验证。"""
         cfg = self._config
         target = _DEESCALATION_PATH.get(self._current)
         if target is None:
             return None
         rules = {
-            DrawdownState.WARN: (cfg.min_hold_warn, cfg.warn_dd * cfg.hysteresis_ratio,
-                                 cfg.sustained_warn, cfg.warn_var),
-            DrawdownState.DANGER: (cfg.min_hold_danger, cfg.danger_dd * cfg.hysteresis_ratio,
-                                   cfg.sustained_danger, cfg.danger_var),
-            DrawdownState.CRISIS: (cfg.min_hold_crisis, cfg.crisis_dd * cfg.hysteresis_ratio,
-                                   cfg.sustained_crisis, cfg.crisis_var),
+            DrawdownState.WARN: (
+                cfg.min_hold_warn,
+                cfg.warn_dd * cfg.hysteresis_ratio,
+                cfg.sustained_warn,
+                cfg.warn_var,
+            ),
+            DrawdownState.DANGER: (
+                cfg.min_hold_danger,
+                cfg.danger_dd * cfg.hysteresis_ratio,
+                cfg.sustained_danger,
+                cfg.danger_var,
+            ),
+            DrawdownState.CRISIS: (
+                cfg.min_hold_crisis,
+                cfg.crisis_dd * cfg.hysteresis_ratio,
+                cfg.sustained_crisis,
+                cfg.crisis_var,
+            ),
         }
         min_hold, half_threshold, window, var_threshold = rules[self._current]
         if self._days_in_state < min_hold:
@@ -442,9 +458,7 @@ class DrawdownStateMachine:
             return None
         if not self._sustained(half_threshold, window):
             return None
-        return self._transition(
-            target, f"hysteresis_recovery_dd_{dd:.4f}", trade_date, to_step=0
-        )
+        return self._transition(target, f"hysteresis_recovery_dd_{dd:.4f}", trade_date, to_step=0)
 
     def _sustained(self, threshold: float, window: int) -> bool:
         """CUSUM 式持续确认：dd_history 最近 window 日全部 < threshold。"""
@@ -469,18 +483,24 @@ class DrawdownStateMachine:
         if dd > cfg.crisis_dd:
             if self._recovery_step > 0:
                 return self._transition(
-                    DrawdownState.RECOVERY, f"recovery_retreat_dd_{dd:.4f}",
-                    trade_date, to_step=self._recovery_step - 1,
+                    DrawdownState.RECOVERY,
+                    f"recovery_retreat_dd_{dd:.4f}",
+                    trade_date,
+                    to_step=self._recovery_step - 1,
                 )
             return self._transition(
-                DrawdownState.KILL, f"recovery_exhausted_kill_dd_{dd:.4f}",
-                trade_date, to_step=0,
+                DrawdownState.KILL,
+                f"recovery_exhausted_kill_dd_{dd:.4f}",
+                trade_date,
+                to_step=0,
             )
         # 2. dd > 10% 且 step>0 → 回退一级（step=0 此区间为空档，由 freeze 兜底）
         if dd > cfg.danger_dd and self._recovery_step > 0:
             return self._transition(
-                DrawdownState.RECOVERY, f"recovery_retreat_dd_{dd:.4f}",
-                trade_date, to_step=self._recovery_step - 1,
+                DrawdownState.RECOVERY,
+                f"recovery_retreat_dd_{dd:.4f}",
+                trade_date,
+                to_step=self._recovery_step - 1,
             )
         # 3. dd > 5% → 冻结阶梯 N 日（不退级；全阶梯生效，再次加深刷新冻结）
         if dd > cfg.warn_dd:
@@ -501,12 +521,12 @@ class DrawdownStateMachine:
         if not self.graduation_criteria_met(strategy_pnls):
             return None
         if step == 2:
-            return self._transition(
-                DrawdownState.NORMAL, "recovery_graduated_new_high", trade_date, to_step=0
-            )
+            return self._transition(DrawdownState.NORMAL, "recovery_graduated_new_high", trade_date, to_step=0)
         return self._transition(
-            DrawdownState.RECOVERY, f"recovery_step_up_{step}_to_{step + 1}",
-            trade_date, to_step=step + 1,
+            DrawdownState.RECOVERY,
+            f"recovery_step_up_{step}_to_{step + 1}",
+            trade_date,
+            to_step=step + 1,
         )
 
     def graduation_criteria_met(self, strategy_pnls: Sequence[Any] | None) -> bool:
@@ -524,7 +544,7 @@ class DrawdownStateMachine:
         streak = cfg.graduation_min_profit_streak
         if len(pnls) < streak or not all(p > 0 for p in pnls[-streak:]):
             return False
-        recent = list(strategy_pnls[-cfg.graduation_window:])
+        recent = list(strategy_pnls[-cfg.graduation_window :])
         r_multiples = [_trade_field(t, "r_multiple") for t in recent]
         if any(r is None for r in r_multiples):
             return False
@@ -540,9 +560,7 @@ class DrawdownStateMachine:
 
     # ── KILL 人工复位（唯一出口，§3.14/§3.7）──
 
-    def request_manual_reset(
-        self, confirmation: ResetConfirmation, *, trade_date: date
-    ) -> StateTransition:
+    def request_manual_reset(self, confirmation: ResetConfirmation, *, trade_date: date) -> StateTransition:
         """KILL → RECOVERY 人工复位（三项确认 + 复位守卫 + 留痕持久化）。
 
         Raises:
@@ -564,11 +582,10 @@ class DrawdownStateMachine:
         if total_resets >= cfg.permanent_lock_threshold:
             _logger.critical(
                 "DRAWDOWN_PERMANENT_LOCK total_resets=%d threshold=%d",
-                total_resets, cfg.permanent_lock_threshold,
+                total_resets,
+                cfg.permanent_lock_threshold,
             )
-            raise RefuseResetError(
-                f"累计复位 {total_resets} 次超阈值 {cfg.permanent_lock_threshold}，永久锁定"
-            )
+            raise RefuseResetError(f"累计复位 {total_resets} 次超阈值 {cfg.permanent_lock_threshold}，永久锁定")
         records: list[dict[str, str]] = list(history.get("records", []))
         if records:
             last_date = date.fromisoformat(records[-1]["date"])
@@ -577,29 +594,28 @@ class DrawdownStateMachine:
                 raise RefuseResetError(
                     f"距上次复位不足 {cfg.reset_cooldown_days} 日冷却期（已过 {elapsed} 日），拒绝复位"
                 )
-        window_start = trade_date.fromordinal(
-            trade_date.toordinal() - cfg.reset_window_days
-        )
+        window_start = trade_date.fromordinal(trade_date.toordinal() - cfg.reset_window_days)
         in_window = [r for r in records if date.fromisoformat(r["date"]) >= window_start]
         if len(in_window) >= cfg.max_resets_per_window:
             raise RefuseResetError(
-                f"近 {cfg.reset_window_days} 日复位 {len(in_window)} 次超上限 "
-                f"{cfg.max_resets_per_window}，拒绝复位"
+                f"近 {cfg.reset_window_days} 日复位 {len(in_window)} 次超上限 {cfg.max_resets_per_window}，拒绝复位"
             )
 
-        records.append({
-            "date": trade_date.isoformat(),
-            "confirmed_by": confirmation.confirmed_by,
-            "reason": confirmation.override_reason,
-        })
+        records.append(
+            {
+                "date": trade_date.isoformat(),
+                "confirmed_by": confirmation.confirmed_by,
+                "reason": confirmation.override_reason,
+            }
+        )
         self._save_reset_history({"total_resets": total_resets + 1, "records": records})
         _logger.warning(
             "DRAWDOWN_MANUAL_RESET by=%s reason=%s total=%d",
-            confirmation.confirmed_by, confirmation.override_reason, total_resets + 1,
+            confirmation.confirmed_by,
+            confirmation.override_reason,
+            total_resets + 1,
         )
-        transition = self._transition(
-            DrawdownState.RECOVERY, "manual_reset_confirmed", trade_date, to_step=0
-        )
+        transition = self._transition(DrawdownState.RECOVERY, "manual_reset_confirmed", trade_date, to_step=0)
         self.persist()
         return transition
 
@@ -631,11 +647,15 @@ class DrawdownStateMachine:
             "as_of_date": self._last_eval_date.isoformat() if self._last_eval_date else "",
             "last_transition": (
                 {
-                    "from": t.from_state.value, "to": t.to_state.value,
-                    "reason": t.reason, "trade_date": t.trade_date,
-                    "from_step": t.from_step, "to_step": t.to_step,
+                    "from": t.from_state.value,
+                    "to": t.to_state.value,
+                    "reason": t.reason,
+                    "trade_date": t.trade_date,
+                    "from_step": t.from_step,
+                    "to_step": t.to_step,
                 }
-                if t is not None else None
+                if t is not None
+                else None
             ),
         }
         self._store.save(self._state_ns, payload)
@@ -660,22 +680,22 @@ class DrawdownStateMachine:
             t = data.get("last_transition")
             self._last_transition = (
                 StateTransition(
-                    from_state=DrawdownState(t["from"]), to_state=DrawdownState(t["to"]),
-                    reason=str(t["reason"]), trade_date=str(t["trade_date"]),
-                    from_step=int(t.get("from_step", 0)), to_step=int(t.get("to_step", 0)),
+                    from_state=DrawdownState(t["from"]),
+                    to_state=DrawdownState(t["to"]),
+                    reason=str(t["reason"]),
+                    trade_date=str(t["trade_date"]),
+                    from_step=int(t.get("from_step", 0)),
+                    to_step=int(t.get("to_step", 0)),
                 )
-                if t else None
+                if t
+                else None
             )
             as_of = str(data.get("as_of_date", ""))
             self._last_eval_date = date.fromisoformat(as_of) if as_of else None
         except (KeyError, ValueError, TypeError) as exc:
-            raise InvalidDrawdownStateError(
-                f"状态快照字段非法: {exc}", details={"namespace": self._state_ns}
-            ) from exc
+            raise InvalidDrawdownStateError(f"状态快照字段非法: {exc}", details={"namespace": self._state_ns}) from exc
         if self._recovery_step < 0 or self._recovery_step > 2:
-            raise InvalidDrawdownStateError(
-                f"recovery_step 越界: {self._recovery_step}（合法 0/1/2）"
-            )
+            raise InvalidDrawdownStateError(f"recovery_step 越界: {self._recovery_step}（合法 0/1/2）")
         return self.snapshot()
 
     def _load_reset_history(self) -> dict[str, Any]:
@@ -693,13 +713,14 @@ class DrawdownStateMachine:
     # ── 内部 ──
 
     def _validate_eval_inputs(
-        self, trade_date: date, var_95: float | None,
-        cvar_95: float | None, recovered_pct: float,
+        self,
+        trade_date: date,
+        var_95: float | None,
+        cvar_95: float | None,
+        recovered_pct: float,
     ) -> None:
         if self._last_eval_date is not None and trade_date < self._last_eval_date:
-            raise InvalidDrawdownStateError(
-                f"trade_date 倒退: {trade_date} < {self._last_eval_date}"
-            )
+            raise InvalidDrawdownStateError(f"trade_date 倒退: {trade_date} < {self._last_eval_date}")
         for name, v in (("var_95", var_95), ("cvar_95", cvar_95)):
             if v is not None and v < 0:
                 raise InvalidDrawdownStateError(f"{name} 须 >= 0, got {v}")
@@ -735,14 +756,21 @@ class DrawdownStateMachine:
     ) -> StateTransition:
         """执行转换（含阶梯内迁移）：重置 days_in_state，记录 last_transition。"""
         transition = StateTransition(
-            from_state=self._current, to_state=to_state, reason=reason,
+            from_state=self._current,
+            to_state=to_state,
+            reason=reason,
             trade_date=trade_date.isoformat(),
-            from_step=self._recovery_step, to_step=to_step,
+            from_step=self._recovery_step,
+            to_step=to_step,
         )
         _logger.info(
             "DRAWDOWN_TRANSITION %s(step=%d) -> %s(step=%d) reason=%s date=%s",
-            transition.from_state.value, transition.from_step,
-            transition.to_state.value, transition.to_step, reason, trade_date,
+            transition.from_state.value,
+            transition.from_step,
+            transition.to_state.value,
+            transition.to_step,
+            reason,
+            trade_date,
         )
         self._current = to_state
         self._recovery_step = to_step

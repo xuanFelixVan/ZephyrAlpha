@@ -15,6 +15,7 @@
   - build_schedule_from_detector（fake detector）
   - RegimeDetectorShrinkageAdapter on-demand + 缓存
 """
+
 from __future__ import annotations
 
 import math
@@ -35,6 +36,7 @@ from zephyr.backtest.regime_validation.shrinkage_provider import (
 
 # ── clamp_shrinkage ───────────────────────────────────────────────────
 
+
 class TestClamp:
     def test_normal_value(self):
         assert clamp_shrinkage(0.6) == 0.6
@@ -54,6 +56,7 @@ class TestClamp:
 
 
 # ── ConstShrinkageProvider ────────────────────────────────────────────
+
 
 class TestConstProvider:
     def test_returns_constant(self):
@@ -78,6 +81,7 @@ class TestConstProvider:
 
 
 # ── ScheduleShrinkageProvider ─────────────────────────────────────────
+
 
 class TestScheduleProvider:
     def _sched(self):
@@ -126,33 +130,26 @@ class TestScheduleProvider:
 
 # ── MockShrinkageProvider ─────────────────────────────────────────────
 
+
 class TestMockProvider:
     def test_low_vol_full_deploy(self):
         """vol < 15% → 1.0（满部署）。"""
-        p = MockShrinkageProvider(
-            volatility_schedule={datetime(2026, 1, 1): 0.10}
-        )
+        p = MockShrinkageProvider(volatility_schedule={datetime(2026, 1, 1): 0.10})
         assert p.get_shrinkage(datetime(2026, 1, 1)) == 1.0
 
     def test_mid_vol_light_throttle(self):
         """vol 15-25% → 0.85。"""
-        p = MockShrinkageProvider(
-            volatility_schedule={datetime(2026, 1, 1): 0.20}
-        )
+        p = MockShrinkageProvider(volatility_schedule={datetime(2026, 1, 1): 0.20})
         assert p.get_shrinkage(datetime(2026, 1, 1)) == 0.85
 
     def test_high_vol_mid_throttle(self):
         """vol 25-40% → 0.60。"""
-        p = MockShrinkageProvider(
-            volatility_schedule={datetime(2026, 1, 1): 0.35}
-        )
+        p = MockShrinkageProvider(volatility_schedule={datetime(2026, 1, 1): 0.35})
         assert p.get_shrinkage(datetime(2026, 1, 1)) == 0.60
 
     def test_crisis_vol_strong_throttle(self):
         """vol ≥ 40% → 0.30（crisis-like）。"""
-        p = MockShrinkageProvider(
-            volatility_schedule={datetime(2026, 1, 1): 0.50}
-        )
+        p = MockShrinkageProvider(volatility_schedule={datetime(2026, 1, 1): 0.50})
         assert p.get_shrinkage(datetime(2026, 1, 1)) == 0.30
 
     def test_vol_fn_mode(self):
@@ -167,9 +164,7 @@ class TestMockProvider:
         assert p.get_shrinkage(datetime(2026, 1, 1)) == 1.0
 
     def test_nan_vol_returns_one(self):
-        p = MockShrinkageProvider(
-            volatility_schedule={datetime(2026, 1, 1): float("nan")}
-        )
+        p = MockShrinkageProvider(volatility_schedule={datetime(2026, 1, 1): float("nan")})
         assert p.get_shrinkage(datetime(2026, 1, 1)) == 1.0
 
     def test_requires_schedule_or_fn(self):
@@ -190,6 +185,7 @@ class TestMockProvider:
 
 
 # ── build_schedule_from_results ───────────────────────────────────────
+
 
 class TestBuildScheduleFromResults:
     def test_from_shrinkage_result_objects(self):
@@ -237,6 +233,7 @@ class TestBuildScheduleFromResults:
 
 # ── build_schedule_from_detector ──────────────────────────────────────
 
+
 class TestBuildScheduleFromDetector:
     def test_uses_detector_detect_output(self):
         """fake detector 的 detect 返回 value=0.6 → schedule 记 0.6。"""
@@ -267,13 +264,12 @@ class TestBuildScheduleFromDetector:
             def detect(self, *args, **kwargs):
                 raise RuntimeError("hmm")
 
-        sched = build_schedule_from_detector(
-            _FakeDetector(), {datetime(2026, 1, 1): ({}, {}, {})}
-        )
+        sched = build_schedule_from_detector(_FakeDetector(), {datetime(2026, 1, 1): ({}, {}, {})})
         assert sched[datetime(2026, 1, 1)] == 1.0
 
 
 # ── RegimeDetectorShrinkageAdapter ────────────────────────────────────
+
 
 class TestRegimeDetectorAdapter:
     def test_on_demand_and_cache(self):

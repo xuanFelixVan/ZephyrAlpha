@@ -146,15 +146,13 @@ class ResultComparisonError(ZephyrBaseError):
 class ResultComparisonConfig:
     """回测结果比较配置——不可变。"""
 
-    significance_level: float = 0.05          # 统计显著性水平 (默认95%置信)
-    min_trades_for_significance: int = 30     # 显著性检验最小交易次数
-    relative_threshold: float = 0.10          # 相对差异阈值(10%, 备用判定)
+    significance_level: float = 0.05  # 统计显著性水平 (默认95%置信)
+    min_trades_for_significance: int = 30  # 显著性检验最小交易次数
+    relative_threshold: float = 0.10  # 相对差异阈值(10%, 备用判定)
 
     def __post_init__(self) -> None:
         if not 0 < self.significance_level < 1:
-            raise ResultComparisonError(
-                f"significance_level must be in (0,1), got {self.significance_level}"
-            )
+            raise ResultComparisonError(f"significance_level must be in (0,1), got {self.significance_level}")
         if self.min_trades_for_significance <= 0:
             raise ResultComparisonError(
                 f"min_trades_for_significance must be > 0, got {self.min_trades_for_significance}"
@@ -173,10 +171,10 @@ class ComparativeMetric:
     name: str
     baseline_value: float | None
     candidate_value: float | None
-    absolute_diff: float | None       # candidate - baseline
-    relative_diff: float | None       # (candidate - baseline)/|baseline|
-    is_significant: bool              # 是否统计显著
-    is_better: bool | None            # candidate 是否更好 (None=无法比较/中性)
+    absolute_diff: float | None  # candidate - baseline
+    relative_diff: float | None  # (candidate - baseline)/|baseline|
+    is_significant: bool  # 是否统计显著
+    is_better: bool | None  # candidate 是否更好 (None=无法比较/中性)
 
 
 @dataclass(frozen=True)
@@ -198,7 +196,7 @@ class ComparisonReport:
 
     comparison: ResultComparison
     summary: str
-    detailed_table: str               # HTML 表格
+    detailed_table: str  # HTML 表格
     significance_notes: list[str] = field(default_factory=list)
 
 
@@ -288,13 +286,9 @@ class ResultComparator:
             ResultComparisonError: baseline/candidate 非 dict
         """
         if not isinstance(baseline, dict):
-            raise ResultComparisonError(
-                f"baseline must be a dict, got {type(baseline).__name__}"
-            )
+            raise ResultComparisonError(f"baseline must be a dict, got {type(baseline).__name__}")
         if not isinstance(candidate, dict):
-            raise ResultComparisonError(
-                f"candidate must be a dict, got {type(candidate).__name__}"
-            )
+            raise ResultComparisonError(f"candidate must be a dict, got {type(candidate).__name__}")
 
         comparative_metrics: list[ComparativeMetric] = []
         for name, key, better_func in _METRICS:
@@ -303,15 +297,17 @@ class ResultComparator:
             abs_diff, rel_diff = self._compute_diffs(b_val, c_val)
             is_sig = self._test_significance(baseline, candidate, key)
             is_better = better_func(b_val, c_val) if better_func and b_val is not None and c_val is not None else None
-            comparative_metrics.append(ComparativeMetric(
-                name=name,
-                baseline_value=b_val,
-                candidate_value=c_val,
-                absolute_diff=abs_diff,
-                relative_diff=rel_diff,
-                is_significant=is_sig,
-                is_better=is_better,
-            ))
+            comparative_metrics.append(
+                ComparativeMetric(
+                    name=name,
+                    baseline_value=b_val,
+                    candidate_value=c_val,
+                    absolute_diff=abs_diff,
+                    relative_diff=rel_diff,
+                    is_significant=is_sig,
+                    is_better=is_better,
+                )
+            )
 
         better_count = sum(1 for m in comparative_metrics if m.is_better is True)
         worse_count = sum(1 for m in comparative_metrics if m.is_better is False)
@@ -360,9 +356,7 @@ class ResultComparator:
             return None
 
     @staticmethod
-    def _compute_diffs(
-        b_val: float | None, c_val: float | None
-    ) -> tuple[float | None, float | None]:
+    def _compute_diffs(b_val: float | None, c_val: float | None) -> tuple[float | None, float | None]:
         """计算绝对差异与相对差异。缺失任一 → (None, None)。"""
         if b_val is None or c_val is None:
             return None, None
@@ -372,9 +366,7 @@ class ResultComparator:
 
     # ── 内部: 显著性检验 ──
 
-    def _test_significance(
-        self, baseline: dict, candidate: dict, key: str
-    ) -> bool:
+    def _test_significance(self, baseline: dict, candidate: dict, key: str) -> bool:
         """基于均值检验判断差异是否统计显著。
 
         交易次数不足 → False; 缺失 std → False;
@@ -400,7 +392,7 @@ class ResultComparator:
             return False
 
         abs_diff = abs(c_val - b_val)
-        se = math.sqrt(std_b ** 2 / n_b + std_c ** 2 / n_c)
+        se = math.sqrt(std_b**2 / n_b + std_c**2 / n_c)
         if se <= 0:
             return False
         z = _z_for_level(cfg.significance_level)
@@ -472,13 +464,10 @@ class ResultComparator:
             notes.append(f"以下指标差异统计显著(α={cfg.significance_level}): {names}")
         else:
             notes.append(
-                f"无指标达到统计显著(α={cfg.significance_level}, "
-                f"最小交易次数 {cfg.min_trades_for_significance})。"
+                f"无指标达到统计显著(α={cfg.significance_level}, 最小交易次数 {cfg.min_trades_for_significance})。"
             )
         # 提示交易次数不足的指标
-        n_b = next(
-            (m for m in comp.metrics if m.name == "交易次数"), None
-        )
+        n_b = next((m for m in comp.metrics if m.name == "交易次数"), None)
         if n_b is not None and n_b.baseline_value is not None:
             if n_b.baseline_value < cfg.min_trades_for_significance:
                 notes.append(

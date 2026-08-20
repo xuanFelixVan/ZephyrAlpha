@@ -78,13 +78,9 @@ class ConsecutiveLossConfig:
 
     def __post_init__(self) -> None:
         if self.consecutive_days < 1:
-            raise InvalidConsecutiveLossInputError(
-                f"consecutive_days 须 >= 1, got {self.consecutive_days}"
-            )
+            raise InvalidConsecutiveLossInputError(f"consecutive_days 须 >= 1, got {self.consecutive_days}")
         if not 0 < self.reduction_pct < 1:
-            raise InvalidConsecutiveLossInputError(
-                f"reduction_pct 须在 (0,1), got {self.reduction_pct}"
-            )
+            raise InvalidConsecutiveLossInputError(f"reduction_pct 须在 (0,1), got {self.reduction_pct}")
 
 
 @dataclass(frozen=True)
@@ -134,12 +130,15 @@ def check_consecutive_loss(
     multiplier = 1.0 - cfg.reduction_pct if triggered else 1.0
     reason = (
         f"连续 {streak} 天亏损 >= {cfg.consecutive_days} 天，降仓 {cfg.reduction_pct:.0%}"
-        if triggered else f"连续亏损 {streak} 天未达 {cfg.consecutive_days} 天阈值"
+        if triggered
+        else f"连续亏损 {streak} 天未达 {cfg.consecutive_days} 天阈值"
     )
     if triggered:
         _logger.warning(
             "CONSECUTIVE_LOSS_TRIGGERED streak=%d threshold=%d multiplier=%.2f",
-            streak, cfg.consecutive_days, multiplier,
+            streak,
+            cfg.consecutive_days,
+            multiplier,
         )
     return ConsecutiveLossAlert(
         triggered=triggered,
@@ -175,9 +174,7 @@ class ConsecutiveLossTracker:
         """逐日推进。pnl<0 连亏+1；pnl>=0 重置。同日幂等（以前日 streak 重算当日）。"""
         _validate_pnl(pnl)
         if self._last_date is not None and trade_date < self._last_date:
-            raise InvalidConsecutiveLossInputError(
-                f"trade_date 倒退: {trade_date} < {self._last_date}"
-            )
+            raise InvalidConsecutiveLossInputError(f"trade_date 倒退: {trade_date} < {self._last_date}")
         is_loss = pnl < 0
         if trade_date != self._last_date:
             self._prev_day_streak = self._streak
@@ -189,12 +186,15 @@ class ConsecutiveLossTracker:
         multiplier = 1.0 - cfg.reduction_pct if triggered else 1.0
         reason = (
             f"连续 {self._streak} 天亏损 >= {cfg.consecutive_days} 天，降仓 {cfg.reduction_pct:.0%}"
-            if triggered else f"连续亏损 {self._streak} 天未达 {cfg.consecutive_days} 天阈值"
+            if triggered
+            else f"连续亏损 {self._streak} 天未达 {cfg.consecutive_days} 天阈值"
         )
         if triggered:
             _logger.warning(
                 "CONSECUTIVE_LOSS_TRIGGERED date=%s streak=%d multiplier=%.2f",
-                trade_date, self._streak, multiplier,
+                trade_date,
+                self._streak,
+                multiplier,
             )
         return ConsecutiveLossAlert(
             triggered=triggered,

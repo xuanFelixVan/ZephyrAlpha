@@ -92,9 +92,7 @@ class E2BootstrapResult:
     summary: str
 
 
-def stationary_bootstrap_indices(
-    n: int, mean_block: int, rng: np.random.Generator
-) -> np.ndarray:
+def stationary_bootstrap_indices(n: int, mean_block: int, rng: np.random.Generator) -> np.ndarray:
     """生成一组 stationary bootstrap 索引（Politis & Romano 1994）。
 
     每步以概率 p=1/mean_block 从均匀分布重开新块，否则顺移到下一观测，
@@ -170,15 +168,11 @@ def bootstrap_sharpe_difference(
         raise E2BootstrapError(f"n_boot 需 ≥1: {cfg.n_boot}")
 
     rng = np.random.default_rng(cfg.seed)
-    observed = annualized_sharpe(on, cfg.periods_per_year) - annualized_sharpe(
-        off, cfg.periods_per_year
-    )
+    observed = annualized_sharpe(on, cfg.periods_per_year) - annualized_sharpe(off, cfg.periods_per_year)
     diffs = np.empty(cfg.n_boot, dtype=float)
     for b in range(cfg.n_boot):
         idx = stationary_bootstrap_indices(on.size, cfg.mean_block, rng)
-        diffs[b] = annualized_sharpe(on[idx], cfg.periods_per_year) - annualized_sharpe(
-            off[idx], cfg.periods_per_year
-        )
+        diffs[b] = annualized_sharpe(on[idx], cfg.periods_per_year) - annualized_sharpe(off[idx], cfg.periods_per_year)
     alpha = 1.0 - cfg.ci_level
     ci_lower, ci_upper = (float(q) for q in np.quantile(diffs, [alpha / 2.0, 1.0 - alpha / 2.0]))
     prob_positive = float(np.mean(diffs > 0.0))

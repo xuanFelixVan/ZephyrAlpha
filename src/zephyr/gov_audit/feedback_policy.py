@@ -27,6 +27,7 @@ Two parallel APIs coexist in this module:
 The two APIs serve different consumers — both are kept to avoid breaking
 existing audit-orchestrator integrations.
 """
+
 import logging
 from enum import Enum, unique
 from typing import Any
@@ -285,7 +286,6 @@ class PolicyFeedbackBridge:
         """写入：recommendations（Stage 4 公共化）。"""
         self._recommendations = value
 
-
     def aggregate_patterns(self, results: list[dict[str, Any]]) -> list[AnomalyPattern]:
         """Aggregate anomaly results into patterns.
 
@@ -366,9 +366,7 @@ class PolicyFeedbackBridge:
         call `generate_recommendations()` first to refresh.
         """
         total_patterns = len(self._patterns)
-        high_severity_count = sum(
-            1 for p in self._patterns.values() if p.severity.lower() in _HIGH_SEVERITIES
-        )
+        high_severity_count = sum(1 for p in self._patterns.values() if p.severity.lower() in _HIGH_SEVERITIES)
         return FeedbackSummary(
             total_patterns=total_patterns,
             total_recommendations=len(self._recommendations),

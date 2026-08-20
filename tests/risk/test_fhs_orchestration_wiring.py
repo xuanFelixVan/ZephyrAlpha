@@ -93,9 +93,7 @@ class FakeBroker(BrokerInterface):
 
 def _fhs_engine() -> FHSEngine:
     """小样本门槛 + 小模拟数 (测试速度) + 固定种子 (可复现)。"""
-    return FHSEngine(
-        FHSConfig(min_history=30, garch_min_history=30, n_simulations=500, random_seed=42)
-    )
+    return FHSEngine(FHSConfig(min_history=30, garch_min_history=30, n_simulations=500, random_seed=42))
 
 
 def _make_orchestrator(
@@ -230,16 +228,12 @@ class TestCooldown:
         orch = _make_orchestrator(fhs_engine=_fhs_engine())
         orch._record_fhs_failure("r", D0)
         assert orch.should_switch_to_fhs(ebt_red_streak=5, today=D0 + timedelta(days=1)) is False
-        assert orch.should_switch_to_fhs(
-            ebt_red_streak=5, today=D0 + timedelta(days=FHS_COOLDOWN_DAYS - 1)
-        ) is False
+        assert orch.should_switch_to_fhs(ebt_red_streak=5, today=D0 + timedelta(days=FHS_COOLDOWN_DAYS - 1)) is False
 
     def test_cooldown_expires_after_10_days(self) -> None:
         orch = _make_orchestrator(fhs_engine=_fhs_engine())
         orch._record_fhs_failure("r", D0)
-        assert orch.should_switch_to_fhs(
-            ebt_red_streak=5, today=D0 + timedelta(days=FHS_COOLDOWN_DAYS)
-        ) is True
+        assert orch.should_switch_to_fhs(ebt_red_streak=5, today=D0 + timedelta(days=FHS_COOLDOWN_DAYS)) is True
 
     def test_cooldown_log(self, caplog) -> None:
         import logging

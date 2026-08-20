@@ -88,7 +88,6 @@ class GitBisector:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def _git(self, *args: str) -> subprocess.CompletedProcess[str]:
         return run_subprocess_hidden(["git", *args], capture_output=True, text=True, cwd=self._project_root, timeout=30)
 
@@ -140,7 +139,9 @@ class GitBisector:
             # 若 subprocess 抛 TimeoutExpired/FileNotFoundError 会掩盖 try 块中正在传播的异常,
             # 并使仓库停留在 bisect 的分离 HEAD 状态。包裹 try/except 确保清理始终执行
             try:
-                run_subprocess_hidden(["git", "checkout", "-"], capture_output=True, text=True, cwd=self._project_root, timeout=10)
+                run_subprocess_hidden(
+                    ["git", "checkout", "-"], capture_output=True, text=True, cwd=self._project_root, timeout=10
+                )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in git_bisector", exc_info=True)
 

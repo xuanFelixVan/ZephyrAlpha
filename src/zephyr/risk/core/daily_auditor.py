@@ -473,10 +473,7 @@ class DailyAuditReport:
             "pnl_reconciliation": self.pnl_reconciliation.to_dict(),
             "attribution_bias": self.attribution_bias.to_dict() if self.attribution_bias else None,
             "compliance_report": self.compliance_report.to_dict(),
-            "checklist": [
-                {"name": c.name, "status": c.status.value, "detail": c.detail}
-                for c in self.checklist
-            ],
+            "checklist": [{"name": c.name, "status": c.status.value, "detail": c.detail} for c in self.checklist],
             "issues": [
                 {
                     "issue_id": i.issue_id,
@@ -577,17 +574,11 @@ class AuditConfig:
 
     def __post_init__(self) -> None:
         if self.pnl_tolerance <= 0:
-            raise InvalidAuditInputError(
-                f"pnl_tolerance must be >0, got {self.pnl_tolerance}"
-            )
+            raise InvalidAuditInputError(f"pnl_tolerance must be >0, got {self.pnl_tolerance}")
         if not 0 < self.warn_ratio <= 1:
-            raise InvalidAuditInputError(
-                f"warn_ratio must be in (0,1], got {self.warn_ratio}"
-            )
+            raise InvalidAuditInputError(f"warn_ratio must be in (0,1], got {self.warn_ratio}")
         if self.bias_threshold <= 0:
-            raise InvalidAuditInputError(
-                f"bias_threshold must be >0, got {self.bias_threshold}"
-            )
+            raise InvalidAuditInputError(f"bias_threshold must be >0, got {self.bias_threshold}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -726,9 +717,7 @@ class DailyAuditor:
         now = now or datetime.now(timezone.utc)
 
         # 前收盘价查找表 (symbol → prev_close), 缺失则用 avg_entry
-        prev_close_map: dict[str, float] = {
-            p.symbol: p.close_price for p in positions_prev
-        }
+        prev_close_map: dict[str, float] = {p.symbol: p.close_price for p in positions_prev}
 
         # ── 资产负债表恒等式 (gross) ──
         # MV_prev = Σ qty_prev × close_prev ; MV_now = Σ qty_now × close
@@ -753,9 +742,7 @@ class DailyAuditor:
         gap = expected - total_pnl
         gap_pct = gap / abs(nav) if abs(nav) > 0 else 0.0
         status = (
-            ReconciliationStatus.MATCH
-            if abs(gap_pct) <= self._config.pnl_tolerance
-            else ReconciliationStatus.MISMATCH
+            ReconciliationStatus.MATCH if abs(gap_pct) <= self._config.pnl_tolerance else ReconciliationStatus.MISMATCH
         )
 
         return PnLReconciliation(
@@ -810,11 +797,7 @@ class DailyAuditor:
         else:
             actual_pct = actual_factor_pnl / denom
             bias = predicted - actual_pct
-            status = (
-                AttributionStatus.BIASED
-                if abs(bias) > self._config.bias_threshold
-                else AttributionStatus.ALIGNED
-            )
+            status = AttributionStatus.BIASED if abs(bias) > self._config.bias_threshold else AttributionStatus.ALIGNED
 
         return AttributionBias(
             predicted_factor_pct=predicted,
@@ -913,18 +896,13 @@ class DailyAuditor:
                 ChecklistItem(
                     name="PnL对账",
                     status=CheckStatus.FAIL,
-                    detail=f"缺口 {pnl_reconciliation.gap_pct:.4%} 超容差 "
-                    f"(gap={pnl_reconciliation.gap:.2f})",
+                    detail=f"缺口 {pnl_reconciliation.gap_pct:.4%} 超容差 (gap={pnl_reconciliation.gap:.2f})",
                 )
             )
 
         # 3. 限额合规
         if compliance_report.overall_status == AuditStatus.FAIL:
-            breached = [
-                c.limit_type
-                for c in compliance_report.checks
-                if c.status == CheckStatus.BREACHED
-            ]
+            breached = [c.limit_type for c in compliance_report.checks if c.status == CheckStatus.BREACHED]
             items.append(
                 ChecklistItem(
                     name="限额合规",
@@ -1000,9 +978,7 @@ class DailyAuditor:
         """
         now = request.now or datetime.now(timezone.utc)
 
-        pnl_recon = self.reconcile_pnl(
-            request.positions_prev, request.positions_now, request.fills, request.nav, now
-        )
+        pnl_recon = self.reconcile_pnl(request.positions_prev, request.positions_now, request.fills, request.nav, now)
         attribution = self.detect_attribution_bias(
             request.decomposition, request.actual_factor_pnl, request.actual_residual_pnl, now
         )
@@ -1053,12 +1029,8 @@ class DailyAuditor:
     ) -> AuditRiskMetricsReport:
         """生成 CTR-P1-011 AuditRiskMetricsReport (供 D-REPORTING)。"""
         now = now or datetime.now(timezone.utc)
-        report_id = (
-            f"RMR-{audit_report.portfolio_id}-{audit_report.trading_date.isoformat()}"
-        )
-        high_count = sum(
-            1 for i in audit_report.issues if i.severity == IssueSeverity.HIGH
-        )
+        report_id = f"RMR-{audit_report.portfolio_id}-{audit_report.trading_date.isoformat()}"
+        high_count = sum(1 for i in audit_report.issues if i.severity == IssueSeverity.HIGH)
         return AuditRiskMetricsReport(
             report_id=report_id,
             trading_date=audit_report.trading_date,
@@ -1106,8 +1078,7 @@ class DailyAuditor:
                 trade_date=trade_date,
                 action="PASS",
                 reason=(
-                    f"样本 {n_obs} < {VAR_BACKTEST_MIN_SAMPLES}, 跳过回测强制 PASS "
-                    f"(min_history 下限, 回测无统计意义)"
+                    f"样本 {n_obs} < {VAR_BACKTEST_MIN_SAMPLES}, 跳过回测强制 PASS (min_history 下限, 回测无统计意义)"
                 ),
                 flags=("INSUFFICIENT_SAMPLE_SKIP",),
                 n_obs=n_obs,
@@ -1237,9 +1208,7 @@ class DailyAuditor:
         持久化由 backtest_store.save_entry_var 承载 (§3.18 阶段 4b),
         本方法只产审计日志记录。
         """
-        rec = self._var_audit_record(
-            "entry_var", trade_date, entry_var=entry_var, entry_es=entry_es
-        )
+        rec = self._var_audit_record("entry_var", trade_date, entry_var=entry_var, entry_es=entry_es)
         logger.info(
             "VAR_AUDIT entry_var date=%s entry_var=%.6f entry_es=%s",
             trade_date.isoformat(),
@@ -1268,9 +1237,7 @@ class DailyAuditor:
         - 其他 (含 RECOVERED_FROM_REBUILD) → INFO
         """
         action_norm = action.upper()
-        rec = self._var_audit_record(
-            "recalibration", trade_date, action=action_norm, reason=reason
-        )
+        rec = self._var_audit_record("recalibration", trade_date, action=action_norm, reason=reason)
         if action_norm == "REBUILD":
             logger.critical(
                 "VAR_AUDIT recalibration date=%s action=REBUILD reason=%s",
@@ -1291,7 +1258,6 @@ class DailyAuditor:
                 reason,
             )
         return rec
-
 
     # ── 内部: 单项限额检查 ──
 
@@ -1370,10 +1336,7 @@ class DailyAuditor:
                     issue_id=_next_id(),
                     category="PNL_RECONCILIATION",
                     severity=IssueSeverity.HIGH,
-                    description=(
-                        f"PnL 对账缺口 {pnl_recon.gap_pct:.4%} "
-                        f"(gap={pnl_recon.gap:.2f}) 超容差"
-                    ),
+                    description=(f"PnL 对账缺口 {pnl_recon.gap_pct:.4%} (gap={pnl_recon.gap:.2f}) 超容差"),
                 )
             )
 
@@ -1466,10 +1429,6 @@ class DailyAuditor:
         """校验限额消耗: 拒绝 NaN / 负消耗。"""
         for c in consumptions:
             if math.isnan(c.value) or math.isnan(c.consumed):
-                raise InvalidAuditInputError(
-                    f"limit {c.limit_type}: value/consumed 禁止 NaN"
-                )
+                raise InvalidAuditInputError(f"limit {c.limit_type}: value/consumed 禁止 NaN")
             if c.consumed < 0:
-                raise InvalidAuditInputError(
-                    f"limit {c.limit_type}: consumed 禁止负值, got {c.consumed}"
-                )
+                raise InvalidAuditInputError(f"limit {c.limit_type}: consumed 禁止负值, got {c.consumed}")

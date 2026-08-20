@@ -218,8 +218,8 @@ def test_no_duplicate_alert_on_same_level():
     monitor = ConcentrationMonitor()
     events: list = []
     monitor.on_concentration_alerted(events.append)
-    monitor.update({"A": 1.0}, now=T0)        # NONE→CRITICAL
-    monitor.update({"B": 1.0}, now=T0)        # CRITICAL→CRITICAL (不重复)
+    monitor.update({"A": 1.0}, now=T0)  # NONE→CRITICAL
+    monitor.update({"B": 1.0}, now=T0)  # CRITICAL→CRITICAL (不重复)
     assert len(events) == 1
 
 

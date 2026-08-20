@@ -41,9 +41,7 @@ class _FakeBroker:
         self.cancelled_orders.append(order_id)
 
     def place_order(self, symbol: str, direction: str, qty: float, order_type: str) -> None:
-        self.placed_orders.append(
-            {"symbol": symbol, "direction": direction, "qty": qty, "order_type": order_type}
-        )
+        self.placed_orders.append({"symbol": symbol, "direction": direction, "qty": qty, "order_type": order_type})
 
 
 class _LiveBroker(_FakeBroker):
@@ -156,14 +154,10 @@ class TestLiquidationResilience:
         results: dict[str, dict] = {}
 
         def run_first():
-            results["first"] = execute_kill_switch_liquidation(
-                broker, positions, event_id="evt-1", state_store=store
-            )
+            results["first"] = execute_kill_switch_liquidation(broker, positions, event_id="evt-1", state_store=store)
 
         def run_second():
-            results["second"] = execute_kill_switch_liquidation(
-                broker, positions, event_id="evt-2", state_store=store
-            )
+            results["second"] = execute_kill_switch_liquidation(broker, positions, event_id="evt-2", state_store=store)
 
         t1 = threading.Thread(target=run_first)
         t1.start()
@@ -187,15 +181,11 @@ class TestLiquidationResilience:
         broker = _FakeBroker()
         positions = {"600000.SH": 1000}
 
-        r1 = execute_kill_switch_liquidation(
-            broker, positions, event_id="evt-dup", state_store=store
-        )
+        r1 = execute_kill_switch_liquidation(broker, positions, event_id="evt-dup", state_store=store)
         assert r1["status"] == "executed"
         assert len(broker.placed_orders) == 1
 
-        r2 = execute_kill_switch_liquidation(
-            broker, positions, event_id="evt-dup", state_store=store
-        )
+        r2 = execute_kill_switch_liquidation(broker, positions, event_id="evt-dup", state_store=store)
         assert r2["status"] == "idempotent_replay"
         assert len(broker.placed_orders) == 1  # 未重复发单
 
@@ -205,9 +195,7 @@ class TestLiquidationResilience:
         (tmp_path / "kill_switch_liquidation.json").write_bytes(b"{broken!!")
         broker = _FakeBroker()
 
-        result = execute_kill_switch_liquidation(
-            broker, {"600000.SH": 1000}, state_store=store
-        )
+        result = execute_kill_switch_liquidation(broker, {"600000.SH": 1000}, state_store=store)
         assert result["status"] == "rejected_state_corrupt"
         assert result["all_success"] is False
         assert broker.placed_orders == []
@@ -231,9 +219,7 @@ class TestLiquidationResilience:
     def test_legacy_mode_no_store_unchanged(self):
         """无 store（既有行为）：调用方快照直发，报告带 status=executed。"""
         broker = _FakeBroker()
-        result = execute_kill_switch_liquidation(
-            broker, {"600000.SH": 1000}, {"ord-1": {}}, scope="all"
-        )
+        result = execute_kill_switch_liquidation(broker, {"600000.SH": 1000}, {"ord-1": {}}, scope="all")
         assert result["status"] == "executed"
         assert len(result["cancelled_orders"]) == 1
         assert len(result["liquidation_orders"]) == 1

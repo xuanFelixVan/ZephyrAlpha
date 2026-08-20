@@ -235,9 +235,7 @@ _DEDUP_WINDOW_SPEC: Final[dict[str, str]] = {"THD-ALERT-001": "dedup_window_seco
 
 def _load_dedup_window_seconds(registry_path: Path | None = None) -> float:
     """从告警阈值注册表加载去重窗口秒数（fail-closed；registry_path 为测试逃生门）。"""
-    return load_alert_thresholds(_DEDUP_WINDOW_SPEC, registry_path=registry_path)[
-        "dedup_window_seconds"
-    ]
+    return load_alert_thresholds(_DEDUP_WINDOW_SPEC, registry_path=registry_path)["dedup_window_seconds"]
 
 
 class AlertGenerator:
@@ -273,9 +271,7 @@ class AlertGenerator:
             registry_path: 注册表路径注入（测试逃生门；默认全仓唯一真源）。
         """
         self._dedup_window = (
-            dedup_window
-            if dedup_window is not None
-            else timedelta(seconds=_load_dedup_window_seconds(registry_path))
+            dedup_window if dedup_window is not None else timedelta(seconds=_load_dedup_window_seconds(registry_path))
         )
         self._dedup_cache: dict[str, datetime] = {}
         self._channels: dict[str, AlertChannel] = channels or {
@@ -299,8 +295,7 @@ class AlertGenerator:
         alerts: list[Alert] = []
         now = datetime.now(UTC)
         _logger.debug(
-            "Classifying report: portfolio=%s kill_switch=%s overall_pass=%s "
-            "failed_checks=%d active_alerts=%d",
+            "Classifying report: portfolio=%s kill_switch=%s overall_pass=%s failed_checks=%d active_alerts=%d",
             report.portfolio_id,
             report.kill_switch_active,
             report.overall_pass,
@@ -310,59 +305,62 @@ class AlertGenerator:
 
         # RED: kill switch 触发
         if report.kill_switch_active:
-            alerts.append(self._make_alert(
-                level=AlertLevel.RED,
-                source="kill_switch",
-                message=f"Kill switch activated for portfolio {report.portfolio_id}",
-                timestamp=now,
-            ))
+            alerts.append(
+                self._make_alert(
+                    level=AlertLevel.RED,
+                    source="kill_switch",
+                    message=f"Kill switch activated for portfolio {report.portfolio_id}",
+                    timestamp=now,
+                )
+            )
 
         # RED: HALT 级违规
         halt_checks = [c for c in report.failed_checks if c.severity == "HALT"]
         for check in halt_checks:
             msg = check.message or (
-                f"HALT: {check.rule_name} violated "
-                f"(limit={check.limit_value}, actual={check.actual_value})"
+                f"HALT: {check.rule_name} violated (limit={check.limit_value}, actual={check.actual_value})"
             )
-            alerts.append(self._make_alert(
-                level=AlertLevel.RED,
-                source=check.rule_name,
-                message=msg,
-                timestamp=now,
-            ))
+            alerts.append(
+                self._make_alert(
+                    level=AlertLevel.RED,
+                    source=check.rule_name,
+                    message=msg,
+                    timestamp=now,
+                )
+            )
 
         # ORANGE: 非 HALT 级违规（同源已有 RED 则跳过）
         red_sources = {a.source for a in alerts if a.level == AlertLevel.RED}
-        non_halt_failures = [
-            c for c in report.failed_checks if c.severity != "HALT"
-        ]
+        non_halt_failures = [c for c in report.failed_checks if c.severity != "HALT"]
         for check in non_halt_failures:
             if check.rule_name in red_sources:
                 continue
             msg = check.message or (
-                f"WARNING: {check.rule_name} violated "
-                f"(limit={check.limit_value}, actual={check.actual_value})"
+                f"WARNING: {check.rule_name} violated (limit={check.limit_value}, actual={check.actual_value})"
             )
-            alerts.append(self._make_alert(
-                level=AlertLevel.ORANGE,
-                source=check.rule_name,
-                message=msg,
-                timestamp=now,
-            ))
+            alerts.append(
+                self._make_alert(
+                    level=AlertLevel.ORANGE,
+                    source=check.rule_name,
+                    message=msg,
+                    timestamp=now,
+                )
+            )
 
         # YELLOW: active_alerts 字符串
         for raw_msg in report.active_alerts:
             source = self._extract_source(raw_msg)
-            alerts.append(self._make_alert(
-                level=AlertLevel.YELLOW,
-                source=source,
-                message=raw_msg,
-                timestamp=now,
-            ))
+            alerts.append(
+                self._make_alert(
+                    level=AlertLevel.YELLOW,
+                    source=source,
+                    message=raw_msg,
+                    timestamp=now,
+                )
+            )
 
         _logger.info(
-            "Classification complete: portfolio=%s total_alerts=%d "
-            "red=%d orange=%d yellow=%d",
+            "Classification complete: portfolio=%s total_alerts=%d red=%d orange=%d yellow=%d",
             report.portfolio_id,
             len(alerts),
             sum(1 for a in alerts if a.level == AlertLevel.RED),
@@ -391,8 +389,7 @@ class AlertGenerator:
 
             if last_seen is not None and (alert.timestamp - last_seen) < self._dedup_window:
                 _logger.warning(
-                    "Alert suppressed (dedup): source=%s message=%s "
-                    "within window=%ss",
+                    "Alert suppressed (dedup): source=%s message=%s within window=%ss",
                     alert.source,
                     alert.message,
                     self._dedup_window.total_seconds(),
@@ -438,16 +435,14 @@ class AlertGenerator:
                     )
                 else:
                     _logger.warning(
-                        "Channel returned failure (best-effort): "
-                        "channel=%s level=%s source=%s",
+                        "Channel returned failure (best-effort): channel=%s level=%s source=%s",
                         channel_name,
                         alert.level.value,
                         alert.source,
                     )
             except Exception as exc:  # noqa: BLE001 — best-effort, 不阻断
                 _logger.error(
-                    "Channel dispatch failed (best-effort): "
-                    "channel=%s error=%s",
+                    "Channel dispatch failed (best-effort): channel=%s error=%s",
                     channel_name,
                     exc,
                 )
@@ -493,10 +488,7 @@ class AlertGenerator:
 
     def _cleanup_expired(self, now: datetime) -> None:
         """清理去重缓存中过期的条目。"""
-        expired_keys = [
-            key for key, ts in self._dedup_cache.items()
-            if (now - ts) >= self._dedup_window
-        ]
+        expired_keys = [key for key, ts in self._dedup_cache.items() if (now - ts) >= self._dedup_window]
         for key in expired_keys:
             del self._dedup_cache[key]
         if expired_keys:

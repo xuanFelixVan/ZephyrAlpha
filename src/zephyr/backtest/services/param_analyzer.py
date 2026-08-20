@@ -212,13 +212,9 @@ class ParamAnalysisConfig:
 
     def __post_init__(self) -> None:
         if self.sensitivity_threshold <= 0:
-            raise ParamAnalysisError(
-                f"sensitivity_threshold must be > 0, got {self.sensitivity_threshold}"
-            )
+            raise ParamAnalysisError(f"sensitivity_threshold must be > 0, got {self.sensitivity_threshold}")
         if self.top_n <= 0:
-            raise ParamAnalysisError(
-                f"top_n must be > 0, got {self.top_n}"
-            )
+            raise ParamAnalysisError(f"top_n must be > 0, got {self.top_n}")
 
 
 @dataclass(frozen=True)
@@ -352,12 +348,14 @@ class ParameterAnalyzer:
             sensitivity = (max(mean_vals) - min(mean_vals)) / overall_std
             is_sig = sensitivity > self._config.sensitivity_threshold
 
-            results.append(ParamSensitivity(
-                param_name=name,
-                sensitivity=sensitivity,
-                is_significant=is_sig,
-                group_means=group_means,
-            ))
+            results.append(
+                ParamSensitivity(
+                    param_name=name,
+                    sensitivity=sensitivity,
+                    is_significant=is_sig,
+                    group_means=group_means,
+                )
+            )
 
         return results
 
@@ -434,14 +432,14 @@ class ParameterAnalyzer:
                 start_date="1970-01-01",
                 end_date="1970-01-01",
             )
-            self._cache.put(key, {
-                "best_objective": report.best_run.objective,
-                "total_runs": report.total_runs,
-                "overfit_score": (
-                    report.overfitting.overfit_score
-                    if report.overfitting else None
-                ),
-            })
+            self._cache.put(
+                key,
+                {
+                    "best_objective": report.best_run.objective,
+                    "total_runs": report.total_runs,
+                    "overfit_score": (report.overfitting.overfit_score if report.overfitting else None),
+                },
+            )
         except Exception:
             _logger.warning("缓存分析结果失败", exc_info=True)
 

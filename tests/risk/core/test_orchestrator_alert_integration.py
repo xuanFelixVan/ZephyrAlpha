@@ -156,23 +156,36 @@ class TestAlertDispatch:
             portfolio_id="p1",
             alert_generator=gen,
         )
-        orch._check_results.extend([
-            RiskCheckResult(
-                check_id="c1", rule_name="position_limit", passed=False,
-                limit_value=Decimal("0.10"), actual_value=Decimal("0.25"),
-                severity="HALT", message="position limit breached",
-            ),
-            RiskCheckResult(
-                check_id="c2", rule_name="drawdown", passed=False,
-                limit_value=Decimal("0.05"), actual_value=Decimal("0.08"),
-                severity="WARNING", message="drawdown approaching limit",
-            ),
-            RiskCheckResult(
-                check_id="c3", rule_name="leverage", passed=True,
-                limit_value=Decimal("1.5"), actual_value=Decimal("1.2"),
-                severity="info",
-            ),
-        ])
+        orch._check_results.extend(
+            [
+                RiskCheckResult(
+                    check_id="c1",
+                    rule_name="position_limit",
+                    passed=False,
+                    limit_value=Decimal("0.10"),
+                    actual_value=Decimal("0.25"),
+                    severity="HALT",
+                    message="position limit breached",
+                ),
+                RiskCheckResult(
+                    check_id="c2",
+                    rule_name="drawdown",
+                    passed=False,
+                    limit_value=Decimal("0.05"),
+                    actual_value=Decimal("0.08"),
+                    severity="WARNING",
+                    message="drawdown approaching limit",
+                ),
+                RiskCheckResult(
+                    check_id="c3",
+                    rule_name="leverage",
+                    passed=True,
+                    limit_value=Decimal("1.5"),
+                    actual_value=Decimal("1.2"),
+                    severity="info",
+                ),
+            ]
+        )
         report = orch.aggregate_report()
         alerts = orch.last_alerts
         levels = {a.level for a in alerts}
@@ -194,8 +207,11 @@ class TestBestEffort:
         )
         orch._check_results.append(
             RiskCheckResult(
-                check_id="c1", rule_name="position_limit", passed=False,
-                limit_value=Decimal("0.10"), actual_value=Decimal("0.25"),
+                check_id="c1",
+                rule_name="position_limit",
+                passed=False,
+                limit_value=Decimal("0.10"),
+                actual_value=Decimal("0.25"),
                 severity="HALT",
             )
         )
@@ -218,6 +234,7 @@ class TestFullPipeline:
 
         # 1. 事前检查通过
         from zephyr.shared.contracts.risk_limits import RiskLimits
+
         limits = RiskLimits(
             as_of_date=datetime.now(UTC),
             idempotency_key="ik-test",

@@ -43,8 +43,7 @@ SQL_DRIFT_TREND = (
     "FROM drift_scan_results ORDER BY scan_time DESC LIMIT 50"
 )
 SQL_LATEST_SCAN = (
-    "SELECT total_drifts, high_count, low_count, auto_fixable "
-    "FROM drift_scan_results ORDER BY scan_time DESC LIMIT 1"
+    "SELECT total_drifts, high_count, low_count, auto_fixable FROM drift_scan_results ORDER BY scan_time DESC LIMIT 1"
 )
 SQL_TOTAL_SCANS = "SELECT COUNT(*) FROM drift_scan_results"
 SQL_SUM_AUTO_FIXABLE = "SELECT COALESCE(SUM(auto_fixable), 0) FROM drift_scan_results"
@@ -93,9 +92,7 @@ class Dashboard:
         from zephyr.shared.io.paths import MAIN_REPO_ROOT, anchor_main_root  # noqa: PLC0415
 
         _anchored_root = anchor_main_root(Path(project_root))
-        self._db_path = os.path.join(
-            str(_anchored_root), *DB_PATH.relative_to(MAIN_REPO_ROOT).parts
-        )
+        self._db_path = os.path.join(str(_anchored_root), *DB_PATH.relative_to(MAIN_REPO_ROOT).parts)
 
         self._registry_path = os.path.join(os.path.dirname(__file__), "_detector_registry.yaml")
 
@@ -109,11 +106,9 @@ class Dashboard:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def load_coverage_matrix(self) -> dict[str, dict[str, object]]:
         """公共接口：load_coverage_matrix（Stage 4 公共化）。"""
         return self._load_coverage_matrix()
-
 
     def _load_coverage_matrix(self) -> dict[str, dict[str, object]]:
         import yaml

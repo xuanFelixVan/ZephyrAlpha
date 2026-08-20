@@ -229,9 +229,7 @@ def compute_pbo(
     is_arr = np.asarray(is_performance, dtype=float)
     oos_arr = np.asarray(oos_performance, dtype=float)
     if is_arr.shape != oos_arr.shape:
-        raise CPCVError(
-            f"IS/OOS性能矩阵形状必须一致, got {is_arr.shape} vs {oos_arr.shape}"
-        )
+        raise CPCVError(f"IS/OOS性能矩阵形状必须一致, got {is_arr.shape} vs {oos_arr.shape}")
     if is_arr.ndim != 2:
         raise CPCVError(f"性能矩阵必须是2D(n_splits×n_trials), got ndim={is_arr.ndim}")
     n_splits, n_trials = is_arr.shape

@@ -216,8 +216,12 @@ class TestCheckRecovery:
         # elapsed 8 < min_hold 10 → None
         result = check_recovery(
             RecoveryCheckInput(
-                current_spread=0.001, current_sell_pressure=0.40,
-                min_hold_minutes=10, elapsed=8.0, current_level=1, active_signals=0,
+                current_spread=0.001,
+                current_sell_pressure=0.40,
+                min_hold_minutes=10,
+                elapsed=8.0,
+                current_level=1,
+                active_signals=0,
                 **self.KW,
             )
         )
@@ -227,8 +231,12 @@ class TestCheckRecovery:
         # 双半阈值满足 + 0 信号 + 持续足够 → 0（正常态）
         result = check_recovery(
             RecoveryCheckInput(
-                current_spread=0.002, current_sell_pressure=0.45,
-                min_hold_minutes=10, elapsed=12.0, current_level=1, active_signals=0,
+                current_spread=0.002,
+                current_sell_pressure=0.45,
+                min_hold_minutes=10,
+                elapsed=12.0,
+                current_level=1,
+                active_signals=0,
                 **self.KW,
             )
         )
@@ -239,8 +247,12 @@ class TestCheckRecovery:
         # spread 0.003 介于恢复阈值 0.0025 与触发阈值 0.005 之间 → 不恢复
         result = check_recovery(
             RecoveryCheckInput(
-                current_spread=0.003, current_sell_pressure=0.45,
-                min_hold_minutes=10, elapsed=12.0, current_level=1, active_signals=0,
+                current_spread=0.003,
+                current_sell_pressure=0.45,
+                min_hold_minutes=10,
+                elapsed=12.0,
+                current_level=1,
+                active_signals=0,
                 **self.KW,
             )
         )
@@ -250,8 +262,12 @@ class TestCheckRecovery:
         # 信号未归零（spread 仍超触发阈值）→ 不恢复
         result = check_recovery(
             RecoveryCheckInput(
-                current_spread=0.002, current_sell_pressure=0.45,
-                min_hold_minutes=10, elapsed=12.0, current_level=1, active_signals=1,
+                current_spread=0.002,
+                current_sell_pressure=0.45,
+                min_hold_minutes=10,
+                elapsed=12.0,
+                current_level=1,
+                active_signals=1,
                 **self.KW,
             )
         )
@@ -261,8 +277,12 @@ class TestCheckRecovery:
         # 信号降至 1 + spread < 0.0025*1.2=0.003 → 降到 LEVEL_1
         result = check_recovery(
             RecoveryCheckInput(
-                current_spread=0.0028, current_sell_pressure=0.60,
-                min_hold_minutes=15, elapsed=20.0, current_level=2, active_signals=1,
+                current_spread=0.0028,
+                current_sell_pressure=0.60,
+                min_hold_minutes=15,
+                elapsed=20.0,
+                current_level=2,
+                active_signals=1,
                 **self.KW,
             )
         )
@@ -272,8 +292,12 @@ class TestCheckRecovery:
         # 冷却期满（min_hold=30 覆盖 Kill Switch 冷却）+ 信号≤2 + spread 放宽
         result = check_recovery(
             RecoveryCheckInput(
-                current_spread=0.0028, current_sell_pressure=0.70,
-                min_hold_minutes=30, elapsed=35.0, current_level=3, active_signals=2,
+                current_spread=0.0028,
+                current_sell_pressure=0.70,
+                min_hold_minutes=30,
+                elapsed=35.0,
+                current_level=3,
+                active_signals=2,
                 **self.KW,
             )
         )
@@ -283,8 +307,12 @@ class TestCheckRecovery:
         with pytest.raises(InvalidLiquidityCrisisInputError):
             check_recovery(
                 RecoveryCheckInput(
-                    current_spread=0.001, current_sell_pressure=0.40,
-                    min_hold_minutes=10, elapsed=12.0, current_level=0, active_signals=0,
+                    current_spread=0.001,
+                    current_sell_pressure=0.40,
+                    min_hold_minutes=10,
+                    elapsed=12.0,
+                    current_level=0,
+                    active_signals=0,
                     **self.KW,
                 )
             )
@@ -294,10 +322,16 @@ class TestCheckRecovery:
         with pytest.raises(InvalidLiquidityCrisisInputError):
             check_recovery(
                 RecoveryCheckInput(
-                    current_spread=0.001, current_sell_pressure=0.40,
-                    trigger_threshold_spread=0.005, recovery_threshold_spread=0.006,
-                    trigger_threshold_pressure=0.65, recovery_threshold_pressure=0.50,
-                    min_hold_minutes=10, elapsed=12.0, current_level=1, active_signals=0,
+                    current_spread=0.001,
+                    current_sell_pressure=0.40,
+                    trigger_threshold_spread=0.005,
+                    recovery_threshold_spread=0.006,
+                    trigger_threshold_pressure=0.65,
+                    recovery_threshold_pressure=0.50,
+                    min_hold_minutes=10,
+                    elapsed=12.0,
+                    current_level=1,
+                    active_signals=0,
                 )
             )
 
@@ -411,8 +445,10 @@ class TestRunIntradayLiquidityCheck:
     def test_crisis_triggers_level1(self):
         # 卖压 0.70 + spread 0.006 双超阈 → LEVEL_1 停开仓
         snap = _snapshot(
-            bid_price=9.97, ask_price=10.03,
-            bid_volumes=(300.0,), ask_volumes=(700.0,),
+            bid_price=9.97,
+            ask_price=10.03,
+            bid_volumes=(300.0,),
+            ask_volumes=(700.0,),
         )
         state = LiquidityRecoveryState()
         result = run_intraday_liquidity_check(snap, state, now=NOW)
@@ -425,8 +461,11 @@ class TestRunIntradayLiquidityCheck:
     def test_limit_down_triggers_crisis(self):
         # 跌停：卖压≈1.0 + effective_spread=1.0 → 双条件 AND 满足（算法断裂修复验证）
         snap = _snapshot(
-            last_price=9.0, bid_price=None, ask_price=9.0,
-            bid_volumes=(0.0,), ask_volumes=(9999.0,),
+            last_price=9.0,
+            bid_price=None,
+            ask_price=9.0,
+            bid_volumes=(0.0,),
+            ask_volumes=(9999.0,),
         )
         state = LiquidityRecoveryState()
         result = run_intraday_liquidity_check(snap, state, now=NOW)
@@ -438,8 +477,11 @@ class TestRunIntradayLiquidityCheck:
     def test_limit_up_never_triggers(self):
         # 涨停：spread 置 None 跳过检查（买压主导非危机）
         snap = _snapshot(
-            last_price=11.0, bid_price=11.0, ask_price=None,
-            bid_volumes=(9999.0,), ask_volumes=(0.0,),
+            last_price=11.0,
+            bid_price=11.0,
+            ask_price=None,
+            bid_volumes=(9999.0,),
+            ask_volumes=(0.0,),
         )
         state = LiquidityRecoveryState()
         result = run_intraday_liquidity_check(snap, state, now=NOW)
@@ -453,15 +495,18 @@ class TestRunIntradayLiquidityCheck:
         detector = AshareSystemicRiskDetector()
         state = LiquidityRecoveryState()
         crisis_snap = _snapshot(
-            bid_price=9.97, ask_price=10.03,
-            bid_volumes=(300.0,), ask_volumes=(700.0,),
+            bid_price=9.97,
+            ask_price=10.03,
+            bid_volumes=(300.0,),
+            ask_volumes=(700.0,),
         )
         run_intraday_liquidity_check(crisis_snap, state, detector=detector, now=NOW)
         assert state.in_crisis and state.level == 1
 
         later = NOW + timedelta(minutes=12)
         ok_snap = _snapshot(
-            bid_volumes=(550.0,), ask_volumes=(450.0,),  # 卖压 0.45 < 0.50 恢复阈值
+            bid_volumes=(550.0,),
+            ask_volumes=(450.0,),  # 卖压 0.45 < 0.50 恢复阈值
         )
         result = run_intraday_liquidity_check(ok_snap, state, detector=detector, now=later)
         assert result.recovery_target == 0
@@ -474,15 +519,15 @@ class TestRunIntradayLiquidityCheck:
         detector = AshareSystemicRiskDetector()
         state = LiquidityRecoveryState()
         crisis_snap = _snapshot(
-            bid_price=9.97, ask_price=10.03,
-            bid_volumes=(300.0,), ask_volumes=(700.0,),
+            bid_price=9.97,
+            ask_price=10.03,
+            bid_volumes=(300.0,),
+            ask_volumes=(700.0,),
         )
         run_intraday_liquidity_check(crisis_snap, state, detector=detector, now=NOW)
 
         early = NOW + timedelta(minutes=5)
-        result = run_intraday_liquidity_check(
-            _snapshot(), state, detector=detector, now=early
-        )
+        result = run_intraday_liquidity_check(_snapshot(), state, detector=detector, now=early)
         assert result.recovery_target is None
         assert state.in_crisis and state.level == 1
 
@@ -491,14 +536,18 @@ class TestRunIntradayLiquidityCheck:
         detector = AshareSystemicRiskDetector()
         state = LiquidityRecoveryState()
         crisis_snap = _snapshot(
-            bid_price=9.97, ask_price=10.03,
-            bid_volumes=(300.0,), ask_volumes=(700.0,),
+            bid_price=9.97,
+            ask_price=10.03,
+            bid_volumes=(300.0,),
+            ask_volumes=(700.0,),
         )
         # 直接以 detector.check 构造多信号场景等价验证：本模块编排只传流动性两输入，
         # LEVEL_3 由 MOD-RK-10 聚合其他信号产出；此处验证逃生指令通路。
         alert = detector.check(
-            sell_pressure=0.70, bid_ask_spread=0.006,
-            index_change_pct=-0.03, volume_surge_ratio=2.5,
+            sell_pressure=0.70,
+            bid_ask_spread=0.006,
+            index_change_pct=-0.03,
+            volume_surge_ratio=2.5,
             external_market_change=-0.04,
             now=NOW,
         )

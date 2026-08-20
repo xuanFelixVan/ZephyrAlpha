@@ -726,4 +726,12 @@ __all__ = [
     "validate_scalability",
     "verify_hash_chain",
     "verify_integrity",
-'artifact_scanner', 'autonomy_regressor', 'bootstrapping_calibrator', 'drift_detector', 'reward_hacking_rebound_detector', 'silence_detector', 'spiral_ews', 'vigil_runtime']
+    "artifact_scanner",
+    "autonomy_regressor",
+    "bootstrapping_calibrator",
+    "drift_detector",
+    "reward_hacking_rebound_detector",
+    "silence_detector",
+    "spiral_ews",
+    "vigil_runtime",
+]

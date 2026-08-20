@@ -107,9 +107,7 @@ class IntradayRecalcConfig:
 
     def __post_init__(self) -> None:
         if self.loss_var_ratio <= 0:
-            raise InvalidIntradayRecalcConfigError(
-                f"loss_var_ratio must be >0, got {self.loss_var_ratio}"
-            )
+            raise InvalidIntradayRecalcConfigError(f"loss_var_ratio must be >0, got {self.loss_var_ratio}")
         if not 0.0 < self.drawdown_threshold < 1.0:
             raise InvalidIntradayRecalcConfigError(
                 f"drawdown_threshold must be in (0,1), got {self.drawdown_threshold}"
@@ -119,13 +117,9 @@ class IntradayRecalcConfig:
                 f"significant_change_ratio must be >0, got {self.significant_change_ratio}"
             )
         if self.cooldown_seconds < 0:
-            raise InvalidIntradayRecalcConfigError(
-                f"cooldown_seconds must be >=0, got {self.cooldown_seconds}"
-            )
+            raise InvalidIntradayRecalcConfigError(f"cooldown_seconds must be >=0, got {self.cooldown_seconds}")
         if self.max_recalc_per_day < 1:
-            raise InvalidIntradayRecalcConfigError(
-                f"max_recalc_per_day must be >=1, got {self.max_recalc_per_day}"
-            )
+            raise InvalidIntradayRecalcConfigError(f"max_recalc_per_day must be >=1, got {self.max_recalc_per_day}")
 
 
 @dataclass(frozen=True)
@@ -334,9 +328,7 @@ class IntradayVarRecalcController:
           (§3.18 阶段 3 由调用方经 backtest_store 持久化)。
         """
         if not math.isfinite(current_nav) or current_nav <= 0:
-            raise InvalidIntradayRecalcConfigError(
-                f"current_nav must be positive finite, got {current_nav}"
-            )
+            raise InvalidIntradayRecalcConfigError(f"current_nav must be positive finite, got {current_nav}")
         now = now or self._clock()
         var_result = self._var_calc.calculate(current_returns, portfolio_value=current_nav, now=now)
         tail = self._tail_monitor.assess(current_returns, portfolio_value=current_nav, now=now)
@@ -397,9 +389,5 @@ class IntradayVarRecalcController:
             self._recalc_count = 0
 
     def _record_suppressed(self, now: datetime, reason: str, cause: str) -> None:
-        self._suppressed.append(
-            {"timestamp": now.isoformat(), "reason": reason, "cause": cause}
-        )
-        logger.info(
-            "intraday_recalc_suppressed cause=%s reason=%s", cause, reason
-        )
+        self._suppressed.append({"timestamp": now.isoformat(), "reason": reason, "cause": cause})
+        logger.info("intraday_recalc_suppressed cause=%s reason=%s", cause, reason)

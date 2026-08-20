@@ -42,6 +42,7 @@ MatchingEngine._clamp_buys_to_projected_cash 按先卖后买投影现金，
   佣金 = max(qty×price×rate, 最低佣金)
   印花税 = 卖出时 qty×price×stamp_tax_rate
 """
+
 from __future__ import annotations
 
 import logging
@@ -191,9 +192,7 @@ class TestFullWeightCostFrictionClamp:
     def test_engine_level_full_weight_no_skip_warning(self, caplog):
         """引擎级：满仓信号应成交（无 skip warning）"""
         dates = pd.bdate_range("2026-08-03", periods=2)
-        rows = [
-            {"symbol": "600000", "date": d, "close": 10.0} for d in dates
-        ]
+        rows = [{"symbol": "600000", "date": d, "close": 10.0} for d in dates]
         data = pd.DataFrame(rows).set_index(["symbol", "date"])
         sig = pd.DataFrame({"600000": [1.0, 1.0]}, index=dates)
         engine = DefaultBacktestEngine(config=BacktestConfig())
@@ -201,40 +200,29 @@ class TestFullWeightCostFrictionClamp:
             logging.WARNING,
             logger="zephyr.backtest.implementations.vectorized_engine",
         ):
-            result = engine.run(
-                data=data, signals=sig, strategy_name="full-clamp"
-            )
+            result = engine.run(data=data, signals=sig, strategy_name="full-clamp")
         pf = engine.last_portfolio
         assert result.trades_count == 1
         pos = pf.get_position("600000")
         assert pos.quantity == D("99900")
         # 不应出现 Fill skipped 警告（满仓成交成功）
-        per_fill = [
-            r for r in caplog.records if "Fill skipped" in r.getMessage()
-        ]
+        per_fill = [r for r in caplog.records if "Fill skipped" in r.getMessage()]
         assert len(per_fill) == 0
 
     def test_engine_level_limit_up_next_day_trade(self, caplog):
         """涨停日满仓被阻，次日非涨停日应成功买入"""
         dates = pd.bdate_range("2026-08-03", periods=3)
         closes = [10.00, 11.00, 11.00]  # day2 涨停
-        rows = [
-            {"symbol": "600000", "date": d, "close": c}
-            for d, c in zip(dates, closes, strict=True)
-        ]
+        rows = [{"symbol": "600000", "date": d, "close": c} for d, c in zip(dates, closes, strict=True)]
         data = pd.DataFrame(rows).set_index(["symbol", "date"])
         # day1 无信号；day2/day3 满仓信号
-        sig = pd.DataFrame(
-            {"600000": [float("nan"), 1.0, 1.0]}, index=dates
-        )
+        sig = pd.DataFrame({"600000": [float("nan"), 1.0, 1.0]}, index=dates)
         engine = DefaultBacktestEngine(config=BacktestConfig())
         with caplog.at_level(
             logging.WARNING,
             logger="zephyr.backtest.implementations.vectorized_engine",
         ):
-            result = engine.run(
-                data=data, signals=sig, strategy_name="limit-up-clamp"
-            )
+            result = engine.run(data=data, signals=sig, strategy_name="limit-up-clamp")
         pf = engine.last_portfolio
         trades = pf.trades_log
         # day2 涨停 → 无成交；day3 买入
@@ -242,7 +230,5 @@ class TestFullWeightCostFrictionClamp:
         assert trades[0]["date"].startswith("2026-08-05")
         assert trades[0]["side"] == "BUY"
         # 涨停日不应出现满仓 skip 警告（无单可成交）
-        per_fill = [
-            r for r in caplog.records if "Fill skipped" in r.getMessage()
-        ]
+        per_fill = [r for r in caplog.records if "Fill skipped" in r.getMessage()]
         assert len(per_fill) == 0

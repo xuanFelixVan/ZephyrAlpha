@@ -17,6 +17,7 @@
 覆盖: 组合数 C(N,k)、train/test 不相交、purge(t1重叠剔除)、embargo 隔离带、
 参数校验、PBO(全过拟合=1/全稳健=0/中间值/同值平局秩/矩阵校验)。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -115,7 +116,10 @@ class TestGenerateCPCVSplits:
             generate_cpcv_splits(10, n_groups=2, k_test=1, t1=[0] * 9 + [0])  # t1[9]<9
         with pytest.raises(CPCVError):
             generate_cpcv_splits(
-                10, n_groups=2, k_test=1, t1=[5, 4, 4, 5, 6, 7, 8, 9, 9, 9]  # 非单调
+                10,
+                n_groups=2,
+                k_test=1,
+                t1=[5, 4, 4, 5, 6, 7, 8, 9, 9, 9],  # 非单调
             )
 
 

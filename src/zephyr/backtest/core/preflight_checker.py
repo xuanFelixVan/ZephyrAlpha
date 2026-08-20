@@ -12,6 +12,7 @@
 run_dq_check 同签名：(table, where)->list[str] 违规描述），未注入时仅做参数
 结构检查并标记 skipped（防"无检查却绿"假通过）。
 """
+
 from __future__ import annotations
 
 import datetime

@@ -51,19 +51,19 @@ class SurvivalStatus(str, Enum):
 
     OK = "ok"
     SURVIVAL_BREACH = "survival_breach"  # 破生存线→降仓/关停评估
-    FAILURE = "failure"                  # 触失败指标→失败处置（对齐 Level4）
+    FAILURE = "failure"  # 触失败指标→失败处置（对齐 Level4）
 
 
 @dataclass(frozen=True)
 class SurvivalLineConfig:
     """生存线阈值配置（90 号 §16 裁定①默认值）。"""
 
-    window_months: int = 12                    # 滚动窗口（月）
-    excess_return_min: float = 0.0             # 超额须 >0
-    max_drawdown_limit: float = 0.15           # MaxDD 须 <15%
-    sharpe_min: float = 0.8                    # Sharpe 须 ≥0.8
-    fail_consecutive_loss_months: int = 6      # 连续 6 个月亏损→失败
-    fail_drawdown: float = 0.25                # 回撤 >25%→失败（对齐 Level4）
+    window_months: int = 12  # 滚动窗口（月）
+    excess_return_min: float = 0.0  # 超额须 >0
+    max_drawdown_limit: float = 0.15  # MaxDD 须 <15%
+    sharpe_min: float = 0.8  # Sharpe 须 ≥0.8
+    fail_consecutive_loss_months: int = 6  # 连续 6 个月亏损→失败
+    fail_drawdown: float = 0.25  # 回撤 >25%→失败（对齐 Level4）
 
 
 @dataclass(frozen=True)
@@ -77,10 +77,10 @@ class HealthExcellenceConfig:
 class SurvivalInput:
     """生存线评估输入（滚动窗口口径）。"""
 
-    excess_return_12m: float        # 滚动 12 个月超额收益
-    max_drawdown: float             # 最大回撤（正数，如 0.15=15%）
-    sharpe: float                   # Sharpe
-    consecutive_loss_months: int    # 连续亏损月数
+    excess_return_12m: float  # 滚动 12 个月超额收益
+    max_drawdown: float  # 最大回撤（正数，如 0.15=15%）
+    sharpe: float  # Sharpe
+    consecutive_loss_months: int  # 连续亏损月数
 
 
 @dataclass(frozen=True)
@@ -107,9 +107,7 @@ def evaluate_survival_line(
 
     failures: list[str] = []
     if metrics.consecutive_loss_months >= cfg.fail_consecutive_loss_months:
-        failures.append(
-            f"连续亏损 {metrics.consecutive_loss_months} 个月 ≥ {cfg.fail_consecutive_loss_months}"
-        )
+        failures.append(f"连续亏损 {metrics.consecutive_loss_months} 个月 ≥ {cfg.fail_consecutive_loss_months}")
     if metrics.max_drawdown > cfg.fail_drawdown:
         failures.append(f"回撤 {metrics.max_drawdown:.2%} > {cfg.fail_drawdown:.0%}（对齐 Level4）")
     if failures:
@@ -122,9 +120,7 @@ def evaluate_survival_line(
             f"滚动 {cfg.window_months} 个月超额 {metrics.excess_return_12m:.2%} ≤ {cfg.excess_return_min:.0%}"
         )
     if metrics.max_drawdown >= cfg.max_drawdown_limit:
-        breaches.append(
-            f"MaxDD {metrics.max_drawdown:.2%} ≥ {cfg.max_drawdown_limit:.0%}"
-        )
+        breaches.append(f"MaxDD {metrics.max_drawdown:.2%} ≥ {cfg.max_drawdown_limit:.0%}")
     if metrics.sharpe < cfg.sharpe_min:
         breaches.append(f"Sharpe {metrics.sharpe:.2f} < {cfg.sharpe_min}")
 

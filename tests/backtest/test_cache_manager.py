@@ -406,9 +406,7 @@ class TestThreadSafety:
         def worker(tid: int) -> None:
             try:
                 for i in range(50):
-                    key = mgr.compute_key(
-                        f"s{tid}", {"i": i}, "2024-01-01", "2024-06-30"
-                    )
+                    key = mgr.compute_key(f"s{tid}", {"i": i}, "2024-01-01", "2024-06-30")
                     mgr.put(key, f"v{tid}-{i}")
                     mgr.get(key)
             except Exception as e:

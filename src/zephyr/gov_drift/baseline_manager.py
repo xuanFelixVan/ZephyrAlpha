@@ -88,7 +88,6 @@ class BaselineManager:
         """写入：baselines_root（Stage 4 公共化）。"""
         self._baselines_root = value
 
-
     def module_baseline_dir(self, module_id: str) -> str:
         safe_id = module_id.replace("\\", "_").replace("/", "_")
 

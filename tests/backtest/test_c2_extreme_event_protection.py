@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """C2 极端事件回撤保护分析单元测试（11_regime_backtest_validation_plan §4.3 C2/§5）."""
+
 from __future__ import annotations
 
 import unittest
@@ -44,7 +45,7 @@ class TestEvaluateExtremeEventProtection(unittest.TestCase):
             calm
             + [-0.035] * 10  # 开组危机 1 浅跌
             + mid
-            + [-0.03] * 10   # 开组危机 2 浅跌
+            + [-0.03] * 10  # 开组危机 2 浅跌
         )
         return _nav_from_returns(base_rets), _nav_from_returns(exp_rets)
 
@@ -72,9 +73,7 @@ class TestEvaluateExtremeEventProtection(unittest.TestCase):
         nav_b = _nav_from_returns(calm + crisis)
         nav_e = _nav_from_returns(calm + crisis)  # 完全相同
         idx = nav_b.index
-        rep = evaluate_extreme_event_protection(
-            nav_b, nav_e, [("c1", idx[50], idx[59])]
-        )
+        rep = evaluate_extreme_event_protection(nav_b, nav_e, [("c1", idx[50], idx[59])])
         self.assertFalse(rep.passed)
         self.assertAlmostEqual(rep.mean_improvement, 0.0, places=9)
 
@@ -95,9 +94,7 @@ class TestEvaluateExtremeEventProtection(unittest.TestCase):
     def test_all_windows_sparse_raises(self):
         nav_b, nav_e = self._two_crisis()
         with self.assertRaises(C2ProtectionError):
-            evaluate_extreme_event_protection(
-                nav_b, nav_e, [("ghost", "2031-01-01", "2031-02-01")]
-            )
+            evaluate_extreme_event_protection(nav_b, nav_e, [("ghost", "2031-01-01", "2031-02-01")])
 
     def test_empty_windows_raises(self):
         nav_b, nav_e = self._two_crisis()
@@ -109,15 +106,15 @@ class TestEvaluateExtremeEventProtection(unittest.TestCase):
         nav_b = nav_b.copy()
         nav_b.iloc[5] = float("nan")
         with self.assertRaises(C2ProtectionError):
-            evaluate_extreme_event_protection(
-                nav_b, nav_e, [("c1", nav_b.index[100], nav_b.index[109])]
-            )
+            evaluate_extreme_event_protection(nav_b, nav_e, [("c1", nav_b.index[100], nav_b.index[109])])
 
     def test_bad_threshold_raises(self):
         nav_b, nav_e = self._two_crisis()
         with self.assertRaises(C2ProtectionError):
             evaluate_extreme_event_protection(
-                nav_b, nav_e, [("c1", nav_b.index[100], nav_b.index[109])],
+                nav_b,
+                nav_e,
+                [("c1", nav_b.index[100], nav_b.index[109])],
                 improvement_threshold=0.0,
             )
 

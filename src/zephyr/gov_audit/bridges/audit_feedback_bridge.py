@@ -66,15 +66,13 @@ class AuditFeedbackBridge:
         """写入：anomaly_to_signal（Stage 4 公共化）。"""
         self._anomaly_to_signal = value
 
-
     @staticmethod
     def classify_layer(severity: str) -> str:
-        if severity in ('CRITICAL', 'HIGH'):
-            return 'L3_ARCHITECTURE'
-        if severity == 'MEDIUM':
-            return 'L2_PATTERN'
-        return 'L1_TASK'
-
+        if severity in ("CRITICAL", "HIGH"):
+            return "L3_ARCHITECTURE"
+        if severity == "MEDIUM":
+            return "L2_PATTERN"
+        return "L1_TASK"
 
     def anomaly_to_fle_signal(self, anomaly: dict[str, Any]) -> dict[str, Any] | None:
         """将审计异常事件转化为 FLE EvolutionSignal.

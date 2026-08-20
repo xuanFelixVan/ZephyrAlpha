@@ -135,8 +135,8 @@ class Severity(str, Enum):
     """问题严重度。"""
 
     ERROR = "ERROR"  # 必须修复 → report.passed = False
-    WARN = "WARN"    # 建议检查
-    INFO = "INFO"    # 提示信息
+    WARN = "WARN"  # 建议检查
+    INFO = "INFO"  # 提示信息
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -159,12 +159,16 @@ class InvalidDataFormatError(ZephyrBaseError):
 class DataQualityConfig:
     """数据质量检查配置 (设计真源 §3)。"""
 
-    price_anomaly_threshold: float = 0.20       # 单日涨跌幅阈值 (默认20%)
-    volume_spike_multiplier: float = 10.0        # 异常放量倍数 (相对均值)
-    max_gap_days: int = 10                       # 交易日间隔阈值 (超此值报gaps)
-    adj_discontinuity_threshold: float = 0.30    # 前复权跳变阈值 (默认30%)
+    price_anomaly_threshold: float = 0.20  # 单日涨跌幅阈值 (默认20%)
+    volume_spike_multiplier: float = 10.0  # 异常放量倍数 (相对均值)
+    max_gap_days: int = 10  # 交易日间隔阈值 (超此值报gaps)
+    adj_discontinuity_threshold: float = 0.30  # 前复权跳变阈值 (默认30%)
     required_columns: tuple[str, ...] = (
-        "open", "high", "low", "close", "volume",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
     )
 
     def __post_init__(self) -> None:
@@ -173,13 +177,9 @@ class DataQualityConfig:
                 f"price_anomaly_threshold must be in (0,1], got {self.price_anomaly_threshold}"
             )
         if self.volume_spike_multiplier <= 0:
-            raise InvalidDataFormatError(
-                f"volume_spike_multiplier must be > 0, got {self.volume_spike_multiplier}"
-            )
+            raise InvalidDataFormatError(f"volume_spike_multiplier must be > 0, got {self.volume_spike_multiplier}")
         if self.max_gap_days <= 0:
-            raise InvalidDataFormatError(
-                f"max_gap_days must be > 0, got {self.max_gap_days}"
-            )
+            raise InvalidDataFormatError(f"max_gap_days must be > 0, got {self.max_gap_days}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -195,8 +195,8 @@ class QualityIssue:
     severity: Severity
     symbol: str
     message: str
-    date: Any | None = None       # 时间戳 (可能为 None)
-    value: float | None = None    # 实际值
+    date: Any | None = None  # 时间戳 (可能为 None)
+    value: float | None = None  # 实际值
     threshold: float | None = None  # 阈值
 
 
@@ -305,14 +305,11 @@ class DataQualityChecker:
 
     def _validate(self, data: pd.DataFrame) -> None:
         if not isinstance(data, pd.DataFrame):
-            raise InvalidDataFormatError(
-                f"data must be a pandas DataFrame, got {type(data).__name__}"
-            )
+            raise InvalidDataFormatError(f"data must be a pandas DataFrame, got {type(data).__name__}")
         missing = set(self._config.required_columns) - set(data.columns)
         if missing:
             raise InvalidDataFormatError(
-                f"missing required columns: {sorted(missing)}; "
-                f"got columns={list(data.columns)}"
+                f"missing required columns: {sorted(missing)}; got columns={list(data.columns)}"
             )
 
     @staticmethod
@@ -323,10 +320,7 @@ class DataQualityChecker:
         多标的 (MultiIndex [symbol, date]) → groupby(level=0)
         """
         if isinstance(data.index, pd.MultiIndex):
-            return [
-                (str(symbol), group.droplevel(0))
-                for symbol, group in data.groupby(level=0, sort=False)
-            ]
+            return [(str(symbol), group.droplevel(0)) for symbol, group in data.groupby(level=0, sort=False)]
         return [("_default", data)]
 
     # ── 内部: 缺失检测 ──
@@ -341,10 +335,15 @@ class DataQualityChecker:
             if nan_mask.any():
                 sev = Severity.ERROR if col in ("close", "volume") else Severity.WARN
                 for idx in df.index[nan_mask]:
-                    issues.append(QualityIssue(
-                        rule="nan_value", severity=sev, symbol=symbol,
-                        date=idx, message=f"{col} is NaN",
-                    ))
+                    issues.append(
+                        QualityIssue(
+                            rule="nan_value",
+                            severity=sev,
+                            symbol=symbol,
+                            date=idx,
+                            message=f"{col} is NaN",
+                        )
+                    )
 
         # 交易日 gaps 检测 (相邻日期间隔 > max_gap_days)
         if isinstance(df.index, pd.DatetimeIndex) and len(df) > 1:
@@ -352,12 +351,17 @@ class DataQualityChecker:
             big_gaps = gaps[gaps > cfg.max_gap_days]
             for idx, gap_days in big_gaps.items():
                 if pd.notna(gap_days):
-                    issues.append(QualityIssue(
-                        rule="trading_day_gap", severity=Severity.WARN,
-                        symbol=symbol, date=idx, value=float(gap_days),
-                        threshold=float(cfg.max_gap_days),
-                        message=f"gap of {int(gap_days)} days exceeds max {cfg.max_gap_days}",
-                    ))
+                    issues.append(
+                        QualityIssue(
+                            rule="trading_day_gap",
+                            severity=Severity.WARN,
+                            symbol=symbol,
+                            date=idx,
+                            value=float(gap_days),
+                            threshold=float(cfg.max_gap_days),
+                            message=f"gap of {int(gap_days)} days exceeds max {cfg.max_gap_days}",
+                        )
+                    )
 
         return issues
 
@@ -371,30 +375,46 @@ class DataQualityChecker:
         for col in cfg.required_columns:
             neg_mask = df[col] < 0
             for idx in df.index[neg_mask]:
-                issues.append(QualityIssue(
-                    rule="negative_value", severity=Severity.ERROR,
-                    symbol=symbol, date=idx, value=float(df.loc[idx, col]),
-                    threshold=0.0, message=f"{col} is negative",
-                ))
+                issues.append(
+                    QualityIssue(
+                        rule="negative_value",
+                        severity=Severity.ERROR,
+                        symbol=symbol,
+                        date=idx,
+                        value=float(df.loc[idx, col]),
+                        threshold=0.0,
+                        message=f"{col} is negative",
+                    )
+                )
 
         # 单日涨跌幅异常 (fill_method=None 避免填充 NaN 掩盖缺失)
         pct = df["close"].pct_change(fill_method=None).abs()
         anomalous = pct > cfg.price_anomaly_threshold
         for idx in df.index[anomalous]:
-            issues.append(QualityIssue(
-                rule="price_anomaly", severity=Severity.WARN,
-                symbol=symbol, date=idx, value=float(pct.loc[idx]),
-                threshold=cfg.price_anomaly_threshold,
-                message=f"price change {pct.loc[idx]:.2%} exceeds {cfg.price_anomaly_threshold:.0%}",
-            ))
+            issues.append(
+                QualityIssue(
+                    rule="price_anomaly",
+                    severity=Severity.WARN,
+                    symbol=symbol,
+                    date=idx,
+                    value=float(pct.loc[idx]),
+                    threshold=cfg.price_anomaly_threshold,
+                    message=f"price change {pct.loc[idx]:.2%} exceeds {cfg.price_anomaly_threshold:.0%}",
+                )
+            )
 
         # 零成交量
         zero_vol = df["volume"] == 0
         for idx in df.index[zero_vol]:
-            issues.append(QualityIssue(
-                rule="zero_volume", severity=Severity.WARN,
-                symbol=symbol, date=idx, message="volume is 0",
-            ))
+            issues.append(
+                QualityIssue(
+                    rule="zero_volume",
+                    severity=Severity.WARN,
+                    symbol=symbol,
+                    date=idx,
+                    message="volume is 0",
+                )
+            )
 
         # 异常放量 (用 median 避免单个异常值拉高基线导致漏检)
         vol_median = df["volume"].median()
@@ -402,12 +422,17 @@ class DataQualityChecker:
             spike_threshold = vol_median * cfg.volume_spike_multiplier
             spike_mask = df["volume"] > spike_threshold
             for idx in df.index[spike_mask]:
-                issues.append(QualityIssue(
-                    rule="volume_spike", severity=Severity.WARN,
-                    symbol=symbol, date=idx, value=float(df.loc[idx, "volume"]),
-                    threshold=spike_threshold,
-                    message="volume spike exceeds mean x multiplier",
-                ))
+                issues.append(
+                    QualityIssue(
+                        rule="volume_spike",
+                        severity=Severity.WARN,
+                        symbol=symbol,
+                        date=idx,
+                        value=float(df.loc[idx, "volume"]),
+                        threshold=spike_threshold,
+                        message="volume spike exceeds mean x multiplier",
+                    )
+                )
 
         # OHLC 逻辑违背
         ohlc_checks = [
@@ -419,10 +444,15 @@ class DataQualityChecker:
         ]
         for rule, mask, msg in ohlc_checks:
             for idx in df.index[mask]:
-                issues.append(QualityIssue(
-                    rule=rule, severity=Severity.ERROR,
-                    symbol=symbol, date=idx, message=msg,
-                ))
+                issues.append(
+                    QualityIssue(
+                        rule=rule,
+                        severity=Severity.ERROR,
+                        symbol=symbol,
+                        date=idx,
+                        message=msg,
+                    )
+                )
 
         return issues
 
@@ -437,11 +467,16 @@ class DataQualityChecker:
             pct = df["close"].pct_change(fill_method=None).abs()
             big_jump = pct > cfg.adj_discontinuity_threshold
             for idx in df.index[big_jump]:
-                issues.append(QualityIssue(
-                    rule="adj_continuity", severity=Severity.WARN,
-                    symbol=symbol, date=idx, value=float(pct.loc[idx]),
-                    threshold=cfg.adj_discontinuity_threshold,
-                    message="possible adjustment discontinuity",
-                ))
+                issues.append(
+                    QualityIssue(
+                        rule="adj_continuity",
+                        severity=Severity.WARN,
+                        symbol=symbol,
+                        date=idx,
+                        value=float(pct.loc[idx]),
+                        threshold=cfg.adj_discontinuity_threshold,
+                        message="possible adjustment discontinuity",
+                    )
+                )
 
         return issues

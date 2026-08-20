@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """C4 Deflated Sharpe 跑批封装入口单元测试（11_regime_backtest_validation_plan §0.6.3/§4.3 C4）."""
+
 from __future__ import annotations
 
 import unittest
@@ -77,9 +78,7 @@ class TestRunDeflatedSharpeBatch(unittest.TestCase):
 
     def test_bad_num_trials_raises(self):
         with self.assertRaises(C4DeflatedSharpeError):
-            run_deflated_sharpe_batch(
-                {"a": _drift_returns(50, 0.001, 0.01, 7)}, num_trials=0
-            )
+            run_deflated_sharpe_batch({"a": _drift_returns(50, 0.001, 0.01, 7)}, num_trials=0)
 
 
 if __name__ == "__main__":

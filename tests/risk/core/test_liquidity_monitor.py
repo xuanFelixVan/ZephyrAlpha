@@ -83,11 +83,13 @@ MOCK_ZERO_VOLUME = _make_ohlcv(
 )
 
 #: Scenario 6: 使用 amount 列（优先于 volume）
-MOCK_WITH_AMOUNT = pd.DataFrame({
-    "close": [10.0, 10.1, 10.05, 10.2, 10.15],
-    "volume": [999, 999, 999, 999, 999],  # 应被忽略
-    "amount": [1e8, 1e8, 1e8, 1e8, 1e8],
-})
+MOCK_WITH_AMOUNT = pd.DataFrame(
+    {
+        "close": [10.0, 10.1, 10.05, 10.2, 10.15],
+        "volume": [999, 999, 999, 999, 999],  # 应被忽略
+        "amount": [1e8, 1e8, 1e8, 1e8, 1e8],
+    }
+)
 
 
 # ── LiquidityMetrics 数据模型测试 ──────────────────────────────────────
@@ -110,9 +112,14 @@ class TestLiquidityMetrics:
 
     def test_frozen_immutability(self):
         m = LiquidityMetrics(
-            symbol="s", amihud_illiq=0, volume_shrinkage_ratio=1,
-            bid_ask_spread=None, is_illiquid=False, window=20,
-            timestamp=datetime.now(UTC), idempotency_key="k",
+            symbol="s",
+            amihud_illiq=0,
+            volume_shrinkage_ratio=1,
+            bid_ask_spread=None,
+            is_illiquid=False,
+            window=20,
+            timestamp=datetime.now(UTC),
+            idempotency_key="k",
         )
         with pytest.raises(AttributeError):
             m.symbol = "other"
@@ -144,7 +151,7 @@ class TestComputeAmihud:
         illiq = mon.compute_amihud(closes, volumes)
 
         r1 = abs(11.0 - 10.0) / 10.0  # 0.1
-        r2 = abs(9.9 - 11.0) / 11.0   # 0.1
+        r2 = abs(9.9 - 11.0) / 11.0  # 0.1
         expected = (r1 / 1e8 + r2 / 2e8) / 2
         assert illiq == pytest.approx(expected, rel=1e-6)
 
@@ -310,11 +317,13 @@ class TestAssess:
 class TestAssessBatch:
     def test_batch_mixed_results(self):
         mon = LiquidityMonitor()
-        results = mon.assess_batch({
-            "liquid": MOCK_LIQUID,
-            "illiquid": MOCK_ILLIQUID,
-            "shrinkage": MOCK_SHRINKAGE,
-        })
+        results = mon.assess_batch(
+            {
+                "liquid": MOCK_LIQUID,
+                "illiquid": MOCK_ILLIQUID,
+                "shrinkage": MOCK_SHRINKAGE,
+            }
+        )
         assert len(results) == 3
         liquid = next(m for m in results if m.symbol == "liquid")
         illiquid = next(m for m in results if m.symbol == "illiquid")
@@ -334,10 +343,12 @@ class TestAssessBatch:
     def test_batch_skips_invalid(self):
         """无效输入跳过，不崩溃"""
         mon = LiquidityMonitor()
-        results = mon.assess_batch({
-            "valid": MOCK_LIQUID,
-            "invalid": pd.DataFrame({"close": [10.0]}),  # 仅1行
-        })
+        results = mon.assess_batch(
+            {
+                "valid": MOCK_LIQUID,
+                "invalid": pd.DataFrame({"close": [10.0]}),  # 仅1行
+            }
+        )
         assert len(results) == 1  # invalid 被跳过
 
 
@@ -348,9 +359,14 @@ class TestToRiskCheckResult:
     def test_illiquid_to_halt(self):
         mon = LiquidityMonitor()
         m = LiquidityMetrics(
-            symbol="600000.SH", amihud_illiq=1e-7, volume_shrinkage_ratio=0.3,
-            bid_ask_spread=None, is_illiquid=True, window=20,
-            timestamp=datetime.now(UTC), idempotency_key="k",
+            symbol="600000.SH",
+            amihud_illiq=1e-7,
+            volume_shrinkage_ratio=0.3,
+            bid_ask_spread=None,
+            is_illiquid=True,
+            window=20,
+            timestamp=datetime.now(UTC),
+            idempotency_key="k",
         )
         r = mon.to_risk_check_result(m)
         assert r.passed is False
@@ -360,9 +376,14 @@ class TestToRiskCheckResult:
     def test_liquid_to_pass(self):
         mon = LiquidityMonitor()
         m = LiquidityMetrics(
-            symbol="600000.SH", amihud_illiq=1e-10, volume_shrinkage_ratio=0.9,
-            bid_ask_spread=None, is_illiquid=False, window=20,
-            timestamp=datetime.now(UTC), idempotency_key="k",
+            symbol="600000.SH",
+            amihud_illiq=1e-10,
+            volume_shrinkage_ratio=0.9,
+            bid_ask_spread=None,
+            is_illiquid=False,
+            window=20,
+            timestamp=datetime.now(UTC),
+            idempotency_key="k",
         )
         r = mon.to_risk_check_result(m)
         assert r.passed is True

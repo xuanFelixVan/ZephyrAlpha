@@ -100,9 +100,7 @@ def purged_kfold_split(
     else:
         t1_arr = np.asarray(t1, dtype=int)
         if t1_arr.shape != (n_samples,):
-            raise PurgedKFoldError(
-                f"t1长度必须等于n_samples={n_samples}, got shape {t1_arr.shape}"
-            )
+            raise PurgedKFoldError(f"t1长度必须等于n_samples={n_samples}, got shape {t1_arr.shape}")
         if np.any(t1_arr < np.arange(n_samples)):
             raise PurgedKFoldError("t1必须满足 t1[i] >= i(标签末端不得早于样本自身)")
         if np.any(np.diff(t1_arr) < 0):

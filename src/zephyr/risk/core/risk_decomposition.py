@@ -320,17 +320,11 @@ class RiskDecomposer:
 
         # 校验因子模型维度
         if B.ndim != 2 or B.shape[0] != N:
-            raise InvalidDecompositionInputError(
-                f"factor_loadings shape {B.shape} must be (N={N}, K)"
-            )
+            raise InvalidDecompositionInputError(f"factor_loadings shape {B.shape} must be (N={N}, K)")
         if Sigma_f.shape != (K, K):
-            raise InvalidDecompositionInputError(
-                f"factor_cov shape {Sigma_f.shape} must be ({K}, {K})"
-            )
+            raise InvalidDecompositionInputError(f"factor_cov shape {Sigma_f.shape} must be ({K}, {K})")
         if eps.shape != (N,):
-            raise InvalidDecompositionInputError(
-                f"residual_var shape {eps.shape} must be ({N},)"
-            )
+            raise InvalidDecompositionInputError(f"residual_var shape {eps.shape} must be ({N},)")
 
         total_var = float(weights @ cov @ weights)
         total_risk = float(np.sqrt(total_var)) if total_var > 0 else 0.0
@@ -396,30 +390,20 @@ class RiskDecomposer:
     # ── 内部: 校验 ──
 
     @staticmethod
-    def _validate(
-        cov: np.ndarray, weights: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray]:
+    def _validate(cov: np.ndarray, weights: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """校验协方差矩阵与权重, 返回归一化后的 (cov, weights)。"""
         cov = np.asarray(cov, dtype=float)
         weights = np.asarray(weights, dtype=float)
         if cov.ndim != 2 or cov.shape[0] != cov.shape[1]:
-            raise InvalidDecompositionInputError(
-                f"cov must be square 2D, got shape {cov.shape}"
-            )
+            raise InvalidDecompositionInputError(f"cov must be square 2D, got shape {cov.shape}")
         N = cov.shape[0]
         if weights.ndim != 1 or weights.shape[0] != N:
-            raise InvalidDecompositionInputError(
-                f"weights shape {weights.shape} mismatched with cov ({N}, {N})"
-            )
+            raise InvalidDecompositionInputError(f"weights shape {weights.shape} mismatched with cov ({N}, {N})")
         # 拒绝负权重 (long-only 假设; 允许 0)
         if np.any(weights < 0):
-            raise InvalidDecompositionInputError(
-                f"negative weights not allowed: {weights}"
-            )
+            raise InvalidDecompositionInputError(f"negative weights not allowed: {weights}")
         total = float(np.sum(weights))
         if total <= 0:
-            raise InvalidDecompositionInputError(
-                f"weights sum must be positive, got {total}"
-            )
+            raise InvalidDecompositionInputError(f"weights sum must be positive, got {total}")
         weights = weights / total  # 归一化
         return cov, weights

@@ -82,6 +82,7 @@ backtest_result_sink · 回测结果数据落地模块（v1.3.0 新增，#ARCH-0
 # I1 --> A3
 # A3 --> O1
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -108,6 +109,7 @@ class BacktestResultSinkError(Exception):
 @dataclass(frozen=True)
 class EquityPoint:
     """净值曲线数据点（PIT: timestamp 时刻的 equity 不得引用之后信息）"""
+
     timestamp: str  # ISO8601
     equity: float
 
@@ -115,6 +117,7 @@ class EquityPoint:
 @dataclass(frozen=True)
 class TradeRecord:
     """交易记录（PIT: timestamp 时刻的成交信息）"""
+
     timestamp: str  # ISO8601
     symbol: str
     side: str  # "buy" / "sell"
@@ -126,6 +129,7 @@ class TradeRecord:
 @dataclass(frozen=True)
 class DrawdownPoint:
     """回撤曲线数据点"""
+
     timestamp: str  # ISO8601
     drawdown: float  # 正数小数, 0.2=20%
 
@@ -133,6 +137,7 @@ class DrawdownPoint:
 @dataclass(frozen=True)
 class BenchmarkPoint:
     """基准曲线数据点"""
+
     timestamp: str  # ISO8601
     value: float
 
@@ -150,6 +155,7 @@ class BacktestSinkData:
     汇总指标字段与 CTR-P1-016 BacktestResult 15字段对齐。
     时序明细字段为可选, 由调用方在运行时填充(回测引擎产出)。
     """
+
     # --- 汇总指标（从 BacktestResult 映射, CTR-P1-016 冻结字段）---
     strategy_id: str
     run_id: str  # = BacktestResult.idempotency_key

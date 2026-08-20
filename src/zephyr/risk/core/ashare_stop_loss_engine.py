@@ -158,30 +158,30 @@ class InvalidStopLossInputError(ZephyrBaseError):
 class StopLossTriggerType(Enum):
     """A股止损触发类型 (6种模式 + 亏损限额)。"""
 
-    FIXED_PCT = "fixed_pct"                       # 1. 固定比例-7%
-    SUPPORT_BREAK = "support_break"               # 2. 关键支撑破位
-    LOGIC_INVALIDATION = "logic_invalidation"     # 3. 逻辑失效
-    AUCTION_DISAPPOINT = "auction_disappoint"     # 4. 竞价不及预期
-    INTRADAY_BREAK = "intraday_break"             # 5. 分时破位
-    SECTOR_EBB = "sector_ebb"                     # 6. 板块退潮
-    LOSS_LIMIT = "loss_limit"                     # 亏损限额触发 (INV-003)
+    FIXED_PCT = "fixed_pct"  # 1. 固定比例-7%
+    SUPPORT_BREAK = "support_break"  # 2. 关键支撑破位
+    LOGIC_INVALIDATION = "logic_invalidation"  # 3. 逻辑失效
+    AUCTION_DISAPPOINT = "auction_disappoint"  # 4. 竞价不及预期
+    INTRADAY_BREAK = "intraday_break"  # 5. 分时破位
+    SECTOR_EBB = "sector_ebb"  # 6. 板块退潮
+    LOSS_LIMIT = "loss_limit"  # 亏损限额触发 (INV-003)
 
 
 class StopLossSeverity(Enum):
     """止损严重级别。"""
 
-    NONE = "none"           # 未触发
-    WARNING = "warning"     # 建议止损 (软止损)
-    CRITICAL = "critical"   # 强制止损 (硬止损)
+    NONE = "none"  # 未触发
+    WARNING = "warning"  # 建议止损 (软止损)
+    CRITICAL = "critical"  # 强制止损 (硬止损)
     EMERGENCY = "emergency"  # 强制停盘 (Kill Switch 联动)
 
 
 class LossLimitLevel(Enum):
     """亏损限额级别 (三级递进)。"""
 
-    NONE = "none"       # 未触发
-    DAILY = "daily"     # 日亏 -2% → 停盘 1 天
-    WEEKLY = "weekly"   # 周亏 -5% → 停盘 2 天
+    NONE = "none"  # 未触发
+    DAILY = "daily"  # 日亏 -2% → 停盘 1 天
+    WEEKLY = "weekly"  # 周亏 -5% → 停盘 2 天
     MONTHLY = "monthly"  # 月亏 -10% → 停盘 3 天
 
 
@@ -222,21 +222,13 @@ class AshareStopLossConfig:
 
     def __post_init__(self) -> None:
         if not 0 < self.fixed_pct_threshold <= 1:
-            raise InvalidStopLossInputError(
-                f"fixed_pct_threshold must be in (0,1], got {self.fixed_pct_threshold}"
-            )
+            raise InvalidStopLossInputError(f"fixed_pct_threshold must be in (0,1], got {self.fixed_pct_threshold}")
         if not 0 < self.daily_loss_limit <= 1:
-            raise InvalidStopLossInputError(
-                f"daily_loss_limit must be in (0,1], got {self.daily_loss_limit}"
-            )
+            raise InvalidStopLossInputError(f"daily_loss_limit must be in (0,1], got {self.daily_loss_limit}")
         if not 0 < self.weekly_loss_limit <= 1:
-            raise InvalidStopLossInputError(
-                f"weekly_loss_limit must be in (0,1], got {self.weekly_loss_limit}"
-            )
+            raise InvalidStopLossInputError(f"weekly_loss_limit must be in (0,1], got {self.weekly_loss_limit}")
         if not 0 < self.monthly_loss_limit <= 1:
-            raise InvalidStopLossInputError(
-                f"monthly_loss_limit must be in (0,1], got {self.monthly_loss_limit}"
-            )
+            raise InvalidStopLossInputError(f"monthly_loss_limit must be in (0,1], got {self.monthly_loss_limit}")
         # 亏损限额递进约束: 日 < 周 < 月
         if not (self.daily_loss_limit < self.weekly_loss_limit < self.monthly_loss_limit):
             raise InvalidStopLossInputError(
@@ -436,13 +428,9 @@ class AshareStopLossRuleEngine:
         if not symbol:
             raise InvalidStopLossInputError("symbol must be non-empty")
         if entry_price <= 0:
-            raise InvalidStopLossInputError(
-                f"entry_price must be positive, got {entry_price}"
-            )
+            raise InvalidStopLossInputError(f"entry_price must be positive, got {entry_price}")
         if current_price <= 0:
-            raise InvalidStopLossInputError(
-                f"current_price must be positive, got {current_price}"
-            )
+            raise InvalidStopLossInputError(f"current_price must be positive, got {current_price}")
 
         now = now or datetime.now(timezone.utc)
         signals: list[StopLossSignal] = []
@@ -465,9 +453,7 @@ class AshareStopLossRuleEngine:
 
         # 4. 竞价不及预期
         if auction_expected_price is not None and auction_actual_price is not None:
-            sig = self._check_auction_disappoint(
-                symbol, auction_expected_price, auction_actual_price, cfg, now
-            )
+            sig = self._check_auction_disappoint(symbol, auction_expected_price, auction_actual_price, cfg, now)
             if sig is not None:
                 signals.append(sig)
 
@@ -528,24 +514,15 @@ class AshareStopLossRuleEngine:
         if monthly_loss >= cfg.monthly_loss_limit:
             level = LossLimitLevel.MONTHLY
             halt_days = cfg.monthly_halt_days
-            reason = (
-                f"月亏损 {monthly_loss:.2%} >= 限额 {cfg.monthly_loss_limit:.2%}, "
-                f"强制停盘 {halt_days} 天"
-            )
+            reason = f"月亏损 {monthly_loss:.2%} >= 限额 {cfg.monthly_loss_limit:.2%}, 强制停盘 {halt_days} 天"
         elif weekly_loss >= cfg.weekly_loss_limit:
             level = LossLimitLevel.WEEKLY
             halt_days = cfg.weekly_halt_days
-            reason = (
-                f"周亏损 {weekly_loss:.2%} >= 限额 {cfg.weekly_loss_limit:.2%}, "
-                f"强制停盘 {halt_days} 天"
-            )
+            reason = f"周亏损 {weekly_loss:.2%} >= 限额 {cfg.weekly_loss_limit:.2%}, 强制停盘 {halt_days} 天"
         elif daily_loss >= cfg.daily_loss_limit:
             level = LossLimitLevel.DAILY
             halt_days = cfg.daily_halt_days
-            reason = (
-                f"日亏损 {daily_loss:.2%} >= 限额 {cfg.daily_loss_limit:.2%}, "
-                f"强制停盘 {halt_days} 天"
-            )
+            reason = f"日亏损 {daily_loss:.2%} >= 限额 {cfg.daily_loss_limit:.2%}, 强制停盘 {halt_days} 天"
         else:
             level = LossLimitLevel.NONE
             halt_days = 0
@@ -607,9 +584,7 @@ class AshareStopLossRuleEngine:
     ) -> StopLossSignal | None:
         """2. 关键支撑破位: 价格跌破支撑位。"""
         if support_level <= 0:
-            raise InvalidStopLossInputError(
-                f"support_level must be positive, got {support_level}"
-            )
+            raise InvalidStopLossInputError(f"support_level must be positive, got {support_level}")
         if current_price < support_level:
             break_pct = (support_level - current_price) / support_level
             return StopLossSignal(
@@ -646,9 +621,7 @@ class AshareStopLossRuleEngine:
     ) -> StopLossSignal | None:
         """4. 竞价不及预期: 开盘价低于预期 >= threshold。"""
         if expected_price <= 0:
-            raise InvalidStopLossInputError(
-                f"expected_price must be positive, got {expected_price}"
-            )
+            raise InvalidStopLossInputError(f"expected_price must be positive, got {expected_price}")
         discount = (expected_price - actual_price) / expected_price
         if discount >= cfg.auction_discount_threshold:
             return StopLossSignal(
@@ -676,9 +649,7 @@ class AshareStopLossRuleEngine:
     ) -> StopLossSignal | None:
         """5. 分时破位: 价格跌破分时均线/前低 >= threshold。"""
         if ref_price <= 0:
-            raise InvalidStopLossInputError(
-                f"ref_price (vwap/prev_low) must be positive, got {ref_price}"
-            )
+            raise InvalidStopLossInputError(f"ref_price (vwap/prev_low) must be positive, got {ref_price}")
         break_pct = (ref_price - current_price) / ref_price
         if break_pct >= cfg.intraday_vwap_break_threshold:
             return StopLossSignal(
@@ -709,10 +680,7 @@ class AshareStopLossRuleEngine:
                 symbol=symbol,
                 trigger_type=StopLossTriggerType.SECTOR_EBB,
                 severity=StopLossSeverity.WARNING,
-                reason=(
-                    f"板块动量 {sector_momentum:.2%} <= 退潮阈值 "
-                    f"{cfg.sector_momentum_threshold:.2%}"
-                ),
+                reason=(f"板块动量 {sector_momentum:.2%} <= 退潮阈值 {cfg.sector_momentum_threshold:.2%}"),
                 suggested_action="减仓, 板块退潮时个股难独立走强",
                 trigger_value=sector_momentum,
                 threshold=cfg.sector_momentum_threshold,

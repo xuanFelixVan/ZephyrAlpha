@@ -186,9 +186,7 @@ def bootstrap(project_root: str) -> ColdStartResult:
         result.warnings.append("src/ directory appears empty — first scan seed recommended")
 
     if result.missing_env:
-        result.warnings.append(
-            f"Missing env vars: {result.missing_env} — create .env file with required values"
-        )
+        result.warnings.append(f"Missing env vars: {result.missing_env} — create .env file with required values")
 
     if result.db_initialized:
         try:

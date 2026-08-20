@@ -38,6 +38,7 @@
   ⑧ 满仓信号成本收缩成交（2026-08-20 包3.2 登记项#2 修复后口径；
      原"满仓零成交+warning 显化"断言随修复目标行为淘汰，留痕见场景⑧类 docstring）
 """
+
 from __future__ import annotations
 
 import logging
@@ -225,8 +226,12 @@ class TestPriceLimitBoardInference:
         pf = Portfolio(initial_capital=D("1000000"))
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="BUY",
-                quantity=D("10000"), price=D("10.00"), commission=D("30"),
+                date="2026-08-03",
+                symbol="600000",
+                side="BUY",
+                quantity=D("10000"),
+                price=D("10.00"),
+                commission=D("30"),
             )
         )
         # 次日 -10% 跌停，目标权重换仓 → A 的清仓卖单应被阻断
@@ -250,10 +255,7 @@ class TestPriceLimitBoardInference:
         """
         dates = pd.bdate_range("2026-08-03", periods=3)
         closes = [10.00, 11.00, 11.00]  # day2 +10% 涨停
-        rows = [
-            {"symbol": "600000", "date": d, "close": c}
-            for d, c in zip(dates, closes, strict=True)
-        ]
+        rows = [{"symbol": "600000", "date": d, "close": c} for d, c in zip(dates, closes, strict=True)]
         data = pd.DataFrame(rows).set_index(["symbol", "date"])
         # day1 无信号（NaN → 不动作）；day2/day3 满仓信号
         sig = pd.DataFrame({"600000": [float("nan"), 1.0, 1.0]}, index=dates)
@@ -285,15 +287,23 @@ class TestTPlusOne:
         pf = Portfolio(initial_capital=D("1000000"))
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="BUY",
-                quantity=D("10000"), price=D("10.00"), commission=D("30"),
+                date="2026-08-03",
+                symbol="600000",
+                side="BUY",
+                quantity=D("10000"),
+                price=D("10.00"),
+                commission=D("30"),
             )
         )
         with pytest.raises(PortfolioError, match="T\\+1"):
             pf.apply_fill(
                 BacktestFill(
-                    date="2026-08-03", symbol="600000", side="SELL",
-                    quantity=D("100"), price=D("10.00"), commission=D("5"),
+                    date="2026-08-03",
+                    symbol="600000",
+                    side="SELL",
+                    quantity=D("100"),
+                    price=D("10.00"),
+                    commission=D("5"),
                 )
             )
         # 拒绝后持仓/现金未被污染
@@ -303,14 +313,22 @@ class TestTPlusOne:
         pf = Portfolio(initial_capital=D("1000000"))
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="BUY",
-                quantity=D("10000"), price=D("10.00"), commission=D("30"),
+                date="2026-08-03",
+                symbol="600000",
+                side="BUY",
+                quantity=D("10000"),
+                price=D("10.00"),
+                commission=D("30"),
             )
         )
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-04", symbol="600000", side="SELL",
-                quantity=D("10000"), price=D("11.00"), commission=D("36.30"),
+                date="2026-08-04",
+                symbol="600000",
+                side="SELL",
+                quantity=D("10000"),
+                price=D("11.00"),
+                commission=D("36.30"),
             )
         )
         assert pf.get_position("600000").quantity == D("0")
@@ -320,14 +338,22 @@ class TestTPlusOne:
         pf = Portfolio(initial_capital=D("1000000"))
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="BUY",
-                quantity=D("10000"), price=D("10.00"), commission=D("30"),
+                date="2026-08-03",
+                symbol="600000",
+                side="BUY",
+                quantity=D("10000"),
+                price=D("10.00"),
+                commission=D("30"),
             )
         )
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="SELL",
-                quantity=D("100"), price=D("10.00"), commission=D("5"),
+                date="2026-08-03",
+                symbol="600000",
+                side="SELL",
+                quantity=D("100"),
+                price=D("10.00"),
+                commission=D("5"),
             ),
             allow_t_plus_1=True,
         )
@@ -346,14 +372,22 @@ class TestSellProceedsNoDoubleSlippage:
         """全往返现金恒等式: final_cash = initial − buy_cost + sell_proceeds，分文不差。"""
         pf = Portfolio(initial_capital=D("1000000"))
         buy = BacktestFill(
-            date="2026-08-03", symbol="600000", side="BUY",
-            quantity=D("50000"), price=D("10.001"), commission=D("150.015"),
+            date="2026-08-03",
+            symbol="600000",
+            side="BUY",
+            quantity=D("50000"),
+            price=D("10.001"),
+            commission=D("150.015"),
             slippage_cost=D("50"),
         )
         pf.apply_fill(buy)
         sell = BacktestFill(
-            date="2026-08-04", symbol="600000", side="SELL",
-            quantity=D("50000"), price=D("10.9989"), commission=D("714.67017"),
+            date="2026-08-04",
+            symbol="600000",
+            side="SELL",
+            quantity=D("50000"),
+            price=D("10.9989"),
+            commission=D("714.67017"),
             slippage_cost=D("55"),
         )
         pf.apply_fill(sell)
@@ -376,14 +410,22 @@ class TestSellProceedsNoDoubleSlippage:
         pf = Portfolio(initial_capital=D("1000000"))
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="BUY",
-                quantity=D("10000"), price=D("10.00"), commission=D("30"),
+                date="2026-08-03",
+                symbol="600000",
+                side="BUY",
+                quantity=D("10000"),
+                price=D("10.00"),
+                commission=D("30"),
             )
         )
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-04", symbol="600000", side="SELL",
-                quantity=D("10000"), price=D("11.00"), commission=D("36.30"),
+                date="2026-08-04",
+                symbol="600000",
+                side="SELL",
+                quantity=D("10000"),
+                price=D("11.00"),
+                commission=D("36.30"),
                 slippage_cost=D("55"),  # 信息字段，不得进入 P&L
             )
         )
@@ -504,8 +546,12 @@ class TestSuspendedPositionNavCarryForward:
         pf = Portfolio(initial_capital=D("1000000"))
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="BUY",
-                quantity=D("1000"), price=D("10.00"), commission=D("5"),
+                date="2026-08-03",
+                symbol="600000",
+                side="BUY",
+                quantity=D("1000"),
+                price=D("10.00"),
+                commission=D("5"),
             )
         )
         nav_d1 = pf.update_market_value("2026-08-03", {"600000": D("10.00")})
@@ -520,8 +566,12 @@ class TestSuspendedPositionNavCarryForward:
         pf = Portfolio(initial_capital=D("1000000"))
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="BUY",
-                quantity=D("1000"), price=D("10.00"), commission=D("5"),
+                date="2026-08-03",
+                symbol="600000",
+                side="BUY",
+                quantity=D("1000"),
+                price=D("10.00"),
+                commission=D("5"),
             )
         )
         # 缺价日 total_nav 应结转 10.00 → 989,995+10,000 = 999,995（而非 989,995）
@@ -533,8 +583,12 @@ class TestSuspendedPositionNavCarryForward:
         pf = Portfolio(initial_capital=D("1000000"))
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="BUY",
-                quantity=D("1000"), price=D("10.00"), commission=D("5"),
+                date="2026-08-03",
+                symbol="600000",
+                side="BUY",
+                quantity=D("1000"),
+                price=D("10.00"),
+                commission=D("5"),
             )
         )
         nav = pf.update_market_value("2026-08-04", {"600000": D("0")})
@@ -554,8 +608,12 @@ class TestRotationLiquidation:
         pf = Portfolio(initial_capital=D("1000000"))
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="BUY",
-                quantity=D("10000"), price=D("10.00"), commission=D("30"),
+                date="2026-08-03",
+                symbol="600000",
+                side="BUY",
+                quantity=D("10000"),
+                price=D("10.00"),
+                commission=D("30"),
             )
         )
         # 次日信号只含 B → A 必须清仓
@@ -578,8 +636,12 @@ class TestRotationLiquidation:
         pf = Portfolio(initial_capital=D("1000000"))
         pf.apply_fill(
             BacktestFill(
-                date="2026-08-03", symbol="600000", side="BUY",
-                quantity=D("10000"), price=D("10.00"), commission=D("30"),
+                date="2026-08-03",
+                symbol="600000",
+                side="BUY",
+                quantity=D("10000"),
+                price=D("10.00"),
+                commission=D("30"),
             )
         )
         fills = engine.generate_fills(
@@ -615,7 +677,8 @@ class TestRotationLiquidation:
         assert pf.get_position("600001").quantity > 0
         # A 的清仓卖单真实发生
         sells_a = [
-            t for t in pf.trades_log
+            t
+            for t in pf.trades_log
             if t["symbol"] == "600000" and t["side"] == "SELL" and t["date"].startswith("2026-08-05")
         ]
         assert len(sells_a) == 1 and sells_a[0]["quantity"] == 59900.0

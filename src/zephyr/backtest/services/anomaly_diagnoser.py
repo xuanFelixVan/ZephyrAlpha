@@ -139,18 +139,11 @@ class AnomalyConfig:
 
     def __post_init__(self) -> None:
         if self.high_sharpe_threshold <= 0:
-            raise DiagnosisError(
-                f"high_sharpe_threshold must be > 0, got {self.high_sharpe_threshold}"
-            )
+            raise DiagnosisError(f"high_sharpe_threshold must be > 0, got {self.high_sharpe_threshold}")
         if not 0 < self.high_win_rate_threshold <= 1:
-            raise DiagnosisError(
-                f"high_win_rate_threshold must be in (0,1], "
-                f"got {self.high_win_rate_threshold}"
-            )
+            raise DiagnosisError(f"high_win_rate_threshold must be in (0,1], got {self.high_win_rate_threshold}")
         if self.min_trades <= 0:
-            raise DiagnosisError(
-                f"min_trades must be > 0, got {self.min_trades}"
-            )
+            raise DiagnosisError(f"min_trades must be > 0, got {self.min_trades}")
 
 
 @dataclass(frozen=True)
@@ -249,9 +242,7 @@ class AnomalyDiagnoser:
             DiagnosisError: result 非 dict / 缺少 strategy_id。
         """
         if not isinstance(result, dict):
-            raise DiagnosisError(
-                f"result must be a dict, got {type(result).__name__}"
-            )
+            raise DiagnosisError(f"result must be a dict, got {type(result).__name__}")
         if not result.get("strategy_id"):
             raise DiagnosisError("result.strategy_id 不能为空")
 
@@ -264,106 +255,122 @@ class AnomalyDiagnoser:
         if sharpe is not None:
             checks += 1
             if sharpe > cfg.high_sharpe_threshold:
-                anomalies.append(Anomaly(
-                    rule="high_sharpe",
-                    severity=Severity.WARN,
-                    message=f"Sharpe 比率异常高: {sharpe:.2f} > {cfg.high_sharpe_threshold}",
-                    value=sharpe,
-                    threshold=cfg.high_sharpe_threshold,
-                    suggestion="检查过拟合: 执行 Walk-Forward 分析 + 样本外验证",
-                ))
+                anomalies.append(
+                    Anomaly(
+                        rule="high_sharpe",
+                        severity=Severity.WARN,
+                        message=f"Sharpe 比率异常高: {sharpe:.2f} > {cfg.high_sharpe_threshold}",
+                        value=sharpe,
+                        threshold=cfg.high_sharpe_threshold,
+                        suggestion="检查过拟合: 执行 Walk-Forward 分析 + 样本外验证",
+                    )
+                )
 
         win_rate = _to_float(result.get("win_rate"))
         if win_rate is not None:
             checks += 1
             if win_rate > cfg.high_win_rate_threshold:
-                anomalies.append(Anomaly(
-                    rule="high_win_rate",
-                    severity=Severity.WARN,
-                    message=f"胜率异常高: {win_rate:.1%} > {cfg.high_win_rate_threshold:.0%}",
-                    value=win_rate,
-                    threshold=cfg.high_win_rate_threshold,
-                    suggestion="检查前瞻偏差: 确认 PIT 铁律 + 截断重算验证",
-                ))
+                anomalies.append(
+                    Anomaly(
+                        rule="high_win_rate",
+                        severity=Severity.WARN,
+                        message=f"胜率异常高: {win_rate:.1%} > {cfg.high_win_rate_threshold:.0%}",
+                        value=win_rate,
+                        threshold=cfg.high_win_rate_threshold,
+                        suggestion="检查前瞻偏差: 确认 PIT 铁律 + 截断重算验证",
+                    )
+                )
 
         max_dd = _to_float(result.get("max_drawdown"))
         if max_dd is not None:
             checks += 1
             if max_dd < cfg.deep_drawdown_threshold:
-                anomalies.append(Anomaly(
-                    rule="deep_drawdown",
-                    severity=Severity.ERROR,
-                    message=f"最大回撤过深: {max_dd:.1%} < {cfg.deep_drawdown_threshold:.0%}",
-                    value=max_dd,
-                    threshold=cfg.deep_drawdown_threshold,
-                    suggestion="降低仓位 / 增加止损 / 分散标的",
-                ))
+                anomalies.append(
+                    Anomaly(
+                        rule="deep_drawdown",
+                        severity=Severity.ERROR,
+                        message=f"最大回撤过深: {max_dd:.1%} < {cfg.deep_drawdown_threshold:.0%}",
+                        value=max_dd,
+                        threshold=cfg.deep_drawdown_threshold,
+                        suggestion="降低仓位 / 增加止损 / 分散标的",
+                    )
+                )
 
         annual_return = _to_float(result.get("annual_return"))
         if annual_return is not None:
             checks += 1
             if annual_return < 0:
-                anomalies.append(Anomaly(
-                    rule="negative_return",
-                    severity=Severity.WARN,
-                    message=f"年化收益为负: {annual_return:.1%}",
-                    value=annual_return,
-                    threshold=0.0,
-                    suggestion="策略不盈利, 检查策略逻辑或市场适配性",
-                ))
+                anomalies.append(
+                    Anomaly(
+                        rule="negative_return",
+                        severity=Severity.WARN,
+                        message=f"年化收益为负: {annual_return:.1%}",
+                        value=annual_return,
+                        threshold=0.0,
+                        suggestion="策略不盈利, 检查策略逻辑或市场适配性",
+                    )
+                )
 
         # ── 统计异常 ──
         trades = _to_int(result.get("trades_count"))
         if trades is not None:
             checks += 1
             if trades < cfg.min_trades:
-                anomalies.append(Anomaly(
-                    rule="few_trades",
-                    severity=Severity.WARN,
-                    message=f"交易次数不足: {trades} < {cfg.min_trades}",
-                    value=float(trades),
-                    threshold=float(cfg.min_trades),
-                    suggestion="增加回测周期或降低交易频率阈值",
-                ))
+                anomalies.append(
+                    Anomaly(
+                        rule="few_trades",
+                        severity=Severity.WARN,
+                        message=f"交易次数不足: {trades} < {cfg.min_trades}",
+                        value=float(trades),
+                        threshold=float(cfg.min_trades),
+                        suggestion="增加回测周期或降低交易频率阈值",
+                    )
+                )
 
         backtest_days = _calc_backtest_days(result)
         if backtest_days is not None:
             checks += 1
             if backtest_days < cfg.min_backtest_days:
-                anomalies.append(Anomaly(
-                    rule="short_period",
-                    severity=Severity.WARN,
-                    message=f"回测周期过短: {backtest_days}天 < {cfg.min_backtest_days}天",
-                    value=float(backtest_days),
-                    threshold=float(cfg.min_backtest_days),
-                    suggestion=f"至少覆盖 {cfg.min_backtest_days} 天 (约1年交易日)",
-                ))
+                anomalies.append(
+                    Anomaly(
+                        rule="short_period",
+                        severity=Severity.WARN,
+                        message=f"回测周期过短: {backtest_days}天 < {cfg.min_backtest_days}天",
+                        value=float(backtest_days),
+                        threshold=float(cfg.min_backtest_days),
+                        suggestion=f"至少覆盖 {cfg.min_backtest_days} 天 (约1年交易日)",
+                    )
+                )
 
         # ── 一致性异常 ──
         if annual_return is not None and sharpe is not None:
             checks += 1
             if annual_return > cfg.high_return_threshold and sharpe < cfg.low_sharpe_threshold:
-                anomalies.append(Anomaly(
-                    rule="high_return_low_sharpe",
-                    severity=Severity.WARN,
-                    message=(
-                        f"高收益低Sharpe: return={annual_return:.1%} "
-                        f"但 sharpe={sharpe:.2f} < {cfg.low_sharpe_threshold}"
-                    ),
-                    value=sharpe,
-                    threshold=cfg.low_sharpe_threshold,
-                    suggestion="收益不稳定, 检查波动率或换手率",
-                ))
+                anomalies.append(
+                    Anomaly(
+                        rule="high_return_low_sharpe",
+                        severity=Severity.WARN,
+                        message=(
+                            f"高收益低Sharpe: return={annual_return:.1%} "
+                            f"但 sharpe={sharpe:.2f} < {cfg.low_sharpe_threshold}"
+                        ),
+                        value=sharpe,
+                        threshold=cfg.low_sharpe_threshold,
+                        suggestion="收益不稳定, 检查波动率或换手率",
+                    )
+                )
 
         checks += 1
         benchmark = result.get("benchmark_symbol")
         if not benchmark:
-            anomalies.append(Anomaly(
-                rule="missing_benchmark",
-                severity=Severity.INFO,
-                message="未指定基准标的",
-                suggestion="添加基准(如沪深300)便于相对绩效评估",
-            ))
+            anomalies.append(
+                Anomaly(
+                    rule="missing_benchmark",
+                    severity=Severity.INFO,
+                    message="未指定基准标的",
+                    suggestion="添加基准(如沪深300)便于相对绩效评估",
+                )
+            )
 
         passed = not any(a.severity is Severity.ERROR for a in anomalies)
         _logger.debug(

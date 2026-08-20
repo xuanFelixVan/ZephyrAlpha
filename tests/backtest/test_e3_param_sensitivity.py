@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """E3 参数敏感性 ±20% 网格分析单元测试（11_regime_backtest_validation_plan §4.4/§4.5 E3）."""
+
 from __future__ import annotations
 
 import unittest
@@ -33,10 +34,13 @@ class TestAnalyzeParamSensitivity(unittest.TestCase):
     def test_all_robust_passes(self):
         """全部参数相对变化 <30% → 稳健。"""
         baseline = 0.074  # C1 实测 MaxDD 改善 7.4pp
-        pts = _grid(baseline, {
-            "conf_t1": (0.070, 0.078),   # ±5%
-            "resonance": (0.062, 0.081),  # ±10-16%
-        })
+        pts = _grid(
+            baseline,
+            {
+                "conf_t1": (0.070, 0.078),  # ±5%
+                "resonance": (0.062, 0.081),  # ±10-16%
+            },
+        )
         rep = analyze_param_sensitivity(baseline, pts)
         self.assertTrue(rep.passed)
         self.assertEqual(rep.cliff_params, ())
@@ -46,10 +50,13 @@ class TestAnalyzeParamSensitivity(unittest.TestCase):
     def test_cliff_param_detected(self):
         """存在悬崖参数（相对变化 ≥30%）→ 不通过 + 点名。"""
         baseline = 0.074
-        pts = _grid(baseline, {
-            "conf_t1": (0.070, 0.078),
-            "recovery_cap": (0.010, 0.074),  # −20% 方向效果骤降 86%
-        })
+        pts = _grid(
+            baseline,
+            {
+                "conf_t1": (0.070, 0.078),
+                "recovery_cap": (0.010, 0.074),  # −20% 方向效果骤降 86%
+            },
+        )
         rep = analyze_param_sensitivity(baseline, pts)
         self.assertFalse(rep.passed)
         self.assertEqual(rep.cliff_params, ("recovery_cap",))

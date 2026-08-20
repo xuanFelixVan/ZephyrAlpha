@@ -18,6 +18,7 @@
 evaluate 不可跳级、回测-实盘偏差监控(ok/warn/retire)、
 DSR 可选判定器(默认关闭不破坏既有行为/启用后第四条件/未注入fail-closed)。
 """
+
 from __future__ import annotations
 
 import pytest

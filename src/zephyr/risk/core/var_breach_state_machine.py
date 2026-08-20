@@ -118,17 +118,13 @@ class VarBreachConfig:
 
     def __post_init__(self) -> None:
         if self.breach_threshold <= 0:
-            raise InvalidVarBreachConfigError(
-                f"breach_threshold must be >0, got {self.breach_threshold}"
-            )
+            raise InvalidVarBreachConfigError(f"breach_threshold must be >0, got {self.breach_threshold}")
         if not 0.0 < self.recovery_threshold_ratio < 1.0:
             raise InvalidVarBreachConfigError(
                 f"recovery_threshold_ratio must be in (0,1), got {self.recovery_threshold_ratio}"
             )
         if self.days_to_recovery < 1:
-            raise InvalidVarBreachConfigError(
-                f"days_to_recovery must be >=1, got {self.days_to_recovery}"
-            )
+            raise InvalidVarBreachConfigError(f"days_to_recovery must be >=1, got {self.days_to_recovery}")
         if self.days_to_normal < self.days_to_recovery:
             raise InvalidVarBreachConfigError(
                 f"days_to_normal({self.days_to_normal}) must be >= "
@@ -245,9 +241,7 @@ class VarBreachStateMachine:
             迁移后状态。
         """
         if current_var < 0:
-            raise InvalidVarBreachConfigError(
-                f"current_var must be >=0, got {current_var}"
-            )
+            raise InvalidVarBreachConfigError(f"current_var must be >=0, got {current_var}")
         cfg = self._config
         day = today.isoformat() if today is not None else None
         prev = self._state

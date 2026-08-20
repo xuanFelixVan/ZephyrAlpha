@@ -15,6 +15,7 @@
   - 空数据降级：返回 passed=False 空结果（不抛异常）
   - run_c1_end_to_end mode 校验
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta
@@ -66,11 +67,17 @@ def _make_market_data(symbols=_SYMBOLS, n_days=_N_DAYS, seed=7) -> pd.DataFrame:
             vol = 0.005 if t < n_days // 2 else 0.03
             ret = rng.normal(0, vol)
             close = close * (1 + ret)
-            rows.append({
-                "symbol": sym, "date": dates[t],
-                "open": close, "high": close * 1.01, "low": close * 0.99,
-                "close": close, "volume": 1_000_000,
-            })
+            rows.append(
+                {
+                    "symbol": sym,
+                    "date": dates[t],
+                    "open": close,
+                    "high": close * 1.01,
+                    "low": close * 0.99,
+                    "close": close,
+                    "volume": 1_000_000,
+                }
+            )
         frames.append(pd.DataFrame(rows))
     df = pd.concat(frames, ignore_index=True).set_index(["symbol", "date"]).sort_index()
     return df
@@ -79,9 +86,7 @@ def _make_market_data(symbols=_SYMBOLS, n_days=_N_DAYS, seed=7) -> pd.DataFrame:
 def _make_signals(data: pd.DataFrame, symbols=_SYMBOLS) -> pd.DataFrame:
     """等权信号（index=date, columns=symbol, 值=1.0 → 归一化后 1/N）。"""
     dates = data.index.get_level_values("date").unique().sort_values()
-    return pd.DataFrame(
-        {sym: 1.0 for sym in symbols}, index=pd.DatetimeIndex(dates, name="date")
-    )
+    return pd.DataFrame({sym: 1.0 for sym in symbols}, index=pd.DatetimeIndex(dates, name="date"))
 
 
 @pytest.fixture
@@ -95,6 +100,7 @@ def signals(market_data) -> pd.DataFrame:
 
 
 # ── build_volatility_schedule ─────────────────────────────────────────
+
 
 class TestBuildVolatilitySchedule:
     """市场等权实现波动率序列构造。"""
@@ -130,12 +136,16 @@ class TestBuildVolatilitySchedule:
     def test_empty_data_returns_empty(self):
         """空 data / 无 close 列 → 空 dict（不抛）。"""
         assert build_volatility_schedule(pd.DataFrame()) == {}
-        assert build_volatility_schedule(
-            pd.DataFrame({"x": [1]}, index=pd.MultiIndex.from_tuples([("a", "b")], names=["s", "d"]))
-        ) == {}
+        assert (
+            build_volatility_schedule(
+                pd.DataFrame({"x": [1]}, index=pd.MultiIndex.from_tuples([("a", "b")], names=["s", "d"]))
+            )
+            == {}
+        )
 
 
 # ── run_c1_mock：冒烟主入口 ────────────────────────────────────────────
+
 
 class TestRunC1Mock:
     """mock 模式（波动率驱动）C1 开/关对比冒烟。"""
@@ -197,9 +207,7 @@ class TestRunC1Mock:
         result = run_c1_mock(data=tiny_data, signals=tiny_signals, vol_window=20)
         assert isinstance(result, C1ComparisonResult)
         # 空 schedule → MockShrinkageProvider 恒 1.0 → 两组等价
-        assert result.baseline_result.sharpe_ratio == pytest.approx(
-            result.experiment_result.sharpe_ratio
-        )
+        assert result.baseline_result.sharpe_ratio == pytest.approx(result.experiment_result.sharpe_ratio)
 
     def test_mock_report_contains_warning(self, market_data, signals, tmp_path):
         """治本补强（裁定②）：mock 报告含"无决策价值"警示。"""
@@ -212,6 +220,7 @@ class TestRunC1Mock:
 
 # ── run_c1_with_provider：核心入口 ─────────────────────────────────────
 
+
 class TestRunC1WithProvider:
     """核心入口用任意 provider 跑 C1。"""
 
@@ -222,22 +231,20 @@ class TestRunC1WithProvider:
         （证明对比器在"无节流"时正确否决——regime 无价值）。
         """
         result = run_c1_with_provider(
-            data=market_data, signals=signals,
+            data=market_data,
+            signals=signals,
             shrinkage_provider=ConstShrinkageProvider(1.0),
         )
-        assert result.baseline_result.sharpe_ratio == pytest.approx(
-            result.experiment_result.sharpe_ratio
-        )
-        assert result.baseline_result.max_drawdown == pytest.approx(
-            result.experiment_result.max_drawdown
-        )
+        assert result.baseline_result.sharpe_ratio == pytest.approx(result.experiment_result.sharpe_ratio)
+        assert result.baseline_result.max_drawdown == pytest.approx(result.experiment_result.max_drawdown)
         # 无节流 → MaxDD 无改善 → 一票否决
         assert result.passed is False
 
     def test_empty_data_returns_empty_result(self):
         """空 data/signals → 返回 passed=False 空结果（不抛）。"""
         result = run_c1_with_provider(
-            data=pd.DataFrame(), signals=pd.DataFrame(),
+            data=pd.DataFrame(),
+            signals=pd.DataFrame(),
             shrinkage_provider=ConstShrinkageProvider(1.0),
         )
         assert result.passed is False
@@ -245,6 +252,7 @@ class TestRunC1WithProvider:
 
 
 # ── run_c1_regime：真实模式（合成 regime_results）──────────────────────
+
 
 class TestRunC1Regime:
     """regime 模式用 ScheduleShrinkageProvider 跑 C1（特征管道就绪后切换路径）。"""
@@ -262,28 +270,29 @@ class TestRunC1Regime:
             regime_results.append((pd.Timestamp(d).to_pydatetime(), shrink))
 
         result = run_c1_regime(
-            data=market_data, signals=signals, regime_results=regime_results,
+            data=market_data,
+            signals=signals,
+            regime_results=regime_results,
         )
         assert isinstance(result, C1ComparisonResult)
         assert len(result.metric_verdicts) == 4
         # regime 有收缩段 → 实验组与基准组有差异
-        assert result.baseline_result.total_return != pytest.approx(
-            result.experiment_result.total_return
-        )
+        assert result.baseline_result.total_return != pytest.approx(result.experiment_result.total_return)
 
     def test_empty_regime_results_degraded(self, market_data, signals):
         """空 regime_results → ScheduleShrinkageProvider 恒 1.0（退化满部署，不抛）。"""
         result = run_c1_regime(
-            data=market_data, signals=signals, regime_results=[],
+            data=market_data,
+            signals=signals,
+            regime_results=[],
         )
         assert isinstance(result, C1ComparisonResult)
         # 空 schedule → 全 1.0 → 两组等价
-        assert result.baseline_result.sharpe_ratio == pytest.approx(
-            result.experiment_result.sharpe_ratio
-        )
+        assert result.baseline_result.sharpe_ratio == pytest.approx(result.experiment_result.sharpe_ratio)
 
 
 # ── save_c1_report：报告落盘 ───────────────────────────────────────────
+
 
 class TestSaveC1Report:
     """C1ComparisonResult → markdown 报告。"""
@@ -292,7 +301,9 @@ class TestSaveC1Report:
         """报告落盘为 .md，含关键章节。"""
         result = run_c1_mock(data=market_data, signals=signals)
         out = save_c1_report(
-            result, output_path=tmp_path / "c1_report.md", mode="mock",
+            result,
+            output_path=tmp_path / "c1_report.md",
+            mode="mock",
             meta={"strategy": "topn-momentum", "symbols": "3"},
         )
         content = (tmp_path / "c1_report.md").read_text(encoding="utf-8")
@@ -312,6 +323,7 @@ class TestSaveC1Report:
 
 # ── run_c1_end_to_end：mode 校验 ───────────────────────────────────────
 
+
 class TestRunC1EndToEnd:
     """端到端入口的 mode 校验（不实际跑 build_weight_panel，避免 ClickHouse 依赖）。"""
 
@@ -319,14 +331,21 @@ class TestRunC1EndToEnd:
         """非法 mode → C1RunnerError。"""
         with pytest.raises(C1RunnerError, match="mode"):
             run_c1_end_to_end(
-                symbols=["600001"], start="2024-01-01", end="2024-06-01",
-                runner_config=None, mode="invalid",
+                symbols=["600001"],
+                start="2024-01-01",
+                end="2024-06-01",
+                runner_config=None,
+                mode="invalid",
             )
 
     def test_regime_mode_without_results_raises(self):
         """regime 模式缺 regime_results → C1RunnerError。"""
         with pytest.raises(C1RunnerError, match="regime_results"):
             run_c1_end_to_end(
-                symbols=["600001"], start="2024-01-01", end="2024-06-01",
-                runner_config=None, mode="regime", regime_results=None,
+                symbols=["600001"],
+                start="2024-01-01",
+                end="2024-06-01",
+                runner_config=None,
+                mode="regime",
+                regime_results=None,
             )

@@ -117,7 +117,7 @@ class TestGranularityChecklist:
         mgr = PITManager()
         df = pd.DataFrame(
             {
-                "date": ["2024-06-04"],           # date 粒度字符串
+                "date": ["2024-06-04"],  # date 粒度字符串
                 "symbol": ["600000.SH"],
                 "available_at": ["2024-06-04"],
                 "factor_x": [9.9],

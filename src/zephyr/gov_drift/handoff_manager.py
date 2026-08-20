@@ -188,7 +188,7 @@ def serialize_package(pkg: HandoffPackage, output_dir: str) -> str:
         "last_verified_at": pkg.last_verified_at,
     }
 
-    content = dumps(package_dict, indent=2,  ensure_ascii=False)
+    content = dumps(package_dict, indent=2, ensure_ascii=False)
 
     tmp_path = f"{path}.{os.getpid()}.tmp"
 
@@ -411,11 +411,7 @@ class HandoffManager:
             True 表示找到并确认了一条记录；False 表示无匹配记录。
         """
         for rec in reversed(self._records):
-            if (
-                rec.to_agent == to_agent
-                and rec.task_id == task_id
-                and not rec.acknowledged
-            ):
+            if rec.to_agent == to_agent and rec.task_id == task_id and not rec.acknowledged:
                 rec.acknowledged = True
                 return True
         return False

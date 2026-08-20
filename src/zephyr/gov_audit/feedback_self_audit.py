@@ -142,7 +142,6 @@ class FeedbackSelfAuditor:
         """写入：amplification_threshold（Stage 4 公共化）。"""
         self._amplification_threshold = value
 
-
     def detect_self_reinforcement(
         self,
         agent_id: str,
@@ -162,11 +161,7 @@ class FeedbackSelfAuditor:
             if action:
                 action_scores[action].append(float(score))
 
-        results.extend(
-            _detect_amplification_loops(
-                agent_id, action_scores, self._amplification_threshold
-            )
-        )
+        results.extend(_detect_amplification_loops(agent_id, action_scores, self._amplification_threshold))
 
         results.extend(_detect_self_feedback_loops(agent_id, events))
 

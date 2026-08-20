@@ -293,9 +293,7 @@ class LiquidityMonitor:
         self._validate_inputs(closes, volumes)
 
         if len(closes) < 2:
-            raise InvalidLiquidityInputError(
-                f"Amihud 计算需 ≥2 个数据点，实际 {len(closes)}"
-            )
+            raise InvalidLiquidityInputError(f"Amihud 计算需 ≥2 个数据点，实际 {len(closes)}")
 
         # 日收益率: r_d = (close_d - close_{d-1}) / close_{d-1}
         returns = closes.pct_change().dropna()
@@ -305,9 +303,7 @@ class LiquidityMonitor:
 
         # 过滤零成交额（避免除零），设为 NaN 后 dropna
         with np.errstate(divide="ignore", invalid="ignore"):
-            illiq_daily = (returns.abs() / vol_aligned).replace(
-                [np.inf, -np.inf], np.nan
-            )
+            illiq_daily = (returns.abs() / vol_aligned).replace([np.inf, -np.inf], np.nan)
         illiq_daily = illiq_daily.dropna()
 
         if len(illiq_daily) == 0:
@@ -400,8 +396,7 @@ class LiquidityMonitor:
 
         if len(closes) < 2:
             _logger.warning(
-                "Liquidity assessment skipped (insufficient data): "
-                "symbol=%s data_points=%d",
+                "Liquidity assessment skipped (insufficient data): symbol=%s data_points=%d",
                 symbol,
                 len(closes),
             )
@@ -419,10 +414,7 @@ class LiquidityMonitor:
         amihud = self.compute_amihud(closes, volumes)
         shrinkage = self.compute_volume_shrinkage(volumes)
 
-        is_illiquid = (
-            amihud > self._amihud_threshold
-            or shrinkage < self._volume_shrinkage_threshold
-        )
+        is_illiquid = amihud > self._amihud_threshold or shrinkage < self._volume_shrinkage_threshold
 
         metrics = LiquidityMetrics(
             symbol=symbol,
@@ -436,8 +428,7 @@ class LiquidityMonitor:
         )
 
         _logger.info(
-            "Liquidity assessed: symbol=%s amihud=%.2e shrinkage=%.4f "
-            "is_illiquid=%s",
+            "Liquidity assessed: symbol=%s amihud=%.2e shrinkage=%.4f is_illiquid=%s",
             symbol,
             amihud,
             shrinkage,
@@ -577,9 +568,7 @@ class LiquidityMonitor:
     def _validate_inputs(closes: pd.Series, volumes: pd.Series) -> None:
         """验证 Amihud 计算输入。"""
         if len(closes) != len(volumes):
-            raise InvalidLiquidityInputError(
-                f"closes 与 volumes 长度不匹配: {len(closes)} vs {len(volumes)}"
-            )
+            raise InvalidLiquidityInputError(f"closes 与 volumes 长度不匹配: {len(closes)} vs {len(volumes)}")
 
     @staticmethod
     def _extract_ohlcv(ohlcv: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
@@ -588,9 +577,7 @@ class LiquidityMonitor:
         优先使用 amount 列（成交额，元），其次用 volume × close 估算。
         """
         if "close" not in ohlcv.columns:
-            raise InvalidLiquidityInputError(
-                f"OHLCV 缺少 close 列: {ohlcv.columns.tolist()}"
-            )
+            raise InvalidLiquidityInputError(f"OHLCV 缺少 close 列: {ohlcv.columns.tolist()}")
 
         closes = ohlcv["close"].astype(float)
 
@@ -601,8 +588,6 @@ class LiquidityMonitor:
             # A股数据源通常 volume=成交额，这里直接用
             volumes = ohlcv["volume"].astype(float)
         else:
-            raise InvalidLiquidityInputError(
-                f"OHLCV 缺少 volume/amount 列: {ohlcv.columns.tolist()}"
-            )
+            raise InvalidLiquidityInputError(f"OHLCV 缺少 volume/amount 列: {ohlcv.columns.tolist()}")
 
         return closes, volumes

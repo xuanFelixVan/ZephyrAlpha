@@ -102,7 +102,6 @@ class EvidencePackExporter:
         """写入：output_dir（Stage 4 公共化）。"""
         self._output_dir = value
 
-
     def export_json(
         self,
         events: list[dict[str, Any]],

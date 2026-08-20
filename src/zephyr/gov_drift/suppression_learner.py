@@ -88,7 +88,6 @@ class SuppressionLearner:
         """写入：shadow_observations（Stage 4 公共化）。"""
         self._shadow_observations = value
 
-
     def compute_pattern_hash(
         self,
         detector_id: str,

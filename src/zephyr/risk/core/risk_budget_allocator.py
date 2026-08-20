@@ -103,24 +103,17 @@ class BudgetConfig:
 
     def __post_init__(self) -> None:
         if self.max_iter < 10:
-            raise InvalidBudgetInputError(
-                f"max_iter must be >=10, got {self.max_iter}"
-            )
+            raise InvalidBudgetInputError(f"max_iter must be >=10, got {self.max_iter}")
         if self.ftol <= 0:
             raise InvalidBudgetInputError(f"ftol must be >0, got {self.ftol}")
         if not 0 < self.rebalance_drift_threshold <= 1:
             raise InvalidBudgetInputError(
-                f"rebalance_drift_threshold must be in (0,1], "
-                f"got {self.rebalance_drift_threshold}"
+                f"rebalance_drift_threshold must be in (0,1], got {self.rebalance_drift_threshold}"
             )
         if self.min_weight < 0:
-            raise InvalidBudgetInputError(
-                f"min_weight must be >=0 (long-only), got {self.min_weight}"
-            )
+            raise InvalidBudgetInputError(f"min_weight must be >=0 (long-only), got {self.min_weight}")
         if self.max_weight < self.min_weight:
-            raise InvalidBudgetInputError(
-                f"max_weight ({self.max_weight}) < min_weight ({self.min_weight})"
-            )
+            raise InvalidBudgetInputError(f"max_weight ({self.max_weight}) < min_weight ({self.min_weight})")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -256,19 +249,14 @@ class RiskBudgetAllocator:
         target = np.asarray(target_budgets, dtype=float)
         if target.ndim != 1 or target.shape[0] != cov.shape[0]:
             raise InvalidBudgetInputError(
-                f"target_budgets shape {target.shape} mismatched with cov "
-                f"({cov.shape[0]},{cov.shape[0]})"
+                f"target_budgets shape {target.shape} mismatched with cov ({cov.shape[0]},{cov.shape[0]})"
             )
         if np.any(target <= 0):
-            raise InvalidBudgetInputError(
-                f"target_budgets must be all positive, got {target}"
-            )
+            raise InvalidBudgetInputError(f"target_budgets must be all positive, got {target}")  # noqa: MSG-EXPOSURE — target=预算权重数组数值非敏感信息
         target = target / np.sum(target)  # 归一化为占比
         return self._solve(cov, target, method="budget", assets=assets, now=now)
 
-    def risk_contributions(
-        self, cov: np.ndarray, weights: np.ndarray
-    ) -> tuple[float, np.ndarray, np.ndarray]:
+    def risk_contributions(self, cov: np.ndarray, weights: np.ndarray) -> tuple[float, np.ndarray, np.ndarray]:
         """计算给定权重的风险贡献 (复用 RK-16)。
 
         Returns:
@@ -369,9 +357,7 @@ class RiskBudgetAllocator:
         weights = np.clip(res.x, 0, None)
         total = np.sum(weights)
         if total <= 0:
-            raise BudgetOptimizationError(
-                f"optimization yielded zero weights: {res.x}"
-            )
+            raise BudgetOptimizationError(f"optimization yielded zero weights: {res.x}")
         weights = weights / total
 
         # 计算最终风险贡献
@@ -403,16 +389,10 @@ class RiskBudgetAllocator:
     def _validate_cov(cov: np.ndarray) -> np.ndarray:
         cov = np.asarray(cov, dtype=float)
         if cov.ndim != 2 or cov.shape[0] != cov.shape[1]:
-            raise InvalidBudgetInputError(
-                f"cov must be square 2D, got shape {cov.shape}"
-            )
+            raise InvalidBudgetInputError(f"cov must be square 2D, got shape {cov.shape}")
         if cov.shape[0] < 2:
-            raise InvalidBudgetInputError(
-                f"need >=2 assets for budget allocation, got {cov.shape[0]}"
-            )
+            raise InvalidBudgetInputError(f"need >=2 assets for budget allocation, got {cov.shape[0]}")
         # 检查对角线非负 (方差非负)
         if np.any(np.diag(cov) < 0):
-            raise InvalidBudgetInputError(
-                f"covariance diagonal must be non-negative, got {np.diag(cov)}"
-            )
+            raise InvalidBudgetInputError(f"covariance diagonal must be non-negative, got {np.diag(cov)}")
         return cov

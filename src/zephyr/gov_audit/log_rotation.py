@@ -53,7 +53,7 @@ class LogRotation:
         # 5.37.12：默认追加 MCP 审计日志目录（tools_call.jsonl）到轮转范围；
         # 显式传 extra_dirs=() 可关闭追加（测试隔离），传自定义 list 可扩展。
         dirs: list[Path] = [self._log_dir]
-        for d in (extra_dirs if extra_dirs is not None else (MCP_AUDIT_LOG_DIR,)):
+        for d in extra_dirs if extra_dirs is not None else (MCP_AUDIT_LOG_DIR,):
             p = Path(d)
             if p not in dirs:
                 dirs.append(p)
@@ -169,7 +169,6 @@ class LogRotationManager:
         """写入：max_rotated_days（Stage 4 公共化）。"""
         self._max_rotated_days = value
 
-
     @property
     def compress_rotated(self):
         """只读：compress_rotated（Stage 4 公共化）。"""
@@ -180,14 +179,13 @@ class LogRotationManager:
         """写入：compress_rotated（Stage 4 公共化）。"""
         self._compress_rotated = value
 
-
     @staticmethod
     def extract_date(filename: str) -> str | None:
-        '从轮转文件名中提取日期（YYYY-MM-DD），无法提取返回 None。'
+        "从轮转文件名中提取日期（YYYY-MM-DD），无法提取返回 None。"
         import re
-        m = re.search('(\\d{4}-\\d{2}-\\d{2})', filename)
-        return m.group(1) if m else None
 
+        m = re.search("(\\d{4}-\\d{2}-\\d{2})", filename)
+        return m.group(1) if m else None
 
     @property
     def _active_log_path(self) -> Path:
@@ -244,12 +242,14 @@ class LogRotationManager:
         for f in sorted(self._data_dir.glob(f"{self._ROTATED_PREFIX}*")):
             if not f.is_file():
                 continue
-            logs.append(RotatedLogInfo(
-                original_path=str(self._active_log_path),
-                rotated_path=str(f),
-                size_bytes=f.stat().st_size,
-                rotated_at=f.stat().st_mtime,
-            ))
+            logs.append(
+                RotatedLogInfo(
+                    original_path=str(self._active_log_path),
+                    rotated_path=str(f),
+                    size_bytes=f.stat().st_size,
+                    rotated_at=f.stat().st_mtime,
+                )
+            )
         return logs
 
     def cleanup_old_rotations(self) -> int:

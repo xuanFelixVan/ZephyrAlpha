@@ -74,16 +74,13 @@ class DriftBridge:
         """公共接口：scan_drift_events（Stage 4 公共化）。"""
         return self._scan_drift_events()
 
-
     def scan_audit_anomalies(self) -> list[dict[str, Any]]:
         """公共接口：scan_audit_anomalies（Stage 4 公共化）。"""
         return self._scan_audit_anomalies()
 
-
     def load_events(self) -> list[dict[str, Any]]:
         """公共接口：load_events（Stage 4 公共化）。"""
         return self._load_events()
-
 
     @property
     def audit_events_path(self) -> Path | None:
@@ -94,7 +91,6 @@ class DriftBridge:
     def audit_events_path(self, value):
         """写入：audit_events_path（Stage 4 公共化）。"""
         self._audit_events_path = value
-
 
     # --- new API ---
 
@@ -157,9 +153,7 @@ class DriftBridge:
         critical_gaps = sum(
             1
             for a in audit_anomalies
-            if a.get("severity") == "CRITICAL"
-            and a.get("target_path")
-            and a.get("target_path") not in drift_paths
+            if a.get("severity") == "CRITICAL" and a.get("target_path") and a.get("target_path") not in drift_paths
         )
 
         return BridgeResult(

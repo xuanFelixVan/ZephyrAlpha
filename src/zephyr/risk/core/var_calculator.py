@@ -149,8 +149,8 @@ logger = logging.getLogger(__name__)
 class VaRMethod(str, Enum):
     """VaR 计算方法。"""
 
-    PARAMETRIC = "parametric"            # 参数法 (方差-协方差, 假设正态)
-    HISTORICAL = "historical"            # 历史模拟法 (经验分位数)
+    PARAMETRIC = "parametric"  # 参数法 (方差-协方差, 假设正态)
+    HISTORICAL = "historical"  # 历史模拟法 (经验分位数)
     CONSERVATIVE_MAX = "conservative_max"  # 取 max(parametric, historical) — Phase 1 默认
 
 
@@ -213,25 +213,15 @@ class VaRConfig:
 
     def __post_init__(self) -> None:
         if not 0 < self.confidence_level < 1:
-            raise InvalidVaRConfigError(
-                f"confidence_level must be in (0,1), got {self.confidence_level}"
-            )
+            raise InvalidVaRConfigError(f"confidence_level must be in (0,1), got {self.confidence_level}")
         if self.holding_period_days < 1:
-            raise InvalidVaRConfigError(
-                f"holding_period_days must be >=1, got {self.holding_period_days}"
-            )
+            raise InvalidVaRConfigError(f"holding_period_days must be >=1, got {self.holding_period_days}")
         if self.min_history < 2:
-            raise InvalidVaRConfigError(
-                f"min_history must be >=2, got {self.min_history}"
-            )
+            raise InvalidVaRConfigError(f"min_history must be >=2, got {self.min_history}")
         if self.annualization_factor < 1:
-            raise InvalidVaRConfigError(
-                f"annualization_factor must be >=1, got {self.annualization_factor}"
-            )
+            raise InvalidVaRConfigError(f"annualization_factor must be >=1, got {self.annualization_factor}")
         if not 0.0 <= self.max_nonfinite_ratio < 1.0:
-            raise InvalidVaRConfigError(
-                f"max_nonfinite_ratio must be in [0,1), got {self.max_nonfinite_ratio}"
-            )
+            raise InvalidVaRConfigError(f"max_nonfinite_ratio must be in [0,1), got {self.max_nonfinite_ratio}")
 
     @property
     def z_alpha(self) -> float:
@@ -363,9 +353,7 @@ class VaRCalculator:
         """
         returns, nan_dropped = self._validate_returns(returns)
         if portfolio_value <= 0:
-            raise InvalidVaRConfigError(
-                f"portfolio_value must be positive, got {portfolio_value}"
-            )
+            raise InvalidVaRConfigError(f"portfolio_value must be positive, got {portfolio_value}")
         now = now or datetime.now(timezone.utc)
 
         mean_r = float(np.mean(returns))
@@ -436,13 +424,10 @@ class VaRCalculator:
         asset_returns = np.asarray(asset_returns, dtype=float)
         weights = np.asarray(weights, dtype=float)
         if asset_returns.ndim != 2:
-            raise InvalidVaRConfigError(
-                f"asset_returns must be 2D (T,N), got shape {asset_returns.shape}"
-            )
+            raise InvalidVaRConfigError(f"asset_returns must be 2D (T,N), got shape {asset_returns.shape}")
         if weights.ndim != 1 or weights.shape[0] != asset_returns.shape[1]:
             raise InvalidVaRConfigError(
-                f"weights shape {weights.shape} mismatched with asset_returns "
-                f"columns {asset_returns.shape[1]}"
+                f"weights shape {weights.shape} mismatched with asset_returns columns {asset_returns.shape[1]}"
             )
         # 合成组合日收益 = weights @ asset_returns.T
         portfolio_returns = asset_returns @ weights
@@ -450,9 +435,7 @@ class VaRCalculator:
 
     # ── 内部: 计算方法 ──
 
-    def _parametric(
-        self, mean_r: float, std_r: float, portfolio_value: float
-    ) -> float:
+    def _parametric(self, mean_r: float, std_r: float, portfolio_value: float) -> float:
         """参数法: VaR = (z_α·σ - μ)·V·sqrt(T), 下限 0。
 
         - z_α = |ppf(1-c)| (如 0.95 → 1.6449)
@@ -468,9 +451,7 @@ class VaRCalculator:
         var = daily_var * np.sqrt(T)
         return float(max(0.0, var))
 
-    def _historical(
-        self, returns: np.ndarray, portfolio_value: float
-    ) -> float:
+    def _historical(self, returns: np.ndarray, portfolio_value: float) -> float:
         """历史模拟法: VaR = -quantile(r, 1-c)·V·sqrt(T)。
 
         - 取收益序列的下侧 (1-c) 经验分位数 (负数=损失)
@@ -496,9 +477,7 @@ class VaRCalculator:
         """
         arr = np.asarray(returns, dtype=float)
         if arr.ndim != 1:
-            raise InvalidVaRConfigError(
-                f"returns must be 1D, got shape {arr.shape}"
-            )
+            raise InvalidVaRConfigError(f"returns must be 1D, got shape {arr.shape}")
         # 过滤非有限值 (NaN + ±Inf)
         finite_mask = np.isfinite(arr)
         nan_dropped = int(len(arr) - int(np.count_nonzero(finite_mask)))
@@ -520,7 +499,5 @@ class VaRCalculator:
             )
             arr = arr[finite_mask]
         if len(arr) < self._config.min_history:
-            raise InsufficientVaRHistoryError(
-                f"need >= {self._config.min_history} valid returns, got {len(arr)}"
-            )
+            raise InsufficientVaRHistoryError(f"need >= {self._config.min_history} valid returns, got {len(arr)}")
         return arr, nan_dropped

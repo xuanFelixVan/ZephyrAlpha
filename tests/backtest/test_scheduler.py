@@ -22,6 +22,7 @@
 - get_result: 查询结果 / 不存在返回None
 - get_summary: 最优/最差/均值 / 无结果空摘要
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -110,9 +111,7 @@ class TestSubmit:
 
     def test_submit_with_params(self):
         scheduler = BacktestScheduler(engine_factory=_mock_engine_factory)
-        task_id = scheduler.submit(
-            "s1", pd.DataFrame(), pd.DataFrame(), {"horizon": 10}
-        )
+        task_id = scheduler.submit("s1", pd.DataFrame(), pd.DataFrame(), {"horizon": 10})
         assert task_id.startswith("task-")
         assert scheduler.queue_size == 1
 
@@ -121,7 +120,9 @@ class TestSubmitGrid:
     def test_grid_expansion(self):
         scheduler = BacktestScheduler(engine_factory=_mock_engine_factory)
         task_ids = scheduler.submit_grid(
-            "s1", pd.DataFrame(), pd.DataFrame(),
+            "s1",
+            pd.DataFrame(),
+            pd.DataFrame(),
             {"horizon": [5, 10, 20], "threshold": [0.01, 0.02]},
         )
         assert len(task_ids) == 6  # 3 × 2 = 6
@@ -129,15 +130,15 @@ class TestSubmitGrid:
 
     def test_empty_grid(self):
         scheduler = BacktestScheduler(engine_factory=_mock_engine_factory)
-        task_ids = scheduler.submit_grid(
-            "s1", pd.DataFrame(), pd.DataFrame(), {}
-        )
+        task_ids = scheduler.submit_grid("s1", pd.DataFrame(), pd.DataFrame(), {})
         assert len(task_ids) == 1
 
     def test_single_param_grid(self):
         scheduler = BacktestScheduler(engine_factory=_mock_engine_factory)
         task_ids = scheduler.submit_grid(
-            "s1", pd.DataFrame(), pd.DataFrame(),
+            "s1",
+            pd.DataFrame(),
+            pd.DataFrame(),
             {"horizon": [5, 10, 20]},
         )
         assert len(task_ids) == 3
@@ -152,7 +153,9 @@ class TestRunAll:
     def test_run_all_executes_all_tasks(self):
         scheduler = BacktestScheduler(engine_factory=_mock_engine_factory)
         scheduler.submit_grid(
-            "s1", pd.DataFrame(), pd.DataFrame(),
+            "s1",
+            pd.DataFrame(),
+            pd.DataFrame(),
             {"horizon": [5, 10, 20]},
         )
         results = scheduler.run_all(max_workers=2)
@@ -169,7 +172,9 @@ class TestRunAll:
     def test_run_all_with_param_aware_factory(self):
         scheduler = BacktestScheduler(engine_factory=_param_aware_factory)
         scheduler.submit_grid(
-            "s1", pd.DataFrame(), pd.DataFrame(),
+            "s1",
+            pd.DataFrame(),
+            pd.DataFrame(),
             {"sharpe": [0.5, 1.0, 2.0]},
         )
         results = scheduler.run_all()
@@ -195,7 +200,9 @@ class TestGetSummary:
     def test_summary_with_results(self):
         scheduler = BacktestScheduler(engine_factory=_param_aware_factory)
         scheduler.submit_grid(
-            "s1", pd.DataFrame(), pd.DataFrame(),
+            "s1",
+            pd.DataFrame(),
+            pd.DataFrame(),
             {"sharpe": [0.5, 1.0, 2.0]},
         )
         scheduler.run_all()
@@ -215,7 +222,9 @@ class TestGetSummary:
     def test_summary_best_params_correct(self):
         scheduler = BacktestScheduler(engine_factory=_param_aware_factory)
         scheduler.submit_grid(
-            "s1", pd.DataFrame(), pd.DataFrame(),
+            "s1",
+            pd.DataFrame(),
+            pd.DataFrame(),
             {"sharpe": [0.5, 2.0]},
         )
         scheduler.run_all()
@@ -226,11 +235,15 @@ class TestGetSummary:
     def test_summary_multiple_strategies(self):
         scheduler = BacktestScheduler(engine_factory=_param_aware_factory)
         scheduler.submit_grid(
-            "s1", pd.DataFrame(), pd.DataFrame(),
+            "s1",
+            pd.DataFrame(),
+            pd.DataFrame(),
             {"sharpe": [1.0, 2.0]},
         )
         scheduler.submit_grid(
-            "s2", pd.DataFrame(), pd.DataFrame(),
+            "s2",
+            pd.DataFrame(),
+            pd.DataFrame(),
             {"sharpe": [0.5, 3.0]},
         )
         scheduler.run_all()

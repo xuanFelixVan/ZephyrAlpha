@@ -134,7 +134,6 @@ class TrendAnalyzer:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def compute_metrics(self, module_id: str) -> TrendMetrics:
         conn = get_db_connection(self._db_path)
 

@@ -59,6 +59,7 @@ class FileBaselineSnapshot:
 
     cross_validated: bool = False
 
+
 @dataclass
 class MultiBaselineVote:
     file_path: str
@@ -72,6 +73,7 @@ class MultiBaselineVote:
     dissenters: int = 0
 
     consensus: bool = False
+
 
 @dataclass
 class HashChainEntry:
@@ -87,12 +89,15 @@ class HashChainEntry:
 
     verified: bool = False
 
+
 HASH_CHAIN: Final[list[HashChainEntry]] = []
 
 INTEGRITY_MANIFEST: Final[dict[str, object]] = {}
 
+
 def _sha256(data: str) -> str:
     return hashlib.sha256(data.encode("utf-8")).hexdigest()
+
 
 def cross_validate_baseline(
     baseline_content: str,
@@ -148,6 +153,7 @@ def cross_validate_baseline(
 
     return result
 
+
 def multi_baseline_vote(
     snapshots: list[FileBaselineSnapshot],
     threshold: int = 2,
@@ -186,6 +192,7 @@ def multi_baseline_vote(
 
     return results
 
+
 def build_hash_chain(
     prev_hash: str,
     current_data: str,
@@ -213,6 +220,7 @@ def build_hash_chain(
 
     return entry
 
+
 def verify_hash_chain(entries: list[HashChainEntry]) -> list[str]:
     violations: list[str] = []
 
@@ -231,6 +239,7 @@ def verify_hash_chain(entries: list[HashChainEntry]) -> list[str]:
             violations.append(f"Chain break at index {i}: expected {expected_chain[:12]} got {entry.chain_hash[:12]}")
 
     return violations
+
 
 def generate_integrity_manifest(
     scan_id: str,

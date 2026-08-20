@@ -110,10 +110,8 @@ MOCK_CLEAN = _report()
 #: Scenario 6: Mixed — HALT + non-HALT + active_alerts
 MOCK_MIXED = _report(
     checks=[
-        _check(check_id="c1", rule_name="position_limit", severity="HALT",
-               message="position limit breached"),
-        _check(check_id="c2", rule_name="drawdown", severity="WARNING",
-               message="drawdown approaching limit"),
+        _check(check_id="c1", rule_name="position_limit", severity="HALT", message="position limit breached"),
+        _check(check_id="c2", rule_name="drawdown", severity="WARNING", message="drawdown approaching limit"),
     ],
     active_alerts=["volatility: VIX spike detected"],
     overall_pass=False,

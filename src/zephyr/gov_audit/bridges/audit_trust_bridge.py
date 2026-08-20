@@ -41,11 +41,10 @@ class AuditTrustBridge:
     @staticmethod
     def classify_tier(score: float) -> str:
         if score >= 0.8:
-            return 'TIER_2_AUTO_REVERT'
+            return "TIER_2_AUTO_REVERT"
         if score >= 0.5:
-            return 'TIER_1_PROPOSE_ONLY'
-        return 'TIER_0_READ_ONLY'
-
+            return "TIER_1_PROPOSE_ONLY"
+        return "TIER_0_READ_ONLY"
 
     _TRUST_SCORE_CHANGE_THRESHOLD = 0.3
 

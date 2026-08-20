@@ -61,17 +61,14 @@ def make_result(**overrides) -> dict:
 
 def make_equity_curve(n: int = 10) -> list[dict]:
     """构建权益曲线数据。"""
-    return [
-        {"timestamp": f"2024-01-{i+1:02d}", "equity": 1.0 + i * 0.01}
-        for i in range(n)
-    ]
+    return [{"timestamp": f"2024-01-{i + 1:02d}", "equity": 1.0 + i * 0.01} for i in range(n)]
 
 
 def make_trade_log(n: int = 5) -> list[dict]:
     """构建交易日志数据。"""
     return [
         {
-            "timestamp": f"2024-01-{i+1:02d}T10:00:00",
+            "timestamp": f"2024-01-{i + 1:02d}T10:00:00",
             "symbol": "000001",
             "side": "buy" if i % 2 == 0 else "sell",
             "price": 10.0 + i,
@@ -177,9 +174,7 @@ class TestHtmlGeneration:
         assert "<svg" not in report
 
     def test_no_equity_curve_when_disabled(self):
-        gen = BacktestReportGenerator(
-            ReportConfig(include_equity_curve=False)
-        )
+        gen = BacktestReportGenerator(ReportConfig(include_equity_curve=False))
         report = gen.generate(make_result(), equity_curve=make_equity_curve(5))
         assert "<svg" not in report
 
@@ -197,16 +192,12 @@ class TestHtmlGeneration:
         assert "交易日志" not in report
 
     def test_no_trade_log_when_disabled(self):
-        gen = BacktestReportGenerator(
-            ReportConfig(include_trade_log=False)
-        )
+        gen = BacktestReportGenerator(ReportConfig(include_trade_log=False))
         report = gen.generate(make_result(), trade_log=make_trade_log(3))
         assert "交易日志" not in report
 
     def test_trade_truncation(self):
-        gen = BacktestReportGenerator(
-            ReportConfig(max_trades_display=3)
-        )
+        gen = BacktestReportGenerator(ReportConfig(max_trades_display=3))
         report = gen.generate(make_result(), trade_log=make_trade_log(10))
         assert "仅展示前 3 条" in report
         assert "共 10 条" in report
@@ -218,14 +209,16 @@ class TestHtmlGeneration:
 class TestMissingFields:
     def test_missing_fields_show_na(self):
         gen = BacktestReportGenerator()
-        report = gen.generate(make_result(
-            annual_return=None,
-            sharpe_ratio=None,
-            max_drawdown=None,
-            win_rate=None,
-            trades_count=None,
-            benchmark_symbol=None,
-        ))
+        report = gen.generate(
+            make_result(
+                annual_return=None,
+                sharpe_ratio=None,
+                max_drawdown=None,
+                win_rate=None,
+                trades_count=None,
+                benchmark_symbol=None,
+            )
+        )
         assert "N/A" in report
 
     def test_minimal_result(self):
@@ -336,9 +329,7 @@ class TestSaveReport:
     def test_save_creates_parent_dirs(self, tmp_path: Path):
         gen = BacktestReportGenerator()
         report = gen.generate(make_result())
-        path = BacktestReportGenerator.save_report(
-            report, tmp_path / "subdir" / "deep" / "report.html"
-        )
+        path = BacktestReportGenerator.save_report(report, tmp_path / "subdir" / "deep" / "report.html")
         assert path.exists()
 
     def test_save_text_report(self, tmp_path: Path):
@@ -380,17 +371,21 @@ class TestEnums:
 class TestDatetimeInput:
     def test_datetime_fields(self):
         gen = BacktestReportGenerator()
-        report = gen.generate(make_result(
-            start_date=datetime(2024, 1, 1),
-            end_date=datetime(2024, 6, 30, 15, 30),
-            timestamp=datetime(2024, 7, 1, 10, 0, 0),
-        ))
+        report = gen.generate(
+            make_result(
+                start_date=datetime(2024, 1, 1),
+                end_date=datetime(2024, 6, 30, 15, 30),
+                timestamp=datetime(2024, 7, 1, 10, 0, 0),
+            )
+        )
         assert "2024-01-01" in report
         assert "2024-06-30" in report
 
     def test_datetime_in_text(self):
         gen = BacktestReportGenerator(ReportConfig(format=ReportFormat.TEXT))
-        report = gen.generate(make_result(
-            timestamp=datetime(2024, 7, 1, 10, 0, 0),
-        ))
+        report = gen.generate(
+            make_result(
+                timestamp=datetime(2024, 7, 1, 10, 0, 0),
+            )
+        )
         assert "2024-07-01" in report

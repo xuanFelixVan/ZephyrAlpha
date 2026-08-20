@@ -134,6 +134,7 @@ class EventDrivenEngine(BacktestEngineBase):
         # 延迟导入 BacktestConfig 避免循环依赖
         if config is None:
             from zephyr.backtest.implementations.vectorized_engine import BacktestConfig
+
             config = BacktestConfig()
         self._config = config
         self._matching_config = matching_config or MatchingConfig(
@@ -159,9 +160,7 @@ class EventDrivenEngine(BacktestEngineBase):
         Raises:
             EventDrivenEngineError: 此引擎不支持向量化模式
         """
-        raise EventDrivenEngineError(
-            "EventDrivenEngine 不支持向量化模式，请使用 run_tick() 或 DefaultBacktestEngine"
-        )
+        raise EventDrivenEngineError("EventDrivenEngine 不支持向量化模式，请使用 run_tick() 或 DefaultBacktestEngine")
 
     def run_tick(
         self,
@@ -276,14 +275,19 @@ class EventDrivenEngine(BacktestEngineBase):
         # 执行回放
         _logger.info(
             "开始 Tick 级事件驱动回测: result_id=%s, symbols=%s, range=[%s, %s]",
-            result_id, symbols, start, end,
+            result_id,
+            symbols,
+            start,
+            end,
         )
         replay_engine.run(callback=on_tick)
         stats = replay_engine.get_statistics()
 
         _logger.info(
             "Tick 回放完成: %d ticks, %d fills applied, 耗时 %.2fs",
-            ticks_processed, fills_applied, stats.total_duration_s,
+            ticks_processed,
+            fills_applied,
+            stats.total_duration_s,
         )
 
         # 计算绩效指标
@@ -466,11 +470,13 @@ class EventDrivenEngine(BacktestEngineBase):
             passed = fold.get("passed")
             if passed is None:
                 passed = sharpe > 0
-            gate_results.append({
-                "passed": bool(passed),
-                "sharpe": sharpe,
-                "max_drawdown": md,
-            })
+            gate_results.append(
+                {
+                    "passed": bool(passed),
+                    "sharpe": sharpe,
+                    "max_drawdown": md,
+                }
+            )
         return gate_results
 
 

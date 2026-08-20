@@ -71,24 +71,28 @@ class TestCancelRatePrecheck:
 class TestLiquidationTimeout:
     def test_cleared_no_alert(self):
         """已全清（无残余）不告警，即便超时。"""
-        assert check_liquidation_timeout(
-            started_monotonic=0.0, now_monotonic=999.0, remaining_positions={}
-        ) is None
+        assert check_liquidation_timeout(started_monotonic=0.0, now_monotonic=999.0, remaining_positions={}) is None
 
     def test_within_timeout_no_alert(self):
-        assert check_liquidation_timeout(
-            started_monotonic=100.0,
-            now_monotonic=120.0,
-            remaining_positions={"600519": {"qty": 100}},
-        ) is None
+        assert (
+            check_liquidation_timeout(
+                started_monotonic=100.0,
+                now_monotonic=120.0,
+                remaining_positions={"600519": {"qty": 100}},
+            )
+            is None
+        )
 
     def test_exactly_at_timeout_no_alert(self):
         """边界：恰好 30s 不告警（严格超过才告警）。"""
-        assert check_liquidation_timeout(
-            started_monotonic=0.0,
-            now_monotonic=30.0,
-            remaining_positions={"600519": {"qty": 100}},
-        ) is None
+        assert (
+            check_liquidation_timeout(
+                started_monotonic=0.0,
+                now_monotonic=30.0,
+                remaining_positions={"600519": {"qty": 100}},
+            )
+            is None
+        )
 
     def test_timeout_with_remaining_alerts(self):
         alert = check_liquidation_timeout(
@@ -96,7 +100,7 @@ class TestLiquidationTimeout:
             now_monotonic=31.0,
             remaining_positions={
                 "600519": {"qty": 100},
-                "000001": {"qty": 0},   # 零持仓不计残余
+                "000001": {"qty": 0},  # 零持仓不计残余
                 "300750": {"qty": 50},
             },
         )
@@ -116,9 +120,7 @@ class TestLiquidationTimeout:
 
     def test_inverted_time_raises(self):
         with pytest.raises(InvalidLiquidationGuardInputError):
-            check_liquidation_timeout(
-                started_monotonic=10.0, now_monotonic=5.0, remaining_positions={}
-            )
+            check_liquidation_timeout(started_monotonic=10.0, now_monotonic=5.0, remaining_positions={})
 
     def test_invalid_timeout_raises(self):
         with pytest.raises(InvalidLiquidationGuardInputError):

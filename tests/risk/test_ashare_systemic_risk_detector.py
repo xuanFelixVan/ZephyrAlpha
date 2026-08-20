@@ -83,15 +83,12 @@ def test_margin_call_cascade_triggered():
     detector = AshareSystemicRiskDetector()
     alert = detector.check(
         margin_balance_change=-0.05,  # < -3%
-        limit_down_count=80,          # > 50
+        limit_down_count=80,  # > 50
         now=t(),
     )
     assert alert.signal_count == 1
     assert alert.alert_level is SystemicRiskAlertLevel.LEVEL_1
-    assert any(
-        s.signal_type is SystemicRiskSignalType.MARGIN_CALL_CASCADE
-        for s in alert.triggered_signals
-    )
+    assert any(s.signal_type is SystemicRiskSignalType.MARGIN_CALL_CASCADE for s in alert.triggered_signals)
 
 
 def test_margin_call_cascade_not_triggered_partial():
@@ -117,16 +114,13 @@ def test_margin_call_cascade_invalid_limit_down():
 def test_quant_stampede_triggered():
     detector = AshareSystemicRiskDetector()
     alert = detector.check(
-        index_change_pct=-0.03,    # < -2%
-        volume_surge_ratio=2.5,    # > 2.0
+        index_change_pct=-0.03,  # < -2%
+        volume_surge_ratio=2.5,  # > 2.0
         now=t(),
     )
     assert alert.signal_count == 1
     assert alert.alert_level is SystemicRiskAlertLevel.LEVEL_1
-    assert any(
-        s.signal_type is SystemicRiskSignalType.QUANT_STAMPEDE
-        for s in alert.triggered_signals
-    )
+    assert any(s.signal_type is SystemicRiskSignalType.QUANT_STAMPEDE for s in alert.triggered_signals)
 
 
 def test_quant_stampede_not_triggered_partial():
@@ -151,15 +145,12 @@ def test_quant_stampede_invalid_volume():
 def test_liquidity_crisis_triggered():
     detector = AshareSystemicRiskDetector()
     alert = detector.check(
-        sell_pressure=0.75,        # > 0.65
-        bid_ask_spread=0.008,      # > 0.005
+        sell_pressure=0.75,  # > 0.65
+        bid_ask_spread=0.008,  # > 0.005
         now=t(),
     )
     assert alert.signal_count == 1
-    assert any(
-        s.signal_type is SystemicRiskSignalType.LIQUIDITY_CRISIS
-        for s in alert.triggered_signals
-    )
+    assert any(s.signal_type is SystemicRiskSignalType.LIQUIDITY_CRISIS for s in alert.triggered_signals)
 
 
 def test_liquidity_crisis_not_triggered_partial():
@@ -185,10 +176,7 @@ def test_policy_shift_triggered():
     detector = AshareSystemicRiskDetector()
     alert = detector.check(policy_shift_flag=True, now=t())
     assert alert.signal_count == 1
-    assert any(
-        s.signal_type is SystemicRiskSignalType.POLICY_SHIFT
-        for s in alert.triggered_signals
-    )
+    assert any(s.signal_type is SystemicRiskSignalType.POLICY_SHIFT for s in alert.triggered_signals)
 
 
 def test_policy_shift_skipped_when_false():
@@ -204,10 +192,7 @@ def test_external_shock_triggered():
     detector = AshareSystemicRiskDetector()
     alert = detector.check(external_market_change=-0.04, now=t())
     assert alert.signal_count == 1
-    assert any(
-        s.signal_type is SystemicRiskSignalType.EXTERNAL_SHOCK
-        for s in alert.triggered_signals
-    )
+    assert any(s.signal_type is SystemicRiskSignalType.EXTERNAL_SHOCK for s in alert.triggered_signals)
 
 
 def test_external_shock_not_triggered():
@@ -390,7 +375,7 @@ def test_custom_config_thresholds():
     # 用默认配置不触发, 用自定义配置触发
     alert = detector.check(
         margin_balance_change=-0.025,  # < -0.02 (自定义)
-        limit_down_count=35,           # > 30 (自定义)
+        limit_down_count=35,  # > 30 (自定义)
         now=t(),
     )
     assert alert.signal_count == 1

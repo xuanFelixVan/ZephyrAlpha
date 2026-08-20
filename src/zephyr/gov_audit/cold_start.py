@@ -24,6 +24,7 @@ REQUIRED_DIRS/detect_missing_env)，已全部删除，真源统一归 gov_drift/
 与 drift cold start 协议无关）。调用方 zephyr.gov_audit.__init__ lazy registry
 仍指向本文件。
 """
+
 from __future__ import annotations
 
 import json

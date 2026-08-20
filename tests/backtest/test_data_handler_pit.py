@@ -12,6 +12,7 @@
 2. 泄漏防护：修正公告在 announce_date 之后才可见（禁止前视偏差）
 3. 向后兼容：无 fundamental_data 时行为不变
 """
+
 from __future__ import annotations
 
 import pandas as pd
@@ -25,16 +26,18 @@ def _make_ohlcv() -> pd.DataFrame:
     rows = []
     for dt in ["2026-03-01", "2026-03-02", "2026-03-03"]:
         for sym in ["000001.SZ", "600000.SH"]:
-            rows.append({
-                "date": pd.Timestamp(dt),
-                "symbol": sym,
-                "open": 10.0,
-                "high": 11.0,
-                "low": 9.0,
-                "close": 10.5,
-                "volume": 100000,
-                "amount": 1050000.0,
-            })
+            rows.append(
+                {
+                    "date": pd.Timestamp(dt),
+                    "symbol": sym,
+                    "open": 10.0,
+                    "high": 11.0,
+                    "low": 9.0,
+                    "close": 10.5,
+                    "volume": 100000,
+                    "amount": 1050000.0,
+                }
+            )
     return pd.DataFrame(rows)
 
 
@@ -49,17 +52,34 @@ def _make_fundamental_with_revision() -> pd.DataFrame:
     - 原始公告 announce_date=2026-02-20, eps_basic=1.20
     - 无修正
     """
-    return pd.DataFrame([
-        # 000001.SZ 原始公告（2月28日）
-        {"symbol": "000001.SZ", "report_period": "2025-12-31",
-         "announce_date": "2026-02-28", "eps_basic": 0.50, "eps_diluted": 0.48},
-        # 000001.SZ 修正公告（3月5日）
-        {"symbol": "000001.SZ", "report_period": "2025-12-31",
-         "announce_date": "2026-03-05", "eps_basic": 0.65, "eps_diluted": 0.63},
-        # 600000.SH 原始公告（2月20日，无修正）
-        {"symbol": "600000.SH", "report_period": "2025-12-31",
-         "announce_date": "2026-02-20", "eps_basic": 1.20, "eps_diluted": 1.15},
-    ])
+    return pd.DataFrame(
+        [
+            # 000001.SZ 原始公告（2月28日）
+            {
+                "symbol": "000001.SZ",
+                "report_period": "2025-12-31",
+                "announce_date": "2026-02-28",
+                "eps_basic": 0.50,
+                "eps_diluted": 0.48,
+            },
+            # 000001.SZ 修正公告（3月5日）
+            {
+                "symbol": "000001.SZ",
+                "report_period": "2025-12-31",
+                "announce_date": "2026-03-05",
+                "eps_basic": 0.65,
+                "eps_diluted": 0.63,
+            },
+            # 600000.SH 原始公告（2月20日，无修正）
+            {
+                "symbol": "600000.SH",
+                "report_period": "2025-12-31",
+                "announce_date": "2026-02-20",
+                "eps_basic": 1.20,
+                "eps_diluted": 1.15,
+            },
+        ]
+    )
 
 
 class TestPITFundamentalMerge:
@@ -96,14 +116,12 @@ class TestPITFundamentalMerge:
         # 3月1日：修正公告(3月5日)还没公告，应该看到原始值 0.50
         bar_mar01 = handler.get_bar(pd.Timestamp("2026-03-01"))
         eps_000001 = bar_mar01[bar_mar01["symbol"] == "000001.SZ"]["eps_basic"].iloc[0]
-        assert eps_000001 == pytest.approx(0.50), \
-            f"3月1日应看到原始公告 eps=0.50, 实际={eps_000001}（前视偏差！）"
+        assert eps_000001 == pytest.approx(0.50), f"3月1日应看到原始公告 eps=0.50, 实际={eps_000001}（前视偏差！）"
 
         # 3月2日：修正公告仍未公告
         bar_mar02 = handler.get_bar(pd.Timestamp("2026-03-02"))
         eps_000001 = bar_mar02[bar_mar02["symbol"] == "000001.SZ"]["eps_basic"].iloc[0]
-        assert eps_000001 == pytest.approx(0.50), \
-            f"3月2日应看到原始公告 eps=0.50, 实际={eps_000001}（前视偏差！）"
+        assert eps_000001 == pytest.approx(0.50), f"3月2日应看到原始公告 eps=0.50, 实际={eps_000001}（前视偏差！）"
 
     def test_pit_revision_visible_after_announce(self):
         """修正公告在 announce_date 之后可见。
@@ -113,14 +131,30 @@ class TestPITFundamentalMerge:
         """
         # 构造含 3月5日 的 OHLCV 数据
         ohlcv = _make_ohlcv()
-        extra = pd.DataFrame([
-            {"date": pd.Timestamp("2026-03-05"),
-             "symbol": "000001.SZ", "open": 10.0, "high": 11.0,
-             "low": 9.0, "close": 10.5, "volume": 100000, "amount": 1050000.0},
-            {"date": pd.Timestamp("2026-03-05"),
-             "symbol": "600000.SH", "open": 10.0, "high": 11.0,
-             "low": 9.0, "close": 10.5, "volume": 100000, "amount": 1050000.0},
-        ])
+        extra = pd.DataFrame(
+            [
+                {
+                    "date": pd.Timestamp("2026-03-05"),
+                    "symbol": "000001.SZ",
+                    "open": 10.0,
+                    "high": 11.0,
+                    "low": 9.0,
+                    "close": 10.5,
+                    "volume": 100000,
+                    "amount": 1050000.0,
+                },
+                {
+                    "date": pd.Timestamp("2026-03-05"),
+                    "symbol": "600000.SH",
+                    "open": 10.0,
+                    "high": 11.0,
+                    "low": 9.0,
+                    "close": 10.5,
+                    "volume": 100000,
+                    "amount": 1050000.0,
+                },
+            ]
+        )
         ohlcv = pd.concat([ohlcv, extra], ignore_index=True)
 
         handler = BacktestDataHandler(
@@ -130,22 +164,33 @@ class TestPITFundamentalMerge:
         # 3月5日：修正公告已公告，应该看到修正值 0.65
         bar_mar05 = handler.get_bar(pd.Timestamp("2026-03-05"))
         eps_000001 = bar_mar05[bar_mar05["symbol"] == "000001.SZ"]["eps_basic"].iloc[0]
-        assert eps_000001 == pytest.approx(0.65), \
-            f"3月5日应看到修正公告 eps=0.65, 实际={eps_000001}"
+        assert eps_000001 == pytest.approx(0.65), f"3月5日应看到修正公告 eps=0.65, 实际={eps_000001}"
 
     def test_pit_takes_latest_report_period(self):
         """公理1（版本对齐）：取最新 report_period 的可见版本。
 
         当有多个 report_period 的数据时，取最新一期。
         """
-        fund = pd.DataFrame([
-            # 000001.SZ 2024Q4 公告（更早的报告期）
-            {"symbol": "000001.SZ", "report_period": "2024-12-31",
-             "announce_date": "2025-02-28", "eps_basic": 0.40, "eps_diluted": 0.38},
-            # 000001.SZ 2025Q4 公告（最新的报告期）
-            {"symbol": "000001.SZ", "report_period": "2025-12-31",
-             "announce_date": "2026-02-28", "eps_basic": 0.50, "eps_diluted": 0.48},
-        ])
+        fund = pd.DataFrame(
+            [
+                # 000001.SZ 2024Q4 公告（更早的报告期）
+                {
+                    "symbol": "000001.SZ",
+                    "report_period": "2024-12-31",
+                    "announce_date": "2025-02-28",
+                    "eps_basic": 0.40,
+                    "eps_diluted": 0.38,
+                },
+                # 000001.SZ 2025Q4 公告（最新的报告期）
+                {
+                    "symbol": "000001.SZ",
+                    "report_period": "2025-12-31",
+                    "announce_date": "2026-02-28",
+                    "eps_basic": 0.50,
+                    "eps_diluted": 0.48,
+                },
+            ]
+        )
         handler = BacktestDataHandler(
             data=_make_ohlcv(),
             fundamental_data=fund,
@@ -153,23 +198,28 @@ class TestPITFundamentalMerge:
         bar = handler.get_bar(pd.Timestamp("2026-03-01"))
         eps = bar[bar["symbol"] == "000001.SZ"]["eps_basic"].iloc[0]
         # 应取 2025Q4 (report_period 更新) 的版本 eps=0.50
-        assert eps == pytest.approx(0.50), \
-            f"应取最新 report_period 的 eps=0.50, 实际={eps}"
+        assert eps == pytest.approx(0.50), f"应取最新 report_period 的 eps=0.50, 实际={eps}"
 
     def test_missing_symbol_gets_nan(self):
         """无财务数据的标的 eps_basic 为 NaN（left join 保留）。"""
-        fund = pd.DataFrame([
-            {"symbol": "000001.SZ", "report_period": "2025-12-31",
-             "announce_date": "2026-02-28", "eps_basic": 0.50, "eps_diluted": 0.48},
-        ])
+        fund = pd.DataFrame(
+            [
+                {
+                    "symbol": "000001.SZ",
+                    "report_period": "2025-12-31",
+                    "announce_date": "2026-02-28",
+                    "eps_basic": 0.50,
+                    "eps_diluted": 0.48,
+                },
+            ]
+        )
         handler = BacktestDataHandler(
             data=_make_ohlcv(),
             fundamental_data=fund,
         )
         bar = handler.get_bar(pd.Timestamp("2026-03-01"))
         eps_600000 = bar[bar["symbol"] == "600000.SH"]["eps_basic"].iloc[0]
-        assert pd.isna(eps_600000), \
-            f"600000.SH 无财务数据, eps 应为 NaN, 实际={eps_600000}"
+        assert pd.isna(eps_600000), f"600000.SH 无财务数据, eps 应为 NaN, 实际={eps_600000}"
 
 
 class TestValueFactorPIT:
@@ -180,10 +230,12 @@ class TestValueFactorPIT:
         from zephyr.factor.value_factor import ValueFactor
 
         # 构造含 eps_basic 列的数据
-        data = pd.DataFrame({
-            "close": [10.0] * 60 + [20.0] * 60,
-            "eps_basic": [0.50] * 60 + [1.00] * 60,
-        })
+        data = pd.DataFrame(
+            {
+                "close": [10.0] * 60 + [20.0] * 60,
+                "eps_basic": [0.50] * 60 + [1.00] * 60,
+            }
+        )
         factor = ValueFactor()
         signal = factor.compute(data)
 

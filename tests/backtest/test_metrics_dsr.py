@@ -18,6 +18,7 @@
 非正态修正(偏度/峰度影响 adjusted_sharpe)、is_overfitting 阈值 0.5、
 n_trials=1 无修正、calculate_full_metrics 合并字段。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -119,9 +120,17 @@ class TestCalculateFullMetrics:
     def test_merged_fields(self):
         r = calculate_full_metrics(self._nav(), trades_count=50, n_trials=10)
         for key in (
-            "total_return", "annual_return", "sharpe_ratio", "sortino_ratio",
-            "max_drawdown", "win_rate", "trades_count",
-            "dsr", "adjusted_sharpe", "expected_max_sharpe", "is_overfitting",
+            "total_return",
+            "annual_return",
+            "sharpe_ratio",
+            "sortino_ratio",
+            "max_drawdown",
+            "win_rate",
+            "trades_count",
+            "dsr",
+            "adjusted_sharpe",
+            "expected_max_sharpe",
+            "is_overfitting",
         ):
             assert key in r
 

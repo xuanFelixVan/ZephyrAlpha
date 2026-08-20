@@ -409,13 +409,9 @@ def execute_kill_switch_liquidation(
     # 输入验证
     _VALID_SCOPES = {"all", "position", "order"}
     if scope not in _VALID_SCOPES:
-        raise ValueError(
-            f"非法 scope: {scope!r}，必须是 {sorted(_VALID_SCOPES)} 之一"
-        )
+        raise ValueError(f"非法 scope: {scope!r}，必须是 {sorted(_VALID_SCOPES)} 之一")
     if max_orders_per_second <= 0:
-        raise ValueError(
-            f"max_orders_per_second 必须 > 0，当前值: {max_orders_per_second}"
-        )
+        raise ValueError(f"max_orders_per_second 必须 > 0，当前值: {max_orders_per_second}")
 
     _logger = logging.getLogger(__name__)
     event_id = event_id or str(uuid.uuid4())
@@ -461,19 +457,14 @@ def execute_kill_switch_liquidation(
                 )
                 return replay
 
-            if (
-                lock_record["state"] == "LIQUIDATING"
-                and lock_record["owner_event_id"] != event_id
-            ):
+            if lock_record["state"] == "LIQUIDATING" and lock_record["owner_event_id"] != event_id:
                 # 陈旧锁检测（AI-R3 复审 P1）：owner 进程 crash 后锁滞留，
                 # 超租约允许接管（CRITICAL 留痕）；租约内仍拒绝二次进入
                 stale = False
                 started_at = lock_record.get("started_at")
                 if started_at:
                     try:
-                        elapsed = (
-                            datetime.now(UTC) - datetime.fromisoformat(started_at)
-                        ).total_seconds()
+                        elapsed = (datetime.now(UTC) - datetime.fromisoformat(started_at)).total_seconds()
                         stale = elapsed > _LIQUIDATION_STALE_LEASE_SECONDS
                     except (ValueError, TypeError):
                         stale = True  # 时间戳不可解析=视为陈旧（保守方向=恢复活性）
@@ -534,11 +525,7 @@ def execute_kill_switch_liquidation(
 
         # ── 阶段 2：平仓所有持仓（15 笔/秒限频分片）──
         # 以券商实时持仓为准（非调用方快照，Qwen P0-3②）
-        live_positions = (
-            _resolve_live_positions(broker, positions)
-            if scope in ("all", "position")
-            else {}
-        )
+        live_positions = _resolve_live_positions(broker, positions) if scope in ("all", "position") else {}
         if scope in ("all", "position") and live_positions:
             position_list = [(sym, qty) for sym, qty in live_positions.items() if qty != 0]
             batch_size = max_orders_per_second

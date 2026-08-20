@@ -151,8 +151,8 @@ logger = logging.getLogger(__name__)
 class ConcentrationAlertLevel(str, Enum):
     """集中度告警级别 (严重度递增)。"""
 
-    NONE = "NONE"          # 集中度在阈值内
-    WARNING = "WARNING"    # 接近上限 (达 warning 阈值)
+    NONE = "NONE"  # 集中度在阈值内
+    WARNING = "WARNING"  # 接近上限 (达 warning 阈值)
     CRITICAL = "CRITICAL"  # 超过硬上限
 
     @property
@@ -204,22 +204,18 @@ class ConcentrationConfig:
             ("max_industry_weight", self.max_industry_weight),
         ):
             if not 0 < val <= 1:
-                raise InvalidConcentrationInputError(
-                    f"{name} must be in (0,1], got {val}"
-                )
+                raise InvalidConcentrationInputError(f"{name} must be in (0,1], got {val}")
         if not 0 < self.single_warning_ratio <= 1:
             raise InvalidConcentrationInputError(
                 f"single_warning_ratio must be in (0,1], got {self.single_warning_ratio}"
             )
         if not 0 < self.industry_warning_ratio <= 1:
             raise InvalidConcentrationInputError(
-                f"industry_warning_ratio must be in (0,1], "
-                f"got {self.industry_warning_ratio}"
+                f"industry_warning_ratio must be in (0,1], got {self.industry_warning_ratio}"
             )
         if self.hhi_warning >= self.hhi_critical:
             raise InvalidConcentrationInputError(
-                f"hhi_warning ({self.hhi_warning}) must be < hhi_critical "
-                f"({self.hhi_critical})"
+                f"hhi_warning ({self.hhi_warning}) must be < hhi_critical ({self.hhi_critical})"
             )
 
 
@@ -351,9 +347,7 @@ class ConcentrationMonitor:
 
         # 3. 行业暴露 (仅当显式提供行业映射时计算, 否则跳过避免误报)
         if industry_mapping:
-            industry_weights = self._aggregate_industries(
-                normalized, industry_mapping
-            )
+            industry_weights = self._aggregate_industries(normalized, industry_mapping)
             max_ind_name = max(industry_weights, key=industry_weights.get)
             max_ind_weight = industry_weights[max_ind_name]
         else:
@@ -391,9 +385,7 @@ class ConcentrationMonitor:
 
         return snapshot
 
-    def on_concentration_alerted(
-        self, listener: Callable[[ConcentrationAlertedEvent], None]
-    ) -> None:
+    def on_concentration_alerted(self, listener: Callable[[ConcentrationAlertedEvent], None]) -> None:
         """订阅集中度告警事件。"""
         self._listeners.append(listener)
 
@@ -407,14 +399,10 @@ class ConcentrationMonitor:
         # 先校验负权重 (在过滤 0 之前, 防止负权重被静默丢弃)
         for s, w in weights.items():
             if float(w) < 0:
-                raise InvalidConcentrationInputError(
-                    f"negative weight for {s}: {w}"
-                )
+                raise InvalidConcentrationInputError(f"negative weight for {s}: {w}")
         cleaned = {s: float(w) for s, w in weights.items() if w > 0}
         if not cleaned:
-            raise InvalidConcentrationInputError(
-                "no positive weights (sum<=0 or all zero)"
-            )
+            raise InvalidConcentrationInputError("no positive weights (sum<=0 or all zero)")
         total = sum(cleaned.values())
         if total <= 0:
             raise InvalidConcentrationInputError(f"weights sum <= 0: {total}")
@@ -434,9 +422,7 @@ class ConcentrationMonitor:
         return sym, weights[sym]
 
     @staticmethod
-    def _aggregate_industries(
-        weights: dict[str, float], mapping: dict[str, str]
-    ) -> dict[str, float]:
+    def _aggregate_industries(weights: dict[str, float], mapping: dict[str, str]) -> dict[str, float]:
         """按行业聚合权重。无映射的 symbol 归入 '__UNCLASSIFIED__'。"""
         agg: dict[str, float] = {}
         for sym, w in weights.items():
@@ -467,30 +453,20 @@ class ConcentrationMonitor:
         single_warn_threshold = cfg.max_single_weight * cfg.single_warning_ratio
         if max_single > cfg.max_single_weight:
             levels.append(ConcentrationAlertLevel.CRITICAL)
-            reasons.append(
-                f"max_single={max_single:.4f} > limit {cfg.max_single_weight}"
-            )
+            reasons.append(f"max_single={max_single:.4f} > limit {cfg.max_single_weight}")
         elif max_single >= single_warn_threshold:
             levels.append(ConcentrationAlertLevel.WARNING)
-            reasons.append(
-                f"max_single={max_single:.4f} >= warning {single_warn_threshold:.4f}"
-            )
+            reasons.append(f"max_single={max_single:.4f} >= warning {single_warn_threshold:.4f}")
 
         # 行业集中度
         if max_industry is not None:
             ind_warn_threshold = cfg.max_industry_weight * cfg.industry_warning_ratio
             if max_industry > cfg.max_industry_weight:
                 levels.append(ConcentrationAlertLevel.CRITICAL)
-                reasons.append(
-                    f"max_industry={max_industry:.4f} > limit "
-                    f"{cfg.max_industry_weight}"
-                )
+                reasons.append(f"max_industry={max_industry:.4f} > limit {cfg.max_industry_weight}")
             elif max_industry >= ind_warn_threshold:
                 levels.append(ConcentrationAlertLevel.WARNING)
-                reasons.append(
-                    f"max_industry={max_industry:.4f} >= warning "
-                    f"{ind_warn_threshold:.4f}"
-                )
+                reasons.append(f"max_industry={max_industry:.4f} >= warning {ind_warn_threshold:.4f}")
 
         if not levels:
             return ConcentrationAlertLevel.NONE
@@ -501,6 +477,4 @@ class ConcentrationMonitor:
             try:
                 listener(event)
             except Exception as exc:  # noqa: BLE001 — 隔离监听器故障
-                logger.error(
-                    "Concentration alert listener error: %s", exc, exc_info=True
-                )
+                logger.error("Concentration alert listener error: %s", exc, exc_info=True)

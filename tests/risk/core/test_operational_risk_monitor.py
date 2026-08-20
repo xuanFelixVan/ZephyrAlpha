@@ -197,7 +197,11 @@ class TestZeroSubmissions:
     def test_zero_submissions_info_with_finding(self):
         """submission_count=0 → info（无突破）+ insufficient data finding。"""
         mon = OperationalRiskMonitor()
-        a = mon.assess(_make_stats(submission_count=0, rejection_count=0, filled_count=0, failure_rate=0.0, fill_rate=0.0, latency_count=0))
+        a = mon.assess(
+            _make_stats(
+                submission_count=0, rejection_count=0, filled_count=0, failure_rate=0.0, fill_rate=0.0, latency_count=0
+            )
+        )
         assert a.overall_severity == "info"
         assert len(a.findings) == 1
         assert "insufficient data" in a.findings[0] or "no submissions" in a.findings[0].lower()

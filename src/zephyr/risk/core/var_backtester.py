@@ -199,13 +199,10 @@ class BacktestObservation:
     def __post_init__(self) -> None:
         if self.pnl_type != "clean":
             raise InvalidBacktestInputError(
-                f"pnl_type 必须为 'clean'（dirty P&L 会污染模型纯度检验，36号 §3.13），"
-                f"得到 {self.pnl_type!r}"
+                f"pnl_type 必须为 'clean'（dirty P&L 会污染模型纯度检验，36号 §3.13），得到 {self.pnl_type!r}"
             )
         if self.var_forecast < 0:
-            raise InvalidBacktestInputError(
-                f"var_forecast 必须 ≥0（正数表示损失），得到 {self.var_forecast}"
-            )
+            raise InvalidBacktestInputError(f"var_forecast 必须 ≥0（正数表示损失），得到 {self.var_forecast}")
         if self.es_forecast < self.var_forecast:
             raise InvalidBacktestInputError(
                 f"es_forecast ({self.es_forecast}) 必须 ≥ var_forecast ({self.var_forecast})，"
@@ -386,9 +383,7 @@ class VarBacktester:
 
     def __init__(self, confidence_level: float = 0.95) -> None:
         if not 0.0 < confidence_level < 1.0:
-            raise InvalidBacktestInputError(
-                f"confidence_level 须 ∈ (0,1)，得到 {confidence_level}"
-            )
+            raise InvalidBacktestInputError(f"confidence_level 须 ∈ (0,1)，得到 {confidence_level}")
         self._confidence = confidence_level
         self._alpha = 1.0 - confidence_level  # 名义超限率
         logger.debug("VarBacktester 初始化: confidence=%.3f alpha=%.3f", confidence_level, self._alpha)
@@ -430,9 +425,7 @@ class VarBacktester:
         ret_arr = np.array([o.realized_return for o in observations], dtype=np.float64)
         violation_mask = ret_arr <= -var_arr
         if require_violations and not np.any(violation_mask):
-            raise InsufficientBacktestHistoryError(
-                "Z2 检验需 ≥1 个超限日，当前序列无超限（VaR 模型可能过度保守）。"
-            )
+            raise InsufficientBacktestHistoryError("Z2 检验需 ≥1 个超限日，当前序列无超限（VaR 模型可能过度保守）")
         return var_arr, es_arr, ret_arr, violation_mask
 
     # ──────────────────────────────────────────────────────────────────────
@@ -582,9 +575,7 @@ class VarBacktester:
         36号 §3.9 line 441
         Acerbi & Szekely 2014/2017 非参数 ES 回测
         """
-        _, es_arr, ret_arr, vmask = self._validate_observations(
-            observations, min_samples=30, require_violations=True
-        )
+        _, es_arr, ret_arr, vmask = self._validate_observations(observations, min_samples=30, require_violations=True)
         T = len(observations)
         N = int(np.sum(vmask))
 
@@ -747,7 +738,7 @@ class VarBacktester:
             "violation_ratio": float(N / expected) if expected > 0 else 0.0,
             "note": (
                 f"95% VaR 250天标准: Green≤16/Yellow 17-20/Red≥21，"
-                f"当前 {T} 天比例化: Green≤{1.28*expected:.1f}/Yellow≤{1.6*expected:.1f}/Red>{1.6*expected:.1f}"
+                f"当前 {T} 天比例化: Green≤{1.28 * expected:.1f}/Yellow≤{1.6 * expected:.1f}/Red>{1.6 * expected:.1f}"
             ),
         }
 
@@ -793,8 +784,6 @@ class VarBacktester:
             "basel_traffic_light": basel if isinstance(basel, dict) else basel,
             # 综合判定：任一检验 reject 即模型告警
             "overall_reject": any(
-                getattr(r, "reject", False)
-                for r in (kupiec, christ, z2, ebt)
-                if not isinstance(r, dict)
+                getattr(r, "reject", False) for r in (kupiec, christ, z2, ebt) if not isinstance(r, dict)
             ),
         }

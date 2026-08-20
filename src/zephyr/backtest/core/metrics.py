@@ -47,8 +47,10 @@ try:
     def _norm_cdf(x):
         return float(norm.cdf(x))
 except ImportError:
+
     def _norm_cdf(x):
         return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
+
 
 # 中国10年期国债无风险利率(年化),来源:D-SIMULATION-23
 DEFAULT_RISK_FREE_RATE = 0.025

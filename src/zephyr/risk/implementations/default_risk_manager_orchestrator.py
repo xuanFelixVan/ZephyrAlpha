@@ -265,7 +265,9 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
             return None
         try:
             metrics = self._crowding_monitor.assess(
-                factor_name, strategy_positions, factor_exposures,
+                factor_name,
+                strategy_positions,
+                factor_exposures,
             )
             result = self._crowding_monitor.to_risk_check_result(metrics)
             self._check_results.append(result)
@@ -294,7 +296,9 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
             return None
         try:
             metrics = self._ai_agent_monitor.assess(
-                agent_metrics, trajectory_anomaly_count, fingerprint_deviation,
+                agent_metrics,
+                trajectory_anomaly_count,
+                fingerprint_deviation,
             )
             result = self._ai_agent_monitor.to_risk_check_result(metrics)
             self._check_results.append(result)
@@ -323,7 +327,9 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
             return None
         try:
             report = self._model_risk_auditor.audit(
-                model_outputs, ic_data, bias_score,
+                model_outputs,
+                ic_data,
+                bias_score,
             )
             result = self._model_risk_auditor.to_risk_check_result(report)
             self._check_results.append(result)
@@ -370,7 +376,8 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
                 self._last_alerts = self._alert_generator.process(report)
             except Exception as exc:  # noqa: BLE001 — best-effort
                 _logger.error(
-                    "AlertGenerator.process failed (best-effort): %s", exc,
+                    "AlertGenerator.process failed (best-effort): %s",
+                    exc,
                 )
                 self._last_alerts = []
         else:
@@ -389,7 +396,9 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
             portfolio_var_1d=var_f,
             # 5.105.13 修复: `or 0.0` 掩盖 None(未设置限额)与 0.0(不允许回撤)的语义差异
             # 显式判断 is not None,保留语义区分
-            max_drawdown_current=float(self._active_limits.max_drawdown_limit) if self._active_limits.max_drawdown_limit is not None else 0.0,
+            max_drawdown_current=float(self._active_limits.max_drawdown_limit)
+            if self._active_limits.max_drawdown_limit is not None
+            else 0.0,
             gross_leverage=float(self._active_limits.max_gross_leverage),
             top_position_concentration=float(self._active_limits.max_single_position),
             sector_concentrations={},

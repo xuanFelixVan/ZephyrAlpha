@@ -153,9 +153,7 @@ def test_conservative_max_takes_maximum():
     assert result.method is VaRMethod.CONSERVATIVE_MAX
     assert result.parametric_var is not None
     assert result.historical_var is not None
-    assert result.value == pytest.approx(
-        max(result.parametric_var, result.historical_var)
-    )
+    assert result.value == pytest.approx(max(result.parametric_var, result.historical_var))
 
 
 def test_default_method_is_conservative_max():
@@ -180,9 +178,7 @@ def test_calculate_portfolio_two_assets():
     result = calc.calculate_portfolio(asset_returns, weights, NAV, now=T0)
     # 组合收益 = 0.6*r1 + 0.4*r2, 应等于手动合成
     synthetic = asset_returns @ weights
-    expected = VaRCalculator(VaRConfig(confidence_level=0.95, method=VaRMethod.PARAMETRIC)).calculate(
-        synthetic, NAV
-    )
+    expected = VaRCalculator(VaRConfig(confidence_level=0.95, method=VaRMethod.PARAMETRIC)).calculate(synthetic, NAV)
     assert result.value == pytest.approx(expected.value, rel=1e-9)
 
 
@@ -346,9 +342,19 @@ def test_result_to_dict_contains_all_fields():
     result = calc.calculate(returns, NAV, now=T0)
     d = result.to_dict()
     for key in (
-        "value", "value_pct", "method", "confidence_level", "holding_period_days",
-        "parametric_var", "historical_var", "portfolio_value", "mean_return",
-        "std_return", "sample_size", "annualized_vol", "nan_dropped",
+        "value",
+        "value_pct",
+        "method",
+        "confidence_level",
+        "holding_period_days",
+        "parametric_var",
+        "historical_var",
+        "portfolio_value",
+        "mean_return",
+        "std_return",
+        "sample_size",
+        "annualized_vol",
+        "nan_dropped",
     ):
         assert key in d
     assert d["method"] == "conservative_max"

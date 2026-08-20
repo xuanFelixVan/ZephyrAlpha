@@ -144,44 +144,54 @@ class MetaAuditLogger:
         return list(self._entries)
 
     def log_audit_query(self, querier: str, query: dict[str, Any]) -> None:
-        self._entries.append({
-            "operation": "audit_query",
-            "querier": querier,
-            "query": query,
-            "timestamp": now_utc().isoformat(),
-        })
+        self._entries.append(
+            {
+                "operation": "audit_query",
+                "querier": querier,
+                "query": query,
+                "timestamp": now_utc().isoformat(),
+            }
+        )
 
     def log_index_rebuild(self, reason: str, entries_count: int) -> None:
-        self._entries.append({
-            "operation": "index_rebuild",
-            "reason": reason,
-            "entries_count": entries_count,
-            "timestamp": now_utc().isoformat(),
-        })
+        self._entries.append(
+            {
+                "operation": "index_rebuild",
+                "reason": reason,
+                "entries_count": entries_count,
+                "timestamp": now_utc().isoformat(),
+            }
+        )
 
     def log_integrity_check(self, report: IntegrityReport) -> None:
-        self._entries.append({
-            "operation": "integrity_check",
-            "is_valid": report.is_valid,
-            "total_entries": report.total_entries,
-            "timestamp": now_utc().isoformat(),
-        })
+        self._entries.append(
+            {
+                "operation": "integrity_check",
+                "is_valid": report.is_valid,
+                "total_entries": report.total_entries,
+                "timestamp": now_utc().isoformat(),
+            }
+        )
 
     def log_retention_enforcement(self, count: int, dry_run: bool = False) -> None:
-        self._entries.append({
-            "operation": "retention_enforcement",
-            "count": count,
-            "dry_run": dry_run,
-            "timestamp": now_utc().isoformat(),
-        })
+        self._entries.append(
+            {
+                "operation": "retention_enforcement",
+                "count": count,
+                "dry_run": dry_run,
+                "timestamp": now_utc().isoformat(),
+            }
+        )
 
     def log_query(self, query: object, result_count: int = 0) -> None:
-        self._entries.append({
-            "operation": "query",
-            "query": str(query),
-            "result_count": result_count,
-            "timestamp": now_utc().isoformat(),
-        })
+        self._entries.append(
+            {
+                "operation": "query",
+                "query": str(query),
+                "result_count": result_count,
+                "timestamp": now_utc().isoformat(),
+            }
+        )
 
     def get_stats(self) -> dict[str, Any]:
         return {
@@ -214,11 +224,9 @@ class AuditQuery:
         """写入：events（Stage 4 公共化）。"""
         self._events = value
 
-
     def load_events(self) -> None:
         """公共接口：load_events（Stage 4 公共化）。"""
         return self._load_events()
-
 
     def _load_events(self) -> None:
         """加载事件到缓存。"""
@@ -385,6 +393,7 @@ class AuditQuery:
     def verify_integrity(self) -> IntegrityReport:
         """验证审计链完整性。"""
         from zephyr.gov_audit import integrity
+
         verifier = integrity.IntegrityVerifier(event_log_path=self._event_log_path)
         result = verifier.verify_chain()
         is_valid = result.get("status") == "valid"
@@ -400,6 +409,7 @@ class AuditQuery:
     def rebuild_index(self) -> int:
         """重建审计索引。"""
         from zephyr.gov_audit import indexer
+
         idx = indexer.AuditIndexer(events_path=self._event_log_path)
         result = idx.rebuild()
         count = getattr(result, "events_indexed", 0)

@@ -95,11 +95,11 @@ class C1Config:
     默认值取自 11_regime_backtest_validation_plan §5 验证标准汇总表（行业基准 Morwane OOS 2013-2026）。
     """
 
-    sharpe_tolerance: float = 0.1           # S_开 ≥ S_关 − tol（不显著伤害）
-    maxdd_improvement_pp: float = 0.03      # DD_开 − DD_关 ≥ 此值（3pp，存负值更高=更好）
-    calmar_improvement_ratio: float = 1.2   # C_开 ≥ C_关 × ratio（提升 ≥20%）
-    turnover_max_ratio: float = 2.0         # T_开 ≤ T_关 × ratio（换手不爆）
-    trading_days_per_year: int = 252        # 年化交易日数（Turnover/Calmar 年化用）
+    sharpe_tolerance: float = 0.1  # S_开 ≥ S_关 − tol（不显著伤害）
+    maxdd_improvement_pp: float = 0.03  # DD_开 − DD_关 ≥ 此值（3pp，存负值更高=更好）
+    calmar_improvement_ratio: float = 1.2  # C_开 ≥ C_关 × ratio（提升 ≥20%）
+    turnover_max_ratio: float = 2.0  # T_开 ≤ T_关 × ratio（换手不爆）
+    trading_days_per_year: int = 252  # 年化交易日数（Turnover/Calmar 年化用）
 
     def __post_init__(self) -> None:
         if self.calmar_improvement_ratio <= 0:
@@ -107,13 +107,9 @@ class C1Config:
                 f"calmar_improvement_ratio must be > 0, got {self.calmar_improvement_ratio}"
             )
         if self.turnover_max_ratio <= 0:
-            raise C1ShrinkageComparatorError(
-                f"turnover_max_ratio must be > 0, got {self.turnover_max_ratio}"
-            )
+            raise C1ShrinkageComparatorError(f"turnover_max_ratio must be > 0, got {self.turnover_max_ratio}")
         if self.trading_days_per_year <= 0:
-            raise C1ShrinkageComparatorError(
-                f"trading_days_per_year must be > 0, got {self.trading_days_per_year}"
-            )
+            raise C1ShrinkageComparatorError(f"trading_days_per_year must be > 0, got {self.trading_days_per_year}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -125,12 +121,12 @@ class C1Config:
 class C1MetricVerdict:
     """单项指标的开/关对比判定——不可变。"""
 
-    name: str               # Sharpe / MaxDD / Calmar / Turnover
-    baseline_value: float   # 关（基准组）
-    experiment_value: float # 开（实验组）
-    threshold_desc: str     # 门槛描述（人类可读）
-    passed: bool            # 是否通过
-    detail: str             # 判定细节（含差值/比例）
+    name: str  # Sharpe / MaxDD / Calmar / Turnover
+    baseline_value: float  # 关（基准组）
+    experiment_value: float  # 开（实验组）
+    threshold_desc: str  # 门槛描述（人类可读）
+    passed: bool  # 是否通过
+    detail: str  # 判定细节（含差值/比例）
 
 
 @dataclass(frozen=True)
@@ -147,9 +143,9 @@ class C1ComparisonResult:
     baseline_calmar: float
     experiment_calmar: float
     metric_verdicts: list[C1MetricVerdict]
-    passed: bool                       # 四项全过=True
-    veto_reason: str | None         # None=通过；否则=首个失败指标说明
-    summary: str                       # 人类可读总结
+    passed: bool  # 四项全过=True
+    veto_reason: str | None  # None=通过；否则=首个失败指标说明
+    summary: str  # 人类可读总结
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -221,29 +217,25 @@ class C1ShrinkageComparator:
         safe_cfg = self._ensure_gate_off(cfg)
 
         # 基准组（关）：ConstShrinkageProvider(1.0)
-        baseline_engine = ShrinkageBacktestEngine(
-            config=safe_cfg, shrinkage_provider=ConstShrinkageProvider(1.0)
-        )
+        baseline_engine = ShrinkageBacktestEngine(config=safe_cfg, shrinkage_provider=ConstShrinkageProvider(1.0))
         # 实验组（开）：传入的 shrinkage_provider
-        experiment_engine = ShrinkageBacktestEngine(
-            config=safe_cfg, shrinkage_provider=shrinkage_provider
-        )
+        experiment_engine = ShrinkageBacktestEngine(config=safe_cfg, shrinkage_provider=shrinkage_provider)
 
         try:
             baseline_result = baseline_engine.run(
-                data=data, signals=signals,
+                data=data,
+                signals=signals,
                 initial_capital=initial_capital,
                 strategy_name=strategy_name,
             )
             experiment_result = experiment_engine.run(
-                data=data, signals=signals,
+                data=data,
+                signals=signals,
                 initial_capital=initial_capital,
                 strategy_name=strategy_name,
             )
         except Exception as exc:
-            raise C1ShrinkageComparatorError(
-                f"C1 回测执行失败: {exc}"
-            ) from exc
+            raise C1ShrinkageComparatorError(f"C1 回测执行失败: {exc}") from exc
 
         # 暴露 portfolio 引用供 experiment_tracking.c1_adapter 序列化 nav 曲线
         self.last_baseline_portfolio = baseline_engine.last_portfolio
@@ -276,26 +268,14 @@ class C1ShrinkageComparator:
         """
         cfg = self._config
 
-        base_calmar = _compute_calmar(
-            baseline_result.annual_return, baseline_result.max_drawdown
-        )
-        exp_calmar = _compute_calmar(
-            experiment_result.annual_return, experiment_result.max_drawdown
-        )
-        base_turnover = _compute_turnover(
-            baseline_portfolio, cfg.trading_days_per_year
-        )
-        exp_turnover = _compute_turnover(
-            experiment_portfolio, cfg.trading_days_per_year
-        )
+        base_calmar = _compute_calmar(baseline_result.annual_return, baseline_result.max_drawdown)
+        exp_calmar = _compute_calmar(experiment_result.annual_return, experiment_result.max_drawdown)
+        base_turnover = _compute_turnover(baseline_portfolio, cfg.trading_days_per_year)
+        exp_turnover = _compute_turnover(experiment_portfolio, cfg.trading_days_per_year)
 
         verdicts: list[C1MetricVerdict] = [
-            self._verdict_sharpe(
-                baseline_result.sharpe_ratio, experiment_result.sharpe_ratio
-            ),
-            self._verdict_maxdd(
-                baseline_result.max_drawdown, experiment_result.max_drawdown
-            ),
+            self._verdict_sharpe(baseline_result.sharpe_ratio, experiment_result.sharpe_ratio),
+            self._verdict_maxdd(baseline_result.max_drawdown, experiment_result.max_drawdown),
             self._verdict_calmar(base_calmar, exp_calmar),
             self._verdict_turnover(base_turnover, exp_turnover),
         ]
@@ -304,10 +284,14 @@ class C1ShrinkageComparator:
         passed = not failed
         veto_reason: str | None = failed[0].detail if failed else None
         summary = self._build_summary(
-            baseline_result, experiment_result,
-            base_calmar, exp_calmar,
-            base_turnover, exp_turnover,
-            passed, veto_reason,
+            baseline_result,
+            experiment_result,
+            base_calmar,
+            exp_calmar,
+            base_turnover,
+            exp_turnover,
+            passed,
+            veto_reason,
         )
 
         return C1ComparisonResult(
@@ -356,8 +340,7 @@ class C1ShrinkageComparator:
             threshold_desc=f"|DD_关| − |DD_开| ≥ {imp:.2%}（回撤减小=改善）",
             passed=passed,
             detail=(
-                f"MaxDD 关={base:.4f} 开={exp:.4f} 改善={diff:+.4f} "
-                f"门槛≥{imp:.4f} → {'通过' if passed else '否决'}"
+                f"MaxDD 关={base:.4f} 开={exp:.4f} 改善={diff:+.4f} 门槛≥{imp:.4f} → {'通过' if passed else '否决'}"
             ),
         )
 
@@ -379,10 +362,7 @@ class C1ShrinkageComparator:
             experiment_value=exp,
             threshold_desc=desc,
             passed=passed,
-            detail=(
-                f"Calmar 关={base:.4f} 开={exp:.4f} 门槛≥{threshold:.4f} "
-                f"→ {'通过' if passed else '否决'}"
-            ),
+            detail=(f"Calmar 关={base:.4f} 开={exp:.4f} 门槛≥{threshold:.4f} → {'通过' if passed else '否决'}"),
         )
 
     def _verdict_turnover(self, base: float, exp: float) -> C1MetricVerdict:
@@ -402,10 +382,7 @@ class C1ShrinkageComparator:
             experiment_value=exp,
             threshold_desc=desc,
             passed=passed,
-            detail=(
-                f"Turnover 关={base:.4f}/yr 开={exp:.4f}/yr 门槛≤{threshold:.4f} "
-                f"→ {'通过' if passed else '否决'}"
-            ),
+            detail=(f"Turnover 关={base:.4f}/yr 开={exp:.4f}/yr 门槛≤{threshold:.4f} → {'通过' if passed else '否决'}"),
         )
 
     # ── 辅助 ──
@@ -419,6 +396,7 @@ class C1ShrinkageComparator:
         if getattr(cfg, "strict_overfitting_gate", False):
             # frozen dataclass → 用 dataclasses.replace 生成新实例
             from dataclasses import replace
+
             return replace(cfg, strict_overfitting_gate=False)
         return cfg
 
@@ -464,9 +442,7 @@ def _compute_calmar(annual_return: float, max_drawdown: float) -> float:
     return float(annual_return) / abs_dd
 
 
-def _compute_turnover(
-    portfolio: Portfolio | None, trading_days_per_year: int
-) -> float:
+def _compute_turnover(portfolio: Portfolio | None, trading_days_per_year: int) -> float:
     """年化单向换手率 = Σ(|qty × price|) / (avg_nav × num_years)。
 
     Args:

@@ -60,7 +60,6 @@ class ResourceAwarePool:
         """写入：gpu_futures（Stage 4 公共化）。"""
         self._gpu_futures = value
 
-
     @property
     def cpu_futures(self) -> list[Future]:
         """只读：cpu_futures（Stage 4 公共化）。"""
@@ -70,7 +69,6 @@ class ResourceAwarePool:
     def cpu_futures(self, value):
         """写入：cpu_futures（Stage 4 公共化）。"""
         self._cpu_futures = value
-
 
     def _pending_count(self, pool: ThreadPoolExecutor) -> int:
         q = getattr(pool, "_work_queue", None)
@@ -86,8 +84,7 @@ class ResourceAwarePool:
         max_pending = self._max_gpu_pending if is_gpu else self._max_cpu_pending
         if pending >= max_pending:
             raise RuntimeError(
-                f"ResourceAwarePool {'gpu' if is_gpu else 'cpu'} queue full "
-                f"(pending={pending}, max={max_pending})"
+                f"ResourceAwarePool {'gpu' if is_gpu else 'cpu'} queue full (pending={pending}, max={max_pending})"
             )
         future = pool.submit(func, *args)
         # 治本（裁定#18 G12）：原代码过滤已完成 futures 导致 _cpu_futures 丢失历史记录，

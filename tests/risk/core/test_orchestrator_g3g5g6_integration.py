@@ -125,10 +125,14 @@ class TestAiAgentRisk:
         gen = AlertGenerator()
         mon = AiAgentMonitor()
         orch = DefaultRiskManagerOrchestrator(
-            portfolio_id="p1", alert_generator=gen, ai_agent_monitor=mon,
+            portfolio_id="p1",
+            alert_generator=gen,
+            ai_agent_monitor=mon,
         )
         m = orch.check_ai_agent(
-            agent_metrics={"a": 0.5}, trajectory_anomaly_count=0, fingerprint_deviation=0.0,
+            agent_metrics={"a": 0.5},
+            trajectory_anomaly_count=0,
+            fingerprint_deviation=0.0,
         )
         assert m is not None
         assert m.is_breached is False
@@ -141,13 +145,16 @@ class TestAiAgentRisk:
         gen = AlertGenerator()
         mon = AiAgentMonitor()
         orch = DefaultRiskManagerOrchestrator(
-            portfolio_id="p1", alert_generator=gen, ai_agent_monitor=mon,
+            portfolio_id="p1",
+            alert_generator=gen,
+            ai_agent_monitor=mon,
         )
         # 驱动到 CRITICAL
         for i in range(6):
             m = orch.check_ai_agent(
                 agent_metrics={"a": float(i), "b": float(i), "c": float(i), "d": float(i)},
-                trajectory_anomaly_count=0, fingerprint_deviation=0.0,
+                trajectory_anomaly_count=0,
+                fingerprint_deviation=0.0,
             )
         assert m.emergence_state == "CRITICAL"
         report = orch.aggregate_report()
@@ -165,7 +172,9 @@ class TestModelRisk:
         gen = AlertGenerator()
         auditor = ModelRiskAuditor(drift_detector=_MockDriftDetector(False, 0.0))
         orch = DefaultRiskManagerOrchestrator(
-            portfolio_id="p1", alert_generator=gen, model_risk_auditor=auditor,
+            portfolio_id="p1",
+            alert_generator=gen,
+            model_risk_auditor=auditor,
         )
         r = orch.check_model_risk()
         assert r is not None
@@ -179,7 +188,9 @@ class TestModelRisk:
         gen = AlertGenerator()
         auditor = ModelRiskAuditor(drift_detector=_MockDriftDetector(True, 0.20))
         orch = DefaultRiskManagerOrchestrator(
-            portfolio_id="p1", alert_generator=gen, model_risk_auditor=auditor,
+            portfolio_id="p1",
+            alert_generator=gen,
+            model_risk_auditor=auditor,
         )
         r = orch.check_model_risk(
             model_outputs=[{"pred": 1}],
@@ -201,7 +212,9 @@ class TestOperationalRisk:
         gen = AlertGenerator()
         mon = OperationalRiskMonitor()
         orch = DefaultRiskManagerOrchestrator(
-            portfolio_id="p1", alert_generator=gen, operational_risk_monitor=mon,
+            portfolio_id="p1",
+            alert_generator=gen,
+            operational_risk_monitor=mon,
         )
         a = orch.check_operational_risk(_make_stats(failure_rate=0.02, latency_p95_ms=80.0))
         assert a is not None
@@ -215,7 +228,9 @@ class TestOperationalRisk:
         gen = AlertGenerator()
         mon = OperationalRiskMonitor()
         orch = DefaultRiskManagerOrchestrator(
-            portfolio_id="p1", alert_generator=gen, operational_risk_monitor=mon,
+            portfolio_id="p1",
+            alert_generator=gen,
+            operational_risk_monitor=mon,
         )
         a = orch.check_operational_risk(_make_stats(failure_rate=0.15, rejection_count=15))
         assert a.overall_severity == "HALT"
@@ -238,7 +253,8 @@ class TestBestEffort:
                 raise RuntimeError("broken")
 
         orch = DefaultRiskManagerOrchestrator(
-            portfolio_id="p1", ai_agent_monitor=_FailingMonitor(),
+            portfolio_id="p1",
+            ai_agent_monitor=_FailingMonitor(),
         )
         assert orch.check_ai_agent() is None
         report = orch.aggregate_report()
@@ -252,7 +268,8 @@ class TestBestEffort:
                 raise RuntimeError("broken")
 
         orch = DefaultRiskManagerOrchestrator(
-            portfolio_id="p1", model_risk_auditor=_FailingAuditor(),
+            portfolio_id="p1",
+            model_risk_auditor=_FailingAuditor(),
         )
         assert orch.check_model_risk() is None
         assert orch.aggregate_report() is not None
@@ -264,7 +281,8 @@ class TestBestEffort:
                 raise RuntimeError("broken")
 
         orch = DefaultRiskManagerOrchestrator(
-            portfolio_id="p1", operational_risk_monitor=_FailingOp(),
+            portfolio_id="p1",
+            operational_risk_monitor=_FailingOp(),
         )
         assert orch.check_operational_risk(_make_stats()) is None
         assert orch.aggregate_report() is not None

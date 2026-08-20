@@ -76,7 +76,6 @@ class ROIEngine:
         """写入：effort_feedback（Stage 4 公共化）。"""
         self._effort_feedback = value
 
-
     def record_feedback(self, detector_id: str, actual_hours: float) -> None:
         self._effort_feedback[detector_id] = actual_hours
 

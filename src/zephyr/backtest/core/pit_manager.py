@@ -203,10 +203,7 @@ class PITManager:
         # 版本对齐: 同一(event_time, 标的)多版本时取最新可用版本
         # 仅在显式提供 available_time_col(表明数据带版本)时执行去重
         if available_time_col is not None and available_time_col != event_time_col:
-            group_cols = [event_time_col] + [
-                c for c in INSTRUMENT_COLUMN_CANDIDATES
-                if c in visible.columns
-            ]
+            group_cols = [event_time_col] + [c for c in INSTRUMENT_COLUMN_CANDIDATES if c in visible.columns]
             # 按 available_time 升序后, 每组保留最后一行(即最大可用时间版本)
             visible = visible.sort_values(avc)
             visible = visible.drop_duplicates(subset=group_cols, keep="last")
@@ -261,13 +258,9 @@ class PITManager:
 
         # 隔离期截止时点: current_time 向前推 embargo 个工作日（或真交易日）
         if trading_calendar is None:
-            cutoff = pd.Timestamp(current_time) - pd.tseries.offsets.BDay(
-                self.config.embargo_days
-            )
+            cutoff = pd.Timestamp(current_time) - pd.tseries.offsets.BDay(self.config.embargo_days)
         else:
-            cutoff = _embargo_cutoff_by_calendar(
-                current_time, self.config.embargo_days, trading_calendar
-            )
+            cutoff = _embargo_cutoff_by_calendar(current_time, self.config.embargo_days, trading_calendar)
         ev_times = pd.to_datetime(data[event_time_col])
         mask = ev_times <= cutoff
         safe = data.loc[mask].copy()
@@ -348,12 +341,14 @@ class PITManager:
             over_idx = np.flatnonzero(over_mask)
             for i in over_idx:
                 idx_val = a.index[i]
-                violations.append({
-                    "index": _to_serializable(idx_val),
-                    "train_value": float(a_arr[i]),
-                    "backtest_value": float(b_arr[i]),
-                    "deviation": float(dev_arr[i]),
-                })
+                violations.append(
+                    {
+                        "index": _to_serializable(idx_val),
+                        "train_value": float(a_arr[i]),
+                        "backtest_value": float(b_arr[i]),
+                        "deviation": float(dev_arr[i]),
+                    }
+                )
 
         consistent = max_deviation <= threshold
         return {

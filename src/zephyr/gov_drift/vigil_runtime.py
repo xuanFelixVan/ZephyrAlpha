@@ -73,7 +73,6 @@ class VigilRuntime:
         """写入：tokens_used（Stage 4 公共化）。"""
         self._tokens_used = value
 
-
     def consume(self, tokens: int) -> bool:
         if self._tokens_used + tokens > self._token_budget:
             return False

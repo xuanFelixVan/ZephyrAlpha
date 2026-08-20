@@ -43,6 +43,7 @@ A 股涨跌停价 = 昨收×(1±幅度) 四舍五入到 0.01 元（交易所口�
   ±20%: 12p/1000 永为偶数尾 → 科创/创业板块无 x.xx5 边界（无需用例）
   ±30%: 13p/1000 尾 5 ⟺ p≡5 (mod 10)（如北交所 10.25×1.3=13.325 可达）
 """
+
 from __future__ import annotations
 
 from decimal import Decimal

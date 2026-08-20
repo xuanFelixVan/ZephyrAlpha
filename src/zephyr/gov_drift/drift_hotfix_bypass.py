@@ -125,7 +125,6 @@ class HotfixBypass:
         """写入：core_writer（Stage 4 公共化）。"""
         self._core_writer = value
 
-
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
@@ -135,7 +134,6 @@ class HotfixBypass:
     def project_root(self, value):
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
-
 
     def is_hotfix_commit(self, commit_message: str) -> bool:
         upper = commit_message.strip().upper()

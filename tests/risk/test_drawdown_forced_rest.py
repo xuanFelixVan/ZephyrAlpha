@@ -51,7 +51,7 @@ class TestForcedRestTimer:
         """触发日 T 后 5 个交易日（T+1..T+5）休息中，T+6 解禁。"""
         timer = ForcedRestTimer()
         timer.trigger(CAL[0])
-        assert timer.is_resting(CAL[0], CAL) is True   # 触发当日：已过 0 < 5
+        assert timer.is_resting(CAL[0], CAL) is True  # 触发当日：已过 0 < 5
         assert timer.remaining_rest_days(CAL[0], CAL) == 5
         for k in range(1, 5):
             assert timer.is_resting(CAL[k], CAL) is True
@@ -73,9 +73,7 @@ class TestForcedRestTimer:
         weekend = CAL[4] + timedelta(days=1)
         if weekend not in CAL:
             # 周末查询：进度同前一交易日
-            assert timer.remaining_rest_days(weekend, CAL) == timer.remaining_rest_days(
-                CAL[4], CAL
-            )
+            assert timer.remaining_rest_days(weekend, CAL) == timer.remaining_rest_days(CAL[4], CAL)
 
     def test_retrigger_refreshes(self):
         """重复触发刷新计时（取最严）。"""

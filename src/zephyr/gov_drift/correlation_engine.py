@@ -67,7 +67,6 @@ class CorrelationEngine:
         """写入：db_path（Stage 4 公共化）。"""
         self._db_path = value
 
-
     def compute_co_occurrence(self) -> dict[str, dict[str, float]]:
         if not os.path.exists(self._db_path):
             return {}

@@ -95,7 +95,6 @@ class IncrementalScanner:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     @property
     def mapping(self):
         """只读：mapping（Stage 4 公共化）。"""
@@ -106,11 +105,9 @@ class IncrementalScanner:
         """写入：mapping（Stage 4 公共化）。"""
         self._mapping = value
 
-
     def extract_module(self, filepath) -> str:
         """公共接口：extract_module（Stage 4 公共化）。"""
         return self._extract_module(filepath)
-
 
     def get_changed_files(self, base_ref: str = "HEAD~1") -> list[FileChange]:
         try:

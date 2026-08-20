@@ -156,7 +156,6 @@ class ReboundDetector:
         """写入：sliding_window_seconds（Stage 4 公共化）。"""
         self._sliding_window_seconds = value
 
-
     def record(
         self,
         agent_id: str,

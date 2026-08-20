@@ -109,9 +109,7 @@ def attribute_throttle(
         C3AttributionError: 空表 / 缺列 / 含 NaN / shrinkage 越出 [0,1] / 门槛非法。
     """
     if not 0.0 < defensive_share_min <= 1.0 or not 0.0 < bull_shrink_min <= 1.0:
-        raise C3AttributionError(
-            f"门槛非法: defensive={defensive_share_min} bull={bull_shrink_min}"
-        )
+        raise C3AttributionError(f"门槛非法: defensive={defensive_share_min} bull={bull_shrink_min}")
     missing = [c for c in _REQUIRED_COLUMNS if c not in records.columns]
     if missing:
         raise C3AttributionError(f"records 缺列: {missing}（需 {list(_REQUIRED_COLUMNS)}）")
@@ -146,23 +144,17 @@ def attribute_throttle(
     per_state = [
         replace(
             s,
-            contribution_share=(
-                max(s.avoided_return, 0.0) / pos_total if pos_total > _EPS else 0.0
-            ),
+            contribution_share=(max(s.avoided_return, 0.0) / pos_total if pos_total > _EPS else 0.0),
         )
         for s in per_state
     ]
     per_state.sort(key=lambda s: (-s.days, str(s.state)))
 
     defensive = tuple(defensive_states)
-    defensive_share = sum(
-        s.contribution_share for s in per_state if s.state in defensive
-    )
+    defensive_share = sum(s.contribution_share for s in per_state if s.state in defensive)
     bull = next((s for s in per_state if s.state == bull_state), None)
     bull_mean = bull.mean_shrinkage if bull is not None else None
-    passed = defensive_share >= defensive_share_min and (
-        bull_mean is None or bull_mean >= bull_shrink_min
-    )
+    passed = defensive_share >= defensive_share_min and (bull_mean is None or bull_mean >= bull_shrink_min)
     summary = (
         f"C3 节流归因: {total_days} 天 / {len(per_state)} 态, 总避免损失={total_avoided:+.4f}, "
         f"防御态{[str(d) for d in defensive]}贡献={defensive_share:.2%} 门槛≥{defensive_share_min:.0%}, "

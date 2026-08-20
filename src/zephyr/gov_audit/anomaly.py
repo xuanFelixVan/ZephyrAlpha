@@ -66,15 +66,10 @@ from pydantic import BaseModel, Field, model_validator
 logger = logging.getLogger(__name__)
 
 
-
 __all__ = ["AnomalyDetector", "AnomalyEvent", "AnomalyResult", "AnomalySignature"]
 
 
-
-
-
 class AnomalySignature(Enum):
-
     """异常签名枚举——治本（裁定#18 G3）：转为真 Enum 对齐 test_audit_anomaly.py 契约。
 
 
@@ -84,8 +79,6 @@ class AnomalySignature(Enum):
     AnomalyResult.to_dict 中 signature=value（编码）、name=name（标识）。
 
     """
-
-
 
     UNAUTHORIZED_ACCESS = "ANM-001"
 
@@ -114,11 +107,7 @@ class AnomalySignature(Enum):
     PRIVILEGE_ESCALATION = "ANM-013"
 
 
-
-
-
 class AnomalyResult:
-
     """异常检测结果——治本（裁定#18 G3）：对齐 test_audit_anomaly.py 契约。
 
 
@@ -131,22 +120,13 @@ class AnomalyResult:
 
     """
 
-
-
     def __init__(
-
         self,
-
         signature: AnomalySignature | None = None,
-
         severity: str = "medium",
-
         description: str = "",
-
         evidence: dict[str, Any] | None = None,
-
         score: float = 0.0,
-
     ) -> None:
 
         self.signature = signature
@@ -161,34 +141,20 @@ class AnomalyResult:
 
         self.detected_at = datetime.now(timezone.utc).isoformat()
 
-
-
     def to_dict(self) -> dict[str, Any]:
 
         return {
-
             "signature": self.signature.value if self.signature else "",
-
             "name": self.signature.name if self.signature else "",
-
             "severity": self.severity,
-
             "description": self.description,
-
             "evidence": self.evidence,
-
             "score": self.score,
-
             "detected_at": self.detected_at,
-
         }
 
 
-
-
-
 class AnomalyEvent(BaseModel):
-
     """审计异常事件 — 双 API 兼容（G-CT-002 + bridges）。
 
 
@@ -211,8 +177,6 @@ class AnomalyEvent(BaseModel):
 
     """
 
-
-
     # API 1 fields (bridges)
 
     agent_id: str = ""
@@ -220,8 +184,6 @@ class AnomalyEvent(BaseModel):
     operation_signature: str = ""
 
     resource_path: str = ""
-
-
 
     # API 2 fields (G-CT-002)
 
@@ -232,8 +194,6 @@ class AnomalyEvent(BaseModel):
     evidence: dict[str, Any] = Field(default_factory=dict)
 
     score: float = 0.0
-
-
 
     # Shared fields
 
@@ -249,12 +209,8 @@ class AnomalyEvent(BaseModel):
 
     detail: str = ""
 
-
-
     @model_validator(mode="after")
-
     def _require_minimum_fields(self):
-
         """必须提供 signature 或 (agent_id+operation_signature+resource_path) 之一。"""
 
         has_api1 = bool(self.agent_id or self.operation_signature or self.resource_path)
@@ -262,23 +218,12 @@ class AnomalyEvent(BaseModel):
         has_api2 = self.signature is not None
 
         if not has_api1 and not has_api2:
-
-            raise ValueError(
-
-                "AnomalyEvent requires either signature or "
-
-                "(agent_id+operation_signature+resource_path)"
-
-            )
+            raise ValueError("AnomalyEvent requires either signature or (agent_id+operation_signature+resource_path)")
 
         return self
 
 
-
-
-
 class AnomalyDetector:
-
     """异常检测器——治本（裁定#18 G3 + G-CT-002）：双 API 检测器。
 
 
@@ -307,49 +252,35 @@ class AnomalyDetector:
 
     """
 
-
-
     # G-CT-002 桥接 API：可疑操作权限白名单（lowercase）。granted=True 且 permission
 
     # 命中此集合时返回 AnomalyEvent；delete/truncate → HIGH，其余 → WARN。
 
     _SUSPICIOUS_OPERATIONS: set[str] = {
-
         "delete",
-
         "truncate",
-
         "drop",
-
         "revoke",
-
         "sudo",
-
         "root",
-
     }
-
-
 
     def __init__(self, event_log_path: int | Path | None = None, window_size: int = 50) -> None:
 
         # 向后兼容：旧调用 AnomalyDetector(50) 将 int 位置参视为 window_size
 
         if isinstance(event_log_path, int):
-
             window_size = event_log_path
 
             event_log_path = None
 
         if event_log_path is None:
-
             # 治本（AI-AUDIT12 路径SSoT收敛）：相对默认锚定 AUDIT_DATA_DIR 真源。
             from zephyr.shared.io.paths import AUDIT_DATA_DIR
 
             self._event_log_path: Path = AUDIT_DATA_DIR / "events.jsonl"
 
         else:
-
             self._event_log_path = Path(event_log_path)
 
         # 旧统计 API 状态
@@ -369,9 +300,6 @@ class AnomalyDetector:
         """写入：event_log_path（Stage 4 公共化）。"""
         self._event_log_path = value
 
-
-
-
     # ------------------------------------------------------------------
 
     # 新 API（裁定#18 G3）：scan 规则引擎
@@ -379,7 +307,6 @@ class AnomalyDetector:
     # ------------------------------------------------------------------
 
     def scan(self, events: list[dict[str, Any]] | None = None) -> list[AnomalyResult]:
-
         """扫描事件列表，返回检测到的异常结果。
 
 
@@ -397,14 +324,10 @@ class AnomalyDetector:
         """
 
         if events is None:
-
             events = self._load_from_file()
 
         if not events:
-
             return []
-
-
 
         results: list[AnomalyResult] = []
 
@@ -417,33 +340,21 @@ class AnomalyDetector:
         cross_agent: dict[str, set[str]] = {}
 
         for event in events:
-
             self._detect_per_event(event, results, delete_counts, trust_scores, freq_buckets, cross_agent)
 
         self._detect_aggregated(delete_counts, trust_scores, freq_buckets, cross_agent, results)
 
         return results
 
-
-
     def _detect_per_event(
-
         self,
-
         event: dict[str, Any],
-
         results: list[AnomalyResult],
-
         delete_counts: dict[str, int],
-
         trust_scores: dict[str, list[float]],
-
         freq_buckets: dict[str, dict[str, int]],
-
         cross_agent: dict[str, set[str]],
-
     ) -> None:
-
         """对单个事件执行规则检测（Extract Method 降低 scan 复杂度）。"""
 
         et = event.get("event_type", "")
@@ -452,31 +363,36 @@ class AnomalyDetector:
 
         self._check_unauthorized(event, et, agent_id, results)
 
-        self._check_simple_match(et, "gate_bypass", AnomalySignature.GATE_BYPASS,
+        self._check_simple_match(
+            et, "gate_bypass", AnomalySignature.GATE_BYPASS, "critical", "Gate bypass", agent_id, results
+        )
 
-                                  "critical", "Gate bypass", agent_id, results)
-
-        self._check_simple_match(et, "agent_impersonation", AnomalySignature.IMPERSONATION,
-
-                                  "critical", "Agent impersonation", agent_id, results)
+        self._check_simple_match(
+            et,
+            "agent_impersonation",
+            AnomalySignature.IMPERSONATION,
+            "critical",
+            "Agent impersonation",
+            agent_id,
+            results,
+        )
 
         if et == "file_delete":
-
             delete_counts[agent_id] = delete_counts.get(agent_id, 0) + 1
 
         ts = event.get("timestamp")
 
         if ts and self._is_off_hours(ts):
-
             hour = self._extract_hour(ts)
 
-            results.append(AnomalyResult(
-
-                signature=AnomalySignature.OFF_HOURS_ACTIVITY, severity="medium",
-
-                description=f"Off-hours activity by {agent_id}",
-
-                evidence={"timestamp": ts, "agent_id": agent_id, "hour": hour}))
+            results.append(
+                AnomalyResult(
+                    signature=AnomalySignature.OFF_HOURS_ACTIVITY,
+                    severity="medium",
+                    description=f"Off-hours activity by {agent_id}",
+                    evidence={"timestamp": ts, "agent_id": agent_id, "hour": hour},
+                )
+            )
 
         self._check_delegation(event, agent_id, results)
 
@@ -489,17 +405,14 @@ class AnomalyDetector:
         score = event.get("trust-score")
 
         if score is not None:
-
             trust_scores.setdefault(agent_id, []).append(float(score))
 
         ts = event.get("timestamp")
 
         if ts and agent_id:
-
             minute_key = self._minute_key(ts)
 
             if minute_key:
-
                 freq_buckets.setdefault(agent_id, {})
 
                 freq_buckets[agent_id][minute_key] = freq_buckets[agent_id].get(minute_key, 0) + 1
@@ -507,273 +420,224 @@ class AnomalyDetector:
         target = event.get("target_path")
 
         if target and agent_id:
-
             cross_agent.setdefault(target, set()).add(agent_id)
 
-
-
     def _check_unauthorized(
-
-        self, event: dict[str, Any], et: str, agent_id: str,
-
+        self,
+        event: dict[str, Any],
+        et: str,
+        agent_id: str,
         results: list[AnomalyResult],
-
     ) -> None:
-
         """检测 UNAUTHORIZED_ACCESS（permission_violation/gate_fail/status in denied/blocked/rejected）。"""
 
         if et in ("permission_violation", "gate_fail") or event.get("status") in ("denied", "blocked", "rejected"):
-
-            results.append(AnomalyResult(
-
-                signature=AnomalySignature.UNAUTHORIZED_ACCESS, severity="high",
-
-                description=f"Unauthorized access by {agent_id}",
-
-                evidence={"event_type": et, "agent_id": agent_id},
-
-                score=0.9))
-
-
+            results.append(
+                AnomalyResult(
+                    signature=AnomalySignature.UNAUTHORIZED_ACCESS,
+                    severity="high",
+                    description=f"Unauthorized access by {agent_id}",
+                    evidence={"event_type": et, "agent_id": agent_id},
+                    score=0.9,
+                )
+            )
 
     def _check_simple_match(
-
-        self, et: str, match_type: str, sig: "AnomalySignature",
-
-        severity: str, desc_prefix: str, agent_id: str,
-
+        self,
+        et: str,
+        match_type: str,
+        sig: "AnomalySignature",
+        severity: str,
+        desc_prefix: str,
+        agent_id: str,
         results: list[AnomalyResult],
-
     ) -> None:
-
         """检测精确 event_type 匹配的异常（GATE_BYPASS/IMPERSONATION）。"""
 
         if et == match_type:
-
-            results.append(AnomalyResult(
-
-                signature=sig, severity=severity,
-
-                description=f"{desc_prefix} by {agent_id}" if desc_prefix != "Agent impersonation"
-
-                            else f"Agent impersonation: {agent_id}",
-
-                evidence={"agent_id": agent_id}))
-
-
+            results.append(
+                AnomalyResult(
+                    signature=sig,
+                    severity=severity,
+                    description=f"{desc_prefix} by {agent_id}"
+                    if desc_prefix != "Agent impersonation"
+                    else f"Agent impersonation: {agent_id}",
+                    evidence={"agent_id": agent_id},
+                )
+            )
 
     def _check_delegation(
-
-        self, event: dict[str, Any], agent_id: str,
-
+        self,
+        event: dict[str, Any],
+        agent_id: str,
         results: list[AnomalyResult],
-
     ) -> None:
-
         """检测 DELEGATION_CHAIN_ANOMALY（depth > 5）。"""
 
         depth = event.get("delegation_depth", 0)
 
         if isinstance(depth, (int, float)) and depth > 5:
-
-            results.append(AnomalyResult(
-
-                signature=AnomalySignature.DELEGATION_CHAIN_ANOMALY, severity="high",
-
-                description=f"Delegation chain depth {depth} exceeds limit",
-
-                evidence={"delegation_depth": depth, "agent_id": agent_id}))
-
-
+            results.append(
+                AnomalyResult(
+                    signature=AnomalySignature.DELEGATION_CHAIN_ANOMALY,
+                    severity="high",
+                    description=f"Delegation chain depth {depth} exceeds limit",
+                    evidence={"delegation_depth": depth, "agent_id": agent_id},
+                )
+            )
 
     def _check_indirect(
-
-        self, event: dict[str, Any], et: str, agent_id: str,
-
+        self,
+        event: dict[str, Any],
+        et: str,
+        agent_id: str,
         results: list[AnomalyResult],
-
     ) -> None:
-
         """检测 INDIRECT_OPERATION（indirect_operation 标志或 event_type=indirect_operation）。"""
 
         if event.get("indirect_operation") or et == "indirect_operation":
-
-            results.append(AnomalyResult(
-
-                signature=AnomalySignature.INDIRECT_OPERATION, severity="high",
-
-                description=f"Indirect operation via {event.get('indirect_method', 'unknown')}",
-
-                evidence={"indirect_method": event.get("indirect_method"), "agent_id": agent_id}))
-
-
+            results.append(
+                AnomalyResult(
+                    signature=AnomalySignature.INDIRECT_OPERATION,
+                    severity="high",
+                    description=f"Indirect operation via {event.get('indirect_method', 'unknown')}",
+                    evidence={"indirect_method": event.get("indirect_method"), "agent_id": agent_id},
+                )
+            )
 
     def _check_dry_run(
-
-        self, event: dict[str, Any], et: str, agent_id: str,
-
+        self,
+        event: dict[str, Any],
+        et: str,
+        agent_id: str,
         results: list[AnomalyResult],
-
     ) -> None:
-
         """检测 DRY_RUN_MISMATCH（dry_run 标志 + diff_score > 0.3，或 event_type=dry_run_mismatch）。"""
 
         diff_score = event.get("dry_run_real_diff_score", 0.0)
 
         if et == "dry_run_mismatch":
-
-            results.append(AnomalyResult(
-
-                signature=AnomalySignature.DRY_RUN_MISMATCH, severity="high",
-
-                description="Dry-run/real mismatch detected",
-
-                evidence={"diff_score": diff_score, "agent_id": agent_id}))
+            results.append(
+                AnomalyResult(
+                    signature=AnomalySignature.DRY_RUN_MISMATCH,
+                    severity="high",
+                    description="Dry-run/real mismatch detected",
+                    evidence={"diff_score": diff_score, "agent_id": agent_id},
+                )
+            )
 
         elif event.get("dry_run") and event.get("dry_run_real_diff") and diff_score > 0.3:
-
-            results.append(AnomalyResult(
-
-                signature=AnomalySignature.DRY_RUN_MISMATCH, severity="high",
-
-                description="Dry-run/real mismatch detected",
-
-                evidence={"diff_score": diff_score, "agent_id": agent_id}))
-
-
+            results.append(
+                AnomalyResult(
+                    signature=AnomalySignature.DRY_RUN_MISMATCH,
+                    severity="high",
+                    description="Dry-run/real mismatch detected",
+                    evidence={"diff_score": diff_score, "agent_id": agent_id},
+                )
+            )
 
     def _check_collusion(
-
-        self, et: str, agent_id: str,
-
+        self,
+        et: str,
+        agent_id: str,
         results: list[AnomalyResult],
-
     ) -> None:
-
         """检测 COLLUSION_PATTERN（event_type=collusion_pattern）。"""
 
         if et == "collusion_pattern":
-
-            results.append(AnomalyResult(
-
-                signature=AnomalySignature.COLLUSION_PATTERN, severity="high",
-
-                description=f"Collusion pattern by {agent_id}",
-
-                evidence={"agent_id": agent_id}))
-
-
+            results.append(
+                AnomalyResult(
+                    signature=AnomalySignature.COLLUSION_PATTERN,
+                    severity="high",
+                    description=f"Collusion pattern by {agent_id}",
+                    evidence={"agent_id": agent_id},
+                )
+            )
 
     def _detect_aggregated(
-
         self,
-
         delete_counts: dict[str, int],
-
         trust_scores: dict[str, list[float]],
-
         freq_buckets: dict[str, dict[str, int]],
-
         cross_agent: dict[str, set[str]],
-
         results: list[AnomalyResult],
-
     ) -> None:
-
         """循环后聚合判定（Extract Method 降低 scan 复杂度）。"""
 
         for agent_id, count in delete_counts.items():
-
             if count >= 3:
-
-                results.append(AnomalyResult(
-
-                    signature=AnomalySignature.BULK_DELETE, severity="critical",
-
-                    description=f"Bulk delete: {count} files by {agent_id}",
-
-                    evidence={"count": count, "agent_id": agent_id}))
+                results.append(
+                    AnomalyResult(
+                        signature=AnomalySignature.BULK_DELETE,
+                        severity="critical",
+                        description=f"Bulk delete: {count} files by {agent_id}",
+                        evidence={"count": count, "agent_id": agent_id},
+                    )
+                )
 
         for agent_id, scores in trust_scores.items():
-
             if len(scores) >= 4 and self._is_declining(scores):
-
-                results.append(AnomalyResult(
-
-                    signature=AnomalySignature.TRUST_TREND, severity="high",
-
-                    description=f"Trust score declining trend for {agent_id}",
-
-                    evidence={"scores": scores, "agent_id": agent_id}))
+                results.append(
+                    AnomalyResult(
+                        signature=AnomalySignature.TRUST_TREND,
+                        severity="high",
+                        description=f"Trust score declining trend for {agent_id}",
+                        evidence={"scores": scores, "agent_id": agent_id},
+                    )
+                )
 
         for agent_id, buckets in freq_buckets.items():
-
             max_ops = max(buckets.values()) if buckets else 0
 
             if max_ops >= 10:
-
-                results.append(AnomalyResult(
-
-                    signature=AnomalySignature.HIGH_FREQUENCY, severity="high",
-
-                    description=f"High frequency operations by {agent_id}",
-
-                    evidence={"max_ops_per_minute": max_ops, "agent_id": agent_id}))
+                results.append(
+                    AnomalyResult(
+                        signature=AnomalySignature.HIGH_FREQUENCY,
+                        severity="high",
+                        description=f"High frequency operations by {agent_id}",
+                        evidence={"max_ops_per_minute": max_ops, "agent_id": agent_id},
+                    )
+                )
 
         for target, agents in cross_agent.items():
-
             if len(agents) >= 3:
-
-                results.append(AnomalyResult(
-
-                    signature=AnomalySignature.CROSS_AGENT_CONFLICT, severity="high",
-
-                    description=f"Cross-agent conflict on {target}",
-
-                    evidence={"agents": list(agents), "target_path": target}))
-
-
+                results.append(
+                    AnomalyResult(
+                        signature=AnomalySignature.CROSS_AGENT_CONFLICT,
+                        severity="high",
+                        description=f"Cross-agent conflict on {target}",
+                        evidence={"agents": list(agents), "target_path": target},
+                    )
+                )
 
     def _load_from_file(self) -> list[dict[str, Any]]:
-
         """从 _event_log_path 加载 JSONL 事件。文件不存在或空 → 返回空列表。"""
 
         if not self._event_log_path.exists():
-
             return []
 
         events: list[dict[str, Any]] = []
 
         try:
-
             with open(self._event_log_path, encoding="utf-8") as fh:
-
                 for line in fh:
-
                     line = line.strip()
 
                     if line:
-
                         events.append(json.loads(line))
 
         except (OSError, json.JSONDecodeError):
-
             logger.warning("Failed to load events from %s", self._event_log_path, exc_info=True)
 
             return []
 
         return events
 
-
-
     @staticmethod
-
     def _is_off_hours(ts: str) -> bool:
-
         """判定时间戳是否为非工作时间（UTC 06:00-22:00 之外，含 06 和 22）。"""
 
         try:
-
             dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
 
             hour = dt.hour
@@ -781,60 +645,40 @@ class AnomalyDetector:
             return hour < 6 or hour > 22
 
         except (ValueError, TypeError):
-
             return False
 
-
-
     @staticmethod
-
     def _extract_hour(ts: str) -> int:
-
         """从时间戳提取小时（失败返回 -1）。"""
 
         try:
-
             dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
 
             return dt.hour
 
         except (ValueError, TypeError):
-
             return -1
 
-
-
     @staticmethod
-
     def _minute_key(ts: str) -> str:
-
         """从时间戳提取分钟级 key（YYYY-MM-DDTHH:MM），失败返回空串。"""
 
         try:
-
             dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
 
             return dt.strftime("%Y-%m-%dT%H:%M")
 
         except (ValueError, TypeError):
-
             return ""
 
-
-
     @staticmethod
-
     def _is_declining(scores: list[float]) -> bool:
-
         """判定 trust-score 序列是否显著下降（末值 < 首值且降幅 > 0.2）。"""
 
         if len(scores) < 2:
-
             return False
 
         return scores[-1] < scores[0] and (scores[0] - scores[-1]) > 0.2
-
-
 
     # ------------------------------------------------------------------
 
@@ -847,13 +691,11 @@ class AnomalyDetector:
         self._values.append(value)
 
         if len(self._values) > self._window_size * 2:
-
             self._values = self._values[-self._window_size :]
 
-
-
-    def detect(self, value: dict[str, Any] | float | int, threshold: float = 2.0) -> AnomalyEvent | dict[str, Any] | None:
-
+    def detect(
+        self, value: dict[str, Any] | float | int, threshold: float = 2.0
+    ) -> AnomalyEvent | dict[str, Any] | None:
         """检测异常——双 API 类型分派（G-CT-002）。
 
 
@@ -901,15 +743,11 @@ class AnomalyDetector:
         """
 
         if isinstance(value, dict):
-
             return self._detect_audit_record(value)
 
         return self._detect_zscore(value, threshold)
 
-
-
     def _detect_audit_record(self, audit_record: dict[str, Any]) -> "AnomalyEvent | None":
-
         """桥接 API：检测审计记录中的可疑操作签名（G-CT-002）。
 
 
@@ -932,45 +770,27 @@ class AnomalyDetector:
 
         granted = audit_record.get("granted", False)
 
-
-
         if permission and permission in self._SUSPICIOUS_OPERATIONS and granted:
-
             resource = audit_record.get("resource", "")
 
             return AnomalyEvent(
-
                 agent_id=audit_record.get("agent_id", "unknown"),
-
                 operation_signature=f"permission={permission}",
-
                 resource_path=resource,
-
                 severity="HIGH" if permission in {"delete", "truncate"} else "WARN",
-
                 session_id=audit_record.get("session_id", ""),
-
                 detail=f"Suspicious operation: {permission} on {resource or '?'}",
-
             )
 
         return None
 
-
-
     def _detect_zscore(self, value: float, threshold: float = 2.0) -> dict[str, Any]:
-
         """统计 API：z-score 异常检测（向后兼容旧 detect(float) 调用方）。"""
 
         self.feed(value)
 
-
-
         if len(self._values) < 10:
-
             return {"is_anomaly": False, "z_score": 0.0, "reason": "insufficient_data"}
-
-
 
         recent = self._values[-self._window_size :]
 
@@ -980,46 +800,29 @@ class AnomalyDetector:
 
         std_dev = variance**0.5
 
-
-
         if abs(std_dev) < 1e-9:  # noqa: PLR2004 — 浮点==0比较改 < epsilon
-
             return {"is_anomaly": value != mean, "z_score": 0.0 if value == mean else float("inf")}
-
-
 
         z_score = abs(value - mean) / std_dev
 
         is_anomaly = z_score > threshold
 
-
-
         return {
-
             "is_anomaly": is_anomaly,
-
             "z_score": round(z_score, 4),
-
             "mean": round(mean, 4),
-
             "std_dev": round(std_dev, 4),
-
             "threshold": threshold,
-
         }
-
-
 
     def scan_series(self, series: list[float], threshold: float = 2.0) -> list[dict[str, Any]]:
 
         results: list[dict[str, Any]] = []
 
         for i, v in enumerate(series):
-
             result = self.detect(v, threshold)
 
             if result["is_anomaly"]:
-
                 result["index"] = i
 
                 result["value"] = v
@@ -1027,4 +830,3 @@ class AnomalyDetector:
                 results.append(result)
 
         return results
-

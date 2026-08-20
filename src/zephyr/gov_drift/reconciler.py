@@ -44,6 +44,7 @@ def _compute_file_hash(fp: str) -> str:
     with open(fp, "rb") as fh:
         return hashlib.sha256(fh.read()).hexdigest()
 
+
 from .drift_models import DriftEvent
 
 # 治本（AI-AUDIT12 失效路径修复）：校验脚本真实位置为 d5_architecture/validators/，
@@ -87,6 +88,7 @@ class FixSnapshot:
 
     captured_at: str = ""
 
+
 @dataclass
 class Suggestion:
     event_id: uuid.UUID
@@ -102,6 +104,7 @@ class Suggestion:
     recommendation: str = ""
 
     references: list[str] = field(default_factory=list)
+
 
 class AutoFixer:
     fix_snapshots_dir: str = ""

@@ -359,17 +359,13 @@ def test_compliance_zero_value_with_consumption_breached():
 def test_compliance_nan_rejected():
     auditor = DailyAuditor()
     with pytest.raises(InvalidAuditInputError):
-        auditor.run_compliance_check(
-            [consumption("VAR_95", float("nan"), 100.0)], now=T0
-        )
+        auditor.run_compliance_check([consumption("VAR_95", float("nan"), 100.0)], now=T0)
 
 
 def test_compliance_negative_consumed_rejected():
     auditor = DailyAuditor()
     with pytest.raises(InvalidAuditInputError):
-        auditor.run_compliance_check(
-            [consumption("VAR_95", 1_000.0, -50.0)], now=T0
-        )
+        auditor.run_compliance_check([consumption("VAR_95", 1_000.0, -50.0)], now=T0)
 
 
 def test_compliance_empty_list_pass():
@@ -392,9 +388,7 @@ def _good_recon():
 def test_checklist_all_pass():
     auditor = DailyAuditor()
     recon = _good_recon()
-    compliance = auditor.run_compliance_check(
-        [consumption("VAR_95", 1_000_000.0, 500_000.0)], now=T0
-    )
+    compliance = auditor.run_compliance_check([consumption("VAR_95", 1_000_000.0, 500_000.0)], now=T0)
     checklist = auditor.run_daily_checklist(
         [pos("A", 100, 10.0, 10.0)],
         [pos("A", 100, 10.0, 11.0)],
@@ -413,8 +407,13 @@ def test_checklist_kill_switch_open_fails():
     recon = _good_recon()
     compliance = auditor.run_compliance_check([], now=T0)
     checklist = auditor.run_daily_checklist(
-        [], [], recon, compliance,
-        kill_switch_state="OPEN", data_completeness=True, now=T0,
+        [],
+        [],
+        recon,
+        compliance,
+        kill_switch_state="OPEN",
+        data_completeness=True,
+        now=T0,
     )
     ks = [c for c in checklist if c.name == "Kill Switch状态"][0]
     assert ks.status == CheckStatus.FAIL
@@ -425,8 +424,13 @@ def test_checklist_data_incomplete_fails():
     recon = _good_recon()
     compliance = auditor.run_compliance_check([], now=T0)
     checklist = auditor.run_daily_checklist(
-        [], [], recon, compliance,
-        kill_switch_state="CLOSED", data_completeness=False, now=T0,
+        [],
+        [],
+        recon,
+        compliance,
+        kill_switch_state="CLOSED",
+        data_completeness=False,
+        now=T0,
     )
     di = [c for c in checklist if c.name == "数据完整性"][0]
     assert di.status == CheckStatus.FAIL
@@ -441,8 +445,13 @@ def test_checklist_pnl_mismatch_fails():
     assert recon.status == ReconciliationStatus.MISMATCH
     compliance = auditor.run_compliance_check([], now=T0)
     checklist = auditor.run_daily_checklist(
-        prev, now, recon, compliance,
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+        prev,
+        now,
+        recon,
+        compliance,
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
     pnl_item = [c for c in checklist if c.name == "PnL对账"][0]
     assert pnl_item.status == CheckStatus.FAIL
@@ -451,12 +460,15 @@ def test_checklist_pnl_mismatch_fails():
 def test_checklist_limit_warning_warns():
     auditor = DailyAuditor(AuditConfig(warn_ratio=0.8))
     recon = _good_recon()
-    compliance = auditor.run_compliance_check(
-        [consumption("VAR_95", 1_000_000.0, 850_000.0)], now=T0
-    )
+    compliance = auditor.run_compliance_check([consumption("VAR_95", 1_000_000.0, 850_000.0)], now=T0)
     checklist = auditor.run_daily_checklist(
-        [], [], recon, compliance,
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+        [],
+        [],
+        recon,
+        compliance,
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
     lim = [c for c in checklist if c.name == "限额合规"][0]
     assert lim.status == CheckStatus.WARNING
@@ -469,12 +481,18 @@ def test_audit_clean_pass():
     auditor = DailyAuditor()
     prev = [pos("A", 100, 10.0, 10.0)]
     now = [pos("A", 100, 10.0, 11.0)]
-    report = _do_audit(auditor,
-        trading_date=D0, portfolio_id="PF-001",
-        positions_prev=prev, positions_now=now,
-        fills=[], nav=10_000.0,
+    report = _do_audit(
+        auditor,
+        trading_date=D0,
+        portfolio_id="PF-001",
+        positions_prev=prev,
+        positions_now=now,
+        fills=[],
+        nav=10_000.0,
         consumptions=[consumption("VAR_95", 1_000_000.0, 500_000.0)],
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
     assert isinstance(report, DailyAuditReport)
     assert report.overall_status == AuditStatus.PASS
@@ -488,12 +506,18 @@ def test_audit_with_failures():
     auditor = DailyAuditor(AuditConfig(pnl_tolerance=0.0001))
     prev = [pos("A", 100, 10.0, 10.0)]
     now = [pos("A", 110, 10.0, 12.0)]  # 缺失成交 → PnL MISMATCH
-    report = _do_audit(auditor,
-        trading_date=D0, portfolio_id="PF-002",
-        positions_prev=prev, positions_now=now,
-        fills=[], nav=1_000.0,
+    report = _do_audit(
+        auditor,
+        trading_date=D0,
+        portfolio_id="PF-002",
+        positions_prev=prev,
+        positions_now=now,
+        fills=[],
+        nav=1_000.0,
         consumptions=[consumption("VAR_95", 1_000.0, 1_500.0)],  # BREACHED
-        kill_switch_state="OPEN", data_completeness=False, now=T0,
+        kill_switch_state="OPEN",
+        data_completeness=False,
+        now=T0,
     )
     assert report.overall_status == AuditStatus.FAIL
     # 应有多个 issue: PnL mismatch + limit breach + kill switch + data integrity
@@ -511,14 +535,19 @@ def test_audit_idempotent_same_input_same_report():
     prev = [pos("A", 100, 10.0, 10.0)]
     now = [pos("A", 100, 10.0, 11.0)]
     args = dict(
-        trading_date=D0, portfolio_id="PF-001",
-        positions_prev=prev, positions_now=now,
-        fills=[], nav=10_000.0,
+        trading_date=D0,
+        portfolio_id="PF-001",
+        positions_prev=prev,
+        positions_now=now,
+        fills=[],
+        nav=10_000.0,
         consumptions=[consumption("VAR_95", 1_000_000.0, 500_000.0)],
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
-    r1 = _do_audit(auditor,**args)
-    r2 = _do_audit(auditor,**args)
+    r1 = _do_audit(auditor, **args)
+    r2 = _do_audit(auditor, **args)
     assert r1.overall_status == r2.overall_status
     assert r1.pnl_reconciliation.total_pnl == r2.pnl_reconciliation.total_pnl
     assert r1.issues == r2.issues
@@ -530,14 +559,21 @@ def test_audit_with_attribution_bias_issue():
     decomp = _make_decomp(60.0, 100.0)  # predicted=0.6
     prev = [pos("A", 100, 10.0, 10.0)]
     now = [pos("A", 100, 10.0, 11.0)]
-    report = _do_audit(auditor,
-        trading_date=D0, portfolio_id="PF-003",
-        positions_prev=prev, positions_now=now,
-        fills=[], nav=10_000.0,
+    report = _do_audit(
+        auditor,
+        trading_date=D0,
+        portfolio_id="PF-003",
+        positions_prev=prev,
+        positions_now=now,
+        fills=[],
+        nav=10_000.0,
         consumptions=[],
         decomposition=decomp,
-        actual_factor_pnl=40.0, actual_residual_pnl=60.0,  # actual=0.4, bias=0.2
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+        actual_factor_pnl=40.0,
+        actual_residual_pnl=60.0,  # actual=0.4, bias=0.2
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
     # 归因偏差不直接影响 checklist (5项不含归因), 但会登记 issue
     assert report.attribution_bias.status == AttributionStatus.BIASED
@@ -549,13 +585,19 @@ def test_audit_no_decomposition_attribution_none():
     auditor = DailyAuditor()
     prev = [pos("A", 100, 10.0, 10.0)]
     now = [pos("A", 100, 10.0, 11.0)]
-    report = _do_audit(auditor,
-        trading_date=D0, portfolio_id="PF-004",
-        positions_prev=prev, positions_now=now,
-        fills=[], nav=10_000.0,
+    report = _do_audit(
+        auditor,
+        trading_date=D0,
+        portfolio_id="PF-004",
+        positions_prev=prev,
+        positions_now=now,
+        fills=[],
+        nav=10_000.0,
         consumptions=[],
         decomposition=None,
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
     assert report.attribution_bias is not None
     assert report.attribution_bias.status == AttributionStatus.NOT_APPLICABLE
@@ -566,12 +608,18 @@ def test_audit_status_pass_with_warnings():
     auditor = DailyAuditor(AuditConfig(warn_ratio=0.8))
     prev = [pos("A", 100, 10.0, 10.0)]
     now = [pos("A", 100, 10.0, 11.0)]
-    report = _do_audit(auditor,
-        trading_date=D0, portfolio_id="PF-005",
-        positions_prev=prev, positions_now=now,
-        fills=[], nav=10_000.0,
+    report = _do_audit(
+        auditor,
+        trading_date=D0,
+        portfolio_id="PF-005",
+        positions_prev=prev,
+        positions_now=now,
+        fills=[],
+        nav=10_000.0,
         consumptions=[consumption("VAR_95", 1_000_000.0, 850_000.0)],  # WARNING
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
     assert report.overall_status == AuditStatus.PASS_WITH_WARNINGS
 
@@ -583,12 +631,18 @@ def test_risk_metrics_report_fields():
     auditor = DailyAuditor()
     prev = [pos("A", 100, 10.0, 10.0)]
     now = [pos("A", 100, 10.0, 11.0)]
-    report = _do_audit(auditor,
-        trading_date=D0, portfolio_id="PF-001",
-        positions_prev=prev, positions_now=now,
-        fills=[], nav=10_000.0,
+    report = _do_audit(
+        auditor,
+        trading_date=D0,
+        portfolio_id="PF-001",
+        positions_prev=prev,
+        positions_now=now,
+        fills=[],
+        nav=10_000.0,
         consumptions=[consumption("VAR_95", 1_000_000.0, 500_000.0)],
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
     rmr = auditor.generate_risk_metrics_report(report, now=T0)
     assert isinstance(rmr, AuditRiskMetricsReport)
@@ -606,12 +660,17 @@ def test_risk_metrics_report_counts_high_severity():
     auditor = DailyAuditor(AuditConfig(pnl_tolerance=0.0001))
     prev = [pos("A", 100, 10.0, 10.0)]
     now = [pos("A", 110, 10.0, 12.0)]  # 缺失成交 → PnL MISMATCH (HIGH)
-    report = _do_audit(auditor,
-        trading_date=D0, portfolio_id="PF-002",
-        positions_prev=prev, positions_now=now,
-        fills=[], nav=1_000.0,
+    report = _do_audit(
+        auditor,
+        trading_date=D0,
+        portfolio_id="PF-002",
+        positions_prev=prev,
+        positions_now=now,
+        fills=[],
+        nav=1_000.0,
         consumptions=[consumption("VAR_95", 1_000.0, 1_500.0)],  # BREACHED (HIGH)
-        kill_switch_state="CLOSED", data_completeness=False,  # HIGH
+        kill_switch_state="CLOSED",
+        data_completeness=False,  # HIGH
         now=T0,
     )
     rmr = auditor.generate_risk_metrics_report(report, now=T0)
@@ -623,12 +682,18 @@ def test_risk_metrics_report_counts_high_severity():
 
 def test_risk_metrics_report_to_dict_serializable():
     auditor = DailyAuditor()
-    report = _do_audit(auditor,
-        trading_date=D0, portfolio_id="PF-X",
+    report = _do_audit(
+        auditor,
+        trading_date=D0,
+        portfolio_id="PF-X",
         positions_prev=[pos("A", 100, 10.0, 10.0)],
         positions_now=[pos("A", 100, 10.0, 11.0)],
-        fills=[], nav=10_000.0, consumptions=[],
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+        fills=[],
+        nav=10_000.0,
+        consumptions=[],
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
     rmr = auditor.generate_risk_metrics_report(report, now=T0)
     d = rmr.to_dict()
@@ -638,12 +703,18 @@ def test_risk_metrics_report_to_dict_serializable():
 
 def test_audit_report_to_dict_serializable():
     auditor = DailyAuditor()
-    report = _do_audit(auditor,
-        trading_date=D0, portfolio_id="PF-X",
+    report = _do_audit(
+        auditor,
+        trading_date=D0,
+        portfolio_id="PF-X",
         positions_prev=[pos("A", 100, 10.0, 10.0)],
         positions_now=[pos("A", 100, 10.0, 11.0)],
-        fills=[], nav=10_000.0, consumptions=[],
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+        fills=[],
+        nav=10_000.0,
+        consumptions=[],
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
     d = report.to_dict()
     assert d["portfolio_id"] == "PF-X"
@@ -672,11 +743,18 @@ def test_issue_severity_high_for_pnl_mismatch():
     auditor = DailyAuditor(AuditConfig(pnl_tolerance=0.0001))
     prev = [pos("A", 100, 10.0, 10.0)]
     now = [pos("A", 110, 10.0, 12.0)]  # 缺失成交 → PnL MISMATCH
-    report = _do_audit(auditor,
-        trading_date=D0, portfolio_id="PF-1",
-        positions_prev=prev, positions_now=now,
-        fills=[], nav=1_000.0, consumptions=[],
-        kill_switch_state="CLOSED", data_completeness=True, now=T0,
+    report = _do_audit(
+        auditor,
+        trading_date=D0,
+        portfolio_id="PF-1",
+        positions_prev=prev,
+        positions_now=now,
+        fills=[],
+        nav=1_000.0,
+        consumptions=[],
+        kill_switch_state="CLOSED",
+        data_completeness=True,
+        now=T0,
     )
     pnl_issues = [i for i in report.issues if i.category == "PNL_RECONCILIATION"]
     assert len(pnl_issues) == 1

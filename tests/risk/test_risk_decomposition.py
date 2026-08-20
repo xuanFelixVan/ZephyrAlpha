@@ -162,14 +162,10 @@ def test_factor_decomposition_variance_split():
     # 构造一致协方差: Σ = B Σ_f B' + diag(ε)
     cov = B @ factor_cov @ B.T + np.diag(resid_var)
     w = np.array([0.3, 0.3, 0.4])
-    result = decomposer.decompose_with_factors(
-        cov, w, B, factor_cov, resid_var, now=T0
-    )
+    result = decomposer.decompose_with_factors(cov, w, B, factor_cov, resid_var, now=T0)
     assert result.has_factor_model
     # 因子 + 残差 = 总方差
-    assert result.factor_variance + result.residual_variance == pytest.approx(
-        result.total_variance, rel=1e-9
-    )
+    assert result.factor_variance + result.residual_variance == pytest.approx(result.total_variance, rel=1e-9)
 
 
 def test_factor_contribution_pct_in_range():
@@ -179,9 +175,7 @@ def test_factor_contribution_pct_in_range():
     resid_var = np.array([0.005, 0.005])
     cov = B @ factor_cov @ B.T + np.diag(resid_var)
     w = np.array([0.5, 0.5])
-    result = decomposer.decompose_with_factors(
-        cov, w, B, factor_cov, resid_var, now=T0
-    )
+    result = decomposer.decompose_with_factors(cov, w, B, factor_cov, resid_var, now=T0)
     assert 0 <= result.factor_contribution_pct <= 1
     assert 0 <= result.residual_contribution_pct <= 1
     assert result.factor_contribution_pct + result.residual_contribution_pct == pytest.approx(1.0)
@@ -195,9 +189,7 @@ def test_factor_decomposition_dominant_factor():
     resid_var = np.array([0.0001, 0.0001])  # 小残差
     cov = B @ factor_cov @ B.T + np.diag(resid_var)
     w = np.array([0.5, 0.5])
-    result = decomposer.decompose_with_factors(
-        cov, w, B, factor_cov, resid_var, now=T0
-    )
+    result = decomposer.decompose_with_factors(cov, w, B, factor_cov, resid_var, now=T0)
     assert result.factor_contribution_pct > 0.95  # 因子占主导
 
 
@@ -209,9 +201,7 @@ def test_factor_decomposition_dominant_residual():
     resid_var = np.array([0.09, 0.09])
     cov = B @ factor_cov @ B.T + np.diag(resid_var)
     w = np.array([0.5, 0.5])
-    result = decomposer.decompose_with_factors(
-        cov, w, B, factor_cov, resid_var, now=T0
-    )
+    result = decomposer.decompose_with_factors(cov, w, B, factor_cov, resid_var, now=T0)
     assert result.residual_contribution_pct > 0.95
 
 
@@ -274,9 +264,18 @@ def test_to_dict_contains_all_fields():
     result = decomposer.decompose(cov, w, assets=["A", "B"], now=T0)
     d = result.to_dict()
     for key in (
-        "total_risk", "total_variance", "mcr", "ccr", "pct_contribution",
-        "weights", "assets", "factor_risk", "factor_variance",
-        "residual_risk", "residual_variance", "factor_contribution_pct",
+        "total_risk",
+        "total_variance",
+        "mcr",
+        "ccr",
+        "pct_contribution",
+        "weights",
+        "assets",
+        "factor_risk",
+        "factor_variance",
+        "residual_risk",
+        "residual_variance",
+        "factor_contribution_pct",
         "residual_contribution_pct",
     ):
         assert key in d
@@ -293,12 +292,8 @@ def test_multi_factor_model():
     resid_var = np.array([0.01, 0.02, 0.015, 0.025])
     cov = B @ factor_cov @ B.T + np.diag(resid_var)
     w = np.array([0.25, 0.25, 0.25, 0.25])
-    result = decomposer.decompose_with_factors(
-        cov, w, B, factor_cov, resid_var, now=T0
-    )
+    result = decomposer.decompose_with_factors(cov, w, B, factor_cov, resid_var, now=T0)
     assert result.has_factor_model
-    assert result.factor_variance + result.residual_variance == pytest.approx(
-        result.total_variance, rel=1e-9
-    )
+    assert result.factor_variance + result.residual_variance == pytest.approx(result.total_variance, rel=1e-9)
     # CCR 守恒
     assert np.sum(result.ccr) == pytest.approx(result.total_risk, rel=1e-9)

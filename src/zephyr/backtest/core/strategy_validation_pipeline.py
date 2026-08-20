@@ -138,9 +138,7 @@ def run_strategy_validation(
         DecisionGateError: 门控输入非法(由 DecisionGate 抛出, 向上传递)
     """
     if not isinstance(request, StrategyValidationRequest):
-        raise StrategyValidationError(
-            f"request必须是StrategyValidationRequest: {type(request).__name__}"
-        )
+        raise StrategyValidationError(f"request必须是StrategyValidationRequest: {type(request).__name__}")
     if not isinstance(request.strategy_id, str) or not request.strategy_id.strip():
         raise StrategyValidationError(f"strategy_id不能为空: {request.strategy_id!r}")
 

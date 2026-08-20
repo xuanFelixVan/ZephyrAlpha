@@ -19,8 +19,7 @@ bridges/ 是向后兼容垫片，位于 drift_detector_core/ 下。
 import warnings
 
 warnings.warn(
-    "zephyr.gov_drift.detector_core.bridges 已废弃，请直接从 zephyr.gov_drift 导入。"
-    "本兼容层将在 2 个版本后移除。",
+    "zephyr.gov_drift.detector_core.bridges 已废弃，请直接从 zephyr.gov_drift 导入。本兼容层将在 2 个版本后移除。",
     DeprecationWarning,
     stacklevel=2,
 )
@@ -34,7 +33,9 @@ try:
 except ImportError:
     pass
 
-__all__ = ['drift_bridge']
+from typing import Final
+
+__all__: Final = ["drift_bridge"]
 
 __version__ = "1.0.0"
 __module_id__ = "MOD-INF-023"

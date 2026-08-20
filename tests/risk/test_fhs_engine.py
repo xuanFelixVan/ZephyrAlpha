@@ -219,9 +219,7 @@ def test_regime_shift_fhs_exceeds_hs(engine: FHSEngine):
     r = _make_regime_shift()
     res = engine.compute(r, portfolio_value=NAV)
     assert res.method_used is FHSMethod.FHS
-    assert res.var > res.historical_var * 1.05, (
-        f"FHS 未响应近期波动聚集: fhs={res.var:.0f} hs={res.historical_var:.0f}"
-    )
+    assert res.var > res.historical_var * 1.05, f"FHS 未响应近期波动聚集: fhs={res.var:.0f} hs={res.historical_var:.0f}"
 
 
 def test_calm_tail_fhs_below_hs(engine: FHSEngine):
@@ -232,9 +230,7 @@ def test_calm_tail_fhs_below_hs(engine: FHSEngine):
     r = np.concatenate([storm, calm])
     res = engine.compute(r, portfolio_value=NAV)
     assert res.method_used is FHSMethod.FHS
-    assert res.var < res.historical_var, (
-        f"FHS 未响应近期平静: fhs={res.var:.0f} hs={res.historical_var:.0f}"
-    )
+    assert res.var < res.historical_var, f"FHS 未响应近期平静: fhs={res.var:.0f} hs={res.historical_var:.0f}"
 
 
 def test_iid_normal_fhs_close_to_hs(engine: FHSEngine):
@@ -266,9 +262,7 @@ def test_multiday_holding_period():
     r = _make_garch_series(500)
     res1 = eng1.compute(r, portfolio_value=NAV)
     res5 = eng5.compute(r, portfolio_value=NAV)
-    assert res5.var > res1.var, (
-        f"多日 VaR 未增长: T1={res1.var:.0f} T5={res5.var:.0f}"
-    )
+    assert res5.var > res1.var, f"多日 VaR 未增长: T1={res1.var:.0f} T5={res5.var:.0f}"
 
 
 def test_seed_reproducibility():

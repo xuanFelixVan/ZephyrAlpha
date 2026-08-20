@@ -165,10 +165,10 @@ class InvalidStressTestInputError(ZephyrBaseError):
 class StressScenarioType(Enum):
     """压力测试情景类型。"""
 
-    HISTORICAL = "historical"        # 历史情景 (2008/2015/2020)
-    HYPOTHETICAL = "hypothetical"    # 假设情景 (用户自定义)
-    REVERSE = "reverse"              # 反向压力测试
-    SENSITIVITY = "sensitivity"      # 敏感性分析
+    HISTORICAL = "historical"  # 历史情景 (2008/2015/2020)
+    HYPOTHETICAL = "hypothetical"  # 假设情景 (用户自定义)
+    REVERSE = "reverse"  # 反向压力测试
+    SENSITIVITY = "sensitivity"  # 敏感性分析
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -180,14 +180,14 @@ HISTORICAL_SCENARIOS: dict[str, dict[str, float]] = {
         "description": "2008 全球金融危机 (雷曼破产, 系统性崩盘)",
         # 单日极端跌幅 shock (负=下跌), 按板块平均
         "shocks": {
-            "financial": -0.095,   # 金融板块 -9.5%
+            "financial": -0.095,  # 金融板块 -9.5%
             "real_estate": -0.082,  # 地产 -8.2%
             "industrial": -0.078,  # 工业 -7.8%
-            "consumer": -0.065,    # 消费 -6.5%
-            "tech": -0.072,        # 科技 -7.2%
-            "energy": -0.085,      # 能源 -8.5%
+            "consumer": -0.065,  # 消费 -6.5%
+            "tech": -0.072,  # 科技 -7.2%
+            "energy": -0.085,  # 能源 -8.5%
             "healthcare": -0.052,  # 医疗 -5.2%
-            "utilities": -0.045,   # 公用事业 -4.5%
+            "utilities": -0.045,  # 公用事业 -4.5%
         },
     },
     "2015_china_stock_crash": {
@@ -210,7 +210,7 @@ HISTORICAL_SCENARIOS: dict[str, dict[str, float]] = {
             "real_estate": -0.072,
             "industrial": -0.085,
             "consumer": -0.058,
-            "tech": -0.045,   # 科技相对抗跌
+            "tech": -0.045,  # 科技相对抗跌
             "energy": -0.112,  # 能源跌幅最深 (原油崩盘)
             "healthcare": -0.028,  # 医疗最抗跌
             "utilities": -0.038,
@@ -362,8 +362,7 @@ class StressTestEngine:
         """
         if scenario_name not in HISTORICAL_SCENARIOS:
             raise InvalidStressTestInputError(
-                f"unknown historical scenario: {scenario_name}, "
-                f"available: {list(HISTORICAL_SCENARIOS.keys())}"
+                f"unknown historical scenario: {scenario_name}, available: {list(HISTORICAL_SCENARIOS.keys())}"
             )
         hist = HISTORICAL_SCENARIOS[scenario_name]
         scenario = StressScenario(
@@ -429,13 +428,9 @@ class StressTestEngine:
             StressTestResult (scenario_type=REVERSE, shocks 已放大)
         """
         if target_loss_pct >= 0:
-            raise InvalidStressTestInputError(
-                f"target_loss_pct must be negative, got {target_loss_pct}"
-            )
+            raise InvalidStressTestInputError(f"target_loss_pct must be negative, got {target_loss_pct}")
         if max_scale <= 1.0:
-            raise InvalidStressTestInputError(
-                f"max_scale must be >1.0, got {max_scale}"
-            )
+            raise InvalidStressTestInputError(f"max_scale must be >1.0, got {max_scale}")
 
         weights_norm = self._normalize_weights(weights)
         if base_shocks is None:
@@ -448,9 +443,7 @@ class StressTestEngine:
         for _ in range(iterations):
             mid = (lo + hi) / 2
             scaled = {s: v * mid for s, v in base_shocks.items()}
-            loss_pct = sum(
-                weights_norm[s] * scaled.get(s, 0.0) for s in weights_norm
-            )
+            loss_pct = sum(weights_norm[s] * scaled.get(s, 0.0) for s in weights_norm)
             if loss_pct <= target_loss_pct:
                 best_scale = mid
                 hi = mid
@@ -495,17 +488,11 @@ class StressTestEngine:
         """
         weights_norm = self._normalize_weights(weights)
         if factor not in weights_norm:
-            raise InvalidStressTestInputError(
-                f"factor '{factor}' not in weights: {list(weights_norm.keys())}"
-            )
+            raise InvalidStressTestInputError(f"factor '{factor}' not in weights: {list(weights_norm.keys())}")
         if shock_range[0] >= shock_range[1]:
-            raise InvalidStressTestInputError(
-                f"shock_range must be increasing, got {shock_range}"
-            )
+            raise InvalidStressTestInputError(f"shock_range must be increasing, got {shock_range}")
         if steps < 2:
-            raise InvalidStressTestInputError(
-                f"steps must be >=2, got {steps}"
-            )
+            raise InvalidStressTestInputError(f"steps must be >=2, got {steps}")
 
         now = now or datetime.now(timezone.utc)
         shock_levels = np.linspace(shock_range[0], shock_range[1], steps).tolist()
@@ -550,17 +537,11 @@ class StressTestEngine:
         self._validate_weights_shocks(weights_norm, shocks)
         corr = np.asarray(correlation_matrix, dtype=float)
         if corr.ndim != 2 or corr.shape[0] != corr.shape[1]:
-            raise InvalidStressTestInputError(
-                f"correlation_matrix must be square 2D, got {corr.shape}"
-            )
+            raise InvalidStressTestInputError(f"correlation_matrix must be square 2D, got {corr.shape}")
         if len(assets) != corr.shape[0]:
-            raise InvalidStressTestInputError(
-                f"assets count {len(assets)} != matrix dim {corr.shape[0]}"
-            )
+            raise InvalidStressTestInputError(f"assets count {len(assets)} != matrix dim {corr.shape[0]}")
         if not 0 <= contagion_factor <= 1:
-            raise InvalidStressTestInputError(
-                f"contagion_factor must be in [0,1], got {contagion_factor}"
-            )
+            raise InvalidStressTestInputError(f"contagion_factor must be in [0,1], got {contagion_factor}")
 
         # 原始 shock 向量
         shock_vec = np.array([shocks.get(a, 0.0) for a in assets])
@@ -586,10 +567,7 @@ class StressTestEngine:
         now: datetime | None = None,
     ) -> list[StressTestResult]:
         """运行全部历史情景 (2008/2015/2020)。"""
-        return [
-            self.run_historical(weights, portfolio_value, name, now)
-            for name in HISTORICAL_SCENARIOS
-        ]
+        return [self.run_historical(weights, portfolio_value, name, now) for name in HISTORICAL_SCENARIOS]
 
     # ── 内部: 应用情景 ──
 
@@ -605,9 +583,7 @@ class StressTestEngine:
         weights_norm = self._normalize_weights(weights)
 
         if portfolio_value <= 0:
-            raise InvalidStressTestInputError(
-                f"portfolio_value must be positive, got {portfolio_value}"
-            )
+            raise InvalidStressTestInputError(f"portfolio_value must be positive, got {portfolio_value}")
 
         asset_losses: dict[str, float] = {}
         total_loss_pct = 0.0
@@ -618,10 +594,7 @@ class StressTestEngine:
             total_loss_pct += w * shock
 
         var_baseline = self._default_var
-        var_exceeded = (
-            var_baseline is not None
-            and abs(total_loss_pct) * portfolio_value > var_baseline
-        )
+        var_exceeded = var_baseline is not None and abs(total_loss_pct) * portfolio_value > var_baseline
 
         result = StressTestResult(
             scenario=scenario,
@@ -650,23 +623,15 @@ class StressTestEngine:
             raise InvalidStressTestInputError("weights must be non-empty")
         total = sum(weights.values())
         if total <= 0:
-            raise InvalidStressTestInputError(
-                f"weights sum must be positive, got {total}"
-            )
+            raise InvalidStressTestInputError(f"weights sum must be positive, got {total}")
         if any(w < 0 for w in weights.values()):
-            raise InvalidStressTestInputError(
-                f"negative weights not allowed: {weights}"
-            )
+            raise InvalidStressTestInputError(f"negative weights not allowed: {weights}")
         return {s: w / total for s, w in weights.items()}
 
     @staticmethod
-    def _validate_weights_shocks(
-        weights: dict[str, float], shocks: dict[str, float]
-    ) -> None:
+    def _validate_weights_shocks(weights: dict[str, float], shocks: dict[str, float]) -> None:
         if not shocks:
             raise InvalidStressTestInputError("shocks must be non-empty")
         missing = set(weights) - set(shocks)
         if missing:
-            raise InvalidStressTestInputError(
-                f"shocks missing for symbols: {missing}"
-            )
+            raise InvalidStressTestInputError(f"shocks missing for symbols: {missing}")

@@ -259,9 +259,7 @@ class TickReplayEngine:
         self._statistics.total_ticks = seq
         self._statistics.total_duration_s = end_wall - start_wall
         if self._statistics.total_duration_s > 0:
-            self._statistics.avg_rate = (
-                seq / self._statistics.total_duration_s
-            )
+            self._statistics.avg_rate = seq / self._statistics.total_duration_s
         if self._merged_ticks:
             self._statistics.time_range = (
                 self._merged_ticks[0]["timestamp"],
@@ -301,9 +299,7 @@ class TickReplayEngine:
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.error("加载 Tick 数据失败 symbol=%s: %s", symbol, e, exc_info=True)
-                raise TickReplayError(
-                    f"加载 Tick 数据失败 symbol={symbol}: {e}"
-                ) from e
+                raise TickReplayError(f"加载 Tick 数据失败 symbol={symbol}: {e}") from e
 
             if df is None or df.empty:
                 _logger.warning("symbol=%s 的 Tick 数据为空，跳过", symbol)
@@ -355,9 +351,7 @@ class TickReplayEngine:
         mask = (tick_times >= start_time) & (tick_times <= end_time)
         return df[mask].reset_index(drop=True)
 
-    def _apply_speed_control(
-        self, prev_ts: datetime, curr_ts: datetime
-    ) -> None:
+    def _apply_speed_control(self, prev_ts: datetime, curr_ts: datetime) -> None:
         """应用速度控制（real_time / fast_forward）
 
         Args:
@@ -380,9 +374,7 @@ class TickReplayEngine:
             if sleep_time > 0:
                 time.sleep(min(sleep_time, 0.5))
 
-    def _row_to_tick_snapshot(
-        self, row: dict[str, Any], symbol: str
-    ) -> TickSnapshot:
+    def _row_to_tick_snapshot(self, row: dict[str, Any], symbol: str) -> TickSnapshot:
         """将 DataFrame 行 dict 转换为 TickSnapshot
 
         Args:
@@ -392,6 +384,7 @@ class TickReplayEngine:
         Returns:
             TickSnapshot（含5档盘口）
         """
+
         def _dec(key: str) -> Decimal:
             val = row.get(key, 0)
             if val is None:
@@ -479,9 +472,7 @@ class TickReplayEngine:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.debug("5秒聚合跳过 symbol=%s: %s", symbol, e, exc_info=True)
 
-    def _aggregate_to_bar(
-        self, symbol: str, buffer: list[TickSnapshot]
-    ) -> TickSnapshot:
+    def _aggregate_to_bar(self, symbol: str, buffer: list[TickSnapshot]) -> TickSnapshot:
         """将5秒内的 Tick 聚合为一根K线（TickSnapshot 形式）
 
         聚合规则:

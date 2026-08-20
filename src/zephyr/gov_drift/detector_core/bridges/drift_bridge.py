@@ -60,9 +60,7 @@ def subscribe_eventbus() -> None:
         bus.subscribe("gate_blocked", _on_gate_blocked)
         bus.subscribe("task_completed", _on_task_completed)
         _subscribed = True
-        logger.info(
-            "DriftBridge: subscribed to 2 events (gate_blocked/task_completed)"
-        )
+        logger.info("DriftBridge: subscribed to 2 events (gate_blocked/task_completed)")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("DriftBridge: subscribe_eventbus failed: %s", e, exc_info=True)
 
@@ -80,8 +78,7 @@ def _on_gate_blocked(payload: object) -> None:
         detail = data.get("detail", str(payload))
         source = data.get("source_function", "unknown")
         logger.warning(
-            "DriftBridge: gate_blocked event (source=%s, detail=%s) — "
-            "manual drift scan recommended",
+            "DriftBridge: gate_blocked event (source=%s, detail=%s) — manual drift scan recommended",
             source,
             detail,
         )
@@ -100,8 +97,7 @@ def _on_task_completed(payload: object) -> None:
         detail = data.get("detail", str(payload))
         source = data.get("source_function", "unknown")
         logger.info(
-            "DriftBridge: task_completed event (source=%s, detail=%s) — "
-            "recorded for drift trend analysis",
+            "DriftBridge: task_completed event (source=%s, detail=%s) — recorded for drift trend analysis",
             source,
             detail,
         )

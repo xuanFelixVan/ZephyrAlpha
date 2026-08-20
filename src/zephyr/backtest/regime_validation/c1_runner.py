@@ -133,11 +133,7 @@ def build_volatility_schedule(
     if vol.empty:
         return {}
 
-    return {
-        pd.Timestamp(ts).to_pydatetime(): float(v)
-        for ts, v in vol.items()
-        if np.isfinite(v)
-    }
+    return {pd.Timestamp(ts).to_pydatetime(): float(v) for ts, v in vol.items() if np.isfinite(v)}
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -164,9 +160,7 @@ def _track_result(
         _logger.warning("track=True 但 experiment_tracking 不可用(%s)，跳过 tracking", e)
         return
     try:
-        track_c1_result(
-            result, comparator=comparator, mode=mode, strategy_name=strategy_name
-        )
+        track_c1_result(result, comparator=comparator, mode=mode, strategy_name=strategy_name)
     except Exception as e:  # noqa: BLE001 — tracking 失败不崩 C1 业务
         _logger.warning("C1 结果 tracking 失败(忽略): %s", e)
 
@@ -375,8 +369,11 @@ def run_c1_end_to_end(
     if mode == "mock":
         return run_c1_mock(data=data, signals=signals, backtest_config=bt_config, track=track)
     return run_c1_regime(
-        data=data, signals=signals, regime_results=regime_results or [],
-        backtest_config=bt_config, track=track,
+        data=data,
+        signals=signals,
+        regime_results=regime_results or [],
+        backtest_config=bt_config,
+        track=track,
     )
 
 
@@ -415,35 +412,35 @@ def save_c1_report(
     ]
     if mode == "mock":
         # 治本补强（#ARCH-REGIME-C1-RUNNER-001 裁定②）：mock 报告显式警示，防误用做部署决策
-        lines.extend([
-            "",
-            "> ⚠️ **mock 模式警示**：本报告用波动率规则映射驱动 Shrinkage（非 HMM 概率），"
-            "C1 结果**无 regime 部署决策价值**，仅验证开/关对比流程管线正确性。"
-            "Phase 1 裁决须用 `run_c1_regime`（真实 RegimeDetector 序列）产出的报告。",
-        ])
+        lines.extend(
+            [
+                "",
+                "> ⚠️ **mock 模式警示**：本报告用波动率规则映射驱动 Shrinkage（非 HMM 概率），"
+                "C1 结果**无 regime 部署决策价值**，仅验证开/关对比流程管线正确性。"
+                "Phase 1 裁决须用 `run_c1_regime`（真实 RegimeDetector 序列）产出的报告。",
+            ]
+        )
     if meta:
         for k, v in meta.items():
             lines.append(f"- **{k}**: {v}")
     lines.append("")
 
     if not result.passed and result.veto_reason:
-        lines.extend([
-            "## ⚠️ 一票否决原因",
-            "",
-            f"> {result.veto_reason}",
-            "",
-            "C1 不通过 = regime 检测器不部署（回退静态等权，11_regime_backtest_validation_plan §6）。",
-            "",
-        ])
+        lines.extend(
+            [
+                "## ⚠️ 一票否决原因",
+                "",
+                f"> {result.veto_reason}",
+                "",
+                "C1 不通过 = regime 检测器不部署（回退静态等权，11_regime_backtest_validation_plan §6）。",
+                "",
+            ]
+        )
 
-    lines.extend(["## 四项指标判定", "", "| 指标 | 关(基准) | 开(实验) | 门槛 | 判定 |",
-                  "|---|---|---|---|---|"])
+    lines.extend(["## 四项指标判定", "", "| 指标 | 关(基准) | 开(实验) | 门槛 | 判定 |", "|---|---|---|---|---|"])
     for v in result.metric_verdicts:
         flag = "✅" if v.passed else "❌"
-        lines.append(
-            f"| {v.name} | {v.baseline_value:.4f} | {v.experiment_value:.4f} "
-            f"| {v.threshold_desc} | {flag} |"
-        )
+        lines.append(f"| {v.name} | {v.baseline_value:.4f} | {v.experiment_value:.4f} | {v.threshold_desc} | {flag} |")
     lines.append("")
 
     lines.extend(["## 指标明细", ""])
@@ -451,24 +448,26 @@ def save_c1_report(
         lines.append(f"- **{v.name}**: {v.detail}")
     lines.append("")
 
-    lines.extend([
-        "## 回测结果摘要",
-        "",
-        "| 指标 | 关(基准组) | 开(实验组) |",
-        "|---|---|---|",
-        f"| Sharpe | {result.baseline_result.sharpe_ratio:.4f} | {result.experiment_result.sharpe_ratio:.4f} |",
-        f"| MaxDD | {result.baseline_result.max_drawdown:.4f} | {result.experiment_result.max_drawdown:.4f} |",
-        f"| 年化收益 | {result.baseline_result.annual_return:.4f} | {result.experiment_result.annual_return:.4f} |",
-        f"| 总收益 | {result.baseline_result.total_return:.4f} | {result.experiment_result.total_return:.4f} |",
-        f"| Calmar | {result.baseline_calmar:.4f} | {result.experiment_calmar:.4f} |",
-        f"| Turnover/yr | {result.baseline_turnover:.4f} | {result.experiment_turnover:.4f} |",
-        f"| 交易笔数 | {result.baseline_result.trades_count} | {result.experiment_result.trades_count} |",
-        "",
-        "```",
-        result.summary,
-        "```",
-        "",
-    ])
+    lines.extend(
+        [
+            "## 回测结果摘要",
+            "",
+            "| 指标 | 关(基准组) | 开(实验组) |",
+            "|---|---|---|",
+            f"| Sharpe | {result.baseline_result.sharpe_ratio:.4f} | {result.experiment_result.sharpe_ratio:.4f} |",
+            f"| MaxDD | {result.baseline_result.max_drawdown:.4f} | {result.experiment_result.max_drawdown:.4f} |",
+            f"| 年化收益 | {result.baseline_result.annual_return:.4f} | {result.experiment_result.annual_return:.4f} |",
+            f"| 总收益 | {result.baseline_result.total_return:.4f} | {result.experiment_result.total_return:.4f} |",
+            f"| Calmar | {result.baseline_calmar:.4f} | {result.experiment_calmar:.4f} |",
+            f"| Turnover/yr | {result.baseline_turnover:.4f} | {result.experiment_turnover:.4f} |",
+            f"| 交易笔数 | {result.baseline_result.trades_count} | {result.experiment_result.trades_count} |",
+            "",
+            "```",
+            result.summary,
+            "```",
+            "",
+        ]
+    )
 
     output_path.write_text("\n".join(lines), encoding="utf-8")
     _logger.info("C1 报告已落盘: %s (passed=%s, mode=%s)", output_path, result.passed, mode)
@@ -486,21 +485,37 @@ def _empty_c1_result() -> C1ComparisonResult:
 
     now = datetime.now()
     empty_bt = BacktestResult(
-        annual_return=0.0, end_date=now, idempotency_key="c1-empty",
-        max_drawdown=0.0, sharpe_ratio=0.0, start_date=now, strategy_id="c1-empty",
-        timestamp=now, total_return=0.0, trades_count=0, win_rate=0.0,
+        annual_return=0.0,
+        end_date=now,
+        idempotency_key="c1-empty",
+        max_drawdown=0.0,
+        sharpe_ratio=0.0,
+        start_date=now,
+        strategy_id="c1-empty",
+        timestamp=now,
+        total_return=0.0,
+        trades_count=0,
+        win_rate=0.0,
     )
     from zephyr.backtest.regime_validation.c1_comparator import C1MetricVerdict
 
     empty_verdict = C1MetricVerdict(
-        name="空数据", baseline_value=0.0, experiment_value=0.0,
-        threshold_desc="数据/信号为空", passed=False, detail="build_weight_panel 返回空，无法跑 C1",
+        name="空数据",
+        baseline_value=0.0,
+        experiment_value=0.0,
+        threshold_desc="数据/信号为空",
+        passed=False,
+        detail="build_weight_panel 返回空，无法跑 C1",
     )
     return C1ComparisonResult(
-        baseline_result=empty_bt, experiment_result=empty_bt,
-        baseline_turnover=0.0, experiment_turnover=0.0,
-        baseline_calmar=0.0, experiment_calmar=0.0,
-        metric_verdicts=[empty_verdict], passed=False,
+        baseline_result=empty_bt,
+        experiment_result=empty_bt,
+        baseline_turnover=0.0,
+        experiment_turnover=0.0,
+        baseline_calmar=0.0,
+        experiment_calmar=0.0,
+        metric_verdicts=[empty_verdict],
+        passed=False,
         veto_reason="数据/信号为空，C1 未执行",
         summary="C1 Shrinkage 开/关对比——未执行（数据为空）",
     )

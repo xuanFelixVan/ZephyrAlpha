@@ -82,9 +82,7 @@ class InvalidBacktestStoreError(ZephyrBaseError):
 def _validate_trade_date(trade_date: date) -> str:
     """交易日 → 命名空间日期后缀 (ISO 格式纯名字, 无路径分隔符)。"""
     if not isinstance(trade_date, date):
-        raise InvalidBacktestStoreError(
-            f"trade_date must be datetime.date, got {type(trade_date).__name__}"
-        )
+        raise InvalidBacktestStoreError(f"trade_date must be datetime.date, got {type(trade_date).__name__}")
     return trade_date.isoformat()
 
 
@@ -112,9 +110,7 @@ class VarBacktestStore:
         """盘后持久化回测报告 (供 §3.10 校准/重构决策 + §3.16 回撤归因参考)。"""
         day = _validate_trade_date(trade_date)
         if not isinstance(report, Mapping):
-            raise InvalidBacktestStoreError(
-                f"report must be Mapping, got {type(report).__name__}"
-            )
+            raise InvalidBacktestStoreError(f"report must be Mapping, got {type(report).__name__}")
         self._store.save(f"{_BACKTEST_REPORT_PREFIX}{day}", dict(report))
 
     def load_backtest_report(self, trade_date: date) -> dict[str, Any] | None:
@@ -168,9 +164,7 @@ class VarBacktestStore:
         if entry_es is not None:
             es = _require_finite(entry_es, "entry_es")
             if es < var:
-                raise InvalidBacktestStoreError(
-                    f"entry_es({es}) 必须 ≥ entry_var({var}) (ES ≥ VaR 不变式)"
-                )
+                raise InvalidBacktestStoreError(f"entry_es({es}) 必须 ≥ entry_var({var}) (ES ≥ VaR 不变式)")
         self._store.save(
             ENTRY_VAR_NAMESPACE,
             {"trade_date": day, "entry_var": var, "entry_es": es},
@@ -194,9 +188,7 @@ class VarBacktestStore:
         if var < 0:
             raise InvalidBacktestStoreError(f"var_95 必须 ≥0, got {var_95}")
         if cvar < var:
-            raise InvalidBacktestStoreError(
-                f"cvar_95({cvar}) 必须 ≥ var_95({var}) (ES ≥ VaR 不变式, §3.18 阶段 0)"
-            )
+            raise InvalidBacktestStoreError(f"cvar_95({cvar}) 必须 ≥ var_95({var}) (ES ≥ VaR 不变式, §3.18 阶段 0)")
         self._store.save(
             PREMARKET_BASELINE_NAMESPACE,
             {"trade_date": day, "var_95": var, "cvar_95": cvar},

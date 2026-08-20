@@ -84,7 +84,6 @@ class SelfTestVerifier:
         """写入：base_dir（Stage 4 公共化）。"""
         self._base_dir = value
 
-
     def check_circular_import(self) -> dict[str, str]:
         try:
             import ast

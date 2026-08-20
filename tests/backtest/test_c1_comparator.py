@@ -11,6 +11,7 @@
   - compare() 真实引擎编排 → 端到端确认接线（orchestration）
   - _compute_calmar / _compute_turnover 工具函数边界
 """
+
 from __future__ import annotations
 
 import math
@@ -39,6 +40,7 @@ from zephyr.backtest.regime_validation.shrinkage_provider import (
 )
 
 # ── 手搓 BacktestResult / Portfolio 工具 ──────────────────────────────
+
 
 def _make_result(
     *,
@@ -75,8 +77,11 @@ def _make_portfolio(trades: list[tuple[int, float]], n_nav_days: int = 10) -> Po
     p = Portfolio(initial_capital=Decimal("1000000"))
     for qty, price in trades:
         fill = BacktestFill(
-            date="2026-01-01", symbol="S1", side="BUY",
-            quantity=Decimal(str(qty)), price=Decimal(str(price)),
+            date="2026-01-01",
+            symbol="S1",
+            side="BUY",
+            quantity=Decimal(str(qty)),
+            price=Decimal(str(price)),
         )
         p.apply_fill(fill, allow_t_plus_1=False)
     dates = pd.date_range("2026-01-01", periods=n_nav_days, freq="D")
@@ -91,6 +96,7 @@ def _verdict(result: C1ComparisonResult, name: str) -> C1MetricVerdict:
 
 
 # ── 配置校验 ──────────────────────────────────────────────────────────
+
 
 class TestC1Config:
     def test_defaults_match_plan(self):
@@ -116,6 +122,7 @@ class TestC1Config:
 
 
 # ── evaluate() 否决逻辑（核心）────────────────────────────────────────
+
 
 class TestEvaluateVerdicts:
     """四项指标一票否决逻辑——确定性覆盖。"""
@@ -191,9 +198,7 @@ class TestEvaluateVerdicts:
         base_pf = _make_portfolio([(100, 10.0)])
         exp_pf = _make_portfolio([(100, 10.0), (100, 10.0), (100, 10.0)])
 
-        result = C1ShrinkageComparator().evaluate(
-            base, exp, base_pf, exp_pf
-        )
+        result = C1ShrinkageComparator().evaluate(base, exp, base_pf, exp_pf)
         assert _verdict(result, "Turnover").passed is False
         assert result.experiment_turnover > result.baseline_turnover * 2
         assert result.passed is False
@@ -205,9 +210,7 @@ class TestEvaluateVerdicts:
         base_pf = _make_portfolio([(100, 10.0)])
         exp_pf = _make_portfolio([(100, 10.0), (100, 10.0)])  # 2× → 恰好通过
 
-        result = C1ShrinkageComparator().evaluate(
-            base, exp, base_pf, exp_pf
-        )
+        result = C1ShrinkageComparator().evaluate(base, exp, base_pf, exp_pf)
         assert _verdict(result, "Turnover").passed is True
 
     def test_summary_contains_all_metrics(self):
@@ -221,6 +224,7 @@ class TestEvaluateVerdicts:
 
 
 # ── 工具函数 ──────────────────────────────────────────────────────────
+
 
 class TestComputeHelpers:
     def test_calmar_normal(self):
@@ -256,6 +260,7 @@ class TestComputeHelpers:
 
 # ── compare() 端到端编排 ─────────────────────────────────────────────
 
+
 def _make_market_data(n_days=40):
     symbols = ["600001", "600002", "600003"]
     rng = np.random.default_rng(7)
@@ -267,11 +272,17 @@ def _make_market_data(n_days=40):
         for t in range(n_days):
             ret = 0.001 + rng.normal(0, 0.01)
             close = close * (1 + ret)
-            rows.append({
-                "symbol": sym, "date": dates[t],
-                "open": close, "high": close * 1.01, "low": close * 0.99,
-                "close": close, "volume": 1_000_000,
-            })
+            rows.append(
+                {
+                    "symbol": sym,
+                    "date": dates[t],
+                    "open": close,
+                    "high": close * 1.01,
+                    "low": close * 0.99,
+                    "close": close,
+                    "volume": 1_000_000,
+                }
+            )
         frames.append(pd.DataFrame(rows))
     return pd.concat(frames, ignore_index=True).set_index(["symbol", "date"]).sort_index()
 
@@ -279,9 +290,7 @@ def _make_market_data(n_days=40):
 def _make_signals(data):
     symbols = ["600001", "600002", "600003"]
     dates = data.index.get_level_values("date").unique().sort_values()
-    return pd.DataFrame(
-        {sym: 1.0 for sym in symbols}, index=pd.DatetimeIndex(dates, name="date")
-    )
+    return pd.DataFrame({sym: 1.0 for sym in symbols}, index=pd.DatetimeIndex(dates, name="date"))
 
 
 class TestCompareOrchestration:
@@ -350,12 +359,14 @@ class TestCompareOrchestration:
         from zephyr.backtest.regime_validation.shrinkage_provider import (
             ScheduleShrinkageProvider,
         )
+
         dates = sorted(data.index.get_level_values("date").unique())
         mid = dates[len(dates) // 2].to_pydatetime()
         provider = ScheduleShrinkageProvider({mid: 0.6})
 
         result = C1ShrinkageComparator().compare(
-            data=data, signals=signals,
+            data=data,
+            signals=signals,
             shrinkage_provider=provider,
             backtest_config=BacktestConfig(),
         )

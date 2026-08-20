@@ -217,8 +217,7 @@ class BacktestDataHandler:
 
         # AS OF JOIN：每个 symbol 取最新 report_period 的最新 announce_date 版本
         pit_latest = (
-            pit_visible
-            .sort_values(["symbol", "report_period", "announce_date"])
+            pit_visible.sort_values(["symbol", "report_period", "announce_date"])
             .groupby("symbol", as_index=False)
             .tail(1)
         )
@@ -363,16 +362,12 @@ class BacktestDataHandler:
             try:
                 database_service = DatabaseService()
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                raise DataHandlerError(
-                    f"DatabaseService 初始化失败: {e}"
-                ) from e
+                raise DataHandlerError(f"DatabaseService 初始化失败: {e}") from e
 
         try:
             client = database_service.get_clickhouse_conn()
         except AttributeError as e:
-            raise DataHandlerError(
-                "DatabaseService 未实现 get_clickhouse_conn() 方法"
-            ) from e
+            raise DataHandlerError("DatabaseService 未实现 get_clickhouse_conn() 方法") from e
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise DataHandlerError(f"获取 ClickHouse 连接失败: {e}") from e
 
@@ -396,10 +391,7 @@ class BacktestDataHandler:
             raise DataHandlerError(f"ClickHouse 查询失败: {e}") from e
 
         if not rows:
-            raise DataHandlerError(
-                f"ClickHouse 查询结果为空: symbols={symbols}, "
-                f"range=[{start_date}, {end_date}]"
-            )
+            raise DataHandlerError(f"ClickHouse 查询结果为空: symbols={symbols}, range=[{start_date}, {end_date}]")
 
         df = pd.DataFrame(
             rows,
@@ -407,16 +399,12 @@ class BacktestDataHandler:
         )
         df["date"] = pd.to_datetime(df["date"])
 
-        _logger.info(
-            "ClickHouse OHLCV 加载完成: %d rows, symbols=%s", len(df), symbols
-        )
+        _logger.info("ClickHouse OHLCV 加载完成: %d rows, symbols=%s", len(df), symbols)
 
         # PIT 财务数据加载（#ARCH-CH-021 P0-5，蓝图 §5.1 PIT铁律）
         fundamental_data = None
         if fundamental_tables:
-            fundamental_data = cls._load_fundamental_pit(
-                symbols, end_date, fundamental_tables
-            )
+            fundamental_data = cls._load_fundamental_pit(symbols, end_date, fundamental_tables)
             _logger.info(
                 "PIT 财务数据加载完成: %d rows, tables=%s",
                 len(fundamental_data) if fundamental_data is not None else 0,
@@ -485,13 +473,15 @@ class BacktestDataHandler:
                 if not line:
                     continue
                 vals = line.split("\t")
-                records.append({
-                    "symbol": vals[0],
-                    "report_period": vals[1],
-                    "announce_date": vals[2],
-                    "eps_basic": float(vals[3]) if len(vals) > 3 and vals[3] and vals[3] != "\\N" else None,
-                    "eps_diluted": float(vals[4]) if len(vals) > 4 and vals[4] and vals[4] != "\\N" else None,
-                })
+                records.append(
+                    {
+                        "symbol": vals[0],
+                        "report_period": vals[1],
+                        "announce_date": vals[2],
+                        "eps_basic": float(vals[3]) if len(vals) > 3 and vals[3] and vals[3] != "\\N" else None,
+                        "eps_diluted": float(vals[4]) if len(vals) > 4 and vals[4] and vals[4] != "\\N" else None,
+                    }
+                )
             if records:
                 frames.append(pd.DataFrame(records))
 
@@ -611,9 +601,7 @@ class MultiSourceDataHandler:
         """
         if self._mode == "tick":
             if self._tick_provider is None:
-                raise DataHandlerError(
-                    'mode="tick" 需要 tick_provider 参数'
-                )
+                raise DataHandlerError('mode="tick" 需要 tick_provider 参数')
             self._active_source = "tick"
             self._load_tick_data()
 
@@ -648,9 +636,7 @@ class MultiSourceDataHandler:
                     interval="tick",
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                raise DataHandlerError(
-                    f"加载 Tick 数据失败 symbol={symbol}: {e}"
-                ) from e
+                raise DataHandlerError(f"加载 Tick 数据失败 symbol={symbol}: {e}") from e
 
             if df is None or df.empty:
                 _logger.warning("symbol=%s 的 Tick 数据为空", symbol)
@@ -712,9 +698,7 @@ class MultiSourceDataHandler:
             DataHandlerError: 当前源非批量模式
         """
         if self._active_source != "batch" or self._batch_handler is None:
-            raise DataHandlerError(
-                f"next_bar() 仅适用于 batch 源, 当前源={self._active_source}"
-            )
+            raise DataHandlerError(f"next_bar() 仅适用于 batch 源, 当前源={self._active_source}")
         try:
             return next(self._batch_handler)
         except StopIteration:
@@ -730,9 +714,7 @@ class MultiSourceDataHandler:
             DataHandlerError: 当前源非 Tick 模式
         """
         if self._active_source != "tick":
-            raise DataHandlerError(
-                f"next_tick() 仅适用于 tick 源, 当前源={self._active_source}"
-            )
+            raise DataHandlerError(f"next_tick() 仅适用于 tick 源, 当前源={self._active_source}")
         if self._merged_idx >= len(self._merged_ticks):
             return None
         row = self._merged_ticks[self._merged_idx]
@@ -773,9 +755,7 @@ class MultiSourceDataHandler:
         # batch 模式：委托给 BacktestDataHandler.get_history
         if self._batch_handler is None or self._batch_handler._current_idx == 0:
             return None
-        current_date = self._batch_handler._dates[
-            self._batch_handler._current_idx - 1
-        ]
+        current_date = self._batch_handler._dates[self._batch_handler._current_idx - 1]
         return self._batch_handler.get_history(current_date, lookback)
 
 

@@ -180,8 +180,7 @@ class ReportConfig:
             )
         if self.chart_width <= 0 or self.chart_height <= 0:
             raise ReportError(
-                f"chart dimensions must be > 0, got "
-                f"width={self.chart_width} height={self.chart_height}",
+                f"chart dimensions must be > 0, got width={self.chart_width} height={self.chart_height}",
             )
 
 
@@ -229,9 +228,7 @@ class BacktestReportGenerator:
             ReportError: result 非 dict / 缺少 strategy_id。
         """
         if not isinstance(result, dict):
-            raise ReportError(
-                f"result must be a dict, got {type(result).__name__}"
-            )
+            raise ReportError(f"result must be a dict, got {type(result).__name__}")
         if not result.get("strategy_id"):
             raise ReportError("result.strategy_id 不能为空")
 
@@ -275,16 +272,8 @@ class BacktestReportGenerator:
 
         metrics_rows = self._build_metrics_table(result)
         overfitting_alert = self._build_overfitting_alert(result)
-        equity_svg = (
-            self._build_equity_svg(equity_curve)
-            if self._config.include_equity_curve and equity_curve
-            else ""
-        )
-        trade_table = (
-            self._build_trade_table(trade_log)
-            if self._config.include_trade_log and trade_log
-            else ""
-        )
+        equity_svg = self._build_equity_svg(equity_curve) if self._config.include_equity_curve and equity_curve else ""
+        trade_table = self._build_trade_table(trade_log) if self._config.include_trade_log and trade_log else ""
 
         return f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -343,23 +332,18 @@ class BacktestReportGenerator:
             if val_str.startswith("-") and label != "最大回撤":
                 css = "negative"
             elif val_str.startswith("+") or (
-                label in ("年化收益", "总收益", "Sharpe 比率", "胜率")
-                and val_str not in ("N/A", "0.00%", "0.00")
+                label in ("年化收益", "总收益", "Sharpe 比率", "胜率") and val_str not in ("N/A", "0.00%", "0.00")
             ):
                 css = "positive"
             html_rows.append(
-                f"  <tr><td>{html.escape(label)}</td>"
-                f'<td class="metric-value {css}">{html.escape(val_str)}</td></tr>'
+                f'  <tr><td>{html.escape(label)}</td><td class="metric-value {css}">{html.escape(val_str)}</td></tr>'
             )
         return "\n".join(html_rows)
 
     def _build_overfitting_alert(self, result: dict) -> str:
         """构建过拟合警告 HTML。"""
         if result.get("overfitting_flag"):
-            return (
-                '<div class="alert">⚠️ 过拟合警告: 该回测结果可能存在过拟合, '
-                "请谨慎参考。</div>"
-            )
+            return '<div class="alert">⚠️ 过拟合警告: 该回测结果可能存在过拟合, 请谨慎参考。</div>'
         return ""
 
     def _build_equity_svg(self, equity_curve: list[dict]) -> str:
@@ -425,8 +409,7 @@ class BacktestReportGenerator:
         truncated_note = ""
         if len(trade_log) > self._config.max_trades_display:
             truncated_note = (
-                f'<p class="meta">仅展示前 {self._config.max_trades_display} 条, '
-                f"共 {len(trade_log)} 条交易</p>"
+                f'<p class="meta">仅展示前 {self._config.max_trades_display} 条, 共 {len(trade_log)} 条交易</p>'
             )
         return f"""
 <h2>交易日志</h2>
@@ -453,8 +436,7 @@ class BacktestReportGenerator:
         lines.append(f"回测报告 — {result.get('strategy_id', 'N/A')}")
         lines.append("=" * 60)
         lines.append(
-            f"回测区间: {self._fmt_datetime(result.get('start_date'))} → "
-            f"{self._fmt_datetime(result.get('end_date'))}"
+            f"回测区间: {self._fmt_datetime(result.get('start_date'))} → {self._fmt_datetime(result.get('end_date'))}"
         )
         lines.append(f"生成时间: {self._fmt_datetime(result.get('timestamp'))}")
         benchmark = result.get("benchmark_symbol")

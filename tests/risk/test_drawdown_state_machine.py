@@ -136,7 +136,6 @@ class TestHysteresisDeescalation:
         assert sm.current is DrawdownState.NORMAL  # last3=[2%,2%,2%] 持续 → 降级
         assert t is not None
 
-
     def test_var_cross_check_blocks_deescalation(self):
         """VaR 交叉验证：dd 回落但 var 仍 ≥ 2% → 假恢复不降级。"""
         sm = DrawdownStateMachine()
@@ -189,9 +188,7 @@ class TestPersistence:
 
     def test_corrupt_state_fail_closed(self, tmp_path):
         store = JsonStateStore(tmp_path)
-        (tmp_path / f"{DRAWDOWN_STATE_NAMESPACE}.json").write_text(
-            "{not json", encoding="utf-8"
-        )
+        (tmp_path / f"{DRAWDOWN_STATE_NAMESPACE}.json").write_text("{not json", encoding="utf-8")
         sm = DrawdownStateMachine(store)
         with pytest.raises(StateCorruptError):
             sm.load_or_none()
@@ -254,9 +251,7 @@ class TestManualReset:
         sm = DrawdownStateMachine()
         self._enter_kill(sm)
         with pytest.raises(RefuseResetError):
-            sm.request_manual_reset(
-                self._confirmation(**{missing: False}), trade_date=_day(1)
-            )
+            sm.request_manual_reset(self._confirmation(**{missing: False}), trade_date=_day(1))
 
     def test_reset_only_from_kill(self):
         sm = DrawdownStateMachine()  # NORMAL
@@ -292,10 +287,7 @@ class TestManualReset:
             "drawdown_reset_history",
             {
                 "total_resets": 5,
-                "records": [
-                    {"date": _day(i * 30).isoformat(), "confirmed_by": "o", "reason": "r"}
-                    for i in range(5)
-                ],
+                "records": [{"date": _day(i * 30).isoformat(), "confirmed_by": "o", "reason": "r"} for i in range(5)],
             },
         )
         self._enter_kill(sm)
@@ -327,19 +319,21 @@ class TestRecoveryLadder:
         # min_hold 不足
         for i in range(2, 5):
             sm.evaluate(
-                trade_date=_day(i), drawdown_pct=-0.02, recovered_pct=0.6,
+                trade_date=_day(i),
+                drawdown_pct=-0.02,
+                recovered_pct=0.6,
                 strategy_pnls=_good_trades(),
             )
         assert sm.recovery_step == 0
         # 毕业准则不满足（亏损交易）
         bad = [{"pnl": -50.0, "r_multiple": 0.5, "rule_followed": True}] * 5
-        sm.evaluate(
-            trade_date=_day(6), drawdown_pct=-0.02, recovered_pct=0.6, strategy_pnls=bad
-        )
+        sm.evaluate(trade_date=_day(6), drawdown_pct=-0.02, recovered_pct=0.6, strategy_pnls=bad)
         assert sm.recovery_step == 0
         # 全达标 → step 1
         t = sm.evaluate(
-            trade_date=_day(7), drawdown_pct=-0.02, recovered_pct=0.6,
+            trade_date=_day(7),
+            drawdown_pct=-0.02,
+            recovered_pct=0.6,
             strategy_pnls=_good_trades(),
         )
         assert sm.recovery_step == 1
@@ -354,7 +348,9 @@ class TestRecoveryLadder:
             start = 2 + step * 6
             for i in range(start, start + days):
                 t = sm.evaluate(
-                    trade_date=_day(i), drawdown_pct=-0.01, recovered_pct=rec,
+                    trade_date=_day(i),
+                    drawdown_pct=-0.01,
+                    recovered_pct=rec,
                     strategy_pnls=_good_trades(),
                 )
         assert sm.current is DrawdownState.NORMAL
@@ -395,12 +391,16 @@ class TestRecoveryLadder:
         assert sm._freeze_days_remaining == 5
         for i in range(3, 8):  # day3..day7 冻结期（5 日）达标不晋升
             sm.evaluate(
-                trade_date=_day(i), drawdown_pct=-0.02, recovered_pct=0.6,
+                trade_date=_day(i),
+                drawdown_pct=-0.02,
+                recovered_pct=0.6,
                 strategy_pnls=_good_trades(),
             )
             assert sm.recovery_step == 0
         t = sm.evaluate(  # day8 解禁 + 全达标 → step 1
-            trade_date=_day(8), drawdown_pct=-0.02, recovered_pct=0.6,
+            trade_date=_day(8),
+            drawdown_pct=-0.02,
+            recovered_pct=0.6,
             strategy_pnls=_good_trades(),
         )
         assert sm.recovery_step == 1
@@ -424,9 +424,7 @@ class TestGraduationCriteria:
         assert self.sm.graduation_criteria_met(trades) is False
 
     def test_expectancy_r_required(self):
-        trades = [
-            {"pnl": 100.0, "r_multiple": 0.1, "rule_followed": True} for _ in range(5)
-        ]
+        trades = [{"pnl": 100.0, "r_multiple": 0.1, "rule_followed": True} for _ in range(5)]
         assert self.sm.graduation_criteria_met(trades) is False  # 均 0.1R < 0.3R
 
     def test_rule_compliance_required(self):

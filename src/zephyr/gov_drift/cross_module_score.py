@@ -83,7 +83,6 @@ class CrossModuleScorer:
         """写入：history（Stage 4 公共化）。"""
         self._history = value
 
-
     def compute(self, module_scores: dict[str, ModuleScore]) -> CrossModuleReport:
         if not module_scores:
             return CrossModuleReport(overall_score=1.0)

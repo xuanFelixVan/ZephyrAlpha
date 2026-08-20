@@ -3,6 +3,7 @@
 # [MODULE] tests.backtest.test_preflight_checker
 # [TTL] permanent
 """BM-BT-02-D 回测前置检查器单元测试。"""
+
 from __future__ import annotations
 
 import datetime

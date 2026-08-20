@@ -61,7 +61,6 @@ class FindingIngest:
         """公共接口：emit_event（Stage 4 公共化）。"""
         return self._emit_event(finding)
 
-
     @property
     def writer_initialized(self):
         """只读：writer_initialized（Stage 4 公共化）。"""
@@ -72,7 +71,6 @@ class FindingIngest:
         """写入：writer_initialized（Stage 4 公共化）。"""
         self._writer_initialized = value
 
-
     @property
     def writer(self) -> AuditWriter | None:
         """只读：writer（Stage 4 公共化）。"""
@@ -82,7 +80,6 @@ class FindingIngest:
     def writer(self, value):
         """写入：writer（Stage 4 公共化）。"""
         self._writer = value
-
 
     def _get_writer(self) -> object:
         if self._writer_initialized:
@@ -96,7 +93,9 @@ class FindingIngest:
 
                 self._writer = get_audit_writer()
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                _logger.debug("FindingIngest: audit-trail.writer unavailable, will use local JSONL fallback", exc_info=True)
+                _logger.debug(
+                    "FindingIngest: audit-trail.writer unavailable, will use local JSONL fallback", exc_info=True
+                )
                 self._writer = None
         return self._writer
 

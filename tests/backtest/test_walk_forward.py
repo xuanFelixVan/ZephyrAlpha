@@ -18,6 +18,7 @@
 (train_end <= test_start)、split 分发、退化输入(空/None)、
 White's Reality Check 显著/不显著/零方差/样本不足、stationary block bootstrap 长度保持。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -77,9 +78,7 @@ class TestWalkForwardConfig:
 
 class TestSplitRolling:
     def test_basic_folds(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="rolling", train_window=4, test_window=2, step=2)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="rolling", train_window=4, test_window=2, step=2))
         folds = analyzer.split_rolling(_dates(10))
         # fold0: train[0,4) test[4,6); fold1: train[2,6) test[6,8); fold2: train[4,8) test[8,10)
         assert len(folds) == 3
@@ -88,22 +87,16 @@ class TestSplitRolling:
         assert test0 == [4, 5]
 
     def test_no_leakage_all_folds(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="rolling", train_window=5, test_window=3, step=2)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="rolling", train_window=5, test_window=3, step=2))
         for train, test in analyzer.split_rolling(_dates(20)):
             assert max(train) < min(test)  # PIT: train_end <= test_start
 
     def test_insufficient_data_returns_empty(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="rolling", train_window=5, test_window=3)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="rolling", train_window=5, test_window=3))
         assert analyzer.split_rolling(_dates(7)) == []
 
     def test_exact_fit_single_fold(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="rolling", train_window=5, test_window=3)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="rolling", train_window=5, test_window=3))
         folds = analyzer.split_rolling(_dates(8))
         assert len(folds) == 1
 
@@ -118,9 +111,7 @@ class TestSplitRolling:
 
 class TestSplitAnchored:
     def test_train_starts_at_zero_and_grows_by_step(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="anchored", train_window=4, test_window=2, step=2)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="anchored", train_window=4, test_window=2, step=2))
         folds = analyzer.split_anchored(_dates(10))
         assert len(folds) == 3
         for train, _ in folds:
@@ -130,16 +121,12 @@ class TestSplitAnchored:
         assert len(folds[2][0]) == 8
 
     def test_no_leakage(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="anchored", train_window=4, test_window=2, step=1)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="anchored", train_window=4, test_window=2, step=1))
         for train, test in analyzer.split_anchored(_dates(12)):
             assert max(train) < min(test)
 
     def test_insufficient_data_returns_empty(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="anchored", train_window=6, test_window=2)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="anchored", train_window=6, test_window=2))
         assert analyzer.split_anchored(_dates(7)) == []
 
 
@@ -148,9 +135,7 @@ class TestSplitAnchored:
 
 class TestSplitExpanding:
     def test_train_grows_by_test_window_ignores_step(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="expanding", train_window=4, test_window=2, step=99)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="expanding", train_window=4, test_window=2, step=99))
         folds = analyzer.split_expanding(_dates(10))
         # step 被忽略, 以 test_window=2 增长
         assert len(folds) == 3
@@ -159,9 +144,7 @@ class TestSplitExpanding:
         assert len(folds[2][0]) == 8
 
     def test_no_leakage(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="expanding", train_window=3, test_window=2)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="expanding", train_window=3, test_window=2))
         for train, test in analyzer.split_expanding(_dates(9)):
             assert max(train) < min(test)
 
@@ -176,21 +159,15 @@ class TestSplitExpanding:
 
 class TestSplitDispatch:
     def test_dispatch_rolling(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="rolling", train_window=4, test_window=2, step=2)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="rolling", train_window=4, test_window=2, step=2))
         assert analyzer.split(_dates(10)) == analyzer.split_rolling(_dates(10))
 
     def test_dispatch_anchored(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="anchored", train_window=4, test_window=2, step=2)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="anchored", train_window=4, test_window=2, step=2))
         assert analyzer.split(_dates(10)) == analyzer.split_anchored(_dates(10))
 
     def test_dispatch_expanding(self):
-        analyzer = WalkForwardAnalyzer(
-            WalkForwardConfig(mode="expanding", train_window=4, test_window=2)
-        )
+        analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="expanding", train_window=4, test_window=2))
         assert analyzer.split(_dates(10)) == analyzer.split_expanding(_dates(10))
 
 

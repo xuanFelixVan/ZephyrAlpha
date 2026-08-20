@@ -362,10 +362,16 @@ def test_sell_realized_pnl_no_double_slippage():
     sell_order = MatchOrderInput(symbol="000001.SZ", side="SELL", quantity=qty_before, order_type="MARKET")
     sell_fill = engine.logic.match_market_order(sell_order, ob)
     from zephyr.backtest.core.portfolio import BacktestFill
+
     portfolio.apply_fill(
         BacktestFill(
-            date="2024-01-16", symbol=sell_fill.symbol, side="SELL", quantity=sell_fill.quantity,
-            price=sell_fill.price, commission=sell_fill.commission, slippage_cost=sell_fill.slippage_cost,
+            date="2024-01-16",
+            symbol=sell_fill.symbol,
+            side="SELL",
+            quantity=sell_fill.quantity,
+            price=sell_fill.price,
+            commission=sell_fill.commission,
+            slippage_cost=sell_fill.slippage_cost,
         ),
         allow_t_plus_1=False,
     )

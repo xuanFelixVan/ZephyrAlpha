@@ -155,9 +155,7 @@ class TestPostmarketPersist:
 
     def test_invalid_closing_nav_raises(self, tmp_path):
         with pytest.raises(InvalidSessionPersistInputError):
-            postmarket_persist(
-                JsonStateStore(tmp_path), trade_date=_day(0), closing_nav=0.0
-            )
+            postmarket_persist(JsonStateStore(tmp_path), trade_date=_day(0), closing_nav=0.0)
 
 
 # ── 盘前初始化（§3.15 四阶段）──
@@ -181,8 +179,11 @@ class TestPremarketInitialization:
         sm = DrawdownStateMachine(store)
         sm.evaluate(trade_date=_day(0), drawdown_pct=-0.06)  # → WARN
         postmarket_persist(
-            store, trade_date=_day(0), closing_nav=940_000.0,
-            state_machine=sm, var_95=0.023,
+            store,
+            trade_date=_day(0),
+            closing_nav=940_000.0,
+            state_machine=sm,
+            var_95=0.023,
             attribution_result={"root_cause": "MIXED_PARTIAL_SYSTEMIC"},
         )
         result = premarket_initialization(store)
@@ -196,9 +197,7 @@ class TestPremarketInitialization:
     def test_ghost_cold_start_guard(self, tmp_path):
         """冷启动守卫：无策略记录但 broker 有持仓 → 全部视为 Ghost，拒绝启动。"""
         store = JsonStateStore(tmp_path)
-        result = premarket_initialization(
-            store, broker_holdings={"600519": {"qty": 100}}, strategy_state=None
-        )
+        result = premarket_initialization(store, broker_holdings={"600519": {"qty": 100}}, strategy_state=None)
         assert result.status == "REFUSED"
         assert "Ghost" in result.refuse_reason
         assert result.ghosts[0][0] == "600519"
@@ -215,9 +214,7 @@ class TestPremarketInitialization:
 
     def test_empty_holdings_pass(self, tmp_path):
         store = JsonStateStore(tmp_path)
-        result = premarket_initialization(
-            store, broker_holdings={}, strategy_state=None
-        )
+        result = premarket_initialization(store, broker_holdings={}, strategy_state=None)
         assert result.status == "READY"
 
     def test_health_check_failure_refuses(self, tmp_path):

@@ -89,7 +89,6 @@ class MerkleTree:
         """写入：leaves（Stage 4 公共化）。"""
         self._leaves = value
 
-
     def add_event(self, event: dict) -> None:
         import hashlib
         import json
@@ -116,7 +115,6 @@ class MerkleAudit:
     def tree(self, value):
         """写入：tree（Stage 4 公共化）。"""
         self._tree = value
-
 
     def record(self, escalation_event: dict) -> str:
         self._tree.add_event(escalation_event)

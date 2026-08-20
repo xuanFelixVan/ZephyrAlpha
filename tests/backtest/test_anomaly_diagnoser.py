@@ -192,18 +192,14 @@ class TestStatisticalAnomalies:
 
     def test_short_period(self):
         diag = AnomalyDiagnoser()
-        report = diag.diagnose(
-            make_result(start_date="2024-06-01", end_date="2024-08-01")
-        )
+        report = diag.diagnose(make_result(start_date="2024-06-01", end_date="2024-08-01"))
         anomalies = [a for a in report.anomalies if a.rule == "short_period"]
         assert len(anomalies) == 1
         assert anomalies[0].severity is Severity.WARN
 
     def test_long_period_no_alert(self):
         diag = AnomalyDiagnoser()
-        report = diag.diagnose(
-            make_result(start_date="2023-01-01", end_date="2024-12-31")
-        )
+        report = diag.diagnose(make_result(start_date="2023-01-01", end_date="2024-12-31"))
         assert not any(a.rule == "short_period" for a in report.anomalies)
 
 
@@ -213,18 +209,14 @@ class TestStatisticalAnomalies:
 class TestConsistencyAnomalies:
     def test_high_return_low_sharpe(self):
         diag = AnomalyDiagnoser()
-        report = diag.diagnose(
-            make_result(annual_return=0.30, sharpe_ratio=0.3)
-        )
+        report = diag.diagnose(make_result(annual_return=0.30, sharpe_ratio=0.3))
         anomalies = [a for a in report.anomalies if a.rule == "high_return_low_sharpe"]
         assert len(anomalies) == 1
         assert anomalies[0].severity is Severity.WARN
 
     def test_high_return_good_sharpe_no_alert(self):
         diag = AnomalyDiagnoser()
-        report = diag.diagnose(
-            make_result(annual_return=0.30, sharpe_ratio=2.0)
-        )
+        report = diag.diagnose(make_result(annual_return=0.30, sharpe_ratio=2.0))
         assert not any(a.rule == "high_return_low_sharpe" for a in report.anomalies)
 
     def test_missing_benchmark(self):
@@ -310,9 +302,7 @@ class TestReportStats:
 
     def test_warning_count(self):
         diag = AnomalyDiagnoser()
-        report = diag.diagnose(
-            make_result(sharpe_ratio=4.0, win_rate=0.90, trades_count=10)
-        )
+        report = diag.diagnose(make_result(sharpe_ratio=4.0, win_rate=0.90, trades_count=10))
         assert report.warning_count >= 3
         assert report.error_count == 0
         assert report.passed is True
@@ -324,9 +314,7 @@ class TestReportStats:
 
     def test_anomalies_by_severity(self):
         diag = AnomalyDiagnoser()
-        report = diag.diagnose(
-            make_result(sharpe_ratio=4.0, benchmark_symbol=None)
-        )
+        report = diag.diagnose(make_result(sharpe_ratio=4.0, benchmark_symbol=None))
         warns = report.anomalies_by_severity(Severity.WARN)
         infos = report.anomalies_by_severity(Severity.INFO)
         assert len(warns) == 1

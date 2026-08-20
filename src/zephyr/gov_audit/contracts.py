@@ -43,45 +43,27 @@ from zephyr.gov_audit.models import (
 )
 
 __all__ = [
-
     "AuditDiscoverer",
-
     "AuditIndexer",
-
     "AuditQuery",
-
     "AuditWriter",
-
     "ContractViolationError",
-
     "IntegrityChecker",
-
 ]
 
 
-
-
-
 class ContractViolationError(Exception):
-
     error_code = "ZA-GV-0035"
-
-
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
 
         super().__init__(*args, **kwargs)
 
         if error_code is not None:
-
             self.error_code = error_code
 
 
-
-
-
 def _get_writer():
-
     """获取全局 AuditWriter 单例——治本（裁定#18 G6）：供 AuditWriter.write 委托桥接。
 
 
@@ -96,16 +78,10 @@ def _get_writer():
 
     from zephyr.gov_audit import writer as _writer_mod
 
-
-
     return _writer_mod._GLOBAL_WRITER
 
 
-
-
-
 class _CoreAuditWriter:
-
     """核心审计链写入器——桥接 contracts 层到 writer 实现。
 
 
@@ -120,78 +96,47 @@ class _CoreAuditWriter:
 
     """
 
-
-
     def __init__(self) -> None:
 
         delegate = _get_writer()
 
         if delegate is None:
-
             # Auto-initialize via singleton factory (test environments without
 
             # explicit set_global_writer() call still work)
 
             from zephyr.gov_audit.writer import get_audit_writer
 
-
-
             delegate = get_audit_writer()
 
         self._delegate = delegate
 
-
-
     def write(self, event: dict[str, Any]) -> str:
-
         """委托到全局 writer 写入事件，返回 entry_hash（chain_hash）。"""
 
         return self._delegate.write(event)
 
 
-
-
-
 class AuditDiscoverer(ABC):
-
     @abstractmethod
-
     def discover_changes(self, session_id: str) -> DiscoveryReport: ...
 
-
-
     @abstractmethod
-
     def get_changed_files(self, since: str | None = None) -> list[dict[str, Any]]: ...
 
 
-
-
-
 class AuditIndexer(ABC):
-
     @abstractmethod
-
     def build_index(self, force: bool = False) -> dict[str, Any]: ...
 
-
-
     @abstractmethod
-
     def lookup(self, key: str) -> dict[str, Any] | None: ...
 
-
-
     @abstractmethod
-
     def cold_start_cache(self) -> dict[str, Any]: ...
 
 
-
-
-
 class AuditWriter:
-
     """审计写入器契约——治本（test_p0_i2_construction_order.py）：
 
 
@@ -206,24 +151,17 @@ class AuditWriter:
 
     """
 
-
-
     def write_report(self, report: GlobalAuditReport, path: Path | None = None) -> Path:
-
         """默认实现——写入报告到指定路径。"""
 
         if path is None:
-
             path = Path("audit_report.json")
 
         path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
 
         return path
 
-
-
     def write_issue(self, issue: AuditIssue, report_dir: Path) -> Path:
-
         """默认实现——写入 issue 到报告目录。"""
 
         issue_path = report_dir / f"issue_{issue.issue_id}.json"
@@ -232,12 +170,8 @@ class AuditWriter:
 
         return issue_path
 
-
-
     @classmethod
-
     def write(cls, **kwargs: Any) -> dict[str, Any]:
-
         """委托到 ``_CoreAuditWriter`` 写入核心审计链——治本（裁定#18 G6）。
 
 
@@ -279,10 +213,7 @@ class AuditWriter:
         event.setdefault("metadata", {})
 
         if not event.get("timestamp"):
-
             from datetime import UTC, datetime
-
-
 
             event["timestamp"] = datetime.now(UTC).isoformat()
 
@@ -293,41 +224,20 @@ class AuditWriter:
         return {"chain_hash": entry_hash, **event}
 
 
-
-
-
 class AuditQuery(ABC):
-
     @abstractmethod
-
     def get_status(self) -> OrchestratorStatus: ...
 
-
-
     @abstractmethod
-
     def get_history(self, limit: int = 50) -> list[dict[str, Any]]: ...
 
-
-
     @abstractmethod
-
     def get_issues(self, audit_id: str) -> list[AuditIssue]: ...
 
 
-
-
-
 class IntegrityChecker(ABC):
-
     @abstractmethod
-
     def check(self, context: AuditContext) -> dict[str, Any]: ...
 
-
-
     @abstractmethod
-
     def verify_merkle(self, hour_key: str, expected_root: str) -> bool: ...
-
-

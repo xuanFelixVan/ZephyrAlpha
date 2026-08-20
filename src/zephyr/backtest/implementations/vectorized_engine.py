@@ -198,7 +198,12 @@ class DefaultBacktestEngine(BacktestEngineBase):
                         # AI-NIGHT-001：回测偏离信号意图必须可见（原 debug 静默吞没致满仓信号零成交无感知）
                         _logger.warning(
                             "Fill skipped (%d 累计): %s %s qty=%s date=%s 原因=%s",
-                            skipped_fills, fill.side, fill.symbol, fill.quantity, date, e,
+                            skipped_fills,
+                            fill.side,
+                            fill.symbol,
+                            fill.quantity,
+                            date,
+                            e,
                         )
 
             # 更新当日市值

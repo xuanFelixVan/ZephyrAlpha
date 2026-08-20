@@ -129,7 +129,6 @@ class RetentionEnforcer:
         """写入：policy（Stage 4 公共化）。"""
         self._policy = value
 
-
     def _iter_files(self) -> list[tuple[Path, str, int]]:
         result: list[tuple[Path, str, int]] = []
         for tier, retention_days in self._policy._tier_dirs():

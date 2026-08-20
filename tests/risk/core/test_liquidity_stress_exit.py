@@ -56,17 +56,13 @@ class TestLvar:
 class TestOpeningPermission:
     def test_normal_allowed(self):
         mon = LiquidityMonitor()
-        perm = mon.assess_opening_permission(
-            symbol="600000.SH", position_value=100_000.0, adv_value=10_000_000.0
-        )
+        perm = mon.assess_opening_permission(symbol="600000.SH", position_value=100_000.0, adv_value=10_000_000.0)
         assert perm.allowed is True
         assert perm.exit_days == pytest.approx(1 / 3)
 
     def test_exit_over_one_day_blocked(self):
         mon = LiquidityMonitor()
-        perm = mon.assess_opening_permission(
-            symbol="600000.SH", position_value=400_000.0, adv_value=10_000_000.0
-        )
+        perm = mon.assess_opening_permission(symbol="600000.SH", position_value=400_000.0, adv_value=10_000_000.0)
         assert perm.allowed is False
         assert any("退出时间" in r for r in perm.reasons)
 
@@ -88,7 +84,5 @@ class TestOpeningPermission:
 
     def test_zero_adv_blocked(self):
         mon = LiquidityMonitor()
-        perm = mon.assess_opening_permission(
-            symbol="600000.SH", position_value=1_000.0, adv_value=0.0
-        )
+        perm = mon.assess_opening_permission(symbol="600000.SH", position_value=1_000.0, adv_value=0.0)
         assert perm.allowed is False

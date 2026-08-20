@@ -111,9 +111,7 @@ def build_schedule_from_results(
             )
         dt, payload = entry
         if not isinstance(dt, datetime):
-            raise ShrinkageProviderError(
-                f"日期须为 datetime, got {type(dt).__name__}"
-            )
+            raise ShrinkageProviderError(f"日期须为 datetime, got {type(dt).__name__}")
         value = _extract_shrinkage_value(payload)
         schedule[dt] = clamp_shrinkage(value)
     return schedule
@@ -126,9 +124,7 @@ def _extract_shrinkage_value(payload: Any) -> float:
         return float(payload.value)
     if isinstance(payload, (int, float)):
         return float(payload)
-    raise ShrinkageProviderError(
-        f"无法从 {type(payload).__name__} 提取 shrinkage 值（须为 ShrinkageResult 或 float）"
-    )
+    raise ShrinkageProviderError(f"无法从 {type(payload).__name__} 提取 shrinkage 值（须为 ShrinkageResult 或 float）")
 
 
 def build_schedule_from_detector(
@@ -149,14 +145,10 @@ def build_schedule_from_detector(
     for dt, inputs in sorted(dated_inputs.items()):
         regime_features, overlay_signals, risk_inputs = inputs
         try:
-            _probs, shrinkage_result = detector.detect(
-                regime_features, overlay_signals, risk_inputs
-            )
+            _probs, shrinkage_result = detector.detect(regime_features, overlay_signals, risk_inputs)
             schedule[dt] = clamp_shrinkage(_extract_shrinkage_value(shrinkage_result))
         except Exception as exc:  # 单日异常降级为满部署，不阻断批量回放
-            _logger.warning(
-                "RegimeDetector.detect 异常 (date=%s)，当日退化为 1.0: %s", dt, exc
-            )
+            _logger.warning("RegimeDetector.detect 异常 (date=%s)，当日退化为 1.0: %s", dt, exc)
             schedule[dt] = 1.0
     return schedule
 
@@ -274,9 +266,7 @@ class MockShrinkageProvider:
             bands: 自定义 (vol上界, shrinkage) 映射；None 用默认 _MOCK_VOL_BANDS。
         """
         if volatility_schedule is None and vol_fn is None:
-            raise ShrinkageProviderError(
-                "须提供 volatility_schedule 或 vol_fn 之一"
-            )
+            raise ShrinkageProviderError("须提供 volatility_schedule 或 vol_fn 之一")
         self._vol_fn: Callable[[datetime], float] | None = vol_fn
         self._bands = bands or _MOCK_VOL_BANDS
         # 预计算 schedule 模式：转 ScheduleShrinkageProvider 的 as-of join 语义
@@ -299,9 +289,7 @@ class MockShrinkageProvider:
         return self._vol_to_shrinkage(vol, self._bands)
 
     @staticmethod
-    def _vol_to_shrinkage(
-        vol: float, bands: tuple[tuple[float, float], ...]
-    ) -> float:
+    def _vol_to_shrinkage(vol: float, bands: tuple[tuple[float, float], ...]) -> float:
         """波动率 → shrinkage 4 档映射。NaN/负值 → 1.0（保守）。"""
         if vol != vol or vol < 0:  # NaN 或负
             return 1.0
@@ -357,9 +345,7 @@ class RegimeDetectorShrinkageAdapter:
             return self._cache[date]
         try:
             regime_features, overlay_signals, risk_inputs = self._inputs_provider(date)
-            _probs, shrinkage_result = self._detector.detect(
-                regime_features, overlay_signals, risk_inputs
-            )
+            _probs, shrinkage_result = self._detector.detect(regime_features, overlay_signals, risk_inputs)
             value = clamp_shrinkage(_extract_shrinkage_value(shrinkage_result))
         except Exception as exc:
             _logger.warning(

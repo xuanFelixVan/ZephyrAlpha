@@ -17,6 +17,7 @@
 覆盖: K折连续块无重叠全覆盖、train/test不相交、purge(t1重叠剔除)、
 embargo 隔离带(含末折截断)、参数/t1 校验、退化(点标签退化为普通K折+embargo)。
 """
+
 from __future__ import annotations
 
 import pytest

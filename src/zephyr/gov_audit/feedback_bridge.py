@@ -101,7 +101,6 @@ class FeedbackBridge:
         """公共接口：classify_layer（Stage 4 公共化）。"""
         return __class__._classify_layer(severity)
 
-
     # ------------------------------------------------------------------
     # Legacy FeedbackLoop delegation API
     # ------------------------------------------------------------------

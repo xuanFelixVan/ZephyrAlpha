@@ -168,9 +168,7 @@ class ShrinkageBacktestEngine(DefaultBacktestEngine):
         """每日实际生效的 Shrinkage 因子序列（归因用，(date, value)）。"""
         return list(self._shrinkage_log)
 
-    def _get_day_signals(
-        self, signals: pd.DataFrame, date: object
-    ) -> dict[str, float]:
+    def _get_day_signals(self, signals: pd.DataFrame, date: object) -> dict[str, float]:
         """归一化后按当日 Shrinkage 缩放权重（剩余留现金）。
 
         流程:
@@ -197,9 +195,7 @@ class ShrinkageBacktestEngine(DefaultBacktestEngine):
         try:
             raw = self._shrinkage_provider.get_shrinkage(dt)
         except Exception as exc:  # provider 异常不应阻断回测
-            _logger.warning(
-                "Shrinkage provider 异常，当日退化为满部署 (date=%s): %s", dt, exc
-            )
+            _logger.warning("Shrinkage provider 异常，当日退化为满部署 (date=%s): %s", dt, exc)
             raw = 1.0
         shrinkage = _clamp_shrinkage(raw if isinstance(raw, (int, float)) else 1.0)
 

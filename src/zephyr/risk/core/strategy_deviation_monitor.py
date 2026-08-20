@@ -89,12 +89,7 @@ class DeviationAction(str, Enum):
 
 #: 阈值注册表相对路径（真源唯一：55 号 §3.3 决策）
 ALERT_THRESHOLD_REGISTRY_PATH: Final[Path] = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "alert_threshold_registry.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "alert_threshold_registry.yaml"
 )
 
 _EPS = 1e-12
@@ -145,9 +140,7 @@ def _load_deviation_thresholds(registry_path: Path | None = None) -> dict[str, f
             details=details,
         ) from exc
     if not (0 < out["warn"] and out["warn"] < out["retire"]):
-        raise DeviationConfigError(
-            f"偏离阈值须满足 0 < warn < retire: {out['warn']}, {out['retire']}"
-        )
+        raise DeviationConfigError(f"偏离阈值须满足 0 < warn < retire: {out['warn']}, {out['retire']}")
     return out
 
 
@@ -213,9 +206,7 @@ class StrategyDeviationMonitor:
     def thresholds(self) -> dict[str, float]:
         return dict(self._thresholds)
 
-    def on_deviation_alerted(
-        self, listener: Callable[[DeviationAlertedEvent], None]
-    ) -> None:
+    def on_deviation_alerted(self, listener: Callable[[DeviationAlertedEvent], None]) -> None:
         """订阅偏离级别变化事件。"""
         self._listeners.append(listener)
 
@@ -275,9 +266,7 @@ class StrategyDeviationMonitor:
         else:
             deviation = abs(cum_live - cum_bt) / abs(cum_bt)
         correlation = _pearson(live, backtest)
-        corr_below_floor = (
-            correlation is not None and correlation < self._thresholds["correlation_floor"]
-        )
+        corr_below_floor = correlation is not None and correlation < self._thresholds["correlation_floor"]
 
         if deviation > self._thresholds["retire"]:
             action = DeviationAction.RETIRE
@@ -310,9 +299,7 @@ class StrategyDeviationMonitor:
         )
         return verdict
 
-    def _emit_if_level_changed(
-        self, verdict: DeviationVerdict, emitted_at: datetime
-    ) -> None:
+    def _emit_if_level_changed(self, verdict: DeviationVerdict, emitted_at: datetime) -> None:
         previous = self._last_action.get(verdict.strategy_id)
         if previous is verdict.action:
             return
@@ -368,11 +355,7 @@ class StrategyDeviationMonitor:
                         navs.append(float(row[-1]))
                     except ValueError:
                         continue
-            returns = [
-                navs[i] / navs[i - 1] - 1.0
-                for i in range(1, len(navs))
-                if abs(navs[i - 1]) > _EPS
-            ]
+            returns = [navs[i] / navs[i - 1] - 1.0 for i in range(1, len(navs)) if abs(navs[i - 1]) > _EPS]
             return returns or None
         except Exception:  # noqa: BLE001 — 基准供给失败不阻断监控
             logger.exception("读取回测基准失败（降级 None）: %s", run_id)

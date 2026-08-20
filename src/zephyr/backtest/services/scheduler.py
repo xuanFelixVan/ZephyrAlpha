@@ -105,6 +105,7 @@ D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结
 # A3 --> O1
 # A4 --> O2
 """
+
 from __future__ import annotations
 
 import itertools
@@ -171,9 +172,7 @@ def _build_summary(
 ) -> GridSearchSummary:
     """从结果列表构建摘要。"""
     if not results:
-        return GridSearchSummary(
-            strategy_id, 0, None, {}, None, {}, 0.0, 0.0, []
-        )
+        return GridSearchSummary(strategy_id, 0, None, {}, None, {}, 0.0, 0.0, [])
     best = max(results, key=lambda r: r[1].sharpe_ratio)
     worst = min(results, key=lambda r: r[1].sharpe_ratio)
     mean_sharpe = sum(r[1].sharpe_ratio for r in results) / len(results)
@@ -211,7 +210,6 @@ class BacktestScheduler:
     def run_task(self, task) -> BacktestResult:
         """公共接口：run_task（Stage 4 公共化）。"""
         return self._run_task(task)
-
 
     def submit(
         self,
@@ -255,9 +253,7 @@ class BacktestScheduler:
             task_id 列表
         """
         combos = _expand_param_grid(param_grid)
-        return [
-            self.submit(strategy_id, data, signals, combo) for combo in combos
-        ]
+        return [self.submit(strategy_id, data, signals, combo) for combo in combos]
 
     def run_all(self, max_workers: int = 4) -> list[BacktestResult]:
         """执行队列中所有任务（FIFO），返回结果列表。
@@ -274,10 +270,7 @@ class BacktestScheduler:
         tasks = list(self._queue)
         self._queue.clear()
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            future_map = {
-                executor.submit(self._run_task, task): task.task_id
-                for task in tasks
-            }
+            future_map = {executor.submit(self._run_task, task): task.task_id for task in tasks}
             for future in as_completed(future_map):
                 task_id = future_map[future]
                 try:
@@ -317,5 +310,6 @@ class BacktestScheduler:
             from zephyr.backtest.implementations.vectorized_engine import (
                 DefaultBacktestEngine,
             )
+
             engine = DefaultBacktestEngine()
         return engine.run(task.data, task.signals)

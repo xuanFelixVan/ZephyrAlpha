@@ -124,7 +124,7 @@ def _save_cascade_state(state: dict[str, object]) -> None:
 
     try:
         with open(tmp, "w", encoding="utf-8") as f:
-            f.write(dumps(state,  indent=2))
+            f.write(dumps(state, indent=2))
 
         os.replace(tmp, path)
 

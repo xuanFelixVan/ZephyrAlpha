@@ -108,7 +108,6 @@ class DetectorDispatcher:
         """写入：registry_path（Stage 4 公共化）。"""
         self._registry_path = value
 
-
     @property
     def scripts_root(self) -> str:
         if not self._scripts_root:

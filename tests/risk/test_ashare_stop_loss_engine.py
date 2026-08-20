@@ -99,9 +99,7 @@ def test_fixed_pct_triggered_with_large_loss():
 
 def test_support_break_triggered():
     engine = AshareStopLossRuleEngine()
-    signals = engine.check_position(
-        "600519", 100.0, 16.5, support_level=16.8, now=t()
-    )
+    signals = engine.check_position("600519", 100.0, 16.5, support_level=16.8, now=t())
     sb = [s for s in signals if s.trigger_type is StopLossTriggerType.SUPPORT_BREAK]
     assert len(sb) == 1
     assert sb[0].severity is StopLossSeverity.CRITICAL
@@ -111,9 +109,7 @@ def test_support_break_triggered():
 
 def test_support_break_not_triggered_above():
     engine = AshareStopLossRuleEngine()
-    signals = engine.check_position(
-        "600519", 100.0, 17.0, support_level=16.8, now=t()
-    )
+    signals = engine.check_position("600519", 100.0, 17.0, support_level=16.8, now=t())
     sb = [s for s in signals if s.trigger_type is StopLossTriggerType.SUPPORT_BREAK]
     assert len(sb) == 0
 
@@ -136,9 +132,7 @@ def test_support_break_invalid_level():
 
 def test_logic_invalidation_triggered():
     engine = AshareStopLossRuleEngine()
-    signals = engine.check_position(
-        "600519", 100.0, 99.0, logic_valid=False, now=t()
-    )
+    signals = engine.check_position("600519", 100.0, 99.0, logic_valid=False, now=t())
     li = [s for s in signals if s.trigger_type is StopLossTriggerType.LOGIC_INVALIDATION]
     assert len(li) == 1
     assert li[0].severity is StopLossSeverity.WARNING
@@ -146,9 +140,7 @@ def test_logic_invalidation_triggered():
 
 def test_logic_invalidation_skipped_when_true():
     engine = AshareStopLossRuleEngine()
-    signals = engine.check_position(
-        "600519", 100.0, 99.0, logic_valid=True, now=t()
-    )
+    signals = engine.check_position("600519", 100.0, 99.0, logic_valid=True, now=t())
     li = [s for s in signals if s.trigger_type is StopLossTriggerType.LOGIC_INVALIDATION]
     assert len(li) == 0
 
@@ -166,7 +158,9 @@ def test_logic_invalidation_skipped_when_none():
 def test_auction_disappoint_triggered():
     engine = AshareStopLossRuleEngine()
     signals = engine.check_position(
-        "600519", 100.0, 95.0,
+        "600519",
+        100.0,
+        95.0,
         auction_expected_price=100.0,
         auction_actual_price=97.5,
         now=t(),
@@ -180,7 +174,9 @@ def test_auction_disappoint_triggered():
 def test_auction_disappoint_not_triggered():
     engine = AshareStopLossRuleEngine()
     signals = engine.check_position(
-        "600519", 100.0, 99.0,
+        "600519",
+        100.0,
+        99.0,
         auction_expected_price=100.0,
         auction_actual_price=99.5,
         now=t(),
@@ -194,9 +190,7 @@ def test_auction_disappoint_not_triggered():
 
 def test_intraday_break_vwap_triggered():
     engine = AshareStopLossRuleEngine()
-    signals = engine.check_position(
-        "600519", 100.0, 16.5, vwap=16.8, now=t()
-    )
+    signals = engine.check_position("600519", 100.0, 16.5, vwap=16.8, now=t())
     ib = [s for s in signals if s.trigger_type is StopLossTriggerType.INTRADAY_BREAK]
     assert len(ib) == 1
     assert ib[0].severity is StopLossSeverity.WARNING
@@ -204,18 +198,14 @@ def test_intraday_break_vwap_triggered():
 
 def test_intraday_break_prev_low_triggered():
     engine = AshareStopLossRuleEngine()
-    signals = engine.check_position(
-        "600519", 100.0, 16.5, prev_low=16.8, now=t()
-    )
+    signals = engine.check_position("600519", 100.0, 16.5, prev_low=16.8, now=t())
     ib = [s for s in signals if s.trigger_type is StopLossTriggerType.INTRADAY_BREAK]
     assert len(ib) == 1
 
 
 def test_intraday_break_not_triggered():
     engine = AshareStopLossRuleEngine()
-    signals = engine.check_position(
-        "600519", 100.0, 16.8, vwap=16.8, now=t()
-    )
+    signals = engine.check_position("600519", 100.0, 16.8, vwap=16.8, now=t())
     ib = [s for s in signals if s.trigger_type is StopLossTriggerType.INTRADAY_BREAK]
     assert len(ib) == 0
 
@@ -225,9 +215,7 @@ def test_intraday_break_not_triggered():
 
 def test_sector_ebb_triggered():
     engine = AshareStopLossRuleEngine()
-    signals = engine.check_position(
-        "600519", 100.0, 99.0, sector_momentum=-0.03, now=t()
-    )
+    signals = engine.check_position("600519", 100.0, 99.0, sector_momentum=-0.03, now=t())
     se = [s for s in signals if s.trigger_type is StopLossTriggerType.SECTOR_EBB]
     assert len(se) == 1
     assert se[0].severity is StopLossSeverity.WARNING
@@ -236,9 +224,7 @@ def test_sector_ebb_triggered():
 
 def test_sector_ebb_not_triggered():
     engine = AshareStopLossRuleEngine()
-    signals = engine.check_position(
-        "600519", 100.0, 99.0, sector_momentum=-0.01, now=t()
-    )
+    signals = engine.check_position("600519", 100.0, 99.0, sector_momentum=-0.01, now=t())
     se = [s for s in signals if s.trigger_type is StopLossTriggerType.SECTOR_EBB]
     assert len(se) == 0
 
@@ -250,9 +236,11 @@ def test_multiple_triggers_sorted_by_severity():
     """固定比例(CRITICAL) + 支撑破位(CRITICAL) + 逻辑失效(WARNING) + 板块退潮(WARNING)。"""
     engine = AshareStopLossRuleEngine()
     signals = engine.check_position(
-        "600519", 100.0, 90.0,  # 亏损 10% → 固定比例
-        support_level=92.0,     # 跌破支撑
-        logic_valid=False,      # 逻辑失效
+        "600519",
+        100.0,
+        90.0,  # 亏损 10% → 固定比例
+        support_level=92.0,  # 跌破支撑
+        logic_valid=False,  # 逻辑失效
         sector_momentum=-0.03,  # 板块退潮
         now=t(),
     )
@@ -266,7 +254,9 @@ def test_multiple_triggers_sorted_by_severity():
 def test_no_triggers_returns_empty():
     engine = AshareStopLossRuleEngine()
     signals = engine.check_position(
-        "600519", 100.0, 99.0,
+        "600519",
+        100.0,
+        99.0,
         support_level=95.0,
         logic_valid=True,
         sector_momentum=0.01,

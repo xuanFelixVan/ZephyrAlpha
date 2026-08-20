@@ -27,15 +27,13 @@ from zephyr.risk.core.drawdown_attribution import (
 
 # 相关性构造（8 点序列，Pearson 解析值）
 S_BASE = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
-S_SAME = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]          # corr = 1.0 → 系统性
-S_MID = [1.0, 2.0, 3.0, 8.0, 7.0, 6.0, 5.0, 4.0]          # corr ≈ 0.518 → MIXED
-S_ANTI = [8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0]         # corr = -1.0 → 策略特定
+S_SAME = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]  # corr = 1.0 → 系统性
+S_MID = [1.0, 2.0, 3.0, 8.0, 7.0, 6.0, 5.0, 4.0]  # corr ≈ 0.518 → MIXED
+S_ANTI = [8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0]  # corr = -1.0 → 策略特定
 
 
 def _bias(status: AttributionStatus) -> AttributionBias:
-    return AttributionBias(
-        predicted_factor_pct=0.6, actual_factor_pct=0.3, bias=0.3, status=status
-    )
+    return AttributionBias(predicted_factor_pct=0.6, actual_factor_pct=0.3, bias=0.3, status=status)
 
 
 # ── §3.12 五问诊断 ──
@@ -78,9 +76,7 @@ class TestDiagnoseDrawdownType:
 
     def test_market_structure_changed_not_violation(self):
         """市场结构质变=regime 提示，不构成行为性违例。"""
-        d = diagnose_drawdown_type(
-            signals_follow_rules=True, market_structure_changed=True
-        )
+        d = diagnose_drawdown_type(signals_follow_rules=True, market_structure_changed=True)
         assert d.drawdown_type is DrawdownType.STATISTICAL
         assert d.market_structure_changed is True
 
@@ -94,9 +90,7 @@ class TestDiagnoseDrawdownType:
 
 class TestRiskDeterioration:
     def test_var_ratio_above_1_5_triggers_feedforward(self):
-        r = drawdown_attribution_flow(
-            drawdown_pct=-0.02, entry_var=0.02, current_var=0.032
-        )
+        r = drawdown_attribution_flow(drawdown_pct=-0.02, entry_var=0.02, current_var=0.032)
         assert r is not None
         assert r.response_routing == ResponseRouting.RISK_BASED_REDUCTION.value
         assert r.systemic_pct == 1.0
@@ -106,18 +100,12 @@ class TestRiskDeterioration:
 
     def test_var_ratio_below_threshold_falls_through(self):
         """ratio ≤ 1.5 不触发前馈，继续常规门控（dd<5% → None）。"""
-        r = drawdown_attribution_flow(
-            drawdown_pct=-0.02, entry_var=0.02, current_var=0.029
-        )
+        r = drawdown_attribution_flow(drawdown_pct=-0.02, entry_var=0.02, current_var=0.029)
         assert r is None
 
     def test_missing_or_zero_entry_var_skips_feedforward(self):
-        assert drawdown_attribution_flow(
-            drawdown_pct=-0.02, entry_var=None, current_var=0.05
-        ) is None
-        assert drawdown_attribution_flow(
-            drawdown_pct=-0.02, entry_var=0.0, current_var=0.05
-        ) is None
+        assert drawdown_attribution_flow(drawdown_pct=-0.02, entry_var=None, current_var=0.05) is None
+        assert drawdown_attribution_flow(drawdown_pct=-0.02, entry_var=0.0, current_var=0.05) is None
 
 
 # ── §3.16 归因流程：门控 + 相关性 + 因子 + regime ──
@@ -128,9 +116,7 @@ class TestAttributionFlow:
         assert drawdown_attribution_flow(drawdown_pct=-0.049) is None
 
     def test_single_strategy_specific(self):
-        r = drawdown_attribution_flow(
-            drawdown_pct=-0.08, strategy_pnls={"alpha": -5000.0}
-        )
+        r = drawdown_attribution_flow(drawdown_pct=-0.08, strategy_pnls={"alpha": -5000.0})
         assert r is not None
         assert r.root_cause == "STRATEGY_SPECIFIC_SINGLE_STRATEGY_REGIME_MISALIGNED"
         assert r.per_strategy_contribution == {"alpha": 1.0}
@@ -214,15 +200,14 @@ class TestAttributionFlow:
         assert r.root_cause.startswith("SYSTEMIC_HIGH_CORRELATION")
 
     def test_regime_suffix_misaligned_when_none(self):
-        r = drawdown_attribution_flow(
-            drawdown_pct=-0.08, strategy_pnls={"a": -1.0}
-        )
+        r = drawdown_attribution_flow(drawdown_pct=-0.08, strategy_pnls={"a": -1.0})
         assert r is not None
         assert r.root_cause.endswith("_REGIME_MISALIGNED")
 
     def test_to_dict_serializable(self):
         r = drawdown_attribution_flow(
-            drawdown_pct=-0.08, strategy_pnls={"a": -1.0},
+            drawdown_pct=-0.08,
+            strategy_pnls={"a": -1.0},
             attribution_bias=_bias(AttributionStatus.ALIGNED),
         )
         assert r is not None
@@ -234,10 +219,6 @@ class TestAttributionFlow:
         with pytest.raises(InvalidAttributionInputError):
             drawdown_attribution_flow(drawdown_pct=-0.08, warning_threshold=1.5)
         with pytest.raises(InvalidAttributionInputError):
-            drawdown_attribution_flow(
-                drawdown_pct=-0.08, var_deterioration_threshold=1.0
-            )
+            drawdown_attribution_flow(drawdown_pct=-0.08, var_deterioration_threshold=1.0)
         with pytest.raises(InvalidAttributionInputError):
-            drawdown_attribution_flow(
-                drawdown_pct=-0.08, systemic_corr=0.3, specific_corr=0.5
-            )
+            drawdown_attribution_flow(drawdown_pct=-0.08, systemic_corr=0.3, specific_corr=0.5)

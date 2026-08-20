@@ -221,20 +221,20 @@ class InvalidLiquidityCrisisInputError(ZephyrBaseError):
 class LimitStatus(str, Enum):
     """涨跌停状态（37号 §3.5.1 五状态）。"""
 
-    LIMIT_UP = "limit_up"        # 涨停：价达涨停价且无卖一（买不进）
-    LIMIT_DOWN = "limit_down"    # 跌停：价达跌停价且无买一（卖不出）
-    NEAR_UP = "near_up"          # 接近涨停：距涨停 <0.5%（即将封板预警）
-    NEAR_DOWN = "near_down"      # 接近跌停：距跌停 <0.5%
-    NORMAL = "normal"            # 正常
+    LIMIT_UP = "limit_up"  # 涨停：价达涨停价且无卖一（买不进）
+    LIMIT_DOWN = "limit_down"  # 跌停：价达跌停价且无买一（卖不出）
+    NEAR_UP = "near_up"  # 接近涨停：距涨停 <0.5%（即将封板预警）
+    NEAR_DOWN = "near_down"  # 接近跌停：距跌停 <0.5%
+    NORMAL = "normal"  # 正常
 
 
 class IPODrainLevel(str, Enum):
     """IPO 流动性抽离分级（37号 §3.2a 四级）。"""
 
-    NEGLIGIBLE = "NEGLIGIBLE"    # 可忽略：drain_ratio < 1%，仓位不变
-    MODERATE = "MODERATE"        # 温和：1%~2%，仓位上限 ×0.90
-    SEVERE = "SEVERE"            # 严重：2%~3%，仓位上限 ×0.75
-    EXTREME = "EXTREME"          # 极端：≥3%，仓位上限 ×0.60
+    NEGLIGIBLE = "NEGLIGIBLE"  # 可忽略：drain_ratio < 1%，仓位不变
+    MODERATE = "MODERATE"  # 温和：1%~2%，仓位上限 ×0.90
+    SEVERE = "SEVERE"  # 严重：2%~3%，仓位上限 ×0.75
+    EXTREME = "EXTREME"  # 极端：≥3%，仓位上限 ×0.60
 
 
 @dataclass(frozen=True)
@@ -259,9 +259,7 @@ class LiquidityCrisisConfig:
     spread_recovery_ratio: float = 0.5
     sell_pressure_recovery: float = 0.50
     recovery_band_multiplier: float = 1.2
-    min_hold_minutes: dict[int, int] = field(
-        default_factory=lambda: {1: 10, 2: 15, 3: 30}
-    )
+    min_hold_minutes: dict[int, int] = field(default_factory=lambda: {1: 10, 2: 15, 3: 30})
     near_limit_band: float = 0.005
     ipo_drain_thresholds: tuple[float, float, float] = (0.01, 0.02, 0.03)
     ipo_cap_adjustments: tuple[float, float, float, float] = (1.0, 0.90, 0.75, 0.60)
@@ -280,21 +278,14 @@ class LiquidityCrisisConfig:
             raise InvalidLiquidityCrisisInputError(
                 f"recovery_band_multiplier must be >=1.0, got {self.recovery_band_multiplier}"
             )
-        if set(self.min_hold_minutes) != {1, 2, 3} or any(
-            v <= 0 for v in self.min_hold_minutes.values()
-        ):
+        if set(self.min_hold_minutes) != {1, 2, 3} or any(v <= 0 for v in self.min_hold_minutes.values()):
             raise InvalidLiquidityCrisisInputError(
-                f"min_hold_minutes must cover levels 1/2/3 with positive minutes, "
-                f"got {self.min_hold_minutes}"
+                f"min_hold_minutes must cover levels 1/2/3 with positive minutes, got {self.min_hold_minutes}"
             )
         if not 0 < self.near_limit_band < 0.05:
-            raise InvalidLiquidityCrisisInputError(
-                f"near_limit_band must be in (0,0.05), got {self.near_limit_band}"
-            )
+            raise InvalidLiquidityCrisisInputError(f"near_limit_band must be in (0,0.05), got {self.near_limit_band}")
         if self.ipo_horizon_days < 1:
-            raise InvalidLiquidityCrisisInputError(
-                f"ipo_horizon_days must be >=1, got {self.ipo_horizon_days}"
-            )
+            raise InvalidLiquidityCrisisInputError(f"ipo_horizon_days must be >=1, got {self.ipo_horizon_days}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -352,9 +343,7 @@ class LiquidityRecoveryState:
     def enter_crisis(self, level: int, timestamp: datetime) -> None:
         """进入/迁移危机级别（记录迁移时刻，重置持续时间计数）。"""
         if level < 1 or level > 3:
-            raise InvalidLiquidityCrisisInputError(
-                f"crisis level must be in {1,2,3}, got {level}"
-            )
+            raise InvalidLiquidityCrisisInputError(f"crisis level must be in {1, 2, 3}, got {level}")
         self.in_crisis = True
         self.level = level
         self.entered_at = timestamp
@@ -362,9 +351,7 @@ class LiquidityRecoveryState:
     def exit_crisis(self, target_level: int, timestamp: datetime) -> None:
         """退出到目标级别（0=正常态清空状态；1/2=降级保留计时锚点）。"""
         if target_level < 0 or target_level >= self.level:
-            raise InvalidLiquidityCrisisInputError(
-                f"target_level must be in [0,{self.level}), got {target_level}"
-            )
+            raise InvalidLiquidityCrisisInputError(f"target_level must be in [0,{self.level}), got {target_level}")
         if target_level == 0:
             self.in_crisis = False
             self.level = 0
@@ -513,9 +500,7 @@ def compute_bid_ask_spread(
     if bid_price <= 0 or ask_price <= 0:
         return None
     if ask_price < bid_price:
-        raise InvalidLiquidityCrisisInputError(
-            f"crossed book: ask {ask_price} < bid {bid_price}"
-        )
+        raise InvalidLiquidityCrisisInputError(f"crossed book: ask {ask_price} < bid {bid_price}")
     mid = (bid_price + ask_price) / 2
     return (ask_price - bid_price) / mid
 
@@ -551,13 +536,10 @@ def detect_limit_status(
     """
     if last_price <= 0 or limit_up_price <= 0 or limit_down_price <= 0:
         raise InvalidLiquidityCrisisInputError(
-            f"prices must be positive: last={last_price} up={limit_up_price} "
-            f"down={limit_down_price}"
+            f"prices must be positive: last={last_price} up={limit_up_price} down={limit_down_price}"
         )
     if limit_up_price <= limit_down_price:
-        raise InvalidLiquidityCrisisInputError(
-            f"limit_up {limit_up_price} must be > limit_down {limit_down_price}"
-        )
+        raise InvalidLiquidityCrisisInputError(f"limit_up {limit_up_price} must be > limit_down {limit_down_price}")
 
     # 1. 涨停判定：最新价达涨停价 + 卖一缺失（无卖单=买不进）
     if abs(last_price - limit_up_price) < tolerance and ask_price is None:
@@ -644,18 +626,14 @@ class RecoveryCheckInput:
 def _validate_recovery_input(inp: RecoveryCheckInput) -> None:
     """校验恢复入参（强制 hysteresis 不对称：恢复阈值 < 触发阈值）。"""
     if inp.current_level not in (1, 2, 3):
-        raise InvalidLiquidityCrisisInputError(
-            f"current_level must be in (1,2,3), got {inp.current_level}"
-        )
+        raise InvalidLiquidityCrisisInputError(f"current_level must be in (1,2,3), got {inp.current_level}")
     if inp.min_hold_minutes <= 0 or inp.elapsed < 0:
         raise InvalidLiquidityCrisisInputError(
-            f"min_hold must be >0 and elapsed >=0, got "
-            f"{inp.min_hold_minutes}/{inp.elapsed}"
+            f"min_hold must be >0 and elapsed >=0, got {inp.min_hold_minutes}/{inp.elapsed}"
         )
     if not 0 < inp.recovery_threshold_spread < inp.trigger_threshold_spread:
         raise InvalidLiquidityCrisisInputError(
-            f"recovery spread {inp.recovery_threshold_spread} must be in "
-            f"(0, trigger {inp.trigger_threshold_spread})"
+            f"recovery spread {inp.recovery_threshold_spread} must be in (0, trigger {inp.trigger_threshold_spread})"
         )
     if not 0 < inp.recovery_threshold_pressure < inp.trigger_threshold_pressure:
         raise InvalidLiquidityCrisisInputError(
@@ -700,19 +678,11 @@ def check_recovery(inp: RecoveryCheckInput) -> int | None:
         # LEVEL_1 → 正常：所有信号归零 + spread/pressure 降至半阈值
         return 0
 
-    if (
-        inp.current_level == 2
-        and inp.active_signals <= 1
-        and inp.current_spread < inp.recovery_threshold_spread * 1.2
-    ):
+    if inp.current_level == 2 and inp.active_signals <= 1 and inp.current_spread < inp.recovery_threshold_spread * 1.2:
         # LEVEL_2 → LEVEL_1：信号降至≤1 + spread < 半阈值×1.2（略宽于正常恢复）
         return 1
 
-    if (
-        inp.current_level == 3
-        and inp.active_signals <= 2
-        and inp.current_spread < inp.recovery_threshold_spread * 1.2
-    ):
+    if inp.current_level == 3 and inp.active_signals <= 2 and inp.current_spread < inp.recovery_threshold_spread * 1.2:
         # LEVEL_3 → LEVEL_2：Kill Switch 冷却期满（min_hold=30 覆盖）+ 信号降至≤2
         return 2
 
@@ -750,9 +720,7 @@ def compute_ipo_liquidity_drain(
     """
     cfg = config or LiquidityCrisisConfig()
     if market_avg_volume_20d <= 0:
-        raise InvalidLiquidityCrisisInputError(
-            f"market_avg_volume_20d must be positive, got {market_avg_volume_20d}"
-        )
+        raise InvalidLiquidityCrisisInputError(f"market_avg_volume_20d must be positive, got {market_avg_volume_20d}")
     ref_today = today or datetime.now(UTC).date()
 
     # 前瞻窗口过滤：今日 ≤ 上市日 ≤ 今日 + horizon（memo 伪代码口径为自然日）
@@ -761,9 +729,7 @@ def compute_ipo_liquidity_drain(
     counted = 0
     for ipo in upcoming_ipos:
         if ipo.raise_amount < 0:
-            raise InvalidLiquidityCrisisInputError(
-                f"raise_amount must be >=0, got {ipo.raise_amount} ({ipo.symbol})"
-            )
+            raise InvalidLiquidityCrisisInputError(f"raise_amount must be >=0, got {ipo.raise_amount} ({ipo.symbol})")
         if ref_today <= ipo.listing_date <= horizon_end:
             total_raise += ipo.raise_amount
             counted += 1
@@ -784,7 +750,10 @@ def compute_ipo_liquidity_drain(
     if drain_level in (IPODrainLevel.SEVERE, IPODrainLevel.EXTREME):
         logger.warning(
             "IPO liquidity drain alert: ratio=%.4f level=%s cap_adj=%.2f ipos=%d",
-            drain_ratio, drain_level.value, cap_adj, counted,
+            drain_ratio,
+            drain_level.value,
+            cap_adj,
+            counted,
         )
 
     return IPOLiquidityDrain(
@@ -884,9 +853,7 @@ def run_intraday_liquidity_check(
                 effective_spread is not None and effective_spread >= trigger_spread
             )
             # 有效价差缺失（如涨停）按 0.0 处理——买压主导侧无危机语义
-            spread_for_recovery = (
-                effective_spread if effective_spread is not None else 0.0
-            )
+            spread_for_recovery = effective_spread if effective_spread is not None else 0.0
             recovery_target = check_recovery(
                 RecoveryCheckInput(
                     current_spread=spread_for_recovery,
@@ -909,7 +876,9 @@ def run_intraday_liquidity_check(
                 position_cap = {0: 1.0, 1: 1.0, 2: 0.70}[recovery_target]
                 logger.info(
                     "Liquidity crisis recovery: symbol=%s L%d→L%d",
-                    snapshot.symbol, prev_level, recovery_target,
+                    snapshot.symbol,
+                    prev_level,
+                    recovery_target,
                 )
 
     return LiquidityLoopResult(

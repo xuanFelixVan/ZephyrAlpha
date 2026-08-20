@@ -54,7 +54,6 @@ class ForensicPackage:
         """写入：events（Stage 4 公共化）。"""
         self._events = value
 
-
     def bundle(self, event: dict) -> str:
         serialized = dumps(event, sort_keys=True)
         h = hashlib.sha256(serialized.encode()).hexdigest()

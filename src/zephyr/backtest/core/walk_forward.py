@@ -77,9 +77,7 @@ class WalkForwardConfig:
         if self.step <= 0:
             raise WalkForwardError(f"step必须>0(防止死循环), got {self.step}")
         if self.mode not in ("rolling", "anchored", "expanding"):
-            raise WalkForwardError(
-                f"不支持的mode: {self.mode} (支持: rolling/anchored/expanding)"
-            )
+            raise WalkForwardError(f"不支持的mode: {self.mode} (支持: rolling/anchored/expanding)")
         if self.block_size < 0:
             raise WalkForwardError(f"block_size必须>=0, got {self.block_size}")
 
@@ -288,9 +286,7 @@ class WalkForwardAnalyzer:
         }
 
     @staticmethod
-    def _stationary_block_bootstrap(
-        data: np.ndarray, block_size: int, rng: np.random.Generator
-    ) -> np.ndarray:
+    def _stationary_block_bootstrap(data: np.ndarray, block_size: int, rng: np.random.Generator) -> np.ndarray:
         """Stationary block bootstrap(Politis & Romano 1994)
 
         块长L ~ Geometric(mean=block_size), 块起始位置均匀随机,

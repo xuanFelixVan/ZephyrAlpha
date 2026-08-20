@@ -15,6 +15,7 @@
 覆盖: STABLE/WARNING/DECAYING/CRITICAL 4级告警、短期/长期均值对比、
        趋势检测、增量更新vs批量评估、样本不足、非有限值校验、配置校验。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -32,10 +33,15 @@ from zephyr.backtest.services.decay_monitor import (
 
 @pytest.fixture
 def monitor() -> DecayMonitor:
-    return DecayMonitor(DecayMonitorConfig(
-        short_window=5, long_window=15, warning_threshold=0.15,
-        critical_threshold=0.30, trend_window=10,
-    ))
+    return DecayMonitor(
+        DecayMonitorConfig(
+            short_window=5,
+            long_window=15,
+            warning_threshold=0.15,
+            critical_threshold=0.30,
+            trend_window=10,
+        )
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -213,11 +219,15 @@ class TestIntegration:
         # 固定种子：噪声 ±0.1 相对基线 1.5 约 6.7%，与 DECAYING 的 trend_magnitude
         # 阈值 5% 接近，未设种子时阶段1 随机趋势可能触发 DECAYING 致 flaky。
         np.random.seed(0)
-        monitor = DecayMonitor(DecayMonitorConfig(
-            short_window=10, long_window=30,
-            warning_threshold=0.15, critical_threshold=0.30,
-            trend_window=20,
-        ))
+        monitor = DecayMonitor(
+            DecayMonitorConfig(
+                short_window=10,
+                long_window=30,
+                warning_threshold=0.15,
+                critical_threshold=0.30,
+                trend_window=20,
+            )
+        )
         # 阶段1: 稳定期 (Sharpe ~1.5)
         for _ in range(30):
             r = monitor.update(1.5 + np.random.uniform(-0.1, 0.1))

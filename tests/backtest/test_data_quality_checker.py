@@ -15,6 +15,7 @@
 覆盖: NaN检测(各字段)、交易日gaps、价格异常、零成交量、异常放量、
        负值、OHLC逻辑违背、前复权连续性、多标的、空DataFrame、输入校验、严重度聚合。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -73,9 +74,7 @@ class TestInputValidation:
             checker.check(df)
 
     def test_empty_dataframe_passes(self, checker: DataQualityChecker):
-        df = pd.DataFrame(
-            columns=["open", "high", "low", "close", "volume"]
-        )
+        df = pd.DataFrame(columns=["open", "high", "low", "close", "volume"])
         report = checker.check(df)
         assert report.passed is True
         assert report.total_bars == 0
@@ -105,27 +104,20 @@ class TestMissingDetection:
         # open NaN = WARN, should not fail
         assert report.passed is True
         assert report.warning_count >= 1
-        assert any(
-            i.rule == "nan_value" and i.message == "open is NaN"
-            for i in report.issues
-        )
+        assert any(i.rule == "nan_value" and i.message == "open is NaN" for i in report.issues)
 
     def test_nan_volume_is_error(self, checker: DataQualityChecker):
         df = _make_clean_df(5)
         df.iloc[0, df.columns.get_loc("volume")] = np.nan
         report = checker.check(df)
         assert report.passed is False
-        assert any(
-            i.rule == "nan_value" and i.message == "volume is NaN"
-            for i in report.issues
-        )
+        assert any(i.rule == "nan_value" and i.message == "volume is NaN" for i in report.issues)
 
     def test_trading_day_gap_detected(self, checker: DataQualityChecker):
         """间隔 > max_gap_days (默认10) 应报 WARN。"""
         dates = pd.to_datetime(["2026-01-05", "2026-01-20"])  # 15天间隔
         df = pd.DataFrame(
-            {"open": [10, 11], "high": [11, 12], "low": [9, 10],
-             "close": [10, 11], "volume": [100, 200]},
+            {"open": [10, 11], "high": [11, 12], "low": [9, 10], "close": [10, 11], "volume": [100, 200]},
             index=dates,
         )
         report = checker.check(df)
@@ -137,8 +129,7 @@ class TestMissingDetection:
         """正常工作日间隔 (3天跨周末) 不应报 gap。"""
         dates = pd.bdate_range("2026-01-05", periods=5)
         df = pd.DataFrame(
-            {"open": [10] * 5, "high": [11] * 5, "low": [9] * 5,
-             "close": [10] * 5, "volume": [100] * 5},
+            {"open": [10] * 5, "high": [11] * 5, "low": [9] * 5, "close": [10] * 5, "volume": [100] * 5},
             index=dates,
         )
         report = checker.check(df)
@@ -156,20 +147,14 @@ class TestAnomalyDetection:
         df.iloc[0, df.columns.get_loc("close")] = -1.0
         report = checker.check(df)
         assert report.passed is False
-        assert any(
-            i.rule == "negative_value" and i.value == -1.0
-            for i in report.issues
-        )
+        assert any(i.rule == "negative_value" and i.value == -1.0 for i in report.issues)
 
     def test_negative_volume_is_error(self, checker: DataQualityChecker):
         df = _make_clean_df(5)
         df.iloc[0, df.columns.get_loc("volume")] = -500
         report = checker.check(df)
         assert report.passed is False
-        assert any(
-            i.rule == "negative_value" and i.message == "volume is negative"
-            for i in report.issues
-        )
+        assert any(i.rule == "negative_value" and i.message == "volume is negative" for i in report.issues)
 
     def test_price_anomaly_detected(self, checker: DataQualityChecker):
         """单日涨跌幅 > 20% 应报 WARN。"""
@@ -251,13 +236,11 @@ class TestMultiSymbol:
         """MultiIndex [symbol, date] 多标的检查。"""
         dates = pd.bdate_range("2026-01-05", periods=5)
         sym_a = pd.DataFrame(
-            {"open": [10] * 5, "high": [11] * 5, "low": [9] * 5,
-             "close": [10] * 5, "volume": [100] * 5},
+            {"open": [10] * 5, "high": [11] * 5, "low": [9] * 5, "close": [10] * 5, "volume": [100] * 5},
             index=dates,
         )
         sym_b = pd.DataFrame(
-            {"open": [20] * 5, "high": [21] * 5, "low": [19] * 5,
-             "close": [20] * 5, "volume": [200] * 5},
+            {"open": [20] * 5, "high": [21] * 5, "low": [19] * 5, "close": [20] * 5, "volume": [200] * 5},
             index=dates,
         )
         # sym_b 引入负值
@@ -271,10 +254,7 @@ class TestMultiSymbol:
         assert report.symbols_checked == 2
         assert report.total_bars == 10
         assert report.passed is False  # BBB 有负值
-        assert any(
-            i.rule == "negative_value" and i.symbol == "BBB"
-            for i in report.issues
-        )
+        assert any(i.rule == "negative_value" and i.symbol == "BBB" for i in report.issues)
 
     def test_single_symbol_uses_default(self, checker: DataQualityChecker):
         df = _make_clean_df(5)
@@ -311,8 +291,8 @@ class TestReportAggregation:
 
     def test_issues_by_severity(self, checker: DataQualityChecker):
         df = _make_clean_df(5)
-        df.iloc[0, df.columns.get_loc("close")] = -1.0       # ERROR
-        df.iloc[1, df.columns.get_loc("open")] = np.nan       # WARN
+        df.iloc[0, df.columns.get_loc("close")] = -1.0  # ERROR
+        df.iloc[1, df.columns.get_loc("open")] = np.nan  # WARN
         report = checker.check(df)
         errors = report.issues_by_severity(Severity.ERROR)
         warns = report.issues_by_severity(Severity.WARN)

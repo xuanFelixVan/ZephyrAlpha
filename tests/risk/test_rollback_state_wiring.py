@@ -121,9 +121,7 @@ def _make_orchestrator(
         tail_risk_monitor=TailRiskMonitor(),
         broker=broker,
         kill_switch_owner=kill_owner,
-        rollback_metrics_provider=(
-            (lambda: dict(metrics_box["data"])) if metrics_box is not None else None
-        ),
+        rollback_metrics_provider=((lambda: dict(metrics_box["data"])) if metrics_box is not None else None),
         state_store=store,
     )
 

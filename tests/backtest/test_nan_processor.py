@@ -15,6 +15,7 @@
 覆盖: 6种填充策略、全NaN行/列删除、高NaN比例删除、fill_limit、
        不修改输入、报告准确性、空DataFrame、非数值列。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -77,70 +78,82 @@ class TestInputValidation:
 
 class TestFillStrategies:
     def test_ffill(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            fill_strategy=FillStrategy.FFILL,
-            drop_all_nan_rows=False,
-            drop_all_nan_cols=False,
-            max_nan_ratio=0,
-        ))
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                fill_strategy=FillStrategy.FFILL,
+                drop_all_nan_rows=False,
+                drop_all_nan_cols=False,
+                max_nan_ratio=0,
+            )
+        )
         df = pd.DataFrame({"a": [1.0, np.nan, 3.0, np.nan, 5.0]})
         result, report = proc.process(df)
         assert result["a"].tolist() == [1.0, 1.0, 3.0, 3.0, 5.0]
         assert report.filled_count == 2
 
     def test_bfill(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            fill_strategy=FillStrategy.BFILL,
-            drop_all_nan_rows=False,
-            drop_all_nan_cols=False,
-            max_nan_ratio=0,
-        ))
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                fill_strategy=FillStrategy.BFILL,
+                drop_all_nan_rows=False,
+                drop_all_nan_cols=False,
+                max_nan_ratio=0,
+            )
+        )
         df = pd.DataFrame({"a": [1.0, np.nan, 3.0, np.nan, 5.0]})
         result, report = proc.process(df)
         assert result["a"].tolist() == [1.0, 3.0, 3.0, 5.0, 5.0]
 
     def test_mean_fill(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            fill_strategy=FillStrategy.MEAN,
-            drop_all_nan_rows=False,
-            drop_all_nan_cols=False,
-            max_nan_ratio=0,
-        ))
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                fill_strategy=FillStrategy.MEAN,
+                drop_all_nan_rows=False,
+                drop_all_nan_cols=False,
+                max_nan_ratio=0,
+            )
+        )
         df = pd.DataFrame({"a": [1.0, np.nan, 3.0, np.nan, 5.0]})
         result, report = proc.process(df)
         # mean of [1,3,5] = 3.0
         assert result["a"].tolist() == [1.0, 3.0, 3.0, 3.0, 5.0]
 
     def test_median_fill(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            fill_strategy=FillStrategy.MEDIAN,
-            drop_all_nan_rows=False,
-            drop_all_nan_cols=False,
-            max_nan_ratio=0,
-        ))
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                fill_strategy=FillStrategy.MEDIAN,
+                drop_all_nan_rows=False,
+                drop_all_nan_cols=False,
+                max_nan_ratio=0,
+            )
+        )
         df = pd.DataFrame({"a": [1.0, np.nan, 3.0, np.nan, 100.0]})
         result, report = proc.process(df)
         # median of [1,3,100] = 3.0
         assert result["a"].tolist() == [1.0, 3.0, 3.0, 3.0, 100.0]
 
     def test_linear_interpolation(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            fill_strategy=FillStrategy.LINEAR,
-            drop_all_nan_rows=False,
-            drop_all_nan_cols=False,
-            max_nan_ratio=0,
-        ))
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                fill_strategy=FillStrategy.LINEAR,
+                drop_all_nan_rows=False,
+                drop_all_nan_cols=False,
+                max_nan_ratio=0,
+            )
+        )
         df = pd.DataFrame({"a": [1.0, np.nan, 3.0, np.nan, 5.0]})
         result, report = proc.process(df)
         assert result["a"].tolist() == [1.0, 2.0, 3.0, 4.0, 5.0]
 
     def test_zero_fill(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            fill_strategy=FillStrategy.ZERO,
-            drop_all_nan_rows=False,
-            drop_all_nan_cols=False,
-            max_nan_ratio=0,
-        ))
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                fill_strategy=FillStrategy.ZERO,
+                drop_all_nan_rows=False,
+                drop_all_nan_cols=False,
+                max_nan_ratio=0,
+            )
+        )
         df = pd.DataFrame({"a": [1.0, np.nan, 3.0]})
         result, report = proc.process(df)
         assert result["a"].tolist() == [1.0, 0.0, 3.0]
@@ -153,62 +166,74 @@ class TestFillStrategies:
 
 class TestCleaning:
     def test_drop_all_nan_rows(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            drop_all_nan_rows=True,
-            drop_all_nan_cols=False,
-            max_nan_ratio=0,
-            fill_strategy=FillStrategy.FFILL,
-        ))
-        df = pd.DataFrame({
-            "a": [1.0, np.nan, 3.0],  # row 1 is all-NaN
-            "b": [4.0, np.nan, 6.0],
-        })
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                drop_all_nan_rows=True,
+                drop_all_nan_cols=False,
+                max_nan_ratio=0,
+                fill_strategy=FillStrategy.FFILL,
+            )
+        )
+        df = pd.DataFrame(
+            {
+                "a": [1.0, np.nan, 3.0],  # row 1 is all-NaN
+                "b": [4.0, np.nan, 6.0],
+            }
+        )
         result, report = proc.process(df)
         assert report.dropped_rows == 1
         assert len(result) == 2
 
     def test_drop_all_nan_cols(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            drop_all_nan_rows=False,
-            drop_all_nan_cols=True,
-            max_nan_ratio=0,
-            fill_strategy=FillStrategy.FFILL,
-        ))
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                drop_all_nan_rows=False,
+                drop_all_nan_cols=True,
+                max_nan_ratio=0,
+                fill_strategy=FillStrategy.FFILL,
+            )
+        )
         df = _make_df_with_nan()
         result, report = proc.process(df)
         assert report.dropped_cols == 1  # column "c"
         assert "c" not in result.columns
 
     def test_max_nan_ratio_drops_high_nan_rows(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            drop_all_nan_rows=False,
-            drop_all_nan_cols=False,
-            max_nan_ratio=0.4,
-            fill_strategy=FillStrategy.FFILL,
-        ))
-        df = pd.DataFrame({
-            "a": [1.0, np.nan, np.nan],  # row 1: 1/2=0.5 > 0.4
-            "b": [4.0, 5.0, np.nan],     # row 2: 1/2=0.5 > 0.4
-        })
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                drop_all_nan_rows=False,
+                drop_all_nan_cols=False,
+                max_nan_ratio=0.4,
+                fill_strategy=FillStrategy.FFILL,
+            )
+        )
+        df = pd.DataFrame(
+            {
+                "a": [1.0, np.nan, np.nan],  # row 1: 1/2=0.5 > 0.4
+                "b": [4.0, 5.0, np.nan],  # row 2: 1/2=0.5 > 0.4
+            }
+        )
         result, report = proc.process(df)
         assert report.dropped_rows == 2
 
     def test_fill_limit(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            fill_strategy=FillStrategy.FFILL,
-            fill_limit=1,
-            drop_all_nan_rows=False,
-            drop_all_nan_cols=False,
-            max_nan_ratio=0,
-        ))
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                fill_strategy=FillStrategy.FFILL,
+                fill_limit=1,
+                drop_all_nan_rows=False,
+                drop_all_nan_cols=False,
+                max_nan_ratio=0,
+            )
+        )
         df = pd.DataFrame({"a": [1.0, np.nan, np.nan, np.nan, 5.0]})
         result, report = proc.process(df)
         # limit=1: only first NaN after 1.0 is filled
         vals = result["a"].tolist()
         assert vals[0] == 1.0
-        assert vals[1] == 1.0       # filled by ffill limit=1
-        assert np.isnan(vals[2])    # not filled (limit reached)
-        assert np.isnan(vals[3])    # not filled
+        assert vals[1] == 1.0  # filled by ffill limit=1
+        assert np.isnan(vals[2])  # not filled (limit reached)
+        assert np.isnan(vals[3])  # not filled
         assert vals[4] == 5.0
 
 
@@ -254,11 +279,13 @@ class TestInvariants:
 
 class TestIntegration:
     def test_full_pipeline_with_realistic_data(self):
-        proc = NaNProcessor(NaNProcessorConfig(
-            fill_strategy=FillStrategy.LINEAR,
-            drop_all_nan_cols=True,
-            max_nan_ratio=0.6,
-        ))
+        proc = NaNProcessor(
+            NaNProcessorConfig(
+                fill_strategy=FillStrategy.LINEAR,
+                drop_all_nan_cols=True,
+                max_nan_ratio=0.6,
+            )
+        )
         dates = pd.date_range("2026-01-05", periods=10)
         df = pd.DataFrame(
             {

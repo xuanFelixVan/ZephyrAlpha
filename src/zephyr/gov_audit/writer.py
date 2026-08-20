@@ -54,14 +54,28 @@ _KNOWN_EVENT_TYPES: frozenset[str] = frozenset(
     getattr(AuditEventType, name).value.lower()
     for name in dir(AuditEventType)
     if name.isupper() and not name.startswith("_")
-) | frozenset({
-    # 运行时事件类型（来自 bridges/executors，尚未登记到 AuditEventType）
-    "rbac_decision", "rollback_discard", "rollback_nexus", "rollback_operation",
-    "drift_hotfix_bypass", "mcp_tool_call", "gate_audit", "skill_loaded",
-    "budget_enforcement", "delegation_create", "chain_cleared", "session_record",
-    "lifecycle_state_change", "feedback_loop_evolution",
-    "generic", "unknown", "file_detail",
-})
+) | frozenset(
+    {
+        # 运行时事件类型（来自 bridges/executors，尚未登记到 AuditEventType）
+        "rbac_decision",
+        "rollback_discard",
+        "rollback_nexus",
+        "rollback_operation",
+        "drift_hotfix_bypass",
+        "mcp_tool_call",
+        "gate_audit",
+        "skill_loaded",
+        "budget_enforcement",
+        "delegation_create",
+        "chain_cleared",
+        "session_record",
+        "lifecycle_state_change",
+        "feedback_loop_evolution",
+        "generic",
+        "unknown",
+        "file_detail",
+    }
+)
 
 # 5.17.1 修复：模块级单例（供 contracts.py 委托桥接使用）
 _GLOBAL_WRITER: "AuditWriter | None" = None
@@ -201,7 +215,6 @@ class AuditWriter:
         """写入：readonly（Stage 4 公共化）。"""
         self._readonly = value
 
-
     @property
     def write_failures(self):
         """只读：write_failures（Stage 4 公共化）。"""
@@ -211,7 +224,6 @@ class AuditWriter:
     def write_failures(self, value):
         """写入：write_failures（Stage 4 公共化）。"""
         self._write_failures = value
-
 
     # ── Stage 4 公共化（2026-07-28）：只读 property ──
     # 消除 tests/audit/test_audit_adversarial.py 中 15 处私有成员访问。
@@ -258,9 +270,7 @@ class AuditWriter:
         lamport_time, lamport_clock_counter, lamport_clock_ide。
         """
         if self._readonly:
-            raise RuntimeError(
-                "AuditWriter is in readonly mode (too many write failures)"
-            )
+            raise RuntimeError("AuditWriter is in readonly mode (too many write failures)")
 
         event_type = event.get("event_type", "generic")
         # 治本（I9 核心模型强制消费）：event_type 白名单规范化——不在 _KNOWN_EVENT_TYPES 中的
@@ -327,9 +337,7 @@ class AuditWriter:
     def write_with_cot(self, event: dict[str, Any], reasoning_trace: str = "") -> dict[str, str]:
         """写入带 CoT 推理链的审计事件。reasoning_trace 截断至 500 字符。"""
         truncated = reasoning_trace[:500] if reasoning_trace else ""
-        cot_hash = (
-            hashlib.sha256(truncated.encode("utf-8")).hexdigest() if truncated else ""
-        )
+        cot_hash = hashlib.sha256(truncated.encode("utf-8")).hexdigest() if truncated else ""
 
         enriched = dict(event)
         enriched["reasoning_trace"] = truncated
@@ -409,9 +417,7 @@ def _resolve_hmac_key(config=None) -> bytes:
     if key:
         return key.encode("utf-8")
     # 兜底默认（测试兼容 + 开发环境可用，生产应设置 env var）
-    logger.warning(
-        "ZEPHYR_AUDIT_HMAC_SECRET 未设置，使用公开默认密钥（不提供任何安全保证，仅限开发/测试）"
-    )
+    logger.warning("ZEPHYR_AUDIT_HMAC_SECRET 未设置，使用公开默认密钥（不提供任何安全保证，仅限开发/测试）")
     return b"zephyr-audit-hmac-default-key"
 
 

@@ -18,6 +18,7 @@
 (相对变化阈值/基准Sharpe≈0跳过)、维度3泛化(占比/CV)、SIM-38样本内外对比
 (0.70否决阈值/IS非正跳过)、detect 综合(任一维度不稳即否决/未提供维度默认稳定)。
 """
+
 from __future__ import annotations
 
 import pytest
@@ -75,25 +76,19 @@ class TestWalkForwardStability:
         assert r["n_folds"] == 0
 
     def test_stable_folds(self):
-        r = OverfittingDetector().check_walk_forward_stability(
-            _wf([0.8, 0.9, 0.7, 0.85])
-        )
+        r = OverfittingDetector().check_walk_forward_stability(_wf([0.8, 0.9, 0.7, 0.85]))
         assert r["is_stable"] is True
         assert r["positive_ratio"] == pytest.approx(1.0)
 
     def test_low_positive_ratio_unstable(self):
         # 正Sharpe占比 2/5=40% < 60%
-        r = OverfittingDetector().check_walk_forward_stability(
-            _wf([0.8, 0.6, -0.1, -0.2, -0.05])
-        )
+        r = OverfittingDetector().check_walk_forward_stability(_wf([0.8, 0.6, -0.1, -0.2, -0.05]))
         assert r["is_stable"] is False
         assert any("占比" in x for x in r["reasons"])
 
     def test_high_cv_unstable(self):
         # mean≈0.1, std大 → CV>1.5
-        r = OverfittingDetector().check_walk_forward_stability(
-            _wf([1.5, -0.8, 0.6, -0.6, 0.8])
-        )
+        r = OverfittingDetector().check_walk_forward_stability(_wf([1.5, -0.8, 0.6, -0.6, 0.8]))
         assert r["is_stable"] is False
         assert any("变异系数" in x for x in r["reasons"])
 
@@ -106,9 +101,7 @@ class TestWalkForwardStability:
 
     def test_sharpe_key_fallback(self):
         # sharpe_ratio 缺失时回退 sharpe 键
-        r = OverfittingDetector().check_walk_forward_stability(
-            [{"sharpe": 0.8}, {"sharpe": 0.9}]
-        )
+        r = OverfittingDetector().check_walk_forward_stability([{"sharpe": 0.8}, {"sharpe": 0.9}])
         assert r["is_stable"] is True
 
     def test_invalid_sharpe_treated_zero(self):
@@ -133,24 +126,18 @@ class TestParameterSensitivity:
         assert r["is_stable"] is True
 
     def test_small_change_stable(self):
-        r = OverfittingDetector().check_parameter_sensitivity(
-            {"sharpe_ratio": 1.0}, _wf([0.95, 1.05, 0.9])
-        )
+        r = OverfittingDetector().check_parameter_sensitivity({"sharpe_ratio": 1.0}, _wf([0.95, 1.05, 0.9]))
         assert r["is_stable"] is True
         assert r["max_change"] == pytest.approx(0.10)
 
     def test_large_change_unstable(self):
         # |0.5-1.0|/1.0=50% > 30%
-        r = OverfittingDetector().check_parameter_sensitivity(
-            {"sharpe_ratio": 1.0}, _wf([0.5])
-        )
+        r = OverfittingDetector().check_parameter_sensitivity({"sharpe_ratio": 1.0}, _wf([0.5]))
         assert r["is_stable"] is False
         assert any("相对变化" in x for x in r["reasons"])
 
     def test_zero_base_sharpe_skips(self):
-        r = OverfittingDetector().check_parameter_sensitivity(
-            {"sharpe_ratio": 0.0}, _wf([0.5, -0.3])
-        )
+        r = OverfittingDetector().check_parameter_sensitivity({"sharpe_ratio": 0.0}, _wf([0.5, -0.3]))
         assert r["is_stable"] is True
         assert any("跳过" in x for x in r["reasons"])
 
@@ -245,8 +232,12 @@ class TestDetect:
     def test_result_keys(self):
         r = OverfittingDetector().detect(is_sharpe=1.0, oos_sharpe=0.9)
         assert set(r) == {
-            "is_overfitting", "oos_is_ratio", "walk_forward_stable",
-            "parameter_stable", "generalization_stable", "reasons",
+            "is_overfitting",
+            "oos_is_ratio",
+            "walk_forward_stable",
+            "parameter_stable",
+            "generalization_stable",
+            "reasons",
         }
 
     def test_gate_error_subclass(self):

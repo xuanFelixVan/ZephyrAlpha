@@ -171,11 +171,10 @@ class TieredStorageManager:
     @staticmethod
     def count_jsonl_lines(path: Path) -> int:
         try:
-            with open(path, encoding='utf-8') as f:
+            with open(path, encoding="utf-8") as f:
                 return sum((1 for line in f if line.strip()))
         except Exception:
             return 0
-
 
     def get_tier(self, timestamp: str | None) -> str:
         if not timestamp:

@@ -76,9 +76,7 @@ class ForcedRestConfig:
 
     def __post_init__(self) -> None:
         if self.rest_trading_days < 1:
-            raise InvalidForcedRestInputError(
-                f"rest_trading_days 须 >= 1, got {self.rest_trading_days}"
-            )
+            raise InvalidForcedRestInputError(f"rest_trading_days 须 >= 1, got {self.rest_trading_days}")
 
 
 class ForcedRestTimer:
@@ -112,11 +110,11 @@ class ForcedRestTimer:
         if self._trigger_date is not None and self._trigger_date != trade_date:
             _logger.warning(
                 "FORCED_REST_RETRIGGER %s -> %s（计时刷新）",
-                self._trigger_date, trade_date,
+                self._trigger_date,
+                trade_date,
             )
         self._trigger_date = trade_date
-        _logger.warning("FORCED_REST_TRIGGERED date=%s rest_days=%d",
-                        trade_date, self._config.rest_trading_days)
+        _logger.warning("FORCED_REST_TRIGGERED date=%s rest_days=%d", trade_date, self._config.rest_trading_days)
 
     def clear(self) -> None:
         """人工清除计时（人工复位完成/根因修复确认后调用，留痕）。"""
@@ -124,16 +122,12 @@ class ForcedRestTimer:
             _logger.info("FORCED_REST_CLEARED date=%s", self._trigger_date)
         self._trigger_date = None
 
-    def _elapsed_rest_days(
-        self, current_date: date, trading_days: Sequence[date]
-    ) -> int:
+    def _elapsed_rest_days(self, current_date: date, trading_days: Sequence[date]) -> int:
         """触发日之后 ≤ current_date 的交易日数（触发日当日不计）。"""
         if self._trigger_date is None:
             raise InvalidForcedRestInputError("未触发（trigger_date 为空）")
         if current_date < self._trigger_date:
-            raise InvalidForcedRestInputError(
-                f"current_date {current_date} 早于触发日 {self._trigger_date}"
-            )
+            raise InvalidForcedRestInputError(f"current_date {current_date} 早于触发日 {self._trigger_date}")
         days = list(trading_days)
         if days != sorted(days):
             raise InvalidForcedRestInputError("trading_days 必须升序")
@@ -143,9 +137,7 @@ class ForcedRestTimer:
         """是否休息中。未触发=False（无休息约束）。"""
         if self._trigger_date is None:
             return False
-        return self._elapsed_rest_days(current_date, trading_days) < (
-            self._config.rest_trading_days
-        )
+        return self._elapsed_rest_days(current_date, trading_days) < (self._config.rest_trading_days)
 
     def remaining_rest_days(self, current_date: date, trading_days: Sequence[date]) -> int:
         """剩余休息交易日数。未触发=0。"""

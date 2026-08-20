@@ -105,9 +105,7 @@ class TestTrigger:
 
     def test_condition1_loss_above_half_var(self) -> None:
         """亏损 1.5% > 0.5×2% (基线 VaR) → 命中。"""
-        inputs = IntradayTriggerInput(
-            opening_nav=1_000_000.0, current_nav=985_000.0, var_baseline_pct=0.02
-        )
+        inputs = IntradayTriggerInput(opening_nav=1_000_000.0, current_nav=985_000.0, var_baseline_pct=0.02)
         trig = _make_ctl(_Clock()).intraday_var_recalc_trigger(inputs)
         assert trig.triggered is True
         assert trig.first_trigger == "loss"
@@ -115,40 +113,30 @@ class TestTrigger:
 
     def test_condition1_boundary_not_triggered(self) -> None:
         """亏损恰好 = 0.5×基线 VaR (1.0%) 不命中 (严格 >)。"""
-        inputs = IntradayTriggerInput(
-            opening_nav=1_000_000.0, current_nav=990_000.0, var_baseline_pct=0.02
-        )
+        inputs = IntradayTriggerInput(opening_nav=1_000_000.0, current_nav=990_000.0, var_baseline_pct=0.02)
         trig = _make_ctl(_Clock()).intraday_var_recalc_trigger(inputs)
         assert trig.triggered is False
 
     def test_condition1_skipped_without_baseline(self) -> None:
         """盘前基线缺失 (§3.19 冷启动) → 条件 1 跳过。"""
-        inputs = IntradayTriggerInput(
-            opening_nav=1_000_000.0, current_nav=900_000.0, var_baseline_pct=None
-        )
+        inputs = IntradayTriggerInput(opening_nav=1_000_000.0, current_nav=900_000.0, var_baseline_pct=None)
         trig = _make_ctl(_Clock()).intraday_var_recalc_trigger(inputs)
         assert trig.triggered is False
 
     def test_condition1_skipped_nonpositive_opening_nav(self) -> None:
-        inputs = IntradayTriggerInput(
-            opening_nav=0.0, current_nav=-1.0, var_baseline_pct=0.02
-        )
+        inputs = IntradayTriggerInput(opening_nav=0.0, current_nav=-1.0, var_baseline_pct=0.02)
         trig = _make_ctl(_Clock()).intraday_var_recalc_trigger(inputs)
         assert trig.triggered is False
 
     def test_condition2_drawdown(self) -> None:
-        inputs = IntradayTriggerInput(
-            opening_nav=1.0, current_nav=1.0, current_drawdown_pct=-0.09
-        )
+        inputs = IntradayTriggerInput(opening_nav=1.0, current_nav=1.0, current_drawdown_pct=-0.09)
         trig = _make_ctl(_Clock()).intraday_var_recalc_trigger(inputs)
         assert trig.triggered is True
         assert trig.first_trigger == "drawdown"
 
     def test_condition2_boundary_not_triggered(self) -> None:
         """回撤恰好 -8% 不命中 (严格 <)。"""
-        inputs = IntradayTriggerInput(
-            opening_nav=1.0, current_nav=1.0, current_drawdown_pct=-0.08
-        )
+        inputs = IntradayTriggerInput(opening_nav=1.0, current_nav=1.0, current_drawdown_pct=-0.08)
         trig = _make_ctl(_Clock()).intraday_var_recalc_trigger(inputs)
         assert trig.triggered is False
 
@@ -287,9 +275,7 @@ class TestRecalc:
             breach_machine=machine,
             clock=clock,
         )
-        result = ctl.intraday_var_recalc(
-            _returns(sigma=0.05, seed=13), 1_000_000.0, now=clock()
-        )
+        result = ctl.intraday_var_recalc(_returns(sigma=0.05, seed=13), 1_000_000.0, now=clock())
         assert result.breach_state == machine.state.value
         assert result.var_95 > 0.02
         assert machine.state.value == "BREACHED"

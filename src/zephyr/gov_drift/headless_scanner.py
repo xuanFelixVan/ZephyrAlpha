@@ -46,6 +46,7 @@ class HeadlessDiffEntry:
 
     sha256: str = ""
 
+
 @dataclass
 class InterruptLog:
     session_id: str
@@ -58,12 +59,12 @@ class InterruptLog:
 
     errors_found: int
 
+
 def _scan_script(script_path: str) -> list[HeadlessDiffEntry]:
     if not os.path.exists(script_path):
         return []
 
     try:
-
         result = run_subprocess_hidden(["python", script_path], capture_output=True, text=True, timeout=30)
 
         if result.returncode != 0:
@@ -94,6 +95,7 @@ def _scan_script(script_path: str) -> list[HeadlessDiffEntry]:
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
 
+
 def headless_scan_light(modules: list[str], project_root: str | None = None) -> ScanResult:
     root = project_root or os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -119,6 +121,7 @@ def headless_scan_light(modules: list[str], project_root: str | None = None) -> 
         resolved_events=[],
         storm_mode_triggered=len(results) > 50,
     )
+
 
 def parse_interrupt_log(log_path: str) -> list[InterruptLog]:
     if not os.path.exists(log_path):

@@ -98,7 +98,6 @@ class AuditTieredStorageBridge:
         """写入：warm_dir（Stage 4 公共化）。"""
         self._warm_dir = value
 
-
     def classify_events(self, events: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
         """按时间将事件分为三层.
 

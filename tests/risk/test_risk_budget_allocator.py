@@ -141,9 +141,7 @@ def test_erc_ccr_sums_to_total_risk():
     alloc = RiskBudgetAllocator()
     cov = np.array([[0.04, 0.01], [0.01, 0.09]])
     result = alloc.equal_risk_contribution(cov, now=T0)
-    assert np.sum(result.risk_contributions) == pytest.approx(
-        result.total_risk, rel=1e-6
-    )
+    assert np.sum(result.risk_contributions) == pytest.approx(result.total_risk, rel=1e-6)
 
 
 def test_erc_contribution_error_small():
@@ -263,8 +261,14 @@ def test_to_dict_contains_all_fields():
     result = alloc.equal_risk_contribution(cov, now=T0)
     d = result.to_dict()
     for key in (
-        "weights", "total_risk", "risk_contributions", "pct_contributions",
-        "target_pct", "contribution_error", "converged", "method",
+        "weights",
+        "total_risk",
+        "risk_contributions",
+        "pct_contributions",
+        "target_pct",
+        "contribution_error",
+        "converged",
+        "method",
     ):
         assert key in d
     assert d["method"] == "erc"

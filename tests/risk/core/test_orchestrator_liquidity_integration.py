@@ -57,8 +57,28 @@ MOCK_LIQUID = _make_ohlcv(
 
 #: 流动性恶化: 高 Amihud（小成交额 + 大价格波动）
 MOCK_ILLIQUID = _make_ohlcv(
-    closes=[10.0, 11.0, 9.5, 10.5, 9.0, 11.5, 9.8, 10.8, 9.2, 11.0,
-            10.0, 11.0, 9.5, 10.5, 9.0, 11.5, 9.8, 10.8, 9.2, 11.0],
+    closes=[
+        10.0,
+        11.0,
+        9.5,
+        10.5,
+        9.0,
+        11.5,
+        9.8,
+        10.8,
+        9.2,
+        11.0,
+        10.0,
+        11.0,
+        9.5,
+        10.5,
+        9.0,
+        11.5,
+        9.8,
+        10.8,
+        9.2,
+        11.0,
+    ],
     volumes=[1e4] * 20,
 )
 
@@ -227,6 +247,7 @@ class TestFullPipeline:
 
         # 1. 事前检查（模拟通过）
         from zephyr.shared.contracts.risk_limits import RiskLimits
+
         limits = RiskLimits(
             as_of_date=datetime.now(UTC),
             idempotency_key="ik-test",

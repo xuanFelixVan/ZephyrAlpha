@@ -88,9 +88,7 @@ class DefaultStopLossEngine(StopLossEngineBase):
         # 空头/零仓求值属上游契约错误——显式拒绝，杜绝"看似支持空头实则方向算反"
         # 的静默误触发（stop 价在 entry 下方配 current>=stop → 入场即熔断）。
         if position_qty <= 0:
-            raise ValueError(
-                f"position_qty 必须 > 0（多头-only 契约，A 股通道禁做空），当前值: {position_qty}"
-            )
+            raise ValueError(f"position_qty 必须 > 0（多头-only 契约，A 股通道禁做空），当前值: {position_qty}")
         check_id = f"sl-{symbol}-{int(datetime.now(UTC).timestamp())}"
         method = rules.get("method", self._rules.method)
 

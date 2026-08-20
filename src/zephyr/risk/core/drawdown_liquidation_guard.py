@@ -128,31 +128,25 @@ def check_cancel_rate(
         CancelRatePrecheck
     """
     if cancelled_count < 0 or total_order_count < 0:
-        raise InvalidLiquidationGuardInputError(
-            f"计数须 >= 0: cancelled={cancelled_count} total={total_order_count}"
-        )
+        raise InvalidLiquidationGuardInputError(f"计数须 >= 0: cancelled={cancelled_count} total={total_order_count}")
     if cancelled_count > total_order_count:
-        raise InvalidLiquidationGuardInputError(
-            f"已撤 {cancelled_count} 不可超过总委托 {total_order_count}"
-        )
+        raise InvalidLiquidationGuardInputError(f"已撤 {cancelled_count} 不可超过总委托 {total_order_count}")
     if not 0 < warn_threshold < hard_limit < 1:
-        raise InvalidLiquidationGuardInputError(
-            f"阈值须满足 0 < warn < hard < 1: {warn_threshold}/{hard_limit}"
-        )
+        raise InvalidLiquidationGuardInputError(f"阈值须满足 0 < warn < hard < 1: {warn_threshold}/{hard_limit}")
     if total_order_count == 0:
         return CancelRatePrecheck(
-            cancel_rate=0.0, warning=False, blocked=False,
-            remaining_cancel_budget=0, reason="当日无委托，无撤单率约束",
+            cancel_rate=0.0,
+            warning=False,
+            blocked=False,
+            remaining_cancel_budget=0,
+            reason="当日无委托，无撤单率约束",
         )
     rate = cancelled_count / total_order_count
     budget = max(0, math.floor(hard_limit * total_order_count) - cancelled_count)
     blocked = rate >= hard_limit or budget <= 0
     warning = rate >= warn_threshold
     if blocked:
-        reason = (
-            f"撤单率 {rate:.1%} 剩余额度 0（红线 {hard_limit:.0%}），禁止继续撤单"
-            "（小额挂单留自然到期，§3.5.1）"
-        )
+        reason = f"撤单率 {rate:.1%} 剩余额度 0（红线 {hard_limit:.0%}），禁止继续撤单（小额挂单留自然到期，§3.5.1）"
         _logger.critical("CANCEL_RATE_BLOCKED rate=%.3f budget=%d", rate, budget)
     elif warning:
         reason = (
@@ -163,8 +157,11 @@ def check_cancel_rate(
     else:
         reason = f"撤单率 {rate:.1%} 正常（预警 {warn_threshold:.0%}）"
     return CancelRatePrecheck(
-        cancel_rate=rate, warning=warning, blocked=blocked,
-        remaining_cancel_budget=0 if blocked else budget, reason=reason,
+        cancel_rate=rate,
+        warning=warning,
+        blocked=blocked,
+        remaining_cancel_budget=0 if blocked else budget,
+        reason=reason,
     )
 
 
@@ -187,16 +184,13 @@ def check_liquidation_timeout(
         LiquidationTimeoutAlert（超时且残余非空）；否则 None
     """
     if timeout_seconds <= 0:
-        raise InvalidLiquidationGuardInputError(
-            f"timeout_seconds 须 > 0, got {timeout_seconds}"
-        )
+        raise InvalidLiquidationGuardInputError(f"timeout_seconds 须 > 0, got {timeout_seconds}")
     elapsed = now_monotonic - started_monotonic
     if elapsed < 0:
-        raise InvalidLiquidationGuardInputError(
-            f"时间对倒置: now({now_monotonic}) < started({started_monotonic})"
-        )
+        raise InvalidLiquidationGuardInputError(f"时间对倒置: now({now_monotonic}) < started({started_monotonic})")
     remaining = tuple(
-        sym for sym, info in remaining_positions.items()
+        sym
+        for sym, info in remaining_positions.items()
         if (info.get("qty", 0) if isinstance(info, Mapping) else info) != 0
     )
     if not remaining or elapsed <= timeout_seconds:
@@ -207,7 +201,9 @@ def check_liquidation_timeout(
     )
     _logger.critical(
         "LIQUIDATION_TIMEOUT elapsed=%.1f timeout=%.0f remaining=%s",
-        elapsed, timeout_seconds, list(remaining),
+        elapsed,
+        timeout_seconds,
+        list(remaining),
     )
     return LiquidationTimeoutAlert(
         elapsed_seconds=elapsed,

@@ -248,7 +248,9 @@ class AiAgentMonitor:
 
         _logger.debug(
             "Emergence detection: state=%s high_corr=%d details=%s",
-            state, high_corr, result,
+            state,
+            high_corr,
+            result,
         )
         return state, high_corr, result
 
@@ -322,11 +324,7 @@ class AiAgentMonitor:
         trajectory_score = min(anomaly_count / 5.0, 1.0)
         fingerprint_score = fp_deviation
 
-        risk_score = (
-            0.4 * emergence_score
-            + 0.3 * trajectory_score
-            + 0.3 * fingerprint_score
-        )
+        risk_score = 0.4 * emergence_score + 0.3 * trajectory_score + 0.3 * fingerprint_score
         is_breached = risk_score > self._risk_threshold or emergence_state == "CRITICAL"
 
         metrics = AiAgentRiskMetrics(
@@ -349,8 +347,7 @@ class AiAgentMonitor:
         )
 
         _logger.info(
-            "AiAgent risk assessed: emergence=%s high_corr=%d anomalies=%d "
-            "fp_dev=%.4f risk=%.4f breached=%s",
+            "AiAgent risk assessed: emergence=%s high_corr=%d anomalies=%d fp_dev=%.4f risk=%.4f breached=%s",
             emergence_state,
             high_corr,
             anomaly_count,

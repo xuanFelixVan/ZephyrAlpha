@@ -74,9 +74,7 @@ class BankruptcyFloorConfig:
 
     def __post_init__(self) -> None:
         if not 0 < self.floor_ratio < 1:
-            raise InvalidBankruptcyFloorInputError(
-                f"floor_ratio 须在 (0,1), got {self.floor_ratio}"
-            )
+            raise InvalidBankruptcyFloorInputError(f"floor_ratio 须在 (0,1), got {self.floor_ratio}")
 
 
 @dataclass(frozen=True)
@@ -114,13 +112,9 @@ def check_bankruptcy_floor(
         BankruptcyFloorBreach（击穿）；未击穿 None
     """
     if initial_capital <= 0 or math.isnan(initial_capital) or math.isinf(initial_capital):
-        raise InvalidBankruptcyFloorInputError(
-            f"initial_capital 须为正, got {initial_capital}"
-        )
+        raise InvalidBankruptcyFloorInputError(f"initial_capital 须为正, got {initial_capital}")
     if current_nav < 0 or math.isnan(current_nav) or math.isinf(current_nav):
-        raise InvalidBankruptcyFloorInputError(
-            f"current_nav 须 >= 0, got {current_nav}"
-        )
+        raise InvalidBankruptcyFloorInputError(f"current_nav 须 >= 0, got {current_nav}")
     cfg = config or BankruptcyFloorConfig()
     floor = initial_capital * cfg.floor_ratio
     if current_nav >= floor:
@@ -133,7 +127,9 @@ def check_bankruptcy_floor(
     )
     _logger.critical(
         "BANKRUPTCY_FLOOR_BREACH nav=%.2f floor=%.2f breach=%.3f",
-        current_nav, floor, breach_pct,
+        current_nav,
+        floor,
+        breach_pct,
     )
     return BankruptcyFloorBreach(
         current_nav=current_nav,

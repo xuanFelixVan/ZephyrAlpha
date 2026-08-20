@@ -202,9 +202,7 @@ class DecisionGate:
         Args:
             config: 决策门控配置,为None时使用默认配置
         """
-        self.config: DecisionGateConfig = (
-            config if config is not None else DecisionGateConfig()
-        )
+        self.config: DecisionGateConfig = config if config is not None else DecisionGateConfig()
 
     def check_is_stage(
         self,
@@ -236,9 +234,7 @@ class DecisionGate:
         except (TypeError, ValueError) as exc:
             raise DecisionGateError(f"sharpe必须是数值: {sharpe!r}") from exc
         if not isinstance(params, dict):
-            raise DecisionGateError(
-                f"params必须是字典: {type(params).__name__}"
-            )
+            raise DecisionGateError(f"params必须是字典: {type(params).__name__}")
 
         reasons: list[str] = []
         # 复制参数,避免外部突变
@@ -247,13 +243,9 @@ class DecisionGate:
         # Sharpe准入门控
         sharpe_passed = sharpe_f > self.config.is_sharpe_threshold
         if sharpe_passed:
-            reasons.append(
-                f"Sharpe准入通过: {sharpe_f:.4f} > {self.config.is_sharpe_threshold}"
-            )
+            reasons.append(f"Sharpe准入通过: {sharpe_f:.4f} > {self.config.is_sharpe_threshold}")
         else:
-            reasons.append(
-                f"Sharpe准入未通过: {sharpe_f:.4f} <= {self.config.is_sharpe_threshold}"
-            )
+            reasons.append(f"Sharpe准入未通过: {sharpe_f:.4f} <= {self.config.is_sharpe_threshold}")
 
         # 参数稳定性门控
         is_plateau_stable = True
@@ -261,9 +253,7 @@ class DecisionGate:
             reasons.append("未提供参数敏感性数据,跳过稳定性门控")
         else:
             if not isinstance(param_sensitivity, dict):
-                raise DecisionGateError(
-                    f"param_sensitivity必须是字典: {type(param_sensitivity).__name__}"
-                )
+                raise DecisionGateError(f"param_sensitivity必须是字典: {type(param_sensitivity).__name__}")
             unstable_params: list[str] = []
             for param_name, scan_points in param_sensitivity.items():
                 if not scan_points:
@@ -274,16 +264,11 @@ class DecisionGate:
                 plateau_info = self.check_stability_plateau(param_name, scan_points)
                 if not plateau_info["is_plateau"] or plateau_info["is_cliff"]:
                     is_plateau_stable = False
-                    unstable_params.append(
-                        f"{param_name}({plateau_info['reason']})"
-                    )
+                    unstable_params.append(f"{param_name}({plateau_info['reason']})")
             if is_plateau_stable:
                 reasons.append("参数稳定性门控通过:所有参数处于稳定高原且非悬崖型")
             else:
-                reasons.append(
-                    "参数稳定性门控未通过:存在不稳定参数 -> "
-                    + "; ".join(unstable_params)
-                )
+                reasons.append("参数稳定性门控未通过:存在不稳定参数 -> " + "; ".join(unstable_params))
 
         passed = sharpe_passed and is_plateau_stable
         return ISStageResult(
@@ -316,9 +301,7 @@ class DecisionGate:
             DecisionGateError: walk_forward_results非列表或窗口结构非法
         """
         if not isinstance(walk_forward_results, list):
-            raise DecisionGateError(
-                f"walk_forward_results必须是列表: {type(walk_forward_results).__name__}"
-            )
+            raise DecisionGateError(f"walk_forward_results必须是列表: {type(walk_forward_results).__name__}")
 
         reasons: list[str] = []
         windows_total = len(walk_forward_results)
@@ -339,9 +322,7 @@ class DecisionGate:
 
         for idx, window in enumerate(walk_forward_results):
             if not isinstance(window, dict):
-                raise DecisionGateError(
-                    f"Walk-Forward窗口{idx}必须是字典: {type(window).__name__}"
-                )
+                raise DecisionGateError(f"Walk-Forward窗口{idx}必须是字典: {type(window).__name__}")
             # 窗口通过判定:优先使用passed字段,否则按sharpe判定
             # P2-2 修正: WFA使用独立的wfa_sharpe_threshold(非IS门槛),
             # 因为WFA关注的是Walk-Forward各fold的相对稳定性, 而非IS绝对准入
@@ -351,9 +332,7 @@ class DecisionGate:
                 try:
                     w_passed = float(window["sharpe"]) > self.config.wfa_sharpe_threshold
                 except (TypeError, ValueError) as exc:
-                    raise DecisionGateError(
-                        f"窗口{idx}的sharpe非数值: {window['sharpe']!r}"
-                    ) from exc
+                    raise DecisionGateError(f"窗口{idx}的sharpe非数值: {window['sharpe']!r}") from exc
             else:
                 w_passed = False
                 reasons.append(f"窗口{idx}缺少passed/sharpe字段,按未通过处理")
@@ -365,9 +344,7 @@ class DecisionGate:
             try:
                 md_abs = abs(float(md_raw))
             except (TypeError, ValueError) as exc:
-                raise DecisionGateError(
-                    f"窗口{idx}的max_drawdown非数值: {md_raw!r}"
-                ) from exc
+                raise DecisionGateError(f"窗口{idx}的max_drawdown非数值: {md_raw!r}") from exc
             if md_abs > self.config.disaster_max_drawdown:
                 has_disaster = True
                 disaster_windows.append(idx)
@@ -380,10 +357,7 @@ class DecisionGate:
             f"(门槛> {self.config.wfa_majority_pct})"
         )
         if has_disaster:
-            reasons.append(
-                f"灾难否决触发:窗口{disaster_windows}最大回撤超过"
-                f"{self.config.disaster_max_drawdown}"
-            )
+            reasons.append(f"灾难否决触发:窗口{disaster_windows}最大回撤超过{self.config.disaster_max_drawdown}")
 
         passed = majority_passed and not has_disaster
         if passed:
@@ -429,9 +403,7 @@ class DecisionGate:
             is_f = float(is_sharpe)
             oos_f = float(oos_sharpe)
         except (TypeError, ValueError) as exc:
-            raise DecisionGateError(
-                f"is_sharpe/oos_sharpe必须是数值: {is_sharpe!r}, {oos_sharpe!r}"
-            ) from exc
+            raise DecisionGateError(f"is_sharpe/oos_sharpe必须是数值: {is_sharpe!r}, {oos_sharpe!r}") from exc
 
         reasons: list[str] = []
 
@@ -444,22 +416,16 @@ class DecisionGate:
         # 样本外Sharpe比率检查
         if is_f <= 0:
             oos_is_ratio = 0.0
-            reasons.append(
-                f"样本内Sharpe={is_f:.4f}<=0,无法满足OOS/IS比率门槛"
-            )
+            reasons.append(f"样本内Sharpe={is_f:.4f}<=0,无法满足OOS/IS比率门槛")
             ratio_passed = False
         else:
             oos_is_ratio = oos_f / is_f
             ratio_passed = oos_is_ratio >= self.config.oos_sharpe_ratio_threshold
             if ratio_passed:
-                reasons.append(
-                    f"OOS/IS Sharpe比率通过: {oos_is_ratio:.4f} >= "
-                    f"{self.config.oos_sharpe_ratio_threshold}"
-                )
+                reasons.append(f"OOS/IS Sharpe比率通过: {oos_is_ratio:.4f} >= {self.config.oos_sharpe_ratio_threshold}")
             else:
                 reasons.append(
-                    f"OOS/IS Sharpe比率未通过: {oos_is_ratio:.4f} < "
-                    f"{self.config.oos_sharpe_ratio_threshold}"
+                    f"OOS/IS Sharpe比率未通过: {oos_is_ratio:.4f} < {self.config.oos_sharpe_ratio_threshold}"
                 )
 
         # DSR可选判定器(52号§7③): 默认关闭(dsr_threshold=None时不参与判定)
@@ -468,10 +434,7 @@ class DecisionGate:
         if self.config.dsr_threshold is not None:
             if dsr is None:
                 dsr_passed = False
-                reasons.append(
-                    f"DSR判定器已启用(阈值{self.config.dsr_threshold})但未注入dsr,"
-                    f"按不通过处理(fail-closed)"
-                )
+                reasons.append(f"DSR判定器已启用(阈值{self.config.dsr_threshold})但未注入dsr,按不通过处理(fail-closed)")
             else:
                 try:
                     dsr_f = float(dsr)
@@ -479,13 +442,9 @@ class DecisionGate:
                     raise DecisionGateError(f"dsr必须是数值: {dsr!r}") from exc
                 dsr_passed = dsr_f >= self.config.dsr_threshold
                 if dsr_passed:
-                    reasons.append(
-                        f"DSR判定通过: {dsr_f:.4f} >= {self.config.dsr_threshold}"
-                    )
+                    reasons.append(f"DSR判定通过: {dsr_f:.4f} >= {self.config.dsr_threshold}")
                 else:
-                    reasons.append(
-                        f"DSR判定未通过: {dsr_f:.4f} < {self.config.dsr_threshold}"
-                    )
+                    reasons.append(f"DSR判定未通过: {dsr_f:.4f} < {self.config.dsr_threshold}")
 
         passed = bool(params_locked) and ratio_passed and dsr_passed
         if passed:
@@ -635,10 +594,7 @@ class DecisionGate:
             DecisionGateError: param_values非列表或元素结构非法
         """
         if not isinstance(param_values, list):
-            raise DecisionGateError(
-                f"参数{param_name}的param_values必须是列表: "
-                f"{type(param_values).__name__}"
-            )
+            raise DecisionGateError(f"参数{param_name}的param_values必须是列表: {type(param_values).__name__}")
         if len(param_values) == 0:
             return {
                 "is_plateau": False,
@@ -667,13 +623,9 @@ class DecisionGate:
         except TypeError:
             sorted_points = list(points)
         # 重新定位center在排序后的位置
-        center_sorted_idx = max(
-            range(len(sorted_points)), key=lambda i: sorted_points[i][1]
-        )
+        center_sorted_idx = max(range(len(sorted_points)), key=lambda i: sorted_points[i][1])
 
-        window_points = self._collect_window_points(
-            sorted_points, center_value, center_sharpe, center_sorted_idx
-        )
+        window_points = self._collect_window_points(sorted_points, center_value, center_sharpe, center_sorted_idx)
 
         # 稳定高原判定:窗口内Sharpe相对变化
         if len(window_points) < 2:
@@ -685,9 +637,7 @@ class DecisionGate:
             }
 
         is_plateau, plateau_detail = self._check_plateau(window_points)
-        is_cliff, cliff_detail = self._check_cliff(
-            sorted_points, center_sorted_idx, center_sharpe
-        )
+        is_cliff, cliff_detail = self._check_cliff(sorted_points, center_sorted_idx, center_sharpe)
 
         # 综合原因
         if is_cliff:
@@ -707,22 +657,16 @@ class DecisionGate:
     # ===== check_stability_plateau() 辅助方法 =====
 
     @staticmethod
-    def _validate_scan_points(
-        param_name: str, param_values: list
-    ) -> list[tuple[Any, float]]:
+    def _validate_scan_points(param_name: str, param_values: list) -> list[tuple[Any, float]]:
         """校验元素结构并转为 (value, float(sharpe)) 列表。"""
         points: list[tuple[Any, float]] = []
         for item in param_values:
             if not (isinstance(item, tuple) and len(item) == 2):
-                raise DecisionGateError(
-                    f"参数{param_name}的扫描点必须是(value, sharpe)二元组: {item!r}"
-                )
+                raise DecisionGateError(f"参数{param_name}的扫描点必须是(value, sharpe)二元组: {item!r}")
             try:
                 points.append((item[0], float(item[1])))
             except (TypeError, ValueError) as exc:
-                raise DecisionGateError(
-                    f"参数{param_name}的sharpe非数值: {item[1]!r}"
-                ) from exc
+                raise DecisionGateError(f"参数{param_name}的sharpe非数值: {item[1]!r}") from exc
         return points
 
     @staticmethod
@@ -738,11 +682,7 @@ class DecisionGate:
             lo = center_value * 0.9
             hi = center_value * 1.1
             for v, s in sorted_points:
-                if (
-                    isinstance(v, (int, float))
-                    and not isinstance(v, bool)
-                    and lo <= v <= hi
-                ):
+                if isinstance(v, (int, float)) and not isinstance(v, bool) and lo <= v <= hi:
                     window_points.append((v, s))
 
         # 窗口内点不足时,回退到center的相邻扫描点
@@ -754,9 +694,7 @@ class DecisionGate:
                 window_points.append(sorted_points[center_sorted_idx + 1])
         return window_points
 
-    def _check_plateau(
-        self, window_points: list[tuple[Any, float]]
-    ) -> tuple[bool, str]:
+    def _check_plateau(self, window_points: list[tuple[Any, float]]) -> tuple[bool, str]:
         """稳定高原判定：窗口内 Sharpe 相对变化是否在容忍度内。"""
         sharpes = [s for _, s in window_points]
         max_s = max(sharpes)
@@ -765,10 +703,7 @@ class DecisionGate:
             return False, "窗口内Sharpe均<=0"
         rel_change = (max_s - min_s) / max_s
         is_plateau = rel_change < self.config.stability_plateau_tolerance
-        detail = (
-            f"窗口内Sharpe相对变化={rel_change:.4f} "
-            f"(容忍度{self.config.stability_plateau_tolerance})"
-        )
+        detail = f"窗口内Sharpe相对变化={rel_change:.4f} (容忍度{self.config.stability_plateau_tolerance})"
         return is_plateau, detail
 
     def _check_cliff(
@@ -788,10 +723,7 @@ class DecisionGate:
                 neighbor_sharpe = sorted_points[neighbor_idx][1]
                 drop = (center_sharpe - neighbor_sharpe) / center_sharpe
                 if drop > self.config.cliff_sharpe_drop:
-                    return True, (
-                        f"相邻参数Sharpe下降{drop:.2%}超过悬崖阈值"
-                        f"{self.config.cliff_sharpe_drop:.0%}"
-                    )
+                    return True, (f"相邻参数Sharpe下降{drop:.2%}超过悬崖阈值{self.config.cliff_sharpe_drop:.0%}")
         return False, ""
 
     def monitor_backtest_live_deviation(
@@ -820,8 +752,7 @@ class DecisionGate:
             lv = float(live_sharpe)
         except (TypeError, ValueError) as exc:
             raise DecisionGateError(
-                f"backtest_sharpe/live_sharpe必须是数值: "
-                f"{backtest_sharpe!r}, {live_sharpe!r}"
+                f"backtest_sharpe/live_sharpe必须是数值: {backtest_sharpe!r}, {live_sharpe!r}"
             ) from exc
         if bt == 0:
             raise DecisionGateError("backtest_sharpe为0,无法计算相对偏差")

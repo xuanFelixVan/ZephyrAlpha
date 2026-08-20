@@ -256,34 +256,21 @@ class FHSConfig:
 
     def __post_init__(self) -> None:
         if not 0 < self.confidence_level < 1:
-            raise InvalidFHSConfigError(
-                f"confidence_level must be in (0,1), got {self.confidence_level}"
-            )
+            raise InvalidFHSConfigError(f"confidence_level must be in (0,1), got {self.confidence_level}")
         if self.holding_period_days < 1:
-            raise InvalidFHSConfigError(
-                f"holding_period_days must be >=1, got {self.holding_period_days}"
-            )
+            raise InvalidFHSConfigError(f"holding_period_days must be >=1, got {self.holding_period_days}")
         if self.min_history < 2:
-            raise InvalidFHSConfigError(
-                f"min_history must be >=2, got {self.min_history}"
-            )
+            raise InvalidFHSConfigError(f"min_history must be >=2, got {self.min_history}")
         if self.garch_min_history < self.min_history:
             raise InvalidFHSConfigError(
-                f"garch_min_history must be >= min_history, got "
-                f"{self.garch_min_history} < {self.min_history}"
+                f"garch_min_history must be >= min_history, got {self.garch_min_history} < {self.min_history}"
             )
         if self.n_simulations < 100:
-            raise InvalidFHSConfigError(
-                f"n_simulations must be >=100, got {self.n_simulations}"
-            )
+            raise InvalidFHSConfigError(f"n_simulations must be >=100, got {self.n_simulations}")
         if not 0.0 <= self.max_nonfinite_ratio < 1.0:
-            raise InvalidFHSConfigError(
-                f"max_nonfinite_ratio must be in [0,1), got {self.max_nonfinite_ratio}"
-            )
+            raise InvalidFHSConfigError(f"max_nonfinite_ratio must be in [0,1), got {self.max_nonfinite_ratio}")
         if self.annualization_factor < 1:
-            raise InvalidFHSConfigError(
-                f"annualization_factor must be >=1, got {self.annualization_factor}"
-            )
+            raise InvalidFHSConfigError(f"annualization_factor must be >=1, got {self.annualization_factor}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -387,9 +374,7 @@ class FHSResult:
             "es_pct": self.es_pct,
             "method_used": self.method_used.value,
             "garch_converged": self.garch_converged,
-            "garch_params": (
-                self.garch_params.to_dict() if self.garch_params is not None else None
-            ),
+            "garch_params": (self.garch_params.to_dict() if self.garch_params is not None else None),
             "historical_var": self.historical_var,
             "historical_es": self.historical_es,
             "fallback_reason": self.fallback_reason,
@@ -461,9 +446,7 @@ class FHSEngine:
         """
         returns, nan_dropped = self._validate_returns(returns)
         if portfolio_value <= 0:
-            raise InvalidFHSConfigError(
-                f"portfolio_value must be positive, got {portfolio_value}"
-            )
+            raise InvalidFHSConfigError(f"portfolio_value must be positive, got {portfolio_value}")
         now = now or datetime.now(timezone.utc)
 
         # HS 对照始终计算 (诊断 + 回退兜底)
@@ -486,10 +469,7 @@ class FHSEngine:
 
         if fallback_reason is not None:
             if not self._config.fallback_to_historical:
-                raise GarchConvergenceError(
-                    f"GARCH(1,1) 拟合不可用: {fallback_reason} "
-                    f"(fallback_to_historical=False)"
-                )
+                raise GarchConvergenceError(f"GARCH(1,1) 拟合不可用: {fallback_reason} (fallback_to_historical=False)")
             logger.warning(
                 "FHS 回退 historical: %s (n=%d, 标记 garch_converged=False)",
                 fallback_reason,
@@ -546,9 +526,7 @@ class FHSEngine:
 
     # ── 内部: GARCH 拟合 ──
 
-    def _try_fit_garch(
-        self, returns: np.ndarray
-    ) -> tuple[GarchParams | None, np.ndarray | None, str | None]:
+    def _try_fit_garch(self, returns: np.ndarray) -> tuple[GarchParams | None, np.ndarray | None, str | None]:
         """尝试 GARCH(1,1) QMLE 拟合, 返回 (params, z_residuals, fail_reason)。
 
         fail_reason 非 None 表示不收敛 (params/z 为 None)。
@@ -557,9 +535,7 @@ class FHSEngine:
         eps = returns - mu
         var0 = float(np.var(eps, ddof=1))
         if not np.isfinite(var0) or var0 <= 0:
-            return None, None, (
-                f"收益方差非正/非有限 (var={var0}), GARCH 无可拟合波动结构"
-            )
+            return None, None, (f"收益方差非正/非有限 (var={var0}), GARCH 无可拟合波动结构")
 
         best: tuple[float, np.ndarray] | None = None  # (neg_loglik, params)
         starts = [
@@ -601,9 +577,7 @@ class FHSEngine:
         )
         return params, z, None
 
-    def _optimize_once(
-        self, eps: np.ndarray, var0: float, x0: np.ndarray
-    ) -> tuple[float, np.ndarray | None]:
+    def _optimize_once(self, eps: np.ndarray, var0: float, x0: np.ndarray) -> tuple[float, np.ndarray | None]:
         """单起点 L-BFGS-B 优化, 返回 (neg_loglik, params|None)。
 
         平稳性约束 alpha+beta<1 经二次罚项执行 (非不等式约束)——
@@ -618,9 +592,7 @@ class FHSEngine:
             sigma2 = self._filter_sigma2(eps, omega, alpha, beta, var0)
             if not np.all(np.isfinite(sigma2)) or np.any(sigma2 <= 0):
                 return 1e12
-            v = float(
-                0.5 * np.sum(np.log(2.0 * np.pi) + np.log(sigma2) + eps**2 / sigma2)
-            )
+            v = float(0.5 * np.sum(np.log(2.0 * np.pi) + np.log(sigma2) + eps**2 / sigma2))
             excess = alpha + beta - self._PERSISTENCE_CAP
             if excess > 0:
                 v += self._PERSISTENCE_PENALTY * excess * excess
@@ -644,9 +616,7 @@ class FHSEngine:
         return nll, res.x
 
     @staticmethod
-    def _filter_sigma2(
-        eps: np.ndarray, omega: float, alpha: float, beta: float, var0: float
-    ) -> np.ndarray:
+    def _filter_sigma2(eps: np.ndarray, omega: float, alpha: float, beta: float, var0: float) -> np.ndarray:
         """GARCH(1,1) 方差滤波: sigma_t^2 = omega + alpha*eps_{t-1}^2 + beta*sigma_{t-1}^2。"""
         n = len(eps)
         sigma2 = np.empty(n, dtype=float)
@@ -657,9 +627,7 @@ class FHSEngine:
 
     # ── 内部: FHS 模拟 ──
 
-    def _simulate_fhs(
-        self, garch: GarchParams, z: np.ndarray, seed: int
-    ) -> np.ndarray:
+    def _simulate_fhs(self, garch: GarchParams, z: np.ndarray, seed: int) -> np.ndarray:
         """残差重采样 + 逐日递归 GARCH 方程, 返回 (n_sims,) 累积收益。
 
         多日 horizon 走递归模拟 (Barone-Adesi 原版 FHS), 非 sqrt(T) 缩放——
@@ -679,9 +647,7 @@ class FHSEngine:
                 sigma2 = garch.omega + garch.alpha * eps_s**2 + garch.beta * sigma2
         return cum - 1.0
 
-    def _var_es_from_simulation(
-        self, simulated: np.ndarray, portfolio_value: float
-    ) -> tuple[float, float]:
+    def _var_es_from_simulation(self, simulated: np.ndarray, portfolio_value: float) -> tuple[float, float]:
         """从模拟累积收益分布取 VaR/ES (method='lower' 口径, 下限 0)。
 
         ES 口径对齐 memo 36 v1.11.0 F1 裁定: 分位数取 method='lower' (实有样本点,
@@ -696,9 +662,7 @@ class FHSEngine:
 
     # ── 内部: HS 对照 ──
 
-    def _historical_benchmark(
-        self, returns: np.ndarray, portfolio_value: float
-    ) -> tuple[float, float]:
+    def _historical_benchmark(self, returns: np.ndarray, portfolio_value: float) -> tuple[float, float]:
         """历史模拟 VaR/ES 对照 (口径对齐 var_calculator._historical + memo ES 'lower')。
 
         VaR = -quantile(r, 1-c)*V*sqrt(T); ES = -mean(r[r <= q_lower])*V*sqrt(T)。
@@ -729,9 +693,7 @@ class FHSEngine:
         """
         arr = np.asarray(returns, dtype=float)
         if arr.ndim != 1:
-            raise InvalidFHSConfigError(
-                f"returns must be 1D, got shape {arr.shape}"
-            )
+            raise InvalidFHSConfigError(f"returns must be 1D, got shape {arr.shape}")
         finite_mask = np.isfinite(arr)
         nan_dropped = int(len(arr) - int(np.count_nonzero(finite_mask)))
         if nan_dropped > 0:
@@ -752,7 +714,5 @@ class FHSEngine:
             )
             arr = arr[finite_mask]
         if len(arr) < self._config.min_history:
-            raise InsufficientFHSHistoryError(
-                f"need >= {self._config.min_history} valid returns, got {len(arr)}"
-            )
+            raise InsufficientFHSHistoryError(f"need >= {self._config.min_history} valid returns, got {len(arr)}")
         return arr, nan_dropped

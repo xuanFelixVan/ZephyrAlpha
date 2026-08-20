@@ -199,9 +199,7 @@ class TestEventDebounce:
 
 class TestExperimentTrackingBridge:
     def test_run_not_found_returns_none(self):
-        result = StrategyDeviationMonitor.load_backtest_returns_from_experiment(
-            "run-nonexistent-mon001"
-        )
+        result = StrategyDeviationMonitor.load_backtest_returns_from_experiment("run-nonexistent-mon001")
         assert result is None
 
     def test_artifact_parsing(self, tmp_path: Path, monkeypatch):
@@ -224,6 +222,4 @@ class TestExperimentTrackingBridge:
         import zephyr.experiment_tracking.query as q
 
         monkeypatch.setattr(q, "get_run", lambda run_id: _FakeDetail())
-        assert (
-            StrategyDeviationMonitor.load_backtest_returns_from_experiment("run-x") is None
-        )
+        assert StrategyDeviationMonitor.load_backtest_returns_from_experiment("run-x") is None

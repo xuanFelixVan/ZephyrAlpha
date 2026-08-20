@@ -103,9 +103,7 @@ def _build_owned_by_map(edges: list[dict[str, object]]) -> dict[str, list[str]]:
     return owned_by_map
 
 
-def _resolve_depgraph_node_dimension(
-    node_id: str, owned_by_map: dict[str, list[str]], script_path: str
-) -> str | None:
+def _resolve_depgraph_node_dimension(node_id: str, owned_by_map: dict[str, list[str]], script_path: str) -> str | None:
     dim = None
     for owner_id in owned_by_map.get(node_id, []):
         for part in owner_id.split("__"):
@@ -283,16 +281,13 @@ class PipelineRunner:
         """公共接口：discover_from_gate_registry（Stage 4 公共化）。"""
         return self._discover_from_gate_registry()
 
-
     def discover_from_depgraph(self) -> dict[str, list[str]]:
         """公共接口：discover_from_depgraph（Stage 4 公共化）。"""
         return self._discover_from_depgraph()
 
-
     def discover_from_manifest(self) -> dict[str, list[str]]:
         """公共接口：discover_from_manifest（Stage 4 公共化）。"""
         return self._discover_from_manifest()
-
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -304,7 +299,6 @@ class PipelineRunner:
     def dimension_scripts(self, value):
         """写入：dimension_scripts（Stage 4 公共化）。"""
         self._dimension_scripts = value
-
 
     def run(self, dimensions: list[str] | None = None, dry_run: bool = False) -> PipelineResult:
         start = time.monotonic()
@@ -467,9 +461,7 @@ class PipelineRunner:
             return {}
         project_root = self._project_root()
         owned_by_map = _build_owned_by_map(data.get("edges", []))
-        mapping = _build_depgraph_script_mapping(
-            data.get("nodes", {}), owned_by_map, project_root
-        )
+        mapping = _build_depgraph_script_mapping(data.get("nodes", {}), owned_by_map, project_root)
         return _filter_underscore_scripts(mapping)
 
     def _discover_from_gate_registry(self) -> dict[str, list[str]]:

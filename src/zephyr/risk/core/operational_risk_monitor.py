@@ -207,9 +207,7 @@ class OperationalRiskMonitor:
         """
         self._failure_rate_threshold = failure_rate_threshold
         self._latency_p95_threshold_ms = latency_p95_threshold_ms
-        self._severe_multiplier = (
-            severe_multiplier if severe_multiplier is not None else _SEVERE_MULTIPLIER
-        )
+        self._severe_multiplier = severe_multiplier if severe_multiplier is not None else _SEVERE_MULTIPLIER
 
     # ── 阈值解释 ──
 
@@ -230,12 +228,8 @@ class OperationalRiskMonitor:
         if stats is None:
             raise InvalidOperationalRiskInputError("OperationalRiskStats is None")
 
-        failure_rate_severe = (
-            stats.failure_rate >= self._severe_multiplier * self._failure_rate_threshold
-        )
-        latency_severe = (
-            stats.latency_p95_ms >= self._severe_multiplier * self._latency_p95_threshold_ms
-        )
+        failure_rate_severe = stats.failure_rate >= self._severe_multiplier * self._failure_rate_threshold
+        latency_severe = stats.latency_p95_ms >= self._severe_multiplier * self._latency_p95_threshold_ms
         failure_rate_breached = stats.failure_rate > self._failure_rate_threshold
         latency_breached = stats.latency_p95_ms > self._latency_p95_threshold_ms
 
@@ -244,11 +238,7 @@ class OperationalRiskMonitor:
         # - 双维度都突破（非 severe）→ HALT（复合风险）
         # - 单维度突破（非 severe）→ warning
         # - 均未突破 → info
-        if (
-            failure_rate_severe
-            or latency_severe
-            or (failure_rate_breached and latency_breached)
-        ):
+        if failure_rate_severe or latency_severe or (failure_rate_breached and latency_breached):
             overall_severity = "HALT"
         elif failure_rate_breached or latency_breached:
             overall_severity = "warning"
@@ -258,9 +248,7 @@ class OperationalRiskMonitor:
         # 人类可读 findings
         findings: list[str] = []
         if stats.submission_count == 0:
-            findings.append(
-                "no submissions in period — insufficient data for failure_rate assessment"
-            )
+            findings.append("no submissions in period — insufficient data for failure_rate assessment")
             _logger.warning(
                 "Operational risk assess: submission_count=0 period=[%s, %s]",
                 stats.period_start.isoformat(),
@@ -304,16 +292,14 @@ class OperationalRiskMonitor:
         )
 
         _logger.info(
-            "Operational risk assessed: failure_rate=%.4f latency_p95=%.2fms "
-            "severity=%s findings=%d",
+            "Operational risk assessed: failure_rate=%.4f latency_p95=%.2fms severity=%s findings=%d",
             stats.failure_rate,
             stats.latency_p95_ms,
             overall_severity,
             len(findings),
         )
         _logger.debug(
-            "Threshold compare: failure_rate %.4f vs %.4f (severe %.4f); "
-            "latency_p95 %.2f vs %.2f (severe %.2f)",
+            "Threshold compare: failure_rate %.4f vs %.4f (severe %.4f); latency_p95 %.2f vs %.2f (severe %.2f)",
             stats.failure_rate,
             self._failure_rate_threshold,
             self._failure_rate_threshold * self._severe_multiplier,

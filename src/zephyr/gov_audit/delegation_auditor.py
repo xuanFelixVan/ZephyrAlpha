@@ -80,56 +80,60 @@ class DelegationChainAuditor:
             if isinstance(item, DelegationNode):
                 nodes.append(item)
             elif isinstance(item, dict):
-                nodes.append(DelegationNode(
-                    agent_id=item.get("agent_id", ""),
-                    permission_level=item.get("permission_level", 0),
-                    delegated_by=item.get("delegated_by", ""),
-                    delegated_at=item.get("delegated_at", ""),
-                    signature=item.get("signature", ""),
-                ))
-            else:
-                raise TypeError(
-                    f"Chain element must be DelegationNode or dict, got {type(item).__name__}"
+                nodes.append(
+                    DelegationNode(
+                        agent_id=item.get("agent_id", ""),
+                        permission_level=item.get("permission_level", 0),
+                        delegated_by=item.get("delegated_by", ""),
+                        delegated_at=item.get("delegated_at", ""),
+                        signature=item.get("signature", ""),
+                    )
                 )
+            else:
+                raise TypeError(f"Chain element must be DelegationNode or dict, got {type(item).__name__}")
         return nodes
 
-    def detect_escalation(
-        self, chain: list
-    ) -> list[tuple[int, EscalationType, str]]:
+    def detect_escalation(self, chain: list) -> list[tuple[int, EscalationType, str]]:
         nodes = self._normalize_chain(chain)
         escalations: list[tuple[int, EscalationType, str]] = []
 
         for i, node in enumerate(nodes):
             if i > 0 and node.permission_level > nodes[i - 1].permission_level:
-                escalations.append((
-                    i,
-                    EscalationType.PRIVILEGE_ESCALATION,
-                    f"Node {i} permission_level={node.permission_level} > "
-                    f"previous={nodes[i-1].permission_level}",
-                ))
+                escalations.append(
+                    (
+                        i,
+                        EscalationType.PRIVILEGE_ESCALATION,
+                        f"Node {i} permission_level={node.permission_level} > previous={nodes[i - 1].permission_level}",
+                    )
+                )
 
             if i >= self.max_depth:
-                escalations.append((
-                    i,
-                    EscalationType.DEPTH_EXCEEDED,
-                    f"Chain depth {i + 1} exceeds max_depth={self.max_depth}",
-                ))
+                escalations.append(
+                    (
+                        i,
+                        EscalationType.DEPTH_EXCEEDED,
+                        f"Chain depth {i + 1} exceeds max_depth={self.max_depth}",
+                    )
+                )
 
             if i > 0:
                 prev = nodes[i - 1]
                 if node.delegated_by and node.delegated_by != prev.agent_id:
-                    escalations.append((
-                        i,
-                        EscalationType.BROKEN_CHAIN,
-                        f"Node {i} delegated_by='{node.delegated_by}' != "
-                        f"previous agent_id='{prev.agent_id}'",
-                    ))
+                    escalations.append(
+                        (
+                            i,
+                            EscalationType.BROKEN_CHAIN,
+                            f"Node {i} delegated_by='{node.delegated_by}' != previous agent_id='{prev.agent_id}'",
+                        )
+                    )
                 if node.agent_id and node.agent_id == node.delegated_by:
-                    escalations.append((
-                        i,
-                        EscalationType.SELF_DELEGATION,
-                        f"Node {i} agent_id='{node.agent_id}' == delegated_by",
-                    ))
+                    escalations.append(
+                        (
+                            i,
+                            EscalationType.SELF_DELEGATION,
+                            f"Node {i} agent_id='{node.agent_id}' == delegated_by",
+                        )
+                    )
 
         return escalations
 
@@ -147,6 +151,7 @@ class DelegationChainAuditor:
 
 
 # --- backward compat: old DelegationAuditor class ---
+
 
 class DelegationAuditor:
     """Legacy delegation auditor -- backward compat."""
@@ -177,32 +182,38 @@ class DelegationAuditor:
             target = event.get("target", "")
 
             if target in visited:
-                findings.append({
-                    "severity": "RED",
-                    "type": "circular_delegation",
-                    "target": target,
-                    "detail": f"Circular delegation detected: {' -> '.join(chain)}",
-                })
+                findings.append(
+                    {
+                        "severity": "RED",
+                        "type": "circular_delegation",
+                        "target": target,
+                        "detail": f"Circular delegation detected: {' -> '.join(chain)}",
+                    }
+                )
 
             visited.add(target)
 
             depth = event.get("depth", 0)
             if depth > MAX_DELEGATION_DEPTH:
-                findings.append({
-                    "severity": "YELLOW",
-                    "type": "depth_overflow",
-                    "target": target,
-                    "depth": depth,
-                    "detail": f"Delegation depth {depth} exceeds max {MAX_DELEGATION_DEPTH}",
-                })
+                findings.append(
+                    {
+                        "severity": "YELLOW",
+                        "type": "depth_overflow",
+                        "target": target,
+                        "depth": depth,
+                        "detail": f"Delegation depth {depth} exceeds max {MAX_DELEGATION_DEPTH}",
+                    }
+                )
 
             if event.get("deadlock", False):
-                findings.append({
-                    "severity": "RED",
-                    "type": "deadlock",
-                    "target": target,
-                    "detail": "Potential deadlock detected in delegation chain",
-                })
+                findings.append(
+                    {
+                        "severity": "RED",
+                        "type": "deadlock",
+                        "target": target,
+                        "detail": "Potential deadlock detected in delegation chain",
+                    }
+                )
                 if self._bridge:
                     self._bridge.report_delegation_failure(target, "deadlock detected")
 

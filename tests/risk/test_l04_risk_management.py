@@ -602,9 +602,7 @@ class _MockBroker:
     def place_order(self, symbol: str, direction: str, qty: float, order_type: str) -> None:
         if symbol in self.place_fail_symbols:
             raise ConnectionError(f"place failed: {symbol}")
-        self.placed_orders.append(
-            {"symbol": symbol, "direction": direction, "qty": qty, "order_type": order_type}
-        )
+        self.placed_orders.append({"symbol": symbol, "direction": direction, "qty": qty, "order_type": order_type})
 
 
 class TestExecuteKillSwitchLiquidation:
@@ -704,9 +702,7 @@ class TestExecuteKillSwitchLiquidation:
     def test_custom_max_orders_per_second(self):
         broker = _MockBroker()
         positions = {f"6000{i:02d}.SH": 100 for i in range(10)}
-        result = execute_kill_switch_liquidation(
-            broker, positions, {}, scope="position", max_orders_per_second=5
-        )
+        result = execute_kill_switch_liquidation(broker, positions, {}, scope="position", max_orders_per_second=5)
         assert result["all_success"] is True
         assert len(result["liquidation_orders"]) == 10
         # 10 个持仓 5 笔/秒 = 2 批，第二批等 1 秒
@@ -836,9 +832,7 @@ class TestDefaultRiskValidatorResetWithConfirmation:
 
         validator = DefaultRiskValidator(kill_switch_active=True)
         assert validator.kill_switch_active is True
-        validator.reset_kill_switch(
-            {"confirmed_by": "admin", "holdings_verified_zero": True}
-        )
+        validator.reset_kill_switch({"confirmed_by": "admin", "holdings_verified_zero": True})
         assert validator.kill_switch_active is False
 
     def test_reset_with_ghost_risk_warning(self):
@@ -846,9 +840,7 @@ class TestDefaultRiskValidatorResetWithConfirmation:
 
         validator = DefaultRiskValidator(kill_switch_active=True)
         # holdings_verified_zero=False 时仍重置，但记录告警日志
-        validator.reset_kill_switch(
-            {"confirmed_by": "admin", "holdings_verified_zero": False}
-        )
+        validator.reset_kill_switch({"confirmed_by": "admin", "holdings_verified_zero": False})
         assert validator.kill_switch_active is False
 
     def test_reset_without_confirmation(self):

@@ -15,6 +15,7 @@
   - provider 异常降级为满部署
   - ShrinkageProvider 协议 structural typing
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -53,11 +54,17 @@ def _make_market_data(symbols=_SYMBOLS, n_days=_N_DAYS, seed=7) -> pd.DataFrame:
         for t in range(n_days):
             ret = 0.001 + rng.normal(0, 0.01)  # 轻微正漂移
             close = close * (1 + ret)
-            rows.append({
-                "symbol": sym, "date": dates[t],
-                "open": close, "high": close * 1.01, "low": close * 0.99,
-                "close": close, "volume": 1_000_000,
-            })
+            rows.append(
+                {
+                    "symbol": sym,
+                    "date": dates[t],
+                    "open": close,
+                    "high": close * 1.01,
+                    "low": close * 0.99,
+                    "close": close,
+                    "volume": 1_000_000,
+                }
+            )
         frames.append(pd.DataFrame(rows))
     df = pd.concat(frames, ignore_index=True).set_index(["symbol", "date"]).sort_index()
     return df
@@ -66,12 +73,11 @@ def _make_market_data(symbols=_SYMBOLS, n_days=_N_DAYS, seed=7) -> pd.DataFrame:
 def _make_signals(data: pd.DataFrame, symbols=_SYMBOLS) -> pd.DataFrame:
     """等权信号（index=date, columns=symbol, 值=1.0 → 归一化后 1/N）。"""
     dates = data.index.get_level_values("date").unique().sort_values()
-    return pd.DataFrame(
-        {sym: 1.0 for sym in symbols}, index=pd.DatetimeIndex(dates, name="date")
-    )
+    return pd.DataFrame({sym: 1.0 for sym in symbols}, index=pd.DatetimeIndex(dates, name="date"))
 
 
 # ── fixtures ──────────────────────────────────────────────────────────
+
 
 @pytest.fixture
 def market_data() -> pd.DataFrame:
@@ -85,6 +91,7 @@ def signals(market_data) -> pd.DataFrame:
 
 # ── 等价性测试 ────────────────────────────────────────────────────────
 
+
 class TestEquivalence:
     """shrinkage=1.0 必须与 DefaultBacktestEngine 完全等价。"""
 
@@ -92,9 +99,7 @@ class TestEquivalence:
         """ConstShrinkageProvider(1.0) 与 DefaultBacktestEngine 指标一致。"""
         cfg = BacktestConfig(initial_capital=__import__("decimal").Decimal("1000000"))
         default_engine = DefaultBacktestEngine(config=cfg)
-        shrink_engine = ShrinkageBacktestEngine(
-            config=cfg, shrinkage_provider=ConstShrinkageProvider(1.0)
-        )
+        shrink_engine = ShrinkageBacktestEngine(config=cfg, shrinkage_provider=ConstShrinkageProvider(1.0))
 
         r_default = default_engine.run(data=market_data, signals=signals, strategy_name="s")
         r_shrink = shrink_engine.run(data=market_data, signals=signals, strategy_name="s")
@@ -117,6 +122,7 @@ class TestEquivalence:
 
 # ── 节流行为测试 ──────────────────────────────────────────────────────
 
+
 class TestThrottling:
     """Shrinkage 缩放仓位，剩余留现金。"""
 
@@ -132,26 +138,20 @@ class TestThrottling:
         full_cash = float(full_engine.last_portfolio.cash)
         half_cash = float(half_engine.last_portfolio.cash)
         # 半仓应保留更多现金
-        assert half_cash > full_cash, (
-            f"半仓现金 {half_cash} 应 > 满仓现金 {full_cash}"
-        )
+        assert half_cash > full_cash, f"半仓现金 {half_cash} 应 > 满仓现金 {full_cash}"
 
         # shrinkage_log 全部 0.5
         assert all(abs(v - 0.5) < 1e-9 for _, v in half_engine.shrinkage_log)
 
     def test_zero_shrinkage_full_cash(self, market_data, signals):
         """shrinkage=0.0 → 全空仓（权重返回空 dict）。"""
-        engine = ShrinkageBacktestEngine(
-            BacktestConfig(), ConstShrinkageProvider(0.0)
-        )
+        engine = ShrinkageBacktestEngine(BacktestConfig(), ConstShrinkageProvider(0.0))
         result = engine.run(data=market_data, signals=signals)
 
         # 无交易
         assert result.trades_count == 0
         # 持仓为空，现金 = 初始资金（扣手续费前；无 fills 故无扣减）
-        assert float(engine.last_portfolio.cash) == float(
-            engine.last_portfolio.initial_capital
-        )
+        assert float(engine.last_portfolio.cash) == float(engine.last_portfolio.initial_capital)
         # shrinkage_log 记录 0.0
         assert all(v == 0.0 for _, v in engine.shrinkage_log)
 
@@ -180,6 +180,7 @@ class TestThrottling:
 
 
 # ── 钳制与不变量 ──────────────────────────────────────────────────────
+
 
 class TestClamping:
     """Shrinkage 钳制到 [0,1]（只减不增）。"""
@@ -221,6 +222,7 @@ class TestClamping:
 
 
 # ── 健壮性 ────────────────────────────────────────────────────────────
+
 
 class TestRobustness:
     """provider 异常降级，不阻断回测。"""
@@ -268,6 +270,7 @@ class TestRobustness:
 
 
 # ── 协议 ──────────────────────────────────────────────────────────────
+
 
 class TestProtocol:
     """ShrinkageProvider 协议 structural typing（runtime_checkable）。"""

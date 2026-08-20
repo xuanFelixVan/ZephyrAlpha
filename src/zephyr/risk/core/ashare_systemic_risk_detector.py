@@ -164,20 +164,20 @@ class InvalidSystemicRiskInputError(ZephyrBaseError):
 class SystemicRiskSignalType(Enum):
     """系统性风险信号类型 (5大信号)。"""
 
-    MARGIN_CALL_CASCADE = "margin_call_cascade"   # 1. 融资盘平仓潮
-    QUANT_STAMPEDE = "quant_stampede"             # 2. 量化踩踏
-    LIQUIDITY_CRISIS = "liquidity_crisis"         # 3. 流动性危机
-    POLICY_SHIFT = "policy_shift"                 # 4. 政策转向
-    EXTERNAL_SHOCK = "external_shock"             # 5. 外围冲击
+    MARGIN_CALL_CASCADE = "margin_call_cascade"  # 1. 融资盘平仓潮
+    QUANT_STAMPEDE = "quant_stampede"  # 2. 量化踩踏
+    LIQUIDITY_CRISIS = "liquidity_crisis"  # 3. 流动性危机
+    POLICY_SHIFT = "policy_shift"  # 4. 政策转向
+    EXTERNAL_SHOCK = "external_shock"  # 5. 外围冲击
 
 
 class SystemicRiskAlertLevel(Enum):
     """系统性风险警报级别 (三级递进)。"""
 
-    NONE = "none"           # 0 信号 → 正常
-    LEVEL_1 = "level_1"     # 1 信号 → 停开仓
-    LEVEL_2 = "level_2"     # 2 信号 → 降仓 30%
-    LEVEL_3 = "level_3"     # ≥3 信号 → 清仓 (Kill Switch 联动)
+    NONE = "none"  # 0 信号 → 正常
+    LEVEL_1 = "level_1"  # 1 信号 → 停开仓
+    LEVEL_2 = "level_2"  # 2 信号 → 降仓 30%
+    LEVEL_3 = "level_3"  # ≥3 信号 → 清仓 (Kill Switch 联动)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -407,25 +407,19 @@ class AshareSystemicRiskDetector:
 
         # 1. 融资盘平仓潮: 融资余额急降 + 跌停股数超阈值 (两者均触发才算)
         if margin_balance_change is not None and limit_down_count is not None:
-            sig = self._check_margin_call_cascade(
-                margin_balance_change, limit_down_count, cfg, now
-            )
+            sig = self._check_margin_call_cascade(margin_balance_change, limit_down_count, cfg, now)
             if sig is not None:
                 signals.append(sig)
 
         # 2. 量化踩踏: 指数快速下跌 + 成交量激增 (两者均触发才算)
         if index_change_pct is not None and volume_surge_ratio is not None:
-            sig = self._check_quant_stampede(
-                index_change_pct, volume_surge_ratio, cfg, now
-            )
+            sig = self._check_quant_stampede(index_change_pct, volume_surge_ratio, cfg, now)
             if sig is not None:
                 signals.append(sig)
 
         # 3. 流动性危机: 卖盘压力 + 买卖价差扩大 (两者均触发才算)
         if sell_pressure is not None and bid_ask_spread is not None:
-            sig = self._check_liquidity_crisis(
-                sell_pressure, bid_ask_spread, cfg, now
-            )
+            sig = self._check_liquidity_crisis(sell_pressure, bid_ask_spread, cfg, now)
             if sig is not None:
                 signals.append(sig)
 
@@ -441,9 +435,7 @@ class AshareSystemicRiskDetector:
 
         # 警报级别判定 (按信号数)
         signal_count = len(signals)
-        alert_level, action, position_cap, kill_switch = self._determine_level(
-            signal_count, cfg
-        )
+        alert_level, action, position_cap, kill_switch = self._determine_level(signal_count, cfg)
 
         # 情绪断路器: 超阈值 → 强制升级至 LEVEL_3
         sentiment_triggered = False
@@ -496,9 +488,7 @@ class AshareSystemicRiskDetector:
             InvalidSystemicRiskInputError: 非 LEVEL_3 不产出逃生指令
         """
         if alert.alert_level is not SystemicRiskAlertLevel.LEVEL_3:
-            raise InvalidSystemicRiskInputError(
-                f"escape directive only for LEVEL_3, got {alert.alert_level.value}"
-            )
+            raise InvalidSystemicRiskInputError(f"escape directive only for LEVEL_3, got {alert.alert_level.value}")
         return {
             "directive": "escape",
             "action": "liquidate_all",
@@ -522,9 +512,7 @@ class AshareSystemicRiskDetector:
     ) -> SystemicRiskSignal | None:
         """1. 融资盘平仓潮: 融资余额急降 + 跌停股数超阈值。"""
         if limit_down_count < 0:
-            raise InvalidSystemicRiskInputError(
-                f"limit_down_count must be >=0, got {limit_down_count}"
-            )
+            raise InvalidSystemicRiskInputError(f"limit_down_count must be >=0, got {limit_down_count}")
         if (
             margin_balance_change <= cfg.margin_balance_drop_threshold
             and limit_down_count >= cfg.limit_down_count_threshold
@@ -551,13 +539,8 @@ class AshareSystemicRiskDetector:
     ) -> SystemicRiskSignal | None:
         """2. 量化踩踏: 指数快速下跌 + 成交量激增。"""
         if volume_surge_ratio < 0:
-            raise InvalidSystemicRiskInputError(
-                f"volume_surge_ratio must be >=0, got {volume_surge_ratio}"
-            )
-        if (
-            index_change_pct <= cfg.index_drop_threshold
-            and volume_surge_ratio >= cfg.volume_surge_ratio_threshold
-        ):
+            raise InvalidSystemicRiskInputError(f"volume_surge_ratio must be >=0, got {volume_surge_ratio}")
+        if index_change_pct <= cfg.index_drop_threshold and volume_surge_ratio >= cfg.volume_surge_ratio_threshold:
             return SystemicRiskSignal(
                 signal_type=SystemicRiskSignalType.QUANT_STAMPEDE,
                 reason=(
@@ -580,17 +563,10 @@ class AshareSystemicRiskDetector:
     ) -> SystemicRiskSignal | None:
         """3. 流动性危机: 卖盘压力 + 买卖价差扩大。"""
         if not 0 <= sell_pressure <= 1:
-            raise InvalidSystemicRiskInputError(
-                f"sell_pressure must be in [0,1], got {sell_pressure}"
-            )
+            raise InvalidSystemicRiskInputError(f"sell_pressure must be in [0,1], got {sell_pressure}")
         if bid_ask_spread < 0:
-            raise InvalidSystemicRiskInputError(
-                f"bid_ask_spread must be >=0, got {bid_ask_spread}"
-            )
-        if (
-            sell_pressure >= cfg.sell_pressure_threshold
-            and bid_ask_spread >= cfg.bid_ask_spread_threshold
-        ):
+            raise InvalidSystemicRiskInputError(f"bid_ask_spread must be >=0, got {bid_ask_spread}")
+        if sell_pressure >= cfg.sell_pressure_threshold and bid_ask_spread >= cfg.bid_ask_spread_threshold:
             return SystemicRiskSignal(
                 signal_type=SystemicRiskSignalType.LIQUIDITY_CRISIS,
                 reason=(
@@ -623,10 +599,7 @@ class AshareSystemicRiskDetector:
         if external_market_change <= cfg.external_market_drop_threshold:
             return SystemicRiskSignal(
                 signal_type=SystemicRiskSignalType.EXTERNAL_SHOCK,
-                reason=(
-                    f"外围市场 {external_market_change:.2%} <= "
-                    f"{cfg.external_market_drop_threshold:.2%}, 外围冲击"
-                ),
+                reason=(f"外围市场 {external_market_change:.2%} <= {cfg.external_market_drop_threshold:.2%}, 外围冲击"),
                 timestamp=now,
                 trigger_value=external_market_change,
                 threshold=cfg.external_market_drop_threshold,

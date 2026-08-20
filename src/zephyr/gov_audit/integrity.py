@@ -118,9 +118,7 @@ class IntegrityVerifier:
 
             hmac_key = resolve_audit_hmac_secret()
         if not hmac_key:
-            _logger.warning(
-                "ZEPHYR_AUDIT_HMAC_SECRET 未设置，HMAC 验证明确降级为跳过（不验证签名）"
-            )
+            _logger.warning("ZEPHYR_AUDIT_HMAC_SECRET 未设置，HMAC 验证明确降级为跳过（不验证签名）")
         self._hmac_key = hmac_key.encode("utf-8") if hmac_key else b""
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
@@ -143,7 +141,6 @@ class IntegrityVerifier:
     def hmac_key(self, value):
         """写入：hmac_key（Stage 4 公共化）。"""
         self._hmac_key = value
-
 
     def verify_chain(self) -> dict[str, Any]:
         if not self._event_log_path.exists():
@@ -172,8 +169,7 @@ class IntegrityVerifier:
                     # 创世哨兵：首条事件允许 "" 或 "0"*64 两种约定
                     if stored_prev not in ("", "0" * 64):
                         issues.append(
-                            f"event #{event_count}: genesis prev_hash must be '' or '0'*64, "
-                            f"got={stored_prev[:16]}..."
+                            f"event #{event_count}: genesis prev_hash must be '' or '0'*64, got={stored_prev[:16]}..."
                         )
                     genesis_seen = True
                 elif stored_prev != prev_hash:
@@ -197,33 +193,22 @@ class IntegrityVerifier:
                 is_production_format = "prev_hash" in event
                 stored_entry_hash = event.get("entry_hash", "")
                 if is_production_format and not stored_entry_hash:
-                    issues.append(
-                        f"event #{event_count}: production event missing entry_hash "
-                        "(possible strip tamper)"
-                    )
+                    issues.append(f"event #{event_count}: production event missing entry_hash (possible strip tamper)")
                 if stored_entry_hash:
                     entry_candidates = [verify_event]
                     if not is_production_format and "prev_entry_hash" in verify_event:
-                        entry_candidates.append(
-                            {k: v for k, v in verify_event.items() if k != "prev_entry_hash"}
-                        )
+                        entry_candidates.append({k: v for k, v in verify_event.items() if k != "prev_entry_hash"})
                     if not any(
                         hmac.compare_digest(
-                            hashlib.sha256(
-                                dumps(c, ensure_ascii=False, sort_keys=True).encode("utf-8")
-                            ).hexdigest(),
+                            hashlib.sha256(dumps(c, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest(),
                             stored_entry_hash,
                         )
                         for c in entry_candidates
                     ):
-                        issues.append(
-                            f"event #{event_count}: entry_hash mismatch "
-                            "(content tampered or hash stripped)"
-                        )
+                        issues.append(f"event #{event_count}: entry_hash mismatch (content tampered or hash stripped)")
                 if is_production_format and self._hmac_key and not event.get("hmac_signature", ""):
                     issues.append(
-                        f"event #{event_count}: production event missing hmac_signature "
-                        "(possible strip tamper)"
+                        f"event #{event_count}: production event missing hmac_signature (possible strip tamper)"
                     )
 
                 if self._hmac_key:
@@ -256,17 +241,13 @@ class IntegrityVerifier:
         # 尝试 writer 生产约定：HMAC over entry_hash 字符串
         entry_hash_str = event.get("entry_hash", "")
         if entry_hash_str:
-            expected_over_hash = hmac.new(
-                self._hmac_key, entry_hash_str.encode("utf-8"), hashlib.sha256
-            ).hexdigest()
+            expected_over_hash = hmac.new(self._hmac_key, entry_hash_str.encode("utf-8"), hashlib.sha256).hexdigest()
             if hmac.compare_digest(expected_over_hash, stored_hmac):
                 return True
         # 回退 legacy 单元约定：HMAC over canonical(event \ {entry_hash, hmac_signature})
         verify_event = {k: v for k, v in event.items() if k not in ("entry_hash", "hmac_signature")}
         canonical_str = dumps(verify_event, ensure_ascii=False, sort_keys=True)
-        expected_over_event = hmac.new(
-            self._hmac_key, canonical_str.encode("utf-8"), hashlib.sha256
-        ).hexdigest()
+        expected_over_event = hmac.new(self._hmac_key, canonical_str.encode("utf-8"), hashlib.sha256).hexdigest()
         return hmac.compare_digest(expected_over_event, stored_hmac)
 
     def verify_single(self, event_index: int) -> dict[str, Any]:
@@ -293,9 +274,7 @@ class IntegrityVerifier:
                     if stored_entry_hash:
                         single_candidates = [verify_event]
                         if not is_production_format and "prev_entry_hash" in verify_event:
-                            single_candidates.append(
-                                {k: v for k, v in verify_event.items() if k != "prev_entry_hash"}
-                            )
+                            single_candidates.append({k: v for k, v in verify_event.items() if k != "prev_entry_hash"})
                         entry_hash_valid = any(
                             hmac.compare_digest(
                                 hashlib.sha256(

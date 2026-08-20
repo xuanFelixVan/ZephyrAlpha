@@ -160,11 +160,11 @@ class InvalidMetricError(ZephyrBaseError):
 class DecayMonitorConfig:
     """衰减监控配置。"""
 
-    short_window: int = 20          # 短期窗口
-    long_window: int = 60           # 长期窗口
+    short_window: int = 20  # 短期窗口
+    long_window: int = 60  # 长期窗口
     warning_threshold: float = 0.15  # 衰减>15% → WARNING
     critical_threshold: float = 0.30  # 衰减>30% → CRITICAL
-    trend_window: int = 30          # 趋势检测窗口
+    trend_window: int = 30  # 趋势检测窗口
 
     def __post_init__(self) -> None:
         if self.short_window <= 0 or self.long_window <= 0:
@@ -173,8 +173,7 @@ class DecayMonitorConfig:
             raise InvalidMetricError("short_window must be < long_window")
         if not 0 < self.warning_threshold < self.critical_threshold <= 1:
             raise InvalidMetricError(
-                f"require 0 < warning({self.warning_threshold}) < "
-                f"critical({self.critical_threshold}) <= 1"
+                f"require 0 < warning({self.warning_threshold}) < critical({self.critical_threshold}) <= 1"
             )
         if self.trend_window <= 0:
             raise InvalidMetricError("trend_window must be > 0")
@@ -192,9 +191,9 @@ class DecayReport:
     level: DecayLevel
     short_term_mean: float
     long_term_mean: float
-    decay_ratio: float       # 正=衰减, 负=改善
-    trend_slope: float       # 线性趋势斜率 (负=下降)
-    samples: int             # 样本数
+    decay_ratio: float  # 正=衰减, 负=改善
+    trend_slope: float  # 线性趋势斜率 (负=下降)
+    samples: int  # 样本数
     message: str
 
     @property
@@ -252,9 +251,7 @@ class DecayMonitor:
             InvalidMetricError: 值非有限 (NaN/Inf)
         """
         if not np.isfinite(metric_value):
-            raise InvalidMetricError(
-                f"metric_value must be finite, got {metric_value}"
-            )
+            raise InvalidMetricError(f"metric_value must be finite, got {metric_value}")
         self._history.append(float(metric_value))
         return self._analyze(np.array(self._history))
 
@@ -299,8 +296,8 @@ class DecayMonitor:
                 message=f"insufficient samples ({n} < {cfg.short_window})",
             )
 
-        short_term = values[-cfg.short_window:]
-        long_term = values[-min(cfg.long_window, n):]
+        short_term = values[-cfg.short_window :]
+        long_term = values[-min(cfg.long_window, n) :]
 
         short_mean = float(np.mean(short_term))
         long_mean = float(np.mean(long_term))
@@ -309,12 +306,10 @@ class DecayMonitor:
         if abs(long_mean) > 1e-10:
             decay_ratio = (long_mean - short_mean) / abs(long_mean)
         else:
-            decay_ratio = 0.0 if abs(short_mean) < 1e-10 else (
-                -1.0 if short_mean > 0 else 1.0
-            )
+            decay_ratio = 0.0 if abs(short_mean) < 1e-10 else (-1.0 if short_mean > 0 else 1.0)
 
         # 趋势斜率 (线性拟合)
-        trend_data = values[-min(cfg.trend_window, n):]
+        trend_data = values[-min(cfg.trend_window, n) :]
         trend_slope = self._compute_slope(trend_data)
 
         # 判定级别

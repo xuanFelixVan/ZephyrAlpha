@@ -116,7 +116,6 @@ class PrivacyGuard:
         """写入：patterns（Stage 4 公共化）。"""
         self._patterns = value
 
-
     def detect_pii(self, text: str) -> PIIScanResult:
         detections: list[PIIDetection] = []
         for category, patterns in self._patterns.items():

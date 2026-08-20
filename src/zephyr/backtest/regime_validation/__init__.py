@@ -12,6 +12,7 @@
 依赖方向: backtest → regime（消费 regime 的 ShrinkageResult），符合
 11_regime_backtest_validation_plan §2.1 "regime 验证复用现有 BM-BT 框架" 的对接约定。
 """
+
 from zephyr.backtest.regime_validation.c1_comparator import (
     C1ComparisonResult,
     C1Config,

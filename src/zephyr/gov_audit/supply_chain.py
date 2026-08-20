@@ -126,7 +126,6 @@ class SupplyChainAuditor:
         """写入：verify_hashes（Stage 4 公共化）。"""
         self._verify_hashes = value
 
-
     def audit_package(
         self,
         package_name: str,

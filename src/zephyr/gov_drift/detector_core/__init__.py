@@ -11,5 +11,12 @@
 Migrated from drift_detection/ to resolve directory boundary with MOD-INF-033.
 """
 
-__all__ = ['benchmark_integrity', 'ml_engineering', 'model_drift_monitor', 'performance_baseline', 'regime_detector']
+from typing import Final
 
+__all__: Final = [
+    "benchmark_integrity",
+    "ml_engineering",
+    "model_drift_monitor",
+    "performance_baseline",
+    "regime_detector",
+]

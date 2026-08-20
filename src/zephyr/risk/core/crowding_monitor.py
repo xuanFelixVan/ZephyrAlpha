@@ -220,9 +220,7 @@ class CrowdingMonitor:
             InvalidCrowdingInputError: 输入为空或策略数 < 2
         """
         if len(strategy_positions) < 2:
-            raise InvalidCrowdingInputError(
-                f"持仓重叠度计算需 ≥2 个策略，实际 {len(strategy_positions)}"
-            )
+            raise InvalidCrowdingInputError(f"持仓重叠度计算需 ≥2 个策略，实际 {len(strategy_positions)}")
 
         # 收集所有标的
         all_symbols: set[str] = set()
@@ -236,15 +234,14 @@ class CrowdingMonitor:
         sum_max = 0.0
 
         for symbol in all_symbols:
-            weights = [
-                strategy_positions[s].get(symbol, 0.0)
-                for s in strategy_positions
-            ]
+            weights = [strategy_positions[s].get(symbol, 0.0) for s in strategy_positions]
             sum_min += min(weights)
             sum_max += max(weights)
             _logger.debug(
                 "Overlap symbol=%s min=%.4f max=%.4f",
-                symbol, min(weights), max(weights),
+                symbol,
+                min(weights),
+                max(weights),
             )
 
         if sum_max == 0:
@@ -278,14 +275,14 @@ class CrowdingMonitor:
             raise InvalidCrowdingInputError("因子暴露字典为空")
 
         n = len(factor_exposures)
-        sign_sum = sum(
-            self._sign(v) for v in factor_exposures.values()
-        )
+        sign_sum = sum(self._sign(v) for v in factor_exposures.values())
         consensus = abs(sign_sum) / n
 
         _logger.debug(
             "Direction consensus: n=%d sign_sum=%d consensus=%.4f",
-            n, sign_sum, consensus,
+            n,
+            sign_sum,
+            consensus,
         )
         return float(consensus)
 
@@ -311,8 +308,7 @@ class CrowdingMonitor:
 
         if n_strategies < 2:
             _logger.warning(
-                "Crowding assessment skipped (insufficient strategies): "
-                "factor=%s n_strategies=%d",
+                "Crowding assessment skipped (insufficient strategies): factor=%s n_strategies=%d",
                 factor_name,
                 n_strategies,
             )
@@ -351,8 +347,7 @@ class CrowdingMonitor:
         )
 
         _logger.info(
-            "Crowding assessed: factor=%s overlap=%.4f consensus=%.4f "
-            "crowding=%.4f is_crowded=%s n_strategies=%d",
+            "Crowding assessed: factor=%s overlap=%.4f consensus=%.4f crowding=%.4f is_crowded=%s n_strategies=%d",
             factor_name,
             overlap,
             consensus,
@@ -392,13 +387,15 @@ class CrowdingMonitor:
             except InvalidCrowdingInputError as exc:
                 _logger.warning(
                     "Batch assess skipped: factor=%s error=%s",
-                    factor_name, exc,
+                    factor_name,
+                    exc,
                 )
 
         crowded_count = sum(1 for m in results if m.is_crowded)
         _logger.info(
             "Batch crowding assess complete: total=%d crowded=%d",
-            len(results), crowded_count,
+            len(results),
+            crowded_count,
         )
         return results
 

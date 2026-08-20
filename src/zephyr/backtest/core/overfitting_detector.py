@@ -108,17 +108,11 @@ class OverfittingConfig:
 
     def __post_init__(self):
         if not (0.0 < self.parameter_perturbation_pct <= 1.0):
-            raise OverfittingError(
-                f"parameter_perturbation_pct必须在(0, 1], got {self.parameter_perturbation_pct}"
-            )
+            raise OverfittingError(f"parameter_perturbation_pct必须在(0, 1], got {self.parameter_perturbation_pct}")
         if not (0.0 <= self.oos_sharpe_threshold_ratio <= 1.0):
-            raise OverfittingError(
-                f"oos_sharpe_threshold_ratio必须在[0, 1], got {self.oos_sharpe_threshold_ratio}"
-            )
+            raise OverfittingError(f"oos_sharpe_threshold_ratio必须在[0, 1], got {self.oos_sharpe_threshold_ratio}")
         if self.cross_validation_folds <= 0:
-            raise OverfittingError(
-                f"cross_validation_folds必须>0, got {self.cross_validation_folds}"
-            )
+            raise OverfittingError(f"cross_validation_folds必须>0, got {self.cross_validation_folds}")
 
 
 class OverfittingDetector:
@@ -167,8 +161,7 @@ class OverfittingDetector:
             }
 
         sharpes = np.array(
-            [self._extract_sharpe(r)
-             for r in walk_forward_results],
+            [self._extract_sharpe(r) for r in walk_forward_results],
             dtype=float,
         )
         n = len(sharpes)
@@ -190,14 +183,10 @@ class OverfittingDetector:
             )
         if std_sharpe > 0 and cv > WF_CV_THRESHOLD:
             is_stable = False
-            reasons.append(
-                f"Walk-Forward Sharpe变异系数{cv:.2f}超过阈值{WF_CV_THRESHOLD:.2f}"
-            )
+            reasons.append(f"Walk-Forward Sharpe变异系数{cv:.2f}超过阈值{WF_CV_THRESHOLD:.2f}")
         if min_sharpe < WF_DISASTER_SHARPE:
             is_stable = False
-            reasons.append(
-                f"Walk-Forward存在灾难fold(最低Sharpe={min_sharpe:.2f}<{WF_DISASTER_SHARPE:.2f})"
-            )
+            reasons.append(f"Walk-Forward存在灾难fold(最低Sharpe={min_sharpe:.2f}<{WF_DISASTER_SHARPE:.2f})")
 
         return {
             "is_stable": bool(is_stable),
@@ -210,9 +199,7 @@ class OverfittingDetector:
             "reasons": reasons,
         }
 
-    def check_parameter_sensitivity(
-        self, base_result: dict, perturbed_results: list[dict]
-    ) -> dict:
+    def check_parameter_sensitivity(self, base_result: dict, perturbed_results: list[dict]) -> dict:
         """参数敏感性检测(维度2)
 
         参数微调±parameter_perturbation_pct后, 检查Sharpe相对变化幅度。
@@ -237,8 +224,7 @@ class OverfittingDetector:
             }
 
         perturbed_sharpes = np.array(
-            [self._extract_sharpe(r)
-             for r in perturbed_results],
+            [self._extract_sharpe(r) for r in perturbed_results],
             dtype=float,
         )
         reasons: list[str] = []
@@ -293,8 +279,7 @@ class OverfittingDetector:
             }
 
         sharpes = np.array(
-            [self._extract_sharpe(r)
-             for r in period_results],
+            [self._extract_sharpe(r) for r in period_results],
             dtype=float,
         )
         n = len(sharpes)
@@ -310,14 +295,10 @@ class OverfittingDetector:
         is_stable = True
         if positive_ratio < GEN_POSITIVE_RATIO_THRESHOLD:
             is_stable = False
-            reasons.append(
-                f"跨时段正Sharpe占比{positive_ratio:.2%}低于阈值{GEN_POSITIVE_RATIO_THRESHOLD:.2%}"
-            )
+            reasons.append(f"跨时段正Sharpe占比{positive_ratio:.2%}低于阈值{GEN_POSITIVE_RATIO_THRESHOLD:.2%}")
         if std_sharpe > 0 and cv > GEN_CV_THRESHOLD:
             is_stable = False
-            reasons.append(
-                f"跨时段Sharpe变异系数{cv:.2f}超过阈值{GEN_CV_THRESHOLD:.2f}"
-            )
+            reasons.append(f"跨时段Sharpe变异系数{cv:.2f}超过阈值{GEN_CV_THRESHOLD:.2f}")
 
         return {
             "is_stable": bool(is_stable),
@@ -427,10 +408,7 @@ class OverfittingDetector:
             reasons.append(io["reason"])
 
         is_overfitting = (
-            (not walk_forward_stable)
-            or (not parameter_stable)
-            or (not generalization_stable)
-            or io["is_overfitting"]
+            (not walk_forward_stable) or (not parameter_stable) or (not generalization_stable) or io["is_overfitting"]
         )
 
         return {

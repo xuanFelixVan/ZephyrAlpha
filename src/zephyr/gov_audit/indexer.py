@@ -80,18 +80,11 @@ CREATE TABLE IF NOT EXISTS audit_events (
 # 注意：不能用 : Final[str] 类型注解——_extract_sql_constant_lines 只识别
 # ast.Assign 节点，AnnAssign 不被豁免会触发 gate 误报。用普通赋值。
 _SQL_INSERT_EVENT = (
-    f"INSERT OR IGNORE INTO audit_events ({','.join(_EVENT_COLUMNS)}) "
-    f"VALUES ({','.join('?' for _ in _EVENT_COLUMNS)})"
+    f"INSERT OR IGNORE INTO audit_events ({','.join(_EVENT_COLUMNS)}) VALUES ({','.join('?' for _ in _EVENT_COLUMNS)})"
 )
 _SQL_COUNT_TOTAL = "SELECT COUNT(*) FROM audit_events"
-_SQL_BY_TYPE = (
-    "SELECT event_type, COUNT(*) FROM audit_events "
-    "WHERE event_type IS NOT NULL GROUP BY event_type"
-)
-_SQL_BY_AGENT = (
-    "SELECT agent_id, COUNT(*) FROM audit_events "
-    "WHERE agent_id IS NOT NULL GROUP BY agent_id"
-)
+_SQL_BY_TYPE = "SELECT event_type, COUNT(*) FROM audit_events WHERE event_type IS NOT NULL GROUP BY event_type"
+_SQL_BY_AGENT = "SELECT agent_id, COUNT(*) FROM audit_events WHERE agent_id IS NOT NULL GROUP BY agent_id"
 
 
 @dataclass
@@ -167,7 +160,6 @@ class AuditIndexer(AuditIndexerABC):
         """写入：events_path（Stage 4 公共化）。"""
         self._events_path = value
 
-
     # ------------------------------------------------------------------
     # 新 API（裁定#18 G5）：rebuild + query_stats
     # ------------------------------------------------------------------
@@ -219,9 +211,7 @@ class AuditIndexer(AuditIndexerABC):
             for ev in events:
                 entry_id = ev.get("entry_id")
                 if not entry_id:
-                    result.errors.append(
-                        f"Missing entry_id in event: {ev.get('event_type', '?')}"
-                    )
+                    result.errors.append(f"Missing entry_id in event: {ev.get('event_type', '?')}")
                     continue
                 values = tuple(ev.get(col) for col in _EVENT_COLUMNS)
                 cur = conn.execute(_SQL_INSERT_EVENT, values)
@@ -253,14 +243,8 @@ class AuditIndexer(AuditIndexerABC):
             return empty
         try:
             total = conn.execute(_SQL_COUNT_TOTAL).fetchone()[0]
-            by_type = {
-                row[0]: row[1]
-                for row in conn.execute(_SQL_BY_TYPE)
-            }
-            by_agent = {
-                row[0]: row[1]
-                for row in conn.execute(_SQL_BY_AGENT)
-            }
+            by_type = {row[0]: row[1] for row in conn.execute(_SQL_BY_TYPE)}
+            by_agent = {row[0]: row[1] for row in conn.execute(_SQL_BY_AGENT)}
             return {"total": total, "by_event_type": by_type, "by_agent": by_agent}
         except sqlite3.Error:
             return empty

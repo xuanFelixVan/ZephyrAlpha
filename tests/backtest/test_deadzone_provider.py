@@ -16,6 +16,7 @@
   - 满足 ShrinkageProvider 协议
   - 包装 ScheduleShrinkageProvider 端到端
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta
@@ -49,7 +50,7 @@ class TestDeadzoneCore:
         schedule = {_dt(0): 0.80, _dt(1): 0.805}  # Δ=0.005 < 0.02
         inner = ScheduleShrinkageProvider(schedule)
         dz = DeadzoneShrinkageProvider(inner, deadzone=0.02)
-        first = dz.get_shrinkage(_dt(0))   # 0.80
+        first = dz.get_shrinkage(_dt(0))  # 0.80
         second = dz.get_shrinkage(_dt(1))  # raw=0.805, Δ=0.005<0.02 → 保持 0.80
         assert first == pytest.approx(0.80)
         assert second == pytest.approx(0.80)  # 被过滤
@@ -59,7 +60,7 @@ class TestDeadzoneCore:
         schedule = {_dt(0): 0.80, _dt(1): 0.60}  # Δ=0.20 >= 0.02
         inner = ScheduleShrinkageProvider(schedule)
         dz = DeadzoneShrinkageProvider(inner, deadzone=0.02)
-        first = dz.get_shrinkage(_dt(0))   # 0.80
+        first = dz.get_shrinkage(_dt(0))  # 0.80
         second = dz.get_shrinkage(_dt(1))  # raw=0.60, Δ=0.20>=0.02 → 更新
         assert first == pytest.approx(0.80)
         assert second == pytest.approx(0.60)
@@ -123,22 +124,22 @@ class TestDeadzoneProtocol:
         """包装 ScheduleShrinkageProvider 端到端：危机期调整保留，平稳期微抖过滤。"""
         # 模拟真实序列：平稳期微抖 + 危机期大跌
         schedule = {
-            _dt(0): 0.95,   # 平稳
+            _dt(0): 0.95,  # 平稳
             _dt(1): 0.948,  # 微抖 Δ0.002 → 过滤
             _dt(2): 0.951,  # 微抖 Δ0.003 → 过滤
-            _dt(3): 0.60,   # 危机 Δ0.35 → 更新
-            _dt(4): 0.59,   # 危机微抖 Δ0.01 → 过滤
-            _dt(5): 0.90,   # 回升 Δ0.31 → 更新
+            _dt(3): 0.60,  # 危机 Δ0.35 → 更新
+            _dt(4): 0.59,  # 危机微抖 Δ0.01 → 过滤
+            _dt(5): 0.90,  # 回升 Δ0.31 → 更新
         }
         inner = ScheduleShrinkageProvider(schedule)
         dz = DeadzoneShrinkageProvider(inner, deadzone=0.02)
         results = [dz.get_shrinkage(_dt(i)) for i in range(6)]
         assert results[0] == pytest.approx(0.95)
-        assert results[1] == pytest.approx(0.95)   # 微抖过滤
-        assert results[2] == pytest.approx(0.95)   # 微抖过滤
-        assert results[3] == pytest.approx(0.60)   # 危机更新
-        assert results[4] == pytest.approx(0.60)   # 危机微抖过滤
-        assert results[5] == pytest.approx(0.90)   # 回升更新
+        assert results[1] == pytest.approx(0.95)  # 微抖过滤
+        assert results[2] == pytest.approx(0.95)  # 微抖过滤
+        assert results[3] == pytest.approx(0.60)  # 危机更新
+        assert results[4] == pytest.approx(0.60)  # 危机微抖过滤
+        assert results[5] == pytest.approx(0.90)  # 回升更新
 
     def test_properties(self):
         """deadzone / inner 属性可读。"""
