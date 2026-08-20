@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_sor/services/slippage_analyzer.py
 title: "滑点分析器蓝图 — 多基准滑点计算+三因子归因+平方根冲击预测"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -192,7 +192,7 @@ class SlippageAnalyzer:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-EX_SOR_EXT-001` 的 4 个 file 节点 | production | `extract_depgraph.py --modules MOD-EX_SOR_EXT-001` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -220,7 +220,9 @@ class SlippageAnalyzer:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/ex_sor/test_execution_route_policy.py` | ✅ 已实现 | |
 | `tests/ex_sor/test_slippage_analyzer.py` | ✅ 已实现 | |
+| `tests/ex_sor/test_t0_cost_model.py` | ✅ 已实现 | |
 
 ### 13.5 路径索引使用指南
 
@@ -235,3 +237,5 @@ class SlippageAnalyzer:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

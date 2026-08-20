@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """E3 参数敏感性 ±20% 网格分析单元测试（11_regime_backtest_validation_plan §4.4/§4.5 E3）."""
 

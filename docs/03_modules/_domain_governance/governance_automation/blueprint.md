@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.5.10
+version: 5.5.11
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
@@ -1468,9 +1468,12 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 | `tests/git/test_lock_release_uncommitted.py` | ✅ 已实现 | |
 | `tests/git/test_reconciler_verify_autosync.py` | ✅ 已实现 | |
 | `tests/governance/code_quality/test_check_frontmatter_metadata.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_add_module_translation.py` | ✅ 已实现 | |
 | `tests/governance/d3_metadata/test_check_naming_check_new.py` | ✅ 已实现 | |
 | `tests/governance/d3_metadata/test_check_naming_display_dichotomy.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_check_pure_assertion.py` | ✅ 已实现 | |
 | `tests/governance/d3_metadata/test_domain_header_maint.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_n16_skip_working.py` | ✅ 已实现 | |
 | `tests/governance/governance_e2e/test_naming_e2e.py` | ✅ 已实现 | |
 | `tests/governance/governance_e2e/test_validate_rule_frontmatter_red_blue.py` | ✅ 已实现 | |
 | `tests/governance/rule_bridge/test_session_worktree_cli.py` | ✅ 已实现 | |

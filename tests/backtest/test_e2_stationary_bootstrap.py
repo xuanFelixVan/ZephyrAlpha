@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """E2 stationary bootstrap 单元测试（11_regime_backtest_validation_plan §0.6.3/§4.3 C4）."""
 

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """C2 极端事件回撤保护分析单元测试（11_regime_backtest_validation_plan §4.3 C2/§5）."""
 

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-RK-13 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_liquidity_stress_exit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.risk.core.test_liquidity_stress_exit
 # [TESTS] src/zephyr/risk/core/liquidity_monitor.py（90 号 Phase2 扩展段）

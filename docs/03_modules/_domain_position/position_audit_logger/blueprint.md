@@ -3,7 +3,7 @@ module_id: MOD-POS-009
 title: "仓位审计记录器蓝图 — 全记录+哈希链+可追溯"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -285,7 +285,7 @@ logger.log_position_sized(plan)
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-POS-009` 的 13 个 file 节点 | production | `extract_depgraph.py --modules MOD-POS-009` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -314,8 +314,12 @@ logger.log_position_sized(plan)
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/position/test_budget_change_handler.py` | ✅ 已实现 | |
+| `tests/position/test_capital_curve_manager.py` | ✅ 已实现 | |
+| `tests/position/test_cash_manager.py` | ✅ 已实现 | |
 | `tests/position/test_firm_risk_aggregator.py` | ✅ 已实现 | |
+| `tests/position/test_position_limit_enforcer.py` | ✅ 已实现 | |
 | `tests/position/test_position_state_machine.py` | ✅ 已实现 | |
+| `tests/position/test_rebalance_engine.py` | ✅ 已实现 | |
 | `tests/position/test_sell_position_link.py` | ✅ 已实现 | |
 | `tests/position/test_single_name_cap_caliber.py` | ✅ 已实现 | |
 | `tests/position/test_strategy_book.py` | ✅ 已实现 | |

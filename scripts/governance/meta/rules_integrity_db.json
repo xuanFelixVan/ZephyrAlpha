@@ -36,22 +36,22 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "1ca56dc8fd3a4320",
+      "hash": "85163ecbdf6880b3",
       "critical": true,
       "desc": "脚本注册表"
     },
     "scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py": {
-      "hash": "efd451c5b41b1dc5",
+      "hash": "77ba2aebf7d25077",
       "critical": true,
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "30ad855c4eea1e32",
+      "hash": "99ee70d76a8870fa",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "33df2ffe35db7095",
+      "hash": "f1cbebc3b1cc96a1",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,36 +61,36 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "9400abadebcc3e51",
+      "hash": "f261594a1e7b8b23",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py": {
-      "hash": "d9737a38fcf4df58",
+      "hash": "b16b05aae2b4fe26",
       "critical": true,
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     },
     "scripts/governance/_shared/code_algorithm_extractor.py": {
-      "hash": "981560b54b1a148f",
+      "hash": "9eabe8d0cc125442",
       "critical": true,
       "desc": "ALGO_FLOW 标记解析器（parse_algo_flow/_strip_algo_flow_block，§4.16 全景图推导真源）"
     },
     "scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py": {
-      "hash": "bfa220becd04349f",
+      "hash": "48b9c50c7d726375",
       "critical": true,
       "desc": "算法全景图生成器（render_algo_flow_mermaid/_render_module_card_with_flow，Mermaid 推导流程图）"
     },
     "tests/governance/generators/test_generate_module_algorithm_overview.py": {
-      "hash": "1ea0778395707fa0",
+      "hash": "4f97d686c8cf030d",
       "critical": false,
       "desc": "算法全景图生成器测试锚点（行为契约防回归）"
     },
     "tests/governance/shared/test_code_algorithm_extractor.py": {
-      "hash": "b2ea7ff459d3948d",
+      "hash": "158623dfe04ad374",
       "critical": false,
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-08-19T02:22:33.655500+00:00",
+  "registered_at": "2026-08-20T17:33:58.379812+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }

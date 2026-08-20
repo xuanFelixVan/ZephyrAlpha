@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] zephyr.data.news_collector
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] pandas; zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.regime.features.regime_data_loader

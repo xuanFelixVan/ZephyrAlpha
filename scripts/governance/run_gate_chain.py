@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python3
 # [MODULE] scripts.governance.run_gate_chain
 # [DOMAIN] D_GOV_SCRIPTS

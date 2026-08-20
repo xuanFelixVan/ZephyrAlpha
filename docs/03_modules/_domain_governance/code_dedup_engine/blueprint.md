@@ -5,7 +5,7 @@ submodule_path: src/zephyr/governance/code_dedup_engine
 title: "Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复"
 doc_type: blueprint
 status: Active
-version: 0.15.2
+version: 0.15.3
 layer: L0_infrastructure
 layer_note: "跨层模块——代码在基础设施域，但与治理域交互（Gate Engine+AiAuditLogger）"
 layer_name: infrastructure
@@ -1749,7 +1749,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_code_quality/code_dedup/canary_manager.py` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/cli.py` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/phase_executor.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/trackers/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_code_quality/code_dedup/trackers/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/trackers/blind_spot_tracker.py` | ✅ 已实现 | |
 | `src/zephyr/governance/intelligence_governance/self_benchmark.py` | ✅ 已实现 | |
 

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """E4 交易成本敏感性 0-50bps 分析单元测试（11_regime_backtest_validation_plan §4.5 E4）."""
 

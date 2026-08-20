@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.9
+version: 1.3.10
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -191,7 +191,7 @@ D_BACKTEST域代码唯一存放于 `src/zephyr/backtest/`。禁止在research/�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-BT-001` 的 57 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-001` |
-| 数据流图 (dataflow) | 5 个 Dataset / 6 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 5 个 Dataset / 5 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -990,15 +990,22 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | `tests/backtest/test_backtest_decisiongraph_adapter.py` | ✅ 已实现 | |
 | `tests/backtest/test_c1_comparator.py` | ✅ 已实现 | |
 | `tests/backtest/test_c1_runner.py` | ✅ 已实现 | |
+| `tests/backtest/test_c2_extreme_event_protection.py` | ✅ 已实现 | |
+| `tests/backtest/test_c3_throttle_attribution.py` | ✅ 已实现 | |
+| `tests/backtest/test_c4_deflated_sharpe_runner.py` | ✅ 已实现 | |
 | `tests/backtest/test_cost_friction_night001.py` | ✅ 已实现 | |
 | `tests/backtest/test_cpcv.py` | ✅ 已实现 | |
 | `tests/backtest/test_deadzone_provider.py` | ✅ 已实现 | |
 | `tests/backtest/test_decision_gate.py` | ✅ 已实现 | |
+| `tests/backtest/test_e2_stationary_bootstrap.py` | ✅ 已实现 | |
+| `tests/backtest/test_e3_param_sensitivity.py` | ✅ 已实现 | |
+| `tests/backtest/test_e4_cost_sensitivity.py` | ✅ 已实现 | |
 | `tests/backtest/test_event_driven_engine.py` | ✅ 已实现 | |
 | `tests/backtest/test_limit_price_rounding_night001.py` | ✅ 已实现 | |
 | `tests/backtest/test_matching_engine.py` | ✅ 已实现 | |
 | `tests/backtest/test_metrics_dsr.py` | ✅ 已实现 | |
 | `tests/backtest/test_overfitting_detector.py` | ✅ 已实现 | |
+| `tests/backtest/test_pit_leakage_future_date.py` | ✅ 已实现 | |
 | `tests/backtest/test_pit_manager.py` | ✅ 已实现 | |
 | `tests/backtest/test_preflight_checker.py` | ✅ 已实现 | |
 | `tests/backtest/test_purged_kfold.py` | ✅ 已实现 | |

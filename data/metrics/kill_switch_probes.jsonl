@@ -456,3 +456,6 @@
 {"probe_id": "2c82892aae93", "timestamp": "2026-05-23T14:22:03.084461Z", "latency_us": 3.1, "latency_ms": 0.0031, "target_ms": 1.0, "target_met": true, "hardware_model": "T0_SIMULATOR"}
 {"probe_id": "6f125e0151ab", "timestamp": "2026-05-23T14:22:03.084461Z", "latency_us": 2.3, "latency_ms": 0.0023, "target_ms": 1.0, "target_met": true, "hardware_model": "T0_SIMULATOR"}
 {"probe_id": "5e606f14daaf", "timestamp": "2026-05-23T14:22:03.085972Z", "latency_us": 2.5, "latency_ms": 0.0025, "target_ms": 1.0, "target_met": true, "hardware_model": "T0_SIMULATOR"}
+{"probe_id": "a80ba239835f", "timestamp": "2026-08-20T19:24:39.406237+00:00Z", "latency_us": 6.5, "latency_ms": 0.0065, "target_ms": 1.0, "target_met": true, "hardware_model": "T0_SIMULATOR"}
+{"probe_id": "c3ef0d67eacf", "timestamp": "2026-08-20T19:24:39.417045+00:00Z", "latency_us": 7.9, "latency_ms": 0.0079, "target_ms": 1.0, "target_met": true, "hardware_model": "T0_SIMULATOR"}
+{"probe_id": "ec3a609d65d9", "timestamp": "2026-08-20T19:24:39.426804+00:00Z", "latency_us": 4.4, "latency_ms": 0.0044, "target_ms": 1.0, "target_met": true, "hardware_model": "T0_SIMULATOR"}

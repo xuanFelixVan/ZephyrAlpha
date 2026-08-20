@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_CONCURRENT_WRITE_TEST | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python3
 """P2-T6 PostgreSQL 40并发写入红蓝测试。
 

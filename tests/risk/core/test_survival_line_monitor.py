@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-RK-13 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_survival_line_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.risk.core.test_survival_line_monitor
 # [TESTS] src/zephyr/risk/core/survival_line_monitor.py

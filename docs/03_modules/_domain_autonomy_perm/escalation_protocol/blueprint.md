@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/escalation_engine.py
 title: Escalation Protocol 蓝图
 doc_type: blueprint
 status: Active
-version: "2.1.3"
+version: "2.1.4"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -87,7 +87,7 @@ build_status: planned
 
 # Escalation Protocol 蓝图+施工图 — AI操作安全升级与委托治理协议
 
-> module_id: MOD-INF-022 | version: 2.1.3 | status: active | domain: infra_ops
+> module_id: MOD-INF-022 | version: 2.1.4 | status: active | domain: infra_ops
 > actual_disk_path: `D:\ZephyrAlpha\src\zephyr\escalation-engine\` | generation: 3 | construction_progress: partially_implemented
 
 ## 概述
@@ -1538,7 +1538,6 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `src/zephyr/governance/architecture_governance/construction_verifier.py` | ✅ 已实现 | |
 | `src/zephyr/governance/services/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/position/__init__.py` | ⚠️ 骨架 | |
 
 ### 1.2 测试文件
 

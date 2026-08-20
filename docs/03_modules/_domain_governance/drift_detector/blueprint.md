@@ -3,7 +3,7 @@ module_id: MOD-INF-023
 title: "Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移生命周期"
 doc_type: blueprint
 status: Active
-version: "3.1.4"
+version: "3.1.5"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -77,7 +77,7 @@ build_status: planned
 design_maturity: design
 ---
 
-> module_id: MOD-INF-023 | version: 3.1.4 | status: Active | layer: cross_layer
+> module_id: MOD-INF-023 | version: 3.1.5 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/gov_drift/ + src/zephyr/governance/drift_detector_core/ | generation: 4 | construction_progress: partially_implemented
 
 # Drift Detector 蓝图+施工图 — 39检测器漂移检测引擎与10状态漂移生命周期
@@ -1305,7 +1305,7 @@ detector_dimensions:
 | `src/zephyr/gov_drift/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/__main__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/alert_router.py` | ✅ 已实现 | |
-| `src/zephyr/gov_drift/detector_core/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_drift/detector_core/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/detector_core/bridges/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/detector_core/bridges/drift_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/reconciler.py` | ✅ 已实现 | |

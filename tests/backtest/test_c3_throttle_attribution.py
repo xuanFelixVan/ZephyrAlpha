@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """C3 节流归因分析单元测试（11_regime_backtest_validation_plan §4.3 C3）."""
 

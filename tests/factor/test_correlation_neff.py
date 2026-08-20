@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-E2E-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_correlation_neff | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.factor.test_correlation_neff
 # [TESTS] src/zephyr/factor/analysis/correlation_neff.py

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.8"
+version: "0.19.9"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -132,7 +132,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-016` 的 339 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-016` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-016` 的 341 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-016` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -144,7 +144,7 @@ build_status: generated
 | module_id | MOD-INF-016 | MOD-INF-016 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 339 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 341 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -510,6 +510,8 @@ build_status: generated
 | `tests/shared/alerts/test_alert_senders.py` | ✅ 已实现 | |
 | `tests/shared/alerts/test_dual_channel_alert.py` | ✅ 已实现 | |
 | `tests/shared/alerts/test_heartbeat_server.py` | ✅ 已实现 | |
+| `tests/shared/test_converters.py` | ✅ 已实现 | |
+| `tests/shared/test_safe_write.py` | ✅ 已实现 | |
 | `tests/shared/test_state_store.py` | ✅ 已实现 | |
 | `tests/shared/test_state_store_redis.py` | ✅ 已实现 | |
 | `tests/trading/integration/test_trading_contracts.py` | ✅ 已实现 | |

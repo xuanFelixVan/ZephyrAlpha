@@ -3,7 +3,7 @@ module_id: MOD-POS-006
 title: "资金管理器蓝图 — T+1约束+储备计算"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -95,7 +95,7 @@ responsibility_domain:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-POS-006` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-POS-006` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -123,7 +123,7 @@ responsibility_domain:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/position/__init__.py` | ⚠️ 骨架 | |
 
 ### 8.5 路径索引使用指南
 
@@ -138,3 +138,5 @@ responsibility_domain:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

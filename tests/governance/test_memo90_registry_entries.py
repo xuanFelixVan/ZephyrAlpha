@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_memo90_registry_entries | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.governance.test_memo90_registry_entries
 # [TESTS] docs/01_policies_and_standards/_registry/catalogs/{benchmark,cost_model,risk_limit,universe}_registry.yaml

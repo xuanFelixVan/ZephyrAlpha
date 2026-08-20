@@ -3,7 +3,7 @@ module_id: MOD-PA-007
 title: "Regime元分配器蓝图 — Shrinkage风险节流+PerformanceScore后验分配（A模型·meta层）"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -373,8 +373,8 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-PA-007` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-PA-007` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-PA-007` 的 5 个 file 节点 | production | `extract_depgraph.py --modules MOD-PA-007` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -385,7 +385,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 | module_id | MOD-PA-007 | MOD-PA-007 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 2 文件 | N/A | — |
+| file_count | 5 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -402,7 +402,10 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/pf_alloc/test_correlation_persistence.py` | ✅ 已实现 | |
+| `tests/pf_alloc/test_multi_strategy_capital_allocator.py` | ✅ 已实现 | |
 | `tests/pf_alloc/test_regime_meta_allocator.py` | ✅ 已实现 | |
+| `tests/pf_alloc/test_strategy_correlation_gate.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

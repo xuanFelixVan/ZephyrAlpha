@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_pit_leakage_future_date | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.backtest.test_pit_leakage_future_date
 # [TESTS] src/zephyr/backtest/core/pit_manager.py（90 号 Phase2 泄漏测试自动化）
