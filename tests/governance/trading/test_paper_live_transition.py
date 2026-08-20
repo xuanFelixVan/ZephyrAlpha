@@ -17,9 +17,13 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
+import pytest
+
 from zephyr.governance.lifecycle_governance.paper_live_transition import (
+    DEFAULT_GATE_THRESHOLDS,
     PHASE_ORDER,
     PHASE_SPECS,
+    GateThresholds,
     PhaseSpec,
     TransitionPhase,
     TransitionState,
@@ -27,6 +31,7 @@ from zephyr.governance.lifecycle_governance.paper_live_transition import (
     get_next_phase,
     get_phase_spec,
     valid_transition,
+    validate_gate_thresholds,
 )
 
 
@@ -196,3 +201,102 @@ class TestPhaseOrder:
     def test_phase_order_covers_all_phases(self):
         for phase in TransitionPhase:
             assert phase in PHASE_ORDER
+
+
+# ============== 门禁阈值配置化(53号 §6 校准配置化) ==============
+
+
+class TestGateThresholds:
+    def test_defaults_unchanged(self):
+        """默认值与机制初始值逐字一致(53号§3.3/§3.5)"""
+        t = GateThresholds()
+        assert t.parallel_min_days == 30
+        assert t.shadow_min_days == 14
+        assert t.gray_ramp_min_days == 30
+        assert t.signal_match_min == 0.999
+        assert t.slippage_diff_max_bp == 1.0
+        assert t.fill_rate_min == 0.99
+        assert t.shadow_pnl_correlation_min == 0.95
+        assert t.settlement_match_min == 1.0
+        assert t.latency_max_ms == 100.0
+        assert t.ramp_drawdown_max == 0.01
+        assert t.ramp_daily_loss_max == 0.03
+        assert t.ramp_steps == (1.0, 5.0, 20.0, 50.0, 100.0)
+        assert t.observation_min_months == 6
+        assert t.min_trades_floor == 30
+
+    def test_phase_specs_derived_from_thresholds(self):
+        """PHASE_SPECS duration_days/key_gates 由默认阈值派生且与既有字面量一致"""
+        assert PHASE_SPECS[TransitionPhase.PARALLEL].duration_days == 30
+        assert PHASE_SPECS[TransitionPhase.SHADOW].duration_days == 14
+        assert PHASE_SPECS[TransitionPhase.GRAY_RAMP].duration_days == 30
+        assert PHASE_SPECS[TransitionPhase.PARALLEL].key_gates == [
+            "paper_live_signal_match >= 99.9%", "slippage_diff < 1bp", "fill_rate >= 99%",
+        ]
+        assert PHASE_SPECS[TransitionPhase.SHADOW].key_gates == [
+            "shadow_pnl_correlation >= 0.95", "settlement_match 100%", "latency < 100ms",
+        ]
+        assert PHASE_SPECS[TransitionPhase.GRAY_RAMP].key_gates == [
+            "drawdown < 1% per ramp step", "no circuit_breaker triggers", "daily_loss < 3%",
+        ]
+
+    def test_default_singleton(self):
+        assert isinstance(DEFAULT_GATE_THRESHOLDS, GateThresholds)
+
+    def test_frozen(self):
+        t = GateThresholds()
+        with pytest.raises(Exception):
+            t.latency_max_ms = 200.0  # type: ignore[misc]
+
+    def test_invalid_days(self):
+        with pytest.raises(ValueError):
+            GateThresholds(parallel_min_days=0)
+
+    def test_invalid_ratios(self):
+        with pytest.raises(ValueError):
+            GateThresholds(signal_match_min=1.5)
+        with pytest.raises(ValueError):
+            GateThresholds(fill_rate_min=0.0)
+        with pytest.raises(ValueError):
+            GateThresholds(shadow_pnl_correlation_min=-0.1)
+        with pytest.raises(ValueError):
+            GateThresholds(settlement_match_min=2.0)
+
+    def test_invalid_ramp_gates(self):
+        with pytest.raises(ValueError):
+            GateThresholds(ramp_drawdown_max=0.0)
+        with pytest.raises(ValueError):
+            GateThresholds(ramp_daily_loss_max=1.0)
+
+    def test_ramp_steps_must_strictly_increase(self):
+        with pytest.raises(ValueError):
+            GateThresholds(ramp_steps=(1.0, 5.0, 5.0, 100.0))
+        with pytest.raises(ValueError):
+            GateThresholds(ramp_steps=(100.0, 50.0))
+
+    def test_ramp_steps_must_end_at_100(self):
+        with pytest.raises(ValueError):
+            GateThresholds(ramp_steps=(1.0, 5.0, 50.0))
+
+    def test_ramp_steps_empty_or_nonpositive(self):
+        with pytest.raises(ValueError):
+            GateThresholds(ramp_steps=())
+        with pytest.raises(ValueError):
+            GateThresholds(ramp_steps=(0.0, 100.0))
+
+    def test_invalid_observation_floor(self):
+        with pytest.raises(ValueError):
+            GateThresholds(observation_min_months=0)
+        with pytest.raises(ValueError):
+            GateThresholds(min_trades_floor=-1)
+
+    def test_custom_thresholds_accepted(self):
+        t = GateThresholds(latency_max_ms=200.0, min_trades_floor=50)
+        assert t.latency_max_ms == 200.0
+        assert t.min_trades_floor == 50
+
+    def test_validate_gate_thresholds(self):
+        t = GateThresholds()
+        assert validate_gate_thresholds(t) is t
+        with pytest.raises(TypeError):
+            validate_gate_thresholds({"latency_max_ms": 100})

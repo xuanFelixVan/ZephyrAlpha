@@ -5,13 +5,13 @@
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入;偏离阈值真源=alert_threshold_registry(THD-DEVIATION-001/002,fail-closed)
+# [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入;偏离阈值真源=alert_threshold_registry(THD-DEVIATION-001/002,fail-closed);DSR可选判定器默认关闭(dsr_threshold=None不参与判定,52号§7③)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DecisionGateError
-# [TESTS]
+# [TESTS] tests/backtest/test_decision_gate.py
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """3阶段决策门控模块(IS->WFA->OOS)
@@ -86,6 +86,9 @@ class DecisionGateConfig:
         cliff_sharpe_drop: 悬崖型参数Sharpe下降阈值(默认0.50)
         backtest_live_deviation_warn: 回测-实盘偏差告警阈值(默认0.30,真源=alert_threshold_registry THD-DEVIATION-001)
         backtest_live_deviation_retire: 回测-实盘偏差退役阈值(默认0.50,真源=alert_threshold_registry THD-DEVIATION-002)
+        dsr_threshold: OOS段DSR可选判定器阈值(默认None=关闭,不破坏既有行为;
+            52号§7③待决策项的可选注入——配置后OOS段追加第四条件dsr>=dsr_threshold,
+            调用方须用metrics.calculate_dsr预计算并注入dsr,未注入按不通过处理(fail-closed))
     """
 
     is_sharpe_threshold: float = 0.5
@@ -97,6 +100,7 @@ class DecisionGateConfig:
     cliff_sharpe_drop: float = 0.50
     backtest_live_deviation_warn: float = _DEVIATION_DEFAULTS["backtest_live_deviation_warn"]
     backtest_live_deviation_retire: float = _DEVIATION_DEFAULTS["backtest_live_deviation_retire"]
+    dsr_threshold: float | None = None
 
 
 @dataclass(frozen=True)
@@ -147,6 +151,7 @@ class OOSStageResult:
         is_sharpe: 样本内Sharpe比率
         oos_is_ratio: 样本外/样本内Sharpe比率
         params_locked: 参数是否已锁定
+        dsr: 注入的DSR值(可选判定器未启用或未注入时为None)
         reasons: 判定原因列表
     """
 
@@ -155,6 +160,7 @@ class OOSStageResult:
     is_sharpe: float
     oos_is_ratio: float
     params_locked: bool
+    dsr: float | None = None
     reasons: list[str] = field(default_factory=list)
 
 
@@ -397,23 +403,27 @@ class DecisionGate:
         is_sharpe: float,
         oos_sharpe: float,
         params_locked: bool = True,
+        dsr: float | None = None,
     ) -> OOSStageResult:
         """OOS(Out-of-Sample)阶段门控检查
 
         检查项:
           - 参数锁定:进入OOS后参数不可调整(params_locked必须为True)
           - 样本外Sharpe比率:oos_sharpe/is_sharpe >= oos_sharpe_ratio_threshold(默认0.7)
+          - DSR可选判定器(默认关闭):config.dsr_threshold配置后追加第四条件
+            dsr >= dsr_threshold;已配置但未注入dsr按不通过处理(fail-closed)
 
         Args:
             is_sharpe: 样本内Sharpe比率
             oos_sharpe: 样本外Sharpe比率
             params_locked: 参数是否已锁定
+            dsr: 调用方预计算的DSR值(metrics.calculate_dsr产出),可选判定器注入
 
         Returns:
             OOSStageResult: OOS阶段判定结果
 
         Raises:
-            DecisionGateError: is_sharpe或oos_sharpe非数值
+            DecisionGateError: is_sharpe或oos_sharpe或dsr非数值
         """
         try:
             is_f = float(is_sharpe)
@@ -452,7 +462,32 @@ class DecisionGate:
                     f"{self.config.oos_sharpe_ratio_threshold}"
                 )
 
-        passed = bool(params_locked) and ratio_passed
+        # DSR可选判定器(52号§7③): 默认关闭(dsr_threshold=None时不参与判定)
+        dsr_f: float | None = None
+        dsr_passed = True
+        if self.config.dsr_threshold is not None:
+            if dsr is None:
+                dsr_passed = False
+                reasons.append(
+                    f"DSR判定器已启用(阈值{self.config.dsr_threshold})但未注入dsr,"
+                    f"按不通过处理(fail-closed)"
+                )
+            else:
+                try:
+                    dsr_f = float(dsr)
+                except (TypeError, ValueError) as exc:
+                    raise DecisionGateError(f"dsr必须是数值: {dsr!r}") from exc
+                dsr_passed = dsr_f >= self.config.dsr_threshold
+                if dsr_passed:
+                    reasons.append(
+                        f"DSR判定通过: {dsr_f:.4f} >= {self.config.dsr_threshold}"
+                    )
+                else:
+                    reasons.append(
+                        f"DSR判定未通过: {dsr_f:.4f} < {self.config.dsr_threshold}"
+                    )
+
+        passed = bool(params_locked) and ratio_passed and dsr_passed
         if passed:
             reasons.append("OOS阶段通过(正式上线仍需人工审批)")
         else:
@@ -463,6 +498,7 @@ class DecisionGate:
             is_sharpe=is_f,
             oos_is_ratio=oos_is_ratio,
             params_locked=bool(params_locked),
+            dsr=dsr_f,
             reasons=reasons,
         )
 
@@ -474,6 +510,7 @@ class DecisionGate:
         walk_forward_results: list[dict],
         oos_sharpe: float,
         params_locked: bool = True,
+        dsr: float | None = None,
     ) -> DecisionGateResult:
         """编排3阶段决策门控(IS->WFA->OOS)
 
@@ -488,6 +525,8 @@ class DecisionGate:
             walk_forward_results: Walk-Forward窗口结果列表
             oos_sharpe: 样本外Sharpe比率
             params_locked: 参数是否已锁定
+            dsr: 调用方预计算的DSR值(可选判定器注入;config.dsr_threshold
+                未配置时忽略,不破坏既有行为)
 
         Returns:
             DecisionGateResult: 三阶段综合判定结果
@@ -548,7 +587,7 @@ class DecisionGate:
             )
 
         # 阶段3: OOS
-        oos_result = self.check_oos_stage(is_result.sharpe, oos_sharpe, params_locked)
+        oos_result = self.check_oos_stage(is_result.sharpe, oos_sharpe, params_locked, dsr=dsr)
         aggregate_reasons.extend(oos_result.reasons)
 
         overall_passed = oos_result.passed
