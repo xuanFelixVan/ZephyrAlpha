@@ -94,7 +94,7 @@ ttl: task_bound
 依据：仓内 SSoT 机制（paths.py:154-164 DB_PATH 仓级共享治理库唯一真源+worktree 锚定）与同族先例（test_correlation_engine.py:82-83）均围绕 governance.db；工程实践 sqlite 单库单写者+WAL 优于多库分散（blueprint §17.2 GAP-003 同口径）。止血两动作在任何终局方案下不浪费。
 
 ### 落地状态
-✅ 代码对齐 2026-08-20 落地（本批）+回归全绿；Owner 窗口四项已登记 tracker。
+✅ 代码对齐 2026-08-20 落地+回归全绿（项② test_ba_dashboard 2 用例裁定书声明时未物理应用，第十统筹全量基线实证抓出原样复现后补落 commit bc0ffc94，12/12 全绿）；Owner 窗口四项已登记 tracker。
 
 ---
 
