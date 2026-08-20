@@ -39,6 +39,7 @@ from zephyr.regime.core.regime_detector import (
     HMM_STATES,
     OVERLAY_STATES,
     REGIME_STATES,
+    TRANSITION_CONFIG,
     TRANSITIONS,
     HMMFittingError,
     OverlayRuleError,
@@ -663,6 +664,31 @@ class TestKeysOrGte:
         assert not RegimeDetector._eval_stage({"a": 60, "c": 39}, 99, cond)
         # 缺 key 计 0.0：析取组 key 全缺 → 不满足
         assert not RegimeDetector._eval_stage({"c": 40}, 40, cond)
+
+
+class TestS2VixThresholdCalibration:
+    """S2 trigger vix 门槛校准（14_regime_s2_diagnosis §4.0 vix 警告/开放问题 11，跨 P1-E7）。
+
+    A 股合成 VIX>25 即触发 8/8 胜率信号（沪深300 期权 CBOE 方差互换法 2026 实证），
+    ≥40 为美股 3-sigma 标准（数年一遇）对沪深300 偏高——校准至 30（25-30 区间上限，
+    保守端）。配置级校准，函数级评分带改造（浙商方案）登记为 P1-E7 后续。
+    """
+
+    def test_vix_threshold_calibrated_to_30(self):
+        """TRANSITION_CONFIG S2 trigger vix 门槛 = 30（校准值锁定）。"""
+        assert TRANSITION_CONFIG["S2"]["stages"]["trigger"]["keys_gte"]["vix"] == 30
+
+    def test_trigger_admits_vix_score_30(self, detector: RegimeDetector):
+        """vix=30（校准后新准入带）+ capitulation/bad_news_flat 达标 → trigger。"""
+        t = detector.record_transition("S2", {
+            "capitulation": 60, "vix": 30, "bad_news_flat": 40})
+        assert t.stage == "trigger" and t.triggered
+
+    def test_trigger_blocked_below_30(self, detector: RegimeDetector):
+        """vix=29（校准后仍不达标）→ 非 trigger。"""
+        t = detector.record_transition("S2", {
+            "capitulation": 60, "vix": 29, "bad_news_flat": 40})
+        assert t.stage not in ("trigger", "confirm", "strong_confirm")
 
 
 # ── 9. 完整链路（端到端）────────────────────────────────────────────

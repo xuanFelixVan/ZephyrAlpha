@@ -377,7 +377,10 @@ TRANSITION_CONFIG: dict[str, dict[str, Any]] = {
             "confirm":        {"keys_or_gte": {"wyckoff": 60, "breadth_thrust": 60},
                                "keys_gte": {"policy": 40, "valuation": 40, "fund": 50},
                                "p_overlay": {"r11": 0.65}, "shrinkage": 0.6},
-            "trigger":        {"keys_gte": {"capitulation": 60, "vix": 40, "bad_news_flat": 40},
+            # vix 门槛校准（14 号 §4.0/开放问题 11，跨 P1-E7）：A 股合成 VIX>25 即触发
+            # 8/8 胜率信号（沪深300 期权 CBOE 方差互换法 2026 实证），≥40 为美股 3-sigma
+            # 标准（数年一遇）对沪深300 偏高 → 校准至 30（25-30 区间上限保守端）。
+            "trigger":        {"keys_gte": {"capitulation": 60, "vix": 30, "bad_news_flat": 40},
                                "p_overlay": {"r11": 0.40}, "shrinkage": 0.4},
             "fail":           {"keys_gte": {"break_sc_low": 1, "vix_new_high": 1, "fund_outflow": 1},
                                "p_overlay": {"r10": 0.60}, "shrinkage": 0.3},

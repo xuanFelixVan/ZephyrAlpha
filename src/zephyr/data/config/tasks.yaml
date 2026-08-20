@@ -2320,3 +2320,16 @@ tasks:
   extra:
     description: "东财人气/关注排行（每日快照积累，实时排行无历史API）"
   fallback_sources: []
+
+  # ============== 因子衰减监控（15 号 §6 待裁定项调度化登记，2026-08-20 AI-NIGHT-001 包N）==============
+- task_id: factor_decay_monitor_weekly
+  table:               # null=分析型任务无 CH 落表（产出=factor_registry.yaml decay_state 回写）
+  source: internal     # 内部计算源（factor/analysis/decay_monitor.py monitor_decay 纯函数，非外部采集）
+  schedule: weekend_calibration    # 周末校准层（对齐"周复盘衰减报表"重评场景）
+  incremental: false
+  dependencies: []
+  symbols:         # null=全因子（遍历 factor_registry.yaml）
+  extra:
+    disabled: true
+    disabled_reason: "分析型任务配置级登记（15_data_feature_layer_spec §6：重评条件'因子数>50'已满足——factor_registry 111 条目）。runner 未绑定：monitor_decay 需 ic_decay_series 或 symbols/start/end 注入，周复盘批量 runner（遍历 factor_registry→monitor_decay→decay_state 回写）施工后移除 disabled 启用。登记使缺口机查可见。无 capability 字段（capability_validator 对无 capability 任务不校验）；无 fallback_sources（内部计算无数据源可切，DATA-TASK-COMPLETENESS warn 已知晓并接受）。"
+  fallback_sources: []

@@ -89,6 +89,45 @@ def _to_serializable(idx_val: object) -> object:
     return idx_val
 
 
+def _embargo_cutoff_by_calendar(
+    current_time: datetime,
+    embargo_days: int,
+    trading_calendar,
+) -> pd.Timestamp:
+    """按注入的真交易日历计算 embargo 截止时点（15 号 §7③ BDay→真日历）。
+
+    语义：current_time 锚定 <= 其值的最近交易日（current_time 落非交易日时
+    向前取最近交易日），cutoff = 该锚定点前第 embargo_days 个交易日（当天 00:00，
+    保留 event_time <= cutoff 的行，即 cutoff 当日放行、次日起拦截）。
+
+    保守边界（不放行无法判定的近端数据）：
+      - current_time 早于日历首日（无法锚定）→ 返回 NaT，调用方全拦；
+      - 日历长度不足 embargo_days 回数 → cutoff = 首个交易日前一日，
+        只放行首个交易日之前的更旧数据。
+
+    Args:
+        current_time: 当前回测决策时点
+        embargo_days: 隔离交易日数（>=1）
+        trading_calendar: 可迭代交易日集合（str/date/datetime/Timestamp/
+            DatetimeIndex 均可；内部去重排序并归一化到日）
+
+    Returns:
+        pd.Timestamp: embargo 截止时点（含当日）；无法锚定时返回 pd.NaT
+    """
+    cal = pd.DatetimeIndex(pd.to_datetime(list(trading_calendar))).normalize()
+    cal = cal.unique().sort_values()
+    if len(cal) == 0:
+        return pd.NaT
+    current = pd.Timestamp(current_time).normalize()
+    pos = int(cal.searchsorted(current, side="right")) - 1  # <= current 的最近交易日
+    if pos < 0:
+        return pd.NaT
+    cutoff_idx = pos - embargo_days
+    if cutoff_idx < 0:
+        return cal[0] - pd.Timedelta(days=1)
+    return cal[cutoff_idx]
+
+
 class PITManager:
     """PIT(Point-In-Time)铁律管理器
 
@@ -184,6 +223,7 @@ class PITManager:
         data: pd.DataFrame,
         current_time: datetime,
         event_time_col: str = "date",
+        trading_calendar=None,
     ) -> pd.DataFrame:
         """应用 Embargo 期隔离标签泄漏
 
@@ -195,12 +235,18 @@ class PITManager:
         实现: 排除 event_time 落在隔离窗口 (current_time - embargo, current_time]
         内的样本, 避免标签前瞻窗口与当前决策时点重叠造成泄漏。
 
-        注: embargo 按工作日(BDay)偏移近似"交易日"; 精确交易日历需调用方提供。
+        日历口径（15_data_feature_layer_spec §7③）:
+          - trading_calendar=None（默认）: 按工作日(BDay)偏移近似"交易日"（向后兼容）。
+          - trading_calendar 注入（交易日集合，str/date/DatetimeIndex 均可）: 按真
+            交易日历回数——current_time 锚定 <= 其值的最近交易日，cutoff=该锚点前
+            embargo_days 个交易日（节假日不计，长假窗口较 BDay 更严）。
+            注入式设计保持本模块纯 pandas 不依赖日历数据源（分层不倒灌）。
 
         Args:
             data: 含标签的数据, 须包含 event_time_col 列
             current_time: 当前回测决策时点
             event_time_col: 事件时间列名, 默认 "date"
+            trading_calendar: 可选真交易日历（可迭代日期集合）。None=BDay 近似
 
         Returns:
             pd.DataFrame: 通过 embargo 过滤的数据子集, 按 event_time 升序
@@ -213,10 +259,15 @@ class PITManager:
         if event_time_col not in data.columns:
             raise PITError(f"缺少事件时间列: {event_time_col}")
 
-        # 隔离期截止时点: current_time 向前推 embargo 个工作日
-        cutoff = pd.Timestamp(current_time) - pd.tseries.offsets.BDay(
-            self.config.embargo_days
-        )
+        # 隔离期截止时点: current_time 向前推 embargo 个工作日（或真交易日）
+        if trading_calendar is None:
+            cutoff = pd.Timestamp(current_time) - pd.tseries.offsets.BDay(
+                self.config.embargo_days
+            )
+        else:
+            cutoff = _embargo_cutoff_by_calendar(
+                current_time, self.config.embargo_days, trading_calendar
+            )
         ev_times = pd.to_datetime(data[event_time_col])
         mask = ev_times <= cutoff
         safe = data.loc[mask].copy()

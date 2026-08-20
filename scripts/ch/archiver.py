@@ -20,6 +20,7 @@
   python scripts/ch/archiver.py archive-range --table c1_market.tick_data --from 202201 --to 202412
   python scripts/ch/archiver.py archive-range --table c1_market.tick_data --from 202201 --to 202412 --dry-run
   python scripts/ch/archiver.py archive-range --table c1_market.technical_indicator --period 60min --from 201901 --to 202108
+  python scripts/ch/archiver.py export --table c1_market.tick_data --partition 202201   # 纯备份（不 DROP）
   python scripts/ch/archiver.py list
   python scripts/ch/archiver.py stats
   python scripts/ch/archiver.py restore --table c1_market.tick_data --partition 202201
@@ -35,12 +36,16 @@ import hashlib
 import http.client
 import json
 import logging
+import math
 import os
 import pathlib
 import re
 import sys
 import time
 import urllib.parse
+
+import numpy as np
+import pandas as pd
 
 _PROJECT_ROOT = str(pathlib.Path(__file__).resolve().parents[2])
 if _PROJECT_ROOT not in sys.path:
@@ -249,8 +254,85 @@ def export_partition(table: str, partition: str, dry_run: bool = False, period: 
         return None
 
 
+def _file_md5(path: pathlib.Path, chunk_size: int = 1 << 20) -> str:
+    """文件 MD5（分块流式，防大文件内存峰值）。restore 前校验防 E 盘静默腐坏。"""
+    h = hashlib.md5()
+    with open(path, "rb") as f:
+        while True:
+            chunk = f.read(chunk_size)
+            if not chunk:
+                break
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _normalize_val(v) -> str:
+    """字段值归一化为可比对字符串（CH FORMAT JSON 侧 vs Parquet 侧对齐）。
+
+    口径：None/NaN → ""；日期 → ISO；时间戳 → "YYYY-MM-DD HH:MM:SS[.mmm]"
+    （tz-aware 归一到 Asia/Shanghai 墙钟，对齐 CH DateTime64 打印格式）；
+    浮点 round(6) 后 repr（吸收 Float32→Float64 精度扩展差异）。
+    """
+    if v is None:
+        return ""
+    if isinstance(v, (float, np.floating)):
+        if math.isnan(v):
+            return ""
+        return repr(round(float(v), 6))
+    if isinstance(v, (bool, np.bool_)):
+        return str(int(v))
+    if isinstance(v, (int, np.integer)):
+        return str(int(v))
+    if isinstance(v, pd.Timestamp):
+        if v.tzinfo is not None:
+            v = v.tz_convert("Asia/Shanghai").tz_localize(None)
+        if v.microsecond or v.nanosecond:
+            return v.strftime("%Y-%m-%d %H:%M:%S.") + f"{v.microsecond // 1000:03d}"
+        return v.strftime("%Y-%m-%d %H:%M:%S")
+    if isinstance(v, datetime.datetime):
+        if v.microsecond:
+            return v.strftime("%Y-%m-%d %H:%M:%S.") + f"{v.microsecond // 1000:03d}"
+        return v.strftime("%Y-%m-%d %H:%M:%S")
+    if isinstance(v, datetime.date):
+        return v.isoformat()
+    return str(v)
+
+
+def _compare_sample_rows(ch_rows: list[dict], pq_path: pathlib.Path) -> bool:
+    """抽样行字段值比对（18 号 §10-6 强化：替换原"可查性确认"）。
+
+    CH 随机抽样行（dict）与 Parquet 内容做多重集比对：列取两侧交集（按名对齐），
+    值经 _normalize_val 归一化；任一抽样行在 Parquet 中不存在或字段值不一致 → False。
+    """
+    import pyarrow.parquet as pq
+
+    if not ch_rows:
+        log.warning("  verify: 抽样返回 0 行，跳过字段值比对")
+        return True
+    pq_cols = pq.read_schema(str(pq_path)).names
+    cols = [c for c in pq_cols if c in ch_rows[0]]
+    if not cols:
+        log.error("  verify 失败: 抽样列与 Parquet 列无交集")
+        return False
+    df = pq.read_table(str(pq_path), columns=cols).to_pandas()
+    from collections import Counter
+
+    pq_counter: Counter = Counter(
+        tuple(_normalize_val(v) for v in row)
+        for row in df[cols].itertuples(index=False, name=None)
+    )
+    for r in ch_rows:
+        key = tuple(_normalize_val(r.get(c)) for c in cols)
+        if pq_counter.get(key, 0) <= 0:
+            log.error("  verify 失败: 抽样行在 Parquet 中不存在或字段值不一致: %s", key[:4])
+            return False
+        pq_counter[key] -= 1
+    log.info("  verify: 抽样 %d 行字段值比对一致", len(ch_rows))
+    return True
+
+
 def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: str | None = None) -> bool:
-    """阶段2: 验证 Parquet 行数 = ClickHouse 行数 + 抽样字段值。"""
+    """阶段2: 验证 Parquet 行数 = ClickHouse 行数 + 抽样 100 行字段值比对。"""
     try:
         import pyarrow.parquet as pq
     except ImportError:
@@ -259,19 +341,19 @@ def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: 
 
     where = _build_where(table, partition, period)
 
-    # 1. ClickHouse 行数
-    r = ch_reader.query(
-        _SQL_COUNT_PARTITION.format(table=table, where=where)
-    ).strip()
-    ch_count = int(r) if r else 0
-
-    # 2. Parquet 行数
+    # 1. Parquet 行数（先读本地文件，失败即返不触 CH）
     try:
         meta = pq.read_metadata(str(pq_path))
         pq_count = meta.num_rows
     except Exception as e:
         log.error("  verify 失败: 读取 Parquet 元数据异常: %s", e)
         return False
+
+    # 2. ClickHouse 行数
+    r = ch_reader.query(
+        _SQL_COUNT_PARTITION.format(table=table, where=where)
+    ).strip()
+    ch_count = int(r) if r else 0
 
     # 行数比对（大分区允许 ±1 行容差：ClickHouse count() 元数据优化 vs FORMAT Parquet 已知差异）
     diff = abs(ch_count - pq_count)
@@ -285,17 +367,22 @@ def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: 
     else:
         log.info("  verify: 行数一致(容差内) CH=%d Parquet=%d (差 %d)", ch_count, pq_count, diff)
 
-    # 3. 抽样字段值比对（随机 100 行）
+    # 3. 抽样 100 行字段值比对（18 号 §10-6：原"可查性确认"升级为精确比对）。
+    #    抽样 SQL 同步 inject_final：与导出口径一致（ReplacingMergeTree 逻辑视图），
+    #    防未合并重复幻影行被采中造成误判。
     if ch_count > 0 and ch_count <= 10_000_000:
-        # 小分区：直接比对
         try:
-            ch_sample = ch_reader.query(
+            sample_sql = ch_reader.inject_final(
                 _SQL_SAMPLE_RANDOM.format(table=table, where=where)
             )
-            # 简单验证：能查到数据即可（完整字段比对太复杂，行数一致已足够可信）
-            log.info("  verify: 抽样 100 行查询成功")
+            ch_rows = json.loads(ch_reader.query(sample_sql)).get("data", [])
         except Exception as e:
-            log.warning("  verify: 抽样查询异常（不阻断）: %s", e)
+            log.error("  verify 失败: 抽样查询异常: %s", e)
+            return False
+        if not _compare_sample_rows(ch_rows, pq_path):
+            return False
+    elif ch_count > 10_000_000:
+        log.warning("  verify: 分区 %d 行（>10M），抽样比对跳过（行数比对已通过）", ch_count)
 
     return True
 
@@ -388,22 +475,111 @@ def archive_partition(table: str, partition: str, dry_run: bool = False, period:
             pq_path.unlink()
         return False
 
+    # manifest 扩展字段（18 号 §10-6）：rows/ch_size_bytes/checksum_md5/compress_ratio
+    rows = _parquet_rows(pq_path)
+    ch_size = _ch_partition_size_bytes(table, partition, period)
+
     # 阶段3: drop
     if not drop_partition(table, partition, dry_run=dry_run, period=period):
         log.error("drop 失败，Parquet 已保留，可手动重试 drop")
         # 仍然记录清单（verified=true, dropped=false）
-        _append_manifest(_manifest_record(table, partition, pq_path, dropped=False, period=period))
+        _append_manifest(_manifest_record(
+            table, partition, pq_path, dropped=False, period=period,
+            rows=rows, ch_size_bytes=ch_size,
+        ))
         return False
 
     # 记录归档清单
-    _append_manifest(_manifest_record(table, partition, pq_path, dropped=True, period=period))
+    _append_manifest(_manifest_record(
+        table, partition, pq_path, dropped=True, period=period,
+        rows=rows, ch_size_bytes=ch_size,
+    ))
 
     log.info("归档完成: %s partition=%s period=%s ✓", table, partition, period)
     return True
 
 
-def _manifest_record(table: str, partition: str, pq_path: pathlib.Path, dropped: bool, period: str | None) -> dict:
-    """构造归档清单记录（元组键表附 period 字段）。"""
+def export_only_partition(table: str, partition: str, dry_run: bool = False, period: str | None = None) -> bool:
+    """纯备份模式（18 号 §10-6 独立 export 子命令）：export + verify，不 DROP 分区。
+
+    与 archive 的差异：不执行阶段3（不腾 D 盘空间）；manifest 记 verified=true/
+    dropped=false——_is_archived 仅认 dropped=true，故纯备份不影响后续正常 archive
+    （archive 会重新 export 覆盖旧文件后 drop）。
+    """
+    _require_period(table, period)
+    pq_path = export_partition(table, partition, dry_run=dry_run, period=period)
+    if not pq_path:
+        log.error("export 失败，中止")
+        return False
+    if dry_run:
+        log.info("[DRY-RUN] 纯备份跳过 verify")
+        return True
+    if not verify_partition(table, partition, pq_path, period=period):
+        log.error("纯备份 verify 失败，删除不可信 Parquet")
+        if pq_path.exists():
+            pq_path.unlink()
+        return False
+    _append_manifest(_manifest_record(
+        table, partition, pq_path, dropped=False, period=period,
+        rows=_parquet_rows(pq_path),
+        ch_size_bytes=_ch_partition_size_bytes(table, partition, period),
+    ))
+    log.info("纯备份完成: %s partition=%s period=%s ✓（分区未删除）", table, partition, period)
+    return True
+
+
+def _parquet_rows(pq_path: pathlib.Path) -> int | None:
+    """Parquet 行数（footer 元数据，读失败返回 None 不阻断清单）。"""
+    try:
+        import pyarrow.parquet as pq
+
+        return int(pq.read_metadata(str(pq_path)).num_rows)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _ch_partition_size_bytes(table: str, partition: str, period: str | None = None) -> int | None:
+    """CH 分区磁盘占用（system.parts bytes_on_disk，供 manifest compress_ratio）。"""
+    db, tbl = table.split(".")
+    if _period_col(table):
+        part_id = f"('{period}',{partition})"
+    else:
+        part_id = partition
+    sql = (
+        "SELECT sum(bytes_on_disk) FROM system.parts "
+        f"WHERE database='{db}' AND table='{tbl}' AND active=1 AND partition='{part_id}'"
+    )
+    try:
+        r = ch_reader.query(sql).strip()
+        return int(r) if r else None
+    except Exception as e:  # noqa: BLE001 — 体积统计失败不阻断归档主流程
+        log.warning("  ch_size_bytes 查询失败（不阻断）: %s", e)
+        return None
+
+
+def _manifest_checksum(table: str, partition: str, period: str | None = None) -> str | None:
+    """取该分区最新一条含 checksum_md5 的清单记录（restore 前校验用；存量记录无则 None）。"""
+    for record in reversed(_read_manifest()):
+        if (record.get("table") == table and record.get("partition") == partition
+                and record.get("period") == period and record.get("checksum_md5")):
+            return record["checksum_md5"]
+    return None
+
+
+def _manifest_record(
+    table: str,
+    partition: str,
+    pq_path: pathlib.Path,
+    dropped: bool,
+    period: str | None,
+    rows: int | None = None,
+    ch_size_bytes: int | None = None,
+) -> dict:
+    """构造归档清单记录（元组键表附 period 字段）。
+
+    18 号 §10-6 强化：rows/ch_size_bytes 传入时补 rows/checksum_md5/compress_ratio
+    三族字段；未传入时保持存量记录形态（1865 条历史记录兼容）。
+    """
     record = {
         "table": table,
         "partition": partition,
@@ -415,6 +591,15 @@ def _manifest_record(table: str, partition: str, pq_path: pathlib.Path, dropped:
     }
     if period is not None:
         record["period"] = period
+    if rows is not None:
+        record["rows"] = rows
+        if pq_path.exists():
+            record["checksum_md5"] = _file_md5(pq_path)
+    if ch_size_bytes is not None:
+        record["ch_size_bytes"] = ch_size_bytes
+        record["compress_ratio"] = (
+            round(record["parquet_size_bytes"] / ch_size_bytes, 4) if ch_size_bytes > 0 else None
+        )
     return record
 
 
@@ -515,13 +700,36 @@ def stats() -> None:
         pass
 
 
+def _get_writer_client():
+    """clickhouse-driver 写入客户端（restore 用；不可用时返回 None）。"""
+    from zephyr.data.ch_writer import get_client
+
+    return get_client()
+
+
 def restore_partition(table: str, partition: str, period: str | None = None) -> bool:
-    """从 Parquet 恢复分区到 ClickHouse（应急用）。"""
+    """从 Parquet 恢复分区到 ClickHouse（应急用）。
+
+    checksum 守卫（18 号 §10-6）：manifest 中该分区最新记录含 checksum_md5 时，
+    恢复前校验文件 MD5，不符即拒绝（防 E 盘家用存储静默腐坏）；存量记录无
+    checksum_md5 则跳过校验（向后兼容）。
+    """
     _require_period(table, period)
     pq_path = _parquet_path(table, partition, period)
     if not pq_path.exists():
         log.error("Parquet 文件不存在: %s", pq_path)
         return False
+
+    expected_md5 = _manifest_checksum(table, partition, period)
+    if expected_md5 is not None:
+        actual_md5 = _file_md5(pq_path)
+        if actual_md5 != expected_md5:
+            log.error(
+                "restore 拒绝: Parquet checksum 不符（manifest=%s, 实际=%s）——文件疑静默腐坏: %s",
+                expected_md5, actual_md5, pq_path,
+            )
+            return False
+        log.info("  checksum 校验通过: %s", actual_md5)
 
     log.info("恢复 %s partition=%s period=%s ← %s", table, partition, period, pq_path)
 
@@ -529,9 +737,7 @@ def restore_partition(table: str, partition: str, period: str | None = None) -> 
     try:
         import pyarrow.parquet as pq
 
-        from zephyr.data.ch_writer import get_client
-
-        client = get_client()
+        client = _get_writer_client()
         if client is None:
             log.error("clickhouse-driver 不可用")
             return False
@@ -582,6 +788,13 @@ def main():
     p_range.add_argument("--period", default=None, help="元组分区键表必填（如 60min）")
     p_range.add_argument("--dry-run", action="store_true")
 
+    # export（纯备份模式，不删除分区——18 号 §10-6）
+    p_export = sub.add_parser("export", help="纯备份单个分区 (export+verify，不 DROP)")
+    p_export.add_argument("--table", required=True)
+    p_export.add_argument("--partition", required=True)
+    p_export.add_argument("--period", default=None, help="元组分区键表必填（如 60min）")
+    p_export.add_argument("--dry-run", action="store_true")
+
     # list
     p_list = sub.add_parser("list", help="列出已归档分区")
     p_list.add_argument("--table", default=None)
@@ -597,7 +810,7 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command in ("archive", "archive-range", "restore"):
+    if args.command in ("archive", "archive-range", "restore", "export"):
         try:
             _require_period(args.table, args.period)
         except ValueError as e:
@@ -607,6 +820,8 @@ def main():
         archive_partition(args.table, args.partition, dry_run=args.dry_run, period=args.period)
     elif args.command == "archive-range":
         archive_range(args.table, args.from_yyyymm, args.to_yyyymm, dry_run=args.dry_run, period=args.period)
+    elif args.command == "export":
+        export_only_partition(args.table, args.partition, dry_run=args.dry_run, period=args.period)
     elif args.command == "list":
         list_archived(args.table)
     elif args.command == "stats":

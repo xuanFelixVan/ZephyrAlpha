@@ -480,25 +480,79 @@ def s2_valuation_score_fundamental(
     return score.clip(upper=100.0)
 
 
-def s2_fund_score(volume: pd.Series, window: int = 20) -> pd.Series:
-    """S2 fund: 资金承接 → 0-100（成交量放大 = 资金流入）。
+def s2_fund_score(
+    volume: pd.Series,
+    window: int = 20,
+    margin_balance: pd.Series | None = None,
+    xl_order_inflow: pd.Series | None = None,
+    pct_window: int = 250,
+    w_margin: float = 0.4,
+    w_xl: float = 0.35,
+    w_volume: float = 0.25,
+) -> pd.Series:
+    """S2 fund: 资金承接 → 0-100。
 
-    MVP 代理：近 window 日均量 vs 前 window 日均量，放大 = 资金流入。
-    完整版需 money_flow 表的净流入数据。
+    升级路径（14_regime_s2_diagnosis §4.0 fund 警告/§6 开放问题 10，跨 P1-E4）：
+    注入 margin_balance（融资余额日频）或 xl_order_inflow（超大单净流入日频）时，
+    评分 = "融资余额变化分位 + 超大单净流入分位 + 成交量分位"加权（缺源按可用源
+    归一化）。依据（2026 研究）：成交量不区分方向（散户接盘式上涨持续性差）、无
+    "出清"语义（融资余额低点=出清）；924 是"主力净流入+融资余额攀升+成交量跃升"
+    三者共振，单看成交量无法复现。
 
-    映射（对齐 S2 confirm 门槛 fund>=50）：
-      均量比>1.5 → 70  （量能显著放大，资金流入）
-      均量比>1.2 → 50  （量能放大，刚达门槛）
-      均量比>1.0 → 25  （量能微增，未达门槛）
-      else       → 0   （量能萎缩，无资金承接）
+      - 融资余额分量：margin_balance.diff(window)（近 window 日变化）的 pct_window
+        日滚动分位——攀升=杠杆资金回流（分位高）；持续下降=出清中（分位低）
+      - 超大单分量：xl_order_inflow.rolling(window).sum() 的滚动分位
+      - 成交量分量：volume 的滚动分位（量级跃升语义，不再用方向不明的均量比）
+      - composite 映射（对齐 confirm 门槛 fund>=50）：
+        >0.80 → 70（三源共振强承接）/ >0.60 → 50（达门槛）/ >0.40 → 25 / else → 0
+
+    两新源均 None 时回退原 MVP 代理（近 window 日均量 vs 前 window 日均量，
+    分档 70/50/25/0），向后兼容（C1 不退化）。预热期分位全 NaN → 0（无信号）。
     """
+    if margin_balance is None and xl_order_inflow is None:
+        # 原 MVP 路径：成交量代理（不变）
+        score = pd.Series(0.0, index=volume.index)
+        recent_avg = volume.rolling(window).mean()
+        prev_avg = volume.shift(window).rolling(window).mean()
+        ratio = recent_avg / (prev_avg + 1e-8)
+        score[ratio > 1.0] = 25
+        score[ratio > 1.2] = 50
+        score[ratio > 1.5] = 70
+        return score
+
+    min_p = min(pct_window, 60)
+    comps: list[pd.Series] = []
+    weights: list[float] = []
+    # 成交量分位（量级跃升语义）
+    comps.append(volume.rolling(pct_window, min_periods=min_p).rank(pct=True))
+    weights.append(w_volume)
+    if margin_balance is not None:
+        # 融资余额近 window 日变化的分位（攀升=回流，下降=出清中）
+        margin_chg = margin_balance.diff(window)
+        comps.append(margin_chg.rolling(pct_window, min_periods=min_p).rank(pct=True))
+        weights.append(w_margin)
+    if xl_order_inflow is not None:
+        # 超大单近 window 日累计净流入的分位
+        xl_sum = xl_order_inflow.rolling(window).sum()
+        comps.append(xl_sum.rolling(pct_window, min_periods=min_p).rank(pct=True))
+        weights.append(w_xl)
+
+    w = np.asarray(weights, dtype=float)
+    w = w / w.sum()
+    mat = pd.concat(comps, axis=1)
+    # 按行加权（NaN 源剔除并归一化；全 NaN 预热期 → NaN → 落 0 档）
+    with np.errstate(divide="ignore", invalid="ignore"):
+        denom = mat.notna().to_numpy(dtype=float) @ w
+        numer = mat.fillna(0.0).to_numpy(dtype=float) @ w
+    composite = pd.Series(
+        np.where(denom > 0, numer / np.where(denom > 0, denom, 1.0), np.nan),
+        index=volume.index,
+    )
     score = pd.Series(0.0, index=volume.index)
-    recent_avg = volume.rolling(window).mean()
-    prev_avg = volume.shift(window).rolling(window).mean()
-    ratio = recent_avg / (prev_avg + 1e-8)
-    score[ratio > 1.0] = 25
-    score[ratio > 1.2] = 50
-    score[ratio > 1.5] = 70
+    c = composite.fillna(0.0)
+    score[c > 0.40] = 25
+    score[c > 0.60] = 50
+    score[c > 0.80] = 70
     return score
 
 

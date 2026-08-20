@@ -25,7 +25,9 @@
   - K线形态编码: 0=无, 1=锤子, 2=看涨吞没, -2=看跌吞没, 3=启明星, 4=黄昏星, 5=十字星
 
 算法说明：
-  - 背离检测用简化方案（lookback 窗口内价格趋势 vs 指标趋势对比），可后续升级为峰谷分析
+  - 背离检测为峰谷检测（16_technical_indicator_catalog §7④ 升级，2026-08-20）：
+    居中窗口局部峰谷 → 比较相邻两峰/谷的价格与指标值（价新高+指标较低=顶背离），
+    信号标在峰/谷确认点（极值点+peak_order，无前视）；原"简化趋势对比"已退役
   - K线形态识别覆盖 6 种基础形态，可扩展
 
 设计文档：16_technical_indicator_catalog.md §2.5
@@ -86,10 +88,10 @@
 #   inputs: I1
 #   outputs: RSI/EMA/布林三轨等中间序列
 # - id: A3
-#   name_zh: ③ 简化背离检测
-#   name_en: lookback divergence
-#   intro: lookback 窗口内价格变化与指标变化符号对比，输出 0/1/-1 信号
-#   desc: price_change=x-x.shift(lookback) 与 ind_change 符号相反 → 置 ±1；RSI/MACD/量价三背离共用此简化方案（docstring 注明可升级为峰谷分析）
+#   name_zh: ③ 峰谷背离检测
+#   name_en: peak/trough divergence
+#   intro: 居中窗口局部峰谷 + 相邻峰/谷价格与指标背离比较，输出 0/1/-1 信号
+#   desc: _local_extrema 取严格局部极值 → _divergence_signal 比较相邻两峰（价新高+指标较低→1）/两谷（价新低+指标较高→-1），间距>lookback 不计；信号标在确认点（极值+peak_order，PIT 安全）；量价背离仍用 lookback 趋势对比
 #   inputs: I1 A2
 #   outputs: 信号 Series（0=无 1=顶背离 -1=底背离）
 # 层: 输出
@@ -133,6 +135,66 @@ from zephyr.factor.technical_indicators.indicator_base import (
 from zephyr.factor.technical_indicators.momentum import _rsi
 from zephyr.factor.technical_indicators.trend import _ema
 from zephyr.factor.technical_indicators.volatility import _boll_bands
+
+# 峰谷检测默认半窗（peak_order）：极值点两侧各 3 bar 确认
+_DEFAULT_PEAK_ORDER = 3
+
+
+def _local_extrema(values: np.ndarray, order: int, kind: str) -> list[int]:
+    """居中窗口严格局部极值的位置列表（峰 kind="max" / 谷 kind="min"）。
+
+    严格大于/小于邻域（平顶/平底不取，防同值平台被重复记为多个极值）；
+    窗口内含 NaN 的位置跳过（指标预热期不产生极值）。
+    """
+    n = len(values)
+    extrema: list[int] = []
+    for i in range(order, n - order):
+        window = values[i - order: i + order + 1]
+        if np.isnan(window).any():
+            continue
+        center = window[order]
+        neighbors = np.delete(window, order)
+        if kind == "max" and (center > neighbors).all():
+            extrema.append(i)
+        elif kind == "min" and (center < neighbors).all():
+            extrema.append(i)
+    return extrema
+
+
+def _divergence_signal(
+    price: pd.Series,
+    indicator: pd.Series,
+    lookback: int,
+    order: int = _DEFAULT_PEAK_ORDER,
+) -> pd.Series:
+    """峰谷背离检测（16 catalog §7④ 升级：简化趋势对比 → 峰谷检测）。
+
+    判定（比较相邻两个价格极值点，指标取同点位值）：
+      - 顶背离（1）：价格更高峰 且 指标较低峰（价升量/能衰）；
+      - 底背离（-1）：价格更低谷 且 指标较高谷；
+      - 两极值间距 > lookback 不构成背离（时间跨度过久动量已重置）。
+
+    PIT 安全：居中窗口极值在极值点后 order 根 bar 才可确认，信号标在确认点
+    （极值位置 + order），不使用任何未来数据。
+    """
+    signal = pd.Series(0.0, index=price.index, dtype=float)
+    p = price.to_numpy(dtype=float)
+    ind = indicator.to_numpy(dtype=float)
+    n = len(p)
+    for kind, sign in (("max", 1.0), ("min", -1.0)):
+        extrema = _local_extrema(p, order, kind)
+        for prev, curr in zip(extrema, extrema[1:]):
+            if curr - prev > lookback:
+                continue
+            i_prev, i_curr = ind[prev], ind[curr]
+            if np.isnan(i_prev) or np.isnan(i_curr):
+                continue
+            confirm = min(curr + order, n - 1)
+            if sign == 1.0 and p[curr] > p[prev] and i_curr < i_prev:
+                signal.iloc[confirm] = 1.0
+            elif sign == -1.0 and p[curr] < p[prev] and i_curr > i_prev:
+                signal.iloc[confirm] = -1.0
+    return signal
 
 
 @TechnicalIndicatorRegistry.register
@@ -210,7 +272,7 @@ class RSIDivergence(TechnicalIndicatorBase):
         input_columns=["close"],
         params={"rsi_period": 12, "lookback": 20},
         version="1.0.0",
-        description="价格趋势 vs RSI 趋势对比，输出(0=无,1=顶背离,-1=底背离)",
+        description="价格峰谷 vs RSI 峰谷背离检测，输出(0=无,1=顶背离,-1=底背离)，信号标在峰确认点(极值+3)",
     )
 
     def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
@@ -219,15 +281,11 @@ class RSIDivergence(TechnicalIndicatorBase):
             return pd.DataFrame(columns=self.meta.output_columns)
         params = self.get_params(**kwargs)
         rsi_n, lookback = params["rsi_period"], params["lookback"]
+        peak_order = int(params.get("peak_order", _DEFAULT_PEAK_ORDER))
         close = data["close"]
         rsi = _rsi(close, rsi_n)
-        price_change = close - close.shift(lookback)
-        rsi_change = rsi - rsi.shift(lookback)
-        signal = pd.Series(0.0, index=data.index, dtype=float)
-        # 顶背离：价升 RSI 降
-        signal[(price_change > 0) & (rsi_change < 0)] = 1.0
-        # 底背离：价跌 RSI 升
-        signal[(price_change < 0) & (rsi_change > 0)] = -1.0
+        # 峰谷检测（§7④ 升级）：价更高峰 + RSI 较低峰 → 顶背离，标在峰确认点
+        signal = _divergence_signal(close, rsi, lookback, peak_order)
         return pd.DataFrame({"rsi_divergence": signal}, index=data.index)
 
 
@@ -243,7 +301,7 @@ class MACDDivergence(TechnicalIndicatorBase):
         input_columns=["close"],
         params={"lookback": 20, "fast": 12, "slow": 26, "signal": 9},
         version="1.0.0",
-        description="价格趋势 vs MACD HIST 趋势对比，输出(0=无,1=顶背离,-1=底背离)",
+        description="价格峰谷 vs MACD HIST 背离检测，输出(0=无,1=顶背离,-1=底背离)，信号标在峰确认点(极值+3)",
     )
 
     def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
@@ -253,15 +311,13 @@ class MACDDivergence(TechnicalIndicatorBase):
         params = self.get_params(**kwargs)
         lookback = params["lookback"]
         fast, slow, signal_n = params["fast"], params["slow"], params["signal"]
+        peak_order = int(params.get("peak_order", _DEFAULT_PEAK_ORDER))
         close = data["close"]
         dif = _ema(close, fast) - _ema(close, slow)
         dea = _ema(dif, signal_n)
         hist = 2 * (dif - dea)
-        price_change = close - close.shift(lookback)
-        hist_change = hist - hist.shift(lookback)
-        signal_out = pd.Series(0.0, index=data.index, dtype=float)
-        signal_out[(price_change > 0) & (hist_change < 0)] = 1.0
-        signal_out[(price_change < 0) & (hist_change > 0)] = -1.0
+        # 峰谷检测（§7④ 升级）：价更高峰 + HIST 较低峰 → 顶背离，标在峰确认点
+        signal_out = _divergence_signal(close, hist, lookback, peak_order)
         return pd.DataFrame({"macd_divergence": signal_out}, index=data.index)
 
 
