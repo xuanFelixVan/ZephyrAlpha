@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-H1_REDIS_HOT | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [ALGO_FLOW] #209④ stock_list 退市闭合测试：板块全量刷新→CH 有效快照对账→
 # [ALGO_FLOW] 消失标的凭 ExpireDate 证据产出 list_status='退市'+valid_to 闭合批
 # [ALGO_FLOW] 三重护栏：清单完整性下限/消失数阈值/逐标的证据，中止不影响主批

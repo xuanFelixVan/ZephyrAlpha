@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-H1_REDIS_HOT | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [ALGO_FLOW] #209② adj_factor 写侧守卫测试：miniqmt 已覆盖键查询→解析→逐行跳过
 # [ALGO_FLOW] 守卫 fail-open（CH 查询失败/异常→空集不阻塞 fallback 写入）
 # [ALGO_FLOW] 自定义目标表（非共享 adj_factor 表）跳过守卫查询
