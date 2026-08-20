@@ -44,6 +44,7 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass, field
+from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
 
 __all__ = [
@@ -157,20 +158,33 @@ class OrderRoutingResult:
 
 
 def _round_tick(price: float) -> float:
-    """按最小价位 0.01 元取整(四舍五入到分)"""
-    return round(round(price / PRICE_TICK) * PRICE_TICK, 2)
+    """按最小价位 0.01 元取整(四舍五入到分)
+
+    口径与交易所一致：十进制 ROUND_HALF_UP（非 Python 银行家舍入），
+    消除 x.xx5 边界 1 分差异（2026-08-20 AI-NIGHT-001 包3.2 登记项#3）。
+    """
+    return float(Decimal(str(price)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
 
 
 def limit_up_price(prev_close: float, limit_pct: float = DEFAULT_LIMIT_PCT) -> float:
-    """涨停价 = 昨收 × (1 + limit_pct), 按 0.01 取整"""
+    """涨停价 = 昨收 × (1 + limit_pct), 四舍五入到分(ROUND_HALF_UP)
+
+    用 Decimal 精确乘法（str 转换），避免 float 二进制误差翻转 x.xx5
+    边界（如 10.35×1.1 真值 11.385 → 交易所 11.39，float 得 11.38）。
+    """
     _validate_prev_close_pct(prev_close, limit_pct)
-    return _round_tick(prev_close * (1.0 + limit_pct))
+    pc = Decimal(str(prev_close)) * (Decimal("1") + Decimal(str(limit_pct)))
+    return float(pc.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
 
 
 def limit_down_price(prev_close: float, limit_pct: float = DEFAULT_LIMIT_PCT) -> float:
-    """跌停价 = 昨收 × (1 - limit_pct), 按 0.01 取整"""
+    """跌停价 = 昨收 × (1 - limit_pct), 四舍五入到分(ROUND_HALF_UP)
+
+    如 8.45×0.9 真值 7.605 → 交易所 7.61（float 银行家得 7.60）。
+    """
     _validate_prev_close_pct(prev_close, limit_pct)
-    return _round_tick(prev_close * (1.0 - limit_pct))
+    pc = Decimal(str(prev_close)) * (Decimal("1") - Decimal(str(limit_pct)))
+    return float(pc.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
 
 
 def _validate_prev_close_pct(prev_close: float, limit_pct: float) -> None:

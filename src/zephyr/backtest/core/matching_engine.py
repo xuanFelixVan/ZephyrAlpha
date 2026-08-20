@@ -66,7 +66,7 @@ SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.2 §5.1 §16.7
 
 from __future__ import annotations
 
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from typing import Optional
 
 from zephyr.backtest.core.matching_logic import (
@@ -463,6 +463,13 @@ class MatchingEngine:
         # 先卖后买（避免现金不足）
         orders.sort(key=lambda o: 0 if o["side"] == "SELL" else 1)
 
+        # 满仓归一化成本摩擦修复（2026-08-20 AI-NIGHT-001 包3.2 登记项#2）：
+        # 目标 sizing 按 NAV×weight 换算不含交易成本余量，满仓（Σ=1）时买入
+        # 总成本=成交额×(1+滑点)+佣金 必然超现金 → 整单被拒（每日重复 warning、
+        # 回测偏离信号意图）。此处按"先卖后买"顺序投影现金，买单预计超支时
+        # 收缩到可负担的最大整手；现金充足的非满仓场景逐位不变（零回归）。
+        orders = self._clamp_buys_to_projected_cash(orders, order_books, portfolio)
+
         # 生成 fills
         fills: list[BacktestFill] = []
         for order_dict in orders:
@@ -472,6 +479,71 @@ class MatchingEngine:
             if fill is not None and (fill.filled or fill.filled_quantity > 0):
                 fills.append(self._to_backtest_fill(fill, date))
         return fills
+
+    def _clamp_buys_to_projected_cash(
+        self,
+        orders: list[dict],
+        order_books: dict[str, OrderBookSnapshot],
+        portfolio: Portfolio,
+    ) -> list[dict]:
+        """按投影现金收缩买单至可负担的最大整手（满仓成本摩擦修复）
+
+        逐单按"先卖后买"顺序投影现金：卖单按估算净回款累加，买单按估算总成本
+        （成交额×(1+滑点)+max(佣金率佣金,最低佣金)，与 MatchingLogic 口径一致）
+        扣减；买单预计超支时收缩数量到可负担整手，不足一手则丢弃。
+        Portfolio._apply_buy 的现金非负检查仍是最终防线（本步骤只做 sizing 收缩）。
+        """
+        slip = self._config.slippage_bps / Decimal("10000")
+        rate = self._config.commission_rate
+        min_comm = self._config.min_commission
+        stamp = self._config.stamp_tax_rate
+        lot = self._config.lot_size
+
+        projected = portfolio.cash
+        out: list[dict] = []
+        for order in orders:
+            ob = order_books.get(order["symbol"])
+            if order["side"] == "SELL":
+                base = self._side_base_price(ob, "SELL")
+                exec_price = base * (1 - slip)
+                gross = order["quantity"] * exec_price
+                comm = max(gross * rate, min_comm) + gross * stamp
+                projected += gross - comm
+                out.append(order)
+                continue
+
+            base = self._side_base_price(ob, "BUY")
+            exec_price = base * (1 + slip)
+            qty = order["quantity"]
+
+            def _buy_cost(q: Decimal) -> Decimal:
+                g = q * exec_price
+                return g + max(g * rate, min_comm)
+
+            if _buy_cost(qty) > projected:
+                # 佣金率情形的可负担手数，再按最低佣金/滑点实际成本回校验递减
+                qty = Decimal(int(projected / (exec_price * (1 + rate)) / lot) * lot)
+                while qty > 0 and _buy_cost(qty) > projected:
+                    qty -= lot
+                if qty <= 0:
+                    continue  # 现金不足一手，放弃该买单（无单可成）
+                order = dict(order, quantity=qty)
+            projected -= _buy_cost(qty)
+            out.append(order)
+        return out
+
+    @staticmethod
+    def _side_base_price(ob: OrderBookSnapshot | None, side: str) -> Decimal:
+        """取估算执行基准价：BUY 用 ask1、SELL 用 bid1，缺失回退 last_price。"""
+        if ob is None:
+            return Decimal("0")
+        if side == "BUY":
+            if ob.ask_price and ob.ask_price[0] > 0:
+                return ob.ask_price[0]
+        else:
+            if ob.bid_price and ob.bid_price[0] > 0:
+                return ob.bid_price[0]
+        return ob.last_price
 
     def _match_order_dict(
         self,
@@ -567,19 +639,26 @@ class MatchingEngine:
         return self._config.price_limit_pct
 
     def _is_limit_up(self, symbol: str, price: Decimal, prev_close: Decimal | None) -> bool:
-        """是否涨停（封板价之上，买单拒成；卖单不受限）。"""
+        """是否涨停（封板价之上，买单拒成；卖单不受限）。
+
+        涨跌停价取整口径与交易所一致：ROUND_HALF_UP 到分（非默认
+        ROUND_HALF_EVEN），消除 x.xx5 边界 1 分差异。
+        """
         if prev_close is None or prev_close <= 0:
             return False
         pct = self._infer_limit_pct(symbol)
-        upper_limit = (prev_close * (1 + pct)).quantize(Decimal("0.01"))
+        upper_limit = (prev_close * (1 + pct)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         return price >= upper_limit
 
     def _is_limit_down(self, symbol: str, price: Decimal, prev_close: Decimal | None) -> bool:
-        """是否跌停（封板价之下，卖单拒成；买单不受限）。"""
+        """是否跌停（封板价之下，卖单拒成；买单不受限）。
+
+        涨跌停价取整口径与交易所一致：ROUND_HALF_UP 到分。
+        """
         if prev_close is None or prev_close <= 0:
             return False
         pct = self._infer_limit_pct(symbol)
-        lower_limit = (prev_close * (1 - pct)).quantize(Decimal("0.01"))
+        lower_limit = (prev_close * (1 - pct)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         return price <= lower_limit
 
     def _is_price_limit(self, symbol: str, price: Decimal, prev_close: Decimal | None) -> bool:

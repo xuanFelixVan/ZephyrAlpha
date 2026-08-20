@@ -35,7 +35,8 @@
   ⑤ 引擎级 5 日全链对账（信号→撮合→记账→NAV 逐日手算）
   ⑥ P0 回归：停牌持仓 NAV 最后已知价结转（2026-08-19 阶段2 新发现修复）
   ⑦ P0 回归：跌出信号的持仓必须清仓（2026-08-19 阶段2 新发现修复）
-  ⑧ 满仓信号零成交 → fill 失败 warning 显化（#210 可见性，红队向量②）
+  ⑧ 满仓信号成本收缩成交（2026-08-20 包3.2 登记项#2 修复后口径；
+     原"满仓零成交+warning 显化"断言随修复目标行为淘汰，留痕见场景⑧类 docstring）
 """
 from __future__ import annotations
 
@@ -240,7 +241,13 @@ class TestPriceLimitBoardInference:
         assert sell_fills == [], "跌停日卖单应拒成"
 
     def test_engine_daily_path_limit_up_no_fill(self):
-        """引擎日频路径：prev_close 逐日传递，涨停日信号零成交。"""
+        """引擎日频路径：prev_close 逐日传递，涨停日买单阻断、次日非涨停成交。
+
+        2026-08-20 包3.2 留痕：原版本以"day1 满仓买单因成本超现金被拒"制造
+        零持仓前置；满仓成本摩擦修复（登记项#2）后满仓单收缩成交，前置不再
+        成立。改为 day1 无信号（零持仓），day2 涨停日信号满仓 → 买单生成但
+        被涨停阻断（撮合层跳过，连拒单 warning 都不应有），day3 非涨停成交。
+        """
         dates = pd.bdate_range("2026-08-03", periods=3)
         closes = [10.00, 11.00, 11.00]  # day2 +10% 涨停
         rows = [
@@ -248,14 +255,22 @@ class TestPriceLimitBoardInference:
             for d, c in zip(dates, closes, strict=True)
         ]
         data = pd.DataFrame(rows).set_index(["symbol", "date"])
-        # 信号覆盖 3 天（0.5 恒定 → 归一化为 1.0 满仓）
-        sig = pd.DataFrame({"600000": [0.5, 0.5, 0.5]}, index=dates)
+        # day1 无信号（NaN → 不动作）；day2/day3 满仓信号
+        sig = pd.DataFrame({"600000": [float("nan"), 1.0, 1.0]}, index=dates)
         engine = DefaultBacktestEngine(config=BacktestConfig())
         engine.run(data=data, signals=sig, strategy_name="toy-limit")
         pf = engine.last_portfolio
-        # day1: 满仓买单因滑点+佣金超出 NAV 被拒（红队向量②独立验证）；
-        # day2/day3: 涨停/触板价 vs prev_close → 撮合层直接跳过，连拒单警告都不应有
-        assert pf.get_position("600000") is None or pf.get_position("600000").quantity == 0
+        trades = pf.trades_log
+        # day2(08-04) 涨停：target=90,900 股买单生成 → 涨停阻断 → 零成交
+        assert not [t for t in trades if t["date"].startswith("2026-08-04")]
+        # day3(08-05) 非涨停（prev=11）：满仓买单收缩至可负担整手成交
+        # target=floor(1,000,000/11/100)×100=90,900 → 成本 1,000,299.99>1,000,000
+        # → 收缩 90,800 股（成本 999,199.55 可负担）
+        day3 = [t for t in trades if t["date"].startswith("2026-08-05")]
+        assert len(day3) == 1
+        assert day3[0]["side"] == "BUY"
+        assert day3[0]["quantity"] == 90800.0
+        assert pf.get_position("600000").quantity == D("90800")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -607,14 +622,23 @@ class TestRotationLiquidation:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 场景⑧ 满仓信号零成交 → fill 失败 warning 显化（#210，红队向量②）
+# 场景⑧ 满仓信号成本收缩成交（2026-08-20 包3.2 登记项#2 修复后口径）
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-class TestFullWeightZeroFillWarning:
-    """满仓（Σ=1 单标的）信号买入必超现金（滑点+佣金）→ 零成交，但 warning 必须显化。"""
+class TestFullWeightCostFrictionFill:
+    """满仓（Σ=1 单标的）信号：sizing 预留成本余量收缩至可负担整手成交。
 
-    def test_zero_fill_emits_warning(self, caplog):
+    2026-08-20 包3.2 留痕：本类原为 TestFullWeightZeroFillWarning，断言
+    "满仓买入必超现金 → 零成交 + Fill skipped warning 显化"（红队向量②对
+    #210 可见性的验证）。该行为即登记项#2 登记的结构性摩擦本身，修复后
+    （matching_engine._clamp_buys_to_projected_cash）满仓单收缩成交、不再
+    触发拒单——原断言口径随修复目标行为一并淘汰（评估：测试口径过时，
+    非代码回退）。#210 的 warning 显化机制仍保留于 vectorized_engine
+    （防御性最终防线，clamp 估算与实际成交口径一致时不再触达）。
+    """
+
+    def test_full_weight_fills_after_clamp(self, caplog):
         dates = pd.bdate_range("2026-08-03", periods=2)
         rows = [{"symbol": "600000", "date": d, "close": 10.0} for d in dates]
         data = pd.DataFrame(rows).set_index(["symbol", "date"])
@@ -623,12 +647,14 @@ class TestFullWeightZeroFillWarning:
         with caplog.at_level(logging.WARNING, logger="zephyr.backtest.implementations.vectorized_engine"):
             result = engine.run(data=data, signals=sig, strategy_name="toy-fullweight")
         pf = engine.last_portfolio
-        # 零成交（100,000股×10.001+300.03 = 1,000,400.03 > 1,000,000）
-        assert result.trades_count == 0
-        assert not pf.positions or all(p.quantity == 0 for p in pf.positions.values())
-        # 但拒绝必须可见：逐笔 warning + 汇总 warning
+        # 满仓成本收缩：100,000 股成本 1,000,400.03>1,000,000 → 收缩至 99,900 股
+        # （成本 999,399.62997 可负担）；day2 NAV 口径下 target=99,900 → diff=0 无单
+        assert result.trades_count == 1
+        pos = pf.get_position("600000")
+        assert pos.quantity == D("99900")
+        # 逐分对账：cash = 1,000,000 − 999,399.62997 = 600.37003
+        assert pf.cash == D("600.37003")
+        # 满仓不再触发拒单 warning（修复目标行为）
         per_fill = [r for r in caplog.records if "Fill skipped" in r.getMessage()]
         summary = [r for r in caplog.records if "fill 被拒绝" in r.getMessage()]
-        assert len(per_fill) >= 1, "满仓零成交必须逐笔 warning 显化（#210）"
-        assert len(summary) >= 1, "回测结束必须有汇总 warning（#210）"
-        assert all(r.levelno == logging.WARNING for r in per_fill + summary)
+        assert per_fill == [] and summary == []
