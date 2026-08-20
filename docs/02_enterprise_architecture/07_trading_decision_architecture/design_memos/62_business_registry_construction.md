@@ -2825,3 +2825,15 @@ project_memory 硬约束：个人+100%AI 项目，过度工程是红线。逐项
 | K6 | 63 号配对文档的两处漂移（v1.34.0 新增，63 号侧修复不越界） | 63 号 line 46 写"62 号已定稿 12 个业务注册表 schema（P0 完成三件套，**P1 待施工 9 件套**）"——口径与 62 号不符（62 号 P1=7 表 + P2=2 表，且 factor/strategy/risk_limit 已落盘 Step1-3）；63 号 line 47 引用"62 号 **line 1715** 记录 dataflow DS-001~076"——硬编码行号引用，62 号 v1.33.0/v1.34.0 编辑后该行已是 §4.13 PROMOTE_ENTRY 内容（引用目标漂移）。01 号规范要求交叉引用用稳定 path，行号引用脆弱 | 不越界改 63 号，由其下一轮审查时修复：① "P1 待施工 9 件套"改为"P1 7 表+P2 2 表，12 表已全部落盘"（v1.34.3 注：12/12 已建成）；② 行号引用改为稳定章节引用（62 号 §6.2.3 数据来源段） |
 | L1 | BM-RES-01-A 数据集版本化与血缘追踪（v1.34.1 作战地图全覆盖补丁，**已闭合裁定**） | 作战地图 BM-RES-01-A（L0，design 态）：原始数据 → Git-like 版本管理→数据快照→回滚→血缘追踪（来源→变换→去向）→质量评分→生命周期管理，versioning_mode 候选 git-like/snapshot | **裁定：不建独立数据集快照/回滚服务**——SemVer + git commit（充 immutable，§4 原则 9 + R34）+ ClickHouse 财报表 PIT 多版本（`available_at` 保留全版本物理设计，15 号 §3 双层 PIT 已施工）已为个人项目上限；15 号已明示"不建独立特征版本服务"，50 号已否决 DVC（"管数据集版本，不是结果日志"另一层）。**血缘=§6.2.3 data_asset_registry 三实体**（sources/datasets/jobs + produced_by/consumed_by 自引用，对标 OpenLineage Source/Dataset/Job）——数据集级血缘已随 P1-B 施工闭合；**字段级血缘（column-level）登记 Phase 3+ 远期候选**（§6.2.3 已裁定个人项目不需要 RunEvent/column-level）。重评条件：出现跨源对账错数且数据集级血缘无法定位时，重评字段级血缘 |
 | L2 | BM-RES-03-C 研究目录与搜索引擎（v1.34.1 作战地图全覆盖补丁，**已闭合裁定**） | 作战地图 BM-RES-03-C（L0，design 态）：研究资产元数据 → 搜索引擎→标签系统→引用图谱→推荐器→访问控制 → 研究目录（可搜索/可引用），search_engine 候选 keyword/semantic/hybrid | **裁定：目录层已建**——12 注册表体系即研究资产目录真源：各表 `tags` 字段（标签系统）+ §4.6 交叉引用矩阵（32 条 FK，引用图谱的结构化替代）+ §4.7 E1-E20 验证审计算法（横切查询）。**语义搜索/引用图谱可视化/推荐器登记 Phase 3+ 候选**——个人项目研究资产总量（因子 111/策略 59/限额 62）下关键词+tags+FK 遍历已够，语义搜索的边际价值随资产规模增长。重评条件：注册表条目总量 >1000 或研究员检索失败率成为痛点时，评估 hybrid（关键词+向量）搜索层；访问控制不建（单 Owner 系统无多租户） |
+
+---
+
+## 15. chart_pattern used_by_factors 回填挂起登记（2026-08-20）
+
+> AI-NIGHT-001 包 Q2 派单（对应 tracker #32，本备忘不越界改 tracker，仅登记口径）。结论：**回填挂起，挂起条件=形态因子施工**。
+
+- **现状实证（2026-08-20）**：`chart_pattern_registry.yaml` 15 条 entry 的 `used_by_factors` 字段**全为空列表 `[]`**（逐条 grep 实证：candlestick 6 active + chart_pattern 4 candidate + trendline 1 candidate + support_resistance 3 active + structure 1 active 无一例外）；schema 注释既定口径="反向关联 factor_id（forward-ref，factor_registry 施工后回填）"（§6.2.4 + 注册表 L200）。
+- **挂起原因**：`used_by_factors` 是"形态 → 因子"的**反向关联**——回填源在因子侧。当前形态因子未施工（factor_registry 中无消费 chart_pattern 条目的形态因子落码条目，29 号入库的 140 条因子多为 candidate 且 code_path 空），反向关联无的放矢；强行回填=凭空编写（违反本备忘"内容按需填充"与 63 号"不给无消费方的表写消费文档"同纪律）。
+- **挂起条件（回填触发）**：形态因子施工批——任一形态因子落码并登记 factor_registry（code_path 非空、与 PAT-XXX 条目建立引用）时启动回填。
+- **回填动作预案**（触发后单批可闭环，未来工程-小型）：① 按 §6.2.4 关系链（chart_pattern_registry 识别算法 → factor_registry 形态因子 → strategy_registry）逐条回填 `used_by_factors: [FCT-XXX, ...]` 并同步 `updated_at`；② 回填后跑 §4.7 E 系列交叉引用校验（FK 双向一致：factor 侧引用形态、形态侧 used_by_factors 回指）；③ 与因子 IC 回填（tracker #56）不同源——本项只依赖形态因子落码，不依赖回测跑批基础设施。
+- **当前状态登记**：字段保留空列表为**诚实占位**（非缺口、非漂移）——与 §6.2.4"建库结构完整，内容按需填充"原则一致；待形态因子施工批一并回填。

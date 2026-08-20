@@ -255,3 +255,17 @@ M5（⑦）：治理登记收尾                                     [部分完�
 | 2026-08-09 | 1.0.2 | 文档头统一：frontmatter 补 title/owner/language，H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
 | 2026-08-12 | 1.1.0 | **MLflow 路线逆转收敛改写 + 代码实况核实**（draft→active）：① 头部加 v1.1.0 路线逆转声明（51 号 2026-08-09 裁定完全卸载 MLflow、单一 FallbackBackend JSON、Panel Tab 可视化）；② §1.4 方案选型标注已逆转；③ §2.3 命名冲突标注选项 A 已落地（experiment_tracking 8 文件正式包）；④ §2.5 依赖现状更正（Grep 核实 pyproject.toml 无 observability extras、无 mlflow 声明，v1.0.x"已落地"描述不实）；⑤ §2.6 已动手进度按代码实况更新（__init__.py/query.py/c1_adapter 均已就位，mlflow 残留待 51 号工作流 A 清除）；⑥ §3 工作清单八项全量状态标注（⓪✅/①②❌逆转取消/③✅/④移交51号/⑤待评估/⑥待施工=核心剩余/⑦部分完成）；⑦ §5/§6/§7/§8 按逆转后改写（零新增依赖/验收走 Panel/风险收敛/里程碑 M0-M1 已完成）；⑧ §9 四个决策点全部标已决；status draft→active（方向全定、M1 已落地、剩余工作明确）。另注：本版修正曾遭并发会话回滚五次（含 f7c4ad2e commit 时 index 被还原漏收一次），此为重放写入 | 架构审查第 1-2 轮发现 50 号与 51 号根本矛盾（50 号写"MLflow 已定"而 51 号已裁定退役）+ 多处与代码实况脱节（命名冲突/依赖声明/已动手进度），按 51 号裁定与 Grep 实证收敛统一 |
 | 2026-08-15 | 1.1.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——§1.3 关键结论 3 条散文并为 2 条（逆转指针并入，调研事实零丢失）；§2.3 未选项 B/C 并为一条（决策历史保留） | 8 类扫描 2 处（类别 2 过程性叙述×1、类别 5 冗余修饰×1）；被推翻的 MLflow 方案按 v1.1.0 既定"保留为决策历史"裁定不删 |
+
+---
+
+## 治理登记收尾（§3⑦，2026-08-20 登记）
+
+> AI-NIGHT-001 包 Q2 派单：§3⑦ 三项治理登记项的实证收尾登记。结论：**两项闭环、一项为派生文档重生成滞后（非真源漂移）**。
+
+| 登记项 | 状态（2026-08-20 实证） | 证据与口径 |
+|---|---|---|
+| ① `experiment_history` 组件 creation_token 登记 | ✅ **已闭环** | capability_canonical_file_registry.yaml L5434-5441：`src/zephyr/frontend/dashboard/components/experiment_history.py` token=`auto-frontend-experiment-history-20260816`、`tests/experiment_tracking/test_experiment_history.py` token=`auto-test-experiment-history-20260816`（created_by=session-ai-25808-20260815122313，51 号工作流 C 批） |
+| ② blueprint 同步"单一 JSON 后端" | ✅ **已闭环** | `docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md` v0.2.0：title="Experiment Tracking 蓝图 — 单一 JSON 后端实验跟踪（MLflow 已退役）"，summary 明示"MLflow 已于 2026-08-16 退役卸载"，last_updated/last_verified=2026-08-16 |
+| ③ 07_d_infra_telemetry.md 措辞同步 | ⏳ **派生文档滞后，真源已一致** | 真源（src/zephyr/experiment_tracking/ 各模块 docstring）已全部 v0.2.0 口径（"单一 JSON 后端/FallbackBackend，MLflow 已退役"——__init__/query/models/fallback_tracker/experiment_tracker/config 逐文件实证）；07_d_infra_telemetry.md 为 generate_domain_doc.py 从 depgraph（PostgreSQL）**自动生成**的派生文档——包级节点与"模块核心算法"节标题已同步新措辞，但全景图内 query/config/fallback_tracker/models 四节点描述仍为旧"mlflow vs fallback 双后端"措辞（depgraph 快照未全量刷新）。属"派生文档未重生成"滞后，**非真源漂移**；待下一次域文档重生成（全景图刷新批）自动收敛，本备忘不手改自动生成文件（改则下次重生成被覆盖，且违反派生产物纪律） |
+
+**收尾裁定**：§3⑦ 整体标记为"登记闭环、一项观察中"——里程碑 M5（⑦治理登记收尾）达成口径以①②为准；③的收敛验证方式=下次 depgraph 全量重扫+域文档重生成后，grep 07_d 残留 "mlflow vs fallback"/"没装 mlflow" 措辞应零命中（标**待实证**，随生成器批次复核）。

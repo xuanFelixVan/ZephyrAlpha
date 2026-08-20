@@ -499,3 +499,27 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 | 2026-08-15 | 1.2.12 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——B2 设计参考尾句过程性叙述删除（注入过程已由 v1.2.2 修订记录承载）；§八.E 三条"这进一步支持 MVP 不做"冗余收尾口号删除（"MVP 不做"裁定在条目内已声明，理由保留） | 8 类扫描 4 处（类别 2 过程性叙述×1、类别 5 冗余修饰×3）；施工步骤/算法/契约/参数零丢失 |
 | 2026-08-16 | 1.2.13 | 施工完成核验注入（头部 v1.2.13 块）：A/B/C 三工作流全部完成实际执行——A=mlflow 代码删除+pip uninstall 3.15.1；B=experiment_history.py 建成+app_panel 第 11 Tab 注册冒烟通过；C=fallback run 重生验证+治理登记完成。53 测试全绿；顺手修复 2 个预存 bug（passed 必填位 TypeError 静默返空/bytes artifact 信息丢失）；偏差注记 2 项（P1-4 节流 value_throttled→value、P0-3 按钮按预案砍）；PNG 退役 pending（条件 3 待用户确认） | 51 号计划闭环——experiment_registry 施工前提（FallbackBackend JSON + Panel experiment_history.py）已达成 |
 | 2026-08-16 | 1.2.14 | 浏览器实测抓 2 个 widget 层 bug 修复：① MultiSelect.options value 放 RunSummary 对象致回调 `TypeError: unhashable`（param.value 返回 value 非 label——options value 改 run_id + by_id 解析 + 契约回归测试锚定，pn=None 测试路径覆盖不到 widget 绑定故施工期未暴露）；② 多选横向对比表 `ReferenceError: Tabulator is not defined`（Tabulator JS 走 CDN，单机离线渲染失败——按 B2 文档备选方案改 plotly go.Table，离线零新增）。Playwright+Chrome 终验：单选双曲线/多选对比表/降级 Alert 全 ✅，控制台零异常；54 测试全绿 | 同 v1.2.13 commit 线追加；另记 IDE 内嵌浏览器会注入 /@vite/client（404 被当 JS 解析→SyntaxError→假白屏），Panel 验证须用 Playwright+本机 Chrome 或常规浏览器 |
+
+---
+
+## 十一、前端 C4 Container Diagram 登记（2026-08-20）
+
+> §三.C2 登记项闭环（AI-NIGHT-001 包 Q2 派单）：前端 C4 Container Diagram（容器图，C4 模型第 2 层——可独立运行/部署单元的职责与依赖视图）尚未成图，按既定口径将「实验历史」Tab 登记为前端第 11 个 Container 的**描述登记**（文字级 C4 条目，成图时直接转 C4-PlantUML）；登记后"纸面 VIEW vs 实际 Panel"断层在册收敛。
+
+**Container 条目（第 11 个 Container）**：
+
+| 字段 | 内容 |
+|---|---|
+| Container 名称 | 实验历史 Tab（Experiment History Tab） |
+| 所属系统/域 | D_FRONTEND 域——Panel dashboard 前端（G0.5 开发工具定位，非 G1 正式前端，§四.9 既定） |
+| 载体文件 | `src/zephyr/frontend/dashboard/components/experiment_history.py`（production；creation_token=auto-frontend-experiment-history-20260816） |
+| 职责 | 实验 run 的列表/详情/多选横向对比 + C1 双净值对比视图（baseline vs experiment 净值叠加 + verdict 指标 diff），是 FallbackBackend JSON 实验记录的唯一可视化消费面 |
+| 技术栈 | Panel（pn）+ plotly（go.Figure/go.Table，离线零 CDN 依赖）+ pandas |
+| 依赖（DEPENDENCIES） | `experiment_tracking/query.py`（list_runs/get_run/compare_runs/download_artifact 统一查询面）+ `experiment_tracking/models.py`（RunSummary/RunDetail）+ panel + plotly |
+| 消费方（CONSUMERS） | `app_panel.py`（注册为第 11 Tab）；用户=Owner 复盘与 AI 开发期验证 |
+| 数据存储 | 只读消费 `logs/experiment_tracking_fallback/{component}/{run_id}/` JSON + artifacts（不写） |
+| 降级行为 | 查询失败/无 run→友好 Alert 降级面板（不崩 dashboard，§七 P1-7 degraded_reason 口径） |
+| 既有同域 Container | 掘金 5-Tab 等前 10 个 Tab（Container 1-10，app_panel 既有注册） |
+| 关联治理锚点 | #ARCH-OBS-EXP-TRACK-001（M2 完成）/ blueprint_experiment_tracking.md v0.2.0 / module_translation_registry plain_zh="实验历史" |
+
+**登记口径注记**：① C4 为通用架构图方法（非前端专用），项目后端已有 4 个 C4 组件图（`docs/02_enterprise_architecture/target_architecture/diagrams/`），前端 Container Diagram 成图（C4-PlantUML）仍属后续批次——本节先行固化条目内容，成图时零返工转写；② 本 Tab 在 C4 分层中的准确位置=Panel dashboard 这一 Deployable 内的 Container 级视图单元（11 Tab 同进程同部署，"第 11 个 Container"为项目内部口径，非 C4 严格"独立部署单元"语义——保持与 §三.C2 原登记措辞一致，标**待实证**：成图时若按 C4 严格语义应落为 Component 级，届时一并校正措辞）。

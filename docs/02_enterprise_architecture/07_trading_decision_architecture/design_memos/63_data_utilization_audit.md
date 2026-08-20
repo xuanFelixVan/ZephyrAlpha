@@ -1402,3 +1402,33 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 | 2026-08-12 | 2.1.0 | 全量重扫核验修正：三层覆盖口径+真闲置收敛+设施盘点+施工计划重 scope | **2026-08-12 git 提交态全量重扫核验**：(1) 基数修正——表数 102→103（`market_stock_valuation` 新增）、受扫文档 42→46 篇、字符量 4.59M→5.24M；(2) 三层覆盖口径——消费层 37（35.9%）/规划层 53（51.5%）/零覆盖 13（12.6%），v0.2.0 的"37.3%"实测即消费层口径，任一文档命中口径虚高 87.4% 废弃，施工目标以消费层为准；(3) 真闲置 3→1 张（仅 `index_meta`）+新增 §6.1b"代码零引用但规划已登记"6 张（dividend_tax_node 改判 dormant VIEW 免归档）；(4) §5 全部数字实测重算（热度榜/零文档缺口 15→12 张/低频表复核）；(5) §2.4 已施工设施盘点——被审查对象全部已施工，审查工具链全部未施工，`src/zephyr/data/ingestions/` 不存在（§7.5 路径修正）；(6) §7 施工计划重 scope——消费层缺口 59 张，覆盖轨迹 35.9%→44.7%→68.9%→93.2%，registry 补齐 26→27 张；(7) §10 Q1 收敛 1 张+新增 Q8；(8) §9 补 2 项；(9) v0.2.0 历史数字不可复现声明（扫描输出须入 git 快照）。全网验证：[modern-datatools.com 2026-04](https://www.modern-datatools.com/blog/data-baselining-warehouse-lifecycle-2026) 三层基线法+"20% 表活跃"企业常态反衬 99.0% 健康。**施工执行插曲**：回填过程遭遇并发会话 stash 隔离清空暂存区事故，全部修改经 dangling blob（f34adb8b）字节级恢复——教训记入 project_memory（git add 快照是最小保护层）。维持 draft（Q1/Q8 待人裁定 + 三波施工未执行） |
 | 2026-08-14 | 2.1.1 | 压缩精简 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001）——2703 行→1390 行（51.4%）；章节标题与编号一字不动；101 表盘点清单/五档分级、三波接入计划与验收标准、闲置表清单、每张表处置裁定全部完整保留；折叠审计方法论过程叙述与已完成阶段性总结（结论+日期保留）；frontmatter version patch+1、date 同步 |
 | 2026-08-15 | 2.1.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——§5.1 三层口径说明与 §2.2 口径修正重复段并指（17/64 号 53 张/87.4% 虚高论证保留在 §2.2 单处）；§5.2 热度表注不可复现声明并指 §2.2 | 8 类扫描 2 处均为类别 3（重复信息）；18 项口径表/利用率表/批次清单/算法参数零丢失 |
+
+---
+
+## 批次 D 归档决策登记（2026-08-20）
+
+> 按本备忘既定决策格式（§10.1 已裁定项：裁定+理由+重评/依据）登记批次 D 处置。决策方为 AI 的按 project_memory"明显可建议的给默认建议"口径登记默认建议并标待人拍板；维持 §10.2 Q1/Q3/Q8 待人决策属性不变——本节不越权拍板，只做处置路径登记。
+
+| # | 事项 | 裁定/处置路径 | 理由与依据 |
+|---|---|---|---|
+| D-1 | 批次 D 各表（跨市场/分钟级/衍生品，§6.2 批次 D 表） | **只记录、不接入、不归档**——代码用法已记录于 §6.2 批次 D 表即完成本波"记录"动作；分钟级 K 线（kline_lof_*/kline_etf_*）文档由 16 号技术指标 machinery 的 period 覆盖说明统一承载（§5.3 既定决议），不逐表铺文档 | 业务边界已由 90 号 §18 裁定（LOF=P0 保留 / 股指期货=P2 需期货账户 / 生猪未列入覆盖范围）；§7.3 既定"不强制接入，只记录现状"。重评=90 号 §18 覆盖范围变更时 |
+| D-2 | `index_meta`（§6.1 唯一真闲置表） | **维持 Q1 默认建议**：DEPRECATED 观察期，1 季度无消费方认领→SUNSET→REMOVED（§7.5 归档路径五层指引）；本轮不动注册表/DDL/采集（归档执行层动作待人拍板后由对应层执行） | v2.1.0 实测五源全零（文档/代码/schemas/tasks/注册表）；provider 无映射、tasks.yaml 无任务（§2.4 已核验）。仍属 §10.2 Q1 待人决策项，本节仅登记路径 |
+| D-3 | 6 张 §6.1b"代码零引用但规划已登记"表（dividend_tax_node/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation） | **维持 Q8 默认建议**：dividend_tax_node 免归档（DB 派生 VIEW 零成本）；其余 5 张标 `status: dormant` 保留 DDL 待启用，不删表不补采集；消费方归属已先行登记（26/15 号附录标"待 Q8 裁定"） | 2026-08-20 实证复核：index_adjustment/ipo_schedule/margin_target_adjustment/stock_valuation 在 src/zephyr 均零命中（仅 schemas DDL/采集配置在位），与 Q8"代码零引用"口径一致——Q8 描述与 §6.2 批次 B 表"v0.2.0 估值计数"的矛盾以实测为准（§2.2 不可复现声明）。仍属 §10.2 Q8 待人决策项 |
+| D-4 | 后复权周/月线（`kline_weekly_hfq`/`kline_monthly_hfq`）与 16 号 §3.2 未复权口径矛盾 | **维持 Q3 待代码核实**：先按 §3.5 Confidence 自动判定核实 7 次引用性质（优先级 1 活跃消费→反向修正 16 号；优先级 2 模板继承→清理代码引用），本轮未改 16 号 | 属 §10.2 Q3 待人决策项（需代码核实）；本轮文档施工不涉及该表消费语义登记 |
+| D-5 | 生猪 3 张（`hog_futures_core`/`hog_province_spot`/`hog_spot_index`） | **待实证**——代码引用疑为采集模板继承（§3.5 优先级 2/3 性质未定）；本轮不归档、不接入、不写消费文档 | 90 号 §18 未列入覆盖范围；v0.1.0"归档生猪"建议已被 v0.2.0 撤销（与 90 号 §18 矛盾），现维持"需核实代码引用性质"原判 |
+| D-6 | `auction_book`（批次 C"配合 block_trade_detail"行） | **随 24 号一并挂起**——已登记于 24 号附录"关联挂起"注记（2026-08-20 实证 src/zephyr 引用 4 次），后续与大宗信号同批补 §7.0.1 六字段小节 | §6.2 批次 C 表既定"配合 block_trade_detail"；24 号为本波批次 A 目标文档 |
+| D-7 | `index_list`/`market_index`/`etf_list`/`lof_list`/`index_weight`（批次 C 注册表路径 5 张） | **归 62 号注册表路径**（benchmark/universe 扩展登记），不进消费文档队列——本备忘 §8 注册表关联表已载该口径（etf_benchmark 应补登记扩展等），本轮不重复登记 | §6.2 批次 C 表指派 62 号；注册表层登记属 62 号施工线范畴（ROOR/benchmark_registry/universe_registry），不在本波消费文档施工范围 |
+
+---
+
+## 批次施工与持续校验登记（2026-08-20，AI-NIGHT-001 包 Q2）
+
+> 结案报告（2026-08-19）未做事项第 1/2/4 条的施工落点登记。本节为施工登记，不改写 §5.1 覆盖率实测数——覆盖率口径更新待下一轮 `audit_data_utilization.ps1` 快照与审查复核（标**待实证**）。
+
+**批次 A（9 表→35/24/37/10 号，第一波）**：✅ 登记完成——各目标 memo 追加"数据资产消费登记"附录节（合并表格汇总口径：表名/内容/潜在消费场景/当前状态=未消费登记）。施工偏差注记：① `futures_term` 实证实际表名为 `futures_term_structure`（63 号简写，37 号附录已按实际表名登记，src 引用 9 次）；② `edb_data` 实证 src/zephyr 消费代码零命中（仅 tasks.yaml 采集+DDL），10 号附录标**待实证**；③ 引用计数为 2026-08-20 工作区复扫（src/zephyr *.py 词边界匹配），与本备忘 §6.2"v0.2.0 估值"列不一致处以复扫为准（§2.2 不可复现声明）。
+
+**批次 B+C（25 表→26/22/15 号 + 62 路径 + 挂起，第二波）**：✅ 登记完成——26 号 11 表（含 index_adjustment/ipo_schedule/margin_target_adjustment/equity_pledge_detail 4 表标"待 Q8 裁定"、`cb_iv` 按实际表名 `convertible_bond_iv` 登记、margin_target_adjustment 的 §6.2→25 号 vs §7.2→26 号指派差异标**待实证**）；22 号 4 表；15 号 4 表（stock_valuation 标"待 Q8 裁定"）；index_list/market_index/etf_list/lof_list/index_weight 5 表按 D-7 归 62 号注册表路径；auction_book 按 D-6 挂起 24 号。
+
+**持续校验脚本（结案报告未做事项第 4 条）**：✅ 已创建 `scripts/audit_data_utilization.ps1`（纯 ASCII 注释）——扫描 data_asset_registry.yaml datasets 条目 entity_name vs src/zephyr 代码引用计数 + design_memos 文档引用计数（排本备忘自引），输出快照到 docs/_working/（frontmatter 仅 ---/ttl: task_bound/--- 三行，EXEMPT-ZONE-FM 合规）；首份快照=docs/_working/data_utilization_audit_snapshot_2026-08-20.md。§3.4 原设想的 docs/_audit/ CSV 落点按 AI-NIGHT-001 派单改为 docs/_working/ 任务域快照（口径注记：快照为脚本实测，覆盖/缺口判定以快照为准）。pre-commit warn 集成（§10.2 Q6）未做，仍待人决策。
+
+**未闭环遗留**：Q1（index_meta）/Q3（hfq 矛盾）/Q8（6 张 dormant 表）仍待 Owner 拍板（D-2/D-3/D-4 仅登记默认建议与路径）；各目标 memo 的"未消费登记"状态→实际消费接线后按 §7.0.1 六字段模板改写正文并回本备忘核销；§5.1 消费层覆盖率（37/103=35.9%）指标是否因"登记级"覆盖上调，待下一轮审查按 §7.0.6 L1/L2/L3 验收口径裁定（L3 语义抽检未做，标**待实证**）。

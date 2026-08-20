@@ -812,3 +812,16 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 | 2026-08-17 | 1.2.1 | IPO 数据源接入闭环（tracker #114，AI-IPO-001） | §3.2a 数据管道落地：akshare `ipo_calendar` capability（巨潮 `stock_new_ipo_cninfo` 替代源）+ c1_market.ipo_calendar 表 + ipo_calendar_daily 盘后调度 + DS-105/JOB-086；§6 待裁定行与结案报告同步闭环 |
 | 2026-08-15 | 1.1.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §3.4 差异对齐 380 字段要点化（spec/代码实现/G16 对齐三要点，过程性叙述删）；§5.2 第二阶段 500 字段按候选拆 6 子项（全部链接/参数保留）；全篇扫描无其他可压缩点——OBI 公式 ΣVolAsk/(ΣVolBid+ΣVolAsk)、0.65/0.5%/0.25%/0.50 阈值、min_hold 10/15/30 分钟、IPO 四级 0.01/0.02/0.03→1.0/0.90/0.75/0.60、LEVEL_1/2/3 响应矩阵、Amihud 1e-8/萎缩 0.5、BM 锚点/开放问题/链接逐项零丢失 |
 | 2026-08-17 | 1.2.0 | LEVEL_3 生产接线闭环（AI-LVL3-001） | 结案报告 L21 遗留第一项闭环：①`detector.check()` 嵌入 `risk_layer_orchestrator.evaluate_intraday`（与 VaR/ES/回撤同层，systemic_detector+systemic_input_provider 成对注入即生效）②LEVEL_3 → `build_escape_directive` → `_engage_kill_switch` 单一仲裁点 → `execute_kill_switch_liquidation` 消费链接通 ③§3.6 降级机接线（复用 MOD-RK-21 `check_recovery`/`LiquidityRecoveryState`，LEVEL_3→LEVEL_2 冷却 30min+信号≤2+spread<0.3% 逐级迁移，降级不解除熔断闩锁——35 号 KILL 态人工复位不变式保持）④tracker #42①编排层接入 35 号 §3.13 调用方并入本批闭环（生产载体=trading_session 调仓循环+orchestrator 同 tick）；红队三向量非 mock 实证 16 项全绿（多信号 LEVEL_3 全链/情绪断路器 0.85 强制升级/冷却期逐级降级+非 LEVEL_3 逃逸守卫），28 项 orchestrator 测试两轮全绿；IPO 数据源接入登记遗留（§6 持续有效） |
+
+---
+
+## 附录：数据资产消费登记（63 号审查批次 A，2026-08-20 登记）
+
+> 来源：[63_data_utilization_audit](63_data_utilization_audit.md) §6.2 批次 A / §7.1 第一波——消费层文档覆盖缺口施工。登记口径：每表 3-5 行（表名/内容/潜在消费场景/当前状态）；按收缩方案合并为本节表格汇总。当前状态统一为**未消费登记**（unconsumed registration）：数据已落库、代码层或有引用，但本消费方文档尚未将其作为显式数据源描述；后续实际消费接线后，按 63 号 §7.0.1 六字段模板改写为正文小节并更新状态。引用计数为 2026-08-20 工作区复扫（src/zephyr *.py，词边界匹配）。
+
+| 表名 | 内容 | 潜在消费场景 | 当前状态 |
+|---|---|---|---|
+| `etf_nav`（ETF 净值） | ETF 单位净值与收盘价的折溢价序列 | 折溢价监测作**流动性危机信号**（非套利策略——个人系统无一级市场申赎资格，63 号 §9 已裁定不做折溢价套利）：折溢价绝对值 >2% 盘后批量预警，并入 §3.1 流动性危机检测信号族；极端折溢价=ETF 二级市场定价失效前兆 | **未消费登记**（2026-08-20 实证：src/zephyr 引用 18 次，代码活跃；消费语义未落本文档） |
+| `kline_futures`（期货 K 线） | 股指期货/商品期货 OHLCV 行情 | 期货对冲工具池行情输入（需期货账户，90 号 §18 定为 P2 背景级）：危机期股指期货贴水幅度=市场恐慌度量，与 §3.7 前瞻算法群信号互补 | **未消费登记**（2026-08-20 实证：src/zephyr 引用 9 次，代码活跃；消费语义未落本文档） |
+| `futures_position`（期货持仓） | 期货主力合约持仓量/成交持仓比序列 | 对冲工具池流动性评估：持仓量萎缩合约排除出对冲候选；持仓异动作危机共振参考 | **未消费登记**（2026-08-20 实证：src/zephyr 引用 11 次，代码活跃；消费语义未落本文档） |
+| `futures_term_structure`（期货期限结构，63 号批次 A 简写 `futures_term`） | 期货各期限合约价格期限结构（升贴水曲线） | 期限结构斜率=对冲成本测算输入；contango/backwardation（远期升水/贴水）切换作危机确认信号 | **未消费登记**（2026-08-20 实证：src/zephyr 引用 9 次（按实际表名 `futures_term_structure` 复扫；63 号简写 `futures_term` 零命中属命名差异，非代码漂移），代码活跃；消费语义未落本文档） |
