@@ -18,10 +18,24 @@
 """L_INFRA_TELEMETRY — 各零件领域对象 → 实验跟踪语义适配器包（单一 JSON 后端，MLflow 已退役）。
 
 M1: c1_adapter（C1ComparisonResult → tracking）
-M3: regime_adapter / feature_adapter / backtest_adapter / full_chain_adapter
+M4（50 号 §3 ⑥ 五零件接入）: regime_adapter（regime_detector 检测）/
+    feature_adapter（regime_feature_builder 特征矩阵）/
+    vectorized_adapter（vectorized_engine 回测）/
+    strategy_runner_adapter（StrategyRunner 全链路）/
+    c2c3_adapter（C2/C3 验证器）
+全链路 lineage：各 adapter 的 lineage 参数把上游零件 run_id 写入 tags
+（lineage_regime_run_id / lineage_feature_run_id / lineage_c1_run_id ...），
+供 query/Panel 按 run 串联 regime→feature→backtest→C1 链。
 """
 from __future__ import annotations
 
 from typing import Final
 
-__all__: Final = ["c1_adapter"]
+__all__: Final = [
+    "c1_adapter",
+    "c2c3_adapter",
+    "feature_adapter",
+    "regime_adapter",
+    "strategy_runner_adapter",
+    "vectorized_adapter",
+]
