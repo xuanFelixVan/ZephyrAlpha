@@ -61,7 +61,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _common import DB_DISPLAY_NAME  # noqa: E402
+from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  同目录脚本相对 import（_GOV_DIR 已注入 sys.path L62），静态解析不可达
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
@@ -667,7 +667,10 @@ DB_TABLE_GROUPS: list[dict] = [
             # 备注中的 {count} 占位符在生成时由 _generate_stats_section 用本表实时行数替换，
             # 避免硬编码数字与行数列漂移（原 nodes=4986/edges=5946 等写死值与行数列不一致）
             ("domains", "功能域清单——{count} 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层）"),
-            ("nodes", "模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），{count} 个"),
+            (
+                "nodes",
+                "模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），{count} 个",
+            ),
             ("edges", "依赖边——节点间的依赖关系（import/契约/事件订阅），{count} 条"),
         ],
     },
@@ -675,13 +678,28 @@ DB_TABLE_GROUPS: list[dict] = [
         "group": "dataflow",
         "label": "数据流图 dataflowgraph",
         "tables": [
-            ("dataflow_datasets", "数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy"),
-            ("dataflow_jobs", "作业——处理数据的「加工者」（如 ingest.minqmt_kline / compute.value_factor），含 trigger_type/run_context"),
+            (
+                "dataflow_datasets",
+                "数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy",
+            ),
+            (
+                "dataflow_jobs",
+                "作业——处理数据的「加工者」（如 ingest.minqmt_kline / compute.value_factor），含 trigger_type/run_context",
+            ),
             ("dataflow_edges", "数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），{count} 条"),
             # metadata 表：骨架已建但数据为 0（设计态扩展属性待填），暴露空表缺口
-            ("dataflow_datasets_metadata", "Dataset 扩展属性——physical_type/pit_policy/contract_ref，{count} 行（0=未填，AI 查 dataflow 会幻觉物理类型）"),
-            ("dataflow_jobs_metadata", "Job 扩展属性——source_code_ref/trigger_type/run_context，{count} 行（0=未填，AI 查 job 找不到源码）"),
-            ("dataflow_runs", "运行记录——job 执行历史（status/耗时/参数），{count} 行（0=无运行时观测，依赖观测系统回填）"),
+            (
+                "dataflow_datasets_metadata",
+                "Dataset 扩展属性——physical_type/pit_policy/contract_ref，{count} 行（0=未填，AI 查 dataflow 会幻觉物理类型）",
+            ),
+            (
+                "dataflow_jobs_metadata",
+                "Job 扩展属性——source_code_ref/trigger_type/run_context，{count} 行（0=未填，AI 查 job 找不到源码）",
+            ),
+            (
+                "dataflow_runs",
+                "运行记录——job 执行历史（status/耗时/参数），{count} 行（0=无运行时观测，依赖观测系统回填）",
+            ),
         ],
     },
     {
@@ -691,8 +709,14 @@ DB_TABLE_GROUPS: list[dict] = [
             ("decision_tracks", "决策轨——{count} 条正交决策轨（价值/动量/风险/组合），优先级+激活条件"),
             # decision_layers 行数=层数（10），原备注里的 214 是跨表引用 decision_nodes 行数，
             # 跨表引用易漂移且与行数列重复，改为不带数字的描述（节点数见 decision_nodes 行数列）
-            ("decision_layers", "决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属"),
-            ("decision_nodes", "决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash"),
+            (
+                "decision_layers",
+                "决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属",
+            ),
+            (
+                "decision_nodes",
+                "决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash",
+            ),
             ("decision_edges", "决策边——节点间的决策传递关系（L0→L1→...→L6 链路），{count} 条"),
         ],
     },
@@ -701,14 +725,32 @@ DB_TABLE_GROUPS: list[dict] = [
         "label": "资产配置 assets（YAML→DB 同步，DB 为只读缓存）",
         "tables": [
             # 备注标注 YAML 真源文件名，让读者一眼看出真源位置（SSoT 铁律：规则数据真源在 YAML，非 DB）
-            ("contracts", "跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，{count} 条"),
-            ("data_source_apis", "数据源 API 清单——外部数据源的 API 函数/参数/测试状态，真源 data_source_apis_registry.yaml，{count} 个"),
-            ("data_source_assets", "外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，{count} 个"),
+            (
+                "contracts",
+                "跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，{count} 条",
+            ),
+            (
+                "data_source_apis",
+                "数据源 API 清单——外部数据源的 API 函数/参数/测试状态，真源 data_source_apis_registry.yaml，{count} 个",
+            ),
+            (
+                "data_source_assets",
+                "外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，{count} 个",
+            ),
             ("service_assets", "服务资产——内部服务 ID/端口/协议/状态，真源 service_registry.yaml，{count} 个"),
-            ("config_assets", "配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），{count} 项"),
-            ("infrastructure_components", "基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，{count} 个"),
+            (
+                "config_assets",
+                "配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），{count} 项",
+            ),
+            (
+                "infrastructure_components",
+                "基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，{count} 个",
+            ),
             # interface_contracts：表已建但仅 5 行（50 域只登记了 5 个模块接口），暴露部分缺失
-            ("interface_contracts", "接口级契约——模块对外 API（函数名/参数签名/返回值/消费方），{count} 行（仅 5=大部分模块接口未登记，AI 会幻觉函数名）"),
+            (
+                "interface_contracts",
+                "接口级契约——模块对外 API（函数名/参数签名/返回值/消费方），{count} 行（仅 5=大部分模块接口未登记，AI 会幻觉函数名）",
+            ),
         ],
     },
 ]
@@ -1036,11 +1078,15 @@ def _generate_table_gaps_section(gaps: list[dict], db_stats: dict) -> list[str]:
     lines = []
     lines.append("## 表级缺口清单")
     lines.append("")
-    lines.append(f"> 共 {len(gaps)} 项表级缺口。与上方 16 项待建全景图区分：全景图是最终产物，表级缺口是底层 DB 真源的实际状态。")
+    lines.append(
+        f"> 共 {len(gaps)} 项表级缺口。与上方 16 项待建全景图区分：全景图是最终产物，表级缺口是底层 DB 真源的实际状态。"
+    )
     lines.append(">")
     lines.append("> **两类缺口的区别**：")
     lines.append("> - 待建全景图（16 项）= 最终要给 AI/人看的产物目录，真源类型待裁定")
-    lines.append(f"> - 表级缺口（{len(gaps)} 项）= 底层 DB 表的真实状态（空表/部分缺失/完全缺失/数据污染/字段值缺失），真源类型已确定")
+    lines.append(
+        f"> - 表级缺口（{len(gaps)} 项）= 底层 DB 表的真实状态（空表/部分缺失/完全缺失/数据污染/字段值缺失），真源类型已确定"
+    )
     lines.append("> - 一个表级缺口对应一个待建全景图（见 panorama_ref 列），但反过来不一定")
     lines.append("")
 
@@ -1048,7 +1094,9 @@ def _generate_table_gaps_section(gaps: list[dict], db_stats: dict) -> list[str]:
     priority_order = {"P0 必做": 0, "P1 应做": 1, "P2 延后": 2}
     sorted_gaps = sorted(gaps, key=lambda x: priority_order.get(x["priority"], 99))
 
-    lines.append("| 缺口ID | 表名 | 状态 | 实际行数 | 应有行数 | 缺什么 | AI 风险 | 怎么修 | 优先级 | 真源形式 | 对应全景图 |")
+    lines.append(
+        "| 缺口ID | 表名 | 状态 | 实际行数 | 应有行数 | 缺什么 | AI 风险 | 怎么修 | 优先级 | 真源形式 | 对应全景图 |"
+    )
     lines.append("|------|------|:---:|:---:|------|------|------|------|:---:|------|------|")
     for g in sorted_gaps:
         # 行数从 db_stats 实时取（覆盖常量里的 current_rows），取不到用常量值
@@ -1158,7 +1206,7 @@ def _generate_detail_section(built: list[dict], pending: list[dict]) -> list[str
         for item in items:
             if item["build_status"] == "✅已建":
                 # 已建项：真源列显示真源名 + 生成器跳转链接 + 产物跳转链接
-                gen_name = item['generator']
+                gen_name = item["generator"]
                 # 生成器做成跳转链接（如果存在）
                 gen_path = GENERATORS_DIR / gen_name
                 if gen_path.exists():
@@ -1246,9 +1294,13 @@ def generate_panorama_registry(db_stats: dict) -> str:
     lines.append("")
     lines.append("> 这是你查看 ZephyrAlpha 全景图体系的入口。从这里能看到应该有哪些全景图、哪些已建、哪些未建。")
     lines.append(">")
-    lines.append("> **自动生成**：本文件由 `generate_panorama_registry.py` 自动生成。date: auto-generated，最后更新以 git log 为准")
+    lines.append(
+        "> **自动生成**：本文件由 `generate_panorama_registry.py` 自动生成。date: auto-generated，最后更新以 git log 为准"
+    )
     lines.append(f"> **已建真源**：{DB_DISPLAY_NAME} + 实际产物文件扫描")
-    lines.append("> **待建真源**：硬编码在生成器代码内的 `PENDING_PANORAMAS` 常量（用户裁定不建 panorama_registry.yaml）")
+    lines.append(
+        "> **待建真源**：硬编码在生成器代码内的 `PENDING_PANORAMAS` 常量（用户裁定不建 panorama_registry.yaml）"
+    )
     lines.append(">")
     lines.append("> **维护策略**：")
     lines.append("> - 已建全景图新增时，在生成器代码 `BUILT_PANORAMAS` 常量添加条目")

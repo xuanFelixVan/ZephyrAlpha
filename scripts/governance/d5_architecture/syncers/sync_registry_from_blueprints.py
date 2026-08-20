@@ -356,8 +356,7 @@ def run_write(
     registry["metadata"]["generated_at"] = datetime.now(UTC).strftime("%Y-%m-%d")
     registry["metadata"]["generated_by"] = "sync_registry_from_blueprints.py"
     registry["metadata"]["canonical_source"] = (
-        "物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；"
-        "本文件由 sync_registry_from_blueprints.py 自动生成"
+        "物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py 自动生成"
     )
     if write_changelog:
         bullets = collect_registry_diff_bullets(old_entries, new_entries)

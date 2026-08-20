@@ -741,7 +741,7 @@ def _remove_s06_block(content: str) -> str:
     if not match:
         return content
     # §0.6 块后若紧跟闭合 --- 分隔线（_replace_or_insert_s06 插入产物），一并移除
-    after_block = content[match.end():]
+    after_block = content[match.end() :]
     sep = _S06_CLOSING_SEPARATOR_RE.match(after_block)
     cut_end = match.end() + (sep.end() if sep else 0)
     before = content[: match.start()]
@@ -1102,9 +1102,7 @@ def generate_all(*, dry_run: bool = False) -> int:
 
     # P2-2a：清理已从 depgraph 删除但蓝图仍残留 §0.6 的孤儿模块。
     # depgraph_map.keys() 为 depgraph 现存模块；blueprint_map 中不在其中的即孤儿。
-    orphan_cleaned = _cleanup_orphan_s06(
-        blueprint_map, set(depgraph_map.keys()), dry_run=dry_run
-    )
+    orphan_cleaned = _cleanup_orphan_s06(blueprint_map, set(depgraph_map.keys()), dry_run=dry_run)
 
     elapsed = _time.monotonic() - t0
     print(

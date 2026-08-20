@@ -183,6 +183,8 @@ def update_references_in_file(file_path: Path, rename_map: dict[str, str]) -> in
             print(f"  ERROR 写入失败 {file_path}: {e}")
             return EXIT_PASS
     return EXIT_PASS
+
+
 def should_skip_file(path: Path) -> bool:
     """检查路径是否应跳过（用于引用更新扫描）。"""
     parts = path.parts

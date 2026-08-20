@@ -139,6 +139,8 @@ def verify_fixes() -> int:
     for line in n06_lines:
         print(f"  {line}")
     return EXIT_FINDINGS
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     print("=" * 60)

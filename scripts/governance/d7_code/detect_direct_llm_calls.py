@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: pre-commit GATE-20 hook 事件触发（.pre-commit-config.yaml:681 entry 在案），非人工 manual
 """
 detect_direct_llm_calls.py — 裸调 LLM API 检测门禁（GATE-20）
 
@@ -121,14 +122,23 @@ _EXEMPTED_FILES = {
 # ── COND-30 业务层判定 ──
 _LAYER_PATTERN = re.compile(r"l(0[2-9]|[1-3]\d)_", re.IGNORECASE)
 _B_TRACK_DIRS = {
-    "llm-security", "vector-memory", "context-engine", "orchestrator",
-    "feedback-loop", "gates", "db", "kb", "mcp", "shared",
+    "llm-security",
+    "vector-memory",
+    "context-engine",
+    "orchestrator",
+    "feedback-loop",
+    "gates",
+    "db",
+    "kb",
+    "mcp",
+    "shared",
 }
 
 
 # ============================================================================
 # 辅助函数
 # ============================================================================
+
 
 def _is_business_layer(filepath: Path, src_dir: Path) -> bool:
     """判断是否为业务层（COND-30 范围）."""
@@ -200,6 +210,7 @@ def _has_lsg_import(tree: ast.AST) -> bool:
 # 检测引擎
 # ============================================================================
 
+
 def _find_bare_llm_calls(tree: ast.AST) -> list[tuple[int, str]]:
     """在 AST 中查找裸调 LLM API 的位置，返回 [(行号, 描述), ...]."""
     violations: list[tuple[int, str]] = []
@@ -250,10 +261,7 @@ def _find_bare_llm_calls(tree: ast.AST) -> list[tuple[int, str]]:
                     if arg_str:
                         for sig in _BARE_LLM_SIGNATURES:
                             if sig in arg_str:
-                                violations.append(
-                                    (node.lineno,
-                                     f"exec/eval/compile 包裹裸调 LLM API（检测到 {sig}）")
-                                )
+                                violations.append((node.lineno, f"exec/eval/compile 包裹裸调 LLM API（检测到 {sig}）"))
                                 break
                 continue
 
@@ -263,8 +271,7 @@ def _find_bare_llm_calls(tree: ast.AST) -> list[tuple[int, str]]:
             for sig in _BARE_LLM_SIGNATURES:
                 if sig in s:
                     violations.append(
-                        (node.lineno,
-                         f"字符串常量含裸调 LLM API（检测到 {sig}）——疑似 exec/eval 变量赋值")
+                        (node.lineno, f"字符串常量含裸调 LLM API（检测到 {sig}）——疑似 exec/eval 变量赋值")
                     )
                     break
 
@@ -296,6 +303,7 @@ def _check_llm_imports(filepath: Path) -> list[dict]:
 # ============================================================================
 # 扫描入口
 # ============================================================================
+
 
 def scan_file(file_path: Path) -> list[str]:
     """扫描单个 Python 文件（RULE-LSG-001 门禁），返回违规描述列表."""
@@ -360,7 +368,10 @@ def scan_all(warn_only: bool = False, files: list[Path] | None = None) -> tuple[
             print(f"  {v}", file=sys.stderr)
         print(file=sys.stderr)
         print("修复方式：将 LLM 调用替换为通过 LSGSecurityGateway 的 scan_input/scan_output 包裹。", file=sys.stderr)
-        print("  参考：src/zephyr/autonomy_core/llm_gateway.py 中的 _lsg_scan_input_sync / _lsg_scan_output_sync 模式", file=sys.stderr)
+        print(
+            "  参考：src/zephyr/autonomy_core/llm_gateway.py 中的 _lsg_scan_input_sync / _lsg_scan_output_sync 模式",
+            file=sys.stderr,
+        )
         return 0 if warn_only else 1, all_violations
     else:
         print("PASS: 所有 LLM 调用均已通过 LSGSecurityGateway 保护", file=sys.stderr)
@@ -371,11 +382,10 @@ def scan_all(warn_only: bool = False, files: list[Path] | None = None) -> tuple[
 # 入口
 # ============================================================================
 
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="裸调 LLM API 检测门禁（GATE-20：RULE-LSG-001 + COND-30）"
-    )
+    parser = argparse.ArgumentParser(description="裸调 LLM API 检测门禁（GATE-20：RULE-LSG-001 + COND-30）")
     parser.add_argument("--ci", action="store_true", help="硬阻断模式（pre-commit），发现裸调 exit(1)")
     parser.add_argument("--warn-only", action="store_true", help="仅警告，不阻断")
     parser.add_argument("--cond30", action="store_true", help="仅运行 COND-30 导入检测（存量模式）")
@@ -399,7 +409,9 @@ def main() -> int:
             findings = _check_llm_imports(filepath)
             for f in findings:
                 rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-                all_findings.append({"file": rel, "line": f["line"], "import_name": f["import_name"], "severity": "HIGH"})
+                all_findings.append(
+                    {"file": rel, "line": f["line"], "import_name": f["import_name"], "severity": "HIGH"}
+                )
         if all_findings:
             print(f"\n[LLM-CALL] {len(all_findings)} 个业务层直接 LLM 调用:", file=sys.stderr)
             for f in all_findings:

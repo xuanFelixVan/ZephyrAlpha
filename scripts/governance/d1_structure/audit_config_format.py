@@ -249,7 +249,9 @@ def main() -> None:
                 continue
             key = (t.get("from", ""), t.get("to", ""))
             if key in seen_transitions:
-                report(issues, "ISSUE", "F3-DUP-TRANSITION", f"worktree_state_machine.yaml: duplicate transition {key}")  # #ARCH-WORKTREE-LIFECYCLE-001
+                report(
+                    issues, "ISSUE", "F3-DUP-TRANSITION", f"worktree_state_machine.yaml: duplicate transition {key}"
+                )  # #ARCH-WORKTREE-LIFECYCLE-001
             seen_transitions.add(key)
 
     print("  \u2705 Safety levels and thresholds checked", file=sys.stderr)

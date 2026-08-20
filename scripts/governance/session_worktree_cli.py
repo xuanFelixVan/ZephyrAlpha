@@ -38,6 +38,7 @@ Usage::
     python scripts/governance/session_worktree_cli.py sweep --max-age 60
     python scripts/governance/session_worktree_cli.py list
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -78,6 +79,8 @@ def _cmd_sweep(args: argparse.Namespace) -> int:
         # 有 warning 但未清理任何——提示人工评估，但仍 exit 0（清理本身无错）
         print("有需人工评估的 stale worktree，请检查上方 WARNING", file=sys.stderr)
     return EXIT_PASS
+
+
 def _cmd_list(args: argparse.Namespace) -> int:
     """list 子命令：列出当前所有 session worktree。"""
     manager = WorktreeManager(REPO_ROOT)
@@ -94,11 +97,10 @@ def _cmd_list(args: argparse.Namespace) -> int:
     print(f"共 {len(worktrees)} 个 session worktree:")
     for wt in worktrees:
         dirty_mark = " [dirty]" if wt.get("dirty") else ""
-        print(
-            f"  {wt.get('session_id', '?')}: {wt.get('path', '?')}"
-            f" branch={wt.get('branch', '?')}{dirty_mark}"
-        )
+        print(f"  {wt.get('session_id', '?')}: {wt.get('path', '?')} branch={wt.get('branch', '?')}{dirty_mark}")
     return EXIT_PASS
+
+
 def main() -> int:
     """CLI 主入口。"""
     parser = argparse.ArgumentParser(
@@ -109,7 +111,9 @@ def main() -> int:
 
     p_sweep = sub.add_parser("sweep", help="清理 stale session worktree 残留")
     p_sweep.add_argument(
-        "--max-age", type=int, default=30,
+        "--max-age",
+        type=int,
+        default=30,
         help="目录年龄阈值（分钟），默认 30（太新的不动，防误清并发 AI 正在创建的）",
     )
     p_sweep.set_defaults(func=_cmd_sweep)
@@ -124,5 +128,7 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001 — CLI 顶层兜底，所有异常转 exit 1
         print(f"ERROR: {type(e).__name__}: {e}", file=sys.stderr)
         return EXIT_FINDINGS
+
+
 if __name__ == "__main__":
     sys.exit(main())

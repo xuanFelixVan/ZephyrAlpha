@@ -84,7 +84,11 @@ def _detect_parents_of_dunder_file(node: ast.Assign) -> str | None:
             if isinstance(child.value, ast.Attribute) and child.value.attr == "parents":
                 inner = child.value.value
                 # resolve() 调用 → 剥一层
-                if isinstance(inner, ast.Call) and isinstance(inner.func, ast.Attribute) and inner.func.attr == "resolve":
+                if (
+                    isinstance(inner, ast.Call)
+                    and isinstance(inner.func, ast.Attribute)
+                    and inner.func.attr == "resolve"
+                ):
                     inner = inner.func.value
                 # Path(__file__) 调用
                 if isinstance(inner, ast.Call):
@@ -121,7 +125,9 @@ def main() -> int:
                 # 新增检测：Path(__file__).parents[N] 模式（warn-only，不阻断）
                 var = _detect_parents_of_dunder_file(node)
                 if var:
-                    print(f"  INFO: {rel} uses Path(__file__).parents[N] (var={var}) — import REPO_ROOT from _shared.constants instead")
+                    print(
+                        f"  INFO: {rel} uses Path(__file__).parents[N] (var={var}) — import REPO_ROOT from _shared.constants instead"
+                    )
                     parents_warnings += 1
 
     if parents_warnings:

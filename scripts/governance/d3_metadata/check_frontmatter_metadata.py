@@ -94,12 +94,12 @@ from _shared.yaml_utils import (  # 词表加载 SSoT（D-D-05：禁止复制 _l
 _FIELD_RULES: dict[str, dict] = {
     "ttl": {
         "vocab_file": "ttl_vocabulary.yaml",
-        "required": True,        # 缺失 → 始终 hard block
-        "always_strict": True,   # 非法值 → 始终 hard block（不可降级）
+        "required": True,  # 缺失 → 始终 hard block
+        "always_strict": True,  # 非法值 → 始终 hard block（不可降级）
     },
     "doc_type": {
         "vocab_file": "doc_type_vocabulary.yaml",
-        "required": True,         # 缺失 → issue（warn-only 或 strict）
+        "required": True,  # 缺失 → issue（warn-only 或 strict）
         "always_strict": False,  # 默认 warn-only；--strict-doctype/env 升级 hard block
         "deprecated_key": "deprecated_values",  # 词表有废弃值节
     },
@@ -138,8 +138,7 @@ def _load_directory_contract() -> dict:
     if _CONTRACT_CACHE is not None:
         return _CONTRACT_CACHE
     contract_path = (
-        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-        / "contracts" / "directory_contract.yaml"
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "directory_contract.yaml"
     )
     try:
         data = load_yaml(str(contract_path))
@@ -249,15 +248,9 @@ def _check_file(
     if not metadata:
         # 无 frontmatter 的文件——按 zone 分类处理
         if zone == "permanent" and suffix == ".md":
-            return [
-                "missing frontmatter in permanent zone "
-                "(ttl=permanent + doc_type required)"
-            ]
+            return ["missing frontmatter in permanent zone (ttl=permanent + doc_type required)"]
         if zone == "temporary" and suffix == ".md":
-            return [
-                "missing ttl frontmatter in temporary zone "
-                "(ttl=task_bound required, doc_type exempt)"
-            ]
+            return ["missing ttl frontmatter in temporary zone (ttl=task_bound required, doc_type exempt)"]
         return issues  # root_whitelist / generator_exempt / exempt_zone / archive_zone / neutral: PASS
 
     for field, rule in field_rules.items():
@@ -303,10 +296,7 @@ def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     raw_args = sys.argv[1:]
     all_files = "--all-files" in raw_args
-    strict_doctype = (
-        "--strict-doctype" in raw_args
-        or os.environ.get("ZEPHYR_DOCTYPE_STRICT", "0") == "1"
-    )
+    strict_doctype = "--strict-doctype" in raw_args or os.environ.get("ZEPHYR_DOCTYPE_STRICT", "0") == "1"
 
     # 加载所有字段的词表缓存（一次性加载，_check_file 复用）
     vocab_cache: dict[str, set[str]] = {}
@@ -328,17 +318,31 @@ def main() -> int:
     else:
         # 全量模式：扫描 docs/ + src/ + scripts/ + tests/ 下所有支持格式
         valid_suffixes = {".md", ".py", ".sh", ".ps1", ".mmd", ".yaml", ".json"}
-        exempt_parts = {"__pycache__", ".git", ".ailocks", "_backups", "_archive",
-                        ".aidrafts", ".runtime", "data", "models", ".mypy_cache",
-                        ".pytest_cache", ".ruff_cache"}
+        exempt_parts = {
+            "__pycache__",
+            ".git",
+            ".ailocks",
+            "_backups",
+            "_archive",
+            ".aidrafts",
+            ".runtime",
+            "data",
+            "models",
+            ".mypy_cache",
+            ".pytest_cache",
+            ".ruff_cache",
+        }
         files = []
         for scan_root_name in ("docs", "src", "scripts", "tests"):
             scan_dir = REPO_ROOT / scan_root_name
             if not scan_dir.exists():
                 continue
             for fp in scan_dir.rglob("*"):
-                if (fp.is_file() and fp.suffix.lower() in valid_suffixes
-                        and not any(p in exempt_parts for p in fp.relative_to(REPO_ROOT).parts)):
+                if (
+                    fp.is_file()
+                    and fp.suffix.lower() in valid_suffixes
+                    and not any(p in exempt_parts for p in fp.relative_to(REPO_ROOT).parts)
+                ):
                     files.append(fp)
 
     if not files:
@@ -351,9 +355,7 @@ def main() -> int:
         if not fpath.exists():
             continue
         checked += 1
-        issues = _check_file(
-            fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype
-        )
+        issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype)
         if issues:
             try:
                 rel = fpath.relative_to(REPO_ROOT)
@@ -364,9 +366,7 @@ def main() -> int:
             errors += 1
 
     if errors:
-        print(
-            f"\nFAIL: {errors} file(s) with hard-block issues in {checked} files checked"
-        )
+        print(f"\nFAIL: {errors} file(s) with hard-block issues in {checked} files checked")
         return EXIT_FINDINGS
 
     print(f"OK: Frontmatter validation passed ({checked} files checked)")

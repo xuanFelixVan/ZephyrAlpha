@@ -241,9 +241,7 @@ def run_baseline(db_path: Path, runs: int) -> dict:
         t3_plan = _explain_plan(conn, scenarios[2]["sql"])
 
         # P2迁移：PG 无文件大小，用 pg_database_size() 查询数据库大小
-        db_size_bytes = conn.execute(
-            "SELECT pg_database_size(current_database()) AS sz"
-        ).fetchone()["sz"]
+        db_size_bytes = conn.execute("SELECT pg_database_size(current_database()) AS sz").fetchone()["sz"]
         result = {
             "test_time": datetime.datetime.now().isoformat(),
             "db_path": str(db_path),

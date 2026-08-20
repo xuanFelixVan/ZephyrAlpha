@@ -220,6 +220,7 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
         # DM-90974 Phase 2: 落 depgraph_dirty.flag 触发域文档重生
         try:
             from _shared.constants import mark_depgraph_dirty
+
             mark_depgraph_dirty()
         except Exception as _e:  # noqa: BLE001 — flag 写入失败不阻断主流程
             print(f"[DIRTY-FLAG] WARNING: depgraph_dirty.flag 写入失败（不阻断）: {_e}", file=sys.stderr)
@@ -670,7 +671,9 @@ def cmd_write() -> None:
 
     new_tree = generate_tree(domain_derivation)
 
-    migration_registry_path = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "migration_registry.yaml"
+    migration_registry_path = (
+        PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "migration_registry.yaml"
+    )
     pending_entries = []
     if migration_registry_path.exists():
         try:
@@ -776,7 +779,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate panorama tree section (PostgreSQL arch_directory_tree)")
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        "--write", action="store_true", help="Write tree to PostgreSQL arch_directory_tree (preserves design-state rows)"
+        "--write",
+        action="store_true",
+        help="Write tree to PostgreSQL arch_directory_tree (preserves design-state rows)",
     )
     group.add_argument("--check", action="store_true", help="CI mode: exit 1 if mismatch")
     args = parser.parse_args()

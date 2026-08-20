@@ -75,13 +75,7 @@ timeout_seconds: 60
 warn_only: false
 """
 
-_CATALOGS = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-)
+_CATALOGS = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
 
 # 含 code 锚点（code_path/code_symbol）的 15 个业务注册表（seat/event/macro 无锚点豁免）
 # file -> (主条目列表键, 条目 id 字段)
@@ -105,10 +99,23 @@ REGISTRY_LISTS: dict[str, list[str]] = {
 
 # 条目 id 字段探测顺序（取首个命中的非空字段）
 _ID_KEYS = (
-    "factor_id", "strategy_id", "indicator_id", "universe_id", "benchmark_id",
-    "cost_model_id", "execution_algo_id", "risk_limit_id", "source_id",
-    "dataset_id", "job_id", "pattern_id", "field_id", "experiment_id",
-    "model_id", "cycle_id", "event_type_id",
+    "factor_id",
+    "strategy_id",
+    "indicator_id",
+    "universe_id",
+    "benchmark_id",
+    "cost_model_id",
+    "execution_algo_id",
+    "risk_limit_id",
+    "source_id",
+    "dataset_id",
+    "job_id",
+    "pattern_id",
+    "field_id",
+    "experiment_id",
+    "model_id",
+    "cycle_id",
+    "event_type_id",
 )
 
 # 列表键 → 期望条目 id 键的 fallback 映射（[List-Purity]，#118）。
@@ -153,6 +160,7 @@ def _expected_id_keys(reg_name: str, data: dict) -> dict[str, str]:
         if lk not in out and lk in _LIST_ID_KEYS:
             out[lk] = _LIST_ID_KEYS[lk]
     return out
+
 
 # code_symbol 格式： <relative_path>::<symbol>
 _SYMBOL_SEP = "::"
@@ -253,39 +261,28 @@ def check_registry_file(reg_path: Path, violations: list[str]) -> int:
             if code_path:
                 for rel in _split_code_paths(code_path):
                     if rel and not (REPO_ROOT / rel).exists():
-                        violations.append(
-                            f"  - [Anchor↔Disk] {reg_path.name} {lk}/{eid}: "
-                            f"code_path 不存在: {rel}"
-                        )
+                        violations.append(f"  - [Anchor↔Disk] {reg_path.name} {lk}/{eid}: code_path 不存在: {rel}")
             code_symbol = entry.get("code_symbol")
             if code_symbol:
                 sym = str(code_symbol)
                 if _SYMBOL_SEP not in sym:
-                    violations.append(
-                        f"  - [Format] {reg_path.name} {lk}/{eid}: "
-                        f"code_symbol 缺少 '::' 分隔: {sym}"
-                    )
+                    violations.append(f"  - [Format] {reg_path.name} {lk}/{eid}: code_symbol 缺少 '::' 分隔: {sym}")
                     continue
                 rel, _, symbol = sym.partition(_SYMBOL_SEP)
                 rel = _strip_anchor_annotation(rel)
                 target = REPO_ROOT / rel
                 if not target.is_file():
-                    violations.append(
-                        f"  - [Anchor↔Disk] {reg_path.name} {lk}/{eid}: "
-                        f"code_symbol 文件不存在: {rel}"
-                    )
+                    violations.append(f"  - [Anchor↔Disk] {reg_path.name} {lk}/{eid}: code_symbol 文件不存在: {rel}")
                     continue
                 if target.suffix == ".py" and symbol.strip():
                     symbols = _py_symbols(target)
                     if symbols is None:
                         violations.append(
-                            f"  - [Parse] {reg_path.name} {lk}/{eid}: "
-                            f"code_symbol 目标文件 AST 解析失败: {rel}"
+                            f"  - [Parse] {reg_path.name} {lk}/{eid}: code_symbol 目标文件 AST 解析失败: {rel}"
                         )
                     elif symbol.strip() not in symbols:
                         violations.append(
-                            f"  - [Anchor↔Code] {reg_path.name} {lk}/{eid}: "
-                            f"符号不存在: {rel}::{symbol.strip()}"
+                            f"  - [Anchor↔Code] {reg_path.name} {lk}/{eid}: 符号不存在: {rel}::{symbol.strip()}"
                         )
     return n
 
@@ -323,9 +320,11 @@ def check(files: list[str] | None = None) -> int:
             print(v)
         if len(violations) > 50:
             print(f"  ... 共 {len(violations)} 条（前 50 条展示）")
-        print("\n修复：代码改名/删除后须同步更新库条目 code_path/code_symbol，"
-              "或将条目标记 deprecated（分域真源：实现域 owner=代码，#ARCH-BREG-002）；"
-              "[List-Purity] 错位条目须移入其 id 键对应的列表（datasets/jobs/sources 等，#118）。")
+        print(
+            "\n修复：代码改名/删除后须同步更新库条目 code_path/code_symbol，"
+            "或将条目标记 deprecated（分域真源：实现域 owner=代码，#ARCH-BREG-002）；"
+            "[List-Purity] 错位条目须移入其 id 键对应的列表（datasets/jobs/sources 等，#118）。"
+        )
         return EXIT_FINDINGS
 
     print(f"[PASS] 业务注册表代码锚点校验通过（扫描 {len(targets)} 库 {total} 条目）")

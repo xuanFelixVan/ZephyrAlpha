@@ -73,8 +73,7 @@ from zephyr.governance.persistence.battle_map_reader import BattleMapReader  # n
 _DECISION_TABLE = _PROJECT_ROOT / "docs" / "_working" / "107_decision_table_filled.md"
 # 候选模块注册表（YAML SSoT）
 _CANDIDATE_REGISTRY = (
-    _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-    / "candidate_module_registry.yaml"
+    _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "candidate_module_registry.yaml"
 )
 
 # emoji → acquisition_method 映射（枚举真源 = DDL CHECK，此处仅展示层映射）
@@ -126,13 +125,15 @@ def parse_decision_table(md_path: Path) -> list[dict]:
         how_raw = cols[2] if len(cols) > 2 else ""
         reason = cols[3] if len(cols) > 3 else ""
         source_raw = cols[4] if len(cols) > 4 else ""
-        decisions.append({
-            "step_id": step_id,
-            "category": category,
-            "how_raw": how_raw,
-            "reason": reason,
-            "source_raw": source_raw,
-        })
+        decisions.append(
+            {
+                "step_id": step_id,
+                "category": category,
+                "how_raw": how_raw,
+                "reason": reason,
+                "source_raw": source_raw,
+            }
+        )
     return decisions
 
 
@@ -161,9 +162,7 @@ def classify_acquisition(how_raw: str, source_raw: str) -> tuple[str | None, str
 
 def _blueprint_id_to_path(blueprint_id: str, conn) -> str | None:
     """MOD-xxx (blueprint_id) → nodes.path。"""
-    cur = conn.execute(
-        "SELECT path FROM nodes WHERE blueprint_id = %s LIMIT 1", (blueprint_id,)
-    )
+    cur = conn.execute("SELECT path FROM nodes WHERE blueprint_id = %s LIMIT 1", (blueprint_id,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
     row = cur.fetchone()
     return row["path"] if row else None
 
@@ -178,8 +177,7 @@ def resolve_step_to_path(step_id: str, bm_conn) -> tuple[str | None, str]:
     """
     for role in ("primary", "supplement"):
         cur = bm_conn.execute(
-            "SELECT target_id FROM battle_map_anchors "
-            "WHERE step_id = %s AND target_graph = %s AND target_role = %s",
+            "SELECT target_id FROM battle_map_anchors WHERE step_id = %s AND target_graph = %s AND target_role = %s",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
             (step_id, "depgraph", role),
         )
         rows = cur.fetchall()
@@ -192,9 +190,7 @@ def resolve_step_to_path(step_id: str, bm_conn) -> tuple[str | None, str]:
     return None, "no_anchor"
 
 
-def update_candidate_yaml(
-    step_id: str, method: str, source: str, yaml_path: Path, dry_run: bool
-) -> tuple[bool, str]:
+def update_candidate_yaml(step_id: str, method: str, source: str, yaml_path: Path, dry_run: bool) -> tuple[bool, str]:
     """候选态：step_id → candidate 锚点 → CAND-xxx → YAML 条目回填 acquisition 字段。
 
     用 ruamel.yaml 保留注释/格式。幂等（覆盖写）。
@@ -205,8 +201,7 @@ def update_candidate_yaml(
     try:
         conn = reader._get_conn()
         cur = conn.execute(
-            "SELECT target_id FROM battle_map_anchors "
-            "WHERE step_id = %s AND target_graph = %s",
+            "SELECT target_id FROM battle_map_anchors WHERE step_id = %s AND target_graph = %s",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
             (step_id, "candidate"),
         )
         rows = cur.fetchall()
@@ -276,9 +271,7 @@ def main(dry_run: bool = False) -> int:
                     if dry_run:
                         ok = True
                     else:
-                        ok = update_module_metadata(
-                            path, {"acquisition_method": method, "acquisition_source": source}
-                        )
+                        ok = update_module_metadata(path, {"acquisition_method": method, "acquisition_source": source})
                     if ok:
                         stats["design_ok"] += 1
                         print(f"  OK  {sid} -> {path} ({role}) = {method}/{source or '—'}")

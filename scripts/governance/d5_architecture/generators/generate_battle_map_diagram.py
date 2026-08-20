@@ -950,18 +950,12 @@ def _format_step_detail(step: dict, anchors: list[dict]) -> str:
         algo_link_base = f"../../08_algorithm_overview/{stage_file}"
         algo_index_link = "../../08_algorithm_overview/index.md"
         depgraph_mods = [
-            a for a in anchors
-            if a.get("target_graph") == "depgraph"
-            and (a.get("target_id") or "").startswith("MOD-")
+            a for a in anchors if a.get("target_graph") == "depgraph" and (a.get("target_id") or "").startswith("MOD-")
         ]
         if depgraph_mods:
-            mod_links = [
-                f"[{a['target_id']}]({algo_link_base}#{a['target_id'].lower()})"
-                for a in depgraph_mods
-            ]
+            mod_links = [f"[{a['target_id']}]({algo_link_base}#{a['target_id'].lower()})" for a in depgraph_mods]
             parts.append(
-                f"> 🔗 **算法详情**：见[算法全景图]({algo_index_link})，"
-                f"本环节锚点模块：{' / '.join(mod_links)}"
+                f"> 🔗 **算法详情**：见[算法全景图]({algo_index_link})，本环节锚点模块：{' / '.join(mod_links)}"
             )
             parts.append("")
     else:

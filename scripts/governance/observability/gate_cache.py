@@ -17,6 +17,7 @@
 # noqa: m02-manual  M02豁免: while True用于文件分块读取(f.read+break),非daemon常驻服务;一次性CLI工具
 
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -138,7 +139,7 @@ class GateCache:
         entry_path = self._cache_entry_path(gate_id, file_hash)
         if entry_path.exists():
             try:
-                os.remove(entry_path)
+                os.remove(entry_path)  # ops-guard-exempt: 缓存条目过期清除（治理缓存自愈非数据删除）
             except OSError:
                 pass
 
@@ -150,7 +151,7 @@ class GateCache:
             return
         for entry in shard_dir.glob("*.json"):
             try:
-                os.remove(entry)
+                os.remove(entry)  # ops-guard-exempt: 缓存条目过期清除（治理缓存自愈非数据删除）
             except OSError:
                 pass
 

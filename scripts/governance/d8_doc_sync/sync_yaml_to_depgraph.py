@@ -156,15 +156,26 @@ _DOMAIN_CONTRACT_CONSUMER = {
 
 # CTR-* 层契约 domain_mapping 为 null 时的 consumer_domain 回退
 _CTR_CONSUMER_FALLBACK = {
-    "CTR-001": "D_FACTOR", "CTR-TRACE-001": "D_FACTOR",
-    "CTR-004": "D_EX_CORE", "CTR-005": "D_TRADING", "CTR-006": "D_RISK",
-    "CTR-008": "D_RISK", "CTR-009": "D_INTELLIGENCE", "CTR-010": "D_INTELLIGENCE",
-    "CTR-011": "D_ML_TRAIN", "CTR-012": "D_SHARED",
+    "CTR-001": "D_FACTOR",
+    "CTR-TRACE-001": "D_FACTOR",
+    "CTR-004": "D_EX_CORE",
+    "CTR-005": "D_TRADING",
+    "CTR-006": "D_RISK",
+    "CTR-008": "D_RISK",
+    "CTR-009": "D_INTELLIGENCE",
+    "CTR-010": "D_INTELLIGENCE",
+    "CTR-011": "D_ML_TRAIN",
+    "CTR-012": "D_SHARED",
     "CTR-ERR-003": "D_RISK",
     # ARCH-045: CTR-P1-004/005 的 consumer 原 D_SIGLEGACY 已删除，设为 None 跳过
-    "CTR-P1-003": "D_PF_CORE", "CTR-P1-004": None, "CTR-P1-005": None,
-    "CTR-P1-006": "D_TRADING", "CTR-P1-009": "D_FRONTEND", "CTR-P1-012": "D_RISK",
-    "CTR-P1-014": "D_SIMULATION", "CTR-P1-015": "D_RISK",
+    "CTR-P1-003": "D_PF_CORE",
+    "CTR-P1-004": None,
+    "CTR-P1-005": None,
+    "CTR-P1-006": "D_TRADING",
+    "CTR-P1-009": "D_FRONTEND",
+    "CTR-P1-012": "D_RISK",
+    "CTR-P1-014": "D_SIMULATION",
+    "CTR-P1-015": "D_RISK",
     "EXT-DASHBOARD-FLE-001": "D_SHARED",
 }
 
@@ -242,9 +253,7 @@ def restore_readonly_triggers(cur):
         except Exception as e:
             failed.append(f"{table}: {e}")
     if failed:
-        raise RuntimeError(
-            f"触发器恢复失败 ({len(failed)}/{len(READONLY_TABLES)} 表): " + "; ".join(failed)
-        )
+        raise RuntimeError(f"触发器恢复失败 ({len(failed)}/{len(READONLY_TABLES)} 表): " + "; ".join(failed))
     print(f"  [PG] 已恢复 {len(READONLY_TABLES)} 张只读表的用户触发器")
 
 
@@ -562,8 +571,7 @@ def sync_cross_layer_contracts(cur):
             version=excluded.version,
             promise=excluded.promise
         """,
-            (contract_id, name, source_domain, consumer_domain,
-             schema_definition, version, promise),
+            (contract_id, name, source_domain, consumer_domain, schema_definition, version, promise),
         )
         synced += 1
 
@@ -692,25 +700,19 @@ def sync_functional_domain_registry(cur):
         domain_id = d.get("domain", "")
         # 跳过有归一化冲突的域(防止产生重复)
         if domain_id in conflict_set:
-            print(
-                f"  SKIP: 跳过冲突域 '{domain_id}'——归一化后与 DB 现有域冲突,请先清理"
-            )
+            print(f"  SKIP: 跳过冲突域 '{domain_id}'——归一化后与 DB 现有域冲突,请先清理")
             skipped += 1
             continue
         # DM-100252: 跳过非规范域ID（既非 D_ 也非 D-），防止脏数据写入 domains 表
         # 裁定#204: 域命名规范为 D_XXX（下划线前缀）；历史 D-XXX 由 normalize_domain_id 归一化
         if not (domain_id.startswith("D_") or domain_id.startswith("D-")):
-            print(
-                f"  SKIP: 跳过非规范域ID '{domain_id}' (subdomain={d.get('subdomain', '')})——非 D_XXX 格式"
-            )
+            print(f"  SKIP: 跳过非规范域ID '{domain_id}' (subdomain={d.get('subdomain', '')})——非 D_XXX 格式")
             skipped += 1
             continue
         # 治本（#ARCH-SSOT-GLOSSARY-MERGE-001）：跳过遗留图示用名域（stability=deprecated），
         # 防止废弃域污染 depgraph domains 表。遗留域中文名经 domain_name_mapping YAML fallback 查到。
         if d.get("stability") == "deprecated":
-            print(
-                f"  SKIP: 跳过遗留域 '{domain_id}' (stability=deprecated)——不 sync 到 depgraph"
-            )
+            print(f"  SKIP: 跳过遗留域 '{domain_id}' (stability=deprecated)——不 sync 到 depgraph")
             skipped += 1
             continue
         # DM-100252: domains 表去重——YAML 同一 domain_id 有多 subdomain entry，
@@ -763,7 +765,9 @@ def sync_functional_domain_registry(cur):
                 (ssot_path, domain_id),
             )
 
-    print(f"  同步 {synced} 个功能域（含 modification_permission 字段映射），跳过 {skipped} 个非规范域ID，去重 {deduped} 个重复域")
+    print(
+        f"  同步 {synced} 个功能域（含 modification_permission 字段映射），跳过 {skipped} 个非规范域ID，去重 {deduped} 个重复域"
+    )
 
 
 def sync_vocabularies(cur):
@@ -1034,7 +1038,12 @@ def sync_directory_registry(cur):
             # 裁定#ARCH-target_layer_v1.0.0 v17修复：domain_id为空时用None（NULL），
             # 避免空字符串""触发fk_arch_dir_domain外键违规（NULL不被FK检查，空字符串被检查）
             # YAML用parent字段（非parent_path），一并兼容
-            (d.get("path", ""), d.get("parent", d.get("parent_path", "")), d.get("domain_id") or None, d.get("module_id", "")),
+            (
+                d.get("path", ""),
+                d.get("parent", d.get("parent_path", "")),
+                d.get("domain_id") or None,
+                d.get("module_id", ""),
+            ),
         )
         synced += 1
 
@@ -1284,6 +1293,7 @@ def sync_domain_naming_rules(cur):
         return
 
     from datetime import datetime
+
     now = datetime.now(UTC).isoformat()
     synced = 0
     for e in entries:
@@ -1302,10 +1312,17 @@ def sync_domain_naming_rules(cur):
             example_good=excluded.example_good,
             source_doc=excluded.source_doc
         """,
-            (e["rule_id"], e["rule_name"], e["rule_text"],
-             e.get("applies_to", "create"), e.get("severity", "error"),
-             e.get("example_bad", ""), e.get("example_good", ""),
-             now, e.get("source_doc", "")),
+            (
+                e["rule_id"],
+                e["rule_name"],
+                e["rule_text"],
+                e.get("applies_to", "create"),
+                e.get("severity", "error"),
+                e.get("example_bad", ""),
+                e.get("example_good", ""),
+                now,
+                e.get("source_doc", ""),
+            ),
         )
         synced += 1
 
@@ -1351,9 +1368,14 @@ def sync_derived_identifier_registry(cur):
             propagation_method=excluded.propagation_method,
             source_doc=excluded.source_doc
         """,
-            (e["derived_type"], e["source_field"], e["derived_field"],
-             e["derivation_rule"], e.get("propagation_method", "exact_value_map"),
-             e.get("source_doc", "")),
+            (
+                e["derived_type"],
+                e["source_field"],
+                e["derived_field"],
+                e["derivation_rule"],
+                e.get("propagation_method", "exact_value_map"),
+                e.get("source_doc", ""),
+            ),
         )
         synced += 1
 
@@ -1376,16 +1398,16 @@ def cleanup_legacy_fk_violations(cur):
         """SELECT count(*) AS cnt FROM contracts
            WHERE consumer_domain LIKE %s
               OR consumer_domain LIKE %s""",
-        ('%-CONTRACTS', '%-contracts'),
+        ("%-CONTRACTS", "%-contracts"),
     )
-    pre_count = cur.fetchone()['cnt']
+    pre_count = cur.fetchone()["cnt"]
     if pre_count == 0:
         print("  无残留违规记录，跳过")
         return
     # 删除 consumer_domain 为旧 -CONTRACTS 后缀变体的孤立记录
     cur.execute(
         "DELETE FROM contracts WHERE consumer_domain LIKE %s",
-        ('%-CONTRACTS',),
+        ("%-CONTRACTS",),
     )
     deleted = cur.rowcount
     print(f"  删除 {deleted} 条 '-CONTRACTS' 后缀孤立记录")
@@ -1411,13 +1433,16 @@ def verify_readonly_table_comments(cur):
         ("同步入口", "同步入口"),
     ]
 
-    cur.execute("""
+    cur.execute(
+        """
         SELECT c.relname, obj_description(c.oid) as comment
         FROM pg_class c
         JOIN pg_namespace n ON c.relnamespace = n.oid
         WHERE n.nspname = 'public' AND c.relkind = 'r'
         AND c.relname = ANY(%s)
-    """, (READONLY_TABLES,))
+    """,
+        (READONLY_TABLES,),
+    )
     rows = {row["relname"]: row["comment"] for row in cur.fetchall()}
 
     missing_comment = []
@@ -1463,6 +1488,7 @@ def sync_dataflow_registry(cur):
     """
     # 显式 import dataflowgraph_schema（声明依赖关系，满足 ORPHAN-MODULE 门禁）
     from zephyr.governance.persistence.dataflowgraph_schema import _DATAFLOW_CORE_TABLES  # noqa: F401
+
     print("同步 #175: dataflowgraph 数据流图 → dataflow_datasets/jobs/edges...")
     data = load_yaml("_registry/catalogs/dataflow_graph_registry.yaml")
     if not data:
@@ -1470,6 +1496,7 @@ def sync_dataflow_registry(cur):
         return
 
     from datetime import UTC, datetime
+
     now_iso = datetime.now(UTC).isoformat(timespec="seconds")
 
     # --- 清空运营态数据（DELETE + UPSERT 模式，保护设计态）---
@@ -1491,18 +1518,9 @@ def sync_dataflow_registry(cur):
     # 但通过 UPSERT 幂等更新（YAML 是 SSoT，design 记录同时存在于 YAML 和 DB）。
     # edges 无唯一约束且受 ARCH-053 触发器保护（禁止 DELETE design 态），
     # 故只 DELETE production edges，INSERT 时用 WHERE NOT EXISTS 避免重复。
-    cur.execute(
-        "DELETE FROM dataflow_edges "
-        "WHERE design_maturity IS NULL OR design_maturity = 'production'"
-    )
-    cur.execute(
-        "DELETE FROM dataflow_datasets "
-        "WHERE design_maturity IS NULL OR design_maturity = 'production'"
-    )
-    cur.execute(
-        "DELETE FROM dataflow_jobs "
-        "WHERE design_maturity IS NULL OR design_maturity = 'production'"
-    )
+    cur.execute("DELETE FROM dataflow_edges WHERE design_maturity IS NULL OR design_maturity = 'production'")  # noqa: bare-sql  治理DBA脚本存量清理语句，format重排伪新增（§5.160.2集中化专项另列）
+    cur.execute("DELETE FROM dataflow_datasets WHERE design_maturity IS NULL OR design_maturity = 'production'")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
+    cur.execute("DELETE FROM dataflow_jobs WHERE design_maturity IS NULL OR design_maturity = 'production'")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
 
     # --- 同步 jobs（先 jobs，因为 datasets 的 produced_by_job 引用 job_name）---
     jobs = data.get("jobs", [])
@@ -1515,8 +1533,9 @@ def sync_dataflow_registry(cur):
         if not job_name:
             continue
         j_design = j.get("design_maturity", "production")
-        j_build = 'planned' if j_design == 'design' else 'generated'
-        cur.execute("""
+        j_build = "planned" if j_design == "design" else "generated"
+        cur.execute(
+            """
             INSERT INTO dataflow_jobs
                 (job_name, entity_type, scope, source_code_ref, trigger_type,
                  run_context, pit_relevance, description, design_maturity,
@@ -1534,13 +1553,21 @@ def sync_dataflow_registry(cur):
                 module_id = EXCLUDED.module_id,
                 last_updated = EXCLUDED.last_updated
             RETURNING job_id
-        """, (
-            job_name, j.get("scope", "production"),
-            j.get("source_code_ref"), j.get("trigger_type"),
-            j.get("run_context"), j.get("pit_relevance", "strict"),
-            j.get("description"), j_design, j_build,
-            j.get("module_id") or None, now_iso,
-        ))
+        """,
+            (
+                job_name,
+                j.get("scope", "production"),
+                j.get("source_code_ref"),
+                j.get("trigger_type"),
+                j.get("run_context"),
+                j.get("pit_relevance", "strict"),
+                j.get("description"),
+                j_design,
+                j_build,
+                j.get("module_id") or None,
+                now_iso,
+            ),
+        )
         job_id = cur.fetchone()["job_id"]
         job_name_to_id[job_name] = job_id
         job_yaml_id_to_pg_id[j.get("job_id", "")] = job_id
@@ -1557,8 +1584,9 @@ def sync_dataflow_registry(cur):
         if not entity_name:
             continue
         d_design = d.get("design_maturity", "production")
-        d_build = 'planned' if d_design == 'design' else 'generated'
-        cur.execute("""
+        d_build = "planned" if d_design == "design" else "generated"
+        cur.execute(
+            """
             INSERT INTO dataflow_datasets
                 (entity_name, entity_type, scope, contract_ref, physical_type,
                  produced_by_job, domain_id, design_maturity, build_status,
@@ -1578,14 +1606,23 @@ def sync_dataflow_registry(cur):
                 module_id = EXCLUDED.module_id,
                 last_updated = EXCLUDED.last_updated
             RETURNING dataset_id
-        """, (
-            entity_name, d.get("scope", "production"),
-            d.get("contract_ref"), d.get("physical_type"),
-            d.get("produced_by_job"), d.get("domain_id"),
-            d_design, d_build,
-            d.get("pit_policy", "strict"), d.get("format_summary"),
-            d.get("valid_since"), d.get("module_id") or None, now_iso,
-        ))
+        """,
+            (
+                entity_name,
+                d.get("scope", "production"),
+                d.get("contract_ref"),
+                d.get("physical_type"),
+                d.get("produced_by_job"),
+                d.get("domain_id"),
+                d_design,
+                d_build,
+                d.get("pit_policy", "strict"),
+                d.get("format_summary"),
+                d.get("valid_since"),
+                d.get("module_id") or None,
+                now_iso,
+            ),
+        )
         dataset_id = cur.fetchone()["dataset_id"]
         dataset_name_to_id[entity_name] = dataset_id
         dataset_name_to_design[entity_name] = d_design
@@ -1600,8 +1637,9 @@ def sync_dataflow_registry(cur):
         entity_name = d.get("entity_name", "")
         produced_by = d.get("produced_by_job")
         if entity_name in dataset_name_to_id and produced_by in job_yaml_id_to_pg_id:
-            edge_design = job_yaml_id_to_design.get(produced_by, 'production')
-            cur.execute("""
+            edge_design = job_yaml_id_to_design.get(produced_by, "production")
+            cur.execute(
+                """
                 INSERT INTO dataflow_edges
                     (from_entity_id, to_entity_id, from_entity_type, to_entity_type, edge_type, design_maturity, last_updated)
                 SELECT %s, %s, 'job', 'dataset', 'push', %s, %s
@@ -1609,8 +1647,16 @@ def sync_dataflow_registry(cur):
                     SELECT 1 FROM dataflow_edges
                     WHERE from_entity_id = %s AND to_entity_id = %s AND edge_type = 'push'
                 )
-            """, (job_yaml_id_to_pg_id[produced_by], dataset_name_to_id[entity_name], edge_design, now_iso,
-                  job_yaml_id_to_pg_id[produced_by], dataset_name_to_id[entity_name]))
+            """,
+                (
+                    job_yaml_id_to_pg_id[produced_by],
+                    dataset_name_to_id[entity_name],
+                    edge_design,
+                    now_iso,
+                    job_yaml_id_to_pg_id[produced_by],
+                    dataset_name_to_id[entity_name],
+                ),
+            )
             synced_edges += 1
 
     # 2. Dataset→Job 消费（consumed_by_jobs）→ edge_type=pull
@@ -1618,10 +1664,11 @@ def sync_dataflow_registry(cur):
         entity_name = d.get("entity_name", "")
         consumed_by = d.get("consumed_by_jobs", []) or []
         if entity_name in dataset_name_to_id:
-            edge_design = dataset_name_to_design.get(entity_name, 'production')
+            edge_design = dataset_name_to_design.get(entity_name, "production")
             for consumed_job_yaml_id in consumed_by:
                 if consumed_job_yaml_id in job_yaml_id_to_pg_id:
-                    cur.execute("""
+                    cur.execute(
+                        """
                         INSERT INTO dataflow_edges
                             (from_entity_id, to_entity_id, from_entity_type, to_entity_type, edge_type, design_maturity, last_updated)
                         SELECT %s, %s, 'dataset', 'job', 'pull', %s, %s
@@ -1629,8 +1676,16 @@ def sync_dataflow_registry(cur):
                             SELECT 1 FROM dataflow_edges
                             WHERE from_entity_id = %s AND to_entity_id = %s AND edge_type = 'pull'
                         )
-                    """, (dataset_name_to_id[entity_name], job_yaml_id_to_pg_id[consumed_job_yaml_id], edge_design, now_iso,
-                          dataset_name_to_id[entity_name], job_yaml_id_to_pg_id[consumed_job_yaml_id]))
+                    """,
+                        (
+                            dataset_name_to_id[entity_name],
+                            job_yaml_id_to_pg_id[consumed_job_yaml_id],
+                            edge_design,
+                            now_iso,
+                            dataset_name_to_id[entity_name],
+                            job_yaml_id_to_pg_id[consumed_job_yaml_id],
+                        ),
+                    )
                     synced_edges += 1
 
     print(f"  同步 {synced_jobs} 个 Job, {synced_datasets} 个 Dataset, {synced_edges} 条 edges")
@@ -1700,8 +1755,7 @@ def sync_aggregate_nodes(cur):
 
         domain_id = _AGGREGATE_OWNER_TO_DOMAIN.get(owner_module)
         if not domain_id:
-            print(f"  跳过: {rel_path} 的 owner_module={owner_module} 未在 "
-                  f"_AGGREGATE_OWNER_TO_DOMAIN 登记映射")
+            print(f"  跳过: {rel_path} 的 owner_module={owner_module} 未在 _AGGREGATE_OWNER_TO_DOMAIN 登记映射")
             skipped += 1
             continue
 
@@ -1752,8 +1806,7 @@ def sync_aggregate_nodes(cur):
                 (module_id, node_type, node_path, node_name, domain_id),
             )
         synced += 1
-        print(f"  UPSERT 聚合节点: {module_id} ({node_type}) → {domain_id}, "
-              f"items={total_registered}")
+        print(f"  UPSERT 聚合节点: {module_id} ({node_type}) → {domain_id}, items={total_registered}")
 
     print(f"  同步 {synced} 个聚合节点，跳过 {skipped} 个")
 
@@ -1778,6 +1831,7 @@ def sync_interface_contracts(cur):
         return
 
     from datetime import UTC, datetime
+
     now_iso = datetime.now(UTC).isoformat(timespec="seconds")
 
     # 建表（幂等，与 sync_dataflow_registry 模式一致）
@@ -1796,7 +1850,9 @@ def sync_interface_contracts(cur):
         )
     """)
     # P6 修复：加 COMMENT（HB-001 四要素：表名+用途+真源+同步方向）
-    cur.execute("COMMENT ON TABLE interface_contracts IS 'ARCH-053 接口契约表 | 用途: 模块API契约(接口集级) | 真源: interface_contract_registry.yaml | 同步: YAML→DB单向'")
+    cur.execute(
+        "COMMENT ON TABLE interface_contracts IS 'ARCH-053 接口契约表 | 用途: 模块API契约(接口集级) | 真源: interface_contract_registry.yaml | 同步: YAML→DB单向'"
+    )
 
     interfaces = data.get("interfaces", [])
     synced = 0
@@ -1804,7 +1860,8 @@ def sync_interface_contracts(cur):
         interface_id = iface.get("interface_id", "")
         if not interface_id:
             continue
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO interface_contracts
                 (interface_id, module_id, api_name, api_type, description,
                  exposed_interfaces, consumed_by_modules, contract_version,
@@ -1820,18 +1877,20 @@ def sync_interface_contracts(cur):
                 contract_version=excluded.contract_version,
                 stability=excluded.stability,
                 last_updated=excluded.last_updated
-        """, (
-            interface_id,
-            iface.get("module_id", ""),
-            iface.get("api_name", ""),
-            iface.get("api_type", ""),
-            iface.get("description", ""),
-            str(iface.get("exposed_interfaces", [])),
-            str(iface.get("consumed_by_modules", [])),
-            iface.get("contract_version", ""),
-            iface.get("stability", "evolving"),
-            now_iso,
-        ))
+        """,
+            (
+                interface_id,
+                iface.get("module_id", ""),
+                iface.get("api_name", ""),
+                iface.get("api_type", ""),
+                iface.get("description", ""),
+                str(iface.get("exposed_interfaces", [])),
+                str(iface.get("consumed_by_modules", [])),
+                iface.get("contract_version", ""),
+                iface.get("stability", "evolving"),
+                now_iso,
+            ),
+        )
         synced += 1
 
     print(f"  同步 {synced} 个接口契约")
@@ -1957,19 +2016,31 @@ def sync_data_source_apis(cur):
     cur.execute("DELETE FROM data_source_apis")
     synced = 0
     for a in apis:
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO data_source_apis
                 (api_id, source_id, category, api_name, short_name,
                  function_desc, params, returns_format, frequency_codes,
                  data_scope, test_status, test_result, section_ref, notes)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            a.get("api_id", ""), a.get("source_id", ""), a.get("category", ""),
-            a.get("api_name", ""), a.get("short_name", ""), a.get("function_desc", ""),
-            a.get("params", ""), a.get("returns_format", ""), a.get("frequency_codes", ""),
-            a.get("data_scope", ""), a.get("test_status", "untested"),
-            a.get("test_result", ""), a.get("section_ref", ""), a.get("notes", ""),
-        ))
+        """,
+            (
+                a.get("api_id", ""),
+                a.get("source_id", ""),
+                a.get("category", ""),
+                a.get("api_name", ""),
+                a.get("short_name", ""),
+                a.get("function_desc", ""),
+                a.get("params", ""),
+                a.get("returns_format", ""),
+                a.get("frequency_codes", ""),
+                a.get("data_scope", ""),
+                a.get("test_status", "untested"),
+                a.get("test_result", ""),
+                a.get("section_ref", ""),
+                a.get("notes", ""),
+            ),
+        )
         synced += 1
     print(f"  同步 {synced} 个数据源 API")
 
@@ -1997,22 +2068,37 @@ def sync_data_source_assets(cur):
     cur.execute("DELETE FROM data_source_assets")
     synced = 0
     for s in sources:
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO data_source_assets
                 (source_id, name, name_en, type, account_type, category, vendor,
                  interface_types, api_count, auth_required, auth_method,
                  rate_limit, status, coverage, limitations, owner, operation_manual, policy)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb)
-        """, (
-            s.get("id", ""), s.get("name", ""), s.get("name_en", ""),
-            s.get("type", ""), s.get("account_type", ""), s.get("category", ""), s.get("vendor", ""),
-            ", ".join(s.get("interface_types", [])) if isinstance(s.get("interface_types"), list) else s.get("interface_types", ""),
-            s.get("api_count", 0), s.get("auth_required", False),
-            s.get("auth_method", ""), s.get("rate_limit", ""), s.get("status", ""),
-            s.get("coverage", ""), s.get("limitations", ""), s.get("owner", ""),
-            s.get("operation_manual", ""),
-            json.dumps(s.get("policy", {}), ensure_ascii=False),
-        ))
+        """,
+            (
+                s.get("id", ""),
+                s.get("name", ""),
+                s.get("name_en", ""),
+                s.get("type", ""),
+                s.get("account_type", ""),
+                s.get("category", ""),
+                s.get("vendor", ""),
+                ", ".join(s.get("interface_types", []))
+                if isinstance(s.get("interface_types"), list)
+                else s.get("interface_types", ""),
+                s.get("api_count", 0),
+                s.get("auth_required", False),
+                s.get("auth_method", ""),
+                s.get("rate_limit", ""),
+                s.get("status", ""),
+                s.get("coverage", ""),
+                s.get("limitations", ""),
+                s.get("owner", ""),
+                s.get("operation_manual", ""),
+                json.dumps(s.get("policy", {}), ensure_ascii=False),
+            ),
+        )
         synced += 1
     print(f"  同步 {synced} 个外部数据源资产")
 
@@ -2038,17 +2124,27 @@ def sync_service_assets(cur):
     cur.execute("DELETE FROM service_assets")
     synced = 0
     for s in services:
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO service_assets
                 (service_id, name, type, component_ref, domain,
                  port, host, protocol, status, description, owner)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            s.get("id", ""), s.get("name", ""), s.get("type", ""),
-            s.get("component_ref"), s.get("domain", ""),
-            s.get("port"), s.get("host", ""), s.get("protocol", ""),
-            s.get("status", ""), s.get("description", ""), s.get("owner", ""),
-        ))
+        """,
+            (
+                s.get("id", ""),
+                s.get("name", ""),
+                s.get("type", ""),
+                s.get("component_ref"),
+                s.get("domain", ""),
+                s.get("port"),
+                s.get("host", ""),
+                s.get("protocol", ""),
+                s.get("status", ""),
+                s.get("description", ""),
+                s.get("owner", ""),
+            ),
+        )
         synced += 1
     print(f"  同步 {synced} 个服务资产")
 
@@ -2074,14 +2170,21 @@ def sync_config_assets(cur):
     for f in yaml_files:
         stat = f.stat()
         rel_path = str(f.relative_to(REPO_ROOT)).replace("\\", "/")
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO config_assets
                 (file_path, file_name, category, size_bytes, owner, last_modified)
             VALUES (%s, %s, %s, %s, %s, to_timestamp(%s))
-        """, (
-            rel_path, f.name, "config", stat.st_size,
-            "ZephyrAlpha-Owner", stat.st_mtime,
-        ))
+        """,
+            (
+                rel_path,
+                f.name,
+                "config",
+                stat.st_size,
+                "ZephyrAlpha-Owner",
+                stat.st_mtime,
+            ),
+        )
         synced += 1
     print(f"  同步 {synced} 个配置文件")
 
@@ -2112,7 +2215,9 @@ def sync_rule_ai_perception_index(cur):
         rule_file       TEXT NOT NULL DEFAULT ''
     )
     """)
-    cur.execute("COMMENT ON TABLE rule_ai_perception IS '规则AI感知索引（#183，#ARCH-GOV-CONVERGENCE-META Phase 3.2a）— 表性质: YAML 真源只读缓存 | 禁止操作: readonly 触发器保护，禁止直接 INSERT/UPDATE/DELETE | 真源：docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml | 同步入口: scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py sync_rule_ai_perception_index()'")
+    cur.execute(
+        "COMMENT ON TABLE rule_ai_perception IS '规则AI感知索引（#183，#ARCH-GOV-CONVERGENCE-META Phase 3.2a）— 表性质: YAML 真源只读缓存 | 禁止操作: readonly 触发器保护，禁止直接 INSERT/UPDATE/DELETE | 真源：docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml | 同步入口: scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py sync_rule_ai_perception_index()'"
+    )
 
     data = load_yaml("_registry/catalogs/rule_ai_perception_index.yaml")
     rules = data.get("rules", [])
@@ -2218,10 +2323,20 @@ def _log_sync_failures(cur, failures):
         cur.execute("SAVEPOINT sp_log_failures")
         _ensure_sync_failures_log_table(cur)
         for f in failures:
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO sync_failures_log (function_name, phase, arch_ref, error_message, error_type, error_class)
                 VALUES (%s, %s, %s, %s, %s, %s)
-            """, (f["function"], f["phase"], f["arch_ref"], f["error"], f["error_type"], f.get("error_class", "unknown")))
+            """,
+                (
+                    f["function"],
+                    f["phase"],
+                    f["arch_ref"],
+                    f["error"],
+                    f["error_type"],
+                    f.get("error_class", "unknown"),
+                ),
+            )
         cur.execute("RELEASE SAVEPOINT sp_log_failures")
     except Exception as e:
         # Best-effort: 写日志失败不能阻断 sync 主流程
@@ -2260,14 +2375,16 @@ def _run_sync_with_savepoint(cur, phase, arch_ref, func, failures):
         err_msg = str(e)[:2000]  # 截断防日志膨胀
         err_type = type(e).__name__
         err_class = _classify_error(err_type, err_msg)  # 裁定 C / P2
-        failures.append({
-            "phase": phase,
-            "function": func.__name__,
-            "arch_ref": arch_ref,
-            "error": err_msg,
-            "error_type": err_type,
-            "error_class": err_class,
-        })
+        failures.append(
+            {
+                "phase": phase,
+                "function": func.__name__,
+                "arch_ref": arch_ref,
+                "error": err_msg,
+                "error_type": err_type,
+                "error_class": err_class,
+            }
+        )
         print(f"[SYNC ISOLATED FAIL] {phase} {func.__name__} ({arch_ref}): {err_type} [{err_class}]: {err_msg[:200]}")
 
 
@@ -2276,18 +2393,39 @@ def _run_sync_with_savepoint(cur, phase, arch_ref, func, failures):
 # reconciler 侧另有 _classify_sync_failure 解析 subprocess 文本做重试决策——
 # 两者分类标准一致，但本函数基于异常类型/消息，reconciler 侧基于 stderr 文本。
 
-_DETERMINISTIC_EXC_TYPES = frozenset({
-    "undefinedobject", "undefinedcolumn", "undefinedtable", "undefinedfunction",
-    "syntaxerror", "duplicatetable", "duplicatecolumn", "permissiondenied",
-    "notnullviolation", "foreignkeyviolation", "uniqueviolation", "checkviolation",
-    "invalidtextrepresentation", "invalidparametervalue", "undefinedparameter",
-    "duplicateobject", "duplicatealias", "invalidcolumnreference", "groupingerror",
-    "wrongobjecttype",
-})
+_DETERMINISTIC_EXC_TYPES = frozenset(
+    {
+        "undefinedobject",
+        "undefinedcolumn",
+        "undefinedtable",
+        "undefinedfunction",
+        "syntaxerror",
+        "duplicatetable",
+        "duplicatecolumn",
+        "permissiondenied",
+        "notnullviolation",
+        "foreignkeyviolation",
+        "uniqueviolation",
+        "checkviolation",
+        "invalidtextrepresentation",
+        "invalidparametervalue",
+        "undefinedparameter",
+        "duplicateobject",
+        "duplicatealias",
+        "invalidcolumnreference",
+        "groupingerror",
+        "wrongobjecttype",
+    }
+)
 
-_TRANSIENT_EXC_TYPES = frozenset({
-    "operationalerror", "deadlockdetected", "serializationfailure", "internalerror",
-})
+_TRANSIENT_EXC_TYPES = frozenset(
+    {
+        "operationalerror",
+        "deadlockdetected",
+        "serializationfailure",
+        "internalerror",
+    }
+)
 
 _DETERMINISTIC_MSG_PATTERNS = (
     "unrecognized configuration parameter",
@@ -2444,6 +2582,7 @@ def sync_all() -> bool:
         # DM-90974 Phase 2: 落 depgraph_dirty.flag 触发域文档重生（治本运行时 DB 写入盲区）
         try:
             from _shared.constants import mark_depgraph_dirty
+
             mark_depgraph_dirty()
         except Exception as _e:  # noqa: BLE001 — flag 写入失败不阻断同步主流程
             print(f"[DIRTY-FLAG] WARNING: depgraph_dirty.flag 写入失败（不阻断）: {_e}", file=sys.stderr)
@@ -2483,7 +2622,8 @@ def main():
         description="P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph"
     )
     parser.add_argument(
-        "--list-readonly-tables", action="store_true",
+        "--list-readonly-tables",
+        action="store_true",
         help="列出由 YAML 同步的只读表（手写会被覆盖），不执行同步",
     )
     args = parser.parse_args()
@@ -2500,14 +2640,14 @@ def main():
 if __name__ == "__main__":
     main()
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def ensure_sync_failures_log_table(cur):
     """公共接口：ensure_sync_failures_log_table（Stage 4 公共化）。"""
     return _ensure_sync_failures_log_table(cur)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def resolve_module_to_single_node(cur, module_id, fallback_name):
     """公共接口：resolve_module_to_single_node（Stage 4 公共化）。"""
     return _resolve_module_to_single_node(cur, module_id, fallback_name)
-
-

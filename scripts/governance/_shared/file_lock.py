@@ -38,6 +38,7 @@ blueprint.md 进行无锁整文件读写，跨 commit/session 并发时后写者
         # ... 修改 content ...
         bp_path.write_text(new_content)
 """
+
 from __future__ import annotations
 
 import hashlib

@@ -17,6 +17,7 @@
 # [TTL] permanent
 
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
 
 import argparse
@@ -76,6 +77,7 @@ def _load_depgraph_from_db(db_path: Path) -> dict:
     conn.close()
     return data
 
+
 __manifest__ = """
 args: []
 description: 从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
@@ -85,7 +87,6 @@ priority: P2
 timeout_seconds: 60
 warn_only: false
 """
-
 
 
 class DependencyGraphError(Exception):
@@ -282,7 +283,9 @@ class ChangeImpactAnalyzer:
             if completed.returncode == 0 and completed.stdout.strip():
                 return [line.strip() for line in completed.stdout.strip().splitlines() if line.strip()]
         except (subprocess.TimeoutExpired, OSError, UnicodeDecodeError) as exc:
-            print(f"[analyze_change_impact] WARNING: git diff-tree 获取 commit {commit_hash} 文件列表失败（{exc}），按空文件列表降级")
+            print(
+                f"[analyze_change_impact] WARNING: git diff-tree 获取 commit {commit_hash} 文件列表失败（{exc}），按空文件列表降级"
+            )
         return []
 
     def generate_incremental_scan_list(self, impact: dict[str, Any]) -> list[str]:

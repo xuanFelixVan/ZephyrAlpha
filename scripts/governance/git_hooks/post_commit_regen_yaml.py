@@ -11,6 +11,7 @@
 # [TESTS] tests/governance/test_reconcile_generators.py::TestPostCommitRegenYaml; tests/governance/test_post_commit_oscillation_guard.py
 # [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: .git/hooks/post-commit sourced 事件触发（CONSUMERS 在案），非人工 manual
 # [ARCH-REF] generator_auto_trigger_pilot.md §缺口#3
 """post_commit_regen_yaml.py — post-commit YAML 变更触发器（治本缺口#3）
 
@@ -57,6 +58,7 @@ Usage::
 
     python scripts/governance/git_hooks/post_commit_regen_yaml.py
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -78,8 +80,7 @@ from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _REGISTRY_YAML = (
-    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-    / "catalogs" / "generator_registry.yaml"
+    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "generator_registry.yaml"
 )
 _ORCHESTRATOR = _REPO_ROOT / "scripts" / "governance" / "reconcile_generators.py"
 
@@ -108,11 +109,7 @@ def _committed_yaml_files() -> list[str]:
             return []
     except Exception:  # noqa: BLE001 — post-commit 不得阻断
         return []
-    return [
-        f.replace("\\", "/").strip()
-        for f in proc.stdout.splitlines()
-        if f.lower().endswith((".yaml", ".yml"))
-    ]
+    return [f.replace("\\", "/").strip() for f in proc.stdout.splitlines() if f.lower().endswith((".yaml", ".yml"))]
 
 
 def _generator_yaml_inputs() -> set[str]:
@@ -120,6 +117,7 @@ def _generator_yaml_inputs() -> set[str]:
     inputs: set[str] = set()
     try:
         import yaml  # type: ignore[import-untyped]
+
         if not _REGISTRY_YAML.is_file():
             return inputs
         data = yaml.safe_load(_REGISTRY_YAML.read_text(encoding="utf-8")) or {}
@@ -142,6 +140,7 @@ def _generator_yaml_outputs() -> set[str]:
     outputs: set[str] = set()
     try:
         import yaml  # type: ignore[import-untyped]
+
         if not _REGISTRY_YAML.is_file():
             return outputs
         data = yaml.safe_load(_REGISTRY_YAML.read_text(encoding="utf-8")) or {}
@@ -178,9 +177,7 @@ def _acquire_lock() -> None:
         pass  # lock 创建失败不阻断（降级为无锁，最坏情况是并发 spawn）
 
 
-def _matches_generator_input(
-    committed: list[str], inputs: set[str], outputs: set[str] | None = None
-) -> bool:
+def _matches_generator_input(committed: list[str], inputs: set[str], outputs: set[str] | None = None) -> bool:
     """committed 文件是否命中任一生成器 yaml 输入源（精确或前缀匹配）。
 
     产物循环阻断（#3）：若 outputs 提供且 committed 命中任何生成器 yaml 产物，
@@ -225,9 +222,7 @@ def main() -> int:
 
         # #1 并发去重：lockfile 活跃时跳过 spawn（防止连续 commit 并发冲突）
         if _is_lock_active():
-            sys.stderr.write(
-                "[POST-COMMIT-REGEN] ⏭ 已有重生成任务运行中（lockfile 活跃），跳过本次 spawn\n"
-            )
+            sys.stderr.write("[POST-COMMIT-REGEN] ⏭ 已有重生成任务运行中（lockfile 活跃），跳过本次 spawn\n")
             return 0
 
         # 异步 spawn reconcile_stale（非阻塞）
@@ -257,18 +252,11 @@ def main() -> int:
             )
             log_handle.close()  # 父进程关闭副本；子进程已继承
             # 不等待——post-commit 立即返回
-            sys.stderr.write(
-                f"[POST-COMMIT-REGEN] 🔄 YAML 变更触发后台重生成 "
-                f"PID={proc.pid} 日志: {log_file}\n"
-            )
+            sys.stderr.write(f"[POST-COMMIT-REGEN] 🔄 YAML 变更触发后台重生成 PID={proc.pid} 日志: {log_file}\n")
         except Exception as e:  # noqa: BLE001 — spawn 失败不阻断
-            sys.stderr.write(
-                f"[POST-COMMIT-REGEN] WARNING: 触发失败（不阻断 commit）: {e}\n"
-            )
+            sys.stderr.write(f"[POST-COMMIT-REGEN] WARNING: 触发失败（不阻断 commit）: {e}\n")
     except Exception as e:  # noqa: BLE001 — 顶层兜底：任何异常都不阻断 git
-        sys.stderr.write(
-            f"[POST-COMMIT-REGEN] WARNING: 内部异常（不阻断 commit）: {e}\n"
-        )
+        sys.stderr.write(f"[POST-COMMIT-REGEN] WARNING: 内部异常（不阻断 commit）: {e}\n")
     return 0
 
 

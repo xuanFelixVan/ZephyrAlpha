@@ -117,7 +117,6 @@ _warnings: list[str] = []
 warnings = _warnings  # public alias（Stage 4 公共化）
 
 
-
 def _extract_top_fields(text: str) -> list[str]:
     """从 YAML 文本提取顶层字段顺序（仅行首无缩进的 key: 行）。"""
     fields: list[str] = []
@@ -261,8 +260,8 @@ def main() -> int:
 if __name__ == "__main__":
     sys.exit(main())
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def validate_file(path) -> None:
     """公共接口：validate_file（Stage 4 公共化）。"""
     return _validate_file(path)
-

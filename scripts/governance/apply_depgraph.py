@@ -191,17 +191,13 @@ SQL_FIX_PATH_CASE1A_SELECT_NONDESIGN_BY_PATH = (
 )
 SQL_FIX_PATH_DELETE_EDGES_BY_NODE = "DELETE FROM edges WHERE from_node_id=%s OR to_node_id=%s"
 SQL_FIX_PATH_DELETE_NODE_BY_ID = "DELETE FROM nodes WHERE node_id=%s"
-SQL_FIX_PATH_CASE1B_UPDATE = (
-    "UPDATE nodes SET path=%s, granularity='file', node_type='module' WHERE node_id=%s"
-)
+SQL_FIX_PATH_CASE1B_UPDATE = "UPDATE nodes SET path=%s, granularity='file', node_type='module' WHERE node_id=%s"
 SQL_FIX_PATH_CASE3_SELECT_DESIGN_NONDIR_SLASH = (
     "SELECT node_id, path, granularity, node_type FROM nodes "
     "WHERE design_maturity = 'design' AND granularity != 'directory' AND path LIKE '%%/' "
     "ORDER BY node_id"
 )
-SQL_FIX_PATH_CASE3_UPDATE = (
-    "UPDATE nodes SET granularity='directory', node_type='blueprint' WHERE node_id=%s"
-)
+SQL_FIX_PATH_CASE3_UPDATE = "UPDATE nodes SET granularity='directory', node_type='blueprint' WHERE node_id=%s"
 
 # 5.160.2 SQL 常量集中化（Phase 7c-3：剩余裸SQL提取，2026-07-22）
 # 防复发：NO-BARE-SQL gate (priority=94) 检测新增裸 SQL 字面量
@@ -257,12 +253,12 @@ SQL_SELECT_DESIGN_MATURITY_BY_NODE = "SELECT design_maturity, path FROM nodes WH
 SQL_UPDATE_DESIGN_MATURITY = "UPDATE nodes SET design_maturity=%s WHERE node_id=%s"
 
 # --- remove_design_node ---
-SQL_SELECT_NODE_DETAIL_BY_ID = "SELECT node_id, path, blueprint_id, design_maturity, build_status FROM nodes WHERE node_id=%s"
+SQL_SELECT_NODE_DETAIL_BY_ID = (
+    "SELECT node_id, path, blueprint_id, design_maturity, build_status FROM nodes WHERE node_id=%s"
+)
 
 # S5 锚点级联提示（2026-08-14，AI-GIT-001）：删除/弃用节点时查 battle_map_anchors 引用
-SQL_CASCADE_ANCHOR_NODE_LOOKUP = (
-    "SELECT node_id, path, blueprint_id FROM nodes WHERE node_id = ANY(%s)"
-)
+SQL_CASCADE_ANCHOR_NODE_LOOKUP = "SELECT node_id, path, blueprint_id FROM nodes WHERE node_id = ANY(%s)"
 SQL_CASCADE_ANCHOR_HINT_QUERY = (
     "SELECT anchor_id, step_id, target_id, target_role FROM battle_map_anchors "
     "WHERE target_graph = 'depgraph' AND target_id = ANY(%s) ORDER BY anchor_id"
@@ -271,7 +267,9 @@ SQL_COUNT_NODES_BY_PATH_EXCLUDE_ID = "SELECT COUNT(*) FROM nodes WHERE path=%s A
 SQL_DELETE_EDGES_BY_NODE = "DELETE FROM edges WHERE from_node_id=%s OR to_node_id=%s"
 
 # --- deprecate_node ---
-SQL_SELECT_NODE_FULL_DETAIL_BY_ID = "SELECT node_id, path, file_path, blueprint_id, design_maturity, build_status FROM nodes WHERE node_id=%s"
+SQL_SELECT_NODE_FULL_DETAIL_BY_ID = (
+    "SELECT node_id, path, file_path, blueprint_id, design_maturity, build_status FROM nodes WHERE node_id=%s"
+)
 
 # --- mark_blueprint_invalid ---
 SQL_SELECT_NODES_BY_BLUEPRINT = "SELECT node_id, path FROM nodes WHERE blueprint_id=%s"
@@ -279,7 +277,9 @@ SQL_UPDATE_BLUEPRINT_INVALID = "UPDATE nodes SET blueprint_id_invalid=1, gate_re
 
 # --- delete_design_edge / delete_edge ---
 SQL_SELECT_EDGE_DESIGN_MATURITY = "SELECT edge_id, from_node_id, to_node_id, dep_maturity FROM edges WHERE edge_id=%s"
-SQL_SELECT_EDGE_FULL_DETAIL = "SELECT edge_id, from_node_id, to_node_id, dep_type, dep_maturity FROM edges WHERE edge_id=%s"
+SQL_SELECT_EDGE_FULL_DETAIL = (
+    "SELECT edge_id, from_node_id, to_node_id, dep_type, dep_maturity FROM edges WHERE edge_id=%s"
+)
 
 # --- delete_blueprint_link / delete_constraint ---
 SQL_SELECT_BLUEPRINT_LINK = "SELECT blueprint_id FROM blueprint_links WHERE blueprint_id=%s"
@@ -316,7 +316,9 @@ SQL_SELECT_EDGE_TYPE_DETAIL = "SELECT edge_id, from_node_id, to_node_id, dep_typ
 SQL_UPDATE_EDGE_DEP_TYPE = "UPDATE edges SET dep_type=%s WHERE edge_id=%s"
 
 # --- domain naming rules validation ---
-SQL_SELECT_DOMAIN_NAMING_RULES = "SELECT rule_id, severity FROM domain_naming_rules WHERE applies_to IN ('create', 'both')"
+SQL_SELECT_DOMAIN_NAMING_RULES = (
+    "SELECT rule_id, severity FROM domain_naming_rules WHERE applies_to IN ('create', 'both')"
+)
 SQL_SELECT_ALL_DOMAIN_IDS = "SELECT domain_id FROM domains"
 
 # --- cmd_insert_domain ---
@@ -336,8 +338,7 @@ SQL_SELECT_ALL_TABLES = (
     "WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
 )
 SQL_SELECT_TABLE_COLUMNS = (
-    "SELECT column_name, data_type FROM information_schema.columns "
-    "WHERE table_schema = 'public' AND table_name = %s"
+    "SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'public' AND table_name = %s"
 )
 SQL_COUNT_TBL_LIKE_CNT_ESCAPE = "SELECT COUNT(*) AS cnt FROM {tbl} WHERE {col} LIKE %s ESCAPE '\\'"
 SQL_UPDATE_TBL_REPLACE_LIKE_ESCAPE = "UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s ESCAPE '\\'"
@@ -417,14 +418,20 @@ SQL_UPDATE_DOMAIN_NAME = "UPDATE domains SET domain_name=%s WHERE domain_id=%s"
 SQL_SELECT_NODE_PATH_BY_MODULE = "SELECT node_id, path FROM nodes WHERE belongs_to=%s OR blueprint_id=%s"
 
 # --- cmd_migrate_dependencies ---
-SQL_SELECT_DOMAIN_DEP_BY_PAIR = "SELECT from_domain, to_domain, edge_count FROM domain_dependencies WHERE from_domain=%s AND to_domain=%s"
+SQL_SELECT_DOMAIN_DEP_BY_PAIR = (
+    "SELECT from_domain, to_domain, edge_count FROM domain_dependencies WHERE from_domain=%s AND to_domain=%s"
+)
 SQL_SELECT_DOMAIN_DEP_EDGE_COUNT = "SELECT edge_count FROM domain_dependencies WHERE from_domain=%s AND to_domain=%s"
 SQL_DELETE_DOMAIN_DEP = "DELETE FROM domain_dependencies WHERE from_domain=%s AND to_domain=%s"
 SQL_UPDATE_DOMAIN_DEP_EDGE_COUNT = "UPDATE domain_dependencies SET edge_count=%s WHERE from_domain=%s AND to_domain=%s"
-SQL_UPDATE_DOMAIN_DEP_PAIR = "UPDATE domain_dependencies SET from_domain=%s, to_domain=%s WHERE from_domain=%s AND to_domain=%s"
+SQL_UPDATE_DOMAIN_DEP_PAIR = (
+    "UPDATE domain_dependencies SET from_domain=%s, to_domain=%s WHERE from_domain=%s AND to_domain=%s"
+)
 
 # --- cmd_update_domain_capacity / layer / ssot_path ---
-SQL_SELECT_DOMAIN_CAPACITY = "SELECT domain_id, current_modules, max_modules, production_nodes FROM domains WHERE domain_id=%s"
+SQL_SELECT_DOMAIN_CAPACITY = (
+    "SELECT domain_id, current_modules, max_modules, production_nodes FROM domains WHERE domain_id=%s"
+)
 SQL_SELECT_DOMAIN_LAYER = "SELECT domain_id, layer_id FROM domains WHERE domain_id=%s"
 SQL_UPDATE_DOMAIN_LAYER = "UPDATE domains SET layer_id=%s, updated_at=%s WHERE domain_id=%s"
 SQL_SELECT_DOMAIN_SSOT_PATH = "SELECT domain_id, ssot_path FROM domains WHERE domain_id=%s"
@@ -448,31 +455,18 @@ SQL_SELECT_NODES_METADATA_BY_PATH = "SELECT path FROM nodes_metadata WHERE path=
 # 裁定#209 Stage 2: path 为稳定 PK。old='' 的节点无法用 --rename-blueprint-id
 # （old='' 会误伤全库所有空值节点），故提供按 path 精确赋值的 sanctioned 入口。
 SQL_SELECT_NODE_FULL_BY_PATH = (
-    "SELECT node_id, blueprint_id, belongs_to, build_status, design_maturity, domain_id "
-    "FROM nodes WHERE path=%s"
+    "SELECT node_id, blueprint_id, belongs_to, build_status, design_maturity, domain_id FROM nodes WHERE path=%s"
 )
-SQL_UPDATE_NODE_BLUEPRINT_ID_BY_PATH = (
-    "UPDATE nodes SET blueprint_id=%s, belongs_to=%s WHERE path=%s"
-)
-SQL_UPDATE_NODES_METADATA_BP_BY_PATH = (
-    "UPDATE nodes_metadata SET blueprint_id=%s, last_updated=%s WHERE path=%s"
-)
-SQL_CLEAR_BLUEPRINT_ID_INVALID_BY_PATH = (
-    "UPDATE nodes SET blueprint_id_invalid=0 WHERE path=%s"
-)
+SQL_UPDATE_NODE_BLUEPRINT_ID_BY_PATH = "UPDATE nodes SET blueprint_id=%s, belongs_to=%s WHERE path=%s"
+SQL_UPDATE_NODES_METADATA_BP_BY_PATH = "UPDATE nodes_metadata SET blueprint_id=%s, last_updated=%s WHERE path=%s"
+SQL_CLEAR_BLUEPRINT_ID_INVALID_BY_PATH = "UPDATE nodes SET blueprint_id_invalid=0 WHERE path=%s"
 # 治本（2026-08-03）：按 blueprint_id 清除 invalid 标志（inverse of mark_blueprint_invalid）
-SQL_CLEAR_INVALID_FLAG_BY_BP = (
-    "UPDATE nodes SET blueprint_id_invalid=0, gate_reason=NULL WHERE blueprint_id=%s"
-)
+SQL_CLEAR_INVALID_FLAG_BY_BP = "UPDATE nodes SET blueprint_id_invalid=0, gate_reason=NULL WHERE blueprint_id=%s"
 # 治本（2026-08-03）：按 path 清空 blueprint_id（infra_id 误存为 blueprint_id 的治本清理）
 SQL_CLEAR_BLUEPRINT_ID_BY_PATH = (
-    "UPDATE nodes SET blueprint_id=NULL, belongs_to=NULL, blueprint_id_invalid=0 "
-    "WHERE path=%s"
+    "UPDATE nodes SET blueprint_id=NULL, belongs_to=NULL, blueprint_id_invalid=0 WHERE path=%s"
 )
-SQL_CLEAR_NODES_METADATA_BP_BY_PATH = (
-    "UPDATE nodes_metadata SET blueprint_id=NULL, last_updated=%s WHERE path=%s"
-)
-
+SQL_CLEAR_NODES_METADATA_BP_BY_PATH = "UPDATE nodes_metadata SET blueprint_id=NULL, last_updated=%s WHERE path=%s"
 
 
 @contextlib.contextmanager
@@ -582,7 +576,9 @@ def _atomic_write(dep: dict, conn=None) -> None:
                     clean["node_type"] = clean.pop("type")
                 set_clause = ", ".join(f"{k} = %s" for k in clean)
                 values = list(clean.values()) + [node_id]
-                conn.execute(f"UPDATE nodes SET {set_clause} WHERE node_id = %s", values)  # 5.160.2 OK: dynamic SQL, kept inline
+                conn.execute(
+                    f"UPDATE nodes SET {set_clause} WHERE node_id = %s", values  # noqa: bare-sql  治理DBA脚本存量动态标识符更新，format重排伪新增（§5.160.2集中化专项另列）
+                )  # 5.160.2 OK: dynamic SQL, kept inline
             if own_conn:
                 conn.commit()
             print("OK: depgraph DB updated", file=sys.stderr)
@@ -849,9 +845,7 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
             elif op in _NODE_OPS:
                 _apply_node_op(dep, change, i)
             else:
-                raise ValueError(
-                    f"change #{i}: unknown op '{op}', supported: {sorted(all_ops)}"
-                )
+                raise ValueError(f"change #{i}: unknown op '{op}', supported: {sorted(all_ops)}")
         print(f"DRY RUN - no changes written (domain_ops={domain_op_count})", file=sys.stderr)
         return
 
@@ -886,9 +880,7 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                 elif op in _NODE_OPS:
                     _apply_node_op(dep, change, i)
                 else:
-                    raise ValueError(
-                        f"change #{i}: unknown op '{op}', supported: {sorted(all_ops)}"
-                    )
+                    raise ValueError(f"change #{i}: unknown op '{op}', supported: {sorted(all_ops)}")
 
             # 节点级变更通过共享连接写入（不单独commit）
             _atomic_write(dep, conn=conn)
@@ -941,8 +933,13 @@ def _warn_translation_coverage(path: str) -> None:
 
 
 def add_design_node(
-    path: str, blueprint_id: str, domain_id: str, build_status: str = "planned",
-    granularity: str = "directory", node_type: str | None = None, db_path: str = None,
+    path: str,
+    blueprint_id: str,
+    domain_id: str,
+    build_status: str = "planned",
+    granularity: str = "directory",
+    node_type: str | None = None,
+    db_path: str = None,
 ) -> int:
     """
     新增设计态节点（支持 file/directory/module 粒度，2026-07-13 治本）。
@@ -1012,14 +1009,22 @@ def add_design_node(
             blueprint_path = f"docs/03_modules/{blueprint_id}/" if blueprint_id else ""
 
             # 检查是否已存在同path的设计态节点
-            existing = conn.execute(
-                SQL_SELECT_NODE_BY_PATH_DESIGN, (path,)
-            ).fetchone()
+            existing = conn.execute(SQL_SELECT_NODE_BY_PATH_DESIGN, (path,)).fetchone()
             if existing:
-                print(f"WARNING: path '{path}' 已有设计态节点 node_id={existing['node_id']}，执行UPDATE", file=sys.stderr)
+                print(
+                    f"WARNING: path '{path}' 已有设计态节点 node_id={existing['node_id']}，执行UPDATE", file=sys.stderr
+                )
                 conn.execute(
                     SQL_UPDATE_DESIGN_NODE_BY_ID,
-                    (blueprint_id, domain_id, build_status, blueprint_path, granularity, node_type, existing["node_id"]),
+                    (
+                        blueprint_id,
+                        domain_id,
+                        build_status,
+                        blueprint_path,
+                        granularity,
+                        node_type,
+                        existing["node_id"],
+                    ),
                 )
                 conn.commit()
                 _warn_translation_coverage(path)
@@ -1029,8 +1034,16 @@ def add_design_node(
             # #ARCH-70：file 粒度同写 file_path=path（SQL_INSERT_DESIGN_NODE 常量注释有完整病根）
             cur = conn.execute(
                 SQL_INSERT_DESIGN_NODE,
-                (node_type, path, path if granularity != "directory" else "",
-                 granularity, domain_id, blueprint_id, build_status, blueprint_path),
+                (
+                    node_type,
+                    path,
+                    path if granularity != "directory" else "",
+                    granularity,
+                    domain_id,
+                    blueprint_id,
+                    build_status,
+                    blueprint_path,
+                ),
             )
             node_id = cur.fetchone()["node_id"]
             conn.commit()
@@ -1052,13 +1065,13 @@ def _check_scan_scope(path: str) -> tuple[bool, list[str]]:
     返回: (in_scope, scan_dirs) — in_scope=True 表示在扫描范围内（不应手动添加节点）
     """
     scan_config_path = (
-        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-        / "catalogs" / "depgraph_scan_exclusions.yaml"
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "depgraph_scan_exclusions.yaml"
     )
     if not scan_config_path.exists():
         return False, []
     try:
         import yaml
+
         with open(scan_config_path, encoding="utf-8") as f:
             config = yaml.safe_load(f)
         scan_dirs = config.get("depgraph", {}).get("scan_dirs", [])
@@ -1073,8 +1086,11 @@ def _check_scan_scope(path: str) -> tuple[bool, list[str]]:
 
 
 def add_file_node(
-    path: str, blueprint_id: str, domain_id: str,
-    db_path: str = None, force: bool = False,
+    path: str,
+    blueprint_id: str,
+    domain_id: str,
+    db_path: str = None,
+    force: bool = False,
 ) -> int:
     """
     新增文件级 production 节点（补注册孤儿文件）。
@@ -1177,8 +1193,13 @@ def fix_path_semantics_for_design_nodes(dry_run: bool = False) -> dict:
         'fixed', 'deprecated', 'skipped', 'details'.
     """
     result = {
-        'case1a_count': 0, 'case1b_count': 0, 'case3_count': 0,
-        'fixed': 0, 'deprecated': 0, 'skipped': 0, 'details': []
+        "case1a_count": 0,
+        "case1b_count": 0,
+        "case3_count": 0,
+        "fixed": 0,
+        "deprecated": 0,
+        "skipped": 0,
+        "details": [],
     }
 
     with _db_write_lock(db_path=None, task="fix_path_semantics_for_design_nodes"):
@@ -1189,18 +1210,15 @@ def fix_path_semantics_for_design_nodes(dry_run: bool = False) -> dict:
             case1_rows = cur.fetchall()
 
             for r in case1_rows:
-                node_id = r['node_id']
-                old_path = r['path']
-                new_path = old_path.rstrip('/')
-                while new_path.endswith('/'):
-                    new_path = new_path.rstrip('/')
+                node_id = r["node_id"]
+                old_path = r["path"]
+                new_path = old_path.rstrip("/")
+                while new_path.endswith("/"):
+                    new_path = new_path.rstrip("/")
 
                 # Check if any non-design node exists with new_path (Case 1a: stale duplicate).
                 # 非 design 节点（production）已是正确真源，design 节点为 stale 重复。
-                prod_row = conn.execute(
-                    SQL_FIX_PATH_CASE1A_SELECT_NONDESIGN_BY_PATH,
-                    (new_path,)
-                ).fetchone()
+                prod_row = conn.execute(SQL_FIX_PATH_CASE1A_SELECT_NONDESIGN_BY_PATH, (new_path,)).fetchone()
 
                 if prod_row:
                     # Case 1a: non-design node exists, design is stale duplicate → hard delete
@@ -1208,100 +1226,153 @@ def fix_path_semantics_for_design_nodes(dry_run: bool = False) -> dict:
                     # 无法通过 UPDATE 修正 path（unique 约束冲突），且 build_status='deprecated'
                     # 仍保留语义错误行——故彻底删除 stale design 节点 + 关联 design edges。
                     # production 节点已是正确真源。
-                    result['case1a_count'] += 1
-                    prod_node_id = prod_row['node_id']
-                    prod_maturity = prod_row['design_maturity']
+                    result["case1a_count"] += 1
+                    prod_node_id = prod_row["node_id"]
+                    prod_maturity = prod_row["design_maturity"]
                     if dry_run:
-                        print(f"[DRY-RUN] Case1a HARD-DELETE node_id={node_id} path={old_path!r} "
-                              f"({prod_maturity} node_id={prod_node_id} already at {new_path!r})", file=sys.stderr)
-                        result['details'].append({
-                            'node_id': node_id, 'case': '1a', 'action': 'hard_delete',
-                            'old_path': old_path, 'new_path': new_path,
-                            'prod_node_id': prod_node_id, 'prod_maturity': prod_maturity
-                        })
-                        result['skipped'] += 1
+                        print(
+                            f"[DRY-RUN] Case1a HARD-DELETE node_id={node_id} path={old_path!r} "
+                            f"({prod_maturity} node_id={prod_node_id} already at {new_path!r})",
+                            file=sys.stderr,
+                        )
+                        result["details"].append(
+                            {
+                                "node_id": node_id,
+                                "case": "1a",
+                                "action": "hard_delete",
+                                "old_path": old_path,
+                                "new_path": new_path,
+                                "prod_node_id": prod_node_id,
+                                "prod_maturity": prod_maturity,
+                            }
+                        )
+                        result["skipped"] += 1
                     else:
                         # 先删除关联 edges（design edges 之间的 stale duplicate 重复，无价值）
                         edge_del = conn.execute(
                             SQL_FIX_PATH_DELETE_EDGES_BY_NODE,
                             (node_id, node_id),
                         )
-                        edge_count = edge_del.rowcount if hasattr(edge_del, 'rowcount') else -1
+                        edge_count = edge_del.rowcount if hasattr(edge_del, "rowcount") else -1
                         # 再删除 stale design 节点
                         conn.execute(
                             SQL_FIX_PATH_DELETE_NODE_BY_ID,
                             (node_id,),
                         )
-                        print(f"[OK] Case1a HARD-DELETE node_id={node_id} path={old_path!r} "
-                              f"({prod_maturity} node_id={prod_node_id} already at {new_path!r}, "
-                              f"edges_deleted={edge_count})", file=sys.stderr)
-                        result['details'].append({
-                            'node_id': node_id, 'case': '1a', 'action': 'hard_delete',
-                            'old_path': old_path, 'new_path': new_path,
-                            'prod_node_id': prod_node_id, 'prod_maturity': prod_maturity,
-                            'edges_deleted': edge_count
-                        })
-                        result['deprecated'] += 1
+                        print(
+                            f"[OK] Case1a HARD-DELETE node_id={node_id} path={old_path!r} "
+                            f"({prod_maturity} node_id={prod_node_id} already at {new_path!r}, "
+                            f"edges_deleted={edge_count})",
+                            file=sys.stderr,
+                        )
+                        result["details"].append(
+                            {
+                                "node_id": node_id,
+                                "case": "1a",
+                                "action": "hard_delete",
+                                "old_path": old_path,
+                                "new_path": new_path,
+                                "prod_node_id": prod_node_id,
+                                "prod_maturity": prod_maturity,
+                                "edges_deleted": edge_count,
+                            }
+                        )
+                        result["deprecated"] += 1
                 else:
                     # Case 1b: no non-design node, fix path + granularity
-                    result['case1b_count'] += 1
+                    result["case1b_count"] += 1
                     if dry_run:
-                        print(f"[DRY-RUN] Case1b FIX node_id={node_id} path={old_path!r} -> {new_path!r} "
-                              f"granularity=directory->file node_type=blueprint->module", file=sys.stderr)
-                        result['details'].append({
-                            'node_id': node_id, 'case': '1b', 'action': 'fix_path',
-                            'old_path': old_path, 'new_path': new_path
-                        })
-                        result['skipped'] += 1
+                        print(
+                            f"[DRY-RUN] Case1b FIX node_id={node_id} path={old_path!r} -> {new_path!r} "
+                            f"granularity=directory->file node_type=blueprint->module",
+                            file=sys.stderr,
+                        )
+                        result["details"].append(
+                            {
+                                "node_id": node_id,
+                                "case": "1b",
+                                "action": "fix_path",
+                                "old_path": old_path,
+                                "new_path": new_path,
+                            }
+                        )
+                        result["skipped"] += 1
                     else:
                         conn.execute(
                             SQL_FIX_PATH_CASE1B_UPDATE,
                             (new_path, node_id),
                         )
-                        print(f"[OK] Case1b FIX node_id={node_id} path={old_path!r} -> {new_path!r} "
-                              f"(granularity=file, node_type=module)", file=sys.stderr)
-                        result['details'].append({
-                            'node_id': node_id, 'case': '1b', 'action': 'fix_path',
-                            'old_path': old_path, 'new_path': new_path
-                        })
-                        result['fixed'] += 1
+                        print(
+                            f"[OK] Case1b FIX node_id={node_id} path={old_path!r} -> {new_path!r} "
+                            f"(granularity=file, node_type=module)",
+                            file=sys.stderr,
+                        )
+                        result["details"].append(
+                            {
+                                "node_id": node_id,
+                                "case": "1b",
+                                "action": "fix_path",
+                                "old_path": old_path,
+                                "new_path": new_path,
+                            }
+                        )
+                        result["fixed"] += 1
 
             # Case 3: path ends with / but granularity != directory (directory semantics)
             cur = conn.execute(SQL_FIX_PATH_CASE3_SELECT_DESIGN_NONDIR_SLASH)
             case3_rows = cur.fetchall()
-            result['case3_count'] = len(case3_rows)
+            result["case3_count"] = len(case3_rows)
 
             for r in case3_rows:
-                node_id = r['node_id']
-                old_path = r['path']
+                node_id = r["node_id"]
+                old_path = r["path"]
                 if dry_run:
-                    print(f"[DRY-RUN] Case3 FIX node_id={node_id} path={old_path!r} "
-                          f"granularity={r['granularity']}->directory node_type={r['node_type']}->blueprint", file=sys.stderr)
-                    result['details'].append({
-                        'node_id': node_id, 'case': 3, 'action': 'fix_granularity',
-                        'old_path': old_path, 'new_path': old_path
-                    })
-                    result['skipped'] += 1
+                    print(
+                        f"[DRY-RUN] Case3 FIX node_id={node_id} path={old_path!r} "
+                        f"granularity={r['granularity']}->directory node_type={r['node_type']}->blueprint",
+                        file=sys.stderr,
+                    )
+                    result["details"].append(
+                        {
+                            "node_id": node_id,
+                            "case": 3,
+                            "action": "fix_granularity",
+                            "old_path": old_path,
+                            "new_path": old_path,
+                        }
+                    )
+                    result["skipped"] += 1
                 else:
                     conn.execute(
                         SQL_FIX_PATH_CASE3_UPDATE,
                         (node_id,),
                     )
-                    print(f"[OK] Case3 FIX node_id={node_id} path={old_path!r} "
-                          f"(granularity=directory, node_type=blueprint)", file=sys.stderr)
-                    result['details'].append({
-                        'node_id': node_id, 'case': 3, 'action': 'fix_granularity',
-                        'old_path': old_path, 'new_path': old_path
-                    })
-                    result['fixed'] += 1
+                    print(
+                        f"[OK] Case3 FIX node_id={node_id} path={old_path!r} "
+                        f"(granularity=directory, node_type=blueprint)",
+                        file=sys.stderr,
+                    )
+                    result["details"].append(
+                        {
+                            "node_id": node_id,
+                            "case": 3,
+                            "action": "fix_granularity",
+                            "old_path": old_path,
+                            "new_path": old_path,
+                        }
+                    )
+                    result["fixed"] += 1
 
             if not dry_run:
                 conn.commit()
-            print(f"[SUMMARY] Case1a(stale→deprecate)={result['case1a_count']} "
-                  f"Case1b(orphan→fix)={result['case1b_count']} "
-                  f"Case3(granularity→fix)={result['case3_count']} "
-                  f"fixed={result['fixed']} deprecated={result['deprecated']} "
-                  f"skipped={result['skipped']}", file=sys.stderr)
+            print(
+                f"[SUMMARY] Case1a(stale→deprecate)={result['case1a_count']} "
+                f"Case1b(orphan→fix)={result['case1b_count']} "
+                f"Case3(granularity→fix)={result['case3_count']} "
+                f"fixed={result['fixed']} deprecated={result['deprecated']} "
+                f"skipped={result['skipped']}",
+                file=sys.stderr,
+            )
         except Exception as e:
             conn.rollback()
             logger.error("fix_path_semantics_for_design_nodes失败: %s", e)
@@ -1342,26 +1413,26 @@ def add_design_edge(
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             # 校验from_node_id和to_node_id存在且为设计态
-            from_node = conn.execute(
-                SQL_SELECT_NODE_MATURITY_BY_ID, (from_node_id,)
-            ).fetchone()
+            from_node = conn.execute(SQL_SELECT_NODE_MATURITY_BY_ID, (from_node_id,)).fetchone()
             if not from_node:
                 print(f"ERROR: from_node_id={from_node_id} 不存在", file=sys.stderr)
                 return -1
             if from_node["design_maturity"] != "design":
                 print(
-                    f"ERROR: from_node_id={from_node_id} design_maturity={from_node['design_maturity']}（应为design）", file=sys.stderr
+                    f"ERROR: from_node_id={from_node_id} design_maturity={from_node['design_maturity']}（应为design）",
+                    file=sys.stderr,
                 )
                 return -1
 
-            to_node = conn.execute(
-                SQL_SELECT_NODE_MATURITY_BY_ID, (to_node_id,)
-            ).fetchone()
+            to_node = conn.execute(SQL_SELECT_NODE_MATURITY_BY_ID, (to_node_id,)).fetchone()
             if not to_node:
                 print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
                 return -1
             if to_node["design_maturity"] != "design":
-                print(f"ERROR: to_node_id={to_node_id} design_maturity={to_node['design_maturity']}（应为design）", file=sys.stderr)
+                print(
+                    f"ERROR: to_node_id={to_node_id} design_maturity={to_node['design_maturity']}（应为design）",
+                    file=sys.stderr,
+                )
                 return -1
 
             # DFS循环检测：检查to_node_id是否能到达from_node_id
@@ -1460,8 +1531,13 @@ def add_edge(
     # C集代码层接线 dep_type 业务子集（含 legacy 短名 contract/event/runtime/data）
     # 非全量词表副本——全量真源为 dep_type_vocabulary.yaml（PS-VOC-034）
     valid_types = {  # noqa: gate-vocab  业务子集校验，非词表硬编码
-        "contract", "event", "runtime", "data",
-        "import_depends", "test_depends", "config_depends",
+        "contract",
+        "event",
+        "runtime",
+        "data",
+        "import_depends",
+        "test_depends",
+        "config_depends",
     }
     valid_maturities = {"design", "active"}
     if dep_type not in valid_types:
@@ -1475,15 +1551,11 @@ def add_edge(
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             # 校验节点存在性（不校验 design_maturity）
-            from_node = conn.execute(
-                SQL_SELECT_NODE_ID_BY_ID, (from_node_id,)
-            ).fetchone()
+            from_node = conn.execute(SQL_SELECT_NODE_ID_BY_ID, (from_node_id,)).fetchone()
             if not from_node:
                 print(f"ERROR: from_node_id={from_node_id} 不存在", file=sys.stderr)
                 return -1
-            to_node = conn.execute(
-                SQL_SELECT_NODE_ID_BY_ID, (to_node_id,)
-            ).fetchone()
+            to_node = conn.execute(SQL_SELECT_NODE_ID_BY_ID, (to_node_id,)).fetchone()
             if not to_node:
                 print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
                 return -1
@@ -1509,11 +1581,22 @@ def add_edge(
             cur = conn.execute(
                 SQL_INSERT_PRODUCTION_EDGE,
                 (
-                    from_node_id, to_node_id, dep_type,
-                    coupling_strength, used_symbol, invocation_method, api_contract_refs,
-                    event_ref, ddd_integration_pattern, failure_mode, fallback,
-                    activation_condition, data_transfer_description, resource_impact,
-                    relationship_type, dep_maturity,
+                    from_node_id,
+                    to_node_id,
+                    dep_type,
+                    coupling_strength,
+                    used_symbol,
+                    invocation_method,
+                    api_contract_refs,
+                    event_ref,
+                    ddd_integration_pattern,
+                    failure_mode,
+                    fallback,
+                    activation_condition,
+                    data_transfer_description,
+                    resource_impact,
+                    relationship_type,
+                    dep_maturity,
                 ),
             )
             edge_id = cur.fetchone()["edge_id"]
@@ -1684,9 +1767,7 @@ def _sync_panorama_after_transition(node_id: int) -> None:
     try:
         conn = get_depgraph_pg_connection()
         try:
-            row = conn.execute(
-                SQL_SELECT_BLUEPRINT_ID_BY_NODE_ID, (node_id,)
-            ).fetchone()
+            row = conn.execute(SQL_SELECT_BLUEPRINT_ID_BY_NODE_ID, (node_id,)).fetchone()
         finally:
             conn.close()
         if not row:
@@ -1695,6 +1776,7 @@ def _sync_panorama_after_transition(node_id: int) -> None:
         if not blueprint_id:
             return
         from sync_panorama_module import sync_module_panorama
+
         sync_module_panorama(blueprint_id)
     except Exception as e:
         print(f"[WARN] sync_panorama_module 失败（不阻断）: {e}", file=sys.stderr)
@@ -1736,9 +1818,7 @@ def _audit_design_node_delete(
             "evidence": evidence,
             "force": force,
         }
-        with (_DESIGN_NODE_DELETE_AUDIT_DIR / _DESIGN_NODE_DELETE_AUDIT_FILE).open(
-            "a", encoding="utf-8"
-        ) as f:
+        with (_DESIGN_NODE_DELETE_AUDIT_DIR / _DESIGN_NODE_DELETE_AUDIT_FILE).open("a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
     except Exception:  # noqa: BLE001
         logger.debug("design_node_delete audit write failed (non-blocking)", exc_info=True)
@@ -1769,9 +1849,7 @@ def _cascade_anchor_hint(conn, node_ids: list[int], *, op: str) -> None:
                 candidates.add(bp)
         if not candidates:
             return
-        anchors = conn.execute(
-            SQL_CASCADE_ANCHOR_HINT_QUERY, (sorted(candidates),)
-        ).fetchall()
+        anchors = conn.execute(SQL_CASCADE_ANCHOR_HINT_QUERY, (sorted(candidates),)).fetchall()
         if not anchors:
             return
         print(
@@ -1780,13 +1858,11 @@ def _cascade_anchor_hint(conn, node_ids: list[int], *, op: str) -> None:
         )
         for a in anchors:
             print(
-                f"  anchor_id={a['anchor_id']} step={a['step_id']}"
-                f" target={a['target_id']} role={a['target_role']}",
+                f"  anchor_id={a['anchor_id']} step={a['step_id']} target={a['target_id']} role={a['target_role']}",
                 file=sys.stderr,
             )
         print(
-            "  处置（统筹登记范围）：python scripts/governance/apply_battle_map.py"
-            " --remove-anchor --anchor-id <id>",
+            "  处置（统筹登记范围）：python scripts/governance/apply_battle_map.py --remove-anchor --anchor-id <id>",
             file=sys.stderr,
         )
         # 审计落盘（非阻断）
@@ -1799,9 +1875,7 @@ def _cascade_anchor_hint(conn, node_ids: list[int], *, op: str) -> None:
                 "node_ids": list(node_ids),
                 "anchors": [dict(a) for a in anchors],
             }
-            with (_DESIGN_NODE_DELETE_AUDIT_DIR / "depgraph_anchor_cascade.jsonl").open(
-                "a", encoding="utf-8"
-            ) as f:
+            with (_DESIGN_NODE_DELETE_AUDIT_DIR / "depgraph_anchor_cascade.jsonl").open("a", encoding="utf-8") as f:
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
         except Exception:  # noqa: BLE001
             logger.debug("anchor cascade audit write failed (non-blocking)", exc_info=True)
@@ -1825,14 +1899,15 @@ def remove_design_node(node_id: int, db_path: str = None, design_evidence: str =
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             # STEP 1: 登记检查 - 节点是否存在
-            row = conn.execute(
-                SQL_SELECT_NODE_DETAIL_BY_ID, (node_id,)
-            ).fetchone()
+            row = conn.execute(SQL_SELECT_NODE_DETAIL_BY_ID, (node_id,)).fetchone()
             if not row:
                 print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
                 return False
             if row["design_maturity"] != "design":
-                print(f"ERROR: node_id={node_id} design_maturity={row['design_maturity']}（非设计态节点，禁止删除）", file=sys.stderr)
+                print(
+                    f"ERROR: node_id={node_id} design_maturity={row['design_maturity']}（非设计态节点，禁止删除）",
+                    file=sys.stderr,
+                )
                 return False
 
             # STEP 2: RULE-DESIGN-EVIDENCE 双源门禁（治本 RSK/RPT 误删，2026-07-31）
@@ -1840,9 +1915,9 @@ def remove_design_node(node_id: int, db_path: str = None, design_evidence: str =
                 print(
                     f"ERROR: node_id={node_id} blueprint_id={row.get('blueprint_id') or ''}"
                     f" 缺少 design_evidence —— 删除 design 节点 MUST 声明已查设计文档的证据"
-                    f"（如 \"11-D-RISK §1.4 RK-09 P0核心\"）。\n"
-                    f"  CLI: --remove-design-node {node_id} --design-evidence \"<文档引用>\"\n"
-                    f"  治本：堵住\"忘了查文档就 CLI 删\"的后门（RSK/RPT 误删事故根因）",
+                    f'（如 "11-D-RISK §1.4 RK-09 P0核心"）。\n'
+                    f'  CLI: --remove-design-node {node_id} --design-evidence "<文档引用>"\n'
+                    f'  治本：堵住"忘了查文档就 CLI 删"的后门（RSK/RPT 误删事故根因）',
                     file=sys.stderr,
                 )
                 return False
@@ -1853,9 +1928,7 @@ def remove_design_node(node_id: int, db_path: str = None, design_evidence: str =
             ).fetchone()["count"]
 
             # STEP 4: 功能价值检查 - 检查是否有边引用此节点
-            edge_count = conn.execute(
-                SQL_COUNT_EDGES_BY_NODE, (node_id, node_id)
-            ).fetchone()["count"]
+            edge_count = conn.execute(SQL_COUNT_EDGES_BY_NODE, (node_id, node_id)).fetchone()["count"]
             if edge_count > 0:
                 print(f"WARNING: node_id={node_id} 有{edge_count}条边引用，将先删除边", file=sys.stderr)
                 conn.execute(SQL_DELETE_EDGES_BY_NODE, (node_id, node_id))
@@ -1943,16 +2016,14 @@ def deprecate_node(node_id: int, db_path: str = None, force: bool = False) -> bo
                     f" design_maturity=design —— design 节点禁止走 --deprecate-node 后门"
                     f"（RSK/RPT 误删事故根因）。\n"
                     f"  正门：python scripts/governance/apply_depgraph.py --remove-design-node {node_id}"
-                    f" --design-evidence \"<设计文档引用>\"\n"
+                    f' --design-evidence "<设计文档引用>"\n'
                     f"  逃生（仅合法 design 垃圾节点如 MOD-TEST）：加 --force（落审计日志）",
                     file=sys.stderr,
                 )
                 return False
 
             # 检查边引用
-            edge_count = conn.execute(
-                SQL_COUNT_EDGES_BY_NODE, (node_id, node_id)
-            ).fetchone()["count"]
+            edge_count = conn.execute(SQL_COUNT_EDGES_BY_NODE, (node_id, node_id)).fetchone()["count"]
             if edge_count > 0:
                 print(f"WARNING: node_id={node_id} 有{edge_count}条边引用（软废弃不删边）", file=sys.stderr)
 
@@ -2021,9 +2092,7 @@ def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = None) 
     with _db_write_lock(db_path=db_path, task="mark_blueprint_invalid"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            rows = conn.execute(
-                SQL_SELECT_NODES_BY_BLUEPRINT, (blueprint_id,)
-            ).fetchall()
+            rows = conn.execute(SQL_SELECT_NODES_BY_BLUEPRINT, (blueprint_id,)).fetchall()
             if not rows:
                 print(f"ERROR: blueprint_id={blueprint_id} 未匹配任何节点", file=sys.stderr)
                 return False
@@ -2071,9 +2140,7 @@ def cmd_clear_invalid_flag(blueprint_id: str, dry_run: bool = False, db_path: st
     with _db_write_lock(db_path=db_path, task="clear_invalid_flag"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            row = conn.execute(
-                SQL_COUNT_NODES_BY_BLUEPRINT_ID, (blueprint_id,)
-            ).fetchone()
+            row = conn.execute(SQL_COUNT_NODES_BY_BLUEPRINT_ID, (blueprint_id,)).fetchone()
             cnt = row["c"] if row else 0
             mode = "[DRY RUN]" if dry_run else "[OK]"
             print(f"{mode} clear_invalid_flag: blueprint_id={blueprint_id} ({cnt} 节点)", file=sys.stderr)
@@ -2113,9 +2180,7 @@ def cmd_clear_blueprint_id(path: str, dry_run: bool = False, db_path: str = None
     with _db_write_lock(db_path=db_path, task="clear_blueprint_id"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            row = conn.execute(
-                SQL_SELECT_NODE_BP_BY_PATH, (path,)
-            ).fetchone()
+            row = conn.execute(SQL_SELECT_NODE_BP_BY_PATH, (path,)).fetchone()
             if not row:
                 print(f"ERROR: path='{path}' 在 nodes 表中不存在", file=sys.stderr)
                 return -1
@@ -2345,9 +2410,7 @@ def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = None) -> int:
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
-            orphan_count = conn.execute(
-                SQL_COUNT_ORPHAN_EDGES
-            ).fetchone()["count"]
+            orphan_count = conn.execute(SQL_COUNT_ORPHAN_EDGES).fetchone()["count"]
 
             if orphan_count == 0:
                 print("[OK] 无孤儿边，无需清理")
@@ -2455,9 +2518,7 @@ def _validate_domain_naming(
 
     try:
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
-        cur = conn.execute(
-            SQL_SELECT_DOMAIN_NAMING_RULES
-        )
+        cur = conn.execute(SQL_SELECT_DOMAIN_NAMING_RULES)
         rules = {r["rule_id"]: r["severity"] for r in cur.fetchall()}
         if not rules:
             conn.close()
@@ -2495,10 +2556,7 @@ def _validate_domain_naming(
     if "NR-003" in rules:
         for existing_id in existing_ids:
             if domain_id.startswith(existing_id + "_"):
-                msg = (
-                    f"NR-003(语义独立性): 域ID '{domain_id}' 以已存在域 "
-                    f"'{existing_id}_' 为前缀，依赖其他域才能理解"
-                )
+                msg = f"NR-003(语义独立性): 域ID '{domain_id}' 以已存在域 '{existing_id}_' 为前缀，依赖其他域才能理解"
                 (errors if rules["NR-003"] == "error" else warnings).append(msg)
                 break
 
@@ -2602,8 +2660,14 @@ def cmd_update_domain_id(
             # 跨域共享防御检查（附录D裁定3）
             domain_ids_in_match = set(r["domain_id"] for r in rows)
             if len(domain_ids_in_match) > 1 and not force_cross_domain:
-                print(f"WARNING: module_id '{module_id}' 匹配 {len(rows)} 个节点，分布在 {len(domain_ids_in_match)} 个域: {domain_ids_in_match}", file=sys.stderr)
-                print("  跨域匹配可能导致误迁。使用 --force-cross-domain 确认，或改用 --migrate-nodes 按节点精确迁移。", file=sys.stderr)
+                print(
+                    f"WARNING: module_id '{module_id}' 匹配 {len(rows)} 个节点，分布在 {len(domain_ids_in_match)} 个域: {domain_ids_in_match}",
+                    file=sys.stderr,
+                )
+                print(
+                    "  跨域匹配可能导致误迁。使用 --force-cross-domain 确认，或改用 --migrate-nodes 按节点精确迁移。",
+                    file=sys.stderr,
+                )
                 return -1
 
             if dry_run:
@@ -2669,12 +2733,8 @@ def _scan_replace_all_text_columns(
     _exclude = exclude_columns or set()
     total = 0
     # P2 PG 迁移：sqlite_master → information_schema.tables（PG 不支持 sqlite_master）
-    cur = c.execute(
-        SQL_SELECT_ALL_TABLES
-    )
-    all_tables = [
-        r["name"] for r in cur.fetchall() if r["name"] not in _RENAME_SCAN_EXCLUDE_TABLES
-    ]
+    cur = c.execute(SQL_SELECT_ALL_TABLES)
+    all_tables = [r["name"] for r in cur.fetchall() if r["name"] not in _RENAME_SCAN_EXCLUDE_TABLES]
     for tbl in all_tables:
         # P2 PG 迁移：PRAGMA table_info → information_schema.columns
         # PG 通过 information_schema.columns 查询列信息：
@@ -2810,7 +2870,11 @@ def cmd_rename_domain(
         # B1 值扫描兜底（裁定#207 R1）：18步枚举列之外的全表TEXT列残留替换
         # 排除 blueprint_id/path（由 --propagate-rename 精确值映射 / 阶段D 路径传播专门处理）
         total += _scan_replace_all_text_columns(
-            c, old_id, new_id, dry_run=dry_run, mode=mode,
+            c,
+            old_id,
+            new_id,
+            dry_run=dry_run,
+            mode=mode,
             exclude_columns=_RENAME_SCAN_EXCLUDE_COLUMNS,
         )
         if not dry_run and own_conn:
@@ -2923,9 +2987,7 @@ def cmd_delete_domain(
             return -1
 
         # 安全门：检查 nodes 引用（force=True 可跳过）
-        node_cnt = c.execute(
-            SQL_COUNT_NODES_BY_DOMAIN, (domain_id,)
-        ).fetchone()["cnt"]
+        node_cnt = c.execute(SQL_COUNT_NODES_BY_DOMAIN, (domain_id,)).fetchone()["cnt"]
         if node_cnt > 0 and not force:
             print(
                 f"ERROR: nodes 表有 {node_cnt} 行引用 domain_id='{domain_id}'\n"
@@ -3094,7 +3156,10 @@ def cmd_merge_domain(
             print(f"ERROR: old_id '{old_id}' 不在 domains 表中", file=sys.stderr)
             return -1
         if not c.execute(SQL_CHECK_DOMAIN_EXISTS, (new_id,)).fetchone():
-            print(f"ERROR: new_id '{new_id}' 不在 domains 表中（merge 要求目标域已存在；若要重命名请用 --rename-domain）", file=sys.stderr)
+            print(
+                f"ERROR: new_id '{new_id}' 不在 domains 表中（merge 要求目标域已存在；若要重命名请用 --rename-domain）",
+                file=sys.stderr,
+            )
             return -1
 
         # domain_dependencies 复合 PK 冲突预检
@@ -3178,7 +3243,11 @@ def cmd_merge_domain(
         # B1 值扫描兜底（与 rename 一致）：step2-17 枚举列之外的全表 TEXT 列残留替换
         # 注：domains.domain_id=old_id 行已 DELETE，兜底扫描不会触发 PK 违规
         total += _scan_replace_all_text_columns(
-            c, old_id, new_id, dry_run=dry_run, mode=mode,
+            c,
+            old_id,
+            new_id,
+            dry_run=dry_run,
+            mode=mode,
             exclude_columns=_RENAME_SCAN_EXCLUDE_COLUMNS,
         )
 
@@ -3234,7 +3303,11 @@ def cmd_fix_rename_residual(
         for old_id, new_id in sorted_map:
             print(f"  {mode} 修复残留: {old_id} -> {new_id}", file=sys.stderr)
             total += _scan_replace_all_text_columns(
-                c, old_id, new_id, dry_run=dry_run, mode=mode,
+                c,
+                old_id,
+                new_id,
+                dry_run=dry_run,
+                mode=mode,
                 exclude_columns=_RENAME_SCAN_EXCLUDE_COLUMNS,
             )
         if not dry_run and own_conn:
@@ -3293,6 +3366,7 @@ def cmd_replace_text_domain(
     # 治本(2026-07-20): 改用项目内模块路径导入，避免 sys.path.insert 后的悬空 import
     # （IMPORT-INTEGRITY gate 不识别 sys.path.insert 注入的导入）
     from scripts.governance.d3_metadata.validate_module_id_naming import is_valid_domain_id
+
     ok, reason = is_valid_domain_id(new_id)
     if not ok:
         print(f"ERROR: new_id '{new_id}' 格式不合法: {reason}", file=sys.stderr)
@@ -3303,7 +3377,11 @@ def cmd_replace_text_domain(
         mode = "[DRY RUN]" if dry_run else "[OK]"
         print(f"  {mode} 全表文本替换: '{old_id}' -> '{new_id}'", file=sys.stderr)
         total = _scan_replace_all_text_columns(
-            c, old_id, new_id, dry_run=dry_run, mode=mode,
+            c,
+            old_id,
+            new_id,
+            dry_run=dry_run,
+            mode=mode,
         )
         if not dry_run and own_conn:
             c.commit()
@@ -3379,8 +3457,7 @@ def cmd_apply_domain_id_check(
             return -1
         # 3. ALTER TABLE ADD CONSTRAINT
         print(
-            f"  {mode} ALTER TABLE domains ADD CONSTRAINT {_CHECK_NAME} "
-            f"CHECK (domain_id ~ '{_CHECK_REGEX}')",
+            f"  {mode} ALTER TABLE domains ADD CONSTRAINT {_CHECK_NAME} CHECK (domain_id ~ '{_CHECK_REGEX}')",
             file=sys.stderr,
         )
         if not dry_run:
@@ -3392,6 +3469,7 @@ def cmd_apply_domain_id_check(
                 c.commit()
         print(f"{mode} cmd_apply_domain_id_check: CHECK 约束已应用", file=sys.stderr)
         return EXIT_PASS
+
     c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
     try:
         return _run(c)
@@ -3440,6 +3518,7 @@ def cmd_fix_domains_defaults(
                 c.commit()
         print(f"{mode} cmd_fix_domains_defaults: DEFAULT 已修复为 'planned'", file=sys.stderr)
         return EXIT_PASS
+
     c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
     try:
         return _run(c)
@@ -3469,8 +3548,7 @@ def _restore_blueprint_links_readonly_trigger(c) -> None:
         c.execute(SQL_CREATE_READONLY_TRIGGER)
     except psycopg2.Error as e:
         logger.warning(
-            "恢复 blueprint_links 只读触发器失败（权限不足或语法错误，"
-            "触发器从未在 PG 上创建——非致命）: %s", e
+            "恢复 blueprint_links 只读触发器失败（权限不足或语法错误，触发器从未在 PG 上创建——非致命）: %s", e
         )
 
 
@@ -3510,7 +3588,9 @@ def cmd_propagate_rename(
                     old_bp_ids.update(r[col] for r in rows if r[col])
                 except psycopg2.Error as e:
                     # Phase 2 P2 修复（异常处理 HIGH）：查询失败静默跳过=blueprint_id 传播丢失
-                    logger.warning("propagate_blueprint_id: 查询 %s.%s 失败(%s)，该域 blueprint_id 传播被跳过", tbl, col, e)
+                    logger.warning(
+                        "propagate_blueprint_id: 查询 %s.%s 失败(%s)，该域 blueprint_id 传播被跳过", tbl, col, e
+                    )
 
             for old_bp_id in sorted(old_bp_ids):
                 # 精确值映射：MOD-{old_frag} -> MOD-{new_frag}（只替换域片段，保留序号）
@@ -3518,7 +3598,7 @@ def cmd_propagate_rename(
                 if old_bp_id == prefix:
                     new_bp_id = f"MOD-{new_frag}"
                 elif old_bp_id.startswith(prefix + "-"):
-                    suffix = old_bp_id[len(prefix):]  # 含 -{SEQ}
+                    suffix = old_bp_id[len(prefix) :]  # 含 -{SEQ}
                     new_bp_id = f"MOD-{new_frag}{suffix}"
                 else:
                     continue  # 不匹配（如 MOD-SIGNAL_ASHARE_EXTRA），跳过
@@ -3620,9 +3700,7 @@ def _propagate_bp_id_core(
     total = 0
 
     # 1. nodes.blueprint_id 精确值映射
-    cnt = c.execute(
-        "SELECT COUNT(*) FROM nodes WHERE blueprint_id=%s", (old_bp_id,)
-    ).fetchone()["count"]
+    cnt = c.execute("SELECT COUNT(*) FROM nodes WHERE blueprint_id=%s", (old_bp_id,)).fetchone()["count"]  # noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）
     if cnt > 0:
         print(f"  {mode} nodes.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
         if not dry_run:
@@ -3634,9 +3712,7 @@ def _propagate_bp_id_core(
 
     # 2. blueprint_links.blueprint_id 精确值映射
     try:
-        cnt = c.execute(
-            SQL_COUNT_BLUEPRINT_LINKS_BY_ID, (old_bp_id,)
-        ).fetchone()["count"]
+        cnt = c.execute(SQL_COUNT_BLUEPRINT_LINKS_BY_ID, (old_bp_id,)).fetchone()["count"]
     except psycopg2.Error:
         cnt = 0
     if cnt > 0:
@@ -3765,8 +3841,12 @@ def cmd_rename_blueprint_id(
         """_run implementation."""
         mode = "[DRY RUN]" if dry_run else "[OK]"
         total = _propagate_bp_id_core(
-            c, old_bp_id, new_bp_id, dry_run,
-            propagate_tsd=True, propagate_bp_path=True,
+            c,
+            old_bp_id,
+            new_bp_id,
+            dry_run,
+            propagate_tsd=True,
+            propagate_bp_path=True,
         )
         if not dry_run and own_conn:
             c.commit()
@@ -3776,15 +3856,23 @@ def cmd_rename_blueprint_id(
             yaml_refs = _scan_yaml_bp_id_refs(old_bp_id)
             if yaml_refs:
                 total_refs = sum(cnt for _, cnt in yaml_refs)
-                print(f"\n[YAML SYNC WARNING] DB 改名已完成，但 {len(yaml_refs)} 个 YAML 文件仍引用旧 ID '{old_bp_id}'（共 {total_refs} 处）：", file=sys.stderr)
+                print(
+                    f"\n[YAML SYNC WARNING] DB 改名已完成，但 {len(yaml_refs)} 个 YAML 文件仍引用旧 ID '{old_bp_id}'（共 {total_refs} 处）：",
+                    file=sys.stderr,
+                )
                 for f, cnt in yaml_refs:
                     print(f"  {f}: {cnt} 处", file=sys.stderr)
                 print("  必须同步这些 YAML 文件，否则 sync_yaml_to_depgraph.py 会回滚 DB 改名成果。", file=sys.stderr)
-                print("  注意: 历史记录（changelog/version history）中的旧 ID 保留不动，只改当前数据。", file=sys.stderr)
+                print(
+                    "  注意: 历史记录（changelog/version history）中的旧 ID 保留不动，只改当前数据。", file=sys.stderr
+                )
             else:
                 print(f"[YAML SYNC OK] 未发现 YAML 文件引用旧 ID '{old_bp_id}'，无需同步。", file=sys.stderr)
             # 提醒 .md 和 .py 的同步（独立于 YAML，已有专用工具，避免 AI 遗漏）
-            print("[SYNC HINT] .md frontmatter 用 sync_registry_from_blueprints.py 同步；.py 头部 [BLUEPRINT] 标记用 check_blueprint_code_alignment.py 验证。", file=sys.stderr)
+            print(
+                "[SYNC HINT] .md frontmatter 用 sync_registry_from_blueprints.py 同步；.py 头部 [BLUEPRINT] 标记用 check_blueprint_code_alignment.py 验证。",
+                file=sys.stderr,
+            )
         return total
 
     if dry_run:
@@ -3942,34 +4030,26 @@ def cmd_propagate_node_paths(
 
         # 1. nodes.path 精确值映射（无只读触发器，可直接 UPDATE）
         for old_path, new_path in path_mapping.items():
-            cnt = c.execute(
-                SQL_COUNT_NODES_BY_PATH, (old_path,)
-            ).fetchone()["count"]
+            cnt = c.execute(SQL_COUNT_NODES_BY_PATH, (old_path,)).fetchone()["count"]
             if cnt > 0:
                 print(
                     f"  {mode} nodes.path: {old_path} -> {new_path}: {cnt} rows",
                     file=sys.stderr,
                 )
                 if not dry_run:
-                    c.execute(
-                        SQL_UPDATE_NODE_PATH_BY_PATH, (new_path, old_path)
-                    )
+                    c.execute(SQL_UPDATE_NODE_PATH_BY_PATH, (new_path, old_path))
                 total += cnt
 
         # 1b. nodes.file_path 精确值映射（与 path 同步传播，避免改名后 file_path 残留）
         for old_path, new_path in path_mapping.items():
-            cnt = c.execute(
-                SQL_COUNT_NODES_BY_FILE_PATH, (old_path,)
-            ).fetchone()["count"]
+            cnt = c.execute(SQL_COUNT_NODES_BY_FILE_PATH, (old_path,)).fetchone()["count"]
             if cnt > 0:
                 print(
                     f"  {mode} nodes.file_path: {old_path} -> {new_path}: {cnt} rows",
                     file=sys.stderr,
                 )
                 if not dry_run:
-                    c.execute(
-                        SQL_UPDATE_NODE_FILE_PATH, (new_path, old_path)
-                    )
+                    c.execute(SQL_UPDATE_NODE_FILE_PATH, (new_path, old_path))
                 total += cnt
 
         # 2. blueprint_links.blueprint_path 精确值映射（需触发器通行证）
@@ -4088,8 +4168,7 @@ def cmd_update_domain_name(
 
 
 def cmd_migrate_nodes(
-    node_ids: list[int], new_domain_id: str, dry_run: bool = False,
-    db_path: str = None, conn=None
+    node_ids: list[int], new_domain_id: str, dry_run: bool = False, db_path: str = None, conn=None
 ) -> int:
     """按 node_id 列表精确迁移 domain_id（不依赖 blueprint_id/belongs_to 匹配）。
     解决跨域共享 blueprint_id 误迁问题（附录D裁定1）。
@@ -4117,7 +4196,10 @@ def cmd_migrate_nodes(
                 return -1
             if dry_run:
                 for r in rows:
-                    print(f"[DRY RUN] 将 UPDATE node_id={r['node_id']} domain_id: {r['domain_id']} -> {new_domain_id} (path={r['path']})", file=sys.stderr)
+                    print(
+                        f"[DRY RUN] 将 UPDATE node_id={r['node_id']} domain_id: {r['domain_id']} -> {new_domain_id} (path={r['path']})",
+                        file=sys.stderr,
+                    )
                 return len(rows)
             cur = conn.execute(
                 f"UPDATE nodes SET domain_id=%s WHERE node_id IN ({placeholders})",  # 5.160.2 OK: dynamic SQL, kept inline
@@ -4138,8 +4220,7 @@ def cmd_migrate_nodes(
 
 
 def cmd_delete_nodes(
-    node_ids: list[int], force: bool = False, dry_run: bool = False,
-    db_path: str = None, conn=None
+    node_ids: list[int], force: bool = False, dry_run: bool = False, db_path: str = None, conn=None
 ) -> int:
     """按 node_id 列表精确删除节点（含关联 edges）。
 
@@ -4179,8 +4260,7 @@ def cmd_delete_nodes(
             in_edge_count = cur.fetchone()["cnt"]
             if in_edge_count > 0 and not force:
                 print(
-                    f"ERROR: {in_edge_count} 条入边引用目标节点（被依赖），拒绝删除。"
-                    f"请先清理依赖关系或使用 --force",
+                    f"ERROR: {in_edge_count} 条入边引用目标节点（被依赖），拒绝删除。请先清理依赖关系或使用 --force",
                     file=sys.stderr,
                 )
                 return -1
@@ -4188,8 +4268,7 @@ def cmd_delete_nodes(
             if dry_run:
                 for r in rows:
                     print(
-                        f"[DRY RUN] 将 DELETE node_id={r['node_id']} "
-                        f"domain_id={r['domain_id']} path={r['path']}",
+                        f"[DRY RUN] 将 DELETE node_id={r['node_id']} domain_id={r['domain_id']} path={r['path']}",
                         file=sys.stderr,
                     )
                 return len(rows)
@@ -4243,9 +4322,7 @@ def cmd_update_path(
         if own_conn:
             conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            rows = conn.execute(
-                SQL_SELECT_NODE_PATH_BY_MODULE, (module_id, module_id)
-            ).fetchall()
+            rows = conn.execute(SQL_SELECT_NODE_PATH_BY_MODULE, (module_id, module_id)).fetchall()
             if not rows:
                 print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
                 return -1
@@ -4256,12 +4333,15 @@ def cmd_update_path(
             for r in rows:
                 old_path = r["path"] or ""
                 if old_path.startswith(old_prefix):
-                    new_path = new_prefix + old_path[len(old_prefix):]
+                    new_path = new_prefix + old_path[len(old_prefix) :]
                     updates.append((r["node_id"], old_path, new_path))
                 else:
                     skipped += 1
                     if dry_run:
-                        print(f"[DRY RUN] SKIP node_id={r['node_id']} path={old_path} (不以 old_prefix 开头)", file=sys.stderr)
+                        print(
+                            f"[DRY RUN] SKIP node_id={r['node_id']} path={old_path} (不以 old_prefix 开头)",
+                            file=sys.stderr,
+                        )
 
             if skipped > 0:
                 print(f"WARNING: {skipped} 个节点 path 不以 '{old_prefix}' 开头，已跳过", file=sys.stderr)
@@ -4353,15 +4433,11 @@ def cmd_migrate_dependencies(
                     )
                 return len(rows)
 
-            existing = conn.execute(
-                SQL_SELECT_DOMAIN_DEP_EDGE_COUNT, (final_from, final_to)
-            ).fetchone()
+            existing = conn.execute(SQL_SELECT_DOMAIN_DEP_EDGE_COUNT, (final_from, final_to)).fetchone()
 
             if existing and (final_from != from_domain or final_to != to_domain):
                 total = existing["edge_count"] + rows[0]["edge_count"]
-                conn.execute(
-                    SQL_DELETE_DOMAIN_DEP, (from_domain, to_domain)
-                )
+                conn.execute(SQL_DELETE_DOMAIN_DEP, (from_domain, to_domain))
                 conn.execute(
                     SQL_UPDATE_DOMAIN_DEP_EDGE_COUNT,
                     (total, final_from, final_to),
@@ -4434,7 +4510,9 @@ def cmd_update_domain_capacity(
                 return True
 
             now = datetime.datetime.now().isoformat()
-            conn.execute(f"UPDATE domains SET {field}=%s, updated_at=%s WHERE domain_id=%s", (value, now, domain_id))  # 5.160.2 OK: dynamic SQL, kept inline
+            conn.execute(
+                f"UPDATE domains SET {field}=%s, updated_at=%s WHERE domain_id=%s", (value, now, domain_id)  # noqa: bare-sql  治理DBA脚本存量动态标识符更新，format重排伪新增（§5.160.2集中化专项另列）
+            )  # 5.160.2 OK: dynamic SQL, kept inline
             if own_conn:
                 conn.commit()
             print(f"[OK] UPDATE domains {field}: {domain_id} {old_value} -> {value}", file=sys.stderr)
@@ -4471,9 +4549,7 @@ def cmd_update_domain_layer(
         if own_conn:
             conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            existing = conn.execute(
-                SQL_SELECT_DOMAIN_LAYER, (domain_id,)
-            ).fetchone()
+            existing = conn.execute(SQL_SELECT_DOMAIN_LAYER, (domain_id,)).fetchone()
             if not existing:
                 print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
                 return False
@@ -4504,8 +4580,7 @@ def cmd_update_domain_layer(
 
 
 def cmd_update_domain_ssot_path(
-    domain_id: str, ssot_path: str, dry_run: bool = False,
-    db_path: str = None, conn=None
+    domain_id: str, ssot_path: str, dry_run: bool = False, db_path: str = None, conn=None
 ) -> bool:
     """UPDATE domains 表的 ssot_path 字段（附录D裁定2）。
     解决已存在域无法修正 ssot_path 的工具设计遗漏。
@@ -4519,9 +4594,7 @@ def cmd_update_domain_ssot_path(
         if own_conn:
             conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            existing = conn.execute(
-                SQL_SELECT_DOMAIN_SSOT_PATH, (domain_id,)
-            ).fetchone()
+            existing = conn.execute(SQL_SELECT_DOMAIN_SSOT_PATH, (domain_id,)).fetchone()
             if not existing:
                 print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
                 return False
@@ -4585,9 +4658,7 @@ def cmd_insert_domain_mapping(
                 return False
 
             # 查重：path_prefix 已存在则拒绝（避免重复映射）
-            existing = conn.execute(
-                SQL_SELECT_DOMAIN_MAPPING_BY_PREFIX, (path_prefix,)
-            ).fetchone()
+            existing = conn.execute(SQL_SELECT_DOMAIN_MAPPING_BY_PREFIX, (path_prefix,)).fetchone()
             if existing:
                 print(
                     f"ERROR: path_prefix '{path_prefix}' 已存在映射 (mapping_id={existing['mapping_id']}, domain_id={existing['domain_id']})",
@@ -4641,9 +4712,7 @@ def mark_entry_point(path: str, entry_flag: bool = True, db_path: str = None) ->
     with _db_write_lock(db_path=db_path, task="mark_entry_point"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            row = conn.execute(
-                SQL_SELECT_NODE_ENTRY_POINT_BY_PATH, (path,)
-            ).fetchone()
+            row = conn.execute(SQL_SELECT_NODE_ENTRY_POINT_BY_PATH, (path,)).fetchone()
             if not row:
                 print(f"ERROR: path='{path}' 在 nodes 表中不存在", file=sys.stderr)
                 return False
@@ -4719,17 +4788,13 @@ def update_module_metadata(
     with _db_write_lock(db_path=db_path, task="update_module_metadata"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            row = conn.execute(
-                SQL_SELECT_NODE_BP_BY_PATH, (path,)
-            ).fetchone()
+            row = conn.execute(SQL_SELECT_NODE_BP_BY_PATH, (path,)).fetchone()
             if not row:
                 print(f"ERROR: path='{path}' 在 nodes 表中不存在", file=sys.stderr)
                 return False
             blueprint_id = row["blueprint_id"]
 
-            existing = conn.execute(
-                SQL_SELECT_NODES_METADATA_BY_PATH, (path,)
-            ).fetchone()
+            existing = conn.execute(SQL_SELECT_NODES_METADATA_BY_PATH, (path,)).fetchone()
             now = datetime.datetime.now().isoformat()
             if existing:
                 set_clauses = ", ".join(f"{k}=%s" for k in fields)
@@ -4789,8 +4854,8 @@ def main() -> None:
         type=str,
         default="directory",
         help="--add-design-node 的粒度（file/directory/module/aggregated，默认 directory）。"
-             "file=单文件设计态（path 不以 / 结尾），directory=目录级设计态（path 以 / 结尾）。"
-             "合法值由 granularity_vocabulary.yaml 动态定义（trae_060 §2 治本，2026-07-13）",
+        "file=单文件设计态（path 不以 / 结尾），directory=目录级设计态（path 以 / 结尾）。"
+        "合法值由 granularity_vocabulary.yaml 动态定义（trae_060 §2 治本，2026-07-13）",
     )
     parser.add_argument(
         "--add-design-edge",
@@ -4833,7 +4898,7 @@ def main() -> None:
         metavar="DOC_REF",
         default=None,
         help="删除 design 节点的设计文档证据引用（必填，如 '11-D-RISK §1.4 RK-09 P0核心'）。"
-        "治本 RSK/RPT 误删：堵住\"忘了查文档就 CLI 删\"的后门。与 --remove-design-node 配合使用。",
+        '治本 RSK/RPT 误删：堵住"忘了查文档就 CLI 删"的后门。与 --remove-design-node 配合使用。',
     )
     parser.add_argument(
         "--delete-design-edge", type=int, metavar="EDGE_ID", help="删除设计态边（仅限dep_maturity=design）: EDGE_ID"
@@ -4912,7 +4977,11 @@ def main() -> None:
         help="UPDATE 模块 domain_id（域拆分迁移模块归属）",
     )
     parser.add_argument(
-        "--update-path", type=str, nargs=3, metavar=("MODULE_ID", "OLD_PREFIX", "NEW_PREFIX"), help="UPDATE 模块 path 前缀替换（物理路径迁移）"
+        "--update-path",
+        type=str,
+        nargs=3,
+        metavar=("MODULE_ID", "OLD_PREFIX", "NEW_PREFIX"),
+        help="UPDATE 模块 path 前缀替换（物理路径迁移）",
     )
     parser.add_argument(
         "--migrate-dependencies",
@@ -5055,7 +5124,9 @@ def main() -> None:
     )
     parser.add_argument("--new-from-domain", type=str, default="", help="migrate-dependencies 的新 from_domain")
     parser.add_argument("--new-to-domain", type=str, default="", help="migrate-dependencies 的新 to_domain")
-    parser.add_argument("--max-modules", type=int, default=150, help="insert-domain 的 max_modules（默认 150，裁定#194硬上限）")
+    parser.add_argument(
+        "--max-modules", type=int, default=150, help="insert-domain 的 max_modules（默认 150，裁定#194硬上限）"
+    )
     parser.add_argument("--description", type=str, default="", help="insert-domain 的 description")
     parser.add_argument("--mapped-by", type=str, default="", help="insert-domain-mapping 的 mapped_by 字段")
     parser.add_argument("--note", type=str, default="", help="insert-domain-mapping 的 note 字段")
@@ -5165,6 +5236,7 @@ def main() -> None:
         if node_id > 0 and blueprint_id:
             try:
                 from sync_panorama_module import sync_module_panorama
+
                 sync_module_panorama(blueprint_id)
             except Exception as e:
                 print(f"[WARN] sync_panorama_module 失败（不阻断）: {e}", file=sys.stderr)
@@ -5305,8 +5377,7 @@ def main() -> None:
             for e in errors:
                 print(f"[BLOCK] {e}", file=sys.stderr)
             print(
-                f"ERROR: 域ID '{domain_id}' 违反 {len(errors)} 条 error 级命名规则，"
-                f"建域阻断（exit 3）",
+                f"ERROR: 域ID '{domain_id}' 违反 {len(errors)} 条 error 级命名规则，建域阻断（exit 3）",
                 file=sys.stderr,
             )
             sys.exit(3)
@@ -5327,7 +5398,9 @@ def main() -> None:
 
     if args.update_domain_id:
         module_id, new_domain_id = args.update_domain_id
-        count = cmd_update_domain_id(module_id, new_domain_id, dry_run=args.dry_run, force_cross_domain=args.force_cross_domain)
+        count = cmd_update_domain_id(
+            module_id, new_domain_id, dry_run=args.dry_run, force_cross_domain=args.force_cross_domain
+        )
         if count < 0:
             sys.exit(4)
         print(f"affected={count}")
@@ -5610,6 +5683,7 @@ def main() -> None:
         result = fix_path_semantics_for_design_nodes(dry_run=args.dry_run)
         # 输出 JSON 摘要供脚本消费
         import json as _json
+
         print(_json.dumps(result, ensure_ascii=False, indent=2))
         sys.exit(EXIT_PASS)
 
@@ -5651,17 +5725,43 @@ def main() -> None:
 # 写入命令集合（模块级——5.34.6 is_prod() 守卫与 __main__ 尾部自动备份共用；
 # 原定义在 finally 块内，hoist 到模块级消除两处重复维护的漂移风险）
 _WRITE_COMMANDS = {
-    "--add-design-node", "--add-design-edge", "--transition-build-status", "--transition-design-maturity",
-    "--remove-design-node", "--deprecate-node", "--delete-design-edge",
-    "--mark-invalid", "--update-edge-type", "--add-edge", "--delete-edge",
-    "--delete-blueprint-link", "--delete-constraint", "--add-file-node",
-    "--insert-domain", "--update-domain-id", "--update-path",
-    "--migrate-dependencies", "--update-domain-capacity", "--update-domain-layer",
-    "--migrate-nodes", "--update-domain-ssot-path", "--insert-domain-mapping",
-    "--rename-domain", "--update-domain-name", "--fix-residual",
-    "--propagate-rename", "--rename-blueprint-id", "--propagate-node-paths",
-    "--cleanup-orphan-edges", "--cleanup-orphan-nodes", "--update-module",
-    "--batch", "--merge-domain", "--replace-text-domain", "--apply-domain-id-check", "--fix-domains-defaults",
+    "--add-design-node",
+    "--add-design-edge",
+    "--transition-build-status",
+    "--transition-design-maturity",
+    "--remove-design-node",
+    "--deprecate-node",
+    "--delete-design-edge",
+    "--mark-invalid",
+    "--update-edge-type",
+    "--add-edge",
+    "--delete-edge",
+    "--delete-blueprint-link",
+    "--delete-constraint",
+    "--add-file-node",
+    "--insert-domain",
+    "--update-domain-id",
+    "--update-path",
+    "--migrate-dependencies",
+    "--update-domain-capacity",
+    "--update-domain-layer",
+    "--migrate-nodes",
+    "--update-domain-ssot-path",
+    "--insert-domain-mapping",
+    "--rename-domain",
+    "--update-domain-name",
+    "--fix-residual",
+    "--propagate-rename",
+    "--rename-blueprint-id",
+    "--propagate-node-paths",
+    "--cleanup-orphan-edges",
+    "--cleanup-orphan-nodes",
+    "--update-module",
+    "--batch",
+    "--merge-domain",
+    "--replace-text-domain",
+    "--apply-domain-id-check",
+    "--fix-domains-defaults",
 }
 
 
@@ -5720,6 +5820,7 @@ if __name__ == "__main__":
             # 运行时 DB 操作（--delete-nodes 等）不产生 git commit，原 trigger 永不 fire。
             try:
                 from _shared.constants import mark_depgraph_dirty
+
                 mark_depgraph_dirty()
             except Exception as _e:  # noqa: BLE001 — flag 写入失败不阻断主流程（DB 已成功写入）
                 print(f"[DIRTY-FLAG] WARNING: depgraph_dirty.flag 写入失败（不阻断）: {_e}", file=sys.stderr)
@@ -5738,17 +5839,18 @@ if __name__ == "__main__":
                     regen = reconcile_async("depgraph_db")
                     if regen.get("status") == "spawned":
                         print(
-                            f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} "
-                            f"日志: {regen['log_file']}",
+                            f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} 日志: {regen['log_file']}",
                             file=sys.stderr,
                         )
                     else:
-                        print(f"[REGENERATE] WARNING: 后台启动失败（不阻断写入）: {regen.get('error')}", file=sys.stderr)
+                        print(
+                            f"[REGENERATE] WARNING: 后台启动失败（不阻断写入）: {regen.get('error')}", file=sys.stderr
+                        )
                 except Exception as _e:  # noqa: BLE001 — 编排器不可用不阻断主流程
                     print(f"[REGENERATE] WARNING: 编排器不可用（不阻断写入）: {_e}", file=sys.stderr)
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def read_maturity_header(file_path) -> str | None:
     """公共接口：read_maturity_header（Stage 4 公共化）。"""
     return _read_maturity_header(file_path)
-

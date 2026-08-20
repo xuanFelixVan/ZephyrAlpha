@@ -20,6 +20,7 @@
 
 使用：python scripts/oneoff_fix_generator_nonidempotent.py
 """
+
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -45,8 +46,8 @@ n1 = fix_file(
     [
         (
             '    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")',
-            '    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源\n'
-            '    now = idempotent_timestamp(Path(__file__))',
+            "    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源\n"
+            "    now = idempotent_timestamp(Path(__file__))",
         ),
         (
             '            out_path.write_text(content, encoding="utf-8")\n            print(f"[OK] 生成 {out_path} ({len(content)} 字符)")\n\n        if args.lang in ("en", "both"):\n            content = _FRONTMATTER + generate_path_tree("en", conn, "full")\n            out_path = output_dir / en_name\n            out_path.write_text(content, encoding="utf-8")',
@@ -62,10 +63,10 @@ n2 = fix_file(
     [
         (
             '    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")\n\n    # 统计',
-            '    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：\n'
-            '    # 时间真源改为脚本最近 git commit 时间（idempotent_date / idempotent_timestamp），\n'
-            '    # 相同 commit → 相同输出，消除 datetime.now() 导致的 per-second diff 非收敛循环。\n'
-            '    # 下方 frontmatter date 字段直接调 idempotent_date()，不再需要 now 局部变量。\n\n    # 统计',
+            "    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：\n"
+            "    # 时间真源改为脚本最近 git commit 时间（idempotent_date / idempotent_timestamp），\n"
+            "    # 相同 commit → 相同输出，消除 datetime.now() 导致的 per-second diff 非收敛循环。\n"
+            "    # 下方 frontmatter date 字段直接调 idempotent_date()，不再需要 now 局部变量。\n\n    # 统计",
         ),
         (
             '    lines.append(f"date: {now.split()[0]}")',
@@ -81,8 +82,8 @@ n3 = fix_file(
     [
         (
             '    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")',
-            '    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源\n'
-            '    now = idempotent_timestamp(Path(__file__))',
+            "    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源\n"
+            "    now = idempotent_timestamp(Path(__file__))",
         ),
         (
             '        out_path.write_text(content, encoding="utf-8")',
@@ -98,8 +99,8 @@ n4 = fix_file(
     [
         (
             '    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")',
-            '    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源\n'
-            '    now = idempotent_timestamp(Path(__file__))',
+            "    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源\n"
+            "    now = idempotent_timestamp(Path(__file__))",
         ),
         (
             '    out_path.write_text(content, encoding="utf-8")',
@@ -115,8 +116,8 @@ n5 = fix_file(
     [
         (
             '    now = datetime.now().isoformat(timespec="seconds")',
-            '    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源（脚本最近 git commit 时间）\n'
-            '    now = idempotent_timestamp(Path(__file__))',
+            "    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源（脚本最近 git commit 时间）\n"
+            "    now = idempotent_timestamp(Path(__file__))",
         ),
         (
             '        md_path.write_text(md_text, encoding="utf-8")',
@@ -134,8 +135,8 @@ remaining = content5.count('    now = datetime.now().isoformat(timespec="seconds
 if remaining > 0:
     content5 = content5.replace(
         '    now = datetime.now().isoformat(timespec="seconds")',
-        '    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源（脚本最近 git commit 时间）\n'
-        '    now = idempotent_timestamp(Path(__file__))',
+        "    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源（脚本最近 git commit 时间）\n"
+        "    now = idempotent_timestamp(Path(__file__))",
     )
     (GEN_DIR / "generate_dataflow_diagram.py").write_text(content5, encoding="utf-8", newline="\n")
     print(f"generate_dataflow_diagram.py: replaced {remaining} remaining datetime.now()")
@@ -147,8 +148,8 @@ n6 = fix_file(
     [
         (
             '    gen_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")',
-            '    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源\n'
-            '    gen_time = idempotent_timestamp(Path(__file__))',
+            "    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源\n"
+            "    gen_time = idempotent_timestamp(Path(__file__))",
         ),
         (
             '    out_path.write_text(html, encoding="utf-8")',

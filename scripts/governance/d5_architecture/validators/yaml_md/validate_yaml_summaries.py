@@ -245,9 +245,7 @@ def validate_yaml_summaries() -> tuple[bool, list[str]]:
                         errors.append(
                             f"contracts/consumer_registry.yaml: summary.total_contracts_registered={declared_contracts}，实际契约数={actual_contracts}"
                         )
-                    registered_lists = [
-                        c.get("registered_consumers", []) for c in contracts if isinstance(c, dict)
-                    ]
+                    registered_lists = [c.get("registered_consumers", []) for c in contracts if isinstance(c, dict)]
                     actual_entries = sum(len(r) for r in registered_lists if isinstance(r, list))
                     declared_entries = summary.get("total_consumer_entries")
                     if declared_entries is not None and declared_entries != actual_entries:

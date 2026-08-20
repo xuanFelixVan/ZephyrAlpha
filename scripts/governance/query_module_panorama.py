@@ -15,6 +15,7 @@
 # [TESTS] tests/governance/test_query_module_panorama.py
 # [A_module] module_id=MOD-D5_ARCH_TOOLS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: AI/CI 按需查询型 permanent runner（P3-1.2 裁定豁免语义），非常驻服务
 """query_module_panorama.py — 模块全景查询入口（五图模块对齐 Step 5）
 
 输入 module_id（MOD-XXX），输出该模块在三图（depgraph/dataflow/decision）的所有记录，
@@ -275,12 +276,16 @@ def _print_single_module(module_id: str) -> int:
 
     print(f"{'=' * 60}")
     return EXIT_PASS
+
+
 def _print_all_modules() -> int:
     """打印全项目蓝图级模块表。"""
     modules = _query_all_modules()
     print(f"全项目蓝图级模块表（{len(modules)}个）：")
     print(f"{'-' * 100}")
-    print(f"{'blueprint_id':<30s} {'domain_id':<20s} {'files':>5s} {'design_maturity':<15s} {'build_status':<12s} {'entry':>5s}")
+    print(
+        f"{'blueprint_id':<30s} {'domain_id':<20s} {'files':>5s} {'design_maturity':<15s} {'build_status':<12s} {'entry':>5s}"
+    )
     print(f"{'-' * 100}")
     for m in modules:
         bp = m.get("blueprint_id", "")
@@ -293,11 +298,11 @@ def _print_all_modules() -> int:
     print(f"{'-' * 100}")
     print(f"总计：{len(modules)} 个蓝图级模块")
     return EXIT_PASS
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="模块全景查询入口（五图模块对齐 Step 5）"
-    )
+    parser = argparse.ArgumentParser(description="模块全景查询入口（五图模块对齐 Step 5）")
     parser.add_argument(
         "module_id",
         nargs="?",
@@ -323,6 +328,7 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def print_all_modules() -> int:
@@ -364,4 +370,3 @@ def query_depgraph_metadata(module_id) -> dict | None:
 def query_depgraph_nodes(module_id) -> list[dict]:
     """公共接口：query_depgraph_nodes（Stage 4 公共化）。"""
     return _query_depgraph_nodes(module_id)
-

@@ -14,6 +14,7 @@
 # [TESTS] tests/governance/d3_metadata/test_check_pure_assertion.py
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: 由 capability 一致性门禁 subprocess 事件触发调用（registry 在案），非人工 manual 运行
 """check_pure_assertion.py — GOV-DOC-016 纯陈述原则检测真源（SSoT）。
 
 检测 .md 文档中的"过去态"过渡文本（如"已废止""之前是X现在改为Y"），
@@ -216,7 +217,10 @@ def _get_project_root() -> str:
     try:
         r = subprocess.run(
             ["git", "rev-parse", "--show-toplevel"],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
         )
         if r.returncode == 0:
             return r.stdout.strip()
@@ -230,7 +234,7 @@ def _to_rel_path(abs_or_rel: str, project_root: str) -> str:
     p = os.path.abspath(abs_or_rel)
     root = os.path.abspath(project_root)
     if p.startswith(root):
-        rel = p[len(root):].lstrip(os.sep)
+        rel = p[len(root) :].lstrip(os.sep)
         return rel.replace("\\", "/")
     return abs_or_rel.replace("\\", "/")
 
@@ -240,7 +244,10 @@ def get_added_lines_ci(rel_path: str) -> set[int]:
     try:
         r = subprocess.run(
             ["git", "diff", "--cached", "--unified=0", "--", rel_path],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
         )
         if r.returncode != 0:
             return set()
@@ -275,7 +282,10 @@ def _read_staged_content(rel_path: str) -> str:
     try:
         r = subprocess.run(
             ["git", "show", ":" + rel_path],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
         )
         if r.returncode == 0:
             return r.stdout
@@ -358,15 +368,17 @@ def _run_full_scan(project_root: str) -> int:
 
 def main() -> int:
     """入口：argparse 解析 --ci / --full-scan。"""
-    parser = argparse.ArgumentParser(
-        description="GOV-DOC-016 纯陈述原则检测（SSoT）"
-    )
+    parser = argparse.ArgumentParser(description="GOV-DOC-016 纯陈述原则检测（SSoT）")
     parser.add_argument(
-        "--ci", nargs="*", default=None, metavar="FILE",
+        "--ci",
+        nargs="*",
+        default=None,
+        metavar="FILE",
         help="增量模式：检查指定文件的 staged added 行",
     )
     parser.add_argument(
-        "--full-scan", action="store_true",
+        "--full-scan",
+        action="store_true",
         help="全量模式：扫描所有 in-scope .md 文件",
     )
     args = parser.parse_args()

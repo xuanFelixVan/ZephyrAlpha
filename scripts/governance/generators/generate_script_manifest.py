@@ -88,7 +88,9 @@ description: >
 SCRIPTS_DIR = REPO_ROOT / "scripts" / "governance"
 DEFAULT_OUTPUT = SCRIPTS_DIR / "script_manifest.yaml"
 
-EXCLUDE_DIRS = frozenset({"_shared", "__pycache__", "test_fixtures", "_archive"})  # 治本(ARCH-036 P0-C): 归档目录不应被脚本发现机制扫描
+EXCLUDE_DIRS = frozenset(
+    {"_shared", "__pycache__", "test_fixtures", "_archive"}
+)  # 治本(ARCH-036 P0-C): 归档目录不应被脚本发现机制扫描
 
 # ---------------------------------------------------------------------------
 # 蓝图 §3.6 标签自动推导（与 run_all.py 同源）

@@ -122,14 +122,23 @@ SCAN_DIRS = [REPO / "src", REPO / "tests", REPO / "scripts"]
 
 # 排除目录
 EXCLUDE_DIRS = {
-    "__pycache__", ".venv", ".runtime", "node_modules", "build", "dist",
-    ".git", ".pytest_cache", ".mypy_cache", ".ruff_cache",
+    "__pycache__",
+    ".venv",
+    ".runtime",
+    "node_modules",
+    "build",
+    "dist",
+    ".git",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
 }
 
 
 # ---------------------------------------------------------------------------
 # 进程存活检测（跨平台）
 # ---------------------------------------------------------------------------
+
 
 def is_process_alive(pid: int) -> bool:
     """检查进程是否存活（跨平台）。
@@ -145,9 +154,7 @@ def is_process_alive(pid: int) -> bool:
 
             PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab Win32 API 常量名为平台既定术语非治理词表违规
             kernel32 = ctypes.windll.kernel32
-            handle = kernel32.OpenProcess(
-                PROCESS_QUERY_LIMITED_INFORMATION, False, pid
-            )
+            handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
             if handle:
                 kernel32.CloseHandle(handle)
                 return True
@@ -166,6 +173,7 @@ def is_process_alive(pid: int) -> bool:
 # ---------------------------------------------------------------------------
 # 文件分类
 # ---------------------------------------------------------------------------
+
 
 def _should_skip(path: Path) -> bool:
     """是否跳过该文件。"""
@@ -229,6 +237,7 @@ def _top_dir(path: Path) -> str:
 # 子命令: scan
 # ---------------------------------------------------------------------------
 
+
 def cmd_scan(args: argparse.Namespace) -> int:
     """全项目扫描缺失 [DOMAIN] header 的文件。"""
     stats = Counter()
@@ -269,9 +278,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
     print("=" * 70)
     print("全项目 [DOMAIN] header 扫描报告")
     print("=" * 70)
-    scan_dir_names = ", ".join(
-        str(d.relative_to(REPO)) for d in SCAN_DIRS if d.exists()
-    )
+    scan_dir_names = ", ".join(str(d.relative_to(REPO)) for d in SCAN_DIRS if d.exists())
     print(f"\n[1] 扫描范围: {scan_dir_names}")
     print(f"    扫描 .py 文件总数: {total}")
 
@@ -334,9 +341,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
     if not has_issues:
         print("✅ 结论：无缺失/格式错误文件，所有有 [MODULE] header 的文件均已补全 [DOMAIN]。")
     else:
-        print(
-            f"⚠️  结论：{stats['missing']} 个缺失 + {stats['empty_domain']} 个空值，需处理。"
-        )
+        print(f"⚠️  结论：{stats['missing']} 个缺失 + {stats['empty_domain']} 个空值，需处理。")
     print("=" * 70)
 
     return 0 if not has_issues else 1
@@ -345,6 +350,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 # 子命令: verify
 # ---------------------------------------------------------------------------
+
 
 def _verify_file(rel: str) -> tuple[str, str | None]:
     """校验单个文件的 header 格式。返回 (状态, 详情)。
@@ -379,7 +385,7 @@ def _verify_file(rel: str) -> tuple[str, str | None]:
         return ("empty_value", f"DOMAIN 值为 '{domain_id}'")
 
     # 检查 MODULE 和 DOMAIN 之间是否有其他内容
-    between = head[m_mod.end():m_dom.start()].strip()
+    between = head[m_mod.end() : m_dom.start()].strip()
     if between:
         return ("ok_with_warn", f"MODULE 和 DOMAIN 之间有内容: '{between[:60]}'")
 
@@ -392,7 +398,9 @@ def cmd_verify(args: argparse.Namespace) -> int:
     if args.commit:
         result = subprocess.run(
             ["git", "show", "--name-only", "--pretty=", args.commit],
-            capture_output=True, text=True, cwd=str(REPO),
+            capture_output=True,
+            text=True,
+            cwd=str(REPO),
         )
         if result.returncode != 0:
             print(f"ERROR: 无法获取 commit {args.commit}: {result.stderr.strip()}")
@@ -469,6 +477,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
 # 子命令: clean-lock
 # ---------------------------------------------------------------------------
 
+
 def cmd_clean_lock(args: argparse.Namespace) -> int:
     """检测和清理孤儿 git commit 锁。"""
     if not COMMIT_LOCK_FILE.exists():
@@ -498,7 +507,7 @@ def cmd_clean_lock(args: argparse.Namespace) -> int:
     if acquired_at:
         age = time.time() - acquired_at
         print(f"  获取时间: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(acquired_at))}")
-        print(f"  持续时间: {age:.1f}s ({age/60:.1f}min)")
+        print(f"  持续时间: {age:.1f}s ({age / 60:.1f}min)")
 
     if pid is None:
         print("\n  ⚠️  锁文件无 PID 字段（损坏）")
@@ -540,6 +549,7 @@ def cmd_clean_lock(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 # 主入口
 # ---------------------------------------------------------------------------
+
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""

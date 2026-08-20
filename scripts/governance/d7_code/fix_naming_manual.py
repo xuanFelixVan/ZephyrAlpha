@@ -146,10 +146,7 @@ def _batch_update_references(renames: list[tuple[str, str]], dry_run: bool = Fal
     # 跳过备份/归档/snapshot目录（不应修改）
     skip_dirs = {"_backups", "_archive", "__pycache__", "node_modules", ".git", ".venv", "venv"}
     for root, dirs, files in os.walk(REPO_ROOT):
-        dirs[:] = [
-            d for d in dirs
-            if not d.startswith(".") and d not in skip_dirs
-        ]
+        dirs[:] = [d for d in dirs if not d.startswith(".") and d not in skip_dirs]
         # 跳过 snapshot_* 目录
         dirs[:] = [d for d in dirs if not d.startswith("snapshot_")]
         for f in files:
@@ -216,10 +213,10 @@ def _git_mv(old: Path, new: Path, dry_run: bool = False) -> bool:
         try:
             if _is_case_only_rename(old, new):
                 temp_name = old.parent / f"__tmp_rename_{os.getpid()}"
-                os.rename(old, temp_name)
-                os.rename(temp_name, new)
+                os.rename(old, temp_name)  # ops-guard-exempt: 重命名修复器本职原子改名（大小写专用两段式）
+                os.rename(temp_name, new)  # ops-guard-exempt: 重命名修复器本职原子改名（大小写专用两段式）
             else:
-                os.rename(old, new)
+                os.rename(old, new)  # ops-guard-exempt: 重命名修复器本职原子改名
             return True
         except OSError as e:
             print(f"    [ERROR] 重命名失败: {old} -> {new}: {e}")
@@ -231,9 +228,7 @@ def _build_file_index() -> dict[str, Path]:
     index: dict[str, Path] = {}
     for root, dirs, files in os.walk(REPO_ROOT):
         dirs[:] = [
-            d for d in dirs
-            if not d.startswith(".") and d != "__pycache__" and d != "node_modules"
-            and d != ".git"
+            d for d in dirs if not d.startswith(".") and d != "__pycache__" and d != "node_modules" and d != ".git"
         ]
         for d in dirs:
             if d not in index:

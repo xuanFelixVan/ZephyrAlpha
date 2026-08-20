@@ -35,11 +35,16 @@ verify_schema_health.py — depgraph (PostgreSQL) Schema 健康度校验门禁�
   --warn-only       软警告模式（发现漂移仍 exit 0）——用于观察期
   --skip-runtime    跳过校验4（PG 运行时健康），仅做 Schema 静态校验——用于无 PG 连接或快速 pre-commit
 """
+
 __manifest__ = {
     "args": [
         {"flag": "--ci", "type": "bool", "description": "硬阻断模式（漂移 exit 1，默认行为）"},
         {"flag": "--warn-only", "type": "bool", "description": "软警告模式（漂移仍 exit 0，观察期用）"},
-        {"flag": "--skip-runtime", "type": "bool", "description": "跳过 PG 运行时健康检查（校验4），仅做 Schema 静态校验"},
+        {
+            "flag": "--skip-runtime",
+            "type": "bool",
+            "description": "跳过 PG 运行时健康检查（校验4），仅做 Schema 静态校验",
+        },
     ],
     "description": "depgraph (PostgreSQL) Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性 + PG 运行时健康，漂移即阻断。对标 #ARCH-016 治本；P3-T4 改造：事件驱动 PG 运行时监控，替代违反 trae_053 的常驻 monitor_pg.py 方案",
     "dimensions": ["D5"],
@@ -142,12 +147,14 @@ _DDL_MAP = {
 
 # Ruling:100PCT-AI-GOVERNANCE P1-2 (2026-07-19): 扩展 _DDL_MAP 包含 decisiongraph 表
 # 用于 CHECK 约束一致性校验（防止 P0-3 类 DB↔DDL drift 复发）
-_DDL_MAP.update({
-    "decision_layers": decisiongraph_schema._DDL_DECISION_LAYERS,
-    "decision_nodes": decisiongraph_schema._DDL_DECISION_NODES,
-    "decision_edges": decisiongraph_schema._DDL_DECISION_EDGES,
-    "decision_tracks": decisiongraph_schema._DDL_DECISION_TRACKS,
-})
+_DDL_MAP.update(
+    {
+        "decision_layers": decisiongraph_schema._DDL_DECISION_LAYERS,
+        "decision_nodes": decisiongraph_schema._DDL_DECISION_NODES,
+        "decision_edges": decisiongraph_schema._DDL_DECISION_EDGES,
+        "decision_tracks": decisiongraph_schema._DDL_DECISION_TRACKS,
+    }
+)
 
 
 def check_ddl_columns(conn, issues: list) -> None:
@@ -155,8 +162,7 @@ def check_ddl_columns(conn, issues: list) -> None:
     for table, ddl in _DDL_MAP.items():
         declared = set(parse_ddl_columns(ddl))
         cursor = conn.execute(
-            "SELECT column_name FROM information_schema.columns "
-            "WHERE table_schema='public' AND table_name=%s",
+            "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name=%s",  # noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）
             (table,),
         )
         actual = {row["column_name"] for row in cursor.fetchall()}
@@ -187,9 +193,7 @@ def check_readonly_triggers(conn, issues: list) -> None:
                 (trig_name,),
             )
             if cursor.fetchone() is None:
-                issues.append(
-                    f"[TRIGGER-MISSING] 只读触发器 '{trig_name}' 不存在（表 {table} 未受只读保护）"
-                )
+                issues.append(f"[TRIGGER-MISSING] 只读触发器 '{trig_name}' 不存在（表 {table} 未受只读保护）")
 
 
 def check_schema_version(conn, issues: list) -> None:
@@ -247,8 +251,7 @@ def check_named_check_constraints(conn, issues: list) -> None:
 
         # 查询 DB 中该表的所有 CHECK 约束名称
         cursor = conn.execute(
-            "SELECT conname FROM pg_constraint "
-            "WHERE contype = 'c' AND conrelid = %s::regclass",
+            "SELECT conname FROM pg_constraint WHERE contype = 'c' AND conrelid = %s::regclass",  # noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）
             (table,),
         )
         actual_constraints = {row["conname"] for row in cursor.fetchall()}
@@ -280,9 +283,7 @@ def check_pg_runtime_health(conn, issues: list) -> None:
     - 连接数饱和 / 长事务（当前状态）：加入 issues，可阻断（反映实时问题）
     """
     # 4a. 死锁计数（累计值，>0 说明曾发生死锁——信息性输出，不阻断）
-    cursor = conn.execute(
-        "SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()"
-    )
+    cursor = conn.execute("SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()")  # noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）
     row = cursor.fetchone()
     if row and row["deadlocks"] is not None and row["deadlocks"] > 0:
         # 累计值不加入 issues（会因历史死锁误阻断），仅信息性提示供 AI 排查

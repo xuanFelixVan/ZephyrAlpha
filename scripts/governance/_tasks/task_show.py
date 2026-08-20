@@ -111,6 +111,7 @@ def main() -> None:
         import sqlite3
 
         from zephyr.governance.persistence.sqlite_schema import DB_PATH
+
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         rows = conn.execute(
@@ -136,19 +137,25 @@ def main() -> None:
             print(f"任务卡 {task_id} 不存在")
             continue
         if args.json:
-            print(json.dumps({
-                "task_id": card.task_id,
-                "title": card.title,
-                "status": card.status.value,
-                "priority": card.priority.value,
-                "description": card.description,
-                "deliverables": card.deliverables,
-                "acceptance": card.acceptance,
-                "rollback_instructions": card.rollback_instructions,
-                "allowed_touch": card.allowed_touch,
-                "files_in_scope": card.files_in_scope,
-                "applicable_rules": card.applicable_rules,
-            }, ensure_ascii=False, indent=2))
+            print(
+                json.dumps(
+                    {
+                        "task_id": card.task_id,
+                        "title": card.title,
+                        "status": card.status.value,
+                        "priority": card.priority.value,
+                        "description": card.description,
+                        "deliverables": card.deliverables,
+                        "acceptance": card.acceptance,
+                        "rollback_instructions": card.rollback_instructions,
+                        "allowed_touch": card.allowed_touch,
+                        "files_in_scope": card.files_in_scope,
+                        "applicable_rules": card.applicable_rules,
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
         else:
             _format_task(card)
 

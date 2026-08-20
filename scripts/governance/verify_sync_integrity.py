@@ -124,11 +124,7 @@ def _check_ssot_path(yaml_domains, db_domains, verbose):
 
 def _check_arch_paths(yaml_domains, arch_path_domains, verbose):
     """维度3: arch_path_mappings 同步"""
-    missing_arch = [
-        (did, yaml_sp)
-        for did, yaml_sp in yaml_domains.items()
-        if yaml_sp and did not in arch_path_domains
-    ]
+    missing_arch = [(did, yaml_sp) for did, yaml_sp in yaml_domains.items() if yaml_sp and did not in arch_path_domains]
     if missing_arch and verbose:
         for did, yaml_sp in missing_arch:
             print(f"  MISSING arch_path: {did} (ssot_path={yaml_sp})")

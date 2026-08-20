@@ -58,9 +58,7 @@ _SQL_INSERT_STALE_TEST = (
     "blocker_reason, details_json) "
     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 )
-_SQL_UPDATE_TIMESTAMP = (
-    "UPDATE remediation_progress SET last_updated = ? WHERE dimension_id = ?"
-)
+_SQL_UPDATE_TIMESTAMP = "UPDATE remediation_progress SET last_updated = ? WHERE dimension_id = ?"
 
 
 class _FakeGateway:
@@ -118,8 +116,7 @@ def _test_fresh_stale(project_root, db_path, old_time, query_stale_fn, failures)
     conn = sqlite3.connect(str(db_path))
     conn.execute(
         _SQL_INSERT_STALE_TEST,
-        ("ARCH-TEST-STALE", "issue", "stale test dimension",
-         "in_progress", old_time, "", "", None, None, None),
+        ("ARCH-TEST-STALE", "issue", "stale test dimension", "in_progress", old_time, "", "", None, None, None),
     )
     conn.commit()
     conn.close()
@@ -151,9 +148,7 @@ def _test_completed_exclusion(project_root, db_path, record_cls, record_fn, quer
     conn.close()
     stale = query_stale_fn(project_root)
     if len(stale) != 1:
-        failures.append(
-            f"expected 1 stale (completed should be excluded), got {len(stale)}"
-        )
+        failures.append(f"expected 1 stale (completed should be excluded), got {len(stale)}")
     else:
         print("  OK: completed dimension excluded from stale")
 
@@ -218,19 +213,34 @@ def main() -> int:
         print(f"[1/6] temp project_root: {project_root}")
 
         _test_record_and_query(
-            project_root, RemediationProgressRecord,
-            record_remediation_progress, query_all_dimensions, failures,
+            project_root,
+            RemediationProgressRecord,
+            record_remediation_progress,
+            query_all_dimensions,
+            failures,
         )
         _test_fresh_stale(
-            project_root, db_path, old_time, query_stale_dimensions, failures,
+            project_root,
+            db_path,
+            old_time,
+            query_stale_dimensions,
+            failures,
         )
         _test_completed_exclusion(
-            project_root, db_path, RemediationProgressRecord,
-            record_remediation_progress, query_stale_dimensions, old_time, failures,
+            project_root,
+            db_path,
+            RemediationProgressRecord,
+            record_remediation_progress,
+            query_stale_dimensions,
+            old_time,
+            failures,
         )
         _test_reconciler(
-            project_root, RemediationProgressRecord,
-            record_remediation_progress, make_remediation_progress_reconciler, failures,
+            project_root,
+            RemediationProgressRecord,
+            record_remediation_progress,
+            make_remediation_progress_reconciler,
+            failures,
         )
 
     print("\n=== Summary ===")
@@ -241,5 +251,7 @@ def main() -> int:
         return EXIT_FINDINGS
     print("ALL PASSED (6/6 tests)")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

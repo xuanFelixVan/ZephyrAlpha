@@ -118,9 +118,7 @@ ACTIVE_STATUSES = frozenset({"PENDING", "IN_PROGRESS", "READY", "BLOCKED", "WAIT
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="批量修复历史 broken post_sync_standard 命令（DM-210625 #205-D 裁定）"
-    )
+    parser = argparse.ArgumentParser(description="批量修复历史 broken post_sync_standard 命令（DM-210625 #205-D 裁定）")
     parser.add_argument(
         "--db",
         type=str,
@@ -150,9 +148,7 @@ def main() -> int:
 
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
-    rows = conn.execute(
-        "SELECT task_id, status, post_sync_standard FROM tasks WHERE is_deleted = 0"
-    ).fetchall()
+    rows = conn.execute("SELECT task_id, status, post_sync_standard FROM tasks WHERE is_deleted = 0").fetchall()
     conn.close()
 
     # 2. 逐任务判定是否需要修复
@@ -240,5 +236,7 @@ def main() -> int:
         return EXIT_FINDINGS
     print("[DONE] 所有活跃任务已修复")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     raise SystemExit(main())

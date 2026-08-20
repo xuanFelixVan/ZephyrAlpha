@@ -102,9 +102,13 @@ def main():
     print(f"  设计态节点: {r['cnt']}")
     r = conn.execute("SELECT COUNT(*) AS cnt FROM edges WHERE dep_maturity='design'").fetchone()
     print(f"  设计态边: {r['cnt']}")
-    r = conn.execute("SELECT COUNT(*) AS cnt FROM nodes WHERE design_maturity!='design' OR design_maturity IS NULL").fetchone()
+    r = conn.execute(
+        "SELECT COUNT(*) AS cnt FROM nodes WHERE design_maturity!='design' OR design_maturity IS NULL"
+    ).fetchone()
     print(f"  运营态节点: {r['cnt']}")
-    r = conn.execute("SELECT COUNT(*) AS cnt FROM edges WHERE dep_maturity!='design' OR dep_maturity IS NULL").fetchone()
+    r = conn.execute(
+        "SELECT COUNT(*) AS cnt FROM edges WHERE dep_maturity!='design' OR dep_maturity IS NULL"
+    ).fetchone()
     print(f"  运营态边: {r['cnt']}")
 
     # 4. edges完整性验证

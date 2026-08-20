@@ -131,9 +131,16 @@ _ALL_OPS = _STEP_OPS | _ANCHOR_OPS | _EDGE_OPS
 
 # update_step 允许更新的字段白名单（安全约束：禁止改 step_id）
 _STEP_UPDATABLE_FIELDS = {
-    "step_name", "flow_stage", "layer", "sort_order",
-    "narrative_ref", "indicators", "source_ref",
-    "parent_step_id", "depth", "design_maturity",
+    "step_name",
+    "flow_stage",
+    "layer",
+    "sort_order",
+    "narrative_ref",
+    "indicators",
+    "source_ref",
+    "parent_step_id",
+    "depth",
+    "design_maturity",
 }
 _STEP_JSONB_FIELDS = {"indicators"}
 
@@ -187,13 +194,9 @@ def op_add_step(
     indicators 是 6 件套结构化数据（trigger/consumes/params/data_flow/code_mapping/degradation）。
     """
     if flow_stage not in _VALID_FLOW_STAGES:
-        raise ValueError(
-            f"flow_stage '{flow_stage}' 不合法，合法值: {sorted(_VALID_FLOW_STAGES)}"
-        )
+        raise ValueError(f"flow_stage '{flow_stage}' 不合法，合法值: {sorted(_VALID_FLOW_STAGES)}")
     if design_maturity not in _VALID_DESIGN_MATURITIES:
-        raise ValueError(
-            f"design_maturity '{design_maturity}' 不合法，合法值: {sorted(_VALID_DESIGN_MATURITIES)}"
-        )
+        raise ValueError(f"design_maturity '{design_maturity}' 不合法，合法值: {sorted(_VALID_DESIGN_MATURITIES)}")
     if not step_id or not step_name:
         raise ValueError("step_id 和 step_name 必填")
 
@@ -224,9 +227,7 @@ def op_add_step(
             )
             parent_row = cur.fetchone()
             if parent_row is None:
-                raise ValueError(
-                    f"parent_step_id '{parent_step_id}' 不存在（BM-INV-006）"
-                )
+                raise ValueError(f"parent_step_id '{parent_step_id}' 不存在（BM-INV-006）")
             if parent_row["flow_stage"] != flow_stage:
                 raise ValueError(
                     f"子环节 flow_stage '{flow_stage}' 与父 '{parent_row['flow_stage']}' "
@@ -235,9 +236,7 @@ def op_add_step(
 
         # BM-INV-006: depth 上限校验（根→子→孙→曾孙，上限3）
         if depth is not None and depth > 3:
-            raise ValueError(
-                f"depth={depth} > 3（上限根→子→孙→曾孙，BM-INV-006）"
-            )
+            raise ValueError(f"depth={depth} > 3（上限根->子->孙->曾孙，BM-INV-006）")
 
         if dry_run:
             print(f"[DRY-RUN] INSERT step {step_id} ({step_name})")
@@ -261,14 +260,10 @@ def op_add_step(
     return {"op": "add_step", "dry_run": True, "step_id": step_id}
 
 
-def op_update_step(
-    conn, *, step_id: str, field: str, value: Any, dry_run: bool = False
-) -> dict:
+def op_update_step(conn, *, step_id: str, field: str, value: Any, dry_run: bool = False) -> dict:
     """更新环节字段（仅允许白名单字段，禁止改 step_id）。"""
     if field not in _STEP_UPDATABLE_FIELDS:
-        raise ValueError(
-            f"field '{field}' 不在允许列表 {_STEP_UPDATABLE_FIELDS}"
-        )
+        raise ValueError(f"field '{field}' 不在允许列表 {_STEP_UPDATABLE_FIELDS}")
     if field == "flow_stage" and value not in _VALID_FLOW_STAGES:
         raise ValueError(f"flow_stage '{value}' 不合法")
     if field == "design_maturity" and value not in _VALID_DESIGN_MATURITIES:
@@ -296,9 +291,7 @@ def op_update_step(
 def op_remove_step(conn, *, step_id: str, dry_run: bool = False) -> dict:
     """删除环节（ON DELETE CASCADE 级联删除其 anchors 和 edges）。"""
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute(
-            "SELECT step_name FROM battle_map_steps WHERE step_id = %s", (step_id,)
-        )
+        cur.execute("SELECT step_name FROM battle_map_steps WHERE step_id = %s", (step_id,))  # noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）
         row = cur.fetchone()
         if row is None:
             raise ValueError(f"step_id '{step_id}' 不存在")
@@ -333,13 +326,9 @@ def op_add_anchor(
     BM-INV-002: target_id 存在性校验由 align_battle_map.py 批量做（跨图校验，apply 不阻断）。
     """
     if target_graph not in _VALID_TARGET_GRAPHS:
-        raise ValueError(
-            f"target_graph '{target_graph}' 不合法，合法值: {sorted(_VALID_TARGET_GRAPHS)}"
-        )
+        raise ValueError(f"target_graph '{target_graph}' 不合法，合法值: {sorted(_VALID_TARGET_GRAPHS)}")
     if target_role not in _VALID_TARGET_ROLES:
-        raise ValueError(
-            f"target_role '{target_role}' 不合法，合法值: {sorted(_VALID_TARGET_ROLES)}"
-        )
+        raise ValueError(f"target_role '{target_role}' 不合法，合法值: {sorted(_VALID_TARGET_ROLES)}")
     if not target_id:
         raise ValueError("target_id 必填")
 
@@ -355,9 +344,7 @@ def op_add_anchor(
             (step_id, target_graph, target_id),
         )
         if cur.fetchone() is not None:
-            raise ValueError(
-                f"锚点已存在: step_id={step_id} target_graph={target_graph} target_id={target_id}"
-            )
+            raise ValueError(f"锚点已存在: step_id={step_id} target_graph={target_graph} target_id={target_id}")
 
         if dry_run:
             print(f"[DRY-RUN] INSERT anchor {step_id} → {target_graph}:{target_id} ({target_role})")
@@ -409,9 +396,7 @@ def op_add_edge(
 ) -> dict:
     """添加环节流转边。"""
     if edge_type not in _VALID_EDGE_TYPES:
-        raise ValueError(
-            f"edge_type '{edge_type}' 不合法，合法值: {sorted(_VALID_EDGE_TYPES)}"
-        )
+        raise ValueError(f"edge_type '{edge_type}' 不合法，合法值: {sorted(_VALID_EDGE_TYPES)}")
     if from_step_id == to_step_id:
         raise ValueError("from_step_id 不能等于 to_step_id（自环禁止）")
 
@@ -574,28 +559,44 @@ def main(argv: list[str] | None = None) -> int:
     # 构造单 op（若指定了任一操作标志）
     single_op: dict | None = None
     if args.add_step:
-        single_op = {"op": "add_step", "step_id": args.step_id, "step_name": args.step_name,
-                     "flow_stage": args.flow_stage, "layer": args.layer,
-                     "sort_order": args.sort_order, "narrative_ref": args.narrative_ref,
-                     "indicators": indicators, "source_ref": args.source_ref,
-                     "design_maturity": args.design_maturity}
+        single_op = {
+            "op": "add_step",
+            "step_id": args.step_id,
+            "step_name": args.step_name,
+            "flow_stage": args.flow_stage,
+            "layer": args.layer,
+            "sort_order": args.sort_order,
+            "narrative_ref": args.narrative_ref,
+            "indicators": indicators,
+            "source_ref": args.source_ref,
+            "design_maturity": args.design_maturity,
+        }
     elif args.update_step:
         val: Any = args.value
         if args.field in _STEP_JSONB_FIELDS and args.value:
             val = json.loads(args.value)
-        single_op = {"op": "update_step", "step_id": args.step_id,
-                     "field": args.field, "value": val}
+        single_op = {"op": "update_step", "step_id": args.step_id, "field": args.field, "value": val}
     elif args.remove_step:
         single_op = {"op": "remove_step", "step_id": args.step_id}
     elif args.add_anchor:
-        single_op = {"op": "add_anchor", "step_id": args.step_id,
-                     "target_graph": args.target_graph, "target_id": args.target_id,
-                     "target_role": args.target_role, "status_snapshot": args.status_snapshot}
+        single_op = {
+            "op": "add_anchor",
+            "step_id": args.step_id,
+            "target_graph": args.target_graph,
+            "target_id": args.target_id,
+            "target_role": args.target_role,
+            "status_snapshot": args.status_snapshot,
+        }
     elif args.remove_anchor:
         single_op = {"op": "remove_anchor", "anchor_id": args.anchor_id}
     elif args.add_edge:
-        single_op = {"op": "add_edge", "from_step_id": args.from_step_id,
-                     "to_step_id": args.to_step_id, "edge_type": args.edge_type, "label": args.label}
+        single_op = {
+            "op": "add_edge",
+            "from_step_id": args.from_step_id,
+            "to_step_id": args.to_step_id,
+            "edge_type": args.edge_type,
+            "label": args.label,
+        }
     elif args.remove_edge:
         single_op = {"op": "remove_edge", "edge_id": args.edge_id}
     elif args.batch:
@@ -652,12 +653,14 @@ def _execute_ops(ops: list[dict], dry_run: bool = False) -> int:
                         regen = reconcile_async("battle_map_db")
                         if regen.get("status") == "spawned":
                             print(
-                                f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} "
-                                f"日志: {regen['log_file']}",
+                                f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} 日志: {regen['log_file']}",
                                 file=sys.stderr,
                             )
                         else:
-                            print(f"[REGENERATE] WARNING: 后台启动失败（不阻断写入）: {regen.get('error')}", file=sys.stderr)
+                            print(
+                                f"[REGENERATE] WARNING: 后台启动失败（不阻断写入）: {regen.get('error')}",
+                                file=sys.stderr,
+                            )
                     except Exception as e:  # noqa: BLE001 — 编排器不可用不阻断主流程
                         print(f"  ⚠ 编排器不可用（不阻断写入）: {e}", file=sys.stderr)
         return 0

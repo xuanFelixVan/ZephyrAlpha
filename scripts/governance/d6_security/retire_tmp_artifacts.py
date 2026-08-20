@@ -227,9 +227,7 @@ def collect_logs_stale(logs_days: int) -> list[Path]:
     return stale
 
 
-def _gather(
-    tmp_days: int, pg_keep: int, logs_days: int, subdir_days: int
-) -> dict[str, list[Path]]:
+def _gather(tmp_days: int, pg_keep: int, logs_days: int, subdir_days: int) -> dict[str, list[Path]]:
     """_gather implementation."""
     return {
         "tmp_root": collect_tmp_root_stale(tmp_days),
@@ -275,7 +273,9 @@ def main() -> int:
     parser.add_argument("--apply", action="store_true", help="执行删除（默认 dry-run 仅列出）")
     parser.add_argument("--tmp-days", type=int, default=7, help="tmp/ 根层文件保留天数（默认 7）")
     parser.add_argument("--pg-keep", type=int, default=10, help="pg_backups/depgraph_*.json 保留份数（默认 10）")
-    parser.add_argument("--logs-days", type=int, default=14, help="logs/顶层(backup_report_*.json+*.log) 保留天数（默认 14）")
+    parser.add_argument(
+        "--logs-days", type=int, default=14, help="logs/顶层(backup_report_*.json+*.log) 保留天数（默认 14）"
+    )
     parser.add_argument(
         "--subdir-days",
         type=int,
@@ -316,7 +316,7 @@ def main() -> int:
         for p in paths:
             try:
                 if label == "tmp_subdir":
-                    shutil.rmtree(p, ignore_errors=False)
+                    shutil.rmtree(p, ignore_errors=False)  # ops-guard-exempt: tmp 退役清理本职（专用脚本单一职责）
                 else:
                     p.unlink()
                 deleted += 1

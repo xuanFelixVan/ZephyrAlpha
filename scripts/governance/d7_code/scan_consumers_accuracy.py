@@ -15,6 +15,7 @@
 # [TESTS] 手动验证: baseline-scan 全项目扫描生成报告
 # [A_module] module_id=MOD-GOV_SCAN_CONSUMERS_ACCURACY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: run_all.py 编排器 baseline-scan 调用（CONSUMERS 在案），非人工 manual
 """scan_consumers_accuracy.py — CONSUMERS 字段准确性 baseline-scan 脚本
 
 #ARCH-CONSUMERS-ACCURACY-002 Phase 1 治本——检测历史漂移（247 个文件）。
@@ -173,9 +174,7 @@ def _check_stale_violation(
     return True  # 消费者文件存在但不 import 当前模块 = stale
 
 
-def _consumer_module_to_files(
-    consumer_module: str, project_root: Path
-) -> list[Path]:
+def _consumer_module_to_files(consumer_module: str, project_root: Path) -> list[Path]:
     """将消费者模块路径转为文件系统路径列表。"""
     candidates = _module_to_file_candidates(consumer_module)
     result: list[Path] = []
@@ -211,11 +210,13 @@ def _scan_file(
     violations: list[dict] = []
     for v in violations_text:
         vtype = "orphan" if "orphan function" in v else "phantom"
-        violations.append({
-            "type": vtype,
-            "file": rel_path,
-            "detail": v.strip(),
-        })
+        violations.append(
+            {
+                "type": vtype,
+                "file": rel_path,
+                "detail": v.strip(),
+            }
+        )
 
     # stale 检测（baseline-scan 专用）
     if check_stale:
@@ -246,20 +247,19 @@ def _scan_file(
 
             # stale 检测：消费者模块存在但不 import 当前模块
             try:
-                is_stale = _check_stale_violation(
-                    module_path, rel_path, project_root
-                )
+                is_stale = _check_stale_violation(module_path, rel_path, project_root)
             except Exception:  # noqa: BLE001 — fail-open
                 is_stale = False
 
             if is_stale:
-                violations.append({
-                    "type": "stale",
-                    "file": rel_path,
-                    "consumer": consumer,
-                    "detail": f"  {rel_path}: stale consumer '{consumer}' "
-                              f"(消费者模块存在但不 import 当前模块)",
-                })
+                violations.append(
+                    {
+                        "type": "stale",
+                        "file": rel_path,
+                        "consumer": consumer,
+                        "detail": f"  {rel_path}: stale consumer '{consumer}' (消费者模块存在但不 import 当前模块)",
+                    }
+                )
 
     return violations
 
@@ -325,9 +325,7 @@ def _print_report(
 
 def main() -> int:
     """主入口。"""
-    parser = argparse.ArgumentParser(
-        description="CONSUMERS 字段准确性 baseline-scan 脚本"
-    )
+    parser = argparse.ArgumentParser(description="CONSUMERS 字段准确性 baseline-scan 脚本")
     parser.add_argument(
         "--src",
         default=str(_PROJECT_ROOT),

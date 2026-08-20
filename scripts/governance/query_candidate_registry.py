@@ -74,8 +74,7 @@ def print_table(entries):
     for e in entries:
         name = (e.get("name") or "")[:30]
         print(
-            f"{e['id']:<22} {name:<32} {e.get('domain', ''):<14} "
-            f"{e.get('status', ''):<10} {e.get('priority', ''):<4}"
+            f"{e['id']:<22} {name:<32} {e.get('domain', ''):<14} {e.get('status', ''):<10} {e.get('priority', ''):<4}"
         )
     print(f"\n共 {len(entries)} 条")
 
@@ -88,8 +87,7 @@ def _print_depgraph(graph_data):
     print(f"  下游邻居: {neighbors.get('downstream', [])}")
     print(f"  插入位置: {graph_data.get('insertion_description', '')}")
     for ed in graph_data.get("target_edges", []):
-        print(f"  实施边: {ed.get('from', '')} → {ed.get('to', '')} "
-              f"({ed.get('type', '')}) {ed.get('reason', '')}")
+        print(f"  实施边: {ed.get('from', '')} → {ed.get('to', '')} ({ed.get('type', '')}) {ed.get('reason', '')}")
 
 
 def _print_dataflow(graph_data):
@@ -155,7 +153,8 @@ def filter_entries(entries, args):
         filtered = [e for e in filtered if match_text(e, args.keyword)]
     if args.has_position_in:
         filtered = [
-            e for e in filtered
+            e
+            for e in filtered
             if e.get("panorama_position", {}).get(args.has_position_in, {}).get("has_position", False)
         ]
     return filtered
@@ -214,8 +213,7 @@ def build_parser():
     parser.add_argument("--show-position", action="store_true", help="显示全景定位详情")
     parser.add_argument("--due-review", action="store_true", help="查找到期需复审的候选")
     parser.add_argument("--check-duplicate", help="登记前查重")
-    parser.add_argument("--has-position-in",
-                        help="查某图有位置的候选 (depgraph/dataflowgraph/decisiongraph/blueprint)")
+    parser.add_argument("--has-position-in", help="查某图有位置的候选 (depgraph/dataflowgraph/decisiongraph/blueprint)")
     return parser
 
 

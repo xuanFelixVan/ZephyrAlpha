@@ -16,6 +16,7 @@
 Usage:
     python scripts/governance/run_gate_chain.py script1.py,arg1,arg2 script2.py,arg3
 """
+
 import subprocess
 import sys
 
@@ -30,7 +31,6 @@ priority: P2
 timeout_seconds: 60
 warn_only: false
 """
-
 
 
 def main() -> int:

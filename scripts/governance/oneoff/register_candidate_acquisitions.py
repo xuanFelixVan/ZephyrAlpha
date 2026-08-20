@@ -76,8 +76,7 @@ from zephyr.governance.persistence.battle_map_reader import BattleMapReader  # n
 _INVENTORY = _PROJECT_ROOT / "docs" / "_working" / "107_pending_steps_inventory.md"
 _DECISION_TABLE = _PROJECT_ROOT / "docs" / "_working" / "107_decision_table_filled.md"
 _CANDIDATE_REGISTRY = (
-    _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-    / "candidate_module_registry.yaml"
+    _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "candidate_module_registry.yaml"
 )
 
 # battle_map 文件名 → (domain, id_abbrev) 映射
@@ -116,14 +115,16 @@ def parse_inventory_candidates(md_path: Path) -> list[dict]:
         cols = cols[1:-1]
         if not cols or not cols[0].startswith("BM-"):
             continue
-        results.append({
-            "step_id": cols[0],
-            "name_cn": cols[1] if len(cols) > 1 else "",
-            "name_en": cols[2] if len(cols) > 2 else "",
-            "layer": cols[3] if len(cols) > 3 else "",
-            "self_report": cols[4] if len(cols) > 4 else "",
-            "file_line": cols[5] if len(cols) > 5 else "",
-        })
+        results.append(
+            {
+                "step_id": cols[0],
+                "name_cn": cols[1] if len(cols) > 1 else "",
+                "name_en": cols[2] if len(cols) > 2 else "",
+                "layer": cols[3] if len(cols) > 3 else "",
+                "self_report": cols[4] if len(cols) > 4 else "",
+                "file_line": cols[5] if len(cols) > 5 else "",
+            }
+        )
     return results
 
 
@@ -148,9 +149,7 @@ def _step_ids_with_candidate_anchor() -> set[str]:
     reader = BattleMapReader()
     try:
         conn = reader._get_conn()
-        cur = conn.execute(
-            "SELECT step_id FROM battle_map_anchors WHERE target_graph = 'candidate'"
-        )
+        cur = conn.execute("SELECT step_id FROM battle_map_anchors WHERE target_graph = 'candidate'")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         for row in cur.fetchall():
             sids.add(row["step_id"])
     finally:
@@ -164,7 +163,7 @@ def _next_seq(existing_ids: set[str], abbrev: str) -> int:
     prefix = f"CAND-{abbrev}-"
     for eid in existing_ids:
         if eid.startswith(prefix):
-            tail = eid[len(prefix):]
+            tail = eid[len(prefix) :]
             try:
                 n = int(tail)
                 if n > max_seq:
@@ -274,8 +273,9 @@ def main(dry_run: bool = False) -> int:
     #    排除两类：(a) YAML 已有 original_id 匹配的；(b) battle_map_anchors 已有 candidate 锚点的
     #    （后者由 load_acquisition_decisions.py 通过锚点回填，本脚本不重复造条目）
     anchored_sids = _step_ids_with_candidate_anchor()
-    print(f"[REG] battle_map_anchors 中已有 candidate 锚点的环节 {len(anchored_sids)} 个"
-          f"（由 load 脚本回填，本脚本跳过）")
+    print(
+        f"[REG] battle_map_anchors 中已有 candidate 锚点的环节 {len(anchored_sids)} 个（由 load 脚本回填，本脚本跳过）"
+    )
     today = date.today().isoformat()
     seq_counters: dict[str, int] = {}
     new_entries: list[dict] = []
@@ -305,15 +305,26 @@ def main(dry_run: bool = False) -> int:
         cand_id = f"CAND-{abbrev}-{seq:03d}"
         existing_ids.add(cand_id)
         entry = build_skeleton_entry(
-            cand_id, sid, inv["name_cn"], inv["name_en"], domain, inv["layer"],
-            inv["self_report"], inv["file_line"], method, source, today,
+            cand_id,
+            sid,
+            inv["name_cn"],
+            inv["name_en"],
+            domain,
+            inv["layer"],
+            inv["self_report"],
+            inv["file_line"],
+            method,
+            source,
+            today,
         )
         new_entries.append(entry)
         print(f"  + {cand_id} ({sid}) {domain} = {method}/{source or '—'}")
 
     # 5. 追加到 YAML
-    print(f"\n[REG] 补登 {len(new_entries)} 条，已存在跳过 {len(skipped_exists)} 条，"
-          f"已有锚点跳过 {len(skipped_anchored)} 条，无法分类 {len(skipped_no_classify)} 条")
+    print(
+        f"\n[REG] 补登 {len(new_entries)} 条，已存在跳过 {len(skipped_exists)} 条，"
+        f"已有锚点跳过 {len(skipped_anchored)} 条，无法分类 {len(skipped_no_classify)} 条"
+    )
     if skipped_exists:
         print(f"  已存在(跳过): {skipped_exists}")
     if skipped_anchored:
@@ -341,9 +352,7 @@ def main(dry_run: bool = False) -> int:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="为49行无候选条目的候选态环节补登骨架候选条目（含 acquisition）"
-    )
+    parser = argparse.ArgumentParser(description="为49行无候选条目的候选态环节补登骨架候选条目（含 acquisition）")
     parser.add_argument("--dry-run", action="store_true", help="只打印不写入")
     args = parser.parse_args()
     sys.exit(main(dry_run=args.dry_run))

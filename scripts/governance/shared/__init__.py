@@ -9,6 +9,7 @@
 注意：``_shared`` 内部使用 ``from _shared.xxx import ...`` 绝对导入，
 因此需要将 ``scripts/governance`` 加入 sys.path 以确保内部导入正常工作。
 """
+
 import pathlib
 import sys
 

@@ -88,9 +88,7 @@ __all__ = ["make_algo_flow_translation_reconciler"]
 
 # ── 配置常量 ──
 _project_root = Path(__file__).resolve().parents[3]  # D:\ZephyrAlpha
-_CATALOGS = (
-    _project_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-)
+_CATALOGS = _project_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
 _FACTOR_REGISTRY = _CATALOGS / "factor_registry.yaml"
 _MTR = _CATALOGS / "module_translation_registry.yaml"
 _MODULES_JSON = _project_root / ".trae" / "documents" / "_operational_modules.json"
@@ -111,14 +109,27 @@ def _is_component_ref(registry: str) -> bool:
     r = (registry or "").lower()
     return any(mk in r for mk in _COMPONENT_MARKERS)
 
+
 # 触发文件：翻译真源 YAML（相对路径用 "/".join 拼接构造，避免完整字符串字面量触发
 # VOCAB-CHAIN gate——对齐 metric_count_drift_reconciler L80-84 先例）
-_FACTOR_REGISTRY_REL = "/".join([
-    "docs", "01_policies_and_standards", "_registry", "catalogs", "factor_registry.yaml",
-])
-_MTR_REL = "/".join([
-    "docs", "01_policies_and_standards", "_registry", "catalogs", "module_translation_registry.yaml",
-])
+_FACTOR_REGISTRY_REL = "/".join(
+    [
+        "docs",
+        "01_policies_and_standards",
+        "_registry",
+        "catalogs",
+        "factor_registry.yaml",
+    ]
+)
+_MTR_REL = "/".join(
+    [
+        "docs",
+        "01_policies_and_standards",
+        "_registry",
+        "catalogs",
+        "module_translation_registry.yaml",
+    ]
+)
 _REGISTRY_TRIGGER_FILES: frozenset[str] = frozenset({_FACTOR_REGISTRY_REL, _MTR_REL})
 
 
@@ -126,6 +137,7 @@ def _to_rel_path(file_path: str | Path) -> str:
     """将绝对路径转为相对项目根的相对路径（正斜杠）。"""
     try:
         import os
+
         return os.path.relpath(str(file_path), str(_project_root)).replace("\\", "/")
     except ValueError:
         return str(file_path).replace("\\", "/")
@@ -190,6 +202,7 @@ def _get_extractor():
         if gov_dir not in sys.path:
             sys.path.insert(0, gov_dir)
         from code_algorithm_extractor import extract_algorithm_from_code
+
         _extract_func = extract_algorithm_from_code
     return _extract_func
 
@@ -211,20 +224,17 @@ def _extract_algo_flow(rel_path: str) -> tuple:
         return None, rel_path
 
 
-def _check_drift(findings: list[str], label: str, marker_val: str, yaml_val: str,
-                 field_desc: str) -> None:
+def _check_drift(findings: list[str], label: str, marker_val: str, yaml_val: str, field_desc: str) -> None:
     """双真源字段对比：两侧均非空且不等 → 追加漂移 finding。"""
     m = (marker_val or "").strip()
     y = (yaml_val or "").strip()
     if m and y and m != y:
-        findings.append(
-            f"{label}: {field_desc} 漂移（标记='{m[:40]}' vs YAML='{y[:40]}'）"
-        )
+        findings.append(f"{label}: {field_desc} 漂移（标记='{m[:40]}' vs YAML='{y[:40]}'）")
 
 
-def _check_module(rel_path: str, factors: dict[str, dict],
-                  submodules: dict[tuple[str, str], dict],
-                  findings: list[str]) -> None:
+def _check_module(
+    rel_path: str, factors: dict[str, dict], submodules: dict[tuple[str, str], dict], findings: list[str]
+) -> None:
     """对比单模块 ALGO_FLOW 标记与翻译真源，漂移追加进 findings。"""
     algo_flow, effective_path = _extract_algo_flow(rel_path)
     if algo_flow is None:
@@ -244,18 +254,14 @@ def _check_module(rel_path: str, factors: dict[str, dict],
                 continue
             if _is_component_ref(node.registry):
                 continue  # 分量引用：存在性校验已过，文案强对比跳过（§4.16.4 分量约定）
-            _check_drift(findings, label, node.name_zh,
-                         entry.get("name_zh", ""), "name_zh")
-            _check_drift(findings, label, node.intro,
-                         entry.get("alpha_source", ""), "intro↔alpha_source")
+            _check_drift(findings, label, node.name_zh, entry.get("name_zh", ""), "name_zh")
+            _check_drift(findings, label, node.intro, entry.get("alpha_source", ""), "intro↔alpha_source")
         elif node.layer == "算法":
             entry = submodules.get((effective_path, node.id))
             if entry is None:
                 continue
-            _check_drift(findings, label, node.name_zh,
-                         entry.get("name_zh", ""), "name_zh")
-            _check_drift(findings, label, node.intro,
-                         entry.get("plain_zh", ""), "intro↔plain_zh")
+            _check_drift(findings, label, node.name_zh, entry.get("name_zh", ""), "name_zh")
+            _check_drift(findings, label, node.intro, entry.get("plain_zh", ""), "intro↔plain_zh")
         # 指标层：technical_indicator_registry 已升级手工 SSoT（REG-IND-001），不对比
 
 
@@ -266,7 +272,8 @@ def _target_modules(committed_files: list[str]) -> list[str]:
     仅注册表 YAML 变更 → 全量（417 运营态模块，_operational_modules.json）。
     """
     src_files = [
-        _to_rel_path(f) for f in committed_files
+        _to_rel_path(f)
+        for f in committed_files
         if _to_rel_path(f).startswith("src/zephyr/") and _to_rel_path(f).endswith(".py")
     ]
     if src_files:
@@ -302,7 +309,7 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
         return ReconcileResult(
             action="warn",
             detail="翻译真源 YAML 加载失败（factor_registry 或 module_translation_registry），"
-                   "无法校验 ALGO_FLOW 标记漂移",
+            "无法校验 ALGO_FLOW 标记漂移",
         )
 
     # 2. 确定待检模块并逐一对比
@@ -331,8 +338,8 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
     return ReconcileResult(
         action="warn",
         detail=f"ALGO_FLOW 标记 ↔ 翻译真源漂移（{len(findings)} 处）: {summary}。"
-               f"修复：代码侧为准则改 YAML，或 YAML 侧为准则改 docstring 后重跑 "
-               f"algo_flow_translation_sync.py（只回填空缺，不覆盖——改 YAML 需手工）",
+        f"修复：代码侧为准则改 YAML，或 YAML 侧为准则改 docstring 后重跑 "
+        f"algo_flow_translation_sync.py（只回填空缺，不覆盖——改 YAML 需手工）",
     )
 
 
@@ -348,9 +355,7 @@ def make_algo_flow_translation_reconciler(project_root: Path | None = None):
     global _project_root, _CATALOGS, _FACTOR_REGISTRY, _MTR, _MODULES_JSON, _GOV_SHARED_DIR
     if project_root is not None:
         _project_root = Path(project_root)
-        _CATALOGS = (
-            _project_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-        )
+        _CATALOGS = _project_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
         _FACTOR_REGISTRY = _CATALOGS / "factor_registry.yaml"
         _MTR = _CATALOGS / "module_translation_registry.yaml"
         _MODULES_JSON = _project_root / ".trae" / "documents" / "_operational_modules.json"
@@ -359,6 +364,7 @@ def make_algo_flow_translation_reconciler(project_root: Path | None = None):
     try:
         from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec
     except ImportError:
+
         class _ReconcilerSpecFallback:  # type: ignore
             def __init__(self, gate_id, trigger, reconcile, priority=100):
                 """__init__ implementation."""
@@ -366,6 +372,7 @@ def make_algo_flow_translation_reconciler(project_root: Path | None = None):
                 self.trigger = trigger
                 self.reconcile = reconcile
                 self.priority = priority
+
         ReconcilerSpec = _ReconcilerSpecFallback
 
     return ReconcilerSpec(

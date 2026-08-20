@@ -97,11 +97,13 @@ def scan_file_ast(filepath: Path) -> list[dict]:
         line_num = content[: match.start()].count("\n") + 1
         if line_num not in code_lines:
             continue
-        findings.append({
-            "file": str(filepath.relative_to(REPO_ROOT)),
-            "line": line_num,
-            "matched": match.group(0)[:100],
-        })
+        findings.append(
+            {
+                "file": str(filepath.relative_to(REPO_ROOT)),
+                "line": line_num,
+                "matched": match.group(0)[:100],
+            }
+        )
     return findings
 
 

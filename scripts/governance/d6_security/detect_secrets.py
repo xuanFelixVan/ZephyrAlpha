@@ -65,15 +65,23 @@ from _shared.encoding import ensure_utf8_stdout  # 仅导入 sys，无慢链
 
 EXIT_PASS = 0
 REPO_ROOT = _SCRIPT_DIR.parents[3]  # scripts/governance/d6_security/ → 项目根
-SCAN_EXTENSIONS_CODE: frozenset[str] = frozenset(
-    {".py", ".yaml", ".yml", ".json", ".toml", ".md", ".sh", ".ps1"}
-)
+SCAN_EXTENSIONS_CODE: frozenset[str] = frozenset({".py", ".yaml", ".yml", ".json", ".toml", ".md", ".sh", ".ps1"})
 # 与 _shared.constants.EXCLUDE_DIRS 保持一致（真源：_shared.constants.py）
 _EXCLUDE_DIRS: frozenset[str] = frozenset(
     {
-        "__pycache__", ".git", ".runtime", "node_modules", ".venv",
-        "_DO_NOT_USE_old_tree", ".pytest_cache", ".mypy_cache", ".ruff_cache",
-        "vector_db", "models", "data", "tmp",
+        "__pycache__",
+        ".git",
+        ".runtime",
+        "node_modules",
+        ".venv",
+        "_DO_NOT_USE_old_tree",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        "vector_db",
+        "models",
+        "data",
+        "tmp",
     }
 )
 
@@ -108,7 +116,10 @@ SECRET_PATTERNS = [
     ("(?:token|TOKEN|Token)\\s*[:=]\\s*['\\\"]([^'\\\"]{8,})['\\\"]", "Token 硬编码"),
     ("(?:password|PASSWORD|Password|passwd)\\s*[:=]\\s*['\\\"]([^'\\\"]{3,})['\\\"]", "Password 硬编码"),
     ("(?:access[_-]?key|ACCESS_KEY|Access_Key)\\s*[:=]\\s*['\\\"]([^'\\\"]{8,})['\\\"]", "Access Key 硬编码"),
-    ("(?:private[_-]?key|PRIVATE_KEY|Private_Key)['\\\"]?\\s*[:=]\\s*['\\\"]([^'\\\"]{16,})['\\\"]", "Private Key 硬编码"),
+    (
+        "(?:private[_-]?key|PRIVATE_KEY|Private_Key)['\\\"]?\\s*[:=]\\s*['\\\"]([^'\\\"]{16,})['\\\"]",
+        "Private Key 硬编码",
+    ),
     ("sk-[a-zA-Z0-9]{32,}", "OpenAI API Key 格式"),
     ("AKIA[0-9A-Z]{16}", "AWS Access Key ID 格式"),
     ("(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36,}", "GitHub Token 格式"),
@@ -117,9 +128,7 @@ SECRET_PATTERNS = [
 # 治本（性能优化 #4）：移除 re.IGNORECASE——显式大小写变体已包含在模式交替中。
 # cProfile 实测：re.IGNORECASE 导致 finditer 10x 减速（与预扫 regex 相同根因）。
 # 添加 Secret/Token/Password 等常见混合大小写变体覆盖绝大多数实际场景。
-_COMPILED_PATTERNS: list[tuple[re.Pattern, str]] = [
-    (re.compile(p), label) for p, label in SECRET_PATTERNS
-]
+_COMPILED_PATTERNS: list[tuple[re.Pattern, str]] = [(re.compile(p), label) for p, label in SECRET_PATTERNS]
 # 快速关键词预扫：regex WITHOUT re.IGNORECASE（显式大小写变体）。
 # cProfile 实测：re.IGNORECASE 导致 10x 减速（14s vs 1.4s），因 IGNORECASE 阻止
 # regex 引擎的 alternation 优化。显式列出大小写变体后，regex 引擎编译为高效状态机。

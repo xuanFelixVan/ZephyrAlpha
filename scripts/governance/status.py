@@ -308,7 +308,9 @@ CAPACITY_LIMITS = {
     "per_dimension_max": 50,
     "global_max": 300,
     "scan_duration_warning_s": 300,
-    "global_hard_timeout_s": _get_threshold("scanning.global_hard_timeout_seconds", 3600),  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码600与SSoT 3600漂移)
+    "global_hard_timeout_s": _get_threshold(
+        "scanning.global_hard_timeout_seconds", 3600
+    ),  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码600与SSoT 3600漂移)
 }
 
 

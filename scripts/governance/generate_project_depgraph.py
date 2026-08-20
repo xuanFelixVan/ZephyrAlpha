@@ -76,6 +76,7 @@ def _get_pg_conn_with_dict_cursor(**kwargs):
     conn.cursor_factory = psycopg2.extras.DictCursor
     return conn
 
+
 # === 扫描排除配置（从 YAML 配置文件加载，真源: depgraph_scan_exclusions.yaml）===
 # 规则定义: docs/01_policies_and_standards/rules/trae_058_depgraph_scan_exclusions.yaml
 # 路径清单: docs/01_policies_and_standards/_registry/catalogs/depgraph_scan_exclusions.yaml
@@ -115,8 +116,7 @@ _FALLBACK_EXEMPT_DIRS = {
 # 治本（2026-06-30）：消除原硬编码 NODE_TYPES_FILE/DOMAIN/WHITELIST/CODE_TYPES/CONFIG_TYPES/
 #   DOC_TYPES/DOMAIN_TYPES/TYPE_PRIORITY/architecture_layer SQL/stability/autonomy fallback
 _NODE_TYPE_VOCAB_PATH = (
-    PROJECT_ROOT / "docs" / "01_policies_and_standards"
-    / "_registry" / "vocabularies" / "node_type_vocabulary.yaml"
+    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "node_type_vocabulary.yaml"
 )
 
 
@@ -141,9 +141,7 @@ _NODE_TYPE_ENTRIES = _load_node_type_vocabulary()
 # 白名单准入（裁定#184）：nodes表只收录 in_nodes_whitelist=true 的 node_type
 # module(.py代码) / script(.py脚本) / test(.py测试) / config(.yaml运行时配置)
 # 新类型默认不进nodes，天然安全（对齐dependency-cruiser/madge/Bazel实践）
-NODES_WHITELIST = frozenset(
-    e["value"] for e in _NODE_TYPE_ENTRIES if e.get("in_nodes_whitelist")
-)
+NODES_WHITELIST = frozenset(e["value"] for e in _NODE_TYPE_ENTRIES if e.get("in_nodes_whitelist"))
 _FALLBACK_SCAN_DIRS = [
     "src/zephyr",
     "scripts",
@@ -194,27 +192,14 @@ DOMAIN_TYPES = frozenset(e["value"] for e in _NODE_TYPE_ENTRIES if e.get("catego
 
 # TYPE_PRIORITY（文件粒度合并优先级——从词表动态加载）
 # 真源：node_type_vocabulary.yaml values[].type_priority（null 值不参与文件合并）
-TYPE_PRIORITY = {
-    e["value"]: e["type_priority"]
-    for e in _NODE_TYPE_ENTRIES
-    if e.get("type_priority") is not None
-}
+TYPE_PRIORITY = {e["value"]: e["type_priority"] for e in _NODE_TYPE_ENTRIES if e.get("type_priority") is not None}
 
 # architecture_layer 兜底映射（从词表动态加载——真源：values[].architecture_layer_fallback）
-_NODE_TYPE_LAYER_MAP = {
-    e["value"]: e.get("architecture_layer_fallback", "L3_application")
-    for e in _NODE_TYPE_ENTRIES
-}
+_NODE_TYPE_LAYER_MAP = {e["value"]: e.get("architecture_layer_fallback", "L3_application") for e in _NODE_TYPE_ENTRIES}
 
 # stability / autonomy 兜底映射（从词表动态加载——真源：values[].stability_fallback / autonomy_fallback）
-_STABILITY_FALLBACK = {
-    e["value"]: e.get("stability_fallback", "evolving")
-    for e in _NODE_TYPE_ENTRIES
-}
-_AUTONOMY_FALLBACK = {
-    e["value"]: e.get("autonomy_fallback", "ai_modifiable")
-    for e in _NODE_TYPE_ENTRIES
-}
+_STABILITY_FALLBACK = {e["value"]: e.get("stability_fallback", "evolving") for e in _NODE_TYPE_ENTRIES}
+_AUTONOMY_FALLBACK = {e["value"]: e.get("autonomy_fallback", "ai_modifiable") for e in _NODE_TYPE_ENTRIES}
 
 
 def _build_architecture_layer_case_sql() -> str:
@@ -414,9 +399,7 @@ DESIGN_STATE_FIELDS = (
 # （file_path 空、imports/content_hash 永不入库、全景图误显"设计态"）。
 # 治本：INSERT 前预查保留的 design 行，命中则走同身份 UPDATE（同 node_id，
 # edges FK 不断链——删行会 CASCADE 丢 design 边，故禁止"删旧插新"）。
-_SQL_DESIGN_ROWS_BY_PATH = (
-    "SELECT node_id, path, build_status FROM nodes WHERE design_maturity = 'design'"
-)
+_SQL_DESIGN_ROWS_BY_PATH = "SELECT node_id, path, build_status FROM nodes WHERE design_maturity = 'design'"
 
 # UPDATE 只写扫描字段；不碰 owner/trust_zone/license/drive_direction/gate_reason/
 # hard_boundary_ref/consumed_interfaces（手工维护 / nodes_metadata 保护字段）。
@@ -1248,9 +1231,7 @@ def _resolve_gov_bare_import(module: str, importing_file: Path) -> str | None:
     for base in [file_dir, gov_dir]:
         candidate_file = base / (mod_slashed + ".py")
         candidate_pkg = base / mod_slashed / "__init__.py"
-        resolved = candidate_file if candidate_file.exists() else (
-            candidate_pkg if candidate_pkg.exists() else None
-        )
+        resolved = candidate_file if candidate_file.exists() else (candidate_pkg if candidate_pkg.exists() else None)
         if resolved is None:
             continue
         try:
@@ -1687,7 +1668,9 @@ def collect_all_files() -> list:
 # 安全: 仍全量 DELETE+INSERT DB（事务原子），无 DB 一致性风险。
 # 失效: content_hash 变 → 单文件 miss；domain_derivation 变 → 全缓存失效
 # (fingerprint)；scan 逻辑变 → bump SCAN_LOGIC_VERSION 全失效。
-_SCAN_LOGIC_VERSION = 2  # scan_*_file 逻辑变更时 bump → 全缓存失效（v2: #ARCH-DEPGRAPH-GOV-BARE-IMPORT-001 裸模块导入解析）
+_SCAN_LOGIC_VERSION = (
+    2  # scan_*_file 逻辑变更时 bump → 全缓存失效（v2: #ARCH-DEPGRAPH-GOV-BARE-IMPORT-001 裸模块导入解析）
+)
 _DEFAULT_CACHE_FILE = PROJECT_ROOT / ".runtime" / "depgraph_scan_cache.json"
 
 
@@ -1700,7 +1683,9 @@ def _compute_derivation_fingerprint(domain_derivation: list, functional_domains:
     try:
         payload = json.dumps(
             {"dd": domain_derivation, "fd": functional_domains},
-            sort_keys=True, ensure_ascii=False, default=str,
+            sort_keys=True,
+            ensure_ascii=False,
+            default=str,
         )
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
     except Exception:
@@ -1735,8 +1720,10 @@ class ScanCache:
             with open(self.cache_path, encoding="utf-8") as f:
                 data = json.load(f)
             meta = data.get("_meta", {})
-            if (meta.get("scan_logic_version") == _SCAN_LOGIC_VERSION
-                    and meta.get("derivation_fingerprint") == self.derivation_fingerprint):
+            if (
+                meta.get("scan_logic_version") == _SCAN_LOGIC_VERSION
+                and meta.get("derivation_fingerprint") == self.derivation_fingerprint
+            ):
                 self.entries = data.get("entries", {})
                 print(f"[DEPGRAPH][CACHE] Loaded {len(self.entries)} cached paths (fingerprint match)")
             else:
@@ -1918,9 +1905,9 @@ def build_depgraph(
             "design_maturity": (_dm := derive_design_maturity(ntype, False)),
             "build_status": derive_build_status(_dm, False),  # 裁定#180：从文件特征推导
             "deployment_lifecycle": derive_deployment_lifecycle(ntype),
-        "trust_zone": trust_zone,
-        "drive_direction": drive_direction,
-        "content_hash": fd.get("content_hash", ""),
+            "trust_zone": trust_zone,
+            "drive_direction": drive_direction,
+            "content_hash": fd.get("content_hash", ""),
         }
 
         # Only include non-empty optional fields
@@ -2594,7 +2581,10 @@ def load_cross_module_registry() -> list:
     # ARCH-036 P3-C4: 静默失效修正 — 返回空列表会让调用方认为"无跨模块依赖"，
     # 导致跨模块依赖分析整体失效。改为 stderr 警告。
     if not CROSS_MODULE_REGISTRY_PATH.exists():
-        print(f"[WARN] CROSS_MODULE_REGISTRY_PATH not found: {CROSS_MODULE_REGISTRY_PATH} — cross-module dep scan skipped", file=sys.stderr)
+        print(
+            f"[WARN] CROSS_MODULE_REGISTRY_PATH not found: {CROSS_MODULE_REGISTRY_PATH} — cross-module dep scan skipped",
+            file=sys.stderr,
+        )
         return []
     try:
         data = _yaml_load(CROSS_MODULE_REGISTRY_PATH)
@@ -2897,19 +2887,27 @@ def _validate_arch_references():
     except Exception:
         return  # 读取失败则静默跳过
 
-    arch_refs = set(_re.findall(r'\bARCH-(\d+)', source))
+    arch_refs = set(_re.findall(r"\bARCH-(\d+)", source))
     if not arch_refs:
         return  # 无 ARCH 引用则跳过
 
     # 1.5 检测小写 arch- 违规（trae_028 §标识符编号格式: 标识符编号必须大写）
-    lowercase_arch = [m.group() for m in _re.finditer(r'\bARCH-\d+', source, _re.IGNORECASE)
-                      if m.group() != m.group().upper()]
+    lowercase_arch = [
+        m.group() for m in _re.finditer(r"\bARCH-\d+", source, _re.IGNORECASE) if m.group() != m.group().upper()
+    ]
     if lowercase_arch:
         print(f"[DEPGRAPH] ERROR: 发现小写 arch- 引用 (trae_028 §标识符编号格式: 标识符编号必须大写): {lowercase_arch}")
         _sys.exit(EXIT_FINDINGS)
 
     # 2. 读取 architecture_issue_registry.yaml
-    registry_path = str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "architecture_issue_registry.yaml")
+    registry_path = str(
+        PROJECT_ROOT
+        / "docs"
+        / "01_policies_and_standards"
+        / "_registry"
+        / "catalogs"
+        / "architecture_issue_registry.yaml"
+    )
     if not _Path(registry_path).exists():
         print("[DEPGRAPH] ERROR: architecture_issue_registry.yaml 不存在，无法校验 ARCH 引用 (编号铁律#6)")
         _sys.exit(EXIT_FINDINGS)
@@ -2925,7 +2923,7 @@ def _validate_arch_references():
     entries = registry_data.get("entries", []) if registry_data else []
     for entry in entries:
         issue_id = entry.get("issue_id", "")
-        match = _re.match(r'#?ARCH-(\d+)', str(issue_id))
+        match = _re.match(r"#?ARCH-(\d+)", str(issue_id))
         if match:
             registered_ids.add(match.group(1))
 
@@ -2941,7 +2939,14 @@ def _validate_arch_references():
 
 def _load_di_seam_exemptions() -> set[str]:
     """从 capability_canonical_file_registry.yaml 加载 di_seam_exemptions 豁免清单（#ARCH-DI-SEAM-001）。"""
-    registry_path = str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml")
+    registry_path = str(
+        PROJECT_ROOT
+        / "docs"
+        / "01_policies_and_standards"
+        / "_registry"
+        / "catalogs"
+        / "capability_canonical_file_registry.yaml"
+    )
     if not Path(registry_path).exists():
         return set()
     try:
@@ -3052,7 +3057,9 @@ def _validate_di_seam():
             if full_path in exemptions:
                 continue
             if not _class_has_di_seam(node):
-                warnings.append(f"{full_path} — __init__ 无可注入参数（Protocol/ABC/Interface 注解 或 |None=None 默认）")
+                warnings.append(
+                    f"{full_path} — __init__ 无可注入参数（Protocol/ABC/Interface 注解 或 |None=None 默认）"
+                )
     if warnings:
         print(f"[DEPGRAPH] WARNING: DI seam 检测发现 {len(warnings)} 个候选违规 (#ARCH-DI-SEAM-001):")
         for w in warnings[:20]:
@@ -3235,13 +3242,25 @@ def _restore_apply_depgraph_design_edges_by_path(cur, snapshot, path_to_db_node_
             )
             """,
             (
-                new_from, new_to,
-                row.get("dep_type"), row.get("architecture_direction"), row.get("coupling_strength"),
-                row.get("used_symbol"), row.get("invocation_method"), row.get("api_contract_refs"),
-                row.get("event_ref"), row.get("ddd_integration_pattern"), row.get("failure_mode"),
-                row.get("fallback"), row.get("activation_condition"), row.get("data_transfer_description"),
-                row.get("resource_impact"), row.get("relationship_type"),
-                row.get("cross_domain"), row.get("verified"), row.get("is_legal_cycle"),
+                new_from,
+                new_to,
+                row.get("dep_type"),
+                row.get("architecture_direction"),
+                row.get("coupling_strength"),
+                row.get("used_symbol"),
+                row.get("invocation_method"),
+                row.get("api_contract_refs"),
+                row.get("event_ref"),
+                row.get("ddd_integration_pattern"),
+                row.get("failure_mode"),
+                row.get("fallback"),
+                row.get("activation_condition"),
+                row.get("data_transfer_description"),
+                row.get("resource_impact"),
+                row.get("relationship_type"),
+                row.get("cross_domain"),
+                row.get("verified"),
+                row.get("is_legal_cycle"),
             ),
         )
         restored += 1
@@ -3276,8 +3295,12 @@ def _warn_uncommitted_governance_scripts() -> None:
         # 检查 scripts/governance/ 下 tracked 文件的未提交修改
         result = _sp.run(
             ["git", "status", "--short", "--", "scripts/governance/"],
-            capture_output=True, text=True, cwd=_repo_root,
-            encoding="utf-8", errors="replace", timeout=10,
+            capture_output=True,
+            text=True,
+            cwd=_repo_root,
+            encoding="utf-8",
+            errors="replace",
+            timeout=10,
         )
         if result.returncode != 0 or not result.stdout.strip():
             return  # 无变更或 git 不可用，静默通过
@@ -3335,9 +3358,7 @@ def _collect_active_worktree_exempt_paths(cursor) -> list[str]:
     wt_base = main_root / ".worktrees"
     if not wt_base.is_dir():
         return []
-    wt_roots = [
-        d for d in wt_base.iterdir() if d.is_dir() and (d / ".git").exists()
-    ]
+    wt_roots = [d for d in wt_base.iterdir() if d.is_dir() and (d / ".git").exists()]
     if not wt_roots:
         return []
     cursor.execute(
@@ -3548,10 +3569,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             "'test_suite', 'rule_registry_collection') "
             "AND build_status IN ('testing', 'stable', 'deprecated')"
         )
-        _preserved_node_status: dict[str, str] = {
-            row["path"]: row["build_status"]
-            for row in cursor.fetchall()
-        }
+        _preserved_node_status: dict[str, str] = {row["path"]: row["build_status"] for row in cursor.fetchall()}
         if _preserved_node_status:
             print(
                 f"[STATUS-PRESERVE] 快照 {len(_preserved_node_status)} 个节点的 "
@@ -3629,7 +3647,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # DB触发器check_blueprint_id_format()正则: ^(MOD-|D-|SH-|SYS-|PLACEHOLDER)
         # 不合规的blueprint_id会触发RAISE EXCEPTION导致整个事务回滚（连累合规节点）
         # 在INSERT前预过滤，不合规的跳过并记录WARN
-        _BLUEPRINT_ID_VALID_RE = re.compile(r'^(MOD-|D-|SH-|SYS-|PLACEHOLDER)')
+        _BLUEPRINT_ID_VALID_RE = re.compile(r"^(MOD-|D-|SH-|SYS-|PLACEHOLDER)")
         # 治本 2026-07-02 (ARCH-033 Phase 2.1): 逐节点SAVEPOINT，失败时ROLLBACK TO SAVEPOINT
         # 防御性设计：即使预过滤通过，仍可能有其他DB约束冲突（如CHECK constraint）
         # 用SAVEPOINT确保单节点失败不影响其他合规节点
@@ -3784,12 +3802,14 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                     conn.rollback()
                     cursor = conn.cursor()
                 failed_insert_count += 1
-                failed_inserts.append({
-                    "blueprint_id": bp_id,
-                    "path": node.get("path", ""),
-                    "domain_id": node.get("domain_id", ""),
-                    "error": str(node_err),
-                })
+                failed_inserts.append(
+                    {
+                        "blueprint_id": bp_id,
+                        "path": node.get("path", ""),
+                        "domain_id": node.get("domain_id", ""),
+                        "error": str(node_err),
+                    }
+                )
                 if failed_insert_count <= 10:  # 即时WARN前10个，完整ERROR摘要在循环后
                     print(
                         f"[DEPGRAPH-DB] WARN: 节点INSERT失败被跳过: "
@@ -3797,18 +3817,14 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                     )
 
         if skipped_invalid_blueprint > 0:
-            print(
-                f"[DEPGRAPH-DB] Phase 2.2 预过滤: 跳过 {skipped_invalid_blueprint} 个不合规blueprint_id节点"
-            )
+            print(f"[DEPGRAPH-DB] Phase 2.2 预过滤: 跳过 {skipped_invalid_blueprint} 个不合规blueprint_id节点")
         if converted_design_count > 0:
             print(
                 f"[DEPGRAPH-DB] #ARCH-70 双态转换: {converted_design_count} 个 design 节点"
                 f"同身份 UPDATE 转 production（file_path/扫描字段回填，node_id 不变 edges 不断链）"
             )
         if failed_insert_count > 0:
-            print(
-                f"[DEPGRAPH-DB] ERROR: {failed_insert_count} 个节点INSERT失败被跳过（未连累合规节点）"
-            )
+            print(f"[DEPGRAPH-DB] ERROR: {failed_insert_count} 个节点INSERT失败被跳过（未连累合规节点）")
             print("[DEPGRAPH-DB] ERROR: INSERT失败完整列表（裁定#ARCH-DRIFT-PREVENTION-001 ADP-2）：")
             for _i, _fi in enumerate(failed_inserts, 1):
                 print(
@@ -3927,8 +3943,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         _restored_status_count = 0
         for _preserved_path, _preserved_bs in _preserved_node_status.items():
             cursor.execute(
-                "UPDATE nodes SET build_status=%s "
-                "WHERE path=%s AND build_status='generated'",
+                "UPDATE nodes SET build_status=%s WHERE path=%s AND build_status='generated'",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                 (_preserved_bs, _preserved_path),
             )
             _restored_status_count += cursor.rowcount
@@ -3999,12 +4014,14 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                     missing.append("from")
                 if to_node not in gen_id_set:
                     missing.append("to")
-                broken_edge_details.append({
-                    "from": from_node,
-                    "to": to_node,
-                    "dep_type": edge.get("dep_type", "import_depends"),
-                    "missing": "+".join(missing),
-                })
+                broken_edge_details.append(
+                    {
+                        "from": from_node,
+                        "to": to_node,
+                        "dep_type": edge.get("dep_type", "import_depends"),
+                        "missing": "+".join(missing),
+                    }
+                )
                 continue
 
             api_contract_refs = edge.get("api_contract_refs", [])
@@ -4082,8 +4099,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             print(f"[DEPGRAPH-DB] Dangling edge details (first 10 of {broken_edge_count}):")
             for i, d in enumerate(broken_edge_details[:10]):
                 print(
-                    f"  [{i + 1}] from={d['from']} -> to={d['to']} "
-                    f"(dep_type={d['dep_type']}, missing={d['missing']})"
+                    f"  [{i + 1}] from={d['from']} -> to={d['to']} (dep_type={d['dep_type']}, missing={d['missing']})"
                 )
             if broken_edge_count > 10:
                 print(f"  ... and {broken_edge_count - 10} more (see broken_edge_details)")
@@ -4093,9 +4109,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                 "Verify gen_node_id_to_path mapping or rerun with --full to rebuild from scratch."
             )
         else:
-            print(
-                f"[DEPGRAPH-DB] Inserted {node_count} nodes, {edge_count} edges (0 dangling edges)"
-            )
+            print(f"[DEPGRAPH-DB] Inserted {node_count} nodes, {edge_count} edges (0 dangling edges)")
 
         # H6 fix: Backfill gate_reason for design-state nodes that were preserved
         try:
@@ -4479,7 +4493,9 @@ def _check_incremental_skip(files_data: list, output_db: str) -> bool:
     #   职责分离（2026-07-04 治本）：removed 由 GATE-DELETE-AUDIT reconciler（post-commit
     #   自动触发，_backup_depgraph_for_autoclean + apply_depgraph.py --cleanup-orphan-nodes）
     #   负责清理；本函数只负责"是否需要重建"，不负责清理。removed 超 WARNING 阈值时告警提示。
-    _GHOST_WARNING_THRESHOLD = get_thresholds_safe().get("scanning", {}).get("depgraph_ghost_warning", 50)  # 治本 M01 #5：阈值外置到 thresholds.yaml
+    _GHOST_WARNING_THRESHOLD = (
+        get_thresholds_safe().get("scanning", {}).get("depgraph_ghost_warning", 50)
+    )  # 治本 M01 #5：阈值外置到 thresholds.yaml
     if not changed and not stale:
         print("[DEPGRAPH][INCREMENTAL] 无阻断性变更（content_hash 全部匹配），跳过 DB 重建")
         if added:
@@ -4511,7 +4527,12 @@ def main():
     parser.add_argument(
         "--output-yaml", type=str, default="", help="[DEPRECATED] Output YAML data file path (DB is now the SSoT)"
     )
-    parser.add_argument("--output-db", type=str, default="", help="Output PostgreSQL database name (P2迁移后: depgraph.db 已迁移到 PostgreSQL)")
+    parser.add_argument(
+        "--output-db",
+        type=str,
+        default="",
+        help="Output PostgreSQL database name (P2迁移后: depgraph.db 已迁移到 PostgreSQL)",
+    )
     parser.add_argument("--output-md-section", type=str, default="", help="Output markdown section file path")
     parser.add_argument("--max-workers", type=int, default=8, help="ThreadPoolExecutor workers")
     parser.add_argument(
@@ -4649,7 +4670,9 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(yaml_files)} .yaml files...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(_scan_with_cache, scan_yaml_file, f, domain_derivation, scan_cache): f for f in yaml_files}
+        futures = {
+            pool.submit(_scan_with_cache, scan_yaml_file, f, domain_derivation, scan_cache): f for f in yaml_files
+        }
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -4665,7 +4688,9 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(json_files)} .json files...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(_scan_with_cache, scan_json_file, f, domain_derivation, scan_cache): f for f in json_files}
+        futures = {
+            pool.submit(_scan_with_cache, scan_json_file, f, domain_derivation, scan_cache): f for f in json_files
+        }
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -4673,7 +4698,9 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(infra_files)} script files (.sh/.ps1)...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(_scan_with_cache, scan_infra_file, f, domain_derivation, scan_cache): f for f in infra_files}
+        futures = {
+            pool.submit(_scan_with_cache, scan_infra_file, f, domain_derivation, scan_cache): f for f in infra_files
+        }
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -4682,7 +4709,9 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(diagram_files)} diagram files (.mmd)...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(_scan_with_cache, scan_diagram_file, f, domain_derivation, scan_cache): f for f in diagram_files}
+        futures = {
+            pool.submit(_scan_with_cache, scan_diagram_file, f, domain_derivation, scan_cache): f for f in diagram_files
+        }
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -4868,8 +4897,7 @@ def main():
                 "  \n"
                 "  depgraph 是唯一真源（禁止重新创建派生 YAML 副本）。\n"
                 "  确认破坏性重建（需人工评估）:\n"
-                "    python scripts/governance/generate_project_depgraph.py --output-db <path> --force\n"
-                + "=" * 70,
+                "    python scripts/governance/generate_project_depgraph.py --output-db <path> --force\n" + "=" * 70,
                 file=sys.stderr,
             )
             sys.exit(4)
@@ -4881,6 +4909,7 @@ def main():
         # ARCH-056: depgraph 写入后自动同步到 dataflow/decision/blueprint
         try:
             from sync_panorama_module import sync_all_panorama
+
             sync_all_panorama()
         except Exception as e:
             print(f"[WARN] sync_panorama_module 失败（不阻断）: {e}", file=sys.stderr)
@@ -4890,12 +4919,9 @@ def main():
     # 触发：自动生成铁律——depgraph 刷新后文档统计自动跟进，无需手动运行
     try:
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
-        _wiki_script = str(
-            Path(__file__).parent / "d5_architecture" / "generators" / "generate_code_wiki_stats.py"
-        )
-        _result = run_subprocess_hidden(
-            [sys.executable, _wiki_script], timeout=120, check=False
-        )
+
+        _wiki_script = str(Path(__file__).parent / "d5_architecture" / "generators" / "generate_code_wiki_stats.py")
+        _result = run_subprocess_hidden([sys.executable, _wiki_script], timeout=120, check=False)
         if _result.returncode != 0:
             _err = (_result.stderr or "")[:300]
             print(f"[WARN] project_handbook 统计刷新 rc={_result.returncode}: {_err}", file=sys.stderr)
@@ -4910,20 +4936,20 @@ def main():
 if __name__ == "__main__":
     main()
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def get_pg_conn_with_dict_cursor(**kwargs):
     """公共接口：get_pg_conn_with_dict_cursor（Stage 4 公共化）。"""
     return _get_pg_conn_with_dict_cursor(**kwargs)
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def restore_apply_depgraph_design_edges_by_path(cur, snapshot, path_to_db_node_id):
     """公共接口：restore_apply_depgraph_design_edges_by_path（Stage 4 公共化）。"""
     return _restore_apply_depgraph_design_edges_by_path(cur, snapshot, path_to_db_node_id)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def snapshot_apply_depgraph_design_edges(cur):
     """公共接口：snapshot_apply_depgraph_design_edges（Stage 4 公共化）。"""
     return _snapshot_apply_depgraph_design_edges(cur)
-
-
-

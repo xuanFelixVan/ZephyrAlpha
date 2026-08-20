@@ -101,6 +101,7 @@ def _check_session_overlap(file_path: str, session_id: str) -> tuple[bool, str]:
         return True, "OK (no --session, skip overlap check)"
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         reg = SessionRegistry(_PROJECT_ROOT)
         holder = reg.find_session_by_file(file_path)
         if holder is not None and holder.session_id != session_id:
@@ -138,7 +139,7 @@ def _check_root_pollution(file_path: str) -> tuple[bool, str]:
 def _check_phase_health() -> tuple[bool, str]:
     """_check_phase_health implementation."""
     try:
-        from zephyr.gov_enforcement.rule_enforcement.phase_manager import GateResult, session_startup
+        from zephyr.gov_enforcement.rule_enforcement.phase_manager import GateResult, session_startup  # noqa: import-integrity  路径陈旧（phase_manager 已迁 ops_governance），ImportError 兜底降级在案，复活属行为变更登记专项
 
         result = session_startup(quick=True)
         if result["ready"]:
@@ -351,8 +352,8 @@ def main() -> int:
 if __name__ == "__main__":
     sys.exit(main())
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def check_session_overlap(file_path, session_id) -> tuple[bool, str]:
     """公共接口：check_session_overlap（Stage 4 公共化）。"""
     return _check_session_overlap(file_path, session_id)
-

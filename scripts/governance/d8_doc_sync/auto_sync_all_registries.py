@@ -152,7 +152,11 @@ def _read_class_docstring(py_file: Path) -> str | None:
         doc = ast.get_docstring(tree)
         if doc:
             return doc.split("\n")[0].strip()
-    except (OSError, SyntaxError, ValueError):  # 单个 gate 文件读取/AST 解析失败返回 None（docstring 为可选元数据），不阻断同步
+    except (
+        OSError,
+        SyntaxError,
+        ValueError,
+    ):  # 单个 gate 文件读取/AST 解析失败返回 None（docstring 为可选元数据），不阻断同步
         pass
     return None
 

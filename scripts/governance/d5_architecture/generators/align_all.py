@@ -89,17 +89,13 @@ from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 
     PanoramaAlignmentReport,
     PanoramaEmptyError,
 )
-from align_panoramas import (
+from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
     run_alignment as run_panorama_alignment,
 )
 
 # 默认输出路径
 _DEFAULT_OVERVIEW = (
-    _REPO_ROOT
-    / "docs"
-    / "02_enterprise_architecture"
-    / "03_governance_reports"
-    / "panorama_alignment_overview.md"
+    _REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports" / "panorama_alignment_overview.md"
 )
 
 
@@ -114,9 +110,7 @@ def _build_overview(
     lines.append("")
     lines.append(f"> 生成时间: {generated_at}")
     lines.append("> 对齐轴: module_id（图 1-4）+ step_id（图 5）")
-    lines.append(
-        "> 五图: depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map"
-    )
+    lines.append("> 五图: depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map")
     lines.append("")
 
     # === 图 1-4：全景对齐（module_id 轴）===
@@ -138,9 +132,7 @@ def _build_overview(
     lines.append("|---|---:|---|")
     lines.append(f"| 孤儿（仅一图存在） | {len(pano.orphans)} | warn |")
     lines.append(f"| 状态漂移（design_maturity 不一致） | {len(pano.state_drifts)} | warn |")
-    lines.append(
-        f"| **域不一致（domain_id 不一致）** | {len(pano.domain_mismatches)} | **硬阻断** |"
-    )
+    lines.append(f"| **域不一致（domain_id 不一致）** | {len(pano.domain_mismatches)} | **硬阻断** |")
     lines.append(f"| 设计态孤立（design 仅一图） | {len(pano.design_only_in_one)} | warn |")
     lines.append(f"| **小计** | {pano.issues_total} | |")
     lines.append("")
@@ -163,9 +155,7 @@ def _build_overview(
     lines.append("| 类型 | 数量 | 级别 |")
     lines.append("|---|---:|---|")
     lines.append(f"| 孤儿环节（BM-INV-001） | {len(bm.orphan_steps)} | warn |")
-    lines.append(
-        f"| **幽灵锚点（BM-INV-002）** | {len(bm.ghost_anchors)} | **硬阻断** |"
-    )
+    lines.append(f"| **幽灵锚点（BM-INV-002）** | {len(bm.ghost_anchors)} | **硬阻断** |")
     lines.append(f"| 缺失叙事（BM-INV-003） | {len(bm.missing_narratives)} | warn |")
     lines.append(f"| 悬空边 | {len(bm.dangling_edges)} | warn |")
     lines.append(f"| 域漂移（BM-INV-004） | {len(bm.domain_drifts)} | warn |")
@@ -174,9 +164,7 @@ def _build_overview(
     lines.append(f"| 已确认合理孤儿环节 | {len(bm.acknowledged_orphan_steps)} | 信息 |")
     lines.append(f"| 已确认合理孤儿模块 | {len(bm.acknowledged_orphan_modules)} | 信息 |")
     if bm.source_unavailable:
-        lines.append(
-            f"| 目标图源不可用（降级） | {','.join(bm.source_unavailable)} | 告警 |"
-        )
+        lines.append(f"| 目标图源不可用（降级） | {','.join(bm.source_unavailable)} | 告警 |")
     lines.append(f"| **小计** | {bm.issues_total} | |")
     lines.append("")
 
@@ -185,12 +173,7 @@ def _build_overview(
     lines.append("")
 
     hard_issues = len(pano.domain_mismatches) + len(bm.ghost_anchors)
-    soft_issues = (
-        pano.issues_total
-        - len(pano.domain_mismatches)
-        + bm.issues_total
-        - len(bm.ghost_anchors)
-    )
+    soft_issues = pano.issues_total - len(pano.domain_mismatches) + bm.issues_total - len(bm.ghost_anchors)
 
     if hard_issues > 0:
         lines.append(f"❌ **硬阻断**: {hard_issues} 个硬问题须修复后才能施工")
@@ -207,12 +190,9 @@ def _build_overview(
     lines.append("")
     lines.append("---")
     lines.append(
-        "> 本报告由 align_all.py 自动生成（ARCH-ALIGN-UNIFIED-001），"
-        "复用 align_panoramas + align_battle_map 检测逻辑。"
+        "> 本报告由 align_all.py 自动生成（ARCH-ALIGN-UNIFIED-001），复用 align_panoramas + align_battle_map 检测逻辑。"
     )
-    lines.append(
-        "> 详细报告: panorama_alignment_report.md + battle_map_alignment_report.md"
-    )
+    lines.append("> 详细报告: panorama_alignment_report.md + battle_map_alignment_report.md")
 
     return "\n".join(lines) + "\n"
 
@@ -274,11 +254,7 @@ def main() -> int:
         print(f"  ERROR: {e}", file=sys.stderr)
         return EXIT_ERROR
 
-    print(
-        f"  OK: 环节={bm.step_count} / "
-        f"锚点={bm.anchor_count} / "
-        f"流转边={bm.edge_count}"
-    )
+    print(f"  OK: 环节={bm.step_count} / 锚点={bm.anchor_count} / 流转边={bm.edge_count}")
     print(
         f"  问题: 孤儿环节={len(bm.orphan_steps)}, "
         f"幽灵锚点={len(bm.ghost_anchors)}, "
@@ -303,12 +279,7 @@ def main() -> int:
     else:
         print("✅ 硬问题清零: domain_mismatches=0, ghost_anchors=0")
 
-    soft_issues = (
-        pano.issues_total
-        - len(pano.domain_mismatches)
-        + bm.issues_total
-        - len(bm.ghost_anchors)
-    )
+    soft_issues = pano.issues_total - len(pano.domain_mismatches) + bm.issues_total - len(bm.ghost_anchors)
     if soft_issues > 0:
         print(f"⚠️ 软问题: {soft_issues} 个 warn 级问题（君子协定，不阻断）")
     else:

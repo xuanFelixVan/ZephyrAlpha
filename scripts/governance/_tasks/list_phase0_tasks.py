@@ -98,5 +98,7 @@ def main():
         return EXIT_FINDINGS
     print("[PASS] Phase 0任务卡列表生成完成")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

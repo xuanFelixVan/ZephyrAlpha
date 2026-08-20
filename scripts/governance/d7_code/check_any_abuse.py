@@ -197,10 +197,7 @@ def _is_bare_any(node: ast.expr | None) -> bool:
             slc = node.slice
             if isinstance(slc, ast.Tuple):
                 # Union 全是 Any 才算裸 Any（如 Union[Any, None] = Any）
-                return all(
-                    (isinstance(elt, ast.Name) and elt.id == "Any")
-                    for elt in slc.elts
-                )
+                return all((isinstance(elt, ast.Name) and elt.id == "Any") for elt in slc.elts)
             return isinstance(slc, ast.Name) and slc.id == "Any"
         return False
 
@@ -241,28 +238,32 @@ def _scan_function(
         if _is_bare_any(arg.annotation):
             # **kwargs: Any 豁免
             # (args.args 不含 **kwargs，kwonlyargs 才有)
-            violations.append(AnyViolation(
-                file=filepath,
-                line=arg.lineno,
-                col=arg.col_offset,
-                kind="ANY-1",
-                function=func_name,
-                annotation=_annotation_to_str(arg.annotation),
-                detail=f"参数 '{arg.arg}' 使用裸 Any，应替换为具体类型",
-            ))
+            violations.append(
+                AnyViolation(
+                    file=filepath,
+                    line=arg.lineno,
+                    col=arg.col_offset,
+                    kind="ANY-1",
+                    function=func_name,
+                    annotation=_annotation_to_str(arg.annotation),
+                    detail=f"参数 '{arg.arg}' 使用裸 Any，应替换为具体类型",
+                )
+            )
 
     # keyword-only 参数
     for arg in args.kwonlyargs:
         if _is_bare_any(arg.annotation):
-            violations.append(AnyViolation(
-                file=filepath,
-                line=arg.lineno,
-                col=arg.col_offset,
-                kind="ANY-1",
-                function=func_name,
-                annotation=_annotation_to_str(arg.annotation),
-                detail=f"关键字参数 '{arg.arg}' 使用裸 Any，应替换为具体类型",
-            ))
+            violations.append(
+                AnyViolation(
+                    file=filepath,
+                    line=arg.lineno,
+                    col=arg.col_offset,
+                    kind="ANY-1",
+                    function=func_name,
+                    annotation=_annotation_to_str(arg.annotation),
+                    detail=f"关键字参数 '{arg.arg}' 使用裸 Any，应替换为具体类型",
+                )
+            )
 
     # *args: Any —— 豁免（兼容旧 API，对标 **kwargs）
     if args.vararg and _is_bare_any(args.vararg.annotation):
@@ -280,15 +281,17 @@ def _scan_function(
         # __init__ 等通常无返回值注解，有也不报
         pass
     elif _is_bare_any(node.returns):
-        violations.append(AnyViolation(
-            file=filepath,
-            line=node.lineno,
-            col=node.col_offset,
-            kind="ANY-2",
-            function=func_name,
-            annotation=_annotation_to_str(node.returns),
-            detail="返回值使用裸 Any，应替换为具体类型",
-        ))
+        violations.append(
+            AnyViolation(
+                file=filepath,
+                line=node.lineno,
+                col=node.col_offset,
+                kind="ANY-2",
+                function=func_name,
+                annotation=_annotation_to_str(node.returns),
+                detail="返回值使用裸 Any，应替换为具体类型",
+            )
+        )
 
     return violations
 
@@ -339,28 +342,32 @@ def scan_file(filepath: Path) -> list[AnyViolation]:
     try:
         content = filepath.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as e:
-        return [AnyViolation(
-            file=str(filepath),
-            line=0,
-            col=0,
-            kind="ERROR",
-            function="",
-            annotation="",
-            detail=f"无法读取文件: {e}",
-        )]
+        return [
+            AnyViolation(
+                file=str(filepath),
+                line=0,
+                col=0,
+                kind="ERROR",
+                function="",
+                annotation="",
+                detail=f"无法读取文件: {e}",
+            )
+        ]
 
     try:
         tree = ast.parse(content, filename=str(filepath))
     except SyntaxError as e:
-        return [AnyViolation(
-            file=str(filepath),
-            line=e.lineno or 0,
-            col=e.offset or 0,
-            kind="ERROR",
-            function="",
-            annotation="",
-            detail=f"语法错误: {e.msg}",
-        )]
+        return [
+            AnyViolation(
+                file=str(filepath),
+                line=e.lineno or 0,
+                col=e.offset or 0,
+                kind="ERROR",
+                function="",
+                annotation="",
+                detail=f"语法错误: {e.msg}",
+            )
+        ]
 
     rel_path = str(filepath).replace("\\", "/")
     scanner = _FunctionScanner(rel_path)
@@ -372,10 +379,7 @@ def scan_file(filepath: Path) -> list[AnyViolation]:
     if violations:
         noqa_lines = _collect_noqa_any_abuse_lines(content)
         if noqa_lines:
-            violations = [
-                v for v in violations
-                if v.kind not in ("ANY-1", "ANY-2") or v.line not in noqa_lines
-            ]
+            violations = [v for v in violations if v.kind not in ("ANY-1", "ANY-2") or v.line not in noqa_lines]
 
     return violations
 
@@ -426,10 +430,9 @@ def scan_directory(src_dir: Path, files: list[Path] | None = None) -> list[AnyVi
         py_files = list(src_dir.rglob("*.py"))
         # 排除 __pycache__ / _archive / .aidrafts
         py_files = [
-            f for f in py_files
-            if "__pycache__" not in f.parts
-            and "_archive" not in f.parts
-            and ".aidrafts" not in f.parts
+            f
+            for f in py_files
+            if "__pycache__" not in f.parts and "_archive" not in f.parts and ".aidrafts" not in f.parts
         ]
 
     all_violations: list[AnyViolation] = []
@@ -485,23 +488,21 @@ def main(argv: list[str] | None = None) -> int:
         # 过滤：只扫 src/zephyr/ 下的 .py
         src_prefix = str(args.src.resolve()).replace("\\", "/")
         file_list = [
-            f for f in file_list
-            if f.suffix == ".py"
-            and str(f.resolve()).replace("\\", "/").startswith(src_prefix)
+            f for f in file_list if f.suffix == ".py" and str(f.resolve()).replace("\\", "/").startswith(src_prefix)
         ]
         if not file_list:
             print("[check_any_abuse] 无 src/zephyr/ 下的 .py 文件，跳过")
             return EXIT_PASS
     elif args.staged:
-            # 变更检测：使用共享 iter_staged_files（真源 _shared/staged_files.py，轻量模块无 psycopg2）
-            # 治本（2026-08-03）：消除 23 行内联 git diff 重复代码，统一 SSoT
-            file_list = iter_staged_files(
-                extensions=frozenset({".py"}),
-                path_prefix="src/zephyr/",
-            )
-            if not file_list:
-                print("[check_any_abuse] 无 staged src/zephyr/ .py 文件，跳过")
-                return EXIT_PASS
+        # 变更检测：使用共享 iter_staged_files（真源 _shared/staged_files.py，轻量模块无 psycopg2）
+        # 治本（2026-08-03）：消除 23 行内联 git diff 重复代码，统一 SSoT
+        file_list = iter_staged_files(
+            extensions=frozenset({".py"}),
+            path_prefix="src/zephyr/",
+        )
+        if not file_list:
+            print("[check_any_abuse] 无 staged src/zephyr/ .py 文件，跳过")
+            return EXIT_PASS
     if not args.src.exists() and not file_list:
         print(f"[check_any_abuse] 错误：src 目录不存在: {args.src}", file=sys.stderr)
         return EXIT_ERROR
@@ -539,5 +540,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.ci:
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

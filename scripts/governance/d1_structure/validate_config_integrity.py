@@ -993,7 +993,7 @@ def _scan_config_consumers(filename: str, max_results: int = 5) -> list[str]:
     """
     consumers: list[str] = []
     # 正则：文件名前后不能是字母/数字/下划线（前）/点（后），确保匹配完整文件名
-    pattern = re.compile(r'(?<![A-Za-z0-9_])' + re.escape(filename) + r'(?![A-Za-z0-9_.])')
+    pattern = re.compile(r"(?<![A-Za-z0-9_])" + re.escape(filename) + r"(?![A-Za-z0-9_.])")
     search_roots = [REPO_ROOT / "src", REPO_ROOT / "scripts", REPO_ROOT / "tests"]
     for root in search_roots:
         if not root.exists():

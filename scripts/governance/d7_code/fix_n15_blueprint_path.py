@@ -233,6 +233,8 @@ def fix_file(file_path: Path) -> int:
             print(f"  ERROR 写入失败 {file_path}: {e}")
             return EXIT_PASS
     return EXIT_PASS
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     print("=" * 70)

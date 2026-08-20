@@ -41,7 +41,6 @@ NOW = datetime.now(UTC).isoformat()
 
 conn = sqlite3.connect(DB)
 try:
-
     count = conn.execute(
         "SELECT count(*) FROM tasks WHERE priority='P0' AND status='PENDING' AND task_id LIKE 'OPS-%' AND is_deleted=0"
     ).fetchone()[0]

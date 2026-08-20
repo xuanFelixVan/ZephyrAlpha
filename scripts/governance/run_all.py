@@ -139,7 +139,9 @@ _SKIP_INTERNAL: frozenset[str] = frozenset({_SMOKE_TEST_SCRIPT, _SELF_SCRIPT})
 
 _USE_BULKHEAD = True
 
-GLOBAL_HARD_TIMEOUT_SECONDS = _get_threshold("scanning.global_hard_timeout_seconds", 3600)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码600与SSoT 3600漂移)
+GLOBAL_HARD_TIMEOUT_SECONDS = _get_threshold(
+    "scanning.global_hard_timeout_seconds", 3600
+)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码600与SSoT 3600漂移)
 
 SLA_METRICS_PATH = SCRIPTS_DIR / "meta" / "sla_metrics.jsonl"
 
@@ -192,6 +194,7 @@ except ImportError:
                 "D12": "AI幻觉检测",
             }
             return _LABELS.get(self.value, self.value)
+
 
 try:
     from zephyr.infrastructure.finding_task_bridge import (
@@ -803,6 +806,7 @@ def run_all_dimensions(
 
             def _make_executor(wo: bool):
                 """_make_executor implementation."""
+
                 def _exec(sn: str, m: dict) -> dict:
                     """_exec implementation."""
                     return _execute_one_script(sn, m, wo)

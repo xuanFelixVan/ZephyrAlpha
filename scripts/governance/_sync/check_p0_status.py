@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Module docstring — see module-level docstring for details."""
+
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块

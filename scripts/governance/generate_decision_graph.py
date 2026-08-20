@@ -206,19 +206,13 @@ def _validate_yaml(data: dict) -> list[str]:
                 errors.append(f"layer {lid} missing layer_name_en")
             track = L.get("track")
             if track and track not in _VALID_TRACK_IDS:
-                errors.append(
-                    f"layer {lid} track '{track}' not in valid set {_VALID_TRACK_IDS}"
-                )
+                errors.append(f"layer {lid} track '{track}' not in valid set {_VALID_TRACK_IDS}")
             bs = L.get("build_status")
             if bs and bs not in _BUILD_STATUS_ORDER:
-                errors.append(
-                    f"layer {lid} build_status '{bs}' not in valid set {_BUILD_STATUS_ORDER}"
-                )
+                errors.append(f"layer {lid} build_status '{bs}' not in valid set {_BUILD_STATUS_ORDER}")
             dm = L.get("design_maturity")
             if dm and dm not in _MATURITY_VALUES:
-                errors.append(
-                    f"layer {lid} design_maturity '{dm}' not in valid set"
-                )
+                errors.append(f"layer {lid} design_maturity '{dm}' not in valid set")
             # 议题1约束：design 态不能有 module_id/source_code_ref（代码未写、蓝图未建）
             if dm == "design":
                 if L.get("module_id"):
@@ -286,9 +280,7 @@ def _sync_tracks(conn, tracks: list[dict], dry_run: bool = False) -> dict:
                 stats["inserted"] += 1
             else:
                 # 对比关键字段，决定 update/unchanged
-                needs_update = any(
-                    existing.get(k) != v for k, v in row.items() if k != "track_id"
-                )
+                needs_update = any(existing.get(k) != v for k, v in row.items() if k != "track_id")
                 if needs_update:
                     if dry_run:
                         print(f"[DRY-RUN] UPDATE track {t['track_id']}")
@@ -355,9 +347,7 @@ def _sync_layers(conn, layers: list[dict], dry_run: bool = False) -> dict:
                     )
                 stats["inserted"] += 1
             else:
-                needs_update = any(
-                    existing.get(k) != v for k, v in row.items() if k != "layer_id"
-                )
+                needs_update = any(existing.get(k) != v for k, v in row.items() if k != "layer_id")
                 if needs_update:
                     if dry_run:
                         print(f"[DRY-RUN] UPDATE layer {L['layer_id']}")
@@ -396,15 +386,14 @@ def _force_rebuild_tracks_layers(conn, dry_run: bool = False) -> None:
     """
     if dry_run:
         print("[DRY-RUN] DELETE FROM decision_layers WHERE design_maturity IS NULL OR design_maturity != 'design'")
-        print("[DRY-RUN] DELETE FROM decision_tracks WHERE track_id NOT IN (SELECT track FROM decision_layers WHERE design_maturity = 'design')")
+        print(
+            "[DRY-RUN] DELETE FROM decision_tracks WHERE track_id NOT IN (SELECT track FROM decision_layers WHERE design_maturity = 'design')"  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
+        )
         return
     with conn.cursor() as cur:
         # 先清空 layers（tracks 被 layers FK 引用，需先删 layers）
         # ARCH-052: 仅删除运营态 layer，保留设计态 layer
-        cur.execute(
-            "DELETE FROM decision_layers "
-            "WHERE design_maturity IS NULL OR design_maturity != 'design'"
-        )
+        cur.execute("DELETE FROM decision_layers WHERE design_maturity IS NULL OR design_maturity != 'design'")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         # ARCH-052: 删除未被设计态 layer 引用的 track（保留设计态 layer 引用的 track）
         cur.execute(
             "DELETE FROM decision_tracks "
@@ -462,9 +451,7 @@ def sync_decision_graph(
     # ARCH-053 逃生通道：YAML 真源驱动 design→production 合法迁移
     # 仅在 --allow-design-edit 显式启用时绕过 protect_decision_design_maturity 触发器，
     # 避免 design 态 layer 被意外覆盖（如手工改 DB），同时允许 YAML 真源升级同步。
-    conn = get_decisiongraph_pg_connection(
-        autocommit=False, allow_design_delete=allow_design_edit
-    )
+    conn = get_decisiongraph_pg_connection(autocommit=False, allow_design_delete=allow_design_edit)
     try:
         with _decision_sync_lock(conn):
             if force:
@@ -506,21 +493,19 @@ DB 目标：PostgreSQL decision_layers + decision_tracks 表
   - YAML 只定义骨架（tracks+layers），节点/边由后续脚本/导入补充""",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("--dry-run", action="store_true",
-                        help="预演：只打印 SQL 不写入 DB")
-    parser.add_argument("--force", action="store_true",
-                        help="破坏性重建：清空 tracks+layers 后重写（保留 nodes/edges）")
-    parser.add_argument("--validate-only", action="store_true",
-                        help="仅校验 YAML 不变量，不写 DB")
+    parser.add_argument("--dry-run", action="store_true", help="预演：只打印 SQL 不写入 DB")
+    parser.add_argument(
+        "--force", action="store_true", help="破坏性重建：清空 tracks+layers 后重写（保留 nodes/edges）"
+    )
+    parser.add_argument("--validate-only", action="store_true", help="仅校验 YAML 不变量，不写 DB")
     parser.add_argument(
         "--allow-design-edit",
         action="store_true",
         help="启用 ARCH-053 逃生通道：允许 YAML 真源驱动 design→production 合法状态"
-             "迁移同步到 DB（如 layer 已落盘代码、YAML 升级 design_maturity）。"
-             "仅用于 YAML 真源明确升级 design→production，需在 commit 信息中记录裁定依据。",
+        "迁移同步到 DB（如 layer 已落盘代码、YAML 升级 design_maturity）。"
+        "仅用于 YAML 真源明确升级 design→production，需在 commit 信息中记录裁定依据。",
     )
-    parser.add_argument("--yaml-path", type=str, default=str(_YAML_PATH),
-                        help=f"YAML 真源路径（默认 {_YAML_PATH}）")
+    parser.add_argument("--yaml-path", type=str, default=str(_YAML_PATH), help=f"YAML 真源路径（默认 {_YAML_PATH}）")
     args = parser.parse_args()
 
     yaml_path = Path(args.yaml_path)

@@ -184,29 +184,25 @@ def scan_residual(
                             }
                         )
                 except Exception as e:  # noqa: BLE001 — 单个表/列残留查询失败不中断审计（已记 WARN 日志），继续扫描其余列
-                    logger.warning("scan_residual: residual query failed for %s.%s (%s: %s)", tbl, col, type(e).__name__, e)
+                    logger.warning(
+                        "scan_residual: residual query failed for %s.%s (%s: %s)", tbl, col, type(e).__name__, e
+                    )
 
     return residuals
 
 
-def scan_node_paths(
-    conn: Any, old_patterns: list[str]
-) -> list[dict]:
+def scan_node_paths(conn: Any, old_patterns: list[str]) -> list[dict]:
     """扫描 nodes.path 中包含旧路径前缀的残留（阶段D专用）。
 
     返回残留列表。
     """
     residuals: list[dict] = []
     for pattern in old_patterns:
-        cur = conn.execute(
-            "SELECT COUNT(*) AS cnt FROM nodes WHERE path LIKE %s", (f"%{pattern}%",)
-        )
+        cur = conn.execute("SELECT COUNT(*) AS cnt FROM nodes WHERE path LIKE %s", (f"%{pattern}%",))  # noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）
         row = cur.fetchone()
         cnt = row["cnt"] if row else 0
         if cnt > 0:
-            cur = conn.execute(
-                "SELECT path FROM nodes WHERE path LIKE %s LIMIT 5", (f"%{pattern}%",)
-            )
+            cur = conn.execute("SELECT path FROM nodes WHERE path LIKE %s LIMIT 5", (f"%{pattern}%",))  # noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）
             samples = [r["path"][:80] for r in cur.fetchall()]
             residuals.append(
                 {
@@ -233,14 +229,14 @@ def scan_files_residual(
 
     返回残留列表，每项: {file, line, old_id}。
     """
-    pattern = re.compile('|'.join(r'(?<![A-Z])' + re.escape(d) for d in old_ids))
+    pattern = re.compile("|".join(r"(?<![A-Z])" + re.escape(d) for d in old_ids))
     residuals: list[dict] = []
     for fpath in file_paths:
         p = Path(fpath)
         if not p.exists():
             continue
         try:
-            content = p.read_text(encoding='utf-8', errors='ignore')
+            content = p.read_text(encoding="utf-8", errors="ignore")
         except OSError as exc:
             logger.warning("OSError reading %s: %s", fpath, exc)
             continue
@@ -248,19 +244,21 @@ def scan_files_residual(
             start = m.start()
             # 排除 [BLUEPRINT] 元数据行：只检查匹配点所在行（非 50 字符窗口）
             # 修复 R5 红蓝对抗发现的 bug：50 字符窗口会误排除邻近行的真实残留
-            line_start = content.rfind('\n', 0, start) + 1
-            line_end = content.find('\n', start)
+            line_start = content.rfind("\n", 0, start) + 1
+            line_end = content.find("\n", start)
             if line_end == -1:
                 line_end = len(content)
             line_content = content[line_start:line_end]
-            if '[BLUEPRINT]' in line_content:
+            if "[BLUEPRINT]" in line_content:
                 continue
-            line_num = content.count('\n', 0, start) + 1
-            residuals.append({
-                'file': fpath,
-                'line': line_num,
-                'old_id': m.group(),
-            })
+            line_num = content.count("\n", 0, start) + 1
+            residuals.append(
+                {
+                    "file": fpath,
+                    "line": line_num,
+                    "old_id": m.group(),
+                }
+            )
     return residuals
 
 
@@ -289,18 +287,18 @@ def scan_file_rename_residual(conn: Any) -> list[dict]:
         # 检查文件是否存在于磁盘
         full_path = REPO_ROOT / file_path
         if not full_path.exists():
-            residuals.append({
-                "node_id": r["node_id"],
-                "file_path": file_path,
-                "domain_id": r["domain_id"] or "",
-                "build_status": r["build_status"] or "",
-            })
+            residuals.append(
+                {
+                    "node_id": r["node_id"],
+                    "file_path": file_path,
+                    "domain_id": r["domain_id"] or "",
+                    "build_status": r["build_status"] or "",
+                }
+            )
     return residuals
 
 
-def circular_review(
-    db_path: str, old_ids: list[str], rounds: int = 2
-) -> bool:
+def circular_review(db_path: str, old_ids: list[str], rounds: int = 2) -> bool:
     """循环审查：连续 rounds 轮扫描，每轮0残留才算通过。
 
     返回 True=通过（连续rounds轮0残留），False=失败。
@@ -317,18 +315,14 @@ def circular_review(
             else:
                 passed_rounds = 0  # 重置连续通过计数
                 for r in residuals:
-                    print(
-                        f"    {r['table']}.{r['column']} contains '{r['old_id']}': {r['count']} rows"
-                    )
+                    print(f"    {r['table']}.{r['column']} contains '{r['old_id']}': {r['count']} rows")
         finally:
             conn.close()
 
     return passed_rounds >= rounds
 
 
-def circular_review_node_paths(
-    db_path: str, old_patterns: list[str], rounds: int = 2
-) -> bool:
+def circular_review_node_paths(db_path: str, old_patterns: list[str], rounds: int = 2) -> bool:
     """循环审查节点路径列：连续 rounds 轮扫描，每轮0残留才算通过（阶段D专用）。
 
     扫描范围：nodes.path + blueprint_links.blueprint_path（与 scan_node_paths 一致）。
@@ -346,9 +340,7 @@ def circular_review_node_paths(
             else:
                 passed_rounds = 0  # 重置连续通过计数
                 for r in residuals:
-                    print(
-                        f"    {r['table']}.{r['column']} contains '{r['old_id']}': {r['count']} rows"
-                    )
+                    print(f"    {r['table']}.{r['column']} contains '{r['old_id']}': {r['count']} rows")
         finally:
             conn.close()
 
@@ -442,8 +434,10 @@ def main() -> int:
             return EXIT_PASS
         print(f"[FAIL] 发现 {total} 个幽灵文件（depgraph 记录了磁盘上不存在的 file_path）:")
         for r in residuals:
-            print(f"  node_id={r['node_id']} file_path={r['file_path']} "
-                  f"domain={r['domain_id']} build_status={r['build_status']}")
+            print(
+                f"  node_id={r['node_id']} file_path={r['file_path']} "
+                f"domain={r['domain_id']} build_status={r['build_status']}"
+            )
         print("修复: python scripts/governance/generate_project_depgraph.py --output-db depgraph --force")
         return EXIT_FINDINGS
 

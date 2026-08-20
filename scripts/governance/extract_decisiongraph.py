@@ -260,19 +260,22 @@ def main():
         description="decisiongraph on-demand extraction tool",
     )
     parser.add_argument("--summary", action="store_true", help="Decision graph summary")
-    parser.add_argument("--layers", type=str, nargs="?", const="ALL",
-                        help="Query layers (no arg=all, or comma-separated layer_id)")
-    parser.add_argument("--track", type=str,
-                        help="Filter by track (model_driven/data_driven/human_override/emergency)")
-    parser.add_argument("--nodes", type=str, nargs="?", const="ALL",
-                        help="Query nodes (no arg=all, or comma-separated node_id)")
+    parser.add_argument(
+        "--layers", type=str, nargs="?", const="ALL", help="Query layers (no arg=all, or comma-separated layer_id)"
+    )
+    parser.add_argument("--track", type=str, help="Filter by track (model_driven/data_driven/human_override/emergency)")
+    parser.add_argument(
+        "--nodes", type=str, nargs="?", const="ALL", help="Query nodes (no arg=all, or comma-separated node_id)"
+    )
     parser.add_argument("--layer", type=str, help="Filter nodes by layer_id")
     parser.add_argument("--type", type=str, help="Filter by node_type or edge_type")
     parser.add_argument("--module_id", type=str, help="Filter nodes by module_id")
-    parser.add_argument("--build_status", type=str,
-                        help="Filter by build_status (planned/generated/testing/stable/deprecated)")
-    parser.add_argument("--edges", type=str, nargs="?", const="ALL",
-                        help="Query edges (no arg=all, or comma-separated edge_id)")
+    parser.add_argument(
+        "--build_status", type=str, help="Filter by build_status (planned/generated/testing/stable/deprecated)"
+    )
+    parser.add_argument(
+        "--edges", type=str, nargs="?", const="ALL", help="Query edges (no arg=all, or comma-separated edge_id)"
+    )
     parser.add_argument("--from", dest="from_node", type=int, help="Filter edges by from_node_id")
     parser.add_argument("--to", dest="to_node", type=int, help="Filter edges by to_node_id")
     parser.add_argument("--tracks", action="store_true", help="Query four tracks")
@@ -281,10 +284,17 @@ def main():
     parser.add_argument("--output", type=str, help="Output to JSON file (default stdout)")
     args = parser.parse_args()
 
-    if not any([
-        args.summary, args.layers, args.nodes, args.edges, args.tracks,
-        args.invariants, args.stats,
-    ]):
+    if not any(
+        [
+            args.summary,
+            args.layers,
+            args.nodes,
+            args.edges,
+            args.tracks,
+            args.invariants,
+            args.stats,
+        ]
+    ):
         parser.print_help()
         print("\nERROR: Must specify at least one extraction mode.", file=sys.stderr)
         sys.exit(3)
@@ -307,8 +317,7 @@ def main():
 
         if args.nodes is not None:
             if args.nodes == "ALL":
-                cmd_nodes(reader, None, args.layer, args.type,
-                          args.module_id, args.build_status, args.output)
+                cmd_nodes(reader, None, args.layer, args.type, args.module_id, args.build_status, args.output)
             else:
                 try:
                     node_ids = [int(n.strip()) for n in args.nodes.split(",")]
@@ -319,8 +328,7 @@ def main():
 
         if args.edges is not None:
             if args.edges == "ALL":
-                cmd_edges(reader, None, args.type, args.track,
-                          args.from_node, args.to_node, args.output)
+                cmd_edges(reader, None, args.type, args.track, args.from_node, args.to_node, args.output)
             else:
                 try:
                     edge_ids = [int(e.strip()) for e in args.edges.split(",")]

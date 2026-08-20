@@ -16,6 +16,7 @@
 
 边的方向：from(消费者) → to(提供者)，即 from 依赖 to。
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -50,74 +51,137 @@ from zephyr.governance.depgraph_schema import get_depgraph_pg_connection, releas
 DESIGN_EDGES = [
     # --- 因子域：Barra 风险模型链 ---
     # D-FACTOR-11 暴露计算器 → D-FACTOR-06 Barra风险模型
-    ("src/zephyr/factor/barra/exposure_calculator/",
-     "src/zephyr/factor/barra/risk_model/",
-     "import", "critical", "CTR-002", "",
-     "Barra风格因子→因子暴露计算"),
+    (
+        "src/zephyr/factor/barra/exposure_calculator/",
+        "src/zephyr/factor/barra/risk_model/",
+        "import",
+        "critical",
+        "CTR-002",
+        "",
+        "Barra风格因子→因子暴露计算",
+    ),
     # D-FACTOR-24 风险预算分配器 → D-FACTOR-11 暴露计算器
-    ("src/zephyr/factor/barra/risk_budget_allocator/",
-     "src/zephyr/factor/barra/exposure_calculator/",
-     "import", "critical", "CTR-002", "",
-     "因子暴露→风险预算分配"),
+    (
+        "src/zephyr/factor/barra/risk_budget_allocator/",
+        "src/zephyr/factor/barra/exposure_calculator/",
+        "import",
+        "critical",
+        "CTR-002",
+        "",
+        "因子暴露→风险预算分配",
+    ),
     # D-FACTOR-24 风险预算分配器 → D-FACTOR-06 Barra风险模型
-    ("src/zephyr/factor/barra/risk_budget_allocator/",
-     "src/zephyr/factor/barra/risk_model/",
-     "import", "medium", "CTR-002", "",
-     "Barra因子→风险预算约束"),
+    (
+        "src/zephyr/factor/barra/risk_budget_allocator/",
+        "src/zephyr/factor/barra/risk_model/",
+        "import",
+        "medium",
+        "CTR-002",
+        "",
+        "Barra因子→风险预算约束",
+    ),
     # D-FACTOR-10 换手率分析器 → D-FACTOR-09 相关性分析器
-    ("src/zephyr/factor/analysis/turnover_analyzer/",
-     "src/zephyr/factor/analysis/correlation_analyzer/",
-     "import", "medium", "", "",
-     "相关性矩阵→换手率分析输入"),
-
+    (
+        "src/zephyr/factor/analysis/turnover_analyzer/",
+        "src/zephyr/factor/analysis/correlation_analyzer/",
+        "import",
+        "medium",
+        "",
+        "",
+        "相关性矩阵→换手率分析输入",
+    ),
     # --- 数据工程域：流处理链 ---
     # D-DATA-ENG-06 流处理引擎 → D-DATA-04 实时行情推送管理器
-    ("src/zephyr/data_eng/services/stream_processing/",
-     "src/zephyr/data/realtime_push_manager/",
-     "import", "critical", "", "",
-     "实时行情流→流处理引擎输入"),
+    (
+        "src/zephyr/data_eng/services/stream_processing/",
+        "src/zephyr/data/realtime_push_manager/",
+        "import",
+        "critical",
+        "",
+        "",
+        "实时行情流→流处理引擎输入",
+    ),
     # D-DATA-ENG-09 训练数据管理器 → D-DATA-ENG-03 特征存储
-    ("src/zephyr/data_eng/services/training_data_manager/",
-     "src/zephyr/data/feature_store/",
-     "import", "critical", "", "",
-     "特征存储PIT查询→训练数据构建"),
+    (
+        "src/zephyr/data_eng/services/training_data_manager/",
+        "src/zephyr/data/feature_store/",
+        "import",
+        "critical",
+        "",
+        "",
+        "特征存储PIT查询→训练数据构建",
+    ),
     # D-DATA-ENG-18 合成数据生成器 → D-DATA-ENG-09 训练数据管理器
-    ("src/zephyr/data_eng/services/synthetic_data/",
-     "src/zephyr/data_eng/services/training_data_manager/",
-     "import", "medium", "", "",
-     "训练数据→合成数据增强"),
+    (
+        "src/zephyr/data_eng/services/synthetic_data/",
+        "src/zephyr/data_eng/services/training_data_manager/",
+        "import",
+        "medium",
+        "",
+        "",
+        "训练数据→合成数据增强",
+    ),
     # D-DATA-ENG-07 漂移感知调度器 → D-DATA-ENG-16 数据画像
-    ("src/zephyr/data_eng/services/drift_aware_scheduler/",
-     "src/zephyr/data_eng/services/data_profiling/",
-     "import", "medium", "", "",
-     "数据画像统计→漂移检测输入"),
+    (
+        "src/zephyr/data_eng/services/drift_aware_scheduler/",
+        "src/zephyr/data_eng/services/data_profiling/",
+        "import",
+        "medium",
+        "",
+        "",
+        "数据画像统计→漂移检测输入",
+    ),
     # D-DATA-ENG-12 数据湖管理器 → D-DATA-ENG-13 数据压缩归档
-    ("src/zephyr/data_eng/services/data_lake_manager/",
-     "src/zephyr/data_eng/services/data_compression/",
-     "import", "medium", "", "",
-     "冷数据→压缩归档"),
+    (
+        "src/zephyr/data_eng/services/data_lake_manager/",
+        "src/zephyr/data_eng/services/data_compression/",
+        "import",
+        "medium",
+        "",
+        "",
+        "冷数据→压缩归档",
+    ),
     # D-DATA-ENG-14 Schema演进管理器 → D-DATA-ENG-17 数据目录同步
-    ("src/zephyr/data_eng/services/schema_evolution/",
-     "src/zephyr/data_eng/services/data_catalog/",
-     "import", "medium", "", "",
-     "Schema变更→数据目录同步"),
-
+    (
+        "src/zephyr/data_eng/services/schema_evolution/",
+        "src/zephyr/data_eng/services/data_catalog/",
+        "import",
+        "medium",
+        "",
+        "",
+        "Schema变更→数据目录同步",
+    ),
     # --- 回测域：辅助模块链 ---
     # BT-23 异常诊断器 → BT-22 数据质量检查器
-    ("src/zephyr/backtest/services/anomaly_diagnoser.py",
-     "src/zephyr/backtest/services/data_quality_checker.py",
-     "import", "medium", "", "",
-     "数据质量报告→异常诊断输入"),
+    (
+        "src/zephyr/backtest/services/anomaly_diagnoser.py",
+        "src/zephyr/backtest/services/data_quality_checker.py",
+        "import",
+        "medium",
+        "",
+        "",
+        "数据质量报告→异常诊断输入",
+    ),
     # BT-24 结果对比器 → BT-20 缓存管理器
-    ("src/zephyr/backtest/services/result_comparator.py",
-     "src/zephyr/backtest/services/cache_manager.py",
-     "import", "medium", "", "",
-     "缓存回测结果→多次结果对比"),
+    (
+        "src/zephyr/backtest/services/result_comparator.py",
+        "src/zephyr/backtest/services/cache_manager.py",
+        "import",
+        "medium",
+        "",
+        "",
+        "缓存回测结果→多次结果对比",
+    ),
     # BT-21 参数分析器 → BT-20 缓存管理器
-    ("src/zephyr/backtest/services/param_analyzer.py",
-     "src/zephyr/backtest/services/cache_manager.py",
-     "import", "medium", "", "",
-     "缓存参数网格结果→参数显著性分析"),
+    (
+        "src/zephyr/backtest/services/param_analyzer.py",
+        "src/zephyr/backtest/services/cache_manager.py",
+        "import",
+        "medium",
+        "",
+        "",
+        "缓存参数网格结果→参数显著性分析",
+    ),
 ]
 
 

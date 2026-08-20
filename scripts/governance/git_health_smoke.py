@@ -27,6 +27,7 @@ AI session 启动时运行的核心工具健康度检查。
 - 2.49.0+：pass（FAST_CWD 已修复）——但 2.49.x/2.50.0 存在 SSH hang regression。
 - 2.50.1+：pass（推荐版本）——FAST_CWD 修复 + SSH hang 修复。
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -75,15 +76,17 @@ def _parse_git_version(version_str: str) -> tuple[int, int, int] | None:
 def run_git(args, cwd, timeout=60.0):
     """_run_git implementation."""
     try:
-        r = subprocess.run(["git"]+args, cwd=cwd, capture_output=True, text=True,
-                           encoding="utf-8", errors="replace", timeout=timeout)
+        r = subprocess.run(  # noqa: bare-subprocess  冒烟诊断脚本直接调 git（人工一次性触发，窗口闪现无影响）
+            ["git"] + args, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout
+        )
         return r.returncode, r.stdout.strip(), r.stderr.strip()
     except subprocess.TimeoutExpired:
         return -1, "", f"timeout after {timeout}s"
     except Exception as e:
         return -2, "", str(e)
 
-def _run_git(args, cwd, timeout = 60.0):
+
+def _run_git(args, cwd, timeout=60.0):
     """向后兼容 thin wrapper（Stage 4 公共化）。"""
     return run_git(args, cwd, timeout)
 
@@ -105,8 +108,13 @@ def _check_git_version(repo_root):
             f"{_RECOMMENDED_VERSION[1]}.{_RECOMMENDED_VERSION[2]}+（FAST_CWD 修复 + "
             f"SSH hang regression 修复）。"
         )
-        return {"check": "git_version", "status": "warn", "detail": detail,
-                "version": version, "recommended": ".".join(map(str, _RECOMMENDED_VERSION))}
+        return {
+            "check": "git_version",
+            "status": "warn",
+            "detail": detail,
+            "version": version,
+            "recommended": ".".join(map(str, _RECOMMENDED_VERSION)),
+        }
 
     # 2. 2.49.0+ 但低于 2.50.1 — FAST_CWD 已修复但存在 SSH hang regression（pass + 提示）
     if parsed is not None and parsed >= (2, 49, 0) and parsed < _RECOMMENDED_VERSION:
@@ -116,16 +124,24 @@ def _check_git_version(repo_root):
             f"git {_RECOMMENDED_VERSION[0]}.{_RECOMMENDED_VERSION[1]}."
             f"{_RECOMMENDED_VERSION[2]}+（同时修复 SSH hang）。"
         )
-        return {"check": "git_version", "status": "pass", "detail": detail,
-                "version": version, "recommended": ".".join(map(str, _RECOMMENDED_VERSION))}
+        return {
+            "check": "git_version",
+            "status": "pass",
+            "detail": detail,
+            "version": version,
+            "recommended": ".".join(map(str, _RECOMMENDED_VERSION)),
+        }
 
     # 3. 2.50.1+ — 推荐版本（pass）
     if parsed is not None and parsed >= _RECOMMENDED_VERSION:
-        detail = (
-            f"git version {version} — 推荐版本（FAST_CWD 修复 + SSH hang regression 修复）。"
-        )
-        return {"check": "git_version", "status": "pass", "detail": detail,
-                "version": version, "recommended": ".".join(map(str, _RECOMMENDED_VERSION))}
+        detail = f"git version {version} — 推荐版本（FAST_CWD 修复 + SSH hang regression 修复）。"
+        return {
+            "check": "git_version",
+            "status": "pass",
+            "detail": detail,
+            "version": version,
+            "recommended": ".".join(map(str, _RECOMMENDED_VERSION)),
+        }
 
     # 4. 低于 2.48 或解析失败 — fail-open pass + 提示
     detail = (
@@ -133,8 +149,13 @@ def _check_git_version(repo_root):
         f"建议升级到 git {_RECOMMENDED_VERSION[0]}.{_RECOMMENDED_VERSION[1]}."
         f"{_RECOMMENDED_VERSION[2]}+ 以确保 FAST_CWD 与 SSH hang 均已修复。"
     )
-    return {"check": "git_version", "status": "pass", "detail": detail,
-            "version": version, "recommended": ".".join(map(str, _RECOMMENDED_VERSION))}
+    return {
+        "check": "git_version",
+        "status": "pass",
+        "detail": detail,
+        "version": version,
+        "recommended": ".".join(map(str, _RECOMMENDED_VERSION)),
+    }
 
 
 def _check_fscache_fsmonitor(repo_root):
@@ -148,8 +169,11 @@ def _check_fscache_fsmonitor(repo_root):
         issues.append("core.fsmonitor=true(仓库级)—违反 GIT-BUDGET-INV-004")
     if issues:
         return {"check": "fscache_fsmonitor", "status": "fail", "detail": "; ".join(issues)}
-    return {"check": "fscache_fsmonitor", "status": "pass",
-            "detail": f"core.fscache={val_f or '(unset)'} / core.fsmonitor={val_m or '(unset)'}(仓库级)"}
+    return {
+        "check": "fscache_fsmonitor",
+        "status": "pass",
+        "detail": f"core.fscache={val_f or '(unset)'} / core.fsmonitor={val_m or '(unset)'}(仓库级)",
+    }
 
 
 def _check_status_timing(repo_root):
@@ -158,8 +182,12 @@ def _check_status_timing(repo_root):
     rc, stdout, stderr = _run_git(["status", "--short"], repo_root, timeout=120)
     elapsed = time.monotonic() - start
     if rc != 0:
-        return {"check": "status_timing", "status": "fail",
-                "detail": f"git status failed({rc}): {stderr}", "elapsed_s": round(elapsed, 2)}
+        return {
+            "check": "status_timing",
+            "status": "fail",
+            "detail": f"git status failed({rc}): {stderr}",
+            "elapsed_s": round(elapsed, 2),
+        }
     if elapsed > _STATUS_FAIL_SECONDS:
         status = "fail"
         detail = f"git status 耗时 {elapsed:.1f}s > {_STATUS_FAIL_SECONDS}s — index 缓存可能损坏"
@@ -193,15 +221,23 @@ def run_git_health_smoke(repo_root=None):
     root = str(repo_root) if repo_root else os.getcwd()
     if not os.path.isdir(os.path.join(root, ".git")) and not os.path.isfile(os.path.join(root, ".git")):
         return {"status": "fail", "checks": [], "timestamp": time.time(), "summary": f"不是 git 仓库: {root}"}
-    checks = [_check_git_version(root), _check_fscache_fsmonitor(root),
-              _check_status_timing(root), _check_git_aliases(root)]
+    checks = [
+        _check_git_version(root),
+        _check_fscache_fsmonitor(root),
+        _check_status_timing(root),
+        _check_git_aliases(root),
+    ]
     overall = "pass"
     for c in checks:
         if _STATUS_PRIORITY.get(c["status"], 0) > _STATUS_PRIORITY.get(overall, 0):
             overall = c["status"]
     summary = ", ".join(f"{c['check']}={c['status']}" for c in checks)
-    return {"status": overall, "checks": checks, "timestamp": time.time(),
-            "summary": f"git_health_smoke: {overall} ({summary})"}
+    return {
+        "status": overall,
+        "checks": checks,
+        "timestamp": time.time(),
+        "summary": f"git_health_smoke: {overall} ({summary})",
+    }
 
 
 def main():

@@ -29,6 +29,7 @@
     python scripts/governance/_shared/algo_flow_applier.py --apply    # 应用全部校准标记
     python scripts/governance/_shared/algo_flow_applier.py --verify   # 全量回读验证覆盖率
 """
+
 from __future__ import annotations
 
 import argparse
@@ -101,11 +102,13 @@ def _dup_group_plan(ms: list[dict], tgt: str) -> list[dict]:
     plan: list[dict] = []
     for m in ms:
         final = tgt if m is keeper else (m["path"] or "").replace("\\", "/")
-        plan.append({
-            "module_id": m["module_id"],
-            "depgraph_path": (m["path"] or "").replace("\\", "/"),
-            "target_path": final,
-        })
+        plan.append(
+            {
+                "module_id": m["module_id"],
+                "depgraph_path": (m["path"] or "").replace("\\", "/"),
+                "target_path": final,
+            }
+        )
     return plan
 
 
@@ -124,16 +127,16 @@ def build_plan() -> list[dict]:
     plan: list[dict] = []
     for tgt, ms in groups.items():
         if len(ms) == 1:
-            plan.append({
-                "module_id": ms[0]["module_id"],
-                "depgraph_path": ms[0]["path"],
-                "target_path": tgt,
-            })
+            plan.append(
+                {
+                    "module_id": ms[0]["module_id"],
+                    "depgraph_path": ms[0]["path"],
+                    "target_path": tgt,
+                }
+            )
             continue
         plan.extend(_dup_group_plan(ms, tgt))
-    PLAN_JSON.write_text(
-        json.dumps(plan, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n"
-    )
+    PLAN_JSON.write_text(json.dumps(plan, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n")
     return plan
 
 
@@ -208,7 +211,7 @@ def apply_marker_to_file(py_abs: Path, marker: str) -> tuple[bool, str]:
             quote = '"""'
         start, end = node.lineno - 1, node.end_lineno - 1  # 0-based 含
         replacement = (quote + "\n" + new_doc.rstrip("\n") + "\n" + quote).splitlines()
-        new_lines = lines[:start] + replacement + lines[end + 1:]
+        new_lines = lines[:start] + replacement + lines[end + 1 :]
     else:
         if '"""' in marker:
             return False, "marker 含三引号且无 docstring 可附着"
@@ -239,7 +242,10 @@ def _git_add(rel_path: str) -> str:
     try:
         r = subprocess.run(  # noqa: bare-subprocess  governance脚本调git_guard叶子命令，窗口闪现无影响且避免反向依赖zephyr.shared
             [sys.executable, "scripts/git_guard.py", "add", rel_path],
-            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=60,
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=60,
         )
         return "" if r.returncode == 0 else (r.stderr or r.stdout or "git add 非0")[:200]
     except Exception as e:  # noqa: BLE001
@@ -283,7 +289,7 @@ def _apply() -> None:
             fail += 1
             continue
         # 截取从 [ALGO_FLOW] 起（允许代理在头部写说明文字）
-        marker = marker[marker.index(_MARKER_START):]
+        marker = marker[marker.index(_MARKER_START) :]
         tgt = REPO_ROOT / item["target_path"]
         if not tgt.exists():
             failures.append({"module_id": mid, "error": f"目标文件不存在 {item['target_path']}"})

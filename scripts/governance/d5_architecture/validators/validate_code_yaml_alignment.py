@@ -139,8 +139,7 @@ def scan_alignment(code_dir: Path, yaml_dir: Path) -> tuple[list[str], list[str]
     for dir_name in sorted(actual_dirs):
         if dir_name not in yaml_expected_dirs:
             criticals.append(
-                f"目录存在但 YAML 未登记: src/zephyr/{dir_name}/ "
-                f"— GATE-A 违规，请在 architecture_model/index.yaml 添加"
+                f"目录存在但 YAML 未登记: src/zephyr/{dir_name}/ — GATE-A 违规，请在 architecture_model/index.yaml 添加"
             )
 
     # HIGH/MEDIUM: YAML ↔ 实际文件对账

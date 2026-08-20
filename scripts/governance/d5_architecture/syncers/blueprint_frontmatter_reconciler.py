@@ -26,6 +26,7 @@
 如 blueprint_path 为空（depgraph 未登记路径），使用命名约定 docs/03_modules/<module_id>.md
 查找已存在的蓝图。blueprint_path 无扩展名时自动补 .md（DCR-005 合规）。
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -60,10 +61,11 @@ try:
     from d5_architecture.panorama_common import weighted_domain_vote
 except ImportError:
     import sys as _sys
+
     _pc_path = str(Path(__file__).resolve().parents[1])  # d5_architecture/
     if _pc_path not in _sys.path:
         _sys.path.insert(0, _pc_path)
-    from panorama_common import min_maturity as _min_mat
+    from panorama_common import min_maturity as _min_mat  # noqa: import-integrity  sys.path 动态加载的本地模块
     from panorama_common import weighted_domain_vote  # noqa: import-integrity  sys.path 动态加载的本地模块
 
 # ---------------------------------------------------------------------------
@@ -134,7 +136,7 @@ def _update_frontmatter(content: str, updates: dict) -> str:
             fm_text = pattern.sub(new_line, fm_text)
         else:
             fm_text = fm_text.rstrip() + "\n" + new_line
-    return f"---\n{fm_text}\n---\n" + content[match.end():]
+    return f"---\n{fm_text}\n---\n" + content[match.end() :]
 
 
 def _query_module_bp(module_id: str) -> tuple[str, str, str, str] | None:
@@ -188,8 +190,7 @@ def _query_module_bp(module_id: str) -> tuple[str, str, str, str] | None:
         conn.close()
 
 
-def _write_frontmatter_updates(bp_file: Path, module_id: str,
-                                domain_id: str, dm: str, bs: str) -> int:
+def _write_frontmatter_updates(bp_file: Path, module_id: str, domain_id: str, dm: str, bs: str) -> int:
     """读取蓝图文件，更新 frontmatter 核心字段。
 
     module_id / responsibility_domain 总是写入（depgraph 为真源）。
@@ -215,6 +216,8 @@ def _write_frontmatter_updates(bp_file: Path, module_id: str,
         if new_content != content:
             bp_file.write_text(new_content, encoding="utf-8")
         return EXIT_PASS
+
+
 # 蓝图扫描根目录（fallback：bp_path 找不到文件时扫描匹配 module_id）
 _BP_SCAN_ROOT = _REPO_ROOT / "docs" / "03_modules"
 _BP_SCAN_FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)

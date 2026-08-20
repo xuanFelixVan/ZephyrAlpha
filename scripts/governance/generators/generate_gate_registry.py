@@ -101,7 +101,7 @@ COMMIT_GATES_DIR = REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "commit_ga
 # .search() 取首个——已验证 [MODIFY-GUARD] gate_id 与 GateSpec gate_id 一致（抽样验证
 # PURE-ASSERTION/PURE-SHIM/CREATE-GUARD 均一致）。
 _RE_GATE_ID = re.compile(r'gate_id\s*=\s*"([^"]+)"')
-_RE_PRIORITY = re.compile(r'priority\s*=\s*(\d+)')
+_RE_PRIORITY = re.compile(r"priority\s*=\s*(\d+)")
 # 模块 docstring 第一行格式："""xxx.py — 描述..."""
 _RE_DOCSTRING_FIRST_LINE = re.compile(r'^"""[^\n]*?—\s*(.+?)$', re.MULTILINE)
 

@@ -65,6 +65,7 @@ Exit codes:
     0 = 无违规
     1 = 发现违规（error severity）
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -97,12 +98,12 @@ ERASURE_PATTERNS: list[tuple[str, str, str]] = [
     # git checkout -- — legacy 擦除（应已替换为 stash）
     (r'["\']git["\']\s*,\s*["\']checkout["\']\s*,\s*["\']--', "git_checkout_erase", "error"),
     # Path.unlink() / os.unlink() / os.remove()
-    (r'\.unlink\s*\(\s*\)', "path_unlink", "warning"),
-    (r'\bos\.(remove|unlink)\s*\(', "os_unlink", "warning"),
+    (r"\.unlink\s*\(\s*\)", "path_unlink", "warning"),
+    (r"\bos\.(remove|unlink)\s*\(", "os_unlink", "warning"),
     # shutil.rmtree — 目录递归删除
-    (r'shutil\.rmtree\s*\(', "shutil_rmtree", "warning"),
+    (r"shutil\.rmtree\s*\(", "shutil_rmtree", "warning"),
     # _quarantine_file — 内部已遥测，但审计应确认调用存在（info 级别）
-    (r'_quarantine_file\s*\(', "quarantine_file", "info"),
+    (r"_quarantine_file\s*\(", "quarantine_file", "info"),
 ]
 
 # 满足遥测要求的函数名（同函数内出现即视为已遥测）
@@ -120,24 +121,24 @@ TELEMETRY_FUNCTIONS: set[str] = {
 # 原因：worktree 内文件操作不影响主工作区；temp 文件（.runtime/.aidrafts/msg_file）非源码
 # 健康检查/孤儿清理的 unlink 是 temp test file / 过期辅助脚本，非主工作区源码擦除
 EXEMPT_FUNC_NAME_KEYWORDS: set[str] = {
-    "worktree_file",   # _delete_worktree_file — worktree 内文件
-    "worktree_path",   # worktree 路径操作
-    "cleanup_pool",    # _cleanup_pool_worktree — worktree pool 目录清理
-    "pool_worktree",   # 同上
-    "msg_file",        # 临时 commit message 文件
-    "orphan",          # _cleanup_orphan_draft_scripts — .aidrafts 过期临时脚本清理
+    "worktree_file",  # _delete_worktree_file — worktree 内文件
+    "worktree_path",  # worktree 路径操作
+    "cleanup_pool",  # _cleanup_pool_worktree — worktree pool 目录清理
+    "pool_worktree",  # 同上
+    "msg_file",  # 临时 commit message 文件
+    "orphan",  # _cleanup_orphan_draft_scripts — .aidrafts 过期临时脚本清理
     "cleanup_orphan",  # 同上（双关键词覆盖）
     "sweep_quarantine",  # 隔离区过期清理（已是二级操作）
-    "health_check",    # _run_startup_health_check — temp test file 读写验证
-    "_force_rmtree",   # worktree 目录强制删除（已由 _log_worktree_delete 遥测）
-    "release",         # _GlobalCommitLock.release / file lock release — 锁文件清理
-    "_clear_stale",    # _clear_stale_lock — 过期锁文件清理
+    "health_check",  # _run_startup_health_check — temp test file 读写验证
+    "_force_rmtree",  # worktree 目录强制删除（已由 _log_worktree_delete 遥测）
+    "release",  # _GlobalCommitLock.release / file lock release — 锁文件清理
+    "_clear_stale",  # _clear_stale_lock — 过期锁文件清理
     # P3-1（2026-07-19）：self_healer._rollback — git restore 回滚 self_healer 自身修改
     # 语义不同于常规擦除：① 回滚的是 self_healer 自己刚做的修改（非用户/AI 文件操作）
     # ② 已有 logger.info/warning 记录（非 worktree_ops_log.jsonl 结构化遥测）
     # ③ 跨域 import _log_workspace_op 会违反架构边界（semantic_audit → gov_enforcement）
     # TODO(P3-1.1 follow-up): 提取 _log_workspace_op 到 shared 模块后，移除此豁免并补遥测
-    "rollback",        # _rollback / _rollback_handler — 自愈回滚自身修改
+    "rollback",  # _rollback / _rollback_handler — 自愈回滚自身修改
 }
 
 # 豁免路径片段：擦除操作涉及这些路径片段时豁免（temp/lock/pathspec 文件，非源码）
@@ -149,11 +150,11 @@ EXEMPT_PATH_KEYWORDS: set[str] = {
     "tmp",
     "tempfile",
     "NamedTemporaryFile",
-    "lock_file",      # _GlobalCommitLock / WorktreeManager 锁文件清理
-    "lock_path",      # 文件锁路径清理
+    "lock_file",  # _GlobalCommitLock / WorktreeManager 锁文件清理
+    "lock_path",  # 文件锁路径清理
     "_lock_file",
-    "pathspec",       # git pathspec 临时文件（add_pathspec_file / del_pathspec）
-    "bundle_path",    # git bundle 临时文件
+    "pathspec",  # git pathspec 临时文件（add_pathspec_file / del_pathspec）
+    "bundle_path",  # git bundle 临时文件
 }
 
 # 排除目录（_archive 是归档的 one-off 脚本，不审计）
@@ -167,11 +168,11 @@ class Violation:
     file: str
     line: int
     col: int
-    op: str           # git_stash_push / path_unlink / ...
-    function: str     # 所在函数名
-    severity: str     # error / warning / info
-    snippet: str      # 违规行内容（前 120 字符）
-    reason: str       # 违规原因说明
+    op: str  # git_stash_push / path_unlink / ...
+    function: str  # 所在函数名
+    severity: str  # error / warning / info
+    snippet: str  # 违规行内容（前 120 字符）
+    reason: str  # 违规原因说明
 
 
 def _is_exempt_function(func_name: str) -> bool:
@@ -221,9 +222,11 @@ def _collect_docstring_line_ranges(tree: ast.AST) -> list[tuple[int, int]]:
             if not body:
                 continue
             first = body[0]
-            if (isinstance(first, ast.Expr)
-                    and isinstance(first.value, ast.Constant)
-                    and isinstance(first.value.value, str)):
+            if (
+                isinstance(first, ast.Expr)
+                and isinstance(first.value, ast.Constant)
+                and isinstance(first.value.value, str)
+            ):
                 start = first.lineno
                 end = first.end_lineno or first.lineno
                 ranges.append((start, end))
@@ -283,13 +286,18 @@ def _audit_file(path: Path) -> list[Violation]:
             func_node = _find_enclosing_function(tree, lineno)
             if func_node is None:
                 # 模块级擦除——不豁免，报告
-                violations.append(Violation(
-                    file=str(path), line=lineno, col=m.start(),
-                    op=op_name, function="<module>",
-                    severity=severity,
-                    snippet=line.rstrip()[:120],
-                    reason="模块级擦除操作无函数包裹，无法确认遥测",
-                ))
+                violations.append(
+                    Violation(
+                        file=str(path),
+                        line=lineno,
+                        col=m.start(),
+                        op=op_name,
+                        function="<module>",
+                        severity=severity,
+                        snippet=line.rstrip()[:120],
+                        reason="模块级擦除操作无函数包裹，无法确认遥测",
+                    )
+                )
                 continue
             func_name = func_node.name
             # 豁免：函数名在豁免列表
@@ -299,13 +307,18 @@ def _audit_file(path: Path) -> list[Violation]:
             if _function_has_telemetry(func_node):
                 continue
             # 违规：函数内有擦除操作但无遥测
-            violations.append(Violation(
-                file=str(path), line=lineno, col=m.start(),
-                op=op_name, function=func_name,
-                severity=severity,
-                snippet=line.rstrip()[:120],
-                reason=f"函数 {func_name} 内有 {op_name} 操作但无 _log_workspace_op/_log_worktree_delete 遥测调用",
-            ))
+            violations.append(
+                Violation(
+                    file=str(path),
+                    line=lineno,
+                    col=m.start(),
+                    op=op_name,
+                    function=func_name,
+                    severity=severity,
+                    snippet=line.rstrip()[:120],
+                    reason=f"函数 {func_name} 内有 {op_name} 操作但无 _log_workspace_op/_log_worktree_delete 遥测调用",
+                )
+            )
     return violations
 
 
@@ -368,15 +381,18 @@ def main() -> int:
         description="Audit worktree_ops_log.jsonl telemetry coverage (P2-6)",
     )
     parser.add_argument(
-        "paths", nargs="+",
+        "paths",
+        nargs="+",
         help="file or directory paths to audit",
     )
     parser.add_argument(
-        "--json", action="store_true",
+        "--json",
+        action="store_true",
         help="output JSON (default: human-readable)",
     )
     parser.add_argument(
-        "--include-warnings", action="store_true",
+        "--include-warnings",
+        action="store_true",
         help="include warning severity violations in exit code (default: only errors)",
     )
     args = parser.parse_args()
@@ -390,9 +406,13 @@ def main() -> int:
             violations.extend(audit_worktree_ops_telemetry([path]))
 
     if args.json:
-        print(json.dumps(
-            [asdict(v) for v in violations], ensure_ascii=False, indent=2,
-        ))
+        print(
+            json.dumps(
+                [asdict(v) for v in violations],
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
     else:
         if not violations:
             print("audit_worktree_ops_telemetry: 0 violations")
@@ -405,18 +425,12 @@ def main() -> int:
                 f"({error_count} error, {warn_count} warning, {info_count} info):"
             )
             for v in violations:
-                print(
-                    f"  {v.file}:{v.line}:{v.col} [{v.severity}] "
-                    f"{v.op} in {v.function}()"
-                )
+                print(f"  {v.file}:{v.line}:{v.col} [{v.severity}] {v.op} in {v.function}()")
                 print(f"    reason: {v.reason}")
                 print(f"    snippet: {v.snippet}")
 
     # exit code: error 总是阻断；warning 仅在 --include-warnings 时阻断
-    has_blocking = any(
-        v.severity == "error" or (args.include_warnings and v.severity == "warning")
-        for v in violations
-    )
+    has_blocking = any(v.severity == "error" or (args.include_warnings and v.severity == "warning") for v in violations)
     return 1 if has_blocking else 0
 
 

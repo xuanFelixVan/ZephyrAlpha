@@ -57,7 +57,6 @@ warn_only: false
 """
 
 
-
 def extract_frontmatter(content: str) -> dict:
     """extract_frontmatter implementation."""
     if not content.startswith("---"):

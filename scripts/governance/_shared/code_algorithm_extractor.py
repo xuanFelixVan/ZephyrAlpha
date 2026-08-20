@@ -66,8 +66,8 @@ MAX_ALGO_STEPS = 500
 MAX_INVARIANTS = 200
 
 # 性能护栏（_find_richest_docstring_file 回退扫描）
-_MAX_SCAN_CANDIDATES = 60   # 大包最多扫描 60 个候选 .py（如 MOD-BT-001 有 289 子文件）
-_RICH_DOC_LEN = 200         # docstring ≥200 字视为富（算法真源），立即早停
+_MAX_SCAN_CANDIDATES = 60  # 大包最多扫描 60 个候选 .py（如 MOD-BT-001 有 289 子文件）
+_RICH_DOC_LEN = 200  # docstring ≥200 字视为富（算法真源），立即早停
 
 
 @dataclass
@@ -88,6 +88,7 @@ class AlgorithmSummary:
 
 
 # ── ALGO_FLOW 结构化数据（§4.16，算法全景图推导流程）──────────
+
 
 @dataclass
 class AlgoFlowNode:
@@ -131,6 +132,7 @@ class AlgoFlowData:
 
 
 # ── 内部工具 ──────────────────────────────────────────────────
+
 
 def _truncate(text: str, limit: int) -> str:
     """截断到 limit 字，超长加 …。"""
@@ -224,7 +226,11 @@ def _parse_module_docstring(py_path: Path) -> tuple[Path, str, int, int]:
         start_line = 1
         end_line = 1
         for node in ast.walk(tree):
-            if isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant) and isinstance(node.value.value, str):
+            if (
+                isinstance(node, ast.Expr)
+                and isinstance(node.value, ast.Constant)
+                and isinstance(node.value.value, str)
+            ):
                 start_line = node.lineno
                 end_line = node.end_lineno or node.lineno
                 break
@@ -319,6 +325,7 @@ def _strip_algo_flow_block(docstring: str) -> str:
 
 # ── 公开 API ──────────────────────────────────────────────────
 
+
 def extract_algorithm_from_code(
     py_path: Path | str,
     module_id: str = "",
@@ -379,11 +386,7 @@ def extract_algorithm_from_code(
         algo_flow_data = parse_algo_flow(docstring)
 
         # 有 ALGO_FLOW 推导图的模块算法信息完整（由图承载），不因文字字段为空误报 ⚠
-        quality = (
-            "✅ 完整"
-            if ((summary and algo_steps) or algo_flow_data is not None)
-            else "⚠ docstring 结构不完整"
-        )
+        quality = "✅ 完整" if ((summary and algo_steps) or algo_flow_data is not None) else "⚠ docstring 结构不完整"
 
         # 截断策略：纵览 truncate=True 按 MAX_* 截断（防爆）；域文档 truncate=False 保留完整
         if truncate:
@@ -465,6 +468,7 @@ def extract_algorithm_from_blueprint(
 
     try:
         from frontmatter import parse_frontmatter_with_body_from_file
+
         fm, body = parse_frontmatter_with_body_from_file(blueprint_md_path)
         fm = fm or {}
 
@@ -483,8 +487,7 @@ def extract_algorithm_from_blueprint(
             summary = fm.get("description", "") or title
 
         if not (algo_steps or summary):
-            return _empty(mid, str(blueprint_md_path.relative_to(REPO_ROOT)).replace("\\", "/"),
-                          "蓝图无算法/概述章节")
+            return _empty(mid, str(blueprint_md_path.relative_to(REPO_ROOT)).replace("\\", "/"), "蓝图无算法/概述章节")
 
         rel = str(blueprint_md_path.relative_to(REPO_ROOT)).replace("\\", "/")
         quality = "✅ 完整" if algo_steps else "⚠ 蓝图结构非标准，靠概述兜底"
@@ -564,7 +567,7 @@ _ALGO_FLOW_END = "# [/ALGO_FLOW]"
 
 # 节点字段名 → AlgoFlowNode 属性（§4.16.2 YAML 风格标记）
 _ALGO_NODE_FIELD_MAP = {
-    "name": "name_zh",      # 输入层用 name（中文名+数据类型）
+    "name": "name_zh",  # 输入层用 name（中文名+数据类型）
     "fields": "fields",
     "name_zh": "name_zh",
     "name_en": "name_en",
@@ -581,9 +584,7 @@ _ALGO_NODE_FIELD_MAP = {
 }
 
 # 边定义正则：# SRC -.->|断点| DST  或  # SRC --> DST  或  # SRC -->|label| DST
-_ALGO_EDGE_RE = re.compile(
-    r"^#\s*([A-Za-z0-9_]+)\s+(-\.->|-->)(\|[^|]*\|)?\s+([A-Za-z0-9_]+)"
-)
+_ALGO_EDGE_RE = re.compile(r"^#\s*([A-Za-z0-9_]+)\s+(-\.->|-->)(\|[^|]*\|)?\s+([A-Za-z0-9_]+)")
 
 # 节点字段行：key: value（key 含字母数字下划线）
 _ALGO_FIELD_RE = re.compile(r"^(\w+)\s*:\s*(.*)$")

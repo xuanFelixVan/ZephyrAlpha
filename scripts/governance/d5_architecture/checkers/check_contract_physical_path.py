@@ -73,9 +73,7 @@ timeout_seconds: 30
 warn_only: false
 """
 
-CONTRACTS_YAML: Path = REPO_ROOT / (
-    "architecture_model/contracts/cross_layer_contracts.yaml"
-)
+CONTRACTS_YAML: Path = REPO_ROOT / ("architecture_model/contracts/cross_layer_contracts.yaml")
 
 # Python 标识符正则: [a-zA-Z_][a-zA-Z0-9_]*
 # 目录段必须匹配此正则才能被 Python import
@@ -105,10 +103,7 @@ def _check_physical_path(contract_id: str, physical_path: str) -> list[str]:
             # 检测是否为已知死路径模式
             known = segment in _KNOWN_DEAD_PATTERNS
             marker = " (已知死路径, Python 无法 import)" if known else " (含非法字符, Python 无法 import)"
-            issues.append(
-                f"  {contract_id}: physical_path='{physical_path}' "
-                f"目录段[{idx}]='{segment}'{marker}"
-            )
+            issues.append(f"  {contract_id}: physical_path='{physical_path}' 目录段[{idx}]='{segment}'{marker}")
     return issues
 
 
@@ -153,8 +148,10 @@ def main() -> int:
         else:
             valid_count += 1
 
-    print(f"[GATE-CONTRACT-PHYSICAL-PATH] 扫描 {len(contracts)} 条契约: "
-          f"valid={valid_count}, null(跳过 codegen)={null_count}, 违规={len(all_issues)}")
+    print(
+        f"[GATE-CONTRACT-PHYSICAL-PATH] 扫描 {len(contracts)} 条契约: "
+        f"valid={valid_count}, null(跳过 codegen)={null_count}, 违规={len(all_issues)}"
+    )
 
     if not all_issues:
         print("OK: 所有 physical_path 路径合法 (无连字符目录)")

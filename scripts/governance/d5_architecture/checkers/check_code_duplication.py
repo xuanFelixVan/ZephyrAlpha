@@ -87,8 +87,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Check code duplication across packages")
     parser.add_argument("--warn-only", action="store_true", help="Exit 0 even if duplicates found")
     parser.add_argument("--threshold", type=float, default=0.8, help="Similarity threshold (default: 0.8)")
-    parser.add_argument("--files", nargs="+", default=None, help="只检查指定文件（作为新文件）与已有同名文件的重复（供 file_copy_gate subprocess 调用）")
-    parser.add_argument("--ast", action="store_true", help="使用 AST 归一化比较（剥离注释/格式差异，Phase 1 sub-task 3）")
+    parser.add_argument(
+        "--files",
+        nargs="+",
+        default=None,
+        help="只检查指定文件（作为新文件）与已有同名文件的重复（供 file_copy_gate subprocess 调用）",
+    )
+    parser.add_argument(
+        "--ast", action="store_true", help="使用 AST 归一化比较（剥离注释/格式差异，Phase 1 sub-task 3）"
+    )
     args = parser.parse_args()
 
     # === --files mode（Phase 1 sub-task 3）：新文件 vs 已有同名文件 ===

@@ -78,8 +78,15 @@ PYPROJECT_TOML = Path("pyproject.toml")
 
 # G0.5 关键字（覆盖 chart_factory.py 的 5 个核心 import）
 _G05_KEYWORDS = (
-    "Panel", "HoloViz", "HoloViews", "Datashader", "hvPlot",
-    "Plotly", "plotly_resampler", "TradingView", "Lightweight",
+    "Panel",
+    "HoloViz",
+    "HoloViews",
+    "Datashader",
+    "hvPlot",
+    "Plotly",
+    "plotly_resampler",
+    "TradingView",
+    "Lightweight",
 )
 
 # runtime_plane_tag.py 的全限定真源路径
@@ -116,9 +123,7 @@ def assert_a1_python_version(tech_yaml: Path, pyproject: Path) -> list[str]:
         return [f"A1: {tech_yaml} 未找到 T-A03 条目"]
     actual = ta03.get("version", "")
     if actual != req:
-        issues.append(
-            f"A1: T-A03 Python version='{actual}' 与 pyproject.toml requires-python='{req}' 不一致"
-        )
+        issues.append(f"A1: T-A03 Python version='{actual}' 与 pyproject.toml requires-python='{req}' 不一致")
     return issues
 
 
@@ -128,9 +133,9 @@ def assert_a2_g05_presence(tech_yaml: Path) -> list[str]:
     data = _load_yaml(tech_yaml)
     techs = data.get("technologies", []) if isinstance(data, dict) else []
     hits = [
-        t for t in techs
-        if isinstance(t, dict)
-        and any(kw.lower() in str(t.get("name", "")).lower() for kw in _G05_KEYWORDS)
+        t
+        for t in techs
+        if isinstance(t, dict) and any(kw.lower() in str(t.get("name", "")).lower() for kw in _G05_KEYWORDS)
     ]
     if len(hits) < 5:
         issues.append(
@@ -190,9 +195,7 @@ def assert_a4_runtime_plane_tag(runtime_planes_yaml: Path, repo_root: Path) -> l
     for m in re.finditer(r"([\w/.-]*runtime_plane_tag\.py)", text):
         ref = m.group(1)
         if not ref.endswith(_RUNTIME_TAG_FULL):
-            issues.append(
-                f"A4: runtime_planes.yaml 引用 '{ref}' 非全限定路径，应为 {_RUNTIME_TAG_FULL}"
-            )
+            issues.append(f"A4: runtime_planes.yaml 引用 '{ref}' 非全限定路径，应为 {_RUNTIME_TAG_FULL}")
     return issues
 
 
@@ -204,9 +207,7 @@ def assert_a5_governance_config(gov_yaml: Path, repo_root: Path) -> list[str]:
     text = gov_yaml.read_text(encoding="utf-8")
     for pat in _STALE_GOV_PATTERNS:
         if pat in text:
-            issues.append(
-                f"A5: governance_systems_registry.yaml 含陈旧子串 '{pat}'，应为 .trae/rules/"
-            )
+            issues.append(f"A5: governance_systems_registry.yaml 含陈旧子串 '{pat}'，应为 .trae/rules/")
     return issues
 
 
@@ -215,9 +216,7 @@ def run_all(repo_root: Path) -> list[str]:
     issues: list[str] = []
     issues += assert_a1_python_version(repo_root / TECH_YAML, repo_root / PYPROJECT_TOML)
     issues += assert_a2_g05_presence(repo_root / TECH_YAML)
-    issues += assert_a3_path_existence(
-        repo_root / CONTRACTS_YAML, repo_root / TECH_YAML, repo_root
-    )
+    issues += assert_a3_path_existence(repo_root / CONTRACTS_YAML, repo_root / TECH_YAML, repo_root)
     issues += assert_a4_runtime_plane_tag(repo_root / RUNTIME_PLANES_YAML, repo_root)
     issues += assert_a5_governance_config(repo_root / GOV_REGISTRY_YAML, repo_root)
     return issues

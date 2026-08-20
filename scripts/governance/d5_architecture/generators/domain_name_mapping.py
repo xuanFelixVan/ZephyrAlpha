@@ -89,7 +89,6 @@ DOMAIN_NAME_EN: dict[str, str] = {
     "D_INFRA_RECOVERY": "Rollback Recovery",
     "D_INFRA_RUNTIME": "Runtime Integration",
     "D_INFRA_TELEMETRY": "Observability",
-
     # L1 基础平台层
     "D_ALT_DATA": "Alternative Data",
     "D_BEHAVIORAL_AUDIT": "Behavioral Audit",
@@ -106,46 +105,38 @@ DOMAIN_NAME_EN: dict[str, str] = {
     "D_SECURITY": "Adversarial Validation",
     "D_SECURITY_LLM": "LLM Defense",
     "D_SHARED": "Shared Services",
-
     # L1 智能层
     "D_INTELLIGENCE": "Context Management",
     "D_KNOWLEDGE": "Knowledge Management",
     "D_AUTONOMY_CORE": "Autonomy Core",
-
     # L2 业务域层 - 因子信号
     "D_FACTOR": "Factor",
     "D_SIGLEGACY": "Signal Legacy (Design)",
     "D_ASHARE_SIGNAL": "A-Share Signal",
     "D_FUNDAMENTAL_SIGNAL": "Fundamental Signal",
     "D_SIGQC": "Signal Quality Control",
-
     # L2 业务域层 - 风险合规
     "D_RISK": "Risk Control",
     "D_COMPLIANCE": "Compliance",
     "D_AUTONOMY_PERM": "Autonomy Protection",
-
     # L2 业务域层 - 组合决策
     "D_PF_CORE": "Portfolio Core",
     "D_PF_ALLOC": "Portfolio Allocation",
     "D_SELL_DECISION": "Sell Decision",
     "D_CROSS_ASSET": "Cross Asset",
     "D_DIGITAL_TWIN": "Digital Twin",
-
     # L2 业务域层 - 执行交易
     "D_EX_CORE": "Execution Core",
     "D_EX_SOR": "Execution Routing",
     "D_TRADING": "Trading Operations",
     "D_POSITION": "Position Management",
-
     # L2 业务域层 - ML平台
     "D_ML_TRAIN": "Training",
     "D_ML_SERVE": "Inference",
-
     # L2 业务域层 - 回测仿真
     "D_BACKTEST": "Backtest",
     "D_SIMULATION": "Simulation",
     "D_EXEC_SIM": "Execution Simulation",
-
     # L2 治理域层
     "D_AUDITTEST": "Audit Test Suite",
     "D_GOV_REPAIR": "Governance Repair",
@@ -162,7 +153,6 @@ DOMAIN_NAME_EN: dict[str, str] = {
     "D_GOV_SCRIPTS": "Script Governance",
     "D_GOV_CODE_QUALITY": "Code Quality Governance",
     "D_GOV_OPS_RESILIENCE": "Ops Resilience Governance",
-
     # 未分类（DB layer_id 为 NULL 或未归类的手工插入域）
     "D_DATA": "Data Access Layer",
     "D_INFRASTRUCTURE": "Cross-Layer Contract Infrastructure",
@@ -176,7 +166,6 @@ DOMAIN_DESC_ZH: dict[str, str] = {
     "D_INFRA_RECOVERY": "回滚恢复，负责系统故障时的状态回滚、事务补偿和恢复编排",
     "D_INFRA_RUNTIME": "运行时集成，负责组件生命周期编排、启动钩子和运行时上下文管理",
     "D_INFRA_TELEMETRY": "可观测性，负责系统遥测采集、指标监控、链路追踪、日志结构和健康检查",
-
     # L1 基础平台层
     "D_ALT_DATA": "另类数据，负责非传统金融数据的采集、清洗和标准化",
     "D_BEHAVIORAL_AUDIT": "行为审计，负责 AI 决策行为的可追溯审计和合规检查",
@@ -193,48 +182,39 @@ DOMAIN_DESC_ZH: dict[str, str] = {
     "D_SECURITY": "对抗验证，负责系统安全对抗测试、漏洞扫描和攻防验证",
     "D_SECURITY_LLM": "LLM 防御，负责 LLM 安全防护、Prompt 注入防御和输出过滤",
     "D_SHARED": "共享服务，负责跨域共享的工具、协议和基础服务",
-
     # L1 智能层
     "D_INTELLIGENCE": "上下文管理，负责 AI 上下文窗口管理、记忆检索和上下文压缩",
     "D_KNOWLEDGE": "知识管理，负责知识库构建、向量索引和知识检索",
     "D_AUTONOMY_CORE": "自治核心，负责 AI 自治决策、目标分解和执行编排",
-
     # L2 业务域层 - 数据
     "D_DIGITAL_TWIN": "数字孪生，负责市场状态镜像、组合模拟和场景推演",
-
     # L2 业务域层 - 因子信号
     "D_FACTOR": "因子，负责因子计算、因子库管理和因子评价",
     "D_SIGLEGACY": "信号遗留设计态，负责旧版信号系统的设计态维护和迁移规划",
     "D_ASHARE_SIGNAL": "A 股特色信号，负责 A 股市场特色交易信号的生成和管理",
     "D_FUNDAMENTAL_SIGNAL": "基本面信号，负责基于财务数据的基本面信号生成",
     "D_SIGQC": "信号质量控制，负责信号质量评估、异常检测和质量门禁",
-
     # L2 业务域层 - 风险合规
     "D_RISK": "风控，负责风险指标计算、风险限额管理和风险预警",
     "D_COMPLIANCE": "合规，负责交易合规检查、规则引擎和合规报告",
     "D_AUTONOMY_PERM": "自治保护，负责 AI 自治行为的权限控制和安全边界",
-
     # L2 业务域层 - 组合决策
     "D_PF_CORE": "组合核心，负责投资组合构建、持仓管理和组合优化",
     "D_PF_ALLOC": "组合分配，负责资产配置、权重分配和再平衡",
     "D_SELL_DECISION": "卖出决策，负责卖出信号生成、卖出时机判断和退出策略",
     "D_CROSS_ASSET": "跨资产，负责多资产类别投资和跨资产套利策略",
-
     # L2 业务域层 - 执行交易
     "D_EX_CORE": "执行核心，负责订单执行引擎、执行策略和执行管理",
     "D_EX_SOR": "执行路由，负责订单路由、智能拆单和执行场所选择",
     "D_TRADING": "交易运营，负责交易生命周期管理、订单状态和成交处理",
     "D_POSITION": "仓位管理，负责持仓跟踪、仓位计算和盈亏分析",
-
     # L2 业务域层 - ML 平台
     "D_ML_TRAIN": "训练，负责模型训练、特征工程和模型评估",
     "D_ML_SERVE": "推理，负责模型部署、在线推理和模型服务管理",
-
     # L2 业务域层 - 回测仿真
     "D_BACKTEST": "回测，负责历史数据回测、回测引擎和回测报告",
     "D_SIMULATION": "仿真，负责市场仿真、模拟撮合和仿真环境管理",
     "D_EXEC_SIM": "执行仿真，负责执行过程仿真、滑点模拟和冲击成本建模",
-
     # L2 治理域层
     "D_AUDITTEST": "审计测试套件，负责审计测试用例管理和测试执行",
     "D_GOV_REPAIR": "治理修复，负责治理问题自动修复和修复策略管理",
@@ -251,7 +231,6 @@ DOMAIN_DESC_ZH: dict[str, str] = {
     "D_GOV_SCRIPTS": "脚本治理，负责脚本生命周期管理和脚本质量门禁",
     "D_GOV_CODE_QUALITY": "代码质量治理，负责代码去重引擎、函数重复检测、AST语义分析和提交门禁引擎",
     "D_GOV_OPS_RESILIENCE": "运维弹性治理，负责运维治理、安全治理、弹性治理和升级协议",
-
     # 未分类（DB layer_id 为 NULL 或未归类的手工插入域，裁定#199/#200/#204）
     "D_DATA": "数据接入层，负责数据源接入、数据集成和数据标准化",
     "D_INFRASTRUCTURE": "跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验",
@@ -300,9 +279,14 @@ def _load_domain_names_from_yaml() -> dict[str, str]:
     try:
         import yaml  # type: ignore[import-untyped]
         from _shared.constants import REPO_ROOT
+
         yaml_path = (
-            REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-            / "catalogs" / "functional_domain_registry.yaml"
+            REPO_ROOT
+            / "docs"
+            / "01_policies_and_standards"
+            / "_registry"
+            / "catalogs"
+            / "functional_domain_registry.yaml"
         )
         if not yaml_path.exists():
             return {}
@@ -347,11 +331,7 @@ def _load_domain_names_from_db() -> dict[str, str]:
 
         conn = get_depgraph_pg_connection()
         cur = conn.execute("SELECT domain_id, domain_name FROM domains")
-        result = {
-            r["domain_id"]: r["domain_name"]
-            for r in cur.fetchall()
-            if r["domain_id"] and r["domain_name"]
-        }
+        result = {r["domain_id"]: r["domain_name"] for r in cur.fetchall() if r["domain_id"] and r["domain_name"]}
         conn.close()
         _DOMAIN_NAME_CACHE = result
         return result

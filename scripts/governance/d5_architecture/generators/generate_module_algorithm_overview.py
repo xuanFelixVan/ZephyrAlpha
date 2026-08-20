@@ -135,10 +135,13 @@ def _zoomable_html_link_line(html_url: str) -> str:
     """Mermaid 图块上方的可缩放 HTML 跳转链接行（blockquote 风格，与图例一致）。"""
     return f"> **[📊 可缩放大图（HTML）]({html_url})**\n"
 
+
 # layer 顺序与中文名（#ARCH-005 权威 4 层；从 layer_vocabulary.yaml SSoT 动态加载，零漂移）
 import yaml as _yaml  # noqa: E402  # gate-vocab: 从 SSoT 动态加载 layer 值
 
-_LAYER_VOCAB_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "layer_vocabulary.yaml"
+_LAYER_VOCAB_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "layer_vocabulary.yaml"
+)
 with open(_LAYER_VOCAB_PATH, encoding="utf-8") as _f:
     _layer_vocab = _yaml.safe_load(_f)
 LAYER_ORDER = [v["value"] for v in _layer_vocab["values"]]
@@ -218,10 +221,7 @@ def load_modules_and_edges() -> tuple[list[dict], list[dict]]:
 
 def _dedupe_modules(all_nodes: list[dict]) -> list[dict]:
     """模块去重：过滤 module+.py 节点 → 按 blueprint_id 分组 → 每组选代表路径并聚合字段。"""
-    module_nodes = [
-        n for n in all_nodes
-        if n.get("node_type") == "module" and (n.get("path") or "").endswith(".py")
-    ]
+    module_nodes = [n for n in all_nodes if n.get("node_type") == "module" and (n.get("path") or "").endswith(".py")]
     groups: dict[str, list[dict]] = defaultdict(list)
     for n in module_nodes:
         bp = (n.get("blueprint_id") or "").strip()
@@ -279,10 +279,7 @@ def _filter_import_edges(all_nodes: list[dict], all_edges: list[dict]) -> list[d
             continue
         edges_set.add((fb, tb, e.get("dep_type")))
 
-    return [
-        {"from_module_id": f, "to_module_id": t, "dep_type": d}
-        for f, t, d in edges_set
-    ]
+    return [{"from_module_id": f, "to_module_id": t, "dep_type": d} for f, t, d in edges_set]
 
 
 def _aggregate_build_status(statuses: list) -> str:
@@ -343,18 +340,20 @@ def build_module_summaries(
         # 设计态/缺失态恒为 None → 回退文字卡片，渐进式向后兼容）
         algo_flow = summary.algo_flow
 
-        rows.append({
-            "module_id": mid,
-            "path": path,
-            "tier": tier,
-            "domain_id": m.get("domain_id") or "",
-            "layer": m.get("architecture_layer") or "",
-            "build_status": m.get("build_status") or "",
-            "bp_ref": bp_ref,
-            "summary": summary,
-            "bi_name": bi_name,
-            "algo_flow": algo_flow,
-        })
+        rows.append(
+            {
+                "module_id": mid,
+                "path": path,
+                "tier": tier,
+                "domain_id": m.get("domain_id") or "",
+                "layer": m.get("architecture_layer") or "",
+                "build_status": m.get("build_status") or "",
+                "bp_ref": bp_ref,
+                "summary": summary,
+                "bi_name": bi_name,
+                "algo_flow": algo_flow,
+            }
+        )
     return rows
 
 
@@ -465,22 +464,18 @@ def _blockquote(text: str) -> str:
 # 推导流程图），原样贴出字大难读——渲染「算法步骤」时剥离，只留人类可读文字。
 _ALGO_FLOW_LINE_RE = re.compile(
     r"^#\s*(?:"
-    r"\[/?ALGO_FLOW\]"          # [ALGO_FLOW] / [/ALGO_FLOW] 起止标记
-    r"|-\s+id\s*:"              # - id: A1 节点起点
-    r"|\w+\s*:"                 # name_zh:/code:/层:/边: 等 key: 字段行（半角冒号）
+    r"\[/?ALGO_FLOW\]"  # [ALGO_FLOW] / [/ALGO_FLOW] 起止标记
+    r"|-\s+id\s*:"  # - id: A1 节点起点
+    r"|\w+\s*:"  # name_zh:/code:/层:/边: 等 key: 字段行（半角冒号）
     r"|[A-Za-z0-9_]+\s+-{1,2}"  # I1 --> A1 / I1 -…（截断残行）边行
-    r"|$"                       # 裸 "#" 行
+    r"|$"  # 裸 "#" 行
     r")"
 )
 
 
 def _strip_algo_flow_comments(text: str) -> str:
     """剥离算法步骤文本里的 ALGO_FLOW 标记注释行，返回剩余人类可读文字（可能为空）。"""
-    kept = [
-        ln.rstrip()
-        for ln in text.splitlines()
-        if ln.strip() and not _ALGO_FLOW_LINE_RE.match(ln.strip())
-    ]
+    kept = [ln.rstrip() for ln in text.splitlines() if ln.strip() and not _ALGO_FLOW_LINE_RE.match(ln.strip())]
     return "\n".join(kept).strip()
 
 
@@ -550,8 +545,7 @@ def render_mermaid_layer_overview(rows: list[dict], edges: list[dict]) -> str:
         cnt_de = sum(1 for r in lrows if r["tier"] == "design")
         cnt_mi = sum(1 for r in lrows if r["tier"] == "missing")
         label = (
-            f"{LAYER_EMOJI[layer]} {layer} {LAYER_NAME_ZH[layer]}\\n"
-            f"{len(lrows)} 模块：🟦{cnt_op} 🟧{cnt_de} ⬜{cnt_mi}"
+            f"{LAYER_EMOJI[layer]} {layer} {LAYER_NAME_ZH[layer]}\\n{len(lrows)} 模块：🟦{cnt_op} 🟧{cnt_de} ⬜{cnt_mi}"
         )
         lines.append(f'  {layer}["{label}"]')
 
@@ -594,7 +588,7 @@ _TIER_MATURITY = {
 }
 
 # 断点边/正常边颜色（§4.15.3）
-_BREAK_COLOR = "#c62828"   # 暗红 Material Red 900
+_BREAK_COLOR = "#c62828"  # 暗红 Material Red 900
 _NORMAL_COLOR = "#333333"  # 近黑深灰
 
 
@@ -820,6 +814,7 @@ def _rel_edge_tuples(
     downs: list[str],
 ) -> list[tuple[str, str, bool]]:
     """关联图边生成：上游→本模块 / 本模块→下游；对端非运营态=断点边。"""
+
     def _is_break(x: str) -> bool:
         """_is_break implementation."""
         rr = row_by_id.get(x)
@@ -878,7 +873,6 @@ def _render_module_relation_mermaid(r: dict, rel: dict, html_url: str = "") -> s
     )
     link = _zoomable_html_link_line(html_url) if html_url else ""
     return legend + link + "\n".join(lines) + "\n"
-
 
 
 def _render_cards_by_layer(
@@ -945,10 +939,7 @@ def render_battle_stage_index(
         op = sum(1 for r in stage_rows if r["tier"] == "operational")
         de = sum(1 for r in stage_rows if r["tier"] == "design")
         mi = sum(1 for r in stage_rows if r["tier"] == "missing")
-        lines.append(
-            f"- **{zh}**（{len(stage_rows)} 模块：🟦{op} 🟧{de} ⬜{mi}）"
-            f" → [`{file_rel}`]({file_rel})"
-        )
+        lines.append(f"- **{zh}**（{len(stage_rows)} 模块：🟦{op} 🟧{de} ⬜{mi}） → [`{file_rel}`]({file_rel})")
 
     if unanchored_rows:
         op = sum(1 for r in unanchored_rows if r["tier"] == "operational")
@@ -1401,12 +1392,8 @@ def _render_module_card_with_flow(
         "> 图例：**红色虚线 + 断点标签** = 断点边（连到断点节点）｜ **黑色实线** = 正常边。",
     ]
     if break_nodes:
-        break_names = ", ".join(
-            f"{n.id}（{n.name_zh or n.name_en or '未命名'}）" for n in break_nodes
-        )
-        legend_lines.append(
-            f"> 断点节点 {len(break_nodes)} 个：{break_names}｜断点边 {len(break_edges)} 条。"
-        )
+        break_names = ", ".join(f"{n.id}（{n.name_zh or n.name_en or '未命名'}）" for n in break_nodes)
+        legend_lines.append(f"> 断点节点 {len(break_nodes)} 个：{break_names}｜断点边 {len(break_edges)} 条。")
     legend_lines.append("")
     legend = "\n".join(legend_lines)
     link = _zoomable_html_link_line(html_url) if html_url else ""
@@ -1427,7 +1414,7 @@ def render_index_doc(
     索引含：统计 + Mermaid 层级总览 + 按作战环节索引 + 质量报告 + 冲突提示。
     """
     ts = idempotent_timestamp(_THIS_FILE)
-    index_html_url = _zoomable_html_url('index.md')
+    index_html_url = _zoomable_html_url("index.md")
     header = f"""# 算法全景图 — 索引（自动派生·离库·按作战环节拆分）
 
 > **真源**：代码 docstring + header ｜ blueprint.md §核心规则 ｜ {DB_DISPLAY_NAME}（nodes/edges）。
@@ -1532,7 +1519,7 @@ def render_system_foundation_doc(
 ) -> str:
     """组装系统基础文件（system_foundation.md，未锚定模块）。"""
     ts = idempotent_timestamp(_THIS_FILE)
-    html_url = _zoomable_html_url('system_foundation.md')
+    html_url = _zoomable_html_url("system_foundation.md")
 
     op = sum(1 for r in unanchored_rows if r["tier"] == "operational")
     de = sum(1 for r in unanchored_rows if r["tier"] == "design")
@@ -1571,7 +1558,7 @@ def _atomic_write(path: Path, content: str) -> None:
         os.replace(tmp_path, str(path))
     except Exception:
         try:
-            os.remove(tmp_path)
+            os.remove(tmp_path)  # ops-guard-exempt: 原子写临时文件清理（写完即删非数据删除）
         except OSError:
             pass
         raise
@@ -1701,11 +1688,18 @@ def main() -> None:
     print("[5/5] 渲染多文件输出（index + 11 stages + system_foundation）...")
     consumers = _build_consumers(edges)
     rel = _build_rel_context(rows, edges, consumers)
-    written = _write_md_files(out_dir, _WriteInputs(
-        rows=rows, edges=edges, anchored_by_stage=anchored_by_stage,
-        unanchored_rows=unanchored_rows, module_to_file=module_to_file,
-        consumers=consumers, rel=rel,
-    ))
+    written = _write_md_files(
+        out_dir,
+        _WriteInputs(
+            rows=rows,
+            edges=edges,
+            anchored_by_stage=anchored_by_stage,
+            unanchored_rows=unanchored_rows,
+            module_to_file=module_to_file,
+            consumers=consumers,
+            rel=rel,
+        ),
+    )
     _cleanup_old_files(out_dir, stages_dir)
 
     print(f"\n[OK] 生成 {len(written)} 个文件：")

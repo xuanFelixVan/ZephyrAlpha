@@ -69,9 +69,7 @@ MODULE_ID_RE = re.compile(r'(?:-\s*)?module_id:\s*["\']?(\S+?)["\']?\s*$')
 
 # 裁定#211：depgraph 查询 SQL（提取为模块级常量，遵循 §5.160.2 SQL 集中化原则）
 _SQL_LOAD_DEPGRAPH_MODULE_INDEX = (
-    "SELECT blueprint_id, path FROM nodes "
-    "WHERE blueprint_id IS NOT NULL AND blueprint_id != '' "
-    "AND path LIKE '%%.py'"
+    "SELECT blueprint_id, path FROM nodes WHERE blueprint_id IS NOT NULL AND blueprint_id != '' AND path LIKE '%%.py'"
 )
 
 # ARCH-FRONTMATTER-STATE-001 Phase 4：build_status 聚合查询（取每个 blueprint_id
@@ -119,6 +117,7 @@ def load_depgraph_module_index() -> tuple[set[str], dict[str, set[str]]]:
 # ---------------------------------------------------------------------------
 # ARCH-FRONTMATTER-STATE-001 Phase 4: FRONTMATTER_STATE_STALE gate
 # ---------------------------------------------------------------------------
+
 
 def _aggregate_build_status(rows: list[dict]) -> dict[str, str]:
     """按 blueprint_id 聚合 build_status（第一个非空值胜出）。
@@ -175,11 +174,13 @@ def scan_blueprint_frontmatter_entries() -> list[dict]:
         module_id = fm.get("module_id")
         if not module_id:
             continue
-        entries.append({
-            "file": str(md_file.relative_to(REPO_ROOT)),
-            "module_id": module_id,
-            "build_status": fm.get("build_status", ""),
-        })
+        entries.append(
+            {
+                "file": str(md_file.relative_to(REPO_ROOT)),
+                "module_id": module_id,
+                "build_status": fm.get("build_status", ""),
+            }
+        )
     return entries
 
 
@@ -201,12 +202,14 @@ def check_frontmatter_state_stale(
             continue
         fm_bs = entry["build_status"]
         if fm_bs != dep_bs:
-            findings.append({
-                "type": "FRONTMATTER_STATE_STALE",
-                "severity": "MEDIUM",
-                "file": entry["file"],
-                "detail": f"frontmatter.build_status='{fm_bs or '(空)'}' 与 depgraph build_status='{dep_bs}' 不一致",
-            })
+            findings.append(
+                {
+                    "type": "FRONTMATTER_STATE_STALE",
+                    "severity": "MEDIUM",
+                    "file": entry["file"],
+                    "detail": f"frontmatter.build_status='{fm_bs or '(空)'}' 与 depgraph build_status='{dep_bs}' 不一致",
+                }
+            )
     return findings
 
 
@@ -401,11 +404,13 @@ def main() -> None:
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--package", type=str, help="限定扫描单个包")
     parser.add_argument(
-        "--scan-root", type=str, default=None,
+        "--scan-root",
+        type=str,
+        default=None,
         help="扫描根目录（#ARCH-DEP-001 第二期 pre-merge 拓扑硬阻断用）："
-             "给定时扫描 <scan-root>/src/zephyr 而非默认 SRC_DIR，"
-             "DB 配置和蓝图注册表仍用 main REPO_ROOT。用于 session_worktree "
-             "pre-merge 检查 worktree session 分支代码相对 production depgraph 的漂移。",
+        "给定时扫描 <scan-root>/src/zephyr 而非默认 SRC_DIR，"
+        "DB 配置和蓝图注册表仍用 main REPO_ROOT。用于 session_worktree "
+        "pre-merge 检查 worktree session 分支代码相对 production depgraph 的漂移。",
     )
     args = parser.parse_args()
 
@@ -413,30 +418,23 @@ def main() -> None:
     pkg_to_modid = load_module_registry()
 
     code_headers = scan_code_blueprint_headers(
-        package_filter=args.package, scan_root=args.scan_root,
+        package_filter=args.package,
+        scan_root=args.scan_root,
     )
 
     # 裁定#211：加载 depgraph 模块索引（ORPHAN 验证 + 文件清单派生）
     depgraph_module_ids, depgraph_files_by_module = load_depgraph_module_index()
 
-    drift_findings = check_header_vs_registry(
-        code_headers, blueprint_registry, pkg_to_modid, depgraph_module_ids
-    )
+    drift_findings = check_header_vs_registry(code_headers, blueprint_registry, pkg_to_modid, depgraph_module_ids)
     file_missing_findings = check_blueprint_file_list(blueprint_registry, depgraph_files_by_module)
-    code_not_in_bp_findings = check_code_not_in_blueprint(
-        code_headers, blueprint_registry, depgraph_files_by_module
-    )
+    code_not_in_bp_findings = check_code_not_in_blueprint(code_headers, blueprint_registry, depgraph_files_by_module)
 
     # ARCH-FRONTMATTER-STATE-001 Phase 4：L3 frontmatter 缓存 vs L2 depgraph 状态一致性
     depgraph_build_status = load_depgraph_build_status()
     frontmatter_entries = scan_blueprint_frontmatter_entries()
-    frontmatter_stale_findings = check_frontmatter_state_stale(
-        frontmatter_entries, depgraph_build_status
-    )
+    frontmatter_stale_findings = check_frontmatter_state_stale(frontmatter_entries, depgraph_build_status)
 
-    all_findings = (
-        drift_findings + file_missing_findings + code_not_in_bp_findings + frontmatter_stale_findings
-    )
+    all_findings = drift_findings + file_missing_findings + code_not_in_bp_findings + frontmatter_stale_findings
 
     high_count = sum(1 for f in all_findings if f["severity"] == "HIGH")
     medium_count = sum(1 for f in all_findings if f["severity"] == "MEDIUM")
@@ -503,8 +501,8 @@ def main() -> None:
 if __name__ == "__main__":
     main()
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def aggregate_build_status(rows) -> dict[str, str]:
     """公共接口：aggregate_build_status（Stage 4 公共化）。"""
     return _aggregate_build_status(rows)
-

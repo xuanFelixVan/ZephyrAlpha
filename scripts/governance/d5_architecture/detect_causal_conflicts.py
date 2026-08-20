@@ -17,6 +17,7 @@
 # [TTL] permanent
 
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
 
 import argparse
@@ -66,6 +67,7 @@ def _load_depgraph_from_db(db_path: Path) -> dict:
     conn.close()
     return data
 
+
 __manifest__ = """
 args: []
 description: 从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
@@ -75,7 +77,6 @@ priority: P2
 timeout_seconds: 60
 warn_only: false
 """
-
 
 
 class CausalChainBrokenError(Exception):
@@ -497,13 +498,15 @@ def main() -> int:
             os.replace(tmp_path, output_path)
         except PermissionError:
             try:
-                os.remove(tmp_path)
+                os.remove(tmp_path)  # ops-guard-exempt: 原子写临时文件清理（写完即删非数据删除）
             except OSError:
                 pass
         print(json.dumps(results, indent=2, default=str))
         return 0 if results["overall"] == "PASS" else 1
 
-    depgraph = args.depgraph  # PG 模式下无文件路径概念，参数保留向后兼容（治本 #ARCH-TOOL-HEALTH-V1：原 DEFAULT_DEPGRAPH_PATH 已删除）
+    depgraph = (
+        args.depgraph
+    )  # PG 模式下无文件路径概念，参数保留向后兼容（治本 #ARCH-TOOL-HEALTH-V1：原 DEFAULT_DEPGRAPH_PATH 已删除）
     detector = CausalConflictDetector(depgraph_path=depgraph)
     report = detector.run_all_checks()
     print(f"[CAUSAL_CONFLICT] Total conflicts: {report['total_conflicts']}")

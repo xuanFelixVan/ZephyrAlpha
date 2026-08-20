@@ -13,6 +13,7 @@
 # [TESTS] 手动测试：全量扫描 exit 0；已知违规文件被检出
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: 由 pre-commit run_gate_chain 事件自动触发（--ci 模式在案），非人工 manual 运行
 """GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2）
 
 检测 src/ 与 scripts/ 下 .py 文件中硬编码的词表合法值集合。
@@ -122,16 +123,16 @@ _VOCAB_LOAD_FUNC_PATTERN = re.compile(
 # 若赋值为数值字面量/数值集合（非 _get_threshold() 调用）→ 疑似硬编码。
 # 阈值变量理应从 thresholds.yaml 通过 _get_threshold() 读取，硬编码=第二真源=必漂移。
 # 豁免：合理不接入 SSoT 的阈值（如实验性/脚本专用）加 noqa: gate-vocab。
-_THRESHOLD_VAR_PATTERN = re.compile(
-    r"^[A-Z_]*?(THRESHOLD|DEADLINE|TIMEOUT|QUARANTINE|LIMIT)[A-Z_]*$"
-)
+_THRESHOLD_VAR_PATTERN = re.compile(r"^[A-Z_]*?(THRESHOLD|DEADLINE|TIMEOUT|QUARANTINE|LIMIT)[A-Z_]*$")
 
 # ── DDL 例外白名单（SQL CHECK 无法 yaml.safe_load，走 DDL-as-Code 协议）──
-_DDL_EXEMPT_FILES: frozenset[str] = frozenset({
-    "sqlite_schema.py",
-    "depgraph_schema.py",
-    "audit_post_sync_commands.py",
-})
+_DDL_EXEMPT_FILES: frozenset[str] = frozenset(
+    {
+        "sqlite_schema.py",
+        "depgraph_schema.py",
+        "audit_post_sync_commands.py",
+    }
+)
 
 # ── SSoT 真源文件白名单（治本 2026-06-30 检测5 行为检测）──
 # 这些文件是 load_vocabulary_values/load_vocabulary_entries 的真源实现，
@@ -140,14 +141,16 @@ _DDL_EXEMPT_FILES: frozenset[str] = frozenset({
 # #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1：纳入 check_vocab_hardcode.py 自身——
 # 它是批量词表加载（_load_all_vocab_values）的真源实现（SSoT 不支持批量，
 # 合理不收敛），守门人是最大违规者（19 次自豁免）属规则盲区。
-_SSOT_EXEMPT_FILES: frozenset[str] = frozenset({
-    "yaml_utils.py",  # src/zephyr/shared/io/ + scripts/governance/_shared/ 两处真源/re-exporter
-    "check_vocab_hardcode.py",  # #ARCH-VOCAB-NOQA-CONVERGENCE-001: 自身批量加载真源
-})
+_SSOT_EXEMPT_FILES: frozenset[str] = frozenset(
+    {
+        "yaml_utils.py",  # src/zephyr/shared/io/ + scripts/governance/_shared/ 两处真源/re-exporter
+        "check_vocab_hardcode.py",  # #ARCH-VOCAB-NOQA-CONVERGENCE-001: 自身批量加载真源
+    }
+)
 
 # ── noqa 豁免登记表路径（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1）──
 # 真源：config/governance/noqa_exempt_registry.yaml（YAML）。
-# 每个 # noqa: gate-vocab 必须在此登记，否则 GATE-VOCAB 校验失败。
+# 每个 gate-vocab 豁免标记（行尾 noqa 形式）必须在此登记，否则 GATE-VOCAB 校验失败。
 # 基线值 = len(exemptions)，自动从登记表计算（消除硬编码魔数 _NOQA_BASELINE=33）。
 _NOQA_REGISTRY_PATH = REPO_ROOT / "config" / "governance" / "noqa_exempt_registry.yaml"
 
@@ -197,11 +200,13 @@ def _check_startup_marker(source: str, valid_values: set[str]) -> list[tuple[int
         if m:
             value = m.group(1)
             if value not in valid_values:
-                issues.append((
-                    i,
-                    f"[STARTUP] 标记值 '{value}' 不在 startup_vocabulary.yaml 合法值中"
-                    f"(合法值: {sorted(valid_values)})",
-                ))
+                issues.append(
+                    (
+                        i,
+                        f"[STARTUP] 标记值 '{value}' 不在 startup_vocabulary.yaml 合法值中"
+                        f"(合法值: {sorted(valid_values)})",
+                    )
+                )
             break  # 只检查第一个 [STARTUP] 标记
     return issues
 
@@ -281,10 +286,15 @@ def _is_number_literal_or_collection(value: ast.expr) -> bool:
     if isinstance(value, ast.Call) and isinstance(value.func, ast.Name):
         if value.func.id in ("set", "frozenset", "list", "tuple"):
             if value.args and isinstance(value.args[0], (ast.List, ast.Set, ast.Tuple)):
-                return all(
-                    isinstance(e, ast.Constant) and isinstance(e.value, (int, float)) and not isinstance(e.value, bool)
-                    for e in value.args[0].elts
-                ) and len(value.args[0].elts) > 0
+                return (
+                    all(
+                        isinstance(e, ast.Constant)
+                        and isinstance(e.value, (int, float))
+                        and not isinstance(e.value, bool)
+                        for e in value.args[0].elts
+                    )
+                    and len(value.args[0].elts) > 0
+                )
     return False
 
 
@@ -335,12 +345,13 @@ def _extract_str_literals(node: ast.expr) -> set[str]:
                     if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
                         values.add(elt.value)
     elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-        if (node.func.attr in ("split", "rsplit")
-                and isinstance(node.func.value, ast.Constant)
-                and isinstance(node.func.value.value, str)):
+        if (
+            node.func.attr in ("split", "rsplit")
+            and isinstance(node.func.value, ast.Constant)
+            and isinstance(node.func.value.value, str)
+        ):
             sep = ","
-            if (node.args and isinstance(node.args[0], ast.Constant)
-                    and isinstance(node.args[0].value, str)):
+            if node.args and isinstance(node.args[0], ast.Constant) and isinstance(node.args[0].value, str):
                 sep = node.args[0].value
             values.update(s for s in node.func.value.value.split(sep) if s)
     return values
@@ -383,7 +394,12 @@ def _match_vocab_values(
     return None
 
 
-def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None = None, vocab_values: dict[str, set[str]] | None = None) -> list[tuple[int, str]]:
+def _check_file(
+    filepath: Path,
+    vocab_dir: Path,
+    startup_values: set[str] | None = None,
+    vocab_values: dict[str, set[str]] | None = None,
+) -> list[tuple[int, str]]:
     """检查单个 Python 文件的词表硬编码与 yaml 引用存在性 + [STARTUP] 标记值校验。
 
     Args:
@@ -455,17 +471,19 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                 # 从变量名提取前缀：VALID_TTL_VALUES → TTL，VALID_LAYERS → LAYERS
                 # v1.1.0: 前缀可能是 VALID/ALLOWED/LEGAL/PERMITTED
                 prefix_part = var_name.split("_", 1)[1]  # 去掉前缀（VALID/ALLOWED/...）
-                prefix_part = prefix_part[:-(len(suffix) + 1)]  # 去掉 _SUFFIX 后缀
+                prefix_part = prefix_part[: -(len(suffix) + 1)]  # 去掉 _SUFFIX 后缀
                 if not prefix_part:
                     prefix_part = suffix  # VALID_VALUES → VALUES
                 vocab_file = _VOCAB_FILES.get(prefix_part) or _VOCAB_FILES.get(suffix)
                 if not vocab_file:
                     vocab_file = f"{prefix_part.lower()}_vocabulary.yaml"
 
-                issues.append((
-                    node.lineno,
-                    f"{var_name} 硬编码词表合法值(应从 {vocab_file} 动态加载)",
-                ))
+                issues.append(
+                    (
+                        node.lineno,
+                        f"{var_name} 硬编码词表合法值(应从 {vocab_file} 动态加载)",
+                    )
+                )
                 name_match_reported = True
 
             # 检测4：值匹配（v1.3.0 新增——不限变量名，覆盖 DOC_TYPES/CODE_TYPES/TYPE_PRIORITY 等漏检命名）
@@ -474,25 +492,29 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
             # 原 min(3,total) 且 ≥2 漏检 2 值子集（如 ("draft","active") 2/3 status）。
             # min_values=2：单值子集（如 ("draft",)）不报——任何单字符串都可能巧合命中某词表，
             # 单值匹配误报率过高（实测 140+ 误报）；2+ 值全子集匹配才是硬编码强信号。
-            if (not name_match_reported and vocab_values
-                    and not _has_noqa_exempt(source, node.lineno)):
+            if not name_match_reported and vocab_values and not _has_noqa_exempt(source, node.lineno):
                 match = _match_vocab_values(node.value, vocab_values, min_values=2)
                 if match:
                     vocab_name, hit_count, total = match
-                    issues.append((
-                        node.lineno,
-                        f"字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
-                        f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
-                    ))
+                    issues.append(
+                        (
+                            node.lineno,
+                            f"字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
+                            f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
+                        )
+                    )
 
             # 检测8：阈值变量硬编码（ARCH-036 P3-A5: 阈值数值应从 SSoT 读取）
             # 仅对 scripts/governance/ 范围生效——thresholds.yaml 是脚本治理系统的 SSoT，
             # src/zephyr/ 的阈值属于不同系统（依赖方向错误，不应接入 scripts SSoT）。
             # 匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名，
             # 若赋值为数值字面量/数值集合（非 _get_threshold() 调用）→ 疑似硬编码。
-            if ("scripts" in filepath.parts and "governance" in filepath.parts
-                    and not name_match_reported
-                    and not _has_noqa_exempt(source, node.lineno)):
+            if (
+                "scripts" in filepath.parts
+                and "governance" in filepath.parts
+                and not name_match_reported
+                and not _has_noqa_exempt(source, node.lineno)
+            ):
                 for target in targets:
                     if not isinstance(target, ast.Name):
                         continue
@@ -501,11 +523,12 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                         continue
                     if not _is_number_literal_or_collection(node.value):
                         continue
-                    issues.append((
-                        node.lineno,
-                        f"{var_name} 硬编码阈值数值"
-                        f"(应从 thresholds.yaml 通过 _get_threshold() 读取)",
-                    ))
+                    issues.append(
+                        (
+                            node.lineno,
+                            f"{var_name} 硬编码阈值数值(应从 thresholds.yaml 通过 _get_threshold() 读取)",
+                        )
+                    )
                     break  # 一个变量名命中即可，避免重复报
         # 检测2：load_vocabulary_values("xxx.yaml") 引用的词表文件存在性
         elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
@@ -525,10 +548,12 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
             if not p.is_absolute():
                 p = vocab_dir / vocab_file
             if not p.exists():
-                issues.append((
-                    node.lineno,
-                    f"load_vocabulary_values 引用的词表文件不存在: {vocab_file}",
-                ))
+                issues.append(
+                    (
+                        node.lineno,
+                        f"load_vocabulary_values 引用的词表文件不存在: {vocab_file}",
+                    )
+                )
         # 检测5：函数体复制 yaml 词表读取逻辑（R4 治本 2026-06-30，行为检测 v2）
         # 治本（2026-06-30 红蓝对抗）：废弃函数名正则门控（漏检 _get_valid_layers/
         # _load_doc_type_suffixes 等非标准命名），改为行为检测——任何函数体内含
@@ -543,9 +568,12 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
             # 识别 docstring 节点（函数体第一个 Expr 的 Constant），遍历时跳过——
             # 避免 docstring 中提到 "vocabulary" 字样触发误报（如 load_contract 的 docstring）
             docstring_const = None
-            if (node.body and isinstance(node.body[0], ast.Expr)
-                    and isinstance(node.body[0].value, ast.Constant)
-                    and isinstance(node.body[0].value.value, str)):
+            if (
+                node.body
+                and isinstance(node.body[0], ast.Expr)
+                and isinstance(node.body[0].value, ast.Constant)
+                and isinstance(node.body[0].value.value, str)
+            ):
                 docstring_const = node.body[0].value
             # 行为检测：函数体内是否含 yaml.safe_load 调用
             has_yaml_load = False
@@ -553,11 +581,13 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
             for child in ast.walk(node):
                 if child is docstring_const:
                     continue  # 跳过 docstring
-                if (isinstance(child, ast.Call)
-                        and isinstance(child.func, ast.Attribute)
-                        and child.func.attr == "safe_load"
-                        and isinstance(child.func.value, ast.Name)
-                        and child.func.value.id == "yaml"):
+                if (
+                    isinstance(child, ast.Call)
+                    and isinstance(child.func, ast.Attribute)
+                    and child.func.attr == "safe_load"
+                    and isinstance(child.func.value, ast.Name)
+                    and child.func.value.id == "yaml"
+                ):
                     has_yaml_load = True
                 # 检测 vocabulary 相关字符串字面量（路径/文件名含 vocab/vocabulary）
                 # 注意：不检测变量名——避免误报引用 vocab_values 参数的同步函数
@@ -570,11 +600,13 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
             # noqa 豁免
             if _has_noqa_exempt(source, node.lineno):
                 continue
-            issues.append((
-                node.lineno,
-                f"def {func_name}() 函数体含 yaml.safe_load 读取词表逻辑"
-                f"(疑似复制词表加载，应使用 load_vocabulary_values SSoT 函数)",
-            ))
+            issues.append(
+                (
+                    node.lineno,
+                    f"def {func_name}() 函数体含 yaml.safe_load 读取词表逻辑"
+                    f"(疑似复制词表加载，应使用 load_vocabulary_values SSoT 函数)",
+                )
+            )
         # 检测9：if 语句中字面量集合（盲区2 治本）
         # 检测 ast.Compare（如 if x not in {"draft", "active"}）中的字面量集合。
         # 原检测仅查 Assign，漏检 if 语句中的 in/not in 字面量集合硬编码。
@@ -586,11 +618,13 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                     match = _match_vocab_values(comparator, vocab_values, min_values=2)
                     if match:
                         vocab_name, hit_count, total = match
-                        issues.append((
-                            node.lineno,
-                            f"if 语句字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
-                            f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
-                        ))
+                        issues.append(
+                            (
+                                node.lineno,
+                                f"if 语句字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
+                                f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
+                            )
+                        )
                         break  # 一个 comparator 命中即可，避免重复报
         # 检测10：return 语句中字面量集合（盲区4 治本）
         # 检测 ast.Return 中的字面量集合（如 return ("draft", "active")）。
@@ -601,11 +635,13 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                 match = _match_vocab_values(node.value, vocab_values, min_values=2)
                 if match:
                     vocab_name, hit_count, total = match
-                    issues.append((
-                        node.lineno,
-                        f"return 语句字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
-                        f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
-                    ))
+                    issues.append(
+                        (
+                            node.lineno,
+                            f"return 语句字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
+                            f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
+                        )
+                    )
 
     # 检测6：生成器数据库名硬编码（治本 2026-06-30，红攻1治本）
     # 生成器产物里的数据库名必须从 _common.DB_DISPLAY_NAME 引用，禁止硬编码字面量。
@@ -635,11 +671,12 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                 continue  # docstring 豁免
             if _has_noqa_exempt(source, node.lineno):
                 continue
-            issues.append((
-                node.lineno,
-                "硬编码数据库名 'depgraph (PostgreSQL)'"
-                "（应 from _common import DB_DISPLAY_NAME 引用常量）",
-            ))
+            issues.append(
+                (
+                    node.lineno,
+                    "硬编码数据库名 'depgraph (PostgreSQL)'（应 from _common import DB_DISPLAY_NAME 引用常量）",
+                )
+            )
 
     # 检测7：commit_gates 测试目录名硬编码（治本 2026-06-30，红攻发现2治本）
     # commit_gates 中 tests/ 豁免必须从 commit_gate_registry.is_test_exempt 引用，
@@ -671,11 +708,13 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                 continue  # docstring 豁免
             if _has_noqa_exempt(source, node.lineno):
                 continue
-            issues.append((
-                node.lineno,
-                "硬编码测试目录名 'tests/'"
-                "（应 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt 引用 SSoT）",
-            ))
+            issues.append(
+                (
+                    node.lineno,
+                    "硬编码测试目录名 'tests/'"
+                    "（应 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt 引用 SSoT）",
+                )
+            )
 
     return issues
 
@@ -729,7 +768,7 @@ def _collect_noqa_exemptions(source: str) -> list[tuple[int, str]]:
         after_hash = tok.string[1:].lstrip()
         if not after_hash.startswith(directive_prefix):
             continue  # 非指令形式（如文档引用 "# ... # noqa 内联豁免"）
-        reason = after_hash[len(directive_prefix):].strip()
+        reason = after_hash[len(directive_prefix) :].strip()
         exemptions.append((tok.start[0], reason))
     return exemptions
 
@@ -872,9 +911,7 @@ def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2）"
-    )
+    parser = argparse.ArgumentParser(description="GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2）")
     parser.add_argument(
         "--warn-only",
         action="store_true",
@@ -895,13 +932,7 @@ def main() -> int:
     args = parser.parse_args()
 
     # 词表 YAML 真源目录（用于校验 load_vocabulary_values 引用存在性）
-    vocab_dir = (
-        REPO_ROOT
-        / "docs"
-        / "01_policies_and_standards"
-        / "_registry"
-        / "vocabularies"
-    )
+    vocab_dir = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
 
     # 加载 [STARTUP] 合法值（红蓝发现3 治本：兑现 startup_vocabulary.yaml "校验器动态加载"声明）
     startup_values = _load_startup_values(vocab_dir)
@@ -930,11 +961,13 @@ def main() -> int:
         for scan_dir in scan_dirs:
             if not scan_dir.exists():
                 continue
-            py_files.extend(iter_files(
-                scan_dir,
-                extensions=frozenset({".py"}),
-                exclude_dirs=exclude,
-            ))
+            py_files.extend(
+                iter_files(
+                    scan_dir,
+                    extensions=frozenset({".py"}),
+                    exclude_dirs=exclude,
+                )
+            )
 
     for filepath in py_files:
         checked += 1
@@ -1013,16 +1046,14 @@ def _print_noqa_audit(
     total = len(all_noqa)
     files_with_noqa = len({fp for fp, _, _ in all_noqa})
     trend = total - baseline
-    trend_str = (
-        f"+{trend}" if trend > 0
-        else str(trend) if trend < 0
-        else "0"
-    )
+    trend_str = f"+{trend}" if trend > 0 else str(trend) if trend < 0 else "0"
     density = (total / checked * 100) if checked else 0.0
 
     registry_status = "registry" if registry else "fallback"
-    print(f"\nNOQA AUDIT: {total} exemptions across {files_with_noqa} files "
-          f"(baseline={baseline} via {registry_status}, trend={trend_str}, density={density:.2f}%)")
+    print(
+        f"\nNOQA AUDIT: {total} exemptions across {files_with_noqa} files "
+        f"(baseline={baseline} via {registry_status}, trend={trend_str}, density={density:.2f}%)"
+    )
 
     # 校验未登记 noqa（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1 闭环核心）
     unregistered: list[tuple[Path, int, str]] = []
@@ -1049,6 +1080,7 @@ def _print_noqa_audit(
     # 按文件分组输出（仅当有豁免时）
     if all_noqa:
         from collections import defaultdict
+
         by_file: dict[Path, list[tuple[int, str]]] = defaultdict(list)
         for fp, lineno, reason in all_noqa:
             by_file[fp].append((lineno, reason))
@@ -1069,14 +1101,17 @@ def _print_noqa_audit(
         print("  新增 # noqa: gate-vocab 必须先在 registry 登记 + commit message 说明豁免理由，")
         print("  或通过治本（如扩展 SSoT 函数支持批量/分组模式）消除豁免需求。")
     elif trend < 0:
-        print(f"\n  [OK] noqa 总数 {total} < 基线 {baseline}（趋势 {trend}）"
-              f"——治本见效，请同步删除 registry 中已退役的条目以降低基线。")
+        print(
+            f"\n  [OK] noqa 总数 {total} < 基线 {baseline}（趋势 {trend}）"
+            f"——治本见效，请同步删除 registry 中已退役的条目以降低基线。"
+        )
 
     return unregistered
 
 
 if __name__ == "__main__":
     sys.exit(main())
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def check_file(
@@ -1092,4 +1127,3 @@ def check_file(
     修复 test_check_vocab_hardcode.py 7 处 pre-existing 接口不匹配失败。
     """
     return _check_file(filepath, vocab_dir, startup_values, vocab_values)
-

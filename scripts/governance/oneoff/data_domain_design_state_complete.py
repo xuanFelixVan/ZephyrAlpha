@@ -73,12 +73,9 @@ from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa
 # ============================================================
 # SQL 集中化（NO-BARE-SQL 门禁，§5.160.2）
 # ============================================================
-SQL_SELECT_CONTRACT_FULFILLMENT = (
-    "SELECT fulfillment_status FROM contracts WHERE contract_id = %s"
-)
+SQL_SELECT_CONTRACT_FULFILLMENT = "SELECT fulfillment_status FROM contracts WHERE contract_id = %s"
 SQL_UPDATE_CONTRACT_FULFILLMENT = (
-    "UPDATE contracts SET fulfillment_status = %s, last_reviewed = NOW() "
-    "WHERE contract_id = %s"
+    "UPDATE contracts SET fulfillment_status = %s, last_reviewed = NOW() WHERE contract_id = %s"
 )
 
 # ============================================================
@@ -163,7 +160,11 @@ DESIGN_NODES_TO_ADD: list[dict] = [
 # 直接 UPDATE DB（contracts 表属架构数据，真源是 DB）
 CONTRACTS_TO_UPDATE: list[tuple[str, str, str]] = [
     # (contract_id, target_status, reason)
-    ("CTR-001", "generated", "NormalizedMarketData dataclass 已实现于 src/zephyr/shared/contracts/market_data.py，被 10+ 模块消费；生产者待实现"),
+    (
+        "CTR-001",
+        "generated",
+        "NormalizedMarketData dataclass 已实现于 src/zephyr/shared/contracts/market_data.py，被 10+ 模块消费；生产者待实现",
+    ),
     ("CTR-ERR-001", "generated", "DataQualityError 契约已实现"),
     ("CTR-TRACE-001", "generated", "TraceContext 已实现于 src/zephyr/shared/contracts/core/trace_context.py"),
 ]
@@ -220,7 +221,9 @@ def step2_add_design_nodes(dry_run: bool) -> int:
 
     for spec in DESIGN_NODES_TO_ADD:
         if dry_run:
-            print(f"  [DRY RUN] add_design_node: path={spec['path']} domain={spec['domain_id']} bp={spec['blueprint_id']}")
+            print(
+                f"  [DRY RUN] add_design_node: path={spec['path']} domain={spec['domain_id']} bp={spec['blueprint_id']}"
+            )
             print(f"            subdomain={spec['subdomain_id']} gate_reason={spec['gate_reason'][:60]}...")
             added += 1
             continue

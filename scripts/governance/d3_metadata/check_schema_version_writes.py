@@ -94,9 +94,12 @@ def _scan_file(filepath: Path) -> list[str]:
     docstring_ids = set()
     for node in ast.walk(tree):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)):
-            if (node.body and isinstance(node.body[0], ast.Expr)
-                    and isinstance(node.body[0].value, ast.Constant)
-                    and isinstance(node.body[0].value.value, str)):
+            if (
+                node.body
+                and isinstance(node.body[0], ast.Expr)
+                and isinstance(node.body[0].value, ast.Constant)
+                and isinstance(node.body[0].value.value, str)
+            ):
                 docstring_ids.add(id(node.body[0].value))
 
     for node in ast.walk(tree):
@@ -106,9 +109,7 @@ def _scan_file(filepath: Path) -> list[str]:
                 continue
             if _check_ast_string(node.value):
                 rel = filepath.relative_to(_REPO_ROOT).as_posix()
-                violations.append(
-                    f"{rel}:{node.lineno}: _schema_version write detected: {node.value[:80].strip()}"
-                )
+                violations.append(f"{rel}:{node.lineno}: _schema_version write detected: {node.value[:80].strip()}")
     return violations
 
 
@@ -138,6 +139,8 @@ def run_ast_scan() -> int:
         return EXIT_FINDINGS
     print("  [PASS] No _schema_version writes found outside whitelist.")
     return EXIT_PASS
+
+
 def run_db_check() -> int:
     """DB state check: verify _schema_version.MAX(version) == _MIGRATIONS max version."""
     print("[G_TRAE_059] DB check: verifying schema version consistency...")
@@ -163,6 +166,8 @@ def run_db_check() -> int:
         return EXIT_FINDINGS
     print("  [PASS] DB version matches _MIGRATIONS max version.")
     return EXIT_PASS
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     args = sys.argv[1:]

@@ -98,10 +98,7 @@ PATH_IN_TABLE_PATTERN = re.compile(r"`([^`]+\.(?:py|yaml|yml|json|toml))`")
 PATH_MUST_HAVE_DIR = re.compile(r"[/\\]")
 
 # §5.160.2 SQL 集中化：depgraph.nodes 运营态查询（NO-BARE-SQL 门禁豁免的 _SQL_ 常量）
-_SQL_GET_GENERATED_NODES = (
-    "SELECT path, node_type FROM nodes "
-    "WHERE blueprint_id = %s AND build_status = 'generated'"
-)
+_SQL_GET_GENERATED_NODES = "SELECT path, node_type FROM nodes WHERE blueprint_id = %s AND build_status = 'generated'"
 
 BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     "_master-blueprint": {

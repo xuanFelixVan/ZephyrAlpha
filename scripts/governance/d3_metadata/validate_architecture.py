@@ -110,11 +110,7 @@ def _iter_target_files() -> list[Path]:
     if not _SCAN_DIR.exists():
         print(f"[WARN] _SCAN_DIR not found: {_SCAN_DIR} — architecture validation scan skipped", file=sys.stderr)
         return []
-    return [
-        p
-        for p in _SCAN_DIR.rglob("*")
-        if p.is_file() and p.suffix.lower() in (".md", ".yaml", ".yml")
-    ]
+    return [p for p in _SCAN_DIR.rglob("*") if p.is_file() and p.suffix.lower() in (".md", ".yaml", ".yml")]
 
 
 def _check_machine_rule(rule: dict, files: list[Path]) -> list[str]:
@@ -175,10 +171,7 @@ def _check_machine_rule(rule: dict, files: list[Path]) -> list[str]:
 
         # assert_required：字段必须存在且非空
         if assert_required and not actual_value:
-            violations.append(
-                f"  {rule_id} VIOLATION: {rel} —— 缺少必填字段 '{assert_field}'"
-                f"（{rule_name}）"
-            )
+            violations.append(f"  {rule_id} VIOLATION: {rel} —— 缺少必填字段 '{assert_field}'（{rule_name}）")
             continue
 
         # assert_equals：字段必须等于指定值

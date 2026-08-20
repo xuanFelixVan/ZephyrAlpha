@@ -30,6 +30,7 @@
   python scripts/governance/generators/generate_rule_ai_perception_index.py          # 生成
   python scripts/governance/generators/generate_rule_ai_perception_index.py --check   # 漂移检测
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -60,12 +61,7 @@ from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 REPO_ROOT = Path(__file__).resolve().parents[3]
 RULES_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "rules"
 OUTPUT_PATH = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "rule_ai_perception_index.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule_ai_perception_index.yaml"
 )
 
 MODULE_ID = "PS-REG-020"
@@ -188,10 +184,13 @@ def check() -> int:
     print(f"DRIFT: {OUTPUT_PATH.name} 不一致")
     # 显示前5个差异
     import difflib
+
     diff = list(difflib.unified_diff(disk_lines, gen_lines, lineterm="", n=1))
     for line in diff[:20]:
         print(f"  {line}")
     return EXIT_FINDINGS
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="规则AI感知索引生成器")
@@ -212,5 +211,7 @@ def main() -> int:
     if no_gates:
         print(f"    {', '.join(no_gates[:10])}{'...' if len(no_gates) > 10 else ''}")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

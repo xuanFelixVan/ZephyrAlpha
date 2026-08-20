@@ -687,5 +687,7 @@ def main():
             print(f"[WARN] {len(cycles)} file-level cycles detected")
 
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

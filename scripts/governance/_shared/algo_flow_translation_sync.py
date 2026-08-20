@@ -25,8 +25,10 @@
 使用方式：
     python scripts/governance/_shared/algo_flow_translation_sync.py
 """
+
 from __future__ import annotations
 
+import os
 import re
 import sys
 from pathlib import Path
@@ -83,9 +85,7 @@ def _replace_top_level_section(text: str, key: str, new_section: str) -> str:
 
 def _yaml_scalar_inline(value: str) -> str:
     """单值 YAML 标量序列化（强制单行不折行，保人工段排版最小侵入）。"""
-    dumped = yaml.safe_dump(
-        {"v": value}, allow_unicode=True, sort_keys=False, width=10**9
-    )
+    dumped = yaml.safe_dump({"v": value}, allow_unicode=True, sort_keys=False, width=10**9)
     return dumped.split(":", 1)[1].strip()
 
 
@@ -95,9 +95,7 @@ def _validated_write(path: Path, new_text: str) -> None:
     path.write_text(new_text, encoding="utf-8", newline="\n")
 
 
-def _fill_factor_fields_textual(
-    text: str, fills: dict[tuple[str, str], str]
-) -> tuple[str, dict[str, int]]:
+def _fill_factor_fields_textual(text: str, fills: dict[tuple[str, str], str]) -> tuple[str, dict[str, int]]:
     """factor_registry 段级字段回填：定位 ``- factor_id:`` 块，就地替换/插入字段行。
 
     fills: {(factor_id, field): value}——调用方已判定"条目存在且字段为空"。
@@ -108,8 +106,7 @@ def _fill_factor_fields_textual(
     entry_re = re.compile(r'^\s*-\s*factor_id:\s*[\'"]?([^\'"\s]+)')
     starts = [(i, m.group(1)) for i, ln in enumerate(lines) if (m := entry_re.match(ln))]
     blocks = [
-        (s, starts[idx + 1][0] if idx + 1 < len(starts) else len(lines), fid)
-        for idx, (s, fid) in enumerate(starts)
+        (s, starts[idx + 1][0] if idx + 1 < len(starts) else len(lines), fid) for idx, (s, fid) in enumerate(starts)
     ]
     filled_by_field: dict[str, int] = {}
     for s, e, fid in reversed(blocks):
@@ -156,9 +153,9 @@ def _harvest() -> dict:
     import json
 
     mods = json.loads(_MODULES_JSON.read_text(encoding="utf-8"))
-    features: list[dict] = []   # 特征层
+    features: list[dict] = []  # 特征层
     indicators: list[dict] = []  # 指标层
-    algos: list[dict] = []      # 算法层
+    algos: list[dict] = []  # 算法层
     for m in mods:
         s = extract_algorithm_from_code(REPO_ROOT / m["path"], module_id=m["module_id"])
         if s.algo_flow is None:
@@ -168,8 +165,11 @@ def _harvest() -> dict:
                 "module_id": m["module_id"],
                 "module_path": s.source_path or m["path"],
                 "node_id": n.id,
-                "name_zh": n.name_zh, "name_en": n.name_en, "intro": n.intro,
-                "formula": n.formula, "registry": n.registry,
+                "name_zh": n.name_zh,
+                "name_en": n.name_en,
+                "intro": n.intro,
+                "formula": n.formula,
+                "registry": n.registry,
             }
             if n.layer == "特征":
                 features.append(rec)
@@ -210,8 +210,11 @@ def _sync_factor_registry(features: list[dict]) -> dict:
         filled_alpha = filled_by_field.get("alpha_source", 0)
         if filled_zh or filled_alpha:
             _validated_write(_FACTOR_REGISTRY, new_text)
-    return {"fct_matched": sum(1 for f in features if _FCT_RE.search(f["registry"] or "")),
-            "filled_name_zh": filled_zh, "filled_alpha_source": filled_alpha}
+    return {
+        "fct_matched": sum(1 for f in features if _FCT_RE.search(f["registry"] or "")),
+        "filled_name_zh": filled_zh,
+        "filled_alpha_source": filled_alpha,
+    }
 
 
 def _sync_technical_indicator_registry(indicators: list[dict]) -> dict:
@@ -235,16 +238,18 @@ def _sync_technical_indicator_registry(indicators: list[dict]) -> dict:
             seen[key] = ind
     entries = []
     for i, (key, ind) in enumerate(sorted(seen.items()), 1):
-        entries.append({
-            "indicator_id": f"IND-ALGOMAP-{i:03d}",
-            "name_zh": ind["name_zh"],
-            "name_en": ind["name_en"] or ind["node_id"],
-            "description": ind["intro"],
-            "formula": ind["formula"],
-            "table_status": ind["registry"],
-            "source_module": ind["module_id"],
-            "source_path": ind["module_path"],
-        })
+        entries.append(
+            {
+                "indicator_id": f"IND-ALGOMAP-{i:03d}",
+                "name_zh": ind["name_zh"],
+                "name_en": ind["name_en"] or ind["node_id"],
+                "description": ind["intro"],
+                "formula": ind["formula"],
+                "table_status": ind["registry"],
+                "source_module": ind["module_id"],
+                "source_path": ind["module_path"],
+            }
+        )
     doc = {
         "ttl": "permanent",
         "schema_version": "0.1.0",
@@ -266,7 +271,8 @@ def _sync_technical_indicator_registry(indicators: list[dict]) -> dict:
     }
     _TI_REGISTRY.write_text(
         yaml.safe_dump(doc, allow_unicode=True, sort_keys=False, width=120),
-        encoding="utf-8", newline="\n",
+        encoding="utf-8",
+        newline="\n",
     )
     return {"indicators": len(entries)}
 
@@ -281,17 +287,17 @@ def _sync_mtr_algo_submodules(algos: list[dict]) -> dict:
     """
     entries = []
     for a in algos:
-        entries.append({
-            "module_path": a["module_path"],
-            "module_id": a["module_id"],
-            "node_id": a["node_id"],
-            "name_zh": a["name_zh"],
-            "name_en": a["name_en"],
-            "plain_zh": a["intro"],
-        })
-    new_section = yaml.safe_dump(
-        {"algo_submodules": entries}, allow_unicode=True, sort_keys=False, width=120
-    )
+        entries.append(
+            {
+                "module_path": a["module_path"],
+                "module_id": a["module_id"],
+                "node_id": a["node_id"],
+                "name_zh": a["name_zh"],
+                "name_en": a["name_en"],
+                "plain_zh": a["intro"],
+            }
+        )
+    new_section = yaml.safe_dump({"algo_submodules": entries}, allow_unicode=True, sort_keys=False, width=120)
     text = _MTR.read_text(encoding="utf-8")
     _validated_write(_MTR, _replace_top_level_section(text, "algo_submodules", new_section))
     return {"algo_submodules": len(entries)}

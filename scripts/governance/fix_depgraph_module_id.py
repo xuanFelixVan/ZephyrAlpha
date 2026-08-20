@@ -87,10 +87,10 @@ RENAMES: list[tuple[str, str, str]] = [
     ("MOD-CFG_SCRIPTS", "MOD-CFG_SCRIPTS", "yaml"),
     ("MOD-CFG_TEST_SUITE", "MOD-CFG_TEST_SUITE", "yaml"),
     # 5 组 MOD-* 派生轨格式非法（连字符应为下划线）→ 修正为合规派生轨
-    ("MOD-H1_REDIS_HOT", "MOD-H1_REDIS_HOT", "py"),        # 8 文件
-    ("MOD-L02_ANA", "MOD-L02_ANA", "py"),                  # 1 文件
-    ("MOD-L02_GOV", "MOD-L02_GOV", "py"),                  # 1 文件
-    ("MOD-POS_SERVICES", "MOD-POS_SERVICES", "py"),    # 1 文件
+    ("MOD-H1_REDIS_HOT", "MOD-H1_REDIS_HOT", "py"),  # 8 文件
+    ("MOD-L02_ANA", "MOD-L02_ANA", "py"),  # 1 文件
+    ("MOD-L02_GOV", "MOD-L02_GOV", "py"),  # 1 文件
+    ("MOD-POS_SERVICES", "MOD-POS_SERVICES", "py"),  # 1 文件
     ("MOD-RUNTIME_INTRADAY", "MOD-RUNTIME_INTRADAY", "py"),  # 2 文件
     # 1 个 SH-* 格式非法（ABBR 段间连字符应为下划线）
     ("SH-MODULE_TRANSLATION-001", "SH-MODULE_TRANSLATION-001", "py"),  # 1 文件
@@ -177,6 +177,7 @@ class SetResult:
 def _get_conn():
     """_get_conn implementation."""
     from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+
     return get_depgraph_pg_connection(autocommit=True)
 
 
@@ -185,8 +186,7 @@ def db_node_by_path(path: str) -> dict | None:
     conn = _get_conn()
     try:
         row = conn.execute(
-            "SELECT node_id, path, blueprint_id, belongs_to, build_status, domain_id "
-            "FROM nodes WHERE path=%s",
+            "SELECT node_id, path, blueprint_id, belongs_to, build_status, domain_id FROM nodes WHERE path=%s",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
             (path,),
         ).fetchone()
         return dict(row) if row else None
@@ -198,9 +198,7 @@ def db_paths_by_blueprint_id(bp_id: str) -> list[str]:
     """查询某 blueprint_id 下的所有 path（用于 rename 的文件头同步清单）。"""
     conn = _get_conn()
     try:
-        rows = conn.execute(
-            "SELECT path FROM nodes WHERE blueprint_id=%s ORDER BY path", (bp_id,)
-        ).fetchall()
+        rows = conn.execute("SELECT path FROM nodes WHERE blueprint_id=%s ORDER BY path", (bp_id,)).fetchall()  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         return [r["path"] for r in rows if r["path"]]
     finally:
         conn.close()
@@ -222,7 +220,9 @@ def check_git_clean() -> bool:
     """Check compliance and report findings."""
     proc = subprocess.run(
         ["git", "status", "--porcelain"],
-        capture_output=True, text=True, cwd=str(BASE_DIR),
+        capture_output=True,
+        text=True,
+        cwd=str(BASE_DIR),
     )
     return proc.returncode == 0 and proc.stdout.strip() == ""
 
@@ -234,7 +234,9 @@ def git_grep_files_containing(old: str) -> list[str]:
     """git grep 出所有含 old 字符串的已跟踪文件路径。"""
     proc = subprocess.run(
         ["git", "grep", "-l", "--fixed-strings", old],
-        capture_output=True, text=True, cwd=str(BASE_DIR),
+        capture_output=True,
+        text=True,
+        cwd=str(BASE_DIR),
     )
     if proc.returncode not in (0, 1):  # 1 = no matches
         return []
@@ -379,8 +381,8 @@ def print_dry_run(existing_ids: set[str]):
         grep_hits = git_grep_files_containing(old)
         total_files += len(grep_hits)
         print(f"{old:34s} {new:34s} {ftype:5s} {len(grep_hits):>10d}")
-        print(f"    DB nodes ({len(db_paths)}): {', '.join(db_paths[:5])}{'...' if len(db_paths)>5 else ''}")
-        print(f"    grep命中 ({len(grep_hits)}): {', '.join(grep_hits[:4])}{'...' if len(grep_hits)>4 else ''}")
+        print(f"    DB nodes ({len(db_paths)}): {', '.join(db_paths[:5])}{'...' if len(db_paths) > 5 else ''}")
+        print(f"    grep命中 ({len(grep_hits)}): {', '.join(grep_hits[:4])}{'...' if len(grep_hits) > 4 else ''}")
         if ftype == "yaml":
             print(f"    策略: 先改 YAML 真源(精确替换 {old}→{new})，再 --rename-blueprint-id 对齐 DB")
         else:
@@ -397,7 +399,9 @@ def print_dry_run(existing_ids: set[str]):
         print(f"    当前 DB blueprint_id={cur!r}  →  策略: --set-blueprint-id + fix_file 添/改 [A_module] 头")
 
     print("\n" + "=" * 100)
-    print(f"总计: {sum(1 for _ in RENAMES)} 组 rename + {len(SETS)} 组 set = {sum(1 for _ in RENAMES)+len(SETS)} 操作")
+    print(
+        f"总计: {sum(1 for _ in RENAMES)} 组 rename + {len(SETS)} 组 set = {sum(1 for _ in RENAMES) + len(SETS)} 操作"
+    )
     print("确认无误后用 --confirm 执行。")
     print("=" * 100)
 
@@ -512,16 +516,19 @@ def print_file_sync_dry_run():
     total = 0
     for old, new in FILE_SYNC_PAIRS:
         hits = git_grep_files_containing(old)
-        stale = [h for h in hits
-                 if h not in INTENTIONAL_SKIP
-                 and not h.endswith((".png", ".jpg", ".jpeg", ".gif", ".pdf", ".db", ".lock"))
-                 and (BASE_DIR / h).is_file()]
+        stale = [
+            h
+            for h in hits
+            if h not in INTENTIONAL_SKIP
+            and not h.endswith((".png", ".jpg", ".jpeg", ".gif", ".pdf", ".db", ".lock"))
+            and (BASE_DIR / h).is_file()
+        ]
         total += len(stale)
         print(f"{old:34s} {new:34s} {len(stale):>10d}")
         for f in stale[:5]:
             print(f"    ✗ {f}")
         if len(stale) > 5:
-            print(f"    ... +{len(stale)-5} more")
+            print(f"    ... +{len(stale) - 5} more")
     print(f"\n  合计需修复文件: {total}")
     print("\n确认无误后用 --file-sync-only --confirm 执行。")
     print("=" * 100)
@@ -565,8 +572,16 @@ def main() -> None:
     )
     mode = parser.add_mutually_exclusive_group(required=False)
     mode.add_argument("--dry-run", action="store_true", help="只分析, 不修改")
-    mode.add_argument("--confirm", action="store_true", help="实际执行（DB 修改经 apply_depgraph 自动 PG 备份，trae_054 v1.6.0；建议先 git commit 保持工作树干净）")
-    parser.add_argument("--file-sync-only", action="store_true", help="治本（2026-08-03）：仅补文件同步（DB 已改），用于 6 节点 rename 后文件未同步的修复。配 --confirm 执行，单独使用为 dry-run。")
+    mode.add_argument(
+        "--confirm",
+        action="store_true",
+        help="实际执行（DB 修改经 apply_depgraph 自动 PG 备份，trae_054 v1.6.0；建议先 git commit 保持工作树干净）",
+    )
+    parser.add_argument(
+        "--file-sync-only",
+        action="store_true",
+        help="治本（2026-08-03）：仅补文件同步（DB 已改），用于 6 节点 rename 后文件未同步的修复。配 --confirm 执行，单独使用为 dry-run。",
+    )
     parser.add_argument("--skip-git-check", action="store_true", help="跳过 git 干净检查（批处理用）")
     parser.add_argument("--output", type=str, default=str(DEFAULT_REPORT), help="报告 JSON 输出路径")
     args = parser.parse_args()
@@ -598,13 +613,13 @@ def main() -> None:
         Path(args.output).write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
         n_fail = len(report["errors"])
         n_ok = sum(len(p["replaced_files"]) for p in report["pairs"])
-        print(f"\n{'='*100}")
+        print(f"\n{'=' * 100}")
         print(f"DONE: {n_ok} 文件已替换, {n_fail} 失败. 报告: {args.output}")
         if report["errors"]:
             print("\n错误清单:")
             for e in report["errors"]:
                 print(f"  - {e}")
-        print(f"{'='*100}")
+        print(f"{'=' * 100}")
         sys.exit(0 if n_fail == 0 else 1)
 
     # Pre-flight: 校验映射表
@@ -633,16 +648,17 @@ def main() -> None:
     DEFAULT_REPORT.parent.mkdir(parents=True, exist_ok=True)
     Path(args.output).write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    n_ok = sum(1 for r in report["renames"] if r["status"] == "OK") + \
-           sum(1 for r in report["sets"] if r["status"] == "OK")
+    n_ok = sum(1 for r in report["renames"] if r["status"] == "OK") + sum(
+        1 for r in report["sets"] if r["status"] == "OK"
+    )
     n_fail = len(report["errors"])
-    print(f"\n{'='*100}")
+    print(f"\n{'=' * 100}")
     print(f"DONE: {n_ok} OK, {n_fail} FAILED. 报告: {args.output}")
     if report["errors"]:
         print("\n错误清单:")
         for e in report["errors"]:
             print(f"  - {e}")
-    print(f"{'='*100}")
+    print(f"{'=' * 100}")
     sys.exit(0 if n_fail == 0 else 1)
 
 

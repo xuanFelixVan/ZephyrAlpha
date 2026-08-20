@@ -58,7 +58,9 @@ try:
     FINDING_AVAILABLE = True
 except ImportError:
     FINDING_AVAILABLE = False
-ROR_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_consistency_contract.yaml"
+ROR_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_consistency_contract.yaml"
+)
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.yaml_utils import load_yaml
 

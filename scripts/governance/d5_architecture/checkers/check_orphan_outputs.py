@@ -75,6 +75,8 @@ def count_importers(module_path: str) -> int:
         return len([line for line in result.stdout.strip().splitlines() if line])
     except Exception:
         return EXIT_PASS
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Check orphan outputs across blueprints")

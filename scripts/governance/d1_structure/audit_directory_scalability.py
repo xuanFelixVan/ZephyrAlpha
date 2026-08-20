@@ -86,10 +86,18 @@ C_SRC_ZEPHYR_DIRS = [  # noqa: gate-vocab  层目录名，非 domain 值
 
 THRESHOLD_DOCS_MD_WARN = _get_threshold("directory_scalability.docs_md_warn", 5)  # 治本(ARCH-036 P3-A5): 从SSoT读取
 THRESHOLD_DOCS_MD_ERROR = _get_threshold("directory_scalability.docs_md_error", 20)  # 治本(ARCH-036 P3-A5): 从SSoT读取
-THRESHOLD_SRC_PY_WARN = _get_threshold("directory_scalability.src_py_warn", 60)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码10与SSoT 60漂移)
-THRESHOLD_SRC_PY_ERROR = _get_threshold("directory_scalability.src_py_error", 120)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码50与SSoT 120漂移)
-THRESHOLD_DIR_CHILDREN_WARN = _get_threshold("directory_scalability.dir_children_warn", 100)  # 治本(ARCH-036 P3-A5): 从SSoT读取
-THRESHOLD_DIR_CHILDREN_ERROR = _get_threshold("directory_scalability.dir_children_error", 500)  # 治本(ARCH-036 P3-A5): 从SSoT读取
+THRESHOLD_SRC_PY_WARN = _get_threshold(
+    "directory_scalability.src_py_warn", 60
+)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码10与SSoT 60漂移)
+THRESHOLD_SRC_PY_ERROR = _get_threshold(
+    "directory_scalability.src_py_error", 120
+)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码50与SSoT 120漂移)
+THRESHOLD_DIR_CHILDREN_WARN = _get_threshold(
+    "directory_scalability.dir_children_warn", 100
+)  # 治本(ARCH-036 P3-A5): 从SSoT读取
+THRESHOLD_DIR_CHILDREN_ERROR = _get_threshold(
+    "directory_scalability.dir_children_error", 500
+)  # 治本(ARCH-036 P3-A5): 从SSoT读取
 
 
 def count_direct_items(path: Path, suffix: str | None = None) -> int:

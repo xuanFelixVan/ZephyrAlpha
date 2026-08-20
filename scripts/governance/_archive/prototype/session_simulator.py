@@ -95,7 +95,11 @@ SCENARIOS: list[dict] = [
     },
     {"task": "给熔断器加个 cooldown 计数器", "expected": ["MOD-GATE_ENGINE"], "level": "none"},
     # ── Session 6-10: Context Engine ──
-    {"task": "优化 context 压缩策略——DocCompressor 丢太多 schema 字段了", "expected": ["MOD-CONTEXT_ENGINE"], "level": "full"},
+    {
+        "task": "优化 context 压缩策略——DocCompressor 丢太多 schema 字段了",
+        "expected": ["MOD-CONTEXT_ENGINE"],
+        "level": "full",
+    },
     {
         "task": "Context Engine 的 validate 阶段加 Token 预算校验",
         "expected": ["MOD-CONTEXT_ENGINE", "MOD-INF-001"],
@@ -156,13 +160,21 @@ SCENARIOS: list[dict] = [
         "level": "none",
     },
     # ── Session 21-25: LLM Security ──
-    {"task": "LLM Security 的 L2 输入分类器误杀率过高——正则规则太严格", "expected": ["MOD-LLM_SECURITY"], "level": "full"},
+    {
+        "task": "LLM Security 的 L2 输入分类器误杀率过高——正则规则太严格",
+        "expected": ["MOD-LLM_SECURITY"],
+        "level": "full",
+    },
     {
         "task": "四层安全防御的 L3 Schema 验证增加 JSON 输出格式校验",
         "expected": ["MOD-LLM_SECURITY", "MOD-INF-017"],
         "level": "full",
     },
-    {"task": "prompt injection 检测增加新的攻击模式（知乎-小红书-v4）", "expected": ["MOD-LLM_SECURITY"], "level": "full"},
+    {
+        "task": "prompt injection 检测增加新的攻击模式（知乎-小红书-v4）",
+        "expected": ["MOD-LLM_SECURITY"],
+        "level": "full",
+    },
     {
         "task": "Security Gateway 的 fail-closed 模式下拒绝了一个合法 LLM 请求",
         "expected": ["MOD-LLM_SECURITY"],

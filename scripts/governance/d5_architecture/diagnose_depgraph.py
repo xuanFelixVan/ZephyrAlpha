@@ -410,15 +410,9 @@ def _load_vocab_order(vocab_file: str, fallback_items: tuple[str, ...]) -> dict[
 
 # 治本：从 stability_vocabulary.yaml/safety_level_vocabulary.yaml/ai_autonomy_vocabulary.yaml
 # 动态加载 ORDER 映射（order 字段优先，否则用列表索引）；YAML 不可读时 fallback 到原值。
-STABILITY_ORDER = _load_vocab_order(
-    "stability_vocabulary.yaml", ("frozen", "stable", "evolving", "volatile")
-)
-SAFETY_ORDER = _load_vocab_order(
-    "safety_level_vocabulary.yaml", ("H", "M", "L")
-)
-AUTONOMY_ORDER = _load_vocab_order(
-    "ai_autonomy_vocabulary.yaml", ("immutable_core", "human_gated", "ai_modifiable")
-)
+STABILITY_ORDER = _load_vocab_order("stability_vocabulary.yaml", ("frozen", "stable", "evolving", "volatile"))
+SAFETY_ORDER = _load_vocab_order("safety_level_vocabulary.yaml", ("H", "M", "L"))
+AUTONOMY_ORDER = _load_vocab_order("ai_autonomy_vocabulary.yaml", ("immutable_core", "human_gated", "ai_modifiable"))
 
 
 def find_test_coverage_gaps(nodes, edges):

@@ -67,9 +67,7 @@ LEGAL_DIRS: tuple[str, ...] = ("scripts/", "src/zephyr/", "tests/", "schemas/")
 #   __init__.py / conftest.py / setup.py — 历史豁免
 #   sitecustomize.py — Python 解释器启动自动加载（GATE-20 运行时 Gate 引导入口，
 #       必须 repo root；详见 AGENTS.md §4.2.1 + runtime_interceptor.py）
-EXCLUDE_NAMES: frozenset[str] = frozenset(
-    {"__init__.py", "conftest.py", "setup.py", "sitecustomize.py"}
-)
+EXCLUDE_NAMES: frozenset[str] = frozenset({"__init__.py", "conftest.py", "setup.py", "sitecustomize.py"})
 
 
 def find_orphan_py_files() -> list[Path]:

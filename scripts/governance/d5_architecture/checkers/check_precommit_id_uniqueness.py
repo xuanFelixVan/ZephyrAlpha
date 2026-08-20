@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: 由 pre-commit hook 事件自动触发（.pre-commit-config.yaml entry 在案），非人工 manual 运行
 """
 check_precommit_id_uniqueness.py — GATE-ID-UNIQ
 
@@ -134,26 +135,20 @@ def _format_entries(entries: list[tuple[int, str, str, int]]) -> str:
     """_format_entries implementation."""
     parts = []
     for line_no, hook_id, repo_url, repo_line in entries:
-        parts.append(
-            f"line {line_no} (id='{hook_id}', repo={repo_url}@line{repo_line})"
-        )
+        parts.append(f"line {line_no} (id='{hook_id}', repo={repo_url}@line{repo_line})")
     return ", ".join(parts)
 
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="GATE-ID-UNIQ: 检测 .pre-commit-config.yaml 内 hook id 唯一性"
-    )
+    parser = argparse.ArgumentParser(description="GATE-ID-UNIQ: 检测 .pre-commit-config.yaml 内 hook id 唯一性")
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument(
         "--ci",
         action="store_true",
         help="硬阻断模式 (默认行为,显式传递以兼容 pre-commit args 配置)",
     )
-    mode.add_argument(
-        "--warn-only", action="store_true", help="仅警告: 全部 exit 0 (不阻断)"
-    )
+    mode.add_argument("--warn-only", action="store_true", help="仅警告: 全部 exit 0 (不阻断)")
     args = parser.parse_args()
 
     if not CONFIG_PATH.exists():

@@ -88,9 +88,7 @@ class BrokenCommand:
 
 
 # 活跃状态（会触发 transition(COMPLETED) 死锁的状态）
-_ACTIVE_STATUSES = frozenset(
-    {"PENDING", "IN_PROGRESS", "READY", "BLOCKED", "WAITING", "RETRY"}
-)
+_ACTIVE_STATUSES = frozenset({"PENDING", "IN_PROGRESS", "READY", "BLOCKED", "WAITING", "RETRY"})
 
 
 def _resolve_script_path(script_token: str) -> Path:
@@ -195,9 +193,7 @@ def scan_all_post_sync(db_path: Path) -> list[BrokenCommand]:
                 reason = _validate_one_command(cmd)
                 if reason is None:
                     continue
-                _aggregate_broken(
-                    broken_map, f"[specific]{cmd}", cmd, reason, task_id, status
-                )
+                _aggregate_broken(broken_map, f"[specific]{cmd}", cmd, reason, task_id, status)
 
         # --- W3: rollback_instructions（str，轻量语义校验，非命令级；
         #     键加 [rollback]{task_id} 前缀，因回滚文本通常每任务唯一）---
@@ -268,8 +264,7 @@ def main() -> int:
             print(f"  原因: {b.reason}", file=sys.stderr)
             print(
                 f"  活跃任务 ({len(b.active_tasks)}): "
-                f"{', '.join(b.active_tasks[:10])}"
-                + ("..." if len(b.active_tasks) > 10 else ""),
+                f"{', '.join(b.active_tasks[:10])}" + ("..." if len(b.active_tasks) > 10 else ""),
                 file=sys.stderr,
             )
         print(file=sys.stderr)
@@ -294,8 +289,7 @@ def main() -> int:
                 print(f"  原因: {b.reason}", file=sys.stderr)
                 print(
                     f"  终态任务 ({len(b.terminal_tasks)}): "
-                    f"{', '.join(b.terminal_tasks[:10])}"
-                    + ("..." if len(b.terminal_tasks) > 10 else ""),
+                    f"{', '.join(b.terminal_tasks[:10])}" + ("..." if len(b.terminal_tasks) > 10 else ""),
                     file=sys.stderr,
                 )
         else:

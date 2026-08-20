@@ -77,94 +77,158 @@ from _shared.frontmatter import parse_frontmatter  # noqa: E402
 # 依据：ttl_vocabulary.yaml values.permanent.applies_to + 文档类型语义
 PERMANENT_SIGNALS: list[str] = [  # noqa: gate-vocab  # 关键词信号列表（非词表合法值副本；含 doc_type 值作信号词，语义关联非复制）
     # 治理核心
-    "蓝图", "blueprint",
-    "规则", "rule",
-    "标准", "standard",
-    "协议", "protocol",
-    "政策", "policy",
-    "宪章", "charter",
-    "宪法", "constitution",
+    "蓝图",
+    "blueprint",
+    "规则",
+    "rule",
+    "标准",
+    "standard",
+    "协议",
+    "protocol",
+    "政策",
+    "policy",
+    "宪章",
+    "charter",
+    "宪法",
+    "constitution",
     # 架构核心
-    "架构视图", "architecture view",
-    "架构原则", "architecture principle",
-    "不变量", "invariant",
-    "约束", "constraint",
-    "门禁", "gate",
+    "架构视图",
+    "architecture view",
+    "架构原则",
+    "architecture principle",
+    "不变量",
+    "invariant",
+    "约束",
+    "constraint",
+    "门禁",
+    "gate",
     "裁定",  # 治理裁定（如 ARCH-REN-001）
     # 数据真源
-    "词表", "vocabulary",
+    "词表",
+    "vocabulary",
     "schema",
-    "注册表", "registry", "register",
-    "真源", "source of truth", "canonical",
-    "元数据", "metadata",
+    "注册表",
+    "registry",
+    "register",
+    "真源",
+    "source of truth",
+    "canonical",
+    "元数据",
+    "metadata",
     # 结构骨架
-    "模板", "template",
-    "索引", "index",
-    "入口", "entry",
-    "导航", "navigation",
+    "模板",
+    "template",
+    "索引",
+    "index",
+    "入口",
+    "entry",
+    "导航",
+    "navigation",
     # 设计规格（非 service_spec 过程文档）
-    "设计规格", "specification",
-    "规格定义", "spec definition",
+    "设计规格",
+    "specification",
+    "规格定义",
+    "spec definition",
 ]
 
 # ── task_bound 强信号词：标题中出现 → 倾向临时 ──
 # 依据：ttl_vocabulary.yaml values.task_bound.applies_to + 过程性文档语义
 TASK_BOUND_SIGNALS: list[str] = [
     # 过程记录
-    "报告", "report",
-    "记录", "record", "log", "日志",
-    "变更记录", "changelog", "change log",
-    "修复记录", "fix log",
-    "迁移记录", "migration log",
+    "报告",
+    "report",
+    "记录",
+    "record",
+    "log",
+    "日志",
+    "变更记录",
+    "changelog",
+    "change log",
+    "修复记录",
+    "fix log",
+    "迁移记录",
+    "migration log",
     # 调研审计（过程性产出）
-    "调研", "research", "investigation",
-    "审计", "audit",  # 过程性审计产出（区别于 audit_report doc_type）
-    "回顾", "retrospective",
-    "复盘", "postmortem",
+    "调研",
+    "research",
+    "investigation",
+    "审计",
+    "audit",  # 过程性审计产出（区别于 audit_report doc_type）
+    "回顾",
+    "retrospective",
+    "复盘",
+    "postmortem",
     # 施工过程
-    "施工", "construction",
-    "施工方案", "construction plan",
-    "任务卡", "task card",
-    "待办", "todo", "task list",
+    "施工",
+    "construction",
+    "施工方案",
+    "construction plan",
+    "任务卡",
+    "task card",
+    "待办",
+    "todo",
+    "task list",
     # 临时产物
-    "临时", "temporary", "temp",
-    "笔记", "note",
-    "草稿", "draft",
-    "候选池", "candidate pool", "candidate",
-    "提案", "proposal",
-    "评估", "assessment",
-    "清理", "cleanup",
-    "交接", "handoff",
-    "会话", "session",
+    "临时",
+    "temporary",
+    "temp",
+    "笔记",
+    "note",
+    "草稿",
+    "draft",
+    "候选池",
+    "candidate pool",
+    "candidate",
+    "提案",
+    "proposal",
+    "评估",
+    "assessment",
+    "清理",
+    "cleanup",
+    "交接",
+    "handoff",
+    "会话",
+    "session",
 ]
 
 # ── 灰色/待定词：标题中出现 → 需人工讨论 ──
 # 依据：既可能是永久架构文档，也可能是临时过程文档
 AMBIGUOUS_SIGNALS: list[str] = [
-    "全景图", "panorama",  # 可能是蓝图（永久），也可能是快照报告（临时）
-    "分析", "analysis",    # 架构分析=永久，调研分析=临时
-    "总结", "summary",     # 年度总结=临时，架构总结=永久
-    "概览", "overview",    # 架构概览=永久，项目概览=临时
-    "能力定位书",           # 既像蓝图又像报告（用户指定案例）
-    "能力定位",             # 同上
-    "清单", "checklist",   # 注册表=永久，待办清单=临时
-    "手册", "manual",      # 标准手册=永久，操作手册=临时
-    "指南", "guide",       # 同上
-    "导航图",              # 索引=永久，临时导航=临时
-    "讨论", "discussion",  # 治理讨论=永久，草稿讨论=临时
-    "方案",                # 设计方案=永久，施工方案=临时
-    "对比", "comparison",  # 架构对比=永久，竞品对比=临时
-    "规划", "roadmap",     # 战略规划=永久，任务规划=临时
-    "矩阵", "matrix",      # 架构矩阵=永久，临时矩阵=临时
-    "图谱", "graph",       # 知识图谱=永久，临时图谱=临时
+    "全景图",
+    "panorama",  # 可能是蓝图（永久），也可能是快照报告（临时）
+    "分析",
+    "analysis",  # 架构分析=永久，调研分析=临时
+    "总结",
+    "summary",  # 年度总结=临时，架构总结=永久
+    "概览",
+    "overview",  # 架构概览=永久，项目概览=临时
+    "能力定位书",  # 既像蓝图又像报告（用户指定案例）
+    "能力定位",  # 同上
+    "清单",
+    "checklist",  # 注册表=永久，待办清单=临时
+    "手册",
+    "manual",  # 标准手册=永久，操作手册=临时
+    "指南",
+    "guide",  # 同上
+    "导航图",  # 索引=永久，临时导航=临时
+    "讨论",
+    "discussion",  # 治理讨论=永久，草稿讨论=临时
+    "方案",  # 设计方案=永久，施工方案=临时
+    "对比",
+    "comparison",  # 架构对比=永久，竞品对比=临时
+    "规划",
+    "roadmap",  # 战略规划=永久，任务规划=临时
+    "矩阵",
+    "matrix",  # 架构矩阵=永久，临时矩阵=临时
+    "图谱",
+    "graph",  # 知识图谱=永久，临时图谱=临时
 ]
 
 # ── doc_type→ttl 映射（从 doc_type_vocabulary.yaml 动态加载）──
 # 真源：doc_type_vocabulary.yaml values[].ttl_default
 # 治本（2026-06-30）：消除原硬编码 PROCESS_DOC_TYPES / PERMANENT_DOC_TYPES 副本——词表变更只需改一处。
 _DOC_TYPE_VOCAB_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards"
-    / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
 )
 
 
@@ -206,8 +270,7 @@ PROCESS_DOC_TYPES, PERMANENT_DOC_TYPES = _load_doc_type_ttl_sets()
 # 仅保留 03_governance_reports/ 特殊规则硬编码（exempt_subdirs 中的过程性目录，契约未明确其 ttl）
 
 _CONTRACT_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards"
-    / "_registry" / "contracts" / "directory_contract.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "directory_contract.yaml"
 )
 
 
@@ -239,11 +302,13 @@ def _load_dir_ttl_map() -> list[tuple[str, str, str]]:
         sub_clean = sub.strip("/")
         items.append((f"/{sub_clean}/", "task_bound", f"过程性子目录（{sub_clean}/）"))
     # task_bound: 03_governance_reports/（特殊规则——permanent.exempt_subdirs 中的过程性目录）
-    items.append((
-        "docs/02_enterprise_architecture/03_governance_reports/",
-        "task_bound",
-        "治理报告目录（过程性：容量/调研/清理审查，permanent.exempt_subdirs 特殊规则）",
-    ))
+    items.append(
+        (
+            "docs/02_enterprise_architecture/03_governance_reports/",
+            "task_bound",
+            "治理报告目录（过程性：容量/调研/清理审查，permanent.exempt_subdirs 特殊规则）",
+        )
+    )
     # permanent: permanent.paths（永久区核心内容）
     for p in permanent_paths:
         items.append((p, "permanent", f"永久区路径（{p}）"))
@@ -268,6 +333,7 @@ def classify_by_dir(rel_path: str) -> tuple[str, str] | None:
 # ════════════════════════════════════════════════════════════════════════════
 # 内容提取
 # ════════════════════════════════════════════════════════════════════════════
+
 
 def extract_title(text: str, frontmatter: dict | None) -> str:
     """提取文档标题：优先 frontmatter.title，回退首个 # 标题，再回退文件名。"""
@@ -298,7 +364,7 @@ def get_body_head(text: str, max_lines: int = 100) -> str:
     if text.startswith("---"):
         m = re.match(r"^---\s*\n.*?\n---\s*\n?", text, re.DOTALL)
         if m:
-            body = text[m.end():]
+            body = text[m.end() :]
         else:
             body = text
     else:
@@ -310,6 +376,7 @@ def get_body_head(text: str, max_lines: int = 100) -> str:
 # ════════════════════════════════════════════════════════════════════════════
 # 关键词匹配
 # ════════════════════════════════════════════════════════════════════════════
+
 
 def find_signals(text: str, signals: list[str]) -> list[str]:
     """在文本中查找信号词，返回命中的词列表（不区分大小写）。
@@ -335,6 +402,7 @@ def find_signals(text: str, signals: list[str]) -> list[str]:
 # ════════════════════════════════════════════════════════════════════════════
 # 分类判定
 # ════════════════════════════════════════════════════════════════════════════
+
 
 def classify(
     title: str,
@@ -412,8 +480,7 @@ def classify(
                 "suggested_ttl": title_ttl,
                 "confidence": "high",
                 "key_signals": key_signals,
-                "reason": f"标题强信号({title_ttl})" +
-                          ("，目录一致" if dir_ttl == title_ttl else ""),
+                "reason": f"标题强信号({title_ttl})" + ("，目录一致" if dir_ttl == title_ttl else ""),
             }
         # 目录冲突——方向不对称处理
         if title_ttl == "task_bound" and dir_ttl == "permanent":
@@ -515,8 +582,14 @@ def classify(
 # ════════════════════════════════════════════════════════════════════════════
 
 CSV_FIELDS = [
-    "relative_path", "current_ttl", "suggested_ttl", "confidence",
-    "title", "doc_type", "key_signals", "reason",
+    "relative_path",
+    "current_ttl",
+    "suggested_ttl",
+    "confidence",
+    "title",
+    "doc_type",
+    "key_signals",
+    "reason",
 ]
 
 
@@ -553,16 +626,18 @@ def main() -> int:
         try:
             text = fpath.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
-            pending_rows.append({
-                "relative_path": rel_path,
-                "current_ttl": "",
-                "suggested_ttl": "pending",
-                "confidence": "low",
-                "title": "(读取失败)",
-                "doc_type": "",
-                "key_signals": "",
-                "reason": "文件读取失败",
-            })
+            pending_rows.append(
+                {
+                    "relative_path": rel_path,
+                    "current_ttl": "",
+                    "suggested_ttl": "pending",
+                    "confidence": "low",
+                    "title": "(读取失败)",
+                    "doc_type": "",
+                    "key_signals": "",
+                    "reason": "文件读取失败",
+                }
+            )
             continue
 
         # 解析 frontmatter
@@ -621,9 +696,9 @@ def main() -> int:
     print("ttl 内容关键词分类报告")
     print(f"{'=' * 70}")
     print(f"  总扫描文件数          : {total}")
-    print(f"  明确永久 (permanent)  : {len(permanent_rows)} ({len(permanent_rows)*100//total}%)")
-    print(f"  明确临时 (task_bound) : {len(task_bound_rows)} ({len(task_bound_rows)*100//total}%)")
-    print(f"  待定讨论 (pending)    : {len(pending_rows)} ({len(pending_rows)*100//total}%)")
+    print(f"  明确永久 (permanent)  : {len(permanent_rows)} ({len(permanent_rows) * 100 // total}%)")
+    print(f"  明确临时 (task_bound) : {len(task_bound_rows)} ({len(task_bound_rows) * 100 // total}%)")
+    print(f"  待定讨论 (pending)    : {len(pending_rows)} ({len(pending_rows) * 100 // total}%)")
     print(f"{'=' * 70}")
     print("\n输出文件：")
     print(f"  {perm_path}")

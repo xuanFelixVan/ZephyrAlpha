@@ -208,6 +208,8 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
     else:
         print("  结果: ✅ PASS")
         return EXIT_PASS
+
+
 def main():
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="蓝图模板合规检查门禁")

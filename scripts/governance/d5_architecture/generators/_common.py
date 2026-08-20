@@ -94,6 +94,7 @@ def idempotent_date(script_path: "Path | None" = None) -> str:
         return ts.split(" ")[0]
     return ts  # "unknown" 或其他格式原样返回
 
+
 # 治本（2026-06-30）：数据库名真源——生成器产物引用此常量，禁止硬编码 `depgraph (PostgreSQL)`。
 # 真源链：dependency_path_panorama.md L23 + AGENTS.md §11.0 命名规范 → 本常量（生成器可用真源）。
 # 生成器纯 stdlib 解耦（不 import zephyr.*），无法读 .md，故在此收口。

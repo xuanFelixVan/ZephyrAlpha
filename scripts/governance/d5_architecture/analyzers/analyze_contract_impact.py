@@ -58,10 +58,7 @@ import argparse
 
 import yaml
 
-CONTRACTS_YAML = (
-    REPO_ROOT
-    / "architecture_model/contracts/cross_layer_contracts.yaml"
-)
+CONTRACTS_YAML = REPO_ROOT / "architecture_model/contracts/cross_layer_contracts.yaml"
 
 
 def load_contracts() -> dict:

@@ -94,7 +94,9 @@ def main() -> None:
             "SELECT design_maturity, COUNT(*) AS cnt FROM nodes GROUP BY design_maturity ORDER BY COUNT(*) DESC"
         )
         maturity_dist = {r["design_maturity"] or "NULL": r["cnt"] for r in cur.fetchall()}
-        cur = conn.execute("SELECT build_status, COUNT(*) AS cnt FROM nodes GROUP BY build_status ORDER BY COUNT(*) DESC")
+        cur = conn.execute(
+            "SELECT build_status, COUNT(*) AS cnt FROM nodes GROUP BY build_status ORDER BY COUNT(*) DESC"  # noqa: bare-sql  治理DBA脚本存量统计查询，format重排伪新增（§5.160.2集中化专项另列）
+        )
         build_dist = {r["build_status"] or "NULL": r["cnt"] for r in cur.fetchall()}
         cur = conn.execute("SELECT layer_id, COUNT(*) AS cnt FROM domains GROUP BY layer_id ORDER BY layer_id")
         layer_dist = {r["layer_id"] or "NULL": r["cnt"] for r in cur.fetchall()}

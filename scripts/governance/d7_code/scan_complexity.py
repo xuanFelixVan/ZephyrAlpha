@@ -15,6 +15,7 @@
 # [TESTS] 手动验证: 裁定#214 基线 215 暗债函数(复杂度>15), 最高105, 平均3.4
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: CI/CD reporting + AI 按需 audit（P3-1.2 裁定豁免语义），非常驻服务
 """
 全量循环复杂度扫描器 — §5.158 暗债监控（裁定#214 Phase 4 引入）。
 
@@ -81,10 +82,7 @@ class ComplexityFinding:
     def format(self) -> str:
         """格式化为可读字符串。"""
         suffix = f"-{self.end_line}" if self.end_line else ""
-        return (
-            f"{self.file}:{self.line}{suffix}: "
-            f"{self.function}(complexity={self.complexity})"
-        )
+        return f"{self.file}:{self.line}{suffix}: {self.function}(complexity={self.complexity})"
 
 
 def _walk_excluding_nested_funcs(node):
@@ -153,19 +151,19 @@ def _scan_file(filepath: Path, threshold: int) -> list[ComplexityFinding]:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             complexity = _cyclomatic_complexity(node)
             if complexity > threshold:
-                findings.append(ComplexityFinding(
-                    file=rel_path,
-                    line=node.lineno,
-                    function=node.name,
-                    complexity=complexity,
-                    end_line=getattr(node, "end_lineno", node.lineno),
-                ))
+                findings.append(
+                    ComplexityFinding(
+                        file=rel_path,
+                        line=node.lineno,
+                        function=node.name,
+                        complexity=complexity,
+                        end_line=getattr(node, "end_lineno", node.lineno),
+                    )
+                )
     return findings
 
 
-def scan_directory(
-    src_dir: Path, threshold: int
-) -> tuple[list[ComplexityFinding], int, list[int]]:
+def scan_directory(src_dir: Path, threshold: int) -> tuple[list[ComplexityFinding], int, list[int]]:
     """扫描目录下所有 .py 文件（排除 tests/）。
 
     Returns:
@@ -193,35 +191,40 @@ def scan_directory(
                 c = _cyclomatic_complexity(node)
                 all_complexities.append(c)
                 if c > threshold:
-                    findings.append(ComplexityFinding(
-                        file=rel,
-                        line=node.lineno,
-                        function=node.name,
-                        complexity=c,
-                        end_line=getattr(node, "end_lineno", node.lineno),
-                    ))
+                    findings.append(
+                        ComplexityFinding(
+                            file=rel,
+                            line=node.lineno,
+                            function=node.name,
+                            complexity=c,
+                            end_line=getattr(node, "end_lineno", node.lineno),
+                        )
+                    )
     return findings, total_functions, all_complexities
 
 
 def main(argv: list[str] | None = None) -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="全量循环复杂度扫描器 — §5.158 暗债监控（裁定#214 Phase 4）"
-    )
+    parser = argparse.ArgumentParser(description="全量循环复杂度扫描器 — §5.158 暗债监控（裁定#214 Phase 4）")
     parser.add_argument(
-        "--src", default="src/zephyr",
+        "--src",
+        default="src/zephyr",
         help="源码目录（默认: src/zephyr）",
     )
     parser.add_argument(
-        "--threshold", type=int, default=_MAX_COMPLEXITY,
+        "--threshold",
+        type=int,
+        default=_MAX_COMPLEXITY,
         help=f"复杂度阈值（默认: {_MAX_COMPLEXITY}，与 gate 一致）",
     )
     parser.add_argument(
-        "--ci", action="store_true",
+        "--ci",
+        action="store_true",
         help="CI 模式：有违规时 exit 1（默认 warn-only exit 0）",
     )
     parser.add_argument(
-        "--quiet", action="store_true",
+        "--quiet",
+        action="store_true",
         help="静默模式：只输出违规列表，不输出统计摘要",
     )
     args = parser.parse_args(argv)
@@ -230,16 +233,13 @@ def main(argv: list[str] | None = None) -> int:
     if not src_dir.is_dir():
         print(f"[scan_complexity] 错误: src 目录不存在: {src_dir}", file=sys.stderr)
         return EXIT_ERROR
-    findings, total_functions, all_complexities = scan_directory(
-        src_dir, args.threshold
-    )
+    findings, total_functions, all_complexities = scan_directory(src_dir, args.threshold)
 
     # 按复杂度降序排列
     findings.sort(key=lambda f: f.complexity, reverse=True)
 
     if findings:
-        print(f"[scan_complexity] 发现 {len(findings)} 个高复杂度函数"
-              f" (complexity > {args.threshold})：")
+        print(f"[scan_complexity] 发现 {len(findings)} 个高复杂度函数 (complexity > {args.threshold})：")
         for f in findings:
             print(f"  {f.format()}")
     else:
@@ -259,5 +259,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.ci and findings:
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

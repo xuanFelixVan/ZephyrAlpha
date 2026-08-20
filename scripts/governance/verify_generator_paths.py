@@ -45,6 +45,7 @@
     python scripts/governance/verify_generator_paths.py          # 跑全部三路径
     python scripts/governance/verify_generator_paths.py --path 1 # 只跑路径1
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -91,11 +92,26 @@ def verify_path1_db_realtime() -> dict:
     # add_step：应触发 [REGENERATE] 🔄 后台启动
     try:
         proc = run_subprocess_hidden(
-            [sys.executable, str(apply_script), "--add-step",
-             "--step-id", step_id, "--step-name", "冒烟验证临时环节",
-             "--flow-stage", "buy_flow", "--layer", "L2A",
-             "--sort-order", "999", "--source-ref", "verify_generator_paths"],
-            cwd=str(_REPO_ROOT), encoding="utf-8", timeout=120,
+            [
+                sys.executable,
+                str(apply_script),
+                "--add-step",
+                "--step-id",
+                step_id,
+                "--step-name",
+                "冒烟验证临时环节",
+                "--flow-stage",
+                "buy_flow",
+                "--layer",
+                "L2A",
+                "--sort-order",
+                "999",
+                "--source-ref",
+                "verify_generator_paths",
+            ],
+            cwd=str(_REPO_ROOT),
+            encoding="utf-8",
+            timeout=120,
         )
     except Exception as e:  # noqa: BLE001
         result["status"] = "skip"
@@ -106,9 +122,16 @@ def verify_path1_db_realtime() -> dict:
     if proc.returncode != 0:
         stderr = proc.stderr or ""
         # DB 连接失败的特征 → skip（CI 无 DB）
-        if any(k in stderr for k in ("could not connect", "connection refused",
-                                      "OperationalError", "password authentication",
-                                      "role \"postgres\" does not exist")):
+        if any(
+            k in stderr
+            for k in (
+                "could not connect",
+                "connection refused",
+                "OperationalError",
+                "password authentication",
+                'role "postgres" does not exist',
+            )
+        ):
             result["status"] = "skip"
             result["detail"] = f"DB 不可用（skip 而非 fail）: {stderr.strip()[:200]}"
             return result
@@ -142,7 +165,9 @@ def verify_path1_db_realtime() -> dict:
     try:
         run_subprocess_hidden(
             [sys.executable, str(apply_script), "--remove-step", "--step-id", step_id],
-            cwd=str(_REPO_ROOT), encoding="utf-8", timeout=120,
+            cwd=str(_REPO_ROOT),
+            encoding="utf-8",
+            timeout=120,
         )
         result["detail"] += "; 已清理临时环节"
     except Exception as e:  # noqa: BLE001
@@ -166,6 +191,7 @@ def verify_path2_yaml_stale() -> dict:
     result = {"path": "2-yaml-stale", "status": "ok", "detail": ""}
     try:
         from scripts.governance.reconcile_generators import reconcile_stale
+
         ret = reconcile_stale()
     except Exception as e:  # noqa: BLE001
         result["status"] = "failed"
@@ -187,15 +213,12 @@ def verify_path2_yaml_stale() -> dict:
     regen = len(ret["regenerated"])
     skipped = len(ret["skipped"])
     # 检查 regenerated 中是否有 failed 的生成器
-    failed_gens = [r.get("generator", "?") for r in ret["regenerated"]
-                   if r.get("status") not in ("ok",)]
+    failed_gens = [r.get("generator", "?") for r in ret["regenerated"] if r.get("status") not in ("ok",)]
     if failed_gens:
         result["status"] = "failed"
         result["detail"] = f"扫描 {total} 生成器，{regen} 重生成，其中失败: {failed_gens}"
     else:
-        result["detail"] = (
-            f"扫描 {total} 生成器，{regen} 重生成（全 ok），{skipped} 已最新"
-        )
+        result["detail"] = f"扫描 {total} 生成器，{regen} 重生成（全 ok），{skipped} 已最新"
     return result
 
 
@@ -226,9 +249,7 @@ def verify_path3_postcommit_yaml() -> dict:
         return result
 
     # 选一个真实输入源做 mock
-    mock_file = next(
-        (i for i in inputs if "terminology_glossary.yaml" in i), sorted(inputs)[0]
-    )
+    mock_file = next((i for i in inputs if "terminology_glossary.yaml" in i), sorted(inputs)[0])
 
     # 验证匹配逻辑
     if not pcm._matches_generator_input([mock_file], inputs):
@@ -267,8 +288,7 @@ def verify_path3_postcommit_yaml() -> dict:
         result["detail"] = f"spawn 调用 {len(spawned_calls)} 次（应 1）"
         return result
     result["detail"] = (
-        f"mock 提交 {Path(mock_file).name} → 检测命中 → spawn 意图确认 "
-        f"({len(spawned_calls)} 次), main()=0 不阻断 git"
+        f"mock 提交 {Path(mock_file).name} → 检测命中 → spawn 意图确认 ({len(spawned_calls)} 次), main()=0 不阻断 git"
     )
     return result
 
@@ -287,8 +307,7 @@ _VERIFIERS = {
 def main(argv: list[str] | None = None) -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="生成器三条触发路径冒烟验证")
-    parser.add_argument("--path", type=int, choices=[1, 2, 3],
-                        help="只跑指定路径（默认全部）")
+    parser.add_argument("--path", type=int, choices=[1, 2, 3], help="只跑指定路径（默认全部）")
     args = parser.parse_args(argv)
 
     paths = [args.path] if args.path else [1, 2, 3]

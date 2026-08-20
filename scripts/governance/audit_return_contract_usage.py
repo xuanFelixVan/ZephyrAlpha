@@ -63,6 +63,7 @@ Exit codes:
     0 = 无违规
     1 = 发现违规（AI MUST 修复，不可静默忽略）
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -109,11 +110,11 @@ class Violation:
     file: str
     line: int
     col: int
-    function: str       # session_worktree_commit 等
+    function: str  # session_worktree_commit 等
     forbidden_key: str  # committed / merged / success
-    pattern: str        # "subscript_access" / "regex_near_call"
-    snippet: str        # 违规行内容（前 120 字符）
-    severity: str       # "error"（键不存在）/ "warning"（语义≠ok）
+    pattern: str  # "subscript_access" / "regex_near_call"
+    snippet: str  # 违规行内容（前 120 字符）
+    severity: str  # "error"（键不存在）/ "warning"（语义≠ok）
 
 
 def _is_temp_path(path: Path) -> bool:
@@ -139,9 +140,7 @@ def _audit_file_ast(path: Path) -> list[Violation]:
     call_bindings: dict[str, str] = {}  # var_name → function_name
     for node in ast.walk(tree):
         if isinstance(node, ast.Assign):
-            if (isinstance(node.value, ast.Call)
-                    and len(node.targets) == 1
-                    and isinstance(node.targets[0], ast.Name)):
+            if isinstance(node.value, ast.Call) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
                 func = node.value.func
                 func_name = ""
                 if isinstance(func, ast.Name):
@@ -153,9 +152,7 @@ def _audit_file_ast(path: Path) -> list[Violation]:
 
     # 检测 Subscript 访问 forbidden key
     for node in ast.walk(tree):
-        if (isinstance(node, ast.Subscript)
-                and isinstance(node.value, ast.Name)
-                and node.value.id in call_bindings):
+        if isinstance(node, ast.Subscript) and isinstance(node.value, ast.Name) and node.value.id in call_bindings:
             func_name = call_bindings[node.value.id]
             forbidden = KNOWN_MISUSE_PATTERNS[func_name]
             # 提取 subscript key（字符串字面量）
@@ -168,16 +165,18 @@ def _audit_file_ast(path: Path) -> list[Violation]:
                 if key in forbidden:
                     severity = "warning" if key == "merged" else "error"
                     snippet = _get_line_snippet(path, node.lineno)
-                    violations.append(Violation(
-                        file=str(path),
-                        line=node.lineno,
-                        col=node.col_offset,
-                        function=func_name,
-                        forbidden_key=key,
-                        pattern="subscript_access",
-                        snippet=snippet,
-                        severity=severity,
-                    ))
+                    violations.append(
+                        Violation(
+                            file=str(path),
+                            line=node.lineno,
+                            col=node.col_offset,
+                            function=func_name,
+                            forbidden_key=key,
+                            pattern="subscript_access",
+                            snippet=snippet,
+                            severity=severity,
+                        )
+                    )
     return violations
 
 
@@ -230,16 +229,18 @@ def _audit_file_regex(path: Path) -> list[Violation]:
                 forbidden = KNOWN_MISUSE_PATTERNS[func_name]
                 if key in forbidden:
                     severity = "warning" if key == "merged" else "error"
-                    violations.append(Violation(
-                        file=str(path),
-                        line=lineno,
-                        col=m.start(),
-                        function=func_name,
-                        forbidden_key=key,
-                        pattern="regex_near_call",
-                        snippet=line.rstrip()[:120],
-                        severity=severity,
-                    ))
+                    violations.append(
+                        Violation(
+                            file=str(path),
+                            line=lineno,
+                            col=m.start(),
+                            function=func_name,
+                            forbidden_key=key,
+                            pattern="regex_near_call",
+                            snippet=line.rstrip()[:120],
+                            severity=severity,
+                        )
+                    )
     return violations
 
 
@@ -312,11 +313,13 @@ def main() -> int:
         description="Audit return contract ok key usage (P2-5)",
     )
     parser.add_argument(
-        "paths", nargs="+",
+        "paths",
+        nargs="+",
         help="file or directory paths to audit",
     )
     parser.add_argument(
-        "--json", action="store_true",
+        "--json",
+        action="store_true",
         help="output JSON (default: human-readable)",
     )
     args = parser.parse_args()
@@ -330,19 +333,20 @@ def main() -> int:
             violations.extend(audit_return_contract_usage([path]))
 
     if args.json:
-        print(json.dumps(
-            [asdict(v) for v in violations], ensure_ascii=False, indent=2,
-        ))
+        print(
+            json.dumps(
+                [asdict(v) for v in violations],
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
     else:
         if not violations:
             print("audit_return_contract_usage: 0 violations")
         else:
             print(f"audit_return_contract_usage: {len(violations)} violations:")
             for v in violations:
-                print(
-                    f"  {v.file}:{v.line}:{v.col} [{v.severity}] "
-                    f"{v.function} -> ['{v.forbidden_key}'] ({v.pattern})"
-                )
+                print(f"  {v.file}:{v.line}:{v.col} [{v.severity}] {v.function} -> ['{v.forbidden_key}'] ({v.pattern})")
                 print(f"    snippet: {v.snippet}")
 
     # 有 error severity 违规 → exit 1
@@ -353,14 +357,14 @@ def main() -> int:
 if __name__ == "__main__":
     sys.exit(main())
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def audit_file_ast(path) -> list[Violation]:
     """公共接口：audit_file_ast（Stage 4 公共化）。"""
     return _audit_file_ast(path)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def audit_file_regex(path) -> list[Violation]:
     """公共接口：audit_file_regex（Stage 4 公共化）。"""
     return _audit_file_regex(path)
-
-

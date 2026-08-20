@@ -155,6 +155,8 @@ def check_stashes(max_threshold: int = MAX_STASHES, critical_threshold: int = CR
         for line in stash_list:
             print(f"  {line}")
         return EXIT_FINDINGS
+
+
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="git stash 堆积治理（OPS-2026062501）")

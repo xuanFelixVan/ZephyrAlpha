@@ -104,22 +104,26 @@ def scan_b_track_packages() -> list[dict]:
     # 幻影模块：index.yaml 列出但物理文件不存在
     phantom = index_ids - physical_ids
     for mod_id in sorted(phantom):
-        findings.append({
-            "module": mod_id,
-            "type": "PHANTOM_MODULE",
-            "detail": f"index.yaml b_track 列出模块 '{mod_id}' 但 layers/b_{mod_id}.yaml 不存在（幻影模块）",
-            "severity": "HIGH",
-        })
+        findings.append(
+            {
+                "module": mod_id,
+                "type": "PHANTOM_MODULE",
+                "detail": f"index.yaml b_track 列出模块 '{mod_id}' 但 layers/b_{mod_id}.yaml 不存在（幻影模块）",
+                "severity": "HIGH",
+            }
+        )
 
     # 漏登模块：物理文件存在但 index.yaml 未列
     missing = physical_ids - index_ids
     for mod_id in sorted(missing):
-        findings.append({
-            "module": mod_id,
-            "type": "MISSING_FROM_INDEX",
-            "detail": f"layers/b_{mod_id}.yaml 物理存在但 index.yaml b_track 未登记（漏登）",
-            "severity": "HIGH",
-        })
+        findings.append(
+            {
+                "module": mod_id,
+                "type": "MISSING_FROM_INDEX",
+                "detail": f"layers/b_{mod_id}.yaml 物理存在但 index.yaml b_track 未登记（漏登）",
+                "severity": "HIGH",
+            }
+        )
 
     return findings
 

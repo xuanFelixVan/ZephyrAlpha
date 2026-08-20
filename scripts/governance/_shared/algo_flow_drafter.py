@@ -31,6 +31,7 @@
     # 批量：对 .trae/documents/_operational_modules.json 里全部运营态模块生成草稿
     python scripts/governance/_shared/algo_flow_drafter.py --batch
 """
+
 from __future__ import annotations
 
 import argparse
@@ -59,13 +60,25 @@ def _safe_draft_name(module_id: str) -> str:
     """module_id → 安全文件名（__unmanaged__ 含路径分隔符，替换为 __）。"""
     return re.sub(r"[\\/:*?\"<>|]+", "__", module_id)
 
+
 # 常见参数名 → 输入层中文猜测（校准起点，AI 校准时必须核实）
 _PARAM_ZH_HINT = {
-    "df": "数据帧 DataFrame", "data": "数据 DataFrame", "bars": "K线数据",
-    "prices": "价格序列", "close": "收盘价序列", "volume": "成交量序列",
-    "symbol": "股票代码", "symbols": "股票代码列表", "trade_date": "交易日",
-    "config": "配置对象", "params": "参数", "signal": "信号", "signals": "信号列表",
-    "positions": "持仓", "orders": "订单", "portfolio": "组合",
+    "df": "数据帧 DataFrame",
+    "data": "数据 DataFrame",
+    "bars": "K线数据",
+    "prices": "价格序列",
+    "close": "收盘价序列",
+    "volume": "成交量序列",
+    "symbol": "股票代码",
+    "symbols": "股票代码列表",
+    "trade_date": "交易日",
+    "config": "配置对象",
+    "params": "参数",
+    "signal": "信号",
+    "signals": "信号列表",
+    "positions": "持仓",
+    "orders": "订单",
+    "portfolio": "组合",
 }
 
 # docstring 步骤切分：①②③ 或 1. 2. 或 Step1 等
@@ -252,9 +265,7 @@ def _batch() -> None:
         out.write_text(header + draft + "\n", encoding="utf-8", newline="\n")
         index_lines.append(f"{mid}\t{meta['target_path']}")
         ok += 1
-    (DRAFTS_DIR / "_index.tsv").write_text(
-        "\n".join(index_lines) + "\n", encoding="utf-8", newline="\n"
-    )
+    (DRAFTS_DIR / "_index.tsv").write_text("\n".join(index_lines) + "\n", encoding="utf-8", newline="\n")
     print(f"[OK] 草稿生成 {ok} 个，跳过 {skip} 个（已有标记/无源码），目录 {DRAFTS_DIR}")
 
 
@@ -269,8 +280,10 @@ def main() -> None:
     if not args.py_file:
         parser.error("需要 py_file 或 --batch")
     draft, meta = draft_algo_flow(Path(args.py_file))
-    print(f"# target: {meta['target_path']} (docstring {meta['docstring_len']} 字, "
-          f"{meta['n_functions']} 函数, {meta['n_steps']} 步骤)")
+    print(
+        f"# target: {meta['target_path']} (docstring {meta['docstring_len']} 字, "
+        f"{meta['n_functions']} 函数, {meta['n_steps']} 步骤)"
+    )
     print(draft)
 
 

@@ -69,7 +69,7 @@ PRE_ROLLBACK_BACKUP = str(REPO_ROOT / "data" / "databases" / "depgraph.backup.pr
 def main():
     """Entry point: parse args, run logic, return exit code."""
     # P2迁移后警告：depgraph 已迁移到 PostgreSQL，本脚本的文件复制式回滚
-    #（shutil.copy2）与 PG 服务器模式不兼容。如需回滚 PG 数据，应使用
+    # （shutil.copy2）与 PG 服务器模式不兼容。如需回滚 PG 数据，应使用
     # pg_dump/pg_restore 或 SQL 级时间点恢复（PITR），而非复制 .db 文件。
     # 本脚本保留仅供 SQLite 备份文件的历史回滚参考，在 PG 模式下不应使用。
     print(
@@ -113,5 +113,7 @@ def main():
         return EXIT_FINDINGS
     print(f"[PASS] 回滚成功，大小一致: {src_size} == {dst_size}")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

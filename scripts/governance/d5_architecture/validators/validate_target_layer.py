@@ -71,7 +71,9 @@ except ImportError:
     sys.exit(EXIT_ERROR)
 
 # target_layer_vocabulary.yaml 真源路径
-VOCAB_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "target_layer_vocabulary.yaml"
+VOCAB_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "target_layer_vocabulary.yaml"
+)
 
 # target_layer 赋值正则（匹配 target_layer="D_XXX" 或 target_layer='D_XXX' 或 target_layer="基础设施"）
 _TARGET_LAYER_RE = re.compile(r'target_layer\s*=\s*["\']([^"\']+)["\']')
@@ -85,10 +87,7 @@ def load_vocabulary() -> tuple[set[str], dict[str, str]]:
 
     data = yaml.safe_load(VOCAB_PATH.read_text(encoding="utf-8"))
     valid_values = {v["value"] for v in data.get("values", [])}
-    deprecated_map = {
-        v["value"]: v.get("replacement", "")
-        for v in data.get("deprecated_values", [])
-    }
+    deprecated_map = {v["value"]: v.get("replacement", "") for v in data.get("deprecated_values", [])}
     return valid_values, deprecated_map
 
 
@@ -116,21 +115,25 @@ def scan_files(valid_values: set[str], deprecated_map: dict[str, str]) -> list[d
                         continue  # 合法值
                     if val in deprecated_map:
                         replacement = deprecated_map[val]
-                        findings.append({
-                            "file": rel,
-                            "line": line_no,
-                            "value": val,
-                            "severity": "WARNING",
-                            "detail": f"废弃值 '{val}'，建议替换为 '{replacement}'",
-                        })
+                        findings.append(
+                            {
+                                "file": rel,
+                                "line": line_no,
+                                "value": val,
+                                "severity": "WARNING",
+                                "detail": f"废弃值 '{val}'，建议替换为 '{replacement}'",
+                            }
+                        )
                     else:
-                        findings.append({
-                            "file": rel,
-                            "line": line_no,
-                            "value": val,
-                            "severity": "ERROR",
-                            "detail": f"未知值 '{val}'，不在 target_layer_vocabulary.yaml 合法值集合中",
-                        })
+                        findings.append(
+                            {
+                                "file": rel,
+                                "line": line_no,
+                                "value": val,
+                                "severity": "ERROR",
+                                "detail": f"未知值 '{val}'，不在 target_layer_vocabulary.yaml 合法值集合中",
+                            }
+                        )
     return findings
 
 

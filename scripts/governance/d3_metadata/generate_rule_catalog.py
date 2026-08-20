@@ -140,6 +140,8 @@ def _count_sections(sections) -> int:
     if isinstance(sections, dict):
         return len(sections)
     return EXIT_PASS
+
+
 def scan_directory(scan_dir: str, repo_root: Path) -> list[dict]:
     """Scan directory for .md and .yaml files, extract frontmatter."""
     results: list[dict] = []

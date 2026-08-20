@@ -153,11 +153,7 @@ def check_config_registry(module_id: str = None) -> list[str]:
     import yaml
 
     findings = []
-    config_yaml = (
-        REPO_ROOT
-        / "architecture_model"
-        / "system-configuration.yaml"
-    )
+    config_yaml = REPO_ROOT / "architecture_model" / "system-configuration.yaml"
     if not config_yaml.exists():
         return findings
     with open(config_yaml, encoding="utf-8") as f:

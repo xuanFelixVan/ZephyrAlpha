@@ -156,7 +156,7 @@ def backfill_file(fpath: Path, dry_run: bool = False, rejudge: bool = False) -> 
     # 传 metadata 用于 Q2 doc_type 判定（修复原 bug：未传 frontmatter 导致 Q2 失效）
     new_ttl = _infer_ttl(rel_path, metadata)
     current_ttl = metadata.get("ttl")
-    current_ttl_str = str(current_ttl).strip().strip('"\'') if current_ttl else ""
+    current_ttl_str = str(current_ttl).strip().strip("\"'") if current_ttl else ""
 
     if current_ttl_str:
         # 已有 ttl
@@ -222,6 +222,7 @@ def _replace_ttl(text: str, suffix: str, ttl_value: str) -> str | None:
 
 # ── .md 格式（YAML frontmatter）──
 
+
 def _inject_md_ttl(text: str, ttl_value: str) -> str | None:
     """在 frontmatter 闭合 --- 前插入 ttl: value 行。"""
     if not text.startswith("---"):
@@ -249,6 +250,7 @@ def _replace_md_ttl(text: str, ttl_value: str) -> str | None:
 
 # ── .py / .sh / .ps1 / .mmd 格式（# [FIELD] value 注释行）──
 
+
 def _inject_py_ttl(text: str, ttl_value: str) -> str | None:
     """在最后一个 # [FIELD] 行后插入 # [TTL] value 行。"""
     lines = text.splitlines(keepends=True)
@@ -274,6 +276,7 @@ def _replace_py_ttl(text: str, ttl_value: str) -> str | None:
 
 # ── .yaml 格式（治理锚定块）──
 
+
 def _inject_yaml_ttl(text: str, ttl_value: str) -> str | None:
     """在 # --- 治理锚定结束 --- 前插入 # ttl: value 行。"""
     lines = text.splitlines(keepends=True)
@@ -295,6 +298,7 @@ def _replace_yaml_ttl(text: str, ttl_value: str) -> str | None:
 
 
 # ── .json 格式（_meta 字段）──
+
 
 def _inject_json_ttl(text: str, ttl_value: str) -> str | None:
     """在 _meta dict 中注入 ttl 字段，重新 dump JSON。"""
@@ -364,9 +368,20 @@ def main() -> int:
 
     # 支持的格式
     valid_suffixes = {".md", ".py", ".sh", ".ps1", ".mmd", ".yaml", ".json"}
-    exempt_parts = {"__pycache__", ".git", ".ailocks", "_backups", "_archive",
-                    ".aidrafts", ".runtime", "data", "models", ".mypy_cache",
-                    ".pytest_cache", ".ruff_cache"}
+    exempt_parts = {
+        "__pycache__",
+        ".git",
+        ".ailocks",
+        "_backups",
+        "_archive",
+        ".aidrafts",
+        ".runtime",
+        "data",
+        "models",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".ruff_cache",
+    }
 
     # 确定扫描范围
     if path_args:
@@ -383,9 +398,11 @@ def main() -> int:
             all_files.append(scan_dir)
         elif scan_dir.is_dir():
             for fp in scan_dir.rglob("*"):
-                if (fp.is_file() and fp.suffix.lower() in valid_suffixes
-                        and not any(p in exempt_parts
-                                    for p in fp.relative_to(REPO_ROOT).parts)):
+                if (
+                    fp.is_file()
+                    and fp.suffix.lower() in valid_suffixes
+                    and not any(p in exempt_parts for p in fp.relative_to(REPO_ROOT).parts)
+                ):
                     all_files.append(fp)
 
     if not all_files:

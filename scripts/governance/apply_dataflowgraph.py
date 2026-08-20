@@ -121,16 +121,12 @@ def _parse_kv_pairs(pairs: list[str] | None) -> dict[str, str]:
 # 对齐 apply_depgraph.py 的 SQL_* 模块级常量模式。
 # ---------------------------------------------------------------------------
 SQL_SELECT_JOB_BY_NAME = (
-    "SELECT job_id, job_name, module_id, design_maturity, build_status "
-    "FROM dataflow_jobs WHERE job_name = %s"
+    "SELECT job_id, job_name, module_id, design_maturity, build_status FROM dataflow_jobs WHERE job_name = %s"
 )
 SQL_SELECT_JOB_BY_MODULE_ID = (
-    "SELECT job_id, job_name, module_id, design_maturity, build_status "
-    "FROM dataflow_jobs WHERE module_id = %s"
+    "SELECT job_id, job_name, module_id, design_maturity, build_status FROM dataflow_jobs WHERE module_id = %s"
 )
-SQL_DELETE_EDGES_BY_ENTITY = (
-    "DELETE FROM dataflow_edges WHERE from_entity_id = %s OR to_entity_id = %s"
-)
+SQL_DELETE_EDGES_BY_ENTITY = "DELETE FROM dataflow_edges WHERE from_entity_id = %s OR to_entity_id = %s"
 SQL_DELETE_JOB_BY_ID = "DELETE FROM dataflow_jobs WHERE job_id = %s"
 
 
@@ -155,6 +151,7 @@ def _backup_after_write(rc: int) -> None:
 # 命令实现
 # ---------------------------------------------------------------------------
 
+
 def cmd_add_design_dataset(args: argparse.Namespace) -> int:
     """新增设计态 Dataset 节点。"""
     init_dataflow_db()
@@ -168,22 +165,33 @@ def cmd_add_design_dataset(args: argparse.Namespace) -> int:
                 print(f"ERROR: Dataset entity_name={args.entity_name!r} 已存在", file=sys.stderr)
                 return EXIT_FINDINGS
             extra = _parse_kv_pairs(args.extra)
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO dataflow_datasets
                     (entity_name, entity_type, scope, contract_ref, physical_type,
                      produced_by_job, domain_id, design_maturity, build_status,
                      pit_policy, format_summary, valid_since, last_updated)
                 VALUES (%s, 'dataset', %s, %s, %s, %s, %s, 'design', 'planned', %s, %s, %s, %s)
                 RETURNING dataset_id
-            """, (
-                args.entity_name, args.scope, args.contract_ref, args.physical_type,
-                args.produced_by_job, args.domain_id,
-                args.pit_policy, args.format_summary, args.valid_since or extra.get("valid_since"),
-                _now(),
-            ))
+            """,
+                (
+                    args.entity_name,
+                    args.scope,
+                    args.contract_ref,
+                    args.physical_type,
+                    args.produced_by_job,
+                    args.domain_id,
+                    args.pit_policy,
+                    args.format_summary,
+                    args.valid_since or extra.get("valid_since"),
+                    _now(),
+                ),
+            )
             dataset_id = cur.fetchone()[0]
         conn.commit()
-        print(f"OK: 新增设计态 Dataset dataset_id={dataset_id} entity_name={args.entity_name!r} (design_maturity=design, build_status=planned)")
+        print(
+            f"OK: 新增设计态 Dataset dataset_id={dataset_id} entity_name={args.entity_name!r} (design_maturity=design, build_status=planned)"
+        )
         return EXIT_PASS
     except Exception as e:
         conn.rollback()
@@ -208,20 +216,31 @@ def cmd_add_design_job(args: argparse.Namespace) -> int:
             if cur.fetchone() is not None:
                 print(f"ERROR: Job job_name={args.job_name!r} 已存在", file=sys.stderr)
                 return EXIT_FINDINGS
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO dataflow_jobs
                     (job_name, entity_type, scope, source_code_ref, trigger_type,
                      run_context, pit_relevance, description, design_maturity,
                      build_status, last_updated)
                 VALUES (%s, 'job', %s, %s, %s, %s, %s, %s, 'design', 'planned', %s)
                 RETURNING job_id
-            """, (
-                args.job_name, args.scope, args.source_code_ref, args.trigger_type,
-                args.run_context, args.pit_relevance, args.description, _now(),
-            ))
+            """,
+                (
+                    args.job_name,
+                    args.scope,
+                    args.source_code_ref,
+                    args.trigger_type,
+                    args.run_context,
+                    args.pit_relevance,
+                    args.description,
+                    _now(),
+                ),
+            )
             job_id = cur.fetchone()[0]
         conn.commit()
-        print(f"OK: 新增设计态 Job job_id={job_id} job_name={args.job_name!r} (design_maturity=design, build_status=planned)")
+        print(
+            f"OK: 新增设计态 Job job_id={job_id} job_name={args.job_name!r} (design_maturity=design, build_status=planned)"
+        )
         return EXIT_PASS
     except Exception as e:
         conn.rollback()
@@ -242,19 +261,28 @@ def cmd_add_design_edge(args: argparse.Namespace) -> int:
     try:
         acquire_dataflow_write_lock(conn)
         with conn.cursor() as cur:
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO dataflow_edges
                     (from_entity_id, to_entity_id, from_entity_type, to_entity_type,
                      edge_type, design_maturity, last_updated)
                 VALUES (%s, %s, %s, %s, %s, 'design', %s)
                 RETURNING edge_id
-            """, (
-                args.from_id, args.to_id, args.from_type, args.to_type,
-                args.edge_type, _now(),
-            ))
+            """,
+                (
+                    args.from_id,
+                    args.to_id,
+                    args.from_type,
+                    args.to_type,
+                    args.edge_type,
+                    _now(),
+                ),
+            )
             edge_id = cur.fetchone()[0]
         conn.commit()
-        print(f"OK: 新增设计态 Edge edge_id={edge_id} {args.from_type}({args.from_id}) --{args.edge_type}--> {args.to_type}({args.to_id})")
+        print(
+            f"OK: 新增设计态 Edge edge_id={edge_id} {args.from_type}({args.from_id}) --{args.edge_type}--> {args.to_type}({args.to_id})"
+        )
         return EXIT_PASS
     except Exception as e:
         conn.rollback()
@@ -366,7 +394,9 @@ def cmd_delete_design_job(args: argparse.Namespace) -> int:
                 edge_count = cur.rowcount
                 cur.execute(SQL_DELETE_JOB_BY_ID, (job_id,))
                 deleted += 1
-                print(f"OK: 删除设计态 Job job_id={job_id} job_name={job_name!r} module_id={module_id!r} (级联边 {edge_count} 条)")
+                print(
+                    f"OK: 删除设计态 Job job_id={job_id} job_name={job_name!r} module_id={module_id!r} (级联边 {edge_count} 条)"
+                )
         conn.commit()
         print(f"共删除 {deleted} 个设计态 Job")
         return EXIT_PASS
@@ -395,10 +425,14 @@ def cmd_list_datasets(args: argparse.Namespace) -> int:
                 ORDER BY scope, entity_name
             """)
             rows = cur.fetchall()
-        print(f"{'ID':>4}  {'entity_name':40}  {'scope':18}  {'contract':12}  {'domain':14}  {'maturity':10}  {'build':10}")
+        print(
+            f"{'ID':>4}  {'entity_name':40}  {'scope':18}  {'contract':12}  {'domain':14}  {'maturity':10}  {'build':10}"
+        )
         print("-" * 130)
         for row in rows:
-            print(f"{row[0]:>4}  {row[1]:40}  {row[2]:18}  {row[3] or '-'!s:12}  {row[4] or '-'!s:14}  {row[5]:10}  {row[6]:10}")
+            print(
+                f"{row[0]:>4}  {row[1]:40}  {row[2]:18}  {row[3] or '-'!s:12}  {row[4] or '-'!s:14}  {row[5]:10}  {row[6]:10}"
+            )
         print(f"\n共 {len(rows)} 个 Dataset")
         return EXIT_PASS
     finally:
@@ -418,10 +452,14 @@ def cmd_list_jobs(args: argparse.Namespace) -> int:
                 ORDER BY scope, job_name
             """)
             rows = cur.fetchall()
-        print(f"{'ID':>4}  {'job_name':35}  {'scope':18}  {'source_code_ref':50}  {'trigger':12}  {'maturity':10}  {'build':10}")
+        print(
+            f"{'ID':>4}  {'job_name':35}  {'scope':18}  {'source_code_ref':50}  {'trigger':12}  {'maturity':10}  {'build':10}"
+        )
         print("-" * 150)
         for row in rows:
-            print(f"{row[0]:>4}  {row[1]:35}  {row[2]:18}  {row[3] or '-'!s:50}  {row[4] or '-'!s:12}  {row[5]:10}  {row[6]:10}")
+            print(
+                f"{row[0]:>4}  {row[1]:35}  {row[2]:18}  {row[3] or '-'!s:50}  {row[4] or '-'!s:12}  {row[5]:10}  {row[6]:10}"
+            )
         print(f"\n共 {len(rows)} 个 Job")
         return EXIT_PASS
     finally:
@@ -445,9 +483,12 @@ def cmd_list_ops() -> int:
     print()
     print("写入互斥锁 key: %d（与 depgraph 的 424242 互不干扰）" % _DATAFLOW_ADVISORY_LOCK_KEY)
     return EXIT_PASS
+
+
 # ---------------------------------------------------------------------------
 # CLI 定义
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
@@ -475,22 +516,36 @@ def main() -> None:
 
     # Dataset 参数
     parser.add_argument("--entity-name", type=str, help="Dataset entity_name（如 market_data.tick）")
-    parser.add_argument("--scope", type=str, default="production", choices=["production", "backtest_internal"], help="作用域")
+    parser.add_argument(
+        "--scope", type=str, default="production", choices=["production", "backtest_internal"], help="作用域"
+    )
     parser.add_argument("--contract-ref", type=str, default=None, help="契约引用（CTR-ID，回测内部为空）")
     parser.add_argument("--physical-type", type=str, default=None, help="物理类型引用")
     parser.add_argument("--produced-by-job", type=str, default=None, help="产出该 Dataset 的 Job 名称")
     parser.add_argument("--domain-id", type=str, default=None, help="所属域 ID")
-    parser.add_argument("--pit-policy", type=str, default="strict", choices=["strict", "loose", "none"], help="PIT 策略")
+    parser.add_argument(
+        "--pit-policy", type=str, default="strict", choices=["strict", "loose", "none"], help="PIT 策略"
+    )
     parser.add_argument("--format-summary", type=str, default=None, help="数据格式摘要")
     parser.add_argument("--valid-since", type=str, default=None, help="数据有效起始日期")
 
     # Job 参数
     parser.add_argument("--job-name", type=str, help="Job job_name（如 ingest.minqmt_kline）")
-    parser.add_argument("--module-id", type=str, default=None, help="module_id（--delete-design-job 按 module_id 定位）")
+    parser.add_argument(
+        "--module-id", type=str, default=None, help="module_id（--delete-design-job 按 module_id 定位）"
+    )
     parser.add_argument("--source-code-ref", type=str, default=None, help="depgraph 模块 path（跨图关联）")
-    parser.add_argument("--trigger-type", type=str, default=None, choices=["event_driven", "scheduled", "manual", "stream"], help="触发类型")
+    parser.add_argument(
+        "--trigger-type",
+        type=str,
+        default=None,
+        choices=["event_driven", "scheduled", "manual", "stream"],
+        help="触发类型",
+    )
     parser.add_argument("--run-context", type=str, default=None, help="运行上下文")
-    parser.add_argument("--pit-relevance", type=str, default="strict", choices=["strict", "loose", "none"], help="PIT 相关性")
+    parser.add_argument(
+        "--pit-relevance", type=str, default="strict", choices=["strict", "loose", "none"], help="PIT 相关性"
+    )
     parser.add_argument("--description", type=str, default=None, help="作业描述")
 
     # Edge 参数
@@ -498,7 +553,13 @@ def main() -> None:
     parser.add_argument("--to-id", type=int, help="Edge 终点实体 ID")
     parser.add_argument("--from-type", type=str, choices=["dataset", "job"], help="Edge 起点类型")
     parser.add_argument("--to-type", type=str, choices=["dataset", "job"], help="Edge 终点类型")
-    parser.add_argument("--edge-type", type=str, default="push", choices=["push", "pull", "sync", "async", "event_driven"], help="边类型")
+    parser.add_argument(
+        "--edge-type",
+        type=str,
+        default="push",
+        choices=["push", "pull", "sync", "async", "event_driven"],
+        help="边类型",
+    )
 
     # 通用
     parser.add_argument("--extra", nargs="*", help="额外 KEY=VALUE 参数")
@@ -565,10 +626,15 @@ if __name__ == "__main__":
         # ZEPHYR_SKIP_REGENERATE=1 逃生通道：批量操作时可跳过（boot_hooks 启动兜底）。
         import os as _os
         import sys as _sys
+
         is_dry_run = "--dry-run" in _sys.argv
         _write_cmds = {
-            "--add-design-dataset", "--add-design-job", "--add-design-edge",
-            "--delete-design-job", "--transition-build-status", "--batch",
+            "--add-design-dataset",
+            "--add-design-job",
+            "--add-design-edge",
+            "--delete-design-job",
+            "--transition-build-status",
+            "--batch",
         }
         has_write_cmd = any(arg in _write_cmds for arg in _sys.argv)
         if has_write_cmd and not is_dry_run and _os.environ.get("ZEPHYR_SKIP_REGENERATE") != "1":
@@ -580,8 +646,7 @@ if __name__ == "__main__":
                 regen = reconcile_async("dataflowgraph_db")
                 if regen.get("status") == "spawned":
                     print(
-                        f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} "
-                        f"日志: {regen['log_file']}",
+                        f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} 日志: {regen['log_file']}",
                         file=_sys.stderr,
                     )
                 else:

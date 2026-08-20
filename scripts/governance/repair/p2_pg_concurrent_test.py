@@ -15,6 +15,7 @@
   - 测试完成后自动清理测试表
   - 所有写入在事务中，可回滚
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -102,6 +103,7 @@ def _cleanup_test_table() -> None:
 # T1: 40 并发 INSERT（独立行，无冲突）
 # ============================================================================
 
+
 def _t1_worker(worker_id: int) -> tuple[int, bool, str]:
     """每个 worker 插入一行。"""
     try:
@@ -144,14 +146,15 @@ def test_t1_concurrent_insert() -> None:
         conn.close()
 
     passed = ok_count == 40 and row_count == 40
-    _record("T1 40并发INSERT",
-            passed,
-            f"成功={ok_count}/40, 表行数={row_count}, 耗时={elapsed:.2f}s, 失败={fail_count}")
+    _record(
+        "T1 40并发INSERT", passed, f"成功={ok_count}/40, 表行数={row_count}, 耗时={elapsed:.2f}s, 失败={fail_count}"
+    )
 
 
 # ============================================================================
 # T2: 40 并发 UPDATE 同一行（验证行锁串行化）
 # ============================================================================
+
 
 def _t2_worker(worker_id: int) -> tuple[int, bool, str]:
     """每个 worker 更新同一行的 counter。"""
@@ -211,14 +214,13 @@ def test_t2_concurrent_update_same_row() -> None:
 
     # 行锁串行化下，counter 应该正好 +40（无丢失更新）
     passed = ok_count == 40 and final_counter == 40
-    _record("T2 40并发UPDATE同行",
-            passed,
-            f"成功={ok_count}/40, counter={final_counter}(期望40), 耗时={elapsed:.2f}s")
+    _record("T2 40并发UPDATE同行", passed, f"成功={ok_count}/40, counter={final_counter}(期望40), 耗时={elapsed:.2f}s")
 
 
 # ============================================================================
 # T3: 40 并发 INSERT + 40 并发 SELECT（MVCC 读写不阻塞）
 # ============================================================================
+
 
 def _t3_writer(worker_id: int) -> tuple[int, bool, str]:
     """写入者：插入行。"""
@@ -292,14 +294,17 @@ def test_t3_concurrent_read_write() -> None:
         conn.close()
 
     passed = ok_count == 80 and write_count == 40
-    _record("T3 40并发读写",
-            passed,
-            f"成功={ok_count}/80, 写入行={write_count}(期望40), 耗时={elapsed:.2f}s, 失败={fail_count}")
+    _record(
+        "T3 40并发读写",
+        passed,
+        f"成功={ok_count}/80, 写入行={write_count}(期望40), 耗时={elapsed:.2f}s, 失败={fail_count}",
+    )
 
 
 # ============================================================================
 # T4: 死锁检测与自动恢复
 # ============================================================================
+
 
 def _t4_deadlock_worker_a() -> tuple[bool, str]:
     """Worker A: 先锁 id=2000，再锁 id=2001。"""
@@ -373,14 +378,13 @@ def test_t4_deadlock_detection() -> None:
     both_ok = ra[0] and rb[0]
     one_deadlock = "deadlock" in ra[1].lower() or "deadlock" in rb[1].lower()
     passed = both_ok and (one_deadlock or elapsed < 5)
-    _record("T4 死锁检测",
-            passed,
-            f"A={ra[1]}, B={rb[1]}, 耗时={elapsed:.2f}s")
+    _record("T4 死锁检测", passed, f"A={ra[1]}, B={rb[1]}, 耗时={elapsed:.2f}s")
 
 
 # ============================================================================
 # T5: 40 并发事务回滚（验证事务隔离）
 # ============================================================================
+
 
 def _t5_worker(worker_id: int) -> tuple[int, bool, str]:
     """每个 worker 开启事务，插入后回滚。"""
@@ -423,14 +427,13 @@ def test_t5_concurrent_rollback() -> None:
         conn.close()
 
     passed = ok_count == 40 and rolled_back_count == 0
-    _record("T5 40并发事务回滚",
-            passed,
-            f"成功={ok_count}/40, 残留行={rolled_back_count}(期望0), 耗时={elapsed:.2f}s")
+    _record("T5 40并发事务回滚", passed, f"成功={ok_count}/40, 残留行={rolled_back_count}(期望0), 耗时={elapsed:.2f}s")
 
 
 # ============================================================================
 # 主流程
 # ============================================================================
+
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""

@@ -266,13 +266,9 @@ def check_file_encoding(filepath: str) -> tuple[list[str], list[str]]:
     _is_rules_file = "docs/01_policies_and_standards/rules/" in _filepath_norm
     if not _is_rules_file:
         # 跳过注释行（lstrip 后 # 开头），在非注释行中搜索 truthy 设置
-        _non_comment = b"\n".join(
-            line for line in raw.split(b"\n") if not line.lstrip().startswith(b"#")
-        )
+        _non_comment = b"\n".join(line for line in raw.split(b"\n") if not line.lstrip().startswith(b"#"))
         if AUTO_GUESS_VIOLATION_RE.search(_non_comment):
-            findings.append(
-                f"INJ-007 FAIL: file '{filepath}' enables autoGuessEncoding (must be false)"
-            )
+            findings.append(f"INJ-007 FAIL: file '{filepath}' enables autoGuessEncoding (must be false)")
     try:
         content = raw.decode("utf-8")
         if _detect_mojibake(content):

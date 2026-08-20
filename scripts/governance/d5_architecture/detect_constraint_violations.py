@@ -15,6 +15,7 @@
 # [TESTS] 无
 # [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: GitCommitGateway post-commit reconciler（GATE-CONSTRAINT-DETECT）事件触发，CONSUMERS 在案
 # [ARCH-REF] #ARCH-CAP-001 #ARCH-CAP-002
 """G9-Detect: 架构约束违规检测器（对照 depgraph 实际数据检测 6 类违规）
 
@@ -86,7 +87,7 @@ DETECTOR_TYPES = (
 # 历史遗留脏数据类型（写入脚本已删除，需 --clean-legacy 一次性清理）
 LEGACY_TYPES = (
     "capacity_limit",  # 32 条，constraint_id 格式 F1-CAPACITY-*
-    "stability",       # 23 条，constraint_id 格式 CONSTRAINT_D-*-*
+    "stability",  # 23 条，constraint_id 格式 CONSTRAINT_D-*-*
 )
 
 # 跨切域（cross-cutting domains）豁免清单（#ARCH-CROSS-CUTTING-EXEMPT-001）
@@ -94,18 +95,20 @@ LEGACY_TYPES = (
 # 被 L0/L1/L2 所有层使用，无法归入单一层级行列。
 # 层级违规检测豁免这些域的边（from 或 to 任一端在跨切域即豁免）。
 # 同时豁免测试文件（tests/* 路径）的层级违规——测试可导入任意层。
-CROSS_CUTTING_DOMAINS = frozenset({  # noqa: gate-vocab  # 业务子集：跨切域清单（#ARCH-CROSS-CUTTING-EXEMPT-001），非 target_layer 词表全集校验
-    "D_GOV_AUDIT",          # 审计追踪——所有层都需要审计
-    "D_GOV_DRIFT",          # 漂移检测——所有层都需要漂移监控
-    "D_GOV_ENFORCEMENT",    # 规则执行——所有层都需要门禁
-    "D_GOV_RULE",           # 规则治理——所有层都需要规则
-    "D_GOVERNANCE",         # 生命周期管理——持久化/任务仓库被多层使用
-    "D_SECURITY",           # 对抗验证——安全是跨切关注点
-    "D_SECURITY_LLM",       # LLM 防御——安全是跨切关注点
-    "D_INTELLIGENCE",       # 上下文管理——被 L1 集成层使用
-    "D_GOV_OPS_RESILIENCE", # 运维弹性治理——被 L0/L2 使用（escalation/ops_governance）
-    "D_FEEDBACK_LOOP",      # 反馈循环引擎——被 L0 使用（secret_rotation）
-})
+CROSS_CUTTING_DOMAINS = frozenset(
+    {  # noqa: gate-vocab  # 业务子集：跨切域清单（#ARCH-CROSS-CUTTING-EXEMPT-001），非 target_layer 词表全集校验
+        "D_GOV_AUDIT",  # 审计追踪——所有层都需要审计
+        "D_GOV_DRIFT",  # 漂移检测——所有层都需要漂移监控
+        "D_GOV_ENFORCEMENT",  # 规则执行——所有层都需要门禁
+        "D_GOV_RULE",  # 规则治理——所有层都需要规则
+        "D_GOVERNANCE",  # 生命周期管理——持久化/任务仓库被多层使用
+        "D_SECURITY",  # 对抗验证——安全是跨切关注点
+        "D_SECURITY_LLM",  # LLM 防御——安全是跨切关注点
+        "D_INTELLIGENCE",  # 上下文管理——被 L1 集成层使用
+        "D_GOV_OPS_RESILIENCE",  # 运维弹性治理——被 L0/L2 使用（escalation/ops_governance）
+        "D_FEEDBACK_LOOP",  # 反馈循环引擎——被 L0 使用（secret_rotation）
+    }
+)
 
 
 # ============================================================================
@@ -143,14 +146,11 @@ def detect_cross_domain_violations(cur) -> list[dict]:
             "from_domain": r["from_domain_id"],
             "to_domain": r["to_domain_id"],
             "rule_definition": (
-                f"import {r['from_node_id']} -> {r['to_node_id']} "
-                f"({r['dep_type']}) 跨域但未在 domain_dependencies 声明"
+                f"import {r['from_node_id']} -> {r['to_node_id']} ({r['dep_type']}) 跨域但未在 domain_dependencies 声明"
             ),
             "severity": "error",
             "enforcement": "gate",
-            "description": (
-                f"跨域依赖未声明: {r['from_domain_id']} -> {r['to_domain_id']}"
-            ),
+            "description": (f"跨域依赖未声明: {r['from_domain_id']} -> {r['to_domain_id']}"),
         }
         for r in cur.fetchall()
     ]
@@ -177,9 +177,7 @@ def detect_capacity_violations(cur) -> list[dict]:
             "constraint_type": "capacity_exceeded",
             "from_domain": r["domain_id"],
             "to_domain": None,
-            "rule_definition": (
-                f"production_nodes({r['production_count']}) > max_modules({r['max_modules']})"
-            ),
+            "rule_definition": (f"production_nodes({r['production_count']}) > max_modules({r['max_modules']})"),
             "severity": "hard",
             "enforcement": "gate",
             "description": (
@@ -213,9 +211,7 @@ def detect_hard_limit_violations(cur) -> list[dict]:
             "constraint_type": "hard_limit_exceeded",
             "from_domain": r["domain_id"],
             "to_domain": None,
-            "rule_definition": (
-                f"production_nodes({r['production_count']}) > hard_limit(150)"
-            ),
+            "rule_definition": (f"production_nodes({r['production_count']}) > hard_limit(150)"),
             "severity": "error",
             "enforcement": "gate",
             "description": (
@@ -306,14 +302,12 @@ def detect_layer_violations(cur) -> list[dict]:
             "from_domain": r["from_domain_id"],
             "to_domain": r["to_domain_id"],
             "rule_definition": (
-                f"{r['from_layer_id']}({r['from_domain_id']}) -> "
-                f"{r['to_layer_id']}({r['to_domain_id']}): 低层依赖高层"
+                f"{r['from_layer_id']}({r['from_domain_id']}) -> {r['to_layer_id']}({r['to_domain_id']}): 低层依赖高层"
             ),
             "severity": "error",
             "enforcement": "gate",
             "description": (
-                f"层级违规: {r['from_node_id']} -> {r['to_node_id']} "
-                f"({r['from_layer_id']} -> {r['to_layer_id']})"
+                f"层级违规: {r['from_node_id']} -> {r['to_node_id']} ({r['from_layer_id']} -> {r['to_layer_id']})"
             ),
         }
         for r in cur.fetchall()
@@ -406,10 +400,7 @@ def run_detection(conn, clean_legacy: bool = False) -> dict:
                 (list(LEGACY_TYPES),),
             )
             legacy_deleted = cur.rowcount
-            print(
-                f"  清理历史遗留脏数据 (capacity_limit/stability): "
-                f"{legacy_deleted} 条"
-            )
+            print(f"  清理历史遗留脏数据 (capacity_limit/stability): {legacy_deleted} 条")
 
         # 2. 执行 6 类检测
         all_violations: list[dict] = []
@@ -488,9 +479,7 @@ def run_detection(conn, clean_legacy: bool = False) -> dict:
 
 def main():
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="G9-Detect: 架构约束违规检测器（6 类检测 -> arch_constraints 表）"
-    )
+    parser = argparse.ArgumentParser(description="G9-Detect: 架构约束违规检测器（6 类检测 -> arch_constraints 表）")
     parser.add_argument(
         "--clean-legacy",
         action="store_true",

@@ -92,7 +92,9 @@ def check_file_idempotency(filepath: Path) -> list[str]:
                 has_idempotency = True
         if not has_idempotency:
             rel = filepath.relative_to(REPO_ROOT)
-            findings.append(f"HC-9 WARNING: {rel}::{node.name}() — D_EXECUTION_CORE execution layer method missing idempotency_key")
+            findings.append(
+                f"HC-9 WARNING: {rel}::{node.name}() — D_EXECUTION_CORE execution layer method missing idempotency_key"
+            )
     return findings
 
 

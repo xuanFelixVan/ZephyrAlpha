@@ -343,7 +343,9 @@ def main() -> None:
                     existing = yaml.safe_load(fh) or {}
                 existing_blind_spots = existing.get("blind_spot_timeline", [])
             except (OSError, yaml.YAMLError) as exc:
-                print(f"WARNING: 读取既有 blind_spot_timeline 失败（{exc}），按空时间线继续合并——请检查 {BLIND_SPOT_FILE} 是否损坏")
+                print(
+                    f"WARNING: 读取既有 blind_spot_timeline 失败（{exc}），按空时间线继续合并——请检查 {BLIND_SPOT_FILE} 是否损坏"
+                )
 
         new_timeline, resolved, open_count = generate_blind_spot_timeline(disk_sessions)
 

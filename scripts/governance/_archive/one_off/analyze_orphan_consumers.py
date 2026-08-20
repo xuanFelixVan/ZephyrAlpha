@@ -1,4 +1,5 @@
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-GOV_ANALYZE_ORPHAN_CONSUMERS
@@ -58,7 +59,7 @@ SRC_ZEPHYR = REPO_ROOT / "src" / "zephyr"
 
 def get_orphan_modules() -> tuple[list[dict], dict[str, list[str]]]:
     """调用 audit_registration.py --json 获取孤儿模块清单 + 消费者地图。
-    
+
     Returns:
         (orphan_modules, import_map): 孤儿模块列表和消费者地图
     """

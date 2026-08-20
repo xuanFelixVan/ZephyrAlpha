@@ -102,16 +102,18 @@ _SESSION_ID_FORMAT_RE = re.compile(r"^sess-\d{4,8}-\d{14}$")
 
 # 白名单 conventional commit type（无需 [GW:] 标记）
 # 与 GitCommitGateway 的 doc-only / tests-only 豁免对齐
-_WHITELIST_TYPES = frozenset({
-    "docs",      # 文档变更
-    "test",      # 测试变更
-    "chore",     # 构建/工具变更
-    "ci",        # CI 配置变更
-    "style",     # 代码风格变更（不影响逻辑）
-    "refactor",  # 重构（不改行为）
-    "revert",    # 回滚
-    "perf",      # 性能优化（不改行为）
-})
+_WHITELIST_TYPES = frozenset(
+    {
+        "docs",  # 文档变更
+        "test",  # 测试变更
+        "chore",  # 构建/工具变更
+        "ci",  # CI 配置变更
+        "style",  # 代码风格变更（不影响逻辑）
+        "refactor",  # 重构（不改行为）
+        "revert",  # 回滚
+        "perf",  # 性能优化（不改行为）
+    }
+)
 
 # Conventional commit type 正则（type(scope): description）
 _CONVENTIONAL_RE = re.compile(r"^([a-z]+)(?:\([^)]*\))?!?:")

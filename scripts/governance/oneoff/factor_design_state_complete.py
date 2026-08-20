@@ -74,11 +74,11 @@ SUBDOMAIN_BY_PREFIX: list[tuple[str, str]] = [
 
 # file 粒度节点单独指定（不带子目录前缀）
 SUBDOMAIN_BY_FILE: dict[str, str] = {
-    "src/zephyr/factor/factor_base.py": "FAC-CORE",            # Engine+Registry 载体
+    "src/zephyr/factor/factor_base.py": "FAC-CORE",  # Engine+Registry 载体
     "src/zephyr/factor/alpha_signal_pipeline.py": "FAC-CORE",  # Pipeline 载体
-    "src/zephyr/factor/bus_factor_defense.py": "FAC-CORE",     # 保命防御
-    "src/zephyr/factor/momentum_factor.py": "FAC-ASHARE",      # A股动量因子
-    "src/zephyr/factor/value_factor.py": "FAC-ASHARE",         # A股价值因子
+    "src/zephyr/factor/bus_factor_defense.py": "FAC-CORE",  # 保命防御
+    "src/zephyr/factor/momentum_factor.py": "FAC-ASHARE",  # A股动量因子
+    "src/zephyr/factor/value_factor.py": "FAC-ASHARE",  # A股价值因子
 }
 
 # ============================================================
@@ -144,9 +144,21 @@ EDGES_TO_ADD: list[tuple[str, str, str]] = [
     # G. 治理引擎 → 生命周期状态机（1）
     ("src/zephyr/factor/governance/engine/", "src/zephyr/factor/governance/lifecycle_state_machine/", "FAC_GOV→F67"),
     # H. barra 反向修正（3）—— GATE-11/24 依赖型转边
-    ("src/zephyr/factor/barra/exposure_calculator/", "src/zephyr/factor/barra/risk_model/", "GATE-11-01: Exposure需06就绪"),
-    ("src/zephyr/factor/barra/risk_budget_allocator/", "src/zephyr/factor/barra/exposure_calculator/", "GATE-24-01: RiskBudget需11就绪"),
-    ("src/zephyr/factor/barra/risk_budget_allocator/", "src/zephyr/factor/barra/risk_model/", "GATE-24-01: RiskBudget需06就绪"),
+    (
+        "src/zephyr/factor/barra/exposure_calculator/",
+        "src/zephyr/factor/barra/risk_model/",
+        "GATE-11-01: Exposure需06就绪",
+    ),
+    (
+        "src/zephyr/factor/barra/risk_budget_allocator/",
+        "src/zephyr/factor/barra/exposure_calculator/",
+        "GATE-24-01: RiskBudget需11就绪",
+    ),
+    (
+        "src/zephyr/factor/barra/risk_budget_allocator/",
+        "src/zephyr/factor/barra/risk_model/",
+        "GATE-24-01: RiskBudget需06就绪",
+    ),
 ]
 
 # ============================================================

@@ -72,11 +72,7 @@ _DOC_TYPE_VOCAB_PATH = (
 def _load_registry_categories() -> dict[str, str]:
     """从 doc_type_vocabulary.yaml 加载 value→registry_category 映射。"""
     data = load_yaml(_DOC_TYPE_VOCAB_PATH)
-    return {
-        v["value"]: v["registry_category"]
-        for v in data.get("values", [])
-        if "registry_category" in v
-    }
+    return {v["value"]: v["registry_category"] for v in data.get("values", []) if "registry_category" in v}
 
 
 CATEGORY_FROM_DOC_TYPE: dict[str, str] = _load_registry_categories()

@@ -147,7 +147,7 @@ def add_all_to_file(init_path: Path, all_names: list[str]) -> bool:
         os.replace(tmp_path, init_path)
     except Exception as e:
         try:
-            os.remove(tmp_path)
+            os.remove(tmp_path)  # ops-guard-exempt: 原子写临时文件清理（写完即删非数据删除）
         except OSError:
             pass
         print(f"  [FAIL] 写入失败: {init_path} - {e}")
@@ -180,6 +180,8 @@ def verify_fixes() -> int:
     for line in n14_lines[:10]:
         print(f"  {line}")
     return EXIT_FINDINGS
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     print("=" * 60)

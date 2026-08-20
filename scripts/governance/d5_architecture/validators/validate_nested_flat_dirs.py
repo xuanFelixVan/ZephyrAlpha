@@ -117,26 +117,30 @@ def _scan_prefix_compliance(root: Path, t_hard: int, t_soft: int) -> list[dict]:
         has_conv = _has_prefix_convention(d / "__init__.py")
         rel = str(d.relative_to(REPO_ROOT)).replace("\\", "/")
         if count > t_soft:
-            violations.append({
-                "severity": "ERROR",
-                "path": rel,
-                "py_count": count,
-                "threshold": t_soft,
-                "has_prefix_convention": has_conv,
-                "message": f"{count} .py files (>T_soft={t_soft}) — 必须拆分，无论有无前缀约定",
-            })
+            violations.append(
+                {
+                    "severity": "ERROR",
+                    "path": rel,
+                    "py_count": count,
+                    "threshold": t_soft,
+                    "has_prefix_convention": has_conv,
+                    "message": f"{count} .py files (>T_soft={t_soft}) — 必须拆分，无论有无前缀约定",
+                }
+            )
         elif not has_conv:
-            violations.append({
-                "severity": "ERROR",
-                "path": rel,
-                "py_count": count,
-                "threshold": t_hard,
-                "has_prefix_convention": False,
-                "message": (
-                    f"{count} .py files (>T_hard={t_hard}) 但 __init__.py 未文档化命名前缀约定 — "
-                    f"需拆分或补充前缀约定文档（GOV-DOC-018 T_soft 资格）"
-                ),
-            })
+            violations.append(
+                {
+                    "severity": "ERROR",
+                    "path": rel,
+                    "py_count": count,
+                    "threshold": t_hard,
+                    "has_prefix_convention": False,
+                    "message": (
+                        f"{count} .py files (>T_hard={t_hard}) 但 __init__.py 未文档化命名前缀约定 — "
+                        f"需拆分或补充前缀约定文档（GOV-DOC-018 T_soft 资格）"
+                    ),
+                }
+            )
     return violations
 
 
@@ -229,7 +233,8 @@ def main() -> int:
         return EXIT_PASS
     if errors:
         print(
-            "\n\u274c 阻断: 存在超过 error 阈值的平铺目录。参考 GOV-DOC-018 \u6587\u4ef6\u5939\u5e73\u94fa\u5bb9\u91cf\u9608\u503c\u534f\u8bae\u3002", file=sys.stderr
+            "\n\u274c 阻断: 存在超过 error 阈值的平铺目录。参考 GOV-DOC-018 \u6587\u4ef6\u5939\u5e73\u94fa\u5bb9\u91cf\u9608\u503c\u534f\u8bae\u3002",
+            file=sys.stderr,
         )
         return EXIT_FINDINGS
     return EXIT_PASS

@@ -88,6 +88,7 @@ except ImportError:
         """降级 stub：_common 不可用时不动文件。"""
         return []
 
+
 # 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步）。真源：zoomable_html.py。
 # 对齐 generate_domain_doc.py 的联动模式（visualization_view_template.md §2/§8.4）。
 from zoomable_html import HTML_SUBDIR, emit_zoomable_html  # noqa: E402
@@ -156,8 +157,8 @@ _L2A_DOMAINS_ALPHA = ["data", "factor", "frontend", "research", "sell", "signal"
 _L3_DOMAINS_ALPHA = ["aut_core", "ex_core", "ex_sor", "pf_alloc", "pf_core", "position", "trading"]
 _L2A_DOMAIN_LAYER = "L2A"
 _L3_DOMAIN_LAYER = "L3"
-_L2A_SEQ_OFFSET = 6   # 06..12
-_L3_SEQ_OFFSET = 13   # 13..19
+_L2A_SEQ_OFFSET = 6  # 06..12
+_L3_SEQ_OFFSET = 13  # 13..19
 _LAYERS_FILE_NAME = "20_decision_layers.md"
 _INVARIANTS_FILE_NAME = "21_decision_invariants.md"
 _STALE_FILE_REGEX = r"^\d{2}_decision_[a-z0-9_]+\.md$"
@@ -333,7 +334,7 @@ def _split_zh_en(name: str | None, name_en: str | None) -> tuple[str, str]:
         # name 与 name_en 完全相同 → 仅显示一次，不输出英文（防重复，V1.3 §4.3）
         return name, ""
     if name.endswith(en):
-        zh = name[:-len(en)].rstrip(" /-·—:：")
+        zh = name[: -len(en)].rstrip(" /-·—:：")
         if zh:
             return zh, en
     return name, en
@@ -390,9 +391,12 @@ def _layer_label_4el(l: dict) -> str:
     return _sanitize_mermaid_label("<br/>".join(wrapped))
 
 
-def _class_apply_lines(prod_ids: list[str], design_ids: list[str],
-                       ext_prod_ids: list[str] | None = None,
-                       ext_design_ids: list[str] | None = None) -> str:
+def _class_apply_lines(
+    prod_ids: list[str],
+    design_ids: list[str],
+    ext_prod_ids: list[str] | None = None,
+    ext_design_ids: list[str] | None = None,
+) -> str:
     """生成 class 应用行（§4.8）：按成熟度分组绑类。任一空组不输出该行。"""
     out: list[str] = []
     if prod_ids:
@@ -428,7 +432,9 @@ def _git_commit_timestamp() -> str:
     try:
         r = subprocess.run(
             ["git", "log", "-1", "--format=%cI", "--", __file__],
-            capture_output=True, text=True, timeout=5,
+            capture_output=True,
+            text=True,
+            timeout=5,
             cwd=str(_REPO_ROOT),
         )
         if r.returncode == 0 and r.stdout.strip():
@@ -471,8 +477,12 @@ def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list
         """)
         tracks = [
             {
-                "id": r[0], "name": r[1], "name_en": r[2], "desc": r[3],
-                "priority": r[4], "activation": r[5],
+                "id": r[0],
+                "name": r[1],
+                "name_en": r[2],
+                "desc": r[3],
+                "priority": r[4],
+                "activation": r[5],
             }
             for r in cur.fetchall()
         ]
@@ -485,9 +495,16 @@ def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list
         """)
         layers = [
             {
-                "id": r[0], "name": r[1], "name_en": r[2], "track": r[3],
-                "desc": r[4], "freq": r[5], "maturity": r[6], "build": r[7],
-                "module_id": r[8], "source_code_ref": r[9],
+                "id": r[0],
+                "name": r[1],
+                "name_en": r[2],
+                "track": r[3],
+                "desc": r[4],
+                "freq": r[5],
+                "maturity": r[6],
+                "build": r[7],
+                "module_id": r[8],
+                "source_code_ref": r[9],
             }
             for r in cur.fetchall()
         ]
@@ -500,9 +517,17 @@ def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list
         """)
         nodes = [
             {
-                "id": r[0], "layer_id": r[1], "type": r[2], "path": r[3],
-                "module_id": r[4], "name": r[5], "name_en": r[6], "build": r[7],
-                "maturity": r[8], "hash": r[9], "source_code_ref": r[10],
+                "id": r[0],
+                "layer_id": r[1],
+                "type": r[2],
+                "path": r[3],
+                "module_id": r[4],
+                "name": r[5],
+                "name_en": r[6],
+                "build": r[7],
+                "maturity": r[8],
+                "hash": r[9],
+                "source_code_ref": r[10],
                 "facets": _parse_facets(r[11]),
             }
             for r in cur.fetchall()
@@ -514,8 +539,12 @@ def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list
         """)
         edges = [
             {
-                "id": r[0], "from": r[1], "to": r[2], "type": r[3],
-                "condition": r[4], "track": r[5],
+                "id": r[0],
+                "from": r[1],
+                "to": r[2],
+                "type": r[3],
+                "condition": r[4],
+                "track": r[5],
             }
             for r in cur.fetchall()
         ]
@@ -568,7 +597,7 @@ def _truncate(text: str, max_len: int = 20) -> str:
     text = text.strip().replace("\n", " ").replace(">", "》")
     if len(text) <= max_len:
         return text
-    return text[:max_len - 1] + "…"
+    return text[: max_len - 1] + "…"
 
 
 def _build_status_color(build: str) -> str:
@@ -615,9 +644,14 @@ def _node_domain(path: str) -> str:
 
 
 def _filter_overview_inputs(
-    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
-    *, maturity: str | None = None,
-    track_id: str | None = None, path_prefix: str | None = None,
+    tracks: list[dict],
+    layers: list[dict],
+    nodes: list[dict],
+    edges: list[dict],
+    *,
+    maturity: str | None = None,
+    track_id: str | None = None,
+    path_prefix: str | None = None,
 ) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
     """全景图输入过滤辅助（复杂度收口，避免 _gen_overview_mmd 超 15）。
 
@@ -647,9 +681,14 @@ def _filter_overview_inputs(
 
 
 def _gen_overview_mmd(
-    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
-    production_only: bool = False, design_only: bool = False,
-    track_id: str | None = None, path_prefix: str | None = None,
+    tracks: list[dict],
+    layers: list[dict],
+    nodes: list[dict],
+    edges: list[dict],
+    production_only: bool = False,
+    design_only: bool = False,
+    track_id: str | None = None,
+    path_prefix: str | None = None,
     skeleton_only: bool = False,
 ) -> tuple[str, int, int, int]:
     """生成全景图：L0-L6 层级 + 节点/边（扁平布局，无 subgraph）。
@@ -664,9 +703,13 @@ def _gen_overview_mmd(
     # 将 production_only/design_only 转换为 maturity 单参（保持 _gen_overview_mmd 签名不变）
     _maturity = "production" if production_only else ("design" if design_only else None)
     tracks, layers, nodes, edges = _filter_overview_inputs(
-        tracks, layers, nodes, edges,
+        tracks,
+        layers,
+        nodes,
+        edges,
         maturity=_maturity,
-        track_id=track_id, path_prefix=path_prefix,
+        track_id=track_id,
+        path_prefix=path_prefix,
     )
 
     lines = [_MERMAID_INIT, "flowchart TD"]
@@ -693,10 +736,10 @@ def _gen_overview_mmd(
             if not skeleton_only:
                 layer_nodes = [n for n in nodes if n["layer_id"] == lid]
                 for n in layer_nodes:
-                    nid = f'N{n["id"]}'
+                    nid = f"N{n['id']}"
                     # 四要素标签（§4.3）：①成熟度 ②双语名 ③大白话 ④文件路径
                     lines.append(f'    {nid}["{_node_label_4el(n)}"]')
-                    lines.append(f'    {node_id} --- {nid}')  # 层-节点附着边（无箭头）
+                    lines.append(f"    {node_id} --- {nid}")  # 层-节点附着边（无箭头）
                     if n.get("maturity") == "production":
                         prod_ids.append(nid)
                     else:
@@ -709,7 +752,7 @@ def _gen_overview_mmd(
         from_lid = layer_ids[i].replace("-", "_")
         to_lid = layer_ids[i + 1].replace("-", "_")
         arr = _arrow(layer_mat.get(layer_ids[i]), layer_mat.get(layer_ids[i + 1]))
-        lines.append(f'    L{from_lid} {arr}|{_edge_label("triggering")}| L{to_lid}')
+        lines.append(f"    L{from_lid} {arr}|{_edge_label('triggering')}| L{to_lid}")
 
     # 节点间边（skeleton_only 模式下跳过——无决策节点）——箭头按两端成熟度（§4.5）
     if not skeleton_only:
@@ -717,7 +760,7 @@ def _gen_overview_mmd(
             fn = node_by_id.get(e["from"], {})
             tn = node_by_id.get(e["to"], {})
             arr = _arrow(fn.get("maturity"), tn.get("maturity"))
-            lines.append(f'    N{e["from"]} {arr}|{_edge_label(e["type"])}| N{e["to"]}')
+            lines.append(f"    N{e['from']} {arr}|{_edge_label(e['type'])}| N{e['to']}")
 
     # classDef 四色 + class 应用（§4.7/§4.8 铁律）
     lines.append(_CLASSDEFS)
@@ -760,7 +803,7 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         from_lid = layer_ids[i].replace("-", "_")
         to_lid = layer_ids[i + 1].replace("-", "_")
         arr = _arrow(layer_mat.get(layer_ids[i]), layer_mat.get(layer_ids[i + 1]))
-        lines.append(f'    L{from_lid} {arr}|{_edge_label("triggering")}| L{to_lid}')
+        lines.append(f"    L{from_lid} {arr}|{_edge_label('triggering')}| L{to_lid}")
 
     # 反馈边（L6 → L1/L5，学习闭环）。节点 ID = "L" + layer_id（与上方定义一致）
     if len(layer_ids) >= 6:
@@ -768,8 +811,8 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         l5 = f"L{layer_ids[-2].replace('-', '_')}"  # 倒数第 2 = L5
         l6 = f"L{layer_ids[-1].replace('-', '_')}"  # 最后 = L6
         if l1:
-            lines.append(f'    {l6} -.->|{_edge_label("feedback")}| {l1}')
-        lines.append(f'    {l6} -.->|{_edge_label("feedback")}| {l5}')
+            lines.append(f"    {l6} -.->|{_edge_label('feedback')}| {l1}")
+        lines.append(f"    {l6} -.->|{_edge_label('feedback')}| {l5}")
 
     # classDef 四色 + class 应用（§4.7/§4.8）
     lines.append(_CLASSDEFS)
@@ -880,27 +923,39 @@ def _build_domain_index(tracks: list[dict], layers: list[dict], nodes: list[dict
         fname = _domain_filename(layer_id, domain)
         seq = _L2A_SEQ_OFFSET + _L2A_DOMAINS_ALPHA.index(domain)
         tid = layer_track.get(layer_id, "")
-        index.append({
-            "track": track_by_id.get(tid, {"id": tid, "name": tid, "name_en": tid}),
-            "layer_id": layer_id, "domain": domain,
-            "node_count": len(domain_nodes), "filename": fname, "seq": seq,
-        })
+        index.append(
+            {
+                "track": track_by_id.get(tid, {"id": tid, "name": tid, "name_en": tid}),
+                "layer_id": layer_id,
+                "domain": domain,
+                "node_count": len(domain_nodes),
+                "filename": fname,
+                "seq": seq,
+            }
+        )
     for domain in _L3_DOMAINS_ALPHA:
         layer_id = _L3_DOMAIN_LAYER
         domain_nodes = [n for n in nodes if n["layer_id"] == layer_id and _node_domain(n.get("path", "")) == domain]
         fname = _domain_filename(layer_id, domain)
         seq = _L3_SEQ_OFFSET + _L3_DOMAINS_ALPHA.index(domain)
         tid = layer_track.get(layer_id, "")
-        index.append({
-            "track": track_by_id.get(tid, {"id": tid, "name": tid, "name_en": tid}),
-            "layer_id": layer_id, "domain": domain,
-            "node_count": len(domain_nodes), "filename": fname, "seq": seq,
-        })
+        index.append(
+            {
+                "track": track_by_id.get(tid, {"id": tid, "name": tid, "name_en": tid}),
+                "layer_id": layer_id,
+                "domain": domain,
+                "node_count": len(domain_nodes),
+                "filename": fname,
+                "seq": seq,
+            }
+        )
     return index
 
 
 def _aggregate_cross_domain_edges(
-    nodes: list[dict], edges: list[dict], self_domain: str,
+    nodes: list[dict],
+    edges: list[dict],
+    self_domain: str,
 ) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
     """聚合跨域边：返回 (outgoing_agg, incoming_agg, outgoing_detail, incoming_detail)。
 
@@ -930,15 +985,35 @@ def _aggregate_cross_domain_edges(
             entry = outgoing_agg_map.setdefault(to_d, {"other_domain": to_d, "count": 0, "types": set()})
             entry["count"] += 1
             entry["types"].add(e["type"])
-            outgoing_detail.append({"from_path": _node_path(nodes, e["from"]), "to_path": _node_path(nodes, e["to"]), "type": e["type"], "condition": e.get("condition")})
+            outgoing_detail.append(
+                {
+                    "from_path": _node_path(nodes, e["from"]),
+                    "to_path": _node_path(nodes, e["to"]),
+                    "type": e["type"],
+                    "condition": e.get("condition"),
+                }
+            )
         elif to_d == self_domain and from_d != self_domain:
             entry = incoming_agg_map.setdefault(from_d, {"other_domain": from_d, "count": 0, "types": set()})
             entry["count"] += 1
             entry["types"].add(e["type"])
-            incoming_detail.append({"from_path": _node_path(nodes, e["from"]), "to_path": _node_path(nodes, e["to"]), "type": e["type"], "condition": e.get("condition")})
+            incoming_detail.append(
+                {
+                    "from_path": _node_path(nodes, e["from"]),
+                    "to_path": _node_path(nodes, e["to"]),
+                    "type": e["type"],
+                    "condition": e.get("condition"),
+                }
+            )
 
-    outgoing_agg = [{"other_domain": v["other_domain"], "count": v["count"], "types": sorted(v["types"])} for v in outgoing_agg_map.values()]
-    incoming_agg = [{"other_domain": v["other_domain"], "count": v["count"], "types": sorted(v["types"])} for v in incoming_agg_map.values()]
+    outgoing_agg = [
+        {"other_domain": v["other_domain"], "count": v["count"], "types": sorted(v["types"])}
+        for v in outgoing_agg_map.values()
+    ]
+    incoming_agg = [
+        {"other_domain": v["other_domain"], "count": v["count"], "types": sorted(v["types"])}
+        for v in incoming_agg_map.values()
+    ]
     return outgoing_agg, incoming_agg, outgoing_detail, incoming_detail
 
 
@@ -951,7 +1026,9 @@ def _node_path(nodes: list[dict], node_id: int) -> str:
 
 
 def _gen_cross_domain_mermaid(
-    self_domain: str, outgoing_agg: list[dict], incoming_agg: list[dict],
+    self_domain: str,
+    outgoing_agg: list[dict],
+    incoming_agg: list[dict],
 ) -> str:
     """跨域依赖图：flowchart TD，本域居中，外部域为外围节点，边标计数。
 
@@ -979,7 +1056,7 @@ def _gen_cross_domain_mermaid(
             ext_ids.append(f"EXT_{safe}")
             seen.add(other)
         # 边箭头：SELF=design → 非双 production → 虚线（§4.5）
-        lines.append(f'    SELF -.->|出 {d["count"]}| EXT_{safe}')
+        lines.append(f"    SELF -.->|出 {d['count']}| EXT_{safe}")
     for d in incoming_agg:
         other = d["other_domain"]
         safe = other.replace("-", "_")
@@ -989,7 +1066,7 @@ def _gen_cross_domain_mermaid(
             lines.append(f'    EXT_{safe}["{_cross_domain_label(other, _other_zh, _other_resp)}"]')
             ext_ids.append(f"EXT_{safe}")
             seen.add(other)
-        lines.append(f'    EXT_{safe} -.->|入 {d["count"]}| SELF')
+        lines.append(f"    EXT_{safe} -.->|入 {d['count']}| SELF")
     # classDef 四色 + class 应用（§4.7/§4.8）：SELF=design，EXT=external_design
     lines.append(_CLASSDEFS)
     class_apply = _class_apply_lines([], ["SELF"], [], ext_ids)
@@ -1022,7 +1099,7 @@ def _atomic_write(path: Path, content: str) -> None:
         os.replace(tmp_path, str(path))
     except Exception:
         try:
-            os.remove(tmp_path)
+            os.remove(tmp_path)  # ops-guard-exempt: 原子写临时文件清理（写完即删非数据删除）
         except OSError:
             pass
         raise
@@ -1037,8 +1114,16 @@ def _assert_domain_set_stable(layers: list[dict], nodes: list[dict]) -> None:
         return
     l2a_layer = next((l for l in layers if l["id"] == _L2A_DOMAIN_LAYER), None)
     l3_layer = next((l for l in layers if l["id"] == _L3_DOMAIN_LAYER), None)
-    db_l2a = {d for d in (_node_domain(n.get("path", "")) for n in nodes if n["layer_id"] == _L2A_DOMAIN_LAYER) if d} if l2a_layer else set()
-    db_l3 = {d for d in (_node_domain(n.get("path", "")) for n in nodes if n["layer_id"] == _L3_DOMAIN_LAYER) if d} if l3_layer else set()
+    db_l2a = (
+        {d for d in (_node_domain(n.get("path", "")) for n in nodes if n["layer_id"] == _L2A_DOMAIN_LAYER) if d}
+        if l2a_layer
+        else set()
+    )
+    db_l3 = (
+        {d for d in (_node_domain(n.get("path", "")) for n in nodes if n["layer_id"] == _L3_DOMAIN_LAYER) if d}
+        if l3_layer
+        else set()
+    )
     expected_l2a = set(_L2A_DOMAINS_ALPHA)
     expected_l3 = set(_L3_DOMAINS_ALPHA)
     drift_l2a = db_l2a - expected_l2a
@@ -1060,8 +1145,11 @@ def _assert_domain_set_stable(layers: list[dict], nodes: list[dict]) -> None:
 
 
 def _md_header(
-    title: str, breadcrumb: str, md_stem: str | None = None,
-    with_html_link: bool = True, doc_title: str | None = None,
+    title: str,
+    breadcrumb: str,
+    md_stem: str | None = None,
+    with_html_link: bool = True,
+    doc_title: str | None = None,
 ) -> list[str]:
     """统一的文件头部（frontmatter + 标题 + 真源 + 生成时间 + HTML链接）。
 
@@ -1087,7 +1175,9 @@ def _md_header(
     lines.append(f"# {title}")
     lines.append("")
     lines.append(f"> 生成时间: {_git_commit_timestamp()}")
-    lines.append("> 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）")
+    lines.append(
+        "> 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）"
+    )
     lines.append(f"> 数据库: {DB_DISPLAY_NAME}")
     lines.append(f"> 导航: [返回主索引 decision_index.md](decision_index.md) | {breadcrumb}")
     if md_stem is not None and with_html_link:
@@ -1150,7 +1240,10 @@ def _edge_table(edges: list[dict]) -> list[str]:
 
 
 def _filter_track_data(
-    tid: str, layers: list[dict], nodes: list[dict], edges: list[dict],
+    tid: str,
+    layers: list[dict],
+    nodes: list[dict],
+    edges: list[dict],
 ) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
     """过滤本轨的 Layer/Node/Edge + 跨轨边（Extract Method 降低 _gen_track_file_md 复杂度）。"""
     track_layers = [l for l in layers if l["track"] == tid]
@@ -1163,9 +1256,16 @@ def _filter_track_data(
 
 
 def _emit_skeleton_view(
-    title: str, hint: str,
-    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
-    tid: str, *, production_only: bool = False, design_only: bool = False,
+    title: str,
+    hint: str,
+    tracks: list[dict],
+    layers: list[dict],
+    nodes: list[dict],
+    edges: list[dict],
+    tid: str,
+    *,
+    production_only: bool = False,
+    design_only: bool = False,
 ) -> list[str]:
     """输出单个 Layer 骨架视图（带 `###` 小标题；空层集用占位说明，避免空 mermaid 块）。
 
@@ -1175,9 +1275,14 @@ def _emit_skeleton_view(
     """
     out = [f"### {title}", "", f"> {hint}", ""]
     mmd, _, l_count, _ = _gen_overview_mmd(
-        tracks, layers, nodes, edges,
-        production_only=production_only, design_only=design_only,
-        track_id=tid, skeleton_only=True,
+        tracks,
+        layers,
+        nodes,
+        edges,
+        production_only=production_only,
+        design_only=design_only,
+        track_id=tid,
+        skeleton_only=True,
     )
     if l_count == 0:
         out += ["> （无模块 / No modules）", ""]
@@ -1187,7 +1292,11 @@ def _emit_skeleton_view(
 
 
 def _gen_track_views_section(
-    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict], tid: str,
+    tracks: list[dict],
+    layers: list[dict],
+    nodes: list[dict],
+    edges: list[dict],
+    tid: str,
 ) -> list[str]:
     """生成 Layer 骨架三视图 + 统计表（概览模式，不画决策节点；Extract Method 降低复杂度）。
 
@@ -1206,7 +1315,8 @@ def _gen_track_views_section(
     design_layers = [l for l in track_layers if l.get("maturity") == "design"]
 
     lines = [
-        "## 统计", "",
+        "## 统计",
+        "",
         "| Layer 数 | 决策节点数 | 域内边数 | 跨轨边数 |",
         "|----------|-----------|----------|----------|",
         f"| {len(track_layers)} | {len(track_nodes)} | {len(track_edges)} | {len(cross_track_edges)} |",
@@ -1226,24 +1336,41 @@ def _gen_track_views_section(
     lines += _emit_skeleton_view(
         "全景图（全部 Layer，颜色区分运营态/设计态）",
         f"展示本轨全部 {len(track_layers)} 个 Layer 骨架（决策节点附着上下文），决策节点详情见各功能域文件。",
-        tracks, layers, nodes, edges, tid,
+        tracks,
+        layers,
+        nodes,
+        edges,
+        tid,
     )
     lines += _emit_skeleton_view(
         "运营态的图（仅 design_maturity=production 的 Layer）",
         f"仅展示已上线运行的 Layer 骨架（共 {len(prod_layers)} 个）。",
-        tracks, layers, nodes, edges, tid, production_only=True,
+        tracks,
+        layers,
+        nodes,
+        edges,
+        tid,
+        production_only=True,
     )
     lines += _emit_skeleton_view(
         "设计态的图（仅 design_maturity=design 的 Layer）",
         f"仅展示蓝图阶段、代码未写的设计态 Layer 骨架（共 {len(design_layers)} 个）。",
-        tracks, layers, nodes, edges, tid, design_only=True,
+        tracks,
+        layers,
+        nodes,
+        edges,
+        tid,
+        design_only=True,
     )
     return lines
 
 
 def _gen_track_file_md(
-    track: dict, tracks: list[dict], layers: list[dict],
-    nodes: list[dict], edges: list[dict],
+    track: dict,
+    tracks: list[dict],
+    layers: list[dict],
+    nodes: list[dict],
+    edges: list[dict],
     domain_index: list[dict],
 ) -> str:
     """Per-Track 文件：Layer 骨架图 + 统计 + 功能域链接 + Layer 清单 + 跨轨边（概览+导航模式）。
@@ -1277,7 +1404,9 @@ def _gen_track_file_md(
         lines += ["## 功能域文件（L2A/L3 拆分）", ""]
         lines += ["| 序号 | 层 | 功能域 | Node 数 | 文档 |", "|------|------|--------|---------|------|"]
         for d in track_domains:
-            lines.append(f"| {d['seq']:02d} | {d['layer_id']} | {d['domain']} | {d['node_count']} | [📄 {d['filename']}]({d['filename']}) |")
+            lines.append(
+                f"| {d['seq']:02d} | {d['layer_id']} | {d['domain']} | {d['node_count']} | [📄 {d['filename']}]({d['filename']}) |"
+            )
         lines += [""]
     else:
         lines += ["## 功能域文件（L2A/L3 拆分）", "", "> （本轨无功能域文件——决策节点未按域拆分）", ""]
@@ -1291,7 +1420,9 @@ def _gen_track_file_md(
             "|---------|-------|-----|------|-----------|",
         ]
         for e in cross_track_edges:
-            lines.append(f"| {e['id']} | {e['from']} | {e['to']} | {_bilingual(e['type'], _EDGE_TYPE_ZH)} | {e['condition'] or '-'} |")
+            lines.append(
+                f"| {e['id']} | {e['from']} | {e['to']} | {_bilingual(e['type'], _EDGE_TYPE_ZH)} | {e['condition'] or '-'} |"
+            )
     else:
         lines += ["> （无跨轨边）"]
     lines += [""]
@@ -1300,10 +1431,18 @@ def _gen_track_file_md(
 
 
 def _emit_domain_view(
-    title: str, hint: str, view_nodes: list[dict],
-    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
-    *, track_id: str, path_prefix: str,
-    production_only: bool = False, design_only: bool = False,
+    title: str,
+    hint: str,
+    view_nodes: list[dict],
+    tracks: list[dict],
+    layers: list[dict],
+    nodes: list[dict],
+    edges: list[dict],
+    *,
+    track_id: str,
+    path_prefix: str,
+    production_only: bool = False,
+    design_only: bool = False,
 ) -> list[str]:
     """输出单个域内依赖视图（带 `###` 小标题；空节点集用占位说明，避免空 mermaid 块）。§3.2。
 
@@ -1317,17 +1456,27 @@ def _emit_domain_view(
         out += ["> （无模块 / No modules）", ""]
         return out
     mmd, _, l_count, e_count = _gen_overview_mmd(
-        tracks, layers, nodes, edges,
-        production_only=production_only, design_only=design_only,
-        track_id=track_id, path_prefix=path_prefix,
+        tracks,
+        layers,
+        nodes,
+        edges,
+        production_only=production_only,
+        design_only=design_only,
+        track_id=track_id,
+        path_prefix=path_prefix,
     )
     out += [f"> 共 {l_count} 层，{e_count} 边。", "", "```mermaid", mmd.rstrip("\n"), "```", ""]
     return out
 
 
 def _gen_domain_file_md(
-    track: dict, layer_id: str, domain: str,
-    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
+    track: dict,
+    layer_id: str,
+    domain: str,
+    tracks: list[dict],
+    layers: list[dict],
+    nodes: list[dict],
+    edges: list[dict],
 ) -> str:
     """Per-domain 文件：三视图 mermaid + 本域 Node 表 + 出/入边表 + 跨域 mermaid。
 
@@ -1379,20 +1528,37 @@ def _gen_domain_file_md(
     lines += _emit_domain_view(
         "全景图（全部模块，颜色区分运营态/设计态）",
         f"展示全部 {len(domain_nodes)} 个决策节点（运营态 {len(prod_domain_nodes)} + 设计态 {len(design_domain_nodes)}），含跨域依赖外部节点。",
-        domain_nodes, tracks, layers, nodes, edges,
-        track_id=track["id"], path_prefix=domain,
+        domain_nodes,
+        tracks,
+        layers,
+        nodes,
+        edges,
+        track_id=track["id"],
+        path_prefix=domain,
     )
     lines += _emit_domain_view(
         "运营态的图（仅 design_maturity=production 的模块和域内依赖）",
         f"仅展示已上线运行的决策节点（共 {len(prod_domain_nodes)} 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。",
-        prod_domain_nodes, tracks, layers, nodes, edges,
-        track_id=track["id"], path_prefix=domain, production_only=True,
+        prod_domain_nodes,
+        tracks,
+        layers,
+        nodes,
+        edges,
+        track_id=track["id"],
+        path_prefix=domain,
+        production_only=True,
     )
     lines += _emit_domain_view(
         "设计态的图（仅 design_maturity=design 的模块和域内依赖）",
         f"仅展示蓝图阶段、代码未写的设计态决策节点（共 {len(design_domain_nodes)} 个），不含跨域外部节点。",
-        design_domain_nodes, tracks, layers, nodes, edges,
-        track_id=track["id"], path_prefix=domain, design_only=True,
+        design_domain_nodes,
+        tracks,
+        layers,
+        nodes,
+        edges,
+        track_id=track["id"],
+        path_prefix=domain,
+        design_only=True,
     )
 
     lines += ["## Node 清单", ""]
@@ -1402,7 +1568,10 @@ def _gen_domain_file_md(
     # 跨域出边
     lines += ["## 跨域出边（Depends On）", ""]
     if outgoing_detail:
-        lines += ["| # | 本域节点 / from | → | 外部域-目标节点 / to | type / 类型 |", "|:--:|---------|:--:|---------|---------|"]
+        lines += [
+            "| # | 本域节点 / from | → | 外部域-目标节点 / to | type / 类型 |",
+            "|:--:|---------|:--:|---------|---------|",
+        ]
         for i, d in enumerate(outgoing_detail, 1):
             lines.append(f"| {i} | {d['from_path']} | → | {d['to_path']} | {_bilingual(d['type'], _EDGE_TYPE_ZH)} |")
     else:
@@ -1412,7 +1581,10 @@ def _gen_domain_file_md(
     # 跨域入边
     lines += ["## 跨域入边（Depended By）", ""]
     if incoming_detail:
-        lines += ["| # | 外部域-源节点 / from | → | 本域节点 / to | type / 类型 |", "|:--:|---------|:--:|---------|---------|"]
+        lines += [
+            "| # | 外部域-源节点 / from | → | 本域节点 / to | type / 类型 |",
+            "|:--:|---------|:--:|---------|---------|",
+        ]
         for i, d in enumerate(incoming_detail, 1):
             lines.append(f"| {i} | {d['from_path']} | → | {d['to_path']} | {_bilingual(d['type'], _EDGE_TYPE_ZH)} |")
     else:
@@ -1441,8 +1613,10 @@ def _gen_layers_file_md(tracks: list[dict], layers: list[dict]) -> str:
     """层级详情图独立文件。"""
     mmd = _gen_layers_mmd(tracks, layers)
     lines = _md_header(
-        "决策流图 · 层级详情图", "辅助图",
-        md_stem=_LAYERS_FILE_NAME[:-3], doc_title="决策流图 层级详情图",
+        "决策流图 · 层级详情图",
+        "辅助图",
+        md_stem=_LAYERS_FILE_NAME[:-3],
+        doc_title="决策流图 层级详情图",
     )
     lines += [
         "L0-L6 层级卡片 + 频率/成熟度/状态 + 流向箭头 + 学习闭环反馈边。",
@@ -1461,8 +1635,10 @@ def _gen_invariants_file_md(invariants: list[dict]) -> str:
     """不变量图独立文件。"""
     mmd = _gen_invariants_mmd(invariants)
     lines = _md_header(
-        "决策流图 · 不变量图", "辅助图",
-        md_stem=_INVARIANTS_FILE_NAME[:-3], doc_title="决策流图 不变量图",
+        "决策流图 · 不变量图",
+        "辅助图",
+        md_stem=_INVARIANTS_FILE_NAME[:-3],
+        doc_title="决策流图 不变量图",
     )
     lines += [
         "6 节点类型 + 5 承重墙不变量 + 合法/非法连接标注。",
@@ -1499,8 +1675,10 @@ def _gen_index_md(
 
     # frontmatter（§3.1）；with_html_link=False：主索引纯导航 0 mermaid，不输出 HTML 链接。
     lines = _md_header(
-        "决策流图（decisiongraph）索引", "主索引",
-        md_stem="decision_index", with_html_link=False,
+        "决策流图（decisiongraph）索引",
+        "主索引",
+        md_stem="decision_index",
+        with_html_link=False,
         doc_title="决策流图（decisiongraph）索引",
     )
     lines += [
@@ -1659,8 +1837,13 @@ def main() -> int:
         _write_md(
             entry["filename"],
             _gen_domain_file_md(
-                entry["track"], entry["layer_id"], entry["domain"],
-                tracks, layers, nodes, edges,
+                entry["track"],
+                entry["layer_id"],
+                entry["domain"],
+                tracks,
+                layers,
+                nodes,
+                edges,
             ),
         )
 
@@ -1677,9 +1860,7 @@ def main() -> int:
     # 6. 清理陈旧 HTML（_zoomable_html/ 子文件夹，域/轨被删时联动 HTML 不残留）
     expected_html = {name[:-3] + ".html" for name in expected_basenames}
     expected_html.add("decision_index.html")  # index 无 mermaid 不会生成，留作占位避免误删
-    deleted_html = cleanup_stale_files(
-        out_dir / HTML_SUBDIR, expected_html, r"^[a-z0-9_]+\.html$"
-    )
+    deleted_html = cleanup_stale_files(out_dir / HTML_SUBDIR, expected_html, r"^[a-z0-9_]+\.html$")
     if deleted_html:
         print(f"[CLEANUP] 删除 {len(deleted_html)} 个残留 HTML: {deleted_html}")
 

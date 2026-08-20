@@ -49,6 +49,7 @@ Exit codes:
     1 = BLOCK（检测到 module_path 冲突 / 能力重复 / module_id 冲突 / 域不一致）
     2 = ERROR（脚本异常）
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -91,7 +92,8 @@ def main() -> int:
         print(f"GATE-SSOT: git diff 失败: {result.stderr}", file=sys.stderr)
         return EXIT_ERROR
     new_files = [
-        f.strip() for f in result.stdout.strip().split("\n")
+        f.strip()
+        for f in result.stdout.strip().split("\n")
         if f.strip().startswith("src/zephyr/") and f.strip().endswith(".py")
     ]
 
@@ -121,11 +123,13 @@ def main() -> int:
         print("GATE-SSOT: SSoT 冲突——新增文件声明了已有 module_path:", file=sys.stderr)
         for c in conflicts:
             print(
-                f"  {c.rel_path} 声明 module_path={c.module_path}"
-                f" 与已有文件冲突: {', '.join(c.conflicts)}",
+                f"  {c.rel_path} 声明 module_path={c.module_path} 与已有文件冲突: {', '.join(c.conflicts)}",
                 file=sys.stderr,
             )
-        print("  修复指令：删除上述新增文件，扩展对应的已有文件后重新 commit（RULE-EIGHT 扩展优先于新建）", file=sys.stderr)
+        print(
+            "  修复指令：删除上述新增文件，扩展对应的已有文件后重新 commit（RULE-EIGHT 扩展优先于新建）",
+            file=sys.stderr,
+        )
         print("  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>", file=sys.stderr)
         return EXIT_FINDINGS
     # 硬层 2：能力重复（basename 撞 capability_id/alias → duplicate）
@@ -135,6 +139,7 @@ def main() -> int:
     dups = lookup.check_capability_duplicates(new_py_files)
     if dups:
         from zephyr.governance.capability_lookup import CAPABILITY_DUPLICATE_FIX_HINT
+
         print("GATE-SSOT: 能力重复——新增文件与已有能力构成同能力多实现:", file=sys.stderr)
         for d in dups:
             print(f"  {d.rel_path}: {d.detail}", file=sys.stderr)
@@ -146,8 +151,7 @@ def main() -> int:
         print("GATE-SSOT: module_id 冲突——新增文件声明的 module_id 已被其他文件占用:", file=sys.stderr)
         for c in id_conflicts:
             print(
-                f"  {c.rel_path} 声明 module_id={c.module_id}"
-                f" 与已有文件冲突: {', '.join(c.conflicts)}",
+                f"  {c.rel_path} 声明 module_id={c.module_id} 与已有文件冲突: {', '.join(c.conflicts)}",
                 file=sys.stderr,
             )
         print("  修复指令：为新增文件分配新的 module_id，或删除新增文件复用已有文件", file=sys.stderr)
@@ -165,5 +169,7 @@ def main() -> int:
         print("  修复指令：修正 [MODULE] module_path 使其与物理路径一致，或将文件移到正确域", file=sys.stderr)
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

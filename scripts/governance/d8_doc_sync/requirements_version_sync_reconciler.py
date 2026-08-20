@@ -77,18 +77,21 @@ _REQUIREMENTS_DEV = _project_root / "requirements-dev.txt"
 _REQUIREMENTS_DEMO = _project_root / "requirements-demo.txt"
 
 # 触发文件清单（pyproject.toml 或 requirements*.txt 任一变更即触发校验）
-_TRIGGER_FILES: frozenset[str] = frozenset({
-    "pyproject.toml",
-    "requirements.txt",
-    "requirements-dev.txt",
-    "requirements-demo.txt",
-})
+_TRIGGER_FILES: frozenset[str] = frozenset(
+    {
+        "pyproject.toml",
+        "requirements.txt",
+        "requirements-dev.txt",
+        "requirements-demo.txt",
+    }
+)
 
 
 def _rel_path(file_path: str | Path) -> str:
     """将绝对路径转为相对项目根的相对路径（正斜杠）。"""
     try:
         import os
+
         return os.path.relpath(str(file_path), str(_project_root)).replace("\\", "/")
     except ValueError:
         return str(file_path)
@@ -234,8 +237,7 @@ def _check_pair(
     for name in sorted(req_names & pyproject_names):
         if req_deps[name] != pyproject_deps[name]:
             findings.append(
-                f"{label}: 版本约束不一致 {name}: "
-                f"requirements='{req_deps[name]}' vs pyproject='{pyproject_deps[name]}'"
+                f"{label}: 版本约束不一致 {name}: requirements='{req_deps[name]}' vs pyproject='{pyproject_deps[name]}'"
             )
 
     return findings
@@ -307,6 +309,7 @@ def make_requirements_version_sync_reconciler(project_root: Path | None = None):
     try:
         from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec
     except ImportError:
+
         class _ReconcilerSpecFallback:  # type: ignore
             def __init__(self, gate_id, trigger, reconcile, priority=100):
                 """__init__ implementation."""
@@ -314,6 +317,7 @@ def make_requirements_version_sync_reconciler(project_root: Path | None = None):
                 self.trigger = trigger
                 self.reconcile = reconcile
                 self.priority = priority
+
         ReconcilerSpec = _ReconcilerSpecFallback
 
     return ReconcilerSpec(

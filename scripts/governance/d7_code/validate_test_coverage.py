@@ -107,10 +107,7 @@ def _find_test_file(source_file: Path) -> Path | None:
 
     if rel.parent != Path("."):
         module_prefix = rel.parent.name
-        candidates.extend(
-            c for c in TESTS_DIR.rglob(f"test_{module_prefix}_{stem}.py")
-            if "__pycache__" not in str(c)
-        )
+        candidates.extend(c for c in TESTS_DIR.rglob(f"test_{module_prefix}_{stem}.py") if "__pycache__" not in str(c))
 
     for candidate in candidates:
         if candidate.exists():

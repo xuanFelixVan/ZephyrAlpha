@@ -406,7 +406,7 @@ def _compute_generic_suffix_set() -> set[str]:
             continue
         # 剥离 name_zh 前缀（plain 以 name_zh 开头时）
         if plain.startswith(name_zh):
-            suffix = plain[len(name_zh):].strip("，,。.、：: ")
+            suffix = plain[len(name_zh) :].strip("，,。.、：: ")
             if suffix and len(suffix) >= 4:
                 suffix_counter.setdefault(suffix, set()).add(mp)
     _GENERIC_SUFFIX_CACHE = {t for t, paths in suffix_counter.items() if len(paths) > 1}
@@ -428,7 +428,7 @@ def is_generic_plain_suffix(plain: str, name_zh: str) -> bool:
     p = plain.strip().rstrip("。.，, ")
     if not p.startswith(name_zh):
         return False
-    suffix = p[len(name_zh):].strip("，,。.、：: ")
+    suffix = p[len(name_zh) :].strip("，,。.、：: ")
     if len(suffix) < 4:
         return False
     return suffix in _compute_generic_suffix_set()

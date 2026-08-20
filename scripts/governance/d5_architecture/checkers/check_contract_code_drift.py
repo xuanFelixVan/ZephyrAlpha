@@ -64,12 +64,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-_CONTRACTS_YAML = (
-    REPO_ROOT
-    / "architecture_model"
-    / "contracts"
-    / "cross_layer_contracts.yaml"
-)
+_CONTRACTS_YAML = REPO_ROOT / "architecture_model" / "contracts" / "cross_layer_contracts.yaml"
 _CONTRACT_OUT_DIR = REPO_ROOT / "src" / "zephyr" / "shared" / "contracts"
 _SNAPSHOT_FILE = _CONTRACT_OUT_DIR / "_codegen_snapshot.txt"
 

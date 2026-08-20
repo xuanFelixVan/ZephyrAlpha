@@ -67,6 +67,7 @@ Exit codes:
     0 = 所有段通过
     1 = 至少一段失败
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -90,28 +91,30 @@ from typing import TypedDict
 # 返回契约（TypedDict，对标 session_worktree_commit 返回契约 P2-5）
 # ===========================================================================
 
+
 class RegressionStageResult(TypedDict):
     """单段执行结果。"""
 
-    name: str           # "pytest" / "audit_return_contract" / "audit_worktree_ops"
-    ok: bool            # 本段是否通过（True=exit 0，False=非零 exit 或异常）
-    exit_code: int      # subprocess exit code（异常时为 -1）
-    duration_s: float   # 执行耗时（秒）
-    detail: str         # 简短说明（成功/失败原因）
+    name: str  # "pytest" / "audit_return_contract" / "audit_worktree_ops"
+    ok: bool  # 本段是否通过（True=exit 0，False=非零 exit 或异常）
+    exit_code: int  # subprocess exit code（异常时为 -1）
+    duration_s: float  # 执行耗时（秒）
+    detail: str  # 简短说明（成功/失败原因）
 
 
 class RegressionResult(TypedDict):
     """整体回归结果。"""
 
-    ok: bool            # 所有段是否全通过（True=全部通过）
+    ok: bool  # 所有段是否全通过（True=全部通过）
     stages: list[RegressionStageResult]  # 各段结果
-    total_duration_s: float    # 总耗时（秒）
-    summary: str               # 人类可读汇总
+    total_duration_s: float  # 总耗时（秒）
+    summary: str  # 人类可读汇总
 
 
 # ===========================================================================
 # 阶段定义
 # ===========================================================================
+
 
 # 各段配置：name → (command_builder, description)
 # command_builder 接收 project_root，返回 (command_list, cwd)
@@ -124,8 +127,11 @@ def _build_pytest_cmd(project_root: Path) -> tuple[list[str], Path]:
     """
     return (
         [
-            sys.executable, "-m", "pytest",
-            "-m", "silent_failure",
+            sys.executable,
+            "-m",
+            "pytest",
+            "-m",
+            "silent_failure",
             "--tb=short",
             "-q",
             "--no-header",
@@ -140,7 +146,8 @@ def _build_return_contract_cmd(project_root: Path) -> tuple[list[str], Path]:
     script = project_root / "scripts" / "governance" / "audit_return_contract_usage.py"
     return (
         [
-            sys.executable, str(script),
+            sys.executable,
+            str(script),
             str(project_root / "src"),
             str(project_root / "scripts"),
         ],
@@ -157,7 +164,8 @@ def _build_worktree_ops_cmd(project_root: Path) -> tuple[list[str], Path]:
     script = project_root / "scripts" / "governance" / "audit_worktree_ops_telemetry.py"
     return (
         [
-            sys.executable, str(script),
+            sys.executable,
+            str(script),
             str(project_root / "src" / "zephyr" / "gov_enforcement"),
         ],
         project_root,
@@ -175,6 +183,7 @@ STAGES: list[tuple[str, str, callable]] = [
 # 核心执行逻辑
 # ===========================================================================
 
+
 def _run_stage(
     name: str,
     description: str,
@@ -183,6 +192,7 @@ def _run_stage(
 ) -> RegressionStageResult:
     """执行单段，返回 RegressionStageResult。永不抛异常。"""
     import time
+
     start = time.monotonic()
     try:
         command, cwd = cmd_builder(project_root)
@@ -249,6 +259,7 @@ def run_silent_failure_regression(
         RegressionResult：含 ok 键作为成败判定唯一入口。
     """
     import time
+
     total_start = time.monotonic()
     stages: list[RegressionStageResult] = []
     for name, description, cmd_builder in STAGES:
@@ -257,10 +268,7 @@ def run_silent_failure_regression(
         stage_result = _run_stage(name, description, cmd_builder, project_root)
         if not quiet:
             status = "PASS" if stage_result["ok"] else "FAIL"
-            print(
-                f"[silent-failure] stage {name}: {status} "
-                f"({stage_result['duration_s']}s) — {stage_result['detail']}"
-            )
+            print(f"[silent-failure] stage {name}: {status} ({stage_result['duration_s']}s) — {stage_result['detail']}")
         stages.append(stage_result)
 
     total_duration = time.monotonic() - total_start
@@ -268,10 +276,7 @@ def run_silent_failure_regression(
     failed_names = [s["name"] for s in stages if not s["ok"]]
 
     if all_ok:
-        summary = (
-            f"silent-failure regression PASSED — {len(stages)} stages all OK "
-            f"in {round(total_duration, 2)}s"
-        )
+        summary = f"silent-failure regression PASSED — {len(stages)} stages all OK in {round(total_duration, 2)}s"
     else:
         summary = (
             f"silent-failure regression FAILED — {len(failed_names)}/{len(stages)} stages failed "
@@ -306,6 +311,7 @@ def run_silent_failure_regression(
 # ===========================================================================
 # CLI 入口
 # ===========================================================================
+
 
 def main(argv: list[str] | None = None) -> int:
     """CLI 入口：``python run_silent_failure_regression.py [--project-root PATH] [--json]``。
@@ -345,26 +351,26 @@ def main(argv: list[str] | None = None) -> int:
 if __name__ == "__main__":
     sys.exit(main())
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def build_pytest_cmd(project_root) -> tuple[list[str], Path]:
     """公共接口：build_pytest_cmd（Stage 4 公共化）。"""
     return _build_pytest_cmd(project_root)
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def build_return_contract_cmd(project_root) -> tuple[list[str], Path]:
     """公共接口：build_return_contract_cmd（Stage 4 公共化）。"""
     return _build_return_contract_cmd(project_root)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def build_worktree_ops_cmd(project_root) -> tuple[list[str], Path]:
     """公共接口：build_worktree_ops_cmd（Stage 4 公共化）。"""
     return _build_worktree_ops_cmd(project_root)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def run_stage(name, description, cmd_builder, project_root) -> RegressionStageResult:
     """公共接口：run_stage（Stage 4 公共化）。"""
     return _run_stage(name, description, cmd_builder, project_root)
-
-
-
-

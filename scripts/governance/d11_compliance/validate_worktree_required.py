@@ -211,8 +211,7 @@ def main() -> int:
     # 全量跑恒 BLOCKED，2026-08-19 基线实证）。可识别 session 的渐进升级语义不变。
     if session_id == "unknown":
         print(
-            "GATE-WORKTREE-REQUIRED: WARN — 主工作区操作（无 session 归因，"
-            "merge hook/手动跑批场景），不升级阻断",
+            "GATE-WORKTREE-REQUIRED: WARN — 主工作区操作（无 session 归因，merge hook/手动跑批场景），不升级阻断",
             file=sys.stderr,
         )
         return EXIT_PASS

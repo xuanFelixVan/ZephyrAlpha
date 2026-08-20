@@ -122,11 +122,7 @@ _SQL_SUMMARY = (
     "  HAVING dup_cnt > 1"
     ")"
 )
-_SQL_TOTAL_ROW = (
-    "SELECT count() AS total_cnt, uniqExact({cols}) AS uniq_full_field_cnt "
-    "FROM {table} "
-    "WHERE {where}"
-)
+_SQL_TOTAL_ROW = "SELECT count() AS total_cnt, uniqExact({cols}) AS uniq_full_field_cnt FROM {table} WHERE {where}"
 
 
 def _validate_month(month: str) -> bool:
@@ -141,7 +137,9 @@ def _build_duplication_query(month: str, market_type: str | None, limit: int) ->
     返回每组的具体字段值 + 重复次数，按重复次数降序排列。
     """
     cols = ", ".join(_TICK_COLUMNS)
-    where_clauses = [f"trade_date BETWEEN toUInt32(toYYYYMM(toDate('{month}01'))) AND toUInt32(toYYYYMM(toDate('{month}01') + INTERVAL 1 MONTH - INTERVAL 1 DAY))"]
+    where_clauses = [
+        f"trade_date BETWEEN toUInt32(toYYYYMM(toDate('{month}01'))) AND toUInt32(toYYYYMM(toDate('{month}01') + INTERVAL 1 MONTH - INTERVAL 1 DAY))"
+    ]
     if market_type:
         where_clauses.append(f"market_type = '{market_type}'")
     where_sql = " AND ".join(where_clauses)
@@ -151,7 +149,9 @@ def _build_duplication_query(month: str, market_type: str | None, limit: int) ->
 def _build_summary_query(month: str, market_type: str | None) -> str:
     """构建重复组总数与重复行总数汇总查询 SQL。"""
     cols = ", ".join(_TICK_COLUMNS)
-    where_clauses = [f"trade_date BETWEEN toUInt32(toYYYYMM(toDate('{month}01'))) AND toUInt32(toYYYYMM(toDate('{month}01') + INTERVAL 1 MONTH - INTERVAL 1 DAY))"]
+    where_clauses = [
+        f"trade_date BETWEEN toUInt32(toYYYYMM(toDate('{month}01'))) AND toUInt32(toYYYYMM(toDate('{month}01') + INTERVAL 1 MONTH - INTERVAL 1 DAY))"
+    ]
     if market_type:
         where_clauses.append(f"market_type = '{market_type}'")
     where_sql = " AND ".join(where_clauses)
@@ -161,7 +161,9 @@ def _build_summary_query(month: str, market_type: str | None) -> str:
 
 def _build_total_row_query(month: str, market_type: str | None) -> str:
     """构建该月总行数查询 SQL（用于上下文对照，证明仅看聚合数字不够）。"""
-    where_clauses = [f"trade_date BETWEEN toUInt32(toYYYYMM(toDate('{month}01'))) AND toUInt32(toYYYYMM(toDate('{month}01') + INTERVAL 1 MONTH - INTERVAL 1 DAY))"]
+    where_clauses = [
+        f"trade_date BETWEEN toUInt32(toYYYYMM(toDate('{month}01'))) AND toUInt32(toYYYYMM(toDate('{month}01') + INTERVAL 1 MONTH - INTERVAL 1 DAY))"
+    ]
     if market_type:
         where_clauses.append(f"market_type = '{market_type}'")
     where_sql = " AND ".join(where_clauses)
@@ -317,8 +319,16 @@ def main() -> None:
         """,
     )
     parser.add_argument("--month", required=True, metavar="YYYYMM", help="检查的月份（6位数字，如 202607）")
-    parser.add_argument("--market-type", default=None, metavar="TYPE", help="市场类型过滤（stock/index/etf/cb/stock_bj，默认全部）")
-    parser.add_argument("--limit", type=int, default=_DEFAULT_LIMIT, metavar="N", help=f"显示重复组详情的最大组数（默认 {_DEFAULT_LIMIT}）")
+    parser.add_argument(
+        "--market-type", default=None, metavar="TYPE", help="市场类型过滤（stock/index/etf/cb/stock_bj，默认全部）"
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=_DEFAULT_LIMIT,
+        metavar="N",
+        help=f"显示重复组详情的最大组数（默认 {_DEFAULT_LIMIT}）",
+    )
     parser.add_argument("--json", action="store_true", help="JSON 输出（AI 消费格式）")
 
     args = parser.parse_args()

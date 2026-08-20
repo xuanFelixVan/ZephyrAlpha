@@ -75,13 +75,7 @@ timeout_seconds: 60
 warn_only: true
 """
 
-_CATALOGS = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-)
+_CATALOGS = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
 
 # 与门禁A 一致的 15 库清单（file -> 主条目列表键）
 REGISTRY_LISTS: dict[str, list[str]] = {
@@ -103,10 +97,23 @@ REGISTRY_LISTS: dict[str, list[str]] = {
 }
 
 _ID_KEYS = (
-    "factor_id", "strategy_id", "indicator_id", "universe_id", "benchmark_id",
-    "cost_model_id", "execution_algo_id", "risk_limit_id", "source_id",
-    "dataset_id", "job_id", "pattern_id", "field_id", "experiment_id",
-    "model_id", "cycle_id", "event_type_id",
+    "factor_id",
+    "strategy_id",
+    "indicator_id",
+    "universe_id",
+    "benchmark_id",
+    "cost_model_id",
+    "execution_algo_id",
+    "risk_limit_id",
+    "source_id",
+    "dataset_id",
+    "job_id",
+    "pattern_id",
+    "field_id",
+    "experiment_id",
+    "model_id",
+    "cycle_id",
+    "event_type_id",
 )
 
 
@@ -115,7 +122,10 @@ def _is_merge_in_progress() -> bool:
     try:
         result = subprocess.run(
             ["git", "rev-parse", "--git-dir"],
-            capture_output=True, text=True, timeout=5, cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=5,
+            cwd=str(REPO_ROOT),
         )
         if result.returncode != 0:
             return False
@@ -150,7 +160,12 @@ def _find_symbol_node(tree: ast.Module, dotted: str):
 def _strip_docstring(node) -> None:
     """就地剥离函数/类节点的 docstring（首个 body 元素为字符串常量表达式）。"""
     body = getattr(node, "body", None)
-    if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant) and isinstance(body[0].value.value, str):
+    if (
+        body
+        and isinstance(body[0], ast.Expr)
+        and isinstance(body[0].value, ast.Constant)
+        and isinstance(body[0].value.value, str)
+    ):
         node.body = body[1:]
 
 

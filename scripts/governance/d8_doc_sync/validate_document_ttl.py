@@ -201,13 +201,15 @@ def list_files_by_ttl(value: str) -> list[dict]:
         stat = filepath.stat()
         mtime = datetime.fromtimestamp(stat.st_mtime)
         rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-        results.append({
-            "path": rel,
-            "ttl": ttl or "(空)",
-            "mtime": mtime.strftime("%Y-%m-%d"),
-            "age_days": (now - mtime).days,
-            "dir": str(filepath.parent.relative_to(REPO_ROOT)).replace("\\", "/"),
-        })
+        results.append(
+            {
+                "path": rel,
+                "ttl": ttl or "(空)",
+                "mtime": mtime.strftime("%Y-%m-%d"),
+                "age_days": (now - mtime).days,
+                "dir": str(filepath.parent.relative_to(REPO_ROOT)).replace("\\", "/"),
+            }
+        )
     results.sort(key=lambda x: x["path"])
     return results
 
@@ -238,14 +240,16 @@ def list_time_expired_files() -> list[dict]:
         if age_days <= ttl_thresholds[ttl]:
             continue
         rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-        results.append({
-            "path": rel,
-            "ttl": ttl,
-            "mtime": mtime.strftime("%Y-%m-%d"),
-            "age_days": age_days,
-            "threshold_days": ttl_thresholds[ttl],
-            "dir": str(filepath.parent.relative_to(REPO_ROOT)).replace("\\", "/"),
-        })
+        results.append(
+            {
+                "path": rel,
+                "ttl": ttl,
+                "mtime": mtime.strftime("%Y-%m-%d"),
+                "age_days": age_days,
+                "threshold_days": ttl_thresholds[ttl],
+                "dir": str(filepath.parent.relative_to(REPO_ROOT)).replace("\\", "/"),
+            }
+        )
     results.sort(key=lambda x: x["path"])
     return results
 
@@ -268,13 +272,15 @@ def list_all_non_permanent() -> list[dict]:
         stat = filepath.stat()
         mtime = datetime.fromtimestamp(stat.st_mtime)
         rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-        results.append({
-            "path": rel,
-            "ttl": ttl or "(缺失)",
-            "mtime": mtime.strftime("%Y-%m-%d"),
-            "age_days": (now - mtime).days,
-            "dir": str(filepath.parent.relative_to(REPO_ROOT)).replace("\\", "/"),
-        })
+        results.append(
+            {
+                "path": rel,
+                "ttl": ttl or "(缺失)",
+                "mtime": mtime.strftime("%Y-%m-%d"),
+                "age_days": (now - mtime).days,
+                "dir": str(filepath.parent.relative_to(REPO_ROOT)).replace("\\", "/"),
+            }
+        )
     results.sort(key=lambda x: x["path"])
     return results
 
@@ -320,12 +326,17 @@ def main() -> None:
     """
     parser = argparse.ArgumentParser(description="文档 TTL 过期检测（GOV-DOC-006 §一/§三）+ ttl 扫描清单")
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻断 exit 0）")
-    parser.add_argument("--list-by-ttl", choices=sorted(VALID_TTL_VALUES),
-                        help="按 ttl 值列出文件清单（不删除，仅输出 stdout）")
-    parser.add_argument("--list-time-expired", action="store_true",
-                        help="列出已到期文件（v2.0.0 废弃时间阈值，结果恒为空）")
-    parser.add_argument("--list-all-non-permanent", action="store_true",
-                        help="列出所有 ttl != permanent 的文件（一键扫描，含缺失 ttl 的文件）")
+    parser.add_argument(
+        "--list-by-ttl", choices=sorted(VALID_TTL_VALUES), help="按 ttl 值列出文件清单（不删除，仅输出 stdout）"
+    )
+    parser.add_argument(
+        "--list-time-expired", action="store_true", help="列出已到期文件（v2.0.0 废弃时间阈值，结果恒为空）"
+    )
+    parser.add_argument(
+        "--list-all-non-permanent",
+        action="store_true",
+        help="列出所有 ttl != permanent 的文件（一键扫描，含缺失 ttl 的文件）",
+    )
     args = parser.parse_args()
 
     # 扫描模式分支（只输出清单，不删除）

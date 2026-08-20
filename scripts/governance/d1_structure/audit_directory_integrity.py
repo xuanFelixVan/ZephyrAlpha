@@ -94,11 +94,7 @@ def _load_doc_type_suffixes() -> dict[str, list[str]]:
     if yaml is None:
         return {}
     data = yaml.safe_load(_DOC_TYPE_VOCAB_PATH.read_text(encoding="utf-8"))
-    return {
-        v["value"]: v["filename_suffixes"]
-        for v in data.get("values", [])
-        if "filename_suffixes" in v
-    }
+    return {v["value"]: v["filename_suffixes"] for v in data.get("values", []) if "filename_suffixes" in v}
 
 
 # 模块级加载一次（词表是项目内稳定文件，import 时读取）

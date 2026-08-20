@@ -783,5 +783,7 @@ def main():
             print(f"  {path_str} → {bp_id} ({strategy}, {confidence})")
 
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

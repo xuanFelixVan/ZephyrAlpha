@@ -59,17 +59,33 @@ from zephyr.governance.depgraph_schema import (  # noqa: E402
 
 # 14 个 nodes 保护字段（与 generate_project_depgraph.PRODUCTION_PROTECTED_FIELDS 对齐）
 NODES_META_FIELDS = [
-    "blueprint_id", "owner", "impact_level", "change_policy",
-    "modification_permission", "belongs_to", "build_status",
-    "gate_reason", "hard_boundary_ref", "consumed_interfaces",
-    "tags", "trust_zone", "deployment_lifecycle", "architecture_layer",
+    "blueprint_id",
+    "owner",
+    "impact_level",
+    "change_policy",
+    "modification_permission",
+    "belongs_to",
+    "build_status",
+    "gate_reason",
+    "hard_boundary_ref",
+    "consumed_interfaces",
+    "tags",
+    "trust_zone",
+    "deployment_lifecycle",
+    "architecture_layer",
 ]
 
 # 9 个 edges 保护字段（与 generate_project_depgraph.EDGES_PROTECTED_FIELDS 对齐）
 EDGES_META_FIELDS = [
-    "failure_mode", "fallback", "activation_condition",
-    "data_transfer_description", "resource_impact",
-    "ddd_integration_pattern", "event_ref", "api_contract_refs", "verified",
+    "failure_mode",
+    "fallback",
+    "activation_condition",
+    "data_transfer_description",
+    "resource_impact",
+    "ddd_integration_pattern",
+    "event_ref",
+    "api_contract_refs",
+    "verified",
 ]
 
 
@@ -151,6 +167,7 @@ def migrate(dry_run: bool = False) -> int:
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(description="裁定#209 Stage 2: 迁移保护字段到 metadata 表")
     parser.add_argument("--dry-run", action="store_true", help="只打印不执行")
     args = parser.parse_args()

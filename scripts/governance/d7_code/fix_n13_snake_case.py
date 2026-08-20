@@ -192,6 +192,8 @@ def update_references_in_file(file_path: Path) -> int:
             print(f"  ERROR 写入失败 {file_path}: {e}")
             return EXIT_PASS
     return EXIT_PASS
+
+
 def rename_file(old_rel: str, new_rel: str) -> bool:
     """重命名文件。"""
     old_path = REPO_ROOT / old_rel
@@ -287,5 +289,7 @@ def main() -> int:
     print(f"          更新 {files_updated} 个文件中的 {total_replacements} 处引用")
     print("=" * 70)
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

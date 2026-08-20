@@ -65,9 +65,21 @@ SCOPE_PATTERN = re.compile(r"(?<!REGISTRY_)SCOPE\.yaml")
 
 # 排除目录
 EXCLUDE_DIRS: set[str] = {
-    ".git", ".aidrafts", ".ailocks", "__pycache__", ".ruff_cache",
-    ".mypy_cache", ".pytest_cache", "node_modules", ".venv", "venv",
-    ".tox", ".eggs", ".idea", ".vscode", ".trae",
+    ".git",
+    ".aidrafts",
+    ".ailocks",
+    "__pycache__",
+    ".ruff_cache",
+    ".mypy_cache",
+    ".pytest_cache",
+    "node_modules",
+    ".venv",
+    "venv",
+    ".tox",
+    ".eggs",
+    ".idea",
+    ".vscode",
+    ".trae",
     "session_logs",  # 历史日志不改
     "_archive",
 }
@@ -285,6 +297,8 @@ def update_depgraph(dry_run: bool = False) -> int:
 
     print(f"\n总计: {total_changes} rows updated")
     return EXIT_PASS
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="命名规范白名单清理替换脚本")
@@ -332,5 +346,7 @@ def main() -> int:
     mode = "[DRY-RUN] " if args.dry_run else ""
     print(f"\n{mode}总计: {files_modified} 个文件, {total_replaced} 处替换")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

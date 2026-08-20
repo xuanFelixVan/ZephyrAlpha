@@ -14,6 +14,7 @@
 # [TESTS] tests/governance/commit_gates/test_check_yaml_anchor_consistency.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: GitHub Actions governance.yml CI 事件触发（L164 在案），非人工 manual
 """check_yaml_anchor_consistency.py — YAML 治理锚定一致性扫描.
 
 检测 config/ 与 architecture_model/ 下所有 YAML 文件的 B_yaml 治理锚定块一致性，
@@ -192,9 +193,7 @@ def scan_all(root: Path) -> dict:
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="YAML 治理锚定一致性扫描（B_yaml 锚定块 vs body vs [A_config] 遗留）"
-    )
+    parser = argparse.ArgumentParser(description="YAML 治理锚定一致性扫描（B_yaml 锚定块 vs body vs [A_config] 遗留）")
     parser.add_argument("--root", default=None, help="项目根目录（默认自动检测）")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出（供 CI 消费）")
     args = parser.parse_args()
@@ -235,8 +234,9 @@ def main() -> int:
             print(f"\n--- {p} ({len(files)} 文件) ---")
             for r in files:
                 print(f"  {r['rel_path']}")
-                print(f"      legacy={r['legacy_a_config_ids']} "
-                      f"anchor={r['anchor_module_id']} body={r['body_module_id']}")
+                print(
+                    f"      legacy={r['legacy_a_config_ids']} anchor={r['anchor_module_id']} body={r['body_module_id']}"
+                )
                 if r.get("anchor_blueprint") is not None:
                     print(f"      blueprint={r['anchor_blueprint']}")
 

@@ -117,9 +117,7 @@ def check_high_sensitivity(target_path: str) -> list[str]:
     normalized = _normalize_repo_relative(target_path)
     for pattern, reason in HIGH_SENSITIVITY_PATTERNS:
         if pattern in normalized or normalized.startswith(pattern):
-            warnings.append(
-                f"GAP-010 WARN: 高敏区文件 '{target_path}' 匹配 '{pattern}' — {reason}"
-            )
+            warnings.append(f"GAP-010 WARN: 高敏区文件 '{target_path}' 匹配 '{pattern}' — {reason}")
     return warnings
 
 
@@ -186,7 +184,11 @@ def _git_read(args: list[str], cwd: str | None = None) -> subprocess.CompletedPr
     """
     return subprocess.run(
         ["git"] + args,
-        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=10,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=10,
         cwd=cwd,
     )
 
@@ -224,9 +226,7 @@ def _merge_head_shas(cwd: str | None = None) -> list[str]:
         return []
 
 
-def _branch_side_commits_touching(
-    merge_shas: list[str], rel_file: str, cwd: str | None = None
-) -> list[str]:
+def _branch_side_commits_touching(merge_shas: list[str], rel_file: str, cwd: str | None = None) -> list[str]:
     """分支侧 commit 集合：第二父可达而 HEAD 不可达（HEAD..<sha>）且触碰 rel_file。"""
     commits: set[str] = set()
     for sha in merge_shas:
@@ -270,7 +270,9 @@ def check_staged() -> list[str]:
     # 逃生通道：env
     if os.environ.get(_BYPASS_ENV) == "1":
         # 落审计到 stderr（pre-commit hook 无独立审计文件，stderr 可被 pre-commit 日志捕获）
-        print("[WARN] PROTECTED-PATHS: ZEPHYR_PROTECTED_PATHS_BYPASS=1 env set, bypassing staged check", file=sys.stderr)
+        print(
+            "[WARN] PROTECTED-PATHS: ZEPHYR_PROTECTED_PATHS_BYPASS=1 env set, bypassing staged check", file=sys.stderr
+        )
         return []
 
     files = get_staged_files()
@@ -295,8 +297,7 @@ def check_staged() -> list[str]:
                 unapproved.append((rel, commits))
         if not unapproved:
             print(
-                f"[INFO] PROTECTED-PATHS: merge 场景分支侧审批标记核验通过"
-                f"（{len(merge_shas)} 个第二父），放行",
+                f"[INFO] PROTECTED-PATHS: merge 场景分支侧审批标记核验通过（{len(merge_shas)} 个第二父），放行",
                 file=sys.stderr,
             )
             return []
@@ -318,7 +319,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Protected paths write check (IRN-010)")
     parser.add_argument("--path", type=str, help="Check if a specific path is protected")
     parser.add_argument("--session-log", type=str, help="Check session log for protected path violations")
-    parser.add_argument("--staged", action="store_true", help="Check git staged files for protected path violations (pre-commit hook mode)")
+    parser.add_argument(
+        "--staged",
+        action="store_true",
+        help="Check git staged files for protected path violations (pre-commit hook mode)",
+    )
     parser.add_argument("--warn-only", action="store_true", help="Only warn, do not fail")
     args = parser.parse_args()
 

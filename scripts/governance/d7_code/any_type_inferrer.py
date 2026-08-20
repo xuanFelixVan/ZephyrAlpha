@@ -88,40 +88,85 @@ from scripts.governance.d7_code.check_any_abuse import (  # noqa: E402  project 
 
 _METHOD_TYPE_MAP: dict[str, str] = {
     # str 方法（独占）
-    "upper": "str", "lower": "str", "strip": "str", "lstrip": "str", "rstrip": "str",
-    "split": "str", "rsplit": "str", "splitlines": "str",
-    "replace": "str", "startswith": "str", "endswith": "str",
-    "find": "str", "rfind": "str", "rindex": "str",
-    "format": "str", "encode": "bytes",
-    "capitalize": "str", "title": "str", "swapcase": "str",
-    "zfill": "str", "expandtabs": "str", "center": "str",
-    "ljust": "str", "rjust": "str",
-    "partition": "str", "rpartition": "str",
-    "removeprefix": "str", "removesuffix": "str",
-    "isalpha": "str", "isdigit": "str", "isalnum": "str", "isspace": "str",
-    "isupper": "str", "islower": "str", "istitle": "str",
-    "isdecimal": "str", "isnumeric": "str", "isidentifier": "str", "isprintable": "str",
-    "isascii": "str", "maketrans": "str", "translate": "str",
+    "upper": "str",
+    "lower": "str",
+    "strip": "str",
+    "lstrip": "str",
+    "rstrip": "str",
+    "split": "str",
+    "rsplit": "str",
+    "splitlines": "str",
+    "replace": "str",
+    "startswith": "str",
+    "endswith": "str",
+    "find": "str",
+    "rfind": "str",
+    "rindex": "str",
+    "format": "str",
+    "encode": "bytes",
+    "capitalize": "str",
+    "title": "str",
+    "swapcase": "str",
+    "zfill": "str",
+    "expandtabs": "str",
+    "center": "str",
+    "ljust": "str",
+    "rjust": "str",
+    "partition": "str",
+    "rpartition": "str",
+    "removeprefix": "str",
+    "removesuffix": "str",
+    "isalpha": "str",
+    "isdigit": "str",
+    "isalnum": "str",
+    "isspace": "str",
+    "isupper": "str",
+    "islower": "str",
+    "istitle": "str",
+    "isdecimal": "str",
+    "isnumeric": "str",
+    "isidentifier": "str",
+    "isprintable": "str",
+    "isascii": "str",
+    "maketrans": "str",
+    "translate": "str",
     "casefold": "str",
     # list 方法（独占）
-    "append": "list", "extend": "list", "insert": "list",
-    "sort": "list", "reverse": "list",
+    "append": "list",
+    "extend": "list",
+    "insert": "list",
+    "sort": "list",
+    "reverse": "list",
     # dict 方法（独占）
-    "keys": "dict", "values": "dict", "items": "dict",
-    "setdefault": "dict", "popitem": "dict", "fromkeys": "dict",
+    "keys": "dict",
+    "values": "dict",
+    "items": "dict",
+    "setdefault": "dict",
+    "popitem": "dict",
+    "fromkeys": "dict",
     # set 方法（独占）
-    "add": "set", "discard": "set",
-    "union": "set", "intersection": "set",
-    "difference": "set", "symmetric_difference": "set",
-    "issubset": "set", "issuperset": "set",
+    "add": "set",
+    "discard": "set",
+    "union": "set",
+    "intersection": "set",
+    "difference": "set",
+    "symmetric_difference": "set",
+    "issubset": "set",
+    "issuperset": "set",
     # bytes 方法（独占）
     "decode": "bytes",
     # 文件对象
-    "read": "file", "readline": "file", "readlines": "file",
-    "write": "file", "writelines": "file", "flush": "file",
-    "seek": "file", "tell": "file",
+    "read": "file",
+    "readline": "file",
+    "readlines": "file",
+    "write": "file",
+    "writelines": "file",
+    "flush": "file",
+    "seek": "file",
+    "tell": "file",
     # 通用对象方法
-    "copy": "iterable", "clear": "iterable",
+    "copy": "iterable",
+    "clear": "iterable",
 }
 
 # 多义方法：同时存在于多种类型，单独列出用于加权推断
@@ -140,19 +185,34 @@ _AMBIGUOUS_METHODS: dict[str, set[str]] = {
 
 # 属性访问 → 类型（如 x.real → numeric）
 _ATTR_TYPE_MAP: dict[str, str] = {
-    "real": "numeric", "imag": "numeric",
-    "numerator": "int", "denominator": "int",
-    "year": "datetime", "month": "datetime", "day": "datetime",
-    "hour": "datetime", "minute": "datetime", "second": "datetime",
-    "microsecond": "datetime", "tzinfo": "datetime",
+    "real": "numeric",
+    "imag": "numeric",
+    "numerator": "int",
+    "denominator": "int",
+    "year": "datetime",
+    "month": "datetime",
+    "day": "datetime",
+    "hour": "datetime",
+    "minute": "datetime",
+    "second": "datetime",
+    "microsecond": "datetime",
+    "tzinfo": "datetime",
 }
 
 # isinstance(x, T) 第二参数 → 类型字符串
 _ISINSTANCE_TYPE_MAP: dict[str, str] = {
-    "str": "str", "int": "int", "float": "float", "bool": "bool",
-    "list": "list", "dict": "dict", "set": "set", "tuple": "tuple",
-    "bytes": "bytes", "bytearray": "bytearray",
-    "complex": "complex", "frozenset": "frozenset",
+    "str": "str",
+    "int": "int",
+    "float": "float",
+    "bool": "bool",
+    "list": "list",
+    "dict": "dict",
+    "set": "set",
+    "tuple": "tuple",
+    "bytes": "bytes",
+    "bytearray": "bytearray",
+    "complex": "complex",
+    "frozenset": "frozenset",
 }
 
 # 算术运算符节点类型集合（用于 _collect_arithmetic_evidence）
@@ -188,9 +248,7 @@ class AnyInferenceFinding:
     def to_dict(self) -> dict:
         """转为可序列化 dict（处理 tuple）。"""
         d = asdict(self)
-        d["inferred_candidates"] = [
-            {"type": t, "confidence": c} for t, c in self.inferred_candidates
-        ]
+        d["inferred_candidates"] = [{"type": t, "confidence": c} for t, c in self.inferred_candidates]
         return d
 
 
@@ -286,9 +344,7 @@ def _method_call_to_type(method_name: str) -> tuple[str, float]:
 # ── 单条证据收集器（每类证据一个函数，主循环 complexity < 10）──────────────
 
 
-def _collect_method_call_evidence(
-    node: ast.Call, param_name: str
-) -> TypeEvidence | None:
+def _collect_method_call_evidence(node: ast.Call, param_name: str) -> TypeEvidence | None:
     """收集 x.method() 调用证据。"""
     if not isinstance(node.func, ast.Attribute):
         return None
@@ -305,9 +361,7 @@ def _collect_method_call_evidence(
     )
 
 
-def _collect_attribute_evidence(
-    node: ast.Attribute, param_name: str
-) -> TypeEvidence | None:
+def _collect_attribute_evidence(node: ast.Attribute, param_name: str) -> TypeEvidence | None:
     """收集 x.attr 属性访问证据（非调用）。"""
     if not (isinstance(node.value, ast.Name) and node.value.id == param_name):
         return None
@@ -321,9 +375,7 @@ def _collect_attribute_evidence(
     )
 
 
-def _collect_subscript_evidence(
-    node: ast.Subscript, param_name: str
-) -> TypeEvidence | None:
+def _collect_subscript_evidence(node: ast.Subscript, param_name: str) -> TypeEvidence | None:
     """收集 x[...] subscript 证据。"""
     if not (isinstance(node.value, ast.Name) and node.value.id == param_name):
         return None
@@ -331,7 +383,7 @@ def _collect_subscript_evidence(
     if isinstance(slc, ast.Constant) and isinstance(slc.value, str):
         return TypeEvidence(
             kind="subscript_str",
-            detail=f"{param_name}[\"{slc.value}\"]",
+            detail=f'{param_name}["{slc.value}"]',
             inferred_type="dict",
             weight=0.7,
         )
@@ -365,17 +417,14 @@ _BUILTIN_CALL_DISPATCH: dict[str, tuple[str, str, float]] = {
 }
 
 
-def _collect_builtin_call_evidence(
-    node: ast.Call, param_name: str
-) -> TypeEvidence | None:
+def _collect_builtin_call_evidence(node: ast.Call, param_name: str) -> TypeEvidence | None:
     """收集 len(x) / iter(x) / next(x) / sorted(x) / list(x) 等内置调用证据。"""
     if not isinstance(node.func, ast.Name):
         return None
     fname = node.func.id
     if fname not in _BUILTIN_CALL_DISPATCH:
         return None
-    if not (node.args and isinstance(node.args[0], ast.Name)
-            and node.args[0].id == param_name):
+    if not (node.args and isinstance(node.args[0], ast.Name) and node.args[0].id == param_name):
         return None
     kind, inferred, weight = _BUILTIN_CALL_DISPATCH[fname]
     return TypeEvidence(
@@ -386,9 +435,7 @@ def _collect_builtin_call_evidence(
     )
 
 
-def _collect_iteration_evidence(
-    node: ast.For, param_name: str
-) -> TypeEvidence | None:
+def _collect_iteration_evidence(node: ast.For, param_name: str) -> TypeEvidence | None:
     """收集 for ... in x 迭代证据。"""
     if not (isinstance(node.iter, ast.Name) and node.iter.id == param_name):
         return None
@@ -413,16 +460,13 @@ def _extract_isinstance_type(node: ast.expr) -> str:
     return ""
 
 
-def _collect_isinstance_evidence(
-    node: ast.Call, param_name: str
-) -> TypeEvidence | None:
+def _collect_isinstance_evidence(node: ast.Call, param_name: str) -> TypeEvidence | None:
     """收集 isinstance(x, T) 类型检查证据。"""
     if not (isinstance(node.func, ast.Name) and node.func.id == "isinstance"):
         return None
     if len(node.args) < 2:
         return None
-    if not (isinstance(node.args[0], ast.Name)
-            and node.args[0].id == param_name):
+    if not (isinstance(node.args[0], ast.Name) and node.args[0].id == param_name):
         return None
     type_str = _extract_isinstance_type(node.args[1])
     if not type_str:
@@ -435,9 +479,7 @@ def _collect_isinstance_evidence(
     )
 
 
-def _collect_arithmetic_evidence(
-    node: ast.BinOp, param_name: str
-) -> TypeEvidence | None:
+def _collect_arithmetic_evidence(node: ast.BinOp, param_name: str) -> TypeEvidence | None:
     """收集 x + 1 / x * 2 算术运算证据（best-effort numeric）。"""
     other = None
     if isinstance(node.left, ast.Name) and node.left.id == param_name:
@@ -505,33 +547,52 @@ def _collect_return_evidence(
             continue
 
         if node.value is None:
-            evidence.append(TypeEvidence(
-                kind="return_literal",
-                detail="return (None)",
-                inferred_type="None",
-                weight=0.9,
-            ))
+            evidence.append(
+                TypeEvidence(
+                    kind="return_literal",
+                    detail="return (None)",
+                    inferred_type="None",
+                    weight=0.9,
+                )
+            )
             continue
 
         ret_type = _infer_expr_type(node.value)
         if ret_type != "unknown":
-            weight = 0.9 if ret_type in (
-                "str", "int", "float", "bool", "None",
-                "list", "dict", "set", "tuple", "bytes",
-            ) else 0.7
-            evidence.append(TypeEvidence(
-                kind="return_literal",
-                detail=f"return {_format_expr(node.value)}",
-                inferred_type=ret_type,
-                weight=weight,
-            ))
+            weight = (
+                0.9
+                if ret_type
+                in (
+                    "str",
+                    "int",
+                    "float",
+                    "bool",
+                    "None",
+                    "list",
+                    "dict",
+                    "set",
+                    "tuple",
+                    "bytes",
+                )
+                else 0.7
+            )
+            evidence.append(
+                TypeEvidence(
+                    kind="return_literal",
+                    detail=f"return {_format_expr(node.value)}",
+                    inferred_type=ret_type,
+                    weight=weight,
+                )
+            )
         else:
-            evidence.append(TypeEvidence(
-                kind="return_expr",
-                detail=f"return {_format_expr(node.value)}",
-                inferred_type="unknown",
-                weight=0.1,
-            ))
+            evidence.append(
+                TypeEvidence(
+                    kind="return_expr",
+                    detail=f"return {_format_expr(node.value)}",
+                    inferred_type="unknown",
+                    weight=0.1,
+                )
+            )
 
     return evidence
 
@@ -580,16 +641,12 @@ def _aggregate_evidence(
     if total_weight == 0:
         return []
 
-    candidates = [
-        (t, w / total_weight) for t, w in type_weights.items()
-    ]
+    candidates = [(t, w / total_weight) for t, w in type_weights.items()]
     candidates.sort(key=lambda x: x[1], reverse=True)
     return candidates
 
 
-def _build_finding(
-    ctx: "_FindingCtx", evidence: list[TypeEvidence]
-) -> AnyInferenceFinding:
+def _build_finding(ctx: "_FindingCtx", evidence: list[TypeEvidence]) -> AnyInferenceFinding:
     """从证据构造 AnyInferenceFinding（降低 _scan_function 复杂度）。
 
     参数对象 _FindingCtx 用于规避 NO-LONG-PARAM-LIST gate（>7 参数反模式 §5.150）。
@@ -631,35 +688,39 @@ def _scan_function(
             continue
         if _is_bare_any(arg.annotation):
             evidence = _collect_param_evidence(node, arg.arg)
-            findings.append(_build_finding(
-                _FindingCtx(
-                    filepath=filepath,
-                    line=arg.lineno,
-                    col=arg.col_offset,
-                    kind="ANY-1",
-                    func_name=func_name,
-                    param_or_return=arg.arg,
-                    annotation=_annotation_to_str(arg.annotation),
-                ),
-                evidence,
-            ))
+            findings.append(
+                _build_finding(
+                    _FindingCtx(
+                        filepath=filepath,
+                        line=arg.lineno,
+                        col=arg.col_offset,
+                        kind="ANY-1",
+                        func_name=func_name,
+                        param_or_return=arg.arg,
+                        annotation=_annotation_to_str(arg.annotation),
+                    ),
+                    evidence,
+                )
+            )
 
     # ANY-2: 返回值裸 Any（跳过 dunder）
     if not (func_name.startswith("__") and func_name.endswith("__")):
         if _is_bare_any(node.returns):
             evidence = _collect_return_evidence(node)
-            findings.append(_build_finding(
-                _FindingCtx(
-                    filepath=filepath,
-                    line=node.lineno,
-                    col=node.col_offset,
-                    kind="ANY-2",
-                    func_name=func_name,
-                    param_or_return="return",
-                    annotation=_annotation_to_str(node.returns),
-                ),
-                evidence,
-            ))
+            findings.append(
+                _build_finding(
+                    _FindingCtx(
+                        filepath=filepath,
+                        line=node.lineno,
+                        col=node.col_offset,
+                        kind="ANY-2",
+                        func_name=func_name,
+                        param_or_return="return",
+                        annotation=_annotation_to_str(node.returns),
+                    ),
+                    evidence,
+                )
+            )
 
     return findings
 
@@ -676,9 +737,7 @@ class _FunctionScanner(ast.NodeVisitor):
         self.findings: list[AnyInferenceFinding] = []
         self._stack: list[ast.AST] = []
 
-    def _scan_and_descend(
-        self, node: ast.FunctionDef | ast.AsyncFunctionDef
-    ) -> None:
+    def _scan_and_descend(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
         """_scan_and_descend implementation."""
         self.findings.extend(_scan_function(node, self.filepath, self._stack))
         self._stack.append(node)
@@ -724,16 +783,15 @@ def scan_file(filepath: Path) -> list[AnyInferenceFinding]:
     return scanner.findings
 
 
-def scan_directory(
-    src_dir: Path, files: list[Path] | None = None
-) -> list[AnyInferenceFinding]:
+def scan_directory(src_dir: Path, files: list[Path] | None = None) -> list[AnyInferenceFinding]:
     """扫描目录或文件列表。"""
     if files:
         py_files = [f for f in files if f.suffix == ".py" and f.exists()]
     else:
         py_files = list(src_dir.rglob("*.py"))
         py_files = [
-            f for f in py_files
+            f
+            for f in py_files
             if "__pycache__" not in f.parts
             and "_archive" not in f.parts
             and ".aidrafts" not in f.parts
@@ -774,19 +832,19 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         description="裸 Any 类型推断辅助工具（#ARCH-ANY-GOVERNANCE-001 Phase 1）",
     )
     parser.add_argument(
-        "--src", type=Path,
+        "--src",
+        type=Path,
         default=Path(__file__).resolve().parents[3] / "src" / "zephyr",
         help="扫描目录（默认 src/zephyr/）",
     )
     parser.add_argument(
-        "--output", type=Path,
+        "--output",
+        type=Path,
         default=Path(__file__).resolve().parents[3] / "data" / "any_inference_report" / "report.json",
         help="JSON 报告输出路径",
     )
-    parser.add_argument("--ci", action="store_true",
-                        help="CI 模式：发现可推断 Any（confidence >= threshold）时 exit 1")
-    parser.add_argument("--threshold", type=float, default=0.7,
-                        help="CI 模式触发的置信度阈值（默认 0.7）")
+    parser.add_argument("--ci", action="store_true", help="CI 模式：发现可推断 Any（confidence >= threshold）时 exit 1")
+    parser.add_argument("--threshold", type=float, default=0.7, help="CI 模式触发的置信度阈值（默认 0.7）")
     parser.add_argument("--quiet", action="store_true", help="静默模式：不打印进度")
     parser.add_argument("files", nargs="*", help="增量扫描：只检查指定文件")
     return parser
@@ -798,11 +856,7 @@ def _filter_file_list(args: argparse.Namespace) -> list[Path] | None:
         return None
     file_list = [Path(f) for f in args.files]
     src_prefix = str(args.src.resolve()).replace("\\", "/")
-    return [
-        f for f in file_list
-        if f.suffix == ".py"
-        and str(f.resolve()).replace("\\", "/").startswith(src_prefix)
-    ]
+    return [f for f in file_list if f.suffix == ".py" and str(f.resolve()).replace("\\", "/").startswith(src_prefix)]
 
 
 def _print_stats(
@@ -818,9 +872,7 @@ def _print_stats(
 
     file_counts: Counter[str] = Counter(f.file for f in findings)
     top_files = file_counts.most_common(10)
-    candidate_counts: Counter[str] = Counter(
-        f.top_candidate for f in findings if f.confidence > 0
-    )
+    candidate_counts: Counter[str] = Counter(f.top_candidate for f in findings if f.confidence > 0)
 
     print(f"[any_type_inferrer] 扫描完成，共 {len(findings)} 处裸 Any：")
     print(f"  ANY-1 (参数): {any1_count}")
@@ -873,11 +925,13 @@ def main(argv: list[str] | None = None) -> int:
             )
             return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def aggregate_evidence(evidence) -> list[tuple[str, float]]:
     """公共接口：aggregate_evidence（Stage 4 公共化）。"""
     return _aggregate_evidence(evidence)
-

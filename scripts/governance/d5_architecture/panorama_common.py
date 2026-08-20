@@ -25,6 +25,7 @@
   2. 平局时按 domain_id 字母序 tie-break（不依赖 SQL ORDER BY）
   3. 纯函数，无 DB 依赖，无副作用
 """
+
 from __future__ import annotations
 
 __manifest__ = """

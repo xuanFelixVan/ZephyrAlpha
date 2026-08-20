@@ -15,6 +15,7 @@
 # [ERROR_CONTRACT] exit 0=pass; exit 1=conflicts found; exit 2=usage error
 # [TESTS] tests/governance/commit_gates/test_module_id_consistency_gate.py
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: GitCommitGateway/session_worktree_commit/CI audit 事件触发（CONSUMERS 在案），非人工 manual
 # [A_module] module_id=MOD-GATE_ENGINE_audit_module_id | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 """check_module_id_consistency.py — module_id 全仓一致性扫描（--scan-existing 模式）.
 
@@ -65,23 +66,19 @@ from _shared.constants import EXIT_ERROR
 # === 正则定义（与 module_id_consistency_gate.py 保持一致）===
 
 # 匹配 [A_module] module_id=XXX 或 [A_module] module_id: XXX 头部声明
-_RE_HEADER_MODULE_ID = re.compile(
-    r"^#\s*\[A_\w+\]\s*module_id[:=]\s*(\S+)", re.MULTILINE
-)
+_RE_HEADER_MODULE_ID = re.compile(r"^#\s*\[A_\w+\]\s*module_id[:=]\s*(\S+)", re.MULTILINE)
 
 # 匹配游离的 module_id: 声明行（非 [A_module] 头部，YAML 风格）
-_RE_STRAY_MODULE_ID = re.compile(
-    r"^module_id:\s*([A-Z]+(?:-[A-Z]+)*-\w+)\s*(?:\([^)]*\))?\s*$", re.MULTILINE
-)
+_RE_STRAY_MODULE_ID = re.compile(r"^module_id:\s*([A-Z]+(?:-[A-Z]+)*-\w+)\s*(?:\([^)]*\))?\s*$", re.MULTILINE)
 
 # 排除模式：Python 代码中的 module_id 用法（非声明）
 _EXCLUDE_PATTERNS = [
-    re.compile(r'def\s+\w+\(.*module_id'),
+    re.compile(r"def\s+\w+\(.*module_id"),
     re.compile(r'module_id\s*=\s*"'),
     re.compile(r'module_id"\s*:\s*"'),
-    re.compile(r'module_id:\s*str\b'),
-    re.compile(r'module_id:\s*Optional'),
-    re.compile(r'self\._?module_id'),
+    re.compile(r"module_id:\s*str\b"),
+    re.compile(r"module_id:\s*Optional"),
+    re.compile(r"self\._?module_id"),
     re.compile(r'module_id\s*=\s*["\']'),
 ]
 
@@ -124,7 +121,7 @@ def _has_stray_module_id(content: str) -> list[str]:
     strays = []
     for match in _RE_STRAY_MODULE_ID.finditer(content):
         line_start = content.rfind("\n", 0, match.start()) + 1
-        line = content[line_start:match.end()]
+        line = content[line_start : match.end()]
         # 排除注释行（# 开头的 [A_module] 声明不算游离）
         if line.strip().startswith("#"):
             continue
@@ -217,9 +214,7 @@ def scan_existing(root: Path, src_only: bool = False) -> dict:
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="module_id 全仓一致性扫描（--scan-existing 模式）"
-    )
+    parser = argparse.ArgumentParser(description="module_id 全仓一致性扫描（--scan-existing 模式）")
     parser.add_argument(
         "--scan-existing",
         action="store_true",
@@ -261,8 +256,7 @@ def main() -> int:
             "conflicts": result["conflicts"],
             "stray_lines": result["stray_lines"],
             "by_type": {
-                k: [{"module_id": mid, "files": files} for mid, files in v]
-                for k, v in result["by_type"].items()
+                k: [{"module_id": mid, "files": files} for mid, files in v] for k, v in result["by_type"].items()
             },
         }
         print(json.dumps(out, indent=2, ensure_ascii=False))
@@ -274,7 +268,12 @@ def main() -> int:
         print(f"冲突组数: {result['conflict_groups']}")
         print(f"冲突文件总数: {result['conflict_files']}")
 
-        for type_name, type_label in [("A", "__init__.py 复制"), ("B", "跨域副本"), ("C", "bridges 副本"), ("D", "其他")]:
+        for type_name, type_label in [
+            ("A", "__init__.py 复制"),
+            ("B", "跨域副本"),
+            ("C", "bridges 副本"),
+            ("D", "其他"),
+        ]:
             groups = result["by_type"][type_name]
             print(f"\n--- Type {type_name}: {type_label} ({len(groups)} 组) ---")
             for mid, files in groups[:20]:

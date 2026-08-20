@@ -101,6 +101,7 @@ def _is_session_worktree_commit() -> bool:
     worktree 根目录）。
     """
     import os
+
     cwd = Path(os.getcwd()).resolve()
     parts = cwd.parts
     for i, part in enumerate(parts):

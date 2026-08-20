@@ -61,8 +61,7 @@ from _shared.constants import REPO_ROOT  # noqa: E402
 
 # 术语词汇表 YAML 真源路径（SSoT：规则数据真源是 YAML 文件）
 _GLOSSARY_YAML = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-    / "catalogs" / "terminology_glossary.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "terminology_glossary.yaml"
 )
 
 # 模块级缓存：None=未加载，dict=已加载（category → {en: zh}）
@@ -121,6 +120,7 @@ def _load_from_yaml() -> dict[str, dict[str, str]]:
     """
     try:
         import yaml  # type: ignore[import-untyped]
+
         if not _GLOSSARY_YAML.exists():
             return {}
         data = yaml.safe_load(_GLOSSARY_YAML.read_text(encoding="utf-8")) or {}

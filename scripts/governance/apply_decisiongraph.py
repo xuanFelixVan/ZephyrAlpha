@@ -124,17 +124,21 @@ _VALID_NODE_TYPES = load_node_type_values()
 _VALID_EDGE_TYPES = load_edge_type_values()
 
 # 支持的 op 列表（对标 apply_depgraph.py _get_supported_ops）
-_NODE_OPS = frozenset({
-    "add_design_node",
-    "transition_build_status",
-    "remove_design_node",
-    "deprecate_node",
-    "update_node_field",
-})
-_EDGE_OPS = frozenset({
-    "add_edge",
-    "remove_edge",
-})
+_NODE_OPS = frozenset(
+    {
+        "add_design_node",
+        "transition_build_status",
+        "remove_design_node",
+        "deprecate_node",
+        "update_node_field",
+    }
+)
+_EDGE_OPS = frozenset(
+    {
+        "add_edge",
+        "remove_edge",
+    }
+)
 _ALL_OPS = _NODE_OPS | _EDGE_OPS
 
 
@@ -165,9 +169,7 @@ def _db_write_lock(conn):
 # ---------------------------------------------------------------------------
 
 
-def _validate_status_transition(
-    current: str, target: str, node_id: int | None = None
-) -> None:
+def _validate_status_transition(current: str, target: str, node_id: int | None = None) -> None:
     """校验 build_status 状态迁移合法性（单调推进，禁止跳态）。
 
     规则：
@@ -179,24 +181,15 @@ def _validate_status_transition(
         ValueError: 状态迁移非法时
     """
     if current not in _BUILD_STATUS_ORDER:
-        raise ValueError(
-            f"node {node_id or '?'} current build_status '{current}' 不合法"
-        )
+        raise ValueError(f"node {node_id or '?'} current build_status '{current}' 不合法")
     if target not in _BUILD_STATUS_ORDER:
-        raise ValueError(
-            f"node {node_id or '?'} target build_status '{target}' 不合法"
-        )
+        raise ValueError(f"node {node_id or '?'} target build_status '{target}' 不合法")  # noqa: MSG-EXPOSURE — target=build_status 目标状态枚举值，非敏感信息
     if current == "deprecated":
-        raise ValueError(
-            f"node {node_id or '?'} 已 deprecated，不能再迁移到 {target}"
-        )
+        raise ValueError(f"node {node_id or '?'} 已 deprecated，不能再迁移到 {target}")  # noqa: MSG-EXPOSURE — target=build_status 目标状态枚举值，非敏感信息
     cur_idx = _BUILD_STATUS_ORDER.index(current)
     tgt_idx = _BUILD_STATUS_ORDER.index(target)
     if tgt_idx < cur_idx:
-        raise ValueError(
-            f"node {node_id or '?'} build_status 禁止回退: "
-            f"{current}({cur_idx}) → {target}({tgt_idx})"
-        )
+        raise ValueError(f"node {node_id or '?'} build_status 禁止回退: {current}({cur_idx}) -> {target}({tgt_idx})")  # noqa: MSG-EXPOSURE — target=build_status 目标状态枚举值，非敏感信息
     if tgt_idx - cur_idx > 1:
         raise ValueError(
             f"node {node_id or '?'} build_status 禁止跳态: "
@@ -210,9 +203,7 @@ def _validate_status_transition(
 # ---------------------------------------------------------------------------
 
 
-def _check_invariants_on_add_edge(
-    conn, from_node_id: int, to_node_id: int, edge_type: str
-) -> list[str]:
+def _check_invariants_on_add_edge(conn, from_node_id: int, to_node_id: int, edge_type: str) -> list[str]:
     """添加边时校验 DEC-INV-002（signal→order 禁止）。
 
     返回违规列表（空列表=通过）。
@@ -238,9 +229,7 @@ def _check_invariants_on_add_edge(
     return violations
 
 
-def _check_invariants_post_add_edge(
-    conn, to_node_id: int
-) -> list[str]:
+def _check_invariants_post_add_edge(conn, to_node_id: int) -> list[str]:
     """添加边后校验 DEC-INV-001（order 节点必须有 risk_check approving）。
 
     仅当 to_node 是 order 类型时检查。
@@ -267,8 +256,7 @@ def _check_invariants_post_add_edge(
             )
             if cur.fetchone() is None:
                 violations.append(
-                    f"DEC-INV-001 违反: order 节点 {to_node_id} 必须有至少一条 "
-                    f"approving 入边来自 risk_check"
+                    f"DEC-INV-001 违反: order 节点 {to_node_id} 必须有至少一条 approving 入边来自 risk_check"
                 )
     return violations
 
@@ -301,9 +289,7 @@ def op_add_design_node(
     本 op 对标 apply_depgraph.py --add-design-node。
     """
     if node_type not in _VALID_NODE_TYPES:
-        raise ValueError(
-            f"node_type '{node_type}' 不合法，合法值: {_VALID_NODE_TYPES}"
-        )
+        raise ValueError(f"node_type '{node_type}' 不合法，合法值: {_VALID_NODE_TYPES}")
     if not evidence_hash:
         raise ValueError("evidence_hash 必填（DEC-INV-005）")
 
@@ -330,9 +316,7 @@ def op_add_design_node(
             (layer_id,),
         )
         if cur.fetchone() is None:
-            raise ValueError(
-                f"layer_id '{layer_id}' 不存在（DEC-INV-001: 节点必须有归属层）"
-            )
+            raise ValueError(f"layer_id '{layer_id}' 不存在（DEC-INV-001: 节点必须有归属层）")
 
         cur.execute("SELECT 1 FROM decision_nodes WHERE path = %s", (path,))
         if cur.fetchone() is not None:
@@ -362,9 +346,7 @@ def op_add_design_node(
     return {"op": "add_design_node", "dry_run": True, "path": path}
 
 
-def op_transition_build_status(
-    conn, *, node_id: int, to: str, dry_run: bool = False
-) -> dict:
+def op_transition_build_status(conn, *, node_id: int, to: str, dry_run: bool = False) -> dict:
     """状态迁移：校验单调性后更新 build_status。"""
     if to not in _BUILD_STATUS_ORDER:
         raise ValueError(f"target build_status '{to}' 不合法")
@@ -414,22 +396,17 @@ def op_remove_design_node(conn, *, node_id: int, dry_run: bool = False) -> dict:
             )
 
         cur.execute(
-            "SELECT COUNT(*) AS cnt FROM decision_edges "
-            "WHERE from_node_id = %s OR to_node_id = %s",
+            "SELECT COUNT(*) AS cnt FROM decision_edges WHERE from_node_id = %s OR to_node_id = %s",  # noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）
             (node_id, node_id),
         )
         edge_count = cur.fetchone()["cnt"]
         if edge_count > 0:
-            raise ValueError(
-                f"node {node_id} 有 {edge_count} 条关联边，必须先删除边再删节点"
-            )
+            raise ValueError(f"node {node_id} 有 {edge_count} 条关联边，必须先删除边再删节点")
 
         if dry_run:
             print(f"[DRY-RUN] DELETE node {node_id} (path={row['path']})")
         else:
-            cur.execute(
-                "DELETE FROM decision_nodes WHERE node_id = %s", (node_id,)
-            )
+            cur.execute("DELETE FROM decision_nodes WHERE node_id = %s", (node_id,))  # noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）
             return {"op": "remove_design_node", "node_id": node_id}
 
     return {"op": "remove_design_node", "dry_run": True, "node_id": node_id}
@@ -440,14 +417,20 @@ def op_deprecate_node(conn, *, node_id: int, dry_run: bool = False) -> dict:
     return op_transition_build_status(conn, node_id=node_id, to="deprecated", dry_run=dry_run)
 
 
-def op_update_node_field(
-    conn, *, node_id: int, field: str, value: Any, dry_run: bool = False
-) -> dict:
+def op_update_node_field(conn, *, node_id: int, field: str, value: Any, dry_run: bool = False) -> dict:
     """更新节点字段（仅允许白名单字段）。"""
     _ALLOWED_FIELDS = {
-        "decision_name", "decision_name_en", "module_id",
-        "inputs", "outputs", "conditions", "facets", "evidence_hash",
-        "design_maturity", "source_code_ref", "flow_stage",
+        "decision_name",
+        "decision_name_en",
+        "module_id",
+        "inputs",
+        "outputs",
+        "conditions",
+        "facets",
+        "evidence_hash",
+        "design_maturity",
+        "source_code_ref",
+        "flow_stage",
     }
     if field not in _ALLOWED_FIELDS:
         raise ValueError(
@@ -460,9 +443,7 @@ def op_update_node_field(
     db_value = json.dumps(value, ensure_ascii=False) if field in _JSONB_FIELDS else value
 
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute(
-            "SELECT 1 FROM decision_nodes WHERE node_id = %s", (node_id,)
-        )
+        cur.execute("SELECT 1 FROM decision_nodes WHERE node_id = %s", (node_id,))  # noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）
         if cur.fetchone() is None:
             raise ValueError(f"node_id {node_id} 不存在")
 
@@ -498,9 +479,7 @@ def op_add_edge(
 ) -> dict:
     """添加决策边（带 DEC-INV-001/002 校验）。"""
     if edge_type not in _VALID_EDGE_TYPES:
-        raise ValueError(
-            f"edge_type '{edge_type}' 不合法（DEC-INV-003），合法值: {_VALID_EDGE_TYPES}"
-        )
+        raise ValueError(f"edge_type '{edge_type}' 不合法（DEC-INV-003），合法值: {_VALID_EDGE_TYPES}")
     if from_node_id == to_node_id:
         raise ValueError("自环边禁止（DEC-INV-003 DAG 无环）")
 
@@ -540,10 +519,7 @@ def op_add_edge(
             post_violations = _check_invariants_post_add_edge(conn, to_node_id)
             if post_violations:
                 # 边已插入但 order 节点缺 approving，回滚事务并报错
-                raise ValueError(
-                    "; ".join(post_violations)
-                    + f"（已回滚 edge {new_id} 的插入）"
-                )
+                raise ValueError("; ".join(post_violations) + f"（已回滚 edge {new_id} 的插入）")
 
             return {"op": "add_edge", "edge_id": new_id}
 
@@ -589,9 +565,7 @@ def op_add_design_edge(
     - 校验不变量 DEC-INV-001/002/003 与 op_add_edge 一致
     """
     if edge_type not in _VALID_EDGE_TYPES:
-        raise ValueError(
-            f"edge_type '{edge_type}' 不合法（DEC-INV-003），合法值: {_VALID_EDGE_TYPES}"
-        )
+        raise ValueError(f"edge_type '{edge_type}' 不合法（DEC-INV-003），合法值: {_VALID_EDGE_TYPES}")
     if from_node_id == to_node_id:
         raise ValueError("自环边禁止（DEC-INV-003 DAG 无环）")
 
@@ -621,9 +595,7 @@ def op_add_design_edge(
         if to_node is None:
             raise ValueError(f"to_node_id={to_node_id} 不存在")
         if to_node["design_maturity"] != "design":
-            raise ValueError(
-                f"to_node_id={to_node_id} design_maturity={to_node['design_maturity']}（应为 design）"
-            )
+            raise ValueError(f"to_node_id={to_node_id} design_maturity={to_node['design_maturity']}（应为 design）")
 
     row = {
         "from_node_id": from_node_id,
@@ -659,10 +631,7 @@ def op_add_design_edge(
 
             post_violations = _check_invariants_post_add_edge(conn, to_node_id)
             if post_violations:
-                raise ValueError(
-                    "; ".join(post_violations)
-                    + f"（已回滚 design edge {new_id} 的插入）"
-                )
+                raise ValueError("; ".join(post_violations) + f"（已回滚 design edge {new_id} 的插入）")
 
             return {"op": "add_design_edge", "edge_id": new_id}
 
@@ -697,9 +666,7 @@ def _execute_batch_op(conn, op_spec: dict, dry_run: bool = False) -> dict:
     return fn(conn, dry_run=dry_run, **kwargs)
 
 
-def cmd_batch(
-    batch_path: str, dry_run: bool = False, allow_promote: bool = False
-) -> dict:
+def cmd_batch(batch_path: str, dry_run: bool = False, allow_promote: bool = False) -> dict:
     """批量执行 JSON 文件中的 ops（对标 apply_depgraph.py --batch）。
 
     batch JSON 格式：
@@ -823,34 +790,31 @@ build_status 状态机（单调推进，禁止跳态）：
     parser.add_argument("--facets", type=str, help="Facet JSON 字符串")
 
     # transition-build-status 参数
-    parser.add_argument("--transition-build-status", action="store_true",
-                        help="状态迁移")
+    parser.add_argument("--transition-build-status", action="store_true", help="状态迁移")
     parser.add_argument("--node-id", type=int, help="节点 ID")
     parser.add_argument("--to", type=str, help="目标状态（planned/generated/...）")
 
     # remove-design-node 参数
-    parser.add_argument("--remove-design-node", action="store_true",
-                        help="删除设计态节点")
+    parser.add_argument("--remove-design-node", action="store_true", help="删除设计态节点")
 
     # deprecate-node 参数
     parser.add_argument("--deprecate-node", action="store_true", help="弃用节点")
 
     # update-node-field 参数
-    parser.add_argument("--update-node-field", action="store_true",
-                        help="更新节点字段")
+    parser.add_argument("--update-node-field", action="store_true", help="更新节点字段")
     parser.add_argument("--field", type=str, help="字段名（白名单）")
     parser.add_argument("--value", type=str, help="字段值（JSON 字符串）")
-    parser.add_argument("--set-flow-stage", type=str,
-        help="设置节点业务流程阶段（stock_selection/buy_flow/sell_flow/position_management/execution/reconciliation）")
+    parser.add_argument(
+        "--set-flow-stage",
+        type=str,
+        help="设置节点业务流程阶段（stock_selection/buy_flow/sell_flow/position_management/execution/reconciliation）",
+    )
 
     # add-edge 参数
     parser.add_argument("--add-edge", action="store_true", help="添加边")
-    parser.add_argument("--from-node", dest="from_node_id", type=int,
-                        help="起点节点 ID")
-    parser.add_argument("--to-node", dest="to_node_id", type=int,
-                        help="终点节点 ID")
-    parser.add_argument("--edge-type", type=str,
-                        help="边类型（triggering/informing/constraining/approving）")
+    parser.add_argument("--from-node", dest="from_node_id", type=int, help="起点节点 ID")
+    parser.add_argument("--to-node", dest="to_node_id", type=int, help="终点节点 ID")
+    parser.add_argument("--edge-type", type=str, help="边类型（triggering/informing/constraining/approving）")
     parser.add_argument("--edge-type-cn", type=str, help="边类型中文名")
     parser.add_argument("--condition", type=str, help="边条件")
     parser.add_argument("--priority", type=int, help="优先级")
@@ -899,32 +863,30 @@ build_status 状态机（单调推进，禁止跳态）：
                     dry_run=args.dry_run,
                 )
             elif args.transition_build_status:
-                result = op_transition_build_status(
-                    conn, node_id=args.node_id, to=args.to, dry_run=args.dry_run
-                )
+                result = op_transition_build_status(conn, node_id=args.node_id, to=args.to, dry_run=args.dry_run)
             elif args.remove_design_node:
-                result = op_remove_design_node(
-                    conn, node_id=args.node_id, dry_run=args.dry_run
-                )
+                result = op_remove_design_node(conn, node_id=args.node_id, dry_run=args.dry_run)
             elif args.deprecate_node:
-                result = op_deprecate_node(
-                    conn, node_id=args.node_id, dry_run=args.dry_run
-                )
+                result = op_deprecate_node(conn, node_id=args.node_id, dry_run=args.dry_run)
             elif args.update_node_field:
                 value = json.loads(args.value) if args.value else None
                 result = op_update_node_field(
-                    conn, node_id=args.node_id, field=args.field,
-                    value=value, dry_run=args.dry_run,
+                    conn,
+                    node_id=args.node_id,
+                    field=args.field,
+                    value=value,
+                    dry_run=args.dry_run,
                 )
             elif args.set_flow_stage:
                 result = op_update_node_field(
-                    conn, node_id=args.node_id, field="flow_stage",
-                    value=args.set_flow_stage, dry_run=args.dry_run,
+                    conn,
+                    node_id=args.node_id,
+                    field="flow_stage",
+                    value=args.set_flow_stage,
+                    dry_run=args.dry_run,
                 )
             elif args.add_edge:
-                evidence_bundle = (
-                    json.loads(args.evidence_bundle) if args.evidence_bundle else None
-                )
+                evidence_bundle = json.loads(args.evidence_bundle) if args.evidence_bundle else None
                 result = op_add_edge(
                     conn,
                     from_node_id=args.from_node_id,
@@ -938,9 +900,7 @@ build_status 状态机（单调推进，禁止跳态）：
                     dry_run=args.dry_run,
                 )
             elif args.remove_edge:
-                result = op_remove_edge(
-                    conn, edge_id=args.edge_id, dry_run=args.dry_run
-                )
+                result = op_remove_edge(conn, edge_id=args.edge_id, dry_run=args.dry_run)
             else:
                 parser.print_help()
                 print("\nERROR: Must specify an operation.", file=sys.stderr)
@@ -984,11 +944,17 @@ if __name__ == "__main__":
         # ZEPHYR_SKIP_REGENERATE=1 逃生通道：批量操作时可跳过（boot_hooks 启动兜底）。
         import os as _os
         import sys as _sys
+
         is_dry_run = "--dry-run" in _sys.argv
         _write_cmds = {
-            "--batch", "--add-design-node", "--transition-build-status",
-            "--remove-design-node", "--deprecate-node", "--update-node-field",
-            "--add-edge", "--remove-edge",
+            "--batch",
+            "--add-design-node",
+            "--transition-build-status",
+            "--remove-design-node",
+            "--deprecate-node",
+            "--update-node-field",
+            "--add-edge",
+            "--remove-edge",
         }
         has_write_cmd = any(arg in _write_cmds for arg in _sys.argv)
         if has_write_cmd and not is_dry_run and _os.environ.get("ZEPHYR_SKIP_REGENERATE") != "1":
@@ -1000,8 +966,7 @@ if __name__ == "__main__":
                 regen = reconcile_async("decisiongraph_db")
                 if regen.get("status") == "spawned":
                     print(
-                        f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} "
-                        f"日志: {regen['log_file']}",
+                        f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} 日志: {regen['log_file']}",
                         file=_sys.stderr,
                     )
                 else:
@@ -1009,8 +974,8 @@ if __name__ == "__main__":
             except Exception as _e:  # noqa: BLE001 — 编排器不可用不阻断主流程
                 print(f"[REGENERATE] WARNING: 编排器不可用（不阻断写入）: {_e}", file=_sys.stderr)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def get_supported_ops() -> set[str]:
     """公共接口：get_supported_ops（Stage 4 公共化）。"""
     return _get_supported_ops()
-

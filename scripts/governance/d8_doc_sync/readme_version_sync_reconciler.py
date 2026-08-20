@@ -83,17 +83,20 @@ _INFRA_REGISTRY_FILE = (
 )
 
 # 触发文件清单（README.md 或真源文件任一变更即触发校验）
-_TRIGGER_FILES: frozenset[str] = frozenset({
-    "README.md",
-    "pyproject.toml",
-    "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml",
-})
+_TRIGGER_FILES: frozenset[str] = frozenset(
+    {
+        "README.md",
+        "pyproject.toml",
+        "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml",
+    }
+)
 
 
 def _rel_path(file_path: str | Path) -> str:
     """将绝对路径转为相对项目根的相对路径（正斜杠）。"""
     try:
         import os
+
         return os.path.relpath(str(file_path), str(_project_root)).replace("\\", "/")
     except ValueError:
         return str(file_path)
@@ -219,9 +222,7 @@ def _check_python(readme: str, pyproject: str) -> list[str]:
     if pyproject_v is None:
         findings.append("pyproject.toml 未找到 requires-python")
     if readme_v and pyproject_v and readme_v != pyproject_v:
-        findings.append(
-            f"Python 版本漂移：README='{readme_v}' vs pyproject.toml='{pyproject_v}'"
-        )
+        findings.append(f"Python 版本漂移：README='{readme_v}' vs pyproject.toml='{pyproject_v}'")
     return findings
 
 
@@ -235,9 +236,7 @@ def _check_postgresql(readme: str, infra_yaml: dict) -> list[str]:
     if infra_v is None:
         findings.append("infrastructure_registry.yaml INFRA-DB-003 未找到 PostgreSQL 版本")
     if readme_v and infra_v and readme_v != infra_v:
-        findings.append(
-            f"PostgreSQL 版本漂移：README='{readme_v}' vs INFRA-DB-003='{infra_v}'"
-        )
+        findings.append(f"PostgreSQL 版本漂移：README='{readme_v}' vs INFRA-DB-003='{infra_v}'")
     return findings
 
 
@@ -251,9 +250,7 @@ def _check_clickhouse(readme: str, infra_yaml: dict) -> list[str]:
     if infra_v is None:
         findings.append("infrastructure_registry.yaml INFRA-DB-006 未找到 ClickHouse 版本")
     if readme_v and infra_v and readme_v != infra_v:
-        findings.append(
-            f"ClickHouse 版本漂移：README='{readme_v}' vs INFRA-DB-006='{infra_v}'"
-        )
+        findings.append(f"ClickHouse 版本漂移：README='{readme_v}' vs INFRA-DB-006='{infra_v}'")
     return findings
 
 
@@ -271,14 +268,10 @@ def _check_chromadb(readme: str, pyproject: str) -> list[str]:
     readme_tuple = _parse_version_tuple(readme_v)
     lower_tuple = _parse_version_tuple(lower_bound)
     if not readme_tuple or not lower_tuple:
-        findings.append(
-            f"ChromaDB 版本解析失败：README='{readme_v}' lower_bound='{lower_bound}'"
-        )
+        findings.append(f"ChromaDB 版本解析失败：README='{readme_v}' lower_bound='{lower_bound}'")
         return findings
     if readme_tuple < lower_tuple:
-        findings.append(
-            f"ChromaDB 版本低于下限：README='{readme_v}' < pyproject下限='{lower_bound}'"
-        )
+        findings.append(f"ChromaDB 版本低于下限：README='{readme_v}' < pyproject下限='{lower_bound}'")
     return findings
 
 
@@ -349,12 +342,18 @@ def make_readme_version_sync_reconciler(project_root: Path | None = None):
         _README_FILE = _project_root / "README.md"
         _PYPROJECT_FILE = _project_root / "pyproject.toml"
         _INFRA_REGISTRY_FILE = (
-            _project_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "infrastructure_registry.yaml"
+            _project_root
+            / "docs"
+            / "01_policies_and_standards"
+            / "_registry"
+            / "catalogs"
+            / "infrastructure_registry.yaml"
         )
 
     try:
         from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec
     except ImportError:
+
         class _ReconcilerSpecFallback:  # type: ignore
             def __init__(self, gate_id, trigger, reconcile, priority=100):
                 """__init__ implementation."""
@@ -362,6 +361,7 @@ def make_readme_version_sync_reconciler(project_root: Path | None = None):
                 self.trigger = trigger
                 self.reconcile = reconcile
                 self.priority = priority
+
         ReconcilerSpec = _ReconcilerSpecFallback
 
     return ReconcilerSpec(

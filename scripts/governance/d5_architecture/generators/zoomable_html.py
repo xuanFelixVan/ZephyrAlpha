@@ -220,10 +220,7 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
 
     mermaid_source: CDN 模式为 URL；内嵌模式为 mermaid.min.js 文件内容。
     """
-    script_tag = (
-        f'<script src="{mermaid_source}"></script>' if is_cdn
-        else f"<script>{mermaid_source}</script>"
-    )
+    script_tag = f'<script src="{mermaid_source}"></script>' if is_cdn else f"<script>{mermaid_source}</script>"
     diagrams_html = []
     for idx, (title, code) in enumerate(blocks, 1):
         safe_code = _escape_for_html(code)

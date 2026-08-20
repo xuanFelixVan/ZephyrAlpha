@@ -20,6 +20,7 @@
   subdomain_id (D_INFRA_A2A-SUB) 和 target_domains (多值/显示名) 需要嵌入式替换
 - FK NO ACTION 约束阻止子表先于 domains PK 更新，故 drop→update→recreate
 """
+
 from __future__ import annotations
 
 import argparse
@@ -109,9 +110,9 @@ L2_MIGRATIONS = [
 # 排除: edges.cross_domain(integer), domains.domain_group(分类名), domains.domain_name(显示名)
 # 排除: dep_cycles(VIEW，数据从基表派生，无需更新)
 DOMAIN_ID_COLUMNS = [
-    ("domains", "domain_id"),               # PK 表
+    ("domains", "domain_id"),  # PK 表
     ("nodes", "domain_id"),
-    ("nodes", "subdomain_id"),              # 嵌入式: D-{DOMAIN}-{SUB}
+    ("nodes", "subdomain_id"),  # 嵌入式: D-{DOMAIN}-{SUB}
     ("arch_constraints", "from_domain"),
     ("arch_constraints", "to_domain"),
     ("arch_path_mappings", "domain_id"),
@@ -121,10 +122,10 @@ DOMAIN_ID_COLUMNS = [
     ("domain_dependencies", "from_domain"),
     ("domain_dependencies", "to_domain"),
     ("domain_events", "source_domain"),
-    ("domain_events", "target_domains"),   # 嵌入式: 多值/显示名
-    ("domain_mapping", "domain_id"),        # 无 FK
-    ("domain_mapping", "subdomain_id"),     # 嵌入式: D-{DOMAIN}-{SUB}
-    ("rule_bindings", "domain_id"),         # 无 FK
+    ("domain_events", "target_domains"),  # 嵌入式: 多值/显示名
+    ("domain_mapping", "domain_id"),  # 无 FK
+    ("domain_mapping", "subdomain_id"),  # 嵌入式: D-{DOMAIN}-{SUB}
+    ("rule_bindings", "domain_id"),  # 无 FK
 ]
 
 # 8 个 FK 约束（全部 NO ACTION，引用 domains.domain_id）
@@ -148,7 +149,7 @@ def drop_fks(cur):
     """临时 drop 所有 FK 约束。"""
     print("  DB: dropping 8 FK constraints...")
     for table, col, name in FK_CONSTRAINTS:
-        cur.execute(f'ALTER TABLE {table} DROP CONSTRAINT IF EXISTS {name}')
+        cur.execute(f"ALTER TABLE {table} DROP CONSTRAINT IF EXISTS {name}")
     print("  DB: FK constraints dropped")
 
 
@@ -164,8 +165,7 @@ def recreate_fks(cur, not_valid: bool = True):
     print(f"  DB: recreating 8 FK constraints (not_valid={not_valid})...")
     for table, col, name in FK_CONSTRAINTS:
         cur.execute(
-            f'ALTER TABLE {table} ADD CONSTRAINT {name} '
-            f'FOREIGN KEY ({col}) REFERENCES domains(domain_id){suffix}'
+            f"ALTER TABLE {table} ADD CONSTRAINT {name} FOREIGN KEY ({col}) REFERENCES domains(domain_id){suffix}"
         )
     print("  DB: FK constraints recreated")
 
@@ -212,10 +212,7 @@ def update_database(migrations: list[tuple[str, str]]) -> dict:
             print(f"  DB: {old_id} -> {new_id}")
             for table, col in DOMAIN_ID_COLUMNS:
                 # REPLACE 统一处理精确/嵌入式匹配
-                sql = (
-                    f"UPDATE {table} SET {col} = REPLACE({col}, %s, %s) "
-                    f"WHERE {col} LIKE %s"
-                )
+                sql = f"UPDATE {table} SET {col} = REPLACE({col}, %s, %s) WHERE {col} LIKE %s"
                 cur.execute(sql, (old_id, new_id, f"%{old_id}%"))
                 affected = cur.rowcount
                 if affected > 0:
@@ -256,7 +253,7 @@ def replace_in_files(migrations: list[tuple[str, str]], dry_run: bool) -> dict:
     for old_id, new_id in migrations:
         print(f"  FILES: {old_id} -> {new_id}")
         # 双重保护: 后瞻防MOD-*误伤 + 前瞻防D-XXX-NNN误伤
-        pattern = re.compile(r'(?<![A-Za-z])' + re.escape(old_id) + r'(?!\-\d)')
+        pattern = re.compile(r"(?<![A-Za-z])" + re.escape(old_id) + r"(?!\-\d)")
         for root, dirs, files in os.walk(REPO_ROOT):
             dirs[:] = [d for d in dirs if d not in exclude_dirs]
             for fname in files:
@@ -282,6 +279,7 @@ def replace_in_files(migrations: list[tuple[str, str]], dry_run: bool) -> dict:
 def backup_database():
     """pg_dump 备份 depgraph (PostgreSQL)。"""
     import time
+
     ts = time.strftime("%Y%m%d_%H%M%S")
     backup_file = REPO_ROOT / "data" / "backups" / f"depgraph_pre_hyphen_migration_{ts}.sql"
     backup_file.parent.mkdir(parents=True, exist_ok=True)
@@ -297,16 +295,21 @@ def backup_database():
     pg_dump = os.getenv("PG_DUMP_PATH", "pg_dump")
     cmd = [
         pg_dump,
-        "-h", pg_config["POSTGRES_HOST"],
-        "-p", pg_config["POSTGRES_PORT"],
-        "-U", pg_config["POSTGRES_USER"],
-        "-d", pg_config["POSTGRES_DB"],
-        "-f", str(backup_file),
+        "-h",
+        pg_config["POSTGRES_HOST"],
+        "-p",
+        pg_config["POSTGRES_PORT"],
+        "-U",
+        pg_config["POSTGRES_USER"],
+        "-d",
+        pg_config["POSTGRES_DB"],
+        "-f",
+        str(backup_file),
     ]
     env = os.environ.copy()
     env["PGPASSWORD"] = pg_config["POSTGRES_PASSWORD"]
     print(f"  BACKUP: {backup_file}")
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', env=env)
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
     if result.returncode != 0:
         print(f"  BACKUP ERROR: {result.stderr}", file=sys.stderr)
         raise RuntimeError(f"pg_dump failed: {result.stderr}")

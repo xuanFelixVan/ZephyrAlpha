@@ -35,6 +35,7 @@ Excluded (separate governance-gated handling):
   - test_check_yaml_anchor_consistency.py: coupled to uncommitted checker (would break CI)
   - noqa_exempt_registry.yaml: intermixed with concurrent session entries
 """
+
 import sys
 from pathlib import Path
 
@@ -86,7 +87,9 @@ def main() -> int:
             allow_non_worktree=True,
         )
         print(f"Commit result: status={result.status}, message={result.message}")
-        sha = getattr(result, "commit_hash", None) or getattr(result, "sha", None) or getattr(result, "commit_sha", None)
+        sha = (
+            getattr(result, "commit_hash", None) or getattr(result, "sha", None) or getattr(result, "commit_sha", None)
+        )
         if sha:
             print(f"Commit SHA: {sha}")
         return 0 if str(result.status) == "OK" else 1

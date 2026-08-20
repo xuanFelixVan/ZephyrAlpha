@@ -115,7 +115,7 @@ def teardown():
         for d in lock_dir.iterdir():
             if "test_rb" in d.name.lower() or "_test_rb_depgraph" in d.name.lower():
                 try:
-                    shutil.rmtree(d, ignore_errors=True)
+                    shutil.rmtree(d, ignore_errors=True)  # ops-guard-exempt: 并发测试夹具目录清理（tmp 测试区）
                 except Exception:  # noqa: BLE001 — 测试清理兜底，测试锁目录删除失败不影响后续测试
                     pass
     print("[TEARDOWN] 测试数据库已清理")
@@ -508,7 +508,9 @@ def test_t8():
     scripts_dir = REPO_ROOT / "scripts"
     if str(scripts_dir) not in sys.path:
         sys.path.insert(0, str(scripts_dir))
-    import importlib as _il; lf = _il.import_module("lock_files")  # noqa: E702 — 动态导入规避模式6误报（本脚本测试锁功能本身，非保护 DB 写入）
+    import importlib as _il
+
+    lf = _il.import_module("lock_files")  # noqa: E702 — 动态导入规避模式6误报（本脚本测试锁功能本身，非保护 DB 写入）
 
     test_file = "data/_test_rb_t8.txt"
     test_path = REPO_ROOT / test_file
@@ -628,7 +630,9 @@ def test_t10():
     scripts_dir = REPO_ROOT / "scripts"
     if str(scripts_dir) not in sys.path:
         sys.path.insert(0, str(scripts_dir))
-    import importlib as _il; lf = _il.import_module("lock_files")  # noqa: E702 — 动态导入规避模式6误报（本脚本测试锁功能本身，非保护 DB 写入）
+    import importlib as _il
+
+    lf = _il.import_module("lock_files")  # noqa: E702 — 动态导入规避模式6误报（本脚本测试锁功能本身，非保护 DB 写入）
 
     test_file = "data/_test_rb_t10.txt"
     test_path = REPO_ROOT / test_file

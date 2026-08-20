@@ -91,7 +91,13 @@ def detect_capacity_violations(cur) -> list:
     HAVING COUNT(*) > d.max_modules
     """)
     return [
-        {"type": "capacity_exceeded", "domain_id": r["domain_id"], "production_nodes": r["production_count"], "max": r["max_modules"]} for r in cur.fetchall()
+        {
+            "type": "capacity_exceeded",
+            "domain_id": r["domain_id"],
+            "production_nodes": r["production_count"],
+            "max": r["max_modules"],
+        }
+        for r in cur.fetchall()
     ]
 
 
@@ -110,7 +116,13 @@ def detect_hard_limit_violations(cur) -> list:
     HAVING COUNT(*) > 150
     """)
     return [
-        {"type": "hard_limit_exceeded", "domain_id": r["domain_id"], "production_nodes": r["production_count"], "hard_limit": 150, "max": r["max_modules"]}
+        {
+            "type": "hard_limit_exceeded",
+            "domain_id": r["domain_id"],
+            "production_nodes": r["production_count"],
+            "hard_limit": 150,
+            "max": r["max_modules"],
+        }
         for r in cur.fetchall()
     ]
 
@@ -369,7 +381,11 @@ def main():
                 (d,),
             )
             row = cur.fetchone()
-            step3[d] = {"total": row["total"], "has_parent": row["has_parent"]} if row["total"] > 0 else {"total": 0, "has_parent": 0}
+            step3[d] = (
+                {"total": row["total"], "has_parent": row["has_parent"]}
+                if row["total"] > 0
+                else {"total": 0, "has_parent": 0}
+            )
             print(f"  {d}: total_fri={step3[d]['total']}, has_parent={step3[d]['has_parent']}")
 
         # STEP 4

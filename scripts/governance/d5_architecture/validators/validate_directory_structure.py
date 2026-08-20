@@ -154,9 +154,7 @@ _DIGIT_SUFFIX_RE = re.compile(r"_\d+$")
 # 真源: trae_028 gov_doc_003_directory_semantics.grandfathered.abbreviation_dirs
 _GRANDFATHERED_ABBREVIATION_FALLBACK: set[str] = {"api", "mcp", "io", "a2a", "sla", "db", "kb"}
 
-_TRAE_028_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
-)
+_TRAE_028_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
 
 
 def _load_grandfathered_abbreviations() -> set[str]:

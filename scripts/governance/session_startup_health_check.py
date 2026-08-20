@@ -66,6 +66,7 @@ Exit codes:
     1 = at least one fail (status=fail)
     2 = at least one warn but no fail (status=warn)
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -104,8 +105,14 @@ _CORE_TOOLS = [
         "rel_path": "scripts/governance/apply_depgraph.py",
         "cli_args": ["--list-ops"],
         "cli_output_contains": "cmd_batch",
-        "required_symbols": ["get_depgraph_pg_connection", "EXIT_PASS", "EXIT_ERROR",
-                             "add_design_node", "add_design_edge", "transition_build_status"],
+        "required_symbols": [
+            "get_depgraph_pg_connection",
+            "EXIT_PASS",
+            "EXIT_ERROR",
+            "add_design_node",
+            "add_design_edge",
+            "transition_build_status",
+        ],
     },
     {
         "name": "apply_decisiongraph",
@@ -138,10 +145,14 @@ _GATEWAY_MODULES = [
     },
     {
         "module": "zephyr.gov_enforcement.rule_bridge.session_worktree",
-        "required_attrs": ["session_worktree_start", "session_worktree_commit",
-                           "session_worktree_merge", "session_worktree_abort",
-                           # P2-2 (2026-07-19): claim_files_for_edit 新增
-                           "claim_files_for_edit"],
+        "required_attrs": [
+            "session_worktree_start",
+            "session_worktree_commit",
+            "session_worktree_merge",
+            "session_worktree_abort",
+            # P2-2 (2026-07-19): claim_files_for_edit 新增
+            "claim_files_for_edit",
+        ],
     },
     {
         "module": "zephyr.governance.audit.reconciliation_registry",
@@ -154,8 +165,7 @@ _GATEWAY_MODULES = [
     },
     {
         "module": "zephyr.governance.audit.reconcile_runner",
-        "required_attrs": ["launch_reconcile_async", "query_reconcile_status",
-                           "write_status_file", "read_status_file"],
+        "required_attrs": ["launch_reconcile_async", "query_reconcile_status", "write_status_file", "read_status_file"],
     },
     {
         "module": "zephyr.governance.audit.reconcile_worker",
@@ -235,9 +245,13 @@ def check_core_tool_cli(tool: dict, repo_root: Path) -> dict:
         env["PYTHONPATH"] = f"{src_path};{gov_path};{existing}" if existing else f"{src_path};{gov_path}"
         result = subprocess.run(
             [sys.executable, str(script_path)] + tool["cli_args"],
-            capture_output=True, text=True,
-            encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(repo_root), env=env,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(repo_root),
+            env=env,
         )
     except subprocess.TimeoutExpired:
         return {
@@ -324,9 +338,12 @@ def check_git_health_smoke(repo_root: Path) -> dict:
     try:
         result = subprocess.run(
             [sys.executable, str(smoke_script), str(repo_root)],
-            capture_output=True, text=True,
-            encoding="utf-8", errors="replace",
-            timeout=60, cwd=str(repo_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+            cwd=str(repo_root),
         )
     except subprocess.TimeoutExpired:
         return {"check": "git_health_smoke", "status": "warn", "detail": "git_health_smoke 超时（>60s）"}
@@ -436,6 +453,7 @@ def run_startup_health_check(
             if src_path.is_dir() and str(src_path) not in sys.path:
                 sys.path.insert(0, str(src_path))  # noqa: import-integrity  src_path 依赖函数参数 repo_root，静态不可解析
             from zephyr.governance.audit.reconciliation_registry import log_gate_failure
+
             detail = fail_summary or f"session_startup_health_check failed: {len(failed)}/{len(checks)} 项 fail"
             log_gate_failure(
                 project_root=root,
@@ -495,7 +513,9 @@ def main() -> int:
             repo_root = a
         i += 1
     result = run_startup_health_check(
-        repo_root, include_git=include_git, session_id=session_id,
+        repo_root,
+        include_git=include_git,
+        session_id=session_id,
     )
     print(json.dumps(result, indent=2, ensure_ascii=False))
     if result["status"] == "fail":
@@ -513,5 +533,7 @@ def main() -> int:
     if result["status"] == "warn":
         return EXIT_ERROR
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

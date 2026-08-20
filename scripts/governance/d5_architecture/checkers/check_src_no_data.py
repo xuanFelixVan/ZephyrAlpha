@@ -20,6 +20,7 @@
 # 触发：pre-commit（事件驱动，staged 文件检测，自动运行自动关闭）
 # 消费者：.pre-commit-config.yaml gate-src-no-data
 """
+
 import argparse
 import subprocess
 import sys
@@ -54,8 +55,7 @@ from _shared.constants import (
 
 # ── 真源加载：从 directory_contract.yaml 动态加载 forbidden prefixes ──
 _CONTRACT_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards"
-    / "_registry" / "contracts" / "directory_contract.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "directory_contract.yaml"
 )
 
 
@@ -73,10 +73,7 @@ def _load_forbidden_prefixes() -> tuple[str, ...]:
     except FileNotFoundError:
         return ()
     rules = contract.get("global_forbidden", []) or []
-    return tuple(
-        r.get("forbidden_prefix") for r in rules
-        if isinstance(r, dict) and r.get("forbidden_prefix")
-    )
+    return tuple(r.get("forbidden_prefix") for r in rules if isinstance(r, dict) and r.get("forbidden_prefix"))
 
 
 FORBIDDEN_PREFIXES: tuple[str, ...] = _load_forbidden_prefixes()
@@ -86,7 +83,9 @@ def get_staged_files():
     """获取 staged 文件列表（相对路径，仅新增/修改/重命名）"""
     result = subprocess.run(
         ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],
-        capture_output=True, text=True, encoding="utf-8",
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
     )
     if result.returncode != 0:
         return []
@@ -137,5 +136,7 @@ def main():
     if args.ci:
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

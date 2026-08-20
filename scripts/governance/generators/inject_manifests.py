@@ -60,7 +60,9 @@ description: >
 SCRIPTS_DIR = REPO_ROOT / "scripts" / "governance"
 MANIFEST_PATH = SCRIPTS_DIR / "script_manifest.yaml"
 
-EXCLUDE_DIRS = frozenset({"_shared", "__pycache__", "test_fixtures", "_archive"})  # 治本(ARCH-036 P0-C): 对齐 generate_script_manifest.py，归档目录不注入
+EXCLUDE_DIRS = frozenset(
+    {"_shared", "__pycache__", "test_fixtures", "_archive"}
+)  # 治本(ARCH-036 P0-C): 对齐 generate_script_manifest.py，归档目录不注入
 
 DIM_FROM_DIR = {
     "d1_structure": ["D1"],

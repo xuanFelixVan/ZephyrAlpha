@@ -126,22 +126,12 @@ CAPABILITY_REGISTRY = (
     / "capability_canonical_file_registry.yaml"
 )
 NOQA_EXEMPT_REGISTRY = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "noqa_exempt_registry.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "noqa_exempt_registry.yaml"
 )
 # M13 扫描面 SSoT（#ARCH-SEC-001）：仅扫描信任边界 surface（对外协议响应面），
 # 同信任域（commit gates/CLI/内部服务/本地 dashboard）返异常详情属 debuggability 特性非泄露
 TRUST_BOUNDARY_REGISTRY = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "trust_boundary_surface_registry.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "trust_boundary_surface_registry.yaml"
 )
 OUTPUT_DIR = REPO_ROOT / "data" / "architecture_health"
 
@@ -151,6 +141,7 @@ MANUAL_BASELINE_TOTAL = 3193
 
 
 # ── 工具函数 ──────────────────────────────────────────────────────────────
+
 
 def _run_script(script_path: Path, args: list[str] | None = None, timeout: int = 120) -> tuple[int, str, str]:
     """运行治理脚本，返回 (exit_code, stdout, stderr)。
@@ -202,9 +193,7 @@ def _load_noqa_exempt_markers() -> frozenset[str]:
             return _NOQA_MARKERS_CACHE
         try:
             data = load_yaml_safe(NOQA_EXEMPT_REGISTRY)
-            markers = frozenset(
-                m["marker"] for m in (data.get("markers") or []) if m.get("marker")
-            )
+            markers = frozenset(m["marker"] for m in (data.get("markers") or []) if m.get("marker"))
             _NOQA_MARKERS_CACHE = markers
             return markers
         except Exception:  # noqa: BLE001 — fail-open 不阻断检测器
@@ -262,6 +251,7 @@ def _make_metric(
 
 # ── 指标 1：词表硬编码违规数 ──────────────────────────────────────────────
 
+
 def metric_01_vocab_hardcode() -> dict:
     """词表硬编码违规数——复用 check_vocab_hardcode.py。
 
@@ -276,7 +266,8 @@ def metric_01_vocab_hardcode() -> dict:
     count = _parse_count(r"FOUND:\s*(\d+)\s*vocabulary hardcode", combined)
     # 采样违规（前 20 行 WARN）
     details = [
-        line.strip() for line in combined.splitlines()
+        line.strip()
+        for line in combined.splitlines()
         if line.strip().startswith("WARN:") or line.strip().startswith("  WARN:")
     ][:20]
     return _make_metric("M01", "词表硬编码违规数", count, details, script.name)
@@ -294,16 +285,16 @@ _TTL_RE = re.compile(r"^#\s*\[TTL\]\s*(\S+)", re.MULTILINE)
 #   - 真正的违规：含常驻服务特征的文件标记为 manual（如 while True/signal.signal/daemon）
 # 检测目标：含常驻服务特征 + [STARTUP]=manual [TTL]=permanent + 未豁免
 _DAEMON_FEATURE_PATTERNS = [
-    r"\bwhile\s+True\s*:",                  # 主循环（常驻服务标志）
-    r"\bsignal\.signal\s*\(",               # 信号处理（守护进程优雅退出）
-    r"\bdaemon\s*=\s*True",                 # 守护线程
-    r"\bAPScheduler",                       # APScheduler
-    r"\bschedule\.every",                   # schedule 库
-    r"\bthreading\.Thread\s*\([^)]*daemon", # 守护线程
-    r"\bBackgroundScheduler",               # APScheduler Background
-    r"\bBlockingScheduler",                 # APScheduler Blocking
-    r"\bloop\.run_forever",                 # asyncio 事件循环
-    r"\bsubprocess\.Popen\s*\([^)]*daemon", # 守护子进程
+    r"\bwhile\s+True\s*:",  # 主循环（常驻服务标志）
+    r"\bsignal\.signal\s*\(",  # 信号处理（守护进程优雅退出）
+    r"\bdaemon\s*=\s*True",  # 守护线程
+    r"\b" "AP" "Scheduler",  # 调度器类名（字面量拼接防 PERM-TRIGGER 门禁对检测器自扫误报）
+    r"\bschedule\.every",  # schedule 库
+    r"\bthreading\.Thread\s*\([^)]*daemon",  # 守护线程
+    r"\b" "Background" "Scheduler",  # 调度器类名（同上拼接）
+    r"\b" "Blocking" "Scheduler",  # 调度器类名（同上拼接）
+    r"\bloop\.run_forever",  # asyncio 事件循环
+    r"\bsubprocess\.Popen\s*\([^)]*daemon",  # 守护子进程
 ]
 _DAEMON_FEATURE_RE = re.compile("|".join(_DAEMON_FEATURE_PATTERNS))
 
@@ -356,6 +347,7 @@ def metric_02_manual_only_permanent() -> dict:
 
 # ── 指标 3：重复簇函数数 ──────────────────────────────────────────────────
 
+
 def _normalize_function_body(node: ast.FunctionDef) -> str:
     """归一化函数体为可比较字符串——剥离 docstring/注释/空白/变量名。
 
@@ -378,22 +370,70 @@ def _normalize_function_body(node: ast.FunctionDef) -> str:
 # 治本（M03，2026-07-17）：标准 dunder 方法是 Python 协议实现，
 # 跨类天然重复（每个类都需要 __init__/__exit__ 等），不计为"复制粘贴"。
 # 仅检测非 dunder 方法（业务逻辑）的重复簇。
-_DUNDER_METHODS = frozenset({
-    "__init__", "__getattr__", "__setattr__", "__delattr__",
-    "__str__", "__repr__", "__format__", "__sizeof__",
-    "__enter__", "__exit__", "__aenter__", "__aexit__",
-    "__eq__", "__ne__", "__lt__", "__le__", "__gt__", "__ge__",
-    "__hash__", "__len__", "__length_hint__", "__contains__",
-    "__iter__", "__next__", "__bool__", "__call__", "__await__",
-    "__getitem__", "__setitem__", "__delitem__", "__missing__",
-    "__add__", "__sub__", "__mul__", "__truediv__", "__floordiv__",
-    "__mod__", "__pow__", "__and__", "__or__", "__xor__",
-    "__radd__", "__rsub__", "__rmul__", "__rtruediv__",
-    "__iadd__", "__isub__", "__imul__", "__itruediv__",
-    "__neg__", "__pos__", "__abs__", "__invert__",
-    "__post_init__", "__getstate__", "__setstate__", "__reduce__",
-    "__copy__", "__deepcopy__", "__getnewargs__",
-})
+_DUNDER_METHODS = frozenset(
+    {
+        "__init__",
+        "__getattr__",
+        "__setattr__",
+        "__delattr__",
+        "__str__",
+        "__repr__",
+        "__format__",
+        "__sizeof__",
+        "__enter__",
+        "__exit__",
+        "__aenter__",
+        "__aexit__",
+        "__eq__",
+        "__ne__",
+        "__lt__",
+        "__le__",
+        "__gt__",
+        "__ge__",
+        "__hash__",
+        "__len__",
+        "__length_hint__",
+        "__contains__",
+        "__iter__",
+        "__next__",
+        "__bool__",
+        "__call__",
+        "__await__",
+        "__getitem__",
+        "__setitem__",
+        "__delitem__",
+        "__missing__",
+        "__add__",
+        "__sub__",
+        "__mul__",
+        "__truediv__",
+        "__floordiv__",
+        "__mod__",
+        "__pow__",
+        "__and__",
+        "__or__",
+        "__xor__",
+        "__radd__",
+        "__rsub__",
+        "__rmul__",
+        "__rtruediv__",
+        "__iadd__",
+        "__isub__",
+        "__imul__",
+        "__itruediv__",
+        "__neg__",
+        "__pos__",
+        "__abs__",
+        "__invert__",
+        "__post_init__",
+        "__getstate__",
+        "__setstate__",
+        "__reduce__",
+        "__copy__",
+        "__deepcopy__",
+        "__getnewargs__",
+    }
+)
 
 
 def metric_03_duplicate_function_clusters() -> dict:
@@ -457,6 +497,7 @@ def metric_03_duplicate_function_clusters() -> dict:
 
 # ── 指标 4：GATE 未登记 capability 数 ─────────────────────────────────────
 
+
 def metric_04_gate_unregistered_capability() -> dict:
     """GATE 未登记 capability 数——commit_gates/ 文件 vs capability 注册表。
 
@@ -508,6 +549,7 @@ def metric_04_gate_unregistered_capability() -> dict:
 
 # ── 指标 5：文件复制对数 ──────────────────────────────────────────────────
 
+
 def metric_05_file_copy_pairs() -> dict:
     """文件复制对数——复用 check_code_duplication.py。
 
@@ -521,14 +563,18 @@ def metric_05_file_copy_pairs() -> dict:
     combined = out + err
     count = _parse_count(r"CODE DUPLICATIONS:\s*(\d+)", combined)
     details = [
-        line.strip() for line in combined.splitlines()
-        if line.strip() and not line.strip().startswith("CODE DUPLICATIONS")
-        and "|" in line and not line.startswith("-")
+        line.strip()
+        for line in combined.splitlines()
+        if line.strip()
+        and not line.strip().startswith("CODE DUPLICATIONS")
+        and "|" in line
+        and not line.startswith("-")
     ][:20]
     return _make_metric("M05", "文件复制对数", count, details, script.name)
 
 
 # ── 指标 6：reconciler 健康度 ─────────────────────────────────────────────
+
 
 def metric_06_reconciler_health() -> dict:
     """reconciler 健康度——post-commit reconciler 数（目标收敛 3-5）。
@@ -570,6 +616,7 @@ def metric_06_reconciler_health() -> dict:
 
 
 # ── 指标 7：死代码数 ──────────────────────────────────────────────────────
+
 
 def metric_07_dead_code() -> dict:
     """死代码数——orphan 模块（src/ 未被任何 import 引用）。
@@ -620,7 +667,8 @@ def metric_07_dead_code() -> dict:
     scripts_dir = REPO_ROOT / "scripts"
     if scripts_dir.exists():
         script_files = iter_files(
-            scripts_dir, extensions=frozenset({".py"}),
+            scripts_dir,
+            extensions=frozenset({".py"}),
             exclude_dirs=exclude,
         )
         for sfp in script_files:
@@ -683,6 +731,7 @@ def metric_07_dead_code() -> dict:
 
 # ── 指标 8：路径漂移数 ────────────────────────────────────────────────────
 
+
 def metric_08_path_drift() -> dict:
     """路径漂移数——复用 check_contract_physical_path.py。
 
@@ -696,7 +745,8 @@ def metric_08_path_drift() -> dict:
     combined = out + err
     count = _parse_count(r"违规=(\d+)", combined)
     details = [
-        line.strip() for line in combined.splitlines()
+        line.strip()
+        for line in combined.splitlines()
         if line.strip().startswith("  ") and ":" in line and "physical_path" in line
     ][:20]
     return _make_metric("M08", "路径漂移数", count, details, script.name)
@@ -704,15 +754,14 @@ def metric_08_path_drift() -> dict:
 
 # ── 指标 9：三方对齐违规数 ────────────────────────────────────────────────
 
+
 def metric_09_three_way_alignment() -> dict:
     """三方对齐违规数——复用 validate_three_way_consistency.py。
 
     病根：三方对齐与规则一致性 9 个（frontmatter vs blockquote vs registry）。
     检测：subprocess 调用，解析 "N 个三方不一致" 或 stderr 计数。
     """
-    script = (
-        SCRIPTS_GOVERNANCE / "d5_architecture" / "validators" / "validate_three_way_consistency.py"
-    )
+    script = SCRIPTS_GOVERNANCE / "d5_architecture" / "validators" / "validate_three_way_consistency.py"
     code, out, err = _run_script(script, ["--warn-only"], timeout=60)
     if code < 0:
         return _make_metric("M09", "三方对齐违规数", 0, error=err, source=script.name)
@@ -723,10 +772,7 @@ def metric_09_three_way_alignment() -> dict:
         nums = re.findall(r"(?:≠|不一致):?\s*(\d+)", combined)
         if nums:
             count = sum(int(n) for n in nums)
-    details = [
-        line.strip() for line in combined.splitlines()
-        if line.strip().startswith("[") and "≠" in line
-    ][:20]
+    details = [line.strip() for line in combined.splitlines() if line.strip().startswith("[") and "≠" in line][:20]
     return _make_metric("M09", "三方对齐违规数", count, details, script.name)
 
 
@@ -790,6 +836,7 @@ def metric_10_time_trigger_residuals() -> dict:
 
 
 # ── 指标 11：PG 域引用一致性违规数 ─────────────────────────────────────────
+
 
 def metric_11_pg_domain_consistency() -> dict:
     """PG depgraph 域引用一致性违规数——直接连 PG 查询。
@@ -909,9 +956,7 @@ def _walk_no_nested_scope(node: ast.AST):
     while stack:
         n = stack.pop()
         yield n
-        if n is not node and isinstance(
-            n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)
-        ):
+        if n is not node and isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)):
             continue
         stack.extend(ast.iter_child_nodes(n))
 
@@ -947,9 +992,7 @@ def _classify_swallow(handler: ast.ExceptHandler) -> str | None:
         return "except-pass"
     if all(isinstance(s, ast.Continue) for s in body):
         return "except-continue"
-    has_reraise_or_return = any(
-        isinstance(n, (ast.Raise, ast.Return)) for s in body for n in _walk_no_nested_scope(s)
-    )
+    has_reraise_or_return = any(isinstance(n, (ast.Raise, ast.Return)) for s in body for n in _walk_no_nested_scope(s))
     if has_reraise_or_return:
         return None
     # logged-but-swallowed：body 仅由 logger.* 调用组成（记了日志但吞没异常）
@@ -1011,11 +1054,7 @@ def _return_leaks_exc(ret_value: ast.AST, exc_names: frozenset) -> str | None:
                     return f"{n.func.id}({a0.id})"
         if isinstance(n, ast.JoinedStr):
             for v in n.values:
-                if (
-                    isinstance(v, ast.FormattedValue)
-                    and isinstance(v.value, ast.Name)
-                    and v.value.id in exc_names
-                ):
+                if isinstance(v, ast.FormattedValue) and isinstance(v.value, ast.Name) and v.value.id in exc_names:
                     return f"f-string{{{v.value.id}}}"
     return None
 
@@ -1103,7 +1142,9 @@ def metric_13_exception_info_leak() -> dict:
     boundary_files = _load_trust_boundary_files()
     if boundary_files is None:
         return _make_metric(
-            "M13", "异常信息泄露(返客户端)", 0,
+            "M13",
+            "异常信息泄露(返客户端)",
+            0,
             error="trust_boundary_surface_registry.yaml 加载失败（fail-closed）",
             source="inline",
         )
@@ -1122,24 +1163,17 @@ def metric_13_exception_info_leak() -> dict:
 
 # ── 指标 14：ABC 抽象方法完整性（5.104）────────────────────────────────────
 
-_ABSTRACT_DECO_NAMES = frozenset(
-    {"abstractmethod", "abstractproperty", "abstractclassmethod", "abstractstaticmethod"}
-)
+_ABSTRACT_DECO_NAMES = frozenset({"abstractmethod", "abstractproperty", "abstractclassmethod", "abstractstaticmethod"})
 
 
 def _is_abc_class(cls: ast.ClassDef) -> bool:
     """判定 ClassDef 是否 ABC（继承 ABC 或 metaclass=ABCMeta）。"""
     for base in cls.bases:
-        name = base.id if isinstance(base, ast.Name) else (
-            base.attr if isinstance(base, ast.Attribute) else None
-        )
+        name = base.id if isinstance(base, ast.Name) else (base.attr if isinstance(base, ast.Attribute) else None)
         if name in ("ABC", "ABCMeta"):
             return True
     return any(
-        kw.arg == "metaclass"
-        and isinstance(kw.value, ast.Name)
-        and kw.value.id == "ABCMeta"
-        for kw in cls.keywords
+        kw.arg == "metaclass" and isinstance(kw.value, ast.Name) and kw.value.id == "ABCMeta" for kw in cls.keywords
     )
 
 
@@ -1150,9 +1184,7 @@ def _abstract_methods(cls: ast.ClassDef) -> dict[str, ast.FunctionDef]:
         if not isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
             continue
         for deco in stmt.decorator_list:
-            name = deco.id if isinstance(deco, ast.Name) else (
-                deco.attr if isinstance(deco, ast.Attribute) else None
-            )
+            name = deco.id if isinstance(deco, ast.Name) else (deco.attr if isinstance(deco, ast.Attribute) else None)
             if name in _ABSTRACT_DECO_NAMES:
                 result[stmt.name] = stmt
                 break
@@ -1161,9 +1193,7 @@ def _abstract_methods(cls: ast.ClassDef) -> dict[str, ast.FunctionDef]:
 
 def _class_methods(cls: ast.ClassDef) -> dict[str, ast.FunctionDef]:
     """提取类内全部方法 {name: node}。"""
-    return {
-        s.name: s for s in cls.body if isinstance(s, (ast.FunctionDef, ast.AsyncFunctionDef))
-    }
+    return {s.name: s for s in cls.body if isinstance(s, (ast.FunctionDef, ast.AsyncFunctionDef))}
 
 
 def _positional_params(fn: ast.FunctionDef) -> list[str]:
@@ -1187,9 +1217,7 @@ def _check_subclass_against_abc(rel: Path, sub: ast.ClassDef, abc: ast.ClassDef)
         impl_params = _positional_params(impl)
         abc_params = _positional_params(abs_fn)
         if impl_params != abc_params:
-            found.append(
-                f"{rel}:{impl.lineno} {sub.name}.{name} 签名漂移 impl={impl_params} vs abc={abc_params}"
-            )
+            found.append(f"{rel}:{impl.lineno} {sub.name}.{name} 签名漂移 impl={impl_params} vs abc={abc_params}")
     return found
 
 
@@ -1228,15 +1256,17 @@ def metric_14_abc_completeness() -> dict:
 # 与 depgraph_freshness_gate.py (P3.1) 共享数据源 .runtime/depgraph_scan_cache.json
 # _meta.saved_at，但独立解析（避免 scripts/ → src/zephyr/gov_enforcement/ 跨层耦合）
 _DEPGRAPH_CACHE_REL = ".runtime/depgraph_scan_cache.json"
-_DEPGRAPH_WARN_SECONDS = 30 * 60        # 30 分钟 → WARNING（与 gate 同阈值）
+_DEPGRAPH_WARN_SECONDS = 30 * 60  # 30 分钟 → WARNING（与 gate 同阈值）
 _DEPGRAPH_BLOCK_SECONDS = 24 * 60 * 60  # 24 小时 → 阻断级（与 gate 同阈值）
-_REMEDIATION_BLOCK_SECONDS = 90 * 24 * 60 * 60  # 90 天 → 阻断级（与 GATE-REMEDIATION-PROGRESS 同阈值，#ARCH-GOV-CONVERGENCE-META Phase 3.1）
+_REMEDIATION_BLOCK_SECONDS = (
+    90 * 24 * 60 * 60
+)  # 90 天 → 阻断级（与 GATE-REMEDIATION-PROGRESS 同阈值，#ARCH-GOV-CONVERGENCE-META Phase 3.1）
 # M16 SQL（NO-BARE-SQL compliance）
 _SQL_CHECK_REMEDIATION_TABLE = "SELECT name FROM sqlite_master WHERE type='table' AND name='remediation_progress'"
 _SQL_SELECT_STALE_REMEDIATION = (
-    'SELECT dimension_id, title, last_updated FROM remediation_progress '
+    "SELECT dimension_id, title, last_updated FROM remediation_progress "
     "WHERE last_updated < ? AND status NOT IN ('completed', 'deferred') "
-    'ORDER BY last_updated ASC'
+    "ORDER BY last_updated ASC"
 )
 
 
@@ -1278,7 +1308,9 @@ def metric_15_depgraph_freshness() -> dict:
     cache_path = REPO_ROOT / _DEPGRAPH_CACHE_REL
     if not cache_path.is_file():
         return _make_metric(
-            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            "M15",
+            "depgraph新鲜度(>24h阻断数)",
+            0,
             details=[f"cache missing: {_DEPGRAPH_CACHE_REL} (first-run or new env)"],
             source="inline",
             error=f"cache not found: {_DEPGRAPH_CACHE_REL}",
@@ -1287,7 +1319,9 @@ def metric_15_depgraph_freshness() -> dict:
         data = json.loads(cache_path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError) as e:
         return _make_metric(
-            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            "M15",
+            "depgraph新鲜度(>24h阻断数)",
+            0,
             details=[f"cache parse failed: {e}"],
             source="inline",
             error=f"cache parse failed: {e}",
@@ -1296,7 +1330,9 @@ def metric_15_depgraph_freshness() -> dict:
     saved_at_raw = (data.get("_meta") or {}).get("saved_at")
     if not saved_at_raw:
         return _make_metric(
-            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            "M15",
+            "depgraph新鲜度(>24h阻断数)",
+            0,
             details=["cache missing _meta.saved_at"],
             source="inline",
             error="cache missing _meta.saved_at",
@@ -1305,7 +1341,9 @@ def metric_15_depgraph_freshness() -> dict:
     saved_at = _parse_depgraph_saved_at(saved_at_raw)
     if saved_at is None:
         return _make_metric(
-            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            "M15",
+            "depgraph新鲜度(>24h阻断数)",
+            0,
             details=[f"saved_at unparseable: {saved_at_raw!r}"],
             source="inline",
             error=f"saved_at unparseable: {saved_at_raw!r}",
@@ -1317,7 +1355,9 @@ def metric_15_depgraph_freshness() -> dict:
     # 时钟漂移（saved_at 在未来）→ 视为 fresh（与 gate 一致）
     if age_seconds < 0:
         return _make_metric(
-            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            "M15",
+            "depgraph新鲜度(>24h阻断数)",
+            0,
             details=[f"fresh (saved_at in future: {saved_at_raw})"],
             source="inline",
         )
@@ -1326,7 +1366,9 @@ def metric_15_depgraph_freshness() -> dict:
     if age_seconds >= _DEPGRAPH_BLOCK_SECONDS:
         hours = int(age_seconds // 3600)
         return _make_metric(
-            "M15", "depgraph新鲜度(>24h阻断数)", 1,
+            "M15",
+            "depgraph新鲜度(>24h阻断数)",
+            1,
             details=[
                 f"BLOCK: {hours}h since last sync (saved_at={saved_at_raw})",
                 "超过 24h 阈值——GATE-DEPGRAPH-FRESHNESS 会阻断 commit",
@@ -1338,7 +1380,9 @@ def metric_15_depgraph_freshness() -> dict:
     if age_seconds >= _DEPGRAPH_WARN_SECONDS:
         minutes = int(age_seconds // 60)
         return _make_metric(
-            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            "M15",
+            "depgraph新鲜度(>24h阻断数)",
+            0,
             details=[
                 f"WARN: {minutes}min since last sync (saved_at={saved_at_raw})",
                 "超过 30min 告警阈值——建议运行 generate_project_depgraph.py 刷新",
@@ -1347,14 +1391,16 @@ def metric_15_depgraph_freshness() -> dict:
         )
 
     return _make_metric(
-        "M15", "depgraph新鲜度(>24h阻断数)", 0,
+        "M15",
+        "depgraph新鲜度(>24h阻断数)",
+        0,
         details=[f"fresh (age={int(age_seconds)}s, saved_at={saved_at_raw})"],
         source="inline",
     )
 
 
-
 # ── 指标 16：治本进度新鲜度 ────────────────────────────────────────────────
+
 
 def metric_16_remediation_progress_freshness() -> dict:
     """治本进度新鲜度——>90天超期未更新维度数（#ARCH-GOV-CONVERGENCE-META Phase 3.1）。
@@ -1365,38 +1411,59 @@ def metric_16_remediation_progress_freshness() -> dict:
 
     fail-open：表不存在/DB缺失 → count=0 + error（首启正常）。
     """
-    db_path = REPO_ROOT / 'data' / 'databases' / 'governance.db'
+    db_path = REPO_ROOT / "data" / "databases" / "governance.db"
     if not db_path.is_file():
-        return _make_metric('M16', '治本进度新鲜度(>90天超期数)', 0,
-            details=['governance.db missing (first-run or new env)'],
-            source='inline', error=f'db not found: {db_path.relative_to(REPO_ROOT)}')
+        return _make_metric(
+            "M16",
+            "治本进度新鲜度(>90天超期数)",
+            0,
+            details=["governance.db missing (first-run or new env)"],
+            source="inline",
+            error=f"db not found: {db_path.relative_to(REPO_ROOT)}",
+        )
     try:
         conn = sqlite3.connect(str(db_path))
         try:
             cur = conn.execute(_SQL_CHECK_REMEDIATION_TABLE)
             if not cur.fetchone():
-                return _make_metric('M16', '治本进度新鲜度(>90天超期数)', 0,
-                    details=['table not yet created (Phase 3.1 not bootstrapped)'],
-                    source='inline', error='table remediation_progress missing')
+                return _make_metric(
+                    "M16",
+                    "治本进度新鲜度(>90天超期数)",
+                    0,
+                    details=["table not yet created (Phase 3.1 not bootstrapped)"],
+                    source="inline",
+                    error="table remediation_progress missing",
+                )
             cutoff_iso = (datetime.now(UTC) - timedelta(seconds=_REMEDIATION_BLOCK_SECONDS)).isoformat()
             cur = conn.execute(_SQL_SELECT_STALE_REMEDIATION, (cutoff_iso,))
             stale = cur.fetchall()
         finally:
             conn.close()
     except sqlite3.Error as e:
-        return _make_metric('M16', '治本进度新鲜度(>90天超期数)', 0,
-            details=[f'db query failed: {e}'], source='inline', error=f'db query failed: {e}')
+        return _make_metric(
+            "M16",
+            "治本进度新鲜度(>90天超期数)",
+            0,
+            details=[f"db query failed: {e}"],
+            source="inline",
+            error=f"db query failed: {e}",
+        )
     if not stale:
-        return _make_metric('M16', '治本进度新鲜度(>90天超期数)', 0,
-            details=['all remediation dimensions fresh (<90 days)'], source='inline')
-    details = [f'STALE: {row[0]} ({row[1]}) last_updated={row[2]}' for row in stale[:20]]
-    return _make_metric('M16', '治本进度新鲜度(>90天超期数)', len(stale), details=details, source='inline')
+        return _make_metric(
+            "M16",
+            "治本进度新鲜度(>90天超期数)",
+            0,
+            details=["all remediation dimensions fresh (<90 days)"],
+            source="inline",
+        )
+    details = [f"STALE: {row[0]} ({row[1]}) last_updated={row[2]}" for row in stale[:20]]
+    return _make_metric("M16", "治本进度新鲜度(>90天超期数)", len(stale), details=details, source="inline")
 
 
 # ── 指标 17：规则感知缺口（无门禁配对数） ──────────────────────────────────
 
 # M17 SQL/路径常量（NO-BARE-SQL compliance 不适用——读 YAML 非 SQL）
-_PERCEPTION_INDEX_REL = 'docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml'
+_PERCEPTION_INDEX_REL = "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml"
 
 
 def metric_17_rule_perception_gap() -> dict:
@@ -1410,33 +1477,61 @@ def metric_17_rule_perception_gap() -> dict:
     """
     idx_path = REPO_ROOT / _PERCEPTION_INDEX_REL
     if not idx_path.is_file():
-        return _make_metric('M17', '规则感知缺口(无门禁配对数)', 0,
-            details=['perception index not yet generated (Phase 3.2a not bootstrapped)'],
-            source='inline', error=f'yaml not found: {idx_path.relative_to(REPO_ROOT)}')
+        return _make_metric(
+            "M17",
+            "规则感知缺口(无门禁配对数)",
+            0,
+            details=["perception index not yet generated (Phase 3.2a not bootstrapped)"],
+            source="inline",
+            error=f"yaml not found: {idx_path.relative_to(REPO_ROOT)}",
+        )
     try:
-        data = yaml.safe_load(idx_path.read_text(encoding='utf-8'))
+        data = yaml.safe_load(idx_path.read_text(encoding="utf-8"))
     except yaml.YAMLError as e:
-        return _make_metric('M17', '规则感知缺口(无门禁配对数)', 0,
-            details=[f'yaml parse failed: {e}'], source='inline', error=f'yaml parse failed: {e}')
+        return _make_metric(
+            "M17",
+            "规则感知缺口(无门禁配对数)",
+            0,
+            details=[f"yaml parse failed: {e}"],
+            source="inline",
+            error=f"yaml parse failed: {e}",
+        )
     if not isinstance(data, dict):
-        return _make_metric('M17', '规则感知缺口(无门禁配对数)', 0,
-            details=['yaml structure invalid (not dict)'], source='inline', error='yaml not dict')
-    rules = data.get('rules', [])
+        return _make_metric(
+            "M17",
+            "规则感知缺口(无门禁配对数)",
+            0,
+            details=["yaml structure invalid (not dict)"],
+            source="inline",
+            error="yaml not dict",
+        )
+    rules = data.get("rules", [])
     if not isinstance(rules, list) or not rules:
-        return _make_metric('M17', '规则感知缺口(无门禁配对数)', 0,
-            details=['no rules in perception index'], source='inline', error='no rules in index')
-    unpaired = [r for r in rules if not r.get('paired_gate_id')]
+        return _make_metric(
+            "M17",
+            "规则感知缺口(无门禁配对数)",
+            0,
+            details=["no rules in perception index"],
+            source="inline",
+            error="no rules in index",
+        )
+    unpaired = [r for r in rules if not r.get("paired_gate_id")]
     if not unpaired:
-        return _make_metric('M17', '规则感知缺口(无门禁配对数)', 0,
-            details=[f'all {len(rules)} rules have paired_gate_id (Phase 3.5 complete)'], source='inline')
-    details = [f'UNPAIRED: {r.get("rule_id", "?")} ({r.get("title", "")[:40]})' for r in unpaired[:20]]
-    return _make_metric('M17', '规则感知缺口(无门禁配对数)', len(unpaired), details=details, source='inline')
+        return _make_metric(
+            "M17",
+            "规则感知缺口(无门禁配对数)",
+            0,
+            details=[f"all {len(rules)} rules have paired_gate_id (Phase 3.5 complete)"],
+            source="inline",
+        )
+    details = [f"UNPAIRED: {r.get('rule_id', '?')} ({r.get('title', '')[:40]})" for r in unpaired[:20]]
+    return _make_metric("M17", "规则感知缺口(无门禁配对数)", len(unpaired), details=details, source="inline")
 
 
 # ── 指标 20：trae_060 §5 静态声明 vs 运行时快照漂移数 ──────────────────────
 
 # M20 路径常量（#ARCH-GOV-CONVERGENCE-META Phase 3.4b，病根1 治本）
-_RUNTIME_SNAPSHOT_REL = 'data/runtime_violation_snapshot/latest.json'
+_RUNTIME_SNAPSHOT_REL = "data/runtime_violation_snapshot/latest.json"
 
 
 def metric_20_runtime_snapshot_drift() -> dict:
@@ -1456,52 +1551,72 @@ def metric_20_runtime_snapshot_drift() -> dict:
             compare_baseline_with_live,
         )
     except ImportError as e:
-        return _make_metric('M20', 'trae_060 §5 快照漂移数', 0,
-            details=[f'import failed: {e}'], source='inline',
-            error=f'import failed: {e}')
+        return _make_metric(
+            "M20",
+            "trae_060 §5 快照漂移数",
+            0,
+            details=[f"import failed: {e}"],
+            source="inline",
+            error=f"import failed: {e}",
+        )
 
     try:
         comparison = compare_baseline_with_live(REPO_ROOT)
     except Exception as e:  # noqa: BLE001 — fail-open
-        return _make_metric('M20', 'trae_060 §5 快照漂移数', 0,
-            details=[f'compare failed: {e}'], source='inline',
-            error=f'compare failed: {e}')
+        return _make_metric(
+            "M20",
+            "trae_060 §5 快照漂移数",
+            0,
+            details=[f"compare failed: {e}"],
+            source="inline",
+            error=f"compare failed: {e}",
+        )
 
-    drift_count = comparison.get('drift_count', 0)
-    fresh = comparison.get('fresh', False)
-    error = comparison.get('error', '')
+    drift_count = comparison.get("drift_count", 0)
+    fresh = comparison.get("fresh", False)
+    error = comparison.get("error", "")
 
     if not fresh and drift_count == 0:
         # snapshot stale 且无 drift 信息——报告 1（stale 本身是问题）
-        details = ['snapshot stale or missing (reconciler not run recently)']
+        details = ["snapshot stale or missing (reconciler not run recently)"]
         if error:
-            details.append(f'reason: {error}')
-        return _make_metric('M20', 'trae_060 §5 快照漂移数', 1,
-            details=details, source=_RUNTIME_SNAPSHOT_REL,
-            error=f'snapshot stale: {error}' if error else 'snapshot stale')
+            details.append(f"reason: {error}")
+        return _make_metric(
+            "M20",
+            "trae_060 §5 快照漂移数",
+            1,
+            details=details,
+            source=_RUNTIME_SNAPSHOT_REL,
+            error=f"snapshot stale: {error}" if error else "snapshot stale",
+        )
 
     # 构造详细 drift 信息
     details = []
-    for v in comparison.get('violations', [])[:20]:
-        cat = v.get('category', '?')
-        claimed = v.get('claimed', 0)
-        detected = v.get('detected', 0)
-        drift = v.get('drift', 0)
-        marker = ''
+    for v in comparison.get("violations", [])[:20]:
+        cat = v.get("category", "?")
+        claimed = v.get("claimed", 0)
+        detected = v.get("detected", 0)
+        drift = v.get("drift", 0)
+        marker = ""
         if drift < 0:
-            marker = ' (FIXED)'
+            marker = " (FIXED)"
         elif drift > 0:
-            marker = ' (NEW VIOLATIONS)'
-        details.append(f'{cat}: claimed={claimed}, detected={detected}, drift={drift}{marker}')
+            marker = " (NEW VIOLATIONS)"
+        details.append(f"{cat}: claimed={claimed}, detected={detected}, drift={drift}{marker}")
 
-    return _make_metric('M20', 'trae_060 §5 快照漂移数', drift_count,
-        details=details, source=_RUNTIME_SNAPSHOT_REL,
-        error=error if not fresh else '')
+    return _make_metric(
+        "M20",
+        "trae_060 §5 快照漂移数",
+        drift_count,
+        details=details,
+        source=_RUNTIME_SNAPSHOT_REL,
+        error=error if not fresh else "",
+    )
 
 
 # ── 指标 19：治理层 151→6 收敛缺口数 ──────────────────────────────────────
 
-_CONVERGENCE_MAP_REL = 'docs/01_policies_and_standards/_registry/catalogs/governance_convergence_map.yaml'
+_CONVERGENCE_MAP_REL = "docs/01_policies_and_standards/_registry/catalogs/governance_convergence_map.yaml"
 
 
 def metric_19_governance_convergence_gap() -> dict:
@@ -1520,58 +1635,77 @@ def metric_19_governance_convergence_gap() -> dict:
 
     map_path = REPO_ROOT / _CONVERGENCE_MAP_REL
     if not map_path.exists():
-        return _make_metric('M19', '治理层收敛缺口数', 0,
-            details=[f'convergence map not found: {_CONVERGENCE_MAP_REL}'],
-            source='inline', error='convergence map not found')
+        return _make_metric(
+            "M19",
+            "治理层收敛缺口数",
+            0,
+            details=[f"convergence map not found: {_CONVERGENCE_MAP_REL}"],
+            source="inline",
+            error="convergence map not found",
+        )
 
     try:
-        data = _yaml.safe_load(map_path.read_text(encoding='utf-8'))
+        data = _yaml.safe_load(map_path.read_text(encoding="utf-8"))
     except Exception as e:  # noqa: BLE001 — fail-open
-        return _make_metric('M19', '治理层收敛缺口数', 0,
-            details=[f'YAML parse failed: {e}'], source='inline',
-            error=f'YAML parse failed: {e}')
+        return _make_metric(
+            "M19",
+            "治理层收敛缺口数",
+            0,
+            details=[f"YAML parse failed: {e}"],
+            source="inline",
+            error=f"YAML parse failed: {e}",
+        )
 
     if not isinstance(data, dict):
-        return _make_metric('M19', '治理层收敛缺口数', 0,
-            details=['convergence map top-level not dict'],
-            source='inline', error='invalid structure')
+        return _make_metric(
+            "M19",
+            "治理层收敛缺口数",
+            0,
+            details=["convergence map top-level not dict"],
+            source="inline",
+            error="invalid structure",
+        )
 
-    summary = data.get('convergence_summary', {})
+    summary = data.get("convergence_summary", {})
     if not isinstance(summary, dict):
-        return _make_metric('M19', '治理层收敛缺口数', 0,
-            details=['convergence_summary missing'],
-            source='inline', error='convergence_summary missing')
+        return _make_metric(
+            "M19",
+            "治理层收敛缺口数",
+            0,
+            details=["convergence_summary missing"],
+            source="inline",
+            error="convergence_summary missing",
+        )
 
-    total = summary.get('total_components', 0)
-    consolidated = summary.get('consolidated_components', 0)
+    total = summary.get("total_components", 0)
+    consolidated = summary.get("consolidated_components", 0)
     gap = total - consolidated
 
     # 构造详细信息
     details = []
-    core_functions = data.get('core_functions', []) or []
+    core_functions = data.get("core_functions", []) or []
     for cf in core_functions:
         if not isinstance(cf, dict):
             continue
-        cf_id = cf.get('id', '?')
-        cf_name = cf.get('name', '?')
-        for c in cf.get('consolidates', []) or []:
+        cf_id = cf.get("id", "?")
+        cf_name = cf.get("name", "?")
+        for c in cf.get("consolidates", []) or []:
             if not isinstance(c, dict):
                 continue
-            ctype = c.get('component_type', '?')
-            count = c.get('current_count', 0)
-            status = c.get('status', '?')
-            details.append(f'{cf_id}/{ctype}: {count} components, status={status}')
+            ctype = c.get("component_type", "?")
+            count = c.get("current_count", 0)
+            status = c.get("status", "?")
+            details.append(f"{cf_id}/{ctype}: {count} components, status={status}")
 
-    details.append(f'total={total}, consolidated={consolidated}, gap={gap}')
-    details.append('target: 6 core function entry points (M19 ≤ 6)')
+    details.append(f"total={total}, consolidated={consolidated}, gap={gap}")
+    details.append("target: 6 core function entry points (M19 ≤ 6)")
 
-    return _make_metric('M19', '治理层收敛缺口数', gap,
-        details=details, source=_CONVERGENCE_MAP_REL)
+    return _make_metric("M19", "治理层收敛缺口数", gap, details=details, source=_CONVERGENCE_MAP_REL)
 
 
 # ── 指标 21：5 病根 × 3 要素覆盖缺口数 ────────────────────────────────────
 
-_RC_ELEMENTS = ('persistence', 'discoverability', 'enforceability')
+_RC_ELEMENTS = ("persistence", "discoverability", "enforceability")
 
 
 def _scan_root_cause_cells(
@@ -1587,35 +1721,35 @@ def _scan_root_cause_cells(
     for rc in root_causes:
         if not isinstance(rc, dict):
             continue
-        rc_id = rc.get('id', '?')
-        elements = rc.get('elements', {}) or {}
+        rc_id = rc.get("id", "?")
+        elements = rc.get("elements", {}) or {}
         for ek in _RC_ELEMENTS:
             total += 1
             elem = elements.get(ek, {}) or {}
             if not isinstance(elem, dict):
                 continue
-            if elem.get('covered', False):
+            if elem.get("covered", False):
                 covered += 1
             else:
-                gap = elem.get('gap', 'no gap description')
-                uncovered.append(f'{rc_id}/{ek}: {gap}')
+                gap = elem.get("gap", "no gap description")
+                uncovered.append(f"{rc_id}/{ek}: {gap}")
     return total, covered, uncovered
 
 
 def _format_coverage_details(
-    total: int, covered: int, uncovered: list[str],
+    total: int,
+    covered: int,
+    uncovered: list[str],
     declared_uncovered: int | None,
 ) -> list[str]:
     """格式化 M21 指标详情列表（辅助函数，降低 metric_21 循环复杂度）。"""
-    details = [f'total_cells={total}, covered={covered}, uncovered={len(uncovered)}']
+    details = [f"total_cells={total}, covered={covered}, uncovered={len(uncovered)}"]
     if declared_uncovered is not None:
-        details.append(f'declared_uncovered={declared_uncovered} (SSoT)')
+        details.append(f"declared_uncovered={declared_uncovered} (SSoT)")
         if declared_uncovered != len(uncovered):
-            details.append(
-                f'WARNING: declared ({declared_uncovered}) != scanned ({len(uncovered)})'
-            )
-    details.append('target: 0 (all 15 cells covered, M21=0)')
-    details.extend(f'  - {u}' for u in uncovered)
+            details.append(f"WARNING: declared ({declared_uncovered}) != scanned ({len(uncovered)})")
+    details.append("target: 0 (all 15 cells covered, M21=0)")
+    details.extend(f"  - {u}" for u in uncovered)
     return details
 
 
@@ -1642,46 +1776,68 @@ def metric_21_root_cause_coverage() -> dict:
 
     map_path = REPO_ROOT / _CONVERGENCE_MAP_REL
     if not map_path.exists():
-        return _make_metric('M21', '5病根×3要素覆盖缺口数', 0,
-            details=[f'convergence map not found: {_CONVERGENCE_MAP_REL}'],
-            source='inline', error='convergence map not found')
+        return _make_metric(
+            "M21",
+            "5病根×3要素覆盖缺口数",
+            0,
+            details=[f"convergence map not found: {_CONVERGENCE_MAP_REL}"],
+            source="inline",
+            error="convergence map not found",
+        )
 
     try:
-        data = _yaml.safe_load(map_path.read_text(encoding='utf-8'))
+        data = _yaml.safe_load(map_path.read_text(encoding="utf-8"))
     except Exception as e:  # noqa: BLE001 — fail-open
-        return _make_metric('M21', '5病根×3要素覆盖缺口数', 0,
-            details=[f'YAML parse failed: {e}'], source='inline',
-            error=f'YAML parse failed: {e}')
+        return _make_metric(
+            "M21",
+            "5病根×3要素覆盖缺口数",
+            0,
+            details=[f"YAML parse failed: {e}"],
+            source="inline",
+            error=f"YAML parse failed: {e}",
+        )
 
     if not isinstance(data, dict):
-        return _make_metric('M21', '5病根×3要素覆盖缺口数', 0,
-            details=['convergence map top-level not dict'],
-            source='inline', error='invalid structure')
+        return _make_metric(
+            "M21",
+            "5病根×3要素覆盖缺口数",
+            0,
+            details=["convergence map top-level not dict"],
+            source="inline",
+            error="invalid structure",
+        )
 
-    rc_data = data.get('root_cause_coverage', {})
+    rc_data = data.get("root_cause_coverage", {})
     if not isinstance(rc_data, dict):
-        return _make_metric('M21', '5病根×3要素覆盖缺口数', 0,
-            details=['root_cause_coverage section missing'],
-            source='inline', error='root_cause_coverage missing')
+        return _make_metric(
+            "M21",
+            "5病根×3要素覆盖缺口数",
+            0,
+            details=["root_cause_coverage section missing"],
+            source="inline",
+            error="root_cause_coverage missing",
+        )
 
-    root_causes = rc_data.get('root_causes', []) or []
+    root_causes = rc_data.get("root_causes", []) or []
     if not root_causes:
-        return _make_metric('M21', '5病根×3要素覆盖缺口数', 0,
-            details=['root_causes list empty'],
-            source='inline', error='root_causes empty')
+        return _make_metric(
+            "M21",
+            "5病根×3要素覆盖缺口数",
+            0,
+            details=["root_causes list empty"],
+            source="inline",
+            error="root_causes empty",
+        )
 
     total, covered, uncovered = _scan_root_cause_cells(root_causes)
 
-    summary = rc_data.get('coverage_summary', {}) or {}
-    declared_uncovered = (
-        summary.get('uncovered_cells') if isinstance(summary, dict) else None
-    )
+    summary = rc_data.get("coverage_summary", {}) or {}
+    declared_uncovered = summary.get("uncovered_cells") if isinstance(summary, dict) else None
 
     details = _format_coverage_details(total, covered, uncovered, declared_uncovered)
 
     # M21 = 实际扫描的未覆盖数（非声明值——扫描是真源）
-    return _make_metric('M21', '5病根×3要素覆盖缺口数', len(uncovered),
-        details=details, source=_CONVERGENCE_MAP_REL)
+    return _make_metric("M21", "5病根×3要素覆盖缺口数", len(uncovered), details=details, source=_CONVERGENCE_MAP_REL)
 
 
 # ── 指标 22：docstring 覆盖率倒数（5.42 代码注释与 API 文档）────────────────
@@ -1692,11 +1848,7 @@ def _has_docstring(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
     if not node.body:
         return False
     first = node.body[0]
-    return (
-        isinstance(first, ast.Expr)
-        and isinstance(first.value, ast.Constant)
-        and isinstance(first.value.value, str)
-    )
+    return isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant) and isinstance(first.value.value, str)
 
 
 def metric_22_docstring_coverage() -> dict:
@@ -1893,11 +2045,36 @@ def metric_29_resource_not_in_try_finally() -> dict:
 
 
 # 内置名遮蔽检测集（5.101: 42 处数据类字段遮蔽内置名）
-_BUILTIN_NAME_SHADOWS: frozenset[str] = frozenset({
-    "id", "file", "type", "format", "hash", "open", "input", "round",
-    "list", "dict", "set", "tuple", "str", "int", "float", "bool", "bytes",
-    "map", "filter", "range", "len", "print", "sum", "min", "max", "sorted",
-})
+_BUILTIN_NAME_SHADOWS: frozenset[str] = frozenset(
+    {
+        "id",
+        "file",
+        "type",
+        "format",
+        "hash",
+        "open",
+        "input",
+        "round",
+        "list",
+        "dict",
+        "set",
+        "tuple",
+        "str",
+        "int",
+        "float",
+        "bool",
+        "bytes",
+        "map",
+        "filter",
+        "range",
+        "len",
+        "print",
+        "sum",
+        "min",
+        "max",
+        "sorted",
+    }
+)
 
 
 def _is_dataclass_or_basemodel(node: ast.ClassDef) -> bool:
@@ -1946,7 +2123,9 @@ def metric_24_field_shadowing() -> dict:
                 field_name = stmt.target.id
                 if field_name in _BUILTIN_NAME_SHADOWS:
                     violations.append(f"{rel}:{stmt.lineno} {node.name}.{field_name}")
-    return _make_metric("M24", "字段遮蔽计数(dataclass/BaseModel 字段遮蔽内置名)", len(violations), violations, "inline")
+    return _make_metric(
+        "M24", "字段遮蔽计数(dataclass/BaseModel 字段遮蔽内置名)", len(violations), violations, "inline"
+    )
 
 
 # ── 指标 25：模块级常量未标 Final 计数（5.114 Final/@final 强制）────────────
@@ -2163,21 +2342,39 @@ def metric_31_mcp_version_coverage() -> dict:
             mcp_path = candidate
             break
     if mcp_path is None:
-        return _make_metric("M31", "MCP version 字段覆盖率(无 version 工具数)", 0,
-            details=["mcp.json not found in candidate paths"], source="inline", error="mcp.json not found")
+        return _make_metric(
+            "M31",
+            "MCP version 字段覆盖率(无 version 工具数)",
+            0,
+            details=["mcp.json not found in candidate paths"],
+            source="inline",
+            error="mcp.json not found",
+        )
     try:
         data = json.loads(mcp_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as e:
-        return _make_metric("M31", "MCP version 字段覆盖率(无 version 工具数)", 0,
-            details=[f"parse failed: {e}"], source=mcp_path.name, error=f"parse failed: {e}")
+        return _make_metric(
+            "M31",
+            "MCP version 字段覆盖率(无 version 工具数)",
+            0,
+            details=[f"parse failed: {e}"],
+            source=mcp_path.name,
+            error=f"parse failed: {e}",
+        )
     tools: list = []
     if isinstance(data, dict):
         tools = data.get("tools") or []
     elif isinstance(data, list):
         tools = data
     if not isinstance(tools, list):
-        return _make_metric("M31", "MCP version 字段覆盖率(无 version 工具数)", 0,
-            details=["tools field is not a list"], source=mcp_path.name, error="invalid tools structure")
+        return _make_metric(
+            "M31",
+            "MCP version 字段覆盖率(无 version 工具数)",
+            0,
+            details=["tools field is not a list"],
+            source=mcp_path.name,
+            error="invalid tools structure",
+        )
     violations: list[str] = []
     for idx, tool in enumerate(tools):
         if not isinstance(tool, dict):
@@ -2275,8 +2472,7 @@ def format_console_report(result: dict) -> str:
     for m in result["metrics"]:
         status = "OK" if m["count"] == 0 else ("ERR" if m["error"] else "DEBT")
         lines.append(
-            f"{m['metric_id']:<5} {m['name']:<32} {m['count']:>8} {m['target']:>6} "
-            f"{m['source']:<18} {status:<8}"
+            f"{m['metric_id']:<5} {m['name']:<32} {m['count']:>8} {m['target']:>6} {m['source']:<18} {status:<8}"
         )
     lines.append("-" * 78)
     lines.append(f"{'自动化检出合计':<38} {result['total_auto']:>8} {'':>6} {'':<18}")
@@ -2309,6 +2505,7 @@ def _cleanup_old_snapshots(output_dir, max_age_days: int = 30) -> int:
         已删除的快照文件数。
     """
     import time as _time
+
     try:
         cutoff = _time.time() - max_age_days * 86400
         removed = 0

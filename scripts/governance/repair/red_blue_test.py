@@ -206,7 +206,9 @@ def run_script_tests():
     # #6 生成器+apply+audit端到端（验证3个脚本都可执行--help）
     gen_exists = os.path.exists(str(REPO_ROOT / "scripts" / "governance" / "generate_project_depgraph.py"))
     apply_exists = os.path.exists(str(REPO_ROOT / "scripts" / "governance" / "apply_depgraph.py"))
-    audit_exists = os.path.exists(str(REPO_ROOT / "scripts" / "governance" / "_archive" / "prototype" / "audit_domain_nodes.py"))
+    audit_exists = os.path.exists(
+        str(REPO_ROOT / "scripts" / "governance" / "_archive" / "prototype" / "audit_domain_nodes.py")
+    )
     # 验证apply_depgraph可执行（--help）
     apply_runnable = False
     if apply_exists:

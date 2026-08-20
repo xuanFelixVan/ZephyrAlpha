@@ -21,6 +21,7 @@
   - audit_status == 'arbitrated' 且 age >= 30 天 → warn
   - 其余 → skip
 """
+
 from __future__ import annotations
 
 import json
@@ -69,14 +70,16 @@ def scan_drafts(directory: Path, warn_days: int = WARN_DAYS, archive_days: int =
             continue
         fm = parse_frontmatter_from_file(md_file)
         if fm is None:
-            results.append({
-                "path": md_file,
-                "relative": md_file.relative_to(directory),
-                "audit_status": None,
-                "arbitrated_date": None,
-                "age_days": None,
-                "action": "skip",
-            })
+            results.append(
+                {
+                    "path": md_file,
+                    "relative": md_file.relative_to(directory),
+                    "audit_status": None,
+                    "arbitrated_date": None,
+                    "age_days": None,
+                    "action": "skip",
+                }
+            )
             continue
         audit_status = fm.get("audit_status", "")
         arbitrated_date_str = fm.get("arbitrated_date", "")
@@ -93,14 +96,16 @@ def scan_drafts(directory: Path, warn_days: int = WARN_DAYS, archive_days: int =
                 action = "archive"
             elif age_days >= warn_days:
                 action = "warn"
-        results.append({
-            "path": md_file,
-            "relative": md_file.relative_to(directory),
-            "audit_status": audit_status,
-            "arbitrated_date": arbitrated_date_str,
-            "age_days": age_days,
-            "action": action,
-        })
+        results.append(
+            {
+                "path": md_file,
+                "relative": md_file.relative_to(directory),
+                "audit_status": audit_status,
+                "arbitrated_date": arbitrated_date_str,
+                "age_days": age_days,
+                "action": action,
+            }
+        )
     return results
 
 
@@ -142,7 +147,7 @@ def execute_archive(drafts: list[dict[str, Any]], confirm: bool = False) -> list
             if confirm:
                 target.mkdir(parents=True, exist_ok=True)
                 dest = target / draft["path"].name
-                shutil.move(str(draft["path"]), str(dest))
+                shutil.move(str(draft["path"]), str(dest))  # ops-guard-exempt: 归档搬移本职（drafts→archive 区归置）
                 try:
                     rel_dest = dest.relative_to(REPO_ROOT)
                 except ValueError:

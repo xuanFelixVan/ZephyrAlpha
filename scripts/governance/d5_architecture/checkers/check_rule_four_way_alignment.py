@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: AI/CI 按需调用型 permanent runner（P3-1.2 裁定豁免语义），非常驻服务
 """check_rule_four_way_alignment.py —— 规则四方对齐门禁（ARCH-020 补建）
 
 对标：ARCH-020 — check_rule_four_way_alignment.py 文件不存在，四方对齐门禁缺失
@@ -77,12 +78,7 @@ warn_only: false
 
 # rule_catalog_registry.yaml 真源路径
 _CATALOG_YAML = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "rule_catalog_registry.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule_catalog_registry.yaml"
 )
 
 # 规则文件目录
@@ -139,9 +135,7 @@ def _check_yaml_catalog_alignment(catalog: dict, violations: list[str]) -> None:
             continue
         abs_path = REPO_ROOT / rel_path
         if not abs_path.is_file():
-            violations.append(
-                f"  - [Catalog↔Disk] path 不存在: {rel_path} (tier={tier})"
-            )
+            violations.append(f"  - [Catalog↔Disk] path 不存在: {rel_path} (tier={tier})")
 
 
 def _check_yaml_disk_rule_id(catalog: dict, violations: list[str]) -> None:
@@ -192,9 +186,7 @@ def _check_duplicate_rule_ids(catalog: dict, violations: list[str]) -> None:
             id_map.setdefault(module_id, []).append(rel_path)
     for mid, paths in id_map.items():
         if len(paths) > 1:
-            violations.append(
-                f"  - [YAML↔Catalog] 重复 module_id={mid}: {paths}"
-            )
+            violations.append(f"  - [YAML↔Catalog] 重复 module_id={mid}: {paths}")
 
 
 def _is_merge_in_progress() -> bool:
@@ -249,8 +241,7 @@ def check(with_code_refs: bool = False) -> int:
         for v in violations:
             print(v)
         print(
-            "\n修复：确保规则 YAML ↔ Catalog ↔ Disk ↔ Code 四方对齐。"
-            "过滤按 tier（L1/L2/cross_layer 检查，L0/空跳过）。"
+            "\n修复：确保规则 YAML ↔ Catalog ↔ Disk ↔ Code 四方对齐。过滤按 tier（L1/L2/cross_layer 检查，L0/空跳过）。"
         )
         return EXIT_FINDINGS
 
@@ -261,12 +252,8 @@ def check(with_code_refs: bool = False) -> int:
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="规则四方对齐门禁（YAML↔Catalog↔Disk↔Code，ARCH-020 补建）"
-    )
-    parser.add_argument(
-        "--ci", action="store_true", help="CI 模式（无交互，违规即 exit 1）"
-    )
+    parser = argparse.ArgumentParser(description="规则四方对齐门禁（YAML↔Catalog↔Disk↔Code，ARCH-020 补建）")
+    parser.add_argument("--ci", action="store_true", help="CI 模式（无交互，违规即 exit 1）")
     parser.add_argument(
         "--with-code-refs",
         action="store_true",

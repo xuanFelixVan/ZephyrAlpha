@@ -19,6 +19,7 @@
 校验 markdown 文件 frontmatter 中的 module_id / layer / status / priority / version
 字段的有效性和跨文件一致性。
 """
+
 from __future__ import annotations
 
 import re
@@ -76,8 +77,7 @@ class Contradiction:
 class FileMeta:
     """文件元数据."""
 
-    def __init__(self, path=None, rel_path=None, module_id=None, layer=None,
-                 status=None, priority=None, version=None):
+    def __init__(self, path=None, rel_path=None, module_id=None, layer=None, status=None, priority=None, version=None):
         """__init__ implementation."""
         self.path = path
         self.rel_path = rel_path
@@ -195,8 +195,11 @@ def check_p0_layer_invalid(files) -> list[Contradiction]:
             continue
         contradictions.append(
             Contradiction(
-                "P0", "P0-1", f"无效 layer: {layer}",
-                files=[meta.rel_path], values=[layer],
+                "P0",
+                "P0-1",
+                f"无效 layer: {layer}",
+                files=[meta.rel_path],
+                values=[layer],
             )
         )
     return contradictions
@@ -218,8 +221,11 @@ def check_p0_duplicate_active_module_id(files) -> list[Contradiction]:
         file_list = [m.rel_path for m in group]
         contradictions.append(
             Contradiction(
-                "P0", "P0-2", f"module_id {module_id} 重复 Active",
-                files=file_list, values=[module_id],
+                "P0",
+                "P0-2",
+                f"module_id {module_id} 重复 Active",
+                files=file_list,
+                values=[module_id],
             )
         )
     return contradictions
@@ -235,8 +241,11 @@ def check_p1_status_invalid(files) -> list[Contradiction]:
         if status not in VALID_DOCUMENT_STATUSES:
             contradictions.append(
                 Contradiction(
-                    "P1", "P1-1", f"无效 status: {status}",
-                    files=[meta.rel_path], values=[status],
+                    "P1",
+                    "P1-1",
+                    f"无效 status: {status}",
+                    files=[meta.rel_path],
+                    values=[status],
                 )
             )
     return contradictions
@@ -259,8 +268,11 @@ def check_p1_module_id_layer_conflict(files) -> list[Contradiction]:
             value_list = list(layers)
             contradictions.append(
                 Contradiction(
-                    "P1", "P1-2", f"module_id {module_id} layer 冲突",
-                    files=file_list, values=value_list,
+                    "P1",
+                    "P1-2",
+                    f"module_id {module_id} layer 冲突",
+                    files=file_list,
+                    values=value_list,
                 )
             )
     return contradictions
@@ -286,8 +298,11 @@ def check_p1_module_id_status_conflict(files) -> list[Contradiction]:
             value_list = [m.status for m in group]
             contradictions.append(
                 Contradiction(
-                    "P1", "P1-3", f"module_id {module_id} status 冲突",
-                    files=file_list, values=value_list,
+                    "P1",
+                    "P1-3",
+                    f"module_id {module_id} status 冲突",
+                    files=file_list,
+                    values=value_list,
                 )
             )
     return contradictions
@@ -303,8 +318,11 @@ def check_p2_priority_invalid(files) -> list[Contradiction]:
         if priority not in VALID_PRIORITIES:
             contradictions.append(
                 Contradiction(
-                    "P2", "P2-1", f"无效 priority: {priority}",
-                    files=[meta.rel_path], values=[priority],
+                    "P2",
+                    "P2-1",
+                    f"无效 priority: {priority}",
+                    files=[meta.rel_path],
+                    values=[priority],
                 )
             )
     return contradictions
@@ -317,14 +335,17 @@ def check_p2_version_format(files) -> list[Contradiction]:
         version = meta.version
         if not version:
             continue
-        v = version.strip("\'\"")
+        v = version.strip("'\"")
         if v == "N/A":
             continue
         if not _VERSION_PATTERN.match(v):
             contradictions.append(
                 Contradiction(
-                    "P2", "P2-2", f"无效 version: {version}",
-                    files=[meta.rel_path], values=[version],
+                    "P2",
+                    "P2-2",
+                    f"无效 version: {version}",
+                    files=[meta.rel_path],
+                    values=[version],
                 )
             )
     return contradictions
@@ -370,20 +391,9 @@ def check_ssot_coverage_completeness(files=None) -> list[Contradiction]:
     import yaml
 
     project_root = REPO_ROOT
-    trae_028_path = (
-        project_root
-        / "docs"
-        / "01_policies_and_standards"
-        / "rules"
-        / "trae_028_doc_structure_naming.yaml"
-    )
+    trae_028_path = project_root / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
     dnr_path = (
-        project_root
-        / "docs"
-        / "01_policies_and_standards"
-        / "_registry"
-        / "catalogs"
-        / "domain_naming_rules.yaml"
+        project_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "domain_naming_rules.yaml"
     )
 
     violations: list[Contradiction] = []
@@ -412,9 +422,11 @@ def check_ssot_coverage_completeness(files=None) -> list[Contradiction]:
             if doc_path and not doc_path.exists():
                 violations.append(
                     Contradiction(
-                        "P0", "SSOT-COV",
+                        "P0",
+                        "SSOT-COV",
                         f"{rule_id} source_doc 有效性: {source_doc} -> 文件不存在",
-                        files=[source_doc], values=[source_doc],
+                        files=[source_doc],
+                        values=[source_doc],
                     )
                 )
                 continue
@@ -423,9 +435,11 @@ def check_ssot_coverage_completeness(files=None) -> list[Contradiction]:
                 if rule_id and rule_id not in ssot_text:
                     violations.append(
                         Contradiction(
-                            "P0", "SSOT-COV",
+                            "P0",
+                            "SSOT-COV",
                             f"{rule_id} SSoT 收录完整性: 未在 conditions 中引用",
-                            files=[rule_id], values=[rule_id],
+                            files=[rule_id],
+                            values=[rule_id],
                         )
                     )
 
@@ -465,6 +479,7 @@ def render_report(report, format="text") -> str:
     """渲染扫描报告."""
     if format == "json":
         import json
+
         return json.dumps(
             {
                 "scanned_files": report.scanned_files,
@@ -533,5 +548,7 @@ def main() -> int:
         return EXIT_FINDINGS
     print("[PASS] SSoT 覆盖范围一致性校验通过")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     raise SystemExit(main())

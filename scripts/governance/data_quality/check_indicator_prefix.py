@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ch_reader.query 失败返回空字符串->打印错误并 exit 2
 # [TESTS]
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: AI/CI 按需调用型 permanent runner（P3-1.2 裁定豁免语义），非常驻服务
 # [A_module] module_id=MOD-GOV_DQ | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """macro_data indicator_name 前缀合规检测工具。
 
@@ -43,6 +44,7 @@
     1 = 发现违规（CI 模式）
     2 = 查询失败
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -73,7 +75,7 @@ INDICATOR_PREFIX_MAP: dict[str, str | None] = {
     "fred": "FRED_",
     "eia": "EIA_",
     "worldbank": "WB_",  # World Bank 标准缩写，非 WORLDBANK_
-    "akshare": None,     # 中文名原生格式，无前缀属预期
+    "akshare": None,  # 中文名原生格式，无前缀属预期
 }
 
 
@@ -113,12 +115,14 @@ def check_prefixes() -> list[dict[str, object]]:
 
         # 检查前缀
         if not indicator_name.startswith(expected_prefix):
-            violations.append({
-                "data_source": data_source,
-                "indicator_name": indicator_name,
-                "expected_prefix": expected_prefix,
-                "actual": indicator_name[:30],
-            })
+            violations.append(
+                {
+                    "data_source": data_source,
+                    "indicator_name": indicator_name,
+                    "expected_prefix": expected_prefix,
+                    "actual": indicator_name[:30],
+                }
+            )
 
     return violations
 
@@ -161,15 +165,15 @@ def generate_fix_sql(violations: list[dict[str, object]]) -> str:
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="macro_data indicator_name 前缀合规检测"
-    )
+    parser = argparse.ArgumentParser(description="macro_data indicator_name 前缀合规检测")
     parser.add_argument(
-        "--fix", action="store_true",
+        "--fix",
+        action="store_true",
         help="生成修复 SQL（不执行）",
     )
     parser.add_argument(
-        "--ci", action="store_true",
+        "--ci",
+        action="store_true",
         help="CI 模式（违规即 exit 1）",
     )
     args = parser.parse_args()
@@ -193,10 +197,7 @@ def main() -> int:
         print(f"{'data_source':12s} {'indicator_name':40s} {'expected':12s} {'actual':30s}")
         print("-" * 94)
         for v in violations:
-            print(
-                f"{v['data_source']:12s} {v['indicator_name']:40s} "
-                f"{v['expected_prefix']:12s} {v['actual']:30s}"
-            )
+            print(f"{v['data_source']:12s} {v['indicator_name']:40s} {v['expected_prefix']:12s} {v['actual']:30s}")
 
         if args.fix:
             print("\n" + "=" * 60)

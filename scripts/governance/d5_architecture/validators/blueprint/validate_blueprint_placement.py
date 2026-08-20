@@ -169,9 +169,7 @@ def main() -> int:
                 rel = filepath.relative_to(REPO_ROOT)
                 if _is_domain_owned(fm, rel.parts):
                     continue  # 判据(c) 域归属豁免
-                violations_p0.append(
-                    f"[P0-2] cross_layer 蓝图 {module_id} 不在 _cross_layer/ 下 → 当前: {rel}"
-                )
+                violations_p0.append(f"[P0-2] cross_layer 蓝图 {module_id} 不在 _cross_layer/ 下 → 当前: {rel}")
 
     # ── P0-3: 已废弃（2026-07-04 阶段4）──
     # dir_prefix 体系随14层概念清除，layer_vocabulary.yaml v2.0.0 已移除 dir_prefix 字段。

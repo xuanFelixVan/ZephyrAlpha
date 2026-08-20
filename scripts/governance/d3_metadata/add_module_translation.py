@@ -52,6 +52,7 @@ Exit codes:
     1 = VALIDATION_ERROR（简介不合规 / 必填字段缺失）
     2 = IO/YAML_ERROR（文件读写或解析失败）
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -84,8 +85,7 @@ from _shared.module_translation_loader import (  # noqa: E402
 
 # 翻译真源路径（SSoT：规则数据真源是 YAML 文件）
 REGISTRY_YAML = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-    / "module_translation_registry.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "module_translation_registry.yaml"
 )
 
 # plain_zh 最低 CJK 字符数（与本次治理基线一致，防过短无信息简介）
@@ -329,10 +329,7 @@ def add_translation(entry: dict, *, dry_run: bool = False) -> tuple[int, str]:
         entries = (data or {}).get("entries", []) or []
         # 确认条目确实落盘
         norm_path = _normalize_path(entry["module_path"])
-        hit = any(
-            _normalize_path(e.get("module_path", "")) == norm_path
-            for e in entries if isinstance(e, dict)
-        )
+        hit = any(_normalize_path(e.get("module_path", "")) == norm_path for e in entries if isinstance(e, dict))
         if not hit:
             return EXIT_IO, f"写后校验失败：entries 中未找到 {norm_path}"
     except Exception as e:  # noqa: BLE001

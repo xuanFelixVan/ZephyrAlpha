@@ -185,12 +185,7 @@ def check_tech_radar(module_id: str = None) -> list[str]:
     import yaml
 
     findings = []
-    tech_landscape = (
-        REPO_ROOT
-        / "architecture_model"
-        / "technology"
-        / "technology_landscape.yaml"
-    )
+    tech_landscape = REPO_ROOT / "architecture_model" / "technology" / "technology_landscape.yaml"
     if not tech_landscape.exists():
         return findings
     with open(tech_landscape, encoding="utf-8") as f:

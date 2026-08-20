@@ -131,9 +131,7 @@ def _load_vocab_values(vocab_name: str) -> list[str]:
     vocab_file = VOCAB_FIELD_MAP.get(vocab_name)
     if not vocab_file:
         return []
-    return list(
-        load_vocabulary_values(vocab_file, fallback_key="id", strict=False)
-    )
+    return list(load_vocabulary_values(vocab_file, fallback_key="id", strict=False))
 
 
 def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) -> bool:  # noqa: gate-vocab  # 派生文件同步器：用 vocab_values 比对 field_registry，非复制词表加载
@@ -165,9 +163,8 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
         # 大小写不敏感——YAML 中可能写作 dynamic_from_ssot 或 DYNAMIC_FROM_SSOT
         _av = field.get("allowed_values")
         _ev = field.get("enum_values")
-        _has_sentinel = (
-            (isinstance(_av, str) and _av.lower() == "dynamic_from_ssot")
-            or (isinstance(_ev, str) and _ev.lower() == "dynamic_from_ssot")
+        _has_sentinel = (isinstance(_av, str) and _av.lower() == "dynamic_from_ssot") or (
+            isinstance(_ev, str) and _ev.lower() == "dynamic_from_ssot"
         )
         if _has_sentinel:
             continue
@@ -201,7 +198,8 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
                 changed = True
             elif apply and "enum_values" in field:
                 field["enum_values"] = [
-                    ev for ev in field.get("enum_values", [])
+                    ev
+                    for ev in field.get("enum_values", [])
                     if (isinstance(ev, dict) and str(ev.get("value") or ev.get("id") or "") in vocab_set)
                     or (isinstance(ev, str) and ev in vocab_set)
                 ]
@@ -219,7 +217,7 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
         finally:
             if os.path.exists(tmp_path):
                 try:
-                    os.remove(tmp_path)
+                    os.remove(tmp_path)  # ops-guard-exempt: 原子写临时文件清理（写完即删非数据删除）
                 except OSError:
                     pass
     return changed
@@ -281,7 +279,7 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
         finally:
             if os.path.exists(tmp_path):
                 try:
-                    os.remove(tmp_path)
+                    os.remove(tmp_path)  # ops-guard-exempt: 原子写临时文件清理（写完即删非数据删除）
                 except OSError:
                     pass
     return changed
@@ -335,9 +333,9 @@ def _sync_schema_json(field_name: str, vocab_entries: list[dict], apply: bool) -
         if apply:
             if "oneOf" in prop:
                 prop["oneOf"] = [
-                    item for item in prop.get("oneOf", [])
-                    if isinstance(item, dict)
-                    and str(item.get("const", "")) in vocab_set
+                    item
+                    for item in prop.get("oneOf", [])
+                    if isinstance(item, dict) and str(item.get("const", "")) in vocab_set
                 ]
                 prop.pop("enum", None)
             elif "enum" in prop:
@@ -352,10 +350,12 @@ def _sync_schema_json(field_name: str, vocab_entries: list[dict], apply: bool) -
             entry_map = {e["value"]: e["definition"] for e in vocab_entries}
             if "oneOf" in prop:
                 for val in sorted(missing):
-                    prop["oneOf"].append({
-                        "const": val,
-                        "description": entry_map.get(val, val),
-                    })
+                    prop["oneOf"].append(
+                        {
+                            "const": val,
+                            "description": entry_map.get(val, val),
+                        }
+                    )
                 changed = True
             elif "enum" in prop:
                 for val in sorted(missing):
@@ -375,7 +375,7 @@ def _sync_schema_json(field_name: str, vocab_entries: list[dict], apply: bool) -
         finally:
             if os.path.exists(tmp_path):
                 try:
-                    os.remove(tmp_path)
+                    os.remove(tmp_path)  # ops-guard-exempt: 原子写临时文件清理（写完即删非数据删除）
                 except OSError:
                     pass
     return changed
@@ -432,16 +432,18 @@ def _sync_schema_allof_rule_form(apply: bool) -> bool:
         else:
             rule_form_constraint = {"enum": allowed_strs}
             desc = f"{dt} 类型的 rule_form 为 {' 或 '.join(allowed_strs)}"
-        expected_blocks.append({
-            "description": desc,
-            "if": {
-                "properties": {"doc_type": {"const": str(dt)}},
-                "required": ["doc_type"],
-            },
-            "then": {
-                "properties": {"rule_form": rule_form_constraint},
-            },
-        })
+        expected_blocks.append(
+            {
+                "description": desc,
+                "if": {
+                    "properties": {"doc_type": {"const": str(dt)}},
+                    "required": ["doc_type"],
+                },
+                "then": {
+                    "properties": {"rule_form": rule_form_constraint},
+                },
+            }
+        )
 
     # 4. 加载 schema.json，拆分 allOf 为 rule_form 块和其他块
     try:
@@ -503,7 +505,7 @@ def _sync_schema_allof_rule_form(apply: bool) -> bool:
             finally:
                 if os.path.exists(tmp_path):
                     try:
-                        os.remove(tmp_path)
+                        os.remove(tmp_path)  # ops-guard-exempt: 原子写临时文件清理（写完即删非数据删除）
                     except OSError:
                         pass
     return changed

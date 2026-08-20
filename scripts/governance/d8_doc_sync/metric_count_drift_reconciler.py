@@ -88,30 +88,36 @@ _CAPABILITY_FILE = (
 
 # 触发文件清单（dashboard.py 或派生文件任一变更即触发校验）
 # capability registry 相对路径用 Path 拼接避免完整字符串硬编码
-_CAPABILITY_REL = "/".join([
-    "docs", "01_policies_and_standards", "_registry", "catalogs",
-    "capability_canonical_file_registry.yaml",
-])
-_TRIGGER_FILES: frozenset[str] = frozenset({
-    "scripts/governance/architecture_health_dashboard.py",
-    "src/zephyr/governance/audit/reconciliation_registry.py",
-    "scripts/governance/script_manifest.yaml",
-    _CAPABILITY_REL,
-})
+_CAPABILITY_REL = "/".join(
+    [
+        "docs",
+        "01_policies_and_standards",
+        "_registry",
+        "catalogs",
+        "capability_canonical_file_registry.yaml",
+    ]
+)
+_TRIGGER_FILES: frozenset[str] = frozenset(
+    {
+        "scripts/governance/architecture_health_dashboard.py",
+        "src/zephyr/governance/audit/reconciliation_registry.py",
+        "scripts/governance/script_manifest.yaml",
+        _CAPABILITY_REL,
+    }
+)
 
 # 匹配 dashboard 相关的指标数描述——收窄避免误匹配其他模块的"项指标"
 # 只匹配以下 3 种 dashboard 专属措辞：
 #   "30 项指标自动化检测基线" / "30 项架构健康度指标" / "30 项架构健康度指标自动化检测基线"
 # 捕获组1=数字，用于对比 len(METRICS)
-_COUNT_DESC_RE = re.compile(
-    r"(\d+)\s*项(?:架构健康度指标自动化检测基线|架构健康度指标|指标自动化检测基线)"
-)
+_COUNT_DESC_RE = re.compile(r"(\d+)\s*项(?:架构健康度指标自动化检测基线|架构健康度指标|指标自动化检测基线)")
 
 
 def _to_rel_path(file_path: str | Path) -> str:
     """将绝对路径转为相对项目根的相对路径（正斜杠）。"""
     try:
         import os
+
         return os.path.relpath(str(file_path), str(_project_root)).replace("\\", "/")
     except ValueError:
         return str(file_path)
@@ -143,10 +149,12 @@ def _get_metric_count() -> int | None:
     """
     try:
         import sys
+
         _gov_dir = str(_project_root / "scripts" / "governance")
         if _gov_dir not in sys.path:
             sys.path.insert(0, _gov_dir)
         from architecture_health_dashboard import METRICS  # type: ignore[import-not-found]
+
         return len(METRICS)
     except Exception as e:  # noqa: BLE001 — 降级不阻断
         logger.warning("metric_count_drift: failed to import METRICS: %s", e)
@@ -168,9 +176,7 @@ def _scan_file_for_count_desc(content: str, expected: int, file_label: str) -> l
     for match in _COUNT_DESC_RE.finditer(content):
         actual = int(match.group(1))
         if actual != expected:
-            findings.append(
-                f"{file_label}: 指标数描述={actual}, 期望={expected}（len(METRICS)）"
-            )
+            findings.append(f"{file_label}: 指标数描述={actual}, 期望={expected}（len(METRICS)）")
     return findings
 
 
@@ -195,30 +201,24 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
     # 2.1 dashboard.py（5 处描述派生点）
     dashboard_text = _read_text(_DASHBOARD_FILE)
     if dashboard_text is not None:
-        findings.extend(_scan_file_for_count_desc(
-            dashboard_text, expected_count, "architecture_health_dashboard.py"
-        ))
+        findings.extend(_scan_file_for_count_desc(dashboard_text, expected_count, "architecture_health_dashboard.py"))
 
     # 2.2 reconciliation_registry.py（2 处描述派生点）
     reconciler_text = _read_text(_RECONCILER_FILE)
     if reconciler_text is not None:
-        findings.extend(_scan_file_for_count_desc(
-            reconciler_text, expected_count, "reconciliation_registry.py"
-        ))
+        findings.extend(_scan_file_for_count_desc(reconciler_text, expected_count, "reconciliation_registry.py"))
 
     # 2.3 script_manifest.yaml（1 处描述派生点，经 __manifest__ 派生）
     manifest_text = _read_text(_MANIFEST_FILE)
     if manifest_text is not None:
-        findings.extend(_scan_file_for_count_desc(
-            manifest_text, expected_count, "script_manifest.yaml"
-        ))
+        findings.extend(_scan_file_for_count_desc(manifest_text, expected_count, "script_manifest.yaml"))
 
     # 2.4 capability_canonical_file_registry.yaml（1 处描述派生点）
     capability_text = _read_text(_CAPABILITY_FILE)
     if capability_text is not None:
-        findings.extend(_scan_file_for_count_desc(
-            capability_text, expected_count, "capability_canonical_file_registry.yaml"
-        ))
+        findings.extend(
+            _scan_file_for_count_desc(capability_text, expected_count, "capability_canonical_file_registry.yaml")
+        )
 
     # 3. 返回结果
     if not findings:
@@ -263,6 +263,7 @@ def make_metric_count_drift_reconciler(project_root: Path | None = None):
     try:
         from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec
     except ImportError:
+
         class _ReconcilerSpecFallback:  # type: ignore
             def __init__(self, gate_id, trigger, reconcile, priority=100):
                 """__init__ implementation."""
@@ -270,6 +271,7 @@ def make_metric_count_drift_reconciler(project_root: Path | None = None):
                 self.trigger = trigger
                 self.reconcile = reconcile
                 self.priority = priority
+
         ReconcilerSpec = _ReconcilerSpecFallback
 
     return ReconcilerSpec(
@@ -289,6 +291,7 @@ if __name__ == "__main__":
     result = spec.reconcile([str(_DASHBOARD_FILE)], "manual-test")
     print(f"result={result}")
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def read_text(path) -> str | None:
     """公共接口：read_text（Stage 4 公共化）。"""
@@ -299,4 +302,3 @@ def read_text(path) -> str | None:
 def get_metric_count() -> int | None:
     """公共接口：get_metric_count（Stage 4 公共化）。"""
     return _get_metric_count()
-

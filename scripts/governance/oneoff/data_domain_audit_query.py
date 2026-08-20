@@ -22,6 +22,7 @@
   - stdout：表 schema + 摘要统计
   - 文件：完整明细（data_domain_audit_report_db.md）
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -60,8 +61,7 @@ REPORT_FILE = Path(__file__).resolve().parent / "data_domain_audit_report_db.md"
 # SQL 集中化（NO-BARE-SQL 门禁，§5.160.2）
 # ============================================================
 SQL_SCHEMA_COLUMNS = (
-    "SELECT column_name, data_type FROM information_schema.columns "
-    "WHERE table_name = %s ORDER BY ordinal_position"
+    "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = %s ORDER BY ordinal_position"
 )
 SQL_DOMAINS_ALL = "SELECT * FROM domains ORDER BY domain_id"
 SQL_NODE_STATS = (
@@ -239,10 +239,7 @@ def main() -> None:
             )
 
         f.write("\n## §4 边明细（{} 条）\n\n".format(len(edge_rows)))
-        f.write(
-            "| from_path | to_path | from_dom | to_dom | dep_type | "
-            "dep_maturity | cross_domain | used_symbol |\n"
-        )
+        f.write("| from_path | to_path | from_dom | to_dom | dep_type | dep_maturity | cross_domain | used_symbol |\n")
         f.write("|---|---|---|---|---|---|---|---|\n")
         for r in edge_rows:
             f.write(

@@ -14,6 +14,7 @@
 # [TESTS] none
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: 由 pre-commit hook 事件自动触发（.pre-commit-config.yaml entry 在案），非人工 manual 运行
 """GATE-DIRECTORY-CONTRACT: Directory Contract validation gate.
 
 Consumes directory_contract.yaml（目录维度约束的唯一真源，合并原先分散在
@@ -82,12 +83,10 @@ from _shared.walk import iter_files  # noqa: E402
 
 # ── 真源路径 ──
 _CONTRACT_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards"
-    / "_registry" / "contracts" / "directory_contract.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "directory_contract.yaml"
 )
 _VOCABULARY_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards"
-    / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
 )
 
 # DCR-001 (doc_type) 豁免目录前缀（临时区 + 归档区 + 运行时/IDE 工具区 + 模板区）
@@ -100,7 +99,10 @@ _VOCABULARY_PATH = (
 # docs/01_policies_and_standards/templates/：模板区（TMP-EX-001 豁免——模板是 Class Definition，
 #   cookbook template 的 doc_type 取目标类型，不受目标类型的 allowed_directories 约束）
 _DCR_DOC_TYPE_EXEMPT_PREFIXES = (
-    "docs/_working/", "docs/_archive/", ".runtime/", ".trae/",
+    "docs/_working/",
+    "docs/_archive/",
+    ".runtime/",
+    ".trae/",
     "docs/01_policies_and_standards/templates/",
 )
 
@@ -122,15 +124,29 @@ _DCR_EXTENSION_EXEMPT_PREFIXES = (
 # 但复查发现 config/system_configs/ 已被 .gitignore:401 排除（gitignored 本地敏感配置，含 DB 凭据，
 # 从不入库），DCR 用 git ls-files 尊重 .gitignore 故该目录永不被扫描——扩展扫描集无效，已回退。
 # config/system_configs/ 在 directory_contract.yaml 的声明仅为 AI 可发现性/契约显式化（同 .env 例外）。
-_SCAN_EXTENSIONS: frozenset[str] = frozenset({
-    ".md", ".yaml", ".yml", ".py", ".sh", ".ps1", ".mmd",
-    ".csv", ".json", ".jsonl", ".txt", ".bak", ".baseline",
-})
+_SCAN_EXTENSIONS: frozenset[str] = frozenset(
+    {
+        ".md",
+        ".yaml",
+        ".yml",
+        ".py",
+        ".sh",
+        ".ps1",
+        ".mmd",
+        ".csv",
+        ".json",
+        ".jsonl",
+        ".txt",
+        ".bak",
+        ".baseline",
+    }
+)
 
 
 # ════════════════════════════════════════════════════════════════════════════
 # 契约加载
 # ════════════════════════════════════════════════════════════════════════════
+
 
 def load_contract() -> dict:
     """加载 directory_contract.yaml（目录维度约束唯一真源）。
@@ -177,6 +193,7 @@ def get_staged_files() -> list[str]:
 # ════════════════════════════════════════════════════════════════════════════
 # 契约查询（longest-prefix match）
 # ════════════════════════════════════════════════════════════════════════════
+
 
 def _normalize_dir(rel_dir: str) -> str:
     """目录路径归一化：反斜杠→正斜杠，确保以 / 结尾。"""
@@ -246,6 +263,7 @@ def get_extension_exceptions(rule: dict, rel_dir: str) -> set[str]:
 # DCR 校验逻辑
 # ════════════════════════════════════════════════════════════════════════════
 
+
 def check_extension(rel_path: str, contract: dict) -> list[dict]:
     """DCR-005 + DCR-006: 文件扩展名必须在目录的 allowed 清单内，不在 forbidden 清单内。
 
@@ -272,20 +290,24 @@ def check_extension(rel_path: str, contract: dict) -> list[dict]:
     forbidden = set(rule.get("forbidden", []))
     # DCR-005: 扩展名必须在 allowed 清单内（仅当 allowed 非空时校验）
     if allowed and ext not in allowed:
-        findings.append({
-            "rule": "DCR-005",
-            "severity": "error",
-            "file": rel_path,
-            "detail": f"扩展名 {ext} 不在 {rule['path']} 的 allowed 清单 {sorted(allowed)} 内",
-        })
+        findings.append(
+            {
+                "rule": "DCR-005",
+                "severity": "error",
+                "file": rel_path,
+                "detail": f"扩展名 {ext} 不在 {rule['path']} 的 allowed 清单 {sorted(allowed)} 内",
+            }
+        )
     # DCR-006: 扩展名不得在 forbidden 清单内
     if ext in forbidden:
-        findings.append({
-            "rule": "DCR-006",
-            "severity": "error",
-            "file": rel_path,
-            "detail": f"扩展名 {ext} 在 {rule['path']} 的 forbidden 清单内",
-        })
+        findings.append(
+            {
+                "rule": "DCR-006",
+                "severity": "error",
+                "file": rel_path,
+                "detail": f"扩展名 {ext} 在 {rule['path']} 的 forbidden 清单内",
+            }
+        )
     return findings
 
 
@@ -316,16 +338,18 @@ def check_purpose_extension(rel_path: str, contract: dict) -> list[dict]:
     if not purpose_allowed:
         return []  # 目录未声明 purpose_allowed_extensions，跳过（向后兼容）
     if ext not in purpose_allowed:
-        return [{
-            "rule": "DCR-008",
-            "severity": "error",
-            "file": rel_path,
-            "detail": (
-                f"文件扩展名 {ext} 不匹配目录用途 "
-                f"{rule.get('purpose', 'unknown')}（purpose_allowed_extensions="
-                f"{purpose_allowed}），目录 {rule['path']}"
-            ),
-        }]
+        return [
+            {
+                "rule": "DCR-008",
+                "severity": "error",
+                "file": rel_path,
+                "detail": (
+                    f"文件扩展名 {ext} 不匹配目录用途 "
+                    f"{rule.get('purpose', 'unknown')}（purpose_allowed_extensions="
+                    f"{purpose_allowed}），目录 {rule['path']}"
+                ),
+            }
+        ]
     return []
 
 
@@ -340,12 +364,14 @@ def check_root_whitelist(rel_path: str, contract: dict) -> list[dict]:
     filename = Path(rel_path).name
     whitelist = set(contract["root_directory_whitelist"]["files"])
     if filename not in whitelist:
-        return [{
-            "rule": "DCR-007",
-            "severity": "error",
-            "file": rel_path,
-            "detail": f"根目录文件 {filename} 不在白名单内（白名单共 {len(whitelist)} 个文件）",
-        }]
+        return [
+            {
+                "rule": "DCR-007",
+                "severity": "error",
+                "file": rel_path,
+                "detail": f"根目录文件 {filename} 不在白名单内（白名单共 {len(whitelist)} 个文件）",
+            }
+        ]
     return []
 
 
@@ -383,19 +409,23 @@ def check_ttl_zone(rel_path: str, contract: dict) -> list[dict]:
     findings: list[dict] = []
     default_ttl = zone.get("default_ttl")
     if zone_name == "permanent" and ttl != "permanent":
-        findings.append({
-            "rule": "DCR-003",
-            "severity": "error",
-            "file": rel_path,
-            "detail": f"永久区文件 ttl={ttl}，应为 permanent（目录 {rel_dir} 属 permanent zone）",
-        })
+        findings.append(
+            {
+                "rule": "DCR-003",
+                "severity": "error",
+                "file": rel_path,
+                "detail": f"永久区文件 ttl={ttl}，应为 permanent（目录 {rel_dir} 属 permanent zone）",
+            }
+        )
     elif zone_name == "temporary" and ttl != "task_bound":
-        findings.append({
-            "rule": "DCR-004",
-            "severity": "warning",
-            "file": rel_path,
-            "detail": f"临时区文件 ttl={ttl}，建议 task_bound（目录 {rel_dir} 属 temporary zone）",
-        })
+        findings.append(
+            {
+                "rule": "DCR-004",
+                "severity": "warning",
+                "file": rel_path,
+                "detail": f"临时区文件 ttl={ttl}，建议 task_bound（目录 {rel_dir} 属 temporary zone）",
+            }
+        )
     return findings
 
 
@@ -455,12 +485,14 @@ def check_doc_type_directory(rel_path: str, contract: dict, vocab: dict | None =
 
     # DCR-001: file.doc_type 必须在 directory.allowed_doc_types 内
     if doc_type not in allowed_doc_types:
-        return [{
-            "rule": "DCR-001",
-            "severity": "error",
-            "file": rel_path,
-            "detail": f"doc_type={doc_type} 不在目录 {rule['path']} 的 allowed_doc_types {allowed_doc_types} 内",
-        }]
+        return [
+            {
+                "rule": "DCR-001",
+                "severity": "error",
+                "file": rel_path,
+                "detail": f"doc_type={doc_type} 不在目录 {rule['path']} 的 allowed_doc_types {allowed_doc_types} 内",
+            }
+        ]
 
     return []
 
@@ -477,21 +509,23 @@ def check_deprecated_directory(rel_path: str, contract: dict) -> list[dict]:
     if not (REPO_ROOT / rel_path).exists():
         return []
     findings: list[dict] = []
-    for entry in (contract.get("deprecated_directories") or []):
+    for entry in contract.get("deprecated_directories") or []:
         dep_path = entry.get("path", "").replace("\\", "/").rstrip("/")
         if not dep_path:
             continue
         rel_norm = rel_path.replace("\\", "/")
         if rel_norm == dep_path or rel_norm.startswith(dep_path + "/"):
-            findings.append({
-                "rule": "DCR-DEPRECATED",
-                "severity": entry.get("severity", "error"),
-                "file": rel_path,
-                "detail": (
-                    f"文件位于废弃目录 {dep_path}（{entry.get('reason', '已迁移')}），"
-                    f"请迁移到 {entry.get('migrated_to', '合规目录')}"
-                ),
-            })
+            findings.append(
+                {
+                    "rule": "DCR-DEPRECATED",
+                    "severity": entry.get("severity", "error"),
+                    "file": rel_path,
+                    "detail": (
+                        f"文件位于废弃目录 {dep_path}（{entry.get('reason', '已迁移')}），"
+                        f"请迁移到 {entry.get('migrated_to', '合规目录')}"
+                    ),
+                }
+            )
     return findings
 
 
@@ -513,6 +547,7 @@ def scan_files(files: list[str], contract: dict, vocab: dict | None = None) -> l
 # ════════════════════════════════════════════════════════════════════════════
 # 全量扫描
 # ════════════════════════════════════════════════════════════════════════════
+
 
 def scan_all(contract: dict) -> list[str]:
     """扫描契约覆盖的所有目录，返回相对路径文件列表。
@@ -539,15 +574,15 @@ def scan_all(contract: dict) -> list[str]:
     # 尝试用 git ls-files 获取待扫描文件（治本：尊重 .gitignore）
     try:
         result = subprocess.run(
-            ["git", "ls-files", "--cached", "--others", "--exclude-standard",
-             "--full-name"],
-            capture_output=True, text=True, cwd=str(REPO_ROOT),
-            encoding="utf-8", errors="replace",
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "--full-name"],
+            capture_output=True,
+            text=True,
+            cwd=str(REPO_ROOT),
+            encoding="utf-8",
+            errors="replace",
         )
         if result.returncode == 0:
-            git_files = set(
-                line.strip() for line in result.stdout.splitlines() if line.strip()
-            )
+            git_files = set(line.strip() for line in result.stdout.splitlines() if line.strip())
             return _filter_scan_files(git_files, scan_prefixes)
     except (FileNotFoundError, subprocess.SubprocessError):
         pass  # 降级到 os.walk
@@ -610,20 +645,17 @@ def _scan_all_walk(contract: dict, scan_prefixes: set[str]) -> list[str]:
 # 主入口
 # ════════════════════════════════════════════════════════════════════════════
 
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008）"
-    )
+    parser = argparse.ArgumentParser(description="GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008）")
     mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--ci", action="store_true",
-                      help="硬阻断模式（违规 exit 1）——与默认行为一致，为 pre-commit 钩子兼容保留")
-    mode.add_argument("--warn-only", action="store_true",
-                      help="只警告不阻断（exit 0）")
-    parser.add_argument("--staged", action="store_true",
-                        help="只校验 git staged 文件（pre-commit use）")
-    parser.add_argument("--all-files", action="store_true",
-                        help="强制全量扫描（忽略传入的文件参数）")
+    mode.add_argument(
+        "--ci", action="store_true", help="硬阻断模式（违规 exit 1）——与默认行为一致，为 pre-commit 钩子兼容保留"
+    )
+    mode.add_argument("--warn-only", action="store_true", help="只警告不阻断（exit 0）")
+    parser.add_argument("--staged", action="store_true", help="只校验 git staged 文件（pre-commit use）")
+    parser.add_argument("--all-files", action="store_true", help="强制全量扫描（忽略传入的文件参数）")
     parser.add_argument("files", nargs="*", help="增量校验文件列表（相对路径）")
     args = parser.parse_args()
 
@@ -631,16 +663,14 @@ def main() -> int:
     try:
         contract = load_contract()
     except Exception as e:
-        print(f"[GATE-DIRECTORY-CONTRACT] ERROR: 无法加载 directory_contract.yaml: {e}",
-              file=sys.stderr)
+        print(f"[GATE-DIRECTORY-CONTRACT] ERROR: 无法加载 directory_contract.yaml: {e}", file=sys.stderr)
         return EXIT_ERROR
 
     # 加载 doc_type 词表（DCR-001/002 真源）
     try:
         vocab = load_doc_type_vocabulary()
     except Exception as e:
-        print(f"[GATE-DIRECTORY-CONTRACT] ERROR: 无法加载 doc_type_vocabulary.yaml: {e}",
-              file=sys.stderr)
+        print(f"[GATE-DIRECTORY-CONTRACT] ERROR: 无法加载 doc_type_vocabulary.yaml: {e}", file=sys.stderr)
         return EXIT_ERROR
 
     # 确定扫描文件列表
@@ -670,8 +700,10 @@ def main() -> int:
     errors = [f for f in findings if f["severity"] == "error"]
     warnings = [f for f in findings if f["severity"] == "warning"]
 
-    print(f"[GATE-DIRECTORY-CONTRACT] {len(findings)} 个发现"
-          f"（{len(errors)} errors, {len(warnings)} warnings）:", file=sys.stderr)
+    print(
+        f"[GATE-DIRECTORY-CONTRACT] {len(findings)} 个发现（{len(errors)} errors, {len(warnings)} warnings）:",
+        file=sys.stderr,
+    )
     for f in findings:
         print(f"  [{f['severity']}] {f['rule']} {f['file']}", file=sys.stderr)
         print(f"    {f['detail']}", file=sys.stderr)

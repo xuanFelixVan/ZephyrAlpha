@@ -9,6 +9,7 @@ C. 删除7682个无blueprint_id的design_maturity='design'幽灵节点（裁定#
 
 P2迁移后：全景图数据库为 depgraph (PostgreSQL)，连接由 get_depgraph_pg_connection 统一管理。
 """
+
 import sys
 from pathlib import Path
 
@@ -56,12 +57,16 @@ def clean_depgraph():
 
         # 先删除这些节点的边
         cur.execute(
-            "DELETE FROM edges WHERE from_node_id IN (SELECT node_id FROM nodes WHERE node_type NOT IN ({}))".format(placeholders),
+            "DELETE FROM edges WHERE from_node_id IN (SELECT node_id FROM nodes WHERE node_type NOT IN ({}))".format(
+                placeholders
+            ),
             tuple(NODES_WHITELIST),
         )
         edges_del_1 = cur.rowcount
         cur.execute(
-            "DELETE FROM edges WHERE to_node_id IN (SELECT node_id FROM nodes WHERE node_type NOT IN ({}))".format(placeholders),
+            "DELETE FROM edges WHERE to_node_id IN (SELECT node_id FROM nodes WHERE node_type NOT IN ({}))".format(
+                placeholders
+            ),
             tuple(NODES_WHITELIST),
         )
         edges_del_2 = cur.rowcount
@@ -97,10 +102,7 @@ def clean_depgraph():
         edges_del_4 = cur.rowcount
         print(f"  Deleted {edges_del_3 + edges_del_4} edges referencing ghost nodes")
 
-        cur.execute(
-            "DELETE FROM nodes WHERE design_maturity='design' "
-            "AND (blueprint_id IS NULL OR blueprint_id='')"
-        )
+        cur.execute("DELETE FROM nodes WHERE design_maturity='design' AND (blueprint_id IS NULL OR blueprint_id='')")
         print(f"  Deleted {cur.rowcount} ghost design nodes")
 
         # ========== Step 3: build_status脏值归一化（裁定#178-180） ==========
@@ -113,11 +115,17 @@ def clean_depgraph():
         # draft → 按design_maturity推导
         cur.execute("UPDATE nodes SET build_status='planned' WHERE build_status='draft' AND design_maturity='design'")
         print(f"  draft+design→planned: {cur.rowcount}")
-        cur.execute("UPDATE nodes SET build_status='generated' WHERE build_status='draft' AND design_maturity='production'")
+        cur.execute(
+            "UPDATE nodes SET build_status='generated' WHERE build_status='draft' AND design_maturity='production'"
+        )
         print(f"  draft+production→generated: {cur.rowcount}")
-        cur.execute("UPDATE nodes SET build_status='generated' WHERE build_status='draft' AND design_maturity='prototype'")
+        cur.execute(
+            "UPDATE nodes SET build_status='generated' WHERE build_status='draft' AND design_maturity='prototype'"
+        )
         print(f"  draft+prototype→generated: {cur.rowcount}")
-        cur.execute("UPDATE nodes SET build_status='generated' WHERE build_status='draft' AND design_maturity='scaffold_placeholder'")
+        cur.execute(
+            "UPDATE nodes SET build_status='generated' WHERE build_status='draft' AND design_maturity='scaffold_placeholder'"
+        )
         print(f"  draft+scaffold_placeholder→generated: {cur.rowcount}")
         # 剩余draft（无design_maturity匹配）→ generated
         cur.execute("UPDATE nodes SET build_status='generated' WHERE build_status='draft'")
@@ -143,8 +151,12 @@ def clean_depgraph():
         cur.execute("SELECT COUNT(*) AS cnt FROM nodes WHERE build_status='path_invalid'")
         path_invalid = cur.fetchone()["cnt"]
         if path_invalid > 0:
-            cur.execute("DELETE FROM edges WHERE from_node_id IN (SELECT node_id FROM nodes WHERE build_status='path_invalid')")
-            cur.execute("DELETE FROM edges WHERE to_node_id IN (SELECT node_id FROM nodes WHERE build_status='path_invalid')")
+            cur.execute(
+                "DELETE FROM edges WHERE from_node_id IN (SELECT node_id FROM nodes WHERE build_status='path_invalid')"
+            )
+            cur.execute(
+                "DELETE FROM edges WHERE to_node_id IN (SELECT node_id FROM nodes WHERE build_status='path_invalid')"
+            )
             cur.execute("DELETE FROM nodes WHERE build_status='path_invalid'")
             print(f"  path_invalid→deleted: {cur.rowcount} nodes")
 

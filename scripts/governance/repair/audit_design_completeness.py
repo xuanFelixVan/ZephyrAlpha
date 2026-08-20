@@ -202,17 +202,13 @@ def match_in_db(conn, declaration):
     node_type = declaration["node_type"]
 
     # 1. 精确匹配：path包含module_id
-    cur.execute(
-        "SELECT node_id FROM nodes WHERE design_maturity='design' AND path LIKE %s LIMIT 1", (f"%{mod_id}%",)
-    )
+    cur.execute("SELECT node_id FROM nodes WHERE design_maturity='design' AND path LIKE %s LIMIT 1", (f"%{mod_id}%",))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
     row = cur.fetchone()
     if row:
         return "path_exact"
 
     # 2. 精确匹配：node_name = module_id
-    cur.execute(
-        "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_name = %s LIMIT 1", (mod_id,)
-    )
+    cur.execute("SELECT node_id FROM nodes WHERE design_maturity='design' AND node_name = %s LIMIT 1", (mod_id,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
     row = cur.fetchone()
     if row:
         return "name_exact"
