@@ -226,14 +226,10 @@ class MarketDataAutoloader:
                     default_id = cfg.vendor_id
 
             except VendorAlreadyRegisteredError:
-                _logger.warning(
-                    "vendor 自动加载跳过(已注册): %s", cfg.vendor_id
-                )
+                _logger.warning("vendor 自动加载跳过(已注册): %s", cfg.vendor_id)
                 errors.append(cfg.vendor_id)
             except Exception:
-                _logger.exception(
-                    "vendor 自动加载失败: %s", cfg.vendor_id
-                )
+                _logger.exception("vendor 自动加载失败: %s", cfg.vendor_id)
                 errors.append(cfg.vendor_id)
 
         result = AutoloadResult(

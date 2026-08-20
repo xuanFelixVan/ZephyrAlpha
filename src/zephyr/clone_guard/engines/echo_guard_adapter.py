@@ -119,7 +119,8 @@ class EchoGuardAdapter:
         except OSError as e:
             logger.warning(
                 "EchoGuardAdapter: 锁目录不可写(%s: %s)，fail-open 无锁执行 echo-guard CLI",
-                type(e).__name__, e,
+                type(e).__name__,
+                e,
             )
             yield
             return

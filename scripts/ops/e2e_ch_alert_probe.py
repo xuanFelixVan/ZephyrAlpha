@@ -15,6 +15,7 @@
   5. 等待 ~10s 看到 INFO 恢复
   6. 脚本 90s 后自动退出
 """
+
 from __future__ import annotations
 
 import logging
@@ -31,10 +32,10 @@ class TrackingAlerter(Alerter):
     """Alerter 子类，打印每次 notify 调用到 stdout（便于人工观察）。"""
 
     def notify(self, task_id, error, level="ERROR", source=None, extra=None):
-        print(f"\n{'='*60}", flush=True)
+        print(f"\n{'=' * 60}", flush=True)
         print(f"[ALERT FIRED] level={level} task={task_id} source={source}", flush=True)
         print(f"  error: {error}", flush=True)
-        print(f"{'='*60}\n", flush=True)
+        print(f"{'=' * 60}\n", flush=True)
         return super().notify(task_id, error, level, source, extra)
 
 
@@ -42,6 +43,7 @@ def real_ch_ping() -> bool:
     """真实 CH ping（SELECT 1 via ch_writer）。"""
     try:
         from zephyr.data import ch_writer
+
         result = ch_writer.health_check()
         return result.get("tcp") == "ok"
     except Exception as e:
@@ -52,8 +54,8 @@ def real_ch_ping() -> bool:
 def main() -> None:
     alerter = TrackingAlerter()
     monitor = HeartbeatMonitor(
-        ch_ping_interval=3.0,   # 3 秒一次（加速测试）
-        ch_fail_threshold=2,    # 连续 2 次失败即告警（~6s）
+        ch_ping_interval=3.0,  # 3 秒一次（加速测试）
+        ch_fail_threshold=2,  # 连续 2 次失败即告警（~6s）
         ch_ping_fn=real_ch_ping,
         alerter=alerter,
     )

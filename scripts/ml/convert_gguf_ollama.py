@@ -35,6 +35,7 @@ GGUF 回灌 Ollama，保持推理路径统一（复用 production local_model �
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 6
 SSoT: #ARCH-NLP-PIPELINE-001
 """
+
 from __future__ import annotations
 
 import argparse
@@ -121,7 +122,7 @@ def render_modelfile(gguf_path: Path, model_name: str) -> str:
     return (
         f"FROM {gguf_path.as_posix()}\n"
         f"# {model_name} — SFT adapter GGUF 回灌（13 号 Phase 6 单一推理源）\n"
-        'PARAMETER temperature 0.0\n'
+        "PARAMETER temperature 0.0\n"
     )
 
 

@@ -56,23 +56,11 @@ def make_action(
         symbol=symbol,
         action_type=action_type,
         ex_date=ex_date,
-        dividend_per_share=(
-            Decimal(dividend_per_share) if dividend_per_share is not None else None
-        ),
-        stock_dividend_ratio=(
-            Decimal(stock_dividend_ratio)
-            if stock_dividend_ratio is not None
-            else None
-        ),
-        rights_ratio=(
-            Decimal(rights_ratio) if rights_ratio is not None else None
-        ),
-        rights_price=(
-            Decimal(rights_price) if rights_price is not None else None
-        ),
-        split_ratio=(
-            Decimal(split_ratio) if split_ratio is not None else None
-        ),
+        dividend_per_share=(Decimal(dividend_per_share) if dividend_per_share is not None else None),
+        stock_dividend_ratio=(Decimal(stock_dividend_ratio) if stock_dividend_ratio is not None else None),
+        rights_ratio=(Decimal(rights_ratio) if rights_ratio is not None else None),
+        rights_price=(Decimal(rights_price) if rights_price is not None else None),
+        split_ratio=(Decimal(split_ratio) if split_ratio is not None else None),
     )
 
 
@@ -438,6 +426,7 @@ class TestCallback:
 
     def test_callback_exception_does_not_block(self):
         """回调抛异常不阻断处理主流程。"""
+
         def bad_callback(result: CorporateActionResult) -> None:
             raise RuntimeError("通知通道故障")
 
@@ -448,9 +437,7 @@ class TestCallback:
             )
         ]
         positions = {"600000.SH": (Decimal("100"), Decimal("10"))}
-        result = CorporateActionProcessor(on_adjusted=bad_callback).apply(
-            actions, positions
-        )
+        result = CorporateActionProcessor(on_adjusted=bad_callback).apply(actions, positions)
         assert len(result.adjustments) == 1
 
 
@@ -523,9 +510,7 @@ class TestDecimalPrecision:
             action_type=CorporateActionType.CASH_DIVIDEND,
             dividend_per_share="0.123456789",
         )
-        adj = CorporateActionProcessor().process(
-            action, Decimal("100"), Decimal("10.000000000")
-        )
+        adj = CorporateActionProcessor().process(action, Decimal("100"), Decimal("10.000000000"))
         assert adj.adjusted_avg_cost == Decimal("9.876543211")
         assert adj.cash_delta == Decimal("12.3456789")
 
@@ -534,9 +519,7 @@ class TestDecimalPrecision:
             action_type=CorporateActionType.STOCK_SPLIT,
             split_ratio="3",
         )
-        adj = CorporateActionProcessor().process(
-            action, Decimal("100"), Decimal("30")
-        )
+        adj = CorporateActionProcessor().process(action, Decimal("100"), Decimal("30"))
         assert isinstance(adj.adjusted_quantity, Decimal)
         assert isinstance(adj.adjusted_avg_cost, Decimal)
         assert isinstance(adj.cash_delta, Decimal)

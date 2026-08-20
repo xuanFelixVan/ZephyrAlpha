@@ -42,8 +42,9 @@ __all__ = [
 ]
 
 
-def dtw_distance(a: np.ndarray | list[float] | tuple[float, ...],
-                 b: np.ndarray | list[float] | tuple[float, ...]) -> float:
+def dtw_distance(
+    a: np.ndarray | list[float] | tuple[float, ...], b: np.ndarray | list[float] | tuple[float, ...]
+) -> float:
     """DTW（Dynamic Time Warping）距离——PnL 形态比对（Tier3）。
 
     经典 O(n×m) DP：局部代价=绝对差，路径=min(上/左/左上) 累积。
@@ -75,10 +76,10 @@ class StrategyFingerprint:
     """退役策略三维指纹（90 号 §20 B-010）。"""
 
     strategy_id: str
-    ast_hash: str                          # Tier1 AST 哈希（精确复制）
-    embedding: tuple[float, ...] | None    # Tier2 CodeSAGE 语义嵌入（可选）
-    pnl_series: tuple[float, ...] | None   # Tier3 PnL 序列（DTW 形态比对；None=缺失降级）
-    retired_at: str                        # 退役日期（ISO）
+    ast_hash: str  # Tier1 AST 哈希（精确复制）
+    embedding: tuple[float, ...] | None  # Tier2 CodeSAGE 语义嵌入（可选）
+    pnl_series: tuple[float, ...] | None  # Tier3 PnL 序列（DTW 形态比对；None=缺失降级）
+    retired_at: str  # 退役日期（ISO）
 
 
 class StrategyFingerprintStore:

@@ -65,10 +65,14 @@ def _init_git_repo(repo_dir: Path) -> None:
     env["GIT_COMMITTER_EMAIL"] = "test@test.com"
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
-    subprocess.run(["git", "config", "user.email", "test@test.com"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
+    subprocess.run(
+        ["git", "config", "user.email", "test@test.com"], cwd=str(repo_dir), capture_output=True, env=env, check=True
+    )
     (repo_dir / ".gitignore").write_text("*.tmp\n", encoding="utf-8")
     subprocess.run(["git", "add", ".gitignore"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
-    subprocess.run(["git", "commit", "-m", "init", "--no-verify"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
+    subprocess.run(
+        ["git", "commit", "-m", "init", "--no-verify"], cwd=str(repo_dir), capture_output=True, env=env, check=True
+    )
 
 
 def _commit_file(repo_dir: Path, rel_path: str, content: str, msg: str = "init") -> None:
@@ -78,7 +82,9 @@ def _commit_file(repo_dir: Path, rel_path: str, content: str, msg: str = "init")
     f.write_text(content, encoding="utf-8")
     env = {**os.environ, "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com"}
     subprocess.run(["git", "add", rel_path], cwd=str(repo_dir), capture_output=True, env=env, check=True)
-    subprocess.run(["git", "commit", "-m", msg, "--no-verify"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
+    subprocess.run(
+        ["git", "commit", "-m", msg, "--no-verify"], cwd=str(repo_dir), capture_output=True, env=env, check=True
+    )
 
 
 def _commit_files_in_hash(repo_dir: Path, commit_hash: str) -> list[str]:
@@ -190,8 +196,7 @@ class TestUnstagedChangesNotPickedUp:
         assert "file_a.py" not in files_b, "B 不应捡拾 A 的未暂存修改（幽灵提交！）"
 
         # A 的未暂存修改应保留（stash pop 恢复）
-        assert (tmp_path / "file_a.py").read_text(encoding="utf-8") == "a = 999\n", \
-            "A 的未暂存修改应保留"
+        assert (tmp_path / "file_a.py").read_text(encoding="utf-8") == "a = 999\n", "A 的未暂存修改应保留"
 
 
 # ---------------------------------------------------------------------------
@@ -349,11 +354,13 @@ class TestTRAE079CriticalSectionSerialization:
                 events.append(("gate_exit", time.monotonic()))
             return (True, "")
 
-        gw.gate_registry.register(GateSpec(
-            gate_id="PROBE-TRAE079",
-            check=_probe_check,
-            priority=1,
-        ))
+        gw.gate_registry.register(
+            GateSpec(
+                gate_id="PROBE-TRAE079",
+                check=_probe_check,
+                priority=1,
+            )
+        )
 
         def commit_session(session_id: str, file_rel: str) -> tuple[str, CommitStatus, str]:
             f = str((tmp_path / file_rel).resolve())
@@ -388,7 +395,7 @@ class TestTRAE079CriticalSectionSerialization:
         assert len(names) == 8, f"事件数应为 8（2 组临界区）: {names}"
         expected = ["lock_acquire", "gate_enter", "gate_exit", "lock_release"]
         for i in range(0, 8, 4):
-            assert names[i:i + 4] == expected, (
+            assert names[i : i + 4] == expected, (
                 f"临界区事件序列不符 TRAE-079 铁律1（gate 必须在锁内且串行）"
-                f"位置 {i}: 期望 {expected}, 实际 {names[i:i + 4]}; 全序列 {names}"
+                f"位置 {i}: 期望 {expected}, 实际 {names[i : i + 4]}; 全序列 {names}"
             )

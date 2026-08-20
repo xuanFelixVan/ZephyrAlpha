@@ -29,66 +29,46 @@ class TestTopNHhi:
 class TestClassifyRotationState:
     def test_distribution_risk_highest_priority(self):
         """派发风险优先级最高：放量滞涨 + hhi>0.25（即使同时满足高潮条件）"""
-        state = classify_rotation_state(
-            up_ratio=0.75, hhi_top5=0.31, lead_streak=5, disp_signal=1
-        )
+        state = classify_rotation_state(up_ratio=0.75, hhi_top5=0.31, lead_streak=5, disp_signal=1)
         assert state == RotationState.DISTRIBUTION_RISK
 
     def test_distribution_risk_requires_concentration(self):
         """放量滞涨但集中度不足（≤0.25）→ 不判派发"""
-        state = classify_rotation_state(
-            up_ratio=0.50, hhi_top5=0.22, lead_streak=1, disp_signal=1
-        )
+        state = classify_rotation_state(up_ratio=0.50, hhi_top5=0.22, lead_streak=1, disp_signal=1)
         assert state != RotationState.DISTRIBUTION_RISK
 
     def test_consensus_climax(self):
         """高集中 >0.30 + 普涨 >0.70 → 共识高潮"""
-        state = classify_rotation_state(
-            up_ratio=0.75, hhi_top5=0.31, lead_streak=1, disp_signal=0
-        )
+        state = classify_rotation_state(up_ratio=0.75, hhi_top5=0.31, lead_streak=1, disp_signal=0)
         assert state == RotationState.CONSENSUS_CLIMAX
 
     def test_consensus_climax_relaxed_in_fast_rotation(self):
         """快轮动期阈值放宽 0.30→0.35：hhi=0.32 常规期判高潮，快轮动期不判"""
         base = dict(up_ratio=0.75, hhi_top5=0.32, lead_streak=1, disp_signal=0)
         assert classify_rotation_state(**base) == RotationState.CONSENSUS_CLIMAX
-        assert (
-            classify_rotation_state(**base, fast_rotation=True)
-            != RotationState.CONSENSUS_CLIMAX
-        )
+        assert classify_rotation_state(**base, fast_rotation=True) != RotationState.CONSENSUS_CLIMAX
         # 快轮动期 hhi>0.35 仍判高潮
         hot = dict(up_ratio=0.75, hhi_top5=0.36, lead_streak=1, disp_signal=0)
-        assert (
-            classify_rotation_state(**hot, fast_rotation=True)
-            == RotationState.CONSENSUS_CLIMAX
-        )
+        assert classify_rotation_state(**hot, fast_rotation=True) == RotationState.CONSENSUS_CLIMAX
 
     def test_healthy_mainline(self):
         """主线连续领涨 3+ 日 + 未过度集中 <0.20 → 健康主线"""
-        state = classify_rotation_state(
-            up_ratio=0.55, hhi_top5=0.15, lead_streak=3, disp_signal=0
-        )
+        state = classify_rotation_state(up_ratio=0.55, hhi_top5=0.15, lead_streak=3, disp_signal=0)
         assert state == RotationState.HEALTHY_MAINLINE
 
     def test_healthy_mainline_streak_boundary(self):
         """streak=2 不满足 3+ 日"""
-        state = classify_rotation_state(
-            up_ratio=0.55, hhi_top5=0.15, lead_streak=2, disp_signal=0
-        )
+        state = classify_rotation_state(up_ratio=0.55, hhi_top5=0.15, lead_streak=2, disp_signal=0)
         assert state != RotationState.HEALTHY_MAINLINE
 
     def test_disagreement_pullback(self):
         """涨跌严重分化 up<0.40 + 头部集中 >0.20 → 分歧回调"""
-        state = classify_rotation_state(
-            up_ratio=0.30, hhi_top5=0.24, lead_streak=1, disp_signal=0
-        )
+        state = classify_rotation_state(up_ratio=0.30, hhi_top5=0.24, lead_streak=1, disp_signal=0)
         assert state == RotationState.DISAGREEMENT_PULLBACK
 
     def test_neutral_mixed_default(self):
         """不命中任何规则 → 中性混沌"""
-        state = classify_rotation_state(
-            up_ratio=0.55, hhi_top5=0.22, lead_streak=1, disp_signal=0
-        )
+        state = classify_rotation_state(up_ratio=0.55, hhi_top5=0.22, lead_streak=1, disp_signal=0)
         assert state == RotationState.NEUTRAL_MIXED
 
     @pytest.mark.parametrize(
@@ -100,9 +80,7 @@ class TestClassifyRotationState:
     )
     def test_threshold_boundaries_fall_through(self, up_ratio, hhi, streak, disp):
         """边界等值不触发严格大于/小于规则"""
-        state = classify_rotation_state(
-            up_ratio=up_ratio, hhi_top5=hhi, lead_streak=streak, disp_signal=disp
-        )
+        state = classify_rotation_state(up_ratio=up_ratio, hhi_top5=hhi, lead_streak=streak, disp_signal=disp)
         assert state in set(RotationState)
 
 

@@ -23,13 +23,18 @@ def _detector(tmp_path) -> TradingComplianceDetector:
 def _order(i: int, qty: float, cancel_after_s: float | None, price: float = 10.0) -> ComplianceOrderRecord:
     placed = _T0 + timedelta(seconds=i * 60)
     return ComplianceOrderRecord(
-        order_id=f"o{i}", symbol="600519", side="BUY", price=price, qty=qty,
+        order_id=f"o{i}",
+        symbol="600519",
+        side="BUY",
+        price=price,
+        qty=qty,
         placed_at=placed,
         cancelled_at=(placed + timedelta(seconds=cancel_after_s)) if cancel_after_s is not None else None,
     )
 
 
 # ── §7.2 异常交易 ──
+
 
 def test_ramp_dump_hit(tmp_path):
     v = _detector(tmp_path).check_ramp_dump(0.035, 0.35)
@@ -53,6 +58,7 @@ def test_large_trade_pass(tmp_path):
 
 
 # ── §7.3 操纵 4 类 ──
+
 
 def test_spoofing_hit(tmp_path):
     """3 次大额快撤（>20% 分钟均量，10s 内撤）→ 幌骗。"""
@@ -108,8 +114,11 @@ def test_wash_trade_different_accounts_pass(tmp_path):
 
 def test_close_manipulation_hit(tmp_path):
     v = _detector(tmp_path).check_close_manipulation(
-        order_price=10.31, order_qty=4_000, pre_close_vwap=10.0,
-        window_total_volume=10_000, at_time=time(14, 58),
+        order_price=10.31,
+        order_qty=4_000,
+        pre_close_vwap=10.0,
+        window_total_volume=10_000,
+        at_time=time(14, 58),
     )
     assert v is not None and v.mtype is ManipulationType.CLOSE_MANIPULATION
 

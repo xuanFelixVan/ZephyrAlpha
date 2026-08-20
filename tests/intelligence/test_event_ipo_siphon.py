@@ -11,6 +11,7 @@
   1. compute_ipo_siphon_coefficient —— 四级分级边界（1%/2%/3%）/长鑫案例锚点/退化输入
   2. ipo_siphon_position_adjustment —— 窗口分支（前3-5天/前1-2天/上市后0-5天/期外）/级别门控
 """
+
 from __future__ import annotations
 
 import pytest

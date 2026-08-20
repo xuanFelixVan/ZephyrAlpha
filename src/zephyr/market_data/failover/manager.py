@@ -146,9 +146,7 @@ class FailoverManager:
         self._config = config
         self._active_vendor_id: str | None = None
         self._rr_index: int = 0  # 轮询索引
-        self._history: deque[FailoverEvent] = deque(
-            maxlen=config.history_max
-        )
+        self._history: deque[FailoverEvent] = deque(maxlen=config.history_max)
         self._lock = Lock()
         self._callbacks: list[FailoverCallback] = []
 
@@ -206,13 +204,8 @@ class FailoverManager:
         active = self._registry.get(active_id)
         if active is None or not self._is_healthy(active):
             # 2. active 不可用 → 切换
-            reason_detail = (
-                "active vendor 已注销" if active is None
-                else "health_check 失败"
-            )
-            return self._do_failover(
-                FailoverReason.HEALTH_CHECK_FAILED, reason_detail
-            )
+            reason_detail = "active vendor 已注销" if active is None else "health_check 失败"
+            return self._do_failover(FailoverReason.HEALTH_CHECK_FAILED, reason_detail)
 
         # 3. auto_failback 检查
         if self._config.auto_failback:
@@ -255,9 +248,7 @@ class FailoverManager:
         primary = self._registry.get(primary_id)
         if primary is None or not self._is_healthy(primary):
             return None
-        return self._switch_to(
-            primary_id, FailoverReason.AUTO_FAILBACK, "手动 failback"
-        )
+        return self._switch_to(primary_id, FailoverReason.AUTO_FAILBACK, "手动 failback")
 
     # ---- 内部方法 ----
 
@@ -271,13 +262,9 @@ class FailoverManager:
                 reason=FailoverReason.ALL_FAILED,
                 detail="无可用 vendor(初始)",
             )
-        return self._switch_to(
-            target, FailoverReason.INITIAL, "初始选择"
-        )
+        return self._switch_to(target, FailoverReason.INITIAL, "初始选择")
 
-    def _do_failover(
-        self, reason: FailoverReason, detail: str
-    ) -> FailoverEvent | None:
+    def _do_failover(self, reason: FailoverReason, detail: str) -> FailoverEvent | None:
         """执行切换——选下一个可用 vendor(排除当前 active)。"""
         with self._lock:
             current = self._active_vendor_id
@@ -338,9 +325,7 @@ class FailoverManager:
         )
         return event
 
-    def _find_next_available(
-        self, exclude: str | None
-    ) -> str | None:
+    def _find_next_available(self, exclude: str | None) -> str | None:
         """按策略找下一个可用 vendor(排除 exclude)。
 
         PRIORITY: 按 priority_list 顺序找首个可用

@@ -61,12 +61,8 @@ class ConnectionState(str, Enum):
 
 # 合法状态转换表
 _VALID_TRANSITIONS: dict[ConnectionState, frozenset[ConnectionState]] = {
-    ConnectionState.DISCONNECTED: frozenset(
-        {ConnectionState.CONNECTING}
-    ),
-    ConnectionState.CONNECTING: frozenset(
-        {ConnectionState.CONNECTED, ConnectionState.ERROR}
-    ),
+    ConnectionState.DISCONNECTED: frozenset({ConnectionState.CONNECTING}),
+    ConnectionState.CONNECTING: frozenset({ConnectionState.CONNECTED, ConnectionState.ERROR}),
     ConnectionState.CONNECTED: frozenset(
         {
             ConnectionState.DISCONNECTING,
@@ -74,15 +70,9 @@ _VALID_TRANSITIONS: dict[ConnectionState, frozenset[ConnectionState]] = {
             ConnectionState.ERROR,
         }
     ),
-    ConnectionState.DISCONNECTING: frozenset(
-        {ConnectionState.DISCONNECTED, ConnectionState.ERROR}
-    ),
-    ConnectionState.RECONNECTING: frozenset(
-        {ConnectionState.CONNECTED, ConnectionState.ERROR}
-    ),
-    ConnectionState.ERROR: frozenset(
-        {ConnectionState.CONNECTING, ConnectionState.DISCONNECTED}
-    ),
+    ConnectionState.DISCONNECTING: frozenset({ConnectionState.DISCONNECTED, ConnectionState.ERROR}),
+    ConnectionState.RECONNECTING: frozenset({ConnectionState.CONNECTED, ConnectionState.ERROR}),
+    ConnectionState.ERROR: frozenset({ConnectionState.CONNECTING, ConnectionState.DISCONNECTED}),
 }
 
 
@@ -310,9 +300,7 @@ class MarketDataConnector(MarketDataVendor):
             len(self._subscriptions[symbol]),
         )
 
-    def unsubscribe(
-        self, symbol: str, callback: TickCallback | None = None
-    ) -> int:
+    def unsubscribe(self, symbol: str, callback: TickCallback | None = None) -> int:
         """退订实时行情。
 
         Args:
@@ -421,8 +409,7 @@ class MarketDataConnector(MarketDataVendor):
             allowed = _VALID_TRANSITIONS.get(current, frozenset())
             if target not in allowed and current != target:
                 raise ConnectorError(
-                    f"非法状态转换: {current.value} -> {target.value}"
-                    f"(合法: {[s.value for s in allowed] or '无'})",
+                    f"非法状态转换: {current.value} -> {target.value}(合法: {[s.value for s in allowed] or '无'})",
                     details={
                         "vendor_id": self.vendor_id,
                         "from": current.value,

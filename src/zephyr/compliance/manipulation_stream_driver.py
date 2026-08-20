@@ -184,9 +184,7 @@ class ManipulationStreamDriver:
         return runs
 
     @staticmethod
-    def _longest_monotonic_run(
-        orders: list[ComplianceOrderRecord], direction: str
-    ) -> list[ComplianceOrderRecord]:
+    def _longest_monotonic_run(orders: list[ComplianceOrderRecord], direction: str) -> list[ComplianceOrderRecord]:
         """时间序上最长严格单调（升/降）价格连续子序列。"""
         if not orders:
             return []

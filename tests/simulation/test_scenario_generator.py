@@ -3,6 +3,7 @@
 覆盖: 三种生成模式、GBM 可复现性、历史切片正确性、自定义冲击叠加、
 参数校验、scenario_id 唯一性、Aggregate frozen、空/越界输入。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -25,13 +26,16 @@ def make_source_data(n: int = 100) -> pd.DataFrame:
     """构建真实历史样例数据。"""
     dates = pd.date_range("2026-01-01", periods=n, freq="D")
     prices = np.linspace(10.0, 20.0, n)  # 线性上升
-    return pd.DataFrame({
-        "open": prices,
-        "high": prices * 1.01,
-        "low": prices * 0.99,
-        "close": prices,
-        "volume": [1000] * n,
-    }, index=dates)
+    return pd.DataFrame(
+        {
+            "open": prices,
+            "high": prices * 1.01,
+            "low": prices * 0.99,
+            "close": prices,
+            "volume": [1000] * n,
+        },
+        index=dates,
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -49,9 +53,7 @@ class TestMonteCarlo:
 
     def test_start_price_first_close_approx(self):
         gen = ScenarioGenerator()
-        sc = gen.generate_monte_carlo(
-            MonteCarloParams(start_price=100.0, n_bars=10, drift=0.0, volatility=0.0, seed=1)
-        )
+        sc = gen.generate_monte_carlo(MonteCarloParams(start_price=100.0, n_bars=10, drift=0.0, volatility=0.0, seed=1))
         # vol=0, drift=0 → 价格恒等于 start_price
         assert all(abs(c - 100.0) < 1e-9 for c in sc.market_data["close"])
 
@@ -158,9 +160,7 @@ class TestCustom:
     def test_shock_applied(self):
         gen = ScenarioGenerator()
         # bar 5 时 -10% 冲击
-        sc = gen.generate_custom(CustomParams(
-            start_price=100.0, n_bars=20, shocks=[(5, -0.10)], trend=0.0, seed=1
-        ))
+        sc = gen.generate_custom(CustomParams(start_price=100.0, n_bars=20, shocks=[(5, -0.10)], trend=0.0, seed=1))
         closes = sc.market_data["close"]
         # bar5 相比 bar4 应明显下跌(约 -10%)
         drop = (closes.iloc[5] - closes.iloc[4]) / closes.iloc[4]
@@ -176,9 +176,7 @@ class TestCustom:
     def test_trend_applied(self):
         gen = ScenarioGenerator()
         # 正趋势 → 价格上升
-        sc = gen.generate_custom(CustomParams(
-            start_price=100.0, n_bars=50, trend=0.001, seed=1
-        ))
+        sc = gen.generate_custom(CustomParams(start_price=100.0, n_bars=50, trend=0.001, seed=1))
         assert sc.market_data["close"].iloc[-1] > 100.0
 
     def test_invalid_shock_index(self):

@@ -176,7 +176,9 @@ def merge_domain(domain_id: str) -> bool:
 
 
 if __name__ == "__main__":
-    import sys; sys.exit("DEPRECATED: 此脚本已归档，depgraph.db 已迁移至 PostgreSQL 16")
+    import sys
+
+    sys.exit("DEPRECATED: 此脚本已归档，depgraph.db 已迁移至 PostgreSQL 16")
     if len(sys.argv) < 2:
         print("Usage: python _phase_c_merge.py <DOMAIN_ID>")
         sys.exit(1)

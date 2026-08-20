@@ -223,10 +223,7 @@ class MarketDataVendor(ABC):
         ...
 
     def __repr__(self) -> str:
-        return (
-            f"{type(self).__name__}(vendor_id={self.vendor_id!r}, "
-            f"status={self.status.value})"
-        )
+        return f"{type(self).__name__}(vendor_id={self.vendor_id!r}, status={self.status.value})"
 
 
 __all__ = [

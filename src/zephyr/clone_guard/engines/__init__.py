@@ -21,4 +21,11 @@ Phase B: + AstGrepAdapter + RedupAdapter
 Phase C: + McritAdapter + VendetectAdapter + RelateAdapter
 """
 
-__all__: list[str] = ["ast_grep_adapter", "echo_guard_adapter", "mcrit_adapter", "redup_adapter", "relate_adapter", "vendetect_adapter"]
+__all__: list[str] = [
+    "ast_grep_adapter",
+    "echo_guard_adapter",
+    "mcrit_adapter",
+    "redup_adapter",
+    "relate_adapter",
+    "vendetect_adapter",
+]

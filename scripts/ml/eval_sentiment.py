@@ -29,6 +29,7 @@
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 2
 SSoT: #ARCH-NLP-PIPELINE-001
 """
+
 from __future__ import annotations
 
 import argparse
@@ -146,7 +147,10 @@ def _run_inference(
                 rate = (i + 1) / elapsed if elapsed > 0 else 0
                 log.info(
                     "进度: %d/%d (%.0f%%) %.1f 条/秒",
-                    i + 1, len(todo), 100 * (i + 1) / max(len(todo), 1), rate,
+                    i + 1,
+                    len(todo),
+                    100 * (i + 1) / max(len(todo), 1),
+                    rate,
                 )
 
 

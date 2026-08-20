@@ -38,9 +38,7 @@ class TestDefaults:
 
 class TestRouteOrder:
     def test_plain_order_direct_limit_single(self):
-        decision = route_order(
-            order_qty=Decimal("1000"), minute_avg_volume=Decimal("100000")
-        )
+        decision = route_order(order_qty=Decimal("1000"), minute_avg_volume=Decimal("100000"))
         assert decision.route == ExecutionRoute.DIRECT_LIMIT
         assert decision.allowed is True
         assert decision.parts == 1
@@ -70,18 +68,14 @@ class TestRouteOrder:
 
     def test_abnormal_volume_split_3_parts(self):
         """单笔>分钟级均量 5 倍→分 3 笔、间隔 3 秒（2026-04 程序化新规防异常交易监控）。"""
-        decision = route_order(
-            order_qty=Decimal("6000"), minute_avg_volume=Decimal("1000")
-        )
+        decision = route_order(order_qty=Decimal("6000"), minute_avg_volume=Decimal("1000"))
         assert decision.route == ExecutionRoute.DIRECT_LIMIT
         assert decision.parts == 3
         assert decision.split_interval_seconds == 3
 
     def test_algo_never_selected_when_disabled(self):
         """①⑦ 删除 5%ADV 硬条款+算法族降级远期：即使超大单也不路由算法执行。"""
-        decision = route_order(
-            order_qty=Decimal("1000000"), minute_avg_volume=Decimal("1000000")
-        )
+        decision = route_order(order_qty=Decimal("1000000"), minute_avg_volume=Decimal("1000000"))
         assert decision.route != ExecutionRoute.ALGO
 
     def test_invalid_qty_raises(self):

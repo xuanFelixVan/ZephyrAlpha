@@ -68,6 +68,7 @@ class TestMerkleAggregatorVerify:
 class TestIntegrityVerifierInit:
     def test_default_path(self):
         from zephyr.shared.io.paths import AUDIT_DATA_DIR
+
         verifier = IntegrityVerifier()
         assert verifier.event_log_path == AUDIT_DATA_DIR / "events.jsonl"
 

@@ -159,17 +159,21 @@ class ChecklistCompletionChecker:
             # 盘中执行项失效按 Fail-Closed 拒单（§1.3 铁律）
             if checkpoint is ChecklistCheckpoint.INTRADAY:
                 verdict = ChecklistVerdict(
-                    checkpoint=checkpoint, complete=False,
+                    checkpoint=checkpoint,
+                    complete=False,
                     missing_items=REQUIRED_ITEMS[checkpoint],
-                    action=ChecklistAction.HARD_BLOCK, checked_at=now,
+                    action=ChecklistAction.HARD_BLOCK,
+                    checked_at=now,
                     detail=f"完成度信号源失效，Fail-Closed 拒单: {exc}",
                 )
                 self._log(verdict)
                 return verdict
             verdict = ChecklistVerdict(
-                checkpoint=checkpoint, complete=False,
+                checkpoint=checkpoint,
+                complete=False,
                 missing_items=REQUIRED_ITEMS[checkpoint],
-                action=ChecklistAction.WARNING, checked_at=now,
+                action=ChecklistAction.WARNING,
+                checked_at=now,
                 detail=f"完成度信号源失效，降级人工 checklist: {exc}",
             )
             self._log(verdict)
@@ -178,8 +182,11 @@ class ChecklistCompletionChecker:
         missing = tuple(k for k in REQUIRED_ITEMS[checkpoint] if k not in completed)
         if not missing:
             verdict = ChecklistVerdict(
-                checkpoint=checkpoint, complete=True, missing_items=(),
-                action=ChecklistAction.NONE, checked_at=now,
+                checkpoint=checkpoint,
+                complete=True,
+                missing_items=(),
+                action=ChecklistAction.NONE,
+                checked_at=now,
             )
             self._log(verdict)
             return verdict
@@ -194,8 +201,12 @@ class ChecklistCompletionChecker:
             action = ChecklistAction.NONE
             detail = "截止前正常进行中"
         verdict = ChecklistVerdict(
-            checkpoint=checkpoint, complete=False, missing_items=missing,
-            action=action, checked_at=now, detail=detail,
+            checkpoint=checkpoint,
+            complete=False,
+            missing_items=missing,
+            action=action,
+            checked_at=now,
+            detail=detail,
         )
         self._log(verdict)
         return verdict

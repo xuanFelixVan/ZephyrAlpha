@@ -434,9 +434,7 @@ class MarketSentimentAnalyzer:
     # ------------------------------------------------------------------
     # 4. 次日回调风险预警器
     # ------------------------------------------------------------------
-    def warn_next_day_risk(
-        self, breadth: MarketBreadthData, index_perf: IndexPerformanceData
-    ) -> tuple[str, float]:
+    def warn_next_day_risk(self, breadth: MarketBreadthData, index_perf: IndexPerformanceData) -> tuple[str, float]:
         """预警次日回调风险（指数涨个股跌→次日风险）"""
         total = breadth.total_count or (breadth.advancing_count + breadth.declining_count + breadth.flat_count)
         if total == 0:
@@ -505,9 +503,7 @@ class MarketSentimentAnalyzer:
     # ------------------------------------------------------------------
     # 7. 昨日涨停表现追踪
     # ------------------------------------------------------------------
-    def track_yesterday_limit_up(
-        self, yesterday_lu: YesterdayLimitUpPerformance | None
-    ) -> str:
+    def track_yesterday_limit_up(self, yesterday_lu: YesterdayLimitUpPerformance | None) -> str:
         """追踪昨日涨停股今日表现"""
         if yesterday_lu is None or yesterday_lu.count == 0:
             return "无数据"
@@ -540,9 +536,7 @@ class MarketSentimentAnalyzer:
         profit_status, profit_score = self.evaluate_profit_effect(input_data.breadth)
 
         # 4. 次日回调风险
-        risk_status, risk_score = self.warn_next_day_risk(
-            input_data.breadth, input_data.index_performance
-        )
+        risk_status, risk_score = self.warn_next_day_risk(input_data.breadth, input_data.index_performance)
 
         # 5. 市场士气
         morale_status, morale_score = self.evaluate_morale(input_data.breadth)

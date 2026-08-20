@@ -15,6 +15,7 @@
   - RunContext log_* 失败只 stderr 不抛
   - get_tracker 单例 + reset_tracker 重置
 """
+
 from __future__ import annotations
 
 import json
@@ -164,8 +165,7 @@ class TestFallbackBackend:
         backend.log_artifact(str(src), artifact_path="data")
         # log_artifact 只记录路径，不复制
         assert any(
-            a.get("local_path") == str(src) and a.get("artifact_path") == "data"
-            for a in backend._current["artifacts"]
+            a.get("local_path") == str(src) and a.get("artifact_path") == "data" for a in backend._current["artifacts"]
         )
         backend.end_run("FINISHED")
 
@@ -235,23 +235,28 @@ class TestRunContext:
 
     def test_log_failure_does_not_raise(self, tmp_path):
         """log_* 内部 backend 抛异常时，RunContext 兜住不抛。"""
+
         class _BadBackend:
             def log_params(self, params):
                 raise RuntimeError("backend broken")
+
             def log_metrics(self, metrics, step):
                 raise RuntimeError("backend broken")
+
             def log_artifact(self, local_path, artifact_path):
                 raise RuntimeError("backend broken")
+
             def log_artifact_bytes(self, data, filename, artifact_path):
                 raise RuntimeError("backend broken")
+
             def end_run(self, status):
                 pass
 
         ctx = RunContext(_BadBackend(), "fake-id", "c", "rn")
         with ctx:
-            ctx.log_params({"a": 1})       # 不抛
-            ctx.log_metrics({"m": 1.0})    # 不抛
-            ctx.log_artifact("/x", None)   # 不抛
+            ctx.log_params({"a": 1})  # 不抛
+            ctx.log_metrics({"m": 1.0})  # 不抛
+            ctx.log_artifact("/x", None)  # 不抛
             ctx.log_artifact_bytes(b"x", "f", None)  # 不抛
 
     def test_log_methods_delegate_to_backend(self, tmp_path):
@@ -280,10 +285,10 @@ class TestSingletonFactory:
         monkeypatch.setenv("ZEPHYR_EXPERIMENT_TRACKING", "1")
         # 注入 fallback_dir 避免污染——通过 patch load_config
         import zephyr.experiment_tracking.experiment_tracker as et
+
         original_load = et.load_config
         monkeypatch.setattr(
-            et, "load_config",
-            lambda: ExperimentTrackingConfig(enable_tracking=True, fallback_dir=tmp_path / "fb")
+            et, "load_config", lambda: ExperimentTrackingConfig(enable_tracking=True, fallback_dir=tmp_path / "fb")
         )
         t1 = get_tracker()
         t2 = get_tracker()
@@ -293,9 +298,9 @@ class TestSingletonFactory:
         """reset_tracker 后 get_tracker 返回新实例。"""
         monkeypatch.setenv("ZEPHYR_EXPERIMENT_TRACKING", "1")
         import zephyr.experiment_tracking.experiment_tracker as et
+
         monkeypatch.setattr(
-            et, "load_config",
-            lambda: ExperimentTrackingConfig(enable_tracking=True, fallback_dir=tmp_path / "fb")
+            et, "load_config", lambda: ExperimentTrackingConfig(enable_tracking=True, fallback_dir=tmp_path / "fb")
         )
         t1 = get_tracker()
         reset_tracker()

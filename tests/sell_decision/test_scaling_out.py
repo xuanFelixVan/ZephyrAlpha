@@ -27,9 +27,7 @@ from zephyr.sell_decision.core.scaling_out import (
 
 
 def _position(risk_reward: float, qty: str = "300", entry: str = "10.00") -> ScalingOutPositionView:
-    return ScalingOutPositionView(
-        quantity=Decimal(qty), entry_price=Decimal(entry), risk_reward=risk_reward
-    )
+    return ScalingOutPositionView(quantity=Decimal(qty), entry_price=Decimal(entry), risk_reward=risk_reward)
 
 
 class TestStepSequencing:

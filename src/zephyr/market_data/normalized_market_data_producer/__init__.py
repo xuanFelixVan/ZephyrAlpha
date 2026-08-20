@@ -23,6 +23,7 @@
 - load_kline(symbols, start, end): 加载并转换
 - produce(symbols, start, end): load_kline 的业务语义别名（对齐 CP-03 门禁命名）
 """
+
 from __future__ import annotations
 
 from zephyr.market_data.normalized_market_data_producer.producer import (

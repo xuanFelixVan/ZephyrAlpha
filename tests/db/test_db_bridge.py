@@ -79,8 +79,7 @@ class TestEnsureTable:
         _ensure_table(conn)
         _ensure_table(conn)
         conn.execute(
-            "INSERT INTO fle_metrics (timestamp, source_system, metric_name, value) "
-            "VALUES (?, ?, ?, ?)",
+            "INSERT INTO fle_metrics (timestamp, source_system, metric_name, value) VALUES (?, ?, ?, ?)",
             ("2026-01-01T00:00:00Z", "latency", "p99", 1.23),
         )
         conn.commit()

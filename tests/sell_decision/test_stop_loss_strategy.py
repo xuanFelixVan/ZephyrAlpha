@@ -38,8 +38,10 @@ def _pos(
 def test_loss_phase_chandelier():
     """亏损区: N=10, M=3.0 → 11.0 - 3.0×0.5 = 9.5(OTHER不调整M)。"""
     price = StopLossStrategy.compute_stop_loss(
-        _pos(), atr_value=0.5,
-        highest_close_fn=_highest_close_fn, phase=PositionPhase.LOSS,
+        _pos(),
+        atr_value=0.5,
+        highest_close_fn=_highest_close_fn,
+        phase=PositionPhase.LOSS,
     )
     assert price == pytest.approx(9.5)
 
@@ -47,8 +49,10 @@ def test_loss_phase_chandelier():
 def test_profit_phase_chandelier():
     """盈利区: N=22, M=2.0 → 12.0 - 2.0×0.5 = 11.0。"""
     price = StopLossStrategy.compute_stop_loss(
-        _pos(current=11.0), atr_value=0.5,
-        highest_close_fn=_highest_close_fn, phase=PositionPhase.PROFIT,
+        _pos(current=11.0),
+        atr_value=0.5,
+        highest_close_fn=_highest_close_fn,
+        phase=PositionPhase.PROFIT,
     )
     assert price == pytest.approx(11.0)
 
@@ -59,8 +63,10 @@ def test_profit_phase_chandelier():
 def test_trend_strategy_m_widened():
     """趋势策略 M+0.5: 11.0 - 3.5×0.5 = 9.25。"""
     price = StopLossStrategy.compute_stop_loss(
-        _pos(strategy_type=StrategyType.TREND), atr_value=0.5,
-        highest_close_fn=_highest_close_fn, phase=PositionPhase.LOSS,
+        _pos(strategy_type=StrategyType.TREND),
+        atr_value=0.5,
+        highest_close_fn=_highest_close_fn,
+        phase=PositionPhase.LOSS,
     )
     assert price == pytest.approx(9.25)
 
@@ -68,8 +74,10 @@ def test_trend_strategy_m_widened():
 def test_mean_reversion_m_tightened():
     """均值回归 M-0.5: 11.0 - 2.5×0.5 = 9.75。"""
     price = StopLossStrategy.compute_stop_loss(
-        _pos(strategy_type=StrategyType.MEAN_REVERSION), atr_value=0.5,
-        highest_close_fn=_highest_close_fn, phase=PositionPhase.LOSS,
+        _pos(strategy_type=StrategyType.MEAN_REVERSION),
+        atr_value=0.5,
+        highest_close_fn=_highest_close_fn,
+        phase=PositionPhase.LOSS,
     )
     assert price == pytest.approx(9.75)
 
@@ -77,8 +85,10 @@ def test_mean_reversion_m_tightened():
 def test_short_term_m_unchanged():
     """短线 M 不调整: 11.0 - 3.0×0.5 = 9.5。"""
     price = StopLossStrategy.compute_stop_loss(
-        _pos(strategy_type=StrategyType.SHORT_TERM), atr_value=0.5,
-        highest_close_fn=_highest_close_fn, phase=PositionPhase.LOSS,
+        _pos(strategy_type=StrategyType.SHORT_TERM),
+        atr_value=0.5,
+        highest_close_fn=_highest_close_fn,
+        phase=PositionPhase.LOSS,
     )
     assert price == pytest.approx(9.5)
 
@@ -89,8 +99,10 @@ def test_short_term_m_unchanged():
 def test_atr_none_fallback_short_term():
     """ATR缺失+短线 → 固定4%: 10.0×0.96 = 9.6。"""
     price = StopLossStrategy.compute_stop_loss(
-        _pos(strategy_type=StrategyType.SHORT_TERM), atr_value=None,
-        highest_close_fn=_highest_close_fn, phase=PositionPhase.LOSS,
+        _pos(strategy_type=StrategyType.SHORT_TERM),
+        atr_value=None,
+        highest_close_fn=_highest_close_fn,
+        phase=PositionPhase.LOSS,
     )
     assert price == pytest.approx(9.6)
 
@@ -98,8 +110,10 @@ def test_atr_none_fallback_short_term():
 def test_atr_none_fallback_long_term():
     """ATR缺失+非短线 → 固定8%: 10.0×0.92 = 9.2。"""
     price = StopLossStrategy.compute_stop_loss(
-        _pos(strategy_type=StrategyType.TREND), atr_value=None,
-        highest_close_fn=_highest_close_fn, phase=PositionPhase.PROFIT,
+        _pos(strategy_type=StrategyType.TREND),
+        atr_value=None,
+        highest_close_fn=_highest_close_fn,
+        phase=PositionPhase.PROFIT,
     )
     assert price == pytest.approx(9.2)
 
@@ -107,8 +121,10 @@ def test_atr_none_fallback_long_term():
 def test_atr_zero_fallback():
     """ATR=0 同样降级固定%。"""
     price = StopLossStrategy.compute_stop_loss(
-        _pos(), atr_value=0.0,
-        highest_close_fn=_highest_close_fn, phase=PositionPhase.LOSS,
+        _pos(),
+        atr_value=0.0,
+        highest_close_fn=_highest_close_fn,
+        phase=PositionPhase.LOSS,
     )
     # OTHER 走非短线分支 8%
     assert price == pytest.approx(9.2)
@@ -120,22 +136,26 @@ def test_atr_zero_fallback():
 def test_empty_symbol_rejected():
     pos = SellPositionSnapshot(symbol="", entry_price=10.0, current_price=10.0)
     with pytest.raises(SellStopLossInputError):
-        StopLossStrategy.compute_stop_loss(
-            pos, 0.5, _highest_close_fn, PositionPhase.LOSS
-        )
+        StopLossStrategy.compute_stop_loss(pos, 0.5, _highest_close_fn, PositionPhase.LOSS)
 
 
 def test_non_callable_highest_close_rejected():
     with pytest.raises(SellStopLossInputError):
         StopLossStrategy.compute_stop_loss(
-            _pos(), 0.5, None, PositionPhase.LOSS  # type: ignore[arg-type]
+            _pos(),
+            0.5,
+            None,
+            PositionPhase.LOSS,  # type: ignore[arg-type]
         )
 
 
 def test_invalid_phase_rejected():
     with pytest.raises(SellStopLossInputError):
         StopLossStrategy.compute_stop_loss(
-            _pos(), 0.5, _highest_close_fn, "loss"  # type: ignore[arg-type]
+            _pos(),
+            0.5,
+            _highest_close_fn,
+            "loss",  # type: ignore[arg-type]
         )
 
 

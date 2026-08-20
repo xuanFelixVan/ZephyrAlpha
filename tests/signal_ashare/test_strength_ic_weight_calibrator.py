@@ -1,6 +1,7 @@
 # [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.4
 # [TTL] permanent
 """6 维权重 IC 加权校准（路径 A）单元测试——含退化/边界用例。"""
+
 from __future__ import annotations
 
 import pytest
@@ -44,9 +45,7 @@ class TestComputeRankIC:
 
 class TestCalibrateWeights:
     def test_proportional_to_positive_ic(self):
-        w = calibrate_dimension_weights_ic(
-            {"price_momentum": 0.06, "technical": 0.03}
-        )
+        w = calibrate_dimension_weights_ic({"price_momentum": 0.06, "technical": 0.03})
         assert w["price_momentum"] == pytest.approx(2.0 / 3.0)
         assert w["technical"] == pytest.approx(1.0 / 3.0)
         assert w["risk"] == 0.0
@@ -54,16 +53,12 @@ class TestCalibrateWeights:
         assert set(w) == set(STRENGTH_DIMENSIONS)
 
     def test_negative_ic_clipped_to_zero(self):
-        w = calibrate_dimension_weights_ic(
-            {"price_momentum": -0.05, "capital": 0.04}
-        )
+        w = calibrate_dimension_weights_ic({"price_momentum": -0.05, "capital": 0.04})
         assert w["price_momentum"] == 0.0
         assert w["capital"] == pytest.approx(1.0)
 
     def test_all_nonpositive_falls_back_empirical(self):
-        w = calibrate_dimension_weights_ic(
-            {d: -0.01 for d in STRENGTH_DIMENSIONS}
-        )
+        w = calibrate_dimension_weights_ic({d: -0.01 for d in STRENGTH_DIMENSIONS})
         assert w == EMPIRICAL_WEIGHTS
         assert w is not EMPIRICAL_WEIGHTS  # 副本，防外部篡改
 
@@ -80,7 +75,9 @@ class TestRollingICWeights:
         dim = list(range(120))
         rets = [0.0] * 60 + [float(i) * 0.001 for i in range(60)]
         w = compute_rolling_ic_weights(
-            {"price_momentum": dim}, rets, window=60,
+            {"price_momentum": dim},
+            rets,
+            window=60,
         )
         assert w["price_momentum"] == pytest.approx(1.0)
 

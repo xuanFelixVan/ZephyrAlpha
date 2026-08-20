@@ -196,7 +196,9 @@ class TestEventDrivenIntegration:
         bus = EventBus()
         scheduler.subscribe_to_events(event_bus=bus)
 
-        with patch.object(scheduler, "trigger", return_value=[{"frequency": "per_commit", "total": 5, "blocked": 3, "bypassed": 2}]) as mock_trigger:
+        with patch.object(
+            scheduler, "trigger", return_value=[{"frequency": "per_commit", "total": 5, "blocked": 3, "bypassed": 2}]
+        ) as mock_trigger:
             bus.publish(EventType.GATE_FAILED, "TASK-001", {"reason": "test"})
             mock_trigger.assert_called_once_with("full_cycle")
 
@@ -292,8 +294,7 @@ class TestEventBusSingleton:
         s1.subscribe_to_events(event_bus=bus)
         s2.subscribe_to_events(event_bus=bus)
 
-        with patch.object(s1, "trigger", return_value=[]) as m1, \
-             patch.object(s2, "trigger", return_value=[]) as m2:
+        with patch.object(s1, "trigger", return_value=[]) as m1, patch.object(s2, "trigger", return_value=[]) as m2:
             bus.publish(EventType.GATE_FAILED, "TASK-MULTI")
             m1.assert_called_once_with("full_cycle")
             m2.assert_called_once_with("full_cycle")

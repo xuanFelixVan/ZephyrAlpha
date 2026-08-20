@@ -267,10 +267,12 @@ class TestStartLocalModelsRefactor:
         """ollama存活+DeepSeek可用+所有组件成功启动。"""
         core = self.make_core(tmp_path)
         report = BootReport()
-        with patch.object(core, "ollama_alive", return_value=True), \
-             patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS, \
-             patch("zephyr.trading.auto_runtime_core.EmbeddingRouter") as MockER, \
-             patch("zephyr.trading.auto_runtime_core.LocalModelScheduler") as MockLS:
+        with (
+            patch.object(core, "ollama_alive", return_value=True),
+            patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS,
+            patch("zephyr.trading.auto_runtime_core.EmbeddingRouter") as MockER,
+            patch("zephyr.trading.auto_runtime_core.LocalModelScheduler") as MockLS,
+        ):
             MockDS.return_value.available = True
             MockER.return_value.warmup = MagicMock()
             MockLS.return_value.start = MagicMock()
@@ -285,11 +287,13 @@ class TestStartLocalModelsRefactor:
         """ollama不存活+自动启动成功→继续启动其他组件。"""
         core = self.make_core(tmp_path)
         report = BootReport()
-        with patch.object(core, "ollama_alive", return_value=False), \
-             patch.object(core, "ensure_ollama_running", return_value=True), \
-             patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS, \
-             patch("zephyr.trading.auto_runtime_core.EmbeddingRouter") as MockER, \
-             patch("zephyr.trading.auto_runtime_core.LocalModelScheduler") as MockLS:
+        with (
+            patch.object(core, "ollama_alive", return_value=False),
+            patch.object(core, "ensure_ollama_running", return_value=True),
+            patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS,
+            patch("zephyr.trading.auto_runtime_core.EmbeddingRouter") as MockER,
+            patch("zephyr.trading.auto_runtime_core.LocalModelScheduler") as MockLS,
+        ):
             MockDS.return_value.available = True
             MockER.return_value.warmup = MagicMock()
             MockLS.return_value.start = MagicMock()
@@ -300,9 +304,11 @@ class TestStartLocalModelsRefactor:
         """ollama不存活+自动启动失败→return early，不启动其他组件。"""
         core = self.make_core(tmp_path)
         report = BootReport()
-        with patch.object(core, "ollama_alive", return_value=False), \
-             patch.object(core, "ensure_ollama_running", return_value=False), \
-             patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS:
+        with (
+            patch.object(core, "ollama_alive", return_value=False),
+            patch.object(core, "ensure_ollama_running", return_value=False),
+            patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS,
+        ):
             core.start_local_models(report)
         assert any("ollama" in e for e in report.errors)
         assert "08_deepseek_chat_verify" not in report.components_started
@@ -312,12 +318,14 @@ class TestStartLocalModelsRefactor:
         """DeepSeek不可用→降级到OllamaChat（可用）。"""
         core = self.make_core(tmp_path)
         report = BootReport()
-        with patch.object(core, "ollama_alive", return_value=True), \
-             patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS, \
-             patch("zephyr.trading.auto_runtime_core.OllamaChat") as MockOC, \
-             patch("zephyr.trading.auto_runtime_core.EmbeddingRouter") as MockER, \
-             patch("zephyr.trading.auto_runtime_core.LocalModelScheduler") as MockLS, \
-             patch("time.sleep"):
+        with (
+            patch.object(core, "ollama_alive", return_value=True),
+            patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS,
+            patch("zephyr.trading.auto_runtime_core.OllamaChat") as MockOC,
+            patch("zephyr.trading.auto_runtime_core.EmbeddingRouter") as MockER,
+            patch("zephyr.trading.auto_runtime_core.LocalModelScheduler") as MockLS,
+            patch("time.sleep"),
+        ):
             MockDS.return_value.available = False
             MockOC.return_value.available = True
             MockER.return_value.warmup = MagicMock()
@@ -330,11 +338,13 @@ class TestStartLocalModelsRefactor:
         """DeepSeek不可用+OllamaChat不可用→errors包含ollama_chat错误。"""
         core = self.make_core(tmp_path)
         report = BootReport()
-        with patch.object(core, "ollama_alive", return_value=True), \
-             patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS, \
-             patch("zephyr.trading.auto_runtime_core.OllamaChat") as MockOC, \
-             patch("zephyr.trading.auto_runtime_core.EmbeddingRouter") as MockER, \
-             patch("zephyr.trading.auto_runtime_core.LocalModelScheduler") as MockLS:
+        with (
+            patch.object(core, "ollama_alive", return_value=True),
+            patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS,
+            patch("zephyr.trading.auto_runtime_core.OllamaChat") as MockOC,
+            patch("zephyr.trading.auto_runtime_core.EmbeddingRouter") as MockER,
+            patch("zephyr.trading.auto_runtime_core.LocalModelScheduler") as MockLS,
+        ):
             MockDS.return_value.available = False
             MockOC.return_value.available = False
             MockER.return_value.warmup = MagicMock()
@@ -346,10 +356,12 @@ class TestStartLocalModelsRefactor:
         """embedding warmup失败→errors记录，继续后续组件。"""
         core = self.make_core(tmp_path)
         report = BootReport()
-        with patch.object(core, "ollama_alive", return_value=True), \
-             patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS, \
-             patch("zephyr.trading.auto_runtime_core.EmbeddingRouter") as MockER, \
-             patch("zephyr.trading.auto_runtime_core.LocalModelScheduler") as MockLS:
+        with (
+            patch.object(core, "ollama_alive", return_value=True),
+            patch("zephyr.trading.auto_runtime_core.DeepSeekChat") as MockDS,
+            patch("zephyr.trading.auto_runtime_core.EmbeddingRouter") as MockER,
+            patch("zephyr.trading.auto_runtime_core.LocalModelScheduler") as MockLS,
+        ):
             MockDS.return_value.available = True
             MockER.return_value.warmup.side_effect = RuntimeError("warmup failed")
             MockLS.return_value.start = MagicMock()

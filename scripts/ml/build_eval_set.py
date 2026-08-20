@@ -28,6 +28,7 @@
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 1
 SSoT: #ARCH-NLP-PIPELINE-001
 """
+
 from __future__ import annotations
 
 import argparse
@@ -66,14 +67,57 @@ STRATA = [
 
 # ── 关键词规则标注（降级方案）──
 _KW_POSITIVE = [
-    "降准", "降息", "减税", "利好", "增长", "盈利", "回购", "增持", "重组", "并购",
-    "改革", "投资", "基建", "补贴", "扶持", "刺激", "支持", "上涨", "突破", "回暖",
-    "复苏", "企稳", "反弹",
+    "降准",
+    "降息",
+    "减税",
+    "利好",
+    "增长",
+    "盈利",
+    "回购",
+    "增持",
+    "重组",
+    "并购",
+    "改革",
+    "投资",
+    "基建",
+    "补贴",
+    "扶持",
+    "刺激",
+    "支持",
+    "上涨",
+    "突破",
+    "回暖",
+    "复苏",
+    "企稳",
+    "反弹",
 ]
 _KW_NEGATIVE = [
-    "跌停", "暴跌", "下跌", "利空", "亏损", "减持", "违规", "处罚", "退市", "爆雷",
-    "违约", "下修", "下调", "风险", "警告", "监管", "限售", "解禁", "商誉减值",
-    "业绩变脸", "诉讼", "熔断", "跳水", "崩盘", "恐慌", "抛售",
+    "跌停",
+    "暴跌",
+    "下跌",
+    "利空",
+    "亏损",
+    "减持",
+    "违规",
+    "处罚",
+    "退市",
+    "爆雷",
+    "违约",
+    "下修",
+    "下调",
+    "风险",
+    "警告",
+    "监管",
+    "限售",
+    "解禁",
+    "商誉减值",
+    "业绩变脸",
+    "诉讼",
+    "熔断",
+    "跳水",
+    "崩盘",
+    "恐慌",
+    "抛售",
 ]
 
 
@@ -107,14 +151,16 @@ def _sample_stratum(name: str, start: str, end: str, n: int) -> list[dict]:
         return []
     rows: list[dict] = []
     for _, row in df.head(n).iterrows():
-        rows.append({
-            "news_id": str(row.get("news_id", "")),
-            "publish_time": str(row.get("publish_time", "")),
-            "title": str(row.get("title", "")),
-            "content": str(row.get("content", ""))[:500],
-            "source": str(row.get("source", "")),
-            "stratum": name,
-        })
+        rows.append(
+            {
+                "news_id": str(row.get("news_id", "")),
+                "publish_time": str(row.get("publish_time", "")),
+                "title": str(row.get("title", "")),
+                "content": str(row.get("content", ""))[:500],
+                "source": str(row.get("source", "")),
+                "stratum": name,
+            }
+        )
     log.info("分层 %s: 采集 %d 条", name, len(rows))
     return rows
 
@@ -136,20 +182,22 @@ def _load_done(path: Path) -> set[str]:
 def _print_distribution(items: list[dict]) -> None:
     """打印情感分布统计。"""
     from collections import Counter
+
     dist = Counter(item.get("sentiment", "?") for item in items)
     total = len(items)
     print("\n=== 情感分布 ===")
     for label in ("positive", "negative", "neutral"):
         count = dist.get(label, 0)
-        print(f"  {label:10s}: {count:4d} ({100*count/total:.1f}%)")
+        print(f"  {label:10s}: {count:4d} ({100 * count / total:.1f}%)")
     print(f"  {'total':10s}: {total:4d}")
 
 
 def _parse_args() -> argparse.Namespace:
     """解析 CLI 参数。"""
     parser = argparse.ArgumentParser(description="构建新闻情感评估集")
-    parser.add_argument("--backend", default="keyword", choices=["keyword", "deepseek", "ollama"],
-                        help="标注后端（默认 keyword 规则）")
+    parser.add_argument(
+        "--backend", default="keyword", choices=["keyword", "deepseek", "ollama"], help="标注后端（默认 keyword 规则）"
+    )
     parser.add_argument("--resume", action="store_true", default=True, help="断点续作")
     parser.add_argument("--no-resume", dest="resume", action="store_false")
     return parser.parse_args()

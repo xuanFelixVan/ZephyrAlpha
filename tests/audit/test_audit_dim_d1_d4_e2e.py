@@ -13,9 +13,7 @@
 
 import pytest
 
-pipeline_mod = pytest.importorskip(
-    "zephyr.gov_audit.pipeline_runner", reason="pipeline_runner not available"
-)
+pipeline_mod = pytest.importorskip("zephyr.gov_audit.pipeline_runner", reason="pipeline_runner not available")
 PipelineRunner = pipeline_mod.PipelineRunner
 PipelineResult = pipeline_mod.PipelineResult
 DimensionResult = pipeline_mod.DimensionResult

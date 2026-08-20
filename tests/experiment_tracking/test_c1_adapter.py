@@ -19,6 +19,7 @@
 用 SimpleNamespace 构造 C1ComparisonResult / C1ShrinkageComparator 鸭子类型
 （c1_adapter 运行时全鸭子类型，TYPE_CHECKING 隔离——无需 import backtest）。
 """
+
 from __future__ import annotations
 
 import json
@@ -119,16 +120,15 @@ def _make_c1_result(
         passed=passed,
         veto_reason=veto_reason,
         summary=summary,
-        metric_verdicts=metric_verdicts or [
+        metric_verdicts=metric_verdicts
+        or [
             _make_verdict("Sharpe", 1.3, 1.25, True),
             _make_verdict("MaxDD", -0.12, -0.11, False, "DD_开 − DD_关 < 3pp"),
             _make_verdict("Calmar", 1.04, 1.20, True),
             _make_verdict("Turnover", 1.7, 1.5, True),
         ],
         baseline_result=baseline_result or _make_backtest_result(),
-        experiment_result=experiment_result or _make_backtest_result(
-            sharpe=1.25, maxdd=-0.11, trades_count=38
-        ),
+        experiment_result=experiment_result or _make_backtest_result(sharpe=1.25, maxdd=-0.11, trades_count=38),
         baseline_turnover=baseline_turnover,
         experiment_turnover=experiment_turnover,
         baseline_calmar=baseline_calmar,
@@ -152,6 +152,7 @@ def _make_comparator(
     comp = SimpleNamespace(config=cfg, last_baseline_portfolio=None, last_experiment_portfolio=None)
     if with_portfolios:
         import pandas as pd
+
         nav = pd.Series([1.0 + i * 0.001 for i in range(nav_len)], name="nav")
         comp.last_baseline_portfolio = SimpleNamespace(nav_series=nav)
         comp.last_experiment_portfolio = SimpleNamespace(nav_series=nav * 0.98)
@@ -208,11 +209,16 @@ class TestExtractMetrics:
         result = _make_c1_result()
         metrics = _extract_metrics(result)
         for key in [
-            "baseline_sharpe", "experiment_sharpe",
-            "baseline_maxdd", "experiment_maxdd",
-            "baseline_annual_return", "experiment_annual_return",
-            "baseline_turnover", "experiment_turnover",
-            "baseline_calmar", "experiment_calmar",
+            "baseline_sharpe",
+            "experiment_sharpe",
+            "baseline_maxdd",
+            "experiment_maxdd",
+            "baseline_annual_return",
+            "experiment_annual_return",
+            "baseline_turnover",
+            "experiment_turnover",
+            "baseline_calmar",
+            "experiment_calmar",
         ]:
             assert key in metrics
         assert metrics["baseline_sharpe"] == pytest.approx(1.3)
@@ -238,8 +244,7 @@ class TestExtractMetrics:
         assert "maxdd_passed" in metrics
         assert metrics["maxdd_passed"] == 0.0
         # 4 verdicts × 3 = 12 per-verdict metrics
-        verdict_keys = [k for k in metrics if k.endswith(("_baseline", "_experiment", "_passed"))
-                        and k != "passed"]
+        verdict_keys = [k for k in metrics if k.endswith(("_baseline", "_experiment", "_passed")) and k != "passed"]
         assert len(verdict_keys) == 12
 
 
@@ -277,9 +282,11 @@ class TestLogNavArtifacts:
 
     def test_comparator_none_skips(self):
         """comparator=None → 不抛、不写。"""
+
         class _Spy:
             def __init__(self):
                 self.calls = []
+
             def log_artifact_bytes(self, data, filename, artifact_path):
                 self.calls.append((filename, artifact_path))
 
@@ -289,9 +296,11 @@ class TestLogNavArtifacts:
 
     def test_with_portfolios_writes_csv(self):
         """comparator 有 portfolio → 写 nav_curve_baseline.csv + nav_curve_experiment.csv。"""
+
         class _Spy:
             def __init__(self):
                 self.calls = []
+
             def log_artifact_bytes(self, data, filename, artifact_path):
                 self.calls.append((filename, artifact_path, data))
 
@@ -307,9 +316,11 @@ class TestLogNavArtifacts:
 
     def test_with_portfolios_writes_png(self):
         """comparator 有 portfolio → 写 nav_curve_comparison.png（matplotlib 装了时）。"""
+
         class _Spy:
             def __init__(self):
                 self.calls = []
+
             def log_artifact_bytes(self, data, filename, artifact_path):
                 self.calls.append((filename, artifact_path, data))
 
@@ -326,9 +337,11 @@ class TestLogNavArtifacts:
 
     def test_portfolio_none_skips(self):
         """portfolio=None → 跳过该侧。"""
+
         class _Spy:
             def __init__(self):
                 self.calls = []
+
             def log_artifact_bytes(self, data, filename, artifact_path):
                 self.calls.append(filename)
 
@@ -354,6 +367,7 @@ class TestTrackC1Result:
         cfg = ExperimentTrackingConfig(enable_tracking=True, fallback_dir=tmp_path / "fb")
         tracker = ExperimentTracker(config=cfg)
         import zephyr.experiment_tracking.experiment_tracker as et
+
         monkeypatch.setattr(et, "_tracker_singleton", tracker)
 
         result = _make_c1_result()
@@ -369,6 +383,7 @@ class TestTrackC1Result:
         cfg = ExperimentTrackingConfig(enable_tracking=True, fallback_dir=fb_dir)
         tracker = ExperimentTracker(config=cfg)
         import zephyr.experiment_tracking.experiment_tracker as et
+
         monkeypatch.setattr(et, "_tracker_singleton", tracker)
 
         result = _make_c1_result()
@@ -415,6 +430,7 @@ class TestTrackC1Result:
         cfg = ExperimentTrackingConfig(enable_tracking=True, fallback_dir=fb_dir)
         tracker = ExperimentTracker(config=cfg)
         import zephyr.experiment_tracking.experiment_tracker as et
+
         monkeypatch.setattr(et, "_tracker_singleton", tracker)
 
         result = _make_c1_result()
@@ -433,11 +449,14 @@ class TestTrackC1Result:
         cfg = ExperimentTrackingConfig(enable_tracking=True, fallback_dir=fb_dir)
         tracker = ExperimentTracker(config=cfg)
         import zephyr.experiment_tracking.experiment_tracker as et
+
         monkeypatch.setattr(et, "_tracker_singleton", tracker)
 
         result = _make_c1_result(passed=True, veto_reason=None)
         run_id = track_c1_result(
-            result, comparator=None, mode="mock",
+            result,
+            comparator=None,
+            mode="mock",
             extra_tags={"git_commit": "abc123", "basket": "csi300"},
         )
         meta = json.loads((fb_dir / "c1-validation" / run_id / "run_meta.json").read_text("utf-8"))

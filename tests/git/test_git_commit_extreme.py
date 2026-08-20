@@ -131,7 +131,9 @@ def _commit_file(repo_dir: Path, rel: str, content: str) -> None:
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(content, encoding="utf-8")
     subprocess.run(["git", "add", rel], cwd=str(repo_dir), capture_output=True, check=True)
-    subprocess.run(["git", "commit", "-m", f"init {rel}", "--no-verify"], cwd=str(repo_dir), capture_output=True, check=True)
+    subprocess.run(
+        ["git", "commit", "-m", f"init {rel}", "--no-verify"], cwd=str(repo_dir), capture_output=True, check=True
+    )
 
 
 def _lock_file_path(repo_dir: Path) -> Path:
@@ -258,10 +260,17 @@ class TestHighConcurrency:
 
         # 验证无跨 session 捡拾
         for sess, _, h in results.values():
-            files = subprocess.run(
-                ["git", "show", "--name-only", "--format=", h],
-                cwd=str(tmp_path), capture_output=True, text=True, encoding="utf-8",
-            ).stdout.strip().splitlines()
+            files = (
+                subprocess.run(
+                    ["git", "show", "--name-only", "--format=", h],
+                    cwd=str(tmp_path),
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                )
+                .stdout.strip()
+                .splitlines()
+            )
             idx = int(sess[1:])
             expected = f"f{idx}.py"
             assert files == [expected], f"{sess} 捡拾了其他文件: {files}"
@@ -286,8 +295,7 @@ class TestHighConcurrency:
         # 文件内容应包含某个 session 的值（S4 reconciler 可能自动注入 [BLUEPRINT] 头部，
         # 故检查 "v = " 存在于内容中而非 startswith）
         content = (tmp_path / "shared.py").read_text(encoding="utf-8")
-        assert any(line.startswith("v = ") for line in content.splitlines()), \
-            f"文件内容异常: {content!r}"
+        assert any(line.startswith("v = ") for line in content.splitlines()), f"文件内容异常: {content!r}"
 
 
 # ---------------------------------------------------------------------------
@@ -319,11 +327,13 @@ class TestStashConflictAndDataSafety:
         if result.status == CommitStatus.STASH_CONFLICT:
             # stash pop 失败——验证 stash 保留
             stash_list = subprocess.run(
-                ["git", "stash", "list"], cwd=str(tmp_path),
-                capture_output=True, text=True, encoding="utf-8",
+                ["git", "stash", "list"],
+                cwd=str(tmp_path),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
             ).stdout.strip()
-            assert "gw:" in stash_list or "stash" in stash_list.lower(), \
-                f"stash pop 失败应保留 stash: {stash_list}"
+            assert "gw:" in stash_list or "stash" in stash_list.lower(), f"stash pop 失败应保留 stash: {stash_list}"
         elif result.status == CommitStatus.OK:
             # stash pop 成功——验证 A 的修改恢复（可能 git 自动合并了）
             content = (tmp_path / "a.py").read_text(encoding="utf-8")
@@ -334,7 +344,7 @@ class TestStashConflictAndDataSafety:
 
     @pytest.mark.xfail(
         reason="Phase 3 stash elimination—_stash_other_files removed, "
-               "worktree isolation replaces stash. Test scenario no longer applies.",
+        "worktree isolation replaces stash. Test scenario no longer applies.",
         strict=False,
     )
     def test_disk_full_stash_failure_no_data_loss(self, tmp_path: Path) -> None:
@@ -358,11 +368,9 @@ class TestStashConflictAndDataSafety:
         result = gw.commit("B", [str(tmp_path / "a.py")], "feat: no stash needed", allow_overlap=True)
 
         # 验证：commit 可能成功或失败（gate 阻断），b.py 修改应保留
-        assert result.status in (CommitStatus.OK, CommitStatus.COMMIT_FAILED), \
-            f"应有明确状态: {result.status}"
+        assert result.status in (CommitStatus.OK, CommitStatus.COMMIT_FAILED), f"应有明确状态: {result.status}"
         # b.py 修改应仍在工作区（Phase 3 无 stash，不会动其他文件）
-        assert (tmp_path / "b.py").read_text(encoding="utf-8") == "b = UNSTAGED\n", \
-            "b.py 修改不应丢失"
+        assert (tmp_path / "b.py").read_text(encoding="utf-8") == "b = UNSTAGED\n", "b.py 修改不应丢失"
 
     def test_commit_failure_stash_restored(self, tmp_path: Path) -> None:
         """场景8: git commit 失败——stash 必须恢复。
@@ -388,15 +396,18 @@ class TestStashConflictAndDataSafety:
         with patch.object(gw, "_commit_with_file_message", side_effect=failing_commit):
             result = gw.commit("B", [str(tmp_path / "a.py")], "feat: commit fail", allow_overlap=True)
 
-        assert result.status == CommitStatus.COMMIT_FAILED, \
-            f"commit 失败应返回 COMMIT_FAILED: {result.status}"
+        assert result.status == CommitStatus.COMMIT_FAILED, f"commit 失败应返回 COMMIT_FAILED: {result.status}"
         # stash 必须恢复（finally 保证）
-        assert (tmp_path / "b.py").read_text(encoding="utf-8") == "b = UNSTAGED\n", \
+        assert (tmp_path / "b.py").read_text(encoding="utf-8") == "b = UNSTAGED\n", (
             "commit 失败后 b.py 修改应恢复（stash pop）"
+        )
         # 无 stash 残留
         stash_list = subprocess.run(
-            ["git", "stash", "list"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8",
+            ["git", "stash", "list"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
         ).stdout.strip()
         assert not stash_list, f"commit 失败后不应有 stash 残留: {stash_list}"
 
@@ -479,5 +490,6 @@ class TestTimeoutAndResourceExhaustion:
             (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
             result = gw.commit("sess-wait", [str(tmp_path / "a.py")], "feat: lock wait", allow_overlap=True)
 
-        assert result.status == CommitStatus.LOCK_TIMEOUT, \
+        assert result.status == CommitStatus.LOCK_TIMEOUT, (
             f"锁被持有时应返回 LOCK_TIMEOUT: {result.status} {result.message}"
+        )

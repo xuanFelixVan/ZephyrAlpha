@@ -49,6 +49,7 @@
 与 memo §3.4 6 维权重同属"经验设定 → 待 G09 回测校准"口径；8 态修正项按 90 号 §7
 暂缓裁定置 0 不参与（等效五要素），重评条件满足后恢复接入。
 """
+
 from __future__ import annotations
 
 import math
@@ -224,7 +225,9 @@ def screen_preliminary(
     """
     if degraded:
         return PreliminaryScreenResult(
-            kept=tuple(r.symbol for r in records), excluded={}, degraded=True,
+            kept=tuple(r.symbol for r in records),
+            excluded={},
+            degraded=True,
         )
     kept: list[str] = []
     excluded: dict[str, str] = {}
@@ -299,14 +302,9 @@ def score_fine_selection(
     mean = sum(values) / len(values)
     var = sum((v - mean) ** 2 for v in values) / len(values)
     std = math.sqrt(var)
-    zs = {
-        s: (0.0 if std < 1e-12 else (v - mean) / std) for s, v in raws.items()
-    }
+    zs = {s: (0.0 if std < 1e-12 else (v - mean) / std) for s, v in raws.items()}
     ordered = sorted(raws, key=lambda s: (zs[s], raws[s]), reverse=True)[:top_n]
-    top = tuple(
-        ScoredSymbol(symbol=s, raw_score=raws[s], z_score=zs[s], rank=i + 1)
-        for i, s in enumerate(ordered)
-    )
+    top = tuple(ScoredSymbol(symbol=s, raw_score=raws[s], z_score=zs[s], rank=i + 1) for i, s in enumerate(ordered))
     return FineSelectionResult(top=top, degraded=degraded)
 
 

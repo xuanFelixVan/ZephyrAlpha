@@ -38,9 +38,7 @@ from zephyr.simulation.sharpe_calculator_fixer import (
 # ============== 辅助函数 ==============
 
 
-def gen_normal(
-    n: int, mean: float = 0.001, std: float = 0.02, seed: int = 42
-) -> list[float]:
+def gen_normal(n: int, mean: float = 0.001, std: float = 0.02, seed: int = 42) -> list[float]:
     """生成正态分布收益率序列。"""
     rng = random.Random(seed)
     return [rng.gauss(mean, std) for _ in range(n)]
@@ -168,18 +166,14 @@ class TestNormalSharpe:
         result = fixer.calculate(returns)
         rf = 0.025 / 252
         mean_r = sum(returns) / len(returns)
-        std_r = math.sqrt(
-            sum((r - mean_r) ** 2 for r in returns) / (len(returns) - 1)
-        )
+        std_r = math.sqrt(sum((r - mean_r) ** 2 for r in returns) / (len(returns) - 1))
         expected = (mean_r - rf) / std_r
         assert result.sharpe == pytest.approx(expected, rel=1e-9)
 
     def test_annualization(self):
         fixer = SharpeCalculatorFixer()
         result = fixer.calculate(gen_normal(200, seed=12))
-        assert result.sharpe_annualized == pytest.approx(
-            result.sharpe * math.sqrt(252), rel=1e-9
-        )
+        assert result.sharpe_annualized == pytest.approx(result.sharpe * math.sqrt(252), rel=1e-9)
 
     def test_positive_sharpe_for_positive_mean(self):
         fixer = SharpeCalculatorFixer()
@@ -224,9 +218,7 @@ class TestNonNormalSortino:
     def test_sortino_annualization(self):
         fixer = SharpeCalculatorFixer()
         result = fixer.calculate(gen_non_normal(300, seed=23))
-        assert result.sortino_annualized == pytest.approx(
-            result.sortino * math.sqrt(252), rel=1e-9
-        )
+        assert result.sortino_annualized == pytest.approx(result.sortino * math.sqrt(252), rel=1e-9)
 
     def test_skewness_kurtosis_populated(self):
         fixer = SharpeCalculatorFixer()

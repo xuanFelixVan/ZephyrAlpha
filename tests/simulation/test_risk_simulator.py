@@ -151,6 +151,7 @@ class TestParametricVaR:
         n = len(var_vals)
         sigma = math.sqrt(sum((v - mu) ** 2 for v in var_vals) / (n - 1))
         from statistics import NormalDist
+
         z = NormalDist().inv_cdf(0.95)
         expected = -mu + z * sigma
         assert results[0].var == pytest.approx(expected, rel=1e-6)

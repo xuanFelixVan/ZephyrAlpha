@@ -169,9 +169,7 @@ class VendorRegistry:
             vendor = self._vendors.pop(vendor_id)
             if self._default_vendor_id == vendor_id:
                 self._default_vendor_id = None
-                _logger.info(
-                    "默认 vendor %s 已注销, 默认源清空", vendor_id
-                )
+                _logger.info("默认 vendor %s 已注销, 默认源清空", vendor_id)
         _logger.info("vendor 注销成功: %s (剩余 %d 个)", vendor_id, self.count)
         return vendor
 
@@ -184,9 +182,7 @@ class VendorRegistry:
         with self._lock:
             return self._vendors.get(vendor_id)
 
-    def list_vendors(
-        self, status: VendorStatus | None = None
-    ) -> list[MarketDataVendor]:
+    def list_vendors(self, status: VendorStatus | None = None) -> list[MarketDataVendor]:
         """列出所有/按状态过滤的 vendor。
 
         Args:
@@ -244,10 +240,7 @@ class VendorRegistry:
 
     def __repr__(self) -> str:
         with self._lock:
-            return (
-                f"VendorRegistry(count={len(self._vendors)}, "
-                f"default={self._default_vendor_id!r})"
-            )
+            return f"VendorRegistry(count={len(self._vendors)}, default={self._default_vendor_id!r})"
 
 
 __all__ = [

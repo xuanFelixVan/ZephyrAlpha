@@ -71,9 +71,9 @@ logger = logging.getLogger(__name__)
 class SignalDirection(str, Enum):
     """策略信号方向。"""
 
-    LONG = "LONG"         # 看多/买入
-    SHORT = "SHORT"       # 看空/卖出
-    NEUTRAL = "NEUTRAL"   # 中性/观望
+    LONG = "LONG"  # 看多/买入
+    SHORT = "SHORT"  # 看空/卖出
+    NEUTRAL = "NEUTRAL"  # 中性/观望
 
     @property
     def sign(self) -> float:
@@ -84,9 +84,9 @@ class SignalDirection(str, Enum):
 class ResonanceLevel(str, Enum):
     """多策略共振级别 (PA-02 共振融合)。"""
 
-    STRONG = "STRONG"       # 全部同向(最高置信度)
-    MODERATE = "MODERATE"   # 多数同向(>=2/3)
-    WEAK = "WEAK"           # 分歧(需因子直通裁决)
+    STRONG = "STRONG"  # 全部同向(最高置信度)
+    MODERATE = "MODERATE"  # 多数同向(>=2/3)
+    WEAK = "WEAK"  # 分歧(需因子直通裁决)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -140,8 +140,12 @@ class StrategySignal:
             raise InvalidStrategySignalError("strategy_id and symbol must not be empty")
         if not isinstance(self.direction, SignalDirection):
             raise InvalidStrategySignalError(f"direction must be SignalDirection, got {type(self.direction)}")
-        for name, val in (("confidence", self.confidence), ("weight", self.weight),
-                          ("sensitivity", self.sensitivity), ("target_weight", self.target_weight)):
+        for name, val in (
+            ("confidence", self.confidence),
+            ("weight", self.weight),
+            ("sensitivity", self.sensitivity),
+            ("target_weight", self.target_weight),
+        ):
             if not 0.0 <= val <= 1.0:
                 raise InvalidStrategySignalError(f"{name} must be in [0,1], got {val}")
 
@@ -266,9 +270,7 @@ class SignalSynthesisCombiner:
         conflict = long_count > 0 and short_count > 0
         conflict_resolution = ""
         if conflict:
-            conflict_resolution = self._resolve_conflict(
-                long_count, short_count, direction, composite_score
-            )
+            conflict_resolution = self._resolve_conflict(long_count, short_count, direction, composite_score)
 
         # 合成置信度: 综合得分绝对值归一化到 [0,1] (得分上限=Σweight×1×1×1=Σweight)
         max_score = sum(s.weight for s in sigs) or 1.0
@@ -332,7 +334,9 @@ class SignalSynthesisCombiner:
             if total >= self._position_cap:
                 logger.info(
                     "Position cap %.2f reached for %s, truncating at strategy %s",
-                    self._position_cap, s.symbol, s.strategy_id,
+                    self._position_cap,
+                    s.symbol,
+                    s.strategy_id,
                 )
                 break
         return total

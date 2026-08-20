@@ -15,6 +15,7 @@
 
 用 SimpleNamespace/pandas 构造鸭子类型（adapters 运行时全鸭子类型，TYPE_CHECKING 隔离）。
 """
+
 from __future__ import annotations
 
 import json
@@ -114,7 +115,8 @@ def _make_bt_config():
 class TestRegimeAdapter:
     def test_full_flow(self, fb_dir):
         run_id = track_regime_detection(
-            _make_probs(), _make_shrinkage(),
+            _make_probs(),
+            _make_shrinkage(),
             feature_stats={"n_features": 12, "missing_rate": 0.01},
             model_params={"n_states": 4},
         )
@@ -135,9 +137,7 @@ class TestRegimeAdapter:
         assert meta["metrics"]["confidence"] == pytest.approx(0.4)
 
     def test_lineage_tags(self, fb_dir):
-        run_id = track_regime_detection(
-            _make_probs(), _make_shrinkage(), lineage={"feature_run_id": "frun-1"}
-        )
+        run_id = track_regime_detection(_make_probs(), _make_shrinkage(), lineage={"feature_run_id": "frun-1"})
         meta = _read_meta(fb_dir, "regime-detector", run_id)
         assert meta["tags"]["lineage_feature_run_id"] == "frun-1"
 
@@ -207,7 +207,9 @@ class TestVectorizedAdapter:
     def test_full_flow_with_nav(self, fb_dir):
         nav = pd.Series([1.0, 1.01, 1.02], index=pd.date_range("2024-01-01", periods=3))
         run_id = track_vectorized_backtest(
-            _make_bt_result(), config=_make_bt_config(), nav_series=nav,
+            _make_bt_result(),
+            config=_make_bt_config(),
+            nav_series=nav,
             lineage={"regime_run_id": "rrun-1"},
         )
         meta = _read_meta(fb_dir, "vectorized-backtest", run_id)
@@ -254,7 +256,8 @@ class TestStrategyRunnerAdapter:
 
     def test_full_flow(self, fb_dir):
         run_id = track_strategy_runner_result(
-            _make_bt_result(), runner_config=self._runner_config(),
+            _make_bt_result(),
+            runner_config=self._runner_config(),
             lineage={"feature_run_id": "frun-9", "regime_run_id": "rrun-9"},
         )
         meta = _read_meta(fb_dir, "full-chain-backtest", run_id)
@@ -291,24 +294,40 @@ class TestStrategyRunnerAdapter:
 class TestC2C3Adapter:
     def _c2_report(self):
         event = SimpleNamespace(
-            name="2020-03 新冠", n_days=20,
-            dd_baseline=-0.30, dd_experiment=-0.22, improvement=0.08,
+            name="2020-03 新冠",
+            n_days=20,
+            dd_baseline=-0.30,
+            dd_experiment=-0.22,
+            improvement=0.08,
         )
         return SimpleNamespace(
-            events=(event,), mean_improvement=0.08, min_improvement=0.08,
-            skipped=(), passed=True, summary="# C2 报告",
+            events=(event,),
+            mean_improvement=0.08,
+            min_improvement=0.08,
+            skipped=(),
+            passed=True,
+            summary="# C2 报告",
         )
 
     def _c3_report(self, bull=0.9):
         state = SimpleNamespace(
-            state="r4", days=30, day_share=0.3, mean_shrinkage=0.5,
-            mean_ret_baseline=-0.001, mean_ret_experiment=0.0005,
-            avoided_return=0.045, contribution_share=0.7,
+            state="r4",
+            days=30,
+            day_share=0.3,
+            mean_shrinkage=0.5,
+            mean_ret_baseline=-0.001,
+            mean_ret_experiment=0.0005,
+            avoided_return=0.045,
+            contribution_share=0.7,
         )
         return SimpleNamespace(
-            states=(state,), total_days=100, total_avoided=0.05,
-            defensive_share=0.7, bull_mean_shrinkage=bull,
-            passed=True, summary="# C3 报告",
+            states=(state,),
+            total_days=100,
+            total_avoided=0.05,
+            defensive_share=0.7,
+            bull_mean_shrinkage=bull,
+            passed=True,
+            summary="# C3 报告",
         )
 
     def test_c2_full_flow(self, fb_dir):

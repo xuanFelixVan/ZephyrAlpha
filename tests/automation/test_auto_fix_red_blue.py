@@ -18,6 +18,7 @@
 2. 安全绕过(Safety Bypass): 尝试绕过 SafetyGate 执行危险修复
 3. 影子工作区泄露(Shadow Workspace Leak): 测试隔离性和数据泄露防护
 """
+
 from __future__ import annotations
 
 import os
@@ -58,6 +59,7 @@ from zephyr.infrastructure.auto_fix_engine.shadow_workspace import ShadowWorkspa
 # 攻击向量 1: 修复爆炸 (Fix Storm)
 # ============================================================================
 
+
 class TestFixStormAttack:
     """红队: 短时间内触发大量修复,试图耗尽系统资源
     蓝队: FixStormGuard + CascadeBreaker + FixBudget 必须熔断"""
@@ -65,11 +67,13 @@ class TestFixStormAttack:
     def test_storm_guard_freezes_on_burst(self):
         """红队: 1秒内触发100次修复(超过short_threshold=30)
         蓝队: FixStormGuard 必须冻结后续请求"""
-        guard = FixStormGuard(config={
-            "short_window_sec": 10,
-            "short_threshold": 30,
-            "cooldown_sec": 60,
-        })
+        guard = FixStormGuard(
+            config={
+                "short_window_sec": 10,
+                "short_threshold": 30,
+                "cooldown_sec": 60,
+            }
+        )
         for _ in range(100):
             guard.record()
 
@@ -81,11 +85,13 @@ class TestFixStormAttack:
     def test_storm_guard_concurrent_attack(self):
         """红队: 8线程并发触发修复(模拟多修复器同时工作)
         蓝队: FixStormGuard 线程安全,正确检测风暴"""
-        guard = FixStormGuard(config={
-            "short_window_sec": 5,
-            "short_threshold": 20,
-            "cooldown_sec": 30,
-        })
+        guard = FixStormGuard(
+            config={
+                "short_window_sec": 5,
+                "short_threshold": 20,
+                "cooldown_sec": 30,
+            }
+        )
 
         def attack():
             for _ in range(50):
@@ -104,11 +110,13 @@ class TestFixStormAttack:
     def test_cascade_breaker_module_freeze(self):
         """红队: 同一模块连续触发10次修复(超过module_threshold)
         蓝队: CascadeBreaker 模块级熔断"""
-        cb = CascadeBreaker(config={
-            "module_threshold": 5,
-            "module_window_sec": 10,
-            "module_cooldown_sec": 60,
-        })
+        cb = CascadeBreaker(
+            config={
+                "module_threshold": 5,
+                "module_window_sec": 10,
+                "module_cooldown_sec": 60,
+            }
+        )
         module = "zephyr.infrastructure.auto_fix_engine.engine"
 
         for _ in range(10):
@@ -121,11 +129,13 @@ class TestFixStormAttack:
     def test_cascade_breaker_global_freeze(self):
         """红队: 全局触发60次修复(超过global_threshold=50)
         蓝队: CascadeBreaker 全局熔断"""
-        cb = CascadeBreaker(config={
-            "global_threshold": 50,
-            "global_window_sec": 10,
-            "global_cooldown_sec": 60,
-        })
+        cb = CascadeBreaker(
+            config={
+                "global_threshold": 50,
+                "global_window_sec": 10,
+                "global_cooldown_sec": 60,
+            }
+        )
 
         for i in range(60):
             cb.record(f"module_{i}")
@@ -137,11 +147,13 @@ class TestFixStormAttack:
     def test_budget_exhaustion_blocks_fixes(self):
         """红队: 消耗完每日预算后继续请求修复
         蓝队: FixBudget 拒绝超出预算的修复"""
-        budget = FixBudget(config={
-            "daily_limit": 5,
-            "monthly_limit": 100,
-            "l1_cost_per_fix": 1,
-        })
+        budget = FixBudget(
+            config={
+                "daily_limit": 5,
+                "monthly_limit": 100,
+                "l1_cost_per_fix": 1,
+            }
+        )
 
         # 消耗5次L1修复(达到每日上限)
         for i in range(5):
@@ -174,6 +186,7 @@ class TestFixStormAttack:
 # 攻击向量 2: 安全绕过 (Safety Bypass)
 # ============================================================================
 
+
 class TestSafetyBypassAttack:
     """红队: 尝试绕过 SafetyGate 执行危险修复
     蓝队: SafetyGate + FixValidator + SecretLeakGuard 必须拦截"""
@@ -194,9 +207,11 @@ class TestSafetyBypassAttack:
     def test_protected_path_blocked(self):
         """红队: 尝试修改受保护路径(如 project_rules.md)
         蓝队: SafetyGate 拒绝"""
-        gate = SafetyGate(config={
-            "protected_paths": ["project_rules.md", ".trae/rules/"],
-        })
+        gate = SafetyGate(
+            config={
+                "protected_paths": ["project_rules.md", ".trae/rules/"],
+            }
+        )
         action = FixAction(
             action_type="config_fix",
             target="project_rules.md",
@@ -297,6 +312,7 @@ class TestSafetyBypassAttack:
 # 攻击向量 3: 影子工作区泄露 (Shadow Workspace Leak)
 # ============================================================================
 
+
 class TestShadowWorkspaceLeak:
     """红队: 尝试通过 ShadowWorkspace 泄露数据或污染主环境
     蓝队: ShadowWorkspace 必须隔离,执行后清理"""
@@ -308,12 +324,14 @@ class TestShadowWorkspaceLeak:
             original_file = Path(tmpdir) / "target.py"
             original_file.write_text("original = 1\n", encoding="utf-8")
 
-            shadow = ShadowWorkspace(config={
-                "base_dir": str(Path(tmpdir) / "shadow"),
-                "run_pytest": False,
-                "run_mypy": False,
-                "run_ruff": False,
-            })
+            shadow = ShadowWorkspace(
+                config={
+                    "base_dir": str(Path(tmpdir) / "shadow"),
+                    "run_pytest": False,
+                    "run_mypy": False,
+                    "run_ruff": False,
+                }
+            )
             action = FixAction(
                 action_type="test",
                 target=str(original_file),
@@ -324,8 +342,9 @@ class TestShadowWorkspaceLeak:
             result = shadow.preflight(action, project_root=tmpdir)
 
             # 主环境文件未被修改
-            assert original_file.read_text(encoding="utf-8") == "original = 1\n", \
+            assert original_file.read_text(encoding="utf-8") == "original = 1\n", (
                 "ShadowWorkspace 泄露: 主环境文件被修改"
+            )
 
     def test_shadow_workspace_nonexistent_target(self):
         """红队: 对不存在的文件执行 preflight
@@ -355,20 +374,21 @@ class TestShadowWorkspaceLeak:
             estimate = estimator.estimate(action)
 
             assert estimate["files"] >= 10, "BlastRadiusEstimator 未正确评估文件数"
-            assert estimate["risk"] in ("medium", "high"), \
-                f"10文件修复风险应为medium/high,实际: {estimate['risk']}"
+            assert estimate["risk"] in ("medium", "high"), f"10文件修复风险应为medium/high,实际: {estimate['risk']}"
 
     def test_shadow_workspace_cleanup(self):
         """红队: ShadowWorkspace 执行后检查临时目录残留
         蓝队: 临时目录被清理"""
         with tempfile.TemporaryDirectory() as tmpdir:
             shadow_base = Path(tmpdir) / "shadow"
-            shadow = ShadowWorkspace(config={
-                "base_dir": str(shadow_base),
-                "run_pytest": False,
-                "run_mypy": False,
-                "run_ruff": False,
-            })
+            shadow = ShadowWorkspace(
+                config={
+                    "base_dir": str(shadow_base),
+                    "run_pytest": False,
+                    "run_mypy": False,
+                    "run_ruff": False,
+                }
+            )
             target_file = Path(tmpdir) / "target.py"
             target_file.write_text("x = 1\n", encoding="utf-8")
 
@@ -381,13 +401,13 @@ class TestShadowWorkspaceLeak:
             shadow.preflight(action, project_root=tmpdir)
 
             # preflight 在 finally 中清理 shadow_dir
-            assert target_file.read_text(encoding="utf-8") == "x = 1\n", \
-                "原文件被 ShadowWorkspace 修改"
+            assert target_file.read_text(encoding="utf-8") == "x = 1\n", "原文件被 ShadowWorkspace 修改"
 
 
 # ============================================================================
 # 组合攻击: 多向量同时攻击
 # ============================================================================
+
 
 class TestCombinedAttack:
     """红队: 同时触发修复爆炸 + 安全绕过 + 影子工作区泄露
@@ -396,11 +416,13 @@ class TestCombinedAttack:
     def test_storm_plus_bypass_attempt(self):
         """红队: 在修复风暴中尝试执行 L3 危险修复
         蓝队: FixStormGuard 冻结 + SafetyGate 拒绝"""
-        guard = FixStormGuard(config={
-            "short_window_sec": 5,
-            "short_threshold": 10,
-            "cooldown_sec": 30,
-        })
+        guard = FixStormGuard(
+            config={
+                "short_window_sec": 5,
+                "short_threshold": 10,
+                "cooldown_sec": 30,
+            }
+        )
         gate = SafetyGate()
 
         for _ in range(50):
@@ -421,11 +443,13 @@ class TestCombinedAttack:
         """红队: 预算耗尽 + 级联熔断同时发生
         蓝队: 系统进入全面保护状态"""
         budget = FixBudget(config={"daily_limit": 3, "monthly_limit": 10, "l1_cost_per_fix": 1})
-        cb = CascadeBreaker(config={
-            "module_threshold": 3,
-            "module_window_sec": 10,
-            "module_cooldown_sec": 60,
-        })
+        cb = CascadeBreaker(
+            config={
+                "module_threshold": 3,
+                "module_window_sec": 10,
+                "module_cooldown_sec": 60,
+            }
+        )
 
         for i in range(3):
             budget.consume(FixLevel.L1_RULE, operation_id=f"fix_{i}")

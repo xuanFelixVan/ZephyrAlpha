@@ -43,6 +43,7 @@ symbol 双向转换（裁定#ARCH-SYMBOL-NORMALIZE-001, 2026-07-25）：
   volume=0     → is_suspended=True（停牌日无成交）
   data_source  → data_source
 """
+
 from __future__ import annotations
 
 import logging
@@ -92,8 +93,17 @@ _SQL_LOAD_KLINE = (
 
 # TSV 列顺序（ClickHouse SELECT 返回无表头，按 SELECT 顺序映射）
 _KLINE_COLUMNS = [
-    "trade_date", "symbol", "open", "high", "low",
-    "close", "volume", "amount", "adj_factor", "data_source", "quality_flag",
+    "trade_date",
+    "symbol",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "amount",
+    "adj_factor",
+    "data_source",
+    "quality_flag",
 ]
 
 # quality_flag 语义（裁定 #ARCH-CH-021 P0-4）：
@@ -255,9 +265,7 @@ def _row_to_record(row: pd.Series) -> NormalizedMarketData | None:
         return None
 
 
-def load_kline(
-    symbols: Sequence[str], start: str, end: str
-) -> list[NormalizedMarketData]:
+def load_kline(symbols: Sequence[str], start: str, end: str) -> list[NormalizedMarketData]:
     """从 ClickHouse 加载日K行情，转为 NormalizedMarketData 列表。
 
     symbol 格式双向转换（裁定#ARCH-SYMBOL-NORMALIZE-001）：
@@ -277,8 +285,11 @@ def load_kline(
     if not symbols:
         return []
     sql = _SQL_LOAD_KLINE.format(
-        tbl=_TBL_KLINE_DAILY, final="",
-        symbols=_format_symbols(symbols), start=start, end=end,
+        tbl=_TBL_KLINE_DAILY,
+        final="",
+        symbols=_format_symbols(symbols),
+        start=start,
+        end=end,
     )
     df = _tsv_to_dataframe(ch_reader.query(sql))
     if df.empty:
@@ -288,14 +299,11 @@ def load_kline(
         rec = _row_to_record(row)
         if rec is not None:
             records.append(rec)
-    log.info("load_kline: symbols=%d, date=%s~%s, loaded=%d",
-             len(symbols), start, end, len(records))
+    log.info("load_kline: symbols=%d, date=%s~%s, loaded=%d", len(symbols), start, end, len(records))
     return records
 
 
-def produce(
-    symbols: Sequence[str], start: str, end: str
-) -> list[NormalizedMarketData]:
+def produce(symbols: Sequence[str], start: str, end: str) -> list[NormalizedMarketData]:
     """生产 NormalizedMarketData（load_kline 的语义别名，对齐 CP-03 门禁命名）。
 
     CP-03 门禁要求 D_MKT_DATA 产出 NormalizedMarketData 供 D_FACTOR 消费。
@@ -310,6 +318,7 @@ def produce(
         NormalizedMarketData 列表
     """
     return load_kline(symbols, start, end)
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def to_int(value, default: int = 1) -> int:
@@ -349,4 +358,3 @@ def normalize_symbol(symbol) -> str:
 def format_symbols(symbols) -> str:
     """公共接口：format_symbols（Stage 4 公共化）。"""
     return _format_symbols(symbols)
-

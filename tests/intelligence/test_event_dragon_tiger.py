@@ -13,6 +13,7 @@
   3. 量化席位过滤（hard ×0.7 / soft ×0.85 / 不足 3 席不过滤 / 零买入基线）
   4. 组合场景（强佐证×量化 hard/soft）与值域 [0.7, 1.2]
 """
+
 from __future__ import annotations
 
 import pytest
@@ -26,7 +27,10 @@ from zephyr.intelligence.event_dragon_tiger import (
 
 def _dt(net=130.0, turnover=1000.0, total_buy=500.0, seats=()) -> DragonTigerData:
     return DragonTigerData(
-        net_buy_amount=net, total_turnover=turnover, total_buy=total_buy, buyer_seats=tuple(seats),
+        net_buy_amount=net,
+        total_turnover=turnover,
+        total_buy=total_buy,
+        buyer_seats=tuple(seats),
     )
 
 

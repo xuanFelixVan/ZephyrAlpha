@@ -179,9 +179,7 @@ class TestLRUEviction:
         assert cache.stats.eviction_count == 1
 
     def test_ttl_only_policy_no_capacity_eviction(self):
-        cache = RawDataCache(
-            CacheConfig(max_size=1, ttl_seconds=None, policy=EvictionPolicy.TTL)
-        )
+        cache = RawDataCache(CacheConfig(max_size=1, ttl_seconds=None, policy=EvictionPolicy.TTL))
         cache.put("A", "2026-01-01", b"1", "v")
         cache.put("B", "2026-01-01", b"2", "v")
         # TTL 策略不做容量淘汰, 两条都在
@@ -350,9 +348,7 @@ class TestStats:
 
 class TestThreadSafety:
     def test_concurrent_put_get(self):
-        cache = RawDataCache(
-            CacheConfig(max_size=500, ttl_seconds=None)
-        )
+        cache = RawDataCache(CacheConfig(max_size=500, ttl_seconds=None))
         errors: list[Exception] = []
 
         def writer(start: int) -> None:

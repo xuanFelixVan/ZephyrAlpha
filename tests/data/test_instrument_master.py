@@ -25,15 +25,15 @@ class TestDDL:
     def test_main_table_has_ashare_required_fields(self):
         """A 股必需补充字段（裁定②）全部在表结构内。"""
         for col in (
-            "board",              # 板块代码（决定涨跌幅 ±10%/20%/30%）
-            "is_st",              # ST/*ST 标志
-            "st_change_date",     # ST 变更日期
+            "board",  # 板块代码（决定涨跌幅 ±10%/20%/30%）
+            "is_st",  # ST/*ST 标志
+            "st_change_date",  # ST 变更日期
             "in_delisting_period",  # 退市整理期
-            "list_date",          # 上市日期（次新过滤）
-            "is_suspended",       # 停牌标志
-            "prev_close",         # 昨收价（算涨跌停价）
-            "min_order_unit",     # 最小申报单位
-            "float_shares",       # 流通股本（#15 市值分层取数）
+            "list_date",  # 上市日期（次新过滤）
+            "is_suspended",  # 停牌标志
+            "prev_close",  # 昨收价（算涨跌停价）
+            "min_order_unit",  # 最小申报单位
+            "float_shares",  # 流通股本（#15 市值分层取数）
         ):
             assert col in INSTRUMENT_MASTER_DDL, col
 

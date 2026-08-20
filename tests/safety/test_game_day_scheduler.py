@@ -49,12 +49,7 @@ ScenarioLoader = scenario_mod.ScenarioLoader
 
 _PROJECT_ROOT = REPO_ROOT
 _SCENARIO_REGISTRY_PATH = (
-    _PROJECT_ROOT
-    / "src"
-    / "zephyr"
-    / "security"
-    / "adversarial_validation"
-    / "_scenario_registry.yaml"
+    _PROJECT_ROOT / "src" / "zephyr" / "security" / "adversarial_validation" / "_scenario_registry.yaml"
 )
 
 
@@ -344,45 +339,31 @@ class TestShouldRun:
         assert scheduler.should_run(GameDayFrequency.DAILY) is False
 
     def test_should_run_true_when_past_daily_interval(self, scheduler):
-        scheduler.state["last_runs"]["daily"] = (
-            datetime.now(UTC) - timedelta(days=2)
-        ).isoformat()
+        scheduler.state["last_runs"]["daily"] = (datetime.now(UTC) - timedelta(days=2)).isoformat()
         assert scheduler.should_run(GameDayFrequency.DAILY) is True
 
     def test_should_run_false_when_within_per_commit_interval(self, scheduler):
-        scheduler.state["last_runs"]["per_commit"] = (
-            datetime.now(UTC) - timedelta(minutes=1)
-        ).isoformat()
+        scheduler.state["last_runs"]["per_commit"] = (datetime.now(UTC) - timedelta(minutes=1)).isoformat()
         assert scheduler.should_run(GameDayFrequency.PER_COMMIT) is False
 
     def test_should_run_true_when_past_per_commit_interval(self, scheduler):
-        scheduler.state["last_runs"]["per_commit"] = (
-            datetime.now(UTC) - timedelta(minutes=6)
-        ).isoformat()
+        scheduler.state["last_runs"]["per_commit"] = (datetime.now(UTC) - timedelta(minutes=6)).isoformat()
         assert scheduler.should_run(GameDayFrequency.PER_COMMIT) is True
 
     def test_should_run_false_when_within_weekly_interval(self, scheduler):
-        scheduler.state["last_runs"]["weekly"] = (
-            datetime.now(UTC) - timedelta(days=1)
-        ).isoformat()
+        scheduler.state["last_runs"]["weekly"] = (datetime.now(UTC) - timedelta(days=1)).isoformat()
         assert scheduler.should_run(GameDayFrequency.WEEKLY) is False
 
     def test_should_run_true_when_past_weekly_interval(self, scheduler):
-        scheduler.state["last_runs"]["weekly"] = (
-            datetime.now(UTC) - timedelta(days=8)
-        ).isoformat()
+        scheduler.state["last_runs"]["weekly"] = (datetime.now(UTC) - timedelta(days=8)).isoformat()
         assert scheduler.should_run(GameDayFrequency.WEEKLY) is True
 
     def test_should_run_false_when_within_monthly_interval(self, scheduler):
-        scheduler.state["last_runs"]["monthly"] = (
-            datetime.now(UTC) - timedelta(days=10)
-        ).isoformat()
+        scheduler.state["last_runs"]["monthly"] = (datetime.now(UTC) - timedelta(days=10)).isoformat()
         assert scheduler.should_run(GameDayFrequency.MONTHLY) is False
 
     def test_should_run_true_when_past_monthly_interval(self, scheduler):
-        scheduler.state["last_runs"]["monthly"] = (
-            datetime.now(UTC) - timedelta(days=31)
-        ).isoformat()
+        scheduler.state["last_runs"]["monthly"] = (datetime.now(UTC) - timedelta(days=31)).isoformat()
         assert scheduler.should_run(GameDayFrequency.MONTHLY) is True
 
 
@@ -575,9 +556,7 @@ class TestLastRun:
 class TestStateLoadSave:
     def test_load_state_creates_default_when_missing(self, tmp_path):
         state_path = tmp_path / "nonexistent.yaml"
-        with patch(
-            "zephyr.security.adversarial_validation.game_day_scheduler.GameDayRunner"
-        ):
+        with patch("zephyr.security.adversarial_validation.game_day_scheduler.GameDayRunner"):
             sched = GameDayScheduler(state_path=state_path)
         assert sched.state["running"] is False
         assert sched.state["last_runs"] == {}
@@ -592,12 +571,8 @@ class TestStateLoadSave:
             "history": [],
             "updated_at": "",
         }
-        state_path.write_text(
-            yaml.safe_dump(existing, allow_unicode=True), encoding="utf-8"
-        )
-        with patch(
-            "zephyr.security.adversarial_validation.game_day_scheduler.GameDayRunner"
-        ):
+        state_path.write_text(yaml.safe_dump(existing, allow_unicode=True), encoding="utf-8")
+        with patch("zephyr.security.adversarial_validation.game_day_scheduler.GameDayRunner"):
             sched = GameDayScheduler(state_path=state_path)
         assert sched.state["running"] is True
         assert "daily" in sched.state["last_runs"]
@@ -612,9 +587,7 @@ class TestStateLoadSave:
 
     def test_state_path_uses_custom_path(self, tmp_path):
         state_path = tmp_path / "custom-state.yaml"
-        with patch(
-            "zephyr.security.adversarial_validation.game_day_scheduler.GameDayRunner"
-        ):
+        with patch("zephyr.security.adversarial_validation.game_day_scheduler.GameDayRunner"):
             sched = GameDayScheduler(state_path=state_path)
         assert sched.state_path == state_path
 
@@ -659,9 +632,7 @@ class TestScenarioRegistry:
         ]
         for i, scenario in enumerate(data["scenarios"]):
             for field in required_fields:
-                assert field in scenario, (
-                    f"scenario[{i}] ({scenario.get('scenario_id', '?')}) missing field: {field}"
-                )
+                assert field in scenario, f"scenario[{i}] ({scenario.get('scenario_id', '?')}) missing field: {field}"
 
     def test_all_scenarios_have_valid_status(self):
         # 治本(2026-07-19): 场景注册表支持 active 和 deprecated 两种状态。
@@ -672,8 +643,7 @@ class TestScenarioRegistry:
         valid_statuses = {"active", "deprecated"}
         for scenario in data["scenarios"]:
             assert scenario["status"] in valid_statuses, (
-                f"{scenario['scenario_id']} status={scenario['status']} "
-                f"not in {valid_statuses}"
+                f"{scenario['scenario_id']} status={scenario['status']} not in {valid_statuses}"
             )
 
     @pytest.mark.xfail(
@@ -712,9 +682,7 @@ class TestScenarioRegistry:
         with open(_SCENARIO_REGISTRY_PATH, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         for scenario in data["scenarios"]:
-            assert scenario["injection_vector"], (
-                f"{scenario['scenario_id']} has empty injection_vector"
-            )
+            assert scenario["injection_vector"], f"{scenario['scenario_id']} has empty injection_vector"
 
     def test_scenarios_have_non_empty_defense(self):
         with open(_SCENARIO_REGISTRY_PATH, encoding="utf-8") as f:
@@ -726,9 +694,7 @@ class TestScenarioRegistry:
         with open(_SCENARIO_REGISTRY_PATH, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         for scenario in data["scenarios"]:
-            assert scenario["target_module"], (
-                f"{scenario['scenario_id']} has empty target_module"
-            )
+            assert scenario["target_module"], f"{scenario['scenario_id']} has empty target_module"
 
 
 class TestScenarioLoaderIntegration:
@@ -805,9 +771,7 @@ class TestSchedulerScenarioExecution:
 
     def test_trigger_full_cycle_executes_all_frequency_tiers(self, scheduler, mock_runner):
         scheduler.trigger("full_cycle")
-        called_freqs = [
-            call.args[0] for call in mock_runner.run_game_day.call_args_list
-        ]
+        called_freqs = [call.args[0] for call in mock_runner.run_game_day.call_args_list]
         assert GameDayFrequency.PER_COMMIT in called_freqs
         assert GameDayFrequency.DAILY in called_freqs
         assert GameDayFrequency.WEEKLY in called_freqs
@@ -825,14 +789,10 @@ class TestSchedulerScenarioExecution:
     def test_trigger_full_cycle_results_have_all_frequencies(self, scheduler):
         results = scheduler.trigger("full_cycle")
         freqs = [r["frequency"] for r in results]
-        assert sorted(freqs) == sorted(
-            ["per_commit", "daily", "weekly", "monthly"]
-        )
+        assert sorted(freqs) == sorted(["per_commit", "daily", "weekly", "monthly"])
 
     def test_trigger_with_mocked_54_attacks(self, tmp_path, mock_runner):
-        mock_runner.run_game_day.return_value = _make_result(
-            total=54, blocked=48, bypassed=6
-        )
+        mock_runner.run_game_day.return_value = _make_result(total=54, blocked=48, bypassed=6)
         state_path = tmp_path / "scheduler-state.yaml"
         with patch(
             "zephyr.security.adversarial_validation.game_day_scheduler.GameDayRunner",

@@ -252,6 +252,7 @@ def _print_top_candidates(will_delete):
         return
     print("\n首批 20 个将删除目录（按文件数降序）:")
     from datetime import datetime
+
     for name, fc, mt in sorted(will_delete, key=lambda x: -x[1])[:20]:
         mt_str = datetime.fromtimestamp(mt).strftime("%Y-%m-%d %H:%M")
         print(f"  {name} ({fc} 文件, mtime {mt_str})")
@@ -317,9 +318,7 @@ def main() -> int:
 
     match_residue, should_remove = _load_shared_predicates()
     now = time.time()
-    will_delete, kept_reasons, category_counts, top_level_files = _scan_entries(
-        match_residue, should_remove, now
-    )
+    will_delete, kept_reasons, category_counts, top_level_files = _scan_entries(match_residue, should_remove, now)
     _print_summary(will_delete, kept_reasons, category_counts, top_level_files, args.execute)
 
     if not args.execute:

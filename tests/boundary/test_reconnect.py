@@ -8,6 +8,7 @@
 4. 策略状态恢复通知
 + 假死心跳检测
 """
+
 import threading
 import time
 from decimal import Decimal
@@ -33,9 +34,13 @@ class TestReconnectFourSteps:
         broker = MiniQmtBroker()
         calls: list = []
         for name in (
-            "_init_xttrader", "_start_once", "_do_connect_with_retry",
-            "_subscribe_account", "_resubscribe_quotes",
-            "_sync_order_state_on_reconnect", "_notify_reconnect_complete",
+            "_init_xttrader",
+            "_start_once",
+            "_do_connect_with_retry",
+            "_subscribe_account",
+            "_resubscribe_quotes",
+            "_sync_order_state_on_reconnect",
+            "_notify_reconnect_complete",
         ):
             _spy_on(broker, name, calls)
 
@@ -43,9 +48,13 @@ class TestReconnectFourSteps:
         assert broker._connected is True
         # 四步完整且顺序固定：连接→行情→订单→通知
         assert calls == [
-            "_init_xttrader", "_start_once", "_do_connect_with_retry",
-            "_subscribe_account", "_resubscribe_quotes",
-            "_sync_order_state_on_reconnect", "_notify_reconnect_complete",
+            "_init_xttrader",
+            "_start_once",
+            "_do_connect_with_retry",
+            "_subscribe_account",
+            "_resubscribe_quotes",
+            "_sync_order_state_on_reconnect",
+            "_notify_reconnect_complete",
         ]
 
     def test_reconnect_syncs_order_state(self):
@@ -53,16 +62,22 @@ class TestReconnectFourSteps:
         broker = MiniQmtBroker()
         broker._account = SimpleNamespace(account_id="test")
         xt_order = SimpleNamespace(
-            order_id="ord-1", order_status=52,  # 52=FILLED
-            traded_volume=100, traded_price=10.5,
+            order_id="ord-1",
+            order_status=52,  # 52=FILLED
+            traded_volume=100,
+            traded_price=10.5,
         )
         broker._xttrader = MagicMock()
         broker._xttrader.query_stock_orders.return_value = [xt_order]
 
         cached = Order(
-            idempotency_key="k-1", order_id="ord-1",
-            order_type=OrderType.LIMIT, quantity=Decimal("100"),
-            side=OrderSide.BUY, strategy_id="test", symbol="600000.SH",
+            idempotency_key="k-1",
+            order_id="ord-1",
+            order_type=OrderType.LIMIT,
+            quantity=Decimal("100"),
+            side=OrderSide.BUY,
+            strategy_id="test",
+            symbol="600000.SH",
             status=OrderStatus.SUBMITTED,
         )
         broker._order_cache["ord-1"] = cached

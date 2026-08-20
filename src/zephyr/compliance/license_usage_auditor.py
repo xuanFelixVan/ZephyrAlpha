@@ -59,9 +59,7 @@ DEFAULT_REGISTRY_PATH: Path = (
 )
 
 #: 合法用途词表（§5.3 permitted_use 枚举）
-VALID_USES: frozenset[str] = frozenset(
-    {"backtest", "live_trading", "display", "ml_training", "redistribution"}
-)
+VALID_USES: frozenset[str] = frozenset({"backtest", "live_trading", "display", "ml_training", "redistribution"})
 
 #: 缺 compliance 段时的最保守默认用途（§5.3 降级裁定）
 CONSERVATIVE_DEFAULT_USES: frozenset[str] = frozenset({"backtest"})
@@ -161,33 +159,41 @@ class LicenseUsageAuditor:
 
         # L2 授权过期（Fail-Closed，最优先）
         if lic.expiry is not None and lic.expiry < today:
-            findings.append(LicenseAuditFinding(
-                ViolationLevel.L2_EXPIRED,
-                f"授权到期日 {lic.expiry.isoformat()} 已过（{today.isoformat()}）仍消费",
-                "立即切断数据流（Fail-Closed）+ 告警",
-            ))
+            findings.append(
+                LicenseAuditFinding(
+                    ViolationLevel.L2_EXPIRED,
+                    f"授权到期日 {lic.expiry.isoformat()} 已过（{today.isoformat()}）仍消费",
+                    "立即切断数据流（Fail-Closed）+ 告警",
+                )
+            )
         # L3 再分发违规
         if "redistribution" in actual_uses and not lic.redistribution_allowed:
-            findings.append(LicenseAuditFinding(
-                ViolationLevel.L3_REDISTRIBUTION,
-                "存在再分发/对外发布用途但条款不允许",
-                "人工处置 + 条款复核 + 功能下线评估（联动 §6 门禁）",
-            ))
+            findings.append(
+                LicenseAuditFinding(
+                    ViolationLevel.L3_REDISTRIBUTION,
+                    "存在再分发/对外发布用途但条款不允许",
+                    "人工处置 + 条款复核 + 功能下线评估（联动 §6 门禁）",
+                )
+            )
         # L1 超范围使用
         for use in sorted(actual_uses - VALID_USES):
-            findings.append(LicenseAuditFinding(
-                ViolationLevel.L1_SCOPE,
-                f"未知用途 '{use}'（不在合法用途词表）",
-                "切断该用途数据流 + Warning + 限期整改",
-            ))
+            findings.append(
+                LicenseAuditFinding(
+                    ViolationLevel.L1_SCOPE,
+                    f"未知用途 '{use}'（不在合法用途词表）",
+                    "切断该用途数据流 + Warning + 限期整改",
+                )
+            )
         for use in sorted((actual_uses - {"redistribution"}) & VALID_USES):
             if use not in lic.permitted_use:
-                findings.append(LicenseAuditFinding(
-                    ViolationLevel.L1_SCOPE,
-                    f"用途 '{use}' 超出授权范围 {sorted(lic.permitted_use)}"
-                    + ("" if lic.has_compliance_section else "（缺 compliance 段，保守默认）"),
-                    "切断该用途数据流 + Warning + 限期整改（升级授权或下线用途）",
-                ))
+                findings.append(
+                    LicenseAuditFinding(
+                        ViolationLevel.L1_SCOPE,
+                        f"用途 '{use}' 超出授权范围 {sorted(lic.permitted_use)}"
+                        + ("" if lic.has_compliance_section else "（缺 compliance 段，保守默认）"),
+                        "切断该用途数据流 + Warning + 限期整改（升级授权或下线用途）",
+                    )
+                )
 
         report = LicenseAuditReport(
             source_id=source_id,
@@ -203,10 +209,7 @@ class LicenseUsageAuditor:
             {
                 "source_id": source_id,
                 "compliant": report.compliant,
-                "findings": [
-                    {"level": f.level.value, "detail": f.detail, "action": f.action}
-                    for f in findings
-                ],
+                "findings": [{"level": f.level.value, "detail": f.detail, "action": f.action} for f in findings],
                 "actual_uses": sorted(actual_uses),
                 "effective_permitted_use": sorted(lic.permitted_use),
             },
@@ -231,9 +234,7 @@ class LicenseUsageAuditor:
 
     def _load_sources(self) -> dict[str, dict]:
         if not self._registry_path.exists():
-            raise LicenseAuditError(
-                f"登记表不可读（Fail-Closed）: {self._registry_path}"
-            )
+            raise LicenseAuditError(f"登记表不可读（Fail-Closed）: {self._registry_path}")
         data = yaml.safe_load(self._registry_path.read_text(encoding="utf-8"))
         return {s["source_id"]: s for s in data.get("sources", [])}
 

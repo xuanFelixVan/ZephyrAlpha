@@ -104,11 +104,7 @@ def multi_tf_momentum(
     if len(windows) != len(weights):
         raise ValueError("windows 与 weights 长度必须一致")
     min_len = max(windows) + 1
-    valid = {
-        code: closes
-        for code, closes in closes_by_sector.items()
-        if len(closes) >= min_len
-    }
+    valid = {code: closes for code, closes in closes_by_sector.items() if len(closes) >= min_len}
     if not valid:
         return {}
 
@@ -118,7 +114,4 @@ def multi_tf_momentum(
         rets = {code: n_day_return(closes, w) for code, closes in valid.items()}
         q_by_window.append(percentile_ranks(rets))
 
-    return {
-        code: sum(weight * q[code] for weight, q in zip(weights, q_by_window, strict=True))
-        for code in valid
-    }
+    return {code: sum(weight * q[code] for weight, q in zip(weights, q_by_window, strict=True)) for code in valid}

@@ -5,6 +5,7 @@
 覆盖: 单场景指标、多场景聚合(mean/std/分位数/CI)、分布直方图、Jarque-Bera 正态性、
 可视化数据、空列表、输入校验、frozen。
 """
+
 from __future__ import annotations
 
 import math
@@ -234,8 +235,15 @@ class TestAggregation:
     def test_all_metrics_present(self):
         analyzer = SimulationResultAnalyzer()
         report = analyzer.analyze(make_results(3))
-        for name in ["total_return", "annualized_return", "volatility",
-                     "sharpe", "max_drawdown", "win_rate", "trades_count"]:
+        for name in [
+            "total_return",
+            "annualized_return",
+            "volatility",
+            "sharpe",
+            "max_drawdown",
+            "win_rate",
+            "trades_count",
+        ]:
             assert name in report.aggregate.metrics
 
 
@@ -342,9 +350,7 @@ class TestVisualizationAndReport:
 
         results = []
         for seed in range(10):
-            sc = gen.generate_monte_carlo(
-                MonteCarloParams(start_price=100.0, n_bars=100, seed=seed)
-            )
+            sc = gen.generate_monte_carlo(MonteCarloParams(start_price=100.0, n_bars=100, seed=seed))
             r = sim.run(sc.market_data, StrategySpec(signal_fn=momentum))
             results.append(r)
 

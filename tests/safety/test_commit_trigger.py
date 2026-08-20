@@ -24,12 +24,7 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 _spec = _ilu.spec_from_file_location(
     "_commit_trigger_under_test",
-    REPO_ROOT
-    / "src"
-    / "zephyr"
-    / "security"
-    / "adversarial_validation"
-    / "commit_trigger.py",
+    REPO_ROOT / "src" / "zephyr" / "security" / "adversarial_validation" / "commit_trigger.py",
 )
 assert _spec is not None and _spec.loader is not None
 ct = _ilu.module_from_spec(_spec)
@@ -51,36 +46,52 @@ class TestDetectFormalFiles:
         return str(p)
 
     def test_blueprint_header_matched(self, tmp_path):
-        f = self._write(tmp_path, "a.py", [
-            "# [BLUEPRINT] MOD-INF-030 | docs/.../blueprint.md | §1",
-            "# [MODULE] zephyr.xxx",
-            "import os",
-        ])
+        f = self._write(
+            tmp_path,
+            "a.py",
+            [
+                "# [BLUEPRINT] MOD-INF-030 | docs/.../blueprint.md | §1",
+                "# [MODULE] zephyr.xxx",
+                "import os",
+            ],
+        )
         result = detect_formal_files([f])
         assert result == [f]
 
     def test_module_header_matched(self, tmp_path):
-        f = self._write(tmp_path, "b.py", [
-            "# [MODULE] zephyr.security.adversarial_validation.commit_trigger",
-            "from __future__ import annotations",
-        ])
+        f = self._write(
+            tmp_path,
+            "b.py",
+            [
+                "# [MODULE] zephyr.security.adversarial_validation.commit_trigger",
+                "from __future__ import annotations",
+            ],
+        )
         assert detect_formal_files([f]) == [f]
 
     def test_no_header_not_matched(self, tmp_path):
-        f = self._write(tmp_path, "c.py", [
-            "import os",
-            "import sys",
-            "# regular comment",
-        ])
+        f = self._write(
+            tmp_path,
+            "c.py",
+            [
+                "import os",
+                "import sys",
+                "# regular comment",
+            ],
+        )
         assert detect_formal_files([f]) == []
 
     def test_blueprint_no_brackets_not_matched(self, tmp_path):
         # registry YAML 头部 `# blueprint:` (无方括号) 必须不命中
-        f = self._write(tmp_path, "reg.yaml", [
-            "# --- 治理锚定 ---",
-            "# blueprint: MOD-INF-005 | docs/.../blueprint.md | §",
-            "# module_id: MOD-INF-005",
-        ])
+        f = self._write(
+            tmp_path,
+            "reg.yaml",
+            [
+                "# --- 治理锚定 ---",
+                "# blueprint: MOD-INF-005 | docs/.../blueprint.md | §",
+                "# module_id: MOD-INF-005",
+            ],
+        )
         assert detect_formal_files([f]) == []
 
     def test_header_beyond_scan_lines_not_matched(self, tmp_path):
@@ -108,7 +119,10 @@ class TestDetectFormalFiles:
 class TestWriteTriggerRecord:
     def test_writes_valid_json_and_fields(self, tmp_path):
         out = write_trigger_record(
-            "abc123def456", "sess-1", ["a.py", "b.py"], queue_dir=tmp_path,
+            "abc123def456",
+            "sess-1",
+            ["a.py", "b.py"],
+            queue_dir=tmp_path,
         )
         assert out.exists()
         data = json.loads(out.read_text(encoding="utf-8"))

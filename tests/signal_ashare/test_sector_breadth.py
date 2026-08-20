@@ -85,25 +85,19 @@ class TestAggregateCapitalNatureToSector:
         constituents = ["BIG", "SMALL"]
         scores = {"BIG": 1.0, "SMALL": -1.0}  # 大票拉升，小票出货
         # BIG 成交额 90 vs SMALL 10 → 加权 = (1×90 + (-1)×10)/100 = 0.8
-        score, label = aggregate_capital_nature_to_sector(
-            constituents, scores, {"BIG": 90.0, "SMALL": 10.0}
-        )
+        score, label = aggregate_capital_nature_to_sector(constituents, scores, {"BIG": 90.0, "SMALL": 10.0})
         assert score == pytest.approx(0.8)
         assert label == "主力流入"
 
     def test_equal_weight_fallback_when_turnover_missing(self):
         """成交额权重和为 0 → 退化等权"""
-        score, label = aggregate_capital_nature_to_sector(
-            ["A", "B"], {"A": 1.0, "B": -1.0}, {}
-        )
+        score, label = aggregate_capital_nature_to_sector(["A", "B"], {"A": 1.0, "B": -1.0}, {})
         assert score == pytest.approx(0.0)
         assert label == "中性"
 
     def test_missing_stock_score_defaults_zero(self):
         """缺失个股资金性质按 0（弱托底）"""
-        score, _ = aggregate_capital_nature_to_sector(
-            ["A", "B"], {"A": 1.0}, {"A": 1.0, "B": 1.0}
-        )
+        score, _ = aggregate_capital_nature_to_sector(["A", "B"], {"A": 1.0}, {"A": 1.0, "B": 1.0})
         assert score == pytest.approx(0.5)
 
     def test_empty_constituents_returns_neutral(self):
@@ -126,9 +120,7 @@ class TestAggregateCapitalNatureToSector:
     )
     def test_label_thresholds(self, score_value, expected_label):
         """标签 4 级阈值边界（单票等权直接命中得分）"""
-        _, label = aggregate_capital_nature_to_sector(
-            ["A"], {"A": score_value}, {"A": 1.0}
-        )
+        _, label = aggregate_capital_nature_to_sector(["A"], {"A": score_value}, {"A": 1.0})
         assert label == expected_label
 
     def test_score_clipped_to_unit_interval(self):

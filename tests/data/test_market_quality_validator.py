@@ -15,6 +15,7 @@
 # [TESTS] this file
 # [TTL] task_bound
 """#ARCH-CH-021 P0-4: 写入路径异常值校验器四门禁测试。"""
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -159,7 +160,7 @@ class TestApplyQualityGate:
     def test_mixed_rows(self):
         rows = [
             self._row(10, 10.5, 9.8, 10.2),  # valid
-            self._row(10, 9, 9.5, 10.5),      # bad ohlc
+            self._row(10, 9, 9.5, 10.5),  # bad ohlc
             self._row(10, 10.5, 9.8, 10.2),  # valid
         ]
         out, stats = apply_quality_gate("kline_daily", self.COLS, rows)
@@ -235,21 +236,25 @@ class TestInferChangeLimit:
 
     def test_bj_prefixes_30pct(self):
         from zephyr.gov_enforcement.rule_enforcement.quality_gate import _infer_change_limit
+
         for sym in ("430047", "830799", "920001", "430047.BJ", "8A0000"):
             assert _infer_change_limit(sym, Decimal("0.20")) == Decimal("0.30")
 
     def test_kcb_cyb_20pct(self):
         from zephyr.gov_enforcement.rule_enforcement.quality_gate import _infer_change_limit
+
         assert _infer_change_limit("688001", Decimal("0.20")) == Decimal("0.20")
         assert _infer_change_limit("300750.SZ", Decimal("0.20")) == Decimal("0.20")
 
     def test_mainboard_10pct(self):
         from zephyr.gov_enforcement.rule_enforcement.quality_gate import _infer_change_limit
+
         assert _infer_change_limit("600519", Decimal("0.20")) == Decimal("0.10")
         assert _infer_change_limit("000001.SH", Decimal("0.20")) == Decimal("0.10")
 
     def test_unrecognized_falls_back_default(self):
         from zephyr.gov_enforcement.rule_enforcement.quality_gate import _infer_change_limit
+
         assert _infer_change_limit("00700", Decimal("0.20")) == Decimal("0.20")  # 港股 5 位
         assert _infer_change_limit(None, Decimal("0.20")) == Decimal("0.20")
         assert _infer_change_limit("", Decimal("0.20")) == Decimal("0.20")

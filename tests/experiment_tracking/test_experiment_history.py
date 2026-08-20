@@ -16,6 +16,7 @@
   - render_experiment_history pn=None 纯 dict
   - _render_c1_comparison plotly figure 2 trace
 """
+
 from __future__ import annotations
 
 import pytest
@@ -29,14 +30,26 @@ _COMPONENT = "c1-validation"
 
 _METRICS = {
     "passed": 1.0,
-    "baseline_sharpe": 1.5, "experiment_sharpe": 1.8,
-    "baseline_maxdd": -0.10, "experiment_maxdd": -0.08,
-    "baseline_calmar": 2.0, "experiment_calmar": 2.4,
-    "baseline_turnover": 1.1, "experiment_turnover": 1.0,
-    "sharpe_baseline": 1.5, "sharpe_experiment": 1.8, "sharpe_passed": 1.0,
-    "max_dd_baseline": -0.10, "max_dd_experiment": -0.08, "max_dd_passed": 1.0,
-    "calmar_baseline": 2.0, "calmar_experiment": 2.4, "calmar_passed": 1.0,
-    "turnover_baseline": 1.1, "turnover_experiment": 1.0, "turnover_passed": 0.0,
+    "baseline_sharpe": 1.5,
+    "experiment_sharpe": 1.8,
+    "baseline_maxdd": -0.10,
+    "experiment_maxdd": -0.08,
+    "baseline_calmar": 2.0,
+    "experiment_calmar": 2.4,
+    "baseline_turnover": 1.1,
+    "experiment_turnover": 1.0,
+    "sharpe_baseline": 1.5,
+    "sharpe_experiment": 1.8,
+    "sharpe_passed": 1.0,
+    "max_dd_baseline": -0.10,
+    "max_dd_experiment": -0.08,
+    "max_dd_passed": 1.0,
+    "calmar_baseline": 2.0,
+    "calmar_experiment": 2.4,
+    "calmar_passed": 1.0,
+    "turnover_baseline": 1.1,
+    "turnover_experiment": 1.0,
+    "turnover_passed": 0.0,
 }
 _CSV_B = b"date,nav\n2026-01-01,1.0\n2026-01-02,1.1\n2026-01-03,1.21\n"
 _CSV_E = b"date,nav\n2026-01-01,100\n2026-01-02,112\n2026-01-03,125\n"
@@ -101,7 +114,8 @@ class TestAlignment:
         # experiment 少一个点且日期错位一天
         backend.log_artifact_bytes(
             b"date,nav\n2026-01-02,100\n2026-01-04,110\n",
-            "nav_curve_experiment.csv", artifact_path="nav",
+            "nav_curve_experiment.csv",
+            artifact_path="nav",
         )
         backend.end_run("FINISHED")
         view = eh.fetch_c1_comparison(rid)
@@ -115,7 +129,9 @@ class TestAlignment:
         backend.log_metrics(dict(_METRICS), step=None)
         backend.log_artifact_bytes(_CSV_B, "nav_curve_baseline.csv", artifact_path="nav")
         backend.log_artifact_bytes(
-            b"date,nav\n2027-01-01,100\n", "nav_curve_experiment.csv", artifact_path="nav",
+            b"date,nav\n2027-01-01,100\n",
+            "nav_curve_experiment.csv",
+            artifact_path="nav",
         )
         backend.end_run("FINISHED")
         view = eh.fetch_c1_comparison(rid)
@@ -129,11 +145,17 @@ class TestAlignment:
 
 class TestParseVerdicts:
     def test_suffix_strip_not_split(self):
-        verdicts = eh._parse_verdicts({
-            "max_dd_baseline": -0.1, "max_dd_experiment": -0.08, "max_dd_passed": 1.0,
-            "sharpe_baseline": 1.5, "sharpe_experiment": 1.8, "sharpe_passed": 1.0,
-            "orphan_passed": 1.0,  # 缺 baseline/experiment → 跳过
-        })
+        verdicts = eh._parse_verdicts(
+            {
+                "max_dd_baseline": -0.1,
+                "max_dd_experiment": -0.08,
+                "max_dd_passed": 1.0,
+                "sharpe_baseline": 1.5,
+                "sharpe_experiment": 1.8,
+                "sharpe_passed": 1.0,
+                "orphan_passed": 1.0,  # 缺 baseline/experiment → 跳过
+            }
+        )
         names = sorted(v.name for v in verdicts)
         assert names == ["max_dd", "sharpe"]  # max_dd 不切错为 max
 
@@ -219,8 +241,12 @@ class TestRender:
 
     def test_nav_figure_two_traces(self):
         view = eh.C1ComparisonView(
-            run_id="x", run_name="x", start_time="", passed=True,
-            nav_baseline=[1.0, 1.1], nav_experiment=[1.0, 1.2],
+            run_id="x",
+            run_name="x",
+            start_time="",
+            passed=True,
+            nav_baseline=[1.0, 1.1],
+            nav_experiment=[1.0, 1.2],
             timestamps_baseline=["2026-01-01", "2026-01-02"],
             timestamps_experiment=["2026-01-01", "2026-01-02"],
         )

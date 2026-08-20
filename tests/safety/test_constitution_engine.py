@@ -62,6 +62,7 @@ class TestConstitutionEngineInit:
     def test_default_registry_path(self):
         """测试默认注册表路径指向正确的文件名（下划线）。"""
         from zephyr.security.adversarial_validation.constitution_engine import _REGISTRY_PATH
+
         assert _REGISTRY_PATH.name == "_constitution_registry.yaml"
         assert _REGISTRY_PATH.exists(), f"注册表文件不存在: {_REGISTRY_PATH}"
 
@@ -98,7 +99,7 @@ class TestLearnFromBypass:
 
     def test_duplicate_bypass_returns_none(self, engine: ConstitutionEngine):
         """同一defense_action的bypass不重复生成article。
-        
+
         _find_by_action查找defense_action字段，learn_from_bypass传入gate_id。
         当gate_id等于已存在的defense_action时，判定为重复。
         """
@@ -166,6 +167,7 @@ class TestAppendToRegistry:
     def test_append_creates_new_article(self, engine: ConstitutionEngine, temp_registry: Path):
         """追加新article到注册表。"""
         import yaml
+
         new_article = {
             "article_id": "CONST-002",
             "name": "Test Article 2",
@@ -195,6 +197,7 @@ class TestRegistryIntegrity:
     def test_registry_file_exists(self):
         """验证实际注册表文件存在且可读。"""
         from zephyr.security.adversarial_validation.constitution_engine import _REGISTRY_PATH
+
         assert _REGISTRY_PATH.exists(), f"注册表文件不存在: {_REGISTRY_PATH}"
 
     def test_registry_has_articles(self):
@@ -202,6 +205,7 @@ class TestRegistryIntegrity:
         import yaml
 
         from zephyr.security.adversarial_validation.constitution_engine import _REGISTRY_PATH
+
         with open(_REGISTRY_PATH, encoding="utf-8") as f:
             raw = yaml.safe_load(f)
         assert "articles" in raw

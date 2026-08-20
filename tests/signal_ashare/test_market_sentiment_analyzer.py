@@ -224,18 +224,32 @@ class TestOverallAnalysis:
         assert result.sentiment_phase in [p.value for p in SentimentPhase]
 
     def test_bullish_market_high_score(self, analyzer: MarketSentimentAnalyzer):
-        result = analyzer.analyze(make_input(
-            advancing=4000, declining=500, flat=500,
-            limit_up=80, limit_down=2, sealed=75, attempted=85,
-        ))
+        result = analyzer.analyze(
+            make_input(
+                advancing=4000,
+                declining=500,
+                flat=500,
+                limit_up=80,
+                limit_down=2,
+                sealed=75,
+                attempted=85,
+            )
+        )
         assert result.overall_score > 60
 
     def test_bearish_market_low_score(self, analyzer: MarketSentimentAnalyzer):
-        result = analyzer.analyze(make_input(
-            advancing=500, declining=4000, flat=500,
-            limit_up=2, limit_down=30, sealed=2, attempted=5,
-            index_change=-0.02,
-        ))
+        result = analyzer.analyze(
+            make_input(
+                advancing=500,
+                declining=4000,
+                flat=500,
+                limit_up=2,
+                limit_down=30,
+                sealed=2,
+                attempted=5,
+                index_change=-0.02,
+            )
+        )
         assert result.overall_score < 40
 
 
@@ -268,21 +282,35 @@ class TestGrayscaleAnalysis:
 
     def test_dominant_matches_hot_market(self, analyzer: MarketSentimentAnalyzer):
         # 全面看多输入 → overall_score 高 → 主导阶段偏 退潮（>80 分段）
-        result = analyzer.analyze_grayscale(make_input(
-            advancing=4200, declining=300, flat=500,
-            limit_up=90, limit_down=0, sealed=85, attempted=90,
-            index_change=0.02, yesterday_lu_avg_ret=0.05,
-        ))
-        hard = analyzer.analyze(make_input(
-            advancing=4200, declining=300, flat=500,
-            limit_up=90, limit_down=0, sealed=85, attempted=90,
-            index_change=0.02, yesterday_lu_avg_ret=0.05,
-        ))
+        result = analyzer.analyze_grayscale(
+            make_input(
+                advancing=4200,
+                declining=300,
+                flat=500,
+                limit_up=90,
+                limit_down=0,
+                sealed=85,
+                attempted=90,
+                index_change=0.02,
+                yesterday_lu_avg_ret=0.05,
+            )
+        )
+        hard = analyzer.analyze(
+            make_input(
+                advancing=4200,
+                declining=300,
+                flat=500,
+                limit_up=90,
+                limit_down=0,
+                sealed=85,
+                attempted=90,
+                index_change=0.02,
+                yesterday_lu_avg_ret=0.05,
+            )
+        )
         assert result.overall_score == pytest.approx(hard.overall_score)
         assert result.dominant_phase == hard.sentiment_phase  # 中心软分配 argmax 与硬标签一致
-        assert result.confidence == pytest.approx(
-            result.phase_prob[result.dominant_phase]
-        )
+        assert result.confidence == pytest.approx(result.phase_prob[result.dominant_phase])
 
     def test_boundary_score_gives_split_probability(self, analyzer: MarketSentimentAnalyzer):
         # overall_score≈40（反核/主升边界）→ 两邻阶段概率接近且低于主导阈值

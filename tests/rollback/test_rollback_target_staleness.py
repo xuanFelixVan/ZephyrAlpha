@@ -88,7 +88,9 @@ class TestGetCommitDate:
         mock_result = MagicMock()
         mock_result.returncode = 0
         mock_result.stdout = "2026-01-15T10:30:00+00:00\n"
-        with patch("zephyr.infrastructure.rollback.rollback_target_staleness.run_subprocess_hidden", return_value=mock_result):
+        with patch(
+            "zephyr.infrastructure.rollback.rollback_target_staleness.run_subprocess_hidden", return_value=mock_result
+        ):
             dt = checker.get_commit_date("abc123")
         assert dt is not None
         assert dt.year == 2026
@@ -98,14 +100,17 @@ class TestGetCommitDate:
         mock_result = MagicMock()
         mock_result.returncode = 1
         mock_result.stdout = ""
-        with patch("zephyr.infrastructure.rollback.rollback_target_staleness.run_subprocess_hidden", return_value=mock_result):
+        with patch(
+            "zephyr.infrastructure.rollback.rollback_target_staleness.run_subprocess_hidden", return_value=mock_result
+        ):
             dt = checker.get_commit_date("bad_sha")
         assert dt is None
 
     def test_git_exception_returns_none(self):
         checker = RollbackTargetStaleness(project_root=Path.cwd())
         with patch(
-            "zephyr.infrastructure.rollback.rollback_target_staleness.run_subprocess_hidden", side_effect=Exception("no git")
+            "zephyr.infrastructure.rollback.rollback_target_staleness.run_subprocess_hidden",
+            side_effect=Exception("no git"),
         ):
             dt = checker.get_commit_date("abc")
         assert dt is None
@@ -115,7 +120,9 @@ class TestGetCommitDate:
         mock_result = MagicMock()
         mock_result.returncode = 0
         mock_result.stdout = "   \n"
-        with patch("zephyr.infrastructure.rollback.rollback_target_staleness.run_subprocess_hidden", return_value=mock_result):
+        with patch(
+            "zephyr.infrastructure.rollback.rollback_target_staleness.run_subprocess_hidden", return_value=mock_result
+        ):
             dt = checker.get_commit_date("abc")
         assert dt is None
 

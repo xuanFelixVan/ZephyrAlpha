@@ -6,6 +6,7 @@
 在 VM 上以 clickhouse OS 用户运行 clickhouse-client，拥有完整 DB 权限。
 步骤：CREATE temp DB -> RESTORE TABLE -> 校验行数 -> 清理。
 """
+
 import sys
 from pathlib import Path
 
@@ -49,10 +50,7 @@ def main() -> None:
 
     # 3. RESTORE TABLE
     print(f"[3] RESTORE TABLE {SRC_DB}.{TABLE} FROM Disk('backups', '{BACKUP_FILE}')...")
-    restore_sql = (
-        f"RESTORE TABLE {SRC_DB}.{TABLE} AS {TMP_DB}.{TABLE} "
-        f"FROM Disk('backups', '{BACKUP_FILE}')"
-    )
+    restore_sql = f"RESTORE TABLE {SRC_DB}.{TABLE} AS {TMP_DB}.{TABLE} FROM Disk('backups', '{BACKUP_FILE}')"
     restore_result = ch_query(restore_sql, timeout=300)
     print(f"    RESTORE 结果: {restore_result}")
 
@@ -75,12 +73,8 @@ def main() -> None:
 
     # 6. 额外校验：抽样数据比对
     print("[6] 抽样数据比对（前 5 行）...")
-    src_sample = ch_query(
-        f"SELECT * FROM {SRC_DB}.{TABLE} ORDER BY 1 LIMIT 5 FORMAT TabSeparated"
-    )
-    rst_sample = ch_query(
-        f"SELECT * FROM {TMP_DB}.{TABLE} ORDER BY 1 LIMIT 5 FORMAT TabSeparated"
-    )
+    src_sample = ch_query(f"SELECT * FROM {SRC_DB}.{TABLE} ORDER BY 1 LIMIT 5 FORMAT TabSeparated")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
+    rst_sample = ch_query(f"SELECT * FROM {TMP_DB}.{TABLE} ORDER BY 1 LIMIT 5 FORMAT TabSeparated")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
     if src_sample == rst_sample:
         print("    ✅ 抽样数据一致")
     else:

@@ -79,6 +79,7 @@ DEFAULT_REQUIRED_FILES = ["model.safetensors", "config.json", "tokenizer.json"]
 # Model Registry Loader — 从 YAML 动态加载（SSoT，消除多真源）
 # ---------------------------------------------------------------------------
 
+
 def _load_models_from_registry() -> list[dict]:
     """从 config/embedding_model_registry.yaml 加载需手动下载的模型清单。
 
@@ -105,14 +106,16 @@ def _load_models_from_registry() -> list[dict]:
         hf_repo_id = entry.get("hf_repo_id")
         if not local_path or not hf_repo_id:
             continue  # 自动下载模型，跳过
-        models.append({
-            "name": entry["name"],
-            "hf_repo_id": hf_repo_id,
-            "local_path": local_path,
-            "size_mb": entry.get("file_size_mb") or 0,
-            "description": entry.get("description", ""),
-            "required_files": entry.get("required_files", DEFAULT_REQUIRED_FILES),
-        })
+        models.append(
+            {
+                "name": entry["name"],
+                "hf_repo_id": hf_repo_id,
+                "local_path": local_path,
+                "size_mb": entry.get("file_size_mb") or 0,
+                "description": entry.get("description", ""),
+                "required_files": entry.get("required_files", DEFAULT_REQUIRED_FILES),
+            }
+        )
     return models
 
 
@@ -123,6 +126,7 @@ MODELS: list[dict] = _load_models_from_registry()
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _model_local_path(model: dict) -> Path:
     """Get absolute Path for a model's local directory."""
@@ -159,6 +163,7 @@ def check_disk_space(required_mb: float) -> bool:
 # ---------------------------------------------------------------------------
 # Core operations
 # ---------------------------------------------------------------------------
+
 
 def download_model(model: dict, force: bool = False) -> bool:
     """Download a single model from HuggingFace Hub.
@@ -241,6 +246,7 @@ def verify_model(model: dict) -> bool:
 # ---------------------------------------------------------------------------
 # CLI commands
 # ---------------------------------------------------------------------------
+
 
 def cmd_list() -> None:
     """List all models and their download status."""
@@ -343,6 +349,7 @@ def cmd_download(models: list[dict], force: bool, dry_run: bool) -> int:
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(

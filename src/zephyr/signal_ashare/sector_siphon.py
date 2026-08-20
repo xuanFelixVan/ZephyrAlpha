@@ -130,9 +130,7 @@ def detect_siphon_state(
     # 信号③：其余板块资金净流出比例
     top_n_ids = {id(s) for s in top_n}
     rest = [s for s in sectors if id(s) not in top_n_ids]
-    outflow_ratio = (
-        sum(1 for s in rest if s.net_inflow < 0) / len(rest) if rest else 0.0
-    )
+    outflow_ratio = sum(1 for s in rest if s.net_inflow < 0) / len(rest) if rest else 0.0
 
     # 三信号滚动 z-score 标准化后加权
     z_hhi = rolling_zscore(hhi_top_n, hhi_history)

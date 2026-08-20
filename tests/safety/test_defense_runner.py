@@ -474,6 +474,7 @@ class TestRunAdversarialSession:
         self.validator.load_and_filter = MagicMock(return_value=self.scenarios)
         self.validator.steady.verify_before_attack = MagicMock()
         from zephyr.security.adversarial_validation.models import SteadyStateSummary
+
         self.validator.steady.verify_after_attack = MagicMock(return_value=SteadyStateSummary())
         self.validator.cleanup.ensure_clean = MagicMock()
 
@@ -511,11 +512,15 @@ class TestRunAdversarialSession:
         assert report.duration_ms >= 0
 
     def test_blast_radius_used(self):
-        report = self.validator.run_adversarial_session("test", tier=AttackTier.TIER_1, blast_radius=BlastRadiusLevel.FILE)
+        report = self.validator.run_adversarial_session(
+            "test", tier=AttackTier.TIER_1, blast_radius=BlastRadiusLevel.FILE
+        )
         assert report.blast_radius_used == BlastRadiusLevel.FILE
 
     def test_with_module_blast_radius(self):
-        report = self.validator.run_adversarial_session("test", tier=AttackTier.TIER_1, blast_radius=BlastRadiusLevel.MODULE)
+        report = self.validator.run_adversarial_session(
+            "test", tier=AttackTier.TIER_1, blast_radius=BlastRadiusLevel.MODULE
+        )
         assert report.blast_radius_used == BlastRadiusLevel.MODULE
 
     def test_scenarios_list_contains_scenario_results(self):
@@ -587,7 +592,8 @@ class TestProcessScenario:
         # 以隔离测试 process_scenario 的 BYPASSED 映射分支（保留覆盖率）
         validator.defense = MagicMock()
         validator.defense.run_defense.return_value = DefenseResult(
-            passed=False, gate_id="G1",
+            passed=False,
+            gate_id="G1",
             detail="BYPASSED G1 [mock]: prompt_injection_filter failed to block test_vector",
         )
         result = validator.process_scenario(scenario)
@@ -618,7 +624,8 @@ class TestProcessScenario:
         # 以隔离测试 process_scenario 的 BYPASSED 映射分支（保留覆盖率）
         validator.defense = MagicMock()
         validator.defense.run_defense.return_value = DefenseResult(
-            passed=False, gate_id="G1",
+            passed=False,
+            gate_id="G1",
             detail="BYPASSED G1 [mock]: prompt_injection_filter failed to block test_vector",
         )
         result = validator.process_scenario(scenario)
@@ -753,7 +760,10 @@ class TestCLIRun:
         args.blast_radius = "MODULE"
         cli_mod.run(args)
         call_kwargs = mock_validator.run_adversarial_session.call_args
-        assert call_kwargs.kwargs.get("blast_radius") == BlastRadiusLevel.MODULE or BlastRadiusLevel.MODULE in call_kwargs.args
+        assert (
+            call_kwargs.kwargs.get("blast_radius") == BlastRadiusLevel.MODULE
+            or BlastRadiusLevel.MODULE in call_kwargs.args
+        )
 
 
 # ===========================================================================

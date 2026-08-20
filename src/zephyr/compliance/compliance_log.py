@@ -94,12 +94,9 @@ class ComplianceLogger:
             now: 时间注入（测试用）；None 取当前 UTC。
         """
         ts = (now or datetime.now(timezone.utc)).isoformat()
-        record = ComplianceLogRecord(
-            ts=ts, event_type=event_type, source=source, payload=payload or {}
-        )
+        record = ComplianceLogRecord(ts=ts, event_type=event_type, source=source, payload=payload or {})
         line = json.dumps(
-            {"ts": record.ts, "event_type": record.event_type,
-             "source": record.source, "payload": record.payload},
+            {"ts": record.ts, "event_type": record.event_type, "source": record.source, "payload": record.payload},
             ensure_ascii=False,
             default=str,
         )

@@ -85,11 +85,13 @@ class TestAutoStartImport:
     def test_threading_imported(self):
         """验证 threading 模块已在源文件中导入。"""
         import zephyr.security.adversarial_validation.game_day_scheduler as mod
+
         assert hasattr(mod, "threading")
 
     def test_time_imported(self):
         """验证 time 模块已在源文件中导入。"""
         import zephyr.security.adversarial_validation.game_day_scheduler as mod
+
         assert hasattr(mod, "time")
 
 
@@ -335,6 +337,7 @@ class TestRegisterToPhaseManager:
             # 由于 phase_manager 已经导入，需要模拟 ImportError
             # 使用 sys.modules 替换
             import sys
+
             original = sys.modules.get("zephyr.infrastructure.rollback.phase_manager")
             try:
                 # 移除模块让 import 失败
@@ -343,6 +346,7 @@ class TestRegisterToPhaseManager:
 
                 # 使用 import 钩子模拟 ImportError
                 import builtins
+
                 original_import = builtins.__import__
 
                 def mock_import(name, *args, **kwargs):
@@ -372,6 +376,7 @@ class TestRegisterToPhaseManager:
             GateResult,
             PhaseGate,
         )
+
         assert ConstructionPhase is not None
         assert GateResult is not None
         assert PhaseGate is not None
@@ -380,6 +385,7 @@ class TestRegisterToPhaseManager:
     def test_phase_2_e2e_exists(self):
         """验证 PHASE_2_E2E 阶段存在。"""
         from zephyr.governance.ops_governance.phase_manager import PHASE_SEQUENCE, ConstructionPhase
+
         assert ConstructionPhase.PHASE_2_E2E in PHASE_SEQUENCE
         phase_gate = PHASE_SEQUENCE[ConstructionPhase.PHASE_2_E2E]
         assert phase_gate is not None

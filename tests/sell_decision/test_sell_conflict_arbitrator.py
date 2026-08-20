@@ -28,8 +28,9 @@ T0 = datetime(2026, 8, 1, 10, 0, tzinfo=timezone.utc)
 # ── 测试数据工厂 ─────────────────────────────────────────────────────────────
 
 
-def sell(symbol="000001.SZ", stype=SellSignalType.MAIN_FORCE_DISTRIBUTION,
-         confidence=0.9, source="", **kw) -> SellSignal:
+def sell(
+    symbol="000001.SZ", stype=SellSignalType.MAIN_FORCE_DISTRIBUTION, confidence=0.9, source="", **kw
+) -> SellSignal:
     return SellSignal(
         symbol=symbol,
         signal_type=stype,
@@ -155,7 +156,7 @@ def test_weak_conflict_mixed_strong_wins():
     arb = SellConflictArbitrator()
     results = arb.arbitrate(
         [
-            sell(stype=SellSignalType.TECHNICAL),            # 弱
+            sell(stype=SellSignalType.TECHNICAL),  # 弱
             sell(stype=SellSignalType.MAIN_FORCE_DISTRIBUTION),  # 强
         ],
         [buy()],
@@ -262,9 +263,7 @@ def test_single_symbol_exception_isolated(monkeypatch):
     bad_signal = sell(symbol="BAD", stype=SellSignalType.TECHNICAL)
     good_signal = sell(symbol="GOOD", stype=SellSignalType.MAIN_FORCE_DISTRIBUTION)
     # BAD 必须有买入对手才会进入 _classify_conflict(否则走 NO_CONFLICT 直通)
-    results = arb.arbitrate(
-        [bad_signal, good_signal], [buy("BAD"), buy("GOOD")], now=T0
-    )
+    results = arb.arbitrate([bad_signal, good_signal], [buy("BAD"), buy("GOOD")], now=T0)
     # BAD 被隔离跳过, GOOD 正常仲裁
     symbols = [r.symbol for r in results]
     assert "GOOD" in symbols

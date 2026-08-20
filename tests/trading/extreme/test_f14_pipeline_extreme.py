@@ -487,9 +487,7 @@ class TestFeedbackLoopDetectionFailure:
     @pytest.fixture
     def scheduler(self):
         """创建隔离的 FeedbackLoopScheduler 实例（mock VMS）。"""
-        with patch(
-            "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
-        ) as vms_cls:
+        with patch("zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory") as vms_cls:
             vms_cls.return_value = MagicMock()
             from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 

@@ -85,9 +85,12 @@ class TestTriggerRegistry:
         """注册触发器。"""
         reg = TriggerRegistry()
         entry = TriggerEntry(
-            trigger_id="T1", source_module="41",
-            condition=lambda ctx: True, action="A1",
-            priority=3, scope="POSITION",
+            trigger_id="T1",
+            source_module="41",
+            condition=lambda ctx: True,
+            action="A1",
+            priority=3,
+            scope="POSITION",
         )
         reg.register(entry)
         assert "T1" in reg.entries
@@ -96,9 +99,12 @@ class TestTriggerRegistry:
         """重复注册 trigger_id→ValueError。"""
         reg = TriggerRegistry()
         entry = TriggerEntry(
-            trigger_id="T1", source_module="41",
-            condition=lambda ctx: True, action="A1",
-            priority=3, scope="POSITION",
+            trigger_id="T1",
+            source_module="41",
+            condition=lambda ctx: True,
+            action="A1",
+            priority=3,
+            scope="POSITION",
         )
         reg.register(entry)
         with pytest.raises(ValueError, match="重复注册"):
@@ -108,9 +114,12 @@ class TestTriggerRegistry:
         """priority 越界→ValueError。"""
         reg = TriggerRegistry()
         entry = TriggerEntry(
-            trigger_id="T1", source_module="41",
-            condition=lambda ctx: True, action="A1",
-            priority=0, scope="POSITION",
+            trigger_id="T1",
+            source_module="41",
+            condition=lambda ctx: True,
+            action="A1",
+            priority=0,
+            scope="POSITION",
         )
         with pytest.raises(ValueError, match="越界"):
             reg.register(entry)
@@ -119,9 +128,12 @@ class TestTriggerRegistry:
         """注销触发器。"""
         reg = TriggerRegistry()
         entry = TriggerEntry(
-            trigger_id="T1", source_module="41",
-            condition=lambda ctx: True, action="A1",
-            priority=3, scope="POSITION",
+            trigger_id="T1",
+            source_module="41",
+            condition=lambda ctx: True,
+            action="A1",
+            priority=3,
+            scope="POSITION",
         )
         reg.register(entry)
         reg.unregister("T1")
@@ -130,11 +142,16 @@ class TestTriggerRegistry:
     def test_evaluate_all_fires(self):
         """condition=True→触发。"""
         reg = TriggerRegistry()
-        reg.register(TriggerEntry(
-            trigger_id="T1", source_module="41",
-            condition=lambda ctx: True, action="A1",
-            priority=3, scope="POSITION",
-        ))
+        reg.register(
+            TriggerEntry(
+                trigger_id="T1",
+                source_module="41",
+                condition=lambda ctx: True,
+                action="A1",
+                priority=3,
+                scope="POSITION",
+            )
+        )
         events = reg.evaluate_all()
         assert len(events) == 1
         assert events[0].trigger_id == "T1"
@@ -142,22 +159,33 @@ class TestTriggerRegistry:
     def test_evaluate_all_no_fire(self):
         """condition=False→不触发。"""
         reg = TriggerRegistry()
-        reg.register(TriggerEntry(
-            trigger_id="T1", source_module="41",
-            condition=lambda ctx: False, action="A1",
-            priority=3, scope="POSITION",
-        ))
+        reg.register(
+            TriggerEntry(
+                trigger_id="T1",
+                source_module="41",
+                condition=lambda ctx: False,
+                action="A1",
+                priority=3,
+                scope="POSITION",
+            )
+        )
         events = reg.evaluate_all()
         assert len(events) == 0
 
     def test_cooldown_blocks_repeat(self):
         """冷却期内不重复触发。"""
         reg = TriggerRegistry()
-        reg.register(TriggerEntry(
-            trigger_id="T1", source_module="41",
-            condition=lambda ctx: True, action="A1",
-            priority=3, scope="POSITION", cooldown_sec=60,
-        ))
+        reg.register(
+            TriggerEntry(
+                trigger_id="T1",
+                source_module="41",
+                condition=lambda ctx: True,
+                action="A1",
+                priority=3,
+                scope="POSITION",
+                cooldown_sec=60,
+            )
+        )
         events1 = reg.evaluate_all()
         assert len(events1) == 1
         events2 = reg.evaluate_all()
@@ -166,37 +194,62 @@ class TestTriggerRegistry:
     def test_priority_sorting(self):
         """触发事件按优先级升序排序。"""
         reg = TriggerRegistry()
-        reg.register(TriggerEntry(
-            trigger_id="LOW", source_module="41",
-            condition=lambda ctx: True, action="A1",
-            priority=5, scope="POSITION",
-        ))
-        reg.register(TriggerEntry(
-            trigger_id="HIGH", source_module="35",
-            condition=lambda ctx: True, action="A2",
-            priority=1, scope="PORTFOLIO",
-        ))
-        reg.register(TriggerEntry(
-            trigger_id="MID", source_module="42",
-            condition=lambda ctx: True, action="A3",
-            priority=3, scope="POSITION",
-        ))
+        reg.register(
+            TriggerEntry(
+                trigger_id="LOW",
+                source_module="41",
+                condition=lambda ctx: True,
+                action="A1",
+                priority=5,
+                scope="POSITION",
+            )
+        )
+        reg.register(
+            TriggerEntry(
+                trigger_id="HIGH",
+                source_module="35",
+                condition=lambda ctx: True,
+                action="A2",
+                priority=1,
+                scope="PORTFOLIO",
+            )
+        )
+        reg.register(
+            TriggerEntry(
+                trigger_id="MID",
+                source_module="42",
+                condition=lambda ctx: True,
+                action="A3",
+                priority=3,
+                scope="POSITION",
+            )
+        )
         events = reg.evaluate_all()
         assert [e.trigger_id for e in events] == ["HIGH", "MID", "LOW"]
 
     def test_scope_sorting_same_priority(self):
         """同优先级按 scope 排序（PORTFOLIO>STRATEGY>POSITION）。"""
         reg = TriggerRegistry()
-        reg.register(TriggerEntry(
-            trigger_id="POS", source_module="41",
-            condition=lambda ctx: True, action="A1",
-            priority=3, scope="POSITION",
-        ))
-        reg.register(TriggerEntry(
-            trigger_id="PF", source_module="35",
-            condition=lambda ctx: True, action="A2",
-            priority=3, scope="PORTFOLIO",
-        ))
+        reg.register(
+            TriggerEntry(
+                trigger_id="POS",
+                source_module="41",
+                condition=lambda ctx: True,
+                action="A1",
+                priority=3,
+                scope="POSITION",
+            )
+        )
+        reg.register(
+            TriggerEntry(
+                trigger_id="PF",
+                source_module="35",
+                condition=lambda ctx: True,
+                action="A2",
+                priority=3,
+                scope="PORTFOLIO",
+            )
+        )
         events = reg.evaluate_all()
         assert events[0].trigger_id == "PF"
         assert events[1].trigger_id == "POS"
@@ -211,16 +264,26 @@ class TestTriggerRegistry:
             return True
 
         reg = TriggerRegistry()
-        reg.register(TriggerEntry(
-            trigger_id="T1", source_module="41",
-            condition=shared_condition, action="A1",
-            priority=3, scope="POSITION",
-        ))
-        reg.register(TriggerEntry(
-            trigger_id="T2", source_module="42",
-            condition=shared_condition, action="A2",
-            priority=4, scope="POSITION",
-        ))
+        reg.register(
+            TriggerEntry(
+                trigger_id="T1",
+                source_module="41",
+                condition=shared_condition,
+                action="A1",
+                priority=3,
+                scope="POSITION",
+            )
+        )
+        reg.register(
+            TriggerEntry(
+                trigger_id="T2",
+                source_module="42",
+                condition=shared_condition,
+                action="A2",
+                priority=4,
+                scope="POSITION",
+            )
+        )
         events = reg.evaluate_all()
         assert len(events) == 2
         assert call_count == 1  # 只算一次
@@ -311,11 +374,21 @@ class TestMVPTriggerList:
     def test_expected_trigger_ids(self):
         """15 条 trigger_id 与 41 §3.9 表一致。"""
         expected = {
-            "RISK_KILL_SWITCH", "RISK_DRAWDOWN_L4",
-            "RISK_DRAWDOWN_L3", "RISK_LIQUIDITY_CRISIS", "RISK_VAR_BREACH",
-            "SELL_BREAKOUT_FAIL", "SELL_SUPPORT_BREAK", "SELL_CIRCUIT_BREAKER",
-            "BUY_BREAKOUT_FAIL", "SELL_ATR_STOP", "SELL_TRAILING_STOP", "SELL_TAKE_PROFIT",
-            "BUY_BATCH2_RELEASE", "EXE_MAKE_OR_TAKE", "EXE_CANCEL_RATE",
+            "RISK_KILL_SWITCH",
+            "RISK_DRAWDOWN_L4",
+            "RISK_DRAWDOWN_L3",
+            "RISK_LIQUIDITY_CRISIS",
+            "RISK_VAR_BREACH",
+            "SELL_BREAKOUT_FAIL",
+            "SELL_SUPPORT_BREAK",
+            "SELL_CIRCUIT_BREAKER",
+            "BUY_BREAKOUT_FAIL",
+            "SELL_ATR_STOP",
+            "SELL_TRAILING_STOP",
+            "SELL_TAKE_PROFIT",
+            "BUY_BATCH2_RELEASE",
+            "EXE_MAKE_OR_TAKE",
+            "EXE_CANCEL_RATE",
         }
         actual = {item["trigger_id"] for item in MVP_TRIGGER_LIST}
         assert actual == expected

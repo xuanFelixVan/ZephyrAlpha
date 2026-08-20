@@ -145,6 +145,7 @@ shadow/promote 部分通过本脚本在生产机本地执行（手动或 self-ho
 # A5 --> O1
 # A4 --> O2
 """
+
 from __future__ import annotations
 
 import argparse
@@ -285,8 +286,7 @@ class WindowsProcessDeployer:
             stderr_to_devnull=False,
         )
         self._pid = self._proc.pid
-        log.info("影子进程已启动: pid=%s, cmd=%s, output=%s",
-                 self._pid, self._command, self._output_path)
+        log.info("影子进程已启动: pid=%s, cmd=%s, output=%s", self._pid, self._command, self._output_path)
         return self._pid
 
     def wait_or_timeout(self) -> str:
@@ -339,8 +339,7 @@ class ContainerDeployer:
         )
 
 
-def make_deployer(adapter: str, command: list[str], output_path: Path,
-                  duration: int, **kwargs):
+def make_deployer(adapter: str, command: list[str], output_path: Path, duration: int, **kwargs):
     """工厂：按 adapter 名构造部署适配器。"""
     if adapter == "windows":
         return WindowsProcessDeployer(command, output_path, duration, **kwargs)
@@ -368,8 +367,7 @@ def _run_check_command(cmd: list[str]) -> bool:
         ok = result.returncode == 0
         if not ok:
             stderr = (result.stderr or "").strip()
-            log.warning("预检命令失败: cmd=%s rc=%s stderr=%s",
-                        cmd, result.returncode, stderr[:300])
+            log.warning("预检命令失败: cmd=%s rc=%s stderr=%s", cmd, result.returncode, stderr[:300])
         return ok
     except Exception as e:  # noqa: BLE001 — fail-closed：预检异常视为 blocker
         log.warning("预检命令异常: cmd=%s err=%s", cmd, e)
@@ -383,6 +381,7 @@ def _verify_simulation_broker_available() -> bool:
     """
     try:
         from zephyr.governance.adapters.simulation_broker import SimulationBroker  # noqa: F401
+
         return True
     except Exception as e:  # noqa: BLE001
         log.warning("simulation_broker 不可加载: %s（影子进程可能无法走模拟券商）", e)
@@ -410,8 +409,7 @@ def run_precheck(mode: str) -> CanIDeployResult:
         "consumer_expectations": _run_check_command(_resolve_precheck_command("consumer_expectations")),
         "schema_version": _run_check_command(_resolve_precheck_command("schema_version")),
         "contract_consistency": _run_check_command(_resolve_precheck_command("contract_consistency")),
-        "health": _run_check_command(_resolve_precheck_command("health"))
-        and _verify_simulation_broker_available(),
+        "health": _run_check_command(_resolve_precheck_command("health")) and _verify_simulation_broker_available(),
     }
     result = CanIDeploy().check(
         consumer_expectations_ok=raw_checks["consumer_expectations"],
@@ -419,8 +417,7 @@ def run_precheck(mode: str) -> CanIDeployResult:
         contract_consistency_ok=raw_checks["contract_consistency"],
         health_ok=raw_checks["health"],
     )
-    log.info("预检结果: allowed=%s checks=%s blockers=%s",
-             result.allowed, result.checks, result.blockers)
+    log.info("预检结果: allowed=%s checks=%s blockers=%s", result.allowed, result.checks, result.blockers)
     return result
 
 
@@ -490,8 +487,10 @@ def compare_decisions(
                 reasons.append(f"side {p.get('side')}->{s.get('side')}")
             if abs(_to_float(p.get("quantity")) - _to_float(s.get("quantity"))) > qty_epsilon:
                 reasons.append(f"qty {p.get('quantity')}->{s.get('quantity')}")
-            if abs(_to_float(p.get("price")) - _to_float(s.get("price"))) > _to_float(s.get("price")) * 1e-6 and \
-                    abs(_to_float(p.get("price")) - _to_float(s.get("price"))) > price_epsilon:
+            if (
+                abs(_to_float(p.get("price")) - _to_float(s.get("price"))) > _to_float(s.get("price")) * 1e-6
+                and abs(_to_float(p.get("price")) - _to_float(s.get("price"))) > price_epsilon
+            ):
                 reasons.append(f"price {p.get('price')}->{s.get('price')}")
             if reasons:
                 mismatches += 1
@@ -578,16 +577,33 @@ def run_deploy(
     started_at = datetime.now().isoformat(timespec="seconds")
 
     log.info("=== Shadow Canary Run %s ===", run_id)
-    log.info("baseline=%s duration=%ss threshold=%s adapter=%s precheck=%s",
-             baseline_ref, duration, divergence_threshold, adapter, precheck_mode)
+    log.info(
+        "baseline=%s duration=%ss threshold=%s adapter=%s precheck=%s",
+        baseline_ref,
+        duration,
+        divergence_threshold,
+        adapter,
+        precheck_mode,
+    )
 
     # 1. 预检（GATE-CDC-1）
     precheck = run_precheck(precheck_mode)
     if not precheck.allowed:
         log.error("预检失败 blockers=%s —— 不进入 shadow", precheck.blockers)
-        _write_report(report_path, run_id, started_at, baseline_ref, duration,
-                      divergence_threshold, precheck, None, None,
-                      CanaryState.DRAFT, EXIT_PRECHECK_FAIL, "precheck_failed")
+        _write_report(
+            report_path,
+            run_id,
+            started_at,
+            baseline_ref,
+            duration,
+            divergence_threshold,
+            precheck,
+            None,
+            None,
+            CanaryState.DRAFT,
+            EXIT_PRECHECK_FAIL,
+            "precheck_failed",
+        )
         return EXIT_PRECHECK_FAIL
 
     # 2. 影子部署（CT-CANARY-001 shadow 阶段）
@@ -617,12 +633,18 @@ def run_deploy(
         # 3. 影子比对
         shadow_decisions = deployer.read_output()
         prod_decisions = load_decisions(production_log)
-        log.info("比对: shadow=%d 条, production=%d 条 (源=%s)",
-                 len(shadow_decisions), len(prod_decisions), production_log)
+        log.info(
+            "比对: shadow=%d 条, production=%d 条 (源=%s)", len(shadow_decisions), len(prod_decisions), production_log
+        )
         comparison = compare_decisions(prod_decisions, shadow_decisions)
-        log.info("比对结果: divergence=%.4f aligned=%d mismatches=%d new_only=%d prod_only=%d",
-                 comparison.divergence_rate, comparison.aligned,
-                 comparison.mismatches, comparison.new_only, comparison.prod_only)
+        log.info(
+            "比对结果: divergence=%.4f aligned=%d mismatches=%d new_only=%d prod_only=%d",
+            comparison.divergence_rate,
+            comparison.aligned,
+            comparison.mismatches,
+            comparison.new_only,
+            comparison.prod_only,
+        )
 
         # ShadowCanary 语义复用：记录 shadow_generated，promote 由分歧率裁决
         canary_result = shadow_canary.shadow(
@@ -636,14 +658,18 @@ def run_deploy(
             state = CanaryState.ROLLOUT
             exit_code = EXIT_PROMOTE
             outcome = "promote"
-            log.info("promote=True (分歧 %.4f < 阈值 %s) → ROLLOUT, exit 0",
-                     comparison.divergence_rate, divergence_threshold)
+            log.info(
+                "promote=True (分歧 %.4f < 阈值 %s) → ROLLOUT, exit 0", comparison.divergence_rate, divergence_threshold
+            )
         else:
             state = CanaryState.ROLLED_BACK
             exit_code = EXIT_ROLLBACK
             outcome = "rollback"
-            log.warning("promote=False (分歧 %.4f >= 阈值 %s) → ROLLED_BACK, exit 1",
-                        comparison.divergence_rate, divergence_threshold)
+            log.warning(
+                "promote=False (分歧 %.4f >= 阈值 %s) → ROLLED_BACK, exit 1",
+                comparison.divergence_rate,
+                divergence_threshold,
+            )
     except NotImplementedError as e:
         log.error("部署适配器未实现: %s", e)
         state = CanaryState.ROLLED_BACK
@@ -655,9 +681,20 @@ def run_deploy(
         exit_code = EXIT_PRECHECK_FAIL
         outcome = f"exception: {type(e).__name__}: {e}"
 
-    _write_report(report_path, run_id, started_at, baseline_ref, duration,
-                  divergence_threshold, precheck, comparison, canary_result,
-                  state, exit_code, outcome)
+    _write_report(
+        report_path,
+        run_id,
+        started_at,
+        baseline_ref,
+        duration,
+        divergence_threshold,
+        precheck,
+        comparison,
+        canary_result,
+        state,
+        exit_code,
+        outcome,
+    )
     log.info("报告已写入: %s (outcome=%s, exit=%s)", report_path, outcome, exit_code)
     return exit_code
 
@@ -694,7 +731,9 @@ def _write_report(
             "strategy_name": canary_result.strategy_name if canary_result else None,
             "shadow_generated": canary_result.shadow_generated if canary_result else None,
             "performance_delta": canary_result.performance_delta if canary_result else None,
-        } if canary_result else None,
+        }
+        if canary_result
+        else None,
         "canary_state": state,
         "exit_code": exit_code,
         "outcome": outcome,
@@ -709,29 +748,43 @@ def _build_argparser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="shadow_canary_deploy.py",
         description="Shadow Canary 部署运行器（簇C CI/CD 灰度发布基建，MOD-CD-001）。"
-                    "预检 → 影子部署 → 比对 → 状态机 → 报告。"
-                    "退出码: 0=promote, 1=rollback, 2=预检失败。",
+        "预检 → 影子部署 → 比对 → 状态机 → 报告。"
+        "退出码: 0=promote, 1=rollback, 2=预检失败。",
     )
-    p.add_argument("--baseline-ref", default="HEAD",
-                   help="基线版本（默认当前生产 HEAD）")
-    p.add_argument("--duration", type=int, default=600,
-                   help="影子运行秒数（默认 600）")
-    p.add_argument("--divergence-threshold", type=float, default=0.05,
-                   help="输出分歧率阈值，<阈值 promote、>=阈值 rollback（默认 0.05）")
-    p.add_argument("--adapter", choices=["windows", "container"], default="windows",
-                   help="部署适配器（默认 windows；container 为 post-activation stub）")
-    p.add_argument("--shadow-cmd", default=None,
-                   help="影子进程命令（shell 字符串，shlex 解析）。"
-                        "默认 'python -m zephyr.trading --broker simulation --shadow'。"
-                        "smoke 测试应覆盖为轻量命令。子进程经 ZEPHYR_SHADOW_OUTPUT_PATH"
-                        " 环境变量获取决策输出文件路径。")
-    p.add_argument("--production-log", default=DEFAULT_PRODUCTION_LOG,
-                   help=f"生产侧决策 jsonl 路径（默认 {DEFAULT_PRODUCTION_LOG}）")
-    p.add_argument("--precheck-mode", choices=["full", "skip"], default="full",
-                   help="预检模式: full=运行 GATE-CDC-1 四项检查; "
-                        "skip=vacuous-pass（smoke/重跑用）")
-    p.add_argument("--log-level", default="INFO",
-                   choices=["DEBUG", "INFO", "WARNING", "ERROR"])
+    p.add_argument("--baseline-ref", default="HEAD", help="基线版本（默认当前生产 HEAD）")
+    p.add_argument("--duration", type=int, default=600, help="影子运行秒数（默认 600）")
+    p.add_argument(
+        "--divergence-threshold",
+        type=float,
+        default=0.05,
+        help="输出分歧率阈值，<阈值 promote、>=阈值 rollback（默认 0.05）",
+    )
+    p.add_argument(
+        "--adapter",
+        choices=["windows", "container"],
+        default="windows",
+        help="部署适配器（默认 windows；container 为 post-activation stub）",
+    )
+    p.add_argument(
+        "--shadow-cmd",
+        default=None,
+        help="影子进程命令（shell 字符串，shlex 解析）。"
+        "默认 'python -m zephyr.trading --broker simulation --shadow'。"
+        "smoke 测试应覆盖为轻量命令。子进程经 ZEPHYR_SHADOW_OUTPUT_PATH"
+        " 环境变量获取决策输出文件路径。",
+    )
+    p.add_argument(
+        "--production-log",
+        default=DEFAULT_PRODUCTION_LOG,
+        help=f"生产侧决策 jsonl 路径（默认 {DEFAULT_PRODUCTION_LOG}）",
+    )
+    p.add_argument(
+        "--precheck-mode",
+        choices=["full", "skip"],
+        default="full",
+        help="预检模式: full=运行 GATE-CDC-1 四项检查; skip=vacuous-pass（smoke/重跑用）",
+    )
+    p.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"])
     return p
 
 

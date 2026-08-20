@@ -9,13 +9,8 @@ from zephyr.signal_ashare.sector_siphon import (
 )
 
 
-def _sectors(
-    n: int, turnover: float = 100.0, inflow: float = 1.0
-) -> list[SectorFlowSnapshot]:
-    return [
-        SectorFlowSnapshot(name=f"板块{i}", turnover=turnover, net_inflow=inflow)
-        for i in range(n)
-    ]
+def _sectors(n: int, turnover: float = 100.0, inflow: float = 1.0) -> list[SectorFlowSnapshot]:
+    return [SectorFlowSnapshot(name=f"板块{i}", turnover=turnover, net_inflow=inflow) for i in range(n)]
 
 
 def _flat_history(value: float, n: int = 20, jitter: float = 0.005) -> list[float]:

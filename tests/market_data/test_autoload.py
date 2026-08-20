@@ -105,11 +105,13 @@ class TestLoad:
     def test_multiple_vendors(self):
         registry = VendorRegistry()
         loader = MarketDataAutoloader(registry, make_factory())
-        result = loader.load([
-            VendorConfig("tushare", "tushare"),
-            VendorConfig("akshare", "akshare"),
-            VendorConfig("wind", "wind"),
-        ])
+        result = loader.load(
+            [
+                VendorConfig("tushare", "tushare"),
+                VendorConfig("akshare", "akshare"),
+                VendorConfig("wind", "wind"),
+            ]
+        )
 
         assert result.registered_count == 3
         assert len(result.errors) == 0
@@ -118,10 +120,12 @@ class TestLoad:
     def test_default_vendor_set(self):
         registry = VendorRegistry()
         loader = MarketDataAutoloader(registry, make_factory())
-        result = loader.load([
-            VendorConfig("tushare", "tushare", is_default=True),
-            VendorConfig("akshare", "akshare"),
-        ])
+        result = loader.load(
+            [
+                VendorConfig("tushare", "tushare", is_default=True),
+                VendorConfig("akshare", "akshare"),
+            ]
+        )
 
         assert result.default_vendor_id == "tushare"
         assert registry.default_vendor_id == "tushare"
@@ -130,10 +134,12 @@ class TestLoad:
     def test_last_default_wins(self):
         registry = VendorRegistry()
         loader = MarketDataAutoloader(registry, make_factory())
-        result = loader.load([
-            VendorConfig("tushare", "tushare", is_default=True),
-            VendorConfig("akshare", "akshare", is_default=True),
-        ])
+        result = loader.load(
+            [
+                VendorConfig("tushare", "tushare", is_default=True),
+                VendorConfig("akshare", "akshare", is_default=True),
+            ]
+        )
 
         assert result.default_vendor_id == "akshare"
         assert registry.default_vendor_id == "akshare"
@@ -154,10 +160,12 @@ class TestFaultTolerance:
         registry = VendorRegistry()
         # factory 仅支持 tushare, akshare 未知
         loader = MarketDataAutoloader(registry, make_factory({"tushare"}))
-        result = loader.load([
-            VendorConfig("tushare", "tushare"),
-            VendorConfig("akshare", "akshare"),  # 会失败
-        ])
+        result = loader.load(
+            [
+                VendorConfig("tushare", "tushare"),
+                VendorConfig("akshare", "akshare"),  # 会失败
+            ]
+        )
 
         assert result.registered_count == 1
         assert "akshare" in result.errors
@@ -172,10 +180,12 @@ class TestFaultTolerance:
         registry.register(existing)
 
         loader = MarketDataAutoloader(registry, make_factory())
-        result = loader.load([
-            VendorConfig("tushare", "tushare"),  # 已存在, 跳过
-            VendorConfig("akshare", "akshare"),  # 正常
-        ])
+        result = loader.load(
+            [
+                VendorConfig("tushare", "tushare"),  # 已存在, 跳过
+                VendorConfig("akshare", "akshare"),  # 正常
+            ]
+        )
 
         assert result.registered_count == 1
         assert "tushare" in result.errors
@@ -185,10 +195,12 @@ class TestFaultTolerance:
         """全部失败——registered_count=0, errors含全部。"""
         registry = VendorRegistry()
         loader = MarketDataAutoloader(registry, make_factory(set()))  # 无支持的type
-        result = loader.load([
-            VendorConfig("tushare", "tushare"),
-            VendorConfig("akshare", "akshare"),
-        ])
+        result = loader.load(
+            [
+                VendorConfig("tushare", "tushare"),
+                VendorConfig("akshare", "akshare"),
+            ]
+        )
 
         assert result.registered_count == 0
         assert len(result.errors) == 2
@@ -199,10 +211,12 @@ class TestFaultTolerance:
         """设为默认的 vendor 创建失败——默认源不设。"""
         registry = VendorRegistry()
         loader = MarketDataAutoloader(registry, make_factory({"akshare"}))
-        result = loader.load([
-            VendorConfig("tushare", "tushare", is_default=True),  # 会失败
-            VendorConfig("akshare", "akshare"),
-        ])
+        result = loader.load(
+            [
+                VendorConfig("tushare", "tushare", is_default=True),  # 会失败
+                VendorConfig("akshare", "akshare"),
+            ]
+        )
 
         assert result.registered_count == 1
         assert result.default_vendor_id is None  # tushare 失败, 默认未设

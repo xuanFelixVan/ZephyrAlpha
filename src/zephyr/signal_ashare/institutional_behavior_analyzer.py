@@ -342,47 +342,63 @@ class InstitutionalBehaviorAnalyzer:
 
         # ── 维度1: 6阶段识别 ──
         phase, phase_confidence = self.identify_behavior_phase(input_data)
-        audit_trail.append({
-            "dimension": "phase_identification",
-            "result": phase,
-            "confidence": phase_confidence,
-        })
+        audit_trail.append(
+            {
+                "dimension": "phase_identification",
+                "result": phase,
+                "confidence": phase_confidence,
+            }
+        )
 
         # ── 维度2: 洗盘vs出货 ──
         wd_verdict, wd_confidence = self.distinguish_wash_vs_distribute(input_data, phase)
-        audit_trail.append({
-            "dimension": "wash_vs_distribute",
-            "result": wd_verdict,
-            "confidence": wd_confidence,
-        })
+        audit_trail.append(
+            {
+                "dimension": "wash_vs_distribute",
+                "result": wd_verdict,
+                "confidence": wd_confidence,
+            }
+        )
 
         # ── 维度3: 诱多行为检测 ──
         bull_trap, bull_trap_conf = self.detect_bull_trap(input_data)
-        audit_trail.append({
-            "dimension": "bull_trap",
-            "result": bull_trap,
-            "confidence": bull_trap_conf,
-        })
+        audit_trail.append(
+            {
+                "dimension": "bull_trap",
+                "result": bull_trap,
+                "confidence": bull_trap_conf,
+            }
+        )
 
         # ── 维度4: 主力vs游资打架 ──
         winner, conflict_conf = self.judge_main_force_vs_hot_money(input_data)
-        audit_trail.append({
-            "dimension": "conflict",
-            "result": winner,
-            "confidence": conflict_conf,
-        })
+        audit_trail.append(
+            {
+                "dimension": "conflict",
+                "result": winner,
+                "confidence": conflict_conf,
+            }
+        )
 
         # ── 维度5: 分时特征 ──
         intraday_features = self.recognize_intraday_features(input_data)
-        audit_trail.append({
-            "dimension": "intraday_features",
-            "result": intraday_features,
-        })
+        audit_trail.append(
+            {
+                "dimension": "intraday_features",
+                "result": intraday_features,
+            }
+        )
 
         # ── 综合评分 ──
         overall_score = self._compute_overall_score(
-            phase, phase_confidence, wd_verdict, wd_confidence,
-            bull_trap, bull_trap_conf, winner, conflict_conf,
+            phase,
+            phase_confidence,
+            wd_verdict,
+            wd_confidence,
+            bull_trap,
+            bull_trap_conf,
+            winner,
+            conflict_conf,
         )
 
         return InstitutionalBehaviorResult(
@@ -403,9 +419,7 @@ class InstitutionalBehaviorAnalyzer:
     # 维度1: 6阶段主力行为识别
     # ------------------------------------------------------------------
 
-    def identify_behavior_phase(
-        self, input_data: InstitutionalBehaviorInput
-    ) -> tuple[str, float]:
+    def identify_behavior_phase(self, input_data: InstitutionalBehaviorInput) -> tuple[str, float]:
         """
         识别当前主力行为阶段。
 
@@ -431,21 +445,13 @@ class InstitutionalBehaviorAnalyzer:
             volume_ratio, price_change_pct, large_order_direction
         )
         # 洗盘：缩量 + 价跌 + 大单仍正
-        scores[BehaviorPhase.WASHING.value] = self._score_washing(
-            volume_ratio, price_change_pct, large_order_direction
-        )
+        scores[BehaviorPhase.WASHING.value] = self._score_washing(volume_ratio, price_change_pct, large_order_direction)
         # 试盘：量短暂放大 + 价小涨
-        scores[BehaviorPhase.TESTING.value] = self._score_testing(
-            volume_ratio, price_change_pct
-        )
+        scores[BehaviorPhase.TESTING.value] = self._score_testing(volume_ratio, price_change_pct)
         # 再洗盘：极度缩量 + 价小跌
-        scores[BehaviorPhase.RE_WASHING.value] = self._score_re_washing(
-            volume_ratio, price_change_pct
-        )
+        scores[BehaviorPhase.RE_WASHING.value] = self._score_re_washing(volume_ratio, price_change_pct)
         # 拉升：放量 + 大涨 + 大单强正
-        scores[BehaviorPhase.PULLING.value] = self._score_pulling(
-            volume_ratio, price_change_pct, large_order_direction
-        )
+        scores[BehaviorPhase.PULLING.value] = self._score_pulling(volume_ratio, price_change_pct, large_order_direction)
         # 出货：放量 + 滞涨 + 大单负
         scores[BehaviorPhase.DISTRIBUTING.value] = self._score_distributing(
             volume_ratio, price_change_pct, large_order_direction
@@ -457,9 +463,7 @@ class InstitutionalBehaviorAnalyzer:
             return BehaviorPhase.UNKNOWN.value, best_score
         return best_phase, best_score
 
-    def _score_building(
-        self, vol_ratio: float, price_pct: float, lo_dir: float
-    ) -> float:
+    def _score_building(self, vol_ratio: float, price_pct: float, lo_dir: float) -> float:
         cfg = self._config
         score = 0.0
         # 量比在 building_volume_min~max 之间
@@ -475,9 +479,7 @@ class InstitutionalBehaviorAnalyzer:
             score += 30.0
         return min(score, 100.0)
 
-    def _score_washing(
-        self, vol_ratio: float, price_pct: float, lo_dir: float
-    ) -> float:
+    def _score_washing(self, vol_ratio: float, price_pct: float, lo_dir: float) -> float:
         cfg = self._config
         score = 0.0
         if vol_ratio <= cfg.washing_volume_max:
@@ -507,9 +509,7 @@ class InstitutionalBehaviorAnalyzer:
             score += 50.0
         return min(score, 100.0)
 
-    def _score_pulling(
-        self, vol_ratio: float, price_pct: float, lo_dir: float
-    ) -> float:
+    def _score_pulling(self, vol_ratio: float, price_pct: float, lo_dir: float) -> float:
         cfg = self._config
         score = 0.0
         if vol_ratio >= cfg.pulling_volume_min:
@@ -520,9 +520,7 @@ class InstitutionalBehaviorAnalyzer:
             score += 30.0
         return min(score, 100.0)
 
-    def _score_distributing(
-        self, vol_ratio: float, price_pct: float, lo_dir: float
-    ) -> float:
+    def _score_distributing(self, vol_ratio: float, price_pct: float, lo_dir: float) -> float:
         cfg = self._config
         score = 0.0
         if vol_ratio >= cfg.distributing_volume_min:
@@ -537,9 +535,7 @@ class InstitutionalBehaviorAnalyzer:
     # 维度2: 洗盘vs出货识别
     # ------------------------------------------------------------------
 
-    def distinguish_wash_vs_distribute(
-        self, input_data: InstitutionalBehaviorInput, phase: str
-    ) -> tuple[str, float]:
+    def distinguish_wash_vs_distribute(self, input_data: InstitutionalBehaviorInput, phase: str) -> tuple[str, float]:
         """
         区分洗盘与出货。
 
@@ -580,9 +576,7 @@ class InstitutionalBehaviorAnalyzer:
     # 维度3: 诱多行为检测
     # ------------------------------------------------------------------
 
-    def detect_bull_trap(
-        self, input_data: InstitutionalBehaviorInput
-    ) -> tuple[bool, float]:
+    def detect_bull_trap(self, input_data: InstitutionalBehaviorInput) -> tuple[bool, float]:
         """
         检测诱多行为（多头陷阱）。
 
@@ -622,9 +616,7 @@ class InstitutionalBehaviorAnalyzer:
     # 维度4: 主力vs游资打架胜负判断
     # ------------------------------------------------------------------
 
-    def judge_main_force_vs_hot_money(
-        self, input_data: InstitutionalBehaviorInput
-    ) -> tuple[str, float]:
+    def judge_main_force_vs_hot_money(self, input_data: InstitutionalBehaviorInput) -> tuple[str, float]:
         """
         判断主力与游资打架胜负（30分钟观察期）。
 
@@ -663,9 +655,7 @@ class InstitutionalBehaviorAnalyzer:
     # 维度5: 主力行为分时特征识别
     # ------------------------------------------------------------------
 
-    def recognize_intraday_features(
-        self, input_data: InstitutionalBehaviorInput
-    ) -> dict[str, float]:
+    def recognize_intraday_features(self, input_data: InstitutionalBehaviorInput) -> dict[str, float]:
         """
         识别主力行为分时特征。
 
@@ -752,7 +742,7 @@ class InstitutionalBehaviorAnalyzer:
         if mean <= 0:
             return 0.0
         variance = sum((p - mean) ** 2 for p in prices) / len(prices)
-        return (variance ** 0.5) / mean * 100.0
+        return (variance**0.5) / mean * 100.0
 
     def _compute_overall_score(
         self,

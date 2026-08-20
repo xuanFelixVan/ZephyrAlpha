@@ -447,4 +447,3 @@ class TestConcurrent100Tasks:
             first_p0_idx = next(i for i, x in enumerate(ready) if x.priority == "P0")
             first_p1_idx = next(i for i, x in enumerate(ready) if x.priority == "P1")
             assert first_p0_idx < first_p1_idx
-

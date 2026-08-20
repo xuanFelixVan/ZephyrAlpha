@@ -167,7 +167,6 @@ class PerfCollector:
         """只读：records（R5 公共化）。"""
         return self._records
 
-
     def record(self, label: str, duration_ms: float) -> None:
         if label not in self._records:
             self._records[label] = PerfSample(label=label, duration_ms=duration_ms)
@@ -512,9 +511,7 @@ class TestPhaseGLatencyByLayer:
             },
             # MultiIndex(symbol, date)：引擎主格式；单 symbol 裸 index 布局价格键为
             # "default" 与 signals 列名不匹配（零成交），列式布局逐日滤行性能不达标。
-            index=pd.MultiIndex.from_arrays(
-                [["600519"] * len(dates), dates], names=["symbol", "date"]
-            ),
+            index=pd.MultiIndex.from_arrays([["600519"] * len(dates), dates], names=["symbol", "date"]),
         )
 
         signals = pd.DataFrame(
@@ -704,7 +701,9 @@ class TestPhaseGFullPipelineThroughput:
                         symbol=order.symbol,
                         target_weight=0.05,
                         current_holdings={},
-                        limits=RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="perf-batch", max_single_position=0.10),
+                        limits=RiskLimits(
+                            as_of_date=datetime.now(UTC), idempotency_key="perf-batch", max_single_position=0.10
+                        ),
                     )
                     assert len(violations) == 0
                     broker.submit_order(order)
@@ -839,7 +838,12 @@ class TestPhaseGSLACompliance:
         validator = DefaultRiskValidator()
         for _ in range(30):
             with measure_ms("CTR-003", collector):
-                validator.validate_order("600519", 0.05, {}, RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="perf-ctr003", max_single_position=0.10))
+                validator.validate_order(
+                    "600519",
+                    0.05,
+                    {},
+                    RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="perf-ctr003", max_single_position=0.10),
+                )
         r = collector.finalize()["CTR-003"]
         reports.append(
             SlaReport("CTR-003", 5.0, r.p99_ms, r.p99_ms <= 5.0, (5.0 - r.p99_ms) / 5.0 * 100, len(r.samples))

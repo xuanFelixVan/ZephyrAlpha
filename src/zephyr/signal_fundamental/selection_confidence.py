@@ -39,6 +39,7 @@ sleeve 差异化选型（memo §3.5 四候选汇总）：
 
 事件过滤阈值（memo §3.6 v1.0.1）：初拟 0.7，按事件类型差异化，**待 G10 校准**。
 """
+
 from __future__ import annotations
 
 import math

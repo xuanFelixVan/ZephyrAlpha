@@ -50,6 +50,7 @@
 **待 Phase 2 各策略 3-6 月实盘后人工调参**（28 号 §6 待裁定-2）；
 validate_sentiment_regime_map 为加载校验函数。
 """
+
 from __future__ import annotations
 
 import math
@@ -91,40 +92,55 @@ class PhaseCharacteristics:
 
 PHASE_CHARACTERISTICS: dict[SentimentPhase, PhaseCharacteristics] = {
     SentimentPhase.FREEZING: PhaseCharacteristics(
-        phase=SentimentPhase.FREEZING, limit_up_range=(0, 20), limit_down_range=(10, 999),
-        consecutive_height=(0, 2), explosion_rate_range=(0.40, 1.00),
+        phase=SentimentPhase.FREEZING,
+        limit_up_range=(0, 20),
+        limit_down_range=(10, 999),
+        consecutive_height=(0, 2),
+        explosion_rate_range=(0.40, 1.00),
         next_day_premium_range=(-0.05, -0.02),
         turnover_desc="地量，成交额较均值萎缩 50%+，换手率个股<1%",
         fund_behavior="散户恐慌割肉，机构观望，北向逆势小单流入",
         essence="空头力量衰竭，多头孕育，底部拐点前夜",
     ),
     SentimentPhase.STARTING: PhaseCharacteristics(
-        phase=SentimentPhase.STARTING, limit_up_range=(20, 40), limit_down_range=(0, 10),
-        consecutive_height=(2, 3), explosion_rate_range=(0.30, 0.40),
+        phase=SentimentPhase.STARTING,
+        limit_up_range=(20, 40),
+        limit_down_range=(0, 10),
+        consecutive_height=(2, 3),
+        explosion_rate_range=(0.30, 0.40),
         next_day_premium_range=(-0.02, 0.01),
         turnover_desc="温和放量，较冰点提升 30%+，新题材冒头试盘",
         fund_behavior="先知先觉资金布局，散户犹豫，游资试错龙头",
         essence="情绪拐点确认，赚钱效应萌芽，主线酝酿期",
     ),
     SentimentPhase.FERMENTING: PhaseCharacteristics(
-        phase=SentimentPhase.FERMENTING, limit_up_range=(40, 80), limit_down_range=(0, 5),
-        consecutive_height=(4, 6), explosion_rate_range=(0.20, 0.30),
+        phase=SentimentPhase.FERMENTING,
+        limit_up_range=(40, 80),
+        limit_down_range=(0, 5),
+        consecutive_height=(4, 6),
+        explosion_rate_range=(0.20, 0.30),
         next_day_premium_range=(0.02, 0.04),
         turnover_desc="放量上涨，较均值提升 20%+，板块形成梯队",
         fund_behavior="资金共识强，风险偏好拉满，打板/追高/低吸均赚钱",
         essence="趋势确立，主线明确，赚钱效应扩散",
     ),
     SentimentPhase.CONSENSUS: PhaseCharacteristics(
-        phase=SentimentPhase.CONSENSUS, limit_up_range=(80, 999), limit_down_range=(0, 3),
-        consecutive_height=(7, 999), explosion_rate_range=(0.00, 0.20),
+        phase=SentimentPhase.CONSENSUS,
+        limit_up_range=(80, 999),
+        limit_down_range=(0, 3),
+        consecutive_height=(7, 999),
+        explosion_rate_range=(0.00, 0.20),
         next_day_premium_range=(0.04, 0.08),
         turnover_desc="天量，板块全面爆发，后排跟风也涨停",
         fund_behavior="资金盲目乐观，物极必反，机构开始减持",
         essence="加速赶顶，波动放大，退潮风险积累",
     ),
     SentimentPhase.EBING: PhaseCharacteristics(
-        phase=SentimentPhase.EBING, limit_up_range=(0, 30), limit_down_range=(15, 999),
-        consecutive_height=(0, 3), explosion_rate_range=(0.50, 1.00),
+        phase=SentimentPhase.EBING,
+        limit_up_range=(0, 30),
+        limit_down_range=(15, 999),
+        consecutive_height=(0, 3),
+        explosion_rate_range=(0.50, 1.00),
         next_day_premium_range=(-0.08, -0.03),
         turnover_desc="流动性枯竭，核按钮批量出现，全线杀跌无抵抗",
         fund_behavior="空间板闷杀→跌停家数堆积→偶尔反抽→继续埋",
@@ -203,17 +219,20 @@ def compute_sentiment_temperature(
     total_attempt = explosion_count + limit_up_count
     explosion_divergence = explosion_count / total_attempt if total_attempt > 0 else 0.0
     total_limit_up_attempt = sealed_limit_up_count + explosion_count
-    seal_consensus = (
-        sealed_limit_up_count / total_limit_up_attempt if total_limit_up_attempt > 0 else 0.0
-    )
+    seal_consensus = sealed_limit_up_count / total_limit_up_attempt if total_limit_up_attempt > 0 else 0.0
     total_ad = advance_count + decline_count
     raw_ad_ratio = (advance_count - decline_count) / total_ad if total_ad > 0 else 0.0
     advance_decline_ratio = (raw_ad_ratio + 1.0) / 2.0
     ladder_layers = sum(1 for k in consecutive_ladder.keys() if 2 <= k <= 7)
     ladder_completeness = min(ladder_layers / 6.0, 1.0)
     components = SentimentTemperatureComponents(
-        limit_up_breadth, limit_down_fear, consecutive_height, explosion_divergence,
-        seal_consensus, advance_decline_ratio, ladder_completeness,
+        limit_up_breadth,
+        limit_down_fear,
+        consecutive_height,
+        explosion_divergence,
+        seal_consensus,
+        advance_decline_ratio,
+        ladder_completeness,
     )
     values = {
         "limit_up_breadth": limit_up_breadth,
@@ -274,15 +293,21 @@ def detect_phase_transition(
       +连板见顶（当日 ≤近 5 日最高 ×0.6）；确认=核按钮 ≥10 或跌停 >50
     """
     signal = PhaseTransitionSignal(
-        transition_type="none", from_phase=current_phase, to_phase=current_phase,
-        leading_indicator_triggered=False, confirmation_triggered=False,
-        leading_evidence={}, confirmation_evidence={}, confidence=0.0, is_actionable=False,
+        transition_type="none",
+        from_phase=current_phase,
+        to_phase=current_phase,
+        leading_indicator_triggered=False,
+        confirmation_triggered=False,
+        leading_evidence={},
+        confirmation_evidence={},
+        confidence=0.0,
+        is_actionable=False,
     )
     if len(explosion_rate_series) < lookback_window + 1:
         return signal
-    recent_explosion_avg = sum(explosion_rate_series[-lookback_window - 1:-1]) / lookback_window
-    recent_limit_up_avg = sum(limit_up_count_series[-lookback_window - 1:-1]) / lookback_window
-    recent_consec_max = max(consecutive_height_series[-lookback_window - 1:-1])
+    recent_explosion_avg = sum(explosion_rate_series[-lookback_window - 1 : -1]) / lookback_window
+    recent_limit_up_avg = sum(limit_up_count_series[-lookback_window - 1 : -1]) / lookback_window
+    recent_consec_max = max(consecutive_height_series[-lookback_window - 1 : -1])
     today_explosion = explosion_rate_series[-1]
     today_limit_up = limit_up_count_series[-1]
     today_consec = consecutive_height_series[-1]
@@ -304,7 +329,8 @@ def detect_phase_transition(
             confidence = (0.5 if leading_triggered else 0.0) + (0.5 if confirmation_triggered else 0.0)
             signal = PhaseTransitionSignal(
                 transition_type="bottom_reversal",
-                from_phase=SentimentPhase.FREEZING, to_phase=SentimentPhase.STARTING,
+                from_phase=SentimentPhase.FREEZING,
+                to_phase=SentimentPhase.STARTING,
                 leading_indicator_triggered=leading_triggered,
                 confirmation_triggered=confirmation_triggered,
                 leading_evidence=leading_evidence,
@@ -330,7 +356,8 @@ def detect_phase_transition(
             confidence = (0.5 if leading_triggered else 0.0) + (0.5 if confirmation_triggered else 0.0)
             signal = PhaseTransitionSignal(
                 transition_type="top_divergence",
-                from_phase=SentimentPhase.CONSENSUS, to_phase=SentimentPhase.EBING,
+                from_phase=SentimentPhase.CONSENSUS,
+                to_phase=SentimentPhase.EBING,
                 leading_indicator_triggered=leading_triggered,
                 confirmation_triggered=confirmation_triggered,
                 leading_evidence=leading_evidence,
@@ -393,18 +420,18 @@ def locate_sentiment_phase(
     highest_consec = max(inp.consecutive_ladder.keys()) if inp.consecutive_ladder else 0
     evidence: dict[SentimentPhase, float] = {
         phase: _score_phase(
-            target=phase, limit_up=inp.limit_up_count, limit_down=inp.limit_down_count,
-            explosion_rate=explosion_rate, next_day_premium=inp.daban_next_day_premium,
-            highest_consec=highest_consec, amount_ratio=inp.market_amount_ratio_vs_ma20,
+            target=phase,
+            limit_up=inp.limit_up_count,
+            limit_down=inp.limit_down_count,
+            explosion_rate=explosion_rate,
+            next_day_premium=inp.daban_next_day_premium,
+            highest_consec=highest_consec,
+            amount_ratio=inp.market_amount_ratio_vs_ma20,
         )
         for phase in SentimentPhase
     }
     # ===== 步骤 2：先验+贝叶斯更新 =====
-    prior = (
-        inp.yesterday_phase_prob
-        if inp.yesterday_phase_prob is not None
-        else {p: 0.2 for p in SentimentPhase}
-    )
+    prior = inp.yesterday_phase_prob if inp.yesterday_phase_prob is not None else {p: 0.2 for p in SentimentPhase}
     smoothed_prior = _apply_transition_smoothing(prior, PHASE_ORDER, diag_weight=0.6)
     posterior = {p: max(smoothed_prior[p] * evidence[p], 1e-9) for p in SentimentPhase}
     total = sum(posterior.values())
@@ -424,11 +451,18 @@ def locate_sentiment_phase(
         confidence = 1.0  # 兜底后置为确定（position_scale 仍强收缩）
     # ===== 步骤 4：可交易性 + 仓位缩放 =====
     is_tradable, position_scale = _compute_tradability(
-        dominant, confidence, fallback_triggered, promotion_rate, explosion_rate,
+        dominant,
+        confidence,
+        fallback_triggered,
+        promotion_rate,
+        explosion_rate,
     )
     return SentimentLocatorOutput(
-        phase_prob=phase_prob, dominant_phase=dominant, confidence=confidence,
-        is_tradable=is_tradable, position_scale=position_scale,
+        phase_prob=phase_prob,
+        dominant_phase=dominant,
+        confidence=confidence,
+        is_tradable=is_tradable,
+        position_scale=position_scale,
         evidence_scores={p.name: v for p, v in evidence.items()},
         fallback_triggered=fallback_triggered,
     )
@@ -464,8 +498,7 @@ def _score_phase(
     else:  # EBING
         s_amt = 1.0 if amount_ratio < 0.6 else max(0.0, 1.0 - (amount_ratio - 0.6) / 0.6)
     score = (
-        0.25 * s_lu + 0.15 * s_ld + 0.20 * s_exp + 0.20 * s_prem
-        + 0.10 * s_consec + 0.10 * max(0.0, min(1.0, s_amt))
+        0.25 * s_lu + 0.15 * s_ld + 0.20 * s_exp + 0.20 * s_prem + 0.10 * s_consec + 0.10 * max(0.0, min(1.0, s_amt))
     )
     return max(0.0, min(1.0, score))
 
@@ -553,35 +586,45 @@ class PhaseTradingDiscipline:
 
 PHASE_DISCIPLINE: dict[SentimentPhase, PhaseTradingDiscipline] = {
     SentimentPhase.FREEZING: PhaseTradingDiscipline(
-        phase=SentimentPhase.FREEZING, position_scale=0.0, throttle_factor=0.0,
+        phase=SentimentPhase.FREEZING,
+        position_scale=0.0,
+        throttle_factor=0.0,
         allow_new_open=False,
         strategy_affinity={"daban": -1.0, "multifactor": +0.5, "event_driven": -0.5},
         entry_discipline="空仓防守，严禁抄底。多因子可开始左侧布局低估标的（估值分位<15%），但仓位≤1成试错",
         exit_discipline="所有短周期持仓无条件清仓，仅保留多因子底仓",
     ),
     SentimentPhase.STARTING: PhaseTradingDiscipline(
-        phase=SentimentPhase.STARTING, position_scale=0.5, throttle_factor=0.5,
+        phase=SentimentPhase.STARTING,
+        position_scale=0.5,
+        throttle_factor=0.5,
         allow_new_open=True,
         strategy_affinity={"daban": +0.3, "multifactor": +1.0, "event_driven": +0.5},
         entry_discipline="试错新题材首板或空间板，仓位2-3成。多因子左侧加仓低位横截面，事件驱动布局利好公告",
         exit_discipline="打板错了就砍，对了加仓。多因子持有不动，事件驱动按衰减曲线退出",
     ),
     SentimentPhase.FERMENTING: PhaseTradingDiscipline(
-        phase=SentimentPhase.FERMENTING, position_scale=1.0, throttle_factor=1.0,
+        phase=SentimentPhase.FERMENTING,
+        position_scale=1.0,
+        throttle_factor=1.0,
         allow_new_open=True,
         strategy_affinity={"daban": +1.0, "multifactor": 0.0, "event_driven": +0.8},
         entry_discipline="打换手龙/空间板回封，仓位5-7成。事件驱动冲击 rising phase 重仓",
         exit_discipline="趋势龙持有不动，打板按 T+1 卖出纪律，连板晋级者持有至分歧/破板",
     ),
     SentimentPhase.CONSENSUS: PhaseTradingDiscipline(
-        phase=SentimentPhase.CONSENSUS, position_scale=0.5, throttle_factor=0.5,
+        phase=SentimentPhase.CONSENSUS,
+        position_scale=0.5,
+        throttle_factor=0.5,
         allow_new_open=False,
         strategy_affinity={"daban": -0.5, "multifactor": -0.3, "event_driven": -0.5},
         entry_discipline="锁仓不新开！打板禁止追高后排，仅允许前排龙头锁仓。高潮期最忌换股",
         exit_discipline="准备在分歧时减仓。后排跟风全部砍掉，趋势龙破 10 日线减仓",
     ),
     SentimentPhase.EBING: PhaseTradingDiscipline(
-        phase=SentimentPhase.EBING, position_scale=0.0, throttle_factor=0.0,
+        phase=SentimentPhase.EBING,
+        position_scale=0.0,
+        throttle_factor=0.0,
         allow_new_open=False,
         strategy_affinity={"daban": -1.0, "multifactor": -0.5, "event_driven": -1.0},
         entry_discipline="无条件空仓！谁打谁亏。退潮反弹都是诱多，唯一正确动作是空仓",
@@ -645,8 +688,18 @@ SENTIMENT_TO_REGIME_MAP: dict[SentimentPhase, dict[str, float]] = {
 
 # 12 态（对齐 10_regime §2.6：9 基础态 = 趋势×波动率 + 3 特殊态）
 REGIME_STATES_12: list[str] = [
-    "Bull-Low", "Bull-Medium", "Bull-High", "Neutral-Low", "Neutral-Medium", "Neutral-High",
-    "Bear-Low", "Bear-Medium", "Bear-High", "CRISIS", "RECOVERY", "BREAKOUT",
+    "Bull-Low",
+    "Bull-Medium",
+    "Bull-High",
+    "Neutral-Low",
+    "Neutral-Medium",
+    "Neutral-High",
+    "Bear-Low",
+    "Bear-Medium",
+    "Bear-High",
+    "CRISIS",
+    "RECOVERY",
+    "BREAKOUT",
 ]
 
 
@@ -721,29 +774,74 @@ class CombinedTradingDirective:
 # 5 阶段 × 12 态 → 联合仓位缩放系数（memo §3.5.4，已乘 sentiment_base × regime_shrinkage）
 SENTIMENT_REGIME_MAPPING: dict[SentimentPhase, dict[str, float]] = {
     SentimentPhase.FREEZING: {
-        "Bull-Low": 0.0, "Bull-Medium": 0.0, "Bull-High": 0.0, "Neutral-Low": 0.0,
-        "Neutral-Medium": 0.0, "Neutral-High": 0.0, "Bear-Low": 0.0, "Bear-Medium": 0.0,
-        "Bear-High": 0.0, "CRISIS": 0.0, "RECOVERY": 0.0, "BREAKOUT": 0.0,
+        "Bull-Low": 0.0,
+        "Bull-Medium": 0.0,
+        "Bull-High": 0.0,
+        "Neutral-Low": 0.0,
+        "Neutral-Medium": 0.0,
+        "Neutral-High": 0.0,
+        "Bear-Low": 0.0,
+        "Bear-Medium": 0.0,
+        "Bear-High": 0.0,
+        "CRISIS": 0.0,
+        "RECOVERY": 0.0,
+        "BREAKOUT": 0.0,
     },
     SentimentPhase.STARTING: {
-        "Bull-Low": 0.50, "Bull-Medium": 0.45, "Bull-High": 0.35, "Neutral-Low": 0.40,
-        "Neutral-Medium": 0.35, "Neutral-High": 0.25, "Bear-Low": 0.30, "Bear-Medium": 0.20,
-        "Bear-High": 0.10, "CRISIS": 0.10, "RECOVERY": 0.30, "BREAKOUT": 0.45,
+        "Bull-Low": 0.50,
+        "Bull-Medium": 0.45,
+        "Bull-High": 0.35,
+        "Neutral-Low": 0.40,
+        "Neutral-Medium": 0.35,
+        "Neutral-High": 0.25,
+        "Bear-Low": 0.30,
+        "Bear-Medium": 0.20,
+        "Bear-High": 0.10,
+        "CRISIS": 0.10,
+        "RECOVERY": 0.30,
+        "BREAKOUT": 0.45,
     },
     SentimentPhase.FERMENTING: {
-        "Bull-Low": 1.00, "Bull-Medium": 0.90, "Bull-High": 0.70, "Neutral-Low": 0.80,
-        "Neutral-Medium": 0.70, "Neutral-High": 0.50, "Bear-Low": 0.60, "Bear-Medium": 0.40,
-        "Bear-High": 0.20, "CRISIS": 0.15, "RECOVERY": 0.50, "BREAKOUT": 0.95,
+        "Bull-Low": 1.00,
+        "Bull-Medium": 0.90,
+        "Bull-High": 0.70,
+        "Neutral-Low": 0.80,
+        "Neutral-Medium": 0.70,
+        "Neutral-High": 0.50,
+        "Bear-Low": 0.60,
+        "Bear-Medium": 0.40,
+        "Bear-High": 0.20,
+        "CRISIS": 0.15,
+        "RECOVERY": 0.50,
+        "BREAKOUT": 0.95,
     },
     SentimentPhase.CONSENSUS: {
-        "Bull-Low": 0.50, "Bull-Medium": 0.45, "Bull-High": 0.35, "Neutral-Low": 0.40,
-        "Neutral-Medium": 0.35, "Neutral-High": 0.25, "Bear-Low": 0.30, "Bear-Medium": 0.20,
-        "Bear-High": 0.10, "CRISIS": 0.10, "RECOVERY": 0.30, "BREAKOUT": 0.45,
+        "Bull-Low": 0.50,
+        "Bull-Medium": 0.45,
+        "Bull-High": 0.35,
+        "Neutral-Low": 0.40,
+        "Neutral-Medium": 0.35,
+        "Neutral-High": 0.25,
+        "Bear-Low": 0.30,
+        "Bear-Medium": 0.20,
+        "Bear-High": 0.10,
+        "CRISIS": 0.10,
+        "RECOVERY": 0.30,
+        "BREAKOUT": 0.45,
     },
     SentimentPhase.EBING: {
-        "Bull-Low": 0.0, "Bull-Medium": 0.0, "Bull-High": 0.0, "Neutral-Low": 0.0,
-        "Neutral-Medium": 0.0, "Neutral-High": 0.0, "Bear-Low": 0.0, "Bear-Medium": 0.0,
-        "Bear-High": 0.0, "CRISIS": 0.0, "RECOVERY": 0.0, "BREAKOUT": 0.0,
+        "Bull-Low": 0.0,
+        "Bull-Medium": 0.0,
+        "Bull-High": 0.0,
+        "Neutral-Low": 0.0,
+        "Neutral-Medium": 0.0,
+        "Neutral-High": 0.0,
+        "Bear-Low": 0.0,
+        "Bear-Medium": 0.0,
+        "Bear-High": 0.0,
+        "CRISIS": 0.0,
+        "RECOVERY": 0.0,
+        "BREAKOUT": 0.0,
     },
 }
 
@@ -762,8 +860,7 @@ def get_effective_combinations(
         (phase, regime)
         for phase in SentimentPhase
         for regime in REGIME_STATES_12
-        if (phase_filter is None or phase == phase_filter)
-        and (regime_filter is None or regime == regime_filter)
+        if (phase_filter is None or phase == phase_filter) and (regime_filter is None or regime == regime_filter)
     ]
 
 
@@ -814,7 +911,8 @@ def combine_sentiment_regime(
     乘法叠加理由（正交性）：情绪管"方向/标的"，regime 管"力度/谨慎度"。
     """
     sentiment_adjusted, sentiment_rationale = apply_sentiment_position_soft_influence(
-        sleeve_name=sleeve_name, target_position=target_position,
+        sleeve_name=sleeve_name,
+        target_position=target_position,
         sentiment_output=sentiment_output,
     )
     regime_shrinkage = 0.0
@@ -838,9 +936,12 @@ def combine_sentiment_regime(
         f"combined={combined:.3f} allow_new={allow_new_open}"
     )
     return CombinedTradingDirective(
-        sentiment_phase=dominant_phase, regime_state=dominant_regime,
-        position_scale_sentiment=sentiment_adjusted, shrinkage_regime=regime_shrinkage,
-        combined_position_scale=combined, allow_new_open=allow_new_open,
+        sentiment_phase=dominant_phase,
+        regime_state=dominant_regime,
+        position_scale_sentiment=sentiment_adjusted,
+        shrinkage_regime=regime_shrinkage,
+        combined_position_scale=combined,
+        allow_new_open=allow_new_open,
         throttle_factor=throttle_factor,
         strategy_affinity=PHASE_DISCIPLINE[dominant_phase].strategy_affinity,
         rationale=rationale,
@@ -866,84 +967,141 @@ class StrategyDeploymentPolicy:
 STRATEGY_DEPLOYMENT_MATRIX: dict[tuple[str, SentimentPhase], StrategyDeploymentPolicy] = {
     # ===== 打板：情绪周期纯多头 =====
     ("daban", SentimentPhase.FREEZING): StrategyDeploymentPolicy(
-        strategy_name="daban", phase=SentimentPhase.FREEZING, position_scale=0.0,
-        allow_new_open=False, target_holdings_ratio=0.0,
-        deployment_desc="空仓，禁止打板", risk_notes="冰点打板必亏，次日溢价 -5%~-2%",
+        strategy_name="daban",
+        phase=SentimentPhase.FREEZING,
+        position_scale=0.0,
+        allow_new_open=False,
+        target_holdings_ratio=0.0,
+        deployment_desc="空仓，禁止打板",
+        risk_notes="冰点打板必亏，次日溢价 -5%~-2%",
     ),
     ("daban", SentimentPhase.STARTING): StrategyDeploymentPolicy(
-        strategy_name="daban", phase=SentimentPhase.STARTING, position_scale=0.3,
-        allow_new_open=True, target_holdings_ratio=0.25,
-        deployment_desc="试错首板/空间板，仓位 2-3 成", risk_notes="试错期，错了就砍，对了加仓",
+        strategy_name="daban",
+        phase=SentimentPhase.STARTING,
+        position_scale=0.3,
+        allow_new_open=True,
+        target_holdings_ratio=0.25,
+        deployment_desc="试错首板/空间板，仓位 2-3 成",
+        risk_notes="试错期，错了就砍，对了加仓",
     ),
     ("daban", SentimentPhase.FERMENTING): StrategyDeploymentPolicy(
-        strategy_name="daban", phase=SentimentPhase.FERMENTING, position_scale=0.7,
-        allow_new_open=True, target_holdings_ratio=0.60,
+        strategy_name="daban",
+        phase=SentimentPhase.FERMENTING,
+        position_scale=0.7,
+        allow_new_open=True,
+        target_holdings_ratio=0.60,
         deployment_desc="重仓换手龙/空间板回封，仓位 5-7 成",
         risk_notes="主升期打板黄金窗口，但 7 成为上限（55188 实战）",
     ),
     ("daban", SentimentPhase.CONSENSUS): StrategyDeploymentPolicy(
-        strategy_name="daban", phase=SentimentPhase.CONSENSUS, position_scale=0.4,
-        allow_new_open=False, target_holdings_ratio=0.35,
-        deployment_desc="锁仓不新开，仅前排龙头锁仓", risk_notes="高潮期最忌换股/追高后排",
+        strategy_name="daban",
+        phase=SentimentPhase.CONSENSUS,
+        position_scale=0.4,
+        allow_new_open=False,
+        target_holdings_ratio=0.35,
+        deployment_desc="锁仓不新开，仅前排龙头锁仓",
+        risk_notes="高潮期最忌换股/追高后排",
     ),
     ("daban", SentimentPhase.EBING): StrategyDeploymentPolicy(
-        strategy_name="daban", phase=SentimentPhase.EBING, position_scale=0.0,
-        allow_new_open=False, target_holdings_ratio=0.0,
-        deployment_desc="无条件空仓，谁打谁亏", risk_notes="退潮反弹都是诱多",
+        strategy_name="daban",
+        phase=SentimentPhase.EBING,
+        position_scale=0.0,
+        allow_new_open=False,
+        target_holdings_ratio=0.0,
+        deployment_desc="无条件空仓，谁打谁亏",
+        risk_notes="退潮反弹都是诱多",
     ),
     # ===== 多因子：情绪周期逆向者 =====
     ("multifactor", SentimentPhase.FREEZING): StrategyDeploymentPolicy(
-        strategy_name="multifactor", phase=SentimentPhase.FREEZING, position_scale=0.1,
-        allow_new_open=True, target_holdings_ratio=0.10,
+        strategy_name="multifactor",
+        phase=SentimentPhase.FREEZING,
+        position_scale=0.1,
+        allow_new_open=True,
+        target_holdings_ratio=0.10,
         deployment_desc="左侧布局低估值标的（估值分位<15%），仓位≤1 成试错",
         risk_notes="冰点是多因子黄金布局期，但需极轻仓试错",
     ),
     ("multifactor", SentimentPhase.STARTING): StrategyDeploymentPolicy(
-        strategy_name="multifactor", phase=SentimentPhase.STARTING, position_scale=0.5,
-        allow_new_open=True, target_holdings_ratio=0.40,
-        deployment_desc="左侧加仓低位横截面，仓位 3-5 成", risk_notes="反核期加仓，与打板试错形成对冲",
+        strategy_name="multifactor",
+        phase=SentimentPhase.STARTING,
+        position_scale=0.5,
+        allow_new_open=True,
+        target_holdings_ratio=0.40,
+        deployment_desc="左侧加仓低位横截面，仓位 3-5 成",
+        risk_notes="反核期加仓，与打板试错形成对冲",
     ),
     ("multifactor", SentimentPhase.FERMENTING): StrategyDeploymentPolicy(
-        strategy_name="multifactor", phase=SentimentPhase.FERMENTING, position_scale=0.8,
-        allow_new_open=True, target_holdings_ratio=0.70,
-        deployment_desc="持有不动，享受趋势", risk_notes="主升期多因子被动收益，不主动调仓",
+        strategy_name="multifactor",
+        phase=SentimentPhase.FERMENTING,
+        position_scale=0.8,
+        allow_new_open=True,
+        target_holdings_ratio=0.70,
+        deployment_desc="持有不动，享受趋势",
+        risk_notes="主升期多因子被动收益，不主动调仓",
     ),
     ("multifactor", SentimentPhase.CONSENSUS): StrategyDeploymentPolicy(
-        strategy_name="multifactor", phase=SentimentPhase.CONSENSUS, position_scale=0.3,
-        allow_new_open=False, target_holdings_ratio=0.30,
-        deployment_desc="减仓至 3 成，估值高位兑现", risk_notes="疯狂期多因子减仓，与打板锁仓形成对冲",
+        strategy_name="multifactor",
+        phase=SentimentPhase.CONSENSUS,
+        position_scale=0.3,
+        allow_new_open=False,
+        target_holdings_ratio=0.30,
+        deployment_desc="减仓至 3 成，估值高位兑现",
+        risk_notes="疯狂期多因子减仓，与打板锁仓形成对冲",
     ),
     ("multifactor", SentimentPhase.EBING): StrategyDeploymentPolicy(
-        strategy_name="multifactor", phase=SentimentPhase.EBING, position_scale=0.2,
-        allow_new_open=False, target_holdings_ratio=0.20,
-        deployment_desc="降仓至 3 成以下防守", risk_notes="退潮期保留底仓，但严控仓位",
+        strategy_name="multifactor",
+        phase=SentimentPhase.EBING,
+        position_scale=0.2,
+        allow_new_open=False,
+        target_holdings_ratio=0.20,
+        deployment_desc="降仓至 3 成以下防守",
+        risk_notes="退潮期保留底仓，但严控仓位",
     ),
     # ===== 事件驱动：跨阶段差异化 =====
     ("event_driven", SentimentPhase.FREEZING): StrategyDeploymentPolicy(
-        strategy_name="event_driven", phase=SentimentPhase.FREEZING, position_scale=0.1,
-        allow_new_open=True, target_holdings_ratio=0.10,
-        deployment_desc="防守，仅高确定性事件（如重组落地）", risk_notes="冰点期事件冲击衰减快，仅做高确定性",
+        strategy_name="event_driven",
+        phase=SentimentPhase.FREEZING,
+        position_scale=0.1,
+        allow_new_open=True,
+        target_holdings_ratio=0.10,
+        deployment_desc="防守，仅高确定性事件（如重组落地）",
+        risk_notes="冰点期事件冲击衰减快，仅做高确定性",
     ),
     ("event_driven", SentimentPhase.STARTING): StrategyDeploymentPolicy(
-        strategy_name="event_driven", phase=SentimentPhase.STARTING, position_scale=0.4,
-        allow_new_open=True, target_holdings_ratio=0.35,
-        deployment_desc="布局利好公告，仓位 3-4 成", risk_notes="反核期事件驱动开始活跃",
+        strategy_name="event_driven",
+        phase=SentimentPhase.STARTING,
+        position_scale=0.4,
+        allow_new_open=True,
+        target_holdings_ratio=0.35,
+        deployment_desc="布局利好公告，仓位 3-4 成",
+        risk_notes="反核期事件驱动开始活跃",
     ),
     ("event_driven", SentimentPhase.FERMENTING): StrategyDeploymentPolicy(
-        strategy_name="event_driven", phase=SentimentPhase.FERMENTING, position_scale=0.7,
-        allow_new_open=True, target_holdings_ratio=0.60,
+        strategy_name="event_driven",
+        phase=SentimentPhase.FERMENTING,
+        position_scale=0.7,
+        allow_new_open=True,
+        target_holdings_ratio=0.60,
         deployment_desc="重仓 rising phase 事件，仓位 5-7 成",
         risk_notes="主升期事件冲击衰减最慢，rising phase 最强（Yukka 2026）",
     ),
     ("event_driven", SentimentPhase.CONSENSUS): StrategyDeploymentPolicy(
-        strategy_name="event_driven", phase=SentimentPhase.CONSENSUS, position_scale=0.3,
-        allow_new_open=False, target_holdings_ratio=0.25,
-        deployment_desc="减仓，事件冲击衰减加快", risk_notes="疯狂期事件驱动退场，与打板锁仓同步",
+        strategy_name="event_driven",
+        phase=SentimentPhase.CONSENSUS,
+        position_scale=0.3,
+        allow_new_open=False,
+        target_holdings_ratio=0.25,
+        deployment_desc="减仓，事件冲击衰减加快",
+        risk_notes="疯狂期事件驱动退场，与打板锁仓同步",
     ),
     ("event_driven", SentimentPhase.EBING): StrategyDeploymentPolicy(
-        strategy_name="event_driven", phase=SentimentPhase.EBING, position_scale=0.0,
-        allow_new_open=False, target_holdings_ratio=0.0,
-        deployment_desc="无条件清仓", risk_notes="退潮期事件冲击被情绪淹没，无 alpha",
+        strategy_name="event_driven",
+        phase=SentimentPhase.EBING,
+        position_scale=0.0,
+        allow_new_open=False,
+        target_holdings_ratio=0.0,
+        deployment_desc="无条件清仓",
+        risk_notes="退潮期事件冲击被情绪淹没，无 alpha",
     ),
 }
 
@@ -955,10 +1113,7 @@ def compute_strategy_deployment(
     """按情绪阶段查 3 策略×5 阶段部署矩阵（§3.6.1）。"""
     if strategy_name is not None:
         return STRATEGY_DEPLOYMENT_MATRIX[(strategy_name, phase)]
-    return {
-        s: STRATEGY_DEPLOYMENT_MATRIX[(s, phase)]
-        for s in ("daban", "multifactor", "event_driven")
-    }
+    return {s: STRATEGY_DEPLOYMENT_MATRIX[(s, phase)] for s in ("daban", "multifactor", "event_driven")}
 
 
 def get_strategy_deployment_by_phase(
@@ -1018,13 +1173,13 @@ def validate_sentiment_hidden_driver(
         phase_returns = {s: [daily_returns[s][i] for i in idx] for s in strategies}
         matrix = _compute_corr_matrix(phase_returns, list(range(len(idx))))
         max_rho = max(
-            abs(matrix[s1][s2])
-            for i, s1 in enumerate(strategies)
-            for j, s2 in enumerate(strategies)
-            if i < j
+            abs(matrix[s1][s2]) for i, s1 in enumerate(strategies) for j, s2 in enumerate(strategies) if i < j
         )
         results[phase] = SentimentStratificationTest(
-            phase, len(idx), matrix, max_rho < correlation_threshold,
+            phase,
+            len(idx),
+            matrix,
+            max_rho < correlation_threshold,
         )
     return results
 
@@ -1110,9 +1265,7 @@ def analyze_sentiment_driven_correlation(
     bootstrap_rhos: dict[str, list[float]] = {s: [] for s in strategy_returns}
     for _ in range(n_bootstrap):
         block_indices = rng.integers(0, n_blocks, size=n_blocks)
-        shuffled = np.concatenate(
-            [intensity[i * block_size:(i + 1) * block_size] for i in block_indices]
-        )
+        shuffled = np.concatenate([intensity[i * block_size : (i + 1) * block_size] for i in block_indices])
         if len(shuffled) < n:
             shuffled = np.concatenate([shuffled, intensity[: n - len(shuffled)]])
         for strat, returns in strategy_returns.items():

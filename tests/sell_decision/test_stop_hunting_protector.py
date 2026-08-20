@@ -223,8 +223,10 @@ def test_on_adjusted_callback_invoked():
 
 def test_on_adjusted_callback_failure_isolated():
     """回调异常不阻断。"""
+
     def bad_cb(_):
         raise RuntimeError("boom")
+
     p = StopHuntingProtector()
     p.on_adjusted(bad_cb)
     r = p.adjust_stop_level("A", 10.00, now=T0)

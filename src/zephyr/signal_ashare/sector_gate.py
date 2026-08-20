@@ -88,12 +88,8 @@ class WaterTempResponse:
 _WATER_TEMP_TABLE: dict[WaterTemp, WaterTempResponse] = {
     WaterTemp.NEUTRAL: WaterTempResponse(1.0, GateThresholds(0.60, 0.80), RRG_FILTER_ALL),
     WaterTemp.RISK_ON: WaterTempResponse(0.5, GateThresholds(0.60, 0.80), RRG_FILTER_ALL),
-    WaterTemp.PANIC_REPAIR: WaterTempResponse(
-        0.5, GateThresholds(0.50, 0.70), RRG_FILTER_IMPROVING_ONLY
-    ),
-    WaterTemp.RISK_OFF: WaterTempResponse(
-        0.3, GateThresholds(0.80, 0.90), RRG_FILTER_LEADING_ONLY
-    ),
+    WaterTemp.PANIC_REPAIR: WaterTempResponse(0.5, GateThresholds(0.50, 0.70), RRG_FILTER_IMPROVING_ONLY),
+    WaterTemp.RISK_OFF: WaterTempResponse(0.3, GateThresholds(0.80, 0.90), RRG_FILTER_LEADING_ONLY),
     WaterTemp.CRASH: WaterTempResponse(0.0, GateThresholds(1.01, 1.01), RRG_FILTER_NONE),
 }
 

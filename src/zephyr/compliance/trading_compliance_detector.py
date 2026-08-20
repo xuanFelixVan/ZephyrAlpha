@@ -167,7 +167,9 @@ class TradingComplianceDetector:
 
     # ── §7.3 市场操纵 4 类 ──
 
-    def check_spoofing(self, orders: list[ComplianceOrderRecord], minute_avg_volume: float) -> ManipulationVerdict | None:
+    def check_spoofing(
+        self, orders: list[ComplianceOrderRecord], minute_avg_volume: float
+    ) -> ManipulationVerdict | None:
         """幌骗：大额挂单后短时撤单，且同 pattern 30min 内重复 ≥3 次。
 
         Args:
@@ -178,7 +180,8 @@ class TradingComplianceDetector:
         if minute_avg_volume <= 0:
             return None
         hits = [
-            o for o in orders
+            o
+            for o in orders
             if o.qty > t.spoof_size_ratio * minute_avg_volume
             and o.cancelled_at is not None
             and (o.cancelled_at - o.placed_at).total_seconds() <= t.spoof_cancel_window_s
@@ -261,9 +264,7 @@ class TradingComplianceDetector:
         return [v for v in verdicts if v is not None]
 
     def _hit(self, mtype: ManipulationType, detail: str) -> ManipulationVerdict:
-        verdict = ManipulationVerdict(
-            mtype=mtype, action=ComplianceAction.HARD_BLOCK, detail=detail
-        )
+        verdict = ManipulationVerdict(mtype=mtype, action=ComplianceAction.HARD_BLOCK, detail=detail)
         self._logger.log(
             "MANIPULATION_VERDICT",
             "trading_compliance_detector",

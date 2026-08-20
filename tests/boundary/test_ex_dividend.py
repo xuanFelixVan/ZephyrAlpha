@@ -3,6 +3,7 @@
 
 测试除权除息日的持仓数量/成本价调整。
 """
+
 from datetime import date
 from decimal import Decimal
 
@@ -37,7 +38,9 @@ class TestExDividend:
         adjuster.register_action(_action(cash="0.50", record_close="10.00"))
 
         result = adjuster.adjust_position(
-            "600000.SH", current_qty=Decimal("1000"), current_avg_cost=Decimal("10.00"),
+            "600000.SH",
+            current_qty=Decimal("1000"),
+            current_avg_cost=Decimal("10.00"),
         )
         assert result is not None
         # 总成本 10000 - 红利 500 = 9500，股数不变 → 成本 9.50
@@ -53,7 +56,9 @@ class TestExDividend:
         adjuster.register_action(_action(ratio="0.1", record_close="10.00"))  # 10送1
 
         result = adjuster.adjust_position(
-            "600000.SH", current_qty=Decimal("1000"), current_avg_cost=Decimal("10.00"),
+            "600000.SH",
+            current_qty=Decimal("1000"),
+            current_avg_cost=Decimal("10.00"),
         )
         assert result is not None
         # 1000 × 1.1 = 1100 股；总成本 10000 不变 → 10000/1100 = 9.0909
@@ -70,7 +75,9 @@ class TestExDividend:
         adjuster.register_action(_action(cash="0.50", ratio="0.1", record_close="11.00"))
 
         limit_up, limit_down = adjuster.get_adjusted_limit_prices(
-            "600000.SH", Decimal("11.00"), Decimal("0.10"),
+            "600000.SH",
+            Decimal("11.00"),
+            Decimal("0.10"),
         )
         # 基于新前收 9.55：涨停 9.55×1.1=10.51，跌停 9.55×0.9=8.60
         assert limit_up == Decimal("10.51")
@@ -91,7 +98,9 @@ class TestExDividend:
         adjuster.register_action(action)
 
         result = adjuster.adjust_position(
-            "600000.SH", current_qty=Decimal("1000"), current_avg_cost=Decimal("10.00"),
+            "600000.SH",
+            current_qty=Decimal("1000"),
+            current_avg_cost=Decimal("10.00"),
         )
         assert result is not None
 
@@ -108,7 +117,9 @@ class TestExDividend:
         action2 = _action(cash="1.00", ratio="0.1", record_close="12.00")
         adjuster2.register_action(action2)
         result2 = adjuster2.adjust_position(
-            "600000.SH", current_qty=Decimal("1000"), current_avg_cost=Decimal("12.00"),
+            "600000.SH",
+            current_qty=Decimal("1000"),
+            current_avg_cost=Decimal("12.00"),
         )
         assert result2 is not None
         new_mv = result2.new_position_qty * action2.ex_dividend_price

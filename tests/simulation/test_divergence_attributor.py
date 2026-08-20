@@ -18,6 +18,7 @@
 数据滞后无门禁仅记录、阈值默认对齐 key_gates、自定义阈值注入、
 观测值越界报错、阈值配置校验。
 """
+
 from __future__ import annotations
 
 import pytest
@@ -51,42 +52,36 @@ class TestAllPass:
     def test_factor_order(self):
         r = attribute_divergence(_clean_obs())
         assert [f.factor for f in r.factors] == [
-            "A_SLIPPAGE", "B_DATA_LAG", "C_LOOKAHEAD", "D_LATENCY", "TOTAL_PNL",
+            "A_SLIPPAGE",
+            "B_DATA_LAG",
+            "C_LOOKAHEAD",
+            "D_LATENCY",
+            "TOTAL_PNL",
         ]
 
 
 class TestFactorFailures:
     def test_slippage_breach(self):
         obs = _clean_obs()
-        r = attribute_divergence(
-            DivergenceObservation(**{**obs.__dict__, "slippage_diff_bps": 2.0})
-        )
+        r = attribute_divergence(DivergenceObservation(**{**obs.__dict__, "slippage_diff_bps": 2.0}))
         assert r.overall_passed is False
         assert r.dominant_factor == "A_SLIPPAGE"
 
     def test_signal_match_breach(self):
-        r = attribute_divergence(
-            DivergenceObservation(**{**_clean_obs().__dict__, "signal_match_pct": 0.98})
-        )
+        r = attribute_divergence(DivergenceObservation(**{**_clean_obs().__dict__, "signal_match_pct": 0.98}))
         assert r.dominant_factor == "C_LOOKAHEAD"
 
     def test_latency_breach(self):
-        r = attribute_divergence(
-            DivergenceObservation(**{**_clean_obs().__dict__, "latency_ms": 150.0})
-        )
+        r = attribute_divergence(DivergenceObservation(**{**_clean_obs().__dict__, "latency_ms": 150.0}))
         assert r.dominant_factor == "D_LATENCY"
 
     def test_pnl_correlation_breach(self):
-        r = attribute_divergence(
-            DivergenceObservation(**{**_clean_obs().__dict__, "pnl_correlation": 0.90})
-        )
+        r = attribute_divergence(DivergenceObservation(**{**_clean_obs().__dict__, "pnl_correlation": 0.90}))
         assert r.dominant_factor == "TOTAL_PNL"
 
     def test_dominant_is_max_excess(self):
         # 滑点超出100%(0.5→2.0=超阈值1bp的100%), 时延超出20%(100→120)
-        r = attribute_divergence(
-            DivergenceObservation(slippage_diff_bps=2.0, latency_ms=120.0)
-        )
+        r = attribute_divergence(DivergenceObservation(slippage_diff_bps=2.0, latency_ms=120.0))
         assert r.n_failed == 2
         assert r.dominant_factor == "A_SLIPPAGE"
 

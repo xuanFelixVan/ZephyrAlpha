@@ -68,9 +68,9 @@ logger = logging.getLogger(__name__)
 class GateVerdict(str, Enum):
     """门禁裁决级别 (严重度递增)。"""
 
-    PASS = "PASS"                  # 通过
-    WARN = "WARN"                  # 警告(可上线但标记)
-    REJECT = "REJECT"             # 否决
+    PASS = "PASS"  # 通过
+    WARN = "WARN"  # 警告(可上线但标记)
+    REJECT = "REJECT"  # 否决
     HARD_REJECT = "HARD_REJECT"  # 硬否决
 
     @property
@@ -109,16 +109,16 @@ class CorrelationGateConfig:
     """相关性门禁阈值配置 (设计真源 §1 PA-04, §7.1)。"""
 
     # Pearson 相关性
-    reject_correlation: float = 0.85       # > 0.85 → REJECT
+    reject_correlation: float = 0.85  # > 0.85 → REJECT
     hard_reject_correlation: float = 0.90  # > 0.90 → HARD_REJECT
     # 因子重叠率
-    warn_factor_overlap: float = 0.60      # > 60% → WARN
-    reject_factor_overlap: float = 0.80    # > 80% → REJECT
+    warn_factor_overlap: float = 0.60  # > 60% → WARN
+    reject_factor_overlap: float = 0.80  # > 80% → REJECT
     # 股票池重叠 + 行业集中度 (联合判定)
-    warn_stock_pool_overlap: float = 0.70   # 股票池重叠 > 70%
+    warn_stock_pool_overlap: float = 0.70  # 股票池重叠 > 70%
     warn_sector_concentration: float = 0.50  # 且 行业集中度 > 50% → WARN
     # 尾部相关性 (EVT, 仅 same_direction 生效)
-    reject_tail_correlation: float = 0.70   # > 0.7 且 same_direction → REJECT
+    reject_tail_correlation: float = 0.70  # > 0.7 且 same_direction → REJECT
     # 相关性否决持久化条件（90 号 Phase2 #20：与 90 天滚动相关性剔除规则口径统一，
     # 补"持续 30 天"避免单日噪声误剔除；pair 未提供持续天数数据时维持立即否决=向后兼容）
     correlation_reject_sustained_days: int = 30
@@ -136,17 +136,11 @@ class CorrelationGateConfig:
             if not 0 <= val <= 1:
                 raise InvalidCorrelationInputError(f"{name} must be in [0,1], got {val}")
         if not (self.reject_correlation < self.hard_reject_correlation):
-            raise InvalidCorrelationInputError(
-                "reject_correlation must be < hard_reject_correlation"
-            )
+            raise InvalidCorrelationInputError("reject_correlation must be < hard_reject_correlation")
         if not (self.warn_factor_overlap < self.reject_factor_overlap):
-            raise InvalidCorrelationInputError(
-                "warn_factor_overlap must be < reject_factor_overlap"
-            )
+            raise InvalidCorrelationInputError("warn_factor_overlap must be < reject_factor_overlap")
         if self.correlation_reject_sustained_days < 0:
-            raise InvalidCorrelationInputError(
-                "correlation_reject_sustained_days must be >= 0"
-            )
+            raise InvalidCorrelationInputError("correlation_reject_sustained_days must be >= 0")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -164,12 +158,12 @@ class StrategyPairMetrics:
 
     strategy_a: str
     strategy_b: str
-    correlation: float | None = None         # Pearson 相关性 (取绝对值)
-    factor_overlap: float | None = None       # 因子重叠率
-    stock_pool_overlap: float | None = None   # 股票池重叠率
+    correlation: float | None = None  # Pearson 相关性 (取绝对值)
+    factor_overlap: float | None = None  # 因子重叠率
+    stock_pool_overlap: float | None = None  # 股票池重叠率
     sector_concentration: float | None = None  # 行业集中度
-    tail_correlation: float | None = None     # 尾部相关性 (EVT)
-    same_direction: bool = False              # 是否同方向 (尾部相关 REJECT 仅对同方向生效)
+    tail_correlation: float | None = None  # 尾部相关性 (EVT)
+    same_direction: bool = False  # 是否同方向 (尾部相关 REJECT 仅对同方向生效)
     # 相关性持续天数（90 号 Phase2 #20 持久化条件；None=未提供→维持立即否决）
     correlation_sustained_days: int | None = None
 
@@ -180,10 +174,10 @@ class GateViolation:
 
     strategy_a: str
     strategy_b: str
-    rule: str           # 违反的规则名
-    dimension: str       # 维度 (correlation/factor_overlap/...)
-    value: float         # 实际值
-    threshold: float     # 触发阈值
+    rule: str  # 违反的规则名
+    dimension: str  # 维度 (correlation/factor_overlap/...)
+    value: float  # 实际值
+    threshold: float  # 触发阈值
     verdict: GateVerdict
 
 
@@ -308,9 +302,7 @@ class StrategyCorrelationGate:
     @staticmethod
     def _validate_pair(pair: StrategyPairMetrics) -> None:
         if pair.strategy_a == pair.strategy_b:
-            raise InvalidCorrelationInputError(
-                f"strategy pair cannot be self-correlated: {pair.strategy_a!r}"
-            )
+            raise InvalidCorrelationInputError(f"strategy pair cannot be self-correlated: {pair.strategy_a!r}")
         # Pearson 相关性天然可为负, 允许 [-1, 1]; 其余维度 [0, 1]
         if pair.correlation is not None and not -1 <= pair.correlation <= 1:
             raise InvalidCorrelationInputError(
@@ -340,38 +332,79 @@ class StrategyCorrelationGate:
         if pair.correlation is not None:
             corr = abs(pair.correlation)
             if corr > cfg.hard_reject_correlation:
-                violations.append(self._mk(pair, "hard_correlation_reject", "correlation",
-                                           corr, cfg.hard_reject_correlation,
-                                           self._correlation_verdict(pair, GateVerdict.HARD_REJECT)))
+                violations.append(
+                    self._mk(
+                        pair,
+                        "hard_correlation_reject",
+                        "correlation",
+                        corr,
+                        cfg.hard_reject_correlation,
+                        self._correlation_verdict(pair, GateVerdict.HARD_REJECT),
+                    )
+                )
             elif corr > cfg.reject_correlation:
-                violations.append(self._mk(pair, "correlation_reject", "correlation",
-                                           corr, cfg.reject_correlation,
-                                           self._correlation_verdict(pair, GateVerdict.REJECT)))
+                violations.append(
+                    self._mk(
+                        pair,
+                        "correlation_reject",
+                        "correlation",
+                        corr,
+                        cfg.reject_correlation,
+                        self._correlation_verdict(pair, GateVerdict.REJECT),
+                    )
+                )
 
         # 因子重叠
         if pair.factor_overlap is not None:
             fo = pair.factor_overlap
             if fo > cfg.reject_factor_overlap:
-                violations.append(self._mk(pair, "factor_overlap_reject", "factor_overlap",
-                                           fo, cfg.reject_factor_overlap, GateVerdict.REJECT))
+                violations.append(
+                    self._mk(
+                        pair,
+                        "factor_overlap_reject",
+                        "factor_overlap",
+                        fo,
+                        cfg.reject_factor_overlap,
+                        GateVerdict.REJECT,
+                    )
+                )
             elif fo > cfg.warn_factor_overlap:
-                violations.append(self._mk(pair, "factor_overlap_warn", "factor_overlap",
-                                           fo, cfg.warn_factor_overlap, GateVerdict.WARN))
+                violations.append(
+                    self._mk(
+                        pair, "factor_overlap_warn", "factor_overlap", fo, cfg.warn_factor_overlap, GateVerdict.WARN
+                    )
+                )
 
         # 股票池重叠 + 行业集中度 (联合判定)
         if pair.stock_pool_overlap is not None and pair.sector_concentration is not None:
-            if (pair.stock_pool_overlap > cfg.warn_stock_pool_overlap
-                    and pair.sector_concentration > cfg.warn_sector_concentration):
-                violations.append(self._mk(pair, "pool_sector_warn", "stock_pool_overlap",
-                                           pair.stock_pool_overlap, cfg.warn_stock_pool_overlap,
-                                           GateVerdict.WARN))
+            if (
+                pair.stock_pool_overlap > cfg.warn_stock_pool_overlap
+                and pair.sector_concentration > cfg.warn_sector_concentration
+            ):
+                violations.append(
+                    self._mk(
+                        pair,
+                        "pool_sector_warn",
+                        "stock_pool_overlap",
+                        pair.stock_pool_overlap,
+                        cfg.warn_stock_pool_overlap,
+                        GateVerdict.WARN,
+                    )
+                )
 
         # 尾部相关性 (仅 same_direction)
         if pair.tail_correlation is not None and pair.same_direction:
             if pair.tail_correlation > cfg.reject_tail_correlation:
-                violations.append(self._mk(pair, "tail_correlation_reject", "tail_correlation",
-                                           pair.tail_correlation, cfg.reject_tail_correlation,
-                                           GateVerdict.REJECT))
+                violations.append(
+                    self._mk(
+                        pair,
+                        "tail_correlation_reject",
+                        "tail_correlation",
+                        pair.tail_correlation,
+                        cfg.reject_tail_correlation,
+                        GateVerdict.REJECT,
+                    )
+                )
 
         return violations
 

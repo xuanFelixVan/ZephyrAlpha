@@ -5,6 +5,7 @@
 覆盖: 配置校验、单/多标的仿真、PIT无前瞻、做空截断、佣金/滑点、空/单bar、
 HOLD不交易、买卖权益、输入校验、signal_log/trade_log 完整性。
 """
+
 from __future__ import annotations
 
 import pandas as pd
@@ -30,13 +31,16 @@ def make_ohlcv(prices: list[float], symbol: str | None = None) -> pd.DataFrame:
     close=prices, open/high/low 围绕 close, volume=1000。
     """
     dates = pd.date_range("2026-01-01", periods=len(prices), freq="D")
-    df = pd.DataFrame({
-        "open": prices,
-        "high": [p * 1.01 for p in prices],
-        "low": [p * 0.99 for p in prices],
-        "close": prices,
-        "volume": [1000] * len(prices),
-    }, index=dates)
+    df = pd.DataFrame(
+        {
+            "open": prices,
+            "high": [p * 1.01 for p in prices],
+            "low": [p * 0.99 for p in prices],
+            "close": prices,
+            "volume": [1000] * len(prices),
+        },
+        index=dates,
+    )
     if symbol is not None:
         df = pd.concat({symbol: df}, names=["symbol", "date"])
     return df
@@ -198,9 +202,9 @@ class TestSimulation:
 
     def test_commission_and_slippage_applied(self):
         """BUY 执行价 = open*(1+slippage), 佣金 = max(cost*rate, min)。"""
-        sim = StrategySimulator(StrategySimulatorConfig(
-            initial_capital=10000.0, commission_rate=0.001, min_commission=0.0, slippage=0.01
-        ))
+        sim = StrategySimulator(
+            StrategySimulatorConfig(initial_capital=10000.0, commission_rate=0.001, min_commission=0.0, slippage=0.01)
+        )
 
         def buy(ctx: SignalContext) -> list[Signal]:
             if ctx.bar_index == 1:
@@ -218,9 +222,9 @@ class TestSimulation:
 
     def test_min_commission_floor(self):
         """小单交易佣金不低于 min_commission。"""
-        sim = StrategySimulator(StrategySimulatorConfig(
-            initial_capital=100.0, commission_rate=0.0001, min_commission=5.0, slippage=0.0
-        ))
+        sim = StrategySimulator(
+            StrategySimulatorConfig(initial_capital=100.0, commission_rate=0.0001, min_commission=5.0, slippage=0.0)
+        )
 
         def buy(ctx: SignalContext) -> list[Signal]:
             if ctx.bar_index == 1:

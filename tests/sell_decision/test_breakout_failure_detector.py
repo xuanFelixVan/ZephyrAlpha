@@ -194,8 +194,10 @@ def test_on_detected_callback_invoked():
 
 def test_on_detected_callback_failure_isolated():
     """回调异常不阻断检测。"""
+
     def bad_cb(_):
         raise RuntimeError("callback boom")
+
     det = BreakoutFailureDetector()
     det.on_detected(bad_cb)
     # 不应抛异常

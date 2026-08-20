@@ -31,8 +31,9 @@ T0 = datetime(2026, 8, 1, 10, 0, tzinfo=timezone.utc)
 # ── 测试数据工厂 ─────────────────────────────────────────────────────────────
 
 
-def sell(symbol="000001.SZ", stype=SellSignalType.MAIN_FORCE_DISTRIBUTION,
-         confidence=0.9, source="", **kw) -> SellSignal:
+def sell(
+    symbol="000001.SZ", stype=SellSignalType.MAIN_FORCE_DISTRIBUTION, confidence=0.9, source="", **kw
+) -> SellSignal:
     return SellSignal(
         symbol=symbol,
         signal_type=stype,
@@ -131,7 +132,7 @@ def test_multi_signal_takes_max():
     scorer = SellUrgencyScorer()
     scores = scorer.score(
         [
-            sell(stype=SellSignalType.OPPORTUNITY_COST),       # 0.3
+            sell(stype=SellSignalType.OPPORTUNITY_COST),  # 0.3
             sell(stype=SellSignalType.MAIN_FORCE_DISTRIBUTION),  # 1.0
         ],
         now=T0,
@@ -147,7 +148,7 @@ def test_multi_signal_all_weak_takes_max():
     scores = scorer.score(
         [
             sell(stype=SellSignalType.OPPORTUNITY_COST),  # 0.3
-            sell(stype=SellSignalType.TECHNICAL),         # 0.6
+            sell(stype=SellSignalType.TECHNICAL),  # 0.6
         ],
         now=T0,
     )
@@ -231,8 +232,8 @@ def test_multi_symbol_mixed():
     scores = scorer.score(
         [
             sell(symbol="A", stype=SellSignalType.MAIN_FORCE_DISTRIBUTION),  # 1.0
-            sell(symbol="B", stype=SellSignalType.OPPORTUNITY_COST),        # 0.3
-            sell(symbol="C", stype=SellSignalType.TECHNICAL),               # 0.6
+            sell(symbol="B", stype=SellSignalType.OPPORTUNITY_COST),  # 0.3
+            sell(symbol="C", stype=SellSignalType.TECHNICAL),  # 0.6
         ],
         now=T0,
     )

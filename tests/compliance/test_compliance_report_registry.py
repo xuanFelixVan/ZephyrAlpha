@@ -14,10 +14,24 @@ from zephyr.compliance.compliance_report_registry import (
 _ITEMS = {
     "order_min_dwell_us": 50,
     "report_items": [
-        {"item_id": "RPT-A", "name": "账户基本信息", "content_source": "券商",
-         "timing": "首次交易前", "required": True, "reported_at": None, "broker_ack": False},
-        {"item_id": "RPT-B", "name": "交易软件信息", "content_source": "miniQMT",
-         "timing": "首次交易前", "required": True, "reported_at": None, "broker_ack": False},
+        {
+            "item_id": "RPT-A",
+            "name": "账户基本信息",
+            "content_source": "券商",
+            "timing": "首次交易前",
+            "required": True,
+            "reported_at": None,
+            "broker_ack": False,
+        },
+        {
+            "item_id": "RPT-B",
+            "name": "交易软件信息",
+            "content_source": "miniQMT",
+            "timing": "首次交易前",
+            "required": True,
+            "reported_at": None,
+            "broker_ack": False,
+        },
     ],
 }
 

@@ -36,6 +36,7 @@
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 8
 SSoT: #ARCH-NLP-PIPELINE-001
 """
+
 from __future__ import annotations
 
 import argparse
@@ -54,9 +55,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 log = logging.getLogger(__name__)
 
 # ── 验收门槛（13 号 §3.1.12/§3.1.10）──
-SFT_F1_THRESHOLD: Final[float] = 0.75        # SFT 后 Macro-F1 ≥ 75%
-SPEED_MIN_ITEMS: Final[int] = 1000           # 推理速度样本量
-SPEED_MAX_SECONDS: Final[float] = 300.0      # 1000 条 < 5 分钟（RTX 3090）
+SFT_F1_THRESHOLD: Final[float] = 0.75  # SFT 后 Macro-F1 ≥ 75%
+SPEED_MIN_ITEMS: Final[int] = 1000  # 推理速度样本量
+SPEED_MAX_SECONDS: Final[float] = 300.0  # 1000 条 < 5 分钟（RTX 3090）
 DEFAULT_START_DATE: Final[str] = "2010-01-01"  # 离线批量全历史起点
 
 STATUS_PASS: Final[str] = "PASS"

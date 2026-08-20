@@ -3,6 +3,7 @@
 
 测试 A 股 T+1 交割规则下的卖出限制。
 """
+
 from decimal import Decimal
 from types import SimpleNamespace
 from unittest.mock import MagicMock
@@ -27,18 +28,14 @@ class TestTPlusOne:
 
     def test_same_day_buy_cannot_sell(self):
         """当日买入的股票当天不能卖出（can_sell_volume=0 必须拦截，不可当 falsy 跳过）。"""
-        broker = _broker_with_positions(
-            [SimpleNamespace(stock_code="600000.SH", can_sell_volume=0)]
-        )
+        broker = _broker_with_positions([SimpleNamespace(stock_code="600000.SH", can_sell_volume=0)])
         with pytest.raises(MiniQmtBrokerError) as exc:
             broker._check_t_plus_1("600000.SH", 100)
         assert exc.value.error_code == -2
 
     def test_next_day_buy_can_sell(self):
         """次日可以卖出前一日买入的股票（can_sell_volume 充足时放行）。"""
-        broker = _broker_with_positions(
-            [SimpleNamespace(stock_code="600000.SH", can_sell_volume=1000)]
-        )
+        broker = _broker_with_positions([SimpleNamespace(stock_code="600000.SH", can_sell_volume=1000)])
         broker._check_t_plus_1("600000.SH", 100)  # 不抛异常即通过
 
     def test_t0_fund_available_for_buy(self):

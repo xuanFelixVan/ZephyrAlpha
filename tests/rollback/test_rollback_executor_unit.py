@@ -279,7 +279,9 @@ class TestDependencyImpactAnalysis:
     def test_identifies_impacted_modules(self):
         exec = RollbackExecutor()
         with patch.object(exec, "run_git") as mock_git:
-            mock_git.return_value = "src/zephyr/rollback/executor.py\nsrc/zephyr/gov_enforcement/rule_enforcement/_registry.yaml"
+            mock_git.return_value = (
+                "src/zephyr/rollback/executor.py\nsrc/zephyr/gov_enforcement/rule_enforcement/_registry.yaml"
+            )
             result = exec.dependency_impact_analysis("abc123")
             modules = result.get("impacted_modules", [])
             assert len(modules) > 0
@@ -391,7 +393,9 @@ class TestExecuteConcurrencyGuard:
             patch.object(exec, "preflight_check", return_value=preflight),
             patch.object(exec, "get_uncommitted_files", return_value=["own.py"]),
             patch.object(exec, "get_staged_uncommitted_files", return_value=["other.py"]),
-            patch("zephyr.infrastructure.rollback.rollback_executor.classify_uncommitted_files", return_value=stash_plan),
+            patch(
+                "zephyr.infrastructure.rollback.rollback_executor.classify_uncommitted_files", return_value=stash_plan
+            ),
             patch.object(exec, "write_in_flight"),
             patch.object(exec, "write_op_audit"),
         ):

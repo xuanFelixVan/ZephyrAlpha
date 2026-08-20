@@ -67,9 +67,7 @@ class TestBasicCalculation:
     def test_annualized_sharpe(self):
         calc = DeflatedSharpeCalculator(DSRConfig(periods_per_year=252))
         result = calc.calculate(gen_normal(200, seed=1), num_trials=1)
-        assert result.sharpe_annualized == pytest.approx(
-            result.sharpe * math.sqrt(252), rel=1e-6
-        )
+        assert result.sharpe_annualized == pytest.approx(result.sharpe * math.sqrt(252), rel=1e-6)
 
     def test_dsr_in_range(self):
         calc = DeflatedSharpeCalculator()
@@ -120,11 +118,10 @@ class TestMultipleTestingCorrection:
     def test_expected_max_known_value(self):
         """N=2: E[max] ≈ sqrt(2*ln2) - (ln(pi)+ln(ln2))/(2*sqrt(2*ln2))"""
         from zephyr.simulation.deflated_sharpe_calculator import _expected_max_sharpe
+
         val = _expected_max_sharpe(2)
         ln_n = math.log(2)
-        expected = math.sqrt(2 * ln_n) - (math.log(math.pi) + math.log(ln_n)) / (
-            2 * math.sqrt(2 * ln_n)
-        )
+        expected = math.sqrt(2 * ln_n) - (math.log(math.pi) + math.log(ln_n)) / (2 * math.sqrt(2 * ln_n))
         assert val == pytest.approx(expected, rel=1e-6)
 
 
@@ -231,6 +228,7 @@ class TestEdgeCases:
 class TestStatistics:
     def test_skewness_symmetric_normal_near_zero(self):
         from zephyr.simulation.deflated_sharpe_calculator import _skewness
+
         # 大样本正态分布偏度接近0
         returns = gen_normal(10000, mean=0, std=1, seed=99)
         sk = _skewness(returns)
@@ -238,18 +236,21 @@ class TestStatistics:
 
     def test_kurtosis_normal_near_zero(self):
         from zephyr.simulation.deflated_sharpe_calculator import _kurtosis
+
         returns = gen_normal(10000, mean=0, std=1, seed=99)
         ku = _kurtosis(returns)
         assert abs(ku) < 0.3  # 超额峰度接近0
 
     def test_variance_of_sharpe_formula(self):
         from zephyr.simulation.deflated_sharpe_calculator import _variance_of_sharpe
+
         # SR=0, γ=0, κ=0, T=100 -> V = 1/99
         v = _variance_of_sharpe(0.0, 0.0, 0.0, 100)
         assert v == pytest.approx(1.0 / 99, rel=1e-6)
 
     def test_normal_cdf_known_values(self):
         from zephyr.simulation.deflated_sharpe_calculator import _normal_cdf
+
         assert _normal_cdf(0.0) == pytest.approx(0.5, abs=1e-9)
         assert _normal_cdf(-10.0) == pytest.approx(0.0, abs=1e-9)
         assert _normal_cdf(10.0) == pytest.approx(1.0, abs=1e-9)

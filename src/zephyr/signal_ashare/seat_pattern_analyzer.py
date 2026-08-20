@@ -121,8 +121,7 @@ __all__ = [
 ]
 
 _SEAT_REGISTRY_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml"
+    Path(__file__).resolve().parents[3] / "docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml"
 )
 
 
@@ -147,9 +146,7 @@ class SeatRecord(BaseModel):
     net_amount: float = Field(default=0.0, description="净买入额（元，可负）")
     buy_rank: int | None = Field(default=None, ge=1, le=5, description="买方排名 1-5")
     sell_rank: int | None = Field(default=None, ge=1, le=5, description="卖方排名 1-5")
-    provider_seat_type: str = Field(
-        default="broker", description="provider 粗分类：institution/connect/broker"
-    )
+    provider_seat_type: str = Field(default="broker", description="provider 粗分类：institution/connect/broker")
     reason: str = Field(default="", description="上榜原因")
 
 
@@ -210,9 +207,7 @@ class SeatPatternConfig(BaseModel):
     retail_share_danger: float = Field(default=0.30, description="散户净买占绝对值比>30% 回避（维度1）")
     score_long: float = Field(default=60.0, description="≥60 long")
     score_avoid: float = Field(default=40.0, description="≤40 avoid")
-    youzi_follow_styles: tuple[str, ...] = Field(
-        default=("龙头连板", "首板"), description="可跟随的游资风格白名单"
-    )
+    youzi_follow_styles: tuple[str, ...] = Field(default=("龙头连板", "首板"), description="可跟随的游资风格白名单")
 
 
 class SeatPatternAnalyzer:

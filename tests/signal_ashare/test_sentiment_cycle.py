@@ -1,6 +1,7 @@
 # [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md §3.2-§3.10
 # [TTL] permanent
 """情绪周期×交易决策标准函数集单元测试——含边界/退化用例（28 号 §3.2-§3.10）。"""
+
 from __future__ import annotations
 
 import numpy as np
@@ -42,10 +43,15 @@ from zephyr.signal_ashare.sentiment_cycle import (
 
 def _locator_input(**kw) -> SentimentLocatorInput:
     base = dict(
-        limit_up_count=60, limit_down_count=2, explosion_count=15,
-        consecutive_ladder={2: 10, 3: 5, 4: 2}, yesterday_consecutive={2: 8, 3: 4},
-        daban_next_day_premium=0.03, avg_turnover_rate=3.0,
-        market_amount_ratio_vs_ma20=1.2, dragon_tiger_net_buy_ratio=0.13,
+        limit_up_count=60,
+        limit_down_count=2,
+        explosion_count=15,
+        consecutive_ladder={2: 10, 3: 5, 4: 2},
+        yesterday_consecutive={2: 8, 3: 4},
+        daban_next_day_premium=0.03,
+        avg_turnover_rate=3.0,
+        market_amount_ratio_vs_ma20=1.2,
+        dragon_tiger_net_buy_ratio=0.13,
         northbound_net_inflow=30.0,
     )
     base.update(kw)
@@ -80,9 +86,13 @@ class TestPhaseDefinitions:
 class TestTemperature:
     def test_hot_market_high_score(self):
         out = compute_sentiment_temperature(
-            limit_up_count=90, limit_down_count=2, explosion_count=5,
-            sealed_limit_up_count=85, consecutive_ladder={2: 20, 3: 10, 4: 5, 5: 3, 6: 2, 7: 1},
-            advance_count=4000, decline_count=800,
+            limit_up_count=90,
+            limit_down_count=2,
+            explosion_count=5,
+            sealed_limit_up_count=85,
+            consecutive_ladder={2: 20, 3: 10, 4: 5, 5: 3, 6: 2, 7: 1},
+            advance_count=4000,
+            decline_count=800,
         )
         assert out.score >= 70.0
         assert out.phase_hint in (SentimentPhase.CONSENSUS, SentimentPhase.EBING)
@@ -90,25 +100,37 @@ class TestTemperature:
 
     def test_cold_market_low_score(self):
         out = compute_sentiment_temperature(
-            limit_up_count=5, limit_down_count=45, explosion_count=10,
-            sealed_limit_up_count=3, consecutive_ladder={},
-            advance_count=500, decline_count=4200,
+            limit_up_count=5,
+            limit_down_count=45,
+            explosion_count=10,
+            sealed_limit_up_count=3,
+            consecutive_ladder={},
+            advance_count=500,
+            decline_count=4200,
         )
         assert out.score < 40.0
 
     def test_degenerate_zero_inputs(self):
         out = compute_sentiment_temperature(
-            limit_up_count=0, limit_down_count=0, explosion_count=0,
-            sealed_limit_up_count=0, consecutive_ladder={},
-            advance_count=0, decline_count=0,
+            limit_up_count=0,
+            limit_down_count=0,
+            explosion_count=0,
+            sealed_limit_up_count=0,
+            consecutive_ladder={},
+            advance_count=0,
+            decline_count=0,
         )
         assert 0.0 <= out.score <= 100.0  # 除零安全
 
     def test_score_bounded(self):
         out = compute_sentiment_temperature(
-            limit_up_count=500, limit_down_count=0, explosion_count=0,
-            sealed_limit_up_count=500, consecutive_ladder={9: 3},
-            advance_count=5000, decline_count=1,
+            limit_up_count=500,
+            limit_down_count=0,
+            explosion_count=0,
+            sealed_limit_up_count=500,
+            consecutive_ladder={9: 3},
+            advance_count=5000,
+            decline_count=1,
             historical_peak_limit_up=100,
         )
         assert out.score <= 100.0
@@ -117,7 +139,12 @@ class TestTemperature:
 class TestPhaseTransition:
     def test_insufficient_data_returns_none(self):
         sig = detect_phase_transition(
-            SentimentPhase.FREEZING, [0.5, 0.4], [5, 8], [1, 2], 3, 0,
+            SentimentPhase.FREEZING,
+            [0.5, 0.4],
+            [5, 8],
+            [1, 2],
+            3,
+            0,
         )
         assert sig.transition_type == "none"
         assert sig.is_actionable is False
@@ -128,7 +155,8 @@ class TestPhaseTransition:
             explosion_rate_series=[0.50, 0.50, 0.50, 0.50, 0.50, 0.30],  # 骤降 0.20
             limit_up_count_series=[10, 10, 10, 10, 10, 20],  # 回暖 ×2.0
             consecutive_height_series=[1, 1, 1, 1, 1, 3],  # 突破 +2
-            limit_down_count=5, nuclear_button_count=0,
+            limit_down_count=5,
+            nuclear_button_count=0,
         )
         assert sig.transition_type == "bottom_reversal"
         assert sig.is_actionable is True
@@ -141,7 +169,8 @@ class TestPhaseTransition:
             explosion_rate_series=[0.15, 0.15, 0.15, 0.15, 0.15, 0.32],  # 攀升 0.17
             limit_up_count_series=[90, 90, 90, 90, 90, 60],
             consecutive_height_series=[7, 7, 7, 7, 7, 3],  # 0.43 ≤0.6
-            limit_down_count=60, nuclear_button_count=12,  # 双确认
+            limit_down_count=60,
+            nuclear_button_count=12,  # 双确认
         )
         assert sig.transition_type == "top_divergence"
         assert sig.is_actionable is True
@@ -153,7 +182,8 @@ class TestPhaseTransition:
             explosion_rate_series=[0.15, 0.15, 0.15, 0.15, 0.15, 0.32],
             limit_up_count_series=[90, 90, 90, 90, 90, 60],
             consecutive_height_series=[7, 7, 7, 7, 7, 3],
-            limit_down_count=5, nuclear_button_count=0,  # 无确认
+            limit_down_count=5,
+            nuclear_button_count=0,  # 无确认
         )
         assert sig.transition_type == "top_divergence"
         assert sig.is_actionable is False
@@ -162,8 +192,11 @@ class TestPhaseTransition:
     def test_other_phase_no_transition(self):
         sig = detect_phase_transition(
             SentimentPhase.FERMENTING,
-            explosion_rate_series=[0.2] * 6, limit_up_count_series=[60] * 6,
-            consecutive_height_series=[5] * 6, limit_down_count=2, nuclear_button_count=0,
+            explosion_rate_series=[0.2] * 6,
+            limit_up_count_series=[60] * 6,
+            consecutive_height_series=[5] * 6,
+            limit_down_count=2,
+            nuclear_button_count=0,
         )
         assert sig.transition_type == "none"
 
@@ -176,9 +209,11 @@ class TestLocator:
         assert out.confidence == pytest.approx(out.phase_prob[out.dominant_phase])
 
     def test_fermenting_market(self):
-        out = locate_sentiment_phase(_locator_input(
-            yesterday_phase_prob=_concentrated_prior(SentimentPhase.FERMENTING),
-        ))
+        out = locate_sentiment_phase(
+            _locator_input(
+                yesterday_phase_prob=_concentrated_prior(SentimentPhase.FERMENTING),
+            )
+        )
         assert out.dominant_phase == SentimentPhase.FERMENTING
         assert out.is_tradable is True
         assert out.fallback_triggered is False
@@ -193,10 +228,16 @@ class TestLocator:
 
     def test_fallback_on_low_confidence(self):
         # 矛盾输入 + 高阈值 → 兜底回退收缩态
-        out = locate_sentiment_phase(_locator_input(
-            limit_up_count=25, limit_down_count=12, explosion_count=18,
-            daban_next_day_premium=0.0, market_amount_ratio_vs_ma20=0.9,
-        ), confidence_threshold=0.999)
+        out = locate_sentiment_phase(
+            _locator_input(
+                limit_up_count=25,
+                limit_down_count=12,
+                explosion_count=18,
+                daban_next_day_premium=0.0,
+                market_amount_ratio_vs_ma20=0.9,
+            ),
+            confidence_threshold=0.999,
+        )
         assert out.fallback_triggered is True
         assert out.dominant_phase in (SentimentPhase.FREEZING, SentimentPhase.EBING)
         assert out.position_scale <= 0.3
@@ -204,11 +245,16 @@ class TestLocator:
 
     def test_explosion_rate_circuit_breaker(self):
         # 炸板率 >70% 且置信度充足（集中先验不触发兜底）→ 强制不可交易 + scale ≤0.1
-        out = locate_sentiment_phase(_locator_input(
-            limit_up_count=60, limit_down_count=2, explosion_count=150,
-            daban_next_day_premium=0.03, market_amount_ratio_vs_ma20=1.2,
-            yesterday_phase_prob=_concentrated_prior(SentimentPhase.FERMENTING),
-        ))
+        out = locate_sentiment_phase(
+            _locator_input(
+                limit_up_count=60,
+                limit_down_count=2,
+                explosion_count=150,
+                daban_next_day_premium=0.03,
+                market_amount_ratio_vs_ma20=1.2,
+                yesterday_phase_prob=_concentrated_prior(SentimentPhase.FERMENTING),
+            )
+        )
         assert out.fallback_triggered is False
         assert out.is_tradable is False
         assert out.position_scale <= 0.1
@@ -235,9 +281,11 @@ class TestDiscipline:
         assert allowed is False and adj == 0.0
 
     def test_position_scaling_and_affinity(self):
-        out = locate_sentiment_phase(_locator_input(
-            yesterday_phase_prob=_concentrated_prior(SentimentPhase.FERMENTING),
-        ))  # 主升主导且不触发兜底
+        out = locate_sentiment_phase(
+            _locator_input(
+                yesterday_phase_prob=_concentrated_prior(SentimentPhase.FERMENTING),
+            )
+        )  # 主升主导且不触发兜底
         adj, allowed, _ = apply_phase_discipline("daban", 1.0, out, is_new_open=True)
         assert allowed is True
         assert 0.0 < adj <= 1.0
@@ -275,7 +323,11 @@ class TestRegimeMapping:
         regime_prob = {"Bull-Low": 0.6, "Bull-Medium": 0.4}
         shrink_map = {"Bull-Low": 1.0, "Bull-Medium": 0.8}
         directive = combine_sentiment_regime(
-            "daban", 0.8, sentiment, regime_prob, shrink_map,
+            "daban",
+            0.8,
+            sentiment,
+            regime_prob,
+            shrink_map,
         )
         assert 0.0 <= directive.combined_position_scale <= 1.0
         assert directive.regime_state == "Bull-Low"
@@ -285,16 +337,26 @@ class TestRegimeMapping:
     def test_combine_low_shrinkage_blocks_new_open(self):
         sentiment = locate_sentiment_phase(_locator_input())
         directive = combine_sentiment_regime(
-            "daban", 0.8, sentiment, {"CRISIS": 1.0}, {"CRISIS": 0.2},
+            "daban",
+            0.8,
+            sentiment,
+            {"CRISIS": 1.0},
+            {"CRISIS": 0.2},
         )
         assert directive.allow_new_open is False
         assert directive.throttle_factor <= 0.2
 
     def test_position_soft_influence_fallback_cap(self):
-        out = locate_sentiment_phase(_locator_input(
-            limit_up_count=25, limit_down_count=12, explosion_count=18,
-            daban_next_day_premium=0.0, market_amount_ratio_vs_ma20=0.9,
-        ), confidence_threshold=0.999)
+        out = locate_sentiment_phase(
+            _locator_input(
+                limit_up_count=25,
+                limit_down_count=12,
+                explosion_count=18,
+                daban_next_day_premium=0.0,
+                market_amount_ratio_vs_ma20=0.9,
+            ),
+            confidence_threshold=0.999,
+        )
         adj, rationale = apply_sentiment_position_soft_influence("daban", 1.0, out)
         assert adj <= 0.2
         assert "fallback=True" in rationale
@@ -353,7 +415,10 @@ class TestHawkes:
         lam = rng.gamma(2.0, 0.5, size=n).tolist()
         strong = {"daban": (np.array(lam) * 0.02 + rng.normal(0, 0.002, n)).tolist()}
         result = analyze_sentiment_driven_correlation(
-            strong, lam, n_bootstrap=100, block_size=5,
+            strong,
+            lam,
+            n_bootstrap=100,
+            block_size=5,
         )
         assert result["observed_rho"]["daban"] > 0.6
         assert result["is_significant"]["daban"] is True
@@ -363,8 +428,10 @@ class TestHawkes:
     def test_block_bootstrap_degenerate(self):
         # 常量强度 → ρ=0，不显著；不崩溃
         result = analyze_sentiment_driven_correlation(
-            {"s": [0.01, 0.02, 0.0, -0.01]}, [1.0, 1.0, 1.0, 1.0],
-            n_bootstrap=10, block_size=2,
+            {"s": [0.01, 0.02, 0.0, -0.01]},
+            [1.0, 1.0, 1.0, 1.0],
+            n_bootstrap=10,
+            block_size=2,
         )
         assert result["observed_rho"]["s"] == 0.0
         assert result["is_significant"]["s"] is False

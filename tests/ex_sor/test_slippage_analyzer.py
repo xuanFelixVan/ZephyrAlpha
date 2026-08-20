@@ -109,7 +109,9 @@ class TestSlippageCalculation:
         """BUY: 成交价 > 基准 → 正滑点 (成本)。"""
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.10", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             now=NOW,
@@ -122,7 +124,9 @@ class TestSlippageCalculation:
         """BUY: 成交价 < 基准 → 负滑点 (有利)。"""
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("9.90", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             now=NOW,
@@ -135,7 +139,9 @@ class TestSlippageCalculation:
         """SELL: 成交价 < 基准 → 正滑点 (成本, 卖便宜了)。"""
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.SELL,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.SELL,
             fills=[make_fill("9.90", "100", side=OrderSide.SELL)],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             now=NOW,
@@ -148,7 +154,9 @@ class TestSlippageCalculation:
         """SELL: 成交价 > 基准 → 负滑点 (有利, 卖贵了)。"""
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.SELL,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.SELL,
             fills=[make_fill("10.10", "100", side=OrderSide.SELL)],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             now=NOW,
@@ -159,7 +167,9 @@ class TestSlippageCalculation:
     def test_zero_slippage_when_fill_equals_benchmark(self):
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.00", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             now=NOW,
@@ -177,7 +187,9 @@ class TestWeightedAverage:
     def test_single_fill(self):
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.50", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             now=NOW,
@@ -188,7 +200,9 @@ class TestWeightedAverage:
         """两笔成交: 100@10.00 + 200@10.50 → VWAP=10.3333。"""
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[
                 make_fill("10.00", "100", fid="F1"),
                 make_fill("10.50", "200", fid="F2"),
@@ -203,7 +217,9 @@ class TestWeightedAverage:
     def test_three_fills_weighted(self):
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[
                 make_fill("10.00", "100", fid="F1"),
                 make_fill("10.20", "150", fid="F2"),
@@ -226,7 +242,9 @@ class TestMultipleBenchmarks:
     def test_multiple_benchmarks_computed(self):
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.10", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00", VWAP="10.05", PREV_CLOSE="9.90"),
             now=NOW,
@@ -245,7 +263,9 @@ class TestMultipleBenchmarks:
     def test_metric_for_missing_returns_none(self):
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.00", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             now=NOW,
@@ -262,7 +282,9 @@ class TestMultipleBenchmarks:
             SlippageBenchmark.DECISION: Decimal("9.98"),
         }
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.10", "100")],
             benchmarks=benches,
             now=NOW,
@@ -282,7 +304,9 @@ class TestAttribution:
         """归因三因子 + 残差 ≈ 总滑点 (守恒)。"""
         analyzer = SlippageAnalyzer(half_spread_bps=Decimal("10"))
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.20", "100")],  # 200 bps vs 10.00
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             adv=Decimal("100000"),
@@ -300,18 +324,24 @@ class TestAttribution:
         analyzer = SlippageAnalyzer(half_spread_bps=Decimal("0"))
         # 小单
         r1 = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.00", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
-            adv=Decimal("1000000"), volatility=Decimal("0.02"),
+            adv=Decimal("1000000"),
+            volatility=Decimal("0.02"),
             now=NOW,
         )
         # 大单
         r2 = analyzer.analyze(
-            order_id="O2", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O2",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.00", "100000")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
-            adv=Decimal("1000000"), volatility=Decimal("0.02"),
+            adv=Decimal("1000000"),
+            volatility=Decimal("0.02"),
             now=NOW,
         )
         assert r2.attribution.market_impact_bps > r1.attribution.market_impact_bps
@@ -320,7 +350,9 @@ class TestAttribution:
         """BUY: 执行期间价格上涨 → 时机成本 (正)。"""
         analyzer = SlippageAnalyzer(half_spread_bps=Decimal("0"))
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.00", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             start_price=Decimal("10.00"),
@@ -334,7 +366,9 @@ class TestAttribution:
         """SELL: 执行期间价格下跌 → 时机成本 (正)。"""
         analyzer = SlippageAnalyzer(half_spread_bps=Decimal("0"))
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.SELL,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.SELL,
             fills=[make_fill("10.00", "100", side=OrderSide.SELL)],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             start_price=Decimal("10.10"),
@@ -349,7 +383,9 @@ class TestAttribution:
         """价差分量 = spread_bps / 2 (half-spread)。"""
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.00", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             spread_bps=Decimal("20"),
@@ -361,7 +397,9 @@ class TestAttribution:
         """无 spread_bps 时用构造器 half_spread_bps。"""
         analyzer = SlippageAnalyzer(half_spread_bps=Decimal("15"))
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.00", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             now=NOW,
@@ -372,7 +410,9 @@ class TestAttribution:
         """无 adv/vol/start/end → 仅 spread 分量, 残差=总滑点-spread。"""
         analyzer = SlippageAnalyzer(half_spread_bps=Decimal("10"))
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.10", "100")],  # 100 bps
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             now=NOW,
@@ -484,7 +524,9 @@ class TestAnalyzeIntegration:
         """无 adv → predicted_slippage_bps = None。"""
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.00", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             now=NOW,
@@ -495,7 +537,9 @@ class TestAnalyzeIntegration:
         """有 adv 无 volatility → predicted = None。"""
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.00", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             adv=Decimal("100000"),
@@ -506,7 +550,9 @@ class TestAnalyzeIntegration:
     def test_predict_with_adv_and_volatility(self):
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.00", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00"),
             adv=Decimal("100000"),
@@ -520,7 +566,9 @@ class TestAnalyzeIntegration:
         """主指标优先选 ARRIVAL。"""
         analyzer = SlippageAnalyzer()
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.10", "100")],
             benchmarks=make_benchmarks(ARRIVAL="10.00", VWAP="10.05", DECISION="9.98"),
             now=NOW,
@@ -536,10 +584,11 @@ class TestAnalyzeIntegration:
         """无 ARRIVAL 时选 DECISION。"""
         analyzer = SlippageAnalyzer(half_spread_bps=Decimal("0"))
         result = analyzer.analyze(
-            order_id="O1", symbol="000001.SZ", side=OrderSide.BUY,
+            order_id="O1",
+            symbol="000001.SZ",
+            side=OrderSide.BUY,
             fills=[make_fill("10.10", "100")],
-            benchmarks={SlippageBenchmark.DECISION: Decimal("10.00"),
-                        SlippageBenchmark.VWAP: Decimal("10.05")},
+            benchmarks={SlippageBenchmark.DECISION: Decimal("10.00"), SlippageBenchmark.VWAP: Decimal("10.05")},
             now=NOW,
         )
         attr = result.attribution
@@ -558,7 +607,9 @@ class TestHistoryTracking:
         analyzer = SlippageAnalyzer()
         for i in range(3):
             analyzer.analyze(
-                order_id=f"O{i}", symbol="000001.SZ", side=OrderSide.BUY,
+                order_id=f"O{i}",
+                symbol="000001.SZ",
+                side=OrderSide.BUY,
                 fills=[make_fill("10.00", "100")],
                 benchmarks=make_benchmarks(ARRIVAL="10.00"),
                 now=NOW,
@@ -567,25 +618,29 @@ class TestHistoryTracking:
 
     def test_history_filtered_by_symbol(self):
         analyzer = SlippageAnalyzer()
-        analyzer.analyze("O1", "000001.SZ", OrderSide.BUY,
-                         [make_fill("10.00", "100")], make_benchmarks(ARRIVAL="10.00"), now=NOW)
-        analyzer.analyze("O2", "600519.SH", OrderSide.BUY,
-                         [make_fill("10.00", "100")], make_benchmarks(ARRIVAL="10.00"), now=NOW)
+        analyzer.analyze(
+            "O1", "000001.SZ", OrderSide.BUY, [make_fill("10.00", "100")], make_benchmarks(ARRIVAL="10.00"), now=NOW
+        )
+        analyzer.analyze(
+            "O2", "600519.SH", OrderSide.BUY, [make_fill("10.00", "100")], make_benchmarks(ARRIVAL="10.00"), now=NOW
+        )
         sz = analyzer.get_history(symbol="000001.SZ")
         assert len(sz) == 1
         assert sz[0].symbol == "000001.SZ"
 
     def test_get_history_all(self):
         analyzer = SlippageAnalyzer()
-        analyzer.analyze("O1", "000001.SZ", OrderSide.BUY,
-                         [make_fill("10.00", "100")], make_benchmarks(ARRIVAL="10.00"), now=NOW)
+        analyzer.analyze(
+            "O1", "000001.SZ", OrderSide.BUY, [make_fill("10.00", "100")], make_benchmarks(ARRIVAL="10.00"), now=NOW
+        )
         all_hist = analyzer.get_history()
         assert len(all_hist) == 1
 
     def test_clear_history(self):
         analyzer = SlippageAnalyzer()
-        analyzer.analyze("O1", "000001.SZ", OrderSide.BUY,
-                         [make_fill("10.00", "100")], make_benchmarks(ARRIVAL="10.00"), now=NOW)
+        analyzer.analyze(
+            "O1", "000001.SZ", OrderSide.BUY, [make_fill("10.00", "100")], make_benchmarks(ARRIVAL="10.00"), now=NOW
+        )
         assert len(analyzer.history) == 1
         analyzer.clear_history()
         assert len(analyzer.history) == 0
@@ -605,35 +660,30 @@ class TestErrorsAndEdgeCases:
     def test_empty_benchmarks_raises(self):
         analyzer = SlippageAnalyzer()
         with pytest.raises(InvalidBenchmarkError, match="未提供任何基准"):
-            analyzer.analyze("O1", "000001.SZ", OrderSide.BUY,
-                             [make_fill()], {}, now=NOW)
+            analyzer.analyze("O1", "000001.SZ", OrderSide.BUY, [make_fill()], {}, now=NOW)
 
     def test_zero_benchmark_price_raises(self):
         analyzer = SlippageAnalyzer()
         with pytest.raises(InvalidBenchmarkError, match="必须为正"):
-            analyzer.analyze("O1", "000001.SZ", OrderSide.BUY,
-                             [make_fill()],
-                             {SlippageBenchmark.ARRIVAL: Decimal("0")},
-                             now=NOW)
+            analyzer.analyze(
+                "O1", "000001.SZ", OrderSide.BUY, [make_fill()], {SlippageBenchmark.ARRIVAL: Decimal("0")}, now=NOW
+            )
 
     def test_negative_benchmark_price_raises(self):
         analyzer = SlippageAnalyzer()
         with pytest.raises(InvalidBenchmarkError, match="必须为正"):
-            analyzer.analyze("O1", "000001.SZ", OrderSide.BUY,
-                             [make_fill()],
-                             {SlippageBenchmark.ARRIVAL: Decimal("-1")},
-                             now=NOW)
+            analyzer.analyze(
+                "O1", "000001.SZ", OrderSide.BUY, [make_fill()], {SlippageBenchmark.ARRIVAL: Decimal("-1")}, now=NOW
+            )
 
     def test_default_now_when_not_provided(self):
         analyzer = SlippageAnalyzer()
-        result = analyzer.analyze("O1", "000001.SZ", OrderSide.BUY,
-                                  [make_fill()], make_benchmarks())
+        result = analyzer.analyze("O1", "000001.SZ", OrderSide.BUY, [make_fill()], make_benchmarks())
         assert result.analyzed_at is not None
 
     def test_slippage_result_frozen(self):
         analyzer = SlippageAnalyzer()
-        result = analyzer.analyze("O1", "000001.SZ", OrderSide.BUY,
-                                  [make_fill()], make_benchmarks(), now=NOW)
+        result = analyzer.analyze("O1", "000001.SZ", OrderSide.BUY, [make_fill()], make_benchmarks(), now=NOW)
         with pytest.raises(Exception):
             result.order_id = "X"  # type: ignore[misc]
 
@@ -657,10 +707,13 @@ class TestErrorsAndEdgeCases:
 
         analyzer = SlippageAnalyzer(predictor=FixedPredictor())
         result = analyzer.analyze(
-            "O1", "000001.SZ", OrderSide.BUY,
+            "O1",
+            "000001.SZ",
+            OrderSide.BUY,
             [make_fill("10.00", "100")],
             make_benchmarks(ARRIVAL="10.00"),
-            adv=Decimal("100000"), volatility=Decimal("0.02"),
+            adv=Decimal("100000"),
+            volatility=Decimal("0.02"),
             now=NOW,
         )
         assert result.predicted_slippage_bps == Decimal("42.00")

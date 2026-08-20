@@ -76,9 +76,11 @@ def _enter_patches(patches):
     """进入所有 patch 上下文，返回退出函数。"""
     for p in patches:
         p.__enter__()
+
     def _exit():
         for p in reversed(patches):
             p.__exit__(None, None, None)
+
     return _exit
 
 

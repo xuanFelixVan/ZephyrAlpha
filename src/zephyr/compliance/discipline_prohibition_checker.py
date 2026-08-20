@@ -131,9 +131,7 @@ class KillSwitchLite:
         on_escalate: Callable[[str, str], None] | None = None,
         logger: ComplianceLogger | None = None,
     ) -> None:
-        self._path = state_path or (
-            MAIN_REPO_ROOT / "data" / "compliance_log" / "kill_switch_lite_state.json"
-        )
+        self._path = state_path or (MAIN_REPO_ROOT / "data" / "compliance_log" / "kill_switch_lite_state.json")
         self._on_escalate = on_escalate
         self._logger = logger or ComplianceLogger()
 
@@ -153,9 +151,7 @@ class KillSwitchLite:
         }
         try:
             self._path.parent.mkdir(parents=True, exist_ok=True)
-            self._path.write_text(
-                json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8"
-            )
+            self._path.write_text(json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8")
         except OSError:
             self._escalate(strategy_id, f"状态写入失败，升级全局 Kill Switch: {reason}")
             return False
@@ -182,9 +178,7 @@ class KillSwitchLite:
         if state is None or strategy_id not in state:
             return False
         del state[strategy_id]
-        self._path.write_text(
-            json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8"
-        )
+        self._path.write_text(json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8")
         return True
 
     def _load(self) -> dict[str, Any] | None:
@@ -246,8 +240,10 @@ class DisciplineGuard:
             return None
         deviation = order.price / ctx.signal_ref_price - 1
         if deviation > t.chase_max_deviation + _EPS and ctx.surge_30min_pct > t.surge_threshold + _EPS:
-            detail = (f"追涨幅度 {deviation:.2%} > {t.chase_max_deviation:.2%} 且"
-                      f"近{t.surge_window_min}min涨幅 {ctx.surge_30min_pct:.2%} > {t.surge_threshold:.2%}")
+            detail = (
+                f"追涨幅度 {deviation:.2%} > {t.chase_max_deviation:.2%} 且"
+                f"近{t.surge_window_min}min涨幅 {ctx.surge_30min_pct:.2%} > {t.surge_threshold:.2%}"
+            )
             return self._verdict(ProhibitedBehavior.CHASING, DisciplineAction.HARD_BLOCK, detail, order)
         return None
 
@@ -266,22 +262,25 @@ class DisciplineGuard:
         if ctx.daily_pnl_pct >= t.revenge_loss_threshold:
             return None
         freq_abnormal = (
-            ctx.freq_baseline_20d > 0
-            and ctx.projected_daily_freq > t.freq_multiplier * ctx.freq_baseline_20d
+            ctx.freq_baseline_20d > 0 and ctx.projected_daily_freq > t.freq_multiplier * ctx.freq_baseline_20d
         )
-        size_abnormal = (
-            ctx.size_baseline_20d > 0
-            and order.size > t.size_multiplier * ctx.size_baseline_20d
-        )
+        size_abnormal = ctx.size_baseline_20d > 0 and order.size > t.size_multiplier * ctx.size_baseline_20d
         if not (freq_abnormal or size_abnormal):
             return None
         ks_triggered = False
         if self._ks is not None:
             ks_triggered = self._ks.trigger(order.strategy_id, "REVENGE_TRADING", date.today())
-        detail = (f"当日亏损 {ctx.daily_pnl_pct:.2%} < {t.revenge_loss_threshold:.2%} 且"
-                  f"频率异常={freq_abnormal}/规模异常={size_abnormal}")
-        return self._verdict(ProhibitedBehavior.REVENGE_TRADING, DisciplineAction.HARD_BLOCK,
-                             detail, order, kill_switch_triggered=ks_triggered)
+        detail = (
+            f"当日亏损 {ctx.daily_pnl_pct:.2%} < {t.revenge_loss_threshold:.2%} 且"
+            f"频率异常={freq_abnormal}/规模异常={size_abnormal}"
+        )
+        return self._verdict(
+            ProhibitedBehavior.REVENGE_TRADING,
+            DisciplineAction.HARD_BLOCK,
+            detail,
+            order,
+            kill_switch_triggered=ks_triggered,
+        )
 
     def _check_overconfidence(self, order: OrderRequest, ctx: DisciplineContext) -> DisciplineVerdict | None:
         """盈利骄傲（Warning，不阻断）。"""
@@ -291,8 +290,10 @@ class DisciplineGuard:
             and ctx.normal_exposure > 0
             and order.risk_exposure > t.risk_exposure_multiplier * ctx.normal_exposure
         ):
-            detail = (f"连续盈利 {ctx.win_streak} 笔 ≥ {t.win_streak_n} 且单笔风险敞口"
-                      f" {order.risk_exposure:.2%} > {t.risk_exposure_multiplier}×常规 {ctx.normal_exposure:.2%}")
+            detail = (
+                f"连续盈利 {ctx.win_streak} 笔 ≥ {t.win_streak_n} 且单笔风险敞口"
+                f" {order.risk_exposure:.2%} > {t.risk_exposure_multiplier}×常规 {ctx.normal_exposure:.2%}"
+            )
             return self._verdict(ProhibitedBehavior.OVERCONFIDENCE, DisciplineAction.WARNING, detail, order)
         return None
 
@@ -305,7 +306,9 @@ class DisciplineGuard:
         kill_switch_triggered: bool = False,
     ) -> DisciplineVerdict:
         verdict = DisciplineVerdict(
-            behavior=behavior, action=action, detail=detail,
+            behavior=behavior,
+            action=action,
+            detail=detail,
             kill_switch_triggered=kill_switch_triggered,
         )
         self._logger.log(

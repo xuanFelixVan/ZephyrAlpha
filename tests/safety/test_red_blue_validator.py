@@ -55,13 +55,13 @@ class TestRedBlueValidatorImport:
     def test_instantiation(self):
         validator = RedBlueValidator()
         assert validator is not None
-        assert hasattr(validator, 'run_adversarial_session')
-        assert hasattr(validator, '_loader')
-        assert hasattr(validator, '_defense')
-        assert hasattr(validator, '_recorder')
-        assert hasattr(validator, '_steady')
-        assert hasattr(validator, '_cleanup')
-        assert hasattr(validator, '_blast')
+        assert hasattr(validator, "run_adversarial_session")
+        assert hasattr(validator, "_loader")
+        assert hasattr(validator, "_defense")
+        assert hasattr(validator, "_recorder")
+        assert hasattr(validator, "_steady")
+        assert hasattr(validator, "_cleanup")
+        assert hasattr(validator, "_blast")
 
     def test_session_error_class(self):
         assert issubclass(SessionError, RuntimeError)
@@ -74,10 +74,10 @@ class TestDefenseRunnerImport:
     def test_instantiation(self):
         runner = DefenseRunner()
         assert runner is not None
-        assert hasattr(runner, 'run_defense')
-        assert hasattr(runner, '_gate_engine')
-        assert hasattr(runner, '_results')
-        assert hasattr(runner, 'jsonl_output')
+        assert hasattr(runner, "run_defense")
+        assert hasattr(runner, "_gate_engine")
+        assert hasattr(runner, "_results")
+        assert hasattr(runner, "jsonl_output")
 
     def test_instantiation_with_jsonl(self):
         runner = DefenseRunner(jsonl_output=True)
@@ -94,15 +94,15 @@ class TestGameDayRunnerImport:
     def test_instantiation(self):
         runner = GameDayRunner()
         assert runner is not None
-        assert hasattr(runner, 'run_game_day')
-        assert hasattr(runner, 'run_full_cycle')
-        assert hasattr(runner, '_validator')
+        assert hasattr(runner, "run_game_day")
+        assert hasattr(runner, "run_full_cycle")
+        assert hasattr(runner, "_validator")
 
     def test_game_day_frequency_enum(self):
-        assert hasattr(GameDayFrequency, 'PER_COMMIT')
-        assert hasattr(GameDayFrequency, 'DAILY')
-        assert hasattr(GameDayFrequency, 'WEEKLY')
-        assert hasattr(GameDayFrequency, 'MONTHLY')
+        assert hasattr(GameDayFrequency, "PER_COMMIT")
+        assert hasattr(GameDayFrequency, "DAILY")
+        assert hasattr(GameDayFrequency, "WEEKLY")
+        assert hasattr(GameDayFrequency, "MONTHLY")
 
     def test_game_day_error_class(self):
         assert issubclass(GameDayError, RuntimeError)
@@ -111,23 +111,23 @@ class TestGameDayRunnerImport:
 class TestGameDayFrequencyValues:
     def test_per_commit_has_tier(self):
         freq = GameDayFrequency.PER_COMMIT
-        assert hasattr(freq, 'tier')
-        assert hasattr(freq, 'blast_radius')
+        assert hasattr(freq, "tier")
+        assert hasattr(freq, "blast_radius")
 
     def test_daily_has_tier(self):
         freq = GameDayFrequency.DAILY
-        assert hasattr(freq, 'tier')
-        assert hasattr(freq, 'blast_radius')
+        assert hasattr(freq, "tier")
+        assert hasattr(freq, "blast_radius")
 
     def test_weekly_has_tier(self):
         freq = GameDayFrequency.WEEKLY
-        assert hasattr(freq, 'tier')
-        assert hasattr(freq, 'blast_radius')
+        assert hasattr(freq, "tier")
+        assert hasattr(freq, "blast_radius")
 
     def test_monthly_has_tier(self):
         freq = GameDayFrequency.MONTHLY
-        assert hasattr(freq, 'tier')
-        assert hasattr(freq, 'blast_radius')
+        assert hasattr(freq, "tier")
+        assert hasattr(freq, "blast_radius")
 
 
 class TestRedBlueReportModel:
@@ -170,11 +170,11 @@ class TestDefenseResultModel:
 
 class TestAttackTierEnum:
     def test_tier_values_exist(self):
-        assert hasattr(AttackTier, 'TIER_1')
-        assert hasattr(AttackTier, 'TIER_2')
-        assert hasattr(AttackTier, 'TIER_3')
+        assert hasattr(AttackTier, "TIER_1")
+        assert hasattr(AttackTier, "TIER_2")
+        assert hasattr(AttackTier, "TIER_3")
 
 
 class TestBlastRadiusLevelEnum:
     def test_level_values_exist(self):
-        assert hasattr(BlastRadiusLevel, 'FILE')
+        assert hasattr(BlastRadiusLevel, "FILE")

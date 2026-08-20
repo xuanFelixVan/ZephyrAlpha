@@ -12,6 +12,7 @@
 5. cmd_release_all 也检查未提交修改
 6. WARNING 不阻止释放（锁仍被释放）
 """
+
 from __future__ import annotations
 
 import io
@@ -41,11 +42,15 @@ def temp_git_repo(tmp_path: Path) -> Path:
     subprocess.run(["git", "init"], cwd=str(repo), capture_output=True, check=True)
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
-        cwd=str(repo), capture_output=True, check=True,
+        cwd=str(repo),
+        capture_output=True,
+        check=True,
     )
     subprocess.run(
         ["git", "config", "user.name", "Test"],
-        cwd=str(repo), capture_output=True, check=True,
+        cwd=str(repo),
+        capture_output=True,
+        check=True,
     )
     return repo
 
@@ -152,9 +157,7 @@ class TestWarnIfUncommitted:
             stdout = ""
             stderr = "fatal: not a git repository"
 
-        monkeypatch.setattr(
-            "subprocess.run", lambda *a, **kw: _FakeResult()
-        )
+        monkeypatch.setattr("subprocess.run", lambda *a, **kw: _FakeResult())
 
         buf = io.StringIO()
         with redirect_stdout(buf):

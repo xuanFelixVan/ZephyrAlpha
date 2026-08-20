@@ -24,6 +24,7 @@ DM-201911 红蓝对抗极端测试: RollbackScheduler 事件驱动调度.
     10. schedule_drill 不可用处理
     11. 统计信息
 """
+
 from __future__ import annotations
 
 import json
@@ -109,7 +110,12 @@ class TestWalGcExtreme:
         wal_path.parent.mkdir(parents=True, exist_ok=True)
         old_time = (datetime.now(UTC) - timedelta(days=10)).isoformat()
         entries = [
-            {"entry_id": f"WAL-{i}", "operation": "op", "status": "COMPLETE" if i % 2 == 0 else "PENDING", "written_at": old_time}
+            {
+                "entry_id": f"WAL-{i}",
+                "operation": "op",
+                "status": "COMPLETE" if i % 2 == 0 else "PENDING",
+                "written_at": old_time,
+            }
             for i in range(20)
         ]
         with open(wal_path, "w", encoding="utf-8") as f:

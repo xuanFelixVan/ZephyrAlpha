@@ -18,6 +18,7 @@
 - _row_to_record: 单行转换 / 解析失败返回 None
 - _format_symbols / _to_decimal / _to_int 辅助函数
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -54,11 +55,21 @@ def _make_tsv(n_days: int = 5, symbols: list[str] | None = None) -> str:
             close = base + i * 0.5
             volume = 0 if i == 2 else 1000 + i * 10  # 第3天停牌
             qflag = 0 if i == 1 else 1  # 第2天质量异常
-            row = "\t".join([
-                date, sym,
-                str(close - 0.3), str(close + 0.3), str(close - 0.6), str(close),
-                str(volume), str(100000 + i * 1000), "1.0", "miniqmt", str(qflag),
-            ])
+            row = "\t".join(
+                [
+                    date,
+                    sym,
+                    str(close - 0.3),
+                    str(close + 0.3),
+                    str(close - 0.6),
+                    str(close),
+                    str(volume),
+                    str(100000 + i * 1000),
+                    "1.0",
+                    "miniqmt",
+                    str(qflag),
+                ]
+            )
             rows.append(row)
     return "\n".join(rows) + "\n"
 
@@ -235,9 +246,11 @@ class TestLoadKline:
 
     def test_sql_injection_escape(self, monkeypatch):
         captured_sql = []
+
         def fake_query(sql, timeout=30):
             captured_sql.append(sql)
             return ""
+
         monkeypatch.setattr(producer.ch_reader, "query", fake_query)
         load_kline(["A'B.SH"], "2026-01-01", "2026-01-10")
         assert "\\'" in captured_sql[0]
@@ -498,9 +511,7 @@ class TestRowToRecordAdjFactorZero:
 
     def test_bdpan_qfq_data_with_zero_adj_factor(self):
         """模拟 bdpan_qfq 场景：data_source='bdpan_qfq', adj_factor=0 → None。"""
-        rec = _row_to_record(self._make_row(
-            adj_factor="0", data_source="bdpan_qfq"
-        ))
+        rec = _row_to_record(self._make_row(adj_factor="0", data_source="bdpan_qfq"))
         assert rec is not None
         assert rec.adj_factor is None
         assert rec.data_source == "bdpan_qfq"
@@ -517,10 +528,24 @@ class TestLoadKlineSymbolConversion:
         def fake_query(sql, timeout=30):
             captured_sql.append(sql)
             # 返回纯数字 symbol 的 TSV（模拟 DB 存储）
-            return "\t".join([
-                "2026-01-01", "600519", "100.0", "101.0", "99.0", "100.5",
-                "1000", "100000", "1.0", "miniqmt", "1",
-            ]) + "\n"
+            return (
+                "\t".join(
+                    [
+                        "2026-01-01",
+                        "600519",
+                        "100.0",
+                        "101.0",
+                        "99.0",
+                        "100.5",
+                        "1000",
+                        "100000",
+                        "1.0",
+                        "miniqmt",
+                        "1",
+                    ]
+                )
+                + "\n"
+            )
 
         monkeypatch.setattr(producer.ch_reader, "query", fake_query)
         records = load_kline(["600519.SH"], "2026-01-01", "2026-01-01")
@@ -531,10 +556,24 @@ class TestLoadKlineSymbolConversion:
 
     def test_output_symbol_has_suffix(self, monkeypatch):
         """DB 返回纯数字 symbol → 产出 NormalizedMarketData.symbol 带后缀。"""
-        tsv = "\t".join([
-            "2026-01-01", "600519", "100.0", "101.0", "99.0", "100.5",
-            "1000", "100000", "1.0", "miniqmt", "1",
-        ]) + "\n"
+        tsv = (
+            "\t".join(
+                [
+                    "2026-01-01",
+                    "600519",
+                    "100.0",
+                    "101.0",
+                    "99.0",
+                    "100.5",
+                    "1000",
+                    "100000",
+                    "1.0",
+                    "miniqmt",
+                    "1",
+                ]
+            )
+            + "\n"
+        )
         monkeypatch.setattr(producer.ch_reader, "query", lambda sql, timeout=30: tsv)
         records = load_kline(["600519"], "2026-01-01", "2026-01-01")
         assert len(records) == 1

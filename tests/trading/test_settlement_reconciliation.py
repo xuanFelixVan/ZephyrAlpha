@@ -108,14 +108,21 @@ class TestFullMatch:
         """多笔交易全部匹配。"""
         fills = [
             make_fill(fill_id="F1", broker_fill_id="B1", order_id="O1"),
-            make_fill(fill_id="F2", broker_fill_id="B2", order_id="O2",
-                      symbol="000001.SZ", price="20.50", qty="200", commission="10.25"),
+            make_fill(
+                fill_id="F2",
+                broker_fill_id="B2",
+                order_id="O2",
+                symbol="000001.SZ",
+                price="20.50",
+                qty="200",
+                commission="10.25",
+            ),
         ]
         records = [
             make_broker_record(trade_id="B1", order_id="O1"),
-            make_broker_record(trade_id="B2", order_id="O2",
-                               symbol="000001.SZ", price="20.50", qty="200",
-                               commission="10.25"),
+            make_broker_record(
+                trade_id="B2", order_id="O2", symbol="000001.SZ", price="20.50", qty="200", commission="10.25"
+            ),
         ]
         r = SettlementReconciler().reconcile(fills, records, SETTLEMENT_DATE)
 
@@ -261,15 +268,13 @@ class TestMixedDrifts:
         """混合场景: 1笔匹配 + 1笔价格差异 + 1笔系统缺失 + 1笔券商缺失。"""
         fills = [
             make_fill(fill_id="F1", broker_fill_id="B1", order_id="O1"),  # 匹配
-            make_fill(fill_id="F2", broker_fill_id="B2", order_id="O2",
-                      price="10.50"),  # 价格差异
+            make_fill(fill_id="F2", broker_fill_id="B2", order_id="O2", price="10.50"),  # 价格差异
             make_fill(fill_id="F3", broker_fill_id="B3", order_id="O3"),  # 券商缺失
         ]
         records = [
             make_broker_record(trade_id="B1", order_id="O1"),  # 匹配
             make_broker_record(trade_id="B2", order_id="O2", price="10.00"),  # 价格差异
-            make_broker_record(trade_id="BX", order_id="OX",
-                               symbol="999999.SZ"),  # 系统缺失
+            make_broker_record(trade_id="BX", order_id="OX", symbol="999999.SZ"),  # 系统缺失
         ]
         r = SettlementReconciler().reconcile(fills, records, SETTLEMENT_DATE)
 
@@ -298,9 +303,7 @@ class TestCustomConfig:
             price_tolerance=Decimal("0.50"),
             quantity_tolerance=Decimal("10"),
         )
-        r_custom = SettlementReconciler(config=config).reconcile(
-            fills, records, SETTLEMENT_DATE
-        )
+        r_custom = SettlementReconciler(config=config).reconcile(fills, records, SETTLEMENT_DATE)
         assert r_custom.matched is True
         assert r_custom.matched_trades == 1
 
@@ -318,9 +321,7 @@ class TestDiscrepancyCallback:
 
         fills = [make_fill(price="10.50")]
         records = [make_broker_record(price="10.00")]
-        SettlementReconciler(on_discrepancy=on_disc).reconcile(
-            fills, records, SETTLEMENT_DATE
-        )
+        SettlementReconciler(on_discrepancy=on_disc).reconcile(fills, records, SETTLEMENT_DATE)
 
         assert len(triggered) == 1
         assert triggered[0].matched is False
@@ -334,23 +335,20 @@ class TestDiscrepancyCallback:
 
         fills = [make_fill()]
         records = [make_broker_record()]
-        SettlementReconciler(on_discrepancy=on_disc).reconcile(
-            fills, records, SETTLEMENT_DATE
-        )
+        SettlementReconciler(on_discrepancy=on_disc).reconcile(fills, records, SETTLEMENT_DATE)
 
         assert len(triggered) == 0
 
     def test_callback_exception_does_not_block(self):
         """回调抛异常不阻断对账主流程。"""
+
         def bad_callback(result: ReconciliationResult) -> None:
             raise RuntimeError("告警通道故障")
 
         fills = [make_fill(price="10.50")]
         records = [make_broker_record(price="10.00")]
         # 不应抛异常
-        r = SettlementReconciler(on_discrepancy=bad_callback).reconcile(
-            fills, records, SETTLEMENT_DATE
-        )
+        r = SettlementReconciler(on_discrepancy=bad_callback).reconcile(fills, records, SETTLEMENT_DATE)
         assert r.matched is False
         assert len(r.drifts) == 1
 
@@ -396,12 +394,14 @@ class TestSettlementReport:
 
         # 场景1: 价格差异
         r1 = reconciler.reconcile(
-            [make_fill(price="10.50")], [make_broker_record(price="10.00")],
+            [make_fill(price="10.50")],
+            [make_broker_record(price="10.00")],
             SETTLEMENT_DATE,
         )
         # 场景2: 数量差异
         r2 = reconciler.reconcile(
-            [make_fill(qty="100")], [make_broker_record(qty="99")],
+            [make_fill(qty="100")],
+            [make_broker_record(qty="99")],
             SETTLEMENT_DATE,
         )
 
@@ -444,9 +444,7 @@ class TestDecimalPrecision:
         fills = [make_fill(price="10.123456789")]
         records = [make_broker_record(price="10.000000000")]
         config = ReconciliationConfig(price_tolerance=Decimal("0"))
-        r = SettlementReconciler(config=config).reconcile(
-            fills, records, SETTLEMENT_DATE
-        )
+        r = SettlementReconciler(config=config).reconcile(fills, records, SETTLEMENT_DATE)
         d = r.drifts[0]
         assert d.system_value == Decimal("10.123456789")
         assert d.broker_value == Decimal("10.000000000")

@@ -152,12 +152,7 @@ class TestDefenseRunnerE2E:
 class TestConstitutionGuardE2E:
     def test_load_constitution(self):
         registry_path = (
-            REPO_ROOT
-            / "src"
-            / "zephyr"
-            / "security"
-            / "adversarial_validation"
-            / "_constitution_registry.yaml"
+            REPO_ROOT / "src" / "zephyr" / "security" / "adversarial_validation" / "_constitution_registry.yaml"
         )
         guard = ConstitutionGuard(registry_path=registry_path)
         articles = guard.load()
@@ -173,12 +168,7 @@ class TestConstitutionGuardE2E:
         if GateEngine is None:
             pytest.skip("GateEngine not available")
         registry_path = (
-            REPO_ROOT
-            / "src"
-            / "zephyr"
-            / "security"
-            / "adversarial_validation"
-            / "_constitution_registry.yaml"
+            REPO_ROOT / "src" / "zephyr" / "security" / "adversarial_validation" / "_constitution_registry.yaml"
         )
         with GateEngine() as ge:
             guard = ConstitutionGuard(registry_path=registry_path, gate_engine=ge)
@@ -191,12 +181,7 @@ class TestConstitutionGuardE2E:
 
     def test_validate_constitution_fallback(self):
         registry_path = (
-            REPO_ROOT
-            / "src"
-            / "zephyr"
-            / "security"
-            / "adversarial_validation"
-            / "_constitution_registry.yaml"
+            REPO_ROOT / "src" / "zephyr" / "security" / "adversarial_validation" / "_constitution_registry.yaml"
         )
         guard = ConstitutionGuard(registry_path=registry_path, gate_engine=None)
         guard.load()
@@ -247,12 +232,7 @@ class TestConstitutionGuardE2E:
 
     def test_guard_attack(self):
         registry_path = (
-            REPO_ROOT
-            / "src"
-            / "zephyr"
-            / "security"
-            / "adversarial_validation"
-            / "_constitution_registry.yaml"
+            REPO_ROOT / "src" / "zephyr" / "security" / "adversarial_validation" / "_constitution_registry.yaml"
         )
         guard = ConstitutionGuard(registry_path=registry_path, gate_engine=None)
         guard.load()

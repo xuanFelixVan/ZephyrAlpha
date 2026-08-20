@@ -32,6 +32,7 @@
 依据: 13_regime_phase3_engineering_plan.md §3.1.9
 SSoT: #ARCH-NLP-PIPELINE-001
 """
+
 from __future__ import annotations
 
 import argparse
@@ -152,7 +153,7 @@ def main() -> None:
     n = int(val_metrics.get("n", 0))
     verdict = "✅ 达标 ≥75%" if f1 >= 0.75 else "❌ 未达 75%"
     print("\n" + "=" * 60)
-    print(f"SFT 训练完成（{time.time()-t0:.0f}s）")
+    print(f"SFT 训练完成（{time.time() - t0:.0f}s）")
     print(f"训练 loss: {metrics.get('train_loss', 0):.4f}")
     print(f"Macro-F1: {f1:.4f}  {verdict}")
     print(f"Accuracy: {acc:.4f}  (n={n})")

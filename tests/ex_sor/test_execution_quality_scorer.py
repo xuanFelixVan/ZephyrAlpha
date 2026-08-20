@@ -179,7 +179,9 @@ class TestMultiDimensionScoring:
     def test_all_four_dimensions(self):
         scorer = ExecutionQualityScorer()
         r = scorer.score(
-            "O1", "X", OrderSide.BUY,
+            "O1",
+            "X",
+            OrderSide.BUY,
             slippage_bps=Decimal("10"),
             duration_seconds=60.0,
             total_cost_bps=Decimal("6"),
@@ -195,11 +197,13 @@ class TestMultiDimensionScoring:
         """overall = Σ(score×weight) / Σ(weight)。"""
         scorer = ExecutionQualityScorer()
         r = scorer.score(
-            "O1", "X", OrderSide.BUY,
-            slippage_bps=Decimal("0"),     # price=1.0
-            duration_seconds=300.0,         # time=0.0
-            total_cost_bps=Decimal("0"),    # cost=1.0
-            impact_bps=Decimal("0"),        # impact=1.0
+            "O1",
+            "X",
+            OrderSide.BUY,
+            slippage_bps=Decimal("0"),  # price=1.0
+            duration_seconds=300.0,  # time=0.0
+            total_cost_bps=Decimal("0"),  # cost=1.0
+            impact_bps=Decimal("0"),  # impact=1.0
             now=NOW,
         )
         # (1.0×0.35 + 0.0×0.25 + 1.0×0.25 + 1.0×0.15) / 1.0 = 0.35+0+0.25+0.15 = 0.75
@@ -208,7 +212,9 @@ class TestMultiDimensionScoring:
     def test_overall_all_perfect(self):
         scorer = ExecutionQualityScorer()
         r = scorer.score(
-            "O1", "X", OrderSide.BUY,
+            "O1",
+            "X",
+            OrderSide.BUY,
             slippage_bps=Decimal("0"),
             duration_seconds=0.0,
             total_cost_bps=Decimal("0"),
@@ -221,7 +227,9 @@ class TestMultiDimensionScoring:
     def test_overall_all_worst(self):
         scorer = ExecutionQualityScorer()
         r = scorer.score(
-            "O1", "X", OrderSide.BUY,
+            "O1",
+            "X",
+            OrderSide.BUY,
             slippage_bps=Decimal("100"),
             duration_seconds=600.0,
             total_cost_bps=Decimal("60"),
@@ -235,8 +243,10 @@ class TestMultiDimensionScoring:
         """仅提供部分维度 → 权重重新归一化。"""
         scorer = ExecutionQualityScorer()
         r = scorer.score(
-            "O1", "X", OrderSide.BUY,
-            slippage_bps=Decimal("0"),    # price=1.0, weight=0.35
+            "O1",
+            "X",
+            OrderSide.BUY,
+            slippage_bps=Decimal("0"),  # price=1.0, weight=0.35
             total_cost_bps=Decimal("0"),  # cost=1.0, weight=0.25
             now=NOW,
         )
@@ -247,9 +257,11 @@ class TestMultiDimensionScoring:
     def test_partial_dims_one_good_one_bad(self):
         scorer = ExecutionQualityScorer()
         r = scorer.score(
-            "O1", "X", OrderSide.BUY,
-            slippage_bps=Decimal("0"),     # price=1.0, w=0.35
-            duration_seconds=300.0,         # time=0.0, w=0.25
+            "O1",
+            "X",
+            OrderSide.BUY,
+            slippage_bps=Decimal("0"),  # price=1.0, w=0.35
+            duration_seconds=300.0,  # time=0.0, w=0.25
             now=NOW,
         )
         # (1.0×0.35 + 0.0×0.25) / (0.35+0.25) = 0.35/0.60 = 0.5833
@@ -266,12 +278,16 @@ class TestVerdict:
         """overall ≥ 0.8 → good。"""
         scorer = ExecutionQualityScorer()
         # slippage=10 → price=0.8, 其他全完美
-        r = scorer.score("O1", "X", OrderSide.BUY,
-                         slippage_bps=Decimal("10"),
-                         duration_seconds=0.0,
-                         total_cost_bps=Decimal("0"),
-                         impact_bps=Decimal("0"),
-                         now=NOW)
+        r = scorer.score(
+            "O1",
+            "X",
+            OrderSide.BUY,
+            slippage_bps=Decimal("10"),
+            duration_seconds=0.0,
+            total_cost_bps=Decimal("0"),
+            impact_bps=Decimal("0"),
+            now=NOW,
+        )
         assert r.overall_score >= 0.8
         assert r.verdict == "good"
 
@@ -279,12 +295,16 @@ class TestVerdict:
         """0.5 ≤ overall < 0.8 → acceptable。"""
         scorer = ExecutionQualityScorer()
         # price=0 (slippage=50), 其他完美
-        r = scorer.score("O1", "X", OrderSide.BUY,
-                         slippage_bps=Decimal("50"),
-                         duration_seconds=0.0,
-                         total_cost_bps=Decimal("0"),
-                         impact_bps=Decimal("0"),
-                         now=NOW)
+        r = scorer.score(
+            "O1",
+            "X",
+            OrderSide.BUY,
+            slippage_bps=Decimal("50"),
+            duration_seconds=0.0,
+            total_cost_bps=Decimal("0"),
+            impact_bps=Decimal("0"),
+            now=NOW,
+        )
         # (0×0.35 + 1×0.25 + 1×0.25 + 1×0.15) / 1.0 = 0.65
         assert 0.5 <= r.overall_score < 0.8
         assert r.verdict == "acceptable"
@@ -292,12 +312,16 @@ class TestVerdict:
     def test_poor_threshold(self):
         """overall < 0.5 → poor。"""
         scorer = ExecutionQualityScorer()
-        r = scorer.score("O1", "X", OrderSide.BUY,
-                         slippage_bps=Decimal("50"),
-                         duration_seconds=300.0,
-                         total_cost_bps=Decimal("30"),
-                         impact_bps=Decimal("20"),
-                         now=NOW)
+        r = scorer.score(
+            "O1",
+            "X",
+            OrderSide.BUY,
+            slippage_bps=Decimal("50"),
+            duration_seconds=300.0,
+            total_cost_bps=Decimal("30"),
+            impact_bps=Decimal("20"),
+            now=NOW,
+        )
         assert r.overall_score < 0.5
         assert r.verdict == "poor"
 
@@ -311,15 +335,11 @@ class TestScoreFromResults:
     def test_score_from_results_same_as_score(self):
         """score_from_results 与 score 行为一致 (都接受原始指标)。"""
         scorer = ExecutionQualityScorer()
-        r1 = scorer.score("O1", "X", OrderSide.BUY,
-                          slippage_bps=Decimal("10"),
-                          total_cost_bps=Decimal("5"),
-                          now=NOW)
+        r1 = scorer.score("O1", "X", OrderSide.BUY, slippage_bps=Decimal("10"), total_cost_bps=Decimal("5"), now=NOW)
         scorer.clear_history()
-        r2 = scorer.score_from_results("O1", "X", OrderSide.BUY,
-                                       slippage_bps=Decimal("10"),
-                                       total_cost_bps=Decimal("5"),
-                                       now=NOW)
+        r2 = scorer.score_from_results(
+            "O1", "X", OrderSide.BUY, slippage_bps=Decimal("10"), total_cost_bps=Decimal("5"), now=NOW
+        )
         assert r1.overall_score == r2.overall_score
 
     def test_consume_slippage_and_cost_results(self):
@@ -331,7 +351,9 @@ class TestScoreFromResults:
         # 模拟 TransactionCostResult 提取的总成本
         cost_bps = Decimal("7")  # 7bps 总成本
         r = scorer.score_from_results(
-            "O1", "000001.SZ", OrderSide.BUY,
+            "O1",
+            "000001.SZ",
+            OrderSide.BUY,
             slippage_bps=slip_bps,
             impact_bps=impact_bps,
             total_cost_bps=cost_bps,
@@ -355,10 +377,9 @@ class TestCustomConfig:
         s_price = ExecutionQualityScorer(weights=w_price)
         s_balanced = ExecutionQualityScorer(weights=w_balanced)
         # price=0, others=1.0
-        kwargs = dict(slippage_bps=Decimal("50"),
-                      duration_seconds=0.0,
-                      total_cost_bps=Decimal("0"),
-                      impact_bps=Decimal("0"))
+        kwargs = dict(
+            slippage_bps=Decimal("50"), duration_seconds=0.0, total_cost_bps=Decimal("0"), impact_bps=Decimal("0")
+        )
         r_price = s_price.score("O1", "X", OrderSide.BUY, now=NOW, **kwargs)
         r_balanced = s_balanced.score("O2", "X", OrderSide.BUY, now=NOW, **kwargs)
         # price-heavy → overall lower when price is bad
@@ -383,12 +404,9 @@ class TestCustomConfig:
         strict = ExecutionQualityScorer(benchmark=StrictBenchmark())
         default = ExecutionQualityScorer()
         # slippage=10bps: strict → 0.0, default → 0.8
-        r_strict = strict.score("O1", "X", OrderSide.BUY,
-                                slippage_bps=Decimal("10"), now=NOW)
-        r_default = default.score("O2", "X", OrderSide.BUY,
-                                  slippage_bps=Decimal("10"), now=NOW)
-        assert r_strict.score_for(QualityDimension.PRICE).score < \
-            r_default.score_for(QualityDimension.PRICE).score
+        r_strict = strict.score("O1", "X", OrderSide.BUY, slippage_bps=Decimal("10"), now=NOW)
+        r_default = default.score("O2", "X", OrderSide.BUY, slippage_bps=Decimal("10"), now=NOW)
+        assert r_strict.score_for(QualityDimension.PRICE).score < r_default.score_for(QualityDimension.PRICE).score
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -400,35 +418,28 @@ class TestHistoryTracking:
     def test_history_accumulates(self):
         scorer = ExecutionQualityScorer()
         for i in range(3):
-            scorer.score(f"O{i}", "X", OrderSide.BUY,
-                         slippage_bps=Decimal("10"), now=NOW)
+            scorer.score(f"O{i}", "X", OrderSide.BUY, slippage_bps=Decimal("10"), now=NOW)
         assert len(scorer.history) == 3
 
     def test_history_filtered_by_symbol(self):
         scorer = ExecutionQualityScorer()
-        scorer.score("O1", "000001.SZ", OrderSide.BUY,
-                     slippage_bps=Decimal("10"), now=NOW)
-        scorer.score("O2", "600519.SH", OrderSide.BUY,
-                     slippage_bps=Decimal("10"), now=NOW)
+        scorer.score("O1", "000001.SZ", OrderSide.BUY, slippage_bps=Decimal("10"), now=NOW)
+        scorer.score("O2", "600519.SH", OrderSide.BUY, slippage_bps=Decimal("10"), now=NOW)
         sz = scorer.get_history(symbol="000001.SZ")
         assert len(sz) == 1
 
     def test_history_filtered_by_min_score(self):
         scorer = ExecutionQualityScorer()
-        scorer.score("O1", "X", OrderSide.BUY,
-                     slippage_bps=Decimal("0"), now=NOW)  # score=1.0
-        scorer.score("O2", "X", OrderSide.BUY,
-                     slippage_bps=Decimal("50"), now=NOW)  # score=0.0
+        scorer.score("O1", "X", OrderSide.BUY, slippage_bps=Decimal("0"), now=NOW)  # score=1.0
+        scorer.score("O2", "X", OrderSide.BUY, slippage_bps=Decimal("50"), now=NOW)  # score=0.0
         good = scorer.get_history(min_score=0.5)
         assert len(good) == 1
         assert good[0].order_id == "O1"
 
     def test_average_score(self):
         scorer = ExecutionQualityScorer()
-        scorer.score("O1", "X", OrderSide.BUY,
-                     slippage_bps=Decimal("0"), now=NOW)  # 1.0
-        scorer.score("O2", "X", OrderSide.BUY,
-                     slippage_bps=Decimal("50"), now=NOW)  # 0.0
+        scorer.score("O1", "X", OrderSide.BUY, slippage_bps=Decimal("0"), now=NOW)  # 1.0
+        scorer.score("O2", "X", OrderSide.BUY, slippage_bps=Decimal("50"), now=NOW)  # 0.0
         avg = scorer.average_score()
         assert avg == pytest.approx(0.5)
 
@@ -438,17 +449,14 @@ class TestHistoryTracking:
 
     def test_average_score_by_symbol(self):
         scorer = ExecutionQualityScorer()
-        scorer.score("O1", "SZ", OrderSide.BUY,
-                     slippage_bps=Decimal("0"), now=NOW)
-        scorer.score("O2", "SH", OrderSide.BUY,
-                     slippage_bps=Decimal("50"), now=NOW)
+        scorer.score("O1", "SZ", OrderSide.BUY, slippage_bps=Decimal("0"), now=NOW)
+        scorer.score("O2", "SH", OrderSide.BUY, slippage_bps=Decimal("50"), now=NOW)
         sz_avg = scorer.average_score(symbol="SZ")
         assert sz_avg == pytest.approx(1.0)
 
     def test_clear_history(self):
         scorer = ExecutionQualityScorer()
-        scorer.score("O1", "X", OrderSide.BUY,
-                     slippage_bps=Decimal("10"), now=NOW)
+        scorer.score("O1", "X", OrderSide.BUY, slippage_bps=Decimal("10"), now=NOW)
         scorer.clear_history()
         assert len(scorer.history) == 0
 
@@ -471,23 +479,18 @@ class TestErrorsAndEdgeCases:
 
     def test_result_frozen(self):
         scorer = ExecutionQualityScorer()
-        r = scorer.score("O1", "X", OrderSide.BUY,
-                         slippage_bps=Decimal("10"), now=NOW)
+        r = scorer.score("O1", "X", OrderSide.BUY, slippage_bps=Decimal("10"), now=NOW)
         with pytest.raises(Exception):
             r.overall_score = 0.0  # type: ignore[misc]
 
     def test_score_for_missing_returns_none(self):
         scorer = ExecutionQualityScorer()
-        r = scorer.score("O1", "X", OrderSide.BUY,
-                         slippage_bps=Decimal("10"), now=NOW)
+        r = scorer.score("O1", "X", OrderSide.BUY, slippage_bps=Decimal("10"), now=NOW)
         assert r.score_for(QualityDimension.TIME) is None
 
     def test_sell_side_works(self):
         scorer = ExecutionQualityScorer()
-        r = scorer.score("O1", "X", OrderSide.SELL,
-                         slippage_bps=Decimal("10"),
-                         total_cost_bps=Decimal("5"),
-                         now=NOW)
+        r = scorer.score("O1", "X", OrderSide.SELL, slippage_bps=Decimal("10"), total_cost_bps=Decimal("5"), now=NOW)
         assert r.side == OrderSide.SELL
         assert r.overall_score > 0
 
@@ -501,8 +504,7 @@ class TestErrorsAndEdgeCases:
     def test_single_dimension_only(self):
         """仅一个维度也能评分。"""
         scorer = ExecutionQualityScorer()
-        r = scorer.score("O1", "X", OrderSide.BUY,
-                         impact_bps=Decimal("10"), now=NOW)
+        r = scorer.score("O1", "X", OrderSide.BUY, impact_bps=Decimal("10"), now=NOW)
         assert len(r.dimension_scores) == 1
         assert r.dimension_scores[0].dimension == QualityDimension.IMPACT
         # 1 - 10/20 = 0.5

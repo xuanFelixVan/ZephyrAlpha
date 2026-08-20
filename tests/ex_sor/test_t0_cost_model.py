@@ -47,9 +47,7 @@ class TestRoundTripCost:
         高流动档滑点 10bps/边 × 双边 = 20000×0.001=20 → 合计 35 元。
         """
         cfg = T0CostConfig(slippage_tier=SlippageTier.HIGH_LIQUIDITY)
-        cost = calc_t0_roundtrip_cost(
-            buy_notional=Decimal("10000"), sell_notional=Decimal("10000"), config=cfg
-        )
+        cost = calc_t0_roundtrip_cost(buy_notional=Decimal("10000"), sell_notional=Decimal("10000"), config=cfg)
         assert cost.commission_total == Decimal("10")
         assert cost.stamp_duty == Decimal("5")
         assert cost.slippage_total == Decimal("20")
@@ -58,9 +56,7 @@ class TestRoundTripCost:
     def test_large_notional_rate_applies(self):
         """10 万元双边：佣金 30+30=60，印花税 50，滑点 20000×0.001×10=200 → 310。"""
         cfg = T0CostConfig(slippage_tier=SlippageTier.HIGH_LIQUIDITY)
-        cost = calc_t0_roundtrip_cost(
-            buy_notional=Decimal("100000"), sell_notional=Decimal("100000"), config=cfg
-        )
+        cost = calc_t0_roundtrip_cost(buy_notional=Decimal("100000"), sell_notional=Decimal("100000"), config=cfg)
         assert cost.commission_total == Decimal("60")
         assert cost.stamp_duty == Decimal("50")
         assert cost.slippage_total == Decimal("200")
@@ -69,9 +65,7 @@ class TestRoundTripCost:
     def test_daban_tier_slippage_higher(self):
         """打板/事件档滑点（默认 20bps/边）高于高流动档（10bps/边）。"""
         cfg = T0CostConfig(slippage_tier=SlippageTier.DABAN_EVENT)
-        cost = calc_t0_roundtrip_cost(
-            buy_notional=Decimal("100000"), sell_notional=Decimal("100000"), config=cfg
-        )
+        cost = calc_t0_roundtrip_cost(buy_notional=Decimal("100000"), sell_notional=Decimal("100000"), config=cfg)
         assert cost.slippage_total == Decimal("400")
 
     def test_failure_risk_premium(self):
@@ -89,9 +83,7 @@ class TestRoundTripCost:
 
     def test_zero_exposure_no_premium(self):
         cfg = T0CostConfig()
-        cost = calc_t0_roundtrip_cost(
-            buy_notional=Decimal("10000"), sell_notional=Decimal("10000"), config=cfg
-        )
+        cost = calc_t0_roundtrip_cost(buy_notional=Decimal("10000"), sell_notional=Decimal("10000"), config=cfg)
         assert cost.failure_risk_premium == Decimal("0")
 
 
@@ -104,6 +96,4 @@ class TestOpenPrecondition:
 
     def test_invalid_notional_raises(self):
         with pytest.raises(ValueError):
-            calc_t0_roundtrip_cost(
-                buy_notional=Decimal("0"), sell_notional=Decimal("10000"), config=T0CostConfig()
-            )
+            calc_t0_roundtrip_cost(buy_notional=Decimal("0"), sell_notional=Decimal("10000"), config=T0CostConfig())

@@ -40,6 +40,7 @@ Lagging 象限+低强度+差回踩 → score 接近 0.1（弱信号/回避）。
 放置说明：RRG 象限枚举只读 import 自 signal_ashare.sector_rrg（22 号 G06 批次资产），
 本模块只做映射公式，不改动 sector_* 任何模块。
 """
+
 from __future__ import annotations
 
 from zephyr.signal_ashare.sector_rrg import RRGQuadrant

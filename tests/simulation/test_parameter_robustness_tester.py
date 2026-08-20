@@ -193,9 +193,7 @@ class TestStableRegion:
         tester = ParameterRobustnessTester()
         params = [5, 10, 15, 20, 25, 30, 35]
         # 用更高的 baseline → 稳定区间变窄
-        sens_high = tester.test_parameter(
-            robust_objective, "ma", params, baseline=1.5
-        )
+        sens_high = tester.test_parameter(robust_objective, "ma", params, baseline=1.5)
         sens_default = tester.test_parameter(robust_objective, "ma", params)
         # 高 baseline 阈值更高 → 稳定点更少
         h_count = sens_high.stable_region.point_count if sens_high.stable_region else 0
@@ -210,9 +208,7 @@ class TestPerturbation:
     def test_stable_perturbation(self):
         """鲁棒函数扰动后退化小。"""
         tester = ParameterRobustnessTester()
-        result = tester.perturb_parameter(
-            robust_objective, "ma", baseline_value=20.0
-        )
+        result = tester.perturb_parameter(robust_objective, "ma", baseline_value=20.0)
         assert isinstance(result, PerturbationResult)
         assert result.baseline_objective > 0
         assert len(result.objectives) == 4
@@ -223,9 +219,7 @@ class TestPerturbation:
     def test_unstable_perturbation(self):
         """过拟合函数扰动后退化大。"""
         tester = ParameterRobustnessTester()
-        result = tester.perturb_parameter(
-            overfit_objective, "ma", baseline_value=20.0
-        )
+        result = tester.perturb_parameter(overfit_objective, "ma", baseline_value=20.0)
         # 尖峰函数 ±5% 扰动退化巨大
         assert result.max_degradation > 0.1
         assert result.is_stable is False
@@ -233,7 +227,9 @@ class TestPerturbation:
     def test_custom_perturbations(self):
         tester = ParameterRobustnessTester()
         result = tester.perturb_parameter(
-            robust_objective, "ma", baseline_value=20.0,
+            robust_objective,
+            "ma",
+            baseline_value=20.0,
             perturbations=[0.01, -0.01],
         )
         assert len(result.objectives) == 2

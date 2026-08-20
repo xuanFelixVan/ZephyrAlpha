@@ -122,8 +122,10 @@ def _add_lock(root: Path, file_rel: str, owner: str) -> None:
 
 def _make_e2e_passthrough(repo_root: Path):
     """创建端到端 passthrough：在临时仓库中执行真实 git 命令。"""
+
     def _pt(git_args: list[str]) -> int:
         return subprocess.call(["git"] + git_args, cwd=str(repo_root))
+
     return _pt
 
 
@@ -302,9 +304,9 @@ class TestMvWithConcurrentWrite:
         # 无论 mv 是否被阻断，未跟踪文件不应丢失
         # 如果 mv 在写入前检查 → 阻断（文件在检查后创建，但文件仍在原位）
         # 如果 mv 在写入后检查 → 阻断（检测到未跟踪文件）
-        assert (repo / "dir_a" / "concurrent_write.py").exists() or \
-               (repo / "new_dir_a" / "concurrent_write.py").exists(), \
-               "并发写入的文件不应丢失"
+        assert (repo / "dir_a" / "concurrent_write.py").exists() or (
+            repo / "new_dir_a" / "concurrent_write.py"
+        ).exists(), "并发写入的文件不应丢失"
 
 
 # ============================================================================
@@ -456,8 +458,7 @@ class TestMvGitignoreFiles:
         # 但如果用户用 git mv 目录，ignored 文件会留在旧目录 → 丢失
         # 这是一个边界情况，记录为已知限制
         # 验证：ignored 文件不被检测（git 行为）
-        assert len(untracked) == 0 or "debug.log" not in untracked, \
-               ".gitignore 中的文件不应被检测为未跟踪（git 行为）"
+        assert len(untracked) == 0 or "debug.log" not in untracked, ".gitignore 中的文件不应被检测为未跟踪（git 行为）"
 
 
 # ============================================================================

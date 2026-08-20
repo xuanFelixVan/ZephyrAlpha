@@ -43,8 +43,14 @@ class TestDQDimension:
 
     def test_dimension_values(self):
         expected = {
-            "Completeness", "Accuracy", "Anomaly", "Consistency",
-            "Freshness", "Timeliness", "Uniqueness", "Validity",
+            "Completeness",
+            "Accuracy",
+            "Anomaly",
+            "Consistency",
+            "Freshness",
+            "Timeliness",
+            "Uniqueness",
+            "Validity",
         }
         actual = {d.value for d in DQDimension}
         assert actual == expected
@@ -137,15 +143,19 @@ class TestB4Dimensions:
         # 仅 FRESHNESS / ANOMALY 为 True，其余默认 False（向后兼容）
         assert DQ_SPECS[DQDimension.FRESHNESS].lower_is_better is True
         assert DQ_SPECS[DQDimension.ANOMALY].lower_is_better is True
-        for dim in (DQDimension.COMPLETENESS, DQDimension.ACCURACY,
-                    DQDimension.CONSISTENCY, DQDimension.TIMELINESS,
-                    DQDimension.UNIQUENESS, DQDimension.VALIDITY):
+        for dim in (
+            DQDimension.COMPLETENESS,
+            DQDimension.ACCURACY,
+            DQDimension.CONSISTENCY,
+            DQDimension.TIMELINESS,
+            DQDimension.UNIQUENESS,
+            DQDimension.VALIDITY,
+        ):
             assert DQ_SPECS[dim].lower_is_better is False
 
     def test_b4_four_dimensions_present(self):
         # B4 SLA 四维度必须在册
-        b4 = {DQDimension.COMPLETENESS, DQDimension.CONSISTENCY,
-              DQDimension.FRESHNESS, DQDimension.ANOMALY}
+        b4 = {DQDimension.COMPLETENESS, DQDimension.CONSISTENCY, DQDimension.FRESHNESS, DQDimension.ANOMALY}
         assert b4.issubset(set(DQDimension))
 
 
@@ -230,17 +240,25 @@ class TestCheckConsistency:
         assert check_consistency(df, reference=ref) == pytest.approx(0.5)
 
     def test_internal_ohlc_structure(self):
-        df = pd.DataFrame({
-            "open": [10.0, 10.0], "high": [11.0, 10.5],
-            "low": [9.0, 9.5], "close": [10.5, 10.2],
-        })
+        df = pd.DataFrame(
+            {
+                "open": [10.0, 10.0],
+                "high": [11.0, 10.5],
+                "low": [9.0, 9.5],
+                "close": [10.5, 10.2],
+            }
+        )
         assert check_consistency(df) == 1.0
 
     def test_internal_ohlc_violation(self):
-        df = pd.DataFrame({
-            "open": [10.0, 10.0], "high": [11.0, 10.0],
-            "low": [9.0, 9.5], "close": [10.5, 10.6],  # 第2行 close>high 违例
-        })
+        df = pd.DataFrame(
+            {
+                "open": [10.0, 10.0],
+                "high": [11.0, 10.0],
+                "low": [9.0, 9.5],
+                "close": [10.5, 10.6],  # 第2行 close>high 违例
+            }
+        )
         assert check_consistency(df) == pytest.approx(0.5)
 
     def test_no_reference_no_ohlc_raises(self):

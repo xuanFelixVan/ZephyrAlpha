@@ -136,9 +136,7 @@ class TestStartFleSchedulerCreatesAndStarts:
         FeedbackLoopScheduler.__post_init__ 会尝试初始化 VectorBridge,
         需要 InProcessVectorMemory。mock 后验证链路完整。
         """
-        with patch(
-            "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
-        ) as mock_vms_cls:
+        with patch("zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory") as mock_vms_cls:
             mock_vms_cls.return_value = MagicMock()
 
             from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
@@ -253,12 +251,8 @@ class TestBootFleFullChain:
                         with patch.object(core, "start_blueprint_watcher"):
                             with patch.object(core, "run_boot_triple_alignment"):
                                 with patch.object(core, "init_escalation_protocol"):
-                                    with patch.object(
-                                        core, "start_fle_scheduler"
-                                    ) as mock_start:
-                                        mock_start.side_effect = lambda: setattr(
-                                            core, "fle_scheduler", mock_fle
-                                        )
+                                    with patch.object(core, "start_fle_scheduler") as mock_start:
+                                        mock_start.side_effect = lambda: setattr(core, "fle_scheduler", mock_fle)
                                         core.boot()
 
         assert core.booted is True

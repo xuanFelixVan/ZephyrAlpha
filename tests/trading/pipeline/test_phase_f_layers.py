@@ -285,7 +285,9 @@ class TestPhaseFL10:
             decision.action = AuditAction.ALLOW
 
     def test_security_gateway_is_abstract(self):
-        assert SecurityGateway.__abstractmethods__ == frozenset({"pre_filter", "security_scan", "decide"})  # 生产跟进：标识符合法化
+        assert SecurityGateway.__abstractmethods__ == frozenset(
+            {"pre_filter", "security_scan", "decide"}
+        )  # 生产跟进：标识符合法化
 
     def test_compliance_engine_is_abstract(self):
         assert ComplianceEngine.__abstractmethods__ == frozenset({"evaluate", "enforce"})
@@ -553,9 +555,7 @@ class TestPhaseFBackpressure:
     def test_backpressure_manager_auto_resume_on_timeout(self):
         mgr = BackpressureManager()
         state = mgr.handle_pause(
-            __import__(
-                "zephyr.shared.contracts.backpressure.pause", fromlist=["BackpressurePause"]
-            ).BackpressurePause(
+            __import__("zephyr.shared.contracts.backpressure.pause", fromlist=["BackpressurePause"]).BackpressurePause(
                 signal_id="bp-001",
                 symbol="600519",
                 duration_ms=1,

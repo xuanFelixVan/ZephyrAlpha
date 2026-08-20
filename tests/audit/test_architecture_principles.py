@@ -235,17 +235,23 @@ class TestValidateAgainstPrinciples:
         assert validate_against_principles(["v1", "v2", "v3"]) is False
 
     def test_logs_warning_on_violation(self, caplog):
-        with caplog.at_level(logging.WARNING, logger="zephyr.governance.architecture_governance.architecture_principles"):
+        with caplog.at_level(
+            logging.WARNING, logger="zephyr.governance.architecture_governance.architecture_principles"
+        ):
             validate_against_principles(["test violation"])
         assert len(caplog.records) >= 1
         assert "test violation" in caplog.text
 
     def test_no_log_on_no_violations(self, caplog):
-        with caplog.at_level(logging.WARNING, logger="zephyr.governance.architecture_governance.architecture_principles"):
+        with caplog.at_level(
+            logging.WARNING, logger="zephyr.governance.architecture_governance.architecture_principles"
+        ):
             validate_against_principles([])
         assert len(caplog.records) == 0
 
     def test_logs_each_violation_separately(self, caplog):
-        with caplog.at_level(logging.WARNING, logger="zephyr.governance.architecture_governance.architecture_principles"):
+        with caplog.at_level(
+            logging.WARNING, logger="zephyr.governance.architecture_governance.architecture_principles"
+        ):
             validate_against_principles(["v1", "v2"])
         assert len(caplog.records) == 2

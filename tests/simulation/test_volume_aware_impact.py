@@ -19,6 +19,7 @@
   ③ sign symmetry(买卖对称) ④ impact_coef=0 恒零(legacy flat 向后兼容)
 另含: 公式正确性、批量形式、参数校验与退化。
 """
+
 from __future__ import annotations
 
 import math
@@ -44,10 +45,7 @@ class TestFormula:
 
 class TestAcceptanceCriteria:
     def test_1_monotonicity(self):
-        impacts = [
-            volume_aware_sqrt_impact(dw, 1e6, 5e7, 0.142)
-            for dw in (0.001, 0.005, 0.01, 0.05, 0.1)
-        ]
+        impacts = [volume_aware_sqrt_impact(dw, 1e6, 5e7, 0.142) for dw in (0.001, 0.005, 0.01, 0.05, 0.1)]
         assert all(b > a for a, b in zip(impacts, impacts[1:]))
 
     def test_2_zero_volume_fallback(self):

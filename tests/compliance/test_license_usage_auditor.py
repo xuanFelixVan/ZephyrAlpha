@@ -100,9 +100,7 @@ def test_review_due_rules(tmp_path):
     assert a.review_due("SRC-X-001")  # 缺段
     assert not a.review_due("SRC-Y-001")  # 今日登记，90 天周期
     old = dict(_STRUCTURED)
-    old["compliance"] = dict(
-        _STRUCTURED["compliance"], registered_at=(date.today() - timedelta(days=100)).isoformat()
-    )
+    old["compliance"] = dict(_STRUCTURED["compliance"], registered_at=(date.today() - timedelta(days=100)).isoformat())
     a2 = _registry(tmp_path, [old])
     assert a2.review_due("SRC-Y-001")
 

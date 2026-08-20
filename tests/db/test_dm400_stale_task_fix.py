@@ -67,9 +67,7 @@ class TestE2E:
         source = inspect.getsource(repo.post_completion_actions)
         # DM-401 提醒应使用 if/else 分支处理 session_id，而非 `and session_id` 条件
         assert "DM-401" in source
-        assert "and session_id" not in source, (
-            "DM-401 修复后不应有 `and session_id` 条件"
-        )
+        assert "and session_id" not in source, "DM-401 修复后不应有 `and session_id` 条件"
 
     def test_list_by_status_in_progress_works(self, repo):
         """list_by_status('IN_PROGRESS') 正常工作。"""

@@ -50,8 +50,8 @@ __all__ = ["AstGrepAdapter"]
 
 # ast-grep severity → CloneGuard severity 映射
 _SEVERITY_MAP: dict[str, str] = {
-    "error": "extract",    # ast-grep error → extract 级（硬阻断）
-    "warning": "review",   # ast-grep warning → review 级（警告）
+    "error": "extract",  # ast-grep error → extract 级（硬阻断）
+    "warning": "review",  # ast-grep warning → review 级（警告）
     "info": "acknowledged",  # ast-grep info → acknowledged（跳过）
 }
 
@@ -165,19 +165,20 @@ class AstGrepAdapter:
         if batch:
             yield batch
 
-    def _run_single_rule(
-        self, rule_file: Path, files: list[str], timeout_sec: int
-    ) -> tuple[list[Finding], bool]:
+    def _run_single_rule(self, rule_file: Path, files: list[str], timeout_sec: int) -> tuple[list[Finding], bool]:
         """对单个规则文件运行 ast-grep scan。"""
         try:
             # Windows 上 ast-grep 是 .cmd 文件，需要 shell=True
             result = subprocess.run(  # noqa: bare-subprocess  ast-grep CLI scan 调用
                 [
-                    "ast-grep", "scan",
-                    "--rule", str(rule_file),
+                    "ast-grep",
+                    "scan",
+                    "--rule",
+                    str(rule_file),
                     "--json=compact",
                     "--include-metadata",
-                ] + files,
+                ]
+                + files,
                 capture_output=True,
                 text=True,
                 timeout=timeout_sec,

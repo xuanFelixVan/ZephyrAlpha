@@ -39,9 +39,7 @@ def _order(
     symbol: str = "600000",
     placed_at: datetime = _T0,
 ) -> ComplianceOrderRecord:
-    return ComplianceOrderRecord(
-        order_id=order_id, symbol=symbol, side=side, price=price, qty=qty, placed_at=placed_at
-    )
+    return ComplianceOrderRecord(order_id=order_id, symbol=symbol, side=side, price=price, qty=qty, placed_at=placed_at)
 
 
 class TestSpoofingViaStream:
@@ -50,9 +48,7 @@ class TestSpoofingViaStream:
         # 大额（>20%×10000=2000）挂单后 10s 内撤单 ×3 → SPOOFING
         for i in range(3):
             driver.on_order_placed(_order(f"o{i}", 10.0, 3000, placed_at=_T0 + timedelta(minutes=i * 5)))
-            verdicts = driver.on_order_cancelled(
-                "600000", f"o{i}", _T0 + timedelta(minutes=i * 5, seconds=5)
-            )
+            verdicts = driver.on_order_cancelled("600000", f"o{i}", _T0 + timedelta(minutes=i * 5, seconds=5))
         assert any(v.mtype is ManipulationType.SPOOFING for v in verdicts)
 
     def test_provider_missing_degrades_skip(self):
@@ -76,7 +72,9 @@ class TestSpoofingViaStream:
         for i in range(3):
             driver.on_order_placed(_order(f"o{i}", 10.0, 3000, placed_at=_T0 + timedelta(minutes=i)))
             verdicts = driver.on_order_cancelled(
-                "600000", f"o{i}", _T0 + timedelta(minutes=i, seconds=30)  # 超 10s 窗口
+                "600000",
+                f"o{i}",
+                _T0 + timedelta(minutes=i, seconds=30),  # 超 10s 窗口
             )
         assert verdicts == []
 
@@ -112,8 +110,12 @@ class TestWashTradeViaStream:
     def test_self_trade_hit_immediately(self):
         driver = ManipulationStreamDriver()
         trade = ComplianceTradeRecord(
-            symbol="600000", price=10.0, qty=100, traded_at=_T0,
-            buyer_account="ACC1", seller_account="ACC1",
+            symbol="600000",
+            price=10.0,
+            qty=100,
+            traded_at=_T0,
+            buyer_account="ACC1",
+            seller_account="ACC1",
         )
         verdicts = driver.on_trade(trade)
         assert len(verdicts) == 1
@@ -122,8 +124,12 @@ class TestWashTradeViaStream:
     def test_distinct_accounts_no_hit(self):
         driver = ManipulationStreamDriver()
         trade = ComplianceTradeRecord(
-            symbol="600000", price=10.0, qty=100, traded_at=_T0,
-            buyer_account="ACC1", seller_account="ACC2",
+            symbol="600000",
+            price=10.0,
+            qty=100,
+            traded_at=_T0,
+            buyer_account="ACC1",
+            seller_account="ACC2",
         )
         assert driver.on_trade(trade) == []
 
@@ -170,8 +176,12 @@ class TestEventValidation:
         with pytest.raises(InvalidStreamEventError):
             driver.on_trade(
                 ComplianceTradeRecord(
-                    symbol="  ", price=10.0, qty=1, traded_at=_T0,
-                    buyer_account="A", seller_account="B",
+                    symbol="  ",
+                    price=10.0,
+                    qty=1,
+                    traded_at=_T0,
+                    buyer_account="A",
+                    seller_account="B",
                 )
             )
 

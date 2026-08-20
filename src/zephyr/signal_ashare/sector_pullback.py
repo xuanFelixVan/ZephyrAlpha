@@ -97,12 +97,8 @@ def classify_volume_pattern(volume_ratios: list[float]) -> str:
     if latest > VOLUME_EXPAND_MIN:
         return VOLUME_EXPANDING
     if len(volume_ratios) >= 2:
-        decreasing = all(
-            volume_ratios[i] < volume_ratios[i - 1] for i in range(1, len(volume_ratios))
-        )
-        increasing = all(
-            volume_ratios[i] > volume_ratios[i - 1] for i in range(1, len(volume_ratios))
-        )
+        decreasing = all(volume_ratios[i] < volume_ratios[i - 1] for i in range(1, len(volume_ratios)))
+        increasing = all(volume_ratios[i] > volume_ratios[i - 1] for i in range(1, len(volume_ratios)))
         if decreasing and latest <= VOLUME_SHRINK_MAX:
             return VOLUME_SHRINKING
         if increasing:

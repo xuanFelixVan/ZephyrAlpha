@@ -27,6 +27,7 @@ CH 状态变化时触发告警（ALIVE→DEAD=CRITICAL，DEAD→ALIVE=INFO 恢�
   - 本探针 7×24 常驻，填补调度器不运行时段的监控盲点
   - 两者均通过 Alerter 发告警，Alerter 内置 300s 冷却防重复
 """
+
 from __future__ import annotations
 
 import logging
@@ -60,9 +61,7 @@ _PID_FILE = REPO_ROOT / "logs" / "ch_health_probe.pid"
 def _setup_logging(log_path: Path) -> None:
     """配置日志：RotatingFileHandler + stdout。"""
     log_path.parent.mkdir(parents=True, exist_ok=True)
-    fh = RotatingFileHandler(
-        log_path, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8"
-    )
+    fh = RotatingFileHandler(log_path, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8")
     fh.setFormatter(logging.Formatter("%(asctime)s %(levelname)s [%(name)s] %(message)s"))
     sh = logging.StreamHandler()
     sh.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
@@ -76,6 +75,7 @@ def _real_ch_ping() -> bool:
     """真实 CH ping（SELECT 1 via ch_writer.health_check）。"""
     try:
         from zephyr.data import ch_writer
+
         result = ch_writer.health_check()
         return result.get("tcp") == "ok"
     except Exception as e:
@@ -93,6 +93,7 @@ def main() -> None:
     # 加载 CH 配置（确保 .env.clickhouse 已加载）
     try:
         from zephyr.data.ch_config import ensure_ch_env_loaded
+
         ensure_ch_env_loaded()
     except Exception as e:  # noqa: BLE001
         log.warning("CH 配置加载失败（将用默认配置）: %s", e)
@@ -100,8 +101,9 @@ def main() -> None:
     # 写 PID 文件（便于进程管理）
     _PID_FILE.parent.mkdir(parents=True, exist_ok=True)
     _PID_FILE.write_text(str(os.getpid()), encoding="utf-8")
-    log.info("CH 健康探针启动 (PID=%d, interval=%.0fs, threshold=%d, log=%s)",
-             os.getpid(), interval, threshold, log_path)
+    log.info(
+        "CH 健康探针启动 (PID=%d, interval=%.0fs, threshold=%d, log=%s)", os.getpid(), interval, threshold, log_path
+    )
 
     # 创建 HeartbeatMonitor + Alerter
     alerter = Alerter()
@@ -132,9 +134,12 @@ def main() -> None:
         while not _stop:
             status = monitor.get_status()
             if status.ch_state != prev_state:
-                log.info("CH 状态变化: %s -> %s (连续失败=%d)",
-                         prev_state.value, status.ch_state.value,
-                         status.ch_consecutive_failures)
+                log.info(
+                    "CH 状态变化: %s -> %s (连续失败=%d)",
+                    prev_state.value,
+                    status.ch_state.value,
+                    status.ch_consecutive_failures,
+                )
                 prev_state = status.ch_state
             time.sleep(1)
     finally:

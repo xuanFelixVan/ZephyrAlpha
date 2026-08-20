@@ -36,27 +36,21 @@ def _pos(
 def test_loss_phase_when_profit_below_1atr():
     """盈利<1×ATR → loss 宽 trailing: 11.0-3.0×0.5=9.5。"""
     # entry=10, current=10.4, pnl=0.04 < atr_pct=0.05
-    price = TakeProfitStrategy.compute_exit_price(
-        _pos(current=10.4), 0.5, _highest_close_fn
-    )
+    price = TakeProfitStrategy.compute_exit_price(_pos(current=10.4), 0.5, _highest_close_fn)
     assert price == pytest.approx(9.5)
 
 
 def test_profit_phase_when_profit_above_1atr():
     """盈利>1×ATR → profit 紧 trailing: 12.0-2.0×0.5=11.0。"""
     # pnl=0.06 > atr_pct=0.05
-    price = TakeProfitStrategy.compute_exit_price(
-        _pos(current=10.6), 0.5, _highest_close_fn
-    )
+    price = TakeProfitStrategy.compute_exit_price(_pos(current=10.6), 0.5, _highest_close_fn)
     assert price == pytest.approx(11.0)
 
 
 def test_profit_phase_boundary_equal_1atr():
     """盈利恰好=1×ATR → profit(>=判定)。"""
     # pnl=0.05 >= atr_pct=0.05 → profit
-    price = TakeProfitStrategy.compute_exit_price(
-        _pos(current=10.5), 0.5, _highest_close_fn
-    )
+    price = TakeProfitStrategy.compute_exit_price(_pos(current=10.5), 0.5, _highest_close_fn)
     assert price == pytest.approx(11.0)
 
 
@@ -67,7 +61,8 @@ def test_trend_strategy_wider_exit():
     """趋势策略 loss phase M=3.5: 11.0-3.5×0.5=9.25。"""
     price = TakeProfitStrategy.compute_exit_price(
         _pos(current=10.4, strategy_type=StrategyType.TREND),
-        0.5, _highest_close_fn,
+        0.5,
+        _highest_close_fn,
     )
     assert price == pytest.approx(9.25)
 
@@ -79,24 +74,21 @@ def test_atr_none_fallback_short():
     """ATR缺失+短线 → 4%: 10.0×0.96=9.6。"""
     price = TakeProfitStrategy.compute_exit_price(
         _pos(current=10.4, strategy_type=StrategyType.SHORT_TERM),
-        None, _highest_close_fn,
+        None,
+        _highest_close_fn,
     )
     assert price == pytest.approx(9.6)
 
 
 def test_atr_none_fallback_medium():
     """ATR缺失+中长线 → 8%: 10.0×0.92=9.2。"""
-    price = TakeProfitStrategy.compute_exit_price(
-        _pos(current=10.4), None, _highest_close_fn
-    )
+    price = TakeProfitStrategy.compute_exit_price(_pos(current=10.4), None, _highest_close_fn)
     assert price == pytest.approx(9.2)
 
 
 def test_atr_zero_fallback():
     """ATR=0 同样降级固定%。"""
-    price = TakeProfitStrategy.compute_exit_price(
-        _pos(current=10.4), 0.0, _highest_close_fn
-    )
+    price = TakeProfitStrategy.compute_exit_price(_pos(current=10.4), 0.0, _highest_close_fn)
     assert price == pytest.approx(9.2)
 
 
@@ -118,5 +110,7 @@ def test_zero_entry_rejected():
 def test_non_callable_fn_rejected():
     with pytest.raises(InvalidTakeProfitInputError):
         TakeProfitStrategy.compute_exit_price(
-            _pos(current=10.4), 0.5, None  # type: ignore[arg-type]
+            _pos(current=10.4),
+            0.5,
+            None,  # type: ignore[arg-type]
         )

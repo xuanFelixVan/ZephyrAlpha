@@ -152,22 +152,22 @@ logger = logging.getLogger(__name__)
 # ── 常量（参数来源：34_regime_meta_allocator §3.2.2 / §3.2.3 / §3.2.4）──────────
 
 # floor/cap 硬约束（§3.2.4，行业经验值，BestFolio 2026-04 印证 cap=40%）
-FLOOR: float = 0.05          # 单策略最低占比 5%（防饿死）
-CAP: float = 0.40            # 单策略最高占比 40%（防集中）
+FLOOR: float = 0.05  # 单策略最低占比 5%（防饿死）
+CAP: float = 0.40  # 单策略最高占比 40%（防集中）
 
 # PerformanceScore 映射区间（§3.2.2）
 PERF_SCORE_MIN: float = 0.5  # Sortino≤0 → 0.5（砍半但不饿死）
 PERF_SCORE_MAX: float = 1.5  # Sortino≥2.0 → 1.5（×1.5但不集中）
-SORTINO_FLOOR: float = 0.0   # Sortino 下限映射点
-SORTINO_CEILING: float = 2.0 # Sortino 上限映射点
-SORTINO_NEUTRAL: float = 1.0 # Sortino=1.0 → PerformanceScore=1.0（中性）
+SORTINO_FLOOR: float = 0.0  # Sortino 下限映射点
+SORTINO_CEILING: float = 2.0  # Sortino 上限映射点
+SORTINO_NEUTRAL: float = 1.0  # Sortino=1.0 → PerformanceScore=1.0（中性）
 
 # Sortino 统计防护（§3.2.2 四件套）
-DOWNSIDE_MIN_OBSERVATIONS: int = 15   # downside 样本量门槛（<15 强制中性）
-COLD_START_MIN_DAYS: int = 30         # 冷启动过渡门槛（交易日）
-GAP_NORMAL_CEILING: float = 1.5       # Sortino/Sharpe gap 正常上限（quantt.co.uk 2026-04 实证 1.3-1.5）
-GAP_WARNING_MULTIPLIER: float = 1.2   # gap > 1.5×1.2=1.8 → 疑似 inflated 警告
-GAP_SEVERE_MULTIPLIER: float = 1.5    # gap > 1.5×1.5=2.25 → 严重 inflated 强制复核
+DOWNSIDE_MIN_OBSERVATIONS: int = 15  # downside 样本量门槛（<15 强制中性）
+COLD_START_MIN_DAYS: int = 30  # 冷启动过渡门槛（交易日）
+GAP_NORMAL_CEILING: float = 1.5  # Sortino/Sharpe gap 正常上限（quantt.co.uk 2026-04 实证 1.3-1.5）
+GAP_WARNING_MULTIPLIER: float = 1.2  # gap > 1.5×1.2=1.8 → 疑似 inflated 警告
+GAP_SEVERE_MULTIPLIER: float = 1.5  # gap > 1.5×1.5=2.25 → 严重 inflated 强制复核
 
 # MAR / Rf（§3.2.2 MAR 选型决策：MAR=Rf=货币基金~2%年化）
 MAR_ANNUAL: float = 0.02
@@ -176,21 +176,21 @@ TRADING_DAYS: int = 252
 # ConfidenceSignal 四档阈值（§3.2.3，[10号] §5.1）
 # (max(P) 上界, ConfidenceSignal 值)
 CONFIDENCE_THRESHOLDS: list[tuple[float, float]] = [
-    (0.60, 0.30),   # max(P) < 60% → 0.3（强收缩，不确定时别赌方向）
-    (0.80, 0.60),   # 60% ≤ max(P) < 80% → 0.6（中度收缩）
-    (0.95, 0.85),   # 80% ≤ max(P) < 95% → 0.85（轻度收缩）
-    (1.01, 1.00),   # max(P) ≥ 95% → 1.0（满部署，高确信度）
+    (0.60, 0.30),  # max(P) < 60% → 0.3（强收缩，不确定时别赌方向）
+    (0.80, 0.60),  # 60% ≤ max(P) < 80% → 0.6（中度收缩）
+    (0.95, 0.85),  # 80% ≤ max(P) < 95% → 0.85（轻度收缩）
+    (1.01, 1.00),  # max(P) ≥ 95% → 1.0（满部署，高确信度）
 ]
 
 # Shrinkage floor（§3.2.2 熊市最低总暴露 + §3.2.2 危机态覆盖说明）
-SHRINKAGE_FLOOR: float = 0.09          # = 0.3 × 0.30 = 9%（r4 熊市常规态最低暴露）
+SHRINKAGE_FLOOR: float = 0.09  # = 0.3 × 0.30 = 9%（r4 熊市常规态最低暴露）
 # AI-NIGHT-001 #208-①：CRISIS floor 0.05 在当前参数域数学不可达——clamp 链下界
 # conf≥0.30（四档最小档）× risk≥0.30（RISK_SIGNAL_MIN clamp）→ raw≥0.09>0.05，
 # max(0.05, raw) 永不选中 0.05。本常量为对齐 31号 §2.4.3 ⑩CRISIS cap 的前瞻口径
 # 保留（参数域放宽使 raw<0.09 可能时生效），非误删死代码——可达性由测试
 # test_crisis_floor_lowers_to_005（monkeypatch 参数域）与
 # test_crisis_floor_005_unreachable_in_current_param_domain（当前域不可达断言）双锚定。
-CRISIS_SHRINKAGE_FLOOR: float = 0.05   # CRISIS 态 floor 降至 5%（对齐 31号 §2.4.3 ⑩CRISIS cap）
+CRISIS_SHRINKAGE_FLOOR: float = 0.05  # CRISIS 态 floor 降至 5%（对齐 31号 §2.4.3 ⑩CRISIS cap）
 
 # RiskSignal clamp 范围（§3.2.3，[10号] §5.3.3）
 RISK_SIGNAL_MIN: float = 0.30
@@ -215,12 +215,12 @@ class ShrinkageDetail:
     所有策略共用。归一化时约掉，只在 effective_budget 层缩放总暴露。
     """
 
-    confidence_signal: float      # max(P) → 4 档映射（+ 稀有态折扣，当前 4 态不触发）
-    risk_signal: float            # 13 参数聚合（[10号] §5.3.3 输出）
-    raw_shrinkage: float          # confidence × risk（裁剪前）
-    final_shrinkage: float        # ≥ floor（裁剪后，即 global_shrinkage）
-    shrinkage_enabled: bool       # 验证开关（C1 一票否决）
-    is_crisis: bool = False       # D-SIGNAL-68 overlay 是否触发 CRISIS 态（§3.2.2 危机态覆盖）
+    confidence_signal: float  # max(P) → 4 档映射（+ 稀有态折扣，当前 4 态不触发）
+    risk_signal: float  # 13 参数聚合（[10号] §5.3.3 输出）
+    raw_shrinkage: float  # confidence × risk（裁剪前）
+    final_shrinkage: float  # ≥ floor（裁剪后，即 global_shrinkage）
+    shrinkage_enabled: bool  # 验证开关（C1 一票否决）
+    is_crisis: bool = False  # D-SIGNAL-68 overlay 是否触发 CRISIS 态（§3.2.2 危机态覆盖）
 
 
 @dataclass(frozen=True)
@@ -233,14 +233,16 @@ class BudgetAllocation:
       - effective_budgets = allocation_i × global_shrinkage × cold_start_ratio_i 是策略实收预算
     """
 
-    allocations: dict[str, float]            # {strategy_id: 相对占比}，Σ=1.0，floor 5%~cap 40%
-    global_shrinkage: float                  # 全局风险节流因子（0.05~1.0）
-    effective_budgets: dict[str, float]      # {strategy_id: allocation_i × global_shrinkage × cold_start_ratio_i}
+    allocations: dict[str, float]  # {strategy_id: 相对占比}，Σ=1.0，floor 5%~cap 40%
+    global_shrinkage: float  # 全局风险节流因子（0.05~1.0）
+    effective_budgets: dict[str, float]  # {strategy_id: allocation_i × global_shrinkage × cold_start_ratio_i}
     shrinkage_detail: ShrinkageDetail
     perf_scores: dict[str, float] = field(default_factory=dict)  # 各策略 PerformanceScore（审计用）
     sortino_sharpe_gaps: dict[str, float] = field(default_factory=dict)  # gap 监控（§3.2.2 四件套 #3）
-    cold_start_ratios: dict[str, float] = field(default_factory=dict)  # 各策略冷启动执行比例（30号 §6.7，审计用；空=全 1.0）
-    rebalance_allowed: bool = True           # 当日是否允许再平衡（频率控制 ≤1次/日）
+    cold_start_ratios: dict[str, float] = field(
+        default_factory=dict
+    )  # 各策略冷启动执行比例（30号 §6.7，审计用；空=全 1.0）
+    rebalance_allowed: bool = True  # 当日是否允许再平衡（频率控制 ≤1次/日）
     created_at: datetime = field(default_factory=datetime.now)
     schema_version: str = "1.0"
 
@@ -249,22 +251,22 @@ class BudgetAllocation:
 class SensitivityScenario:
     """D1 敏感性网格单场景输入（11号 §0.5.7 / 34号 §3.2.7）。"""
 
-    name: str                              # 场景名（归因展示用，如 "高确信牛市"）
-    regime_probabilities: Any              # regime 概率向量
-    performance_scores: dict[str, float]   # 各策略 PerformanceScore
-    risk_signal_inputs: dict[str, Any]     # RiskSignal 13 参数
-    is_crisis: bool = False                # CRISIS 态开关
+    name: str  # 场景名（归因展示用，如 "高确信牛市"）
+    regime_probabilities: Any  # regime 概率向量
+    performance_scores: dict[str, float]  # 各策略 PerformanceScore
+    risk_signal_inputs: dict[str, Any]  # RiskSignal 13 参数
+    is_crisis: bool = False  # CRISIS 态开关
 
 
 @dataclass(frozen=True)
 class ThresholdGridPoint:
     """D1 网格单点结果：某扰动档位下的分配输出 + 相对 baseline 的最大变化率。"""
 
-    perturbation: float                            # 扰动比例 δ（如 -0.2/-0.1/0/+0.1/+0.2）
-    thresholds: tuple[tuple[float, float], ...]    # 扰动后阈值表（审计用）
+    perturbation: float  # 扰动比例 δ（如 -0.2/-0.1/0/+0.1/+0.2）
+    thresholds: tuple[tuple[float, float], ...]  # 扰动后阈值表（审计用）
     global_shrinkage: float
     effective_budgets: dict[str, float]
-    max_rel_change: float                          # max_sid |eff(δ)−eff(0)| / max(eff(0), ε)
+    max_rel_change: float  # max_sid |eff(δ)−eff(0)| / max(eff(0), ε)
 
 
 @dataclass(frozen=True)
@@ -274,8 +276,8 @@ class SensitivityScenarioResult:
     scenario: str
     baseline_shrinkage: float
     grid: tuple[ThresholdGridPoint, ...]
-    max_rel_change: float          # 全网格最大相对变化率
-    verdict: str                   # "robust"（稳健）/ "cliff_suspect"（悬崖型疑似，需调阈值）
+    max_rel_change: float  # 全网格最大相对变化率
+    verdict: str  # "robust"（稳健）/ "cliff_suspect"（悬崖型疑似，需调阈值）
 
 
 class RegimeMetaAllocator:
@@ -300,8 +302,8 @@ class RegimeMetaAllocator:
     依据: 34_regime_meta_allocator §3.4 施工算法伪代码
     """
 
-    FLOOR: float = FLOOR   # 防饿死（5%）
-    CAP: float = CAP       # 防集中（40%）
+    FLOOR: float = FLOOR  # 防饿死（5%）
+    CAP: float = CAP  # 防集中（40%）
 
     def __init__(
         self,
@@ -385,18 +387,14 @@ class RegimeMetaAllocator:
         base = self._resolve_base_weights(strategies)
 
         # 冷启动校验（§3.2.2）：<30 交易日策略 PerformanceScore 应为 1.0 中性
-        perf_scores = self._apply_cold_start_neutral(
-            performance_scores, strategy_sample_days, strategies
-        )
+        perf_scores = self._apply_cold_start_neutral(performance_scores, strategy_sample_days, strategies)
 
         # 冷启动执行比例校验（30号 §6.7：∈(0,1]，只缩不放）
         ratios: dict[str, float] = {}
         if cold_start_ratios:
             for sid, ratio in cold_start_ratios.items():
                 if not 0 < ratio <= 1.0:
-                    raise AllocationError(
-                        f"策略 {sid} cold_start_ratio={ratio} 越界（须 ∈(0,1]，只缩不放）"
-                    )
+                    raise AllocationError(f"策略 {sid} cold_start_ratio={ratio} 越界（须 ∈(0,1]，只缩不放）")
                 ratios[sid] = float(ratio)
 
         # ── Step 1: 计算 global_shrinkage（§3.2.3）──
@@ -411,15 +409,11 @@ class RegimeMetaAllocator:
 
         # ── Step 4: effective_budget = allocation × global_shrinkage（§3.1 两层）──
         global_shrinkage = shrinkage.final_shrinkage
-        effective_budgets = {
-            sid: allocations[sid] * global_shrinkage for sid in strategies
-        }
+        effective_budgets = {sid: allocations[sid] * global_shrinkage for sid in strategies}
 
         # ── Step 5: 冷启动执行比例缩放（30号 §6.7 施工指导：effective_budget 缩放步骤后乘）──
         if ratios:
-            effective_budgets = {
-                sid: effective_budgets[sid] * ratios.get(sid, 1.0) for sid in strategies
-            }
+            effective_budgets = {sid: effective_budgets[sid] * ratios.get(sid, 1.0) for sid in strategies}
 
         return BudgetAllocation(
             allocations=allocations,
@@ -464,7 +458,10 @@ class RegimeMetaAllocator:
                 if scores[sid] != 1.0:
                     logger.warning(
                         "策略 %s 样本天数 %d < %d（冷启动），PerformanceScore %.3f → 1.0 中性",
-                        sid, days, COLD_START_MIN_DAYS, scores[sid],
+                        sid,
+                        days,
+                        COLD_START_MIN_DAYS,
+                        scores[sid],
                     )
                     scores[sid] = 1.0
         return scores
@@ -509,8 +506,11 @@ class RegimeMetaAllocator:
                 "CRISIS 态激活：effective_floor %.2f → %.2f（对齐 31号 crisis cap；"
                 "#208-① 当前参数域数学下界 conf≥0.30×risk≥0.30→raw≥0.09，0.05 floor "
                 "前瞻保留不约束），ConfidenceSignal=%.2f RiskSignal=%.2f → global_shrinkage=%.4f",
-                SHRINKAGE_FLOOR, CRISIS_SHRINKAGE_FLOOR,
-                confidence_signal, risk_signal, final_shrinkage,
+                SHRINKAGE_FLOOR,
+                CRISIS_SHRINKAGE_FLOOR,
+                confidence_signal,
+                risk_signal,
+                final_shrinkage,
             )
 
         return ShrinkageDetail(
@@ -604,9 +604,11 @@ class RegimeMetaAllocator:
         if N * CAP < 1.0 - 1e-9:
             relaxed_cap = 1.0 - (N - 1) * FLOOR
             logger.warning(
-                "floor/cap 无解兜底触发：N=%d, floor=%.2f, cap=%.2f → "
-                "放宽 cap 到 %.2f（优先保 floor 防饿死，§3.2.4）",
-                N, FLOOR, CAP, relaxed_cap,
+                "floor/cap 无解兜底触发：N=%d, floor=%.2f, cap=%.2f → 放宽 cap 到 %.2f（优先保 floor 防饿死，§3.2.4）",
+                N,
+                FLOOR,
+                CAP,
+                relaxed_cap,
             )
             effective_cap = relaxed_cap
 
@@ -662,8 +664,7 @@ class RegimeMetaAllocator:
         total_final = sum(alloc[sid] for sid in strategies)
         if abs(total_final - 1.0) > 1e-9 and total_final > 0:
             logger.warning(
-                "water-filling 全越界破产兜底：Σ=%.6f≠1.0，按比例归一化"
-                "（floor/cap 边界让位 Σ=1.0 硬不变量）",
+                "water-filling 全越界破产兜底：Σ=%.6f≠1.0，按比例归一化（floor/cap 边界让位 Σ=1.0 硬不变量）",
                 total_final,
             )
             alloc = {sid: alloc[sid] / total_final for sid in strategies}
@@ -720,7 +721,8 @@ class RegimeMetaAllocator:
         if n_downside < DOWNSIDE_MIN_OBSERVATIONS:
             logger.warning(
                 "downside 样本 %d < %d，Sortino 统计不可靠，PerformanceScore 强制中性 1.0",
-                n_downside, DOWNSIDE_MIN_OBSERVATIONS,
+                n_downside,
+                DOWNSIDE_MIN_OBSERVATIONS,
             )
             return (1.0, SORTINO_NEUTRAL, SORTINO_NEUTRAL)
 
@@ -751,9 +753,9 @@ class RegimeMetaAllocator:
         elif sortino >= SORTINO_CEILING:
             perf_score = PERF_SCORE_MAX
         else:
-            perf_score = PERF_SCORE_MIN + (sortino - SORTINO_FLOOR) / (
-                SORTINO_CEILING - SORTINO_FLOOR
-            ) * (PERF_SCORE_MAX - PERF_SCORE_MIN)
+            perf_score = PERF_SCORE_MIN + (sortino - SORTINO_FLOOR) / (SORTINO_CEILING - SORTINO_FLOOR) * (
+                PERF_SCORE_MAX - PERF_SCORE_MIN
+            )
 
         # gap 监控（§3.2.2 四件套 #3）
         if sharpe > 0:
@@ -762,12 +764,14 @@ class RegimeMetaAllocator:
                 logger.warning(
                     "Sortino/Sharpe gap=%.2f 严重 inflated（>%.2f），疑似 downside 样本太少"
                     "或连胜期未遇回撤，建议复核 PerformanceScore",
-                    gap, GAP_NORMAL_CEILING * GAP_SEVERE_MULTIPLIER,
+                    gap,
+                    GAP_NORMAL_CEILING * GAP_SEVERE_MULTIPLIER,
                 )
             elif gap > GAP_NORMAL_CEILING * GAP_WARNING_MULTIPLIER:
                 logger.warning(
                     "Sortino/Sharpe gap=%.2f 疑似 inflated（>%.2f），标记复核",
-                    gap, GAP_NORMAL_CEILING * GAP_WARNING_MULTIPLIER,
+                    gap,
+                    GAP_NORMAL_CEILING * GAP_WARNING_MULTIPLIER,
                 )
 
         return (perf_score, sortino, sharpe)
@@ -837,25 +841,28 @@ class RegimeMetaAllocator:
                     is_crisis=sc.is_crisis,
                 )
                 rel = max(
-                    abs(out.effective_budgets[sid] - base_eff[sid]) / max(base_eff[sid], 1e-9)
-                    for sid in base_eff
+                    abs(out.effective_budgets[sid] - base_eff[sid]) / max(base_eff[sid], 1e-9) for sid in base_eff
                 )
                 scenario_max_change = max(scenario_max_change, rel)
-                grid.append(ThresholdGridPoint(
-                    perturbation=float(delta),
-                    thresholds=tuple(perturbed),
-                    global_shrinkage=out.global_shrinkage,
-                    effective_budgets=dict(out.effective_budgets),
-                    max_rel_change=rel,
-                ))
+                grid.append(
+                    ThresholdGridPoint(
+                        perturbation=float(delta),
+                        thresholds=tuple(perturbed),
+                        global_shrinkage=out.global_shrinkage,
+                        effective_budgets=dict(out.effective_budgets),
+                        max_rel_change=rel,
+                    )
+                )
 
-            results.append(SensitivityScenarioResult(
-                scenario=sc.name,
-                baseline_shrinkage=base_alloc.global_shrinkage,
-                grid=tuple(grid),
-                max_rel_change=scenario_max_change,
-                verdict="robust" if scenario_max_change < robust_tolerance else "cliff_suspect",
-            ))
+            results.append(
+                SensitivityScenarioResult(
+                    scenario=sc.name,
+                    baseline_shrinkage=base_alloc.global_shrinkage,
+                    grid=tuple(grid),
+                    max_rel_change=scenario_max_change,
+                    verdict="robust" if scenario_max_change < robust_tolerance else "cliff_suspect",
+                )
+            )
 
         return results
 

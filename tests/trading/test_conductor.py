@@ -11,6 +11,7 @@
 # [TESTS] tests/test_conductor.py
 # [TTL] task_bound
 """Conductor 单元测试——覆盖核心编排接口。"""
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
@@ -131,9 +132,7 @@ class TestConductorIsDone:
 class TestConductorMarkCompleted:
     def test_mark_completed_calls_transition(self, conductor):
         conductor.mark_completed("T1", note="done")
-        conductor.repo.transition.assert_called_once_with(
-            "T1", "COMPLETED", session_id="session-test-001", note="done"
-        )
+        conductor.repo.transition.assert_called_once_with("T1", "COMPLETED", session_id="session-test-001", note="done")
 
 
 class TestConductorMarkFailed:

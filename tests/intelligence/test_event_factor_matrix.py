@@ -12,6 +12,7 @@
   2. compute_jump_on_pead —— 跳跃提取/正负抵消/drift 分离/空输入/非法阈值
   3. compute_overnight_trend —— 滚动均值口径/首值 NaN/满窗要求/长度不一致/窗口非法
 """
+
 from __future__ import annotations
 
 from datetime import date
@@ -49,7 +50,7 @@ class TestJumpOnPead:
     def test_jump_extraction(self):
         # |0.05|, |-0.04| ≥ 3% → jump；0.01, -0.02, 0.005 → drift
         out = compute_jump_on_pead([0.05, 0.01, -0.04, -0.02, 0.005])
-        assert out.jump_component == pytest.approx(0.01)   # 0.05 - 0.04
+        assert out.jump_component == pytest.approx(0.01)  # 0.05 - 0.04
         assert out.drift_component == pytest.approx(-0.005)  # 0.01 - 0.02 + 0.005
         assert out.car_total == pytest.approx(0.005)
 

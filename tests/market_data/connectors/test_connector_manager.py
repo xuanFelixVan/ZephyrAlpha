@@ -39,9 +39,7 @@ class StubConnector(MarketDataConnector):
     """测试用 stub 连接器。"""
 
     def __init__(self, vid: str, connect_fails: bool = False) -> None:
-        super().__init__(
-            ConnectorConfig(endpoint="stub://", vendor_id=vid)
-        )
+        super().__init__(ConnectorConfig(endpoint="stub://", vendor_id=vid))
         self._fails = connect_fails
         self.disconnected_called = False
 

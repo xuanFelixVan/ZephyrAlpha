@@ -70,9 +70,7 @@ class TestAutoSplitNoViolation:
 # 生产代码内部矛盾（repo 生成的 id 过不了同项目模型校验），非测试错。
 # 下列拆分路径测试 xfail(strict=False) 留痕，待裁定（pattern 扩子卡后缀 /
 # _make_sub_task 改用合规 seq 编号）。
-_XFAIL_ARCH078 = pytest.mark.xfail(
-    strict=False, reason="#ARCH-078 _make_sub_task 子卡 id 违 Task pattern，待裁定"
-)
+_XFAIL_ARCH078 = pytest.mark.xfail(strict=False, reason="#ARCH-078 _make_sub_task 子卡 id 违 Task pattern，待裁定")
 
 
 @_XFAIL_ARCH078

@@ -129,9 +129,7 @@ class TestRealizedPnl:
     def test_sell_realized_pnl_basic(self) -> None:
         """卖出已实现盈亏: 毛盈亏-费用=净盈亏。"""
         calc = PnlCalculator()
-        fill = make_fill(
-            fill_price=Decimal("11"), filled_quantity=Decimal("100")
-        )
+        fill = make_fill(fill_price=Decimal("11"), filled_quantity=Decimal("100"))
         result = calc.calculate_realized(fill, OrderSide.SELL, avg_cost=Decimal("10"))
         # turnover=1100, gross=(11-10)*100=100
         # commission=max(1100*0.00025,5)=max(0.275,5)=5
@@ -153,9 +151,7 @@ class TestRealizedPnl:
     def test_sell_realized_pnl_large_turnover(self) -> None:
         """大单卖出: 佣金按费率计算(超最低¥5)。"""
         calc = PnlCalculator()
-        fill = make_fill(
-            fill_price=Decimal("100"), filled_quantity=Decimal("1000")
-        )
+        fill = make_fill(fill_price=Decimal("100"), filled_quantity=Decimal("1000"))
         result = calc.calculate_realized(fill, OrderSide.SELL, avg_cost=Decimal("90"))
         # turnover=100000, gross=(100-90)*1000=10000
         # commission=max(25,5)=25, stamp_duty=50, transfer_fee=1 → fees=76
@@ -168,9 +164,7 @@ class TestRealizedPnl:
     def test_sell_realized_pnl_loss(self) -> None:
         """亏损卖出: 毛盈亏为负。"""
         calc = PnlCalculator()
-        fill = make_fill(
-            fill_price=Decimal("9"), filled_quantity=Decimal("100")
-        )
+        fill = make_fill(fill_price=Decimal("9"), filled_quantity=Decimal("100"))
         result = calc.calculate_realized(fill, OrderSide.SELL, avg_cost=Decimal("10"))
         # gross=(9-10)*100=-100, turnover=900
         # commission=max(900*0.00025,5)=max(0.225,5)=5
@@ -183,9 +177,7 @@ class TestRealizedPnl:
     def test_buy_realized_pnl_gross_zero(self) -> None:
         """买入不计已实现盈亏(毛盈亏=0), 但费用仍计入。"""
         calc = PnlCalculator()
-        fill = make_fill(
-            fill_price=Decimal("10"), filled_quantity=Decimal("100")
-        )
+        fill = make_fill(fill_price=Decimal("10"), filled_quantity=Decimal("100"))
         result = calc.calculate_realized(fill, OrderSide.BUY, avg_cost=Decimal("10"))
         # gross=0, turnover=1000
         # commission=max(0.25,5)=5, stamp_duty=0(BUY), transfer_fee=0.01
@@ -198,9 +190,7 @@ class TestRealizedPnl:
     def test_sell_breakeven_gross_zero(self) -> None:
         """平价卖出: 毛盈亏=0, 仍有费用。"""
         calc = PnlCalculator()
-        fill = make_fill(
-            fill_price=Decimal("10"), filled_quantity=Decimal("100")
-        )
+        fill = make_fill(fill_price=Decimal("10"), filled_quantity=Decimal("100"))
         result = calc.calculate_realized(fill, OrderSide.SELL, avg_cost=Decimal("10"))
         assert result.gross_pnl == Decimal("0")
         # SELL 有印花税
@@ -237,9 +227,7 @@ class TestUnrealizedPnl:
     def test_long_position_profit(self) -> None:
         """多头浮盈。"""
         calc = PnlCalculator()
-        result = calc.calculate_unrealized(
-            "600000", Decimal("100"), Decimal("10"), Decimal("11")
-        )
+        result = calc.calculate_unrealized("600000", Decimal("100"), Decimal("10"), Decimal("11"))
         # (11-10)*100=100
         assert result.gross_pnl == Decimal("100")
         assert result.quantity == Decimal("100")
@@ -247,61 +235,47 @@ class TestUnrealizedPnl:
     def test_long_position_loss(self) -> None:
         """多头浮亏。"""
         calc = PnlCalculator()
-        result = calc.calculate_unrealized(
-            "600000", Decimal("100"), Decimal("10"), Decimal("9")
-        )
+        result = calc.calculate_unrealized("600000", Decimal("100"), Decimal("10"), Decimal("9"))
         # (9-10)*100=-100
         assert result.gross_pnl == Decimal("-100")
 
     def test_short_position_profit(self) -> None:
         """空头浮盈(价格下跌盈利, 反向)。"""
         calc = PnlCalculator()
-        result = calc.calculate_unrealized(
-            "600000", Decimal("-100"), Decimal("10"), Decimal("9")
-        )
+        result = calc.calculate_unrealized("600000", Decimal("-100"), Decimal("10"), Decimal("9"))
         # (10-9)*100=100
         assert result.gross_pnl == Decimal("100")
 
     def test_short_position_loss(self) -> None:
         """空头浮亏(价格上涨亏损, 反向)。"""
         calc = PnlCalculator()
-        result = calc.calculate_unrealized(
-            "600000", Decimal("-100"), Decimal("10"), Decimal("11")
-        )
+        result = calc.calculate_unrealized("600000", Decimal("-100"), Decimal("10"), Decimal("11"))
         # (10-11)*100=-100
         assert result.gross_pnl == Decimal("-100")
 
     def test_zero_position(self) -> None:
         """零持仓浮盈亏=0。"""
         calc = PnlCalculator()
-        result = calc.calculate_unrealized(
-            "600000", Decimal("0"), Decimal("10"), Decimal("11")
-        )
+        result = calc.calculate_unrealized("600000", Decimal("0"), Decimal("10"), Decimal("11"))
         assert result.gross_pnl == Decimal("0")
 
     def test_breakeven_price_equals_cost(self) -> None:
         """市价=成本价, 浮盈亏=0。"""
         calc = PnlCalculator()
-        result = calc.calculate_unrealized(
-            "600000", Decimal("100"), Decimal("10"), Decimal("10")
-        )
+        result = calc.calculate_unrealized("600000", Decimal("100"), Decimal("10"), Decimal("10"))
         assert result.gross_pnl == Decimal("0")
 
     def test_invalid_negative_avg_cost(self) -> None:
         """负均价拒绝。"""
         calc = PnlCalculator()
         with pytest.raises(InvalidPnlInputError):
-            calc.calculate_unrealized(
-                "600000", Decimal("100"), Decimal("-1"), Decimal("11")
-            )
+            calc.calculate_unrealized("600000", Decimal("100"), Decimal("-1"), Decimal("11"))
 
     def test_invalid_negative_current_price(self) -> None:
         """负市价拒绝。"""
         calc = PnlCalculator()
         with pytest.raises(InvalidPnlInputError):
-            calc.calculate_unrealized(
-                "600000", Decimal("100"), Decimal("10"), Decimal("-1")
-            )
+            calc.calculate_unrealized("600000", Decimal("100"), Decimal("10"), Decimal("-1"))
 
 
 # ── 组合盈亏汇总测试 ──
@@ -315,8 +289,11 @@ class TestPortfolioPnl:
             # 卖出1: price=11,qty=100,cost=10 → gross=100, fees=5.561, net=94.439
             (make_fill(fill_price=Decimal("11"), fill_id="F1"), OrderSide.SELL, Decimal("10")),
             # 卖出2: price=100,qty=1000,cost=90 → gross=10000, fees=76, net=9924
-            (make_fill(fill_price=Decimal("100"), filled_quantity=Decimal("1000"), fill_id="F2"),
-             OrderSide.SELL, Decimal("90")),
+            (
+                make_fill(fill_price=Decimal("100"), filled_quantity=Decimal("1000"), fill_id="F2"),
+                OrderSide.SELL,
+                Decimal("90"),
+            ),
         ]
         positions = [
             # 持仓1: qty=100,cost=10,price=11 → unrealized=100
@@ -367,9 +344,7 @@ class TestInvariants:
         calc = PnlCalculator()
         fill = make_fill(fill_price=Decimal("11"), filled_quantity=Decimal("100"))
         realized = calc.calculate_realized(fill, OrderSide.SELL, avg_cost=Decimal("10"))
-        unrealized = calc.calculate_unrealized(
-            "600000", Decimal("100"), Decimal("10"), Decimal("11")
-        )
+        unrealized = calc.calculate_unrealized("600000", Decimal("100"), Decimal("10"), Decimal("11"))
         assert isinstance(realized.gross_pnl, Decimal)
         assert isinstance(realized.turnover, Decimal)
         assert isinstance(realized.fees.commission, Decimal)

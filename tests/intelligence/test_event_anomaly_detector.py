@@ -14,6 +14,7 @@
   4. 契约违反 —— 长度不一致/window<2/非数值 → EventAnomalyError
   5. 阈值参数化 —— corr/excess 阈值可调（G23 校准入口）
 """
+
 from __future__ import annotations
 
 import math

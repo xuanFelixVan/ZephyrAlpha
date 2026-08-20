@@ -215,9 +215,7 @@ class WormWriter:
 
             if self._config.enable_hash_chain:
                 prev_hash = self._prev_hash
-                full_hash = hashlib.sha256(
-                    (prev_hash + content_hash).encode("utf-8")
-                ).hexdigest()
+                full_hash = hashlib.sha256((prev_hash + content_hash).encode("utf-8")).hexdigest()
             else:
                 prev_hash = ""
                 full_hash = content_hash
@@ -238,9 +236,7 @@ class WormWriter:
 
             return entry
 
-    def _serialize_event(
-        self, event: SignalAuditEvent, entry_id: int, written_at: datetime
-    ) -> str:
+    def _serialize_event(self, event: SignalAuditEvent, entry_id: int, written_at: datetime) -> str:
         """序列化事件为JSON字符串"""
         data = {
             "entry_id": entry_id,
@@ -282,9 +278,7 @@ class WormWriter:
         for entry in self._entries:
             content = self._serialize_event(entry.event, entry.entry_id, entry.written_at)
             content_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()
-            expected = hashlib.sha256(
-                (prev_hash + content_hash).encode("utf-8")
-            ).hexdigest()
+            expected = hashlib.sha256((prev_hash + content_hash).encode("utf-8")).hexdigest()
             if entry.content_hash != expected:
                 return False
             if entry.prev_hash != prev_hash:
@@ -466,9 +460,7 @@ class SignalAuditLogger:
             "total_entries": len(entries),
             "event_type_breakdown": type_counts,
             "severity_breakdown": severity_counts,
-            "top_symbols": dict(
-                sorted(symbol_counts.items(), key=lambda x: -x[1])[:20]
-            ),
+            "top_symbols": dict(sorted(symbol_counts.items(), key=lambda x: -x[1])[:20]),
             "chain_integrity_valid": chain_valid,
             "retention_policy_years": self._config.retention_years,
             "worm_compliant": True,

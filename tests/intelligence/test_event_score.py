@@ -21,6 +21,7 @@
   11. check_selling_pressure_absorbed —— CVD/量能/企稳三共振+退化
   12. 量能薄封装 —— fake provider 委托/非法 symbol 守卫
 """
+
 from __future__ import annotations
 
 from datetime import date
@@ -134,32 +135,52 @@ class TestDualFactor:
 class TestExpectationGap:
     def test_quarterly_uses_revision_momentum(self):
         gap = expectation_gap_with_revision_momentum(
-            1.2, "Q1", consensus=1.0, consensus_before=1.0, consensus_after=1.1,
+            1.2,
+            "Q1",
+            consensus=1.0,
+            consensus_before=1.0,
+            consensus_after=1.1,
         )
         assert gap == pytest.approx(0.1)
 
     def test_annual_uses_static_gap_discounted(self):
         gap = expectation_gap_with_revision_momentum(
-            1.4, "annual", consensus=1.0, consensus_before=1.0, consensus_after=2.0,
+            1.4,
+            "annual",
+            consensus=1.0,
+            consensus_before=1.0,
+            consensus_after=2.0,
         )
         # 静态 (1.4-1.0)/1.0=0.4 × annual 权重 0.4（忽略巨大的上修动量）
         assert gap == pytest.approx(0.4 * 0.4)
 
     def test_zero_consensus_static_gap_zero(self):
         gap = expectation_gap_with_revision_momentum(
-            1.0, "annual", consensus=0.0, consensus_before=1.0, consensus_after=1.1,
+            1.0,
+            "annual",
+            consensus=0.0,
+            consensus_before=1.0,
+            consensus_after=1.1,
         )
         assert gap == 0.0
 
     def test_zero_consensus_before_revision_zero(self):
         gap = expectation_gap_with_revision_momentum(
-            1.0, "Q1", consensus=1.0, consensus_before=0.0, consensus_after=1.1,
+            1.0,
+            "Q1",
+            consensus=1.0,
+            consensus_before=0.0,
+            consensus_after=1.1,
         )
         assert gap == 0.0
 
     def test_unknown_report_type_still_revision(self):
         gap = expectation_gap_with_revision_momentum(
-            1.0, "weird", consensus=1.0, consensus_before=1.0, consensus_after=1.2,
+            1.0,
+            "weird",
+            consensus=1.0,
+            consensus_before=1.0,
+            consensus_after=1.2,
         )
         assert gap == pytest.approx(0.2)
 
@@ -181,8 +202,13 @@ class TestOvernightReturnJump:
 
 def _triple_data(**kw) -> EarningsFactorData:
     base = dict(
-        consensus_eps=1.0, surprise_std=0.1, ear=0.01,
-        consensus_before=1.0, consensus_after=1.1, open_next=10.1, close_event=10.0,
+        consensus_eps=1.0,
+        surprise_std=0.1,
+        ear=0.01,
+        consensus_before=1.0,
+        consensus_after=1.1,
+        open_next=10.1,
+        close_event=10.0,
     )
     base.update(kw)
     return EarningsFactorData(**base)
@@ -316,8 +342,12 @@ class TestShouldExit:
 
     def test_decay_window_table_complete(self):
         assert DECAY_EXIT_WINDOW == {
-            "earnings": 10, "ma": 15, "policy": 20,
-            "surprise": 5, "ipo": 15, "geopolitical": 25,
+            "earnings": 10,
+            "ma": 15,
+            "policy": 20,
+            "surprise": 5,
+            "ipo": 15,
+            "geopolitical": 25,
         }
 
 

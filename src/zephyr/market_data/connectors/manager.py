@@ -122,9 +122,7 @@ class ConnectorManager:
         with self._lock:
             return self._connectors.get(connector_id)
 
-    def list_connectors(
-        self, state: ConnectionState | None = None
-    ) -> list[MarketDataConnector]:
+    def list_connectors(self, state: ConnectionState | None = None) -> list[MarketDataConnector]:
         """列出所有/按连接状态过滤的连接器。
 
         Args:
@@ -158,9 +156,7 @@ class ConnectorManager:
                 _logger.exception("连接失败: %s", conn.vendor_id)
                 results[conn.vendor_id] = False
         succeeded = sum(results.values())
-        _logger.info(
-            "批量连接完成: %d/%d 成功", succeeded, len(results)
-        )
+        _logger.info("批量连接完成: %d/%d 成功", succeeded, len(results))
         return results
 
     def disconnect_all(self) -> dict[str, bool]:
@@ -182,9 +178,7 @@ class ConnectorManager:
                 _logger.exception("断开失败: %s", conn.vendor_id)
                 results[conn.vendor_id] = False
         succeeded = sum(results.values())
-        _logger.info(
-            "批量断开完成: %d/%d 成功", succeeded, len(results)
-        )
+        _logger.info("批量断开完成: %d/%d 成功", succeeded, len(results))
         return results
 
     def health_check_all(self) -> dict[str, bool]:

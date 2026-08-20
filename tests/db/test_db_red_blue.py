@@ -24,6 +24,7 @@
          WAL 模式验证为 E2E 只读测试，使用 governance_db_path fixture。
          路径通过 fixture 派生（真源：zephyr.shared.io.paths.DB_PATH）。
 """
+
 import sqlite3
 import sys
 import time

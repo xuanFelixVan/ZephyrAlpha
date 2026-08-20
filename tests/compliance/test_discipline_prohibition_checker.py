@@ -23,9 +23,15 @@ def _order(**kw) -> OrderRequest:
 
 def _ctx(**kw) -> DisciplineContext:
     base = dict(
-        signal_ref_price=100.0, surge_30min_pct=0.0, position_pnl_pct=None,
-        win_streak=0, normal_exposure=0.01, daily_pnl_pct=0.0,
-        projected_daily_freq=3.0, freq_baseline_20d=5.0, size_baseline_20d=10_000.0,
+        signal_ref_price=100.0,
+        surge_30min_pct=0.0,
+        position_pnl_pct=None,
+        win_streak=0,
+        normal_exposure=0.01,
+        daily_pnl_pct=0.0,
+        projected_daily_freq=3.0,
+        freq_baseline_20d=5.0,
+        size_baseline_20d=10_000.0,
     )
     return DisciplineContext(**{**base, **kw})
 
@@ -35,6 +41,7 @@ def _guard(tmp_path, **kw) -> DisciplineGuard:
 
 
 # ── 踏空追高 ──
+
 
 def test_chasing_hard_block(tmp_path):
     """追涨幅度 +3% > +2% 且近 30min 涨幅 +6% > +5% → Hard Block。"""
@@ -63,6 +70,7 @@ def test_chasing_boundary_not_block(tmp_path):
 
 # ── 被套补仓 ──
 
+
 def test_adding_to_loser_hard_block(tmp_path):
     v = _guard(tmp_path).check(_order(is_add=True), _ctx(position_pnl_pct=-0.06))
     assert v.behavior is ProhibitedBehavior.ADDING_TO_LOSER
@@ -82,23 +90,21 @@ def test_not_add_no_position_check(tmp_path):
 
 # ── 盈利骄傲 ──
 
+
 def test_overconfidence_warning_not_block(tmp_path):
     """连盈 5 笔 + 敞口 1.6×常规 → Warning 不阻断。"""
-    v = _guard(tmp_path).check(
-        _order(risk_exposure=0.016), _ctx(win_streak=5, normal_exposure=0.01)
-    )
+    v = _guard(tmp_path).check(_order(risk_exposure=0.016), _ctx(win_streak=5, normal_exposure=0.01))
     assert v.behavior is ProhibitedBehavior.OVERCONFIDENCE
     assert v.action is DisciplineAction.WARNING
 
 
 def test_overconfidence_streak_below_pass(tmp_path):
-    v = _guard(tmp_path).check(
-        _order(risk_exposure=0.016), _ctx(win_streak=4, normal_exposure=0.01)
-    )
+    v = _guard(tmp_path).check(_order(risk_exposure=0.016), _ctx(win_streak=4, normal_exposure=0.01))
     assert v.action is DisciplineAction.PASS
 
 
 # ── 亏损报复 ──
+
 
 def test_revenge_freq_abnormal_triggers_kill_switch(tmp_path):
     """当日 -3% + 频率 2.5×基线 → Hard Block + KillSwitchLite 触发。"""
@@ -112,9 +118,7 @@ def test_revenge_freq_abnormal_triggers_kill_switch(tmp_path):
 
 
 def test_revenge_size_abnormal(tmp_path):
-    v = _guard(tmp_path).check(
-        _order(size=16_000.0), _ctx(daily_pnl_pct=-0.03, size_baseline_20d=10_000.0)
-    )
+    v = _guard(tmp_path).check(_order(size=16_000.0), _ctx(daily_pnl_pct=-0.03, size_baseline_20d=10_000.0))
     assert v.behavior is ProhibitedBehavior.REVENGE_TRADING
 
 
@@ -134,6 +138,7 @@ def test_revenge_priority_over_overconfidence(tmp_path):
 
 
 # ── KillSwitchLite ──
+
 
 def test_kill_switch_expiry_auto_reset_next_day(tmp_path):
     ks = KillSwitchLite(tmp_path / "ks.json", logger=ComplianceLogger(tmp_path / "c.jsonl"))

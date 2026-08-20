@@ -20,17 +20,17 @@ class TestKnownTiers:
     @pytest.mark.parametrize(
         "mcap_yi,expected",
         [
-            (1500.0, MarketCapTier.MEGA),        # 1000亿+ 超级大蓝筹
-            (1000.0, MarketCapTier.MEGA),        # 边界含下限
-            (500.0, MarketCapTier.LARGE),        # 300-1000 行业头部/白马
+            (1500.0, MarketCapTier.MEGA),  # 1000亿+ 超级大蓝筹
+            (1000.0, MarketCapTier.MEGA),  # 边界含下限
+            (500.0, MarketCapTier.LARGE),  # 300-1000 行业头部/白马
             (300.0, MarketCapTier.LARGE),
-            (200.0, MarketCapTier.MID),          # 100-300 成长股/二线龙头
+            (200.0, MarketCapTier.MID),  # 100-300 成长股/二线龙头
             (100.0, MarketCapTier.MID),
-            (75.0, MarketCapTier.SMALL_MID),     # 50-100 中小盘
+            (75.0, MarketCapTier.SMALL_MID),  # 50-100 中小盘
             (50.0, MarketCapTier.SMALL_MID),
-            (30.0, MarketCapTier.SMALL),         # 20-50 小盘（游资主场）
+            (30.0, MarketCapTier.SMALL),  # 20-50 小盘（游资主场）
             (20.0, MarketCapTier.SMALL),
-            (10.0, MarketCapTier.MICRO),         # <20亿 超小盘
+            (10.0, MarketCapTier.MICRO),  # <20亿 超小盘
             (0.5, MarketCapTier.MICRO),
         ],
     )

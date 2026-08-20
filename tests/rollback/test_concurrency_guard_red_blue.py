@@ -850,6 +850,7 @@ class TestMvGuardEndToEnd:
         mapping_file = stage_base / "mapping.json"
         assert mapping_file.exists(), "映射文件应存在"
         import json as _json
+
         mapping = _json.loads(mapping_file.read_text(encoding="utf-8"))
         assert mapping["source_dir"] == "old_dir"
         assert "old_dir/untracked.md" in mapping["files"]

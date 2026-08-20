@@ -52,7 +52,11 @@ def test_to_qmt_symbol_empty() -> None:
 
 def test_static_provider_returns_context() -> None:
     provider = StaticMarketContextProvider.from_values(
-        symbol="600519", last_price=100, adv=100000, bid_price=99.9, ask_price=100.1,
+        symbol="600519",
+        last_price=100,
+        adv=100000,
+        bid_price=99.9,
+        ask_price=100.1,
     )
     ctx = provider.get_context("600519")
     assert isinstance(ctx, MarketContext)
@@ -66,7 +70,9 @@ def test_static_provider_returns_context() -> None:
 def test_static_provider_symbol_mismatch_rebuilds() -> None:
     """请求 symbol 与 ctx.symbol 不一致时, 重建保持其余字段的 context。"""
     provider = StaticMarketContextProvider.from_values(
-        symbol="600519", last_price=100, adv=100000,
+        symbol="600519",
+        last_price=100,
+        adv=100000,
     )
     ctx = provider.get_context("000001")
     assert ctx.symbol == "000001"
@@ -76,7 +82,10 @@ def test_static_provider_symbol_mismatch_rebuilds() -> None:
 
 def test_static_provider_accepts_decimal_float_str() -> None:
     provider = StaticMarketContextProvider.from_values(
-        symbol="600519", last_price=Decimal("100.5"), adv=100000.0, bid_price="99.9",
+        symbol="600519",
+        last_price=Decimal("100.5"),
+        adv=100000.0,
+        bid_price="99.9",
     )
     ctx = provider.get_context("600519")
     assert ctx.last_price == Decimal("100.5")
@@ -99,7 +108,10 @@ class _FakeRedis:
 
 
 def _make_kline(
-    symbol: str, ts: datetime, volume: Decimal, close: Decimal = Decimal("100"),
+    symbol: str,
+    ts: datetime,
+    volume: Decimal,
+    close: Decimal = Decimal("100"),
 ) -> NormalizedMarketData:
     return NormalizedMarketData(
         close=close,
@@ -116,10 +128,13 @@ def _make_kline(
 
 def _patch_load_kline(monkeypatch, records: list[NormalizedMarketData]) -> None:
     """把 market_context_provider 模块内的 load_kline 替换为返回固定 records。"""
+
     def _fake_load_kline(symbols, start, end):  # noqa: ANN001 — 测试桩
         return list(records)
+
     monkeypatch.setattr(
-        "zephyr.ex_sor.core.market_context_provider.load_kline", _fake_load_kline,
+        "zephyr.ex_sor.core.market_context_provider.load_kline",
+        _fake_load_kline,
     )
 
 
@@ -131,9 +146,11 @@ def test_redis_provider_uses_tick_and_kline_adv(monkeypatch) -> None:
         for d in range(1, 21)  # 20 个交易日
     ]
     _patch_load_kline(monkeypatch, records)
-    fake_redis = _FakeRedis({
-        tick_latest_key("600519.SH"): {"price": "100.5", "bid1": "100.4", "ask1": "100.6"},
-    })
+    fake_redis = _FakeRedis(
+        {
+            tick_latest_key("600519.SH"): {"price": "100.5", "bid1": "100.4", "ask1": "100.6"},
+        }
+    )
     provider = RedisKlineMarketContextProvider(redis_conn=fake_redis)
 
     ctx = provider.get_context("600519")
@@ -176,11 +193,16 @@ def test_redis_provider_raises_when_all_suspended(monkeypatch) -> None:
     now = datetime.now(timezone.utc)
     records = [
         NormalizedMarketData(
-            close=Decimal("100"), data_source="test",
-            high=Decimal("100"), idempotency_key=f"s:{d}",
-            low=Decimal("100"), open=Decimal("100"), symbol="600519.SH",
+            close=Decimal("100"),
+            data_source="test",
+            high=Decimal("100"),
+            idempotency_key=f"s:{d}",
+            low=Decimal("100"),
+            open=Decimal("100"),
+            symbol="600519.SH",
             timestamp=datetime(2026, 7, d, tzinfo=timezone.utc),
-            volume=Decimal("0"), is_suspended=True,
+            volume=Decimal("0"),
+            is_suspended=True,
         )
         for d in range(1, 10)
     ]

@@ -27,6 +27,7 @@
 
 无头部的文件（解析器返回 None）跳过——仅校验有头部文件的字段完整性。
 """
+
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -50,11 +51,21 @@ SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 # ── 各格式必填字段集（小写键名，与解析器返回一致）──
 # A_full：.py code/script（src/scripts 下非 tests）
 A_FULL_REQUIRED = [  # noqa: gate-vocab  # frontmatter 字段名（非 node_type 词表值；"blueprint"/"module"/"domain" 碰巧与 node_type 同名，语义无关）
-    "blueprint", "module", "domain", "dependencies",
-    "consumers", "startup", "maturity",
-    "invariants", "modify-guard",
-    "stability", "safety", "ai_autonomy",
-    "error_contract", "tests", "ttl",  # v2.0.0: 补齐 15 字段全硬校验
+    "blueprint",
+    "module",
+    "domain",
+    "dependencies",
+    "consumers",
+    "startup",
+    "maturity",
+    "invariants",
+    "modify-guard",
+    "stability",
+    "safety",
+    "ai_autonomy",
+    "error_contract",
+    "tests",
+    "ttl",  # v2.0.0: 补齐 15 字段全硬校验
 ]
 # A_test：.py test（tests/ 下）
 A_TEST_REQUIRED = ["blueprint", "module", "stability", "safety", "ai_autonomy"]
@@ -75,12 +86,21 @@ ALL_FIELD_SETS = {
 
 # 排除目录（不扫描）
 EXEMPT_DIRS = {
-    "__pycache__", ".git", ".ailocks", "node_modules",
-    ".mypy_cache", ".pytest_cache", ".ruff_cache",
-    "_backups", "_archive", ".aidrafts", ".runtime",
+    "__pycache__",
+    ".git",
+    ".ailocks",
+    "node_modules",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    "_backups",
+    "_archive",
+    ".aidrafts",
+    ".runtime",
     "data",  # data/ 下 .json/.yaml 是数据文件，非治理对象
     "models",  # ML 模型文件
 }
+
 
 # 统计累加器（5.165.35 治本：dataclass 替代 global 计数器，避免 module-level
 # 可变状态副作用——多次调用 main() 时旧数据会残留导致计数错误）

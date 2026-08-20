@@ -8,6 +8,7 @@
 # [TTL] task_bound
 
 """IdeHealthDaemon 测试."""
+
 from __future__ import annotations
 
 from zephyr.trading.ide_health_daemon import IdeHealthDaemon, cleanup_completed_tasks, scan_ghost_windows
@@ -16,10 +17,12 @@ from zephyr.trading.ide_health_daemon import IdeHealthDaemon, cleanup_completed_
 class TestIdeHealthDaemonImport:
     def test_import_ok(self):
         from zephyr.trading.ide_health_daemon import IdeHealthDaemon
+
         assert IdeHealthDaemon is not None
 
     def test_module_all(self):
         import zephyr.trading.ide_health_daemon as mod
+
         assert "IdeHealthDaemon" in mod.__all__
         assert "scan_ghost_windows" in mod.__all__
         assert "cleanup_completed_tasks" in mod.__all__

@@ -63,9 +63,7 @@ def _init_clean_repo(repo_dir: Path) -> None:
     env["GIT_COMMITTER_NAME"] = "Test"
     env["GIT_COMMITTER_EMAIL"] = "test@test.com"
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
-    subprocess.run(
-        ["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True
-    )
+    subprocess.run(["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
         cwd=str(repo_dir),
@@ -207,9 +205,7 @@ def test_registry_catalog_autosync_passes(tmp_path: Path) -> None:
     exit_code, msg = _validate_reconciler_verify(
         _make_args(), is_pure_claim=False, message="test msg", project_root=str(repo)
     )
-    assert exit_code is None, (
-        f"registry catalog autosync should pass (classifier reuse), got exit_code={exit_code}"
-    )
+    assert exit_code is None, f"registry catalog autosync should pass (classifier reuse), got exit_code={exit_code}"
     assert "[RECONCILER-VERIFY]" in msg
 
 
@@ -231,6 +227,4 @@ def test_non_autosync_yaml_in_catalogs_blocks(tmp_path: Path) -> None:
     exit_code, msg = _validate_reconciler_verify(
         _make_args(), is_pure_claim=False, message="test msg", project_root=str(repo)
     )
-    assert exit_code == 1, (
-        f"non-autosync yaml in catalogs should block, got exit_code={exit_code}"
-    )
+    assert exit_code == 1, f"non-autosync yaml in catalogs should block, got exit_code={exit_code}"

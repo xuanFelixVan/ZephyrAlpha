@@ -119,7 +119,9 @@ class FeatureGate:
             entries = self._load()
         except FeatureGateError as exc:
             result = FeatureGateResult(
-                feature=feature_name, decision=FeatureGateDecision.BLOCK, entry=None,
+                feature=feature_name,
+                decision=FeatureGateDecision.BLOCK,
+                entry=None,
                 detail=f"登记表不可读，Fail-Closed 阻断: {exc}",
             )
             self._log(result)
@@ -127,17 +129,23 @@ class FeatureGate:
         entry = entries.get(feature_name)
         if entry is None:
             result = FeatureGateResult(
-                feature=feature_name, decision=FeatureGateDecision.BLOCK, entry=None,
+                feature=feature_name,
+                decision=FeatureGateDecision.BLOCK,
+                entry=None,
                 detail="未登记（PENDING 视同 BLOCK）：裁定未决 → 暂缓上线，先走提案→裁定→登记流程",
             )
         elif entry.verdict is FeatureVerdict.FORBIDDEN:
             result = FeatureGateResult(
-                feature=feature_name, decision=FeatureGateDecision.BLOCK, entry=entry,
+                feature=feature_name,
+                decision=FeatureGateDecision.BLOCK,
+                entry=entry,
                 detail=f"禁建：{entry.reason}｜重评条件：{entry.re_review_condition}",
             )
         else:
             result = FeatureGateResult(
-                feature=feature_name, decision=FeatureGateDecision.PASS, entry=entry,
+                feature=feature_name,
+                decision=FeatureGateDecision.PASS,
+                entry=entry,
                 detail="能建（BUILDABLE）",
             )
         self._log(result)

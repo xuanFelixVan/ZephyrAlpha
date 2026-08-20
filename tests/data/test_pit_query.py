@@ -21,6 +21,7 @@
   2. 查询方法（mock ch_reader.query 捕获 SQL + 返回固定 TSV）
   3. TSV 解析 + 白名单校验
 """
+
 from __future__ import annotations
 
 from datetime import date, datetime
@@ -143,9 +144,7 @@ class TestBuildAsOfSql:
         self.pit = FinancialPITQuery()
 
     def test_single_symbol_basic(self):
-        sql = self.pit.build_as_of_sql(
-            "balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True
-        )
+        sql = self.pit.build_as_of_sql("balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True)
         assert "FROM " + FINANCIAL_PIT_TABLES["balance_sheet"] in sql
         assert "symbol = '000001.SZ'" in sql
         assert "announce_date <= toDate('2026-06-01')" in sql
@@ -156,35 +155,31 @@ class TestBuildAsOfSql:
 
     def test_panel_symbols(self):
         sql = self.pit.build_as_of_sql(
-            "income_statement", ["000001.SZ", "600000.SH"], "2026-06-01", "symbol,report_period,total_assets", single=False
+            "income_statement",
+            ["000001.SZ", "600000.SH"],
+            "2026-06-01",
+            "symbol,report_period,total_assets",
+            single=False,
         )
         assert "symbol IN ('000001.SZ','600000.SH')" in sql
         assert "LIMIT 1 BY symbol, report_period" in sql
 
     def test_embargo_applied(self):
         pit = FinancialPITQuery(PITQueryConfig(embargo_days=5))
-        sql = pit.build_as_of_sql(
-            "balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True
-        )
+        sql = pit.build_as_of_sql("balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True)
         assert "announce_date <= toDate('2026-06-01') - INTERVAL 5 DAY" in sql
 
     def test_repurchase_no_limit_by(self):
-        sql = self.pit.build_as_of_sql(
-            "repurchase", ["000001.SZ"], "2026-06-01", "*", single=True
-        )
+        sql = self.pit.build_as_of_sql("repurchase", ["000001.SZ"], "2026-06-01", "*", single=True)
         assert "LIMIT 1 BY" not in sql
 
     def test_non_whitelist_raises(self):
         with pytest.raises(PITQueryError):
-            self.pit.build_as_of_sql(
-                "kline_daily", ["000001.SZ"], "2026-06-01", "*", single=True
-            )
+            self.pit.build_as_of_sql("kline_daily", ["000001.SZ"], "2026-06-01", "*", single=True)
 
     def test_sql_injection_blocked(self):
         # 恶意 symbol 被转义
-        sql = self.pit.build_as_of_sql(
-            "balance_sheet", ["x' OR '1'='1"], "2026-06-01", "*", single=True
-        )
+        sql = self.pit.build_as_of_sql("balance_sheet", ["x' OR '1'='1"], "2026-06-01", "*", single=True)
         assert "\\'" in sql
         assert "OR '1'='1" not in sql or "\\'" in sql
 
@@ -324,9 +319,7 @@ class TestConfig:
 
     def test_embargo_propagates_to_sql(self):
         pit = FinancialPITQuery(PITQueryConfig(embargo_days=10))
-        sql = pit.build_as_of_sql(
-            "balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True
-        )
+        sql = pit.build_as_of_sql("balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True)
         assert "INTERVAL 10 DAY" in sql
 
 

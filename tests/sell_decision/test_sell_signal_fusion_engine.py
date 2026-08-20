@@ -28,9 +28,14 @@ T0 = datetime(2026, 8, 1, 10, 0, tzinfo=timezone.utc)
 # ── 测试数据工厂 ─────────────────────────────────────────────────────────────
 
 
-def sell(symbol="000001.SZ", stype=SellSignalType.MAIN_FORCE_DISTRIBUTION,
-         direction=SellDirection.CLEAR, confidence=0.9,
-         timeframe=SignalTimeFrame.DAILY, **kw) -> SellSignal:
+def sell(
+    symbol="000001.SZ",
+    stype=SellSignalType.MAIN_FORCE_DISTRIBUTION,
+    direction=SellDirection.CLEAR,
+    confidence=0.9,
+    timeframe=SignalTimeFrame.DAILY,
+    **kw,
+) -> SellSignal:
     return SellSignal(
         symbol=symbol,
         signal_type=stype,
@@ -83,7 +88,7 @@ def test_type_weight_differentiation():
     decisions = engine.fuse(
         [
             sell(stype=SellSignalType.MAIN_FORCE_DISTRIBUTION, confidence=0.5),  # w1.5
-            sell(stype=SellSignalType.OPPORTUNITY_COST, confidence=0.5),        # w0.6
+            sell(stype=SellSignalType.OPPORTUNITY_COST, confidence=0.5),  # w0.6
         ],
         now=T0,
     )

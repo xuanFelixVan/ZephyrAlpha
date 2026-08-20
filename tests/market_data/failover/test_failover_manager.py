@@ -432,9 +432,7 @@ class TestThreadSafety:
         v2 = MockVendor("b", healthy=True)
         mgr = FailoverManager(
             make_registry(v1, v2),
-            FailoverConfig(
-                priority_list=("a", "b"), auto_failback=False
-            ),
+            FailoverConfig(priority_list=("a", "b"), auto_failback=False),
         )
         errors: list[Exception] = []
 

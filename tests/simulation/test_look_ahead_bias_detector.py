@@ -126,9 +126,7 @@ class TestCleanDataFrame:
         detector = LookAheadBiasDetector()
         df = make_clean_df()
         df["label"] = [float(i % 2) for i in range(len(df))]
-        result = detector.scan(
-            df, feature_columns=["ma5", "rsi"], label_column="label"
-        )
+        result = detector.scan(df, feature_columns=["ma5", "rsi"], label_column="label")
         assert result.is_clean
 
 
@@ -144,9 +142,7 @@ class TestForwardColumnName:
         types = [i.bias_type for i in result.issues]
         assert BiasType.FORWARD_COLUMN_NAME in types
         # ret_fwd 应被标记
-        fwd_issue = next(
-            i for i in result.issues if i.column == "ret_fwd"
-        )
+        fwd_issue = next(i for i in result.issues if i.column == "ret_fwd")
         assert fwd_issue.severity == BiasSeverity.MEDIUM
 
     def test_target_pattern_high_severity(self):
@@ -177,31 +173,19 @@ class TestForwardColumnName:
 class TestLabelLeakage:
     def test_label_in_features_critical(self):
         detector = LookAheadBiasDetector()
-        df = pd.DataFrame(
-            {"ma5": [1.0] * 100, "label": [0.0] * 100}
-        )
-        result = detector.scan(
-            df, feature_columns=["ma5", "label"], label_column="label"
-        )
+        df = pd.DataFrame({"ma5": [1.0] * 100, "label": [0.0] * 100})
+        result = detector.scan(df, feature_columns=["ma5", "label"], label_column="label")
         assert not result.is_clean
-        leakage = [
-            i for i in result.issues if i.bias_type == BiasType.LABEL_LEAKAGE
-        ]
+        leakage = [i for i in result.issues if i.bias_type == BiasType.LABEL_LEAKAGE]
         assert len(leakage) == 1
         assert leakage[0].severity == BiasSeverity.CRITICAL
         assert leakage[0].column == "label"
 
     def test_label_not_in_features_no_leakage(self):
         detector = LookAheadBiasDetector()
-        df = pd.DataFrame(
-            {"ma5": [1.0] * 100, "label": [0.0] * 100}
-        )
-        result = detector.scan(
-            df, feature_columns=["ma5"], label_column="label"
-        )
-        leakage = [
-            i for i in result.issues if i.bias_type == BiasType.LABEL_LEAKAGE
-        ]
+        df = pd.DataFrame({"ma5": [1.0] * 100, "label": [0.0] * 100})
+        result = detector.scan(df, feature_columns=["ma5"], label_column="label")
+        leakage = [i for i in result.issues if i.bias_type == BiasType.LABEL_LEAKAGE]
         assert len(leakage) == 0
 
 
@@ -245,16 +229,9 @@ class TestTrailingNaN:
 class TestTimestampMonotonic:
     def test_monotonic_ok(self):
         detector = LookAheadBiasDetector()
-        df = pd.DataFrame(
-            {"feat": [1.0] * 50, "ts": list(range(50))}
-        )
-        result = detector.scan(
-            df, feature_columns=["feat"], timestamp_column="ts"
-        )
-        ts_issues = [
-            i for i in result.issues
-            if i.bias_type == BiasType.NON_MONOTONIC_TIMESTAMP
-        ]
+        df = pd.DataFrame({"feat": [1.0] * 50, "ts": list(range(50))})
+        result = detector.scan(df, feature_columns=["feat"], timestamp_column="ts")
+        ts_issues = [i for i in result.issues if i.bias_type == BiasType.NON_MONOTONIC_TIMESTAMP]
         assert len(ts_issues) == 0
 
     def test_non_monotonic_detected(self):
@@ -262,13 +239,8 @@ class TestTimestampMonotonic:
         ts = list(range(50))
         ts[10] = 5  # 倒退
         df = pd.DataFrame({"feat": [1.0] * 50, "ts": ts})
-        result = detector.scan(
-            df, feature_columns=["feat"], timestamp_column="ts"
-        )
-        ts_issues = [
-            i for i in result.issues
-            if i.bias_type == BiasType.NON_MONOTONIC_TIMESTAMP
-        ]
+        result = detector.scan(df, feature_columns=["feat"], timestamp_column="ts")
+        ts_issues = [i for i in result.issues if i.bias_type == BiasType.NON_MONOTONIC_TIMESTAMP]
         assert len(ts_issues) == 1
         assert ts_issues[0].severity == BiasSeverity.MEDIUM
 
@@ -277,13 +249,8 @@ class TestTimestampMonotonic:
         ts = list(range(50))
         ts[10] = ts[9]  # 重复
         df = pd.DataFrame({"feat": [1.0] * 50, "ts": ts})
-        result = detector.scan(
-            df, feature_columns=["feat"], timestamp_column="ts"
-        )
-        ts_issues = [
-            i for i in result.issues
-            if i.bias_type == BiasType.NON_MONOTONIC_TIMESTAMP
-        ]
+        result = detector.scan(df, feature_columns=["feat"], timestamp_column="ts")
+        ts_issues = [i for i in result.issues if i.bias_type == BiasType.NON_MONOTONIC_TIMESTAMP]
         assert len(ts_issues) == 1
 
 
@@ -317,10 +284,7 @@ class TestTruncationValidation:
         data = [float(i) for i in range(100)]
         result = detector.validate_function(full_sample_mean, data)
         assert not result.is_clean
-        mismatches = [
-            i for i in result.issues
-            if i.bias_type == BiasType.TRUNCATION_MISMATCH
-        ]
+        mismatches = [i for i in result.issues if i.bias_type == BiasType.TRUNCATION_MISMATCH]
         assert len(mismatches) == 1
         assert mismatches[0].severity == BiasSeverity.CRITICAL
 
@@ -347,9 +311,7 @@ class TestTruncationValidation:
             return [m] * len(d)
 
         data = [float(i) for i in range(100)]
-        result = detector.validate_function(
-            full_mean, data, test_indices=[50]
-        )
+        result = detector.validate_function(full_mean, data, test_indices=[50])
         assert not result.is_clean
 
     def test_empty_data_raises(self):
@@ -395,9 +357,7 @@ class TestSeverityOrdering:
                 "label": [0.0] * 100,  # CRITICAL (label leakage)
             }
         )
-        result = detector.scan(
-            df, feature_columns=["ret_fwd", "label"], label_column="label"
-        )
+        result = detector.scan(df, feature_columns=["ret_fwd", "label"], label_column="label")
         # 第一个应是最严重
         assert result.issues[0].severity == BiasSeverity.CRITICAL
         # 严重度非递增
@@ -409,9 +369,7 @@ class TestSeverityOrdering:
     def test_critical_count(self):
         detector = LookAheadBiasDetector()
         df = pd.DataFrame({"label": [0.0] * 50})
-        result = detector.scan(
-            df, feature_columns=["label"], label_column="label"
-        )
+        result = detector.scan(df, feature_columns=["label"], label_column="label")
         assert result.critical_count == 1
         assert result.max_severity == BiasSeverity.CRITICAL
 
@@ -439,9 +397,7 @@ class TestAuditSummary:
     def test_biased_summary_lists_issues(self):
         detector = LookAheadBiasDetector()
         df = pd.DataFrame({"label": [0.0] * 50})
-        result = detector.scan(
-            df, feature_columns=["label"], label_column="label"
-        )
+        result = detector.scan(df, feature_columns=["label"], label_column="label")
         summary = detector.audit_summary(result)
         assert "FAIL" in summary
         assert "CRITICAL" in summary

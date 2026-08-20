@@ -202,5 +202,7 @@ def main():
 
 
 if __name__ == "__main__":
-    import sys; sys.exit("DEPRECATED: 此脚本已归档，depgraph.db 已迁移至 PostgreSQL 16")
+    import sys
+
+    sys.exit("DEPRECATED: 此脚本已归档，depgraph.db 已迁移至 PostgreSQL 16")
     main()

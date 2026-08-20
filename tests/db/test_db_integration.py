@@ -20,6 +20,7 @@
 测试隔离：本测试为 E2E 集成测试，连接生产库执行只读 SELECT 查询；
          路径通过 governance_db_path fixture 派生（真源：zephyr.shared.io.paths.DB_PATH）。
 """
+
 import sqlite3
 import sys
 from pathlib import Path

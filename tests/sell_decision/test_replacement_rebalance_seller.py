@@ -197,8 +197,10 @@ def test_on_order_callback_invoked():
 
 def test_on_order_callback_failure_isolated():
     """回调异常不阻断。"""
+
     def bad_cb(_):
         raise RuntimeError("boom")
+
     seller = ReplacementRebalanceSeller()
     seller.on_order(bad_cb)
     order = seller.evaluate_rebalance("A", 0.12, 0.05, now=T0)

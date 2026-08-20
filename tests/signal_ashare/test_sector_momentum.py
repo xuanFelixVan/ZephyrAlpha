@@ -97,9 +97,7 @@ class TestMultiTfMomentum:
 
     def test_windows_weights_mismatch_raises(self):
         with pytest.raises(ValueError, match="长度必须一致"):
-            multi_tf_momentum(
-                {"A": _trend(100.0, 0.01, 21)}, windows=(20, 5), weights=(0.5,)
-            )
+            multi_tf_momentum({"A": _trend(100.0, 0.01, 21)}, windows=(20, 5), weights=(0.5,))
 
     def test_custom_windows_weights(self):
         """自定义窗口与权重（如 q5 单窗口）"""

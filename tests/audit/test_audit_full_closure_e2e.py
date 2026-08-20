@@ -22,15 +22,11 @@ FindingSeverity = finding_model.FindingSeverity
 FindingDimension = finding_model.FindingDimension
 generate_finding_id = finding_model.generate_finding_id
 
-finding_ingest_mod = pytest.importorskip(
-    "zephyr.gov_audit.finding_ingest", reason="finding_ingest not available"
-)
+finding_ingest_mod = pytest.importorskip("zephyr.gov_audit.finding_ingest", reason="finding_ingest not available")
 FindingIngest = finding_ingest_mod.FindingIngest
 IngestResult = finding_ingest_mod.IngestResult
 
-pipeline_mod = pytest.importorskip(
-    "zephyr.gov_audit.pipeline_runner", reason="pipeline_runner not available"
-)
+pipeline_mod = pytest.importorskip("zephyr.gov_audit.pipeline_runner", reason="pipeline_runner not available")
 PipelineRunner = pipeline_mod.PipelineRunner
 PipelineResult = pipeline_mod.PipelineResult
 

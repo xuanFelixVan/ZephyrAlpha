@@ -38,6 +38,7 @@
 依据: 13_regime_phase3_engineering_plan.md §3.1.9
 SSoT: #ARCH-NLP-PIPELINE-001
 """
+
 from __future__ import annotations
 
 import argparse
@@ -61,14 +62,14 @@ EVAL_SET_PATH = ROOT / "data" / "eval" / "news_sentiment_200.jsonl"
 
 # ── 中文新闻采集时间段（危机期关键词密集）──
 PERIODS = [
-    ("2015-06-15", "2015-09-15", 2500),   # 股灾 1.0
-    ("2015-12-01", "2016-02-29", 2500),   # 股灾 2.0/3.0 + 熔断
-    ("2018-06-01", "2019-01-31", 2500),   # 贸易战
-    ("2020-02-01", "2020-04-30", 2500),   # 疫情
-    ("2022-01-01", "2022-05-31", 2500),   # 美联储加息
-    ("2024-01-01", "2024-09-30", 2500),   # 近期波动
-    ("2017-03-01", "2017-09-30", 1500),   # 常态
-    ("2023-01-01", "2023-09-30", 1500),   # 常态
+    ("2015-06-15", "2015-09-15", 2500),  # 股灾 1.0
+    ("2015-12-01", "2016-02-29", 2500),  # 股灾 2.0/3.0 + 熔断
+    ("2018-06-01", "2019-01-31", 2500),  # 贸易战
+    ("2020-02-01", "2020-04-30", 2500),  # 疫情
+    ("2022-01-01", "2022-05-31", 2500),  # 美联储加息
+    ("2024-01-01", "2024-09-30", 2500),  # 近期波动
+    ("2017-03-01", "2017-09-30", 1500),  # 常态
+    ("2023-01-01", "2023-09-30", 1500),  # 常态
 ]
 
 FPB_URL = "https://raw.githubusercontent.com/AnonZamura/financial-phrasebank/master/Data/Sentences_AllAgree.txt"
@@ -109,14 +110,16 @@ def collect_chinese_news(eval_ids: set[str]) -> list[dict]:
             if not nid or nid in eval_ids or nid in seen:
                 continue
             seen.add(nid)
-            all_news.append({
-                "news_id": nid,
-                "title": str(row.get("title", "")).strip(),
-                "content": str(row.get("content", ""))[:500],
-                "source": str(row.get("source", "")),
-                "publish_time": str(row.get("publish_time", "")),
-                "lang": "zh",
-            })
+            all_news.append(
+                {
+                    "news_id": nid,
+                    "title": str(row.get("title", "")).strip(),
+                    "content": str(row.get("content", ""))[:500],
+                    "source": str(row.get("source", "")),
+                    "publish_time": str(row.get("publish_time", "")),
+                    "lang": "zh",
+                }
+            )
             added += 1
         log.info("采集 %s~%s: +%d（累计 %d）", start, end, added, len(all_news))
     return all_news
@@ -162,7 +165,10 @@ def balance_sample(labeled: list[dict], *, target_per_class: int, seed: int = 42
     rnd.shuffle(balanced)
     log.info(
         "平衡后: pos=%d neg=%d neutral=%d 总计=%d",
-        len(by_label["positive"]), len(by_label["negative"]), len(by_label["neutral"]), len(balanced),
+        len(by_label["positive"]),
+        len(by_label["negative"]),
+        len(by_label["neutral"]),
+        len(balanced),
     )
     return balanced
 
@@ -207,14 +213,16 @@ def fetch_fpb_english() -> list[dict]:
         if sent not in LABELS or not sentence:
             continue
         score = 0.8 if sent != "neutral" else 0.5
-        samples.append({
-            "title": sentence[:100],
-            "content": sentence,
-            "sentiment": sent,
-            "score": score,
-            "source": "fpb_allagree",
-            "lang": "en",
-        })
+        samples.append(
+            {
+                "title": sentence[:100],
+                "content": sentence,
+                "sentiment": sent,
+                "score": score,
+                "source": "fpb_allagree",
+                "lang": "en",
+            }
+        )
     log.info("FPB 加载: %d 条英文样本", len(samples))
     return samples
 
@@ -252,7 +260,9 @@ def main() -> None:
     cn_labeled = label_with_keywords(cn_news) if cn_news else []
 
     # 4. 平衡采样
-    cn_balanced = balance_sample(cn_labeled, target_per_class=args.target_per_class, seed=args.seed) if cn_labeled else []
+    cn_balanced = (
+        balance_sample(cn_labeled, target_per_class=args.target_per_class, seed=args.seed) if cn_labeled else []
+    )
 
     # 5. FPB 英文增强
     en_samples: list[dict] = []
@@ -271,6 +281,7 @@ def main() -> None:
 
     # 7. 分布统计
     from collections import Counter
+
     dist = Counter(s.get("sentiment") for s in all_samples)
     log.info("最终分布: %s", dict(dist))
 

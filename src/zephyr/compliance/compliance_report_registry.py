@@ -69,7 +69,7 @@ class ReportGateDecision(enum.Enum):
 
 @dataclass(frozen=True)
 class ReportItem:
-    """一条报告义务（§7.4）。 """
+    """一条报告义务（§7.4）。"""
 
     item_id: str
     name: str
@@ -105,15 +105,17 @@ class ComplianceReportRegistry:
             raise ComplianceReportError(f"登记表解析失败: {exc}") from exc
         items: list[ReportItem] = []
         for raw in data.get("report_items", []):
-            items.append(ReportItem(
-                item_id=raw["item_id"],
-                name=str(raw.get("name", "")),
-                content_source=str(raw.get("content_source", "")),
-                timing=str(raw.get("timing", "")),
-                required=bool(raw.get("required", True)),
-                reported_at=raw.get("reported_at"),
-                broker_ack=bool(raw.get("broker_ack", False)),
-            ))
+            items.append(
+                ReportItem(
+                    item_id=raw["item_id"],
+                    name=str(raw.get("name", "")),
+                    content_source=str(raw.get("content_source", "")),
+                    timing=str(raw.get("timing", "")),
+                    required=bool(raw.get("required", True)),
+                    reported_at=raw.get("reported_at"),
+                    broker_ack=bool(raw.get("broker_ack", False)),
+                )
+            )
         return items
 
     def order_min_dwell_us(self) -> int | None:
@@ -142,7 +144,8 @@ class ReportGate:
             items = self._registry.load_items()
         except ComplianceReportError as exc:
             result = ReportGateResult(
-                decision=ReportGateDecision.BLOCK, missing=(),
+                decision=ReportGateDecision.BLOCK,
+                missing=(),
                 detail=f"登记表不可读，Fail-Closed 拒单: {exc}",
             )
             self._log(result)
@@ -150,12 +153,14 @@ class ReportGate:
         missing = tuple(i.item_id for i in items if i.required and not i.broker_ack)
         if missing:
             result = ReportGateResult(
-                decision=ReportGateDecision.BLOCK, missing=missing,
+                decision=ReportGateDecision.BLOCK,
+                missing=missing,
                 detail=f"先报告后交易：{len(missing)} 项必报未确认（broker_ack 缺失）→ C-002 拒单",
             )
         else:
             result = ReportGateResult(
-                decision=ReportGateDecision.PASS, missing=(),
+                decision=ReportGateDecision.PASS,
+                missing=(),
                 detail="全部必报项已确认",
             )
         self._log(result)

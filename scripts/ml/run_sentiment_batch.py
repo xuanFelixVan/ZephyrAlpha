@@ -33,6 +33,7 @@ sentiment_aggregator 跨源一致性投票 + 按日聚合 → 产物落盘（回
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 7
 SSoT: #ARCH-NLP-PIPELINE-001
 """
+
 from __future__ import annotations
 
 import argparse

@@ -37,6 +37,7 @@
     0 = 全部通道验证通过（或单测已覆盖且 live 不可达时降级通过）
     1 = 通道代码路径故障（需修复）
 """
+
 from __future__ import annotations
 
 import json
@@ -139,8 +140,7 @@ def _run_feishu_test() -> dict:
         "channel": "feishu_webhook",
         "passed": not failed,
         "detail": (
-            f"POST 已接收，payload 校验全部通过；msg_type={payload.get('msg_type')!r}, "
-            f"text 长度={len(text)}"
+            f"POST 已接收，payload 校验全部通过；msg_type={payload.get('msg_type')!r}, text 长度={len(text)}"
             if not failed
             else f"payload 校验失败: {failed}; payload={payload}"
         ),
@@ -198,12 +198,7 @@ class _SMTPCatcherHandler(socketserver.BaseRequestHandler):
                 conv.commands.append(line)
                 cmd = line.upper()
                 if cmd.startswith("EHLO") or cmd.startswith("HELO"):
-                    sock.sendall(
-                        b"250-smtp.zephyr.local\r\n"
-                        b"250-AUTH PLAIN LOGIN\r\n"
-                        b"250-STARTTLS\r\n"
-                        b"250 OK\r\n"
-                    )
+                    sock.sendall(b"250-smtp.zephyr.local\r\n250-AUTH PLAIN LOGIN\r\n250-STARTTLS\r\n250 OK\r\n")
                 elif cmd.startswith("AUTH"):
                     sock.sendall(b"235 2.7.0 Authentication successful\r\n")
                 elif cmd.startswith("MAIL FROM"):
@@ -263,14 +258,10 @@ def _run_smtp_test() -> dict:
         try:
             from zephyr.data.alerter import LEVEL_CRITICAL, Alerter
 
-            alerter = Alerter(
-                failures_dir=os.path.join(os.path.dirname(__file__), "_tmp_failures")
-            )
+            alerter = Alerter(failures_dir=os.path.join(os.path.dirname(__file__), "_tmp_failures"))
             task_id = "b2_smtp_verify"
             error = "B2 告警通道验证：SMTP 邮件端到端测试"
-            ok = alerter.notify(
-                task_id, error, level=LEVEL_CRITICAL, source="verify_alert_channels"
-            )
+            ok = alerter.notify(task_id, error, level=LEVEL_CRITICAL, source="verify_alert_channels")
             # 等待会话完成
             for _ in range(40):
                 if any(c == "QUIT" for c in conv.commands):
@@ -346,9 +337,7 @@ def main() -> int:
     print()
     print("=" * 60)
     all_passed = all(r["passed"] for r in results)
-    print(
-        "总结: " + ("全部通道验证通过 ✅" if all_passed else "存在通道故障 ❌")
-    )
+    print("总结: " + ("全部通道验证通过 ✅" if all_passed else "存在通道故障 ❌"))
     print()
     print("说明：")
     print("  - 本脚本验证代码路径在真实网络层可用（真实 HTTP/socket + 真实 payload）。")

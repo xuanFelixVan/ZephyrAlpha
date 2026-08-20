@@ -12,6 +12,7 @@
   2. map_geopolitical_event_to_sectors —— 已知标签/未知标签/event_score 公式
      （权重 1.4×方向×情绪×衰减）/rising 窗内外/sentiment 裁剪
 """
+
 from __future__ import annotations
 
 import pytest

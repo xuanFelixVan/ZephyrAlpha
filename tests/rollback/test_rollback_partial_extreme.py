@@ -14,6 +14,7 @@ Covers 5 extreme scenarios:
 
 Each test verifies exit code + state consistency per blueprint §B42 (rollback state machine).
 """
+
 from __future__ import annotations
 
 import json

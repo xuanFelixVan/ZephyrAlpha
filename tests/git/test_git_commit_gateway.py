@@ -70,9 +70,7 @@ def _init_git_repo(repo_dir: Path) -> None:
     env["GIT_COMMITTER_NAME"] = "Test"
     env["GIT_COMMITTER_EMAIL"] = "test@test.com"
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
-    subprocess.run(
-        ["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True
-    )
+    subprocess.run(["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
         cwd=str(repo_dir),
@@ -310,6 +308,7 @@ class TestGitCommitGatewayCommit:
         导致 [no-lookup:reason] 标记在直接路径下永远不触发（逃生通道形同虚设）。
         """
         from unittest.mock import MagicMock
+
         _init_git_repo(tmp_path)
         f = _write_file(tmp_path, "a.py", "x = 1\n")
 
@@ -329,12 +328,12 @@ class TestGitCommitGatewayCommit:
         mock_registry.check_all.assert_called_once()
         call_args = mock_registry.check_all.call_args
         # call_args.kwargs 是关键字参数
-        assert 'commit_message' in call_args.kwargs, (
-            "commit() MUST 传 commit_message 给 check_all"
-            "（#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1）"
+        assert "commit_message" in call_args.kwargs, (
+            "commit() MUST 传 commit_message 给 check_all（#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1）"
         )
-        assert call_args.kwargs['commit_message'] == "feat: test [no-lookup:symmetry-test]", \
+        assert call_args.kwargs["commit_message"] == "feat: test [no-lookup:symmetry-test]", (
             "commit_message 应为原始 message（不含 GW marker）"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -456,7 +455,7 @@ class TestSessionAwareStash:
                 # 格式 1：内联 pathspec（``--`` 分隔符）
                 if "--" in cmd:
                     idx = cmd.index("--")
-                    recorded.extend(cmd[idx + 1:])
+                    recorded.extend(cmd[idx + 1 :])
                 # 格式 2：pathspec 文件
                 for arg in cmd:
                     if arg.startswith("--pathspec-from-file="):
@@ -468,7 +467,7 @@ class TestSessionAwareStash:
                                     if line:
                                         # 去掉 :(icase) 前缀
                                         if line.startswith(":(icase)"):
-                                            line = line[len(":(icase)"):]
+                                            line = line[len(":(icase)") :]
                                         recorded.append(line)
                         except OSError:
                             pass
@@ -486,14 +485,19 @@ class TestSessionAwareStash:
         f_b = _write_file(repo_dir, "b.py", "y = 2\n")
         env = {
             **os.environ,
-            "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com",
-            "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@t.com",
+            "GIT_AUTHOR_NAME": "T",
+            "GIT_AUTHOR_EMAIL": "t@t.com",
+            "GIT_COMMITTER_NAME": "T",
+            "GIT_COMMITTER_EMAIL": "t@t.com",
         }
         for f in ("a.py", "b.py"):
             subprocess.run(["git", "add", f], cwd=str(repo_dir), capture_output=True, env=env, check=True)
         subprocess.run(
             ["git", "commit", "-m", "init ab", "--no-verify"],
-            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+            cwd=str(repo_dir),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         return f_a, f_b
 
@@ -568,9 +572,7 @@ class TestSessionAwareStash:
         assert recorded == [], f"pathspec commit 不应 stash，pathspec={recorded}"
         assert f_b.read_text(encoding="utf-8") == "y = 20\n", "b.py 修改应留在工作区"
 
-    def test_feature_flag_disabled_pathspec_skips_stash(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_feature_flag_disabled_pathspec_skips_stash(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """pathspec commit 跳过 stash——feature flag 禁用也不 stash。
 
         治本（2026-06-29）：pathspec commit 天然隔离，feature flag 状态不影响
@@ -614,8 +616,11 @@ class TestSessionAwareStash:
         assert f_b.read_text(encoding="utf-8") == "y = 20\n", "b.py 修改应留在工作区"
         # 无 stash 残留
         stash_list = subprocess.run(
-            ["git", "stash", "list"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8",
+            ["git", "stash", "list"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
         ).stdout
         assert stash_list.strip() == "", f"不应有 stash 残留: {stash_list}"
 
@@ -640,7 +645,8 @@ class TestEdgeCases:
         result = gw.commit(
             session_id="s1",
             files=[str(tmp_path / "nonexistent.py")],
-            allow_overlap=True, message="feat: nope",
+            allow_overlap=True,
+            message="feat: nope",
         )
         assert result.status == CommitStatus.NOTHING_TO_COMMIT
 
@@ -680,12 +686,18 @@ class TestRenameFallback:
         env = self._git_env()
         tmp_name = f"_tmp_rename_{old}_{new}"
         subprocess.run(
-            ["git", "mv", old, tmp_name], cwd=str(repo),
-            capture_output=True, env=env, check=True,
+            ["git", "mv", old, tmp_name],
+            cwd=str(repo),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         subprocess.run(
-            ["git", "mv", tmp_name, new], cwd=str(repo),
-            capture_output=True, env=env, check=True,
+            ["git", "mv", tmp_name, new],
+            cwd=str(repo),
+            capture_output=True,
+            env=env,
+            check=True,
         )
 
     def test_staged_rename_committed_correctly(self, tmp_path: Path) -> None:
@@ -695,13 +707,22 @@ class TestRenameFallback:
         f = _write_file(tmp_path, "UPPER.txt", "hello\n")
         env = self._git_env()
         subprocess.run(["git", "add", "UPPER.txt"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
-        subprocess.run(["git", "commit", "-m", "init upper", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        subprocess.run(
+            ["git", "commit", "-m", "init upper", "--no-verify"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
+        )
         # rename UPPER.txt -> lower.txt（两步法）
         self._do_rename(tmp_path, "UPPER.txt", "lower.txt")
         # 验证 staged 是 R100
         r = subprocess.run(
-            ["git", "diff", "--cached", "--name-status"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8",
+            ["git", "diff", "--cached", "--name-status"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
         )
         assert r.stdout.strip().startswith("R"), f"staged 应为 rename: {r.stdout}"
         # 通过 GitCommitGateway commit
@@ -709,24 +730,28 @@ class TestRenameFallback:
         result = gw.commit(
             session_id="rename-test",
             files=[str(tmp_path / "lower.txt")],
-            allow_overlap=True, message="refactor: rename UPPER.txt to lower.txt",
+            allow_overlap=True,
+            message="refactor: rename UPPER.txt to lower.txt",
         )
-        assert result.status == CommitStatus.OK, \
-            f"rename commit 应成功: {result.status} {result.message}"
+        assert result.status == CommitStatus.OK, f"rename commit 应成功: {result.status} {result.message}"
         # commit 后 staged 区无残留
         r = subprocess.run(
-            ["git", "diff", "--cached", "--name-status"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8",
+            ["git", "diff", "--cached", "--name-status"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
         )
-        assert not r.stdout.strip(), \
-            f"commit 后 staged 区应无残留: {r.stdout}"
+        assert not r.stdout.strip(), f"commit 后 staged 区应无残留: {r.stdout}"
         # HEAD commit 包含 rename
         r = subprocess.run(
-            ["git", "show", "--name-status", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8",
+            ["git", "show", "--name-status", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
         )
-        assert "UPPER.txt" in r.stdout and "lower.txt" in r.stdout, \
-            f"HEAD 应含 rename: {r.stdout}"
+        assert "UPPER.txt" in r.stdout and "lower.txt" in r.stdout, f"HEAD 应含 rename: {r.stdout}"
 
     def test_dirty_staged_blocks_commit(self, tmp_path: Path) -> None:
         """staged 区有非目标文件时，commit 被阻断（防误提交）。"""
@@ -736,7 +761,9 @@ class TestRenameFallback:
         f_b = _write_file(tmp_path, "b.txt", "b\n")
         env = self._git_env()
         subprocess.run(["git", "add", "a.txt", "b.txt"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
-        subprocess.run(["git", "commit", "-m", "init", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        subprocess.run(
+            ["git", "commit", "-m", "init", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env, check=True
+        )
         # 手动 stage 两个文件的修改
         _write_file(tmp_path, "a.txt", "a modified\n")
         _write_file(tmp_path, "b.txt", "b modified\n")
@@ -746,15 +773,14 @@ class TestRenameFallback:
         result = gw.commit(
             session_id="dirty-test",
             files=[str(tmp_path / "a.txt")],
-            allow_overlap=True, message="feat: only a",
+            allow_overlap=True,
+            message="feat: only a",
         )
         # pathspec commit 只提交 a.txt，b.txt 留在 staged 区不被提交
         # 治本（2026-06-29）：pathspec commit 不 stash，天然隔离非目标文件
-        assert result.status == CommitStatus.OK, \
-            f"pathspec commit 应成功: {result.status} {result.message}"
+        assert result.status == CommitStatus.OK, f"pathspec commit 应成功: {result.status} {result.message}"
         # b.txt 修改留在工作区（pathspec commit 不 stash）
-        assert (tmp_path / "b.txt").read_text(encoding="utf-8") == "b modified\n", \
-            "b.txt 修改应留工作区"
+        assert (tmp_path / "b.txt").read_text(encoding="utf-8") == "b modified\n", "b.txt 修改应留工作区"
 
     def test_rename_with_dirty_staged_auto_unstage(self, tmp_path: Path) -> None:
         """无 pathspec 模式（rename）+ staging 区有非目标文件 → 自动 unstage → commit 成功。
@@ -768,8 +794,12 @@ class TestRenameFallback:
         _write_file(tmp_path, "UPPER.txt", "hello\n")
         _write_file(tmp_path, "b.txt", "b\n")
         env = self._git_env()
-        subprocess.run(["git", "add", "UPPER.txt", "b.txt"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
-        subprocess.run(["git", "commit", "-m", "init", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        subprocess.run(
+            ["git", "add", "UPPER.txt", "b.txt"], cwd=str(tmp_path), capture_output=True, env=env, check=True
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "init", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env, check=True
+        )
         # rename UPPER.txt -> lower.txt（触发无 pathspec 模式）
         self._do_rename(tmp_path, "UPPER.txt", "lower.txt")
         # 模拟并发 session：stage b.txt 修改（非目标文件污染 staging 区）
@@ -780,22 +810,24 @@ class TestRenameFallback:
         result = gw.commit(
             session_id="auto-unstage-test",
             files=[str(tmp_path / "lower.txt")],
-            allow_overlap=True, message="refactor: rename UPPER to lower",
+            allow_overlap=True,
+            message="refactor: rename UPPER to lower",
         )
-        assert result.status == CommitStatus.OK, \
+        assert result.status == CommitStatus.OK, (
             f"auto-unstage 后 rename commit 应成功: {result.status} {result.message}"
+        )
         # b.txt 修改不在 commit 中（只提交了 rename）
         r = subprocess.run(
-            ["git", "show", "--name-status", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8",
+            ["git", "show", "--name-status", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
         )
-        assert "UPPER.txt" in r.stdout and "lower.txt" in r.stdout, \
-            f"HEAD 应含 rename: {r.stdout}"
-        assert "b.txt" not in r.stdout, \
-            f"b.txt 不应被搭便车提交: {r.stdout}"
+        assert "UPPER.txt" in r.stdout and "lower.txt" in r.stdout, f"HEAD 应含 rename: {r.stdout}"
+        assert "b.txt" not in r.stdout, f"b.txt 不应被搭便车提交: {r.stdout}"
         # b.txt 修改仍留在工作区（被 auto-unstage，未丢失）
-        assert (tmp_path / "b.txt").read_text(encoding="utf-8") == "b modified\n", \
-            "b.txt 修改应留工作区"
+        assert (tmp_path / "b.txt").read_text(encoding="utf-8") == "b modified\n", "b.txt 修改应留工作区"
 
 
 class TestGitignoredTrackedDeleted:
@@ -819,7 +851,6 @@ class TestGitignoredTrackedDeleted:
     @staticmethod
     def git_env():
         return __class__._git_env()
-
 
     @staticmethod
     def _git_env() -> dict:
@@ -855,12 +886,13 @@ class TestGitignoredTrackedDeleted:
             wip_dir.mkdir()
             for i in range(n_wip):
                 (wip_dir / f"f{i:02d}.txt").write_text(f"v0-{i}\n", encoding="utf-8")
-        subprocess.run(
-            ["git", "add", "."], cwd=str(repo_dir), capture_output=True, env=env, check=True
-        )
+        subprocess.run(["git", "add", "."], cwd=str(repo_dir), capture_output=True, env=env, check=True)
         subprocess.run(
             ["git", "commit", "-m", "init-content", "--no-verify"],
-            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+            cwd=str(repo_dir),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         # 2. gitignore ignored_dir + 删除 foo.md + 修改 normal.txt + 修改 WIP
         (repo_dir / ".gitignore").write_text("*.tmp\nignored_dir/\n", encoding="utf-8")
@@ -878,18 +910,21 @@ class TestGitignoredTrackedDeleted:
         env = TestGitignoredTrackedDeleted.git_env()
         show = subprocess.run(
             ["git", "show", "--stat", "--name-status", "HEAD"],
-            cwd=str(repo_dir), capture_output=True, text=True, env=env,
+            cwd=str(repo_dir),
+            capture_output=True,
+            text=True,
+            env=env,
         )
         out = show.stdout
         assert "ignored_dir/foo.md" in out, f"commit 未含 foo.md 删除:\n{out}"
         assert "normal.txt" in out, f"commit 未含 normal.txt:\n{out}"
         assert ".gitignore" in out, f"commit 未含 .gitignore:\n{out}"
-        assert (
-            "D\tignored_dir/foo.md" in out or "D  ignored_dir/foo.md" in out
-        ), f"foo.md 应标 D(删除):\n{out}"
+        assert "D\tignored_dir/foo.md" in out or "D  ignored_dir/foo.md" in out, f"foo.md 应标 D(删除):\n{out}"
         tracked = subprocess.run(
             ["git", "ls-files", "ignored_dir/"],
-            cwd=str(repo_dir), capture_output=True, text=True,
+            cwd=str(repo_dir),
+            capture_output=True,
+            text=True,
         )
         assert tracked.stdout.strip() == "", f"foo.md 仍被跟踪: {tracked.stdout}"
 
@@ -900,11 +935,10 @@ class TestGitignoredTrackedDeleted:
         result = gw.commit(
             session_id="test-gi-small",
             files=files,
-            allow_overlap=True, message="test: small-path gitignored-tracked-deleted",
+            allow_overlap=True,
+            message="test: small-path gitignored-tracked-deleted",
         )
-        assert result.status == CommitStatus.OK, (
-            f"小路径应成功: {result.status} {result.message}"
-        )
+        assert result.status == CommitStatus.OK, f"小路径应成功: {result.status} {result.message}"
         self._assert_commit_contents(tmp_path)
 
     def test_large_path(self, tmp_path: Path) -> None:
@@ -914,20 +948,19 @@ class TestGitignoredTrackedDeleted:
         result = gw.commit(
             session_id="test-gi-large",
             files=files,
-            allow_overlap=True, message="test: large-path gitignored-tracked-deleted",
+            allow_overlap=True,
+            message="test: large-path gitignored-tracked-deleted",
         )
-        assert result.status == CommitStatus.OK, (
-            f"大路径应成功: {result.status} {result.message}"
-        )
+        assert result.status == CommitStatus.OK, f"大路径应成功: {result.status} {result.message}"
         self._assert_commit_contents(tmp_path)
         # 非目标 WIP 修改应保留在工作区（stash pop 恢复）
         diff = subprocess.run(
             ["git", "diff", "--stat"],
-            cwd=str(tmp_path), capture_output=True, text=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
         )
-        assert "f00.txt" in diff.stdout, (
-            f"非目标 WIP 应保留工作区:\n{diff.stdout}"
-        )
+        assert "f00.txt" in diff.stdout, f"非目标 WIP 应保留工作区:\n{diff.stdout}"
 
 
 class TestStagedDeleteGitignored:
@@ -968,24 +1001,35 @@ class TestStagedDeleteGitignored:
         normal = tmp_path / "normal.txt"
         normal.write_text("v0\n", encoding="utf-8")
         subprocess.run(
-            ["git", "add", "."], cwd=str(tmp_path), capture_output=True,
-            env=env, check=True,
+            ["git", "add", "."],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         subprocess.run(
             ["git", "commit", "-m", "init", "--no-verify"],
-            cwd=str(tmp_path), capture_output=True, env=env, check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         # 2. gitignore build_artifacts/ + git rm --cached foo（staged delete，文件留磁盘）
         (tmp_path / ".gitignore").write_text("build_artifacts/\n", encoding="utf-8")
         subprocess.run(
             ["git", "rm", "--cached", "build_artifacts/artifact.txt"],
-            cwd=str(tmp_path), capture_output=True, env=env, check=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         normal.write_text("v1\n", encoding="utf-8")
         # 确认 staged delete 状态
         status = subprocess.run(
             ["git", "status", "--porcelain"],
-            cwd=str(tmp_path), capture_output=True, text=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
         )
         assert "D  build_artifacts/artifact.txt" in status.stdout, (
             f"前置条件失败——foo 应为 staged delete:\n{status.stdout}"
@@ -1000,32 +1044,31 @@ class TestStagedDeleteGitignored:
         result = gw.commit(
             session_id="test-staged-del",
             files=files,
-            allow_overlap=True, message="test: staged delete gitignored file on disk",
+            allow_overlap=True,
+            message="test: staged delete gitignored file on disk",
         )
-        assert result.status == CommitStatus.OK, (
-            f"commit 应成功: {result.status} {result.message}"
-        )
+        assert result.status == CommitStatus.OK, f"commit 应成功: {result.status} {result.message}"
         # 4. 验证 commit 含 artifact.txt 删除
         show = subprocess.run(
             ["git", "show", "--name-status", "HEAD"],
-            cwd=str(tmp_path), capture_output=True, text=True, env=env,
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            env=env,
         )
         out = show.stdout
-        assert "build_artifacts/artifact.txt" in out, (
-            f"commit 未含 artifact.txt 删除:\n{out}"
+        assert "build_artifacts/artifact.txt" in out, f"commit 未含 artifact.txt 删除:\n{out}"
+        assert "D\tbuild_artifacts/artifact.txt" in out or "D  build_artifacts/artifact.txt" in out, (
+            f"artifact.txt 应标 D(删除):\n{out}"
         )
-        assert (
-            "D\tbuild_artifacts/artifact.txt" in out
-            or "D  build_artifacts/artifact.txt" in out
-        ), f"artifact.txt 应标 D(删除):\n{out}"
         # 5. 验证 artifact.txt 不再被 git 跟踪
         tracked = subprocess.run(
             ["git", "ls-files", "build_artifacts/"],
-            cwd=str(tmp_path), capture_output=True, text=True,
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
         )
-        assert tracked.stdout.strip() == "", (
-            f"artifact.txt 仍被跟踪: {tracked.stdout}"
-        )
+        assert tracked.stdout.strip() == "", f"artifact.txt 仍被跟踪: {tracked.stdout}"
         # 6. 验证文件仍在磁盘（git rm --cached 不删磁盘文件）
         assert foo.exists(), "git rm --cached 不应删除磁盘文件"
 
@@ -1049,16 +1092,20 @@ class TestRunGitCommitGuard:
         gw = GitCommitGateway(project_root=tmp_path)
         assert gw.in_commit_flow is False  # 默认 False
         head_before = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True,
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
         ).stdout.strip()
         result = gw.run_git(["git", "commit", "-m", "sneaky", "--allow-empty"])
         assert result.returncode == 1, "裸 git commit 应被守卫拦截（returncode=1）"
         assert "禁止裸调" in result.stderr, f"stderr 应含拦截信息: {result.stderr}"
         # 守卫拦截后 HEAD 不应变化（git commit 未执行）
         head_after = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True,
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
         ).stdout.strip()
         assert head_before == head_after, "守卫拦截后 HEAD 不应变化（无新 commit）"
 
@@ -1069,18 +1116,20 @@ class TestRunGitCommitGuard:
         gw.in_commit_flow = True
         try:
             head_before = subprocess.run(
-                ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
-                capture_output=True, text=True,
+                ["git", "rev-parse", "HEAD"],
+                cwd=str(tmp_path),
+                capture_output=True,
+                text=True,
             ).stdout.strip()
             # --allow-empty 确保即使无 staged 变更也能成功 commit
             result = gw.run_git(["git", "commit", "-m", "test", "--allow-empty"])
-            assert result.returncode == 0, (
-                f"_in_commit_flow=True 时 git commit 应放行成功: {result.stderr}"
-            )
+            assert result.returncode == 0, f"_in_commit_flow=True 时 git commit 应放行成功: {result.stderr}"
             assert "禁止裸调" not in result.stderr, "守卫不应拦截"
             head_after = subprocess.run(
-                ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
-                capture_output=True, text=True,
+                ["git", "rev-parse", "HEAD"],
+                cwd=str(tmp_path),
+                capture_output=True,
+                text=True,
             ).stdout.strip()
             assert head_before != head_after, "应产生新 commit（证明 git commit 实际执行）"
         finally:
@@ -1118,7 +1167,7 @@ def _make_gateway_for_warning_test(
     # mock registry：list_active() 返回 Session 对象列表（带 session_id 属性）
     mock_registry = MagicMock()
     mock_sessions = []
-    for sid in (other_session_ids or []):
+    for sid in other_session_ids or []:
         mock_s = MagicMock()
         mock_s.session_id = sid
         mock_sessions.append(mock_s)
@@ -1209,9 +1258,7 @@ class TestNonWorktreeCommitWarning:
     # ------------------------------------------------------------------
     def test_no_warn_when_only_worker_sessions(self, tmp_path: Path, caplog) -> None:
         """非 worktree commit + 仅 reconciler worker 活跃 → INFO（worker 无搭便车风险）。"""
-        gw = _make_gateway_for_warning_test(
-            tmp_path, other_session_ids=["worker-0f12f1aa-20176"]
-        )
+        gw = _make_gateway_for_warning_test(tmp_path, other_session_ids=["worker-0f12f1aa-20176"])
         with caplog.at_level(
             logging.DEBUG,
             logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
@@ -1238,9 +1285,7 @@ class TestNonWorktreeCommitWarning:
         warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
         assert len(warnings) == 1, f"应有 1 条 WARNING（真实 user session），实际 {len(warnings)}"
         assert "sess-real-user" in warnings[0].message
-        assert "worker-" not in warnings[0].message, (
-            f"WARN 消息不应含 worker session: {warnings[0].message!r}"
-        )
+        assert "worker-" not in warnings[0].message, f"WARN 消息不应含 worker session: {warnings[0].message!r}"
 
 
 # ---------------------------------------------------------------------------
@@ -1261,16 +1306,36 @@ class TestClassifyGitTimeout:
 
     def test_read_commands_return_15s(self) -> None:
         """rev-parse/show/status/diff/log 等 read 子命令返回 15s。"""
-        for subcmd in ["rev-parse", "show", "status", "diff", "log", "ls-tree",
-                        "merge-base", "config", "cat-file", "rev-list"]:
+        for subcmd in [
+            "rev-parse",
+            "show",
+            "status",
+            "diff",
+            "log",
+            "ls-tree",
+            "merge-base",
+            "config",
+            "cat-file",
+            "rev-list",
+        ]:
             assert classify_git_timeout(["git", subcmd]) == GIT_TIMEOUT_READ, (
                 f"git {subcmd} 应返回 READ timeout ({GIT_TIMEOUT_READ}s)"
             )
 
     def test_write_commands_return_60s(self) -> None:
         """commit/merge/checkout/reset 等 write 子命令返回 60s。"""
-        for subcmd in ["commit", "merge", "checkout", "reset", "update-ref",
-                        "rebase", "cherry-pick", "revert", "apply", "am"]:
+        for subcmd in [
+            "commit",
+            "merge",
+            "checkout",
+            "reset",
+            "update-ref",
+            "rebase",
+            "cherry-pick",
+            "revert",
+            "apply",
+            "am",
+        ]:
             assert classify_git_timeout(["git", subcmd]) == GIT_TIMEOUT_WRITE, (
                 f"git {subcmd} 应返回 WRITE timeout ({GIT_TIMEOUT_WRITE}s)"
             )
@@ -1319,6 +1384,7 @@ class TestClassifyGitTimeout:
 
         # patch run_subprocess_hidden（在函数内部 import 的位置）
         import zephyr.gov_enforcement.rule_bridge.git_commit_gateway as _gw_mod
+
         monkeypatch.setattr(
             "zephyr.shared.infra.process_pool.run_subprocess_hidden",
             _fake_run,
@@ -1326,19 +1392,16 @@ class TestClassifyGitTimeout:
 
         # read 命令 → 15s
         gw.run_git(["git", "status", "--porcelain"])
-        assert captured_timeouts[-1] == GIT_TIMEOUT_READ, (
-            f"git status 应传 READ timeout: {captured_timeouts[-1]}"
-        )
+        assert captured_timeouts[-1] == GIT_TIMEOUT_READ, f"git status 应传 READ timeout: {captured_timeouts[-1]}"
 
         # write 命令 → 60s（需 _in_commit_flow=True 避开守卫）
         gw.in_commit_flow = True
         try:
             gw.run_git(["git", "commit", "-m", "test", "--allow-empty"])
-            assert captured_timeouts[-1] == GIT_TIMEOUT_WRITE, (
-                f"git commit 应传 WRITE timeout: {captured_timeouts[-1]}"
-            )
+            assert captured_timeouts[-1] == GIT_TIMEOUT_WRITE, f"git commit 应传 WRITE timeout: {captured_timeouts[-1]}"
         finally:
             gw.in_commit_flow = False
+
 
 # ---------------------------------------------------------------------------
 # #ARCH-RECONCILER-INDEXLOCK-RETRY 治本测试（2026-08-03）：
@@ -1361,17 +1424,11 @@ class TestGitAddIndexLockRetry:
     - 非 index.lock 错误 → 不重试 → 立即 COMMIT_FAILED
     """
 
-    _LOCK_ERR = (
-        "fatal: Unable to create 'D:/ZephyrAlpha/.git/index.lock': File exists."
-    )
+    _LOCK_ERR = "fatal: Unable to create 'D:/ZephyrAlpha/.git/index.lock': File exists."
     _OTHER_ERR = "fatal: pathspec 'foo' did not match any files"
 
-    def _mock_result(
-        self, returncode: int, stderr: str = ""
-    ) -> subprocess.CompletedProcess:
-        return subprocess.CompletedProcess(
-            args=[], returncode=returncode, stderr=stderr, stdout=""
-        )
+    def _mock_result(self, returncode: int, stderr: str = "") -> subprocess.CompletedProcess:
+        return subprocess.CompletedProcess(args=[], returncode=returncode, stderr=stderr, stdout="")
 
     def test_add_success_no_retry(self, tmp_path: Path, monkeypatch) -> None:
         """git add 成功 → 返回 None，不调用 sleep。"""
@@ -1383,88 +1440,64 @@ class TestGitAddIndexLockRetry:
             "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.time.sleep",
             lambda s: sleep_calls.append(s),
         )
-        result = gw._git_add_with_index_lock_retry(
-            "/tmp/fake_pathspec", "test-session"
-        )
+        result = gw._git_add_with_index_lock_retry("/tmp/fake_pathspec", "test-session")
         assert result is None, "成功应返回 None"
         assert sleep_calls == [], "成功时不应调用 sleep"
 
-    def test_index_lock_retry_then_success(
-        self, tmp_path: Path, monkeypatch
-    ) -> None:
+    def test_index_lock_retry_then_success(self, tmp_path: Path, monkeypatch) -> None:
         """index.lock 错误 → 重试 → 成功 → None。"""
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        results = iter([
-            self._mock_result(1, self._LOCK_ERR),
-            self._mock_result(0),
-        ])
+        results = iter(
+            [
+                self._mock_result(1, self._LOCK_ERR),
+                self._mock_result(0),
+            ]
+        )
         monkeypatch.setattr(gw, "run_git", lambda cmd: next(results))
         sleep_calls: list[float] = []
         monkeypatch.setattr(
             "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.time.sleep",
             lambda s: sleep_calls.append(s),
         )
-        result = gw._git_add_with_index_lock_retry(
-            "/tmp/fake_pathspec", "test-session"
-        )
+        result = gw._git_add_with_index_lock_retry("/tmp/fake_pathspec", "test-session")
         assert result is None, "重试后成功应返回 None"
-        assert len(sleep_calls) == 1, (
-            f"应重试1次（sleep 1次），实际 {len(sleep_calls)}"
-        )
+        assert len(sleep_calls) == 1, f"应重试1次（sleep 1次），实际 {len(sleep_calls)}"
         assert sleep_calls[0] == 2.0, f"首次退避应为 2s，实际 {sleep_calls[0]}"
 
-    def test_index_lock_exhaust_retries(
-        self, tmp_path: Path, monkeypatch
-    ) -> None:
+    def test_index_lock_exhaust_retries(self, tmp_path: Path, monkeypatch) -> None:
         """index.lock 错误 → 重试耗尽（3次）→ COMMIT_FAILED。"""
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        monkeypatch.setattr(
-            gw, "run_git", lambda cmd: self._mock_result(1, self._LOCK_ERR)
-        )
+        monkeypatch.setattr(gw, "run_git", lambda cmd: self._mock_result(1, self._LOCK_ERR))
         sleep_calls: list[float] = []
         monkeypatch.setattr(
             "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.time.sleep",
             lambda s: sleep_calls.append(s),
         )
-        result = gw._git_add_with_index_lock_retry(
-            "/tmp/fake_pathspec", "test-session"
-        )
+        result = gw._git_add_with_index_lock_retry("/tmp/fake_pathspec", "test-session")
         assert result is not None, "重试耗尽应返回 CommitResult"
-        assert result.status == CommitStatus.COMMIT_FAILED, (
-            f"应返回 COMMIT_FAILED，实际 {result.status}"
-        )
+        assert result.status == CommitStatus.COMMIT_FAILED, f"应返回 COMMIT_FAILED，实际 {result.status}"
         assert "3 retries" in result.message or "index.lock" in result.message, (
             f"失败消息应含重试次数或 index.lock: {result.message}"
         )
         # 3次尝试 = 2次退避（第3次失败后不 sleep，因 attempt < max_retries-1 为 False）
-        assert len(sleep_calls) == 2, (
-            f"3次尝试应有2次退避 sleep，实际 {len(sleep_calls)}"
-        )
+        assert len(sleep_calls) == 2, f"3次尝试应有2次退避 sleep，实际 {len(sleep_calls)}"
         assert sleep_calls == [2.0, 4.0], f"退避应为 2s/4s，实际 {sleep_calls}"
 
-    def test_non_index_lock_error_no_retry(
-        self, tmp_path: Path, monkeypatch
-    ) -> None:
+    def test_non_index_lock_error_no_retry(self, tmp_path: Path, monkeypatch) -> None:
         """非 index.lock 错误 → 不重试 → 立即 COMMIT_FAILED。"""
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        monkeypatch.setattr(
-            gw, "run_git", lambda cmd: self._mock_result(1, self._OTHER_ERR)
-        )
+        monkeypatch.setattr(gw, "run_git", lambda cmd: self._mock_result(1, self._OTHER_ERR))
         sleep_calls: list[float] = []
         monkeypatch.setattr(
             "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.time.sleep",
             lambda s: sleep_calls.append(s),
         )
-        result = gw._git_add_with_index_lock_retry(
-            "/tmp/fake_pathspec", "test-session"
-        )
+        result = gw._git_add_with_index_lock_retry("/tmp/fake_pathspec", "test-session")
         assert result is not None, "非 index.lock 错误应返回 CommitResult"
-        assert result.status == CommitStatus.COMMIT_FAILED, (
-            f"应返回 COMMIT_FAILED，实际 {result.status}"
-        )
+        assert result.status == CommitStatus.COMMIT_FAILED, f"应返回 COMMIT_FAILED，实际 {result.status}"
         assert sleep_calls == [], "非 index.lock 错误不应重试（不应 sleep）"
 
 
@@ -1489,12 +1522,20 @@ class TestMergeFinalizeForeignStaged:
         """构造 merge 现场：MERGE_HEAD 指向当前 HEAD（合法第二父），两文件已 staged。"""
         env = self._git_env()
         subprocess.run(
-            ["git", "add", "a.py", "b.py"], cwd=str(repo),
-            capture_output=True, env=env, check=True,
+            ["git", "add", "a.py", "b.py"],
+            cwd=str(repo),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         head = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(repo),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(repo),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout.strip()
         # write_bytes 防 Windows 文本模式 \n→\r\n 翻译（\r 会致 git 报 Corrupt MERGE_HEAD）
         (repo / ".git" / "MERGE_HEAD").write_bytes((head + "\n").encode("ascii"))
@@ -1505,7 +1546,7 @@ class TestMergeFinalizeForeignStaged:
 
         _init_git_repo(tmp_path)
         fa = _write_file(tmp_path, "a.py", "x = 1\n")  # 本 session 目标
-        _write_file(tmp_path, "b.py", "y = 1\n")       # 别会话 staged WIP（将被收编）
+        _write_file(tmp_path, "b.py", "y = 1\n")  # 别会话 staged WIP（将被收编）
         self._stage_merge_scene(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
         with caplog.at_level(logging.WARNING):
@@ -1516,17 +1557,20 @@ class TestMergeFinalizeForeignStaged:
                 message="merge: finalize",
                 merge_finalize=True,  # B2① 契约变更（2026-08-19）：MERGE_HEAD 场景必须显式 finalize
             )
-        assert result.status == CommitStatus.OK, (
-            f"merge finalize 应成功: {result.status} {result.message}"
-        )
+        assert result.status == CommitStatus.OK, f"merge finalize 应成功: {result.status} {result.message}"
         warn_msgs = [r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING]
         assert any("收编" in m and "b.py" in m for m in warn_msgs), (
             f"应有收编预警且列出 b.py，实际 warnings={warn_msgs}"
         )
         # 机制实证：b.py 确被全量 commit 收编
         show = subprocess.run(
-            ["git", "show", "--name-only", "--format=", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8", env=self._git_env(), check=True,
+            ["git", "show", "--name-only", "--format=", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=self._git_env(),
+            check=True,
         ).stdout
         assert "a.py" in show and "b.py" in show, f"两文件都应被收编: {show}"
 
@@ -1538,12 +1582,20 @@ class TestMergeFinalizeForeignStaged:
         fa = _write_file(tmp_path, "a.py", "x = 1\n")
         env = self._git_env()
         subprocess.run(
-            ["git", "add", "a.py"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "add", "a.py"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         head = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout.strip()
         (tmp_path / ".git" / "MERGE_HEAD").write_bytes((head + "\n").encode("ascii"))
         gw = GitCommitGateway(project_root=tmp_path)
@@ -1555,13 +1607,9 @@ class TestMergeFinalizeForeignStaged:
                 message="merge: finalize clean",
                 merge_finalize=True,  # B2① 契约变更（2026-08-19）：MERGE_HEAD 场景必须显式 finalize
             )
-        assert result.status == CommitStatus.OK, (
-            f"merge finalize 应成功: {result.status} {result.message}"
-        )
+        assert result.status == CommitStatus.OK, f"merge finalize 应成功: {result.status} {result.message}"
         warn_msgs = [r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING]
-        assert not any("收编" in m for m in warn_msgs), (
-            f"staged 区干净不应有收编预警，实际={warn_msgs}"
-        )
+        assert not any("收编" in m for m in warn_msgs), f"staged 区干净不应有收编预警，实际={warn_msgs}"
 
 
 # ---------------------------------------------------------------------------
@@ -1595,8 +1643,10 @@ class TestGateTrackedDriftWatch:
         _write_file(tmp_path, "tracked_audit.jsonl", "")
         env = {
             **os.environ,
-            "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com",
-            "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@t.com",
+            "GIT_AUTHOR_NAME": "T",
+            "GIT_AUTHOR_EMAIL": "t@t.com",
+            "GIT_COMMITTER_NAME": "T",
+            "GIT_COMMITTER_EMAIL": "t@t.com",
         }
         subprocess.run(["git", "add", "tracked_audit.jsonl"], cwd=str(tmp_path), capture_output=True, env=env)
         subprocess.run(["git", "commit", "-m", "track", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env)
@@ -1636,15 +1686,9 @@ class TestGateTrackedDriftWatch:
         assert results == []  # 不阻断——结果照常返回
         audit = self._audit_file(tmp_path)
         assert audit.exists(), "gate 运行期 tracked 写入未产生违规审计"
-        records = [
-            _json.loads(line)
-            for line in audit.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        records = [_json.loads(line) for line in audit.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert any(
-            r.get("violation") == "gate_runtime_tracked_drift"
-            and r.get("session_id") == "sess-drift"
-            for r in records
+            r.get("violation") == "gate_runtime_tracked_drift" and r.get("session_id") == "sess-drift" for r in records
         )
 
 
@@ -1684,8 +1728,13 @@ class TestMergeInProgressWorktreeAware:
         _init_git_repo(tmp_path)
         env = self._git_env()
         head = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout.strip()
         (tmp_path / ".git" / "MERGE_HEAD").write_bytes((head + "\n").encode("ascii"))
         gw = GitCommitGateway(project_root=tmp_path)
@@ -1701,24 +1750,40 @@ class TestMergeInProgressWorktreeAware:
         env = self._git_env()
         # 建分支 + linked worktree
         subprocess.run(
-            ["git", "branch", "wt-branch"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "branch", "wt-branch"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         wt_dir = tmp_path / "wt"
         subprocess.run(
-            ["git", "worktree", "add", str(wt_dir), "wt-branch"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "worktree", "add", str(wt_dir), "wt-branch"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         # 实证 .git 是指针文件（非目录）——worktree 盲区前提
         assert (wt_dir / ".git").is_file(), "linked worktree 的 .git 应为指针文件"
         # 写 MERGE_HEAD 到 per-worktree git 目录（git rev-parse --git-path 解析的真实位置）
         git_path = subprocess.run(
-            ["git", "rev-parse", "--git-path", "MERGE_HEAD"], cwd=str(wt_dir),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "rev-parse", "--git-path", "MERGE_HEAD"],
+            cwd=str(wt_dir),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout.strip()
         head = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(wt_dir),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(wt_dir),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout.strip()
         merge_head_path = Path(git_path)
         if not merge_head_path.is_absolute():
@@ -1726,9 +1791,7 @@ class TestMergeInProgressWorktreeAware:
         merge_head_path.write_bytes((head + "\n").encode("ascii"))
         # 红队治本验收：网关在 worktree root 下能检测到 merge 态
         gw = GitCommitGateway(project_root=wt_dir)
-        assert gw._is_merge_in_progress() is True, (
-            "worktree 盲区未修复：linked worktree 的 MERGE_HEAD 未被检测到"
-        )
+        assert gw._is_merge_in_progress() is True, "worktree 盲区未修复：linked worktree 的 MERGE_HEAD 未被检测到"
         # 对照：原硬编码路径在 worktree 下恒 False（盲区实证）
         assert not (wt_dir / ".git" / "MERGE_HEAD").exists(), (
             "对照实证：原硬编码 .git/MERGE_HEAD 在 worktree 下应不存在"
@@ -1762,8 +1825,13 @@ class TestMergeHeadPreflightReject:
         """
         env = TestMergeHeadPreflightReject._git_env()
         head = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(repo),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(repo),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout.strip()
         # write_bytes 防 Windows 文本模式 \n→\r\n 翻译（\r 会致 git 报 Corrupt MERGE_HEAD）
         (repo / ".git" / "MERGE_HEAD").write_bytes(((merge_head_sha or head) + "\n").encode("ascii"))
@@ -1788,8 +1856,13 @@ class TestMergeHeadPreflightReject:
         )
         env = self._git_env()
         head_after = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout.strip()
         assert head_after == head_before, "拒绝后 HEAD 不得移动（未连带提交 merge）"
         assert (tmp_path / ".git" / "MERGE_HEAD").exists(), "拒绝不得破坏在途 merge 现场"
@@ -1816,47 +1889,78 @@ class TestMergeHeadPreflightReject:
         _init_git_repo(tmp_path)
         env = self._git_env()
         base_ref = subprocess.run(
-            ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout.strip()
         # 真第二父：side 分支独立 commit（MERGE_HEAD==HEAD 会被 git 规范化为单父，断言失效）
         subprocess.run(
-            ["git", "checkout", "-qb", "side"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "checkout", "-qb", "side"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         _write_file(tmp_path, "side.py", "s = 1\n")
         subprocess.run(
-            ["git", "add", "side.py"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "add", "side.py"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         subprocess.run(
-            ["git", "commit", "-q", "--no-verify", "-m", "side commit"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "commit", "-q", "--no-verify", "-m", "side commit"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         side_sha = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout.strip()
         subprocess.run(
-            ["git", "checkout", "-q", base_ref], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "checkout", "-q", base_ref],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         # 真分叉构造（2026-08-19 修复）：side 若仅是 base 的后代，git commit 会把
         # MERGE_HEAD 规范化为单父（fast-forward 语义无合并内容，纯 git 探针实证）。
         # master 须独立前进一格，使 master/side 互不为祖先 → 真合并 → 双亲 commit。
         _write_file(tmp_path, "main.py", "m = 1\n")
         subprocess.run(
-            ["git", "add", "main.py"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "add", "main.py"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         subprocess.run(
-            ["git", "commit", "-q", "--no-verify", "-m", "main advances"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "commit", "-q", "--no-verify", "-m", "main advances"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         fa = _write_file(tmp_path, "a.py", "x = 1\n")
         subprocess.run(
-            ["git", "add", "a.py"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "add", "a.py"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         self._plant_merge_head(tmp_path, merge_head_sha=side_sha)
         gw = GitCommitGateway(project_root=tmp_path)
@@ -1867,12 +1971,15 @@ class TestMergeHeadPreflightReject:
             message="merge: explicit finalize",
             merge_finalize=True,
         )
-        assert result.status == CommitStatus.OK, (
-            f"显式 finalize 应成功: {result.status} {result.message}"
-        )
+        assert result.status == CommitStatus.OK, f"显式 finalize 应成功: {result.status} {result.message}"
         cat = subprocess.run(
-            ["git", "cat-file", "-p", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "cat-file", "-p", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout
         parent_lines = [ln for ln in cat.splitlines() if ln.startswith("parent ")]
         assert len(parent_lines) == 2, f"应为双亲 merge commit，实际 parents={parent_lines}"
@@ -1905,8 +2012,11 @@ class TestIntentToAddSweep:
         _write_file(tmp_path, "wip.py", "wip = True\n")
         env = self._git_env()
         subprocess.run(
-            ["git", "add", "-N", "wip.py"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "add", "-N", "wip.py"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         gw = GitCommitGateway(project_root=tmp_path)
         assert "wip.py" in gw._list_intent_to_add_paths(), "前置：ita 残留构造失败"
@@ -1916,20 +2026,21 @@ class TestIntentToAddSweep:
             allow_overlap=True,
             message="commit with ita residue",
         )
-        assert result.status == CommitStatus.OK, (
-            f"commit 应成功: {result.status} {result.message}"
-        )
+        assert result.status == CommitStatus.OK, f"commit 应成功: {result.status} {result.message}"
         assert gw._list_intent_to_add_paths() == [], "ita 残留应被清扫"
         assert (tmp_path / "wip.py").read_text(encoding="utf-8") == "wip = True\n", (
             "清扫只动 index，工作区内容必须原样保留"
         )
         show = subprocess.run(
-            ["git", "show", "--name-only", "--format=", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "show", "--name-only", "--format=", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout
-        assert "a.py" in show and "wip.py" not in show, (
-            f"ita 残留不得被收编进 commit: {show}"
-        )
+        assert "a.py" in show and "wip.py" not in show, f"ita 残留不得被收编进 commit: {show}"
         audit = tmp_path / ".runtime" / "gate_audit" / "gateway_index_hygiene.jsonl"
         assert audit.exists(), "清扫事件应落审计"
         assert "ita_sweep" in audit.read_text(encoding="utf-8")
@@ -1940,8 +2051,11 @@ class TestIntentToAddSweep:
         ft = _write_file(tmp_path, "t.py", "t = 1\n")
         env = self._git_env()
         subprocess.run(
-            ["git", "add", "-N", "t.py"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "add", "-N", "t.py"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         gw = GitCommitGateway(project_root=tmp_path)
         result = gw.commit(
@@ -1950,12 +2064,15 @@ class TestIntentToAddSweep:
             allow_overlap=True,
             message="commit ita target file",
         )
-        assert result.status == CommitStatus.OK, (
-            f"目标 ita 文件应正常提交: {result.status} {result.message}"
-        )
+        assert result.status == CommitStatus.OK, f"目标 ita 文件应正常提交: {result.status} {result.message}"
         show = subprocess.run(
-            ["git", "show", "--name-only", "--format=", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "show", "--name-only", "--format=", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout
         assert "t.py" in show, f"目标文件应入 commit: {show}"
 
@@ -1966,8 +2083,11 @@ class TestIntentToAddSweep:
         _write_file(tmp_path, "wip2.py", "wip = 2\n")
         env = self._git_env()
         subprocess.run(
-            ["git", "add", "-N", "wip2.py"], cwd=str(tmp_path),
-            capture_output=True, env=env, check=True,
+            ["git", "add", "-N", "wip2.py"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
         )
         TestMergeHeadPreflightReject._plant_merge_head(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
@@ -1978,14 +2098,17 @@ class TestIntentToAddSweep:
             message="merge: finalize with ita residue",
             merge_finalize=True,
         )
-        assert result.status == CommitStatus.OK, (
-            f"merge finalize 应成功: {result.status} {result.message}"
-        )
+        assert result.status == CommitStatus.OK, f"merge finalize 应成功: {result.status} {result.message}"
         assert (tmp_path / "wip2.py").read_text(encoding="utf-8") == "wip = 2\n", (
             "merge 现场保护：ita 工作区内容必须原样"
         )
         show = subprocess.run(
-            ["git", "show", "--name-only", "--format=", "HEAD"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+            ["git", "show", "--name-only", "--format=", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            check=True,
         ).stdout
         assert "wip2.py" not in show, f"ita 文件不得入 merge commit tree: {show}"

@@ -35,6 +35,7 @@ memo 裁定：6 维各视为子因子，计算滚动 60 日 RankIC，按 weight_
 2. Σmax(IC,0)≈0（全部维度 IC 无效）→ 回退经验权重（20/15/20/15/20/10 归一化），
    保证 MVP 行为与现行引擎一致、可解释可归因。
 """
+
 from __future__ import annotations
 
 # 6 维维度名（与 quant_short_term_strength_engine 6 维一一对应）
@@ -98,7 +99,7 @@ def compute_rank_ic(dim_values: list[float], forward_returns: list[float]) -> fl
     vy = sum((b - my) ** 2 for b in ry)
     if vx < IC_EPS or vy < IC_EPS:
         return 0.0
-    return cov / (vx ** 0.5 * vy ** 0.5)
+    return cov / (vx**0.5 * vy**0.5)
 
 
 def calibrate_dimension_weights_ic(
@@ -157,11 +158,11 @@ def should_recalibrate_cusum(
     var = sum((v - mean) ** 2 for v in ic_series) / (n - 1)
     if var < IC_EPS:
         return False
-    sigma = var ** 0.5
+    sigma = var**0.5
     # 前后半段均值偏移的累积和检验（单变点 CUSUM 简化式）
     cusum = 0.0
     max_cusum = 0.0
     for v in ic_series:
         cusum += v - mean
         max_cusum = max(max_cusum, abs(cusum))
-    return max_cusum > sigma_mult * sigma * (n ** 0.5)
+    return max_cusum > sigma_mult * sigma * (n**0.5)

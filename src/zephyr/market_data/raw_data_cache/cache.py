@@ -150,9 +150,7 @@ def _compute_hash(raw_payload: bytes) -> str:
     return hashlib.sha256(raw_payload).hexdigest()[:16]
 
 
-def _make_expires_at(
-    fetched_at: datetime, ttl_seconds: int | None
-) -> datetime | None:
+def _make_expires_at(fetched_at: datetime, ttl_seconds: int | None) -> datetime | None:
     """根据 TTL 计算过期时间。"""
     if ttl_seconds is None:
         return None
@@ -234,9 +232,7 @@ class RawDataCache:
 
         key = CacheKey(symbol=symbol, date=date)
         now = datetime.now(timezone.utc)
-        effective_ttl = (
-            ttl_seconds if ttl_seconds is not None else self._config.ttl_seconds
-        )
+        effective_ttl = ttl_seconds if ttl_seconds is not None else self._config.ttl_seconds
         payload = bytes(raw_payload)
         entry = CacheEntry(
             key=key,
@@ -299,9 +295,7 @@ class RawDataCache:
             self._hit_count += 1
             return entry
 
-    def query(
-        self, symbol: str, start_date: str, end_date: str
-    ) -> list[CacheEntry]:
+    def query(self, symbol: str, start_date: str, end_date: str) -> list[CacheEntry]:
         """范围查询——返回 [start_date, end_date] 区间内该 symbol 的有效缓存条目。
 
         - 按日期升序返回
@@ -347,9 +341,7 @@ class RawDataCache:
         """
         evicted = 0
         with self._lock:
-            expired_keys = [
-                k for k, e in self._store.items() if e.is_expired
-            ]
+            expired_keys = [k for k, e in self._store.items() if e.is_expired]
             for key in expired_keys:
                 self._remove_locked(key)
                 evicted += 1
@@ -404,9 +396,7 @@ class RawDataCache:
             key, entry = self._store.popitem(last=False)
             self._total_size -= entry.payload_size
             self._eviction_count += 1
-            _logger.debug(
-                "LRU 淘汰: %s %s (容量超限)", key.symbol, key.date
-            )
+            _logger.debug("LRU 淘汰: %s %s (容量超限)", key.symbol, key.date)
 
     def __repr__(self) -> str:
         with self._lock:

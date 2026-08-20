@@ -18,6 +18,7 @@
 市价转限价)、成交概率公式②、FIFO队列(时间优先/部分成交/队首留存)、
 参数校验与退化。
 """
+
 from __future__ import annotations
 
 import pytest
@@ -98,9 +99,7 @@ class TestRouteOrder:
         assert r.fill_price == 9.0
 
     def test_market_order_at_limit_converted(self):
-        r = route_order(
-            OrderSide.BUY, 100, BoardState.LIMIT_UP, 11.0, order_type=OrderType.MARKET
-        )
+        r = route_order(OrderSide.BUY, 100, BoardState.LIMIT_UP, 11.0, order_type=OrderType.MARKET)
         assert r.action is RouteAction.CONVERTED_QUEUED
         assert "转限价" in r.reason
 

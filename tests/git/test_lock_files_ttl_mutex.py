@@ -15,6 +15,7 @@
 8. 26 线程并发 acquire/release registry.json 无损坏无丢锁（§7.28 + §8.4）
 9. Mutex 超时（5s 未获得）→ acquire DENIED 且回滚锁目录（无半锁状态）
 """
+
 from __future__ import annotations
 
 import contextlib
@@ -167,10 +168,12 @@ def test_registry_concurrent_no_lost_locks(isolated_lock_root: Path) -> None:
     files = [f"docs/concurrent/{s}.md" for s in sessions]
 
     with ThreadPoolExecutor(max_workers=26) as pool:
-        results = list(pool.map(
-            lambda i: _run(lock_files.cmd_acquire, files[i], sessions[i], skip_naming_check=True)[0],
-            range(26),
-        ))
+        results = list(
+            pool.map(
+                lambda i: _run(lock_files.cmd_acquire, files[i], sessions[i], skip_naming_check=True)[0],
+                range(26),
+            )
+        )
     assert all(rc == 0 for rc in results), f"有 acquire 失败: {results}"
 
     # registry.json 必须是完好 JSON 且 26 锁全在（无丢锁）
@@ -180,10 +183,12 @@ def test_registry_concurrent_no_lost_locks(isolated_lock_root: Path) -> None:
         assert f in locks
 
     with ThreadPoolExecutor(max_workers=26) as pool:
-        results = list(pool.map(
-            lambda i: _run(lock_files.cmd_release, files[i], sessions[i])[0],
-            range(26),
-        ))
+        results = list(
+            pool.map(
+                lambda i: _run(lock_files.cmd_release, files[i], sessions[i])[0],
+                range(26),
+            )
+        )
     assert all(rc == 0 for rc in results)
     assert _registry(isolated_lock_root)["locks"] == {}
 
@@ -207,38 +212,39 @@ def test_mutex_timeout_denies_and_rolls_back(isolated_lock_root: Path, monkeypat
 
 
 class TestCliFileArgGuard:
-    '''#120 防呆：文件参数以 -- 开头拒绝落锁。
+    """#120 防呆：文件参数以 -- 开头拒绝落锁。
 
     实证：AI-POT-001 误把 list --session 写法带到 acquire，字面量 --session
     被当文件落锁（全仓唯一垃圾锁）。仓库内合法路径不会以 -- 开头。
-    '''
+    """
 
     def test_acquire_rejects_dash_dash_file(self, isolated_lock_root, monkeypatch, capsys):
-        monkeypatch.setattr(sys, 'argv', ['lock_files.py', 'acquire', '--session', 'AI-PROBE-001'])
+        monkeypatch.setattr(sys, "argv", ["lock_files.py", "acquire", "--session", "AI-PROBE-001"])
         rc = lock_files.main()
         assert rc == 1
         out = capsys.readouterr().out
-        assert '文件参数非法' in out
-        assert not (isolated_lock_root / '--session.lock').exists()
+        assert "文件参数非法" in out
+        assert not (isolated_lock_root / "--session.lock").exists()
 
     def test_guard_write_rejects_dash_dash_file(self, isolated_lock_root, monkeypatch):
-        monkeypatch.setattr(sys, 'argv', ['lock_files.py', 'guard-write', '--task', 'AI-PROBE-001'])
+        monkeypatch.setattr(sys, "argv", ["lock_files.py", "guard-write", "--task", "AI-PROBE-001"])
         assert lock_files.main() == 1
 
     def test_release_rejects_dash_dash_file(self, isolated_lock_root, monkeypatch):
-        monkeypatch.setattr(sys, 'argv', ['lock_files.py', 'release', '--session', 'AI-PROBE-001'])
+        monkeypatch.setattr(sys, "argv", ["lock_files.py", "release", "--session", "AI-PROBE-001"])
         assert lock_files.main() == 1
 
     def test_check_rejects_dash_dash_file(self, isolated_lock_root, monkeypatch):
-        monkeypatch.setattr(sys, 'argv', ['lock_files.py', 'check', '--session'])
+        monkeypatch.setattr(sys, "argv", ["lock_files.py", "check", "--session"])
         assert lock_files.main() == 1
 
     def test_acquire_legit_file_still_works(self, isolated_lock_root, monkeypatch):
         monkeypatch.setattr(
-            sys, 'argv',
-            ['lock_files.py', 'acquire', 'src/probe_govb120.py', 'AI-PROBE-001', '--skip-naming-check'],
+            sys,
+            "argv",
+            ["lock_files.py", "acquire", "src/probe_govb120.py", "AI-PROBE-001", "--skip-naming-check"],
         )
         rc = lock_files.main()
         assert rc == 0
-        monkeypatch.setattr(sys, 'argv', ['lock_files.py', 'release', 'src/probe_govb120.py', 'AI-PROBE-001'])
+        monkeypatch.setattr(sys, "argv", ["lock_files.py", "release", "src/probe_govb120.py", "AI-PROBE-001"])
         assert lock_files.main() == 0
