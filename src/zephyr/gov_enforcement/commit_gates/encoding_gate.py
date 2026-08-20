@@ -106,13 +106,7 @@ def make_encoding_gate() -> GateSpec:
             return True, "no files to check (no relevant suffixes)"
 
         # 2. 定位 check_encoding.py（真源）
-        check_script = (
-            project_root
-            / "scripts"
-            / "governance"
-            / "d7_code"
-            / "check_encoding.py"
-        )
+        check_script = project_root / "scripts" / "governance" / "d7_code" / "check_encoding.py"
         if not check_script.is_file():
             # fail-open：checker 缺失是环境异常（测试环境/非 ZephyrAlpha 项目），
             # 不阻断 commit——与 pure_shim_gate/vocab_hardcode_gate/pure_assertion_gate 一致
@@ -127,17 +121,13 @@ def make_encoding_gate() -> GateSpec:
         for rel in rel_files:
             cmd = [sys.executable, str(check_script), "--file", rel]
             try:
-                result = run_subprocess_hidden(
-                    cmd,
-                    capture_output=True,
-                    cwd=str(project_root),
-                    timeout=30,
-                text=False)
+                result = run_subprocess_hidden(cmd, capture_output=True, cwd=str(project_root), timeout=30, text=False)
             except (subprocess.TimeoutExpired, OSError) as e:
                 # fail-open：subprocess 异常是环境问题，不阻断
                 logger.warning(
                     "ENCODING-SAFETY gate fail-open: check_encoding.py 执行异常(%s: %s)。",
-                    type(e).__name__, e,
+                    type(e).__name__,
+                    e,
                 )
                 return True, f"check_encoding.py execution error, skip (fail-open): {e}"
 
@@ -154,7 +144,8 @@ def make_encoding_gate() -> GateSpec:
                 err = result.stderr.decode("utf-8", errors="replace").strip()
                 logger.warning(
                     "ENCODING-SAFETY gate fail-open: check_encoding.py 异常(exit %d)：%s",
-                    result.returncode, err,
+                    result.returncode,
+                    err,
                 )
                 return True, f"check_encoding.py script error, skip (fail-open): {err}"
 

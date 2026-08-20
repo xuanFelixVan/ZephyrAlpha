@@ -1,287 +1,1 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-
-
-# [MODULE] zephyr.gov_enforcement.commit_gates.blueprint_amodule_consistency_gate
-
-# [DOMAIN] D_GOV_CODE_QUALITY
-
-# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
-
-# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-
-# [STARTUP] imported
-
-# [MATURITY] production
-
-# [INVARIANTS] 硬阻断——staged .py added 行含 [A_module] module_id 头部时，module_id 不得匹配 _MALFORMATION_RE（层码后下划线+小写）；tests/豁免；docstring 行豁免；git diff 不可达 fail-open；检出违规则 fail-closed 阻断
-
-# [MODIFY-GUARD] gate_id="BLUEPRINT-AMODULE-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；diff-based 只检测 added 行
-
-# [STABILITY] stable
-
-# [SAFETY] L
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
-
-# [TESTS] tests/governance/commit_gates/test_blueprint_amodule_consistency_gate.py
-
-# [A_module] module_id=MOD-GOV-blueprint_amodule_consistency_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
-
-# [TTL] permanent
-
-"""blueprint_amodule_consistency_gate.py — [A_module] 头部 module_id 格式一致性门禁
-
-
-
-裁定#ARCH-DRIFT-PREVENTION-001 (ADP-3)：从"检测驱动"转向"约束驱动"。
-
-
-
-检测 staged .py 文件 added 行中的 ``[A_module] module_id=XXX`` 头部，校验 XXX
-
-不匹配 malformation 正则 ``MOD-[A-Z]+_[a-z]``（层码后下划线+小写）。
-
-
-
-合法 vs 非法示例
-
-----------------
-
-  合法: MOD-GOV-domain_fk_gate     (DASH 分隔，不匹配 malformation)
-
-  合法: MOD-INF-025                (层码轨，无下划线+小写)
-
-  合法: MOD-INFRA_A2A-005          (下划线后大写，不匹配)
-
-  非法: MOD-INF_a2a_agent_blocklist (层码后下划线+小写)
-
-  非法: MOD-INF_bad_name            (层码后下划线+小写)
-
-
-
-Usage::
-
-
-
-    from zephyr.gov_enforcement.commit_gates.blueprint_amodule_consistency_gate import (
-
-        make_blueprint_amodule_consistency_gate,
-
-    )
-
-    registry.register(make_blueprint_amodule_consistency_gate())
-
-"""
-
-
-
-from __future__ import annotationsimport loggingimport refrom zephyr.gov_enforcement.commit_gates._diff_helpers import (    _extract_docstring_lines,    _get_added_lines,    _get_staged_py_files,    _read_staged_file,)from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (    GateSpec,    is_test_exempt,)logger = logging.getLogger(__name__)
-
-
-
-__all__ = ["make_blueprint_amodule_consistency_gate"]
-
-
-
-# 匹配 [A_module] module_id=XXX 或 [A_module] module_id:XXX 头部
-
-_RE_AMODULE_HEADER = re.compile(
-
-    r"^#\s*\[A_\w+\]\s*module_id[:=]\s*(\S+)"
-
-)
-
-
-
-# Malformation 正则：MOD- + 层码(大写) + _ + 小写字母
-
-# 匹配 "层码后下划线+小写" 格式错误（如 MOD-INF_a2a_xxx）
-
-# 不匹配: MOD-GOV-domain_fk_gate (DASH 后非 _), MOD-INF-025 (无 _),
-
-#          MOD-INFRA_A2A-005 (_ 后大写)
-
-_MALFORMATION_RE = re.compile(r"^MOD-[A-Z]+_[a-z]")
-
-
-
-
-
-def _is_malformation(module_id: str) -> bool:
-
-    """Check if module_id matches the malformation pattern.
-
-
-
-    Returns True if malformed (violation), False if valid.
-
-    """
-
-    return bool(_MALFORMATION_RE.match(module_id))
-
-
-
-
-
-def _check_amodule_format(
-
-    gateway, py_files: list[str]
-
-) -> list[str]:
-
-    """校验 staged .py 文件 added 行的 [A_module] module_id 格式。
-
-
-
-    使用 _MALFORMATION_RE 检测"层码后下划线+小写"格式错误。
-
-
-
-    diff-based 检测：只检查 added 行中的 [A_module] 声明。新文件全行 added
-
-    故 [A_module] 必被检查；modified 文件仅当 [A_module] 行被改动时才检查。
-
-    """
-
-    violations: list[str] = []
-
-    for py_file in py_files:
-
-        file_content = _read_staged_file(gateway, py_file)
-
-        docstring_lines = (
-
-            _extract_docstring_lines(file_content) if file_content else set()
-
-        )
-
-        for line_no, content in _get_added_lines(
-
-            gateway, py_file, "BLUEPRINT-AMODULE-CONSISTENCY"
-
-        ):
-
-            if line_no in docstring_lines:
-
-                continue
-
-            m = _RE_AMODULE_HEADER.search(content)
-
-            if not m:
-
-                continue
-
-            module_id = m.group(1)
-
-            if _is_malformation(module_id):
-
-                violations.append(
-
-                    f"  {py_file}:{line_no}: [A_module] module_id="
-
-                    f"'{module_id}' 格式错误——层码后下划线+小写"
-
-                    f"（应为 MOD-{{LAYER}}-{{SEQ}} 或 MOD-{{DOM}}_{{name}}）"
-
-                )
-
-    return violations
-
-
-
-
-
-def _format_amodule_violations(violations: list[str]) -> tuple[bool, str]:
-
-    """格式化 [A_module] 格式违规为阻断消息。"""
-
-    return False, (
-
-        "BLUEPRINT-AMODULE-CONSISTENCY：[A_module] module_id 格式不合规\n"
-
-        "  裁定#ARCH-DRIFT-PREVENTION-001 (ADP-3)\n"
-
-        "  合法格式：\n"
-
-        "    layer-master: MOD-{LAYER}-{SEQ}      如 MOD-INF-025\n"
-
-        "    派生轨: MOD-{DOM}-{name}             如 MOD-GOV-domain_fk_gate\n"
-
-        "    派生轨: MOD-{DOM}_{DOM}-{SEQ}        如 MOD-INFRA_A2A-005\n"
-
-        "    跨域共享: SH-{ABBR}-{NNN}            如 SH-DB-001\n"
-
-        "  非法：MOD-{LAYER}_{name} (层码后下划线+小写)  如 MOD-INF_a2a_xxx\n"
-
-        + "\n".join(violations)
-
-        + "\n-> 修复 [A_module] module_id，层码后下划线+小写改为 DASH 或大写"
-
-    )
-
-
-
-
-
-def make_blueprint_amodule_consistency_gate() -> GateSpec:
-
-    """构造 [A_module] 格式一致性门禁 GateSpec（硬阻断型）。
-
-
-
-    Returns:
-
-        GateSpec(gate_id="BLUEPRINT-AMODULE-CONSISTENCY", priority=79)。
-
-        priority=79——在 GATE-DOMAIN-FK(78) 之后、VOCAB-HARDCODE(80) 之前。
-
-    """
-
-
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-
-        py_files = [
-
-            f for f in _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CONSISTENCY")
-
-            if not is_test_exempt(f)
-
-        ]
-
-        if not py_files:
-
-            return True, ""
-
-
-
-        violations = _check_amodule_format(gateway, py_files)
-
-        if violations:
-
-            logger.error(
-
-                "BLUEPRINT-AMODULE-CONSISTENCY gate block: %d violation(s)",
-
-                len(violations),
-
-            )
-
-            return _format_amodule_violations(violations)
-
-        return True, ""
-
-
-
-    return GateSpec(
-
-        gate_id="BLUEPRINT-AMODULE-CONSISTENCY",
-
-        check=_check,
-
-        priority=79,
-
-    )
-
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable# [MODULE] zephyr.gov_enforcement.commit_gates.blueprint_amodule_consistency_gate# [DOMAIN] D_GOV_CODE_QUALITY# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__# [STARTUP] imported# [MATURITY] production# [INVARIANTS] 硬阻断——staged .py added 行含 [A_module] module_id 头部时，module_id 不得匹配 _MALFORMATION_RE（层码后下划线+小写）；tests/豁免；docstring 行豁免；git diff 不可达 fail-open；检出违规则 fail-closed 阻断# [MODIFY-GUARD] gate_id="BLUEPRINT-AMODULE-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；diff-based 只检测 added 行# [STABILITY] stable# [SAFETY] L# [AI_AUTONOMY] ai_modifiable# [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）# [TESTS] tests/governance/commit_gates/test_blueprint_amodule_consistency_gate.py# [A_module] module_id=MOD-GOV-blueprint_amodule_consistency_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable# [TTL] permanent"""blueprint_amodule_consistency_gate.py — [A_module] 头部 module_id 格式一致性门禁裁定#ARCH-DRIFT-PREVENTION-001 (ADP-3)：从"检测驱动"转向"约束驱动"。检测 staged .py 文件 added 行中的 ``[A_module] module_id=XXX`` 头部，校验 XXX不匹配 malformation 正则 ``MOD-[A-Z]+_[a-z]``（层码后下划线+小写）。合法 vs 非法示例----------------  合法: MOD-GOV-domain_fk_gate     (DASH 分隔，不匹配 malformation)  合法: MOD-INF-025                (层码轨，无下划线+小写)  合法: MOD-INFRA_A2A-005          (下划线后大写，不匹配)  非法: MOD-INF_a2a_agent_blocklist (层码后下划线+小写)  非法: MOD-INF_bad_name            (层码后下划线+小写)Usage::    from zephyr.gov_enforcement.commit_gates.blueprint_amodule_consistency_gate import (        make_blueprint_amodule_consistency_gate,    )    registry.register(make_blueprint_amodule_consistency_gate())"""from __future__ import annotationsimport loggingimport refrom zephyr.gov_enforcement.commit_gates._diff_helpers import (    _extract_docstring_lines,    _get_added_lines,    _get_staged_py_files,    _read_staged_file,)from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (    GateSpec,    is_test_exempt,)logger = logging.getLogger(__name__)__all__ = ["make_blueprint_amodule_consistency_gate"]# 匹配 [A_module] module_id=XXX 或 [A_module] module_id:XXX 头部_RE_AMODULE_HEADER = re.compile(r"^#\s*\[A_\w+\]\s*module_id[:=]\s*(\S+)")# Malformation 正则：MOD- + 层码(大写) + _ + 小写字母# 匹配 "层码后下划线+小写" 格式错误（如 MOD-INF_a2a_xxx）# 不匹配: MOD-GOV-domain_fk_gate (DASH 后非 _), MOD-INF-025 (无 _),#          MOD-INFRA_A2A-005 (_ 后大写)_MALFORMATION_RE = re.compile(r"^MOD-[A-Z]+_[a-z]")def _is_malformation(module_id: str) -> bool:    """Check if module_id matches the malformation pattern.    Returns True if malformed (violation), False if valid.    """    return bool(_MALFORMATION_RE.match(module_id))def _check_amodule_format(gateway, py_files: list[str]) -> list[str]:    """校验 staged .py 文件 added 行的 [A_module] module_id 格式。    使用 _MALFORMATION_RE 检测"层码后下划线+小写"格式错误。    diff-based 检测：只检查 added 行中的 [A_module] 声明。新文件全行 added    故 [A_module] 必被检查；modified 文件仅当 [A_module] 行被改动时才检查。    """    violations: list[str] = []    for py_file in py_files:        file_content = _read_staged_file(gateway, py_file)        docstring_lines = _extract_docstring_lines(file_content) if file_content else set()        for line_no, content in _get_added_lines(gateway, py_file, "BLUEPRINT-AMODULE-CONSISTENCY"):            if line_no in docstring_lines:                continue            m = _RE_AMODULE_HEADER.search(content)            if not m:                continue            module_id = m.group(1)            if _is_malformation(module_id):                violations.append(                    f"  {py_file}:{line_no}: [A_module] module_id="                    f"'{module_id}' 格式错误——层码后下划线+小写"                    f"（应为 MOD-{{LAYER}}-{{SEQ}} 或 MOD-{{DOM}}_{{name}}）"                )    return violationsdef _format_amodule_violations(violations: list[str]) -> tuple[bool, str]:    """格式化 [A_module] 格式违规为阻断消息。"""    return False, (        "BLUEPRINT-AMODULE-CONSISTENCY：[A_module] module_id 格式不合规\n"        "  裁定#ARCH-DRIFT-PREVENTION-001 (ADP-3)\n"        "  合法格式：\n"        "    layer-master: MOD-{LAYER}-{SEQ}      如 MOD-INF-025\n"        "    派生轨: MOD-{DOM}-{name}             如 MOD-GOV-domain_fk_gate\n"        "    派生轨: MOD-{DOM}_{DOM}-{SEQ}        如 MOD-INFRA_A2A-005\n"        "    跨域共享: SH-{ABBR}-{NNN}            如 SH-DB-001\n"        "  非法：MOD-{LAYER}_{name} (层码后下划线+小写)  如 MOD-INF_a2a_xxx\n"        + "\n".join(violations)        + "\n-> 修复 [A_module] module_id，层码后下划线+小写改为 DASH 或大写"    )def make_blueprint_amodule_consistency_gate() -> GateSpec:    """构造 [A_module] 格式一致性门禁 GateSpec（硬阻断型）。    Returns:        GateSpec(gate_id="BLUEPRINT-AMODULE-CONSISTENCY", priority=79)。        priority=79——在 GATE-DOMAIN-FK(78) 之后、VOCAB-HARDCODE(80) 之前。    """    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:        py_files = [f for f in _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CONSISTENCY") if not is_test_exempt(f)]        if not py_files:            return True, ""        violations = _check_amodule_format(gateway, py_files)        if violations:            logger.error(                "BLUEPRINT-AMODULE-CONSISTENCY gate block: %d violation(s)",                len(violations),            )            return _format_amodule_violations(violations)        return True, ""    return GateSpec(        gate_id="BLUEPRINT-AMODULE-CONSISTENCY",        check=_check,        priority=79,    )

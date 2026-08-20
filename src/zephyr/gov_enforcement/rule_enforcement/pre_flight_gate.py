@@ -58,7 +58,6 @@ class PreFlightGate:
         """写入：engine（Stage 4 公共化）。"""
         self._engine = value
 
-
     def gate(
         self,
         action: str,

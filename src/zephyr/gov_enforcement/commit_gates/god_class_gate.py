@@ -70,10 +70,7 @@ _MAX_METHODS = 20
 
 def _count_methods(node: ast.ClassDef) -> int:
     """统计类中的方法数（直接 body 内的 FunctionDef/AsyncFunctionDef）。"""
-    return sum(
-        1 for child in node.body
-        if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
-    )
+    return sum(1 for child in node.body if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)))
 
 
 def make_god_class_gate() -> GateSpec:
@@ -107,9 +104,7 @@ def make_god_class_gate() -> GateSpec:
         if violations:
             detail = (
                 "NO-GOD-CLASS：检测到 God Class（方法数>20），\n"
-                "  违反 §5.150 God Class 反模式。\n"
-                + "\n".join(violations)
-                + "\n-> 考虑按职责拆分类（单一职责原则）"
+                "  违反 §5.150 God Class 反模式。\n" + "\n".join(violations) + "\n-> 考虑按职责拆分类（单一职责原则）"
             )
             logger.error("NO-GOD-CLASS gate block:\n%s", detail)
             return False, detail

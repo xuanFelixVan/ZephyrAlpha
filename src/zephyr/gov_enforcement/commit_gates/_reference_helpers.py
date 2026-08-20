@@ -78,7 +78,8 @@ def get_head_content(project_root: Path, rel_path: str) -> str | None:
             capture_output=True,
             cwd=str(project_root),
             timeout=_GIT_SHOW_TIMEOUT,
-        text=False)
+            text=False,
+        )
     except (subprocess.TimeoutExpired, OSError) as e:
         raise OSError(f"git show HEAD:{rel_path} failed: {e}") from e
     if result.returncode != 0:
@@ -151,7 +152,8 @@ def load_head_registered_nums(
             capture_output=True,
             cwd=str(project_root),
             timeout=_GIT_SHOW_TIMEOUT,
-        text=False)
+            text=False,
+        )
         if rev_result.returncode != 0:
             return None
     except (subprocess.TimeoutExpired, OSError):
@@ -164,6 +166,7 @@ def load_head_registered_nums(
         return set()
     try:
         import yaml
+
         data = yaml.safe_load(head_content)
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
@@ -206,9 +209,7 @@ def collect_new_refs_by_file(
     return result
 
 
-def check_atomicity(
-    new_refs_by_file: dict[str, set[str]], registry_in_commit: bool
-) -> list[tuple[str, list[str]]]:
+def check_atomicity(new_refs_by_file: dict[str, set[str]], registry_in_commit: bool) -> list[tuple[str, list[str]]]:
     """L2 同提交原子性检查：新引用不在 HEAD registry 时，要求 registry 同 commit。"""
     if registry_in_commit:
         return []

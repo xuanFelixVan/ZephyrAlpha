@@ -111,7 +111,9 @@ def make_panorama_alignment_gate() -> GateSpec:
             logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail)
             try:
                 log_gate_failure(
-                    gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
+                    gateway.project_root,
+                    "GATE-PANORAMA-ALIGNMENT",
+                    detail,
                     session_id=kwargs.get("session_id", ""),
                 )
             except Exception:  # noqa: BLE001 — log 失败不阻断 gate
@@ -119,15 +121,15 @@ def make_panorama_alignment_gate() -> GateSpec:
             return True, ""
         # 1. 获取 staged 文件清单
         try:
-            diff_result = gateway.run_git(
-                ["git", "diff", "--cached", "--name-only"]
-            )
+            diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only"])
             if diff_result.returncode != 0:
                 # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
                 detail = f"git diff 失败(rc={diff_result.returncode})，检测器失效"
                 logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail)
                 log_gate_failure(
-                    gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
+                    gateway.project_root,
+                    "GATE-PANORAMA-ALIGNMENT",
+                    detail,
                     session_id=kwargs.get("session_id", ""),
                 )
                 return True, ""
@@ -145,7 +147,9 @@ def make_panorama_alignment_gate() -> GateSpec:
             logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail)
             try:
                 log_gate_failure(
-                    gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
+                    gateway.project_root,
+                    "GATE-PANORAMA-ALIGNMENT",
+                    detail,
                     session_id=kwargs.get("session_id", ""),
                 )
             except Exception:  # noqa: BLE001 — log 失败不阻断 gate
@@ -157,7 +161,9 @@ def make_panorama_alignment_gate() -> GateSpec:
             detail = f"git diff 异常({type(e).__name__}: {e})，检测器失效"
             logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail, exc_info=True)
             log_gate_failure(
-                gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
+                gateway.project_root,
+                "GATE-PANORAMA-ALIGNMENT",
+                detail,
                 session_id=kwargs.get("session_id", ""),
                 stack_trace=traceback.format_exc(),
             )
@@ -196,7 +202,9 @@ def make_panorama_alignment_gate() -> GateSpec:
             detail = f"run_alignment 异常({type(e).__name__}: {e})，检测器失效"
             logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail, exc_info=True)
             log_gate_failure(
-                gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
+                gateway.project_root,
+                "GATE-PANORAMA-ALIGNMENT",
+                detail,
                 session_id=kwargs.get("session_id", ""),
                 stack_trace=traceback.format_exc(),
             )
@@ -216,16 +224,11 @@ def make_panorama_alignment_gate() -> GateSpec:
         #     blueprint-only = 三图 domain 一致，仅 blueprint 不同。
         def _is_three_graph_internal(m: dict) -> bool:
             three_graph_domains = {
-                v for v in (m.get("depgraph", "-"),
-                            m.get("dataflow", "-"),
-                            m.get("decision", "-"))
-                if v != "-"
+                v for v in (m.get("depgraph", "-"), m.get("dataflow", "-"), m.get("decision", "-")) if v != "-"
             }
             return len(three_graph_domains) > 1
 
-        strict_mismatches = [
-            m for m in report.domain_mismatches if _is_three_graph_internal(m)
-        ]
+        strict_mismatches = [m for m in report.domain_mismatches if _is_three_graph_internal(m)]
         if len(strict_mismatches) > 0:
             detail = (
                 f"核心字段 domain_id 不一致（三图内部）：{len(strict_mismatches)} 处，"
@@ -233,9 +236,11 @@ def make_panorama_alignment_gate() -> GateSpec:
                 f"对齐全景后重试"
             )
             logger.error(
-                "GATE-PANORAMA-ALIGNMENT BLOCK: %s (orphans=%d, drifts=%d, design_only=%d, "
-                "blueprint_mismatches=%d)",
-                detail, orphan_count, drift_count, design_only_count,
+                "GATE-PANORAMA-ALIGNMENT BLOCK: %s (orphans=%d, drifts=%d, design_only=%d, blueprint_mismatches=%d)",
+                detail,
+                orphan_count,
+                drift_count,
+                design_only_count,
                 domain_mismatch_count - len(strict_mismatches),
             )
             return False, detail
@@ -243,13 +248,9 @@ def make_panorama_alignment_gate() -> GateSpec:
         # 4b. orphans / state_drifts / blueprint-only domain_mismatches 保持 warn-only
         warnings: list[str] = []
         if orphan_count > _ORPHAN_WARN_THRESHOLD:
-            warnings.append(
-                f"孤儿数 {orphan_count} > 阈值 {_ORPHAN_WARN_THRESHOLD}"
-            )
+            warnings.append(f"孤儿数 {orphan_count} > 阈值 {_ORPHAN_WARN_THRESHOLD}")
         if drift_count > _STATE_DRIFT_WARN_THRESHOLD:
-            warnings.append(
-                f"状态漂移 {drift_count} > 阈值 {_STATE_DRIFT_WARN_THRESHOLD}"
-            )
+            warnings.append(f"状态漂移 {drift_count} > 阈值 {_STATE_DRIFT_WARN_THRESHOLD}")
         blueprint_only_mismatches = domain_mismatch_count - len(strict_mismatches)
         if blueprint_only_mismatches > 0:
             warnings.append(
@@ -260,9 +261,9 @@ def make_panorama_alignment_gate() -> GateSpec:
         if warnings:
             warn_msg = " | ".join(warnings)
             logger.warning(
-                "GATE-PANORAMA-ALIGNMENT gate warn-only: %s "
-                "(设计态孤立=%d)",
-                warn_msg, design_only_count,
+                "GATE-PANORAMA-ALIGNMENT gate warn-only: %s (设计态孤立=%d)",
+                warn_msg,
+                design_only_count,
             )
 
         # domain_mismatches=0 + warn-only → 通过

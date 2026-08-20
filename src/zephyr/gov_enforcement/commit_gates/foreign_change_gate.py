@@ -128,9 +128,7 @@ def _load_adopted_files(gateway, session_id: str) -> set[str]:
     return adopted
 
 
-def _audit_post_claim_modifications(
-    gateway, session_id: str, files: list[str], snapshots: dict[str, str]
-) -> None:
+def _audit_post_claim_modifications(gateway, session_id: str, files: list[str], snapshots: dict[str, str]) -> None:
     """P1：审计 claim 后到 commit 前的文件修改（时序缺口可见性，warn-only）。
 
     FOREIGN-CHANGE gate 只检查 claim 时刻基线，不检测 claim 后的修改。本函数在
@@ -180,15 +178,17 @@ def _audit_post_claim_modifications(
             except (ValueError, AttributeError):
                 rel = abs_f
 
-            records.append({
-                "timestamp": time.time(),  # noqa: m46-time — 审计事件时间戳
-                "session_id": session_id,
-                "file": rel.replace("\\", "/"),
-                "baseline_size": len(baseline),
-                "current_size": len(current),
-                "adopted": is_adopted,
-                "post_claim_change": True,
-            })
+            records.append(
+                {
+                    "timestamp": time.time(),  # noqa: m46-time — 审计事件时间戳（Unix 秒格式）
+                    "session_id": session_id,
+                    "file": rel.replace("\\", "/"),
+                    "baseline_size": len(baseline),
+                    "current_size": len(current),
+                    "adopted": is_adopted,
+                    "post_claim_change": True,
+                }
+            )
 
         if records:
             with audit_path.open("a", encoding="utf-8") as fh:
@@ -250,10 +250,7 @@ def make_foreign_change_gate() -> GateSpec:
         if dirty_files:
             # 显示相对路径更易读（调试用）
             try:
-                dirty_rel = sorted(
-                    os.path.relpath(f, str(gateway.project_root))
-                    for f in dirty_files
-                )
+                dirty_rel = sorted(os.path.relpath(f, str(gateway.project_root)) for f in dirty_files)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 dirty_rel = dirty_files
             return False, (

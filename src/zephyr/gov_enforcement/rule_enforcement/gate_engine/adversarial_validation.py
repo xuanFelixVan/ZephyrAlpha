@@ -78,7 +78,6 @@ class AdversarialValidationGate:
         """写入：confidence_threshold（Stage 4 公共化）。"""
         self._confidence_threshold = value
 
-
     def validate(self, output: str, context: dict[str, Any] | None = None) -> ValidationResult:
         context = context or {}
         violations: list[str] = []

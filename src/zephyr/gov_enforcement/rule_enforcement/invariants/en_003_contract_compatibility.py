@@ -51,6 +51,7 @@ def _load_contract_spec_path() -> Path:
             return REPO_ROOT / rel
     return REPO_ROOT / "architecture_model" / "contracts" / "cross_layer_contracts.yaml"
 
+
 CONTRACTS_PATH: Final[Any] = _load_contract_spec_path()
 
 TYPE_ALIAS_MAP: Final[dict[str, str]] = {

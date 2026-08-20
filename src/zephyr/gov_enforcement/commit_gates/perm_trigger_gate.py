@@ -70,12 +70,14 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_perm_trigger_gate"]
 
 # 时间触发模式标识符（APScheduler 类名 + 标识符）
-_TIME_TRIGGER_IDENTIFIERS = frozenset({
-    "APScheduler",
-    "BackgroundScheduler",
-    "BlockingScheduler",
-    "AsyncIOScheduler",
-})
+_TIME_TRIGGER_IDENTIFIERS = frozenset(
+    {
+        "APScheduler",
+        "BackgroundScheduler",
+        "BlockingScheduler",
+        "AsyncIOScheduler",
+    }
+)
 
 # 事件订阅相关属性名/方法名
 _EVENT_REGISTRATION_ATTRS = frozenset({"subscribe", "register_handler"})
@@ -213,9 +215,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
     Returns: (py_files, wt_root) — py_files 为空时表示无文件或 fail-open。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "PERM-TRIGGER gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -225,22 +225,16 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
         staged_files = diff_result.stdout.strip().splitlines()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "PERM-TRIGGER gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "PERM-TRIGGER gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return [], ""
 
-    py_files = [
-        f.replace("\\", "/") for f in staged_files
-        if f.endswith(".py") and not is_test_exempt(f)
-    ]
+    py_files = [f.replace("\\", "/") for f in staged_files if f.endswith(".py") and not is_test_exempt(f)]
     if not py_files:
         return [], ""
 
     try:
-        toplevel_result = gateway.run_git(
-            ["git", "rev-parse", "--show-toplevel"]
-        )
+        toplevel_result = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         wt_root = toplevel_result.stdout.strip() if toplevel_result.returncode == 0 else str(gateway.project_root)
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         wt_root = str(gateway.project_root)
@@ -251,9 +245,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
 def _get_added_set(gateway) -> set[str]:
     """获取 staged 新增(A)文件集合。"""
     try:
-        result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         return set(result.stdout.strip().splitlines()) if result.returncode == 0 else set()
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return set()
@@ -266,7 +258,9 @@ def _check_permanent_trigger_new(abs_path: str, content: str) -> bool:
     except SyntaxError as e:
         logger.warning(
             "PERM-TRIGGER gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
-            abs_path, type(e).__name__, e,
+            abs_path,
+            type(e).__name__,
+            e,
         )
         return False
     has_trigger = _detect_time_trigger(tree)
@@ -277,14 +271,11 @@ def _check_permanent_trigger_new(abs_path: str, content: str) -> bool:
 def _check_permanent_trigger_modified(gateway, rel_path: str, abs_path: str, content: str) -> bool:
     """检测修改文件的 staged 新增行是否含时间触发且全文件无事件订阅。"""
     try:
-        diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
-        )
+        diff_content = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path])
         if diff_content.returncode != 0:
             return False
         added_lines = [
-            line[1:] for line in diff_content.stdout.splitlines()
-            if line.startswith("+") and not line.startswith("+++")
+            line[1:] for line in diff_content.stdout.splitlines() if line.startswith("+") and not line.startswith("+++")
         ]
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False
@@ -334,7 +325,9 @@ def make_perm_trigger_gate() -> GateSpec:
             except OSError as e:
                 logger.warning(
                     "PERM-TRIGGER gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path, type(e).__name__, e,
+                    abs_path,
+                    type(e).__name__,
+                    e,
                 )
                 continue
 
@@ -342,7 +335,8 @@ def make_perm_trigger_gate() -> GateSpec:
                 continue  # 非 permanent 文件，跳过
 
             # 门禁文件自豁免：检测器本身含 pattern 字符串（非真实时间触发）
-            if "governance/commit_gates/" in rel_path or "governance\\commit_gates\\" in rel_path:
+            # 2026-08-20 修 governance→gov_enforcement 迁移漂移：原匹配 governance/commit_gates/ 已失配
+            if "commit_gates/" in rel_path.replace("\\", "/"):
                 continue
 
             if rel_path in added_set:
@@ -357,8 +351,7 @@ def make_perm_trigger_gate() -> GateSpec:
         if violations:
             detail = "; ".join(violations[:5])
             return False, (
-                f"永久系统脚本使用时间触发模式但未注册事件订阅"
-                f"（违反'永久系统必须全自动事件触发'铁律）: {detail}"
+                f"永久系统脚本使用时间触发模式但未注册事件订阅（违反'永久系统必须全自动事件触发'铁律）: {detail}"
             )
         return True, ""
 

@@ -105,7 +105,9 @@ def _check_provider_content(content: str, provider_file: str) -> list[str]:
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "CAP-CONSISTENCY: 解析 %s 失败（fail-open）: %s",
-            provider_file, e, exc_info=True,
+            provider_file,
+            e,
+            exc_info=True,
         )
         return []
 

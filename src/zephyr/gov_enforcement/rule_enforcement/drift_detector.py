@@ -156,9 +156,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
-def _check_hotfix_bypass(
-    result: dict[str, Any], module_id: str, commit_message: str
-) -> bool:
+def _check_hotfix_bypass(result: dict[str, Any], module_id: str, commit_message: str) -> bool:
     """检测 hotfix 旁路；命中时置位 result 并返回 True（调用方应直接 return）。"""
     try:
         from zephyr.gov_drift.drift_hotfix_bypass import HotfixBypass
@@ -188,9 +186,7 @@ def _run_drift_scan(
         return None
 
 
-def _detect_cascade_and_check_lockout(
-    scan_result: "ScanResult", module_id: str, result: dict[str, Any]
-) -> bool:
+def _detect_cascade_and_check_lockout(scan_result: "ScanResult", module_id: str, result: dict[str, Any]) -> bool:
     """级联检测；若 auto-fix 被暂停则置位 result 并返回 True（调用方应直接 return）。"""
     try:
         from zephyr.gov_drift.cascade_detector import detect_cascade, is_auto_fix_paused

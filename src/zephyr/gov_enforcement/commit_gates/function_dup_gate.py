@@ -78,8 +78,7 @@ def _function_body_hash(func: ast.FunctionDef | ast.AsyncFunctionDef) -> str:
     # 过滤掉 docstring（第一个 Expr + Constant str）
     body_stmts: list[ast.stmt] = []
     for stmt in func.body:
-        if (isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Constant)
-                and isinstance(stmt.value.value, str)):
+        if isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Constant) and isinstance(stmt.value.value, str):
             continue  # docstring
         body_stmts.append(stmt)
     # unparse body 语句拼接
@@ -136,7 +135,9 @@ def _scan_sibling_functions(abs_path: str, exclude_path: str) -> dict[str, tuple
         except (OSError, SyntaxError) as e:
             logger.warning(
                 "FUNCTION-DUP gate skip sibling %s: 解析失败(%s: %s)。",
-                sibling_path, type(e).__name__, e,
+                sibling_path,
+                type(e).__name__,
+                e,
             )
             continue
         funcs = _extract_top_level_functions(tree)
@@ -157,9 +158,7 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
     """
     # 1. 获取 staged 新增 .py 文件
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
                 "FUNCTION-DUP gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -169,16 +168,12 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
         staged_new = diff_result.stdout.strip().splitlines()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "FUNCTION-DUP gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "FUNCTION-DUP gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
 
     # 2. 过滤 .py 文件 + tests/ 豁免
-    new_py_files = [
-        f.replace("\\", "/") for f in staged_new
-        if f.endswith(".py") and not is_test_exempt(f)
-    ]
+    new_py_files = [f.replace("\\", "/") for f in staged_new if f.endswith(".py") and not is_test_exempt(f)]
     return new_py_files
 
 
@@ -192,9 +187,7 @@ def _resolve_worktree_root(gateway) -> str:
         worktree 根目录绝对路径字符串。
     """
     try:
-        toplevel_result = gateway.run_git(
-            ["git", "rev-parse", "--show-toplevel"]
-        )
+        toplevel_result = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         if toplevel_result.returncode == 0:
             return toplevel_result.stdout.strip()
         return str(gateway.project_root)
@@ -239,7 +232,9 @@ def _collect_dup_violations(abs_files: list[str], wt_root: str) -> list[str]:
         except OSError as e:
             logger.warning(
                 "FUNCTION-DUP gate skip file %s: 读取失败(%s: %s)。",
-                abs_path, type(e).__name__, e,
+                abs_path,
+                type(e).__name__,
+                e,
             )
             continue
 
@@ -248,7 +243,9 @@ def _collect_dup_violations(abs_files: list[str], wt_root: str) -> list[str]:
         except SyntaxError as e:
             logger.warning(
                 "FUNCTION-DUP gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
-                abs_path, type(e).__name__, e,
+                abs_path,
+                type(e).__name__,
+                e,
             )
             continue
 
@@ -268,8 +265,7 @@ def _collect_dup_violations(abs_files: list[str], wt_root: str) -> list[str]:
                 if fhash == other_hash and fhash:  # hash 相同且非空
                     other_rel = os.path.relpath(other_path, wt_root).replace("\\", "/")
                     all_violations.append(
-                        f"重复函数 {fname} 在 {other_rel} 已存在相同实现"
-                        f"（hash={fhash}，新文件 {rel_name}）"
+                        f"重复函数 {fname} 在 {other_rel} 已存在相同实现（hash={fhash}，新文件 {rel_name}）"
                     )
     return all_violations
 

@@ -191,9 +191,7 @@ def make_reconciler_health_gate() -> GateSpec:
                 try:
                     if Path(_rp).stat().st_mtime < _cutoff:
                         continue
-                    _stats = _json.loads(Path(_rp).read_text(encoding="utf-8")).get(
-                        "ops_guard_audit_stats"
-                    )
+                    _stats = _json.loads(Path(_rp).read_text(encoding="utf-8")).get("ops_guard_audit_stats")
                     if _stats:
                         _gap_total += int(_stats.get("audit_failed", 0))
                         _judge_total += int(_stats.get("judge_calls", 0))

@@ -122,18 +122,14 @@ def _load_bp_entries() -> dict[str, dict] | None:
     """
     bp_registry_data = _load_yaml(BLUEPRINT_REGISTRY)
     if bp_registry_data and "blueprints" in bp_registry_data:
-        return {
-            entry["module_id"]: entry
-            for entry in bp_registry_data["blueprints"]
-            if entry.get("module_id")
-        }
+        return {entry["module_id"]: entry for entry in bp_registry_data["blueprints"] if entry.get("module_id")}
     try:
         import sys
 
         syncers_dir = REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "syncers"
         if str(syncers_dir) not in sys.path:
             sys.path.insert(0, str(syncers_dir))
-        from sync_registry_from_blueprints import (  # noqa: PLC0415 延迟 import 防循环
+        from sync_registry_from_blueprints import (  # noqa: PLC0415 延迟 import 防循环  # noqa: import-integrity  syncers 目录 sys.path 动态注入（L130-131），静态解析不可达
             build_registry_entry,
             extract_frontmatter,
             find_all_blueprints,
@@ -146,8 +142,8 @@ def _load_bp_entries() -> dict[str, dict] | None:
             if mid:
                 entries[mid] = entry
         logger.info(
-            "triple_alignment: blueprint_registry.yaml 不在盘（派生退库终态），"
-            "已从 frontmatter 现算 %d 条 entries", len(entries),
+            "triple_alignment: blueprint_registry.yaml 不在盘（派生退库终态），已从 frontmatter 现算 %d 条 entries",
+            len(entries),
         )
         return entries or None
     except Exception:  # noqa: BLE001 — frontmatter 回退失败走 registry_load ERROR 兜底
@@ -180,12 +176,12 @@ def _extract_dep_map_modules() -> dict[str, dict[str, str]]:
     modules: dict[str, dict[str, str]] = {}
     try:
         from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
         conn = get_depgraph_pg_connection()
         try:
             cur = conn.cursor()
             cur.execute(
-                "SELECT DISTINCT blueprint_id, path, blueprint_path "
-                "FROM nodes WHERE blueprint_id ~ '^(MOD-|SH-|SYS-)'",
+                "SELECT DISTINCT blueprint_id, path, blueprint_path FROM nodes WHERE blueprint_id ~ '^(MOD-|SH-|SYS-)'",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
             )
             for row in cur.fetchall():
                 mid = row[0]
@@ -276,9 +272,14 @@ def _build_module_check_context(
     code_headers = _parse_code_headers(code_path) if code_path and code_path.exists() else {}
 
     ctx = _ModuleCheckContext(
-        mid=mid, bp=bp, bp_path_str=bp_path_str, bp_path=bp_path,
-        bp_frontmatter=bp_frontmatter, source_path_str=source_path_str,
-        code_path=code_path, code_headers=code_headers,
+        mid=mid,
+        bp=bp,
+        bp_path_str=bp_path_str,
+        bp_path=bp_path,
+        bp_frontmatter=bp_frontmatter,
+        source_path_str=source_path_str,
+        code_path=code_path,
+        code_headers=code_headers,
         dep_map_modules=dep_map_modules,
     )
     return ctx, violations
@@ -490,6 +491,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def load_yaml(path) -> dict | list | None:

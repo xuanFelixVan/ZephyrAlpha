@@ -18,6 +18,7 @@
 
 扫描工作区确保清理操作（如 deprecate/migrate）无遗漏，返回残留清单供 reconciler 兜底。
 """
+
 import os
 import subprocess
 import sys

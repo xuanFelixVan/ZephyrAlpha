@@ -63,13 +63,25 @@ __all__ = ["make_registry_code_anchor_gate"]
 _CHECKER_REL = "scripts/governance/d5_architecture/checkers/check_registry_code_anchor.py"
 
 # 15 个含 code 锚点的业务注册表文件名（与 checker REGISTRY_LISTS 一致）
-_REGISTRY_NAMES = frozenset({
-    "factor_registry.yaml", "strategy_registry.yaml", "technical_indicator_registry.yaml",
-    "universe_registry.yaml", "benchmark_registry.yaml", "cost_model_registry.yaml",
-    "execution_algo_registry.yaml", "risk_limit_registry.yaml", "data_asset_registry.yaml",
-    "chart_pattern_registry.yaml", "field_dictionary.yaml", "experiment_registry.yaml",
-    "model_registry.yaml", "regime_cycle_registry.yaml", "portfolio_model_registry.yaml",
-})
+_REGISTRY_NAMES = frozenset(
+    {
+        "factor_registry.yaml",
+        "strategy_registry.yaml",
+        "technical_indicator_registry.yaml",
+        "universe_registry.yaml",
+        "benchmark_registry.yaml",
+        "cost_model_registry.yaml",
+        "execution_algo_registry.yaml",
+        "risk_limit_registry.yaml",
+        "data_asset_registry.yaml",
+        "chart_pattern_registry.yaml",
+        "field_dictionary.yaml",
+        "experiment_registry.yaml",
+        "model_registry.yaml",
+        "regime_cycle_registry.yaml",
+        "portfolio_model_registry.yaml",
+    }
+)
 
 _CATALOGS_REL = "docs/01_policies_and_standards/_registry/catalogs"
 
@@ -193,8 +205,10 @@ def make_registry_code_anchor_gate() -> GateSpec:
                 return True, ""
             try:
                 result = run_checker_script(
-                    checker_path, ["--ci", "--files", *staged_regs],
-                    cwd=str(project_root), timeout=_TIMEOUT,
+                    checker_path,
+                    ["--ci", "--files", *staged_regs],
+                    cwd=str(project_root),
+                    timeout=_TIMEOUT,
                 )
             except subprocess.TimeoutExpired:
                 logger.warning(
@@ -205,7 +219,9 @@ def make_registry_code_anchor_gate() -> GateSpec:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning(
                     "REGISTRY-CODE-ANCHOR gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
-                    type(e).__name__, e, exc_info=True,
+                    type(e).__name__,
+                    e,
+                    exc_info=True,
                 )
                 return True, ""
 

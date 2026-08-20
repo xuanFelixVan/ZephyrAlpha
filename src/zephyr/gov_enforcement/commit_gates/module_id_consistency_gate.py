@@ -63,9 +63,7 @@ _RE_TOTAL_TEMPLATES = re.compile(r"^\s*total_templates:\s*(\d+)", re.MULTILINE)
 _RE_TOTAL_DEPS = re.compile(r"^total_dependencies:\s*(\d+)", re.MULTILINE)
 
 # 跨文件 module_id 唯一性（治本 2026-07-03）：提取 [A_test]/[A_config] 头部 module_id
-_RE_HEADER_MODULE_ID = re.compile(
-    r"^#\s*\[A_\w+\]\s*module_id[:=]\s*(\S+)", re.MULTILINE
-)
+_RE_HEADER_MODULE_ID = re.compile(r"^#\s*\[A_\w+\]\s*module_id[:=]\s*(\S+)", re.MULTILINE)
 
 # [BLUEPRINT] 引用提取——同 blueprint = 同模块，共享 module_id 是预期非碰撞
 # 治本（2026-08-03, #ARCH-GATE-COLLISION-SAME-MODULE）：原 collision check 不区分
@@ -231,27 +229,21 @@ def _check_cross_file_collision(gateway, files: list[str], project_root) -> list
         # 精确验证：候选必须在 [A_*] 头声明相同 module_id（非 [BLUEPRINT] 引用），
         # 且引用不同 [BLUEPRINT]（同 blueprint = 同模块，共享 module_id 非碰撞）
         others = [
-            candidate for candidate in matches
+            candidate
+            for candidate in matches
             if candidate != rel
-            and _candidate_declares_mid(
-                os.path.join(str(project_root), candidate.replace("/", os.sep)), mid
-            )
-            and not _candidate_same_blueprint(
-                os.path.join(str(project_root), candidate.replace("/", os.sep)), bp_id
-            )
+            and _candidate_declares_mid(os.path.join(str(project_root), candidate.replace("/", os.sep)), mid)
+            and not _candidate_same_blueprint(os.path.join(str(project_root), candidate.replace("/", os.sep)), bp_id)
         ]
         if others:
-            violations.append(
-                f"{rel}: module_id_collision '{mid}' also declared in: {', '.join(others[:5])}"
-            )
+            violations.append(f"{rel}: module_id_collision '{mid}' also declared in: {', '.join(others[:5])}")
     return violations
 
 
 def _format_module_id_violations(violations: list[str]) -> tuple[bool, str]:
     """格式化 module_id 一致性违规为阻断消息。"""
     return False, (
-        f"MODULE-ID-CONSISTENCY: {len(violations)} violation(s):\n"
-        + "\n".join(f"  - {v}" for v in violations)
+        f"MODULE-ID-CONSISTENCY: {len(violations)} violation(s):\n" + "\n".join(f"  - {v}" for v in violations)
     )
 
 
@@ -270,8 +262,12 @@ def make_module_id_consistency_gate() -> GateSpec:
             if not os.path.isfile(f):
                 continue
             rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if (rel != _REGISTRY_REL and rel != _TEMPLATE_REGISTRY_REL
-                    and rel != _DEP_REGISTRY_REL and not rel.startswith(_CONTRACTS_DIR)):
+            if (
+                rel != _REGISTRY_REL
+                and rel != _TEMPLATE_REGISTRY_REL
+                and rel != _DEP_REGISTRY_REL
+                and not rel.startswith(_CONTRACTS_DIR)
+            ):
                 continue
             try:
                 content = Path(f).read_text(encoding="utf-8", errors="replace")

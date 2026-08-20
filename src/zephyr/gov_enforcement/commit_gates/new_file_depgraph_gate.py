@@ -98,9 +98,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_new_file_depgraph_gate"]
 
 # SQL 集中化（NO-BARE-SQL gate 合规，常量名需匹配 ^_?SQL_\w+$ 豁免正则）
-_SQL_CHECK_FILE_PATH = (
-    "SELECT 1 FROM nodes WHERE file_path = %s LIMIT 1"
-)
+_SQL_CHECK_FILE_PATH = "SELECT 1 FROM nodes WHERE file_path = %s LIMIT 1"
 
 # 范围限定：src/zephyr/ + scripts/ 下（tests/ 由 is_test_exempt 豁免）
 # 排除 tests/ 的原因：测试不是模块依赖链节点，depgraph 不强制登记
@@ -138,13 +136,10 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
         git diff 失败/异常时返回 None（fail-open 检测器失效）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
-                "NEW-FILE-DEPGRAPH-ENFORCEMENT gate fail-open: "
-                "git diff 失败(rc=%d)，检测器失效。",
+                "NEW-FILE-DEPGRAPH-ENFORCEMENT gate fail-open: git diff 失败(rc=%d)，检测器失效。",
                 diff_result.returncode,
             )
             return None
@@ -163,9 +158,10 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
         return new_files
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "NEW-FILE-DEPGRAPH-ENFORCEMENT gate fail-open: "
-            "git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            "NEW-FILE-DEPGRAPH-ENFORCEMENT gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -192,9 +188,10 @@ def _check_depgraph_has_file(file_path: str) -> bool | None:
             conn.close()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "NEW-FILE-DEPGRAPH-ENFORCEMENT gate fail-open: "
-            "depgraph 查询失败(%s: %s)，无法验证新文件登记状态。",
-            type(e).__name__, e, exc_info=True,
+            "NEW-FILE-DEPGRAPH-ENFORCEMENT gate fail-open: depgraph 查询失败(%s: %s)，无法验证新文件登记状态。",
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -220,7 +217,10 @@ def make_new_file_depgraph_gate() -> GateSpec:
         # 对标 CREATE-GUARD 的 non-Zephyr project skip 设计
         _governance_dir = gateway.project_root / "scripts" / "governance" / "d1_structure"
         if not _governance_dir.is_dir():
-            return True, "non-Zephyr project (no scripts/governance/d1_structure), skipping NEW-FILE-DEPGRAPH-ENFORCEMENT"
+            return (
+                True,
+                "non-Zephyr project (no scripts/governance/d1_structure), skipping NEW-FILE-DEPGRAPH-ENFORCEMENT",
+            )
 
         # 2. 获取 staged 新增 .py 文件（None 表示 fail-open 检测器失效）
         new_py_files = _get_staged_new_py_files(gateway)
@@ -261,9 +261,11 @@ def make_new_file_depgraph_gate() -> GateSpec:
                 log_db_failopen,
                 pg_probe_shows_offline,
             )
+
             _offline = pg_probe_shows_offline(gateway.project_root)
             log_db_failopen(
-                gateway.project_root, "NEW-FILE-DEPGRAPH-ENFORCEMENT",
+                gateway.project_root,
+                "NEW-FILE-DEPGRAPH-ENFORCEMENT",
                 db_offline=_offline,
                 reason=(
                     "depgraph 查询失败，新文件登记状态无法验证，降级放行"

@@ -166,14 +166,10 @@ class DefaultQualityGate(DataQualityGate):
         )
         score += ts_delta
 
-        pr_delta, failure_reason, failed_field = _price_range_penalty(
-            high, low, failure_reason, failed_field
-        )
+        pr_delta, failure_reason, failed_field = _price_range_penalty(high, low, failure_reason, failed_field)
         score += pr_delta
 
-        pc_delta, failure_reason = _price_change_penalty(
-            close, prev_close, self._max_price_change_pct, failure_reason
-        )
+        pc_delta, failure_reason = _price_change_penalty(close, prev_close, self._max_price_change_pct, failure_reason)
         score += pc_delta
 
         if volume == 0:

@@ -313,9 +313,7 @@ class WorktreePool:
         pool_branch = f"{_POOL_BRANCH_PREFIX}{pool_id}"
 
         # Step 1: git worktree remove --force
-        r = self.run_git(
-            ["git", "worktree", "remove", "--force", str(pool_path)]
-        )
+        r = self.run_git(["git", "worktree", "remove", "--force", str(pool_path)])
         if r.returncode != 0:
             # Step 2: prune + 物理删除 fallback
             self.run_git(["git", "worktree", "prune"])
@@ -339,7 +337,8 @@ class WorktreePool:
             logger.warning(
                 "WorktreePool: cleanup incomplete (pool=%s) — may need manual "
                 "intervention: git worktree prune && git branch -D %s",
-                pool_id, pool_branch,
+                pool_id,
+                pool_branch,
             )
         return cleaned
 
@@ -385,18 +384,18 @@ class WorktreePool:
             # Pre-flight: 目标路径已存在则放弃（不覆盖现有 worktree）
             if session_path.exists():
                 logger.warning(
-                    "WorktreePool: target path exists, cannot lease "
-                    "(session=%s): %s",
-                    session_id, session_path,
+                    "WorktreePool: target path exists, cannot lease (session=%s): %s",
+                    session_id,
+                    session_path,
                 )
                 return None
 
             # Pre-flight: pool worktree 必须仍被 git 识别
             if not self._worktree_registered(pool_path):
                 logger.warning(
-                    "WorktreePool: pool worktree not registered in git, "
-                    "cleaning up (pool=%s): %s",
-                    pool_id, pool_path,
+                    "WorktreePool: pool worktree not registered in git, cleaning up (pool=%s): %s",
+                    pool_id,
+                    pool_path,
                 )
                 self._cleanup_pool_worktree(pool_id, pool_path)
                 return None
@@ -407,50 +406,51 @@ class WorktreePool:
             # 每次 0.5s 间隔。同类问题见 worktree_manager._force_rmtree 的 onerror 重试。
             r_move = None
             for _attempt in range(3):
-                r_move = self.run_git(
-                    ["git", "worktree", "move", str(pool_path), str(session_path)]
-                )
+                r_move = self.run_git(["git", "worktree", "move", str(pool_path), str(session_path)])
                 if r_move.returncode == 0:
                     break
                 if _attempt < 2:
                     time.sleep(0.5)  # noqa: m10-time-trigger — retry delay, not a periodic trigger
             if r_move.returncode != 0:
                 logger.warning(
-                    "WorktreePool: git worktree move failed after 3 retries "
-                    "(pool=%s, session=%s): %s",
-                    pool_id, session_id, r_move.stderr.strip(),
+                    "WorktreePool: git worktree move failed after 3 retries (pool=%s, session=%s): %s",
+                    pool_id,
+                    session_id,
+                    r_move.stderr.strip(),
                 )
                 # Move 失败——pool worktree 可能损坏，清理后返回 None
                 self._cleanup_pool_worktree(pool_id, pool_path)
                 return None
 
             # Step 2: git branch -m <pool_branch> <session_branch>
-            r_branch = self.run_git(
-                ["git", "branch", "-m", pool_branch, session_branch]
-            )
+            r_branch = self.run_git(["git", "branch", "-m", pool_branch, session_branch])
             if r_branch.returncode != 0:
                 logger.warning(
-                    "WorktreePool: git branch -m failed "
-                    "(pool=%s, session=%s): %s. Attempting rollback...",
-                    pool_id, session_id, r_branch.stderr.strip(),
+                    "WorktreePool: git branch -m failed (pool=%s, session=%s): %s. Attempting rollback...",
+                    pool_id,
+                    session_id,
+                    r_branch.stderr.strip(),
                 )
                 # 回滚：将 worktree 移回 pool 路径
-                r_back = self.run_git(
-                    ["git", "worktree", "move", str(session_path), str(pool_path)]
-                )
+                r_back = self.run_git(["git", "worktree", "move", str(session_path), str(pool_path)])
                 if r_back.returncode != 0:
                     logger.error(
                         "WorktreePool: rollback failed! Worktree at %s with "
                         "branch %s (expected %s). Manual cleanup needed: "
                         "git worktree remove --force %s && git branch -D %s",
-                        session_path, pool_branch, session_branch,
-                        session_path, pool_branch,
+                        session_path,
+                        pool_branch,
+                        session_branch,
+                        session_path,
+                        pool_branch,
                     )
                 return None
 
             logger.info(
                 "WorktreePool: leased (pool=%s → session=%s): %s",
-                pool_id, session_id, session_path,
+                pool_id,
+                session_id,
+                session_path,
             )
             return str(session_path)
 
@@ -471,9 +471,7 @@ class WorktreePool:
 
         head_sha = self._current_head_sha()
         if not head_sha:
-            logger.warning(
-                "WorktreePool: prefetch aborted — cannot get HEAD sha"
-            )
+            logger.warning("WorktreePool: prefetch aborted — cannot get HEAD sha")
             return 0
 
         # 确保 pool_dir 存在
@@ -481,7 +479,8 @@ class WorktreePool:
             self.pool_dir.mkdir(parents=True, exist_ok=True)
         except OSError as e:
             logger.warning(
-                "WorktreePool: mkdir pool_dir failed: %s", e,
+                "WorktreePool: mkdir pool_dir failed: %s",
+                e,
             )
             return 0
 
@@ -501,24 +500,30 @@ class WorktreePool:
 
             r = self.run_git(
                 [
-                    "git", "worktree", "add",
-                    "-b", pool_branch,
+                    "git",
+                    "worktree",
+                    "add",
+                    "-b",
+                    pool_branch,
                     str(pool_path),
                     head_sha,
                 ]
             )
             if r.returncode != 0:
                 logger.warning(
-                    "WorktreePool: prefetch git worktree add failed "
-                    "(pool=%s): %s",
-                    pool_id, r.stderr.strip(),
+                    "WorktreePool: prefetch git worktree add failed (pool=%s): %s",
+                    pool_id,
+                    r.stderr.strip(),
                 )
                 continue
 
             created += 1
             logger.info(
                 "WorktreePool: prefetched (pool=%s, branch=%s, head=%s): %s",
-                pool_id, pool_branch, head_sha[:8], pool_path,
+                pool_id,
+                pool_branch,
+                head_sha[:8],
+                pool_path,
             )
 
         return created
@@ -541,11 +546,14 @@ class WorktreePool:
                 self.prefetch(n)
             except Exception:  # noqa: BLE001 — daemon thread, never propagate
                 logger.debug(
-                    "WorktreePool: prefetch_async failed", exc_info=True,
+                    "WorktreePool: prefetch_async failed",
+                    exc_info=True,
                 )
 
         t = threading.Thread(
-            target=_run, daemon=True, name="WorktreePool-prefetch",
+            target=_run,
+            daemon=True,
+            name="WorktreePool-prefetch",
         )
         t.start()
         return t
@@ -591,12 +599,14 @@ class WorktreePool:
                     )
                     if r.returncode == 0:
                         head_sha = r.stdout.strip()
-                result.append({
-                    "pool_id": pool_id,
-                    "path": str(pool_path),
-                    "branch": f"{_POOL_BRANCH_PREFIX}{pool_id}",
-                    "head_sha": head_sha,
-                })
+                result.append(
+                    {
+                        "pool_id": pool_id,
+                        "path": str(pool_path),
+                        "branch": f"{_POOL_BRANCH_PREFIX}{pool_id}",
+                        "head_sha": head_sha,
+                    }
+                )
         return result
 
     def stats(self) -> dict:
@@ -645,7 +655,8 @@ class WorktreePool:
         if removed:
             logger.info(
                 "WorktreePool: cleanup_stale removed %d worktrees (max_age=%dh)",
-                removed, max_age_hours,
+                removed,
+                max_age_hours,
             )
         return removed
 
@@ -691,6 +702,7 @@ def get_pool(project_root: str | Path | None = None) -> WorktreePool:
         if key not in _pool_instances:
             _pool_instances[key] = WorktreePool(root)
     return _pool_instances[key]
+
 
 # ── Stage 4 公共化（2026-07-29）：module-level public aliases ──
 pool_instances: dict[str, WorktreePool] = _pool_instances  # public alias（Stage 4 公共化）

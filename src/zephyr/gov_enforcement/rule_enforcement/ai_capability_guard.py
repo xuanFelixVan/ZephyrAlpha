@@ -60,10 +60,10 @@ _logger = logging.getLogger("zephyr.gov_enforcement.rule_enforcement.capability_
 # 治本(2026-07-17): _check_file_level 路径模式真源是 config/ai_capability_matrix.yaml
 # 原代码 L135-151 硬编码 7 个子串模式（shared/contracts 等），违反 SSoT 真源唯一性。
 # 加载失败时回退到 _LEGACY_FALLBACK_PATTERNS（保持原行为，避免 fail-open）。
-_AI_CAPABILITY_MATRIX_PATH: Path = Path(
-    os.environ.get("ZEPHYR_AI_CAPABILITY_MATRIX_PATH", "")
-) if os.environ.get("ZEPHYR_AI_CAPABILITY_MATRIX_PATH") else (
-    REPO_ROOT / "config" / "ai_capability_matrix.yaml"
+_AI_CAPABILITY_MATRIX_PATH: Path = (
+    Path(os.environ.get("ZEPHYR_AI_CAPABILITY_MATRIX_PATH", ""))
+    if os.environ.get("ZEPHYR_AI_CAPABILITY_MATRIX_PATH")
+    else (REPO_ROOT / "config" / "ai_capability_matrix.yaml")
 )
 
 
@@ -101,9 +101,7 @@ def _load_capability_matrix_entries() -> list[tuple[str, "CapabilityLevel"]]:
             entries.append((str(scope), level))
         return entries
     except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-        _logger.error(
-            "Failed to load ai_capability_matrix.yaml: %s", exc, exc_info=True
-        )
+        _logger.error("Failed to load ai_capability_matrix.yaml: %s", exc, exc_info=True)
         return []
 
 
@@ -265,8 +263,8 @@ def _legacy_check_file_level(rel: str) -> CapabilityLevel:
 
     return CapabilityLevel.FULL
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def check_file_level(filepath) -> CapabilityLevel:
     """公共接口：check_file_level（Stage 4 公共化）。"""
     return _check_file_level(filepath)
-

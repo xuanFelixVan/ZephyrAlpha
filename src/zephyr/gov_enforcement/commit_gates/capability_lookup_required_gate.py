@@ -233,8 +233,7 @@ def _check_bypass(commit_msg: str | None) -> tuple[bool, str] | None:
     if hit:
         if not reason:
             return False, (
-                "commit msg 含 [no-lookup:] 标记但 reason 为空——"
-                "MUST 提供 reason（如 [no-lookup:gate-fix-xxx]）。"
+                "commit msg 含 [no-lookup:] 标记但 reason 为空——MUST 提供 reason（如 [no-lookup:gate-fix-xxx]）。"
             )
         if not is_exempt_reason(reason):
             return False, (
@@ -245,7 +244,8 @@ def _check_bypass(commit_msg: str | None) -> tuple[bool, str] | None:
             )
         logger.warning(
             "CAPABILITY-LOOKUP-REQUIRED gate: 逃生通道启用（reason=%s, whitelist match），"
-            "请在 commit 后人工确认未引入规则违反。", reason,
+            "请在 commit 后人工确认未引入规则违反。",
+            reason,
         )
         return True, f"bypass via [no-lookup:{reason}] (whitelist match)"
     if _is_merge_commit(commit_msg):
@@ -347,6 +347,7 @@ def make_capability_lookup_required_gate() -> GateSpec:
 
     return GateSpec(gate_id="CAPABILITY-LOOKUP-REQUIRED", check=_check, priority=110)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def get_audit_log_path(session_id) -> Path:
     """公共接口：get_audit_log_path（Stage 4 公共化）。"""
@@ -357,4 +358,3 @@ def get_audit_log_path(session_id) -> Path:
 def audit_log_dir_exists() -> bool:
     """公共接口：audit_log_dir_exists（Stage 4 公共化）。"""
     return _audit_log_dir_exists()
-

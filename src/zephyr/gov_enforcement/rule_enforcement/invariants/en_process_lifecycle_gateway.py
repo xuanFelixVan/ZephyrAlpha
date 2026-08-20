@@ -84,16 +84,14 @@ class ProcessCreationScanner(ast.NodeVisitor):
         """写入：imported_gateway（Stage 4 公共化）。"""
         self._imported_gateway = value
 
-
     @staticmethod
     def resolve_call_path(node: ast.expr) -> str:
         if isinstance(node, ast.Name):
             return node.id
         if isinstance(node, ast.Attribute):
             value_path = ProcessCreationScanner._resolve_call_path(node.value)
-            return f'{value_path}.{node.attr}' if value_path else node.attr
-        return ''
-
+            return f"{value_path}.{node.attr}" if value_path else node.attr
+        return ""
 
     def visit_Import(self, node: ast.Import) -> None:
         for alias in node.names:

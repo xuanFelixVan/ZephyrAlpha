@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff/文件读取异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_derivation_annotation_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """derivation_annotation_gate.py — 派生关系声明真实性校验门禁（DERIVATION-ANNOTATION）
@@ -74,9 +74,7 @@ __all__ = ["make_derivation_annotation_gate"]
 
 # DERIVES_FROM 提取正则——匹配 # [DERIVES_FROM] <path>
 # path 允许：字母/数字/下划线/连字符/正斜杠/点
-_DERIVES_FROM_RE = re.compile(
-    r"^#\s*\[DERIVES_FROM\]\s*([A-Za-z0-9_./\-]+)", re.MULTILINE
-)
+_DERIVES_FROM_RE = re.compile(r"^#\s*\[DERIVES_FROM\]\s*([A-Za-z0-9_./\-]+)", re.MULTILINE)
 
 # 触发检测的文件扩展名（代码 + 配置）
 _TRIGGER_EXTENSIONS: tuple[str, ...] = (".py", ".yaml", ".yml")
@@ -89,13 +87,10 @@ def _collect_staged_new_files(gateway) -> list[str] | None:
         相对路径列表；git diff 失败/异常返回 None（fail-open）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
-                "DERIVATION-ANNOTATION gate fail-open: "
-                "git diff 失败(rc=%d)，检测器失效。",
+                "DERIVATION-ANNOTATION gate fail-open: git diff 失败(rc=%d)，检测器失效。",
                 diff_result.returncode,
             )
             return None
@@ -112,9 +107,10 @@ def _collect_staged_new_files(gateway) -> list[str] | None:
         return result
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning(
-            "DERIVATION-ANNOTATION gate fail-open: "
-            "git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            "DERIVATION-ANNOTATION gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -154,10 +150,7 @@ def _scan_violations(gateway, new_files: list[str]) -> list[str]:
         # 校验源文件存在（相对 project_root）
         source_abs = os.path.join(str(project_root), derives_from)
         if not os.path.isfile(source_abs):
-            violations.append(
-                f"  {rel}: # [DERIVES_FROM] {derives_from} "
-                f"源文件不存在（悬空派生声明）"
-            )
+            violations.append(f"  {rel}: # [DERIVES_FROM] {derives_from} 源文件不存在（悬空派生声明）")
 
     return violations
 
@@ -188,6 +181,4 @@ def make_derivation_annotation_gate() -> GateSpec:
 
         return True, ""
 
-    return GateSpec(
-        gate_id="DERIVATION-ANNOTATION", check=_check, priority=114
-    )
+    return GateSpec(gate_id="DERIVATION-ANNOTATION", check=_check, priority=114)

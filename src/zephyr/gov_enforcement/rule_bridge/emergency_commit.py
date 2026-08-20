@@ -221,11 +221,14 @@ def _agent_bucket_id(project_root: str | Path) -> str:
     # project_root 本身是 git 仓库根（而非子目录），只有根才读取 local config。
     try:
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
         toplevel_r = run_subprocess_hidden(
             ["git", "rev-parse", "--show-toplevel"],
             cwd=str(project_root),
-            capture_output=True, text=True,
-            encoding="utf-8", errors="replace",
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=5,
         )
         if toplevel_r.returncode == 0:
@@ -234,8 +237,10 @@ def _agent_bucket_id(project_root: str | Path) -> str:
                 cfg_r = run_subprocess_hidden(
                     ["git", "config", "--local", "user.email"],
                     cwd=str(project_root),
-                    capture_output=True, text=True,
-                    encoding="utf-8", errors="replace",
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
                     timeout=5,
                 )
                 if cfg_r.returncode == 0:
@@ -281,7 +286,9 @@ def _read_emergency_count(project_root: str | Path, bucket_id: str) -> dict:
 
 
 def _write_emergency_count(
-    project_root: str | Path, bucket_id: str, data: dict,
+    project_root: str | Path,
+    bucket_id: str,
+    data: dict,
 ) -> None:
     """写入 emergency 计数（原子写入：tmp + os.replace）。
 
@@ -301,7 +308,9 @@ def _write_emergency_count(
 
 
 def _check_emergency_escalation(
-    project_root: str | Path, bucket_id: str, reason: str,
+    project_root: str | Path,
+    bucket_id: str,
+    reason: str,
 ) -> tuple[bool, str]:
     """检查 emergency_commit 成本递增门禁（#ARCH-HEARTBEAT-001 P1-5 + P1-2 治本）。
 
@@ -333,7 +342,8 @@ def _check_emergency_escalation(
 
 
 def _increment_emergency_count(
-    project_root: str | Path, bucket_id: str,
+    project_root: str | Path,
+    bucket_id: str,
 ) -> int:
     """emergency_commit 成功后递增计数（#ARCH-HEARTBEAT-001 P1-5 + P1-2 治本）。
 
@@ -349,16 +359,22 @@ def _increment_emergency_count(
     data = _read_emergency_count(project_root, bucket_id)
     new_count = data.get("count", 0) + 1
     block_next = new_count >= _EMERGENCY_BLOCK_THRESHOLD
-    _write_emergency_count(project_root, bucket_id, {
-        "count": new_count,
-        "block_next_start": block_next,
-        "bucket_id": bucket_id,
-    })
+    _write_emergency_count(
+        project_root,
+        bucket_id,
+        {
+            "count": new_count,
+            "block_next_start": block_next,
+            "bucket_id": bucket_id,
+        },
+    )
     if block_next:
         logger.warning(
             "emergency_commit count reached %d (block threshold %d) — "
             "next session_worktree_start will be blocked (bucket=%s)",
-            new_count, _EMERGENCY_BLOCK_THRESHOLD, bucket_id,
+            new_count,
+            _EMERGENCY_BLOCK_THRESHOLD,
+            bucket_id,
         )
     return new_count
 
@@ -404,6 +420,7 @@ class EmergencyCommitResult(TypedDict, total=False):
 
     ``ok`` 是判定成败的唯一入口（项目 memory 硬约束：TypedDict 统一 ok 键）。
     """
+
     ok: bool
     session_id: str
     status: str  # "OK" | "FAILED"
@@ -436,7 +453,10 @@ def run_git(
         env=full_env,
     )
 
-def _run_git(cmd: list[str], cwd: str, env: dict | None = None, timeout: int = _COMMIT_TREE_TIMEOUT) -> subprocess.CompletedProcess:
+
+def _run_git(
+    cmd: list[str], cwd: str, env: dict | None = None, timeout: int = _COMMIT_TREE_TIMEOUT
+) -> subprocess.CompletedProcess:
     """向后兼容 thin wrapper（Stage 4 公共化）。"""
     return run_git(cmd, cwd, env, timeout)
 
@@ -614,8 +634,12 @@ def emergency_commit(
     if reason:
         full_message += f"\n\nEmergency reason: {reason}"
     tmp_msg = tempfile.NamedTemporaryFile(
-        prefix="emergency_msg_", suffix=".txt", delete=False, mode="w",
-        encoding="utf-8", dir=str(root / ".git"),
+        prefix="emergency_msg_",
+        suffix=".txt",
+        delete=False,
+        mode="w",
+        encoding="utf-8",
+        dir=str(root / ".git"),
     )
     tmp_msg.write(full_message)
     tmp_msg.close()
@@ -636,8 +660,21 @@ def emergency_commit(
                     _ops_log.parent.mkdir(parents=True, exist_ok=True)
                     import json as _j
                     import time as _t
+
                     with open(_ops_log, "a", encoding="utf-8") as _f:
-                        _f.write(_j.dumps({"ts": _t.time(), "session_id": session_id, "stage": "emergency_commit", "event": "workspace_head_diff", "files": _warn_files}, ensure_ascii=False) + "\n")
+                        _f.write(
+                            _j.dumps(
+                                {
+                                    "ts": _t.time(),
+                                    "session_id": session_id,
+                                    "stage": "emergency_commit",
+                                    "event": "workspace_head_diff",
+                                    "files": _warn_files,
+                                },
+                                ensure_ascii=False,
+                            )
+                            + "\n"
+                        )
                 except OSError:
                     pass
         except Exception as _bf_err:
@@ -647,13 +684,19 @@ def emergency_commit(
         env_index = {"GIT_INDEX_FILE": tmp_index_path}
         r = _run_git(
             ["git", "read-tree", "HEAD"],
-            cwd=str(root), env=env_index, timeout=30,
+            cwd=str(root),
+            env=env_index,
+            timeout=30,
         )
         if r.returncode != 0:
             return {
-                "ok": False, "session_id": session_id, "status": "FAILED",
-                "commit_hash": "", "error": f"git read-tree HEAD failed: {r.stderr.strip()}",
-                "branch": branch, "files_count": len(norm_files),
+                "ok": False,
+                "session_id": session_id,
+                "status": "FAILED",
+                "commit_hash": "",
+                "error": f"git read-tree HEAD failed: {r.stderr.strip()}",
+                "branch": branch,
+                "files_count": len(norm_files),
             }
 
         # Step 2: 逐文件 hash-object + update-index
@@ -661,13 +704,18 @@ def emergency_commit(
             # hash-object -w：写入 object store，返回 SHA
             r = _run_git(
                 ["git", "hash-object", "-w", "--", str(abs_path)],
-                cwd=str(root), timeout=_HASH_OBJECT_TIMEOUT,
+                cwd=str(root),
+                timeout=_HASH_OBJECT_TIMEOUT,
             )
             if r.returncode != 0:
                 return {
-                    "ok": False, "session_id": session_id, "status": "FAILED",
-                    "commit_hash": "", "error": f"git hash-object failed for {rel_path}: {r.stderr.strip()}",
-                    "branch": branch, "files_count": len(norm_files),
+                    "ok": False,
+                    "session_id": session_id,
+                    "status": "FAILED",
+                    "commit_hash": "",
+                    "error": f"git hash-object failed for {rel_path}: {r.stderr.strip()}",
+                    "branch": branch,
+                    "files_count": len(norm_files),
                 }
             blob_sha = r.stdout.strip()
 
@@ -675,40 +723,56 @@ def emergency_commit(
             # --add 必须用于新文件（不在 HEAD tree 中的文件）
             # 100644 = normal file mode
             r = _run_git(
-                ["git", "update-index", "--add", "--cacheinfo",
-                 f"100644,{blob_sha},{rel_path}"],
-                cwd=str(root), env=env_index, timeout=30,
+                ["git", "update-index", "--add", "--cacheinfo", f"100644,{blob_sha},{rel_path}"],
+                cwd=str(root),
+                env=env_index,
+                timeout=30,
             )
             if r.returncode != 0:
                 return {
-                    "ok": False, "session_id": session_id, "status": "FAILED",
-                    "commit_hash": "", "error": f"git update-index failed for {rel_path}: {r.stderr.strip()}",
-                    "branch": branch, "files_count": len(norm_files),
+                    "ok": False,
+                    "session_id": session_id,
+                    "status": "FAILED",
+                    "commit_hash": "",
+                    "error": f"git update-index failed for {rel_path}: {r.stderr.strip()}",
+                    "branch": branch,
+                    "files_count": len(norm_files),
                 }
 
         # Step 3: write-tree（从临时 index 创建 tree object）
         r = _run_git(
             ["git", "write-tree"],
-            cwd=str(root), env=env_index, timeout=30,
+            cwd=str(root),
+            env=env_index,
+            timeout=30,
         )
         if r.returncode != 0:
             return {
-                "ok": False, "session_id": session_id, "status": "FAILED",
-                "commit_hash": "", "error": f"git write-tree failed: {r.stderr.strip()}",
-                "branch": branch, "files_count": len(norm_files),
+                "ok": False,
+                "session_id": session_id,
+                "status": "FAILED",
+                "commit_hash": "",
+                "error": f"git write-tree failed: {r.stderr.strip()}",
+                "branch": branch,
+                "files_count": len(norm_files),
             }
         tree_sha = r.stdout.strip()
 
         # Step 4: commit-tree（创建 commit object，不触发任何 hook！）
         r = _run_git(
             ["git", "commit-tree", tree_sha, "-p", parent_sha, "-F", tmp_msg_path],
-            cwd=str(root), timeout=_COMMIT_TREE_TIMEOUT,
+            cwd=str(root),
+            timeout=_COMMIT_TREE_TIMEOUT,
         )
         if r.returncode != 0:
             return {
-                "ok": False, "session_id": session_id, "status": "FAILED",
-                "commit_hash": "", "error": f"git commit-tree failed: {r.stderr.strip()}",
-                "branch": branch, "files_count": len(norm_files),
+                "ok": False,
+                "session_id": session_id,
+                "status": "FAILED",
+                "commit_hash": "",
+                "error": f"git commit-tree failed: {r.stderr.strip()}",
+                "branch": branch,
+                "files_count": len(norm_files),
             }
         commit_sha = r.stdout.strip()
 
@@ -718,13 +782,18 @@ def emergency_commit(
         _reflog_msg = f"emergency_commit: {session_id} reason={reason or 'unspecified'}"
         r = _run_git(
             ["git", "update-ref", "-m", _reflog_msg, f"refs/heads/{branch}", commit_sha, parent_sha],
-            cwd=str(root), timeout=30,
+            cwd=str(root),
+            timeout=30,
         )
         if r.returncode != 0:
             return {
-                "ok": False, "session_id": session_id, "status": "FAILED",
-                "commit_hash": "", "error": f"git update-ref failed: {r.stderr.strip()}",
-                "branch": branch, "files_count": len(norm_files),
+                "ok": False,
+                "session_id": session_id,
+                "status": "FAILED",
+                "commit_hash": "",
+                "error": f"git update-ref failed: {r.stderr.strip()}",
+                "branch": branch,
+                "files_count": len(norm_files),
             }
 
         # Step 6: 治理可见性——持久化到 reconcile_execution_log + 审计报告
@@ -744,8 +813,7 @@ def emergency_commit(
         # Step 7: 可选触发 reconciler 链路
         if trigger_reconcilers:
             try:
-                _trigger_reconcilers_safely(root, session_id, commit_sha,
-                                            [rel for _, rel in norm_files])
+                _trigger_reconcilers_safely(root, session_id, commit_sha, [rel for _, rel in norm_files])
             except Exception as e:  # noqa: BLE001 — reconciler 失败不阻断 commit
                 logger.warning("emergency_commit: reconciler trigger failed: %s", e)
 
@@ -753,7 +821,10 @@ def emergency_commit(
         short_sha = commit_sha[:10]
         logger.info(
             "emergency_commit: OK commit=%s branch=%s files=%d session=%s",
-            short_sha, branch, len(norm_files), session_id,
+            short_sha,
+            branch,
+            len(norm_files),
+            session_id,
         )
         # #ARCH-HEARTBEAT-001 P1-5 + P1-2 治本：成功后递增计数（按 agent bucket）
         # N+1 >= 5 时设置 block_next_start=True（阻断下次 session_worktree_start）
@@ -774,9 +845,13 @@ def emergency_commit(
 
     except subprocess.TimeoutExpired as e:
         return {
-            "ok": False, "session_id": session_id, "status": "FAILED",
-            "commit_hash": "", "error": f"git command timeout: {e}",
-            "branch": branch, "files_count": len(norm_files),
+            "ok": False,
+            "session_id": session_id,
+            "status": "FAILED",
+            "commit_hash": "",
+            "error": f"git command timeout: {e}",
+            "branch": branch,
+            "files_count": len(norm_files),
         }
     finally:
         # 清理临时文件
@@ -820,6 +895,7 @@ def _trigger_reconcilers_safely(
             CommitResult,
             CommitStatus,
         )
+
         result = CommitResult(
             status=CommitStatus.OK,
             message=f"emergency_commit {commit_sha[:10]}",

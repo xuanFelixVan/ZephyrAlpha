@@ -67,7 +67,7 @@ __all__ = ["make_msg_style_gate"]
 
 # 违规字符常量
 _UNICODE_ARROW = "\u2192"  # ->
-_CN_PERIOD = "\u3002"      # 。
+_CN_PERIOD = "\u3002"  # 。
 
 # 行级豁免标记（与 MSG-EXPOSURE 一致的 noqa 风格）
 _NOQA_MARKER = "noqa: MSG-STYLE"
@@ -189,9 +189,7 @@ def _filter_noqa_violations(
 def _get_staged_py_files(gateway) -> list[str] | None:
     """获取 staged added/modified .py 文件列表（tests/ 豁免）。None=fail-open。"""
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "MSG-STYLE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -202,7 +200,9 @@ def _get_staged_py_files(gateway) -> list[str] | None:
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "MSG-STYLE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
     return [f.replace("\\", "/") for f in staged_files if f.endswith(".py") and not is_test_exempt(f)]
@@ -221,14 +221,13 @@ def _scan_new_file(rel_path: str, abs_path: str, content: str) -> list[str]:
     except SyntaxError as e:
         logger.warning(
             "MSG-STYLE gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
-            abs_path, type(e).__name__, e,
+            abs_path,
+            type(e).__name__,
+            e,
         )
         return []
     violations = _filter_noqa_violations(content, _detect_msg_style(tree))
-    return [
-        _format_violation_entry(rel_path, lineno, exc_name, vtype)
-        for lineno, exc_name, vtype in violations
-    ]
+    return [_format_violation_entry(rel_path, lineno, exc_name, vtype) for lineno, exc_name, vtype in violations]
 
 
 def _parse_diff_added_lines(diff_stdout: str) -> list[tuple[int, str]]:
@@ -256,9 +255,7 @@ def _parse_diff_added_lines(diff_stdout: str) -> list[tuple[int, str]]:
 def _scan_modified_file(gateway, rel_path: str, abs_path: str, content: str) -> list[str]:
     """扫描修改文件（只检测 diff 新增行范围内的违规 + 行级 noqa 豁免）。"""
     try:
-        diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
-        )
+        diff_content = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path])
         if diff_content.returncode != 0:
             return []
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -289,10 +286,7 @@ def _scan_modified_file(gateway, rel_path: str, abs_path: str, content: str) -> 
 def _format_msg_style_violations(violations: list[str]) -> tuple[bool, str]:
     """格式化 MSG-STYLE 违规为阻断消息。"""
     detail = "; ".join(violations[:5])
-    return False, (
-        f"错误消息标点/箭头风格违规（统一 ASCII -> + 无句号结尾，"
-        f"5.99.22 治本防复发）: {detail}"
-    )
+    return False, (f"错误消息标点/箭头风格违规（统一 ASCII -> + 无句号结尾，5.99.22 治本防复发）: {detail}")
 
 
 def make_msg_style_gate() -> GateSpec:
@@ -317,17 +311,15 @@ def make_msg_style_gate() -> GateSpec:
 
         # added(A) set
         try:
-            added_result = gateway.run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-            )
+            added_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
             added_set = set(added_result.stdout.strip().splitlines()) if added_result.returncode == 0 else set()
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             added_set = set()
 
         violations_all: list[str] = []
         for rel_path in py_files:
-            if "governance/commit_gates/" in rel_path.replace("\\", "/"):
-                continue  # 门禁文件自豁免
+            if "commit_gates/" in rel_path.replace("\\", "/"):
+                continue  # 门禁文件自豁免（2026-08-20 修 governance→gov_enforcement 迁移漂移：原匹配 governance/commit_gates/ 已失配）
             abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
             if not os.path.isfile(abs_path):
                 continue
@@ -337,7 +329,9 @@ def make_msg_style_gate() -> GateSpec:
             except OSError as e:
                 logger.warning(
                     "MSG-STYLE gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path, type(e).__name__, e,
+                    abs_path,
+                    type(e).__name__,
+                    e,
                 )
                 continue
             if rel_path in added_set:

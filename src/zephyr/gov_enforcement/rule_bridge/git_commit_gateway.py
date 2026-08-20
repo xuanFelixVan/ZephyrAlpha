@@ -160,7 +160,7 @@ class CommitStatus(str, Enum):
     REPO_ROOT_VIOLATION = "REPO_ROOT_VIOLATION"
     PURE_ASSERTION_VIOLATION = "PURE_ASSERTION_VIOLATION"
     HELD_OVERLAP_VIOLATION = "HELD_OVERLAP_VIOLATION"
-    FOREIGN_CHANGE_VIOLATION = "FOREIGN_CHANGE_VIOLATION"  #ARCH-054 外来变更检测
+    FOREIGN_CHANGE_VIOLATION = "FOREIGN_CHANGE_VIOLATION"  # ARCH-054 外来变更检测
     CLAIM_REQUIRED_VIOLATION = "CLAIM_REQUIRED_VIOLATION"
     WORKTREE_VIOLATION = "WORKTREE_VIOLATION"  # #ARCH-WORKTREE-GATE-001
     COMMIT_SCOPE_VIOLATION = "COMMIT_SCOPE_VIOLATION"  # 跨域混合提交治本（13a5e1d512）
@@ -171,6 +171,7 @@ class CommitStatus(str, Enum):
 
 class GatewayError(RuntimeError):
     """Gateway 层错误（锁超时等）。"""
+
     error_code = "ZA-GV-0032"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -242,7 +243,8 @@ class _GlobalCommitLock:
                     if holder_pid is not None and not is_pid_alive(int(holder_pid)):
                         logger.warning(
                             "_GlobalCommitLock: 持有进程 PID %s 已死亡，清理僵尸锁: %s",
-                            holder_pid, self._lock_file,
+                            holder_pid,
+                            self._lock_file,
                         )
                         try:
                             os.remove(self._lock_file)
@@ -256,9 +258,7 @@ class _GlobalCommitLock:
                             pass
                         continue
                 except (OSError, ValueError, TypeError):
-                    logger.warning(
-                        "_GlobalCommitLock: 锁文件损坏，清理后重试: %s", self._lock_file
-                    )
+                    logger.warning("_GlobalCommitLock: 锁文件损坏，清理后重试: %s", self._lock_file)
                     try:
                         os.remove(self._lock_file)
                     except OSError:
@@ -333,8 +333,8 @@ def _audit_index_hygiene(project_root: Path, session_id: str, kind: str, payload
 # git 命令 timeout 分级——原硬编码 120s 对所有 git 命令共用，导致快速读命令
 # （rev-parse/show/status）与慢速写命令（commit/merge）共用上限。改为按命令类型
 # 分级，单个慢命令不会耗尽整个 session 预算。
-_GIT_TIMEOUT_READ = 15    # rev-parse/show/status/diff/log/ls-tree/merge-base/config
-_GIT_TIMEOUT_WRITE = 60   # commit/merge/checkout/reset/update-ref/rebase
+_GIT_TIMEOUT_READ = 15  # rev-parse/show/status/diff/log/ls-tree/merge-base/config
+_GIT_TIMEOUT_WRITE = 60  # commit/merge/checkout/reset/update-ref/rebase
 _GIT_TIMEOUT_DEFAULT = 30  # 其他默认
 
 # Stage 4 公共化：timeout 常量公共别名。
@@ -342,17 +342,53 @@ GIT_TIMEOUT_READ = _GIT_TIMEOUT_READ
 GIT_TIMEOUT_WRITE = _GIT_TIMEOUT_WRITE
 GIT_TIMEOUT_DEFAULT = _GIT_TIMEOUT_DEFAULT
 
-_GIT_READ_SUBCMDS: frozenset[str] = frozenset({
-    "rev-parse", "show", "status", "diff", "log", "ls-tree", "ls-files",
-    "merge-base", "config", "cat-file", "rev-list", "name-rev", "describe",
-    "remote", "stash", "show-ref", "symbolic-ref", "for-each-ref",
-})
+_GIT_READ_SUBCMDS: frozenset[str] = frozenset(
+    {
+        "rev-parse",
+        "show",
+        "status",
+        "diff",
+        "log",
+        "ls-tree",
+        "ls-files",
+        "merge-base",
+        "config",
+        "cat-file",
+        "rev-list",
+        "name-rev",
+        "describe",
+        "remote",
+        "stash",
+        "show-ref",
+        "symbolic-ref",
+        "for-each-ref",
+    }
+)
 
-_GIT_WRITE_SUBCMDS: frozenset[str] = frozenset({
-    "commit", "merge", "checkout", "reset", "update-ref", "rebase",
-    "cherry-pick", "revert", "apply", "am", "init", "clone", "fetch",
-    "push", "pull", "tag", "add", "rm", "mv", "worktree",
-})
+_GIT_WRITE_SUBCMDS: frozenset[str] = frozenset(
+    {
+        "commit",
+        "merge",
+        "checkout",
+        "reset",
+        "update-ref",
+        "rebase",
+        "cherry-pick",
+        "revert",
+        "apply",
+        "am",
+        "init",
+        "clone",
+        "fetch",
+        "push",
+        "pull",
+        "tag",
+        "add",
+        "rm",
+        "mv",
+        "worktree",
+    }
+)
 
 
 def _classify_git_timeout(cmd: list[str]) -> int:
@@ -404,6 +440,7 @@ class GitCommitGateway:
             self._registry = registry
         else:
             from zephyr.security.access_control.session_concurrency import SessionRegistry
+
             self._registry = SessionRegistry(self.project_root)
         self._reconciliation_registry = ReconciliationRegistry()
         # ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): reconciler auto-commit batcher.
@@ -415,7 +452,7 @@ class GitCommitGateway:
         auto_register_gates(self._gate_registry, self.project_root)
         self.in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
-        #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
+        # ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
         # commit 时 FOREIGN-CHANGE-DETECTION gate 对比检测搭便车变更。
         # S3-C 治本（2026-07-17）：快照持久化到 .runtime/claim_snapshots/，
         # 进程崩溃后重启可恢复快照（原纯内存 dict 崩溃即丢失，gate 降级为 PASS）。
@@ -427,30 +464,40 @@ class GitCommitGateway:
         """公共接口：commit_with_file_message（Stage 4 公共化）。"""
         return self._commit_with_file_message(message, pathspec_file, target_files)
 
-
     # ── Stage 4 公共化（2026-07-29）：public wrapper ──
-    def run_post_commit_reconcile_async(self, existing: list[str], session_id: str, commit_sha: str, commit_message: str='') -> None:
-        '异步 spawn detached worker subprocess（P2-3 治本）。\n\n        - commit_sha 缺失 → 回退 sync（兼容 edge case）\n        - launch 失败 → 回退 sync（fail-open，reconciler 仍需执行）\n        - launch 成功 → 立即返回，worker 在后台执行\n\n        Args:\n            existing: 已 commit 的文件绝对路径列表。\n            session_id: commit session_id。\n            commit_sha: 本次 commit 的 SHA（worker 用作 status file key）。\n            commit_message: commit message（审计追溯用）。\n        '
+    def run_post_commit_reconcile_async(
+        self, existing: list[str], session_id: str, commit_sha: str, commit_message: str = ""
+    ) -> None:
+        "异步 spawn detached worker subprocess（P2-3 治本）。\n\n        - commit_sha 缺失 → 回退 sync（兼容 edge case）\n        - launch 失败 → 回退 sync（fail-open，reconciler 仍需执行）\n        - launch 成功 → 立即返回，worker 在后台执行\n\n        Args:\n            existing: 已 commit 的文件绝对路径列表。\n            session_id: commit session_id。\n            commit_sha: 本次 commit 的 SHA（worker 用作 status file key）。\n            commit_message: commit message（审计追溯用）。\n"
         if not commit_sha:
-            logger.warning('GitCommitGateway: async reconcile fallback to sync (no commit_sha, session=%s)', session_id)
+            logger.warning("GitCommitGateway: async reconcile fallback to sync (no commit_sha, session=%s)", session_id)
             self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=None)
             return
         try:
             from zephyr.governance.audit.reconcile_runner import launch_reconcile_async
+
             launch_result = launch_reconcile_async(self.project_root, commit_sha, session_id, existing, commit_message)
-            if launch_result['ok']:
-                logger.info('GitCommitGateway: post-commit reconcile async launched (session=%s, sha=%s, pid=%s)', session_id, commit_sha, launch_result.get('worker_pid', 0))
+            if launch_result["ok"]:
+                logger.info(
+                    "GitCommitGateway: post-commit reconcile async launched (session=%s, sha=%s, pid=%s)",
+                    session_id,
+                    commit_sha,
+                    launch_result.get("worker_pid", 0),
+                )
             else:
-                logger.warning('GitCommitGateway: async launch failed, fallback to sync: %s', launch_result.get('error', ''))
+                logger.warning(
+                    "GitCommitGateway: async launch failed, fallback to sync: %s", launch_result.get("error", "")
+                )
                 self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=None)
         except Exception as e:
-            logger.warning('GitCommitGateway: async reconcile launch failed, fallback to sync: %s', e, exc_info=True)
+            logger.warning("GitCommitGateway: async reconcile launch failed, fallback to sync: %s", e, exc_info=True)
             self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=None)
 
-
     # ── Stage 4 公共化（2026-07-29）：public wrapper ──
-    def run_post_commit_reconcile(self, existing: list[str], session_id: str, result: CommitResult, commit_message: str='') -> None:
-        'Post-commit reconciler 调度器（Ruling:100PCT-AI-GOVERNANCE P2-3 异步化）。\n\n        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点4/5 治本：\n        新增 commit_message 参数——传递给 reconcile_for 和 _log_reconcile_results，\n        使 post-commit 审计链可追溯 [no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP 逃生通道使用。\n        原断点4: commit() 不传 message 给 _run_post_commit_reconcile；\n        原断点5: _run_post_commit_reconcile 不传 commit_message 给 reconcile_for。\n\n        P2-3 治本（2026-07-19）：默认异步 spawn detached worker subprocess，避免 30+ 个\n        reconciler 同步执行超时被 AI 工具强制终止（误判为 commit 失败）。env\n        ``ZEPHYR_RECONCILE_SYNC=1`` 强制同步模式（测试用）。\n        '
+    def run_post_commit_reconcile(
+        self, existing: list[str], session_id: str, result: CommitResult, commit_message: str = ""
+    ) -> None:
+        "Post-commit reconciler 调度器（Ruling:100PCT-AI-GOVERNANCE P2-3 异步化）。\n\n        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点4/5 治本：\n        新增 commit_message 参数——传递给 reconcile_for 和 _log_reconcile_results，\n        使 post-commit 审计链可追溯 [no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP 逃生通道使用。\n        原断点4: commit() 不传 message 给 _run_post_commit_reconcile；\n        原断点5: _run_post_commit_reconcile 不传 commit_message 给 reconcile_for。\n\n        P2-3 治本（2026-07-19）：默认异步 spawn detached worker subprocess，避免 30+ 个\n        reconciler 同步执行超时被 AI 工具强制终止（误判为 commit 失败）。env\n        ``ZEPHYR_RECONCILE_SYNC=1`` 强制同步模式（测试用）。\n"
         if result.status is not CommitStatus.OK:
             return
         # #ARCH-REGEN-CASCADE-001 治本（2026-08-05 CPU 爆炸事故）：
@@ -460,23 +507,22 @@ class GitCommitGateway:
         # → blueprint_panorama 互相争用全部 300s 超时 → CPU 99% 正反馈放大。
         # worker 主循环 _run_post_commit_reconcile_sync_worker 已覆盖全部 reconciler，
         # auto-commit 仅持久化；后续 reconciler 顺序读最新 DB/文件即可，无需重跑链路。
-        if os.environ.get('ZEPHYR_RECONCILE_WORKER', '') == '1':
+        if os.environ.get("ZEPHYR_RECONCILE_WORKER", "") == "1":
             return
-        _governance_dir = self.project_root / 'scripts' / 'governance' / 'd1_structure'
+        _governance_dir = self.project_root / "scripts" / "governance" / "d1_structure"
         if not _governance_dir.is_dir():
             return
-        if os.environ.get('ZEPHYR_RECONCILE_SYNC', '') == '1':
+        if os.environ.get("ZEPHYR_RECONCILE_SYNC", "") == "1":
             self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=result)
-        elif os.environ.get('PYTEST_CURRENT_TEST'):
+        elif os.environ.get("PYTEST_CURRENT_TEST"):
             # B1/R1 治本（2026-08-19）：pytest 测试体内 commit 不 spawn 真实 reconcile
             # worker——worker 以 tmp 仓为 root 跑主仓维护链路，实测挂起残留 2h+（8 僵尸
             # 进程实证），async 回写更是 xdist 尾部资源风暴放大器（61 watchdog daemon
             # 同族问题）。需覆盖 reconcile 调度的测试走 ZEPHYR_RECONCILE_SYNC=1 同步路径。
-            logger.debug('GitCommitGateway: pytest env, skip async reconcile worker spawn')
+            logger.debug("GitCommitGateway: pytest env, skip async reconcile worker spawn")
             return
         else:
             self._run_post_commit_reconcile_async(existing, session_id, result.commit_hash, commit_message)
-
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -488,7 +534,6 @@ class GitCommitGateway:
     def reconciliation_registry(self, value):
         """写入：reconciliation_registry（Stage 4 公共化）。"""
         self._reconciliation_registry = value
-
 
     # ------------------------------------------------------------------
     # R5 (Stage 4): public properties for private backing attributes
@@ -542,6 +587,7 @@ class GitCommitGateway:
         """延迟获取 WorktreeManager 单例。"""
         if self._worktree_mgr is None:
             from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
+
             self._worktree_mgr = WorktreeManager(self.project_root)
         return self._worktree_mgr
 
@@ -561,7 +607,8 @@ class GitCommitGateway:
         if wt_session is not None:
             logger.info(
                 "GitCommitGateway: 在 session worktree 内 commit，物理隔离生效（session=%s, wt=%s）",
-                session_id, wt_session,
+                session_id,
+                wt_session,
             )
             return
         # 非 worktree commit——检查是否有其他活跃 session（并发风险判定）
@@ -572,9 +619,9 @@ class GitCommitGateway:
             # gateway 串行提交），无搭便车风险。不排除则每次 commit 有活跃 worker 都产
             # 噪音 WARN（非阻断，但治理噪音 + 与 gate 判定标准不一致=第二决策点）。
             other_active = [
-                s for s in self.registry.list_active()
-                if s.session_id != session_id
-                and not s.session_id.startswith("worker-")
+                s
+                for s in self.registry.list_active()
+                if s.session_id != session_id and not s.session_id.startswith("worker-")
             ]
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             other_active = []
@@ -584,7 +631,8 @@ class GitCommitGateway:
                 "GitCommitGateway: 非 worktree commit 且有其他活跃 session（session=%s, "
                 "others=%s）——并发风险：共享工作区 commit 可能搭便车带入其他 session WIP。"
                 "建议使用 session_worktree_start 实现物理隔离，或等待其他 session 完成后再 commit。",
-                session_id, other_ids,
+                session_id,
+                other_ids,
             )
         else:
             logger.info(
@@ -597,9 +645,7 @@ class GitCommitGateway:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         return self.warn_non_worktree_commit(session_id, wt_session)
 
-    def claim_files(
-        self, session_id: str, files: list[str], adopt_prior_work: bool = False
-    ) -> list[str]:
+    def claim_files(self, session_id: str, files: list[str], adopt_prior_work: bool = False) -> list[str]:
         """为 session 声明持有本次 commit 的文件。claim 失败的文件从返回列表排除。
 
         ARCH-054: claim 成功后捕获文件基线快照（git diff HEAD -- <file>），
@@ -615,7 +661,7 @@ class GitCommitGateway:
         for f in files:
             if self.registry.claim_file(session_id, f):
                 claimed.append(f)
-                #ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
+                # ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
                 try:
                     abs_f = os.path.abspath(f)
                     # tracker #92 治本（2026-08-16）：本 session 已有基线记录=此前已 claim，
@@ -639,12 +685,15 @@ class GitCommitGateway:
                 except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning(
                         "GitCommitGateway: claim_files 基线快照捕获失败 — file=%s (session=%s)",
-                        f, session_id, exc_info=True,
+                        f,
+                        session_id,
+                        exc_info=True,
                     )
             else:
                 logger.warning(
-                    "GitCommitGateway: claim_files conflict — file=%s held by other session, "
-                    "skipped (session=%s)", f, session_id,
+                    "GitCommitGateway: claim_files conflict — file=%s held by other session, skipped (session=%s)",
+                    f,
+                    session_id,
                 )
         return claimed
 
@@ -657,9 +706,10 @@ class GitCommitGateway:
             if not self.registry.release_file(session_id, f):
                 logger.debug(
                     "GitCommitGateway: release_files no-op — file=%s not held by session=%s",
-                    f, session_id,
+                    f,
+                    session_id,
                 )
-        #ARCH-054: 清理 session 的基线快照（内存 + 磁盘，S3-C 治本）
+        # ARCH-054: 清理 session 的基线快照（内存 + 磁盘，S3-C 治本）
         try:
             self.claim_snapshots.pop(session_id, None)
             self.delete_session_snapshot(session_id)
@@ -689,9 +739,7 @@ class GitCommitGateway:
         """Deprecated thin wrapper — use capture_baseline_diff."""
         return self.capture_baseline_diff(abs_file)
 
-    def _log_adopted_work(
-        self, session_id: str, abs_file: str, actual_baseline: str
-    ) -> None:
+    def _log_adopted_work(self, session_id: str, abs_file: str, actual_baseline: str) -> None:
         """治本(2026-07-23)：认领跨 session 前序工作的审计日志。
 
         adopt_prior_work=True 且文件有实际 diff 时调用。记录被认领文件的 diff
@@ -706,6 +754,7 @@ class GitCommitGateway:
             import hashlib
             import re
             import time as _t
+
             # P2：读取文件 [DOMAIN] 头部（与 commit_scope_gate / domain_fk_gate 同模式）
             domain = "UNKNOWN"
             try:
@@ -726,18 +775,12 @@ class GitCommitGateway:
                 "file": abs_file,
                 "domain": domain,
                 "diff_size": len(actual_baseline),
-                "diff_sha256": hashlib.sha256(
-                    actual_baseline.encode("utf-8", errors="replace")
-                ).hexdigest()[:16],
+                "diff_sha256": hashlib.sha256(actual_baseline.encode("utf-8", errors="replace")).hexdigest()[:16],
             }
-            with (self.claim_snapshots_dir / f"{session_id}_adopted.jsonl").open(
-                "a", encoding="utf-8"
-            ) as fh:
+            with (self.claim_snapshots_dir / f"{session_id}_adopted.jsonl").open("a", encoding="utf-8") as fh:
                 fh.write(json.dumps(record, ensure_ascii=False) + "\n")
         except Exception:  # noqa: BLE001 — 审计失败不阻断 claim
-            logger.debug(
-                "_log_adopted_work audit write failed (non-blocking)", exc_info=True
-            )
+            logger.debug("_log_adopted_work audit write failed (non-blocking)", exc_info=True)
 
     # ------------------------------------------------------------------
     # S3-C 治本（2026-07-17）：claim 快照磁盘持久化
@@ -767,11 +810,13 @@ class GitCommitGateway:
                 except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning(
                         "GitCommitGateway: claim snapshot file corrupt, skipped — %s",
-                        snap_file, exc_info=True,
+                        snap_file,
+                        exc_info=True,
                     )
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
-                "GitCommitGateway: load_claim_snapshots_from_disk failed", exc_info=True,
+                "GitCommitGateway: load_claim_snapshots_from_disk failed",
+                exc_info=True,
             )
 
     def _load_claim_snapshots_from_disk(self) -> None:
@@ -800,7 +845,8 @@ class GitCommitGateway:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "GitCommitGateway: save_session_snapshot failed — session=%s",
-                session_id, exc_info=True,
+                session_id,
+                exc_info=True,
             )
 
     def _save_session_snapshot(self, session_id: str) -> None:
@@ -818,7 +864,8 @@ class GitCommitGateway:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug(
                 "GitCommitGateway: delete_session_snapshot failed — session=%s",
-                session_id, exc_info=True,
+                session_id,
+                exc_info=True,
             )
 
     def _delete_session_snapshot(self, session_id: str) -> None:
@@ -831,16 +878,22 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
         self._reconciliation_registry.register(make_path_ownership_reconciler(self))  # path_ownership_map.yaml 自动同步
         self._reconciliation_registry.register(make_depgraph_ops_reconciler(self))  # 裁定#209 阶段1
-        self._reconciliation_registry.register(make_blueprint_frontmatter_reconciler(self))  # ARCH-FRONTMATTER-STATE-001 Phase 2 (Link B)
+        self._reconciliation_registry.register(
+            make_blueprint_frontmatter_reconciler(self)
+        )  # ARCH-FRONTMATTER-STATE-001 Phase 2 (Link B)
         self._reconciliation_registry.register(make_drift_scan_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S1
         self._reconciliation_registry.register(make_drift_fix_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S2
-        self._reconciliation_registry.register(make_module_id_recommend_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S4
+        self._reconciliation_registry.register(
+            make_module_id_recommend_reconciler(self)
+        )  # MOD-GOV-ALIGNMENT-LOOP §4.S4
         self._reconciliation_registry.register(make_yaml_sync_reconciler(self))
         # Phase 3 收敛：以下 3 个纯校验 reconciler 已升级为 pre-commit gate（见上方 _gate_registry）
         # make_precommit_id_uniqueness_reconciler / make_exempt_zone_frontmatter_reconciler /
         # make_module_id_consistency_reconciler 不再 post-commit 注册（warn->阻断前移）
         self._reconciliation_registry.register(make_vocab_change_reconciler(self))
-        self._reconciliation_registry.register(make_ttl_drift_incremental_reconciler(self))  # #73 TTL 声明质保链·增量校验（priority=285，post-commit warn-only，对齐 decision_tree）
+        self._reconciliation_registry.register(
+            make_ttl_drift_incremental_reconciler(self)
+        )  # #73 TTL 声明质保链·增量校验（priority=285，post-commit warn-only，对齐 decision_tree）
         self._reconciliation_registry.register(make_deprecated_directory_reconciler(self))
         self._reconciliation_registry.register(make_delete_audit_reconciler(self))
         self._reconciliation_registry.register(make_regenerate_reconciler(self))
@@ -849,45 +902,106 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_integrity_audit_reconciler(self))
         self._reconciliation_registry.register(make_index_generator_reconciler(self))  # P3 生成器触发接入
         self._reconciliation_registry.register(make_runtime_cleanup_reconciler(self))  # .runtime/ TTL 自动清理
-        self._reconciliation_registry.register(make_architecture_health_reconciler(self))  # 架构健康度基线记录（第0期 warn-only）
-        self._reconciliation_registry.register(make_session_log_index_reconciler(self))  # session_logs/index.yaml 派生（AI-03 审计 P3）
-        self._reconciliation_registry.register(make_arch_diagram_reconciler(self))  # 议题3: 02_enterprise_architecture 下 9 个架构图生成器自动重生（decision/dataflow/integration/cross_domain/constraint/capacity/capability/navigation）
-        self._reconciliation_registry.register(make_constraint_detect_reconciler(self))  # 补齐断链: 5 类违规检测器（跨域/容量/硬上限/孤儿/层级），写 PG arch_constraints 表，在 GATE-ARCH-DIAGRAM 之前跑
-        self._reconciliation_registry.register(make_gate_inventory_sync_reconciler(self))  #ARCH-055 commit_gates 模块清单漂移正向检测（post-commit warn-only，priority=820）
-        self._reconciliation_registry.register(make_gate_registry_sync_reconciler(self))  #ARCH-GATE-REGISTRY-SYNC-001 gate_registry.yaml 自动重生成（对标 make_manifest_reconciler，post-commit priority=830）
-        self._reconciliation_registry.register(make_in_process_gate_registry_drift_reconciler(self))  # #ARCH-GATE-REGISTRY-AUTO-001 Phase 6——in_process_gate_registry.yaml ↔ 内存注册表双向漂移检测（priority=831）
-        self._reconciliation_registry.register(make_tmp_cleanup_reconciler(self))  # tmp/ TTL 自动清理（priority=49，对标 make_runtime_cleanup_reconciler，治本 249+ 文件残留）
-        self._reconciliation_registry.register(make_worktree_lifecycle_reconciler(self))  # worktree 残留事件驱动清理（P2，治本遗留项#2，2026-07-17，priority=800）
-        self._reconciliation_registry.register(make_stash_lifecycle_reconciler(self))  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理（priority=801，清理 >24h 的 session_worktree 临时 stash）
-        self._reconciliation_registry.register(make_session_staging_lifecycle_reconciler(self))  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 staging TTL 清理（priority=802，清理 .runtime/sessions/*/staging/ 下 >24h 文件）
-        self._reconciliation_registry.register(make_root_temp_sweep_reconciler(self))  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 根目录临时文件清扫（priority=803，FS-scan 补强 DCR-007 commit gate 看不到 gitignored 文件的盲区）
-        self._reconciliation_registry.register(make_git_guard_bypass_reconciler(self))  # #ARCH-GIT-SELF-HARM-GUARD L2.3 alias 绕过检测（priority=810，post-commit warn-only，对比 reflog reset 与审计日志）
-        self._reconciliation_registry.register(make_scripts_import_integrity_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 3 scripts import baseline 全扫（priority=210，post-commit 补强 pre-commit gate 只扫 staged 的盲区）
-        self._reconciliation_registry.register(make_undefined_name_baseline_reconciler(self))  # GATE-DEPGRAPH-OPS 治本 Phase 1 undefined-name baseline 全扫（priority=211，post-commit 补强 UNDEFINED-NAME gate 只扫 staged + --no-verify 绕过盲区）
-        self._reconciliation_registry.register(make_consumers_accuracy_baseline_reconciler(self))  # #ARCH-CONSUMERS-ACCURACY-001/003 治本 Phase 2 CONSUMERS baseline 全扫（priority=212，post-commit 补强 CONSUMERS-ACCURACY gate 只扫 staged 的盲区）
-        self._reconciliation_registry.register(make_capability_lookup_health_reconciler(self))  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺（priority=220，post-commit 检测 [no-lookup:] bypass 频率 + audit log 健康）
-        self._reconciliation_registry.register(make_blueprint_id_legacy_reconciler(self))  # ARCH-DATAQUALITY-V1.8 Task I blueprint_id legacy baseline 全扫（priority=145，post-commit warn-only，检测存量 119 条 invalid [BLUEPRINT] 头部，落盘报告供追踪，与 BLUEPRINT-FORMAT gate 互补——gate 防蔓延，reconciler 清存量）
-        self._reconciliation_registry.register(make_remediation_progress_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.1 治本进度新鲜度（priority=900，>90天未更新 block_next）
-        self._reconciliation_registry.register(make_runtime_violation_snapshot_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.4b trae_060 §5 evidence 运行时快照（priority=850，post-commit 事件触发）
-        self._reconciliation_registry.register(make_git_performance_monitor_reconciler(self))  # ARCH-GIT-CALL-BUDGET P3.5 git status 计时持续监控 + stale worktree 累积预警 + 退化趋势检测（priority=870，post-commit 事件触发，warn-only）
-        self._reconciliation_registry.register(make_commit_gateway_abuse_monitor_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 5b commit gateway 持续滥用监控（priority=875，post-commit 事件触发，五维滥用检测 warn-only，补强 POST-COMMIT-GUARD 1h 短窗口盲区）
-        self._reconciliation_registry.register(make_error_pattern_consumer_reconciler(self))  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b AI behavior telemetry JSONL 错误事件聚合 consumer（priority=880，post-commit 事件触发，聚合到 .runtime/ai_error_patterns/aggregated_patterns.json）
-        self._reconciliation_registry.register(make_workspace_hygiene_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002 工作区卫生自动清理（priority=890，post-commit auto-sync 产物 git restore 还原）
-        self._reconciliation_registry.register(make_dead_public_wrapper_reconciler(self))  # #ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 防复发——死公共 wrapper 持续自动检测（priority=950，post-commit warn-only）
-        self._reconciliation_registry.register(make_translation_coverage_reconciler(self))  # TRANSLATION-COVERAGE Layer 4——翻译覆盖率存量对账（priority=951，post-commit warn-only，全扫 depgraph vs 翻译真源，落盘 drift_report.json）
-        self._reconciliation_registry.register(make_cross_layer_contract_signature_reconciler(self))  # 12维度审计自动化 P1-b——跨层契约签名漂移检测（priority=215，post-commit 事件触发，对比 [C_contract] 签名 git show HEAD~1 vs HEAD）
-        self._reconciliation_registry.register(make_blueprint_status_transition_reconciler(self))  # 12维度审计自动化 P1-d——BLUEPRINT 状态转跃检测（priority=825，post-commit 事件触发，STABILITY/MATURITY 逆向转跃 hard-fail）
+        self._reconciliation_registry.register(
+            make_architecture_health_reconciler(self)
+        )  # 架构健康度基线记录（第0期 warn-only）
+        self._reconciliation_registry.register(
+            make_session_log_index_reconciler(self)
+        )  # session_logs/index.yaml 派生（AI-03 审计 P3）
+        self._reconciliation_registry.register(
+            make_arch_diagram_reconciler(self)
+        )  # 议题3: 02_enterprise_architecture 下 9 个架构图生成器自动重生（decision/dataflow/integration/cross_domain/constraint/capacity/capability/navigation）
+        self._reconciliation_registry.register(
+            make_constraint_detect_reconciler(self)
+        )  # 补齐断链: 5 类违规检测器（跨域/容量/硬上限/孤儿/层级），写 PG arch_constraints 表，在 GATE-ARCH-DIAGRAM 之前跑
+        self._reconciliation_registry.register(
+            make_gate_inventory_sync_reconciler(self)
+        )  # ARCH-055 commit_gates 模块清单漂移正向检测（post-commit warn-only，priority=820）
+        self._reconciliation_registry.register(
+            make_gate_registry_sync_reconciler(self)
+        )  # ARCH-GATE-REGISTRY-SYNC-001 gate_registry.yaml 自动重生成（对标 make_manifest_reconciler，post-commit priority=830）
+        self._reconciliation_registry.register(
+            make_in_process_gate_registry_drift_reconciler(self)
+        )  # #ARCH-GATE-REGISTRY-AUTO-001 Phase 6——in_process_gate_registry.yaml ↔ 内存注册表双向漂移检测（priority=831）
+        self._reconciliation_registry.register(
+            make_tmp_cleanup_reconciler(self)
+        )  # tmp/ TTL 自动清理（priority=49，对标 make_runtime_cleanup_reconciler，治本 249+ 文件残留）
+        self._reconciliation_registry.register(
+            make_worktree_lifecycle_reconciler(self)
+        )  # worktree 残留事件驱动清理（P2，治本遗留项#2，2026-07-17，priority=800）
+        self._reconciliation_registry.register(
+            make_stash_lifecycle_reconciler(self)
+        )  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理（priority=801，清理 >24h 的 session_worktree 临时 stash）
+        self._reconciliation_registry.register(
+            make_session_staging_lifecycle_reconciler(self)
+        )  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 staging TTL 清理（priority=802，清理 .runtime/sessions/*/staging/ 下 >24h 文件）
+        self._reconciliation_registry.register(
+            make_root_temp_sweep_reconciler(self)
+        )  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 根目录临时文件清扫（priority=803，FS-scan 补强 DCR-007 commit gate 看不到 gitignored 文件的盲区）
+        self._reconciliation_registry.register(
+            make_git_guard_bypass_reconciler(self)
+        )  # #ARCH-GIT-SELF-HARM-GUARD L2.3 alias 绕过检测（priority=810，post-commit warn-only，对比 reflog reset 与审计日志）
+        self._reconciliation_registry.register(
+            make_scripts_import_integrity_reconciler(self)
+        )  # ARCH-TOOL-HEALTH-V1 Phase 3 scripts import baseline 全扫（priority=210，post-commit 补强 pre-commit gate 只扫 staged 的盲区）
+        self._reconciliation_registry.register(
+            make_undefined_name_baseline_reconciler(self)
+        )  # GATE-DEPGRAPH-OPS 治本 Phase 1 undefined-name baseline 全扫（priority=211，post-commit 补强 UNDEFINED-NAME gate 只扫 staged + --no-verify 绕过盲区）
+        self._reconciliation_registry.register(
+            make_consumers_accuracy_baseline_reconciler(self)
+        )  # #ARCH-CONSUMERS-ACCURACY-001/003 治本 Phase 2 CONSUMERS baseline 全扫（priority=212，post-commit 补强 CONSUMERS-ACCURACY gate 只扫 staged 的盲区）
+        self._reconciliation_registry.register(
+            make_capability_lookup_health_reconciler(self)
+        )  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺（priority=220，post-commit 检测 [no-lookup:] bypass 频率 + audit log 健康）
+        self._reconciliation_registry.register(
+            make_blueprint_id_legacy_reconciler(self)
+        )  # ARCH-DATAQUALITY-V1.8 Task I blueprint_id legacy baseline 全扫（priority=145，post-commit warn-only，检测存量 119 条 invalid [BLUEPRINT] 头部，落盘报告供追踪，与 BLUEPRINT-FORMAT gate 互补——gate 防蔓延，reconciler 清存量）
+        self._reconciliation_registry.register(
+            make_remediation_progress_reconciler(self)
+        )  # #ARCH-GOV-CONVERGENCE-META Phase 3.1 治本进度新鲜度（priority=900，>90天未更新 block_next）
+        self._reconciliation_registry.register(
+            make_runtime_violation_snapshot_reconciler(self)
+        )  # #ARCH-GOV-CONVERGENCE-META Phase 3.4b trae_060 §5 evidence 运行时快照（priority=850，post-commit 事件触发）
+        self._reconciliation_registry.register(
+            make_git_performance_monitor_reconciler(self)
+        )  # ARCH-GIT-CALL-BUDGET P3.5 git status 计时持续监控 + stale worktree 累积预警 + 退化趋势检测（priority=870，post-commit 事件触发，warn-only）
+        self._reconciliation_registry.register(
+            make_commit_gateway_abuse_monitor_reconciler(self)
+        )  # ARCH-TOOL-HEALTH-V1 Phase 5b commit gateway 持续滥用监控（priority=875，post-commit 事件触发，五维滥用检测 warn-only，补强 POST-COMMIT-GUARD 1h 短窗口盲区）
+        self._reconciliation_registry.register(
+            make_error_pattern_consumer_reconciler(self)
+        )  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b AI behavior telemetry JSONL 错误事件聚合 consumer（priority=880，post-commit 事件触发，聚合到 .runtime/ai_error_patterns/aggregated_patterns.json）
+        self._reconciliation_registry.register(
+            make_workspace_hygiene_reconciler(self)
+        )  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002 工作区卫生自动清理（priority=890，post-commit auto-sync 产物 git restore 还原）
+        self._reconciliation_registry.register(
+            make_dead_public_wrapper_reconciler(self)
+        )  # #ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 防复发——死公共 wrapper 持续自动检测（priority=950，post-commit warn-only）
+        self._reconciliation_registry.register(
+            make_translation_coverage_reconciler(self)
+        )  # TRANSLATION-COVERAGE Layer 4——翻译覆盖率存量对账（priority=951，post-commit warn-only，全扫 depgraph vs 翻译真源，落盘 drift_report.json）
+        self._reconciliation_registry.register(
+            make_cross_layer_contract_signature_reconciler(self)
+        )  # 12维度审计自动化 P1-b——跨层契约签名漂移检测（priority=215，post-commit 事件触发，对比 [C_contract] 签名 git show HEAD~1 vs HEAD）
+        self._reconciliation_registry.register(
+            make_blueprint_status_transition_reconciler(self)
+        )  # 12维度审计自动化 P1-d——BLUEPRINT 状态转跃检测（priority=825，post-commit 事件触发，STABILITY/MATURITY 逆向转跃 hard-fail）
         from zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog import (  # noqa: PLC0415
             make_worktree_drift_watchdog_reconciler,
         )
-        self._reconciliation_registry.register(make_worktree_drift_watchdog_reconciler(self))  # #ARCH-WORKTREE-WRITE-INTEGRITY-001 P0-1/P0-2 工作区 tracked 漂移看门狗（priority=845，ensure-daemon+即时一扫，陈旧覆写发现靠机制）
+
+        self._reconciliation_registry.register(
+            make_worktree_drift_watchdog_reconciler(self)
+        )  # #ARCH-WORKTREE-WRITE-INTEGRITY-001 P0-1/P0-2 工作区 tracked 漂移看门狗（priority=845，ensure-daemon+即时一扫，陈旧覆写发现靠机制）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
         try:
             import sys as _sys
+
             _backup_dir = str(self.project_root / "scripts" / "backup")
             if _backup_dir not in _sys.path:
                 _sys.path.insert(0, _backup_dir)
-            from backup_reconciler import make_backup_reconciler
+            from backup_reconciler import make_backup_reconciler  # noqa: import-integrity  运行时 sys.path 注入后惰性 import（ImportError 已兜底 warn）
+
             self._reconciliation_registry.register(make_backup_reconciler(self.project_root))
         except ImportError as e:
             logger.warning("backup_reconciler not registered: %s", e)
@@ -897,10 +1011,12 @@ class GitCommitGateway:
         # 漂移时 warn 不阻断（版本升级需人工决策），priority=210 晚于 BACKUP-RECONCILER(200)
         try:
             import sys as _sys
+
             _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
             if _doc_sync_dir not in _sys.path:
                 _sys.path.insert(0, _doc_sync_dir)
-            from readme_version_sync_reconciler import make_readme_version_sync_reconciler
+            from readme_version_sync_reconciler import make_readme_version_sync_reconciler  # noqa: import-integrity  运行时 sys.path 注入后惰性 import（ImportError 已兜底 warn）
+
             self._reconciliation_registry.register(make_readme_version_sync_reconciler(self.project_root))
         except ImportError as e:
             logger.warning("readme_version_sync_reconciler not registered: %s", e)
@@ -910,10 +1026,12 @@ class GitCommitGateway:
         # 漂移时 warn 不阻断（版本约束变更需人工决策），priority=230 晚于 METRIC-COUNT-DRIFT(220)
         try:
             import sys as _sys
+
             _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
             if _doc_sync_dir not in _sys.path:
                 _sys.path.insert(0, _doc_sync_dir)
-            from requirements_version_sync_reconciler import make_requirements_version_sync_reconciler
+            from requirements_version_sync_reconciler import make_requirements_version_sync_reconciler  # noqa: import-integrity  运行时 sys.path 注入后惰性 import（ImportError 已兜底 warn）
+
             self._reconciliation_registry.register(make_requirements_version_sync_reconciler(self.project_root))
         except ImportError as e:
             logger.warning("requirements_version_sync_reconciler not registered: %s", e)
@@ -923,10 +1041,12 @@ class GitCommitGateway:
         # 漂移时 warn 不阻断（描述同步需人工决策），priority=220 晚于 README-VERSION-SYNC(210)
         try:
             import sys as _sys
+
             _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
             if _doc_sync_dir not in _sys.path:
                 _sys.path.insert(0, _doc_sync_dir)
-            from metric_count_drift_reconciler import make_metric_count_drift_reconciler
+            from metric_count_drift_reconciler import make_metric_count_drift_reconciler  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+
             self._reconciliation_registry.register(make_metric_count_drift_reconciler(self.project_root))
         except ImportError as e:
             logger.warning("metric_count_drift_reconciler not registered: %s", e)
@@ -936,10 +1056,12 @@ class GitCommitGateway:
         # 漂移时 warn 不阻断（翻译对齐方向需人工决策），priority=240 晚于 REQUIREMENTS-VERSION-SYNC(230)
         try:
             import sys as _sys
+
             _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
             if _doc_sync_dir not in _sys.path:
                 _sys.path.insert(0, _doc_sync_dir)
-            from algo_flow_translation_reconciler import make_algo_flow_translation_reconciler
+            from algo_flow_translation_reconciler import make_algo_flow_translation_reconciler  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+
             self._reconciliation_registry.register(make_algo_flow_translation_reconciler(self.project_root))
         except ImportError as e:
             logger.warning("algo_flow_translation_reconciler not registered: %s", e)
@@ -969,7 +1091,7 @@ class GitCommitGateway:
                     return CommitResult(status=CommitStatus.CLAIM_REQUIRED_VIOLATION, message=gr.detail)
                 if gr.gate_id == "WORKTREE-REQUIRED":  # #ARCH-WORKTREE-GATE-001
                     return CommitResult(status=CommitStatus.WORKTREE_VIOLATION, message=gr.detail)
-                if gr.gate_id == "FOREIGN-CHANGE-DETECTION":  #ARCH-054
+                if gr.gate_id == "FOREIGN-CHANGE-DETECTION":  # ARCH-054
                     return CommitResult(status=CommitStatus.FOREIGN_CHANGE_VIOLATION, message=gr.detail)
                 if gr.gate_id == "COMMIT-SCOPE":  # 跨域混合提交治本（13a5e1d512）
                     return CommitResult(status=CommitStatus.COMMIT_SCOPE_VIOLATION, message=gr.detail)
@@ -1054,7 +1176,9 @@ class GitCommitGateway:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         return self.check_ssot_canonical(abs_files)
 
-    def _run_post_commit_reconcile(self, existing: list[str], session_id: str, result: CommitResult, commit_message: str='') -> None:
+    def _run_post_commit_reconcile(
+        self, existing: list[str], session_id: str, result: CommitResult, commit_message: str = ""
+    ) -> None:
         """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
         return self.run_post_commit_reconcile(existing, session_id, result, commit_message)
 
@@ -1117,6 +1241,7 @@ class GitCommitGateway:
         import os as _os
         import subprocess as _sp
         import sys as _sys
+
         _env = dict(_os.environ)
         _env["ZEPHYR_RECONCILER_MODE"] = "1"
         _script = "scripts/governance/meta/validate_rules_integrity.py"
@@ -1124,9 +1249,12 @@ class GitCommitGateway:
             reg_result = _sp.run(
                 [_sys.executable, _script, "--register"],
                 cwd=str(self.project_root),
-                capture_output=True, text=True,
-                encoding="utf-8", errors="replace",
-                timeout=30, env=_env,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=30,
+                env=_env,
             )
         except Exception as e:  # noqa: BLE001 — fail-open 不阻断主流程
             logger.warning("post-flush rules_integrity --register error: %s", e)
@@ -1134,7 +1262,8 @@ class GitCommitGateway:
         if reg_result.returncode != 0:
             logger.warning(
                 "post-flush rules_integrity --register failed (rc=%d): %s",
-                reg_result.returncode, (reg_result.stderr or "")[:200],
+                reg_result.returncode,
+                (reg_result.stderr or "")[:200],
             )
             return
         # 提交 DB 变更（_commit_auto 不触发 reconciler，无递归）
@@ -1143,24 +1272,30 @@ class GitCommitGateway:
         if _diff.returncode == 0 and not _diff.stdout.strip():
             return  # DB 无变更（基线已匹配 post-flush HEAD）
         _abs_db = str(self.project_root / _db_rel)
-        _msg = ("chore(integrity): post-flush re-register rules_integrity_db "
-                "(capture final HEAD, 时序竞态治本 2026-08-02)")
+        _msg = (
+            "chore(integrity): post-flush re-register rules_integrity_db (capture final HEAD, 时序竞态治本 2026-08-02)"
+        )
         _cr = self._commit_auto(session_id, [_abs_db], _msg)
         if _cr.status == "OK":
             logger.info(
                 "post-flush rules_integrity re-registered (hash=%s, session=%s)",
-                _cr.commit_hash, session_id,
+                _cr.commit_hash,
+                session_id,
             )
         elif _cr.status == "NOTHING_TO_COMMIT":
             logger.debug("post-flush rules_integrity: no DB drift")
         else:
             logger.warning(
                 "post-flush rules_integrity DB auto-commit %s: %s",
-                _cr.status, (_cr.message or "")[:200],
+                _cr.status,
+                (_cr.message or "")[:200],
             )
 
     def _run_post_commit_reconcile_sync(
-        self, existing: list[str], session_id: str, commit_message: str = "",
+        self,
+        existing: list[str],
+        session_id: str,
+        commit_message: str = "",
         result: CommitResult | None = None,
     ) -> list[ReconcileResult]:
         """同步执行 reconciler 链路（原 _run_post_commit_reconcile 主体逻辑）。
@@ -1179,7 +1314,9 @@ class GitCommitGateway:
             with self._batcher as _batcher_ctx:
                 _batcher_ctx.enable(session_id)
                 reconcile_results = self._reconciliation_registry.reconcile_for(
-                    existing, session_id, commit_message=commit_message,
+                    existing,
+                    session_id,
+                    commit_message=commit_message,
                 )
             # 治本（2026-08-02 audit-02 时序竞态）：flush 后重注册 rules_integrity 基线，
             # 读 post-flush HEAD（含所有 reconciler 变更）→ 消除 DB 滞后导致的永久 TAMPERED。
@@ -1190,21 +1327,29 @@ class GitCommitGateway:
             # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级
             # auto_committed → warn，防止日志误报"已自动提交"但文件未真正提交。
             _downgrade_auto_committed_on_flush_failure(
-                reconcile_results, getattr(self._batcher, "_last_flush_result", None),
+                reconcile_results,
+                getattr(self._batcher, "_last_flush_result", None),
             )
             # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化 reconciler 执行结果
             # 到 governance.db reconcile_execution_log 表，消除 fail-silent（失败不可见）。
             # Phase 3.4 断点7: 同时持久化 commit_message 供审计追溯。
             _log_reconcile_results(
-                self.project_root, reconcile_results, session_id,
-                trigger_source="post_commit", committed_files=existing,
+                self.project_root,
+                reconcile_results,
+                session_id,
+                trigger_source="post_commit",
+                committed_files=existing,
                 commit_message=commit_message,
             )
             for rr in reconcile_results:
                 if rr.action == "auto_committed":
-                    logger.info("GitCommitGateway: post-commit reconcile auto-committed (session=%s): %s", session_id, rr.detail)
+                    logger.info(
+                        "GitCommitGateway: post-commit reconcile auto-committed (session=%s): %s", session_id, rr.detail
+                    )
                 elif rr.action == "warn":
-                    logger.warning("GitCommitGateway: post-commit reconcile warning (session=%s): %s", session_id, rr.detail)
+                    logger.warning(
+                        "GitCommitGateway: post-commit reconcile warning (session=%s): %s", session_id, rr.detail
+                    )
                 elif rr.action == "clean":
                     logger.info("GitCommitGateway: post-commit reconcile clean (session=%s): %s", session_id, rr.detail)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -1213,7 +1358,10 @@ class GitCommitGateway:
         return reconcile_results
 
     def _run_post_commit_reconcile_sync_worker(
-        self, existing: list[str], session_id: str, commit_message: str = "",
+        self,
+        existing: list[str],
+        session_id: str,
+        commit_message: str = "",
         heartbeat: "Callable[[str], None] | None" = None,
     ) -> list[ReconcileResult]:
         """worker-only 入口：同步执行 reconciler 链路并返回 results。
@@ -1229,7 +1377,9 @@ class GitCommitGateway:
         with self._batcher as _batcher_ctx:
             _batcher_ctx.enable(session_id)
             reconcile_results = self._reconciliation_registry.reconcile_for(
-                existing, session_id, commit_message=commit_message,
+                existing,
+                session_id,
+                commit_message=commit_message,
                 heartbeat=heartbeat,
             )
         # 治本（2026-08-02 audit-02 时序竞态）：flush 后重注册 rules_integrity 基线，
@@ -1238,11 +1388,15 @@ class GitCommitGateway:
         # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级
         # auto_committed → warn，防止日志误报"已自动提交"但文件未真正提交。
         _downgrade_auto_committed_on_flush_failure(
-            reconcile_results, getattr(self._batcher, "_last_flush_result", None),
+            reconcile_results,
+            getattr(self._batcher, "_last_flush_result", None),
         )
         _log_reconcile_results(
-            self.project_root, reconcile_results, session_id,
-            trigger_source="post_commit_async", committed_files=existing,
+            self.project_root,
+            reconcile_results,
+            session_id,
+            trigger_source="post_commit_async",
+            committed_files=existing,
             commit_message=commit_message,
         )
         for rr in reconcile_results:
@@ -1252,7 +1406,9 @@ class GitCommitGateway:
                 logger.warning("GitCommitGateway: worker reconcile warning (session=%s): %s", session_id, rr.detail)
         return reconcile_results
 
-    def _run_post_commit_reconcile_async(self, existing: list[str], session_id: str, commit_sha: str, commit_message: str='') -> None:
+    def _run_post_commit_reconcile_async(
+        self, existing: list[str], session_id: str, commit_sha: str, commit_message: str = ""
+    ) -> None:
         """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
         return self.run_post_commit_reconcile_async(existing, session_id, commit_sha, commit_message)
 
@@ -1312,6 +1468,7 @@ class GitCommitGateway:
             from zephyr.gov_enforcement.rule_bridge.session_worktree import (  # noqa: PLC0415 延迟 import 防循环
                 _WORKTREE_SKIP_GATES,
             )
+
             _gate_skip = _WORKTREE_SKIP_GATES
 
         # tracker #116 B2（#ARCH-119）：PG 可用性前置探针——commit 前置执行
@@ -1322,6 +1479,7 @@ class GitCommitGateway:
             from zephyr.governance.audit.pg_probe import (  # noqa: PLC0415 延迟 import 防循环
                 refresh_pg_probe_state,
             )
+
             refresh_pg_probe_state(self.project_root)
         except Exception:  # noqa: BLE001 — 探针自身失败不阻断 commit
             logger.debug("pg_probe refresh skipped", exc_info=True)
@@ -1352,7 +1510,8 @@ class GitCommitGateway:
             # TRAE-079 铁律5：allow_overlap 降级为 last-resort（仅文件锁不可用时），落审计
             logger.warning(
                 "TRAE-079: allow_overlap=True last-resort escape hatch used by session %s on %d files",
-                session_id, len(existing),
+                session_id,
+                len(existing),
             )
         if allow_multi_domain:
             full_message += f"\n[GW:{session_id}:multi-domain]"
@@ -1372,8 +1531,11 @@ class GitCommitGateway:
                 # commit_message 透传：CAPABILITY-LOOKUP-REQUIRED gate 据此检测 [no-lookup:reason] 逃生标记
                 # （#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1 止血修复：与 session_worktree._run_pre_commit_gates L1174 对称）
                 gate_results = self._check_gates_with_drift_watch(
-                    existing, session_id, allow_overlap=allow_overlap,
-                    allow_promote=allow_promote, commit_message=message,
+                    existing,
+                    session_id,
+                    allow_overlap=allow_overlap,
+                    allow_promote=allow_promote,
+                    commit_message=message,
                     allow_derived_deletion=allow_derived_deletion,
                     allow_non_worktree=allow_non_worktree,
                     allow_multi_domain=allow_multi_domain,
@@ -1393,15 +1555,19 @@ class GitCommitGateway:
             logger.warning(
                 "TRAE-079: _GlobalCommitLock unavailable (fail-open fallback): %s — "
                 "commit proceeding without serialization lock for session %s",
-                e, session_id,
+                e,
+                session_id,
             )
             # 无锁降级：直接执行 gate + commit（不串行化，但 gate 仍在）
             if not merge_finalize and self._is_merge_in_progress():
                 return self._merge_in_progress_result()
             self._sweep_intent_to_add_residue(session_id, self._target_rel_set(existing))
             gate_results = self._check_gates_with_drift_watch(
-                existing, session_id, allow_overlap=allow_overlap,
-                allow_promote=allow_promote, commit_message=message,
+                existing,
+                session_id,
+                allow_overlap=allow_overlap,
+                allow_promote=allow_promote,
+                commit_message=message,
                 allow_derived_deletion=allow_derived_deletion,
                 allow_non_worktree=allow_non_worktree,
                 allow_multi_domain=allow_multi_domain,
@@ -1461,9 +1627,7 @@ class GitCommitGateway:
         """
         if not files:
             return []
-        rels = [
-            os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in files
-        ]
+        rels = [os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in files]
         ignored_rels: set[str] = set()
         _BATCH = 300
         for i in range(0, len(rels), _BATCH):
@@ -1501,9 +1665,7 @@ class GitCommitGateway:
             return f"{error_prefix}: {r.stderr.strip()}"
         return None
 
-    def _stage_gitignored_tracked(
-        self, files: list[str]
-    ) -> tuple[bool, str, list[str]]:
+    def _stage_gitignored_tracked(self, files: list[str]) -> tuple[bool, str, list[str]]:
         """暂存 gitignored 且已跟踪的文件，返回 (ok, err, normal_files)。git add 对 gitignored 整批拒绝故分离处理：已删除+已跟踪->git rm --cached；已修改+已跟踪->git add -f；未跟踪的 gitignored->跳过。"""
         ignored = self._filter_gitignored(files)
         if not ignored:
@@ -1515,10 +1677,7 @@ class GitCommitGateway:
         for f in ignored:
             (existing if os.path.isfile(f) else deleted).append(f)
         if deleted:
-            del_rels = [
-                os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-                for f in deleted
-            ]
+            del_rels = [os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in deleted]
             del_tracked = [f for f, rel in zip(deleted, del_rels) if self.is_git_tracked(rel)]
             err = self._run_pathspec_git_cmd(
                 del_tracked,
@@ -1528,13 +1687,9 @@ class GitCommitGateway:
             if err is not None:
                 return False, err, normal_files
         if existing:
-            ex_rels = [
-                os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-                for f in existing
-            ]
+            ex_rels = [os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in existing]
             ex_tracked = [
-                f for f, rel in zip(existing, ex_rels)
-                if self.is_git_tracked(rel) and not self._is_staged_delete(rel)
+                f for f, rel in zip(existing, ex_rels) if self.is_git_tracked(rel) and not self._is_staged_delete(rel)
             ]
             err = self._run_pathspec_git_cmd(
                 ex_tracked,
@@ -1560,12 +1715,16 @@ class GitCommitGateway:
 
         try:
             unstaged = run_subprocess_hidden(
-                ["git", "diff-files"], capture_output=True, text=True,
+                ["git", "diff-files"],
+                capture_output=True,
+                text=True,
                 cwd=str(self.project_root),
             )
             staged = run_subprocess_hidden(
-                ["git", "diff-index", "--cached", "HEAD"], capture_output=True,
-                text=True, cwd=str(self.project_root),
+                ["git", "diff-index", "--cached", "HEAD"],
+                capture_output=True,
+                text=True,
+                cwd=str(self.project_root),
             )
             import hashlib  # noqa: PLC0415
 
@@ -1614,9 +1773,7 @@ class GitCommitGateway:
         单一真源=session_worktree._WORKTREE_SKIP_GATES，tracker #92）。
         """
         before = self._tracked_area_fingerprint()
-        results = self._gate_registry.check_all(
-            self, existing, session_id=session_id, skip_gates=skip_gates, **kwargs
-        )
+        results = self._gate_registry.check_all(self, existing, session_id=session_id, skip_gates=skip_gates, **kwargs)
         after = self._tracked_area_fingerprint()
         if before and after and before != after:
             self._audit_gate_tracked_drift(session_id)
@@ -1634,9 +1791,7 @@ class GitCommitGateway:
         统一路径：始终使用 --pathspec-from-file，避免 Windows CLI 长度限制 (WinError 206)。
         """
         pathspec_file: str | None = None
-        result: CommitResult = CommitResult(
-            status=CommitStatus.COMMIT_FAILED, message="unexpected: no result set"
-        )
+        result: CommitResult = CommitResult(status=CommitStatus.COMMIT_FAILED, message="unexpected: no result set")
         try:
             # 1. 暂存 gitignored-tracked 文件，分离出 normal_files
             gi_ok, gi_err, normal_files = self._stage_gitignored_tracked(files)
@@ -1654,17 +1809,14 @@ class GitCommitGateway:
                     result = add_fail
                 else:
                     # 4-6. 检查 staged 变更并 commit
-                    result = self._resolve_commit_result(
-                        files, normal_files, full_message, pathspec_file, gw_marker
-                    )
+                    result = self._resolve_commit_result(files, normal_files, full_message, pathspec_file, gw_marker)
         finally:
-            self._commit_locked_finalize(
-                result, files, session_id, full_message, pathspec_file
-            )
+            self._commit_locked_finalize(result, files, session_id, full_message, pathspec_file)
         return result
 
     def _add_and_remove_normal_files(
-        self, normal_files: list[str],
+        self,
+        normal_files: list[str],
     ) -> tuple[bool, CommitResult | None]:
         """步骤3：git add existing + git rm deleted（delete 文件 git add 报错，用 git rm 替代）。
 
@@ -1682,9 +1834,7 @@ class GitCommitGateway:
             if existing_files:
                 add_pathspec_file = self._write_pathspec_file(existing_files)
                 try:
-                    add_result = self.run_git(
-                        ["git", "add", f"--pathspec-from-file={add_pathspec_file}"]
-                    )
+                    add_result = self.run_git(["git", "add", f"--pathspec-from-file={add_pathspec_file}"])
                     add_ok = add_result.returncode == 0
                     if not add_ok:
                         logger.warning("GitCommitGateway: git add 失败: %s", add_result.stderr.strip())
@@ -1702,8 +1852,7 @@ class GitCommitGateway:
                 del_pathspec = self._write_pathspec_file(deleted_files)
                 try:
                     rm_result = self.run_git(
-                        ["git", "rm", "--cached", "--ignore-unmatch",
-                         f"--pathspec-from-file={del_pathspec}"]
+                        ["git", "rm", "--cached", "--ignore-unmatch", f"--pathspec-from-file={del_pathspec}"]
                     )
                 finally:
                     try:
@@ -1740,9 +1889,7 @@ class GitCommitGateway:
             )
         # 6. commit（rename 检测内置到 _commit_with_file_message）
         pathspec_for_commit = None if has_gitignored else pathspec_file
-        commit_hash, commit_err = self._commit_with_file_message(
-            full_message, pathspec_for_commit, files
-        )
+        commit_hash, commit_err = self._commit_with_file_message(full_message, pathspec_for_commit, files)
         if commit_hash is None:
             return CommitResult(
                 status=CommitStatus.COMMIT_FAILED,
@@ -1751,7 +1898,9 @@ class GitCommitGateway:
         os.environ[_GATEWAY_ENV] = "1"
         logger.info(
             "GitCommitGateway: commit 成功 hash=%s marker=%s files=%d",
-            commit_hash, gw_marker, len(files),
+            commit_hash,
+            gw_marker,
+            len(files),
         )
         return CommitResult(
             status=CommitStatus.OK,
@@ -1778,6 +1927,7 @@ class GitCommitGateway:
         if result.status == CommitStatus.OK:
             try:
                 from zephyr.governance.ops_governance.phase_manager import session_shutdown
+
                 session_shutdown(session_id, summary=full_message)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("GitCommitGateway: session_shutdown handoff failed: %s", e, exc_info=True)
@@ -1795,28 +1945,42 @@ class GitCommitGateway:
         os.environ.pop(_GATEWAY_ENV, None)
 
     def _post_commit_red_blue_trigger(
-        self, files: list[str], session_id: str, commit_hash: str,
+        self,
+        files: list[str],
+        session_id: str,
+        commit_hash: str,
     ) -> None:
         """事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 -> 写异步触发记录 + 事件通知。"""
         from zephyr.security.adversarial_validation.commit_trigger import (
             detect_formal_files,
             write_trigger_record,
         )
+
         formal_files = detect_formal_files(files)
         if formal_files:
             write_trigger_record(commit_hash, session_id, formal_files)
-            self._emit_bus_event("red_blue.trigger.queued", {
-                "commit_hash": commit_hash, "session_id": session_id,
-            })
+            self._emit_bus_event(
+                "red_blue.trigger.queued",
+                {
+                    "commit_hash": commit_hash,
+                    "session_id": session_id,
+                },
+            )
             logger.info(
                 "GitCommitGateway: red-blue trigger emitted (session=%s hash=%s formal=%d)",
-                session_id, commit_hash[:8], len(formal_files),
+                session_id,
+                commit_hash[:8],
+                len(formal_files),
             )
         # 文件变更通知（驱动 FileWatcher 增量扫描）
         for f in files:
-            self._emit_bus_event("file.changed", {
-                "path": f, "commit_hash": commit_hash,
-            })
+            self._emit_bus_event(
+                "file.changed",
+                {
+                    "path": f,
+                    "commit_hash": commit_hash,
+                },
+            )
 
     @staticmethod
     def _emit_bus_event(topic: str, payload: dict) -> None:
@@ -1830,10 +1994,7 @@ class GitCommitGateway:
 
     def _has_staged_renames(self, target_files: list[str]) -> bool:
         """检测目标文件中是否有 staged rename（R 状态），pathspec 会拆分 rename 需 fallback。"""
-        target_rel = {
-            os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-            for f in target_files
-        }
+        target_rel = {os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in target_files}
         result = self.run_git(["git", "diff", "--cached", "--name-status", "-M"])
         if result.returncode != 0:
             return False
@@ -1844,9 +2005,7 @@ class GitCommitGateway:
                     return True
         return False
 
-    def _verify_staged_is_clean(
-        self, target_files: list[str]
-    ) -> tuple[bool, str, list[str]]:
+    def _verify_staged_is_clean(self, target_files: list[str]) -> tuple[bool, str, list[str]]:
         """验证 staged 区只有目标文件（防误提交其他 session WIP，无 pathspec commit 前置验证）。
 
         返回 (is_clean, error_msg, non_target_files)。
@@ -1855,13 +2014,9 @@ class GitCommitGateway:
         staged_result = self.run_git(["git", "diff", "--cached", "--name-only"])
         if staged_result.returncode != 0:
             return False, f"git diff --cached failed: {staged_result.stderr.strip()}", []
-        staged_files = {
-            os.path.normcase(f.strip())
-            for f in staged_result.stdout.splitlines() if f.strip()
-        }
+        staged_files = {os.path.normcase(f.strip()) for f in staged_result.stdout.splitlines() if f.strip()}
         target_rel = {
-            os.path.normcase(os.path.relpath(f, str(self.project_root)).replace("\\", "/"))
-            for f in target_files
+            os.path.normcase(os.path.relpath(f, str(self.project_root)).replace("\\", "/")) for f in target_files
         }
         non_target = sorted(staged_files - target_rel)
         if non_target:
@@ -1869,9 +2024,7 @@ class GitCommitGateway:
             return False, f"staged 区有 {len(non_target)} 个非目标文件: {sample}", non_target
         return True, "", []
 
-    def _unstage_non_target_files(
-        self, non_target_files: list[str]
-    ) -> tuple[bool, str]:
+    def _unstage_non_target_files(self, non_target_files: list[str]) -> tuple[bool, str]:
         """自动 unstage 非目标文件（治本：多 session 共享 git index 时清理并发污染）。
 
         git index 是工作区级单例，并发 session 可能 staged 了不属于本次 commit 的文件。
@@ -1925,7 +2078,8 @@ class GitCommitGateway:
                     logger.warning(
                         "merge finalize 全量 commit 将收编 %d 个非目标 staged 文件"
                         "（git 禁 merge 期间 partial commit，机制设计如此）: %s",
-                        len(foreign_staged), foreign_staged,
+                        len(foreign_staged),
+                        foreign_staged,
                     )
             else:
                 clean, err, non_target = self._verify_staged_is_clean(target_files)
@@ -1934,9 +2088,7 @@ class GitCommitGateway:
                     # 污染 staging 区导致 commit 卡死（此前需调用方手动 git reset HEAD）
                     unstage_ok, unstage_err = self._unstage_non_target_files(non_target)
                     if not unstage_ok:
-                        return None, (
-                            f"staged 区不干净且自动清理失败: {err} | unstage error: {unstage_err}"
-                        )
+                        return None, (f"staged 区不干净且自动清理失败: {err} | unstage error: {unstage_err}")
                     clean, err, _ = self._verify_staged_is_clean(target_files)
                     if not clean:
                         return None, f"staged 区不干净，自动 unstage 后仍不干净: {err}"
@@ -1945,16 +2097,13 @@ class GitCommitGateway:
         # 的规范真源是 OS temp dir（由 OS 管理生命周期/清理/隔离）。不传 dir= 即用
         # tempfile.gettempdir()，避免在项目根建立平行真源。git -F 接受任意绝对路径，
         # pathspec 内容用 os.path.relpath(abs, project_root) 计算，与 temp 文件存放位置无关。
-        msg_fd, msg_path = tempfile.mkstemp(
-            prefix="gw_commit_msg_", suffix=".txt"
-        )
+        msg_fd, msg_path = tempfile.mkstemp(prefix="gw_commit_msg_", suffix=".txt")
         try:
             self.in_commit_flow = True  # 放行 _run_git 的 commit 守卫（红攻1治本）
             with os.fdopen(msg_fd, "w", encoding="utf-8") as f:
                 f.write(message)
             if use_pathspec:
-                commit_cmd = ["git", "commit", "--no-verify", "-F", msg_path,
-                              f"--pathspec-from-file={pathspec_file}"]
+                commit_cmd = ["git", "commit", "--no-verify", "-F", msg_path, f"--pathspec-from-file={pathspec_file}"]
             else:
                 commit_cmd = ["git", "commit", "--no-verify", "-F", msg_path]
             result = self.run_git(commit_cmd)
@@ -1973,10 +2122,7 @@ class GitCommitGateway:
 
     def _resolve_auto_commit_files(self, files: list[str]) -> list[str]:
         """将 files 解析为绝对路径并过滤出存在或已跟踪的文件（_commit_auto 用）。"""
-        abs_files = [
-            os.path.abspath(f) if os.path.isabs(f) else str(self.project_root / f)
-            for f in files
-        ]
+        abs_files = [os.path.abspath(f) if os.path.isabs(f) else str(self.project_root / f) for f in files]
         existing: list[str] = []
         for f in abs_files:
             if os.path.isfile(f):
@@ -2014,7 +2160,9 @@ class GitCommitGateway:
         return None
 
     def _git_add_with_index_lock_retry(
-        self, pathspec_file: str, session_id: str,
+        self,
+        pathspec_file: str,
+        session_id: str,
     ) -> "CommitResult | None":
         """git add 带 index.lock 暂时性竞争重试（#ARCH-RECONCILER-INDEXLOCK-RETRY）。
 
@@ -2034,9 +2182,7 @@ class GitCommitGateway:
         max_retries = 3
         add_result = None
         for attempt in range(max_retries):
-            add_result = self.run_git(
-                ["git", "add", f"--pathspec-from-file={pathspec_file}"]
-            )
+            add_result = self.run_git(["git", "add", f"--pathspec-from-file={pathspec_file}"])
             if add_result.returncode == 0:
                 return None  # 成功
             stderr = add_result.stderr.strip()
@@ -2046,7 +2192,10 @@ class GitCommitGateway:
                     "_commit_auto: git add index.lock 竞争，%.0fs 后重试 "
                     "(attempt=%d/%d, session=%s) —— #ARCH-RECONCILER-INDEXLOCK-RETRY "
                     "(暂时性竞争，commit 未执行，重试安全)",
-                    backoff, attempt + 1, max_retries, session_id,
+                    backoff,
+                    attempt + 1,
+                    max_retries,
+                    session_id,
                 )
                 time.sleep(backoff)  # noqa: m10-time-trigger — 锁等待退避，非周期触发
                 continue
@@ -2064,7 +2213,10 @@ class GitCommitGateway:
         )
 
     def _commit_auto(
-        self, session_id: str, files: list[str], message: str,
+        self,
+        session_id: str,
+        files: list[str],
+        message: str,
     ) -> CommitResult:
         """reconciler auto-commit 唯一入口（锁 + DIRECTORY-CONTRACT gate + commit，不触发 reconciler）。阶段3 仅保留 DIRECTORY-CONTRACT gate；禁止 reconciler 裸调 git commit。"""
         # ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): batch intercept -- buffer when enabled.
@@ -2089,7 +2241,8 @@ class GitCommitGateway:
             logger.info(
                 "_commit_auto: skip auto-commit, merge in progress "
                 "(session=%s, files=%d) —— #ARCH-WORKTREE-002 缺陷3 治本",
-                session_id, len(files),
+                session_id,
+                len(files),
             )
             return CommitResult(
                 status=CommitStatus.NOTHING_TO_COMMIT,
@@ -2108,7 +2261,9 @@ class GitCommitGateway:
 
         # DIRECTORY-CONTRACT gate 校验（真源复用：gate_registry.get，不复制 DCR 逻辑）
         dcr_result = self._run_auto_commit_gate(
-            "DIRECTORY-CONTRACT", existing, session_id,
+            "DIRECTORY-CONTRACT",
+            existing,
+            session_id,
             "目录契约违规（auto-commit）",
             "_commit_auto: DIRECTORY-CONTRACT gate 未注册，跳过 DCR 校验"
             "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
@@ -2118,10 +2273,11 @@ class GitCommitGateway:
 
         # TTL-METADATA gate (subprocess reuse, same pattern as DCR gate)
         ttl_result = self._run_auto_commit_gate(
-            "TTL-METADATA", existing, session_id,
+            "TTL-METADATA",
+            existing,
+            session_id,
             "ttl metadata violation (auto-commit)",
-            "_commit_auto: TTL-METADATA gate 未注册，跳过 ttl 校验"
-            "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
+            "_commit_auto: TTL-METADATA gate 未注册，跳过 ttl 校验（session=%s, files=%d）——检查 __init__ 的 gate 注册",
         )
         if ttl_result is not None:
             return ttl_result
@@ -2129,7 +2285,9 @@ class GitCommitGateway:
         # FILE-PLACEMENT-TTL gate（ARCH-049，与 TTL-METADATA 同模式覆盖 _commit_auto 路径）
         # reconciler auto-commit 传 allow_promote=True（reconciler 是受信任自动流程，exempt_subdirs 生成器输出豁免）
         fpt_result = self._run_auto_commit_gate(
-            "FILE-PLACEMENT-TTL", existing, session_id,
+            "FILE-PLACEMENT-TTL",
+            existing,
+            session_id,
             "file placement ttl violation (auto-commit)",
             "_commit_auto: FILE-PLACEMENT-TTL gate 未注册，跳过文件放置校验"
             "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
@@ -2146,7 +2304,8 @@ class GitCommitGateway:
                 pathspec_file = self._write_pathspec_file(existing)
                 try:
                     add_fail = self._git_add_with_index_lock_retry(
-                        pathspec_file, session_id,
+                        pathspec_file,
+                        session_id,
                     )
                     if add_fail is not None:
                         return add_fail
@@ -2156,9 +2315,7 @@ class GitCommitGateway:
                             status=CommitStatus.NOTHING_TO_COMMIT,
                             message="no staged changes in auto-commit files",
                         )
-                    commit_hash, commit_err = self._commit_with_file_message(
-                        full_message, pathspec_file, existing
-                    )
+                    commit_hash, commit_err = self._commit_with_file_message(full_message, pathspec_file, existing)
                     if commit_hash is None:
                         return CommitResult(
                             status=CommitStatus.COMMIT_FAILED,
@@ -2167,7 +2324,9 @@ class GitCommitGateway:
                     os.environ[_GATEWAY_ENV] = "1"
                     logger.info(
                         "GitCommitGateway: auto-commit 成功 hash=%s marker=%s files=%d",
-                        commit_hash, gw_marker, len(existing),
+                        commit_hash,
+                        gw_marker,
+                        len(existing),
                     )
                     return CommitResult(
                         status=CommitStatus.OK,
@@ -2187,13 +2346,15 @@ class GitCommitGateway:
             logger.warning(
                 "TRAE-079: _GlobalCommitLock unavailable in _commit_auto (fail-open fallback): %s — "
                 "auto-commit proceeding without serialization lock for session %s",
-                e, session_id,
+                e,
+                session_id,
             )
             # 无锁降级：直接执行 auto-commit（不串行化，但 gate 仍在）
             pathspec_file = self._write_pathspec_file(existing)
             try:
                 add_fail = self._git_add_with_index_lock_retry(
-                    pathspec_file, session_id,
+                    pathspec_file,
+                    session_id,
                 )
                 if add_fail is not None:
                     return add_fail
@@ -2203,9 +2364,7 @@ class GitCommitGateway:
                         status=CommitStatus.NOTHING_TO_COMMIT,
                         message="no staged changes in auto-commit files",
                     )
-                commit_hash, commit_err = self._commit_with_file_message(
-                    full_message, pathspec_file, existing
-                )
+                commit_hash, commit_err = self._commit_with_file_message(full_message, pathspec_file, existing)
                 if commit_hash is None:
                     return CommitResult(
                         status=CommitStatus.COMMIT_FAILED,
@@ -2214,7 +2373,9 @@ class GitCommitGateway:
                 os.environ[_GATEWAY_ENV] = "1"
                 logger.info(
                     "GitCommitGateway: auto-commit 成功 hash=%s marker=%s files=%d",
-                    commit_hash, gw_marker, len(existing),
+                    commit_hash,
+                    gw_marker,
+                    len(existing),
                 )
                 return CommitResult(
                     status=CommitStatus.OK,
@@ -2232,9 +2393,7 @@ class GitCommitGateway:
         # 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: gw_pathspec_*.txt 同为进程 IPC token
         # （git --pathspec-from-file），归宿 OS temp dir。文件内容是 :(icase)relpath 行，
         # git 按 cwd(project_root) 解释 pathspec，与 temp 文件存放位置无关。
-        fd, path = tempfile.mkstemp(
-            prefix="gw_pathspec_", suffix=".txt"
-        )
+        fd, path = tempfile.mkstemp(prefix="gw_pathspec_", suffix=".txt")
         with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
             for abs_path in abs_files:
                 rel = os.path.relpath(abs_path, str(self.project_root))
@@ -2281,10 +2440,7 @@ class GitCommitGateway:
 
     def _target_rel_set(self, files: list[str]) -> set[str]:
         """commit 目标文件 → normcase 相对路径集合（ita 清扫排除集用）。"""
-        return {
-            os.path.normcase(os.path.relpath(f, str(self.project_root)).replace("\\", "/"))
-            for f in files
-        }
+        return {os.path.normcase(os.path.relpath(f, str(self.project_root)).replace("\\", "/")) for f in files}
 
     def _list_intent_to_add_paths(self) -> list[str]:
         """列出 index 中 intent-to-add 残留条目（相对路径，正斜杠）。
@@ -2343,13 +2499,12 @@ class GitCommitGateway:
             return []
         result = self.run_git(["git", "reset", "-q", "--"] + ita)
         if result.returncode != 0:
-            logger.warning(
-                "GitCommitGateway: ita 残留清扫失败（不阻断）: %s", result.stderr.strip()
-            )
+            logger.warning("GitCommitGateway: ita 残留清扫失败（不阻断）: %s", result.stderr.strip())
             return []
         logger.info(
             "GitCommitGateway: 清扫 ita 残留 %d 条（merge local-changes 误报治本）: %s",
-            len(ita), ita,
+            len(ita),
+            ita,
         )
         _audit_index_hygiene(self.project_root, session_id, "ita_sweep", {"swept": ita})
         return ita
@@ -2363,9 +2518,7 @@ class GitCommitGateway:
         异常落 .runtime/gate_audit/gateway_index_hygiene.jsonl。
         """
         anomalies: dict[str, object] = {}
-        rels = [
-            os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in files
-        ]
+        rels = [os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in files]
         if rels:
             diff = self.run_git(["git", "diff", "--cached", "--quiet", "--"] + rels)
             if diff.returncode != 0:
@@ -2377,7 +2530,9 @@ class GitCommitGateway:
         if anomalies:
             logger.warning("GitCommitGateway: post-commit index 一致性异常: %s", anomalies)
             _audit_index_hygiene(
-                self.project_root, session_id, "post_commit_consistency",
+                self.project_root,
+                session_id,
+                "post_commit_consistency",
                 {"anomalies": anomalies},
             )
 
@@ -2397,12 +2552,7 @@ class GitCommitGateway:
           - write 类（commit/merge/checkout/reset/update-ref/rebase）: 60s
           - 其他默认: 30s
         """
-        if (
-            len(cmd) >= 2
-            and cmd[0] == "git"
-            and cmd[1] == "commit"
-            and not getattr(self, "in_commit_flow", False)
-        ):
+        if len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit" and not getattr(self, "in_commit_flow", False):
             return subprocess.CompletedProcess(
                 args=cmd,
                 returncode=1,

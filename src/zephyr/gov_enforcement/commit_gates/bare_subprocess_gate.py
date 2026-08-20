@@ -102,10 +102,12 @@ _SUBPROCESS_CALL_ATTRS = frozenset({"run", "Popen", "check_output", "check_call"
 
 
 def _is_bare_subprocess_exempt_file(py_file: str) -> bool:  # noqa: m03-duplicate  M03豁免: 与git_call_budget_gate._is_git_budget_exempt_file共享实现模式（各gate持自身_EXEMPT_FILES常量）
-    """文件级豁免：process_pool / _diff_helpers / git_call_budget_gate / git_commit_gateway / 本 gate 自身。"""
+    """文件级豁免：process_pool / _diff_helpers / git_call_budget_gate / git_commit_gateway / 本 gate 自身 /
+    _archive 目录（归档一次性代码不参与扫描——同族先例：undefined_name_gate 裁定#E / bare_sql_gate 同口径）。"""
     normalized = py_file.replace("\\", "/")
-    return any(normalized.endswith(f"/{name}") or py_file == name
-               for name in _EXEMPT_FILES)
+    if "_archive" in normalized:  # 2026-08-20 波3 实证补齐
+        return True
+    return any(normalized.endswith(f"/{name}") or py_file == name for name in _EXEMPT_FILES)
 
 
 def _collect_subprocess_aliases(tree: ast.AST) -> set[str]:
@@ -202,7 +204,8 @@ def make_bare_subprocess_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         py_files = [
-            f for f in _get_staged_py_files(gateway, "BARE-SUBPROCESS")
+            f
+            for f in _get_staged_py_files(gateway, "BARE-SUBPROCESS")
             if not is_test_exempt(f) and not _is_bare_subprocess_exempt_file(f)
         ]
         if not py_files:
@@ -222,7 +225,8 @@ def make_bare_subprocess_gate() -> GateSpec:
             except SyntaxError:
                 logger.warning(
                     "BARE-SUBPROCESS: ast.parse 失败 %s（语法错误），fail-open 跳过",
-                    py_file, exc_info=True,
+                    py_file,
+                    exc_info=True,
                 )
                 continue
 

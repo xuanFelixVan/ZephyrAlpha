@@ -48,11 +48,10 @@ class GateIntegrityGuard:
     @staticmethod
     def compute_sha256(path: str) -> str:
         hasher = hashlib.sha256()
-        with open(path, 'rb') as f:
-            for chunk in iter(lambda: f.read(65536), b''):
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(65536), b""):
                 hasher.update(chunk)
         return hasher.hexdigest()
-
 
     def _load_manifest(self, path: str) -> None:
         try:
@@ -89,8 +88,7 @@ class GateIntegrityGuard:
         manifest_path = os.path.join(_TRUST_ROOT, "gate_integrity.manifest")
         if not os.path.exists(manifest_path):
             logger.warning(
-                "TRUST_ROOT set but manifest not found: %s — "
-                "run with --init-trust to create (grace period, skipping)",
+                "TRUST_ROOT set but manifest not found: %s — run with --init-trust to create (grace period, skipping)",
                 manifest_path,
             )
             return True  # grace period: manifest not yet created

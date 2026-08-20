@@ -160,9 +160,7 @@ def make_high_complexity_gate() -> GateSpec:
         if violations:
             detail = (
                 "NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15），\n"
-                "  违反 §5.158 循环复杂度反模式。\n"
-                + "\n".join(violations)
-                + "\n-> 考虑拆分为短函数/策略模式/查表法"
+                "  违反 §5.158 循环复杂度反模式。\n" + "\n".join(violations) + "\n-> 考虑拆分为短函数/策略模式/查表法"
             )
             logger.error("NO-HIGH-COMPLEXITY gate block:\n%s", detail)
             return False, detail

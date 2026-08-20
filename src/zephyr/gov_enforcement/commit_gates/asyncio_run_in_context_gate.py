@@ -118,9 +118,7 @@ def _scan_file_for_violations(gateway, py_file: str) -> list[str]:
             continue
         matched = _match_violation(content)
         if matched:
-            violations.append(
-                f"  {py_file}:{line_no}: {matched} -> {content.strip()}"
-            )
+            violations.append(f"  {py_file}:{line_no}: {matched} -> {content.strip()}")
     return violations
 
 
@@ -130,7 +128,7 @@ def _format_violation_detail(violations: list[str]) -> str:
         "  src/zephyr/ 全量禁止 asyncio.run() / asyncio.get_event_loop() / asyncio.new_event_loop()。\n"
         + "\n".join(violations)
         + "\n-> 改用 zephyr...async_utils.run_coroutine_sync（canonical）；"
-        "合法场景用 # noqa: a100-asyncio 豁免。"
+        "合法场景用 # noqa: a100-asyncio 豁免并附理由说明文本。"
     )
 
 
@@ -146,10 +144,7 @@ def make_asyncio_run_in_context_gate() -> GateSpec:
         if not staged:
             return True, ""
 
-        target_files = [
-            f for f in staged
-            if _is_src_zephyr_file(f) and not is_test_exempt(f)
-        ]
+        target_files = [f for f in staged if _is_src_zephyr_file(f) and not is_test_exempt(f)]
         if not target_files:
             return True, ""
 

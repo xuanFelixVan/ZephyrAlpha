@@ -141,6 +141,7 @@ class CircuitBreakerRecord:
 
 class CircuitOpenError(RuntimeError):
     """OPEN 状态下调用被阻断时抛出。"""
+
     error_code = "ZA-GV-0036"
 
     def __init__(self, caller: str, target: str, reason: str | None = None, *, error_code: str | None = None) -> None:
@@ -347,7 +348,8 @@ class CBGManager:
                 raise
 
         updated = self.get_state(caller, target)
-        if updated is None: raise RuntimeError("post-write fetch returned None")  # 5.88.6 修复: assert->if/raise
+        if updated is None:
+            raise RuntimeError("post-write fetch returned None")  # 5.88.6 修复: assert->if/raise
         return updated
 
     def reset(

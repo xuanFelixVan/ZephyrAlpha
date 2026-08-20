@@ -73,10 +73,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_domain_fk_gate"]
 
 # 域注册表真源（SSoT TRAE-062：注册表属规则数据，真源=YAML）
-_DOMAIN_REGISTRY_REL = (
-    "docs/01_policies_and_standards/_registry/catalogs/"
-    "functional_domain_registry.yaml"
-)
+_DOMAIN_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml"
 
 # 匹配 [DOMAIN] D_XXX 头部（frontmatter 注释行，列 0 起始）
 _DOMAIN_HEADER_RE = re.compile(r"^#\s*\[DOMAIN\]\s*(\S+)")
@@ -105,17 +102,11 @@ def _load_valid_domains(gateway) -> set[str] | None:
     """
     content = _read_staged_file(gateway, _DOMAIN_REGISTRY_REL)
     if content is None:
-        logger.warning(
-            "GATE-DOMAIN-FK fail-open: 无法读取 functional_domain_registry.yaml"
-            "（staged 版本）"
-        )
+        logger.warning("GATE-DOMAIN-FK fail-open: 无法读取 functional_domain_registry.yaml（staged 版本）")
         return None
     domains = set(_YAML_DOMAIN_ENTRY_RE.findall(content))
     if not domains:
-        logger.warning(
-            "GATE-DOMAIN-FK fail-open: functional_domain_registry.yaml"
-            " 未解析出任何域条目（格式异常？）"
-        )
+        logger.warning("GATE-DOMAIN-FK fail-open: functional_domain_registry.yaml 未解析出任何域条目（格式异常？）")
         return None
     return domains
 
@@ -130,9 +121,7 @@ def _check_domain_fk(gateway, py_files: list[str], valid_domains: set[str]) -> l
     violations: list[str] = []
     for py_file in py_files:
         file_content = _read_staged_file(gateway, py_file)
-        docstring_lines = (
-            _extract_docstring_lines(file_content) if file_content else set()
-        )
+        docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
         for line_no, content in _get_added_lines(gateway, py_file, "GATE-DOMAIN-FK"):
             if line_no in docstring_lines:
                 continue
@@ -141,10 +130,7 @@ def _check_domain_fk(gateway, py_files: list[str], valid_domains: set[str]) -> l
                 continue
             domain = m.group(1)
             if domain not in valid_domains:
-                violations.append(
-                    f"  {py_file}:{line_no}: [DOMAIN] {domain} "
-                    f"不在 functional_domain_registry.yaml 中"
-                )
+                violations.append(f"  {py_file}:{line_no}: [DOMAIN] {domain} 不在 functional_domain_registry.yaml 中")
     return violations
 
 
@@ -157,8 +143,7 @@ def _format_domain_fk_violations(violations: list[str]) -> tuple[bool, str]:
         "  修复方式（二选一）：\n"
         "    A. 将 [DOMAIN] 改为已注册的域（查看真源 YAML 的 entries 列表）\n"
         "    B. 在 functional_domain_registry.yaml 的 entries 中新增域条目\n"
-        "       （需与使用该域的 .py 文件在同一 commit 提交）\n"
-        + "\n".join(violations)
+        "       （需与使用该域的 .py 文件在同一 commit 提交）\n" + "\n".join(violations)
     )
 
 
@@ -172,10 +157,7 @@ def make_domain_fk_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        py_files = [
-            f for f in _get_staged_py_files(gateway, "GATE-DOMAIN-FK")
-            if not is_test_exempt(f)
-        ]
+        py_files = [f for f in _get_staged_py_files(gateway, "GATE-DOMAIN-FK") if not is_test_exempt(f)]
         if not py_files:
             return True, ""
 

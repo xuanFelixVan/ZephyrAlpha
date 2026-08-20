@@ -123,9 +123,7 @@ _NO_PAIRING_RE = re.compile(r"\[no-pairing:[^\]]+\]")
 def _load_known_gate_ids(gateway) -> "set[str] | None":
     """加载 gate_registry.yaml 中所有 gate_id（fail-open）。"""
     registry_path = (
-        gateway.project_root
-        / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-        / "gate_registry.yaml"
+        gateway.project_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "gate_registry.yaml"
     )
     if not registry_path.exists():
         return None
@@ -155,21 +153,12 @@ def _check_paired_gate_id(paired_gate_id, known_gate_ids):
             return True, ""
         gate_ids_to_check = paired_gate_id
     else:
-        return False, (
-            f"paired_gate_id 类型无效({type(paired_gate_id).__name__})，"
-            f"须为 string | list[str] | null"
-        )
+        return False, (f"paired_gate_id 类型无效({type(paired_gate_id).__name__})，须为 string | list[str] | null")
     if known_gate_ids is None:
         return True, ""
-    invalid = [
-        gid for gid in gate_ids_to_check
-        if not isinstance(gid, str) or gid not in known_gate_ids
-    ]
+    invalid = [gid for gid in gate_ids_to_check if not isinstance(gid, str) or gid not in known_gate_ids]
     if invalid:
-        return False, (
-            f"paired_gate_id 含无效 gate_id: {invalid}. "
-            f"gate_id MUST 在 gate_registry.yaml 中注册。"
-        )
+        return False, (f"paired_gate_id 含无效 gate_id: {invalid}. gate_id MUST 在 gate_registry.yaml 中注册。")
     return True, ""
 
 
@@ -207,10 +196,7 @@ def make_rule_execution_pairing_gate() -> GateSpec:
         if not isinstance(enforcement, dict):
             return f"{rel}: 缺 enforcement 段，MUST 添加 enforcement.paired_gate_id"
         if "paired_gate_id" not in enforcement:
-            return (
-                f"{rel}: enforcement 缺 paired_gate_id 字段。"
-                f"MUST 添加 paired_gate_id: <gate_id | null>。"
-            )
+            return f"{rel}: enforcement 缺 paired_gate_id 字段。MUST 添加 paired_gate_id: <gate_id | null>。"
         ok, detail = _check_paired_gate_id(enforcement["paired_gate_id"], known_gate_ids)
         if not ok:
             return f"{rel}: {detail}"
@@ -230,18 +216,13 @@ def make_rule_execution_pairing_gate() -> GateSpec:
 
         known_gate_ids = _load_known_gate_ids(gateway)
         violations = [
-            v for v in (
-                _validate_single_rule(gateway, rel, known_gate_ids)
-                for rel in trae_files
-            )
-            if v is not None
+            v for v in (_validate_single_rule(gateway, rel, known_gate_ids) for rel in trae_files) if v is not None
         ]
 
         if violations:
             return False, (
                 f"RULE-EXECUTION-PAIRING: {len(violations)} 条规则未配对执行机制"
-                f"（Phase 3.5）: " + "; ".join(violations)
-                + ". 修复：在 enforcement 段添加 paired_gate_id"
+                f"（Phase 3.5）: " + "; ".join(violations) + ". 修复：在 enforcement 段添加 paired_gate_id"
                 "（gate_id 或 null），或用 [no-pairing:<reason>] 逃生通道。"
             )
         return True, ""

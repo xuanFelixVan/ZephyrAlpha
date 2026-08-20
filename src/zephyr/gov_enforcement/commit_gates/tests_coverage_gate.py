@@ -83,10 +83,7 @@ def make_tests_coverage_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        has_gate_change = any(
-            f.replace("\\", "/").startswith(_TRIGGER_PREFIX) and f.endswith(".py")
-            for f in files
-        )
+        has_gate_change = any(f.replace("\\", "/").startswith(_TRIGGER_PREFIX) and f.endswith(".py") for f in files)
         if not has_gate_change:
             return True, ""
 
@@ -102,7 +99,8 @@ def make_tests_coverage_gate() -> GateSpec:
         except OSError as e:
             logger.warning(
                 "META-TESTS-COVERAGE gate fail-open: listdir 失败(%s: %s)。",
-                type(e).__name__, e,
+                type(e).__name__,
+                e,
             )
             return True, ""
 
@@ -120,7 +118,9 @@ def make_tests_coverage_gate() -> GateSpec:
             except OSError as e:
                 logger.warning(
                     "META-TESTS-COVERAGE gate skip %s: 读取失败(%s: %s)。",
-                    entry, type(e).__name__, e,
+                    entry,
+                    type(e).__name__,
+                    e,
                 )
                 continue
 
@@ -134,9 +134,7 @@ def make_tests_coverage_gate() -> GateSpec:
 
             tests_abs = os.path.join(project_root, tests_path.replace("/", os.sep))
             if not os.path.isfile(tests_abs):
-                violations.append(
-                    f"  {entry}: [TESTS] 声明 {tests_path} 但文件不存在"
-                )
+                violations.append(f"  {entry}: [TESTS] 声明 {tests_path} 但文件不存在")
 
         if violations:
             detail = (

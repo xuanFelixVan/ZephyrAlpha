@@ -70,10 +70,8 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_file_copy_gate"]
 
 # check_code_duplication.py 路径（检测逻辑 SSoT）
-_SCRIPT_PATH = (
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))
-    ))))
+_SCRIPT_PATH = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 )
 # src/zephyr/gov_enforcement/commit_gates/ -> 上 5 级 = 项目根
 _DUP_SCRIPT = os.path.join(
@@ -91,9 +89,7 @@ def _get_staged_new_py_files(gateway) -> list[str]:
     与「无新增 .py 文件」在调用侧同走 (True, "") 放行路径。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
                 "FILE-COPY gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -103,14 +99,10 @@ def _get_staged_new_py_files(gateway) -> list[str]:
         staged_new = diff_result.stdout.strip().splitlines()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "FILE-COPY gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "FILE-COPY gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return []
-    return [
-        f.replace("\\", "/") for f in staged_new
-        if f.endswith(".py") and not is_test_exempt(f)
-    ]
+    return [f.replace("\\", "/") for f in staged_new if f.endswith(".py") and not is_test_exempt(f)]
 
 
 def _resolve_abs_files(new_py_files, repo_root):
@@ -144,14 +136,11 @@ def _run_dup_checker(abs_files, repo_root):
             timeout=120,
         )
     except subprocess.TimeoutExpired:
-        logger.warning(
-            "FILE-COPY gate fail-open: check_code_duplication.py 超时(120s)，检测器失效。"
-        )
+        logger.warning("FILE-COPY gate fail-open: check_code_duplication.py 超时(120s)，检测器失效。")
         return None
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "FILE-COPY gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "FILE-COPY gate fail-open: subprocess 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
 

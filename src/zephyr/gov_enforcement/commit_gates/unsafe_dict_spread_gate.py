@@ -74,13 +74,12 @@ _SAFE_KWARGS_NAMES: frozenset[str] = frozenset({"kwargs", "kwds"})
 # 不匹配 `**{...}` 因 `{` 不是 `\w`
 _UNSAFE_SPREAD_RE = re.compile(r"\b(\w+)\(\*\*([A-Za-z_]\w*)\s*\)")
 
+
 # 行级豁免：注释 / import
 # hunk header: @@ -old_start,old_count +new_start,new_count @@
 def _get_staged_py_files(gateway):
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "UNSAFE-DICT-SPREAD gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -90,8 +89,7 @@ def _get_staged_py_files(gateway):
         staged = [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "UNSAFE-DICT-SPREAD gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "UNSAFE-DICT-SPREAD gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
     return [f for f in staged if f.endswith(".py") and not is_test_exempt(f)]
@@ -101,13 +99,13 @@ def _collect_unsafe_spread_warnings(gateway, py_file):
     file_content = _read_staged_file(gateway, py_file)
     docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
     try:
-        file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
-        )
+        file_diff = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file])
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "UNSAFE-DICT-SPREAD gate: git diff 失败 file=%s, %s",
-            py_file, e, exc_info=True,
+            py_file,
+            e,
+            exc_info=True,
         )
         return []
     if file_diff.returncode != 0:
@@ -125,9 +123,7 @@ def _collect_unsafe_spread_warnings(gateway, py_file):
         cls_name, var_name = m.group(1), m.group(2)
         if var_name in _SAFE_KWARGS_NAMES:
             continue
-        warnings.append(
-            f"  {py_file}:{line_no}: {cls_name}(**{var_name}) -> {content.strip()}"
-        )
+        warnings.append(f"  {py_file}:{line_no}: {cls_name}(**{var_name}) -> {content.strip()}")
     return warnings
 
 

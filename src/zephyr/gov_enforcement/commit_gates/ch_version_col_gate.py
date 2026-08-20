@@ -50,12 +50,12 @@ __all__ = ["make_ch_version_col_gate"]
 
 # 非 DateTime 列名集合——这些列作 ReplacingMergeTree version 参数会导致去重失效
 _BLOCKED_VERSION_COLS = {
-    "quality_flag",   # UInt8 质量标记位（1=正常 0=异常），100% 行值为 1
-    "is_deleted",     # UInt8 软删除标记
-    "is_active",      # UInt8 激活状态
-    "status",         # 各种状态码
-    "version_num",    # Int32 数值版本号（非时序）
-    "revision",       # Int32 修订号（非时序）
+    "quality_flag",  # UInt8 质量标记位（1=正常 0=异常），100% 行值为 1
+    "is_deleted",  # UInt8 软删除标记
+    "is_active",  # UInt8 激活状态
+    "status",  # 各种状态码
+    "version_num",  # Int32 数值版本号（非时序）
+    "revision",  # Int32 修订号（非时序）
 }
 
 # 匹配 ReplacingMergeTree(col_name) 提取 col_name
@@ -74,9 +74,7 @@ def _get_staged_scan_files(gateway) -> list[str]:
     fail-open：git diff 失败/异常时返回空列表。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning("CH-VERSION-COL fail-open: git diff 失败(rc=%d)", diff_result.returncode)
             return []
@@ -84,10 +82,7 @@ def _get_staged_scan_files(gateway) -> list[str]:
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("CH-VERSION-COL fail-open: git diff 异常(%s: %s)", type(e).__name__, e)
         return []
-    return [
-        f.replace("\\", "/") for f in staged
-        if f.endswith(_SCAN_EXTENSIONS) and not is_test_exempt(f)
-    ]
+    return [f.replace("\\", "/") for f in staged if f.endswith(_SCAN_EXTENSIONS) and not is_test_exempt(f)]
 
 
 def _get_added_lines_text(gateway, rel_path: str) -> list[str]:
@@ -96,14 +91,11 @@ def _get_added_lines_text(gateway, rel_path: str) -> list[str]:
     fail-open：git diff 失败/异常时返回空列表。
     """
     try:
-        diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
-        )
+        diff_content = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path])
         if diff_content.returncode != 0:
             return []
         return [
-            line[1:] for line in diff_content.stdout.splitlines()
-            if line.startswith("+") and not line.startswith("+++")
+            line[1:] for line in diff_content.stdout.splitlines() if line.startswith("+") and not line.startswith("+++")
         ]
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []

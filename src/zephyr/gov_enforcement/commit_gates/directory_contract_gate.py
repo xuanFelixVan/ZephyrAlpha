@@ -99,13 +99,7 @@ def make_directory_contract_gate() -> GateSpec:
             return True, "no files to check (all deletions or missing)"
 
         # 2. 定位 check_directory_contract.py（真源）
-        check_script = (
-            project_root
-            / "scripts"
-            / "governance"
-            / "d1_structure"
-            / "check_directory_contract.py"
-        )
+        check_script = project_root / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
         if not check_script.is_file():
             # fail-closed：Zephyr 项目但 checker 缺失是环境异常，必须阻断
             return False, f"check_directory_contract.py not found: {check_script}"
@@ -128,8 +122,12 @@ def make_directory_contract_gate() -> GateSpec:
             env["PYTHONPATH"] = f"{src_dir}{os.pathsep}{existing_pp}" if existing_pp else src_dir
         try:
             result = run_checker_script(
-                check_script, cmd_args,
-                cwd=project_root, timeout=60, text=False, env=env,
+                check_script,
+                cmd_args,
+                cwd=project_root,
+                timeout=60,
+                text=False,
+                env=env,
             )
         except (subprocess.TimeoutExpired, OSError) as e:
             # fail-closed：执行失败阻断（目录契约是核心约束）
@@ -138,11 +136,13 @@ def make_directory_contract_gate() -> GateSpec:
         # 5. 解析结果——exit 0=通过，1=有违规，2=脚本异常
         if result.returncode == 0:
             return True, "directory contract check passed"
+
         # Compat str/bytes: run_subprocess_hidden forces text mode
         def _decode(s: object) -> str:
             if isinstance(s, bytes):
                 return s.decode("utf-8", errors="replace").strip()
             return str(s).strip() if s else ""
+
         detail = _decode(result.stderr)
         if not detail:
             detail = _decode(result.stdout)

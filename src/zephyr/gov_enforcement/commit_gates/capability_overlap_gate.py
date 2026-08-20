@@ -65,11 +65,13 @@ _REGISTRY_PREFIX = "docs/01_policies_and_standards/_registry/"
 # 'gate' token 交集 = 确定性误报）。原阈值 len>=4 使 gate（4 字符）通过过滤。
 # 方案 B（stop-word）比方案 A（阈值>=5）更精准——不会误过滤 data/core/base 等
 # 有诊断价值的 4 字符 token。
-_STOP_WORDS: frozenset[str] = frozenset({
-    "gate",   # 77 个 *_gate.py 文件的共性后缀
-    "test",   # 测试文件共性前缀
-    "init",   # __init__.py 的共性 token
-})
+_STOP_WORDS: frozenset[str] = frozenset(
+    {
+        "gate",  # 77 个 *_gate.py 文件的共性后缀
+        "test",  # 测试文件共性前缀
+        "init",  # __init__.py 的共性 token
+    }
+)
 
 
 def _tokenize(name: str) -> set[str]:
@@ -93,20 +95,19 @@ def _tokenize(name: str) -> set[str]:
 def _get_staged_new_files(gateway) -> list[str] | None:
     """获取 staged 新增(A) 文件列表。None=fail-loud（warn-only 契约仍 return True）。"""
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
-                "CAPABILITY-OVERLAP gate fail-loud: git diff 失败(rc=%d)，"
-                "检测器失效，无法检测 capability 重叠。", diff_result.returncode,
+                "CAPABILITY-OVERLAP gate fail-loud: git diff 失败(rc=%d)，检测器失效，无法检测 capability 重叠。",
+                diff_result.returncode,
             )
             return None
         return diff_result.stdout.strip().splitlines()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error(
-            "CAPABILITY-OVERLAP gate fail-loud: git diff 异常(%s: %s)，"
-            "检测器失效，无法检测 capability 重叠。", type(e).__name__, e,
+            "CAPABILITY-OVERLAP gate fail-loud: git diff 异常(%s: %s)，检测器失效，无法检测 capability 重叠。",
+            type(e).__name__,
+            e,
             exc_info=True,
         )
         return None
@@ -114,14 +115,11 @@ def _get_staged_new_files(gateway) -> list[str] | None:
 
 def _filter_new_files(staged_new: list[str]) -> tuple[list[str], list[str]]:
     """从 staged 新增文件中筛选 (.py 文件, _registry/ .yaml/.yml 文件)。"""
-    py_files = [
-        f.replace("\\", "/") for f in staged_new
-        if f.endswith(".py") and not is_test_exempt(f)
-    ]
+    py_files = [f.replace("\\", "/") for f in staged_new if f.endswith(".py") and not is_test_exempt(f)]
     yaml_files = [
-        f.replace("\\", "/") for f in staged_new
-        if f.replace("\\", "/").endswith((".yaml", ".yml"))
-        and f.replace("\\", "/").startswith(_REGISTRY_PREFIX)
+        f.replace("\\", "/")
+        for f in staged_new
+        if f.replace("\\", "/").endswith((".yaml", ".yml")) and f.replace("\\", "/").startswith(_REGISTRY_PREFIX)
     ]
     return py_files, yaml_files
 
@@ -134,23 +132,24 @@ def _load_registry_data() -> dict | None:
         logger.warning(
             "CAPABILITY-OVERLAP gate fail-loud: registry 缺失(%s)，检测器失效，"
             "无法检测 capability 重叠。修复：git checkout HEAD -- %s",
-            REGISTRY_YAML, REGISTRY_YAML,
+            REGISTRY_YAML,
+            REGISTRY_YAML,
         )
         return None
     try:
         import yaml
+
         data = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "CAPABILITY-OVERLAP gate fail-loud: registry 解析失败(%s: %s)，"
-            "检测器失效，无法检测 capability 重叠。",
-            type(e).__name__, e, exc_info=True,
+            "CAPABILITY-OVERLAP gate fail-loud: registry 解析失败(%s: %s)，检测器失效，无法检测 capability 重叠。",
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
     if not isinstance(data, dict):
-        logger.warning(
-            "CAPABILITY-OVERLAP gate fail-loud: registry 顶层非 dict，检测器失效。"
-        )
+        logger.warning("CAPABILITY-OVERLAP gate fail-loud: registry 顶层非 dict，检测器失效。")
         return None
     return data
 
@@ -196,6 +195,7 @@ def _check_py_overlap(new_py_files: list[str], cap_tokens: dict[str, set[str]]) 
 def _check_yaml_overlap(new_yaml_files: list[str]) -> list[str]:
     """检测新建 _registry/ .yaml 文件名与同目录现有 .yaml token 交集（≥2 token=高置信度第二真源）。"""
     import glob
+
     warnings: list[str] = []
     for yaml_file in new_yaml_files:
         stem = os.path.basename(yaml_file).rsplit(".", 1)[0]
@@ -229,9 +229,7 @@ def _get_all_staged_py_files(gateway) -> list[str]:
     也可能引入重复代码。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "CAPABILITY-OVERLAP gate: git diff AM 失败(rc=%d)，跳过 CloneGuard 检测",
@@ -239,13 +237,15 @@ def _get_all_staged_py_files(gateway) -> list[str]:
             )
             return []
         return [
-            f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines()
+            f.replace("\\", "/")
+            for f in diff_result.stdout.strip().splitlines()
             if f.endswith(".py") and not is_test_exempt(f)
         ]
     except Exception as e:  # noqa: BLE001  门禁不抛异常
         logger.warning(
             "CAPABILITY-OVERLAP gate: git diff AM 异常(%s: %s)，跳过 CloneGuard 检测",
-            type(e).__name__, e,
+            type(e).__name__,
+            e,
         )
         return []
 
@@ -265,7 +265,8 @@ def _run_clone_guard_check(py_files: list[str]):
     except Exception as e:  # noqa: BLE001  门禁不抛异常
         logger.warning(
             "CAPABILITY-OVERLAP gate: CloneGuard 不可用(%s: %s)，降级 warn-only",
-            type(e).__name__, e,
+            type(e).__name__,
+            e,
         )
         return None
 

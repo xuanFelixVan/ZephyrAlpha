@@ -73,9 +73,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_rename_depgraph_sync_gate"]
 
 # SQL 集中化（NO-BARE-SQL gate 合规，常量名需匹配 ^_?SQL_\w+$ 豁免正则）
-_SQL_CHECK_FILE_PATH = (
-    "SELECT 1 FROM nodes WHERE file_path = %s AND build_status != 'deprecated' LIMIT 1"
-)
+_SQL_CHECK_FILE_PATH = "SELECT 1 FROM nodes WHERE file_path = %s AND build_status != 'deprecated' LIMIT 1"
 
 
 def _get_staged_renamed_py_files(gateway) -> list[tuple[str, str]] | None:
@@ -92,9 +90,7 @@ def _get_staged_renamed_py_files(gateway) -> list[tuple[str, str]] | None:
         git diff 失败/异常时返回 None（fail-open 检测器失效）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-status", "--diff-filter=R"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-status", "--diff-filter=R"])
         if diff_result.returncode != 0:
             logger.warning(
                 "RENAME-DEPGRAPH-SYNC gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -122,7 +118,9 @@ def _get_staged_renamed_py_files(gateway) -> list[tuple[str, str]] | None:
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "RENAME-DEPGRAPH-SYNC gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -152,9 +150,10 @@ def _check_depgraph_has_file(file_path: str) -> bool | None:
             conn.close()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "RENAME-DEPGRAPH-SYNC gate fail-open: depgraph 查询失败(%s: %s)，"
-            "无法验证文件重命名同步状态。",
-            type(e).__name__, e, exc_info=True,
+            "RENAME-DEPGRAPH-SYNC gate fail-open: depgraph 查询失败(%s: %s)，无法验证文件重命名同步状态。",
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -203,9 +202,11 @@ def make_rename_depgraph_sync_gate() -> GateSpec:
                 log_db_failopen,
                 pg_probe_shows_offline,
             )
+
             _offline = pg_probe_shows_offline(gateway.project_root)
             log_db_failopen(
-                gateway.project_root, "RENAME-DEPGRAPH-SYNC",
+                gateway.project_root,
+                "RENAME-DEPGRAPH-SYNC",
                 db_offline=_offline,
                 reason=(
                     "depgraph 查询失败，重命名同步状态无法验证，降级放行"

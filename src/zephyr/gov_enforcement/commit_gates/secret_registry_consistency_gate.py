@@ -108,9 +108,7 @@ def make_secret_registry_consistency_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 检测 staged 中是否包含目标文件
         try:
-            diff_result = gateway.run_git(
-                ["git", "diff", "--cached", "--name-only"]
-            )
+            diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only"])
             if diff_result.returncode != 0:
                 logger.warning(
                     "SECRET-REGISTRY-CONSISTENCY gate fail-open: git diff 失败(rc=%d)",
@@ -121,7 +119,9 @@ def make_secret_registry_consistency_gate() -> GateSpec:
         except Exception as e:  # noqa: BLE001
             logger.warning(
                 "SECRET-REGISTRY-CONSISTENCY gate fail-open: git diff 异常(%s: %s)",
-                type(e).__name__, e, exc_info=True,
+                type(e).__name__,
+                e,
+                exc_info=True,
             )
             return True, ""
 
@@ -139,7 +139,9 @@ def make_secret_registry_consistency_gate() -> GateSpec:
         except OSError as e:
             logger.warning(
                 "SECRET-REGISTRY-CONSISTENCY gate fail-open: 读取 %s 失败(%s: %s)",
-                env_example_path, type(e).__name__, e,
+                env_example_path,
+                type(e).__name__,
+                e,
             )
             return True, ""
 
@@ -148,7 +150,9 @@ def make_secret_registry_consistency_gate() -> GateSpec:
         except OSError as e:
             logger.warning(
                 "SECRET-REGISTRY-CONSISTENCY gate fail-open: 读取 %s 失败(%s: %s)",
-                registry_path, type(e).__name__, e,
+                registry_path,
+                type(e).__name__,
+                e,
             )
             return True, ""
 
@@ -161,13 +165,9 @@ def make_secret_registry_consistency_gate() -> GateSpec:
 
         violations: list[str] = []
         if only_in_example:
-            violations.append(
-                f".env.example 有但 secret_registry.yaml 未登记: {sorted(only_in_example)}"
-            )
+            violations.append(f".env.example 有但 secret_registry.yaml 未登记: {sorted(only_in_example)}")
         if only_in_registry:
-            violations.append(
-                f"secret_registry.yaml 有但 .env.example 未文档化: {sorted(only_in_registry)}"
-            )
+            violations.append(f"secret_registry.yaml 有但 .env.example 未文档化: {sorted(only_in_registry)}")
 
         if violations:
             detail = "; ".join(violations)

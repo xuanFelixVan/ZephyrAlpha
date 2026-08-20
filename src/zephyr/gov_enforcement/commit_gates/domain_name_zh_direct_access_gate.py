@@ -98,9 +98,7 @@ def _collect_staged_py_files(gateway):
     None=fail-open(git diff 不可达)。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "NO-DOMAIN-NAME-ZH-DIRECT-ACCESS gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -111,17 +109,14 @@ def _collect_staged_py_files(gateway):
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "NO-DOMAIN-NAME-ZH-DIRECT-ACCESS gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
     # 过滤 .py 文件 + tests/ 豁免 + SSoT 定义文件豁免
-    py_files = [
-        f for f in staged
-        if f.endswith(".py")
-        and not is_test_exempt(f)
-        and f != _SSoT_EXEMPT_FILE
-    ]
+    py_files = [f for f in staged if f.endswith(".py") and not is_test_exempt(f) and f != _SSoT_EXEMPT_FILE]
     return py_files
 
 
@@ -133,13 +128,12 @@ def _scan_file_violations(gateway, py_file):
 
     # 解析 diff，获取 added 行及行号
     try:
-        file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
-        )
+        file_diff = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file])
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "NO-DOMAIN-NAME-ZH-DIRECT-ACCESS gate: git diff 失败 file=%s, %s",
-            py_file, e,
+            py_file,
+            e,
         )
         return []
     if file_diff.returncode != 0:

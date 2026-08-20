@@ -290,6 +290,7 @@ def session_claim_check(
     try:
         other_held = registry.other_held_files(session_id)
         from pathlib import Path as _Path
+
         target = str(_Path(file).resolve())
         if target in other_held:
             owner = _find_file_owner(registry, file, exclude_session=session_id)

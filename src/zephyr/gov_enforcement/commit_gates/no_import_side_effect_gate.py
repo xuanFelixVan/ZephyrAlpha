@@ -14,6 +14,7 @@
 # [TESTS] tests/governance/commit_gates/test_no_import_side_effect_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: in-process 门禁检测器（GitCommitGateway 事件触发，STARTUP=imported），检测模式字符串非真实 manual 触发
 """no_import_side_effect_gate.py — 模块导入零副作用门禁（NO-IMPORT-SIDE-EFFECT，S4-C 2026-07-17）
 
 检测 staged src/ .py 文件 added 行中的模块级副作用——违反"模块导入零副作用原则"
@@ -101,8 +102,16 @@ _SIDE_EFFECT_ATTRS: dict[str, set[str]] = {
 }
 # Path(...).<io_method> 方法调用——检测 Attribute(value=Call(func=Path)).<method>
 _PATH_IO_METHODS: set[str] = {
-    "read_text", "read_bytes", "write_text", "write_bytes",
-    "read", "write", "unlink", "mkdir", "rmdir", "touch",
+    "read_text",
+    "read_bytes",
+    "write_text",
+    "write_bytes",
+    "read",
+    "write",
+    "unlink",
+    "mkdir",
+    "rmdir",
+    "touch",
 }
 # 急切单例 allowlist——Capitalized 但纯构造（无 I/O/无副作用）
 _PURE_CAPITALIZED: set[str] = {"TypeVar", "NamedTuple", "TypedDict", "Enum", "Path"}
@@ -300,7 +309,7 @@ def make_no_import_side_effect_gate() -> GateSpec:
                 "  import 一个模块不应触发 I/O、网络、子进程、DB 连接或急切实例化。\n"
                 + "\n".join(all_violations)
                 + "\n-> 改为惰性：将副作用移入函数（首次调用时执行）或 __getattr__ (PEP 562)"
-                + "\n   或 if __name__ == \"__main__\" guard；急切单例改 get_xxx() 惰性工厂"
+                + '\n   或 if __name__ == "__main__" guard；急切单例改 get_xxx() 惰性工厂'
             )
             logger.error("NO-IMPORT-SIDE-EFFECT gate block:\n%s", detail)
             return False, detail

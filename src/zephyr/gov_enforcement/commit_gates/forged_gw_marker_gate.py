@@ -183,8 +183,8 @@ def make_forged_gw_marker_gate() -> GateSpec:
 
     return GateSpec(gate_id="FORGED-GW-MARKER", check=_check, priority=29)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def is_session_registered(project_root, session_id) -> bool:
     """公共接口：is_session_registered（Stage 4 公共化）。"""
     return _is_session_registered(project_root, session_id)
-

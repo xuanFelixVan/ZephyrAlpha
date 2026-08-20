@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_depgraph_write_path_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """depgraph_write_path_gate.py — depgraph 写入路径白名单门禁（DEPGRAPH-WRITE-PATH）
@@ -71,25 +71,25 @@ __all__ = ["make_depgraph_write_path_gate"]
 
 # depgraph 写入权限参数模式
 # 匹配 read_only=False / superuser=True / allow_edge_delete=True
-_WRITE_PARAM_RE = re.compile(
-    r"(read_only\s*=\s*False|superuser\s*=\s*True|allow_edge_delete\s*=\s*True)"
-)
+_WRITE_PARAM_RE = re.compile(r"(read_only\s*=\s*False|superuser\s*=\s*True|allow_edge_delete\s*=\s*True)")
 
 # 白名单文件（相对仓库根，正斜杠）
 # 治本（2026-07-17）：新增 generate_project_path_tree.py（arch_directory_tree 表写入器）
 # 治本（2026-08-01）：新增 apply_battle_map.py（battle_map_* 表写入器，用 depgraph_writer 角色）
 # 治本（2026-08-05）：新增 add_acquisition_fields.py（nodes_metadata schema 迁移，superuser DDL）
-_WHITELIST: frozenset[str] = frozenset({
-    "scripts/governance/apply_depgraph.py",
-    "scripts/governance/generate_project_depgraph.py",
-    "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py",
-    "scripts/governance/_shared/constants.py",
-    "scripts/governance/sync_panorama_module.py",
-    "scripts/governance/generate_project_path_tree.py",
-    "scripts/governance/apply_battle_map.py",
-    "scripts/governance/migrations/add_acquisition_fields.py",
-    "src/zephyr/governance/depgraph_schema.py",
-})
+_WHITELIST: frozenset[str] = frozenset(
+    {
+        "scripts/governance/apply_depgraph.py",
+        "scripts/governance/generate_project_depgraph.py",
+        "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py",
+        "scripts/governance/_shared/constants.py",
+        "scripts/governance/sync_panorama_module.py",
+        "scripts/governance/generate_project_path_tree.py",
+        "scripts/governance/apply_battle_map.py",
+        "scripts/governance/migrations/add_acquisition_fields.py",
+        "src/zephyr/governance/depgraph_schema.py",
+    }
+)
 
 
 def _is_whitelisted(file_path: str) -> bool:
@@ -120,15 +120,14 @@ def make_depgraph_write_path_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         py_files = [
-            f for f in _get_staged_py_files(gateway, "DEPGRAPH-WRITE-PATH")
+            f
+            for f in _get_staged_py_files(gateway, "DEPGRAPH-WRITE-PATH")
             if not is_test_exempt(f) and not _is_whitelisted(f) and not _is_self(f)
         ]
         violations: list[str] = []
         for py_file in py_files:
             file_content = _read_staged_file(gateway, py_file)
-            docstring_lines = (
-                _extract_docstring_lines(file_content) if file_content else set()
-            )
+            docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
             for line_no, content in _get_added_lines(gateway, py_file, "DEPGRAPH-WRITE-PATH"):
                 if line_no in docstring_lines or _is_exempt_line(content):
                     continue

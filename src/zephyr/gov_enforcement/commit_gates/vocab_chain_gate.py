@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——AST/IO 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_vocab_chain_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m01-vocab-hardcode  M01豁免: 本文件是VOCAB-CHAIN检测器自身,源码含SSoT路径模式字符串用于AST匹配,非实际硬编码
@@ -106,8 +106,7 @@ def _matches_ssot_pattern(s: str) -> bool:
     if "/" not in s and "\\" not in s:
         return False
     lower = s.lower()
-    if not (lower.endswith(".yaml") or lower.endswith(".yml")
-            or lower.endswith(".json") or lower.endswith(".jsonl")):
+    if not (lower.endswith(".yaml") or lower.endswith(".yml") or lower.endswith(".json") or lower.endswith(".jsonl")):
         return False
     # 归一化为正斜杠
     normalized = s.replace("\\", "/")
@@ -133,7 +132,9 @@ def _detect_ssot_hardcoding(abs_path: str, content: str) -> list[str]:
     except SyntaxError as e:
         logger.warning(
             "VOCAB-CHAIN gate skip file %s: AST 解析失败(%s: %s)。",
-            abs_path, type(e).__name__, e,
+            abs_path,
+            type(e).__name__,
+            e,
         )
         return []
 
@@ -156,9 +157,7 @@ def _get_staged_new_py_files(gateway) -> tuple[list[str], str]:
         (py_files, wt_root) — py_files 为空时表示无文件或 fail-open。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
                 "VOCAB-CHAIN gate fail-open: git diff 失败(rc=%d)。",
@@ -169,14 +168,13 @@ def _get_staged_new_py_files(gateway) -> tuple[list[str], str]:
     except Exception as e:  # noqa: BLE001 — broad exception catch for fail-open
         logger.warning(
             "VOCAB-CHAIN gate fail-open: git diff 异常(%s: %s)。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return [], ""
 
-    py_files = [
-        f.replace("\\", "/") for f in staged_new
-        if f.endswith(".py") and not is_test_exempt(f)
-    ]
+    py_files = [f.replace("\\", "/") for f in staged_new if f.endswith(".py") and not is_test_exempt(f)]
     if not py_files:
         return [], ""
 
@@ -210,9 +208,7 @@ def make_vocab_chain_gate() -> GateSpec:
             if _is_exempt_path(rel_path):
                 continue
 
-            abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(
-                wt_root, rel_path.replace("/", os.sep)
-            )
+            abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
             if not os.path.isfile(abs_path):
                 continue
 
@@ -222,13 +218,15 @@ def make_vocab_chain_gate() -> GateSpec:
             except OSError as e:
                 logger.warning(
                     "VOCAB-CHAIN gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path, type(e).__name__, e,
+                    abs_path,
+                    type(e).__name__,
+                    e,
                 )
                 continue
 
             violations = _detect_ssot_hardcoding(abs_path, content)
             for v in violations:
-                all_violations.append(f"{rel_path}: \"{v}\"")
+                all_violations.append(f'{rel_path}: "{v}"')
 
         if all_violations:
             detail = "; ".join(all_violations[:5])

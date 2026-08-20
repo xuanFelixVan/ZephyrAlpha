@@ -72,7 +72,7 @@ __all__ = ["make_depgraph_freshness_gate"]
 _CACHE_REL = ".runtime/depgraph_scan_cache.json"
 
 # 阈值（秒）
-_WARN_SECONDS = 30 * 60        # 30 分钟 → WARNING
+_WARN_SECONDS = 30 * 60  # 30 分钟 → WARNING
 _BLOCK_SECONDS = 24 * 60 * 60  # 24 小时 → 阻断
 
 
@@ -116,10 +116,7 @@ def make_depgraph_freshness_gate() -> GateSpec:
 
         # 1. 文件缺失——fail-open（首次启动/新环境）
         if not cache_path.is_file():
-            return True, (
-                f"depgraph scan cache not found ({_CACHE_REL}); "
-                f"skip freshness check (first-run or new env)"
-            )
+            return True, (f"depgraph scan cache not found ({_CACHE_REL}); skip freshness check (first-run or new env)")
 
         # 2. 读取 + JSON 解析——fail-open
         try:
@@ -144,7 +141,8 @@ def make_depgraph_freshness_gate() -> GateSpec:
         if age_seconds < 0:
             logger.warning(
                 "depgraph scan cache saved_at is in the future (%s vs %s); treating as fresh",
-                saved_at_raw, now_utc.isoformat(),
+                saved_at_raw,
+                now_utc.isoformat(),
             )
             return True, f"depgraph fresh (saved_at in future: {saved_at_raw})"
 
@@ -157,10 +155,12 @@ def make_depgraph_freshness_gate() -> GateSpec:
                 log_db_failopen,
                 pg_offline_beyond,
             )
+
             if pg_offline_beyond(project_root, _BLOCK_SECONDS):
                 hours_offline = int(age_seconds // 3600)
                 log_db_failopen(
-                    project_root, "DEPGRAPH-FRESHNESS",
+                    project_root,
+                    "DEPGRAPH-FRESHNESS",
                     db_offline=True,
                     reason=(
                         f"探针证实 PG 离线超 24h，depgraph saved_at({saved_at_raw}) "

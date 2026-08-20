@@ -136,6 +136,7 @@ def scan_precommit_config_offline(config_text: str) -> tuple[bool, list[str], li
     """
     try:
         import yaml
+
         config = yaml.safe_load(config_text)
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         # fail-open：YAML 解析失败不阻断（其他 gate 如 GATE-ENCODING 会兜底）

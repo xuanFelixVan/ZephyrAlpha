@@ -76,24 +76,73 @@ __all__ = ["make_msg_exposure_gate"]
 
 # 敏感变量名清单（小写匹配，覆盖变量名 + 属性访问的 attr 名）
 # 分类维护，便于后续扩展
-_SENSITIVE_NAMES: frozenset[str] = frozenset({
-    # 路径类
-    "path", "file_path", "filepath", "file", "dir", "directory",
-    "target", "draft", "baseline", "tmp_path", "bak_path", "backup_path",
-    "src", "dst", "source", "destination", "filename", "fname",
-    # 标识类
-    "tx_id", "transaction_id", "event_id", "session_id", "user_id", "task_id",
-    "request_id", "trace_id", "span_id",
-    # 凭据类
-    "password", "passwd", "pwd", "secret", "token", "api_key", "apikey",
-    "private_key", "priv_key", "credential", "credentials", "auth_token",
-    "access_token", "refresh_token",
-    # 连接类
-    "conn_str", "connection_string", "dsn", "url", "host", "port",
-    "endpoint", "server", "database_url", "db_url",
-    # 数据类
-    "sql", "query", "stmt", "statement", "payload", "body", "content",
-})
+_SENSITIVE_NAMES: frozenset[str] = frozenset(
+    {
+        # 路径类
+        "path",
+        "file_path",
+        "filepath",
+        "file",
+        "dir",
+        "directory",
+        "target",
+        "draft",
+        "baseline",
+        "tmp_path",
+        "bak_path",
+        "backup_path",
+        "src",
+        "dst",
+        "source",
+        "destination",
+        "filename",
+        "fname",
+        # 标识类
+        "tx_id",
+        "transaction_id",
+        "event_id",
+        "session_id",
+        "user_id",
+        "task_id",
+        "request_id",
+        "trace_id",
+        "span_id",
+        # 凭据类
+        "password",
+        "passwd",
+        "pwd",
+        "secret",
+        "token",
+        "api_key",
+        "apikey",
+        "private_key",
+        "priv_key",
+        "credential",
+        "credentials",
+        "auth_token",
+        "access_token",
+        "refresh_token",
+        # 连接类
+        "conn_str",
+        "connection_string",
+        "dsn",
+        "url",
+        "host",
+        "port",
+        "endpoint",
+        "server",
+        "database_url",
+        "db_url",
+        # 数据类
+        "sql",
+        "query",
+        "stmt",
+        "statement",
+        "payload",
+        "body",
+        "content",
+    }
+)
 
 # 行级豁免标记（与 PERM-TRIGGER 一致的 noqa 风格）
 _NOQA_MARKER = "noqa: MSG-EXPOSURE"
@@ -235,9 +284,7 @@ def _filter_noqa_violations(
 def _get_staged_py_files(gateway) -> list[str] | None:
     """获取 staged added/modified .py 文件列表（tests/ 豁免）。None=fail-open。"""
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "MSG-EXPOSURE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -248,7 +295,9 @@ def _get_staged_py_files(gateway) -> list[str] | None:
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "MSG-EXPOSURE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
     return [f.replace("\\", "/") for f in staged_files if f.endswith(".py") and not is_test_exempt(f)]
@@ -256,10 +305,7 @@ def _get_staged_py_files(gateway) -> list[str] | None:
 
 def _format_violation_entry(rel_path: str, lineno: int, exc_name: str, hits: list[str], suffix: str = "") -> str:
     """格式化单条违规为消息字符串。"""
-    return (
-        f'{rel_path}:{lineno} raise {exc_name}(f"...{{{hits[0]}}}...") '
-        f"[sensitive: {', '.join(hits)}]{suffix}"
-    )
+    return f'{rel_path}:{lineno} raise {exc_name}(f"...{{{hits[0]}}}...") [sensitive: {", ".join(hits)}]{suffix}'
 
 
 def _scan_new_file(rel_path: str, abs_path: str, content: str) -> list[str]:
@@ -269,14 +315,13 @@ def _scan_new_file(rel_path: str, abs_path: str, content: str) -> list[str]:
     except SyntaxError as e:
         logger.warning(
             "MSG-EXPOSURE gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
-            abs_path, type(e).__name__, e,
+            abs_path,
+            type(e).__name__,
+            e,
         )
         return []
     violations = _filter_noqa_violations(content, _detect_msg_exposure(tree))
-    return [
-        _format_violation_entry(rel_path, lineno, exc_name, hits)
-        for lineno, exc_name, hits in violations
-    ]
+    return [_format_violation_entry(rel_path, lineno, exc_name, hits) for lineno, exc_name, hits in violations]
 
 
 def _parse_diff_added_lines(diff_stdout: str) -> list[tuple[int, str]]:
@@ -304,9 +349,7 @@ def _parse_diff_added_lines(diff_stdout: str) -> list[tuple[int, str]]:
 def _scan_modified_file(gateway, rel_path: str, abs_path: str, content: str) -> list[str]:
     """扫描修改文件（只检测 diff 新增行范围内的违规 + 行级 noqa 豁免）。"""
     try:
-        diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
-        )
+        diff_content = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path])
         if diff_content.returncode != 0:
             return []
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -338,8 +381,7 @@ def _format_msg_exposure_violations(violations: list[str]) -> tuple[bool, str]:
     """格式化 MSG-EXPOSURE 违规为阻断消息。"""
     detail = "; ".join(violations[:5])
     return False, (
-        f"错误消息暴露敏感信息（路径/tx_id/凭据/连接串等应放入 details 字段而非消息文本，"
-        f"5.99.20 治本）: {detail}"
+        f"错误消息暴露敏感信息（路径/tx_id/凭据/连接串等应放入 details 字段而非消息文本，5.99.20 治本）: {detail}"
     )
 
 
@@ -365,17 +407,15 @@ def make_msg_exposure_gate() -> GateSpec:
 
         # added(A) set
         try:
-            added_result = gateway.run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-            )
+            added_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
             added_set = set(added_result.stdout.strip().splitlines()) if added_result.returncode == 0 else set()
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             added_set = set()
 
         violations_all: list[str] = []
         for rel_path in py_files:
-            if "governance/commit_gates/" in rel_path.replace("\\", "/"):
-                continue  # 门禁文件自豁免
+            if "commit_gates/" in rel_path.replace("\\", "/"):
+                continue  # 门禁文件自豁免（2026-08-20 修 governance→gov_enforcement 迁移漂移：原匹配 governance/commit_gates/ 已失配）
             abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
             if not os.path.isfile(abs_path):
                 continue
@@ -385,7 +425,9 @@ def make_msg_exposure_gate() -> GateSpec:
             except OSError as e:
                 logger.warning(
                     "MSG-EXPOSURE gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path, type(e).__name__, e,
+                    abs_path,
+                    type(e).__name__,
+                    e,
                 )
                 continue
             if rel_path in added_set:

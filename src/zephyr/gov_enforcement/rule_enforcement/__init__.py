@@ -57,9 +57,18 @@ from .gate_engine import (
 logger = logging.getLogger(__name__)
 
 _LAZY_IMPORTS: dict[str, dict[str, str]] = {
-    "GateContext": {"module": "zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_context", "attr": "GateContext"},
-    "GatePipeline": {"module": "zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_pipeline", "attr": "GatePipeline"},
-    "GateSimulator": {"module": "zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_simulator", "attr": "GateSimulator"},
+    "GateContext": {
+        "module": "zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_context",
+        "attr": "GateContext",
+    },
+    "GatePipeline": {
+        "module": "zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_pipeline",
+        "attr": "GatePipeline",
+    },
+    "GateSimulator": {
+        "module": "zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_simulator",
+        "attr": "GateSimulator",
+    },
     "GateIntegrityGuard": {
         "module": "zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_integrity_guard",
         "attr": "GateIntegrityGuard",
@@ -73,16 +82,25 @@ _LAZY_IMPORTS: dict[str, dict[str, str]] = {
         "attr": "AuditChainVerifier",
     },
     "GateHealth": {"module": "zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_health", "attr": "GateHealth"},
-    "GateOverride": {"module": "zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_override", "attr": "GateOverride"},
+    "GateOverride": {
+        "module": "zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_override",
+        "attr": "GateOverride",
+    },
     "SysMasterCompliance": {
         "module": "zephyr.shared.contracts.sys_master_compliance",
         "attr": "SysMasterCompliance",
     },
-    "trigger_recovery": {"module": "zephyr.gov_enforcement.rule_enforcement.drift_detector", "attr": "trigger_recovery"},
+    "trigger_recovery": {
+        "module": "zephyr.gov_enforcement.rule_enforcement.drift_detector",
+        "attr": "trigger_recovery",
+    },
     "GateViolation": {"module": "zephyr.gov_enforcement.rule_enforcement.gate_types", "attr": "GateViolation"},
     "GateResult": {"module": "zephyr.gov_enforcement.rule_enforcement.gate_types", "attr": "GateResult"},
     "GateEngineError": {"module": "zephyr.gov_enforcement.rule_enforcement.gate_types", "attr": "GateEngineError"},
-    "GateViolationError": {"module": "zephyr.gov_enforcement.rule_enforcement.gate_types", "attr": "GateViolationError"},
+    "GateViolationError": {
+        "module": "zephyr.gov_enforcement.rule_enforcement.gate_types",
+        "attr": "GateViolationError",
+    },
 }
 
 __all__ = [
@@ -129,7 +147,19 @@ __all__ = [
     "trigger_recovery",
     "triple_alignment",
     "truth_source_validator",
-'approval', 'default_quality_gate', 'dlq_retry_policy', 'output_quality_gate', 'pre_flight_gate', 'quality_gate', 'rule_canary_manager', 'rule_debt_auditor', 'rule_engine', 'rule_shadow_runner', 'rule_watcher', 'slo_contract']
+    "approval",
+    "default_quality_gate",
+    "dlq_retry_policy",
+    "output_quality_gate",
+    "pre_flight_gate",
+    "quality_gate",
+    "rule_canary_manager",
+    "rule_debt_auditor",
+    "rule_engine",
+    "rule_shadow_runner",
+    "rule_watcher",
+    "slo_contract",
+]
 
 _LAZY_IMPORTS["TripleAlignmentResult"] = {
     "module": "zephyr.gov_enforcement.rule_enforcement.triple_alignment",

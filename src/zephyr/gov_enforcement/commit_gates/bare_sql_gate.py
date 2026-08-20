@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py added 行含裸SQL字面量(SELECT/INSERT INTO/UPDATE SET/DELETE FROM)时阻断commit(passed=False); tests/豁免; docstring/注释/import/SQL_*常量定义行豁免（R96 用 ast 精确识别多行常量定义范围，替代旧正则近似只豁免定义行）; git diff不可达fail-open; 检出违规则fail-closed
+# [INVARIANTS] 硬阻断——staged .py added 行含裸SQL字面量(SELECT/INSERT INTO/UPDATE SET/DELETE FROM)时阻断commit(passed=False); tests/豁免; docstring/注释/import/SQL_*常量定义行豁免（R96 用 ast 精确识别多行常量定义范围，替代旧正则近似只豁免定义行）; noqa: bare-sql 行级豁免（存量伪新增/不可机械集中化，标记登记 noqa_exempt_registry.yaml）; git diff不可达fail-open; 检出违规则fail-closed
 # [MODIFY-GUARD] gate_id="NO-BARE-SQL"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -54,10 +54,12 @@ import re
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _extract_docstring_lines,
+    _extract_noqa_lines,
     _extract_sql_constant_lines,
     _get_added_lines,
     _get_staged_py_files,
     _is_exempt_line,
+    _make_noqa_pattern,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
@@ -82,6 +84,12 @@ __all__ = ["make_bare_sql_gate"]
 _SQL_PATTERN = re.compile(r"""['"`].*?(?:SELECT\b.*?\bFROM\b|INSERT(?:\s+OR\s+\w+)?\s+INTO\b|UPDATE\b.*?\bSET\b|DELETE\s+FROM\b)""", re.IGNORECASE | re.DOTALL)
 # fmt: on
 
+# noqa 行级逃生：对标 bare-subprocess / import-integrity / long-param-list 同族通道
+# （2026-08-20 波3 补齐，标记已登记 noqa_exempt_registry.yaml）——存量 SQL 行被
+# format 重排伪"新增"（gate 只检 added 行）、且 f-string 插值使 SQL_* 常量集中化
+# 不可机械施行的场景；集中化专项治理路径不变（§5.160.2 另列）。
+_NOQA_PATTERN = _make_noqa_pattern("bare-sql")
+
 
 def make_bare_sql_gate() -> GateSpec:
     """构造裸SQL字面量阻断 GateSpec（硬阻断型）。
@@ -94,14 +102,28 @@ def make_bare_sql_gate() -> GateSpec:
         py_files = [f for f in _get_staged_py_files(gateway, "NO-BARE-SQL") if not is_test_exempt(f)]
         violations: list[str] = []
         for py_file in py_files:
+            # 排除 _archive 目录（归档一次性代码不参与扫描——同族先例：undefined_name_gate 裁定#E /
+            # consumers_accuracy_gate / translation_coverage_gate / doc_ref_broken_gate 同口径；
+            # 2026-08-20 波3 实证：format 重排归档脚本存量裸 SQL 行伪"新增"致误阻断）
+            normalized = py_file.replace("\\", "/")
+            if "_archive" in normalized:
+                continue
+            # 排除 scripts/ch/（CH 运维脚本域：SQL 即业务语言——system.* 元数据查询/DDL 操作为本职；
+            # §5.160.2 病根=应用代码 SQL 散落（apply_depgraph 174 处），域外误扩且 f-string 插值
+            # 使 SQL_* 常量集中化不可机械施行；2026-08-20 波3 实证 14 处 5 脚本同族浮出）
+            if normalized.startswith("scripts/ch/"):
+                continue
             file_content = _read_staged_file(gateway, py_file)
             docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
             sql_const_lines = _extract_sql_constant_lines(file_content) if file_content else set()
+            noqa_lines = _extract_noqa_lines(file_content, _NOQA_PATTERN) if file_content else set()
             for line_no, content in _get_added_lines(gateway, py_file, "NO-BARE-SQL"):
                 if line_no in docstring_lines or _is_exempt_line(content):
                     continue
                 if line_no in sql_const_lines:
                     continue
+                if line_no in noqa_lines:
+                    continue  # 行级豁免（存量 format 伪新增/不可机械集中化，标记+理由已登记校验）
                 if _SQL_PATTERN.search(content):
                     violations.append(f"  {py_file}:{line_no}: {content.strip()}")
         if violations:
@@ -110,6 +132,7 @@ def make_bare_sql_gate() -> GateSpec:
                 "  违反 §5.160.2 SQL 集中化原则。\n"
                 + "\n".join(violations)
                 + "\n-> 将 SQL 提取到模块级常量或专用的 SQL 集中化文件"
+                + "\n-> 逃生通道：行尾加 `# noqa: bare-sql  <reason>` 注释（reason >= 10 字符，存量伪新增/不可机械集中化场景）"
             )
             logger.error("NO-BARE-SQL gate block:\n%s", detail)
             return False, detail

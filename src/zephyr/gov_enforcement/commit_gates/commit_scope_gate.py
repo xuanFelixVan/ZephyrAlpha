@@ -71,10 +71,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_commit_scope_gate"]
 
 # 域注册表真源（SSoT TRAE-062：与 domain_fk_gate 同源，规则数据真源=YAML）
-_DOMAIN_REGISTRY_REL = (
-    "docs/01_policies_and_standards/_registry/catalogs/"
-    "functional_domain_registry.yaml"
-)
+_DOMAIN_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml"
 
 # 匹配 [DOMAIN] D_XXX 头部（与 domain_fk_gate._DOMAIN_HEADER_RE 同模式，列 0 起始）
 _DOMAIN_HEADER_RE = re.compile(r"^#\s*\[DOMAIN\]\s*(\S+)")
@@ -112,9 +109,7 @@ def _load_path_domain_map(gateway) -> dict[str, str] | None:
         except Exception:  # noqa: BLE001 — fail-open
             content = None
     if content is None:
-        logger.warning(
-            "COMMIT-SCOPE fail-open: 无法读取 functional_domain_registry.yaml"
-        )
+        logger.warning("COMMIT-SCOPE fail-open: 无法读取 functional_domain_registry.yaml")
         return None
 
     path_map: dict[str, str] = {}
@@ -128,10 +123,7 @@ def _load_path_domain_map(gateway) -> dict[str, str] | None:
         if m_path and current_domain:
             path_map[m_path.group(1)] = current_domain
     if not path_map:
-        logger.warning(
-            "COMMIT-SCOPE fail-open: functional_domain_registry.yaml"
-            " 未解析出 ssot_path 条目（格式异常？）"
-        )
+        logger.warning("COMMIT-SCOPE fail-open: functional_domain_registry.yaml 未解析出 ssot_path 条目（格式异常？）")
         return None
     return path_map
 
@@ -238,9 +230,7 @@ def make_commit_scope_gate() -> GateSpec:
         for f, d in file_domains.items():
             domain_files.setdefault(d, []).append(f)
 
-        detail_lines = [
-            f"  {d}: {sorted(fs)}" for d, fs in sorted(domain_files.items())
-        ]
+        detail_lines = [f"  {d}: {sorted(fs)}" for d, fs in sorted(domain_files.items())]
         return False, (
             f"commit 跨越多个功能域（COMMIT_SCOPE_VIOLATION）: "
             f"检测到 {len(domains)} 个域。"

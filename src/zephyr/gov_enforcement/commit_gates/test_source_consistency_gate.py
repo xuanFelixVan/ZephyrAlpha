@@ -194,10 +194,7 @@ def _extract_source_symbols(file_path: Path) -> set[str] | None:
     # 避免把惰性导出符号误报为"符号不存在"而硬阻断 commit。
     # 符号漂移由测试实际运行（import 失败）兜底，符合本 gate 既有 fail-open 哲学。
     for node in tree.body:
-        if (
-            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-            and node.name == "__getattr__"
-        ):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "__getattr__":
             return None
 
     symbols: set[str] = set()
@@ -253,9 +250,7 @@ def _check_import_node(node: ast.ImportFrom, test_file: str) -> list[str]:
             if alias.name == "*":
                 continue
             violations.append(
-                f"  {test_file}:{node.lineno}: "
-                f"from {module_path} import {alias.name} "
-                f"-> 模块不存在（已删除/迁移？）"
+                f"  {test_file}:{node.lineno}: from {module_path} import {alias.name} -> 模块不存在（已删除/迁移？）"
             )
         return violations
 
@@ -278,9 +273,7 @@ def _check_import_node(node: ast.ImportFrom, test_file: str) -> list[str]:
     return violations
 
 
-def _check_test_file(
-    content: str, test_file: str, added_lines: set[int] | None = None
-) -> list[str]:
+def _check_test_file(content: str, test_file: str, added_lines: set[int] | None = None) -> list[str]:
     """检查单个测试文件的 import 符号一致性，返回违规列表。
 
     Args:

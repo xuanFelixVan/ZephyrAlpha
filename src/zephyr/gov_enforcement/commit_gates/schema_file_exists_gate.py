@@ -113,9 +113,7 @@ def _check_schema_files_exist(
         full_path = os.path.join(project_root, sf)
         if not os.path.exists(full_path):
             cid = cat.get("category_id", "?")
-            violations.append(
-                f"  {cid}: schema_file='{sf}' 文件不存在（声明层→存在层断裂）"
-            )
+            violations.append(f"  {cid}: schema_file='{sf}' 文件不存在（声明层→存在层断裂）")
 
     return violations
 
@@ -149,11 +147,7 @@ def make_schema_file_exists_gate() -> GateSpec:
                 "（#ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase 1）\n"
                 "  修复：创建缺失的 schema 文件或修正 schema_file 路径。\n"
                 + "\n".join(violations[:30])
-                + (
-                    f"\n  ...(+{len(violations) - 30} more)"
-                    if len(violations) > 30
-                    else ""
-                )
+                + (f"\n  ...(+{len(violations) - 30} more)" if len(violations) > 30 else "")
             )
             logger.error("SCHEMA-FILE-EXISTS gate block:\n%s", detail)
             return False, detail

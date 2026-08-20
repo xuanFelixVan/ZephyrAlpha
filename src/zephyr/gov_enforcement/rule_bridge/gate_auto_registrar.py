@@ -137,7 +137,12 @@ def auto_register_gates(
             continue
 
         if not gate_id or not module_path or not factory_function:
-            failures.append((gate_id or "?", f"missing required field (gate_id={gate_id!r}, module_path={module_path!r}, factory_function={factory_function!r})"))
+            failures.append(
+                (
+                    gate_id or "?",
+                    f"missing required field (gate_id={gate_id!r}, module_path={module_path!r}, factory_function={factory_function!r})",
+                )
+            )
             continue
 
         # 动态 import

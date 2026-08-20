@@ -106,9 +106,7 @@ def _load_dir_prefixes() -> frozenset[str] | None:
         return None
     cfg = _load_test_residue_config()
     if cfg is None:
-        logger.warning(
-            "TEST-RESIDUE-SSOT gate fail-open: trae_071 test_residue_reclaim config 不可达，检测器失效。"
-        )
+        logger.warning("TEST-RESIDUE-SSOT gate fail-open: trae_071 test_residue_reclaim config 不可达，检测器失效。")
         return None
     return frozenset(cfg.get("dir_prefixes") or ())
 
@@ -123,9 +121,7 @@ def _get_staged_py_files(gateway) -> list[str] | None:
         .py 相对路径列表（正斜杠归一化）；git diff 失败/异常时返回 None。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "TEST-RESIDUE-SSOT gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -136,7 +132,9 @@ def _get_staged_py_files(gateway) -> list[str] | None:
     except Exception as e:  # noqa: BLE001 — fail-open: broad exception catch
         logger.warning(
             "TEST-RESIDUE-SSOT gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
     return [f.replace("\\", "/") for f in staged if f.endswith(".py")]
@@ -177,9 +175,7 @@ def _target_name(target) -> str:
     return "<expr>"
 
 
-def _find_hardcoded_prefix_collections(
-    tree: ast.AST, dir_prefixes: frozenset[str]
-) -> list[tuple[int, str, list[str]]]:
+def _find_hardcoded_prefix_collections(tree: ast.AST, dir_prefixes: frozenset[str]) -> list[tuple[int, str, list[str]]]:
     """遍历 AST，找硬编码 dir_prefix 集合的赋值节点。
 
     Args:
@@ -238,9 +234,7 @@ def make_test_residue_ssot_gate() -> GateSpec:
         # 4. 逐文件 AST 检测
         all_violations: list[str] = []
         for rel in staged_py:
-            abs_path = rel if os.path.isabs(rel) else os.path.join(
-                wt_root, rel.replace("/", os.sep)
-            )
+            abs_path = rel if os.path.isabs(rel) else os.path.join(wt_root, rel.replace("/", os.sep))
             if not os.path.isfile(abs_path):
                 continue
             try:
@@ -251,13 +245,13 @@ def make_test_residue_ssot_gate() -> GateSpec:
                 # 单文件读/语法错误 fail-open（不阻断 commit，语法错误由其他 gate/lint 管）
                 logger.warning(
                     "TEST-RESIDUE-SSOT gate fail-open: %s 解析失败(%s: %s)，跳过该文件。",
-                    rel, type(exc).__name__, exc,
+                    rel,
+                    type(exc).__name__,
+                    exc,
                 )
                 continue
             for lineno, name, matched in _find_hardcoded_prefix_collections(tree, dir_prefixes):
-                all_violations.append(
-                    f"  {rel}:{lineno} ({name}) 硬编码前缀 {sorted(set(matched))}"
-                )
+                all_violations.append(f"  {rel}:{lineno} ({name}) 硬编码前缀 {sorted(set(matched))}")
 
         if not all_violations:
             return True, ""
@@ -267,8 +261,7 @@ def make_test_residue_ssot_gate() -> GateSpec:
             "TEST_RESIDUE_SSOT_VIOLATION——检出硬编码测试残留目录前缀集合（重复造轮子风险）。\n"
             "前缀真源 = trae_071 §test_residue_reclaim.covered_patterns.dir_prefixes（YAML），\n"
             "MUST 通过 reconciliation_registry._load_test_residue_config() 动态加载，禁止硬编码\n"
-            "（trae_062 SSoT：规则数据真源是 YAML 文件）。\n"
-            + detail
+            "（trae_062 SSoT：规则数据真源是 YAML 文件）。\n" + detail
         )
 
     return GateSpec(gate_id="TEST-RESIDUE-SSOT", check=_check, priority=56)

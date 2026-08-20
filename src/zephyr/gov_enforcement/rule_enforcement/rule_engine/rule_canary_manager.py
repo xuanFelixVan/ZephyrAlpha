@@ -60,7 +60,6 @@ class RuleCanaryManager:
         """写入：canary_weight（Stage 4 公共化）。"""
         self._canary_weight = value
 
-
     def set_baseline(self, metrics: dict):
         self._baseline_metrics = metrics
 

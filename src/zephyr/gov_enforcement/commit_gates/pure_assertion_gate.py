@@ -40,14 +40,10 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["make_pure_assertion_gate"]
 
-_PROJECT_ROOT = (
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))
-    ))))
+_PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 )
-_CHECKER_SCRIPT = os.path.join(
-    _PROJECT_ROOT, "scripts", "governance", "d3_metadata", "check_pure_assertion.py"
-)
+_CHECKER_SCRIPT = os.path.join(_PROJECT_ROOT, "scripts", "governance", "d3_metadata", "check_pure_assertion.py")
 
 
 def _get_staged_md_files(gateway) -> list[str]:
@@ -57,10 +53,7 @@ def _get_staged_md_files(gateway) -> list[str]:
         if r.returncode != 0:
             logger.warning("PURE-ASSERTION fail-open: git diff 失败(rc=%d)。", r.returncode)
             return []
-        return [
-            f.replace("\\", "/") for f in r.stdout.strip().splitlines()
-            if f.endswith(".md")
-        ]
+        return [f.replace("\\", "/") for f in r.stdout.strip().splitlines() if f.endswith(".md")]
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("PURE-ASSERTION fail-open: git diff 异常(%s: %s)。", type(e).__name__, e)
         return []
@@ -96,8 +89,12 @@ def _run_assertion_checker(abs_files: list[str], wt_root: str) -> subprocess.Com
     try:
         return run_subprocess_hidden(
             [sys.executable, _CHECKER_SCRIPT, "--ci"] + abs_files,
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            cwd=wt_root, timeout=60,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=wt_root,
+            timeout=60,
         )
     except subprocess.TimeoutExpired:
         logger.warning("PURE-ASSERTION fail-open: checker 超时(60s)。")
@@ -119,8 +116,7 @@ def _parse_assertion_result(result: subprocess.CompletedProcess) -> tuple[bool, 
     return False, (
         "PURE_ASSERTION_VIOLATION——检出纯陈述原则违规（GOV-DOC-016）。\n"
         "正文只应承载当前真实值，历史差异是 git log 的职责。\n"
-        "修复：删除过渡文本（'已废止''之前是X现在改为Y'等），直接写当前值。\n"
-        + detail
+        "修复：删除过渡文本（'已废止''之前是X现在改为Y'等），直接写当前值。\n" + detail
     )
 
 

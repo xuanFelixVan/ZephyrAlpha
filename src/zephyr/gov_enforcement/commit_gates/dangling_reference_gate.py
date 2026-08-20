@@ -125,10 +125,13 @@ def _load_valid_sections(project_root: Path) -> tuple[set[str] | None, tuple[boo
     agents_md = project_root / "AGENTS.md"
     # fail-closed：AGENTS.md 不存在是环境异常，必须阻断
     if not agents_md.is_file():
-        return None, (False, (
-            "AGENTS.md not found at project root (DANGLING-REFERENCE fail-closed)——"
-            "无法提取有效章节号，禁止放行以防门禁静默失效。"
-        ))
+        return None, (
+            False,
+            (
+                "AGENTS.md not found at project root (DANGLING-REFERENCE fail-closed)——"
+                "无法提取有效章节号，禁止放行以防门禁静默失效。"
+            ),
+        )
     # 提取有效章节号（工作区版本 = commit 后的新真源）
     try:
         agents_content = agents_md.read_text(encoding="utf-8", errors="replace")
@@ -137,10 +140,10 @@ def _load_valid_sections(project_root: Path) -> tuple[set[str] | None, tuple[boo
     valid_sections = _extract_valid_sections(agents_content)
     if not valid_sections:
         # AGENTS.md 存在但无任何章节号——可能是文件损坏，fail-closed
-        return None, (False, (
-            "AGENTS.md 无任何有效章节号（DANGLING-REFERENCE fail-closed）——"
-            "文件可能损坏，请检查 AGENTS.md 章节结构。"
-        ))
+        return None, (
+            False,
+            ("AGENTS.md 无任何有效章节号（DANGLING-REFERENCE fail-closed）——文件可能损坏，请检查 AGENTS.md 章节结构。"),
+        )
     return valid_sections, None
 
 

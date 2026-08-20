@@ -98,9 +98,9 @@ def make_worktree_required_gate() -> GateSpec:
         # WORKTREE_VIOLATION，--allow-non-worktree 逃生通道被常态化（审计噪音 + 治理稀释）。
         try:
             other_active = [
-                s for s in gateway.registry.list_active()
-                if s.session_id != session_id
-                and not s.session_id.startswith("worker-")
+                s
+                for s in gateway.registry.list_active()
+                if s.session_id != session_id and not s.session_id.startswith("worker-")
             ]
         except Exception:  # noqa: BLE001 — list_active 异常 -> 安全降级放行
             other_active = []

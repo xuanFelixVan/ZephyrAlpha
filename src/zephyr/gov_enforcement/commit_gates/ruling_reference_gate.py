@@ -138,26 +138,40 @@ def _load_registered_nums(project_root) -> tuple[bool, str, set[str]]:
         (ok, detail, nums)：ok=False 时 detail 含失败原因（fail-closed）。
     """
     from pathlib import Path
+
     registry_yaml = Path(project_root) / _REGISTRY_REL
     # fail-closed：registry 不存在是环境异常，必须阻断
     # _MANUAL_STAGE=True 时降级为 WARNING（放行）——阶段2 hard block 已启用，此分支不再触发（裁定#20-G）
     if not registry_yaml.is_file():
         if _MANUAL_STAGE:
-            return True, (
-                f"⚠️ RULING-REFERENCE manual stage：ruling_registry.yaml 未找到，"
-                f"本会话不阻断（阶段1 建立基线，阶段2 已切 False）。路径：{registry_yaml}"
-            ), set()
-        return False, (
-            f"ruling_registry.yaml not found (RULING-REFERENCE fail-closed)——"
-            f"无法提取已登记编号，禁止放行以防门禁静默失效。"
-            f"路径：{registry_yaml}"
-        ), set()
+            return (
+                True,
+                (
+                    f"⚠️ RULING-REFERENCE manual stage：ruling_registry.yaml 未找到，"
+                    f"本会话不阻断（阶段1 建立基线，阶段2 已切 False）。路径：{registry_yaml}"
+                ),
+                set(),
+            )
+        return (
+            False,
+            (
+                f"ruling_registry.yaml not found (RULING-REFERENCE fail-closed)——"
+                f"无法提取已登记编号，禁止放行以防门禁静默失效。"
+                f"路径：{registry_yaml}"
+            ),
+            set(),
+        )
     try:
         import yaml
+
         registry_data = yaml.safe_load(registry_yaml.read_text(encoding="utf-8"))
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         if _MANUAL_STAGE:
-            return True, f"⚠️ RULING-REFERENCE manual stage：registry 解析失败 {type(e).__name__}: {e}，本会话不阻断。", set()
+            return (
+                True,
+                f"⚠️ RULING-REFERENCE manual stage：registry 解析失败 {type(e).__name__}: {e}，本会话不阻断。",
+                set(),
+            )
         return False, f"registry 解析失败 (fail-closed): {type(e).__name__}: {e}", set()
     if not isinstance(registry_data, dict):
         if _MANUAL_STAGE:
@@ -167,10 +181,14 @@ def _load_registered_nums(project_root) -> tuple[bool, str, set[str]]:
     if not registered_nums:
         if _MANUAL_STAGE:
             return True, "⚠️ RULING-REFERENCE manual stage：registry 无任何已登记裁定编号，本会话不阻断。", set()
-        return False, (
-            "registry 无任何已登记裁定编号（RULING-REFERENCE fail-closed）——"
-            "文件可能损坏或 rulings 为空，请检查 ruling_registry.yaml。"
-        ), set()
+        return (
+            False,
+            (
+                "registry 无任何已登记裁定编号（RULING-REFERENCE fail-closed）——"
+                "文件可能损坏或 rulings 为空，请检查 ruling_registry.yaml。"
+            ),
+            set(),
+        )
     return True, "", registered_nums
 
 
@@ -241,6 +259,7 @@ def make_ruling_reference_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         from pathlib import Path
+
         project_root = Path(gateway.project_root)
 
         ok, detail, registered_nums = _load_registered_nums(project_root)
@@ -250,9 +269,7 @@ def make_ruling_reference_gate() -> GateSpec:
         if not registered_nums and _MANUAL_STAGE:
             return True, detail
 
-        violations, error = scan_file_violations(
-            project_root, files, registered_nums, _extract_refs
-        )
+        violations, error = scan_file_violations(project_root, files, registered_nums, _extract_refs)
         if error is not None:
             if _MANUAL_STAGE:
                 return True, f"⚠️ RULING-REFERENCE manual stage：扫描异常 {error}，本会话不阻断。"
@@ -265,18 +282,13 @@ def make_ruling_reference_gate() -> GateSpec:
             return False, violation_detail
 
         # L2: 同提交原子性检查
-        head_nums = load_head_registered_nums(
-            project_root, _REGISTRY_REL, _extract_registered_nums
-        )
+        head_nums = load_head_registered_nums(project_root, _REGISTRY_REL, _extract_registered_nums)
         if head_nums is not None:
-            new_refs_by_file = collect_new_refs_by_file(
-                project_root, files, head_nums, _REGISTRY_REL, _extract_refs
-            )
+            new_refs_by_file = collect_new_refs_by_file(project_root, files, head_nums, _REGISTRY_REL, _extract_refs)
             if new_refs_by_file:
                 registry_rel = _REGISTRY_REL.replace("\\", "/")
                 registry_in_commit = any(
-                    os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel
-                    for f in files
+                    os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel for f in files
                 )
                 atomicity_violations = check_atomicity(new_refs_by_file, registry_in_commit)
                 if atomicity_violations:

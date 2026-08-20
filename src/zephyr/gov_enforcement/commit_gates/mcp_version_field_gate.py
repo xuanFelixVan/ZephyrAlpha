@@ -73,24 +73,20 @@ def _get_staged_files(gateway) -> list[str] | None:
     失败返回 None（fail-open）。
     """
     try:
-        result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if result.returncode != 0:
             logger.warning(
                 "MCP-VERSION-FIELD gate fail-open: git diff 失败(rc=%d)，检测器失效。",
                 result.returncode,
             )
             return None
-        return [
-            f.replace("\\", "/")
-            for f in result.stdout.strip().splitlines()
-            if f
-        ]
+        return [f.replace("\\", "/") for f in result.stdout.strip().splitlines() if f]
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "MCP-VERSION-FIELD gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -121,18 +117,18 @@ def _scan_file_for_violation(gateway, mcp_file: str) -> str | None:
     except (json.JSONDecodeError, ValueError) as e:
         # JSON 语法错误由其他 gate 管完整性，本 gate 只管 version 字段存在性
         logger.warning(
-            "MCP-VERSION-FIELD gate: json.loads 失败 file=%s（%s），"
-            "fail-open 跳过（JSON 完整性由其他 gate 管理）。",
-            mcp_file, type(e).__name__,
+            "MCP-VERSION-FIELD gate: json.loads 失败 file=%s（%s），fail-open 跳过（JSON 完整性由其他 gate 管理）。",
+            mcp_file,
+            type(e).__name__,
         )
         return None
 
     # data 必须是 dict（mcp.json 顶层是对象）
     if not isinstance(data, dict):
         logger.warning(
-            "MCP-VERSION-FIELD gate: mcp.json 顶层非 object file=%s（type=%s），"
-            "fail-open 跳过。",
-            mcp_file, type(data).__name__,
+            "MCP-VERSION-FIELD gate: mcp.json 顶层非 object file=%s（type=%s），fail-open 跳过。",
+            mcp_file,
+            type(data).__name__,
         )
         return None
 
@@ -140,7 +136,7 @@ def _scan_file_for_violation(gateway, mcp_file: str) -> str | None:
     if "version" not in data:
         return (
             f"  {mcp_file}: 缺顶层 version 字段（5.35 API 版本管理防复发）"
-            f"\n     应补: 在 mcp.json 顶层加 \"version\": \"<语义版本号>\""
+            f'\n     应补: 在 mcp.json 顶层加 "version": "<语义版本号>"'
         )
     return None
 
@@ -148,9 +144,9 @@ def _scan_file_for_violation(gateway, mcp_file: str) -> str | None:
 def _format_violation_detail(violations: list[str]) -> str:
     return (
         "MCP-VERSION-FIELD：检测到 mcp.json 缺顶层 version 字段（5.35 API 版本管理防复发），\n"
-        "  所有 staged mcp.json 文件 MUST 含顶层 \"version\" 字段。\n"
+        '  所有 staged mcp.json 文件 MUST 含顶层 "version" 字段。\n'
         + "\n".join(violations)
-        + "\n-> 在 mcp.json 顶层加 \"version\": \"<语义版本号>\"（如 \"1.0.0\"）。"
+        + '\n-> 在 mcp.json 顶层加 "version": "<语义版本号>"（如 "1.0.0"）。'
     )
 
 

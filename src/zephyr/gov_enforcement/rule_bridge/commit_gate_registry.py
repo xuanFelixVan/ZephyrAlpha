@@ -93,6 +93,7 @@ def _audit_allow_overlap_usage(gateway: object, files: list[str], kwargs: dict) 
     except Exception:  # noqa: BLE001 — 审计写入失败不阻断 commit
         logger.debug("allow_overlap usage audit write failed (non-blocking)", exc_info=True)
 
+
 __all__ = [
     "GateResult",
     "GateSpec",
@@ -279,7 +280,6 @@ class CommitGateRegistry:
         """写入：specs（Stage 4 公共化）。"""
         self._specs = value
 
-
     def register(self, spec: GateSpec) -> None:
         """注册门禁（幂等，同 gate_id 覆盖；同 priority 不同 gate_id 阻断）。
 
@@ -324,26 +324,26 @@ class CommitGateRegistry:
         results: list[GateResult] = []
         for spec in sorted(self._specs.values(), key=lambda s: s.priority):
             if spec.gate_id in skip_gates:
-                results.append(GateResult(
-                    gate_id=spec.gate_id, passed=True,
-                    detail="skipped: worktree 物理隔离（无检测对象）",
-                ))
+                results.append(
+                    GateResult(
+                        gate_id=spec.gate_id,
+                        passed=True,
+                        detail="skipped: worktree 物理隔离（无检测对象）",
+                    )
+                )
                 continue
             try:
                 passed, detail = spec.check(gateway, files, **kwargs)
-                results.append(GateResult(
-                    gate_id=spec.gate_id, passed=passed, detail=detail
-                ))
+                results.append(GateResult(gate_id=spec.gate_id, passed=passed, detail=detail))
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning(
-                    "CommitGateRegistry: gate %s 异常降级为 fail-closed: %s",
-                    spec.gate_id, e, exc_info=True
+                logger.warning("CommitGateRegistry: gate %s 异常降级为 fail-closed: %s", spec.gate_id, e, exc_info=True)
+                results.append(
+                    GateResult(
+                        gate_id=spec.gate_id,
+                        passed=False,
+                        detail=f"gate 异常（fail-closed）: {e}",
+                    )
                 )
-                results.append(GateResult(
-                    gate_id=spec.gate_id,
-                    passed=False,
-                    detail=f"gate 异常（fail-closed）: {e}",
-                ))
         return results
 
     def get(self, gate_id: str) -> GateSpec | None:

@@ -92,6 +92,9 @@ _EXEMPT_FILES: frozenset[str] = frozenset(
         "scripts/governance/d6_security/detect_secrets.py",
         "src/zephyr/gov_enforcement/commit_gates/secret_hardcode_gate.py",
         "src/zephyr/shared/security/secrets.py",  # 密钥读取模块（含 KEY 常量引用，非硬编码值）
+        # create_guard.py 的指引模板含 creation_token 格式示例字面量（token: "auto-xxx" 占位符非真实密钥），
+        # 与 capability_canonical_file_registry.yaml 豁免同族（2026-08-20 波3 实证补齐）
+        "src/zephyr/gov_enforcement/commit_gates/create_guard.py",
         # creation_tokens 注册表——token 字段是创建意图标记（auto-xxx），非密钥
         # CREATE-GUARD 门禁要求新 .py 文件在此登记 token，与 NO-SECRET-HARDCODE 形成冲突
         "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml",
@@ -139,9 +142,7 @@ def _collect_staged_files(gateway):
         非空列表=待检相对路径（正斜杠）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "NO-SECRET-HARDCODE gate fail-open: git diff 失败(rc=%d)。",
@@ -152,7 +153,9 @@ def _collect_staged_files(gateway):
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "NO-SECRET-HARDCODE gate fail-open: git diff 异常(%s: %s)。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -185,9 +188,7 @@ def _scan_file_violations(gateway, rel_file: str) -> list[str]:
 
     # 解析 diff，获取 added 行及行号
     try:
-        file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_file]
-        )
+        file_diff = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_file])
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("NO-SECRET-HARDCODE gate: git diff 失败 file=%s, %s", rel_file, e)
         return []
@@ -206,9 +207,7 @@ def _scan_file_violations(gateway, rel_file: str) -> list[str]:
         for compiled_re, label, severity in _SECRET_PATTERNS_DEEP:
             m = compiled_re.search(content)
             if m:
-                violations.append(
-                    f"  {rel_file}:{line_no} [{severity}] {label}: {m.group(0)[:80]}"
-                )
+                violations.append(f"  {rel_file}:{line_no} [{severity}] {label}: {m.group(0)[:80]}")
                 break  # 同一行只报一个模式，避免噪音
     return violations
 

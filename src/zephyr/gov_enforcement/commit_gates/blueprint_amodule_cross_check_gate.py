@@ -122,9 +122,7 @@ def _extract_headers(content: str) -> tuple[str | None, str | None]:
     return blueprint_id, amodule_id
 
 
-def _check_cross_consistency(
-    gateway, py_files: list[str]
-) -> list[str]:
+def _check_cross_consistency(gateway, py_files: list[str]) -> list[str]:
     """校验 staged .py 文件的 [BLUEPRINT] vs [A_module] module_id 一致性。
 
     diff-based 检测：只检查有 added 行的文件。对每个待检文件读取完整内容，
@@ -150,11 +148,13 @@ def _check_cross_consistency(
         # 检查 [BLUEPRINT] 或 [A_module] 行是否在 added 行中
         # （只有头部被改动时才触发检测，避免对未改动文件误报）
         bp_in_added = any(
-            _RE_BLUEPRINT_HEADER.search(content) for _, content in added_lines
+            _RE_BLUEPRINT_HEADER.search(content)
+            for _, content in added_lines
             if _line_no_not_in_docstring(_, docstring_lines)
         )
         am_in_added = any(
-            _RE_AMODULE_HEADER.search(content) for _, content in added_lines
+            _RE_AMODULE_HEADER.search(content)
+            for _, content in added_lines
             if _line_no_not_in_docstring(_, docstring_lines)
         )
         if not (bp_in_added or am_in_added):
@@ -208,10 +208,7 @@ def make_blueprint_amodule_cross_check_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        py_files = [
-            f for f in _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CROSS-CHECK")
-            if not is_test_exempt(f)
-        ]
+        py_files = [f for f in _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CROSS-CHECK") if not is_test_exempt(f)]
         if not py_files:
             return True, ""
 

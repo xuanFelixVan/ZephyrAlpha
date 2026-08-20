@@ -33,6 +33,7 @@ post-commit 补强：make_undefined_name_baseline_reconciler（reconciliation_re
 GATE-UNDEFINED-NAME-BASELINE, priority=211）全仓 baseline 扫描，覆盖 gate
 上线前存量债务与 --no-verify 绕过盲区。
 """
+
 from __future__ import annotations
 
 import ast
@@ -62,10 +63,24 @@ _SCAN_PREFIXES: tuple[str, ...] = ("scripts/governance/", "src/")
 _IMPLICIT_NAMES: frozenset[str] = frozenset(
     set(dir(builtins))
     | {
-        "__name__", "__file__", "__doc__", "__all__", "__package__",
-        "__path__", "__spec__", "__loader__", "__cached__", "__builtins__",
-        "__annotations__", "__qualname__", "__module__", "__dict__",
-        "__class__", "__slots__", "__version__", "__manifest__",
+        "__name__",
+        "__file__",
+        "__doc__",
+        "__all__",
+        "__package__",
+        "__path__",
+        "__spec__",
+        "__loader__",
+        "__cached__",
+        "__builtins__",
+        "__annotations__",
+        "__qualname__",
+        "__module__",
+        "__dict__",
+        "__class__",
+        "__slots__",
+        "__version__",
+        "__manifest__",
     }
 )
 
@@ -122,9 +137,7 @@ def _collect_module_name_sets(body: list) -> dict[str, set[str]]:
         ):
             continue
         name_sets[target.id] = {
-            elt.value
-            for elt in stmt.value.elts
-            if isinstance(elt, ast.Constant) and isinstance(elt.value, str)
+            elt.value for elt in stmt.value.elts if isinstance(elt, ast.Constant) and isinstance(elt.value, str)
         }
     return name_sets
 
@@ -140,11 +153,7 @@ def _extract_getattr_lazy_names(stmt: ast.AST, name_sets: dict[str, set[str]]) -
         if not (isinstance(node.left, ast.Name) and node.left.id == param):
             continue
         for op, comparator in zip(node.ops, node.comparators):
-            if (
-                isinstance(op, ast.Eq)
-                and isinstance(comparator, ast.Constant)
-                and isinstance(comparator.value, str)
-            ):
+            if isinstance(op, ast.Eq) and isinstance(comparator, ast.Constant) and isinstance(comparator.value, str):
                 lazy.add(comparator.value)
             elif isinstance(op, ast.In) and isinstance(comparator, ast.Name):
                 lazy.update(name_sets.get(comparator.id, set()))
@@ -243,18 +252,12 @@ def scan_content_for_undefined_names(py_file: str, content: str) -> list[str]:
         return []  # 跳过：wildcard 导入集无法静态推断
 
     defined = _collect_defined_names(tree)
-    used = {
-        node.id
-        for node in ast.walk(tree)
-        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
-    }
+    used = {node.id for node in ast.walk(tree) if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)}
     missing = used - imported - defined - _IMPLICIT_NAMES
     violations: list[str] = []
     for sym in sorted(missing):
         line_no = _find_first_use_line(tree, sym)
-        violations.append(
-            f"  {py_file}:{line_no}: undefined name '{sym}' (not imported, not defined locally)"
-        )
+        violations.append(f"  {py_file}:{line_no}: undefined name '{sym}' (not imported, not defined locally)")
     return violations
 
 
@@ -316,6 +319,11 @@ def make_undefined_name_gate() -> GateSpec:
         violations: list[str] = []
         for py_file in staged:
             if not py_file.startswith(_SCAN_PREFIXES):
+                continue
+            # 裁定#E（2026-07-19）同口径补齐：staged 路径与 scan_all_for_undefined_names
+            # 一致排除 _archive（归档一次性死代码不参与 F821 扫描；2026-08-20 波3 实证
+            # format 重排归档脚本存量符号伪"新增"致误阻断 migrate_clean_build_status.py）
+            if "_archive" in py_file:
                 continue
             content = _read_staged_file(gateway, py_file)
             if content is None:

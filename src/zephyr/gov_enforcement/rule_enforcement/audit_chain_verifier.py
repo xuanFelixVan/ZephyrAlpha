@@ -105,7 +105,6 @@ class AuditChainVerifier:
         """写入：core_writer（Stage 4 公共化）。"""
         self._core_writer = value
 
-
     @property
     def last_hash(self):
         """只读：last_hash（Stage 4 公共化）。"""
@@ -115,7 +114,6 @@ class AuditChainVerifier:
     def last_hash(self, value):
         """写入：last_hash（Stage 4 公共化）。"""
         self._last_hash = value
-
 
     @property
     def chain(self) -> list[AuditEntry]:
@@ -127,12 +125,10 @@ class AuditChainVerifier:
         """写入：chain（Stage 4 公共化）。"""
         self._chain = value
 
-
     @staticmethod
     def compute_hash(payload: dict) -> str:
         payload_str = dumps(payload, sort_keys=True)
         return hashlib.sha256(payload_str.encode()).hexdigest()
-
 
     def _load_persisted_chain(self) -> None:
         """从 gate_chain.jsonl 恢复链与尾哈希（5.37.8：重启后链连续，可跨进程校验）。"""
@@ -295,14 +291,16 @@ class AuditChainVerifier:
         # 5.17.4 修复：clear() 前写入审计事件，留痕可追溯（防止无审计抹除链）
         if self._core_writer is not None:
             try:
-                self._core_writer.write({
-                    "event_type": "chain_cleared",
-                    "agent_id": cleared_by or "audit_chain_verifier",
-                    "reason": reason or "unspecified",
-                    "cleared_by": cleared_by,
-                    "chain_length": len(self._chain),
-                    "last_hash": self._last_hash,
-                })
+                self._core_writer.write(
+                    {
+                        "event_type": "chain_cleared",
+                        "agent_id": cleared_by or "audit_chain_verifier",
+                        "reason": reason or "unspecified",
+                        "cleared_by": cleared_by,
+                        "chain_length": len(self._chain),
+                        "last_hash": self._last_hash,
+                    }
+                )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
         self._chain.clear()

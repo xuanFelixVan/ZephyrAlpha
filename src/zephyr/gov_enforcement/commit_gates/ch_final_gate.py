@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——AST/IO/git 异常降级为 fail-open（passed=True，logger.warning）; 检出违规则 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_ch_final_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ch_final_gate.py — ch_writer.query() 直接调用阻断门禁（CH-FINAL-GATE，裁定 #ARCH-CH-007 B5）
@@ -54,7 +54,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_ch_final_gate"]
 
 # ch_writer.query() 文本模式（用于 diff 新增行检测，覆盖常见别名 ch_writer / _chw）
-_QUERY_CALL_PATTERN = re.compile(r'\b(ch_writer|_chw)\s*\.\s*query\s*\(')
+_QUERY_CALL_PATTERN = re.compile(r"\b(ch_writer|_chw)\s*\.\s*query\s*\(")
 
 # 基础设施文件豁免（文件名后缀）——ch_reader 内部调用 ch_writer.query 是正常的
 _INFRA_EXEMPT_SUFFIXES = ("ch_reader.py", "ch_writer.py")
@@ -87,8 +87,14 @@ def _find_query_calls(tree: ast.AST, aliases: set[str]) -> list[int]:
 
 
 def _is_infra_exempt(rel_path: str) -> bool:
-    """检查文件是否为基础设施豁免（ch_reader.py / ch_writer.py）。"""
+    """检查文件是否为基础设施豁免（ch_reader.py / ch_writer.py / commit_gates/ 门禁检测器自身）。
+
+    2026-08-20 波3 实证：本 gate 源码 docstring/pattern 含 ch_writer.query() 字面量（检测语义描述），
+    modified 路径文本扫描自扫误报——与 msg_style/msg_exposure/perm_trigger/manual_only 自豁免
+    同族补齐（commit_gates/ 子串匹配不限定父目录，防 governance→gov_enforcement 式迁移漂移）。"""
     normalized = rel_path.replace("\\", "/")
+    if "commit_gates/" in normalized:
+        return True
     return any(normalized.endswith(s) for s in _INFRA_EXEMPT_SUFFIXES)
 
 
@@ -117,14 +123,11 @@ def _check_new_file(abs_path: str, rel_path: str) -> str | None:
 def _check_modified_file(gateway, rel_path: str) -> str | None:
     """修改文件检测 staged diff 新增行中的 ch_writer.query 文本模式。"""
     try:
-        diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
-        )
+        diff_content = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path])
         if diff_content.returncode != 0:
             return None
         added_lines = [
-            line[1:] for line in diff_content.stdout.splitlines()
-            if line.startswith("+") and not line.startswith("+++")
+            line[1:] for line in diff_content.stdout.splitlines() if line.startswith("+") and not line.startswith("+++")
         ]
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
@@ -137,9 +140,7 @@ def _check_modified_file(gateway, rel_path: str) -> str | None:
 def _get_staged_py_files(gateway) -> list[str]:
     """获取 staged added/modified .py 文件（过滤 tests/ 和基础设施豁免）。"""
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning("CH-FINAL-GATE fail-open: git diff 失败(rc=%d)", diff_result.returncode)
             return []
@@ -148,8 +149,7 @@ def _get_staged_py_files(gateway) -> list[str]:
         logger.warning("CH-FINAL-GATE fail-open: git diff 异常(%s: %s)", type(e).__name__, e)
         return []
     return [
-        f.replace("\\", "/") for f in staged
-        if f.endswith(".py") and not is_test_exempt(f) and not _is_infra_exempt(f)
+        f.replace("\\", "/") for f in staged if f.endswith(".py") and not is_test_exempt(f) and not _is_infra_exempt(f)
     ]
 
 
@@ -165,9 +165,7 @@ def _get_wt_root(gateway) -> str:
 def _get_added_set(gateway) -> set[str]:
     """获取 staged 新增(A)文件集合。"""
     try:
-        added_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        added_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         return set(added_result.stdout.strip().splitlines()) if added_result.returncode == 0 else set()
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return set()
@@ -205,8 +203,7 @@ def make_ch_final_gate() -> GateSpec:
             return True, ""
         detail = "; ".join(violations[:5])
         return False, (
-            f"直接调用 ch_writer.query() 应改用 ch_reader.query() 以自动注入 FINAL"
-            f"（裁定 #ARCH-CH-007）: {detail}"
+            f"直接调用 ch_writer.query() 应改用 ch_reader.query() 以自动注入 FINAL（裁定 #ARCH-CH-007）: {detail}"
         )
 
     return GateSpec(gate_id="CH-FINAL-GATE", check=_check, priority=37)

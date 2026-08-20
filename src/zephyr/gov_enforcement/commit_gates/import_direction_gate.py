@@ -118,10 +118,12 @@ def _collect_type_checking_imports(tree: ast.Module) -> set[int]:
         if isinstance(test, ast.Name) and test.id == "TYPE_CHECKING":
             is_tc = True
         # if typing.TYPE_CHECKING:
-        elif (isinstance(test, ast.Attribute)
-              and test.attr == "TYPE_CHECKING"
-              and isinstance(test.value, ast.Name)
-              and test.value.id == "typing"):
+        elif (
+            isinstance(test, ast.Attribute)
+            and test.attr == "TYPE_CHECKING"
+            and isinstance(test.value, ast.Name)
+            and test.value.id == "typing"
+        ):
             is_tc = True
         if not is_tc:
             continue
@@ -179,8 +181,7 @@ def _find_violations_in_file(abs_path: str, wt_root: str) -> list[str]:
             rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
             names = ", ".join(a.name for a in node.names)
             violations.append(
-                f"{rel_name}:{node.lineno} from {module} import {names} "
-                f"—— shared 层禁止向上依赖（§5.152）"
+                f"{rel_name}:{node.lineno} from {module} import {names} —— shared 层禁止向上依赖（§5.152）"
             )
     return violations
 
@@ -195,9 +196,7 @@ def make_import_direction_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged added/modified .py 文件
         try:
-            diff_result = gateway.run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-            )
+            diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
             if diff_result.returncode != 0:
                 logger.warning(
                     "NO-UPWARD-IMPORT gate fail-open: git diff 失败(rc=%d)。",
@@ -208,17 +207,14 @@ def make_import_direction_gate() -> GateSpec:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "NO-UPWARD-IMPORT gate fail-open: git diff 异常(%s: %s)。",
-                type(e).__name__, e, exc_info=True,
+                type(e).__name__,
+                e,
+                exc_info=True,
             )
             return True, ""
 
         # 2. 过滤到 shared 层 .py 文件 + tests/ 豁免
-        shared_files = [
-            f for f in staged
-            if f.endswith(".py")
-            and _SHARED_PATH_PART in f
-            and not is_test_exempt(f)
-        ]
+        shared_files = [f for f in staged if f.endswith(".py") and _SHARED_PATH_PART in f and not is_test_exempt(f)]
         if not shared_files:
             return True, ""
 

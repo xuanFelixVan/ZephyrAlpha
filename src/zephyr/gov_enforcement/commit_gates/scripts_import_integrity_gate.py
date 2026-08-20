@@ -94,9 +94,7 @@ __all__ = [
 ]
 
 # 豁免：_shared/constants.py 是 _shared.constants 真源，不可自引用 import
-_EXEMPT_FILES: frozenset[str] = frozenset(
-    {"scripts/governance/_shared/constants.py"}
-)
+_EXEMPT_FILES: frozenset[str] = frozenset({"scripts/governance/_shared/constants.py"})
 
 
 def _get_shared_constants_symbols() -> set[str] | None:
@@ -118,8 +116,7 @@ def _get_shared_constants_symbols() -> set[str] | None:
         return {name for name in dir(_sc) if not name.startswith("_")}
     except Exception as e:  # noqa: BLE001 — fail-open on import error
         logger.warning(
-            "SCRIPTS-IMPORT-INTEGRITY: _shared.constants 不可导入，fail-open: "
-            "%s: %s",
+            "SCRIPTS-IMPORT-INTEGRITY: _shared.constants 不可导入，fail-open: %s: %s",
             type(e).__name__,
             e,
             exc_info=True,
@@ -181,11 +178,7 @@ def _collect_defined_names(tree: ast.AST) -> set[str]:
 
 def _collect_used_names(tree: ast.AST) -> set[str]:
     """收集文件中所有被使用的符号名（Load context 的 Name 节点）。"""
-    return {
-        node.id
-        for node in ast.walk(tree)
-        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
-    }
+    return {node.id for node in ast.walk(tree) if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)}
 
 
 def _find_first_use_line(tree: ast.AST, symbol: str) -> int:
@@ -196,18 +189,12 @@ def _find_first_use_line(tree: ast.AST, symbol: str) -> int:
     candidates = [
         node.lineno
         for node in ast.walk(tree)
-        if (
-            isinstance(node, ast.Name)
-            and isinstance(node.ctx, ast.Load)
-            and node.id == symbol
-        )
+        if (isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load) and node.id == symbol)
     ]
     return min(candidates) if candidates else 0
 
 
-def _scan_file_content(
-    py_file: str, content: str, shared_symbols: set[str]
-) -> list[str]:
+def _scan_file_content(py_file: str, content: str, shared_symbols: set[str]) -> list[str]:
     """扫描单个文件内容，返回 _shared.constants 符号使用未导入的违规列表。
 
     治本 #ARCH-TOOL-HEALTH-V1 Phase 3：提取为共享 helper，供 pre-commit gate
@@ -266,11 +253,7 @@ def make_scripts_import_integrity_gate() -> GateSpec:
         py_files = _get_staged_py_files(gateway, "SCRIPTS-IMPORT-INTEGRITY")
         # 只检测 scripts/governance/**/*.py（src/ 由 validate_python_syntax 覆盖，
         # tests/ 不依赖 _shared.constants）
-        gov_scripts = [
-            f
-            for f in py_files
-            if f.replace("\\", "/").startswith("scripts/governance/")
-        ]
+        gov_scripts = [f for f in py_files if f.replace("\\", "/").startswith("scripts/governance/")]
 
         violations: list[str] = []
         for py_file in gov_scripts:
@@ -292,8 +275,7 @@ def make_scripts_import_integrity_gate() -> GateSpec:
                 "  病根：脚本使用 _shared.constants 的 REPO_ROOT / "
                 "get_depgraph_pg_connection 等符号但未 import，导致运行时 NameError。\n"
                 "  修复：在文件顶部添加 "
-                "`from _shared.constants import <symbol>`\n"
-                + "\n".join(violations)
+                "`from _shared.constants import <symbol>`\n" + "\n".join(violations)
             )
             logger.error("SCRIPTS-IMPORT-INTEGRITY gate block:\n%s", detail)
             return False, detail

@@ -137,7 +137,6 @@ class PostProcessPipeline:
         """写入：hooks（Stage 4 公共化）。"""
         self._hooks = value
 
-
     def register_hook(
         self,
         name: str,

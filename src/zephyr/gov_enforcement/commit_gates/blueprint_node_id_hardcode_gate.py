@@ -78,15 +78,11 @@ logger = logging.getLogger(__name__)
 __all__: Final = ["make_blueprint_node_id_hardcode_gate"]
 
 # check_doc_node_id_hardcode.py 路径（检测逻辑 SSoT——node_id/edge_id 硬编码检测唯一真源）
-_PROJECT_ROOT = (
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))
-    ))))
+_PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 )
 # src/zephyr/gov_enforcement/commit_gates/ -> 上 5 级 = 项目根
-_CHECKER_SCRIPT = os.path.join(
-    _PROJECT_ROOT, "scripts", "governance", "d3_metadata", "check_doc_node_id_hardcode.py"
-)
+_CHECKER_SCRIPT = os.path.join(_PROJECT_ROOT, "scripts", "governance", "d3_metadata", "check_doc_node_id_hardcode.py")
 
 
 def _get_staged_blueprint_files(gateway) -> list[str] | None:
@@ -99,9 +95,7 @@ def _get_staged_blueprint_files(gateway) -> list[str] | None:
         blueprint.md 相对路径列表（正斜杠归一化）；git diff 失败/异常时返回 None。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "BLUEPRINT-NODE-ID-HARDCODE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -112,7 +106,9 @@ def _get_staged_blueprint_files(gateway) -> list[str] | None:
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "BLUEPRINT-NODE-ID-HARDCODE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
     # 过滤 blueprint.md 文件（文件名匹配，不限目录）
@@ -146,8 +142,8 @@ def _run_checker(abs_files: list[str], wt_root: str) -> subprocess.CompletedProc
     """
     if not os.path.isfile(_CHECKER_SCRIPT):
         logger.warning(
-            "BLUEPRINT-NODE-ID-HARDCODE gate fail-open: check_doc_node_id_hardcode.py "
-            "不存在(%s)，检测器失效。", _CHECKER_SCRIPT,
+            "BLUEPRINT-NODE-ID-HARDCODE gate fail-open: check_doc_node_id_hardcode.py 不存在(%s)，检测器失效。",
+            _CHECKER_SCRIPT,
         )
         return None
 
@@ -163,14 +159,15 @@ def _run_checker(abs_files: list[str], wt_root: str) -> subprocess.CompletedProc
         )
     except subprocess.TimeoutExpired:
         logger.warning(
-            "BLUEPRINT-NODE-ID-HARDCODE gate fail-open: check_doc_node_id_hardcode.py "
-            "超时(60s)，检测器失效。"
+            "BLUEPRINT-NODE-ID-HARDCODE gate fail-open: check_doc_node_id_hardcode.py 超时(60s)，检测器失效。"
         )
         return None
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "BLUEPRINT-NODE-ID-HARDCODE gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -187,8 +184,8 @@ def _parse_checker_result(result: subprocess.CompletedProcess) -> tuple[bool, st
         return True, ""
     if result.returncode == 2:
         logger.warning(
-            "BLUEPRINT-NODE-ID-HARDCODE gate fail-open: check_doc_node_id_hardcode.py "
-            "异常(exit 2)：%s", result.stderr[:200] if result.stderr else "",
+            "BLUEPRINT-NODE-ID-HARDCODE gate fail-open: check_doc_node_id_hardcode.py 异常(exit 2)：%s",
+            result.stderr[:200] if result.stderr else "",
         )
         return True, ""
 
@@ -196,17 +193,21 @@ def _parse_checker_result(result: subprocess.CompletedProcess) -> tuple[bool, st
     # rstrip（非 strip）：保留行首两空格，使 "  WARN:" 前缀可被 startswith 匹配
     raw = result.stdout.rstrip() if result.stdout else ""
     if not raw:
-        raw = result.stderr.rstrip() if result.stderr else "node_id/edge_id 硬编码检出（见 check_doc_node_id_hardcode.py 输出）"
+        raw = (
+            result.stderr.rstrip()
+            if result.stderr
+            else "node_id/edge_id 硬编码检出（见 check_doc_node_id_hardcode.py 输出）"
+        )
     # 提取违规行（WARN/FOUND/ERROR 开头），限 10 行
     detail_lines = [
-        line for line in raw.splitlines()
+        line
+        for line in raw.splitlines()
         if line.strip() and (line.startswith("  WARN") or line.startswith("  ERROR") or line.startswith("FOUND"))
     ][:10]
     detail_str = "\n".join(detail_lines) if detail_lines else raw[:300]
     return False, (
         "BLUEPRINT_NODE_ID_HARDCODE_VIOLATION——检出 node_id/edge_id 硬编码"
-        "（文档引用铁律：禁止易变物理ID，改用 module_id/blueprint_id/path）。\n"
-        + detail_str
+        "（文档引用铁律：禁止易变物理ID，改用 module_id/blueprint_id/path）。\n" + detail_str
     )
 
 

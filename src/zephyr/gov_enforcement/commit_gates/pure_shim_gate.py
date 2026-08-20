@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——subprocess 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_pure_shim_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
@@ -65,15 +65,11 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_pure_shim_gate"]
 
 # check_pure_shim.py 路径（检测逻辑 SSoT）
-_PROJECT_ROOT = (
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))
-    ))))
+_PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 )
 # src/zephyr/gov_enforcement/commit_gates/ -> 上 5 级 = 项目根
-_SHIM_SCRIPT = os.path.join(
-    _PROJECT_ROOT, "scripts", "governance", "d7_code", "check_pure_shim.py"
-)
+_SHIM_SCRIPT = os.path.join(_PROJECT_ROOT, "scripts", "governance", "d7_code", "check_pure_shim.py")
 
 
 def _get_staged_py_files(gateway) -> list[str]:
@@ -83,9 +79,7 @@ def _get_staged_py_files(gateway) -> list[str]:
         .py 文件相对路径列表（正斜杠）；git 异常时返回空列表（fail-open）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only"])
         if diff_result.returncode != 0:
             logger.warning(
                 "PURE-SHIM gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -96,14 +90,13 @@ def _get_staged_py_files(gateway) -> list[str]:
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "PURE-SHIM gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return []
 
-    return [
-        f.replace("\\", "/") for f in staged
-        if f.endswith(".py") and not is_test_exempt(f)
-    ]
+    return [f.replace("\\", "/") for f in staged if f.endswith(".py") and not is_test_exempt(f)]
 
 
 def _resolve_worktree_root(gateway) -> str:
@@ -113,9 +106,7 @@ def _resolve_worktree_root(gateway) -> str:
         worktree root 绝对路径；获取失败时回退到 gateway.project_root。
     """
     try:
-        toplevel_result = gateway.run_git(
-            ["git", "rev-parse", "--show-toplevel"]
-        )
+        toplevel_result = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         if toplevel_result.returncode == 0:
             return toplevel_result.stdout.strip()
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -166,14 +157,14 @@ def _run_shim_checker(abs_files: list[str], wt_root: str) -> subprocess.Complete
             timeout=60,
         )
     except subprocess.TimeoutExpired:
-        logger.warning(
-            "PURE-SHIM gate fail-open: check_pure_shim.py 超时(60s)，检测器失效。"
-        )
+        logger.warning("PURE-SHIM gate fail-open: check_pure_shim.py 超时(60s)，检测器失效。")
         return None
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "PURE-SHIM gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -197,15 +188,11 @@ def _parse_shim_result(result: subprocess.CompletedProcess) -> tuple[bool, str]:
 
     # exit 1 = 检出违规，硬阻断
     detail = result.stderr.strip() if result.stderr else "纯 re-export shim 检出（见 check_pure_shim.py 输出）"
-    detail_lines = [
-        line for line in detail.splitlines()
-        if line.strip() and not line.startswith("-") * 5
-    ][:10]
+    detail_lines = [line for line in detail.splitlines() if line.strip() and not line.startswith("-") * 5][:10]
     detail_str = "\n".join(detail_lines) if detail_lines else detail[:300]
     return False, (
         "PURE_SHIM_VIOLATION——检出纯 re-export shim 文件（star import + 无实质代码）。\n"
-        "纯 shim 是真源分裂温床，禁止新建。修复：删除 shim 文件，消费者改引 canonical 路径。\n"
-        + detail_str
+        "纯 shim 是真源分裂温床，禁止新建。修复：删除 shim 文件，消费者改引 canonical 路径。\n" + detail_str
     )
 
 

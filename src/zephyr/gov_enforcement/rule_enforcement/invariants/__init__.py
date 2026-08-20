@@ -29,6 +29,7 @@ __all__ = [
     "en_003_contract_compatibility",
     "en_process_lifecycle_gateway",
     "zero_residue_check",
-'post_doc_review_check']
+    "post_doc_review_check",
+]
 
 __all__.append("PostDocReviewScanner")

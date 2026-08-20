@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True）；ast.parse 失败 fail-open；检出违规则 warn-only（passed=True + detail）
-# [TESTS] tests/governance/commit_gates/test_git_call_budget_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """git_call_budget_gate.py — Git 调用预算 warn-only 门禁（GIT-CALL-BUDGET，§ARCH-GIT-CALL-BUDGET P2.2）
@@ -77,8 +77,7 @@ def _is_git_budget_exempt_file(py_file: str) -> bool:  # noqa: m03-duplicate  M0
 
     重命名自 _is_exempt_file 以避免 FUNCTION-DUP gate 与 ch_batch_size_gate 冲突。
     """
-    return any(py_file.replace("\\", "/").endswith(f"/{name}") or py_file == name
-               for name in _EXEMPT_FILES)
+    return any(py_file.replace("\\", "/").endswith(f"/{name}") or py_file == name for name in _EXEMPT_FILES)
 
 
 def _build_git_parent_map(tree: ast.AST) -> dict[int, ast.AST]:  # noqa: m03-duplicate  M03豁免: 与ch_batch_size_gate._build_parent_map共享实现（各gate持自身常量，共享模块提取为后续重构，对标_reference_helpers模式）
@@ -147,7 +146,8 @@ def make_git_call_budget_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         py_files = [
-            f for f in _get_staged_py_files(gateway, "GIT-CALL-BUDGET")
+            f
+            for f in _get_staged_py_files(gateway, "GIT-CALL-BUDGET")
             if not is_test_exempt(f) and not _is_git_budget_exempt_file(f)
         ]
         if not py_files:
@@ -167,7 +167,8 @@ def make_git_call_budget_gate() -> GateSpec:
             except SyntaxError:
                 logger.warning(
                     "GIT-CALL-BUDGET: ast.parse 失败 %s（语法错误），fail-open 跳过",
-                    py_file, exc_info=True,
+                    py_file,
+                    exc_info=True,
                 )
                 continue
 
@@ -183,14 +184,14 @@ def make_git_call_budget_gate() -> GateSpec:
                 loop_line = loop_node.lineno
                 if call_line in added_lines or loop_line in added_lines:
                     warnings.append(
-                        f"  {py_file}:{call_line}: subprocess.run([\"git\", ...]) "
+                        f'  {py_file}:{call_line}: subprocess.run(["git", ...]) '
                         f"在 {'for' if isinstance(loop_node, (ast.For, ast.AsyncFor)) else 'while'} "
                         f"循环内调用（循环头在第 {loop_line} 行）"
                     )
 
         if warnings:
             detail = (
-                "GIT-CALL-BUDGET (warn-only)：检测到 subprocess.run([\"git\", ...]) "
+                'GIT-CALL-BUDGET (warn-only)：检测到 subprocess.run(["git", ...]) '
                 "在循环内调用，\n"
                 "  违反铁律 trae_064 ARCH-GIT-CALL-BUDGET GIT-BUDGET-INV-002 批量化强制——\n"
                 "  逐文件 git 调用（N 文件 = N subprocess）是 git.exe 崩溃的放大源。\n"

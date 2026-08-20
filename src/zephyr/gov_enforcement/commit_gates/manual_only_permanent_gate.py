@@ -11,10 +11,11 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——AST/IO 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_manual_only_permanent_gate.py
+# [TESTS] tests/governance/commit_gates/test_manual_only_permanent_gate_noqa.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual-trigger  M02豁免: 本文件是MANUAL-ONLY-PERMANENT检测器自身,源码含检测模式字符串(argparse/input/sys.argv)用于AST匹配,非实际manual触发
+# noqa: m11-perm-manual-legitimate  M11豁免: 本文件是 MANUAL-ONLY-PERMANENT 检测器自身（GitCommitGateway in-process 事件触发），源码含检测模式字符串用于 AST 匹配非真实 manual 触发
 """manual_only_permanent_gate.py — 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc4 enforceability）
 
 病根（裁定#221，原 ai_first_governance_principles.md §二，文档已删 2026-07-30，git 历史可查）
@@ -66,10 +67,12 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_manual_only_permanent_gate"]
 
 # manual 触发模式标识符（argparse 类名 + 相关函数名）
-_MANUAL_TRIGGER_IDENTIFIERS = frozenset({
-    "ArgumentParser",
-    "argparse",
-})
+_MANUAL_TRIGGER_IDENTIFIERS = frozenset(
+    {
+        "ArgumentParser",
+        "argparse",
+    }
+)
 
 # m11-perm-manual-legitimate noqa 标记正则（#ARCH-P3-FOLLOWUP-TODOS-001 裁定 B / C，P3-1.2 治本）
 # 格式：`# noqa: m11-perm-manual-legitimate` + 2+ 空格 + reason（>=10 字符）
@@ -84,14 +87,16 @@ _EVENT_REGISTRATION_ATTRS = frozenset({"subscribe", "register_handler"})
 _EVENT_BUS_ATTR = "event_bus"
 _EVENT_DECORATORS = frozenset({"subscriber", "event_handler"})
 # 自动触发注册方法（reconciler / scheduler 注册）
-_AUTO_TRIGGER_METHODS = frozenset({
-    "register_reconciler",
-    "register_scheduler",
-    "register_daemon",
-    "register_auto_trigger",
-    "add_reconciler",
-    "add_scheduler",
-})
+_AUTO_TRIGGER_METHODS = frozenset(
+    {
+        "register_reconciler",
+        "register_scheduler",
+        "register_daemon",
+        "register_auto_trigger",
+        "add_reconciler",
+        "add_scheduler",
+    }
+)
 
 
 def _is_manual_trigger_call(node: ast.AST) -> bool:
@@ -224,9 +229,7 @@ def _detect_event_or_auto_trigger(tree: ast.AST) -> bool:
 def _get_staged_py_files(gateway) -> tuple[list[str], str]:
     """获取 staged 新增+修改的 .py 文件列表和 worktree root。"""
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "MANUAL-ONLY-PERMANENT gate fail-open: git diff 失败(rc=%d)。",
@@ -237,14 +240,13 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
     except Exception as e:  # noqa: BLE001 — broad exception catch for fail-open
         logger.warning(
             "MANUAL-ONLY-PERMANENT gate fail-open: git diff 异常(%s: %s)。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return [], ""
 
-    py_files = [
-        f.replace("\\", "/") for f in staged_files
-        if f.endswith(".py") and not is_test_exempt(f)
-    ]
+    py_files = [f.replace("\\", "/") for f in staged_files if f.endswith(".py") and not is_test_exempt(f)]
     if not py_files:
         return [], ""
 
@@ -260,9 +262,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
 def _get_added_set(gateway) -> set[str]:
     """获取 staged 新增(A)文件集合。"""
     try:
-        result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         return set(result.stdout.strip().splitlines()) if result.returncode == 0 else set()
     except Exception:  # noqa: BLE001 — broad exception catch for fail-open
         return set()
@@ -279,7 +279,9 @@ def _check_manual_only_permanent_new(abs_path: str, content: str) -> bool:
     except SyntaxError as e:
         logger.warning(
             "MANUAL-ONLY-PERMANENT gate skip file %s: AST 解析失败(%s: %s)。",
-            abs_path, type(e).__name__, e,
+            abs_path,
+            type(e).__name__,
+            e,
         )
         return False
     has_manual = _detect_manual_trigger(tree)
@@ -330,14 +332,11 @@ def _check_manual_only_permanent_modified(gateway, rel_path: str, abs_path: str,
     try:
         # --ignore-cr-at-eol：EOL 规范化提交全文件行伪"added"，会把存量 manual 触发
         # 模式误报为新增——按内容判定 added，行尾差异不计（2026-08-16 EOL 批实证）
-        diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
-        )
+        diff_content = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path])
         if diff_content.returncode != 0:
             return False
         added_lines = [
-            line[1:] for line in diff_content.stdout.splitlines()
-            if line.startswith("+") and not line.startswith("+++")
+            line[1:] for line in diff_content.stdout.splitlines() if line.startswith("+") and not line.startswith("+++")
         ]
     except Exception:  # noqa: BLE001 — broad exception catch for fail-open
         return False
@@ -358,7 +357,7 @@ def _check_manual_only_permanent_modified(gateway, rel_path: str, abs_path: str,
         if "input(" in line:
             quick_hit = True
             break
-        if '__name__' in line and '__main__' in line:
+        if "__name__" in line and "__main__" in line:
             quick_hit = True
             break
     if not quick_hit:
@@ -393,9 +392,7 @@ def make_manual_only_permanent_gate() -> GateSpec:
         # 3. AST 检测：permanent 文件含 manual 触发但无事件/自动触发订阅
         violations: list[str] = []
         for rel_path in py_files:
-            abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(
-                wt_root, rel_path.replace("/", os.sep)
-            )
+            abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
             if not os.path.isfile(abs_path):
                 continue
 
@@ -405,7 +402,9 @@ def make_manual_only_permanent_gate() -> GateSpec:
             except OSError as e:
                 logger.warning(
                     "MANUAL-ONLY-PERMANENT gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path, type(e).__name__, e,
+                    abs_path,
+                    type(e).__name__,
+                    e,
                 )
                 continue
 
@@ -413,7 +412,8 @@ def make_manual_only_permanent_gate() -> GateSpec:
                 continue  # 非 permanent 文件，跳过
 
             # 门禁文件自豁免：检测器本身含 pattern 字符串（非真实 manual 触发）
-            if "governance/commit_gates/" in rel_path or "governance\\commit_gates\\" in rel_path:
+            # 2026-08-20 修 governance→gov_enforcement 迁移漂移：原匹配 governance/commit_gates/ 已失配
+            if "commit_gates/" in rel_path.replace("\\", "/"):
                 continue
 
             if rel_path in added_set:

@@ -30,7 +30,7 @@
 1. **只检测 added 行**：存量由仪表盘 M30 监控，gate 只防新增。
 2. **config 层豁免**：``src/zephyr/shared/foundation/config`` 目录合法直读 env。
 3. **priority=125**：在既有 gate 之后、200 段之前。
-4. **noqa 豁免**：合法场景用 ``# noqa: e34-env``。
+4. **noqa 豁免**：合法场景用 ``# noqa: e34-env`` 并附理由说明文本（≥10字符）。
 """
 
 from __future__ import annotations
@@ -101,7 +101,7 @@ def _format_violation_detail(violations: list[str]) -> str:
         "  禁止 os.environ['ZEPHYR_ENV'] / os.environ.get('ZEPHYR_ENV') 散落直访。\n"
         + "\n".join(violations)
         + "\n-> 改走 config 层（zephyr.shared.foundation.config）统一读取；"
-        "config 层自身或合法场景用 # noqa: e34-env 豁免。"
+        "config 层自身或合法场景用 # noqa: e34-env 豁免并附理由说明文本。"
     )
 
 
@@ -118,10 +118,9 @@ def make_zephyr_env_direct_access_gate() -> GateSpec:
             return True, ""
 
         target_files = [
-            f for f in staged
-            if f.replace("\\", "/").startswith(_SRC_ZEPHYR_PREFIX)
-            and not _is_config_layer(f)
-            and not is_test_exempt(f)
+            f
+            for f in staged
+            if f.replace("\\", "/").startswith(_SRC_ZEPHYR_PREFIX) and not _is_config_layer(f) and not is_test_exempt(f)
         ]
         if not target_files:
             return True, ""

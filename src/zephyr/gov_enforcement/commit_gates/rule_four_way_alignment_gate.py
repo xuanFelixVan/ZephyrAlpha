@@ -66,9 +66,7 @@ __all__ = ["make_rule_four_way_alignment_gate"]
 _CHECKER_REL = "scripts/governance/d5_architecture/checkers/check_rule_four_way_alignment.py"
 
 # 触发文件路径前缀（staged 文件匹配任一前缀时触发）
-_TRIGGER_PREFIXES = (
-    "docs/01_policies_and_standards/",
-)
+_TRIGGER_PREFIXES = ("docs/01_policies_and_standards/",)
 
 # 触发文件名（精确匹配）
 _TRIGGER_FILES = {
@@ -139,8 +137,10 @@ def make_rule_four_way_alignment_gate() -> GateSpec:
         # 4. subprocess 调用 checker
         try:
             result = run_checker_script(
-                checker_path, ["--ci"],
-                cwd=wt_root, timeout=_TIMEOUT,
+                checker_path,
+                ["--ci"],
+                cwd=wt_root,
+                timeout=_TIMEOUT,
             )
         except subprocess.TimeoutExpired:
             logger.warning(
@@ -151,7 +151,9 @@ def make_rule_four_way_alignment_gate() -> GateSpec:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "RULE-FOUR-WAY-ALIGN gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
+                type(e).__name__,
+                e,
+                exc_info=True,
             )
             return True, ""
 
@@ -168,9 +170,6 @@ def make_rule_four_way_alignment_gate() -> GateSpec:
 
         # exit 1 = 检出违规，硬阻断
         detail = result.stdout.strip() if result.stdout else "规则四方对齐违规（见 checker 输出）"
-        return False, (
-            f"规则四方对齐门禁检测到违规（RULE_FOUR_WAY_ALIGN_VIOLATION）——"
-            f"触发原因: {reason}\n{detail}"
-        )
+        return False, (f"规则四方对齐门禁检测到违规（RULE_FOUR_WAY_ALIGN_VIOLATION）——触发原因: {reason}\n{detail}")
 
     return GateSpec(gate_id="RULE-FOUR-WAY-ALIGN", check=_check, priority=76)

@@ -67,10 +67,8 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_vocab_hardcode_gate"]
 
 # check_vocab_hardcode.py 路径（检测逻辑 SSoT）
-_SCRIPT_PATH = (
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))
-    ))))
+_SCRIPT_PATH = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 )
 # src/zephyr/gov_enforcement/commit_gates/ -> 上 5 级 = 项目根
 _VOCAB_SCRIPT = os.path.join(_SCRIPT_PATH, "scripts", "governance", "d3_metadata", "check_vocab_hardcode.py")
@@ -83,9 +81,7 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
     正常时返回新增 .py 文件列表（可能为空）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
                 "VOCAB-HARDCODE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -95,22 +91,16 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
         staged_new = diff_result.stdout.strip().splitlines()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "VOCAB-HARDCODE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "VOCAB-HARDCODE gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
-    return [
-        f.replace("\\", "/") for f in staged_new
-        if f.endswith(".py") and not is_test_exempt(f)
-    ]
+    return [f.replace("\\", "/") for f in staged_new if f.endswith(".py") and not is_test_exempt(f)]
 
 
 def _resolve_worktree_root(gateway) -> str:
     """获取 worktree root 路径；解析失败回退 gateway.project_root。"""
     try:
-        toplevel_result = gateway.run_git(
-            ["git", "rev-parse", "--show-toplevel"]
-        )
+        toplevel_result = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         if toplevel_result.returncode == 0:
             return toplevel_result.stdout.strip()
         return str(gateway.project_root)
@@ -149,14 +139,11 @@ def _run_vocab_script(abs_files: list[str], wt_root: str):
             timeout=60,
         )
     except subprocess.TimeoutExpired:
-        logger.warning(
-            "VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 超时(60s)，检测器失效。"
-        )
+        logger.warning("VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 超时(60s)，检测器失效。")
         return None
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "VOCAB-HARDCODE gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "VOCAB-HARDCODE gate fail-open: subprocess 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
 

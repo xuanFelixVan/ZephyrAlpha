@@ -75,7 +75,7 @@ def _extract_doc_type(content: str, is_markdown: bool) -> str:
     for line in block:
         stripped = line.strip()
         if stripped.startswith("doc_type:"):
-            return stripped[len("doc_type:"):].strip().strip('"').strip("'")
+            return stripped[len("doc_type:") :].strip().strip('"').strip("'")
     return ""
 
 
@@ -109,11 +109,8 @@ def make_exempt_zone_frontmatter_gate() -> GateSpec:
             # 历史违规豁免：git ls-tree HEAD 判断文件是否已存在
             try:
                 result = run_subprocess_hidden(
-                    ["git", "ls-tree", "HEAD", rel],
-                    capture_output=True,
-                    cwd=str(project_root),
-                    timeout=10,
-                text=False)
+                    ["git", "ls-tree", "HEAD", rel], capture_output=True, cwd=str(project_root), timeout=10, text=False
+                )
                 if result.stdout.strip():
                     historical.append(rel)
                     continue

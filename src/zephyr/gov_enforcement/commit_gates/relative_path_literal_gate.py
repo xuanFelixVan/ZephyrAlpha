@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_relative_path_literal_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 r"""relative_path_literal_gate.py — 相对路径字面量硬阻断门禁（RELATIVE-PATH-LITERAL）
@@ -92,13 +92,10 @@ def _collect_staged_py_files(gateway) -> list[str] | None:
         相对路径列表；git diff 失败/异常返回 None（fail-open）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
-                "RELATIVE-PATH-LITERAL gate fail-open: "
-                "git diff 失败(rc=%d)，检测器失效。",
+                "RELATIVE-PATH-LITERAL gate fail-open: git diff 失败(rc=%d)，检测器失效。",
                 diff_result.returncode,
             )
             return None
@@ -115,9 +112,10 @@ def _collect_staged_py_files(gateway) -> list[str] | None:
         return result
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning(
-            "RELATIVE-PATH-LITERAL gate fail-open: "
-            "git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            "RELATIVE-PATH-LITERAL gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -133,9 +131,7 @@ def _scan_file_violations(gateway, py_file: str) -> list[str]:
 
     # 解析 diff，获取 added 行及行号
     try:
-        file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
-        )
+        file_diff = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file])
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning("RELATIVE-PATH-LITERAL gate: git diff 失败 file=%s, %s", py_file, e)
         return []
@@ -189,6 +185,4 @@ def make_relative_path_literal_gate() -> GateSpec:
 
         return True, ""
 
-    return GateSpec(
-        gate_id="RELATIVE-PATH-LITERAL", check=_check, priority=115
-    )
+    return GateSpec(gate_id="RELATIVE-PATH-LITERAL", check=_check, priority=115)

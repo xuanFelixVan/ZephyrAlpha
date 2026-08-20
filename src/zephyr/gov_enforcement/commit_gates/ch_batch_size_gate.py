@@ -82,8 +82,7 @@ _EXEMPT_FILES = {"ch_writer.py", "buffered_writer.py"}
 
 def _is_exempt_file(py_file: str) -> bool:
     """文件级豁免：ch_writer.py / buffered_writer.py 自身。"""
-    return any(py_file.replace("\\", "/").endswith(f"/{name}") or py_file == name
-               for name in _EXEMPT_FILES)
+    return any(py_file.replace("\\", "/").endswith(f"/{name}") or py_file == name for name in _EXEMPT_FILES)
 
 
 def _build_parent_map(tree: ast.AST) -> dict[int, ast.AST]:
@@ -98,9 +97,7 @@ def _build_parent_map(tree: ast.AST) -> dict[int, ast.AST]:
     return parent_map
 
 
-def _find_enclosing_for(
-    call_node: ast.Call, parent_map: dict[int, ast.AST]
-) -> ast.For | ast.AsyncFor | None:
+def _find_enclosing_for(call_node: ast.Call, parent_map: dict[int, ast.AST]) -> ast.For | ast.AsyncFor | None:
     """从 Call 节点向上遍历祖先链，返回最近的 For/AsyncFor 祖先。
 
     Returns:
@@ -141,7 +138,8 @@ def make_ch_batch_size_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         py_files = [
-            f for f in _get_staged_py_files(gateway, "CH-BATCH-SIZE")
+            f
+            for f in _get_staged_py_files(gateway, "CH-BATCH-SIZE")
             if not is_test_exempt(f) and not _is_exempt_file(f)
         ]
         if not py_files:
@@ -163,7 +161,8 @@ def make_ch_batch_size_gate() -> GateSpec:
             except SyntaxError:
                 logger.warning(
                     "CH-BATCH-SIZE: ast.parse 失败 %s（语法错误），fail-open 跳过",
-                    py_file, exc_info=True,
+                    py_file,
+                    exc_info=True,
                 )
                 continue
 
@@ -183,8 +182,7 @@ def make_ch_batch_size_gate() -> GateSpec:
                 for_line = for_node.lineno
                 if call_line in added_lines or for_line in added_lines:
                     violations.append(
-                        f"  {py_file}:{call_line}: write_result 在 for 循环内直接调用"
-                        f"（for 循环头在第 {for_line} 行）"
+                        f"  {py_file}:{call_line}: write_result 在 for 循环内直接调用（for 循环头在第 {for_line} 行）"
                     )
 
         if violations:

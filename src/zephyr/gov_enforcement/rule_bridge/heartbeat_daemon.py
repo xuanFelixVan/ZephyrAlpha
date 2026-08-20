@@ -214,6 +214,7 @@ def _safe_getpid() -> int:
     """安全获取 PID（兼容极旧 Python 无 os.getpid 的边界场景）。"""
     try:
         import os
+
         return os.getpid()
     except Exception:  # noqa: BLE001 — 极端兜底，不应发生
         return 0
@@ -251,6 +252,7 @@ def _session_in_registry(session_id: str, project_root: str | Path) -> bool:
     """
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         registry = SessionRegistry(project_root)
         # 2026-08-19 治本：SessionRegistry 只有 get_session（无 .get）——原 .get()
         # 每轮 AttributeError 被 except 吞掉保守返 True，daemon 存在性自退静默失效
@@ -275,6 +277,7 @@ def _session_idle_seconds(session_id: str, project_root: str | Path) -> float | 
     """
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         registry = SessionRegistry(project_root)
         # 同族修复（2026-08-19）：get → get_session，与 _session_in_registry 一致
         info = registry.get_session(session_id)
@@ -283,9 +286,7 @@ def _session_idle_seconds(session_id: str, project_root: str | Path) -> float | 
         if isinstance(info, dict):  # 兼容 mock/旧式 dict 返回
             anchor = info.get("last_activity") or info.get("start_time") or 0.0
         else:
-            anchor = (getattr(info, "last_activity", 0.0) or 0.0) or (
-                getattr(info, "start_time", 0.0) or 0.0
-            )
+            anchor = (getattr(info, "last_activity", 0.0) or 0.0) or (getattr(info, "start_time", 0.0) or 0.0)
         if not anchor:
             return None
         return time.time() - float(anchor)
@@ -333,8 +334,12 @@ def _handle_signal(signum: int, frame) -> None:  # noqa: ANN001
     sys.exit(0)
 
 
-def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEARTBEAT_INTERVAL,
-               worktree_path: str | Path | None = None) -> int:
+def run_daemon(
+    session_id: str,
+    project_root: str | Path,
+    interval: int = _HEARTBEAT_INTERVAL,
+    worktree_path: str | Path | None = None,
+) -> int:
     """heartbeat daemon 主循环（独立进程入口）。
 
     生命周期：
@@ -396,7 +401,8 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
             # 2 个两天残留 daemon）。锚点未配置（旧 spawn）时跳过，零行为变更。
             if not _worktree_anchor_alive(worktree_path):
                 _append_heartbeat_log(
-                    hb_path, "exited",
+                    hb_path,
+                    "exited",
                     {"reason": "worktree anchor lost", "worktree_path": str(worktree_path)},
                 )
                 return 0
@@ -410,7 +416,8 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
             idle = _session_idle_seconds(session_id, root)
             if idle is not None and idle > _MAX_IDLE_SECONDS:
                 _append_heartbeat_log(
-                    hb_path, "exited",
+                    hb_path,
+                    "exited",
                     {
                         "reason": "idle timeout",
                         "idle_seconds": round(idle, 1),
@@ -422,6 +429,7 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
             # 刷新 registry heartbeat
             try:
                 from zephyr.security.access_control.session_concurrency import SessionRegistry
+
                 registry = SessionRegistry(root)
                 registry.heartbeat(session_id)
             except Exception as e:  # noqa: BLE001 — DB 故障不退出
@@ -429,7 +437,8 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
                 consecutive_errors += 1
                 if consecutive_errors > 10:
                     _append_heartbeat_log(
-                        hb_path, "fatal",
+                        hb_path,
+                        "fatal",
                         {"reason": "too many consecutive registry errors", "count": consecutive_errors},
                     )
                     return 1
@@ -452,7 +461,10 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
 if __name__ == "__main__":  # pragma: no cover
     # 命令行入口：python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <sid> [root] [interval] [worktree_path]
     if len(sys.argv) < 2:
-        print("Usage: python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <session_id> [project_root] [interval] [worktree_path]", file=sys.stderr)
+        print(
+            "Usage: python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <session_id> [project_root] [interval] [worktree_path]",
+            file=sys.stderr,
+        )
         sys.exit(2)
     _sid = sys.argv[1]
     _root = sys.argv[2] if len(sys.argv) > 2 else "."

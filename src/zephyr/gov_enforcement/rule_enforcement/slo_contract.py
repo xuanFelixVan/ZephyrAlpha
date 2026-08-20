@@ -249,7 +249,6 @@ class SLOContractEngine:
         """写入：slis（Stage 4 公共化）。"""
         self._slis = value
 
-
     @property
     def window_seconds(self) -> float:
         return self._window_seconds

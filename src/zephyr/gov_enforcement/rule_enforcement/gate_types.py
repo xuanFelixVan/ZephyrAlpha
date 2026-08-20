@@ -18,6 +18,7 @@
 
 定义门禁系统的类型契约，供 gate_engine / gate_pipeline / gate_simulator 共用。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

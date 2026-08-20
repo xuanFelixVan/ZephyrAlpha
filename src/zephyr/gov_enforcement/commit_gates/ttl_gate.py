@@ -98,13 +98,7 @@ def make_ttl_gate() -> GateSpec:
             return True, "no files to check (all deletions or missing)"
 
         # 2. 定位 check_frontmatter_metadata.py（真源）
-        check_script = (
-            project_root
-            / "scripts"
-            / "governance"
-            / "d3_metadata"
-            / "check_frontmatter_metadata.py"
-        )
+        check_script = project_root / "scripts" / "governance" / "d3_metadata" / "check_frontmatter_metadata.py"
         if not check_script.is_file():
             # fail-closed：checker 缺失是环境异常，必须阻断
             return False, f"check_frontmatter_metadata.py not found: {check_script}"
@@ -119,8 +113,11 @@ def make_ttl_gate() -> GateSpec:
         # 4. subprocess 调用复用真源
         try:
             result = run_checker_script(
-                check_script, cmd_args,
-                cwd=project_root, timeout=60, text=False,
+                check_script,
+                cmd_args,
+                cwd=project_root,
+                timeout=60,
+                text=False,
             )
         except (subprocess.TimeoutExpired, OSError) as e:
             # fail-closed：执行失败阻断（ttl 是强制字段）
@@ -129,12 +126,14 @@ def make_ttl_gate() -> GateSpec:
         # 5. 解析结果——exit 0=通过，1=有违规，2=脚本异常
         if result.returncode == 0:
             return True, "ttl metadata check passed"
+
         # 兼容 str/bytes：run_subprocess_hidden 的 setdefault("errors","replace")
         # 会强制 text 模式（即使 text=False），导致 stderr 为 str 而非 bytes
         def _decode(s: object) -> str:
             if isinstance(s, bytes):
                 return s.decode("utf-8", errors="replace").strip()
             return str(s).strip() if s else ""
+
         detail = _decode(result.stderr)
         if not detail:
             detail = _decode(result.stdout)

@@ -50,6 +50,7 @@ def _load_contract_spec_path() -> Path:
             return REPO_ROOT / rel
     return REPO_ROOT / "architecture_model" / "contracts" / "cross_layer_contracts.yaml"
 
+
 CONTRACTS_PATH: Final[Any] = _load_contract_spec_path()
 
 VALID_ENFORCEMENT_MODES: Final[set] = {"block", "warn", "log", "shadow", "strict"}
@@ -116,6 +117,7 @@ if __name__ == "__main__":
     ok, msg = check()
     print(msg)
     sys.exit(0 if ok else 1)
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def load_contracts() -> dict[str, Any]:

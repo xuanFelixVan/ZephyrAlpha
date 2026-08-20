@@ -81,8 +81,14 @@ _FILE_PATH_RE = re.compile(r"[\w/.\-]+\.(?:py|yaml|json)")
 
 # 跳过关键词——文件不存在但含这些关键词时视为合法（删除/待建/不本次执行）
 _SKIP_KEYWORDS = (
-    "删除", "待建", "Phase 2", "不本次执行", "长期可选",
-    "deprecated", "预留", "superseded",
+    "删除",
+    "待建",
+    "Phase 2",
+    "不本次执行",
+    "长期可选",
+    "deprecated",
+    "预留",
+    "superseded",
 )
 
 
@@ -139,10 +145,7 @@ def check_impact_files_exist(
         # 验证文件路径存在
         full_path = project_root / path_str
         if not full_path.exists():
-            warnings.append(
-                f"  {issue_id}: impact 文件 '{path_str}' 不存在"
-                f"（可能工作项未完成）"
-            )
+            warnings.append(f"  {issue_id}: impact 文件 '{path_str}' 不存在（可能工作项未完成）")
     return warnings
 
 
@@ -200,9 +203,7 @@ def make_issue_resolved_integrity_gate() -> GateSpec:
                 continue
             issue_id = entry.get("issue_id", "?")
             impact = entry.get("impact", [])
-            warnings.extend(
-                check_impact_files_exist(issue_id, impact, project_root)
-            )
+            warnings.extend(check_impact_files_exist(issue_id, impact, project_root))
 
         if warnings:
             detail = (

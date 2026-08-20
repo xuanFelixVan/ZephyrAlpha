@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——registry/IO 异常降级为 fail-open；检出违规则 fail-closed
-# [TESTS] tests/governance/commit_gates/test_noqa_validation_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """noqa_validation_gate.py — 自定义 noqa 标记合规性门禁（NOQA-VALIDATION，ARCH-NOQA-GOV-001 治本）
@@ -40,6 +40,7 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.noqa_validation_gate import make_noqa_validation_gate
     registry.register(make_noqa_validation_gate())
 """
+
 from __future__ import annotations
 
 import logging
@@ -55,14 +56,16 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["make_noqa_validation_gate"]
 
-_PROJECT_ROOT = (
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))
-    ))))
+_PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 )
 _REGISTRY_PATH = os.path.join(
-    _PROJECT_ROOT, "docs", "01_policies_and_standards", "_registry",
-    "catalogs", "noqa_exempt_registry.yaml",
+    _PROJECT_ROOT,
+    "docs",
+    "01_policies_and_standards",
+    "_registry",
+    "catalogs",
+    "noqa_exempt_registry.yaml",
 )
 
 # noqa 标记提取正则：`# noqa: <marker>`，marker 含字母（跳过纯注释）
@@ -88,7 +91,9 @@ def _load_registry() -> dict[str, Any] | None:
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning(
             "NOQA-VALIDATION fail-open: registry 加载失败(%s: %s, path=%s)",
-            type(e).__name__, e, _REGISTRY_PATH,
+            type(e).__name__,
+            e,
+            _REGISTRY_PATH,
         )
         return None
 
@@ -106,10 +111,7 @@ def _get_staged_py_files(gateway) -> list[str]:
         if r.returncode != 0:
             logger.warning("NOQA-VALIDATION fail-open: git diff 失败(rc=%d)。", r.returncode)
             return []
-        return [
-            f.replace("\\", "/") for f in r.stdout.strip().splitlines()
-            if f.endswith(".py")
-        ]
+        return [f.replace("\\", "/") for f in r.stdout.strip().splitlines() if f.endswith(".py")]
     except Exception as e:  # noqa: BLE001 — fail-open
         logger.warning("NOQA-VALIDATION fail-open: git diff 异常(%s: %s)。", type(e).__name__, e)
         return []
@@ -155,11 +157,10 @@ def _scan_file_noqa(abs_path: str, registered: frozenset[str]) -> list[str]:
                 continue  # ruff/flake8 标准码跳过
             if marker not in registered:
                 violations.append(
-                    f"{abs_path}:L{line_no} 未登记的 noqa 标记 '{marker}'"
-                    "（需先在 noqa_exempt_registry.yaml 登记）"
+                    f"{abs_path}:L{line_no} 未登记的 noqa 标记 '{marker}'（需先在 noqa_exempt_registry.yaml 登记）"
                 )
                 continue
-            reason = line[match.end():].strip()
+            reason = line[match.end() :].strip()
             if len(reason) < _REASON_MIN_LENGTH:
                 violations.append(
                     f"{abs_path}:L{line_no} noqa '{marker}' 缺少理由"
@@ -232,8 +233,7 @@ def make_noqa_validation_gate() -> GateSpec:
             detail = "\n".join(violations[:20])
             return False, (
                 "NOQA_VALIDATION_VIOLATION——检出未登记/无理由/密度超限的自定义 noqa 标记"
-                "（ARCH-NOQA-GOV-001）：\n"
-                + detail
+                "（ARCH-NOQA-GOV-001）：\n" + detail
             )
         return True, ""
 

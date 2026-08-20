@@ -75,9 +75,9 @@ logger = logging.getLogger(__name__)
 
 GATE_ID = "GATE-WORKTREE-DRIFT-WATCHDOG"
 
-_SCAN_INTERVAL = 60            # daemon 扫描间隔（秒）
-_GRACE_AFTER_COMMIT = 600      # commit 后派生写宽限窗（秒）——reconciler 合法回写期
-_IDLE_EXIT_SECONDS = 1800      # 无活跃 session 持续此秒数后 daemon 退出（同 heartbeat 活性锚语义）
+_SCAN_INTERVAL = 60  # daemon 扫描间隔（秒）
+_GRACE_AFTER_COMMIT = 600  # commit 后派生写宽限窗（秒）——reconciler 合法回写期
+_IDLE_EXIT_SECONDS = 1800  # 无活跃 session 持续此秒数后 daemon 退出（同 heartbeat 活性锚语义）
 _STATE_DIR = ".runtime/drift_watchdog"
 _AUDIT_DIR = ".runtime/audit"
 _QUARANTINE_DIR = ".runtime/quarantine"
@@ -85,13 +85,18 @@ _QUARANTINE_DIR = ".runtime/quarantine"
 
 # ── git 原语（全部经 run_subprocess_hidden，禁裸 subprocess 直调）────────────────
 
+
 def _git(root: Path, args: list[str]) -> tuple[int, str]:
     """执行只读 git 命令，返回 (returncode, stdout)。失败返回 (rc, '') 不抛异常。"""
     from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
 
     try:
         r = run_subprocess_hidden(
-            ["git", *args], capture_output=True, text=True, cwd=str(root), timeout=30,
+            ["git", *args],
+            capture_output=True,
+            text=True,
+            cwd=str(root),
+            timeout=30,
         )
         return r.returncode, (r.stdout or "")
     except Exception as e:  # noqa: BLE001 — git 不可达降级
@@ -140,6 +145,7 @@ def _head_blob(root: Path, rel: str) -> str:
 
 # ── 归属判定（活跃 session + claim 快照）──────────────────────────────────────
 
+
 def _active_sessions_and_claims(root: Path) -> tuple[list[str], dict[str, str]]:
     """返回 (活跃 session id 清单, {被 claim 文件: session_id})。
 
@@ -151,6 +157,7 @@ def _active_sessions_and_claims(root: Path) -> tuple[list[str], dict[str, str]]:
         from zephyr.security.access_control.session_concurrency import (  # noqa: PLC0415
             SessionRegistry,
         )
+
         sessions = [s.session_id for s in SessionRegistry(root).list_active()]
     except Exception as e:  # noqa: BLE001 — registry 故障降级空清单（不误豁免）
         logger.debug("session registry query failed: %s", e)
@@ -172,6 +179,7 @@ def _active_sessions_and_claims(root: Path) -> tuple[list[str], dict[str, str]]:
 
 
 # ── 状态/审计/快照/告警 ──────────────────────────────────────────────────────
+
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -229,6 +237,7 @@ def _log_results(root: Path, action: str, detail: str) -> None:
             ReconcileResult,
             _log_reconcile_results,
         )
+
         _log_reconcile_results(
             str(root),
             [ReconcileResult(action=action, detail=detail, gate_id=GATE_ID)],
@@ -240,6 +249,7 @@ def _log_results(root: Path, action: str, detail: str) -> None:
 
 
 # ── 扫描主逻辑 ────────────────────────────────────────────────────────────────
+
 
 def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COMMIT) -> dict:
     """单周期扫描：tracked 漂移四路分流（claimed/grace/dedup/alert）+ 自愈。
@@ -254,8 +264,16 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
     from zephyr.shared.io.paths import anchor_main_root  # noqa: PLC0415
 
     root = anchor_main_root(Path(str(project_root)).resolve())
-    summary = {"scanned": 0, "drifted": 0, "alerted": 0, "claimed": 0,
-               "grace_suppressed": 0, "dedup_skipped": 0, "healed": 0, "merge_suppressed": 0}
+    summary = {
+        "scanned": 0,
+        "drifted": 0,
+        "alerted": 0,
+        "claimed": 0,
+        "grace_suppressed": 0,
+        "dedup_skipped": 0,
+        "healed": 0,
+        "merge_suppressed": 0,
+    }
     head_sha = _head_sha(root)
     if not head_sha:
         return summary  # git 不可达→本轮 skip（fail-open）
@@ -303,9 +321,14 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
         hb = _head_blob(root, rel)
         prev = files_state.get(rel, {})
         base = {
-            "ts": _now_iso(), "file": rel, "work_hash": wh, "head_blob": hb,
-            "prev_work_hash": prev.get("work_hash", ""), "head_sha": head_sha,
-            "active_sessions": sessions, "claimed_by": claimed.get(rel, ""),
+            "ts": _now_iso(),
+            "file": rel,
+            "work_hash": wh,
+            "head_blob": hb,
+            "prev_work_hash": prev.get("work_hash", ""),
+            "head_sha": head_sha,
+            "active_sessions": sessions,
+            "claimed_by": claimed.get(rel, ""),
         }
         if prev.get("work_hash") == wh:
             summary["dedup_skipped"] += 1  # 同签名漂移持续，不重复告警
@@ -337,8 +360,10 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
     for rel, sig in list(alerted.items()):
         if rel not in seen_drift:
             _log_results(root, "clean", f"tracked 漂移已消解: {rel}（alert 签名 {sig[:8]}）")
-            _audit(root, {"ts": _now_iso(), "file": rel, "verdict": "healed",
-                          "head_sha": head_sha, "active_sessions": sessions})
+            _audit(
+                root,
+                {"ts": _now_iso(), "file": rel, "verdict": "healed", "head_sha": head_sha, "active_sessions": sessions},
+            )
             del alerted[rel]
             files_state.pop(rel, None)
             summary["healed"] += 1
@@ -348,6 +373,7 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
 
 
 # ── daemon 生命周期（模式同 heartbeat_daemon）────────────────────────────────
+
 
 def _pid_path(root: Path) -> Path:
     return root / _STATE_DIR / "watchdog.pid"
@@ -395,9 +421,18 @@ def ensure_daemon(project_root: str | Path, interval: int = _SCAN_INTERVAL) -> b
     log_path = str(root / _STATE_DIR / "watchdog_stdout.log")
     (root / _STATE_DIR).mkdir(parents=True, exist_ok=True)
     proc = spawn_python_hidden(
-        [sys.executable, "-m", "zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog",
-         str(root), "--daemon", "--interval", str(interval)],
-        cwd=str(root), stdout_path=log_path, stderr_path=log_path,
+        [
+            sys.executable,
+            "-m",
+            "zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog",
+            str(root),
+            "--daemon",
+            "--interval",
+            str(interval),
+        ],
+        cwd=str(root),
+        stdout_path=log_path,
+        stderr_path=log_path,
     )
     try:
         pid_file.write_text(str(proc.pid), encoding="utf-8")
@@ -477,6 +512,7 @@ def run_daemon(project_root: str | Path, interval: int = _SCAN_INTERVAL) -> int:
 
 # ── post-commit reconciler 接入（事件轨 spawn 点）────────────────────────────
 
+
 def make_worktree_drift_watchdog_reconciler(gateway: object):
     """构造 GATE-WORKTREE-DRIFT-WATCHDOG post-commit reconciler（ensure-daemon + 即时一扫）。
 
@@ -519,6 +555,7 @@ def make_worktree_drift_watchdog_reconciler(gateway: object):
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
+
 def _status(root: Path) -> int:
     state = _load_state(root)
     alerted = state.get("alerted", {})
@@ -528,15 +565,24 @@ def _status(root: Path) -> int:
     if pid_file.is_file():
         try:
             from zephyr.shared.infra.process_pool import is_pid_alive  # noqa: PLC0415
+
             pid = int(pid_file.read_text(encoding="utf-8").strip())
             alive = is_pid_alive(pid)
         except (OSError, ValueError):
             pass
-    print(json.dumps({
-        "daemon_pid": pid, "daemon_alive": alive,
-        "active_alerts": len(alerted), "alerted_files": sorted(alerted),
-        "state_file": str(_state_path(root)),
-    }, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                "daemon_pid": pid,
+                "daemon_alive": alive,
+                "active_alerts": len(alerted),
+                "alerted_files": sorted(alerted),
+                "state_file": str(_state_path(root)),
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
     return 1 if alerted else 0
 
 

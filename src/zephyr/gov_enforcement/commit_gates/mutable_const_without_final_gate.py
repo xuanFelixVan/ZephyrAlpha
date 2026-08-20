@@ -130,8 +130,7 @@ def _scan_file_for_violations(gateway, py_file: str) -> list[str]:
         tree = ast.parse(file_content)
     except SyntaxError:
         logger.warning(
-            "MUTABLE-CONST-WITHOUT-FINAL gate: ast.parse 失败 file=%s（语法错误），"
-            "fail-open 跳过该文件。",
+            "MUTABLE-CONST-WITHOUT-FINAL gate: ast.parse 失败 file=%s（语法错误），fail-open 跳过该文件。",
             py_file,
             exc_info=True,
         )
@@ -188,7 +187,7 @@ def _format_violation_detail(violations: list[str]) -> str:
         "  src/zephyr/ 全量禁止模块级可变容器赋值（X = [...]）无 Final 标注。\n"
         + "\n".join(violations)
         + "\n-> 改用 X: Final = [...]（AnnAssign + Final 注解）；"
-        "合法场景（需运行时修改的注册表）用 # noqa: n114-final 豁免。"
+        "合法场景（需运行时修改的注册表）用 # noqa: n114-final 豁免并附理由说明文本。"
     )
 
 
@@ -206,10 +205,7 @@ def make_mutable_const_without_final_gate() -> GateSpec:
             return True, ""
 
         # 2. 过滤到 src/zephyr/ 文件 + tests/ 豁免
-        target_files = [
-            f for f in staged
-            if _is_src_zephyr_file(f) and not is_test_exempt(f)
-        ]
+        target_files = [f for f in staged if _is_src_zephyr_file(f) and not is_test_exempt(f)]
         if not target_files:
             return True, ""
 

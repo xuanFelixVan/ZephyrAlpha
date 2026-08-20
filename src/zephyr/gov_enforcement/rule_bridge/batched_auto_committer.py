@@ -162,9 +162,7 @@ _BUFFERED_HASH = "BUFFERED"
 
 # squash commit message 模板（flush 时生成）
 _FLUSH_MSG_TEMPLATE = (
-    "chore(reconciler): batched auto-commit ({n} reconcilers) "
-    "by GitCommitGateway post-commit\n\n"
-    "{entries}"
+    "chore(reconciler): batched auto-commit ({n} reconcilers) by GitCommitGateway post-commit\n\n{entries}"
 )
 
 
@@ -237,7 +235,8 @@ class BatchedAutoCommitter:
         self._session_id = session_id
         self._buffer = []
         logger.debug(
-            "BatchedAutoCommitter: enabled (session=%s)", session_id,
+            "BatchedAutoCommitter: enabled (session=%s)",
+            session_id,
         )
 
     def disable(self) -> None:
@@ -248,7 +247,8 @@ class BatchedAutoCommitter:
         """
         self._enabled = False
         logger.debug(
-            "BatchedAutoCommitter: disabled (buffer size=%d)", len(self._buffer),
+            "BatchedAutoCommitter: disabled (buffer size=%d)",
+            len(self._buffer),
         )
 
     def is_enabled(self) -> bool:  # noqa: m03-duplicate  M03豁免: 平凡一行属性getter(return self._enabled)，AI趋同演化非复制粘贴
@@ -286,7 +286,10 @@ class BatchedAutoCommitter:
     # ── 拦截入口 ──────────────────────────────────────────────────────
 
     def buffer(
-        self, session_id: str, files: list[str], message: str,
+        self,
+        session_id: str,
+        files: list[str],
+        message: str,
     ) -> "CommitResult":
         """拦截 _commit_auto 调用，累积到 buffer。
 
@@ -314,13 +317,16 @@ class BatchedAutoCommitter:
         )
         logger.debug(
             "BatchedAutoCommitter: buffered %d files (msg=%r, total buffered=%d)",
-            len(files), message[:80], len(self._buffer),
+            len(files),
+            message[:80],
+            len(self._buffer),
         )
         # 延迟 import 避免循环依赖
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
             CommitResult,
             CommitStatus,
         )
+
         return CommitResult(
             status=CommitStatus.OK,
             message=f"buffered {len(files)} files (pending flush)",
@@ -372,11 +378,10 @@ class BatchedAutoCommitter:
                     all_files.append(f)
 
         # 2. 合并 message（每条原 message 作为 bullet）
-        entries = "\n".join(
-            f"- {entry.message}" for entry in self._buffer
-        )
+        entries = "\n".join(f"- {entry.message}" for entry in self._buffer)
         combined_msg = _FLUSH_MSG_TEMPLATE.format(
-            n=len(self._buffer), entries=entries,
+            n=len(self._buffer),
+            entries=entries,
         )
 
         # 3. 临时 disable，调 _commit_auto（避免被自身拦截）
@@ -386,19 +391,25 @@ class BatchedAutoCommitter:
         # 清空 buffer 在 finally 中执行——即使 _commit_auto 失败也不留残余
         try:
             result = self._gateway._commit_auto(
-                self._session_id, all_files, combined_msg,
+                self._session_id,
+                all_files,
+                combined_msg,
             )
             if result.status == CommitStatus.OK:
                 logger.info(
-                    "BatchedAutoCommitter: flush 成功 squash %d buffered → 1 commit "
-                    "(hash=%s, files=%d, session=%s)",
-                    buffer_count, result.commit_hash, files_count, self._session_id,
+                    "BatchedAutoCommitter: flush 成功 squash %d buffered → 1 commit (hash=%s, files=%d, session=%s)",
+                    buffer_count,
+                    result.commit_hash,
+                    files_count,
+                    self._session_id,
                 )
             else:
                 logger.warning(
-                    "BatchedAutoCommitter: flush _commit_auto 返回 %s (msg=%s, "
-                    "buffered=%d, files=%d)",
-                    result.status, result.message[:200], buffer_count, files_count,
+                    "BatchedAutoCommitter: flush _commit_auto 返回 %s (msg=%s, buffered=%d, files=%d)",
+                    result.status,
+                    result.message[:200],
+                    buffer_count,
+                    files_count,
                 )
             # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：记录 flush 结果，
             # 供调用方在 with 块后验证 auto_committed 是否真正落地。
@@ -436,7 +447,8 @@ class BatchedAutoCommitter:
             self.flush()
         except Exception as e:  # noqa: BLE001 — flush 异常不应掩盖 with 块内原异常
             logger.warning(
-                "BatchedAutoCommitter: __exit__ flush 异常（已吞，原异常优先）: %s", e,
+                "BatchedAutoCommitter: __exit__ flush 异常（已吞，原异常优先）: %s",
+                e,
             )
         # 确保 batcher 被禁用（flush 内部已 disable，此处兜底）
         self._enabled = False

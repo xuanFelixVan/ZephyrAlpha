@@ -175,6 +175,7 @@ def _to_decimal(v):
         return None
     try:
         from math import isnan
+
         if isinstance(v, float) and isnan(v):
             return None
         d = Decimal(str(v))
@@ -196,9 +197,7 @@ def _gate_ohlc_logic(o, h, l, c):
     """门禁1：OHLC 结构一致性。"""
     if None in (o, h, l, c):
         return False
-    return (o > 0 and h > 0 and l > 0 and c > 0
-            and h >= o and h >= c and l <= o and l <= c
-            and h >= l)
+    return o > 0 and h > 0 and l > 0 and c > 0 and h >= o and h >= c and l <= o and l <= c and h >= l
 
 
 def _gate_price_change(o, c, prev_c, change_limit):
@@ -250,8 +249,7 @@ class MarketDataValidator:
     设计为无副作用、无 DB 查询、O(n) 复杂度，可在 ch_writer.write_result 批量写入前调用。
     """
 
-    def __init__(self, change_limit=_DEFAULT_CHANGE_LIMIT, swing_limit=Decimal("0.30"),
-                 adj_max=Decimal("1000")):
+    def __init__(self, change_limit=_DEFAULT_CHANGE_LIMIT, swing_limit=Decimal("0.30"), adj_max=Decimal("1000")):
         self.change_limit = change_limit
         self.swing_limit = swing_limit
         self.adj_max = adj_max
@@ -267,9 +265,13 @@ def _build_col_map(columns):
     has_ohlc = all(k in idx for k in ("open", "high", "low", "close"))
     if not has_ohlc:
         return None
-    for key, aliases in (("volume", _VOLUME_ALIASES), ("adj_factor", _ADJ_ALIASES),
-                        ("prev_close", _PREVCLOSE_ALIASES), ("quality_flag", _QFLAG_ALIASES),
-                        ("symbol", _SYMBOL_ALIASES)):
+    for key, aliases in (
+        ("volume", _VOLUME_ALIASES),
+        ("adj_factor", _ADJ_ALIASES),
+        ("prev_close", _PREVCLOSE_ALIASES),
+        ("quality_flag", _QFLAG_ALIASES),
+        ("symbol", _SYMBOL_ALIASES),
+    ):
         i = _detect_column_index(columns, aliases)
         if i is not None:
             idx[key] = i
@@ -291,8 +293,13 @@ def apply_quality_gate(table, columns, rows, validator=None):
     """
     v = validator or MarketDataValidator()
     col_map = _build_col_map(list(columns))
-    stats = {"table": table, "total": len(rows), "checked": 0,
-             "flagged": 0, "by_gate": {"ohlc": 0, "change": 0, "swing": 0, "adj": 0}}
+    stats = {
+        "table": table,
+        "total": len(rows),
+        "checked": 0,
+        "flagged": 0,
+        "by_gate": {"ohlc": 0, "change": 0, "swing": 0, "adj": 0},
+    }
     if col_map is None:
         return rows, stats  # 非 OHLC 表，跳过
     qf_idx = col_map.get("quality_flag")
@@ -314,16 +321,20 @@ def apply_quality_gate(table, columns, rows, validator=None):
         stats["checked"] += 1
         ok = True
         if not _gate_ohlc_logic(o, h, l, c):
-            ok = False; stats["by_gate"]["ohlc"] += 1
+            ok = False
+            stats["by_gate"]["ohlc"] += 1
         change_limit = v.change_limit
         if board_aware and sym_idx is not None:
             change_limit = _infer_change_limit(r[sym_idx], v.change_limit)
         if not _gate_price_change(o, c, pc, change_limit):
-            ok = False; stats["by_gate"]["change"] += 1
+            ok = False
+            stats["by_gate"]["change"] += 1
         if not _gate_swing(o, h, l, v.swing_limit):
-            ok = False; stats["by_gate"]["swing"] += 1
+            ok = False
+            stats["by_gate"]["swing"] += 1
         if not _gate_adjustment(adj, v.adj_max):
-            ok = False; stats["by_gate"]["adj"] += 1
+            ok = False
+            stats["by_gate"]["adj"] += 1
         if not ok:
             stats["flagged"] += 1
             if qf_idx is not None:
@@ -331,9 +342,15 @@ def apply_quality_gate(table, columns, rows, validator=None):
         out_rows.append(tuple(r) if isinstance(row, tuple) else r)
     if stats["flagged"]:
         import logging
+
         logging.getLogger("zephyr.data.quality_gate").info(
             "apply_quality_gate(%s): %d/%d rows flagged (ohlc=%d change=%d swing=%d adj=%d)",
-            table, stats["flagged"], stats["checked"], stats["by_gate"]["ohlc"],
-            stats["by_gate"]["change"], stats["by_gate"]["swing"], stats["by_gate"]["adj"])
+            table,
+            stats["flagged"],
+            stats["checked"],
+            stats["by_gate"]["ohlc"],
+            stats["by_gate"]["change"],
+            stats["by_gate"]["swing"],
+            stats["by_gate"]["adj"],
+        )
     return out_rows, stats
-

@@ -228,7 +228,6 @@ class WorktreeLifecycle:
         """写入：config_path（Stage 4 公共化）。"""
         self._config_path = value
 
-
     def _load_config(self) -> None:
         try:
             config = load_state_machine_config(self._config_path)
@@ -325,9 +324,7 @@ class WorktreeLifecycle:
                 }
             )
             self._write_record(session_id, record)
-        _logger.info(
-            "WorktreeLifecycle: %s %s -> %s", session_id, current.value, target.value
-        )
+        _logger.info("WorktreeLifecycle: %s %s -> %s", session_id, current.value, target.value)
         return target
 
     def get_state(self, session_id: str) -> WorktreeState:
@@ -395,18 +392,13 @@ class WorktreeLifecycle:
             cleaned += 1
         return cleaned
 
-    def _is_valid_transition(
-        self, current: WorktreeState, target: WorktreeState
-    ) -> bool:
+    def _is_valid_transition(self, current: WorktreeState, target: WorktreeState) -> bool:
         """校验转换是否合法（按 config 的 transitions 表）。"""
         if not self._transitions:
             # config 缺失时使用内置默认转换表
             return _DEFAULT_TRANSITIONS.get(current, set()).__contains__(target)
         for t in self._transitions:
-            if (
-                t.get("from") == current.value
-                and t.get("to") == target.value
-            ):
+            if t.get("from") == current.value and t.get("to") == target.value:
                 return True
         return False
 
@@ -419,19 +411,25 @@ class WorktreeLifecycle:
 # 内置默认转换表（config 缺失时的 fallback）
 _DEFAULT_TRANSITIONS: dict[WorktreeState, frozenset[WorktreeState]] = {
     WorktreeState.CREATED: frozenset({WorktreeState.ACTIVE, WorktreeState.SWEPT}),
-    WorktreeState.ACTIVE: frozenset({
-        WorktreeState.IDLE,
-        WorktreeState.SWEPT,
-        WorktreeState.QUARANTINED,
-    }),
-    WorktreeState.IDLE: frozenset({
-        WorktreeState.ACTIVE,
-        WorktreeState.QUARANTINED,
-        WorktreeState.SWEPT,
-    }),
-    WorktreeState.QUARANTINED: frozenset({
-        WorktreeState.ACTIVE,
-        WorktreeState.SWEPT,
-    }),
+    WorktreeState.ACTIVE: frozenset(
+        {
+            WorktreeState.IDLE,
+            WorktreeState.SWEPT,
+            WorktreeState.QUARANTINED,
+        }
+    ),
+    WorktreeState.IDLE: frozenset(
+        {
+            WorktreeState.ACTIVE,
+            WorktreeState.QUARANTINED,
+            WorktreeState.SWEPT,
+        }
+    ),
+    WorktreeState.QUARANTINED: frozenset(
+        {
+            WorktreeState.ACTIVE,
+            WorktreeState.SWEPT,
+        }
+    ),
     WorktreeState.SWEPT: frozenset(),  # 终态
 }

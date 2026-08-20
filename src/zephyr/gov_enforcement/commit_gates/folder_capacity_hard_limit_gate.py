@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True，logger.warning）；文件系统扫描异常降级为 fail-open；检出违规则 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_folder_capacity_hard_limit_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """folder_capacity_hard_limit_gate.py — 文件夹容量硬上限门禁（FOLDER-CAPACITY-HARD-LIMIT）
@@ -85,29 +85,24 @@ def _collect_staged_trigger_files(gateway) -> list[str]:
     fail-open：git diff 失败返回空列表（不阻断 commit）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "FOLDER-CAPACITY-HARD-LIMIT gate fail-open: git diff 失败(rc=%d)。",
                 diff_result.returncode,
             )
             return []
-        staged = [
-            f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f
-        ]
+        staged = [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning(
             "FOLDER-CAPACITY-HARD-LIMIT gate fail-open: git diff 异常(%s: %s)。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return []
 
-    return [
-        f for f in staged
-        if f.endswith(_TRIGGER_EXTENSIONS) and not is_test_exempt(f)
-    ]
+    return [f for f in staged if f.endswith(_TRIGGER_EXTENSIONS) and not is_test_exempt(f)]
 
 
 def _count_flat_files(dir_path: str) -> int:
@@ -161,8 +156,7 @@ def _scan_violations(gateway, trigger_files: list[str]) -> list[str]:
         count = _count_flat_files(abs_dir)
         if count > _HARD_LIMIT:
             violations.append(
-                f"  {rel_dir}/: {count} 文件 > {_HARD_LIMIT} 硬上限"
-                f"（GOV-DOC-018 T_soft=120）。请拆分子目录或迁移文件。"
+                f"  {rel_dir}/: {count} 文件 > {_HARD_LIMIT} 硬上限（GOV-DOC-018 T_soft=120）。请拆分子目录或迁移文件。"
             )
 
     return violations
@@ -194,6 +188,4 @@ def make_folder_capacity_hard_limit_gate() -> GateSpec:
 
         return True, ""
 
-    return GateSpec(
-        gate_id="FOLDER-CAPACITY-HARD-LIMIT", check=_check, priority=112
-    )
+    return GateSpec(gate_id="FOLDER-CAPACITY-HARD-LIMIT", check=_check, priority=112)

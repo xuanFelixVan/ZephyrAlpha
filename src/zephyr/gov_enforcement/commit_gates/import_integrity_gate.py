@@ -268,11 +268,7 @@ def _is_path_file_bare(node: ast.AST) -> bool:
         return False
     if not _is_path_func(node.func):
         return False
-    return (
-        len(node.args) == 1
-        and isinstance(node.args[0], ast.Name)
-        and node.args[0].id == "__file__"
-    )
+    return len(node.args) == 1 and isinstance(node.args[0], ast.Name) and node.args[0].id == "__file__"
 
 
 def _is_path_file_resolve(node: ast.AST) -> bool:
@@ -339,15 +335,11 @@ def _resolve_path_object(
         and isinstance(node.args[0], ast.Name)
         and node.args[0].id in var_assigns
     ):
-        resolved = _resolve_path_expr(
-            var_assigns[node.args[0].id], file_abs, var_assigns, _depth
-        )
+        resolved = _resolve_path_expr(var_assigns[node.args[0].id], file_abs, var_assigns, _depth)
         if resolved is not None:
             return resolved
     if isinstance(node, ast.Name) and node.id in var_assigns:
-        return _resolve_path_object(
-            var_assigns[node.id], file_abs, var_assigns, _depth + 1
-        )
+        return _resolve_path_object(var_assigns[node.id], file_abs, var_assigns, _depth + 1)
     return None
 
 
@@ -428,9 +420,7 @@ def _try_resolve_next_parents_search(
         return None
     comp = gen.generators[0]
     # iter 必须是 <base>.parents
-    if not (
-        isinstance(comp.iter, ast.Attribute) and comp.iter.attr == "parents"
-    ):
+    if not (isinstance(comp.iter, ast.Attribute) and comp.iter.attr == "parents"):
         return None
     # 用 _resolve_path_expr 而非 _resolve_path_object 解析 base，支持 base 为
     # .parent 链（如 _SCRIPT_DIR = Path(__file__).resolve().parent）的变量间接形式。
@@ -485,12 +475,15 @@ def _resolve_path_expr(
         return node.value
 
     # str(EXPR) → 递归求值内部表达式
-    if (
-        isinstance(node, ast.Call)
-        and isinstance(node.func, ast.Name)
-        and node.func.id == "str"
-        and node.args
-    ):
+    if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "str" and node.args:
+        return _resolve_path_expr(node.args[0], file_abs, var_assigns, _depth)
+
+    # Path(EXPR) → 递归求值内部表达式（2026-08-20 波3 实证补齐：protected_paths_gate
+    # ``gov_dir = Path(REPO_ROOT) / "scripts" / ...`` 模式——REPO_ROOT 经
+    # _REPO_ROOT_IMPORT_MODULES 映射为 project_root 常量，Path() 包装此前无分支求值，
+    # 致 str(gov_dir) 全链失败误报悬空；Path(__file__) 形态不受影响——__file__ 不在
+    # var_assigns，Name 回溯失败返回 None，与旧行为一致）
+    if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "Path" and node.args:
         return _resolve_path_expr(node.args[0], file_abs, var_assigns, _depth)
 
     # X / "subdir" → 路径拼接（BinOp Div，治本 #ARCH-IMPORT-INTEGRITY-SYSPATH-001）
@@ -508,9 +501,7 @@ def _resolve_path_expr(
 
     # 变量引用 → 回溯赋值（多层深度）
     if isinstance(node, ast.Name) and node.id in var_assigns:
-        return _resolve_path_expr(
-            var_assigns[node.id], file_abs, var_assigns, _depth + 1
-        )
+        return _resolve_path_expr(var_assigns[node.id], file_abs, var_assigns, _depth + 1)
 
     # next(p for p in <base>.parents if (p / "subdir").exists()) — 启发式向上搜索
     next_result = _try_resolve_next_parents_search(node, file_abs, var_assigns)
@@ -532,10 +523,7 @@ def _resolve_path_expr(
     # <base>.parents[N] → base 所在目录向上 N 级
     # AST: Subscript(value=Attribute(attr='parents', value=<base>), slice=N)
     if isinstance(node, ast.Subscript):
-        if (
-            isinstance(node.value, ast.Attribute)
-            and node.value.attr == "parents"
-        ):
+        if isinstance(node.value, ast.Attribute) and node.value.attr == "parents":
             base_dir = _resolve_path_object(node.value.value, file_abs, var_assigns)
             if base_dir is not None:
                 n = _extract_subscript_int(node)
@@ -625,9 +613,7 @@ def _extract_repo_root_while_var(test: ast.AST) -> str | None:
     return None
 
 
-def _extract_sys_path_dirs(
-    tree: ast.AST, py_file: str, project_root: str | None = None
-) -> list[str]:
+def _extract_sys_path_dirs(tree: ast.AST, py_file: str, project_root: str | None = None) -> list[str]:
     """从 AST 中提取 ``sys.path.insert`` / ``sys.path.append`` 注入的目录路径。
 
     识别模式::
@@ -667,10 +653,7 @@ def _extract_sys_path_dirs(
     for node in ast.walk(tree):
         if isinstance(node, ast.Assign):
             for target in node.targets:
-                if (
-                    isinstance(target, ast.Name)
-                    and target.id not in module_level_vars
-                ):
+                if isinstance(target, ast.Name) and target.id not in module_level_vars:
                     var_assigns[target.id] = node.value
 
     # 识别跨文件 import 的仓库根常量（REPO_ROOT 等），映射为 project_root。
@@ -684,7 +667,9 @@ def _extract_sys_path_dirs(
             for alias in node.names:
                 if alias.name in _REPO_ROOT_IMPORT_NAMES:
                     local_name = alias.asname or alias.name
-                    var_assigns[local_name] = ast.Constant(value=project_root)
+                    # str() 包装（2026-08-20 波3 实证）：project_root 为 Path 对象时
+                    # Constant(value=Path) 过不了 _resolve_path_expr 的 str 校验致全链失效
+                    var_assigns[local_name] = ast.Constant(value=str(project_root))
 
     # 识别 while 循环向上找 .git 的仓库根模式
     # （_VAR = Path(__file__).resolve(); while not (_VAR / ".git").exists() ...: _VAR = _VAR.parent）
@@ -695,7 +680,7 @@ def _extract_sys_path_dirs(
                 continue
             root_var = _extract_repo_root_while_var(node.test)
             if root_var:
-                var_assigns[root_var] = ast.Constant(value=project_root)
+                var_assigns[root_var] = ast.Constant(value=str(project_root))  # str 包装：Path 过不了 str 校验
 
     file_abs = os.path.abspath(py_file)
     dirs: list[str] = []
@@ -708,9 +693,7 @@ def _extract_sys_path_dirs(
     for node in ast.walk(tree):
         if not isinstance(node, ast.For):
             continue
-        if not (
-            isinstance(node.target, ast.Name) and isinstance(node.iter, ast.Tuple)
-        ):
+        if not (isinstance(node.target, ast.Name) and isinstance(node.iter, ast.Tuple)):
             continue
         target_id = node.target.id
         for stmt in ast.walk(node):
@@ -793,6 +776,7 @@ def find_target_in_active_sessions(
     """
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         registry = SessionRegistry(project_root=project_root)
         active_sessions = registry.list_active()
         candidates = _module_to_file_candidates(module_path)
@@ -812,7 +796,8 @@ def find_target_in_active_sessions(
         return hits
     except Exception as e:  # noqa: BLE001 — fail-open
         logger.debug(
-            "IMPORT-INTEGRITY: find_target_in_active_sessions fail-open: %s", e,
+            "IMPORT-INTEGRITY: find_target_in_active_sessions fail-open: %s",
+            e,
         )
         return []
 
@@ -843,9 +828,23 @@ def scan_content_for_dangling_imports(
     noqa_lines = _extract_noqa_lines(content, _NOQA_PATTERN)
     # #ARCH-IMPORT-INTEGRITY-SYSPATH-001 治本：提取 sys.path 注入目录，
     # 使 from _shared / from _common 等动态加载模块可被解析（320+ 文件免疫）
-    sys_path_dirs = _extract_sys_path_dirs(
-        tree, py_file, getattr(gateway, "project_root", None)
-    )
+    sys_path_dirs = _extract_sys_path_dirs(tree, py_file, getattr(gateway, "project_root", None))
+    # 隐式 script-dir 解析（2026-08-20 波3 实证 18+ 文件误报补齐）：
+    # ①CPython 直接执行语义——python scripts/x/y.py 时脚本自身目录自动入 sys.path[0]，
+    #   from _shared/_common/同目录模块 无显式注入运行时亦可解析；
+    # ②scripts/governance/** 额外补 scripts/governance（_shared/_common 唯一真源所在地，
+    #   项目入口脚本 run_gate_chain/sync_panorama_module 均以该目录为 script-dir 运行，
+    #   嵌套脚本经入口导入时运行时可达）。
+    # 安全边界：_check_module_in_dirs 校验模块文件真实存在才放行，幻觉模块名仍阻断。
+    _root = getattr(gateway, "project_root", None)
+    _norm_file = py_file.replace("\\", "/")
+    if _root and _norm_file.startswith("scripts/"):
+        _implicit = [os.path.join(str(_root), os.path.dirname(_norm_file))]
+        if _norm_file.startswith("scripts/governance/"):
+            _implicit.append(os.path.join(str(_root), "scripts", "governance"))
+        for _d in _implicit:
+            if _d not in sys_path_dirs:
+                sys_path_dirs.append(_d)
     violations: list[str] = []
     for lineno, module_path, _is_from in imports:
         if lineno in noqa_lines:
@@ -887,12 +886,15 @@ def make_import_integrity_gate() -> GateSpec:
         for py_file in staged:
             if not py_file.startswith(_SCAN_PREFIXES):
                 continue
+            # 排除 _archive 目录（归档一次性代码不参与扫描——同族先例：undefined_name_gate
+            # 裁定#E / bare_sql_gate / reconciler_file_ops_gate 同口径；2026-08-20 波3 实证
+            # format 重排归档脚本存量 import 伪"新增"致误报 analyze_orphan_consumers 等 4 处）
+            if "_archive" in py_file:
+                continue
             content = _read_staged_file(gateway, py_file)
             if content is None:
                 continue  # fail-open: 文件不可读（git show 失败）
-            violations.extend(
-                scan_content_for_dangling_imports(py_file, content, staged_set, gateway)
-            )
+            violations.extend(scan_content_for_dangling_imports(py_file, content, staged_set, gateway))
 
         if violations:
             # Phase 2.5（#ARCH-CROSS-COMMIT-ATOMICITY-002）：
@@ -907,15 +909,14 @@ def make_import_integrity_gate() -> GateSpec:
                 if m and _project_root is not None:
                     _mod = m.group(1)
                     hits = find_target_in_active_sessions(
-                        _project_root, _mod, current_session_id,
+                        _project_root,
+                        _mod,
+                        current_session_id,
                     )
                     if hits:
-                        hit_str = "; ".join(
-                            f"sess={sid} held={cand}" for sid, cand in hits
-                        )
+                        hit_str = "; ".join(f"sess={sid} held={cand}" for sid, cand in hits)
                         v = (
-                            v
-                            + f"  [Phase 2.5 hint: 目标模块在活跃 session 的 "
+                            v + f"  [Phase 2.5 hint: 目标模块在活跃 session 的 "
                             f"held_files 中 ({hit_str})。修复：①等待该 session "
                             f"merge 后重试；②同 commit 创建目标模块]"
                         )

@@ -124,6 +124,7 @@ def _is_template_ref(ref: str) -> bool:
     """
     return ref in _TEMPLATE_REFS or ref.endswith("-NNN")
 
+
 # registry 相对路径（对标 dangling_reference_gate.py 用 gateway.project_root 的稳健设计）
 # 治本（M03，2026-07-18）：_SCANNABLE_EXTS / _GIT_SHOW_TIMEOUT 已下沉到 _reference_helpers，
 # 本模块不再需要（消除 M03 重复簇：get_head_content / scan_file_violations /
@@ -174,14 +175,19 @@ def _load_registered_nums(project_root: Path) -> tuple[bool, str, set[str]]:
     registry_yaml = project_root / _REGISTRY_REL
     # fail-closed：registry 不存在是环境异常，必须阻断
     if not registry_yaml.is_file():
-        return False, (
-            f"architecture_issue_registry.yaml not found (ARCH-REFERENCE fail-closed)——"
-            f"无法提取已登记编号，禁止放行以防门禁静默失效。"
-            f"路径：{registry_yaml}"
-        ), set()
+        return (
+            False,
+            (
+                f"architecture_issue_registry.yaml not found (ARCH-REFERENCE fail-closed)——"
+                f"无法提取已登记编号，禁止放行以防门禁静默失效。"
+                f"路径：{registry_yaml}"
+            ),
+            set(),
+        )
     # 加载 registry 并提取已登记编号（工作区版本 = commit 后的新真源）
     try:
         import yaml
+
         registry_data = yaml.safe_load(registry_yaml.read_text(encoding="utf-8"))
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False, f"registry 解析失败 (fail-closed): {type(e).__name__}: {e}", set()
@@ -189,10 +195,14 @@ def _load_registered_nums(project_root: Path) -> tuple[bool, str, set[str]]:
         return False, "registry 顶层非 dict（结构异常，fail-closed）。", set()
     registered_nums = _extract_registered_nums(registry_data)
     if not registered_nums:
-        return False, (
-            "registry 无任何已登记 ARCH 编号（ARCH-REFERENCE fail-closed）——"
-            "文件可能损坏或 entries 为空，请检查 architecture_issue_registry.yaml。"
-        ), set()
+        return (
+            False,
+            (
+                "registry 无任何已登记 ARCH 编号（ARCH-REFERENCE fail-closed）——"
+                "文件可能损坏或 entries 为空，请检查 architecture_issue_registry.yaml。"
+            ),
+            set(),
+        )
     return True, "", registered_nums
 
 
@@ -216,6 +226,7 @@ def _detect_id_gaps(registered_nums: set[str]) -> dict[str, list[int]]:
         {domain_prefix: [missing_numbers]} 字典，如 {"CH": [6, 8]}。
     """
     from collections import defaultdict
+
     by_domain: dict[str, list[int]] = defaultdict(list)
     for num in registered_nums:
         parts = num.split("-")
@@ -254,9 +265,7 @@ def _format_gap_warning(gaps: dict[str, list[int]]) -> str:
         parts.append(f"{prefix}{missing}")
     return (
         "⚠️ 编号空洞检测（ARCH_GAP_WARNING，不阻断）——"
-        "以下 ARCH 编号域存在编号空洞：\n  "
-        + "\n  ".join(parts)
-        + "\n建议：确认空洞编号是否为已删除/合并的条目，"
+        "以下 ARCH 编号域存在编号空洞：\n  " + "\n  ".join(parts) + "\n建议：确认空洞编号是否为已删除/合并的条目，"
         "如是则无需处理；如为分配错误则补登或重新分配。"
     )
 
@@ -305,9 +314,7 @@ def make_arch_reference_gate() -> GateSpec:
 
         # 治本（M03，2026-07-18）：scan_file_violations 等共享 helper 已下沉到
         # _reference_helpers，通过 _extract_refs 参数注入本 gate 专用正则。
-        violations, error = scan_file_violations(
-            project_root, files, registered_nums, _extract_refs
-        )
+        violations, error = scan_file_violations(project_root, files, registered_nums, _extract_refs)
         if error is not None:
             return False, error
 
@@ -316,18 +323,13 @@ def make_arch_reference_gate() -> GateSpec:
 
         # L2: 同提交原子性检查——新引用不在 HEAD registry 时，要求 registry 同 commit
         # 防止"引用了新编号但 registry 没同提交登记"导致 commit 后 HEAD registry 仍缺条目
-        head_nums = load_head_registered_nums(
-            project_root, _REGISTRY_REL, _extract_registered_nums
-        )
+        head_nums = load_head_registered_nums(project_root, _REGISTRY_REL, _extract_registered_nums)
         if head_nums is not None:
-            new_refs_by_file = collect_new_refs_by_file(
-                project_root, files, head_nums, _REGISTRY_REL, _extract_refs
-            )
+            new_refs_by_file = collect_new_refs_by_file(project_root, files, head_nums, _REGISTRY_REL, _extract_refs)
             if new_refs_by_file:
                 registry_rel = _REGISTRY_REL.replace("\\", "/")
                 registry_in_commit = any(
-                    os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel
-                    for f in files
+                    os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel for f in files
                 )
                 atomicity_violations = check_atomicity(new_refs_by_file, registry_in_commit)
                 if atomicity_violations:
@@ -341,14 +343,11 @@ def make_arch_reference_gate() -> GateSpec:
         if head_nums is not None:
             registry_rel_normalized = _REGISTRY_REL.replace("\\", "/")
             registry_in_commit = any(
-                os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel_normalized
-                for f in files
+                os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel_normalized for f in files
             )
             if registry_in_commit:
                 new_entries = registered_nums - head_nums
-                non_numeric = sorted(
-                    n for n in new_entries if not _is_numeric_suffix(n)
-                )
+                non_numeric = sorted(n for n in new_entries if not _is_numeric_suffix(n))
                 if non_numeric:
                     warnings.append(_format_non_numeric_warning(non_numeric))
 

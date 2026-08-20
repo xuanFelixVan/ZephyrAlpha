@@ -96,7 +96,8 @@ def _count_stash_entries(gateway: object) -> int | None:
     except Exception as e:  # noqa: BLE001 — fail-open: git 故障不阻断 commit
         logger.warning(
             "STASH-ACCUMULATION: git stash list exception (fail-open): %s",
-            e, exc_info=True,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -145,4 +146,3 @@ if __name__ == "__main__":
     # 入口文件标记——让 ORPHAN-MODULE gate 豁免（本 gate 通过 gate_auto_registrar 动态注册）
     _spec = make_stash_accumulation_gate()
     print(f"gate_id={_spec.gate_id}, priority={_spec.priority}")
-

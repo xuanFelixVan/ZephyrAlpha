@@ -177,7 +177,7 @@ __all__ = [
     "VerdictLevel",
     "VibeRuleLevel",
     "WorktreeLifecycle",  # added #ARCH-WORKTREE-LIFECYCLE-001
-    "WorktreeState",       # added #ARCH-WORKTREE-LIFECYCLE-001
+    "WorktreeState",  # added #ARCH-WORKTREE-LIFECYCLE-001
     "admission_controller",
     "ai_code_standards",
     "code_review_ai",

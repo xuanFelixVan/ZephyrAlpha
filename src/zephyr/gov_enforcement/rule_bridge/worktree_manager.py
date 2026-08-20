@@ -158,6 +158,7 @@ _BRANCH_PREFIX = "session/"
 
 class WorktreeError(RuntimeError):
     """worktree 管理错误（创建/删除/merge 失败等）。"""
+
     error_code = "ZA-GV-0031"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -219,8 +220,7 @@ class _WorktreeLock:
                     continue
                 if time.monotonic() >= deadline:
                     raise WorktreeError(
-                        f"Cannot acquire worktree lock (timeout {self._timeout}s): "
-                        f"{self._lock_file}"
+                        f"Cannot acquire worktree lock (timeout {self._timeout}s): {self._lock_file}"
                     ) from None
                 # PERM-TRIGGER fix: use Event().wait() instead of time.sleep()
                 threading.Event().wait(self._poll)
@@ -386,9 +386,7 @@ class WorktreeManager:
 
     def _is_dirty(self, wt_path: Path) -> bool:
         """worktree 是否有未提交修改（含 untracked）。"""
-        r = self.run_git(
-            ["git", "status", "--porcelain"], cwd=str(wt_path)
-        )
+        r = self.run_git(["git", "status", "--porcelain"], cwd=str(wt_path))
         if r.returncode != 0:
             return False
         return bool(r.stdout.strip())
@@ -422,7 +420,8 @@ class WorktreeManager:
             if self.worktree_exists(session_id):
                 logger.info(
                     "WorktreeManager: session worktree 已存在，复用 (session=%s): %s",
-                    session_id, wt_path,
+                    session_id,
+                    wt_path,
                 )
                 return wt_path
 
@@ -432,7 +431,8 @@ class WorktreeManager:
             if wt_path.exists():
                 logger.info(
                     "WorktreeManager: 创建前清理残留物理目录 (session=%s): %s",
-                    session_id, wt_path,
+                    session_id,
+                    wt_path,
                 )
                 _force_rmtree(wt_path)
 
@@ -441,22 +441,18 @@ class WorktreeManager:
 
             head_sha = self._current_head_sha()
             # git worktree add -b <new-branch> <path> <start-point>
-            r = self.run_git(
-                ["git", "worktree", "add", "-b", branch, str(wt_path), head_sha]
-            )
+            r = self.run_git(["git", "worktree", "add", "-b", branch, str(wt_path), head_sha])
             if r.returncode != 0:
                 # 分支可能已存在（上次未清理），尝试复用分支
-                r2 = self.run_git(
-                    ["git", "worktree", "add", str(wt_path), branch]
-                )
+                r2 = self.run_git(["git", "worktree", "add", str(wt_path), branch])
                 if r2.returncode != 0:
-                    raise WorktreeError(
-                        f"git worktree add 失败: "
-                        f"{r2.stderr.strip() or r.stderr.strip()}"
-                    )
+                    raise WorktreeError(f"git worktree add 失败: {r2.stderr.strip() or r.stderr.strip()}")
             logger.info(
                 "WorktreeManager: 创建 session worktree (session=%s, branch=%s, head=%s): %s",
-                session_id, branch, head_sha[:8], wt_path,
+                session_id,
+                branch,
+                head_sha[:8],
+                wt_path,
             )
         return wt_path
 
@@ -481,9 +477,7 @@ class WorktreeManager:
 
         with _WorktreeLock(self.repo_root):
             if not self.worktree_exists(session_id):
-                raise WorktreeError(
-                    f"session worktree 不存在: {wt_path}"
-                )
+                raise WorktreeError(f"session worktree 不存在: {wt_path}")
             # 在主工作目录执行 merge（--no-ff 保留 session 提交拓扑）
             # merge message 末尾追加 [GW:{sid}:merge] 标记，与 session_worktree_commit 的 [GW:{sid}:worktree] 设计对齐
             r = self.run_git(
@@ -493,14 +487,16 @@ class WorktreeManager:
                 stderr = r.stderr.strip()
                 logger.warning(
                     "WorktreeManager: merge 失败/冲突 (session=%s): %s",
-                    session_id, stderr,
+                    session_id,
+                    stderr,
                 )
                 # merge 冲突时中止 merge，保持主分支干净
                 self.run_git(["git", "merge", "--abort"])
                 return False
             logger.info(
                 "WorktreeManager: merge 成功 (session=%s, branch=%s)",
-                session_id, branch,
+                session_id,
+                branch,
             )
             if delete_after:
                 # merge 成功后 worktree 内容已并入主分支；force=True 安全删除
@@ -563,7 +559,8 @@ class WorktreeManager:
             # 降级为 info 避免噪音；真正的删除失败在下方 _worktree_exists 检查处记 warning
             logger.info(
                 "WorktreeManager: git worktree remove 失败，走兜底 (session=%s): %s",
-                session_id, r.stderr.strip(),
+                session_id,
+                r.stderr.strip(),
             )
             # 尝试 prune + 物理删除兜底
             self.run_git(["git", "worktree", "prune"])
@@ -581,22 +578,22 @@ class WorktreeManager:
                 return False
             if wt_path.exists():
                 logger.info(
-                    "WorktreeManager: worktree 物理目录残留 (session=%s)——"
-                    "git 元数据已清理，残留无害",
+                    "WorktreeManager: worktree 物理目录残留 (session=%s)——git 元数据已清理，残留无害",
                     session_id,
                 )
         # 删除 session 分支（force 因可能未 merge）
-        br_r = self.run_git(
-            ["git", "branch", "-D" if force else "-d", branch]
-        )
+        br_r = self.run_git(["git", "branch", "-D" if force else "-d", branch])
         if br_r.returncode != 0:
             logger.debug(
                 "WorktreeManager: 删除分支 %s 跳过 (session=%s): %s",
-                branch, session_id, br_r.stderr.strip(),
+                branch,
+                session_id,
+                br_r.stderr.strip(),
             )
         logger.info(
             "WorktreeManager: 删除 session worktree (session=%s, force=%s)",
-            session_id, force,
+            session_id,
+            force,
         )
         return True
 
@@ -622,12 +619,14 @@ class WorktreeManager:
             if not session_id:
                 continue
             wt_path = Path(path)
-            result.append({
-                "session_id": session_id,
-                "path": path,
-                "branch": entry.get("branch", ""),
-                "dirty": self._is_dirty(wt_path) if wt_path.exists() else False,
-            })
+            result.append(
+                {
+                    "session_id": session_id,
+                    "path": path,
+                    "branch": entry.get("branch", ""),
+                    "dirty": self._is_dirty(wt_path) if wt_path.exists() else False,
+                }
+            )
         return result
 
     def get_current_worktree(self) -> str | None:

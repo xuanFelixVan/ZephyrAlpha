@@ -47,8 +47,11 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 PROJECT_RULES = REPO_ROOT / ".trae" / "rules" / "project_rules.md"
 BLUEPRINT_REGISTRY = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 MODULE_REGISTRY = REPO_ROOT / "docs" / "03_modules" / "module-registry.yaml"
-GATE_REGISTRY = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule_enforcement_registry.yaml"
+GATE_REGISTRY = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule_enforcement_registry.yaml"
+)
 CROSSCHECK_SCRIPT = REPO_ROOT / "scripts" / "governance" / "crosscheck_sys_master_deps.py"
+
 
 def load_blueprint_path(module_id: str) -> Path | None:
     """从 blueprint_registry.yaml（SSoT 派生）查询蓝图磁盘路径，不硬编码。
@@ -68,9 +71,11 @@ def load_blueprint_path(module_id: str) -> Path | None:
             return REPO_ROOT / "docs" / bp["file_path"]
     return None
 
+
 # 蓝图路径从 registry 查询（SSoT），不硬编码——消除连字符/下划线漂移根因
 SYS_MASTER_PATH = load_blueprint_path("SYS-MASTER-001")
 MOD_MASTER_PATH = load_blueprint_path("MOD-MASTER_BLUEPRINT")
+
 
 def extract_frontmatter(filepath: Path) -> dict:
     text = filepath.read_text(encoding="utf-8")
@@ -86,11 +91,19 @@ def extract_frontmatter(filepath: Path) -> dict:
     except yaml.YAMLError:
         return {}
 
+
 def check_blueprint_existence() -> list[dict]:
     results = []
     for label, path in [("SYS-MASTER-001", SYS_MASTER_PATH), ("MOD-MASTER_BLUEPRINT", MOD_MASTER_PATH)]:
         if path is None:
-            results.append({"check_id": "SYS-C00", "label": f"{label} blueprint_exists", "status": "FAIL", "detail": f"{label} not found in blueprint_registry.yaml"})
+            results.append(
+                {
+                    "check_id": "SYS-C00",
+                    "label": f"{label} blueprint_exists",
+                    "status": "FAIL",
+                    "detail": f"{label} not found in blueprint_registry.yaml",
+                }
+            )
             continue
         ok = path.exists() and path.is_file()
         results.append(
@@ -102,6 +115,7 @@ def check_blueprint_existence() -> list[dict]:
             }
         )
     return results
+
 
 def check_cold_start_integration() -> list[dict]:
     if not PROJECT_RULES.exists():
@@ -134,9 +148,17 @@ def check_cold_start_integration() -> list[dict]:
         }
     ]
 
+
 def check_depends_on_integrity() -> list[dict]:
     if SYS_MASTER_PATH is None:
-        return [{"check_id": "SYS-C02", "label": "depends_on_integrity", "status": "FAIL", "detail": "SYS-MASTER-001 not found in blueprint_registry.yaml"}]
+        return [
+            {
+                "check_id": "SYS-C02",
+                "label": "depends_on_integrity",
+                "status": "FAIL",
+                "detail": "SYS-MASTER-001 not found in blueprint_registry.yaml",
+            }
+        ]
     fm = extract_frontmatter(SYS_MASTER_PATH)
     if not fm:
         return [
@@ -148,15 +170,20 @@ def check_depends_on_integrity() -> list[dict]:
             }
         ]
     deps = fm.get("depends_on", [])
-    has_mod_master = any(d.get("target", "") == "MOD-MASTER_BLUEPRINT" for d in deps) if isinstance(deps, list) else False
+    has_mod_master = (
+        any(d.get("target", "") == "MOD-MASTER_BLUEPRINT" for d in deps) if isinstance(deps, list) else False
+    )
     return [
         {
             "check_id": "SYS-C02",
             "label": "depends_on_integrity",
             "status": "PASS" if has_mod_master else "FAIL",
-            "detail": "MOD-MASTER_BLUEPRINT found in depends_on" if has_mod_master else "MOD-MASTER_BLUEPRINT NOT in depends_on",
+            "detail": "MOD-MASTER_BLUEPRINT found in depends_on"
+            if has_mod_master
+            else "MOD-MASTER_BLUEPRINT NOT in depends_on",
         }
     ]
+
 
 def check_ai_rules_count() -> list[dict]:
     rules_dir = REPO_ROOT / ".trae" / "rules"
@@ -174,6 +201,7 @@ def check_ai_rules_count() -> list[dict]:
             "detail": f"{count} numbered rules found (minimum required: 32)",
         }
     ]
+
 
 def check_gate_registry_entry() -> list[dict]:
     if not GATE_REGISTRY.exists():
@@ -196,6 +224,7 @@ def check_gate_registry_entry() -> list[dict]:
         }
     ]
 
+
 def check_version_consistency() -> list[dict]:
     results = []
     for target_id, target_path in [
@@ -203,7 +232,14 @@ def check_version_consistency() -> list[dict]:
         ("MOD-MASTER_BLUEPRINT", MOD_MASTER_PATH),
     ]:
         if target_path is None:
-            results.append({"check_id": "SYS-C07", "label": f"{target_id} version_consistency", "status": "FAIL", "detail": f"{target_id} not found in blueprint_registry.yaml"})
+            results.append(
+                {
+                    "check_id": "SYS-C07",
+                    "label": f"{target_id} version_consistency",
+                    "status": "FAIL",
+                    "detail": f"{target_id} not found in blueprint_registry.yaml",
+                }
+            )
             continue
         if not target_path.exists():
             results.append(
@@ -264,6 +300,7 @@ def check_version_consistency() -> list[dict]:
         )
     return results
 
+
 def check_sli_data_sources() -> list[dict]:
     results = []
     sli_sources = [
@@ -323,6 +360,7 @@ def check_sli_data_sources() -> list[dict]:
             )
     return results
 
+
 def check_crosscheck_script() -> list[dict]:
 
     # Step 1 治标（2026-07-19）：crosscheck_sys_master_deps.py 于 commit 20b7392141
@@ -353,7 +391,10 @@ def check_crosscheck_script() -> list[dict]:
             }
         ]
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        return [{"check_id": "SYS-C06", "label": "crosscheck_script_pass", "status": "FAIL", "detail": "internal error"}]
+        return [
+            {"check_id": "SYS-C06", "label": "crosscheck_script_pass", "status": "FAIL", "detail": "internal error"}
+        ]
+
 
 def main() -> int:
     use_json = "--json" in sys.argv
@@ -381,6 +422,7 @@ def main() -> int:
         print(f"\n{failed} FAILED, {warnings} WARNINGS, {len(all_checks) - failed - warnings} PASSED")
 
     return 1 if failed > 0 else 0
+
 
 class SysMasterCompliance:
     def __init__(self) -> None:
@@ -413,6 +455,7 @@ class SysMasterCompliance:
 
     def invalidate_cache(self) -> None:
         self._last_results = None
+
 
 if __name__ == "__main__":
     sys.exit(main())

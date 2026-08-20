@@ -134,7 +134,6 @@ class AdaptiveThreshold:
         """写入：window（Stage 4 公共化）。"""
         self._window = value
 
-
     def get_state(
         self,
         gate_id: str,

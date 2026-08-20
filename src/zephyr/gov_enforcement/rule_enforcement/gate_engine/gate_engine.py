@@ -111,9 +111,7 @@ __all__ = [
 # GATES_DIR 唯一真源=zephyr.shared.io.paths（#61 裁定 2026-08-20：三处拷贝收敛为一处，
 # 值与本包 Path(__file__).parent.parent 恒等，门禁 yaml 真源根 task/ invariants/ admission/ 子目录不变）
 
-_DEPRECATED_PATHS_YAML = (
-    REPO_ROOT / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"
-)
+_DEPRECATED_PATHS_YAML = REPO_ROOT / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"
 
 
 def _load_deprecated_patterns() -> list[str]:
@@ -140,6 +138,7 @@ _PLACEHOLDER_PATTERNS: list[str] = [
 # ---------------------------------------------------------------------------
 # 5.176.1 Phase 1: 从 _registry.yaml 动态加载 gate_id → filename 映射
 # ---------------------------------------------------------------------------
+
 
 def _load_gate_files_from_registry(gate_dir: Path) -> dict[str, str]:
     """从 _registry.yaml 加载 gate_id → filename 映射。
@@ -192,6 +191,7 @@ def _load_gate_files_from_registry(gate_dir: Path) -> dict[str, str]:
     result = dict(narrative)
     result.update(executable)
     return result
+
 
 # ---------------------------------------------------------------------------
 # 配置模型（轻量 dataclass，不用 Pydantic 避免循环依赖）
@@ -1484,7 +1484,6 @@ class GateEngine:
     def load_gate_configs_from_registry(self) -> dict[str, GateConfig]:
         """公共接口：load_gate_configs_from_registry（Stage 4 公共化，委托到 self._load_gate_configs_from_registry）。"""
         return self._load_gate_configs_from_registry()
-
 
     @property
     def gate_cache(self) -> "dict[str, GateConfig] | None":

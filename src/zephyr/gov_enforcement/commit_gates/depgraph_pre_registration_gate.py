@@ -79,9 +79,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_depgraph_pre_registration_gate"]
 
 # SQL 集中化（NO-BARE-SQL gate 合规，常量名需匹配 ^_?SQL_\w+$ 豁免正则）
-_SQL_GET_BUILD_STATUS = (
-    "SELECT build_status FROM nodes WHERE file_path = %s LIMIT 1"
-)
+_SQL_GET_BUILD_STATUS = "SELECT build_status FROM nodes WHERE file_path = %s LIMIT 1"
 
 # 范围限定：src/zephyr/ 下（tests/ 由 is_test_exempt 豁免）
 _SRC_ZEPHYR_PREFIX = "src/zephyr/"
@@ -142,13 +140,10 @@ def _get_staged_py_files(gateway) -> list[str] | None:
         相对路径列表；git diff 失败/异常返回 None（fail-open）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
-                "DEPGRAPH-PRE-REGISTRATION gate fail-open: "
-                "git diff 失败(rc=%d)，检测器失效。",
+                "DEPGRAPH-PRE-REGISTRATION gate fail-open: git diff 失败(rc=%d)，检测器失效。",
                 diff_result.returncode,
             )
             return None
@@ -167,9 +162,10 @@ def _get_staged_py_files(gateway) -> list[str] | None:
         return result
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning(
-            "DEPGRAPH-PRE-REGISTRATION gate fail-open: "
-            "git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            "DEPGRAPH-PRE-REGISTRATION gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -194,9 +190,10 @@ def _query_build_status(file_path: str) -> str | None:
             conn.close()
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning(
-            "DEPGRAPH-PRE-REGISTRATION gate fail-open: "
-            "depgraph 查询失败(%s: %s)。",
-            type(e).__name__, e, exc_info=True,
+            "DEPGRAPH-PRE-REGISTRATION gate fail-open: depgraph 查询失败(%s: %s)。",
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -218,7 +215,8 @@ def _log_none_status_failopen(gateway, skipped: list[str], session_id: str = "")
     project_root = gateway.project_root
     if pg_probe_shows_offline(project_root):
         log_db_failopen(
-            project_root, "DEPGRAPH-PRE-REGISTRATION",
+            project_root,
+            "DEPGRAPH-PRE-REGISTRATION",
             db_offline=True,
             reason="探针证实 PG 离线，build_status 查询失败，planned→production 流转检测降级跳过",
             affected_files=skipped,
@@ -232,11 +230,11 @@ def _log_none_status_failopen(gateway, skipped: list[str], session_id: str = "")
         conn.close()
     except Exception as e:  # noqa: BLE001 — 连接失败=真实错误留痕
         log_db_failopen(
-            project_root, "DEPGRAPH-PRE-REGISTRATION",
+            project_root,
+            "DEPGRAPH-PRE-REGISTRATION",
             db_offline=False,
             reason=(
-                f"探针未证实离线但 depgraph 连接失败({type(e).__name__}: {e})，"
-                f"build_status 查询降级跳过——真实错误"
+                f"探针未证实离线但 depgraph 连接失败({type(e).__name__}: {e})，build_status 查询降级跳过——真实错误"
             ),
             affected_files=skipped,
             session_id=session_id,
@@ -298,9 +296,7 @@ def make_depgraph_pre_registration_gate() -> GateSpec:
         if not py_files:
             return True, ""
 
-        violations = _scan_violations(
-            gateway, py_files, session_id=kwargs.get("session_id", "")
-        )
+        violations = _scan_violations(gateway, py_files, session_id=kwargs.get("session_id", ""))
 
         if violations:
             detail = (
@@ -314,9 +310,8 @@ def make_depgraph_pre_registration_gate() -> GateSpec:
 
         return True, ""
 
-    return GateSpec(
-        gate_id="DEPGRAPH-PRE-REGISTRATION", check=_check, priority=113
-    )
+    return GateSpec(gate_id="DEPGRAPH-PRE-REGISTRATION", check=_check, priority=113)
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def query_build_status(file_path) -> str | None:
@@ -334,4 +329,3 @@ def extract_ttl(file_path) -> str | None:
 def count_impl_lines(file_path) -> int:
     """公共接口：count_impl_lines（Stage 4 公共化）。"""
     return _count_impl_lines(file_path)
-

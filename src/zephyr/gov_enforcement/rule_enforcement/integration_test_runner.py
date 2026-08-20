@@ -178,7 +178,6 @@ class IntegrationTestRunner:
         """公共接口：finalize（Stage 4 公共化）。"""
         return self._finalize(result)
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def project_root(self):
@@ -199,7 +198,6 @@ class IntegrationTestRunner:
     def result_dir(self, value):
         """写入：result_dir（Stage 4 公共化）。"""
         self._result_dir = value
-
 
     # ── 旧 API 兼容（CITier 评估）──
     def add_result(
@@ -228,8 +226,11 @@ class IntegrationTestRunner:
         total = len(tier_results)
         passed_count = sum(1 for r in tier_results if r.passed)
         return GateResult(
-            tier=tier, passed=passed_count == total, total_tests=total,
-            passed_tests=passed_count, results=tier_results,
+            tier=tier,
+            passed=passed_count == total,
+            total_tests=total,
+            passed_tests=passed_count,
+            results=tier_results,
         )
 
     def get_triggers(self, tier: CITier) -> list[CITrigger]:
@@ -244,41 +245,59 @@ class IntegrationTestRunner:
         result = SelfTestResult(test_id=None, passed=True, tests_run=1)
         try:
             proc = run_subprocess_hidden(  # noqa: bare-subprocess  test patches integration_test_runner.subprocess.run directly
-                ["pip", "check"], capture_output=True, text=True, timeout=60,
+                ["pip", "check"],
+                capture_output=True,
+                text=True,
+                timeout=60,
             )
             if proc.returncode == 0:
-                result.checks.append({
-                    "check": "pip_check", "status": "PASS",
-                    "detail": proc.stdout.strip()[:500] or "No broken requirements.",
-                })
+                result.checks.append(
+                    {
+                        "check": "pip_check",
+                        "status": "PASS",
+                        "detail": proc.stdout.strip()[:500] or "No broken requirements.",
+                    }
+                )
             else:
                 result.passed = False
                 result.failures = 1
-                result.checks.append({
-                    "check": "pip_check", "status": "FAIL",
-                    "detail": proc.stdout.strip()[:500],
-                })
+                result.checks.append(
+                    {
+                        "check": "pip_check",
+                        "status": "FAIL",
+                        "detail": proc.stdout.strip()[:500],
+                    }
+                )
         except subprocess.TimeoutExpired as e:
             result.passed = False
             result.errors = 1
-            result.checks.append({
-                "check": "pip_check", "status": "ERROR",
-                "detail": f"timeout: {e}",
-            })
+            result.checks.append(
+                {
+                    "check": "pip_check",
+                    "status": "ERROR",
+                    "detail": f"timeout: {e}",
+                }
+            )
         except FileNotFoundError as e:
             result.passed = False
             result.errors = 1
-            result.checks.append({
-                "check": "pip_check", "status": "ERROR",
-                "detail": f"pip not found: {e}",
-            })
+            result.checks.append(
+                {
+                    "check": "pip_check",
+                    "status": "ERROR",
+                    "detail": f"pip not found: {e}",
+                }
+            )
         except Exception as e:  # noqa: BLE001
             result.passed = False
             result.errors = 1
-            result.checks.append({
-                "check": "pip_check", "status": "ERROR",
-                "detail": f"unexpected: {e}",
-            })
+            result.checks.append(
+                {
+                    "check": "pip_check",
+                    "status": "ERROR",
+                    "detail": f"unexpected: {e}",
+                }
+            )
         return result
 
     def import_check(self) -> SelfTestResult:
@@ -294,48 +313,63 @@ class IntegrationTestRunner:
         for target in _IMPORT_TARGETS:
             try:
                 __import__(target)
-                result.checks.append({
-                    "check": target, "status": "PASS", "detail": "",
-                })
+                result.checks.append(
+                    {
+                        "check": target,
+                        "status": "PASS",
+                        "detail": "",
+                    }
+                )
             except ImportError as e:
                 result.passed = False
                 result.failures += 1
-                result.checks.append({
-                    "check": target, "status": "FAIL",
-                    "detail": f"ImportError: {e}",
-                })
+                result.checks.append(
+                    {
+                        "check": target,
+                        "status": "FAIL",
+                        "detail": f"ImportError: {e}",
+                    }
+                )
             except Exception as e:  # noqa: BLE001
                 result.passed = False
                 result.failures += 1
-                result.checks.append({
-                    "check": target, "status": "FAIL",
-                    "detail": f"{type(e).__name__}: {e}",
-                })
+                result.checks.append(
+                    {
+                        "check": target,
+                        "status": "FAIL",
+                        "detail": f"{type(e).__name__}: {e}",
+                    }
+                )
         return result
 
     def type_check(self) -> SelfTestResult:
         """检查 behavioral-auditor/self_check.py 是否存在."""
         result = SelfTestResult(test_id=None, passed=True, tests_run=1)
-        check_path = (
-            Path(self._project_root) / "src" / "zephyr" / "behavioral-auditor" / "self_check.py"
-        )
+        check_path = Path(self._project_root) / "src" / "zephyr" / "behavioral-auditor" / "self_check.py"
         if check_path.exists():
-            result.checks.append({
-                "check": "self_check", "status": "EXISTS",
-                "detail": str(check_path),
-            })
+            result.checks.append(
+                {
+                    "check": "self_check",
+                    "status": "EXISTS",
+                    "detail": str(check_path),
+                }
+            )
         else:
             result.passed = False
             result.failures = 1
-            result.checks.append({
-                "check": "self_check", "status": "MISSING",
-                "detail": str(check_path),
-            })
+            result.checks.append(
+                {
+                    "check": "self_check",
+                    "status": "MISSING",
+                    "detail": str(check_path),
+                }
+            )
         return result
 
     def run_all(self) -> SelfTestResult:
         """聚合 pip_check + import_check + type_check."""
         from uuid import uuid4
+
         pip = self.pip_check()
         imp = self.import_check()
         typ = self.type_check()
@@ -359,6 +393,7 @@ class IntegrationTestRunner:
         tid = result.test_id
         if tid is None:
             from uuid import uuid4
+
             tid = uuid4()
             result.test_id = tid
         tid_str = str(tid)

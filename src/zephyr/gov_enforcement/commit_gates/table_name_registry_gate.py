@@ -136,9 +136,7 @@ def check_hardcoded_tables_in_file(
     if not file_content:
         return []
 
-    added_line_set = {
-        ln for ln, _ in _get_added_lines(gateway, py_file, "TABLE-NAME-REGISTRY")
-    }
+    added_line_set = {ln for ln, _ in _get_added_lines(gateway, py_file, "TABLE-NAME-REGISTRY")}
     if not added_line_set:
         return []
 
@@ -160,18 +158,14 @@ def check_hardcoded_tables_in_file(
         value = node.value
         # 精确匹配：直接硬编码表名
         if value in registered_tables:
-            violations.append(
-                f"  {py_file}:{node.lineno}: 硬编码表名 '{value}'"
-                f" -> use TableRegistry.table()"
-            )
+            violations.append(f"  {py_file}:{node.lineno}: 硬编码表名 '{value}' -> use TableRegistry.table()")
             continue
         # 子串匹配：SQL 字符串含表名
         if table_name_pattern is not None:
             matches = table_name_pattern.findall(value)
             if matches:
                 violations.append(
-                    f"  {py_file}:{node.lineno}: 字符串含硬编码表名 {set(matches)}"
-                    f" -> use TableRegistry.table()"
+                    f"  {py_file}:{node.lineno}: 字符串含硬编码表名 {set(matches)} -> use TableRegistry.table()"
                 )
     return violations
 
@@ -231,9 +225,7 @@ def make_table_name_registry_gate() -> GateSpec:
             registry = get_registry()
             registered_tables = set(registry.all_tables())
         except Exception:  # noqa: BLE001 — fail-open
-            logger.warning(
-                "TABLE-NAME-REGISTRY fail-open: TableRegistry 加载失败"
-            )
+            logger.warning("TABLE-NAME-REGISTRY fail-open: TableRegistry 加载失败")
             return True, ""
 
         if not registered_tables:
@@ -244,16 +236,12 @@ def make_table_name_registry_gate() -> GateSpec:
 
         # Detection 1: 防蔓延——staged .py added 行硬编码表名
         py_files = [
-            f for f in _get_staged_py_files(gateway, "TABLE-NAME-REGISTRY")
-            if not is_test_exempt(f)
-            and not f.endswith(_EXEMPT_SUFFIXES)
+            f
+            for f in _get_staged_py_files(gateway, "TABLE-NAME-REGISTRY")
+            if not is_test_exempt(f) and not f.endswith(_EXEMPT_SUFFIXES)
         ]
         for py_file in py_files:
-            warnings.extend(
-                check_hardcoded_tables_in_file(
-                    gateway, py_file, registered_tables, table_name_pattern
-                )
-            )
+            warnings.extend(check_hardcoded_tables_in_file(gateway, py_file, registered_tables, table_name_pattern))
 
         # Detection 2: tasks.yaml 表名校验
         normalized_files = [f.replace("\\", "/") for f in files]

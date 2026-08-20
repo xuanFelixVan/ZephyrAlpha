@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_blueprint_format_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """blueprint_format_gate.py — [BLUEPRINT] 头部 module_id 格式阻断门禁（BLUEPRINT-FORMAT，裁定#214 Phase 0 防蔓延）
@@ -95,24 +95,21 @@ def _load_is_valid_module_id(project_root: Path):
     key = str(project_root)
     if key in _validate_module_id_cache:
         return _validate_module_id_cache[key]
-    module_path = (
-        project_root / "scripts" / "governance" / "d3_metadata"
-        / "validate_module_id_naming.py"
-    )
+    module_path = project_root / "scripts" / "governance" / "d3_metadata" / "validate_module_id_naming.py"
     if not module_path.exists():
         # 回退到 REPO_ROOT（非 worktree 模式或路径异常）
         from zephyr.shared.io.paths import REPO_ROOT
-        module_path = (
-            REPO_ROOT / "scripts" / "governance" / "d3_metadata"
-            / "validate_module_id_naming.py"
-        )
+
+        module_path = REPO_ROOT / "scripts" / "governance" / "d3_metadata" / "validate_module_id_naming.py"
     spec = importlib.util.spec_from_file_location(
-        "_validate_module_id_naming_dynamic", module_path,
+        "_validate_module_id_naming_dynamic",
+        module_path,
     )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     _validate_module_id_cache[key] = mod.is_valid_module_id
     return mod.is_valid_module_id
+
 
 # 匹配 [BLUEPRINT] 头部行，提取 module_id token（第一个非空白 token）
 # 合规：# [BLUEPRINT] MOD-INF-029 | docs/...
@@ -152,8 +149,7 @@ def make_blueprint_format_gate() -> GateSpec:
                 ok, reason = is_valid_module_id(module_id)
                 if not ok:
                     violations.append(
-                        f"  {py_file}:{line_no}: [BLUEPRINT] header invalid module_id "
-                        f"'{module_id}': {reason}"
+                        f"  {py_file}:{line_no}: [BLUEPRINT] header invalid module_id '{module_id}': {reason}"
                     )
         if violations:
             detail = (

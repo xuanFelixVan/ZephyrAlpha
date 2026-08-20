@@ -133,9 +133,7 @@ def make_data_task_completeness_gate() -> GateSpec:
         # 1. 只在 tasks.yaml 被修改时触发
         tasks_yaml_abs = str(project_root / _TASKS_YAML_REL).replace("/", os.sep)
         tasks_yaml_modified = any(
-            os.path.normpath(f) == os.path.normpath(tasks_yaml_abs)
-            or f.endswith("tasks.yaml")
-            for f in files
+            os.path.normpath(f) == os.path.normpath(tasks_yaml_abs) or f.endswith("tasks.yaml") for f in files
         )
         if not tasks_yaml_modified:
             return True, "no tasks.yaml change, skip"
@@ -149,7 +147,8 @@ def make_data_task_completeness_gate() -> GateSpec:
                 timeout=30,
                 encoding="utf-8",
                 errors="replace",
-            text=False)
+                text=False,
+            )
         except (subprocess.TimeoutExpired, OSError) as e:
             # git diff 失败不阻断（warn 级）
             logger.warning("git diff 失败，跳过检测: %s", e)
@@ -169,10 +168,7 @@ def make_data_task_completeness_gate() -> GateSpec:
         # 公共 wrapper 是模块级名字，测试 patch "...data_task_completeness_gate.load_tasks_yaml"
         # 才能命中（与 forged_gw_marker_gate B1 修复同模式）。
         tasks = load_tasks_yaml(project_root)
-        missing = [
-            tid for tid in new_task_ids
-            if not _check_task_has_fallback(tasks, tid)
-        ]
+        missing = [tid for tid in new_task_ids if not _check_task_has_fallback(tasks, tid)]
 
         if not missing:
             return True, f"all {len(new_task_ids)} new task(s) have fallback_sources"
@@ -187,12 +183,10 @@ def make_data_task_completeness_gate() -> GateSpec:
         logger.warning(warning)
         return True, warning
 
-    return GateSpec(
-        gate_id="DATA-TASK-COMPLETENESS", check=_check, priority=41
-    )
+    return GateSpec(gate_id="DATA-TASK-COMPLETENESS", check=_check, priority=41)
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def load_tasks_yaml(project_root) -> list[dict]:
     """公共接口：load_tasks_yaml（Stage 4 公共化）。"""
     return _load_tasks_yaml(project_root)
-

@@ -373,9 +373,7 @@ class VerdictEngine:
 
         # 5.44.1 修复：批次大小校验，超过 max_batch_size 抛 ValueError
         if len(events) > self._max_batch_size:
-            raise ValueError(
-                f"evaluate_batch 批次大小 {len(events)} 超过上限 {self._max_batch_size}，请分片处理"
-            )
+            raise ValueError(f"evaluate_batch 批次大小 {len(events)} 超过上限 {self._max_batch_size}，请分片处理")
 
         loop = asyncio.get_running_loop()
         results: list[Verdict] = []
@@ -409,9 +407,7 @@ class VerdictEngine:
 
         tasks = [_limited_eval(_eval_one(evt)) for evt in events]
         # 5.44.1 修复：整体超时包裹，超时抛 TimeoutError 给调用方
-        results = await asyncio.wait_for(
-            asyncio.gather(*tasks), timeout=self._batch_timeout_s
-        )
+        results = await asyncio.wait_for(asyncio.gather(*tasks), timeout=self._batch_timeout_s)
         return list(results)
 
     def resolve_graduated_level(

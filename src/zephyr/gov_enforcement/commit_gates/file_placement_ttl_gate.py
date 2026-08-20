@@ -142,9 +142,7 @@ def _load_placement_ssot(project_root):
     if tv_path.is_file():
         with open(tv_path, encoding="utf-8") as f:
             tv = yaml.safe_load(f)
-        q1_criteria = (
-            tv.get("decision_tree", {}).get("nodes", {}).get("Q1", {}).get("criteria", [])
-        )
+        q1_criteria = tv.get("decision_tree", {}).get("nodes", {}).get("Q1", {}).get("criteria", [])
         for c in q1_criteria:
             if c.get("signal") == "path" and c.get("operator") == "contains":
                 process_subdir_segments.append(c["value"])  # 如 "/changes/"
@@ -173,20 +171,15 @@ def _load_placement_ssot(project_root):
     )
 
 
-def _check_rule1_permanent_admission(
-    rel, is_new_file, in_permanent, exempt_subdirs, allow_promote
-):
+def _check_rule1_permanent_admission(rel, is_new_file, in_permanent, exempt_subdirs, allow_promote):
     """规则1：永久区新文件准入（PROMOTION_BLOCKED）——只对新增文件。
 
     返回违规消息字符串；无违规则返回 None。
     """
-    if is_new_file and in_permanent and not any(
-        rel.startswith(ex) for ex in exempt_subdirs
-    ):
+    if is_new_file and in_permanent and not any(rel.startswith(ex) for ex in exempt_subdirs):
         if not allow_promote:
             return (
-                f"PROMOTION_BLOCKED: {rel} 位于永久区，需 allow_promote=True 准入"
-                f"（或落入 exempt_subdirs 生成器豁免）"
+                f"PROMOTION_BLOCKED: {rel} 位于永久区，需 allow_promote=True 准入（或落入 exempt_subdirs 生成器豁免）"
             )
     return None
 
@@ -197,10 +190,7 @@ def _check_rule2_ttl_zone_consistency(rel, ttl, in_permanent, in_temporary):
     返回违规消息字符串；无违规则返回 None。
     """
     if ttl == "permanent" and in_temporary:
-        return (
-            f"FILE-PLACEMENT-TTL: {rel} frontmatter.ttl=permanent 但在临时区，"
-            f"应迁移到永久区或改 ttl=task_bound"
-        )
+        return f"FILE-PLACEMENT-TTL: {rel} frontmatter.ttl=permanent 但在临时区，应迁移到永久区或改 ttl=task_bound"
     if ttl == "task_bound" and in_permanent:
         return (
             f"FILE-PLACEMENT-TTL: {rel} frontmatter.ttl=task_bound 但在永久区，"
@@ -288,9 +278,7 @@ def make_file_placement_ttl_gate() -> GateSpec:
             is_new_file = not gateway.is_git_tracked(rel)
 
             # 规则1：永久区新文件准入（PROMOTION_BLOCKED）——只对新增文件
-            v1 = _check_rule1_permanent_admission(
-                rel, is_new_file, in_permanent, exempt_subdirs, allow_promote
-            )
+            v1 = _check_rule1_permanent_admission(rel, is_new_file, in_permanent, exempt_subdirs, allow_promote)
             if v1 is not None:
                 violations.append(v1)
 

@@ -82,13 +82,15 @@ __all__ = ["make_derived_file_deletion_gate"]
 # 受保护派生文件清单（相对 project_root，正斜杠）。
 # P1 硬编码起步——已知删除受害者。P1.5 迁移至 YAML 真源（见模块 docstring）。
 # 扩展方式：追加相对路径到此 frozenset。每条均应有对应消费者审计（删除会导致静默降级）。
-_PROTECTED_DERIVED_FILES: frozenset[str] = frozenset({
-    # 三次删除事故对象（303fb9c9b2/1f172f3224/8ae1da59f0 + 本次第三次），
-    # 20+ 消费方（GAP-2/SYS-C00/SYS-C02）读不到 → 静默返回空集 → 检测失效。
-    "docs/03_modules/blueprint_registry.yaml",
-    # 5710 path claims，path_ownership_reconciler 自动重生成；删除致路径冲突检测失效。
-    "docs/03_modules/path_ownership_map.yaml",
-})
+_PROTECTED_DERIVED_FILES: frozenset[str] = frozenset(
+    {
+        # 三次删除事故对象（303fb9c9b2/1f172f3224/8ae1da59f0 + 本次第三次），
+        # 20+ 消费方（GAP-2/SYS-C00/SYS-C02）读不到 → 静默返回空集 → 检测失效。
+        "docs/03_modules/blueprint_registry.yaml",
+        # 5710 path claims，path_ownership_reconciler 自动重生成；删除致路径冲突检测失效。
+        "docs/03_modules/path_ownership_map.yaml",
+    }
+)
 
 
 def _normalize_rel(path: str) -> str:
@@ -107,27 +109,21 @@ def _collect_staged_deletions(gateway) -> set[str] | None:
         删除文件相对路径集合；git diff 失败/异常返回 None（fail-open）。
     """
     try:
-        result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=D"]
-        )
+        result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=D"])
         if result.returncode != 0:
             logger.warning(
-                "DERIVED-FILE-DELETION-PROTECTION gate fail-open: "
-                "git diff 失败(rc=%d)，检测器失效。",
+                "DERIVED-FILE-DELETION-PROTECTION gate fail-open: git diff 失败(rc=%d)，检测器失效。",
                 result.returncode,
             )
             return None
-        deleted = {
-            _normalize_rel(line)
-            for line in result.stdout.strip().splitlines()
-            if line.strip()
-        }
+        deleted = {_normalize_rel(line) for line in result.stdout.strip().splitlines() if line.strip()}
         return deleted
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning(
-            "DERIVED-FILE-DELETION-PROTECTION gate fail-open: "
-            "git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            "DERIVED-FILE-DELETION-PROTECTION gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -166,6 +162,4 @@ def make_derived_file_deletion_gate() -> GateSpec:
             )
         return True, ""
 
-    return GateSpec(
-        gate_id="DERIVED-FILE-DELETION-PROTECTION", check=_check, priority=46
-    )
+    return GateSpec(gate_id="DERIVED-FILE-DELETION-PROTECTION", check=_check, priority=46)

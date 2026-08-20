@@ -158,16 +158,13 @@ def _extract_make_reconcilers(tree) -> set[str]:
     if tree is None:
         return set()
     return {
-        n.name for n in ast.walk(tree)
-        if isinstance(n, ast.FunctionDef)
-        and n.name.startswith("make_")
-        and n.name.endswith("_reconciler")
+        n.name
+        for n in ast.walk(tree)
+        if isinstance(n, ast.FunctionDef) and n.name.startswith("make_") and n.name.endswith("_reconciler")
     }
 
 
-def _find_unmarked_reconcilers(
-    staged_tree, staged_src: str, new_reconcilers: set[str]
-) -> list[str]:
+def _find_unmarked_reconcilers(staged_tree, staged_src: str, new_reconcilers: set[str]) -> list[str]:
     """在 staged AST 中查找未标记 trae_060 的新增 reconciler 函数名。
 
     检查 def 行前 5 行（含 decorator/注释区）是否有 '# trae_060-reviewed' 标记。
@@ -265,9 +262,7 @@ def _get_staged_new_files(gateway) -> tuple[list[str] | None, str]:
         (staged_new, "") 成功； (None, detail) fail-closed 阻断。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             return None, (
                 f"CREATE-GUARD fail-closed: git diff 失败(rc={diff_result.returncode})，"
@@ -290,26 +285,24 @@ def _collect_renamed_rule_files(gateway, commit_files_rel: set[str]) -> list[str
     """
     renamed: list[str] = []
     try:
-        rename_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-status", "--diff-filter=R"]
-        )
+        rename_result = gateway.run_git(["git", "diff", "--cached", "--name-status", "--diff-filter=R"])
         if rename_result.returncode == 0:
             for line in rename_result.stdout.strip().splitlines():
                 parts = line.split("\t")
                 if len(parts) >= 3:
                     new_path = parts[-1].replace("\\", "/")
-                    if (new_path.startswith(_RULES_DIR_PREFIX)
-                            and new_path.endswith(".yaml")
-                            and new_path in commit_files_rel):
+                    if (
+                        new_path.startswith(_RULES_DIR_PREFIX)
+                        and new_path.endswith(".yaml")
+                        and new_path in commit_files_rel
+                    ):
                         renamed.append(new_path)
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass  # fail-open：rename 检测故障不阻断
     return renamed
 
 
-def _check_rule_yaml_naming(
-    gateway, staged_new: list[str], commit_files_rel: set[str]
-) -> tuple[bool, str]:
+def _check_rule_yaml_naming(gateway, staged_new: list[str], commit_files_rel: set[str]) -> tuple[bool, str]:
     """ARCH-037 治本：rules/ .yaml 命名格式硬阻断（非 trae 命名 / 单段 name）。
 
     放在 new_py_files 过滤前：若 commit 只含 .yaml 无 .py，new_py_files 为空
@@ -318,9 +311,7 @@ def _check_rule_yaml_naming(
     new_rule_files: list[str] = []
     for f in staged_new:
         f_norm = f.replace("\\", "/")
-        if (f_norm.startswith(_RULES_DIR_PREFIX)
-                and f_norm.endswith(".yaml")
-                and f_norm in commit_files_rel):
+        if f_norm.startswith(_RULES_DIR_PREFIX) and f_norm.endswith(".yaml") and f_norm in commit_files_rel:
             new_rule_files.append(f_norm)
 
     renamed_rule_files = _collect_renamed_rule_files(gateway, commit_files_rel)
@@ -353,14 +344,11 @@ def _filter_new_py_and_yaml(staged_new: list[str]) -> tuple[list[str], list[str]
     - new_py_files: .py 文件，排除 tests/ 豁免（真源：commit_gate_registry.is_test_exempt）
     - new_yaml_files: .yaml 文件，排除 tests/ 豁免，排除 rules/ 目录（rules/ 已有命名检查）
     """
-    new_py_files = [
-        f.replace("\\", "/") for f in staged_new
-        if f.endswith(".py") and not is_test_exempt(f)
-    ]
+    new_py_files = [f.replace("\\", "/") for f in staged_new if f.endswith(".py") and not is_test_exempt(f)]
     new_yaml_files = [
-        f.replace("\\", "/") for f in staged_new
-        if f.endswith(".yaml") and not is_test_exempt(f)
-        and not f.replace("\\", "/").startswith(_RULES_DIR_PREFIX)
+        f.replace("\\", "/")
+        for f in staged_new
+        if f.endswith(".yaml") and not is_test_exempt(f) and not f.replace("\\", "/").startswith(_RULES_DIR_PREFIX)
     ]
     return new_py_files, new_yaml_files
 
@@ -368,9 +356,9 @@ def _filter_new_py_and_yaml(staged_new: list[str]) -> tuple[list[str], list[str]
 def _filter_new_other_formats(staged_new: list[str]) -> list[str]:
     """过滤 .md/.sh/.ps1/.mmd/.json 格式（阶段 2，ARCH-TTL-DOC-001 全 7 格式覆盖）。"""
     return [
-        f.replace("\\", "/") for f in staged_new
-        if any(f.endswith(ext) for ext in _OTHER_FORMAT_EXTENSIONS)
-        and not is_test_exempt(f)
+        f.replace("\\", "/")
+        for f in staged_new
+        if any(f.endswith(ext) for ext in _OTHER_FORMAT_EXTENSIONS) and not is_test_exempt(f)
     ]
 
 
@@ -380,10 +368,7 @@ def _check_governance_root(gateway, new_py_files: list[str]) -> tuple[bool, str]
     NOTE: 使用 UNFILTERED new_py_files（commit_files_rel 过滤前），因为 rename
     检测 MUST 在 early return 前完成。
     """
-    _gov_root_new = [
-        f for f in new_py_files
-        if f.startswith(_GOVERNANCE_ROOT_PREFIX) and f.count("/") == 3
-    ]
+    _gov_root_new = [f for f in new_py_files if f.startswith(_GOVERNANCE_ROOT_PREFIX) and f.count("/") == 3]
     if _gov_root_new:
         return False, (
             f"ARCH-031 防复发: 禁止在 governance/ 根新增 .py 文件: {_gov_root_new}. "
@@ -395,18 +380,18 @@ def _check_governance_root(gateway, new_py_files: list[str]) -> tuple[bool, str]
         )
     # 检测②: rename(R) .py 到 governance/ 根（防 git mv 绕过 --diff-filter=A 漏检）
     try:
-        _rename_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-status", "--diff-filter=R"]
-        )
+        _rename_result = gateway.run_git(["git", "diff", "--cached", "--name-status", "--diff-filter=R"])
         if _rename_result.returncode == 0:
             _gov_root_renamed = []
             for line in _rename_result.stdout.strip().splitlines():
                 parts = line.split("\t")
                 if len(parts) >= 3:
                     _new_path = parts[2].replace("\\", "/")
-                    if (_new_path.startswith(_GOVERNANCE_ROOT_PREFIX)
-                            and _new_path.count("/") == 3
-                            and _new_path.endswith(".py")):
+                    if (
+                        _new_path.startswith(_GOVERNANCE_ROOT_PREFIX)
+                        and _new_path.count("/") == 3
+                        and _new_path.endswith(".py")
+                    ):
                         _gov_root_renamed.append(_new_path)
             if _gov_root_renamed:
                 return False, (
@@ -417,7 +402,8 @@ def _check_governance_root(gateway, new_py_files: list[str]) -> tuple[bool, str]
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "CREATE-GUARD: ARCH-031 rename 检测 git diff 失败: %s",
-            e, exc_info=True,
+            e,
+            exc_info=True,
         )
         # fail-open: git diff 失败不阻断 rename 检测（下游 gate 仍检测新增文件）
     return True, ""
@@ -451,15 +437,13 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
             if _has_marker:
                 continue
             # git grep 搜索同名 class 在 src/zephyr/ 下（排除当前文件）
-            #ARCH-034 遗留3治本：git grep 故障改 fail-closed
+            # ARCH-034 遗留3治本：git grep 故障改 fail-closed
             try:
-                _grep_res = gateway.run_git([
-                    "git", "grep", "-l", f"^class {_node.name}\\b",
-                    "--", "src/zephyr/"
-                ])
+                _grep_res = gateway.run_git(["git", "grep", "-l", f"^class {_node.name}\\b", "--", "src/zephyr/"])
                 if _grep_res.returncode == 0:
                     _existing = [
-                        f.replace("\\", "/") for f in _grep_res.stdout.strip().splitlines()
+                        f.replace("\\", "/")
+                        for f in _grep_res.stdout.strip().splitlines()
                         if f.replace("\\", "/") != _py_file
                     ]
                     if _existing:
@@ -472,10 +456,7 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
                     f"修复：检查 git 状态（git status）确认仓库可用后重试。"
                 )
     if _class_violations:
-        _detail = "; ".join(
-            f"{f} 定义 class {name} 与已有 {existing} 同名"
-            for f, name, existing in _class_violations
-        )
+        _detail = "; ".join(f"{f} 定义 class {name} 与已有 {existing} 同名" for f, name, existing in _class_violations)
         return False, (
             f"类名跨模块冲突(ARCH-034 CLASS-UNIQUENESS): {_detail}. "
             f"同名不同义是 AI 开发幻觉温床（后导入覆盖前导入，不报错）。"
@@ -491,7 +472,10 @@ def _load_capability_registry(gateway) -> tuple[dict | None, str]:
 
     _registry_yaml = (
         gateway.project_root
-        / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+        / "docs"
+        / "01_policies_and_standards"
+        / "_registry"
+        / "catalogs"
         / "capability_canonical_file_registry.yaml"
     )
     if not _registry_yaml.exists():
@@ -540,13 +524,15 @@ def _no_token_detail(unregistered: list[str], file_kind: str) -> str:
         f"无 creation_token，禁止造第二真源（trae_060 §2）: {unregistered}. "
         f"commit 新建 {file_kind} 文件前 MUST 在 capability_canonical_file_registry.yaml "
         f"的 creation_tokens 字段登记 token（声明创建意图 + 关联 capability）。"
-        f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
-        f"created_by: \"session-xxx\"  capability: \"xxx\""
+        f'格式: - file: "<相对路径>"  token: "auto-xxx"  '
+        f'created_by: "session-xxx"  capability: "xxx"'
     )
 
 
 def _check_creation_token(
-    gateway, new_py_files: list[str], new_yaml_files: list[str],
+    gateway,
+    new_py_files: list[str],
+    new_yaml_files: list[str],
     new_other_files: list[str] | None = None,
 ) -> tuple[bool, str]:
     """检测新增 .py/.yaml 文件是否登记了 creation_token（trae_060 §2 唯一真源）。
@@ -588,6 +574,7 @@ def _check_field_header(gateway, new_py_files: list[str]) -> tuple[bool, str]:
     # F-5 修复续：trae_047 路径回退到全局 REPO_ROOT（对标 P-2 capability registry 回退模式）
     if not _TRAE_047_YAML.exists():
         from zephyr.shared.io.paths import REPO_ROOT
+
         _TRAE_047_YAML = REPO_ROOT / "docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml"
     try:
         _rule_data = yaml.safe_load(_TRAE_047_YAML.read_text(encoding="utf-8"))
@@ -605,13 +592,13 @@ def _check_field_header(gateway, new_py_files: list[str]) -> tuple[bool, str]:
         if not _abs_path.exists():
             continue
         try:
-            _head = "\n".join(
-                _abs_path.read_text(encoding="utf-8", errors="replace").split("\n")[:30]
-            )
+            _head = "\n".join(_abs_path.read_text(encoding="utf-8", errors="replace").split("\n")[:30])
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug(
                 "CREATE-GUARD: 读取文件头失败 file=%s: %s",
-                _py_file, e, exc_info=True,
+                _py_file,
+                e,
+                exc_info=True,
             )
             continue  # 读取失败由其他 gate 检测，此处 fail-open
 
@@ -623,10 +610,7 @@ def _check_field_header(gateway, new_py_files: list[str]) -> tuple[bool, str]:
         _is_init = _py_file.endswith("__init__.py")
         _required = _INIT_MIN_FIELDS if _is_init else _REQUIRED_FIELDS
 
-        _missing = [
-            _field for _field in _required
-            if not re.search(rf'#\s*\[{re.escape(_field)}\]', _head)
-        ]
+        _missing = [_field for _field in _required if not re.search(rf"#\s*\[{re.escape(_field)}\]", _head)]
 
         if _missing:
             return False, (
@@ -650,26 +634,23 @@ def _check_basename_collision(gateway, new_py_files: list[str]) -> tuple[bool, s
             CAPABILITY_DUPLICATE_FIX_HINT,
             CapabilityLookup,
         )
+
         _lookup = CapabilityLookup()
         _new_py_tuples = [(str(gateway.project_root / f), f) for f in new_py_files]
         _dups = _lookup.check_capability_duplicates(_new_py_tuples)
         if _dups:
             _details = "; ".join(f"{d.rel_path}: {d.detail}" for d in _dups)
-            return False, (
-                f"能力重复/basename碰撞(GATE-SSOT L2): {_details}. "
-                f"{CAPABILITY_DUPLICATE_FIX_HINT}"
-            )
+            return False, (f"能力重复/basename碰撞(GATE-SSOT L2): {_details}. {CAPABILITY_DUPLICATE_FIX_HINT}")
     except Exception as _e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.warning(
-            "CREATE-GUARD: capability_lookup 不可用，跳过 basename 碰撞检测: %s",
-            _e, exc_info=True
-        )
+        logger.warning("CREATE-GUARD: capability_lookup 不可用，跳过 basename 碰撞检测: %s", _e, exc_info=True)
     return True, ""
 
 
 def _filter_to_commit_files(
-    new_py_files: list[str], new_yaml_files: list[str],
-    new_other_files: list[str], commit_files_rel: set[str],
+    new_py_files: list[str],
+    new_yaml_files: list[str],
+    new_other_files: list[str],
+    commit_files_rel: set[str],
 ) -> tuple[list[str], list[str], list[str]]:
     """治本 2026-06-30：只检测 commit 文件中的新增文件（gateway 选择性提交）。"""
     return (
@@ -680,23 +661,23 @@ def _filter_to_commit_files(
 
 
 def _run_file_registration_checks(
-    gateway, new_py_files: list[str], new_yaml_files: list[str],
+    gateway,
+    new_py_files: list[str],
+    new_yaml_files: list[str],
     new_other_files: list[str],
 ) -> tuple[bool, str]:
     """文件登记类检测链：creation_token → 字段头部 → basename 碰撞。"""
     # creation_token 检测（trae_060 §2 唯一真源）——阶段 2：覆盖全 7 格式
-    passed, detail = _check_creation_token(
-        gateway, new_py_files, new_yaml_files, new_other_files
-    )
+    passed, detail = _check_creation_token(gateway, new_py_files, new_yaml_files, new_other_files)
     if not passed:
         return False, detail
 
-    #ARCH-031：字段头部完整性检测
+    # ARCH-031：字段头部完整性检测
     passed, detail = _check_field_header(gateway, new_py_files)
     if not passed:
         return False, detail
 
-    #ARCH-031：basename 碰撞检测
+    # ARCH-031：basename 碰撞检测
     return _check_basename_collision(gateway, new_py_files)
 
 
@@ -724,7 +705,7 @@ def make_create_guard() -> GateSpec:
         if staged_new is None:
             return False, detail
 
-        #ARCH-037：rules/ .yaml 命名格式硬阻断
+        # ARCH-037：rules/ .yaml 命名格式硬阻断
         passed, detail = _check_rule_yaml_naming(gateway, staged_new, commit_files_rel)
         if not passed:
             return False, detail
@@ -733,7 +714,7 @@ def make_create_guard() -> GateSpec:
         new_py_files, new_yaml_files = _filter_new_py_and_yaml(staged_new)
         new_other_files = _filter_new_other_formats(staged_new)
 
-        #ARCH-031 防复发：governance/ 根检测 MUST 用 UNFILTERED new_py_files
+        # ARCH-031 防复发：governance/ 根检测 MUST 用 UNFILTERED new_py_files
         passed, detail = _check_governance_root(gateway, new_py_files)
         if not passed:
             return False, detail
@@ -749,14 +730,12 @@ def make_create_guard() -> GateSpec:
         if not new_py_files and not new_yaml_files and not new_other_files:
             return True, ""
 
-        #ARCH-034：类名跨模块唯一性检测
+        # ARCH-034：类名跨模块唯一性检测
         passed, detail = _check_class_uniqueness(gateway, new_py_files)
         if not passed:
             return False, detail
 
         # 文件登记类检测链（creation_token / 字段头部 / basename 碰撞）
-        return _run_file_registration_checks(
-            gateway, new_py_files, new_yaml_files, new_other_files
-        )
+        return _run_file_registration_checks(gateway, new_py_files, new_yaml_files, new_other_files)
 
     return GateSpec(gate_id="CREATE-GUARD", check=_check, priority=60)

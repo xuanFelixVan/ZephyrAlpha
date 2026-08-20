@@ -56,8 +56,10 @@ import ast
 import logging
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _extract_noqa_lines,
     _get_added_lines,
     _get_staged_py_files,
+    _make_noqa_pattern,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
@@ -67,6 +69,10 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_long_param_list_gate"]
 
 _MAX_PARAMS = 7
+
+# noqa 行级逃生：对标 bare-subprocess / import-integrity 同族通道（2026-08-20 波3 补齐，
+# 标记已登记 noqa_exempt_registry.yaml）——存量签名契约绑定场景（公共包装器/协议实现）。
+_NOQA_PATTERN = _make_noqa_pattern("long-param-list")
 
 
 def _count_params(node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
@@ -103,17 +109,18 @@ def make_long_param_list_gate() -> GateSpec:
             added_lines = {ln for ln, _ in _get_added_lines(gateway, py_file, "NO-LONG-PARAM-LIST")}
             if not added_lines:
                 continue
+            noqa_lines = _extract_noqa_lines(file_content, _NOQA_PATTERN)
             try:
                 tree = ast.parse(file_content, filename=py_file)
             except SyntaxError:
                 continue
             for node in ast.walk(tree):
                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.lineno in added_lines:
+                    if node.lineno in noqa_lines:
+                        continue  # 行级豁免（存量签名契约绑定，标记+理由已登记校验）
                     count = _count_params(node)
                     if count > _MAX_PARAMS:
-                        violations.append(
-                            f"  {py_file}:{node.lineno}: {node.name}({count} params > {_MAX_PARAMS})"
-                        )
+                        violations.append(f"  {py_file}:{node.lineno}: {node.name}({count} params > {_MAX_PARAMS})")
         if violations:
             detail = (
                 "NO-LONG-PARAM-LIST：检测到长参数列表（>7参数），\n"

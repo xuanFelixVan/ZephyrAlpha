@@ -80,9 +80,7 @@ _HARDCODED_LOCALHOST_RE = re.compile(r"https?://localhost:")
 def _collect_staged_py_files(gateway):
     # 1. 获取 staged added/modified .py 文件
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "NO-HARDCODED-URL gate fail-open: git diff 失败(rc=%d)。",
@@ -93,17 +91,14 @@ def _collect_staged_py_files(gateway):
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "NO-HARDCODED-URL gate fail-open: git diff 异常(%s: %s)。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
     # 2. 过滤 .py 文件 + tests/ 豁免 + SSoT 豁免
-    py_files = [
-        f for f in staged
-        if f.endswith(".py")
-        and not is_test_exempt(f)
-        and f != _SSoT_EXEMPT_FILE
-    ]
+    py_files = [f for f in staged if f.endswith(".py") and not is_test_exempt(f) and f != _SSoT_EXEMPT_FILE]
     return py_files
 
 
@@ -114,9 +109,7 @@ def _scan_file_violations(gateway, py_file):
 
     # 3b. 解析 diff，获取 added 行及行号
     try:
-        file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
-        )
+        file_diff = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file])
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("NO-HARDCODED-URL gate: git diff 失败 file=%s, %s", py_file, e)
         return []
@@ -133,9 +126,7 @@ def _scan_file_violations(gateway, py_file):
         if _is_exempt_line(content):
             continue
         if _HARDCODED_LOCALHOST_RE.search(content):
-            violations.append(
-                f"  {py_file}:{line_no}: {content.strip()}"
-            )
+            violations.append(f"  {py_file}:{line_no}: {content.strip()}")
     return violations
 
 

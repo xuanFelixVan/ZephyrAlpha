@@ -149,12 +149,14 @@ def _verify_commit_exists(project_root: Path, commit_hash: str) -> bool:
             capture_output=True,
             cwd=str(project_root),
             timeout=_GIT_CAT_FILE_TIMEOUT,
-        text=False)
+            text=False,
+        )
         return result.returncode == 0
     except (subprocess.TimeoutExpired, OSError) as e:
         logger.warning(
             "ruling_commit_verified_gate: git cat-file failed for %s: %s",
-            commit_hash, e,
+            commit_hash,
+            e,
         )
         return False  # fail-closed
 
@@ -246,9 +248,7 @@ def _detect_violations(
             continue
 
         # 验证新增 commit hash 存在性
-        invalid_hashes = sorted(
-            h for h in new_hashes if not _verify_commit_exists(project_root, h)
-        )
+        invalid_hashes = sorted(h for h in new_hashes if not _verify_commit_exists(project_root, h))
         if invalid_hashes:
             violations.append((rel, invalid_hashes))
 

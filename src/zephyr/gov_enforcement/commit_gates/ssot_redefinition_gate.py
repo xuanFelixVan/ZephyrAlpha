@@ -73,9 +73,7 @@ def _is_ssot_symbol(alias: str) -> bool:
 def _get_staged_files(gateway) -> list[str] | None:
     """获取 staged added/modified 文件列表。None=fail-open(git diff 不可达)。"""
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "SSOT-REDEFINITION gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -85,8 +83,7 @@ def _get_staged_files(gateway) -> list[str] | None:
         return [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "SSOT-REDEFINITION gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "SSOT-REDEFINITION gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
 
@@ -124,17 +121,21 @@ def _load_registry_yaml(gateway, staged: list[str]) -> tuple[dict | None, tuple[
         )
     try:
         import yaml
+
         data = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         if registry_being_fixed:
             logger.info(
                 "SSOT-REDEFINITION gate: registry 解析失败(%s: %s)但正在 staged 修复，放行。",
-                type(e).__name__, e,
+                type(e).__name__,
+                e,
             )
             return None, (True, "")
         logger.error(
             "SSOT-REDEFINITION gate fail-closed: registry 解析失败(%s: %s)，阻断。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None, (
             False,
@@ -168,21 +169,21 @@ def _compile_define_re(symbols) -> re.Pattern:
     """编译符号定义检测正则（符号按长度降序，避免短符号误匹配）。"""
     symbols_sorted = sorted(symbols, key=len, reverse=True)
     symbols_alt = "|".join(re.escape(s) for s in symbols_sorted)
-    return re.compile(
-        rf"^class\s+({symbols_alt})\b|^({symbols_alt})\s*[:=]"
-    )
+    return re.compile(rf"^class\s+({symbols_alt})\b|^({symbols_alt})\s*[:=]")
 
 
-def _scan_file_violations(gateway, py_file: str, symbol_to_canonical: dict[str, str], define_re: re.Pattern) -> list[str]:
+def _scan_file_violations(
+    gateway, py_file: str, symbol_to_canonical: dict[str, str], define_re: re.Pattern
+) -> list[str]:
     """扫描单个 staged .py 文件的 added 行，返回违规列表。"""
     try:
-        file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
-        )
+        file_diff = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file])
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "SSOT-REDEFINITION gate: git diff 失败 file=%s, %s",
-            py_file, e, exc_info=True,
+            py_file,
+            e,
+            exc_info=True,
         )
         return []
     if file_diff.returncode != 0:
@@ -201,20 +202,15 @@ def _scan_file_violations(gateway, py_file: str, symbol_to_canonical: dict[str, 
         canonical = symbol_to_canonical.get(symbol, "")
         if canonical == py_file:
             continue  # 合法定义（canonical 文件本身）
-        violations.append(
-            f"{py_file}: 重新定义 SSoT 符号 '{symbol}' "
-            f"(canonical: {canonical}) -> {content.strip()}"
-        )
+        violations.append(f"{py_file}: 重新定义 SSoT 符号 '{symbol}' (canonical: {canonical}) -> {content.strip()}")
     return violations
 
 
 def _format_violations(violations: list[str]) -> str:
     """格式化违规详情为阻断消息。"""
     return (
-        "SSoT 符号重复定义（硬阻断）：\n"
-        + "\n".join(violations)
-        + "\n-> 扩展现有 canonical 文件，勿重新定义。"
-          "查 capability_canonical_file_registry.yaml 找 canonical 文件。"
+        "SSoT 符号重复定义（硬阻断）：\n" + "\n".join(violations) + "\n-> 扩展现有 canonical 文件，勿重新定义。"
+        "查 capability_canonical_file_registry.yaml 找 canonical 文件。"
     )
 
 

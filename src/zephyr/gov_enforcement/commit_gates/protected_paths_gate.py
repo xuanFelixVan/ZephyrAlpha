@@ -105,11 +105,13 @@ def _load_protected_patterns() -> list[tuple[str, str]]:
         if str(gov_dir) not in sys.path:
             sys.path.insert(0, str(gov_dir))
         from check_protected_paths import PROTECTED_PATTERNS  # type: ignore[import-not-found]
+
         _PROTECTED_PATTERNS = list(PROTECTED_PATTERNS)
         # B4 治本（2026-08-19）：审批标记正则 SSoT 对齐（同通道 import，禁复制防漂移）
         global _APPROVAL_MARKER_RE, _APPROVAL_MARKER_RE_LOADED
         if not _APPROVAL_MARKER_RE_LOADED:
             from check_protected_paths import APPROVAL_MARKER_RE  # type: ignore[import-not-found]
+
             _APPROVAL_MARKER_RE = APPROVAL_MARKER_RE
             _APPROVAL_MARKER_RE_LOADED = True
     except Exception:  # noqa: BLE001 — fail-open: import 失败降级为内置清单
@@ -263,6 +265,7 @@ def make_protected_paths_gate() -> GateSpec:
                     _branch_side_commits_touching,
                     _merge_head_shas,
                 )
+
                 gw_cwd = str(getattr(gateway, "project_root", ".") or ".")
                 merge_shas = _merge_head_shas(cwd=gw_cwd)
                 if merge_shas:

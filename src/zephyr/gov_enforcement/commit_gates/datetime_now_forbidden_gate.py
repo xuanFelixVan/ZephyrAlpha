@@ -137,9 +137,7 @@ def _has_noqa_exempt(content: str) -> bool:
 def _get_staged_files(gateway) -> list[str] | None:
     # 获取 staged added/modified .py 文件；失败返回 None（fail-open）
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "DATETIME-NOW-FORBIDDEN gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -150,7 +148,9 @@ def _get_staged_files(gateway) -> list[str] | None:
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "DATETIME-NOW-FORBIDDEN gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -158,10 +158,9 @@ def _get_staged_files(gateway) -> list[str] | None:
 def _filter_target_py_files(staged: list[str]) -> list[str]:
     # 过滤到目标 .py 文件（生成器 OR src/zephyr/）+ tests/ 豁免
     return [
-        f for f in staged
-        if f.endswith(".py")
-        and not is_test_exempt(f)
-        and (_is_generator_file(f) or _is_src_zephyr_file(f))
+        f
+        for f in staged
+        if f.endswith(".py") and not is_test_exempt(f) and (_is_generator_file(f) or _is_src_zephyr_file(f))
     ]
 
 
@@ -176,13 +175,13 @@ def _scan_file_for_violations(gateway, py_file: str) -> list[str]:
     # --ignore-cr-at-eol：EOL 规范化提交（CRLF→LF 机械翻转）全文件行伪"added"，
     # 会把存量违规误报为新增——按内容判定 added，行尾差异不计（2026-08-16 EOL 批实证）
     try:
-        file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
-        )
+        file_diff = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file])
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "DATETIME-NOW-FORBIDDEN gate: git diff 失败 file=%s, %s",
-            py_file, e, exc_info=True,
+            py_file,
+            e,
+            exc_info=True,
         )
         return violations
     if file_diff.returncode != 0:

@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——IO/JSON/git 异常降级为 fail-open（passed=True，logger.warning），结构校验失败 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_snapshot_drift_gate.py
+# [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m20-snapshot-drift  M20豁免: 本文件是SNAPSHOT-DRIFT检测器自身,源码引用snapshot路径用于校验,非实际drift
@@ -77,9 +77,7 @@ def _is_snapshot_in_staged(gateway) -> tuple[bool, str]:
         git 命令异常时返回 (False, "") 并记录 warning。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only"])
         if diff_result.returncode != 0:
             logger.warning(
                 "SNAPSHOT-DRIFT gate fail-open: git diff 失败(rc=%d)。",
@@ -90,7 +88,9 @@ def _is_snapshot_in_staged(gateway) -> tuple[bool, str]:
     except Exception as e:  # noqa: BLE001 — broad exception catch for fail-open
         logger.warning(
             "SNAPSHOT-DRIFT gate fail-open: git diff 异常(%s: %s)。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return False, ""
 
@@ -132,10 +132,7 @@ def _validate_generated_at_freshness(gen_at: object) -> str:
         age = datetime.now(timezone.utc) - ts
         if age > timedelta(hours=_MAX_FRESHNESS_HOURS):
             hours_old = age.total_seconds() / 3600
-            return (
-                f"generated_at is stale ({hours_old:.1f}h old, "
-                f"max {_MAX_FRESHNESS_HOURS}h) — snapshot drift"
-            )
+            return f"generated_at is stale ({hours_old:.1f}h old, max {_MAX_FRESHNESS_HOURS}h) — snapshot drift"
         if age < timedelta(seconds=-60):
             return "generated_at is in the future (clock skew or tampering)"
     except ValueError as e:
@@ -152,7 +149,9 @@ def _get_head_sha(gateway) -> str | None:
     except Exception as e:  # noqa: BLE001 — broad exception catch for fail-open
         logger.warning(
             "SNAPSHOT-DRIFT gate fail-open: HEAD SHA 获取异常(%s: %s)。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
     return None
 
@@ -196,26 +195,18 @@ def make_snapshot_drift_gate() -> GateSpec:
             with open(abs_path, "r", encoding="utf-8") as f:
                 content = f.read()
         except OSError as e:
-            return False, (
-                f"snapshot file 读取失败({type(e).__name__}: {e}) — "
-                f"无法验证 drift"
-            )
+            return False, (f"snapshot file 读取失败({type(e).__name__}: {e}) — 无法验证 drift")
 
         # 3. 解析 JSON（fail-closed：解析失败即阻断）
         try:
             data = json.loads(content)
         except json.JSONDecodeError as e:
-            return False, (
-                f"snapshot JSON 解析失败(line {e.lineno} col {e.colno}): {e.msg} — "
-                f"快照文件结构破坏"
-            )
+            return False, (f"snapshot JSON 解析失败(line {e.lineno} col {e.colno}): {e.msg} — 快照文件结构破坏")
 
         # 4. 校验必需字段
         errors = _validate_snapshot_structure(data)
         if errors:
-            return False, (
-                f"snapshot 结构校验失败: {'; '.join(errors)}"
-            )
+            return False, (f"snapshot 结构校验失败: {'; '.join(errors)}")
 
         # 5. 校验 generated_at 新鲜度
         gen_err = _validate_generated_at_freshness(data.get("generated_at"))

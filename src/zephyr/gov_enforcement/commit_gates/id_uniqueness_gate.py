@@ -58,16 +58,16 @@ def make_id_uniqueness_gate() -> GateSpec:
         project_root = gateway.project_root
 
         triggered = any(
-            os.path.relpath(f, str(project_root)).replace("\\", "/") == _CONFIG_REL
-            for f in files
-            if os.path.isfile(f)
+            os.path.relpath(f, str(project_root)).replace("\\", "/") == _CONFIG_REL for f in files if os.path.isfile(f)
         )
         if not triggered:
             return True, "no .pre-commit-config.yaml in commit"
 
         result = run_checker_script(
-            _CHECK_SCRIPT, ["--ci"],
-            cwd=project_root, timeout=30,
+            _CHECK_SCRIPT,
+            ["--ci"],
+            cwd=project_root,
+            timeout=30,
         )
 
         if result.returncode == 0:
@@ -75,13 +75,11 @@ def make_id_uniqueness_gate() -> GateSpec:
         if result.returncode == 2:
             logger.warning(
                 "id_uniqueness_gate: script error (exit=2): %s",
-                result.stderr[-300:], exc_info=True,
+                result.stderr[-300:],
+                exc_info=True,
             )
             return True, "id_uniqueness check script error (exit=2), fail-open"
 
-        return False, (
-            f"ID-UNIQUENESS: same-repo duplicate pre-commit hook IDs detected\n"
-            f"{result.stdout[-500:]}"
-        )
+        return False, (f"ID-UNIQUENESS: same-repo duplicate pre-commit hook IDs detected\n{result.stdout[-500:]}")
 
     return GateSpec(gate_id="ID-UNIQUENESS", check=_check, priority=86)

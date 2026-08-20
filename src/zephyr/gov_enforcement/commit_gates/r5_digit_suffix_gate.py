@@ -119,7 +119,8 @@ def make_r5_digit_suffix_gate() -> GateSpec:
                     capture_output=True,
                     cwd=str(project_root),
                     timeout=10,
-                text=False)
+                    text=False,
+                )
             except (subprocess.TimeoutExpired, OSError) as e:
                 # fail-closed：git 操作失败阻断（R5 是核心约束）
                 return False, f"R5 gate fail-closed: git ls-tree failed for {dir_path}: {e}"
@@ -140,9 +141,6 @@ def make_r5_digit_suffix_gate() -> GateSpec:
             )
 
         # 全部是历史违规 -> 通过（progressive_convergence 渐进收敛策略）
-        return True, (
-            f"digit-suffix dirs exist in HEAD (historical, skipped): "
-            f"{', '.join(historical)}"
-        )
+        return True, (f"digit-suffix dirs exist in HEAD (historical, skipped): {', '.join(historical)}")
 
     return GateSpec(gate_id="R5-DIGIT-SUFFIX", check=_check, priority=35)

@@ -105,14 +105,16 @@ def _is_entry_point(rel_path: str, content: str) -> bool:
         if isinstance(node, ast.If):
             test = node.test
             # if __name__ == "__main__":
-            if (isinstance(test, ast.Compare)
-                    and isinstance(test.left, ast.Name)
-                    and test.left.id == "__name__"
-                    and len(test.ops) == 1
-                    and isinstance(test.ops[0], ast.Eq)
-                    and len(test.comparators) == 1
-                    and isinstance(test.comparators[0], ast.Constant)
-                    and test.comparators[0].value == "__main__"):
+            if (
+                isinstance(test, ast.Compare)
+                and isinstance(test.left, ast.Name)
+                and test.left.id == "__name__"
+                and len(test.ops) == 1
+                and isinstance(test.ops[0], ast.Eq)
+                and len(test.comparators) == 1
+                and isinstance(test.comparators[0], ast.Constant)
+                and test.comparators[0].value == "__main__"
+            ):
                 return True
     return False
 
@@ -132,7 +134,7 @@ def _compute_module_path(rel_path: str) -> tuple[str, str]:
     path = rel_path
     # 去 src/ 前缀
     if path.startswith("src/"):
-        path = path[len("src/"):]
+        path = path[len("src/") :]
     # 去 .py
     if path.endswith(".py"):
         path = path[:-3]
@@ -157,9 +159,7 @@ def _collect_staged_new_py_files(gateway) -> "tuple[list[str], str] | None":
     """
     # 1. 获取 staged 新增 .py 文件
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
                 "ORPHAN-MODULE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -169,8 +169,7 @@ def _collect_staged_new_py_files(gateway) -> "tuple[list[str], str] | None":
         staged_new = diff_result.stdout.strip().splitlines()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "ORPHAN-MODULE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "ORPHAN-MODULE gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
 
@@ -180,17 +179,14 @@ def _collect_staged_new_py_files(gateway) -> "tuple[list[str], str] | None":
     # 不是 src/ 模块，不应被 ORPHAN-MODULE gate 检查。
     # scripts/ 下文件由 _is_entry_point 豁免，无需额外处理。
     new_py_files = [
-        f.replace("\\", "/") for f in staged_new
-        if f.endswith(".py") and not is_test_exempt(f) and f.startswith("src/")
+        f.replace("\\", "/") for f in staged_new if f.endswith(".py") and not is_test_exempt(f) and f.startswith("src/")
     ]
     if not new_py_files:
         return [], ""
 
     # 3. 获取 worktree root
     try:
-        toplevel_result = gateway.run_git(
-            ["git", "rev-parse", "--show-toplevel"]
-        )
+        toplevel_result = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         if toplevel_result.returncode == 0:
             wt_root = toplevel_result.stdout.strip()
         else:
@@ -224,7 +220,9 @@ def _detect_orphans(gateway, abs_files: list[str], wt_root: str) -> "list[str] |
         except OSError as e:
             logger.warning(
                 "ORPHAN-MODULE gate skip file %s: 读取失败(%s: %s)。",
-                abs_path, type(e).__name__, e,
+                abs_path,
+                type(e).__name__,
+                e,
             )
             continue
 
@@ -261,17 +259,14 @@ def _detect_orphans(gateway, abs_files: list[str], wt_root: str) -> "list[str] |
             return None
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
-                "ORPHAN-MODULE gate fail-open: git grep 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
+                "ORPHAN-MODULE gate fail-open: git grep 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
             )
             return None
 
         # git grep exit 0 = 有匹配；exit 1 = 无匹配；其他 = 错误
         if grep_result.returncode == 0:
             # 有匹配——但需排除文件自身（grep 可能匹配到 staged 文件本身）
-            matched_files = [
-                f for f in grep_result.stdout.strip().splitlines() if f
-            ]
+            matched_files = [f for f in grep_result.stdout.strip().splitlines() if f]
             # 过滤掉自身
             others = [f for f in matched_files if f != rel_name and f != rel_name.replace("/", os.sep)]
             if others:
@@ -313,10 +308,7 @@ def make_orphan_module_gate() -> GateSpec:
             return True, ""
         if violations:
             detail = "; ".join(violations[:5])
-            return False, (
-                f"孤儿模块在代码库中无任何 import 引用"
-                f"（死代码，违反新AI可发现性）: {detail}"
-            )
+            return False, (f"孤儿模块在代码库中无任何 import 引用（死代码，违反新AI可发现性）: {detail}")
         return True, ""
 
     return GateSpec(gate_id="ORPHAN-MODULE", check=_check, priority=89)

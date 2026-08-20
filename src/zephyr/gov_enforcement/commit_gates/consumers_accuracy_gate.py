@@ -141,8 +141,21 @@ def _has_cjk(text: str) -> bool:
 # 病根：原算法假设输入全是 dotted 格式，对 filepath/glob/descriptive 格式产生
 # 系统性误报（如 scripts/git_commit.py 文件实际存在但被误报 phantom）。
 _FILE_EXTENSIONS = (
-    ".py", ".yaml", ".json", ".yml",
-    ".ps1", ".sh", ".bat", ".cmd", ".toml", ".cfg", ".ini", ".md", ".txt", ".csv", ".sql",
+    ".py",
+    ".yaml",
+    ".json",
+    ".yml",
+    ".ps1",
+    ".sh",
+    ".bat",
+    ".cmd",
+    ".toml",
+    ".cfg",
+    ".ini",
+    ".md",
+    ".txt",
+    ".csv",
+    ".sql",
 )
 
 
@@ -216,9 +229,7 @@ def _check_filepath_exists(filepath: str, project_root: Path) -> bool:
 # 调用处直接使用 _module_to_file_candidates(module_path)
 
 
-def _check_module_path_exists(
-    module_path: str, project_root: Path
-) -> bool:
+def _check_module_path_exists(module_path: str, project_root: Path) -> bool:
     """检查模块路径在项目内是否存在（phantom 检测）。
 
     Args:
@@ -367,10 +378,7 @@ def check_consumers_accuracy(
         # 文件路径格式：直接存在性检查
         if fmt == "filepath":
             if not _check_filepath_exists(consumer, project_root):
-                violations.append(
-                    f"  {py_file}: phantom consumer '{consumer}' "
-                    f"(文件路径在项目内不存在)"
-                )
+                violations.append(f"  {py_file}: phantom consumer '{consumer}' (文件路径在项目内不存在)")
                 continue  # phantom 违规，不再检测 orphan
             # 文件存在，继续 orphan 检测
         else:
@@ -396,10 +404,7 @@ def check_consumers_accuracy(
                         found = True
                         break
                 if not found:
-                    violations.append(
-                        f"  {py_file}: phantom consumer '{consumer}' "
-                        f"(模块路径在项目内不存在)"
-                    )
+                    violations.append(f"  {py_file}: phantom consumer '{consumer}' (模块路径在项目内不存在)")
                     continue  # phantom 违规，不再检测 orphan（模块都不存在）
 
         # orphan 检测：括号内声明的函数名在当前文件中不存在
@@ -445,10 +450,7 @@ def make_consumers_accuracy_gate() -> GateSpec:
     """
 
     def _check(gateway, _files: list[str], **_kwargs) -> tuple[bool, str]:
-        py_files = [
-            f for f in _get_staged_py_files(gateway, "CONSUMERS-ACCURACY")
-            if not is_test_exempt(f)
-        ]
+        py_files = [f for f in _get_staged_py_files(gateway, "CONSUMERS-ACCURACY") if not is_test_exempt(f)]
         if not py_files:
             return True, ""
 
@@ -461,9 +463,7 @@ def make_consumers_accuracy_gate() -> GateSpec:
         # 获取项目根目录
         project_root = getattr(gateway, "project_root", None)
         if project_root is None:
-            logger.warning(
-                "CONSUMERS-ACCURACY: gateway.project_root 不可达，fail-open 放行"
-            )
+            logger.warning("CONSUMERS-ACCURACY: gateway.project_root 不可达，fail-open 放行")
             return True, ""
         project_root = Path(project_root)
 
@@ -476,14 +476,13 @@ def make_consumers_accuracy_gate() -> GateSpec:
                 continue  # fail-open: 文件不可读
 
             try:
-                file_warnings = check_consumers_accuracy(
-                    py_file, content, project_root, noqa_files
-                )
+                file_warnings = check_consumers_accuracy(py_file, content, project_root, noqa_files)
                 warnings.extend(file_warnings)
             except Exception as e:  # noqa: BLE001 — fail-open
                 logger.debug(
                     "CONSUMERS-ACCURACY: check_consumers_accuracy fail-open %s: %s",
-                    py_file, e,
+                    py_file,
+                    e,
                 )
                 continue
 

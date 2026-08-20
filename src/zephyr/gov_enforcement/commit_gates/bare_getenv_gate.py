@@ -153,9 +153,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], list[str]] | None:
         列表中的路径已归一化为正斜杠，已过滤 tests/ 豁免。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-status", "--diff-filter=AM"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-status", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
                 "NO-BARE-GETENV gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -183,8 +181,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], list[str]] | None:
         return added, modified
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "NO-BARE-GETENV gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "NO-BARE-GETENV gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
 
@@ -202,14 +199,12 @@ def _get_added_line_numbers(gateway, file_path: str) -> set[int] | None:
         新增行号集合；None 表示 fail-open（git 失败/异常，该文件跳过检测）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "-U0", "--", file_path]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "-U0", "--", file_path])
         if diff_result.returncode != 0:
             logger.warning(
-                "NO-BARE-GETENV gate: git diff -U0 失败 for %s(rc=%d)，"
-                "该修改文件跳过 diff-aware 检测（fail-open）。",
-                file_path, diff_result.returncode,
+                "NO-BARE-GETENV gate: git diff -U0 失败 for %s(rc=%d)，该修改文件跳过 diff-aware 检测（fail-open）。",
+                file_path,
+                diff_result.returncode,
             )
             return None
         added_lines: set[int] = set()
@@ -233,9 +228,11 @@ def _get_added_line_numbers(gateway, file_path: str) -> set[int] | None:
         return added_lines
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "NO-BARE-GETENV gate: git diff -U0 异常 for %s(%s: %s)，"
-            "该修改文件跳过 diff-aware 检测（fail-open）。",
-            file_path, type(e).__name__, e, exc_info=True,
+            "NO-BARE-GETENV gate: git diff -U0 异常 for %s(%s: %s)，该修改文件跳过 diff-aware 检测（fail-open）。",
+            file_path,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -243,9 +240,7 @@ def _get_added_line_numbers(gateway, file_path: str) -> set[int] | None:
 def _resolve_worktree_root(gateway) -> str:
     """解析 worktree 根目录（git rev-parse --show-toplevel），失败回退 project_root。"""
     try:
-        toplevel_result = gateway.run_git(
-            ["git", "rev-parse", "--show-toplevel"]
-        )
+        toplevel_result = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         if toplevel_result.returncode == 0:
             return toplevel_result.stdout.strip()
         return str(gateway.project_root)
@@ -286,7 +281,9 @@ def _collect_violations(
         except OSError as e:
             logger.warning(
                 "NO-BARE-GETENV gate skip file %s: 读取失败(%s: %s)。",
-                abs_path, type(e).__name__, e,
+                abs_path,
+                type(e).__name__,
+                e,
             )
             continue
 
@@ -295,7 +292,9 @@ def _collect_violations(
         except SyntaxError as e:
             logger.warning(
                 "NO-BARE-GETENV gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
-                abs_path, type(e).__name__, e,
+                abs_path,
+                type(e).__name__,
+                e,
             )
             continue
 
@@ -310,7 +309,7 @@ def _collect_violations(
                 if added_lines is not None and lineno not in added_lines:
                     continue
                 all_violations.append(
-                    f"{rel_name}:{lineno} {pattern}(\"{key}\") "
+                    f'{rel_name}:{lineno} {pattern}("{key}") '
                     f"—— 应改用 get_secret/get_secret_or_default（SecretProvider SSoT）"
                 )
     return all_violations
@@ -357,9 +356,7 @@ def make_bare_getenv_gate() -> GateSpec:
             if scannable_modified:
                 modified_abs = _resolve_abs_paths(scannable_modified, wt_root)
                 if modified_abs:
-                    all_violations.extend(
-                        _collect_violations(modified_abs, wt_root, added_lines_map)
-                    )
+                    all_violations.extend(_collect_violations(modified_abs, wt_root, added_lines_map))
 
         # 5. 汇总违规
         if all_violations:

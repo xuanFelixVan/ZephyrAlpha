@@ -59,7 +59,6 @@ class GateOverride:
         """写入：active（Stage 4 公共化）。"""
         self._active = value
 
-
     def grant(
         self,
         gate_id: str,
