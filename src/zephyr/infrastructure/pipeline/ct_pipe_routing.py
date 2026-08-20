@@ -64,9 +64,7 @@ _CT_PIPE_TAG_PREFIX = "ct_pipe."
 # 蓝图决策树隐含的低层路由（foundation domains）— 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001
 # + target_layer_vocabulary.yaml foundation_domains 段（SSoT 动态加载，治本 M01 #3）
 # target_layer ∈ foundation_domains -> M5；其余域 -> M6
-_FOUNDATION_LAYERS = frozenset(
-    load_vocabulary_section_list("target_layer_vocabulary.yaml", "foundation_domains")
-)
+_FOUNDATION_LAYERS = frozenset(load_vocabulary_section_list("target_layer_vocabulary.yaml", "foundation_domains"))
 
 # node_id -> (execution_model, sandbox_profile, gate_profile) — 对齐契约 YAML 枚举语义
 _NODE_PROFILE: dict[str, tuple[str, str, str]] = {  # noqa: gate-vocab  无对应词表真源；M1-M11 节点 ID 真源为 models.py M_MODULE_SPECS，值为路由策略配置
@@ -223,7 +221,9 @@ def _check_model_affinity(
     if constraint.node_b:
         node_b_model = active.get(constraint.node_b, M_MODULE_SPECS.get(constraint.node_b, {}).get("model", ""))
         if node_a_model and node_b_model and node_a_model == node_b_model:
-            return [f"ABORT: {constraint.description} ({constraint.node_a}={node_a_model}, {constraint.node_b}={node_b_model})"]
+            return [
+                f"ABORT: {constraint.description} ({constraint.node_a}={node_a_model}, {constraint.node_b}={node_b_model})"
+            ]
         if node_a_model and node_b_model and node_a_model != node_b_model:
             return []
         if constraint.weight is AffinityWeight.SOFT:

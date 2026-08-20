@@ -50,6 +50,7 @@ class ChaosScenario:
     description: str
     enabled: bool = True
 
+
 @dataclass
 class DrillResult:
     drill_id: str
@@ -62,12 +63,14 @@ class DrillResult:
     success: bool
     details: list[str] = field(default_factory=list)
 
+
 CHAOS_SCENARIOS: list[ChaosScenario] = [
     ChaosScenario("gc_concurrent", "并发 GC 压力——多线程垃圾回收与回滚竞争"),
     ChaosScenario("sqlite_locked", "SQLite 锁竞争——回滚期间 DB 被外部锁定"),
     ChaosScenario("disk_90pct", "磁盘 90% 满载——限制 dump JSONL 写入空间"),
     ChaosScenario("cpu_saturation", "CPU 极限——stress-ng 满载所有核心"),
 ]
+
 
 class RollbackDrill:
     DRILL_SCHEDULE_DAY: int = 5
@@ -92,7 +95,6 @@ class RollbackDrill:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     @property
     def drill_log_dir(self):
         """只读：drill_log_dir（Stage 4 公共化）。"""
@@ -103,11 +105,9 @@ class RollbackDrill:
         """写入：drill_log_dir（Stage 4 公共化）。"""
         self._drill_log_dir = value
 
-
     def check_db_integrity(self, path) -> bool:
         """公共接口：check_db_integrity（Stage 4 公共化）。"""
         return self._check_db_integrity(path)
-
 
     @property
     def automatic_rollback_melted(self):
@@ -118,7 +118,6 @@ class RollbackDrill:
     def automatic_rollback_melted(self, value):
         """写入：automatic_rollback_melted（Stage 4 公共化）。"""
         self._automatic_rollback_melted = value
-
 
     def is_drill_time(self) -> bool:
         now = datetime.now(UTC)

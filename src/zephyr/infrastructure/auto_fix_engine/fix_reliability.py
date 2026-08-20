@@ -61,7 +61,6 @@ class IdempotencyGuard:
         """写入：ttl（Stage 4 公共化）。"""
         self._ttl = value
 
-
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = get_db_connection(self._db_path)
@@ -141,7 +140,6 @@ class ConflictResolver:
         """写入：queue（Stage 4 公共化）。"""
         self._queue = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def locks(self) -> dict[str, threading.Lock]:
@@ -152,7 +150,6 @@ class ConflictResolver:
     def locks(self, value):
         """写入：locks（Stage 4 公共化）。"""
         self._locks = value
-
 
     def acquire(self, target: str) -> threading.Lock:
         with self._global_lock:
@@ -197,7 +194,6 @@ class FixOrderResolver:
         """写入：dependency_map（Stage 4 公共化）。"""
         self._dependency_map = value
 
-
     def add_dependency(self, fixer_type: str, depends_on: str) -> None:
         self._dependency_map.setdefault(fixer_type, set()).add(depends_on)
 
@@ -239,7 +235,6 @@ class FixResultCache:
     def max_size(self, value):
         """写入：max_size（Stage 4 公共化）。"""
         self._max_size = value
-
 
     def get(self, key: str) -> object | None:
         with self._lock:
@@ -300,7 +295,6 @@ class DeadLetterQueue:
         """写入：queue（Stage 4 公共化）。"""
         self._queue = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def max_retries(self):
@@ -311,7 +305,6 @@ class DeadLetterQueue:
     def max_retries(self, value):
         """写入：max_retries（Stage 4 公共化）。"""
         self._max_retries = value
-
 
     def add(self, action: FixAction, reason: str) -> FixDeadLetter:
         entry = FixDeadLetter(
@@ -412,7 +405,6 @@ class CanaryFixer:
     def ratios(self, value):
         """写入：ratios（Stage 4 公共化）。"""
         self._ratios = value
-
 
     def get_ratio(self, fixer_type: str) -> float:
         stage = self._current_stage.get(fixer_type, 0)

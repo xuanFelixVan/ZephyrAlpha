@@ -89,7 +89,6 @@ class Notifier:
         """写入：notification_count（Stage 4 公共化）。"""
         self._notification_count = value
 
-
     def notify(self, level: NotificationLevel, title: str, message: str, task_id: str = "") -> Notification:
         notification = Notification(
             notification_id=f"NOTIF-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",

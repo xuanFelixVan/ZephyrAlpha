@@ -78,7 +78,6 @@ class RollbackBudget:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def status(self) -> BudgetStatus:
         today = datetime.now(UTC).date()
         daily_used = 0

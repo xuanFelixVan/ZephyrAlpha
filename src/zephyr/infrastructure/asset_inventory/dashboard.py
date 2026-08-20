@@ -167,7 +167,6 @@ class KnowledgeTransferGate:
         """写入：root（Stage 4 公共化）。"""
         self._root = value
 
-
     def generate_summary(self) -> str:
         index_path = self._root / "data" / "asset_index" / "unified-asset-index.yaml"
 

@@ -114,9 +114,7 @@ class InterruptGuard:
             with self._lock:
                 if not self._active_fixes:
                     return
-                logger.warning(
-                    "atexit cleanup: rolling back %d active fixes", len(self._active_fixes)
-                )
+                logger.warning("atexit cleanup: rolling back %d active fixes", len(self._active_fixes))
                 for action_id, fix_data in list(self._active_fixes.items()):
                     self._write_wal(action_id, "interrupted", fix_data)
                     self._rollback_fix(action_id, fix_data)

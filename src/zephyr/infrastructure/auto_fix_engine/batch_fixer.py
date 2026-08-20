@@ -57,7 +57,6 @@ class BatchFixer:
         """写入：conflict_resolver（Stage 4 公共化）。"""
         self._conflict_resolver = value
 
-
     @property
     def idempotency(self):
         """只读：idempotency（Stage 4 公共化）。"""
@@ -67,7 +66,6 @@ class BatchFixer:
     def idempotency(self, value):
         """写入：idempotency（Stage 4 公共化）。"""
         self._idempotency = value
-
 
     @property
     def storm_guard(self):
@@ -79,7 +77,6 @@ class BatchFixer:
         """写入：storm_guard（Stage 4 公共化）。"""
         self._storm_guard = value
 
-
     @property
     def budget(self):
         """只读：budget（Stage 4 公共化）。"""
@@ -90,7 +87,6 @@ class BatchFixer:
         """写入：budget（Stage 4 公共化）。"""
         self._budget = value
 
-
     @property
     def max_workers(self):
         """只读：max_workers（Stage 4 公共化）。"""
@@ -100,7 +96,6 @@ class BatchFixer:
     def max_workers(self, value):
         """写入：max_workers（Stage 4 公共化）。"""
         self._max_workers = value
-
 
     def execute_batch(
         self,

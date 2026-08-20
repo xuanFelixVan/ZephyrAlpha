@@ -170,6 +170,7 @@ __all__ = [
     "traces",
     "validate_error_context",
     "watchdog",
-'otel_instrumentation']
+    "otel_instrumentation",
+]
 
 __all__.append("MetricsBridge")

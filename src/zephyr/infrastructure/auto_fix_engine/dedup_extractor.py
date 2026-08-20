@@ -40,7 +40,6 @@ logger = logging.getLogger(__name__)
 
 
 class DedupExtractor(BaseFixer):
-
     def __init__(self, min_occurrences: int = 3) -> None:
         super().__init__(
             fixer_id="dedup_extractor",
@@ -55,7 +54,6 @@ class DedupExtractor(BaseFixer):
         """公共接口：normalize_code（Stage 4 公共化）。"""
         return self._normalize_code(code)
 
-
     @property
     def min_occurrences(self):
         """只读：min_occurrences（Stage 4 公共化）。"""
@@ -65,7 +63,6 @@ class DedupExtractor(BaseFixer):
     def min_occurrences(self, value):
         """写入：min_occurrences（Stage 4 公共化）。"""
         self._min_occurrences = value
-
 
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
@@ -106,9 +103,7 @@ class DedupExtractor(BaseFixer):
     def _collect_function_bodies(
         self, content: str, tree: ast.AST
     ) -> dict[str, list[tuple[str, ast.FunctionDef | ast.AsyncFunctionDef]]]:
-        function_bodies: dict[
-            str, list[tuple[str, ast.FunctionDef | ast.AsyncFunctionDef]]
-        ] = defaultdict(list)
+        function_bodies: dict[str, list[tuple[str, ast.FunctionDef | ast.AsyncFunctionDef]]] = defaultdict(list)
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 body_lines = ast.get_source_segment(content, node)
@@ -186,9 +181,7 @@ class DedupExtractor(BaseFixer):
             original = content
             tree = ast.parse(content)
             function_bodies = self._collect_function_bodies(content, tree)
-            new_functions, content, replacements_made = self._replace_duplicate_functions(
-                content, function_bodies
-            )
+            new_functions, content, replacements_made = self._replace_duplicate_functions(content, function_bodies)
             if new_functions and replacements_made > 0:
                 insert_pos = content.find("\n\nclass ") if "\nclass " in content else len(content)
                 for func_def in new_functions:

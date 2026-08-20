@@ -117,11 +117,7 @@ def _scan_candidate_dirs(
     candidate_dirs = [p for p, _, _ in type_mapping]
     for prefix in sorted(candidate_dirs, key=len, reverse=True):
         if relative_path.startswith(prefix):
-            if any(
-                True
-                for _, exts, _ in type_mapping
-                if prefix in relative_path and extension in exts
-            ):
+            if any(True for _, exts, _ in type_mapping if prefix in relative_path and extension in exts):
                 pass
             break
     else:
@@ -189,9 +185,7 @@ class Classifier:
         )
 
     def _classify_one(self, entry: RawFileEntry) -> ClassifiedAsset:
-        asset_type = _resolve_asset_type(
-            entry.relative_path, entry.extension, self.type_mapping
-        )
+        asset_type = _resolve_asset_type(entry.relative_path, entry.extension, self.type_mapping)
         asset_layer = _resolve_asset_layer(entry.relative_path)
         asset_status = _resolve_asset_status(entry.relative_path)
         _scan_candidate_dirs(entry.relative_path, entry.extension, self.type_mapping)

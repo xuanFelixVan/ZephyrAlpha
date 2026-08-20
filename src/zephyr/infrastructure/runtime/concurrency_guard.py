@@ -85,7 +85,9 @@ class ConcurrencyConflictError(Exception):
 
     error_code = "ZA-IF-0007"
 
-    def __init__(self, blocked_files: list[str], locked_by: dict[str, str], reason: str = "", error_code: str | None = None):
+    def __init__(
+        self, blocked_files: list[str], locked_by: dict[str, str], reason: str = "", error_code: str | None = None
+    ):
         self.blocked_files = blocked_files
         self.locked_by = locked_by
         details = []

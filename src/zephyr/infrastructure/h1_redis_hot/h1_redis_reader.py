@@ -182,11 +182,10 @@ class H1RedisReader:
         except Exception as exc:
             logger.error(
                 "H1RedisReader get_feature_updated_at 失败: symbol=%s, error=%s",
-                symbol, exc,
+                symbol,
+                exc,
             )
-            raise H1RedisUnavailable(
-                f"Redis updated_at 读取失败（symbol={symbol}）: {exc}"
-            ) from exc
+            raise H1RedisUnavailable(f"Redis updated_at 读取失败（symbol={symbol}）: {exc}") from exc
 
         return _parse_float(raw)
 

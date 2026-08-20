@@ -76,7 +76,9 @@ class TaskQueue:
         self._config = QueueConfig()
         self._running = False
         self._dispatch_handler: Callable[[QueueItem], bool] | None = None
-        self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start_polling/stop_polling 的 check-then-act, 避免 TOCTOU
+        self._lifecycle_lock = (
+            threading.Lock()
+        )  # 5.142.6 修复: 保护 start_polling/stop_polling 的 check-then-act, 避免 TOCTOU
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -119,7 +121,6 @@ class TaskQueue:
         """写入：items（Stage 4 公共化）。"""
         self._items = value
 
-
     def enqueue(self, task_id: str, priority: str = "P2") -> QueueItem:
         item = QueueItem(
             item_id=f"QITEM-{task_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
@@ -134,6 +135,7 @@ class TaskQueue:
     def _emit_task_created(task_id: str, priority: str) -> None:
         try:
             from zephyr.shared.event_bus import bus as _bus
+
             _bus.emit("task.created", {"task_id": task_id, "priority": priority})
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("TaskQueue: emit task.created failed", exc_info=True)
@@ -164,6 +166,7 @@ class TaskQueue:
             if self._running:
                 return
             from zephyr.shared.event_bus import bus as _bus
+
             _bus.subscribe("task.created", self._on_task_created)
             self._running = True
 
@@ -173,6 +176,7 @@ class TaskQueue:
             if not self._running:
                 return
             from zephyr.shared.event_bus import bus as _bus
+
             _bus.unsubscribe("task.created", self._on_task_created)
             self._running = False
 

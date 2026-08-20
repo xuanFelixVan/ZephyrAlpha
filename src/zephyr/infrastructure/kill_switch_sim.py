@@ -110,7 +110,6 @@ class KillSwitchSimulator:
         """写入：metrics_path（Stage 4 公共化）。"""
         self._metrics_path = value
 
-
     @property
     def probe_history(self) -> list[KillSwitchProbe]:
         """只读：probe_history（Stage 4 公共化）。"""
@@ -120,7 +119,6 @@ class KillSwitchSimulator:
     def probe_history(self, value):
         """写入：probe_history（Stage 4 公共化）。"""
         self._probe_history = value
-
 
     def register_ack_callback(self, cb: Callable[[], None]) -> None:
         """注册硬件确认回调（T1 真实硬件时替换此回调）"""

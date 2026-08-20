@@ -80,16 +80,13 @@ def _scan_unregistered_modules(repo_root: Path) -> list[dict[str, Any]]:
                 content = init_file.read_text(encoding="utf-8")
                 module_name = py_file.stem
                 if module_name not in content:
-                    findings.append(
-                        {"file": str(py_file), "init_file": str(init_file), "type": "unregistered_module"}
-                    )
+                    findings.append({"file": str(py_file), "init_file": str(init_file), "type": "unregistered_module"})
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in scaffold_registrar", exc_info=True)
     return findings
 
 
 class ScaffoldRegistrar(BaseFixer):
-
     def __init__(self) -> None:
         super().__init__(
             fixer_id="scaffold_registrar",

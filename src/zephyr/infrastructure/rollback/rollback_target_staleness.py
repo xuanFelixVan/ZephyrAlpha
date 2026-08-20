@@ -46,6 +46,7 @@ class StalenessResult:
     exit_code: int
     recommendation: str
 
+
 class RollbackTargetStaleness:
     EXIT_CODE_STALE: int = 42
     MAX_AGE_DAYS: int = 30
@@ -63,11 +64,9 @@ class RollbackTargetStaleness:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def get_commit_date(self, commit_sha) -> datetime | None:
         """公共接口：get_commit_date（Stage 4 公共化）。"""
         return self._get_commit_date(commit_sha)
-
 
     def check(self, commit_sha: str) -> StalenessResult:
         commit_date = self._get_commit_date(commit_sha)

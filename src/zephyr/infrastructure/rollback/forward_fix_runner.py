@@ -41,6 +41,7 @@ class FixResult:
     patch_file: str
     details: list[str] = field(default_factory=list)
 
+
 class ForwardFixRunner:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
@@ -55,7 +56,6 @@ class ForwardFixRunner:
     def project_root(self, value):
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
-
 
     def can_forward_fix(self, changed_files: list[str], conflict_risk: str) -> bool:
         if conflict_risk == "high":

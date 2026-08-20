@@ -62,7 +62,6 @@ class LLMImpactAnalyzer:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def analyze_impact(self, task_card: dict[str, Any]) -> ImpactAssessment:
         downstream = task_card.get("downstream_outputs", [])
         files_affected = [o.get("path", "") for o in downstream]

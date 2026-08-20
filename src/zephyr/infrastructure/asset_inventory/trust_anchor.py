@@ -74,11 +74,13 @@ class TripleTrustAnchorGate:
         test_ok = self._run_pytest()
         audit_ok = self.check_audit_continuity()
 
-        trust_level = self.calculate_trust({
-            "git_ok": git_ok,
-            "test_ok": test_ok,
-            "audit_ok": audit_ok,
-        })
+        trust_level = self.calculate_trust(
+            {
+                "git_ok": git_ok,
+                "test_ok": test_ok,
+                "audit_ok": audit_ok,
+            }
+        )
 
         self._cache = TrustAnchorResult(
             git_ok=git_ok,
@@ -216,6 +218,7 @@ def _load_override_yaml(override_path: Path) -> dict | None:
     if not override_path.exists():
         return None
     import yaml
+
     try:
         data = yaml.safe_load(override_path.read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -270,7 +273,6 @@ class BypassManager:
     def override_path(self, value):
         """写入：override_path（Stage 4 公共化）。"""
         self._override_path = value
-
 
     def get_bypass_state(self) -> BypassState:
         data = _load_override_yaml(self._override_path)

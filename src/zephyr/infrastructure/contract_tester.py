@@ -84,7 +84,6 @@ class ContractTester:
         """写入：strict（Stage 4 公共化）。"""
         self._strict = value
 
-
     def test_contract(
         self,
         contract_path: str | Path,

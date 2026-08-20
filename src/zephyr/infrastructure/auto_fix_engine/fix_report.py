@@ -50,7 +50,6 @@ class FixReportGenerator:
         """写入：history（Stage 4 公共化）。"""
         self._history = value
 
-
     def generate(
         self, actions: list[FixAction], budget_info: BudgetInfo | None = None, cascade_alerts: list[str] | None = None
     ) -> FixReport:

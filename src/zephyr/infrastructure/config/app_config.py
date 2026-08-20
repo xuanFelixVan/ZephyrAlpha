@@ -96,9 +96,7 @@ def _find_yaml_path(config_path: str | None, checked: list[str]) -> Path | None:
 _VALID_LOG_LEVELS = frozenset({"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"})
 
 
-def _apply_env_overrides(
-    env: str, log_level: str, loaded: dict
-) -> tuple[str, str]:
+def _apply_env_overrides(env: str, log_level: str, loaded: dict) -> tuple[str, str]:
     """应用环境变量覆盖（5.93.7 extract method 降低 load_config 复杂度）。
 
     ``ZEPHYR_ENV`` 覆盖 env，``ZEPHYR_LOG_LEVEL`` 覆盖 log_level（校验合法性）。
@@ -112,7 +110,8 @@ def _apply_env_overrides(
         else:
             _LOGGER.warning(
                 "config.load_config: ZEPHYR_LOG_LEVEL=%s 无效，回退到 %s",
-                candidate, loaded.get("log_level", "INFO"),
+                candidate,
+                loaded.get("log_level", "INFO"),
             )
             log_level = str(loaded.get("log_level", "INFO")).upper()
     return env, log_level
@@ -223,9 +222,7 @@ class ConfigHolder:
         cls._notify(old, config, listeners)
 
     @classmethod
-    def subscribe(
-        cls, callback: Callable[[AppConfig | None, AppConfig], None]
-    ) -> None:
+    def subscribe(cls, callback: Callable[[AppConfig | None, AppConfig], None]) -> None:
         """订阅配置重载事件。``callback(old, new)`` 在 set/reload 时被调用。
 
         回调异常被捕获并记录日志，不阻断其他订阅者。

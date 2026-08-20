@@ -319,9 +319,7 @@ class FileLockBackend(LockBackend):
     def _ensure_root(self) -> None:
         os.makedirs(self._lock_root, exist_ok=True)
 
-    def _record_conflict_from_dir(
-        self, lock_dir: str, task_id: str, conflicts: list[str]
-    ) -> None:
+    def _record_conflict_from_dir(self, lock_dir: str, task_id: str, conflicts: list[str]) -> None:
         """读取锁目录 owner 并按需记录冲突任务（去重）。
 
         从 try_acquire 抽取——3 处重复的冲突记录逻辑。

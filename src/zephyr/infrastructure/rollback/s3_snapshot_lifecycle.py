@@ -107,11 +107,9 @@ class S3SnapshotLifecycle:
         """写入：snapshot_dir（Stage 4 公共化）。"""
         self._snapshot_dir = value
 
-
     def save_manifest(self, manifest) -> None:
         """公共接口：save_manifest（Stage 4 公共化）。"""
         return self._save_manifest(manifest)
-
 
     @property
     def manifest_dir(self):
@@ -123,11 +121,9 @@ class S3SnapshotLifecycle:
         """写入：manifest_dir（Stage 4 公共化）。"""
         self._manifest_dir = value
 
-
     def load_manifests(self) -> list[SnapshotManifest]:
         """公共接口：load_manifests（Stage 4 公共化）。"""
         return self._load_manifests()
-
 
     def apply_lifecycle_policy(self) -> LifecyclePolicy:
         self._manifest_dir.mkdir(parents=True, exist_ok=True)

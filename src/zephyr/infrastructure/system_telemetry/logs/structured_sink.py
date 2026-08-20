@@ -21,7 +21,6 @@
 蓝图 §5: structlog 配置 + JSONL 写入 + trace_id 注入 + ring buffer + RULE-ONE 原子写入。
 """
 
-
 from __future__ import annotations
 
 import json
@@ -71,6 +70,7 @@ def configure(
 def _inject_trace_context(record: dict[str, Any]) -> None:
     try:
         from zephyr.infrastructure.system_telemetry._trace_bridge import get_current_span
+
         span = get_current_span()
         if span is not None:
             record.setdefault("trace_id", span.context.trace_id)
@@ -139,9 +139,7 @@ def _write_batch_atomic(target: Path, batch: list[dict[str, Any]]) -> None:
     tmp = target.with_name(f"{target.name}.{os.getpid()}.tmp")
     try:
         target.parent.mkdir(parents=True, exist_ok=True)
-        lines = "\n".join(
-            json.dumps(entry, default=str, ensure_ascii=False) for entry in batch
-        ) + "\n"
+        lines = "\n".join(json.dumps(entry, default=str, ensure_ascii=False) for entry in batch) + "\n"
 
         existing = ""
         if target.exists() and target.stat().st_size < _MAX_FILE_BYTES:

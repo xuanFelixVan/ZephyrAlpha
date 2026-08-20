@@ -37,7 +37,6 @@ logger = logging.getLogger(__name__)
 
 
 class AlignmentSyncer(BaseFixer):
-
     def __init__(self) -> None:
         super().__init__(
             fixer_id="alignment_syncer",

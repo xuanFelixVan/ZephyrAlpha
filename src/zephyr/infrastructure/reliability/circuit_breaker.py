@@ -101,7 +101,6 @@ class CircuitBreaker:
         """写入：state（Stage 4 公共化）。"""
         self._state = value
 
-
     def reset(self) -> None:
         with self._lock:
             self._state = CircuitState.CLOSED

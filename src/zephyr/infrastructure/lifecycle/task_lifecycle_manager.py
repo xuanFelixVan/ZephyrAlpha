@@ -105,7 +105,6 @@ class TaskLifecycleManager:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def initialize(self, task_id: str) -> LifecycleState:
         with self._lock:
             state = self._states.get(task_id)

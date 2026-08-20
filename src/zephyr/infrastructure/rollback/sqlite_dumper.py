@@ -76,11 +76,13 @@ HMAC_KEY_DEFAULT = b"ZephyrAlpha-Rollback-Integrity-v1"
 # P0 安全修复（Phase 2）：表名白名单校验——表名无法参数化，用正则白名单防 SQL 注入
 _TABLE_NAME_RE = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
 
+
 def _validate_table_name(table: str) -> str:
     """校验表名仅含字母/数字/下划线（防 SQL 注入——表名无法参数化，用白名单替代）。"""
     if not isinstance(table, str) or not _TABLE_NAME_RE.match(table):
         raise ValueError(f"非法表名: {table!r}（仅允许字母/数字/下划线，防 SQL 注入）")
     return table
+
 
 def _read_dump_lines(source_path: Path) -> list[str]:
     lines: list[str] = []
@@ -90,6 +92,7 @@ def _read_dump_lines(source_path: Path) -> list[str]:
             if line and not line.startswith("#"):
                 lines.append(line)
     return lines
+
 
 @dataclass
 class DumpResult:
@@ -101,12 +104,14 @@ class DumpResult:
     file_size_bytes: int
     hmac_signature: str
 
+
 @dataclass
 class RestoreResult:
     source_path: Path
     tables_restored: int
     rows_restored: int
     db_path: Path
+
 
 @dataclass
 class VerifyResult:
@@ -121,6 +126,7 @@ class VerifyResult:
     def passed(self) -> bool:
         """5.96.1 修复: passed 从其他4个 match 字段派生,消除冗余布尔字段。"""
         return self.merkle_match and self.hmac_match and self.table_count_match and self.row_count_match
+
 
 class SqliteDumper:
     def __init__(
@@ -140,7 +146,6 @@ class SqliteDumper:
         """公共接口：compute_merkle_root（Stage 4 公共化）。"""
         return self._compute_merkle_root(table_hashes)
 
-
     @property
     def output_dir(self):
         """只读：output_dir（Stage 4 公共化）。"""
@@ -150,7 +155,6 @@ class SqliteDumper:
     def output_dir(self, value):
         """写入：output_dir（Stage 4 公共化）。"""
         self._output_dir = value
-
 
     @property
     def hmac_key(self):
@@ -162,7 +166,6 @@ class SqliteDumper:
         """写入：hmac_key（Stage 4 公共化）。"""
         self._hmac_key = value
 
-
     @property
     def db_path(self):
         """只读：db_path（Stage 4 公共化）。"""
@@ -172,7 +175,6 @@ class SqliteDumper:
     def db_path(self, value):
         """写入：db_path（Stage 4 公共化）。"""
         self._db_path = value
-
 
     def _get_all_tables(self, conn: sqlite3.Connection) -> list[str]:
         rows = conn.execute(

@@ -165,11 +165,9 @@ class RollbackExecutor:
         """公共接口：in_flight_path（Stage 4 公共化）。"""
         return self._in_flight_path(execution_id)
 
-
     def g0_verify(self, files) -> bool:
         """公共接口：g0_verify（Stage 4 公共化）。"""
         return self._g0_verify(files)
-
 
     @property
     def audit_writer(self) -> _CoreAuditWriter | None:
@@ -180,7 +178,6 @@ class RollbackExecutor:
     def audit_writer(self, value):
         """写入：audit_writer（Stage 4 公共化）。"""
         self._audit_writer = value
-
 
     # === Public property accessors (R5: reverse hierarchy) ===
     @property
@@ -674,7 +671,11 @@ class RollbackExecutor:
         audit_session: str,
     ) -> dict[str, Any]:
         return self.build_discard_audit(
-            decision=decision, files=files, blocked=blocked, reason=reason, audit_session=audit_session,
+            decision=decision,
+            files=files,
+            blocked=blocked,
+            reason=reason,
+            audit_session=audit_session,
         )
 
     def write_audit_log(self, record: dict[str, Any]) -> None:
@@ -747,14 +748,22 @@ class RollbackExecutor:
 
         # === 1. 并发安全守卫（方案C）：检测回滚文件是否与活跃文件锁冲突 ===
         guard_result = self._concurrency_guard(
-            operation, commit_sha, file_globs, file_list, execution_id, audit_session,
+            operation,
+            commit_sha,
+            file_globs,
+            file_list,
+            execution_id,
+            audit_session,
         )
         if guard_result is not None:
             return guard_result
 
         # === 2. 预检 + stash 安全化 ===
         preflight_result, stashed = self._preflight_with_stash(
-            operation, execution_id, audit_session, commit_sha,
+            operation,
+            execution_id,
+            audit_session,
+            commit_sha,
         )
         if preflight_result is not None:
             return preflight_result
@@ -782,10 +791,17 @@ class RollbackExecutor:
         # === 4. 执行回滚操作 ===
         try:
             files_reverted, g0_passed = self._dispatch_rollback_op(
-                operation, commit_sha, file_globs, file_list, dry_run, execution_id,
+                operation,
+                commit_sha,
+                file_globs,
+                file_list,
+                dry_run,
+                execution_id,
             )
             db_tables_restored, db_rows_restored = self._restore_db_snapshots(
-                commit_sha, dry_run, execution_id,
+                commit_sha,
+                dry_run,
+                execution_id,
             )
             result = RollbackExecutionResult(
                 success=True,
@@ -829,9 +845,7 @@ class RollbackExecutor:
                         },
                     )
                 except Exception:  # noqa: BLE001 — 事件发布失败不阻断回滚结果
-                    logger.warning(
-                        "rollback_completed emit failed for execution_id=%s", execution_id, exc_info=True
-                    )
+                    logger.warning("rollback_completed emit failed for execution_id=%s", execution_id, exc_info=True)
 
             self.write_in_flight(execution_id, "complete", "SUCCESS")
 
@@ -900,9 +914,13 @@ class RollbackExecutor:
         )
 
     def _concurrency_guard(
-        self, operation: RollbackOp, commit_sha: str,
-        file_globs: list[str] | None, file_list: list[str] | None,
-        execution_id: str, audit_session: str,
+        self,
+        operation: RollbackOp,
+        commit_sha: str,
+        file_globs: list[str] | None,
+        file_list: list[str] | None,
+        execution_id: str,
+        audit_session: str,
     ) -> RollbackExecutionResult | None:
         """检测回滚文件是否与活跃文件锁冲突。返回阻断结果或 None（通过）。"""
         files_to_check = self.resolve_conflict_files(operation, commit_sha, file_globs, file_list)
@@ -920,7 +938,11 @@ class RollbackExecutor:
             operation=operation.value,
             commit_sha=commit_sha,
             success=False,
-            details={"error": "concurrency_conflict", "blocked_files": conflict.blocked_files, "execution_id": execution_id},
+            details={
+                "error": "concurrency_conflict",
+                "blocked_files": conflict.blocked_files,
+                "execution_id": execution_id,
+            },
             audit_session=audit_session,
         )
         return RollbackExecutionResult(
@@ -935,8 +957,11 @@ class RollbackExecutor:
         )
 
     def _preflight_with_stash(
-        self, operation: RollbackOp, execution_id: str,
-        audit_session: str, commit_sha: str,
+        self,
+        operation: RollbackOp,
+        execution_id: str,
+        audit_session: str,
+        commit_sha: str,
     ) -> tuple[RollbackExecutionResult | None, bool]:
         """预检 + stash 安全化。返回 (阻断结果或None, stashed)。"""
         self.write_in_flight(execution_id, "preflight", "PENDING")
@@ -976,7 +1001,11 @@ class RollbackExecutor:
                 operation=operation.value,
                 commit_sha=commit_sha,
                 success=False,
-                details={"error": "other_session_uncommitted", "other_files": stash_plan.other_files, "execution_id": execution_id},
+                details={
+                    "error": "other_session_uncommitted",
+                    "other_files": stash_plan.other_files,
+                    "execution_id": execution_id,
+                },
                 audit_session=audit_session,
             )
             return RollbackExecutionResult(
@@ -994,9 +1023,13 @@ class RollbackExecutor:
         return None, True
 
     def _dispatch_rollback_op(
-        self, operation: RollbackOp, commit_sha: str,
-        file_globs: list[str] | None, file_list: list[str] | None,
-        dry_run: bool, execution_id: str,
+        self,
+        operation: RollbackOp,
+        commit_sha: str,
+        file_globs: list[str] | None,
+        file_list: list[str] | None,
+        dry_run: bool,
+        execution_id: str,
     ) -> tuple[int, bool]:
         """分发回滚操作。返回 (files_reverted, g0_passed)。"""
         if dry_run:
@@ -1046,7 +1079,10 @@ class RollbackExecutor:
         return 0, True
 
     def _restore_db_snapshots(
-        self, commit_sha: str, dry_run: bool, execution_id: str,
+        self,
+        commit_sha: str,
+        dry_run: bool,
+        execution_id: str,
     ) -> tuple[int, int]:
         """恢复 DB 快照。返回 (tables_restored, rows_restored)。"""
         jsonl_path = Path(f"data/rollback/db_snapshots/{commit_sha}.jsonl")
@@ -1055,7 +1091,9 @@ class RollbackExecutor:
         self.write_in_flight(execution_id, "db_restore", "PENDING")
         restore_result = self.dumper.restore(jsonl_path)
         self.write_in_flight(
-            execution_id, "db_restore", "SUCCESS",
+            execution_id,
+            "db_restore",
+            "SUCCESS",
             {"tables": restore_result.tables_restored, "rows": restore_result.rows_restored},
         )
         return restore_result.tables_restored, restore_result.rows_restored
@@ -1219,5 +1257,9 @@ class RollbackExecutor:
         audit_session: str,
     ) -> None:
         return self.write_op_audit(
-            operation=operation, commit_sha=commit_sha, success=success, details=details, audit_session=audit_session,
+            operation=operation,
+            commit_sha=commit_sha,
+            success=success,
+            details=details,
+            audit_session=audit_session,
         )

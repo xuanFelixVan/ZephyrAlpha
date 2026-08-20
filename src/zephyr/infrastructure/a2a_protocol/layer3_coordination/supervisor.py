@@ -44,7 +44,6 @@ class Supervisor:
         """写入：tasks（Stage 4 公共化）。"""
         self._tasks = value
 
-
     def submit_task(self, task: A2ATask) -> A2ATask:
         if task.deadline is None:
             task.deadline = now_utc() + timedelta(hours=1)

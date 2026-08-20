@@ -33,7 +33,6 @@ class DeadlockGuard:
         """写入：locks（Stage 4 公共化）。"""
         self._locks = value
 
-
     def try_acquire(self, resource: str, holder: str) -> bool:
         if resource in self._locks:
             return False

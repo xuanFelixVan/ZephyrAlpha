@@ -118,7 +118,6 @@ class StartupOrchestrator:
         """写入：health_check（Stage 4 公共化）。"""
         self._health_check = value
 
-
     def run(self) -> bool:
         for phase in StartupPhase:
             pdef = STARTUP_DAG[phase]
@@ -153,7 +152,6 @@ class ShutdownOrchestrator:
     def shutdown(self, value):
         """写入：shutdown（Stage 4 公共化）。"""
         self._shutdown = value
-
 
     def run(self) -> bool:
         for phase in SHUTDOWN_SEQUENCE:

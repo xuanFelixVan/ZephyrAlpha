@@ -32,6 +32,7 @@ rollback_boot_integration._on_rollback_completed）。
     - RollbackWAL (WAL GC)
     - RollbackDrill (演练调度)
 """
+
 from __future__ import annotations
 
 import json
@@ -49,6 +50,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class SchedulerResult:
     """调度任务执行结果。"""
+
     task: str
     success: bool
     timestamp_utc: str
@@ -84,6 +86,7 @@ class RollbackScheduler:
             return self._wal
         try:
             from zephyr.infrastructure.rollback.rollback_wal import RollbackWAL
+
             self._wal = RollbackWAL(project_root=self._project_root)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to initialize RollbackWAL: %s", e, exc_info=True)
@@ -94,6 +97,7 @@ class RollbackScheduler:
             return self._drill
         try:
             from zephyr.infrastructure.rollback.rollback_drill import RollbackDrill
+
             self._drill = RollbackDrill(project_root=self._project_root)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to initialize RollbackDrill: %s", e, exc_info=True)

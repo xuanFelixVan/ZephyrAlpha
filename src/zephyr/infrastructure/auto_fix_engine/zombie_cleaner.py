@@ -81,7 +81,6 @@ def _atomic_write(target: str, content: str) -> bool:
 
 
 class ZombieCleaner(BaseFixer):
-
     def __init__(self) -> None:
         super().__init__(
             fixer_id="zombie_cleaner",

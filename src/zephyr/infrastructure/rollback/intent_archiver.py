@@ -92,7 +92,6 @@ class IntentArchiver:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def archive(self, operation_id: str, intent_text: str, author: str = "") -> IntentRecord:
         now = datetime.now(UTC)
         intent_id = f"INTENT-{now.strftime('%Y%m%d-%H%M%S-%f')}"

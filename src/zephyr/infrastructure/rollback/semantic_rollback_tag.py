@@ -47,6 +47,7 @@ class TagType(str, Enum):
     REFACTOR = "refactor"
     MIGRATION = "migration"
 
+
 @dataclass
 class RollbackTag:
     tag_name: str
@@ -55,6 +56,7 @@ class RollbackTag:
     phase: str
     commit_sha: str
     created_at: str
+
 
 class SemanticRollbackTag:
     def __init__(self, project_root: Path | None = None) -> None:
@@ -70,7 +72,6 @@ class SemanticRollbackTag:
     def project_root(self, value):
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
-
 
     def tag_task(self, task_id: str, phase: str) -> RollbackTag | None:
         sha = self._get_head_short()

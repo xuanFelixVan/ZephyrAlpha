@@ -105,7 +105,9 @@ class AlertSubsystem:
         if len(self._pending_alerts) + len(triggered) > self._MAX_PENDING_ALERTS:
             logger.warning(
                 "pending_alerts will overflow (current=%d, adding=%d, maxlen=%d), dropping oldest",
-                len(self._pending_alerts), len(triggered), self._MAX_PENDING_ALERTS,
+                len(self._pending_alerts),
+                len(triggered),
+                self._MAX_PENDING_ALERTS,
             )
         self._pending_alerts.extend(triggered)
         return triggered

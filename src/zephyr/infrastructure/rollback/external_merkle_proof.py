@@ -91,7 +91,6 @@ class ExternalMerkleProof:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def merklize_file_tree(
         self,
         files: list[str],

@@ -54,6 +54,7 @@ warnings.warn(
     stacklevel=2,
 )
 
+
 @dataclass
 class StandbyState:
     standby_commit: str
@@ -61,6 +62,7 @@ class StandbyState:
     last_verified_at: str
     is_active: bool
     is_stale: bool
+
 
 @dataclass
 class CutoverResult:
@@ -70,6 +72,7 @@ class CutoverResult:
     rto_ms: int
     exit_code: int
     details: list[str] = field(default_factory=list)
+
 
 class WarmStandby:
     STANDBY_DIR: str = ".zephyr/warm_standby"
@@ -85,11 +88,9 @@ class WarmStandby:
         """公共接口：read_state（Stage 4 公共化）。"""
         return self._read_state()
 
-
     def save_state(self, state) -> None:
         """公共接口：save_state（Stage 4 公共化）。"""
         return self._save_state(state)
-
 
     @property
     def state_path(self):
@@ -101,7 +102,6 @@ class WarmStandby:
         """写入：state_path（Stage 4 公共化）。"""
         self._state_path = value
 
-
     @property
     def standby_dir(self):
         """只读：standby_dir（Stage 4 公共化）。"""
@@ -112,7 +112,6 @@ class WarmStandby:
         """写入：standby_dir（Stage 4 公共化）。"""
         self._standby_dir = value
 
-
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
@@ -122,7 +121,6 @@ class WarmStandby:
     def project_root(self, value):
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
-
 
     def initialize(self, commit_sha: str) -> bool:
         if self._standby_dir.exists():

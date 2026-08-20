@@ -49,7 +49,6 @@ class FixPatternMiner:
         """写入：db_path（Stage 4 公共化）。"""
         self._db_path = value
 
-
     @property
     def pattern_cache(self) -> dict[str, dict[str, Any]]:
         """只读：pattern_cache（Stage 4 公共化）。"""
@@ -59,7 +58,6 @@ class FixPatternMiner:
     def pattern_cache(self, value):
         """写入：pattern_cache（Stage 4 公共化）。"""
         self._pattern_cache = value
-
 
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)

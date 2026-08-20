@@ -25,7 +25,6 @@ _record_writer: Callable[[dict[str, Any], dict[str, Any] | None], bool] | None =
 record_writer = _record_writer  # public alias（Stage 4 公共化）
 
 
-
 def set_span_context_getter(fn: Callable[[], Any]) -> None:
     global _span_context_getter
     _span_context_getter = fn

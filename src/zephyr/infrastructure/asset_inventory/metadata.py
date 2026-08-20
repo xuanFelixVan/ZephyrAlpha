@@ -82,19 +82,16 @@ class GitMetadataExtractor:
         """公共接口：current_lines（Stage 4 公共化）。"""
         return self._current_lines(file_path)
 
-
     @staticmethod
     def parse_date(date_str: str) -> datetime:
         try:
-            return datetime.strptime(date_str.strip()[:19], '%Y-%m-%d %H:%M:%S').replace(tzinfo=UTC)
+            return datetime.strptime(date_str.strip()[:19], "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC)
         except ValueError:
             return datetime.min.replace(tzinfo=UTC)
-
 
     @staticmethod
     def is_ai_commit(message: str) -> bool:
         return bool(_AI_COMMIT_PATTERNS.search(message))
-
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -106,7 +103,6 @@ class GitMetadataExtractor:
     def root(self, value):
         """写入：root（Stage 4 公共化）。"""
         self._root = value
-
 
     def extract(self, file_path: str) -> GitAssetMetadata | None:
         log = self._run_git_log(file_path)
@@ -273,7 +269,6 @@ class MultiIDERuleGenerator:
     def root(self, value):
         """写入：root（Stage 4 公共化）。"""
         self._root = value
-
 
     def _collect_project_rules(self) -> str:
         rules_path = self._root / ".trae" / "rules" / "project_rules.md"

@@ -49,6 +49,7 @@ class SimulationResult:
     db_impact: int
     details: list[str] = field(default_factory=list)
 
+
 class RollbackSimulator:
     WORKTREE_PREFIX: str = ".zephyr/sim_worktree_"
 
@@ -59,7 +60,6 @@ class RollbackSimulator:
         """公共接口：run_git（Stage 4 公共化，forward 至 _run_git 实现）。"""
         return self._run_git(args, cwd)
 
-
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
@@ -69,7 +69,6 @@ class RollbackSimulator:
     def project_root(self, value):
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
-
 
     def simulate_rollback(self, commit_sha: str) -> SimulationResult:
         start_time = time.time()

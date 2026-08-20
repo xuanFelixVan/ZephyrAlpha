@@ -70,7 +70,6 @@ class AgentCooldown:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def _init_db(self) -> None:
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         # 5.144.6 修复: conn.close() 移入 finally, 防止 execute/commit 抛异常跳过 close

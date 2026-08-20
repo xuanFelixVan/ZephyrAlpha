@@ -72,7 +72,6 @@ class EnvWatcher:
         """写入：sentinel_path（Stage 4 公共化）。"""
         self._sentinel_path = value
 
-
     def check_for_changes(self) -> EnvChangeAlert | None:
         current_state = self._read_env_files()
         if not current_state:

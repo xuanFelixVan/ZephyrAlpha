@@ -89,12 +89,10 @@ class ContractMetricsCollector:
         """只读：sla_buffer（Stage 4 公共化）。"""
         return self._sla_buffer
 
-
     @property
     def enabled(self) -> bool:
         """只读：enabled（Stage 4 公共化）。"""
         return self._enabled
-
 
     @property
     def violation_counts(self) -> dict[str, int]:
@@ -106,7 +104,6 @@ class ContractMetricsCollector:
         """写入：violation_counts（Stage 4 公共化）。"""
         self._violation_counts = value
 
-
     @property
     def field_baselines(self) -> dict[str, dict[str, float]]:
         """只读：field_baselines（Stage 4 公共化）。"""
@@ -116,7 +113,6 @@ class ContractMetricsCollector:
     def field_baselines(self, value):
         """写入：field_baselines（Stage 4 公共化）。"""
         self._field_baselines = value
-
 
     def enable(self) -> None:
         self._enabled = True
@@ -211,7 +207,6 @@ class ContractMetricsCollector:
 
 _collector: ContractMetricsCollector | None = None
 collector = _collector  # public alias（Stage 4 公共化）
-
 
 
 def get_contract_metrics() -> ContractMetricsCollector:

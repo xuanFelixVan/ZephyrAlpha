@@ -38,7 +38,6 @@ logger = logging.getLogger(__name__)
 
 
 class AllCompleter(BaseFixer):
-
     def __init__(self) -> None:
         super().__init__(
             fixer_id="all_completer",
@@ -52,11 +51,9 @@ class AllCompleter(BaseFixer):
         """公共接口：parse_all（Stage 4 公共化）。"""
         return self._parse_all(content)
 
-
     def extract_public_symbols(self, content) -> list[str]:
         """公共接口：extract_public_symbols（Stage 4 公共化）。"""
         return self._extract_public_symbols(content)
-
 
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []

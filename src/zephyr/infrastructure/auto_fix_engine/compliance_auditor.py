@@ -46,7 +46,6 @@ class ComplianceAuditor:
         """写入：retention_days（Stage 4 公共化）。"""
         self._retention_days = value
 
-
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = get_db_connection(self._db_path)
@@ -116,7 +115,9 @@ class ComplianceAuditor:
                     tamper_proof_hash=row[11],
                 )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("ComplianceAuditor.get_evidence: evidence lookup failed (%s: %s)", type(e).__name__, e, exc_info=True)
+            logger.warning(
+                "ComplianceAuditor.get_evidence: evidence lookup failed (%s: %s)", type(e).__name__, e, exc_info=True
+            )
         # 5.49.2 修复：异常路径确保连接归还
         finally:
             if conn is not None:

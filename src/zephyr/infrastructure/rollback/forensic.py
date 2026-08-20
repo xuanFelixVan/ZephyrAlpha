@@ -190,7 +190,6 @@ class ForensicEngine:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def scan_shell_injection(self, trigger: str, message: str, context: str = "") -> list[ShellInjectionFinding]:
         findings: list[ShellInjectionFinding] = []
 

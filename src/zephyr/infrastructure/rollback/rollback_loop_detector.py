@@ -78,7 +78,6 @@ class RollbackLoopDetector:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def record(self, task_id: str, gate_id: str, success: bool = False) -> None:
         entry = {
             "timestamp_utc": datetime.now(UTC).isoformat(),

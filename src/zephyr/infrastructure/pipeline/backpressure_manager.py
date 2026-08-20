@@ -175,7 +175,6 @@ class BackpressureManager:
         """写入：history（Stage 4 公共化）。"""
         self._history = value
 
-
     def handle_pause(self, signal: BackpressurePause) -> BpSymbolState:
         with self._lock:
             state = self._get_or_create(signal.symbol)

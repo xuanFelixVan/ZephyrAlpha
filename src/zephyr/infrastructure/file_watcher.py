@@ -92,11 +92,11 @@ class FileWatcher:
         """写入：on_change（Stage 4 公共化）。"""
         self._on_change = value
 
-
     def start(self) -> None:
         if self._started:
             return
         from zephyr.shared.event_bus import bus as _bus
+
         _bus.subscribe("file.changed", self._on_file_changed)
         self._snapshot = self._build_snapshot()
         self._started = True
@@ -112,6 +112,7 @@ class FileWatcher:
         if not self._started:
             return
         from zephyr.shared.event_bus import bus as _bus
+
         _bus.unsubscribe("file.changed", self._on_file_changed)
         self._started = False
         logger.info("FileWatcher stopped: dir=%s", self._watch_dir)

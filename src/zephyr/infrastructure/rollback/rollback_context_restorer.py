@@ -69,7 +69,6 @@ class RollbackContextRestorer:
         """写入：prompt_path（Stage 4 公共化）。"""
         self._prompt_path = value
 
-
     def generate_restore_prompt(self, context: RestoreContext) -> str:
         lines: list[str] = []
         lines.append("# AI Session Context Restore")

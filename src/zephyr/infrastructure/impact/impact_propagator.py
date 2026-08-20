@@ -62,7 +62,6 @@ class ImpactPropagator:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def analyze_propagation(self, task_card: dict[str, Any]) -> PropagationReport:
         downstream = task_card.get("downstream_outputs", [])
         source_files = [o.get("path", "") for o in downstream]

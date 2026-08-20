@@ -114,7 +114,6 @@ class CircuitBreakerManager:
         """只读：states（Stage 4 公共化补全 2026-08-15，tests/pipeline/test_pipeline_orchestrator.py 消费）。"""
         return self._states
 
-
     # ------------------------------------------------------------------
     # 公共 API
     # ------------------------------------------------------------------

@@ -173,10 +173,7 @@ class GitCommandBatcher:
         """公共接口：parse_tar_archive（Stage 4 公共化）。"""
         return self._parse_tar_archive(tar_bytes)
 
-
-    def git_show_batch(
-        self, ref: str, files: list[str], timeout: int = 60
-    ) -> dict[str, bytes]:
+    def git_show_batch(self, ref: str, files: list[str], timeout: int = 60) -> dict[str, bytes]:
         """批量获取 git ref 中指定文件的内容。
 
         用 ``git archive --format=tar <ref> -- <files>`` 一次获取 N 个文件内容，
@@ -197,9 +194,7 @@ class GitCommandBatcher:
 
         try:
             cmd = ["git", "archive", "--format=tar", ref, "--"] + files
-            r = run_subprocess_hidden(
-                cmd, cwd=str(self._root), capture_output=True, timeout=timeout,
-            text=False)
+            r = run_subprocess_hidden(cmd, cwd=str(self._root), capture_output=True, timeout=timeout, text=False)
         except subprocess.TimeoutExpired:
             logger.warning("git_show_batch: timeout after %ss (ref=%s, %d files)", timeout, ref, len(files))
             return {}
@@ -214,9 +209,7 @@ class GitCommandBatcher:
 
         return self._parse_tar_archive(r.stdout)
 
-    def git_diff_cached_names(
-        self, files: list[str] | None = None, timeout: int = 60
-    ) -> list[str]:
+    def git_diff_cached_names(self, files: list[str] | None = None, timeout: int = 60) -> list[str]:
         """批量获取 staged 文件名。
 
         Args:
@@ -231,9 +224,7 @@ class GitCommandBatcher:
             cmd += ["--"] + files
         return self._run_git_name_list(cmd, timeout, "git_diff_cached_names")
 
-    def git_diff_names(
-        self, ref_spec: str, files: list[str] | None = None, timeout: int = 60
-    ) -> list[str]:
+    def git_diff_names(self, ref_spec: str, files: list[str] | None = None, timeout: int = 60) -> list[str]:
         """批量获取 diff 文件名。
 
         Args:
@@ -249,9 +240,7 @@ class GitCommandBatcher:
             cmd += ["--"] + files
         return self._run_git_name_list(cmd, timeout, "git_diff_names")
 
-    def git_ls_files_tracked(
-        self, files: list[str] | None = None, timeout: int = 60
-    ) -> list[str]:
+    def git_ls_files_tracked(self, files: list[str] | None = None, timeout: int = 60) -> list[str]:
         """批量获取 tracked 文件列表。
 
         Args:
@@ -266,9 +255,7 @@ class GitCommandBatcher:
             cmd += ["--"] + files
         return self._run_git_name_list(cmd, timeout, "git_ls_files_tracked")
 
-    def git_restore_batch(
-        self, files: list[str], timeout: int = 60, *, staged: bool = False
-    ) -> list[str]:
+    def git_restore_batch(self, files: list[str], timeout: int = 60, *, staged: bool = False) -> list[str]:
         """批量 git restore 还原文件（GIT-BUDGET-INV-002 批量化强制）。
 
         用 ``git restore [--staged] -- <files>`` 一次还原 N 个文件，
@@ -308,13 +295,19 @@ class GitCommandBatcher:
 
         try:
             r = run_subprocess_hidden(
-                cmd, cwd=str(self._root), capture_output=True, text=True,
-                encoding="utf-8", errors="replace", timeout=timeout,
+                cmd,
+                cwd=str(self._root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=timeout,
             )
         except subprocess.TimeoutExpired:
             logger.warning(
                 "git_restore_batch: timeout after %ss (%d files)",
-                timeout, len(files),
+                timeout,
+                len(files),
             )
             return []
         except Exception as e:  # noqa: BLE001 — fail-open
@@ -343,7 +336,9 @@ class GitCommandBatcher:
         stderr = r.stderr.strip()[:300]
         logger.warning(
             "git_restore_batch: git restore failed (rc=%d, %d files): %s",
-            r.returncode, len(files), stderr,
+            r.returncode,
+            len(files),
+            stderr,
         )
         return []
 
@@ -370,17 +365,20 @@ class GitCommandBatcher:
             logger.warning("_parse_tar_archive: unexpected error: %s", e)
         return result
 
-    def _run_git_name_list(
-        self, cmd: list[str], timeout: int, caller: str
-    ) -> list[str]:
+    def _run_git_name_list(self, cmd: list[str], timeout: int, caller: str) -> list[str]:
         """运行返回文件名列表的 git 命令（git diff --name-only / git ls-files）。
 
         fail-open：subprocess 失败返回空列表。
         """
         try:
             r = run_subprocess_hidden(
-                cmd, cwd=str(self._root), capture_output=True, text=True,
-                encoding="utf-8", errors="replace", timeout=timeout,
+                cmd,
+                cwd=str(self._root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=timeout,
             )
         except subprocess.TimeoutExpired:
             logger.warning("%s: timeout after %ss", caller, timeout)

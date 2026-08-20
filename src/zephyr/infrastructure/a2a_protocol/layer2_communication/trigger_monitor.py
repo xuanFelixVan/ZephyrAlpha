@@ -33,7 +33,6 @@ class TriggerMonitor:
         """写入：triggers（Stage 4 公共化）。"""
         self._triggers = value
 
-
     def watch(self, trigger_id: str, condition: callable) -> None:
         self._triggers[trigger_id] = condition
 

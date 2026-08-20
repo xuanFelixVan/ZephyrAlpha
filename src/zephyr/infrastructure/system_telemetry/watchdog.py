@@ -60,7 +60,6 @@ class Watchdog:
         """写入：external_file（Stage 4 公共化）——测试隔离注入点（tmp_path 重定向）。"""
         self._external_file = value
 
-
     @property
     def panic_mode(self) -> bool:
         return self._panic_mode

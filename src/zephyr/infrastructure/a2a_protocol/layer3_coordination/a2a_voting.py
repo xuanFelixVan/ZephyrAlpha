@@ -73,7 +73,6 @@ class A2AVoting:
         """写入：default_quorum（Stage 4 公共化）。"""
         self._default_quorum = value
 
-
     def open_proposal(self, proposal_id: str, quorum_ratio: float | None = None):
         self._boxes[proposal_id] = {}
         self._boxes[proposal_id]["_quorum"] = (VoteAction.APPROVE, quorum_ratio or self._default_quorum)

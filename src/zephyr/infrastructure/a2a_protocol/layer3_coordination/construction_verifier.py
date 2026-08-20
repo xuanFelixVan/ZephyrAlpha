@@ -64,9 +64,7 @@ def _compute_counts(source: str):
     tree = ast.parse(source)
     classes = [n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)]
     functions = [
-        n
-        for n in ast.walk(tree)
-        if isinstance(n, ast.FunctionDef) and not any(isinstance(p, ast.ClassDef) for p in [])
+        n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and not any(isinstance(p, ast.ClassDef) for p in [])
     ]
     class_count = len(classes)
     method_count = 0

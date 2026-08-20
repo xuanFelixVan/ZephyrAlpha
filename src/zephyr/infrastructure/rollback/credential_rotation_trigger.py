@@ -85,7 +85,6 @@ class CredentialRotationDetector:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def scan(self) -> CredentialScanResult:
         files_scanned = 0
         credentials_detected = 0

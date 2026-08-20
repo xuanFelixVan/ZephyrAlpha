@@ -102,7 +102,6 @@ class ConfigValidator:
         """写入：schema_path（Stage 4 公共化）。"""
         self._schema_path = value
 
-
     def validate(
         self,
         config_path: str | Path,

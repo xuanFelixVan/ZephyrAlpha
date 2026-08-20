@@ -24,7 +24,14 @@ class MetricType:
 
 
 class MetricSnapshot:
-    def __init__(self, name: str = "", value: float = 0.0, metric_type: str | None = None, timestamp: str | None = None, tags: dict[str, str] | None = None) -> None:
+    def __init__(
+        self,
+        name: str = "",
+        value: float = 0.0,
+        metric_type: str | None = None,
+        timestamp: str | None = None,
+        tags: dict[str, str] | None = None,
+    ) -> None:
         self.name = name
         self.value = value
         self.metric_type = metric_type

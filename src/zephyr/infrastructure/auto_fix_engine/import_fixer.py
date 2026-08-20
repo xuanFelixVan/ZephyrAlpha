@@ -42,9 +42,7 @@ def _is_scan_excluded(py_file: Path) -> bool:
     return "site-packages" in s or ".venv" in s
 
 
-def _check_import_from_node(
-    node: ast.ImportFrom, src_root: Path, py_file: Path
-) -> dict[str, Any] | None:
+def _check_import_from_node(node: ast.ImportFrom, src_root: Path, py_file: Path) -> dict[str, Any] | None:
     if not node.module or not node.module.startswith("zephyr."):
         return None
     parts = node.module.split(".")
@@ -62,9 +60,7 @@ def _check_import_from_node(
     }
 
 
-def _check_import_node(
-    node: ast.Import, src_root: Path, py_file: Path
-) -> list[dict[str, Any]]:
+def _check_import_node(node: ast.Import, src_root: Path, py_file: Path) -> list[dict[str, Any]]:
     findings: list[dict[str, Any]] = []
     for alias in node.names:
         if not alias.name.startswith("zephyr."):
@@ -105,7 +101,6 @@ def _scan_file_imports(py_file: Path, src_root: Path) -> list[dict[str, Any]]:
 
 
 class ImportFixer(BaseFixer):
-
     def __init__(self) -> None:
         super().__init__(
             fixer_id="import_fixer",
@@ -118,7 +113,6 @@ class ImportFixer(BaseFixer):
     def try_fix_module(self, module, src_root) -> str | None:
         """公共接口：try_fix_module（Stage 4 公共化）。"""
         return self._try_fix_module(module, src_root)
-
 
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []

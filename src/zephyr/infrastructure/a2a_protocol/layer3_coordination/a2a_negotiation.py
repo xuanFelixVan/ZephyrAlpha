@@ -77,7 +77,6 @@ class A2ANegotiation:
         """写入：max_rounds（Stage 4 公共化）。"""
         self._max_rounds = value
 
-
     def propose(
         self,
         initiator: str,

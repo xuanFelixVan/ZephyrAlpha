@@ -130,17 +130,19 @@ class Arbitrator:
         result: ArbitrationResult,
         conflicted_files: list[str],
     ) -> None:
-        self._audit_log.append({
-            "timestamp": datetime.now(UTC).isoformat(),
-            "agent_a": agent_a,
-            "agent_b": agent_b,
-            "winner": result.winner,
-            "loser": result.loser,
-            "tier": result.tier,
-            "verdict": result.verdict.name,
-            "reason": result.reason,
-            "conflicted_files": list(conflicted_files),
-        })
+        self._audit_log.append(
+            {
+                "timestamp": datetime.now(UTC).isoformat(),
+                "agent_a": agent_a,
+                "agent_b": agent_b,
+                "winner": result.winner,
+                "loser": result.loser,
+                "tier": result.tier,
+                "verdict": result.verdict.name,
+                "reason": result.reason,
+                "conflicted_files": list(conflicted_files),
+            }
+        )
 
     def get_audit_log(self) -> list[dict]:
         return list(self._audit_log)
@@ -187,6 +189,7 @@ class Arbitrator:
         if self.escalation_engine is not None:
             try:
                 from zephyr.governance.escalation.escalation_models import RuleCategory
+
                 self.escalation_engine.evaluate(
                     category=RuleCategory.DEADLOCK,
                     description=f"A2A conflict: {agent_a.agent_id} vs {agent_b.agent_id} on {conflicted_files}",

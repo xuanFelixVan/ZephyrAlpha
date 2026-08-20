@@ -26,6 +26,7 @@ Extends the basic per-session error-count fuse with:
     fire exactly once when the fuse trips (exceptions in one callback do not
     block subsequent callbacks).
 """
+
 from __future__ import annotations
 
 import logging

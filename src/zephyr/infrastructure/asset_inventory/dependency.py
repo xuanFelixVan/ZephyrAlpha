@@ -84,7 +84,6 @@ class DependencyExtractor:
         """公共接口：classify_import（Stage 4 公共化）。"""
         return self._classify_import(imported)
 
-
     def _to_edge(self, file_path: str, imported: str, lineno: int) -> DependencyEdge:
         return DependencyEdge(
             from_file=file_path,
@@ -117,10 +116,16 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
     module_to_file: dict[str, str] = {}
     resolved_adjacency: dict[str, set[str]] = {}
 
-    graph.edges.extend(_extract_entry_edges(
-        scan_entries, project_root, extractor,
-        importer_count, importee_count, adjacency,
-    ))
+    graph.edges.extend(
+        _extract_entry_edges(
+            scan_entries,
+            project_root,
+            extractor,
+            importer_count,
+            importee_count,
+            adjacency,
+        )
+    )
 
     _build_graph_nodes(scan_entries, importer_count, importee_count, graph.nodes)
 

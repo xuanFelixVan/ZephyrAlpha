@@ -85,7 +85,6 @@ def _write_file_atomic(target, content):
 
 
 class DepVersionFixer(BaseFixer):
-
     def __init__(self) -> None:
         super().__init__(
             fixer_id="dep_version_fixer",
@@ -98,7 +97,6 @@ class DepVersionFixer(BaseFixer):
     def is_higher(self, ver_a, ver_b) -> bool:
         """公共接口：is_higher（Stage 4 公共化）。"""
         return self._is_higher(ver_a, ver_b)
-
 
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
@@ -153,7 +151,9 @@ class DepVersionFixer(BaseFixer):
                                     }
                                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("DepVersionFixer.scan: pyproject.toml parse failed (%s: %s)", type(e).__name__, e, exc_info=True)
+                logger.warning(
+                    "DepVersionFixer.scan: pyproject.toml parse failed (%s: %s)", type(e).__name__, e, exc_info=True
+                )
         return findings
 
     def fix(self, target: str, dry_run: bool = False) -> FixAction:

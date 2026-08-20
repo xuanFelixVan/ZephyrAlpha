@@ -49,6 +49,7 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="python -m zephyr.data.asset_inventory",
@@ -91,13 +92,16 @@ def _parse_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
+
 def _load_scan() -> str | None:
     p = REPO_ROOT / "data" / "scans" / "raw-asset-scan.json"
     return str(p) if p.exists() else None
 
+
 def _load_classified() -> str | None:
     p = REPO_ROOT / "data" / "classified" / "classified-assets.json"
     return str(p) if p.exists() else None
+
 
 def _cmd_scan(args: argparse.Namespace) -> int:
     s = Scanner()
@@ -132,6 +136,7 @@ def _cmd_scan(args: argparse.Namespace) -> int:
     print(f"  TIME    {result.duration_seconds:.1f}s")
     print(f"  OUTPUT  {out}")
     return 0
+
 
 def _cmd_classify(args: argparse.Namespace) -> int:
     scan_path = _load_scan()
@@ -171,6 +176,7 @@ def _cmd_classify(args: argparse.Namespace) -> int:
     print(f"  BY TYPE   {result.by_type}")
     print(f"  OUTPUT    {out}")
     return 0
+
 
 def _cmd_reconcile(args: argparse.Namespace) -> int:
     scan_path = _load_scan()
@@ -230,6 +236,7 @@ def _cmd_reconcile(args: argparse.Namespace) -> int:
         print(f"  AUTO-FIX   {auto_fixed} 个孤儿通过 scaffold 自动注册")
     print(f"  OUTPUT     {out}")
     return 0
+
 
 def _print_dry_run_preview(report, scan_path: str) -> None:
     orphans_by_ext: dict[str, int] = {}
@@ -296,6 +303,7 @@ def _print_dry_run_preview(report, scan_path: str) -> None:
 
     print("\n".join(lines))
 
+
 def _auto_fix_orphans(orphans: list) -> int:
 
     fixed = 0
@@ -318,10 +326,17 @@ def _auto_fix_orphans(orphans: list) -> int:
                         capture_output=True,
                         timeout=30,
                         cwd=str(REPO_ROOT),
-                    text=False)
+                        text=False,
+                    )
                     fixed += 1
                 except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    logger.warning("_auto_fix_orphans: scaffold module register failed for %s (%s: %s)", rel, type(e).__name__, e, exc_info=True)
+                    logger.warning(
+                        "_auto_fix_orphans: scaffold module register failed for %s (%s: %s)",
+                        rel,
+                        type(e).__name__,
+                        e,
+                        exc_info=True,
+                    )
         elif rel.startswith("scripts/"):
             script_rel = rel.replace("scripts/", "").replace(".py", "")
             try:
@@ -330,12 +345,20 @@ def _auto_fix_orphans(orphans: list) -> int:
                     capture_output=True,
                     timeout=30,
                     cwd=str(REPO_ROOT),
-                text=False)
+                    text=False,
+                )
                 fixed += 1
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("_auto_fix_orphans: scaffold script register failed for %s (%s: %s)", rel, type(e).__name__, e, exc_info=True)
+                logger.warning(
+                    "_auto_fix_orphans: scaffold script register failed for %s (%s: %s)",
+                    rel,
+                    type(e).__name__,
+                    e,
+                    exc_info=True,
+                )
 
     return fixed
+
 
 def _cmd_dashboard(args: argparse.Namespace) -> int:
     idx_p = REPO_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
@@ -356,6 +379,7 @@ def _cmd_dashboard(args: argparse.Namespace) -> int:
     d.print_summary(dash)
     print(f"  OUTPUT {out}")
     return 0
+
 
 def _cmd_check(args: argparse.Namespace) -> int:
     idx_p = REPO_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
@@ -409,6 +433,7 @@ def _cmd_check(args: argparse.Namespace) -> int:
 
     return 0 if gate == "GREEN" else 1
 
+
 def _cmd_bootstrap(args: argparse.Namespace) -> int:
     """scan -> classify -> index -> reconcile -> dashboard"""
     print("开始自举重建...")
@@ -453,6 +478,7 @@ def _cmd_bootstrap(args: argparse.Namespace) -> int:
 
     return 0
 
+
 def _cmd_clean(args: argparse.Namespace) -> int:
     dry = not args.apply
     cleanup_dirs = [
@@ -477,6 +503,7 @@ def _cmd_clean(args: argparse.Namespace) -> int:
     else:
         print(f"已清理 {total} 个产物")
     return 0
+
 
 def _cmd_deps(args: argparse.Namespace) -> int:
     scan_path = _load_scan()
@@ -510,6 +537,7 @@ def _cmd_deps(args: argparse.Namespace) -> int:
     print("  （依赖图统一由 generate_project_depgraph.py 产出到 depgraph (PostgreSQL)，不再产 JSON）")
     return 0
 
+
 def _cmd_registries(args: argparse.Namespace) -> int:
     from zephyr.infrastructure.asset_inventory.registry_adapter import RegistryManager
 
@@ -531,6 +559,7 @@ def _cmd_registries(args: argparse.Namespace) -> int:
         print(f"    {rid:30s}  {count} entries")
     return 0
 
+
 _COMMANDS = {
     "scan": _cmd_scan,
     "classify": _cmd_classify,
@@ -551,6 +580,7 @@ _EXIT_CODES = {
     4: "REGISTRY_CORRUPT",
     5: "TIMEOUT",
 }
+
 
 def main() -> None:
     args = _parse_args()
@@ -574,6 +604,7 @@ def main() -> None:
             print(f"退出: {label} ({code})")
 
     sys.exit(code)
+
 
 if __name__ == "__main__":
     main()

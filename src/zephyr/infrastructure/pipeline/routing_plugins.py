@@ -65,9 +65,7 @@ __all__ = [
 
 # 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001 + target_layer_vocabulary.yaml
 # foundation_domains 段（SSoT 动态加载，治本 M01 #4）
-_FOUNDATION_LAYERS = frozenset(
-    load_vocabulary_section_list("target_layer_vocabulary.yaml", "foundation_domains")
-)
+_FOUNDATION_LAYERS = frozenset(load_vocabulary_section_list("target_layer_vocabulary.yaml", "foundation_domains"))
 
 _NODE_TASK_TYPE_MAP: dict[str, frozenset[str]] = {  # noqa: gate-vocab  无对应词表真源；M1-M11 节点 ID 真源为 models.py M_MODULE_SPECS，值为节点-任务类型路由策略
     "M1": frozenset({"MODEL_BUILD"}),

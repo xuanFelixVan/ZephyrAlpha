@@ -163,6 +163,7 @@ class DatabaseService(DatabaseCRUDMixin):
             with self._lock:
                 if self._clickhouse_conn is None:
                     from clickhouse_driver import Client
+
                     cfg = _load_clickhouse_config()
                     self._clickhouse_conn = Client(
                         host=cfg["host"],
@@ -170,7 +171,7 @@ class DatabaseService(DatabaseCRUDMixin):
                         user=cfg["user"],
                         password=cfg["password"],
                         database=cfg["database"],
-                        settings={'readonly': 1},
+                        settings={"readonly": 1},
                     )
         return self._clickhouse_conn
 
@@ -207,7 +208,9 @@ class DatabaseService(DatabaseCRUDMixin):
                     self._redis_conn = redis_lib.Redis(**cfg)
                     logger.info(
                         "Redis H1 热缓存连接已建立: %s:%s db=%s",
-                        cfg["host"], cfg["port"], cfg["db"],
+                        cfg["host"],
+                        cfg["port"],
+                        cfg["db"],
                     )
         return self._redis_conn
 

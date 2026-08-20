@@ -50,6 +50,7 @@ class TopologyOp(str, Enum):
     BRANCH_CREATE = "branch_create"
     RESET = "reset"
 
+
 @dataclass
 class TopologyChange:
     op: TopologyOp
@@ -59,6 +60,7 @@ class TopologyChange:
     after_sha: str
     timestamp_utc: str
     details: dict[str, Any] = field(default_factory=dict)
+
 
 class TopologyChangeLog:
     LOG_FILE: str = ".zephyr/topology_change_log.jsonl"
@@ -87,7 +89,6 @@ class TopologyChangeLog:
     def project_root(self, value):
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
-
 
     def record(self, change: TopologyChange) -> None:
         entry = {

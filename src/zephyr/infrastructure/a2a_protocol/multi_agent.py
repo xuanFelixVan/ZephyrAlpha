@@ -102,7 +102,9 @@ class TaskDispatch:
     def unregister_agent(self, agent_id: str) -> AgentCard | None:
         return self.agents.pop(agent_id, None)
 
-    def assign(self, task_id: str, description: str, required_role: MultiAgentRole | None = None) -> DispatchedTask | None:
+    def assign(
+        self, task_id: str, description: str, required_role: MultiAgentRole | None = None
+    ) -> DispatchedTask | None:
         candidates = [
             (aid, card) for aid, card in self.agents.items() if required_role is None or card.role == required_role
         ]

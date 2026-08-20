@@ -24,7 +24,6 @@ _telemetry_getter: Callable[[], Any] | None = None
 telemetry_getter = _telemetry_getter  # public alias（Stage 4 公共化）
 
 
-
 def set_telemetry_getter(getter: Callable[[], Any]) -> None:
     global _telemetry_getter
     _telemetry_getter = getter

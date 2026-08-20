@@ -48,7 +48,6 @@ class OTelInstrumentation:
         """写入：spans（Stage 4 公共化）。"""
         self._spans = value
 
-
     def start_span(self, name: str, attrs: dict[str, Any] | None = None) -> PipelineTraceSpan:
         span = PipelineTraceSpan(name=name, start_time=time.time(), attributes=attrs or {})
         self._spans.append(span)

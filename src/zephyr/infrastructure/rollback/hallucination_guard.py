@@ -86,7 +86,6 @@ class HallucinationGuard:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     @staticmethod
     def extract_functions(source: str) -> list[str]:
         try:
@@ -95,11 +94,10 @@ class HallucinationGuard:
             for node in ast.walk(tree):
                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                     args = [a.arg for a in node.args.args]
-                    funcs.append(f'{node.name}({', '.join(args)})')
+                    funcs.append(f"{node.name}({', '.join(args)})")
             return funcs
         except SyntaxError:
             return []
-
 
     @staticmethod
     def extract_classes(source: str) -> list[str]:
@@ -108,7 +106,6 @@ class HallucinationGuard:
             return [node.name for node in ast.walk(tree) if isinstance(node, ast.ClassDef)]
         except SyntaxError:
             return []
-
 
     def compute_actual_state(self, files: list[str] | None = None) -> list[FileState]:
         target_files = files or list(self._project_root.glob("src/zephyr/**/*.py"))

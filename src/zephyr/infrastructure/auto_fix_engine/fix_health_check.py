@@ -37,7 +37,6 @@ class FixHealthCheck:
         """公共接口：check_config（Stage 4 公共化）。"""
         return self._check_config()
 
-
     @property
     def db_path(self):
         """只读：db_path（Stage 4 公共化）。"""
@@ -48,11 +47,9 @@ class FixHealthCheck:
         """写入：db_path（Stage 4 公共化）。"""
         self._db_path = value
 
-
     def check_db(self) -> bool:
         """公共接口：check_db（Stage 4 公共化）。"""
         return self._check_db()
-
 
     def check(
         self,

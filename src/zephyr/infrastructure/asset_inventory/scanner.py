@@ -119,21 +119,17 @@ class Scanner:
         """公共接口：tokenize_and_normalize（Stage 4 公共化）。"""
         return self._tokenize_and_normalize(code)
 
-
     def jaccard_estimate(self, a, b) -> float:
         """公共接口：jaccard_estimate（Stage 4 公共化）。"""
         return self._jaccard_estimate(a, b)
-
 
     def get_threshold(self, path) -> float:
         """公共接口：get_threshold（Stage 4 公共化）。"""
         return self._get_threshold(path)
 
-
     def compute_minhash(self, tokens) -> list[int]:
         """公共接口：compute_minhash（Stage 4 公共化）。"""
         return self._compute_minhash(tokens)
-
 
     def scan(self, *, incremental: bool = False, last_scan_time: datetime | None = None) -> ScanResult:
         scan_id = _generate_scan_id()
@@ -239,7 +235,7 @@ class Scanner:
         blocks: list[str] = []
         step = _BLOCK_MIN_LINES
         for start in range(0, len(lines) - step + 1, step):
-            block = "\n".join(lines[start:start + step])
+            block = "\n".join(lines[start : start + step])
             blocks.append(block)
         return blocks
 
@@ -259,9 +255,15 @@ class Scanner:
     @staticmethod
     def _normalize_token(ttype: int, tval: str) -> str | None:
         """将单个 token 归一化为标准形式，返回 None 表示跳过。"""
-        _SKIP_TYPES = {tokenize.ENCODING, tokenize.ENDMARKER,
-                       tokenize.NEWLINE, tokenize.NL, tokenize.INDENT, tokenize.DEDENT,
-                       tokenize.COMMENT}
+        _SKIP_TYPES = {
+            tokenize.ENCODING,
+            tokenize.ENDMARKER,
+            tokenize.NEWLINE,
+            tokenize.NL,
+            tokenize.INDENT,
+            tokenize.DEDENT,
+            tokenize.COMMENT,
+        }
         if ttype in _SKIP_TYPES:
             return None
         if ttype == tokenize.STRING:
@@ -490,11 +492,9 @@ class ConcurrentScanner:
         """公共接口：verify_sha（Stage 4 公共化）。"""
         return self._verify_sha(path, expected)
 
-
     def scan_normal(self, path) -> RawFileEntry | None:
         """公共接口：scan_normal（Stage 4 公共化）。"""
         return self._scan_normal(path)
-
 
     @property
     def lock_dir(self):
@@ -506,11 +506,9 @@ class ConcurrentScanner:
         """写入：lock_dir（Stage 4 公共化）。"""
         self._lock_dir = value
 
-
     def is_locked(self, path) -> bool:
         """公共接口：is_locked（Stage 4 公共化）。"""
         return self._is_locked(path)
-
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -522,7 +520,6 @@ class ConcurrentScanner:
     def root(self, value):
         """写入：root（Stage 4 公共化）。"""
         self._root = value
-
 
     def _is_locked(self, path: Path) -> bool:
         try:

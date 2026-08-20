@@ -141,7 +141,6 @@ class RollbackIntegration:
         """写入：last_checkpoint_time（Stage 4 公共化）。"""
         self._last_checkpoint_time = value
 
-
     @property
     def notify_state(self):
         """只读：notify_state（Stage 4 公共化）。"""
@@ -151,7 +150,6 @@ class RollbackIntegration:
     def notify_state(self, value):
         """写入：notify_state（Stage 4 公共化）。"""
         self._notify_state = value
-
 
     @property
     def project_root(self):
@@ -163,13 +161,11 @@ class RollbackIntegration:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     @staticmethod
     @staticmethod
     def three_way_merge(base, incoming) -> dict[str, Any]:
         """公共接口：three_way_merge（Stage 4 公共化）。"""
         return __class__._three_way_merge(base, incoming)
-
 
     def acl_check_to_target(self, session_id: str, target: str, owner_session_id: str | None = None) -> AclCheckResult:
         env_owner = owner_session_id or os.environ.get("ZEPHYR_OWNER_SESSION_ID", "")
@@ -256,10 +252,8 @@ class RollbackIntegration:
 
         try:
             result = run_subprocess_hidden(
-                ["systemd-detect-virt", "--quiet"],
-                capture_output=True,
-                timeout=3,
-            text=False)
+                ["systemd-detect-virt", "--quiet"], capture_output=True, timeout=3, text=False
+            )
             if result.returncode == 0:
                 is_vm = True
                 container_type = "vm"

@@ -67,7 +67,9 @@ _TRANSITIONS[FixState.ACKNOWLEDGED] = {FixState.RESOLVING, FixState.DEAD_LETTER}
 class InvalidFixTransitionError(Exception):
     error_code = "ZA-IF-0005"
 
-    def __init__(self, current: FixState, target: FixState, allowed: set[FixState] | None = None, error_code: str | None = None):
+    def __init__(
+        self, current: FixState, target: FixState, allowed: set[FixState] | None = None, error_code: str | None = None
+    ):
         self.current = current
         self.target = target
         self.allowed = allowed or set()
@@ -141,7 +143,10 @@ class FixStateMachine:
             self._history.append((previous, target, audit_ctx))
             logger.warning(
                 "Forced fix state transition: %s -> %s (caller=%s, reason=%s)",
-                previous.value, target.value, audit_ctx["caller"], audit_ctx["reason"],
+                previous.value,
+                target.value,
+                audit_ctx["caller"],
+                audit_ctx["reason"],
             )
             return self._current
 
@@ -205,6 +210,7 @@ _DRIFT_TRANSITIONS: dict = {
     "DEAD_LETTER": {"ACKNOWLEDGED"},
     "SUPPRESSED": {"DETECTED"},
 }
+
 
 # 漂移终态（对齐 test_state_machine.py TestTerminalStatesConstant——VERIFIED + FALSE_POSITIVE）
 # 使用 DriftState 枚举成员，使 `DriftState.VERIFIED in TERMINAL_STATES` 为真
@@ -275,9 +281,7 @@ class DriftStateMachine:
         if event_id not in self._events:
             # 首次转换：创建记录
             if self._state_value(from_state) != "DETECTED" and from_state is not None:
-                raise InvalidTransitionError(
-                    f"Event not found and from_state={from_state} is not DETECTED"
-                )
+                raise InvalidTransitionError(f"Event not found and from_state={from_state} is not DETECTED")
             from datetime import UTC, datetime
 
             self._events[event_id] = DriftEventRecord(
@@ -288,17 +292,13 @@ class DriftStateMachine:
         else:
             rec = self._events[event_id]
             if self._state_value(rec.state) != self._state_value(from_state):
-                raise InvalidTransitionError(
-                    f"State mismatch: expected {from_state}, got {rec.state}"
-                )
+                raise InvalidTransitionError(f"State mismatch: expected {from_state}, got {rec.state}")
             from datetime import UTC, datetime
 
             rec.updated_at = datetime.now(UTC)
 
         if not self.validate_transition(from_state, to_state):
-            raise InvalidTransitionError(
-                f"Invalid transition: {from_state} -> {to_state}"
-            )
+            raise InvalidTransitionError(f"Invalid transition: {from_state} -> {to_state}")
 
         from datetime import UTC, datetime
 
@@ -366,9 +366,7 @@ class DriftStateMachine:
             raise InvalidTransitionError("Event not found")
         rec = self._events[event_id]
         if not self.validate_transition(rec.state, _drift_state_value("SUPPRESSED")):
-            raise InvalidTransitionError(
-                f"No valid transition to SUPPRESSED from {rec.state}"
-            )
+            raise InvalidTransitionError(f"No valid transition to SUPPRESSED from {rec.state}")
         self.transition(event_id, rec.state, _drift_state_value("SUPPRESSED"))
         rec.suppressed_until = until
 

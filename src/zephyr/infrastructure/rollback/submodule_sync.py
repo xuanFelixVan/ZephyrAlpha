@@ -83,7 +83,6 @@ class SubmoduleSync:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def detect_layout(self) -> str:
         if (self._project_root / ".gitmodules").exists():
             return "submodule"

@@ -237,7 +237,13 @@ class SystemSnapshotter:
 
         文件不存在时返回 "unavailable"。
         """
-        log_path = self._repo_root / "docs" / "19_development_workspace" / "structure-and-mapping" / "architecture-rationale-log.md"
+        log_path = (
+            self._repo_root
+            / "docs"
+            / "19_development_workspace"
+            / "structure-and-mapping"
+            / "architecture-rationale-log.md"
+        )
         if not log_path.exists():
             return "unavailable"
         try:

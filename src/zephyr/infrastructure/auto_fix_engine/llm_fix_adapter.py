@@ -37,7 +37,6 @@ logger = logging.getLogger(__name__)
 
 
 class LLMFixAdapter(BaseFixer):
-
     def __init__(self) -> None:
         super().__init__(
             fixer_id="llm_fix_adapter",
@@ -59,7 +58,6 @@ class LLMFixAdapter(BaseFixer):
         """写入：secret_guard（Stage 4 公共化）。"""
         self._secret_guard = value
 
-
     @property
     def llm_bridge(self) -> LLMGateway | None:
         """只读：llm_bridge（Stage 4 公共化）。"""
@@ -70,16 +68,13 @@ class LLMFixAdapter(BaseFixer):
         """写入：llm_bridge（Stage 4 公共化）。"""
         self._llm_bridge = value
 
-
     def call_llm(self, bridge, prompt) -> str:
         """公共接口：call_llm（Stage 4 公共化）。"""
         return self._call_llm(bridge, prompt)
 
-
     def build_fix_prompt(self, target, content) -> str:
         """公共接口：build_fix_prompt（Stage 4 公共化）。"""
         return self._build_fix_prompt(target, content)
-
 
     def _get_llm_bridge(self) -> object:
         if self._llm_bridge is not None:

@@ -37,7 +37,6 @@ logger = logging.getLogger(__name__)
 
 
 class ConfigFixer(BaseFixer):
-
     def __init__(self) -> None:
         super().__init__(
             fixer_id="config_fixer",
@@ -51,16 +50,13 @@ class ConfigFixer(BaseFixer):
         """公共接口：fix_trailing_whitespace（Stage 4 公共化）。"""
         return self._fix_trailing_whitespace(content, fixes)
 
-
     def fix_tabs(self, content, fixes) -> str:
         """公共接口：fix_tabs（Stage 4 公共化）。"""
         return self._fix_tabs(content, fixes)
 
-
     def fix_merge_conflicts(self, content, fixes) -> str:
         """公共接口：fix_merge_conflicts（Stage 4 公共化）。"""
         return self._fix_merge_conflicts(content, fixes)
-
 
     def scan(self, root: Path | None = None) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []

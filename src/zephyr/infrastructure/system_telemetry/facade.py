@@ -350,7 +350,8 @@ class AIBehaviorFacade:
                 decision,
                 model,
                 reason,
-                dumps(extra), exc_info=True
+                dumps(extra),
+                exc_info=True,
             )
             return {
                 "ts": datetime.now(UTC).isoformat(),

@@ -55,7 +55,9 @@ class FixScheduler:
         self._lock = threading.Lock()
         self._last_batch_time: float = 0.0
         self._batch_count: int = 0
-        self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start/stop 的 check-then-act, 避免 TOCTOU (与 _lock 分离, 避免与 event_queue 锁耦合)
+        self._lifecycle_lock = (
+            threading.Lock()
+        )  # 5.142.6 修复: 保护 start/stop 的 check-then-act, 避免 TOCTOU (与 _lock 分离, 避免与 event_queue 锁耦合)
 
     @property
     def mode(self) -> SchedulerMode:

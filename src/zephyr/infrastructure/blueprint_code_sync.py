@@ -62,7 +62,6 @@ class BlueprintCodeSync:
         """写入：registry_path（Stage 4 公共化）。"""
         self._registry_path = value
 
-
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
@@ -73,11 +72,9 @@ class BlueprintCodeSync:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def collect_entries(self) -> list[SyncEntry]:
         """公共接口：collect_entries（Stage 4 公共化）。"""
         return self._collect_entries()
-
 
     def verify_sync(self) -> SyncReport:
         entries = self._collect_entries()

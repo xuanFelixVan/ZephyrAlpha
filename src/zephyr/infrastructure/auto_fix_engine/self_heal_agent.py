@@ -65,7 +65,13 @@ class SelfHealAgent:
     def circuit_open(self, value: bool) -> None:
         self._circuit_open = value
 
-    def heal(self, target: str, diagnose_fn: Callable[..., object], fix_fn: Callable[..., object], validate_fn: Callable[..., object]) -> FixAction:
+    def heal(
+        self,
+        target: str,
+        diagnose_fn: Callable[..., object],
+        fix_fn: Callable[..., object],
+        validate_fn: Callable[..., object],
+    ) -> FixAction:
         if self._circuit_open:
             return FixAction(
                 action_type="self_heal",

@@ -62,7 +62,6 @@ class HealthAggregator:
         """只读：snapshots（Stage 4 公共化）。"""
         return self._snapshots
 
-
     def poll_all(self) -> list[SystemHealthSnapshot]:
         results: list[SystemHealthSnapshot] = []
         for system in SYSTEMS:
@@ -120,6 +119,7 @@ class HealthAggregator:
                 degraded = [s for s in snapshots if s.degraded]
                 if degraded:
                     from datetime import UTC, datetime
+
                     ts = datetime.now(UTC).isoformat()
                     logger.warning("[HEALTH] %s: %d degraded systems after critical event", ts, len(degraded))
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch

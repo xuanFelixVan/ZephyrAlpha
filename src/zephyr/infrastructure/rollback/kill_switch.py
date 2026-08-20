@@ -131,7 +131,9 @@ class KillSwitchManager:
         except Exception:  # noqa: BLE001 — 事件发布失败不阻断熔断生效
             logging.getLogger(__name__).warning(
                 "kill_switch_triggered emit failed for level=%s target=%s",
-                entry.level.value, entry.target, exc_info=True,
+                entry.level.value,
+                entry.target,
+                exc_info=True,
             )
 
         return entry

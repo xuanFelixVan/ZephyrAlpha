@@ -213,7 +213,10 @@ class PreemptionManager:
     def load_state(self, state: dict) -> None:
         """从持久化字典恢复抢占状态。"""
         preempt_raw = state.get("preempt_log", {})
-        self._preempt_log = {tid: PreemptionRecord(**filter_dataclass_fields(PreemptionRecord, data)) for tid, data in preempt_raw.items()}
+        self._preempt_log = {
+            tid: PreemptionRecord(**filter_dataclass_fields(PreemptionRecord, data))
+            for tid, data in preempt_raw.items()
+        }
         self._priority_cutoff = state.get("priority_cutoff", "P2")
 
     # ------------------------------------------------------------------

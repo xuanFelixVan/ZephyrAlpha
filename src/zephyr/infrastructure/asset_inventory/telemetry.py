@@ -163,7 +163,6 @@ from urllib.request import urlopen as _urlopen
 urlopen = _urlopen  # public alias（Stage 4 公共化）
 
 
-
 class NotificationRecord(BaseModel):
     """通知记录。"""
 
@@ -365,7 +364,6 @@ class NotificationManager:
     def channels(self, value):
         """写入：channels（Stage 4 公共化）。"""
         self._channels = value
-
 
     def notify_all(self, severity: str, message: str) -> list[NotificationRecord]:
         return [ch.send(severity, message) for ch in self._channels]

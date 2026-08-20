@@ -94,7 +94,6 @@ class A2ASaga:
         """写入：compensations（Stage 4 公共化）。"""
         self._compensations = value
 
-
     def add_step(
         self,
         step_id: str,

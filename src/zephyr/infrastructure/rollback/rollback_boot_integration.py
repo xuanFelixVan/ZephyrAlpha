@@ -21,6 +21,7 @@ RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD-INF-021 �
 实现: 注册到 boot_hooks 启动序列，系统启动时自动初始化 WAL + Verifier，
 系统关闭时自动 flush WAL + 清理临时文件。
 """
+
 from __future__ import annotations
 
 import logging
@@ -33,6 +34,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class BootResult:
     """启动/关闭结果。"""
+
     success: bool
     component: str
     errors: list[str] = field(default_factory=list)
@@ -82,6 +84,7 @@ class RollbackBootIntegration:
         # 1. 初始化 RollbackWAL
         try:
             from zephyr.infrastructure.rollback.rollback_wal import RollbackWAL
+
             self._wal = RollbackWAL(project_root=self._project_root)
             # 检查 WAL 完整性
             incomplete = self._wal.check_incomplete()
@@ -96,6 +99,7 @@ class RollbackBootIntegration:
         # 2. 初始化 RollbackVerifier
         try:
             from zephyr.infrastructure.rollback.rollback_verifier import RollbackVerifier
+
             self._verifier = RollbackVerifier(project_root=self._project_root)
             details["verifier_initialized"] = True
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -131,6 +135,7 @@ class RollbackBootIntegration:
         if in_flight_dir.exists():
             try:
                 import shutil
+
                 shutil.rmtree(in_flight_dir, ignore_errors=True)
                 details["in_flight_cleaned"] = True
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -139,6 +144,7 @@ class RollbackBootIntegration:
         # 3. 释放回滚锁
         try:
             from zephyr.infrastructure.rollback.rollback_lock import RollbackLock
+
             lock = RollbackLock(project_root=self._project_root)
             if hasattr(lock, "force_release_all"):
                 lock.force_release_all()
@@ -274,8 +280,7 @@ def _trigger_rollback(payload: object, source: str) -> None:
                 logger.warning("RollbackExecutor.full_revert completed for '%s'", source)
             else:
                 logger.warning(
-                    "Rollback required for '%s' but no commit_sha in payload; "
-                    "manual intervention needed",
+                    "Rollback required for '%s' but no commit_sha in payload; manual intervention needed",
                     source,
                 )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

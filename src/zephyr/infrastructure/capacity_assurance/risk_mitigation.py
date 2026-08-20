@@ -357,7 +357,6 @@ class ChromaDBThreadGuard:
         """写入：task_count（Stage 4 公共化）。"""
         self._task_count = value
 
-
     @property
     def recycle_threshold(self) -> int:
         """只读：recycle_threshold（Stage 4 公共化）。"""
@@ -367,7 +366,6 @@ class ChromaDBThreadGuard:
     def recycle_threshold(self, value):
         """写入：recycle_threshold（Stage 4 公共化）。"""
         self._recycle_threshold = value
-
 
     @property
     def executor(self) -> ThreadPoolExecutor:

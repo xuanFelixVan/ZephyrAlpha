@@ -82,7 +82,6 @@ class CrossPlatformShell:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def generate(self, commit_sha: str, gpg_sign: bool = False) -> CrossPlatformScripts:
         now = datetime.now(UTC).isoformat()
 

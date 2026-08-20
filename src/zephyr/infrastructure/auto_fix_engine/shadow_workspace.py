@@ -46,7 +46,9 @@ def _prepare_shadow_file(
     target_path = Path(action.target)
     if not target_path.exists():
         return ShadowResult(safe_to_apply=False, error="Target not found", shadow_dir=shadow_dir)
-    rel_path = target_path.relative_to(project_root or str(REPO_ROOT)) if project_root else target_path.name  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
+    rel_path = (
+        target_path.relative_to(project_root or str(REPO_ROOT)) if project_root else target_path.name
+    )  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
     shadow_file = os.path.join(shadow_dir, str(rel_path))
     os.makedirs(os.path.dirname(shadow_file), exist_ok=True)
     with open(shadow_file, "w", encoding="utf-8") as f:
@@ -97,11 +99,9 @@ class ShadowWorkspace:
         """公共接口：run_type_check（Stage 4 公共化）。"""
         return self._run_type_check(shadow_file, project_root)
 
-
     def run_test(self, shadow_dir, project_root: str | None = None) -> dict[str, Any]:
         """公共接口：run_test（Stage 4 公共化）。"""
         return self._run_test(shadow_dir, project_root)
-
 
     @property
     def run_ruff(self) -> bool:
@@ -113,7 +113,6 @@ class ShadowWorkspace:
         """写入：run_ruff（Stage 4 公共化）。"""
         self._run_ruff = value
 
-
     @property
     def run_pytest(self) -> bool:
         """只读：run_pytest（Stage 4 公共化）。"""
@@ -123,7 +122,6 @@ class ShadowWorkspace:
     def run_pytest(self, value):
         """写入：run_pytest（Stage 4 公共化）。"""
         self._run_pytest = value
-
 
     @property
     def run_mypy(self) -> bool:
@@ -135,11 +133,9 @@ class ShadowWorkspace:
         """写入：run_mypy（Stage 4 公共化）。"""
         self._run_mypy = value
 
-
     def run_lint(self, shadow_file, project_root: str | None = None) -> dict[str, Any]:
         """公共接口：run_lint（Stage 4 公共化）。"""
         return self._run_lint(shadow_file, project_root)
-
 
     @property
     def pytest_timeout(self) -> int:
@@ -151,7 +147,6 @@ class ShadowWorkspace:
         """写入：pytest_timeout（Stage 4 公共化）。"""
         self._pytest_timeout = value
 
-
     @property
     def base_dir(self) -> str:
         """只读：base_dir（Stage 4 公共化）。"""
@@ -161,7 +156,6 @@ class ShadowWorkspace:
     def base_dir(self, value):
         """写入：base_dir（Stage 4 公共化）。"""
         self._base_dir = value
-
 
     def preflight(self, action: FixAction, project_root: str | None = None) -> ShadowResult:
         shadow_dir = os.path.join(self._base_dir, action.action_id)
@@ -195,7 +189,8 @@ class ShadowWorkspace:
                 capture_output=True,
                 text=True,
                 timeout=self._pytest_timeout,
-                cwd=project_root or str(REPO_ROOT),  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
+                cwd=project_root
+                or str(REPO_ROOT),  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             )
             return {
                 "passed": result.returncode == 0,
@@ -215,7 +210,8 @@ class ShadowWorkspace:
                 capture_output=True,
                 text=True,
                 timeout=60,
-                cwd=project_root or str(REPO_ROOT),  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
+                cwd=project_root
+                or str(REPO_ROOT),  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             )
             return {
                 "passed": result.returncode == 0,
@@ -232,7 +228,8 @@ class ShadowWorkspace:
                 capture_output=True,
                 text=True,
                 timeout=30,
-                cwd=project_root or str(REPO_ROOT),  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
+                cwd=project_root
+                or str(REPO_ROOT),  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             )
             return {
                 "passed": result.returncode == 0,

@@ -163,9 +163,7 @@ class Reconciler:
             for a in existing_index.assets:
                 index_assets[a.relative_path] = a
 
-        matched, orphans, drifts = self._compare_scan_vs_index(
-            scan_sha, class_by_path, index_assets, now
-        )
+        matched, orphans, drifts = self._compare_scan_vs_index(scan_sha, class_by_path, index_assets, now)
         ghosts = self._detect_ghosts(index_assets, scan_sha, existing_index, now)
 
         total = matched + len(orphans) + len(ghosts) + len(drifts)

@@ -105,7 +105,6 @@ class RollbackStateMachine:
         """写入：execution_id（Stage 4 公共化）。"""
         self._execution_id = value
 
-
     def _init_steps(self) -> None:
         self._steps = [RollbackStep(name=name, step_type=st, max_retries=retries) for name, st, retries in self.STEPS]
 

@@ -255,11 +255,9 @@ class SchemaEvolutionManager:
         """公共接口：migrate_1_1_to_2_0（Stage 4 公共化）。"""
         return self._migrate_1_1_to_2_0(data)
 
-
     def migrate_1_0_to_1_1(self, data) -> dict:
         """公共接口：migrate_1_0_to_1_1（Stage 4 公共化）。"""
         return self._migrate_1_0_to_1_1(data)
-
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -271,7 +269,6 @@ class SchemaEvolutionManager:
     def root(self, value):
         """写入：root（Stage 4 公共化）。"""
         self._root = value
-
 
     def check_compatibility(self, current_version: str) -> MigrationPlan:
         plan = MigrationPlan(current_version=current_version, target_version=self.VERSIONS[-1])

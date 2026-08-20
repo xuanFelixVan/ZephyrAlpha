@@ -84,7 +84,6 @@ class SecretRotationAware:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def scan(self) -> RotationResult:
         stale: list[StaleSecret] = []
         total = 0

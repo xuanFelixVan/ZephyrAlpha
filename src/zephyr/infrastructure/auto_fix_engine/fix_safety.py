@@ -52,6 +52,7 @@ _SECRET_PATTERNS = [
     re.compile(r"(?i)xox[bpsa]-[A-Za-z0-9\-]{10,}"),
 ]
 
+
 class SafetyGate:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
         config = config or {}
@@ -69,7 +70,6 @@ class SafetyGate:
     def enabled(self, value):
         """写入：enabled（Stage 4 公共化）。"""
         self._enabled = value
-
 
     def check(self, action: FixAction) -> SafetyDecision:
         if not self._enabled:
@@ -95,6 +95,7 @@ class SafetyGate:
             )
         return SafetyDecision(approved=True, confidence=action.confidence, reason="Safety gate passed")
 
+
 class LockGuard:
     def __init__(self) -> None:
         self._locks_dir = Path(".ailocks")
@@ -109,7 +110,6 @@ class LockGuard:
     def locks_dir(self, value):
         """写入：locks_dir（Stage 4 公共化）。"""
         self._locks_dir = value
-
 
     def is_locked(self, filepath: str) -> tuple[bool, str]:
         sanitized = filepath.replace(os.sep, "_").replace(":", "_").replace("/", "_")
@@ -127,6 +127,7 @@ class LockGuard:
 
     def check(self, filepath: str) -> tuple[bool, str]:
         return self.is_locked(filepath)
+
 
 class WriteSafety:
     @staticmethod
@@ -147,6 +148,7 @@ class WriteSafety:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
+
 class FixValidator:
     # 5.141.2 修复: timeout 通过环境变量外部化, 避免散落硬编码
     PYTEST_TIMEOUT_S: int = int(os.getenv("FIX_PYTEST_TIMEOUT_S", "120"))
@@ -166,7 +168,6 @@ class FixValidator:
     def project_root(self, value):
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
-
 
     def validate_fix(self, target: str) -> ValidationResult:
         errors: list[str] = []
@@ -198,7 +199,9 @@ class FixValidator:
             cmd = ["python", "-m", "pytest", "-x", "-q", "--tb=short"]
             if target:
                 cmd.append(target)
-            result = run_subprocess_hidden(cmd, capture_output=True, text=True, timeout=self.PYTEST_TIMEOUT_S, cwd=self._project_root)
+            result = run_subprocess_hidden(
+                cmd, capture_output=True, text=True, timeout=self.PYTEST_TIMEOUT_S, cwd=self._project_root
+            )
             return ValidationResult(
                 valid=result.returncode == 0,
                 check_name="pytest",
@@ -244,6 +247,7 @@ class FixValidator:
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ValidationResult(valid=False, check_name="ruff", evidence="", error=str(exc))
 
+
 class CascadeBreaker:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
         config = config or {}
@@ -278,7 +282,6 @@ class CascadeBreaker:
     def module_threshold(self, value):
         """写入：module_threshold（Stage 4 公共化）。"""
         self._module_threshold = value
-
 
     def record(self, module: str) -> None:
         now = time.time()
@@ -324,6 +327,7 @@ class CascadeBreaker:
             if now >= self._module_frozen[mod]:
                 del self._module_frozen[mod]
 
+
 class SandboxExecutor:
     def __init__(self, base_dir: str | None = None) -> None:
         self._base_dir = base_dir or os.path.join(tempfile.gettempdir(), "auto_fix_sandbox")
@@ -338,7 +342,6 @@ class SandboxExecutor:
     def base_dir(self, value):
         """写入：base_dir（Stage 4 公共化）。"""
         self._base_dir = value
-
 
     def execute(self, action: FixAction, fix_fn: Callable[..., object]) -> tuple[bool, str]:
         sandbox_dir = os.path.join(self._base_dir, action.action_id)
@@ -356,6 +359,7 @@ class SandboxExecutor:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in fix_safety", exc_info=True)
 
+
 class SecretLeakGuard:
     def __init__(self) -> None:
         self._patterns = _SECRET_PATTERNS
@@ -370,7 +374,6 @@ class SecretLeakGuard:
     def patterns(self, value):
         """写入：patterns（Stage 4 公共化）。"""
         self._patterns = value
-
 
     def scan(self, text: str) -> tuple[bool, list[str]]:
         findings: list[str] = []

@@ -111,11 +111,7 @@ def _extract_asset_path(item: dict, asset_key: str) -> str | None:
 
 def _build_entry_extra(item: dict, asset_path: str) -> dict:
     """构造 RegistryEntry.extra（过滤 None + asset_path + physical_path，与原行为一致）。"""
-    return {
-        k: v
-        for k, v in item.items()
-        if v is not None and k != asset_path and k != "physical_path"
-    }
+    return {k: v for k, v in item.items() if v is not None and k != asset_path and k != "physical_path"}
 
 
 def _extract_dict_entry(item: dict, asset_key: str, registry_id: str) -> RegistryEntry | None:
@@ -313,9 +309,7 @@ class YamlDictAdapter(RegistryAdapter):
                     registry_path="",
                     entry_path=str(path_val),
                     extra={
-                        k: v
-                        for k, v in value.items()
-                        if v is not None and k not in (self._asset_key, "physical_path")
+                        k: v for k, v in value.items() if v is not None and k not in (self._asset_key, "physical_path")
                     },
                 )
             )
@@ -632,7 +626,6 @@ class RegistryManager:
         """公共接口：find_adapter（Stage 4 公共化）。"""
         return self._find_adapter(file_path)
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def known(self) -> dict[str, RegistryAdapter]:
@@ -654,7 +647,6 @@ class RegistryManager:
         """写入：root（Stage 4 公共化）。"""
         self._root = value
 
-
     def _init_defaults(self) -> None:
         self._known: dict[str, RegistryAdapter] = {}
 
@@ -665,7 +657,9 @@ class RegistryManager:
         self._known["docs/03_modules/module-registry.yaml"] = YamlListAdapter(
             # 历史遗留 ID：名字含 ALPHA_SIGNAL_DOMAIN 但实际管辖整个 module-registry.yaml
             # 改名涉及 6 文件+depgraph 节点迁移，待后续重构统一为 REG-MOD-001
-            "REG-MOD-ALPHA_SIGNAL_DOMAIN", "module-registry.yaml", asset_key="module_id"
+            "REG-MOD-ALPHA_SIGNAL_DOMAIN",
+            "module-registry.yaml",
+            asset_key="module_id",
         )
         self._known["docs/03_modules/blueprint_registry.yaml"] = YamlListAdapter(
             "REG-BP-001", "blueprint_registry.yaml", asset_key="blueprint_id"
@@ -711,8 +705,8 @@ class RegistryManager:
         self._known["docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml"] = (
             YamlListAdapter("REG-FRONTMATTER-001", "frontmatter_field_registry.yaml", asset_key="field_name")
         )
-        self._known["docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml"] = YamlListAdapter(
-            "REG-CROSS-001", "registry_consistency_contract.yaml", asset_key="field_name"
+        self._known["docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml"] = (
+            YamlListAdapter("REG-CROSS-001", "registry_consistency_contract.yaml", asset_key="field_name")
         )
         self._known["docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml"] = (
             YamlListAdapter("REG-KB-001", "knowledge_article_registry.yaml", asset_key="article_id")

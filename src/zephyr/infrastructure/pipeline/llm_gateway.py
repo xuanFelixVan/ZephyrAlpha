@@ -199,6 +199,7 @@ def _call_openai_compatible(
     if not api_key:
         # 5.155.13 修复：生产环境api_key缺失阻断，dev/test环境降级为模拟模式
         from zephyr.shared.foundation.env import is_prod
+
         if is_prod():
             raise RuntimeError(f"API key not set in production: {config.api_key_env} (5.155.13)")
         return LLMResponse(
@@ -275,6 +276,7 @@ def _call_anthropic(
     if not api_key:
         # 5.155.13 修复：生产环境api_key缺失阻断，dev/test环境降级为模拟模式
         from zephyr.shared.foundation.env import is_prod
+
         if is_prod():
             raise RuntimeError(f"API key not set in production: {config.api_key_env} (5.155.13)")
         return LLMResponse(
@@ -286,7 +288,7 @@ def _call_anthropic(
         )
 
     try:
-        import anthropic
+        import anthropic  # noqa: import-integrity  anthropic 可选依赖，ImportError 守卫返回 simulated 降级
     except ImportError:
         return LLMResponse(
             content="",

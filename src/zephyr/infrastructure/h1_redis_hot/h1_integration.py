@@ -125,7 +125,8 @@ def write_dag_results_to_h1(
         written = writer.write_factor_cross_section(cross_section, factor_version)
         logger.info(
             "write_dag_results_to_h1: 成功写入 %d symbols, %d factors → H1",
-            written, len(cross_section),
+            written,
+            len(cross_section),
         )
         return written
     except Exception as exc:  # noqa: BLE001 — 降级：H1 写入失败不阻断因子管道
@@ -159,6 +160,7 @@ def create_h1_factor_sink(
     Returns:
         回调函数 (results: dict) -> None。
     """
+
     def _sink(results: dict[str, Any]) -> None:
         write_dag_results_to_h1(results, redis_conn, factor_version)
 

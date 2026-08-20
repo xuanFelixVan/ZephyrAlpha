@@ -73,7 +73,6 @@ class EventHooks:
         """写入：hooks（Stage 4 公共化）。"""
         self._hooks = value
 
-
     def register(self, event: FixEvent, callback: Callable[..., None]) -> None:
         self._hooks.setdefault(event, []).append(callback)
 
@@ -170,10 +169,7 @@ def subscribe_eventbus() -> None:
         bus.subscribe("drift_detected", _on_drift_detected)
         bus.subscribe("validation_result", _on_validation_result)
         _subscribed = True
-        logger.info(
-            "AutoFixEngine: subscribed to 2 external events "
-            "(drift_detected/validation_result)"
-        )
+        logger.info("AutoFixEngine: subscribed to 2 external events (drift_detected/validation_result)")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("AutoFixEngine: subscribe_eventbus failed: %s", e, exc_info=True)
 

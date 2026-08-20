@@ -127,7 +127,6 @@ class RollbackVerifier:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def g0_verify(self, files: list[str] | None = None) -> G0Report:
         target_files = _collect_g0_targets(self._project_root, files)
 

@@ -131,7 +131,6 @@ class SLAMonitor:
         """写入：rto_samples（Stage 4 公共化）。"""
         self._rto_samples = value
 
-
     def record_rto(self, recovery_time_s: float) -> SLABreach | None:
         self._rto_samples.append(recovery_time_s)
 
@@ -273,7 +272,8 @@ class SLAMonitor:
         if removed:
             logger.info(
                 "SLAMonitor: cleaned %d old SLA reports (retention=%dd)",
-                removed, _SLA_REPORT_RETENTION_DAYS,
+                removed,
+                _SLA_REPORT_RETENTION_DAYS,
             )
         return removed
 
@@ -295,10 +295,7 @@ class SLAMonitor:
             bus.subscribe("kill_switch_triggered", self._on_recovery_start)
             bus.subscribe("rollback_completed", self._on_recovery_completed)
             self._subscribed = True
-            logger.info(
-                "SLAMonitor: subscribed to 3 events "
-                "(pipeline_failed/kill_switch_triggered/rollback_completed)"
-            )
+            logger.info("SLAMonitor: subscribed to 3 events (pipeline_failed/kill_switch_triggered/rollback_completed)")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("SLAMonitor: subscribe_eventbus failed: %s", e, exc_info=True)
 
@@ -322,9 +319,7 @@ class SLAMonitor:
             data = raw if isinstance(raw, dict) else {}
             lost_tasks = int(data.get("lost_tasks", 0))
             self.record_recovery(self._recovery_start_time, lost_tasks=lost_tasks)
-            logger.info(
-                "SLAMonitor: recovery recorded via rollback_completed event (RTO/RPO measured)"
-            )
+            logger.info("SLAMonitor: recovery recorded via rollback_completed event (RTO/RPO measured)")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("SLAMonitor: _on_recovery_completed failed: %s", e, exc_info=True)
         finally:

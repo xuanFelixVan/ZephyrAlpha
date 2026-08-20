@@ -99,7 +99,6 @@ class A2AWorkSteal:
         """写入：stolen（Stage 4 公共化）。"""
         self._stolen = value
 
-
     def steal(
         self,
         idle_agent_id: str,

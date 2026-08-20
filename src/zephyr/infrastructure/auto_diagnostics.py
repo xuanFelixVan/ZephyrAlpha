@@ -142,7 +142,6 @@ class AutoDiagnostics:
         """写入：rules（Stage 4 公共化）。"""
         self._rules = value
 
-
     def _load_default_rules(self) -> None:
         self._rules = [
             DiagnosisRule(

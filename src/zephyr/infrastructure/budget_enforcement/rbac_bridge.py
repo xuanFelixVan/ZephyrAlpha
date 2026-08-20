@@ -110,16 +110,23 @@ class BudgetEnforcementRBACBridge:
         if ratio >= self._warning_threshold and not decision.exceeded:
             _logger.warning(
                 "Budget warning: agent=%s ratio=%.2f exceeds warning threshold %.2f",
-                agent_id, ratio, self._warning_threshold,
+                agent_id,
+                ratio,
+                self._warning_threshold,
             )
         if decision.exceeded:
             _logger.warning(
                 "Budget exceeded: agent=%s action=%s (used=%d limit=%d)",
-                agent_id, decision.action, token_used, limit,
+                agent_id,
+                decision.action,
+                token_used,
+                limit,
             )
         return decision
 
-    def enforce_budget(self, agent_id: str, token_used: int, token_limit: int | None = None) -> BudgetEnforcementDecision:
+    def enforce_budget(
+        self, agent_id: str, token_used: int, token_limit: int | None = None
+    ) -> BudgetEnforcementDecision:
         """便捷方法：评估预算并返回裁决（含审计日志）。
 
         等同于 evaluate()，语义上强调"执行"而非"查询"。

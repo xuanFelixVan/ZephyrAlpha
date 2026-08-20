@@ -70,7 +70,6 @@ class GitInfraSnapshot:
         """写入：snapshot_dir（Stage 4 公共化）。"""
         self._snapshot_dir = value
 
-
     def create_snapshot(self) -> bool:
         git_dir = self._project_root / ".git"
         if not git_dir.exists():
