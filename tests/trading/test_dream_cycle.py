@@ -102,7 +102,11 @@ class TestNeedsArchival:
     def test_needs_archival_with_today_file(self, tmp_path: Path) -> None:
         audit_dir = tmp_path / "audit"
         audit_dir.mkdir()
-        today = datetime.now().strftime("%Y-%m-%d")
+        # 与被测代码同一时钟（now_utc）——datetime.now() 本地时在 UTC+8 的 00:00-08:00
+        # 窗口与 UTC 日期错位致假性失败（2026-08-21 波3 回归实证）
+        from zephyr.shared.utils.time_utils import now_utc
+
+        today = now_utc().strftime("%Y-%m-%d")
         today_file = audit_dir / f"ai_audit_{today}.jsonl"
         today_file.write_text('{"entry": 1}\n', encoding="utf-8")
         cycle = DreamCycle(archive_dir=tmp_path / "archive", audit_log_dir=audit_dir)
@@ -112,7 +116,10 @@ class TestNeedsArchival:
         archive = tmp_path / "archive"
         audit_dir = tmp_path / "audit"
         audit_dir.mkdir()
-        today = datetime.now().strftime("%Y-%m-%d")
+        # 与被测代码同一时钟（now_utc）——防 UTC+8 的 00:00-08:00 窗口本地/UTC 日期错位
+        from zephyr.shared.utils.time_utils import now_utc
+
+        today = now_utc().strftime("%Y-%m-%d")
         today_file = audit_dir / f"ai_audit_{today}.jsonl"
         today_file.write_text('{"entry": 1}\n', encoding="utf-8")
         episodic_today = archive / "episodic" / today
