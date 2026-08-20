@@ -36,6 +36,7 @@
     本模块只产出检测结论；复用 deadman/reconciler 基础设施风格（轻量状态机 +
     dataclass 报告 + degraded 降级标记），不新建独立监控系统。
 """
+
 from __future__ import annotations
 
 import math
@@ -271,9 +272,7 @@ def assess_pair_drift(
     if baseline_dist is not None and recent_dist is not None:
         psi = population_stability_index(baseline_dist, recent_dist, n_bins=n_bins)
         psi_level = (
-            PsiLevel.ALERT
-            if psi > PSI_ALERT
-            else (PsiLevel.INVESTIGATE if psi > PSI_INVESTIGATE else PsiLevel.STABLE)
+            PsiLevel.ALERT if psi > PSI_ALERT else (PsiLevel.INVESTIGATE if psi > PSI_INVESTIGATE else PsiLevel.STABLE)
         )
     return PairDriftReport(
         cusum=cusum,

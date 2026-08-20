@@ -6,6 +6,7 @@
 覆盖：三代理各自归一化 / 综合分级响应（REDUCE_WEIGHT_50/ALERT/MONITOR）/
 数据不足 degraded 退化 / 边界阈值。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -70,30 +71,25 @@ class TestComponentScores:
 class TestGrading:
     def test_reduce_weight_50(self):
         # 三分量全满 → composite=1.0 > 0.70
-        a = assess(etf_holdings=_etf_series(100.0, 130.0),
-                   factor_returns_panel=_corr_panel(0.9),
-                   quant_seat_ratio=0.40)
+        a = assess(etf_holdings=_etf_series(100.0, 130.0), factor_returns_panel=_corr_panel(0.9), quant_seat_ratio=0.40)
         assert a.level is CrowdingLevel.REDUCE_WEIGHT_50
 
     def test_alert(self):
         # composite ≈ (0.75+0+0.75)/3 = 0.5+ → ALERT 带内
-        a = assess(etf_holdings=_etf_series(100.0, 115.0),
-                   quant_seat_ratio=0.2625)
+        a = assess(etf_holdings=_etf_series(100.0, 115.0), quant_seat_ratio=0.2625)
         assert CrowdingLevel.ALERT is a.level or CrowdingLevel.MONITOR is a.level
         assert 0.0 < a.composite < 0.70
 
     def test_monitor(self):
-        a = assess(etf_holdings=_etf_series(100.0, 102.0),
-                   factor_returns_panel=_corr_panel(0.02),
-                   quant_seat_ratio=0.05)
+        a = assess(
+            etf_holdings=_etf_series(100.0, 102.0), factor_returns_panel=_corr_panel(0.02), quant_seat_ratio=0.05
+        )
         assert a.level is CrowdingLevel.MONITOR
 
     def test_boundary_above_070(self):
         p = CrowdingParams()
         # 直接构造 composite 恰 >0.70：seat=1.0, etf=1.0, corr 低 → (1+1+0.12)/3≈0.707
-        a = assess(etf_holdings=_etf_series(100.0, 125.0),
-                   quant_seat_ratio=0.40,
-                   params=p)
+        a = assess(etf_holdings=_etf_series(100.0, 125.0), quant_seat_ratio=0.40, params=p)
         # composite=(1+0+1)/3≈0.667 → ALERT
         assert a.level is CrowdingLevel.ALERT
 

@@ -124,9 +124,7 @@ class TestWriteDagResultsToH1:
             ),
         }
         mock_conn = MagicMock()
-        with patch(
-            "zephyr.infrastructure.h1_redis_hot.h1_redis_writer.H1RedisWriter"
-        ) as MockWriter:
+        with patch("zephyr.infrastructure.h1_redis_hot.h1_redis_writer.H1RedisWriter") as MockWriter:
             mock_writer = MockWriter.return_value
             mock_writer.write_factor_cross_section.return_value = 1
             written = write_dag_results_to_h1(results, mock_conn)
@@ -136,9 +134,7 @@ class TestWriteDagResultsToH1:
     def test_empty_results_returns_zero(self):
         """空 results → 返回 0，不调用 Writer。"""
         mock_conn = MagicMock()
-        with patch(
-            "zephyr.infrastructure.h1_redis_hot.h1_redis_writer.H1RedisWriter"
-        ) as MockWriter:
+        with patch("zephyr.infrastructure.h1_redis_hot.h1_redis_writer.H1RedisWriter") as MockWriter:
             written = write_dag_results_to_h1({}, mock_conn)
             assert written == 0
             MockWriter.return_value.write_factor_cross_section.assert_not_called()
@@ -153,12 +149,8 @@ class TestWriteDagResultsToH1:
             ),
         }
         mock_conn = MagicMock()
-        with patch(
-            "zephyr.infrastructure.h1_redis_hot.h1_redis_writer.H1RedisWriter"
-        ) as MockWriter:
-            MockWriter.return_value.write_factor_cross_section.side_effect = RuntimeError(
-                "Redis connection refused"
-            )
+        with patch("zephyr.infrastructure.h1_redis_hot.h1_redis_writer.H1RedisWriter") as MockWriter:
+            MockWriter.return_value.write_factor_cross_section.side_effect = RuntimeError("Redis connection refused")
             written = write_dag_results_to_h1(results, mock_conn)
             assert written == 0  # 降级返回 0
 
@@ -182,9 +174,7 @@ class TestCreateH1FactorSink:
             ),
         }
         mock_conn = MagicMock()
-        with patch(
-            "zephyr.infrastructure.h1_redis_hot.h1_redis_writer.H1RedisWriter"
-        ) as MockWriter:
+        with patch("zephyr.infrastructure.h1_redis_hot.h1_redis_writer.H1RedisWriter") as MockWriter:
             MockWriter.return_value.write_factor_cross_section.return_value = 1
             sink = create_h1_factor_sink(mock_conn)
             sink(results)  # 不应抛异常
@@ -200,12 +190,8 @@ class TestCreateH1FactorSink:
             ),
         }
         mock_conn = MagicMock()
-        with patch(
-            "zephyr.infrastructure.h1_redis_hot.h1_redis_writer.H1RedisWriter"
-        ) as MockWriter:
-            MockWriter.return_value.write_factor_cross_section.side_effect = RuntimeError(
-                "Redis down"
-            )
+        with patch("zephyr.infrastructure.h1_redis_hot.h1_redis_writer.H1RedisWriter") as MockWriter:
+            MockWriter.return_value.write_factor_cross_section.side_effect = RuntimeError("Redis down")
             sink = create_h1_factor_sink(mock_conn)
             # 不应抛异常——write_dag_results_to_h1 内部已降级
             sink(results)

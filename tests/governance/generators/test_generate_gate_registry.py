@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_GENERATE_ALGO_OVERVIEW | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.governance.generators.test_generate_gate_registry
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.generators.generate_gate_registry

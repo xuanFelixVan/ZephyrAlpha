@@ -33,6 +33,7 @@ commit deb695006f 误删 import 导致 NameError 静默累积，5 层防线全�
 6. e2e 真实仓库 smoke test：在真实 ZephyrAlpha 仓库上跑健康检查，
    验证 12 项检查全 pass（前提：仓库当前健康）
 """
+
 from __future__ import annotations
 
 import json
@@ -57,9 +58,7 @@ def _load_health_check_module():
     """用 importlib 加载 session_startup_health_check.py 为模块。"""
     import importlib.util
 
-    spec = importlib.util.spec_from_file_location(
-        "_test_target_session_startup_health_check", SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("_test_target_session_startup_health_check", SCRIPT_PATH)
     assert spec is not None and spec.loader is not None, f"无法加载 {SCRIPT_PATH}"
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
@@ -94,12 +93,16 @@ class TestCheckCoreToolImport:
     def test_import_success_with_required_symbols(self, hc, tmp_path):
         """脚本正常 + 关键符号齐全 → pass。"""
         _init_git_repo(tmp_path)
-        _write_tool_script(tmp_path, "tools/good_tool.py", textwrap.dedent("""
+        _write_tool_script(
+            tmp_path,
+            "tools/good_tool.py",
+            textwrap.dedent("""
             EXIT_PASS = 0
             EXIT_ERROR = 1
             def get_conn():
                 return None
-        """))
+        """),
+        )
         tool = {
             "name": "good_tool",
             "rel_path": "tools/good_tool.py",
@@ -125,11 +128,15 @@ class TestCheckCoreToolImport:
         """脚本有 SyntaxError → fail（Phase 1 类 NameError 检测点）。"""
         _init_git_repo(tmp_path)
         # 故意构造未闭合的 import（与 apply_dataflowgraph.py bug 同形态）
-        _write_tool_script(tmp_path, "tools/broken.py", textwrap.dedent("""
+        _write_tool_script(
+            tmp_path,
+            "tools/broken.py",
+            textwrap.dedent("""
             from os import (
             _SCRIPT_DIR = "x"
             )
-        """))
+        """),
+        )
         tool = {
             "name": "broken_tool",
             "rel_path": "tools/broken.py",
@@ -143,10 +150,14 @@ class TestCheckCoreToolImport:
     def test_import_missing_symbol(self, hc, tmp_path):
         """脚本正常但缺关键符号 → fail。"""
         _init_git_repo(tmp_path)
-        _write_tool_script(tmp_path, "tools/partial.py", textwrap.dedent("""
+        _write_tool_script(
+            tmp_path,
+            "tools/partial.py",
+            textwrap.dedent("""
             EXIT_PASS = 0
             # 缺 EXIT_ERROR
-        """))
+        """),
+        )
         tool = {
             "name": "partial_tool",
             "rel_path": "tools/partial.py",
@@ -169,13 +180,17 @@ class TestCheckCoreToolCli:
     def test_cli_success(self, hc, tmp_path):
         """CLI rc=0 → pass。"""
         _init_git_repo(tmp_path)
-        _write_tool_script(tmp_path, "tools/cli_ok.py", textwrap.dedent("""
+        _write_tool_script(
+            tmp_path,
+            "tools/cli_ok.py",
+            textwrap.dedent("""
             import sys
             sys.argv  # avoid unused
             if __name__ == "__main__":
                 print("cmd_batch: list-ops")
                 sys.exit(0)
-        """))
+        """),
+        )
         tool = {
             "name": "cli_ok",
             "rel_path": "tools/cli_ok.py",
@@ -190,12 +205,16 @@ class TestCheckCoreToolCli:
     def test_cli_nonzero_exit(self, hc, tmp_path):
         """CLI rc!=0 → fail。"""
         _init_git_repo(tmp_path)
-        _write_tool_script(tmp_path, "tools/cli_fail.py", textwrap.dedent("""
+        _write_tool_script(
+            tmp_path,
+            "tools/cli_fail.py",
+            textwrap.dedent("""
             import sys
             if __name__ == "__main__":
                 print("error occurred", file=sys.stderr)
                 sys.exit(1)
-        """))
+        """),
+        )
         tool = {
             "name": "cli_fail",
             "rel_path": "tools/cli_fail.py",
@@ -210,12 +229,16 @@ class TestCheckCoreToolCli:
     def test_cli_missing_expected_output(self, hc, tmp_path):
         """CLI rc=0 但输出不含 expected → warn（输出格式变更提示）。"""
         _init_git_repo(tmp_path)
-        _write_tool_script(tmp_path, "tools/cli_format.py", textwrap.dedent("""
+        _write_tool_script(
+            tmp_path,
+            "tools/cli_format.py",
+            textwrap.dedent("""
             import sys
             if __name__ == "__main__":
                 print("totally different output format")
                 sys.exit(0)
-        """))
+        """),
+        )
         tool = {
             "name": "cli_format",
             "rel_path": "tools/cli_format.py",
@@ -350,8 +373,7 @@ class TestRunStartupHealthCheckAggregation:
             return {"check": "fake_pass", "status": "pass", "detail": "ok"}
 
         def fail_check(*args, **kwargs):
-            return {"check": "fake_fail", "status": "fail",
-                    "detail": "NameError: missing_import"}
+            return {"check": "fake_fail", "status": "fail", "detail": "NameError: missing_import"}
 
         monkeypatch.setattr(hc, "check_core_tool_import", fail_check)
         monkeypatch.setattr(hc, "check_core_tool_cli", pass_check)
@@ -468,34 +490,36 @@ class TestP2_4Extensions:
     def test_gateway_modules_includes_p2_1_emergency_commit(self, hc):
         """GATEWAY_MODULES 应包含 emergency_commit 模块。"""
         modules = [m["module"] for m in hc.GATEWAY_MODULES]
-        assert "zephyr.gov_enforcement.rule_bridge.emergency_commit" in modules, \
+        assert "zephyr.gov_enforcement.rule_bridge.emergency_commit" in modules, (
             "P2-1 emergency_commit 必须纳入 health check"
+        )
 
     def test_gateway_modules_includes_p2_3_reconcile_runner(self, hc):
         """GATEWAY_MODULES 应包含 reconcile_runner 模块。"""
         modules = [m["module"] for m in hc.GATEWAY_MODULES]
-        assert "zephyr.governance.audit.reconcile_runner" in modules, \
-            "P2-3 reconcile_runner 必须纳入 health check"
+        assert "zephyr.governance.audit.reconcile_runner" in modules, "P2-3 reconcile_runner 必须纳入 health check"
 
     def test_gateway_modules_includes_p2_3_reconcile_worker(self, hc):
         """GATEWAY_MODULES 应包含 reconcile_worker 模块。"""
         modules = [m["module"] for m in hc.GATEWAY_MODULES]
-        assert "zephyr.governance.audit.reconcile_worker" in modules, \
-            "P2-3 reconcile_worker 必须纳入 health check"
+        assert "zephyr.governance.audit.reconcile_worker" in modules, "P2-3 reconcile_worker 必须纳入 health check"
 
     def test_session_worktree_includes_claim_files_for_edit(self, hc):
         """session_worktree 模块的 required_attrs 应包含 P2-2 claim_files_for_edit。"""
         sw_spec = next(
-            (m for m in hc.GATEWAY_MODULES
-             if m["module"] == "zephyr.gov_enforcement.rule_bridge.session_worktree"),
+            (m for m in hc.GATEWAY_MODULES if m["module"] == "zephyr.gov_enforcement.rule_bridge.session_worktree"),
             None,
         )
         assert sw_spec is not None
-        assert "claim_files_for_edit" in sw_spec["required_attrs"], \
+        assert "claim_files_for_edit" in sw_spec["required_attrs"], (
             "P2-2 claim_files_for_edit 必须纳入 session_worktree 属性检查"
+        )
 
     def test_session_id_persists_failure_to_db(
-        self, hc, tmp_path, monkeypatch,
+        self,
+        hc,
+        tmp_path,
+        monkeypatch,
     ):
         """status=fail + session_id 提供时调用 log_gate_failure 持久化。"""
         _init_git_repo(tmp_path)
@@ -512,17 +536,20 @@ class TestP2_4Extensions:
         persist_calls: list[dict] = []
 
         def fake_log_gate_failure(project_root, gate_id, detail, session_id="", trigger_source=""):
-            persist_calls.append({
-                "project_root": str(project_root),
-                "gate_id": gate_id,
-                "detail": detail,
-                "session_id": session_id,
-                "trigger_source": trigger_source,
-            })
+            persist_calls.append(
+                {
+                    "project_root": str(project_root),
+                    "gate_id": gate_id,
+                    "detail": detail,
+                    "session_id": session_id,
+                    "trigger_source": trigger_source,
+                }
+            )
 
         # 注入 fake 模块到 sys.modules，使 `from zephyr... import log_gate_failure` 命中
         import sys
         import types
+
         fake_mod = types.ModuleType("zephyr.governance.audit.reconciliation_registry")
         fake_mod.log_gate_failure = fake_log_gate_failure
         monkeypatch.setitem(sys.modules, "zephyr.governance.audit.reconciliation_registry", fake_mod)
@@ -542,7 +569,10 @@ class TestP2_4Extensions:
         assert persist_calls[0]["trigger_source"] == "session_startup"
 
     def test_no_session_id_skips_persistence(
-        self, hc, tmp_path, monkeypatch,
+        self,
+        hc,
+        tmp_path,
+        monkeypatch,
     ):
         """status=fail 但无 session_id 时不调用 log_gate_failure（向后兼容）。"""
         _init_git_repo(tmp_path)
@@ -561,6 +591,7 @@ class TestP2_4Extensions:
 
         import sys
         import types
+
         fake_mod = types.ModuleType("zephyr.governance.audit.reconciliation_registry")
         fake_mod.log_gate_failure = fake_log_gate_failure
         monkeypatch.setitem(sys.modules, "zephyr.governance.audit.reconciliation_registry", fake_mod)
@@ -574,7 +605,10 @@ class TestP2_4Extensions:
         assert result["persisted_to_db"] is False
 
     def test_pass_status_skips_persistence(
-        self, hc, tmp_path, monkeypatch,
+        self,
+        hc,
+        tmp_path,
+        monkeypatch,
     ):
         """status=pass 时不调用 log_gate_failure（即使有 session_id）。"""
         _init_git_repo(tmp_path)
@@ -592,6 +626,7 @@ class TestP2_4Extensions:
 
         import sys
         import types
+
         fake_mod = types.ModuleType("zephyr.governance.audit.reconciliation_registry")
         fake_mod.log_gate_failure = fake_log_gate_failure
         monkeypatch.setitem(sys.modules, "zephyr.governance.audit.reconciliation_registry", fake_mod)
@@ -605,7 +640,10 @@ class TestP2_4Extensions:
         assert result["persisted_to_db"] is False
 
     def test_persistence_failure_does_not_block_result(
-        self, hc, tmp_path, monkeypatch,
+        self,
+        hc,
+        tmp_path,
+        monkeypatch,
     ):
         """log_gate_failure 抛异常时不阻断主结果返回（fail-open 降级）。"""
         _init_git_repo(tmp_path)
@@ -623,6 +661,7 @@ class TestP2_4Extensions:
 
         import sys
         import types
+
         fake_mod = types.ModuleType("zephyr.governance.audit.reconciliation_registry")
         fake_mod.log_gate_failure = fake_log_gate_failure
         monkeypatch.setitem(sys.modules, "zephyr.governance.audit.reconciliation_registry", fake_mod)
@@ -658,10 +697,7 @@ class TestE2ERealRepo:
         """
         result = hc.run_startup_health_check(repo_root=str(REPO_ROOT))
         # 提取核心工具检查项（4 import + 4 CLI）
-        core_checks = [
-            c for c in result["checks"]
-            if c["check"].startswith("apply_") or c["check"].startswith("sync_")
-        ]
+        core_checks = [c for c in result["checks"] if c["check"].startswith("apply_") or c["check"].startswith("sync_")]
         assert len(core_checks) >= 8, f"核心工具检查项不足 8 项: {len(core_checks)}"
         failed = [c for c in core_checks if c["status"] != "pass"]
         if failed:
@@ -699,13 +735,16 @@ class TestE2ERealRepo:
         env["PYTHONPATH"] = f"{src_path};{existing}" if existing else src_path
         result = subprocess.run(
             [sys.executable, str(SCRIPT_PATH)],
-            capture_output=True, text=True,
-            encoding="utf-8", errors="replace",
-            cwd=str(REPO_ROOT), env=env, timeout=180,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(REPO_ROOT),
+            env=env,
+            timeout=180,
         )
         # 验证输出是合法 JSON（不论 exit code）
-        assert result.stdout.strip().startswith("{"), \
-            f"输出不是 JSON，stdout[:200]={result.stdout[:200]}"
+        assert result.stdout.strip().startswith("{"), f"输出不是 JSON，stdout[:200]={result.stdout[:200]}"
         data = json.loads(result.stdout)
         assert "status" in data
         assert data["status"] in ("pass", "warn", "fail")
@@ -723,14 +762,18 @@ def _init_git_repo(path: Path) -> None:
     """初始化临时 git 仓库（部分检查依赖 .git 存在）。"""
     if (path / ".git").exists():
         return
-    subprocess.run(
-        ["git", "init"], cwd=str(path), capture_output=True, check=True, timeout=30
-    )
+    subprocess.run(["git", "init"], cwd=str(path), capture_output=True, check=True, timeout=30)
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
-        cwd=str(path), capture_output=True, check=True, timeout=10,
+        cwd=str(path),
+        capture_output=True,
+        check=True,
+        timeout=10,
     )
     subprocess.run(
         ["git", "config", "user.name", "Test"],
-        cwd=str(path), capture_output=True, check=True, timeout=10,
+        cwd=str(path),
+        capture_output=True,
+        check=True,
+        timeout=10,
     )

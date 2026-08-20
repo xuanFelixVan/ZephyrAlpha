@@ -82,6 +82,7 @@ D-FACTOR-GOV-03 灰度发布——管理因子从 10% → 30% → 100% 的放量
 # A3 --> O1
 # A2 --> O2
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

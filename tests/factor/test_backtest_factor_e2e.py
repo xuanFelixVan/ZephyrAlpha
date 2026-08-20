@@ -26,6 +26,7 @@
   - 嵌入动量信号：高动量标的未来收益更高，使 IC > 0 可验证
   - 验证 BacktestResult 全字段填充 + IC 评估结果正确传递
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -92,15 +93,17 @@ def _make_synthetic_market_data(
             high = max(open_, close) * (1 + abs(rng.normal(0, 0.003)))
             low = min(open_, close) * (1 - abs(rng.normal(0, 0.003)))
             volume = int(1_000_000 + rng.integers(-100_000, 100_000))
-            rows.append({
-                "symbol": sym,
-                "date": dates[t],
-                "open": open_,
-                "high": high,
-                "low": low,
-                "close": close,
-                "volume": volume,
-            })
+            rows.append(
+                {
+                    "symbol": sym,
+                    "date": dates[t],
+                    "open": open_,
+                    "high": high,
+                    "low": low,
+                    "close": close,
+                    "volume": volume,
+                }
+            )
         frames.append(pd.DataFrame(rows))
 
     df = pd.concat(frames, ignore_index=True)
@@ -359,6 +362,7 @@ class TestICInformsDecision:
             from zephyr.backtest.implementations.vectorized_engine import (
                 DefaultBacktestEngine,
             )
+
             return DefaultBacktestEngine()
 
         # 通过 signals 的 attrs 携带 strategy_name（模拟 scheduler 传递策略上下文）
@@ -419,7 +423,9 @@ class TestGridSearchE2E:
 
         scheduler = BacktestScheduler(engine_factory=_factory)
         scheduler.submit_grid(
-            "grid_strat", history, signals,
+            "grid_strat",
+            history,
+            signals,
             {"sharpe": sharpe_values},
         )
         results = scheduler.run_all(max_workers=3)
@@ -444,7 +450,9 @@ class TestGridSearchE2E:
         # 真实引擎（默认工厂）+ 单参数网格（空 params，验证默认配置可用）
         scheduler = BacktestScheduler()
         task_ids = scheduler.submit_grid(
-            "real_grid", history, signals,
+            "real_grid",
+            history,
+            signals,
             {"dummy": [1, 2]},  # 真实引擎不消费此参数，仅验证网格展开
         )
         results = scheduler.run_all(max_workers=2)

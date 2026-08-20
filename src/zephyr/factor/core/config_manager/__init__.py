@@ -19,6 +19,7 @@
 加载 core/_config.yaml，供 dag_manager / dist_feature_eng / batch_output / backpressure
 读取默认参数。所有策略参数集中于此 YAML，代码不硬编码。
 """
+
 from __future__ import annotations
 
 from zephyr.factor.core.config_manager.loader import get_section, load_core_config

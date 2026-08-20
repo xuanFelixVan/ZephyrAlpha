@@ -34,7 +34,11 @@ S = RollbackState
 class TestFiveStateEnum:
     def test_five_states_exact(self):
         assert [s.value for s in S] == [
-            "NORMAL", "THROTTLED", "SOFT_HALT", "HARD_HALT", "UNWINDING",
+            "NORMAL",
+            "THROTTLED",
+            "SOFT_HALT",
+            "HARD_HALT",
+            "UNWINDING",
         ]
 
     def test_enum_order_is_conservatism_order(self):
@@ -42,7 +46,7 @@ class TestFiveStateEnum:
         assert list(S).index(S.NORMAL) < list(S).index(S.UNWINDING)
 
     def test_auto_transitions_only_more_conservative(self):
-        for (frm, to) in _AUTO_TRANSITIONS:
+        for frm, to in _AUTO_TRANSITIONS:
             assert list(S).index(to) > list(S).index(frm)
 
     def test_hard_halt_to_unwinding_not_auto(self):
@@ -181,56 +185,46 @@ class TestSampleFloor:
 class TestRecover:
     def test_no_rca_permission_error(self):
         with pytest.raises(PermissionError):
-            recover(S.HARD_HALT, S.SOFT_HALT,
-                    rca_written=False, dual_approval=True, position_flat=True)
+            recover(S.HARD_HALT, S.SOFT_HALT, rca_written=False, dual_approval=True, position_flat=True)
 
     def test_no_dual_approval_permission_error(self):
         with pytest.raises(PermissionError):
-            recover(S.HARD_HALT, S.SOFT_HALT,
-                    rca_written=True, dual_approval=False, position_flat=True)
+            recover(S.HARD_HALT, S.SOFT_HALT, rca_written=True, dual_approval=False, position_flat=True)
 
     def test_neither_rca_nor_approval_permission_error(self):
         with pytest.raises(PermissionError):
-            recover(S.HARD_HALT, S.NORMAL,
-                    rca_written=False, dual_approval=False, position_flat=True)
+            recover(S.HARD_HALT, S.NORMAL, rca_written=False, dual_approval=False, position_flat=True)
 
     def test_permission_check_precedes_direction_check(self):
         # 先权限后方向：无 RCA 即使方向合法也 PermissionError
         with pytest.raises(PermissionError):
-            recover(S.NORMAL, S.HARD_HALT,
-                    rca_written=False, dual_approval=False, position_flat=True)
+            recover(S.NORMAL, S.HARD_HALT, rca_written=False, dual_approval=False, position_flat=True)
 
     def test_reverse_direction_value_error(self):
         # 恢复只能向更宽松态：向更保守态 = ValueError
         with pytest.raises(ValueError):
-            recover(S.THROTTLED, S.HARD_HALT,
-                    rca_written=True, dual_approval=True, position_flat=True)
+            recover(S.THROTTLED, S.HARD_HALT, rca_written=True, dual_approval=True, position_flat=True)
 
     def test_same_state_value_error(self):
         with pytest.raises(ValueError):
-            recover(S.THROTTLED, S.THROTTLED,
-                    rca_written=True, dual_approval=True, position_flat=True)
+            recover(S.THROTTLED, S.THROTTLED, rca_written=True, dual_approval=True, position_flat=True)
 
     def test_unwinding_position_not_flat_value_error(self):
         # T+1：T-1 持仓未平禁止回 NORMAL
         with pytest.raises(ValueError):
-            recover(S.UNWINDING, S.NORMAL,
-                    rca_written=True, dual_approval=True, position_flat=False)
+            recover(S.UNWINDING, S.NORMAL, rca_written=True, dual_approval=True, position_flat=False)
 
     def test_unwinding_to_normal_success(self):
-        got = recover(S.UNWINDING, S.NORMAL,
-                      rca_written=True, dual_approval=True, position_flat=True)
+        got = recover(S.UNWINDING, S.NORMAL, rca_written=True, dual_approval=True, position_flat=True)
         assert got == S.NORMAL
 
     def test_hard_halt_to_throttled_success(self):
         # 恢复可跨级向更宽松（人工裁决）
-        got = recover(S.HARD_HALT, S.THROTTLED,
-                      rca_written=True, dual_approval=True, position_flat=False)
+        got = recover(S.HARD_HALT, S.THROTTLED, rca_written=True, dual_approval=True, position_flat=False)
         assert got == S.THROTTLED
 
     def test_throttled_to_normal_success(self):
-        got = recover(S.THROTTLED, S.NORMAL,
-                      rca_written=True, dual_approval=True, position_flat=True)
+        got = recover(S.THROTTLED, S.NORMAL, rca_written=True, dual_approval=True, position_flat=True)
         assert got == S.NORMAL
 
 
@@ -272,8 +266,7 @@ class TestPersistence:
     def test_load_garbage_state_soft_halt(self, tmp_path):
         store = JsonStateStore(tmp_path)
         persist_state(store, S.NORMAL)
-        (tmp_path / "rollback_state.json").write_text(
-            '{"state": "NOT_A_STATE"}', encoding="utf-8")
+        (tmp_path / "rollback_state.json").write_text('{"state": "NOT_A_STATE"}', encoding="utf-8")
         assert load_persisted_state(store) == S.SOFT_HALT
 
     def test_crash_restart_posture_survives(self, tmp_path):
@@ -289,9 +282,15 @@ class TestPromotionCoupling:
     def test_normal_allows_promotion(self):
         check_promotion_allowed(S.NORMAL)  # 不抛异常
 
-    @pytest.mark.parametrize("posture", [
-        S.THROTTLED, S.SOFT_HALT, S.HARD_HALT, S.UNWINDING,
-    ])
+    @pytest.mark.parametrize(
+        "posture",
+        [
+            S.THROTTLED,
+            S.SOFT_HALT,
+            S.HARD_HALT,
+            S.UNWINDING,
+        ],
+    )
     def test_non_normal_blocks_promotion(self, posture):
         with pytest.raises(PermissionError):
             check_promotion_allowed(posture)

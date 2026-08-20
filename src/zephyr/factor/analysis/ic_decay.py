@@ -76,6 +76,7 @@ IC 半衰期 = IC 衰减到初始 IC 一半所需的 lag 数。
 # A1 --> O1
 # A2 --> O2
 """
+
 from __future__ import annotations
 
 import logging

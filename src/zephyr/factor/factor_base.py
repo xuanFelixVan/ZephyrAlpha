@@ -151,7 +151,6 @@ class FactorBase(abc.ABC):
 
 
 class FactorRegistry:
-
     """
     因子全局注册表（单例）。
 

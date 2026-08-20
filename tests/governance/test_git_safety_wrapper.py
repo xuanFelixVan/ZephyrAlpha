@@ -12,6 +12,7 @@ ALGO_FLOW:
 覆盖：§7.1.1 git 16 类阻断+放行边界、§7.23 四命令、§7.1.2 原生删除类+CRITICAL、
       §7.17.2 .git 硬阻断、§7.10 审计、§7.7 安装/幂等/卸载、§7.32 Session ID。
 """
+
 from __future__ import annotations
 
 import json
@@ -162,7 +163,9 @@ def test_git_plumbing_serializer_whitelist(installed_profile: Path):
     import tempfile
 
     with tempfile.TemporaryDirectory() as outside_repo:
-        out = _in_shell(installed_profile, "$env:ZEPHYR_SERIALIZER_MODE='1'; git read-tree HEAD", cwd=Path(outside_repo))
+        out = _in_shell(
+            installed_profile, "$env:ZEPHYR_SERIALIZER_MODE='1'; git read-tree HEAD", cwd=Path(outside_repo)
+        )
     assert "BLOCKED" not in out, f"白名单误拦: {out}"
     assert "not a git repository" in out or "fatal" in out, f"未透传真实 git: {out}"
 
@@ -170,10 +173,10 @@ def test_git_plumbing_serializer_whitelist(installed_profile: Path):
 @pytest.mark.parametrize(
     "cmd",
     [
-        "git clean -n",                # dry-run 放行
-        "git stash list",              # 只读放行
-        "git push --force-with-lease", # lease 放行
-        "git rm --cached foo.py",      # cached 放行
+        "git clean -n",  # dry-run 放行
+        "git stash list",  # 只读放行
+        "git push --force-with-lease",  # lease 放行
+        "git rm --cached foo.py",  # cached 放行
     ],
 )
 def test_git_safe_allowed_through(installed_profile: Path, cmd: str):

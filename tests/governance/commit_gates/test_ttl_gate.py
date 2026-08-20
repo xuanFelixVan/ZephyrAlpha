@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_LONG_PARAM_LIST_GATE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] task_bound
 """test_ttl_gate.py — ttl 字段校验门禁单元测试。
 

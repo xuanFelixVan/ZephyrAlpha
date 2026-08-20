@@ -33,6 +33,7 @@
 对标：tests/governance/test_reconcile_generators.py::TestPostCommitRegenYaml
 （前者验证现有行为，本文件验证待实施的强化机制）
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -43,9 +44,7 @@ from unittest.mock import MagicMock
 import pytest
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
-_POST_COMMIT_SCRIPT = (
-    _REPO_ROOT / "scripts" / "governance" / "git_hooks" / "post_commit_regen_yaml.py"
-)
+_POST_COMMIT_SCRIPT = _REPO_ROOT / "scripts" / "governance" / "git_hooks" / "post_commit_regen_yaml.py"
 
 
 @pytest.fixture(scope="module")
@@ -54,9 +53,7 @@ def pcr():
 
     真实执行模块级代码（含 import 语句）——若 import 缺失会立即抛 ImportError/NameError。
     """
-    spec = importlib.util.spec_from_file_location(
-        "post_commit_regen_yaml_oscillation_test", _POST_COMMIT_SCRIPT
-    )
+    spec = importlib.util.spec_from_file_location("post_commit_regen_yaml_oscillation_test", _POST_COMMIT_SCRIPT)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -65,6 +62,7 @@ def pcr():
 # ============================================================================
 # #1 并发去重：连续多次 commit 只 spawn 1 次（lockfile 去重）
 # ============================================================================
+
 
 class TestConcurrentSpawnDedup:
     """验证连续 commit 场景的 spawn 去重。
@@ -86,7 +84,8 @@ class TestConcurrentSpawnDedup:
             monkeypatch.setattr(pcr, "_LOCK_FILE", tmp_path / "reconcile_stale.pid")
         # mock commit 了生成器 yaml 输入源（触发 _matches_generator_input）
         monkeypatch.setattr(
-            pcr, "_committed_yaml_files",
+            pcr,
+            "_committed_yaml_files",
             lambda: ["docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml"],
         )
         # 拦截 Popen 计数（不启动真实子进程）
@@ -114,6 +113,7 @@ class TestConcurrentSpawnDedup:
 # ============================================================================
 # #3 产物循环阻断：commit 命中生成器 yaml 产物时不触发
 # ============================================================================
+
 
 class TestGeneratorOutputCycleBlock:
     """验证产物循环阻断机制。
@@ -154,12 +154,14 @@ class TestGeneratorOutputCycleBlock:
         monkeypatch.delenv("ZEPHYR_SKIP_REGENERATE", raising=False)
         # 模拟误配置：policies.yaml 被配为输入源（未来可能的人为配置错误）
         monkeypatch.setattr(
-            pcr, "_generator_yaml_inputs",
+            pcr,
+            "_generator_yaml_inputs",
             lambda: {"src/zephyr/data/config/policies.yaml"},
         )
         # commit 了 policies.yaml（生成器产物）
         monkeypatch.setattr(
-            pcr, "_committed_yaml_files",
+            pcr,
+            "_committed_yaml_files",
             lambda: ["src/zephyr/data/config/policies.yaml"],
         )
         # 拦截 Popen 计数

@@ -66,6 +66,7 @@ D-FACTOR-ANA-02 多因子评估报告器——批量评估+格式化报告。
 # A1 --> O1
 # A2 --> O2
 """
+
 from __future__ import annotations
 
 import logging

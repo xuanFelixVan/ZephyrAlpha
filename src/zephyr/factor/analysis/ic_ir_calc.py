@@ -57,6 +57,7 @@ D-FACTOR-ANA-01 IC/IR 批量计算器——多因子 IC/IR 指标汇总表。
 # I2 --> A1
 # A1 --> O1
 """
+
 from __future__ import annotations
 
 import logging
@@ -94,27 +95,41 @@ def compute_ic_ir_table(
     for fid in factor_ids:
         try:
             result = evaluate_factor(fid, symbols, start, end, horizon, oos_ratio)
-            rows.append({
-                "factor_id": result.factor_id,
-                "ic_mean": result.ic_mean,
-                "ic_std": result.ic_std,
-                "ir": result.ir,
-                "oos_positive_rate": result.oos_positive_rate,
-                "is_overfitted": result.is_overfitted,
-                "sample_size": result.sample_size,
-            })
+            rows.append(
+                {
+                    "factor_id": result.factor_id,
+                    "ic_mean": result.ic_mean,
+                    "ic_std": result.ic_std,
+                    "ir": result.ir,
+                    "oos_positive_rate": result.oos_positive_rate,
+                    "is_overfitted": result.is_overfitted,
+                    "sample_size": result.sample_size,
+                }
+            )
         except KeyError:
             log.warning("ic_ir_calc: 因子 '%s' 未注册，跳过", fid)
-            rows.append({
-                "factor_id": fid, "ic_mean": 0.0, "ic_std": 0.0,
-                "ir": 0.0, "oos_positive_rate": 0.0,
-                "is_overfitted": True, "sample_size": 0,
-            })
+            rows.append(
+                {
+                    "factor_id": fid,
+                    "ic_mean": 0.0,
+                    "ic_std": 0.0,
+                    "ir": 0.0,
+                    "oos_positive_rate": 0.0,
+                    "is_overfitted": True,
+                    "sample_size": 0,
+                }
+            )
         except Exception:
             log.exception("ic_ir_calc: 因子 '%s' 评估失败", fid)
-            rows.append({
-                "factor_id": fid, "ic_mean": 0.0, "ic_std": 0.0,
-                "ir": 0.0, "oos_positive_rate": 0.0,
-                "is_overfitted": True, "sample_size": 0,
-            })
+            rows.append(
+                {
+                    "factor_id": fid,
+                    "ic_mean": 0.0,
+                    "ic_std": 0.0,
+                    "ir": 0.0,
+                    "oos_positive_rate": 0.0,
+                    "is_overfitted": True,
+                    "sample_size": 0,
+                }
+            )
     return pd.DataFrame(rows)

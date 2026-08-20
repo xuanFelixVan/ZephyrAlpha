@@ -20,6 +20,7 @@
 - to_dataframe: NormalizedMarketData 列表 → pd.DataFrame
 - filter_quality: 质量过滤
 """
+
 from zephyr.factor.core.ctr001_consumer.converter import filter_quality, to_dataframe
 
 __all__ = ["to_dataframe", "filter_quality"]

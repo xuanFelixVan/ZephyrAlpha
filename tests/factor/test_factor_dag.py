@@ -21,6 +21,7 @@
 - topological_layers（Kahn 分层 / 环抛 ValueError / 外部依赖过滤）
 - build_dag_from_registry（从 FactorRegistry 构建 / 过滤外部依赖 / 未注册抛 KeyError）
 """
+
 from __future__ import annotations
 
 import pytest
@@ -207,7 +208,9 @@ class TestBuildDagFromRegistry:
         @FactorRegistry.register
         class FactorA(FactorBase):
             meta = FactorMeta(
-                factor_id="a", name="A", domain="test",
+                factor_id="a",
+                name="A",
+                domain="test",
                 dependencies=["market_data"],  # 外部输入
             )
 
@@ -236,7 +239,9 @@ class TestBuildDagFromRegistry:
         @FactorRegistry.register
         class FactorA(FactorBase):
             meta = FactorMeta(
-                factor_id="a", name="A", domain="test",
+                factor_id="a",
+                name="A",
+                domain="test",
                 dependencies=["b", "market_data"],
             )
 

@@ -8,6 +8,7 @@
   Politis-Romano stationary bootstrap + Patton-Politis-White (2009) 自动块长 +
   2000× 同步行重采样 + Fisher z 参数 CI 互验。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -135,9 +136,7 @@ class TestBootstrapCorrelationCI:
         with pytest.raises(ValueError):  # 列数<2
             bootstrap_correlation_ci(pd.DataFrame({"a": np.random.default_rng(1).normal(0, 1, 50)}))
         with pytest.raises(ValueError):  # NaN
-            bootstrap_correlation_ci(
-                pd.DataFrame({"a": [0.1] * 20 + [np.nan], "b": [0.1] * 21})
-            )
+            bootstrap_correlation_ci(pd.DataFrame({"a": [0.1] * 20 + [np.nan], "b": [0.1] * 21}))
 
     def test_min_obs_boundary(self):
         """T=MIN_OBS 边界可用；T=MIN_OBS-1 拒绝。"""

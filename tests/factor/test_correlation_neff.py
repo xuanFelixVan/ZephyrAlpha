@@ -8,6 +8,7 @@
   Neff=(Σλ)²/Σλ²；LW 闭式收缩保证正定稳定特征值；α∈[0,1] 双重用途；
   等相关近似仅辅助。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -26,9 +27,7 @@ class TestLedoitWolfShrinkage:
         """对称半正定校验：收缩矩阵必须对称且特征值 ≥ −ε。"""
         rng = np.random.default_rng(41)
         factor = rng.normal(0, 1, 300)
-        x = np.column_stack(
-            [0.8 * factor + 0.6 * rng.normal(0, 1, 300) for _ in range(4)]
-        )
+        x = np.column_stack([0.8 * factor + 0.6 * rng.normal(0, 1, 300) for _ in range(4)])
         res = ledoit_wolf_shrinkage(pd.DataFrame(x))
         assert np.allclose(res.shrunk_corr, res.shrunk_corr.T, atol=1e-12)  # 对称
         assert np.linalg.eigvalsh(res.shrunk_corr).min() >= -1e-12  # 半正定
@@ -57,9 +56,7 @@ class TestLedoitWolfShrinkage:
         rng = np.random.default_rng(45)
         t = 4000
         factor = rng.normal(0, 1, t)
-        x = np.column_stack(
-            [np.sqrt(0.1) * factor + np.sqrt(0.9) * rng.normal(0, 1, t) for _ in range(4)]
-        )
+        x = np.column_stack([np.sqrt(0.1) * factor + np.sqrt(0.9) * rng.normal(0, 1, t) for _ in range(4)])
         res = ledoit_wolf_shrinkage(x)
         assert 0.0 <= res.alpha < 0.5
 

@@ -3,6 +3,7 @@
 # [TESTS] zephyr.data.tick_subscriber
 # [DOMAIN] D_DATA
 """tick_subscriber 单元测试（含 Phase C: WalWriter + 批量出队 + 无锁计数）。"""
+
 import os
 import sys
 
@@ -165,6 +166,7 @@ def _make_sub():
     仅 running 需测试覆写（__init__ 设 False，测试默认 True）。
     """
     from zephyr.data.tick_subscriber import TickSubscriber
+
     sub = TickSubscriber()
     sub.running = True
     return sub
@@ -199,10 +201,12 @@ class TestTickSubscriber:
     def test_callback_handles_multi_tick_list(self):
         """list 包含多个 tick 时全部入队"""
         sub = _make_sub()
-        datas = {"000001.SZ": [
-            {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050},
-            {"time": 1720838406000, "lastPrice": 10.6, "volume": 200, "amount": 2120},
-        ]}
+        datas = {
+            "000001.SZ": [
+                {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050},
+                {"time": 1720838406000, "lastPrice": 10.6, "volume": 200, "amount": 2120},
+            ]
+        }
         sub.on_tick(datas)
 
         assert sub.tick_queue.qsize() == 2
@@ -229,12 +233,17 @@ class TestTickSubscriber:
 
         # 放入 3 条 tick
         for i in range(3):
-            sub.tick_queue.put(("000001.SZ", {
-                "time": 1720838403000 + i * 1000,
-                "lastPrice": 10.5 + i,
-                "volume": 100,
-                "amount": 1050,
-            }))
+            sub.tick_queue.put(
+                (
+                    "000001.SZ",
+                    {
+                        "time": 1720838403000 + i * 1000,
+                        "lastPrice": 10.5 + i,
+                        "volume": 100,
+                        "amount": 1050,
+                    },
+                )
+            )
 
         n = sub.drain_batch(max_n=500, timeout=0.1)
         assert n == 3
@@ -571,15 +580,11 @@ class TestQmtInstanceGuard:
     # ------------------------------------------------------------------
     def test_classify_sim_path(self):
         """exe/datadir 含"模拟" → sim。"""
-        assert TickSubscriber._classify_qmt_path(
-            r"E:\国金QMT交易端模拟\bin.x64\miniquote.exe"
-        ) == "sim"
+        assert TickSubscriber._classify_qmt_path(r"E:\国金QMT交易端模拟\bin.x64\miniquote.exe") == "sim"
 
     def test_classify_live_path(self):
         """exe/datadir 含"证券"且无"模拟" → live。"""
-        assert TickSubscriber._classify_qmt_path(
-            r"E:\国金证券QMT交易端\bin.x64\miniquote.exe"
-        ) == "live"
+        assert TickSubscriber._classify_qmt_path(r"E:\国金证券QMT交易端\bin.x64\miniquote.exe") == "live"
 
     def test_classify_sim_priority_when_both_present(self):
         """路径同时含"模拟"和"证券" → 优先 sim（"模拟"后缀更具体）。"""
@@ -603,7 +608,8 @@ class TestQmtInstanceGuard:
         ]
         monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": conns)
         monkeypatch.setattr(
-            psutil, "Process",
+            psutil,
+            "Process",
             lambda pid: _proc_with_exe(r"E:\国金QMT交易端模拟\bin.x64\miniquote.exe"),
         )
         sub = _make_sub()
@@ -622,7 +628,8 @@ class TestQmtInstanceGuard:
         ]
         monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": conns)
         monkeypatch.setattr(
-            psutil, "Process",
+            psutil,
+            "Process",
             lambda pid: _proc_with_exe(r"E:\国金证券QMT交易端\bin.x64\miniquote.exe"),
         )
         sub = _make_sub()
@@ -651,8 +658,8 @@ class TestQmtInstanceGuard:
             _conn("ESTABLISHED", "127.0.0.1", 58342, "127.0.0.1", 3772, 47052),
         ]
         exe_map = {
-            52744: r"E:\国金证券QMT交易端\bin.x64\miniquote.exe",   # live
-            47052: r"E:\国金QMT交易端模拟\bin.x64\miniquote.exe",   # sim
+            52744: r"E:\国金证券QMT交易端\bin.x64\miniquote.exe",  # live
+            47052: r"E:\国金QMT交易端模拟\bin.x64\miniquote.exe",  # sim
         }
         monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": conns)
         monkeypatch.setattr(psutil, "Process", lambda pid: _proc_with_exe(exe_map[pid]))
@@ -669,9 +676,7 @@ class TestQmtInstanceGuard:
         monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": [])
         sub = _make_sub()
         mock_xtdata = MagicMock()
-        mock_xtdata.get_data_dir.return_value = (
-            r"E:\国金QMT交易端模拟\userdata_mini\datadir"
-        )
+        mock_xtdata.get_data_dir.return_value = r"E:\国金QMT交易端模拟\userdata_mini\datadir"
         sub._xtdata = mock_xtdata
 
         env = sub._verify_qmt_instance()
@@ -689,7 +694,9 @@ class TestQmtInstanceGuard:
         ]
         monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": conns)
         monkeypatch.setattr(
-            psutil, "Process", lambda pid: _proc_with_exe(r"C:\Windows\System32\other.exe"),
+            psutil,
+            "Process",
+            lambda pid: _proc_with_exe(r"C:\Windows\System32\other.exe"),
         )
         sub = _make_sub()
         mock_xtdata = MagicMock()
@@ -707,9 +714,7 @@ class TestQmtInstanceGuard:
         monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": [])
         sub = _make_sub()
         sub._xtdata = MagicMock()
-        sub._xtdata.get_data_dir.return_value = (
-            r"E:\国金QMT交易端模拟\userdata_mini\datadir"
-        )
+        sub._xtdata.get_data_dir.return_value = r"E:\国金QMT交易端模拟\userdata_mini\datadir"
 
         assert sub._verify_qmt_instance() == "sim"
 
@@ -717,9 +722,7 @@ class TestQmtInstanceGuard:
         monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": [])
         sub = _make_sub()
         sub._xtdata = MagicMock()
-        sub._xtdata.get_data_dir.return_value = (
-            r"E:\国金证券QMT交易端\userdata_mini\datadir"
-        )
+        sub._xtdata.get_data_dir.return_value = r"E:\国金证券QMT交易端\userdata_mini\datadir"
 
         assert sub._verify_qmt_instance() == "live"
 
@@ -746,14 +749,25 @@ class TestQmtInstanceGuard:
 
 # 业务心跳 JSON 契约字段（deadman_switch.ps1 / start_tick_subscriber.ps1 消费面）
 _BIZ_HB_CONTRACT_KEYS = {
-    "ts", "pid", "started_ts", "last_tick_ts", "last_tick_age_s",
-    "today_rows", "received", "written", "errors", "subscribed",
-    "resub_count", "is_trading_day", "universe_retry_count",
+    "ts",
+    "pid",
+    "started_ts",
+    "last_tick_ts",
+    "last_tick_age_s",
+    "today_rows",
+    "received",
+    "written",
+    "errors",
+    "subscribed",
+    "resub_count",
+    "is_trading_day",
+    "universe_retry_count",
 }
 
 
 class _FakeDt(datetime):
     """固定当前时刻的 datetime 替身（模块级 monkeypatch 用）。"""
+
     _fixed = None
 
     @classmethod
@@ -884,9 +898,7 @@ class TestTradingDayFlag:
         """日历接口异常 → fallback weekday，不崩溃。"""
         _patch_now(monkeypatch, datetime(2026, 8, 15, 10, 0))  # 周六
         sub = _make_sub()
-        sub._xtdata = SimpleNamespace(
-            get_trading_dates=MagicMock(side_effect=RuntimeError("qmt down"))
-        )
+        sub._xtdata = SimpleNamespace(get_trading_dates=MagicMock(side_effect=RuntimeError("qmt down")))
         sub._refresh_trading_day_flag()
         assert sub._is_trading_day is False
 
@@ -1020,7 +1032,7 @@ class TestBizWatchdogEmptyUniverse:
         sub = _make_sub()
         sub._xtdata = fake
         sub._symbols_resolved = []  # 启动时解析全失败（#117 边缘）
-        sub._last_tick_ts = 0.0     # 从未收到 tick
+        sub._last_tick_ts = 0.0  # 从未收到 tick
         sub._is_market_open_now = lambda: True
 
         t = threading.Thread(target=sub._biz_watchdog_loop, daemon=True)
@@ -1114,9 +1126,7 @@ class TestMainRunLog:
             content = run_log.read_text(encoding="utf-8")
             assert "日志落盘" in content
             assert "启动失败" in content
-            assert any(
-                isinstance(h, RotatingFileHandler) for h in root.handlers if h not in before
-            )
+            assert any(isinstance(h, RotatingFileHandler) for h in root.handlers if h not in before)
         finally:
             root.setLevel(old_level)
             for h in list(root.handlers):
@@ -1165,16 +1175,20 @@ def _feed_ticks(fake_xt, n=5, interval=0.1):
     for i in range(n):
         if fake_xt.callback is None:
             return
-        fake_xt.callback({"000001.SZ": {
-            "time": int(time.time() * 1000),
-            "lastPrice": 10.5 + i * 0.01,
-            "volume": 100,
-            "amount": 1050.0,
-            "bidPrice": [10.49],
-            "askPrice": [10.51],
-            "bidVol": [10],
-            "askVol": [10],
-        }})
+        fake_xt.callback(
+            {
+                "000001.SZ": {
+                    "time": int(time.time() * 1000),
+                    "lastPrice": 10.5 + i * 0.01,
+                    "volume": 100,
+                    "amount": 1050.0,
+                    "bidPrice": [10.49],
+                    "askPrice": [10.51],
+                    "bidVol": [10],
+                    "askVol": [10],
+                }
+            }
+        )
         time.sleep(interval)
 
 
@@ -1192,7 +1206,8 @@ class TestIntradayLinkIntegration:
         fake_writer = MagicMock()
         fake_writer.add.return_value = True
         monkeypatch.setitem(
-            sys.modules, "zephyr.data.wal_writer",
+            sys.modules,
+            "zephyr.data.wal_writer",
             SimpleNamespace(WalWriter=lambda *a, **kw: fake_writer),
         )
 

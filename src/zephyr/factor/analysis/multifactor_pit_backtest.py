@@ -33,6 +33,7 @@
 注入式骨架：数据加载/组合优化/换仓触发/偏差监控均经回调注入，
 本框架只编排主循环 + 强制 5 层 PIT 断言（首批回测前必做）。
 """
+
 from __future__ import annotations
 
 import logging
@@ -68,24 +69,20 @@ class PITViolationError(Exception):
 class PITBacktestParams:
     """PIT 回测参数（25号memo §3.7#7）。"""
 
-    ic_window: int = 60   # IC 滚动窗口
+    ic_window: int = 60  # IC 滚动窗口
     cov_window: int = 60  # 协方差滚动窗口
 
 
 def assert_factor_pit(factor_date: pd.Timestamp, decision_date: pd.Timestamp) -> None:
     """factor_value 层：t 日决策只用 t 日及之前因子值（AS OF JOIN）。"""
     if pd.Timestamp(factor_date) > pd.Timestamp(decision_date):
-        raise PITViolationError(
-            f"factor_value PIT 违规: factor_date {factor_date} > decision_date {decision_date}"
-        )
+        raise PITViolationError(f"factor_value PIT 违规: factor_date {factor_date} > decision_date {decision_date}")
 
 
 def assert_ic_weight_pit(ic_window_end: pd.Timestamp, decision_date: pd.Timestamp) -> None:
     """ic_weight 层：IC 窗口截止日 < 决策日（ROLLING t-1，防 t 日 IC 算 t 日权重）。"""
     if pd.Timestamp(ic_window_end) >= pd.Timestamp(decision_date):
-        raise PITViolationError(
-            f"ic_weight PIT 违规: ic_window_end {ic_window_end} >= decision_date {decision_date}"
-        )
+        raise PITViolationError(f"ic_weight PIT 违规: ic_window_end {ic_window_end} >= decision_date {decision_date}")
 
 
 def assert_covariance_pit(cov_window_end: pd.Timestamp, decision_date: pd.Timestamp) -> None:
@@ -109,10 +106,10 @@ class BacktestDayRecord:
     """单决策日回测记录。"""
 
     date: pd.Timestamp
-    method: str = ""          # 合成方法（regression/ic_weighted/equal_weight）
-    trigger: str = ""         # 换仓触发器（INIT/TIME/DRIFT/SIGNAL/HOLD/DRIFT_CRITICAL）
-    drift_alerts: int = 0     # 持仓偏差警报数
-    skipped: bool = False     # 数据缺失当日跳过
+    method: str = ""  # 合成方法（regression/ic_weighted/equal_weight）
+    trigger: str = ""  # 换仓触发器（INIT/TIME/DRIFT/SIGNAL/HOLD/DRIFT_CRITICAL）
+    drift_alerts: int = 0  # 持仓偏差警报数
+    skipped: bool = False  # 数据缺失当日跳过
     note: str = ""
 
 
@@ -168,9 +165,7 @@ class MultifactorPITBacktestFramework:
             ic_history, ic_end = self._load_ic_history(date, self._params.ic_window)
             assert_ic_weight_pit(ic_end, date)
             # ③ 合成降级链决策（forward_returns=None 避免前瞻）
-            signal, decision = synthesize_with_degradation(
-                factor_values, ic_history, forward_returns=None
-            )
+            signal, decision = synthesize_with_degradation(factor_values, ic_history, forward_returns=None)
             # ⑤ 协方差加载 + 断言（提供时）
             covariance = None
             if self._load_covariance is not None:
@@ -204,8 +199,12 @@ class MultifactorPITBacktestFramework:
             else:
                 days_since_last += 1
             # ⑨ 记录
-            records.append(BacktestDayRecord(
-                date=date, method=decision.method, trigger=trigger,
-                drift_alerts=drift_alerts,
-            ))
+            records.append(
+                BacktestDayRecord(
+                    date=date,
+                    method=decision.method,
+                    trigger=trigger,
+                    drift_alerts=drift_alerts,
+                )
+            )
         return records

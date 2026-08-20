@@ -71,6 +71,7 @@ D-FACTOR-GOV-02 ABS001 上线门禁——因子进入灰度前的质量检查。
 # A1 --> O1
 # A2 --> O2
 """
+
 from __future__ import annotations
 
 from zephyr.factor.core.evaluation.backtest import EvaluationResult

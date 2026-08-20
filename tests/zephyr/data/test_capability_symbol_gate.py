@@ -14,6 +14,7 @@
     async 方法定义计入
   - 验收：模拟 17 号两历史 bug 形态（internal 半截工程 + akshare 声明残留）均可检出
 """
+
 from __future__ import annotations
 
 from zephyr.data.capability_symbol_gate import (
@@ -21,7 +22,7 @@ from zephyr.data.capability_symbol_gate import (
     check_declaration_impl_consistency_content,
 )
 
-GOOD_PROVIDER = '''
+GOOD_PROVIDER = """
 class P:
     def fetch(self, capability, payload):
         if capability == "kline_daily":
@@ -33,15 +34,15 @@ class P:
 
     def _fetch_trade_calendar(self, payload):
         return []
-'''
+"""
 
-FORWARD_VIOLATION = '''
+FORWARD_VIOLATION = """
 class P:
     def fetch(self, capability, payload):
         return self._fetch_hk_trade_calendar(payload)
-'''
+"""
 
-REVERSE_FROZENSET = '''
+REVERSE_FROZENSET = """
 _KLINE_CAPABILITIES = frozenset({"kline_daily", "kline_weekly"})
 
 
@@ -51,9 +52,9 @@ class P:
 
     def _fetch_kline_daily(self, payload):
         return []
-'''
+"""
 
-REVERSE_META_CONTRACT = '''
+REVERSE_META_CONTRACT = """
 class P:
     meta = IngestProviderMeta(
         name="akshare",
@@ -65,15 +66,15 @@ class P:
 
     def _fetch_trade_calendar(self, payload):
         return []
-'''
+"""
 
-REVERSE_DICT_ROUTES = '''
+REVERSE_DICT_ROUTES = """
 _DIRECT_ROUTES = {"margin_target": "_fetch_margin_target"}
 
 
 class P:
     pass
-'''
+"""
 
 
 class TestForward:
@@ -88,18 +89,18 @@ class TestForward:
         assert "未定义" in violations[0]
 
     def test_async_method_def_counts(self):
-        content = '''
+        content = """
 class P:
     def fetch(self, capability, payload):
         return self._fetch_tick(payload)
 
     async def _fetch_tick(self, payload):
         return []
-'''
+"""
         assert check_declaration_impl_consistency_content(content) == []
 
     def test_non_self_and_non_fetch_calls_ignored(self):
-        content = '''
+        content = """
 class P:
     def fetch(self, capability, payload):
         helper(payload)
@@ -107,7 +108,7 @@ class P:
 
     def compute(self, payload):
         return []
-'''
+"""
         assert check_declaration_impl_consistency_content(content) == []
 
 
@@ -139,14 +140,14 @@ class TestReverse:
 
 class TestBothDirections:
     def test_both_violations_one_scan(self):
-        content = '''
+        content = """
 _GHOST_CAPABILITIES = frozenset({"ghost_capability"})
 
 
 class P:
     def fetch(self, capability, payload):
         return self._fetch_missing(payload)
-'''
+"""
         violations = check_declaration_impl_consistency_content(content)
         assert len(violations) == 2
         assert any("_fetch_missing" in v for v in violations)
@@ -158,7 +159,7 @@ class TestRouteFormExemptions:
 
     def test_shared_method_routing_exempt(self):
         """miniqmt 形态：frozenset + capability in <var> 共享方法路由 → 不算残留。"""
-        content = '''
+        content = """
 _KLINE_1D_CAPABILITIES = frozenset({"kline_hk_daily", "kline_futures"})
 
 
@@ -169,12 +170,12 @@ class P:
 
     def _fetch_kline(self, payload, policy, period):
         return []
-'''
+"""
         assert check_declaration_impl_consistency_content(content) == []
 
     def test_param_dict_route_table_exempt(self):
         """miniqmt 形态：dict 参数化路由表（tuple/非 _fetch_ 值）+ in <var> → 不算残留。"""
-        content = '''
+        content = """
 _KLINE_CAPABILITIES = {
     "kline_daily": ("1d", "沪深A股"),
     "kline_1min": ("1m", "沪深A股"),
@@ -189,12 +190,12 @@ class P:
 
     def _fetch_kline(self, payload, policy, period):
         return []
-'''
+"""
         assert check_declaration_impl_consistency_content(content) == []
 
     def test_plain_meta_strings_not_checked(self):
         """memo §5.5 范围外：纯 meta 字符串声明（无 frozenset/Contract）不查。"""
-        content = '''
+        content = """
 class P:
     meta = IngestProviderMeta(name="eia", capabilities=["eia_petroleum", "eia_full"])
 
@@ -202,12 +203,12 @@ class P:
         if capability == "eia_petroleum":
             return []
         return []
-'''
+"""
         assert check_declaration_impl_consistency_content(content) == []
 
     def test_dynamic_dispatch_still_catches_residue(self):
         """akshare 形态：getattr(self, f"_fetch_{cap}") 动态分发 → frozenset 声明必须有 _fetch_<cap>。"""
-        content = '''
+        content = """
 _AKSHARE_CAPABILITIES = frozenset({"trade_calendar", "ghost_cap"})
 
 
@@ -219,14 +220,14 @@ class P:
 
     def _fetch_trade_calendar(self, payload, policy):
         return []
-'''
+"""
         violations = check_declaration_impl_consistency_content(content)
         assert len(violations) == 1
         assert "ghost_cap" in violations[0]
 
     def test_dict_method_ref_missing_detected(self):
         """miniqmt _DIRECT_ROUTES 形态：dict 方法引用不存在 → 正向违规。"""
-        content = '''
+        content = """
 _DIRECT_ROUTES = {"adj_factor": "_fetch_adj_factor", "ghost": "_fetch_ghost"}
 
 
@@ -237,7 +238,7 @@ class P:
 
     def _fetch_adj_factor(self, payload, policy):
         return []
-'''
+"""
         violations = check_declaration_impl_consistency_content(content)
         assert len(violations) == 1
         assert "_fetch_ghost" in violations[0]

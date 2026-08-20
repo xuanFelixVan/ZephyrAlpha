@@ -41,6 +41,7 @@ DORMANT（0.0，不参与合成）/ RECOVERY（0.3 复激活观察）/ RETIRED�
   DORMANT→deprecated / RECOVERY→experimental（复激活试运行）/ RETIRED→retired。
   反向：registry candidate 入池即初始化 NEW。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -71,10 +72,10 @@ class DecayState(str, Enum):
 # 6态 ↔ factor_registry 治理 5态（candidate/experimental/active/deprecated/retired）
 # 映射规则（memo §6 待裁定项落码；只定义映射常量，不改动注册表 YAML）。
 DECAY_TO_REGISTRY_STATUS: dict[DecayState, str] = {
-    DecayState.NEW: "experimental",      # 冷启动试运行
+    DecayState.NEW: "experimental",  # 冷启动试运行
     DecayState.ACTIVE: "active",
-    DecayState.OBSERVE: "active",        # 观察中仍参与合成（0.5 权重）
-    DecayState.DORMANT: "deprecated",    # 休眠退出合成
+    DecayState.OBSERVE: "active",  # 观察中仍参与合成（0.5 权重）
+    DecayState.DORMANT: "deprecated",  # 休眠退出合成
     DecayState.RECOVERY: "experimental",  # 复激活试运行
     DecayState.RETIRED: "retired",
 }
@@ -89,17 +90,17 @@ def registry_status_for(state: DecayState) -> str:
 class DecayLifecycleParams:
     """生命周期阈值参数（25号memo §3.7#3 参数表）。"""
 
-    halflife_observe: float = 20.0        # 半衰期<20→OBSERVE
-    cusum_alert_to_dormant: int = 40      # CUSUM 预警后 40 交易日无恢复→DORMANT
-    ic_floor_dormant: int = 40            # 连续 40 日 |IC|<0.02→DORMANT
-    recovery_ic_threshold: float = 0.03   # DORMANT 后连续 10 日 |IC|>0.03→RECOVERY
-    recovery_observe_days: int = 10       # 复激活观察期
-    ic_dormant_floor: float = 0.02        # |IC|<0.02 持续→DORMANT
-    dormant_skip_synthesis: bool = True   # DORMANT 因子不参与合成
-    new_factor_warmup_days: int = 20      # 新因子冷启动期（IC 样本积累）
-    new_factor_weight_mult: float = 0.3   # 冷启动期权重乘子
-    dormant_max_days: int = 120           # DORMANT 持续 120 日无恢复→永久退役
-    retired_skip_all: bool = True         # RETIRED 完全退出
+    halflife_observe: float = 20.0  # 半衰期<20→OBSERVE
+    cusum_alert_to_dormant: int = 40  # CUSUM 预警后 40 交易日无恢复→DORMANT
+    ic_floor_dormant: int = 40  # 连续 40 日 |IC|<0.02→DORMANT
+    recovery_ic_threshold: float = 0.03  # DORMANT 后连续 10 日 |IC|>0.03→RECOVERY
+    recovery_observe_days: int = 10  # 复激活观察期
+    ic_dormant_floor: float = 0.02  # |IC|<0.02 持续→DORMANT
+    dormant_skip_synthesis: bool = True  # DORMANT 因子不参与合成
+    new_factor_warmup_days: int = 20  # 新因子冷启动期（IC 样本积累）
+    new_factor_weight_mult: float = 0.3  # 冷启动期权重乘子
+    dormant_max_days: int = 120  # DORMANT 持续 120 日无恢复→永久退役
+    retired_skip_all: bool = True  # RETIRED 完全退出
 
 
 @dataclass
@@ -110,10 +111,10 @@ class FactorDecayState:
     state: DecayState = DecayState.NEW
     weight_multiplier: float = 0.3
     days_in_state: int = 0
-    ic_below_floor_streak: int = 0   # 连续 |IC|<0.02 天数
-    ic_recovery_streak: int = 0      # DORMANT 中连续 |IC|≥0.03 天数
+    ic_below_floor_streak: int = 0  # 连续 |IC|<0.02 天数
+    ic_recovery_streak: int = 0  # DORMANT 中连续 |IC|≥0.03 天数
     cusum_alert: bool = False
-    cusum_alert_days: int = 0        # CUSUM 预警后无恢复天数
+    cusum_alert_days: int = 0  # CUSUM 预警后无恢复天数
 
     @property
     def participates_in_synthesis(self) -> bool:
@@ -127,8 +128,7 @@ class CusumMonitor:
     S_t > h → 触发衰减预警（进入观察池）。
     """
 
-    def __init__(self, mu_ic: float, sigma_ic: float,
-                 k_mult: float = 0.5, h_mult: float = 4.0) -> None:
+    def __init__(self, mu_ic: float, sigma_ic: float, k_mult: float = 0.5, h_mult: float = 4.0) -> None:
         self.mu_ic = float(mu_ic)
         self.k = k_mult * float(sigma_ic)
         self.h = h_mult * float(sigma_ic)
@@ -231,8 +231,9 @@ class DecayActionLifecycle:
             if half_life < p.halflife_observe:
                 self._enter(st, DecayState.OBSERVE, 0.5)
         elif st.state is DecayState.OBSERVE:
-            if (st.ic_below_floor_streak >= p.ic_floor_dormant
-                    or (st.cusum_alert and st.cusum_alert_days >= p.cusum_alert_to_dormant)):
+            if st.ic_below_floor_streak >= p.ic_floor_dormant or (
+                st.cusum_alert and st.cusum_alert_days >= p.cusum_alert_to_dormant
+            ):
                 self._enter(st, DecayState.DORMANT, 0.0)
             elif half_life >= p.halflife_observe and not st.cusum_alert:
                 self._enter(st, DecayState.ACTIVE, 1.0)

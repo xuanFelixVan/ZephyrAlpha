@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """ic_ir_evaluator 模块测试——多因子评估报告器。"""
+
 from __future__ import annotations
 
 import pandas as pd
@@ -12,8 +13,13 @@ from zephyr.factor.core.evaluation.backtest import EvaluationResult
 
 def _make_result(fid: str, ic: float = 0.05, ir: float = 0.6) -> EvaluationResult:
     return EvaluationResult(
-        factor_id=fid, ic_mean=ic, ic_std=0.1, ir=ir,
-        oos_positive_rate=0.55, is_overfitted=False, sample_size=50,
+        factor_id=fid,
+        ic_mean=ic,
+        ic_std=0.1,
+        ir=ir,
+        oos_positive_rate=0.55,
+        is_overfitted=False,
+        sample_size=50,
     )
 
 
@@ -22,11 +28,15 @@ class TestEvaluateMultiple:
         # 空列表不应调用 evaluate_factor
         called: list[str] = []
         monkeypatch.setattr(
-            ic_ir_evaluator, "evaluate_factor",
+            ic_ir_evaluator,
+            "evaluate_factor",
             lambda fid, *a, **kw: called.append(fid) or _make_result(fid),
         )
         results = ic_ir_evaluator.evaluate_multiple(
-            [], ["000001"], "2026-01-01", "2026-06-01",
+            [],
+            ["000001"],
+            "2026-01-01",
+            "2026-06-01",
         )
         assert results == {}
         assert called == []
@@ -37,11 +47,15 @@ class TestEvaluateMultiple:
             "value_5d": _make_result("value_5d", 0.03, 0.4),
         }
         monkeypatch.setattr(
-            ic_ir_evaluator, "evaluate_factor",
+            ic_ir_evaluator,
+            "evaluate_factor",
             lambda fid, *a, **kw: mapping[fid],
         )
         results = ic_ir_evaluator.evaluate_multiple(
-            ["mom_5d", "value_5d"], ["000001"], "2026-01-01", "2026-06-01",
+            ["mom_5d", "value_5d"],
+            ["000001"],
+            "2026-01-01",
+            "2026-06-01",
         )
         assert set(results.keys()) == {"mom_5d", "value_5d"}
         assert results["mom_5d"].ic_mean == 0.08
@@ -55,7 +69,10 @@ class TestEvaluateMultiple:
 
         monkeypatch.setattr(ic_ir_evaluator, "evaluate_factor", _eval)
         results = ic_ir_evaluator.evaluate_multiple(
-            ["good", "unknown"], ["000001"], "2026-01-01", "2026-06-01",
+            ["good", "unknown"],
+            ["000001"],
+            "2026-01-01",
+            "2026-06-01",
         )
         assert "good" in results
         assert "unknown" not in results
@@ -68,7 +85,10 @@ class TestEvaluateMultiple:
 
         monkeypatch.setattr(ic_ir_evaluator, "evaluate_factor", _eval)
         results = ic_ir_evaluator.evaluate_multiple(
-            ["good", "bad"], ["000001"], "2026-01-01", "2026-06-01",
+            ["good", "bad"],
+            ["000001"],
+            "2026-01-01",
+            "2026-06-01",
         )
         assert "good" in results
         assert "bad" not in results
@@ -78,15 +98,23 @@ class TestEvaluateMultiple:
 
         def _eval(fid, symbols, start, end, horizon, oos_ratio):
             captured.update(
-                fid=fid, symbols=symbols, start=start, end=end,
-                horizon=horizon, oos_ratio=oos_ratio,
+                fid=fid,
+                symbols=symbols,
+                start=start,
+                end=end,
+                horizon=horizon,
+                oos_ratio=oos_ratio,
             )
             return _make_result(fid)
 
         monkeypatch.setattr(ic_ir_evaluator, "evaluate_factor", _eval)
         ic_ir_evaluator.evaluate_multiple(
-            ["f1"], ["000001", "000002"], "2026-01-01", "2026-06-30",
-            horizon=10, oos_ratio=0.4,
+            ["f1"],
+            ["000001", "000002"],
+            "2026-01-01",
+            "2026-06-30",
+            horizon=10,
+            oos_ratio=0.4,
         )
         assert captured["fid"] == "f1"
         assert captured["symbols"] == ["000001", "000002"]
@@ -112,8 +140,13 @@ class TestFormatReport:
 
     def test_overfitted_flag_display(self) -> None:
         overfitted = EvaluationResult(
-            factor_id="f2", ic_mean=0.02, ic_std=0.1, ir=0.2,
-            oos_positive_rate=0.3, is_overfitted=True, sample_size=30,
+            factor_id="f2",
+            ic_mean=0.02,
+            ic_std=0.1,
+            ir=0.2,
+            oos_positive_rate=0.3,
+            is_overfitted=True,
+            sample_size=30,
         )
         results = {"f2": overfitted}
         report = ic_ir_evaluator.format_report(results)

@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """ic_decay 模块测试——IC 衰减分析与半衰期计算。"""
+
 from __future__ import annotations
 
 import numpy as np
@@ -75,14 +76,19 @@ class TestComputeIcDecay:
     def test_empty_history(self, monkeypatch: pytest.MonkeyPatch) -> None:
         # 历史数据为空时返回空 Series
         monkeypatch.setattr(
-            ic_decay, "load_history",
+            ic_decay,
+            "load_history",
             lambda symbols, start, end: pd.DataFrame(),
         )
+
         # 需要一个 fake factor class
         class _FakeFactor:
             pass
+
         monkeypatch.setattr(
-            ic_decay.FactorRegistry, "get", lambda fid: _FakeFactor,
+            ic_decay.FactorRegistry,
+            "get",
+            lambda fid: _FakeFactor,
         )
         result = ic_decay.compute_ic_decay("f1", ["000001"], "2026-01-01", "2026-06-01")
         assert result.empty
@@ -94,12 +100,19 @@ class TestComputeIcDecay:
         rows = []
         for d in dates:
             for s in symbols:
-                rows.append({
-                    "trade_date": d, "symbol": s,
-                    "open": 10.0, "high": 11.0, "low": 9.0,
-                    "close": 10.0 + np.random.randn() * 0.5,
-                    "volume": 1000.0, "amount": 10000.0, "adj_factor": 1.0,
-                })
+                rows.append(
+                    {
+                        "trade_date": d,
+                        "symbol": s,
+                        "open": 10.0,
+                        "high": 11.0,
+                        "low": 9.0,
+                        "close": 10.0 + np.random.randn() * 0.5,
+                        "volume": 1000.0,
+                        "amount": 10000.0,
+                        "adj_factor": 1.0,
+                    }
+                )
         history = pd.DataFrame(rows).set_index(["trade_date", "symbol"])
 
         # 返回常数因子值的 fake factor
@@ -132,9 +145,15 @@ class TestComputeIcDecayAdjustedClose218:
         adj_factors = [1.0, 2.0, 2.0, 2.0]
         rows = [
             {
-                "trade_date": d, "symbol": "600010",
-                "open": c, "high": c, "low": c, "close": c,
-                "volume": 1000.0, "amount": 10000.0, "adj_factor": a,
+                "trade_date": d,
+                "symbol": "600010",
+                "open": c,
+                "high": c,
+                "low": c,
+                "close": c,
+                "volume": 1000.0,
+                "amount": 10000.0,
+                "adj_factor": a,
             }
             for d, c, a in zip(dates, raw_closes, adj_factors)
         ]

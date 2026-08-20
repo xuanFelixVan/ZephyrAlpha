@@ -8,6 +8,7 @@
   CUSUM on rolling 63 日 ρ（k=0.5σ/h=4σ）主检测 + PSI（>0.2 调查 / >0.4 告警）
   辅助；σ=0 降级不告警。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -55,9 +56,7 @@ class TestCusumUpperAlarm:
     def test_step_shift_triggers_alarm(self):
         """ρ 从 0.3 结构性跳到 0.6 → CUSUM 必告警且位置在跳变后。"""
         rng = np.random.default_rng(71)
-        rho = pd.Series(
-            np.concatenate([rng.normal(0.3, 0.05, 100), rng.normal(0.6, 0.05, 100)])
-        )
+        rho = pd.Series(np.concatenate([rng.normal(0.3, 0.05, 100), rng.normal(0.6, 0.05, 100)]))
         res = cusum_upper_alarm(rho, baseline_rho=0.3)
         assert res.alarm
         assert res.first_alarm_pos is not None and res.first_alarm_pos >= 100

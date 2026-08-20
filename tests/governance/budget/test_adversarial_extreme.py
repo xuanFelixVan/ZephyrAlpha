@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-TEST-278 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """F4 红蓝对抗极端测试——真实降级链/并发/分块/cold_start压力测试
 
 DM-201501 验收测试: 覆盖4类真实压力场景，验证 BudgetEngine 在极端负载下的真实行为。

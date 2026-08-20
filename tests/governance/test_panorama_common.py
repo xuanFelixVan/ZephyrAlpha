@@ -3,6 +3,7 @@
 # [A_test] module_id: MOD-GOV_panorama_common | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_panorama_common.py — 共享投票工具单测"""
+
 from __future__ import annotations
 
 import importlib.util
@@ -10,10 +11,7 @@ from pathlib import Path
 
 import pytest
 
-_SCRIPT_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "scripts" / "governance" / "d5_architecture" / "panorama_common.py"
-)
+_SCRIPT_PATH = Path(__file__).resolve().parents[2] / "scripts" / "governance" / "d5_architecture" / "panorama_common.py"
 
 
 @pytest.fixture(scope="module")

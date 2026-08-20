@@ -33,6 +33,7 @@
 BM-RC-06-D 三个深度增强项（策略逻辑相似度/去杠杆路径预案/拥挤悖论防护）
 登记 design 远期——依赖多策略并发实盘数据，当前无输入不施工。
 """
+
 from __future__ import annotations
 
 import logging
@@ -56,18 +57,18 @@ __all__ = [
 class CrowdingParams:
     """拥挤监控阈值参数（25号memo §3.7#5 参数表）。"""
 
-    etf_holding_window: int = 60        # ETF 持仓变化滚动窗口
-    etf_holding_alert: float = 0.20     # ETF 持仓增长>20%→拥挤加速
-    factor_corr_window: int = 40        # 因子收益相关性滚动窗口
-    factor_corr_alert: float = 0.70     # 因子间平均相关性>0.70→拥挤
+    etf_holding_window: int = 60  # ETF 持仓变化滚动窗口
+    etf_holding_alert: float = 0.20  # ETF 持仓增长>20%→拥挤加速
+    factor_corr_window: int = 40  # 因子收益相关性滚动窗口
+    factor_corr_alert: float = 0.70  # 因子间平均相关性>0.70→拥挤
     quant_seat_ratio_alert: float = 0.35  # 龙虎榜量化席位占比>35%→拥挤
-    crash_risk_high: float = 0.70       # 综合分>0.70→高崩盘风险→降仓
-    crash_risk_mid: float = 0.50        # 综合分>0.50→ALERT
+    crash_risk_high: float = 0.70  # 综合分>0.70→高崩盘风险→降仓
+    crash_risk_mid: float = 0.50  # 综合分>0.50→ALERT
 
 
 class CrowdingLevel(str, Enum):
     REDUCE_WEIGHT_50 = "REDUCE_WEIGHT_50"  # 降权 50% + 尾部风险预警
-    ALERT = "ALERT"                        # 监控 + CUSUM 联动
+    ALERT = "ALERT"  # 监控 + CUSUM 联动
     MONITOR = "MONITOR"
 
 
@@ -92,7 +93,7 @@ def _etf_growth_score(etf_holdings: pd.Series | None, p: CrowdingParams) -> tupl
     if etf_holdings is None or len(etf_holdings) < p.etf_holding_window:
         return 0.0, True
     recent = float(etf_holdings.iloc[-20:].mean())
-    baseline = float(etf_holdings.iloc[-p.etf_holding_window:-20].mean())
+    baseline = float(etf_holdings.iloc[-p.etf_holding_window : -20].mean())
     if baseline <= 0:
         return 0.0, True
     growth = recent / baseline - 1.0
@@ -103,7 +104,7 @@ def _corr_score(factor_returns_panel: pd.DataFrame | None, p: CrowdingParams) ->
     """因子间平均相关性得分：滚动窗口内平均两两相关，>0.70 满分。"""
     if factor_returns_panel is None or factor_returns_panel.shape[1] < 2:
         return 0.0, True
-    window = factor_returns_panel.dropna().iloc[-p.factor_corr_window:]
+    window = factor_returns_panel.dropna().iloc[-p.factor_corr_window :]
     if len(window) < 2:
         return 0.0, True
     corr = window.corr().to_numpy()
@@ -135,8 +136,7 @@ def assess(
     etf_s, etf_deg = _etf_growth_score(etf_holdings, p)
     corr_s, corr_deg = _corr_score(factor_returns_panel, p)
     seat_s, seat_deg = _seat_score(quant_seat_ratio, p)
-    degraded = tuple(n for n, d in
-                     (("etf", etf_deg), ("corr", corr_deg), ("seat", seat_deg)) if d)
+    degraded = tuple(n for n, d in (("etf", etf_deg), ("corr", corr_deg), ("seat", seat_deg)) if d)
     composite = (etf_s + corr_s + seat_s) / 3.0
     if composite > p.crash_risk_high:
         level = CrowdingLevel.REDUCE_WEIGHT_50
@@ -147,6 +147,10 @@ def assess(
     if level is CrowdingLevel.REDUCE_WEIGHT_50:
         log.warning("crowding: 综合分 %.2f>%.2f 高崩盘风险→降权50%%", composite, p.crash_risk_high)
     return CrowdingAssessment(
-        etf_score=etf_s, corr_score=corr_s, seat_score=seat_s,
-        composite=composite, level=level, degraded=degraded,
+        etf_score=etf_s,
+        corr_score=corr_s,
+        seat_score=seat_s,
+        composite=composite,
+        level=level,
+        degraded=degraded,
     )

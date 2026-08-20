@@ -516,7 +516,13 @@ class TestPhaseERiskValidation:
             holdings=holdings,
             market_values=market_values,
             total_nav=1000000.0,
-            limits=RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="phase-e-port", max_single_position=0.10, max_gross_leverage=1.0, max_drawdown_limit=0.20),
+            limits=RiskLimits(
+                as_of_date=datetime.now(UTC),
+                idempotency_key="phase-e-port",
+                max_single_position=0.10,
+                max_gross_leverage=1.0,
+                max_drawdown_limit=0.20,
+            ),
         )
         assert len(violations) > 0
 

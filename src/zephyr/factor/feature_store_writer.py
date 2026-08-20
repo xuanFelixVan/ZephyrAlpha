@@ -36,6 +36,7 @@
 
 依据: 15_data_feature_layer_spec v1.0.3 §3.4
 """
+
 from __future__ import annotations
 
 import logging
@@ -100,17 +101,17 @@ def build_feature_value_rows(
     if len(values) == 0:
         return []
     rows: list[tuple] = []
-    for td, sym, fid, val in zip(
-        values["trade_date"], values["symbol"], values["factor_id"], values["value"]
-    ):
-        rows.append((
-            pd.Timestamp(td).date(),
-            str(sym),
-            str(fid),
-            factor_version,
-            None if pd.isna(val) else float(val),
-            data_source,
-        ))
+    for td, sym, fid, val in zip(values["trade_date"], values["symbol"], values["factor_id"], values["value"]):
+        rows.append(
+            (
+                pd.Timestamp(td).date(),
+                str(sym),
+                str(fid),
+                factor_version,
+                None if pd.isna(val) else float(val),
+                data_source,
+            )
+        )
     return rows
 
 
@@ -148,6 +149,6 @@ def write_feature_values(
         raise RuntimeError("clickhouse-driver 不可用（client 未注入且 get_client 返回 None）")
     sql = f"INSERT INTO {_FULL_TABLE} {INSERT_COLUMNS} VALUES"
     for i in range(0, len(rows), chunk_size):
-        client.execute(sql, rows[i: i + chunk_size])
+        client.execute(sql, rows[i : i + chunk_size])
     log.info("特征值写入 %s: %d 行（factor_version=%s）", _FULL_TABLE, len(rows), factor_version)
     return len(rows)

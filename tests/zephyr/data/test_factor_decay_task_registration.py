@@ -24,6 +24,7 @@
 schedule=weekend_calibration / extra.disabled=true 留痕 runner 未绑定），
 且 schedule 槽位在 schedule.yaml 真实存在（防挂到不存在的时段）。
 """
+
 from __future__ import annotations
 
 import pathlib

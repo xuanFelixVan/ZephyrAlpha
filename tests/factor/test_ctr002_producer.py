@@ -22,6 +22,7 @@
 - idempotency_key 格式
 - factor_version / prefix 传递
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

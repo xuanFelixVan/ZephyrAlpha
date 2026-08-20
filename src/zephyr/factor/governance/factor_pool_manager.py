@@ -93,6 +93,7 @@ D-FACTOR-08 因子池容量管理——活跃池/休眠池 + IC末位淘汰 + �
 # A3 --> O1
 # A4 --> O2
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -160,9 +161,7 @@ class FactorPoolManager:
     """
 
     def __init__(self) -> None:
-        self._n_max, self._active_cap, self._dormant_cap, self._min_ic = (
-            _get_pool_config()
-        )
+        self._n_max, self._active_cap, self._dormant_cap, self._min_ic = _get_pool_config()
         self._entries: dict[str, FactorPoolEntry] = {}
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
@@ -176,10 +175,7 @@ class FactorPoolManager:
         """写入：entries（Stage 4 公共化）。"""
         self._entries = value
 
-
-    def add_factor(
-        self, factor_id: str, ic_mean: float, is_core: bool = False
-    ) -> tuple[bool, str]:
+    def add_factor(self, factor_id: str, ic_mean: float, is_core: bool = False) -> tuple[bool, str]:
         """添加因子到池中。
 
         - IC低于 min_ic_to_enter → 拒绝入池
@@ -205,9 +201,7 @@ class FactorPoolManager:
         else:
             _msg_prefix = ""
         if self._active_count() < self._active_cap:
-            self._entries[factor_id] = FactorPoolEntry(
-                factor_id, ic_mean, is_core, pool=ACTIVE
-            )
+            self._entries[factor_id] = FactorPoolEntry(factor_id, ic_mean, is_core, pool=ACTIVE)
             return True, f"{_msg_prefix}因子 {factor_id} 加入活跃池"
         return self._ic_based_replace(factor_id, ic_mean, is_core, _msg_prefix)
 
@@ -218,17 +212,13 @@ class FactorPoolManager:
         del self._entries[factor_id]
         return True
 
-    def ic_based_replace(
-        self, new_factor_id: str, new_ic: float, is_core: bool = False
-    ) -> tuple[bool, str]:
+    def ic_based_replace(self, new_factor_id: str, new_ic: float, is_core: bool = False) -> tuple[bool, str]:
         """IC末位淘汰：新因子与活跃池中IC最低的非核心因子对比。
 
         活跃池未满时直接加入。已满时新因子IC须高于池内最低IC才替换。
         """
         if self._active_count() < self._active_cap:
-            self._entries[new_factor_id] = FactorPoolEntry(
-                new_factor_id, new_ic, is_core, pool=ACTIVE
-            )
+            self._entries[new_factor_id] = FactorPoolEntry(new_factor_id, new_ic, is_core, pool=ACTIVE)
             return True, f"活跃池未满，因子 {new_factor_id} 直接加入"
         return self._ic_based_replace(new_factor_id, new_ic, is_core, "")
 
@@ -272,9 +262,7 @@ class FactorPoolManager:
             is_full=total >= self._n_max,
         )
 
-    def _ic_based_replace(
-        self, new_id: str, new_ic: float, is_core: bool, msg_prefix: str
-    ) -> tuple[bool, str]:
+    def _ic_based_replace(self, new_id: str, new_ic: float, is_core: bool, msg_prefix: str) -> tuple[bool, str]:
         """活跃池满时，新因子与池内IC最低的非核心因子对比。"""
         victim = self._find_lowest_ic_active_non_core()
         if victim is None:
@@ -288,19 +276,14 @@ class FactorPoolManager:
 
     def _find_lowest_ic_active_non_core(self) -> str | None:
         """找活跃池中IC绝对值最低的非核心因子。"""
-        candidates = [
-            fid for fid, e in self._entries.items()
-            if e.pool == ACTIVE and not e.is_core
-        ]
+        candidates = [fid for fid, e in self._entries.items() if e.pool == ACTIVE and not e.is_core]
         if not candidates:
             return None
         return min(candidates, key=lambda fid: abs(self._entries[fid].ic_mean))
 
     def _find_prune_target(self) -> str | None:
         """找裁剪目标：优先休眠池中IC最低者。"""
-        dormant = [
-            fid for fid, e in self._entries.items() if e.pool == DORMANT
-        ]
+        dormant = [fid for fid, e in self._entries.items() if e.pool == DORMANT]
         if dormant:
             return min(dormant, key=lambda fid: abs(self._entries[fid].ic_mean))
         # 休眠池空 → 从活跃池降级IC最低非核心因子到休眠池，再裁撤

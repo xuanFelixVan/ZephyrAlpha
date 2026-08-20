@@ -23,6 +23,7 @@
     4. start/stop 线程生命周期
     5. 错误降级（Redis 故障 / 空 tick / DAG 构建失败）
 """
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
@@ -150,9 +151,7 @@ class TestTickCycle:
         """构造 mock Redis + mock DagExecutor 的 loop。"""
         mock_redis = MagicMock()
         mock_pipe = MagicMock()
-        mock_pipe.execute.return_value = [
-            {"price": "12.5", "volume": "100", "amount": "1250.0"}
-        ]
+        mock_pipe.execute.return_value = [{"price": "12.5", "volume": "100", "amount": "1250.0"}]
         mock_redis.pipeline.return_value = mock_pipe
 
         mock_executor = MagicMock()
@@ -228,8 +227,10 @@ class TestStartStopLifecycle:
         mock_redis = MagicMock()
         loop = IntradayFactorLoop(mock_redis, ["000001.SZ"])
 
-        with patch.object(loop, "_build_dag", return_value=True) as mock_build, \
-             patch("zephyr.factor.core.intraday_factor_loop.create_h1_factor_sink") as mock_sink:
+        with (
+            patch.object(loop, "_build_dag", return_value=True) as mock_build,
+            patch("zephyr.factor.core.intraday_factor_loop.create_h1_factor_sink") as mock_sink,
+        ):
             mock_sink.return_value = MagicMock()
             # 让循环立即退出（_running=False after first cycle）
             loop._cycle_seconds = 0.01

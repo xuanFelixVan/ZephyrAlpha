@@ -19,6 +19,7 @@
 提供 FactorNode / FactorEdge / FactorDAG 数据结构及 build_dag_from_registry 工具。
 是 dag_manager 和 dist_feature_eng 的基础。
 """
+
 from __future__ import annotations
 
 from zephyr.factor.core.factor_dag.dag import (

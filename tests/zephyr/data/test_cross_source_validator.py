@@ -4,6 +4,7 @@
 # [DOMAIN] D_DATA
 # [TTL] task_bound
 """cross_source_validator 单元测试（P1-4 多源交叉校验）。"""
+
 import os
 import sys
 
@@ -29,8 +30,12 @@ class TestValidationReport:
 
     def test_summary_string(self):
         report = ValidationReport(
-            check_time=None, total_symbols=10, passed=8,
-            warnings=1, failures=1, missing_in_backup=2,
+            check_time=None,
+            total_symbols=10,
+            passed=8,
+            warnings=1,
+            failures=1,
+            missing_in_backup=2,
         )
         s = report.summary()
         assert "symbols=10" in s
@@ -56,10 +61,12 @@ class TestCrossSourceValidator:
     @patch("zephyr.data.cross_source_validator.ch_reader")
     def test_validate_price_pass(self, mock_reader):
         """价格偏差在阈值内 → pass"""
-        mock_reader.query.return_value = self._mock_ch_response([
-            "000001\tminiqmt\t10.50\t100000",
-            "000001\ttdx_backup\t10.51\t100000",
-        ])
+        mock_reader.query.return_value = self._mock_ch_response(
+            [
+                "000001\tminiqmt\t10.50\t100000",
+                "000001\ttdx_backup\t10.51\t100000",
+            ]
+        )
         validator = CrossSourceValidator(price_threshold=Decimal("0.005"))
         report = validator.validate()
         # price pass + volume pass = 2 passed
@@ -69,10 +76,12 @@ class TestCrossSourceValidator:
     @patch("zephyr.data.cross_source_validator.ch_reader")
     def test_validate_price_fail(self, mock_reader):
         """价格偏差超阈值 → fail"""
-        mock_reader.query.return_value = self._mock_ch_response([
-            "000001\tminiqmt\t11.00\t100000",
-            "000001\ttdx_backup\t10.50\t100000",
-        ])
+        mock_reader.query.return_value = self._mock_ch_response(
+            [
+                "000001\tminiqmt\t11.00\t100000",
+                "000001\ttdx_backup\t10.50\t100000",
+            ]
+        )
         validator = CrossSourceValidator(price_threshold=Decimal("0.001"))
         report = validator.validate()
         assert report.failures >= 1
@@ -81,9 +90,11 @@ class TestCrossSourceValidator:
     @patch("zephyr.data.cross_source_validator.ch_reader")
     def test_validate_missing_in_backup(self, mock_reader):
         """主源有但备源无 → warn + missing_in_backup"""
-        mock_reader.query.return_value = self._mock_ch_response([
-            "000001\tminiqmt\t10.50\t100000",
-        ])
+        mock_reader.query.return_value = self._mock_ch_response(
+            [
+                "000001\tminiqmt\t10.50\t100000",
+            ]
+        )
         validator = CrossSourceValidator()
         report = validator.validate()
         assert report.missing_in_backup == 1
@@ -92,9 +103,11 @@ class TestCrossSourceValidator:
     @patch("zephyr.data.cross_source_validator.ch_reader")
     def test_validate_missing_in_primary(self, mock_reader):
         """备源有但主源无 → fail + missing_in_primary"""
-        mock_reader.query.return_value = self._mock_ch_response([
-            "000001\ttdx_backup\t10.50\t100000",
-        ])
+        mock_reader.query.return_value = self._mock_ch_response(
+            [
+                "000001\ttdx_backup\t10.50\t100000",
+            ]
+        )
         validator = CrossSourceValidator()
         report = validator.validate()
         assert report.missing_in_primary == 1
@@ -103,10 +116,12 @@ class TestCrossSourceValidator:
     @patch("zephyr.data.cross_source_validator.ch_reader")
     def test_validate_volume_warn(self, mock_reader):
         """成交量偏差超阈值 → warn"""
-        mock_reader.query.return_value = self._mock_ch_response([
-            "000001\tminiqmt\t10.50\t120000",
-            "000001\ttdx_backup\t10.50\t100000",
-        ])
+        mock_reader.query.return_value = self._mock_ch_response(
+            [
+                "000001\tminiqmt\t10.50\t120000",
+                "000001\ttdx_backup\t10.50\t100000",
+            ]
+        )
         validator = CrossSourceValidator(volume_threshold=Decimal("0.01"))
         report = validator.validate()
         # volume 20% > 1% threshold → warn
@@ -116,10 +131,12 @@ class TestCrossSourceValidator:
     @patch("zephyr.data.cross_source_validator.ch_reader")
     def test_validate_writes_log(self, mock_reader, mock_writer):
         """校验结果写入 cross_validation_log"""
-        mock_reader.query.return_value = self._mock_ch_response([
-            "000001\tminiqmt\t11.00\t100000",
-            "000001\ttdx_backup\t10.50\t100000",
-        ])
+        mock_reader.query.return_value = self._mock_ch_response(
+            [
+                "000001\tminiqmt\t11.00\t100000",
+                "000001\ttdx_backup\t10.50\t100000",
+            ]
+        )
         validator = CrossSourceValidator(price_threshold=Decimal("0.001"))
         validator.validate()
         # ch_writer.query 被调用写入日志
@@ -128,10 +145,12 @@ class TestCrossSourceValidator:
     @patch("zephyr.data.cross_source_validator.ch_reader")
     def test_validate_malformed_line_skipped(self, mock_reader):
         """格式错误的行被跳过"""
-        mock_reader.query.return_value = self._mock_ch_response([
-            "000001\tminiqmt\t10.50",  # 缺少 volume 列
-            "000002\ttdx_backup\t10.50\t100000",
-        ])
+        mock_reader.query.return_value = self._mock_ch_response(
+            [
+                "000001\tminiqmt\t10.50",  # 缺少 volume 列
+                "000002\ttdx_backup\t10.50\t100000",
+            ]
+        )
         validator = CrossSourceValidator()
         report = validator.validate()
         # 只有 000002 被处理（备源 only → missing_in_primary）

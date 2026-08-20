@@ -13,6 +13,7 @@
 
 不测试 start 命令（常驻进程会阻塞）。
 """
+
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -21,6 +22,7 @@ from zephyr.data.cli import _build_parser, get_subcommands, main
 from zephyr.data.policy_registry import SourcePolicy
 
 # ============== Parser ==============
+
 
 class TestParser:
     def test_build_parser_has_8_subcommands(self):
@@ -37,6 +39,7 @@ class TestParser:
 
 # ============== status ==============
 
+
 class TestStatusCmd:
     def test_status_no_task_id(self, capsys):
         """status 无 task_id：打印调度器状态 + 最近运行记录。"""
@@ -49,7 +52,13 @@ class TestStatusCmd:
             "task_summary": {},
         }
         mock_sched._progress_store.list_recent_runs.return_value = [
-            {"task_id": "t1", "started_at": "2026-07-06 16:30", "finished_at": "2026-07-06 16:31", "status": "SUCCESS", "rows_fetched": 100}
+            {
+                "task_id": "t1",
+                "started_at": "2026-07-06 16:30",
+                "finished_at": "2026-07-06 16:31",
+                "status": "SUCCESS",
+                "rows_fetched": 100,
+            }
         ]
         with patch("zephyr.data.get_integrator", return_value=mock_sched):
             rc = main(["status"])
@@ -89,13 +98,26 @@ class TestStatusCmd:
 
 # ============== list ==============
 
+
 class TestListCmd:
     def test_list_all(self, capsys):
         """list 无过滤：打印所有任务。"""
         mock_sched = MagicMock()
         mock_sched.list_tasks.return_value = [
-            {"task_id": "t1", "source": "akshare", "table": "c1_market.kline_daily", "schedule": "daily_kline", "incremental": True},
-            {"task_id": "t2", "source": "akshare", "table": "c1_market.fin", "schedule": "daily_kline", "incremental": True},
+            {
+                "task_id": "t1",
+                "source": "akshare",
+                "table": "c1_market.kline_daily",
+                "schedule": "daily_kline",
+                "incremental": True,
+            },
+            {
+                "task_id": "t2",
+                "source": "akshare",
+                "table": "c1_market.fin",
+                "schedule": "daily_kline",
+                "incremental": True,
+            },
         ]
         with patch("zephyr.data.get_integrator", return_value=mock_sched):
             rc = main(["list"])
@@ -123,6 +145,7 @@ class TestListCmd:
 
 # ============== run ==============
 
+
 class TestRunCmd:
     def test_run_success(self, capsys):
         """run <task_id> 成功返回 0。"""
@@ -147,6 +170,7 @@ class TestRunCmd:
 
 
 # ============== rerun-failed ==============
+
 
 class TestRerunFailedCmd:
     def test_rerun_no_failed(self, capsys):
@@ -189,6 +213,7 @@ class TestRerunFailedCmd:
 
 
 # ============== pause / resume ==============
+
 
 class TestPauseResumeCmd:
     def test_pause_unknown_source(self, capsys):
@@ -259,6 +284,7 @@ class TestPauseResumeCmd:
 
 
 # ============== main 入口 ==============
+
 
 class TestMainEntry:
     def test_main_handler_exception_returns_1(self, capsys):

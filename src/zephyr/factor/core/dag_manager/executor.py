@@ -31,6 +31,7 @@
 
 适用场景：IO 密集或轻量计算（GIL 下 ThreadPool 够用）。CPU 密集场景用 dist_feature_eng。
 """
+
 from __future__ import annotations
 
 import logging
@@ -55,10 +56,10 @@ BATCH = "batch"
 INCREMENTAL = "incremental"
 
 # A股时间窗口（分钟数，用于 determine_mode）
-_BATCH_START = 3 * 60       # 03:00
-_BATCH_END = 9 * 60 + 15    # 09:15
-_INCR_START = 9 * 60 + 30   # 09:30
-_INCR_END = 15 * 60         # 15:00
+_BATCH_START = 3 * 60  # 03:00
+_BATCH_END = 9 * 60 + 15  # 09:15
+_INCR_START = 9 * 60 + 30  # 09:30
+_INCR_END = 15 * 60  # 15:00
 
 
 def determine_mode(now: datetime | None = None) -> str:
@@ -218,8 +219,12 @@ class DagExecutor:
             with ThreadPoolExecutor(max_workers=self._config.max_workers) as pool:
                 futures = {
                     pool.submit(
-                        self._compute_factor, fid, data, kwargs_map.get(fid, {}),
-                        mode, cache.get(fid),
+                        self._compute_factor,
+                        fid,
+                        data,
+                        kwargs_map.get(fid, {}),
+                        mode,
+                        cache.get(fid),
                     ): fid
                     for fid in to_execute
                 }
@@ -231,15 +236,11 @@ class DagExecutor:
                         if not result.success:
                             failed_set.add(fid)
                     except FutureTimeout:
-                        results[fid] = FactorExecutionResult(
-                            fid, success=False, series=None, error="timeout"
-                        )
+                        results[fid] = FactorExecutionResult(fid, success=False, series=None, error="timeout")
                         failed_set.add(fid)
                     except Exception as e:
                         log.exception("dag_manager: 因子 %s 执行异常", fid)
-                        results[fid] = FactorExecutionResult(
-                            fid, success=False, series=None, error=f"exception: {e}"
-                        )
+                        results[fid] = FactorExecutionResult(fid, success=False, series=None, error=f"exception: {e}")
                         failed_set.add(fid)
 
         duration = time.monotonic() - start_ts
@@ -262,23 +263,26 @@ class DagExecutor:
         )
 
     def _filter_layer(
-        self, dag: FactorDAG, layer: list[str],
-        results: dict[str, FactorExecutionResult], failed_set: set[str],
+        self,
+        dag: FactorDAG,
+        layer: list[str],
+        results: dict[str, FactorExecutionResult],
+        failed_set: set[str],
     ) -> list[str]:
         """过滤层内因子：跳过上游失败的因子，返回可执行列表。"""
         to_execute: list[str] = []
         for fid in layer:
             node = next((n for n in dag.nodes if n.factor_id == fid), None)
             if node is None:
-                results[fid] = FactorExecutionResult(
-                    fid, success=False, series=None, error="node not found in DAG"
-                )
+                results[fid] = FactorExecutionResult(fid, success=False, series=None, error="node not found in DAG")
                 failed_set.add(fid)
                 continue
             failed_deps = [d for d in node.dependencies if d in failed_set]
             if failed_deps:
                 results[fid] = FactorExecutionResult(
-                    fid, success=False, series=None,
+                    fid,
+                    success=False,
+                    series=None,
                     error=f"upstream failed: {','.join(failed_deps)}",
                 )
                 failed_set.add(fid)
@@ -287,8 +291,12 @@ class DagExecutor:
         return to_execute
 
     def _compute_factor(
-        self, factor_id: str, data: pd.DataFrame, kwargs: dict,
-        mode: str = BATCH, cached: pd.Series | None = None,
+        self,
+        factor_id: str,
+        data: pd.DataFrame,
+        kwargs: dict,
+        mode: str = BATCH,
+        cached: pd.Series | None = None,
     ) -> FactorExecutionResult:
         """单因子计算（线程池工作函数）。
 
@@ -301,7 +309,9 @@ class DagExecutor:
         if self._bp is not None:
             if not self._bp.acquire():
                 return FactorExecutionResult(
-                    factor_id, success=False, series=None,
+                    factor_id,
+                    success=False,
+                    series=None,
                     error="backpressure rejected",
                 )
         try:
@@ -311,19 +321,17 @@ class DagExecutor:
                 series = factor.incremental_compute(data, cached=cached)
             else:
                 series = factor.compute(data, **kwargs)
-            return FactorExecutionResult(
-                factor_id, success=True, series=series, error=""
-            )
+            return FactorExecutionResult(factor_id, success=True, series=series, error="")
         except KeyError:
             return FactorExecutionResult(
-                factor_id, success=False, series=None,
+                factor_id,
+                success=False,
+                series=None,
                 error=f"factor '{factor_id}' not registered",
             )
         except Exception as e:  # noqa: BLE001 — 单因子失败不阻断同层其他因子（错误契约：记入 FactorExecutionResult.error）
             log.warning("dag_manager: 因子 %s 计算失败: %s", factor_id, e)
-            return FactorExecutionResult(
-                factor_id, success=False, series=None, error=f"compute error: {e}"
-            )
+            return FactorExecutionResult(factor_id, success=False, series=None, error=f"compute error: {e}")
         finally:
             if self._bp is not None:
                 self._bp.release()

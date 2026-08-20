@@ -39,6 +39,7 @@ Usage::
     py -3.12 -m pytest tests/governance/test_reconcile_generators.py -v
     py -3.12 -m pytest tests/governance/test_reconcile_generators.py -k "not e2e"  # 跳过 DB 测试
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -61,9 +62,7 @@ def rg():
 
     真实执行模块级代码（含 import 语句）——若 import 缺失会立即抛 ImportError/NameError。
     """
-    spec = importlib.util.spec_from_file_location(
-        "reconcile_generators_under_test", _SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("reconcile_generators_under_test", _SCRIPT_PATH)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -91,6 +90,7 @@ def _wait_detached_procs_at_teardown(rg):
 # ============================================================================
 # Test 1: Import smoke —— 检测 import 缺失 / 符号不存在
 # ============================================================================
+
 
 class TestImportSmoke:
     """验证 reconcile_generators.py 模块能正常 import（所有依赖符号可用）。"""
@@ -120,14 +120,13 @@ class TestImportSmoke:
         assert 0 in rg._OK_RETURNCODES, "exit 0 应在 _OK_RETURNCODES 中"
         assert 1 in rg._OK_RETURNCODES, "exit 1 应在 _OK_RETURNCODES 中（FINDINGS）"
         assert 2 not in rg._OK_RETURNCODES, "exit 2 不应在 _OK_RETURNCODES 中（ERROR）"
-        assert rg._REGISTRY_YAML.exists(), (
-            f"generator_registry.yaml 不存在: {rg._REGISTRY_YAML}"
-        )
+        assert rg._REGISTRY_YAML.exists(), f"generator_registry.yaml 不存在: {rg._REGISTRY_YAML}"
 
 
 # ============================================================================
 # Test 2: Registry loading —— 真实读 generator_registry.yaml
 # ============================================================================
+
 
 class TestRegistryLoading:
     """验证 _load_registry() 能真实加载 generator_registry.yaml。
@@ -145,9 +144,7 @@ class TestRegistryLoading:
     def test_registry_has_at_least_20_generators(self, rg):
         """注册表至少有 20 个生成器（当前 23 个，留余量防计数敏感）。"""
         data = rg._load_registry()
-        assert len(data["generators"]) >= 20, (
-            f"生成器数量 {len(data['generators'])} < 20，注册表可能加载不完整"
-        )
+        assert len(data["generators"]) >= 20, f"生成器数量 {len(data['generators'])} < 20，注册表可能加载不完整"
 
     def test_all_generators_have_required_fields(self, rg):
         """每个生成器条目都有 name/module_path/trigger_sources/input_sources/output_globs。"""
@@ -155,9 +152,7 @@ class TestRegistryLoading:
         required = {"name", "module_path", "trigger_sources", "input_sources", "output_globs"}
         for gen in data["generators"]:
             missing = required - set(gen.keys())
-            assert not missing, (
-                f"生成器 '{gen.get('name', '?')}' 缺少必填字段: {missing}"
-            )
+            assert not missing, f"生成器 '{gen.get('name', '?')}' 缺少必填字段: {missing}"
 
     def test_battle_map_has_entry_function(self, rg):
         """battle_map 生成器声明了 entry_function=regenerate（in-process 路径）。"""
@@ -174,14 +169,14 @@ class TestRegistryLoading:
         for gen in data["generators"]:
             for ts in gen["trigger_sources"]:
                 assert ts.endswith("_db") or ts.endswith("_yaml"), (
-                    f"生成器 '{gen['name']}' 的 trigger_source '{ts}' "
-                    f"不符合 _db/_yaml 命名约定"
+                    f"生成器 '{gen['name']}' 的 trigger_source '{ts}' 不符合 _db/_yaml 命名约定"
                 )
 
 
 # ============================================================================
 # Test 3: CLI smoke —— --list 命令可运行
 # ============================================================================
+
 
 class TestCLISmoke:
     """验证 reconcile_generators.py CLI 入口可运行。"""
@@ -190,35 +185,37 @@ class TestCLISmoke:
         """--list CLI 命令能正常运行（returncode=0）且输出含生成器数。"""
         result = subprocess.run(
             [sys.executable, str(_SCRIPT_PATH), "--list"],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(_REPO_ROOT),
         )
         assert result.returncode == 0, (
-            f"--list CLI 失败 rc={result.returncode}\n"
-            f"stdout: {result.stdout[:500]}\nstderr: {result.stderr[:500]}"
+            f"--list CLI 失败 rc={result.returncode}\nstdout: {result.stdout[:500]}\nstderr: {result.stderr[:500]}"
         )
-        assert "生成器" in result.stdout, (
-            f"--list 输出缺少 '生成器' 关键词\nstdout: {result.stdout[:500]}"
-        )
+        assert "生成器" in result.stdout, f"--list 输出缺少 '生成器' 关键词\nstdout: {result.stdout[:500]}"
 
     def test_no_args_prints_help(self):
         """无参数调用打印 help（returncode=0，非崩溃）。"""
         result = subprocess.run(
             [sys.executable, str(_SCRIPT_PATH)],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(_REPO_ROOT),
         )
-        assert result.returncode == 0, (
-            f"无参数调用应返回 rc=0（print_help），实际 rc={result.returncode}"
-        )
-        assert "usage:" in result.stdout or "--source" in result.stdout, (
-            "help 输出缺少 usage/--source"
-        )
+        assert result.returncode == 0, f"无参数调用应返回 rc=0（print_help），实际 rc={result.returncode}"
+        assert "usage:" in result.stdout or "--source" in result.stdout, "help 输出缺少 usage/--source"
 
 
 # ============================================================================
 # Test 4: reconcile() in-process —— 真实调用 battle_map 生成器（@pytest.mark.e2e）
 # ============================================================================
+
 
 @pytest.mark.e2e
 class TestReconcileInProcess:
@@ -237,9 +234,7 @@ class TestReconcileInProcess:
             pytest.skip(f"reconcile('battle_map_db') 抛异常（DB 不可达？）: {e}")
 
         assert result["source"] == "battle_map_db"
-        assert result["total"] >= 1, (
-            f"reconcile('battle_map_db') 应匹配至少 1 个生成器，实际 {result['total']}"
-        )
+        assert result["total"] >= 1, f"reconcile('battle_map_db') 应匹配至少 1 个生成器，实际 {result['total']}"
         # 生成器内吞 PG 连接错误返回 failed（非异常路径）——docstring 声明的
         # "PostgreSQL 不可达时 skip" 契约同样覆盖此路径
         for r in result["regenerated"]:
@@ -248,12 +243,8 @@ class TestReconcileInProcess:
         # battle_map 走 in-process 路径（entry_function=regenerate）
         for r in result["regenerated"]:
             assert r["generator"] == "battle_map"
-            assert r["status"] == "ok", (
-                f"battle_map 生成器应返回 ok，实际 {r['status']}: {r.get('error', '')}"
-            )
-            assert r.get("invoke_mode") == "in_process", (
-                f"battle_map 应走 in_process 路径，实际 {r.get('invoke_mode')}"
-            )
+            assert r["status"] == "ok", f"battle_map 生成器应返回 ok，实际 {r['status']}: {r.get('error', '')}"
+            assert r.get("invoke_mode") == "in_process", f"battle_map 应走 in_process 路径，实际 {r.get('invoke_mode')}"
 
     def test_reconcile_unknown_source_returns_empty(self, rg):
         """reconcile('unknown_source') 匹配 0 个生成器，返回空列表。"""
@@ -266,6 +257,7 @@ class TestReconcileInProcess:
 # ============================================================================
 # Test 5: _is_stale() 逻辑 —— temp 目录 + os.utime 控制 mtime
 # ============================================================================
+
 
 class TestIsStaleLogic:
     """验证 _is_stale() 的 4 种判定路径。
@@ -383,7 +375,7 @@ class TestIsStaleLogic:
         output_file = tmp_path / "output.md"
         output_file.write_text("# generated", encoding="utf-8")
         now = time.time()
-        os.utime(yaml1, (now, now))       # 旧
+        os.utime(yaml1, (now, now))  # 旧
         os.utime(yaml2, (now, now + 200))  # 新（比产物新）
         os.utime(output_file, (now, now + 100))
         entry = {
@@ -398,6 +390,7 @@ class TestIsStaleLogic:
 # ============================================================================
 # Test 6: 退出码语义 —— mock subprocess.run 验证 4 种退出码判定
 # ============================================================================
+
 
 class TestExitCodeSemantics:
     """验证 _invoke_subprocess() 的退出码判定逻辑。
@@ -432,8 +425,7 @@ class TestExitCodeSemantics:
         monkeypatch.setattr(subprocess, "run", lambda *a, **kw: mock_proc)
         result = rg._invoke_subprocess(self._make_entry())
         assert result["status"] == "ok", (
-            "exit 1 无 Traceback 应为 ok（FINDINGS），实际 "
-            f"{result['status']}: {result.get('error', '')}"
+            f"exit 1 无 Traceback 应为 ok（FINDINGS），实际 {result['status']}: {result.get('error', '')}"
         )
 
     def test_exit_1_with_traceback_is_failed(self, rg, monkeypatch):
@@ -445,12 +437,8 @@ class TestExitCodeSemantics:
         )
         monkeypatch.setattr(subprocess, "run", lambda *a, **kw: mock_proc)
         result = rg._invoke_subprocess(self._make_entry())
-        assert result["status"] == "failed", (
-            "exit 1 + Traceback 应为 failed（崩溃），实际 " + result["status"]
-        )
-        assert "crash" in result["error"], (
-            f"错误信息应含 'crash'，实际: {result['error']}"
-        )
+        assert result["status"] == "failed", "exit 1 + Traceback 应为 failed（崩溃），实际 " + result["status"]
+        assert "crash" in result["error"], f"错误信息应含 'crash'，实际: {result['error']}"
 
     def test_exit_2_is_failed(self, rg, monkeypatch):
         """exit 2 → status=failed。"""
@@ -461,8 +449,10 @@ class TestExitCodeSemantics:
 
     def test_timeout_is_failed(self, rg, monkeypatch):
         """TimeoutExpired → status=failed，error 含 'timeout'。"""
+
         def raise_timeout(*a, **kw):
             raise subprocess.TimeoutExpired(cmd="test", timeout=300)
+
         monkeypatch.setattr(subprocess, "run", raise_timeout)
         result = rg._invoke_subprocess(self._make_entry())
         assert result["status"] == "failed"
@@ -472,6 +462,7 @@ class TestExitCodeSemantics:
 # ============================================================================
 # Test 7: reconcile_async() spawn 验证 —— 真实 spawn 子进程
 # ============================================================================
+
 
 class TestReconcileAsync:
     """验证 reconcile_async() 能 spawn detached subprocess 并返回正确结果。
@@ -515,6 +506,7 @@ class TestReconcileAsync:
 # Test 8: reconcile_stale() —— 扫描不崩溃，返回结构正确
 # ============================================================================
 
+
 class TestReconcileStaleStructure:
     """验证 reconcile_stale() 返回结构正确（不验证生成器实际执行）。
 
@@ -547,6 +539,7 @@ class TestReconcileStaleStructure:
 # Test 9: _invoke_parallel() —— 并行调用顺序保持 + 失败隔离（治本缺口#2）
 # ============================================================================
 
+
 class TestParallelInvocation:
     """验证 _invoke_parallel() 的并行调度行为（治本缺口#2）。
 
@@ -565,12 +558,11 @@ class TestParallelInvocation:
         monkeypatch.setattr(rg, "_invoke_generator", fake_invoke)
         entries = [{"name": n} for n in names]
         results = rg._invoke_parallel(entries)
-        assert [r["generator"] for r in results] == names, (
-            "并行结果顺序应与输入一致（确定性报告）"
-        )
+        assert [r["generator"] for r in results] == names, "并行结果顺序应与输入一致（确定性报告）"
 
     def test_parallel_failure_isolation(self, rg, monkeypatch):
         """一个生成器抛异常不影响其他生成器执行。"""
+
         def fake_invoke(entry):
             if entry["name"] == "boom":
                 raise RuntimeError("simulated crash")
@@ -595,6 +587,7 @@ class TestParallelInvocation:
         monkeypatch.setenv("ZEPHYR_REGENERATE_WORKERS", "8")
         # 重新 import 模块级常量需 reload；这里只验证 env 可读且为正数
         import importlib
+
         monkeypatch.delenv("ZEPHYR_REGENERATE_WORKERS", raising=False)
         # 默认值 4
         assert rg._MAX_WORKERS >= 1, "_MAX_WORKERS 应 ≥1"
@@ -610,9 +603,7 @@ _POST_COMMIT_SCRIPT = _REPO_ROOT / "scripts" / "governance" / "git_hooks" / "pos
 @pytest.fixture(scope="module")
 def pcr():
     """动态加载 post_commit_regen_yaml.py。"""
-    spec = importlib.util.spec_from_file_location(
-        "post_commit_regen_yaml_under_test", _POST_COMMIT_SCRIPT
-    )
+    spec = importlib.util.spec_from_file_location("post_commit_regen_yaml_under_test", _POST_COMMIT_SCRIPT)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -649,9 +640,7 @@ class TestPostCommitRegenYaml:
     def test_matches_generator_input_no_match(self, pcr):
         """不相关 YAML 文件 → False（避免每次提交任意 YAML 都触发）。"""
         inputs = {"docs/foo/bar.yaml"}
-        assert pcr._matches_generator_input(
-            ["docs/01_policies_and_standards/trae_999_unrelated.yaml"], inputs
-        ) is False
+        assert pcr._matches_generator_input(["docs/01_policies_and_standards/trae_999_unrelated.yaml"], inputs) is False
 
     def test_matches_generator_input_empty(self, pcr):
         """空 committed 列表 → False。"""
@@ -661,9 +650,11 @@ class TestPostCommitRegenYaml:
         """ZEPHYR_SKIP_REGENERATE=1 → 立即返回 0，不触发任何检测。"""
         monkeypatch.setenv("ZEPHYR_SKIP_REGENERATE", "1")
         called = {"n": 0}
+
         def _boom():
             called["n"] += 1
             return ["should_not_be_called.yaml"]
+
         monkeypatch.setattr(pcr, "_committed_yaml_files", _boom)
         assert pcr.main() == 0
         assert called["n"] == 0, "逃生通道应跳过 _committed_yaml_files 调用"
@@ -673,7 +664,9 @@ class TestPostCommitRegenYaml:
         monkeypatch.delenv("ZEPHYR_SKIP_REGENERATE", raising=False)
         monkeypatch.setattr(pcr, "_committed_yaml_files", lambda: [])
         spawned = {"n": 0}
-        monkeypatch.setattr(subprocess, "Popen", lambda *a, **k: spawned.__setitem__("n", spawned["n"] + 1) or MagicMock())
+        monkeypatch.setattr(
+            subprocess, "Popen", lambda *a, **k: spawned.__setitem__("n", spawned["n"] + 1) or MagicMock()
+        )
         assert pcr.main() == 0
         assert spawned["n"] == 0, "无 YAML 变更不应 spawn"
 
@@ -681,19 +674,24 @@ class TestPostCommitRegenYaml:
         """commit 改了 YAML 但非生成器输入源 → 返回 0，不 spawn。"""
         monkeypatch.delenv("ZEPHYR_SKIP_REGENERATE", raising=False)
         monkeypatch.setattr(
-            pcr, "_committed_yaml_files",
+            pcr,
+            "_committed_yaml_files",
             lambda: ["docs/01_policies_and_standards/trae_999_unrelated.yaml"],
         )
         spawned = {"n": 0}
-        monkeypatch.setattr(subprocess, "Popen", lambda *a, **k: spawned.__setitem__("n", spawned["n"] + 1) or MagicMock())
+        monkeypatch.setattr(
+            subprocess, "Popen", lambda *a, **k: spawned.__setitem__("n", spawned["n"] + 1) or MagicMock()
+        )
         assert pcr.main() == 0
         assert spawned["n"] == 0, "非生成器输入 YAML 不应 spawn"
 
     def test_main_never_blocks_on_error(self, pcr, monkeypatch):
         """任何异常 → 返回 0（post-commit 绝不阻断 git）。"""
         monkeypatch.delenv("ZEPHYR_SKIP_REGENERATE", raising=False)
+
         def _boom():
             raise RuntimeError("simulated git failure")
+
         monkeypatch.setattr(pcr, "_committed_yaml_files", _boom)
         assert pcr.main() == 0, "异常时必须返回 0，不得阻断 git"
 
@@ -707,18 +705,21 @@ class TestPostCommitRegenYaml:
 #       本类覆盖 --source 路径 + reconcile_stale 的全局串行锁。
 # ============================================================================
 
+
 class TestRegenConcurrencyLock:
     """验证跨进程串行锁的 drop-not-queue 语义与僵尸回收。"""
 
     def _hold_lock(self, rg, lock_dir, pid=None, age_seconds=0):
         """在 lock_dir 预置一个锁文件（模拟已被持有）。"""
         import os as _os
+
         lock_dir.mkdir(parents=True, exist_ok=True)
         lock_path = lock_dir / rg._REGEN_LOCK_NAME
         owner_pid = pid if pid is not None else _os.getpid()
         lock_path.write_text(f"{owner_pid}\n", encoding="utf-8")
         if age_seconds > 0:
             import time as _time
+
             old = _time.time() - age_seconds
             _os.utime(str(lock_path), (old, old))
         return lock_path
@@ -774,8 +775,10 @@ class TestRegenConcurrencyLock:
     def test_lock_released_on_exception(self, rg, monkeypatch, tmp_path):
         """生成器抛异常时锁仍由 finally 释放（不泄漏）。"""
         monkeypatch.setattr(rg, "_LOCK_DIR", tmp_path)
+
         def _boom(entries):
             raise RuntimeError("generator explosion")
+
         monkeypatch.setattr(rg, "_invoke_parallel", _boom)
         lock_path = tmp_path / rg._REGEN_LOCK_NAME
         with pytest.raises(RuntimeError):

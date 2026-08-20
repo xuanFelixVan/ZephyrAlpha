@@ -20,6 +20,7 @@
 
 测试隔离：tmp_path 创建临时仓库结构；monkeypatch 替换 strip_session_worktree 行为。
 """
+
 from __future__ import annotations
 
 import json
@@ -41,6 +42,7 @@ from zephyr.shared.io.workspace_telemetry import (  # noqa: E402
 # ===========================================================================
 # TestLogWorkspaceOp: 字段完整性
 # ===========================================================================
+
 
 class TestLogWorkspaceOp:
     """log_workspace_op 写入 worktree_ops_log.jsonl 的字段完整性。"""
@@ -126,6 +128,7 @@ class TestLogWorkspaceOp:
 # TestLogWorkspaceOpDegradation: 遥测降级
 # ===========================================================================
 
+
 class TestLogWorkspaceOpDegradation:
     """遥测失败仅 debug 日志，不抛异常（ERROR_CONTRACT）。"""
 
@@ -135,6 +138,7 @@ class TestLogWorkspaceOpDegradation:
         # 用一个明确不可写的路径模拟（如已存在的文件作为父目录）
         # 这里用 tmp_path 下的一个文件作为 root，mkdir 会失败
         import tempfile
+
         with tempfile.NamedTemporaryFile(delete=False) as f:
             invalid_root = Path(f.name)
 
@@ -171,6 +175,7 @@ class TestLogWorkspaceOpDegradation:
     def test_no_logging_error_propagation(self, tmp_path, caplog):
         """遥测失败时记录 debug 日志，不传播 error。"""
         import tempfile
+
         with tempfile.NamedTemporaryFile(delete=False) as f:
             invalid_root = Path(f.name)
 
@@ -191,12 +196,14 @@ class TestLogWorkspaceOpDegradation:
 # TestComputeContentHash: sha256 hex 前 16 字符
 # ===========================================================================
 
+
 class TestComputeContentHash:
     """compute_content_hash 返回 sha256 hex 前 16 字符。"""
 
     def test_returns_hex_first_16_chars(self, tmp_path):
         """已知内容的 sha256 hex 前 16 字符。"""
         import hashlib
+
         content = b"hello world\n"
         expected = hashlib.sha256(content).hexdigest()[:16]
 
@@ -210,6 +217,7 @@ class TestComputeContentHash:
     def test_empty_file_returns_hash(self, tmp_path):
         """空文件返回 sha256("")[:16]（非空字符串）。"""
         import hashlib
+
         empty_file = tmp_path / "empty.txt"
         empty_file.write_bytes(b"")
 
@@ -226,6 +234,7 @@ class TestComputeContentHash:
     def test_large_file_hashed_correctly(self, tmp_path):
         """大文件（>8192 bytes，超过 chunk size）正确分块哈希。"""
         import hashlib
+
         # 20KB 内容（超过 8192 chunk size，验证分块逻辑）
         content = b"x" * 20480
         expected = hashlib.sha256(content).hexdigest()[:16]
@@ -251,6 +260,7 @@ class TestComputeContentHash:
 # ===========================================================================
 # TestStripSessionWorktreeIntegration: worktree 路径自动 strip
 # ===========================================================================
+
 
 class TestStripSessionWorktreeIntegration:
     """root 是 worktree 路径时自动 strip 到主仓库 .runtime/。"""

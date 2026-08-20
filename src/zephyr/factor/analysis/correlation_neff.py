@@ -35,6 +35,7 @@ Neff=(Σλ)²/Σλ² 衡量组合真正有多少独立风险方向——两两�
 等相关近似 Neff≈N/(1+(N−1)ρ̄) 仅辅助（Soloviov 2026 警告 PnL stream 偏差
 −56%~+91%），以特征值分解为准。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -158,9 +159,7 @@ def equicorrelation_neff(corr: np.ndarray) -> float:
     return n / denom
 
 
-def effective_bets(
-    panel: pd.DataFrame | np.ndarray, shrink: bool = True
-) -> NeffResult:
+def effective_bets(panel: pd.DataFrame | np.ndarray, shrink: bool = True) -> NeffResult:
     """组合层有效下注数 Neff=(Σλ)²/Σλ²（特征值分解，可选 LW 收缩前置）。
 
     Args:

@@ -75,6 +75,7 @@ D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分为优秀/合格/淘�
 # A1 --> O1
 # A2 --> O2
 """
+
 from __future__ import annotations
 
 from zephyr.factor.analysis import load_analysis_config

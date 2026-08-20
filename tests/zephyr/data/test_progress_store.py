@@ -11,6 +11,7 @@
 
 用 tmp_path fixture 隔离测试库，不污染生产 data/integrator_progress.db。
 """
+
 import datetime
 import threading
 
@@ -33,9 +34,7 @@ class TestInitDb:
 
     def test_tables_created(self, store):
         """task_progress 和 task_runs 表应存在。"""
-        cur = store.conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
-        )
+        cur = store.conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
         tables = [r[0] for r in cur.fetchall()]
         assert "task_progress" in tables
         assert "task_runs" in tables
@@ -199,6 +198,7 @@ class TestReapStaleRuns:
     def test_reap_stale_running(self, store):
         """超过24h的RUNNING任务应被清理为STALE。"""
         from zephyr.shared.utils.time_utils import now_utc
+
         # 手动插入一个25小时前的 RUNNING 记录（模拟进程崩溃后遗留）
         old_time = (now_utc() - datetime.timedelta(hours=25)).isoformat(timespec="seconds")
         store.conn.execute(
@@ -213,9 +213,7 @@ class TestReapStaleRuns:
         assert reaped[0]["task_id"] == "crashed_task"
 
         # task_runs 应更新为 STALE
-        cur = store.conn.execute(
-            "SELECT status, finished_at, error_msg FROM task_runs WHERE task_id='crashed_task'"
-        )
+        cur = store.conn.execute("SELECT status, finished_at, error_msg FROM task_runs WHERE task_id='crashed_task'")
         row = cur.fetchone()
         assert row["status"] == "STALE"
         assert row["finished_at"] is not None
@@ -235,9 +233,7 @@ class TestReapStaleRuns:
         assert len(reaped) == 0
 
         # 任务仍为 RUNNING
-        cur = store.conn.execute(
-            "SELECT status FROM task_runs WHERE run_id=?", (run_id,)
-        )
+        cur = store.conn.execute("SELECT status FROM task_runs WHERE run_id=?", (run_id,))
         assert cur.fetchone()["status"] == "RUNNING"
 
     def test_reap_does_not_touch_finished(self, store):
@@ -251,6 +247,7 @@ class TestReapStaleRuns:
     def test_reap_multiple_stale(self, store):
         """多个卡死任务应全部被清理。"""
         from zephyr.shared.utils.time_utils import now_utc
+
         old_time = (now_utc() - datetime.timedelta(hours=48)).isoformat(timespec="seconds")
         for i in range(3):
             store.conn.execute(

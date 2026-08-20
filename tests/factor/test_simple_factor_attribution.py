@@ -6,6 +6,7 @@
 覆盖：Brinson 分解公式 / 基准暴露扣减 / 残差与 explained_ratio /
 低贡献标记与排序 / 空输入退化 / 总PnL为0退化。
 """
+
 from __future__ import annotations
 
 import pandas as pd
@@ -45,7 +46,7 @@ class TestAttributionFormula:
             "small": pd.Series([0.01] * 10, index=idx),
         }
         returns = {
-            "big": pd.Series([0.05] * 10, index=idx),    # pnl=0.1
+            "big": pd.Series([0.05] * 10, index=idx),  # pnl=0.1
             "small": pd.Series([0.01] * 10, index=idx),  # pnl=0.001
         }
         rep = attribute(exposures, returns, total_pnl=0.101)

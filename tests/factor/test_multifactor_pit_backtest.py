@@ -6,6 +6,7 @@
 覆盖：5 层 PIT 断言（通过/违规抛错各层）+ 主循环（INIT→HOLD→TIME 保底/
 DRIFT_CRITICAL 强制换仓/数据缺失 skip/合成方法记录）。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -27,7 +28,7 @@ D0 = pd.Timestamp("2026-08-20")
 
 class TestPITAssertions:
     def test_factor_pit_pass_and_fail(self):
-        assert_factor_pit(D0, D0)          # AS OF JOIN 允许同日
+        assert_factor_pit(D0, D0)  # AS OF JOIN 允许同日
         assert_factor_pit(D0 - pd.Timedelta(days=1), D0)
         with pytest.raises(PITViolationError):
             assert_factor_pit(D0 + pd.Timedelta(days=1), D0)
@@ -35,7 +36,7 @@ class TestPITAssertions:
     def test_ic_weight_pit_strict_t_minus_1(self):
         assert_ic_weight_pit(D0 - pd.Timedelta(days=1), D0)
         with pytest.raises(PITViolationError):
-            assert_ic_weight_pit(D0, D0)   # t 日 IC 算 t 日权重=未来函数
+            assert_ic_weight_pit(D0, D0)  # t 日 IC 算 t 日权重=未来函数
 
     def test_covariance_pit_strict(self):
         assert_covariance_pit(D0 - pd.Timedelta(days=1), D0)
@@ -53,8 +54,7 @@ def _framework(dates, **overrides):
     idx = pd.RangeIndex(5)
     defaults = dict(
         load_factors=lambda d: (
-            {"f1": pd.Series(np.arange(5.0), index=idx),
-             "f2": pd.Series(np.arange(5.0) * 2, index=idx)},
+            {"f1": pd.Series(np.arange(5.0), index=idx), "f2": pd.Series(np.arange(5.0) * 2, index=idx)},
             d,
         ),
         load_ic_history=lambda d, w: (
@@ -75,7 +75,7 @@ class TestRunBacktest:
     def test_init_then_hold_then_time(self):
         dates = pd.date_range("2026-08-10", periods=7, freq="D")
         recs = _framework(dates).run_backtest(list(dates))
-        assert recs[0].trigger == "INIT"          # 首次建仓
+        assert recs[0].trigger == "INIT"  # 首次建仓
         assert recs[1].trigger == "HOLD"
         assert all(r.method == "ic_weighted" for r in recs)
         # INIT 后 days_since_last 累积到 5 → TIME 保底
@@ -83,8 +83,7 @@ class TestRunBacktest:
 
     def test_pit_violation_propagates(self):
         dates = pd.date_range("2026-08-10", periods=3, freq="D")
-        fw = _framework(dates, load_factors=lambda d: (
-            {"f1": pd.Series([1.0])}, d + pd.Timedelta(days=1)))  # 未来因子
+        fw = _framework(dates, load_factors=lambda d: ({"f1": pd.Series([1.0])}, d + pd.Timedelta(days=1)))  # 未来因子
         with pytest.raises(PITViolationError):
             fw.run_backtest(list(dates))
 

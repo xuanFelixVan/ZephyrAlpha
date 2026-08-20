@@ -40,6 +40,7 @@ D_FACTOR governance 子包——因子生命周期治理工具链。
 # I1 --> A1
 # A1 --> O1
 """
+
 from __future__ import annotations
 
 from pathlib import Path

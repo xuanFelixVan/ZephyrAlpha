@@ -26,6 +26,7 @@ IC 虚高。消融实证（arXiv:2507.07107）：mask 合约是单一最大贡�
 
 因子工坊 IC 计算前置门控：仅在可交易池中计算 IC。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -39,7 +40,7 @@ __all__ = [
 ]
 
 DEFAULT_MIN_AMOUNT = 1e7  # 日成交额 ≥1000 万视为流动性可交易
-MIN_IC_NAMES = 5          # 可交易截面 <5 只不计算 IC（统计不可靠）
+MIN_IC_NAMES = 5  # 可交易截面 <5 只不计算 IC（统计不可靠）
 
 
 def build_tradability_mask(

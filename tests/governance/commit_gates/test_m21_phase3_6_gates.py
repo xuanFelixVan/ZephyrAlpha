@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_LONG_PARAM_LIST_GATE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """Smoke tests for Phase 3.6 第1期 AST 门禁 (3 new gates).
 
 验证 3 个新 gate 的检测逻辑能正确识别违规模式：

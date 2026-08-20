@@ -8,6 +8,7 @@
   对数收益率统一 + ADF 平稳性（p<0.05 才算 Pearson）+ Modified Z-score 异常值
   标注（只标注不剔除）+ 交易日对齐（交集，禁前向填充）。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -88,9 +89,7 @@ class TestAlignTradingDays:
     def test_intersection_only_no_forward_fill(self):
         idx_a = pd.date_range("2026-01-01", periods=5)
         idx_b = pd.date_range("2026-01-03", periods=5)  # 错位 2 天
-        panel = align_trading_days(
-            {"a": pd.Series(range(5), index=idx_a), "b": pd.Series(range(5), index=idx_b)}
-        )
+        panel = align_trading_days({"a": pd.Series(range(5), index=idx_a), "b": pd.Series(range(5), index=idx_b)})
         assert len(panel) == 3  # 仅交集 01-03/04/05
         assert list(panel.columns) == ["a", "b"]
         assert not panel.isna().any().any()  # 禁前向填充

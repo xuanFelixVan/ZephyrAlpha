@@ -16,6 +16,7 @@
 
 不依赖真实 SDK / tasks.yaml，用临时文件 + 内联代码片段。
 """
+
 from __future__ import annotations
 
 import textwrap
@@ -43,6 +44,7 @@ from src.zephyr.data.provider_base import (
 
 # ============== CapabilityContract / _normalize_capabilities ==============
 
+
 class TestNormalizeCapabilities:
     """capabilities 字段归一化（list[str | CapabilityContract] -> list[CapabilityContract]）。"""
 
@@ -63,10 +65,12 @@ class TestNormalizeCapabilities:
 
     def test_mixed_list_normalized(self):
         """字符串与 CapabilityContract 混合列表归一化。"""
-        result = _normalize_capabilities([
-            "kline_daily",
-            CapabilityContract("balance_sheet", supports_symbols_null=True),
-        ])
+        result = _normalize_capabilities(
+            [
+                "kline_daily",
+                CapabilityContract("balance_sheet", supports_symbols_null=True),
+            ]
+        )
         assert result[0].capability_id == "kline_daily"
         assert result[0].supports_symbols_null is False
         assert result[1].capability_id == "balance_sheet"
@@ -80,8 +84,12 @@ class TestNormalizeCapabilities:
     def test_data_source_meta_post_init_normalizes(self):
         """IngestProviderMeta.__post_init__ 自动归一化 capabilities。"""
         meta = IngestProviderMeta(
-            name="test", display_name="t", auth_type="anonymous",
-            requires_process=False, thread_safety="shared", rate_limit_default=0,
+            name="test",
+            display_name="t",
+            auth_type="anonymous",
+            requires_process=False,
+            thread_safety="shared",
+            rate_limit_default=0,
             capabilities=["kline_daily", CapabilityContract("money_flow", supports_symbols_null=True)],
         )
         # capability_contracts 属性返回归一化后的 list[CapabilityContract]
@@ -93,8 +101,12 @@ class TestNormalizeCapabilities:
     def test_get_capability_contract_returns_none_if_not_found(self):
         """get_capability_contract 不存在时返回 None。"""
         meta = IngestProviderMeta(
-            name="test", display_name="t", auth_type="anonymous",
-            requires_process=False, thread_safety="shared", rate_limit_default=0,
+            name="test",
+            display_name="t",
+            auth_type="anonymous",
+            requires_process=False,
+            thread_safety="shared",
+            rate_limit_default=0,
             capabilities=["kline_daily"],
         )
         assert meta.get_capability_contract("kline_daily") is not None
@@ -103,8 +115,12 @@ class TestNormalizeCapabilities:
     def test_capabilities_as_strings_backward_compat(self):
         """capabilities_as_strings 返回字符串列表（向后兼容）。"""
         meta = IngestProviderMeta(
-            name="test", display_name="t", auth_type="anonymous",
-            requires_process=False, thread_safety="shared", rate_limit_default=0,
+            name="test",
+            display_name="t",
+            auth_type="anonymous",
+            requires_process=False,
+            thread_safety="shared",
+            rate_limit_default=0,
             capabilities=["kline_daily", CapabilityContract("money_flow", supports_symbols_null=True)],
         )
         assert meta.capabilities_as_strings() == ["kline_daily", "money_flow"]
@@ -112,11 +128,16 @@ class TestNormalizeCapabilities:
 
 # ============== validate_task_capability_contracts 三条规则 ==============
 
+
 def _make_meta(caps: list) -> IngestProviderMeta:
     """构造测试用 IngestProviderMeta。"""
     return IngestProviderMeta(
-        name="test", display_name="t", auth_type="anonymous",
-        requires_process=False, thread_safety="shared", rate_limit_default=0,
+        name="test",
+        display_name="t",
+        auth_type="anonymous",
+        requires_process=False,
+        thread_safety="shared",
+        rate_limit_default=0,
         capabilities=caps,
     )
 
@@ -131,7 +152,9 @@ class TestValidateTaskCapabilityContracts:
     def test_disabled_task_skipped(self):
         """disabled 任务跳过校验。"""
         task = {
-            "task_id": "t1", "source": "test", "capability": "not_exist",
+            "task_id": "t1",
+            "source": "test",
+            "capability": "not_exist",
             "extra": {"disabled": True},
         }
         metas = {"test": _make_meta(["kline_daily"])}
@@ -167,15 +190,13 @@ class TestValidateTaskCapabilityContracts:
         v = validate_task_capability_contracts([task_id_only], metas)
         assert v[0].task_id == "from_id"
         # task_id 优先于 id
-        task_both = {"task_id": "from_task_id", "id": "from_id",
-                     "source": "test", "capability": "not_exist"}
+        task_both = {"task_id": "from_task_id", "id": "from_id", "source": "test", "capability": "not_exist"}
         v = validate_task_capability_contracts([task_both], metas)
         assert v[0].task_id == "from_task_id"
 
     def test_rule2_symbols_null_warn_when_not_declared(self):
         """规则2: symbols=null + supports_symbols_null=False -> WARN。"""
-        task = {"task_id": "t1", "source": "test", "capability": "kline_daily",
-                "symbols": None}
+        task = {"task_id": "t1", "source": "test", "capability": "kline_daily", "symbols": None}
         metas = {"test": _make_meta(["kline_daily"])}  # 默认 supports_symbols_null=False
         violations = validate_task_capability_contracts([task], metas)
         assert len(violations) == 1
@@ -184,27 +205,38 @@ class TestValidateTaskCapabilityContracts:
 
     def test_rule2_symbols_null_pass_when_declared(self):
         """规则2: symbols=null + supports_symbols_null=True -> PASS。"""
-        task = {"task_id": "t1", "source": "test", "capability": "top10",
-                "symbols": None}
-        metas = {"test": _make_meta([
-            CapabilityContract("top10", supports_symbols_null=True),
-        ])}
+        task = {"task_id": "t1", "source": "test", "capability": "top10", "symbols": None}
+        metas = {
+            "test": _make_meta(
+                [
+                    CapabilityContract("top10", supports_symbols_null=True),
+                ]
+            )
+        }
         assert validate_task_capability_contracts([task], metas) == []
 
     def test_rule2_symbols_non_null_skipped(self):
         """规则2: symbols 非 null 不校验。"""
-        task = {"task_id": "t1", "source": "test", "capability": "kline_daily",
-                "symbols": ["000001.SZ"]}
+        task = {"task_id": "t1", "source": "test", "capability": "kline_daily", "symbols": ["000001.SZ"]}
         metas = {"test": _make_meta(["kline_daily"])}
         assert validate_task_capability_contracts([task], metas) == []
 
     def test_rule3_incremental_warn_when_not_declared(self):
         """规则3: incremental=true + supports_incremental=False -> WARN。"""
-        task = {"task_id": "t1", "source": "test", "capability": "macro",
-                "symbols": ["000001.SZ"], "extra": {"incremental": True}}
-        metas = {"test": _make_meta([
-            CapabilityContract("macro", supports_incremental=False),
-        ])}
+        task = {
+            "task_id": "t1",
+            "source": "test",
+            "capability": "macro",
+            "symbols": ["000001.SZ"],
+            "extra": {"incremental": True},
+        }
+        metas = {
+            "test": _make_meta(
+                [
+                    CapabilityContract("macro", supports_incremental=False),
+                ]
+            )
+        }
         violations = validate_task_capability_contracts([task], metas)
         assert len(violations) == 1
         assert violations[0].severity == "WARN"
@@ -212,39 +244,71 @@ class TestValidateTaskCapabilityContracts:
 
     def test_rule3_full_refresh_skipped(self):
         """规则3: incremental=false（全量模式）不校验增量。"""
-        task = {"task_id": "t1", "source": "test", "capability": "macro",
-                "symbols": ["000001.SZ"], "extra": {"incremental": False}}
-        metas = {"test": _make_meta([
-            CapabilityContract("macro", supports_incremental=False),
-        ])}
+        task = {
+            "task_id": "t1",
+            "source": "test",
+            "capability": "macro",
+            "symbols": ["000001.SZ"],
+            "extra": {"incremental": False},
+        }
+        metas = {
+            "test": _make_meta(
+                [
+                    CapabilityContract("macro", supports_incremental=False),
+                ]
+            )
+        }
         assert validate_task_capability_contracts([task], metas) == []
 
     def test_rule3_top_level_incremental_false_no_warn(self):
         """规则3 回归（2026-08-15 误报实证）：顶层 incremental=false（tasks.yaml 真源字段）
         + extra 缺省 → 全量模式不 WARN。修复前误读 extra 单源致误报 CAP-INCREMENTAL。"""
-        task = {"task_id": "northbound_hold_snapshot_refresh", "source": "test",
-                "capability": "macro", "symbols": None, "incremental": False}
-        metas = {"test": _make_meta([
-            CapabilityContract("macro", supports_symbols_null=True, supports_incremental=False),
-        ])}
+        task = {
+            "task_id": "northbound_hold_snapshot_refresh",
+            "source": "test",
+            "capability": "macro",
+            "symbols": None,
+            "incremental": False,
+        }
+        metas = {
+            "test": _make_meta(
+                [
+                    CapabilityContract("macro", supports_symbols_null=True, supports_incremental=False),
+                ]
+            )
+        }
         assert validate_task_capability_contracts([task], metas) == []
 
     def test_rule3_top_level_true_beats_extra_false(self):
         """规则3: 顶层 incremental=true 优先于 extra.incremental=false（与 scheduler 一致）。"""
-        task = {"task_id": "t1", "source": "test", "capability": "macro",
-                "symbols": ["000001.SZ"], "incremental": True,
-                "extra": {"incremental": False}}
-        metas = {"test": _make_meta([
-            CapabilityContract("macro", supports_incremental=False),
-        ])}
+        task = {
+            "task_id": "t1",
+            "source": "test",
+            "capability": "macro",
+            "symbols": ["000001.SZ"],
+            "incremental": True,
+            "extra": {"incremental": False},
+        }
+        metas = {
+            "test": _make_meta(
+                [
+                    CapabilityContract("macro", supports_incremental=False),
+                ]
+            )
+        }
         violations = validate_task_capability_contracts([task], metas)
         assert len(violations) == 1
         assert violations[0].rule_id == "CAP-INCREMENTAL"
 
     def test_rule1_error_skips_rule2_rule3(self):
         """规则1 ERROR 后跳过规则2/3（不重复报）。"""
-        task = {"task_id": "t1", "source": "test", "capability": "not_exist",
-                "symbols": None, "extra": {"incremental": True}}
+        task = {
+            "task_id": "t1",
+            "source": "test",
+            "capability": "not_exist",
+            "symbols": None,
+            "extra": {"incremental": True},
+        }
         metas = {"test": _make_meta(["kline_daily"])}
         violations = validate_task_capability_contracts([task], metas)
         # 只有规则1的 ERROR，规则2/3 不重复报
@@ -388,6 +452,7 @@ class TestExtractRouteCapabilities:
 
     def test_route_caps_extracted_from_frozenset(self):
         import ast
+
         tree = ast.parse(_AKSHARE_STYLE)
         caps = _route_caps_from_tree(tree)
         assert caps == {"kline_daily", "money_flow", "stock_list"}
@@ -395,6 +460,7 @@ class TestExtractRouteCapabilities:
     def test_route_caps_extracted_from_multiple_dicts(self):
         """miniqmt 风格：多个字典变量合并。"""
         import ast
+
         tree = ast.parse(_MINIQMT_STYLE)
         caps = _route_caps_from_tree(tree)
         assert caps == {"kline_daily", "kline_1min", "adj_factor", "index_constituent"}
@@ -402,13 +468,14 @@ class TestExtractRouteCapabilities:
     def test_route_caps_extracted_from_if_elif(self):
         """if-elif 链风格：(capability == "xxx") 路由。"""
         import ast
+
         tree = ast.parse(_IF_ELIF_STYLE)
         caps = _route_caps_from_tree(tree)
         assert caps == {"daily_valuation", "kline_daily", "money_flow"}
 
     def test_route_caps_combined_dict_and_compare(self):
         """混合模式：字典变量 + if-elif 比较都提取。"""
-        content = textwrap.dedent('''
+        content = textwrap.dedent("""
             _ROUTES = {"cap_a": "m"}
             def fetch(self, payload, policy):
                 capability = payload.extra.get("capability")
@@ -416,8 +483,9 @@ class TestExtractRouteCapabilities:
                     pass
                 elif capability in {"cap_c", "cap_d"}:
                     pass
-        ''')
+        """)
         import ast
+
         tree = ast.parse(content)
         caps = _route_caps_from_tree(tree)
         assert caps == {"cap_a", "cap_b", "cap_c", "cap_d"}
@@ -429,6 +497,7 @@ class TestExtractMetaCapabilities:
     def test_meta_caps_from_annassign(self):
         """类属性 meta: IngestProviderMeta = ... (AnnAssign) 检测。"""
         import ast
+
         tree = ast.parse(_MINIQMT_STYLE)
         caps = _meta_caps_from_tree(tree)
         assert caps == {"kline_daily", "kline_1min", "adj_factor", "index_constituent"}
@@ -436,13 +505,14 @@ class TestExtractMetaCapabilities:
     def test_meta_caps_from_assign_attribute(self):
         """实例级 self.meta = ... (Assign with Attribute target) 检测。"""
         import ast
+
         tree = ast.parse(_INSTANCE_META_STYLE)
         caps = _meta_caps_from_tree(tree)
         assert caps == {"kline_daily"}
 
     def test_meta_caps_capability_contract_first_arg(self):
         """CapabilityContract("xxx", ...) 第一参数提取。"""
-        content = textwrap.dedent('''
+        content = textwrap.dedent("""
             from src.zephyr.data.provider_base import IngestProviderMeta, CapabilityContract
 
             class P:
@@ -454,8 +524,9 @@ class TestExtractMetaCapabilities:
                         CapabilityContract("contract_cap", supports_symbols_null=True),
                     ],
                 )
-        ''')
+        """)
         import ast
+
         tree = ast.parse(content)
         caps = _meta_caps_from_tree(tree)
         assert caps == {"str_cap", "contract_cap"}
@@ -511,6 +582,7 @@ class TestCheckRouteMetaConsistency:
     def test_three_real_providers_consistent(self):
         """集成测试：3 个真实 provider 文件全部 CONSISTENT（治本本次 8 条 ERROR 修复后）。"""
         from src.zephyr.shared.io.paths import REPO_ROOT
+
         providers = [
             ("akshare", REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "akshare_provider.py"),
             ("miniqmt", REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "miniqmt_provider.py"),

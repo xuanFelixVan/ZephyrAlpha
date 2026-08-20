@@ -34,6 +34,7 @@ Usage::
     python -m pytest tests/governance/test_generate_project_depgraph_smoke.py -v
     python -m pytest tests/governance/test_generate_project_depgraph_smoke.py -k "not e2e"
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -53,9 +54,7 @@ def gpd():
 
     真实执行模块级代码（含 import 语句）——若 import 缺失会立即抛 ImportError/NameError。
     """
-    spec = importlib.util.spec_from_file_location(
-        "generate_project_depgraph_smoke_under_test", _SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("generate_project_depgraph_smoke_under_test", _SCRIPT_PATH)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -64,6 +63,7 @@ def gpd():
 # ============================================================================
 # Test 1: Import smoke —— 检测 NameError（import 缺失）/ 函数签名漂移
 # ============================================================================
+
 
 class TestImportSmoke:
     """验证 generate_project_depgraph.py 模块能正常 import 且关键函数存在。"""
@@ -97,6 +97,7 @@ class TestImportSmoke:
 # Test 2: CLI smoke —— --help 可运行（只读，不写 DB）
 # ============================================================================
 
+
 class TestCLISmoke:
     """验证 generate_project_depgraph.py CLI 入口可运行。"""
 
@@ -107,18 +108,22 @@ class TestCLISmoke:
         """
         result = subprocess.run(
             [sys.executable, str(_SCRIPT_PATH), "--help"],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(_REPO_ROOT),
         )
         assert result.returncode == 0, (
-            f"--help CLI 失败 rc={result.returncode}\n"
-            f"stdout: {result.stdout[:500]}\nstderr: {result.stderr[:500]}"
+            f"--help CLI 失败 rc={result.returncode}\nstdout: {result.stdout[:500]}\nstderr: {result.stderr[:500]}"
         )
 
 
 # ============================================================================
 # Test 3: DesignEdgeSurvivesRebuild —— 问题B治本逻辑 e2e 验证（事务回滚）
 # ============================================================================
+
 
 @pytest.mark.e2e
 class TestDesignEdgeSurvivesRebuild:
@@ -179,13 +184,8 @@ class TestDesignEdgeSurvivesRebuild:
 
                 # 步骤1：快照应含测试边（from_path/to_path 正确）
                 snapshot = gpd.snapshot_apply_depgraph_design_edges(cur)
-                test_snaps = [
-                    r for r in snapshot
-                    if r["from_path"] == design_path and r["to_path"] == prod_path
-                ]
-                assert len(test_snaps) == 1, (
-                    f"快照应含测试边（design_path→prod_path），实际命中 {len(test_snaps)} 条"
-                )
+                test_snaps = [r for r in snapshot if r["from_path"] == design_path and r["to_path"] == prod_path]
+                assert len(test_snaps) == 1, f"快照应含测试边（design_path→prod_path），实际命中 {len(test_snaps)} 条"
 
                 # 步骤2：删 production 节点 → FK CASCADE 删 design 边
                 cur.execute("DELETE FROM nodes WHERE path = %s", (prod_path,))
@@ -209,9 +209,7 @@ class TestDesignEdgeSurvivesRebuild:
                 path_to_db_node_id = {design_path: design_node_id, prod_path: prod_node_id_new}
 
                 # 步骤4：按 path 重插
-                gpd.restore_apply_depgraph_design_edges_by_path(
-                    cur, snapshot, path_to_db_node_id
-                )
+                gpd.restore_apply_depgraph_design_edges_by_path(cur, snapshot, path_to_db_node_id)
 
                 # 步骤5：断言测试边按 path 重映射后存活（from=design_node_id 不变，to=prod_node_id_new 已重映射）
                 cur.execute(

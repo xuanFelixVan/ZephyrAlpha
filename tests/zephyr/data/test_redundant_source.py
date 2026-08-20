@@ -2,6 +2,7 @@
 # [A_module] module_id=MOD-L00-005 | layer=module | stability=evolving | safety=M
 # [TTL] permanent
 """P2-8 数据源冗余与热切换模块测试。"""
+
 import time
 
 import pytest
@@ -109,9 +110,7 @@ class TestSourceSwitcher:
         backup = _MockSourceProvider("backup")
         heartbeat = HeartbeatMonitor(tick_timeout=0.1, ch_ping_fn=lambda: True)
         heartbeat.record_tick()
-        switcher = SourceSwitcher(
-            primary, backup, heartbeat, check_interval=0.1, recovery_stable_period=0.1
-        )
+        switcher = SourceSwitcher(primary, backup, heartbeat, check_interval=0.1, recovery_stable_period=0.1)
         switcher.start()
         # 等待主源超时
         time.sleep(0.4)
@@ -168,9 +167,7 @@ class TestSQLiteFallback:
         db.close()
 
     def test_cleanup_old_data(self, tmp_path):
-        db = SQLiteFallback(
-            db_path=str(tmp_path / "test.sqlite"), max_rows_per_table=3
-        )
+        db = SQLiteFallback(db_path=str(tmp_path / "test.sqlite"), max_rows_per_table=3)
         cols = ["symbol"]
         rows = [(f"00000{i}",) for i in range(5)]
         db.write_rows("test_table", cols, rows)

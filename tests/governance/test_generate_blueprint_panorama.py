@@ -24,6 +24,7 @@
   修复后前瞻为 \\n#{2,3} [^#]，同时匹配2级和3级标题作为边界。
   commit 733136ea33
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -82,79 +83,35 @@ class TestS06BlockRegex:
         修复前 bug：前瞻 \\n## [^#] 只匹配2级标题，### §0.2 的第3个 # 导致
         [^#] 匹配失败，正则不停止，§0.6 块扩展到 §0.2/§0.3。
         """
-        content = (
-            "### §0.6 五图对齐视图\n"
-            "\n"
-            "一些内容\n"
-            "\n"
-            "### §0.2 对齐验证矩阵\n"
-            "\n"
-            "| 模块 | 状态 |\n"
-        )
+        content = "### §0.6 五图对齐视图\n\n一些内容\n\n### §0.2 对齐验证矩阵\n\n| 模块 | 状态 |\n"
         match = gbp._S06_BLOCK_RE.search(content)
         assert match is not None
         assert "对齐验证矩阵" not in match.group(0), "§0.6 块误吞了 §0.2 内容"
 
     def test_stops_at_h3_heading_s03(self, gbp):
         """回归测试：§0.6 后跟 ### §0.3（3级标题）时必须停止。"""
-        content = (
-            "### §0.6 五图对齐视图\n"
-            "\n"
-            "内容\n"
-            "\n"
-            "### §0.3 版本-代码映射\n"
-            "\n"
-            "表格\n"
-        )
+        content = "### §0.6 五图对齐视图\n\n内容\n\n### §0.3 版本-代码映射\n\n表格\n"
         match = gbp._S06_BLOCK_RE.search(content)
         assert match is not None
         assert "版本-代码映射" not in match.group(0), "§0.6 块误吞了 §0.3 内容"
 
     def test_stops_at_h2_heading(self, gbp):
         """§0.6 后跟 ## §1（2级标题）时必须停止。"""
-        content = (
-            "### §0.6 五图对齐视图\n"
-            "\n"
-            "内容\n"
-            "\n"
-            "## 1. 核心概念\n"
-            "\n"
-            "正文\n"
-        )
+        content = "### §0.6 五图对齐视图\n\n内容\n\n## 1. 核心概念\n\n正文\n"
         match = gbp._S06_BLOCK_RE.search(content)
         assert match is not None
         assert "核心概念" not in match.group(0)
 
     def test_stops_at_hr_separator(self, gbp):
         """§0.6 后跟 --- 分隔线时必须停止。"""
-        content = (
-            "### §0.6 五图对齐视图\n"
-            "\n"
-            "内容\n"
-            "\n"
-            "---\n"
-            "\n"
-            "## 1. 核心概念\n"
-        )
+        content = "### §0.6 五图对齐视图\n\n内容\n\n---\n\n## 1. 核心概念\n"
         match = gbp._S06_BLOCK_RE.search(content)
         assert match is not None
         assert "---" not in match.group(0)
 
     def test_h4_subheading_inside_s06_not_treated_as_boundary(self, gbp):
         """§0.6 内部的 #### 全景位置（4级标题）不应被当作边界，应包含在块内。"""
-        content = (
-            "### §0.6 五图对齐视图\n"
-            "\n"
-            "#### 全景位置\n"
-            "\n"
-            "| 图 | 位置 |\n"
-            "\n"
-            "#### 四核心字段\n"
-            "\n"
-            "| 字段 | 值 |\n"
-            "\n"
-            "---\n"
-        )
+        content = "### §0.6 五图对齐视图\n\n#### 全景位置\n\n| 图 | 位置 |\n\n#### 四核心字段\n\n| 字段 | 值 |\n\n---\n"
         match = gbp._S06_BLOCK_RE.search(content)
         assert match is not None
         assert "全景位置" in match.group(0), "§0.6 块应包含内部 4 级子标题"
@@ -162,13 +119,7 @@ class TestS06BlockRegex:
 
     def test_matches_h2_level_s06(self, gbp):
         """§0.6 用 ## （2级标题）时也能匹配。"""
-        content = (
-            "## §0.6 五图对齐视图\n"
-            "\n"
-            "内容\n"
-            "\n"
-            "---\n"
-        )
+        content = "## §0.6 五图对齐视图\n\n内容\n\n---\n"
         match = gbp._S06_BLOCK_RE.search(content)
         assert match is not None
         assert "内容" in match.group(0)
@@ -190,15 +141,7 @@ class TestParseSimpleFrontmatter:
 
     def test_parses_basic_fields(self, gbp):
         """解析基本 key: value 字段。"""
-        content = (
-            "---\n"
-            "module_id: MOD-GOV-029\n"
-            "build_status: generated\n"
-            "status: Active\n"
-            "---\n"
-            "\n"
-            "正文\n"
-        )
+        content = "---\nmodule_id: MOD-GOV-029\nbuild_status: generated\nstatus: Active\n---\n\n正文\n"
         fm = gbp._parse_simple_frontmatter(content)
         assert fm.get("module_id") == "MOD-GOV-029"
         assert fm.get("build_status") == "generated"
@@ -206,25 +149,14 @@ class TestParseSimpleFrontmatter:
 
     def test_strips_quotes(self, gbp):
         """值带引号时去除引号。"""
-        content = (
-            "---\n"
-            'module_id: "MOD-GOV-029"\n'
-            "status: 'Active'\n"
-            "---\n"
-        )
+        content = "---\nmodule_id: \"MOD-GOV-029\"\nstatus: 'Active'\n---\n"
         fm = gbp._parse_simple_frontmatter(content)
         assert fm.get("module_id") == "MOD-GOV-029"
         assert fm.get("status") == "Active"
 
     def test_skips_nested_fields(self, gbp):
         """跳过嵌套字段（以 [ 或 { 开头的值）。"""
-        content = (
-            "---\n"
-            "module_id: MOD-GOV-029\n"
-            "tags: [a, b, c]\n"
-            "meta: {key: value}\n"
-            "---\n"
-        )
+        content = "---\nmodule_id: MOD-GOV-029\ntags: [a, b, c]\nmeta: {key: value}\n---\n"
         fm = gbp._parse_simple_frontmatter(content)
         assert fm.get("module_id") == "MOD-GOV-029"
         assert "tags" not in fm
@@ -238,12 +170,7 @@ class TestParseSimpleFrontmatter:
 
     def test_skips_lines_without_colon(self, gbp):
         """跳过无冒号的行。"""
-        content = (
-            "---\n"
-            "module_id: MOD-GOV-029\n"
-            "这是一行没有冒号的文本\n"
-            "---\n"
-        )
+        content = "---\nmodule_id: MOD-GOV-029\n这是一行没有冒号的文本\n---\n"
         fm = gbp._parse_simple_frontmatter(content)
         assert fm.get("module_id") == "MOD-GOV-029"
         assert len(fm) == 1
@@ -369,34 +296,12 @@ class TestRemoveS06Block:
 
     def test_no_s06_returns_unchanged(self, gbp):
         """无 §0.6 章节时原样返回。"""
-        content = (
-            "---\n"
-            "module_id: MOD-X\n"
-            "---\n"
-            "\n"
-            "### §0.1 代码文件清单\n"
-            "\n"
-            "| # | 文件 |\n"
-            "\n"
-            "## 1. 核心概念\n"
-        )
+        content = "---\nmodule_id: MOD-X\n---\n\n### §0.1 代码文件清单\n\n| # | 文件 |\n\n## 1. 核心概念\n"
         assert gbp._remove_s06_block(content) == content
 
     def test_s06_without_separator_followed_by_h2(self, gbp):
         """§0.6 后直接跟 ## §1（无闭合 ---）时，§0.6 移除、§1 保留。"""
-        content = (
-            "### §0.1 清单\n"
-            "\n"
-            "内容\n"
-            "\n"
-            "### §0.6 五图对齐视图\n"
-            "\n"
-            "自动生成内容\n"
-            "\n"
-            "## 1. 核心概念\n"
-            "\n"
-            "正文\n"
-        )
+        content = "### §0.1 清单\n\n内容\n\n### §0.6 五图对齐视图\n\n自动生成内容\n\n## 1. 核心概念\n\n正文\n"
         result = gbp._remove_s06_block(content)
         assert "### §0.6" not in result
         assert "自动生成内容" not in result
@@ -405,15 +310,7 @@ class TestRemoveS06Block:
 
     def test_s06_at_end_of_file(self, gbp):
         """§0.6 位于文件末尾时干净移除，前置内容保留。"""
-        content = (
-            "### §0.1 清单\n"
-            "\n"
-            "内容\n"
-            "\n"
-            "### §0.6 五图对齐视图\n"
-            "\n"
-            "末尾自动生成内容\n"
-        )
+        content = "### §0.1 清单\n\n内容\n\n### §0.6 五图对齐视图\n\n末尾自动生成内容\n"
         result = gbp._remove_s06_block(content)
         assert "### §0.6" not in result
         assert "末尾自动生成内容" not in result
@@ -438,13 +335,7 @@ class TestCleanupOrphanS06:
         if with_s06:
             content = _make_blueprint_with_s06(module_id=module_id)
         else:
-            content = (
-                "---\n"
-                f"module_id: {module_id}\n"
-                "---\n"
-                "\n"
-                "## 1. 核心概念\n"
-            )
+            content = f"---\nmodule_id: {module_id}\n---\n\n## 1. 核心概念\n"
         fpath.write_text(content, encoding="utf-8")
         return gbp.BlueprintFrontmatter(
             module_id=module_id,

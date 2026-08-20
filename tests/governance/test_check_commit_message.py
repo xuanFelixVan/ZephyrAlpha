@@ -62,11 +62,16 @@ class TestLoadRegisteredSessions:
 
     def test_load_valid(self, tmp_path: Path) -> None:
         registry = tmp_path / "session_registry.json"
-        registry.write_text(json.dumps({
-            "sess-aaa-20260720": {"session_id": "sess-aaa-20260720"},
-            "sess-bbb-20260720": {"session_id": "sess-bbb-20260720"},
-            "not-a-session": {"foo": "bar"},  # 非 sess- 前缀，应过滤
-        }), encoding="utf-8")
+        registry.write_text(
+            json.dumps(
+                {
+                    "sess-aaa-20260720": {"session_id": "sess-aaa-20260720"},
+                    "sess-bbb-20260720": {"session_id": "sess-bbb-20260720"},
+                    "not-a-session": {"foo": "bar"},  # 非 sess- 前缀，应过滤
+                }
+            ),
+            encoding="utf-8",
+        )
         result = ccm.load_registered_sessions(registry)
         assert result == {"sess-aaa-20260720", "sess-bbb-20260720"}
 
@@ -136,7 +141,10 @@ class TestCheckCommit:
         """含 [GW:session_id] 且 session 已注册 → 放行。"""
         msg = "feat(audit): P4-1 library [GW:sess-aaa-20260720]"
         violations = ccm.check_commit(
-            "abc1234", msg, {"sess-aaa-20260720"}, strict=False,
+            "abc1234",
+            msg,
+            {"sess-aaa-20260720"},
+            strict=False,
         )
         assert violations == []
 
@@ -144,7 +152,10 @@ class TestCheckCommit:
         """含 [GW:session_id] 但 session 未注册 → forged_gw_marker。"""
         msg = "feat(audit): forged [GW:sess-fake-20260720]"
         violations = ccm.check_commit(
-            "abc1234", msg, {"sess-aaa-20260720"}, strict=False,
+            "abc1234",
+            msg,
+            {"sess-aaa-20260720"},
+            strict=False,
         )
         assert len(violations) == 1
         assert "forged_gw_marker" in violations[0]
@@ -153,7 +164,10 @@ class TestCheckCommit:
         """无 [GW:] + type ∈ 白名单 → 放行。"""
         msg = "docs(ruling): update P4-1 status"
         violations = ccm.check_commit(
-            "abc1234", msg, set(), strict=False,
+            "abc1234",
+            msg,
+            set(),
+            strict=False,
         )
         assert violations == []
 
@@ -161,7 +175,10 @@ class TestCheckCommit:
         """无 [GW:] + type ∉ 白名单 → non_gw_commit。"""
         msg = "feat(audit): add new gate"
         violations = ccm.check_commit(
-            "abc1234", msg, set(), strict=False,
+            "abc1234",
+            msg,
+            set(),
+            strict=False,
         )
         assert len(violations) == 1
         assert "non_gw_commit" in violations[0]
@@ -170,7 +187,10 @@ class TestCheckCommit:
         """strict=1 时白名单不生效。"""
         msg = "docs(ruling): update P4-1 status"
         violations = ccm.check_commit(
-            "abc1234", msg, set(), strict=True,
+            "abc1234",
+            msg,
+            set(),
+            strict=True,
         )
         assert len(violations) == 1
         assert "non_gw_commit" in violations[0]
@@ -179,7 +199,10 @@ class TestCheckCommit:
         """merge commit 即使无 [GW:] 也放行。"""
         msg = "Merge pull request #123 from xuanFelixVan/feature"
         violations = ccm.check_commit(
-            "abc1234", msg, set(), strict=True,
+            "abc1234",
+            msg,
+            set(),
+            strict=True,
         )
         assert violations == []
 

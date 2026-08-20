@@ -79,6 +79,7 @@ D-FACTOR-ANA-06 分层回测——按因子值分组计算各层收益与多空�
 # A1 --> O1
 # A2 --> O2
 """
+
 from __future__ import annotations
 
 import pandas as pd
@@ -144,9 +145,7 @@ def compute_layer_spread(
     common_dates = factor_panel.index.intersection(return_panel.index)
     spreads: dict = {}
     for date in common_dates:
-        lr = layered_returns(
-            factor_panel.loc[date], return_panel.loc[date], n_layers
-        )
+        lr = layered_returns(factor_panel.loc[date], return_panel.loc[date], n_layers)
         if lr.empty or len(lr) < 2:
             continue
         spreads[date] = float(lr["avg_return"].iloc[-1] - lr["avg_return"].iloc[0])

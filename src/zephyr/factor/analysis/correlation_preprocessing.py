@@ -33,6 +33,7 @@
 相关性必须用 PnL stream（收益率序列），禁用 binary 信号序列（tetrachoric 效应
 使 binary 估计高估分散 56%，Soloviov 2026）。
 """
+
 from __future__ import annotations
 
 import itertools
@@ -168,13 +169,9 @@ def adf_test(series: pd.Series, max_lags: int | None = None) -> ADFTestResult:
     y = pd.Series(series).dropna().to_numpy(dtype=float)
     n = len(y)
     if n < ADF_MIN_OBS:
-        return ADFTestResult(
-            float("nan"), 1.0, 0, n, False, ADFSignificance.INSUFFICIENT_SAMPLE
-        )
+        return ADFTestResult(float("nan"), 1.0, 0, n, False, ADFSignificance.INSUFFICIENT_SAMPLE)
     if float(np.std(y)) == 0.0:
-        return ADFTestResult(
-            float("nan"), 1.0, 0, n, False, ADFSignificance.CONSTANT_SERIES
-        )
+        return ADFTestResult(float("nan"), 1.0, 0, n, False, ADFSignificance.CONSTANT_SERIES)
 
     lags = max_lags if max_lags is not None else min(12, int(12.0 * (n / 100.0) ** 0.25))
     lags = max(0, min(lags, (n - 4) // 2))  # 保证 n_eff > 回归元数
@@ -204,9 +201,7 @@ def adf_test(series: pd.Series, max_lags: int | None = None) -> ADFTestResult:
     return ADFTestResult(tau, p_value, lags, n, p_value < ADF_STATIONARY_P)
 
 
-def modified_zscore_flags(
-    series: pd.Series, threshold: float = MODIFIED_ZSCORE_THRESHOLD
-) -> pd.Series:
+def modified_zscore_flags(series: pd.Series, threshold: float = MODIFIED_ZSCORE_THRESHOLD) -> pd.Series:
     """Modified Z-score 异常值标注（Iglewicz-Hoaglin，MAD 法，只标注不剔除）。
 
     M_i = 0.6745·(x_i − median)/MAD，|M_i| > threshold(默认3.5) 记异常。
@@ -269,10 +264,7 @@ def preprocess_strategy_returns(
     log_returns = {name: to_log_returns(nav) for name, nav in nav_map.items()}
     adf = {name: adf_test(r, max_lags=adf_max_lags) for name, r in log_returns.items()}
     aligned = align_trading_days(log_returns)
-    outliers = {
-        name: modified_zscore_flags(aligned[name], threshold=outlier_threshold)
-        for name in aligned.columns
-    }
+    outliers = {name: modified_zscore_flags(aligned[name], threshold=outlier_threshold) for name in aligned.columns}
     warnings = [name for name, r in adf.items() if not r.is_stationary]
     return PreprocessResult(aligned, adf, outliers, warnings)
 

@@ -9,6 +9,7 @@
 - PolicyRegistry.register（编程式注册）
 - PolicyRegistry.list_sources
 """
+
 import pytest
 
 from src.zephyr.data.policy_registry import (
@@ -40,9 +41,13 @@ class TestSourcePolicy:
 
     def test_from_dict_all_fields(self):
         d = {
-            "rpm": 60, "concurrency": 4, "max_retries": 5,
-            "backoff": "jittered", "initial_wait_sec": 2.0,
-            "retry_on": ["HTTPError"], "disconnect_vpn": True,
+            "rpm": 60,
+            "concurrency": 4,
+            "max_retries": 5,
+            "backoff": "jittered",
+            "initial_wait_sec": 2.0,
+            "retry_on": ["HTTPError"],
+            "disconnect_vpn": True,
             "extra": {"key": "val"},
         }
         p = SourcePolicy.from_dict(d)
@@ -55,8 +60,7 @@ class TestPolicyRegistry:
     def test_defaults_loaded(self):
         """构造时自动加载 DEFAULT_POLICIES 的 7 个源。"""
         r = PolicyRegistry()
-        for src in ["miniqmt", "akshare", "baostock",
-                     "tushare", "tickflow", "tdx", "rss"]:
+        for src in ["miniqmt", "akshare", "baostock", "tushare", "tickflow", "tdx", "rss"]:
             assert src in r.list_sources()
 
     def test_get_policy_akshare(self):
@@ -103,6 +107,5 @@ class TestDefaultPoliciesCompleteness:
     """确保 DEFAULT_POLICIES 覆盖蓝图 §5.2 的 7 个数据源。"""
 
     def test_all_7_sources_present(self):
-        expected = {"miniqmt", "akshare", "baostock",
-                    "tushare", "tickflow", "tdx", "rss"}
+        expected = {"miniqmt", "akshare", "baostock", "tushare", "tickflow", "tdx", "rss"}
         assert expected == set(DEFAULT_POLICIES.keys())

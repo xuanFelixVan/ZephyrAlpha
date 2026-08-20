@@ -1,6 +1,7 @@
 # [TTL] task_bound
 # [TESTS] zephyr.infrastructure.h1_redis_hot.h1_redis_writer
 """H1RedisWriter 单元测试——验证因子截面批量写入 + updated_at 时戳（CP-02 治本）。"""
+
 import os
 import sys
 
@@ -71,10 +72,12 @@ class TestWriteFactorCrossSection:
         mock_pipe.execute.return_value = []
 
         writer = H1RedisWriter(mock_conn)
-        writer.write_factor_cross_section({
-            "000001.SZ": {},  # 空 → 跳过
-            "600000.SH": {"close": 8.0},
-        })
+        writer.write_factor_cross_section(
+            {
+                "000001.SZ": {},  # 空 → 跳过
+                "600000.SH": {"close": 8.0},
+            }
+        )
 
         assert mock_pipe.hset.call_count == 1
 
@@ -96,10 +99,12 @@ class TestWriteFactorCrossSection:
         mock_conn.pipeline.return_value = mock_pipe
 
         writer = H1RedisWriter(mock_conn)
-        writer.write_factor_cross_section({
-            "000001.SZ": {"close": 1.0},
-            "600000.SH": {"close": 2.0},
-        })
+        writer.write_factor_cross_section(
+            {
+                "000001.SZ": {"close": 1.0},
+                "600000.SH": {"close": 2.0},
+            }
+        )
 
         calls = mock_pipe.hset.call_args_list
         assert len(calls) == 2

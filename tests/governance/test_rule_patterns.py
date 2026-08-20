@@ -23,6 +23,7 @@ PIICategory / POISONING_INDICATORS / PII_PATTERNS）
 
 测试隔离：纯常量验证，无外部依赖，无 tmp_path 需求。
 """
+
 from __future__ import annotations
 
 import sys
@@ -222,10 +223,10 @@ class TestNoRedefinitionInPackage:
     )
     def test_kb_gate_imports_poisoning_indicators(self, module_path):
         import importlib
+
         mod = importlib.import_module(module_path)
         assert mod.POISONING_INDICATORS is POISONING_INDICATORS, (
-            f"{module_path}.POISONING_INDICATORS 不是 rule_patterns 的同一对象，"
-            f"可能重定义了 SSoT 符号"
+            f"{module_path}.POISONING_INDICATORS 不是 rule_patterns 的同一对象，可能重定义了 SSoT 符号"
         )
 
     @pytest.mark.parametrize(
@@ -237,12 +238,11 @@ class TestNoRedefinitionInPackage:
     )
     def test_privacy_imports_pii_symbols(self, module_path):
         import importlib
+
         mod = importlib.import_module(module_path)
         assert mod.PIICategory is PIICategory, (
-            f"{module_path}.PIICategory 不是 rule_patterns 的同一对象，"
-            f"可能重定义了 SSoT 符号"
+            f"{module_path}.PIICategory 不是 rule_patterns 的同一对象，可能重定义了 SSoT 符号"
         )
         assert mod.PII_PATTERNS is PII_PATTERNS, (
-            f"{module_path}.PII_PATTERNS 不是 rule_patterns 的同一对象，"
-            f"可能重定义了 SSoT 符号"
+            f"{module_path}.PII_PATTERNS 不是 rule_patterns 的同一对象，可能重定义了 SSoT 符号"
         )

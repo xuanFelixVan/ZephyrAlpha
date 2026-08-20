@@ -120,9 +120,7 @@ class TestCodeToRegistry:
     def test_all_prefixes_declared(self):
         reg = load_registry()
         declared = set(reg["domain_prefixes"])
-        undeclared = sorted(
-            {_prefix_of(r["code"]) for r in scan_code_definitions()} - declared
-        )
+        undeclared = sorted({_prefix_of(r["code"]) for r in scan_code_definitions()} - declared)
         assert not undeclared, f"error_code 前缀未在 domain_prefixes 声明: {undeclared}"
 
 
@@ -138,8 +136,7 @@ class TestRegistryToCode:
             if "deprecated" not in e and (e["code"], e.get("class"), e.get("file")) not in live
         ]
         assert not stale, (
-            f"{len(stale)} 条 active 注册条目无存活定义点（退役请加 deprecated/replacement）: "
-            + "; ".join(stale[:20])
+            f"{len(stale)} 条 active 注册条目无存活定义点（退役请加 deprecated/replacement）: " + "; ".join(stale[:20])
         )
 
     def test_registry_internal_uniqueness_and_fields(self):
@@ -196,6 +193,4 @@ class TestDuplicates:
             expected = {canon} | {(li["file"], li["class"]) for li in d["later_introducers"]}
             if locs != expected or len(locs) <= 1:
                 rotten.append(f"{code}: 代码实况 {sorted(locs)} != 白名单 {sorted(expected)}")
-        assert not rotten, "known_duplicates 白名单与代码实况不符（改号完工后请移除条目）: " + "; ".join(
-            rotten[:10]
-        )
+        assert not rotten, "known_duplicates 白名单与代码实况不符（改号完工后请移除条目）: " + "; ".join(rotten[:10])

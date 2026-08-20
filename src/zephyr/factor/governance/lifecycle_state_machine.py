@@ -77,6 +77,7 @@ research → development → backtest → paper → grayscale → production →
 # A2 --> O2
 # A3 --> O1
 """
+
 from __future__ import annotations
 
 from zephyr.factor.governance import load_governance_config
@@ -110,24 +111,29 @@ def _build_config() -> StateMachineConfig[str]:
     """
     cfg = load_governance_config().get("lifecycle_state_machine", {})
     state_names = list(cfg.get("states", [])) or [
-        RESEARCH, DEVELOPMENT, BACKTEST, PAPER, GRAYSCALE, PRODUCTION, DEPRECATED, RETIRED,
+        RESEARCH,
+        DEVELOPMENT,
+        BACKTEST,
+        PAPER,
+        GRAYSCALE,
+        PRODUCTION,
+        DEPRECATED,
+        RETIRED,
     ]
     initial = str(cfg.get("initial", RESEARCH))
-    states = [
-        StateDefinition(name, is_terminal=(name == RETIRED))
-        for name in state_names
-    ]
+    states = [StateDefinition(name, is_terminal=(name == RETIRED)) for name in state_names]
     # 合法转换：线性推进 + 回退 + 废弃路径
     from zephyr.shared.lifecycle.state_machine import Transition
+
     transitions = [
-        Transition(RESEARCH, DEVELOPMENT),      # 研究 → 开发
-        Transition(DEVELOPMENT, BACKTEST),       # 开发 → 回测
-        Transition(BACKTEST, PAPER),             # 回测 → 纸面
-        Transition(PAPER, GRAYSCALE),            # 纸面 → 灰度
-        Transition(GRAYSCALE, PRODUCTION),       # 灰度 → 实盘
-        Transition(GRAYSCALE, PAPER),            # 灰度 → 回退纸面
-        Transition(PRODUCTION, DEPRECATED),      # 实盘 → 废弃
-        Transition(DEPRECATED, RETIRED),         # 废弃 → 退役
+        Transition(RESEARCH, DEVELOPMENT),  # 研究 → 开发
+        Transition(DEVELOPMENT, BACKTEST),  # 开发 → 回测
+        Transition(BACKTEST, PAPER),  # 回测 → 纸面
+        Transition(PAPER, GRAYSCALE),  # 纸面 → 灰度
+        Transition(GRAYSCALE, PRODUCTION),  # 灰度 → 实盘
+        Transition(GRAYSCALE, PAPER),  # 灰度 → 回退纸面
+        Transition(PRODUCTION, DEPRECATED),  # 实盘 → 废弃
+        Transition(DEPRECATED, RETIRED),  # 废弃 → 退役
         # 异常回退：任何非终态可回退到 research（重新研究）
         Transition(BACKTEST, RESEARCH),
         Transition(PAPER, BACKTEST),

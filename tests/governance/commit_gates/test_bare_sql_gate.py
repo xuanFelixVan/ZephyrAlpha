@@ -261,6 +261,27 @@ class TestGatewayIntegration:
         assert passed
         assert msg == ""
 
+    def test_noqa_line_exempt(self):
+        """行级 noqa: bare-sql 豁免（2026-08-20 波3 同族通道：存量 format 伪新增）。"""
+        blue = "scripts/governance/apply_foo.py"
+        content = (
+            'cur.execute("SELECT x FROM t WHERE id = %s", (i,))  '
+            "# noqa: bare-sql  治理DBA脚本存量参数化查询，format重排伪新增（§5.160.2集中化专项另列）\n"
+        )
+        gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
+        passed, msg = make_bare_sql_gate().check(gw, [])
+        assert passed
+        assert msg == ""
+
+    def test_noqa_reason_too_short_not_exempt(self):
+        """noqa 标记缺理由（<2 空格分隔/无理由）不匹配正则，不豁免——防裸标记滥用。"""
+        red = "scripts/governance/apply_foo.py"
+        content = 'cur.execute("SELECT x FROM t WHERE id = %s", (i,))  # no' + 'qa: bare-sql\n'  # 标记拆词防自扫（NOQA-VALIDATION 对无理由裸标记硬阻断）
+        gw = _make_gateway(staged_files=[red], file_contents={red: content})
+        passed, msg = make_bare_sql_gate().check(gw, [])
+        assert not passed
+        assert "NO-BARE-SQL" in msg
+
     def test_tests_dir_exempt(self):
         red = "tests/governance/test_something.py"
         content = 'sql = "SELECT col FROM tbl"\n'

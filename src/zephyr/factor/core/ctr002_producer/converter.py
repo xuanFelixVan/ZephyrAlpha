@@ -26,6 +26,7 @@
 - 幂等键生成 → idempotency_key
 - 不做任何因子计算——纯信号适配
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -111,10 +112,15 @@ def to_signals(
     rank_pct = _compute_rank_pct(values)
     return [
         _build_signal(
-            symbol=sym, raw_val=val, as_of_date=as_of_date,
-            factor_id=factor_id, factor_version=factor_version,
-            confidence=confidence, normalized=normalized.get(sym),
-            rank_pct=rank_pct.get(sym), key_prefix=idempotency_key_prefix,
+            symbol=sym,
+            raw_val=val,
+            as_of_date=as_of_date,
+            factor_id=factor_id,
+            factor_version=factor_version,
+            confidence=confidence,
+            normalized=normalized.get(sym),
+            rank_pct=rank_pct.get(sym),
+            key_prefix=idempotency_key_prefix,
         )
         for sym, val in values.items()
     ]

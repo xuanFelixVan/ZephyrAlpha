@@ -5,6 +5,7 @@
 # [A_module] module_id=MOD-TEST_METRICS_SERVER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """metrics_server 单元测试（P1-5 Prometheus /metrics 端点）。"""
+
 import os
 import sys
 

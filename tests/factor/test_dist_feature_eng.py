@@ -22,6 +22,7 @@
 - 非 MultiIndex 输入抛 ValueError
 - backpressure 集成
 """
+
 from __future__ import annotations
 
 import pandas as pd
@@ -60,9 +61,7 @@ def _register_factor(fid: str, deps: list[str] | None = None) -> None:
     """注册一个简单因子（返回 close 列）。"""
 
     class _Factor(FactorBase):
-        meta = FactorMeta(
-            factor_id=fid, name=fid, domain="test", dependencies=deps or []
-        )
+        meta = FactorMeta(factor_id=fid, name=fid, domain="test", dependencies=deps or [])
 
         def compute(self, data, **kwargs):
             return data["close"]
@@ -80,15 +79,17 @@ def _make_multiindex_data(
     rows = []
     for sym in symbols:
         for i in range(n_days):
-            rows.append({
-                "symbol": sym,
-                "trade_date": pd.Timestamp("2026-01-01") + pd.Timedelta(days=i),
-                "open": 99.0 + i,
-                "high": 101.0 + i,
-                "low": 98.0 + i,
-                "close": 100.0 + i,
-                "volume": 1000 + i,
-            })
+            rows.append(
+                {
+                    "symbol": sym,
+                    "trade_date": pd.Timestamp("2026-01-01") + pd.Timedelta(days=i),
+                    "open": 99.0 + i,
+                    "high": 101.0 + i,
+                    "low": 98.0 + i,
+                    "close": 100.0 + i,
+                    "volume": 1000 + i,
+                }
+            )
     df = pd.DataFrame(rows)
     df["symbol"] = df["symbol"].astype(str)
     df["trade_date"] = pd.to_datetime(df["trade_date"])
@@ -193,9 +194,7 @@ class TestBackpressureIntegration:
         dag = build_dag_from_registry(["f1"], dag_id="t")
         bp = BackpressureLimiter(BackpressureConfig(max_inflight=1))
         bp.pause()
-        engine = DistributedFeatureEngine(
-            DistEngConfig(max_workers=1), backpressure=bp
-        )
+        engine = DistributedFeatureEngine(DistEngConfig(max_workers=1), backpressure=bp)
         data = _make_multiindex_data()
         results = engine.execute(dag, data)
         # 所有标的被拒绝 → panel 空
@@ -205,9 +204,7 @@ class TestBackpressureIntegration:
         _register_factor("f1")
         dag = build_dag_from_registry(["f1"], dag_id="t")
         bp = BackpressureLimiter(BackpressureConfig(max_inflight=4))
-        engine = DistributedFeatureEngine(
-            DistEngConfig(max_workers=1), backpressure=bp
-        )
+        engine = DistributedFeatureEngine(DistEngConfig(max_workers=1), backpressure=bp)
         data = _make_multiindex_data()
         results = engine.execute(dag, data)
         assert not results["f1"].panel.empty

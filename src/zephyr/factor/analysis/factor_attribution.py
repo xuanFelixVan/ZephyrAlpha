@@ -74,6 +74,7 @@ D-FACTOR-ANA-09 因子归因——按时间和行业维度分解因子表现。
 # I3 --> A2
 # A2 --> O2
 """
+
 from __future__ import annotations
 
 import pandas as pd

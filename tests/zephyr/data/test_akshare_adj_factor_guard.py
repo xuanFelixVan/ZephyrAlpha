@@ -14,6 +14,7 @@
 不含 data_source——akshare hfq fallback 与 miniqmt dr 同键写入时后写静默替换
 先写。守卫：写共享表前查 miniqmt 已覆盖 (symbol, trade_date) 键并跳过。
 """
+
 from __future__ import annotations
 
 import datetime
@@ -68,7 +69,8 @@ class TestCoveredMiniqmtAdjKeys:
         import zephyr.data.ch_reader as chr_mod
 
         monkeypatch.setattr(
-            chr_mod, "query",
+            chr_mod,
+            "query",
             lambda sql, timeout=None: "600519\t2026-07-05\n000002\t2026-07-06\n",
         )
         p = AkshareIngestProvider()
@@ -98,13 +100,12 @@ class TestCoveredMiniqmtAdjKeys:
         import zephyr.data.ch_reader as chr_mod
 
         monkeypatch.setattr(
-            chr_mod, "query",
+            chr_mod,
+            "query",
             lambda sql, timeout=None: "600519\t2026-07-05\nBROKENLINE\n\t2026-07-06\n",
         )
         p = AkshareIngestProvider()
-        assert p._covered_miniqmt_adj_keys(["600519"], "2026-07-01", "2026-07-10") == {
-            ("600519", "2026-07-05")
-        }
+        assert p._covered_miniqmt_adj_keys(["600519"], "2026-07-01", "2026-07-10") == {("600519", "2026-07-05")}
 
     def test_empty_codes_no_query(self, monkeypatch):
         import zephyr.data.ch_reader as chr_mod

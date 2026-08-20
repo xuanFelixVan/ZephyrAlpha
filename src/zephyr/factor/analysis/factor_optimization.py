@@ -87,6 +87,7 @@ D-FACTOR-ANA-11 因子优化——优化多因子合成权重以最大化目标�
 # A2 --> O1
 # A3 --> O2
 """
+
 from __future__ import annotations
 
 import logging
@@ -117,7 +118,8 @@ def _neg_ir(
     # 组装面板用于 IC 计算
     synth_panel = pd.DataFrame(
         np.outer(synth, np.ones(factor_panel.shape[1])),
-        index=factor_panel.index, columns=factor_panel.columns,
+        index=factor_panel.index,
+        columns=factor_panel.columns,
     )
     ic_series = compute_ic_series(synth_panel, return_panel, 5)
     ir = compute_ir(ic_series)
@@ -163,9 +165,11 @@ def optimize_weights(
     constraints = [{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}]
     bounds = [(0.0, 1.0)] * n
     if objective == "max_ir":
+
         def loss(w: np.ndarray) -> float:
             return _neg_ir(w, panel, forward_returns)
     elif objective == "min_variance":
+
         def loss(w: np.ndarray) -> float:
             return float(np.var(panel.fillna(0).to_numpy() @ w))
     else:

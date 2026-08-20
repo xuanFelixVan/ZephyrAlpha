@@ -23,6 +23,7 @@
 - check_promotion: 通过 / 失败
 - stages 属性: 默认阶梯 / 返回副本
 """
+
 from __future__ import annotations
 
 import pytest

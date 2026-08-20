@@ -18,6 +18,7 @@
 验收真源（65 号 §732）："task_board.py create/claim/start/complete；AI-02 claim
 已认领任务 → 状态机正确转换，重复认领 DENIED"。
 """
+
 from __future__ import annotations
 
 import os
@@ -90,9 +91,7 @@ class TestStateMachine:
         conn = sqlite3.connect(str(board))
         conn.row_factory = sqlite3.Row
         row = conn.execute("SELECT status FROM tasks WHERE task_id=?", (tid,)).fetchone()
-        ev = conn.execute(
-            "SELECT event_type FROM task_events WHERE task_id=? ORDER BY event_id", (tid,)
-        ).fetchall()
+        ev = conn.execute("SELECT event_type FROM task_events WHERE task_id=? ORDER BY event_id", (tid,)).fetchall()
         conn.close()
         assert row["status"] == "claimed"
         assert [e["event_type"] for e in ev] == ["created", "claimed", "started"]
@@ -169,6 +168,7 @@ class TestDeadLetterMetadata:
         row = conn.execute("SELECT metadata_json FROM tasks WHERE task_id=?", (tid,)).fetchone()
         conn.close()
         import json
+
         payload = json.loads(row["metadata_json"])
         assert payload["type"] == "dead_letter"
         assert payload["qid"] == "q-20260814-sess-x-0003"

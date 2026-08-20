@@ -22,6 +22,7 @@
 - retired 终态: is_terminal / 终态后再转换抛错
 - register_factor_lifecycle: 返回 fsm_id / 幂等
 """
+
 from __future__ import annotations
 
 import pytest

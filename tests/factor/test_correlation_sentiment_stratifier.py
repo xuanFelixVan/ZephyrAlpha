@@ -8,6 +8,7 @@
   BM-SEL-23-B 4+1 阶段打标签 + 置信度<60% 默认保守兜底 + 每阶段 ≥30 样本标注 +
   灰度软分配（30 号 §6.5）。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

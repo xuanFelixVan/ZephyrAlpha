@@ -14,6 +14,7 @@
 
 不依赖真实 APScheduler/Provider/ClickHouse，用 mock 替换。
 """
+
 import datetime
 from unittest.mock import MagicMock, PropertyMock, patch
 
@@ -25,12 +26,18 @@ from src.zephyr.data.scheduler import IntegratorScheduler
 
 # ============== 测试用 Mock Provider ==============
 
+
 class _MockProvider(IngestProviderBase):
     """最小可实例化的 IngestProviderBase 子类。"""
+
     source_name = "mock"
     meta = IngestProviderMeta(
-        name="mock", display_name="Mock", auth_type="anonymous",
-        requires_process=False, thread_safety="shared", rate_limit_default=0,
+        name="mock",
+        display_name="Mock",
+        auth_type="anonymous",
+        requires_process=False,
+        thread_safety="shared",
+        rate_limit_default=0,
     )
 
     def connect(self):
@@ -65,15 +72,15 @@ def scheduler(tmp_path):
         encoding="utf-8",
     )
     (config_dir / "tasks.yaml").write_text(
-        'tasks:\n'
-        '  - task_id: kline_daily_incremental\n'
-        '    table: c1_market.kline_daily\n'
-        '    source: mock\n'
-        '    schedule: daily_kline\n'
-        '    incremental: true\n'
-        '    dependencies: []\n'
-        '    capability: kline_daily\n'
-        '    symbols: null\n',
+        "tasks:\n"
+        "  - task_id: kline_daily_incremental\n"
+        "    table: c1_market.kline_daily\n"
+        "    source: mock\n"
+        "    schedule: daily_kline\n"
+        "    incremental: true\n"
+        "    dependencies: []\n"
+        "    capability: kline_daily\n"
+        "    symbols: null\n",
         encoding="utf-8",
     )
     progress_db = tmp_path / "progress.db"
@@ -120,8 +127,10 @@ class TestEventSubscribe:
 
     def test_emit_event_handler_exception(self, scheduler):
         """handler 异常不抛出。"""
+
         def bad_handler(**kw):
             raise RuntimeError("boom")
+
         scheduler.subscribe("task_completed", bad_handler)
         # 不抛异常
         scheduler.emit_event("task_completed", task_id="t1", success=True)
@@ -205,8 +214,10 @@ class TestRunTask:
         mock_provider.connect()
         scheduler.providers["mock"] = mock_provider
         # 调度器经 BufferedWriter 写入；mock 该层以隔离真实 ClickHouse。
-        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
-             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True):
+        with (
+            patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True),
+            patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True),
+        ):
             ok = scheduler.run_task("kline_daily_incremental")
         assert ok is True
         # 进度应记录
@@ -233,9 +244,9 @@ class TestRunTask:
         """Provider.fetch 返回 error。"""
         scheduler.load_config()
         mock_provider = MagicMock()
-        mock_provider.fetch.return_value = iter([
-            FetchResult(table="t", columns=[], rows=[], last_key="", elapsed_sec=0, error="连接超时")
-        ])
+        mock_provider.fetch.return_value = iter(
+            [FetchResult(table="t", columns=[], rows=[], last_key="", elapsed_sec=0, error="连接超时")]
+        )
         scheduler.providers["mock"] = mock_provider
         ok = scheduler.run_task("kline_daily_incremental")
         assert ok is False
@@ -249,8 +260,10 @@ class TestRunTask:
         mock_provider = _MockProvider()
         mock_provider.connect()
         scheduler.providers["mock"] = mock_provider
-        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
-             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=False):
+        with (
+            patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True),
+            patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=False),
+        ):
             ok = scheduler.run_task("kline_daily_incremental")
         assert ok is False
         status = scheduler.progress_store.get_task_status("kline_daily_incremental")
@@ -263,12 +276,22 @@ class TestRunTask:
         provider.connect()
         scheduler.providers["mock"] = provider
         outcome = WriteOutcome(WriteDisposition.LOCAL_DURABLE, "local_fallback")
-        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
-             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=False), \
-             patch.object(IntegratorScheduler.__module__ and __import__("src.zephyr.data.scheduler", fromlist=["BufferedWriter"]).BufferedWriter, "last_outcome", new_callable=PropertyMock, return_value=outcome):
+        with (
+            patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True),
+            patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=False),
+            patch.object(
+                IntegratorScheduler.__module__
+                and __import__("src.zephyr.data.scheduler", fromlist=["BufferedWriter"]).BufferedWriter,
+                "last_outcome",
+                new_callable=PropertyMock,
+                return_value=outcome,
+            ),
+        ):
             ok = scheduler.run_task("kline_daily_incremental")
         assert ok is True
-        assert scheduler.progress_store.get_task_status("kline_daily_incremental")["last_status"] == "DEFERRED_PERSISTENCE"
+        assert (
+            scheduler.progress_store.get_task_status("kline_daily_incremental")["last_status"] == "DEFERRED_PERSISTENCE"
+        )
 
     def test_run_task_provider_exception(self, scheduler):
         """Provider.fetch 抛异常。"""
@@ -290,8 +313,10 @@ class TestRunTask:
         scheduler.providers["mock"] = mock_provider
         events = []
         scheduler.subscribe("task_completed", lambda **kw: events.append(kw))
-        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
-             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True):
+        with (
+            patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True),
+            patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True),
+        ):
             scheduler.run_task("kline_daily_incremental")
         assert len(events) == 1
         assert events[0]["success"] is True
@@ -305,6 +330,7 @@ class TestRunTask:
         scheduler.providers["mock"] = mock_provider
         # mock policy.enabled=False（CLI pause 生效点）
         from zephyr.data.policy_registry import SourcePolicy
+
         with patch.object(scheduler.policy_registry, "get_policy", return_value=SourcePolicy(enabled=False)):
             ok = scheduler.run_task("kline_daily_incremental")
         assert ok is False
@@ -321,9 +347,11 @@ class TestRunSchedule:
         scheduler.providers["mock"] = mock_provider
         # 时间解耦：daily_kline 属交易日历守卫时段（_schedule_should_skip），
         # 非交易日跑测试会 return {}——patch is_trading_day 固定为交易日
-        with patch("src.zephyr.data.scheduler.is_trading_day", return_value=True), \
-             patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
-             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True):
+        with (
+            patch("src.zephyr.data.scheduler.is_trading_day", return_value=True),
+            patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True),
+            patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True),
+        ):
             results = scheduler.run_schedule("daily_kline")
         assert len(results) == 1
         assert results["kline_daily_incremental"] is True
@@ -338,24 +366,28 @@ class TestRunSchedule:
         """DAG 依赖：前置完成才执行后续。"""
         # 追加一个依赖任务
         scheduler.load_config()
-        scheduler.tasks.append({
-            "task_id": "daily_valuation_incremental",
-            "table": "c1_market.daily_valuation",
-            "source": "mock",
-            "schedule": "daily_kline",
-            "incremental": True,
-            "dependencies": ["kline_daily_incremental"],
-            "capability": "daily_valuation",
-            "symbols": None,
-            "extra": {},
-        })
+        scheduler.tasks.append(
+            {
+                "task_id": "daily_valuation_incremental",
+                "table": "c1_market.daily_valuation",
+                "source": "mock",
+                "schedule": "daily_kline",
+                "incremental": True,
+                "dependencies": ["kline_daily_incremental"],
+                "capability": "daily_valuation",
+                "symbols": None,
+                "extra": {},
+            }
+        )
         mock_provider = _MockProvider()
         mock_provider.connect()
         scheduler.providers["mock"] = mock_provider
         # 时间解耦：同上（交易日历守卫时段在非交易日 return {}）
-        with patch("src.zephyr.data.scheduler.is_trading_day", return_value=True), \
-             patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
-             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True):
+        with (
+            patch("src.zephyr.data.scheduler.is_trading_day", return_value=True),
+            patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True),
+            patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True),
+        ):
             results = scheduler.run_schedule("daily_kline")
         assert len(results) == 2
         assert all(results.values())
@@ -374,10 +406,12 @@ class TestStartStop:
 
     def test_start_skips_live_probes(self, scheduler):
         """startup_probes=False 时跳过 live 健康检查/CH 探活/破损 part 检测（#ARCH-DATA-015）。"""
-        with patch("src.zephyr.data.scheduler.IntegratorScheduler.init_scheduler"), \
-             patch("src.zephyr.data.scheduler.IntegratorScheduler._start_ch_health_probe") as mock_ch, \
-             patch("src.zephyr.data.scheduler.IntegratorScheduler._start_corrupted_part_detector") as mock_cp, \
-             patch("zephyr.data.source_health_check.run_source_health_check") as mock_hc:
+        with (
+            patch("src.zephyr.data.scheduler.IntegratorScheduler.init_scheduler"),
+            patch("src.zephyr.data.scheduler.IntegratorScheduler._start_ch_health_probe") as mock_ch,
+            patch("src.zephyr.data.scheduler.IntegratorScheduler._start_corrupted_part_detector") as mock_cp,
+            patch("zephyr.data.source_health_check.run_source_health_check") as mock_hc,
+        ):
             scheduler.scheduler = MagicMock()
             scheduler.start()
         assert scheduler.started is True

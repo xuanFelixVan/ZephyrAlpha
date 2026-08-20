@@ -18,6 +18,7 @@
 - to_dataframe: 空输入 / Decimal→float / MultiIndex / 排序
 - filter_quality: 悬停过滤 / 质量分过滤 / 自定义阈值 / 无列降级
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -118,27 +119,33 @@ class TestFilterQuality:
         assert filter_quality(pd.DataFrame()).empty
 
     def test_filters_suspended(self):
-        df = to_dataframe([
-            _make_record(symbol="A.SH", is_suspended=False),
-            _make_record(symbol="B.SH", is_suspended=True),
-        ])
+        df = to_dataframe(
+            [
+                _make_record(symbol="A.SH", is_suspended=False),
+                _make_record(symbol="B.SH", is_suspended=True),
+            ]
+        )
         filtered = filter_quality(df)
         assert "B.SH" not in [idx[0] for idx in filtered.index]
         assert "A.SH" in [idx[0] for idx in filtered.index]
 
     def test_filters_low_quality(self):
-        df = to_dataframe([
-            _make_record(symbol="A.SH", quality_score=0.9),
-            _make_record(symbol="B.SH", quality_score=0.5),
-        ])
+        df = to_dataframe(
+            [
+                _make_record(symbol="A.SH", quality_score=0.9),
+                _make_record(symbol="B.SH", quality_score=0.5),
+            ]
+        )
         filtered = filter_quality(df, min_score=0.7)
         assert "B.SH" not in [idx[0] for idx in filtered.index]
 
     def test_custom_min_score(self):
-        df = to_dataframe([
-            _make_record(symbol="A.SH", quality_score=0.8),
-            _make_record(symbol="B.SH", quality_score=0.6),
-        ])
+        df = to_dataframe(
+            [
+                _make_record(symbol="A.SH", quality_score=0.8),
+                _make_record(symbol="B.SH", quality_score=0.6),
+            ]
+        )
         # 阈值 0.5 时两条都通过
         assert len(filter_quality(df, min_score=0.5)) == 2
         # 阈值 0.7 时只剩 A
@@ -146,9 +153,7 @@ class TestFilterQuality:
 
     def test_no_quality_columns_returns_as_is(self):
         df = pd.DataFrame({"close": [1.0, 2.0]})
-        df.index = pd.MultiIndex.from_tuples(
-            [("A.SH", 1), ("B.SH", 2)], names=["symbol", "timestamp"]
-        )
+        df.index = pd.MultiIndex.from_tuples([("A.SH", 1), ("B.SH", 2)], names=["symbol", "timestamp"])
         result = filter_quality(df)
         assert len(result) == 2
 

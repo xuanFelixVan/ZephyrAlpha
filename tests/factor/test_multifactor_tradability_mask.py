@@ -6,6 +6,7 @@
 覆盖：mask 构造（停牌/涨跌停/流动性各通道+组合）/ masked_rank_ic
 （掩码过滤效果/标的不足 NaN/常数列 NaN/上游污染实证——不掩码 IC 虚高）。
 """
+
 from __future__ import annotations
 
 import numpy as np

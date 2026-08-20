@@ -437,3 +437,24 @@ class TestStaticScanGate:
         f = tmp_path / "exempt.py"
         f.write_text("os.remove('x')  # ops-guard-exempt: 补丁真源自测\n", encoding="utf-8")
         assert scan_file_for_bare_primitives(f) == []
+
+    def test_gw_infra_files_exempt(self):
+        """GW 提交基础设施（rule_bridge）自管锁/临时文件豁免——与 ops_guard.py
+        "安全 API 真源自身"同族（2026-08-20 波3 实证 19 处 5 文件存量浮出）。
+        用真实仓库文件回归：git_commit_gateway.py 内含 lock/pathspec 清理原语。"""
+        from unittest.mock import MagicMock
+
+        from zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate import (
+            _EXEMPT_FILES,
+            make_reconciler_file_ops_gate,
+        )
+
+        assert "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py" in _EXEMPT_FILES
+        gw = MagicMock()
+        from zephyr.shared.io.paths import REPO_ROOT
+
+        gw.project_root = str(REPO_ROOT)
+        passed, _ = make_reconciler_file_ops_gate().check(
+            gw, ["src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"]
+        )
+        assert passed is True

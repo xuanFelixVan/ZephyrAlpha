@@ -2,6 +2,7 @@
 # [TTL] permanent
 # -*- coding: utf-8 -*-
 """sector_snapshot_collector 单元测试。"""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -16,6 +17,7 @@ from zephyr.data.sector_snapshot_collector import (
 )
 
 # ---------- _to_decimal ----------
+
 
 class TestToDecimal:
     def test_normal_float(self):
@@ -45,6 +47,7 @@ class TestToDecimal:
 
 # ---------- _to_uint ----------
 
+
 class TestToUint:
     def test_normal_int(self):
         assert _to_uint(100) == 100
@@ -73,6 +76,7 @@ class TestToUint:
 
 # ---------- classify_market_type ----------
 
+
 class TestClassifyMarketType:
     def test_mkt_index_880001(self):
         assert classify_market_type("880001.SH") == "mkt_index"
@@ -91,6 +95,7 @@ class TestClassifyMarketType:
 
 
 # ---------- parse_snapshot ----------
+
 
 class TestParseSnapshot:
     def _make_snap(self, **overrides):
@@ -121,26 +126,26 @@ class TestParseSnapshot:
         now = datetime(2026, 7, 22, 10, 30, 0)
         row = parse_snapshot(snap, "880101.SH", "sector", "tqcenter_push", now_bj=now)
         assert row is not None
-        assert row[0] == now.date()          # trade_date
+        assert row[0] == now.date()  # trade_date
         assert row[1] == datetime(2026, 7, 22, 10, 30, 0)  # timestamp from Time
-        assert row[2] == "880101.SH"         # sector_code
-        assert row[3] == "sector"            # market_type
-        assert row[4] == 3500.5             # now_price
-        assert row[5] == 3490.0             # open_price
-        assert row[6] == 3510.0             # max_price
-        assert row[7] == 3485.0             # min_price
-        assert row[8] == 3488.0             # last_close
-        assert row[9] == 3495.0             # before_5min_now
-        assert row[10] == 3498.0            # average_price
-        assert row[11] == 0                 # volume (板块恒为0)
-        assert row[12] == 100               # now_vol
-        assert row[13] == 1234567.89        # amount
-        assert row[14] == 200               # up_home
-        assert row[15] == 150               # down_home
-        assert row[16] == 80                # inside
-        assert row[17] == 120               # outside
-        assert row[18] == 0.5               # zangsu
-        assert row[19] == "tqcenter_push"   # data_source
+        assert row[2] == "880101.SH"  # sector_code
+        assert row[3] == "sector"  # market_type
+        assert row[4] == 3500.5  # now_price
+        assert row[5] == 3490.0  # open_price
+        assert row[6] == 3510.0  # max_price
+        assert row[7] == 3485.0  # min_price
+        assert row[8] == 3488.0  # last_close
+        assert row[9] == 3495.0  # before_5min_now
+        assert row[10] == 3498.0  # average_price
+        assert row[11] == 0  # volume (板块恒为0)
+        assert row[12] == 100  # now_vol
+        assert row[13] == 1234567.89  # amount
+        assert row[14] == 200  # up_home
+        assert row[15] == 150  # down_home
+        assert row[16] == 80  # inside
+        assert row[17] == 120  # outside
+        assert row[18] == 0.5  # zangsu
+        assert row[19] == "tqcenter_push"  # data_source
         # fetched_at is dynamic, just check it's a datetime
         assert isinstance(row[20], datetime)
 
@@ -173,17 +178,15 @@ class TestParseSnapshot:
         assert row[1] == now  # timestamp falls back to now_bj
 
     def test_none_values_use_defaults(self):
-        snap = self._make_snap(
-            Now=None, Open="", Max="None", Volume=None, UpHome=""
-        )
+        snap = self._make_snap(Now=None, Open="", Max="None", Volume=None, UpHome="")
         now = datetime(2026, 7, 22, 10, 30, 0)
         row = parse_snapshot(snap, "880101.SH", "sector", "tqcenter_push", now_bj=now)
         assert row is not None
-        assert row[4] == 0.0   # now_price default
-        assert row[5] == 0.0   # open_price default
-        assert row[6] == 0.0   # max_price default
-        assert row[11] == 0    # volume default
-        assert row[14] == 0    # up_home default
+        assert row[4] == 0.0  # now_price default
+        assert row[5] == 0.0  # open_price default
+        assert row[6] == 0.0  # max_price default
+        assert row[11] == 0  # volume default
+        assert row[14] == 0  # up_home default
 
     def test_mkt_index_classification(self):
         snap = self._make_snap()

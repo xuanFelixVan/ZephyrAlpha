@@ -40,6 +40,7 @@
   子进程通过 fork/spawn 继承注册表（spawn 模式下子进程会重新 import 主模块）
 - 运行时动态注册的因子（非 import 时注册）在 spawn 子进程不可见，须用 max_workers<=1
 """
+
 from __future__ import annotations
 
 import logging
@@ -170,19 +171,13 @@ class DistributedFeatureEngine:
             - 单标的失败不阻断其他标的，记入 failed_symbols
         """
         if not isinstance(data.index, pd.MultiIndex):
-            raise ValueError(
-                "data 必须是 MultiIndex (symbol, date)，"
-                f"实际收到 {type(data.index).__name__}"
-            )
+            raise ValueError(f"data 必须是 MultiIndex (symbol, date)，实际收到 {type(data.index).__name__}")
         if "symbol" not in data.index.names or "trade_date" not in data.index.names:
             # 兼容 "date" 别名
             names_lower = [n.lower() for n in data.index.names]
-            if "symbol" not in names_lower or not any(
-                n in ("trade_date", "date") for n in names_lower
-            ):
+            if "symbol" not in names_lower or not any(n in ("trade_date", "date") for n in names_lower):
                 raise ValueError(
-                    "data.index.names 必须含 'symbol' 和 'trade_date'（或 'date'），"
-                    f"实际 {data.index.names}"
+                    f"data.index.names 必须含 'symbol' 和 'trade_date'（或 'date'），实际 {data.index.names}"
                 )
 
         kwargs_map = extra_kwargs or {}
@@ -194,9 +189,7 @@ class DistributedFeatureEngine:
             # 用途：单测/调试/轻量数据；避开 spawn 子进程无法继承运行时注册表
             for layer in layers:
                 for fid in layer:
-                    results[fid] = self._execute_one_factor_serial(
-                        fid, data, kwargs_map.get(fid, {})
-                    )
+                    results[fid] = self._execute_one_factor_serial(fid, data, kwargs_map.get(fid, {}))
             return results
 
         # ProcessPoolExecutor 在整个 execute 期间复用（避免每层重建开销）
@@ -227,9 +220,7 @@ class DistributedFeatureEngine:
                 if not self._bp.acquire():
                     log.warning("dist_feature_eng: backpressure 拒绝 %s/%s", factor_id, symbol)
                     continue
-            future = pool.submit(
-                compute_factor_for_symbol, factor_id, str(symbol), symbol_data, kwargs
-            )
+            future = pool.submit(compute_factor_for_symbol, factor_id, str(symbol), symbol_data, kwargs)
             futures[future] = symbol
 
         # 收集结果
@@ -292,9 +283,7 @@ class DistributedFeatureEngine:
                 failed.append(str(symbol))
                 continue
             try:
-                sym, _fid, series, error = compute_factor_for_symbol(
-                    factor_id, str(symbol), symbol_data, kwargs
-                )
+                sym, _fid, series, error = compute_factor_for_symbol(factor_id, str(symbol), symbol_data, kwargs)
                 if series is not None and not error:
                     series_map[sym] = series
                 else:

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_ASSET_INDEX_RECONCILER | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: SRC-TST-3004 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_error_pattern_consumer.py — P4-1b error_pattern_consumer_reconciler 单测

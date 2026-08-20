@@ -6,6 +6,7 @@
 - layered_returns: 空输入 / 单截面分层 / 层间收益单调 / 数据不足
 - compute_layer_spread: 多空收益差计算 / 数据不足截面跳过 / 全部不足返回空
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -89,15 +90,21 @@ class TestComputeLayerSpread:
         dates = [pd.Timestamp("2026-01-01"), pd.Timestamp("2026-01-02")]
         factor_panel = pd.DataFrame(
             {
-                "A": [1.0, 1.0], "B": [2.0, 2.0], "C": [3.0, 3.0],
-                "D": [4.0, 4.0], "E": [5.0, 5.0],
+                "A": [1.0, 1.0],
+                "B": [2.0, 2.0],
+                "C": [3.0, 3.0],
+                "D": [4.0, 4.0],
+                "E": [5.0, 5.0],
             },
             index=dates,
         )
         return_panel = pd.DataFrame(
             {
-                "A": [10.0, 5.0], "B": [20.0, 10.0], "C": [30.0, 15.0],
-                "D": [40.0, 20.0], "E": [50.0, 25.0],
+                "A": [10.0, 5.0],
+                "B": [20.0, 10.0],
+                "C": [30.0, 15.0],
+                "D": [40.0, 20.0],
+                "E": [50.0, 25.0],
             },
             index=dates,
         )
@@ -114,15 +121,21 @@ class TestComputeLayerSpread:
         dates = [pd.Timestamp("2026-01-01"), pd.Timestamp("2026-01-02")]
         factor_panel = pd.DataFrame(
             {
-                "A": [1.0, 1.0], "B": [2.0, 2.0], "C": [3.0, 3.0],
-                "D": [4.0, 4.0], "E": [5.0, 5.0],
+                "A": [1.0, 1.0],
+                "B": [2.0, 2.0],
+                "C": [3.0, 3.0],
+                "D": [4.0, 4.0],
+                "E": [5.0, 5.0],
             },
             index=dates,
         )
         return_panel = pd.DataFrame(
             {
-                "A": [10.0, 10.0], "B": [20.0, 20.0], "C": [30.0, 30.0],
-                "D": [40.0, float("nan")], "E": [50.0, float("nan")],
+                "A": [10.0, 10.0],
+                "B": [20.0, 20.0],
+                "C": [30.0, 30.0],
+                "D": [40.0, float("nan")],
+                "E": [50.0, float("nan")],
             },
             index=dates,
         )
@@ -147,7 +160,9 @@ class TestComputeLayerSpread:
 
     def test_empty_panels(self):
         spreads = compute_layer_spread(
-            pd.DataFrame(), pd.DataFrame(), n_layers=5,
+            pd.DataFrame(),
+            pd.DataFrame(),
+            n_layers=5,
         )
         assert spreads.empty
         assert spreads.name == "layer_spread"

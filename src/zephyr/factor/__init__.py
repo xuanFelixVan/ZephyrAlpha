@@ -94,7 +94,8 @@ __all__ = [
     "momentum_factor",
     "value_factor",
     "technical_indicators",
-'bus_factor_defense']
+    "bus_factor_defense",
+]
 
 # CODEGEN-GUARD: __init__-manual-exports
 # 包级导出以 factor_base 为 SSoT（base.py 已删除，2026-07-14 shim 消除）

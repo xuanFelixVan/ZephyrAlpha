@@ -25,6 +25,7 @@
 - writer 参数可注入（测试用，生产用默认 ch_writer.write_tsv_outcome）
 - 线程安全：threading.Lock 保护内部 list 和 _last_flush_ts
 """
+
 from __future__ import annotations
 
 import logging

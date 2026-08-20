@@ -55,9 +55,7 @@ class ValueFactor(FactorBase):
         # PIT 正确的 EPS：优先从 bar 数据读（data_handler 合并的 eps_basic），
         # 其次从 kwargs 读（向后兼容），最后用默认值 5.0（仅无财务数据时）
         if "eps_basic" in data.columns:
-            earnings_estimate = data["eps_basic"].fillna(
-                kwargs.get("earnings_per_share", 5.0)
-            )
+            earnings_estimate = data["eps_basic"].fillna(kwargs.get("earnings_per_share", 5.0))
         else:
             earnings_estimate = kwargs.get("earnings_per_share", 5.0)
 

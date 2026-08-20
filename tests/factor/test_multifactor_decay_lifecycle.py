@@ -9,6 +9,7 @@
 - CusumMonitor: 下行偏移预警/正常不预警
 - DECAY_TO_REGISTRY_STATUS 映射完整性
 """
+
 from __future__ import annotations
 
 import pytest

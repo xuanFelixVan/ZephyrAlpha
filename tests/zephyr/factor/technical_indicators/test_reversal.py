@@ -168,20 +168,20 @@ def _double_top_close(n: int = 60, weak_second: bool = True) -> pd.Series:
     """
     vals = [100.0] * 10
     if weak_second:
-        vals += [100.0 + i * 1.0 for i in range(1, 12)]      # bar10..20 → 峰 111（连涨）
-        vals += [111.0 - i * 0.5 for i in range(1, 11)]      # bar21..30 → 106
+        vals += [100.0 + i * 1.0 for i in range(1, 12)]  # bar10..20 → 峰 111（连涨）
+        vals += [111.0 - i * 0.5 for i in range(1, 11)]  # bar21..30 → 106
         step2 = 0.65
     else:
         v = 100.0
-        for i in range(1, 12):                                # bar10..20 混合涨跌 → 峰 104
+        for i in range(1, 12):  # bar10..20 混合涨跌 → 峰 104
             v += 1.0 if i % 2 else -0.4
             vals.append(v)
-        vals += [104.0 - i * 0.5 for i in range(1, 11)]      # bar21..30 → 99
+        vals += [104.0 - i * 0.5 for i in range(1, 11)]  # bar21..30 → 99
         step2 = 2.0
     base2 = vals[-1]
-    vals += [base2 + i * step2 for i in range(1, 11)]        # bar31..40 → 第二峰
+    vals += [base2 + i * step2 for i in range(1, 11)]  # bar31..40 → 第二峰
     peak2 = vals[-1]
-    vals += [peak2 - i * 0.5 for i in range(1, 10)]          # bar41..49 回落
+    vals += [peak2 - i * 0.5 for i in range(1, 10)]  # bar41..49 回落
     vals += [peak2 - 4.5] * (n - len(vals))
     return pd.Series(vals[:n], dtype=float)
 
@@ -192,14 +192,14 @@ def _double_bottom_close(n: int = 60, strong_second: bool = True) -> pd.Series:
     → 价新低 88.5<89 + RSI 较高 = 底背离。段间衔接一律用 vals[-1]，防硬编码错位。
     """
     vals = [100.0] * 10
-    vals += [100.0 - i * 1.0 for i in range(1, 12)]          # bar10..20 → 谷 89（连跌）
+    vals += [100.0 - i * 1.0 for i in range(1, 12)]  # bar10..20 → 谷 89（连跌）
     base1 = vals[-1]
-    vals += [base1 + i * 0.5 for i in range(1, 11)]          # bar21..30 → 94
+    vals += [base1 + i * 0.5 for i in range(1, 11)]  # bar21..30 → 94
     step2 = 0.55 if strong_second else 1.2
     base2 = vals[-1]
-    vals += [base2 - i * step2 for i in range(1, 11)]        # bar31..40 → 第二谷
+    vals += [base2 - i * step2 for i in range(1, 11)]  # bar31..40 → 第二谷
     trough2 = vals[-1]
-    vals += [trough2 + i * 0.5 for i in range(1, 10)]        # bar41..49 回升
+    vals += [trough2 + i * 0.5 for i in range(1, 10)]  # bar41..49 回升
     vals += [trough2 + 4.5] * (n - len(vals))
     return pd.Series(vals[:n], dtype=float)
 

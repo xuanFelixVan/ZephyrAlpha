@@ -249,6 +249,18 @@ class TestCheckGate:
         passed, _ = make_undefined_name_gate().check(gw, ["tests/foo_test.py"])
         assert passed is True
 
+    def test_archive_staged_skipped(self) -> None:
+        """staged 路径 _archive 豁免（裁定#E 同口径，2026-08-20 波3 补齐）——
+        归档一次性死代码不参与 F821 扫描（format 重排存量符号伪"新增"不阻断）。"""
+        archived = "scripts/governance/_archive/one_off/migrate_foo.py"
+        gw = _make_gateway(
+            [archived],
+            {archived: "X = DB_DISPLAY_NAME\n"},
+        )
+        passed, detail = make_undefined_name_gate().check(gw, [archived])
+        assert passed is True
+        assert detail == ""
+
     def test_no_staged_files_passes(self) -> None:
         gw = _make_gateway([], {})
         passed, detail = make_undefined_name_gate().check(gw, [])

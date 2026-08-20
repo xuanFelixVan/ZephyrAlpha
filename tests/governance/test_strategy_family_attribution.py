@@ -18,14 +18,7 @@ import yaml
 
 from zephyr.shared.io.paths import REPO_ROOT
 
-_REGISTRY = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "strategy_registry.yaml"
-)
+_REGISTRY = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "strategy_registry.yaml"
 
 #: 已知策略族（schema 注释枚举真源：daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation）
 _KNOWN_CLASSES = frozenset(

@@ -14,6 +14,7 @@
 静默消失，原实现不闭合（stale '上市' 快照最长挂 1 个月等 akshare 月度任务）。
 修复：刷新后对账 CH valid_to IS NULL 快照，消失标的凭 ExpireDate 证据闭合。
 """
+
 from __future__ import annotations
 
 import datetime
@@ -38,8 +39,9 @@ _ACTIVE_TSV = (
 )
 
 
-def _wire(monkeypatch, sector=None, details=None, active_tsv=_ACTIVE_TSV,
-          active_exc=None, full_min=2, closure_max_abs=None):
+def _wire(
+    monkeypatch, sector=None, details=None, active_tsv=_ACTIVE_TSV, active_exc=None, full_min=2, closure_max_abs=None
+):
     """构造 provider + xtquant/ch_reader mock。
 
     sector: 板块接口返回的在市标的列表；details: {stock_code: dict|Exception}；
@@ -84,8 +86,12 @@ def _wire(monkeypatch, sector=None, details=None, active_tsv=_ACTIVE_TSV,
 
 def _run(p):
     payload = FetchPayload(
-        table="", symbols=None, start=D(2026, 8, 20), end=D(2026, 8, 20),
-        incremental=False, extra={},
+        table="",
+        symbols=None,
+        start=D(2026, 8, 20),
+        end=D(2026, 8, 20),
+        incremental=False,
+        extra={},
     )
     return list(p._fetch_stock_list(payload, MagicMock()))
 
@@ -98,8 +104,12 @@ class TestDelistedClosure:
             details={
                 "600000.SH": {"InstrumentName": "浦发银行", "ExchangeID": "SH", "OpenDate": "19991110"},
                 "000001.SZ": {"InstrumentName": "平安银行", "ExchangeID": "SZ", "OpenDate": "19910403"},
-                "600001.SH": {"InstrumentName": "邯郸钢铁", "ExchangeID": "SH",
-                              "OpenDate": "19980122", "ExpireDate": "20260801"},
+                "600001.SH": {
+                    "InstrumentName": "邯郸钢铁",
+                    "ExchangeID": "SH",
+                    "OpenDate": "19980122",
+                    "ExpireDate": "20260801",
+                },
             },
         )
         results = _run(p)
@@ -113,8 +123,8 @@ class TestDelistedClosure:
         assert row[0] == "600001.SH"
         assert row[1] == "600001"
         assert row[2] == "邯郸钢铁"  # name 从 CH 快照结转
-        assert row[4] == "钢铁"     # industry 结转
-        assert row[10] == "退市"    # list_status
+        assert row[4] == "钢铁"  # industry 结转
+        assert row[10] == "退市"  # list_status
         assert row[11] == "1998-01-22"  # list_date 结转
         assert row[12] == "2026-08-01"  # delist_date=ExpireDate
         assert row[16] == "2026-08-01"  # valid_to=delist_date（SCD-2 终止）

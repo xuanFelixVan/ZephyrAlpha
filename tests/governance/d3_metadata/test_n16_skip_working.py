@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """N-16 应跳过 docs/_working/ 草稿区（trae_028 n16_config.skip_dirs_docs 含 _working）。
 
 背景（#ARCH-PRECOMMIT-INCREMENTAL，2026-08-05）：

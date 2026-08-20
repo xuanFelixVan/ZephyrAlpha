@@ -8,6 +8,7 @@
 - 无 alerter 时静默（向后兼容）
 - 持续 DEAD 不重复告警（仅状态变化时触发）
 """
+
 from __future__ import annotations
 
 from typing import List, Tuple

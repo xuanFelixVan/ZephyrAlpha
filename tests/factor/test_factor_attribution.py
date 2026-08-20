@@ -6,6 +6,7 @@
 - attribute_by_time: 空输入 / 按月聚合正确 / 按季聚合
 - attribute_by_sector: 空输入 / 行业归因分组 / 缺失行业映射="未知" / 单行业
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -24,9 +25,7 @@ class TestAttributeByTime:
         assert result.empty
 
     def test_monthly_aggregation(self):
-        dates = pd.to_datetime(
-            ["2026-01-10", "2026-01-20", "2026-02-15", "2026-03-10"]
-        )
+        dates = pd.to_datetime(["2026-01-10", "2026-01-20", "2026-02-15", "2026-03-10"])
         ic = pd.Series([0.1, 0.2, 0.3, 0.4], index=dates)
         # 使用非弃用的 "ME"（month end）别名，避免 pandas 2.x FutureWarning
         result = attribute_by_time(ic, freq="ME")

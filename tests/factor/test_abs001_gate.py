@@ -20,6 +20,7 @@
   / 负IC按abs判定通过
 - get_gate_spec: 结构 / 字段完整性 / 检查项指标名
 """
+
 from __future__ import annotations
 
 import pytest

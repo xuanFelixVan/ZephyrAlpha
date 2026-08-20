@@ -149,7 +149,7 @@ def _local_extrema(values: np.ndarray, order: int, kind: str) -> list[int]:
     n = len(values)
     extrema: list[int] = []
     for i in range(order, n - order):
-        window = values[i - order: i + order + 1]
+        window = values[i - order : i + order + 1]
         if np.isnan(window).any():
             continue
         center = window[order]

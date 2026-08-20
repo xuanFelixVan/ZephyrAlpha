@@ -22,6 +22,7 @@
   / backtest→paper 需门禁 / 门禁未过不推进 / 到 production 无法推进 / 未提交推进报错
 - check_exit_gate: research/development 无门禁 / backtest 需门禁
 """
+
 from __future__ import annotations
 
 import pytest

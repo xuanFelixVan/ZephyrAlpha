@@ -80,6 +80,7 @@ D-FACTOR-GOV-05 因子治理引擎——顶层编排六步流程+灰度发布。
 # A1 --> O2
 # A3 --> O2
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

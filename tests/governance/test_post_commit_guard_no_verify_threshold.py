@@ -36,6 +36,7 @@ post_commit_guard_*.json 读取 violation=unregistered_session_id + action=warn_
    - count >= threshold → block，commit 被 reset（HEAD 回退）
    - 阈值可通过 POST_COMMIT_GUARD_NO_VERIFY_THRESHOLD 环境变量覆盖
 """
+
 from __future__ import annotations
 
 import json
@@ -54,8 +55,13 @@ HOOK_SRC = REPO_ROOT / "scripts" / "governance" / "git_hooks" / "post_commit_gua
 def _git(repo: Path, *args: str, env: dict | None = None) -> subprocess.CompletedProcess:
     """Run a git command in repo, return CompletedProcess."""
     return subprocess.run(
-        ["git", *args], cwd=repo, env=env, capture_output=True, text=True,
-        encoding="utf-8", errors="replace",
+        ["git", *args],
+        cwd=repo,
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
     )
 
 
@@ -165,8 +171,7 @@ class TestNoVerifyThreshold:
         result = _make_test_commit(repo, "sess-test-block")
         current_head = _git(repo, "rev-parse", "HEAD").stdout.strip()
         assert current_head == initial_head, (
-            f"commit 应被 reset（block），HEAD 应回退到 initial。"
-            f"current={current_head[:8]} initial={initial_head[:8]}"
+            f"commit 应被 reset（block），HEAD 应回退到 initial。current={current_head[:8]} initial={initial_head[:8]}"
         )
         combined = result.stdout + result.stderr
         assert "BLOCK" in combined, f"输出应含 BLOCK：{combined}"
@@ -182,8 +187,7 @@ class TestNoVerifyThreshold:
         result = _make_test_commit(repo, "sess-test-cfg", threshold=1)
         current_head = _git(repo, "rev-parse", "HEAD").stdout.strip()
         assert current_head == initial_head, (
-            f"threshold=1 时 1 个 prior warn 应 block。"
-            f"current={current_head[:8]} initial={initial_head[:8]}"
+            f"threshold=1 时 1 个 prior warn 应 block。current={current_head[:8]} initial={initial_head[:8]}"
         )
         combined = result.stdout + result.stderr
         assert "BLOCK" in combined, f"输出应含 BLOCK：{combined}"
@@ -215,8 +219,7 @@ class TestNoVerifyThreshold:
         result = _make_test_commit(repo, "sess-test-expire")
         current_head = _git(repo, "rev-parse", "HEAD").stdout.strip()
         assert current_head != initial_head, (
-            f"过期的 warn-only 报告不应计入，commit 应保留。"
-            f"current={current_head[:8]} initial={initial_head[:8]}"
+            f"过期的 warn-only 报告不应计入，commit 应保留。current={current_head[:8]} initial={initial_head[:8]}"
         )
         combined = result.stdout + result.stderr
         assert "WARN" in combined, f"输出应含 WARN（过期报告不计）：{combined}"
@@ -233,8 +236,7 @@ class TestNoVerifyThreshold:
         result = _make_test_commit(repo, "sess-test-isolated")
         current_head = _git(repo, "rev-parse", "HEAD").stdout.strip()
         assert current_head != initial_head, (
-            f"其他 session 的报告不应计入，commit 应保留。"
-            f"current={current_head[:8]} initial={initial_head[:8]}"
+            f"其他 session 的报告不应计入，commit 应保留。current={current_head[:8]} initial={initial_head[:8]}"
         )
 
     def test_spaced_json_reports_also_counted(self, temp_git_repo):
@@ -260,8 +262,7 @@ class TestNoVerifyThreshold:
         result = _make_test_commit(repo, "sess-test-spaced")
         current_head = _git(repo, "rev-parse", "HEAD").stdout.strip()
         assert current_head == initial_head, (
-            f"spaced JSON 报告应被计数（3 >= 3 → block）。"
-            f"current={current_head[:8]} initial={initial_head[:8]}"
+            f"spaced JSON 报告应被计数（3 >= 3 → block）。current={current_head[:8]} initial={initial_head[:8]}"
         )
         combined = result.stdout + result.stderr
         assert "BLOCK" in combined, f"spaced JSON 应触发 BLOCK：{combined}"

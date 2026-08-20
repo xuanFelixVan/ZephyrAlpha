@@ -11,6 +11,7 @@
 
 不依赖真实 SDK，用 mock 子类和 mock 函数。
 """
+
 import datetime
 import time
 
@@ -26,12 +27,18 @@ from src.zephyr.data.provider_base import (
 
 # ============== 测试用 mock 子类 ==============
 
+
 class _MockProvider(IngestProviderBase):
     """最小可实例化的 IngestProviderBase 子类（实现所有抽象方法）。"""
+
     source_name = "mock"
     meta = IngestProviderMeta(
-        name="mock", display_name="Mock", auth_type="anonymous",
-        requires_process=False, thread_safety="shared", rate_limit_default=0,
+        name="mock",
+        display_name="Mock",
+        auth_type="anonymous",
+        requires_process=False,
+        thread_safety="shared",
+        rate_limit_default=0,
     )
 
     def connect(self):
@@ -42,8 +49,11 @@ class _MockProvider(IngestProviderBase):
 
     def fetch(self, payload, policy):
         yield FetchResult(
-            table=payload.table, columns=["a"], rows=[(1,)],
-            last_key="x", elapsed_sec=0.0,
+            table=payload.table,
+            columns=["a"],
+            rows=[(1,)],
+            last_key="x",
+            elapsed_sec=0.0,
         )
 
     def disconnect(self):
@@ -51,6 +61,7 @@ class _MockProvider(IngestProviderBase):
 
 
 # ============== 数据类测试 ==============
+
 
 class TestFetchPayload:
     def test_construction(self):
@@ -67,8 +78,10 @@ class TestFetchPayload:
 
     def test_full_market(self):
         p = FetchPayload(
-            table="t", symbols=None,
-            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 2),
+            table="t",
+            symbols=None,
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 2),
         )
         assert p.symbols is None
 
@@ -76,15 +89,22 @@ class TestFetchPayload:
 class TestFetchResult:
     def test_rows_fetched_autofill(self):
         r = FetchResult(
-            table="t", columns=["a"], rows=[(1,), (2,), (3,)],
-            last_key="k", elapsed_sec=1.0,
+            table="t",
+            columns=["a"],
+            rows=[(1,), (2,), (3,)],
+            last_key="k",
+            elapsed_sec=1.0,
         )
         assert r.rows_fetched == 3
 
     def test_rows_fetched_explicit(self):
         r = FetchResult(
-            table="t", columns=["a"], rows=[(1,)],
-            last_key="k", elapsed_sec=1.0, rows_fetched=100,
+            table="t",
+            columns=["a"],
+            rows=[(1,)],
+            last_key="k",
+            elapsed_sec=1.0,
+            rows_fetched=100,
         )
         assert r.rows_fetched == 100
 
@@ -96,14 +116,19 @@ class TestFetchResult:
 class TestIngestProviderMeta:
     def test_defaults(self):
         m = IngestProviderMeta(
-            name="x", display_name="X", auth_type="anonymous",
-            requires_process=False, thread_safety="shared", rate_limit_default=0,
+            name="x",
+            display_name="X",
+            auth_type="anonymous",
+            requires_process=False,
+            thread_safety="shared",
+            rate_limit_default=0,
         )
         assert m.capabilities == []
         assert m.known_issues == []
 
 
 # ============== _call_with_policy 测试 ==============
+
 
 class TestCallWithPolicy:
     def test_success_no_retry(self):
@@ -124,8 +149,10 @@ class TestCallWithPolicy:
         """失败后重试成功。"""
         p = _MockProvider()
         policy = SourcePolicy(
-            max_retries=3, retry_on=["ValueError"],
-            backoff="fixed", initial_wait_sec=0.01,
+            max_retries=3,
+            retry_on=["ValueError"],
+            backoff="fixed",
+            initial_wait_sec=0.01,
         )
         calls = []
 
@@ -143,8 +170,10 @@ class TestCallWithPolicy:
         """重试耗尽抛异常。"""
         p = _MockProvider()
         policy = SourcePolicy(
-            max_retries=2, retry_on=["ValueError"],
-            backoff="fixed", initial_wait_sec=0.01,
+            max_retries=2,
+            retry_on=["ValueError"],
+            backoff="fixed",
+            initial_wait_sec=0.01,
         )
 
         def fn():
@@ -171,8 +200,10 @@ class TestCallWithPolicy:
         """retry_on 匹配错误消息子串。"""
         p = _MockProvider()
         policy = SourcePolicy(
-            max_retries=2, retry_on=["-4318"],
-            backoff="fixed", initial_wait_sec=0.01,
+            max_retries=2,
+            retry_on=["-4318"],
+            backoff="fixed",
+            initial_wait_sec=0.01,
         )
         calls = []
 
@@ -199,6 +230,7 @@ class TestCallWithPolicy:
 
 # ============== _rate_limit_sleep 测试 ==============
 
+
 class TestRateLimitSleep:
     def test_no_sleep_when_rpm_zero(self):
         """rpm=0 不限流。"""
@@ -222,6 +254,7 @@ class TestRateLimitSleep:
 
 # ============== _calc_backoff 测试 ==============
 
+
 class TestCalcBackoff:
     def test_fixed(self):
         assert IngestProviderBase.calc_backoff("fixed", 2.0, 0) == 2.0
@@ -237,7 +270,7 @@ class TestCalcBackoff:
         """jittered = exponential ± 0.5。"""
         for attempt in range(5):
             val = IngestProviderBase.calc_backoff("jittered", 1.0, attempt)
-            base = 1.0 * (2 ** attempt)
+            base = 1.0 * (2**attempt)
             assert base - 0.5 <= val <= base + 0.5
 
     def test_unknown_mode_defaults_fixed(self):
@@ -245,6 +278,7 @@ class TestCalcBackoff:
 
 
 # ============== 上下文管理测试 ==============
+
 
 class TestContextManager:
     def test_with_connects_and_disconnects(self):
@@ -262,12 +296,15 @@ class TestContextManager:
 
 # ============== fetch 迭代器测试 ==============
 
+
 class TestFetchIterator:
     def test_mock_fetch_yields_result(self):
         p = _MockProvider()
         payload = FetchPayload(
-            table="t", symbols=["x"],
-            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 2),
+            table="t",
+            symbols=["x"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 2),
         )
         results = list(p.fetch(payload, SourcePolicy()))
         assert len(results) == 1

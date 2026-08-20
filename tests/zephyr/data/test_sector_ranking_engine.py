@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """sector_ranking_engine 单元测试。"""
+
 from __future__ import annotations
 
 import pytest

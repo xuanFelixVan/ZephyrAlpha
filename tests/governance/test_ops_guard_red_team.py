@@ -137,9 +137,7 @@ class TestRedTeamAttackVectorsBlocked:
             f"  verdict.targets={verdict.targets}\n"
             f"  verdict.reason={verdict.reason}"
         )
-        assert verdict.is_protected_zone, (
-            f"攻击未标记为保护区: {cmd}\n  targets={verdict.targets}"
-        )
+        assert verdict.is_protected_zone, f"攻击未标记为保护区: {cmd}\n  targets={verdict.targets}"
 
     def test_attack_vector_count(self) -> None:
         """确保攻击向量覆盖面（防止意外删减导致测试空心化）。"""
@@ -152,10 +150,7 @@ class TestRedTeamAttackVectorsBlocked:
     def test_100_percent_interception_rate(self) -> None:
         """S1 验收标准：红队 100% 拦截率。"""
         total = len(ALL_ATTACK_VECTORS)
-        blocked = sum(
-            1 for cmd in ALL_ATTACK_VECTORS
-            if not analyze_delete_command(cmd).allowed
-        )
+        blocked = sum(1 for cmd in ALL_ATTACK_VECTORS if not analyze_delete_command(cmd).allowed)
         rate = blocked / total * 100
         assert rate == 100.0, f"拦截率 {rate:.1f}%（{blocked}/{total}），未达 100%"
 
@@ -182,9 +177,7 @@ class TestWhitelistAllowed:
     def test_whitelist_allowed(self, cmd: str) -> None:
         """白名单路径和显式单文件删除必须放行。"""
         verdict = analyze_delete_command(cmd)
-        assert verdict.allowed, (
-            f"白名单/单文件删除被误拦: {cmd}\n  reason={verdict.reason}"
-        )
+        assert verdict.allowed, f"白名单/单文件删除被误拦: {cmd}\n  reason={verdict.reason}"
 
 
 class TestNonRecursiveSingleFile:
@@ -203,9 +196,7 @@ class TestNonRecursiveSingleFile:
     def test_single_file_allowed(self, cmd: str) -> None:
         """显式单文件（非递归）删除在保护区内也放行。"""
         verdict = analyze_delete_command(cmd)
-        assert verdict.allowed, (
-            f"单文件删除被误拦: {cmd}\n  reason={verdict.reason}"
-        )
+        assert verdict.allowed, f"单文件删除被误拦: {cmd}\n  reason={verdict.reason}"
         assert not verdict.is_recursive
 
 
@@ -238,9 +229,7 @@ class TestDocsUntrackedGuard:
         """已 tracked 的 docs 文件单文件删除放行（T3② 不误伤 git 安全网内文件）。"""
         monkeypatch.setattr(ops_guard_mod, "_is_docs_untracked", lambda *a, **kw: False)
         verdict = analyze_delete_command("Remove-Item docs\\tracked_doc.md")
-        assert verdict.allowed, (
-            f"tracked docs 单文件删除被误拦: reason={verdict.reason}"
-        )
+        assert verdict.allowed, f"tracked docs 单文件删除被误拦: reason={verdict.reason}"
 
 
 class TestAuthorizedBypass:
@@ -249,9 +238,7 @@ class TestAuthorizedBypass:
     def test_force_env_allows_protected_delete(self) -> None:
         """ZEPHYR_FORCE_DELETE=1 时保护区递归删除放行（但仍落审计）。"""
         with patch.dict(os.environ, {"ZEPHYR_FORCE_DELETE": "1"}):
-            verdict = analyze_delete_command(
-                "Remove-Item -Recurse -Force .worktrees\\AI-OLD-DONE"
-            )
+            verdict = analyze_delete_command("Remove-Item -Recurse -Force .worktrees\\AI-OLD-DONE")
             assert verdict.allowed
             assert verdict.is_protected_zone  # 仍标记保护区（审计用）
             assert "授权" in verdict.reason
@@ -259,9 +246,7 @@ class TestAuthorizedBypass:
     def test_gateway_env_allows_protected_delete(self) -> None:
         """ZEPHYR_COMMIT_GATEWAY=1 时保护区递归删除放行。"""
         with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1"}):
-            verdict = analyze_delete_command(
-                "Remove-Item -Recurse -Force .worktrees\\AI-OLD-DONE"
-            )
+            verdict = analyze_delete_command("Remove-Item -Recurse -Force .worktrees\\AI-OLD-DONE")
             assert verdict.allowed
 
 
@@ -355,9 +340,7 @@ class TestPrimitiveDetection:
 
     def test_absolute_path_resolution(self) -> None:
         """绝对路径正确解析为仓库相对路径。"""
-        v = analyze_delete_command(
-            "Remove-Item -Recurse -Force D:\\ZephyrAlpha\\.worktrees\\AI-X"
-        )
+        v = analyze_delete_command("Remove-Item -Recurse -Force D:\\ZephyrAlpha\\.worktrees\\AI-X")
         assert not v.allowed
         assert any(".worktrees" in t for t in v.targets)
 

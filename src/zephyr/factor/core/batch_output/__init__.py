@@ -19,6 +19,7 @@
 缓冲 FactorSignal 列表，按定量（batch_size）或定时（flush_interval_s）触发刷新，
 调用 ch_writer.write_tsv_outcome 写入 ClickHouse。
 """
+
 from __future__ import annotations
 
 from zephyr.factor.core.batch_output.buffer import (

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """test_check_pure_assertion.py — check_pure_assertion.py 检测逻辑测试。"""
 
 import importlib.util

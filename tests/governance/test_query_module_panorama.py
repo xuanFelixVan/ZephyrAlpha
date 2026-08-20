@@ -26,6 +26,7 @@
 
 DB 连接全部 mock，不依赖真实 PostgreSQL。
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -42,20 +43,13 @@ import pytest
 # 故 query_module_panorama.py 的 design_maturity 保持 production（ARCH-MM-002
 # 两档化：物理存在=production，与所有 scripts/ 模块一致，如 align_panoramas.py）。
 # 这是生成器的已知限制，非模块缺陷。
-_SCRIPT_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "scripts"
-    / "governance"
-    / "query_module_panorama.py"
-)
+_SCRIPT_PATH = Path(__file__).resolve().parents[2] / "scripts" / "governance" / "query_module_panorama.py"
 
 
 @pytest.fixture(scope="module")
 def qmp():
     """加载 query_module_panorama.py 为独立模块（规避 governance 包名冲突）。"""
-    spec = importlib.util.spec_from_file_location(
-        "query_module_panorama_under_test", _SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("query_module_panorama_under_test", _SCRIPT_PATH)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -121,9 +115,16 @@ class TestQueryDepgraphNodes:
     """_query_depgraph_nodes 返回 list[dict]。"""
 
     def test_returns_list_of_dict(self, qmp, monkeypatch):
-        desc = [("path",), ("node_type",), ("domain_id",),
-                ("design_maturity",), ("build_status",),
-                ("entry_point",), ("public_api",), ("blueprint_path",)]
+        desc = [
+            ("path",),
+            ("node_type",),
+            ("domain_id",),
+            ("design_maturity",),
+            ("build_status",),
+            ("entry_point",),
+            ("public_api",),
+            ("blueprint_path",),
+        ]
         rows = [
             ("src/a.py", "module", "D_GOVERNANCE", "production", "stable", True, "run", "bp.md"),
             ("src/b.py", "module", "D_GOVERNANCE", "production", "stable", False, "", "bp.md"),
@@ -142,8 +143,15 @@ class TestQueryDepgraphMetadata:
     """_query_depgraph_metadata 返回 dict|None。"""
 
     def test_returns_dict_when_found(self, qmp, monkeypatch):
-        desc = [("path",), ("module_name_cn",), ("module_name_en",),
-                ("description_cn",), ("description_en",), ("tags",), ("last_updated",)]
+        desc = [
+            ("path",),
+            ("module_name_cn",),
+            ("module_name_en",),
+            ("description_cn",),
+            ("description_en",),
+            ("tags",),
+            ("last_updated",),
+        ]
         row = ("src/a.py", "测试模块", "test_module", "desc", "desc_en", "t1", "2026-07-09")
         conn = _make_mock_conn([(desc, [], row)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)
@@ -162,17 +170,17 @@ class TestQueryDataflowEntities:
     """_query_dataflow_entities 合并 datasets + jobs。"""
 
     def test_merges_datasets_and_jobs(self, qmp, monkeypatch):
-        ds_desc = [("entity_name",), ("entity_type",), ("scope",),
-                   ("domain_id",), ("physical_type",)]
+        ds_desc = [("entity_name",), ("entity_type",), ("scope",), ("domain_id",), ("physical_type",)]
         ds_rows = [("ds1", "dataset", "global", "D_MARKET", "table")]
-        job_desc = [("job_name",), ("entity_type",), ("scope",),
-                    ("source_code_ref",), ("trigger_type",)]
+        job_desc = [("job_name",), ("entity_type",), ("scope",), ("source_code_ref",), ("trigger_type",)]
         job_rows = [("job1", "job", "global", "src/j.py", "event")]
         # 两次 execute：datasets / jobs
-        conn = _make_mock_conn([
-            (ds_desc, ds_rows, None),
-            (job_desc, job_rows, None),
-        ])
+        conn = _make_mock_conn(
+            [
+                (ds_desc, ds_rows, None),
+                (job_desc, job_rows, None),
+            ]
+        )
         monkeypatch.setattr(qmp, "get_dataflowgraph_pg_connection", lambda: conn)
         result = qmp.query_dataflow_entities("MOD-TEST")
         assert len(result) == 2
@@ -184,16 +192,16 @@ class TestQueryDecisionNodes:
     """_query_decision_nodes 合并 layers + nodes。"""
 
     def test_merges_layers_and_nodes(self, qmp, monkeypatch):
-        node_desc = [("decision_name",), ("layer_id",), ("node_type",),
-                     ("design_maturity",), ("build_status",)]
+        node_desc = [("decision_name",), ("layer_id",), ("node_type",), ("design_maturity",), ("build_status",)]
         node_rows = [("dec1", "L1", "action", "production", "stable")]
-        layer_desc = [("layer_name",), ("layer_id",), ("design_maturity",),
-                      ("build_status",)]
+        layer_desc = [("layer_name",), ("layer_id",), ("design_maturity",), ("build_status",)]
         layer_rows = [("Layer1", "L1", "production", "stable")]
-        conn = _make_mock_conn([
-            (node_desc, node_rows, None),
-            (layer_desc, layer_rows, None),
-        ])
+        conn = _make_mock_conn(
+            [
+                (node_desc, node_rows, None),
+                (layer_desc, layer_rows, None),
+            ]
+        )
         monkeypatch.setattr(qmp, "get_decisiongraph_pg_connection", lambda: conn)
         result = qmp.query_decision_nodes("MOD-TEST")
         assert len(result) == 2
@@ -206,9 +214,15 @@ class TestQueryAllModules:
     """_query_all_modules 返回 list[dict]。"""
 
     def test_returns_grouped_modules(self, qmp, monkeypatch):
-        desc = [("blueprint_id",), ("domain_id",), ("file_count",),
-                ("design_maturity",), ("build_status",),
-                ("blueprint_path",), ("has_entry_point",)]
+        desc = [
+            ("blueprint_id",),
+            ("domain_id",),
+            ("file_count",),
+            ("design_maturity",),
+            ("build_status",),
+            ("blueprint_path",),
+            ("has_entry_point",),
+        ]
         rows = [
             ("MOD-A", "D_GOVERNANCE", 3, "production", "stable", "bp/a.md", True),
             ("MOD-B", "D_MARKET", 1, "design", "planned", "bp/b.md", False),
@@ -231,9 +245,16 @@ class TestSingleModuleNotFound:
 
     def test_not_found_exit_3(self, qmp, monkeypatch, capsys):
         # depgraph 返回空
-        desc = [("path",), ("node_type",), ("domain_id",),
-                ("design_maturity",), ("build_status",),
-                ("entry_point",), ("public_api",), ("blueprint_path",)]
+        desc = [
+            ("path",),
+            ("node_type",),
+            ("domain_id",),
+            ("design_maturity",),
+            ("build_status",),
+            ("entry_point",),
+            ("public_api",),
+            ("blueprint_path",),
+        ]
         conn = _make_mock_conn([(desc, [], None)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)
         rc = qmp.print_single_module("MOD-MISSING")
@@ -246,33 +267,54 @@ class TestSingleModuleFound:
     """module_id 存在 → exit 0。"""
 
     def test_found_exit_0(self, qmp, monkeypatch, capsys):
-        node_desc = [("path",), ("node_type",), ("domain_id",),
-                     ("design_maturity",), ("build_status",),
-                     ("entry_point",), ("public_api",), ("blueprint_path",)]
+        node_desc = [
+            ("path",),
+            ("node_type",),
+            ("domain_id",),
+            ("design_maturity",),
+            ("build_status",),
+            ("entry_point",),
+            ("public_api",),
+            ("blueprint_path",),
+        ]
         node_rows = [("src/a.py", "module", "D_GOVERNANCE", "production", "stable", True, "run", "bp.md")]
-        meta_desc = [("path",), ("module_name_cn",), ("module_name_en",),
-                     ("description_cn",), ("description_en",), ("tags",), ("last_updated",)]
+        meta_desc = [
+            ("path",),
+            ("module_name_cn",),
+            ("module_name_en",),
+            ("description_cn",),
+            ("description_en",),
+            ("tags",),
+            ("last_updated",),
+        ]
         # depgraph 连接被调用两次：_query_depgraph_nodes + _query_depgraph_metadata
         conn_nodes = _make_mock_conn([(node_desc, node_rows, None)])
         conn_meta = _make_mock_conn([(meta_desc, [], None)])
         monkeypatch.setattr(
-            qmp, "get_depgraph_pg_connection",
+            qmp,
+            "get_depgraph_pg_connection",
             MagicMock(side_effect=[conn_nodes, conn_meta]),
         )
         # dataflow + decision 返回空
         monkeypatch.setattr(
-            qmp, "get_dataflowgraph_pg_connection",
-            lambda: _make_mock_conn([
-                ((("entity_name",),), [], None),
-                ((("job_name",),), [], None),
-            ]),
+            qmp,
+            "get_dataflowgraph_pg_connection",
+            lambda: _make_mock_conn(
+                [
+                    ((("entity_name",),), [], None),
+                    ((("job_name",),), [], None),
+                ]
+            ),
         )
         monkeypatch.setattr(
-            qmp, "get_decisiongraph_pg_connection",
-            lambda: _make_mock_conn([
-                ((("decision_name",),), [], None),
-                ((("layer_name",),), [], None),
-            ]),
+            qmp,
+            "get_decisiongraph_pg_connection",
+            lambda: _make_mock_conn(
+                [
+                    ((("decision_name",),), [], None),
+                    ((("layer_name",),), [], None),
+                ]
+            ),
         )
         rc = qmp.print_single_module("MOD-TEST")
         assert rc == 0
@@ -282,9 +324,15 @@ class TestAllModules:
     """--all → exit 0。"""
 
     def test_all_modules_exit_0(self, qmp, monkeypatch, capsys):
-        desc = [("blueprint_id",), ("domain_id",), ("file_count",),
-                ("design_maturity",), ("build_status",),
-                ("blueprint_path",), ("has_entry_point",)]
+        desc = [
+            ("blueprint_id",),
+            ("domain_id",),
+            ("file_count",),
+            ("design_maturity",),
+            ("build_status",),
+            ("blueprint_path",),
+            ("has_entry_point",),
+        ]
         rows = [("MOD-A", "D_GOVERNANCE", 2, "production", "stable", "bp.md", True)]
         conn = _make_mock_conn([(desc, rows, None)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)
@@ -308,9 +356,15 @@ class TestMainAll:
 
     def test_main_all_exit_0(self, qmp, monkeypatch):
         monkeypatch.setattr("sys.argv", ["query_module_panorama.py", "--all"])
-        desc = [("blueprint_id",), ("domain_id",), ("file_count",),
-                ("design_maturity",), ("build_status",),
-                ("blueprint_path",), ("has_entry_point",)]
+        desc = [
+            ("blueprint_id",),
+            ("domain_id",),
+            ("file_count",),
+            ("design_maturity",),
+            ("build_status",),
+            ("blueprint_path",),
+            ("has_entry_point",),
+        ]
         rows = [("MOD-A", "D_GOVERNANCE", 1, "production", "stable", "bp.md", False)]
         conn = _make_mock_conn([(desc, rows, None)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)

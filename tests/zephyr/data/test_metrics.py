@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-H1_REDIS_HOT | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """IntegratorMetrics 单测（MOD-L00-004 §11 可观测性）。"""
+
 import os
 import tempfile
 from pathlib import Path

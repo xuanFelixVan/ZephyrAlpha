@@ -7,6 +7,7 @@
 - decide: 回归可行/条件数过高降IC加权/样本不足等权/信号衰竭等权/集中度过高等权/默认IC加权
 - synthesize_with_degradation: 分派正确性 + 空输入退化
 """
+
 from __future__ import annotations
 
 import numpy as np

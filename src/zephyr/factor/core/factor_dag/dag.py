@@ -28,6 +28,7 @@ r"""D_FACTOR core factor_dag.dag——因子 DAG 数据结构 + Kahn 拓扑分�
 - dependencies 字段语义：FactorNode.dependencies 列出该因子依赖的上游 factor_id
 - topological_layers 返回分层结果，层内因子可并行计算
 """
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -94,10 +95,7 @@ class FactorDAG(BaseModel):
 
     def add_edge(self, edge: FactorEdge) -> None:
         """追加边。重复边（同 from/to）时跳过。"""
-        if not any(
-            e.from_factor == edge.from_factor and e.to_factor == edge.to_factor
-            for e in self.edges
-        ):
+        if not any(e.from_factor == edge.from_factor and e.to_factor == edge.to_factor for e in self.edges):
             self.edges.append(edge)
 
     def validate(self) -> list[str]:

@@ -5,6 +5,7 @@
 覆盖：
 - monitor_decay: 数据不足 / 半衰期长=正常 / 半衰期短=衰减 / 传入预计算 series / trend 描述
 """
+
 from __future__ import annotations
 
 import pandas as pd

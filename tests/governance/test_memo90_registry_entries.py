@@ -17,9 +17,7 @@ import yaml
 
 from zephyr.shared.io.paths import REPO_ROOT
 
-_CATALOGS = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-)
+_CATALOGS = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
 
 
 def _load(name: str) -> dict:
@@ -53,15 +51,13 @@ class TestMemo90P1Benchmarks:
     def test_three_sleeve_benchmarks_registered(self):
         entries = {e["benchmark_id"]: e for e in _load("benchmark_registry.yaml")["benchmarks"]}
         expected = {
-            "BMK-INDEX-005": "000852",   # 中证1000
-            "BMK-INDEX-006": "932000",   # 中证2000
-            "BMK-INDEX-007": "881001",   # 万得全A
+            "BMK-INDEX-005": "000852",  # 中证1000
+            "BMK-INDEX-006": "932000",  # 中证2000
+            "BMK-INDEX-007": "881001",  # 万得全A
         }
         for bmk_id, code in expected.items():
             assert bmk_id in entries, f"{bmk_id} 未登记"
-            assert any(code in str(a) for a in entries[bmk_id]["aliases"]), (
-                f"{bmk_id} aliases 缺代码 {code}"
-            )
+            assert any(code in str(a) for a in entries[bmk_id]["aliases"]), f"{bmk_id} aliases 缺代码 {code}"
             assert entries[bmk_id]["benchmark_type"] == "index"
             assert entries[bmk_id]["status"] == "candidate"
 
@@ -95,9 +91,7 @@ class TestMemo90P2RiskLimitConsolidation:
     """90 号 §17 裁定：散落硬编码限额归并 risk_limit_registry 声明式登记。"""
 
     def test_single_instrument_cap_registered(self):
-        entries = {
-            e["risk_limit_id"]: e for e in _load("risk_limit_registry.yaml")["risk_limits"]
-        }
+        entries = {e["risk_limit_id"]: e for e in _load("risk_limit_registry.yaml")["risk_limits"]}
         entry = entries["RLM-POSITION-027"]
         assert entry["limit_type"] == "position"
         assert entry["threshold_value"] == 5.0
@@ -105,4 +99,3 @@ class TestMemo90P2RiskLimitConsolidation:
         assert entry["breach_action"] == "block"
         # 代码真源锚点：PositionLimitConfig.single_instrument_cap
         assert "position_limit_enforcer" in entry["code_symbol"]
-

@@ -46,12 +46,7 @@ class TestValidCsv:
     def test_comments_and_empty_lines_skipped(self, tmp_path):
         content = (
             "# FOMC 2026 台账（手工录入）\n"
-            "\n"
-            + _VALID_HEADER
-            + "# 第1次\n"
-            + _VALID_ROW
-            + "\n"
-            + "2026-03-18,fomc_meeting,FOMC 2026 第2次议息会议\n"
+            "\n" + _VALID_HEADER + "# 第1次\n" + _VALID_ROW + "\n" + "2026-03-18,fomc_meeting,FOMC 2026 第2次议息会议\n"
         )
         rows, errors = validate_manual_events_csv(_write(tmp_path, content))
         assert errors == [] and len(rows) == 2
@@ -64,9 +59,7 @@ class TestValidCsv:
         assert rows[0]["event_date"] == "2026-01-28"
 
     def test_explicit_data_source_manual_accepted(self, tmp_path):
-        content = "event_date,event_type,description,data_source\n" + _VALID_ROW.replace(
-            "\n", ",manual\n"
-        )
+        content = "event_date,event_type,description,data_source\n" + _VALID_ROW.replace("\n", ",manual\n")
         rows, errors = validate_manual_events_csv(_write(tmp_path, content))
         assert errors == [] and rows[0]["data_source"] == "manual"
 
@@ -82,9 +75,7 @@ class TestValidCsv:
 
 class TestHeaderErrors:
     def test_missing_required_column(self, tmp_path):
-        rows, errors = validate_manual_events_csv(
-            _write(tmp_path, "event_date,event_type\n2026-01-28,fomc_meeting\n")
-        )
+        rows, errors = validate_manual_events_csv(_write(tmp_path, "event_date,event_type\n2026-01-28,fomc_meeting\n"))
         assert rows == []
         assert any("缺少必需列" in e and "description" in e for e in errors)
 
@@ -102,16 +93,12 @@ class TestHeaderErrors:
 
 class TestRowErrors:
     def test_bad_date_format(self, tmp_path):
-        rows, errors = validate_manual_events_csv(
-            _write(tmp_path, _VALID_HEADER + "2026/01/28,fomc_meeting,FOMC\n")
-        )
+        rows, errors = validate_manual_events_csv(_write(tmp_path, _VALID_HEADER + "2026/01/28,fomc_meeting,FOMC\n"))
         assert rows == []
         assert any("YYYY-MM-DD" in e for e in errors)
 
     def test_invalid_calendar_date(self, tmp_path):
-        rows, errors = validate_manual_events_csv(
-            _write(tmp_path, _VALID_HEADER + "2026-02-30,fomc_meeting,FOMC\n")
-        )
+        rows, errors = validate_manual_events_csv(_write(tmp_path, _VALID_HEADER + "2026-02-30,fomc_meeting,FOMC\n"))
         assert rows == []
         assert any("event_date" in e for e in errors)
 
@@ -124,16 +111,12 @@ class TestRowErrors:
 
     def test_internal_event_type_rejected(self, tmp_path):
         """internal 派生九类（如 month_end）禁止走 CSV（防与派生通道双写冲突）。"""
-        rows, errors = validate_manual_events_csv(
-            _write(tmp_path, _VALID_HEADER + "2026-01-30,month_end,月末\n")
-        )
+        rows, errors = validate_manual_events_csv(_write(tmp_path, _VALID_HEADER + "2026-01-30,month_end,月末\n"))
         assert rows == []
         assert any("event_type 非法" in e for e in errors)
 
     def test_empty_description(self, tmp_path):
-        rows, errors = validate_manual_events_csv(
-            _write(tmp_path, _VALID_HEADER + "2026-01-28,fomc_meeting,\n")
-        )
+        rows, errors = validate_manual_events_csv(_write(tmp_path, _VALID_HEADER + "2026-01-28,fomc_meeting,\n"))
         assert rows == []
         assert any("description 为空" in e for e in errors)
 
@@ -145,16 +128,12 @@ class TestRowErrors:
         assert any("超长" in e for e in errors)
 
     def test_column_count_mismatch(self, tmp_path):
-        rows, errors = validate_manual_events_csv(
-            _write(tmp_path, _VALID_HEADER + "2026-01-28,fomc_meeting\n")
-        )
+        rows, errors = validate_manual_events_csv(_write(tmp_path, _VALID_HEADER + "2026-01-28,fomc_meeting\n"))
         assert rows == []
         assert any("列数" in e for e in errors)
 
     def test_duplicate_key(self, tmp_path):
-        rows, errors = validate_manual_events_csv(
-            _write(tmp_path, _VALID_HEADER + _VALID_ROW + _VALID_ROW)
-        )
+        rows, errors = validate_manual_events_csv(_write(tmp_path, _VALID_HEADER + _VALID_ROW + _VALID_ROW))
         assert len(rows) == 1
         assert any("同键重复" in e for e in errors)
 

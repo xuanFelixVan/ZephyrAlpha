@@ -22,6 +22,7 @@
 - batch_prune: 全池满→从休眠裁撤 / 休眠空→从活跃降级再裁撤
 - get_pool_status: 计数正确 / is_full 标记
 """
+
 from __future__ import annotations
 
 import pytest

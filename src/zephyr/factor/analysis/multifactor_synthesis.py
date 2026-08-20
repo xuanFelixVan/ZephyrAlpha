@@ -88,6 +88,7 @@ D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号。
 # A3 --> A4
 # A4 --> O1
 """
+
 from __future__ import annotations
 
 import logging

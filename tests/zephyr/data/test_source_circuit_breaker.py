@@ -73,8 +73,13 @@ class TestClosedState:
     def test_success_resets_consecutive_counter(self, clock):
         # min_samples=99 隔离滑窗错误率路径，只验证连续计数复位
         b = SourceCircuitBreaker(
-            "s", failure_threshold=3, cooldown_seconds=600.0,
-            window_size=10, error_rate_threshold=0.6, min_samples=99, clock=clock,
+            "s",
+            failure_threshold=3,
+            cooldown_seconds=600.0,
+            window_size=10,
+            error_rate_threshold=0.6,
+            min_samples=99,
+            clock=clock,
         )
         b.record_failure()
         b.record_failure()
@@ -109,7 +114,7 @@ class TestTripOnConsecutiveFailures:
         for _ in range(3):
             breaker.record_failure()
         clock.advance(600.0)
-        assert breaker.allow_request() is True   # 探针放行
+        assert breaker.allow_request() is True  # 探针放行
         assert breaker.allow_request() is False  # 探针在飞，并发拒绝
 
     def test_probe_success_closes(self, breaker, clock):
@@ -138,9 +143,9 @@ class TestTripOnConsecutiveFailures:
         for _ in range(3):
             breaker.record_failure()
         clock.advance(600.0)
-        assert breaker.allow_request() is True   # 探针 1
-        clock.advance(600.0)                     # 探针 1 超时（≥ cooldown）
-        assert breaker.allow_request() is True   # 补探放行
+        assert breaker.allow_request() is True  # 探针 1
+        clock.advance(600.0)  # 探针 1 超时（≥ cooldown）
+        assert breaker.allow_request() is True  # 补探放行
         assert breaker.state is CircuitState.HALF_OPEN
 
 
@@ -162,8 +167,12 @@ class TestOnTripCallback:
     def test_on_trip_fired_with_reason(self, clock):
         trips: list[tuple[str, str]] = []
         b = SourceCircuitBreaker(
-            "tushare", failure_threshold=2, cooldown_seconds=60.0,
-            min_samples=99, clock=clock, on_trip=lambda s, r: trips.append((s, r)),
+            "tushare",
+            failure_threshold=2,
+            cooldown_seconds=60.0,
+            min_samples=99,
+            clock=clock,
+            on_trip=lambda s, r: trips.append((s, r)),
         )
         b.record_failure()
         assert trips == []
@@ -176,9 +185,7 @@ class TestOnTripCallback:
         def _bad_callback(source, reason):
             raise RuntimeError("callback boom")
 
-        b = SourceCircuitBreaker(
-            "x", failure_threshold=1, cooldown_seconds=60.0, clock=clock, on_trip=_bad_callback
-        )
+        b = SourceCircuitBreaker("x", failure_threshold=1, cooldown_seconds=60.0, clock=clock, on_trip=_bad_callback)
         b.record_failure()  # 回调异常不得影响状态机
         assert b.state is CircuitState.OPEN
 
@@ -202,11 +209,16 @@ class TestRegistry:
 
 # ============== scheduler 集成（熔断源跳过，不调 provider）==============
 
+
 class _MockProvider(IngestProviderBase):
     source_name = "mock"
     meta = IngestProviderMeta(
-        name="mock", display_name="Mock", auth_type="anonymous",
-        requires_process=False, thread_safety="shared", rate_limit_default=0,
+        name="mock",
+        display_name="Mock",
+        auth_type="anonymous",
+        requires_process=False,
+        thread_safety="shared",
+        rate_limit_default=0,
     )
 
     def connect(self):
@@ -217,8 +229,12 @@ class _MockProvider(IngestProviderBase):
 
     def fetch(self, payload, policy):
         yield FetchResult(
-            table=payload.table, columns=["code"], rows=[("000001",)],
-            last_key="2026-07-05", elapsed_sec=0.1, rows_fetched=1,
+            table=payload.table,
+            columns=["code"],
+            rows=[("000001",)],
+            last_key="2026-07-05",
+            elapsed_sec=0.1,
+            rows_fetched=1,
         )
 
     def disconnect(self):
@@ -234,15 +250,15 @@ def scheduler(tmp_path):
         encoding="utf-8",
     )
     (config_dir / "tasks.yaml").write_text(
-        'tasks:\n'
-        '  - task_id: kline_daily_incremental\n'
-        '    table: c1_market.kline_daily\n'
-        '    source: mock\n'
-        '    schedule: daily_kline\n'
-        '    incremental: true\n'
-        '    dependencies: []\n'
-        '    capability: kline_daily\n'
-        '    symbols: null\n',
+        "tasks:\n"
+        "  - task_id: kline_daily_incremental\n"
+        "    table: c1_market.kline_daily\n"
+        "    source: mock\n"
+        "    schedule: daily_kline\n"
+        "    incremental: true\n"
+        "    dependencies: []\n"
+        "    capability: kline_daily\n"
+        "    symbols: null\n",
         encoding="utf-8",
     )
     return IntegratorScheduler(
@@ -277,12 +293,14 @@ class TestSchedulerIntegration:
         mock_provider.connect()
         scheduler.providers["mock"] = mock_provider
         recorded: list[dict] = []
-        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
-             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True), \
-             patch(
-                 "zephyr.data.fetch_perf_recorder.record_fetch_perf",
-                 lambda record, **kw: recorded.append(dict(record)),
-             ):
+        with (
+            patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True),
+            patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True),
+            patch(
+                "zephyr.data.fetch_perf_recorder.record_fetch_perf",
+                lambda record, **kw: recorded.append(dict(record)),
+            ),
+        ):
             ok = scheduler.run_task("kline_daily_incremental")
         assert ok is True
         assert scheduler._circuit_breakers.state("mock") is CircuitState.CLOSED

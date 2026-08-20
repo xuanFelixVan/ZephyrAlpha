@@ -23,6 +23,7 @@
 - 超时处理
 - report 字段完整性
 """
+
 from __future__ import annotations
 
 import time
@@ -58,15 +59,11 @@ def clear_registry():
     FactorRegistry.clear()
 
 
-def _register_factor(
-    fid: str, deps: list[str] | None = None, compute_fn: Any = None
-) -> None:
+def _register_factor(fid: str, deps: list[str] | None = None, compute_fn: Any = None) -> None:
     """动态注册因子到 FactorRegistry。"""
 
     class _Factor(FactorBase):
-        meta = FactorMeta(
-            factor_id=fid, name=fid, domain="test", dependencies=deps or []
-        )
+        meta = FactorMeta(factor_id=fid, name=fid, domain="test", dependencies=deps or [])
 
         def compute(self, data, **kwargs):
             if compute_fn is not None:

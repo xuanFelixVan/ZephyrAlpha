@@ -8,6 +8,7 @@
   PDR<0.5 / PSI_param<3.0 / DFR≥30 / DSR≥0.95 / PBO<0.05 / 斜率>0 /
   胜率>70% 或 PF>3.0 软警告；任一 fail 即不上线（保守）。
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -94,8 +95,14 @@ class TestAudit:
         is_sr = list(rng.uniform(1.0, 3.0, 8))
         oos_sr = [0.6 * v for v in is_sr]  # 正斜率
         res = audit(
-            2.0, 1.6, 500, 10, best_sharpe=2.0, avg_sharpe=1.2,
-            trial_is_sharpes=is_sr, trial_oos_sharpes=oos_sr,
+            2.0,
+            1.6,
+            500,
+            10,
+            best_sharpe=2.0,
+            avg_sharpe=1.2,
+            trial_is_sharpes=is_sr,
+            trial_oos_sharpes=oos_sr,
         )
         assert res.checks["oos_degradation_slope"]
         assert res.verdict is OverfitVerdict.LIKELY_REAL

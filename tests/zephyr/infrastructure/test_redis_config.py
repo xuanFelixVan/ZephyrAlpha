@@ -7,6 +7,7 @@
     try/except 永不触发 → CP-02 优雅降级失效。
     load_redis_config() 必须返回含 socket_timeout / socket_connect_timeout 的字典。
 """
+
 import os
 import sys
 
@@ -56,9 +57,14 @@ class TestLoadRedisConfigTimeouts:
     """socket_timeout / socket_connect_timeout 注入（CP-02 治本）。"""
 
     def test_has_socket_timeout(self, monkeypatch):
-        _set_env(monkeypatch,
-                 REDIS_HOST="127.0.0.1", REDIS_PORT="6379", REDIS_PASSWORD="pw",
-                 REDIS_SOCKET_TIMEOUT="2", REDIS_SOCKET_CONNECT_TIMEOUT="2")
+        _set_env(
+            monkeypatch,
+            REDIS_HOST="127.0.0.1",
+            REDIS_PORT="6379",
+            REDIS_PASSWORD="pw",
+            REDIS_SOCKET_TIMEOUT="2",
+            REDIS_SOCKET_CONNECT_TIMEOUT="2",
+        )
         cfg = load_redis_config()
         assert cfg["socket_timeout"] == 2.0
         assert cfg["socket_connect_timeout"] == 2.0
@@ -67,18 +73,28 @@ class TestLoadRedisConfigTimeouts:
 
     def test_custom_timeout_values(self, monkeypatch):
         """自定义超时值（如 0.5s）正确解析。"""
-        _set_env(monkeypatch,
-                 REDIS_HOST="127.0.0.1", REDIS_PORT="6379", REDIS_PASSWORD="pw",
-                 REDIS_SOCKET_TIMEOUT="0.5", REDIS_SOCKET_CONNECT_TIMEOUT="1.5")
+        _set_env(
+            monkeypatch,
+            REDIS_HOST="127.0.0.1",
+            REDIS_PORT="6379",
+            REDIS_PASSWORD="pw",
+            REDIS_SOCKET_TIMEOUT="0.5",
+            REDIS_SOCKET_CONNECT_TIMEOUT="1.5",
+        )
         cfg = load_redis_config()
         assert cfg["socket_timeout"] == pytest.approx(0.5)
         assert cfg["socket_connect_timeout"] == pytest.approx(1.5)
 
     def test_default_socket_timeout_2_seconds(self, monkeypatch):
         """未设置时默认 2 秒（治本 CP-02 软故障兜底）。"""
-        _set_env(monkeypatch,
-                 REDIS_HOST="127.0.0.1", REDIS_PORT="6379", REDIS_PASSWORD="pw",
-                 REDIS_SOCKET_TIMEOUT="", REDIS_SOCKET_CONNECT_TIMEOUT="")
+        _set_env(
+            monkeypatch,
+            REDIS_HOST="127.0.0.1",
+            REDIS_PORT="6379",
+            REDIS_PASSWORD="pw",
+            REDIS_SOCKET_TIMEOUT="",
+            REDIS_SOCKET_CONNECT_TIMEOUT="",
+        )
         # env 空字符串 → os.environ.get 返回 "" → falsy → 走默认值 "2"
         cfg = load_redis_config()
         assert cfg["socket_timeout"] == 2.0

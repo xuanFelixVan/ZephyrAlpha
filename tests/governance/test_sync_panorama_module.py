@@ -21,6 +21,7 @@
 - --all 全量同步迭代
 - 无参数返回 exit 3
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -48,9 +49,9 @@ def spm():
     return mod
 
 
-def _make_module_row(module_id="MOD-TEST", domain_id="D_TEST",
-                     design_maturity="design", build_status="planned",
-                     path="src/test.py"):
+def _make_module_row(
+    module_id="MOD-TEST", domain_id="D_TEST", design_maturity="design", build_status="planned", path="src/test.py"
+):
     """构造 depgraph 查询返回行（RealDictRow 兼容 dict 访问）"""
     return {
         "blueprint_id": module_id,
@@ -61,9 +62,9 @@ def _make_module_row(module_id="MOD-TEST", domain_id="D_TEST",
     }
 
 
-def _mock_three_conns(spm, monkeypatch, depgraph_fetchone=None,
-                      dataflow_fetchone=None, decision_fetchone=None,
-                      depgraph_fetchall=None):
+def _mock_three_conns(
+    spm, monkeypatch, depgraph_fetchone=None, dataflow_fetchone=None, decision_fetchone=None, depgraph_fetchall=None
+):
     """统一 mock 三个 DB 连接，返回 (depgraph_conn, dataflow_conn, decision_conn)
 
     fetchall 兼容：_query_depgraph_module 改用 fetchall 聚合后，
@@ -108,10 +109,11 @@ class TestSyncToDataflow:
     def test_creates_placeholder_job(self, spm, monkeypatch):
         """depgraph 有模块 → dataflow_jobs 建占位记录"""
         _mock_three_conns(
-            spm, monkeypatch,
+            spm,
+            monkeypatch,
             depgraph_fetchone=_make_module_row(),
-            dataflow_fetchone=None,   # 占位记录不存在
-            decision_fetchone=None,   # 占位记录不存在
+            dataflow_fetchone=None,  # 占位记录不存在
+            decision_fetchone=None,  # 占位记录不存在
         )
         result = spm.sync_module_panorama("MOD-TEST")
         assert result == 0
@@ -121,7 +123,8 @@ class TestSyncToDecision:
     def test_creates_placeholder_layer(self, spm, monkeypatch):
         """depgraph 有模块 → decision_layers 建占位记录"""
         _mock_three_conns(
-            spm, monkeypatch,
+            spm,
+            monkeypatch,
             depgraph_fetchone=_make_module_row(),
             dataflow_fetchone=None,
             decision_fetchone=None,
@@ -133,7 +136,8 @@ class TestSyncModuleNotFound:
     def test_module_not_in_depgraph_exit_3(self, spm, monkeypatch):
         """模块不在 depgraph → exit 3"""
         _mock_three_conns(
-            spm, monkeypatch,
+            spm,
+            monkeypatch,
             depgraph_fetchone=None,  # 模块不存在
         )
         assert spm.sync_module_panorama("MOD-MISSING") == 3
@@ -173,7 +177,8 @@ class TestSyncExistingRealJob:
     def test_existing_real_job_updates_not_overwrites(self, spm, monkeypatch):
         """已有真实 job（entity_type='job'）→ UPDATE 核心字段，不改 entity_type"""
         _mock_three_conns(
-            spm, monkeypatch,
+            spm,
+            monkeypatch,
             depgraph_fetchone=_make_module_row(),
             dataflow_fetchone={"entity_type": "job"},  # 已有真实 job
             decision_fetchone=None,
@@ -202,8 +207,7 @@ class TestWeightedVoting:
 
 
 class TestPruneOrphans:
-    def _mock_three_conns_for_prune(self, spm, monkeypatch,
-                                     depgraph_rows, decision_rows, dataflow_rows):
+    def _mock_three_conns_for_prune(self, spm, monkeypatch, depgraph_rows, decision_rows, dataflow_rows):
         """统一 mock prune_orphans 的三个 DB 连接。
 
         get_depgraph_pg_connection → depgraph_conn（查询 blueprint_ids）
@@ -235,13 +239,13 @@ class TestPruneOrphans:
 
     def test_prune_orphans_removes_orphan_decision_and_dataflow(self, spm, monkeypatch):
         """prune_orphans 删除 decision_layers + dataflow_jobs 中的孤儿占位记录。"""
-        _, dec_cursor, df_cursor, decision_conn, dataflow_conn = \
-            self._mock_three_conns_for_prune(
-                spm, monkeypatch,
-                depgraph_rows=[{"blueprint_id": "MOD-A"}, {"blueprint_id": "MOD-B"}],
-                decision_rows=[{"layer_id": "MOD-A"}, {"layer_id": "MOD-DEC-ORPHAN"}],
-                dataflow_rows=[{"job_name": "MOD-A"}, {"job_name": "MOD-DF-ORPHAN"}],
-            )
+        _, dec_cursor, df_cursor, decision_conn, dataflow_conn = self._mock_three_conns_for_prune(
+            spm,
+            monkeypatch,
+            depgraph_rows=[{"blueprint_id": "MOD-A"}, {"blueprint_id": "MOD-B"}],
+            decision_rows=[{"layer_id": "MOD-A"}, {"layer_id": "MOD-DEC-ORPHAN"}],
+            dataflow_rows=[{"job_name": "MOD-A"}, {"job_name": "MOD-DF-ORPHAN"}],
+        )
 
         result = spm.prune_orphans()
 
@@ -249,19 +253,16 @@ class TestPruneOrphans:
         assert result["orphan_decision"] == ["MOD-DEC-ORPHAN"]
         assert result["deleted_dataflow"] == 1
         assert result["orphan_dataflow"] == ["MOD-DF-ORPHAN"]
-        dec_cursor.execute.assert_any_call(
-            spm._SQL_DELETE_DECISION_LAYER, ("MOD-DEC-ORPHAN",)
-        )
-        df_cursor.execute.assert_any_call(
-            spm._SQL_DELETE_DATAFLOW_JOB, ("MOD-DF-ORPHAN",)
-        )
+        dec_cursor.execute.assert_any_call(spm._SQL_DELETE_DECISION_LAYER, ("MOD-DEC-ORPHAN",))
+        df_cursor.execute.assert_any_call(spm._SQL_DELETE_DATAFLOW_JOB, ("MOD-DF-ORPHAN",))
         decision_conn.commit.assert_called_once()
         dataflow_conn.commit.assert_called_once()
 
     def test_prune_orphans_idempotent_no_orphans(self, spm, monkeypatch):
         """prune_orphans 幂等：无孤儿时 deleted=0。"""
         self._mock_three_conns_for_prune(
-            spm, monkeypatch,
+            spm,
+            monkeypatch,
             depgraph_rows=[{"blueprint_id": "MOD-A"}],
             decision_rows=[{"layer_id": "MOD-A"}],
             dataflow_rows=[{"job_name": "MOD-A"}],

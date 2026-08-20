@@ -2,6 +2,7 @@
 # [A_module] module_id=MOD-L00-006 | layer=module | stability=evolving | safety=L
 # [TTL] permanent
 """P2-9 WAL 段编解码模块测试。"""
+
 import pytest
 
 from zephyr.data.wal_codec import (
@@ -33,6 +34,7 @@ class TestTsvCodec:
 
     def test_encode_nan_value(self):
         import math
+
         data = encode_tsv([("000001", float("nan"))])
         assert b"\\N" in data
 
@@ -79,11 +81,10 @@ class TestTsvCodec:
     def test_roundtrip_with_ch_writer_consistency(self):
         """编码结果与 wal_writer.serialize_tsv 完全一致。"""
         from zephyr.data import ch_writer
+
         rows = [("000001", "10.5", None), ("000002", "hello\tworld")]
         # wal_writer.serialize_tsv 的逻辑
-        expected = "\n".join(
-            "\t".join(ch_writer.tsv_escape(v) for v in row) for row in rows
-        ).encode("utf-8")
+        expected = "\n".join("\t".join(ch_writer.tsv_escape(v) for v in row) for row in rows).encode("utf-8")
         assert encode_tsv(rows) == expected
 
     def test_tsv_codec_class_encode(self):

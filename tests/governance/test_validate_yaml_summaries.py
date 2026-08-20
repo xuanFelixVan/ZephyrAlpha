@@ -45,10 +45,7 @@ def _consumer_registry_yaml(contracts: int = 2, entries_per: int = 1, tier: int 
         lines.append(f"    contract_name: Contract{i}")
         lines.append("    registered_consumers:")
         for j in range(entries_per):
-            lines.append(
-                f'      - {{domain: D_TEST, module: "m{j}", tier: {tier}, '
-                f'pinned_version: "1.0.0"}}'
-            )
+            lines.append(f'      - {{domain: D_TEST, module: "m{j}", tier: {tier}, pinned_version: "1.0.0"}}')
     total_entries = contracts * entries_per
     lines.append("summary:")
     lines.append(f"  total_contracts_registered: {contracts}")

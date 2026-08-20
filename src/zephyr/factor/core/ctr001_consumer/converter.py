@@ -24,6 +24,7 @@
 - 质量过滤（可选：is_suspended / quality_score）
 - 不做任何因子计算——纯数据适配
 """
+
 from __future__ import annotations
 
 from decimal import Decimal

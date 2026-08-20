@@ -18,6 +18,7 @@
 - load_core_config: 默认配置加载 / 文件存在性
 - get_section: 取已有子节 / 取不存在的子节返回 {} / 取非 dict 子节返回 {}
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -38,8 +39,11 @@ class TestLoadCoreConfig:
         config = load_core_config()
         assert isinstance(config, dict)
         expected_sections = {
-            "factor_dag", "backpressure", "batch_output",
-            "dag_manager", "dist_feature_eng",
+            "factor_dag",
+            "backpressure",
+            "batch_output",
+            "dag_manager",
+            "dist_feature_eng",
         }
         assert expected_sections.issubset(config.keys())
 

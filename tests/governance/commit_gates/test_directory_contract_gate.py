@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_LONG_PARAM_LIST_GATE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] task_bound
 """test_directory_contract_gate.py — DCR-001~007 等效校验门禁单元测试。
 

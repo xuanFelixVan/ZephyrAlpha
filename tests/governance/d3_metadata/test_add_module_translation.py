@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_add_module_translation_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.governance.d3_metadata.test_add_module_translation
 # [STABILITY] evolving

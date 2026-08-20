@@ -22,6 +22,7 @@
 - Momentum20d 无新增数据时返回缓存
 - Momentum20d cached 索引不在 data 中时回退全量
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -92,9 +93,7 @@ class TestMomentumIncremental:
         cache_data = full_data.iloc[:40]
         cached = factor.compute(cache_data, window=20)
         # 用全部 50 天做增量计算
-        incremental = factor.incremental_compute(
-            full_data, window=20, cached=cached
-        )
+        incremental = factor.incremental_compute(full_data, window=20, cached=cached)
         # 全量计算作为基准
         full_result = factor.compute(full_data, window=20)
         # 去掉 NaN 后比较（前 20 天是 NaN）
@@ -130,9 +129,7 @@ class TestMomentumIncremental:
         full_data = _make_close_data(41)
         cache_data = full_data.iloc[:40]
         cached = factor.compute(cache_data, window=20)
-        incremental = factor.incremental_compute(
-            full_data, window=20, cached=cached
-        )
+        incremental = factor.incremental_compute(full_data, window=20, cached=cached)
         full_result = factor.compute(full_data, window=20)
         # 最后一个点应该一致
         assert incremental.iloc[-1] == pytest.approx(full_result.iloc[-1], rel=1e-10)
@@ -143,13 +140,9 @@ class TestMomentumIncremental:
         full_data = _make_close_data(50)
         cache_data = full_data.iloc[:35]
         cached = factor.compute(cache_data, window=20)
-        incremental = factor.incremental_compute(
-            full_data, window=20, cached=cached
-        )
+        incremental = factor.incremental_compute(full_data, window=20, cached=cached)
         full_result = factor.compute(full_data, window=20)
         # 比较新增部分（第 35 天之后）
         new_part = full_result.iloc[35:]
         inc_new = incremental.iloc[35:]
-        pd.testing.assert_series_equal(
-            inc_new, new_part, check_names=False
-        )
+        pd.testing.assert_series_equal(inc_new, new_part, check_names=False)

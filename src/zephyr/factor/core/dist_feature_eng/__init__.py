@@ -19,6 +19,7 @@
 用 ProcessPoolExecutor 跨进程并行计算因子（绕开 GIL，适合 CPU 密集计算）。
 按标的分片，每片在子进程内独立调用因子 compute。
 """
+
 from __future__ import annotations
 
 from zephyr.factor.core.dist_feature_eng.engine import (

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_GENERATE_ALGO_OVERVIEW | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.governance.generators.test_check_gate_inventory_drift
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.generators.check_gate_inventory_drift

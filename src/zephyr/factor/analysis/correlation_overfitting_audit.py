@@ -34,6 +34,7 @@
 DSR 由调用方经 DeflatedSharpeCalculator（MOD-SIM-024 已 production）预算后传入，
 PBO/CSCV 同理留口； verdict 保守策略"任一 fail 即不上线"（memo §5.3）。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -130,9 +131,7 @@ def compute_degrees_of_freedom_ratio(n_obs: int, n_params: int) -> float:
     return n_obs / n_params
 
 
-def compute_oos_degradation_slope(
-    is_sharpes: list[float] | np.ndarray, oos_sharpes: list[float] | np.ndarray
-) -> float:
+def compute_oos_degradation_slope(is_sharpes: list[float] | np.ndarray, oos_sharpes: list[float] | np.ndarray) -> float:
     """OOS 退化斜率：OOS_SR 对 IS_SR 的最小二乘回归斜率（>0 通过）。
 
     注意机械陷阱（deflated-alpha README Limitations）：IS/OOS halves 互补时常胜
@@ -153,9 +152,7 @@ def compute_oos_degradation_slope(
     return float(((x - x.mean()) * (y - y.mean())).sum() / var_x)
 
 
-def check_extreme_backtest_metrics(
-    win_rate: float | None = None, profit_factor: float | None = None
-) -> list[str]:
+def check_extreme_backtest_metrics(win_rate: float | None = None, profit_factor: float | None = None) -> list[str]:
     """胜率/PF 警戒线（软警告）：胜率>70% 或 PF>3.0 需极端怀疑。"""
     warnings: list[str] = []
     if win_rate is not None and win_rate > WIN_RATE_WARN:
@@ -215,9 +212,7 @@ def audit(
         metrics["pbo"] = pbo
         checks["pbo"] = pbo < PBO_MAX
     if trial_is_sharpes is not None and trial_oos_sharpes is not None:
-        metrics["oos_degradation_slope"] = compute_oos_degradation_slope(
-            trial_is_sharpes, trial_oos_sharpes
-        )
+        metrics["oos_degradation_slope"] = compute_oos_degradation_slope(trial_is_sharpes, trial_oos_sharpes)
         checks["oos_degradation_slope"] = metrics["oos_degradation_slope"] > 0.0
 
     warnings = check_extreme_backtest_metrics(win_rate, profit_factor)

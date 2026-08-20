@@ -35,6 +35,7 @@ Usage::
     py -3.12 -m pytest tests/governance/test_sync_yaml_to_depgraph_smoke.py -v
     py -3.12 -m pytest tests/governance/test_sync_yaml_to_depgraph_smoke.py -k "not e2e"
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -55,9 +56,7 @@ def syd():
 
     真实执行模块级代码（含 import 语句）——若 import 缺失会立即抛 ImportError/NameError。
     """
-    spec = importlib.util.spec_from_file_location(
-        "sync_yaml_to_depgraph_smoke_under_test", _SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("sync_yaml_to_depgraph_smoke_under_test", _SCRIPT_PATH)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -66,6 +65,7 @@ def syd():
 # ============================================================================
 # Test 1: Import smoke —— 检测 NameError（import 缺失）
 # ============================================================================
+
 
 class TestImportSmoke:
     """验证 sync_yaml_to_depgraph.py 模块能正常 import。"""
@@ -97,14 +97,13 @@ class TestImportSmoke:
         READONLY_TABLES 为空 = 同步范围丢失 = sync_all() 变成 no-op = silent failure。
         """
         assert hasattr(syd, "READONLY_TABLES"), "READONLY_TABLES 常量缺失"
-        assert len(syd.READONLY_TABLES) > 0, (
-            "READONLY_TABLES 为空——同步范围丢失，sync_all() 变成 no-op"
-        )
+        assert len(syd.READONLY_TABLES) > 0, "READONLY_TABLES 为空——同步范围丢失，sync_all() 变成 no-op"
 
 
 # ============================================================================
 # Test 2: CLI smoke —— 检测 CLI 入口可运行
 # ============================================================================
+
 
 class TestCLISmoke:
     """验证 sync_yaml_to_depgraph.py CLI 入口可运行。"""
@@ -116,8 +115,12 @@ class TestCLISmoke:
         """
         result = subprocess.run(
             [sys.executable, str(_SCRIPT_PATH), "--list-readonly-tables"],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            cwd=str(_REPO_ROOT),
         )
         assert result.returncode == 0, (
             f"--list-readonly-tables CLI 失败 rc={result.returncode}\n"
@@ -132,19 +135,23 @@ class TestCLISmoke:
         """无参数调用不会崩溃（会尝试 sync_all 需 DB，但应优雅退出）。"""
         result = subprocess.run(
             [sys.executable, str(_SCRIPT_PATH)],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=60, cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+            cwd=str(_REPO_ROOT),
         )
         # 无参数时调用 sync_all()——无 DB 时应 rc=1（优雅退出），不应崩溃（rc=-15 SIGTERM 等）
         assert result.returncode in (0, 1), (
-            f"无参数调用应返回 0（成功）或 1（DB 不可达），实际 rc={result.returncode}\n"
-            f"stderr: {result.stderr[:500]}"
+            f"无参数调用应返回 0（成功）或 1（DB 不可达），实际 rc={result.returncode}\nstderr: {result.stderr[:500]}"
         )
 
 
 # ============================================================================
 # Test 3: DB connection smoke —— 真实连接 PostgreSQL（@pytest.mark.e2e）
 # ============================================================================
+
 
 @pytest.mark.e2e
 class TestDBConnectionSmoke:
@@ -181,6 +188,7 @@ class TestDBConnectionSmoke:
         """READONLY_TABLES 中列出的表在 DB 中存在（schema 对齐）。"""
         try:
             from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
             conn = get_depgraph_pg_connection(read_only=True)
         except Exception as e:
             pytest.skip(f"PostgreSQL depgraph 不可达: {e}")
@@ -192,9 +200,7 @@ class TestDBConnectionSmoke:
                         (table_name,),
                     )
                     row = cur.fetchone()
-                    assert row is not None, (
-                        f"READONLY_TABLES 中的表 '{table_name}' 在 DB 中不存在——schema 漂移"
-                    )
+                    assert row is not None, f"READONLY_TABLES 中的表 '{table_name}' 在 DB 中不存在——schema 漂移"
         finally:
             conn.close()
 
@@ -202,6 +208,7 @@ class TestDBConnectionSmoke:
 # ============================================================================
 # Test 4: Function callable smoke —— mock DB，真实调用函数逻辑
 # ============================================================================
+
 
 class TestFunctionCallableSmoke:
     """验证核心函数能被调用（mock DB，检测 NameError/签名漂移）。
@@ -241,6 +248,7 @@ class TestFunctionCallableSmoke:
 # ============================================================================
 # Test 5: 跨模块依赖多节点跳过 —— 问题A治本逻辑 e2e 验证
 # ============================================================================
+
 
 @pytest.mark.e2e
 class TestCrossModuleDepMultiNodeSkip:
@@ -291,9 +299,7 @@ class TestCrossModuleDepMultiNodeSkip:
         conn = self._get_conn(syd)
         try:
             with conn.cursor() as cur:
-                node_id, status = syd.resolve_module_to_single_node(
-                    cur, "MOD-SMOKE-DOES-NOT-EXIST-999", ""
-                )
+                node_id, status = syd.resolve_module_to_single_node(cur, "MOD-SMOKE-DOES-NOT-EXIST-999", "")
                 assert status == "none", f"不存在模块应返回 'none'，实际 {status}"
                 assert node_id is None, f"none 分支应返回 None node_id，实际 {node_id}"
         finally:

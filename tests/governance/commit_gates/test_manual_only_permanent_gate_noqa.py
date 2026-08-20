@@ -541,11 +541,12 @@ class TestGateIntegrationNew:
         assert passed is True, f"gate should self-exempt governance/commit_gates/ path: {msg}"
 
     def test_gate_self_exempt_path_mismatch_known_bug(self, tmp_path):
-        """已知 bug：gate 自豁免检查 ``governance/commit_gates/`` 但实际路径是
+        """原已知 bug（2026-08-20 已治本）：gate 自豁免检查 ``governance/commit_gates/`` 但实际路径是
         ``gov_enforcement/commit_gates/``——path mismatch 导致自豁免失效。
 
-        本测试记录此 pre-existing bug（非 P3-1.2 引入），不阻断 P3-1.2 merge。
-        治本方向：gate 自豁免检查应改为 ``commit_gates/`` 子串匹配（不限定父目录）。
+        治本（AI-NIGHT-001 波3 顺带修，#61 迁移漂移族）：自豁免检查改 ``commit_gates/`` 子串匹配
+        （不限定父目录，与本测试原记录的治本方向一致）。本用例翻转为断言修复后行为：
+        gov_enforcement/commit_gates/ 路径下的文件自豁免生效（gate 不误阻断自身路径）。
         """
         # 用实际 gate 文件路径模式（gov_enforcement/commit_gates/）
         rel = _write_file(
@@ -557,12 +558,8 @@ class TestGateIntegrationNew:
 
         gate = make_manual_only_permanent_gate()
         passed, msg = gate.check(gw, [rel])
-        # 已知 bug：自豁免未生效（路径不匹配），gate 误阻断自身路径下的文件
-        # 记录现状，待独立裁定修 path mismatch
-        assert passed is False, (
-            f"KNOWN BUG: self-exempt path mismatch — gate blocks its own path "
-            f"(governance/commit_gates/ vs gov_enforcement/commit_gates/): {msg}"
-        )
+        # 修复后：自豁免生效（commit_gates/ 子串匹配不限定父目录）
+        assert passed is True, f"self-exempt should work on gov_enforcement/commit_gates/ path: {msg}"
 
     def test_non_permanent_file_not_checked(self, tmp_path):
         """非 permanent 文件不检测（即使含 argparse）。"""

@@ -21,6 +21,7 @@ list_date=None、未定价 raise_amount=None）/ 代码防御（非法代码跳�
 源失败容错（异常→空结果不抛出）/ PIT 快照锚定（trade_date=payload.end）。
 全部 mock akshare，不触网不触库。
 """
+
 from __future__ import annotations
 
 import datetime
@@ -40,8 +41,12 @@ D = datetime.date  # 简写
 
 def _payload(start: D, end: D, extra: dict | None = None) -> FetchPayload:
     return FetchPayload(
-        table="", symbols=None, start=start, end=end,
-        incremental=False, extra=extra or {},
+        table="",
+        symbols=None,
+        start=start,
+        end=end,
+        incremental=False,
+        extra=extra or {},
     )
 
 
@@ -74,15 +79,19 @@ def _ipo_df(rows: list[dict]) -> pd.DataFrame:
 class TestIpoCalendarFetch:
     def test_normal_mapping_and_unit_derivation(self, monkeypatch):
         """正常行：字段映射 + 万股→股 + 募资规模（亿元）派生口径。"""
-        df = _ipo_df([
-            {
-                "证劵代码": "688825", "证券简称": "长鑫科技",
-                "上市日期": datetime.date(2026, 7, 27),
-                "申购日期": datetime.date(2026, 7, 17),
-                "发行价": 90.0, "总发行数量": 74000.0,  # 万股
-                "发行市盈率": 45.5,
-            },
-        ])
+        df = _ipo_df(
+            [
+                {
+                    "证劵代码": "688825",
+                    "证券简称": "长鑫科技",
+                    "上市日期": datetime.date(2026, 7, 27),
+                    "申购日期": datetime.date(2026, 7, 17),
+                    "发行价": 90.0,
+                    "总发行数量": 74000.0,  # 万股
+                    "发行市盈率": 45.5,
+                },
+            ]
+        )
         _mock_ak(monkeypatch, stock_new_ipo_cninfo=df)
         provider = AkshareIngestProvider()
         results = _call_fetch(provider, "ipo_calendar", _payload(D(2026, 7, 20), D(2026, 7, 20)))
@@ -93,29 +102,33 @@ class TestIpoCalendarFetch:
         assert res.error is None
         assert len(res.rows) == 1
         r = res.rows[0]
-        assert r[0] == "2026-07-20"          # trade_date = payload.end（PIT 快照锚）
-        assert r[1] == "688825"              # symbol
-        assert r[2] == "长鑫科技"             # name
-        assert r[3] == "2026-07-27"          # list_date
-        assert r[4] == "2026-07-17"          # subscribe_date
-        assert r[5] == 90.0                  # issue_price
-        assert r[6] == 740000000             # total_shares（万股×1e4→股）
+        assert r[0] == "2026-07-20"  # trade_date = payload.end（PIT 快照锚）
+        assert r[1] == "688825"  # symbol
+        assert r[2] == "长鑫科技"  # name
+        assert r[3] == "2026-07-27"  # list_date
+        assert r[4] == "2026-07-17"  # subscribe_date
+        assert r[5] == 90.0  # issue_price
+        assert r[6] == 740000000  # total_shares（万股×1e4→股）
         # raise_amount = 90 × 74000万 / 10000 = 666.0 亿元（37号 §3.2a 长鑫实证口径）
         assert r[7] == pytest.approx(666.0)
-        assert r[8] == 45.5                  # pe_ratio
-        assert r[9] == "akshare_cninfo"      # data_source
+        assert r[8] == 45.5  # pe_ratio
+        assert r[9] == "akshare_cninfo"  # data_source
 
     def test_nat_nan_defense(self, monkeypatch):
         """未定档（list_date=NaT）+ 未定价（发行价 NaN）→ None，不炸不脏库。"""
-        df = _ipo_df([
-            {
-                "证劵代码": "301688", "证券简称": "格林生物",
-                "上市日期": pd.NaT,
-                "申购日期": datetime.date(2026, 8, 20),
-                "发行价": float("nan"), "总发行数量": 3333.3334,
-                "发行市盈率": float("nan"),
-            },
-        ])
+        df = _ipo_df(
+            [
+                {
+                    "证劵代码": "301688",
+                    "证券简称": "格林生物",
+                    "上市日期": pd.NaT,
+                    "申购日期": datetime.date(2026, 8, 20),
+                    "发行价": float("nan"),
+                    "总发行数量": 3333.3334,
+                    "发行市盈率": float("nan"),
+                },
+            ]
+        )
         _mock_ak(monkeypatch, stock_new_ipo_cninfo=df)
         provider = AkshareIngestProvider()
         results = _call_fetch(provider, "ipo_calendar", _payload(D(2026, 8, 17), D(2026, 8, 17)))
@@ -123,12 +136,12 @@ class TestIpoCalendarFetch:
         assert len(results) == 1
         r = results[0].rows[0]
         assert r[1] == "301688"
-        assert r[3] is None                   # list_date NaT→None（未定档）
-        assert r[4] == "2026-08-20"           # subscribe_date 正常
-        assert r[5] is None                   # issue_price NaN→None（未定价）
-        assert r[6] == 33333334               # total_shares 仍可派生
-        assert r[7] is None                   # raise_amount 未定价→None
-        assert r[8] is None                   # pe_ratio NaN→None
+        assert r[3] is None  # list_date NaT→None（未定档）
+        assert r[4] == "2026-08-20"  # subscribe_date 正常
+        assert r[5] is None  # issue_price NaN→None（未定价）
+        assert r[6] == 33333334  # total_shares 仍可派生
+        assert r[7] is None  # raise_amount 未定价→None
+        assert r[8] is None  # pe_ratio NaN→None
 
     def test_invalid_code_skipped(self, monkeypatch):
         """非法代码（空/非数字/超长/短码幻影）跳过，合法行保留。
@@ -136,18 +149,55 @@ class TestIpoCalendarFetch:
         短码防御（AI-R1 复审）：5 位码 '12345' 若经 zfill(6) 会幻影成
         '012345' 串号入库——现严格 6 位门禁（对齐 _suspend_rows_* 姊妹防御）。
         """
-        df = _ipo_df([
-            {"证劵代码": "", "证券简称": "空码", "上市日期": pd.NaT,
-             "申购日期": pd.NaT, "发行价": 1.0, "总发行数量": 100.0, "发行市盈率": 1.0},
-            {"证劵代码": "ABC123", "证券简称": "非数字", "上市日期": pd.NaT,
-             "申购日期": pd.NaT, "发行价": 1.0, "总发行数量": 100.0, "发行市盈率": 1.0},
-            {"证劵代码": "12345678", "证券简称": "超长", "上市日期": pd.NaT,
-             "申购日期": pd.NaT, "发行价": 1.0, "总发行数量": 100.0, "发行市盈率": 1.0},
-            {"证劵代码": "12345", "证券简称": "短码幻影", "上市日期": pd.NaT,
-             "申购日期": pd.NaT, "发行价": 1.0, "总发行数量": 100.0, "发行市盈率": 1.0},
-            {"证劵代码": "600000", "证券简称": "浦发银行", "上市日期": datetime.date(1999, 11, 10),
-             "申购日期": pd.NaT, "发行价": 10.0, "总发行数量": 40000.0, "发行市盈率": 20.0},
-        ])
+        df = _ipo_df(
+            [
+                {
+                    "证劵代码": "",
+                    "证券简称": "空码",
+                    "上市日期": pd.NaT,
+                    "申购日期": pd.NaT,
+                    "发行价": 1.0,
+                    "总发行数量": 100.0,
+                    "发行市盈率": 1.0,
+                },
+                {
+                    "证劵代码": "ABC123",
+                    "证券简称": "非数字",
+                    "上市日期": pd.NaT,
+                    "申购日期": pd.NaT,
+                    "发行价": 1.0,
+                    "总发行数量": 100.0,
+                    "发行市盈率": 1.0,
+                },
+                {
+                    "证劵代码": "12345678",
+                    "证券简称": "超长",
+                    "上市日期": pd.NaT,
+                    "申购日期": pd.NaT,
+                    "发行价": 1.0,
+                    "总发行数量": 100.0,
+                    "发行市盈率": 1.0,
+                },
+                {
+                    "证劵代码": "12345",
+                    "证券简称": "短码幻影",
+                    "上市日期": pd.NaT,
+                    "申购日期": pd.NaT,
+                    "发行价": 1.0,
+                    "总发行数量": 100.0,
+                    "发行市盈率": 1.0,
+                },
+                {
+                    "证劵代码": "600000",
+                    "证券简称": "浦发银行",
+                    "上市日期": datetime.date(1999, 11, 10),
+                    "申购日期": pd.NaT,
+                    "发行价": 10.0,
+                    "总发行数量": 40000.0,
+                    "发行市盈率": 20.0,
+                },
+            ]
+        )
         _mock_ak(monkeypatch, stock_new_ipo_cninfo=df)
         provider = AkshareIngestProvider()
         results = _call_fetch(provider, "ipo_calendar", _payload(D(2026, 8, 17), D(2026, 8, 17)))
@@ -163,17 +213,37 @@ class TestIpoCalendarFetch:
         int(inf*1e4) 直接 OverflowError 崩整个快照循环。修复=_num_or_none 用
         math.isfinite 统一拒非有限值（NaN/±Inf 同面），派生列得 None 不炸。
         """
-        df = _ipo_df([
-            {"证劵代码": "688825", "证券简称": "Inf发行价",
-             "上市日期": pd.NaT, "申购日期": pd.NaT,
-             "发行价": float("inf"), "总发行数量": 74000.0, "发行市盈率": 45.5},
-            {"证劵代码": "301688", "证券简称": "溢出股数",
-             "上市日期": pd.NaT, "申购日期": pd.NaT,
-             "发行价": 90.0, "总发行数量": "1e400", "发行市盈率": 45.5},
-            {"证劵代码": "600000", "证券简称": "正常",
-             "上市日期": pd.NaT, "申购日期": pd.NaT,
-             "发行价": 10.0, "总发行数量": 40000.0, "发行市盈率": 20.0},
-        ])
+        df = _ipo_df(
+            [
+                {
+                    "证劵代码": "688825",
+                    "证券简称": "Inf发行价",
+                    "上市日期": pd.NaT,
+                    "申购日期": pd.NaT,
+                    "发行价": float("inf"),
+                    "总发行数量": 74000.0,
+                    "发行市盈率": 45.5,
+                },
+                {
+                    "证劵代码": "301688",
+                    "证券简称": "溢出股数",
+                    "上市日期": pd.NaT,
+                    "申购日期": pd.NaT,
+                    "发行价": 90.0,
+                    "总发行数量": "1e400",
+                    "发行市盈率": 45.5,
+                },
+                {
+                    "证劵代码": "600000",
+                    "证券简称": "正常",
+                    "上市日期": pd.NaT,
+                    "申购日期": pd.NaT,
+                    "发行价": 10.0,
+                    "总发行数量": 40000.0,
+                    "发行市盈率": 20.0,
+                },
+            ]
+        )
         _mock_ak(monkeypatch, stock_new_ipo_cninfo=df)
         provider = AkshareIngestProvider()
         # 修复前：OverflowError 崩循环；修复后：3 行全产出，非有限值列 None
@@ -213,11 +283,19 @@ class TestIpoCalendarFetch:
 
     def test_trade_date_defaults_today(self, monkeypatch):
         """payload.end=None 时 trade_date 锚定今日（快照语义）。"""
-        df = _ipo_df([
-            {"证劵代码": "600000", "证券简称": "浦发银行",
-             "上市日期": datetime.date(1999, 11, 10), "申购日期": pd.NaT,
-             "发行价": 10.0, "总发行数量": 40000.0, "发行市盈率": 20.0},
-        ])
+        df = _ipo_df(
+            [
+                {
+                    "证劵代码": "600000",
+                    "证券简称": "浦发银行",
+                    "上市日期": datetime.date(1999, 11, 10),
+                    "申购日期": pd.NaT,
+                    "发行价": 10.0,
+                    "总发行数量": 40000.0,
+                    "发行市盈率": 20.0,
+                },
+            ]
+        )
         _mock_ak(monkeypatch, stock_new_ipo_cninfo=df)
         provider = AkshareIngestProvider()
         payload = _payload(D(2026, 8, 17), D(2026, 8, 17))

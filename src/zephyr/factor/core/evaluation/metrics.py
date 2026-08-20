@@ -23,6 +23,7 @@ IC (Information Coefficient): 因子值与前向收益的 Spearman rank correlat
 IR (Information Ratio): IC 均值 / IC 标准差
 OOS 正率: 样本外 IC > 0 的比例
 """
+
 from __future__ import annotations
 
 import warnings
@@ -73,10 +74,7 @@ def compute_ic_series(
         IC 时间序列，index=date, name="ic"
     """
     common_dates = factor_panel.index.intersection(return_panel.index)
-    ic_dict = {
-        date: compute_ic(factor_panel.loc[date], return_panel.loc[date])
-        for date in common_dates
-    }
+    ic_dict = {date: compute_ic(factor_panel.loc[date], return_panel.loc[date]) for date in common_dates}
     return pd.Series(ic_dict, name="ic")
 
 

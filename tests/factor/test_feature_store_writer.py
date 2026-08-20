@@ -28,6 +28,7 @@
      client 不可得 → RuntimeError
   4. schema 文件契约：DDL 含表名/引擎/分区键；INSERT_COLUMNS 与写入列一致
 """
+
 from __future__ import annotations
 
 import datetime
@@ -43,12 +44,14 @@ from zephyr.factor.feature_store_writer import (
 
 
 def _values(n: int = 3) -> pd.DataFrame:
-    return pd.DataFrame({
-        "trade_date": [datetime.date(2026, 8, 20)] * n,
-        "symbol": [f"00000{i}.SZ" for i in range(1, n + 1)],
-        "factor_id": ["rsi_momentum"] * n,
-        "value": [0.5, np.nan, 1.2][:n],
-    })
+    return pd.DataFrame(
+        {
+            "trade_date": [datetime.date(2026, 8, 20)] * n,
+            "symbol": [f"00000{i}.SZ" for i in range(1, n + 1)],
+            "factor_id": ["rsi_momentum"] * n,
+            "value": [0.5, np.nan, 1.2][:n],
+        }
+    )
 
 
 class TestBuildRows:

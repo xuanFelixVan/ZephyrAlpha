@@ -37,6 +37,7 @@ confidence<0.60 → 默认保守（冰点）并留痕 fallback_mask。
 本模块只消费 market_sentiment_analyzer 的输出契约（duck-typed），不 import 其内部；
 5 档中文阶段名与 SentimentPhase enum value 一致（BM-SEL-23-B 输出契约）。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -19,6 +19,7 @@
 导出公共 API:
 - to_signals: pd.Series → list[FactorSignal]
 """
+
 from zephyr.factor.core.ctr002_producer.converter import to_signals
 
 __all__ = ["to_signals"]

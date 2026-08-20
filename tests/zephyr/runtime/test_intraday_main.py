@@ -26,6 +26,7 @@
     7. symbols 从 subscriber 传给 factor_loop
     8. main() 命令行入口
 """
+
 from __future__ import annotations
 
 import unittest
@@ -84,9 +85,7 @@ class TestIntradayRuntimeStart(unittest.TestCase):
     @patch("zephyr.runtime.intraday_main.is_trading_day", return_value=True)
     @patch("zephyr.runtime.intraday_main.DatabaseService")
     @patch("zephyr.runtime.intraday_main.TickRedisCache")
-    def test_start_success(
-        self, mock_cache_cls, mock_ds_cls, mock_trading
-    ):
+    def test_start_success(self, mock_cache_cls, mock_ds_cls, mock_trading):
         """正常启动：交易日 → Redis → tick_subscriber → factor_loop 全部启动。"""
         mock_sub = _FakeTickSubscriber()
         mock_loop = _FakeFactorLoop()
@@ -118,9 +117,7 @@ class TestIntradayRuntimeStart(unittest.TestCase):
     @patch("zephyr.runtime.intraday_main.is_trading_day", return_value=False)
     @patch("zephyr.runtime.intraday_main.TickRedisCache")
     @patch("zephyr.runtime.intraday_main.DatabaseService")
-    def test_start_force_bypasses_guard(
-        self, mock_ds_cls, mock_cache_cls, mock_trading
-    ):
+    def test_start_force_bypasses_guard(self, mock_ds_cls, mock_cache_cls, mock_trading):
         """非交易日 + --force → 跳过守卫，正常启动。"""
         mock_sub = _FakeTickSubscriber()
         mock_loop = _FakeFactorLoop()
@@ -137,9 +134,7 @@ class TestIntradayRuntimeStart(unittest.TestCase):
     @patch("zephyr.runtime.intraday_main.is_trading_day", return_value=True)
     @patch("zephyr.runtime.intraday_main.TickRedisCache")
     @patch("zephyr.runtime.intraday_main.DatabaseService")
-    def test_start_tick_subscriber_fails(
-        self, mock_ds_cls, mock_cache_cls, mock_trading
-    ):
+    def test_start_tick_subscriber_fails(self, mock_ds_cls, mock_cache_cls, mock_trading):
         """tick_subscriber 启动失败 → 不启动 loop，返回 False。"""
         mock_sub = _FakeTickSubscriber()
         mock_sub.start_return = False
@@ -157,9 +152,7 @@ class TestIntradayRuntimeStart(unittest.TestCase):
     @patch("zephyr.runtime.intraday_main.is_trading_day", return_value=True)
     @patch("zephyr.runtime.intraday_main.TickRedisCache")
     @patch("zephyr.runtime.intraday_main.DatabaseService")
-    def test_start_factor_loop_fails_rolls_back_subscriber(
-        self, mock_ds_cls, mock_cache_cls, mock_trading
-    ):
+    def test_start_factor_loop_fails_rolls_back_subscriber(self, mock_ds_cls, mock_cache_cls, mock_trading):
         """factor_loop 启动失败 → 回滚 subscriber（调用其 stop）。"""
         mock_sub = _FakeTickSubscriber()
         mock_loop = _FakeFactorLoop()
@@ -182,9 +175,7 @@ class TestIntradayRuntimeStop(unittest.TestCase):
     @patch("zephyr.runtime.intraday_main.is_trading_day", return_value=True)
     @patch("zephyr.runtime.intraday_main.TickRedisCache")
     @patch("zephyr.runtime.intraday_main.DatabaseService")
-    def test_stop_reverse_order(
-        self, mock_ds_cls, mock_cache_cls, mock_trading
-    ):
+    def test_stop_reverse_order(self, mock_ds_cls, mock_cache_cls, mock_trading):
         """停止顺序：factor_loop 先停，subscriber 后停（反序）。"""
         mock_sub = _FakeTickSubscriber()
         mock_loop = _FakeFactorLoop()
@@ -212,9 +203,7 @@ class TestIntradayRuntimeStats(unittest.TestCase):
     @patch("zephyr.runtime.intraday_main.is_trading_day", return_value=True)
     @patch("zephyr.runtime.intraday_main.TickRedisCache")
     @patch("zephyr.runtime.intraday_main.DatabaseService")
-    def test_stats_aggregates_both_components(
-        self, mock_ds_cls, mock_cache_cls, mock_trading
-    ):
+    def test_stats_aggregates_both_components(self, mock_ds_cls, mock_cache_cls, mock_trading):
         """stats 聚合 subscriber + factor_loop 数据。"""
         mock_sub = _FakeTickSubscriber()
         mock_loop = _FakeFactorLoop()
@@ -242,9 +231,7 @@ class TestSymbolsPropagation(unittest.TestCase):
     @patch("zephyr.runtime.intraday_main.is_trading_day", return_value=True)
     @patch("zephyr.runtime.intraday_main.TickRedisCache")
     @patch("zephyr.runtime.intraday_main.DatabaseService")
-    def test_symbols_passed_from_subscriber_to_loop(
-        self, mock_ds_cls, mock_cache_cls, mock_trading
-    ):
+    def test_symbols_passed_from_subscriber_to_loop(self, mock_ds_cls, mock_cache_cls, mock_trading):
         """无显式 symbols 时，从 subscriber.subscribed_symbols 传给 factor_loop。"""
         mock_sub = _FakeTickSubscriber()
         captured: dict = {}
@@ -254,9 +241,7 @@ class TestSymbolsPropagation(unittest.TestCase):
                 super().__init__(**kwargs)
                 captured["symbols"] = kwargs.get("symbols")
 
-        with patch(
-            "zephyr.runtime.intraday_main.IntradayFactorLoop", _CapturingLoop
-        ):
+        with patch("zephyr.runtime.intraday_main.IntradayFactorLoop", _CapturingLoop):
             rt = IntradayRuntime(
                 redis_conn=MagicMock(),
                 tick_subscriber=mock_sub,
@@ -269,9 +254,7 @@ class TestSymbolsPropagation(unittest.TestCase):
     @patch("zephyr.runtime.intraday_main.is_trading_day", return_value=True)
     @patch("zephyr.runtime.intraday_main.TickRedisCache")
     @patch("zephyr.runtime.intraday_main.DatabaseService")
-    def test_empty_subscribed_falls_back_to_explicit_symbols(
-        self, mock_ds_cls, mock_cache_cls, mock_trading
-    ):
+    def test_empty_subscribed_falls_back_to_explicit_symbols(self, mock_ds_cls, mock_cache_cls, mock_trading):
         """subscriber 订阅为空时，回退到显式传入的 symbols。"""
         mock_sub = _FakeTickSubscriber()
         mock_sub._subscribed = set()  # 空订阅
@@ -282,9 +265,7 @@ class TestSymbolsPropagation(unittest.TestCase):
                 super().__init__(**kwargs)
                 captured["symbols"] = kwargs.get("symbols")
 
-        with patch(
-            "zephyr.runtime.intraday_main.IntradayFactorLoop", _CapturingLoop
-        ):
+        with patch("zephyr.runtime.intraday_main.IntradayFactorLoop", _CapturingLoop):
             rt = IntradayRuntime(
                 symbols=["999999.BJ"],
                 redis_conn=MagicMock(),

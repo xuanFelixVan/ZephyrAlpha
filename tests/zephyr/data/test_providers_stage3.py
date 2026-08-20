@@ -11,6 +11,7 @@
 
 不依赖真实 SDK，用 patch.dict("sys.modules", ...) 注入 mock 模块。
 """
+
 import datetime
 import os
 import sys
@@ -31,11 +32,13 @@ def _install_mock_module(name: str, mock: MagicMock | None = None) -> MagicMock:
 
 # ============== BaostockProvider 测试 ==============
 
+
 class TestBaostockProvider:
     """BaostockProvider 测试（thread_local 登录模型）。"""
 
     def _make_provider(self):
         from src.zephyr.data.implementations.baostock_provider import BaostockProvider
+
         return BaostockProvider()
 
     def _make_bs_mock(self, login_ok=True):
@@ -162,8 +165,10 @@ class TestBaostockProvider:
             p = self._make_provider()
             p.connect()
             payload = FetchPayload(
-                table="t", symbols=None,
-                start=datetime.date(2026, 1, 1), end=datetime.date(2026, 1, 2),
+                table="t",
+                symbols=None,
+                start=datetime.date(2026, 1, 1),
+                end=datetime.date(2026, 1, 2),
                 extra={"capability": "unknown"},
             )
             results = list(p.fetch(payload, SourcePolicy()))
@@ -173,11 +178,13 @@ class TestBaostockProvider:
 
 # ============== TushareProvider 测试 ==============
 
+
 class TestTushareProvider:
     """TushareProvider 测试（token 认证）。"""
 
     def _make_provider(self):
         from src.zephyr.data.implementations.tushare_provider import TushareProvider
+
         return TushareProvider()
 
     def _make_ts_mock(self):
@@ -194,8 +201,7 @@ class TestTushareProvider:
     def test_connect(self):
         """connect 读取 token 并初始化 pro_api。"""
         ts, pro = self._make_ts_mock()
-        with patch.dict(os.environ, {"TUSHARE_TOKEN": "test_token"}), \
-             patch.dict("sys.modules", {"tushare": ts}):
+        with patch.dict(os.environ, {"TUSHARE_TOKEN": "test_token"}), patch.dict("sys.modules", {"tushare": ts}):
             p = self._make_provider()
             p.connect()
             assert p.is_connected is True
@@ -212,18 +218,20 @@ class TestTushareProvider:
     def test_fetch_news_news_info(self):
         """获取新闻快讯。"""
         import pandas as pd
+
         ts, pro = self._make_ts_mock()
-        mock_df = pd.DataFrame({
-            "datetime": ["2026-07-05 10:00:00"],
-            "news_id": ["n001"],
-            "title": ["test news"],
-            "content": ["content"],
-            "src": ["sina"],
-        })
+        mock_df = pd.DataFrame(
+            {
+                "datetime": ["2026-07-05 10:00:00"],
+                "news_id": ["n001"],
+                "title": ["test news"],
+                "content": ["content"],
+                "src": ["sina"],
+            }
+        )
         pro.news_info.return_value = mock_df
 
-        with patch.dict(os.environ, {"TUSHARE_TOKEN": "test_token"}), \
-             patch.dict("sys.modules", {"tushare": ts}):
+        with patch.dict(os.environ, {"TUSHARE_TOKEN": "test_token"}), patch.dict("sys.modules", {"tushare": ts}):
             p = self._make_provider()
             p.connect()
             payload = FetchPayload(
@@ -240,13 +248,14 @@ class TestTushareProvider:
 
     def test_fetch_unsupported(self):
         ts, pro = self._make_ts_mock()
-        with patch.dict(os.environ, {"TUSHARE_TOKEN": "test_token"}), \
-             patch.dict("sys.modules", {"tushare": ts}):
+        with patch.dict(os.environ, {"TUSHARE_TOKEN": "test_token"}), patch.dict("sys.modules", {"tushare": ts}):
             p = self._make_provider()
             p.connect()
             payload = FetchPayload(
-                table="t", symbols=None,
-                start=datetime.date(2026, 1, 1), end=datetime.date(2026, 1, 2),
+                table="t",
+                symbols=None,
+                start=datetime.date(2026, 1, 1),
+                end=datetime.date(2026, 1, 2),
                 extra={"capability": "unknown"},
             )
             results = list(p.fetch(payload, SourcePolicy()))
@@ -256,11 +265,13 @@ class TestTushareProvider:
 
 # ============== TickFlowProvider 测试 ==============
 
+
 class TestTickFlowProvider:
     """TickFlowProvider 测试（美股数据）。"""
 
     def _make_provider(self):
         from src.zephyr.data.implementations.tickflow_provider import TickFlowProvider
+
         return TickFlowProvider()
 
     def test_source_name(self):
@@ -289,15 +300,18 @@ class TestTickFlowProvider:
     def test_fetch_us_daily_kline(self):
         """获取美股日K线。"""
         import pandas as pd
+
         tf = MagicMock()
-        mock_df = pd.DataFrame({
-            "date": ["2026-07-05"],
-            "open": [150.0],
-            "high": [155.0],
-            "low": [149.0],
-            "close": [153.0],
-            "volume": [1000000],
-        })
+        mock_df = pd.DataFrame(
+            {
+                "date": ["2026-07-05"],
+                "open": [150.0],
+                "high": [155.0],
+                "low": [149.0],
+                "close": [153.0],
+                "volume": [1000000],
+            }
+        )
         # connect() 设置 self._client = tf.TickFlow.free()，故 mock 路径需经过 TickFlow.free
         tf.TickFlow.free.return_value.klines.get.return_value = mock_df
 
@@ -320,15 +334,18 @@ class TestTickFlowProvider:
     def test_fetch_us_index(self):
         """获取美股指数（ETF替代）。"""
         import pandas as pd
+
         tf = MagicMock()
-        mock_df = pd.DataFrame({
-            "date": ["2026-07-05"],
-            "open": [400.0],
-            "high": [405.0],
-            "low": [399.0],
-            "close": [403.0],
-            "volume": [5000000],
-        })
+        mock_df = pd.DataFrame(
+            {
+                "date": ["2026-07-05"],
+                "open": [400.0],
+                "high": [405.0],
+                "low": [399.0],
+                "close": [403.0],
+                "volume": [5000000],
+            }
+        )
         # connect() 设置 self._client = tf.TickFlow.free()，故 mock 路径需经过 TickFlow.free
         tf.TickFlow.free.return_value.klines.get.return_value = mock_df
 
@@ -349,16 +366,19 @@ class TestTickFlowProvider:
 
 # ============== TDXProvider 测试 ==============
 
+
 class TestTDXProvider:
     """TDXProvider 测试（通达信板块数据）。"""
 
     def _make_provider(self):
         from src.zephyr.data.implementations.tdx_provider import TDXProvider
+
         return TDXProvider()
 
     def _make_mootdx_mock(self):
         """构造 mootdx 模块 mock。"""
         import pandas as pd
+
         mootdx = MagicMock()
         mock_client = MagicMock()
         mootdx.quotes.Quotes.factory.return_value = mock_client
@@ -385,11 +405,14 @@ class TestTDXProvider:
         capability 迁 tushare）——回归保护：fetch 必须返回 unsupported capability 错误。"""
         mootdx, mock_client = self._make_mootdx_mock()
         import pandas as pd
+
         # mootdx block() 返回 DataFrame: [blockname, code]
-        mock_client.block.return_value = pd.DataFrame({
-            "blockname": ["板块A", "板块B"],
-            "code": ["600000", "600016"],
-        })
+        mock_client.block.return_value = pd.DataFrame(
+            {
+                "blockname": ["板块A", "板块B"],
+                "code": ["600000", "600016"],
+            }
+        )
 
         with patch.dict("sys.modules", {"mootdx": mootdx, "mootdx.quotes": mootdx.quotes}):
             p = self._make_provider()
@@ -409,12 +432,18 @@ class TestTDXProvider:
         """获取板块指数K线。"""
         mootdx, mock_client = self._make_mootdx_mock()
         import pandas as pd
-        mock_client.index_bars.return_value = pd.DataFrame({
-            "datetime": ["2026-07-05"],
-            "open": [1000], "high": [1010],
-            "low": [995], "close": [1005],
-            "vol": [50000], "amount": [5000000],
-        })
+
+        mock_client.index_bars.return_value = pd.DataFrame(
+            {
+                "datetime": ["2026-07-05"],
+                "open": [1000],
+                "high": [1010],
+                "low": [995],
+                "close": [1005],
+                "vol": [50000],
+                "amount": [5000000],
+            }
+        )
 
         with patch.dict("sys.modules", {"mootdx": mootdx, "mootdx.quotes": mootdx.quotes}):
             p = self._make_provider()
@@ -434,11 +463,13 @@ class TestTDXProvider:
 
 # ============== RSSProvider 测试 ==============
 
+
 class TestRSSProvider:
     """RSSProvider 测试（财经新闻）。"""
 
     def _make_provider(self):
         from src.zephyr.data.implementations.rss_provider import RSSProvider
+
         return RSSProvider()
 
     def test_source_name(self):
@@ -467,6 +498,7 @@ class TestRSSProvider:
     def test_fetch_news_data(self):
         """获取财经新闻。"""
         import pandas as pd  # noqa: F401  确保 pandas 可用
+
         # mock requests + feedparser
         requests_mock = MagicMock()
         mock_response = MagicMock()
@@ -477,15 +509,17 @@ class TestRSSProvider:
         fp = MagicMock()
         mock_parsed = MagicMock()
         mock_parsed.entries = [
-            {"published": "2026-07-05", "title": "news1",
-             "link": "http://1", "summary": "sum1"},
+            {"published": "2026-07-05", "title": "news1", "link": "http://1", "summary": "sum1"},
         ]
         fp.parse.return_value = mock_parsed
 
-        with patch.dict("sys.modules", {
-            "feedparser": fp,
-            "requests": requests_mock,
-        }):
+        with patch.dict(
+            "sys.modules",
+            {
+                "feedparser": fp,
+                "requests": requests_mock,
+            },
+        ):
             p = self._make_provider()
             p.connect()
             # 禁用 robots.txt 检查
@@ -509,8 +543,10 @@ class TestRSSProvider:
             p = self._make_provider()
             p.connect()
             payload = FetchPayload(
-                table="t", symbols=None,
-                start=datetime.date(2026, 1, 1), end=datetime.date(2026, 1, 2),
+                table="t",
+                symbols=None,
+                start=datetime.date(2026, 1, 1),
+                end=datetime.date(2026, 1, 2),
                 extra={"capability": "unknown"},
             )
             results = list(p.fetch(payload, SourcePolicy()))
@@ -520,6 +556,7 @@ class TestRSSProvider:
     def test_robots_txt_cache(self):
         """robots.txt 缓存机制——fail-open（读取失败 → 允许）。"""
         from src.zephyr.data.implementations.rss_provider import RSSProvider
+
         p = self._make_provider()
         # 清空缓存
         RSSProvider.robots_cache.clear()
@@ -532,6 +569,7 @@ class TestRSSProvider:
         应按 fail-open 处理。模拟 Investing.com 等 Cloudflare 站点 robots.txt 返回 403 的场景：
         若不处理 disallow_all，can_fetch 会返回 False（误判全站禁止），导致 RSS 源被跳过。"""
         from src.zephyr.data.implementations.rss_provider import RSSProvider
+
         p = self._make_provider()
         RSSProvider.robots_cache.clear()
 
@@ -547,6 +585,7 @@ class TestRSSProvider:
         故 provider 对单 feed 失败不应 yield error（仅 log + 跳过）。验证：feed1 失败、feed2 成功时，
         结果中无 error FetchResult，且 feed2 的行被正确返回（模拟 domestic 源 503 后海外源仍能入库）。"""
         import pandas as pd  # noqa: F401  确保 pandas 可用
+
         requests_mock = MagicMock()
         ok_response = MagicMock()
         ok_response.content = b"<rss>...</rss>"
@@ -556,27 +595,29 @@ class TestRSSProvider:
             if "feed1.example.com" in url:
                 raise Exception("503 Server Error: Service Unavailable")
             return ok_response
+
         requests_mock.get.side_effect = fake_get
 
         fp = MagicMock()
         mock_parsed = MagicMock()
         mock_parsed.entries = [
-            {"published": "2026-07-05", "title": "news_ok",
-             "link": "http://ok", "summary": "sum_ok"},
+            {"published": "2026-07-05", "title": "news_ok", "link": "http://ok", "summary": "sum_ok"},
         ]
         fp.parse.return_value = mock_parsed
 
-        with patch.dict("sys.modules", {
-            "feedparser": fp,
-            "requests": requests_mock,
-        }):
+        with patch.dict(
+            "sys.modules",
+            {
+                "feedparser": fp,
+                "requests": requests_mock,
+            },
+        ):
             p = self._make_provider()
             p.connect()
             policy = SourcePolicy(respect_robots_txt=False)
             payload = FetchPayload(
                 table="c3_fundamental.news_data",
-                symbols=["https://feed1.example.com/fail.xml",
-                         "https://feed2.example.com/ok.xml"],
+                symbols=["https://feed1.example.com/fail.xml", "https://feed2.example.com/ok.xml"],
                 start=datetime.date(2026, 7, 1),
                 end=datetime.date(2026, 7, 6),
                 extra={"capability": "news_data"},
@@ -584,8 +625,7 @@ class TestRSSProvider:
             results = list(p.fetch(payload, policy))
 
         # 关键断言：无 error FetchResult（scheduler._fetch_and_write 不会 break）
-        assert all(r.error is None for r in results), \
-            f"单源失败不应 yield error，但得到: {[r.error for r in results]}"
+        assert all(r.error is None for r in results), f"单源失败不应 yield error，但得到: {[r.error for r in results]}"
         # feed2 的行被正确返回（失败的 feed1 被跳过）
         assert len(results) == 1
         assert len(results[0].rows) == 1

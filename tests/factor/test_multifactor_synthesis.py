@@ -8,15 +8,14 @@
 - synthesize_regression: 回归优化
 - synthesize: 统一入口 dispatch / 未知方法退化
 """
+
 from __future__ import annotations
 
 import numpy as np
 import pandas as pd
 import pytest
 
-multifactor_synthesis = pytest.importorskip(
-    "zephyr.factor.analysis.multifactor_synthesis"
-)
+multifactor_synthesis = pytest.importorskip("zephyr.factor.analysis.multifactor_synthesis")
 
 synthesize_equal_weight = multifactor_synthesis.synthesize_equal_weight
 synthesize_ic_weighted = multifactor_synthesis.synthesize_ic_weighted
@@ -151,7 +150,9 @@ class TestSynthesizeDispatch:
         f2 = pd.Series([3.0, 4.0], index=list("AB"))
         ic_weights = {"f1": 1.0, "f2": 3.0}
         result = synthesize(
-            {"f1": f1, "f2": f2}, method="ic_weighted", ic_weights=ic_weights,
+            {"f1": f1, "f2": f2},
+            method="ic_weighted",
+            ic_weights=ic_weights,
         )
         expected = synthesize_ic_weighted({"f1": f1, "f2": f2}, ic_weights)
         pd.testing.assert_series_equal(result, expected)
@@ -161,7 +162,9 @@ class TestSynthesizeDispatch:
         f2 = pd.Series([2.0, 3.0, 4.0, 5.0], index=list("ABCD"))
         fr = pd.Series([8.0, 13.0, 18.0, 23.0], index=list("ABCD"))
         result = synthesize(
-            {"f1": f1, "f2": f2}, method="regression", forward_returns=fr,
+            {"f1": f1, "f2": f2},
+            method="regression",
+            forward_returns=fr,
         )
         expected = synthesize_regression({"f1": f1, "f2": f2}, fr)
         pd.testing.assert_series_equal(result, expected)

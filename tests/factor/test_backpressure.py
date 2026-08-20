@@ -22,6 +22,7 @@
 - 超时返回 False
 - stats 快照
 """
+
 from __future__ import annotations
 
 import threading
@@ -88,9 +89,7 @@ class TestStateTransitions:
 
     def test_high_watermark_triggers_throttled(self) -> None:
         """max_inflight=4, high_watermark=0.8 → inflight=4 (ratio=1.0) → THROTTLED。"""
-        limiter = BackpressureLimiter(
-            BackpressureConfig(max_inflight=4, high_watermark=0.8, low_watermark=0.5)
-        )
+        limiter = BackpressureLimiter(BackpressureConfig(max_inflight=4, high_watermark=0.8, low_watermark=0.5))
         # acquire 到高水位（4 * 0.8 = 3.2，所以 inflight=4 时 ratio=1.0）
         for _ in range(4):
             limiter.acquire()
@@ -100,9 +99,7 @@ class TestStateTransitions:
 
     def test_low_watermark_returns_normal(self) -> None:
         """max_inflight=4, low=0.5 → inflight=2 (ratio=0.5) → NORMAL。"""
-        limiter = BackpressureLimiter(
-            BackpressureConfig(max_inflight=4, high_watermark=0.8, low_watermark=0.5)
-        )
+        limiter = BackpressureLimiter(BackpressureConfig(max_inflight=4, high_watermark=0.8, low_watermark=0.5))
         # 先到 THROTTLED
         for _ in range(4):
             limiter.acquire()
@@ -117,9 +114,7 @@ class TestStateTransitions:
 
     def test_hysteresis_middle_zone(self) -> None:
         """中间区间（low < ratio < high）保持当前状态（滞后区间）。"""
-        limiter = BackpressureLimiter(
-            BackpressureConfig(max_inflight=10, high_watermark=0.8, low_watermark=0.5)
-        )
+        limiter = BackpressureLimiter(BackpressureConfig(max_inflight=10, high_watermark=0.8, low_watermark=0.5))
         # 先到 THROTTLED（acquire 8 个）
         for _ in range(8):
             limiter.acquire()
@@ -161,9 +156,7 @@ class TestPauseResume:
 class TestTimeout:
     def test_acquire_timeout_returns_false(self) -> None:
         """max_inflight=1, acquire_timeout_s=0.1 → 第 2 个 acquire 超时返回 False。"""
-        limiter = BackpressureLimiter(
-            BackpressureConfig(max_inflight=1, acquire_timeout_s=0.1)
-        )
+        limiter = BackpressureLimiter(BackpressureConfig(max_inflight=1, acquire_timeout_s=0.1))
         assert limiter.acquire() is True
         start = time.monotonic()
         result = limiter.acquire()
@@ -175,9 +168,7 @@ class TestTimeout:
 
     def test_concurrent_acquire_blocks_then_succeeds(self) -> None:
         """一个线程持有，另一线程等待 release 后成功获取。"""
-        limiter = BackpressureLimiter(
-            BackpressureConfig(max_inflight=1, acquire_timeout_s=2.0)
-        )
+        limiter = BackpressureLimiter(BackpressureConfig(max_inflight=1, acquire_timeout_s=2.0))
         assert limiter.acquire() is True
 
         results: list[bool] = []

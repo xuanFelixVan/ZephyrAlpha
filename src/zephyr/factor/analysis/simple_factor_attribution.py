@@ -27,6 +27,7 @@ benchmark='csi300'（沪深300）。验证 §3.3 衰减监控的因子贡献与 
 归因公式：PnL_i = Σ_t (w_{i,t} - w_{benchmark,t}) × r_{i,t}
   w = t 日因子 i 的组合暴露，r = t 日因子 i 的截面收益。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -99,13 +100,15 @@ def attribute(
         avg_active = float(active.loc[common].mean())
         attributed += pnl_i
         ratio = pnl_i / total_pnl if abs(total_pnl) > 1e-12 else 0.0
-        rows.append(FactorAttributionRow(
-            factor_id=fid,
-            pnl=pnl_i,
-            contribution_ratio=ratio,
-            avg_active_exposure=avg_active,
-            low_contribution=abs(ratio) < LOW_CONTRIBUTION_THRESHOLD,
-        ))
+        rows.append(
+            FactorAttributionRow(
+                factor_id=fid,
+                pnl=pnl_i,
+                contribution_ratio=ratio,
+                avg_active_exposure=avg_active,
+                low_contribution=abs(ratio) < LOW_CONTRIBUTION_THRESHOLD,
+            )
+        )
     rows.sort(key=lambda x: x.pnl, reverse=True)
     residual = float(total_pnl) - attributed
     explained = attributed / total_pnl if abs(total_pnl) > 1e-12 else 0.0

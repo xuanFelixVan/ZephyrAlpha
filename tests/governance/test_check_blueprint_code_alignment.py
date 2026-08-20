@@ -137,9 +137,7 @@ class TestScanBlueprintFrontmatterEntries:
     def test_skip_index_md(self, tmp_path):
         bp_dir = tmp_path / "docs" / "03_modules"
         bp_dir.mkdir(parents=True)
-        (bp_dir / "index.md").write_text(
-            "---\nmodule_id: MOD-INDEX\nbuild_status: planned\n---\n", encoding="utf-8"
-        )
+        (bp_dir / "index.md").write_text("---\nmodule_id: MOD-INDEX\nbuild_status: planned\n---\n", encoding="utf-8")
         entries = cbca.scan_blueprint_frontmatter_entries()
         assert entries == []
 
@@ -166,9 +164,7 @@ class TestScanBlueprintFrontmatterEntries:
     def test_no_module_id_skipped(self, tmp_path):
         bp_dir = tmp_path / "docs" / "03_modules"
         bp_dir.mkdir(parents=True)
-        (bp_dir / "no_mid.md").write_text(
-            "---\nbuild_status: planned\n---\n", encoding="utf-8"
-        )
+        (bp_dir / "no_mid.md").write_text("---\nbuild_status: planned\n---\n", encoding="utf-8")
         entries = cbca.scan_blueprint_frontmatter_entries()
         assert entries == []
 

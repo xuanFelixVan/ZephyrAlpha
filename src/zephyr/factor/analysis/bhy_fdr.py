@@ -45,9 +45,9 @@ DEFAULT_Q: float = 0.10
 class BHYFDRResult:
     """BHY 校正结果。"""
 
-    rejected: list[bool]   # 拒绝掩码（原始输入顺序）
+    rejected: list[bool]  # 拒绝掩码（原始输入顺序）
     n_rejected: int
-    threshold: float       # 临界 p 值阈值（k 对应阈值；零拒绝=0.0）
+    threshold: float  # 临界 p 值阈值（k 对应阈值；零拒绝=0.0）
     q: float
     m: int
 

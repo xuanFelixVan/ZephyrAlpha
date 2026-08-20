@@ -22,6 +22,7 @@
   / 未提交 promote 报错 / grayscale 中推进阶梯 / 门禁未过保持
   / 完整流程走通到 production
 """
+
 from __future__ import annotations
 
 import pytest

@@ -50,6 +50,7 @@
     # ... 运行中 ...
     loop.stop()   # 优雅停止
 """
+
 from __future__ import annotations
 
 import logging
@@ -216,14 +217,18 @@ class IntradayFactorLoop:
             if report.failed_factors:
                 logger.warning(
                     "IntradayFactorLoop: 周期 #%d 完成, mode=%s, %d 因子, %d 失败",
-                    self._cycle_count, mode,
-                    len(report.results), len(report.failed_factors),
+                    self._cycle_count,
+                    mode,
+                    len(report.results),
+                    len(report.failed_factors),
                 )
             else:
                 logger.debug(
                     "IntradayFactorLoop: 周期 #%d 完成, mode=%s, %d 因子, %.3fs",
-                    self._cycle_count, mode,
-                    len(report.results), report.duration_s,
+                    self._cycle_count,
+                    mode,
+                    len(report.results),
+                    report.duration_s,
                 )
             return len(report.results)
         except Exception as exc:  # noqa: BLE001 — 单周期失败不中断循环
@@ -235,7 +240,8 @@ class IntradayFactorLoop:
         """循环线程主函数。"""
         logger.info(
             "IntradayFactorLoop: 循环启动, %d symbols, %.1fs 周期",
-            len(self._symbols), self._cycle_seconds,
+            len(self._symbols),
+            self._cycle_seconds,
         )
         while self._running:
             self.tick_cycle()
@@ -261,9 +267,7 @@ class IntradayFactorLoop:
         self._sink = create_h1_factor_sink(self._redis)
         self._running = True
         self._cycle_count = 0
-        self._thread = threading.Thread(
-            target=self._loop, daemon=True, name="intraday-factor-loop"
-        )
+        self._thread = threading.Thread(target=self._loop, daemon=True, name="intraday-factor-loop")
         self._thread.start()
         logger.info("IntradayFactorLoop: 已启动")
         return True

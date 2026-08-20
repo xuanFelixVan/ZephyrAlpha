@@ -231,13 +231,19 @@ class TestGateThresholds:
         assert PHASE_SPECS[TransitionPhase.SHADOW].duration_days == 14
         assert PHASE_SPECS[TransitionPhase.GRAY_RAMP].duration_days == 30
         assert PHASE_SPECS[TransitionPhase.PARALLEL].key_gates == [
-            "paper_live_signal_match >= 99.9%", "slippage_diff < 1bp", "fill_rate >= 99%",
+            "paper_live_signal_match >= 99.9%",
+            "slippage_diff < 1bp",
+            "fill_rate >= 99%",
         ]
         assert PHASE_SPECS[TransitionPhase.SHADOW].key_gates == [
-            "shadow_pnl_correlation >= 0.95", "settlement_match 100%", "latency < 100ms",
+            "shadow_pnl_correlation >= 0.95",
+            "settlement_match 100%",
+            "latency < 100ms",
         ]
         assert PHASE_SPECS[TransitionPhase.GRAY_RAMP].key_gates == [
-            "drawdown < 1% per ramp step", "no circuit_breaker triggers", "daily_loss < 3%",
+            "drawdown < 1% per ramp step",
+            "no circuit_breaker triggers",
+            "daily_loss < 3%",
         ]
 
     def test_default_singleton(self):

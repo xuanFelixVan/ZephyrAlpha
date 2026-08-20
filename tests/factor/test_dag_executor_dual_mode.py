@@ -20,6 +20,7 @@
 - incremental 模式 + cached_results 调用 incremental_compute
 - DagExecutionReport.mode 字段正确
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -65,8 +66,11 @@ def _register_incremental_factor(fid: str) -> None:
             return data["close"].pct_change(5)
 
         def incremental_compute(
-            self, data: pd.DataFrame, window: int = 5,
-            cached: pd.Series | None = None, **kwargs,
+            self,
+            data: pd.DataFrame,
+            window: int = 5,
+            cached: pd.Series | None = None,
+            **kwargs,
         ) -> pd.Series:
             if cached is None or cached.empty:
                 return self.compute(data)
@@ -165,9 +169,7 @@ class TestIncrementalMode:
         cache_report = executor.execute(dag, cache_data, mode=BATCH)
         cached = cache_report.results["inc_1"].series
         # 用 incremental 模式计算全部 40 天
-        inc_report = executor.execute(
-            dag, full_data, mode=INCREMENTAL, cached_results={"inc_1": cached}
-        )
+        inc_report = executor.execute(dag, full_data, mode=INCREMENTAL, cached_results={"inc_1": cached})
         assert inc_report.mode == INCREMENTAL
         inc_result = inc_report.results["inc_1"]
         assert inc_result.success is True
@@ -201,15 +203,11 @@ class TestIncrementalMode:
         cache_data = full_data.iloc[:30]
         cache_report = executor.execute(dag, cache_data, mode=BATCH)
         cached = cache_report.results["inc_1"].series
-        inc_report = executor.execute(
-            dag, full_data, mode=INCREMENTAL, cached_results={"inc_1": cached}
-        )
+        inc_report = executor.execute(dag, full_data, mode=INCREMENTAL, cached_results={"inc_1": cached})
         inc_series = inc_report.results["inc_1"].series
         # 比较 non-NaN 部分
         valid = batch_series.notna()
-        pd.testing.assert_series_equal(
-            inc_series[valid], batch_series[valid], check_names=False
-        )
+        pd.testing.assert_series_equal(inc_series[valid], batch_series[valid], check_names=False)
 
 
 class TestReportModeField:

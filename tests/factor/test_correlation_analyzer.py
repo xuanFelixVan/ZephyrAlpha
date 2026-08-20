@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """correlation_analyzer 模块测试——因子相关性分析。"""
+
 from __future__ import annotations
 
 import numpy as np

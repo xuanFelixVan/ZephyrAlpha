@@ -13,6 +13,7 @@
     - 11→06 传导路径图→跨市场传导 (修复06)
     - L0→06/L0→09/L0→10 全球市场数据→跨市场传导/调整周期/行情生命周期
 """
+
 import sys
 from pathlib import Path
 
@@ -89,9 +90,7 @@ class TestFixEdgesExist:
             rows = cur.fetchall()
         assert len(rows) > 0, f"修复边不存在: {desc} ({from_bp}→{to_bp})"
         eid, dep_type, dep_maturity = rows[0]
-        assert dep_maturity == "design", (
-            f"{desc}: dep_maturity={dep_maturity}≠design"
-        )
+        assert dep_maturity == "design", f"{desc}: dep_maturity={dep_maturity}≠design"
 
     def test_fix_edge_count(self, db_conn):
         """验证5条修复边全部存在（非重复写入）。"""
@@ -132,9 +131,7 @@ class TestBfsReachable:
     def test_module_reachable_from_upstream(self, adjacency, step_id, module_id):
         """验证5个模块从上游起点 BFS 可达（修复后应全部可达）。"""
         reachable = self._bfs_reachable(adjacency, BFS_STARTS, module_id)
-        assert reachable, (
-            f"{step_id}({module_id}) 从上游起点 {BFS_STARTS} BFS 不可达——修复边可能缺失或断链"
-        )
+        assert reachable, f"{step_id}({module_id}) 从上游起点 {BFS_STARTS} BFS 不可达——修复边可能缺失或断链"
 
     def test_all_5_reachable_summary(self, adjacency):
         """汇总验证：5个模块全部可达。"""
@@ -142,9 +139,7 @@ class TestBfsReachable:
         for step_id, module_id in UNREACHABLE_5.items():
             if not self._bfs_reachable(adjacency, BFS_STARTS, module_id):
                 unreachable.append(f"{step_id}({module_id})")
-        assert not unreachable, (
-            f"以下模块不可达: {unreachable}"
-        )
+        assert not unreachable, f"以下模块不可达: {unreachable}"
 
 
 class TestDataflowChain:
@@ -178,9 +173,7 @@ class TestDataflowChain:
             "MOD-SIG-040",  # 09 直接修复
             "MOD-SIG-041",  # 10 直接修复
         }
-        assert fix_targets == expected_direct_targets, (
-            f"修复边目标不匹配: {fix_targets}≠{expected_direct_targets}"
-        )
+        assert fix_targets == expected_direct_targets, f"修复边目标不匹配: {fix_targets}≠{expected_direct_targets}"
 
     @pytest.mark.parametrize("step_id,module_id", list(UNREACHABLE_5.items()))
     def test_module_node_exists(self, db_conn, step_id, module_id):
@@ -194,7 +187,5 @@ class TestDataflowChain:
             rows = cur.fetchall()
         assert len(rows) > 0, f"{step_id}({module_id}) 无设计态节点"
         build_status, maturity = rows[0]
-        assert build_status == "planned", (
-            f"{step_id}({module_id}): build_status={build_status}≠planned"
-        )
+        assert build_status == "planned", f"{step_id}({module_id}): build_status={build_status}≠planned"
         assert maturity == "design", f"{step_id}({module_id}): maturity={maturity}≠design"

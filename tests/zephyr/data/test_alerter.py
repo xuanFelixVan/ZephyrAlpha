@@ -17,6 +17,7 @@
 
 用 tmp_path fixture 隔离测试 failures/ 目录。
 """
+
 import json
 from unittest.mock import MagicMock, patch
 
@@ -159,6 +160,7 @@ class TestQueryFailures:
         会因日期错位而漏匹配。B2 告警通道验证发现并修复（#ARCH-CH-023）。
         """
         from zephyr.shared.utils.time_utils import now_utc
+
         alerter.notify("task_a", "err1", level=LEVEL_ERROR)
         today_utc = now_utc().strftime("%Y%m%d")
         files = alerter.list_failure_files(date=today_utc)
@@ -210,9 +212,7 @@ class TestFormatAlertText:
 
     def test_basic_format(self):
         """基本字段格式正确。"""
-        text = Alerter.format_alert_text(
-            "kline_daily", "连接超时", LEVEL_ERROR, "akshare", None
-        )
+        text = Alerter.format_alert_text("kline_daily", "连接超时", LEVEL_ERROR, "akshare", None)
         assert "[ZephyrAlpha 告警]" in text
         assert "级别: ERROR" in text
         assert "任务: kline_daily" in text
@@ -222,25 +222,19 @@ class TestFormatAlertText:
 
     def test_source_none_shows_na(self):
         """source 为 None 显示 N/A。"""
-        text = Alerter.format_alert_text(
-            "task_x", "err", LEVEL_CRITICAL, None, None
-        )
+        text = Alerter.format_alert_text("task_x", "err", LEVEL_CRITICAL, None, None)
         assert "数据源: N/A" in text
 
     def test_extra_included(self):
         """extra 字典序列化到正文。"""
-        text = Alerter.format_alert_text(
-            "task_x", "err", LEVEL_ERROR, None, {"retry": 3, "code": "-4318"}
-        )
+        text = Alerter.format_alert_text("task_x", "err", LEVEL_ERROR, None, {"retry": 3, "code": "-4318"})
         assert "附加:" in text
         assert '"retry": 3' in text
         assert '"code": "-4318"' in text
 
     def test_no_extra_line_when_none(self):
         """extra 为 None 时不出现附加行。"""
-        text = Alerter.format_alert_text(
-            "task_x", "err", LEVEL_ERROR, None, None
-        )
+        text = Alerter.format_alert_text("task_x", "err", LEVEL_ERROR, None, None)
         assert "附加:" not in text
 
 
@@ -249,24 +243,30 @@ class TestNotifyChannelsDispatch:
 
     def test_warn_does_not_reach_channels(self, alerter, clean_alert_env):
         """WARN 级别不触达通道。"""
-        with patch.object(alerter, "send_feishu_webhook") as mock_fw, \
-             patch.object(alerter, "send_email_smtp") as mock_em:
+        with (
+            patch.object(alerter, "send_feishu_webhook") as mock_fw,
+            patch.object(alerter, "send_email_smtp") as mock_em,
+        ):
             alerter.notify_channels("task", "err", LEVEL_WARN, None, None)
             mock_fw.assert_not_called()
             mock_em.assert_not_called()
 
     def test_info_does_not_reach_channels(self, alerter, clean_alert_env):
         """INFO 级别不触达通道。"""
-        with patch.object(alerter, "send_feishu_webhook") as mock_fw, \
-             patch.object(alerter, "send_email_smtp") as mock_em:
+        with (
+            patch.object(alerter, "send_feishu_webhook") as mock_fw,
+            patch.object(alerter, "send_email_smtp") as mock_em,
+        ):
             alerter.notify_channels("task", "err", LEVEL_INFO, None, None)
             mock_fw.assert_not_called()
             mock_em.assert_not_called()
 
     def test_error_reaches_both_channels(self, alerter, clean_alert_env):
         """ERROR 级别触达飞书+邮件两个通道。"""
-        with patch.object(alerter, "send_feishu_webhook") as mock_fw, \
-             patch.object(alerter, "send_email_smtp") as mock_em:
+        with (
+            patch.object(alerter, "send_feishu_webhook") as mock_fw,
+            patch.object(alerter, "send_email_smtp") as mock_em,
+        ):
             alerter.notify_channels("task", "err", LEVEL_ERROR, "akshare", {"k": "v"})
             mock_fw.assert_called_once()
             mock_em.assert_called_once()
@@ -276,8 +276,10 @@ class TestNotifyChannelsDispatch:
 
     def test_critical_reaches_both_channels(self, alerter, clean_alert_env):
         """CRITICAL 级别触达两个通道。"""
-        with patch.object(alerter, "send_feishu_webhook") as mock_fw, \
-             patch.object(alerter, "send_email_smtp") as mock_em:
+        with (
+            patch.object(alerter, "send_feishu_webhook") as mock_fw,
+            patch.object(alerter, "send_email_smtp") as mock_em,
+        ):
             alerter.notify_channels("task", "err", LEVEL_CRITICAL, None, None)
             mock_fw.assert_called_once()
             mock_em.assert_called_once()
@@ -353,9 +355,7 @@ class TestSendEmailSmtp:
             result = alerter.send_email_smtp("kline_daily", LEVEL_ERROR, "body text")
         assert result is True
         # local_hostname 必须显式传 ASCII 值（B2 验证发现，#ARCH-CH-023）
-        mock_ctor.assert_called_once_with(
-            "smtp.example.com", 587, local_hostname="zephyr.alert.local", timeout=5
-        )
+        mock_ctor.assert_called_once_with("smtp.example.com", 587, local_hostname="zephyr.alert.local", timeout=5)
         mock_smtp.starttls.assert_called_once()
         mock_smtp.login.assert_called_once_with("alert@example.com", "secret")
         mock_smtp.sendmail.assert_called_once()

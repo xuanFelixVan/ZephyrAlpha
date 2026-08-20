@@ -13,6 +13,7 @@
 
 不依赖真实 ClickHouse；用 tmp_path 隔离 data/local_fallback/。
 """
+
 import json
 import time
 from decimal import Decimal
@@ -71,8 +72,7 @@ class TestSegmentFlush:
         """时间达阈值→自动落盘。"""
         _setup_fallback_dir(tmp_path, monkeypatch)
         with _mock_table_cols(["trade_date", "symbol", "price"]):
-            w = WalWriter("c1_market.tick_data", segment_max_rows=100,
-                          segment_max_seconds=0.3)
+            w = WalWriter("c1_market.tick_data", segment_max_rows=100, segment_max_seconds=0.3)
             w.add(_make_result([("d1", "s1", Decimal("1"))]))
             assert w.pending_rows == 1
             time.sleep(0.4)
@@ -162,8 +162,7 @@ class TestBackpressure:
         # 写 800 字节，上限 1000 → 80% > 70% warning
         (tmp_path / "junk.bin").write_bytes(b"x" * 800)
         with _mock_table_cols(["trade_date", "symbol", "price"]):
-            w = WalWriter("c1_market.tick_data", segment_max_rows=100,
-                          wal_dir_max_bytes=1000)
+            w = WalWriter("c1_market.tick_data", segment_max_rows=100, wal_dir_max_bytes=1000)
             r = _make_result([("d1", "s1", Decimal("1"))])
             assert w.add(r) is True  # warning 不阻断
             assert w.pending_rows == 1
@@ -174,8 +173,7 @@ class TestBackpressure:
         # 写 950 字节，上限 1000 → 95% > 90% critical
         (tmp_path / "junk.bin").write_bytes(b"x" * 950)
         with _mock_table_cols(["trade_date", "symbol", "price"]):
-            w = WalWriter("c1_market.tick_data", segment_max_rows=100,
-                          wal_dir_max_bytes=1000)
+            w = WalWriter("c1_market.tick_data", segment_max_rows=100, wal_dir_max_bytes=1000)
             r = _make_result([("d1", "s1", Decimal("1"))])
             assert w.add(r) is False  # critical 阻断
             assert w.total_added == 0
@@ -198,10 +196,11 @@ class TestDrainAndRecovery:
         monkeypatch.setattr(wal_writer, "_DRAIN_IDLE_INTERVAL", 0.1)
         monkeypatch.setattr(wal_writer, "_DRAIN_FAST_INTERVAL", 0.05)
 
-        with _mock_table_cols(["trade_date", "symbol", "price"]), \
-             patch("src.zephyr.data.ch_writer.get_insert_columns",
-                   return_value="(trade_date, symbol, price)"), \
-             patch("src.zephyr.data.ch_writer.write_tsv", return_value=True):
+        with (
+            _mock_table_cols(["trade_date", "symbol", "price"]),
+            patch("src.zephyr.data.ch_writer.get_insert_columns", return_value="(trade_date, symbol, price)"),
+            patch("src.zephyr.data.ch_writer.write_tsv", return_value=True),
+        ):
             w = WalWriter("c1_market.tick_data")
             w.start()
             time.sleep(1.0)  # 等 drain 线程处理
@@ -220,8 +219,7 @@ class TestDrainAndRecovery:
         # 实例1：写入段文件并落盘（不启动 drain = 模拟崩溃）
         with _mock_table_cols(["trade_date", "symbol", "price"]):
             w1 = WalWriter("c1_market.tick_data", segment_max_rows=100)
-            w1.add(_make_result([("d1", "s1", Decimal("1")),
-                                 ("d1", "s2", Decimal("2"))]))
+            w1.add(_make_result([("d1", "s1", Decimal("1")), ("d1", "s2", Decimal("2"))]))
             w1.flush()
             assert w1.segment_count == 1
             # 不调 stop()，不启动 drain → 模拟崩溃
@@ -229,8 +227,7 @@ class TestDrainAndRecovery:
         # 验证段文件已持久化
         manifest = tmp_path / "_manifest.jsonl"
         assert manifest.exists()
-        entries = [json.loads(l) for l in
-                   manifest.read_text(encoding="utf-8").splitlines() if l.strip()]
+        entries = [json.loads(l) for l in manifest.read_text(encoding="utf-8").splitlines() if l.strip()]
         assert len(entries) == 1
         assert entries[0]["rows"] == 2
         tsv_path = tmp_path / entries[0]["file"]

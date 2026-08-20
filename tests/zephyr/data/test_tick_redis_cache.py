@@ -23,6 +23,7 @@
     4. 空批次/空 tick 跳过
     5. tick_subscriber 集成（_drain_batch 调用 write_batch）
 """
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
@@ -33,6 +34,7 @@ from zephyr.data.tick_redis_cache import TickRedisCache, tick_to_cache_dict
 from zephyr.infrastructure.h1_redis_hot.h1_redis_schema import tick_latest_key
 
 # ── 测试数据工厂 ──
+
 
 def _make_qmt_tick(
     time_ms: int = 1754106780000,

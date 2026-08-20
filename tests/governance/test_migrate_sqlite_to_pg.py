@@ -39,6 +39,7 @@ import seed_from_yaml  # noqa: E402
 
 # ── Fake PG 连接（内存模拟，不连真实 PostgreSQL） ─────────────────────────
 
+
 class _FakeCursor:
     """模拟 psycopg2 cursor：按 SQL 文本路由到内存状态。"""
 
@@ -61,9 +62,7 @@ class _FakeCursor:
             return
         if upper.startswith("SELECT STATUS FROM MIGRATION_LOG"):
             mid = params[0]
-            self._result = [
-                (r["status"],) for r in self._conn.migration_log if r["migration_id"] == mid
-            ][:1]
+            self._result = [(r["status"],) for r in self._conn.migration_log if r["migration_id"] == mid][:1]
             return
         if upper.startswith("INSERT INTO MIGRATION_LOG"):
             record = {
@@ -74,9 +73,7 @@ class _FakeCursor:
                 "rows_total": params[4],
                 "details": params[5],
             }
-            self._conn.migration_log = [
-                r for r in self._conn.migration_log if r["migration_id"] != params[0]
-            ]
+            self._conn.migration_log = [r for r in self._conn.migration_log if r["migration_id"] != params[0]]
             self._conn.migration_log.append(record)
             return
         if "INFORMATION_SCHEMA.COLUMNS" in upper:
@@ -151,6 +148,7 @@ def _fake_execute_values_factory(fail_tables: set[str]):
 
 # ── Fixtures ─────────────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def sqlite_conn(tmp_path):
     """小型 SQLite fixture：2 表（nodes/edges）× 3 行。"""
@@ -158,9 +156,7 @@ def sqlite_conn(tmp_path):
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
     conn.execute("CREATE TABLE nodes (node_id INTEGER PRIMARY KEY, path TEXT)")
-    conn.execute(
-        "CREATE TABLE edges (edge_id INTEGER PRIMARY KEY, from_node_id INTEGER, to_node_id INTEGER)"
-    )
+    conn.execute("CREATE TABLE edges (edge_id INTEGER PRIMARY KEY, from_node_id INTEGER, to_node_id INTEGER)")
     conn.executemany("INSERT INTO nodes VALUES (?, ?)", [(1, "a.py"), (2, "b.py"), (3, "c.py")])
     conn.executemany("INSERT INTO edges VALUES (?, ?, ?)", [(10, 1, 2), (11, 2, 3), (12, 3, 1)])
     conn.commit()
@@ -185,6 +181,7 @@ TABLES = ["nodes", "edges"]
 
 
 # ── 5.32.2 每表独立事务 ─────────────────────────────────────────────────
+
 
 def test_per_table_transaction_commits_each_table(sqlite_conn, pg, no_fail):
     """迁移后每表行数与 SQLite 一致，且每表独立 COMMIT（非单大事务）。"""
@@ -228,6 +225,7 @@ def test_triggers_restored_in_finally_on_failure(sqlite_conn, pg, no_fail):
 
 # ── 5.32.4 migration_log 幂等 ───────────────────────────────────────────
 
+
 def test_second_run_skips_when_completed(sqlite_conn, pg, no_fail):
     """二次运行检测到 completed 记录则跳过（不再 DELETE/INSERT）。"""
     rc1 = migrate_data.run_migration(sqlite_conn, pg, tables=TABLES, migration_id="t4")
@@ -251,6 +249,7 @@ def test_force_reruns_even_when_completed(sqlite_conn, pg, no_fail):
 
 
 # ── 5.32.10 种子表拆分一致性 ────────────────────────────────────────────
+
 
 def test_seed_tables_split_consistency():
     """种子表（YAML 真源）与迁移表（运营数据）无交集，且两脚本清单一致。"""

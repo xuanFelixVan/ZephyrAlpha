@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """correlation_dedup 模块测试——因子相关性去重。"""
+
 from __future__ import annotations
 
 import numpy as np

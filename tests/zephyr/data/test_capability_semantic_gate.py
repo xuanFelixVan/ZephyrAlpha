@@ -15,6 +15,7 @@
   - 通配符：THS_* 前缀命中 / 非前缀不命中
   - 退化：语法错误 fail-open；无 _fetch_<cap> 方法（未实现）不校验；文件变体
 """
+
 from __future__ import annotations
 
 from zephyr.data.capability_semantic_gate import (
@@ -24,7 +25,7 @@ from zephyr.data.capability_semantic_gate import (
     check_capability_api_whitelist_content,
 )
 
-HK_OK = '''
+HK_OK = """
 import exchange_calendars as xcals
 
 
@@ -32,36 +33,36 @@ class P:
     def _fetch_hk_trade_calendar(self, payload):
         cal = xcals.get_calendar("XHKG")
         return cal
-'''
+"""
 
 # #ARCH-DATA-001 历史 bug 形态：hk_trade_calendar 用 A股 sina API
-HK_BUG = '''
+HK_BUG = """
 import akshare as ak
 
 
 class P:
     def _fetch_hk_trade_calendar(self, payload):
         return ak.tool_trade_date_hist_sina()
-'''
+"""
 
 # INDUSTRY-CLASS-MIGRATE 历史 bug 形态：industry_class 用 mootdx 板块成分
-INDUSTRY_BUG = '''
+INDUSTRY_BUG = """
 import akshare as ak
 
 
 class P:
     def _fetch_industry_class(self, payload):
         return ak.stock_board_industry_cons_em(symbol="BK0475")
-'''
+"""
 
-TRADE_CAL_OK = '''
+TRADE_CAL_OK = """
 import akshare as ak
 
 
 class P:
     def _fetch_trade_calendar(self, payload):
         return ak.tool_trade_date_hist_sina()
-'''
+"""
 
 
 class TestAcceptanceHistoricalBugs:
@@ -89,11 +90,11 @@ class TestPassForms:
         assert check_capability_api_whitelist_content(TRADE_CAL_OK) == []
 
     def test_ths_wildcard_ok(self):
-        content = '''
+        content = """
 class P:
     def _fetch_industry_class(self, payload):
         return THS_DataPool("block", "2026-08-20")
-'''
+"""
         # THS_DataPool 非 import alias 调用（未 import）→ 不提取 → 不校验
         assert check_capability_api_whitelist_content(content) == []
 
@@ -101,33 +102,33 @@ class P:
 class TestWildcard:
     def test_ths_prefix_match(self):
         """THS_* 通配：规范模块名 THS_iFinD.* 前缀命中 → 放行。"""
-        content = '''
+        content = """
 import THS_iFinD
 
 
 class P:
     def _fetch_industry_class(self, payload):
         return THS_iFinD.THS_DataPool("block")
-'''
+"""
         assert check_capability_api_whitelist_content(content) == []
 
     def test_non_whitelisted_source_blocked(self):
         """mootdx（INDUSTRY-CLASS bug 源）不在白名单 → 拦截。"""
-        content = '''
+        content = """
 import mootdx
 
 
 class P:
     def _fetch_industry_class(self, payload):
         return mootdx.block("880")
-'''
+"""
         violations = check_capability_api_whitelist_content(content)
         assert len(violations) == 1
         assert "mootdx.block" in violations[0]
 
     def test_stdlib_pandas_not_extracted(self):
         """stdlib/pandas 工具调用不是数据源 API（2026-08-20 真实扫描误报收敛）。"""
-        content = '''
+        content = """
 import time
 from datetime import timedelta
 import pandas as pd
@@ -140,33 +141,33 @@ class P:
         cal = xcals.get_calendar("XHKG")
         ts = pd.Timestamp("2026-08-20")
         return cal
-'''
+"""
         assert check_capability_api_whitelist_content(content) == []
 
 
 class TestOverEngineeringGuard:
     def test_unregistered_capability_not_checked(self):
         """未登记 capability（如 us_kline）不校验——过度工程防线。"""
-        content = '''
+        content = """
 import yfinance as yf
 
 
 class P:
     def _fetch_us_kline(self, payload):
         return yf.download("AAPL")
-'''
+"""
         assert check_capability_api_whitelist_content(content) == []
 
     def test_method_absent_not_checked(self):
         """注册了但文件无 _fetch_<cap> 方法（该 provider 未实现此能力）→ 不校验。"""
-        content = '''
+        content = """
 import akshare as ak
 
 
 class P:
     def _fetch_other(self, payload):
         return ak.tool_trade_date_hist_sina()
-'''
+"""
         assert check_capability_api_whitelist_content(content) == []
 
 
@@ -174,30 +175,32 @@ class TestCustomRegistry:
     def test_custom_entry_enforced(self):
         registry = (
             CapabilitySemanticEntry(
-                capability_id="us_kline", market="us", variety="stock",
+                capability_id="us_kline",
+                market="us",
+                variety="stock",
                 allowed_apis=frozenset({"yfinance.download"}),
             ),
         )
-        bad = '''
+        bad = """
 import yfinance as yf
 
 
 class P:
     def _fetch_us_kline(self, payload):
         return yf.Ticker("AAPL").history()
-'''
+"""
         violations = check_capability_api_whitelist_content(bad, registry)
         assert len(violations) == 1
         assert "us_kline" in violations[0]
         assert "yfinance.Ticker" in violations[0]
-        ok = '''
+        ok = """
 import yfinance as yf
 
 
 class P:
     def _fetch_us_kline(self, payload):
         return yf.download("AAPL")
-'''
+"""
         assert check_capability_api_whitelist_content(ok, registry) == []
 
 
@@ -216,5 +219,7 @@ class TestDegenerate:
     def test_registry_default_three_entries(self):
         """初始登记 3 条（17 号 §5.8 定稿）。"""
         assert {e.capability_id for e in DEFAULT_SEMANTIC_REGISTRY} == {
-            "hk_trade_calendar", "trade_calendar", "industry_class",
+            "hk_trade_calendar",
+            "trade_calendar",
+            "industry_class",
         }

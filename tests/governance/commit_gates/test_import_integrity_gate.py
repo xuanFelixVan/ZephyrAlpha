@@ -1076,3 +1076,78 @@ class TestSysPathInjectionResolvable:
         tree = ast.parse(content)
         dirs = _extract_sys_path_dirs(tree, "scripts/test.py")
         assert "/abs/append/path" in dirs
+
+    def test_implicit_script_dir_resolves_shared(self, tmp_path):
+        """隐式 script-dir 解析（2026-08-20 波3 治本）：scripts/governance 顶层脚本
+        无显式 sys.path 注入时，from _shared.constants import 依 CPython 直接执行语义
+        （脚本自身目录自动入 sys.path[0]）可解析，不误报。"""
+        shared_dir = tmp_path / "scripts" / "governance" / "_shared"
+        shared_dir.mkdir(parents=True)
+        (shared_dir / "__init__.py").write_text("", encoding="utf-8")
+        (shared_dir / "constants.py").write_text("EXIT_ERROR = 1", encoding="utf-8")
+
+        py_file_rel = "scripts/governance/run_gate_chain.py"
+        content = "from _shared.constants import EXIT_ERROR\n"
+        gw = _make_gateway()
+        gw.project_root = str(tmp_path)
+        violations = scan_content_for_dangling_imports(py_file_rel, content, set(), gw)
+        assert violations == [], f"Expected no violations, got: {violations}"
+
+    def test_implicit_script_dir_nonexistent_still_blocked(self, tmp_path):
+        """隐式 script-dir 安全边界：模块文件在 scripts/governance/ 真实不存在时
+        仍阻断（幻觉模块名不误放）。"""
+        (tmp_path / "scripts" / "governance").mkdir(parents=True)
+        py_file_rel = "scripts/governance/run_gate_chain.py"
+        content = "from _shared.ghost_module_xyz import EXIT_ERROR\n"
+        gw = _make_gateway()
+        gw.project_root = str(tmp_path)
+        violations = scan_content_for_dangling_imports(py_file_rel, content, set(), gw)
+        assert len(violations) == 1
+        assert "_shared.ghost_module_xyz" in violations[0]
+
+    def test_path_call_with_constant_var_resolves(self):
+        """_resolve_path_expr Path(EXPR) 分支（2026-08-20 波3 补齐）：
+        Path(REPO_ROOT) / "scripts" 链式求值——REPO_ROOT 经 REPO_ROOT_IMPORT 映射为常量。"""
+        import ast
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _resolve_path_expr,
+        )
+
+        expr = ast.parse('Path(REPO_ROOT) / "scripts" / "governance"', mode="eval").body
+        var_assigns = {"REPO_ROOT": ast.Constant(value="/repo/root")}
+        resolved = _resolve_path_expr(expr, "/repo/root/scripts/x.py", var_assigns)
+        assert resolved is not None
+        assert resolved.replace("\\", "/") == "/repo/root/scripts/governance"
+
+    def test_path_call_file_form_unchanged(self):
+        """Path(__file__) 形态行为不变（__file__ 不在 var_assigns → None，走原有
+        __file__ 专用分支，不受 Path(EXPR) 新分支影响）。"""
+        import ast
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _resolve_path_expr,
+        )
+
+        expr = ast.parse("Path(__file__)", mode="eval").body
+        assert _resolve_path_expr(expr, "/a/b/c.py", {}) is None
+
+    def test_gate_archive_staged_skipped(self):
+        """gate 级 _archive 豁免（2026-08-20 波3 同口径补齐）：归档一次性代码的
+        存量 import 不参与悬空检测（format 重排伪"新增"不阻断）。"""
+        archived = "scripts/governance/_archive/one_off/foo.py"
+
+        gw = _make_gateway()
+
+        def _run(cmd):
+            m = MagicMock(returncode=0, stdout="", stderr="")
+            if "--name-only" in cmd:
+                m.stdout = archived + "\n"
+            elif cmd[:2] == ["git", "show"]:
+                m.stdout = "import totally_ghost_module_xyz_123\n"
+            return m
+
+        gw.run_git.side_effect = _run
+        passed, detail = make_import_integrity_gate().check(gw, [archived])
+        assert passed is True
+        assert detail == ""

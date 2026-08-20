@@ -23,6 +23,7 @@
 - FactorSignalBuffer.maybe_flush_by_time: 时间触发
 - 注入 writer 验证调用参数
 """
+
 from __future__ import annotations
 
 import time
@@ -75,9 +76,9 @@ class TestSignalToTsvRow:
         assert len(fields) == 11
         # 关键字段位置
         assert fields[1] == "momentum_20d"  # factor_id
-        assert fields[4] == "600519.SH"     # symbol
-        assert fields[5] == "0.9"           # confidence
-        assert fields[9] == "1.0"           # factor_version
+        assert fields[4] == "600519.SH"  # symbol
+        assert fields[5] == "0.9"  # confidence
+        assert fields[9] == "1.0"  # factor_version
 
     def test_date_format(self) -> None:
         s = _make_signal()

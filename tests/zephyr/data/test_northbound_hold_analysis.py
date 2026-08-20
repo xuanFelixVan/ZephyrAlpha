@@ -31,6 +31,7 @@
 
 依据: 19_northbound_hold_snapshot §6.3/§6.5（Δ持股数量 × 当季 VWAP 单公式）
 """
+
 from __future__ import annotations
 
 import pandas as pd
@@ -49,9 +50,12 @@ Q1 = "2026-03-31"
 def _snapshot() -> pd.DataFrame:
     rows = [
         # A 加仓 100→150；B 减仓 200→100；C 不变 300→300
-        (Q0, "000001.SZ", 100), (Q1, "000001.SZ", 150),
-        (Q0, "000002.SZ", 200), (Q1, "000002.SZ", 100),
-        (Q0, "000003.SZ", 300), (Q1, "000003.SZ", 300),
+        (Q0, "000001.SZ", 100),
+        (Q1, "000001.SZ", 150),
+        (Q0, "000002.SZ", 200),
+        (Q1, "000002.SZ", 100),
+        (Q0, "000003.SZ", 300),
+        (Q1, "000003.SZ", 300),
         # D 退出（Q1 无记录）；E 新进（Q0 无记录）
         (Q0, "000004.SZ", 50),
         (Q1, "000005.SZ", 80),
@@ -60,21 +64,26 @@ def _snapshot() -> pd.DataFrame:
 
 
 def _vwap() -> pd.Series:
-    return pd.Series({
-        "000001.SZ": 10.0, "000002.SZ": 20.0, "000003.SZ": 30.0,
-        "000004.SZ": 5.0, "000005.SZ": 8.0,
-    })
+    return pd.Series(
+        {
+            "000001.SZ": 10.0,
+            "000002.SZ": 20.0,
+            "000003.SZ": 30.0,
+            "000004.SZ": 5.0,
+            "000005.SZ": 8.0,
+        }
+    )
 
 
 class TestComputeQuarterPositionChanges:
     def test_five_states(self):
         chg = compute_quarter_position_changes(_snapshot(), Q0, Q1, _vwap())
         m = chg.set_index("ts_code")
-        assert m.loc["000001.SZ", "delta_share"] == 50      # 加仓
-        assert m.loc["000002.SZ", "delta_share"] == -100    # 减仓
-        assert m.loc["000003.SZ", "delta_share"] == 0       # 不变
-        assert m.loc["000004.SZ", "delta_share"] == -50     # 退出=负全仓
-        assert m.loc["000005.SZ", "delta_share"] == 80      # 新进=全仓
+        assert m.loc["000001.SZ", "delta_share"] == 50  # 加仓
+        assert m.loc["000002.SZ", "delta_share"] == -100  # 减仓
+        assert m.loc["000003.SZ", "delta_share"] == 0  # 不变
+        assert m.loc["000004.SZ", "delta_share"] == -50  # 退出=负全仓
+        assert m.loc["000005.SZ", "delta_share"] == 80  # 新进=全仓
 
     def test_delta_amount(self):
         chg = compute_quarter_position_changes(_snapshot(), Q0, Q1, _vwap())

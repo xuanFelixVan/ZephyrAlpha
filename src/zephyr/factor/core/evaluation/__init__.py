@@ -25,6 +25,7 @@
 - backtest.py 封装数据访问，metrics.py 做计算——职责分离
 - INV-004 PIT 铁律：backtest 使用 ch_reader（自动注入 FINAL）保证去重
 """
+
 from __future__ import annotations
 
 from zephyr.factor.core.evaluation.backtest import (

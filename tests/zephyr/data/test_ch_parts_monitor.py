@@ -36,11 +36,7 @@ class TestParsePartsTsv:
 
 class TestCheckPartsThreshold:
     def test_violations_filtered_and_sorted(self):
-        tsv = (
-            "c1_market\ttick_data\t250\n"
-            "c1_market\tkline_daily\t50\n"
-            "c3_fundamental\tnews_data\t480\n"
-        )
+        tsv = "c1_market\ttick_data\t250\nc1_market\tkline_daily\t50\nc3_fundamental\tnews_data\t480\n"
         violations = check_parts_threshold(query_fn=lambda sql, timeout: tsv)
         assert [v["table"] for v in violations] == ["news_data", "tick_data"]  # 降序
         assert violations[0]["parts"] == 480
@@ -72,9 +68,7 @@ class TestCheckPartsThreshold:
 
 class TestMain:
     def test_main_ok_exit_0(self, capsys, monkeypatch):
-        monkeypatch.setattr(
-            "zephyr.data.ch_parts_monitor.check_parts_threshold", lambda: []
-        )
+        monkeypatch.setattr("zephyr.data.ch_parts_monitor.check_parts_threshold", lambda: [])
         assert main() == 0
         assert "OK" in capsys.readouterr().out
 

@@ -13,6 +13,7 @@
 
 用 tmp_path fixture 隔离测试 yaml。
 """
+
 import threading
 
 import pytest
@@ -66,6 +67,7 @@ tasks:
     def test_load_real_tasks_yaml(self, queue):
         """加载真实的 config/tasks.yaml。"""
         from pathlib import Path
+
         real_yaml = Path(__file__).parent.parent.parent.parent / "src" / "zephyr" / "data" / "config" / "tasks.yaml"
         if real_yaml.exists():
             queue.load_yaml(real_yaml)

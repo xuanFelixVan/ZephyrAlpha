@@ -33,10 +33,12 @@ class TestIntradayClose:
 
     def test_returns_close_column(self):
         """compute 直接返回 close 列（恒等映射）。"""
-        df = _make_df({
-            "000001.SZ": {"close": 12.50, "volume": 1000, "amount": 12500.0},
-            "600000.SH": {"close": 8.32, "volume": 500, "amount": 4160.0},
-        })
+        df = _make_df(
+            {
+                "000001.SZ": {"close": 12.50, "volume": 1000, "amount": 12500.0},
+                "600000.SH": {"close": 8.32, "volume": 500, "amount": 4160.0},
+            }
+        )
         result = IntradayClose().compute(df)
         assert result["000001.SZ"] == pytest.approx(12.50)
         assert result["600000.SH"] == pytest.approx(8.32)
@@ -54,47 +56,57 @@ class TestIntradayVwap:
 
     def test_vwap_normal(self):
         """volume>0 → amount/volume。"""
-        df = _make_df({
-            "000001.SZ": {"close": 12.50, "volume": 1000, "amount": 12500.0},
-            # amount=8320 / volume=1000 = 8.32（与 close 不同，验证实际计算）
-            "600000.SH": {"close": 9.00, "volume": 1000, "amount": 8320.0},
-        })
+        df = _make_df(
+            {
+                "000001.SZ": {"close": 12.50, "volume": 1000, "amount": 12500.0},
+                # amount=8320 / volume=1000 = 8.32（与 close 不同，验证实际计算）
+                "600000.SH": {"close": 9.00, "volume": 1000, "amount": 8320.0},
+            }
+        )
         result = IntradayVwap().compute(df)
         assert result["000001.SZ"] == pytest.approx(12.50)
         assert result["600000.SH"] == pytest.approx(8.32)
 
     def test_vwap_zero_volume_falls_back_to_close(self):
         """volume=0 → 回退 close，避免除零。"""
-        df = _make_df({
-            "000001.SZ": {"close": 12.50, "volume": 0, "amount": 0.0},
-        })
+        df = _make_df(
+            {
+                "000001.SZ": {"close": 12.50, "volume": 0, "amount": 0.0},
+            }
+        )
         result = IntradayVwap().compute(df)
         assert result["000001.SZ"] == pytest.approx(12.50)
 
     def test_vwap_mixed(self):
         """混合：一只 volume>0，一只 volume=0。"""
-        df = _make_df({
-            "000001.SZ": {"close": 12.50, "volume": 1000, "amount": 12500.0},  # vwap=12.50
-            "600000.SH": {"close": 8.32, "volume": 0, "amount": 0.0},  # 回退 8.32
-        })
+        df = _make_df(
+            {
+                "000001.SZ": {"close": 12.50, "volume": 1000, "amount": 12500.0},  # vwap=12.50
+                "600000.SH": {"close": 8.32, "volume": 0, "amount": 0.0},  # 回退 8.32
+            }
+        )
         result = IntradayVwap().compute(df)
         assert result["000001.SZ"] == pytest.approx(12.50)
         assert result["600000.SH"] == pytest.approx(8.32)
 
     def test_vwap_does_not_mutate_input(self):
         """compute 不修改输入 DataFrame 的 close 列。"""
-        df = _make_df({
-            "000001.SZ": {"close": 12.50, "volume": 1000, "amount": 9999.0},
-        })
+        df = _make_df(
+            {
+                "000001.SZ": {"close": 12.50, "volume": 1000, "amount": 9999.0},
+            }
+        )
         original_close = df["close"].copy()
         IntradayVwap().compute(df)
         pd.testing.assert_series_equal(df["close"], original_close)
 
     def test_vwap_handles_nan_amount(self):
         """amount=NaN 时 vwap=NaN（不抛异常），由下游 NaN 过滤处理。"""
-        df = _make_df({
-            "000001.SZ": {"close": 12.50, "volume": 1000, "amount": float("nan")},
-        })
+        df = _make_df(
+            {
+                "000001.SZ": {"close": 12.50, "volume": 1000, "amount": float("nan")},
+            }
+        )
         result = IntradayVwap().compute(df)
         assert np.isnan(result["000001.SZ"])
 

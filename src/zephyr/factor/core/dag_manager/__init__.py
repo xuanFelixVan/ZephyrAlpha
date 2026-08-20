@@ -19,6 +19,7 @@
 输入 FactorDAG + 数据，按拓扑层串行推进、层内并发执行因子计算（ThreadPoolExecutor），
 受 BackpressureLimiter 限流。适合 IO/轻计算场景。
 """
+
 from __future__ import annotations
 
 from zephyr.factor.core.dag_manager.executor import (

@@ -2,6 +2,7 @@
 # [A_module] module_id=MOD-INF-044 | layer=module | stability=evolving | safety=L
 # [TTL] permanent
 """P2-10 Grafana 双数据源仪表盘模块测试。"""
+
 import json
 
 import pytest

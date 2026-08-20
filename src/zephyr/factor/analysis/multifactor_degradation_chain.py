@@ -37,6 +37,7 @@
 synthesize_with_degradation() 为统一入口：decide() 后分派到
 multifactor_synthesis 的三个 production 方法，纯增量不替换现有方法。
 """
+
 from __future__ import annotations
 
 import logging
@@ -66,10 +67,10 @@ __all__ = [
 class DegradationChainParams:
     """降级链阈值参数（25号memo §3.7#1 参数表）。"""
 
-    ic_min_samples: int = 20            # IC 样本<20→IC 加权不可靠→降级等权
+    ic_min_samples: int = 20  # IC 样本<20→IC 加权不可靠→降级等权
     ic_weight_concentration: float = 0.70  # 单因子 IC 权重>70%→过度集中→降级等权
-    ic_abs_floor: float = 0.02          # 全池 |IC|<0.02→信号衰竭→降级等权
-    regression_min_obs: int = 120       # 前瞻收益观测<120→回归过拟合→降级 IC 加权
+    ic_abs_floor: float = 0.02  # 全池 |IC|<0.02→信号衰竭→降级等权
+    regression_min_obs: int = 120  # 前瞻收益观测<120→回归过拟合→降级 IC 加权
     condition_number_max: float = 50.0  # 因子矩阵条件数>50→共线性→降级 IC 加权
 
 

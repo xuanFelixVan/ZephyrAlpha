@@ -6,6 +6,7 @@
 - optimize_weights: 空输入 / 单因子 / 权重非负且和为1 / 优化失败退化为等权
 - evaluate_portfolio: 用权重合成 / 空输入 / 权重归一化
 """
+
 from __future__ import annotations
 
 import numpy as np

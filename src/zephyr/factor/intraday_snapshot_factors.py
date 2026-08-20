@@ -35,6 +35,7 @@
     输入 DataFrame 由 IntradayFactorLoop.read_ticks_to_dataframe 构造，
     index=symbol，columns 至少含 close/volume/amount（见 _TICK_FIELD_MAP）。
 """
+
 from __future__ import annotations
 
 import logging
@@ -55,8 +56,7 @@ class IntradayClose(FactorBase):
         name="盘中最新价",
         domain="technical",
         version="1.0.0",
-        description="横截面因子：返回最新 tick close 价。"
-                    "盘中 3 秒周期可重算，供信号/风控作为基准价读取。",
+        description="横截面因子：返回最新 tick close 价。盘中 3 秒周期可重算，供信号/风控作为基准价读取。",
         tags=["intraday", "cross-sectional", "price"],
     )
 
@@ -74,7 +74,7 @@ class IntradayVwap(FactorBase):
         domain="technical",
         version="1.0.0",
         description="横截面因子：累计成交均价 = amount / volume。"
-                    "volume=0 时回退为 close（避免除零），代表当日零成交时的价格基准。",
+        "volume=0 时回退为 close（避免除零），代表当日零成交时的价格基准。",
         tags=["intraday", "cross-sectional", "vwap"],
     )
 
