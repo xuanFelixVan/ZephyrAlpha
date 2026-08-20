@@ -46701,9 +46701,9 @@ algo_submodules:
 - module_path: src/zephyr/factor/technical_indicators/reversal.py
   module_id: MOD-L02-020
   node_id: A3
-  name_zh: ③ 简化背离检测
-  name_en: lookback divergence
-  plain_zh: lookback 窗口内价格变化与指标变化符号对比，输出 0/1/-1 信号
+  name_zh: ③ 峰谷背离检测
+  name_en: peak/trough divergence
+  plain_zh: 居中窗口局部峰谷 + 相邻峰/谷价格与指标背离比较，输出 0/1/-1 信号
 - module_path: src/zephyr/compliance/__init__.py
   module_id: MOD-L10-001
   node_id: A1

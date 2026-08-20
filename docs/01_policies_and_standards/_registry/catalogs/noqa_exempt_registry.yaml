@@ -387,6 +387,37 @@ markers:
     created: "2026-08-05"
     created_by: "ARCH-REGEN-NONIDEMPOTENT-001"
 
+  # ── 长参数列表存量签名契约豁免（AI-NIGHT-001 波3，2026-08-20）────────
+  # NO-LONG-PARAM-LIST gate 行级豁免（对齐 bare-subprocess/import-integrity 同族通道）
+  - marker: "long-param-list"
+    metric_id: null  # 非 dashboard 指标，是 NO-LONG-PARAM-LIST gate 行级豁免
+    description: "NO-LONG-PARAM-LIST gate 行级豁免——存量长参数函数签名契约绑定的合法场景"
+    applicable_conditions:
+      - "公共包装器/适配器与下游实现签名契约绑定（参数对象重构属破坏性变更，须专项裁定排期）"
+      - "协议/接口实现强制签名（override 不可改形）"
+    reason_required: true
+    reason_format: "long-param-list豁免: <具体理由>（必须说明签名契约绑定方 + 重构登记路径）"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-08-20"
+    created_by: "AI-NIGHT-001 波3（Owner 通用裁定条款 §四-2 授权）"
+
+  # ── 裸SQL存量伪新增豁免（AI-NIGHT-001 波3，2026-08-20）────────────────
+  # NO-BARE-SQL gate 行级豁免（对齐 bare-subprocess/import-integrity 同族通道）
+  - marker: "bare-sql"
+    metric_id: null  # 非 dashboard 指标，是 NO-BARE-SQL gate 行级豁免
+    description: "NO-BARE-SQL gate 行级豁免——存量 SQL 行被 format 重排伪'新增'（gate 只检 added 行）、且动态标识符/f-string 插值使 SQL_* 常量集中化不可机械施行的治理DBA脚本场景"
+    applicable_conditions:
+      - "存量 SQL 行被 ruff format 重排在 diff 中伪'新增'，非真实新增裸 SQL"
+      - "治理 DBA 脚本（depgraph/battle_map/decisiongraph/schema 管理）参数化查询，SQL 即业务语言"
+      - "动态标识符（列名/表名 f-string 插值）场景，SQL_* 常量集中化不可机械施行"
+    reason_required: true
+    reason_format: "bare-sql豁免: <具体理由>（必须说明存量/伪新增性质 + §5.160.2 集中化专项登记路径）"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-08-20"
+    created_by: "AI-NIGHT-001 波3（Owner 通用裁定条款 §四-2 授权）"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）
