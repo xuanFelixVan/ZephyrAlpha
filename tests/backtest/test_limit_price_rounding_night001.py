@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [ALGO_FLOW]
 # 层: 输入
 # - id: I1
