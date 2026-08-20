@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-016 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.shared.test_safe_write
 # [DOMAIN] D_SHARED
 # [MATURITY] production

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """考试系统评分逻辑单元测试（合成数据，零成本，不调真实模型）。

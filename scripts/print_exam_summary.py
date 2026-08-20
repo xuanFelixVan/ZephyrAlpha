@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """输出所有模型考试成绩清单（中文版）"""
 
 import json

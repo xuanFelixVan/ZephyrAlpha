@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L11-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_sample_weights | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ml_train.test_sample_weights
 # [TESTS] src/zephyr/ml_train/core/sample_weights.py

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-PA-007 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_correlation_persistence | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.pf_alloc.test_correlation_persistence
 # [TESTS] src/zephyr/pf_alloc/core/strategy_correlation_gate.py（90 号 Phase2 持久化段）

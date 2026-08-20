@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] scripts.diagnose_breadth_failed
 # [DOMAIN] D_GOVERNANCE
 # [STARTUP] manual

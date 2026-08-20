@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-PA-007 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MultiStrategyCapitalAllocator 单元测试 (MOD-PA-003)。"""
 
 from __future__ import annotations
