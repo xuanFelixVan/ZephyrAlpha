@@ -37,6 +37,8 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
+from zephyr.simulation.deflated_sharpe_calculator import DSR_OVERFITTING_FLOOR
+
 # 标准正态分布CDF(累积分布函数,Cumulative Distribution Function)
 # 优先使用scipy.stats.norm.cdf;scipy不可用时用math.erf近似
 try:
@@ -54,8 +56,6 @@ DEFAULT_RISK_FREE_RATE = 0.025
 TRADING_DAYS_PER_YEAR = 252
 # Sharpe计算最小样本量(低于此值统计不显著)
 MIN_SAMPLES_FOR_SHARPE = 60
-# Euler-Mascheroni constant(用于DSR多重测试偏差修正E[max SR]期望)
-_EULER_MASCHERONI_GAMMA = 0.5772156649015329
 
 
 class MetricsError(Exception):
@@ -279,48 +279,43 @@ def calculate_dsr(
     skew = float(skewness)
     kurt = float(kurtosis)
 
-    # 1) 非正态修正Sharpe(adjusted Sharpe Ratio, Bailey-LdP 2014)
-    #    SR_adj = SR * (1 - skew*SR/6 + (kurt-3)*SR^2/24)
-    adjustment = 1.0 - skew * sr / 6.0 + (kurt - 3.0) * sr * sr / 24.0
-    adjusted_sharpe = sr * adjustment
+    # #14 裁定（2026-08-20）：公式统编到 MOD-SIM-024 论文口径（Bailey & López de Prado 2014），
+    # 弃 Cornish-Fisher SR_adj 预调整（非论文步骤且年化 Sharpe 配 n_samples 量纲不严格）。
+    # adjusted_sharpe 键保留向后兼容，现=原始 sr（不再做非正态预调整）。
+    adjusted_sharpe = sr
 
-    # 2) DSR方差项(考虑非正态与样本量, Mertens/Bailey-LdP)
-    #    var_term = 1 - skew*SR_adj + (kurt-1)/4 * SR_adj^2
-    #    sigma_sr = sqrt(var_term / (n_samples - 1))
-    var_term = (
-        1.0
-        - skew * adjusted_sharpe
-        + (kurt - 1.0) * adjusted_sharpe * adjusted_sharpe / 4.0
-    )
+    # 1) Sharpe 估计量方差（Mertens/Bailey-LdP 论文口径）：
+    #    V[SR] = (1 - skew·SR + (kurt-1)/4·SR²) / (n-1)
+    var_term = 1.0 - skew * sr + (kurt - 1.0) * sr * sr / 4.0
     if n_samples > 1 and var_term > 0:
         sigma_sr = float(np.sqrt(var_term / (n_samples - 1)))
     else:
         sigma_sr = 0.0
 
-    # 3) 多重测试偏差(multiple testing bias):N次独立试错中最高Sharpe的期望
-    #    E[max SR] = sigma_sr * [(1-γ)*sqrt(2*ln(N)) + γ/sqrt(2*ln(N))]
-    #    γ = Euler-Mascheroni constant ≈ 0.5772156649
+    # 2) 多重测试偏差：E[max(Z_N)] Euler-Maclaurin 近似（与 MOD-SIM-024 同款）：
+    #    ≈ sqrt(2·lnN) - (ln(π)+ln(lnN)) / (2·sqrt(2·lnN))
+    #    E[max SR] = sigma_sr * E[max(Z_N)]
     if n_trials > 1 and sigma_sr > 0:
-        sqrt_2lnN = float(np.sqrt(2.0 * np.log(n_trials)))
-        if sqrt_2lnN > 0:
-            expected_max_sharpe = sigma_sr * (
-                (1.0 - _EULER_MASCHERONI_GAMMA) * sqrt_2lnN
-                + _EULER_MASCHERONI_GAMMA / sqrt_2lnN
-            )
+        ln_n = float(np.log(n_trials))
+        sqrt_2lnn = float(np.sqrt(2.0 * ln_n))
+        if sqrt_2lnn > 0 and ln_n > 0:
+            e_max_z = sqrt_2lnn - (float(np.log(np.pi)) + float(np.log(ln_n))) / (2.0 * sqrt_2lnn)
+            expected_max_sharpe = sigma_sr * e_max_z
         else:
             expected_max_sharpe = 0.0
     else:
         expected_max_sharpe = 0.0
 
-    # 4) DSR = Φ((SR_adj - E[max SR]) / sigma_sr),Φ为标准正态CDF
+    # 3) DSR = Φ(SR/σ_sr - E[max(Z_N)]) = Φ((SR - E[max SR]) / σ_sr)
     if sigma_sr > 0:
-        z = (adjusted_sharpe - expected_max_sharpe) / sigma_sr
+        z = (sr - expected_max_sharpe) / sigma_sr
         dsr = _norm_cdf(z)
     else:
         dsr = 0.0
 
-    # DSR < 0.5 -> 存在过拟合(overfitting)(来源:D-SIMULATION-24)
-    is_overfitting = bool(dsr < 0.5)
+    # #14 裁定：is_overfitting 语义=运气中值否决线（dsr < DSR_OVERFITTING_FLOOR=0.5，
+    # 低于此=无超出运气的证据）；显著性放行线 0.95 归 MOD-SIM-024 is_significant。
+    is_overfitting = bool(dsr < DSR_OVERFITTING_FLOOR)
 
     return {
         "dsr": float(dsr),

@@ -139,17 +139,24 @@ class SimulationError(ZephyrBaseError):
     error_code = "ZA-SIM-0024"
 
 
+# #14 裁定（2026-08-20）：DSR 阈值常量唯一真源（SSoT）——分级语义对齐社区惯例：
+# 显著性放行线 0.95（类比 p<0.05）；运气中值否决线 0.5（低于此=无超出运气的证据）。
+# 消费方：本模块 DSRConfig 默认值 / backtest.core.metrics.calculate_dsr is_overfitting。
+DSR_SIGNIFICANCE_THRESHOLD = 0.95
+DSR_OVERFITTING_FLOOR = 0.5
+
+
 @dataclass(frozen=True)
 class DSRConfig:
     """DSR 配置——不可变。
 
     Attributes:
-        significance_threshold: DSR 显著性阈值(默认 0.95)
+        significance_threshold: DSR 显著性阈值(默认 DSR_SIGNIFICANCE_THRESHOLD=0.95)
         periods_per_year: 年化频率(A股日度=252)
         risk_free_rate: 默认无风险利率(默认 0.0)
     """
 
-    significance_threshold: float = 0.95
+    significance_threshold: float = DSR_SIGNIFICANCE_THRESHOLD
     periods_per_year: int = 252
     risk_free_rate: float = 0.0
 

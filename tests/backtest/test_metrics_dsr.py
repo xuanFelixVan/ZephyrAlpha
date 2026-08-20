@@ -73,16 +73,29 @@ class TestCalculateDSR:
         r = calculate_dsr(sharpe_ratio=1.0, n_trials=1, n_samples=252)
         assert r["expected_max_sharpe"] == 0.0
 
-    def test_skewness_affects_adjusted_sharpe(self):
-        r_sym = calculate_dsr(sharpe_ratio=1.0, n_trials=1, n_samples=252, skewness=0.0)
-        r_neg = calculate_dsr(sharpe_ratio=1.0, n_trials=1, n_samples=252, skewness=-1.5)
-        # 负偏度提高 adjusted_sharpe 修正项(1 - skew*SR/6)
-        assert r_neg["adjusted_sharpe"] != r_sym["adjusted_sharpe"]
+    def test_skewness_affects_dsr_via_variance(self):
+        """#14 裁定：公式统编到 MOD-SIM-024 论文口径，弃 Cornish-Fisher 预调整——
+        adjusted_sharpe 键=原始 sr（向后兼容），skewness 经 V[SR] 方差项影响 dsr。
 
-    def test_kurtosis_affects_adjusted_sharpe(self):
-        r_normal = calculate_dsr(sharpe_ratio=1.0, n_trials=1, n_samples=252, kurtosis=3.0)
-        r_fat = calculate_dsr(sharpe_ratio=1.0, n_trials=1, n_samples=252, kurtosis=9.0)
-        assert r_fat["adjusted_sharpe"] != r_normal["adjusted_sharpe"]
+        注：取 sr=0.2/n=100 使 z≈1.7~2.0 落在 Φ 敏感区；sr=1.0/n=252 时 z≈9~13，
+        float64 下 Φ 饱和为 1.0，无法观测方差项效应。"""
+        r_sym = calculate_dsr(sharpe_ratio=0.2, n_trials=1, n_samples=100, skewness=0.0)
+        r_neg = calculate_dsr(sharpe_ratio=0.2, n_trials=1, n_samples=100, skewness=-1.5)
+        # 兼容键：adjusted_sharpe 现=原始 sr（不再预调整）
+        assert r_neg["adjusted_sharpe"] == r_sym["adjusted_sharpe"] == 0.2
+        # 负偏度增大 V[SR]=(1-skew·SR+...) → σ_sr 增大 → dsr 下降（论文口径）
+        assert r_neg["dsr"] != r_sym["dsr"]
+        assert r_neg["dsr"] < r_sym["dsr"]
+
+    def test_kurtosis_affects_dsr_via_variance(self):
+        """#14 裁定：kurtosis 经 V[SR] 方差项影响 dsr（(kurt-1)/4·SR² 项），不再经 adjusted_sharpe。
+        参数同取 Φ 敏感区（z≈1.9），避免高 z 值下 CDF 饱和。"""
+        r_normal = calculate_dsr(sharpe_ratio=0.2, n_trials=1, n_samples=100, kurtosis=3.0)
+        r_fat = calculate_dsr(sharpe_ratio=0.2, n_trials=1, n_samples=100, kurtosis=15.0)
+        assert r_fat["adjusted_sharpe"] == r_normal["adjusted_sharpe"] == 0.2
+        # 肥尾增大 V[SR] → σ_sr 增大 → dsr 下降
+        assert r_fat["dsr"] != r_normal["dsr"]
+        assert r_fat["dsr"] < r_normal["dsr"]
 
     def test_result_keys(self):
         r = calculate_dsr(sharpe_ratio=1.0, n_trials=10, n_samples=252)
