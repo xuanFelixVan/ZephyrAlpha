@@ -131,7 +131,6 @@ class SagaCompensator:
         """写入：sagas（Stage 4 公共化）。"""
         self._sagas = value
 
-
     def create_saga(self, saga_id: str, steps: list[SagaStep]) -> SagaContext:
         context = SagaContext(saga_id=saga_id, steps=steps)
         self._sagas[saga_id] = context

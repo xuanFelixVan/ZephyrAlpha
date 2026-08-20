@@ -84,7 +84,6 @@ EventHandler = Callable[[DomainEvent], None]
 
 
 class EventBus:
-
     """
     任务事件发布/订阅总线（单例模式）
     与 EventBusBackpressure 互补：EventBus 面向领域事件，EventBusBackpressure 面向系统事件
@@ -93,7 +92,7 @@ class EventBus:
     """
 
     _instance: "EventBus | None" = None
-    instance: 'EventBus | None' = _instance  # public alias（Stage 4 公共化）
+    instance: "EventBus | None" = _instance  # public alias（Stage 4 公共化）
 
     def __init__(self) -> None:
         self._subscribers: dict[EventType, list[EventHandler]] = {et: [] for et in EventType}
@@ -110,7 +109,6 @@ class EventBus:
         """写入：subscribers（Stage 4 公共化）。"""
         self._subscribers = value
 
-
     @property
     def event_log(self) -> list[DomainEvent]:
         """只读：event_log（Stage 4 公共化）。"""
@@ -120,7 +118,6 @@ class EventBus:
     def event_log(self, value):
         """写入：event_log（Stage 4 公共化）。"""
         self._event_log = value
-
 
     @classmethod
     def get_instance(cls) -> "EventBus":
@@ -355,7 +352,7 @@ class EventBusBackpressure:
 
 def _init_bridge() -> None:
     try:
-        from zephyr.shared.contract_bus import get_bus
+        from zephyr.shared.contract_bus import get_bus  # noqa: import-integrity  contract_bus 可选桥接（模块未上线），try/except 守卫降级 debug
 
         bus.set_contract_bus(get_bus())
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch

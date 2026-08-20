@@ -31,6 +31,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 #   updated_at: DateTime64(3, 'UTC')
 #   ingest_ts: DateTime64(3, 'UTC')
 """
+
 from __future__ import annotations
 
 # category_id: fundamental_industry_class
@@ -68,6 +69,4 @@ PARTITION_KEY = ""
 ORDER_BY = "(symbol, industry_level)"  # 含 industry_level 防止 merge 塌缩多级分类行
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(symbol, industry_sw, industry_zsi, industry_level, valid_to)"
-)
+INSERT_COLUMNS = "(symbol, industry_sw, industry_zsi, industry_level, valid_to)"

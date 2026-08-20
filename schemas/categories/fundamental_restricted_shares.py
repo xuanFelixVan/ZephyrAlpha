@@ -27,6 +27,7 @@
 
 注：float_shares/float_ratio 为 Float64（上游万股口径），非 #ARCH-CH-026 Decimal 迁移范围。
 """
+
 from __future__ import annotations
 
 # category_id: fundamental_restricted_shares

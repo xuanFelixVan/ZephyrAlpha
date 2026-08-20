@@ -29,6 +29,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 
 审计列（audit 1.7 #ARCH-CH-022）：quality_flag + ingest_ts（兼任版本列）。
 """
+
 from __future__ import annotations
 
 # category_id: fundamental_cashflow_statement

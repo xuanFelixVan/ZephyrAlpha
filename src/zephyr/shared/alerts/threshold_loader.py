@@ -52,12 +52,7 @@ class AlertThresholdConfigError(ZephyrBaseError):
 
 #: 告警阈值注册表相对路径（真源唯一：55 号 §3.3 决策）
 ALERT_THRESHOLD_REGISTRY_PATH: Final[Path] = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "alert_threshold_registry.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "alert_threshold_registry.yaml"
 )
 
 
@@ -128,9 +123,7 @@ def load_alert_thresholds(
     """
     path = registry_path or ALERT_THRESHOLD_REGISTRY_PATH
     if not path.exists():
-        raise AlertThresholdConfigError(
-            "告警阈值注册表不存在", details={"path": str(path)}
-        )
+        raise AlertThresholdConfigError("告警阈值注册表不存在", details={"path": str(path)})
     try:
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
     except yaml.YAMLError as exc:
@@ -143,9 +136,7 @@ def load_alert_thresholds(
     for tid, key in mapping.items():
         entry = entries.get(tid)
         if entry is None:
-            raise AlertThresholdConfigError(
-                "注册表缺条目", details={"threshold_id": tid, "path": str(path)}
-            )
+            raise AlertThresholdConfigError("注册表缺条目", details={"threshold_id": tid, "path": str(path)})
         if "value" not in entry:
             raise AlertThresholdConfigError(
                 "注册表条目缺 value 字段",

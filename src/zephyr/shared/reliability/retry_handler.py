@@ -127,11 +127,9 @@ class RetryHandler:
         """写入：config（Stage 4 公共化）。"""
         self._config = value
 
-
     @staticmethod
     def is_unrecoverable(exc: Exception) -> bool:
         return isinstance(exc, UNRECOVERABLE_EXCEPTIONS)
-
 
     def execute(self, func: Callable, *args: Any, **kwargs: Any) -> RetryResult:
         attempts: list[RetryAttempt] = []

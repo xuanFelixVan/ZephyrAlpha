@@ -27,6 +27,7 @@
     PARTITION BY toYYYYMM(report_period)——按报告期月分区。
     ORDER BY (symbol, report_period)——单标的多报告期点查友好。
 """
+
 from __future__ import annotations
 
 # category_id: fundamental_disclosure_plan
@@ -60,7 +61,4 @@ ENGINE = "ReplacingMergeTree"
 PARTITION_KEY = "toYYYYMM(report_period)"
 ORDER_BY = "(symbol, report_period)"
 
-INSERT_COLUMNS = (
-    "(symbol, report_period, announce_date, scheduled_date, actual_date, "
-    "data_source, quality_flag)"
-)
+INSERT_COLUMNS = "(symbol, report_period, announce_date, scheduled_date, actual_date, data_source, quality_flag)"

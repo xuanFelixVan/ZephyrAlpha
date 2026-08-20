@@ -94,6 +94,7 @@ class ContractViolationError(TypeError):
     detail : str
         详细描述
     """
+
     error_code = "ZA-SH-0022"
 
     def __init__(
@@ -325,7 +326,10 @@ def _validate_value(
     """校验单个值是否符合契约定义。返回违规描述列表（空列表 = 通过）。"""
 
     pydantic_violations = _validate_pydantic_value(
-        value, contract_type, contract_name, trace_required,
+        value,
+        contract_type,
+        contract_name,
+        trace_required,
     )
     if pydantic_violations is not None:
         return pydantic_violations
@@ -402,9 +406,7 @@ def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
             try:
                 # 5.45.2 修复：使用 typing._eval_type 替代 eval() 解析字符串类型注解
                 # typing._eval_type 仅处理类型表达式，不会执行任意代码
-                hints[fld.name] = typing._eval_type(
-                    typing.ForwardRef(ftype), globalns, None
-                )
+                hints[fld.name] = typing._eval_type(typing.ForwardRef(ftype), globalns, None)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 hints[fld.name] = ftype
         else:

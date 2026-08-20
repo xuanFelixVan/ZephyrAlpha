@@ -426,9 +426,7 @@ class SessionAuditTrail:
         # 不再延迟 import zephyr.gov_audit.writer——L0→L2 向上依赖已消除。
         provider = _audit_writer_provider
         if provider is None:
-            logger.debug(
-                "session_audit: no audit writer provider registered, skipping global audit event"
-            )
+            logger.debug("session_audit: no audit writer provider registered, skipping global audit event")
         else:
             try:
                 provider().write(

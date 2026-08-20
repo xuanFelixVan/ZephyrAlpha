@@ -27,6 +27,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     后台合并时互相覆盖（静默丢一半数据）。补 option_type 后 call/put 不再合并。
     同时修复 miniqmt_provider 列名 opt_type→option_type（列名不匹配致值被丢弃）。
 """
+
 from __future__ import annotations
 
 # category_id: market_option_iv

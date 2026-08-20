@@ -48,6 +48,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
    - recorded_time/ingest_ts(now() 真 UTC) -> DateTime64(3, 'UTC')，无偏移
    - 消除 UTC/北京时间混存导致的 8 小时算术偏差；迁移由 apply_timezone_migration.py 执行
 """
+
 from __future__ import annotations
 
 # category_id: market_tick

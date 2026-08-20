@@ -119,13 +119,7 @@ import yaml
 from zephyr.shared.io.paths import REPO_ROOT
 
 # vocabulary YAML 默认目录（SSoT 真源目录）
-DEFAULT_VOCAB_DIR: Final[Path] = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "vocabularies"
-)
+DEFAULT_VOCAB_DIR: Final[Path] = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
 
 
 def _resolve_vocab_path(vocab_file, vocab_dir):
@@ -184,10 +178,12 @@ def _collect_vocab_entries(data, fallback_key):
         if not val and fallback_key:
             val = entry.get(fallback_key)
         if val is not None:
-            entries.append({
-                "value": str(val),
-                "definition": str(entry.get("definition", "")),
-            })
+            entries.append(
+                {
+                    "value": str(val),
+                    "definition": str(entry.get("definition", "")),
+                }
+            )
     return entries
 
 
@@ -248,7 +244,8 @@ def load_vocabulary_values(
     """
     p = _resolve_vocab_path(vocab_file, vocab_dir)
     data = _load_vocab_data(
-        p, strict,
+        p,
+        strict,
         f"vocabulary YAML 不存在: {p}\n"
         f"提示：检查文件名拼写（误拼会导致合规检查变空集->DoS漂移）。"
         f"如需测试隔离/渐进迁移，传 strict=False。",
@@ -303,9 +300,9 @@ def load_all_vocabulary_values(
     for p in sorted(vdir.glob("*_vocabulary.yaml")):
         vocab_name = p.name.removesuffix("_vocabulary.yaml")
         data = _load_vocab_data(
-            p, strict,
-            f"vocabulary YAML 不存在: {p}\n"
-            f"提示：批量加载时某词表文件缺失（strict=True fail-fast）。",
+            p,
+            strict,
+            f"vocabulary YAML 不存在: {p}\n提示：批量加载时某词表文件缺失（strict=True fail-fast）。",
             f"vocabulary YAML 顶层非 dict 结构: {p}",
         )
         if data is None:
@@ -318,9 +315,7 @@ def load_all_vocabulary_values(
 
 # 治本(2026-07-17): ttl 合法值真源是 ttl_vocabulary.yaml，禁止代码硬编码字面量集合。
 # strict=False 容错：词表缺失时返回空 set，evaluate_ttl 回退 task_bound（安全默认）。
-_TTL_VALID_VALUES: Final[set[str]] = load_vocabulary_values(
-    "ttl_vocabulary.yaml", strict=False
-)
+_TTL_VALID_VALUES: Final[set[str]] = load_vocabulary_values("ttl_vocabulary.yaml", strict=False)
 
 
 def load_vocabulary_entries(
@@ -354,9 +349,9 @@ def load_vocabulary_entries(
     """
     p = _resolve_vocab_path(vocab_file, vocab_dir)
     data = _load_vocab_data(
-        p, strict,
-        f"vocabulary YAML 不存在: {p}\n"
-        f"提示：检查文件名拼写。如需测试隔离/渐进迁移，传 strict=False。",
+        p,
+        strict,
+        f"vocabulary YAML 不存在: {p}\n提示：检查文件名拼写。如需测试隔离/渐进迁移，传 strict=False。",
         f"vocabulary YAML 顶层非 dict 结构: {p}",
     )
     if data is None:
@@ -395,9 +390,9 @@ def load_vocabulary_section_list(
     """
     p = _resolve_vocab_path(vocab_file, vocab_dir)
     data = _load_vocab_data(
-        p, strict,
-        f"vocabulary YAML 不存在: {p}\n"
-        f"提示：检查文件名拼写。如需测试隔离，传 strict=False。",
+        p,
+        strict,
+        f"vocabulary YAML 不存在: {p}\n提示：检查文件名拼写。如需测试隔离，传 strict=False。",
         f"vocabulary YAML 顶层非 dict 结构: {p}",
     )
     if data is None:
@@ -405,9 +400,7 @@ def load_vocabulary_section_list(
     section = data.get(section_key) or []
     if not isinstance(section, list):
         if strict:
-            raise ValueError(
-                f"vocabulary YAML 段 '{section_key}' 不是列表: {p}"
-            )
+            raise ValueError(f"vocabulary YAML 段 '{section_key}' 不是列表: {p}")
         return set()
     return {str(v) for v in section if v}
 
@@ -481,8 +474,7 @@ def load_decision_tree(
     if not p.exists():
         if strict:
             raise FileNotFoundError(
-                f"vocabulary YAML 不存在: {p}\n"
-                f"提示：检查文件名拼写。如需测试隔离，传 strict=False。"
+                f"vocabulary YAML 不存在: {p}\n提示：检查文件名拼写。如需测试隔离，传 strict=False。"
             )
         return {}
     data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
@@ -523,9 +515,7 @@ def _expand_criteria_sources(tree: dict, *, strict: bool = True) -> None:
         ext_file = REPO_ROOT / ext_path
         if not ext_file.exists():
             if strict:
-                raise FileNotFoundError(
-                    f"criteria_source 引用的 YAML 不存在: {ext_file}"
-                )
+                raise FileNotFoundError(f"criteria_source 引用的 YAML 不存在: {ext_file}")
             node["criteria"] = []
             continue
         ext_data = yaml.safe_load(ext_file.read_text(encoding="utf-8")) or {}
@@ -538,15 +528,10 @@ def _expand_criteria_sources(tree: dict, *, strict: bool = True) -> None:
             value = value.get(key)
         if not isinstance(value, list):
             if strict:
-                raise ValueError(
-                    f"criteria_source section '{section}' 不是列表: {ext_path}"
-                )
+                raise ValueError(f"criteria_source section '{section}' 不是列表: {ext_path}")
             node["criteria"] = []
             continue
-        node["criteria"] = [
-            {"signal": signal, "value": str(v), "operator": operator}
-            for v in value
-        ]
+        node["criteria"] = [{"signal": signal, "value": str(v), "operator": operator} for v in value]
 
 
 def evaluate_ttl(
@@ -586,9 +571,9 @@ def evaluate_ttl(
         match_mode = node.get("match", "any")
 
         results = [
-            _eval_criterion(c.get("signal", ""), c.get("value", ""),
-                            c.get("operator", "equals"), rel_path, frontmatter)
-            for c in criteria if isinstance(c, dict)
+            _eval_criterion(c.get("signal", ""), c.get("value", ""), c.get("operator", "equals"), rel_path, frontmatter)
+            for c in criteria
+            if isinstance(c, dict)
         ]
         matched = any(results) if match_mode == "any" else all(results)
         # YAML 1.1 (PyYAML) 将裸 yes/no 解析为 True/False，必须兼容两种键名

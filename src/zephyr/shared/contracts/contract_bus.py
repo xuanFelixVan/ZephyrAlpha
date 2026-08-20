@@ -51,6 +51,7 @@ class ContractViolationError(Exception):
 
 class ContractBusError(Exception):
     """Contract Bus 错误。"""
+
     error_code = "ZA-SH-0025"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):

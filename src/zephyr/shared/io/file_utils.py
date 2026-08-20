@@ -90,6 +90,7 @@ __all__: Final = [
 
 class AtomicWriteError(OSError):
     """原子写入失败——临时文件写入或 rename 异常。"""
+
     error_code = "ZA-SH-0037"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -298,15 +299,17 @@ def backup_and_rollback(
 
 # 热文件词表（高频 contested——lost-update/吞写事故全部出自这类文件）：
 # 相对仓根路径，正斜杠。新增热文件在此追加。
-DEFAULT_HOT_FILES: Final = frozenset({
-    "AGENTS.md",
-    "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml",
-    "docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml",
-    "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml",
-    "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml",
-    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md",
-    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md",
-})
+DEFAULT_HOT_FILES: Final = frozenset(
+    {
+        "AGENTS.md",
+        "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml",
+        "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md",
+        "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md",
+    }
+)
 
 _SAFE_WRITE_AUDIT_REL = ".runtime/audit/safe_write.jsonl"
 
@@ -415,8 +418,7 @@ def safe_write_text(
         _safe_write_audit(root, {**base_record, "event": "refused", "reason": "stale_base"})
         raise StaleWriteRefused(
             "base-hash 与磁盘不符（磁盘已被他人推进），拒写",
-            details={"path": str(target), "expected": expected_base_sha256[:12],
-                     "disk": before_hash[:12]},
+            details={"path": str(target), "expected": expected_base_sha256[:12], "disk": before_hash[:12]},
         )
 
     # ③ 原子写（复用本模块 atomic_write 真源）
@@ -429,10 +431,8 @@ def safe_write_text(
         _safe_write_audit(root, {**base_record, "event": "verify_failed", "after_sha256": after_hash})
         raise WriteVerificationError(
             "写后回读校验失败（落盘内容与预期不符）",
-            details={"path": str(target), "expect": expected_after[:12],
-                     "disk": after_hash[:12]},
+            details={"path": str(target), "expect": expected_after[:12], "disk": after_hash[:12]},
         )
 
     _safe_write_audit(root, {**base_record, "event": "written", "after_sha256": after_hash})
-    return SafeWriteResult(path=str(target), written=True,
-                           before_sha256=before_hash, after_sha256=after_hash)
+    return SafeWriteResult(path=str(target), written=True, before_sha256=before_hash, after_sha256=after_hash)

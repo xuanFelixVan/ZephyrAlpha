@@ -64,9 +64,7 @@ class CacheInvalidationManager:
         cv = self._versions.get(key)
         return cv is not None and cv.version > client_version
 
-    def register_invalidation_handler(
-        self, key: str, handler: Callable[[str, int], None]
-    ) -> None:
+    def register_invalidation_handler(self, key: str, handler: Callable[[str, int], None]) -> None:
         """注册失效回调——当 key 的版本被更新（set_version/bump_version）时自动调用。
 
         允许数据更新组件订阅缓存失效事件，实现数据更新->缓存自动失效。
@@ -100,14 +98,9 @@ class CacheInvalidationManager:
         """持久化版本数据到 JSON 文件."""
         if self._persistence_path is None:
             return
-        data = {
-            k: {"version": v.version, "invalidated_at": v.invalidated_at}
-            for k, v in self._versions.items()
-        }
+        data = {k: {"version": v.version, "invalidated_at": v.invalidated_at} for k, v in self._versions.items()}
         try:
             self._persistence_path.parent.mkdir(parents=True, exist_ok=True)
-            self._persistence_path.write_text(
-                json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
-            )
+            self._persistence_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
         except OSError:
             pass

@@ -61,6 +61,7 @@ R = TypeVar("R")
 
 class FallbackExhaustedError(ZephyrBaseError):
     """降级链全部耗尽——所有步骤都失败了。"""
+
     error_code = "ZA-SH-0019"
 
 
@@ -123,10 +124,7 @@ class FallbackChain(Generic[P, R]):
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 last_errors.append((step.name, str(exc)))
                 logger.warning(
-                    "fallback chain '%s': step '%s' failed: %s",
-                    self._chain_name,
-                    step.name,
-                    exc, exc_info=True
+                    "fallback chain '%s': step '%s' failed: %s", self._chain_name, step.name, exc, exc_info=True
                 )
 
         raise FallbackExhaustedError(
@@ -158,10 +156,7 @@ class FallbackChain(Generic[P, R]):
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 last_errors.append((step.name, str(exc)))
                 logger.warning(
-                    "fallback chain '%s': step '%s' failed: %s",
-                    self._chain_name,
-                    step.name,
-                    exc, exc_info=True
+                    "fallback chain '%s': step '%s' failed: %s", self._chain_name, step.name, exc, exc_info=True
                 )
 
         raise FallbackExhaustedError(

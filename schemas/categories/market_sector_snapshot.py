@@ -25,6 +25,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     本治本同步消除 apply_market_tables_ddl.py 与 sector_snapshot_collector.py 之间的
     内联 DDL 双真源（Phase 2 目标）。
 """
+
 from __future__ import annotations
 
 # category_id: market_sector_snapshot

@@ -25,6 +25,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     新增 ingest_ts DateTime DEFAULT now() 作为入库时间戳审计列（非版本列）。
     不入 INSERT_COLUMNS（DEFAULT 自动填充）。
 """
+
 from __future__ import annotations
 
 # category_id: market_cb_iv
@@ -65,6 +66,5 @@ ORDER_BY = "(symbol, trade_date)"
 
 # 列清单（用于 INSERT 时显式指定）
 INSERT_COLUMNS = (
-    "(trade_date, symbol, underlying, iv, delta, gamma, theta, vega, "
-    "conversion_premium, data_source, quality_flag)"
+    "(trade_date, symbol, underlying, iv, delta, gamma, theta, vega, conversion_premium, data_source, quality_flag)"
 )

@@ -21,6 +21,7 @@
     列: 日期/指数/4个月均线/6个月均线/12个月均线/预售均价/成交均价/成交均重
 价格字段用 Decimal(18,4) 遵循 #ARCH-CH-026 精度裁定；均线/均重为计算值用 Float64。
 """
+
 from __future__ import annotations
 
 # category_id: market_hog_spot_index
@@ -55,7 +56,4 @@ PARTITION_KEY = "tuple()"
 ORDER_BY = "(trade_date)"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列 ingest_ts 由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(trade_date, index_value, ma_4m, ma_6m, ma_12m, "
-    "presale_avg_price, deal_avg_price, deal_avg_weight)"
-)
+INSERT_COLUMNS = "(trade_date, index_value, ma_4m, ma_6m, ma_12m, presale_avg_price, deal_avg_price, deal_avg_weight)"

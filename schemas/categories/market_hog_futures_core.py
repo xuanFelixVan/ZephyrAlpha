@@ -21,6 +21,7 @@
     列: date/value（生猪期货核心价，元/公斤）
 价格字段用 Decimal(18,4) 遵循 #ARCH-CH-026 精度裁定。
 """
+
 from __future__ import annotations
 
 # category_id: market_hog_futures_core

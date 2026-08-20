@@ -84,6 +84,7 @@ class FlagState(str, Enum):
 
 class FlagNotFoundError(ZephyrBaseError):
     """请求的 FeatureFlag 未在注册表中找到。"""
+
     error_code = "ZA-SH-0047"
 
 
@@ -202,7 +203,6 @@ class FlagRegistry:
     def flags(self, value):
         """写入：flags（Stage 4 公共化）。"""
         self._flags = value
-
 
     def _default_audit_path(self) -> Path | None:
         """惰性解析默认审计路径——shared 层禁止向上 import audit 组件，JSONL 落盘即可。"""

@@ -128,7 +128,6 @@ class Dogfooding:
         """写入：tasks（Stage 4 公共化）。"""
         self._tasks = value
 
-
     def register_dogfood_task(self, task: DogfoodTask) -> None:
         self._tasks.append(task)
 

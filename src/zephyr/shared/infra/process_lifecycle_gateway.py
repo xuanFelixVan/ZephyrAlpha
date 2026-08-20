@@ -132,7 +132,9 @@ class ProcessLifecycleGateway:
         try:
             DaemonRegistry.start(f"gateway:{name}")
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.exception("ProcessLifecycleGateway: DaemonRegistry.start failed for 'gateway:%s'", name, exc_info=True)
+            logger.exception(
+                "ProcessLifecycleGateway: DaemonRegistry.start failed for 'gateway:%s'", name, exc_info=True
+            )
         return True
 
     def terminate(self, name: str) -> bool:

@@ -75,6 +75,7 @@ ISO_FORMAT: Final[str] = "%Y-%m-%dT%H:%M:%S.%fZ"
 
 class SerializationError(ZephyrBaseError):
     """序列化/反序列化过程中类型不兼容或格式错误。"""
+
     error_code = "ZA-SH-0034"
 
 
@@ -323,6 +324,7 @@ def filter_dataclass_fields(cls: type, data: dict | None) -> dict:
     # 1. 尝试 dataclass
     try:
         from dataclasses import fields as _dc_fields
+
         valid_names = {f.name for f in _dc_fields(cls)}
     except TypeError:
         pass
@@ -341,9 +343,11 @@ def filter_dataclass_fields(cls: type, data: dict | None) -> dict:
     dropped = set(data.keys()) - valid_names
     if dropped:
         import logging
+
         logging.getLogger(__name__).debug(
             "filter_dataclass_fields: %s dropped unknown fields %s",
-            getattr(cls, "__name__", cls), dropped,
+            getattr(cls, "__name__", cls),
+            dropped,
         )
     return filtered
 

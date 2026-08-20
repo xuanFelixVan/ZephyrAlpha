@@ -23,6 +23,7 @@ SCD-2 时点版本（#ARCH-CH-021 P0-6, 2026-07-23）：
     板块成分股列表随成分调整而变化，SCD-2 保留历史版本。
     valid_from=trade_date，valid_to=NULL（当前有效）。
 """
+
 from __future__ import annotations
 
 # category_id: market_sector_list
@@ -58,6 +59,4 @@ PARTITION_KEY = "toYYYYMM(trade_date)"
 ORDER_BY = "(sector_name, symbol, trade_date)"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(trade_date, sector_name, symbol, data_source)"
-)
+INSERT_COLUMNS = "(trade_date, sector_name, symbol, data_source)"

@@ -33,6 +33,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 #   data_source: LowCardinality(String)
 #   ingest_ts: DateTime64(3, 'UTC')
 """
+
 from __future__ import annotations
 
 # category_id: market_hk_connect_flow
@@ -68,6 +69,4 @@ PARTITION_KEY = "toYYYYMM(trade_date)"
 ORDER_BY = "trade_date, channel"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(trade_date, channel, net_buy_amount, buy_amount, sell_amount, cumulative_net_buy, daily_inflow, daily_balance, holding_market_value)"
-)
+INSERT_COLUMNS = "(trade_date, channel, net_buy_amount, buy_amount, sell_amount, cumulative_net_buy, daily_inflow, daily_balance, holding_market_value)"

@@ -133,7 +133,6 @@ class ExecutionTuner:
         """写入：history（Stage 4 公共化）。"""
         self._history = value
 
-
     def tune(self, task_card: dict[str, Any]) -> ExecutionProfile:
         task_id = task_card.get("task_id", "")
         priority = task_card.get("priority", "P2")

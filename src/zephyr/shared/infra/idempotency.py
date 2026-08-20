@@ -80,29 +80,20 @@ CREATE TABLE IF NOT EXISTS idempotency_records (
     completed_at REAL NOT NULL DEFAULT 0
 )
 """
-_SQL_DELETE_EXPIRED = (
-    "DELETE FROM idempotency_records WHERE completed_at > 0 AND completed_at < ?"
-)
+_SQL_DELETE_EXPIRED = "DELETE FROM idempotency_records WHERE completed_at > 0 AND completed_at < ?"
 _SQL_DELETE_BY_KEY = "DELETE FROM idempotency_records WHERE key = ?"
-_SQL_SELECT_BY_KEY = (
-    "SELECT key, status, result, created_at, completed_at "
-    "FROM idempotency_records WHERE key = ?"
-)
+_SQL_SELECT_BY_KEY = "SELECT key, status, result, created_at, completed_at FROM idempotency_records WHERE key = ?"
 _SQL_INSERT = (
-    "INSERT INTO idempotency_records (key, status, result, created_at, completed_at) "
-    "VALUES (?, ?, NULL, ?, 0)"
+    "INSERT INTO idempotency_records (key, status, result, created_at, completed_at) VALUES (?, ?, NULL, ?, 0)"
 )
-_SQL_UPDATE_COMPLETE = (
-    "UPDATE idempotency_records SET status = ?, result = ?, completed_at = ? WHERE key = ?"
-)
-_SQL_UPDATE_FAIL = (
-    "UPDATE idempotency_records SET status = ?, completed_at = ? WHERE key = ?"
-)
+_SQL_UPDATE_COMPLETE = "UPDATE idempotency_records SET status = ?, result = ?, completed_at = ? WHERE key = ?"
+_SQL_UPDATE_FAIL = "UPDATE idempotency_records SET status = ?, completed_at = ? WHERE key = ?"
 _SQL_COUNT = "SELECT COUNT(*) FROM idempotency_records"
 
 
 class IdempotencyError(ZephyrBaseError):
     """幂等性冲突——相同 key 产生了不同结果或状态不一致。"""
+
     error_code = "ZA-SH-0044"
 
 

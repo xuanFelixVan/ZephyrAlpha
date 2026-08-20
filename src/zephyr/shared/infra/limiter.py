@@ -68,6 +68,7 @@ logger = logging.getLogger(__name__)
 
 class RateLimitError(ZephyrBaseError):
     """速率限制耗尽——等待时间过长或无法获取 token。"""
+
     error_code = "ZA-SH-0043"
 
 

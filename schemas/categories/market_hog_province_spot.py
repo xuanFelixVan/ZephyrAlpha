@@ -21,6 +21,7 @@
     列: 省份/价格/涨跌幅（当天快照，无日期列，由 payload.end 补 trade_date）
 价格字段用 Decimal(18,4) 遵循 #ARCH-CH-026 精度裁定；涨跌幅用 Float64。
 """
+
 from __future__ import annotations
 
 # category_id: market_hog_province_spot

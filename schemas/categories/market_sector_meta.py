@@ -27,6 +27,7 @@ Float64→Decimal 治本修复（Phase 3-A, 2026-07-23）：
     total_mv/float_mv: Float64→Decimal(18,2)（市值精度治本）
     float_share: Float64→Decimal(18,4)（股本精度治本）
 """
+
 from __future__ import annotations
 
 # category_id: market_sector_meta
@@ -64,7 +65,4 @@ PARTITION_KEY = "tuple()"
 ORDER_BY = "(sector_code, trade_date)"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(sector_code, trade_date, sector_name, sector_type, constituent_num, "
-    "float_share, total_mv, float_mv)"
-)
+INSERT_COLUMNS = "(sector_code, trade_date, sector_name, sector_type, constituent_num, float_share, total_mv, float_mv)"

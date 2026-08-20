@@ -15,6 +15,7 @@ Usage::
     from zephyr.shared.observability.dashboard import generate_data_collection_dashboard
     json_obj = generate_data_collection_dashboard()
 """
+
 from __future__ import annotations
 
 import json
@@ -118,10 +119,32 @@ def generate_ch_write_dashboard() -> dict[str, Any]:
     6. HTTP 冷却状态
     """
     panels = [
-        _make_panel(1, "CH 写入成功率", 'rate(zephyr_ch_write_total{outcome="committed"}[1m])', 0, 0, 12, 8, unit="ops"),
-        _make_panel(2, "CH 写入失败率", 'rate(zephyr_ch_write_total{outcome!="committed"}[1m])', 0, 12, 12, 8, unit="ops"),
-        _make_panel(3, "写入延迟 p50", 'histogram_quantile(0.5, rate(zephyr_ch_write_latency_seconds_bucket[5m]))', 8, 0, 12, 8, unit="s"),
-        _make_panel(4, "写入延迟 p99", 'histogram_quantile(0.99, rate(zephyr_ch_write_latency_seconds_bucket[5m]))', 8, 12, 12, 8, unit="s"),
+        _make_panel(
+            1, "CH 写入成功率", 'rate(zephyr_ch_write_total{outcome="committed"}[1m])', 0, 0, 12, 8, unit="ops"
+        ),
+        _make_panel(
+            2, "CH 写入失败率", 'rate(zephyr_ch_write_total{outcome!="committed"}[1m])', 0, 12, 12, 8, unit="ops"
+        ),
+        _make_panel(
+            3,
+            "写入延迟 p50",
+            "histogram_quantile(0.5, rate(zephyr_ch_write_latency_seconds_bucket[5m]))",
+            8,
+            0,
+            12,
+            8,
+            unit="s",
+        ),
+        _make_panel(
+            4,
+            "写入延迟 p99",
+            "histogram_quantile(0.99, rate(zephyr_ch_write_latency_seconds_bucket[5m]))",
+            8,
+            12,
+            12,
+            8,
+            unit="s",
+        ),
         _make_panel(5, "TCP 冷却状态", 'zephyr_ch_cooldown_active{channel="tcp"}', 16, 0, 12, 8, unit="short"),
         _make_panel(6, "HTTP 冷却状态", 'zephyr_ch_cooldown_active{channel="http"}', 16, 12, 12, 8, unit="short"),
     ]

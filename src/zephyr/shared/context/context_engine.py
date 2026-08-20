@@ -107,7 +107,6 @@ class ContextEngine:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def assemble_context(
         self,
         task_id: str,

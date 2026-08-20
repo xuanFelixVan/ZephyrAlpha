@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-SHR-market | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | 
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md |
 # [TTL] permanent
 # ARCH-DATA-SSOT-001: 5 个数据契约真源归一到 shared/contracts/ 根目录
 # （cross_layer_contracts.yaml CTR-001/002/003/004/005 声明）。

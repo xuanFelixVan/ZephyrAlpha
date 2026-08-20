@@ -83,9 +83,7 @@ class WeChatWebhookSender:
 
     @staticmethod
     def _urllib_post(url: str, body: bytes, timeout: float) -> Any:
-        req = urllib.request.Request(
-            url, data=body, headers={"Content-Type": "application/json"}, method="POST"
-        )
+        req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
         return urllib.request.urlopen(req, timeout=timeout)  # noqa: S310 —— URL 由 owner 配置
 
     def send_markdown(self, content: str) -> bool:
@@ -104,9 +102,7 @@ class WeChatWebhookSender:
             payload = json.loads(raw.decode("utf-8")) if raw else {}
             ok = status == 200 and int(payload.get("errcode", 0)) == 0
             if not ok:
-                _logger.warning(
-                    "WeChat webhook 软失败: status=%s errcode=%s", status, payload.get("errcode")
-                )
+                _logger.warning("WeChat webhook 软失败: status=%s errcode=%s", status, payload.get("errcode"))
             return ok
         except Exception as exc:  # noqa: BLE001 —— best-effort 不阻断
             _logger.warning("WeChat webhook 发送异常: %s", type(exc).__name__)

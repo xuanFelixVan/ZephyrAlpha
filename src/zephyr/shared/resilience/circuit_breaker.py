@@ -69,9 +69,17 @@ class CircuitState(str, Enum):
 
 class CircuitOpenError(ZephyrBaseError):
     """熔断器处于 OPEN 状态时拒绝调用。"""
+
     error_code = "ZA-SH-0020"
 
-    def __init__(self, name: str, message: str | None = None, *, details: dict[str, Any] | None = None, error_code: str | None = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        message: str | None = None,
+        *,
+        details: dict[str, Any] | None = None,
+        error_code: str | None = None,
+    ) -> None:
         super().__init__(
             message or f"CircuitBreaker '{name}' is OPEN",
             details=details or {},
@@ -118,7 +126,6 @@ class CircuitBreaker:
         """公共接口：transition（Stage 4 公共化）。"""
         return self._transition()
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def failure_threshold(self) -> int:
@@ -140,7 +147,6 @@ class CircuitBreaker:
         """写入：recovery_timeout_ms（Stage 4 公共化）。"""
         self._recovery_timeout_ms = value
 
-
     @property
     def state(self) -> CircuitState:
         with self._lock:
@@ -150,7 +156,6 @@ class CircuitBreaker:
     def state(self, value):
         """写入：state（Stage 4 公共化）。"""
         self._state = value
-
 
     @property
     def failure_count(self) -> int:

@@ -32,6 +32,7 @@ from pathlib import Path
 
 class FingerprintError(Exception):
     """内容指纹系统异常基类（所有指纹相关异常由此派生）。"""
+
     error_code = "ZA-SH-0038"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -42,6 +43,7 @@ class FingerprintError(Exception):
 
 class FingerprintNotFoundError(FingerprintError):
     """请求的指纹 key 在指纹库中不存在。"""
+
     error_code = "ZA-SH-0039"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -52,6 +54,7 @@ class FingerprintNotFoundError(FingerprintError):
 
 class FingerprintPermissionError(FingerprintError):
     """无权读取或写入指定路径的指纹文件（文件系统权限不足）。"""
+
     error_code = "ZA-SH-0040"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):

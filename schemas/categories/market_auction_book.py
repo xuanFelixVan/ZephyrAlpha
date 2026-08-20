@@ -27,6 +27,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     留下异步 mutations 记录累积，治本方案迁移到 ReplacingMergeTree 直接 INSERT，
     后台合并去重，无 DELETE 开销。
 """
+
 from __future__ import annotations
 
 # category_id: market_auction_book

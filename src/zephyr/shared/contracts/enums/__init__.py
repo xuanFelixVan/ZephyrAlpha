@@ -20,6 +20,7 @@
 问题: shared/contracts/order.py (codegen) 反向 import trading 层枚举 → 违反分层
 修复: 枚举下沉到 shared 层，trading/governance 通过 re-export 引用
 """
+
 from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
 
 __all__ = ["OrderSide", "OrderStatus", "OrderType"]

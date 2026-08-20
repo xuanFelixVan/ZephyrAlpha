@@ -57,6 +57,7 @@ __all__ = [
 
 class PatchConflictError(ValueError):
     """Patch 无法干净应用——存在冲突或目标状态与期望不符。"""
+
     error_code = "ZA-SH-0049"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):

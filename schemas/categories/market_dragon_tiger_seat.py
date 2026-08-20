@@ -32,6 +32,7 @@
 #   data_source: LowCardinality(String)
 #   ingest_ts: DateTime64(3, 'UTC')
 """
+
 from __future__ import annotations
 
 # category_id: market_dragon_tiger_seat
@@ -71,6 +72,5 @@ ORDER_BY = "trade_date, symbol, seat_name"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT/MATERIALIZED 列由 CH 自动填充）
 INSERT_COLUMNS = (
-    "(trade_date, symbol, seat_name, buy_amount, sell_amount, net_amount, "
-    "buy_rank, sell_rank, seat_type, reason)"
+    "(trade_date, symbol, seat_name, buy_amount, sell_amount, net_amount, buy_rank, sell_rank, seat_type, reason)"
 )

@@ -28,6 +28,7 @@
 注：pledge_shares/total_holdings 等 Float64 字段为上游口径（万股），
     非 #ARCH-CH-026 Decimal 迁移范围（该裁定仅覆盖财务三表金额字段）。
 """
+
 from __future__ import annotations
 
 # category_id: fundamental_equity_pledge_detail

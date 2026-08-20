@@ -129,6 +129,7 @@ def _check_rotation(key: str) -> None:
 
 class SecretsError(ZephyrBaseError):
     """Secrets 读取失败——key 不存在、backend 不可达、权限拒绝。"""
+
     error_code = "ZA-SH-0016"
 
 

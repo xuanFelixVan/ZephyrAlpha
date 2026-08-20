@@ -165,7 +165,6 @@ class ZephyrLogger:
         """写入：name（Stage 4 公共化）。"""
         self._name = value
 
-
     def _log(
         self,
         level: int,

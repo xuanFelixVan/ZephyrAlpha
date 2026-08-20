@@ -29,6 +29,7 @@
     curl http://localhost:9925/metrics
     curl http://localhost:9925/health
 """
+
 from __future__ import annotations
 
 import logging

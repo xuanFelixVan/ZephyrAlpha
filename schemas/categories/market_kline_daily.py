@@ -32,6 +32,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     新行由 CH 自动填充入库时间；旧行按 DEFAULT 惰性求值（近似值）。
     不入 INSERT_COLUMNS（DEFAULT 自动填充）。
 """
+
 from __future__ import annotations
 
 # category_id: market_kline_daily

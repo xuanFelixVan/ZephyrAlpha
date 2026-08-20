@@ -25,6 +25,7 @@
     PARTITION BY toYYYYMM(announce_date)——按公告日期月分区。
     ORDER BY (symbol, announce_date, type)——单标的多类型方案点查友好。
 """
+
 from __future__ import annotations
 
 # category_id: fundamental_rights_issue

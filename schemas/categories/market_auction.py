@@ -21,6 +21,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     列（蓝图内部矛盾）。本文件以可执行为准——使用 ReplacingMergeTree（无版本列）。
     蓝图 §4.0 的 ingest_ts 版本列设计待 #ARCH-CH-009 后续裁定统一修正。
 """
+
 from __future__ import annotations
 
 # category_id: market_auction

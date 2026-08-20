@@ -54,7 +54,6 @@ class EventReactor:
         """写入：bus（Stage 4 公共化）。"""
         self._bus = value
 
-
     def _register_handlers(self) -> None:
         self._bus.subscribe(EventType.TASK_FAILED, self._on_task_failed)
         self._bus.subscribe(EventType.TASK_COMPLETED, self._on_task_completed)

@@ -109,7 +109,6 @@ class HookDispatcher:
         """写入：hooks（Stage 4 公共化）。"""
         self._hooks = value
 
-
     def register_hook(self, hook: HookConfig) -> None:
         if hook.event_type in self._hooks:
             self._hooks[hook.event_type].append(hook)
@@ -132,6 +131,7 @@ class HookDispatcher:
             # 5.40.6 修复：原 env={} 替换整个环境，子进程无 PATH/HOME/PYTHONPATH 必然立即失败。
             # 改为合并 os.environ 与自定义环境变量，保留继承的环境变量。
             import os
+
             env = {
                 **os.environ,
                 "ZEPHYR_TASK_ID": event.task_id,

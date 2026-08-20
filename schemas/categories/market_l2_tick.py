@@ -87,6 +87,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 # A1 --> O1
 # A3 --> O1
 """
+
 from __future__ import annotations
 
 # category_id: market_l2_tick
@@ -133,7 +134,4 @@ ORDER_BY = "(market_type, symbol, trade_date, timestamp, price)"
 
 # 列清单（fetch_l2_tick 写入的 9 列，其余列由 DEFAULT 填充）
 # 对齐 miniqmt_provider.fetch_l2_tick columns 定义
-INSERT_COLUMNS = (
-    "(trade_date, timestamp, symbol, price, volume, amount, "
-    "bid_price, ask_price, data_source)"
-)
+INSERT_COLUMNS = "(trade_date, timestamp, symbol, price, volume, amount, bid_price, ask_price, data_source)"

@@ -12,6 +12,7 @@ Usage::
     from zephyr.shared.observability.dashboard import generate_clickhouse_datasource_yaml
     yaml_text = generate_clickhouse_datasource_yaml(host="172.24.30.100", port=8123)
 """
+
 from __future__ import annotations
 
 import logging

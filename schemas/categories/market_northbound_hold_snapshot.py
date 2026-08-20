@@ -37,6 +37,7 @@ tushare pro.hk_hold 季度末全量快照，仅北向 SH/SZ）。
 #   ingested_at: DateTime64(3, 'UTC')  DEFAULT now()  入库时间（memo §5.2 列名 ingested_at，
 #       类型取家族统一精度 DateTime64(3,'UTC') 对齐既有 100+ 表 ingest 审计列惯例）
 """
+
 from __future__ import annotations
 
 # category_id: market_northbound_hold_snapshot
@@ -69,6 +70,4 @@ PARTITION_KEY = "toYYYYMM(trade_date)"
 ORDER_BY = "ts_code, trade_date"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(trade_date, ts_code, name, hold_share, hold_ratio, exchange, data_source)"
-)
+INSERT_COLUMNS = "(trade_date, ts_code, name, hold_share, hold_ratio, exchange, data_source)"

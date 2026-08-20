@@ -29,6 +29,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 #   data_source: LowCardinality(String)
 #   ingest_ts: DateTime64(3, 'UTC')
 """
+
 from __future__ import annotations
 
 # category_id: macro_macro_data
@@ -60,6 +61,4 @@ PARTITION_KEY = "toYYYYMM(report_date)"
 ORDER_BY = "indicator_name, report_date"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(report_date, indicator_name, indicator_value, unit, frequency)"
-)
+INSERT_COLUMNS = "(report_date, indicator_name, indicator_value, unit, frequency)"

@@ -54,6 +54,7 @@ __all__ = [
 
 class MigrationError(Exception):
     """迁移失败异常。"""
+
     error_code = "ZA-SH-0048"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):

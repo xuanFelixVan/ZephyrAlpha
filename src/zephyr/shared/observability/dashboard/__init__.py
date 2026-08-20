@@ -55,6 +55,7 @@ Grafana 双数据源仪表盘模块（MOD-INF-044）。
 # I1 --> A1
 # A1 --> O1
 """
+
 from zephyr.shared.observability.dashboard.alert_rules import (
     ALERT_RULES,
     generate_alert_rules_yaml,

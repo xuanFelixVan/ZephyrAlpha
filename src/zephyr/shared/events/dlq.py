@@ -252,8 +252,7 @@ class DeadLetterQueue:
         # 5.151.4 修复: 原 raise+except pass 完全静默, 该 handler 已注册到事件总线,
         # 所有 DLQ 事件在此处被完全静默丢弃。改为记录 warning 日志使丢弃可见
         logger.warning(
-            "DLQ _failure_handler called directly (should use capture() instead): "
-            "event_type=%s payload_keys=%s",
+            "DLQ _failure_handler called directly (should use capture() instead): event_type=%s payload_keys=%s",
             event_type,
             list(payload.keys()) if isinstance(payload, dict) else "N/A",
         )

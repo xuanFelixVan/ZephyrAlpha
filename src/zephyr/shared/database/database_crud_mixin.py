@@ -139,16 +139,46 @@ class DatabaseCRUDMixin:
         return dict(row) if row else None
 
     # 5.66.1 修复：tasks 表列名白名单，防止 SQL 注入（f-string 拼接列名的治本）
-    _TASK_COLUMNS = frozenset({
-        "task_id", "title", "description", "status", "priority", "assignee",
-        "created_at", "updated_at", "due_date", "completed_at", "parent_id",
-        "module_id", "blueprint_id", "decomposition_id", "task_type",
-        "estimated_hours", "actual_hours", "tags", "metadata", "is_deleted",
-        "deleted_at", "depends_on", "blocks", "labels", "story_points",
-        "sprint_id", "epic_id", "assignee_ai", "source", "difficulty",
-        "verification_status", "verification_notes", "review_status",
-        "review_notes", "creation_tokens", "related_arch_issues",
-    })
+    _TASK_COLUMNS = frozenset(
+        {
+            "task_id",
+            "title",
+            "description",
+            "status",
+            "priority",
+            "assignee",
+            "created_at",
+            "updated_at",
+            "due_date",
+            "completed_at",
+            "parent_id",
+            "module_id",
+            "blueprint_id",
+            "decomposition_id",
+            "task_type",
+            "estimated_hours",
+            "actual_hours",
+            "tags",
+            "metadata",
+            "is_deleted",
+            "deleted_at",
+            "depends_on",
+            "blocks",
+            "labels",
+            "story_points",
+            "sprint_id",
+            "epic_id",
+            "assignee_ai",
+            "source",
+            "difficulty",
+            "verification_status",
+            "verification_notes",
+            "review_status",
+            "review_notes",
+            "creation_tokens",
+            "related_arch_issues",
+        }
+    )
 
     def create_task(self, task_data: dict[str, Any]) -> str:
         """创建任务"""

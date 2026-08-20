@@ -37,6 +37,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 #   fetched_at: DateTime64(3, 'UTC')
 #   ingest_ts: DateTime64(3, 'UTC')
 """
+
 from __future__ import annotations
 
 # category_id: market_kline_sector_880

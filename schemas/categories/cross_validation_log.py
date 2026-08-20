@@ -22,6 +22,7 @@
 3. ORDER BY (check_date, symbol, metric, check_time)——按日期+标的+指标查询
 4. status 使用 LowCardinality——pass/warn/fail 三值枚举
 """
+
 from __future__ import annotations
 
 CROSS_VALIDATION_LOG_DDL = """
@@ -56,6 +57,5 @@ ORDER_BY = "(check_date, symbol, metric, check_time)"
 
 # 列清单（用于 INSERT）
 INSERT_COLUMNS = (
-    "(check_time, check_date, symbol, metric, primary_value, backup_value, "
-    "deviation, threshold, status, detail)"
+    "(check_time, check_date, symbol, metric, primary_value, backup_value, deviation, threshold, status, detail)"
 )

@@ -284,9 +284,7 @@ def __getattr__(name: str) -> Any:
         try:
             value = getattr(module, name)
         except AttributeError:
-            raise AttributeError(
-                f"module 'zephyr.shared.{submod}' has no attribute {name!r}"
-            ) from None
+            raise AttributeError(f"module 'zephyr.shared.{submod}' has no attribute {name!r}") from None
 
     # 缓存到模块 __dict__，后续访问直接命中
     sys.modules[__name__].__dict__[name] = value

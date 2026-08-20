@@ -29,6 +29,7 @@ def __getattr__(name):
         return getattr(mod, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 # ==== BEGIN CODGEN:CTR-ERR-003 ====
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] zephyr.shared.contracts.errors.signal_degradation_warning
@@ -73,6 +74,7 @@ AI Prompt
     当 D_SIGNAL 信号合成引擎检测到以下情况时，MUST 发布 SignalDegradationWarning： - confidence_below_threshold：合成后的信号置信度低于阈值 - regime_change_detected：检测到市场状态切换（如趋势->震荡） - factor_decay_triggered：某个依赖的因子 ICIR 大幅下降 这不是错误——信号仍然产出，但 D_RISK/D_PORTFOLIO_CORE 应对此做降级处理（如减半仓位）。
 """
 
+
 @dataclass(frozen=True)
 class SignalDegradationWarning:
     degradation_level: str
@@ -84,12 +86,5 @@ class SignalDegradationWarning:
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
 
+
 # ==== END CODGEN:CTR-ERR-003 ====
-
-
-
-
-
-
-
-

@@ -286,18 +286,13 @@ def _spawn_detached_via_wmi(
         except subprocess.TimeoutExpired:
             # 脱敏（#ARCH-105）：不回传 TimeoutExpired——其 args 含完整命令，
             # 病史为全量 env 随之喷入 reconcile status JSON 明文落盘。
-            raise RuntimeError(
-                "WMI spawn probe timed out after 60s (powershell CIM channel busy/hung)"
-            ) from None
+            raise RuntimeError("WMI spawn probe timed out after 60s (powershell CIM channel busy/hung)") from None
         for line in (completed.stdout or "").splitlines():
             if line.startswith("ZEPHYR_WMI_SPAWN|"):
                 _, return_value, pid_text = line.strip().split("|", 2)
                 if return_value == "0" and pid_text.isdigit():
                     return _WmiDetachedProcess(int(pid_text), args=cmd)
-                raise RuntimeError(
-                    f"WMI Win32_Process.Create failed: ReturnValue={return_value} "
-                    f"(cmd={cmdline[:120]})"
-                )
+                raise RuntimeError(f"WMI Win32_Process.Create failed: ReturnValue={return_value} (cmd={cmdline[:120]})")
         raise RuntimeError(
             "WMI spawn probe sentinel missing; "
             f"stdout={(completed.stdout or '')[:200]!r} stderr={(completed.stderr or '')[:200]!r}"
@@ -423,8 +418,11 @@ def spawn_python_hidden(
                 "forbids breakaway), falling back to WMI Win32_Process.Create"
             )
             return _spawn_detached_via_wmi(
-                cmd, cwd=cwd, env=env,
-                stdout_path=stdout_path, stderr_path=stderr_path,
+                cmd,
+                cwd=cwd,
+                env=env,
+                stdout_path=stdout_path,
+                stderr_path=stderr_path,
             )
     finally:
         # 父进程句柄即刻关闭——CreateProcess/ fork 已把句柄 duplicate 给子进程，
@@ -510,7 +508,6 @@ class MCPProcessPool:
     def reap_zombies(self) -> int:
         """公共接口：reap_zombies（Stage 4 公共化）。"""
         return self._reap_zombies()
-
 
     # ----- Stage 4 公共化：属性 getter -----
     @property

@@ -28,6 +28,7 @@
 注：shares/amount 为 Decimal(18,2)、ratio 为 Decimal(18,4)——本表已采用 Decimal 精度
    （早于 #ARCH-CH-026 财务三表迁移，独立落地）。
 """
+
 from __future__ import annotations
 
 # category_id: fundamental_share_unlock
@@ -60,6 +61,4 @@ ENGINE = "ReplacingMergeTree"
 PARTITION_KEY = "toYYYYMM(unlock_date)"
 ORDER_BY = "(symbol, unlock_date)"
 
-INSERT_COLUMNS = (
-    "(symbol, unlock_date, shares, ratio, amount, data_source)"
-)
+INSERT_COLUMNS = "(symbol, unlock_date, shares, ratio, amount, data_source)"

@@ -136,21 +136,17 @@ class DraftAssistant:
         """写入：output_dir（Stage 4 公共化）。"""
         self._output_dir = value
 
-
     def extract_targets(self, text) -> list[str]:
         """公共接口：extract_targets（Stage 4 公共化）。"""
         return self._extract_targets(text)
-
 
     def extract_constraints(self, text) -> list[str]:
         """公共接口：extract_constraints（Stage 4 公共化）。"""
         return self._extract_constraints(text)
 
-
     def extract_boundaries(self, text) -> list[str]:
         """公共接口：extract_boundaries（Stage 4 公共化）。"""
         return self._extract_boundaries(text)
-
 
     def generate_draft(self, input_data: DraftInput) -> BlueprintDraft:
         module_id = self._infer_module(input_data)

@@ -351,7 +351,7 @@ def get_event_health_log() -> list[dict[str, Any]]:
     """返回事件健康日志 — DM-201248."""
     return list(_event_health_log)
 
+
 # ── Stage 4 公共化（2026-07-29）：module-level public aliases ──
 event_health_log: list[dict[str, Any]] = _event_health_log  # public alias（Stage 4 公共化）
 monitoring_events_subscribed = _monitoring_events_subscribed  # public alias（Stage 4 公共化）
-

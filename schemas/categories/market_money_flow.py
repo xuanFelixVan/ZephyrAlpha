@@ -38,6 +38,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 #   data_source: LowCardinality(String)
 #   ingest_ts: DateTime64(3, 'UTC')
 """
+
 from __future__ import annotations
 
 # category_id: market_money_flow
@@ -80,6 +81,4 @@ PARTITION_KEY = "toYYYYMM(trade_date)"
 ORDER_BY = "symbol, trade_date"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(trade_date, symbol, close, pct_change, main_net_inflow, main_net_inflow_pct, super_large_net_inflow, super_large_net_inflow_pct, large_net_inflow, large_net_inflow_pct, medium_net_inflow, medium_net_inflow_pct, small_net_inflow, small_net_inflow_pct)"
-)
+INSERT_COLUMNS = "(trade_date, symbol, close, pct_change, main_net_inflow, main_net_inflow_pct, super_large_net_inflow, super_large_net_inflow_pct, large_net_inflow, large_net_inflow_pct, medium_net_inflow, medium_net_inflow_pct, small_net_inflow, small_net_inflow_pct)"

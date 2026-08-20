@@ -34,6 +34,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     quality_flag UInt8 DEFAULT 1 + ingest_ts DateTime DEFAULT now()。
     ingest_ts 兼任版本列（ReplacingMergeTree(ingest_ts)）。
 """
+
 from __future__ import annotations
 
 # category_id: fundamental_income_statement

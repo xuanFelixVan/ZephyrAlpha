@@ -157,6 +157,7 @@ class CompressionInvariantError(Exception):
     compressed
         压缩后值说明（如 "header '## Installation' 在压缩结果中缺失"）。
     """
+
     error_code = "ZA-SH-0036"
 
     def __init__(self, field: str, original: str, compressed: str, *, error_code: str | None = None) -> None:
@@ -218,7 +219,9 @@ def load_policy_from_yaml(
         policy_dict = data.get("policy", {})
         return CompressionPolicy(**policy_dict)
     except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-        _log.warning("CompressionPolicy YAML parse failed: %s — using DEFAULT_POLICY (%s)", resolved, exc, exc_info=True)
+        _log.warning(
+            "CompressionPolicy YAML parse failed: %s — using DEFAULT_POLICY (%s)", resolved, exc, exc_info=True
+        )
         return DEFAULT_POLICY
 
 

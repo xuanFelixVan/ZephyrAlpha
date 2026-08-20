@@ -47,6 +47,7 @@
     ② data_asset_registry.yaml 数据资产登记——62 号 P1 载体（15 号 §3.4 既定）；
     ③ 本文件 [AI_AUTONOMY] human_only：后续结构变更走 schema-change 守卫。
 """
+
 from __future__ import annotations
 
 # category_id: factor_feature_value
@@ -83,6 +84,4 @@ ORDER_BY = "(factor_id, symbol, trade_date)"
 
 # 列清单（INSERT 显式指定；ingest_ts DEFAULT now() 自动填充；exchange/symbol_canonical
 # MATERIALIZED 派生；factor_version 有 DEFAULT 但写入侧始终显式携带版本）
-INSERT_COLUMNS = (
-    "(trade_date, symbol, factor_id, factor_version, value, data_source)"
-)
+INSERT_COLUMNS = "(trade_date, symbol, factor_id, factor_version, value, data_source)"

@@ -321,6 +321,6 @@ def subscribe_metrics_events() -> None:
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("suppressed error in metrics", exc_info=True)
 
+
 # ── Stage 4 公共化（2026-07-29）：module-level public aliases ──
 metrics_events_subscribed = _metrics_events_subscribed  # public alias（Stage 4 公共化）
-

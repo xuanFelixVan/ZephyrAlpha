@@ -63,11 +63,9 @@ class ZeroConfig:
         """公共接口：check_python（Stage 4 公共化）。"""
         return self._check_python()
 
-
     def check_git_config(self) -> ConfigCheck:
         """公共接口：check_git_config（Stage 4 公共化）。"""
         return self._check_git_config()
-
 
     def scan(self) -> ZeroConfigResult:
         checks: list[ConfigCheck] = []

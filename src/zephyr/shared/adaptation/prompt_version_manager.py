@@ -79,7 +79,6 @@ class PromptVersionManager:
         """写入：registry（Stage 4 公共化）。"""
         self._registry = value
 
-
     def register(
         self, prompt_id: str, version: str, content: str, model: str = "deepseek", pipeline_module: str = ""
     ) -> PromptVersion:

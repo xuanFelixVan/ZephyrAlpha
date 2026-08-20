@@ -66,7 +66,6 @@ class HealthcheckService:
         """写入：start_time（Stage 4 公共化）。"""
         self._start_time = value
 
-
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
@@ -77,26 +76,21 @@ class HealthcheckService:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def check_python(self) -> HealthStatus:
         """公共接口：check_python（Stage 4 公共化）。"""
         return self._check_python()
-
 
     def check_network(self) -> HealthStatus:
         """公共接口：check_network（Stage 4 公共化）。"""
         return self._check_network()
 
-
     def check_file_system(self) -> HealthStatus:
         """公共接口：check_file_system（Stage 4 公共化）。"""
         return self._check_file_system()
 
-
     def check_disk(self) -> HealthStatus:
         """公共接口：check_disk（Stage 4 公共化）。"""
         return self._check_disk()
-
 
     def check_all(self) -> HealthReport:
         components: list[HealthStatus] = []

@@ -90,9 +90,12 @@ class VersionTransition:
 
 class VersionMismatchError(ValueError):
     """VER-R2: MAJOR 版本不匹配时抛出。"""
+
     error_code = "ZA-SH-0026"
 
-    def __init__(self, contract_id: str, expected_major: int, actual_major: int, *, error_code: str | None = None) -> None:
+    def __init__(
+        self, contract_id: str, expected_major: int, actual_major: int, *, error_code: str | None = None
+    ) -> None:
         self.contract_id = contract_id
         self.expected_major = expected_major
         self.actual_major = actual_major
@@ -114,9 +117,7 @@ class ContractRegistry:
         进行中的版本迁移
     """
 
-    _ssot_path: str = (
-        "architecture_model/contracts/cross_layer_contracts.yaml"
-    )
+    _ssot_path: str = "architecture_model/contracts/cross_layer_contracts.yaml"
 
     def __init__(self, repo_root: Path | None = None) -> None:
         self._contracts: dict[str, ContractMeta] = {}

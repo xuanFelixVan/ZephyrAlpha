@@ -41,6 +41,7 @@ SCD-2 时点版本化设计（#ARCH-CH-021 P0-1/P0-6，2026-07-23）：
     新行由 CH 自动填充入库时间；旧行按 DEFAULT 惰性求值（近似值）。
     不入 INSERT_COLUMNS（DEFAULT 自动填充）。
 """
+
 from __future__ import annotations
 
 # category_id: market_stock_list

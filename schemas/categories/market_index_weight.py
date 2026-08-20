@@ -23,6 +23,7 @@ SCD-2 时点版本（#ARCH-CH-021 P0-6, 2026-07-23）：
     指数成分股权重随指数调整而变化，SCD-2 保留历史版本。
     valid_from=trade_date（数据生效日），valid_to=NULL（当前有效）。
 """
+
 from __future__ import annotations
 
 # category_id: market_index_weight
@@ -59,6 +60,4 @@ PARTITION_KEY = "toYYYYMM(trade_date)"
 ORDER_BY = "(trade_date, index_code, symbol)"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(trade_date, index_code, symbol, weight, data_source)"
-)
+INSERT_COLUMNS = "(trade_date, index_code, symbol, weight, data_source)"

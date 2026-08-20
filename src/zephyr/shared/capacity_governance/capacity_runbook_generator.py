@@ -40,7 +40,9 @@ class CapacityRunbookGenerator:
             steps = [
                 RunbookStep(1, "Assess load", "python scripts/governance/diagnose_depgraph.py", "exit 0"),
                 RunbookStep(2, "Scale resources", "Adjust capacity allocation", "utilization < target"),
-                RunbookStep(3, "Verify SLO", "python scripts/governance/d11_compliance/audit_registration.py", "exit 0"),
+                RunbookStep(
+                    3, "Verify SLO", "python scripts/governance/d11_compliance/audit_registration.py", "exit 0"
+                ),
             ]
         else:
             steps = [

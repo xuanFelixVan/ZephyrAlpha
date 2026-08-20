@@ -15,6 +15,7 @@ Usage::
     from zephyr.shared.observability.dashboard import generate_alert_rules_yaml
     yaml_text = generate_alert_rules_yaml()
 """
+
 from __future__ import annotations
 
 import logging
@@ -89,14 +90,16 @@ def generate_alert_rules_yaml() -> str:
         "    rules:",
     ]
     for rule in ALERT_RULES:
-        lines.extend([
-            f"      - alert: {rule['name']}",
-            f"        expr: {rule['expr']}",
-            f"        for: {rule['for']}",
-            "        labels:",
-            f"          severity: {rule['severity']}",
-            "        annotations:",
-            f'          summary: "{rule["summary"]}"',
-            f'          description: "{rule["description"]}"',
-        ])
+        lines.extend(
+            [
+                f"      - alert: {rule['name']}",
+                f"        expr: {rule['expr']}",
+                f"        for: {rule['for']}",
+                "        labels:",
+                f"          severity: {rule['severity']}",
+                "        annotations:",
+                f'          summary: "{rule["summary"]}"',
+                f'          description: "{rule["description"]}"',
+            ]
+        )
     return "\n".join(lines) + "\n"

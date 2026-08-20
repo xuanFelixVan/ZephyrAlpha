@@ -31,6 +31,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 #   data_source: LowCardinality(String)
 #   ingest_ts: DateTime64(3, 'UTC')
 """
+
 from __future__ import annotations
 
 # category_id: market_block_trade_detail
@@ -66,6 +67,4 @@ PARTITION_KEY = "toYYYYMM(trade_date)"
 ORDER_BY = "trade_date, symbol"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(trade_date, symbol, price, volume, amount, buyer, seller)"
-)
+INSERT_COLUMNS = "(trade_date, symbol, price, volume, amount, buyer, seller)"

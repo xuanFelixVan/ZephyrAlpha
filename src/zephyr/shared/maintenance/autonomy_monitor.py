@@ -81,7 +81,6 @@ class AutonomyMonitor:
         """写入：state（Stage 4 公共化）。"""
         self._state = value
 
-
     def get_level(self) -> AutonomyLevel:
         return self._state.current_level
 

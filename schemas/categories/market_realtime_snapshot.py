@@ -32,6 +32,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 #   data_source: LowCardinality(String)
 #   ingest_ts: DateTime64(3, 'UTC')
 """
+
 from __future__ import annotations
 
 # category_id: market_realtime_snapshot
@@ -68,6 +69,4 @@ PARTITION_KEY = "toYYYYMM(snapshot_time)"
 ORDER_BY = "snapshot_time, symbol"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
-INSERT_COLUMNS = (
-    "(snapshot_time, symbol, open, high, low, close, volume, amount, data_source)"
-)
+INSERT_COLUMNS = "(snapshot_time, symbol, open, high, low, close, volume, amount, data_source)"

@@ -19,6 +19,7 @@
 从 zephyr.trading.trading_contracts.execution.order 下沉到 shared 层。
 枚举值保持不变，序列化/DB映射零影响。
 """
+
 from __future__ import annotations
 
 from enum import Enum

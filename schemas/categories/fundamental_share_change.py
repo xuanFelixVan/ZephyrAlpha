@@ -25,6 +25,7 @@
     PARTITION BY toYYYYMM(announce_date)——按公告日期月分区。
     ORDER BY (symbol, announce_date)——单标的多变动点查友好。
 """
+
 from __future__ import annotations
 
 # category_id: fundamental_share_change
@@ -57,7 +58,4 @@ ENGINE = "ReplacingMergeTree"
 PARTITION_KEY = "toYYYYMM(announce_date)"
 ORDER_BY = "(symbol, announce_date)"
 
-INSERT_COLUMNS = (
-    "(symbol, announce_date, change_type, change_amount, total_shares_after, "
-    "data_source)"
-)
+INSERT_COLUMNS = "(symbol, announce_date, change_type, change_amount, total_shares_after, data_source)"

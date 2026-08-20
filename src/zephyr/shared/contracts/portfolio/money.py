@@ -127,6 +127,7 @@ def get_currency_precision(currency: str) -> int:
 
 class MoneyPrecisionError(ValueError):
     """金额精度错误（如试图用 float 构造 Money）。"""
+
     error_code = "ZA-SH-0031"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -137,6 +138,7 @@ class MoneyPrecisionError(ValueError):
 
 class MoneyCurrencyMismatchError(ValueError):
     """币种不匹配错误（如 CNY Money 与 USD Money 直接相加）。"""
+
     error_code = "ZA-SH-0032"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):

@@ -21,6 +21,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     列（蓝图内部矛盾）。Wave 2 真源回写（#ARCH-CH-025，2026-07-25）：DB 已 ALTER 加
     ingest_ts 列，本真源同步补齐，蓝图 §4.0 与 §4.7 矛盾消除。
 """
+
 from __future__ import annotations
 
 # category_id: market_futures_term
@@ -59,6 +60,5 @@ ORDER_BY = "(symbol, trade_date)"
 
 # 列清单（用于 INSERT 时显式指定）
 INSERT_COLUMNS = (
-    "(trade_date, symbol, front_contract, next_contract, front_price, "
-    "next_price, basis, data_source, quality_flag)"
+    "(trade_date, symbol, front_contract, next_contract, front_price, next_price, basis, data_source, quality_flag)"
 )

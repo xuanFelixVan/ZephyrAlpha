@@ -29,6 +29,7 @@ SCD-2 时点版本（#ARCH-CH-021 P0-6，缓变维表）：
     valid_from/valid_to/updated_at 三列支持时点查询——回测到历史日期时取该日有效的行业分类，
     消除"用当前行业分类回测历史"的前视偏差。valid_from DEFAULT today()，valid_to NULL=当前有效。
 """
+
 from __future__ import annotations
 
 # category_id: fundamental_industry_class_suppl
@@ -62,7 +63,4 @@ ENGINE = "ReplacingMergeTree"
 PARTITION_KEY = ""
 ORDER_BY = "(symbol)"
 
-INSERT_COLUMNS = (
-    "(symbol, industry_sw, industry_zsi, industry_level, data_source, "
-    "valid_from, valid_to, updated_at)"
-)
+INSERT_COLUMNS = "(symbol, industry_sw, industry_zsi, industry_level, data_source, valid_from, valid_to, updated_at)"

@@ -144,6 +144,7 @@ MIN_COMPATIBLE_SHARED_VERSION: Final[str] = "0.14.0"
 
 class VersionMismatchError(Exception):
     """版本不匹配异常。"""
+
     error_code = "ZA-SH-0030"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
