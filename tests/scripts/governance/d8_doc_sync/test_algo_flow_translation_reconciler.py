@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-metric_count_drift | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """test_algo_flow_translation_reconciler.py — ALGO_FLOW 翻译漂移 reconciler 单测（#ARCH-69/70）。
 
 覆盖 §4.16.4 两级引用语义：

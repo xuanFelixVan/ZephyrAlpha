@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-POS-009 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """CapitalCurveManager 单元测试 (MOD-POS-007)。"""
 
 from __future__ import annotations

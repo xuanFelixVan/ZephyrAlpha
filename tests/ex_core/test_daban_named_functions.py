@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-049 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-EXE-daban_named_functions_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ex_core.test_daban_named_functions
 # [STABILITY] evolving

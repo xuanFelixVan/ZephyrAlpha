@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-049 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-EXE-daban_instant_circuit_breaker_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ex_core.test_daban_instant_circuit_breaker
 # [STABILITY] evolving

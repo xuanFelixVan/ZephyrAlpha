@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_t_rules_config | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.pf_core.test_t_rules_config
 # [TESTS] src/zephyr/pf_core/strategy_engine/tick_strategy_base.py（90 号 Phase2 四规则段）
