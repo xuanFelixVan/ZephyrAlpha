@@ -146,7 +146,8 @@ __all__ = [
 # 但语义为"未校验"（全链路对齐后下游可据 ingest_ts/quality_flag 联合判定）。
 # 四条门禁（单行级，无 DB 查询，写入路径轻量）：
 #   1. OHLC 逻辑：high >= max(open,close) >= min(open,close) >= low > 0
-#   2. 涨跌幅：|close - ref|/ref <= change_limit（ref=prev_close 优先，否则 open）
+#   2. 涨跌幅：|close - ref|/ref <= change_limit（ref=prev_close 优先，否则 open；
+#      默认阈值且有 symbol 列时按板块推断：北交所 0.30/科创创业 0.20/主板 0.10，#209③）
 #   3. 缺口/振幅：intraday 振幅 (high-low)/open <= swing_limit（防数据错位）
 #   4. 复权：若 adj_factor 列存在，0 < adj_factor <= adj_max
 # ---------------------------------------------------------------------------
@@ -162,6 +163,10 @@ _VOLUME_ALIASES = ("volume", "vol", "volume_long", "turnover_vol")
 _ADJ_ALIASES = ("adj_factor", "adjust_factor", "adjustfactor", "adjfactor")
 _PREVCLOSE_ALIASES = ("prev_close", "pre_close", "preclose", "yesterday_close")
 _QFLAG_ALIASES = ("quality_flag", "qflag", "quality", "qf")
+# 标的代码列名别名（板块推断用；词表对齐 pit_manager.INSTRUMENT_COLUMN_CANDIDATES）
+_SYMBOL_ALIASES = ("symbol", "ticker", "code", "instrument", "ts_code")
+# 涨跌幅门禁默认阈值（向后兼容基准值；默认构造时按 symbol 板块推断覆盖）
+_DEFAULT_CHANGE_LIMIT = Decimal("0.20")
 
 
 def _to_decimal(v):
@@ -218,6 +223,26 @@ def _gate_adjustment(adj, adj_max):
     return 0 < adj <= adj_max
 
 
+def _infer_change_limit(symbol, default: Decimal) -> Decimal:
+    """按代码前缀推断板块涨跌幅门禁阈值（2026-08-20 AI-NIGHT-001 #209③）。
+
+    口径与 matching_engine._infer_limit_pct 对齐（同源板块规则）：
+    北交所(4xx/8xx/92x) ±30%、科创(68x)/创业(30x) ±20%、其余 6 位数字 A 股
+    主板 ±10%；无法识别的代码（港股/指数前缀外异形/空值）回退 default
+    （保守不误伤未知板块）。修复原默认 0.20 一刀切将北交所 ±30% 合法行
+    误标 quality_flag=0 的问题；显式自定义 change_limit 时不调用本推断
+    （调用方显式接管阈值，保持完全向后兼容）。
+    """
+    code = str(symbol or "").strip().split(".")[0]
+    if code.startswith(("68", "30")):
+        return Decimal("0.20")
+    if code.startswith(("4", "8", "92")):
+        return Decimal("0.30")
+    if len(code) == 6 and code.isdigit():
+        return Decimal("0.10")
+    return default
+
+
 class MarketDataValidator:
     """写入路径轻量异常值校验器（#ARCH-CH-021 P0-4）。
 
@@ -225,7 +250,7 @@ class MarketDataValidator:
     设计为无副作用、无 DB 查询、O(n) 复杂度，可在 ch_writer.write_result 批量写入前调用。
     """
 
-    def __init__(self, change_limit=Decimal("0.20"), swing_limit=Decimal("0.30"),
+    def __init__(self, change_limit=_DEFAULT_CHANGE_LIMIT, swing_limit=Decimal("0.30"),
                  adj_max=Decimal("1000")):
         self.change_limit = change_limit
         self.swing_limit = swing_limit
@@ -243,7 +268,8 @@ def _build_col_map(columns):
     if not has_ohlc:
         return None
     for key, aliases in (("volume", _VOLUME_ALIASES), ("adj_factor", _ADJ_ALIASES),
-                        ("prev_close", _PREVCLOSE_ALIASES), ("quality_flag", _QFLAG_ALIASES)):
+                        ("prev_close", _PREVCLOSE_ALIASES), ("quality_flag", _QFLAG_ALIASES),
+                        ("symbol", _SYMBOL_ALIASES)):
         i = _detect_column_index(columns, aliases)
         if i is not None:
             idx[key] = i
@@ -272,6 +298,10 @@ def apply_quality_gate(table, columns, rows, validator=None):
     qf_idx = col_map.get("quality_flag")
     pc_idx = col_map.get("prev_close")
     adj_idx = col_map.get("adj_factor")
+    sym_idx = col_map.get("symbol")
+    # #209③：默认阈值（0.20 未自定义）且有 symbol 列时按板块推断逐行阈值；
+    # 显式自定义 change_limit 的 validator 视为调用方接管，保持原一刀切行为
+    board_aware = v.change_limit == _DEFAULT_CHANGE_LIMIT
     out_rows = []
     for row in rows:
         r = list(row)
@@ -285,7 +315,10 @@ def apply_quality_gate(table, columns, rows, validator=None):
         ok = True
         if not _gate_ohlc_logic(o, h, l, c):
             ok = False; stats["by_gate"]["ohlc"] += 1
-        if not _gate_price_change(o, c, pc, v.change_limit):
+        change_limit = v.change_limit
+        if board_aware and sym_idx is not None:
+            change_limit = _infer_change_limit(r[sym_idx], v.change_limit)
+        if not _gate_price_change(o, c, pc, change_limit):
             ok = False; stats["by_gate"]["change"] += 1
         if not _gate_swing(o, h, l, v.swing_limit):
             ok = False; stats["by_gate"]["swing"] += 1

@@ -119,6 +119,28 @@ _TBL_SHAREHOLDER_COUNT = get_registry().table("fund_shareholder_count")
 _TBL_STOCK_LIST = get_registry().table("market_stock_list")
 _TBL_TICK_DATA = get_registry().table("market_tick")
 
+# #209④ stock_list 全量刷新退市闭合：miniqmt 板块接口只返回在市标的，退市股从
+# universe 静默消失——原实现不闭合（stale list_status='上市'/valid_to=NULL 快照
+# 最长挂 1 个月等 akshare 月度 stock_list_delisted_refresh）。刷新后对账 CH 侧
+# 有效快照（valid_to IS NULL），消失标的凭 get_instrument_detail ExpireDate
+# 证据闭合为 list_status='退市' + valid_to=delist_date（无证据不闭合，留痕）。
+_SQL_STOCK_LIST_ACTIVE = (
+    "SELECT ts_code, symbol, name, industry, list_date, delist_date "
+    "FROM c1_market.stock_list WHERE valid_to IS NULL"
+)
+# 闭合护栏 1：板块清单须非平凡完整（防局部数据缺失/QMT 接口异常时大面积误闭合）
+_STOCK_LIST_FULL_MIN = 3000
+# 闭合护栏 2：单次消失数上限（绝对 50 或有效快照 5% 取大），超阈中止闭合留 warning
+_STOCK_LIST_CLOSURE_MAX_ABS = 50
+_STOCK_LIST_CLOSURE_MAX_RATIO = 0.05
+# 闭合行 INSERT 列（对齐 schemas market_stock_list.INSERT_COLUMNS：无 MATERIALIZED
+# exchange 列，显式带 valid_to）
+_STOCK_LIST_CLOSURE_COLUMNS = [
+    "ts_code", "symbol", "name", "area", "industry", "fullname", "enname",
+    "cn_spell", "market", "currency", "list_status", "list_date", "delist_date",
+    "hs_hold", "actual_controller", "controller_type", "valid_to",
+]
+
 
 # === 裁定#217 Tier2 P4 Extract Method 重构（2026-07-15）===
 # 原 MiniQmtIngestProvider.fetch 166行 McCabe=42（~40个elif分支能力路由）。
@@ -3408,6 +3430,94 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
     # ============== 股票列表 ==============
 
+    def _load_active_stock_list(self) -> dict:
+        """#209④ CH stock_list 当前有效快照 {ts_code: (symbol, name, industry, list_date, delist_date)}。
+
+        查询失败返回 None（调用方中止闭合——无基线不可对账）。空结果（新环境
+        表为空）返回 {}，对账差集为空自然不闭合，方向均 fail-closed。
+        """
+        try:
+            tsv = ch_reader.query(_SQL_STOCK_LIST_ACTIVE, timeout=60)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"stock_list 有效快照查询失败（中止退市闭合）: {e}")
+            return None
+        out: dict = {}
+        for line in (tsv or "").strip().split("\n"):
+            parts = line.split("\t")
+            if len(parts) < 6 or not parts[0].strip():
+                continue
+            out[parts[0].strip()] = tuple(p.strip() for p in parts[1:6])
+        return out
+
+    def _delisted_closure_rows(self, stock_codes: list, policy: SourcePolicy, xtdata) -> list | None:
+        """#209④ 退市闭合行（list_status='退市', valid_to=delist_date）；None=中止闭合。
+
+        三重防线防误闭合（退市标记会截断 SCD-2 valid_to，方向不可逆）：
+          1. 板块清单非平凡完整（>=_STOCK_LIST_FULL_MIN）才对账；
+          2. 消失数超 max(_STOCK_LIST_CLOSURE_MAX_ABS, 5%×有效快照) 中止留 warning；
+          3. 逐标的凭 get_instrument_detail ExpireDate 证据闭合，无证据跳过
+             （维持原状，留 akshare 月度任务兜底）。
+        """
+        if not stock_codes or len(stock_codes) < _STOCK_LIST_FULL_MIN:
+            self._log.warning(
+                f"stock_list 退市闭合中止: 板块清单 {len(stock_codes or [])} 只 "
+                f"< {_STOCK_LIST_FULL_MIN}（清单不完整，误闭合风险）"
+            )
+            return None
+        active = self._load_active_stock_list()
+        if not active:
+            return None  # 无基线（查询失败 None 或全空 {}）→ 无可对账，中止
+        missing = sorted(set(active) - set(stock_codes))
+        if not missing:
+            return []
+        if len(missing) > max(
+            _STOCK_LIST_CLOSURE_MAX_ABS, int(len(active) * _STOCK_LIST_CLOSURE_MAX_RATIO)
+        ):
+            self._log.warning(
+                f"stock_list 退市闭合中止: 消失 {len(missing)} 只超阈值"
+                f"（有效快照 {len(active)}）——疑似板块数据异常，不闭合"
+            )
+            return None
+        rows: list = []
+        for ts_code in missing:
+            symbol, name, industry, list_date, _prev_delist = active[ts_code]
+            try:
+                detail = self._call_with_policy(
+                    xtdata.get_instrument_detail, policy, ts_code
+                )
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                detail = None
+            ds = str((detail or {}).get("ExpireDate") or "")
+            if len(ds) < 8 or not ds[:8].isdigit():
+                self._log.info(
+                    f"stock_list 闭合跳过 {ts_code}: 无 ExpireDate 证据"
+                    f"（维持现状，留 akshare 月度任务兜底）"
+                )
+                continue
+            delist_date = f"{ds[:4]}-{ds[4:6]}-{ds[6:8]}"
+            rows.append(
+                (
+                    ts_code,
+                    symbol,
+                    name,
+                    "",
+                    industry,
+                    "",
+                    "",
+                    "",
+                    "A股",
+                    "CNY",
+                    "退市",
+                    list_date or "1970-01-01",
+                    delist_date,
+                    "",
+                    "",
+                    "",
+                    delist_date,
+                )
+            )
+        return rows
+
     def _fetch_stock_list(
         self,
         payload: FetchPayload,
@@ -3421,13 +3531,17 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     cn_spell, market, exchange, currency, list_status,
                     list_date, delist_date, hs_hold, actual_controller,
                     controller_type)
+        #209④ 退市闭合：主批（在市标的覆盖式更新）后，对账 CH 有效快照
+        （valid_to IS NULL）补闭合消失标的——凭 ExpireDate 证据产出
+        list_status='退市'+valid_to=delist_date 的第二批；三重护栏防误闭合
+        （清单完整性/消失数阈值/逐标的证据），中止仅留日志不影响主批。
 
         Args:
             payload: 下载请求
             policy: 调用策略
 
         Yields:
-            FetchResult: 一批（全部股票）
+            FetchResult: 一批（全部在市股票）+ 可选一批（退市闭合行）
         """
         from xtquant import xtdata
 
@@ -3514,6 +3628,18 @@ class MiniQmtIngestProvider(IngestProviderBase):
                 last_key=self._date_to_str(payload.end),
                 elapsed_sec=time.monotonic() - t0,
             )
+            # #209④ 退市闭合：板块接口只返回在市标的，对账 CH 有效快照补闭合
+            # （本能力恒为全量刷新——payload.symbols 不参与板块取数，无需子集守卫）
+            closure = self._delisted_closure_rows(stock_codes or [], policy, xtdata)
+            if closure:
+                self._log.info(f"stock_list 退市闭合: {len(closure)} 只凭 ExpireDate 证据标记退市")
+                yield FetchResult(
+                    table=table,
+                    columns=_STOCK_LIST_CLOSURE_COLUMNS,
+                    rows=closure,
+                    last_key=self._date_to_str(payload.end),
+                    elapsed_sec=time.monotonic() - t0,
+                )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table,

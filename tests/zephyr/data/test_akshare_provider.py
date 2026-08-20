@@ -76,6 +76,15 @@ def _call_fetch(provider, cap: str, payload: FetchPayload) -> list:
 
 
 class TestAdjFactorFetch:
+    @pytest.fixture(autouse=True)
+    def _no_guard_ch(self, monkeypatch):
+        """#209② 写侧守卫引入 CH 覆盖键查询：本类用例与守卫正交，置空集保持不触库。"""
+        monkeypatch.setattr(
+            AkshareIngestProvider,
+            "_covered_miniqmt_adj_keys",
+            lambda self, codes, start, end: set(),
+        )
+
     def test_normal_mapping(self, monkeypatch):
         """正常行：hfq_factor 映射 + date 过滤 + 单位保留。"""
         df = pd.DataFrame(

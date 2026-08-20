@@ -234,6 +234,16 @@ _SQL_KLINE_SYMBOL_DAYS = (
     "SELECT symbol, groupArray(trade_date) FROM c1_market.kline_daily "
     "WHERE trade_date >= '{start}' AND trade_date <= '{end}' GROUP BY symbol"
 )
+# #209② adj_factor 写侧守卫：akshare hfq fallback 写入前查已被 miniqmt dr 覆盖的
+# (symbol, trade_date) 键。依据：adj_factor 表 ReplacingMergeTree(ingest_ts)
+# ORDER BY (symbol, trade_date) 不含 data_source——同键后写行静默替换先写行，
+# hfq 累计口径可能顶替 dr 点口径，读侧 data_source='miniqmt' 过滤无法挽回
+# （merge 后 miniqmt 行已消失，stk_limit 该日退化为不修正）。
+_SQL_ADJ_FACTOR_MINIQMT_KEYS = (
+    "SELECT symbol, trade_date FROM c1_market.adj_factor "
+    "WHERE data_source = 'miniqmt' AND symbol IN ({symbols}) "
+    "AND trade_date >= '{start}' AND trade_date <= '{end}'"
+)
 # CH 不可达探活（ch_reader.query 故障静默返回空串，count() 仍为空=不可达）
 _SQL_KLINE_PROBE = "SELECT count() FROM c1_market.kline_daily"
 # ST 最近可得快照加载（PIT 严格：≤T 口径，窗口前推 400 天）
@@ -6838,6 +6848,36 @@ class AkshareIngestProvider(IngestProviderBase):
 
     # ---- P1-1 复权因子（adj_factor） ----
 
+    def _covered_miniqmt_adj_keys(self, codes: list[str], start_str: str, end_str: str) -> set:
+        """#209② 查 adj_factor 表已被 miniqmt dr 覆盖的 (code, trade_date) 键集。
+
+        守卫依据见 _SQL_ADJ_FACTOR_MINIQMT_KEYS 注释。fail-open：查询失败返回
+        空集（不阻塞写入——本能力定位即 miniqmt 故障时的 fallback，守卫自身
+        不可用时保持原行为，不引入新阻塞点）。
+        """
+        if not codes:
+            return set()
+        from zephyr.data import ch_reader as _chr
+
+        in_list = ",".join(f"'{c}'" for c in codes)
+        try:
+            tsv = _chr.query(
+                _SQL_ADJ_FACTOR_MINIQMT_KEYS.format(
+                    symbols=in_list, start=start_str, end=end_str
+                ),
+                timeout=60,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"adj_factor miniqmt 覆盖键查询失败（守卫降级放行）: {e}")
+            return set()
+        covered: set = set()
+        for line in (tsv or "").strip().split("\n"):
+            parts = line.split("\t")
+            if len(parts) != 2 or not parts[0].strip():
+                continue
+            covered.add((parts[0].strip(), parts[1].strip()[:10]))
+        return covered
+
     def _fetch_adj_factor(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取复权因子（新浪 hfq-factor），写入 c1_market.adj_factor。
 
@@ -6848,6 +6888,9 @@ class AkshareIngestProvider(IngestProviderBase):
         列，必须用 adjust="hfq-factor"。新浪 hfq_factor 与 QMT dr 因子调整约定
         不同（实测 000002 相差约 7%），data_source='akshare' 标记区分；本能力仅作
         miniqmt 故障时的 fallback。
+        #209② 写侧守卫：写入目标为共享 adj_factor 表时，跳过已被 miniqmt dr
+        覆盖的 (symbol, trade_date) 键（表 ORDER BY 不含 data_source，同键后写
+        静默替换先写）；守卫查询失败降级放行（fail-open，不阻塞 fallback）。
         """
         import akshare as ak
 
@@ -6870,6 +6913,12 @@ class AkshareIngestProvider(IngestProviderBase):
                 error=f"获取标的清单失败: {e}",
             )
             return
+
+        # #209② 写侧守卫：仅写共享 adj_factor 表时排除 miniqmt dr 已覆盖键
+        covered_keys: set = set()
+        if table == _TBL_ADJ_FACTOR and symbols:
+            covered_keys = self._covered_miniqmt_adj_keys(symbols, start_str, end_str)
+        skipped_covered = 0
 
         batch_rows: list[tuple] = []
         for idx, code in enumerate(symbols):
@@ -6897,6 +6946,9 @@ class AkshareIngestProvider(IngestProviderBase):
                 factor = self._safe_num(row.get("hfq_factor"))
                 if factor is None:
                     continue
+                if (code, d) in covered_keys:
+                    skipped_covered += 1
+                    continue  # #209② miniqmt dr 已覆盖键：防 hfq 累计口径静默替换点口径
                 batch_rows.append((d, code, factor, "akshare"))
 
             if len(batch_rows) >= 500:
@@ -6911,6 +6963,8 @@ class AkshareIngestProvider(IngestProviderBase):
 
             threading.Event().wait(0.3)  # 新浪源温和限速
 
+        if skipped_covered:
+            self._log.info(f"adj_factor 守卫: 跳过 miniqmt 已覆盖键 {skipped_covered} 行")
         yield FetchResult(
             table=table,
             columns=columns,
