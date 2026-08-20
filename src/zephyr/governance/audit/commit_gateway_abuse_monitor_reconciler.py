@@ -212,7 +212,9 @@ PRIORITY = 875
 #   2026-07-20 P3-1: 提取到 YAML，代码常量改为 load_thresholds_from_yaml() 返回值
 THRESHOLDS_YAML_PATH = (
     Path(__file__).resolve().parents[4]  # src/zephyr/governance/audit → repo root
-    / "docs" / "01_policies_and_standards" / "rules"
+    / "docs"
+    / "01_policies_and_standards"
+    / "rules"
     / "trae_069_commit_gateway_abuse_thresholds.yaml"
 )
 
@@ -246,6 +248,7 @@ def load_thresholds_from_yaml() -> dict[str, int]:
             )
             return dict(DEFAULT_THRESHOLDS)
         import yaml
+
         with THRESHOLDS_YAML_PATH.open("r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
         thresholds_section = data.get("thresholds", {})
@@ -256,14 +259,17 @@ def load_thresholds_from_yaml() -> dict[str, int]:
             if not isinstance(value, int) or value < 0:
                 logger.warning(
                     "P3-1: invalid threshold for %s (%r), using default %d",
-                    dim_name, value, DEFAULT_THRESHOLDS[dim_name],
+                    dim_name,
+                    value,
+                    DEFAULT_THRESHOLDS[dim_name],
                 )
                 value = DEFAULT_THRESHOLDS[dim_name]
             result[dim_name] = value
         return result
     except Exception as e:  # noqa: BLE001 — YAML 加载失败不阻断 reconciler
         logger.warning(
-            "P3-1: failed to load thresholds YAML (%s), using defaults", e,
+            "P3-1: failed to load thresholds YAML (%s), using defaults",
+            e,
         )
         return dict(DEFAULT_THRESHOLDS)
 
@@ -373,7 +379,9 @@ def _save_baseline(repo_root: Path, baseline: dict) -> None:
 
 
 def record_daily_metrics(
-    repo_root: Path, metrics: dict, now_ts: int,
+    repo_root: Path,
+    metrics: dict,
+    now_ts: int,
 ) -> list[dict]:
     """将今日 6 维 metrics 追加到 baseline 并保留 7d 滚动窗口（P3-6）。
 
@@ -398,8 +406,7 @@ def record_daily_metrics(
 
     # 提取 6 维计数（按标准 dim_name 存储，metrics 中是简化 key，需映射）
     daily_metrics = {
-        dim_name: int(metrics.get(src_key, metrics.get(dim_name, 0)))
-        for src_key, dim_name in _METRICS_KEY_MAP.items()
+        dim_name: int(metrics.get(src_key, metrics.get(dim_name, 0))) for src_key, dim_name in _METRICS_KEY_MAP.items()
     }
 
     # 同日覆盖：若已存在 today_str 记录，更新之；否则追加新记录
@@ -419,10 +426,7 @@ def record_daily_metrics(
 
     # 裁剪 7d 滚动窗口（按 timestamp 排序后保留最新 N 条）
     cutoff_ts = now_ts - BASELINE_WINDOW_DAYS * 24 * 3600
-    records = [
-        r for r in records
-        if isinstance(r, dict) and r.get("timestamp", 0) >= cutoff_ts
-    ]
+    records = [r for r in records if isinstance(r, dict) and r.get("timestamp", 0) >= cutoff_ts]
     records.sort(key=lambda r: r.get("timestamp", 0))
 
     baseline["version"] = _BASELINE_VERSION
@@ -474,10 +478,7 @@ def compute_adaptive_thresholds(daily_records: list[dict]) -> dict:
                 continue  # 跳过无效计数
 
     # 获取 6 维自适应阈值
-    return {
-        dim_name: at.get_threshold(dim_name)
-        for dim_name in DEFAULT_THRESHOLDS
-    }
+    return {dim_name: at.get_threshold(dim_name) for dim_name in DEFAULT_THRESHOLDS}
 
 
 def _reports_dir(repo_root: Path) -> Path:
@@ -675,7 +676,8 @@ def classify_abuse(
 
     # === 维度1: warn_only 持续低频（24h）===
     warn_only_24h = sum(
-        1 for r in post_commit_reports
+        1
+        for r in post_commit_reports
         if r.get("timestamp", 0) >= since_24h
         and r.get("action") == "warn_only"
         and r.get("violation") == "unregistered_session_id"
@@ -690,9 +692,9 @@ def classify_abuse(
 
     # === 维度4: forged_gw_marker 伪造率（24h）===
     forged_24h = sum(
-        1 for r in post_commit_reports
-        if r.get("timestamp", 0) >= since_24h
-        and r.get("violation") == "forged_gw_marker"
+        1
+        for r in post_commit_reports
+        if r.get("timestamp", 0) >= since_24h and r.get("violation") == "forged_gw_marker"
     )
 
     # === 维度5: non-GW commit 持续率（24h）——按 commit hash distinct 计数 ===
@@ -812,9 +814,7 @@ def classify_abuse(
                 "non_gw_commit_24h": eff_non_gw,
                 "force_merge_7d": eff_force_merge,
             },
-            "adaptive_thresholds": {
-                dim: float(adaptive.get(dim, 0.0)) for dim in DEFAULT_THRESHOLDS
-            },
+            "adaptive_thresholds": {dim: float(adaptive.get(dim, 0.0)) for dim in DEFAULT_THRESHOLDS},
         },
     }
 
@@ -843,12 +843,16 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
 
             # 1. 读取 7d 内的 post_commit_guard 报告（覆盖维度1/3/4）
             post_commit_reports = read_json_reports(
-                project_root, "post_commit_guard", since_7d,
+                project_root,
+                "post_commit_guard",
+                since_7d,
             )
 
             # 2. 读取 24h 内的 commit_gateway_audit 报告（覆盖维度5）
             audit_reports = read_json_reports(
-                project_root, "commit_gateway_audit", since_24h,
+                project_root,
+                "commit_gateway_audit",
+                since_24h,
             )
 
             # 3. 统计 24h 内 emergency_commit 数量（覆盖维度2）
@@ -875,7 +879,10 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
 
             # 4. 六维分类（P3-1: 传入 adaptive_thresholds，有效阈值 = max(adaptive, static)）
             classification = classify_abuse(
-                post_commit_reports, audit_reports, emergency_count, now_ts,
+                post_commit_reports,
+                audit_reports,
+                emergency_count,
+                now_ts,
                 allow_overlap_count=allow_overlap_count,
                 adaptive_thresholds=adaptive_thresholds,
                 force_merge_count=force_merge_count,
@@ -897,9 +904,7 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
             # 综合评分 >0.7 critical_warn, >0.9 block_next（post-commit 无法 block，
             # 降级为 critical_warn + 横幅）。阈值用 metrics["effective_thresholds"]
             # （P3-1: 有效阈值 = max(adaptive, static)），确保评分基于生效阈值。
-            effective_thresholds = metrics.get("effective_thresholds") or metrics.get(
-                "thresholds", {}
-            )
+            effective_thresholds = metrics.get("effective_thresholds") or metrics.get("thresholds", {})
             try:
                 health = calculate_health_score(metrics, effective_thresholds)
                 health_score = health.score
@@ -926,7 +931,9 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
                 "health_triggered_dimensions": health_triggered,
             }
             report_path, write_err = _write_reconcile_report(
-                project_root, "commit_gateway_abuse_monitor", report,
+                project_root,
+                "commit_gateway_abuse_monitor",
+                report,
             )
             if write_err:
                 return ReconcileResult(

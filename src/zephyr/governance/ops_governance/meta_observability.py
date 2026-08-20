@@ -49,7 +49,6 @@ class MetaObservability:
         """写入：self_latencies（Stage 4 公共化）。"""
         self._self_latencies = value
 
-
     def record_self_latency(self, seconds: float):
         self._self_latencies.append(seconds)
 

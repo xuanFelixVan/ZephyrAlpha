@@ -154,17 +154,17 @@ from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 # 2026-08-03 全生命周期扩展：+5 新阶段（研究孵化/模型训练/回测验证/仿真验证/风控管控）
 # 生命周期序：研究孵化→模型训练→回测验证→仿真验证→选股→买入→卖出→仓位→风控管控→执行→对账
 _FLOW_STAGES = (
-    "research_incubation",     # 研究孵化（D-RESEARCH）
-    "model_training",          # 模型训练（D-ML-TRAIN）
-    "backtest_validation",     # 回测验证（D-BACKTEST）
-    "simulation_validation",   # 仿真验证（D-SIMULATION）
-    "stock_selection",         # 选股
-    "buy_flow",                # 买入
-    "sell_flow",               # 卖出
-    "position_management",     # 仓位
-    "risk_control",            # 风控管控（D-RISK）
-    "execution",               # 执行
-    "reconciliation",          # 对账
+    "research_incubation",  # 研究孵化（D-RESEARCH）
+    "model_training",  # 模型训练（D-ML-TRAIN）
+    "backtest_validation",  # 回测验证（D-BACKTEST）
+    "simulation_validation",  # 仿真验证（D-SIMULATION）
+    "stock_selection",  # 选股
+    "buy_flow",  # 买入
+    "sell_flow",  # 卖出
+    "position_management",  # 仓位
+    "risk_control",  # 风控管控（D-RISK）
+    "execution",  # 执行
+    "reconciliation",  # 对账
 )
 
 # target_graph 5值（锚点指向的图/仓库）
@@ -220,14 +220,14 @@ CREATE TABLE IF NOT EXISTS battle_map_steps (
     step_id          TEXT    PRIMARY KEY,
     step_name        TEXT    NOT NULL,
     flow_stage       TEXT    NOT NULL
-        CHECK (flow_stage IN ({', '.join(f"'{s}'" for s in _FLOW_STAGES)})),
+        CHECK (flow_stage IN ({", ".join(f"'{s}'" for s in _FLOW_STAGES)})),
     layer            TEXT,
     sort_order       INTEGER NOT NULL DEFAULT 0,
     narrative_ref    TEXT,
     indicators       JSONB,
     source_ref       TEXT,
     design_maturity  TEXT    DEFAULT 'production'
-        CHECK (design_maturity IN ({', '.join(f"'{m}'" for m in _DESIGN_MATURITIES)})),
+        CHECK (design_maturity IN ({", ".join(f"'{m}'" for m in _DESIGN_MATURITIES)})),
     parent_step_id   TEXT    REFERENCES battle_map_steps(step_id) ON DELETE SET NULL,
     depth            INTEGER NOT NULL DEFAULT 0,
     created_at       TIMESTAMPTZ DEFAULT NOW(),
@@ -247,10 +247,10 @@ CREATE TABLE IF NOT EXISTS battle_map_anchors (
     anchor_id        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     step_id          TEXT    NOT NULL REFERENCES battle_map_steps(step_id) ON DELETE CASCADE,
     target_graph     TEXT    NOT NULL
-        CHECK (target_graph IN ({', '.join(f"'{g}'" for g in _TARGET_GRAPHS)})),
+        CHECK (target_graph IN ({", ".join(f"'{g}'" for g in _TARGET_GRAPHS)})),
     target_id        TEXT    NOT NULL,
     target_role      TEXT    NOT NULL DEFAULT 'primary'
-        CHECK (target_role IN ({', '.join(f"'{r}'" for r in _TARGET_ROLES)})),
+        CHECK (target_role IN ({", ".join(f"'{r}'" for r in _TARGET_ROLES)})),
     status_snapshot  TEXT,
     created_at       TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE (step_id, target_graph, target_id)
@@ -269,7 +269,7 @@ CREATE TABLE IF NOT EXISTS battle_map_edges (
     from_step_id     TEXT    NOT NULL REFERENCES battle_map_steps(step_id) ON DELETE CASCADE,
     to_step_id       TEXT    NOT NULL REFERENCES battle_map_steps(step_id) ON DELETE CASCADE,
     edge_type        TEXT    NOT NULL
-        CHECK (edge_type IN ({', '.join(f"'{t}'" for t in _EDGE_TYPES)})),
+        CHECK (edge_type IN ({", ".join(f"'{t}'" for t in _EDGE_TYPES)})),
     label            TEXT,
     created_at       TIMESTAMPTZ DEFAULT NOW(),
     CHECK (from_step_id <> to_step_id)

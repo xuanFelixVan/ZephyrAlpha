@@ -67,18 +67,16 @@ class ConfidenceQuantifier:
         """写入：consecutive_low（Stage 4 公共化）。"""
         self._consecutive_low = value
 
-
     @staticmethod
     def determine_tier(confidence: float) -> str:
         if confidence >= 0.8:
-            return 'TIER_1_FULL_AUTO'
+            return "TIER_1_FULL_AUTO"
         elif confidence >= 0.5:
-            return 'TIER_2_AUTO_WITH_AUDIT'
+            return "TIER_2_AUTO_WITH_AUDIT"
         elif confidence >= 0.3:
-            return 'TIER_3_HUMAN_REVIEW'
+            return "TIER_3_HUMAN_REVIEW"
         else:
-            return 'TIER_4_HUMAN_ONLY'
-
+            return "TIER_4_HUMAN_ONLY"
 
     def record(self, operation_id: str, confidence: float) -> ConfidenceResult:
         tier = self._determine_tier(confidence)

@@ -38,7 +38,6 @@ class WitnessIsolator:
         """写入：witnesses（Stage 4 公共化）。"""
         self._witnesses = value
 
-
     def register_witness(self, witness_id: str, decision: str):
         self._witnesses[witness_id] = decision
 

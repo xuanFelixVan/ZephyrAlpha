@@ -198,9 +198,7 @@ def _get_project_root(project_root: Path | str | None = None) -> Path:
     return Path(__file__).resolve().parents[4]
 
 
-def _run_dashboard(
-    project_root: Path, metric_ids: list[str], timeout: int = 120
-) -> tuple[int, str, str]:
+def _run_dashboard(project_root: Path, metric_ids: list[str], timeout: int = 120) -> tuple[int, str, str]:
     """subprocess 调用 architecture_health_dashboard.py --json --metric <ids>。
 
     Returns:
@@ -333,18 +331,20 @@ def generate_snapshot(
         total_detected += detected_count
         total_claimed += claimed_count
 
-        violations.append({
-            "category": category,
-            "rule": rule_text,
-            "claimed_count": claimed_count,
-            "claim_text": claim_text,
-            "detected_count": detected_count,
-            "drift": drift,
-            "detector_metric_id": metric_id,
-            "detector_metric_name": baseline_entry.get("detector_metric_name", ""),
-            "detector_error": detector_error,
-            "details": details[:20] if isinstance(details, list) else [],
-        })
+        violations.append(
+            {
+                "category": category,
+                "rule": rule_text,
+                "claimed_count": claimed_count,
+                "claim_text": claim_text,
+                "detected_count": detected_count,
+                "drift": drift,
+                "detector_metric_id": metric_id,
+                "detector_metric_name": baseline_entry.get("detector_metric_name", ""),
+                "detector_error": detector_error,
+                "details": details[:20] if isinstance(details, list) else [],
+            }
+        )
 
     return {
         "generated_at": now_iso,
@@ -488,13 +488,15 @@ def compare_baseline_with_live(project_root: Path | str | None = None) -> dict:
     for v in snapshot.get("violations", []):
         if not isinstance(v, dict):
             continue
-        violations_detail.append({
-            "category": v.get("category", ""),
-            "claimed": v.get("claimed_count", 0),
-            "detected": v.get("detected_count", 0),
-            "drift": v.get("drift", 0),
-            "detector_error": v.get("detector_error", ""),
-        })
+        violations_detail.append(
+            {
+                "category": v.get("category", ""),
+                "claimed": v.get("claimed_count", 0),
+                "detected": v.get("detected_count", 0),
+                "drift": v.get("drift", 0),
+                "detector_error": v.get("detector_error", ""),
+            }
+        )
 
     return {
         "drift_count": drift_count,
@@ -502,4 +504,3 @@ def compare_baseline_with_live(project_root: Path | str | None = None) -> dict:
         "violations": violations_detail,
         "error": "" if fresh else "snapshot stale (generated_at > 24h)",
     }
-

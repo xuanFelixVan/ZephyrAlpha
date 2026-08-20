@@ -105,6 +105,7 @@ class LLMBridge:
         # 修复 prompt 注入：对用户可控字段进行基本净化（去换行+截断）
         def _sanitize(text: str) -> str:
             return text.replace("\n", " ").replace("\r", " ")[:500]
+
         return (
             f"你是一个代码审计助手。以下是一个语义断裂问题的检测结果:\n"
             f"- 类型: {_sanitize(trigger.trigger_type)}\n"

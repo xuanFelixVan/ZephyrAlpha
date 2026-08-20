@@ -93,9 +93,7 @@ class DecisionGraphReader:
 
     def _get_conn(self) -> _PgConnExecuteWrapper:
         if self._conn is None:
-            self._conn = _PgConnExecuteWrapper(
-                get_decisiongraph_pg_connection(autocommit=True)
-            )
+            self._conn = _PgConnExecuteWrapper(get_decisiongraph_pg_connection(autocommit=True))
         return self._conn
 
     def close(self) -> None:
@@ -120,9 +118,7 @@ class DecisionGraphReader:
     def get_layer_by_id(self, layer_id: str) -> dict[str, Any] | None:
         """按 layer_id 精确查询决策层。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM decision_layers WHERE layer_id = %s", (layer_id,)
-        )
+        cursor = conn.execute("SELECT * FROM decision_layers WHERE layer_id = %s", (layer_id,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         row = cursor.fetchone()
         return dict(row) if row else None
 
@@ -150,25 +146,19 @@ class DecisionGraphReader:
         """获取所有决策节点（自动解析 JSONB 字段）。"""
         conn = self._get_conn()
         cursor = conn.execute("SELECT * FROM decision_nodes ORDER BY node_id")
-        return [
-            _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()]
 
     def get_node_by_id(self, node_id: int) -> dict[str, Any] | None:
         """按 node_id（BIGINT）精确查询节点（自动解析 JSONB）。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM decision_nodes WHERE node_id = %s", (node_id,)
-        )
+        cursor = conn.execute("SELECT * FROM decision_nodes WHERE node_id = %s", (node_id,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         row = cursor.fetchone()
         return _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) if row else None
 
     def get_node_by_path(self, path: str) -> dict[str, Any] | None:
         """按 path（UNIQUE）精确查询节点（自动解析 JSONB）。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM decision_nodes WHERE path = %s", (path,)
-        )
+        cursor = conn.execute("SELECT * FROM decision_nodes WHERE path = %s", (path,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         row = cursor.fetchone()
         return _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) if row else None
 
@@ -179,9 +169,7 @@ class DecisionGraphReader:
             "SELECT * FROM decision_nodes WHERE layer_id = %s ORDER BY node_id",
             (layer_id,),
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()]
 
     def get_nodes_by_type(self, node_type: str) -> list[dict[str, Any]]:
         """按 node_type（signal/portfolio_target/risk_check/order/...）查询节点。"""
@@ -190,9 +178,7 @@ class DecisionGraphReader:
             "SELECT * FROM decision_nodes WHERE node_type = %s ORDER BY node_id",
             (node_type,),
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()]
 
     def get_nodes_by_module_id(self, module_id: str) -> list[dict[str, Any]]:
         """按 module_id 查询节点（与 depgraph.nodes.blueprint_id 关联）。
@@ -204,9 +190,7 @@ class DecisionGraphReader:
             "SELECT * FROM decision_nodes WHERE module_id = %s ORDER BY node_id",
             (module_id,),
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()]
 
     def get_nodes_by_build_status(self, build_status: str) -> list[dict[str, Any]]:
         """按 build_status 查询节点。"""
@@ -215,13 +199,9 @@ class DecisionGraphReader:
             "SELECT * FROM decision_nodes WHERE build_status = %s ORDER BY node_id",
             (build_status,),
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()]
 
-    def get_nodes_by_flow_stage(
-        self, flow_stage: str, design_maturity: str | None = None
-    ) -> list[dict[str, Any]]:
+    def get_nodes_by_flow_stage(self, flow_stage: str, design_maturity: str | None = None) -> list[dict[str, Any]]:
         """按 flow_stage 查询节点（可选按 design_maturity 过滤，07_ 交易决策架构视图用）。
 
         :param flow_stage: 业务流程阶段（stock_selection/buy_flow/sell_flow/
@@ -239,9 +219,7 @@ class DecisionGraphReader:
                 "SELECT * FROM decision_nodes WHERE flow_stage = %s AND design_maturity = %s ORDER BY node_id",
                 (flow_stage, design_maturity),
             )
-        return [
-            _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()]
 
     # ── 边查询 ────────────────────────────────────────────────
 
@@ -249,16 +227,12 @@ class DecisionGraphReader:
         """获取所有决策边（自动解析 JSONB evidence_bundle）。"""
         conn = self._get_conn()
         cursor = conn.execute("SELECT * FROM decision_edges ORDER BY edge_id")
-        return [
-            _parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()]
 
     def get_edge_by_id(self, edge_id: int) -> dict[str, Any] | None:
         """按 edge_id 精确查询边。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM decision_edges WHERE edge_id = %s", (edge_id,)
-        )
+        cursor = conn.execute("SELECT * FROM decision_edges WHERE edge_id = %s", (edge_id,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         row = cursor.fetchone()
         return _parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) if row else None
 
@@ -269,9 +243,7 @@ class DecisionGraphReader:
             "SELECT * FROM decision_edges WHERE from_node_id = %s ORDER BY edge_id",
             (from_node_id,),
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()]
 
     def get_edges_to_node(self, to_node_id: int) -> list[dict[str, Any]]:
         """查询指向指定节点的所有边。"""
@@ -280,9 +252,7 @@ class DecisionGraphReader:
             "SELECT * FROM decision_edges WHERE to_node_id = %s ORDER BY edge_id",
             (to_node_id,),
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()]
 
     def get_edges_by_type(self, edge_type: str) -> list[dict[str, Any]]:
         """按 edge_type（triggering/informing/constraining/approving）查询边。"""
@@ -291,9 +261,7 @@ class DecisionGraphReader:
             "SELECT * FROM decision_edges WHERE edge_type = %s ORDER BY edge_id",
             (edge_type,),
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()]
 
     def get_edges_by_track(self, track: str) -> list[dict[str, Any]]:
         """按 track 查询边（与 decision_tracks.track_id 关联）。"""
@@ -302,26 +270,20 @@ class DecisionGraphReader:
             "SELECT * FROM decision_edges WHERE track = %s ORDER BY edge_id",
             (track,),
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()]
 
     # ── 轨查询 ────────────────────────────────────────────────
 
     def get_all_tracks(self) -> list[dict[str, Any]]:
         """获取所有决策轨（按 priority 排序）。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM decision_tracks ORDER BY priority"
-        )
+        cursor = conn.execute("SELECT * FROM decision_tracks ORDER BY priority")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         return [dict(row) for row in cursor.fetchall()]
 
     def get_track_by_id(self, track_id: str) -> dict[str, Any] | None:
         """按 track_id 精确查询轨。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM decision_tracks WHERE track_id = %s", (track_id,)
-        )
+        cursor = conn.execute("SELECT * FROM decision_tracks WHERE track_id = %s", (track_id,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         row = cursor.fetchone()
         return dict(row) if row else None
 
@@ -330,9 +292,7 @@ class DecisionGraphReader:
     def get_adjacency_forward(self) -> dict[int, list[int]]:
         """构建前向邻接表 {from_node_id: [to_node_id, ...]}。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT from_node_id, to_node_id FROM decision_edges ORDER BY from_node_id"
-        )
+        cursor = conn.execute("SELECT from_node_id, to_node_id FROM decision_edges ORDER BY from_node_id")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         adj: dict[int, list[int]] = {}
         for row in cursor.fetchall():
             r = dict(row)
@@ -342,9 +302,7 @@ class DecisionGraphReader:
     def get_adjacency_reverse(self) -> dict[int, list[int]]:
         """构建反向邻接表 {to_node_id: [from_node_id, ...]}。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT from_node_id, to_node_id FROM decision_edges ORDER BY to_node_id"
-        )
+        cursor = conn.execute("SELECT from_node_id, to_node_id FROM decision_edges ORDER BY to_node_id")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         adj: dict[int, list[int]] = {}
         for row in cursor.fetchall():
             r = dict(row)
@@ -367,9 +325,7 @@ class DecisionGraphReader:
             """,
             (to_node_id,),
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()]
 
     def get_full_graph(self) -> dict[str, Any]:
         """导出完整决策流图（layers + nodes + edges + tracks）。
@@ -459,9 +415,7 @@ class DecisionGraphReader:
             ORDER BY dn.node_id
             """
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()]
 
     def find_signal_to_order_direct_edges(self) -> list[dict[str, Any]]:
         """查找违反 DEC-INV-002（信号仓位分离）的边。
@@ -480,9 +434,7 @@ class DecisionGraphReader:
             ORDER BY de.edge_id
             """
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_EDGE_FIELDS) for row in cursor.fetchall()]
 
     def find_nodes_missing_evidence_hash(self) -> list[dict[str, Any]]:
         """查找违反 DEC-INV-005（evidence_hash 必填）的节点。
@@ -498,9 +450,7 @@ class DecisionGraphReader:
             ORDER BY node_id
             """
         )
-        return [
-            _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()
-        ]
+        return [_parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()]
 
 
 if __name__ == "__main__":

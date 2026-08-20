@@ -146,7 +146,6 @@ class EngineSandbox:
         """写入：profile（Stage 4 公共化）。"""
         self._profile = value
 
-
     @property
     def access_log(self) -> list[SandboxAccessEvent]:
         """只读：access_log（Stage 4 公共化）。"""
@@ -157,18 +156,16 @@ class EngineSandbox:
         """写入：access_log（Stage 4 公共化）。"""
         self._access_log = value
 
-
     @staticmethod
     def match_path(rel: Path, patterns: list[str]) -> bool:
-        rel_str = str(rel).replace('\\', '/')
+        rel_str = str(rel).replace("\\", "/")
         for pattern in patterns:
-            p = pattern.replace('\\', '/')
-            if rel_str.startswith(p.rstrip('/')) or rel_str == p.rstrip('/'):
+            p = pattern.replace("\\", "/")
+            if rel_str.startswith(p.rstrip("/")) or rel_str == p.rstrip("/"):
                 return True
-            if p.endswith('/') and rel_str.startswith(p):
+            if p.endswith("/") and rel_str.startswith(p):
                 return True
         return False
-
 
     @property
     def state(self) -> SandboxState:

@@ -295,7 +295,12 @@ def auto_subscribe_eventbus() -> None:
                     owner_id=task_id,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                _logger.warning("auto_subscribe_eventbus._on_event: event handling failed (%s: %s)", type(e).__name__, e, exc_info=True)
+                _logger.warning(
+                    "auto_subscribe_eventbus._on_event: event handling failed (%s: %s)",
+                    type(e).__name__,
+                    e,
+                    exc_info=True,
+                )
 
         for et in (EventType.GATE_FAILED, EventType.SCOPE_DRIFT, EventType.TASK_FAILED):
             bus.subscribe(et, _on_event)

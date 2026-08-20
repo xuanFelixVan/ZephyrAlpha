@@ -38,7 +38,6 @@ class HooksIntegrityGuard:
         """写入：hooks_hashes（Stage 4 公共化）。"""
         self._hooks_hashes = value
 
-
     def register(self, hook_path: str, hash_value: str):
         self._hooks_hashes[hook_path] = hash_value
 

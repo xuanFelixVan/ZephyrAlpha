@@ -38,6 +38,7 @@ production），本模块是 §3.9 伪代码的**编排层**：触发 → 诊断
 依据: 61_lifecycle_multi_ai §3.9（退役流程 5 步施工伪代码 + 三选一决策矩阵 + 五骑士归因）
 Version: 0.1.0
 """
+
 from __future__ import annotations
 
 import logging

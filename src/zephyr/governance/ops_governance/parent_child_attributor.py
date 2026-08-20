@@ -57,7 +57,6 @@ class ParentChildAttributor:
         """写入：max_depth（Stage 4 公共化）。"""
         self._max_depth = value
 
-
     def record_delegation(
         self, parent_id: str, child_id: str, tokens: int, cost: float, depth: int = 1
     ) -> AttributionChain:

@@ -28,9 +28,9 @@ class DQDimension(str, Enum):
     # 扩展维度：ACCURACY / TIMELINESS / UNIQUENESS / VALIDITY
     COMPLETENESS = "Completeness"
     ACCURACY = "Accuracy"
-    ANOMALY = "Anomaly"            # B4: 异常检测（时序突变/离群）
+    ANOMALY = "Anomaly"  # B4: 异常检测（时序突变/离群）
     CONSISTENCY = "Consistency"
-    FRESHNESS = "Freshness"        # B4: 新鲜度（数据年龄，区别于 TIMELINESS 处理延迟）
+    FRESHNESS = "Freshness"  # B4: 新鲜度（数据年龄，区别于 TIMELINESS 处理延迟）
     TIMELINESS = "Timeliness"
     UNIQUENESS = "Uniqueness"
     VALIDITY = "Validity"

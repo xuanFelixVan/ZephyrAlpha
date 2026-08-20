@@ -49,7 +49,6 @@ class ContextSwitchGovernor:
         """写入：max_switches_per_owner（Stage 4 公共化）。"""
         self._max_switches_per_owner = value
 
-
     def can_switch(self, owner_id: str) -> bool:
         current = self._daily_switches.get(owner_id, 0)
         return current < self._max_switches_per_owner

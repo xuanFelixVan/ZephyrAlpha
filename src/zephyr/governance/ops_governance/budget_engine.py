@@ -91,7 +91,6 @@ class BudgetEngineProtocol(Protocol):
 
 
 class BudgetEngine:
-
     _instance: "BudgetEngine | None" = None
     _instance_lock = threading.Lock()
 
@@ -150,7 +149,6 @@ class BudgetEngine:
         """写入：policies（Stage 4 公共化）。"""
         self._policies = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def alerts(self) -> list[BudgetAlert]:
@@ -161,7 +159,6 @@ class BudgetEngine:
     def alerts(self, value):
         """写入：alerts（Stage 4 公共化）。"""
         self._alerts = value
-
 
     @property
     def degradation_steps(self) -> list[DegradationStep]:
@@ -272,7 +269,9 @@ class BudgetEngine:
                 json.dump(snapshot, f, ensure_ascii=False, indent=2)
             os.replace(tmp_path, persist_path)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("BudgetEngine.shutdown: snapshot persist failed (%s: %s)", type(e).__name__, e, exc_info=True)
+            logger.warning(
+                "BudgetEngine.shutdown: snapshot persist failed (%s: %s)", type(e).__name__, e, exc_info=True
+            )
 
         with self._lock:
             self._ipi_defense = None
@@ -310,7 +309,9 @@ class BudgetEngine:
             for _ in range(step_idx):
                 engine.advance_degradation()
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("BudgetEngine.recover_from_snapshot: snapshot load failed (%s: %s)", type(e).__name__, e, exc_info=True)
+            logger.warning(
+                "BudgetEngine.recover_from_snapshot: snapshot load failed (%s: %s)", type(e).__name__, e, exc_info=True
+            )
         return engine
 
     def _init_consumption(self) -> None:
@@ -429,7 +430,9 @@ class BudgetEngine:
                 return -1
             return self._consumption_version.get(policy.policy_id, 0)
 
-    def pre_flight_check(self, request_id: str, estimated_tokens: int = 0, estimated_cost: float = 0.0, prompt: str = "") -> GateResult:
+    def pre_flight_check(
+        self, request_id: str, estimated_tokens: int = 0, estimated_cost: float = 0.0, prompt: str = ""
+    ) -> GateResult:
         if self._closed:
             raise RuntimeError("BudgetEngine 已关闭")  # 5.99.14 修复: 中英文之间加空格
 

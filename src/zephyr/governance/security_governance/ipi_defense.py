@@ -75,7 +75,6 @@ class IPIDefense:
         """写入：block_threshold（Stage 4 公共化）。"""
         self._block_threshold = value
 
-
     def scan(self, prompt: str, context: str = "") -> IPIDefenseReport:
         evidence: list[str] = []
         max_confidence = 0.0

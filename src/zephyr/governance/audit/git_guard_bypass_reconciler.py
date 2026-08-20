@@ -161,9 +161,7 @@ def _get_commit_timestamp(project_root: Path, ref: str) -> float | None:
     return None
 
 
-def _get_reflog_resets_in_window(
-    project_root: Path, window_start: float, window_end: float
-) -> list[tuple[float, str]]:
+def _get_reflog_resets_in_window(project_root: Path, window_start: float, window_end: float) -> list[tuple[float, str]]:
     """获取时间窗口内的 reflog reset 条目。
 
     Returns:
@@ -204,9 +202,7 @@ def _get_reflog_resets_in_window(
     return entries
 
 
-def _get_audited_resets_in_window(
-    audit_log: Path, window_start: float, window_end: float
-) -> list[dict]:
+def _get_audited_resets_in_window(audit_log: Path, window_start: float, window_end: float) -> list[dict]:
     """读取审计日志，筛选时间窗口内的记录。
 
     Returns:
@@ -319,8 +315,7 @@ def make_git_guard_bypass_reconciler(gateway: object) -> ReconcilerSpec:
             return ReconcileResult(
                 action="clean",
                 detail=(
-                    f"git-guard-bypass: 窗口内 {reflog_count} 次 reset 全部被审计"
-                    f"（audit={audit_count}），无绕过迹象"
+                    f"git-guard-bypass: 窗口内 {reflog_count} 次 reset 全部被审计（audit={audit_count}），无绕过迹象"
                 ),
                 gate_id=_GATE_ID,
             )

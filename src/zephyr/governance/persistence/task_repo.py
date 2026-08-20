@@ -102,14 +102,26 @@ SQL_INSERT_EVENTS = """
             VALUES (?, ?, ?, ?, ?, ?)
             """
 SQL_SELECT_TASKS_BY_ID = "SELECT * FROM tasks WHERE task_id = ?"
-SQL_SELECT_TASKS_ACTIVE_BY_STATUS = "SELECT task_id, files_in_scope FROM tasks WHERE status IN ('READY', 'IN_PROGRESS') AND is_deleted = 0"
+SQL_SELECT_TASKS_ACTIVE_BY_STATUS = (
+    "SELECT task_id, files_in_scope FROM tasks WHERE status IN ('READY', 'IN_PROGRESS') AND is_deleted = 0"
+)
 SQL_SELECT_TASKS_ACTIVE_BY_ID = "SELECT * FROM tasks WHERE task_id = ? AND is_deleted = 0"
 SQL_SELECT_TASKS_ACTIVE = "SELECT task_id FROM tasks WHERE is_deleted = 0 AND depends_on LIKE ?"
-SQL_SELECT_TASKS_ACTIVE_BY_STATUS_SORTED = "SELECT * FROM tasks WHERE status = ? AND is_deleted = 0 ORDER BY phase ASC, updated_at DESC"
-SQL_SELECT_TASKS_ACTIVE_BY_PHASE_SORTED = "SELECT * FROM tasks WHERE phase = ? AND is_deleted = 0 ORDER BY status ASC, task_id ASC"
-SQL_SELECT_TASKS_ACTIVE_BY_SESSION_SORTED = "SELECT * FROM tasks WHERE session_id = ? AND is_deleted = 0 ORDER BY updated_at DESC"
-SQL_SELECT_TASKS_ACTIVE_COUNT_BY_STATUS = "SELECT COUNT(*) FROM tasks WHERE status = ? AND session_id = ? AND is_deleted = 0"
-SQL_SELECT_TASKS_ACTIVE_BY_NAMESPACE_SORTED = "SELECT * FROM tasks WHERE namespace = ? AND is_deleted = 0 ORDER BY seq ASC"
+SQL_SELECT_TASKS_ACTIVE_BY_STATUS_SORTED = (
+    "SELECT * FROM tasks WHERE status = ? AND is_deleted = 0 ORDER BY phase ASC, updated_at DESC"
+)
+SQL_SELECT_TASKS_ACTIVE_BY_PHASE_SORTED = (
+    "SELECT * FROM tasks WHERE phase = ? AND is_deleted = 0 ORDER BY status ASC, task_id ASC"
+)
+SQL_SELECT_TASKS_ACTIVE_BY_SESSION_SORTED = (
+    "SELECT * FROM tasks WHERE session_id = ? AND is_deleted = 0 ORDER BY updated_at DESC"
+)
+SQL_SELECT_TASKS_ACTIVE_COUNT_BY_STATUS = (
+    "SELECT COUNT(*) FROM tasks WHERE status = ? AND session_id = ? AND is_deleted = 0"
+)
+SQL_SELECT_TASKS_ACTIVE_BY_NAMESPACE_SORTED = (
+    "SELECT * FROM tasks WHERE namespace = ? AND is_deleted = 0 ORDER BY seq ASC"
+)
 SQL_SELECT_TASK_FILES_BY_ID_SORTED = "SELECT file_path, role FROM task_files WHERE task_id = ? ORDER BY role, file_path"
 SQL_SELECT_TASK_FILES_BY_FILE_PATH_SORTED = "SELECT task_id FROM task_files WHERE file_path = ? ORDER BY task_id"
 SQL_SELECT_TASKS_ACTIVE_BY_STATUS_SORTED_2 = """
@@ -196,15 +208,21 @@ SQL_INSERT_TASKS_COUNT = """
                 )
                 """
 SQL_UPDATE_TASKS_BY_ID = "UPDATE tasks SET {set_clause} WHERE task_id = ?"
-SQL_UPDATE_TASKS_BY_ID_VERIFICATION_STATUS = "UPDATE tasks SET verification_status='verified', construction_status='completed', updated_at=? WHERE task_id=?"
-SQL_UPDATE_TASKS_BY_ID_APPROVAL_REQUIRED = "UPDATE tasks SET approval_required = 1, priority_proposed = ?, updated_at = ? WHERE task_id = ?"
+SQL_UPDATE_TASKS_BY_ID_VERIFICATION_STATUS = (
+    "UPDATE tasks SET verification_status='verified', construction_status='completed', updated_at=? WHERE task_id=?"
+)
+SQL_UPDATE_TASKS_BY_ID_APPROVAL_REQUIRED = (
+    "UPDATE tasks SET approval_required = 1, priority_proposed = ?, updated_at = ? WHERE task_id = ?"
+)
 SQL_INSERT_EVENTS_2 = """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
                    VALUES (?, 'task_event', ?, ?, ?)"""
 SQL_UPDATE_TASKS_BY_ID_PRIORITY = "UPDATE tasks SET priority = ?, approval_required = 0, priority_proposed = NULL, rejection_cooldown_until = NULL, updated_at = ? WHERE task_id = ?"
 SQL_UPDATE_TASKS_BY_ID_APPROVAL_REQUIRED_2 = "UPDATE tasks SET approval_required = 0, priority_proposed = NULL, rejection_cooldown_until = ?, updated_at = ? WHERE task_id = ?"
 SQL_UPDATE_TASKS_BY_ID_STATUS = "UPDATE tasks SET status = ?, blocked_by = ?, updated_at = ? WHERE task_id = ?"
 SQL_UPDATE_TASKS_BY_ID_BLOCKED_BY = "UPDATE tasks SET blocked_by = '[]', updated_at = ? WHERE task_id = ?"
-SQL_UPDATE_TASKS_ACTIVE_BY_ID_IS_DELETED = "UPDATE tasks SET is_deleted = 1, deleted_at = ?, updated_at = ? WHERE task_id = ? AND is_deleted = 0"
+SQL_UPDATE_TASKS_ACTIVE_BY_ID_IS_DELETED = (
+    "UPDATE tasks SET is_deleted = 1, deleted_at = ?, updated_at = ? WHERE task_id = ? AND is_deleted = 0"
+)
 SQL_DELETE_TASK_FILES_BY_ID = "DELETE FROM task_files WHERE task_id = ?"
 SQL_DELETE_TASKS_BY_ID = "DELETE FROM tasks WHERE task_id = ?"
 SQL_SELECT_TASK_FILES_BY_ID = "SELECT file_path FROM task_files WHERE task_id = ?"
@@ -347,7 +365,9 @@ SQL_SELECT_TASKS_FTS_ACTIVE_SORTED_2 = """SELECT t.{cols},
                     WHERE tasks_fts MATCH ? AND t.is_deleted = 0
                     ORDER BY rank
                     LIMIT ?"""
-SQL_SELECT_TASKS_ACTIVE_COUNT = "SELECT COUNT(*) FROM tasks WHERE priority = 'P0' AND status NOT IN ('CANCELLED','VERIFIED') AND is_deleted = 0"
+SQL_SELECT_TASKS_ACTIVE_COUNT = (
+    "SELECT COUNT(*) FROM tasks WHERE priority = 'P0' AND status NOT IN ('CANCELLED','VERIFIED') AND is_deleted = 0"
+)
 SQL_UPDATE_TASKS_BY_ID_PRIORITY_2 = "UPDATE tasks SET priority = ?, updated_at = ? WHERE task_id = ?"
 SQL_UPDATE_TASKS_COUNT_BY_ID_STATUS = """UPDATE tasks
                     SET status = ?, session_id = COALESCE(?, session_id),
@@ -383,7 +403,9 @@ SQL_UPDATE_TASKS_BY_ID_DEPENDS_ON = "UPDATE tasks SET depends_on = ? WHERE task_
 SQL_UPDATE_TASKS_BY_ID_PRIORITY_PROPOSED = "UPDATE tasks SET priority_proposed = ?, updated_at = ? WHERE task_id = ?"
 SQL_SELECT_TASK_REVIEWS_COUNT_BY_ID_SORTED = "SELECT review_round, passed, dimension, issue_count FROM task_reviews WHERE task_id=? ORDER BY review_round DESC, dimension"
 SQL_SELECT_TASK_REVIEWS_COUNT_BY_ID_SORTED_2 = "SELECT review_round, dimension, issue_count, passed, reviewed_at FROM task_reviews WHERE task_id=? ORDER BY review_round, dimension"
-SQL_UPDATE_TASKS_COUNT_BY_ID_STATUS_2 = "UPDATE tasks SET status = ?, updated_at = ?, block_sessions_count = block_sessions_count + 1 WHERE task_id = ?"
+SQL_UPDATE_TASKS_COUNT_BY_ID_STATUS_2 = (
+    "UPDATE tasks SET status = ?, updated_at = ?, block_sessions_count = block_sessions_count + 1 WHERE task_id = ?"
+)
 SQL_UPDATE_TASKS_ACTIVE_BY_ID_SORTED_STATUS = """UPDATE tasks SET status = 'IN_PROGRESS',
                                      claimed_by = :worker_id,
                                      claimed_at = :now,
@@ -446,6 +468,7 @@ _STARTUP_GATE_ID = "G1"
 
 class TaskRepositoryError(RuntimeError):
     """TaskRepository 基础异常。"""
+
     error_code = "ZA-GV-0006"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -456,6 +479,7 @@ class TaskRepositoryError(RuntimeError):
 
 class TaskNotFoundError(TaskRepositoryError):
     """task_id 不存在。"""
+
     error_code = "ZA-GV-0007"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -466,6 +490,7 @@ class TaskNotFoundError(TaskRepositoryError):
 
 class InvalidTransitionError(TaskRepositoryError):
     """非法状态转换。"""
+
     error_code = "ZA-GV-0008"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -476,6 +501,7 @@ class InvalidTransitionError(TaskRepositoryError):
 
 class RejectedUpgradeCoolingOffError(TaskRepositoryError):
     """优先级升级被拒绝且仍在 48h 冷却期内。"""
+
     error_code = "ZA-GV-0009"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -486,6 +512,7 @@ class RejectedUpgradeCoolingOffError(TaskRepositoryError):
 
 class P0InflationFrozenError(TaskRepositoryError):
     """GOV-TASK-004 §2.5: P0 任务已达上限（5个），冻结新增 P0。"""
+
     error_code = "ZA-GV-0012"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -500,9 +527,12 @@ class P0InflationWarning(TaskRepositoryError):
 
 class SyncVerificationError(TaskRepositoryError):
     """post_sync_standard 验证命令执行失败（exit ≠ 0）。"""
+
     error_code = "ZA-GV-0013"
 
-    def __init__(self, task_id: str, command: str, exit_code: int, stderr: str = "", *, error_code: str | None = None) -> None:
+    def __init__(
+        self, task_id: str, command: str, exit_code: int, stderr: str = "", *, error_code: str | None = None
+    ) -> None:
         self.command = command
         self.exit_code = exit_code
         self.stderr = stderr
@@ -519,14 +549,13 @@ class PostSyncValidationError(TaskRepositoryError):
     （如 D-SIGNAL 改名 20 卡死锁事故：建卡 AI 臆造 apply_depgraph.py --diagnose，
     argparse 从未注册该 flag，导致所有卡无法 transition）。
     """
+
     error_code = "ZA-GV-0014"
 
     def __init__(self, task_id: str, command: str, reason: str, *, error_code: str | None = None) -> None:
         self.command = command
         self.reason = reason
-        super().__init__(
-            f"任务 {task_id!r} 的 post_sync_standard 校验失败: 命令 {command!r} — {reason}"
-        )
+        super().__init__(f"任务 {task_id!r} 的 post_sync_standard 校验失败: 命令 {command!r} — {reason}")
         if error_code is not None:
             self.error_code = error_code
 
@@ -539,6 +568,7 @@ class PostSyncConstructionError(TaskRepositoryError):
     （DM-210625: 原 _run_circular_acceptance 将所有非零退出码一视同仁，
     导致建卡缺陷被笼统报为 CircularAcceptanceError，掩盖根因。）
     """
+
     error_code = "ZA-GV-0015"
 
     def __init__(self, task_id: str, command: str, stderr: str = "", *, error_code: str | None = None) -> None:
@@ -555,6 +585,7 @@ class PostSyncConstructionError(TaskRepositoryError):
 
 class CircularAcceptanceError(TaskRepositoryError):
     """循环验收未通过——验收命令未连续 2 次返回零错误。"""
+
     error_code = "ZA-GV-0016"
 
     def __init__(self, task_id: str, round_num: int, failures: list[str], *, error_code: str | None = None) -> None:
@@ -567,6 +598,7 @@ class CircularAcceptanceError(TaskRepositoryError):
 
 class UnclaimedOperationError(TaskRepositoryError):
     """对未认领的任务执行了需要认领才能做的操作。"""
+
     error_code = "ZA-GV-0017"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -577,6 +609,7 @@ class UnclaimedOperationError(TaskRepositoryError):
 
 class RootCauseRequiredError(TaskRepositoryError):
     """FAILED 状态转换缺少根因分析（MTH-006）。"""
+
     error_code = "ZA-GV-0018"
 
     def __init__(self, task_id: str, *, error_code: str | None = None) -> None:
@@ -590,6 +623,7 @@ class RootCauseRequiredError(TaskRepositoryError):
 
 class GranularityViolationError(TaskRepositoryError):
     """RULE-THIRTEEN 粒度门禁 R1-R6 违规（DM-200921 修复：原仅文档规则，现代码强制）。"""
+
     error_code = "ZA-GV-0019"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -600,6 +634,7 @@ class GranularityViolationError(TaskRepositoryError):
 
 class BatchReviewRequiredError(TaskRepositoryError):
     """task_001_batch_review_protocol 违规：未完成7维度循环审查即尝试 COMPLETED。"""
+
     error_code = "ZA-GV-0020"
 
     def __init__(self, task_id: str, detail: str = "", *, error_code: str | None = None) -> None:
@@ -696,6 +731,7 @@ def now_iso() -> str:  # noqa: F811  5.12.3 修复：保留签名以兼容调用
     # 与模块顶部已导入的真源 now_iso (line 90) 漂移，导致字符串排序错乱。
     # 模块顶部已 `from zephyr.shared.utils.time_utils import now_iso`，此处直接复用。
     from zephyr.shared.utils.time_utils import now_iso as _now_iso_true_source
+
     return _now_iso_true_source()
 
 
@@ -858,11 +894,26 @@ def _serialize_for_db(task: TaskCard) -> dict:
 _TASK_ID_PATTERN = __import__("re").compile(r"^(CP|DM|DW|KBG|KE|OPS|SRC|STD)-\d+$")
 
 _JSON_ARRAY_FIELDS = (
-    "files_in_scope", "deliverables", "acceptance", "depends_on", "tags",
-    "upstream_files", "downstream_outputs", "allowed_touch", "forbidden_touch",
-    "applicable_rules", "context_assembly_manifest", "completed_gates",
-    "pipeline_modules", "blocked_by", "artifact_paths", "audit_findings",
-    "ke_entries", "autonomy_checklist", "post_sync_standard", "post_sync_specific",
+    "files_in_scope",
+    "deliverables",
+    "acceptance",
+    "depends_on",
+    "tags",
+    "upstream_files",
+    "downstream_outputs",
+    "allowed_touch",
+    "forbidden_touch",
+    "applicable_rules",
+    "context_assembly_manifest",
+    "completed_gates",
+    "pipeline_modules",
+    "blocked_by",
+    "artifact_paths",
+    "audit_findings",
+    "ke_entries",
+    "autonomy_checklist",
+    "post_sync_standard",
+    "post_sync_specific",
     "depgraph_nodes",
 )
 
@@ -892,6 +943,7 @@ def _normalize_datetime_fields(d: dict) -> None:
     if d.get("updated_at") and d.get("created_at"):
         try:
             from datetime import datetime as _dt
+
             ca = _dt.fromisoformat(str(d["created_at"]))
             ua = _dt.fromisoformat(str(d["updated_at"]))
             if ua < ca:
@@ -944,18 +996,21 @@ def _fix_scalar_fields(d: dict) -> None:
 def _validate_and_construct_taskcard(d: dict) -> TaskCard:
     """schema_version 警告 + task_id 格式校验 + TaskCard 构造（model_validate 或 model_construct 兜底）。"""
     import warnings
+
     schema_ver = d.get("schema_version", "")
     if schema_ver and schema_ver != "0.3.2":
         warnings.warn(
             f"TaskCard {d.get('task_id', '?')} schema_version={schema_ver} 与当前 0.3.2 不匹配，"
             f"可能缺少新增字段（autonomy_checklist 等），数据完整性未经验证。",
-            UserWarning, stacklevel=2,
+            UserWarning,
+            stacklevel=2,
         )
     tid = d.get("task_id", "")
     if not _TASK_ID_PATTERN.match(str(tid)):
         warnings.warn(
             f"TaskCard task_id={tid!r} 不符合格式 NAMESPACE-SEQ，跳过 Pydantic 校验",
-            UserWarning, stacklevel=2,
+            UserWarning,
+            stacklevel=2,
         )
         try:
             return TaskCard.model_validate(d)
@@ -1063,13 +1118,9 @@ def _collect_governance_field_updates(
     if model_rationale is not None:
         updates.append(("model_rationale", model_rationale))
     if post_sync_standard is not None:
-        updates.append(
-            ("post_sync_standard", json.dumps(post_sync_standard, ensure_ascii=False))
-        )
+        updates.append(("post_sync_standard", json.dumps(post_sync_standard, ensure_ascii=False)))
     if post_sync_specific is not None:
-        updates.append(
-            ("post_sync_specific", json.dumps(post_sync_specific, ensure_ascii=False))
-        )
+        updates.append(("post_sync_specific", json.dumps(post_sync_specific, ensure_ascii=False)))
     if rollback_instructions is not None:
         # rollback_instructions 是 TEXT（非 JSON list），直接写字符串
         updates.append(("rollback_instructions", rollback_instructions))
@@ -1093,8 +1144,7 @@ def _check_all_deps_met(conn: sqlite3.Connection, deps: list) -> bool:
     if not deps:
         return True
     return all(
-        conn.execute(SQL_SELECT_TASKS_BY_ID_2, (d,)).fetchone()["status"]
-        in ("COMPLETED", "VERIFIED")
+        conn.execute(SQL_SELECT_TASKS_BY_ID_2, (d,)).fetchone()["status"] in ("COMPLETED", "VERIFIED")
         for d in deps
         if d
     )
@@ -1117,9 +1167,7 @@ def _collect_unmet_blockers(conn: sqlite3.Connection, deps: list) -> list:
     return unmet_blockers
 
 
-def _check_pytest_py_compile_path(
-    task_id: str, cmd: str, parts: list[str], parts_lower: list[str]
-) -> bool:
+def _check_pytest_py_compile_path(task_id: str, cmd: str, parts: list[str], parts_lower: list[str]) -> bool:
     """处理 ``-m pytest`` / ``-m py_compile`` 子命令：仅校验 .py 文件存在性，跳过 flag 校验。
 
     返回 True 表示命令已命中并被处理（调用方应直接返回），False 表示未命中。
@@ -1129,10 +1177,7 @@ def _check_pytest_py_compile_path(
     if "-m" not in parts_lower:
         return False
     idx = parts_lower.index("-m")
-    if not (
-        idx + 1 < len(parts_lower)
-        and parts_lower[idx + 1] in ("pytest", "py_compile")
-    ):
+    if not (idx + 1 < len(parts_lower) and parts_lower[idx + 1] in ("pytest", "py_compile")):
         return False
     # 仍校验 .py 文件存在性，但不校验 flag
     script_path = next((t for t in parts if t.endswith(".py")), None)
@@ -1149,9 +1194,7 @@ def _check_pytest_py_compile_path(
     return True  # pytest/py_compile flag 由模块自身管理，跳过
 
 
-def _resolve_post_sync_script_path(
-    task_id: str, cmd: str, parts: list[str]
-) -> Path | None:
+def _resolve_post_sync_script_path(task_id: str, cmd: str, parts: list[str]) -> Path | None:
     """定位 .py 脚本（可能是 'python script.py' 或 'script.py'）并校验存在性。
 
     相对路径基于 REPO_ROOT 解析。返回解析后的 Path；无 .py 脚本时返回 None。
@@ -1172,9 +1215,7 @@ def _resolve_post_sync_script_path(
     return p
 
 
-def _validate_post_sync_script_flags(
-    task_id: str, cmd: str, parts: list[str], script_path: Path
-) -> None:
+def _validate_post_sync_script_flags(task_id: str, cmd: str, parts: list[str], script_path: Path) -> None:
     """提取 --flag 参数，通过 ``--help`` 输出校验是否注册。
 
     处理 --flag=value 格式：只取 = 前面的 flag 名（argparse 合法语法）。
@@ -1208,8 +1249,7 @@ def _validate_post_sync_script_flags(
         raise PostSyncValidationError(
             task_id,
             cmd,
-            f"argparse 未注册 flag {missing}（--help 输出中未找到；"
-            f"疑似臆造 flag，请对照 '<脚本> --help' 实际输出）",
+            f"argparse 未注册 flag {missing}（--help 输出中未找到；疑似臆造 flag，请对照 '<脚本> --help' 实际输出）",
         )
 
 
@@ -1264,21 +1304,17 @@ class TaskRepository:
         """公共接口：is_timeout_exempt（Stage 4 公共化）。"""
         return self._is_timeout_exempt(task_id)
 
-
     def post_completion_actions(self, task_id, to_status, session_id, updated_row) -> None:
         """公共接口：post_completion_actions（Stage 4 公共化）。"""
         return self._post_completion_actions(task_id, to_status, session_id, updated_row)
-
 
     def count_by_status_and_session(self, status, session_id) -> int:
         """公共接口：count_by_status_and_session（Stage 4 公共化）。"""
         return self._count_by_status_and_session(status, session_id)
 
-
     def validate_granularity(self, task) -> list[str]:
         """公共接口：validate_granularity（Stage 4 公共化）。"""
         return self._validate_granularity(task)
-
 
     @property
     def enable_gate(self):
@@ -1290,24 +1326,20 @@ class TaskRepository:
         """写入：enable_gate（Stage 4 公共化）。"""
         self._enable_gate = value
 
-
     # ── Stage 4 公共化（2026-07-29）：public wrapper ──
     def validate_template_fields(self, task) -> list[str]:
         """公共接口：validate_template_fields（Stage 4 公共化，委托到 self._validate_template_fields）。"""
         return self._validate_template_fields(task)
-
 
     # ── Stage 4 公共化（2026-07-29）：public wrapper ──
     def determine_split_strategy(self, violations, requested) -> str:
         """公共接口：determine_split_strategy（Stage 4 公共化，委托到 self._determine_split_strategy）。"""
         return self._determine_split_strategy(violations, requested)
 
-
     # ── Stage 4 公共化（2026-07-29）：public wrapper ──
     def auto_commit_on_completion(self, task_id, task_obj) -> None:
         """公共接口：auto_commit_on_completion（Stage 4 公共化，委托到 self._auto_commit_on_completion）。"""
         return self._auto_commit_on_completion(task_id, task_obj)
-
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -1320,7 +1352,6 @@ class TaskRepository:
         """写入：db_path（Stage 4 公共化）。"""
         self._db_path = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def conn(self) -> sqlite3.Connection:
@@ -1331,7 +1362,6 @@ class TaskRepository:
     def conn(self, value):
         """写入：conn（Stage 4 公共化）。"""
         self._conn = value
-
 
     # ------------------------------------------------------------------
     # 连接管理
@@ -1491,15 +1521,13 @@ class TaskRepository:
             validate_rollback_instructions,
         )
 
-        for cmd in (task.post_sync_specific or []):
+        for cmd in task.post_sync_specific or []:
             reason = validate_post_sync_specific(cmd, REPO_ROOT)
             if reason is not None:
                 raise PostSyncValidationError(task.task_id, cmd, reason)
         reason = validate_rollback_instructions(task.rollback_instructions or "", REPO_ROOT)
         if reason is not None:
-            raise PostSyncValidationError(
-                task.task_id, task.rollback_instructions or "", reason
-            )
+            raise PostSyncValidationError(task.task_id, task.rollback_instructions or "", reason)
 
     def _validate_post_sync_commands(self, task_id: str, cmds: list[str]) -> None:
         """校验一组 post_sync_standard 命令（create + update 复用）。
@@ -1606,9 +1634,7 @@ class TaskRepository:
         if not new_files:
             return
 
-        cursor = conn.execute(
-            SQL_SELECT_TASKS_ACTIVE_BY_STATUS
-        )
+        cursor = conn.execute(SQL_SELECT_TASKS_ACTIVE_BY_STATUS)
         for row in cursor.fetchall():
             existing_task_id = row["task_id"]
             existing_raw = row["files_in_scope"]
@@ -1621,8 +1647,7 @@ class TaskRepository:
             overlap = new_files & existing_files
             if overlap:
                 raise ValueError(
-                    f"files_in_scope 冲突: 新任务与活跃任务 "
-                    f"{existing_task_id!r} 共享文件 {sorted(overlap)}"
+                    f"files_in_scope 冲突: 新任务与活跃任务 {existing_task_id!r} 共享文件 {sorted(overlap)}"
                 )
 
     def create(
@@ -1715,7 +1740,8 @@ class TaskRepository:
                 session_id=task.session_id,
             )
             row = self._fetch_row(conn, task.task_id)
-        if row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
+        if row is None:
+            raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(row)
 
     # ------------------------------------------------------------------
@@ -1785,9 +1811,7 @@ class TaskRepository:
         """
         # DM-210625: post_sync_standard 校验在 _write_tx 外执行（subprocess 调用
         # --help 不应在事务内长占连接）。校验通过后才进入写事务。
-        _validate_update_preconditions(
-            self, task_id, post_sync_standard, post_sync_specific, rollback_instructions
-        )
+        _validate_update_preconditions(self, task_id, post_sync_standard, post_sync_specific, rollback_instructions)
 
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
@@ -1795,12 +1819,21 @@ class TaskRepository:
                 raise TaskNotFoundError("任务不存在")
 
             updates: list[tuple[str, object]] = _collect_primary_field_updates(
-                title, session_id, waiting_for, estimate_hours, actual_hours,
-                deliverables, acceptance,
+                title,
+                session_id,
+                waiting_for,
+                estimate_hours,
+                actual_hours,
+                deliverables,
+                acceptance,
             )
             updates += _collect_governance_field_updates(
-                files_in_scope, tags, model_rationale,
-                post_sync_standard, post_sync_specific, rollback_instructions,
+                files_in_scope,
+                tags,
+                model_rationale,
+                post_sync_standard,
+                post_sync_specific,
+                rollback_instructions,
             )
 
             if not updates:
@@ -1815,7 +1848,8 @@ class TaskRepository:
             )
             updated_row = self._fetch_row(conn, task_id)
 
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
+        if updated_row is None:
+            raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(updated_row)
 
     # ------------------------------------------------------------------
@@ -1866,8 +1900,7 @@ class TaskRepository:
         if not review_status.get("review_complete", False):
             raise BatchReviewRequiredError(
                 task_id,
-                f"verify() 前置门禁失败：审查未完成 "
-                f"consecutive_zero={review_status.get('consecutive_zero', 0)}/2",
+                f"verify() 前置门禁失败：审查未完成 consecutive_zero={review_status.get('consecutive_zero', 0)}/2",
             )
 
         with self._write_tx() as conn:
@@ -1881,7 +1914,8 @@ class TaskRepository:
             )
             updated_row = self._fetch_row(conn, task_id)
 
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
+        if updated_row is None:
+            raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(updated_row)
 
     # ------------------------------------------------------------------
@@ -1890,9 +1924,7 @@ class TaskRepository:
 
     def _count_p0_tasks(self, conn: sqlite3.Connection) -> int:
         """统计当前活跃 P0 任务数（排除终态 CANCELLED/VERIFIED 和软删除）。"""
-        row = conn.execute(
-            SQL_SELECT_TASKS_ACTIVE_COUNT
-        ).fetchone()
+        row = conn.execute(SQL_SELECT_TASKS_ACTIVE_COUNT).fetchone()
         return row[0] if row else 0
 
     def propose_priority_upgrade(
@@ -2011,7 +2043,8 @@ class TaskRepository:
             )
 
             updated_row = self._fetch_row(conn, task_id)
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
+        if updated_row is None:
+            raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(updated_row)
 
     def approve_priority_upgrade(self, task_id: str) -> TaskCard:
@@ -2048,7 +2081,8 @@ class TaskRepository:
             )
 
             updated_row = self._fetch_row(conn, task_id)
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
+        if updated_row is None:
+            raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(updated_row)
 
     def reject_priority_upgrade(self, task_id: str) -> TaskCard:
@@ -2086,7 +2120,8 @@ class TaskRepository:
             )
 
             updated_row = self._fetch_row(conn, task_id)
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
+        if updated_row is None:
+            raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(updated_row)
 
     # ------------------------------------------------------------------
@@ -2099,7 +2134,10 @@ class TaskRepository:
     # 行为等价：所有异常/事件/事务/门禁逻辑完全保留，GateViolationError 处理保留在主函数。
 
     def _normalize_transition_input(
-        self, to_status: TaskStatus | str, note: str | None, task_id: str,
+        self,
+        to_status: TaskStatus | str,
+        note: str | None,
+        task_id: str,
     ) -> TaskStatus:
         """规范化 to_status 并执行 FAILED 根因检查（MTH-006）。"""
         if isinstance(to_status, str):
@@ -2122,7 +2160,11 @@ class TaskRepository:
                 self._run_circular_acceptance(task_id, _pre_cmds)
 
     def _check_transition_gates(
-        self, conn, row, to_status: TaskStatus, task_id: str,
+        self,
+        conn,
+        row,
+        to_status: TaskStatus,
+        task_id: str,
     ) -> None:
         """G1 门禁（IN_PROGRESS）+ G7 门禁（COMPLETED）+ 批量审查检查（COMPLETED）。"""
         if to_status is TaskStatus.IN_PROGRESS and self._should_evaluate_gate(_STARTUP_GATE_ID):
@@ -2149,8 +2191,13 @@ class TaskRepository:
                 )
 
     def _apply_transition_update(
-        self, conn, task_id: str, to_status: TaskStatus,
-        session_id: str | None, waiting_for: str | None, note: str | None,
+        self,
+        conn,
+        task_id: str,
+        to_status: TaskStatus,
+        session_id: str | None,
+        waiting_for: str | None,
+        note: str | None,
     ) -> None:
         """构建 UPDATE 参数并执行状态转换 SQL。"""
         now = now_iso()
@@ -2180,8 +2227,13 @@ class TaskRepository:
         )
 
     def _record_transition_events(
-        self, conn, task_id: str, from_status: TaskStatus, to_status: TaskStatus,
-        session_id: str | None, note: str | None,
+        self,
+        conn,
+        task_id: str,
+        from_status: TaskStatus,
+        to_status: TaskStatus,
+        session_id: str | None,
+        note: str | None,
     ) -> None:
         """记录 state_transition 事件 + COMPLETED 时记录 git_commit_pending 事件。"""
         self._record_event(
@@ -2209,8 +2261,11 @@ class TaskRepository:
             )
 
     def _post_completion_actions(
-        self, task_id: str, to_status: TaskStatus,
-        session_id: str | None, updated_row,
+        self,
+        task_id: str,
+        to_status: TaskStatus,
+        session_id: str | None,
+        updated_row,
     ) -> None:
         """COMPLETED 后的自动 git commit + 提醒剩余 IN_PROGRESS 任务。"""
         if to_status is not TaskStatus.COMPLETED:
@@ -2306,14 +2361,22 @@ class TaskRepository:
                 self._check_transition_gates(conn, row, to_status, task_id)
                 from_status = TaskStatus(row["status"])
                 if not _is_valid_transition(from_status, to_status):
-                    raise InvalidTransitionError(
-                        f"非法转换 {from_status.value} -> {to_status.value}"
-                    )
+                    raise InvalidTransitionError(f"非法转换 {from_status.value} -> {to_status.value}")
                 self._apply_transition_update(
-                    conn, task_id, to_status, session_id, waiting_for, note,
+                    conn,
+                    task_id,
+                    to_status,
+                    session_id,
+                    waiting_for,
+                    note,
                 )
                 self._record_transition_events(
-                    conn, task_id, from_status, to_status, session_id, note,
+                    conn,
+                    task_id,
+                    from_status,
+                    to_status,
+                    session_id,
+                    note,
                 )
                 self._recalculate_dependent_status(conn, task_id, to_status)
                 updated_row = self._fetch_row(conn, task_id)
@@ -2323,7 +2386,8 @@ class TaskRepository:
                 self._gate_engine._persist_result(exc.result, conn=None)
             raise
 
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
+        if updated_row is None:
+            raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
 
         from zephyr.governance.ops_governance.event_hook import TransitionEvent, hook_registry
 
@@ -2387,26 +2451,27 @@ class TaskRepository:
             if result.status is CommitStatus.OK:
                 logger.info(
                     "DM-202918: GitCommitGateway commit 成功 (task=%s hash=%s): %s",
-                    task_id, result.commit_hash[:8], result.message,
+                    task_id,
+                    result.commit_hash[:8],
+                    result.message,
                 )
             elif result.status is CommitStatus.NOTHING_TO_COMMIT:
-                logger.info(
-                    "DM-202918: files_in_scope 无 staged 变更，跳过 commit (task=%s)", task_id
-                )
+                logger.info("DM-202918: files_in_scope 无 staged 变更，跳过 commit (task=%s)", task_id)
             elif result.status is CommitStatus.STASH_CONFLICT:
                 logger.warning(
                     "DM-202918: commit 成功但 stash pop 失败，数据保留在 stash (task=%s): %s",
-                    task_id, result.message,
+                    task_id,
+                    result.message,
                 )
             else:
                 logger.warning(
                     "DM-202918: GitCommitGateway commit 失败 (task=%s status=%s): %s",
-                    task_id, result.status, result.message,
+                    task_id,
+                    result.status,
+                    result.message,
                 )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning(
-                "DM-202918: GitCommitGateway 异常，回退跳过 commit (task=%s): %s", task_id, e
-            , exc_info=True)
+            logger.warning("DM-202918: GitCommitGateway 异常，回退跳过 commit (task=%s): %s", task_id, e, exc_info=True)
 
     def _run_circular_acceptance(
         self,
@@ -2429,10 +2494,27 @@ class TaskRepository:
 
         # Windows shell builtins that have no standalone .exe (cmd.exe internal commands).
         # On Windows, shlex.split + shell=False fails for these with WinError 2.
-        _WIN_SHELL_BUILTINS = frozenset({
-            "echo", "dir", "type", "cd", "cls", "copy", "del", "move", "ren",
-            "md", "rd", "set", "ver", "vol", "path", "prompt", "title",
-        })
+        _WIN_SHELL_BUILTINS = frozenset(
+            {
+                "echo",
+                "dir",
+                "type",
+                "cd",
+                "cls",
+                "copy",
+                "del",
+                "move",
+                "ren",
+                "md",
+                "rd",
+                "set",
+                "ver",
+                "vol",
+                "path",
+                "prompt",
+                "title",
+            }
+        )
 
         def _build_cmd(cmd: str) -> list[str]:
             """Build command list, routing Windows shell builtins through cmd.exe /c."""
@@ -2440,6 +2522,7 @@ class TaskRepository:
             if not tokens:
                 return tokens
             import sys as _sys
+
             if _sys.platform == "win32" and tokens[0].lower() in _WIN_SHELL_BUILTINS:
                 return ["cmd.exe", "/c", cmd]
             return tokens
@@ -2462,9 +2545,7 @@ class TaskRepository:
                         # 立即抛 PostSyncConstructionError 而非计入循环验收失败——
                         # 建卡缺陷不可通过重试解决，必须修复 post_sync_standard 字段。
                         if result.returncode == 2:
-                            raise PostSyncConstructionError(
-                                task_id, cmd, (result.stderr or "")[:200]
-                            )
+                            raise PostSyncConstructionError(task_id, cmd, (result.stderr or "")[:200])
                         failures.append(f"命令 {cmd!r} 返回 exit={result.returncode}: {(result.stderr or '')[:200]}")
                 except subprocess.TimeoutExpired:
                     failures.append(f"命令 {cmd!r} 超时（120s）")
@@ -2533,13 +2614,31 @@ class TaskRepository:
             with self._write_tx() as conn:
                 conn.execute(
                     SQL_INSERT_TASK_REVIEWS_COUNT,
-                    (str(uuid.uuid4()), task_id, current_round, dim, len(issues), json.dumps(issues, ensure_ascii=False), 1 if passed else 0, reviewer, session_id, now),
+                    (
+                        str(uuid.uuid4()),
+                        task_id,
+                        current_round,
+                        dim,
+                        len(issues),
+                        json.dumps(issues, ensure_ascii=False),
+                        1 if passed else 0,
+                        reviewer,
+                        session_id,
+                        now,
+                    ),
                 )
 
         if total_issues == 0:
             consecutive_zero += 1
 
-        return {"task_id": task_id, "round": current_round, "total_issues": total_issues, "passed": total_issues == 0, "consecutive_zero": consecutive_zero, "dimensions": dimensions_result}
+        return {
+            "task_id": task_id,
+            "round": current_round,
+            "total_issues": total_issues,
+            "passed": total_issues == 0,
+            "consecutive_zero": consecutive_zero,
+            "dimensions": dimensions_result,
+        }
 
     def _normalize_blocked_by(self, task: Task) -> list[str]:
         """Normalize blocked_by to list (handles both list[str] and JSON string)."""
@@ -2670,7 +2769,14 @@ class TaskRepository:
             else:
                 break
 
-        return {"task_id": task_id, "reviewed": True, "total_rounds": len(rounds), "consecutive_zero": consecutive_zero, "review_complete": consecutive_zero >= 2, "rounds": rounds}
+        return {
+            "task_id": task_id,
+            "reviewed": True,
+            "total_rounds": len(rounds),
+            "consecutive_zero": consecutive_zero,
+            "review_complete": consecutive_zero >= 2,
+            "rounds": rounds,
+        }
 
     def _recalculate_dependent_status(
         self,
@@ -3206,9 +3312,7 @@ class TaskRepository:
 
     def list_active(self) -> list[Task]:
         """查询活跃任务（IN_PROGRESS / READY / RETRY / WAITING），排除已删除。"""
-        cursor = self._conn.execute(
-            SQL_SELECT_TASKS_ACTIVE_BY_STATUS_SORTED_2
-        )
+        cursor = self._conn.execute(SQL_SELECT_TASKS_ACTIVE_BY_STATUS_SORTED_2)
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
 
     def count_by_status(self) -> dict[str, int]:
@@ -3268,7 +3372,8 @@ class TaskRepository:
                         (task.task_id, f["file_path"], f.get("role", "in_scope")),
                     )
             row = self._fetch_row(conn, task.task_id)
-        if row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
+        if row is None:
+            raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(row)
 
     # ------------------------------------------------------------------
@@ -3834,9 +3939,7 @@ def search(
         cursor = conn.execute(SQL_SELECT_SQLITE_MASTER)
         has_fts = cursor.fetchone() is not None
         if not has_fts:
-            conn.execute(
-                SQL_CREATE_IF_VIRTUAL
-            )
+            conn.execute(SQL_CREATE_IF_VIRTUAL)
             conn.execute(SQL_INSERT_TASKS_FTS)
 
         cols = "task_id, title, status, priority, phase"

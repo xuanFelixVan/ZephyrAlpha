@@ -35,5 +35,6 @@
 
 __all__: list[str] = []
 
-__all__ = ['adapter', 'cross_session_correlator', 'memory_provenance']
+from typing import Final
 
+__all__: Final = ["adapter", "cross_session_correlator", "memory_provenance"]

@@ -38,6 +38,7 @@ F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3).
     # 事件发布后自动触发处理器
     subscriber.unsubscribe_all()  # 清理订阅
 """
+
 from __future__ import annotations
 
 import logging
@@ -70,6 +71,7 @@ F5_EVENT_TOPICS: Final[tuple[str, ...]] = (
 @dataclass
 class SubscriptionResult:
     """订阅操作结果。"""
+
     success: bool
     topic: str
     handler_name: str
@@ -79,6 +81,7 @@ class SubscriptionResult:
 @dataclass
 class EventHandlerResult:
     """事件处理器执行结果。"""
+
     handled: bool
     topic: str
     action: str
@@ -90,6 +93,7 @@ class EventHandlerResult:
 @dataclass
 class RuleBinding:
     """规则引擎绑定 — RuleCategory -> 处理器名称映射。"""
+
     category: str
     topic: str
     handler_name: str
@@ -194,38 +198,46 @@ class F5EventSubscriber:
         results: list[SubscriptionResult] = []
         for binding in self._rule_bindings:
             if binding.topic in self._subscribed_topics:
-                results.append(SubscriptionResult(
-                    success=True,
-                    topic=binding.topic,
-                    handler_name=binding.handler_name,
-                    error="already_subscribed",
-                ))
+                results.append(
+                    SubscriptionResult(
+                        success=True,
+                        topic=binding.topic,
+                        handler_name=binding.handler_name,
+                        error="already_subscribed",
+                    )
+                )
                 continue
             handler = self._handler_registry.get(binding.topic)
             if handler is None:
-                results.append(SubscriptionResult(
-                    success=False,
-                    topic=binding.topic,
-                    handler_name=binding.handler_name,
-                    error="no_handler_registered",
-                ))
+                results.append(
+                    SubscriptionResult(
+                        success=False,
+                        topic=binding.topic,
+                        handler_name=binding.handler_name,
+                        error="no_handler_registered",
+                    )
+                )
                 continue
             try:
                 self._bus.subscribe(binding.topic, handler)
                 self._subscribed_topics.add(binding.topic)
-                results.append(SubscriptionResult(
-                    success=True,
-                    topic=binding.topic,
-                    handler_name=binding.handler_name,
-                ))
+                results.append(
+                    SubscriptionResult(
+                        success=True,
+                        topic=binding.topic,
+                        handler_name=binding.handler_name,
+                    )
+                )
                 logger.info("F5EventSubscriber: subscribed to '%s'", binding.topic)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                results.append(SubscriptionResult(
-                    success=False,
-                    topic=binding.topic,
-                    handler_name=binding.handler_name,
-                    error=str(e),
-                ))
+                results.append(
+                    SubscriptionResult(
+                        success=False,
+                        topic=binding.topic,
+                        handler_name=binding.handler_name,
+                        error=str(e),
+                    )
+                )
                 logger.error("F5EventSubscriber: subscribe failed for '%s': %s", binding.topic, e, exc_info=True)
         return results
 
@@ -316,6 +328,7 @@ class F5EventSubscriber:
             return result
         try:
             from zephyr.governance.escalation.escalation_models import RuleCategory
+
             try:
                 category = RuleCategory(category_str)
             except ValueError:
@@ -366,6 +379,7 @@ class F5EventSubscriber:
                 AgentMeta,
                 AgentRole,
             )
+
             agent_a = self._build_agent_meta(agent_a_data, AgentRole)
             agent_b = self._build_agent_meta(agent_b_data, AgentRole)
             arbitration_result = self._arbitrator.arbitrate(
@@ -397,6 +411,7 @@ class F5EventSubscriber:
     def _build_agent_meta(data: dict, AgentRole: object) -> object:
         """从字典构建 AgentMeta (延迟导入避免循环依赖)。"""
         from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import AgentMeta
+
         agent_id = data.get("agent_id", "unknown")
         role_str = data.get("role", "builder")
         try:
@@ -468,7 +483,7 @@ class F5EventSubscriber:
         """记录事件派发结果 (环形缓冲)。"""
         self._dispatch_log.append(result)
         if len(self._dispatch_log) > self._max_log_entries:
-            self._dispatch_log = self._dispatch_log[-self._max_log_entries:]
+            self._dispatch_log = self._dispatch_log[-self._max_log_entries :]
 
     # ── 查询接口 ─────────────────────────────────────────────────────────
 

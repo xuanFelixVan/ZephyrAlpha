@@ -48,7 +48,6 @@ class MVEPOrchestrator:
         """写入：implemented（Stage 4 公共化）。"""
         self._implemented = value
 
-
     def mark_implemented(self, decision_id: str):
         self._implemented.add(decision_id)
 

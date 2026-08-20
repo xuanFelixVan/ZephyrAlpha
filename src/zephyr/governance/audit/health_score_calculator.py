@@ -177,9 +177,7 @@ def calculate_health_score(
         logger.warning("health_score: weight sum <= 0 (%.4f), using defaults", weight_sum)
         use_weights = dict(_DEFAULT_WEIGHTS)
         weight_sum = 1.0
-    normalized_weights = {
-        k: v / weight_sum for k, v in use_weights.items()
-    } if weight_sum != 1.0 else use_weights
+    normalized_weights = {k: v / weight_sum for k, v in use_weights.items()} if weight_sum != 1.0 else use_weights
 
     dimension_scores: dict[str, float] = {}
     triggered: list[str] = []

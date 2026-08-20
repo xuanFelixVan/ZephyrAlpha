@@ -29,6 +29,7 @@ F5 = EscalationProtocol 五件套: EscalationEngine + DelegationEngine + Deadloc
 已于 2026-06-26 裁定随 CircadianScheduler 一并废除；F5 巡检改由 FLE
 _periodic_checks() 事件驱动触发。
 """
+
 from __future__ import annotations
 
 import logging
@@ -49,6 +50,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class BootResult:
     """启动/关闭结果。"""
+
     success: bool
     component: str
     errors: list[str] = field(default_factory=list)
@@ -93,7 +95,6 @@ class F5BootIntegration:
         """写入：project_root（Stage 4 公共化）。"""
         self._project_root = value
 
-
     def register_startup_hook(self) -> None:
         """注册到 boot_hooks 启动序列 (幂等)。"""
         try:
@@ -119,6 +120,7 @@ class F5BootIntegration:
         # 1. 初始化 DeadlockDetector (无依赖)
         try:
             from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
+
             self._deadlock_detector = DeadlockDetector()
             details["deadlock_detector_initialized"] = True
             logger.info("F5: DeadlockDetector initialized")
@@ -129,6 +131,7 @@ class F5BootIntegration:
         # 2. 初始化 EscalationEngine (无依赖, 但内部加载扩展探测器)
         try:
             from zephyr.governance.escalation.escalation_engine import EscalationEngine
+
             self._escalation_engine = EscalationEngine(name="f5_default", hooks_enabled=True)
             details["escalation_engine_initialized"] = True
             logger.info("F5: EscalationEngine initialized")
@@ -139,6 +142,7 @@ class F5BootIntegration:
         # 3. 初始化 DelegationEngine (注入 DeadlockDetector)
         try:
             from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
+
             self._delegation_engine = DelegationEngine(deadlock_detector=self._deadlock_detector)
             details["delegation_engine_initialized"] = True
             details["delegation_max_depth"] = DelegationEngine.MAX_DELEGATION_DEPTH
@@ -150,6 +154,7 @@ class F5BootIntegration:
         # 4. 初始化 Arbitrator (注入 EscalationEngine + DeadlockDetector)
         try:
             from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import Arbitrator
+
             self._arbitrator = Arbitrator(
                 escalation_engine=self._escalation_engine,
                 deadlock_detector=self._deadlock_detector,

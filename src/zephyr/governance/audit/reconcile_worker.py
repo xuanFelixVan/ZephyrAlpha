@@ -162,8 +162,11 @@ def _write_failed_status(
             STATUS_FAILED,
             write_status_file,
         )
+
         write_status_file(
-            project_root, commit_sha, STATUS_FAILED,
+            project_root,
+            commit_sha,
+            STATUS_FAILED,
             session_id=session_id,
             started_at=started_at,
             finished_at=int(time.time()),
@@ -179,21 +182,22 @@ def _write_failed_status(
             ReconcileResult,
             _log_reconcile_results,
         )
+
         detail = "; ".join(errors) if errors else "worker boot failed (unknown reason)"
         _log_reconcile_results(
             project_root,
-            [ReconcileResult(
-                action="critical_warn",
-                detail=f"reconcile_worker boot failed (commit={commit_sha}): {detail}",
-                gate_id="RECONCILE-WORKER-BOOT",
-            )],
+            [
+                ReconcileResult(
+                    action="critical_warn",
+                    detail=f"reconcile_worker boot failed (commit={commit_sha}): {detail}",
+                    gate_id="RECONCILE-WORKER-BOOT",
+                )
+            ],
             session_id or "unknown",
             trigger_source="post_commit_async",
         )
     except Exception:  # noqa: BLE001 — DB 写入失败不阻断 exit
         pass
-
-
 
 
 def _write_boot_success_clean(
@@ -218,21 +222,25 @@ def _write_boot_success_clean(
             ReconcileResult,
             _log_reconcile_results,
         )
+
         _log_reconcile_results(
             project_root,
-            [ReconcileResult(
-                action="clean",
-                detail=(
-                    f"reconcile_worker boot succeeded (commit={commit_sha}) "
-                    f"— auto-selfheal of prior RECONCILE-WORKER-BOOT critical_warn"
-                ),
-                gate_id="RECONCILE-WORKER-BOOT",
-            )],
+            [
+                ReconcileResult(
+                    action="clean",
+                    detail=(
+                        f"reconcile_worker boot succeeded (commit={commit_sha}) "
+                        f"— auto-selfheal of prior RECONCILE-WORKER-BOOT critical_warn"
+                    ),
+                    gate_id="RECONCILE-WORKER-BOOT",
+                )
+            ],
             session_id or "unknown",
             trigger_source="post_commit_async",
         )
     except Exception:  # noqa: BLE001 — 自愈写入失败不阻断 worker 主流程
         pass
+
 
 def _write_stale_healed_clean(
     project_root: str,
@@ -256,6 +264,7 @@ def _write_stale_healed_clean(
         # 复用 reconcile_runner 阈值真源（同包私有常量，对齐 reconciler_health_gate
         # 跨模块复用 _check_recent_blocks 的先例，不复制阈值避免双真源漂移）。
         from zephyr.governance.audit.reconcile_runner import _STALE_THRESHOLD_SECONDS
+
         elapsed = int(time.time()) - started_at
         if elapsed <= _STALE_THRESHOLD_SECONDS:
             return  # 未超阈值，sweep 不会写 live-timeout critical_warn，无需自愈
@@ -263,22 +272,26 @@ def _write_stale_healed_clean(
             ReconcileResult,
             _log_reconcile_results,
         )
+
         _log_reconcile_results(
             project_root,
-            [ReconcileResult(
-                action="clean",
-                detail=(
-                    f"reconcile_worker reached terminal state after {elapsed}s "
-                    f"(>threshold {_STALE_THRESHOLD_SECONDS}s, commit={commit_sha}) "
-                    f"— auto-selfheal of prior RECONCILE-WORKER-STALE live-timeout critical_warn"
-                ),
-                gate_id="RECONCILE-WORKER-STALE",
-            )],
+            [
+                ReconcileResult(
+                    action="clean",
+                    detail=(
+                        f"reconcile_worker reached terminal state after {elapsed}s "
+                        f"(>threshold {_STALE_THRESHOLD_SECONDS}s, commit={commit_sha}) "
+                        f"— auto-selfheal of prior RECONCILE-WORKER-STALE live-timeout critical_warn"
+                    ),
+                    gate_id="RECONCILE-WORKER-STALE",
+                )
+            ],
             session_id or "unknown",
             trigger_source="post_commit_async_stale_healed",
         )
     except Exception:  # noqa: BLE001 — 自愈写入失败不阻断 worker 主流程
         pass
+
 
 def _register_worker_session(project_root: str, commit_sha: str) -> str:
     """Register worker as a logical session in SessionRegistry.
@@ -295,6 +308,7 @@ def _register_worker_session(project_root: str, commit_sha: str) -> str:
     worker_sid = f"worker-{commit_sha[:8]}-{os.getpid()}"
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         registry = SessionRegistry(project_root)
         registry.register(worker_sid, pid=os.getpid())
     except Exception:  # noqa: BLE001 — registration failure doesn't block worker
@@ -311,6 +325,7 @@ def _unregister_worker_session(project_root: str, worker_sid: str) -> None:
     """
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         registry = SessionRegistry(project_root)
         registry.unregister(worker_sid)
     except Exception:  # noqa: BLE001
@@ -354,8 +369,7 @@ def _check_worker_admission(payload: dict) -> tuple[bool, str]:
     now_epoch = int(now_utc().timestamp())
     if started_at and now_epoch - started_at > PAYLOAD_TTL_SECONDS:
         return False, (
-            f"证2 payload 过期：started_at 距今 "
-            f"{now_epoch - started_at}s > {PAYLOAD_TTL_SECONDS}s（远古负载拒启）"
+            f"证2 payload 过期：started_at 距今 {now_epoch - started_at}s > {PAYLOAD_TTL_SECONDS}s（远古负载拒启）"
         )
 
     # 证1 锚定存活（仅 worktree 锚定型）——判定口径：project_root 本身即
@@ -370,8 +384,7 @@ def _check_worker_admission(payload: dict) -> tuple[bool, str]:
             return False, f"证1 锚定失效：worktree 目录不存在 {project_root}（疑已 abort/删除）"
         if not (p_root / ".git").exists():
             return False, (
-                f"证1 锚定失效：worktree .git 指针不存在 {project_root} "
-                f"（wipe/sweeper 机制后遗症，拒启防穿透主仓）"
+                f"证1 锚定失效：worktree .git 指针不存在 {project_root} （wipe/sweeper 机制后遗症，拒启防穿透主仓）"
             )
 
     # 证3 session 活性（仅 worktree 锚定型；registry 异常降级放行）
@@ -476,7 +489,10 @@ def _run_worker(payload: dict) -> int:
         _wt_root = Path(project_root)
         status_root = str(_wt_root) if _wt_root.is_dir() else str(anchor_main_root(_wt_root))
         _write_failed_status(
-            status_root, commit_sha, session_id, started_at,
+            status_root,
+            commit_sha,
+            session_id,
+            started_at,
             [f"worker 启动三证拒启: {deny_reason}"],
         )
         sys.stderr.write(f"reconcile_worker: admission denied: {deny_reason}\n")
@@ -496,7 +512,9 @@ def _run_worker(payload: dict) -> int:
 
     # 1. 写 status=running
     write_status_file(
-        project_root, commit_sha, STATUS_RUNNING,
+        project_root,
+        commit_sha,
+        STATUS_RUNNING,
         session_id=session_id,
         started_at=started_at,
         trigger_source="post_commit_async",
@@ -514,10 +532,14 @@ def _run_worker(payload: dict) -> int:
             from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
                 GitCommitGateway,
             )
+
             gateway = GitCommitGateway(Path(project_root))
         except Exception as e:  # noqa: BLE001
             _write_failed_status(
-                project_root, commit_sha, session_id, started_at,
+                project_root,
+                commit_sha,
+                session_id,
+                started_at,
                 [f"GitCommitGateway init failed: {e}", traceback.format_exc()],
             )
             return 1
@@ -535,12 +557,17 @@ def _run_worker(payload: dict) -> int:
                 write_heartbeat(_root, _sha, gate_id)
 
             reconcile_results = gateway._run_post_commit_reconcile_sync_worker(
-                committed_files, session_id, commit_message,
+                committed_files,
+                session_id,
+                commit_message,
                 heartbeat=_hb,
             )
         except Exception as e:  # noqa: BLE001 — 兜底
             _write_failed_status(
-                project_root, commit_sha, session_id, started_at,
+                project_root,
+                commit_sha,
+                session_id,
+                started_at,
                 [f"reconcile_for failed: {e}", traceback.format_exc()],
             )
             return 1
@@ -548,9 +575,7 @@ def _run_worker(payload: dict) -> int:
         # 4. 统计结果
         total = len(reconcile_results)
         warn_count = sum(1 for r in reconcile_results if getattr(r, "action", "") == "warn")
-        auto_count = sum(
-            1 for r in reconcile_results if getattr(r, "action", "") == "auto_committed"
-        )
+        auto_count = sum(1 for r in reconcile_results if getattr(r, "action", "") == "auto_committed")
         errors: list[str] = [
             getattr(r, "detail", "")
             for r in reconcile_results
@@ -562,23 +587,29 @@ def _run_worker(payload: dict) -> int:
         #     但原仅 warn 级摘要可见——删除/移动语义动作不论等级全部显式落盘，
         #     消除"clean 动作里藏着文件消失"的观测盲区（19:05 批次死因不可考教训）。
         _DELETE_HINTS = (
-            "archiv", "recycl", "delet", "removed", "moved", "prune",
-            "归档", "删除", "清理", "回收站",
+            "archiv",
+            "recycl",
+            "delet",
+            "removed",
+            "moved",
+            "prune",
+            "归档",
+            "删除",
+            "清理",
+            "回收站",
         )
         for _r in reconcile_results:
             _action = getattr(_r, "action", "")
             _detail = getattr(_r, "detail", "") or ""
             _gate = getattr(_r, "gate_id", "?")
-            if _action in ("auto_committed", "fix-in-place") or any(
-                h in _detail for h in _DELETE_HINTS
-            ):
-                sys.stderr.write(
-                    f"[DELETE-AUDIT] gate={_gate} action={_action} detail={_detail[:300]}\n"
-                )
+            if _action in ("auto_committed", "fix-in-place") or any(h in _detail for h in _DELETE_HINTS):
+                sys.stderr.write(f"[DELETE-AUDIT] gate={_gate} action={_action} detail={_detail[:300]}\n")
 
         # 5. 写 status=done
         write_status_file(
-            project_root, commit_sha, STATUS_DONE,
+            project_root,
+            commit_sha,
+            STATUS_DONE,
             session_id=session_id,
             started_at=started_at,
             finished_at=int(time.time()),
@@ -599,15 +630,12 @@ def _run_worker(payload: dict) -> int:
             _audit_stats = get_audit_stats()
             if _audit_stats.get("judge_calls"):
                 _status_path = (
-                    Path(project_root) / ".runtime" / "reconcile_reports"
-                    / f"reconcile_status_{commit_sha}.json"
+                    Path(project_root) / ".runtime" / "reconcile_reports" / f"reconcile_status_{commit_sha}.json"
                 )
                 if _status_path.is_file():
                     _data = json.loads(_status_path.read_text(encoding="utf-8"))
                     _data["ops_guard_audit_stats"] = _audit_stats
-                    _status_path.write_text(
-                        json.dumps(_data, ensure_ascii=False, indent=2), encoding="utf-8"
-                    )
+                    _status_path.write_text(json.dumps(_data, ensure_ascii=False, indent=2), encoding="utf-8")
         except Exception:  # noqa: BLE001 — 指标落盘失败不阻断 worker 终态
             pass
 
@@ -627,7 +655,8 @@ def main() -> int:
         description="Post-commit reconciler async worker (P2-3)",
     )
     parser.add_argument(
-        "--payload", required=True,
+        "--payload",
+        required=True,
         help="payload file path (JSON, read-once)",
     )
     args = parser.parse_args()
@@ -646,8 +675,8 @@ def main() -> int:
 if __name__ == "__main__":
     sys.exit(main())
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def run_worker(payload) -> int:
     """公共接口：run_worker（Stage 4 公共化，委托到 _run_worker）。"""
     return _run_worker(payload)
-

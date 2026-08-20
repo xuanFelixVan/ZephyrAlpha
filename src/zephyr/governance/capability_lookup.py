@@ -200,7 +200,9 @@ REGISTRY_YAML: Final[Path] = (
 # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S3 Phase 2: 审计日志目录与 rule_discovery_server 对称
 # CAPABILITY-LOOKUP-REQUIRED gate 消费此目录的 JSONL 日志（capability_lookup_required_gate.py:81）
 # 病根 G3：原 find() 不写审计日志，Phase 3.4a "同步扩展" 半成品——本次治本补齐
-LOOKUP_AUDIT_DIR: Final[Path] = MAIN_REPO_ROOT / ".runtime" / "lookup_audit"  # 观测数据锚主仓库（#ARCH-WORKTREE-ENV-001）
+LOOKUP_AUDIT_DIR: Final[Path] = (
+    MAIN_REPO_ROOT / ".runtime" / "lookup_audit"
+)  # 观测数据锚主仓库（#ARCH-WORKTREE-ENV-001）
 
 # session_id 环境变量（与 rule_discovery_server.SESSION_ID_ENV_VAR 对齐）
 SESSION_ID_ENV_VAR: Final[str] = "ZEPHYR_SESSION_ID"

@@ -74,7 +74,6 @@ class CircuitBreaker:
         """写入：failure_count（Stage 4 公共化）。"""
         self._failure_count = value
 
-
     @property
     def state(self) -> CircuitState:
         with self._lock:
@@ -85,7 +84,6 @@ class CircuitBreaker:
     def state(self, value):
         """写入：state（Stage 4 公共化）。"""
         self._state = value
-
 
     def call(self) -> bool:
         with self._lock:

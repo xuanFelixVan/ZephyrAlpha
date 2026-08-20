@@ -40,7 +40,6 @@ class EscalationLoopDetector:
         """写入：history（Stage 4 公共化）。"""
         self._history = value
 
-
     def record_transition(self, task_id: str, from_level: str, to_level: str):
         self._history.append((task_id, from_level, time.time()))
         self._history.append((task_id, to_level, time.time()))

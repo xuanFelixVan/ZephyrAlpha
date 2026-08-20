@@ -100,7 +100,6 @@ class SimulationBroker(BrokerInterface):
         """写入：fill_callbacks（Stage 4 公共化）。"""
         self._fill_callbacks = value
 
-
     def connect(self) -> bool:
         self._connected = True
         _logger.info("SimulationBroker connected. initial_cash=%s", self._initial_cash)

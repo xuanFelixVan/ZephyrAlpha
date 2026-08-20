@@ -9,7 +9,9 @@ Agent 规范约束定义：参数类型、行为签名、契约检查。
 
 from zephyr.governance.agent_spec.registry import AgentCapability, SpecRegistry
 
-__all__ = ["AgentCapability", "SpecRegistry", "registry", 'a2a_failure', 'rbac_bridge']
+from typing import Final
+
+__all__: Final = ["AgentCapability", "SpecRegistry", "registry", "a2a_failure", "rbac_bridge"]
 
 __version__ = "0.1.0"
 __module_id__ = "MOD-INF-019"

@@ -68,7 +68,6 @@ class DelegationEngine:
         """写入：delegate_load（Stage 4 公共化）。"""
         self._delegate_load = value
 
-
     @property
     def deadlock_detector(self):
         """公共只读属性 (reverse hierarchy: _deadlock_detector 仍为存储)。"""

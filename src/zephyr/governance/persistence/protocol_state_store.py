@@ -44,7 +44,6 @@ class ProtocolStateStore:
         """写入：state（Stage 4 公共化）。"""
         self._state = value
 
-
     def save(self) -> str:
         snapshot = {"state": self._state, "timestamp": datetime.now(UTC).isoformat()}
         path = os.path.join(self._dir, "protocol_state.json")

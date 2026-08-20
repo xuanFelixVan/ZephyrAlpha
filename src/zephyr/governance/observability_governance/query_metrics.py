@@ -182,7 +182,6 @@ class QueryMetrics:
         """写入：slow_threshold_ms（Stage 4 公共化）。"""
         self._slow_threshold_ms = value
 
-
     @classmethod
     def instance(cls) -> QueryMetrics:
         if cls._instance is None:

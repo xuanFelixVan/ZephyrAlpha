@@ -61,7 +61,6 @@ class PolicySandbox:
         """写入：sandbox_policy（Stage 4 公共化）。"""
         self._sandbox_policy = value
 
-
     @property
     def policy_path(self):
         """只读：policy_path（Stage 4 公共化）。"""
@@ -71,7 +70,6 @@ class PolicySandbox:
     def policy_path(self, value):
         """写入：policy_path（Stage 4 公共化）。"""
         self._policy_path = value
-
 
     @property
     def changes(self) -> dict:
@@ -83,19 +81,16 @@ class PolicySandbox:
         """写入：changes（Stage 4 公共化）。"""
         self._changes = value
 
-
     def assess_impact(self, policy) -> dict[str, float]:
         """公共接口：assess_impact（Stage 4 公共化）。"""
         return self._assess_impact(policy)
 
-
     @staticmethod
     def set_nested(d: dict, path: str, value) -> None:
-        keys = path.split('.')
+        keys = path.split(".")
         for key in keys[:-1]:
             d = d.setdefault(key, {})
         d[keys[-1]] = value
-
 
     def load_current(self) -> dict:
         with open(self._policy_path, encoding="utf-8") as f:

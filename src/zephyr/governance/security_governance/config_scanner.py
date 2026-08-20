@@ -38,7 +38,6 @@ class ConfigScanner:
         """写入：baseline（Stage 4 公共化）。"""
         self._baseline = value
 
-
     def set_baseline(self, filepath: str, content_hash: str):
         self._baseline[filepath] = content_hash
 

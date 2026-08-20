@@ -86,7 +86,6 @@ class OwnerAbsent:
         """写入：state_path（Stage 4 公共化）。"""
         self._state_path = value
 
-
     def check_owner_status(self, last_owner_interaction: str) -> AbsentStatus:
         try:
             last_ts = datetime.fromisoformat(last_owner_interaction)

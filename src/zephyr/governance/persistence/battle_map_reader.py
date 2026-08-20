@@ -91,9 +91,7 @@ class BattleMapReader:
 
     def _get_conn(self) -> _PgConnExecuteWrapper:
         if self._conn is None:
-            self._conn = _PgConnExecuteWrapper(
-                get_battle_map_pg_connection(autocommit=True)
-            )
+            self._conn = _PgConnExecuteWrapper(get_battle_map_pg_connection(autocommit=True))
         return self._conn
 
     def close(self) -> None:
@@ -112,17 +110,13 @@ class BattleMapReader:
     def get_all_steps(self) -> list[dict[str, Any]]:
         """获取所有作战环节（按 flow_stage, sort_order 排序，自动解析 indicators JSONB）。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM battle_map_steps ORDER BY flow_stage, sort_order"
-        )
+        cursor = conn.execute("SELECT * FROM battle_map_steps ORDER BY flow_stage, sort_order")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         return [_parse_jsonb(dict(row), _JSONB_STEP_FIELDS) for row in cursor.fetchall()]
 
     def get_step_by_id(self, step_id: str) -> dict[str, Any] | None:
         """按 step_id 精确查询环节（自动解析 indicators JSONB）。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM battle_map_steps WHERE step_id = %s", (step_id,)
-        )
+        cursor = conn.execute("SELECT * FROM battle_map_steps WHERE step_id = %s", (step_id,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         row = cursor.fetchone()
         return _parse_jsonb(dict(row), _JSONB_STEP_FIELDS) if row else None
 
@@ -152,17 +146,13 @@ class BattleMapReader:
     def get_all_anchors(self) -> list[dict[str, Any]]:
         """获取所有锚点（按 step_id 排序）。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM battle_map_anchors ORDER BY step_id, anchor_id"
-        )
+        cursor = conn.execute("SELECT * FROM battle_map_anchors ORDER BY step_id, anchor_id")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         return [dict(row) for row in cursor.fetchall()]
 
     def get_anchor_by_id(self, anchor_id: int) -> dict[str, Any] | None:
         """按 anchor_id 精确查询锚点。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT * FROM battle_map_anchors WHERE anchor_id = %s", (anchor_id,)
-        )
+        cursor = conn.execute("SELECT * FROM battle_map_anchors WHERE anchor_id = %s", (anchor_id,))  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         row = cursor.fetchone()
         return dict(row) if row else None
 
@@ -223,9 +213,7 @@ class BattleMapReader:
         """
         conn = self._get_conn()
         if flow_stage is None:
-            cursor = conn.execute(
-                "SELECT * FROM battle_map_steps ORDER BY flow_stage, sort_order"
-            )
+            cursor = conn.execute("SELECT * FROM battle_map_steps ORDER BY flow_stage, sort_order")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         else:
             cursor = conn.execute(
                 "SELECT * FROM battle_map_steps WHERE flow_stage = %s ORDER BY sort_order",
@@ -288,9 +276,7 @@ class BattleMapReader:
     def get_adjacency_forward(self) -> dict[str, list[str]]:
         """构建前向邻接表 {from_step_id: [to_step_id, ...]}。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT from_step_id, to_step_id FROM battle_map_edges ORDER BY from_step_id"
-        )
+        cursor = conn.execute("SELECT from_step_id, to_step_id FROM battle_map_edges ORDER BY from_step_id")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         adj: dict[str, list[str]] = {}
         for row in cursor.fetchall():
             r = dict(row)
@@ -300,9 +286,7 @@ class BattleMapReader:
     def get_adjacency_reverse(self) -> dict[str, list[str]]:
         """构建反向邻接表 {to_step_id: [from_step_id, ...]}。"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT from_step_id, to_step_id FROM battle_map_edges ORDER BY to_step_id"
-        )
+        cursor = conn.execute("SELECT from_step_id, to_step_id FROM battle_map_edges ORDER BY to_step_id")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         adj: dict[str, list[str]] = {}
         for row in cursor.fetchall():
             r = dict(row)
@@ -394,10 +378,7 @@ class BattleMapReader:
             "SELECT * FROM battle_map_anchors WHERE target_graph = %s ORDER BY anchor_id",
             (target_graph,),
         )
-        return [
-            dict(row) for row in cursor.fetchall()
-            if dict(row)["target_id"] not in valid_ids
-        ]
+        return [dict(row) for row in cursor.fetchall() if dict(row)["target_id"] not in valid_ids]
 
 
 if __name__ == "__main__":

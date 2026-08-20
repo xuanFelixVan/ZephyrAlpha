@@ -128,11 +128,25 @@ _LESSON_KEYWORDS = [
 ]
 
 # KBG removal Stage 2: COLLOQUIAL_PATTERNS inlined from gov_kb.ingest (deleted in Stage 3)
-_COLLOQUIAL_RES = [re.compile(p) for p in (
-    r"gonna", r"wanna", r"gotta", r"kinda", r"sorta",
-    r"yeah", r"nope", r"ok\b", r"ok\s*,",
-    r"\btbh\b", r"\bimo\b", r"\bfyi\b", r"\btbd\b", r"\bwip\b",
-)]
+_COLLOQUIAL_RES = [
+    re.compile(p)
+    for p in (
+        r"gonna",
+        r"wanna",
+        r"gotta",
+        r"kinda",
+        r"sorta",
+        r"yeah",
+        r"nope",
+        r"ok\b",
+        r"ok\s*,",
+        r"\btbh\b",
+        r"\bimo\b",
+        r"\bfyi\b",
+        r"\btbd\b",
+        r"\bwip\b",
+    )
+]
 
 _UTC = UTC
 

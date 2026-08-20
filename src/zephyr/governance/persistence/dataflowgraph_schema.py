@@ -315,12 +315,15 @@ def init_dataflow_db(*, echo: bool = False) -> None:
     conn = get_dataflowgraph_pg_connection()
     try:
         with conn.cursor() as cur:
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = 'public'
                   AND table_name = ANY(%s)
-            """, (list(_DATAFLOW_CORE_TABLES),))
+            """,
+                (list(_DATAFLOW_CORE_TABLES),),
+            )
             existing = {row[0] for row in cur.fetchall()}
             missing = set(_DATAFLOW_CORE_TABLES) - existing
             if missing:

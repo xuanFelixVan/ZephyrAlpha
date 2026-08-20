@@ -190,8 +190,6 @@ Usage
 # A5 --> O2
 """
 
-
-
 from __future__ import annotations
 
 import ast
@@ -213,7 +211,6 @@ from zephyr.shared.utils.time_utils import now_utc
 logger = logging.getLogger(__name__)
 
 
-
 _GATE_ID = "GATE-CROSS-LAYER-CONTRACT-SIGNATURE"
 
 # priority=215: 独立检测契约签名漂移，在 drift_scan(140) 之后
@@ -221,17 +218,12 @@ _GATE_ID = "GATE-CROSS-LAYER-CONTRACT-SIGNATURE"
 _PRIORITY = 215
 
 
-
 # 跨层契约 YAML 真源路径（SSoT，AGENTS.md §11.0.2 规则数据真源）
 
 _CONTRACTS_YAML_REL = "architecture_model/contracts/cross_layer_contracts.yaml"
 
 
-
-
-
 def _load_contract_physical_paths(yaml_abs: str) -> set[str]:
-
     """从 cross_layer_contracts.yaml 加载所有 physical_path 集合。
 
 
@@ -253,27 +245,21 @@ def _load_contract_physical_paths(yaml_abs: str) -> set[str]:
     """
 
     try:
-
         import yaml
 
     except ImportError:
-
         logger.warning("cross_layer_contract_signature: PyYAML not installed, skip")
 
         return set()
 
     if not os.path.isfile(yaml_abs):
-
         return set()
 
     try:
-
         with open(yaml_abs, "r", encoding="utf-8") as f:
-
             data = yaml.safe_load(f)
 
         if not isinstance(data, dict):
-
             return set()
 
         contracts = data.get("contracts", [])
@@ -281,29 +267,21 @@ def _load_contract_physical_paths(yaml_abs: str) -> set[str]:
         paths: set[str] = set()
 
         for c in contracts:
-
             if isinstance(c, dict):
-
                 p = c.get("physical_path")
 
                 if isinstance(p, str) and p:
-
                     paths.add(p.replace("\\", "/"))
 
         return paths
 
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
-
         logger.warning("cross_layer_contract_signature: YAML load failed: %s", e)
 
         return set()
 
 
-
-
-
 def _extract_dataclass_signatures(source: str) -> dict[str, list[tuple[str, str]]]:
-
     """AST 提取源码中所有 @dataclass 类的签名（类名 → [(字段名, 类型注解字符串), ...]）。
 
 
@@ -321,19 +299,15 @@ def _extract_dataclass_signatures(source: str) -> dict[str, list[tuple[str, str]
     """
 
     try:
-
         tree = ast.parse(source)
 
     except SyntaxError:
-
         return {}
 
     sigs: dict[str, list[tuple[str, str]]] = {}
 
     for node in ast.walk(tree):
-
         if not isinstance(node, ast.ClassDef):
-
             continue
 
         # 检测 @dataclass 装饰器（含 @dataclass(frozen=True) 等带参形式）
@@ -341,33 +315,26 @@ def _extract_dataclass_signatures(source: str) -> dict[str, list[tuple[str, str]
         is_dataclass = False
 
         for dec in node.decorator_list:
-
             d_name = ""
 
             if isinstance(dec, ast.Name):
-
                 d_name = dec.id
 
             elif isinstance(dec, ast.Call) and isinstance(dec.func, ast.Name):
-
                 d_name = dec.func.id
 
             if d_name == "dataclass":
-
                 is_dataclass = True
 
                 break
 
         if not is_dataclass:
-
             continue
 
         fields: list[tuple[str, str]] = []
 
         for stmt in node.body:
-
             if isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name):
-
                 fname = stmt.target.id
 
                 ftype = ast.unparse(stmt.annotation) if stmt.annotation else "Any"
@@ -379,17 +346,10 @@ def _extract_dataclass_signatures(source: str) -> dict[str, list[tuple[str, str]
     return sigs
 
 
-
-
-
 def _diff_signatures(
-
     old: dict[str, list[tuple[str, str]]],
-
     new: dict[str, list[tuple[str, str]]],
-
 ) -> list[str]:
-
     """比对两份 @dataclass 签名，返回差异描述列表。
 
 
@@ -419,7 +379,6 @@ def _diff_signatures(
     # 删除的类
 
     for cls in sorted(old_classes - new_classes):
-
         diffs.append(f"类 {cls} 被删除")
 
     # 新增的类（不报漂移——新增是兼容变更）
@@ -427,7 +386,6 @@ def _diff_signatures(
     # 修改的类（字段集变化）
 
     for cls in sorted(old_classes & new_classes):
-
         old_fields = dict(old[cls])
 
         new_fields = dict(new[cls])
@@ -439,31 +397,18 @@ def _diff_signatures(
         # 删除的字段（破坏性变更）
 
         for fname in sorted(old_names - new_names):
-
             diffs.append(f"类 {cls} 字段 '{fname}' 被删除")
 
         # 类型变化
 
         for fname in sorted(old_names & new_names):
-
             if old_fields[fname] != new_fields[fname]:
-
-                diffs.append(
-
-                    f"类 {cls} 字段 '{fname}' 类型 "
-
-                    f"{old_fields[fname]}→{new_fields[fname]}"
-
-                )
+                diffs.append(f"类 {cls} 字段 '{fname}' 类型 {old_fields[fname]}→{new_fields[fname]}")
 
     return diffs
 
 
-
-
-
 def _persist_drift_finding(project_root: Path, file_path: str, detail: str) -> None:
-
     """持久化契约签名漂移到 governance.db drift_audit_findings 表。
 
 
@@ -485,43 +430,28 @@ def _persist_drift_finding(project_root: Path, file_path: str, detail: str) -> N
     db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
 
     try:
-
         conn = sqlite3.connect(db_path, timeout=30.0)
 
         try:
-
             conn.execute(SQL_CREATE_DRIFT_AUDIT_FINDINGS)
 
             finding_id = f"cs-{uuid.uuid4().hex[:12]}"
 
             conn.execute(
-
                 SQL_INSERT_DRIFT_AUDIT_FINDING,
-
-                (finding_id, now_utc(),
-
-                 "CONTRACT_SIGNATURE_DRIFT", "HIGH",
-
-                 file_path, detail),
-
+                (finding_id, now_utc(), "CONTRACT_SIGNATURE_DRIFT", "HIGH", file_path, detail),
             )
 
             conn.commit()
 
         finally:
-
             conn.close()
 
     except Exception as e:  # noqa: BLE001 — fail-open
-
         logger.warning("cross_layer_contract_signature: persist finding failed: %s", e)
 
 
-
-
-
 def make_cross_layer_contract_signature_reconciler(gateway: "object") -> ReconcilerSpec:
-
     """构造 GATE-CROSS-LAYER-CONTRACT-SIGNATURE post-commit 契约签名漂移检测 reconciler。
 
 
@@ -546,28 +476,20 @@ def make_cross_layer_contract_signature_reconciler(gateway: "object") -> Reconci
 
     yaml_abs = str(project_root / _CONTRACTS_YAML_REL)
 
-
-
     def _safe_relpath(f: str) -> str:
 
         try:
-
             return os.path.relpath(f, str(project_root)).replace("\\", "/")
 
         except (ValueError, OSError):
-
             return f.replace("\\", "/")
-
-
 
     def _trigger(committed_files: list[str]) -> bool:
 
         # 1. YAML 自身被修改 → 触发（需重检所有契约）
 
         for f in committed_files:
-
             if _safe_relpath(f) == _CONTRACTS_YAML_REL:
-
                 return True
 
         # 2. .py 文件命中 physical_path → 触发
@@ -575,29 +497,20 @@ def make_cross_layer_contract_signature_reconciler(gateway: "object") -> Reconci
         physical_paths = _load_contract_physical_paths(yaml_abs)
 
         if not physical_paths:
-
             return False
 
         for f in committed_files:
-
             rel = _safe_relpath(f)
 
             if rel in physical_paths:
-
                 return True
 
         return False
 
-
-
     def _collect_changed_contracts(
-
         committed_files: list[str],
-
         physical_paths: set[str],
-
     ) -> tuple[bool, list[str]]:
-
         """收集本次 commit 涉及的契约文件列表。
 
 
@@ -617,31 +530,24 @@ def make_cross_layer_contract_signature_reconciler(gateway: "object") -> Reconci
         changed_contracts: list[str] = []
 
         for f in committed_files:
-
             rel = _safe_relpath(f)
 
             if rel == _CONTRACTS_YAML_REL:
-
                 yaml_changed = True
 
                 continue
 
             if rel in physical_paths and rel.endswith(".py"):
-
                 changed_contracts.append(rel)
 
         # YAML 自身被修改 → 检测所有 physical_path（无法确定哪个变了）
 
         if yaml_changed:
-
             changed_contracts = sorted(physical_paths)
 
         return yaml_changed, changed_contracts
 
-
-
     def _check_single_contract(rel_path: str) -> str | None:
-
         """检查单个契约文件的签名漂移。
 
 
@@ -659,13 +565,10 @@ def make_cross_layer_contract_signature_reconciler(gateway: "object") -> Reconci
         new_abs = str(project_root / rel_path)
 
         try:
-
             with open(new_abs, "r", encoding="utf-8", errors="replace") as fh:
-
                 new_source = fh.read()
 
         except OSError as e:
-
             return f"{rel_path}: 读取失败 {e}"
 
         # 读取旧版本（HEAD~1）
@@ -673,7 +576,6 @@ def make_cross_layer_contract_signature_reconciler(gateway: "object") -> Reconci
         old_source = git_show_file(str(project_root), rel_path, "HEAD~1")
 
         if old_source is None:
-
             return None  # 新增文件，无旧版本可比对
 
         old_sigs = _extract_dataclass_signatures(old_source)
@@ -681,129 +583,82 @@ def make_cross_layer_contract_signature_reconciler(gateway: "object") -> Reconci
         new_sigs = _extract_dataclass_signatures(new_source)
 
         if not old_sigs and not new_sigs:
-
             return None  # 两边都无 @dataclass（非契约文件误匹配）
 
         diffs = _diff_signatures(old_sigs, new_sigs)
 
         if not diffs:
-
             return None
 
         detail_str = "; ".join(diffs[:5])
 
         if len(diffs) > 5:
-
             detail_str += f" (还有 {len(diffs) - 5} 项)"
 
         _persist_drift_finding(project_root, rel_path, detail_str)
 
         return f"{rel_path}: {detail_str}"
 
-
-
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
 
         try:
-
             physical_paths = _load_contract_physical_paths(yaml_abs)
 
             if not physical_paths:
-
                 return ReconcileResult(
-
                     action="skip",
-
                     detail="cross_layer_contracts.yaml 无 physical_path 或加载失败",
-
                     gate_id=_GATE_ID,
-
                 )
 
-            _yaml_changed, changed_contracts = _collect_changed_contracts(
-
-                committed_files, physical_paths
-
-            )
+            _yaml_changed, changed_contracts = _collect_changed_contracts(committed_files, physical_paths)
 
             if not changed_contracts:
-
                 return ReconcileResult(
-
                     action="skip",
-
                     detail="无契约文件被修改",
-
                     gate_id=_GATE_ID,
-
                 )
 
             drift_details: list[str] = []
 
             for rel_path in changed_contracts:
-
                 detail = _check_single_contract(rel_path)
 
                 if detail:
-
                     drift_details.append(detail)
 
             if drift_details:
-
                 summary = "; ".join(drift_details[:3])
 
                 if len(drift_details) > 3:
-
                     summary += f" (还有 {len(drift_details) - 3} 个文件)"
 
                 return ReconcileResult(
-
                     action="warn",
-
                     detail=f"跨层契约签名漂移 {len(drift_details)} 个文件: {summary}",
-
                     gate_id=_GATE_ID,
-
                 )
 
             return ReconcileResult(
-
                 action="clean",
-
                 detail=f"检查 {len(changed_contracts)} 个契约文件，无签名漂移",
-
                 gate_id=_GATE_ID,
-
             )
 
-
-
         except Exception as e:  # noqa: BLE001 — reconciler 永不抛异常
-
             logger.warning("cross_layer_contract_signature: reconcile failed: %s", e)
 
             return ReconcileResult(
-
                 action="warn",
-
                 detail=f"cross_layer_contract_signature reconcile error: {e}",
-
                 gate_id=_GATE_ID,
-
             )
 
-
-
     return ReconcilerSpec(
-
         gate_id=_GATE_ID,
-
         trigger=_trigger,
-
         reconcile=_reconcile,
-
         priority=_PRIORITY,
         file_ops=frozenset({"read", "write"}),
-
     )
-

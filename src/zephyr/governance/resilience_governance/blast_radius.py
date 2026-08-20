@@ -141,6 +141,7 @@ logger = logging.getLogger(__name__)
 
 class DepgraphLoadError(RuntimeError):
     """depgraph YAML 加载或结构校验失败."""
+
     error_code = "ZA-GV-0037"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -242,7 +243,6 @@ class BlastRadiusAnalyzer:
     def max_depth(self, value):
         """写入：max_depth（Stage 4 公共化）。"""
         self._max_depth = value
-
 
     def _ensure_loaded(self) -> None:
         """延迟加载 depgraph 并构建反向依赖索引."""

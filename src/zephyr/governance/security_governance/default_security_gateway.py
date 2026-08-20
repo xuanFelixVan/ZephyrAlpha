@@ -177,7 +177,6 @@ class DefaultSecurityGateway(SecurityGateway):
         """公共接口：filter_backtick_escape（Stage 4 公共化）。"""
         return __class__._filter_backtick_escape(content)
 
-
     @property
     def findings(self) -> list[ScanFinding]:
         """只读：findings（Stage 4 公共化）。"""
@@ -187,7 +186,6 @@ class DefaultSecurityGateway(SecurityGateway):
     def findings(self, value):
         """写入：findings（Stage 4 公共化）。"""
         self._findings = value
-
 
     @property
     def l1_clean(self):
@@ -199,7 +197,6 @@ class DefaultSecurityGateway(SecurityGateway):
         """写入：l1_clean（Stage 4 公共化）。"""
         self._l1_clean = value
 
-
     @property
     def context(self):
         """只读：context（Stage 4 公共化）。"""
@@ -210,11 +207,9 @@ class DefaultSecurityGateway(SecurityGateway):
         """写入：context（Stage 4 公共化）。"""
         self._context = value
 
-
     def lsg_full_scan(self, content, metadata=None) -> str | None:
         """公共接口：lsg_full_scan（Stage 4 公共化）。"""
         return self._lsg_full_scan(content, metadata)
-
 
     # ─── Layer 1: Prompt Injection ───
 

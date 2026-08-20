@@ -137,19 +137,12 @@ from enum import Enum
 from typing import Final
 
 __all__ = [
-
     "DIGIT_SUFFIX_RE",
-
     "RULE_NAME_RE",
-
     "MODULE_ID_RE",
-
     "PIICategory",
-
     "POISONING_INDICATORS",
-
     "PII_PATTERNS",
-
 ]
 
 # ============================================================================
@@ -190,8 +183,8 @@ MODULE_ID_RE: Final[re.Pattern[str]] = re.compile(r"^module_id:\s*(.+)$", re.MUL
 
 # ============================================================================
 
-class PIICategory(str, Enum):
 
+class PIICategory(str, Enum):
     """PII 类别枚举。"""
 
     EMAIL = "email"
@@ -208,28 +201,20 @@ class PIICategory(str, Enum):
 
     CUSTOM = "custom"
 
+
 # KB 投毒检测指标——用于 kb_gate.py 的内容安全扫描
 
 # 消费者: semantic_auditor/kb_gate.py + semantic_audit/kb_gate.py + audit_trail/kb_gate.py
 
 POISONING_INDICATORS: Final[list[re.Pattern[str]]] = [
-
     re.compile(
-
         r"(ignore|disregard|override|bypass)\s+(all|previous|above|prior)\s*(instructions|rules|guidelines)",
-
         re.IGNORECASE,
-
     ),
-
     re.compile(r"(you\s+are\s+now|act\s+as|pretend\s+to\s+be)\s*a?\s*(system|admin|root|superuser)", re.IGNORECASE),
-
     re.compile(r"(delete|remove|drop|truncate)\s+(all|every|entire)\s*(file|record|entry|knowledge)", re.IGNORECASE),
-
     re.compile(r"(inject|insert|plant)\s*(malicious|harmful|backdoor|payload)", re.IGNORECASE),
-
     re.compile(r"(sudo|chmod|chown|exec|eval|system|subprocess)\s*[\(\[]", re.IGNORECASE),
-
 ]
 
 # PII 检测模式——用于 privacy.py 的 PII 扫描与脱敏
@@ -237,46 +222,24 @@ POISONING_INDICATORS: Final[list[re.Pattern[str]]] = [
 # 消费者: semantic_auditor/privacy.py + semantic_audit/privacy.py + audit_trail/privacy.py
 
 PII_PATTERNS: Final[dict[PIICategory, list[re.Pattern[str]]]] = {
-
     PIICategory.EMAIL: [
-
         re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", re.IGNORECASE),
-
     ],
-
     PIICategory.PHONE: [
-
         re.compile(r"\+?1?\s*[-.(]?\s*\d{3}\s*[-.)]\s*\d{3}\s*[-.]\s*\d{4}"),
-
         re.compile(r"\+?\d{1,3}[-.\s]?\d{3,4}[-.\s]?\d{3,4}[-.\s]?\d{0,4}"),
-
     ],
-
     PIICategory.SSN: [
-
         re.compile(r"\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b"),
-
     ],
-
     PIICategory.CREDIT_CARD: [
-
         re.compile(r"\b(?:\d{4}[-\s]?){3}\d{4}\b"),
-
     ],
-
     PIICategory.API_KEY: [
-
         re.compile(r"(?:api[_-]?key|token|secret|password|credential)\s*[:=]\s*['\"]?[\w\-]{16,}['\"]?", re.IGNORECASE),
-
         re.compile(r"\b(?:sk|pk|ghp|gho|glpat|xox[bpas])_[\w\-]{20,}\b"),
-
     ],
-
     PIICategory.IP_ADDRESS: [
-
         re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b"),
-
     ],
-
 }
-

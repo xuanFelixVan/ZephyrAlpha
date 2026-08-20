@@ -38,7 +38,6 @@ class ExchangePartitionDetector:
         """写入：known_exchanges（Stage 4 公共化）。"""
         self._known_exchanges = value
 
-
     def register(self, exchange: str):
         self._known_exchanges.add(exchange)
 

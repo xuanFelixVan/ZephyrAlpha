@@ -74,7 +74,6 @@ class QuoteProviderMeta:
 
 
 class QuoteProviderBase(abc.ABC):
-
     """
     数据源抽象基类（OCP 扩展点）
 

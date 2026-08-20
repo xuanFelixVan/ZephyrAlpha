@@ -18,5 +18,6 @@ Phase C 具体实现包。
   - DefaultSecurityGateway : SecurityGateway 的具体实现（正则检测 + 审计决策）
 """
 
-__all__ = [
-'compliance_manager', 'compliance_mapper']
+from typing import Final
+
+__all__: Final = ["compliance_manager", "compliance_mapper"]

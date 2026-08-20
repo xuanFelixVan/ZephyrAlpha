@@ -47,6 +47,7 @@ def _resolve_hmac_key() -> bytes:
     # 派生而非硬编码字符串，避免相同密钥跨项目复用
     import getpass
     import socket
+
     _material = f"zephyr:{getpass.getuser()}:{socket.gethostname()}".encode("utf-8")
     return hashlib.sha256(_material).digest()
 

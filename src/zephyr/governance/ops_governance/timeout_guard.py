@@ -75,7 +75,6 @@ class TimeoutGuard:
         """写入：timeouts（Stage 4 公共化）。"""
         self._timeouts = value
 
-
     def watch(
         self,
         level: TimeoutLevel,

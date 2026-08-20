@@ -73,9 +73,7 @@ def validate_post_sync_command(cmd: str, repo_root: Path) -> str | None:
     return None
 
 
-def validate_post_sync_commands(
-    cmds: list[str], repo_root: Path
-) -> list[tuple[str, str | None]]:
+def validate_post_sync_commands(cmds: list[str], repo_root: Path) -> list[tuple[str, str | None]]:
     """校验一组 post_sync_standard 命令。
 
     返回 [(cmd, reason | None), ...]，与输入一一对应。
@@ -96,9 +94,7 @@ def validate_post_sync_specific(cmd: str, repo_root: Path) -> str | None:
     return validate_post_sync_command(cmd, repo_root)
 
 
-def validate_post_sync_specifics(
-    cmds: list[str], repo_root: Path
-) -> list[tuple[str, str | None]]:
+def validate_post_sync_specifics(cmds: list[str], repo_root: Path) -> list[tuple[str, str | None]]:
     """校验一组 post_sync_specific 命令（与 validate_post_sync_commands 对称）。"""
     return [(cmd, validate_post_sync_specific(cmd, repo_root)) for cmd in cmds]
 

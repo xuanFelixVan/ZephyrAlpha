@@ -46,7 +46,6 @@ class StrategyScoper:
         """写入：scopes（Stage 4 公共化）。"""
         self._scopes = value
 
-
     def assign_scope(self, agent_id: str, scope: ScopeLevel):
         self._scopes[agent_id] = scope
 

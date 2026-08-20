@@ -163,6 +163,7 @@ class ErrorPattern:
 
         缺失字段使用默认值，类型不匹配尝试强转，转换失败跳过该字段。
         """
+
         def _get_str(key: str, default: str = "") -> str:
             v = d.get(key, default)
             return str(v) if v is not None else default
@@ -294,7 +295,6 @@ class AIErrorPatternLibrary:
         """写入：path（Stage 4 公共化）。"""
         self._path = value
 
-
     def _load(self) -> None:
         """从磁盘加载聚合文件（fail-open）。
 
@@ -382,7 +382,10 @@ class AIErrorPatternLibrary:
         return sorted(self._patterns, key=lambda p: p.count, reverse=True)[:n]
 
     def match_pattern(
-        self, error_type: str, persistence: str, source: str,
+        self,
+        error_type: str,
+        persistence: str,
+        source: str,
     ) -> ErrorPattern | None:
         """按 (error_type, persistence, source) 三元组匹配已知模式。
 
@@ -393,7 +396,10 @@ class AIErrorPatternLibrary:
         return self._index.get(pid)
 
     def is_known_pattern(
-        self, error_type: str, persistence: str, source: str,
+        self,
+        error_type: str,
+        persistence: str,
+        source: str,
     ) -> bool:
         """判断三元组是否为已知模式（O(1)）。"""
         return self.match_pattern(error_type, persistence, source) is not None

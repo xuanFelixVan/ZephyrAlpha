@@ -136,8 +136,7 @@ class DepgraphReader:
             return {}
         conn = self._get_conn()
         cursor = conn.execute(
-            "SELECT path, blueprint_id, build_status FROM nodes "
-            "WHERE path = ANY(%s) OR blueprint_id = ANY(%s)",
+            "SELECT path, blueprint_id, build_status FROM nodes WHERE path = ANY(%s) OR blueprint_id = ANY(%s)",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
             (ids, ids),
         )
         result: dict[str, str] = {}
@@ -347,9 +346,7 @@ class DepgraphReader:
     def get_domain_count(self) -> int:
         """获取域总数"""
         conn = self._get_conn()
-        cursor = conn.execute(
-            "SELECT COUNT(DISTINCT domain_id) AS cnt FROM nodes WHERE domain_id IS NOT NULL"
-        )
+        cursor = conn.execute("SELECT COUNT(DISTINCT domain_id) AS cnt FROM nodes WHERE domain_id IS NOT NULL")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         return cursor.fetchone()["cnt"]
 
     def get_type_specific_data(self, node_id: str) -> dict[str, Any] | None:

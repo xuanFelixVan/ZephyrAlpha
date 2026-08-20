@@ -102,7 +102,6 @@ class HookRegistry:
         """写入：hooks（Stage 4 公共化）。"""
         self._hooks = value
 
-
     # ── public API ────────────────────────────────────────────────
 
     def register(

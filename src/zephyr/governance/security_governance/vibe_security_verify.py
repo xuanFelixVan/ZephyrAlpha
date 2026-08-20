@@ -24,7 +24,14 @@ from __future__ import annotations
 
 from typing import Final
 
-SECURITY_CHECKS: Final[list] = ["no_eval", "no_exec", "no_os_system", "no_subprocess_shell", "no_pickle", "no_yaml_unsafe_load"]
+SECURITY_CHECKS: Final[list] = [
+    "no_eval",
+    "no_exec",
+    "no_os_system",
+    "no_subprocess_shell",
+    "no_pickle",
+    "no_yaml_unsafe_load",
+]
 
 
 class VibeSecurityVerify:

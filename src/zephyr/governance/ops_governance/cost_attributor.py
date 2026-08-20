@@ -79,7 +79,6 @@ class CostAttributor:
         """写入：top_n（Stage 4 公共化）。"""
         self._top_n = value
 
-
     def attribute(
         self,
         action_type: str,

@@ -38,7 +38,6 @@ class MemoryPoisonGuard:
         """写入：trusted_agents（Stage 4 公共化）。"""
         self._trusted_agents = value
 
-
     def register_trusted(self, agent_id: str):
         self._trusted_agents.add(agent_id)
 

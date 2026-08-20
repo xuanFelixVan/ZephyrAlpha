@@ -31,6 +31,7 @@ registry L3627 明确记载"被两个 DatabaseService 类继承"——属多真�
 infrastructure 版为超集（含 ClickHouse/Redis 接口），governance 消费者获得
 完整能力。DatabaseCRUDMixin（SH-DB-001）的 [MODIFY-GUARD] 已同步更新为单真源。
 """
+
 from zephyr.infrastructure.database_service import DatabaseService
 
 __all__ = ["DatabaseService"]

@@ -38,7 +38,6 @@ class LastResortWatchdog:
         """写入：activated（Stage 4 公共化）。"""
         self._activated = value
 
-
     def activate(self) -> None:
         self._activated = True
 

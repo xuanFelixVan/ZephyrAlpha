@@ -80,9 +80,7 @@ def build_plv_checks(registry_path: Path | None = None) -> dict[PLVCheck, PLVSpe
 
     字符串规约值（"±1%" 等）保持字符串语义加载，不强行数值化（55 号 §3.3 裁定②）。
     """
-    thresholds = load_alert_thresholds(
-        _PLV_THRESHOLD_SPEC, registry_path=registry_path, cast="str"
-    )
+    thresholds = load_alert_thresholds(_PLV_THRESHOLD_SPEC, registry_path=registry_path, cast="str")
     return {
         check: PLVSpec(
             check=check,

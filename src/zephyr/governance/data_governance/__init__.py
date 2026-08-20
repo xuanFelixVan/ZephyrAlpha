@@ -26,4 +26,10 @@ __all__ = [
     "max_level_from_list",
     "score_dq",
     "score_source",
-'akshare_provider', 'data_pipeline_guard', 'exchange_partition_detector', 'exchange_reg_monitor', 'pricing_sync', 'realtime_streaming']
+    "akshare_provider",
+    "data_pipeline_guard",
+    "exchange_partition_detector",
+    "exchange_reg_monitor",
+    "pricing_sync",
+    "realtime_streaming",
+]

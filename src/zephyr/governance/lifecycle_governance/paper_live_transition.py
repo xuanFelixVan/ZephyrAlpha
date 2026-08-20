@@ -127,21 +127,15 @@ class GateThresholds:
         if not 0 < self.fill_rate_min <= 1:
             raise ValueError(f"fill_rate_min必须在(0,1], got {self.fill_rate_min}")
         if not 0 < self.shadow_pnl_correlation_min <= 1:
-            raise ValueError(
-                f"shadow_pnl_correlation_min必须在(0,1], got {self.shadow_pnl_correlation_min}"
-            )
+            raise ValueError(f"shadow_pnl_correlation_min必须在(0,1], got {self.shadow_pnl_correlation_min}")
         if not 0 < self.settlement_match_min <= 1:
-            raise ValueError(
-                f"settlement_match_min必须在(0,1], got {self.settlement_match_min}"
-            )
+            raise ValueError(f"settlement_match_min必须在(0,1], got {self.settlement_match_min}")
         if self.latency_max_ms <= 0:
             raise ValueError(f"latency_max_ms必须>0, got {self.latency_max_ms}")
         if not 0 < self.ramp_drawdown_max < 1:
             raise ValueError(f"ramp_drawdown_max必须在(0,1), got {self.ramp_drawdown_max}")
         if not 0 < self.ramp_daily_loss_max < 1:
-            raise ValueError(
-                f"ramp_daily_loss_max必须在(0,1), got {self.ramp_daily_loss_max}"
-            )
+            raise ValueError(f"ramp_daily_loss_max必须在(0,1), got {self.ramp_daily_loss_max}")
         steps = tuple(self.ramp_steps)
         if not steps or any(s <= 0 for s in steps):
             raise ValueError(f"ramp_steps必须全非空正数, got {steps}")
@@ -150,9 +144,7 @@ class GateThresholds:
         if steps[-1] != 100.0:
             raise ValueError(f"ramp_steps末级必须=100(全量), got {steps[-1]}")
         if self.observation_min_months <= 0:
-            raise ValueError(
-                f"observation_min_months必须>0, got {self.observation_min_months}"
-            )
+            raise ValueError(f"observation_min_months必须>0, got {self.observation_min_months}")
         if self.min_trades_floor <= 0:
             raise ValueError(f"min_trades_floor必须>0, got {self.min_trades_floor}")
 
@@ -174,9 +166,7 @@ def validate_gate_thresholds(thresholds: GateThresholds) -> GateThresholds:
         TypeError: 非 GateThresholds 实例
     """
     if not isinstance(thresholds, GateThresholds):
-        raise TypeError(
-            f"thresholds必须是GateThresholds: {type(thresholds).__name__}"
-        )
+        raise TypeError(f"thresholds必须是GateThresholds: {type(thresholds).__name__}")
     return thresholds
 
 
@@ -265,8 +255,7 @@ def check_promotion_allowed(posture: RollbackState) -> None:
     """
     if posture != RollbackState.NORMAL:
         raise PermissionError(
-            f"降级姿态={posture.value}，禁止晋级（须 NORMAL；"
-            f"#ARCH-QUANT-003 两机唯一耦合点，53 号 §3.6）"
+            f"降级姿态={posture.value}，禁止晋级（须 NORMAL；#ARCH-QUANT-003 两机唯一耦合点，53 号 §3.6）"
         )
 
 

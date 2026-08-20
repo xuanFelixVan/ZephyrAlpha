@@ -184,8 +184,7 @@ _MIN_SAMPLE_TRADES: Final = 30  # AlphaFactory G2.2 统计地板，避免小样�
 STATE_NAMESPACE: Final = "rollback_state"
 
 
-def evaluate_rollback(metrics: dict, current: RollbackState,
-                      trade_count: int) -> RollbackState:
+def evaluate_rollback(metrics: dict, current: RollbackState, trade_count: int) -> RollbackState:
     """每 tick 调用：根据 metrics 决定是否单向降级。不做自动恢复。
 
     Args:
@@ -205,25 +204,27 @@ def evaluate_rollback(metrics: dict, current: RollbackState,
             return RollbackState.THROTTLED
 
     if current == RollbackState.THROTTLED:
-        if (_breach(metrics, "intraday_dd", mult=2.0)          # DD > 2%
-                or _breach(metrics, "reject_rate", mult=5.0)    # reject > 5%
-                or _breach(metrics, "daily_loss", mult=5.0 / 6.0)  # daily_loss > 2.5%（"接近 3%"，AI-R5 补齐 53 号迁移矩阵明文触发）
-                or _persistent(metrics, "reject_rate", 60)):    # 持续 60s
+        if (
+            _breach(metrics, "intraday_dd", mult=2.0)  # DD > 2%
+            or _breach(metrics, "reject_rate", mult=5.0)  # reject > 5%
+            or _breach(
+                metrics, "daily_loss", mult=5.0 / 6.0
+            )  # daily_loss > 2.5%（"接近 3%"，AI-R5 补齐 53 号迁移矩阵明文触发）
+            or _persistent(metrics, "reject_rate", 60)
+        ):  # 持续 60s
             return RollbackState.SOFT_HALT  # = REDUCING 态（仅减仓不新建）
 
     if current == RollbackState.SOFT_HALT:
-        if (_breach(metrics, "daily_loss")
-                or metrics.get("circuit_breaker")
-                or metrics.get("p0_event")):
+        if _breach(metrics, "daily_loss") or metrics.get("circuit_breaker") or metrics.get("p0_event"):
             return RollbackState.HARD_HALT
 
     # HARD_HALT → UNWINDING 不自动，须人工 + 双人复核（见 recover()）
     return current
 
 
-def recover(current: RollbackState, target: RollbackState,
-            rca_written: bool, dual_approval: bool,
-            position_flat: bool) -> RollbackState:
+def recover(
+    current: RollbackState, target: RollbackState, rca_written: bool, dual_approval: bool, position_flat: bool
+) -> RollbackState:
     """恢复（向更宽松态迁移）须人工 + 双人复核 + RCA 已写。
 
     Args:
@@ -262,8 +263,7 @@ def safe_read_state(persisted: dict | None) -> RollbackState:
 
 
 # --- 状态持久化（JsonStateStore 公开接口消费，#ARCH-QUANT-002 承载层） ---
-def persist_state(store: JsonStateStore, state: RollbackState, *,
-                  reason: str = "", trade_count: int = 0) -> Path:
+def persist_state(store: JsonStateStore, state: RollbackState, *, reason: str = "", trade_count: int = 0) -> Path:
     """原子落盘当前降级姿态（含触发原因/样本量/时间戳，供 RCA 追溯）。"""
     payload = {
         "state": state.value,

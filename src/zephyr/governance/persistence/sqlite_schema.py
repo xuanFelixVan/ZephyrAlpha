@@ -1014,8 +1014,7 @@ def _drop_tasks_domain_id(conn: sqlite3.Connection) -> None:
 
     # 1. 清理 events 表的 dangling task_id（历史遗留脏数据：ON DELETE SET NULL 未生效）
     conn.execute(
-        "UPDATE events SET task_id = NULL "
-        "WHERE task_id IS NOT NULL AND task_id NOT IN (SELECT task_id FROM tasks)"
+        "UPDATE events SET task_id = NULL WHERE task_id IS NOT NULL AND task_id NOT IN (SELECT task_id FROM tasks)"  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
     )
 
     # 2. 关闭 FK 检查（避免 DROP COLUMN 内部表重建触发其他表的 ON DELETE）
@@ -1024,18 +1023,16 @@ def _drop_tasks_domain_id(conn: sqlite3.Connection) -> None:
     # 3. 用 writable_schema 移除 tasks 的 FK(domain_id)->domains 约束
     conn.execute("PRAGMA writable_schema = ON")
     try:
-        sql = conn.execute(
-            "SELECT sql FROM sqlite_master WHERE type='table' AND name='tasks'"
-        ).fetchone()[0]
+        sql = conn.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='tasks'").fetchone()[0]  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
         # 移除 FK 约束行（先尝试 "逗号+FK"，再尝试单独 "FK"）
         new_sql = re.sub(
-            r',\s*\n\s*FOREIGN\s+KEY\s*\(\s*domain_id\s*\)\s+REFERENCES\s+domains\s*\(\s*domain_id\s*\)',
-            '',
+            r",\s*\n\s*FOREIGN\s+KEY\s*\(\s*domain_id\s*\)\s+REFERENCES\s+domains\s*\(\s*domain_id\s*\)",
+            "",
             sql,
         )
         new_sql = re.sub(
-            r'\n\s*FOREIGN\s+KEY\s*\(\s*domain_id\s*\)\s+REFERENCES\s+domains\s*\(\s*domain_id\s*\)',
-            '',
+            r"\n\s*FOREIGN\s+KEY\s*\(\s*domain_id\s*\)\s+REFERENCES\s+domains\s*\(\s*domain_id\s*\)",
+            "",
             new_sql,
         )
         conn.execute(
@@ -1074,9 +1071,7 @@ def _run_migration(
         # （有 details 列，无 payload/session_id 列）。v31 INSERT 假设 v19 已成功（有 payload），
         # 旧库需动态替换为 details->payload、NULL->session_id
         if version == 31 and i == 4:
-            backup_cols = {r[1] for r in conn.execute(
-                "PRAGMA table_info(_task_events_v31_backup)"
-            ).fetchall()}
+            backup_cols = {r[1] for r in conn.execute("PRAGMA table_info(_task_events_v31_backup)").fetchall()}
             if "payload" not in backup_cols and "details" in backup_cols:
                 stmt = """INSERT INTO task_events (event_id, task_id, event_type, payload, timestamp, session_id)
                SELECT event_id, task_id, event_type, COALESCE(details, '{}'), timestamp, NULL
@@ -1192,8 +1187,7 @@ def init_db(
 
             now = datetime.now(UTC).isoformat()
             conn.execute(
-                "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) "
-                "VALUES (?, ?, ?)",
+                "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                 (30, now, "DM-P3001: Drop legacy tasks.domain_id column (遗留列清理)"),
             )
 
@@ -1211,8 +1205,7 @@ def init_db(
 
                         now = datetime.now(UTC).isoformat()
                         conn.execute(
-                            "INSERT OR IGNORE INTO _schema_version "
-                            "(version, applied_at, description) VALUES (?, ?, ?)",
+                            "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
                             (30, now, description),
                         )
                     continue

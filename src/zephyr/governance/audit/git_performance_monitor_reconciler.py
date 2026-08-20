@@ -335,9 +335,7 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
 
             # 维度 1：绝对阈值（对标 git_health_smoke.py）
             if status_rc != 0:
-                warnings.append(
-                    f"git status 失败(rc={status_rc}): {status_err}"
-                )
+                warnings.append(f"git status 失败(rc={status_rc}): {status_err}")
             elif elapsed > STATUS_FAIL_SECONDS:
                 warnings.append(
                     f"git status 耗时 {elapsed:.1f}s > {STATUS_FAIL_SECONDS}s fail 阈值"
@@ -358,6 +356,7 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
                     from zephyr.gov_enforcement.rule_bridge.session_worktree import (
                         session_worktree_sweep,
                     )
+
                     sweep_result = session_worktree_sweep(
                         project_root,
                         max_age_minutes=30,
@@ -392,10 +391,7 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
             if warnings:
                 return ReconcileResult(
                     action="warn",
-                    detail=(
-                        "; ".join(warnings)
-                        + f" (elapsed={elapsed:.2f}s, stale_wt={stale_count})"
-                    ),
+                    detail=("; ".join(warnings) + f" (elapsed={elapsed:.2f}s, stale_wt={stale_count})"),
                     gate_id=GATE_ID,
                 )
             return ReconcileResult(
@@ -422,6 +418,7 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
         priority=PRIORITY,
         file_ops=frozenset({"read", "write"}),
     )
+
 
 # === Reverse-hierarchy backward-compat aliases (R5 private-assert elimination) ===
 # Public names above are the primary API. These _-prefixed aliases are kept

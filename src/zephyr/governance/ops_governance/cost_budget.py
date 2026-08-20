@@ -47,6 +47,7 @@ _logger = logging.getLogger(__name__)
 
 class CostBudgetExceededError(ZephyrBaseError):
     """成本预算超出硬性熔断阈值时抛出。"""
+
     error_code = "ZA-GV-0033"
 
     def __init__(self, current: float, limit: float, provider: str, model: str, *, error_code: str | None = None):

@@ -42,7 +42,6 @@ class CrossAssistantAdapter:
         """写入：adapters（Stage 4 公共化）。"""
         self._adapters = value
 
-
     def register_adapter(self, ide_name: str, config: dict = None) -> bool:
         if ide_name not in SUPPORTED_IDES:
             return False

@@ -38,7 +38,6 @@ class SBOMGuard:
         """写入：sbom（Stage 4 公共化）。"""
         self._sbom = value
 
-
     def register_dependency(self, name: str, version: str, hash_checksum: str = ""):
         self._sbom[name] = {"version": version, "hash": hash_checksum}
 

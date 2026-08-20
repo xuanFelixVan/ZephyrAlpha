@@ -59,6 +59,7 @@ __all__ = [
 
 class SelfHealError(Exception):
     """自愈闭环异常基类."""
+
     error_code = "ZA-GV-0034"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -256,7 +257,7 @@ class SelfHealer:
             logger.error("写入权限不足: %s", target_path)
             try:
                 if os.path.exists(tmp_path):
-                    os.remove(tmp_path)
+                    os.remove(tmp_path)  # ops-guard-exempt: 原子写 tmp 文件 PermissionError 兜底清理（非治理产物删除）
             except OSError:
                 pass
             return False
@@ -264,7 +265,7 @@ class SelfHealer:
             logger.error("写入失败: %s — %s", target_path, exc)
             try:
                 if "tmp_path" in locals() and os.path.exists(tmp_path):
-                    os.remove(tmp_path)
+                    os.remove(tmp_path)  # ops-guard-exempt: 原子写 tmp 文件 OSError 兜底清理（非治理产物删除）
             except OSError:
                 pass
             return False

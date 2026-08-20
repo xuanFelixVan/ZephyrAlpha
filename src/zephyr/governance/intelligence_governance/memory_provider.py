@@ -172,9 +172,7 @@ class MemoryProvider(IngestProviderBase):
         """探活。内存数据源始终可用。"""
         return True
 
-    def fetch(
-        self, payload: FetchPayload, policy: "SourcePolicy"
-    ) -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
         """按 payload 拉取数据，返回 FetchResult 迭代器。
 
         内存数据源将 fetch_historical 的 DataFrame 转换为 FetchResult。

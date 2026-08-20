@@ -98,7 +98,11 @@ class DegradationManager:
 
     @staticmethod
     def compute_target_tier(level: DegradationLevel, current: ModelTier) -> ModelTier:
-        mapping = {DegradationLevel.MODEL_SWITCH: ModelTier.ECONOMY, DegradationLevel.COMPRESS: ModelTier.MINIMAL, DegradationLevel.MINIMAL: ModelTier.MINIMAL}
+        mapping = {
+            DegradationLevel.MODEL_SWITCH: ModelTier.ECONOMY,
+            DegradationLevel.COMPRESS: ModelTier.MINIMAL,
+            DegradationLevel.MINIMAL: ModelTier.MINIMAL,
+        }
         target = mapping.get(level)
         if target is None:
             return current
@@ -108,7 +112,6 @@ class DegradationManager:
         if target_idx <= current_idx:
             return current
         return target
-
 
     @property
     def state(self) -> DegradationState:

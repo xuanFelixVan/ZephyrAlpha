@@ -165,7 +165,6 @@ class ContinuousTrust:
         """写入：ledger_dir（Stage 4 公共化）。"""
         self._ledger_dir = value
 
-
     def record_trust_event(
         self,
         trust_delta: float,

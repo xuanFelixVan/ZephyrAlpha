@@ -225,7 +225,8 @@ def _is_ai_behavior_error_event(entry: dict[str, Any]) -> bool:
 
 
 def _merge_event_into_patterns(
-    patterns: dict[str, dict[str, Any]], event: dict[str, Any],
+    patterns: dict[str, dict[str, Any]],
+    event: dict[str, Any],
 ) -> None:
     """将单条事件合并到 patterns dict（P4-1b 内部 helper，in-place 修改）。"""
     error = event["error"]
@@ -268,7 +269,8 @@ def _persist_patterns(output_path: Path, result: dict[str, Any]) -> None:
     try:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(
-            json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8",
+            json.dumps(result, ensure_ascii=False, indent=2),
+            encoding="utf-8",
         )
     except OSError as e:
         logger.warning("P4-1b: persist patterns to %s failed: %s", output_path, e)

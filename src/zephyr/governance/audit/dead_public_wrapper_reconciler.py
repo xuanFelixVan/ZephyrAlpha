@@ -165,14 +165,16 @@ def _find_function_pairs(tree: ast.AST) -> list[dict]:
     for name, pub_node in module_funcs.items():
         private_name = "_" + name
         if private_name in module_funcs:
-            pairs.append({
-                "public_name": name,
-                "private_name": private_name,
-                "public_node": pub_node,
-                "private_node": module_funcs[private_name],
-                "scope": "module",
-                "line": pub_node.lineno,
-            })
+            pairs.append(
+                {
+                    "public_name": name,
+                    "private_name": private_name,
+                    "public_node": pub_node,
+                    "private_node": module_funcs[private_name],
+                    "scope": "module",
+                    "line": pub_node.lineno,
+                }
+            )
 
     # --- 类级方法 ---
     for node in ast.iter_child_nodes(tree):
@@ -188,14 +190,16 @@ def _find_function_pairs(tree: ast.AST) -> list[dict]:
         for mname, pub_node in class_funcs.items():
             private_name = "_" + mname
             if private_name in class_funcs:
-                pairs.append({
-                    "public_name": mname,
-                    "private_name": private_name,
-                    "public_node": pub_node,
-                    "private_node": class_funcs[private_name],
-                    "scope": f"class:{node.name}",
-                    "line": pub_node.lineno,
-                })
+                pairs.append(
+                    {
+                        "public_name": mname,
+                        "private_name": private_name,
+                        "public_node": pub_node,
+                        "private_node": class_funcs[private_name],
+                        "scope": f"class:{node.name}",
+                        "line": pub_node.lineno,
+                    }
+                )
 
     return pairs
 
@@ -224,9 +228,7 @@ def _is_trivial_wrapper(node: ast.AST, target_name: str) -> bool:
         stmt
         for stmt in body
         if not (
-            isinstance(stmt, ast.Expr)
-            and isinstance(stmt.value, ast.Constant)
-            and isinstance(stmt.value.value, str)
+            isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Constant) and isinstance(stmt.value.value, str)
         )
     ]
 
@@ -293,18 +295,16 @@ def _find_dead_public_wrappers(project_root: Path) -> list[dict]:
                 continue
 
             for pair in _find_function_pairs(tree):
-                if not _is_trivial_wrapper(
-                    pair["public_node"], pair["private_name"]
-                ):
+                if not _is_trivial_wrapper(pair["public_node"], pair["private_name"]):
                     continue
-                candidates.append({
-                    "file": str(py_file.relative_to(project_root)).replace(
-                        "\\", "/"
-                    ),
-                    "function": pair["public_name"],
-                    "line": pair["line"],
-                    "scope": pair["scope"],
-                })
+                candidates.append(
+                    {
+                        "file": str(py_file.relative_to(project_root)).replace("\\", "/"),
+                        "function": pair["public_name"],
+                        "line": pair["line"],
+                        "scope": pair["scope"],
+                    }
+                )
 
     if not candidates:
         return []
@@ -313,17 +313,13 @@ def _find_dead_public_wrappers(project_root: Path) -> list[dict]:
     # Build a combined regex matching any candidate name followed by (
     # \b ensures _func_name doesn't match (underscore is a word char)
     candidate_names = {c["function"] for c in candidates}
-    combined_pattern = re.compile(
-        r"\b(" + "|".join(re.escape(n) for n in candidate_names) + r")\("
-    )
+    combined_pattern = re.compile(r"\b(" + "|".join(re.escape(n) for n in candidate_names) + r")\(")
 
     # Search directories: src/zephyr + scripts + tests
     # (covers production code, scripts, and test calls — but NOT mock patches
     #  which use mock.patch('module.func_name') without trailing ()
     call_counts: dict[str, int] = {name: 0 for name in candidate_names}
-    search_dirs = [
-        project_root / d for d in ("src/zephyr", "scripts", "tests")
-    ]
+    search_dirs = [project_root / d for d in ("src/zephyr", "scripts", "tests")]
 
     for search_dir in search_dirs:
         if not search_dir.exists():
@@ -332,9 +328,7 @@ def _find_dead_public_wrappers(project_root: Path) -> list[dict]:
             if "__pycache__" in py_file.parts:
                 continue
             try:
-                content = py_file.read_text(
-                    encoding="utf-8", errors="replace"
-                )
+                content = py_file.read_text(encoding="utf-8", errors="replace")
             except Exception:  # noqa: BLE001 — fail-open
                 continue
             for match in combined_pattern.finditer(content):
@@ -342,9 +336,7 @@ def _find_dead_public_wrappers(project_root: Path) -> list[dict]:
                 call_counts[name] += 1
 
     # === Phase 3: Filter to dead wrappers (count <= 1 = only definition) ===
-    dead = [
-        c for c in candidates if call_counts[c["function"]] <= 1
-    ]
+    dead = [c for c in candidates if call_counts[c["function"]] <= 1]
 
     return dead
 
@@ -363,14 +355,9 @@ def make_dead_public_wrapper_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         """Trigger when Python files in src/ are committed."""
-        return any(
-            f.startswith("src/") and f.endswith(".py")
-            for f in committed_files
-        )
+        return any(f.startswith("src/") and f.endswith(".py") for f in committed_files)
 
-    def _reconcile(
-        committed_files: list[str], session_id: str
-    ) -> ReconcileResult:
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         """Scan for dead public wrappers and warn if found."""
         try:
             dead = _find_dead_public_wrappers(project_root)
@@ -383,17 +370,10 @@ def make_dead_public_wrapper_reconciler(gateway: "object") -> ReconcilerSpec:
                 )
 
             # 格式化 detail（截断防过长）
-            items = [
-                f"{d['file']}:{d['function']} (line {d['line']}, {d['scope']})"
-                for d in dead[:_MAX_DETAIL_ITEMS]
-            ]
-            detail = (
-                f"{len(dead)} dead public wrapper(s): {'; '.join(items)}"
-            )
+            items = [f"{d['file']}:{d['function']} (line {d['line']}, {d['scope']})" for d in dead[:_MAX_DETAIL_ITEMS]]
+            detail = f"{len(dead)} dead public wrapper(s): {'; '.join(items)}"
             if len(dead) > _MAX_DETAIL_ITEMS:
-                detail += (
-                    f"; ... and {len(dead) - _MAX_DETAIL_ITEMS} more"
-                )
+                detail += f"; ... and {len(dead) - _MAX_DETAIL_ITEMS} more"
 
             return ReconcileResult(
                 action="warn",

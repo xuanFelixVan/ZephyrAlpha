@@ -51,7 +51,6 @@ class ClockGuard:
         """写入：wall_start（Stage 4 公共化）。"""
         self._wall_start = value
 
-
     def detect_drift(self) -> float:
         mono_elapsed = time.monotonic() - self._monotonic_start
         wall_elapsed = time.time() - self._wall_start

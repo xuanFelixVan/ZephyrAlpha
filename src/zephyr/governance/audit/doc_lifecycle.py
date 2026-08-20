@@ -163,7 +163,7 @@ def is_ghost(ref: str, source: Path, project_root: Path) -> bool:
     if ref.startswith(("http://", "https://", "mailto:", "#")):
         return False
     if ref.startswith("file:///"):
-        ref = ref[len("file:///"):]
+        ref = ref[len("file:///") :]
     p1 = (source.parent / ref).resolve()
     if p1.exists():
         return False
@@ -309,9 +309,7 @@ def evaluate_lifecycle(repo_root: Path, *, now: int | None = None) -> LifecycleR
             continue
 
         durable_ghosts = [
-            r
-            for r in extract_refs(content)
-            if classify_path(r) == "durable" and is_ghost(r, doc, repo_root)
+            r for r in extract_refs(content) if classify_path(r) == "durable" and is_ghost(r, doc, repo_root)
         ]
         inactive = (now - mtime) > INACTIVE_THRESHOLD_SECONDS
         has_signal = bool(durable_ghosts) or inactive
@@ -326,9 +324,7 @@ def evaluate_lifecycle(repo_root: Path, *, now: int | None = None) -> LifecycleR
                     baseline_mtime=mtime,
                     last_checked=now,
                     ghost_refs=durable_ghosts[:20],
-                    reason=(
-                        f"durable_ghosts={len(durable_ghosts)}, inactive={inactive}"
-                    ),
+                    reason=(f"durable_ghosts={len(durable_ghosts)}, inactive={inactive}"),
                 )
                 report.watched.append(rel)
             continue

@@ -38,7 +38,6 @@ class GhostScanner:
         """写入：registered_pids（Stage 4 公共化）。"""
         self._registered_pids = value
 
-
     def register(self, pid: str):
         self._registered_pids.add(pid)
 

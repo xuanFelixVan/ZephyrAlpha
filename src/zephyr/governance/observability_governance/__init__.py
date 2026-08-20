@@ -47,4 +47,8 @@ __all__ = [
     "observability_dashboard",
     "provenance_key",
     "validate_e2e",
-'analytics_base', 'objective_tracker', 'projection_engine', 'query_metrics']
+    "analytics_base",
+    "objective_tracker",
+    "projection_engine",
+    "query_metrics",
+]

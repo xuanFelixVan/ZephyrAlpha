@@ -249,9 +249,7 @@ class TransitionMixin:
                 from_status = TaskStatus(row["status"])
 
                 if not _is_valid_transition(from_status, to_status):
-                    raise InvalidTransitionError(
-                        f"非法转换 {from_status.value} -> {to_status.value}"
-                    )
+                    raise InvalidTransitionError(f"非法转换 {from_status.value} -> {to_status.value}")
 
                 self._apply_status_update(conn, task_id, to_status, session_id, waiting_for)
 
@@ -280,7 +278,8 @@ class TransitionMixin:
 
             raise
 
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.3 修复: assert->if/raise
+        if updated_row is None:
+            raise RuntimeError("post-write fetch returned None")  # 5.88.3 修复: assert->if/raise
 
         from zephyr.governance.ops_governance.event_hook import TransitionEvent, hook_registry
 

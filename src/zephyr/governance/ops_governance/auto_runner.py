@@ -163,7 +163,6 @@ class GovernanceAutoRunner:
         """公共接口：write_audit_log（Stage 4 公共化）。"""
         return self._write_audit_log()
 
-
     @property
     def result(self):
         """只读：result（Stage 4 公共化）。"""
@@ -174,11 +173,9 @@ class GovernanceAutoRunner:
         """写入：result（Stage 4 公共化）。"""
         self._result = value
 
-
     def execute_gate(self, gate_name) -> bool:
         """公共接口：execute_gate（Stage 4 公共化）。"""
         return self._execute_gate(gate_name)
-
 
     def run(self) -> AutoRunnerResult:
         """执行自动运行 + 自动关闭的完整流程。

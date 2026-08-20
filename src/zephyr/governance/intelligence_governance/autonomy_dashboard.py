@@ -133,7 +133,6 @@ class AutonomyDashboard:
         """公共接口：load_metrics（Stage 4 公共化）。"""
         return self._load_metrics()
 
-
     @property
     def data_dir(self):
         """只读：data_dir（Stage 4 公共化）。"""
@@ -143,7 +142,6 @@ class AutonomyDashboard:
     def data_dir(self, value):
         """写入：data_dir（Stage 4 公共化）。"""
         self._data_dir = value
-
 
     def record_rollback(self, success: bool, token_cost: int = 0, rto_ms: int = 0) -> AutonomyMetrics:
         metrics = self._load_metrics()

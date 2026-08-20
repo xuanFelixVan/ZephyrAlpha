@@ -219,8 +219,6 @@ Usage
 # A5 --> O1
 """
 
-
-
 from __future__ import annotations
 
 import logging
@@ -242,7 +240,6 @@ from zephyr.shared.utils.time_utils import now_utc
 logger = logging.getLogger(__name__)
 
 
-
 _GATE_ID = "GATE-BLUEPRINT-STATUS-TRANSITION"
 
 # priority=825: 晚于 cross_layer_contract(215)，早于 workspace_hygiene(890)
@@ -250,35 +247,24 @@ _GATE_ID = "GATE-BLUEPRINT-STATUS-TRANSITION"
 _PRIORITY = 825
 
 
-
 # STABILITY 单调推进序列（stability_vocabulary.yaml 真源）
 
 # 索引越大表示越稳定；后向转换（new_index < old_index）触发 warn
 
 _STABILITY_ORDER: dict[str, int] = {
-
     "volatile": 0,
-
     "evolving": 1,
-
     "stable": 2,
-
     "frozen": 3,
-
 }
-
 
 
 # MATURITY 单调推进序列（maturity_vocabulary.yaml 真源）
 
 _MATURITY_ORDER: dict[str, int] = {
-
     "design": 0,
-
     "production": 1,
-
 }
-
 
 
 # 头部标记正则：匹配 `# [STABILITY] evolving` 或 `# [MATURITY] production`（ARCH-MM-002 两档化）
@@ -286,11 +272,7 @@ _MATURITY_ORDER: dict[str, int] = {
 _HEADER_RE = re.compile(r"^#\s*\[(STABILITY|MATURITY)\]\s*(\w+)", re.MULTILINE)
 
 
-
-
-
 def _extract_status_markers(source: str) -> dict[str, str]:
-
     """从源码头部提取 [STABILITY] 和 [MATURITY] 标记值。
 
 
@@ -312,7 +294,6 @@ def _extract_status_markers(source: str) -> dict[str, str]:
     markers: dict[str, str] = {}
 
     for m in _HEADER_RE.finditer(source):
-
         key = m.group(1)
 
         value = m.group(2)
@@ -320,25 +301,16 @@ def _extract_status_markers(source: str) -> dict[str, str]:
         # 只取第一次匹配（文件头标记，避免误匹配后续注释）
 
         if key not in markers:
-
             markers[key] = value
 
     return markers
 
 
-
-
-
 def _detect_backward_transition(
-
     old_value: str,
-
     new_value: str,
-
     order_map: dict[str, int],
-
 ) -> bool:
-
     """检测状态转换是否为后向（降级）。
 
 
@@ -360,7 +332,6 @@ def _detect_backward_transition(
     """
 
     if old_value not in order_map or new_value not in order_map:
-
         # 值不在词表中（可能是 typo 或新词未登记），不报漂移（由其他 gate 检测）
 
         return False
@@ -368,23 +339,13 @@ def _detect_backward_transition(
     return order_map[new_value] < order_map[old_value]
 
 
-
-
-
 def _persist_drift_finding(
-
     project_root: Path,
-
     file_path: str,
-
     field: str,
-
     old_value: str,
-
     new_value: str,
-
 ) -> None:
-
     """持久化状态降级到 governance.db drift_audit_findings 表。
 
 
@@ -410,11 +371,9 @@ def _persist_drift_finding(
     db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
 
     try:
-
         conn = sqlite3.connect(db_path, timeout=30.0)
 
         try:
-
             conn.execute(SQL_CREATE_DRIFT_AUDIT_FINDINGS)
 
             finding_id = f"bt-{uuid.uuid4().hex[:12]}"
@@ -422,33 +381,20 @@ def _persist_drift_finding(
             detail = f"{field} 后向转换 {old_value}→{new_value}（疑似降级，需仲裁）"
 
             conn.execute(
-
                 SQL_INSERT_DRIFT_AUDIT_FINDING,
-
-                (finding_id, now_utc(),
-
-                 "BLUEPRINT_STATUS_BACKWARD", "HIGH",
-
-                 file_path, detail),
-
+                (finding_id, now_utc(), "BLUEPRINT_STATUS_BACKWARD", "HIGH", file_path, detail),
             )
 
             conn.commit()
 
         finally:
-
             conn.close()
 
     except Exception as e:  # noqa: BLE001 — fail-open
-
         logger.warning("blueprint_status_transition: persist finding failed: %s", e)
 
 
-
-
-
 def make_blueprint_status_transition_reconciler(gateway: "object") -> ReconcilerSpec:
-
     """构造 GATE-BLUEPRINT-STATUS-TRANSITION post-commit 蓝图状态单调推进 reconciler。
 
 
@@ -469,64 +415,43 @@ def make_blueprint_status_transition_reconciler(gateway: "object") -> Reconciler
 
     project_root = gateway.project_root
 
-
-
     def _safe_relpath(f: str) -> str:
 
         try:
-
             return os.path.relpath(f, str(project_root)).replace("\\", "/")
 
         except (ValueError, OSError):
-
             return f.replace("\\", "/")
-
-
 
     def _trigger(committed_files: list[str]) -> bool:
 
         for f in committed_files:
-
             rel = _safe_relpath(f)
 
             if not rel.endswith(".py"):
-
                 continue
 
             # 快速检查：只读文件前 20 行（BLUEPRINT 头部在前几行）
 
             try:
-
                 with open(f, "r", encoding="utf-8", errors="replace") as fh:
-
                     head = "".join(fh.readline() for _ in range(20))
 
             except OSError:
-
                 continue
 
             if _HEADER_RE.search(head):
-
                 return True
 
         return False
 
-
-
     def _check_field_transition(
-
         rel: str,
-
         field: str,
-
         old_markers: dict[str, str],
-
         new_markers: dict[str, str],
-
         order_map: dict[str, int],
-
     ) -> str | None:
-
         """检测单个字段（STABILITY / MATURITY）的后向转换。
 
 
@@ -538,7 +463,6 @@ def make_blueprint_status_transition_reconciler(gateway: "object") -> Reconciler
         """
 
         if field not in new_markers or field not in old_markers:
-
             return None
 
         old_v = old_markers[field]
@@ -546,25 +470,18 @@ def make_blueprint_status_transition_reconciler(gateway: "object") -> Reconciler
         new_v = new_markers[field]
 
         if old_v == new_v:
-
             return None
 
         if not _detect_backward_transition(old_v, new_v, order_map):
-
             return None
 
         _persist_drift_finding(project_root, rel, field, old_v, new_v)
 
         return f"{rel}: {field} {old_v}→{new_v}（后向降级）"
 
-
-
     def _check_single_file_markers(
-
         f: str,
-
     ) -> tuple[str, dict[str, str], dict[str, str]] | None:
-
         """读取单文件的新旧版本 status markers。
 
 
@@ -580,53 +497,41 @@ def make_blueprint_status_transition_reconciler(gateway: "object") -> Reconciler
         rel = _safe_relpath(f)
 
         if not rel.endswith(".py"):
-
             return None
 
         try:
-
             with open(f, "r", encoding="utf-8", errors="replace") as fh:
-
                 new_source = fh.read()
 
         except OSError:
-
             return None
 
         new_markers = _extract_status_markers(new_source)
 
         if not new_markers:
-
             return None  # 无 STABILITY/MATURITY 标记，skip
 
         old_source = git_show_file(str(project_root), rel, "HEAD~1")
 
         if old_source is None:
-
             return None  # 新增文件，无旧版本可比对
 
         old_markers = _extract_status_markers(old_source)
 
         if not old_markers:
-
             return None  # 旧版本无标记（可能从未登记到已登记）
 
         return rel, old_markers, new_markers
 
-
-
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
 
         try:
-
             drift_details: list[str] = []
 
             for f in committed_files:
-
                 markers = _check_single_file_markers(f)
 
                 if markers is None:
-
                     continue
 
                 rel, old_markers, new_markers = markers
@@ -634,81 +539,45 @@ def make_blueprint_status_transition_reconciler(gateway: "object") -> Reconciler
                 # 检测 STABILITY + MATURITY 后向转换（单文件可能两类都命中）
 
                 for field, order_map in (
-
                     ("STABILITY", _STABILITY_ORDER),
-
                     ("MATURITY", _MATURITY_ORDER),
-
                 ):
-
-                    hit = _check_field_transition(
-
-                        rel, field, old_markers, new_markers, order_map
-
-                    )
+                    hit = _check_field_transition(rel, field, old_markers, new_markers, order_map)
 
                     if hit:
-
                         drift_details.append(hit)
 
-
-
             if drift_details:
-
                 summary = "; ".join(drift_details[:3])
 
                 if len(drift_details) > 3:
-
                     summary += f" (还有 {len(drift_details) - 3} 个文件)"
 
                 return ReconcileResult(
-
                     action="warn",
-
                     detail=f"蓝图状态后向转换 {len(drift_details)} 处: {summary}",
-
                     gate_id=_GATE_ID,
-
                 )
 
             return ReconcileResult(
-
                 action="clean",
-
                 detail="无蓝图状态后向转换",
-
                 gate_id=_GATE_ID,
-
             )
 
-
-
         except Exception as e:  # noqa: BLE001 — reconciler 永不抛异常
-
             logger.warning("blueprint_status_transition: reconcile failed: %s", e)
 
             return ReconcileResult(
-
                 action="warn",
-
                 detail=f"blueprint_status_transition reconcile error: {e}",
-
                 gate_id=_GATE_ID,
-
             )
 
-
-
     return ReconcilerSpec(
-
         gate_id=_GATE_ID,
-
         trigger=_trigger,
-
         reconcile=_reconcile,
-
         priority=_PRIORITY,
         file_ops=frozenset({"read", "write"}),
-
     )
-

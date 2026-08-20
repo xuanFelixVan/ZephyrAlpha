@@ -5,6 +5,6 @@
 # [TTL] permanent
 # Phase 1 gate marker (kebab-case dir). Implementation in zephyr.gov_drift.
 
-DRIFT_DETECTOR_PHASE1_MARKER = 'drift-detector-v1'
+DRIFT_DETECTOR_PHASE1_MARKER = "drift-detector-v1"
 
 __all__: list[str] = []

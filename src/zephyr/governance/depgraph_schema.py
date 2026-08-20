@@ -121,6 +121,7 @@ _PG_OPTIONAL_KEYS: tuple[str, ...] = (
     "POSTGRES_WRITER_PASSWORD",
 )
 
+
 def _load_pg_config() -> dict[str, str]:
     """加载 PostgreSQL 连接参数。
 
@@ -136,10 +137,7 @@ def _load_pg_config() -> dict[str, str]:
     if database_url:
         return _load_pg_config_from_url(database_url)
     if not _PG_ENV_PATH.exists():
-        raise FileNotFoundError(
-            "PG 连接配置文件不存在\n"
-            "请参考 P2迁移方案 §四 创建该文件（含 5 个必需字段）"
-        )
+        raise FileNotFoundError("PG 连接配置文件不存在\n请参考 P2迁移方案 §四 创建该文件（含 5 个必需字段）")
     config: dict[str, str] = {}
     missing: list[str] = []
     for key in _PG_REQUIRED_KEYS:
@@ -160,6 +158,7 @@ def _load_pg_config() -> dict[str, str]:
             pass
     return config
 
+
 def _load_pg_config_from_url(database_url: str) -> dict[str, str]:
     """从 DATABASE_URL 环境变量解析 PG 连接参数（§5.34.5）。
 
@@ -169,9 +168,7 @@ def _load_pg_config_from_url(database_url: str) -> dict[str, str]:
     """
     parsed = urlparse(database_url)
     if parsed.scheme not in ("postgres", "postgresql"):
-        raise ValueError(
-            f"DATABASE_URL scheme 非法: {parsed.scheme!r}（要求 postgres:// 或 postgresql://）"
-        )
+        raise ValueError(f"DATABASE_URL scheme 非法: {parsed.scheme!r}（要求 postgres:// 或 postgresql://）")
     config: dict[str, str] = {
         "POSTGRES_HOST": parsed.hostname or "",
         "POSTGRES_PORT": str(parsed.port or 5432),
@@ -189,6 +186,7 @@ def _load_pg_config_from_url(database_url: str) -> dict[str, str]:
         except SecretsError:
             pass
     return config
+
 
 def _build_pg_dsn(
     config: dict[str, str] | None = None,
@@ -233,6 +231,7 @@ def _build_pg_dsn(
         kwargs["password"] = config["POSTGRES_WRITER_PASSWORD"]
     return kwargs
 
+
 def _check_role_config(config: dict[str, str], role: str) -> None:
     """检查角色凭证是否已配置（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL）。"""
     user_key = f"POSTGRES_{role}_USER"
@@ -244,6 +243,7 @@ def _check_role_config(config: dict[str, str], role: str) -> None:
             f"请执行 scripts/governance/migrate_sqlite_to_pg/04_create_roles.sql 创建角色，"
             f"并在 config/.env.postgres 中添加 {user_key}/{pass_key}"
         )
+
 
 # ---------------------------------------------------------------------------
 # DDL — nodes 表（31列，v11删除module_lifecycle_state+添加CHECK约束）
@@ -1301,6 +1301,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
 # verify_schema_health.py 继续引用 _MIGRATIONS（保持不变）。
 MIGRATIONS: list[tuple[int, str, list[str]]] = _MIGRATIONS
 
+
 def _get_current_version(conn: object) -> int:
     """获取 PG schema 版本。
 
@@ -1328,6 +1329,7 @@ def _get_current_version(conn: object) -> int:
         cur.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
         row = cur.fetchone()
         return row[0] if row else 0
+
 
 def _run_migration(
     conn: object,
@@ -1359,13 +1361,16 @@ def _run_migration(
             )
             if any(p in msg for p in benign):
                 continue
-            raise RuntimeError(f"Migration v{version} statement #{i} failed: {exc}") from exc  # 5.99.1 修复: 移除SQL文本泄露,仅保留版本/语句编号/原始异常
+            raise RuntimeError(
+                f"Migration v{version} statement #{i} failed: {exc}"
+            ) from exc  # 5.99.1 修复: 移除SQL文本泄露,仅保留版本/语句编号/原始异常
     with conn.cursor() as cur:
         cur.execute(
             "INSERT INTO _schema_version (version, applied_at, description) VALUES (%s, %s, %s) "
             "ON CONFLICT (version) DO NOTHING",
             (version, now, description),
         )
+
 
 def init_db(
     db_path: Path | str | None = None,  # 保留参数向后兼容（PG模式下忽略）
@@ -1408,6 +1413,7 @@ def init_db(
     finally:
         release_depgraph_pg_connection(conn)
 
+
 # ---------------------------------------------------------------------------
 # §5.64.1 治本：per-role 轻量连接池（ThreadedConnectionPool, minconn=1 maxconn=5）
 # ---------------------------------------------------------------------------
@@ -1415,6 +1421,7 @@ def init_db(
 _POOL_MINCONN = 1
 _POOL_MAXCONN = 5
 _POOLED_CONNS_SWEEP_THRESHOLD = 512  # 归属登记表超过此规模时清理已关闭连接的条目
+
 
 class _SelfHealingPool(ThreadedConnectionPool):
     """自愈连接池：回收被调用方 close() 但未归还的连接槽位（防池耗尽）。
@@ -1438,6 +1445,7 @@ class _SelfHealingPool(ThreadedConnectionPool):
                 conn = self._connect(key)
             return conn
 
+
 _pools: dict[str, _SelfHealingPool] = {}
 _pools_lock = threading.Lock()
 _pools_pid: int | None = None  # 池所属进程 PID（fork 安全：子进程丢弃继承的池引用）
@@ -1447,10 +1455,12 @@ _atexit_registered = False
 _pooled_conns: dict[int, tuple[_SelfHealingPool, psycopg2.extensions.connection]] = {}
 _pooled_conns_lock = threading.Lock()
 
+
 def _pool_role(superuser: bool, read_only: bool) -> str:
     if superuser:
         return "superuser"
     return "reader" if read_only else "writer"
+
 
 def _get_role_pool(role: str) -> _SelfHealingPool:
     """按角色获取/创建连接池（lazy 创建 + fork 安全 + atexit 注册）。"""
@@ -1477,6 +1487,7 @@ def _get_role_pool(role: str) -> _SelfHealingPool:
             _atexit_registered = True
     return pool
 
+
 def _checkout_pooled(superuser: bool, read_only: bool) -> psycopg2.extensions.connection:
     """从角色池取出连接并登记归属（供 release_depgraph_pg_connection 路由）。"""
     pool = _get_role_pool(_pool_role(superuser, read_only))
@@ -1497,6 +1508,7 @@ def _checkout_pooled(superuser: bool, read_only: bool) -> psycopg2.extensions.co
                     del _pooled_conns[stale_id]
         _pooled_conns[id(conn)] = (pool, conn)
     return conn
+
 
 def release_depgraph_pg_connection(conn: psycopg2.extensions.connection | None) -> None:
     """归还 get_depgraph_pg_connection() 获取的连接（§5.64.1 配套接口）。
@@ -1540,6 +1552,7 @@ def release_depgraph_pg_connection(conn: psycopg2.extensions.connection | None) 
         except Exception:  # noqa: BLE001
             pass
 
+
 def _close_all_pools() -> None:
     """进程退出时关闭全部连接池（atexit 注册，首次建池时挂载）。"""
     with _pools_lock:
@@ -1550,9 +1563,11 @@ def _close_all_pools() -> None:
                 pass
         _pools.clear()
 
+
 # ---------------------------------------------------------------------------
 # 公共 API
 # ---------------------------------------------------------------------------
+
 
 def get_depgraph_pg_connection(
     db_path: Path | str | None = None,  # 保留参数向后兼容（PG模式下忽略）
@@ -1622,8 +1637,10 @@ def get_depgraph_pg_connection(
 
     return conn
 
+
 # 原 get_db_connection 废弃别名已删除（5.61.7+5.1.5#2 治本：全仓零活跃调用点）。
 # 禁止恢复——与 SQLite 同名函数冲突（AGENTS.md §11.4 的历史描述以本代码为准）。
+
 
 # ---------------------------------------------------------------------------
 # PgConnectionProvider Protocol（#ARCH-098 DIP 注入缝，2026-07-27 立项）
@@ -1654,11 +1671,12 @@ class PgConnectionProvider(Protocol):
         *,
         autocommit: bool | None = None,
         read_only: bool = True,
-    ) -> "psycopg2.extensions.connection":
-        ...
+    ) -> "psycopg2.extensions.connection": ...
+
 
 # 默认提供者 = get_depgraph_pg_connection（保持向后兼容）
 _DEFAULT_PG_CONN_PROVIDER: PgConnectionProvider = get_depgraph_pg_connection
+
 
 def table_names(db_path: Path | str | None = None) -> list[str]:
     """返回 depgraph (PostgreSQL) 中所有 public schema 表名。"""
@@ -1675,6 +1693,7 @@ def table_names(db_path: Path | str | None = None) -> list[str]:
     finally:
         release_depgraph_pg_connection(conn)
 
+
 def schema_version(db_path: Path | str | None = None) -> int:
     """返回当前 depgraph (PostgreSQL) 的 schema 版本。"""
     conn = get_depgraph_pg_connection()
@@ -1683,11 +1702,13 @@ def schema_version(db_path: Path | str | None = None) -> int:
     finally:
         release_depgraph_pg_connection(conn)
 
+
 # ---------------------------------------------------------------------------
 # 5.18.12 治本：PG 迁移框架恢复（轻量级，不依赖 alembic）
 # ---------------------------------------------------------------------------
 
 _PG_SCHEMA_SQL_PATH: Path = REPO_ROOT / "scripts" / "governance" / "migrate_sqlite_to_pg" / "02_create_pg_schema.sql"
+
 
 def apply_pg_schema(*, version: int | None = None, description: str = "") -> None:
     """从 02_create_pg_schema.sql 执行 DDL（幂等，CREATE IF NOT EXISTS）。
@@ -1709,6 +1730,7 @@ def apply_pg_schema(*, version: int | None = None, description: str = "") -> Non
             cur.execute(sql_text)
         if version is not None:
             from datetime import UTC, datetime
+
             now = datetime.now(UTC).isoformat()
             with conn.cursor() as cur:
                 cur.execute(
@@ -1720,9 +1742,11 @@ def apply_pg_schema(*, version: int | None = None, description: str = "") -> Non
     finally:
         release_depgraph_pg_connection(conn)
 
+
 # ---------------------------------------------------------------------------
 # 5.18.13 治本：迁移前备份（downgrade 替代方案）
 # ---------------------------------------------------------------------------
+
 
 def backup_before_migration(backup_path: Path | str) -> Path:
     """在应用破坏性 migration 前备份 PG depgraph（pg_dump）。
@@ -1741,17 +1765,26 @@ def backup_before_migration(backup_path: Path | str) -> Path:
 
     cmd = [
         "pg_dump",
-        "-h", config["POSTGRES_HOST"],
-        "-p", config["POSTGRES_PORT"],
-        "-U", config["POSTGRES_USER"],
-        "-d", config["POSTGRES_DB"],
-        "-F", "c",  # custom format for pg_restore
-        "-f", str(backup_file),
+        "-h",
+        config["POSTGRES_HOST"],
+        "-p",
+        config["POSTGRES_PORT"],
+        "-U",
+        config["POSTGRES_USER"],
+        "-d",
+        config["POSTGRES_DB"],
+        "-F",
+        "c",  # custom format for pg_restore
+        "-f",
+        str(backup_file),
     ]
-    result = run_subprocess_hidden(cmd, capture_output=True, text=True, env={**os.environ, "PGPASSWORD": config["POSTGRES_PASSWORD"]})
+    result = run_subprocess_hidden(
+        cmd, capture_output=True, text=True, env={**os.environ, "PGPASSWORD": config["POSTGRES_PASSWORD"]}
+    )
     if result.returncode != 0:
         raise RuntimeError(f"pg_dump failed: {result.stderr}")
     return backup_file
+
 
 def restore_from_backup(backup_path: Path | str) -> None:
     """从 pg_dump 备份恢复 PG depgraph（downgrade 执行入口）。
@@ -1766,17 +1799,24 @@ def restore_from_backup(backup_path: Path | str) -> None:
 
     cmd = [
         "pg_restore",
-        "-h", config["POSTGRES_HOST"],
-        "-p", config["POSTGRES_PORT"],
-        "-U", config["POSTGRES_USER"],
-        "-d", config["POSTGRES_DB"],
+        "-h",
+        config["POSTGRES_HOST"],
+        "-p",
+        config["POSTGRES_PORT"],
+        "-U",
+        config["POSTGRES_USER"],
+        "-d",
+        config["POSTGRES_DB"],
         "--clean",  # 先 DROP 再 CREATE
         "--if-exists",
         str(backup_file),
     ]
-    result = run_subprocess_hidden(cmd, capture_output=True, text=True, env={**os.environ, "PGPASSWORD": config["POSTGRES_PASSWORD"]})
+    result = run_subprocess_hidden(
+        cmd, capture_output=True, text=True, env={**os.environ, "PGPASSWORD": config["POSTGRES_PASSWORD"]}
+    )
     if result.returncode != 0:
         raise RuntimeError(f"pg_restore failed: {result.stderr}")
+
 
 __all__ = [
     "get_depgraph_pg_connection",
@@ -1800,14 +1840,14 @@ if __name__ == "__main__":
     print(f"  Tables ({len(tables)}): {', '.join(tables)}")
     sys.exit(0)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def build_pg_dsn(config, *, superuser, read_only) -> dict[str, Any]:
     """公共接口：build_pg_dsn（Stage 4 公共化，委托到 _build_pg_dsn）。"""
     return _build_pg_dsn(config, superuser=superuser, read_only=read_only)
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def get_current_version(conn) -> int:
     """公共接口：get_current_version（Stage 4 公共化）。"""
     return _get_current_version(conn)
-
-

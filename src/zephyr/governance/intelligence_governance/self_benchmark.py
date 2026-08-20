@@ -46,54 +46,159 @@ from zephyr.shared.foundation.errors import SecurityError
 
 # 5.45.3 修复：AST 白名单校验，阻断 LLM 生成代码中的危险操作
 _ALLOWED_AST_NODES = (
-    ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef,
-    ast.Return, ast.Delete, ast.Assign, ast.AugAssign, ast.AnnAssign,
-    ast.For, ast.While, ast.If, ast.With, ast.AsyncWith, ast.Raise,
-    ast.Try, ast.Assert, ast.Import, ast.ImportFrom, ast.Global,
-    ast.Nonlocal, ast.Expr, ast.Pass, ast.Break, ast.Continue,
-    ast.BoolOp, ast.BinOp, ast.UnaryOp, ast.Lambda, ast.IfExp,
-    ast.Dict, ast.Set, ast.ListComp, ast.SetComp, ast.DictComp,
-    ast.GeneratorExp, ast.Await, ast.Yield, ast.YieldFrom,
-    ast.Compare, ast.Call, ast.FormattedValue, ast.JoinedStr,
-    ast.Constant, ast.Attribute, ast.Subscript, ast.Starred,
-    ast.Name, ast.List, ast.Tuple, ast.Slice,
-    ast.arguments, ast.arg,
+    ast.Module,
+    ast.FunctionDef,
+    ast.AsyncFunctionDef,
+    ast.ClassDef,
+    ast.Return,
+    ast.Delete,
+    ast.Assign,
+    ast.AugAssign,
+    ast.AnnAssign,
+    ast.For,
+    ast.While,
+    ast.If,
+    ast.With,
+    ast.AsyncWith,
+    ast.Raise,
+    ast.Try,
+    ast.Assert,
+    ast.Import,
+    ast.ImportFrom,
+    ast.Global,
+    ast.Nonlocal,
+    ast.Expr,
+    ast.Pass,
+    ast.Break,
+    ast.Continue,
+    ast.BoolOp,
+    ast.BinOp,
+    ast.UnaryOp,
+    ast.Lambda,
+    ast.IfExp,
+    ast.Dict,
+    ast.Set,
+    ast.ListComp,
+    ast.SetComp,
+    ast.DictComp,
+    ast.GeneratorExp,
+    ast.Await,
+    ast.Yield,
+    ast.YieldFrom,
+    ast.Compare,
+    ast.Call,
+    ast.FormattedValue,
+    ast.JoinedStr,
+    ast.Constant,
+    ast.Attribute,
+    ast.Subscript,
+    ast.Starred,
+    ast.Name,
+    ast.List,
+    ast.Tuple,
+    ast.Slice,
+    ast.arguments,
+    ast.arg,
     ast.comprehension,
     ast.keyword,
     ast.alias,
     # 表达式上下文（Name/Attribute/Subscript 的 ctx 字段，良性叶节点）
-    ast.Load, ast.Store, ast.Del,
+    ast.Load,
+    ast.Store,
+    ast.Del,
     # 布尔运算符
-    ast.And, ast.Or,
+    ast.And,
+    ast.Or,
     # 二元运算符
-    ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Mod, ast.Pow,
-    ast.LShift, ast.RShift, ast.BitOr, ast.BitXor, ast.BitAnd,
-    ast.FloorDiv, ast.MatMult,
+    ast.Add,
+    ast.Sub,
+    ast.Mult,
+    ast.Div,
+    ast.Mod,
+    ast.Pow,
+    ast.LShift,
+    ast.RShift,
+    ast.BitOr,
+    ast.BitXor,
+    ast.BitAnd,
+    ast.FloorDiv,
+    ast.MatMult,
     # 一元运算符
-    ast.Invert, ast.Not, ast.UAdd, ast.USub,
+    ast.Invert,
+    ast.Not,
+    ast.UAdd,
+    ast.USub,
     # 比较运算符
-    ast.Eq, ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE,
-    ast.Is, ast.IsNot, ast.In, ast.NotIn,
+    ast.Eq,
+    ast.NotEq,
+    ast.Lt,
+    ast.LtE,
+    ast.Gt,
+    ast.GtE,
+    ast.Is,
+    ast.IsNot,
+    ast.In,
+    ast.NotIn,
 )
 
-_DANGEROUS_NAMES = frozenset({
-    "__import__", "__builtins__", "eval", "exec", "compile",
-    "globals", "locals", "vars", "dir", "getattr", "setattr",
-    "delattr", "hasattr", "type", "object", "classmethod",
-    "staticmethod", "property", "memoryview", "open",
-    "input", "breakpoint", "exit", "quit",
-})
+_DANGEROUS_NAMES = frozenset(
+    {
+        "__import__",
+        "__builtins__",
+        "eval",
+        "exec",
+        "compile",
+        "globals",
+        "locals",
+        "vars",
+        "dir",
+        "getattr",
+        "setattr",
+        "delattr",
+        "hasattr",
+        "type",
+        "object",
+        "classmethod",
+        "staticmethod",
+        "property",
+        "memoryview",
+        "open",
+        "input",
+        "breakpoint",
+        "exit",
+        "quit",
+    }
+)
 
 # 受限 builtins：保留 import 语句与常用安全函数所需的最小集，
 # 排除 eval/exec/open/getattr 等危险项（AST 校验已阻断其 Name 引用，此处为纵深防御）
 _SAFE_BUILTINS = {
     "__import__": __import__,
-    "sum": sum, "len": len, "abs": abs, "min": min, "max": max,
-    "round": round, "int": int, "float": float, "str": str, "bool": bool,
-    "list": list, "dict": dict, "set": set, "tuple": tuple,
-    "range": range, "enumerate": enumerate, "zip": zip, "map": map,
-    "filter": filter, "sorted": sorted, "reversed": reversed,
-    "any": any, "all": all, "print": print, "isinstance": isinstance,
+    "sum": sum,
+    "len": len,
+    "abs": abs,
+    "min": min,
+    "max": max,
+    "round": round,
+    "int": int,
+    "float": float,
+    "str": str,
+    "bool": bool,
+    "list": list,
+    "dict": dict,
+    "set": set,
+    "tuple": tuple,
+    "range": range,
+    "enumerate": enumerate,
+    "zip": zip,
+    "map": map,
+    "filter": filter,
+    "sorted": sorted,
+    "reversed": reversed,
+    "any": any,
+    "all": all,
+    "print": print,
+    "isinstance": isinstance,
 }
 
 
@@ -316,11 +421,11 @@ class SelfBenchmark:
             return round(sim, 3), stage
         finally:
             try:
-                os.unlink(path_a)
+                os.unlink(path_a)  # ops-guard-exempt: 自评测临时文件 finally 清理（OSError 守卫，非用户/治理产物删除）
             except OSError:
                 pass
             try:
-                os.unlink(path_b)
+                os.unlink(path_b)  # ops-guard-exempt: 自评测临时文件 finally 清理（OSError 守卫，非用户/治理产物删除）
             except OSError:
                 pass
 
@@ -386,11 +491,11 @@ class SelfBenchmark:
             return round(sim, 3), stage
         finally:
             try:
-                os.unlink(path_a)
+                os.unlink(path_a)  # ops-guard-exempt: 自评测临时文件 finally 清理（OSError 守卫，非用户/治理产物删除）
             except OSError:
                 pass
             try:
-                os.unlink(path_b)
+                os.unlink(path_b)  # ops-guard-exempt: 自评测临时文件 finally 清理（OSError 守卫，非用户/治理产物删除）
             except OSError:
                 pass
 
@@ -464,7 +569,7 @@ class SelfBenchmark:
             os.replace(tmp_path, str(self._HISTORY_FILE))
         except PermissionError:
             try:
-                os.remove(tmp_path)
+                os.remove(tmp_path)  # ops-guard-exempt: 原子写 tmp 文件 PermissionError 兜底清理（非治理产物删除）
             except OSError:
                 pass
 

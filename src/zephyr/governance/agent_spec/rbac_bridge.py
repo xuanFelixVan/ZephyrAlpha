@@ -42,6 +42,7 @@ try:
         IDESource,
         MaturityLevel,
     )
+
     _AGENT_RBAC_AVAILABLE = True
 except ImportError:
     pass
@@ -94,7 +95,6 @@ class EscalationRBACBridge:
     def guard(self, value):
         """写入：guard（Stage 4 公共化）。"""
         self._guard = value
-
 
     def request_escalation(self, agent_id: str, target_permission: str, reason: str) -> dict:
         return {

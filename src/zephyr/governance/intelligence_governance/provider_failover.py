@@ -42,7 +42,6 @@ class ProviderFailover:
         """写入：healthy（Stage 4 公共化）。"""
         self._healthy = value
 
-
     def mark_unhealthy(self, provider: str):
         self._healthy[provider] = False
 

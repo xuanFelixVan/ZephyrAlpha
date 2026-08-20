@@ -24,7 +24,11 @@ from __future__ import annotations
 
 from typing import Final
 
-REQUIRED_CONFIGS: Final[dict] = {"limits.yaml": "resource_limits", "cors.yaml": "cors_whitelist", "secrets.yaml": "api_keys"}
+REQUIRED_CONFIGS: Final[dict] = {
+    "limits.yaml": "resource_limits",
+    "cors.yaml": "cors_whitelist",
+    "secrets.yaml": "api_keys",
+}
 
 
 class SecurityConfigScanner:

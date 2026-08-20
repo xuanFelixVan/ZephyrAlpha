@@ -36,6 +36,6 @@
 # A1 --> O1
 """
 
-A2A_PHASE1_MARKER = 'a2a-v1'
+A2A_PHASE1_MARKER = "a2a-v1"
 
 __all__: list[str] = []

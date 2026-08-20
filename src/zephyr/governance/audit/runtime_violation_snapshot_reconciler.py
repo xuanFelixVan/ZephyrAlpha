@@ -208,4 +208,3 @@ def make_runtime_violation_snapshot_reconciler(gateway: "object") -> ReconcilerS
         priority=_PRIORITY,
         file_ops=frozenset({"read", "write"}),
     )
-

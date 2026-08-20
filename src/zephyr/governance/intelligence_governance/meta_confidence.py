@@ -38,7 +38,6 @@ class MetaConfidence:
         """写入：history（Stage 4 公共化）。"""
         self._history = value
 
-
     def self_assess(self, confidence: float, evidence_count: int, domain_familiarity: float) -> float:
         ev_score = min(1.0, evidence_count / 5.0)
         return confidence * 0.5 + ev_score * 0.3 + domain_familiarity * 0.2

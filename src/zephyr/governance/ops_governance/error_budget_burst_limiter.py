@@ -42,7 +42,6 @@ class BurstLimiter:
         """写入：burst_window_s（Stage 4 公共化）。"""
         self._burst_window_s = value
 
-
     @property
     def max_burst(self):
         """只读：max_burst（Stage 4 公共化）。"""
@@ -62,7 +61,6 @@ class BurstLimiter:
     def requests(self, value):
         """写入：requests（Stage 4 公共化）。"""
         self._requests = value
-
 
     def allow(self) -> bool:
         now = time.time()

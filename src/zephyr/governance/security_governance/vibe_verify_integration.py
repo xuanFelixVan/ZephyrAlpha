@@ -49,7 +49,6 @@ class VibeVerifyIntegration:
         """写入：violations_patched（Stage 4 公共化）。"""
         self._violations_patched = value
 
-
     def scan_and_patch(self, code: str) -> tuple[bool, int]:
         self._scan_count += 1
         violations = 0

@@ -79,12 +79,10 @@ class AkshareQuoteProvider(QuoteProviderBase):
         """公共接口：akshare（Stage 4 公共化）。"""
         return self._akshare()
 
-
     @property
     def ak(self):
         """只读：ak（Stage 4 公共化）。"""
         return self._ak
-
 
     @property
     def _akshare(self):
@@ -154,7 +152,9 @@ class AkshareQuoteProvider(QuoteProviderBase):
 
     def subscribe_realtime(self, symbols: list[str]) -> None:
         """Akshare 不支持实时推送"""
-        _logger.warning("AkshareQuoteProvider does not support realtime subscription. Use MarketStack or XTX for realtime.")
+        _logger.warning(
+            "AkshareQuoteProvider does not support realtime subscription. Use MarketStack or XTX for realtime."
+        )
 
     def get_stock_list(self) -> pd.DataFrame:
         """获取全 A 股股票列表"""

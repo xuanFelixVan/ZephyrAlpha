@@ -44,7 +44,6 @@ class FlashCrashGuard:
         """写入：trip_time（Stage 4 公共化）。"""
         self._trip_time = value
 
-
     def evaluate(self, price_drop_pct: float, velocity_pct_per_s: float, bid_ask_spread_pct: float) -> bool:
         if price_drop_pct > self.LIQUIDITY_THRESHOLD or velocity_pct_per_s > self.VELOCITY_THRESHOLD:
             self._tripped = True

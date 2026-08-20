@@ -51,6 +51,7 @@ __all__ = [
 
 class SnapshotError(RuntimeError):
     """快照操作失败。"""
+
     error_code = "ZA-GV-0002"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):

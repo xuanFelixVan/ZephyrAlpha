@@ -233,7 +233,6 @@ class AntiAutomationBias:
         """写入：consecutive_confirms（Stage 4 公共化）。"""
         self._consecutive_confirms = value
 
-
     @property
     def last_response_times(self) -> list[float]:
         """只读：last_response_times（Stage 4 公共化）。"""
@@ -244,7 +243,6 @@ class AntiAutomationBias:
         """写入：last_response_times（Stage 4 公共化）。"""
         self._last_response_times = value
 
-
     @property
     def review_records(self) -> list[ReviewRecord]:
         """只读：review_records（Stage 4 公共化）。"""
@@ -254,8 +252,6 @@ class AntiAutomationBias:
     def review_records(self, value):
         """写入：review_records（Stage 4 公共化）。"""
         self._review_records = value
-
-
 
     @property
     def forced_review_ratio(self) -> float:
@@ -273,7 +269,6 @@ class AntiAutomationBias:
     def fatigue_level(self, value):
         """写入：fatigue_level（Stage 4 公共化）。"""
         self._fatigue_level = value
-
 
     def evaluate(
         self,

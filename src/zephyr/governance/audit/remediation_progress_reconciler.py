@@ -166,6 +166,7 @@ class RemediationProgressRecord:
     blocker_reason: str | None = None
     details: dict | None = None
 
+
 # ---------------------------------------------------------------------------
 # SQL 常量（§5.160.2 NO-BARE-SQL gate 合规）
 # ---------------------------------------------------------------------------
@@ -246,9 +247,7 @@ def record_remediation_progress(project_root, record: RemediationProgressRecord)
         True=成功，False=失败（DB 写入异常，已 logger.warning，不抛）。
     """
     if record.dimension_kind not in ("issue", "root_cause", "phase"):
-        logger.warning(
-            "record_remediation_progress: invalid dimension_kind=%r", record.dimension_kind
-        )
+        logger.warning("record_remediation_progress: invalid dimension_kind=%r", record.dimension_kind)
         return False
     if record.status not in ("not_started", "in_progress", "completed", "blocked", "deferred"):
         logger.warning("record_remediation_progress: invalid status=%r", record.status)
@@ -407,8 +406,7 @@ def make_remediation_progress_reconciler(gateway: "object") -> ReconcilerSpec:
             )
         # block_next：下次 commit 硬阻断，AI 必须更新进度后调 resolve_blocks()
         stale_summary = "; ".join(
-            f"{d['dimension_id']} ({d['title']}) last_updated={d['last_updated']}"
-            for d in stale[:5]
+            f"{d['dimension_id']} ({d['title']}) last_updated={d['last_updated']}" for d in stale[:5]
         )
         if len(stale) > 5:
             stale_summary += f"; ...(+{len(stale) - 5} more)"

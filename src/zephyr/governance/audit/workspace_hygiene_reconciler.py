@@ -262,8 +262,6 @@ Usage
 # A4 --> O2
 """
 
-
-
 from __future__ import annotations
 
 import logging
@@ -279,7 +277,6 @@ from zephyr.shared.infra.process_pool import run_subprocess_hidden
 logger = logging.getLogger(__name__)
 
 
-
 _GATE_ID = "GATE-WORKSPACE-HYGIENE"
 
 # priority=890: 晚于 commit_gateway_abuse_monitor(875)，早于 remediation_progress(900)
@@ -287,11 +284,9 @@ _GATE_ID = "GATE-WORKSPACE-HYGIENE"
 _PRIORITY = 890
 
 
-
 # git status --porcelain 超时（秒）
 
 _GIT_STATUS_TIMEOUT = 10
-
 
 
 # === auto-sync 产物路径前缀/模式（workspace_governance_policy.md §2.1 派生）===
@@ -299,81 +294,47 @@ _GIT_STATUS_TIMEOUT = 10
 # 精确前缀匹配（路径以这些字符串开头）
 
 _AUTO_SYNC_PREFIXES: tuple[str, ...] = (
-
     "docs/02_enterprise_architecture/generated/",
-
     "docs/02_enterprise_architecture/02_domain_architecture_docs/",
-
     "docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_",
-
     "docs/02_enterprise_architecture/00_overview_entry/",
-
     "docs/_archive/architecture_debt_registry_v2.md",
-
     "data/asset_index/unified-asset-index.yaml",
-
     "data/reports/dashboard.json",
-
     "data/reports/reconciliation-report.md",
-
     "data/scans/raw-asset-scan.json",
-
     "data/architecture_health/latest.json",
-
     "data/classified/classified-assets.json",
-
     "data/budget/shutdown_snapshot.json",
-
     "data/metrics/kill_switch_probes.jsonl",
-
     # 目录前缀匹配（避免 SSoT 路径硬编码，VOCAB-CHAIN gate 合规）
-
     "data/runtime_violation_snapshot/",
-
     "data/telemetry/",
-
     "data/audit-trail/",
-
     "data/cache/",
-
     # rules_integrity_db.json 已移除出 auto-sync（偏离1修复，2026-07-22；
     # 2026-08-02 audit-02 治本：原修复仅加注释未删行，导致写入→还原循环仍存在）：
     # 该文件是 validate_rules_integrity.py --register 的写入产物（golden hash DB），
     # 非"派生产物"。列入 auto-sync 导致 register() 写入的新 hash 被 git restore 还原回
     # HEAD，形成"写入→还原"循环，post-commit reconciler 漏触发后 hash 永远停留旧值。
-
     "scripts/governance/script_manifest.yaml",
-
     "scripts/script_manifest.yaml",
-
     "architecture_model/index.yaml",
-
     # PG schema 迁移产物（reconciler 自动同步）
-
     "scripts/governance/migrate_sqlite_to_pg/03_create_dataflow_schema.sql",
-
     "scripts/governance/migrate_sqlite_to_pg/03_create_decision_schema.sql",
-
 )
-
 
 
 # 通配后缀匹配（路径以这些后缀结尾）
 
 _AUTO_SYNC_SUFFIXES: tuple[str, ...] = (
-
     # blueprint.md 是 blueprint_frontmatter_reconciler 的产物
-
     # 仅匹配 docs/03_modules/ 下的 blueprint.md
-
 )
 
 
-
-
-
 def _is_auto_sync_product(file_path: str) -> bool:
-
     """判断文件是否属于 auto-sync 产物（workspace_governance_policy.md §2.1）。
 
 
@@ -393,12 +354,8 @@ def _is_auto_sync_product(file_path: str) -> bool:
     # 精确前缀匹配
 
     for prefix in _AUTO_SYNC_PREFIXES:
-
         if file_path.startswith(prefix):
-
             return True
-
-
 
     # #ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001 (2026-07-21): blueprint.md 已从 auto-sync 清单移除
 
@@ -408,28 +365,16 @@ def _is_auto_sync_product(file_path: str) -> bool:
 
     # 旧规则（已删除）：if file_path.endswith("/blueprint.md") and file_path.startswith("docs/03_modules/"): return True
 
-
-
     # registry catalogs 下的派生产物（rule_catalog_registry / registry_master_index）
 
     if file_path.startswith("docs/01_policies_and_standards/_registry/catalogs/"):
-
-        if file_path.endswith(("rule_catalog_registry.yaml",
-
-                               "registry_master_index.yaml")):
-
+        if file_path.endswith(("rule_catalog_registry.yaml", "registry_master_index.yaml")):
             return True
-
-
 
     return False
 
 
-
-
-
 def _parse_porcelain(output: str) -> list[str]:
-
     """解析 ``git status --porcelain`` 输出，返回 modified 文件路径列表。
 
 
@@ -455,9 +400,7 @@ def _parse_porcelain(output: str) -> list[str]:
     files: list[str] = []
 
     for line in output.splitlines():
-
         if len(line) < 4:
-
             continue
 
         # porcelain 格式："XY path" 或 "XY path -> path"（rename）
@@ -468,74 +411,50 @@ def _parse_porcelain(output: str) -> list[str]:
 
         path = line[3:]
 
-
-
         # Windows CRLF 兼容
 
         path = path.rstrip("\r")
 
-
-
         # 跳过 rename（R）
 
         if "R" in status:
-
             continue
 
         # 跳过 untracked（??）
 
         if status == "??":
-
             continue
 
         # 跳过 deleted（D）
 
         if "D" in status:
-
             continue
 
         # 跳过 added（A）—— 新增文件不是 auto-sync 产物
 
         if "A" in status:
-
             continue
-
-
 
         # 处理 rename 的 "path -> path" 格式（虽然上面已跳过 R，但防御性处理）
 
         if " -> " in path:
-
             path = path.split(" -> ")[-1]
-
-
 
         # 转换为 POSIX 风格（git status 在 Windows 上可能用反斜杠）
 
         path = path.replace("\\", "/")
 
-
-
         # 去除引号（git status 对含特殊字符的路径会加引号）
 
         if path.startswith('"') and path.endswith('"'):
-
             path = path[1:-1]
 
-
-
         files.append(path)
-
-
 
     return files
 
 
-
-
-
 def _git_status_porcelain(repo_root: str) -> list[str]:
-
     """获取工作区 modified 文件列表（git status --porcelain）。
 
 
@@ -557,47 +476,30 @@ def _git_status_porcelain(repo_root: str) -> list[str]:
     """
 
     try:
-
         result = run_subprocess_hidden(
-
             ["git", "status", "--porcelain"],
-
             cwd=repo_root,
-
             capture_output=True,
-
             text=True,
-
             encoding="utf-8",
-
             errors="replace",
-
             timeout=_GIT_STATUS_TIMEOUT,
-
         )
 
         if result.returncode != 0:
-
-            logger.warning("workspace_hygiene: git status failed (rc=%d): %s",
-
-                           result.returncode, result.stderr[:200])
+            logger.warning("workspace_hygiene: git status failed (rc=%d): %s", result.returncode, result.stderr[:200])
 
             return []
 
         return _parse_porcelain(result.stdout)
 
     except (subprocess.TimeoutExpired, Exception) as e:  # noqa: BLE001 — fail-open 不阻断
-
         logger.warning("workspace_hygiene: git status error: %s", e)
 
         return []
 
 
-
-
-
 def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
-
     """构造 GATE-WORKSPACE-HYGIENE post-commit 工作区卫生自动清理 reconciler。
 
 
@@ -626,47 +528,31 @@ def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
 
     batcher = GitCommandBatcher(project_root)
 
-
-
     def _trigger(committed_files: list[str]) -> bool:
 
         # 任何 commit 都触发——工作区卫生是全局关注，不限文件类型
 
         return True
 
-
-
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
 
         try:
-
             # 1. 获取工作区 modified 文件列表
 
             modified = _git_status_porcelain(str(project_root))
 
-
-
             if not modified:
-
                 return ReconcileResult(
-
                     action="skip",
-
                     detail="workspace clean (no modified files)",
-
                     gate_id=_GATE_ID,
-
                 )
-
-
 
             # 2. 分类：auto-sync 产物 vs 真实代码修改
 
             auto_sync_files = [f for f in modified if _is_auto_sync_product(f)]
 
             real_changes = [f for f in modified if not _is_auto_sync_product(f)]
-
-
 
             # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001（2026-07-30）：
             # 排除已被前序 reconciler 写盘并 buffer 待提交的文件——这些文件正等待
@@ -685,8 +571,6 @@ def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
             if buffered_pending:
                 auto_sync_files = [f for f in auto_sync_files if f not in buffered_pending]
 
-
-
             # 3. auto-sync 产物：批量 git restore 还原（GIT-BUDGET-INV-002 合规）
 
             # batcher.git_restore_batch 单次 `git restore -- <files>` 调用，
@@ -697,48 +581,36 @@ def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
             restore_failed: list[str] = []
 
             if auto_sync_files:
-
                 restored_set = set(batcher.git_restore_batch(auto_sync_files))
 
                 restored_count = len(restored_set)
 
                 restore_failed = [f for f in auto_sync_files if f not in restored_set]
 
-
-
             # 4. 构造结果
 
             parts: list[str] = []
 
             if restored_count > 0:
-
                 parts.append(f"restored {restored_count} auto-sync files")
 
             if restore_failed:
-
-                parts.append(f"{len(restore_failed)} auto-sync restore failed: "
-
-                             f"{restore_failed[:3]}")
+                parts.append(f"{len(restore_failed)} auto-sync restore failed: {restore_failed[:3]}")
 
             if real_changes:
-
                 # 真实代码修改：告警（不自动处理）
 
                 # 截断显示前 5 个，避免 detail 过长
 
                 sample = real_changes[:5]
 
-                parts.append(f"{len(real_changes)} non-auto-sync modified files detected: "
-
-                             f"{sample}"
-
-                             f"{'...' if len(real_changes) > 5 else ''}")
-
-
+                parts.append(
+                    f"{len(real_changes)} non-auto-sync modified files detected: "
+                    f"{sample}"
+                    f"{'...' if len(real_changes) > 5 else ''}"
+                )
 
             detail = "; ".join(parts) if parts else "no action"
-
-
 
             # 判定 action：
 
@@ -749,57 +621,35 @@ def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
             # - 仅 auto-sync 产物且全部 restore 成功 → clean（已清理）
 
             if real_changes or restore_failed:
-
                 return ReconcileResult(
-
                     action="warn",
-
                     detail=detail,
-
                     gate_id=_GATE_ID,
-
                 )
 
             return ReconcileResult(
-
                 action="clean",
-
                 detail=detail,
-
                 gate_id=_GATE_ID,
-
             )
 
-
-
         except Exception as e:  # noqa: BLE001 — reconciler 永不抛异常
-
             logger.warning("workspace_hygiene: reconcile failed: %s", e)
 
             return ReconcileResult(
-
                 action="warn",
-
                 detail=f"workspace_hygiene reconcile error: {e}",
-
                 gate_id=_GATE_ID,
-
             )
 
-
-
     return ReconcilerSpec(
-
         gate_id=_GATE_ID,
-
         trigger=_trigger,
-
         reconcile=_reconcile,
-
         priority=_PRIORITY,
         file_ops=frozenset({"read", "write"}),
-
     )
+
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def git_status_porcelain(repo_root) -> list[str]:

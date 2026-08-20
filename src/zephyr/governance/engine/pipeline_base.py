@@ -92,7 +92,9 @@ class ExperimentPipelineBase(abc.ABC):
     @staticmethod
     def compute_effect_size(control: float, treatment: float, pooled_std: float) -> float:
         """Cohen's d 效应量计算"""
-        if abs(pooled_std) < 1e-9:  # 5.167 修复: 浮点==0精确比较改 < epsilon（对标 simulation/pipeline_base.py 5.167.6）
+        if (
+            abs(pooled_std) < 1e-9
+        ):  # 5.167 修复: 浮点==0精确比较改 < epsilon（对标 simulation/pipeline_base.py 5.167.6）
             return 0.0
         return (treatment - control) / pooled_std
 

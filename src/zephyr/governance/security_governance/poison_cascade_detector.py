@@ -63,7 +63,6 @@ class PoisonCascadeDetector:
         """写入：suspicion_threshold（Stage 4 公共化）。"""
         self._suspicion_threshold = value
 
-
     def scan(self, source: str, target: str, content: str, tokens: int = 0) -> PoisonEvent:
         score = self._compute_suspicion(content)
         sig_found = self._detect_signature(content)

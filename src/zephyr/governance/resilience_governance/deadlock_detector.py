@@ -115,10 +115,7 @@ class DeadlockDetector:
 
     def break_timeout(self, timeout_seconds: float) -> list[str]:
         now = time.monotonic()
-        expired = [
-            r for r, ts in self.lock_timestamps.items()
-            if now - ts >= timeout_seconds
-        ]
+        expired = [r for r, ts in self.lock_timestamps.items() if now - ts >= timeout_seconds]
         for r in expired:
             holder = self.locks.pop(r, None)
             self.lock_timestamps.pop(r, None)

@@ -169,11 +169,7 @@ class FeedbackSelfAuditor:
             if action:
                 action_scores[action].append(float(score))
 
-        results.extend(
-            _detect_amplification_loops(
-                agent_id, action_scores, self._amplification_threshold
-            )
-        )
+        results.extend(_detect_amplification_loops(agent_id, action_scores, self._amplification_threshold))
 
         self_actions = set()
 

@@ -262,9 +262,7 @@ def _hook_slo_contract(event: EscalationEvent, detector: ExtensionDetector, engi
         scaling = detector.get_recommended_scaling()
         event.description += f" | slo_tier={scaling['current_tier']}"
         if scaling["escalation_level_offset"] > 0:
-            new_level = min(
-                EscalationLevel.L4_EMERGENCY.value, event.level.value + scaling["escalation_level_offset"]
-            )
+            new_level = min(EscalationLevel.L4_EMERGENCY.value, event.level.value + scaling["escalation_level_offset"])
             event.level = EscalationLevel(new_level)
 
 
@@ -273,9 +271,7 @@ def _hook_rebound_detector(event: EscalationEvent, detector: ExtensionDetector, 
     if event.category in (RuleCategory.SECURITY_VIOLATION, RuleCategory.REWARD_HACKING_REBOUND):
         owner = event.owner_id or "unknown"
         if event.category is RuleCategory.SECURITY_VIOLATION:
-            detector.record(
-                owner, "violation", severity="high", description=event.description, event_id=event.event_id
-            )
+            detector.record(owner, "violation", severity="high", description=event.description, event_id=event.event_id)
         elif event.category is RuleCategory.REWARD_HACKING_REBOUND:
             detector.record(
                 owner, "rebound", severity="critical", description=event.description, event_id=event.event_id

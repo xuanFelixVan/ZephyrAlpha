@@ -38,7 +38,6 @@ class CrossSessionCorrelator:
         """写入：sessions（Stage 4 公共化）。"""
         self._sessions = value
 
-
     def register_session(self, session_id: str, metrics: dict):
         self._sessions[session_id] = metrics
 

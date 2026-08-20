@@ -84,6 +84,7 @@ __meta__ = QuoteProviderMeta(
 
 class MiniQmtProviderError(Exception):
     """MiniQMT Provider 错误"""
+
     error_code = "ZA-GV-0001"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -143,6 +144,7 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
         if self._xtdata is None:
             try:
                 from xtquant import xtdata  # type: ignore[import-not-found]
+
                 self._xtdata = xtdata
                 _logger.info("xtdata 模块加载成功")
             except ImportError as e:
@@ -183,9 +185,7 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
         try:
             xtdata.download_history_data(symbol, interval, start_str, end_str)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            raise MiniQmtProviderError(
-                f"下载历史数据失败 symbol={symbol} interval={interval}: {e}"
-            ) from e
+            raise MiniQmtProviderError(f"下载历史数据失败 symbol={symbol} interval={interval}: {e}") from e
 
         # 2. 获取数据
         try:
@@ -196,9 +196,7 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
                 end_time=end_str,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            raise MiniQmtProviderError(
-                f"获取历史数据失败 symbol={symbol} interval={interval}: {e}"
-            ) from e
+            raise MiniQmtProviderError(f"获取历史数据失败 symbol={symbol} interval={interval}: {e}") from e
 
         if not data or symbol not in data:
             _logger.warning("历史数据为空 symbol=%s interval=%s", symbol, interval)
@@ -237,9 +235,7 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
                 self._subscribed_symbols.add(symbol)
                 _logger.info("订阅实时 Tick 成功 symbol=%s", symbol)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                raise MiniQmtProviderError(
-                    f"订阅实时行情失败 symbol={symbol}: {e}"
-                ) from e
+                raise MiniQmtProviderError(f"订阅实时行情失败 symbol={symbol}: {e}") from e
 
     def register_tick_callback(self, callback: Callable[[pd.DataFrame], None]) -> None:
         """注册 Tick 回调函数
@@ -306,9 +302,7 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
         try:
             from zephyr.infrastructure.database_service import DatabaseService
         except ImportError as e:
-            raise MiniQmtProviderError(
-                "DatabaseService 不可用，无法访问 ClickHouse"
-            ) from e
+            raise MiniQmtProviderError("DatabaseService 不可用，无法访问 ClickHouse") from e
 
         try:
             db = DatabaseService()
@@ -335,9 +329,7 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
         if not rows:
             return pd.DataFrame()
 
-        df = pd.DataFrame(
-            rows, columns=["date", "open", "high", "low", "close", "volume", "amount"]
-        )
+        df = pd.DataFrame(rows, columns=["date", "open", "high", "low", "close", "volume", "amount"])
         df["date"] = pd.to_datetime(df["date"])
         return df
 
@@ -402,17 +394,13 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
         ]:
             if prefix in df.columns:
                 for i in range(5):
-                    df[f"{cols}_{i + 1}"] = df[prefix].apply(
-                        lambda x, idx=i: self._safe_index(x, idx)
-                    )
+                    df[f"{cols}_{i + 1}"] = df[prefix].apply(lambda x, idx=i: self._safe_index(x, idx))
                 df = df.drop(columns=[prefix])
 
         # timestamp 毫秒(UTC) -> naive 北京时间
         if "timestamp" in df.columns:
             df["timestamp"] = (
-                pd.to_datetime(df["timestamp"], unit="ms", utc=True)
-                .dt.tz_convert(_SHANGHAI_TZ)
-                .dt.tz_localize(None)
+                pd.to_datetime(df["timestamp"], unit="ms", utc=True).dt.tz_convert(_SHANGHAI_TZ).dt.tz_localize(None)
             )
 
         df["symbol"] = symbol
@@ -426,11 +414,7 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
         # 修复实时回调与历史回放 timestamp 语义不一致的隐藏 bug：原 fromtimestamp 无 tz
         # 参数返回系统本地时间，与批量路径的 naive UTC 差 8 小时）
         _ts = tick.get("time", 0) / 1000
-        row["timestamp"] = (
-            datetime.fromtimestamp(_ts, tz=_UTC)
-            .astimezone(_SHANGHAI_TZ)
-            .replace(tzinfo=None)
-        )
+        row["timestamp"] = datetime.fromtimestamp(_ts, tz=_UTC).astimezone(_SHANGHAI_TZ).replace(tzinfo=None)
         row["last_price"] = Decimal(str(tick.get("lastPrice", 0)))
         row["open"] = Decimal(str(tick.get("open", 0)))
         row["high"] = Decimal(str(tick.get("high", 0)))

@@ -30,6 +30,7 @@ depgraph retired / 模型注册 alias）由调用方另行承载，本模块仅�
 依据: 61_lifecycle_multi_ai §3.9（策略归档机制）
 Version: 0.1.0
 """
+
 from __future__ import annotations
 
 import csv
@@ -84,9 +85,7 @@ class StrategyArchiveArtifacts:
 
 def _validate_strategy_id(strategy_id: str) -> str:
     if not strategy_id or not _STRATEGY_ID_PATTERN.match(strategy_id):
-        raise StrategyArchiveError(
-            f"strategy_id 非法（仅允许 [A-Za-z0-9_-]，防路径穿越）: {strategy_id!r}"
-        )
+        raise StrategyArchiveError(f"strategy_id 非法（仅允许 [A-Za-z0-9_-]，防路径穿越）: {strategy_id!r}")
     return strategy_id
 
 
@@ -143,9 +142,7 @@ def archive_strategy(
                 writer.writerow([date_iso, float(pnl)])
         manifest["files"].append(PNL_FILENAME)
 
-    (target / MANIFEST_FILENAME).write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    (target / MANIFEST_FILENAME).write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     logger.warning("策略 %s 已归档到 %s（%s）", strategy_id, target, artifacts.decay_knight)
     return target
 
@@ -161,9 +158,7 @@ def retrieve_strategy_archive(
     target = root / strategy_id
     manifest_path = target / MANIFEST_FILENAME
     if not manifest_path.exists():
-        raise StrategyArchiveError(
-            f"归档不存在: {target}", details={"strategy_id": strategy_id}
-        )
+        raise StrategyArchiveError("归档不存在", details={"strategy_id": strategy_id, "target": str(target)})
     try:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, UnicodeDecodeError) as exc:
@@ -177,9 +172,7 @@ def list_archived_strategies(*, archive_root: Path | None = None) -> list[str]:
     root = archive_root if archive_root is not None else DEFAULT_ARCHIVE_ROOT
     if not root.exists():
         return []
-    return sorted(
-        d.name for d in root.iterdir() if d.is_dir() and (d / MANIFEST_FILENAME).exists()
-    )
+    return sorted(d.name for d in root.iterdir() if d.is_dir() and (d / MANIFEST_FILENAME).exists())
 
 
 __all__: Final = [

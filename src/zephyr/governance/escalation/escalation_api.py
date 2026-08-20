@@ -51,7 +51,6 @@ class EscalationAPI:
         """写入：api_keys（Stage 4 公共化）。"""
         self._api_keys = value
 
-
     def register_service(self, service_name: str, api_key: str):
         self._api_keys[service_name] = api_key
 

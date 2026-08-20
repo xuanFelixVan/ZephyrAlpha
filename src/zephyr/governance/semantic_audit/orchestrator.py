@@ -79,6 +79,7 @@ class SemanticAuditor:
         """初始化9阶段管道组件。"""
         try:
             from zephyr.governance.semantic_audit.reference_extractor import ReferenceExtractor
+
             self._extractor = ReferenceExtractor()
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("ReferenceExtractor init failed: %s", exc, exc_info=True)
@@ -86,6 +87,7 @@ class SemanticAuditor:
 
         try:
             from zephyr.governance.semantic_audit.trigger_engine import TriggerEngine
+
             self._trigger_engine = TriggerEngine()
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("TriggerEngine init failed: %s", exc, exc_info=True)
@@ -93,6 +95,7 @@ class SemanticAuditor:
 
         try:
             from zephyr.governance.semantic_audit.safety_boundary import SafetyBoundary
+
             self._safety_boundary = SafetyBoundary()
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("SafetyBoundary init failed: %s", exc, exc_info=True)
@@ -100,6 +103,7 @@ class SemanticAuditor:
 
         try:
             from zephyr.governance.semantic_audit.alignment_engine import AlignmentEngine
+
             self._alignment_engine = AlignmentEngine(project_root=self._root)
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("AlignmentEngine init failed: %s", exc, exc_info=True)
@@ -107,6 +111,7 @@ class SemanticAuditor:
 
         try:
             from zephyr.governance.semantic_audit.issue_aggregator import IssueAggregator
+
             self._aggregator = IssueAggregator()
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("IssueAggregator init failed: %s", exc, exc_info=True)
@@ -114,6 +119,7 @@ class SemanticAuditor:
 
         try:
             from zephyr.governance.semantic_audit.llm_bridge import LLMBridge
+
             self._llm_bridge = LLMBridge(api_available=self._llm_available)
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("LLMBridge init failed: %s", exc, exc_info=True)
@@ -121,6 +127,7 @@ class SemanticAuditor:
 
         try:
             from zephyr.governance.semantic_audit.self_healer import SelfHealer
+
             self._self_healer = SelfHealer()
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("SelfHealer init failed: %s", exc, exc_info=True)
@@ -128,6 +135,7 @@ class SemanticAuditor:
 
         try:
             from zephyr.governance.semantic_audit.fix_prioritizer import FixPrioritizer
+
             self._fix_prioritizer = FixPrioritizer()
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("FixPrioritizer init failed: %s", exc, exc_info=True)
@@ -135,6 +143,7 @@ class SemanticAuditor:
 
         try:
             from zephyr.governance.semantic_audit.self_health import SelfHealth
+
             self._self_health = SelfHealth(project_root=self._root)
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("SelfHealth init failed: %s", exc, exc_info=True)
@@ -289,9 +298,7 @@ class SemanticAuditor:
 
         results: list[BaseModel] = []
         with ThreadPoolExecutor(max_workers=self._max_workers) as executor:
-            future_to_path = {
-                executor.submit(self.audit, Path(p), mode): p for p in doc_paths
-            }
+            future_to_path = {executor.submit(self.audit, Path(p), mode): p for p in doc_paths}
             for future in as_completed(future_to_path):
                 path = future_to_path[future]
                 try:
@@ -316,6 +323,7 @@ class SemanticAuditor:
 
         # 降级: 返回最小健康状态
         from zephyr.governance.semantic_audit.self_health import HealthLevel, HealthStatus
+
         return HealthStatus(level=HealthLevel.DEGRADED, reason="self_health unavailable")
 
     def _extract_module_id(self, doc_path: Path) -> str:

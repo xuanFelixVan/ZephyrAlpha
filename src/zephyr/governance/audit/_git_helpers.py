@@ -67,6 +67,7 @@ from zephyr.shared.infra.process_pool import run_subprocess_hidden
 # git show 超时（秒）——对标 _reference_helpers._GIT_SHOW_TIMEOUT
 _GIT_SHOW_TIMEOUT = 15
 
+
 def git_show_file(repo_root: str, rel_path: str, ref: str) -> str | None:
     """``git show <ref>:<path>`` 获取指定 ref 的文件内容。
 

@@ -28,6 +28,7 @@ F5 = EscalationProtocol 五件套: EscalationEngine + DelegationEngine + Deadloc
 5. 10 分钟空闲自动回收: idle_timeout 检测, 长时间无活动自动关闭
 6. 状态恢复: 从 SQLite 恢复 DeadlockDetector 状态 (供下次启动使用)
 """
+
 from __future__ import annotations
 
 import atexit
@@ -63,6 +64,7 @@ def _validate_table_name(table: str) -> str:
 @dataclass
 class ShutdownResult:
     """关闭/持久化结果。"""
+
     success: bool
     component: str
     errors: list[str] = field(default_factory=list)
@@ -106,9 +108,7 @@ class F5ShutdownManager:
         if db_path is None:
             db_path = self._project_root / "data" / "databases" / "governance.db"
         self._db_path = db_path
-        self._idle_timeout = (
-            idle_timeout_seconds if idle_timeout_seconds is not None else self.IDLE_TIMEOUT_SECONDS
-        )
+        self._idle_timeout = idle_timeout_seconds if idle_timeout_seconds is not None else self.IDLE_TIMEOUT_SECONDS
         self._last_activity = time.monotonic()
         self._shutdown_done = False
         self._lock = threading.Lock()
@@ -288,9 +288,9 @@ class F5ShutdownManager:
                     # EscalationEngine 可能有 _recent_escalations, 不属于审计日志
                     # 真正的审计日志在 EscalationAPI 中, 但 F5BootIntegration 未直接持有
                     # 这里捕获 escalation_engine 的可序列化状态
-                    active_count = escalation_engine.get_active_count() if hasattr(
-                        escalation_engine, "get_active_count"
-                    ) else 0
+                    active_count = (
+                        escalation_engine.get_active_count() if hasattr(escalation_engine, "get_active_count") else 0
+                    )
                     state_payload["escalation_audit_log"] = {
                         "active_count": int(active_count),
                     }
@@ -313,9 +313,7 @@ class F5ShutdownManager:
                 try:
                     history = delegation.get_delegation_history()
                     # DelegationRecord 是 dataclass, 转为 dict
-                    state_payload["delegation_history"] = [
-                        self._serialize_record(r) for r in history
-                    ]
+                    state_payload["delegation_history"] = [self._serialize_record(r) for r in history]
                     details["delegation_history_captured"] = True
                     details["delegation_history_count"] = len(history)
                 except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -445,9 +443,7 @@ class F5ShutdownManager:
         safe_table = _validate_table_name(self.STATE_TABLE)
         conn = get_db_connection(str(self._db_path), timeout=5.0)
         try:
-            cursor = conn.execute(
-                f"SELECT key, value FROM {safe_table}"
-            )
+            cursor = conn.execute(f"SELECT key, value FROM {safe_table}")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
             result: dict[str, Any] = {}
             for key, value in cursor.fetchall():
                 try:

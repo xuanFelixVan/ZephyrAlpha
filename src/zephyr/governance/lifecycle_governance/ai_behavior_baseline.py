@@ -30,6 +30,7 @@
 依据: 61_lifecycle_multi_ai §3.6（BM-RC-04-F Agent 行为基线 + 异常告警）
 Version: 0.1.0
 """
+
 from __future__ import annotations
 
 import logging
@@ -117,9 +118,7 @@ def compute_baseline(
 ) -> BehaviorBaseline:
     """从 ≥min_sessions 个历史会话统计行为基线（小样本不判，fail-closed）。"""
     if len(sessions) < min_sessions:
-        raise BehaviorBaselineError(
-            f"基线样本不足（须 >= {min_sessions}，实际 {len(sessions)}）——小样本不判"
-        )
+        raise BehaviorBaselineError(f"基线样本不足（须 >= {min_sessions}，实际 {len(sessions)}）——小样本不判")
     _validate_sessions(sessions)
     cph = [s.commits_per_hour() for s in sessions]
     ratios = [s.type_ratios() for s in sessions]
@@ -160,12 +159,16 @@ def detect_anomalies(
 
     z_cph = _z(session.commits_per_hour(), baseline.cph_mean, baseline.cph_std)
     if abs(z_cph) > z_threshold:
-        anomalies.append(BehaviorAnomaly(
-            rule="commit_frequency", metric="commits_per_hour",
-            value=session.commits_per_hour(), z_score=z_cph,
-            detail=f"commits/hour={session.commits_per_hour():.1f} 偏离基线 "
-                   f"{baseline.cph_mean:.1f}±{baseline.cph_std:.1f}（z={z_cph:.1f}）",
-        ))
+        anomalies.append(
+            BehaviorAnomaly(
+                rule="commit_frequency",
+                metric="commits_per_hour",
+                value=session.commits_per_hour(),
+                z_score=z_cph,
+                detail=f"commits/hour={session.commits_per_hour():.1f} 偏离基线 "
+                f"{baseline.cph_mean:.1f}±{baseline.cph_std:.1f}（z={z_cph:.1f}）",
+            )
+        )
 
     names = ("docs_ratio", "code_ratio", "registry_ratio")
     means = (baseline.docs_ratio_mean, baseline.code_ratio_mean, baseline.registry_ratio_mean)
@@ -173,20 +176,32 @@ def detect_anomalies(
     for name, value, mean, std in zip(names, session.type_ratios(), means, stds):
         z = _z(value, mean, std)
         if abs(z) > z_threshold:
-            anomalies.append(BehaviorAnomaly(
-                rule="type_distribution", metric=name, value=value, z_score=z,
-                detail=f"{name}={value:.2f} 偏离基线 {mean:.2f}±{std:.2f}（z={z:.1f}）",
-            ))
+            anomalies.append(
+                BehaviorAnomaly(
+                    rule="type_distribution",
+                    metric=name,
+                    value=value,
+                    z_score=z,
+                    detail=f"{name}={value:.2f} 偏离基线 {mean:.2f}±{std:.2f}（z={z:.1f}）",
+                )
+            )
 
     for module in session.modules_touched:
         if module not in baseline.known_modules:
-            anomalies.append(BehaviorAnomaly(
-                rule="first_touch_module", metric=module,
-                detail=f"首次触碰基线外模块: {module}（61 号 §3.6：首次涉及未见模块即告警）",
-            ))
+            anomalies.append(
+                BehaviorAnomaly(
+                    rule="first_touch_module",
+                    metric=module,
+                    detail=f"首次触碰基线外模块: {module}（61 号 §3.6：首次涉及未见模块即告警）",
+                )
+            )
     if anomalies:
-        logger.warning("AI 行为异常 %s: %d 条（%s）", session.session_id, len(anomalies),
-                       ",".join(sorted({a.rule for a in anomalies})))
+        logger.warning(
+            "AI 行为异常 %s: %d 条（%s）",
+            session.session_id,
+            len(anomalies),
+            ",".join(sorted({a.rule for a in anomalies})),
+        )
     return anomalies
 
 

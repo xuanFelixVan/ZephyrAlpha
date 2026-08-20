@@ -135,6 +135,7 @@ def _check_db_integrity(conn):
 
 class DatabaseManagerError(RuntimeError):
     """DatabaseManager 基础异常。"""
+
     error_code = "ZA-GV-0029"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -283,7 +284,6 @@ class DatabaseManager:
         """写入：backup_dir（Stage 4 公共化）。"""
         self._backup_dir = value
 
-
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def closed(self):
@@ -294,7 +294,6 @@ class DatabaseManager:
     def closed(self, value):
         """写入：closed（Stage 4 公共化）。"""
         self._closed = value
-
 
     @classmethod
     def instance(cls) -> DatabaseManager:
@@ -919,7 +918,9 @@ class DatabaseManager:
                     # COMMIT 必抛 OperationalError 中断整个循环；且 UPDATE 无事务保护。
                     # 失败时回滚并记录日志后继续处理下一条（尽力记录语义不变）。
                     try:
-                        payload = _json.loads(str(dl["payload"])) if isinstance(dl["payload"], str) else dict(dl["payload"])
+                        payload = (
+                            _json.loads(str(dl["payload"])) if isinstance(dl["payload"], str) else dict(dl["payload"])
+                        )
                         payload["retry_count"] = payload.get("retry_count", 0) + 1
                         conn.execute("BEGIN IMMEDIATE")
                         conn.execute(

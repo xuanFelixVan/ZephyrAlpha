@@ -59,7 +59,7 @@ from typing import Final, Sequence
 import yaml
 
 from zephyr.reporting.report_publisher import ReportPublisher, ReportSource
-from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
+from zephyr.shared.alerts.threshold_loader import ALERT_THRESHOLD_REGISTRY_PATH, load_alert_thresholds
 from zephyr.shared.foundation.errors import ZephyrBaseError
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -214,9 +214,7 @@ class StrategyRetirementEvaluator:
         sharpe_window: int = 60,
     ) -> None:
         if underperformance_window < 2 or sharpe_window < 2:
-            raise InvalidRetirementInputError(
-                f"滚动窗口须 >= 2: {underperformance_window}, {sharpe_window}"
-            )
+            raise InvalidRetirementInputError(f"滚动窗口须 >= 2: {underperformance_window}, {sharpe_window}")
         self._publisher = publisher
         self._thresholds = _load_retirement_thresholds(registry_path)
         self._underperformance_window = underperformance_window
@@ -320,8 +318,7 @@ class StrategyRetirementEvaluator:
                     metric_value=backtest_live_deviation,
                     threshold=self._thresholds["deviation_retire"],
                     detail=(
-                        f"回测-实盘偏离 {backtest_live_deviation:.2%} > "
-                        f"{self._thresholds['deviation_retire']:.0%}"
+                        f"回测-实盘偏离 {backtest_live_deviation:.2%} > {self._thresholds['deviation_retire']:.0%}"
                     ),
                 )
             )
@@ -352,9 +349,7 @@ class StrategyRetirementEvaluator:
         if not live or not bench:
             raise InvalidRetirementInputError("live/benchmark 收益序列不可为空")
         if inp.backtest_live_deviation is not None and inp.backtest_live_deviation < 0.0:
-            raise InvalidRetirementInputError(
-                f"backtest_live_deviation 须 >= 0: {inp.backtest_live_deviation}"
-            )
+            raise InvalidRetirementInputError(f"backtest_live_deviation 须 >= 0: {inp.backtest_live_deviation}")
 
         triggered: list[TriggeredCriterion] = []
         metrics: dict[str, float] = {}

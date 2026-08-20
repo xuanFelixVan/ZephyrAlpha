@@ -182,12 +182,12 @@ from zephyr.shared.io.paths import REPO_ROOT
 _is_pid_alive = is_pid_alive
 
 # Status 枚举（字符串常量，避免 enum 序列化复杂度）
-STATUS_PENDING: str = "pending"      # 已 spawn subprocess，worker 尚未启动
-STATUS_RUNNING: str = "running"      # worker 已启动，正在执行 reconciler
-STATUS_DONE: str = "done"            # 全部 reconciler 执行完成
-STATUS_FAILED: str = "failed"        # worker 异常退出
-STATUS_STALE: str = "stale"          # running 超 30min，疑似僵尸
-STATUS_UNKNOWN: str = "unknown"      # status file 不存在（commit 早于 P2-3 / 未触发 async）
+STATUS_PENDING: str = "pending"  # 已 spawn subprocess，worker 尚未启动
+STATUS_RUNNING: str = "running"  # worker 已启动，正在执行 reconciler
+STATUS_DONE: str = "done"  # 全部 reconciler 执行完成
+STATUS_FAILED: str = "failed"  # worker 异常退出
+STATUS_STALE: str = "stale"  # running 超 30min，疑似僵尸
+STATUS_UNKNOWN: str = "unknown"  # status file 不存在（commit 早于 P2-3 / 未触发 async）
 
 # 僵尸判定阈值（秒）——running 状态超此时长视为 stale
 _STALE_THRESHOLD_SECONDS: int = 1800  # 30 分钟
@@ -218,15 +218,15 @@ class ReconcileStatus(TypedDict, total=False):
 
     commit_sha: str
     session_id: str
-    status: str               # STATUS_* 常量之一
-    started_at: int           # Unix timestamp（spawn 时间）
-    finished_at: int          # Unix timestamp（done/failed 时间，未完成=0）
-    reconcilers_total: int    # 已执行 reconciler 总数（done 时填）
-    reconcilers_warn: int     # warn 结果数
+    status: str  # STATUS_* 常量之一
+    started_at: int  # Unix timestamp（spawn 时间）
+    finished_at: int  # Unix timestamp（done/failed 时间，未完成=0）
+    reconcilers_total: int  # 已执行 reconciler 总数（done 时填）
+    reconcilers_warn: int  # warn 结果数
     reconcilers_auto_committed: int  # auto_commit 结果数
-    errors: list[str]         # 失败原因列表
-    trigger_source: str       # "post_commit_async"
-    worker_pid: int           # worker subprocess PID
+    errors: list[str]  # 失败原因列表
+    trigger_source: str  # "post_commit_async"
+    worker_pid: int  # worker subprocess PID
 
 
 def _reports_dir(project_root: Path | str) -> Path:
@@ -346,8 +346,8 @@ def read_status_file(project_root: Path | str, commit_sha: str) -> ReconcileStat
 # dedup 按 action 分裂——同一 sha 生命周期可先 live-timeout（critical_warn）后
 # dead-orphan/终态（clean），单 set 会使 clean 被 critical_warn 去重跳过，断裂
 # 自愈闭环。双 set 允许同一 sha 各记一次 critical_warn + clean，配对自愈。
-_stale_live_logged: set[str] = set()   # 活进程超时 critical_warn 去重
-_stale_dead_logged: set[str] = set()   # 死孤儿 clean 去重
+_stale_live_logged: set[str] = set()  # 活进程超时 critical_warn 去重
+_stale_dead_logged: set[str] = set()  # 死孤儿 clean 去重
 
 
 def _log_stale_to_db(
@@ -378,6 +378,7 @@ def _log_stale_to_db(
             ReconcileResult,
             _log_reconcile_results,
         )
+
         elapsed = int(time.time()) - started_at  # noqa: m46-time  M46豁免: 与本文件既有 time.time() 风格一致（5处既有调用），stale 判定需 Unix timestamp 整数差值
         session_id = status_data.get("session_id", "unknown")
         worker_pid = status_data.get("worker_pid", 0)
@@ -424,11 +425,13 @@ def _log_stale_to_db(
             dedup_set = _stale_dead_logged
         _log_reconcile_results(
             project_root,
-            [ReconcileResult(
-                action=stale_action,
-                detail=detail,
-                gate_id="RECONCILE-WORKER-STALE",
-            )],
+            [
+                ReconcileResult(
+                    action=stale_action,
+                    detail=detail,
+                    gate_id="RECONCILE-WORKER-STALE",
+                )
+            ],
             session_id,
             trigger_source="post_commit_async_stale",
         )
@@ -521,7 +524,9 @@ def sweep_stale_workers(project_root: Path | str) -> int:
                 f"pending_threshold={_PENDING_DEAD_THRESHOLD_SECONDS}s"
             )
             write_status_file(
-                project_root, pending_sha, STATUS_STALE,
+                project_root,
+                pending_sha,
+                STATUS_STALE,
                 session_id=data.get("session_id", ""),
                 started_at=pending_started,
                 finished_at=now,
@@ -565,7 +570,9 @@ def sweep_stale_workers(project_root: Path | str) -> int:
             f"stale_threshold={_STALE_THRESHOLD_SECONDS}s"
         )
         write_status_file(
-            project_root, commit_sha, STATUS_STALE,
+            project_root,
+            commit_sha,
+            STATUS_STALE,
             session_id=session_id,
             started_at=started_at,
             finished_at=now,
@@ -613,6 +620,7 @@ def _count_active_workers(project_root: str) -> int:
     """
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
+
         registry = SessionRegistry(project_root)
         return sum(1 for s in registry.list_active() if s.session_id.startswith("worker-"))
     except Exception:  # noqa: BLE001 — fail-open
@@ -688,13 +696,16 @@ def launch_reconcile_async(
     }
     payload_tmp = payload_path.with_suffix(".json.tmp")
     payload_tmp.write_text(
-        json.dumps(payload_data, ensure_ascii=False, indent=2), encoding="utf-8",
+        json.dumps(payload_data, ensure_ascii=False, indent=2),
+        encoding="utf-8",
     )
     os.replace(payload_tmp, payload_path)
 
     # 2. 写 pending status file（worker 启动后改为 running）
     status_path = write_status_file(
-        root, commit_sha, STATUS_PENDING,
+        root,
+        commit_sha,
+        STATUS_PENDING,
         session_id=session_id,
         started_at=started_at,
         trigger_source="post_commit_async",
@@ -702,8 +713,11 @@ def launch_reconcile_async(
 
     # 3. spawn detached worker subprocess
     cmd = [
-        sys.executable, "-m", "zephyr.governance.audit.reconcile_worker",
-        "--payload", str(payload_path),
+        sys.executable,
+        "-m",
+        "zephyr.governance.audit.reconcile_worker",
+        "--payload",
+        str(payload_path),
     ]
     env = os.environ.copy()
     # 确保 PYTHONPATH 含 src/（worker import zephyr.* 需要）
@@ -750,7 +764,9 @@ def launch_reconcile_async(
     except Exception as e:  # noqa: BLE001 — launch 失败 fail-open（sync 兜底）
         # spawn 失败：改 status 为 failed，调用方应回退 sync
         write_status_file(
-            root, commit_sha, STATUS_FAILED,
+            root,
+            commit_sha,
+            STATUS_FAILED,
             session_id=session_id,
             started_at=started_at,
             finished_at=int(time.time()),
@@ -769,7 +785,9 @@ def launch_reconcile_async(
 
     # 4. 更新 status file 记录 worker_pid（仍 pending，worker 启动后改 running）
     write_status_file(
-        root, commit_sha, STATUS_PENDING,
+        root,
+        commit_sha,
+        STATUS_PENDING,
         session_id=session_id,
         started_at=started_at,
         trigger_source="post_commit_async",

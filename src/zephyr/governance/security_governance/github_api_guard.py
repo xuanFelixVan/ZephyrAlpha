@@ -39,7 +39,6 @@ class GitHubAPIGuard:
         """写入：allowed_commands（Stage 4 公共化）。"""
         self._allowed_commands = value
 
-
     def validate_command(self, command: str, user: str) -> tuple[bool, str]:
         if command not in self._allowed_commands:
             self._audit.append({"command": command, "user": user, "result": "denied"})

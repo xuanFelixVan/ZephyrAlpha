@@ -116,15 +116,17 @@ def __getattr__(name: str):
     if name in _SYMBOL_TO_SUBMODULE:
         import importlib
 
-        mod = importlib.import_module(
-            f"{__name__}.{_SYMBOL_TO_SUBMODULE[name]}"
-        )
+        mod = importlib.import_module(f"{__name__}.{_SYMBOL_TO_SUBMODULE[name]}")
         return getattr(mod, name)
     # 子模块名本身（api_lifecycle/migration_strategy/paper_live_transition/
     # post_live_verification/rollback_state_machine/transition）按需 import
     if name in {
-        "api_lifecycle", "migration_strategy", "paper_live_transition",
-        "post_live_verification", "rollback_state_machine", "transition",
+        "api_lifecycle",
+        "migration_strategy",
+        "paper_live_transition",
+        "post_live_verification",
+        "rollback_state_machine",
+        "transition",
     }:
         import importlib
 

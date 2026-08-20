@@ -87,6 +87,7 @@ __all__ = [
 
 class ProjectionError(RuntimeError):
     """投影计算失败。"""
+
     error_code = "ZA-GV-0030"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):

@@ -49,7 +49,6 @@ class GapAnalyzer:
         """写入：observed_operations（Stage 4 公共化）。"""
         self._observed_operations = value
 
-
     def register_coverage(self, operation_type: str):
         self._covered_operations.add(operation_type)
 
