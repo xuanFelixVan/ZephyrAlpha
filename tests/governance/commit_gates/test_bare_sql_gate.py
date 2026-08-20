@@ -276,7 +276,9 @@ class TestGatewayIntegration:
     def test_noqa_reason_too_short_not_exempt(self):
         """noqa 标记缺理由（<2 空格分隔/无理由）不匹配正则，不豁免——防裸标记滥用。"""
         red = "scripts/governance/apply_foo.py"
-        content = 'cur.execute("SELECT x FROM t WHERE id = %s", (i,))  # no' + 'qa: bare-sql\n'  # 标记拆词防自扫（NOQA-VALIDATION 对无理由裸标记硬阻断）
+        content = (
+            'cur.execute("SELECT x FROM t WHERE id = %s", (i,))  # no' + "qa: bare-sql\n"
+        )  # 标记拆词防自扫（NOQA-VALIDATION 对无理由裸标记硬阻断）
         gw = _make_gateway(staged_files=[red], file_contents={red: content})
         passed, msg = make_bare_sql_gate().check(gw, [])
         assert not passed

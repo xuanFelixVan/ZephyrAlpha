@@ -3483,9 +3483,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
         missing = sorted(set(active) - set(stock_codes))
         if not missing:
             return []
-        if len(missing) > max(
-            _STOCK_LIST_CLOSURE_MAX_ABS, int(len(active) * _STOCK_LIST_CLOSURE_MAX_RATIO)
-        ):
+        if len(missing) > max(_STOCK_LIST_CLOSURE_MAX_ABS, int(len(active) * _STOCK_LIST_CLOSURE_MAX_RATIO)):
             self._log.warning(
                 f"stock_list 退市闭合中止: 消失 {len(missing)} 只超阈值"
                 f"（有效快照 {len(active)}）——疑似板块数据异常，不闭合"
@@ -3495,16 +3493,13 @@ class MiniQmtIngestProvider(IngestProviderBase):
         for ts_code in missing:
             symbol, name, industry, list_date, _prev_delist = active[ts_code]
             try:
-                detail = self._call_with_policy(
-                    xtdata.get_instrument_detail, policy, ts_code
-                )
+                detail = self._call_with_policy(xtdata.get_instrument_detail, policy, ts_code)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 detail = None
             ds = str((detail or {}).get("ExpireDate") or "")
             if len(ds) < 8 or not ds[:8].isdigit():
                 self._log.info(
-                    f"stock_list 闭合跳过 {ts_code}: 无 ExpireDate 证据"
-                    f"（维持现状，留 akshare 月度任务兜底）"
+                    f"stock_list 闭合跳过 {ts_code}: 无 ExpireDate 证据（维持现状，留 akshare 月度任务兜底）"
                 )
                 continue
             delist_date = f"{ds[:4]}-{ds[4:6]}-{ds[6:8]}"

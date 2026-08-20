@@ -157,6 +157,10 @@ SQL_DEPRECATE_NODE = "UPDATE nodes SET build_status='deprecated' WHERE node_id=%
 SQL_DELETE_EDGE_BY_ID = "DELETE FROM edges WHERE edge_id=%s"
 SQL_DELETE_DOMAIN_BY_ID = "DELETE FROM domains WHERE domain_id=%s"
 SQL_UPDATE_NODE_PATH_BY_ID = "UPDATE nodes SET path=%s, file_path=%s WHERE node_id=%s"
+# 动态标识符模板（列名/字段名 f-string 插值不可参数化，.format 注入；2026-08-20 波3 实证：
+# 行内 f-string+noqa 组合超 120 列致 ruff format 重排拆行使标记漂移失效，升 SQL_* 模板治本）
+SQL_UPDATE_NODE_SET_DYNAMIC = "UPDATE nodes SET {set_clause} WHERE node_id = %s"
+SQL_UPDATE_DOMAIN_FIELD_DYNAMIC = "UPDATE domains SET {field}=%s, updated_at=%s WHERE domain_id=%s"
 # 5.179 治本（2026-07-13）：add_design_node UPDATE 提取为常量，消除 NO-BARE-SQL gate 违规
 SQL_UPDATE_DESIGN_NODE_BY_ID = "UPDATE nodes SET blueprint_id=%s, domain_id=%s, build_status=%s, blueprint_path=%s, granularity=%s, node_type=%s WHERE node_id=%s"
 # #ARCH-70：add_design_node INSERT 提取为常量（NO-BARE-SQL §5.160.2 合规）；
@@ -577,8 +581,8 @@ def _atomic_write(dep: dict, conn=None) -> None:
                 set_clause = ", ".join(f"{k} = %s" for k in clean)
                 values = list(clean.values()) + [node_id]
                 conn.execute(
-                    f"UPDATE nodes SET {set_clause} WHERE node_id = %s", values  # noqa: bare-sql  治理DBA脚本存量动态标识符更新，format重排伪新增（§5.160.2集中化专项另列）
-                )  # 5.160.2 OK: dynamic SQL, kept inline
+                    SQL_UPDATE_NODE_SET_DYNAMIC.format(set_clause=set_clause), values
+                )  # 5.160.2 OK: 动态标识符经 SQL_* 模板常量
             if own_conn:
                 conn.commit()
             print("OK: depgraph DB updated", file=sys.stderr)
@@ -4511,8 +4515,8 @@ def cmd_update_domain_capacity(
 
             now = datetime.datetime.now().isoformat()
             conn.execute(
-                f"UPDATE domains SET {field}=%s, updated_at=%s WHERE domain_id=%s", (value, now, domain_id)  # noqa: bare-sql  治理DBA脚本存量动态标识符更新，format重排伪新增（§5.160.2集中化专项另列）
-            )  # 5.160.2 OK: dynamic SQL, kept inline
+                SQL_UPDATE_DOMAIN_FIELD_DYNAMIC.format(field=field), (value, now, domain_id)
+            )  # 5.160.2 OK: 动态标识符经 SQL_* 模板常量
             if own_conn:
                 conn.commit()
             print(f"[OK] UPDATE domains {field}: {domain_id} {old_value} -> {value}", file=sys.stderr)
