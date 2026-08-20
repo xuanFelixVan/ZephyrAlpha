@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.backtest.test_preflight_checker
 # [TTL] permanent
 """BM-BT-02-D 回测前置检查器单元测试。"""

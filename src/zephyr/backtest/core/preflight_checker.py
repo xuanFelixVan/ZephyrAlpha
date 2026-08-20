@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [ALGO_FLOW] 目的: 回测启动前数据质量前置检查（15号 memo BM-BT-02-D，函数级 MVP，绑定入口由调用方注入）
 # [ALGO_FLOW] 输入: symbols/start/end + 可选 DQ 检查函数表（默认空集，纯结构检查）
 # [ALGO_FLOW] 输出: PreflightReport(passed/violations/skipped)，fail-visible 不静默
