@@ -15,6 +15,7 @@
 
 测试隔离：FakeChat 零外部依赖（不连 Ollama）；CacheLayer 用真实内存实例。
 """
+
 from __future__ import annotations
 
 import pytest
@@ -127,7 +128,7 @@ class TestParseSentiment:
         assert sc == 0.0  # 裁剪到 [0, 1]
 
     def test_non_dict_json_array(self) -> None:
-        s, sc = parse_sentiment('[1, 2, 3]')
+        s, sc = parse_sentiment("[1, 2, 3]")
         assert s == NEUTRAL
         assert sc == 0.5
 

@@ -120,6 +120,7 @@
 # A2 --> O1
 # A4 --> O2
 """
+
 from __future__ import annotations
 
 import argparse
@@ -206,9 +207,7 @@ class IntradayRuntime:
 
         # ① 交易日守卫
         if not self._force and not is_trading_day():
-            logger.warning(
-                "IntradayRuntime: 今日非交易日，跳过启动（--force 可强制运行）"
-            )
+            logger.warning("IntradayRuntime: 今日非交易日，跳过启动（--force 可强制运行）")
             return False
 
         # ② 获取 Redis 连接
@@ -242,9 +241,7 @@ class IntradayRuntime:
         # ⑤ 从 subscriber 拿实际订阅标的（传给因子循环作为 tick 读取范围）
         symbols = sorted(self._tick_subscriber.subscribed_symbols)
         if not symbols:
-            logger.warning(
-                "IntradayRuntime: 无已订阅标的，因子循环将以空 symbols 启动"
-            )
+            logger.warning("IntradayRuntime: 无已订阅标的，因子循环将以空 symbols 启动")
             symbols = self._symbols or []
         logger.info(
             "IntradayRuntime: TickSubscriber 已订阅 %d 只标的，启动因子循环",
@@ -259,16 +256,12 @@ class IntradayRuntime:
                 cycle_seconds=self._cycle_seconds,
             )
         if not self._factor_loop.start():
-            logger.error(
-                "IntradayRuntime: IntradayFactorLoop 启动失败，回滚 TickSubscriber"
-            )
+            logger.error("IntradayRuntime: IntradayFactorLoop 启动失败，回滚 TickSubscriber")
             self._tick_subscriber.stop()
             return False
 
         self._running = True
-        logger.info(
-            "IntradayRuntime: 盘中运行时已启动（tick→Redis→因子→H1 端到端贯通）"
-        )
+        logger.info("IntradayRuntime: 盘中运行时已启动（tick→Redis→因子→H1 端到端贯通）")
         return True
 
     def stop(self) -> None:

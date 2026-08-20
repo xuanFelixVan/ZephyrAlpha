@@ -66,14 +66,25 @@ STATE_FILE = PROJECT_ROOT / "data" / "databases" / "backup_state.json"
 
 # 重要文件路径前缀（触发条件1）
 IMPORTANT_PREFIXES: tuple[str, ...] = (
-    "src/", "config/", "docs/", "scripts/", "tests/", "architecture_model/",
-    "data/databases/", "data/raw/bdpan/", "data/vector_db/",
+    "src/",
+    "config/",
+    "docs/",
+    "scripts/",
+    "tests/",
+    "architecture_model/",
+    "data/databases/",
+    "data/raw/bdpan/",
+    "data/vector_db/",
 )
 
 # 重要根文件（触发条件1）
-IMPORTANT_FILES: frozenset[str] = frozenset({
-    "AGENTS.md", "pyproject.toml", "docker-compose.yml",
-})
+IMPORTANT_FILES: frozenset[str] = frozenset(
+    {
+        "AGENTS.md",
+        "pyproject.toml",
+        "docker-compose.yml",
+    }
+)
 
 # 最小间隔秒数（触发条件2，默认8小时）
 MIN_INTERVAL_SECONDS = 8 * 3600
@@ -206,7 +217,8 @@ def trigger(committed_files: list[str]) -> bool:
             if elapsed < min_interval:
                 logger.debug(
                     "backup_reconciler: skip (elapsed=%.0fs < %ds)",
-                    elapsed, min_interval,
+                    elapsed,
+                    min_interval,
                 )
                 return False
         except (ValueError, TypeError):
@@ -242,8 +254,11 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
     try:
         result = subprocess.run(
             [
-                "powershell", "-ExecutionPolicy", "Bypass",
-                "-File", str(backup_script),
+                "powershell",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(backup_script),
             ],
             capture_output=True,
             text=True,
@@ -325,6 +340,7 @@ def make_backup_reconciler(project_root: Path | None = None):
                 self.trigger = trigger
                 self.reconcile = reconcile
                 self.priority = priority
+
         ReconcilerSpec = _ReconcilerSpecFallback
 
     return ReconcilerSpec(

@@ -181,8 +181,13 @@ class TestEmailSmtpSender:
             return conn
 
         sender = EmailSmtpSender(
-            host="h", port=1, username="u", password="p",  # noqa: S106
-            from_addr="f", to_addrs=["t"], smtp_factory=_factory,
+            host="h",
+            port=1,
+            username="u",
+            password="p",  # noqa: S106
+            from_addr="f",
+            to_addrs=["t"],
+            smtp_factory=_factory,
         )
         assert sender.send_mail("s", "b") is False
         assert conn_holder[0].quit_called is True
@@ -194,8 +199,13 @@ class TestEmailSmtpSender:
             return conn
 
         sender = EmailSmtpSender(
-            host="h", port=1, username="u", password="p",  # noqa: S106
-            from_addr="f", to_addrs=["t"], smtp_factory=_factory,
+            host="h",
+            port=1,
+            username="u",
+            password="p",  # noqa: S106
+            from_addr="f",
+            to_addrs=["t"],
+            smtp_factory=_factory,
         )
         assert sender.send_mail("s", "b") is False
 

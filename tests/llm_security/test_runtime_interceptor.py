@@ -66,6 +66,7 @@ def _litellm_importable() -> bool:
     """
     try:
         import litellm  # noqa: F401
+
         return True
     except Exception:
         return False
@@ -85,6 +86,7 @@ def _clean_allowance():
 # ============================================================================
 # 1. 放行令牌机制（单元测试，不依赖 openai）
 # ============================================================================
+
 
 class TestAllowanceToken:
     def test_no_allowance_by_default(self):
@@ -158,6 +160,7 @@ class TestAllowanceToken:
 # 真源：runtime_interceptor.py 的 grant_allowance / revoke_allowance / is_allowance_active
 # ============================================================================
 
+
 class TestDualStoreInvariant:
     """双存储不变量守卫。
 
@@ -209,6 +212,7 @@ class TestDualStoreInvariant:
 # 2. install / uninstall / kill-switch
 # ============================================================================
 
+
 class TestInstallLifecycle:
     def test_install_idempotent(self):
         install()
@@ -237,6 +241,7 @@ class TestInstallLifecycle:
 # 3. 真实 openai / litellm patch 验证（无网络——guard 在 original 之前 raise）
 # ============================================================================
 
+
 class TestRealLLMPatching:
     """验证已安装的 openai/litellm 被 patch 后，裸调被拦截（不发起网络请求）。"""
 
@@ -255,9 +260,7 @@ class TestRealLLMPatching:
 
         client = openai.OpenAI(api_key="sk-runtime-gate-test")  # 仅构造，无网络
         with pytest.raises(BareLLMCallError):
-            client.chat.completions.create(
-                model="gpt-4", messages=[{"role": "user", "content": "hi"}]
-            )
+            client.chat.completions.create(model="gpt-4", messages=[{"role": "user", "content": "hi"}])
 
     @pytest.mark.skipif(not _LITELLM_OK, reason="litellm 本地环境无法导入（model_cost_map 缺失）")
     def test_litellm_bare_call_blocked(self):
@@ -270,6 +273,7 @@ class TestRealLLMPatching:
 # ============================================================================
 # 4. 红蓝对抗（验收标准 #1）：code = read_file(...); exec(code) 运行时被拦截
 # ============================================================================
+
 
 class TestRedBlueAdversarial:
     """模拟 GATE-20 静态分析无法检测的运行时代码生成场景。"""
@@ -301,8 +305,7 @@ class TestRedBlueAdversarial:
     def test_exec_payload_litellm_blocked(self, tmp_path):
         payload = tmp_path / "payload_litellm.txt"
         payload.write_text(
-            "import litellm\n"
-            "litellm.completion(model='gpt-4', messages=[{'role':'user','content':'x'}])\n",
+            "import litellm\nlitellm.completion(model='gpt-4', messages=[{'role':'user','content':'x'}])\n",
             encoding="utf-8",
         )
         code = payload.read_text(encoding="utf-8")
@@ -332,6 +335,7 @@ class TestRedBlueAdversarial:
 # ============================================================================
 # 5. LSG 集成（scan_input ALLOW → 颁发放行令牌）
 # ============================================================================
+
 
 class TestLSGIntegration:
     """验证 gateway.py 集成：LSG 扫描通过后自动颁发放行令牌。"""
@@ -380,6 +384,7 @@ class TestLSGIntegration:
 # 6. sitecustomize 自动加载（子进程——验收 #2 自动生效）
 # ============================================================================
 
+
 class TestSitecustomizeAutoLoad:
     """独立子进程验证：无需显式 install，sitecustomize 自动加载并 patch。"""
 
@@ -391,11 +396,7 @@ class TestSitecustomizeAutoLoad:
         # execsitecustomize 被调用时 sys.path 不含 cwd → sitecustomize.py 找不到。
         # 修复：把 repo_root 加到 PYTHONPATH，确保 sitecustomize.py 在 execsitecustomize
         # 被调用时能在 sys.path 上被找到。
-        env["PYTHONPATH"] = (
-            str(_REPO_ROOT) + os.pathsep
-            + src + os.pathsep
-            + env.get("PYTHONPATH", "")
-        )
+        env["PYTHONPATH"] = str(_REPO_ROOT) + os.pathsep + src + os.pathsep + env.get("PYTHONPATH", "")
         if env_override:
             env.update(env_override)
         return subprocess.run(
@@ -459,6 +460,7 @@ class TestSitecustomizeAutoLoad:
 # ============================================================================
 # 7. 性能基准（验收 #4：LSG 扫描耗时增加 < 5%）
 # ============================================================================
+
 
 class TestPerformanceBenchmark:
     """验证 grant_allowance 对 LSG 扫描路径的性能开销可忽略（< 5%）。"""

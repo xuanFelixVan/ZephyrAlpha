@@ -7,6 +7,7 @@
 
 覆盖DM-202314验收标准：5个维度验证MCP集群启动/关闭自动化能力。
 """
+
 from __future__ import annotations
 
 import importlib

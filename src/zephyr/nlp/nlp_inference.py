@@ -367,7 +367,7 @@ def infer_sentiment(
         raise NLPInferenceError("chat 推理后端不能为 None")
 
     cfg = config or InferConfig()
-    content_snippet = (content or "")[:cfg.max_content_chars]
+    content_snippet = (content or "")[: cfg.max_content_chars]
     # model_version 入键：换模型时缓存自动失效（避免读到旧模型结果）
     cache_key_text = f"[{cfg.model_version}]{title}\n{content_snippet}"
 

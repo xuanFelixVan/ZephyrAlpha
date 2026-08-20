@@ -79,6 +79,7 @@ def _create_readonly_triggers(conn: sqlite3.Connection) -> None:
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def healthy_db_path(tmp_path):
     """创建一个 schema 健康的临时 depgraph（init_db 全量迁移 + 只读触发器齐全）。"""
@@ -115,6 +116,7 @@ def _run_script(db_path: Path, *extra_args) -> subprocess.CompletedProcess:
 # ---------------------------------------------------------------------------
 # 1. parse_ddl_columns 纯函数单元测试
 # ---------------------------------------------------------------------------
+
 
 class TestParseDdlColumns:
     def test_simple_table(self):
@@ -254,6 +256,7 @@ class TestParseDdlNamedCheckConstraints:
     def test_real_decision_layers_ddl(self):
         """用真源 _DDL_DECISION_LAYERS 验证解析正确性"""
         from zephyr.governance.persistence import decisiongraph_schema
+
         result = vsh.parse_ddl_named_check_constraints(decisiongraph_schema._DDL_DECISION_LAYERS)
         assert "chk_decision_layers_domain_id_not_empty" in result
 
@@ -268,12 +271,12 @@ class TestParseDdlNamedCheckConstraints:
 # 2. check_ddl_columns 集成测试（注入漂移验证检测）
 # ---------------------------------------------------------------------------
 
+
 # P2迁移：以下测试类依赖 init_db 创建 SQLite 临时库 + sqlite3 连接 + PRAGMA/sqlite_master/触发器，
 # init_db 现在只验证 PG schema 不创建 SQLite 文件，这些测试不适用 PG。
 # TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（用 get_db_connection + information_schema 替代 SQLite 临时库/sqlite_master），当前 skip。
 @pytest.mark.skip(reason="P2迁移：依赖 SQLite 临时库 + init_db 创建 SQLite 文件，不适用 PG")
 class TestCheckDdlColumns:
-
     def test_healthy_db_no_issues(self, healthy_db_conn):
         issues = []
         vsh.check_ddl_columns(healthy_db_conn, issues)
@@ -328,6 +331,7 @@ class TestCheckDdlColumns:
 # 3. check_readonly_triggers 集成测试
 # ---------------------------------------------------------------------------
 
+
 # P2迁移：依赖 SQLite 临时库 + sqlite_master 查询触发器，不适用 PG。
 # TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（用 pg_trigger 系统表替代 sqlite_master 触发器检查），当前 skip。
 @pytest.mark.skip(reason="P2迁移：依赖 SQLite 临时库 + sqlite_master 触发器检查，不适用 PG")
@@ -379,6 +383,7 @@ class TestCheckReadonlyTriggers:
 # 4. check_schema_version 集成测试
 # ---------------------------------------------------------------------------
 
+
 # P2迁移：依赖 SQLite 临时库 + _schema_version 表 + init_db 创建 SQLite 文件，不适用 PG。
 # TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（用 get_db_connection + PG _schema_version 表替代 SQLite 临时库），当前 skip。
 @pytest.mark.skip(reason="P2迁移：依赖 SQLite 临时库 + _schema_version 版本表，不适用 PG")
@@ -423,6 +428,7 @@ class TestCheckSchemaVersion:
 # ---------------------------------------------------------------------------
 # 5. main() 端到端退出码测试（subprocess 子进程模拟 pre-commit 调用）
 # ---------------------------------------------------------------------------
+
 
 # P2迁移：依赖 SQLite 临时库 + subprocess 调用 verify_schema_health.py --db <sqlite_file>，
 # verify_schema_health.py 现在检查 PG schema，不再支持 --db 指向 SQLite 文件。
@@ -478,9 +484,7 @@ class TestMainExitCodes:
 
     def test_version_drift_exit_one(self, healthy_db_path):
         conn = sqlite3.connect(str(healthy_db_path))
-        conn.execute(
-            "DELETE FROM _schema_version WHERE version = (SELECT MAX(version) FROM _schema_version)"
-        )
+        conn.execute("DELETE FROM _schema_version WHERE version = (SELECT MAX(version) FROM _schema_version)")
         conn.commit()
         conn.close()
         result = _run_script(healthy_db_path)
@@ -503,6 +507,7 @@ class TestMainExitCodes:
 # ---------------------------------------------------------------------------
 # 6. check_pg_runtime_health 单元测试（P3-T4 改造，mock PG 系统视图）
 # ---------------------------------------------------------------------------
+
 
 class _FakeCursor:
     """模拟 psycopg2 cursor，fetchone 返回预设 dict 行。"""

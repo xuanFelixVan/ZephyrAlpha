@@ -98,9 +98,7 @@ def store_backend(request, tmp_path):
     if request.param == "json":
         return _StoreBackend(
             reopen=lambda: JsonStateStore(tmp_path),
-            inject_raw=lambda ns, raw: (tmp_path / f"{ns}.json").write_text(
-                raw, encoding="utf-8"
-            ),
+            inject_raw=lambda ns, raw: (tmp_path / f"{ns}.json").write_text(raw, encoding="utf-8"),
         )
     cfg = _redis_cfg_or_skip()
     import redis
@@ -136,9 +134,7 @@ def dedup_backend(request, tmp_path):
     conn.flushdb()
     request.addfinalizer(lambda: (conn.flushdb(), conn.close()))
     return _DedupBackend(
-        reopen=lambda: RedisDedupSet(
-            conn, set_name="test_fill_ids", key_prefix=_TEST_DEDUP_PREFIX
-        ),
+        reopen=lambda: RedisDedupSet(conn, set_name="test_fill_ids", key_prefix=_TEST_DEDUP_PREFIX),
     )
 
 
@@ -241,9 +237,7 @@ class TestRedisFailFast:
         """真实连接到死端口：构造即抛 StateStoreError（不依赖外部 Redis）。"""
         import redis
 
-        dead = redis.Redis(
-            host="127.0.0.1", port=1, socket_connect_timeout=0.5, socket_timeout=0.5
-        )
+        dead = redis.Redis(host="127.0.0.1", port=1, socket_connect_timeout=0.5, socket_timeout=0.5)
         with pytest.raises(StateStoreError):
             RedisStateStore(dead)
 
@@ -322,9 +316,7 @@ class TestFactoriesRedis:
     """工厂 Redis 侧：构造注入+必填拦截（建连归接线层层级纪律实证）。"""
 
     def test_make_state_store_redis_with_conn(self, redis_conn):
-        store = make_state_store(
-            "redis", redis_conn=redis_conn, key_prefix=_TEST_STATE_PREFIX
-        )
+        store = make_state_store("redis", redis_conn=redis_conn, key_prefix=_TEST_STATE_PREFIX)
         assert isinstance(store, RedisStateStore)
 
     def test_make_state_store_redis_requires_conn(self):

@@ -37,7 +37,9 @@ def test_resolve_doc_write_requires_layer() -> None:
 
 
 def test_resolve_doc_write_foundation_vs_other() -> None:
-    r_f = resolve_ct_pipe_orc001(CtPipeRoutingHints(task_type="DOC_WRITE", priority_value="P2", target_layer="D_INFRA_OPS"))
+    r_f = resolve_ct_pipe_orc001(
+        CtPipeRoutingHints(task_type="DOC_WRITE", priority_value="P2", target_layer="D_INFRA_OPS")
+    )
     r_o = resolve_ct_pipe_orc001(CtPipeRoutingHints(task_type="REFACTOR", priority_value="P2", target_layer="D_FACTOR"))
     assert r_f.node_id == "M5"
     assert r_o.node_id == "M6"

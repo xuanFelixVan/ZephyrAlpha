@@ -137,10 +137,7 @@ def _is_gateway_authorized() -> bool:
     设置的是 ZEPHYR_COMMIT_GATEWAY，但本文件原只识别 ZEPHYR_FORCE_STASH，
     两者不互认。本函数统一契约，使 gateway 的 stash 操作也被识别为授权。
     """
-    return (
-        os.environ.get(FORCE_STASH_ENV) == "1"
-        or os.environ.get(GATEWAY_ENV) == "1"
-    )
+    return os.environ.get(FORCE_STASH_ENV) == "1" or os.environ.get(GATEWAY_ENV) == "1"
 
 
 # git mv 目录重命名策略环境变量
@@ -503,8 +500,7 @@ def _check_self_harm_files(
         )
         if authorized and at_risk:
             print(
-                f"[GIT-GUARD] {action} 授权放行（{FORCE_STASH_ENV}|{GATEWAY_ENV}），"
-                f"将丢弃 {len(at_risk)} 个未提交文件",
+                f"[GIT-GUARD] {action} 授权放行（{FORCE_STASH_ENV}|{GATEWAY_ENV}），将丢弃 {len(at_risk)} 个未提交文件",
                 file=sys.stderr,
             )
         return None  # 继续锁冲突检查
@@ -619,7 +615,10 @@ def _handle_stash(git_args: list[str]) -> int:
     if not files_in_scope:
         return _passthrough(git_args)
     if _is_gateway_authorized():
-        print(f"[GIT-GUARD] stash 授权（{FORCE_STASH_ENV}|{GATEWAY_ENV}），强制 stash {len(files_in_scope)} 个未提交文件", file=sys.stderr)
+        print(
+            f"[GIT-GUARD] stash 授权（{FORCE_STASH_ENV}|{GATEWAY_ENV}），强制 stash {len(files_in_scope)} 个未提交文件",
+            file=sys.stderr,
+        )
         return _passthrough(git_args)
     print("", file=sys.stderr)
     print("=" * 70, file=sys.stderr)
@@ -683,9 +682,7 @@ def _scan_untracked_in_dir(dir_rel: str, project_root: Path) -> list[str]:
     return scan_untracked_in_dir(dir_rel, project_root)
 
 
-def _mv_strategy_block(
-    untracked: list[str], source: str, dest: str, git_args: list[str]
-) -> int:
+def _mv_strategy_block(untracked: list[str], source: str, dest: str, git_args: list[str]) -> int:
     """策略 B (默认): 阻断，报告未跟踪文件。"""
     print("", file=sys.stderr)
     print("=" * 70, file=sys.stderr)
@@ -732,7 +729,7 @@ def _mv_strategy_move(
         src_file = project_root / rel_path
         if not src_file.exists():
             continue
-        rel_name = rel_path[len(source_prefix):]
+        rel_name = rel_path[len(source_prefix) :]
         dest_file = project_root / (dest_prefix + rel_name)
         try:
             dest_file.parent.mkdir(parents=True, exist_ok=True)
@@ -882,7 +879,10 @@ def check_and_execute(git_args: list[str]) -> int:
         print("", file=sys.stderr)
         print("  解决方案:", file=sys.stderr)
         print(f"    1. Serializer 合法通道：{SERIALIZER_MODE_ENV}=1 git {subcommand} ...", file=sys.stderr)
-        print("    2.  porcelain 替代：read-tree→reset/checkout，write-tree+commit-tree→经 GitCommitGateway", file=sys.stderr)
+        print(
+            "    2.  porcelain 替代：read-tree→reset/checkout，write-tree+commit-tree→经 GitCommitGateway",
+            file=sys.stderr,
+        )
         print("=" * 70, file=sys.stderr)
         _audit_self_harm(
             action=f"plumbing:{subcommand}",

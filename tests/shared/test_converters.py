@@ -5,6 +5,7 @@
 Ruling:100PCT-AI-GOVERNANCE P1-1 (2026-07-19) 治本：
   验证 normalize_to_none 只转空字符串为 None，不误转其他 falsy 值。
 """
+
 from __future__ import annotations
 
 import pytest
@@ -79,14 +80,17 @@ class TestNormalizeToNone:
         # `normalize_to_none(0)` → 0（正确保留）
         assert normalize_to_none(0) == 0
 
-    @pytest.mark.parametrize("value,expected", [
-        ("", None),
-        (None, None),
-        ("text", "text"),
-        (0, 0),
-        (False, False),
-        ([], []),
-    ])
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            ("", None),
+            (None, None),
+            ("text", "text"),
+            (0, 0),
+            (False, False),
+            ([], []),
+        ],
+    )
     def test_parametrized(self, value, expected):
         """参数化测试覆盖所有边界情况"""
         result = normalize_to_none(value)

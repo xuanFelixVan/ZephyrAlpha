@@ -178,7 +178,9 @@ class TestCheckFileLevel:
         assert result is CapabilityLevel.IMMUTABLE
 
     def test_shared_contracts_subdir_immutable(self):
-        result = _check_file_level(str(REPO_ROOT / "src" / "zephyr" / "shared" / "contracts" / "core" / "runtime_plane_tag.py"))
+        result = _check_file_level(
+            str(REPO_ROOT / "src" / "zephyr" / "shared" / "contracts" / "core" / "runtime_plane_tag.py")
+        )
         assert result is CapabilityLevel.IMMUTABLE
 
     def test_governance_ai_immutable(self):

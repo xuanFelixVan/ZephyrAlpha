@@ -275,24 +275,30 @@ class TestIsSessionAlive:
     def test_dead_pid_returns_false(self):
         """PID 已死 → 立即 False（零窗口期，不等 TTL）。"""
         info = SessionInfo(
-            session_id="sess-dead", pid=_DEAD_PID,
-            start_time=time.time(), last_heartbeat=time.time(),
+            session_id="sess-dead",
+            pid=_DEAD_PID,
+            start_time=time.time(),
+            last_heartbeat=time.time(),
         )
         assert _is_session_alive(info, time.time()) is False
 
     def test_alive_pid_recent_heartbeat_returns_true(self):
         """PID 存活 + 心跳未过期 → True。"""
         info = SessionInfo(
-            session_id="sess-alive", pid=os.getpid(),
-            start_time=time.time(), last_heartbeat=time.time(),
+            session_id="sess-alive",
+            pid=os.getpid(),
+            start_time=time.time(),
+            last_heartbeat=time.time(),
         )
         assert _is_session_alive(info, time.time()) is True
 
     def test_alive_pid_expired_heartbeat_returns_false(self):
         """PID 存活但心跳过期 → False（TTL 兜底）。"""
         info = SessionInfo(
-            session_id="sess-idle", pid=os.getpid(),
-            start_time=0.0, last_heartbeat=0.0,
+            session_id="sess-idle",
+            pid=os.getpid(),
+            start_time=0.0,
+            last_heartbeat=0.0,
         )
         assert _is_session_alive(info, time.time()) is False
 
@@ -301,14 +307,18 @@ class TestIsSessionAlive:
         now = time.time()
         # pid=0 + 心跳新鲜 → 存活（TTL 通过）
         info_fresh = SessionInfo(
-            session_id="sess-zero", pid=0,
-            start_time=now, last_heartbeat=now,
+            session_id="sess-zero",
+            pid=0,
+            start_time=now,
+            last_heartbeat=now,
         )
         assert _is_session_alive(info_fresh, now) is True
         # pid=0 + 心跳过期 → 失效（TTL 兜底）
         info_stale = SessionInfo(
-            session_id="sess-zero", pid=0,
-            start_time=0.0, last_heartbeat=0.0,
+            session_id="sess-zero",
+            pid=0,
+            start_time=0.0,
+            last_heartbeat=0.0,
         )
         assert _is_session_alive(info_stale, now) is False
 

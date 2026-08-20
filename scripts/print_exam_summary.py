@@ -1,4 +1,5 @@
 """输出所有模型考试成绩清单（中文版）"""
+
 import json
 from datetime import date
 from pathlib import Path
@@ -11,27 +12,29 @@ for f in files:
     d = json.loads(f.read_text(encoding="utf-8"))
     ce = d.get("cost_efficiency", {})
     safe_caps = d.get("recommendations", {}).get("safe_capabilities", [])
-    rows.append({
-        "model_id": d.get("model_id", f.stem),
-        "timestamp": d.get("exam_timestamp", "")[:10],
-        "grade": d.get("overall_grade", ""),
-        "score": d.get("overall_score", 0.0),
-        "breadth_passed": d.get("breadth", {}).get("passed", 0),
-        "breadth_total": d.get("breadth", {}).get("total", 0),
-        "depth_score": d.get("depth", {}).get("overall_score", 0.0),
-        "hallucination": d.get("hallucination", {}).get("overall_rate", 0.0),
-        "speed_p50": d.get("speed", {}).get("latency_p50_ms", 0.0),
-        "safe_count": len(safe_caps),
-        "safe_caps": safe_caps,
-        "cost": ce.get("exam_cost_cny", 0.0),
-        "input_tokens": ce.get("input_tokens", 0),
-        "output_tokens": ce.get("output_tokens", 0),
-        "total_tokens": ce.get("total_tokens", 0),
-        "cost_per_question": ce.get("cost_per_question", 0.0),
-        "exam_questions": ce.get("exam_questions_asked", 0),
-        "deployment_mode": ce.get("deployment_mode", ""),
-        "duration": d.get("exam_duration_seconds", 0.0),
-    })
+    rows.append(
+        {
+            "model_id": d.get("model_id", f.stem),
+            "timestamp": d.get("exam_timestamp", "")[:10],
+            "grade": d.get("overall_grade", ""),
+            "score": d.get("overall_score", 0.0),
+            "breadth_passed": d.get("breadth", {}).get("passed", 0),
+            "breadth_total": d.get("breadth", {}).get("total", 0),
+            "depth_score": d.get("depth", {}).get("overall_score", 0.0),
+            "hallucination": d.get("hallucination", {}).get("overall_rate", 0.0),
+            "speed_p50": d.get("speed", {}).get("latency_p50_ms", 0.0),
+            "safe_count": len(safe_caps),
+            "safe_caps": safe_caps,
+            "cost": ce.get("exam_cost_cny", 0.0),
+            "input_tokens": ce.get("input_tokens", 0),
+            "output_tokens": ce.get("output_tokens", 0),
+            "total_tokens": ce.get("total_tokens", 0),
+            "cost_per_question": ce.get("cost_per_question", 0.0),
+            "exam_questions": ce.get("exam_questions_asked", 0),
+            "deployment_mode": ce.get("deployment_mode", ""),
+            "duration": d.get("exam_duration_seconds", 0.0),
+        }
+    )
 
 # 按分数降序
 rows.sort(key=lambda r: r["score"], reverse=True)
@@ -77,7 +80,9 @@ print("=" * 120)
 print(f"  AI 模型入职考试成绩清单（{date.today().isoformat()}）")
 print("=" * 120)
 print()
-print(f"{'排名':<4} {'模型':<32} {'等级':<4} {'总分':<8} {'横轴':<8} {'纵轴':<8} {'幻觉率':<8} {'延迟P50':<10} {'安全能力':<8} {'费用(元)':<12} {'Tokens':<10} {'每题成本':<10} {'模式':<6}")
+print(
+    f"{'排名':<4} {'模型':<32} {'等级':<4} {'总分':<8} {'横轴':<8} {'纵轴':<8} {'幻觉率':<8} {'延迟P50':<10} {'安全能力':<8} {'费用(元)':<12} {'Tokens':<10} {'每题成本':<10} {'模式':<6}"
+)
 print("-" * 120)
 
 for i, r in enumerate(rows, 1):

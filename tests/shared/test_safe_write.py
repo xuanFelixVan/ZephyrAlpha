@@ -50,8 +50,7 @@ def test_hot_file_stale_base_refused(repo: Path) -> None:
     """base 与磁盘不符（他人已推进）→ 拒写不吞改。"""
     stale = content_sha256("# outdated\n")
     with pytest.raises(StaleWriteRefused):
-        safe_write_text(repo / "AGENTS.md", "# hijack\n",
-                        expected_base_sha256=stale, repo_root=repo)
+        safe_write_text(repo / "AGENTS.md", "# hijack\n", expected_base_sha256=stale, repo_root=repo)
     assert (repo / "AGENTS.md").read_text(encoding="utf-8") == "# rules v1\n"
     rows = _audit_rows(repo)
     assert any(r["event"] == "refused" and r["reason"] == "stale_base" for r in rows)
@@ -59,8 +58,7 @@ def test_hot_file_stale_base_refused(repo: Path) -> None:
 
 def test_hot_file_correct_base_written(repo: Path) -> None:
     base = content_sha256("# rules v1\n")
-    result = safe_write_text(repo / "AGENTS.md", "# rules v2\n",
-                             expected_base_sha256=base, repo_root=repo)
+    result = safe_write_text(repo / "AGENTS.md", "# rules v2\n", expected_base_sha256=base, repo_root=repo)
     assert result.written
     assert (repo / "AGENTS.md").read_text(encoding="utf-8") == "# rules v2\n"
     assert result.before_sha256 == base
@@ -73,8 +71,7 @@ def test_non_hot_file_optional_base(repo: Path) -> None:
     """非热文件：无 base 直接写；带正确 base 也写。"""
     r1 = safe_write_text(repo / "plain.txt", "p2\n", repo_root=repo)
     assert r1.written
-    r2 = safe_write_text(repo / "plain.txt", "p3\n",
-                         expected_base_sha256=content_sha256("p2\n"), repo_root=repo)
+    r2 = safe_write_text(repo / "plain.txt", "p3\n", expected_base_sha256=content_sha256("p2\n"), repo_root=repo)
     assert r2.written
     assert (repo / "plain.txt").read_text(encoding="utf-8") == "p3\n"
 
@@ -82,8 +79,7 @@ def test_non_hot_file_optional_base(repo: Path) -> None:
 def test_non_hot_file_stale_base_refused(repo: Path) -> None:
     """非热文件给了 base 就校验——陈旧同样拒写。"""
     with pytest.raises(StaleWriteRefused):
-        safe_write_text(repo / "plain.txt", "pX\n",
-                        expected_base_sha256=content_sha256("other\n"), repo_root=repo)
+        safe_write_text(repo / "plain.txt", "pX\n", expected_base_sha256=content_sha256("other\n"), repo_root=repo)
     assert (repo / "plain.txt").read_text(encoding="utf-8") == "p1\n"
 
 

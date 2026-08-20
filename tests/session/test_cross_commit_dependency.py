@@ -22,6 +22,7 @@
 - TestCheckCrossCommitDeps: _check_cross_commit_deps 函数（阻断/放行/异常降级）
 - TestBa40fa5b75Scenario: ba40fa5b75 同型违规治本场景复现
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -50,7 +51,9 @@ class TestSessionInfoDependsOnSessions:
     def test_to_dict_includes_depends_on_sessions(self):
         """to_dict 包含 depends_on_sessions 字段。"""
         info = SessionInfo(
-            session_id="s1", pid=0, start_time=0.0,
+            session_id="s1",
+            pid=0,
+            start_time=0.0,
             depends_on_sessions=["s2", "s3"],
         )
         d = info.to_dict()
@@ -58,31 +61,45 @@ class TestSessionInfoDependsOnSessions:
 
     def test_from_dict_reads_depends_on_sessions(self):
         """from_dict 读取 depends_on_sessions 字段。"""
-        info = SessionInfo.from_dict({
-            "session_id": "s1", "pid": 0, "start_time": 0.0,
-            "depends_on_sessions": ["s2"],
-        })
+        info = SessionInfo.from_dict(
+            {
+                "session_id": "s1",
+                "pid": 0,
+                "start_time": 0.0,
+                "depends_on_sessions": ["s2"],
+            }
+        )
         assert info.depends_on_sessions == ["s2"]
 
     def test_from_dict_missing_field_defaults_to_empty(self):
         """from_dict 缺失 depends_on_sessions 字段时默认空列表（向后兼容）。"""
-        info = SessionInfo.from_dict({
-            "session_id": "s1", "pid": 0, "start_time": 0.0,
-        })
+        info = SessionInfo.from_dict(
+            {
+                "session_id": "s1",
+                "pid": 0,
+                "start_time": 0.0,
+            }
+        )
         assert info.depends_on_sessions == []
 
     def test_from_dict_null_field_defaults_to_empty(self):
         """from_dict 中 depends_on_sessions=null 时默认空列表（防 None.append AttributeError）。"""
-        info = SessionInfo.from_dict({
-            "session_id": "s1", "pid": 0, "start_time": 0.0,
-            "depends_on_sessions": None,
-        })
+        info = SessionInfo.from_dict(
+            {
+                "session_id": "s1",
+                "pid": 0,
+                "start_time": 0.0,
+                "depends_on_sessions": None,
+            }
+        )
         assert info.depends_on_sessions == []
 
     def test_round_trip_preserves_depends_on_sessions(self):
         """to_dict → from_dict 往返保持 depends_on_sessions 一致。"""
         info = SessionInfo(
-            session_id="s1", pid=0, start_time=0.0,
+            session_id="s1",
+            pid=0,
+            start_time=0.0,
             depends_on_sessions=["s2", "s3"],
         )
         restored = SessionInfo.from_dict(info.to_dict())
@@ -172,6 +189,7 @@ class TestRegisterDependency:
         old_hb = old_info.last_heartbeat
         # 等待一小段时间确保时间戳不同
         import time as _time
+
         _time.sleep(0.01)
         reg.register_dependency("sess-A", "sess-B")
         new_info = reg.get_session("sess-A")
@@ -234,6 +252,7 @@ class TestCheckCrossCommitDeps:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _check_cross_commit_deps,
         )
+
         reg = SessionRegistry(project_root=tmp_path)
         reg.register("sess-A")  # 无依赖
         result = _check_cross_commit_deps(Path(tmp_path), "sess-A")
@@ -244,6 +263,7 @@ class TestCheckCrossCommitDeps:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _check_cross_commit_deps,
         )
+
         reg = SessionRegistry(project_root=tmp_path)
         # 注册依赖 session B（活跃）
         reg.register("sess-B")
@@ -262,6 +282,7 @@ class TestCheckCrossCommitDeps:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _check_cross_commit_deps,
         )
+
         reg = SessionRegistry(project_root=tmp_path)
         # 只注册当前 session A，依赖 ghost session B（未注册=已结束）
         reg.register("sess-A", depends_on_sessions=["sess-B-ghost"])
@@ -273,6 +294,7 @@ class TestCheckCrossCommitDeps:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _check_cross_commit_deps,
         )
+
         reg = SessionRegistry(project_root=tmp_path)
         reg.register("sess-B")
         # 手动把 sess-B 的 last_heartbeat 改老（pid=0 + 心跳过期 = 不活跃）
@@ -289,6 +311,7 @@ class TestCheckCrossCommitDeps:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _check_cross_commit_deps,
         )
+
         result = _check_cross_commit_deps(Path(tmp_path), "sess-ghost")
         assert result is None
 
@@ -297,6 +320,7 @@ class TestCheckCrossCommitDeps:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _check_cross_commit_deps,
         )
+
         reg = SessionRegistry(project_root=tmp_path)
         reg.register("sess-B")  # 活跃
         # sess-C 不注册（不活跃）
@@ -312,7 +336,8 @@ class TestCheckCrossCommitDeps:
 
         # patch _get_registry 抛异常
         with patch.object(
-            sw_mod, "_get_registry",
+            sw_mod,
+            "_get_registry",
             side_effect=RuntimeError("registry corrupted"),
         ):
             result = sw_mod.check_cross_commit_deps(Path(tmp_path), "sess-A")
@@ -337,6 +362,7 @@ class TestBa40fa5b75Scenario:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _check_cross_commit_deps,
         )
+
         reg = SessionRegistry(project_root=tmp_path)
         # session-B 正在创建 forged_gw_marker_gate.py（活跃）
         reg.register("sess-B")
@@ -353,6 +379,7 @@ class TestBa40fa5b75Scenario:
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
             _check_cross_commit_deps,
         )
+
         reg = SessionRegistry(project_root=tmp_path)
         reg.register("sess-B")
         reg.register("sess-A", depends_on_sessions=["sess-B"])

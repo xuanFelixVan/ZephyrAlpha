@@ -23,9 +23,7 @@ import pytest
 # add_node(depends_on=)/get_impact、AutoMaintenance.record_rule_usage/
 # complexity_budget、ForensicAssurance.sign_record 缺席——代码侧缺口待裁定，
 # 全文件 xfail 留痕（strict=False）。
-pytestmark = pytest.mark.xfail(
-    strict=False, reason="#ARCH-083 cross_cutting 窄实现 vs 宽契约，待裁定"
-)
+pytestmark = pytest.mark.xfail(strict=False, reason="#ARCH-083 cross_cutting 窄实现 vs 宽契约，待裁定")
 
 try:
     from zephyr.security.access_control.cross_cutting import (

@@ -65,7 +65,9 @@ def _make_py_file(
         header_lines.append(f"# [DOMAIN] {domain}")
     if maturity:
         header_lines.append(f"# [MATURITY] {maturity}")
-    header_lines.append(f"# [A_module] module_id={module_id} | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable")
+    header_lines.append(
+        f"# [A_module] module_id={module_id} | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable"
+    )
     header_lines.append("")
     header_lines.append(f'"""{docstring}"""')
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -109,6 +111,7 @@ def setup_registry(tmp_path: Path):
 # find / get 测试
 # ---------------------------------------------------------------------------
 
+
 def test_find_by_keyword(setup_registry):
     yaml_path, scan_root = setup_registry
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
@@ -145,7 +148,8 @@ def test_find_chinese_token_match(tmp_path: Path):
     查询变体"仓库根路径"（已删 alias）经 core"仓库根"公共子串命中——不再靠堆 alias。
     """
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 schema_version: "1.1.0"
 capabilities:
   - capability_id: repo_root_resolver
@@ -153,7 +157,9 @@ capabilities:
       - 仓库根
       - REPO_ROOT
     description: "仓库根目录的权威解析入口"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
@@ -224,6 +230,7 @@ def test_find_adversarial_vectors():
         assert isinstance(results, list), f"crash on {q!r}"
     # 超长查询不 DoS（应在 1s 内返回，实际 <10ms）
     import time
+
     t0 = time.time()
     reg.find("vocabulary " * 2000)
     assert time.time() - t0 < 1.0, "20k 字符查询超 1s（DoS 风险）"
@@ -235,10 +242,8 @@ def test_find_adversarial_vectors():
         ids = {r["capability_id"] for r in reg.find(q)}
         assert "session_handoff_continuity" in ids, f"failed for {q!r}: {ids}"
     # 制表符/多空格分隔（\W+ 统一切分）
-    assert "session_handoff_continuity" in {
-        r["capability_id"] for r in reg.find("session\thandoff")}
-    assert "session_handoff_continuity" in {
-        r["capability_id"] for r in reg.find("session   handoff")}
+    assert "session_handoff_continuity" in {r["capability_id"] for r in reg.find("session\thandoff")}
+    assert "session_handoff_continuity" in {r["capability_id"] for r in reg.find("session   handoff")}
     # 负向：完全无关查询返回空（不误命中）
     assert reg.find("完全无关的查询xyz123") == []
 
@@ -266,15 +271,19 @@ def test_get_not_found(setup_registry):
 # canonical 派生测试（v1.1.0 新增）
 # ---------------------------------------------------------------------------
 
+
 def test_canonical_single_candidate(tmp_path: Path):
     """单候选 → auto canonical（无需成熟度排序）。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: solo_cap
     aliases: [solo]
     description: "solo"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     _make_py_file(
@@ -307,13 +316,16 @@ def test_canonical_multiple_maturity_sort(setup_registry):
 def test_canonical_override(tmp_path: Path):
     """canonical_override 覆盖派生（强制选 design 版）。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: override_cap
     aliases: [picker]
     description: "override test"
     canonical_override: src/zephyr/proto/picker.py
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     # production 版（默认会被选中，但 override 强制选 design 版）
@@ -347,12 +359,15 @@ capabilities:
 def test_canonical_ambiguous_when_tied(tmp_path: Path):
     """两候选成熟度+import 数都打平 → AMBIGUOUS 标记。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: tied_cap
     aliases: [tied]
     description: "tied"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     # 两个 design 候选（成熟度相同，无 import → 打平）
@@ -390,12 +405,15 @@ def test_duplicate_relation_conflicting(setup_registry):
 def test_duplicate_relation_sibling(tmp_path: Path):
     """异蓝图 → relation=sibling。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: sib_cap
     aliases: [shared_name]
     description: "sibling test"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     _make_py_file(
@@ -422,7 +440,8 @@ capabilities:
 def test_duplicates_manual_merged(tmp_path: Path):
     """duplicates_manual（语义 sibling）合并到 duplicates[]。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: manual_cap
     aliases: [main]
@@ -431,7 +450,9 @@ capabilities:
       - path: src/zephyr/sibling/manager.py
         relation: sibling
         note: "语义 sibling，basename 不匹配，auto 派生漏掉"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     _make_py_file(
@@ -466,6 +487,7 @@ capabilities:
 # list_duplicates / list_ssot_conflicts 测试
 # ---------------------------------------------------------------------------
 
+
 def test_list_duplicates(setup_registry):
     yaml_path, scan_root = setup_registry
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
@@ -488,7 +510,8 @@ def test_list_ssot_conflicts(setup_registry):
 def test_list_ssot_conflicts_excludes_sibling(tmp_path: Path):
     """relation=sibling 不算 SSoT 冲突。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: cap_with_sibling
     aliases: [main_only]
@@ -496,7 +519,9 @@ capabilities:
     duplicates_manual:
       - path: src/zephyr/d.py
         relation: sibling
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     _make_py_file(
@@ -514,6 +539,7 @@ capabilities:
 # ---------------------------------------------------------------------------
 # check_file_canonical 测试
 # ---------------------------------------------------------------------------
+
 
 def test_check_file_canonical_canonical(setup_registry):
     yaml_path, scan_root = setup_registry
@@ -552,6 +578,7 @@ def test_check_file_canonical_not_in_registry(setup_registry):
 # summary / canonical_alive 测试
 # ---------------------------------------------------------------------------
 
+
 def test_summary(setup_registry):
     yaml_path, scan_root = setup_registry
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
@@ -566,12 +593,15 @@ def test_summary(setup_registry):
 def test_canonical_dead_when_file_missing(tmp_path: Path):
     """无候选（磁盘无匹配文件）→ canonical_alive=False, status=dead。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: dead_cap
     aliases: [dead_alias]
     description: "Dead"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
@@ -587,6 +617,7 @@ capabilities:
 # ---------------------------------------------------------------------------
 # _parse_header / _parse_header_from_text 测试
 # ---------------------------------------------------------------------------
+
 
 def test_parse_header_full(tmp_path: Path):
     py = tmp_path / "mod.py"
@@ -614,8 +645,7 @@ def test_parse_header_missing_fields(tmp_path: Path):
     """只有 [MODULE] 的文件也应被收录（有头部声明的下限）。"""
     py = tmp_path / "mod.py"
     py.write_text(
-        "# [MODULE] zephyr.minimal\n"
-        "pass\n",
+        "# [MODULE] zephyr.minimal\npass\n",
         encoding="utf-8",
     )
     info = CapabilityLookup.parse_header(py, "mod.py")
@@ -627,12 +657,7 @@ def test_parse_header_missing_fields(tmp_path: Path):
 def test_parse_header_multiline_docstring(tmp_path: Path):
     py = tmp_path / "mod.py"
     py.write_text(
-        "# [MODULE] zephyr.test\n"
-        '"""\n'
-        "First line of multi-line docstring.\n"
-        "Second line.\n"
-        '"""\n'
-        "pass\n",
+        '# [MODULE] zephyr.test\n"""\nFirst line of multi-line docstring.\nSecond line.\n"""\npass\n',
         encoding="utf-8",
     )
     info = CapabilityLookup.parse_header(py, "mod.py")
@@ -650,12 +675,7 @@ def test_parse_header_no_header(tmp_path: Path):
 
 def test_parse_header_from_text_string_input():
     """_parse_header_from_text 直接接受字符串（供 git show 输出复用）。"""
-    text = (
-        "# [MODULE] zephyr.old.ghost\n"
-        "# [BLUEPRINT] MOD-OLD\n"
-        "# [A_module] module_id=MOD-OLD_ghost\n"
-        "pass\n"
-    )
+    text = "# [MODULE] zephyr.old.ghost\n# [BLUEPRINT] MOD-OLD\n# [A_module] module_id=MOD-OLD_ghost\npass\n"
     info = CapabilityLookup.parse_header_from_text(text, "src/zephyr/old/ghost.py")
     assert info.module_path == "zephyr.old.ghost"
     assert info.module_id == "MOD-OLD_ghost"
@@ -666,15 +686,19 @@ def test_parse_header_from_text_string_input():
 # pending_candidates 测试
 # ---------------------------------------------------------------------------
 
+
 def test_pending_candidates_same_module_path(tmp_path: Path):
     """磁盘上有文件声明与 canonical 相同 module_path，但不在派生结果里 → pending。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: test_cap
     aliases: [canonical]
     description: "Test"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     _make_py_file(scan_root / "canonical.py", "zephyr.canonical", "MOD-TEST_canonical")
@@ -690,12 +714,15 @@ capabilities:
 def test_pending_candidates_same_module_id(tmp_path: Path):
     """磁盘上有文件声明与 canonical 相同 module_id，但不在派生结果里 → pending。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: test_cap
     aliases: [canonical]
     description: "Test"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     _make_py_file(scan_root / "canonical.py", "zephyr.canonical", "MOD-TEST_canonical")
@@ -710,19 +737,32 @@ capabilities:
 def test_pending_candidates_excludes_declared(tmp_path: Path):
     """派生 canonical + duplicates 已收录的文件不算 pending。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: test_cap
     aliases: [canonical]
     description: "Test"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
-    _make_py_file(scan_root / "a" / "canonical.py", "zephyr.canonical", "MOD-TEST_canonical",
-                  blueprint="MOD-TEST", maturity="production")
+    _make_py_file(
+        scan_root / "a" / "canonical.py",
+        "zephyr.canonical",
+        "MOD-TEST_canonical",
+        blueprint="MOD-TEST",
+        maturity="production",
+    )
     # 同 basename 同 module_id 的派生 duplicate（会被 _derive 收录，不算 pending）
-    _make_py_file(scan_root / "b" / "canonical.py", "zephyr.canonical", "MOD-TEST_canonical",
-                  blueprint="MOD-TEST", maturity="design")
+    _make_py_file(
+        scan_root / "b" / "canonical.py",
+        "zephyr.canonical",
+        "MOD-TEST_canonical",
+        blueprint="MOD-TEST",
+        maturity="design",
+    )
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("test_cap")
     assert cap["pending_candidates"] == []
@@ -732,15 +772,19 @@ capabilities:
 # removed_duplicates git log 派生测试（mock subprocess）
 # ---------------------------------------------------------------------------
 
+
 def test_removed_duplicates_git_derived(tmp_path: Path, monkeypatch):
     """git log --diff-filter=D 派生 removed_duplicates（mock subprocess）。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: ghost_cap
     aliases: [ghost]
     description: "ghost capability"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     # 磁盘无 ghost.py（已被删除），但有另一个活文件让 canonical_alive 检测正常
@@ -749,17 +793,14 @@ capabilities:
     # git log 输出：commit hash + 删除文件路径
     git_log_stdout = f"{fake_commit}\nsrc/zephyr/old/ghost.py\n"
     # git show 输出：被删文件的内容（含匹配能力的头部）
-    deleted_content = (
-        "# [MODULE] zephyr.old.ghost\n"
-        "# [A_module] module_id=MOD-OLD_ghost\n"
-        "pass\n"
-    )
+    deleted_content = "# [MODULE] zephyr.old.ghost\n# [A_module] module_id=MOD-OLD_ghost\npass\n"
 
     def fake_run(cmd, **kwargs):
         class FakeResult:
             returncode = 0
             stdout = ""
             stderr = ""
+
         r = FakeResult()
         cmd_str = " ".join(cmd) if isinstance(cmd, list) else str(cmd)
         if "log" in cmd_str and "--diff-filter=D" in cmd_str:
@@ -768,14 +809,11 @@ capabilities:
             r.stdout = deleted_content
         return r
 
-    monkeypatch.setattr(
-        "zephyr.governance.capability_lookup.subprocess.run", fake_run
-    )
+    monkeypatch.setattr("zephyr.governance.capability_lookup.subprocess.run", fake_run)
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("ghost_cap")
     # git 派生应找到 1 条 removed_duplicate
-    git_derived = [d for d in cap["removed_duplicates"]
-                   if "git-derived" in d.get("note", "")]
+    git_derived = [d for d in cap["removed_duplicates"] if "git-derived" in d.get("note", "")]
     assert len(git_derived) == 1
     assert git_derived[0]["path"] == "src/zephyr/old/ghost.py"
     assert git_derived[0]["removed_in_commit"] == fake_commit
@@ -785,28 +823,28 @@ capabilities:
 def test_removed_duplicates_git_header_mismatch_skipped(tmp_path: Path, monkeypatch):
     """basename 匹配但头部不匹配能力 → 跳过（避免 basename 巧合误报）。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: real_cap
     aliases: [ghost]
     description: "real capability"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
     fake_commit = "b" * 40
     git_log_stdout = f"{fake_commit}\nsrc/zephyr/old/ghost.py\n"
     # 头部 module_path 是 unrelated，不匹配 ghost 能力
-    deleted_content = (
-        "# [MODULE] zephyr.unrelated.thing\n"
-        "# [A_module] module_id=MOD-UNRELATED\n"
-        "pass\n"
-    )
+    deleted_content = "# [MODULE] zephyr.unrelated.thing\n# [A_module] module_id=MOD-UNRELATED\npass\n"
 
     def fake_run(cmd, **kwargs):
         class FakeResult:
             returncode = 0
             stdout = ""
             stderr = ""
+
         r = FakeResult()
         cmd_str = " ".join(cmd) if isinstance(cmd, list) else str(cmd)
         if "log" in cmd_str:
@@ -815,21 +853,19 @@ capabilities:
             r.stdout = deleted_content
         return r
 
-    monkeypatch.setattr(
-        "zephyr.governance.capability_lookup.subprocess.run", fake_run
-    )
+    monkeypatch.setattr("zephyr.governance.capability_lookup.subprocess.run", fake_run)
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("real_cap")
     # 头部不匹配 → 不收录
-    git_derived = [d for d in cap["removed_duplicates"]
-                   if "git-derived" in d.get("note", "")]
+    git_derived = [d for d in cap["removed_duplicates"] if "git-derived" in d.get("note", "")]
     assert git_derived == []
 
 
 def test_removed_duplicates_manual_appended(tmp_path: Path, monkeypatch):
     """removed_duplicates_manual 始终追加（未被 git 跟踪的历史文件）。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: manual_cap
     aliases: [manual]
@@ -837,26 +873,27 @@ capabilities:
     removed_duplicates_manual:
       - path: src/zephyr/never_tracked/manual.py
         note: "未被 git 跟踪的历史死副本"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
+
     # mock git log 返回空（无 git 派生）
     def fake_run(cmd, **kwargs):
         class FakeResult:
             returncode = 0
             stdout = ""
             stderr = ""
+
         return FakeResult()
 
-    monkeypatch.setattr(
-        "zephyr.governance.capability_lookup.subprocess.run", fake_run
-    )
+    monkeypatch.setattr("zephyr.governance.capability_lookup.subprocess.run", fake_run)
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("manual_cap")
     paths = [d["path"] for d in cap["removed_duplicates"]]
     assert "src/zephyr/never_tracked/manual.py" in paths
-    manual_entry = [d for d in cap["removed_duplicates"]
-                    if d["path"] == "src/zephyr/never_tracked/manual.py"][0]
+    manual_entry = [d for d in cap["removed_duplicates"] if d["path"] == "src/zephyr/never_tracked/manual.py"][0]
     assert "未被 git 跟踪" in manual_entry["note"]
 
 
@@ -975,7 +1012,8 @@ def test_check_capability_duplicates_no_signal(setup_registry):
 def test_removed_duplicates_no_git_keeps_manual(tmp_path: Path, monkeypatch):
     """非 git 仓库（git log 失败）→ git 派生为空，manual 条目保留。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: nogit_cap
     aliases: [nogit]
@@ -983,7 +1021,9 @@ capabilities:
     removed_duplicates_manual:
       - path: src/zephyr/old/nogit.py
         note: "manual only"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
 
@@ -992,11 +1032,10 @@ capabilities:
             returncode = 128  # git 错误
             stdout = ""
             stderr = "not a git repository"
+
         return FakeResult()
 
-    monkeypatch.setattr(
-        "zephyr.governance.capability_lookup.subprocess.run", fake_run
-    )
+    monkeypatch.setattr("zephyr.governance.capability_lookup.subprocess.run", fake_run)
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("nogit_cap")
     # git 派生失败 → 只有 manual 条目
@@ -1007,7 +1046,8 @@ capabilities:
 def test_no_derive_removed_skips_git(tmp_path: Path, monkeypatch):
     """derive_removed=False → 不调用 git，removed_duplicates 只有 manual。"""
     yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text("""
+    yaml_path.write_text(
+        """
 capabilities:
   - capability_id: skip_cap
     aliases: [skip]
@@ -1015,28 +1055,27 @@ capabilities:
     removed_duplicates_manual:
       - path: src/zephyr/old/skip.py
         note: "manual"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
-    _make_py_file(scan_root / "skip.py", "zephyr.skip", "MOD-SKIP",
-                  blueprint="MOD-SKIP", maturity="production")
+    _make_py_file(scan_root / "skip.py", "zephyr.skip", "MOD-SKIP", blueprint="MOD-SKIP", maturity="production")
 
     call_count = [0]
 
     def fake_run(cmd, **kwargs):
         call_count[0] += 1
+
         class FakeResult:
             returncode = 0
             stdout = ""
             stderr = ""
+
         return FakeResult()
 
-    monkeypatch.setattr(
-        "zephyr.governance.capability_lookup.subprocess.run", fake_run
-    )
-    reg = CapabilityLookup(
-        yaml_path=yaml_path, scan_root=scan_root, derive_removed=False
-    )
+    monkeypatch.setattr("zephyr.governance.capability_lookup.subprocess.run", fake_run)
+    reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root, derive_removed=False)
     assert call_count[0] == 0  # 未调用 git
     cap = reg.get("skip_cap")
     assert len(cap["removed_duplicates"]) == 1  # 只有 manual
@@ -1045,6 +1084,7 @@ capabilities:
 # ---------------------------------------------------------------------------
 # 边界 / 错误处理测试
 # ---------------------------------------------------------------------------
+
 
 def test_yaml_missing_raises(tmp_path: Path):
     scan_root = tmp_path / "src" / "zephyr"
@@ -1069,14 +1109,17 @@ def test_reload(setup_registry):
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     assert len(reg.list_all()) == 1
     # 修改 YAML 加一条
-    yaml_path.write_text(SAMPLE_YAML + """
+    yaml_path.write_text(
+        SAMPLE_YAML
+        + """
   - capability_id: second_cap
     aliases: [second]
     description: "Second"
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
     # 为 second_cap 创建磁盘文件
-    _make_py_file(scan_root / "second.py", "zephyr.second", "MOD-SECOND",
-                  blueprint="MOD-SECOND", maturity="production")
+    _make_py_file(scan_root / "second.py", "zephyr.second", "MOD-SECOND", blueprint="MOD-SECOND", maturity="production")
     reg.reload()
     assert len(reg.list_all()) == 2
 
@@ -1101,6 +1144,7 @@ def test_empty_yaml(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # 真实项目注册表集成测试（确保种子条目可加载 + 派生正确）
 # ---------------------------------------------------------------------------
+
 
 def test_real_registry_loads():
     """集成测试：真实项目 YAML 能加载，且包含 2 个种子条目。

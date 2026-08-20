@@ -326,6 +326,7 @@ class TestDeterministicJudge:
 
     def _make_judge(self):
         from zephyr.intelligence.model_profiling.exam_judge import DeterministicJudge
+
         return DeterministicJudge()
 
     def test_keyword_coverage_full(self):
@@ -371,7 +372,10 @@ class TestDeterministicJudge:
         """太短 (<50字) → depth < 0.5。"""
         judge = self._make_judge()
         case = ExamTestCase(
-            case_id="T", capability="x", difficulty=Difficulty.OLYMPIAD, prompt="t",
+            case_id="T",
+            capability="x",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="t",
         )
         result = judge.judge(case, "short answer")
         assert result.depth < 0.5
@@ -380,7 +384,10 @@ class TestDeterministicJudge:
         """合理长度 (50~10000字) → depth=1.0。"""
         judge = self._make_judge()
         case = ExamTestCase(
-            case_id="T", capability="x", difficulty=Difficulty.OLYMPIAD, prompt="t",
+            case_id="T",
+            capability="x",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="t",
         )
         result = judge.judge(case, "x" * 100)
         assert result.depth == 1.0
@@ -389,7 +396,10 @@ class TestDeterministicJudge:
         """无关键词/结构要求 → correctness/completeness=0.5 (中性分)。"""
         judge = self._make_judge()
         case = ExamTestCase(
-            case_id="T", capability="x", difficulty=Difficulty.OLYMPIAD, prompt="t",
+            case_id="T",
+            capability="x",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="t",
         )
         result = judge.judge(case, "x" * 100)
         assert result.correctness == 0.5
@@ -509,7 +519,10 @@ class TestOlympiadThreeTrackEnforcement:
     def test_expected_static_assertions_default_empty(self):
         """新字段默认为空列表, 向后兼容。"""
         case = ExamTestCase(
-            case_id="X", capability="c", difficulty=Difficulty.EASY, prompt="p",
+            case_id="X",
+            capability="c",
+            difficulty=Difficulty.EASY,
+            prompt="p",
         )
         assert case.expected_static_assertions == []
 
@@ -689,6 +702,7 @@ class TestComputeGradeSimple:
         from zephyr.intelligence.model_profiling.capability_passport import (
             compute_grade_simple,
         )
+
         assert compute_grade_simple(0.90) == "A"
         assert compute_grade_simple(0.75) == "A"
 
@@ -696,6 +710,7 @@ class TestComputeGradeSimple:
         from zephyr.intelligence.model_profiling.capability_passport import (
             compute_grade_simple,
         )
+
         assert compute_grade_simple(0.74) == "B"
         assert compute_grade_simple(0.60) == "B"
 
@@ -703,6 +718,7 @@ class TestComputeGradeSimple:
         from zephyr.intelligence.model_profiling.capability_passport import (
             compute_grade_simple,
         )
+
         assert compute_grade_simple(0.59) == "C"
         assert compute_grade_simple(0.45) == "C"
 
@@ -710,6 +726,7 @@ class TestComputeGradeSimple:
         from zephyr.intelligence.model_profiling.capability_passport import (
             compute_grade_simple,
         )
+
         assert compute_grade_simple(0.44) == "D"
         assert compute_grade_simple(0.30) == "D"
 
@@ -717,6 +734,7 @@ class TestComputeGradeSimple:
         from zephyr.intelligence.model_profiling.capability_passport import (
             compute_grade_simple,
         )
+
         assert compute_grade_simple(0.29) == "F"
         assert compute_grade_simple(0.0) == "F"
 
@@ -728,6 +746,7 @@ class TestHallucinationBreakdown:
         from zephyr.intelligence.model_profiling.capability_passport import (
             HallucinationBreakdown,
         )
+
         h = HallucinationBreakdown()
         assert h.overall_rate == 0.0
         assert h.hallucination_score == 1.0
@@ -736,11 +755,16 @@ class TestHallucinationBreakdown:
         from zephyr.intelligence.model_profiling.capability_passport import (
             HallucinationBreakdown,
         )
+
         h = HallucinationBreakdown(
-            fabrication=0.2, inconsistency=0.4,
-            refusal=0.0, overclaim=0.1,
-            context_drift=0.3, source_confusion=0.0,
-            instruction_drift=0.0, format_hallucination=0.0,
+            fabrication=0.2,
+            inconsistency=0.4,
+            refusal=0.0,
+            overclaim=0.1,
+            context_drift=0.3,
+            source_confusion=0.0,
+            instruction_drift=0.0,
+            format_hallucination=0.0,
             quantity_hallucination=0.0,
         )
         # mean(0.2,0.4,0.0,0.1,0.3,0.0,0.0,0.0,0.0) = 1.0/9 ≈ 0.111
@@ -750,6 +774,7 @@ class TestHallucinationBreakdown:
         from zephyr.intelligence.model_profiling.capability_passport import (
             HallucinationBreakdown,
         )
+
         h = HallucinationBreakdown(fabrication=0.5)
         # mean(0.5,0,...,0)=0.5/9≈0.056, score=1-0.056
         assert h.hallucination_score == round(1.0 - h.overall_rate, 3)
@@ -758,10 +783,16 @@ class TestHallucinationBreakdown:
         from zephyr.intelligence.model_profiling.capability_passport import (
             HallucinationBreakdown,
         )
+
         h = HallucinationBreakdown(
-            fabrication=1.0, inconsistency=1.0, refusal=1.0,
-            overclaim=1.0, context_drift=1.0, source_confusion=1.0,
-            instruction_drift=1.0, format_hallucination=1.0,
+            fabrication=1.0,
+            inconsistency=1.0,
+            refusal=1.0,
+            overclaim=1.0,
+            context_drift=1.0,
+            source_confusion=1.0,
+            instruction_drift=1.0,
+            format_hallucination=1.0,
             quantity_hallucination=1.0,
         )
         assert h.overall_rate == 1.0
@@ -772,8 +803,10 @@ class TestHallucinationBreakdown:
         from zephyr.intelligence.model_profiling.capability_passport import (
             HallucinationBreakdown,
         )
+
         h = HallucinationBreakdown(
-            instruction_drift=0.9, format_hallucination=0.9,
+            instruction_drift=0.9,
+            format_hallucination=0.9,
             quantity_hallucination=0.9,
         )
         # mean(0,0,0,0,0,0,0.9,0.9,0.9) = 2.7/9 = 0.3
@@ -785,8 +818,10 @@ class TestCheckOverclaim:
 
     def _make_case(self, capability="refactor", prompt="refactor this code"):
         return ExamTestCase(
-            case_id="T", capability=capability,
-            difficulty=Difficulty.EASY, prompt=prompt,
+            case_id="T",
+            capability=capability,
+            difficulty=Difficulty.EASY,
+            prompt=prompt,
         )
 
     def test_claim_with_empty_field(self):
@@ -819,8 +854,10 @@ class TestCheckSourceConfusion:
 
     def _make_case(self, prompt="fix bug in auth.py"):
         return ExamTestCase(
-            case_id="T", capability="code_edit_precision",
-            difficulty=Difficulty.EASY, prompt=prompt,
+            case_id="T",
+            capability="code_edit_precision",
+            difficulty=Difficulty.EASY,
+            prompt=prompt,
         )
 
     def test_referenced_file_in_prompt(self):
@@ -845,8 +882,10 @@ class TestCheckSourceConfusion:
 
     def test_input_files_are_legit(self):
         case = ExamTestCase(
-            case_id="T", capability="cross_file_refactor",
-            difficulty=Difficulty.HARD, prompt="refactor",
+            case_id="T",
+            capability="cross_file_refactor",
+            difficulty=Difficulty.HARD,
+            prompt="refactor",
             input_files={"a.py": "content", "b.py": "content"},
         )
         result = {"changes": [{"file": "a.py"}, {"file": "b.py"}]}
@@ -858,8 +897,10 @@ class TestCheckInstructionDrift:
 
     def _make_case(self, keys: list[str]) -> ExamTestCase:
         return ExamTestCase(
-            case_id="T", capability="task_classification",
-            difficulty=Difficulty.EASY, prompt="classify",
+            case_id="T",
+            capability="task_classification",
+            difficulty=Difficulty.EASY,
+            prompt="classify",
             expected_structure_keys=keys,
         )
 
@@ -884,8 +925,10 @@ class TestCheckInstructionDrift:
     def test_no_expected_keys(self):
         """case 无 expected_structure_keys → 无法判定, 返回 False。"""
         case = ExamTestCase(
-            case_id="T", capability="task_classification",
-            difficulty=Difficulty.EASY, prompt="test",
+            case_id="T",
+            capability="task_classification",
+            difficulty=Difficulty.EASY,
+            prompt="test",
         )
         assert check_instruction_drift(case, {"x": 1}) is False
 
@@ -900,8 +943,10 @@ class TestCheckFormatHallucination:
 
     def _make_case(self, keys: list[str]) -> ExamTestCase:
         return ExamTestCase(
-            case_id="T", capability="tag_completion",
-            difficulty=Difficulty.EASY, prompt="complete tags",
+            case_id="T",
+            capability="tag_completion",
+            difficulty=Difficulty.EASY,
+            prompt="complete tags",
             expected_structure_keys=keys,
         )
 
@@ -932,8 +977,10 @@ class TestCheckFormatHallucination:
     def test_no_expected_keys(self):
         """case 无 expected_structure_keys → False。"""
         case = ExamTestCase(
-            case_id="T", capability="tag_completion",
-            difficulty=Difficulty.EASY, prompt="test",
+            case_id="T",
+            capability="tag_completion",
+            difficulty=Difficulty.EASY,
+            prompt="test",
         )
         assert check_format_hallucination(case, {"x": 1}) is False
 
@@ -944,41 +991,56 @@ class TestCheckQuantityHallucination:
     def test_normal_list_size(self):
         """正常大小 list → 无数量幻觉。"""
         result = {"tags": ["a", "b", "c"]}
-        assert check_quantity_hallucination(
-            ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
-            result,
-        ) is False
+        assert (
+            check_quantity_hallucination(
+                ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
+                result,
+            )
+            is False
+        )
 
     def test_inflated_list(self):
         """list 长度 > 20 → 数量幻觉。"""
         result = {"tags": [f"tag_{i}" for i in range(25)]}
-        assert check_quantity_hallucination(
-            ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
-            result,
-        ) is True
+        assert (
+            check_quantity_hallucination(
+                ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
+                result,
+            )
+            is True
+        )
 
     def test_inflated_dict(self):
         """dict 长度 > 20 → 数量幻觉。"""
         result = {"mapping": {str(i): i for i in range(25)}}
-        assert check_quantity_hallucination(
-            ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
-            result,
-        ) is True
+        assert (
+            check_quantity_hallucination(
+                ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
+                result,
+            )
+            is True
+        )
 
     def test_boundary_exactly_20(self):
         """list 长度 = 20 → 不触发 (阈值 > 20)。"""
         result = {"tags": [f"t{i}" for i in range(20)]}
-        assert check_quantity_hallucination(
-            ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
-            result,
-        ) is False
+        assert (
+            check_quantity_hallucination(
+                ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
+                result,
+            )
+            is False
+        )
 
     def test_non_dict_result(self):
         """非 dict 输出 → False。"""
-        assert check_quantity_hallucination(
-            ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
-            "not a dict",
-        ) is False
+        assert (
+            check_quantity_hallucination(
+                ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
+                "not a dict",
+            )
+            is False
+        )
 
 
 class TestRunHallucinationSixDim:
@@ -990,7 +1052,10 @@ class TestRunHallucinationSixDim:
         chat.inference.return_value = {"category": "ok"}
         orch = ExamOrchestrator(chat, model_id="t")
         breadth = BreadthResult(
-            score=1.0, passed=29, total=29, failed_capabilities=[],
+            score=1.0,
+            passed=29,
+            total=29,
+            failed_capabilities=[],
         )
         h = orch.run_hallucination_six_dim(breadth, quick=True)
         # 每个能力 2 次推断 (主+对比), 5 能力 = 10 次
@@ -1003,7 +1068,10 @@ class TestRunHallucinationSixDim:
         chat.inference.return_value = {"category": "web"}
         orch = ExamOrchestrator(chat, model_id="t")
         breadth = BreadthResult(
-            score=1.0, passed=29, total=29, failed_capabilities=[],
+            score=1.0,
+            passed=29,
+            total=29,
+            failed_capabilities=[],
         )
         h = orch.run_hallucination_six_dim(breadth, quick=False)
         # 全部能力相同输出 → inconsistency=0
@@ -1014,7 +1082,9 @@ class TestRunHallucinationSixDim:
         chat = MagicMock()
         orch = ExamOrchestrator(chat, model_id="t")
         breadth = BreadthResult(
-            score=0.0, passed=0, total=29,
+            score=0.0,
+            passed=0,
+            total=29,
             failed_capabilities=list(CAPABILITIES),
         )
         h = orch.run_hallucination_six_dim(breadth, quick=True)
@@ -1055,6 +1125,7 @@ class TestRunQuickExam:
     def test_quick_exam_returns_quick_profile(self):
         """Quick 模式返回 QuickProfile, 不是 CapabilityPassport。"""
         from zephyr.intelligence.model_profiling.capability_passport import QuickProfile
+
         chat = MagicMock()
         chat.inference.return_value = {"category": "web", "tags": ["x"]}
         orch = ExamOrchestrator(chat, model_id="test-quick")
@@ -1108,6 +1179,7 @@ class TestRunExamModes:
     def test_run_exam_quick(self):
         """run_exam(mode='quick') 返回 QuickProfile。"""
         from zephyr.intelligence.model_profiling.capability_passport import QuickProfile
+
         chat = MagicMock()
         chat.inference.return_value = {"category": "web"}
         orch = ExamOrchestrator(chat, model_id="t")
@@ -1124,6 +1196,7 @@ class TestRunExamModes:
     def test_run_exam_mode_case_insensitive(self):
         """mode 大小写不敏感。"""
         from zephyr.intelligence.model_profiling.capability_passport import QuickProfile
+
         chat = MagicMock()
         chat.inference.return_value = {"category": "web"}
         orch = ExamOrchestrator(chat, model_id="t")
@@ -1193,6 +1266,7 @@ class TestBuildRecommendationsContinued:
 # P2 Tool 轴 (ROADMAP-02): function_calling + tool_chaining
 # ══════════════════════════════════════════════════════════
 
+
 class TestComputeMetricsFunctionCalling:
     """_compute_metrics_generic 对 function_calling (expected_function_args) 的评分。"""
 
@@ -1214,9 +1288,7 @@ class TestComputeMetricsFunctionCalling:
     def test_perfect_match(self):
         """function 名 + 所有参数 value 命中 → 高分。"""
         orch = self._make_orch()
-        case = self._make_case(
-            "Read", {"file_path": "docker-compose"}, contains=["file_path"]
-        )
+        case = self._make_case("Read", {"file_path": "docker-compose"}, contains=["file_path"])
         result = {
             "function": "Read",
             "arguments": {"file_path": "/abs/docker-compose.yml"},
@@ -1275,10 +1347,12 @@ class TestComputeMetricsToolChaining:
         """steps 工具顺序完全匹配 → 满分。"""
         orch = self._make_orch()
         case = self._make_case(["Grep", "Read"], contains=["Grep", "Read"])
-        result = {"steps": [
-            {"tool": "Grep", "purpose": "find"},
-            {"tool": "Read", "purpose": "read"},
-        ]}
+        result = {
+            "steps": [
+                {"tool": "Grep", "purpose": "find"},
+                {"tool": "Read", "purpose": "read"},
+            ]
+        }
         p, r, ed, em = orch.compute_metrics(case, result)
         assert p == pytest.approx(1.0, abs=0.01)
         assert em == 1
@@ -1287,10 +1361,12 @@ class TestComputeMetricsToolChaining:
         """工具顺序错误 → seq_rate 部分匹配。"""
         orch = self._make_orch()
         case = self._make_case(["Grep", "Read"], contains=["Grep", "Read"])
-        result = {"steps": [
-            {"tool": "Read", "purpose": "read first"},
-            {"tool": "Grep", "purpose": "then search"},
-        ]}
+        result = {
+            "steps": [
+                {"tool": "Read", "purpose": "read first"},
+                {"tool": "Grep", "purpose": "then search"},
+            ]
+        }
         p, r, ed, em = orch.compute_metrics(case, result)
         # Read 在前, Grep 在后; expected=[Grep,Read] 作为子序列无法匹配
         assert em == 0
@@ -1299,10 +1375,12 @@ class TestComputeMetricsToolChaining:
         """3 步期望, 只匹配 2 步 → 部分分。"""
         orch = self._make_orch()
         case = self._make_case(["Glob", "Read", "Edit"], contains=["Glob", "Read", "Edit"])
-        result = {"steps": [
-            {"tool": "Glob", "purpose": "find"},
-            {"tool": "Read", "purpose": "read"},
-        ]}  # 缺 Edit
+        result = {
+            "steps": [
+                {"tool": "Glob", "purpose": "find"},
+                {"tool": "Read", "purpose": "read"},
+            ]
+        }  # 缺 Edit
         p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 0
         assert p < 1.0
@@ -1311,10 +1389,12 @@ class TestComputeMetricsToolChaining:
         """steps 中用 'function' 而非 'tool' 也能匹配。"""
         orch = self._make_orch()
         case = self._make_case(["Grep", "Read"], contains=["Grep", "Read"])
-        result = {"steps": [
-            {"function": "Grep"},
-            {"function": "Read"},
-        ]}
+        result = {
+            "steps": [
+                {"function": "Grep"},
+                {"function": "Read"},
+            ]
+        }
         p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 1
 
@@ -1322,12 +1402,14 @@ class TestComputeMetricsToolChaining:
         """中间插入额外步骤, 期望序列仍为有序子序列 → 匹配 (em=1)。"""
         orch = self._make_orch()
         case = self._make_case(["Grep", "Read"], contains=["Grep", "Read"])
-        result = {"steps": [
-            {"tool": "Glob", "purpose": "first find files"},
-            {"tool": "Grep", "purpose": "then search"},
-            {"tool": "Write", "purpose": "log"},
-            {"tool": "Read", "purpose": "finally read"},
-        ]}
+        result = {
+            "steps": [
+                {"tool": "Glob", "purpose": "first find files"},
+                {"tool": "Grep", "purpose": "then search"},
+                {"tool": "Write", "purpose": "log"},
+                {"tool": "Read", "purpose": "finally read"},
+            ]
+        }
         p, r, ed, em = orch.compute_metrics(case, result)
         # Grep 和 Read 仍按序出现 → seq_rate=1.0; contains Grep/Read 均在文本中 → 全中
         # 额外的 Glob/Write 不在任何 expected 字段中, 不扣分
@@ -1340,14 +1422,17 @@ class TestDeterministicJudgeToolAxis:
 
     def _make_judge(self):
         from zephyr.intelligence.model_profiling.exam_judge import DeterministicJudge
+
         return DeterministicJudge()
 
     def test_function_args_full_hit(self):
         """参数 key+value 全命中 → correctness 高。"""
         judge = self._make_judge()
         case = ExamTestCase(
-            case_id="T", capability="function_calling",
-            difficulty=Difficulty.EASY, prompt="t",
+            case_id="T",
+            capability="function_calling",
+            difficulty=Difficulty.EASY,
+            prompt="t",
             expected_structure_keys=["function", "arguments"],
             expected_tool="Read",
             expected_function_args={"file_path": "docker-compose"},
@@ -1362,8 +1447,10 @@ class TestDeterministicJudgeToolAxis:
         """参数 key 存在但 value 不符 → correctness 部分分。"""
         judge = self._make_judge()
         case = ExamTestCase(
-            case_id="T", capability="function_calling",
-            difficulty=Difficulty.EASY, prompt="t",
+            case_id="T",
+            capability="function_calling",
+            difficulty=Difficulty.EASY,
+            prompt="t",
             expected_function_args={"pattern": "TODO", "path": "src"},
             expected_contains=["pattern", "path"],
         )
@@ -1376,8 +1463,10 @@ class TestDeterministicJudgeToolAxis:
         """工具按序出现 → seq_score=1.0。"""
         judge = self._make_judge()
         case = ExamTestCase(
-            case_id="T", capability="tool_chaining",
-            difficulty=Difficulty.EASY, prompt="t",
+            case_id="T",
+            capability="tool_chaining",
+            difficulty=Difficulty.EASY,
+            prompt="t",
             expected_tool_sequence=["Grep", "Read"],
             expected_contains=["Grep", "Read"],
         )
@@ -1389,8 +1478,10 @@ class TestDeterministicJudgeToolAxis:
         """工具乱序 → seq_score 部分分。"""
         judge = self._make_judge()
         case = ExamTestCase(
-            case_id="T", capability="tool_chaining",
-            difficulty=Difficulty.EASY, prompt="t",
+            case_id="T",
+            capability="tool_chaining",
+            difficulty=Difficulty.EASY,
+            prompt="t",
             expected_tool_sequence=["Grep", "Read"],
             expected_contains=["Grep", "Read"],
         )
@@ -1405,8 +1496,10 @@ class TestDeterministicJudgeToolAxis:
         """无 Tool 轴字段 → 不影响原有评分逻辑。"""
         judge = self._make_judge()
         case = ExamTestCase(
-            case_id="T", capability="x",
-            difficulty=Difficulty.EASY, prompt="t",
+            case_id="T",
+            capability="x",
+            difficulty=Difficulty.EASY,
+            prompt="t",
             expected_contains=["alpha"],
         )
         text = "alpha " * 30
@@ -1421,6 +1514,7 @@ class TestToolAxisCasesRegistered:
         from zephyr.intelligence.model_profiling.exam_test_cases import (
             CASES_BY_CAPABILITY,
         )
+
         cases = CASES_BY_CAPABILITY.get("function_calling", [])
         assert len(cases) == 3
         ids = [c.case_id for c in cases]
@@ -1435,6 +1529,7 @@ class TestToolAxisCasesRegistered:
         from zephyr.intelligence.model_profiling.exam_test_cases import (
             CASES_BY_CAPABILITY,
         )
+
         cases = CASES_BY_CAPABILITY.get("tool_chaining", [])
         assert len(cases) == 3
         ids = [c.case_id for c in cases]
@@ -1450,6 +1545,7 @@ class TestToolAxisCasesRegistered:
         from zephyr.intelligence.model_profiling.exam_test_cases import (
             CASES_BY_CAPABILITY,
         )
+
         for cap in ("function_calling", "tool_chaining"):
             diffs = {c.difficulty for c in CASES_BY_CAPABILITY[cap]}
             assert Difficulty.EASY in diffs
@@ -1461,6 +1557,7 @@ class TestToolAxisCasesRegistered:
         from zephyr.intelligence.model_profiling.exam_test_cases import (
             CASES_BY_CAPABILITY,
         )
+
         assert len(CASES_BY_CAPABILITY) == 31
 
 
@@ -1468,6 +1565,7 @@ class TestToolAxisCasesRegistered:
 # 5.158.12 回归测试——_compute_metrics 硬编码分支行为等价验证
 # 重构前编写，验证 extract method 后行为不变。
 # ══════════════════════════════════════════════════════════
+
 
 class TestComputeMetricsHardcodedBranches:
     """_compute_metrics 6 个硬编码分支的直接回归测试。"""
@@ -1480,8 +1578,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_task_classification_match(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="task_classification",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="task_classification",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_category="utils",
         )
         p, r, ed, em = orch.compute_metrics(case, {"category": "utils"})
@@ -1491,8 +1591,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_task_classification_mismatch(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="task_classification",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="task_classification",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_category="utils",
         )
         p, r, ed, em = orch.compute_metrics(case, {"category": "governance"})
@@ -1503,8 +1605,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_tag_completion_exact(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="tag_completion",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="tag_completion",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_tags=["a", "b"],
         )
         p, r, ed, em = orch.compute_metrics(case, {"tags": ["a", "b"]})
@@ -1514,8 +1618,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_tag_completion_partial(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="tag_completion",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="tag_completion",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_tags=["a", "b"],
         )
         p, r, ed, em = orch.compute_metrics(case, {"tags": ["a"]})
@@ -1525,8 +1631,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_tag_completion_empty_pred(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="tag_completion",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="tag_completion",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_tags=["a"],
         )
         p, r, ed, em = orch.compute_metrics(case, {"tags": []})
@@ -1538,8 +1646,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_summary_extraction_all_hits(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="summary_extraction",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="summary_extraction",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_contains=["hello", "world"],
         )
         p, r, ed, em = orch.compute_metrics(case, "hello world text")
@@ -1549,8 +1659,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_summary_extraction_partial(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="summary_extraction",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="summary_extraction",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_contains=["hello", "world"],
         )
         p, r, ed, em = orch.compute_metrics(case, "hello only")
@@ -1560,8 +1672,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_naming_suggest_uses_same_logic(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="naming_suggest",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="naming_suggest",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_contains=["foo"],
         )
         p, r, ed, em = orch.compute_metrics(case, "the foo bar")
@@ -1572,8 +1686,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_anomaly_triage_match_true(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="anomaly_triage",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="anomaly_triage",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_needs_human=True,
         )
         p, r, ed, em = orch.compute_metrics(case, {"needs_human": True})
@@ -1582,8 +1698,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_anomaly_triage_mismatch(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="anomaly_triage",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="anomaly_triage",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_needs_human=True,
         )
         p, r, ed, em = orch.compute_metrics(case, {"needs_human": False})
@@ -1594,8 +1712,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_code_fix_exact_old_str(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="code_fix",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="code_fix",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_old_str="old code",
             expected_contains=["kw"],
         )
@@ -1607,8 +1727,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_code_fix_no_entries(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="code_fix",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="code_fix",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_old_str="old code",
         )
         p, r, ed, em = orch.compute_metrics(case, {"fixes": []})
@@ -1618,8 +1740,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_code_edit_precision_best_ed(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="code_edit_precision",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="code_edit_precision",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_old_str="abc",
         )
         result = {"fixes": [{"old_str": "axc"}, {"old_str": "abd"}]}
@@ -1630,8 +1754,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_refactor_uses_changes_field(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="refactor",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="refactor",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_old_str="target",
         )
         result = {"changes": [{"old_str": "target"}]}
@@ -1641,8 +1767,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_dead_code_removal_uses_dead_sections(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="dead_code_removal",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="dead_code_removal",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_old_str="dead",
         )
         result = {"dead_sections": [{"old_str": "dead"}]}
@@ -1654,8 +1782,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_code_generate_with_content(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="code_generate",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="code_generate",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_contains=["def", "main"],
         )
         result = {"content": "def main(): pass"}
@@ -1666,8 +1796,10 @@ class TestComputeMetricsHardcodedBranches:
     def test_code_generate_empty_content(self):
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="code_generate",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="code_generate",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_contains=["def"],
         )
         result = {"content": ""}
@@ -1679,8 +1811,10 @@ class TestComputeMetricsHardcodedBranches:
         """content 嵌套在 codegen.content 中也能取到。"""
         orch = self._make_orch()
         case = ExamTestCase(
-            case_id="T", capability="code_generate",
-            difficulty=Difficulty.EASY, prompt="x",
+            case_id="T",
+            capability="code_generate",
+            difficulty=Difficulty.EASY,
+            prompt="x",
             expected_contains=["hello"],
         )
         result = {"codegen": {"content": "hello world"}}

@@ -90,7 +90,9 @@ class TestTokenBudget:
 class TestRegistryIntegrity:
     """A6: 注册表完整性验证."""
 
-    @pytest.mark.xfail(reason="#ARCH-096：skill 内容库整体缺失——registry 内 SKILL.md 文件全部不存在；保留作功能规格书", strict=False)
+    @pytest.mark.xfail(
+        reason="#ARCH-096：skill 内容库整体缺失——registry 内 SKILL.md 文件全部不存在；保留作功能规格书", strict=False
+    )
     def test_all_registered_skills_integrity_report(self):
         """审计所有已注册技能——报告缺失/可加载的状态."""
         loader = SkillLoader()

@@ -84,7 +84,9 @@ def _commit_file(repo_dir: Path, rel: str, content: str) -> Path:
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(content, encoding="utf-8")
     subprocess.run(["git", "add", rel], cwd=str(repo_dir), capture_output=True, check=True)
-    subprocess.run(["git", "commit", "-m", f"init {rel}", "--no-verify"], cwd=str(repo_dir), capture_output=True, check=True)
+    subprocess.run(
+        ["git", "commit", "-m", f"init {rel}", "--no-verify"], cwd=str(repo_dir), capture_output=True, check=True
+    )
     return f
 
 
@@ -96,7 +98,7 @@ def _attach_stash_spy(gw: GitCommitGateway) -> list[str]:
     def spy(cmd: list[str]) -> object:
         if "stash" in cmd and "push" in cmd and "--" in cmd:
             idx = cmd.index("--")
-            recorded.extend(cmd[idx + 1:])
+            recorded.extend(cmd[idx + 1 :])
         return original(cmd)
 
     gw.run_git = spy  # type: ignore[assignment]
@@ -107,7 +109,10 @@ def _last_commit_files(repo_dir: Path) -> list[str]:
     """获取最近一次 commit 修改的文件列表。"""
     r = subprocess.run(
         ["git", "show", "--name-only", "--format="],
-        cwd=str(repo_dir), capture_output=True, text=True, encoding="utf-8",
+        cwd=str(repo_dir),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
     )
     return [line.strip() for line in r.stdout.splitlines() if line.strip()]
 
@@ -140,8 +145,7 @@ class TestPathNormalizationBypass:
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
 
         # b.py 不应被 stash（session-B 持有，session-A 的 held=[a.py] 是 target）
-        assert "sub/b.py" not in recorded and "b.py" not in recorded, \
-            f"b.py 不应被 stash，pathspec={recorded}"
+        assert "sub/b.py" not in recorded and "b.py" not in recorded, f"b.py 不应被 stash，pathspec={recorded}"
         # b.py 修改留在工作区
         assert f_b.read_text(encoding="utf-8") == "b = 2\n", "b.py 修改应留在工作区"
 
@@ -163,8 +167,9 @@ class TestPathNormalizationBypass:
         result = gw.commit(session_id="sess-A", files=[str(f_a)], message="feat: a")
         assert result.status == CommitStatus.OK
 
-        assert "sub/b.py" not in recorded and "b.py" not in recorded, \
+        assert "sub/b.py" not in recorded and "b.py" not in recorded, (
             f"反斜杠路径 claim 后 b.py 仍不应被 stash，pathspec={recorded}"
+        )
 
 
 # ===========================================================================
@@ -451,8 +456,7 @@ class TestUntrackedFilePreservation:
         # 未跟踪文件不应出现在 stash pathspec
         assert "c_untracked.py" not in recorded, f"未跟踪文件不应被 stash，pathspec={recorded}"
         # 未跟踪文件仍在工作区
-        assert f_c.exists() and f_c.read_text(encoding="utf-8") == "c = UNTRACKED\n", \
-            "未跟踪文件应留在工作区"
+        assert f_c.exists() and f_c.read_text(encoding="utf-8") == "c = UNTRACKED\n", "未跟踪文件应留在工作区"
 
 
 # ===========================================================================
@@ -493,9 +497,9 @@ class TestConcurrentCommitNoCrossTheft:
             def spy(cmd: list[str]) -> object:
                 if "stash" in cmd and "push" in cmd and "--" in cmd:
                     idx = cmd.index("--")
-                    local_recorded.extend(cmd[idx + 1:])
+                    local_recorded.extend(cmd[idx + 1 :])
                     with stash_lock:
-                        stash_recorded.extend(cmd[idx + 1:])
+                        stash_recorded.extend(cmd[idx + 1 :])
                 return original(cmd)
 
             gw.run_git = spy  # type: ignore[assignment]
@@ -517,8 +521,7 @@ class TestConcurrentCommitNoCrossTheft:
         assert results["sess-B"][1] == CommitStatus.OK, f"sess-B commit 失败: {results['sess-B']}"
 
         # 核心不变量：无 stash 发生（session 隔离下候选为空）
-        assert stash_recorded == [], \
-            f"session 隔离下不应有任何 stash，pathspec={stash_recorded}"
+        assert stash_recorded == [], f"session 隔离下不应有任何 stash，pathspec={stash_recorded}"
 
         # 两个文件最终内容都是各自的修改
         assert f_a.read_text(encoding="utf-8") == "a = A_WIN\n", "a.py 应是 session-A 的修改"
@@ -526,8 +529,11 @@ class TestConcurrentCommitNoCrossTheft:
 
         # 无 stash 残留
         stash_list = subprocess.run(
-            ["git", "stash", "list"], cwd=str(tmp_path),
-            capture_output=True, text=True, encoding="utf-8",
+            ["git", "stash", "list"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
         ).stdout.strip()
         assert stash_list == "", f"不应有 stash 残留: {stash_list}"
 
@@ -549,8 +555,7 @@ class TestConcurrentCommitNoCrossTheft:
             futures = [pool.submit(commit, f"sess-{s}", f) for s, f in files.items()]
             results = {f.result()[0]: f.result()[1] for f in as_completed(futures, timeout=60)}
 
-        assert all(s == CommitStatus.OK for s in results.values()), \
-            f"3 session 应全部成功: {results}"
+        assert all(s == CommitStatus.OK for s in results.values()), f"3 session 应全部成功: {results}"
         # 每个文件最终内容正确
         for s, f in files.items():
             assert f.read_text(encoding="utf-8") == f"v = {s}\n", f"{s}.py 内容错误"
@@ -606,14 +611,18 @@ class TestDefenseSummary:
 
         result = gw.commit(session_id="sess-A", files=[str(tmp_path / "a.py")], message="feat: a")
         # commit 应成功
-        assert result.status in (CommitStatus.OK, CommitStatus.STASH_CONFLICT), \
+        assert result.status in (CommitStatus.OK, CommitStatus.STASH_CONFLICT), (
             f"commit 应成功或 stash 冲突: {result.status} {result.message}"
+        )
 
         if result.status == CommitStatus.STASH_CONFLICT:
             # stash 保留——数据不丢
             stash_list = subprocess.run(
-                ["git", "stash", "list"], cwd=str(tmp_path),
-                capture_output=True, text=True, encoding="utf-8",
+                ["git", "stash", "list"],
+                cwd=str(tmp_path),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
             ).stdout.strip()
             assert stash_list, f"stash pop 冲突应保留 stash: {stash_list}"
         else:

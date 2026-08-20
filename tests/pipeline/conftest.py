@@ -11,6 +11,7 @@
 清除所有 LLM provider 的 API key 环境变量，强制 LLMGateway 进入 simulated 模式，
 避免单元测试因真实 API 调用而挂起或产生费用。
 """
+
 from __future__ import annotations
 
 import os

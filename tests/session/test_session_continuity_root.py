@@ -132,7 +132,9 @@ class TestSessionContinuityInit:
 
     def test_none_db_path_uses_default(self, tmp_path: Path):
         sc = SessionContinuity(project_root=tmp_path)
-        assert sc.db_path == tmp_path / "data" / "databases" / "session_continuity.db"  # 生产跟进：独立库（L93/132/134）
+        assert (
+            sc.db_path == tmp_path / "data" / "databases" / "session_continuity.db"
+        )  # 生产跟进：独立库（L93/132/134）
 
 
 class TestSaveLoadSessionState:

@@ -199,11 +199,10 @@ class TestRunModelBenchmark:
         profiles = [_FakeProfile(model_name="qwen3:8b", rank=1), _FakeProfile(model_name="llama3:8b", rank=2)]
         orch.model_profiler = _make_mock_profiler(profiles)
 
-        with patch(
-            "zephyr.intelligence.model_profiling.results_writer.write_benchmark_results"
-        ) as mock_write, patch(
-            "zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result"
-        ) as mock_convert:
+        with (
+            patch("zephyr.intelligence.model_profiling.results_writer.write_benchmark_results") as mock_write,
+            patch("zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result") as mock_convert,
+        ):
             mock_convert.side_effect = lambda p: {
                 "model_name": p.model_name,
                 "model_version": p.model_name.split(":")[-1],
@@ -237,11 +236,10 @@ class TestRunModelBenchmark:
         profiles = [_FakeProfile(model_name="test-model:latest")]
         orch.model_profiler = _make_mock_profiler(profiles)
 
-        with patch(
-            "zephyr.intelligence.model_profiling.results_writer.write_benchmark_results"
-        ), patch(
-            "zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result"
-        ) as mock_convert:
+        with (
+            patch("zephyr.intelligence.model_profiling.results_writer.write_benchmark_results"),
+            patch("zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result") as mock_convert,
+        ):
             mock_convert.return_value = {"model_name": "test-model:latest", "task_scores": {}}
 
             results = orch.run_model_benchmark()
@@ -310,9 +308,7 @@ class TestGetBestModel:
         ]
         orch.model_profiler = _make_mock_profiler(profiles)
 
-        with patch(
-            "zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result"
-        ) as mock_convert:
+        with patch("zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result") as mock_convert:
             mock_convert.return_value = {"model_name": "model-a:latest", "task_scores": {}}
 
             best = orch.get_best_model()
@@ -352,9 +348,7 @@ class TestDetectModelDrift:
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
 
-        with patch(
-            "zephyr.intelligence.model_profiling.results_writer.load_benchmark_history"
-        ) as mock_load:
+        with patch("zephyr.intelligence.model_profiling.results_writer.load_benchmark_history") as mock_load:
             mock_load.return_value = [{"average_score": 0.85}]  # 仅1条记录
 
             result = orch.detect_model_drift("test-model")
@@ -373,11 +367,10 @@ class TestDetectModelDrift:
             {"average_score": 0.75, "latency_p50_ms": 200.0},
         ]
 
-        with patch(
-            "zephyr.intelligence.model_profiling.results_writer.load_benchmark_history"
-        ) as mock_load, patch(
-            "zephyr.intelligence.model_profiling.results_writer.detect_drift"
-        ) as mock_detect:
+        with (
+            patch("zephyr.intelligence.model_profiling.results_writer.load_benchmark_history") as mock_load,
+            patch("zephyr.intelligence.model_profiling.results_writer.detect_drift") as mock_detect,
+        ):
             mock_load.return_value = history
             mock_detect.return_value = {
                 "drift_detected": True,
@@ -418,11 +411,10 @@ class TestProperties:
         orch = PipelineOrchestrator(config=config)
         orch.model_profiler = _make_mock_profiler([_FakeProfile()])
 
-        with patch(
-            "zephyr.intelligence.model_profiling.results_writer.write_benchmark_results"
-        ), patch(
-            "zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result"
-        ) as mock_convert:
+        with (
+            patch("zephyr.intelligence.model_profiling.results_writer.write_benchmark_results"),
+            patch("zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result") as mock_convert,
+        ):
             mock_convert.return_value = {"model_name": "test"}
             orch.run_model_benchmark()
 

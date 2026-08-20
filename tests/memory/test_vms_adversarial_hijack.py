@@ -173,16 +173,10 @@ class TestKnowledgePollution:
         retriever = HybridRetriever(collection_manager=None, embedding_router=None)
 
         # quality-1 在 dense/sparse 中 score 最高，但 rank 最后（99）
-        dense_hits = [
-            (f"spam-{i}", 0.9 - i * 0.001, {"written_at": datetime.now(UTC).isoformat()})
-            for i in range(99)
-        ]
+        dense_hits = [(f"spam-{i}", 0.9 - i * 0.001, {"written_at": datetime.now(UTC).isoformat()}) for i in range(99)]
         dense_hits.append(("quality-1", 0.95, {"written_at": datetime.now(UTC).isoformat()}))
 
-        sparse_hits = [
-            (f"spam-{i}", 5.0 - i * 0.01, {"written_at": datetime.now(UTC).isoformat()})
-            for i in range(99)
-        ]
+        sparse_hits = [(f"spam-{i}", 5.0 - i * 0.01, {"written_at": datetime.now(UTC).isoformat()}) for i in range(99)]
         sparse_hits.append(("quality-1", 6.0, {"written_at": datetime.now(UTC).isoformat()}))
 
         fused = retriever.rrf_fusion(dense_hits, sparse_hits, "knowledge")
@@ -199,17 +193,12 @@ class TestKnowledgePollution:
     def test_massive_pollution_quality_degradation(self) -> None:
         """大规模污染下，高质量内容仍应可检索（验证BM25对污染的鲁棒性）。"""
         bm25 = BM25Index()
-        clean_docs = [
-            {"id": f"clean-{i}", "content": f"informative content {i} about Python"}
-            for i in range(10)
-        ]
+        clean_docs = [{"id": f"clean-{i}", "content": f"informative content {i} about Python"} for i in range(10)]
         bm25.index(clean_docs)
         clean_results = bm25.search("Python informative", k=5)
         clean_top_ids = {r[0] for r in clean_results}
 
-        polluted_docs = clean_docs + [
-            {"id": f"spam-{i}", "content": "Python Python Python spam"} for i in range(100)
-        ]
+        polluted_docs = clean_docs + [{"id": f"spam-{i}", "content": "Python Python Python spam"} for i in range(100)]
         bm25.index(polluted_docs)
         polluted_results = bm25.search("Python informative", k=10)
         polluted_top_ids = {r[0] for r in polluted_results}
@@ -218,8 +207,7 @@ class TestKnowledgePollution:
         informative_in_top = any("clean" in did for did in polluted_top_ids)
         if not informative_in_top:
             pytest.skip(
-                "☠️已知限制: 大规模污染下 BM25 的 informative 内容被 spam 淹没。"
-                "需 reranker 或 score threshold 缓解"
+                "☠️已知限制: 大规模污染下 BM25 的 informative 内容被 spam 淹没。需 reranker 或 score threshold 缓解"
             )
         assert informative_in_top, "高质量内容应在污染后仍可检索"
 
@@ -255,20 +243,13 @@ class TestKnowledgePollution:
         trace = retriever.search("polluted", "knowledge", k=5)
 
         for hit in trace.hits:
-            assert hit.provenance is not None or "provenance" in hit.metadata, (
-                "污染内容也必须有provenance可追溯"
-            )
+            assert hit.provenance is not None or "provenance" in hit.metadata, "污染内容也必须有provenance可追溯"
 
     def test_repetition_does_not_create_new_top_candidate(self) -> None:
         """重复写入相同内容不应创造新的top候选——同content不同id应独立排名。"""
         bm25 = BM25Index()
         docs = [{"id": "unique-1", "content": "unique valuable insight about ZephyrAlpha"}]
-        docs.extend(
-            [
-                {"id": f"repeat-{i}", "content": "unique valuable insight about ZephyrAlpha"}
-                for i in range(50)
-            ]
-        )
+        docs.extend([{"id": f"repeat-{i}", "content": "unique valuable insight about ZephyrAlpha"} for i in range(50)])
         bm25.index(docs)
         results = bm25.search("ZephyrAlpha valuable", k=10)
 
@@ -398,9 +379,7 @@ class TestRetrievalHijack:
             _, score, _, _ = fused[0]
             # RRF双路最高: 2 * (1/61) ≈ 0.0328
             theoretical_max = 2.0 / (RRF_K + 1)
-            assert score <= theoretical_max * 1.5, (
-                f"RRF score {score:.4f} 超过理论上限 {theoretical_max * 1.5:.4f}"
-            )
+            assert score <= theoretical_max * 1.5, f"RRF score {score:.4f} 超过理论上限 {theoretical_max * 1.5:.4f}"
 
     def test_metadata_tampering_not_boost_rank(self) -> None:
         """篡改metadata（非written_at）不应提升排名。"""
@@ -424,8 +403,7 @@ class TestRetrievalHijack:
             score_normal = next((s for did, s, _, _ in fused if did == "normal-1"), 0.0)
             score_tampered = next((s for did, s, _, _ in fused if did == "tampered-1"), 0.0)
             assert abs(score_normal - score_tampered) < 0.001, (
-                "非written_at的metadata篡改不应影响排名: "
-                f"normal={score_normal:.4f} tampered={score_tampered:.4f}"
+                f"非written_at的metadata篡改不应影响排名: normal={score_normal:.4f} tampered={score_tampered:.4f}"
             )
 
     def test_time_decay_boundary_zero_age(self) -> None:
@@ -446,6 +424,5 @@ class TestRetrievalHijack:
         traces_decay = retriever.time_decay(metadata, "execution_traces")
 
         assert rules_decay > traces_decay, (
-            f"rules(0.0001)应几乎不衰减: rules={rules_decay:.4f} > "
-            f"execution_traces(0.02)={traces_decay:.4f}"
+            f"rules(0.0001)应几乎不衰减: rules={rules_decay:.4f} > execution_traces(0.02)={traces_decay:.4f}"
         )

@@ -30,6 +30,7 @@
 
 输出：JSON 报告（stdout）。exit 0=完成；exit 2=输入错误。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -147,8 +148,10 @@ def run_verification(
 ) -> dict:
     """③ block-bootstrap 显著性 + ④ 分层相关性 + Hawkes η 摘要。"""
     bootstrap = analyze_sentiment_driven_correlation(
-        strategy_returns, intensity,
-        n_bootstrap=n_bootstrap, block_size=block_size,
+        strategy_returns,
+        intensity,
+        n_bootstrap=n_bootstrap,
+        block_size=block_size,
     )
     driver_verdict = {}
     for strat, rho in bootstrap["observed_rho"].items():
@@ -162,10 +165,7 @@ def run_verification(
     stratification = {}
     if phases:
         results = validate_sentiment_hidden_driver(strategy_returns, phases)
-        stratification = {
-            p.value: {"n_days": r.n_days, "is_pass": r.is_pass}
-            for p, r in results.items()
-        }
+        stratification = {p.value: {"n_days": r.n_days, "is_pass": r.is_pass} for p, r in results.items()}
     return {
         "n_days": len(intensity),
         "n_bootstrap": n_bootstrap,

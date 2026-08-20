@@ -121,9 +121,7 @@ class TestVerifyStaticConstants:
 
     def test_no_increment_on_failure(self):
         mock_core = MagicMock()
-        mock_core.verify_static_constants_integrity.return_value = IntegrityResult(
-            intact=False, violations=["test"]
-        )
+        mock_core.verify_static_constants_integrity.return_value = IntegrityResult(intact=False, violations=["test"])
         lock = ColdStartLock(immutable_core=mock_core)
         initial = lock.checks_passed
         lock.verify_static_constants()

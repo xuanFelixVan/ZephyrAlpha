@@ -29,9 +29,7 @@ pytestmark = pytest.mark.xfail(
 class TestMainFunction:
     def test_status_command(self):
         with (
-            patch(
-                "zephyr.gov_drift.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]
-            ),
+            patch("zephyr.gov_drift.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]),
             patch("zephyr.gov_drift.self_test_verifier.SelfTestVerifier") as mock_cls,
         ):
             mock_inst = MagicMock()
@@ -249,9 +247,7 @@ class TestCmdStatus:
         mock_result = MagicMock(summary="8/8 checks passed")
         mock_verifier.run_all.return_value = mock_result
         with (
-            patch(
-                "zephyr.gov_drift.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]
-            ),
+            patch("zephyr.gov_drift.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]),
             patch("zephyr.gov_drift.self_test_verifier.SelfTestVerifier", return_value=mock_verifier),
         ):
             with patch("zephyr.gov_drift.self_check.bootstrap_self_check", return_value=True):
@@ -263,9 +259,7 @@ class TestCmdStatus:
         mock_result = MagicMock(summary="5/8 checks passed")
         mock_verifier.run_all.return_value = mock_result
         with (
-            patch(
-                "zephyr.gov_drift.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]
-            ),
+            patch("zephyr.gov_drift.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]),
             patch("zephyr.gov_drift.self_test_verifier.SelfTestVerifier", return_value=mock_verifier),
         ):
             with patch("zephyr.gov_drift.self_check.bootstrap_self_check", return_value=False):
@@ -289,9 +283,7 @@ class TestCmdStatus:
         mock_result = MagicMock(summary="5/8 checks passed")
         mock_verifier.run_all.return_value = mock_result
         with (
-            patch(
-                "zephyr.gov_drift.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]
-            ),
+            patch("zephyr.gov_drift.drift_engine.load_detector_registry", return_value=[MagicMock(status="active")]),
             patch("zephyr.gov_drift.self_test_verifier.SelfTestVerifier", return_value=mock_verifier),
         ):
             with patch("zephyr.gov_drift.self_check.bootstrap_self_check", return_value=True):

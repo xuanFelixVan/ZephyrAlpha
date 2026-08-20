@@ -15,6 +15,7 @@ F11 ContextPipeline 红蓝对抗极端测试
 3. 管道阻塞（循环引用 + 超大文件 + 空文件）
 4. KillSwitch熔断触发（连续错误 → 自动关闭）
 """
+
 from __future__ import annotations
 
 import os
@@ -34,6 +35,7 @@ from zephyr.infrastructure.capacity_assurance.kill_switch import KillSwitch
 # ============================================================================
 # 1. 上下文溢出攻击测试
 # ============================================================================
+
 
 class TestContextOverflowAttack:
     """红队：试图通过超大manifest导致上下文溢出，验证压缩机制生效不崩溃。"""
@@ -98,6 +100,7 @@ class TestContextOverflowAttack:
 # 2. 注入攻击测试
 # ============================================================================
 
+
 class TestInjectionAttack:
     """红队：试图通过路径遍历和内容注入攻击，验证路径校验和内容安全。"""
 
@@ -159,6 +162,7 @@ class TestInjectionAttack:
 # ============================================================================
 # 3. 管道阻塞测试
 # ============================================================================
+
 
 class TestPipelineBlockage:
     """红队：试图通过循环引用/超大文件/空文件导致管道阻塞，验证不死锁不超时。"""
@@ -233,6 +237,7 @@ class TestPipelineBlockage:
 # 4. KillSwitch熔断触发测试
 # ============================================================================
 
+
 class TestKillSwitchFuse:
     """红队：模拟连续错误触发KillSwitch熔断，验证自动关闭+reset机制。"""
 
@@ -266,7 +271,7 @@ class TestKillSwitchFuse:
         ks = KillSwitch(threshold=5)
         for i in range(4):
             state = ks.record_error(f"error_{i}")
-            assert not state.on, f"第{i+1}次错误不应触发熔断"
+            assert not state.on, f"第{i + 1}次错误不应触发熔断"
 
     def test_kill_switch_custom_threshold(self) -> None:
         """自定义阈值threshold=1 → 第1次错误即触发。"""
@@ -307,6 +312,7 @@ class TestKillSwitchFuse:
 # ============================================================================
 # 5. run_context_four_stage_or_raise 极端测试
 # ============================================================================
+
 
 class TestOrRaiseExtreme:
     """红队：测试run_context_four_stage_or_raise在极端场景下的行为。"""

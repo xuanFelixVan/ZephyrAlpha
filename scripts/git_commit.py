@@ -63,7 +63,9 @@ def _resolve_repo_root() -> Path:
     try:
         r = _sp.run(  # noqa: bare-subprocess  bootstrap 循环依赖无法走 process_pool 统一入口，已补 CREATE_NO_WINDOW
             ["git", "rev-parse", "--show-toplevel"],
-            capture_output=True, text=True, check=True,
+            capture_output=True,
+            text=True,
+            check=True,
             creationflags=_cf,
         )
         return Path(r.stdout.strip())
@@ -165,9 +167,7 @@ def _format_commit_result(result) -> int:
 
     替代原 main() 中 9 路 if/elif 状态分发（L340-386），复杂度 5。
     """
-    exit_code, line_template, help_text, to_stdout = _COMMIT_RESULT_MAP.get(
-        result.status, _COMMIT_RESULT_DEFAULT
-    )
+    exit_code, line_template, help_text, to_stdout = _COMMIT_RESULT_MAP.get(result.status, _COMMIT_RESULT_DEFAULT)
     out = sys.stdout if to_stdout else sys.stderr
     line = line_template.format(
         message=result.message,
@@ -195,9 +195,7 @@ def _parse_files(files_arg: str) -> list[str]:
     return [os.path.abspath(f) for f in parts]
 
 
-def _check_staged_delete_fallback(
-    files: list[str], project_root: str
-) -> tuple[list[str], list[str]]:
+def _check_staged_delete_fallback(files: list[str], project_root: str) -> tuple[list[str], list[str]]:
     """校验文件存在性，允许 staged delete（git rm）场景回退校验。
 
     覆盖两种删除场景：
@@ -222,6 +220,7 @@ def _check_staged_delete_fallback(
         return [], []
 
     import subprocess as _sp
+
     truly_missing: list[str] = []
     for f in missing:
         rel = os.path.relpath(f, project_root)
@@ -230,24 +229,23 @@ def _check_staged_delete_fallback(
         # 不加 :(icase) 会导致 on-disk 路径大小写与 git index 不一致时误报"未跟踪"
         chk = _sp.run(
             ["git", "ls-files", "--error-unmatch", "--", f":(icase){rel}"],
-            capture_output=True, cwd=project_root,
+            capture_output=True,
+            cwd=project_root,
         )
         if chk.returncode != 0:
             # 场景 B: staged delete (git rm) — 文件已从 index 移除，
             # 回退检查 HEAD 是否仍跟踪该文件
             chk2 = _sp.run(
-                ["git", "ls-files", "--error-unmatch", "--with-tree=HEAD",
-                 "--", f":(icase){rel}"],
-                capture_output=True, cwd=project_root,
+                ["git", "ls-files", "--error-unmatch", "--with-tree=HEAD", "--", f":(icase){rel}"],
+                capture_output=True,
+                cwd=project_root,
             )
             if chk2.returncode != 0:
                 truly_missing.append(f)
     return truly_missing, missing
 
 
-def _validate_reconciler_verify(
-    args, is_pure_claim: bool, message: str, project_root: str
-) -> tuple[int | None, str]:
+def _validate_reconciler_verify(args, is_pure_claim: bool, message: str, project_root: str) -> tuple[int | None, str]:
     """reconciler-verify 模式前置校验（豁免 worktree 君子协定的三重防护）。
 
     提取自原 main() L246-299，复杂度 10。
@@ -270,14 +268,17 @@ def _validate_reconciler_verify(
     # 后台进程（scanner/classifier/telemetry）持续更新这些文件，非搭便车风险。
     # auto-sync 产物由 workspace_hygiene_reconciler 管理，batched auto-committer 定期提交。
     import subprocess as _rv_sp
+
     status_r = _rv_sp.run(
         ["git", "status", "--short"],
-        capture_output=True, text=True, cwd=project_root,
-        encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        cwd=project_root,
+        encoding="utf-8",
+        errors="replace",
     )
     if status_r.returncode != 0:
-        print(f"ERROR: --reconciler-verify: git status 检查失败: {status_r.stderr.strip()}",
-              file=sys.stderr)
+        print(f"ERROR: --reconciler-verify: git status 检查失败: {status_r.stderr.strip()}", file=sys.stderr)
         return 1, message
     # 过滤 auto-sync 产物（后台进程持续更新的派生文件，非搭便车风险）
     # 治本 2026-07-24 (#ARCH-RECONCILER-VERIFY-AUTOSYNC-001): 复用 workspace_hygiene_reconciler
@@ -291,6 +292,7 @@ def _validate_reconciler_verify(
     _rv_auto_sync_excluded: list[str] = []
     try:
         from zephyr.governance.audit.workspace_hygiene_reconciler import _is_auto_sync_product
+
         for _rv_line in _rv_raw_lines:
             # git status --short format: "XY path" (2-char status + space + path)
             _rv_path = _rv_line[3:].strip().strip('"') if len(_rv_line) > 3 else ""
@@ -323,6 +325,7 @@ def _validate_reconciler_verify(
     if not args.allow_concurrent:
         try:
             from zephyr.security.access_control.session_concurrency import SessionRegistry
+
             _rv_reg = SessionRegistry(project_root)
             _rv_active = _rv_reg.list_active()
             # list_active 返回 list[SessionInfo]（dataclass），用属性而非 dict.get
@@ -479,21 +482,21 @@ def main() -> int:
     parser.add_argument(
         "--message",
         help="commit message（不含 GW 标记，自动追加 [GW:<session>]）。"
-             "含中文/特殊字符时推荐用 --message-file 避免 shell 编码问题",
+        "含中文/特殊字符时推荐用 --message-file 避免 shell 编码问题",
     )
     parser.add_argument(
         "--message-file",
         help="从 UTF-8 文件读取 commit message（治本 PowerShell 中文编码问题）。"
-             "提供时优先于 --message。文件内容原样作为 message（不含 GW 标记）。"
-             "成功即删（方案 A 治本 #ARCH-MSG-FILE-RESIDUE-001）——commit 成功"
-             "（exit 0）自动 unlink；失败（exit≠0）保留供重试。",
+        "提供时优先于 --message。文件内容原样作为 message（不含 GW 标记）。"
+        "成功即删（方案 A 治本 #ARCH-MSG-FILE-RESIDUE-001）——commit 成功"
+        "（exit 0）自动 unlink；失败（exit≠0）保留供重试。",
     )
     parser.add_argument(
         "--keep-message-file",
         action="store_true",
         default=False,
         help="保留 --message-file 文件不删除（诊断场景 opt-out）。"
-             "默认 False（成功即删，对标 gateway tempfile + os.remove 范式；失败保留供重试）。",
+        "默认 False（成功即删，对标 gateway tempfile + os.remove 范式；失败保留供重试）。",
     )
     parser.add_argument(
         "--project-root",
@@ -505,76 +508,76 @@ def main() -> int:
         action="store_true",
         default=False,
         help="批准新文件晋升到永久区（docs/01_policies/、02_enterprise_architecture/、"
-             "03_modules/、08_knowledge/）。2026-08-13 用户裁定：AI 可默认使用——"
-             "前置：creation_token 已登记 capability_canonical_file_registry.yaml；审计留痕。",
+        "03_modules/、08_knowledge/）。2026-08-13 用户裁定：AI 可默认使用——"
+        "前置：creation_token 已登记 capability_canonical_file_registry.yaml；审计留痕。",
     )
     parser.add_argument(
         "--allow-overlap",
         action="store_true",
         default=False,
         help="搭便车防护逃生通道——目标文件被其他活跃 session 持有时放行"
-             "（HELD_OVERLAP_VIOLATION）。commit message 追加 [GW:<sid>:overlap] 标记"
-             "供审计追踪。2026-08-13 用户裁定：AI 可默认使用——前置：已读对方改动并按 67 号"
-             "冲突三分法判定非互斥（叠加型合并都留/迭代型取新+说明/互斥型禁自行放行升级用户）。",
+        "（HELD_OVERLAP_VIOLATION）。commit message 追加 [GW:<sid>:overlap] 标记"
+        "供审计追踪。2026-08-13 用户裁定：AI 可默认使用——前置：已读对方改动并按 67 号"
+        "冲突三分法判定非互斥（叠加型合并都留/迭代型取新+说明/互斥型禁自行放行升级用户）。",
     )
     parser.add_argument(
         "--allow-non-worktree",
         action="store_true",
         default=False,
         help="worktree 阻断逃生通道（#ARCH-WORKTREE-GATE-001 治本）——非 worktree commit "
-             "且有其他活跃 session 时放行 WORKTREE-REQUIRED gate。commit message 追加 "
-             "[GW:<sid>:non-worktree] 标记供审计追踪。2026-08-13 用户裁定：AI 可默认使用——"
-             "前置：确认 gateway 只提交本 claim 文件、不搭便车他人 WIP（对称 --allow-overlap 治理）。",
+        "且有其他活跃 session 时放行 WORKTREE-REQUIRED gate。commit message 追加 "
+        "[GW:<sid>:non-worktree] 标记供审计追踪。2026-08-13 用户裁定：AI 可默认使用——"
+        "前置：确认 gateway 只提交本 claim 文件、不搭便车他人 WIP（对称 --allow-overlap 治理）。",
     )
     parser.add_argument(
         "--allow-multi-domain",
         action="store_true",
         default=False,
         help="COMMIT_SCOPE_VIOLATION 治本通道（13a5e1d512 混合提交事故治本）——跨域提交"
-             "场景放行 COMMIT-SCOPE gate。commit message 追加 [GW:<sid>:multi-domain] "
-             "标记供审计追踪。合理场景：跨域重构/域注册表本身变更/裁定引用+registry 同 commit。"
-             "2026-08-13 用户裁定：AI 可默认使用（留痕审计，对称 --allow-overlap 治理）。",
+        "场景放行 COMMIT-SCOPE gate。commit message 追加 [GW:<sid>:multi-domain] "
+        "标记供审计追踪。合理场景：跨域重构/域注册表本身变更/裁定引用+registry 同 commit。"
+        "2026-08-13 用户裁定：AI 可默认使用（留痕审计，对称 --allow-overlap 治理）。",
     )
     parser.add_argument(
         "--merge-finalize",
         action="store_true",
         default=False,
         help="显式完成在途 merge（B2 治本①，2026-08-19，AI-FILL-14 截胡事故治本）——"
-             "MERGE_HEAD 存在时普通 commit 一律拒绝（exit 10，防把他人晾置 merge 连带提交"
-             "并张冠李戴 commit message），仅本标志放行。merge 期间 git 禁 partial commit，"
-             "故走全量 commit 并追加 [GW:<sid>:merge] 标记留痕。前置：确认该 merge 是你发起的、"
-             "冲突已解决、staged 区内容全部归属本次 merge。",
+        "MERGE_HEAD 存在时普通 commit 一律拒绝（exit 10，防把他人晾置 merge 连带提交"
+        "并张冠李戴 commit message），仅本标志放行。merge 期间 git 禁 partial commit，"
+        "故走全量 commit 并追加 [GW:<sid>:merge] 标记留痕。前置：确认该 merge 是你发起的、"
+        "冲突已解决、staged 区内容全部归属本次 merge。",
     )
     parser.add_argument(
         "--adopt-prior-work",
         action="store_true",
         default=False,
         help="FOREIGN_CHANGE_VIOLATION 治本通道（2026-07-23）——跨 session 续作场景"
-             "认领前序未提交变更。claim_files 对有实际 diff 的文件记录审计日志"
-             "（.runtime/claim_snapshots/{sid}_adopted.jsonl）但存储空基线，使 "
-             "FOREIGN-CHANGE-DETECTION gate 放行。与 --allow-overlap 区别："
-             "allow_overlap 在 commit 时绕 gate，adopt-prior-work 在 claim 时认领附审计。"
-             "适用于本 session 续作前序 session 已落工作区但未 commit 的合法变更。"
-             "注意（tracker #92）：本标志直接加在 commit 命令上（一条命令完成认领+提交）"
-             "——勿拆成 claim-only --adopt-prior-work + 裸 commit 两步；worktree 内提交"
-             "物理隔离直通，无需本标志。",
+        "认领前序未提交变更。claim_files 对有实际 diff 的文件记录审计日志"
+        "（.runtime/claim_snapshots/{sid}_adopted.jsonl）但存储空基线，使 "
+        "FOREIGN-CHANGE-DETECTION gate 放行。与 --allow-overlap 区别："
+        "allow_overlap 在 commit 时绕 gate，adopt-prior-work 在 claim 时认领附审计。"
+        "适用于本 session 续作前序 session 已落工作区但未 commit 的合法变更。"
+        "注意（tracker #92）：本标志直接加在 commit 命令上（一条命令完成认领+提交）"
+        "——勿拆成 claim-only --adopt-prior-work + 裸 commit 两步；worktree 内提交"
+        "物理隔离直通，无需本标志。",
     )
     parser.add_argument(
         "--allow-derived-deletion",
         action="store_true",
         default=False,
         help="DERIVED_FILE_DELETION_VIOLATION 治本通道（#ARCH-BP-REGISTRY-DELETION-001 P1）——"
-             "派生文件退库等合法删除场景放行 DERIVED-FILE-DELETION-PROTECTION gate。"
-             "受保护派生文件（blueprint_registry.yaml / path_ownership_map.yaml 等）"
-             "删除会导致 20+ 消费方静默降级，默认硬阻断；本旗标显式声明合法删除。"
-             "2026-08-13 用户裁定：AI 可默认使用——前置：确认目标确为可再生成派生物（审计留痕）。",
+        "派生文件退库等合法删除场景放行 DERIVED-FILE-DELETION-PROTECTION gate。"
+        "受保护派生文件（blueprint_registry.yaml / path_ownership_map.yaml 等）"
+        "删除会导致 20+ 消费方静默降级，默认硬阻断；本旗标显式声明合法删除。"
+        "2026-08-13 用户裁定：AI 可默认使用——前置：确认目标确为可再生成派生物（审计留痕）。",
     )
     parser.add_argument(
         "--claim-only",
         action="store_true",
         default=False,
         help="仅 claim_files 声明持有，不 commit（claim 前移协议：Edit 前调用）。"
-             "exit 0=全部 claim 成功, exit 7=部分文件被其他 session 持有（冲突跳过）",
+        "exit 0=全部 claim 成功, exit 7=部分文件被其他 session 持有（冲突跳过）",
     )
     parser.add_argument(
         "--release-only",
@@ -587,17 +590,17 @@ def main() -> int:
         action="store_true",
         default=False,
         help="reconciler 实弹验证专用通道（豁免 worktree 君子协定）。前置条件："
-             "(1) 主工作区 clean (2) 无其他活跃 session（或用 --allow-concurrent 逃生）"
-             "(3) claim_files 全部成功（--allow-overlap 自动禁用）。"
-             "豁免理由：reconciler 操作主分支数据无法在 worktree 内运行，且验证为单 session 诊断场景，"
-             "搭便车风险由 claim_files+串行锁+干净环境三重防护覆盖。详见 AGENTS.md RULE-WORKTREE 豁免条款。",
+        "(1) 主工作区 clean (2) 无其他活跃 session（或用 --allow-concurrent 逃生）"
+        "(3) claim_files 全部成功（--allow-overlap 自动禁用）。"
+        "豁免理由：reconciler 操作主分支数据无法在 worktree 内运行，且验证为单 session 诊断场景，"
+        "搭便车风险由 claim_files+串行锁+干净环境三重防护覆盖。详见 AGENTS.md RULE-WORKTREE 豁免条款。",
     )
     parser.add_argument(
         "--allow-concurrent",
         action="store_true",
         default=False,
         help="reconciler-verify 模式下放行其他活跃 session 检查（逃生通道）。"
-             "默认硬阻断——验证前必须无其他活跃 session，确保单 session 诊断场景无搭便车窗口。",
+        "默认硬阻断——验证前必须无其他活跃 session，确保单 session 诊断场景无搭便车窗口。",
     )
     # 方案 A 治本（#ARCH-MSG-FILE-RESIDUE-001）：--message-file 成功即删契约
     # 对标 gateway 内部 tempfile.mkstemp + finally os.remove 范式
@@ -621,9 +624,7 @@ def main() -> int:
             return 1
 
         # 校验文件存在性（允许 staged delete 回退——见 _check_staged_delete_fallback）
-        truly_missing, tracked_but_deleted = _check_staged_delete_fallback(
-            files, args.project_root
-        )
+        truly_missing, tracked_but_deleted = _check_staged_delete_fallback(files, args.project_root)
         if truly_missing:
             print(f"ERROR: 文件不存在且未被 git 跟踪: {truly_missing}", file=sys.stderr)
             return 1
@@ -637,9 +638,7 @@ def main() -> int:
             return 2
 
         # reconciler-verify 模式前置校验（豁免 worktree 君子协定的三重防护）
-        rv_exit, message = _validate_reconciler_verify(
-            args, is_pure_claim, message, args.project_root
-        )
+        rv_exit, message = _validate_reconciler_verify(args, is_pure_claim, message, args.project_root)
         if rv_exit is not None:
             return rv_exit
 

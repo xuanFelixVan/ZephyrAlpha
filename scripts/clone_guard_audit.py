@@ -26,6 +26,7 @@
 输出：审计 JSON 持久化到 .runtime/clone_guard_audit/audit_<ts>.json（派生产物，不入 git）。
 退出码：0=审计完成（含降级），1=审计异常，2=无可审计文件。
 """
+
 from __future__ import annotations
 
 import sys

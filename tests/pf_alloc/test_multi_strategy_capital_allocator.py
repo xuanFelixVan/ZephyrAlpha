@@ -89,9 +89,7 @@ def test_cold_start_inactive_after_observation():
 
 def test_cold_start_combined_with_max_dd():
     alloc = MultiStrategyCapitalAllocator()
-    result = alloc.allocate(
-        reqs(), max_drawdown=0.20, cold_start_days_elapsed=2, now=T0, today=TODAY
-    )
+    result = alloc.allocate(reqs(), max_drawdown=0.20, cold_start_days_elapsed=2, now=T0, today=TODAY)
     assert result.max_dd_triggered is True
     assert result.cold_start_active is True
     # 0.5 (MaxDD) × 0.3 (cold) = 0.15, ≤ 0.50 cap

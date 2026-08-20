@@ -223,7 +223,8 @@ class TestWmiSpawnHelpers:
         import zephyr.shared.infra.process_pool as pp
 
         monkeypatch.setattr(
-            pp, "run_subprocess_hidden",
+            pp,
+            "run_subprocess_hidden",
             lambda cmd, **kw: self._fake_completed("ZEPHYR_WMI_SPAWN|0|4242\r\n"),
         )
         proc = pp._spawn_detached_via_wmi(["python.exe", "-c", "pass"], env={"A": "1"})
@@ -236,7 +237,8 @@ class TestWmiSpawnHelpers:
         import zephyr.shared.infra.process_pool as pp
 
         monkeypatch.setattr(
-            pp, "run_subprocess_hidden",
+            pp,
+            "run_subprocess_hidden",
             lambda cmd, **kw: self._fake_completed("ZEPHYR_WMI_SPAWN|9|\r\n"),
         )
         with pytest.raises(RuntimeError, match="ReturnValue=9"):
@@ -248,7 +250,8 @@ class TestWmiSpawnHelpers:
         import zephyr.shared.infra.process_pool as pp
 
         monkeypatch.setattr(
-            pp, "run_subprocess_hidden",
+            pp,
+            "run_subprocess_hidden",
             lambda cmd, **kw: self._fake_completed("some powershell error"),
         )
         with pytest.raises(RuntimeError, match="sentinel missing"):
@@ -274,7 +277,9 @@ class TestWmiSpawnHelpers:
 
         monkeypatch.setattr(pp, "run_subprocess_hidden", _fake_run)
         pp._spawn_detached_via_wmi(
-            ["python.exe", "-m", "foo"], cwd="d:/work", env={"ZW_TEST": "v1", "QUOTE": "it's"},
+            ["python.exe", "-m", "foo"],
+            cwd="d:/work",
+            env={"ZW_TEST": "v1", "QUOTE": "it's"},
         )
         script = captured["script"]
         assert "$startup.ShowWindow = [uint16]0" in script
@@ -342,7 +347,8 @@ class TestWmiSpawnHelpers:
         monkeypatch.setattr(pp, "run_subprocess_hidden", _timeout_run)
         with pytest.raises(RuntimeError, match="timed out") as exc_info:
             pp._spawn_detached_via_wmi(
-                ["python.exe", "-c", "pass"], env={"GITHUB_TOKEN": "ghp_secret"},
+                ["python.exe", "-c", "pass"],
+                env={"GITHUB_TOKEN": "ghp_secret"},
             )
         assert "ghp_secret" not in str(exc_info.value)
         assert "GITHUB_TOKEN" not in str(exc_info.value)

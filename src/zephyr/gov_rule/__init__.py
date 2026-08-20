@@ -54,7 +54,4 @@ Migrated from src/zephyr/governance/constitutional_update/ in batch 11.
 # A1 --> O1
 """
 
-
-
 __all__: list[str] = []
-

@@ -125,12 +125,12 @@ def _load_prompt_template() -> tuple[str, str]:
     """从 nlp_inference 加载 SYSTEM_PROMPT / USER_TEMPLATE（训练/推理对齐）。"""
     try:
         from zephyr.nlp.nlp_inference import SYSTEM_PROMPT, USER_TEMPLATE
+
         return SYSTEM_PROMPT, USER_TEMPLATE
     except Exception:  # noqa: BLE001 — 回退内置精简版
         _log.warning("sentiment_sft_trainer: 无法导入 nlp_inference prompt，用回退版")
         return (
-            "你是 A 股金融新闻情感分析专家。输出 JSON: "
-            '{"sentiment": "positive|negative|neutral", "score": 0.0-1.0}',
+            '你是 A 股金融新闻情感分析专家。输出 JSON: {"sentiment": "positive|negative|neutral", "score": 0.0-1.0}',
             "新闻标题: {title}\n新闻内容: {content}\n请分析情感，输出 JSON。",
         )
 
@@ -323,7 +323,9 @@ class SentimentSFTTrainer(ModelTrainerBase):
             raise SFTTrainError("features['train_dataset'] 缺失（messages 格式 datasets.Dataset）")
         eval_ds = features.get("eval_dataset")
 
-        _log.info("SFT 训练开始: train=%d eval=%s key=%s", len(train_ds), len(eval_ds) if eval_ds else "None", idempotency_key)
+        _log.info(
+            "SFT 训练开始: train=%d eval=%s key=%s", len(train_ds), len(eval_ds) if eval_ds else "None", idempotency_key
+        )
 
         try:
             model, tokenizer = self._build_quant_model()

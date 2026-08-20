@@ -83,7 +83,10 @@ def _make_depgraph_nodes() -> dict:
             "id": "node_d",
             "path": "src/zephyr/governance/semantic_audit/self_healer.py",
             "type": "module",
-            "imports": ["zephyr.governance.semantic_audit.models", "zephyr.governance.resilience_governance.blast_radius"],
+            "imports": [
+                "zephyr.governance.semantic_audit.models",
+                "zephyr.governance.resilience_governance.blast_radius",
+            ],
         },
     }
 
@@ -195,7 +198,9 @@ class TestAnalyzeWithSourceLocation:
         depgraph = tmp_path / "dep.yaml"
         _write_depgraph(depgraph, _make_depgraph_nodes())
         analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph)
-        finding = _make_finding(finding_id="F-SEM-999", source_location="src/zephyr/governance/semantic_audit/models.py")
+        finding = _make_finding(
+            finding_id="F-SEM-999", source_location="src/zephyr/governance/semantic_audit/models.py"
+        )
         report = analyzer.analyze(finding)
         assert report.finding_id == "F-SEM-999"
 

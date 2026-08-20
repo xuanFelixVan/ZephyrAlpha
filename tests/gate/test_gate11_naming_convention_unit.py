@@ -190,6 +190,7 @@ class TestN16IncrementalCaseInsensitive:
     @staticmethod
     def _init_git_repo(tmp_path: Path) -> None:
         import subprocess
+
         subprocess.run(["git", "init"], cwd=str(tmp_path), capture_output=True, check=True)
         subprocess.run(["git", "config", "user.email", "test@test.com"], cwd=str(tmp_path), capture_output=True)
         subprocess.run(["git", "config", "user.name", "test"], cwd=str(tmp_path), capture_output=True)
@@ -197,6 +198,7 @@ class TestN16IncrementalCaseInsensitive:
     def test_modified_file_not_flagged_as_new(self, tmp_path: Path) -> None:
         """修改文件（已跟踪）不应被误判为新增报 N-16 冲突。"""
         import subprocess
+
         self._init_git_repo(tmp_path)
         f = tmp_path / "existing_module.py"
         f.write_text("# v1", encoding="utf-8")
@@ -212,6 +214,7 @@ class TestN16IncrementalCaseInsensitive:
     def test_genuinely_new_file_with_same_name_detected(self, tmp_path: Path) -> None:
         """真正的新增文件与已跟踪文件同名时应报 N-16 冲突。"""
         import subprocess
+
         self._init_git_repo(tmp_path)
         src_dir = tmp_path / "src"
         src_dir.mkdir()
@@ -232,6 +235,7 @@ class TestN16IncrementalCaseInsensitive:
     def test_exempt_files_not_checked(self, tmp_path: Path) -> None:
         """豁免文件（如 __init__.py）即使同名也不报 N-16。"""
         import subprocess
+
         self._init_git_repo(tmp_path)
         src_dir = tmp_path / "src"
         src_dir.mkdir()

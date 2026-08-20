@@ -1,6 +1,7 @@
 # [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.1 v1.1.16
 # [TTL] permanent
 """板块轮动 score 映射公式单元测试——含 memo 原文示例复算与边界用例。"""
+
 from __future__ import annotations
 
 import pytest
@@ -43,12 +44,8 @@ class TestQuadrantBase:
         assert s_lead > s_impr > s_weak > s_lagg
 
     def test_string_quadrant_case_insensitive(self):
-        assert map_sector_rotation_score("leading", 50.0) == map_sector_rotation_score(
-            RRGQuadrant.LEADING, 50.0
-        )
-        assert map_sector_rotation_score("LEADING", 50.0) == map_sector_rotation_score(
-            "Leading", 50.0
-        )
+        assert map_sector_rotation_score("leading", 50.0) == map_sector_rotation_score(RRGQuadrant.LEADING, 50.0)
+        assert map_sector_rotation_score("LEADING", 50.0) == map_sector_rotation_score("Leading", 50.0)
 
 
 class TestQualityBonus:
@@ -56,14 +53,12 @@ class TestQualityBonus:
         assert PULLBACK_QUALITY_BONUS == {"A": 0.15, "B": 0.05, "C": -0.05}
 
     def test_none_quality_neutral(self):
-        assert map_sector_rotation_score(
-            RRGQuadrant.LEADING, 50.0, None
-        ) == pytest.approx(0.8 + 0.1)
+        assert map_sector_rotation_score(RRGQuadrant.LEADING, 50.0, None) == pytest.approx(0.8 + 0.1)
 
     def test_lowercase_quality_accepted(self):
-        assert map_sector_rotation_score(
-            RRGQuadrant.LEADING, 50.0, "a"
-        ) == pytest.approx(map_sector_rotation_score(RRGQuadrant.LEADING, 50.0, "A"))
+        assert map_sector_rotation_score(RRGQuadrant.LEADING, 50.0, "a") == pytest.approx(
+            map_sector_rotation_score(RRGQuadrant.LEADING, 50.0, "A")
+        )
 
     def test_invalid_quality_raises(self):
         with pytest.raises(ValueError):

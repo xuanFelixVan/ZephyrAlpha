@@ -42,6 +42,7 @@
     2 = 护照不存在
     3 = 参数错误/未知模式
 """
+
 from __future__ import annotations
 
 import argparse
@@ -146,6 +147,7 @@ def _run_quick_exam(model_id: str, top_n: int) -> int:
     try:
         # 延迟导入: 避免无 Ollama 环境下 import 失败
         from zephyr.intelligence.model_profiling.exam_orchestrator import ExamOrchestrator
+
         # 尝试导入 OllamaChat (项目内可能有不同实现)
         try:
             from zephyr.integration.local_model.ollama_chat import OllamaChat
@@ -181,7 +183,7 @@ def _print_report(profile: QuickProfile) -> None:
     # 1. 能力雷达图 (文本表格)
     print("\n【能力轮廓】 A=精通 B=熟练 C=合格 D=初级 F=不胜任")
     print(f"  {'能力':<30} {'分数':>6} {'分级':>4} {'柱状图':<20}")
-    print(f"  {'-'*30} {'-'*6} {'-'*4} {'-'*20}")
+    print(f"  {'-' * 30} {'-' * 6} {'-' * 4} {'-' * 20}")
     # 按分数降序
     sorted_caps = sorted(
         profile.capability_scores.items(),
@@ -221,7 +223,7 @@ def _print_report(profile: QuickProfile) -> None:
     if profile.recommendations:
         print(f"\n【岗位推荐 Top{len(profile.recommendations)}】")
         print(f"  {'岗位':<18} {'匹配度':>8} {'合格':>4} {'幻觉':>6} {'说明':<30}")
-        print(f"  {'-'*18} {'-'*8} {'-'*4} {'-'*6} {'-'*30}")
+        print(f"  {'-' * 18} {'-' * 8} {'-' * 4} {'-' * 6} {'-' * 30}")
         for r in profile.recommendations:
             hallu_mark = "✓" if r.hallucination_passed else "✗"
             qualified_mark = "✓" if r.qualified else "✗"

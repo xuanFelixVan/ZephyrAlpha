@@ -35,9 +35,7 @@ import yaml
 
 from zephyr.shared.io.paths import REPO_ROOT
 
-YAML_PATH = REPO_ROOT / (
-    "architecture_model/contracts/cross_layer_contracts.yaml"
-)
+YAML_PATH = REPO_ROOT / ("architecture_model/contracts/cross_layer_contracts.yaml")
 
 TYPE_MAP = {
     "str": "str",

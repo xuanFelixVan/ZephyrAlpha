@@ -100,6 +100,7 @@ def run_git(args: list[str]) -> str:
         print("[ERROR] 未找到 git 命令，请确认 git 已安装并在 PATH 中。", file=sys.stderr)
         sys.exit(1)
 
+
 def _run_git(args: list[str]) -> str:
     """向后兼容 thin wrapper（Stage 4 公共化）。"""
     return run_git(args)

@@ -94,9 +94,7 @@ def test_factor_overlap_reject_above_80():
 
 def test_pool_sector_joint_warn():
     gate = StrategyCorrelationGate()
-    pair = StrategyPairMetrics(
-        "S1", "S2", stock_pool_overlap=0.75, sector_concentration=0.55
-    )
+    pair = StrategyPairMetrics("S1", "S2", stock_pool_overlap=0.75, sector_concentration=0.55)
     result = gate.check([pair], now=T0)
     assert result.overall_verdict is GateVerdict.WARN
 
@@ -104,9 +102,7 @@ def test_pool_sector_joint_warn():
 def test_pool_only_without_sector_no_warn():
     # 联合条件: 仅股票池超, 行业不超 → 不触发
     gate = StrategyCorrelationGate()
-    pair = StrategyPairMetrics(
-        "S1", "S2", stock_pool_overlap=0.75, sector_concentration=0.40
-    )
+    pair = StrategyPairMetrics("S1", "S2", stock_pool_overlap=0.75, sector_concentration=0.40)
     result = gate.check([pair], now=T0)
     assert result.overall_verdict is GateVerdict.PASS
 
@@ -116,9 +112,7 @@ def test_pool_only_without_sector_no_warn():
 
 def test_tail_correlation_reject_same_direction():
     gate = StrategyCorrelationGate()
-    pair = StrategyPairMetrics(
-        "S1", "S2", tail_correlation=0.75, same_direction=True
-    )
+    pair = StrategyPairMetrics("S1", "S2", tail_correlation=0.75, same_direction=True)
     result = gate.check([pair], now=T0)
     assert result.overall_verdict is GateVerdict.REJECT
 
@@ -126,9 +120,7 @@ def test_tail_correlation_reject_same_direction():
 def test_tail_correlation_no_reject_different_direction():
     # same_direction=False → 尾部相关不触发 REJECT
     gate = StrategyCorrelationGate()
-    pair = StrategyPairMetrics(
-        "S1", "S2", tail_correlation=0.75, same_direction=False
-    )
+    pair = StrategyPairMetrics("S1", "S2", tail_correlation=0.75, same_direction=False)
     result = gate.check([pair], now=T0)
     assert result.overall_verdict is GateVerdict.PASS
 
@@ -139,9 +131,9 @@ def test_tail_correlation_no_reject_different_direction():
 def test_overall_verdict_is_worst_across_pairs():
     gate = StrategyCorrelationGate()
     pairs = [
-        StrategyPairMetrics("S1", "S2", factor_overlap=0.65),     # WARN
-        StrategyPairMetrics("S2", "S3", correlation=0.92),        # HARD_REJECT
-        StrategyPairMetrics("S1", "S3", correlation=0.50),        # PASS
+        StrategyPairMetrics("S1", "S2", factor_overlap=0.65),  # WARN
+        StrategyPairMetrics("S2", "S3", correlation=0.92),  # HARD_REJECT
+        StrategyPairMetrics("S1", "S3", correlation=0.50),  # PASS
     ]
     result = gate.check(pairs, now=T0)
     assert result.overall_verdict is GateVerdict.HARD_REJECT

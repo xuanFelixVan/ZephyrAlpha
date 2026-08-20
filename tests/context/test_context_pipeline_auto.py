@@ -18,6 +18,7 @@ KillSwitch 扩展测试：
 4. check_errors_and_kill: 批量错误检查
 5. register_cleanup / trigger_shutdown: 资源清理 + 主动熔断
 """
+
 from __future__ import annotations
 
 import threading

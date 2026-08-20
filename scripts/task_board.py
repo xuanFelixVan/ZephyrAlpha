@@ -135,20 +135,13 @@ _SQL_INSERT_TASK = (
     " VALUES (?, ?, ?, 'pending', datetime('now'), ?)"
 )
 _SQL_INSERT_EVENT = (
-    "INSERT INTO task_events (task_id, event_type, actor, timestamp, payload_json)"
-    " VALUES (?, ?, ?, datetime('now'), ?)"
+    "INSERT INTO task_events (task_id, event_type, actor, timestamp, payload_json) VALUES (?, ?, ?, datetime('now'), ?)"
 )
-_SQL_COMPLETE_TASK = (
-    "UPDATE tasks SET status='completed', completed_at=datetime('now')"
-    " WHERE task_id=?"
-)
+_SQL_COMPLETE_TASK = "UPDATE tasks SET status='completed', completed_at=datetime('now') WHERE task_id=?"
 _SQL_DELETE_TASK = "DELETE FROM tasks WHERE task_id=?"
-_SQL_LIST_TASKS_BASE = (
-    "SELECT task_id, status, title, claimed_by, claimed_at, created_at FROM tasks"
-)
+_SQL_LIST_TASKS_BASE = "SELECT task_id, status, title, claimed_by, claimed_at, created_at FROM tasks"
 _SQL_LIST_EVENTS = (
-    "SELECT event_type, actor, timestamp, payload_json FROM task_events"
-    " WHERE task_id=? ORDER BY event_id"
+    "SELECT event_type, actor, timestamp, payload_json FROM task_events WHERE task_id=? ORDER BY event_id"
 )
 _SQL_COUNT_TASKS = "SELECT count(*) FROM tasks"
 _SQL_LATEST_TASK_ID = "SELECT task_id FROM tasks ORDER BY created_at DESC, rowid DESC LIMIT 1"
@@ -164,12 +157,16 @@ def _resolve_board_db() -> Path:
     try:
         common = subprocess.run(  # noqa: bare-subprocess  治理脚本轻量调用，CREATE_NO_WINDOW 已补
             ["git", "rev-parse", "--git-common-dir"],
-            capture_output=True, text=True, check=True,
+            capture_output=True,
+            text=True,
+            check=True,
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         ).stdout.strip()
         gitdir = subprocess.run(  # noqa: bare-subprocess  板根解析轻量 git 调用，CREATE_NO_WINDOW 已补
             ["git", "rev-parse", "--git-dir"],
-            capture_output=True, text=True, check=True,
+            capture_output=True,
+            text=True,
+            check=True,
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         ).stdout.strip()
         common_p = Path(common).resolve()
@@ -179,7 +176,9 @@ def _resolve_board_db() -> Path:
             return common_p.parent / ".runtime" / "task_board.db"
         top = subprocess.run(  # noqa: bare-subprocess  板根解析轻量 git 调用，CREATE_NO_WINDOW 已补
             ["git", "rev-parse", "--show-toplevel"],
-            capture_output=True, text=True, check=True,
+            capture_output=True,
+            text=True,
+            check=True,
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         ).stdout.strip()
         return Path(top) / ".runtime" / "task_board.db"
@@ -243,8 +242,7 @@ def cmd_create(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
             _SQL_INSERT_TASK,
             (tid, args.title, args.description or "", json.dumps(metadata, ensure_ascii=False)),
         )
-        _add_event(conn, tid, "created", args.session or "",
-                   {"title": args.title, "metadata": metadata})
+        _add_event(conn, tid, "created", args.session or "", {"title": args.title, "metadata": metadata})
     print(tid)
     return 0
 
@@ -253,8 +251,7 @@ def cmd_claim(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
     with conn:
         cur = conn.execute(_SQL_CLAIM, (args.session, args.task_id))
         if cur.rowcount > 0:
-            _add_event(conn, args.task_id, "claimed", args.session,
-                       {"ttl_minutes": _CLAIM_TTL_MINUTES})
+            _add_event(conn, args.task_id, "claimed", args.session, {"ttl_minutes": _CLAIM_TTL_MINUTES})
             print(f"CLAIMED {args.task_id} by {args.session}")
             return 0
         # DENIED：给出原因
@@ -298,14 +295,12 @@ def cmd_complete(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
             return 2
         if task["claimed_by"] != args.session:
             print(
-                f"DENIED: task {args.task_id} 当前认领者 {task['claimed_by']}，"
-                f"非 {args.session}",
+                f"DENIED: task {args.task_id} 当前认领者 {task['claimed_by']}，非 {args.session}",
                 file=sys.stderr,
             )
             return 2
         conn.execute(_SQL_COMPLETE_TASK, (args.task_id,))
-        _add_event(conn, args.task_id, "completed", args.session,
-                   {"result": args.result or ""})
+        _add_event(conn, args.task_id, "completed", args.session, {"result": args.result or ""})
         print(f"COMPLETED {args.task_id}")
         return 0
 
@@ -321,13 +316,11 @@ def cmd_delete(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
             return 2
         if task["status"] == "claimed" and task["claimed_by"] != args.session:
             print(
-                f"DENIED: task {args.task_id} 被 {task['claimed_by']} 认领中，"
-                f"仅认领者可删",
+                f"DENIED: task {args.task_id} 被 {task['claimed_by']} 认领中，仅认领者可删",
                 file=sys.stderr,
             )
             return 2
-        _add_event(conn, args.task_id, "deleted", args.session or "",
-                   {"title": task["title"]})
+        _add_event(conn, args.task_id, "deleted", args.session or "", {"title": task["title"]})
         conn.execute(_SQL_DELETE_TASK, (args.task_id,))
         print(f"DELETED {args.task_id}")
         return 0

@@ -17,6 +17,7 @@
 
 依据：26 号 §2.7 跨源一致性投票裁定（≥2 源同向=强，单源=弱，冲突=0）。
 """
+
 from __future__ import annotations
 
 import math

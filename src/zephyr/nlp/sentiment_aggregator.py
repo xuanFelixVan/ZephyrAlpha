@@ -182,7 +182,12 @@ def vote_cross_source(
     if directional == 1:
         # 单源孤证 → 弱信号降级
         return CrossSourceVote(
-            _sign(mean_all), math.tanh(mean_all * weak_gain), STRENGTH_WEAK, n_sources, 1, source_mean,
+            _sign(mean_all),
+            math.tanh(mean_all * weak_gain),
+            STRENGTH_WEAK,
+            n_sources,
+            1,
+            source_mean,
         )
     if directional >= 2:
         # 多源冲突（正负互搏无多数）→ 无信号

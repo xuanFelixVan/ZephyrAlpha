@@ -41,7 +41,11 @@ def engine(tmp_path):
     budget_db = (tmp_path / "budget.db").as_posix()
     with open(config_path, "w", encoding="utf-8") as f:
         # budget.db_path -> tmp: keep test consumption off the shared DB_PATH SSoT
-        f.write("safety:\n  safety_gate_enabled: true\nbudget:\n  daily_limit: 50\n  monthly_limit: 500\n  db_path: " + budget_db + "\n")
+        f.write(
+            "safety:\n  safety_gate_enabled: true\nbudget:\n  daily_limit: 50\n  monthly_limit: 500\n  db_path: "
+            + budget_db
+            + "\n"
+        )
     return AutoFixEngine(config_path=config_path)
 
 

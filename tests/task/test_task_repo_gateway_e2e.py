@@ -67,7 +67,9 @@ def _commit_file(repo_dir: Path, rel: str, content: str) -> None:
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(content, encoding="utf-8")
     subprocess.run(["git", "add", rel], cwd=str(repo_dir), capture_output=True, check=True)
-    subprocess.run(["git", "commit", "-m", f"init {rel}", "--no-verify"], cwd=str(repo_dir), capture_output=True, check=True)
+    subprocess.run(
+        ["git", "commit", "-m", f"init {rel}", "--no-verify"], cwd=str(repo_dir), capture_output=True, check=True
+    )
 
 
 def _make_mock_task(task_id: str, files_in_scope: list[str], session_id: str = "e2e-test") -> MagicMock:
@@ -253,11 +255,13 @@ class TestAutoCommitE2E:
 
         # patch GitCommitGateway 的 project_root 为临时仓库
         with patch.object(
-            TaskRepository, "_auto_commit_on_completion",
+            TaskRepository,
+            "_auto_commit_on_completion",
             TaskRepository.auto_commit_on_completion,
         ):
             # 直接调用，但需要 patch GitCommitGateway 的初始化
             from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
+
             original_init = GitCommitGateway.__init__
 
             def patched_init(self, project_root=None):
@@ -269,7 +273,10 @@ class TestAutoCommitE2E:
         # 验证 commit 实际执行
         log = subprocess.run(
             ["git", "log", "-1", "--format=%B"],
-            cwd=str(tmp_path), capture_output=True, text=True, encoding="utf-8",
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
         ).stdout.strip()
         assert "E2E-009" in log, f"commit message 应含 task_id: {log}"
         assert "[GW:real-e2e]" in log, f"commit 应含 GW 标记: {log}"

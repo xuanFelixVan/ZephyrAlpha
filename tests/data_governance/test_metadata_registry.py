@@ -12,6 +12,7 @@
 # [TESTS] tests/data_governance/test_metadata_registry.py
 # [TTL] task_bound
 """D-DATA-GOV Metadata Registry 测试。"""
+
 from __future__ import annotations
 
 import pytest

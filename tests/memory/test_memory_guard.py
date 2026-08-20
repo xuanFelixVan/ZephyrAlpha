@@ -18,9 +18,7 @@ import pytest
 
 # #ARCH-083：MemoryAccessLog(access_id=)、MemoryGuard.stats/_MAX_ACCESS_SIZE
 # 缺席——代码侧缺口待裁定，全文件 xfail 留痕（strict=False）。
-pytestmark = pytest.mark.xfail(
-    strict=False, reason="#ARCH-083 memory_guard 窄实现 vs 宽契约，待裁定"
-)
+pytestmark = pytest.mark.xfail(strict=False, reason="#ARCH-083 memory_guard 窄实现 vs 宽契约，待裁定")
 
 try:
     from zephyr.security.access_control.guards.memory_guard import MemoryAccessLog, MemoryGuard

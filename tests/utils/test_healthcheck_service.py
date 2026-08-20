@@ -165,9 +165,7 @@ class TestHealthcheckServiceCheckGit:
 
     def test_git_not_found_returns_unhealthy(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
-        with patch(
-            "zephyr.shared.lifecycle.healthcheck_service.run_subprocess_hidden", side_effect=FileNotFoundError
-        ):
+        with patch("zephyr.shared.lifecycle.healthcheck_service.run_subprocess_hidden", side_effect=FileNotFoundError):
             status = svc.check_git()
             assert status.healthy is False
 
@@ -251,9 +249,7 @@ class TestHealthcheckServiceBoundary:
 
     def test_python_not_found_returns_unhealthy(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
-        with patch(
-            "zephyr.shared.lifecycle.healthcheck_service.run_subprocess_hidden", side_effect=FileNotFoundError
-        ):
+        with patch("zephyr.shared.lifecycle.healthcheck_service.run_subprocess_hidden", side_effect=FileNotFoundError):
             status = svc.check_python()
             assert status.healthy is False
             assert status.message == "Python not found"

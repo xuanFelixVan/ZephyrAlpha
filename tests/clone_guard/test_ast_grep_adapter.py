@@ -28,12 +28,7 @@ def _make_rule_file(tmp_path: Path, name: str = "test-rule.yaml") -> Path:
     rules_dir.mkdir(parents=True, exist_ok=True)
     rule_file = rules_dir / name
     rule_file.write_text(
-        "id: test-rule\n"
-        "language: Python\n"
-        "rule:\n"
-        "  kind: except_clause\n"
-        "message: test message\n"
-        "severity: warning\n",
+        "id: test-rule\nlanguage: Python\nrule:\n  kind: except_clause\nmessage: test message\nseverity: warning\n",
         encoding="utf-8",
     )
     return rules_dir
@@ -221,7 +216,9 @@ class TestAstGrepAdapterDetect:
     def test_multiple_rule_files_all_scanned(self, tmp_path: Path):
         """多个规则文件都被扫描。"""
         rules_dir = _make_rule_file(tmp_path, "rule-a.yaml")
-        (rules_dir / "rule-b.yaml").write_text("id: rule-b\nlanguage: Python\nrule:\n  kind: pass_statement\n", encoding="utf-8")
+        (rules_dir / "rule-b.yaml").write_text(
+            "id: rule-b\nlanguage: Python\nrule:\n  kind: pass_statement\n", encoding="utf-8"
+        )
         adapter = AstGrepAdapter(tmp_path, CloneGuardConfig())
         mock_result = MagicMock(returncode=0, stdout="[]", stderr="")
         with patch("shutil.which", return_value="/fake/ast-grep"):

@@ -14,6 +14,7 @@
   2. _check_structure 判定
   3. 缺失字段分析
 """
+
 from __future__ import annotations
 
 import os
@@ -77,11 +78,15 @@ def main() -> int:
         print(f"[FATAL] {e}", file=sys.stderr)
         return 2
 
-    caps = sys.argv[1:] if len(sys.argv) > 1 else [
-        "parallel_planning",
-        "dependency_trace",
-        "context_management",
-    ]
+    caps = (
+        sys.argv[1:]
+        if len(sys.argv) > 1
+        else [
+            "parallel_planning",
+            "dependency_trace",
+            "context_management",
+        ]
+    )
     print(f"诊断 {len(caps)} 个能力: {caps}")
 
     results = {}

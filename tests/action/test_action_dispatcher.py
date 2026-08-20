@@ -188,10 +188,12 @@ class TestActionDispatcherSearchReplacePaths:
                 with patch.object(d, "version_backup", return_value="bak"):
                     report = d.search_replace_file(
                         "partial",
-                        {"fixes": [
-                            {"old_str": "alpha", "new_str": "beta"},
-                            {"old_str": "not_found", "new_str": "gamma"},
-                        ]},
+                        {
+                            "fixes": [
+                                {"old_str": "alpha", "new_str": "beta"},
+                                {"old_str": "not_found", "new_str": "gamma"},
+                            ]
+                        },
                     )
         assert report.status == "search_replaced"
         assert "1 replaced" in report.detail

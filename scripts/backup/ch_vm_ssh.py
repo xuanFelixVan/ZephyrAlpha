@@ -11,6 +11,7 @@ Usage from PowerShell / Python:
 Credentials read from config/.env.ch_backup (CH_VM_HOST, CH_VM_USER, CH_VM_PASSWORD, CH_VM_KEY_PATH).
 Exit code 0 = success, 1 = failure. Output to stdout.
 """
+
 import argparse
 import json
 import os
@@ -74,7 +75,11 @@ def ssh_run(cmd: str, timeout: int = 120, use_sudo: bool = False) -> dict:
     try:
         if use_sudo:
             if not creds["password"]:
-                return {"exit_code": 1, "stdout": "", "stderr": "sudo requires CH_VM_PASSWORD (or configure NOPASSWD sudo on VM for key-only auth)"}
+                return {
+                    "exit_code": 1,
+                    "stdout": "",
+                    "stderr": "sudo requires CH_VM_PASSWORD (or configure NOPASSWD sudo on VM for key-only auth)",
+                }
             stdin, stdout, stderr = client.exec_command(cmd, timeout=timeout, get_pty=True)
             stdin.write(creds["password"] + "\n")
             stdin.flush()
@@ -137,7 +142,7 @@ def sync_config(dest_dir: str) -> dict:
         # Match =CFG= at start of a line (after \n or start of string)
         marker_match = re.search(r"(?:^|\n)=CFG=", out)
         if marker_match:
-            out = out[marker_match.start():]
+            out = out[marker_match.start() :]
         for part in out.split("=CFG=")[1:]:
             # Normalize \r\n to \n first (get_pty adds \r)
             part = part.replace("\r\n", "\n").replace("\r", "\n")

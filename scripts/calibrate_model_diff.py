@@ -40,6 +40,7 @@
         --tolerance 0.1
     python scripts/calibrate_model_diff.py --list
 """
+
 from __future__ import annotations
 
 import argparse
@@ -101,11 +102,7 @@ def _compute_per_capability_ratio(
         f1_b = caps_b.get(cap).f1 if caps_b.get(cap) else 0.0
         # 避免除零: 若 f1_b 为 0, 用 None 占位
         ratio = (f1_a / f1_b) if f1_b > 0 else None
-        drift = (
-            abs(ratio - DEFAULT_TARGET_RATIO) > CAP_DISCRIMINATION_DRIFT
-            if ratio is not None
-            else True
-        )
+        drift = abs(ratio - DEFAULT_TARGET_RATIO) > CAP_DISCRIMINATION_DRIFT if ratio is not None else True
         rows.append(
             {
                 "capability": cap,
@@ -150,29 +147,20 @@ def _print_report(
     print(f"  弱模型 B: {b.model_id}")
     print(f"    overall_score = {b.overall_score:.4f}  grade = {b.overall_grade}")
     print("-" * 80)
-    print(
-        f"  实际比率  A/B = {ratio:.4f}"
-        f"  (目标 {target:.2f} ± {tolerance:.2f} → 区间 [{lo:.2f}, {hi:.2f}])"
-    )
+    print(f"  实际比率  A/B = {ratio:.4f}  (目标 {target:.2f} ± {tolerance:.2f} → 区间 [{lo:.2f}, {hi:.2f}])")
     print(f"  校准结果: {'PASS ✓' if passed else 'FAIL ✗'}")
     print("=" * 80)
 
     if not passed:
         # 失败诊断
         if ratio < lo:
-            print(
-                f"\n  [诊断] 比率偏低 ({ratio:.4f} < {lo:.2f}): "
-                f"题库对强弱模型的区分度不足 (Goodhart 风险)"
-            )
+            print(f"\n  [诊断] 比率偏低 ({ratio:.4f} < {lo:.2f}): 题库对强弱模型的区分度不足 (Goodhart 风险)")
             print("         建议:")
             print("           1. 复核 breadth 35% 权重是否过重 (仅检 JSON 键存在)")
             print("           2. 增加 depth 难题占比 (HARD/EXTREME)")
             print("           3. 启用三轨 judge 强制 (P1-4)")
         else:
-            print(
-                f"\n  [诊断] 比率偏高 ({ratio:.4f} > {hi:.2f}): "
-                f"题库过度偏向强模型 (不公平风险)"
-            )
+            print(f"\n  [诊断] 比率偏高 ({ratio:.4f} > {hi:.2f}): 题库过度偏向强模型 (不公平风险)")
             print("         建议:")
             print("           1. 增加 EASY/MEDIUM 基础题, 确保弱模型有底线分")
             print("           2. 复核 depth 多次采样是否引入随机噪声 (P1-2)")
@@ -187,10 +175,7 @@ def _print_report(
         for r in rows:
             ratio_str = f"{r['ratio']:.4f}" if r["ratio"] is not None else "N/A"
             mark = "✗" if r["drift"] else " "
-            print(
-                f"  {r['capability']:<32}{r['f1_a']:>10.4f}{r['f1_b']:>10.4f}"
-                f"{ratio_str:>10}  {mark}"
-            )
+            print(f"  {r['capability']:<32}{r['f1_a']:>10.4f}{r['f1_b']:>10.4f}{ratio_str:>10}  {mark}")
         if drifted:
             print(f"\n  判别力退化能力 {len(drifted)}/{len(rows)} 个:")
             for r in drifted:
@@ -199,18 +184,11 @@ def _print_report(
 
     # 速度/幻觉/漂移次要指标
     print("\n  次要指标对比:")
+    print(f"    speed.avg_latency_ms:    A={a.speed.avg_latency_ms:>10.0f}ms  B={b.speed.avg_latency_ms:>10.0f}ms")
     print(
-        f"    speed.avg_latency_ms:    A={a.speed.avg_latency_ms:>10.0f}ms  "
-        f"B={b.speed.avg_latency_ms:>10.0f}ms"
+        f"    hallucination.rate:      A={a.hallucination.overall_rate:>10.4f}  B={b.hallucination.overall_rate:>10.4f}"
     )
-    print(
-        f"    hallucination.rate:      A={a.hallucination.overall_rate:>10.4f}  "
-        f"B={b.hallucination.overall_rate:>10.4f}"
-    )
-    print(
-        f"    drift.stable:            A={a.drift.stable!s:>10}  "
-        f"B={b.drift.stable!s:>10}"
-    )
+    print(f"    drift.stable:            A={a.drift.stable!s:>10}  B={b.drift.stable!s:>10}")
 
     print("\n" + "=" * 80)
     return passed
@@ -263,10 +241,7 @@ def main(argv: list[str] | None = None) -> int:
         for pid in sorted(passports):
             p = CapabilityPassport.load(pid)
             if p:
-                print(
-                    f"  {pid:<35} score={p.overall_score:.4f}  "
-                    f"grade={p.overall_grade}"
-                )
+                print(f"  {pid:<35} score={p.overall_score:.4f}  grade={p.overall_grade}")
         return 0
 
     a = _load_passport_or_exit(args.model_a)

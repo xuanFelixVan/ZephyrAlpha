@@ -12,6 +12,7 @@
 # [TESTS] tests/data_governance/test_lineage_tracker.py
 # [TTL] task_bound
 """D-DATA-GOV Lineage Tracker 测试。"""
+
 from __future__ import annotations
 
 import pytest

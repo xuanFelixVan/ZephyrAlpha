@@ -26,25 +26,19 @@ class TestPersistenceCondition:
     def test_sustained_30d_reject(self):
         """0.88 相关持续 35 天 ≥30 → REJECT（持久化达标，维持否决）。"""
         gate = StrategyCorrelationGate()
-        res = gate.check([
-            StrategyPairMetrics("S1", "S2", correlation=0.88, correlation_sustained_days=35)
-        ])
+        res = gate.check([StrategyPairMetrics("S1", "S2", correlation=0.88, correlation_sustained_days=35)])
         assert res.overall_verdict == GateVerdict.REJECT
 
     def test_unsustained_downgrades_to_warn(self):
         """0.88 相关仅持续 10 天 <30 → 降级 WARN（防单日噪声误剔除）。"""
         gate = StrategyCorrelationGate()
-        res = gate.check([
-            StrategyPairMetrics("S1", "S2", correlation=0.88, correlation_sustained_days=10)
-        ])
+        res = gate.check([StrategyPairMetrics("S1", "S2", correlation=0.88, correlation_sustained_days=10)])
         assert res.overall_verdict == GateVerdict.WARN
 
     def test_hard_reject_unsustained_also_downgrades(self):
         """0.95 硬否决相关未达持续条件同样降级 WARN。"""
         gate = StrategyCorrelationGate()
-        res = gate.check([
-            StrategyPairMetrics("S1", "S2", correlation=0.95, correlation_sustained_days=3)
-        ])
+        res = gate.check([StrategyPairMetrics("S1", "S2", correlation=0.95, correlation_sustained_days=3)])
         assert res.overall_verdict == GateVerdict.WARN
 
     def test_no_sustained_data_legacy_behavior(self):
@@ -56,17 +50,13 @@ class TestPersistenceCondition:
     def test_custom_sustained_threshold(self):
         cfg = CorrelationGateConfig(correlation_reject_sustained_days=60)
         gate = StrategyCorrelationGate(cfg)
-        res = gate.check([
-            StrategyPairMetrics("S1", "S2", correlation=0.88, correlation_sustained_days=45)
-        ])
+        res = gate.check([StrategyPairMetrics("S1", "S2", correlation=0.88, correlation_sustained_days=45)])
         assert res.overall_verdict == GateVerdict.WARN
 
     def test_negative_sustained_days_raises(self):
         gate = StrategyCorrelationGate()
         with pytest.raises(InvalidCorrelationInputError):
-            gate.check([
-                StrategyPairMetrics("S1", "S2", correlation=0.88, correlation_sustained_days=-1)
-            ])
+            gate.check([StrategyPairMetrics("S1", "S2", correlation=0.88, correlation_sustained_days=-1)])
 
     def test_default_config_30d(self):
         assert CorrelationGateConfig().correlation_reject_sustained_days == 30

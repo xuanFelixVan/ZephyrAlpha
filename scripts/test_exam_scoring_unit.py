@@ -11,6 +11,7 @@
 运行: python scripts/test_exam_scoring_unit.py
 退出码: 0=全部通过, 1=有失败
 """
+
 import json
 import math
 import sys
@@ -63,10 +64,10 @@ def _make_orch(response: dict) -> ExamOrchestrator:
 def test_time_weight_boundaries():
     cases = [
         (0, 1.000),
-        (9000, 0.966),       # 本地模型单题
-        (60000, 0.794),      # thinking 模型单题
-        (260000, 0.368),     # exp 衰减常数点
-        (600000, 0.099),     # 防卡死上限，不归零
+        (9000, 0.966),  # 本地模型单题
+        (60000, 0.794),  # thinking 模型单题
+        (260000, 0.368),  # exp 衰减常数点
+        (600000, 0.099),  # 防卡死上限，不归零
     ]
     for ms, expected in cases:
         got = round(_time_weight(ms), 3)
@@ -174,10 +175,21 @@ def test_olympiad_field_consistency():
     perfect_results = {
         "EX-OLY-001": {  # architecture_design: files/dependencies/expected_contains
             "files": [
-                "user_service.py", "product_service.py", "order_service.py", "payment_service.py",
-                "inventory_service.py", "shipping_service.py", "notification_service.py", "analytics_service.py",
-                "tenant_isolator.py", "scale_shard.py", "consistency_saga.py", "idempotent_guard.py",
-                "observability_trace.py", "gray_release.py", "api_gateway.py",
+                "user_service.py",
+                "product_service.py",
+                "order_service.py",
+                "payment_service.py",
+                "inventory_service.py",
+                "shipping_service.py",
+                "notification_service.py",
+                "analytics_service.py",
+                "tenant_isolator.py",
+                "scale_shard.py",
+                "consistency_saga.py",
+                "idempotent_guard.py",
+                "observability_trace.py",
+                "gray_release.py",
+                "api_gateway.py",
             ],
             "dependencies": [
                 {"from": "api_gateway", "to": "order_service"},
@@ -188,20 +200,35 @@ def test_olympiad_field_consistency():
         },
         "EX-OLY-002": {  # hallucination_detect: hallucinations vs expected_hallucinations
             "hallucinations": [
-                {"item": h, "reason": "fabricated"} for h in [
-                    "fastjsonx 3.0", "redis-py-cluster-plus", "PyTTLCache",
-                    "Ollama.function_call", "SQLAlchemy.atomic_batch",
-                    "kombu_rpc", "psycopg3-async-pool", "uvicorn.experimental_workers",
-                    "Pydantic.serial_validator", "httpx.retry_policy",
-                    "aiohttp.thread_executor", "FastAPI.dependency_scope",
+                {"item": h, "reason": "fabricated"}
+                for h in [
+                    "fastjsonx 3.0",
+                    "redis-py-cluster-plus",
+                    "PyTTLCache",
+                    "Ollama.function_call",
+                    "SQLAlchemy.atomic_batch",
+                    "kombu_rpc",
+                    "psycopg3-async-pool",
+                    "uvicorn.experimental_workers",
+                    "Pydantic.serial_validator",
+                    "httpx.retry_policy",
+                    "aiohttp.thread_executor",
+                    "FastAPI.dependency_scope",
                 ]
             ],
         },
         "EX-OLY-003": {  # dependency_trace: call_chain vs expected_call_chain
             "call_chain": [
-                {"function": f} for f in [
-                    "handle_request", "route_api", "validate_input", "process_order",
-                    "query_inventory", "map_record", "fetch_cache", "check_policy",
+                {"function": f}
+                for f in [
+                    "handle_request",
+                    "route_api",
+                    "validate_input",
+                    "process_order",
+                    "query_inventory",
+                    "map_record",
+                    "fetch_cache",
+                    "check_policy",
                 ]
             ],
         },
@@ -259,8 +286,12 @@ def test_olympiad_field_consistency():
         # ── Phase 3: 真实多文件注入题（rubric/judge 评分，不走 _compute_metrics）──
         "EX-OLY-007": {  # architecture_design: files/dependencies + broken/hallucinated
             "files": [
-                "task_gate.py", "git_commit.py", "verify_schema_health.py",
-                "diagnose_depgraph.py", "audit_registration.py", "ghost_router.py",
+                "task_gate.py",
+                "git_commit.py",
+                "verify_schema_health.py",
+                "diagnose_depgraph.py",
+                "audit_registration.py",
+                "ghost_router.py",
             ],
             "dependencies": [
                 {"from": "git_commit", "to": "git_commit_gateway"},
@@ -287,8 +318,13 @@ def test_olympiad_field_consistency():
         },
         "EX-OLY-009": {  # dependency_trace: call_chain + phantom_imports
             "call_chain": [
-                {"function": f} for f in [
-                    "main", "GitCommitGateway", "commit", "_stash_other_files", "_run_git",
+                {"function": f}
+                for f in [
+                    "main",
+                    "GitCommitGateway",
+                    "commit",
+                    "_stash_other_files",
+                    "_run_git",
                 ]
             ],
             "phantom_imports": [
@@ -326,8 +362,7 @@ def test_olympiad_field_consistency():
         # 非零分 = 字段名对齐正确（全 0 才是字段错配；某些维度因内容不匹配得 0 属正常）
         if rr.score <= 0.0:
             problems.append(
-                f"{case.case_id} ({case.capability}): 完美结果 rubric score=0.000，"
-                f"疑似字段名错配；维度明细: {rr.items}"
+                f"{case.case_id} ({case.capability}): 完美结果 rubric score=0.000，疑似字段名错配；维度明细: {rr.items}"
             )
 
     if problems:

@@ -123,6 +123,7 @@ def _get_daemon_status() -> dict[str, str]:
     try:
         # 5.154.1 修复: 使用公共 getter 而非导入 _daemon_instance 私有单例
         from zephyr.trading.ide_health_daemon import get_daemon_instance
+
         daemon = get_daemon_instance()
     except ImportError as e:
         return {"running": "false", "ghost_count": "0", "detail": f"导入失败: {e}"}

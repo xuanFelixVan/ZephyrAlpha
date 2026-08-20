@@ -87,12 +87,23 @@ __all__ = [
 # ---------------------------------------------------------------------------
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-GATES_DIR = SRC_ZEPHYR / "gov_enforcement" / "rule_enforcement"  # #61 裁定（2026-08-20）：孤儿拷贝修正（governance→gov_enforcement，真源与 paths.GATES_DIR 一致）
+GATES_DIR = (
+    SRC_ZEPHYR / "gov_enforcement" / "rule_enforcement"
+)  # #61 裁定（2026-08-20）：孤儿拷贝修正（governance→gov_enforcement，真源与 paths.GATES_DIR 一致）
 SCRIPT_MANIFEST = SCRIPTS_DIR / "script-manifest.yaml"  # 连字符=登记真源（裁定 d2da16e0fe，下划线版已退库）
 GATE_REGISTRY = GATES_DIR / "_registry.yaml"
 RULES_DIR = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
-CAPABILITY_REGISTRY = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
-LAYER_VOCABULARY = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "layer_vocabulary.yaml"
+CAPABILITY_REGISTRY = (
+    PROJECT_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
+    / "capability_canonical_file_registry.yaml"
+)
+LAYER_VOCABULARY = (
+    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "layer_vocabulary.yaml"
+)
 
 
 def _load_valid_layers() -> frozenset[str]:
@@ -157,15 +168,22 @@ def _load_valid_ai_autonomy() -> frozenset[str]:
     print("  [WARN] ai_autonomy_vocabulary.yaml 不可读，使用 fallback 值", file=sys.stderr)
     return _build_vocab_fallback("immutable_core", "human_gated", "ai_modifiable")
 
+
 # ---------------------------------------------------------------------------
 # 规则主题前缀（ARCH-037，按文件名定位的命名约定）
 # ---------------------------------------------------------------------------
 # 多段主题前缀无法机械拆分，显式声明；新增多段主题时更新此处。
 # 单段主题前缀由 _derive_rule_theme_prefixes() 从现有文件名自动派生。
-_MULTI_SEGMENT_THEMES = frozenset({
-    "anti_hallucination", "anti_orphan", "meta_rule", "domain_policy",
-    "cross_blueprint", "file_operation",
-})
+_MULTI_SEGMENT_THEMES = frozenset(
+    {
+        "anti_hallucination",
+        "anti_orphan",
+        "meta_rule",
+        "domain_policy",
+        "cross_blueprint",
+        "file_operation",
+    }
+)
 
 
 def _derive_rule_theme_prefixes() -> frozenset[str]:
@@ -372,7 +390,11 @@ class ScaffoldEngine:
 
         # ── 检查 3: 功能重复 ──
         check_duplicate_functionality(
-            name, description, domain, subdomain, force_override=force_override,
+            name,
+            description,
+            domain,
+            subdomain,
+            force_override=force_override,
             expected_module_path=f"zephyr.{package}.{name}",
         )
 
@@ -430,7 +452,10 @@ class ScaffoldEngine:
 
         # ── 检查 3: 功能重复 ──
         check_duplicate_functionality(
-            rel_path, description, domain, subdomain,
+            rel_path,
+            description,
+            domain,
+            subdomain,
             force_override=force_override,
             expected_module_path=f"scripts.{rel_path.replace('/', '.')}",
         )
@@ -591,8 +616,7 @@ class ScaffoldEngine:
         valid_layers = _load_valid_layers()
         if not valid_layers:
             raise ScaffoldError(
-                f"无法从 layer_vocabulary.yaml 加载合法层名（文件不可读或为空），"
-                f"请检查 {LAYER_VOCABULARY}"
+                f"无法从 layer_vocabulary.yaml 加载合法层名（文件不可读或为空），请检查 {LAYER_VOCABULARY}"
             )
         if layer not in valid_layers:
             raise ScaffoldError(f"layer 必须是 {sorted(valid_layers)} 之一，得到: {layer}")
@@ -927,6 +951,7 @@ def check_duplicate_functionality(
     if expected_module_path:
         try:
             from zephyr.governance.capability_lookup import CapabilityLookup
+
             lookup = CapabilityLookup()
             conflicts = lookup.find_files_by_module_path(expected_module_path)
             if conflicts:
@@ -938,13 +963,12 @@ def check_duplicate_functionality(
                     _BASENAME_EXEMPT = frozenset({"__init__.py", "conftest.py", "__main__.py"})
                     if basename not in _BASENAME_EXEMPT:
                         existing = [
-                            p for p in SRC_ZEPHYR.rglob(basename)
+                            p
+                            for p in SRC_ZEPHYR.rglob(basename)
                             if "__pycache__" not in str(p) and "._archive" not in str(p)
                         ]
                         if existing:
-                            exist_list = "\n".join(
-                                f"    - {p.relative_to(PROJECT_ROOT)}" for p in sorted(existing)
-                            )
+                            exist_list = "\n".join(f"    - {p.relative_to(PROJECT_ROOT)}" for p in sorted(existing))
                             basename_extra = (
                                 f"\n  额外发现: basename 跨域重复\n"
                                 f"  新文件 basename: {basename}\n"
@@ -1068,7 +1092,12 @@ def _check_duplicate_functionality(
 ) -> None:
     """向后兼容 thin wrapper（Stage 4 公共化）。"""
     check_duplicate_functionality(
-        name, description, domain, subdomain, force_override, expected_module_path,
+        name,
+        description,
+        domain,
+        subdomain,
+        force_override,
+        expected_module_path,
     )
 
 
@@ -1167,6 +1196,7 @@ def _register_creation_token(file_path: str, capability: str, dry_run: bool) -> 
         return
 
     import yaml as _yaml
+
     try:
         data = _yaml.safe_load(CAPABILITY_REGISTRY.read_text(encoding="utf-8"))
     except Exception as exc:
@@ -1196,7 +1226,12 @@ def _register_creation_token(file_path: str, capability: str, dry_run: bool) -> 
     data["creation_tokens"] = tokens
 
     try:
-        _atomic_write(CAPABILITY_REGISTRY, _yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False), False, [])
+        _atomic_write(
+            CAPABILITY_REGISTRY,
+            _yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False),
+            False,
+            [],
+        )
         print(f"  REGISTERED  creation_token for {rel_path} (token={token_value})")
     except Exception as exc:
         print(f"  WARNING: creation_token 登记失败: {exc}")
@@ -1403,7 +1438,11 @@ def main() -> None:
     p_mod.add_argument("--domain", default="", help="功能域 (e.g. governance)")
     p_mod.add_argument("--subdomain", default="", help="子功能域 (e.g. gate_engine)")
     p_mod.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
-    p_mod.add_argument("--force-override", action="store_true", help="裁定通道：跳过功能域 alias 模糊匹配+蓝图关键词匹配（exact/module_path 冲突仍阻断，同名碰撞经裁定后使用）")
+    p_mod.add_argument(
+        "--force-override",
+        action="store_true",
+        help="裁定通道：跳过功能域 alias 模糊匹配+蓝图关键词匹配（exact/module_path 冲突仍阻断，同名碰撞经裁定后使用）",
+    )
 
     # script
     p_scr = sub.add_parser("script", help="创建 scripts/<path>/<name>.py")
@@ -1412,7 +1451,11 @@ def main() -> None:
     p_scr.add_argument("--domain", default="", help="功能域 (e.g. governance)")
     p_scr.add_argument("--subdomain", default="", help="子功能域 (e.g. gate_engine)")
     p_scr.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
-    p_scr.add_argument("--force-override", action="store_true", help="裁定通道：跳过功能域 alias 模糊匹配+蓝图关键词匹配（exact/module_path 冲突仍阻断，同名碰撞经裁定后使用）")
+    p_scr.add_argument(
+        "--force-override",
+        action="store_true",
+        help="裁定通道：跳过功能域 alias 模糊匹配+蓝图关键词匹配（exact/module_path 冲突仍阻断，同名碰撞经裁定后使用）",
+    )
 
     # gate
     p_gate = sub.add_parser("gate", help="创建 src/zephyr/gov_enforcement/rule_enforcement/<id>.yaml")

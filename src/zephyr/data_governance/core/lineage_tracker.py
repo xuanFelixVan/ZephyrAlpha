@@ -87,6 +87,7 @@ D-DATA-GOV Lineage Tracker——数据血缘追踪。
 # A3 --> O1
 # A4 --> O1
 """
+
 from __future__ import annotations
 
 from collections import defaultdict, deque
@@ -119,9 +120,7 @@ class LineageTracker:
         self._downstream: dict[str, set[str]] = defaultdict(set)
         self._upstream: dict[str, set[str]] = defaultdict(set)
 
-    def add_edge(
-        self, source: str, target: str, transformation: str = ""
-    ) -> LineageEdge:
+    def add_edge(self, source: str, target: str, transformation: str = "") -> LineageEdge:
         """添加血缘边。如果 source→target 已存在则更新 transformation。
 
         Raises:
@@ -130,9 +129,7 @@ class LineageTracker:
         if source == target:
             raise ValueError(f"自环不被允许: {source} → {target}")
         if self._would_create_cycle(source, target):
-            raise ValueError(
-                f"添加 {source} → {target} 会形成环（{target} 已是 {source} 的上游）"
-            )
+            raise ValueError(f"添加 {source} -> {target} 会形成环（{target} 已是 {source} 的上游）")  # noqa: MSG-EXPOSURE — source/target=血缘节点 ID 非敏感路径
         edge = LineageEdge(source, target, transformation)
         self._edges[(source, target)] = edge
         self._downstream[source].add(target)
@@ -189,9 +186,7 @@ class LineageTracker:
             queue.extend(self._upstream.get(node, set()))
         return False
 
-    def _collect_upstream(
-        self, node: str, visited: set[str], result: list[str]
-    ) -> None:
+    def _collect_upstream(self, node: str, visited: set[str], result: list[str]) -> None:
         """递归收集上游节点（BFS 拓扑序）。"""
         queue: deque[str] = deque(self._upstream.get(node, set()))
         while queue:
@@ -202,9 +197,7 @@ class LineageTracker:
             result.append(parent)
             queue.extend(self._upstream.get(parent, set()))
 
-    def _collect_downstream(
-        self, node: str, visited: set[str], result: list[str]
-    ) -> None:
+    def _collect_downstream(self, node: str, visited: set[str], result: list[str]) -> None:
         """递归收集下游节点（BFS 拓扑序）。"""
         queue: deque[str] = deque(self._downstream.get(node, set()))
         while queue:

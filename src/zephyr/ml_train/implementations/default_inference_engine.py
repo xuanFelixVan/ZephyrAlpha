@@ -75,9 +75,7 @@ class DefaultInferenceEngine(InferenceEngineBase):
             # 5.117.1 修复：路径白名单校验，防止路径穿越和恶意模型文件加载
             resolved = Path(model_path).resolve()
             if not str(resolved).startswith(str(_ALLOWED_MODEL_ROOT)):
-                raise ValueError(
-                    f"model_path must be under {_ALLOWED_MODEL_ROOT}, got {resolved}"
-                )
+                raise ValueError(f"model_path must be under {_ALLOWED_MODEL_ROOT}, got {resolved}")
             self._models[model_id] = joblib.load(resolved)
             self._metadatas[model_id] = metadata
             _logger.info("Model loaded: model_id=%s path=%s", model_id, model_path)

@@ -194,12 +194,7 @@ def _is_whitelisted(path: str) -> bool:
     path = _normalize_path(path).lower()
     for wp in ALLOWED_PREFIXES:
         wp_norm = _normalize_path(wp).lower()
-        if (
-            path == wp_norm
-            or path.startswith(wp_norm + "/")
-            or f"/{wp_norm}/" in path
-            or path.endswith(f"/{wp_norm}")
-        ):
+        if path == wp_norm or path.startswith(wp_norm + "/") or f"/{wp_norm}/" in path or path.endswith(f"/{wp_norm}"):
             return True
     return False
 
@@ -236,29 +231,29 @@ def _resolve_to_repo_rel(target: str, cwd: str | Path | None = None) -> str:
 
     # 绝对路径：优先剥离主仓根（覆盖 D:\ZephyrAlpha\.worktrees 等场景）
     if target_lower.startswith(main_norm + "/"):
-        return target[len(main_norm) + 1:]
+        return target[len(main_norm) + 1 :]
     # 主仓根本身
     if target_lower == main_norm:
         return "."
     # worktree 根（cwd 所在 worktree）
     if root_norm != main_norm:
         if target_lower.startswith(root_norm + "/"):
-            wt_rel = target[len(root_norm) + 1:]
-            session_part = root_norm[len(main_norm) + 1:]  # .worktrees/<sid>
+            wt_rel = target[len(root_norm) + 1 :]
+            session_part = root_norm[len(main_norm) + 1 :]  # .worktrees/<sid>
             return f"{session_part}/{wt_rel}"
         if target_lower == root_norm:
-            session_part = root_norm[len(main_norm) + 1:]
+            session_part = root_norm[len(main_norm) + 1 :]
             return session_part
     # 含 .worktrees/ 段的其他绝对路径（主仓其他 worktree）
     if "/.worktrees/" in target_lower:
         idx = target_lower.index("/.worktrees/")
-        return target[idx + 1:]
+        return target[idx + 1 :]
 
     # 相对路径：直接返回（已归一化）
     # 去除 ./ 前缀（os.curdir 拼接规避 RELATIVE-PATH-LITERAL 字面量检测）
     curdir_prefix = os.curdir + "/"
     if target.startswith(curdir_prefix):
-        target = target[len(curdir_prefix):]
+        target = target[len(curdir_prefix) :]
     return target
 
 
@@ -320,14 +315,32 @@ def audit_delete(
 
 # Remove-Item 已知开关（token 级精确匹配，防误吃路径内连字符段如 AI-BGT-001）
 _PS_SWITCH_NO_VALUE = {
-    "recurse", "force", "confirm", "whatif", "usetransaction",
-    "verbose", "debug", "passthru",
+    "recurse",
+    "force",
+    "confirm",
+    "whatif",
+    "usetransaction",
+    "verbose",
+    "debug",
+    "passthru",
 }
 _PS_SWITCH_WITH_VALUE = {
-    "path", "literalpath", "include", "exclude", "filter", "credential",
-    "erroraction", "warningaction", "informationaction", "errorvariable",
-    "warningvariable", "informationvariable", "outvariable", "outbuffer",
-    "pipelinevariable", "stream",
+    "path",
+    "literalpath",
+    "include",
+    "exclude",
+    "filter",
+    "credential",
+    "erroraction",
+    "warningaction",
+    "informationaction",
+    "errorvariable",
+    "warningvariable",
+    "informationvariable",
+    "outvariable",
+    "outbuffer",
+    "pipelinevariable",
+    "stream",
 }
 
 
@@ -386,14 +399,10 @@ def _extract_python_targets(cmd: str) -> tuple[list[str], bool]:
     """提取 Python shutil.rmtree/os.remove 调用目标。"""
     targets: list[str] = []
     # shutil.rmtree("path") 或 shutil.rmtree('path')
-    rmtree_matches = re.findall(
-        r"(?:shutil\.)?rmtree\s*\(\s*['\"]([^'\"]+)['\"]", cmd
-    )
+    rmtree_matches = re.findall(r"(?:shutil\.)?rmtree\s*\(\s*['\"]([^'\"]+)['\"]", cmd)
     targets.extend(rmtree_matches)
     # os.remove("path")
-    remove_matches = re.findall(
-        r"(?:os\.)?remove\s*\(\s*['\"]([^'\"]+)['\"]", cmd
-    )
+    remove_matches = re.findall(r"(?:os\.)?remove\s*\(\s*['\"]([^'\"]+)['\"]", cmd)
     targets.extend(remove_matches)
     is_recursive = bool(rmtree_matches)
     # 批量模式无字面量目标时，从 Path('...')/os.listdir('...')/glob 提取作用目录
@@ -416,9 +425,7 @@ def _is_batch_os_remove(cmd: str) -> bool:
 def _detect_primitive(cmd: str) -> tuple[str, list[str], bool]:
     """识别命令的删除原语类型，返回 (primitive, targets, is_recursive)。"""
     # PowerShell Remove-Item / ri / rm 别名
-    if re.search(r"Remove-Item", cmd, re.IGNORECASE) or re.match(
-        r"^(ri|rm)\s+", cmd, re.IGNORECASE
-    ):
+    if re.search(r"Remove-Item", cmd, re.IGNORECASE) or re.match(r"^(ri|rm)\s+", cmd, re.IGNORECASE):
         targets, is_recursive = _extract_ps_targets(cmd)
         return "powershell_recurse", targets, is_recursive
     # CMD del/rd/rmdir/erase
@@ -440,9 +447,7 @@ def _detect_primitive(cmd: str) -> tuple[str, list[str], bool]:
     return "unknown", [], False
 
 
-def _judge_protected(
-    targets: list[str], is_recursive: bool, cwd: str | Path | None
-) -> tuple[bool, list[str]]:
+def _judge_protected(targets: list[str], is_recursive: bool, cwd: str | Path | None) -> tuple[bool, list[str]]:
     """判定目标是否命中保护区，返回 (is_protected, resolved_targets)。"""
     resolved: list[str] = []
     for t in targets:
@@ -461,10 +466,7 @@ def _judge_protected(
 
 def _is_authorized() -> bool:
     """授权环境变量检查（gateway/强制删除场景）。"""
-    return (
-        os.environ.get(GATEWAY_ENV) == "1"
-        or os.environ.get(FORCE_ENV) == "1"
-    )
+    return os.environ.get(GATEWAY_ENV) == "1" or os.environ.get(FORCE_ENV) == "1"
 
 
 def _is_docs_untracked(path_str: str, cwd: str | Path | None = None) -> bool:
@@ -580,9 +582,11 @@ def analyze_delete_command(cmd: str, cwd: str | Path | None = None) -> DeleteVer
                 is_protected_zone=True,
             )
 
-    reason = "白名单路径" if any(
-        _is_whitelisted(rt) for rt in resolved_targets
-    ) else ("授权放行" if authorized else "非保护区")
+    reason = (
+        "白名单路径"
+        if any(_is_whitelisted(rt) for rt in resolved_targets)
+        else ("授权放行" if authorized else "非保护区")
+    )
     if is_protected and authorized:
         reason = "授权放行（命中保护区但有授权标记）"
 
@@ -664,10 +668,7 @@ def guard_remove(path: str | Path, *, cwd: str | Path | None = None) -> None:
     audit_delete("guard_remove", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
 
     if not verdict.allowed:
-        raise DeleteBlockedError(
-            f"[OPS-GUARD] remove 被阻断——{verdict.reason}\n"
-            f"  目标: {path_str}"
-        )
+        raise DeleteBlockedError(f"[OPS-GUARD] remove 被阻断——{verdict.reason}\n  目标: {path_str}")
 
     try:
         os.remove(path_str)
@@ -739,11 +740,7 @@ def guard_move(src: str | Path, dst: str | Path, *, cwd: str | Path | None = Non
             is_protected_zone=True,
         )
         audit_delete("guard_move", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
-        raise DeleteBlockedError(
-            f"[OPS-GUARD] move 被阻断——{verdict.reason}\n"
-            f"  源: {src_str}\n"
-            f"  目标: {dst_str}"
-        )
+        raise DeleteBlockedError(f"[OPS-GUARD] move 被阻断——{verdict.reason}\n  源: {src_str}\n  目标: {dst_str}")
 
     verdict = DeleteVerdict(
         allowed=True,
@@ -811,7 +808,9 @@ def guard_recycle(
 
 
 def prune_recycle_bin(
-    *, repo_root: str | Path, ttl_seconds: int = RECYCLE_TTL_SECONDS,
+    *,
+    repo_root: str | Path,
+    ttl_seconds: int = RECYCLE_TTL_SECONDS,
     max_bytes: int = RECYCLE_MAX_BYTES,
 ) -> int:
     """回收站清理（唯一合法的物理删除点，仅作用于回收站内部）。
@@ -901,14 +900,12 @@ def prune_recycle_bin(
 # ============================================================================
 
 #: 当前执行的 reconciler 上下文：(gate_id, file_ops frozenset)；None=非 reconciler 执行期
-_RECONCILER_CTX: contextvars.ContextVar[tuple[str, frozenset] | None] = (
-    contextvars.ContextVar("ops_guard_reconciler_ctx", default=None)
+_RECONCILER_CTX: contextvars.ContextVar[tuple[str, frozenset] | None] = contextvars.ContextVar(
+    "ops_guard_reconciler_ctx", default=None
 )
 
 #: rmtree/move 整体判定后的批量子操作直通 flag（防内部逐文件重复判定刷屏审计）
-_BULK_APPROVED: contextvars.ContextVar[bool] = contextvars.ContextVar(
-    "ops_guard_bulk_approved", default=False
-)
+_BULK_APPROVED: contextvars.ContextVar[bool] = contextvars.ContextVar("ops_guard_bulk_approved", default=False)
 
 
 def set_reconciler_context(gate_id: str, file_ops: object) -> contextvars.Token:
@@ -1036,7 +1033,9 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
         audit_delete(
             "inprocess_allow",
             f"{op}('{path_str}')",
-            DeleteVerdict(allowed=True, reason="白名单路径", primitive=f"inprocess_{op}", targets=[rel], is_recursive=recursive),
+            DeleteVerdict(
+                allowed=True, reason="白名单路径", primitive=f"inprocess_{op}", targets=[rel], is_recursive=recursive
+            ),
         )
         return
     try:
@@ -1044,10 +1043,7 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
     except DeleteBlockedError:
         _AUDIT_STATS["block"] += 1
         raise
-    if (
-        any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
-        and not _is_authorized()
-    ):
+    if any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES) and not _is_authorized():
         _AUDIT_STATS["block"] += 1
         verdict = DeleteVerdict(
             allowed=False,
@@ -1066,7 +1062,9 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
     audit_delete(
         "inprocess_allow",
         f"{op}('{path_str}')",
-        DeleteVerdict(allowed=True, reason="非保护区", primitive=f"inprocess_{op}", targets=[rel], is_recursive=recursive),
+        DeleteVerdict(
+            allowed=True, reason="非保护区", primitive=f"inprocess_{op}", targets=[rel], is_recursive=recursive
+        ),
     )
 
 

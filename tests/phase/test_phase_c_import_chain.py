@@ -50,7 +50,9 @@ PHASE_C_CLASSES: list[ConcreteClass] = [
     ConcreteClass("zephyr.reporting.default_attribution_engine", "DefaultAttributionEngine", "L07"),
     ConcreteClass("zephyr.backtest.implementations.vectorized_engine", "DefaultBacktestEngine", "L09"),
     ConcreteClass("zephyr.governance.implementations.default_security_gateway", "DefaultSecurityGateway", "L10"),
-    ConcreteClass("zephyr.intelligence.model_evaluation.implementations.default_inference_engine", "DefaultInferenceEngine", "L11"),
+    ConcreteClass(
+        "zephyr.intelligence.model_evaluation.implementations.default_inference_engine", "DefaultInferenceEngine", "L11"
+    ),
     ConcreteClass("zephyr.simulation.implementations.default_experiment_pipeline", "DefaultExperimentPipeline", "L13"),
 ]
 

@@ -90,6 +90,7 @@ schema_registry 管理表名→列结构映射。
 # A3 --> O1
 # A4 --> O1
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -179,9 +180,7 @@ class ManagedSchemaRegistry:
             return False
         return any(col.name == column_name for col in schema.columns)
 
-    def get_column(
-        self, table_name: str, column_name: str
-    ) -> ColumnSchema | None:
+    def get_column(self, table_name: str, column_name: str) -> ColumnSchema | None:
         """获取列定义。不存在返回 None。"""
         schema = self._schemas.get(table_name)
         if schema is None:

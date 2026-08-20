@@ -345,9 +345,7 @@ class TestAllocate:
         alloc = RegimeMetaAllocator()
         budget = alloc.allocate([0.97, 0.03], {"A": 1.1, "B": 0.9}, _risk(0.85, 1.0, 0.0))
         for sid in ("A", "B"):
-            assert budget.effective_budgets[sid] == pytest.approx(
-                budget.allocations[sid] * budget.global_shrinkage
-            )
+            assert budget.effective_budgets[sid] == pytest.approx(budget.allocations[sid] * budget.global_shrinkage)
 
     def test_empty_strategies_raises(self) -> None:
         # ZA-PA-0007：策略列表为空 → AllocationError
@@ -396,9 +394,7 @@ class TestAllocate:
 
     def test_custom_base_weights_preserved(self) -> None:
         # 人工先验（打板 0.3/多因子 0.4/事件 0.3，§3.2.1）+ 全中性 perf → 比例保留
-        alloc = RegimeMetaAllocator(
-            base_weights={"daban": 0.3, "multi_factor": 0.4, "event": 0.3}
-        )
+        alloc = RegimeMetaAllocator(base_weights={"daban": 0.3, "multi_factor": 0.4, "event": 0.3})
         budget = alloc.allocate([0.97, 0.03], {"daban": 1.0, "multi_factor": 1.0, "event": 1.0}, {})
         assert budget.allocations["daban"] == pytest.approx(0.3)
         assert budget.allocations["multi_factor"] == pytest.approx(0.4)
@@ -413,9 +409,7 @@ class TestComputePerformanceScore:
 
     def test_cold_start_below_30_days_neutral(self) -> None:
         # 上线 10 交易日 < 30 → (1.0, 1.0, 1.0) 中性（交易日口径，施工要点 #9）
-        perf, sortino, sharpe = RegimeMetaAllocator.compute_performance_score(
-            [0.01] * 10, trading_days_live=10
-        )
+        perf, sortino, sharpe = RegimeMetaAllocator.compute_performance_score([0.01] * 10, trading_days_live=10)
         assert perf == pytest.approx(1.0)
         assert sortino == pytest.approx(1.0)
         assert sharpe == pytest.approx(1.0)
@@ -516,9 +510,7 @@ class TestEdgeCases:
     def test_seven_dim_with_overlay_states(self) -> None:
         # 7 维向量（4 HMM 基态 + 3 overlay 特殊态，MOD-REGIME-001 输出形态）
         alloc = RegimeMetaAllocator()
-        budget = alloc.allocate(
-            [0.10, 0.70, 0.05, 0.05, 0.05, 0.03, 0.02], {"A": 1.0, "B": 1.0}, {}
-        )
+        budget = alloc.allocate([0.10, 0.70, 0.05, 0.05, 0.05, 0.03, 0.02], {"A": 1.0, "B": 1.0}, {})
         assert budget.shrinkage_detail.confidence_signal == pytest.approx(0.60)
 
     def test_missing_risk_param_keys_defaults(self) -> None:
@@ -580,9 +572,7 @@ class TestColdStartRatios:
         alloc = RegimeMetaAllocator()
         b1 = alloc.allocate([0.97, 0.03], {"A": 1.0, "B": 1.0}, _risk())
         assert b1.cold_start_ratios == {}
-        assert b1.effective_budgets["A"] == pytest.approx(
-            b1.allocations["A"] * b1.global_shrinkage
-        )
+        assert b1.effective_budgets["A"] == pytest.approx(b1.allocations["A"] * b1.global_shrinkage)
 
     def test_cold_start_scales_effective_budget(self) -> None:
         """×0.30 只缩 effective_budget，不动 allocations 归一化（31号 §2.4.1 执行时机）。"""
@@ -596,21 +586,15 @@ class TestColdStartRatios:
         # allocations 不受冷启动影响（Σ=1.0 硬不变量不受侵蚀）
         assert sum(budget.allocations.values()) == pytest.approx(1.0)
         # A 实收 = allocation × shrinkage × 0.30；B 未传 → ×1.0
-        assert budget.effective_budgets["A"] == pytest.approx(
-            budget.allocations["A"] * budget.global_shrinkage * 0.30
-        )
-        assert budget.effective_budgets["B"] == pytest.approx(
-            budget.allocations["B"] * budget.global_shrinkage
-        )
+        assert budget.effective_budgets["A"] == pytest.approx(budget.allocations["A"] * budget.global_shrinkage * 0.30)
+        assert budget.effective_budgets["B"] == pytest.approx(budget.allocations["B"] * budget.global_shrinkage)
         # 审计留痕
         assert budget.cold_start_ratios == {"A": 0.30}
 
     def test_ratio_boundary_one_and_invalid(self) -> None:
         """ratio=1.0 边界合法；0 / 负 / >1 → AllocationError（只缩不放）。"""
         alloc = RegimeMetaAllocator()
-        budget = alloc.allocate(
-            [0.97, 0.03], {"A": 1.0}, _risk(), cold_start_ratios={"A": 1.0}
-        )
+        budget = alloc.allocate([0.97, 0.03], {"A": 1.0}, _risk(), cold_start_ratios={"A": 1.0})
         assert budget.effective_budgets["A"] == pytest.approx(budget.global_shrinkage)
         for bad in (0.0, -0.1, 1.5):
             with pytest.raises(AllocationError, match="cold_start_ratio"):
@@ -673,14 +657,16 @@ class TestConfidenceThresholdSensitivityGrid:
         """max(P)=0.50 远低于所有扰动后阈值（最低 0.48）→ 部分档位仍变（0.50 vs 0.48 跨档），
         max(P)=0.30 则全档位同档 → 完全稳健。"""
         alloc = RegimeMetaAllocator()
-        res = alloc.confidence_threshold_sensitivity_grid([
-            SensitivityScenario(
-                name="deep_low",
-                regime_probabilities=[0.30, 0.30, 0.40 - 0.0],  # max(P)=0.40
-                performance_scores={"A": 1.0},
-                risk_signal_inputs=_risk(),
-            )
-        ])[0]
+        res = alloc.confidence_threshold_sensitivity_grid(
+            [
+                SensitivityScenario(
+                    name="deep_low",
+                    regime_probabilities=[0.30, 0.30, 0.40 - 0.0],  # max(P)=0.40
+                    performance_scores={"A": 1.0},
+                    risk_signal_inputs=_risk(),
+                )
+            ]
+        )[0]
         # max(P)=0.40：扰动后一档边界 ∈[0.48,0.72]，全部 > 0.40 → 恒一档 → 零变化
         assert res.max_rel_change == pytest.approx(0.0)
         assert res.verdict == "robust"

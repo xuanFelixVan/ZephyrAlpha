@@ -72,10 +72,7 @@ def _make_passport(
     if capabilities:
         p.depth = DepthResult(
             overall_score=overall_score,
-            capabilities={
-                cap: DepthCapabilityResult(f1=f1, pass_=f1 >= 0.55)
-                for cap, f1 in capabilities.items()
-            },
+            capabilities={cap: DepthCapabilityResult(f1=f1, pass_=f1 >= 0.55) for cap, f1 in capabilities.items()},
         )
     return p
 
@@ -207,9 +204,7 @@ class TestMainExitCodes:
         def fake_load(model_id, verify=False):
             return a if model_id == "strong" else b
 
-        monkeypatch.setattr(
-            "scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load)
-        )
+        monkeypatch.setattr("scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load))
         rc = main(["--model-a", "strong", "--model-b", "weak"])
         assert rc == 0
 
@@ -221,9 +216,7 @@ class TestMainExitCodes:
         def fake_load(model_id, verify=False):
             return a if model_id == "strong" else b
 
-        monkeypatch.setattr(
-            "scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load)
-        )
+        monkeypatch.setattr("scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load))
         rc = main(["--model-a", "strong", "--model-b", "weak"])
         assert rc == 1
 
@@ -231,9 +224,7 @@ class TestMainExitCodes:
         def fake_load(model_id, verify=False):
             return None
 
-        monkeypatch.setattr(
-            "scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load)
-        )
+        monkeypatch.setattr("scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load))
         with pytest.raises(SystemExit) as exc:
             main(["--model-a", "ghost", "--model-b", "weak"])
         assert exc.value.code == 2
@@ -245,9 +236,7 @@ class TestMainExitCodes:
         def fake_load(model_id, verify=False):
             return a if model_id == "strong" else b
 
-        monkeypatch.setattr(
-            "scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load)
-        )
+        monkeypatch.setattr("scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load))
         rc = main(["--model-a", "strong", "--model-b", "weak"])
         assert rc == 3
 
@@ -259,9 +248,7 @@ class TestMainExitCodes:
         def fake_load(model_id, verify=False):
             return {"alpha": p1, "beta": p2}.get(model_id)
 
-        monkeypatch.setattr(
-            "scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load)
-        )
+        monkeypatch.setattr("scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load))
         monkeypatch.setattr(
             "scripts.calibrate_model_diff.CapabilityPassport.list_all",
             staticmethod(lambda: ["alpha", "beta"]),
@@ -288,15 +275,17 @@ class TestCliArgs:
         def fake_load(model_id, verify=False):
             return a if model_id == "a" else b
 
-        monkeypatch.setattr(
-            "scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load)
-        )
+        monkeypatch.setattr("scripts.calibrate_model_diff.CapabilityPassport.load", staticmethod(fake_load))
         rc = main(
             [
-                "--model-a", "a",
-                "--model-b", "b",
-                "--target-ratio", "1.5",
-                "--tolerance", "0.1",
+                "--model-a",
+                "a",
+                "--model-b",
+                "b",
+                "--target-ratio",
+                "1.5",
+                "--tolerance",
+                "0.1",
             ]
         )
         assert rc == 1

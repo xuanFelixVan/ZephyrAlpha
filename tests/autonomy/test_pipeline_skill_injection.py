@@ -200,7 +200,9 @@ class TestSpecEngineIntegration:
         assert "total" in status
         assert status["total"] > 0
 
-    @pytest.mark.xfail(reason="#ARCH-096：skill 内容库整体缺失——锚定 ID SKILL-DOM-DBS-001 不在册；保留作功能规格书", strict=False)
+    @pytest.mark.xfail(
+        reason="#ARCH-096：skill 内容库整体缺失——锚定 ID SKILL-DOM-DBS-001 不在册；保留作功能规格书", strict=False
+    )
     def test_engine_validate_existing_skill(self):
         """SpecEngine.validate_skill() 应对已注册 Skill 返回 valid=True."""
         engine = SpecEngine()
@@ -216,7 +218,9 @@ class TestSpecEngineIntegration:
 
 
 class TestSkillLoaderL3References:
-    @pytest.mark.xfail(reason="#ARCH-096：skill 内容库整体缺失——锚定 ID SKILL-ROL-ARC-001 不在册；保留作功能规格书", strict=False)
+    @pytest.mark.xfail(
+        reason="#ARCH-096：skill 内容库整体缺失——锚定 ID SKILL-ROL-ARC-001 不在册；保留作功能规格书", strict=False
+    )
     def test_l3_references_available(self):
         """已注册 Skill 的 L3 references 能被列出."""
         loader = SkillLoader()
@@ -224,7 +228,10 @@ class TestSkillLoaderL3References:
         l3 = data.get("l3_available", [])
         assert len(l3) >= 0
 
-    @pytest.mark.xfail(reason="#ARCH-096：skill 内容库整体缺失——skills/factory/AGENT.md 不存在，L0 content 为空；保留作功能规格书", strict=False)
+    @pytest.mark.xfail(
+        reason="#ARCH-096：skill 内容库整体缺失——skills/factory/AGENT.md 不存在，L0 content 为空；保留作功能规格书",
+        strict=False,
+    )
     def test_skill_l0_constitution_has_content(self):
         """L0 宪法应有有效内容."""
         loader = SkillLoader()

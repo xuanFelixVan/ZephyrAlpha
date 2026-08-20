@@ -38,6 +38,7 @@ D_SIGQC — Signal Quality Domain
 # I1 --> A1
 # A1 --> O1
 """
+
 from __future__ import annotations
 
 from zephyr.signal_quality.degradation_monitor_base import DegradationMonitorBase

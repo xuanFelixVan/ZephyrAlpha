@@ -23,6 +23,7 @@
 3. lock 清理——正常流程结束后 lock 文件被清理
 4. 损坏 lock——lock 文件内容非 JSON → 保守不接管（返回 None pid）
 """
+
 from __future__ import annotations
 
 import json
@@ -78,8 +79,9 @@ class TestStaleLockTakeover:
             assert got is True
 
         captured = capsys.readouterr()
-        assert "僵尸锁" in captured.err or "zombie" in captured.err.lower(), \
+        assert "僵尸锁" in captured.err or "zombie" in captured.err.lower(), (
             f"应输出僵尸锁检测消息，实际: {captured.err!r}"
+        )
 
     def test_lock_cleaned_after_takeover(self, tmp_path: Path) -> None:
         """僵尸锁接管后，退出时 lock 文件被正常清理。"""

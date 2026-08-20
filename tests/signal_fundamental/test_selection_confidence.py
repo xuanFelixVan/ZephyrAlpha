@@ -1,6 +1,7 @@
 # [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.5/§3.6
 # [TTL] permanent
 """SelectionResult.confidence 算法 + 事件过滤阈值单元测试——含边界/退化用例。"""
+
 from __future__ import annotations
 
 import pytest
@@ -22,9 +23,7 @@ class TestThresholdConfig:
         assert EVENT_CONFIDENCE_FILTER_THRESHOLD == 0.7
 
     def test_invalid_values_detected(self):
-        problems = validate_event_confidence_thresholds(
-            {"earnings": 0.0, "ma": 1.5, "": 0.5}
-        )
+        problems = validate_event_confidence_thresholds({"earnings": 0.0, "ma": 1.5, "": 0.5})
         assert any("越界" in p for p in problems)
         assert any("非法事件类型键" in p for p in problems)
 

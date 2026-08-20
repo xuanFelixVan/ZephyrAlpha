@@ -39,6 +39,7 @@
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md §4.2
 SSoT: 13_regime_phase3_engineering_plan P2-E8（依赖 P0-E2 校准器 B1ProbabilityCalibration）
 """
+
 from __future__ import annotations
 
 import argparse
@@ -72,7 +73,7 @@ class ForwardDaysScanRow:
     """单候选扫描结果。"""
 
     forward_days: int
-    ece: float           # 样本加权校准误差（B1 weighted_calibration_error）
+    ece: float  # 样本加权校准误差（B1 weighted_calibration_error）
     verdict: str
     total_samples: int
     degraded: bool

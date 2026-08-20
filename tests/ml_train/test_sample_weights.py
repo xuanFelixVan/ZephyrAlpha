@@ -64,9 +64,7 @@ class TestBreakPeriods:
 
     def test_default_break_periods_cover_2015_crash(self):
         """默认断裂期清单配置化且覆盖 2015 股灾（2015-07 在期内）。"""
-        assert any(
-            start <= date(2015, 7, 15) <= end for start, end in DEFAULT_BREAK_PERIODS
-        )
+        assert any(start <= date(2015, 7, 15) <= end for start, end in DEFAULT_BREAK_PERIODS)
 
     def test_outside_break_period_no_downweight(self):
         ref = date(2026, 8, 19)

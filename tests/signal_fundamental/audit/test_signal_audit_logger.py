@@ -75,10 +75,7 @@ class TestWormWrite:
         file_logger.log_event(make_event())
         assert file_logger.entry_count == 1
         # Verify file exists and has content
-        log_files = [
-            f for f in os.listdir(file_logger._writer._current_file.rsplit("\\", 1)[0])
-            if f.endswith(".log")
-        ]
+        log_files = [f for f in os.listdir(file_logger._writer._current_file.rsplit("\\", 1)[0]) if f.endswith(".log")]
         assert len(log_files) > 0
 
 
@@ -87,24 +84,18 @@ class TestWormWrite:
 # ------------------------------------------------------------------
 class TestConvenienceMethods:
     def test_log_signal_generated(self, logger: SignalAuditLogger):
-        entry = logger.log_signal_generated(
-            "SIG_001", "000001", source_module="D-SIGNAL-25"
-        )
+        entry = logger.log_signal_generated("SIG_001", "000001", source_module="D-SIGNAL-25")
         assert entry.event.event_type == SignalEventType.GENERATED
         assert entry.event.severity == AuditSeverity.INFO
 
     def test_log_signal_revoked(self, logger: SignalAuditLogger):
-        entry = logger.log_signal_revoked(
-            "SIG_001", "000001", reason="SEVERE降级"
-        )
+        entry = logger.log_signal_revoked("SIG_001", "000001", reason="SEVERE降级")
         assert entry.event.event_type == SignalEventType.REVOKED
         assert entry.event.severity == AuditSeverity.WARNING
         assert entry.event.metadata["reason"] == "SEVERE降级"
 
     def test_log_signal_degraded(self, logger: SignalAuditLogger):
-        entry = logger.log_signal_degraded(
-            "SIG_001", "000001", degradation_level="MILD"
-        )
+        entry = logger.log_signal_degraded("SIG_001", "000001", degradation_level="MILD")
         assert entry.event.event_type == SignalEventType.DEGRADED
         assert entry.event.metadata["degradation_level"] == "MILD"
 
@@ -138,12 +129,20 @@ class TestQuery:
     def test_query_by_time_range(self, logger: SignalAuditLogger):
         base = datetime(2026, 8, 3, 10, 0, tzinfo=timezone.utc)
         e1 = SignalAuditEvent(
-            SignalEventType.GENERATED, "S1", "000001",
-            base, AuditSeverity.INFO, "test",
+            SignalEventType.GENERATED,
+            "S1",
+            "000001",
+            base,
+            AuditSeverity.INFO,
+            "test",
         )
         e2 = SignalAuditEvent(
-            SignalEventType.GENERATED, "S2", "000001",
-            base + timedelta(hours=2), AuditSeverity.INFO, "test",
+            SignalEventType.GENERATED,
+            "S2",
+            "000001",
+            base + timedelta(hours=2),
+            AuditSeverity.INFO,
+            "test",
         )
         logger.log_event(e1)
         logger.log_event(e2)

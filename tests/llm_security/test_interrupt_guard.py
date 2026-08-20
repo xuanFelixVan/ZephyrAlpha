@@ -32,6 +32,7 @@ class TestInterruptGuardInstantiation:
 
     def test_default_db_path(self):
         from zephyr.shared.io.paths import DB_PATH
+
         guard = InterruptGuard()
         assert guard.db_path == DB_PATH
 

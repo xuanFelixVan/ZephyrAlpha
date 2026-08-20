@@ -19,9 +19,7 @@ import pytest
 # #ARCH-083：MemoryProvenance(source_agent_id=)、guard.flag/
 # record_provenance(vector_db_name=) 缺席——代码侧缺口待裁定，
 # 全文件 xfail 留痕（strict=False）。
-pytestmark = pytest.mark.xfail(
-    strict=False, reason="#ARCH-083 memory_provenance_guard 窄实现 vs 宽契约，待裁定"
-)
+pytestmark = pytest.mark.xfail(strict=False, reason="#ARCH-083 memory_provenance_guard 窄实现 vs 宽契约，待裁定")
 
 try:
     from zephyr.security.access_control.guards.memory_provenance_guard import (

@@ -45,7 +45,9 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT as PROJECT_ROOT  # noqa: E402
 
-REGISTRY_FILE = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "migration_registry.yaml"
+REGISTRY_FILE = (
+    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "migration_registry.yaml"
+)
 
 OLD_PREFIX = "zephyr.infra_ops."
 OLD_PATH_PREFIX = "src/zephyr/infra_ops/"

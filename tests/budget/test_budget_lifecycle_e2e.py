@@ -143,7 +143,10 @@ class TestRestartStateRecovery:
         # 验证恢复的消费数据一致
         recovered_consumption = recovered.get_consumption_summary()
         assert token_policy.policy_id in recovered_consumption
-        assert recovered_consumption[token_policy.policy_id]["daily"] == pre_shutdown_consumption[token_policy.policy_id]["daily"]
+        assert (
+            recovered_consumption[token_policy.policy_id]["daily"]
+            == pre_shutdown_consumption[token_policy.policy_id]["daily"]
+        )
 
     def test_restart_without_snapshot_starts_fresh(self, engine, tmp_path):
         """无快照文件时重启应从零开始。"""

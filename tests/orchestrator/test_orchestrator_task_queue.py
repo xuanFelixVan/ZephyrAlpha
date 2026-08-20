@@ -35,7 +35,6 @@ class FakeRepo:
         """只读：transitions（R5 公共化）。"""
         return self._transitions
 
-
     def list_by_status(self, status):
         return [t for t in self._tasks if t.status.lower() == status.lower()]
 

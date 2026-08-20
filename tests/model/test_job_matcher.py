@@ -125,6 +125,7 @@ def _make_profile(
 
 # ── 1. 矩阵加载 ────────────────────────────────────────────
 
+
 class TestLoadMatrix:
     def test_load_default_matrix(self):
         """默认路径加载生产 job_matrix.yaml (6 岗位)。"""
@@ -180,20 +181,17 @@ class TestLoadMatrix:
 
 # ── 2. _check_required ────────────────────────────────────
 
+
 class TestCheckRequired:
     def test_all_satisfied(self, matcher: JobMatcher):
         grades = {"code_edit_precision": "B", "refactor": "C"}
-        ok, missing = matcher.check_required(
-            grades, {"code_edit_precision": "C", "refactor": "D"}
-        )
+        ok, missing = matcher.check_required(grades, {"code_edit_precision": "C", "refactor": "D"})
         assert ok is True
         assert missing == []
 
     def test_partial_fail(self, matcher: JobMatcher):
         grades = {"code_edit_precision": "B", "refactor": "F"}
-        ok, missing = matcher.check_required(
-            grades, {"code_edit_precision": "C", "refactor": "D"}
-        )
+        ok, missing = matcher.check_required(grades, {"code_edit_precision": "C", "refactor": "D"})
         assert ok is False
         assert len(missing) == 1
         assert "refactor" in missing[0]
@@ -201,9 +199,7 @@ class TestCheckRequired:
     def test_missing_capability_defaults_F(self, matcher: JobMatcher):
         """能力缺失 → 默认 F 级, 不满足 C 要求。"""
         grades = {"code_edit_precision": "B"}  # refactor 缺失
-        ok, missing = matcher.check_required(
-            grades, {"code_edit_precision": "C", "refactor": "D"}
-        )
+        ok, missing = matcher.check_required(grades, {"code_edit_precision": "C", "refactor": "D"})
         assert ok is False
         assert any("refactor" in m for m in missing)
 
@@ -220,21 +216,18 @@ class TestCheckRequired:
 
 # ── 3. _compute_bonus ─────────────────────────────────────
 
+
 class TestComputeBonus:
     def test_all_hit(self, matcher: JobMatcher):
         grades = {"dead_code_removal": "B", "code_generate": "C"}
-        ratio, summary = matcher.compute_bonus(
-            grades, {"dead_code_removal": "C", "code_generate": "D"}
-        )
+        ratio, summary = matcher.compute_bonus(grades, {"dead_code_removal": "C", "code_generate": "D"})
         assert ratio == 1.0
         assert "dead_code_removal" in summary
         assert "code_generate" in summary
 
     def test_partial_hit(self, matcher: JobMatcher):
         grades = {"dead_code_removal": "B", "code_generate": "F"}
-        ratio, summary = matcher.compute_bonus(
-            grades, {"dead_code_removal": "C", "code_generate": "D"}
-        )
+        ratio, summary = matcher.compute_bonus(grades, {"dead_code_removal": "C", "code_generate": "D"})
         assert ratio == 0.5
         assert "dead_code_removal" in summary
         assert "code_generate" not in summary
@@ -246,15 +239,14 @@ class TestComputeBonus:
 
     def test_none_hit(self, matcher: JobMatcher):
         grades = {"dead_code_removal": "F", "code_generate": "F"}
-        ratio, summary = matcher.compute_bonus(
-            grades, {"dead_code_removal": "C", "code_generate": "D"}
-        )
+        ratio, summary = matcher.compute_bonus(grades, {"dead_code_removal": "C", "code_generate": "D"})
         assert ratio == 0.0
         assert summary == "none"
 
 
 # ── 4. _compute_hallucination_score ───────────────────────
 # 幻觉率正常评分 (非硬门): rate<=max → 0.7~1.0; rate>max → 0.7~0.0
+
 
 class TestComputeHallucinationScore:
     def test_zero_hallucination_full_score(self, matcher: JobMatcher):
@@ -266,9 +258,15 @@ class TestComputeHallucinationScore:
     def test_within_expectation(self, matcher: JobMatcher):
         """rate=0.2, max=0.4 → 0.7 + 0.3*(1-0.5) = 0.85。"""
         hallu = HallucinationBreakdown(
-            fabrication=0.2, inconsistency=0.2, refusal=0.2,
-            overclaim=0.2, context_drift=0.2, source_confusion=0.2,
-            instruction_drift=0.2, format_hallucination=0.2, quantity_hallucination=0.2,
+            fabrication=0.2,
+            inconsistency=0.2,
+            refusal=0.2,
+            overclaim=0.2,
+            context_drift=0.2,
+            source_confusion=0.2,
+            instruction_drift=0.2,
+            format_hallucination=0.2,
+            quantity_hallucination=0.2,
         )
         assert hallu.overall_rate == pytest.approx(0.2, abs=0.01)
         score = matcher.compute_hallucination_score(hallu, max_hallu=0.4)
@@ -278,9 +276,15 @@ class TestComputeHallucinationScore:
     def test_at_threshold(self, matcher: JobMatcher):
         """rate=max → 0.7 (刚好满足期望下限)。"""
         hallu = HallucinationBreakdown(
-            fabrication=0.4, inconsistency=0.4, refusal=0.4,
-            overclaim=0.4, context_drift=0.4, source_confusion=0.4,
-            instruction_drift=0.4, format_hallucination=0.4, quantity_hallucination=0.4,
+            fabrication=0.4,
+            inconsistency=0.4,
+            refusal=0.4,
+            overclaim=0.4,
+            context_drift=0.4,
+            source_confusion=0.4,
+            instruction_drift=0.4,
+            format_hallucination=0.4,
+            quantity_hallucination=0.4,
         )
         score = matcher.compute_hallucination_score(hallu, max_hallu=0.4)
         assert score == pytest.approx(0.7, abs=0.02)
@@ -288,9 +292,15 @@ class TestComputeHallucinationScore:
     def test_exceed_expectation_decay(self, matcher: JobMatcher):
         """rate=0.6, max=0.4 → 超出 50%, score=0.7-0.7*0.5=0.35。"""
         hallu = HallucinationBreakdown(
-            fabrication=0.6, inconsistency=0.6, refusal=0.6,
-            overclaim=0.6, context_drift=0.6, source_confusion=0.6,
-            instruction_drift=0.6, format_hallucination=0.6, quantity_hallucination=0.6,
+            fabrication=0.6,
+            inconsistency=0.6,
+            refusal=0.6,
+            overclaim=0.6,
+            context_drift=0.6,
+            source_confusion=0.6,
+            instruction_drift=0.6,
+            format_hallucination=0.6,
+            quantity_hallucination=0.6,
         )
         score = matcher.compute_hallucination_score(hallu, max_hallu=0.4)
         # excess = (0.6-0.4)/0.4 = 0.5; score = 0.7 - 0.7*0.5 = 0.35
@@ -299,9 +309,15 @@ class TestComputeHallucinationScore:
     def test_double_exceed_zero(self, matcher: JobMatcher):
         """rate=2*max → 超出 100%, score=0.0 (但不一票否决, 仍参与排序)。"""
         hallu = HallucinationBreakdown(
-            fabrication=0.8, inconsistency=0.8, refusal=0.8,
-            overclaim=0.8, context_drift=0.8, source_confusion=0.8,
-            instruction_drift=0.8, format_hallucination=0.8, quantity_hallucination=0.8,
+            fabrication=0.8,
+            inconsistency=0.8,
+            refusal=0.8,
+            overclaim=0.8,
+            context_drift=0.8,
+            source_confusion=0.8,
+            instruction_drift=0.8,
+            format_hallucination=0.8,
+            quantity_hallucination=0.8,
         )
         score = matcher.compute_hallucination_score(hallu, max_hallu=0.4)
         assert score == 0.0
@@ -309,9 +325,15 @@ class TestComputeHallucinationScore:
     def test_max_hallu_zero_uses_absolute(self, matcher: JobMatcher):
         """max_hallu=0 (岗位要求零幻觉) → 用绝对分 1-rate。"""
         hallu = HallucinationBreakdown(
-            fabrication=0.3, inconsistency=0.3, refusal=0.3,
-            overclaim=0.3, context_drift=0.3, source_confusion=0.3,
-            instruction_drift=0.3, format_hallucination=0.3, quantity_hallucination=0.3,
+            fabrication=0.3,
+            inconsistency=0.3,
+            refusal=0.3,
+            overclaim=0.3,
+            context_drift=0.3,
+            source_confusion=0.3,
+            instruction_drift=0.3,
+            format_hallucination=0.3,
+            quantity_hallucination=0.3,
         )
         score = matcher.compute_hallucination_score(hallu, max_hallu=0.0)
         assert score == pytest.approx(0.7, abs=0.01)
@@ -319,12 +341,12 @@ class TestComputeHallucinationScore:
 
 # ── 5. match / match_top ──────────────────────────────────
 
+
 class TestMatch:
     def test_match_returns_all_jobs_sorted(self, matcher: JobMatcher):
         """match 返回全部岗位, 按 match_score 降序。"""
         profile = _make_profile(
-            {"code_edit_precision": "B", "refactor": "C",
-             "rule_comprehension": "F", "hallucination_detect": "F"},
+            {"code_edit_precision": "B", "refactor": "C", "rule_comprehension": "F", "hallucination_detect": "F"},
             fab=0.1,
         )
         recs = matcher.match(profile)
@@ -351,8 +373,12 @@ class TestMatch:
     def test_qualified_scores_higher(self, matcher: JobMatcher):
         """qualified 岗位有 0.5 基础分, 通常高于不 qualified。"""
         profile = _make_profile(
-            {"code_edit_precision": "A", "refactor": "A",  # 初级 qualified
-             "rule_comprehension": "F", "hallucination_detect": "F"},  # 守门员不
+            {
+                "code_edit_precision": "A",
+                "refactor": "A",  # 初级 qualified
+                "rule_comprehension": "F",
+                "hallucination_detect": "F",
+            },  # 守门员不
         )
         recs = matcher.match(profile)
         junior = next(r for r in recs if r.job_id == "junior_code_worker")
@@ -372,9 +398,7 @@ class TestMatch:
     def test_hallucination_passed_flag(self, matcher: JobMatcher):
         """hallucination_passed 是参考值 (非硬门), rate<=max → True。"""
         # 低幻觉
-        low = _make_profile(
-            {"code_edit_precision": "B", "refactor": "C"}, fab=0.05
-        )
+        low = _make_profile({"code_edit_precision": "B", "refactor": "C"}, fab=0.05)
         recs_low = matcher.match(low)
         junior_low = next(r for r in recs_low if r.job_id == "junior_code_worker")
         assert junior_low.hallucination_passed is True
@@ -382,8 +406,15 @@ class TestMatch:
         # 高幻觉 (九维都高, overall_rate=0.9 > max=0.4, 仍参与匹配不淘汰)
         high = _make_profile(
             {"code_edit_precision": "B", "refactor": "C"},
-            fab=0.9, inc=0.9, ref=0.9, ovc=0.9, cd=0.9, sc=0.9,
-            idr=0.9, fmh=0.9, qh=0.9,
+            fab=0.9,
+            inc=0.9,
+            ref=0.9,
+            ovc=0.9,
+            cd=0.9,
+            sc=0.9,
+            idr=0.9,
+            fmh=0.9,
+            qh=0.9,
         )
         recs_high = matcher.match(high)
         junior_high = next(r for r in recs_high if r.job_id == "junior_code_worker")
@@ -395,13 +426,14 @@ class TestMatch:
 
 # ── 6. 端到端: 合成画像场景 ───────────────────────────────
 
+
 class TestEndToEndScenarios:
     def test_strong_code_low_hallu_matches_junior(self, matcher: JobMatcher):
         """场景1: 代码强 + 幻觉低 → 初级代码工高分。"""
         profile = _make_profile(
-            {"code_edit_precision": "A", "refactor": "B",
-             "dead_code_removal": "B", "code_generate": "B"},
-            fab=0.05, inc=0.05,
+            {"code_edit_precision": "A", "refactor": "B", "dead_code_removal": "B", "code_generate": "B"},
+            fab=0.05,
+            inc=0.05,
         )
         recs = matcher.match_top(profile, n=2)
         assert recs[0].job_id == "junior_code_worker"
@@ -412,7 +444,12 @@ class TestEndToEndScenarios:
         """场景2: 高幻觉模型仍获得分数 (非一票否决)。"""
         profile = _make_profile(
             {"code_edit_precision": "A", "refactor": "B"},
-            fab=0.5, inc=0.5, ref=0.5, ovc=0.5, cd=0.5, sc=0.5,
+            fab=0.5,
+            inc=0.5,
+            ref=0.5,
+            ovc=0.5,
+            cd=0.5,
+            sc=0.5,
         )
         recs = matcher.match(profile)
         # 全部岗位仍有分数 (>= 0)
@@ -437,6 +474,7 @@ class TestEndToEndScenarios:
 
 # ── 7. 便捷函数 ───────────────────────────────────────────
 
+
 class TestConvenienceFunctions:
     def test_match_jobs_helper(self, matrix_path: Path):
         profile = _make_profile({"code_edit_precision": "B", "refactor": "C"})
@@ -454,6 +492,7 @@ class TestConvenienceFunctions:
 
 # ── 8. 边界情况 ───────────────────────────────────────────
 
+
 class TestEdgeCases:
     def test_empty_grades(self, matcher: JobMatcher):
         """空 grades → 全部不 qualified, 但仍返回推荐。"""
@@ -465,8 +504,7 @@ class TestEdgeCases:
     def test_clamp_score_to_1(self, matcher: JobMatcher):
         """match_score 不超过 1.0。"""
         profile = _make_profile(
-            {"code_edit_precision": "A", "refactor": "A",
-             "dead_code_removal": "A", "code_generate": "A"},
+            {"code_edit_precision": "A", "refactor": "A", "dead_code_removal": "A", "code_generate": "A"},
         )
         recs = matcher.match(profile)
         assert all(r.match_score <= 1.0 for r in recs)
@@ -492,6 +530,7 @@ class TestEdgeCases:
 
 
 # ── 9. Cost 轴: CostBreakdown (D-MCE-07) ──────────────────
+
 
 class TestCostBreakdown:
     """CostBreakdown.cost_score property 测试。"""
@@ -530,6 +569,7 @@ class TestCostBreakdown:
 
 # ── 10. Cost 轴: _compute_cost_score (D-MCE-07) ───────────
 # 成本是维度非硬门: claude 贵但必要时仍可用
+
 
 class TestComputeCostScore:
     """JobMatcher.compute_cost_score 测试。"""
@@ -576,16 +616,17 @@ class TestComputeCostScore:
 
 # ── 11. Cost 轴: 端到端场景 (D-MCE-07) ────────────────────
 
+
 class TestCostEndToEnd:
     """成本轴端到端: claude 贵但必要时仍可用。"""
 
     def test_expensive_model_still_matched(self, matcher: JobMatcher):
         """claude 贵但必要时仍可用: cost_score=0 不淘汰, 仅降 10% match_score。"""
         profile = _make_profile(
-            {"code_edit_precision": "A", "refactor": "A",
-             "dead_code_removal": "A", "code_generate": "A"},
+            {"code_edit_precision": "A", "refactor": "A", "dead_code_removal": "A", "code_generate": "A"},
             cost=CostBreakdown(
-                deployment_mode="api", provider="anthropic",
+                deployment_mode="api",
+                provider="anthropic",
                 estimated_cost_usd=2.0,  # 很贵, cost_score=0
             ),
         )
@@ -600,8 +641,7 @@ class TestCostEndToEnd:
 
     def test_local_cheaper_than_api_scores_higher(self, matcher: JobMatcher):
         """本地模型 (cost_score=1.0) 比昂贵 API (cost_score=0.0) match_score 高 0.10。"""
-        grades = {"code_edit_precision": "A", "refactor": "A",
-                  "dead_code_removal": "A", "code_generate": "A"}
+        grades = {"code_edit_precision": "A", "refactor": "A", "dead_code_removal": "A", "code_generate": "A"}
         local_profile = _make_profile(grades)  # 默认 local
         api_profile = _make_profile(
             grades,
@@ -621,7 +661,8 @@ class TestCostEndToEnd:
         free_api_profile = _make_profile(
             grades,
             cost=CostBreakdown(
-                deployment_mode="api", provider="zhipu",
+                deployment_mode="api",
+                provider="zhipu",
                 estimated_cost_usd=0.005,  # 近似免费
             ),
         )

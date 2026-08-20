@@ -68,10 +68,7 @@ def pytest_configure(config):
         config.option.basetemp = str(_rt_tmp / f"pytest_{_os_conf.getpid()}")
     # junitxml：AI 调用（ZEPHYR_AI_PYTEST=1）默认输出到 .runtime/tmp/junit.xml，
     # 避免 AI 显式传 --junit-xml=tmp_junit_p0.xml 污染根目录。仅当未显式指定时生效。
-    if (
-        _os_conf.environ.get("ZEPHYR_AI_PYTEST") == "1"
-        and getattr(config.option, "xmlpath", None) is None
-    ):
+    if _os_conf.environ.get("ZEPHYR_AI_PYTEST") == "1" and getattr(config.option, "xmlpath", None) is None:
         config.option.xmlpath = str(_rt_tmp / "junit.xml")
 
 
@@ -89,6 +86,7 @@ def pytest_sessionfinish(session, exitstatus):
     """
     import os
     import shutil
+
     bt = getattr(session.config.option, "basetemp", None)
     if not bt:
         return
@@ -139,6 +137,7 @@ try:
     # 注册 zephyr.testing 包（若不存在）
     if _testing_pkg_name not in _sys_td.modules:
         import zephyr as _zephyr_root
+
         _testing_pkg = _types_td.ModuleType(_testing_pkg_name)
         _testing_pkg.__path__ = []  # 标记为包
         _testing_pkg.__package__ = _testing_pkg_name
@@ -331,9 +330,6 @@ def kb_root(tmp_path: Path) -> Path:
     return tmp_path / "kb"
 
 
-
-
-
 # ── #ARCH-107 sys.modules 污染探针（2026-08-16 治本）──────────────────────
 # 根因：测试把 sys.modules["x"] 置 None / MagicMock 后不恢复，同进程后续无关测试爆雷
 # （"import halted; None in sys.modules" / "not a package"），爆雷点≠投毒点，归因极难。
@@ -349,9 +345,7 @@ _MISSING = object()
 def _sysmodules_pollution_sentinel():
     import types as _types
 
-    before = {
-        k: v for k, v in sys.modules.items() if k == "zephyr" or k.startswith("zephyr.")
-    }
+    before = {k: v for k, v in sys.modules.items() if k == "zephyr" or k.startswith("zephyr.")}
     yield
     poisoned = []
     for k, v in sys.modules.items():
@@ -371,11 +365,8 @@ def _sysmodules_pollution_sentinel():
                 continue
             if k not in before and (v is None or not isinstance(v, _types.ModuleType)):
                 del sys.modules[k]
-            elif k in before and before[k] is not v and (
-                v is None or not isinstance(v, _types.ModuleType)
-            ):
+            elif k in before and before[k] is not v and (v is None or not isinstance(v, _types.ModuleType)):
                 sys.modules[k] = before[k]
         raise AssertionError(
-            "sys.modules 污染检出（#ARCH-107）：本测试置脏模块注册表且未恢复: "
-            + "; ".join(sorted(set(poisoned)))
+            "sys.modules 污染检出（#ARCH-107）：本测试置脏模块注册表且未恢复: " + "; ".join(sorted(set(poisoned)))
         )

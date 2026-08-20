@@ -25,7 +25,9 @@ except Exception as _exc:
 
 # #ARCH-075：目标为 "implementation pending" 桩模块——escalate/should_throttle 等行为契约
 # 由测试编码但源码侧自始未实现，代码侧缺口待裁定——全文件 xfail 留痕（strict=False）。
-pytestmark = pytest.mark.xfail(strict=False, reason="#ARCH-075 桩模块 implementation-pending 设计契约缺口，待裁定补实现")
+pytestmark = pytest.mark.xfail(
+    strict=False, reason="#ARCH-075 桩模块 implementation-pending 设计契约缺口，待裁定补实现"
+)
 
 
 class TestEscalationHandler:

@@ -12,6 +12,7 @@
 # [TESTS] tests/data_governance/test_schema_registry.py
 # [TTL] task_bound
 """D-DATA-GOV Schema Registry 测试。"""
+
 from __future__ import annotations
 
 import pytest

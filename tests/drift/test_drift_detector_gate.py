@@ -25,9 +25,7 @@ from zephyr.gov_drift.drift_detector import trigger_recovery
 # #ARCH-079：trigger_recovery 为桩（return True，-> bool），未实现测试契约的
 # dict 恢复编排（recovery_status/hotfix_bypass/级联锁停等 9 键）——代码侧缺口
 # 待裁定，全文件 xfail 留痕（strict=False）。
-pytestmark = pytest.mark.xfail(
-    strict=False, reason="#ARCH-079 trigger_recovery 桩未实现恢复编排契约，待裁定补实现"
-)
+pytestmark = pytest.mark.xfail(strict=False, reason="#ARCH-079 trigger_recovery 桩未实现恢复编排契约，待裁定补实现")
 
 _EXPECTED_KEYS = {
     "recovery_id",

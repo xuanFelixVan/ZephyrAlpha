@@ -34,6 +34,7 @@ import backup_runtime_state as brs  # noqa: E402
 
 # ── Fake PG（内存模拟，不连真实 PostgreSQL） ─────────────────────────────
 
+
 def _install_fake_pg(monkeypatch, tmp_path, table_rows: dict[str, list] | None = None):
     """替换 backup_pg_architecture 的 PG 依赖：连接 + DSN + REPO_ROOT。
 
@@ -83,6 +84,7 @@ def _install_fake_pg(monkeypatch, tmp_path, table_rows: dict[str, list] | None =
 
 # ── 5.33.9 恢复演练：backup_pg_architecture JSON 可解析恢复 ──────────────
 
+
 def test_pg_backup_json_format_restorable(monkeypatch, tmp_path):
     """导出的备份 JSON 可被解析并逐行恢复（19表完整/行数一致/字段集合一致）。"""
     # 为部分表提供数据，其余表默认空列表（验证空表也被备份）
@@ -106,8 +108,7 @@ def test_pg_backup_json_format_restorable(monkeypatch, tmp_path):
     expected_tables = set(brs._ARCHITECTURE_TABLES)
     actual_tables = set(data["tables"])
     assert actual_tables == expected_tables, (
-        f"备份表不完整：缺失={expected_tables - actual_tables}, "
-        f"多余={actual_tables - expected_tables}"
+        f"备份表不完整：缺失={expected_tables - actual_tables}, 多余={actual_tables - expected_tables}"
     )
 
     # 恢复演练：逐表重建行，行数与 count 字段一致
@@ -169,6 +170,7 @@ def test_pg_backup_throttle_skips_recent(monkeypatch, tmp_path):
 
 
 # ── 5.33.7 配套：backup_runtime_handoffs 可回读恢复 + 保留 10 份 ─────────
+
 
 def test_handoffs_backup_roundtrip_and_prune(monkeypatch, tmp_path):
     """handoffs/reconcile_reports 备份内容可回读恢复，且仅保留最近 10 份。"""

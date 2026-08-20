@@ -72,7 +72,6 @@ class ModelTrainerBase(abc.ABC):
 
 
 class ModelRegistry:
-
     """
     模型注册表（OCP 扩展点 D_ML_TRAIN-REG）
 
@@ -98,7 +97,9 @@ class ModelRegistry:
     @classmethod
     def get(cls, model_id: str) -> type[ModelTrainerBase]:
         if model_id not in cls._registry:
-            raise KeyError(f"Model trainer not registered: {model_id!r}. Available: {list(cls._registry.keys())}")  # 5.99.17 修复: 附加说明文字和可用列表
+            raise KeyError(
+                f"Model trainer not registered: {model_id!r}. Available: {list(cls._registry.keys())}"
+            )  # 5.99.17 修复: 附加说明文字和可用列表
         return cls._registry[model_id]
 
     @classmethod

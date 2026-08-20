@@ -121,10 +121,14 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 PORT = 8765
 GENERATORS = [
     # (描述, 命令)
-    ("path_tree（项目树 zh/en）",
-     [sys.executable, "scripts/governance/d5_architecture/generators/generate_path_tree.py"]),
-    ("domain_doc --all（72 域文档 + HTML）",
-     [sys.executable, "scripts/governance/d5_architecture/generators/generate_domain_doc.py", "--all"]),
+    (
+        "path_tree（项目树 zh/en）",
+        [sys.executable, "scripts/governance/d5_architecture/generators/generate_path_tree.py"],
+    ),
+    (
+        "domain_doc --all（72 域文档 + HTML）",
+        [sys.executable, "scripts/governance/d5_architecture/generators/generate_domain_doc.py", "--all"],
+    ),
 ]
 
 
@@ -133,8 +137,15 @@ def regenerate_derived_docs() -> int:
     failures = 0
     for desc, cmd in GENERATORS:
         print(f"  → 重生成 {desc} ...", flush=True)
-        r = subprocess.run(cmd, cwd=str(REPO_ROOT), capture_output=True, text=True,  # noqa: bare-subprocess  本地文档HTTP服务按需生成,非线上治理代码
-                           encoding="utf-8", errors="replace", timeout=300)
+        r = subprocess.run(  # noqa: bare-subprocess  文档生成器重跑器直接 subprocess（人工触发工具，无窗口敏感场景）
+            cmd,
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,  # noqa: bare-subprocess  本地文档HTTP服务按需生成,非线上治理代码
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+        )
         if r.returncode != 0:
             failures += 1
             print(f"    ❌ 失败: {r.stderr.strip()[:300]}", flush=True)
@@ -148,6 +159,7 @@ def regenerate_derived_docs() -> int:
 def serve_http(port: int) -> None:
     """启动本地 HTTP 服务，服务仓库根目录。"""
     handler = http.server.SimpleHTTPRequestHandler
+
     # 静态服务器无 Cache-Control，浏览器启发式缓存会让用户看到旧版 HTML。
     # 加 no-cache 头强制重验证（与 zoomable_html.py 一致）。
     class NoCacheHandler(handler):
@@ -161,8 +173,14 @@ def serve_http(port: int) -> None:
     print(f"\n🌐 HTTP 服务启动: http://127.0.0.1:{port}/", flush=True)
     print(f"   服务根目录: {REPO_ROOT}", flush=True)
     print("   浏览器入口:", flush=True)
-    print(f"   - 域文档: http://127.0.0.1:{port}/docs/02_enterprise_architecture/02_domain_architecture_docs/README.md", flush=True)
-    print(f"   - 全局图: http://127.0.0.1:{port}/docs/02_enterprise_architecture/01_global_architecture_diagram/", flush=True)
+    print(
+        f"   - 域文档: http://127.0.0.1:{port}/docs/02_enterprise_architecture/02_domain_architecture_docs/README.md",
+        flush=True,
+    )
+    print(
+        f"   - 全局图: http://127.0.0.1:{port}/docs/02_enterprise_architecture/01_global_architecture_diagram/",
+        flush=True,
+    )
     print("\n   Ctrl+C 停止服务。\n", flush=True)
 
     with ReusableTCPServer(("127.0.0.1", port), NoCacheHandler) as httpd:

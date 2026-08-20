@@ -79,9 +79,13 @@ class TestConstraintState:
     def test_fields(self):
         """字段完整。"""
         b = TomorrowBoundary(
-            symbol="600519", box_upper=11.0, box_lower=9.0,
-            max_add_position=0.30, no_add_price=10.78,
-            must_exit_price=11.0, breakout_confirm="放量站稳10分钟",
+            symbol="600519",
+            box_upper=11.0,
+            box_lower=9.0,
+            max_add_position=0.30,
+            no_add_price=10.78,
+            must_exit_price=11.0,
+            breakout_confirm="放量站稳10分钟",
         )
         cs = ConstraintState(
             symbol="600519",
@@ -161,9 +165,13 @@ class TestPremarketConstraintLoader:
 
     def _make_boundary(self) -> TomorrowBoundary:
         return TomorrowBoundary(
-            symbol="600519", box_upper=11.0, box_lower=9.0,
-            max_add_position=0.30, no_add_price=10.78,
-            must_exit_price=11.0, breakout_confirm="放量站稳10分钟",
+            symbol="600519",
+            box_upper=11.0,
+            box_lower=9.0,
+            max_add_position=0.30,
+            no_add_price=10.78,
+            must_exit_price=11.0,
+            breakout_confirm="放量站稳10分钟",
         )
 
     def test_load_constraint(self):

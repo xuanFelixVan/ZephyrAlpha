@@ -1,6 +1,7 @@
 # [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.6
 # [TTL] permanent
 """选股漏斗三层级（BM-SEL-16/17/18）单元测试——含边界与降级用例。"""
+
 from __future__ import annotations
 
 from zephyr.signal_fundamental.selection_funnel import (
@@ -52,9 +53,11 @@ class TestGradedFilter:
         assert "OK" in out.kept  # 阈值边界值均放行
 
     def test_degraded_only_excludes_limit_locked_and_suspended(self):
-        recs = [_rec("A", is_limit_locked=True), _rec("B", is_suspended=True),
-                _rec("C", is_st=True, list_days=1, avg_daily_amount=0.0, aum=0.0,
-                     dealer_abandon_prob=1.0)]
+        recs = [
+            _rec("A", is_limit_locked=True),
+            _rec("B", is_suspended=True),
+            _rec("C", is_st=True, list_days=1, avg_daily_amount=0.0, aum=0.0, dealer_abandon_prob=1.0),
+        ]
         out = filter_graded_indicators(recs, degraded=True)
         assert out.degraded is True
         assert out.kept == ("C",)  # 降级：ST/次新/低流动性/弃庄全放行
@@ -117,8 +120,14 @@ class TestFineScoring:
 
     def test_density_and_crowding_deduct(self):
         clean = _rec("CLEAN", base_momentum_score=80.0)
-        noisy = _rec("NOISY", base_momentum_score=80.0, crowding_score=100.0,
-                     neg_skewness=1.0, excess_kurtosis=2.0, forward_var_pct=5.0)
+        noisy = _rec(
+            "NOISY",
+            base_momentum_score=80.0,
+            crowding_score=100.0,
+            neg_skewness=1.0,
+            excess_kurtosis=2.0,
+            forward_var_pct=5.0,
+        )
         out = score_fine_selection([clean, noisy], top_n=2)
         assert out.top[0].symbol == "CLEAN"
         assert out.top[0].raw_score > out.top[1].raw_score
@@ -130,8 +139,14 @@ class TestFineScoring:
         assert len(out.top) == 2
 
     def test_degraded_equal_weight(self):
-        rec = _rec("A", base_value_score=100.0, base_momentum_score=0.0,
-                   base_quality_score=0.0, base_sentiment_score=0.0, main_force_score=0.0)
+        rec = _rec(
+            "A",
+            base_value_score=100.0,
+            base_momentum_score=0.0,
+            base_quality_score=0.0,
+            base_sentiment_score=0.0,
+            main_force_score=0.0,
+        )
         out = score_fine_selection([rec], top_n=1, degraded=True)
         assert out.degraded is True
         assert out.top[0].raw_score == 20.0  # 等权 (100+0+0+0+0)/5

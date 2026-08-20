@@ -49,12 +49,8 @@ import yaml
 
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
-CONTRACTS_YAML = REPO_ROOT / (
-    "architecture_model/contracts/cross_layer_contracts.yaml"
-)
-INVARIANTS_YAML = REPO_ROOT / (
-    "architecture_model/cross_cutting/invariants.yaml"
-)
+CONTRACTS_YAML = REPO_ROOT / ("architecture_model/contracts/cross_layer_contracts.yaml")
+INVARIANTS_YAML = REPO_ROOT / ("architecture_model/cross_cutting/invariants.yaml")
 LAYERS_DIR = REPO_ROOT / ("architecture_model/layers")
 ADR_DIR = REPO_ROOT / "docs/02_enterprise_architecture/adr"
 OUTPUT_PATH = REPO_ROOT / "src/zephyr/context-engine/architecture-context.json"
@@ -62,10 +58,7 @@ handoff_DIR = REPO_ROOT / "docs/19_development_workspace/handoff-logs"
 CAPACITY_SLO_YAML = REPO_ROOT / "config" / "capacity_slo.yaml"
 GATE_REGISTRY_YAML = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"
 MODULE_REGISTRY_YAML = REPO_ROOT / "docs/03_modules/module-registry.yaml"
-CAPABILITY_HEATMAP_YAML = (
-    REPO_ROOT
-    / "architecture_model/cross_cutting/capability_heatmap.yaml"
-)
+CAPABILITY_HEATMAP_YAML = REPO_ROOT / "architecture_model/cross_cutting/capability_heatmap.yaml"
 ARCH_GUARD_MANIFEST = REPO_ROOT / "scripts/arch_guard/manifest.yaml"
 
 LAYER_NAMES = {

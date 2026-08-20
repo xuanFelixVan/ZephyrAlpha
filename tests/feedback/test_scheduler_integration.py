@@ -26,9 +26,7 @@ import pytest
 @pytest.fixture
 def scheduler():
     """Create a FeedbackLoopScheduler with InProcessVectorMemory mocked."""
-    with patch(
-        "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
-    ) as vms_cls:
+    with patch("zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory") as vms_cls:
         vms_cls.return_value = MagicMock()
         from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
@@ -189,9 +187,7 @@ class TestSchedulerSingleton:
 
     def test_get_instance_returns_singleton(self):
         """get_instance returns the same instance."""
-        with patch(
-            "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
-        ):
+        with patch("zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"):
             from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
             FeedbackLoopScheduler.reset_instance()
@@ -202,9 +198,7 @@ class TestSchedulerSingleton:
 
     def test_reset_instance_clears_singleton(self):
         """reset_instance clears the singleton."""
-        with patch(
-            "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
-        ):
+        with patch("zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"):
             from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
             FeedbackLoopScheduler.reset_instance()
@@ -237,6 +231,7 @@ class TestSchedulerEvents:
 # 5.158.4 回归测试——_persist_failure_pattern (extracted from _run_once)
 # ══════════════════════════════════════════════════════════
 
+
 class TestPersistFailurePattern:
     """5.158.4 回归测试——_persist_failure_pattern 行为等价验证。
 
@@ -246,6 +241,7 @@ class TestPersistFailurePattern:
 
     def _make_bare_scheduler(self):
         from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
+
         s = object.__new__(FeedbackLoopScheduler)
         return s
 

@@ -34,9 +34,7 @@ except Exception as exc:
 # 待裁定，全文件 xfail 留痕（strict=False）。与既有 import skipif 合并
 # （后赋值覆盖会吃掉 xfail）。
 pytestmark = [
-    pytest.mark.xfail(
-        strict=False, reason="#ARCH-083 canary_rollout_manager 窄实现 vs 宽契约，待裁定"
-    ),
+    pytest.mark.xfail(strict=False, reason="#ARCH-083 canary_rollout_manager 窄实现 vs 宽契约，待裁定"),
     pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_REASON}"),
 ]
 

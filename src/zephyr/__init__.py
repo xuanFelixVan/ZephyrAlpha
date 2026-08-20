@@ -132,6 +132,7 @@ import typing as _typing
 if not hasattr(_typing, "Self"):
     try:
         from typing_extensions import Self as _Self
+
         _typing.Self = _Self
     except ImportError:
         _Self = _typing.TypeVar("Self")
@@ -187,7 +188,9 @@ try:
     from importlib.metadata import version as _pkg_version
 
     __version__ = _pkg_version("zephyralpha")
-except Exception:  # 包未安装（开发模式/直接 import）回退到 pyproject 解析  # noqa: BLE001 — 5.135治标: broad exception catch
+except (
+    Exception
+):  # 包未安装（开发模式/直接 import）回退到 pyproject 解析  # noqa: BLE001 — 5.135治标: broad exception catch
     try:
         from pathlib import Path as _Path
 
@@ -335,7 +338,9 @@ atexit.register(_cleanup_bootstrap_timers)
 register_lazy(
     "vector-memory", "zephyr.integration.vector_memory"
 )  # MOD-INF-011 VMS — P0-4: 真源是 vector_memory 包（reexport UnifiedMemoryAPI/get_unified_memory_api），非 mcp.vector_memory_server（仅定义 Server 类）
-register_lazy("llm-security", "zephyr.security.llm_defense.llm_security")  # MOD-LLM_SECURITY LSG — L0-L8 nine-layer defense
+register_lazy(
+    "llm-security", "zephyr.security.llm_defense.llm_security"
+)  # MOD-LLM_SECURITY LSG — L0-L8 nine-layer defense
 register_lazy(
     "_cross_layer", "zephyr.risk.cross_asset.cross_market_data_adapter"
 )  # MOD-FEEDBACK_LOOP FLE cross-layer pipelines (AlphaSignal + MLExperiment)
@@ -376,4 +381,3 @@ __all__ = [  # noqa: gate-vocab  __all__ 子包导出列表，非 domain 分类
     "simulation",
 ]
 auto_bootstrap_result = _auto_bootstrap_result  # public alias（Stage 4 公共化）
-

@@ -19,9 +19,7 @@ import pytest
 
 # #ARCH-083：IntentDeclaration.is_valid/violations、IntentState.EXCEEDED
 # 缺席——代码侧缺口待裁定，全文件 xfail 留痕（strict=False）。
-pytestmark = pytest.mark.xfail(
-    strict=False, reason="#ARCH-083 intent_binder 窄实现 vs 宽契约，待裁定"
-)
+pytestmark = pytest.mark.xfail(strict=False, reason="#ARCH-083 intent_binder 窄实现 vs 宽契约，待裁定")
 
 try:
     from zephyr.security.access_control.intent_binder import IntentBinder, IntentDeclaration, IntentState

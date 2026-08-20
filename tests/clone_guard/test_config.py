@@ -87,7 +87,8 @@ class TestLoadConfig:
     def test_malformed_yaml_returns_defaults(self, tmp_path: Path):
         """YAML 解析失败时返回安全默认值（不抛异常）。"""
         (tmp_path / "clone_guard.yml").write_text(
-            "[: not valid yaml :]\n}}}\n", encoding="utf-8",
+            "[: not valid yaml :]\n}}}\n",
+            encoding="utf-8",
         )
         cfg = load_config(tmp_path)
         assert cfg.pre_commit_timeout_sec == 30
@@ -102,12 +103,13 @@ class TestLoadConfig:
     def test_partial_config_uses_defaults_for_missing_keys(self, tmp_path: Path):
         """部分配置缺失时缺失字段使用默认值。"""
         (tmp_path / "clone_guard.yml").write_text(
-            "pre_commit:\n  timeout_sec: 45\n", encoding="utf-8",
+            "pre_commit:\n  timeout_sec: 45\n",
+            encoding="utf-8",
         )
         cfg = load_config(tmp_path)
         assert cfg.pre_commit_timeout_sec == 45
         assert cfg.fail_on_severity == "extract"  # 默认
-        assert cfg.echo_guard_enabled is True     # 默认
+        assert cfg.echo_guard_enabled is True  # 默认
 
 
 class TestEnvConfig:
@@ -121,9 +123,7 @@ class TestEnvConfig:
     def test_env_loaded_from_yaml(self, tmp_path: Path):
         """env 段从 YAML 正确加载。"""
         (tmp_path / "clone_guard.yml").write_text(
-            "env:\n"
-            "  HF_HUB_OFFLINE: \"1\"\n"
-            "  TRANSFORMERS_OFFLINE: \"1\"\n",
+            'env:\n  HF_HUB_OFFLINE: "1"\n  TRANSFORMERS_OFFLINE: "1"\n',
             encoding="utf-8",
         )
         cfg = load_config(tmp_path)
@@ -142,7 +142,8 @@ class TestEnvConfig:
     def test_env_missing_returns_empty(self, tmp_path: Path):
         """无 env 段时返回空 dict。"""
         (tmp_path / "clone_guard.yml").write_text(
-            "version: 1\n", encoding="utf-8",
+            "version: 1\n",
+            encoding="utf-8",
         )
         cfg = load_config(tmp_path)
         assert cfg.env == {}
@@ -150,7 +151,8 @@ class TestEnvConfig:
     def test_env_non_dict_returns_empty(self, tmp_path: Path):
         """env 段非 dict 时返回空 dict（安全降级）。"""
         (tmp_path / "clone_guard.yml").write_text(
-            "env: [\"not\", \"a\", \"dict\"]\n", encoding="utf-8",
+            'env: ["not", "a", "dict"]\n',
+            encoding="utf-8",
         )
         cfg = load_config(tmp_path)
         assert cfg.env == {}
@@ -158,7 +160,8 @@ class TestEnvConfig:
     def test_malformed_yaml_env_returns_empty(self, tmp_path: Path):
         """YAML 解析失败时 env 为空 dict（安全降级）。"""
         (tmp_path / "clone_guard.yml").write_text(
-            "[: not valid :]\n}}}\n", encoding="utf-8",
+            "[: not valid :]\n}}}\n",
+            encoding="utf-8",
         )
         cfg = load_config(tmp_path)
         assert cfg.env == {}
@@ -257,10 +260,7 @@ class TestNestedEngineConfig:
     def test_pre_commit_engines_ast_grep_loaded(self, tmp_path: Path):
         """pre_commit.engines.ast_grep 嵌套配置正确加载。"""
         (tmp_path / "clone_guard.yml").write_text(
-            "pre_commit:\n"
-            "  engines:\n"
-            "    ast_grep:\n"
-            "      enabled: false\n",
+            "pre_commit:\n  engines:\n    ast_grep:\n      enabled: false\n",
             encoding="utf-8",
         )
         cfg = load_config(tmp_path)
@@ -269,10 +269,7 @@ class TestNestedEngineConfig:
     def test_pre_commit_engines_echo_guard_loaded(self, tmp_path: Path):
         """pre_commit.engines.echo_guard 嵌套配置正确加载。"""
         (tmp_path / "clone_guard.yml").write_text(
-            "pre_commit:\n"
-            "  engines:\n"
-            "    echo_guard:\n"
-            "      enabled: false\n",
+            "pre_commit:\n  engines:\n    echo_guard:\n      enabled: false\n",
             encoding="utf-8",
         )
         cfg = load_config(tmp_path)
@@ -319,10 +316,7 @@ class TestNestedEngineConfig:
     def test_nested_config_backward_compatible(self, tmp_path: Path):
         """旧式扁平配置（无 engines 嵌套）仍向后兼容。"""
         (tmp_path / "clone_guard.yml").write_text(
-            "pre_commit:\n"
-            "  timeout_sec: 45\n"
-            "  echo_guard_enabled: false\n"
-            "  fail_closed: true\n",
+            "pre_commit:\n  timeout_sec: 45\n  echo_guard_enabled: false\n  fail_closed: true\n",
             encoding="utf-8",
         )
         cfg = load_config(tmp_path)

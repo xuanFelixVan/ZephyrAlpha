@@ -88,6 +88,7 @@ D-DATA-GOV Metadata Registry——元数据管理。
 # A3 --> O1
 # A4 --> O1
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -119,9 +120,7 @@ class MetadataRegistry:
     def __init__(self) -> None:
         self._entries: dict[str, MetadataEntry] = {}
 
-    def register(
-        self, key: str, value: dict[str, Any], category: str = ""
-    ) -> MetadataEntry:
+    def register(self, key: str, value: dict[str, Any], category: str = "") -> MetadataEntry:
         """注册或更新元数据条目。
 
         Args:
@@ -159,15 +158,11 @@ class MetadataRegistry:
 
     def list_by_category(self, category: str) -> list[MetadataEntry]:
         """按分类过滤。"""
-        return [
-            e for e in self._entries.values() if e.category == category
-        ]
+        return [e for e in self._entries.values() if e.category == category]
 
     def search(self, prefix: str) -> list[MetadataEntry]:
         """前缀搜索。返回所有 key 以 prefix 开头的条目。"""
-        return [
-            e for k, e in self._entries.items() if k.startswith(prefix)
-        ]
+        return [e for k, e in self._entries.items() if k.startswith(prefix)]
 
     def remove(self, key: str) -> bool:
         """移除元数据条目。返回是否成功。"""

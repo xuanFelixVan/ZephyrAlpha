@@ -20,6 +20,7 @@
   - run_deploy: 预检失败(exit 2)/promote(exit 0)/rollback(exit 1)/异常(exit 2)
   - make_deployer: windows/container/unknown
 """
+
 from __future__ import annotations
 
 import json
@@ -123,8 +124,12 @@ class TestCompareDecisions:
     def test_below_threshold(self) -> None:
         """1/10 分歧, 阈值 0.05 -> divergence 0.1 >= 0.05 -> rollback。"""
         _ThresholdHolder.threshold = 0.05
-        prod = [{"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(10)]
-        shadow = [{"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(10)]
+        prod = [
+            {"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(10)
+        ]
+        shadow = [
+            {"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(10)
+        ]
         shadow[0]["side"] = "SELL"  # 1 mismatch
         r = compare_decisions(prod, shadow)
         assert r.divergence_rate == pytest.approx(0.1)
@@ -133,8 +138,12 @@ class TestCompareDecisions:
     def test_at_threshold_boundary(self) -> None:
         """1/20 分歧 = 0.05, 0.05 < 0.05 is False -> rollback（边界 fail-safe）。"""
         _ThresholdHolder.threshold = 0.05
-        prod = [{"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(20)]
-        shadow = [{"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(20)]
+        prod = [
+            {"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(20)
+        ]
+        shadow = [
+            {"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(20)
+        ]
         shadow[0]["side"] = "SELL"  # 1/20 = 0.05
         r = compare_decisions(prod, shadow)
         assert r.divergence_rate == pytest.approx(0.05)
@@ -143,8 +152,12 @@ class TestCompareDecisions:
     def test_just_below_threshold(self) -> None:
         """1/21 分歧 ~0.0476 < 0.05 -> promote。"""
         _ThresholdHolder.threshold = 0.05
-        prod = [{"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(21)]
-        shadow = [{"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(21)]
+        prod = [
+            {"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(21)
+        ]
+        shadow = [
+            {"symbol": f"S{i}", "timestamp": f"t{i}", "side": "BUY", "quantity": 100, "price": 10.0} for i in range(21)
+        ]
         shadow[0]["side"] = "SELL"  # 1/21 ≈ 0.0476
         r = compare_decisions(prod, shadow)
         assert r.divergence_rate < 0.05
@@ -171,8 +184,10 @@ class TestLoadDecisions:
         """有效 jsonl -> 解析所有行。"""
         f = tmp_path / "decisions.jsonl"
         f.write_text(
-            json.dumps({"symbol": "000001", "side": "BUY"}) + "\n"
-            + json.dumps({"symbol": "000002", "side": "SELL"}) + "\n"
+            json.dumps({"symbol": "000001", "side": "BUY"})
+            + "\n"
+            + json.dumps({"symbol": "000002", "side": "SELL"})
+            + "\n"
         )
         result = load_decisions(f)
         assert len(result) == 2
@@ -181,11 +196,7 @@ class TestLoadDecisions:
     def test_invalid_json_line_skipped(self, tmp_path: Path) -> None:
         """无效 JSON 行 -> 跳过，返回已解析部分。"""
         f = tmp_path / "mixed.jsonl"
-        f.write_text(
-            json.dumps({"symbol": "000001"}) + "\n"
-            + "NOT JSON\n"
-            + json.dumps({"symbol": "000002"}) + "\n"
-        )
+        f.write_text(json.dumps({"symbol": "000001"}) + "\n" + "NOT JSON\n" + json.dumps({"symbol": "000002"}) + "\n")
         result = load_decisions(f)
         assert len(result) == 2  # 无效行跳过
 
@@ -252,8 +263,11 @@ class TestRunDeploy:
             allowed=False, checks={"health": False}, blockers=["health check failed"]
         )
         exit_code = run_deploy(
-            baseline_ref="HEAD", duration=1, divergence_threshold=0.05,
-            adapter="windows", shadow_cmd="python -c 'simulation pass'",
+            baseline_ref="HEAD",
+            duration=1,
+            divergence_threshold=0.05,
+            adapter="windows",
+            shadow_cmd="python -c 'simulation pass'",
             production_log=self._make_prod_log(tmp_path, []),
             precheck_mode="full",
         )
@@ -276,8 +290,11 @@ class TestRunDeploy:
         mock_factory.return_value = mock_deployer
 
         exit_code = run_deploy(
-            baseline_ref="HEAD", duration=1, divergence_threshold=0.05,
-            adapter="windows", shadow_cmd="python -c 'simulation pass'",
+            baseline_ref="HEAD",
+            duration=1,
+            divergence_threshold=0.05,
+            adapter="windows",
+            shadow_cmd="python -c 'simulation pass'",
             production_log=self._make_prod_log(tmp_path, [decision]),
             precheck_mode="skip",
         )
@@ -300,8 +317,11 @@ class TestRunDeploy:
         mock_factory.return_value = mock_deployer
 
         exit_code = run_deploy(
-            baseline_ref="HEAD", duration=1, divergence_threshold=0.05,
-            adapter="windows", shadow_cmd="python -c 'simulation pass'",
+            baseline_ref="HEAD",
+            duration=1,
+            divergence_threshold=0.05,
+            adapter="windows",
+            shadow_cmd="python -c 'simulation pass'",
             production_log=self._make_prod_log(tmp_path, [prod]),
             precheck_mode="skip",
         )
@@ -320,8 +340,11 @@ class TestRunDeploy:
         mock_factory.side_effect = RuntimeError("deployer construction failed")
 
         exit_code = run_deploy(
-            baseline_ref="HEAD", duration=1, divergence_threshold=0.05,
-            adapter="windows", shadow_cmd="python -c 'simulation pass'",
+            baseline_ref="HEAD",
+            duration=1,
+            divergence_threshold=0.05,
+            adapter="windows",
+            shadow_cmd="python -c 'simulation pass'",
             production_log=self._make_prod_log(tmp_path, []),
             precheck_mode="skip",
         )
@@ -342,8 +365,11 @@ class TestRunDeploy:
         mock_factory.return_value = mock_deployer
 
         exit_code = run_deploy(
-            baseline_ref="HEAD", duration=1, divergence_threshold=0.05,
-            adapter="windows", shadow_cmd="python -c 'simulation pass'",
+            baseline_ref="HEAD",
+            duration=1,
+            divergence_threshold=0.05,
+            adapter="windows",
+            shadow_cmd="python -c 'simulation pass'",
             production_log=self._make_prod_log(tmp_path, []),  # prod 空
             precheck_mode="skip",
         )

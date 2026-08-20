@@ -48,7 +48,9 @@ class TestOnBudgetAlert:
     def test_adapter_exception_handled(self):
         alert = _make_alert()
         with patch(
-            "zephyr.governance.ops_governance.budget_handler.escalate_if_needed", side_effect=RuntimeError("fail"), create=True
+            "zephyr.governance.ops_governance.budget_handler.escalate_if_needed",
+            side_effect=RuntimeError("fail"),
+            create=True,
         ):
             result = on_budget_alert(alert)
             assert isinstance(result, dict)

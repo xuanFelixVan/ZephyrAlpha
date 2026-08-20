@@ -24,6 +24,7 @@
 训练/推理路径（train/validate/_batch_predict）依赖 torch+GPU，属 [ml-train] extras
 集成测试范畴，不在此桩覆盖。
 """
+
 from __future__ import annotations
 
 import json

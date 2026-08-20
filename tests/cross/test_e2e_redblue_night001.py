@@ -28,6 +28,7 @@
 
 CH 不可达时整文件 skip（不阻断无 CH 环境的 CI 轨）。
 """
+
 from __future__ import annotations
 
 import math
@@ -52,8 +53,16 @@ from zephyr.governance.strategies.strategy_base import StrategyRegistry
 
 # ── 测试常量：沪深300成分内 10 只大盘蓝筹（2026-02-02..2026-08-18 实证 131 个交易日在库）──
 SYMBOLS = [
-    "600519.SH", "000858.SZ", "601318.SH", "600036.SH", "000333.SZ",
-    "600900.SH", "601899.SH", "600030.SH", "002594.SZ", "000651.SZ",
+    "600519.SH",
+    "000858.SZ",
+    "601318.SH",
+    "600036.SH",
+    "000333.SZ",
+    "600900.SH",
+    "601899.SH",
+    "600030.SH",
+    "002594.SZ",
+    "000651.SZ",
 ]
 START = "2026-02-02"
 END = "2026-08-18"
@@ -95,17 +104,13 @@ def _ensure_registered():
 @pytest.fixture(scope="module")
 def e2e_result():
     """全链回测（模块级复用——真实 CH 查询只跑一次）。"""
-    result = StrategyRunner().run_backtest(
-        symbols=SYMBOLS, start=START, end=END, config=_runner_config
-    )
+    result = StrategyRunner().run_backtest(symbols=SYMBOLS, start=START, end=END, config=_runner_config)
     return result
 
 
 @pytest.fixture(scope="module")
 def weight_panel():
-    _, panel = StrategyRunner().build_weight_panel(
-        SYMBOLS, START, END, _runner_config
-    )
+    _, panel = StrategyRunner().build_weight_panel(SYMBOLS, START, END, _runner_config)
     return panel
 
 
@@ -161,9 +166,7 @@ class TestFullChainConnectivity:
         assert not weight_panel.empty
         row_sums = weight_panel.sum(axis=1)
         nonzero_idx = int((row_sums > 0).to_numpy().argmax())
-        assert nonzero_idx >= 20, (
-            f"首个非零权重出现在第 {nonzero_idx} 行（<20）→ 因子 warmup 期内出信号，前视嫌疑"
-        )
+        assert nonzero_idx >= 20, f"首个非零权重出现在第 {nonzero_idx} 行（<20）→ 因子 warmup 期内出信号，前视嫌疑"
         # 权重面板不变量：非负、Σ≤1
         assert (weight_panel.to_numpy() >= -1e-12).all()
         assert (row_sums <= 1.0 + 1e-9).all()
@@ -345,17 +348,13 @@ class TestRedTeamDividend:
         非本阶段修复对象；本断言若因 adj_factor 接入真实值而失败，应改写为
         真实除权事件验证（届时 #209② 已治理）。
         """
-        tsv = ch_reader.query(
-            "SELECT countIf(adj_factor != 1) FROM c1_market.kline_daily"
-        )
+        tsv = ch_reader.query("SELECT countIf(adj_factor != 1) FROM c1_market.kline_daily")
         n_non_one = int(tsv.strip().split()[0]) if tsv.strip() else -1
         assert n_non_one == 0, "adj_factor 已接入真实值（#209② 已治理）——请升级本测试为真实除权事件验证"
 
     def test_evaluate_factor_on_real_data_no_extreme_ic(self, _ensure_registered=None):
         """真实数据因子评估：momentum_20d IC 不应出现 |IC|>0.5 的离谱值（前视征兆）。"""
-        result = factor_bt.evaluate_factor(
-            "momentum_20d", SYMBOLS, START, END, horizon=5
-        )
+        result = factor_bt.evaluate_factor("momentum_20d", SYMBOLS, START, END, horizon=5)
         assert result.sample_size > 10, "真实数据 IC 序列样本不足"
         assert abs(result.ic_mean) < 0.5, f"ic_mean={result.ic_mean} 离谱（前视嫌疑）"
 
@@ -367,18 +366,14 @@ class TestRedTeamSigma1Invariant:
         """N=2 全贴 cap（0.4×2=0.8<1）→ 兜底归一化，Σ=1 硬不变量优先于 floor/cap。"""
         from zephyr.pf_alloc.core.regime_meta_allocator import RegimeMetaAllocator
 
-        alloc = RegimeMetaAllocator(
-            base_weights={"s1": 0.5, "s2": 0.5}, shrinkage_enabled=False
-        )
+        alloc = RegimeMetaAllocator(base_weights={"s1": 0.5, "s2": 0.5}, shrinkage_enabled=False)
         budget = alloc.allocate(
             regime_probabilities=[0.9, 0.1],
             performance_scores={"s1": 1.5, "s2": 1.5},  # 同分 → 等权 → 双双贴 cap
             risk_signal_inputs={"risk_base": 1.0},
         )
         total = sum(budget.allocations.values())
-        assert total == pytest.approx(1.0, abs=1e-9), (
-            f"N=2 cap 不可行场景 Σ={total}，Σ=1 硬不变量被破坏（#206 回归）"
-        )
+        assert total == pytest.approx(1.0, abs=1e-9), f"N=2 cap 不可行场景 Σ={total}，Σ=1 硬不变量被破坏（#206 回归）"
 
     def test_allocator_n25_all_floor_still_sigma1(self):
         """N=25 全贴 floor（25×0.05=1.25>1）→ 兜底归一化，Σ=1 保持。"""
@@ -412,9 +407,7 @@ class TestRedTeamSigma1Invariant:
         assert total == pytest.approx(1.0, abs=1e-9)
         # effective_budget = allocation × global_shrinkage（两层一致性）
         for sid, eb in budget.effective_budgets.items():
-            assert eb == pytest.approx(
-                budget.allocations[sid] * budget.global_shrinkage, rel=1e-9
-            )
+            assert eb == pytest.approx(budget.allocations[sid] * budget.global_shrinkage, rel=1e-9)
 
     def test_constraint_solver_soft_crowding_one_shot_no_collapse(self):
         """#205 回归：ρ=0.85 软拥挤一次性减半（原 0.5^n 几何坍缩 → Σw≈8e-7）。
@@ -428,20 +421,22 @@ class TestRedTeamSigma1Invariant:
         from zephyr.shared.contracts.risk_limits import RiskLimits
 
         limits = RiskLimits(
-            as_of_date=datetime.now(UTC), idempotency_key="rt-crowd",
-            max_gross_leverage=1.0, max_single_position=0.6,
+            as_of_date=datetime.now(UTC),
+            idempotency_key="rt-crowd",
+            max_gross_leverage=1.0,
+            max_single_position=0.6,
         )
         corr = np.array([[1.0, 0.85], [0.85, 1.0]])
         solver = ConstraintSolver(ConstraintSolverConfig(max_correlation=0.9))
         result = solver.solve(
-            {"A": 0.5, "B": 0.5}, limits,
-            assets=["A", "B"], correlation_matrix=corr,
+            {"A": 0.5, "B": 0.5},
+            limits,
+            assets=["A", "B"],
+            correlation_matrix=corr,
         )
         out_sum = float(np.sum(result.weights))
         assert result.converged, "软拥挤一次性响应后应正常收敛"
-        assert out_sum == pytest.approx(0.5, abs=1e-9), (
-            f"软拥挤应一次性减半至 Σw=0.5，实际 {out_sum}（#205 坍缩回归）"
-        )
+        assert out_sum == pytest.approx(0.5, abs=1e-9), f"软拥挤应一次性减半至 Σw=0.5，实际 {out_sum}（#205 坍缩回归）"
         assert not [v for v in result.violations if v.constraint_id == "COLLAPSE"]
 
     def test_constraint_solver_hard_crowding_keeps_one(self):
@@ -450,13 +445,17 @@ class TestRedTeamSigma1Invariant:
         from zephyr.shared.contracts.risk_limits import RiskLimits
 
         limits = RiskLimits(
-            as_of_date=datetime.now(UTC), idempotency_key="rt-hard",
-            max_gross_leverage=1.0, max_single_position=0.9,
+            as_of_date=datetime.now(UTC),
+            idempotency_key="rt-hard",
+            max_gross_leverage=1.0,
+            max_single_position=0.9,
         )
         corr = np.array([[1.0, 0.95], [0.95, 1.0]])
         result = ConstraintSolver().solve(
-            {"A": 0.6, "B": 0.4}, limits,
-            assets=["A", "B"], correlation_matrix=corr,
+            {"A": 0.6, "B": 0.4},
+            limits,
+            assets=["A", "B"],
+            correlation_matrix=corr,
         )
         w = dict(zip(["A", "B"], result.weights, strict=True))
         assert w["B"] == pytest.approx(0.0, abs=1e-12), "硬拥挤应清零权重较小者"
@@ -468,19 +467,20 @@ class TestRedTeamSigma1Invariant:
         from zephyr.shared.contracts.risk_limits import RiskLimits
 
         limits = RiskLimits(
-            as_of_date=datetime.now(UTC), idempotency_key="rt-exp",
-            max_gross_leverage=1.0, max_single_position=0.6,
+            as_of_date=datetime.now(UTC),
+            idempotency_key="rt-exp",
+            max_gross_leverage=1.0,
+            max_single_position=0.6,
         )
         result = ConstraintSolver().solve(
-            {"A": 0.5, "B": 0.5}, limits,
+            {"A": 0.5, "B": 0.5},
+            limits,
             market_cap_exposures={"A": 1.0, "B": 1.0},  # 全同号且 |加权|>0.3σ
         )
         infeasible = [v for v in result.violations if v.constraint_name == "market_cap_exposure_infeasible"]
         assert infeasible, "全同号暴露必须标 infeasible（fail-visible）"
         out_sum = float(np.sum(result.weights))
-        assert out_sum == pytest.approx(1.0, abs=1e-9), (
-            f"不可达场景权重不应被缩放（Σw={out_sum}，#207 坍缩回归）"
-        )
+        assert out_sum == pytest.approx(1.0, abs=1e-9), f"不可达场景权重不应被缩放（Σw={out_sum}，#207 坍缩回归）"
         assert result.converged
 
     def test_constraint_solver_extreme_leverage_clip(self):
@@ -489,8 +489,10 @@ class TestRedTeamSigma1Invariant:
         from zephyr.shared.contracts.risk_limits import RiskLimits
 
         limits = RiskLimits(
-            as_of_date=datetime.now(UTC), idempotency_key="rt-lev",
-            max_gross_leverage=1.0, max_single_position=1.0,
+            as_of_date=datetime.now(UTC),
+            idempotency_key="rt-lev",
+            max_gross_leverage=1.0,
+            max_single_position=1.0,
         )
         result = ConstraintSolver().solve({"A": 5.0, "B": 5.0}, limits)
         assert float(np.sum(result.weights)) <= 1.0 + 1e-9

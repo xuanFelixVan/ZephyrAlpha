@@ -44,13 +44,33 @@ class Consumer(NamedTuple):
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 CONSUMERS: list[Consumer] = [
-    Consumer("gov_enforcement.rule_enforcement.gate_engine.gate_engine", "src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py", "G7 门禁引擎"),
+    Consumer(
+        "gov_enforcement.rule_enforcement.gate_engine.gate_engine",
+        "src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py",
+        "G7 门禁引擎",
+    ),
     Consumer("governance.persistence.task_repo", "src/zephyr/governance/persistence/task_repo.py", "Task 持久化仓库"),
-    Consumer("governance.persistence.sqlite_schema", "src/zephyr/governance/persistence/sqlite_schema.py", "SQLite Schema 管理"),
-    Consumer("integration.mcp.task_manager_server", "src/zephyr/integration/mcp/task_manager_server.py", "MCP Task 管理服务端"),
-    Consumer("integration.mcp.blueprint_search_server", "src/zephyr/integration/mcp/blueprint_search_server.py", "MCP 蓝图搜索服务端"),
-    Consumer("orchestrator.execution.trigger_router", "src/zephyr/orchestrator/execution/trigger_router.py", "管线触发路由器"),
-    Consumer("feedback_loop", "src/zephyr/feedback_loop/__init__.py", "Feedback Loop MOD-FEEDBACK_LOOP", is_package=True),
+    Consumer(
+        "governance.persistence.sqlite_schema",
+        "src/zephyr/governance/persistence/sqlite_schema.py",
+        "SQLite Schema 管理",
+    ),
+    Consumer(
+        "integration.mcp.task_manager_server",
+        "src/zephyr/integration/mcp/task_manager_server.py",
+        "MCP Task 管理服务端",
+    ),
+    Consumer(
+        "integration.mcp.blueprint_search_server",
+        "src/zephyr/integration/mcp/blueprint_search_server.py",
+        "MCP 蓝图搜索服务端",
+    ),
+    Consumer(
+        "orchestrator.execution.trigger_router", "src/zephyr/orchestrator/execution/trigger_router.py", "管线触发路由器"
+    ),
+    Consumer(
+        "feedback_loop", "src/zephyr/feedback_loop/__init__.py", "Feedback Loop MOD-FEEDBACK_LOOP", is_package=True
+    ),
 ]
 
 

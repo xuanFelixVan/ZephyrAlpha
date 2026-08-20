@@ -21,6 +21,7 @@
 - 连接抛异常 → main() 返回 EXIT_ERROR(2) + 输出含 [PG-UNREACHABLE] 与引导文案，
   且无未捕获异常（崩溃栈不出现）。
 """
+
 from __future__ import annotations
 
 import importlib.util

@@ -23,9 +23,7 @@ import pytest
 # record_decision(level=)/detect_density_anomaly(operations_in_window=)/
 # verify_metric_integrity，MetricEntry(metric=)/AnomalyResult.rule 字段缺席。
 # 代码侧缺口待裁定，全文件 xfail 留痕（strict=False）。
-pytestmark = pytest.mark.xfail(
-    strict=False, reason="#ARCH-083 observability 窄实现 vs 宽契约，待裁定"
-)
+pytestmark = pytest.mark.xfail(strict=False, reason="#ARCH-083 observability 窄实现 vs 宽契约，待裁定")
 
 try:
     from zephyr.security.access_control.observability import AnomalyResult, MetricEntry, ObservabilityReporter

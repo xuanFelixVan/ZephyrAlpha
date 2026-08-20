@@ -122,12 +122,21 @@ class TestBacktestResult:
             )
 
     def test_negative_return(self):
-        r = _make_result(total_return=-0.20, annual_return=-0.60, sharpe_ratio=-1.5, max_drawdown=0.30, win_rate=0.30, trades_count=10)
+        r = _make_result(
+            total_return=-0.20,
+            annual_return=-0.60,
+            sharpe_ratio=-1.5,
+            max_drawdown=0.30,
+            win_rate=0.30,
+            trades_count=10,
+        )
         assert r.total_return < 0
         assert r.sharpe_ratio < 0
 
     def test_zero_trades(self):
-        r = _make_result(total_return=0.0, annual_return=0.0, sharpe_ratio=0.0, max_drawdown=0.0, win_rate=0.0, trades_count=0)
+        r = _make_result(
+            total_return=0.0, annual_return=0.0, sharpe_ratio=0.0, max_drawdown=0.0, win_rate=0.0, trades_count=0
+        )
         assert r.trades_count == 0
 
 

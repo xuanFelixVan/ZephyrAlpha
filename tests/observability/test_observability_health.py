@@ -26,7 +26,9 @@ import pytest
 # HealthSummary(status=/total_modules=/healthy_count=)、collect_health(modules) 设计契约在源码侧
 # 为桩实现（health/__init__.py 数据壳）或另一设计（health_aggregator.HealthAggregator 探针驱动），
 # 代码侧缺口待裁定补实现——全文件 xfail 留痕（strict=False）。
-pytestmark = pytest.mark.xfail(strict=False, reason="#ARCH-074 AggregateHealth/collect_health 设计契约代码侧缺口（桩实现），待裁定补实现")
+pytestmark = pytest.mark.xfail(
+    strict=False, reason="#ARCH-074 AggregateHealth/collect_health 设计契约代码侧缺口（桩实现），待裁定补实现"
+)
 
 from zephyr.infrastructure.system_telemetry.health import (
     AggregateHealth,

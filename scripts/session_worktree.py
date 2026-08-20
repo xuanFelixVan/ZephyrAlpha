@@ -139,7 +139,7 @@ def _find_branch_for_session(session_id: str) -> str | None:
                     if l2.startswith("branch ") and session_id in l2:
                         full = l2.split(" ", 1)[1].strip()
                         # porcelain 输出是 refs/heads/ 全限定名；git branch -D 只认短名
-                        return full[len("refs/heads/"):] if full.startswith("refs/heads/") else full
+                        return full[len("refs/heads/") :] if full.startswith("refs/heads/") else full
         return None
     except Exception:
         return None
@@ -225,9 +225,12 @@ def cmd_create(args: argparse.Namespace) -> int:
                 _hb_env["ZEPHYR_RUNTIME_GATE"] = "0"  # daemon 无需 LLM 运行时拦截
                 _hb_proc = spawn_python_hidden(
                     [
-                        sys.executable, "-m",
+                        sys.executable,
+                        "-m",
                         "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon",
-                        session_id, str(_main_root), "30",
+                        session_id,
+                        str(_main_root),
+                        "30",
                     ],
                     cwd=str(_main_root),
                     env=_hb_env,
@@ -385,7 +388,8 @@ def _check_cert_no_unmerged(session_id: str, wt_path: Path) -> tuple[bool, str, 
 
     # ① 分支 ahead commit 数
     ahead_result = _run_git(
-        ["log", "dev.." + branch, "--oneline"], check=False,
+        ["log", "dev.." + branch, "--oneline"],
+        check=False,
     )
     ahead_count = 0
     if ahead_result.returncode == 0 and ahead_result.stdout.strip():
@@ -395,7 +399,8 @@ def _check_cert_no_unmerged(session_id: str, wt_path: Path) -> tuple[bool, str, 
 
     # ② worktree 内未提交变更
     dirty_result = _run_git(
-        ["-C", str(wt_path), "status", "--porcelain"], check=False,
+        ["-C", str(wt_path), "status", "--porcelain"],
+        check=False,
     )
     dirty: list[str] = []
     if dirty_result.returncode == 0 and dirty_result.stdout.strip():
@@ -403,10 +408,14 @@ def _check_cert_no_unmerged(session_id: str, wt_path: Path) -> tuple[bool, str, 
     details["dirty_files"] = dirty[:10]
 
     if dirty:
-        return False, (
-            f"worktree 有 {len(dirty)} 个未提交变更: {dirty[:5]}"
-            "——先 commit 或 stash push 存证 refs/quarantine/ 后再清理"
-        ), details
+        return (
+            False,
+            (
+                f"worktree 有 {len(dirty)} 个未提交变更: {dirty[:5]}"
+                "——先 commit 或 stash push 存证 refs/quarantine/ 后再清理"
+            ),
+            details,
+        )
     if ahead_count > 0:
         # ahead commit 已入对象库，分支本身即存证 → 通过但提示
         return True, f"分支有 {ahead_count} 个 ahead commit（已入对象库，永不丢失）", details
@@ -436,9 +445,7 @@ def _check_cert_recovery(session_id: str) -> tuple[bool, str]:
         return False, f"快照写入失败: {e}"
 
 
-def _four_cert_check(
-    session_id: str, wt_path: Path, *, skip: bool = False, exempt_cert1: bool = False
-) -> int | None:
+def _four_cert_check(session_id: str, wt_path: Path, *, skip: bool = False, exempt_cert1: bool = False) -> int | None:
     """S2 四证检查（worktree_cleanup_sop.md）。
 
     Args:
@@ -541,9 +548,7 @@ def _teardown_session_governance(session_id: str) -> None:
         print(f"  WARN: SessionRegistry 注销失败（TTL 3600s 到期自动清理）: {e}", file=sys.stderr)
 
 
-def cmd_abort_inner(
-    session_id: str, *, skip_checks: bool = False, exempt_cert1: bool = False
-) -> int:
+def cmd_abort_inner(session_id: str, *, skip_checks: bool = False, exempt_cert1: bool = False) -> int:
     """清理 worktree（内部函数，含 S2 四证检查）。"""
     wt_path = _worktree_path(session_id)
 
@@ -625,7 +630,11 @@ def main() -> int:
     # merge
     p_merge = sub.add_parser("merge", help="合并 worktree 分支回主分支")
     p_merge.add_argument("session_id", help="session ID")
-    p_merge.add_argument("--to", default="dev", help="目标分支（默认 dev——项目主线约定，2026-08-15 前误默认 main，#ARCH-WORKTREE-WRITE-INTEGRITY-001 P1-2② 修正）")
+    p_merge.add_argument(
+        "--to",
+        default="dev",
+        help="目标分支（默认 dev——项目主线约定，2026-08-15 前误默认 main，#ARCH-WORKTREE-WRITE-INTEGRITY-001 P1-2② 修正）",
+    )
     p_merge.add_argument("--squash", action="store_true", help="squash merge")
     p_merge.add_argument("--yes", action="store_true", help="跳过确认")
     p_merge.set_defaults(func=cmd_merge)

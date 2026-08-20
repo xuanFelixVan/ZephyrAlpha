@@ -16,6 +16,7 @@
 真源：docs/01_policies_and_standards/rules/trae_XXX_*.yaml
 派生：tests/fixtures/g_trae_XXX_mock.yaml
 """
+
 from __future__ import annotations
 
 import re

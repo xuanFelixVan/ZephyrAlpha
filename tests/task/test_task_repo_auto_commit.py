@@ -19,6 +19,7 @@
 3. 无 files_in_scope 时跳过
 4. git commit 失败时不影响 transition
 """
+
 from __future__ import annotations
 
 import os
@@ -52,14 +53,13 @@ class TestAutoCommitOnCompletion:
         repo = TaskRepository()
         task_obj = self._make_task("DM-TEST-001", ["/fake/path/file1.py", "/fake/path/file2.py"])
 
-        with patch("os.path.isfile", return_value=True), patch(
-            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway"
-        ) as mock_gw_cls:
+        with (
+            patch("os.path.isfile", return_value=True),
+            patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as mock_gw_cls,
+        ):
             mock_gw = mock_gw_cls.return_value
             mock_gw.claim_files.return_value = task_obj.files_in_scope
-            mock_gw.commit.return_value = MagicMock(
-                status=CommitStatus.OK, commit_hash="abc12345", message="ok"
-            )
+            mock_gw.commit.return_value = MagicMock(status=CommitStatus.OK, commit_hash="abc12345", message="ok")
 
             repo.auto_commit_on_completion("DM-TEST-001", task_obj)
 
@@ -76,9 +76,7 @@ class TestAutoCommitOnCompletion:
         repo = TaskRepository()
         task_obj = self._make_task("DM-TEST-002", [])
 
-        with patch(
-            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway"
-        ) as mock_gw_cls:
+        with patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as mock_gw_cls:
             repo.auto_commit_on_completion("DM-TEST-002", task_obj)
             mock_gw_cls.assert_not_called()
 
@@ -87,9 +85,10 @@ class TestAutoCommitOnCompletion:
         repo = TaskRepository()
         task_obj = self._make_task("DM-TEST-003", ["/nonexistent/file.py"])
 
-        with patch("os.path.isfile", return_value=False), patch(
-            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway"
-        ) as mock_gw_cls:
+        with (
+            patch("os.path.isfile", return_value=False),
+            patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as mock_gw_cls,
+        ):
             repo.auto_commit_on_completion("DM-TEST-003", task_obj)
             mock_gw_cls.assert_not_called()
 
@@ -100,9 +99,10 @@ class TestAutoCommitOnCompletion:
         repo = TaskRepository()
         task_obj = self._make_task("DM-TEST-004", ["/fake/path/file.py"])
 
-        with patch("os.path.isfile", return_value=True), patch(
-            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway"
-        ) as mock_gw_cls:
+        with (
+            patch("os.path.isfile", return_value=True),
+            patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as mock_gw_cls,
+        ):
             mock_gw = mock_gw_cls.return_value
             mock_gw.claim_files.return_value = task_obj.files_in_scope
             mock_gw.commit.return_value = MagicMock(
@@ -117,9 +117,10 @@ class TestAutoCommitOnCompletion:
         repo = TaskRepository()
         task_obj = self._make_task("DM-TEST-005", ["/fake/path/file.py"])
 
-        with patch("os.path.isfile", return_value=True), patch(
-            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway"
-        ) as mock_gw_cls:
+        with (
+            patch("os.path.isfile", return_value=True),
+            patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as mock_gw_cls,
+        ):
             mock_gw = mock_gw_cls.return_value
             mock_gw.claim_files.return_value = task_obj.files_in_scope
             mock_gw.commit.side_effect = RuntimeError("simulated gateway failure")
@@ -133,14 +134,13 @@ class TestAutoCommitOnCompletion:
         repo = TaskRepository()
         task_obj = self._make_task("DM-TEST-006", ["/fake/path/file.py"])
 
-        with patch("os.path.isfile", return_value=True), patch(
-            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway"
-        ) as mock_gw_cls:
+        with (
+            patch("os.path.isfile", return_value=True),
+            patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as mock_gw_cls,
+        ):
             mock_gw = mock_gw_cls.return_value
             mock_gw.claim_files.return_value = task_obj.files_in_scope
-            mock_gw.commit.return_value = MagicMock(
-                status=CommitStatus.OK, commit_hash="abc12345", message="ok"
-            )
+            mock_gw.commit.return_value = MagicMock(status=CommitStatus.OK, commit_hash="abc12345", message="ok")
 
             repo.auto_commit_on_completion("DM-TEST-006", task_obj)
 
@@ -159,14 +159,13 @@ class TestAutoCommitOnCompletion:
         repo = TaskRepository()
         task_obj = self._make_task("DM-TEST-007", ["/fake/path/target_file.py"])
 
-        with patch("os.path.isfile", return_value=True), patch(
-            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway"
-        ) as mock_gw_cls:
+        with (
+            patch("os.path.isfile", return_value=True),
+            patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as mock_gw_cls,
+        ):
             mock_gw = mock_gw_cls.return_value
             mock_gw.claim_files.return_value = task_obj.files_in_scope
-            mock_gw.commit.return_value = MagicMock(
-                status=CommitStatus.OK, commit_hash="abc12345", message="ok"
-            )
+            mock_gw.commit.return_value = MagicMock(status=CommitStatus.OK, commit_hash="abc12345", message="ok")
 
             repo.auto_commit_on_completion("DM-TEST-007", task_obj)
 
@@ -184,9 +183,10 @@ class TestAutoCommitOnCompletion:
         repo = TaskRepository()
         task_obj = self._make_task("DM-TEST-008", ["/fake/path/my_file.py"])
 
-        with patch("os.path.isfile", return_value=True), patch(
-            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway"
-        ) as mock_gw_cls:
+        with (
+            patch("os.path.isfile", return_value=True),
+            patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as mock_gw_cls,
+        ):
             mock_gw = mock_gw_cls.return_value
             mock_gw.claim_files.return_value = task_obj.files_in_scope
             mock_gw.commit.return_value = MagicMock(
@@ -205,10 +205,16 @@ class TestTransitionIntegration:
         """验证 transition(COMPLETED) 调用 _auto_commit_on_completion。"""
         repo = TaskRepository()
 
-        with patch.object(repo, "_auto_commit_on_completion") as mock_auto_commit, \
-             patch.object(repo, "_should_evaluate_gate", return_value=False), \
-             patch.object(repo, "get_review_status", return_value={"reviewed": True, "review_complete": True, "consecutive_zero": 2}), \
-             patch.object(repo, "_run_circular_acceptance"):
+        with (
+            patch.object(repo, "_auto_commit_on_completion") as mock_auto_commit,
+            patch.object(repo, "_should_evaluate_gate", return_value=False),
+            patch.object(
+                repo,
+                "get_review_status",
+                return_value={"reviewed": True, "review_complete": True, "consecutive_zero": 2},
+            ),
+            patch.object(repo, "_run_circular_acceptance"),
+        ):
             try:
                 repo.transition("DM-FAKE-001", "COMPLETED", note="test")
             except Exception:
