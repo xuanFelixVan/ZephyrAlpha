@@ -4791,7 +4791,71 @@ capabilities:
   - generate_target_weights
   - select
   - _score_symbol
+- capability_id: agents_cheatsheet_drift_reconciler
+  canonical_override: scripts/governance/d8_doc_sync/agents_cheatsheet_drift_reconciler.py
+  aliases:
+  - make_agents_cheatsheet_drift_reconciler
+  - GATE-AGENTS-CHEATSHEET-SYNC
+  - agents_cheatsheet_drift
+  - AGENTS.md 速查表数字漂移检测
+  - CAND-REGSYNC-001
+  description: >-
+    AGENTS.md 速查区硬编码数字漂移检测 reconciler（tracker #41/#83 裁定承接，
+    2026-08-21 P0-6①，CAND-REGSYNC-001/#ARCH-133，warn-only MVP）。post-commit 事件触发
+    （priority=250，file_ops=read 只读不写），机械校验 AGENTS.md 速查表计数（业务资产
+    18 表体系总数+18 行明细/告警阈值条数/能力计数"时点 N 条"）与真源（ROOR #ARCH-BREG-001
+    区段条目数+各条目 entry_count、capability 注册表 `- capability_id:` 行数）一致性，
+    漂移时 action=warn 逐行报告「AGENTS.md L<行号> 写 X，实测 Y（真源=<文件>），请更新」，
+    不 auto-fix——AGENTS.md 属 PROTECTED-PATHS（#83 人工回填需 Owner 审批通道），并发会话期
+    reconciler auto-commit 曾引发 TRACKED-DRIFT 风暴；fix-in-place 自动重写升级路径登记在
+    CAND-REGSYNC-001（触发=warn 档稳定 ≥2 周+Owner 批准保护区通道）。解析失败 fail-visible
+    warn"速查区格式已变，检测器需跟进"。canonical = scripts/governance/d8_doc_sync/
+    agents_cheatsheet_drift_reconciler.py（MOD-agents_cheatsheet_drift，D_GOV_DOCS，
+    [MATURITY] testing）。注册点：git_commit_gateway.py _register_default_reconcilers
+    （d8_doc_sync 插件 sys.path 动态 import+ImportError 守卫）。解决发现性：新 AI 搜
+    "AGENTS.md 速查表数字漂移/硬编码计数检测/REGSYNC" 可定位真源。解决防重建：
+    check_file_canonical() 反查。
+  integrity_anchors:
+  - make_agents_cheatsheet_drift_reconciler
+  - _parse_agents_cheatsheet
+  - _load_roor_truth
+- capability_id: commit_queue_serialization
+  canonical_override: scripts/commit_queue.py
+  aliases:
+  - commit_queue
+  - enqueue_item
+  - drain_queue
+  - try_bootstrap_drain
+  - 提交队列串行化
+  - ARCH-COMMIT-QUEUE-MVP-001
+  description: >-
+    提交队列串行化 MVP（A 段：队列协议+CLI+Serializer 自举排空+死信+compaction，
+    2026-08-21 P0-6④，#ARCH-COMMIT-QUEUE-MVP-001，66 号备忘 §6 协议真源+08 号文 §4.2
+    Phase 0）。enqueue/status/drain 三命令 CLI；快照入袋即返回（blob 内容寻址 sha256 存
+    blobs/，防多会话并发内容丢失）；入队轻检五类红队全拦 fail-closed（路径穿越/超大
+    blob/空 message/.git 路径）；单写者 Serializer（serializer.lease：O_EXCL+TTL 300s+
+    僵尸 PID 检测）纯 FIFO（qid 单调序）；入队自举排空无常驻进程，drain 崩溃下次自举
+    幂等续跑；死信附 dead_reason 不卡队；同键 (session_id,path) compaction 整体覆盖+
+    supersedes 传递累积审计链；landing callable 注入点（B 段接专用 worktree 真落盘+
+    _commit_auto flag 改道，flag 默认关，启用=Owner 窗口）。canonical =
+    scripts/commit_queue.py（MOD-GOV-046，D_GOVERNANCE，[MATURITY] testing，宪章 B-007
+    封顶）。解决发现性：新 AI 搜 "提交队列/commit queue/多会话并发提交/内容丢失"
+    可定位真源。解决防重建：check_file_canonical() 反查。
+  integrity_anchors:
+  - enqueue_item
+  - drain_queue
+  - try_bootstrap_drain
+  - queue_status
+  - SerializerLease
 creation_tokens:
+- file: scripts/commit_queue.py
+  token: auto-commit-queue-20260821
+  created_by: AI-P0-6-004
+  capability: commit_queue_serialization
+- file: .runtime/commit_queue/
+  token: auto-commit-queue-dir-20260821
+  created_by: AI-P0-6-004
+  capability: commit_queue_serialization
 - file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/56_backtest_vs_sim_reconciliation_plan.md
   token: auto-backtest-vs-sim-reconciliation-plan-20260821
   created_by: AI-P0BATCH-001
