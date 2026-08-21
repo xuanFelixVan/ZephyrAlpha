@@ -7,6 +7,7 @@ from typing import Final
 
 from zephyr.plan_engine import (
     closing_session_decision,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-003）
+    overnight_boundary_reviser,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-004）
     premarket_constraint_loader,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-002）
     tomorrow_boundary_planner,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-001）
 )
@@ -15,4 +16,5 @@ __all__: Final = [
     "tomorrow_boundary_planner",
     "premarket_constraint_loader",
     "closing_session_decision",
+    "overnight_boundary_reviser",
 ]
