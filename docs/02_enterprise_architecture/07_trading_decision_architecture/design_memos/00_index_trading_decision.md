@@ -5,7 +5,7 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.11.12"
+version: "2.11.13"
 date: 2026-08-21
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
@@ -18,7 +18,7 @@ scope: 07_trading_decision_architecture
 > 用途：用户将开启多个 AI，每个 AI 认领一个主题组 → 讨论 → 落盘 discussion/design_memo → 施工。本文档是分工的"作战地图"。
 > 关联：[30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)（多策略并发架构，已定稿 v2.5.0）｜ [10_regime_detector_spec](10_regime_detector_spec.md)（regime 完整 spec，已定稿 v1.5.1）｜ [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md)（regime 验证，已定稿 v1.5.2，C1 已通过 commit 852457e9）
 
-## 0. 现有文档总目录（51 篇·按段位编号）
+## 0. 现有文档总目录（53 篇·按段位编号）
 
 > 段位语义：**0x**=meta（规范与索引）｜**1x**=地基层（regime/数据特征）｜**2x**=Alpha 策略层｜**3x**=组合仓位与风控层｜**4x**=交易执行层｜**5x**=验证与可观测性层｜**6x**=跨切治理层｜**9x**=开放问题与远期愿景。
 > 命名规则见 §8；新旧名对照见 §10；占用登记见 §7.3。
@@ -72,6 +72,8 @@ scope: 07_trading_decision_architecture
 | [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（5 态 FSM 已落码 AI-DGR-001，MOD-GOV-045 production） | active v1.7.9 |
 | [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因 | active v1.14.0 |
 | [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.2.0（2026-08-17 AI-THD-001 存量 9 模块阈值统读完工） |
+| [56_backtest_vs_sim_reconciliation_plan.md](56_backtest_vs_sim_reconciliation_plan.md) | 回测 vs 模拟盘对账方案（P0-1②：不变量 I1-I4+三层 diff 复用+归因三分类+10 项对照清单；G1/G6 转 Owner 窗口） | active v1.0.0（2026-08-21 P0 批） |
+| [57_daily_cycle_sop.md](57_daily_cycle_sop.md) | 交易日模拟盘+收盘后回测 日循环 SOP（P0-5：六环节命令清单+开盘前 QMT 人工确认项+缺口 GAP1-5+首跑彩排记录） | active v1.0.0（2026-08-21 P0 批，首跑彩排已过） |
 | [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（31条仲裁→3条firm硬上限+任务系统总线+三档节奏） | active v1.1.0 |
 | [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.10.0 |
 | [62_business_registry_construction.md](62_business_registry_construction.md) | 18业务注册表施工（registry_of_registries） | active v1.32.0 |
@@ -865,3 +867,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-21 | 2.11.10 | 44 号 v1.1.1→v1.1.2 版本同步（§0 目录+§7.3 两处）：新增 M1-⑩ 板块分歧度与轮动速度计（消费 22 号 5 状态/虹吸态+新增电风扇速度计/个股分歧度两因子）+§9.13 算法+§9.5 降档触发补两条，FCT 清单 10→12 条 | Owner 板块分歧核查驱动："电风扇无主线→混沌中继/板块分歧→见顶/个股分歧→见顶中继"三命题规则化；实证 22 号体系已完整（sector_rotation_state/sector_siphon 已落码），真实缺口=消费接入断裂+两因子未独立 |
 | 2026-08-21 | 2.11.11 | 22 号 v1.8.0→v1.9.8 版本同步（§0 目录一处，顺带修正 v1.8.0→v1.9.7 历史漂移）：22 号 §2.4 补"电风扇速度计已升级为独立因子"跨文档登记（44 号 M1-⑩/§9.13，rotation_velocity+top3_overlap+lead_streak 无主线判定→M2 降档），22 号 §2.3/§2.4 为其设计真源锚点 | Owner 指令驱动：把"电风扇行情口径有未落成独立因子"的升级状态写入文档——44 号因子设计+22 号锚点登记双向互引闭环 |
 | 2026-08-21 | 2.11.12 | 44 号 v1.1.2→v1.2.0 版本同步（§0 目录+§7.3 两处）：Owner 四问批次——新增 M3-⑨ LLM 盘后分析（DeepSeek-V4-Flash+PIT 回填四铁律+llm_daily_analysis 新表）+§9.14+§12 附录（M4 日志体系 4 缺口/外部短板复核 5 条全有主/开源评估 15 项/Tito 提取 2 因子+MA10 gate） | Owner 四问驱动（短板复核/日志体系/开源评估/LLM 数据源+Tito）：DeepSeek 官方定价实证、TradingAgents v0.3.0 决策日志同构借鉴、optuna/Numba 候选引入 |
+| 2026-08-21 | 2.11.13 | **56/57 号补登（P0 批两件）**——§0 目录 51→53 篇：56_backtest_vs_sim_reconciliation_plan.md（P0-1② 回测 vs 模拟盘对账方案，不变量 I1-I4+三层 diff+归因三分类+对照清单，G1/G6 转 Owner 窗口）+57_daily_cycle_sop.md（P0-5 日循环 SOP，六环节命令清单+开盘前 QMT 人工确认项+缺口 GAP1-5 登记+首跑彩排记录已过），均 active v1.0.0 | P0 批施工驱动：到期前目标态（交易日模拟盘+收盘后回测对账）的两件承载文档落位 5x 验证与可观测性层 |
