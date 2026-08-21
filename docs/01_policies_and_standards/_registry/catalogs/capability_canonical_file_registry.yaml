@@ -4707,6 +4707,10 @@ capabilities:
   - _try_fit_garch
   - _simulate_fhs
 creation_tokens:
+- file: docs/_working/reviews/2026-08-21-drift-events-ssot-adjudication.md
+  token: auto-drift-events-ssot-adjudication-20260821
+  created_by: AI-NIGHT-001
+  capability: drift_events_ssot_adjudication
 - file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/00_index.md
   token: auto-ai-arch-index-fill-20260817
   created_by: AI-FILL-00

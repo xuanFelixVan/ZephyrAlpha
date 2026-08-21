@@ -487,6 +487,17 @@ def _event_to_dict(event: DriftEvent) -> dict[str, object]:
     }
 
 
+# #62 治本①：append-only 写入 SQL（§5.160.2 SQL 集中化——SQL_* 常量定义行 gate 豁免）
+# 列集与生产 governance.db drift_events 22 列 schema 对齐：event_id 不传由 AUTOINCREMENT
+# 分配（观测事件流本质=追加日志）；drift_type/detector_id 同填 detector_id（legacy 双列
+# 同值口径实测）；description 列承载 drift_dimension 语义。
+_SQL_INSERT_DRIFT_EVENT = (
+    "INSERT INTO drift_events (drift_type, detector_id, module_id, severity, state, "
+    "description, detected_at, auto_fixable, resolution_detail, created_at, updated_at) "
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+)
+
+
 def _parse_event(raw: dict[str, object]) -> DriftEvent:
     return DriftEvent(
         event_id=uuid.UUID(str(raw.get("event_id", str(uuid.uuid4())))),
@@ -520,22 +531,46 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
     try:
         conn.execute("PRAGMA journal_mode=WAL")
 
+        # #62 治本①：CREATE DDL 逐字对齐生产 governance.db drift_events（22 列 legacy
+        # schema）——旧 DDL（TEXT PK + timestamp NOT NULL）与生产（INTEGER AUTOINCREMENT PK，
+        # 无 timestamp）双重失配，是 2026-05-26 起静默零写入的结构根因；新库与生产同构
         conn.executescript("""
 
 
         CREATE TABLE IF NOT EXISTS drift_events (
 
 
-            event_id TEXT PRIMARY KEY,
+            event_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
 
-            detector_id TEXT NOT NULL,
+            drift_type TEXT NOT NULL,
+
+
+            target TEXT,
+
+
+            expected_value TEXT,
+
+
+            actual_value TEXT,
+
+
+            severity TEXT,
+
+
+            detected_at TEXT NOT NULL,
+
+
+            resolved_at TEXT,
+
+
+            resolution TEXT,
+
+
+            detector_id TEXT DEFAULT '',
 
 
             module_id TEXT DEFAULT 'MOD-INF-023',
-
-
-            severity TEXT NOT NULL,
 
 
             state TEXT DEFAULT 'DETECTED',
@@ -553,9 +588,6 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
             fix_description TEXT,
 
 
-            timestamp TEXT NOT NULL,
-
-
             scan_level TEXT DEFAULT 'STANDARD',
 
 
@@ -568,10 +600,10 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
             roi_score REAL DEFAULT 0.0,
 
 
-            created_at TEXT DEFAULT (datetime('now')),
+            created_at TEXT,
 
 
-            updated_at TEXT DEFAULT (datetime('now'))
+            updated_at TEXT
 
 
         );
@@ -586,7 +618,7 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
         CREATE INDEX IF NOT EXISTS idx_drift_severity ON drift_events(severity);
 
 
-        CREATE INDEX IF NOT EXISTS idx_drift_timestamp ON drift_events(timestamp);
+        CREATE INDEX IF NOT EXISTS idx_drift_created_at ON drift_events(created_at);
 
 
         """)
@@ -595,12 +627,14 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
 
         for event in events:
             try:
+                # #62 治本①：append-only 写入对齐生产 schema——event_id 不传由 AUTOINCREMENT
+                # 分配（uuid str 与 INTEGER PK datatype mismatch 是静默零写入第二结构根因；
+                # 观测事件流本质=追加日志，与 tamper_proof APPEND_ONLY trigger 同语义）；
+                # severity 对齐 legacy 'MEDIUM' 主流值（385/386 实测）
                 conn.execute(
-                    "INSERT OR REPLACE INTO drift_events (event_id, detector_id, module_id, severity, state, "
-                    "description, timestamp, auto_fixable, resolution_detail, created_at, updated_at) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    _SQL_INSERT_DRIFT_EVENT,
                     (
-                        str(event.event_id),
+                        event.detector_id,
                         event.detector_id,
                         event.module_id,
                         "MEDIUM",
@@ -616,10 +650,24 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
 
                 written += 1
 
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("suppressed error in drift_engine", exc_info=True)
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                # #62 治本②：fail-visible——写入失败不再静默（旧 logger.warning 逐条淹没无聚合），
+                # 异常留痕后由函数尾对账统一 error 上报
+                logger.exception(
+                    "drift_engine: drift_events 单行写入失败（event_id=%s）",
+                    getattr(event, "event_id", "?"),
+                )
 
         conn.commit()
+        # #62 治本②：写入量对账——写侧失败聚合上报（观测神经断了不能再无声）
+        if written < len(events):
+            logger.error(
+                "drift_engine: drift_events 写入对账失败——应写 %d 实写 %d（丢失 %d，db=%s）",
+                len(events),
+                written,
+                len(events) - written,
+                db_path,
+            )
     # 5.49.2 修复：异常路径确保连接归还
     finally:
         conn.close()
