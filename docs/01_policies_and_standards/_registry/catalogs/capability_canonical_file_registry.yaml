@@ -7498,6 +7498,10 @@ creation_tokens:
   token: auto-event-driven-sleeve-strategy-20260821
   created_by: AI-P0-4-001
   capability: event_driven_sleeve_strategy
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/architecture_review_2026_08_module_upgrade_audit.md
+  token: auto-architecture-review-module-upgrade-audit-20260821
+  created_by: AI-ARCH-AUDIT-001
+  capability: architecture_review_module_upgrade_audit
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
