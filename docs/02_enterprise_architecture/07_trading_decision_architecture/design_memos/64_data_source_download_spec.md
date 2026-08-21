@@ -5,7 +5,7 @@ title: 数据源与下载体系规范
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.4.2"
+version: "1.4.3"
 date: 2026-08-15
 topic: data_source_download_spec
 scope: 07_trading_decision_architecture
@@ -608,6 +608,8 @@ QMT callback 线程 ──put_nowait──→ queue.Queue ──批量出队(500
 **覆盖率实证**（2026-08-12 tasks.yaml 全量统计）：154 任务中 105 个配置了非空 fallback_sources（68.2%）；49 个无 fallback（含全部 miniqmt 分钟K线 15 个、tqcenter 4 个、tdx 板块分钟K 5 个、生猪 5 个、fred/eia/qweather 显式空列表注明无国内副源等），符合"天然无副源"设计。
 
 **死 fallback 警告**（2026-08-12 实证）：fallback_sources 中 35 处引用**无 Provider 实现的 source**（qmt/exchange/bdpan/local_valuation，create_provider 14 分支均不含）——主源失败轮到这些 fallback 会落入"未知数据源"分支返回 None 直接失败，实际不提供韧性。裁定见 §16.2 Q14（清理 28 处 + 保留 local_valuation 1 处待补实现，逐源计数真源在 Q14）。
+
+> **注记：爬虫源禁盘中关键路径（2026-08 社区避坑共识）**：akshare/baostock 类爬虫源零 SLA、盘中多线程扫全市场必封 IP，只能作离线补充（盘后/回填/兜底）；盘中关键路径故障转移链=QMT→券商自带，不挂爬虫源。
 
 ### 9.2 冗余源热切换（redundant_source/，MOD-L00-005/007，P2-8）
 
@@ -1265,3 +1267,4 @@ fallback_sources 中 35 处引用无 Provider 实现的 source（§9.1 死 fallb
 | 2026-08-13 | 1.4.0 | **定稿转 active**：§12 全部缺口/升级方向 + §16 全部开放问题逐项裁定收敛（35 项全覆盖） | AI-DSD-001 定稿会话逐项裁定：①§16 重写为三表结构——§16.1 待人拍板费用项 2 项（Q1 iFind 续费默认建议暂不续费/Q4 L2 开通默认建议暂不开通，费用支出最终拍板权在用户）；§16.2 裁定施工 14 项（Q18 internal 接线修复 P0/Q8 data parts 监控 P1/Q17 per-source 自动熔断器 P1/Q5 北向快照 P1/Q6 冷归档 P2/Q16 fetch_perf 被动记录 P2/Q14 死 fallback 清理 28 处/Q13 SPECIAL-DAYS 补登记 ARCH 条目等，登记 CAND 候选库或转施工队列）；§16.3 裁定暂缓/维持/不做 19 项（Q2 EDB 拼凑不做维持 accepted/Q3 低频事件暂缓/Q11 调度动态化暂缓/Q19 tushare 积分评估/Q20-Q26 等，均附理由+重评条件）；②§12 各小节"待裁定" checkbox 全部回填裁定结论+指向 §16 真源（防内容漂移）；③§15 待裁定表与 §16.3 合并同源；④§14.2 演进路径更新为 v1.4.0 施工清单（短期 Q18/Q8/Q17/Q14/Q13，中期 Q5/Q6/Q16，长期费用项+暂缓项）；⑤frontmatter status draft→active、version 1.3.1→1.4.0，ARCH-SPECIAL-DAYS 注记更新为"已裁定补登记"；⑥裁定原则：费用项不越权（待人拍板+默认建议）、技术项按证据裁定（项目约束：MVP/风险优先/避免过度工程/先测量后优化）、暂缓项全部带重评条件（非永久禁止） |
 | 2026-08-14 | 1.4.1 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001） | AI-DOCS-001 文档压缩：折叠调研过程叙述与重复解释（§3 ASCII 总览图压为紧凑管线描述、选型对比只留结论、重复 why 去重、§4.3 影响范围/§7.5 表全景/§10.4 实测/§11.5 测试清单压为紧凑单行、§10.5 部署块与 §10.12 去重、§10.6 验证明细表压为一行、§12.12.2 处置选项讨论并入裁定），35 项裁定（Q1-Q26）与 §16 三表逐条完整保留，15 源/154 任务/15 时段清单、费用裁定、落库/韧性规则、#ARCH/BM 锚点与跨文档链接全部保留；章节标题与编号一字未动 |
 | 2026-08-15 | 1.4.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08） | ① §17.5 #ARCH-BOOT-001 重复行合并为一条（含 §10.6 + §10.11 双指针）；② §9.1 死 fallback 逐源计数去重（真源=§16.2 Q14）；③ §12.12.2 同项计数去重留指针；④ §1 状态 cell 精简（保留 35 项裁定 2/14/19 口径）；35 项裁定 Q1-Q26 与 §16 三表逐条零丢失，数据源/调度/落库规则/#ARCH/BM 锚点/跨文档链接零丢失；章节标题与编号一字未动 |
+| 2026-08-22 | 1.4.3 | §9.1 补注记：爬虫源禁盘中关键路径 | 92 号清单波 1（ALG-06）文档注记——akshare/baostock 类爬虫源零 SLA、盘中多线程扫全市场必封 IP，只能作离线补充（盘后/回填/兜底）；盘中关键路径故障转移链=QMT→券商自带，不挂爬虫源。akshare_provider/baostock_provider 模块 docstring 同款注记同步 |
