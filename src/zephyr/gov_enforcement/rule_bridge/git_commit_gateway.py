@@ -1066,6 +1066,21 @@ class GitCommitGateway:
         except ImportError as e:
             logger.warning("algo_flow_translation_reconciler not registered: %s", e)
 
+        # 注册 AGENTS.md 速查区硬编码数字漂移检测 reconciler（MOD-agents_cheatsheet_drift，tracker #41/#83 裁定承接，2026-08-21 P0-6①，CAND-REGSYNC-001/#ARCH-133）
+        # 校验 AGENTS.md 速查表计数（18 表体系总数+18 行明细+告警阈值+能力计数）与 ROOR/capability 注册表真值一致
+        # 漂移时 warn 不阻断不 auto-fix（AGENTS.md 属 PROTECTED-PATHS，自动重写升级路径登记 CAND-REGSYNC-001），priority=250 晚于 ALGO-FLOW-TRANSLATION-DRIFT(240)
+        try:
+            import sys as _sys
+
+            _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
+            if _doc_sync_dir not in _sys.path:
+                _sys.path.insert(0, _doc_sync_dir)
+            from agents_cheatsheet_drift_reconciler import make_agents_cheatsheet_drift_reconciler  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+
+            self._reconciliation_registry.register(make_agents_cheatsheet_drift_reconciler(self.project_root))
+        except ImportError as e:
+            logger.warning("agents_cheatsheet_drift_reconciler not registered: %s", e)
+
     # ------------------------------------------------------------------
     # 公开 API
     # ------------------------------------------------------------------
