@@ -76,15 +76,17 @@ python -c "import sys;sys.path.insert(0,'src');from zephyr.pf_core.strategy_engi
 
 ## 5. ⑤ 对账 diff（56 号文口径）
 
-G3-G7 未施工期的**过渡上限**（彩排实证可走通）：
+**G3-G7 已施工（2026-08-21，#ARCH-135）——当前可执行形态**：
 
 ```powershell
-# L1 空对账冒烟（引擎接线验证）：
-python -c "import sys;sys.path.insert(0,'src');from zephyr.trading.settlement_reconciliation import SettlementReconciler;print(SettlementReconciler().reconcile(system_fills=[],broker_records=[],settlement_date='<YYYY-MM-DD>').matched)"
-# L2 持仓 diff：回测 trade_log 重放持仓 vs broker.get_positions() 逐标的比对（QMT 在线时）
+# 当日全流程（QMT 在线+当日回测已 sink 落盘前提下）：
+python -c "import sys;sys.path.insert(0,'src');from zephyr.ex_core.adapters.miniqmt_broker import MiniQmtBroker;from zephyr.trading.recon_runner import run_daily_reconciliation;b=MiniQmtBroker(path='<QMT_SIM_PATH>',session_id='sop-recon',account_id='<QMT_SIM_ACCOUNT>');b.connect();r=run_daily_reconciliation(trade_date='<YYYY-MM-DD>',run_id='<当日回测 run_id>',broker=b);print(r.to_dict())"
+# 差异自动落 governance.db reconciliation_differences；C 类（拒单/缺失）清单在 result.c_class_items——当日告警+tracker 登记
 ```
 
-- 归因三分类（A 滑点/B 部分成交/C 拒单缺失）与 10 项对照清单见 56 号文 §3/§6——费用差不判定（G1 费率口径待 Owner 裁定，tracker #233）。
+- 归因三分类（A 滑点/B 部分成交/C 拒单缺失）与 10 项对照清单见 56 号文 §3/§6——费用差仅参考列不判定（#233 已统一费率口径，万0.854/万5/万0.1）。
+- 配对键口径={symbol}|{seq:03d}（broker_settlement_adapter 真源）；实盘拆单错位由 C4 笔数差 ≤5% 兜底。
+- L3 PnL 级当前为期初空仓假设代理口径——滚动持仓场景的期初快照数据源是窗口项（§7 GAP 表外追加项）。
 - 当日无成交时无法区分 C 类拒单 vs 推送缺漏（56 号文 R2），只登记不判定。
 
 ## 6. ⑥ 异常登记（当日闭环）
@@ -93,13 +95,15 @@ python -c "import sys;sys.path.insert(0,'src');from zephyr.trading.settlement_re
 
 ## 7. 缺口登记（施工排期，非本 SOP 阻塞项）
 
-| # | 缺口 | 出处/登记 |
+| # | 缺口 | 状态（2026-08-21 Owner 全批后） |
 |---|---|---|
-| GAP-1 | 56 号文 G3-G7（query_stock_trades 封装/BrokerSettlementRecord 适配器/适配层 A/recon_runner） | tracker #232 |
-| GAP-2 | 盘中模拟盘常驻服务入口（LiveStrategyAdapter 未施工+TradingSession 无生产拉起件） | 架构评审 INT 族 |
-| GAP-3 | post_settlement_pipeline 未挂调度+无 CLI/注入脚本 | 架构评审 INT-02 |
-| GAP-4 | _data_inventory.py key_tables 扩 4 表（trade_calendar/stock_list/stk_limit/limit_up_down） | 本 SOP §1 |
-| GAP-5 | 向量化路径无逐笔 trade_log（56 号文 I4 在向量化引擎不满足）+引擎→sink 无现成批处理脚本 | 56 号文 §4 |
+| GAP-1 | 56 号文 G3-G7 | ✅ 已施工（#ARCH-135：query_trades_today 兜底+Fill JSONL 落盘+双适配器+recon_runner，testing 封顶） |
+| GAP-2 | 盘中模拟盘常驻服务入口 | ◐ 部分闭环：start_paper_session.py 拉起脚本已落（交易日 09:25 前手动执行）；LiveStrategyAdapter 与常驻服务化仍登记后续批 |
+| GAP-3 | post_settlement 挂调度+CLI | ◐ 部分闭环：run_post_settlement.py CLI 已落实证 exit 0；挂调度（cron 30 15 规格已备）=Owner 窗口待批 |
+| GAP-4 | _data_inventory 关键表 | ✅ 已闭环（+trade_calendar/stk_limit/limit_up_down+None 行数存量 bug 修复） |
+| GAP-5 | 向量化逐笔 trade_log+跑批脚本 | ✅ 登记 CAND-BT-003（触发=对账需向量化基准；当前 EDE 路径分工不缺口）；跑批显式串 sink 见 §4 命令 |
+| 追加 | recon_runner L3 期初持仓快照数据源 | ⏳ 登记（滚动持仓场景 L3 精确化的前置） |
+| 追加 | kline_daily/stk_limit 数据滞后 2 交易日（最新 2026-08-19） | ⏳ 周一开盘前 §1 C2 核查（GAP-4 实证发现） |
 
 ## 8. 彩排记录（验收口径：无演练记录不予通过）
 
