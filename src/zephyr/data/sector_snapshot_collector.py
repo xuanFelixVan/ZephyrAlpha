@@ -52,7 +52,15 @@ log = logging.getLogger(__name__)
 
 # ---------- 常量 ----------
 
-_TQCENTER_PATH = r"E:\tdx\PYPlugins\user"
+from zephyr.shared.security.secrets import SecretsError, get_secret_or_default, get_service_secret
+
+# 通达信插件目录走配置真源（secret_registry.yaml: TDX_PLUGIN_DIR，env_file=.env）；未配置回退默认安装路径
+try:
+    _TQCENTER_PATH = get_service_secret("TDX_PLUGIN_DIR", "tqcenter", required=False) or r"E:\tdx\PYPlugins\user"
+except SecretsError:
+    # service "tqcenter" 未登记于 secrets._SERVICE_ENV_FILES 时，降级读 os.environ（根 .env 由 zephyr/__init__.py 自动加载）
+    _TQCENTER_PATH = get_secret_or_default("TDX_PLUGIN_DIR", r"E:\tdx\PYPlugins\user")
+
 _BEIJING_TZ = timezone(timedelta(hours=8))
 
 # 表名真源：business_data_categories.yaml via table_registry（裁定 #ARCH-CH-024，

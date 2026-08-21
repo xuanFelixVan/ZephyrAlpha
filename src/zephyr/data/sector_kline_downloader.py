@@ -37,6 +37,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from zephyr.data.table_registry import get_registry
+from zephyr.shared.security.secrets import SecretsError, get_secret_or_default, get_service_secret
 
 log = logging.getLogger(__name__)
 
@@ -45,7 +46,12 @@ log = logging.getLogger(__name__)
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（TableRegistry 消费层）
 _CH_TABLE = get_registry().table("market_sector_kline_880")
 
-_TQCENTER_PATH = r"E:\tdx\PYPlugins\user"
+# 通达信插件目录走配置真源（secret_registry.yaml: TDX_PLUGIN_DIR，env_file=.env）；未配置回退默认安装路径
+try:
+    _TQCENTER_PATH = get_service_secret("TDX_PLUGIN_DIR", "tqcenter", required=False) or r"E:\tdx\PYPlugins\user"
+except SecretsError:
+    # service "tqcenter" 未登记于 secrets._SERVICE_ENV_FILES 时，降级读 os.environ（根 .env 由 zephyr/__init__.py 自动加载）
+    _TQCENTER_PATH = get_secret_or_default("TDX_PLUGIN_DIR", r"E:\tdx\PYPlugins\user")
 
 _MKT_INDEX_CODES = [f"88000{i}.SH" for i in range(1, 10)]
 

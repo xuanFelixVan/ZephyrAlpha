@@ -42,6 +42,8 @@ D_ML_TRAIN ml_platform       : ML 生命周期（训练/推理/模型注册）
 遥测 system-telemetry  : 系统可观测性
 实验 experimentation   : 自动化实验（Scout + A/B + 结论沉淀）
 
+命名消歧：本包为实验管线抽象（ExperimentPipelineBase/策略仿真/Scout 实验），非 QMT 模拟盘撮合；模拟盘链路见 ex_core/trading_session.py + data/tick_subscriber.py。
+
 架构归属
 --------
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）

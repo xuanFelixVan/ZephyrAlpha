@@ -40,6 +40,8 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Iterator
 
+from zephyr.shared.security.secrets import SecretsError, get_secret_or_default, get_service_secret
+
 from ..policy_registry import SourcePolicy
 from ..provider_base import (
     CapabilityContract,
@@ -52,7 +54,12 @@ from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)
 
-_TQCENTER_PATH = r"E:\tdx\PYPlugins\user"
+# 通达信插件目录走配置真源（secret_registry.yaml: TDX_PLUGIN_DIR，env_file=.env）；未配置回退默认安装路径
+try:
+    _TQCENTER_PATH = get_service_secret("TDX_PLUGIN_DIR", "tqcenter", required=False) or r"E:\tdx\PYPlugins\user"
+except SecretsError:
+    # service "tqcenter" 未登记于 secrets._SERVICE_ENV_FILES 时，降级读 os.environ（根 .env 由 zephyr/__init__.py 自动加载）
+    _TQCENTER_PATH = get_secret_or_default("TDX_PLUGIN_DIR", r"E:\tdx\PYPlugins\user")
 
 _TBL_KLINE_SECTOR_880 = get_registry().table("market_sector_kline_880")
 _TBL_SECTOR_CONSTITUENT = get_registry().table("market_sector_constituent_880")

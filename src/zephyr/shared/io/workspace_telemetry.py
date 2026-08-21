@@ -42,17 +42,18 @@ API
 Usage::
 
     from zephyr.shared.io.workspace_telemetry import log_workspace_op, compute_content_hash
+    from zephyr.shared.io.paths import find_repo_root
     from pathlib import Path
 
     # 计算文件内容 hash（移送/恢复前）
     ch = compute_content_hash(Path("src/foo.py"))
 
-    # 记录遥测
+    # 记录遥测（root 走 paths 真源，禁止硬编码仓根路径）
     log_workspace_op(
         op="git_restore_rollback",
         session_id="sess-xxx",
         source="self_healer._rollback",
-        root=Path("D:/ZephyrAlpha"),
+        root=find_repo_root(),
         file="src/foo.py",
         content_hash=ch,
     )

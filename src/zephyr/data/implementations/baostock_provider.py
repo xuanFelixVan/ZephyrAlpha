@@ -34,6 +34,8 @@
 - 用 threading.local() 存储每线程的登录态
 - connect() 为当前线程登录；fetch() 前确认当前线程已登录
 - disconnect() 登出当前线程
+
+注记：爬虫源零 SLA，禁入盘中关键路径，仅离线补充（盘后/回填/兜底）——64 号规范注记（64_data_source_download_spec §9.1）。
 """
 
 from __future__ import annotations

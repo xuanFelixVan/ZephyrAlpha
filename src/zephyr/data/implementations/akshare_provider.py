@@ -55,6 +55,8 @@
 - 当前能力：macro_data（GDP/CPI/PMI/货币供应量）
 - 每个指标函数作为一批 yield FetchResult，异常时 yield error 不抛出
 
+注记：爬虫源零 SLA，禁入盘中关键路径，仅离线补充（盘后/回填/兜底）——64 号规范注记（64_data_source_download_spec §9.1）。
+
 数据转换目标表 c1_market.macro_data：
     report_date, indicator_name, indicator_value, unit, frequency
 """

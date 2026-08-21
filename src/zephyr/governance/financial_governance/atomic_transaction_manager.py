@@ -82,11 +82,13 @@ Usage::
 
     from zephyr.governance.financial_governance.atomic_transaction_manager import AtomicTransactionManager
 
+    from zephyr.shared.io.paths import find_repo_root
+
     atm = AtomicTransactionManager(
 
         db_path="data/databases/governance.db",
 
-        root="D:/ZephyrAlpha",
+        root=str(find_repo_root()),
 
     )
 
