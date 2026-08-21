@@ -16,12 +16,13 @@ tier: tier_1_governance
 status: active
 version: 1.1.1
 created: '2026-07-31'
-last_updated: '2026-08-21'
+last_updated: '2026-08-22'
 # 2026-08-16: +CAND-AUTONOMYCORE-002（FHS 引擎，双轮审查深挖④裁定，AI-RFIX-001）
 # 2026-08-18: +CAND-SEC-001（Whistleblower Agent MVP，裁定 9 联动降级远期 P4，AI-ADJ-004）
 # 2026-08-20: +40 条（AI-NIGHT-001 阶段3 未来工程-大型登记批，tracker #223 承接，均不施工附触发条件）
 # 2026-08-21: +CAND-FBL-002（FLE 自卫门禁激活专项，#61 挂起转正）+CAND-GOVDRIFT-001（drift_events 容量保留，任务1 残余）（AI-RESIDUAL-001）
 # 2026-08-21: +CAND-REGSYNC-001（AGENTS.md 速查区数字动态化，tracker #41/#83 裁定承接，P0-6① warn-only MVP 已落地+fix-in-place 升级路径登记）
+# 2026-08-22: +4 条 44号全组（CAND-SIG-023 M1/新建 CAND-PLAN 族-001 M2·002 M3/CAND-RPT-005 M4，44号 §11 裁定二缓办条件达成，Owner 长城任务指令晋升即施工，92号清单派单真源）
 
 # ============================================================
 # 设计原则
@@ -7546,3 +7547,95 @@ entries:
   source: '2026-08-21 P0-5 日循环 SOP 彩排发现（57 号文 §7 GAP-5 登记转化）'
   created: '2026-08-21'
   last_updated: '2026-08-21'
+
+# --- CAND-SIG-023: 大盘情绪实时分析升级（44号 M1 全组十增量） ---
+- id: CAND-SIG-023
+  name: 大盘情绪实时分析升级（44号 M1 全组：加速度/护盘检测/量能外推/大幅回撤/破板追踪/期指基差/期权三件套/板块分歧度）
+  aliases: [情绪实时分析升级, M1 增量组, MOD-SIG-025 增量]
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: 信号层
+  problem: >-
+    MOD-SIG-025 已有 7 维快照式分析，缺：涨跌加速度/护盘失真检测/剩余走势推演/实时调度回路/
+    量能盘中预测/大幅回撤个股数/昨日破板今表现/期指基差情绪/期权情绪三件套/板块分歧度十增量
+    （44 号 §1 Owner 三问核查发现）。
+  proposal: >-
+    2026-08-22 Owner 长城任务指令晋升即施工——按 92 号施工顺序清单执行：波 3 M1 情绪增量包
+    （①②a/b⑤⑥⑦）→波 4（⑧⑨⑩）→波 5（③④数据期件带降级兜底）；FCT-sentiment 12 条随模块
+    完工走 ROOR 登记挂 CAND-FAC-003 IC 回填链。
+  status: promoted
+  priority: P1
+  source: '2026-08-21 44号 v1.2.1 §7/§11 裁定二（M1 挂 CAND-SIG 族）；2026-08-22 Owner 指令晋升'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+  promoted_to: "92号清单 波3-6.1/波4-7.1/7.3/7.4/波5-8.1/8.2（testing 封顶，B-007）"
+  last_reviewed_at: '2026-08-22'
+  last_review_outcome: "Owner 指令晋升，阶段二施工"
+
+# --- CAND-PLAN-001: 盘中次日预案边界修正（44号 M2，D_PLAN 域首条目） ---
+- id: CAND-PLAN-001
+  name: 盘中次日预案边界修正（44号 M2：boundary_revision 通道，14:00/14:45 双时点）
+  aliases: [边界修正, M2, boundary_revision]
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: 预案层
+  problem: >-
+    MOD-PLAN-001 边界盘后静态生成，盘中无动态修正通道——盘中情绪显著恶化/改善无法反映到
+    当晚边界档位（44 号 §1 核查缺口②）。不重启 BM-SEL-04 点预测（90 号 §7），走边界修正替代。
+  proposal: >-
+    2026-08-22 Owner 指令晋升——92 号清单波 5-8.3：boundary_revision_engine 新建+
+    MOD-PLAN-001/003 增量；防抖 15min/当日各 1 次冷却/仅当日有效；修正事件写 prediction_log。
+  status: promoted
+  priority: P1
+  source: '2026-08-21 44号 §7/§11 裁定二（M2 挂新建 CAND-PLAN 族）；2026-08-22 Owner 指令晋升'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+  promoted_to: "92号清单 波5-8.3（testing 封顶，B-007）"
+  last_reviewed_at: '2026-08-22'
+  last_review_outcome: "Owner 指令晋升，阶段二施工"
+
+# --- CAND-PLAN-002: 盘前综合预判升级（44号 M3 全组九增量） ---
+- id: CAND-PLAN-002
+  name: 盘前综合预判升级（44号 M3 全组：外盘四通道/新闻情绪/多情景方案/日韩/龙虎榜溢价/期指三时点/资金面四件套/事件日历/LLM 盘前分析）
+  aliases: [盘前综合预判, M3 增量组, MOD-PLAN-002 增量]
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: 预案层
+  problem: >-
+    MOD-PLAN-002 只"加载昨夜边界"无"今晨用外盘+新闻+盘后数据修正边界"环节（44 号 §1 核查
+    缺口③）；外盘映射/龙虎榜溢价/资金面/事件日历数据均已在库未消费。
+  proposal: >-
+    2026-08-22 Owner 指令晋升——92 号清单：波 3（M3-①a⑤⑦⑧+接口评估）→波 4（M3-③ 多情景
+    +竞价三细节）→波 5（M3-② 新闻情绪/M3-④ 日韩评估/M3-⑨ LLM 核心件）；M3-⑨ LLM 接线
+    留阶段三 llm_runtime_gateway 就绪后（92 号 D5 裁定）。
+  status: promoted
+  priority: P1
+  source: '2026-08-21 44号 §7/§11 裁定二（M3 挂新建 CAND-PLAN 族）；2026-08-22 Owner 指令晋升'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+  promoted_to: "92号清单 波3-6.2/6.3/6.4、波4-7.11、波5-8.4/8.5/8.6（testing 封顶，B-007）"
+  last_reviewed_at: '2026-08-22'
+  last_review_outcome: "Owner 指令晋升，阶段二施工"
+
+# --- CAND-RPT-005: 日志与实验追踪体系（44号 M4 四缺口） ---
+- id: CAND-RPT-005
+  name: 日志与实验追踪体系（44号 M4：日志总账索引/预测输出统一落库/LLM 落库/日志调参闭环）
+  aliases: [日志总账, registry_of_logs, prediction_log, M4]
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: 可观测层
+  problem: >-
+    已有 7 件日志设施但缺：①100+日志总索引（AI 进项目即可发现）②每日预测类输出统一落库
+    （每天预测了什么可回查可验证）③LLM 输出落库 ④日志→参数校准反馈闭环（44 号 §12.1）。
+  proposal: >-
+    2026-08-22 Owner 指令晋升——92 号清单：波 4-7.12（registry_of_logs 轻量登记表 warn-only
+    MVP，AGENTS.md 联动走 Owner 审批通道）+波 4-7.13（prediction_log 表+统一写入器）+
+    波 5-8.7（调参闭环触发器骨架，样本量守卫 <30 不触发）。
+  status: promoted
+  priority: P1
+  source: '2026-08-21 44号 §12.1（与 §7 三条同批缓办条件已达成）；2026-08-22 Owner 指令晋升'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+  promoted_to: "92号清单 波4-7.12/7.13、波5-8.7（testing 封顶，B-007）"
+  last_reviewed_at: '2026-08-22'
+  last_review_outcome: "Owner 指令晋升，阶段二施工"
