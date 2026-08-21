@@ -27,6 +27,10 @@
 # NEVER Unregister+Register an existing task - Unregister TERMINATES the running guard instance
 # (root cause of silent guard deaths 2026-07-22 23:30-00:48: re-registration killed guards
 # 42196/55188 mid-duty; watchdog revived them, but service needlessly bounced).
+# INT-03 (2026-08-22, 92 D3 ruling): 5th task ZephyrAlpha_TradingWatchdog is registered in
+# DISABLED state - verified no resident trading production process is running today, so an
+# enabled watchdog would auto-start a process that is not running (= production behavior
+# change). Disabled preserves one-click recovery; enabling is an Owner-window action.
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1
 # Verify: schtasks /query /tn ZephyrAlpha_DataScheduler & schtasks /query /tn ZephyrAlpha_TickSubscriber
 
@@ -93,9 +97,41 @@ foreach ($svc in $services) {
     $task | Set-ScheduledTask | Out-Null
 }
 
+# --- INT-03 trading watchdog (92 D3 ruling): register in DISABLED state ---
+# Same action/triggers/settings as the data-domain guards, so once enabled the 5min re-fire
+# + heartbeat-takeover semantics apply unchanged. Idempotent = create-if-absent ONLY: an
+# existing task is left completely untouched (never Unregister, never Set) so whatever state
+# the Owner has since chosen (including Enabled) is preserved.
+$tradingSvc = @{ TaskName = "ZephyrAlpha_TradingWatchdog"; Script = "start_trading.ps1" }
+$tradingPs1 = Join-Path $RepoRoot ("scripts\" + $tradingSvc.Script)
+if (-not (Test-Path $tradingPs1)) { throw "Guard script not found: $tradingPs1" }
+
+if (Get-ScheduledTask -TaskName $tradingSvc.TaskName -ErrorAction SilentlyContinue) {
+    Write-Host "Task already exists, left untouched (idempotent; state preserved): $($tradingSvc.TaskName)"
+} else {
+    $tradingArg = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' + $tradingPs1 + '"'
+    $tradingAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $tradingArg -WorkingDirectory $RepoRoot
+    $tradingLogonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
+    $tradingLogonTrigger.Delay = 'PT4M'
+    $tradingOnceTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date)
+    Register-ScheduledTask -TaskName $tradingSvc.TaskName -Action $tradingAction `
+        -Trigger @($tradingLogonTrigger, $tradingOnceTrigger) `
+        -Settings $settings -Principal $principal -Force | Out-Null
+    # Disable IMMEDIATELY after registration (92 D3): minimizes the enabled window so the
+    # Once-trigger can never fire the guard into starting a trading process.
+    Disable-ScheduledTask -TaskName $tradingSvc.TaskName | Out-Null
+    # Watchdog heartbeat repetition (same as other guards: every 5min, indefinitely).
+    # Get-after-Disable => the object carries Enabled=$false; Set preserves the Disabled state.
+    $tradingTask = Get-ScheduledTask -TaskName $tradingSvc.TaskName
+    foreach ($t in $tradingTask.Triggers) { $t.Repetition.Interval = "PT5M" }
+    $tradingTask | Set-ScheduledTask | Out-Null
+    Write-Host "Registered watchdog task in DISABLED state (92 D3; enable = Owner window): $($tradingSvc.TaskName) -> $($tradingSvc.Script)"
+}
+
 Write-Host ""
 Write-Host "Done. Watchdog: AtLogOn + every 5min, user=$CurrentUser, unlimited execution time."
 Write-Host "Start now:    schtasks /run /tn ZephyrAlpha_DataScheduler ; schtasks /run /tn ZephyrAlpha_TickSubscriber ; schtasks /run /tn ZephyrAlpha_CHHealthProbe"
 Write-Host "Dead-man:     schtasks /run /tn ZephyrAlpha_DeadmanSwitch (auto-fires every 5min, alerts if any heartbeat stale >10min)"
+Write-Host "Trading:      REGISTERED DISABLED (92 D3). Enable = Owner window: Enable-ScheduledTask ZephyrAlpha_TradingWatchdog ; schtasks /run /tn ZephyrAlpha_TradingWatchdog"
 Write-Host "Query status: schtasks /query /tn <TaskName> /v /fo LIST"
 Write-Host "Unregister:   Unregister-ScheduledTask -TaskName <TaskName> -Confirm:`$false"
