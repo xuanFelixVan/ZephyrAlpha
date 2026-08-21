@@ -22,20 +22,57 @@ from zephyr.gov_drift.correlation_engine import (
     CorrelationReport,
 )
 
+# P0-2⑤（2026-08-21）：夹具复刻生产 governance.db drift_events 22 列 legacy schema
+# （真源=drift_engine._write_drift_events 内 CREATE DDL，#62 治本①同构）——旧夹具为
+# drift_audit 时代 4 列 schema（scan_id/drift_dimension），与生产查询列（date(created_at)/
+# description）失配致 8 红（测试错非代码错，生产冒烟实证通过）。
+# 语义映射：scan_id 批次 → date(created_at) 天级（生产无批次列，correlation_engine L47-49
+# 同口径）；drift_dimension → description 列承载。
+_SQL_CREATE_DRIFT_EVENTS = """
+CREATE TABLE drift_events (
+    event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    drift_type TEXT NOT NULL,
+    target TEXT,
+    expected_value TEXT,
+    actual_value TEXT,
+    severity TEXT,
+    detected_at TEXT NOT NULL,
+    resolved_at TEXT,
+    resolution TEXT,
+    detector_id TEXT DEFAULT '',
+    module_id TEXT DEFAULT 'MOD-INF-023',
+    state TEXT DEFAULT 'DETECTED',
+    source_file TEXT,
+    description TEXT,
+    details TEXT,
+    fix_description TEXT,
+    scan_level TEXT DEFAULT 'STANDARD',
+    auto_fixable INTEGER DEFAULT 0,
+    resolution_detail TEXT,
+    roi_score REAL DEFAULT 0.0,
+    created_at TEXT,
+    updated_at TEXT
+)
+"""
+_SQL_INSERT_DRIFT_EVENT = (
+    "INSERT INTO drift_events (drift_type, module_id, state, description, detected_at, created_at) "
+    "VALUES (?, ?, ?, ?, ?, ?)"
+)
+
 
 @pytest.fixture
 def tmp_db(tmp_path):
     db_path = str(tmp_path / "drift_events.db")
     conn = sqlite3.connect(db_path)
-    conn.execute("CREATE TABLE drift_events (scan_id TEXT, module_id TEXT, drift_dimension TEXT, state TEXT)")
+    conn.execute(_SQL_CREATE_DRIFT_EVENTS)
     conn.executemany(
-        "INSERT INTO drift_events VALUES (?,?,?,?)",
+        _SQL_INSERT_DRIFT_EVENT,
         [
-            ("s1", "mod_a", "dim_x", "CONFIRMED"),
-            ("s1", "mod_b", "dim_x", "CONFIRMED"),
-            ("s2", "mod_a", "dim_y", "CONFIRMED"),
-            ("s2", "mod_c", "dim_y", "CONFIRMED"),
-            ("s3", "mod_b", "dim_x", "FALSE_POSITIVE"),
+            ("REGISTRY_DRIFT", "mod_a", "CONFIRMED", "dim_x", "2026-08-01T09:00:00", "2026-08-01T09:00:00"),
+            ("REGISTRY_DRIFT", "mod_b", "CONFIRMED", "dim_x", "2026-08-01T09:05:00", "2026-08-01T09:05:00"),
+            ("REGISTRY_DRIFT", "mod_a", "CONFIRMED", "dim_y", "2026-08-02T09:00:00", "2026-08-02T09:00:00"),
+            ("REGISTRY_DRIFT", "mod_c", "CONFIRMED", "dim_y", "2026-08-02T09:05:00", "2026-08-02T09:05:00"),
+            ("REGISTRY_DRIFT", "mod_b", "FALSE_POSITIVE", "dim_x", "2026-08-03T09:00:00", "2026-08-03T09:00:00"),
         ],
     )
     conn.commit()
@@ -47,7 +84,7 @@ def tmp_db(tmp_path):
 def empty_db(tmp_path):
     db_path = str(tmp_path / "empty.db")
     conn = sqlite3.connect(db_path)
-    conn.execute("CREATE TABLE drift_events (scan_id TEXT, module_id TEXT, drift_dimension TEXT, state TEXT)")
+    conn.execute(_SQL_CREATE_DRIFT_EVENTS)
     conn.commit()
     conn.close()
     return db_path
