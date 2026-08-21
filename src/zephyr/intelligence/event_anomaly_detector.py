@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] EventAnomalyError(ZA-INT-0002)——输入契约违反（长度不一致/非数值）时抛；数据退化降级不抛
+# [ERROR_CONTRACT] EventAnomalyError(ZA-INT-0006)——输入契约违反（长度不一致/非数值）时抛；数据退化降级不抛
 # [TESTS] tests/intelligence/test_event_anomaly_detector.py
 # [A_module] module_id=MOD-INT-EVENT-ANOMALY | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -61,9 +61,11 @@ _log = logging.getLogger(__name__)
 
 
 class EventAnomalyError(ZephyrBaseError):
-    """ZA-INT-0002: 异动识别输入契约违反（两序列长度不一致/非数值）。"""
+    """ZA-INT-0006: 异动识别输入契约违反（两序列长度不一致/非数值）。"""
 
-    error_code = "ZA-INT-0002"
+    # 2026-08-21 改号收口（Owner 批准）：原 ZA-INT-0002 与 sentinel_server.MCPError
+    # 重码，git 首引入裁定 canonical=先引入者（05-04），本类后引入（08-20）改号 ZA-INT-0006
+    error_code = "ZA-INT-0006"
 
 
 # ── G23 校准参数（26 号 §5 暂缓项 3——回测校准前为首版裁定常量）──

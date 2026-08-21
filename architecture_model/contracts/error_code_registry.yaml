@@ -1854,6 +1854,253 @@ error_codes:
   file: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
 # ============================================================
+# 2026-08-21 AI-RESIDUAL-001 补登批（Owner 批准，#63 测试债专项批遗留 2+3）：
+# 43 个真新增码补登 + 5 个重码改号收口（路径 A 沿 08-18 先例——后引入者改号：
+# CMP-0006→0011 manipulation_stream_driver / GV-0050→0051 ai_behavior_baseline /
+# INT-0001→0005 event_score / INT-0002→0006 event_anomaly_detector /
+# RK-0030→0068 deviation_attribution；canonical=git 先引入者）
+# ============================================================
+- code: ZA-BT-0027
+  class: E2BootstrapError
+  module: zephyr.backtest.regime_validation.e2_stationary_bootstrap
+  file: src/zephyr/backtest/regime_validation/e2_stationary_bootstrap.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-BT-0028
+  class: E3SensitivityError
+  module: zephyr.backtest.regime_validation.e3_param_sensitivity
+  file: src/zephyr/backtest/regime_validation/e3_param_sensitivity.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-BT-0029
+  class: E4CostSensitivityError
+  module: zephyr.backtest.regime_validation.e4_cost_sensitivity
+  file: src/zephyr/backtest/regime_validation/e4_cost_sensitivity.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-BT-0030
+  class: C2ProtectionError
+  module: zephyr.backtest.regime_validation.c2_extreme_event_protection
+  file: src/zephyr/backtest/regime_validation/c2_extreme_event_protection.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-BT-0031
+  class: C3AttributionError
+  module: zephyr.backtest.regime_validation.c3_throttle_attribution
+  file: src/zephyr/backtest/regime_validation/c3_throttle_attribution.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-BT-0032
+  class: C4DeflatedSharpeError
+  module: zephyr.backtest.regime_validation.c4_deflated_sharpe_runner
+  file: src/zephyr/backtest/regime_validation/c4_deflated_sharpe_runner.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-BT-0033
+  class: CPCVError
+  module: zephyr.backtest.core.cpcv
+  file: src/zephyr/backtest/core/cpcv.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-BT-0034
+  class: PurgedKFoldError
+  module: zephyr.backtest.core.purged_kfold
+  file: src/zephyr/backtest/core/purged_kfold.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-BT-0035
+  class: StrategyValidationError
+  module: zephyr.backtest.core.strategy_validation_pipeline
+  file: src/zephyr/backtest/core/strategy_validation_pipeline.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-CMP-0011
+  class: InvalidStreamEventError
+  module: zephyr.compliance.manipulation_stream_driver
+  file: src/zephyr/compliance/manipulation_stream_driver.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）'
+- code: ZA-EX-0012
+  class: InvalidExecutionReportInputError
+  module: zephyr.ex_core.execution_report
+  file: src/zephyr/ex_core/execution_report.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-EX-0013
+  class: InvalidProbeInputError
+  module: zephyr.ex_core.broker_link_probe
+  file: src/zephyr/ex_core/broker_link_probe.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-EX-0014
+  class: InvalidRejectionActionInputError
+  module: zephyr.ex_core.rejection_action_handler
+  file: src/zephyr/ex_core/rejection_action_handler.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-EX-0016
+  class: PostClosePricingError
+  module: zephyr.ex_core.post_close_pricing
+  file: src/zephyr/ex_core/post_close_pricing.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-GV-0048
+  class: RetirementWorkflowError
+  module: zephyr.governance.lifecycle_governance.retirement_workflow
+  file: src/zephyr/governance/lifecycle_governance/retirement_workflow.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-GV-0049
+  class: StrategyArchiveError
+  module: zephyr.governance.lifecycle_governance.strategy_archive
+  file: src/zephyr/governance/lifecycle_governance/strategy_archive.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-GV-0051
+  class: BehaviorBaselineError
+  module: zephyr.governance.lifecycle_governance.ai_behavior_baseline
+  file: src/zephyr/governance/lifecycle_governance/ai_behavior_baseline.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）'
+- code: ZA-INT-0004
+  class: EventFactorError
+  module: zephyr.intelligence.event_factor_matrix
+  file: src/zephyr/intelligence/event_factor_matrix.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-INT-0005
+  class: EventScoreError
+  module: zephyr.intelligence.event_score
+  file: src/zephyr/intelligence/event_score.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）'
+- code: ZA-INT-0006
+  class: EventAnomalyError
+  module: zephyr.intelligence.event_anomaly_detector
+  file: src/zephyr/intelligence/event_anomaly_detector.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）'
+- code: ZA-POS-0018
+  class: ColdStartProgressionError
+  module: zephyr.position.core.cold_start_progression
+  file: src/zephyr/position/core/cold_start_progression.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-REGIME-0031
+  class: A3CoverageError
+  module: zephyr.regime.validation.a3_transition_coverage
+  file: src/zephyr/regime/validation/a3_transition_coverage.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-REGIME-0032
+  class: A4ImportanceError
+  module: zephyr.regime.validation.a4_feature_importance
+  file: src/zephyr/regime/validation/a4_feature_importance.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-REGIME-0033
+  class: B2CRPSError
+  module: zephyr.regime.validation.b2_crps
+  file: src/zephyr/regime/validation/b2_crps.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-REGIME-0034
+  class: B3ConfidenceError
+  module: zephyr.regime.validation.b3_confidence_distribution
+  file: src/zephyr/regime/validation/b3_confidence_distribution.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-REGIME-0035
+  class: D1ConfidenceGridError
+  module: zephyr.regime.validation.d1_confidence_grid
+  file: src/zephyr/regime/validation/d1_confidence_grid.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-REGIME-0036
+  class: D3AggregationError
+  module: zephyr.regime.validation.d3_aggregation_perturbation
+  file: src/zephyr/regime/validation/d3_aggregation_perturbation.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-REGIME-0037
+  class: E1WalkForwardCVError
+  module: zephyr.regime.validation.e1_walkforward_cv
+  file: src/zephyr/regime/validation/e1_walkforward_cv.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0030
+  class: InvalidVarBreachConfigError
+  module: zephyr.risk.core.var_breach_state_machine
+  file: src/zephyr/risk/core/var_breach_state_machine.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0031
+  class: InvalidIntradayRecalcConfigError
+  module: zephyr.risk.core.var_intraday_recalc
+  file: src/zephyr/risk/core/var_intraday_recalc.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0032
+  class: InvalidBacktestStoreError
+  module: zephyr.risk.core.backtest_store
+  file: src/zephyr/risk/core/backtest_store.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0060
+  class: InvalidDrawdownStateError
+  module: zephyr.risk.core.drawdown_state_machine
+  file: src/zephyr/risk/core/drawdown_state_machine.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0061
+  class: RefuseResetError
+  module: zephyr.risk.core.drawdown_state_machine
+  file: src/zephyr/risk/core/drawdown_state_machine.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0062
+  class: InvalidSessionPersistInputError
+  module: zephyr.risk.core.drawdown_session_persistence
+  file: src/zephyr/risk/core/drawdown_session_persistence.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0063
+  class: InvalidAttributionInputError
+  module: zephyr.risk.core.drawdown_attribution
+  file: src/zephyr/risk/core/drawdown_attribution.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0064
+  class: InvalidConsecutiveLossInputError
+  module: zephyr.risk.core.drawdown_consecutive_loss
+  file: src/zephyr/risk/core/drawdown_consecutive_loss.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0065
+  class: InvalidForcedRestInputError
+  module: zephyr.risk.core.drawdown_forced_rest
+  file: src/zephyr/risk/core/drawdown_forced_rest.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0066
+  class: InvalidLiquidationGuardInputError
+  module: zephyr.risk.core.drawdown_liquidation_guard
+  file: src/zephyr/risk/core/drawdown_liquidation_guard.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0067
+  class: InvalidBankruptcyFloorInputError
+  module: zephyr.risk.core.drawdown_bankruptcy_floor
+  file: src/zephyr/risk/core/drawdown_bankruptcy_floor.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RK-0068
+  class: InvalidDeviationDecompositionError
+  module: zephyr.risk.core.deviation_attribution
+  file: src/zephyr/risk/core/deviation_attribution.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）'
+- code: ZA-RPT-0030
+  class: InvalidAttributionInputError
+  module: zephyr.reporting.attribution
+  file: src/zephyr/reporting/attribution.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RPT-0031
+  class: InvalidTemplateInputError
+  module: zephyr.reporting.review_template_engine
+  file: src/zephyr/reporting/review_template_engine.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-RPT-0032
+  class: AttributionMappingError
+  module: zephyr.reporting.attribution_registry_mapper
+  file: src/zephyr/reporting/attribution_registry_mapper.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-SELL-0010
+  class: InvalidScalingOutInputError
+  module: zephyr.sell_decision.core.scaling_out
+  file: src/zephyr/sell_decision/core/scaling_out.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-SIM-0025
+  class: LimitBoardQueueError
+  module: zephyr.simulation.limit_board_queue
+  file: src/zephyr/simulation/limit_board_queue.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-SIM-0026
+  class: DivergenceAttributionError
+  module: zephyr.simulation.divergence_attributor
+  file: src/zephyr/simulation/divergence_attributor.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-SIM-0027
+  class: VolumeAwareImpactError
+  module: zephyr.simulation.volume_aware_impact
+  file: src/zephyr/simulation/volume_aware_impact.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-TR-0021
+  class: InvalidPostSettlementInputError
+  module: zephyr.trading.post_settlement_pipeline
+  file: src/zephyr/trading/post_settlement_pipeline.py
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+# ============================================================
 # 跨定义点重码白名单（对账门禁仅豁免本段存量、硬阻断新增；白名单防腐——条目不再对应真实重码即红）
 # 2026-08-18 Owner 批准执行改号收口（#ARCH-ERRCODE-001，第八统筹施工）：9 码 10 处全部改号完成——
 #   VendorNotFoundError ZA-MKT-0001→0007 / ConnectorAlreadyRegisteredError ZA-MKT-0003→0008 /

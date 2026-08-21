@@ -947,7 +947,12 @@ def _check_n15_blueprint_path_exists(
 _N16_YAML_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
 
 # fail-open 回退值(与 trae_028.yaml v1.5.0 n16_config 保持一致;仅在YAML不可达时使用)
-_N16_TESTS_EXEMPT_NAMES_FALLBACK: frozenset[str] = frozenset({"conftest.py", "__init__.py"})
+# 2026-08-21 同步：event_bus_upgrade.py/upgrade_strategy.py 随 YAML 侧合法授权裁定
+# （e2fede99f4，[ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001]，D-D-05 re-export shim 副本）
+# 补入 fallback——Owner 批准（残余四项专项批遗留1，AI-RESIDUAL-001）
+_N16_TESTS_EXEMPT_NAMES_FALLBACK: frozenset[str] = frozenset(
+    {"conftest.py", "__init__.py", "event_bus_upgrade.py", "upgrade_strategy.py"}
+)
 _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK: frozenset[str] = frozenset(
     {
         "blueprint.md",

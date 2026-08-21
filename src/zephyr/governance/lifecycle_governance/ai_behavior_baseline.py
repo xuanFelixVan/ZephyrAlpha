@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] BehaviorBaselineError(ZA-GV-0050)
+# [ERROR_CONTRACT] BehaviorBaselineError(ZA-GV-0051)
 # [TESTS] tests/governance/lifecycle/test_ai_behavior_baseline.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -51,7 +51,10 @@ _EPS: Final[float] = 1e-12
 class BehaviorBaselineError(ZephyrBaseError):
     """行为基线输入非法（样本不足 / 数值非法）。"""
 
-    error_code = "ZA-GV-0050"
+    # 2026-08-21 改号收口（Owner 批准）：原 ZA-GV-0050 与 commit_gate_registry.
+    # GateRegistrationError 重码，git 首引入裁定 canonical=先引入者（06-30），
+    # 本类后引入（08-20）改号 ZA-GV-0051
+    error_code = "ZA-GV-0051"
 
 
 @dataclass(frozen=True)

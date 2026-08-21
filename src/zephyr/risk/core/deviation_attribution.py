@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidDeviationDecompositionError(ZA-RK-0030)
+# [ERROR_CONTRACT] InvalidDeviationDecompositionError(ZA-RK-0068)
 # [TESTS] tests/risk/core/test_deviation_attribution.py
 # [TTL] permanent
 # [ALGO_FLOW]
@@ -56,7 +56,10 @@ _SUM_TOLERANCE: Final[float] = 1e-9
 class InvalidDeviationDecompositionError(ZephyrBaseError):
     """偏离分解输入非法——非有限数值/权重对畸形等。"""
 
-    error_code = "ZA-RK-0030"
+    # 2026-08-21 改号收口（Owner 批准）：原 ZA-RK-0030 与 var_breach_state_machine.
+    # InvalidVarBreachConfigError 重码，git 首引入裁定 canonical=先引入者（08-20 06:50），
+    # 本类后引入（08-20 08:38）改号 ZA-RK-0068
+    error_code = "ZA-RK-0068"
 
 
 def _require_finite(name: str, value: float) -> float:

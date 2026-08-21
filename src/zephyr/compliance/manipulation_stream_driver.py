@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidStreamEventError(ZA-CMP-0006)
+# [ERROR_CONTRACT] InvalidStreamEventError(ZA-CMP-0011)
 # [TESTS] tests/compliance/test_manipulation_stream_driver.py
 # [TTL] permanent
 # [ALGO_FLOW]
@@ -58,7 +58,10 @@ _logger = logging.getLogger(__name__)
 class InvalidStreamEventError(ZephyrBaseError):
     """实时流事件非法——空 symbol/order_id、时间倒挂等。"""
 
-    error_code = "ZA-CMP-0006"
+    # 2026-08-21 改号收口（Owner 批准，残余专项批遗留3）：原 ZA-CMP-0006 与
+    # compliance_report_registry.ComplianceReportError 重码，git 首引入裁定 canonical=
+    # 先引入者（08-15），本类后引入（08-20）改号 ZA-CMP-0011
+    error_code = "ZA-CMP-0011"
 
 
 class ManipulationStreamDriver:
