@@ -76,3 +76,8 @@ flags:
     tier_6_advanced: true
     blind_test_mode: false
     constitution_auto_approve: false
+
+  commit_queue_serializer:
+    enabled: false
+    description: "提交队列串行化改道开关（66 号 §7 / 08 号文 §4.2 步骤 5）：ON 时 reconciler auto-commit（_commit_auto）改道 commit_queue 入队，dev 单写者不变量生效；默认 enabled:false=ALWAYS_OFF（安全默认）。启用属 Owner 窗口（宪章 B-007 production 行为变更）；启用后以 scripts/governance/commit_queue_landing.assert_single_writer_dev_history 机械验证 dev 单写者"
+    implementation_status: "gated_mvp"
