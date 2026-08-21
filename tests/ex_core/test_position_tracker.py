@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-049 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """PositionTracker (MOD-EX-002 / D-EX-CORE-04) 单元测试。
 
 覆盖: 买入/卖出持仓更新、平均成本计算、现金跟踪、PositionSnapshot产出、
