@@ -549,15 +549,15 @@ tiers:
       # 施工总案：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md
       # P0 回测必需三件套（universe/benchmark/cost_model）2026-08-10 完成；
       # P1-A 被测对象（factor 111/strategy 59）+ P1-B 交易风控 7 表（risk_limit 62/technical_indicator 40/chart_pattern 15/execution_algo 6/data_asset 166）全部落盘（Step1-8 全量闭环，2026-08-13-14）；
-      # P2 元数据层（field_dictionary 257/experiment 5）2026-08-13 完成。18 个业务注册表全部建成并登记 ROOR（total 979 条，2026-08-14——867 条基线含 chart_pattern 并发扩至 254 +47，新增 model 8/event 12/macro 15/portfolio 8 + data_asset 补登 DS-081~102 22 条）。
+      # P2 元数据层（field_dictionary 257/experiment 5）2026-08-13 完成。18 个业务注册表全部建成并登记 ROOR（total 1268 条实测 2026-08-20——29 号 546 条入库+90 号组批后全量复核：factor 140/strategy 146/risk_limit 111/data_asset 206/chart_pattern 256/field_dictionary 259 等，AGENTS.md 速查表同口径）。
       - registry_id: REG-UNI-001
         name: 股票池登记表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 5
+        entry_count: 6
         status: active
-        description: 股票池/标的池唯一真源（SSoT）——打板连板梯队池/全A可交易池/CSI300/CSI800/事件驱动池 5 条。回测必需输入：每次回测 MUST 指定 universe_id。#ARCH-BREG-001 P0
+        description: 股票池/标的池唯一真源（SSoT）——打板连板梯队池/全A可交易池/CSI300/CSI800/事件驱动池等 6 条（2026-08-20 实测）。回测必需输入：每次回测 MUST 指定 universe_id。#ARCH-BREG-001 P0
         owned_by: governance
 
       - registry_id: REG-BMK-001
@@ -565,9 +565,9 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 4
+        entry_count: 8
         status: active
-        description: 交易基准唯一真源（SSoT）——沪深300/中证500/中证全指/绝对收益零基准 4 条。回测必需输入：每次回测 MUST 指定 benchmark_id 计算超额收益。#ARCH-BREG-001 P0
+        description: 交易基准唯一真源（SSoT）——沪深300/中证500/中证全指/中证1000/中证2000/万得全A/绝对收益零基准等 8 条（2026-08-20 实测）。回测必需输入：每次回测 MUST 指定 benchmark_id 计算超额收益。#ARCH-BREG-001 P0
         owned_by: governance
 
       - registry_id: REG-CST-001
@@ -575,9 +575,9 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 3
+        entry_count: 5
         status: active
-        description: 交易成本模型唯一真源（SSoT）——A股标准（万3佣金/万5印花税/万0.1过户费/1bp滑点）/保守/零成本 3 条。回测必需输入：MUST 指定 cost_model_id 扣成本。#ARCH-BREG-001 P0
+        description: 交易成本模型唯一真源（SSoT）——A股标准（万3佣金/万5印花税/万0.1过户费/1bp滑点）/保守/零成本/T0 等 5 条（2026-08-20 实测）。回测必需输入：MUST 指定 cost_model_id 扣成本。#ARCH-BREG-001 P0
         owned_by: governance
 
       - registry_id: REG-FCT-001
@@ -585,9 +585,9 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 111
+        entry_count: 140
         status: draft
-        description: 交易因子唯一真源（SSoT）——10 类（Barra 6 + A股特色 4）111 条已落盘。P1-A Step1-8 全量闭环（交叉引用校验/半派生补全/一致性审计/循环审查 2026-08-13 完成，条目性能字段运行时可空）。#ARCH-BREG-001 P1-A
+        description: 交易因子唯一真源（SSoT）——7 类 140 条已落盘（2026-08-20 实测，29 号 546 条入库主因漂移）。P1-A Step1-8 全量闭环（交叉引用校验/半派生补全/一致性审计/循环审查 2026-08-13 完成，条目性能字段运行时可空）。#ARCH-BREG-001 P1-A
         owned_by: governance
 
       - registry_id: REG-STR-001
@@ -595,9 +595,9 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 59
+        entry_count: 146
         status: draft
-        description: 交易策略唯一真源（SSoT）——6 类（daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation）59 条已落盘。P1-A Step1-8 全量闭环（code_path 半派生补全完成）。#ARCH-BREG-001 P1-A
+        description: 交易策略唯一真源（SSoT）——5 类 146 条已落盘（2026-08-20 实测）。P1-A Step1-8 全量闭环（code_path 半派生补全完成）。#ARCH-BREG-001 P1-A
         owned_by: governance
 
       - registry_id: REG-RLM-001
@@ -605,9 +605,9 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 62
+        entry_count: 111
         status: draft
-        description: 交易风控限额唯一真源（SSoT）——9 类（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk）62 条已落盘（P1-B Step1-8 全量闭环 + K4 var/es/kill_switch 补登 20 条）。#ARCH-BREG-001 P1-B
+        description: 交易风控限额唯一真源（SSoT）——9 类（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk）111 条已落盘（2026-08-20 实测；P1-B Step1-8 全量闭环 + K4 var/es/kill_switch 补登 20 条 + 90 号组批扩编）。#ARCH-BREG-001 P1-B
         owned_by: governance
 
       - registry_id: REG-TECHNICAL-INDICATOR-001
@@ -625,7 +625,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 254
+        entry_count: 256
         status: active
         description: 图形形态唯一真源（SSoT）——8 大类 254 条。v2.13.0（2026-08-14 十四轮全网 SOTA 调研驱动）：candlestick 77（TA-Lib 61 全集+A股特色7+Nison镊子2+塔形2+Crabel NR7+关键反转日/WRB/Oops+酒田三空）/chart_pattern 62（经典全集对账完成+缺口四型+Wolfe浪/Quasimodo/VCP/Ross/Lindsay/O'Neil高紧旗/Brooks H2L2+A股游资10+A股技术派2+DeMark TD2）/trendline 12（通道+Gann角度/九方图/摆动图+速度阻力线）/support_resistance 9（+Murrey/Camarilla）/fibonacci 17（工具6+谐波11）/chanlun 15/elliott_wave 8/structure 54（Wyckoff+SMC+MatrixProfile+VSA7+分时盘口9+订单流2+ORB/供需区/ICT PO3/冰山单/幌骗层叠+DL 套件13 锚点 YOLOv8/Swin-T/ViT-MAE/多模态LLM/Kronos/Mamba/扩散/Chart-RVR/多尺度VLM/AC-Seq2Net/ElliottAgents/wave-alpha/GAF-CNN）。#ARCH-BREG-001 P1-B
         owned_by: governance
@@ -635,7 +635,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 6
+        entry_count: 7
         status: active
         description: 执行算法唯一真源（SSoT）——TWAP/VWAP/ICEBERG/POV/IS/ALT 6 种拆单/撮合算法（对齐 40 号 §2.3 实际代码实现）。含监管合规 8 字段（程序化交易 15 笔/秒+撤单率 15%+50µs 停留+盘后时段+广域网时延地板）与 A 股微观结构 3 字段（价格笼子/T+1/涨跌停不可成交）。编号 EXA-{NAME}-{NNN}。#ARCH-BREG-001 P1-B
         owned_by: governance
@@ -645,7 +645,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 199
+        entry_count: 206
         status: active
         description: 数据资产唯一真源（SSoT）——三实体模型（sources/datasets/jobs，对标 OpenLineage Source/Dataset/Job）。sources 15 个外部/内部数据源 + datasets 102 条 + jobs 82 条（DS-001~102/JOB-001~082 稳定编号；2026-08-14 v1.2.0 对标聚宽 JQData/quant666 补登 22 数据集+6 管道：市场约束/基本面/公司行动事件/资金面/中国宏观/申万行业）。S6 裁定改名扩展自 dataflow_graph_registry.yaml（registry_id/module_id 保留，稳定标识符不断）。#ARCH-BREG-001 P1-B
         owned_by: governance
@@ -655,7 +655,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml
         format: yaml
         maintenance: manual
-        entry_count: 257
+        entry_count: 259
         status: active
         description: 数据字段唯一真源（SSoT）——16 域（MKT/MFLOW/EXP/RISK/FCT/MACRO/SENT/ORD/PORT/EXEC/IND/SIG/PERF/POS/ML/FILL）257 条，登记字段的 type/unit/source/复权口径/PIT 性质/质量规则。真源反查自 cross_layer_contracts.yaml 18 个业务契约（146 字段）+ factor_registry inputs（111 声明字段）。source_system FK → data_asset_registry（SRC-QMT-001/SRC-AKSHARE-001/SRC-INTERNAL-001 已回填）。#ARCH-BREG-001 P2
         owned_by: governance
@@ -675,7 +675,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 15
+        entry_count: 16
         status: active
         description: 龙虎榜席位唯一真源（SSoT）——15 席位（机构/游资/量化/北向/散户）身份分类+操盘风格+历史胜率+席位溢价，六维分析框架。与 chart_pattern_registry 正交：本表管"谁在买"（结构化披露数据），图形形态表管"怎么买"（价格形态）。前提数据 DS-080 lhb_detail + JOB-076 已登记。消费模块=CAND-SEAT-001。#ARCH-BREG-001 扩展（2026-08-14）
         owned_by: governance
@@ -685,7 +685,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/regime_cycle_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 12
+        entry_count: 13
         status: active
         description: 周期分析唯一真源（SSoT）——12 条（Gann 时间周期6+周年日/价格周期2/几何周期2/统计周期2）。与 regime（市场状态）和 emotion_cycle 五阶段（sleeve 内择时）正交：本表管"时间窗口"（何时可能变盘）。无新增数据前提（日线 DS-002 已有）。消费模块=CAND-CYCLE-001。#ARCH-BREG-001 扩展（2026-08-14）
         owned_by: governance
@@ -705,7 +705,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/event_calendar_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 12
+        entry_count: 14
         status: active
         description: 事件类型唯一真源（SSoT）——12 类（财报披露/业绩预告/业绩快报/分红送转/限售解禁/停复牌/股东增减持/回购/定增/指数调整/宏观发布/股东大会），全量 PIT 规则（announce_time vs effective_date）。与 regime_cycle_registry 正交：周期表管规则性时间窗口，本表管离散事件。事件数据=DS-091~097/JOB-079。event_driven 策略前提。#ARCH-BREG-001 扩展（2026-08-14）
         owned_by: governance
@@ -715,7 +715,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/macro_indicator_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 15
+        entry_count: 16
         status: active
         description: 宏观指标唯一真源（SSoT）——15 条（中国 CPI/PPI/PMI/GDP/社融/M2/LPR/MLF/十债/汇率/进出口 + 美国 FOMC/十债/非农/VIX），含发布机构/频率/PIT 滞后/修订政策/市场影响方向。与 field_dictionary 正交：字段字典管字段口径，本表管指标发布纪律与市场语义。数据=DS-101 中国宏观/SRC-FRED-001 美国 22 序列。#ARCH-BREG-001 扩展（2026-08-14）
         owned_by: governance
@@ -725,7 +725,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/portfolio_model_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 8
+        entry_count: 11
         status: active
         description: 组合构建模型唯一真源（SSoT）——8 条（等权/打分加权/均值方差/Black-Litterman/风险平价/最小方差/HRP/Barra 因子模型）。与 execution_algo（怎么交易）和 risk_limit（不能超过什么）正交：本表管"买多少"（权重分配）。MVP 纪律：优化模型 OOS 跑不赢 1/N 不得晋升（DeMiguel 2009）。承载 CAND-PFALLOC-001~003。#ARCH-BREG-001 扩展（2026-08-14）
       - registry_id: REG-FEATURE-ADJ-001
