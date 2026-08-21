@@ -4860,6 +4860,10 @@ creation_tokens:
   token: auto-recon-runner-20260821
   created_by: AI-P0-G3567
   capability: backtest_vs_sim_reconciliation
+- file: scripts/run_post_settlement_daily.ps1
+  token: auto-run-post-settlement-daily-ps1-20260822
+  created_by: AI-P0BATCH-001
+  capability: daily_cycle_sop
 - file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/57_daily_cycle_sop.md
   token: auto-daily-cycle-sop-20260821
   created_by: AI-P0BATCH-001
