@@ -376,7 +376,7 @@ global_stats:
     74域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
     b_track 13横切基础设施模块（从 layers/b_*.yaml 物理文件派生）。
     结构化数据从depgraph + 物理蓝图文件派生，禁止硬编码会变化的数字。
-  last_updated: '2026-08-21'
+  last_updated: '2026-08-22'
 
 query_hints:
 - question: 系统有哪些域？
