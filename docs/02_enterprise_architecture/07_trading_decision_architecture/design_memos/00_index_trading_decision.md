@@ -5,7 +5,7 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.11.11"
+version: "2.11.12"
 date: 2026-08-21
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
@@ -65,7 +65,7 @@ scope: 07_trading_decision_architecture
 | [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec（含明日预案双层架构+上游四轨裁定） | active v1.7.0 |
 | [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec（MVP 已施工：Triage/止损/止盈/执行编排 4 模块） | active v1.7.1 |
 | [43_compliance_discipline.md](43_compliance_discipline.md) | G30 合规与交易纪律体系（四项必做/四项严禁/信息合规/硬边界裁定/交易合规检测，D_COMPLIANCE 域设计真源） | active v1.1.0（2026-08-15 施工落地 AI-COMP-001 + 运行时装配 AI-ASM-001） |
-| [44_premarket_intraday_decision_upgrade.md](44_premarket_intraday_decision_upgrade.md) | 盘前与盘中决策支持升级（M1 情绪实时分析 10 增量/M2 盘中次日预案边界修正/M3 盘前综合预判 8 增量，28+41+90 号升级备忘；§9 施工算法十三件；§11 五项裁定 Owner 已批准；CAND 登记因并发纪律缓办） | active v1.1.2（2026-08-21 五项裁定全批+华泰范式+A50 交割+板块分歧计，施工按分期排 P0 之后） |
+| [44_premarket_intraday_decision_upgrade.md](44_premarket_intraday_decision_upgrade.md) | 盘前与盘中决策支持升级（M1 情绪实时分析 10 增量/M2 盘中次日预案边界修正/M3 盘前综合预判 9 增量含 LLM 盘后分析，28+41+90 号升级备忘；§9 施工算法十四件；§11 五项裁定 Owner 已批准；§12 附录 M4 日志体系+短板复核+开源评估+Tito 提取；CAND 登记因并发纪律缓办） | active v1.2.0（2026-08-21 五项裁定全批+Owner 四问批次，施工按分期排 P0 之后） |
 | [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | draft v1.0.2 |
 | [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active v1.2.6 |
 | [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.0（2026-08-12 重建） |
@@ -675,7 +675,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 61_lifecycle_multi_ai | G28 生命周期多AI | ✅ 已定稿 | active v2.10.0 |
 | 19_northbound_hold_snapshot | 北向季度快照 fetcher（数据地基层子项） | 待施工 | draft v0.1.0 |
 | 64_data_source_download_spec | G29 数据源与下载体系（跨切治理层·6x 段位） | ✅ 已定稿 | active v1.4.0 |
-| 44_premarket_intraday_decision_upgrade | 盘前与盘中决策支持升级（28/41/90 号升级备忘，4x 交易流层） | ✅ Owner 五项裁定全批（2026-08-21） | active v1.1.2 |
+| 44_premarket_intraday_decision_upgrade | 盘前与盘中决策支持升级（28/41/90 号升级备忘，4x 交易流层） | ✅ Owner 五项裁定全批（2026-08-21） | active v1.2.0 |
 
 ## 8. 产出物命名规范
 
@@ -864,3 +864,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-21 | 2.11.9 | 44 号 v1.1.0→v1.1.1 版本同步（§0 目录+§7.3 两处）：§9.12 补 A50 期货交割日规则（每月倒数第 2 个工作日，新交所，交割前夜外资调仓→次日跳空；敏感度升半档+A50 通道权重上调 0.45），§6 事件日历行更正（写入任务未注册=P0-4② 挂账，A50 交割为第 13 类 event_type 候选） | Owner 指令驱动：特殊交易日盘点核查（17 号台账实证 calendar_event_refresh 未注册），A50 交割日 17 号 §2.4 已登记待评估且与 44 号 A50 通道直接联动 |
 | 2026-08-21 | 2.11.10 | 44 号 v1.1.1→v1.1.2 版本同步（§0 目录+§7.3 两处）：新增 M1-⑩ 板块分歧度与轮动速度计（消费 22 号 5 状态/虹吸态+新增电风扇速度计/个股分歧度两因子）+§9.13 算法+§9.5 降档触发补两条，FCT 清单 10→12 条 | Owner 板块分歧核查驱动："电风扇无主线→混沌中继/板块分歧→见顶/个股分歧→见顶中继"三命题规则化；实证 22 号体系已完整（sector_rotation_state/sector_siphon 已落码），真实缺口=消费接入断裂+两因子未独立 |
 | 2026-08-21 | 2.11.11 | 22 号 v1.8.0→v1.9.8 版本同步（§0 目录一处，顺带修正 v1.8.0→v1.9.7 历史漂移）：22 号 §2.4 补"电风扇速度计已升级为独立因子"跨文档登记（44 号 M1-⑩/§9.13，rotation_velocity+top3_overlap+lead_streak 无主线判定→M2 降档），22 号 §2.3/§2.4 为其设计真源锚点 | Owner 指令驱动：把"电风扇行情口径有未落成独立因子"的升级状态写入文档——44 号因子设计+22 号锚点登记双向互引闭环 |
+| 2026-08-21 | 2.11.12 | 44 号 v1.1.2→v1.2.0 版本同步（§0 目录+§7.3 两处）：Owner 四问批次——新增 M3-⑨ LLM 盘后分析（DeepSeek-V4-Flash+PIT 回填四铁律+llm_daily_analysis 新表）+§9.14+§12 附录（M4 日志体系 4 缺口/外部短板复核 5 条全有主/开源评估 15 项/Tito 提取 2 因子+MA10 gate） | Owner 四问驱动（短板复核/日志体系/开源评估/LLM 数据源+Tito）：DeepSeek 官方定价实证、TradingAgents v0.3.0 决策日志同构借鉴、optuna/Numba 候选引入 |
