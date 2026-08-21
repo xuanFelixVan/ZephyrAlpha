@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] EventScoreError(ZA-INT-0005)——symbol 非法/输入契约违反时抛；数据缺失走降级路径不抛
+# [ERROR_CONTRACT] EventScoreError(ZA-IT-0005)——symbol 非法/输入契约违反时抛；数据缺失走降级路径不抛
 # [TESTS] tests/intelligence/test_event_score.py
 # [A_module] module_id=MOD-INT-EVENT-SCORE | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -83,11 +83,12 @@ _log = logging.getLogger(__name__)
 
 
 class EventScoreError(ZephyrBaseError):
-    """ZA-INT-0005: 事件评分输入契约违反（symbol 非法/字段缺失）。"""
+    """ZA-IT-0005: 事件评分输入契约违反（symbol 非法/字段缺失）。"""
 
-    # 2026-08-21 改号收口（Owner 批准）：原 ZA-INT-0001 与 sentinel_server.MCPError
-    # 重码，git 首引入裁定 canonical=先引入者（05-04），本类后引入（08-20）改号 ZA-INT-0005
-    error_code = "ZA-INT-0005"
+    # 2026-08-21 定稿（Owner 批准两步收口）：原 ZA-INT-0001 与 sentinel_server.MCPError
+    # 重码→改号 ZA-INT-0005（git 首引入裁定 canonical=先引入者）；同日 INT→IT 前缀
+    # 语义迁移定稿 ZA-IT-0005（注册表 IT=D_INTELLIGENCE 为本模块域；零消费方实证）
+    error_code = "ZA-IT-0005"
 
 
 # ── 26 号 §2.5 常量（首版裁定值）──

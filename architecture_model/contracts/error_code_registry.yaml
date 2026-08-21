@@ -1945,21 +1945,21 @@ error_codes:
   module: zephyr.governance.lifecycle_governance.ai_behavior_baseline
   file: src/zephyr/governance/lifecycle_governance/ai_behavior_baseline.py
   introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）'
-- code: ZA-INT-0004
+- code: ZA-IT-0004
   class: EventFactorError
   module: zephyr.intelligence.event_factor_matrix
   file: src/zephyr/intelligence/event_factor_matrix.py
-  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
-- code: ZA-INT-0005
+  introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）；同日 INT→IT 前缀语义迁移定稿（原 ZA-INT-0004，Owner 批准——IT=D_INTELLIGENCE 为本模块域，零消费方实证）'
+- code: ZA-IT-0005
   class: EventScoreError
   module: zephyr.intelligence.event_score
   file: src/zephyr/intelligence/event_score.py
-  introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）'
-- code: ZA-INT-0006
+  introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）；同日 INT→IT 前缀语义迁移定稿（原 ZA-INT-0005，Owner 批准，零消费方实证）'
+- code: ZA-IT-0006
   class: EventAnomalyError
   module: zephyr.intelligence.event_anomaly_detector
   file: src/zephyr/intelligence/event_anomaly_detector.py
-  introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）'
+  introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）；同日 INT→IT 前缀语义迁移定稿（原 ZA-INT-0006，Owner 批准，零消费方实证）'
 - code: ZA-POS-0018
   class: ColdStartProgressionError
   module: zephyr.position.core.cold_start_progression

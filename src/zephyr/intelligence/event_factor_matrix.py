@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] EventFactorError(ZA-INT-0004)——输入契约违反（序列长度不一致/窗口非法）时抛
+# [ERROR_CONTRACT] EventFactorError(ZA-IT-0004)——输入契约违反（序列长度不一致/窗口非法）时抛
 # [TESTS] tests/intelligence/test_event_factor_matrix.py
 # [A_module] module_id=MOD-INT-EVENT-FACTOR | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -61,9 +61,12 @@ except Exception:  # noqa: BLE001  # pragma: no cover
 
 
 class EventFactorError(ZephyrBaseError):
-    """ZA-INT-0004: 六因子数值项输入契约违反。"""
+    """ZA-IT-0004: 六因子数值项输入契约违反。"""
 
-    error_code = "ZA-INT-0004"
+    # 2026-08-21 前缀语义迁移（Owner 批准）：原 ZA-INT-0004（08-20 生逢夜班批目测取号，
+    # 未涉重码）同日 INT→IT 迁移定稿——注册表 IT=D_INTELLIGENCE 为本模块域，
+    # INT=D_INFRASTRUCTURE；零消费方实证，迁移无事故面
+    error_code = "ZA-IT-0004"
 
 
 # ── 参数常量（G23/G10 待校准，26 号 §2.4 登记）──
