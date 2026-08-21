@@ -21,6 +21,7 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import FrozenInstanceError
 
 import pytest
@@ -35,6 +36,7 @@ from zephyr.backtest.services.param_analyzer import (
     ParamRun,
     ParamSensitivity,
     StabilityAssessment,
+    select_plateau_param,
 )
 
 # ============== 辅助函数 ==============
@@ -363,3 +365,122 @@ class TestIntegration:
         ]
         report = analyzer.analyze(runs)
         assert report.best_run.objective == pytest.approx(-0.2)
+
+
+# ============== 稳定区优选 (ALG-02 / 92号清单§5.2 / B-009互锁) ==============
+
+
+def make_plateau_runs() -> list[ParamRun]:
+    """平台面: 一片 SR≈1.8 平台中含一个 SR=2.0 孤点。"""
+    return [
+        ParamRun(params={"p": 10}, objective=1.80),
+        ParamRun(params={"p": 11}, objective=1.82),
+        ParamRun(params={"p": 12}, objective=1.79),
+        ParamRun(params={"p": 13}, objective=1.81),
+        ParamRun(params={"p": 14}, objective=2.00),  # 孤峰点
+    ]
+
+
+def make_cliff_runs() -> list[ParamRun]:
+    """悬崖面: 单点尖峰 SR=2.0, 周围全 0.5。"""
+    return [
+        ParamRun(params={"p": 10}, objective=0.5),
+        ParamRun(params={"p": 11}, objective=2.0),  # 尖峰
+        ParamRun(params={"p": 12}, objective=0.5),
+        ParamRun(params={"p": 13}, objective=0.5),
+    ]
+
+
+class TestSelectPlateauParam:
+    def test_plateau_surface_selects_median_not_peak(self):
+        """平台面: Ω={全部} (0.9·2.0=1.8), 中位代表点落在平台, 弃 2.0 孤点。"""
+        selected = select_plateau_param(make_plateau_runs())
+        assert selected.objective == pytest.approx(1.81)
+        assert selected.params["p"] == 13
+
+    def test_cliff_surface_falls_back_to_peak(self, caplog):
+        """悬崖面: 无平台可选, 诚实回退孤点并记悬崖 warning (对齐 decision_gate 悬崖语义)。"""
+        with caplog.at_level(logging.WARNING):
+            selected = select_plateau_param(make_cliff_runs())
+        assert selected.objective == pytest.approx(2.0)
+        assert selected.params["p"] == 11
+        assert any("悬崖" in r.message for r in caplog.records)
+
+    def test_empty_raises(self):
+        with pytest.raises(ParamAnalysisError):
+            select_plateau_param([])
+
+    def test_invalid_sr_ratio(self):
+        with pytest.raises(ParamAnalysisError):
+            select_plateau_param(make_plateau_runs(), sr_ratio=0)
+        with pytest.raises(ParamAnalysisError):
+            select_plateau_param(make_plateau_runs(), sr_ratio=1.5)
+
+    def test_negative_objectives_fallback_argmax(self):
+        """objective_opt ≤ 0: 比率语义失效, 回退单点 argmax。"""
+        runs = [
+            ParamRun(params={"p": 1}, objective=-0.5),
+            ParamRun(params={"p": 2}, objective=-0.2),
+            ParamRun(params={"p": 3}, objective=-0.8),
+        ]
+        selected = select_plateau_param(runs)
+        assert selected.objective == pytest.approx(-0.2)
+        assert selected.params["p"] == 2
+
+    def test_custom_sr_ratio_tight(self):
+        """收紧比率到 0.95: Ω 只剩孤点 (1.82 < 0.95·2.0), 回退孤点。"""
+        selected = select_plateau_param(make_plateau_runs(), sr_ratio=0.95)
+        assert selected.objective == pytest.approx(2.0)
+
+    def test_even_stable_set_picks_lower_median(self):
+        """|Ω| 偶数: 取下中位数 (偏保守)。"""
+        runs = [
+            ParamRun(params={"p": 1}, objective=1.80),
+            ParamRun(params={"p": 2}, objective=1.85),
+            ParamRun(params={"p": 3}, objective=1.90),
+            ParamRun(params={"p": 4}, objective=2.00),
+            ParamRun(params={"p": 5}, objective=0.40),
+        ]
+        # Ω = {1.80, 1.85, 1.90, 2.00} (0.9·2.0=1.8), |Ω|=4, 下中位 → 1.85
+        selected = select_plateau_param(runs)
+        assert selected.objective == pytest.approx(1.85)
+
+
+class TestPlateauSelectionSwitch:
+    def test_switch_off_default_unchanged(self):
+        """开关关 (默认): 单点 argmax, 行为与现状一致——选 2.0 孤点。"""
+        analyzer = ParameterAnalyzer()
+        report = analyzer.analyze(make_plateau_runs())
+        assert report.best_run.objective == pytest.approx(2.0)
+        assert report.best_run.params["p"] == 14
+
+    def test_switch_on_selects_plateau(self):
+        """开关开: 弃孤峰选平台代表点。"""
+        analyzer = ParameterAnalyzer(ParamAnalysisConfig(plateau_selection_enabled=True))
+        report = analyzer.analyze(make_plateau_runs())
+        assert report.best_run.objective == pytest.approx(1.81)
+        assert report.best_run.params["p"] == 13
+
+    def test_switch_on_cliff_surface_keeps_peak(self):
+        """开关开+悬崖面: 无稳定区可选, 诚实回退尖峰 (不造虚假平台)。"""
+        analyzer = ParameterAnalyzer(ParamAnalysisConfig(plateau_selection_enabled=True))
+        report = analyzer.analyze(make_cliff_runs())
+        assert report.best_run.objective == pytest.approx(2.0)
+        assert report.best_run.params["p"] == 11
+
+    def test_switch_on_single_run(self):
+        """开关开+单条记录: 正常返回该记录。"""
+        analyzer = ParameterAnalyzer(ParamAnalysisConfig(plateau_selection_enabled=True))
+        report = analyzer.analyze([ParamRun(params={"p": 1}, objective=1.0)])
+        assert report.best_run.objective == 1.0
+
+    def test_config_defaults(self):
+        cfg = ParamAnalysisConfig()
+        assert cfg.plateau_selection_enabled is False
+        assert cfg.plateau_sr_ratio == 0.9
+
+    def test_config_invalid_sr_ratio(self):
+        with pytest.raises(ParamAnalysisError):
+            ParamAnalysisConfig(plateau_sr_ratio=0)
+        with pytest.raises(ParamAnalysisError):
+            ParamAnalysisConfig(plateau_sr_ratio=1.2)
