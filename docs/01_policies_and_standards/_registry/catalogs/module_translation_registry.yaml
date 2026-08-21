@@ -24474,6 +24474,13 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理的提交消息校验：按既定规则核对提交消息，不合规就拦住或报出来，防止治理出问题。
+- module_path: scripts/governance/commit_queue_landing.py
+  domain_id: D_GOVERNANCE
+  name_zh: 提交队列落盘执行体
+  name_en: Commit Queue Landing
+  desc_zh: 提交队列 B 段真落盘（#ARCH-COMMIT-QUEUE-MVP-001）：专用 git worktree 内把队列快照落成真实文件，经 GitCommitGateway 全门禁链提交并 CAS 推进 dev；is-ancestor/标记 grep 幂等防双落；base_head 逐文件快进冲突判定进死信；_commit_auto flag 门控改道目标（fail-safe 降级直提）；单写者不变量机械断言工具。
+  desc_en: 'Commit queue segment-B real landing: dedicated git worktree + GitCommitGateway full gate chain + CAS dev advance; idempotent via is-ancestor/marker grep; base_head conflict to dead letter; _commit_auto flag-gated reroute target (fail-safe fallback); single-writer assertion tool.'
+  plain_zh: 提交队列的"真正落盘工人"：大家把要提交的文件快照先投进队列，它一个人在专用工作区里排队逐个过安检门（门禁链）写到 dev 分支上。同一个包裹重复投递不会重复落盘（认得自己盖过的邮戳）；如果发现自己投件期间别人改过同一个文件，就把包裹退回给人处理而不是硬覆盖。还有个开关（默认关）决定自动提交是否改走这条队列通道，开关归 Owner 审批。
 - module_path: src/zephyr/gov_drift/_scanners.py
   domain_id: D_SECURITY
   name_zh: 扫描器

@@ -4856,6 +4856,10 @@ creation_tokens:
   token: auto-commit-queue-dir-20260821
   created_by: AI-P0-6-004
   capability: commit_queue_serialization
+- file: scripts/governance/commit_queue_landing.py
+  token: auto-commit-queue-landing-20260821
+  created_by: AI-P0-6-005
+  capability: commit_queue_serialization
 - file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/56_backtest_vs_sim_reconciliation_plan.md
   token: auto-backtest-vs-sim-reconciliation-plan-20260821
   created_by: AI-P0BATCH-001
