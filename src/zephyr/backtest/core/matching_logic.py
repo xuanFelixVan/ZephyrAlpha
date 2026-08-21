@@ -90,7 +90,7 @@ class MatchingConfig:
         slippage_bps: 滑点(bps, 1bp=0.01%，维持 1bps 假设不变)
         stamp_tax_rate: 印花税率(卖出单边 万5=0.0005，2023-08 起现行法定)
         transfer_fee_rate: 过户费率(双向 万0.1=0.00001，沪深现行法定)
-        min_commission: 最低佣金(5元；免五待 Owner 确认，暂保留 5 元下限)
+        min_commission: 最低佣金(5元；不免五——Owner 2026-08-22 确认实盘万0.854 不免五，保留 5 元下限)
         lot_size: 最小交易单位(A股100股)
         price_limit_pct: 涨跌停板限制(10%=0.10, ST股5%=0.05)
     """
@@ -99,7 +99,7 @@ class MatchingConfig:
     slippage_bps: Decimal = Decimal("1")
     stamp_tax_rate: Decimal = Decimal("0.0005")  # 万5，卖出单边（2023-08 起法定）
     transfer_fee_rate: Decimal = Decimal("0.00001")  # 万0.1，双向（沪深现行法定）
-    min_commission: Decimal = Decimal("5")  # 免五待 Owner 确认，暂保留 5 元下限
+    min_commission: Decimal = Decimal("5")  # 不免五（Owner 2026-08-22 确认），保留 5 元下限
     lot_size: int = 100
     price_limit_pct: Decimal = Decimal("0.10")
 
