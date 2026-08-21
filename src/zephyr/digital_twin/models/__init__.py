@@ -18,6 +18,7 @@
 # digital_twin/models
 
 """
+[DORMANT] 未启用占位模板，勿当实现引用；2026-08-22 STR-01 标注，架构审查报告 §3.2
 
 # [ALGO_FLOW]
 # 层: 输入

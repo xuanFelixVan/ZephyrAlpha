@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-DATA_SEC | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# [DORMANT] 未启用占位模板，勿当实现引用；2026-08-22 STR-01 标注，架构审查报告 §3.2
 
 # data_sec/models
 

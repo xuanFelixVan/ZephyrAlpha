@@ -1,5 +1,6 @@
 # [TTL] permanent
 """
+[DORMANT] 未启用占位模板，勿当实现引用；2026-08-22 STR-01 标注，架构审查报告 §3.2
 
 MOD-L09-001 Research Innovation Core.
 
