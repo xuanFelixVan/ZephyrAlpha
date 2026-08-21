@@ -71,6 +71,10 @@ def main() -> None:
     empty_tables = []
     for db, tbl, eng, rows, gb in tables:
         full = f"{db}.{tbl}"
+        # 存量 bug 修复（2026-08-21 GAP-4 验证时实证）：View/特定引擎的 total_rows/
+        # total_bytes 可为 None，直接进 f-string 格式化必炸 TypeError——None 归零处理
+        rows = rows or 0
+        gb = gb or 0.0
         status = "空表" if rows == 0 else "OK"
         if rows == 0:
             empty_tables.append(full)
@@ -92,6 +96,12 @@ def main() -> None:
         ("c1_market", "tick_data", "trade_date"),
         ("c1_market", "kline_5min", "trade_date"),
         ("c1_market", "kline_daily_hfq", "trade_date"),
+        # GAP-4（2026-08-21，57 号 SOP §1 开盘前检查口径）：日循环关键表补入盘点。
+        # 列名实证：trade_calendar 日期列=cal_date；stock_list 为维度表无日期列
+        # （新鲜度=行数，不在本段），stk_limit/limit_up_down=trade_date。
+        ("c1_market", "trade_calendar", "cal_date"),
+        ("c1_market", "stk_limit", "trade_date"),
+        ("c1_market", "limit_up_down", "trade_date"),
         ("c3_fundamental", "income_statement", "report_period"),
         ("c3_fundamental", "news_data", "publish_time"),
     ]
