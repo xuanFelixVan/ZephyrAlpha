@@ -122,7 +122,7 @@ from __future__ import annotations
 import logging
 import threading
 from collections.abc import Callable
-from datetime import datetime
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any, Final, Optional
 
@@ -635,6 +635,87 @@ class MiniQmtBroker(BrokerInterface):
                 market_values=market_values,
                 total_market_value=total_mv,
             )
+
+    def query_trades_today(self, trade_date: str | None = None) -> list[Fill]:
+        """盘后同步查询成交回报（56号文 G3 兜底封装），转成 Fill 契约列表。
+
+        用途：on_stock_trade 推送在断线重连窗口可能漏单（56号文 R2），盘后对账
+        前 MUST 用本方法兜底补齐后才得判 C 类（拒单/缺失）。
+
+        40 号戒律（40_execution_broker §决策① 工程约束1）：严禁在 on_stock_trade
+        等 XtQuant 回调内调用本方法——回调内调同步查询会死锁。仅限回调外/盘后
+        场景（如 G7 recon_runner 日终对账）。
+
+        Args:
+            trade_date: 交易日 "YYYY-MM-DD"，None=今日（本地时区，QMT 为本地
+                Windows 终端）。xtquant 返回账户当日成交，本方法按交易日过滤。
+
+        Returns:
+            list[Fill]（CTR-005，按成交时间升序）：
+            - broker_fill_id = 券商成交号 traded_id（对账优先配对键）
+            - fill_id = f"qmt-{traded_id}"（全局唯一）
+            - order_id = 券商订单号 str（本地 Order 查找由调用方负责）
+            - 方向（买/卖）不入 Fill——CTR-005 契约无 side 字段；对账配对以
+              标的+时间序为业务主键（56号文 §3 口径铁律：数量与成交价为主键）
+
+        Raises:
+            MiniQmtBrokerError: 未连接 / xttrader 查询异常。
+        """
+        with self._lock:
+            if not self._connected:
+                raise MiniQmtBrokerError("未连接，请先调用 connect()", error_code=-1)
+
+            try:
+                xt_trades = self._call_xttrader_with_reconnect(
+                    lambda: self._xttrader.query_stock_trades(self._account)
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                raise MiniQmtBrokerError(f"xttrader 查询成交异常: {e}", error_code=-1) from e
+
+        if trade_date is None:
+            # 本地日期（QMT 终端与账户交易日同为本地时区口径）
+            trade_date = datetime.now().strftime("%Y-%m-%d")
+
+        fills: list[Fill] = []
+        for xt_trade in xt_trades or []:
+            traded_ts = int(getattr(xt_trade, "traded_time", 0) or 0)
+            if traded_ts <= 0:
+                # 异常记录（无成交时间）——跳过并告警，不阻断其余记录
+                _logger.warning("成交记录 traded_time 非法，跳过: %s", xt_trade)
+                continue
+            # 本地日期过滤（traded_time 为 Unix 秒；交易日=本地时区日期）
+            if datetime.fromtimestamp(traded_ts).strftime("%Y-%m-%d") != trade_date:
+                continue
+            traded_id = str(getattr(xt_trade, "traded_id", "") or "")
+            if not traded_id:
+                _logger.warning("成交记录缺 traded_id，跳过: %s", xt_trade)
+                continue
+            # commission 字段 xtquant 版本间可能缺失（模拟盘常为 0），getattr 容错
+            commission = Decimal(str(getattr(xt_trade, "commission", 0) or 0))
+            fills.append(
+                Fill(
+                    fill_id=f"qmt-{traded_id}",
+                    fill_price=Decimal(str(xt_trade.traded_price)),
+                    fill_timestamp=datetime.fromtimestamp(traded_ts, tz=UTC),
+                    filled_quantity=Decimal(str(xt_trade.traded_volume)),
+                    idempotency_key=f"qmt-trade-{traded_id}",
+                    order_id=str(getattr(xt_trade, "order_id", "") or ""),
+                    strategy_id=str(getattr(xt_trade, "strategy_name", "") or ""),
+                    symbol=str(xt_trade.stock_code),
+                    broker_fill_id=traded_id,
+                    commission=commission,
+                )
+            )
+
+        # 按成交时间升序（对账业务配对键依赖时间序，56号文 §3）
+        fills.sort(key=lambda f: f.fill_timestamp)
+        _logger.info(
+            "盘后成交查询兜底: trade_date=%s 原始=%d 过滤后=%d",
+            trade_date,
+            len(xt_trades or []),
+            len(fills),
+        )
+        return fills
 
     def register_fill_callback(self, callback: FillCallback) -> None:
         """注册成交回调（线程安全）"""

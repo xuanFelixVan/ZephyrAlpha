@@ -88,6 +88,7 @@ SSoT: depgraph MOD-EX-001
 
 from __future__ import annotations
 
+import json
 import logging
 import threading
 from collections import defaultdict
@@ -95,6 +96,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
+from pathlib import Path
 from typing import Final
 
 from zephyr.shared.contracts.enums.order_enums import OrderStatus
@@ -135,6 +137,57 @@ class OrderNotFoundError(ZephyrBaseError):
     """成交回报对应的订单不存在。"""
 
     error_code = "ZA-EX-001-03"
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Fill JSONL 落盘序列化（56号文 G3：进程退出不丢当日 Fill）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _fill_to_json_dict(fill: Fill) -> dict:
+    """Fill(CTR-005) → JSON 可序列化 dict（Decimal→str，datetime→ISO8601）。
+
+    trace_context 不落盘（可选分析上下文字段，对账链路不消费，省去嵌套序列化）。
+    """
+    return {
+        "fill_id": fill.fill_id,
+        "order_id": fill.order_id,
+        "strategy_id": fill.strategy_id,
+        "symbol": fill.symbol,
+        "fill_price": str(fill.fill_price),
+        "filled_quantity": str(fill.filled_quantity),
+        "commission": str(fill.commission),
+        "fill_timestamp": fill.fill_timestamp.isoformat(),
+        "idempotency_key": fill.idempotency_key,
+        "broker_fill_id": fill.broker_fill_id,
+        "slippage": str(fill.slippage) if fill.slippage is not None else None,
+        "schema_version": fill.schema_version,
+    }
+
+
+def _fill_from_json_dict(d: dict) -> Fill:
+    """JSON dict → Fill(CTR-005)（_fill_to_json_dict 逆变换）。"""
+    slippage = d.get("slippage")
+    return Fill(
+        fill_id=d["fill_id"],
+        order_id=d["order_id"],
+        strategy_id=d["strategy_id"],
+        symbol=d["symbol"],
+        fill_price=Decimal(d["fill_price"]),
+        filled_quantity=Decimal(d["filled_quantity"]),
+        commission=Decimal(d.get("commission", "0")),
+        fill_timestamp=datetime.fromisoformat(d["fill_timestamp"]),
+        idempotency_key=d["idempotency_key"],
+        broker_fill_id=d.get("broker_fill_id"),
+        slippage=Decimal(slippage) if slippage is not None else None,
+        schema_version=d.get("schema_version", "1.0"),
+        trace_context=None,
+    )
+
+
+def _trade_date_of(fill: Fill) -> str:
+    """成交的交易日（本地时区 YYYYMMDD，A股交易日=券商终端本地日期口径）。"""
+    return fill.fill_timestamp.astimezone().strftime("%Y%m%d")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -193,7 +246,11 @@ class FillHandler:
         remaining = handler.get_remaining(order.order_id)
     """
 
-    def __init__(self, dedup_store: AppendOnlyDedupSet | None = None) -> None:
+    def __init__(
+        self,
+        dedup_store: AppendOnlyDedupSet | None = None,
+        fills_dir: str | Path | None = None,
+    ) -> None:
         """初始化成交处理器。
 
         Args:
@@ -201,6 +258,12 @@ class FillHandler:
                 提供时幂等拦截集由 append-only 文件承载，进程重启后
                 同一 fill_id 重放仍被拦截（不再"重启即去重失效"）。
                 None=纯内存 set（既有行为）。
+            fills_dir: Fill JSONL 落盘目录（56号文 G3，与 AppendOnlyDedupSet
+                同目录风格——调用方传 "data/fills" 风格相对/绝对路径）。
+                提供时 process_fill 尾部把每笔 Fill 追加写入
+                {fills_dir}/YYYYMMDD.jsonl（按成交日本地时区分文件），
+                进程退出不丢当日 Fill（病根修复：_fills 原仅内存字典，
+                重启后当日成交明细全失）。None=不落盘（既有行为）。
         """
         self._fills: dict[str, list[Fill]] = defaultdict(list)
         self._processed_fill_ids: set[str] | AppendOnlyDedupSet = dedup_store if dedup_store is not None else set()
@@ -209,6 +272,11 @@ class FillHandler:
         # 幂等门原子化锁（AI-R3 复审 P2 治本）：纯内存 set 场景下
         # check-then-add 非原子，多线程同 fill_id 存在双入账窗口
         self._dedup_lock = threading.Lock()
+        # Fill JSONL 落盘目录（None=不落盘）与追加写锁（多线程 append 防行交错）
+        self._fills_dir: Path | None = Path(fills_dir) if fills_dir is not None else None
+        self._persist_lock = threading.Lock()
+        if self._fills_dir is not None:
+            self._fills_dir.mkdir(parents=True, exist_ok=True)
 
     # ── 核心处理 ──────────────────────────────────────────────────────────
 
@@ -365,7 +433,70 @@ class FillHandler:
                     exc_info=True,
                 )
 
+        # ── Fill JSONL 落盘（56号文 G3：进程退出不丢当日 Fill）──
+        self._persist_fill(fill)
+
         return summary
+
+    # ── Fill JSONL 落盘 / 回放（56号文 G3）─────────────────────────────────
+
+    def _persist_fill(self, fill: Fill) -> None:
+        """把 Fill 追加写入 {fills_dir}/YYYYMMDD.jsonl（append-only）。
+
+        落盘失败仅记录日志不阻断成交主流程（持久化是旁路审计链，
+        不可因磁盘异常拖垮 process_fill——与回调异常隔离同语义）。
+        """
+        if self._fills_dir is None:
+            return
+        trade_day = _trade_date_of(fill)
+        path = self._fills_dir / f"{trade_day}.jsonl"
+        line = json.dumps(
+            {"trade_date": trade_day, "fill": _fill_to_json_dict(fill)},
+            ensure_ascii=False,
+        )
+        try:
+            with self._persist_lock, open(path, "a", encoding="utf-8") as f:
+                f.write(line + "\n")
+        except OSError:
+            logger.error("Fill 落盘失败: fill_id=%s path=%s", fill.fill_id, path, exc_info=True)
+
+    def query_fills_by_date(self, trade_date: str) -> list[Fill]:
+        """按交易日回放落盘的 Fill 列表（56号文 G3 盘后查询）。
+
+        进程退出后重启，当日 Fill 仍可从 JSONL 完整回放（病根修复）。
+        行顺序=写入顺序（成交处理顺序）。
+
+        Args:
+            trade_date: 交易日，"YYYY-MM-DD" 或 "YYYYMMDD"（内部归一）。
+
+        Returns:
+            list[Fill]：该日落盘的全部成交；文件不存在返回空列表。
+
+        Raises:
+            ValueError: 未配置 fills_dir（本功能依赖落盘目录）。
+        """
+        if self._fills_dir is None:
+            raise ValueError("未配置 fills_dir，query_fills_by_date 不可用（FillHandler 初始化时传入落盘目录）")
+        day = trade_date.replace("-", "")
+        path = self._fills_dir / f"{day}.jsonl"
+        if not path.is_file():
+            return []
+        fills: list[Fill] = []
+        with self._persist_lock, open(path, "r", encoding="utf-8") as f:
+            for lineno, line in enumerate(f, start=1):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    record = json.loads(line)
+                    fills.append(_fill_from_json_dict(record["fill"]))
+                except (json.JSONDecodeError, KeyError, ValueError) as exc:
+                    # 坏行（crash 残行/schema 不兼容）跳过——与 AppendOnlyDedupSet
+                    # 末行残缺丢弃同风格：宁可少读不阻断回放
+                    logger.warning(
+                        "Fill JSONL 坏行跳过: path=%s line=%d err=%s", path, lineno, exc
+                    )
+        return fills
 
     # ── 查询 ──────────────────────────────────────────────────────────────
 
