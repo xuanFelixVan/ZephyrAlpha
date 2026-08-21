@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "648b2544d80efbcd",
+      "hash": "ea5f8bf623517b56",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,7 +46,7 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "99ee70d76a8870fa",
+      "hash": "e12538d0718965be",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "04121fe3a873b4d5",
+      "hash": "ee1a943dfb98d5d9",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -91,6 +91,6 @@
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-08-21T03:24:17.220833+00:00",
+  "registered_at": "2026-08-21T18:18:13.062283+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
