@@ -95,6 +95,14 @@ EXIT_EXCEPTIONS = frozenset(
         "oneoff/register_candidate_acquisitions.py",
         "reconcile_generators.py",
         "register_deferred_modules.py",
+        # --- 测试债清偿登记（2026-08-21，延续 #ARCH-114 裁定路径 C 机制）---
+        # [归档一次性脚本——_archive/one_off/ 冻结归档（已执行完毕），常量替换=死代码
+        #  churn，与上方 oneoff/ 豁免条目同理由]
+        "_archive/one_off/oneoff_migrate_four_question_to_design_admission.py",
+        "_archive/one_off/oneoff_purge_harvest_candidates.py",
+        "_archive/one_off/oneoff_update_four_question_text_fields.py",
+        # [dm 一次性直写脚本（已执行），naming 门已登记豁免（dm200916_write_direct.py），同理由]
+        "d5_architecture/dm200916_write_direct.py",
     }
 )
 

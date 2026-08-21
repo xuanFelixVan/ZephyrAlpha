@@ -429,7 +429,14 @@ class TestGitCommitGatewayDispatcher:
         assert call_log == ["sync"], f"expected ['sync'], got {call_log}"
 
     def test_async_mode_dispatches_to_async(self, tmp_repo, monkeypatch):
-        """默认（无 env var）调用 _run_post_commit_reconcile_async。"""
+        """默认（无 env var）调用 _run_post_commit_reconcile_async。
+
+        B1/R1 治本（2026-08-19）后契约：dispatcher 在 pytest 环境
+        （PYTEST_CURRENT_TEST 存在）下故意跳过 async spawn（防僵尸 worker），
+        需覆盖 reconcile 调度的测试应走 ZEPHYR_RECONCILE_SYNC=1 同步路径。
+        本用例验证生产分发契约本身，故显式摘除 PYTEST_CURRENT_TEST 模拟
+        非 pytest 运行环境。
+        """
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
             CommitResult,
             CommitStatus,
@@ -453,6 +460,8 @@ class TestGitCommitGatewayDispatcher:
 
         result = CommitResult(status=CommitStatus.OK, commit_hash="sha_async_test")
         monkeypatch.delenv("ZEPHYR_RECONCILE_SYNC", raising=False)
+        # 模拟非 pytest 生产运行环境（dispatcher 对 pytest 环境故意抑制 async spawn）
+        monkeypatch.delenv("PYTEST_CURRENT_TEST", raising=False)
         GitCommitGateway.run_post_commit_reconcile(
             fake_gw,
             ["d:/fake.py"],

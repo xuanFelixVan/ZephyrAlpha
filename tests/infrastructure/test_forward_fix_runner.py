@@ -73,11 +73,30 @@ class TestCanForwardFix:
 
 
 class TestGenerateFix:
+    @pytest.fixture(autouse=True)
+    def _block_real_git(self, monkeypatch):
+        """隔离真实 git 子进程：tmp_project 落在仓内 .runtime/tmp（pytest basetemp），
+        git 会从该目录上溯命中真实仓 D:\\ZephyrAlpha——generate_fix 内的
+        git add -A / git commit 将对真实仓执行并触发 pre-commit 门禁链挂起
+        （120s timeout 实证），且有污染真实工作区风险。本 fixture 模拟 git
+        失败路径（generate_fix 契约：子进程异常 → 返回 success=False 的
+        FixResult），使测试与真实 git 零接触。
+        """
+
+        def _raise(*args, **kwargs):
+            raise RuntimeError("mocked git failure")
+
+        monkeypatch.setattr(
+            "zephyr.infrastructure.rollback.forward_fix_runner.run_subprocess_hidden",
+            _raise,
+        )
+
     def test_returns_fix_result_on_git_failure(self, runner):
         result = runner.generate_fix("abc123", "test error")
         assert isinstance(result, FixResult)
         assert result.commit_sha == "abc123"
         assert result.fix_type == "forward_fix"
+        assert result.success is False
 
     def test_fix_result_has_details(self, runner):
         result = runner.generate_fix("sha", "error msg")

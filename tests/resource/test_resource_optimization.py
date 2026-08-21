@@ -63,6 +63,9 @@ class TestCircuitBreaker:
         cb.record_failure()
         assert cb.state == CircuitBreakerState.OPEN
         time.sleep(0.02)
+        # 5.91.3 契约：state getter 仅返回当前状态不做转换，OPEN→HALF_OPEN
+        # 转换仅在 allow() 内触发（见 CircuitBreaker._try_recover 注释）
+        cb.allow()
         assert cb.state == CircuitBreakerState.HALF_OPEN
 
     def test_half_open_allows_limited_calls(self):

@@ -223,6 +223,17 @@ EXCEPTIONS = frozenset(
         "reconcile_generators.py",
         "register_deferred_modules.py",
         "verify_generator_paths.py",
+        # --- 测试债清偿登记（2026-08-21，延续 #ARCH-114 裁定路径 C 机制）---
+        # [归档一次性脚本——_archive/one_off/ 冻结归档（已执行完毕），重命名=死代码
+        #  churn，与上方 #ARCH-114 oneoff/ 豁免类别同理由]
+        "oneoff_commit_audit02.py",  # _archive/one_off/
+        "oneoff_fix_generator_nonidempotent.py",  # _archive/one_off/
+        "oneoff_migrate_four_question_to_design_admission.py",  # _archive/one_off/
+        "oneoff_purge_harvest_candidates.py",  # _archive/one_off/
+        "oneoff_update_four_question_text_fields.py",  # _archive/one_off/
+        # [存量活跃 reconciler——重命名须跨域同步 manifest/registry/引用方，
+        #  与上方 d8_doc_sync 两个 *_reconciler.py 爷爷条款豁免同类别]
+        "agents_cheatsheet_drift_reconciler.py",  # d8_doc_sync/
     }
 )
 
