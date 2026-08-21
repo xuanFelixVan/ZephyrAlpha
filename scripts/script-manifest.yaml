@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-22'
-total_scripts: 711
+total_scripts: 713
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -198,6 +198,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: run_post_settlement.py
+  path: run_post_settlement.py
+  description: '----'
+  domain: run_post_settlement.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: scaffold.py
   path: scaffold.py
   description: 所有新文件 MUST 通过本脚本创建，禁止直接用 IDE Write/SearchReplace 写入新文件。
@@ -242,6 +250,14 @@ scripts:
   path: setup_git_guard_aliases.py
   description: Setup/Remove Git Aliases for Git Guard — 自动化集成入口。
   domain: setup_git_guard_aliases.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: start_paper_session.py
+  path: start_paper_session.py
+  description: '----'
+  domain: start_paper_session.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
