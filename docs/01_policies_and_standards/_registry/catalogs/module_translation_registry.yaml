@@ -52720,3 +52720,19 @@ algo_submodules:
   desc_zh: 交易主进程（python -m zephyr.trading）崩溃自愈看门狗：进程退出后 5 分钟内自动拉起，15 秒心跳落盘，僵尸守护可被接管；计划任务 Disabled 态注册（92号 D3 裁定）
   desc_en: ''
   plain_zh: 交易主进程的崩溃自愈看门狗——数据域三个常驻进程都有看门狗，唯独交易主进程没有，它一旦崩溃会静默停摆直到人工发现；当前注册为 Disabled（没有常驻交易进程在跑，enabled 会凭空拉起一个），翻开是 Owner 一键的事
+- module_path: src/zephyr/plan_engine/overnight_boundary_reviser.py
+  domain_id: D_PLAN
+  module_id: MOD-PLAN-004
+  name_zh: 盘前边界修正器
+  name_en: overnight_boundary_reviser
+  desc_zh: 盘前综合预判修正核心（44号 M3-①a⑦⑧）：外盘隔夜 gap_adj 四档修正+盘后资金面四件套确认/否决+事件日历联动（FOMC 夜敏感度升半档/期权到期阈值×0.8/交割周基差降权/A50 交割），fail-open 不阻塞主流程
+  desc_en: ''
+  plain_zh: 盘前边界修正器——昨夜生成的明日边界档位不是死的：今晨用隔夜外盘涨跌、昨日两融/主力资金/大宗交易资金面、今天是不是特殊日子（FOMC 夜/期权到期/交割周）三件套把边界收紧或放宽半档到一档；任何一路数据缺失就跳过那一路，绝不阻塞盘前加载主流程
+- module_path: src/zephyr/signal_ashare/lhb_premium_analyzer.py
+  domain_id: D_ASHARE_SIGNAL
+  module_id: MOD-SIG-057
+  name_zh: 龙虎榜盘后溢价分析器
+  name_en: lhb_premium_analyzer
+  desc_zh: 龙虎榜次日溢价预判（44号 M3-⑤）：机构+一线游资净买入>5%且≥2席→次日高开候选；独食/一日游降权×0.3；机构净卖>5%→低开风险；跌停股知名游资抄底→反核观察名单
+  desc_en: ''
+  plain_zh: 龙虎榜盘后溢价分析器——前一交易日龙虎榜里谁在买决定明天大概率高开还是低开：机构和一线游资抱团大买=高开候选，单席位独食或一日游游资要打折，机构大额卖出=低开风险，跌停股有知名游资抄底=放进反核观察名单

@@ -7661,3 +7661,28 @@ di_seam_exemptions:
   token: auto-cross-sectional-features-blueprint-20260822
   created_by: AI-P2-001
   capability: regime_cross_sectional_features
+# --- 2026-08-22 阶段二波3（92号清单 44号 Phase 1）creation_token ---
+- file: src/zephyr/plan_engine/overnight_boundary_reviser.py
+  token: auto-overnight-boundary-reviser-20260822
+  created_by: AI-P2-M3PKG
+  capability: overnight_boundary_reviser
+- file: tests/plan_engine/test_overnight_boundary_reviser.py
+  token: auto-test-overnight-boundary-reviser-20260822
+  created_by: AI-P2-M3PKG
+  capability: overnight_boundary_reviser
+- file: src/zephyr/signal_ashare/lhb_premium_analyzer.py
+  token: auto-lhb-premium-analyzer-20260822
+  created_by: AI-P2-M3LHB
+  capability: lhb_premium_analyzer
+- file: tests/signal_ashare/test_lhb_premium_analyzer.py
+  token: auto-test-lhb-premium-analyzer-20260822
+  created_by: AI-P2-M3LHB
+  capability: lhb_premium_analyzer
+- file: tests/signal_ashare/test_market_sentiment_m1_increments.py
+  token: auto-test-market-sentiment-m1-20260822
+  created_by: AI-P2-M1PKG
+  capability: market_sentiment_analyzer
+- file: docs/_working/reports/2026-08-22-foreign-interface-evaluation.md
+  token: auto-foreign-interface-evaluation-20260822
+  created_by: AI-P2-IFEVAL
+  capability: foreign_interface_evaluation

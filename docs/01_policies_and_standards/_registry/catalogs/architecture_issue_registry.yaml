@@ -18049,3 +18049,47 @@ entries:
   related_rules: '2026-08 架构审查报告 §3.2 STR-01/§9.3; 92号清单 §5.5'
   created: '2026-08-22'
   last_updated: '2026-08-22'
+# --- #ARCH-144: 盘前边界修正器落地（44号 M3-①a⑦⑧，MOD-PLAN-004） ---
+- issue_id: '#ARCH-144'
+  title: 'MOD-PLAN-004 overnight_boundary_reviser——MOD-PLAN-002 只加载不修正缺口的增量载体（外盘四档修正+资金面四件套+事件日历联动）'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：44号 §1 核查缺口③——MOD-PLAN-002 只"加载昨夜边界"，无"今晨用
+    外盘+资金面+事件日历修正边界"环节；外盘/资金面/日历数据均已在库未消费。本模块
+    把三路消费接通为边界档位修正（-1/-0.5/0/+0.5/+1），不输出方向预测（90号 §7 铁律，
+    画栏杆不算命）。纪律：fail-open（任一通道异常=该通道降级留痕不阻塞主流程）；
+    us_index symbol 空值缺陷期按最新可得序列取数并标 degraded（数据域修复项已登记）；
+    A50/中概通道预留开关默认关闭（波4 采集接线后启用）。
+  impact:
+    - 'src/zephyr/plan_engine/overnight_boundary_reviser.py（新建，MOD-PLAN-004，testing 封顶）'
+    - 'tests/plan_engine/test_overnight_boundary_reviser.py（23 用例）'
+    - 'src/zephyr/plan_engine/__init__.py（ORPHAN-MODULE 引用登记）'
+  fix_phase: '已落地（2026-08-22）：23 新用例+plan_engine 40 passed 零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §4/§9.6/§9.10/§9.12; 92号清单 §6.2; 90号 §7（不预测铁律）; CAND-PLAN-002'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-145: 龙虎榜盘后溢价分析器落地（44号 M3-⑤，MOD-SIG-057） ---
+- issue_id: '#ARCH-145'
+  title: 'MOD-SIG-057 lhb_premium_analyzer——龙虎榜席位数据已在库未消费的次日溢价预判通道'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：44号 §1 缺口④——seat 注册表+龙虎榜数据（dragon_tiger_seat
+    608k 行 2022 起）已有但无消费方；本模块落地 44号 §9.7 四规则（高开候选/独食·
+    一日游降权/低开风险/反核观察名单）。查重论证：MOD-SIG-056=单票单日形态跟随
+    （纯函数喂数），本项=全市场批量次日预判（自取数跨日历史窗），输入契约不同构
+    故独立模块。口径声明：当日成交额=龙虎榜上榜成交额（与 056 净买率口径一致，
+    全市场口径待日K接入另行裁定）；一日游动态复核设 min_samples=3 噪声护栏；
+    degraded 契约对齐 056（无数据空结果不炸）。
+  impact:
+    - 'src/zephyr/signal_ashare/lhb_premium_analyzer.py（新建，MOD-SIG-057，testing 封顶）'
+    - 'tests/signal_ashare/test_lhb_premium_analyzer.py（13 用例）'
+  fix_phase: '已落地（2026-08-22）：13 新用例+signal_ashare 623 passed 零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §9.7; 92号清单 §6.3; CAND-PLAN-002; 62号 seat 注册表'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
