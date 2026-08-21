@@ -373,6 +373,7 @@ entries:
     regime detection, degradation warning
   plain_zh: 信号合成引擎。把多个因子信号加权聚合成一个统一的合成交易信号，顺带归一化去噪、识别市场状态、检测信号退化，是信号合二为一的核心。
 - module_path: src/zephyr/alt_data/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ALT_DATA
   name_zh: 包入口
   name_en: __init__
@@ -380,6 +381,7 @@ entries:
   desc_en: ''
   plain_zh: 另类数据 包入口，整合另类数据相关子模块导出
 - module_path: src/zephyr/alt_data/_extensions/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ALT_DATA
   name_zh: 包入口
   name_en: __init__
@@ -387,6 +389,7 @@ entries:
   desc_en: ''
   plain_zh: 另类数据/扩展 包入口，整合扩展相关子模块导出
 - module_path: src/zephyr/alt_data/api/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ALT_DATA
   name_zh: 包入口
   name_en: __init__
@@ -394,6 +397,7 @@ entries:
   desc_en: ''
   plain_zh: 另类数据/接口 包入口，整合接口相关子模块导出
 - module_path: src/zephyr/alt_data/core/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ALT_DATA
   name_zh: 包入口
   name_en: __init__
@@ -401,6 +405,7 @@ entries:
   desc_en: ''
   plain_zh: 另类数据/核心 包入口，整合核心相关子模块导出
 - module_path: src/zephyr/alt_data/infrastructure/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ALT_DATA
   name_zh: 包入口
   name_en: __init__
@@ -408,6 +413,7 @@ entries:
   desc_en: ''
   plain_zh: 另类数据/基础设施 包入口，整合基础设施相关子模块导出
 - module_path: src/zephyr/alt_data/models/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ALT_DATA
   name_zh: 包入口
   name_en: __init__
@@ -415,6 +421,7 @@ entries:
   desc_en: ''
   plain_zh: 另类数据/模型 包入口，整合模型相关子模块导出
 - module_path: src/zephyr/alt_data/services/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ALT_DATA
   name_zh: 包入口
   name_en: __init__
@@ -1675,6 +1682,7 @@ entries:
   desc_en: D_COMPLIANCE Compliance
   plain_zh: 域量化架构 · D_COMPLIANCE 合规层
 - module_path: src/zephyr/cross_asset/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
@@ -1682,6 +1690,7 @@ entries:
   desc_en: ''
   plain_zh: cross_asset的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。
 - module_path: src/zephyr/cross_asset/_extensions/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
@@ -1689,6 +1698,7 @@ entries:
   desc_en: ''
   plain_zh: cross asset 扩展 包入口，整合扩展相关子模块导出
 - module_path: src/zephyr/cross_asset/api/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
@@ -1696,6 +1706,7 @@ entries:
   desc_en: ''
   plain_zh: cross asset 接口 包入口，整合接口相关子模块导出
 - module_path: src/zephyr/cross_asset/core/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
@@ -1703,6 +1714,7 @@ entries:
   desc_en: ''
   plain_zh: cross asset 核心 包入口，整合核心相关子模块导出
 - module_path: src/zephyr/cross_asset/infrastructure/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
@@ -1710,6 +1722,7 @@ entries:
   desc_en: ''
   plain_zh: cross asset 基础设施 包入口，整合基础设施相关子模块导出
 - module_path: src/zephyr/cross_asset/models/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
@@ -1717,6 +1730,7 @@ entries:
   desc_en: ''
   plain_zh: cross asset 模型 包入口，整合模型相关子模块导出
 - module_path: src/zephyr/cross_asset/services/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
@@ -2974,6 +2988,7 @@ entries:
   desc_en: ''
   plain_zh: 'tick_subscriber 单元测试（含 Phase C: WalWriter + 批量出队 + 无锁计数）。'
 - module_path: src/zephyr/data_eng/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
@@ -2981,6 +2996,7 @@ entries:
   desc_en: ''
   plain_zh: data eng 包入口，整合data eng相关子模块导出
 - module_path: src/zephyr/data_eng/_extensions/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
@@ -2988,6 +3004,7 @@ entries:
   desc_en: ''
   plain_zh: data eng 扩展 包入口，整合扩展相关子模块导出
 - module_path: src/zephyr/data_eng/api/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
@@ -2995,6 +3012,7 @@ entries:
   desc_en: ''
   plain_zh: data eng 接口 包入口，整合接口相关子模块导出
 - module_path: src/zephyr/data_eng/core/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
@@ -3002,6 +3020,7 @@ entries:
   desc_en: ''
   plain_zh: data eng 核心 包入口，整合核心相关子模块导出
 - module_path: src/zephyr/data_eng/infrastructure/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
@@ -3009,6 +3028,7 @@ entries:
   desc_en: ''
   plain_zh: data eng 基础设施 包入口，整合基础设施相关子模块导出
 - module_path: src/zephyr/data_eng/models/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
@@ -3016,6 +3036,7 @@ entries:
   desc_en: ''
   plain_zh: data eng 模型 包入口，整合模型相关子模块导出
 - module_path: src/zephyr/data_eng/services/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
@@ -3093,6 +3114,7 @@ entries:
   desc_en: ''
   plain_zh: data governance 服务 包入口，整合服务相关子模块导出
 - module_path: src/zephyr/data_security/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
@@ -3100,6 +3122,7 @@ entries:
   desc_en: ''
   plain_zh: data security 包入口，整合data security相关子模块导出
 - module_path: src/zephyr/data_security/_extensions/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
@@ -3107,6 +3130,7 @@ entries:
   desc_en: ''
   plain_zh: data security 扩展 包入口，整合扩展相关子模块导出
 - module_path: src/zephyr/data_security/api/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
@@ -3114,6 +3138,7 @@ entries:
   desc_en: ''
   plain_zh: data security 接口 包入口，整合接口相关子模块导出
 - module_path: src/zephyr/data_security/core/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
@@ -3121,6 +3146,7 @@ entries:
   desc_en: ''
   plain_zh: data security 核心 包入口，整合核心相关子模块导出
 - module_path: src/zephyr/data_security/infrastructure/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
@@ -3128,6 +3154,7 @@ entries:
   desc_en: ''
   plain_zh: data security 基础设施 包入口，整合基础设施相关子模块导出
 - module_path: src/zephyr/data_security/models/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
@@ -3135,6 +3162,7 @@ entries:
   desc_en: ''
   plain_zh: data security 模型 包入口，整合模型相关子模块导出
 - module_path: src/zephyr/data_security/services/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
@@ -3142,6 +3170,7 @@ entries:
   desc_en: ''
   plain_zh: data security 服务 包入口，整合服务相关子模块导出
 - module_path: src/zephyr/digital_twin/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
@@ -3149,6 +3178,7 @@ entries:
   desc_en: ''
   plain_zh: digital twin 包入口，整合digital twin相关子模块导出
 - module_path: src/zephyr/digital_twin/_extensions/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
@@ -3156,6 +3186,7 @@ entries:
   desc_en: ''
   plain_zh: digital twin 扩展 包入口，整合扩展相关子模块导出
 - module_path: src/zephyr/digital_twin/api/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
@@ -3163,6 +3194,7 @@ entries:
   desc_en: ''
   plain_zh: digital twin 接口 包入口，整合接口相关子模块导出
 - module_path: src/zephyr/digital_twin/core/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
@@ -3170,6 +3202,7 @@ entries:
   desc_en: ''
   plain_zh: digital twin 核心 包入口，整合核心相关子模块导出
 - module_path: src/zephyr/digital_twin/infrastructure/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
@@ -3177,6 +3210,7 @@ entries:
   desc_en: ''
   plain_zh: digital twin 基础设施 包入口，整合基础设施相关子模块导出
 - module_path: src/zephyr/digital_twin/models/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
@@ -3184,6 +3218,7 @@ entries:
   desc_en: ''
   plain_zh: digital twin 模型 包入口，整合模型相关子模块导出
 - module_path: src/zephyr/digital_twin/services/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
@@ -13086,6 +13121,7 @@ entries:
   desc_en: ''
   plain_zh: 集成的编排器发动机：把编排器的动力输出给整条链路，没它集成就跑不起来。
 - module_path: src/zephyr/ml_serve/api/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ML_SERVE
   name_zh: 包入口
   name_en: Init
@@ -13674,6 +13710,7 @@ entries:
   desc_en: ''
   plain_zh: 测试：验证背压管理器的正确性，出问题尽早发现。
 - module_path: src/zephyr/ml_serve/infrastructure/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ML_SERVE
   name_zh: 包入口
   name_en: Init
@@ -16796,6 +16833,7 @@ entries:
   desc_en: ''
   plain_zh: 基础设施·资产清单的命令行入口：直接运行它就从这里启动，负责解析参数再把活转交给主逻辑。
 - module_path: src/zephyr/ml_serve/services/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ML_SERVE
   name_zh: 包入口
   name_en: Init
@@ -21052,6 +21090,7 @@ entries:
   desc_en: ''
   plain_zh: 治理门禁·提交门禁的规则执行 pairing守卫：在关键环节把关，发现规则执行 pairing越界或违规就拦下，给治理门禁·提交门禁加一道保险。
 - module_path: src/zephyr/ml_serve/_extensions/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ML_SERVE
   name_zh: 包入口
   name_en: Init
@@ -21192,6 +21231,7 @@ entries:
   desc_en: ''
   plain_zh: 测试：验证微观结构防御的正确性，出问题尽早发现。
 - module_path: src/zephyr/ml_serve/models/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ML_SERVE
   name_zh: 包入口
   name_en: Init
@@ -24895,6 +24935,7 @@ entries:
   desc_en: ''
   plain_zh: 运维治理的coldstart管理器：统一负责coldstart的安排和收尾，运维治理别处要用都通过它，避免各管一段乱套。
 - module_path: src/zephyr/ml_serve/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ML_SERVE
   name_zh: 包入口
   name_en: Init
@@ -39266,6 +39307,7 @@ entries:
   desc_en: ''
   plain_zh: 测试：检查A2A 异常检测器在各种情况下表现对不对，守住质量关。
 - module_path: src/zephyr/ml_serve/core/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   domain_id: D_ML_SERVE
   name_zh: 包入口
   name_en: Init
@@ -47505,6 +47547,7 @@ algo_submodules:
   name_en: __all__ = []
   plain_zh: 仅声明空导出列表，占位保留 models 子包结构
 - module_path: src/zephyr/research/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: __unmanaged__src/zephyr/research/__init__.py
   node_id: A1
   name_zh: ① 研究创新核心包占位
@@ -47559,6 +47602,7 @@ algo_submodules:
   name_en: FindingAggregator
   plain_zh: 把各检测引擎的 findings 聚成统一结果（Phase A 单引擎 Echo-Guard）
 - module_path: src/zephyr/cross_asset/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-CROSS_ASSET
   node_id: A1
   name_zh: ① 规划态占位 空导出
@@ -47625,6 +47669,7 @@ algo_submodules:
   name_en: CodecRegistry/get_registry
   plain_zh: 按段文件开头的 magic number 自动选对应 codec 解码，不认识的按 TSV 兜底
 - module_path: src/zephyr/digital_twin/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-DIGITAL_TWIN
   node_id: A1
   name_zh: ① 规划态占位 空导出
@@ -50067,6 +50112,7 @@ algo_submodules:
   name_en: get/query/exists
   plain_zh: 命中更新 LRU 顺序，范围查询按日期升序返回
 - module_path: src/zephyr/ml_serve/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-ML_SERVE
   node_id: A1
   name_zh: ① 包命名空间占位初始化
@@ -52617,18 +52663,21 @@ algo_submodules:
   name_en: zephyr.runtime.__init__
   plain_zh: ZephyrAlpha 交易运行时入口层。
 - module_path: src/zephyr/alt_data/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-ALT_DATA
   node_id: A1
   name_zh: ① 模块命名空间声明
   name_en: __init__
   plain_zh: 声明 MOD-ALT_DATA 另类数据域包入口并初始化空导出列表
 - module_path: src/zephyr/data_eng/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-DATA_ENG
   node_id: A1
   name_zh: ① 模块命名空间声明
   name_en: __init__
   plain_zh: 声明 MOD-DATA_ENG 数据工程域包入口并初始化空导出列表
 - module_path: src/zephyr/data_security/__init__.py
+  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-DATA_SEC
   node_id: A1
   name_zh: ① 模块命名空间声明
@@ -52640,3 +52689,34 @@ algo_submodules:
   name_zh: ① 包命名空间初始化 空导出
   name_en: __all__空列表
   plain_zh: 包级init不聚合再导出任何符号，消费者须显式导入具体子模块
+- module_path: src/zephyr/regime/cross_sectional_features.py
+  domain_id: D_REGIME
+  module_id: MOD-REGIME-007
+  name_zh: 横截面结构特征
+  name_en: Cross-Sectional Structure Features
+  desc_zh: 4 横截面结构特征纯函数（截面收益离散度/平均成对相关/波动率离散/动量宽度），PIT 严格，分层抽样约 200 只
+  desc_en: ''
+  plain_zh: 横截面结构特征——从全市场个股横切面看市场结构：个股涨跌有多分化（离散度）、个股之间有多联动（平均相关）、波动率有多不齐（波动率离散）、上涨有多普遍（动量宽度）；补既有 6 特征只有指数时序维度的盲区
+- module_path: src/zephyr/factor/casebook/casebook.py
+  domain_id: D_FACTOR
+  module_id: MOD-L02-027
+  name_zh: 因子研究案例库
+  name_en: casebook
+  desc_zh: 因子研究案例库：沉淀因子假设+表达式+IC/ICIR/换手率统计量+结论（成功/失败/失败转修复）与失败诊断，按因子族标签检索；只存统计量不存持仓金额（B-011）
+  desc_en: ''
+  plain_zh: 因子研究案例库：把每次因子假设、表达式、IC/ICIR/换手率统计量和结论记进 SQLite，挖因子前先查库，做过的不再重复做，失败过的看诊断，省 token 并为数据期 LLM 挖因子打底
+- module_path: src/zephyr/factor/casebook/__init__.py
+  domain_id: D_FACTOR
+  module_id: MOD-L02-027
+  name_zh: 包入口
+  name_en: __init__
+  desc_zh: 因子研究案例库包入口，导出 record_case/query_similar/get_case
+  desc_en: ''
+  plain_zh: 因子研究案例库 包入口，整合案例库读写接口导出
+- module_path: scripts/start_trading.ps1
+  domain_id: D_SHARED
+  name_zh: 交易主进程看门狗
+  name_en: start_trading
+  desc_zh: 交易主进程（python -m zephyr.trading）崩溃自愈看门狗：进程退出后 5 分钟内自动拉起，15 秒心跳落盘，僵尸守护可被接管；计划任务 Disabled 态注册（92号 D3 裁定）
+  desc_en: ''
+  plain_zh: 交易主进程的崩溃自愈看门狗——数据域三个常驻进程都有看门狗，唯独交易主进程没有，它一旦崩溃会静默停摆直到人工发现；当前注册为 Disabled（没有常驻交易进程在跑，enabled 会凭空拉起一个），翻开是 Owner 一键的事

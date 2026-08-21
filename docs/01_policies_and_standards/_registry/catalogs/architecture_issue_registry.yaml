@@ -17941,3 +17941,111 @@ entries:
   related_rules: '#ARCH-ERRCODE-001; #ARCH-GATE-REGISTRY-AUTO-001; tracker #63'
   created: '2026-08-21'
   last_updated: '2026-08-21'
+# --- #ARCH-140: regime 横截面结构特征补强（ALG-01，2026-08 架构审查 §4.3，宪章生死线族） ---
+- issue_id: '#ARCH-140'
+  title: 'regime 特征集补横截面结构特征（截面收益离散度/平均成对相关/波动率离散/动量宽度）——指数时序单维度盲区治理'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2 目的必填纪律）：既有 6 特征全部由市场代理指数（沪深300）时序派生，
+    横截面结构事件（如 2024-02 微盘流动性危机：指数未崩但小盘股踩踏、离散度/相关性
+    结构剧变）在指数维度不可见，横截面结构特征是该类事件的唯一可见维度（2026-04
+    机构白皮书 84,864 组合网格实证：横截面特征是 regime 检测最强驱动）。
+    规则：R1 纯函数无 IO，PIT 铁律（T 日只用 ≤T 数据，trailing 窗禁全样本归一）；
+    R2 新特征列一律尾部追加，禁插既有 6 列（detect 消费方列序契约），进主特征集
+    必须配置开关+A/B 对照且默认关；R3 截面 NaN 纪律（缺数据剔除不填补，样本<30 输出
+    NaN，宁缺毋假）；R4 O(N²) 计算配分层确定性抽样。
+    落地：MOD-REGIME-007 cross_sectional_features.py + builder 可选开关（默认关）；
+    A/B 实证（2026-08-22，601 交易日）两臂 regime 判定高度一致（Pearson 0.9999）——
+    边际影响小，开关维持默认关仅作诊断观察。
+  impact:
+    - 'src/zephyr/regime/cross_sectional_features.py（新建，MOD-REGIME-007，testing 封顶）'
+    - 'src/zephyr/regime/regime_feature_builder.py（可选开关增量，默认关零行为变化）'
+    - 'tests/regime/test_cross_sectional_features.py（18 用例）'
+  fix_phase: '已落地（2026-08-22）：18 新用例全绿+tests/regime 577 passed 零新增红；A/B 报告 docs/_working/reviews/2026-08-22-alg01-cross-sectional-ab.md'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令（阶段二施工）'
+  related_rules: '2026-08 架构审查报告 §4.3 ALG-01; 92号清单 §5.1; 10号 regime_detector_spec; 宪章约束三（regime 生死线）'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-141: 因子研究案例库落地（ALG-03）——防 AI 重复试错、数据期 LLM 挖因子打底 ---
+- issue_id: '#ARCH-141'
+  title: '因子研究案例库（MOD-L02-027 casebook）——成功/失败转修复案例沉淀，防 AI 重复试错'
+  severity: P2中
+  category: architecture
+  adjudication: |
+    目的声明：建 SQLite 案例库沉淀因子研究假设/表达式/IC/ICIR/换手率统计量与结论
+    （success/failure/fixed）及失败诊断，AI 挖因子前先查库避免重复试错烧 token，
+    并为数据期 LLM 挖因子流程提供经验检索基座（RD-Agent CoSTEER 实证：双知识库
+    显著提升首次生成成功率）。合规边界：只存统计量不存持仓/金额（B-011）；只借鉴
+    案例库机制，不引入 RD-Agent/Qlib 框架本体（审查报告 §7 拒绝清单维持）；向量
+    检索后置不抢（D_KNOWLEDGE 域远期）。
+  impact:
+    - 'src/zephyr/factor/casebook/casebook.py + __init__.py（新建，MOD-L02-027，testing 封顶）'
+    - 'tests/factor/test_casebook.py（18 用例）'
+    - 'docs/03_modules/_domain_factor/casebook/blueprint.md（新建蓝图）'
+    - 'data/databases/factor_casebook.db（运行时产物不入 git，首次写入自建）'
+  fix_phase: '已落地（2026-08-22）：18 新用例全绿+tests/factor 652 passed 零新增红；fail-closed 校验（非法 verdict/NaN IC/空 hypothesis 拒绝）+WAL 并发写'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令；新 DB DDL 按 92号 D2 授权执行'
+  related_rules: '2026-08 架构审查报告 §4.2 ALG-03; 92号清单 §5.3; 宪章 B-011'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-142: 交易主进程看门狗（INT-03）——崩溃静默停摆风险治理 ---
+- issue_id: '#ARCH-142'
+  title: 'trading 主进程（AutoRuntimeCore）无看门狗覆盖=崩溃静默停摆风险；start_trading.ps1 落地+计划任务 Disabled 态注册'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明：数据域三常驻进程（scheduler/tick_subscriber/ch_health_probe）均有
+    OS 级看门狗，交易主进程没有——一旦崩溃静默停摆直至人工发现（可用性/风险族）。
+    施工 start_trading.ps1（同构 start_scheduler.ps1：while-true 守护+单实例锁+
+    15s 心跳+孤儿清理+防快速重启），register_guard_tasks.ps1 增第 5 任务
+    ZephyrAlpha_TradingWatchdog。裁定（92号 D3）：实证当前无常驻 trading 生产进程
+    在跑（57号 SOP §2=盘中 AI 会话手动拉起 start_paper_session.py 过渡形态），
+    enabled 注册会凭空拉起本不在跑的交易进程=生产行为变更——注册为 Disabled 态
+    保留恢复可能（RestartMiniQmt disable 先例），翻开=Owner 一键；启用时配套
+    deadman 第四路心跳（SOP 注记已写）。QMT 崩溃/掉线端到端 RTO 依赖人工重登
+    （QMT 无法自动登录实证），进程级自愈 RTO<5min 对齐宪章约束五。
+  impact:
+    - 'scripts/start_trading.ps1（新建，纯 ASCII 无 BOM 纯 LF，INJ-007 合规）'
+    - 'scripts/register_guard_tasks.ps1（+TradingWatchdog 注册块，Disabled 幂等）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/57_daily_cycle_sop.md（§2 注记）'
+  fix_phase: '已落地（2026-08-22）：PSParser 0 错误+单实例锁实证（替身二次启动 1022ms 秒退）+未真实拉起 trading 进程（生产变更禁令）；执行注册/启用=Owner 窗口'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '2026-08 架构审查报告 §2.3 INT-03; 92号清单 §5.4/D3; system_charter 约束五（RTO<5min）'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-143: 真空壳/模板包 DORMANT 标注规则（STR-01）——防空壳误导 AI 检索 ---
+- issue_id: '#ARCH-143'
+  title: '真空壳/模板包 DORMANT 标注规则与首批落地（7 包 43 文件）+depgraph 14 零节点域休眠标注'
+  severity: P2中
+  category: governance
+  adjudication: |
+    目的声明：空包/纯模板包对 AI 协作者是"看起来有模块"的误导源，检索即烧 token。
+    规则：R1 实证真空壳包（全域 0 def/class/import、__all__=[]、无消费者）根
+    __init__.py docstring 首行必须带 [DORMANT] 统一字样；无 docstring 子包壳在
+    [TTL] 头注行下加 #[DORMANT] 注释；R2 DORMANT 包保留在仓与翻译注册表
+    （build_status: dormant），检索/采集活跃实现面时排除，AI 禁止引用为实现证据；
+    R3 DORMANT 包头注 [MATURITY] 不得标 production（应为 design）——其余 42 处
+    存量漂移联动修正列遗留项（防门禁 churn，本批不动）；R4 包内落地首个真实实现时
+    作者同步摘除标注并回写注册表 build_status→active；R5 清单类输入仅作假设，
+    标注与否以逐包实证为准（plan_engine/signal_quality 有实装严禁标注）。
+    先例：6 张 dormant 数据表（保留、标注、不采集）。
+    首批落地：research/alt_data/cross_asset/data_eng/ml_serve/digital_twin/
+    data_security 7 包 43 文件；alt_data 根 [MATURITY] production→design 勘正；
+    depgraph 14 零节点域侧写**未执行**——domains.build_status CHECK 词表
+    （planned/generated/testing/stable/deprecated）无 dormant 值，deprecated
+    语义错误不强行复用；休眠真源=翻译注册表 build_status: dormant + 本条目
+    （词表扩展属 schema 变更，留 Owner 窗口，登记 tracker 遗留项）。
+  impact:
+    - '7 包 43 个 __init__.py（DORMANT 标注）'
+    - 'module_translation_registry.yaml（43 条目 build_status: dormant）'
+    - 'depgraph PG domains 表（未动——词表不支持，见 adjudication 末段）'
+  fix_phase: '已落地（2026-08-22）：grep DORMANT 43 命中+全包 import 不破坏+关联测试 36 passed 零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '2026-08 架构审查报告 §3.2 STR-01/§9.3; 92号清单 §5.5'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'

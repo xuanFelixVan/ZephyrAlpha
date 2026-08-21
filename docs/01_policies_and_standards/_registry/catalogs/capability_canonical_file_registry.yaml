@@ -7620,3 +7620,44 @@ di_seam_exemptions:
 - module_path: zephyr.orchestrator.agent_orchestrator.AgentOrchestrator
   reason: 编排器核心，P1-3 RoutingRole 改造期暂豁免
   created: '2026-07-18'
+# --- 2026-08-22 阶段二波2（92号清单）新建文件 creation_token ---
+- file: src/zephyr/regime/cross_sectional_features.py
+  token: auto-cross-sectional-features-20260822
+  created_by: AI-P2-ALG01
+  capability: regime_cross_sectional_features
+- file: tests/regime/test_cross_sectional_features.py
+  token: auto-test-cross-sectional-features-20260822
+  created_by: AI-P2-ALG01
+  capability: regime_cross_sectional_features
+- file: docs/_working/reviews/2026-08-22-alg01-cross-sectional-ab.md
+  token: auto-alg01-cross-sectional-ab-20260822
+  created_by: AI-P2-ALG01
+  capability: regime_cross_sectional_features
+- file: src/zephyr/factor/casebook/__init__.py
+  token: auto-factor-casebook-init-20260822
+  created_by: AI-P2-ALG03
+  capability: factor_casebook
+- file: src/zephyr/factor/casebook/casebook.py
+  token: auto-factor-casebook-20260822
+  created_by: AI-P2-ALG03
+  capability: factor_casebook
+- file: tests/factor/test_casebook.py
+  token: auto-test-factor-casebook-20260822
+  created_by: AI-P2-ALG03
+  capability: factor_casebook
+- file: docs/03_modules/_domain_factor/casebook/blueprint.md
+  token: auto-factor-casebook-blueprint-20260822
+  created_by: AI-P2-ALG03
+  capability: factor_casebook
+- file: scripts/start_trading.ps1
+  token: auto-start-trading-20260822
+  created_by: AI-P2-INT03
+  capability: trading_watchdog
+- file: docs/_working/reports/2026-08-22-notimplementederror-classification.md
+  token: auto-notimplementederror-classification-20260822
+  created_by: AI-P2-STR02
+  capability: notimplemented_classification
+- file: docs/03_modules/_domain_regime/cross_sectional_features/blueprint.md
+  token: auto-cross-sectional-features-blueprint-20260822
+  created_by: AI-P2-001
+  capability: regime_cross_sectional_features

@@ -7639,3 +7639,158 @@ entries:
   promoted_to: "92号清单 波4-7.12/7.13、波5-8.7（testing 封顶，B-007）"
   last_reviewed_at: '2026-08-22'
   last_review_outcome: "Owner 指令晋升，阶段二施工"
+
+# ----------------------------------------------------------
+# CAND-SEC-002: access_control 合规矩阵与纵深防御查询族（deferred，92号清单 §5.6 STR-02）
+# 来源: 92号清单 §5.6 + docs/_working/reports/2026-08-22-notimplementederror-classification.md 族 A1
+# ----------------------------------------------------------
+- id: CAND-SEC-002
+  name: "access_control 合规矩阵与纵深防御查询族（compliance_matrix + defense_depth）"
+  aliases: ["合规矩阵", "compliance matrix", "纵深防御", "defense in depth", "MOD-INF-018 查询桩族"]
+  domain: D_SECURITY
+  domain_status: active
+  domain_node_count: 171
+  sub_layer: "security/access_control 合规矩阵/纵深防御查询层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      note: "两文件已作为 MOD-INF-018 组成模块在图（stub 态）；蓝图模块表自标 stub (pending ARCH-036)"
+    dataflowgraph:
+      has_position: false
+      note: "无活数据流——CONSUMERS 全为 phantom（文件头实证）"
+    decisiongraph:
+      has_position: false
+      note: "不参与任何业务决策"
+    blueprint:
+      has_position: true
+      target_ref: "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md 模块表（stub pending ARCH-036）"
+      design_maturity: design
+  description: >-
+    compliance_matrix.py（compliant_items / get_by_reg_id / non_compliant_items，3 处
+    raise NotImplementedError）与 defense_depth.py（all_enabled / get_layer /
+    get_layer_by_level，3 处）共 6 处活 stub。提案：多账户/多用户上线时按蓝图
+    ARCH-036 口径实现合规矩阵查询与纵深防御层查询；当前单人单信任域无 RBAC
+    查询需求，维持 stub+deferred。文件头 [MATURITY] production 与 stub docstring
+    的漂移已登记归档报告 §四，晋升或统筹裁定时联动修正。
+  capability: ""
+  problem_it_solves: "多账户/多用户形态下合规条目查询（按 reg_id / 合规态过滤）与纵深防御层状态查询缺实现；当前单信任域无消费者，缺口不阻塞（92号清单 §5.6 口径）"
+  trigger_signals:
+  - "多账户/多用户上线（92号清单 §5.6 激活前提）"
+  - "ARCH-036 裁定补实现"
+  - "出现合规审计/防御层状态查询的真实消费者"
+  keywords: ["compliance_matrix", "defense_depth", "RBAC", "合规矩阵", "纵深防御", "NotImplementedError", "stub"]
+  upstream_deps:
+  - {contract: "MOD-INF-018 RBAC 核心（a2a_check/capability_check/approver_check 已实现）", from_domain: D_SECURITY, dep_type: S, availability: available, note: "治本三模块 2026-07-18 已落地，可作实现范式"}
+  downstream_consumers: []
+  contracts_to_produce:
+  - {id: "compliance_matrix 查询接口", name: "合规条目查询契约（compliant/non_compliant/by_reg_id）"}
+  - {id: "defense_depth 查询接口", name: "纵深防御层查询契约（all_enabled/get_layer/get_layer_by_level）"}
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "多账户/多用户上线", check: "92号清单 §5.6 激活前提", met: false, note: "单人单信任域无 RBAC 需求"}
+  design_admission:
+    q1_implemented: {result: pass, equivalent_nodes: [], evidence: "2026-08-22 实证：全仓无合规矩阵/纵深防御查询的等价实现，6 处均为本族 stub"}
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-22'
+  last_reviewed_at: '2026-08-22'
+  promoted_to: ""
+  source_draft: "92号清单 §5.6 NotImplementedError 分类处置（STR-02）"
+  source_section: "docs/_working/reports/2026-08-22-notimplementederror-classification.md 族 A1 #1-#6"
+  original_id: ""
+  estimated_complexity: M
+  estimated_effort: "2-4 人天（6 个查询函数 + 矩阵/层数据定义 + 单测；范式可照 a2a_check 治本模式）"
+  tech_notes: "实现时照 a2a_check/capability_check/approver_check 治本范式（测试契约先行）；文件头 MATURITY 需从 production 更正为与实际成熟度一致（漂移见归档报告 §四）；stub 常量（COMPLIANCE_MATRIX/DEFENSE_DEPTH=None）需替换为真实数据定义"
+  risks: ["长期 deferred 致蓝图 stub 表与 depgraph 运营态漂移扩大", "多账户上线时若未同步晋升则 RBAC 查询面缺口外露"]
+  alternatives: "维持 stub（当前状态）：单人单信任域无消费者，零运行时代价。代价：蓝图 §1.1 autogen 索引'✅ 已实现'与模块表'stub'自相矛盾的漂移存续"
+  tags: ["candidate", "deferred", "RBAC", "access_control", "stub", "92号清单"]
+  search_terms: ["compliance_matrix", "defense_depth", "compliant_items", "get_layer_by_level", "NotImplementedError"]
+  related_candidates: ["CAND-SEC-003"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-22'
+  review_frequency: yearly
+  last_review_outcome: "首次登记（2026-08-22 STR-02）——92号清单 §5.6 裁定 deferred：单人单信任域无 RBAC 需求，触发条件=多账户/多用户上线"
+  acquisition_method: self_build
+  acquisition_source: ''
+
+# ----------------------------------------------------------
+# CAND-SEC-003: access_control 运行时桩族（环境/会话/密钥/反模式守卫）（deferred，92号清单 §5.6 STR-02）
+# 来源: 92号清单 §5.6 + docs/_working/reports/2026-08-22-notimplementederror-classification.md 族 A1
+# ----------------------------------------------------------
+- id: CAND-SEC-003
+  name: "access_control 运行时桩族（environment_manager + session_lifecycle + secrets_lifecycle + anti_pattern_guard）"
+  aliases: ["环境管理", "会话生命周期", "密钥生命周期", "反模式守卫", "MOD-INF-018 运行时桩族"]
+  domain: D_SECURITY
+  domain_status: active
+  domain_node_count: 171
+  sub_layer: "security/access_control 运行时环境与守卫层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      note: "四文件已作为 MOD-INF-018 组成模块在图（stub 态）；蓝图模块表自标 stub (pending ARCH-036)"
+    dataflowgraph:
+      has_position: false
+      note: "无活数据流——CONSUMERS 全为 phantom（文件头实证）"
+    decisiongraph:
+      has_position: false
+      note: "不参与任何业务决策"
+    blueprint:
+      has_position: true
+      target_ref: "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md 模块表（stub pending ARCH-036）+ §on_session_lifecycle（30/60m 软硬过期+滑动续期设计稿）"
+      design_maturity: design
+  description: >-
+    environment_manager.py（get_env / switch_env，2 处）、session_lifecycle.py
+    （get_state_def，1 处）、secrets_lifecycle.py（auto_clean_build，1 处）、
+    guards/anti_pattern_guard.py（benchmark_before_optimize / check_lock_before_write /
+    scan_silent_ignore，3 处）共 7 处活 stub。提案：多账户/多用户上线时按蓝图
+    ARCH-036 及 §on_session_lifecycle 设计稿实现环境切换、会话状态定义、密钥
+    自动清理与反模式守卫扫描；当前单人单信任域无需求，维持 stub+deferred。
+    文件头 MATURITY 漂移已登记归档报告 §四。
+  capability: ""
+  problem_it_solves: "多账户/多用户形态下的运行环境切换、会话状态机定义、密钥轮换清理及提交前反模式守卫（先 benchmark 后优化/写前查锁/静默忽略扫描）缺实现；当前单信任域无消费者，缺口不阻塞（92号清单 §5.6 口径）"
+  trigger_signals:
+  - "多账户/多用户上线（92号清单 §5.6 激活前提）"
+  - "ARCH-036 裁定补实现"
+  - "安全治理扫描基建需求出现（anti_pattern_guard 三函数的消费场景）"
+  keywords: ["environment_manager", "session_lifecycle", "secrets_lifecycle", "anti_pattern_guard", "RBAC", "stub", "NotImplementedError"]
+  upstream_deps:
+  - {contract: "zephyr.shared.lifecycle.state_machine（MOD-INF-038 统一状态机基类）", from_domain: D_SHARED, dep_type: S, availability: available, note: "session_lifecycle 的 StateDef 应复用统一状态机，蓝图 CONSUMERS 已列 MOD-INF-018(rbac)"}
+  downstream_consumers: []
+  contracts_to_produce:
+  - {id: "environment_manager 环境切换接口", name: "get_env/switch_env 契约"}
+  - {id: "session_lifecycle 状态定义接口", name: "会话状态机 StateDef 契约（对齐蓝图 §on_session_lifecycle）"}
+  - {id: "secrets_lifecycle 清理接口", name: "auto_clean_build 契约（ROTATION_DAYS/SECRET_MIN_BITS 等常量需真实化）"}
+  - {id: "anti_pattern_guard 扫描接口", name: "提交前反模式守卫三检查契约"}
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "多账户/多用户上线", check: "92号清单 §5.6 激活前提", met: false, note: "单人单信任域无 RBAC 需求"}
+  design_admission:
+    q1_implemented: {result: pass, equivalent_nodes: [], evidence: "2026-08-22 实证：全仓无环境切换/会话状态定义/密钥清理/反模式守卫的等价实现，7 处均为本族 stub"}
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-22'
+  last_reviewed_at: '2026-08-22'
+  promoted_to: ""
+  source_draft: "92号清单 §5.6 NotImplementedError 分类处置（STR-02）"
+  source_section: "docs/_working/reports/2026-08-22-notimplementederror-classification.md 族 A1 #7-#13"
+  original_id: ""
+  estimated_complexity: M
+  estimated_effort: "3-5 人天（7 个函数 + 状态/常量真实化 + 单测；session_lifecycle 复用 MOD-INF-038 状态机基类）"
+  tech_notes: "session_lifecycle 实现须复用 zephyr.shared.lifecycle.state_machine 统一基类（禁止第 12 套自研状态机）；蓝图 §on_session_lifecycle 已有 30/60m 软硬过期+滑动窗口续期设计稿可直接对接；secrets_lifecycle 三个 stub 常量（REVOKE_TIMEOUT_SECONDS/ROTATION_DAYS/SECRET_MIN_BITS=None）需真实化；anti_pattern_guard 与提交门禁链（G7/pre-commit）集成点需在实现期评估；文件头 MATURITY 漂移更正联动归档报告 §四"
+  risks: ["长期 deferred 致蓝图/depgraph 漂移扩大", "密钥生命周期属敏感面——晋升施工时需安全评审先行", "反模式守卫与既有 pre-commit/G7 门禁职责重叠风险（实现期先过一问）"]
+  alternatives: "维持 stub（当前状态）：单人单信任域无消费者，零运行时代价；反模式检查部分由现有门禁脚本（check_algo_quality.py 等）覆盖。代价：蓝图设计稿长期不落码"
+  tags: ["candidate", "deferred", "RBAC", "access_control", "session", "secrets", "stub", "92号清单"]
+  search_terms: ["environment_manager", "switch_env", "get_state_def", "auto_clean_build", "anti_pattern_guard", "NotImplementedError"]
+  related_candidates: ["CAND-SEC-002"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-22'
+  review_frequency: yearly
+  last_review_outcome: "首次登记（2026-08-22 STR-02）——92号清单 §5.6 裁定 deferred：单人单信任域无 RBAC 需求，触发条件=多账户/多用户上线"
+  acquisition_method: self_build
+  acquisition_source: ''
