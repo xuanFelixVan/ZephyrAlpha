@@ -79,17 +79,16 @@ class TrendAnalyzer:
 
         self._project_root = project_root
 
-        self._db_dir = os.path.join(project_root, "data", "drift_audit")
+        # 治本（#62 子裁定 2026-08-21，推翻 #18 F5）：drift_events 唯一真源=governance.db
+        # （DB_PATH SSoT，22 列 legacy schema）——读方随写方（唯一写方=drift_engine，
+        # append-only）。F5 原独立 drift_audit.db 物理不存在、无写方，生产 compute_metrics
+        # 必抛 no such table（能力从未工作）；第四物理位置消除。测试隔离走 db_path
+        # property setter 显式注入临时库，夹具复刻生产 schema。
+        self._db_path = str(DB_PATH)
 
-        os.makedirs(self._db_dir, exist_ok=True)
+        self._db_dir = os.path.dirname(self._db_path)
 
-        # 治本（裁定#18 F5）：原 self._db_path = str(DB_PATH) 指向共享 governance.db，
-        # 其 drift_events 表 schema 与测试契约不符（缺 drift_dimension/baseline_version/
-        # resolved_by/auto_fixed/rollback_verified 列）。改为从 project_root 派生独立
-        # db_path，使测试隔离 + 生产使用独立 drift_audit.db。
-        self._db_path = os.path.join(self._db_dir, "drift_audit.db")
-
-        self._archive_dir = os.path.join(self._db_dir, "archive")
+        self._archive_dir = os.path.join(project_root, "data", "drift_audit", "archive")
 
         os.makedirs(self._archive_dir, exist_ok=True)
 
@@ -256,41 +255,45 @@ class TrendAnalyzer:
         return alerts
 
     def archive_old_data(self) -> None:
+        """导出 90 天前事件到 jsonl（export-only，不删除 SSoT 行）。
+
+        #62 子裁定（2026-08-21）：drift_events SSoT 唯一写方=drift_engine（append-only），
+        本模块为读方不得 DELETE——与 tamper_proof drift_events_no_delete trigger 设计
+        终局一致，亦守本模块 INVARIANTS（趋势数据不可篡改）。列重映射对齐生产 22 列
+        schema：drift_dimension←description、auto_fixed←auto_fixable（#62 writer 口径）；
+        baseline_version/resolved_by/rollback_verified SSoT 从不承载，归档记录移除。
+        容量保留/冷热分层（blueprint >2GB 触发）为治理动作，另案设计。重复导出需下游
+        去重（jsonl 为派生物）。
+        """
         conn = get_db_connection(self._db_path)
 
-        cutoff = (datetime.now(UTC) - timedelta(days=self.HOT_DATA_DAYS)).isoformat()
+        try:
+            cutoff = (datetime.now(UTC) - timedelta(days=self.HOT_DATA_DAYS)).isoformat()
 
-        rows = conn.execute(
-            "SELECT event_id, module_id, detector_id, drift_dimension, baseline_version, state, created_at, updated_at, resolved_by, resolution_detail, auto_fixed, rollback_verified FROM drift_events WHERE created_at < ?",
-            (cutoff,),
-        ).fetchall()
+            rows = conn.execute(
+                "SELECT event_id, module_id, detector_id, description, state, created_at, updated_at, resolution_detail, auto_fixable FROM drift_events WHERE created_at < ?",
+                (cutoff,),
+            ).fetchall()
 
-        if rows:
-            year = datetime.now(UTC).strftime("%Y")
+            if rows:
+                year = datetime.now(UTC).strftime("%Y")
 
-            archive_path = os.path.join(self._archive_dir, f"drift_{year}.jsonl")
+                archive_path = os.path.join(self._archive_dir, f"drift_{year}.jsonl")
 
-            with open(archive_path, "a", encoding="utf-8") as fh:
-                for row in rows:
-                    record = {
-                        "event_id": row[0],
-                        "module_id": row[1],
-                        "detector_id": row[2],
-                        "drift_dimension": row[3],
-                        "baseline_version": row[4],
-                        "state": row[5],
-                        "created_at": row[6],
-                        "updated_at": row[7],
-                        "resolved_by": row[8],
-                        "resolution_detail": row[9],
-                        "auto_fixed": row[10],
-                        "rollback_verified": row[11],
-                    }
+                with open(archive_path, "a", encoding="utf-8") as fh:
+                    for row in rows:
+                        record = {
+                            "event_id": row[0],
+                            "module_id": row[1],
+                            "detector_id": row[2],
+                            "drift_dimension": row[3],
+                            "state": row[4],
+                            "created_at": row[5],
+                            "updated_at": row[6],
+                            "resolution_detail": row[7],
+                            "auto_fixed": row[8],
+                        }
 
-                    fh.write(dumps(record, ensure_ascii=False) + "\n")
-
-            conn.execute("DELETE FROM drift_events WHERE created_at < ?", (cutoff,))
-
-        conn.commit()
-
-        conn.close()
+                        fh.write(dumps(record, ensure_ascii=False) + "\n")
+        finally:
+            conn.close()

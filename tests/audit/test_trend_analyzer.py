@@ -13,6 +13,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import sqlite3
 from datetime import UTC, datetime, timedelta
@@ -23,33 +24,64 @@ from zephyr.gov_drift.trend_analyzer import (
     TrendMetrics,
 )
 
+# #62 子裁定（2026-08-21）：夹具复刻生产 governance.db drift_events 22 列 schema
+# （与 drift_engine CREATE DDL 逐字一致；#62 §七.3——测试夹具复刻生产 schema 硬约束方向）
+_PRODUCTION_DDL = (
+    "CREATE TABLE IF NOT EXISTS drift_events ("
+    "event_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+    "drift_type TEXT NOT NULL, "
+    "target TEXT, "
+    "expected_value TEXT, "
+    "actual_value TEXT, "
+    "severity TEXT, "
+    "detected_at TEXT NOT NULL, "
+    "resolved_at TEXT, "
+    "resolution TEXT, "
+    "detector_id TEXT DEFAULT '', "
+    "module_id TEXT DEFAULT 'MOD-INF-023', "
+    "state TEXT DEFAULT 'DETECTED', "
+    "source_file TEXT, "
+    "description TEXT, "
+    "details TEXT, "
+    "fix_description TEXT, "
+    "scan_level TEXT DEFAULT 'STANDARD', "
+    "auto_fixable INTEGER DEFAULT 0, "
+    "resolution_detail TEXT, "
+    "roi_score REAL DEFAULT 0.0, "
+    "created_at TEXT, "
+    "updated_at TEXT)"
+)
+
+
+def _make_analyzer(tmp_path) -> TrendAnalyzer:
+    """测试隔离：db_path setter 显式注入临时库（生产默认=SSoT governance.db，#62 子裁定）。"""
+    analyzer = TrendAnalyzer(project_root=str(tmp_path))
+    analyzer.db_path = str(tmp_path / "test_drift.db")
+    return analyzer
+
 
 def _seed_db(db_path: str, rows: list[dict]) -> None:
     conn = sqlite3.connect(db_path)
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS drift_events ("
-        "event_id TEXT, module_id TEXT, detector_id TEXT, drift_dimension TEXT, "
-        "baseline_version TEXT, state TEXT, created_at TEXT, updated_at TEXT, "
-        "resolved_by TEXT, resolution_detail TEXT, auto_fixed INTEGER, rollback_verified INTEGER)"
-    )
+    conn.execute(_PRODUCTION_DDL)
     for r in rows:
+        created = r.get("created_at") or datetime.now(UTC).isoformat()
+        detector = r.get("detector_id", "det-1")
         conn.execute(
-            "INSERT INTO drift_events (event_id, module_id, detector_id, drift_dimension, "
-            "baseline_version, state, created_at, updated_at, resolved_by, resolution_detail, "
-            "auto_fixed, rollback_verified) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO drift_events (drift_type, detector_id, module_id, severity, state, "
+            "description, detected_at, auto_fixable, resolution_detail, created_at, updated_at) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
             (
-                r.get("event_id", "e1"),
+                detector,  # drift_type/detector_id 同填（#62 legacy 双列同值口径）
+                detector,
                 r.get("module_id", "MOD-X"),
-                r.get("detector_id", "det-1"),
-                r.get("drift_dimension", "code"),
-                r.get("baseline_version", "v1"),
-                r.get("state", "OPEN"),
-                r.get("created_at"),
-                r.get("updated_at"),
-                r.get("resolved_by", ""),
+                "MEDIUM",
+                r.get("state", "DETECTED"),
+                r.get("drift_dimension", "code"),  # description 列承载 drift_dimension
+                created,  # detected_at=created_at（#62 writer 口径）
+                r.get("auto_fixed", 0),  # auto_fixed→auto_fixable
                 r.get("resolution_detail", ""),
-                r.get("auto_fixed", 0),
-                r.get("rollback_verified", 0),
+                created,
+                r.get("updated_at"),
             ),
         )
     conn.commit()
@@ -101,15 +133,17 @@ class TestTrendAnalyzer:
         assert os.path.isdir(analyzer.db_dir)
         assert os.path.isdir(analyzer.archive_dir)
 
+    def test_db_path_default_is_ssot(self):
+        # #62 子裁定：生产默认指向 DB_PATH SSoT（governance.db），第四物理位置消除
+        from zephyr.shared.io.paths import DB_PATH
+
+        analyzer = TrendAnalyzer()
+        assert analyzer.db_path == str(DB_PATH)
+
     def test_compute_metrics_empty_db(self, tmp_path):
-        analyzer = TrendAnalyzer(project_root=str(tmp_path))
+        analyzer = _make_analyzer(tmp_path)
         conn = sqlite3.connect(analyzer.db_path)
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS drift_events ("
-            "event_id TEXT, module_id TEXT, detector_id TEXT, drift_dimension TEXT, "
-            "baseline_version TEXT, state TEXT, created_at TEXT, updated_at TEXT, "
-            "resolved_by TEXT, resolution_detail TEXT, auto_fixed INTEGER, rollback_verified INTEGER)"
-        )
+        conn.execute(_PRODUCTION_DDL)
         conn.commit()
         conn.close()
         metrics = analyzer.compute_metrics("MOD-EMPTY")
@@ -119,7 +153,7 @@ class TestTrendAnalyzer:
         assert metrics.mean_time_to_resolve_hours == 0.0
 
     def test_compute_metrics_with_data(self, tmp_path):
-        analyzer = TrendAnalyzer(project_root=str(tmp_path))
+        analyzer = _make_analyzer(tmp_path)
         now = datetime.now(UTC)
         week_ago = (now - timedelta(days=3)).isoformat()
         month_ago = (now - timedelta(days=10)).isoformat()
@@ -127,15 +161,13 @@ class TestTrendAnalyzer:
             analyzer.db_path,
             [
                 {
-                    "event_id": "e1",
                     "module_id": "MOD-A",
-                    "state": "OPEN",
+                    "state": "DETECTED",
                     "created_at": week_ago,
                     "updated_at": week_ago,
                     "detector_id": "det-1",
                 },
                 {
-                    "event_id": "e2",
                     "module_id": "MOD-A",
                     "state": "VERIFIED",
                     "created_at": month_ago,
@@ -143,7 +175,6 @@ class TestTrendAnalyzer:
                     "detector_id": "det-1",
                 },
                 {
-                    "event_id": "e3",
                     "module_id": "MOD-A",
                     "state": "FALSE_POSITIVE",
                     "created_at": month_ago,
@@ -159,16 +190,15 @@ class TestTrendAnalyzer:
         assert "det-1" in metrics.detector_fp_ratio or "det-2" in metrics.detector_fp_ratio
 
     def test_check_trend_alerts_spike(self, tmp_path):
-        analyzer = TrendAnalyzer(project_root=str(tmp_path))
+        analyzer = _make_analyzer(tmp_path)
         now = datetime.now(UTC)
         rows = []
         for i in range(7):
             ts = (now - timedelta(days=i)).isoformat()
             rows.append(
                 {
-                    "event_id": f"spike-{i}",
                     "module_id": "MOD-SPIKE",
-                    "state": "OPEN",
+                    "state": "DETECTED",
                     "created_at": ts,
                     "updated_at": ts,
                     "detector_id": "det-1",
@@ -181,13 +211,12 @@ class TestTrendAnalyzer:
         assert spike_alerts[0].severity == "WARNING"
 
     def test_check_trend_alerts_no_alerts_when_healthy(self, tmp_path):
-        analyzer = TrendAnalyzer(project_root=str(tmp_path))
+        analyzer = _make_analyzer(tmp_path)
         now = datetime.now(UTC)
         _seed_db(
             analyzer.db_path,
             [
                 {
-                    "event_id": "h1",
                     "module_id": "MOD-HEALTHY",
                     "state": "VERIFIED",
                     "created_at": (now - timedelta(days=10)).isoformat(),
@@ -200,8 +229,9 @@ class TestTrendAnalyzer:
         spike_alerts = [a for a in alerts if a.alert_type == "spike"]
         assert len(spike_alerts) == 0
 
-    def test_archive_old_data_moves_records(self, tmp_path):
-        analyzer = TrendAnalyzer(project_root=str(tmp_path))
+    def test_archive_old_data_exports_records_keeps_ssot_rows(self, tmp_path):
+        # #62 子裁定：export-only——导出 jsonl 但 SSoT 行保留（读方不得 DELETE）
+        analyzer = _make_analyzer(tmp_path)
         now = datetime.now(UTC)
         old_ts = (now - timedelta(days=120)).isoformat()
         recent_ts = (now - timedelta(days=10)).isoformat()
@@ -209,17 +239,17 @@ class TestTrendAnalyzer:
             analyzer.db_path,
             [
                 {
-                    "event_id": "old-1",
                     "module_id": "MOD-OLD",
-                    "state": "OPEN",
+                    "state": "DETECTED",
                     "created_at": old_ts,
                     "updated_at": old_ts,
                     "detector_id": "det-1",
+                    "drift_dimension": "code",
+                    "auto_fixed": 1,
                 },
                 {
-                    "event_id": "recent-1",
                     "module_id": "MOD-NEW",
-                    "state": "OPEN",
+                    "state": "DETECTED",
                     "created_at": recent_ts,
                     "updated_at": recent_ts,
                     "detector_id": "det-1",
@@ -230,22 +260,28 @@ class TestTrendAnalyzer:
         conn = sqlite3.connect(analyzer.db_path)
         remaining = conn.execute("SELECT COUNT(*) FROM drift_events").fetchone()[0]
         conn.close()
-        assert remaining == 1
+        assert remaining == 2  # SSoT 行保留（export-only）
         year = now.strftime("%Y")
         archive_path = os.path.join(analyzer.archive_dir, f"drift_{year}.jsonl")
         assert os.path.isfile(archive_path)
+        with open(archive_path, encoding="utf-8") as fh:
+            records = [json.loads(line) for line in fh if line.strip()]
+        assert len(records) == 1  # 仅 90 天前的 1 行被导出
+        assert records[0]["module_id"] == "MOD-OLD"
+        # 列重映射实证：drift_dimension←description、auto_fixed←auto_fixable
+        assert records[0]["drift_dimension"] == "code"
+        assert records[0]["auto_fixed"] == 1
 
     def test_archive_old_data_no_old_records(self, tmp_path):
-        analyzer = TrendAnalyzer(project_root=str(tmp_path))
+        analyzer = _make_analyzer(tmp_path)
         now = datetime.now(UTC)
         recent_ts = (now - timedelta(days=5)).isoformat()
         _seed_db(
             analyzer.db_path,
             [
                 {
-                    "event_id": "r1",
                     "module_id": "MOD-R",
-                    "state": "OPEN",
+                    "state": "DETECTED",
                     "created_at": recent_ts,
                     "updated_at": recent_ts,
                     "detector_id": "det-1",
@@ -259,14 +295,13 @@ class TestTrendAnalyzer:
         assert remaining == 1
 
     def test_fp_ratio_alert(self, tmp_path):
-        analyzer = TrendAnalyzer(project_root=str(tmp_path))
+        analyzer = _make_analyzer(tmp_path)
         now = datetime.now(UTC)
         rows = []
         for i in range(5):
             ts = (now - timedelta(days=i)).isoformat()
             rows.append(
                 {
-                    "event_id": f"fp-{i}",
                     "module_id": "MOD-FP",
                     "state": "FALSE_POSITIVE",
                     "created_at": ts,
