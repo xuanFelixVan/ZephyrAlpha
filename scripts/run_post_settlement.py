@@ -141,6 +141,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help="结算日 YYYY-MM-DD；缺省=最近交易日（is_trading_day 从今天回推，含今天——盘后语义）",
     )
+    parser.add_argument(
+        "--if-trading-day",
+        action="store_true",
+        help="仅当日是交易日才执行，否则静默 exit 0（挂调度专用守卫：非交易日空转零打扰）",
+    )
     return parser.parse_args(argv)
 
 
@@ -370,6 +375,11 @@ def main(argv: list[str] | None = None, *, deps: PipelineDeps | None = None) -> 
     """
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     args = parse_args(argv)
+    # 挂调度守卫（2026-08-22 Owner 批准挂 15:30 日调度）：非交易日静默退出，
+    # 防止周末/节假日空跑重复结算最近交易日
+    if getattr(args, "if_trading_day", False) and not is_trading_day(date.today()):
+        print(f"[INFO] 今日 {date.today().isoformat()} 非交易日，跳过（--if-trading-day 守卫）")
+        return 0
     try:
         trade_date = resolve_trade_date(args.trade_date)
     except ValueError as exc:
