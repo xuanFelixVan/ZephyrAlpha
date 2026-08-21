@@ -3,7 +3,7 @@ module_id: MOD-CMP-001
 title: "四项必做清单检查器蓝图 — 盘前/盘中/盘后/晚间完成度检测"
 doc_type: blueprint
 status: Active
-version: "0.1.15"
+version: "0.1.18"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation

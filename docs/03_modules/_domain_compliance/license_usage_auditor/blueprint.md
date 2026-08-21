@@ -3,7 +3,7 @@ module_id: MOD-CMP-008
 title: "数据源授权合规审计器蓝图 — 授权条款登记/使用审计/违规处置"
 doc_type: blueprint
 status: Active
-version: "0.1.15"
+version: "0.1.18"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation

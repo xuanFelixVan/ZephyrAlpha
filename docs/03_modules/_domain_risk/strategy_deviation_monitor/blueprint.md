@@ -3,7 +3,7 @@ module_id: MOD-RK-23
 title: "策略偏离监控器蓝图 — 实盘 vs 回测净值偏离双口径持续度量（55 号 G26 §3.4）"
 doc_type: blueprint
 status: Active
-version: "0.1.16"
+version: "0.1.19"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
