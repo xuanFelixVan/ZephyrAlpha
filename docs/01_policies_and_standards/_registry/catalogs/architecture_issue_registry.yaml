@@ -17913,3 +17913,31 @@ entries:
   related_rules: '56号文（backtest_vs_sim_reconciliation_plan）; 57号文 §5; 40号文 §决策①工程约束1; #ARCH-134; tracker #234; 宪章 B-007（testing 封顶）'
   created: '2026-08-21'
   last_updated: '2026-08-21'
+# --- #ARCH-136: ERRCODE 门禁 in-process 化（gateway 主通道结构洞补齐） ---
+- issue_id: '#ARCH-136'
+  title: GATE-ERRCODE 只挂外部 pre-commit 链致 gateway 主通道无 error_code 对账——43 未登记+5 重号入仓（08-20 夜班批目测取号事故）
+  severity: P1严重
+  category: governance_gate
+  adjudication: |
+    问题背景：GATE-ERRCODE（08-18 AI-ERR-001 建）仅存在于 .pre-commit-config.yaml 外部链；
+    GitCommitGateway 设计上永远 --no-verify（precommit_offline_gate 文档明示），in-process
+    97 门无 ERRCODE——100% AI 开发全部合法提交走 gateway，该门禁对主通道等于不存在。
+    2026-08-20 AI-NIGHT-001 第二批三大包（54be465cb5/7b6d09ffac/b843aba06e）新模块异常类
+    目测取号（未查 registry SSoT），43 个未登记码+5 个跨定义点重号经此洞入仓。
+    附带发现：前缀语义漂移——INT=D_INFRASTRUCTURE 被 D_INTELLIGENCE 域 event_* 模块占用
+    （IT 才是 D_INTELLIGENCE 声明前缀）；gate 只查前缀已声明不查域匹配，登记为观察项不再改号。
+    裁定（2026-08-21 errorcode-stability 裁定书）：①5 重号按 08-18 先例路径 A 改号收口
+    （Owner 批准，615df5b90c，零消费面实证——全项目无按码告警/看板/通知机制）；②ERRCODE
+    门禁移植 in-process（本条目施工）；③阻断消息内嵌受影响前缀下一可用号（取号靠工具不靠
+    纪律）；错误码=可观测性 API 面，入册即 immutable，防控在写入点不在事后。
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/errcode_consistency_gate.py（新建——GATE-ERRCODE-CONSISTENCY，priority=131 硬阻断，调用 tests/governance/test_error_code_consistency.py 六断言为判定 SSoT 不重实现）'
+    - 'tests/governance/commit_gates/test_errcode_consistency_gate.py（新建——构造/跳过/阻断/真仓放行 6 用例）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml（注册 + total_gates 97→98）'
+    - '裁定书 docs/_working/reviews/2026-08-21-errorcode-stability-adjudication.md'
+  fix_phase: '已落地（2026-08-21 AI-RESIDUAL-001）：gate+测试+注册全齐；真仓放行实证+合成违规阻断实证（含下一可用号提示）6/6 绿；gate_registry.yaml 由 GATE-REGISTRY-SYNC reconciler（priority=830）post-commit 自动重生成不手改'
+  status: decided
+  confirmed_by_user: '2026-08-21 Owner 批准三项 human_gated 遗留执行+改号影响面调研裁定'
+  related_rules: '#ARCH-ERRCODE-001; #ARCH-GATE-REGISTRY-AUTO-001; tracker #63'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'

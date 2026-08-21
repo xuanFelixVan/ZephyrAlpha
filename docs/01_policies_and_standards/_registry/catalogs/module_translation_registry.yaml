@@ -39370,6 +39370,20 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理门禁·提交门禁的表名称注册表守卫：在关键环节把关，发现表名称注册表越界或违规就拦下，给治理门禁·提交门禁加一道保险。
+- module_path: src/zephyr/gov_enforcement/commit_gates/errcode_consistency_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: GATE-ERRCODE-CONSISTENCY 错误码对账门禁
+  name_en: Error Code Consistency Gate
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 治理门禁·提交门禁的错误码户口核查员：提交代码时自动核对错误码有没有登记进总账、有没有和别人重号，发现没上户口或重号就拦下，并直接告诉下一可用号码。
+- module_path: tests/governance/commit_gates/test_errcode_consistency_gate.py
+  domain_id: ''
+  name_zh: GATE-ERRCODE-CONSISTENCY gate 测试
+  name_en: Test Error Code Consistency Gate
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 测试：错误码户口核查员这套逻辑要经得起考验，有毛病立刻报出来。
 - module_path: src/zephyr/governance/security_governance/github_api_guard.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: 只读：allowed_commands
