@@ -359,6 +359,18 @@ def check_consumers_accuracy(
         for node in ast.walk(tree):
             if isinstance(node, ast.ClassDef):
                 defined_functions.add(node.name)
+        # #231① 治本（2026-08-21）：模块级常量定义也是文件内定义符号——
+        # Assign（_SQL_X = ...）与 AnnAssign（NAME: Final[...] = ...）两种形态。
+        # 此前只收函数/类名，[CONSUMERS] 括号声明常量（如 rule_patterns.py 的
+        # SQL 常量）被误报 orphan 3 条。仅收模块级（tree.body 直接子节点），
+        # 不收函数内局部变量（局部变量不可能是合法 consumer 声明对象）。
+        for node in tree.body:
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        defined_functions.add(target.id)
+            elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+                defined_functions.add(node.target.id)
     except Exception:  # noqa: BLE001 — fail-open
         defined_functions = set()
 
