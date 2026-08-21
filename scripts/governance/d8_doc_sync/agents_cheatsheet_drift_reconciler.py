@@ -301,6 +301,7 @@ def _load_roor_truth(text: str) -> dict[str, Any]:
     cur_lines: list[str] = []
 
     def _flush() -> None:
+        """_flush implementation."""
         nonlocal cur_id
         if cur_id is not None:
             entries.append((cur_id, cur_start, "\n".join(cur_lines)))
