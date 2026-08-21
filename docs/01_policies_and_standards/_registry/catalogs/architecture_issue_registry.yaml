@@ -17804,3 +17804,39 @@ entries:
   related_rules: 'tracker #41/#83; CAND-REGSYNC-001; GATE-AGENTS-CHEATSHEET-SYNC; INV-11（metric_count_drift 同型先例）'
   created: '2026-08-21'
   last_updated: '2026-08-21'
+# --- #ARCH-134: 三套费率口径统一（tracker #233，Owner 2026-08-21 裁定：回测以实盘费率为准 万0.854） ---
+- issue_id: '#ARCH-134'
+  title: '三套费率口径统一（回测 matching_logic / 实盘 pnl_calculator / T0 t0_cost_model）——回测以实盘费率为准 万0.854（tracker #233）'
+  severity: P1高
+  category: architecture
+  discovered: '2026-08-21 实证三套费率口径并存：①回测 matching_logic.MatchingConfig 佣金万3/印花税千1（旧）/无过户费字段；②trading pnl_calculator.FeeConfig 佣金万2.5/印花税万5/过户费万0.1（最接近）；③ex_sor t0_cost_model.T0CostConfig 佣金万3/印花税万5。另扫出第四处起：vectorized_engine.BacktestConfig 万3、simulation.strategy_simulator 万3、governance simulation_broker 万3、matching_engine._clamp_buys_to_projected_cash 估算口径（缺过户费）、前端演示 mock 0.0003。'
+  adjudication: |
+    Owner 2026-08-21 裁定口径原文：回测以实盘费率为准（佣金 万0.854=0.0000854，
+    Owner 实盘账户实测协议费率）；印花税 万5=0.0005 卖出单边（2023-08 起现行法定）；
+    过户费 万0.1=0.00001 双向（沪深现行法定）；滑点假设维持 1bps 不变；
+    最低佣金暂保留 5 元下限（免五待 Owner 确认，代码注释留口子说明）；
+    模拟盘对账口径以模拟盘实际成交回报费率为准（本任务不动对账逻辑）。
+    施工：①MatchingConfig commission_rate 0.0003→0.0000854、stamp_tax_rate 0.001→0.0005、
+    新增 transfer_fee_rate=0.00001（双向），_calc_commission 买=佣金+过户费、
+    卖=佣金+印花税+过户费，min_commission=5 保留；②FeeConfig 佣金 0.00025→0.0000854，
+    其余不动；③T0CostConfig 佣金万3→万0.854，印花/滑点分档不动（T0 专项假设）；
+    ④第四处起一并统一：BacktestConfig/StrategySimulatorConfig/SimulationBroker
+    默认佣金→0.0000854，matching_engine 满仓收缩估算口径补双向过户费，
+    前端演示 mock 0.0003→0.0000854；⑤测试断言按新口径逐条重算
+    （代码口径裁定变更，测试断言跟进=测试改），黄金数注释标注"2026-08-21 费率口径统一（#233）"。
+  impact:
+    - 'src/zephyr/backtest/core/matching_logic.py（MatchingConfig 三费率+_calc_commission 加过户费）'
+    - 'src/zephyr/backtest/core/matching_engine.py（_clamp_buys_to_projected_cash 估算含过户费）'
+    - 'src/zephyr/backtest/implementations/vectorized_engine.py（BacktestConfig.commission_rate）'
+    - 'src/zephyr/trading/pnl_calculator.py（FeeConfig.commission_rate）'
+    - 'src/zephyr/ex_sor/services/t0_cost_model.py（T0CostConfig.commission_rate）'
+    - 'src/zephyr/simulation/strategy_simulator.py（StrategySimulatorConfig.commission_rate）'
+    - 'src/zephyr/governance/adapters/simulation_broker.py（SimulationBroker 默认佣金）'
+    - 'src/zephyr/frontend/dashboard/components/backtest_performance.py（演示 mock 费率）'
+    - 'tests：backtest/test_matching_engine.py、test_toy_reconciliation_night001.py、test_cost_friction_night001.py、trading/test_pnl_calculator.py、ex_sor/test_t0_cost_model.py、reporting/test_attribution.py、ex_core/test_position_tracker.py、experiment_tracking/test_component_adapters.py、simulation/test_strategy_simulator.py（按新口径重算）'
+  fix_phase: '已落地（2026-08-21）：源码 8 处统一 + 9 个测试文件重算；关联测试域两轮全绿（第一轮 153 passed；第二轮 matching/pnl/t0+trading/ex_sor/simulation 2920 passed）；回测域复跑 tests/backtest+tests/pf_core 1101 passed 零新增红。ex_sor transaction_cost_optimizer.FeeSchedule 本已是万0.854（国金miniQMT实盘费率），无需改动。'
+  status: decided
+  confirmed_by_user: '2026-08-21 Owner 裁定：回测以实盘费率为准 万0.854，模拟盘以模拟盘费率为准'
+  related_rules: 'tracker #233; CST-ASTOCK-001; 90 号 §5（T0 滑点分档专项假设不动）'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
