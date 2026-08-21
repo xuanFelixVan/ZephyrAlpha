@@ -5,8 +5,8 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.11.3"
-date: 2026-08-17
+version: "2.11.9"
+date: 2026-08-21
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
 ---
@@ -18,7 +18,7 @@ scope: 07_trading_decision_architecture
 > 用途：用户将开启多个 AI，每个 AI 认领一个主题组 → 讨论 → 落盘 discussion/design_memo → 施工。本文档是分工的"作战地图"。
 > 关联：[30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)（多策略并发架构，已定稿 v2.5.0）｜ [10_regime_detector_spec](10_regime_detector_spec.md)（regime 完整 spec，已定稿 v1.5.1）｜ [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md)（regime 验证，已定稿 v1.5.2，C1 已通过 commit 852457e9）
 
-## 0. 现有文档总目录（50 篇·按段位编号）
+## 0. 现有文档总目录（51 篇·按段位编号）
 
 > 段位语义：**0x**=meta（规范与索引）｜**1x**=地基层（regime/数据特征）｜**2x**=Alpha 策略层｜**3x**=组合仓位与风控层｜**4x**=交易执行层｜**5x**=验证与可观测性层｜**6x**=跨切治理层｜**9x**=开放问题与远期愿景。
 > 命名规则见 §8；新旧名对照见 §10；占用登记见 §7.3。
@@ -65,6 +65,7 @@ scope: 07_trading_decision_architecture
 | [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec（含明日预案双层架构+上游四轨裁定） | active v1.7.0 |
 | [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec（MVP 已施工：Triage/止损/止盈/执行编排 4 模块） | active v1.7.1 |
 | [43_compliance_discipline.md](43_compliance_discipline.md) | G30 合规与交易纪律体系（四项必做/四项严禁/信息合规/硬边界裁定/交易合规检测，D_COMPLIANCE 域设计真源） | active v1.1.0（2026-08-15 施工落地 AI-COMP-001 + 运行时装配 AI-ASM-001） |
+| [44_premarket_intraday_decision_upgrade.md](44_premarket_intraday_decision_upgrade.md) | 盘前与盘中决策支持升级（M1 情绪实时分析 9 增量/M2 盘中次日预案边界修正/M3 盘前综合预判 8 增量，28+41+90 号升级备忘；§9 施工算法十二件；§11 五项裁定 Owner 已批准；CAND 登记因并发纪律缓办） | active v1.1.1（2026-08-21 五项裁定全批+华泰机构范式整合+A50 交割日补登，施工按分期排 P0 之后） |
 | [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | draft v1.0.2 |
 | [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active v1.2.6 |
 | [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.0（2026-08-12 重建） |
@@ -674,6 +675,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 61_lifecycle_multi_ai | G28 生命周期多AI | ✅ 已定稿 | active v2.10.0 |
 | 19_northbound_hold_snapshot | 北向季度快照 fetcher（数据地基层子项） | 待施工 | draft v0.1.0 |
 | 64_data_source_download_spec | G29 数据源与下载体系（跨切治理层·6x 段位） | ✅ 已定稿 | active v1.4.0 |
+| 44_premarket_intraday_decision_upgrade | 盘前与盘中决策支持升级（28/41/90 号升级备忘，4x 交易流层） | ✅ Owner 五项裁定全批（2026-08-21） | active v1.1.1 |
 
 ## 8. 产出物命名规范
 
@@ -854,3 +856,9 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-17 | 2.11.1 | **68 号补登（代码与算法多模型审查流水线）**——§0 目录 49→50 篇（标题篇数由 48 同步修正为 50，29 号 v2.11.0 补登时标题滞后一并修正）；68_code_algorithm_review_pipeline.md 落位 6x 跨切治理层（67 号已占用迁出，取下一空号 68），draft v1.0.0 待用户裁定（待定问题 4 项：模型版本渠道/首审批次/token 预算/周审查窗口） | 用户指令驱动：建立施工后审查线——多模型轮流审查已 merge 模块代码/算法/运行情况，与前方施工线双线并行，统一由统筹会话调度；与 AI_review_instructions（审文档 why 层）、55 号（监控基建）、pre-commit 门禁（L1 机械检查）互补不重叠 |
 | 2026-08-17 | 2.11.2 | 68 号描述同步更新（§0 目录 68 号一句话）：v1.0.0→v1.1.0——只读纪律推翻→自主治本修复，双线并行→5+5 并发制，新增冲突防护五机制+止损降级线+全自动化零打扰两个打扰例外，执行蓝本补登 audit_prompts_20_ai.md；§5 待裁定重排（删报告存放、增模型-域绑定表与提示词落盘形态） | 用户裁定驱动：68 号 v1.0.0 初稿设计（审查线只登记+双线串行）被用户推翻，按用户"并发执行且审查与自我循环修复全自动化尽量不问用户"裁定修订为 v1.1.0；索引描述随之同步更新 |
 | 2026-08-17 | 2.11.3 | 68 号描述同步更新（§0 目录 68 号一句话）：v1.1.0→v1.2.0——模型池确认（Kimi-K3/GLM-5.3/Qwen3.8-Max，Trae CN 选择器手动切换）+§2.3 轮换矩阵落地+新增决策十一调度卡协议（切模型/执行任务/一键复制指令三要素）+§8 附录指令模板库（初审修复/复审/红队/调度卡示例），待裁定 #4/#5 与待定问题 #1 闭环 | 用户裁定驱动：三模型版本与 Trae CN 切换工作方式确认（每对话完成须输出下一步切模型+任务+一键复制指令），68 号 v1.2.0 落地调度卡任务链机制，索引描述同步 |
+| 2026-08-21 | 2.11.4 | **44 号补登（盘前与盘中决策支持升级，28/41/90 号升级备忘）**——§0 目录 50→51 篇 + §7.3 占用表补登 44 号；44_premarket_intraday_decision_upgrade.md 落位 4x 交易流层（40-43 已占用，取下一空号 44），draft v0.1.0 待 Owner 裁定（登记三缺口：M1 大盘情绪实时分析增量/M2 盘中次日预案边界修正/M3 盘前综合预判；CAND 登记因 candidate_module_registry.yaml 正被残余四项专项批写入，按并发纪律缓办） | Owner 三问核查驱动：实证 MOD-SIG-025 缺加速度/板块属性映射/剩余走势推演三增量、BM-SEL-04 暂缓裁定下 T+1 走边界修正替代路线、MOD-PLAN-002 缺盘前修正器——新建升级备忘与 28/41/90 号互引，不产生第二真源 |
+| 2026-08-21 | 2.11.5 | 44 号 v0.1.0→v0.2.0 版本同步（§0 目录+§7.3 两处）：全网调研+审查升级——M1 扩容 4→7 增量、M3 扩容 4→5 增量、新增 §2.1 因子定性裁定（6 条 FCT-sentiment 登记清单）+§6 数据源盘点+§9 施工算法七件（9.1-9.7），描述同步更新 | Owner 指令驱动：审查施工算法缺失+选项外更优算法+2026-08 最新研究整合（护盘实证/权重掩护三特征/开盘啦情绪五维/外盘四通道+龙虎榜溢价） |
+| 2026-08-21 | 2.11.6 | 44 号 v0.2.0→v0.3.0 版本同步（§0 目录+§7.3 两处）：新增 M1-⑧ 期指基差+M3-⑥ 期指三时点通道、§11 四项建议裁定（三缺口认可/CAND 前缀/日韩用途/期指通道）、§9.8 期指算法、§6 竞价采集口径更正（auction_book 已有） | Owner 第四问驱动（股指期货+白天美股期指盘中影响）：实证项目期货地基（kline_futures 311 万行/futures_position L1 轮询/index_quote 现货腿，唯一缺口=tick 采集 symbols 未配置） |
+| 2026-08-21 | 2.11.7 | 44 号 v0.3.0→v1.0.0 翻正 active（§0 目录+§7.3 两处）：§11 四项建议裁定 Owner 全批+追加裁定五（ES/NQ 盘中实时下载+实时分析，主源新浪 hf_ES/hf_NQ 秒级延时+L1 调度族 1 分钟轮询），§9.8 通道3 升级完整规则，状态 draft→active | Owner 批准驱动+机构实践核实：跨市场台亚洲时段必看美股期指/量化社区免费实时方案=akshare futures_foreign_commodity_realtime（新浪） |
+| 2026-08-21 | 2.11.8 | 44 号 v1.0.0→v1.1.0 版本同步（§0 目录+§7.3 两处）：华泰机构范式整合——新增 M1-⑨ 期权情绪三件套（PCR+IV Rank+Skew）/M3-⑦ 盘后资金面四件套（两融/主力/大宗/ETF 申赎）/M3-⑧ 事件日历联动+竞价三细节+M2 修正有效期，§9 算法 8→12 件，FCT 清单 8→10 条 | Owner 持续改进指令驱动：华泰证券 2026-03-17 A 股情绪指数研究（PCR+IV 两衍生品/融资+ETF 申购+CDS 三资金/非对称买卖夏普 1.07）+期权实战口径（2026-08-14）整合；实证两融/大宗/money_flow/option_iv/calendar_event 均已在库 |
+| 2026-08-21 | 2.11.9 | 44 号 v1.1.0→v1.1.1 版本同步（§0 目录+§7.3 两处）：§9.12 补 A50 期货交割日规则（每月倒数第 2 个工作日，新交所，交割前夜外资调仓→次日跳空；敏感度升半档+A50 通道权重上调 0.45），§6 事件日历行更正（写入任务未注册=P0-4② 挂账，A50 交割为第 13 类 event_type 候选） | Owner 指令驱动：特殊交易日盘点核查（17 号台账实证 calendar_event_refresh 未注册），A50 交割日 17 号 §2.4 已登记待评估且与 44 号 A50 通道直接联动 |
