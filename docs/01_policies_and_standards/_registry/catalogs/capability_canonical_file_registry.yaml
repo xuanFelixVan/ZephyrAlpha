@@ -4792,6 +4792,10 @@ capabilities:
   - select
   - _score_symbol
 creation_tokens:
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/56_backtest_vs_sim_reconciliation_plan.md
+  token: auto-backtest-vs-sim-reconciliation-plan-20260821
+  created_by: AI-P0BATCH-001
+  capability: backtest_vs_sim_reconciliation
 - file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/pre_expiry_full_backlog_roadmap.md
   token: auto-pre-expiry-backlog-roadmap-20260821
   created_by: AI-NIGHT-001
