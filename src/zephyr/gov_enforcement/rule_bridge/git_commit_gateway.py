@@ -1350,6 +1350,18 @@ class GitCommitGateway:
             reconcile_results 列表（worker 用于统计）。
         """
         try:
+            # 治本 #ARCH-104 同族（2026-08-21 P0-6②）：sync 回退路径（WMI spawn 失败降级/
+            # ZEPHYR_RECONCILE_SYNC=1）在入口脚本进程内跑 reconciler——`python scripts/
+            # git_commit.py` 的 sys.path[0]=scripts/ 目录而非仓根，reconciler 函数级
+            # `from scripts.ops_guard import ...`（reconciliation_registry.py 19 处）
+            # 随即 ImportError（GATE-TMP-CLEANUP/GATE-RUNTIME-CLEANUP 实发失败实证）。
+            # 显式装配 project_root，自给自足（worker 侧同款修复见 reconcile_worker
+            # ._run_worker #ARCH-104）。
+            import sys as _sys  # noqa: PLC0415 — 函数级局部 import（本文件惯例，见 L1023 等 8 处）
+
+            _root_str = str(self.project_root)
+            if _root_str not in _sys.path:
+                _sys.path.insert(0, _root_str)
             # ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): batched auto-commit wrapper.
             with self._batcher as _batcher_ctx:
                 _batcher_ctx.enable(session_id)
