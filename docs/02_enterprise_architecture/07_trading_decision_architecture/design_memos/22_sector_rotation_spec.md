@@ -5,8 +5,8 @@ title: 板块轮动 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.9.7"
-date: 2026-08-15
+version: "1.9.8"
+date: 2026-08-21
 topic: sector_rotation_spec
 scope: 07_trading_decision_architecture
 ---
@@ -72,6 +72,7 @@ scope: 07_trading_decision_architecture
   - [国泰海通 2026-08](https://m.weibo.cn/detail/5330754731250030)：7 月 28 日-8 月 7 日**周度行业排名变化均值 12.75，超历史 75 分位 11.75**，"典型的'电风扇'式再平衡"，"本轮科技反弹或为拥挤出清后的超跌修复，而非新一轮单边主升"
   - [川观新闻 2026-08-11 盘面](https://cbgc.scol.com.cn/news/7840749)：沪指终结六连阳跌 0.82% 报 3934 点、缩量 2.34 万亿，机器人/MLCC/算力租赁/创新药"一个接一个，但都没有持续性"——电风扇行情进行时实盘证据
   - [财信证券行业轮动周报 2026-08-10](https://m.toutiao.com/group/7672560316760490502/)（数据截至 08-07）：高拥挤区电子/食品饮料；快速升温区建筑材料/医药生物/传媒/计算机等 10 行业；Beta/Alpha 区间划分（12 行业 Beta 共振 / 18 行业 Alpha 分化）——与 §3.1⑨ 5 状态分类（高拥挤≈DISTRIBUTION_RISK/CONSENSUS_CLIMAX 视角）同向，"Alpha 区间=行业内部分化"支持 §3.1⑦ 龙头识别在分化行情中的权重溢价
+- **"电风扇"速度计已升级为独立因子（v1.9.8 补，2026-08-21）**——本节与 §2.3 的两条量化口径（周度行业排名变化均值 12.75>历史 75 分位 / Top3 次日重合率 14.8%）此前仅为约束与印证，已在 [44_premarket_intraday_decision_upgrade](44_premarket_intraday_decision_upgrade.md) **M1-⑩/§9.13 落为独立因子设计**：`rotation_velocity`（周度行业排名变化均值，>75 分位=电风扇行情）+ `top3_overlap`（Top3 板块次日重合率，<20%=一日游生态）+ `lead_streak<2` 无主线判定 → 大盘"混沌/下跌中继"注解 → M2 边界降档（§9.5 已挂降档触发：虹吸 z>1.5σ 且速度计>75 分位共振）。本 spec §2.3/§2.4 为其设计真源锚点；FCT-sentiment 条目登记随 44 号 Phase 2 走 62 号 ROOR 流程，本文不直接写注册表
 
 ### 2.5 已施工设施盘点（通用规则 #11，2026-08-12 代码侧/schema 真源审计）
 
@@ -757,6 +758,7 @@ sector_snapshot_collector (production) ──880xxx快照──┐
 | 2026-08-12 | 1.9.5 | **确认轮 §3.1⑥ 资金流数据源精确化** | 循环自检深挖发现 §3.1⑥"板块资金流——复用现有字段"裁定含两处真源偏差：①"snapshot_collector 采集 26 字段含资金数据"——schema 真源确认 snapshot 表 18 采集字段且无 inflow 类字段，collector 不采集资金流；②全仓扫描无任何 `SectorData(` 实例化代码——analyzer 是纯函数库，数据装配调用方未落码。修正：板块级 net_inflow 正确来源 = money_flow（个股级五层净流入 production）× sector_constituent（SCD-2 成分股）聚合，与 v1.8.0 资金性质聚合同路径，聚合器待施工（纯函数无新数据源）；§2.5 盘点表 snapshot 行同步补"无资金流字段"注记。SectorData.net_inflow 字段本身存在（代码确认 L88），裁定结论"不新建资金流采集管道"不变，仅数据源路径精确化 |
 | 2026-08-12 | 1.9.6 | 作战地图环节映射补强——锚定 BM-SEL-08-A 板块分析器（§2.5 末映射块：MOD-SIG-026 `sector_analyzer.py`，§2.5 盘点行 + §3.1① `evaluate_strength` 复用裁定，production） | 语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |
 | 2026-08-15 | 1.9.7 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-07） | 版本修正过程叙述→当前态陈述（§2.1/§3.1⑥/§3.1⑧ 数据源）；§2.4 电风扇超长 bullet 要点化；一日游 14.8% 实证 5 处重复→真源（§2.3）+指针（§3.1⑧/§3.1⑩）；RRG 增强与象限确认规则重复项指针化；§3.1⑪ 与 §4.8 重复的"为何 5 档"合并；§8.4 三条长条目瘦身 + WyckoffTradingAgent 锚点残留修正（§2.4→§2.3）。标题编号/关键数值（强度权重 40/30/30、回踩 Fib 38.2-61.8%、调整周期 80%、RRG DualEma 10/26、虹吸 z>1.5、门槛 0.60/0.80、水温 5 档 100/50/50/30/0%）/裁定/开放问题/BM-XXX/跨文档链接零丢失 |
+| 2026-08-21 | 1.9.8 | 电风扇速度计升级为独立因子的跨文档登记（44 号 M1-⑩/§9.13） | §2.4 补一条：§2.3/§2.4 两条电风扇量化口径（周度行业排名变化均值 12.75>75 分位 / Top3 次日重合率 14.8%）此前仅为约束与印证，已被 44_premarket_intraday_decision_upgrade M1-⑩/§9.13 升级为独立因子设计（rotation_velocity+top3_overlap+lead_streak 无主线判定→大盘混沌/中继注解→M2 边界降档，§9.5 已挂虹吸×速度计共振触发），本 spec 为其设计真源锚点；FCT-sentiment 登记随 44 号 Phase 2 走 62 号 ROOR 流程 |
 
 ---
 
