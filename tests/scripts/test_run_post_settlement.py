@@ -106,6 +106,29 @@ class TestParseArgs:
     def test_default_trade_date_is_none(self):
         assert rps.parse_args([]).trade_date is None
 
+    def test_if_trading_day_flag_default_off(self):
+        assert rps.parse_args([]).if_trading_day is False
+        assert rps.parse_args(["--if-trading-day"]).if_trading_day is True
+
+
+# ── 1.5 --if-trading-day 守卫（挂调度专用，2026-08-22）──
+
+
+class TestIfTradingDayGuard:
+    """非交易日静默 exit 0 不进入管线；交易日正常放行。"""
+
+    def test_non_trading_day_skips_before_pipeline(self, monkeypatch, capsys):
+        # 守卫在 deps 装配/管线执行之前——is_trading_day False 时直接 return 0
+        monkeypatch.setattr(rps, "is_trading_day", lambda d: False)
+        assert rps.main(["--if-trading-day"]) == 0  # deps=None 也不触生产装配（守卫先行）
+        assert "非交易日，跳过" in capsys.readouterr().out
+
+    def test_trading_day_proceeds(self, monkeypatch, capsys):
+        monkeypatch.setattr(rps, "is_trading_day", lambda d: True)
+        deps = _deps()  # 全 SKIPPED 基准 → exit 0
+        assert rps.main(["--if-trading-day"], deps=deps) == 0
+        assert "SKIPPED" in capsys.readouterr().out
+
 
 # ── 2. resolve_trade_date ──
 
