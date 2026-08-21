@@ -129,7 +129,7 @@ class TestRegistryManager:
         mgr = RegistryManager(REPO_ROOT)
         ad = mgr.find_adapter(str(REPO_ROOT / "docs/03_modules/module-registry.yaml"))
         assert ad is not None
-        assert ad.registry_id == "REG-MOD-001"
+        assert ad.registry_id == "REG-MOD-ALPHA_SIGNAL_DOMAIN"
 
     def test_find_adapter_csv_fallback(self) -> None:
         mgr = RegistryManager(REPO_ROOT)

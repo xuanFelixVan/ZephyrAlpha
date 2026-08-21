@@ -1,7 +1,7 @@
 # [A_test] module_id: MOD-GOV_health_probes_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] tests.test_health_probes
-# [INVARIANTS] 12-system triple-state probes; ProbeStatus enum stability
+# [INVARIANTS] 11-system triple-state probes (knowledge_base 已随 KB 系统退役移除); ProbeStatus enum stability
 # [MODIFY-GUARD] health_probes.py
 # [CONSUMERS] CI
 # [STABILITY] evolving
@@ -95,14 +95,14 @@ class TestHealthProbeManager:
         mgr = hp.HealthProbeManager()
         systems = mgr.list_systems()
         assert isinstance(systems, list)
-        assert len(systems) == 12
+        assert len(systems) == 11
         assert "orchestrator" in systems
 
 
 class TestSystemsConstant:
     def test_systems_tuple(self):
         assert isinstance(hp.SYSTEMS, tuple)
-        assert len(hp.SYSTEMS) == 12
+        assert len(hp.SYSTEMS) == 11
 
     def test_special_rules(self):
         assert "orchestrator" in hp.SPECIAL_RULES

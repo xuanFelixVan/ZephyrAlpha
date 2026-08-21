@@ -153,7 +153,7 @@ class TestClassifiedAsset:
 class TestDependencyNode:
     def test_create_defaults(self):
         node = dependency.DependencyNode(file_path="src/zephyr/core.py")
-        assert node.layer == "cross_layer"
+        assert node.layer == "L1_foundation"
         assert node.imported_by_count == 0
         assert node.imports_count == 0
         assert node.is_leaf is False

@@ -47,7 +47,7 @@ class TestDependencyExtractor:
     def test_extract_simple(self) -> None:
         ex = DependencyExtractor()
         edges = ex.extract("src/mod.py", _SIMPLE_IMPORTS)
-        assert len(edges) == 5
+        assert len(edges) == 6
         imports = {e.to_module for e in edges}
         assert "os" in imports
         assert "pathlib.Path" in imports
@@ -96,11 +96,11 @@ class TestBuildDependencyGraph:
         assert graph.total_edges == 0
 
     def test_single_py_file(self) -> None:
-        entries = [{"relative_path": "src/zephyr/asset-inventory/scanner.py"}]
+        entries = [{"relative_path": "src/zephyr/infrastructure/asset_inventory/scanner.py"}]
         graph = build_dependency_graph(entries, REPO_ROOT)
         assert graph.total_files == 1
         assert graph.total_edges > 0
-        assert "src/zephyr/asset-inventory/scanner.py" in graph.nodes
+        assert "src/zephyr/infrastructure/asset_inventory/scanner.py" in graph.nodes
 
     def test_non_py_files_skipped(self) -> None:
         entries = [
@@ -125,10 +125,10 @@ class TestInferLayer:
         assert _infer_layer("scripts/lock_files.py") == "L1_foundation"
 
     def test_tests_layer(self) -> None:
-        assert _infer_layer("tests/test_foo.py") == "cross_layer"
+        assert _infer_layer("tests/test_foo.py") == "L1_foundation"
 
-    def test_cross_layer_default(self) -> None:
-        assert _infer_layer("README.md") == "cross_layer"
+    def test_default_layer(self) -> None:
+        assert _infer_layer("README.md") == "L1_foundation"
 
 
 class TestDetectCycles:

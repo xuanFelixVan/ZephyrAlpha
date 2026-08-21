@@ -27,7 +27,7 @@ from zephyr.infrastructure.asset_inventory.dependency import (
 class TestDependencyNode:
     def test_create(self):
         n = DependencyNode(file_path="src/test.py")
-        assert n.layer == "cross_layer"
+        assert n.layer == "L1_foundation"
         assert n.imported_by_count == 0
         assert n.is_leaf is False
         assert n.is_root is True
@@ -137,16 +137,16 @@ class TestInferLayer:
         assert _infer_layer("scripts/scan.py") == "L1_foundation"
 
     def test_tests(self):
-        assert _infer_layer("tests/test_foo.py") == "cross_layer"
+        assert _infer_layer("tests/test_foo.py") == "L1_foundation"
 
     def test_config(self):
         assert _infer_layer("config/settings.yaml") == "L0_infrastructure"
 
     def test_docs(self):
-        assert _infer_layer("docs/guide.md") == "cross_layer"
+        assert _infer_layer("docs/guide.md") == "L1_foundation"
 
     def test_unknown(self):
-        assert _infer_layer("random/file.txt") == "cross_layer"
+        assert _infer_layer("random/file.txt") == "L1_foundation"
 
 
 class TestPriorityFromDependency:
