@@ -52,7 +52,11 @@ class TestScan:
         y.write_text("version: '1.0.0'\n", encoding="utf-8")
         f = DriftFixer()
         result = f.scan()
-        assert not any(finding["type"] == "pre_release_version" for finding in result)
+        # 5.12.5 后 scan() 固定扫描 REPO_ROOT（不受 chdir 隔离），
+        # 断言本文件（version 1.0.0）不被标记为 pre_release_version
+        assert not any(
+            finding["type"] == "pre_release_version" and finding["file"] == str(y) for finding in result
+        )
 
 
 class TestFix:

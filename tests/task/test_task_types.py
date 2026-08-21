@@ -50,13 +50,17 @@ class TestTaskStatus:
     def test_all_enum_values(self):
         expected = {
             "PENDING",
+            "CREATED",
+            "LOCKED",
+            "ASSIGNED",
+            "READY",
             "IN_PROGRESS",
+            "REVIEWING",
             "COMPLETED",
             "VERIFIED",
             "FAILED",
             "BLOCKED",
             "WAITING",
-            "READY",
             "RETRY",
             "CANCELLED",
         }

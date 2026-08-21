@@ -243,7 +243,7 @@ class TestBudgetTierOrdering:
         assert budget_tier_ordering(BudgetTier.CRITICAL) == 2
 
     def test_exhausted_returns_3(self):
-        assert BudgetTier_ordering(BudgetTier.EXHAUSTED) == 3
+        assert budget_tier_ordering(BudgetTier.EXHAUSTED) == 3
 
 
 class TestSLOContractEngineInit:

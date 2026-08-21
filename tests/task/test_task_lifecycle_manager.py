@@ -26,13 +26,13 @@ from zephyr.infrastructure.lifecycle.task_lifecycle_manager import (
 
 class TestTaskStatus:
     def test_values(self):
-        assert TaskStatus.CREATED == "created"
-        assert TaskStatus.LOCKED == "locked"
-        assert TaskStatus.ASSIGNED == "assigned"
-        assert TaskStatus.IN_PROGRESS == "in_progress"
-        assert TaskStatus.REVIEWING == "reviewing"
-        assert TaskStatus.COMPLETED == "completed"
-        assert TaskStatus.FAILED == "failed"
+        assert TaskStatus.CREATED == "CREATED"
+        assert TaskStatus.LOCKED == "LOCKED"
+        assert TaskStatus.ASSIGNED == "ASSIGNED"
+        assert TaskStatus.IN_PROGRESS == "IN_PROGRESS"
+        assert TaskStatus.REVIEWING == "REVIEWING"
+        assert TaskStatus.COMPLETED == "COMPLETED"
+        assert TaskStatus.FAILED == "FAILED"
 
 
 class TestGateID:
@@ -171,7 +171,7 @@ class TestTaskLifecycleManagerTransition:
         mgr.transition("T1", TaskStatus.LOCKED)
         state = mgr.get_state("T1")
         assert len(state.transition_history) >= 2
-        assert any("created" in h and "locked" in h for h in state.transition_history)
+        assert any("CREATED" in h and "LOCKED" in h for h in state.transition_history)
 
 
 class TestTaskLifecycleManagerPassGate:

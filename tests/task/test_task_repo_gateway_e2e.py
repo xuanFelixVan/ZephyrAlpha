@@ -254,21 +254,15 @@ class TestAutoCommitE2E:
         repo = _make_repo(tmp_path)
 
         # patch GitCommitGateway 的 project_root 为临时仓库
-        with patch.object(
-            TaskRepository,
-            "_auto_commit_on_completion",
-            TaskRepository.auto_commit_on_completion,
-        ):
-            # 直接调用，但需要 patch GitCommitGateway 的初始化
-            from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
 
-            original_init = GitCommitGateway.__init__
+        original_init = GitCommitGateway.__init__
 
-            def patched_init(self, project_root=None):
-                original_init(self, project_root=str(tmp_path))
+        def patched_init(self, project_root=None):
+            original_init(self, project_root=str(tmp_path))
 
-            with patch.object(GitCommitGateway, "__init__", patched_init):
-                repo.auto_commit_on_completion("E2E-009", task)
+        with patch.object(GitCommitGateway, "__init__", patched_init):
+            repo.auto_commit_on_completion("E2E-009", task)
 
         # 验证 commit 实际执行
         log = subprocess.run(

@@ -59,12 +59,12 @@ class TestE2E:
 
     def test_transition_has_dm401_reminder(self, repo):
         """_post_completion_actions() 包含 DM-401 提醒代码。"""
-        source = inspect.getsource(repo.post_completion_actions)
+        source = inspect.getsource(repo._post_completion_actions)
         assert "DM-401" in source, "_post_completion_actions() 缺少 DM-401 标记"
 
     def test_transition_no_session_id_guard(self, repo):
         """_post_completion_actions() 提醒逻辑不再依赖 session_id（DM-401 修复）。"""
-        source = inspect.getsource(repo.post_completion_actions)
+        source = inspect.getsource(repo._post_completion_actions)
         # DM-401 提醒应使用 if/else 分支处理 session_id，而非 `and session_id` 条件
         assert "DM-401" in source
         assert "and session_id" not in source, "DM-401 修复后不应有 `and session_id` 条件"
@@ -111,7 +111,7 @@ class TestRedBlue:
 
     def test_transition_reminder_wrapped_in_try_except(self, repo):
         """提醒逻辑被 try/except 包裹，不阻断 transition。"""
-        source = inspect.getsource(repo.post_completion_actions)
+        source = inspect.getsource(repo._post_completion_actions)
         assert "DM-401" in source
         assert "try:" in source
         assert "except Exception" in source
