@@ -78,6 +78,10 @@ class DashboardData:
 
     generated_at: str = ""
 
+    # #62 裁定（2026-08-21）：drift_events 最新事件时间（ISO），展示层"数据截至"提示用；
+    # 表空/库不存在为 None。写入链断裂期（2026-05-26~2026-08-21 实证）防"健康度良好"过期假象。
+    data_as_of: str | None = None
+
 
 class Dashboard:
     def __init__(self, project_root: str | None = None) -> None:
@@ -269,6 +273,7 @@ class Dashboard:
             drift_distribution=self.compute_drift_distribution(),
             manual_interventions=self.compute_manual_interventions(),
             generated_at=datetime.now(UTC).isoformat(),
+            data_as_of=self.data_as_of(),
         )
 
     def to_json_summary(self) -> str:
@@ -283,14 +288,34 @@ class Dashboard:
             "drift_distribution": data.drift_distribution,
             "manual_interventions": data.manual_interventions,
             "generated_at": data.generated_at,
+            "data_as_of": data.data_as_of,
         }
 
         return json.dumps(summary, ensure_ascii=False)
 
+    # 死数据警示阈值（#62）：drift 扫描设计频率为每 commit/定时，超 7 天未更新即判过期
+    STALE_DAYS: int = 7
+
+    def _staleness_banner(self, data_as_of: str | None) -> str:
+        """数据截至警示行（#62 裁定：展示层必须提示死数据，防过期"健康度良好"假象）。"""
+        if not data_as_of:
+            return "!! Drift data: NO DATA — drift_events 表空或库不存在，本表所有指标无数据基础"
+        age_days: int | None = None
+        try:
+            ts = datetime.fromisoformat(data_as_of)
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=UTC)
+            age_days = (datetime.now(UTC) - ts).days
+        except (ValueError, TypeError):
+            pass
+        if age_days is not None and age_days > self.STALE_DAYS:
+            return f"!! Drift data STALE — 数据截至 {data_as_of}（{age_days} 天未更新），写入链疑似断裂，读数不可信"
+        return f"Data as of {data_as_of}"
+
     def to_cli_table(self) -> str:
         data = self.generate()
 
-        lines = ["Module Health Index", "-" * 60]
+        lines = [self._staleness_banner(data.data_as_of), "", "Module Health Index", "-" * 60]
 
         for mod, score in sorted(data.module_health_index.items()):
             bar = "█" * int(score * 20)

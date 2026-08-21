@@ -20,6 +20,20 @@ import sqlite3
 from zephyr.gov_drift.dashboard import Dashboard, DashboardData
 
 
+def _seed_gov_db(tmp_path, rows: list[tuple]) -> None:
+    """tmp governance.db 布局造数（#62 裁定口径：DB_PATH 相对 MAIN_REPO_ROOT 重定位）。"""
+    from zephyr.shared.io.paths import DB_PATH, MAIN_REPO_ROOT
+
+    db_path = os.path.join(str(tmp_path), *DB_PATH.relative_to(MAIN_REPO_ROOT).parts)
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    conn = sqlite3.connect(db_path)
+    conn.execute("CREATE TABLE drift_events (module_id TEXT, state TEXT, created_at TEXT)")
+    for row in rows:
+        conn.execute("INSERT INTO drift_events VALUES (?, ?, ?)", row)
+    conn.commit()
+    conn.close()
+
+
 class TestDashboardData:
     def test_default_fields(self):
         dd = DashboardData()
@@ -27,6 +41,8 @@ class TestDashboardData:
         assert dd.module_health_index == {}
         assert dd.drift_heatmap == []
         assert dd.generated_at == ""
+        # #62 裁定（2026-08-21）：data_as_of 字段默认 None（表空/库不存在）
+        assert dd.data_as_of is None
 
     def test_custom_fields(self):
         dd = DashboardData(
@@ -124,3 +140,43 @@ class TestDashboard:
         db = Dashboard(project_root=str(tmp_path))
         matrix = db.load_coverage_matrix()
         assert isinstance(matrix, dict)
+
+
+class TestDataAsOfIntegration:
+    """#62 裁定（2026-08-21）：data_as_of 展示层接入——死数据警示防过期"健康度良好"假象。"""
+
+    def test_generate_includes_data_as_of(self, tmp_path):
+        _seed_gov_db(tmp_path, [("MOD-A", "VERIFIED", "2025-01-01"), ("MOD-A", "OPEN", "2025-01-02")])
+        db = Dashboard(project_root=str(tmp_path))
+        data = db.generate()
+        assert data.data_as_of == "2025-01-02"  # MAX(created_at)
+
+    def test_to_json_summary_includes_data_as_of(self, tmp_path):
+        _seed_gov_db(tmp_path, [("MOD-A", "OPEN", "2025-01-01")])
+        db = Dashboard(project_root=str(tmp_path))
+        parsed = json.loads(db.to_json_summary())
+        assert parsed["data_as_of"] == "2025-01-01"
+
+    def test_cli_table_stale_banner_for_old_data(self, tmp_path):
+        # 2025-01-01 距今远超 STALE_DAYS=7 → 过期警示
+        _seed_gov_db(tmp_path, [("MOD-A", "OPEN", "2025-01-01")])
+        db = Dashboard(project_root=str(tmp_path))
+        table = db.to_cli_table()
+        assert "STALE" in table
+        assert "2025-01-01" in table
+        assert "Module Health Index" in table
+
+    def test_cli_table_no_data_banner_when_no_db(self, tmp_path):
+        db = Dashboard(project_root=str(tmp_path))
+        table = db.to_cli_table()
+        assert "NO DATA" in table
+
+    def test_cli_table_fresh_data_no_stale(self, tmp_path):
+        from datetime import UTC, datetime
+
+        today = datetime.now(UTC).isoformat()
+        _seed_gov_db(tmp_path, [("MOD-A", "OPEN", today)])
+        db = Dashboard(project_root=str(tmp_path))
+        table = db.to_cli_table()
+        assert "Data as of" in table
+        assert "STALE" not in table
