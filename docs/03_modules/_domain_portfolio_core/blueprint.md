@@ -131,8 +131,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L05-001` 的 40 个 file 节点 | production | `extract_depgraph.py --modules MOD-L05-001` |
-| 数据流图 (dataflow) | 3 个 Dataset / 3 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L05-001` 的 46 个 file 节点 | production | `extract_depgraph.py --modules MOD-L05-001` |
+| 数据流图 (dataflow) | 3 个 Dataset / 4 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 73 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -143,7 +143,7 @@ build_status: generated
 | module_id | MOD-L05-001 | MOD-L05-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 40 文件 | 8 文件（§0.1） | ❌ |
+| file_count | 46 文件 | 8 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
