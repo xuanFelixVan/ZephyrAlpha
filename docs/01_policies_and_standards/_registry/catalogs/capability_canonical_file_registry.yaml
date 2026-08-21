@@ -4848,6 +4848,10 @@ capabilities:
   - queue_status
   - SerializerLease
 creation_tokens:
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/57_daily_cycle_sop.md
+  token: auto-daily-cycle-sop-20260821
+  created_by: AI-P0BATCH-001
+  capability: daily_cycle_sop
 - file: scripts/commit_queue.py
   token: auto-commit-queue-20260821
   created_by: AI-P0-6-004
