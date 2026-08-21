@@ -4706,6 +4706,91 @@ capabilities:
   - compute
   - _try_fit_garch
   - _simulate_fhs
+- capability_id: selection_result
+  aliases:
+  - SelectionResult
+  - SignalInput
+  - TargetPosition
+  - CTR-P1-018
+  - CAND-SIG-013
+  - 选股统一结果契约
+  description: 选股统一结果契约（CAND-SIG-013 晋升，2026-08-21 P0-4① 施工，#ARCH-132）。canonical =
+    src/zephyr/shared/contracts/selection_result.py（auto 派生：basename selection_result 匹配 capability_id）。
+    CTR-P1-018 手工维护（SSoT=21号设计备忘录 §3.5，非 cross_layer_contracts.yaml，故非 codegen 托管）：
+    TargetPosition（urgency∈{immediate,next_open,gradual} 枚举校验）/ SignalInput（as_of_date/universe/
+    regime_budget + v1.1.1 扩展 signals/metadata）/ SelectionResult（轻量 4 字段，confidence∈[0,1] 校验），
+    全 frozen dataclass。3 个 sleeve（打板/多因子/事件驱动）select() 统一返回，对接 firm 层
+    FirmRiskAggregator（Model A 统一风险框架工程落地）。[MATURITY] testing（宪章 B-007 新模块封顶）。
+    解决发现性：新 AI 搜 "SelectionResult/选股统一接口/TargetPosition/urgency" 可定位真源。
+    解决防重建：check_file_canonical() 反查阻止重建第二份选股结果契约。
+  integrity_anchors:
+  - TargetPosition
+  - SignalInput
+  - SelectionResult
+  - VALID_URGENCY
+- capability_id: daban_sleeve_strategy
+  aliases:
+  - DabanSleeveStrategy
+  - daban-sleeve
+  - STR-DABAN-022
+  - CAND-SIG-012
+  - 打板sleeve组装策略
+  description: 打板 sleeve 组装策略（CAND-SIG-012 晋升，2026-08-21 P0-4① 施工，#ARCH-132，STR-DABAN-022）。
+    canonical = src/zephyr/pf_core/strategies/daban_sleeve_strategy.py（auto 派生：basename 匹配）。
+    组装 signal_ashare 四引擎（全 production 不重复造轮子）：short_term_stock_selector（BM-SEL-22
+    资格门）+ youzi_relay_emotion_engine（BM-SEL-23）+ quant_short_term_strength_engine（BM-SEL-24）
+    + dual_engine_fusion_decision_engine（BM-SEL-25）；final_score=融合分×6类决策优先级
+    （主升龙头1.0/二进三0.85/跟风0.65/复苏0.50/伪强0.30/地天反包0.20）降序 Top-N（N≤10 容量硬约束），
+    权重比例归一化≤1.0；urgency=immediate。经 strategies/__init__.py lazy 映射导出防双注册。
+    [MATURITY] testing（宪章 B-007）。解决发现性：新 AI 搜 "打板sleeve/daban-sleeve/双引擎融合策略"
+    可定位真源。解决防重建：check_file_canonical() 反查。
+  integrity_anchors:
+  - DabanSleeveStrategy
+  - generate_target_weights
+  - select
+  - _DECISION_PRIORITY
+- capability_id: multifactor_sleeve_strategy
+  aliases:
+  - MultifactorSleeveStrategy
+  - multifactor-sleeve
+  - STR-MULTIFACTOR-096
+  - CAND-SIG-012
+  - 多因子sleeve组装策略
+  description: 多因子 sleeve 组装策略（CAND-SIG-012 晋升，2026-08-21 P0-4① 施工，#ARCH-132，
+    STR-MULTIFACTOR-096）。canonical = src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py
+    （auto 派生：basename 匹配）。组装 factor 域 production 组件：multifactor_synthesis
+    （synthesize_equal_weight/synthesize_ic_weighted 横截面合成 pd.Series 产出）+ ic_ir_calc
+    （compute_ic_ir_table 离线 IC 权重，compute_ic_weights 薄封装注入 constraints）；
+    横截面降序 Top-N 等权归一化 min(1/N,max_single)≤1.0；urgency=gradual。
+    经 strategies/__init__.py lazy 映射导出防双注册。[MATURITY] testing（宪章 B-007）。
+    解决发现性：新 AI 搜 "多因子sleeve/multifactor-sleeve/横截面合成策略" 可定位真源。
+    解决防重建：check_file_canonical() 反查。
+  integrity_anchors:
+  - MultifactorSleeveStrategy
+  - generate_target_weights
+  - select
+  - compute_ic_weights
+- capability_id: event_driven_sleeve_strategy
+  aliases:
+  - EventDrivenSleeveStrategy
+  - eventdriven-sleeve
+  - STR-EVENT-001
+  - CAND-SIG-012
+  - 事件驱动sleeve组装策略
+  description: 事件驱动 sleeve 组装策略（CAND-SIG-012 晋升，2026-08-21 P0-4① 施工，#ARCH-132，
+    STR-EVENT-001）。canonical = src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py
+    （auto 派生：basename 匹配）。组装 intelligence 域组件：event_score（compute_event_score 族，
+    [MATURITY] design——事件链 NLP 管道未闭环（#ARCH-NLP-PIPELINE-001），依赖成熟度如实标注）
+    + event_anomaly_detector（detect_anomaly 异动确认，负向异动剔除）；|score|<0.2 噪声不动作、
+    利空剔除（A股不能做空），评分降序 Top-N 比例归一化≤1.0；urgency=next_open。
+    经 strategies/__init__.py lazy 映射导出防双注册。[MATURITY] testing（宪章 B-007）。
+    解决发现性：新 AI 搜 "事件驱动sleeve/eventdriven-sleeve/事件冲击评分策略" 可定位真源。
+    解决防重建：check_file_canonical() 反查。
+  integrity_anchors:
+  - EventDrivenSleeveStrategy
+  - generate_target_weights
+  - select
+  - _score_symbol
 creation_tokens:
 - file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/pre_expiry_full_backlog_roadmap.md
   token: auto-pre-expiry-backlog-roadmap-20260821
@@ -7393,6 +7478,22 @@ creation_tokens:
   token: auto-check-contracts-codegen-idempotent-20260819
   created_by: CODEGEN-001
   capability: contract_codegen_idempotency_gate
+- file: src/zephyr/shared/contracts/selection_result.py
+  token: auto-selection-result-contract-20260821
+  created_by: AI-P0-4-001
+  capability: selection_result
+- file: src/zephyr/pf_core/strategies/daban_sleeve_strategy.py
+  token: auto-daban-sleeve-strategy-20260821
+  created_by: AI-P0-4-001
+  capability: daban_sleeve_strategy
+- file: src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py
+  token: auto-multifactor-sleeve-strategy-20260821
+  created_by: AI-P0-4-001
+  capability: multifactor_sleeve_strategy
+- file: src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py
+  token: auto-event-driven-sleeve-strategy-20260821
+  created_by: AI-P0-4-001
+  capability: event_driven_sleeve_strategy
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

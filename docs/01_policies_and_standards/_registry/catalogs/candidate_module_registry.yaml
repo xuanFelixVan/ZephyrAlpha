@@ -7049,12 +7049,12 @@ entries:
   domain_status: active
   sub_layer: 策略组装层
   problem: 首批上线主链路最后一公里，跨 signal/position/pf_core 多模块组装；依赖 G08/G09/G10 细节定型与 G05 标准接口。
-  proposal: 触发=G08/G09/G10 定型（首批策略回测校准完成）；与 CAND-SIG-013 统一接口同批。
-  status: candidate
+  proposal: 触发=G08/G09/G10 定型（首批策略回测校准完成）；与 CAND-SIG-013 统一接口同批。晋升依据（2026-08-21）：G05/G08/G09/G10 全定型触发条件命中，tracker 总账 P0-4① 施工落地——3 个 sleeve 组装策略类落成（src/zephyr/pf_core/strategies/{daban,multifactor,event_driven}_sleeve_strategy.py，[MATURITY] testing 宪章B-007 封顶），strategy_registry.yaml 登记 STR-DABAN-022/STR-MULTIFACTOR-096/STR-EVENT-001。
+  status: promoted
   priority: P1
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 20号节'
   created: '2026-08-20'
-  last_updated: '2026-08-20'
+  last_updated: '2026-08-21'
 - id: CAND-SIG-013
   name: SelectionResult 统一接口（21号①，与 20号① 同源主链路）
   aliases: [选股统一接口]
@@ -7062,12 +7062,12 @@ entries:
   domain_status: active
   sub_layer: 选股引擎
   problem: L0/L1/L2-C 三层 production 但无统一 SelectionResult 接口（仅局部 StockSelectionResult）。
-  proposal: 触发=G05 标准接口定型；与 sleeve 策略类同批施工。
-  status: candidate
+  proposal: 触发=G05 标准接口定型；与 sleeve 策略类同批施工。晋升依据（2026-08-21）：G05 标准接口定型触发条件命中，tracker 总账 P0-4① 施工落地——SelectionResult 统一接口契约落成（src/zephyr/shared/contracts/selection_result.py，CTR-P1-018 手工维护，[MATURITY] testing 宪章B-007 封顶），签名对齐 21号 §3.5 L224-235 + v1.1.1 L241-261。
+  status: promoted
   priority: P1
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
   created: '2026-08-20'
-  last_updated: '2026-08-20'
+  last_updated: '2026-08-21'
 - id: CAND-SIG-014
   name: 信号工厂九子阶段流水线+信号聚合器（21号⑥）
   aliases: [信号工厂]

@@ -17707,3 +17707,34 @@ entries:
   related_rules: '#ARCH-MODULE-ID-DUAL-SPELLING-001; trae_047; trae_060'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+- issue_id: '#ARCH-132'
+  title: 'SelectionResult 统一接口契约 + 3 个 sleeve 组装策略类新模块登记（CAND-SIG-012/013 晋升，tracker 总账 P0-4①）'
+  severity: P1高
+  category: module_registration
+  discovered: '2026-08-21 tracker 总账 P0-4① 施工批：G05/G08/G09/G10 全定型触发条件命中，CAND-SIG-012/013 晋升施工'
+  adjudication: |
+    裁定（20/21/24/25/26 号设计备忘录既有裁定落码，非新价值判断）：
+    ① SelectionResult 统一接口契约落 src/zephyr/shared/contracts/selection_result.py
+    （CTR-P1-018 手工维护——SSoT 为 21号 §3.5 设计备忘录而非 cross_layer_contracts.yaml，
+    故不加 CODGEN 标记；签名对齐 21号 L224-235 + v1.1.1 L241-261 扩展；
+    urgency∈{immediate,next_open,gradual} 映射 daban/event/multifactor）。
+    ② 3 个 sleeve 组装策略类落 src/zephyr/pf_core/strategies/（daban/multifactor/event_driven），
+    组装底层全 production 组件不重复造轮子；canonical 签名 generate_target_weights
+    + select()→SelectionResult 统一对外接口，内部实现不强行统一（21号 §5.1）。
+    ③ 双注册陷阱防护：真实模块放 strategies/ 包下 + __init__.py lazy __getattr__ 映射
+    保证 import 只发生一次（StrategyRegistry.register 重复 strategy_id 直接 raise）。
+    ④ 宪章 B-007：新模块一律 [MATURITY] testing 封顶，production 启用属 Owner。
+  impact:
+    - 'src/zephyr/shared/contracts/selection_result.py（新建，CTR-P1-018）'
+    - 'src/zephyr/pf_core/strategies/daban_sleeve_strategy.py（新建，strategy_id=daban-sleeve）'
+    - 'src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py（新建，strategy_id=multifactor-sleeve）'
+    - 'src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py（新建，strategy_id=eventdriven-sleeve）'
+    - 'src/zephyr/pf_core/strategies/__init__.py（_LAZY 映射追加 3 行）'
+    - 'tests/pf_core/test_{selection_result_contract,daban_sleeve_strategy,multifactor_sleeve_strategy,eventdriven_sleeve_strategy}.py（新建 4 件，35 项）'
+    - 'strategy_registry.yaml（STR-DABAN-022/STR-MULTIFACTOR-096/STR-EVENT-001）'
+    - 'candidate_module_registry.yaml（CAND-SIG-012/013 → promoted）'
+  fix_phase: '施工落地（2026-08-21）：4 src 新文件 + __init__ lazy 映射 + 4 测试文件 35 项全绿；治理登记五联（strategy/candidate/arch/capability+creation_token/translation）'
+  status: decided
+  related_adjudication: '21号 §3.5/§3.6; 20号 §2.2/§2.3/§2.4; 宪章 B-007'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'

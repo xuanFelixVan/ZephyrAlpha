@@ -41551,6 +41551,35 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "contracts YAML 或生成器模板变更时，验证重跑产物与磁盘文件零差异，防回退合法修复进 git"
+- module_path: src/zephyr/shared/contracts/selection_result.py
+  domain_id: D_INFRASTRUCTURE
+  name_zh: "选股统一结果契约"
+  name_en: "Selection Result Contract"
+  desc_zh: "CTR-P1-018 选股统一接口契约（21号 §3.5）：TargetPosition/SignalInput/SelectionResult 三 frozen dataclass，urgency 三值枚举+confidence∈[0,1] 校验"
+  desc_en: "CTR-P1-018 unified stock-selection interface contract (memo 21 §3.5): TargetPosition/SignalInput/SelectionResult frozen dataclasses with urgency enum and confidence range validation"
+  plain_zh: "选股统一结果契约。三个选股策略（打板/多因子/事件驱动）内部算法各不相同，但对外交卷统一用这一张表：买哪几只、各买多少、信号从哪来、多着急买（立即/次日开盘/逐步建仓）。有了统一格式，上层风控才能一把尺子汇总三家结果。"
+- module_path: src/zephyr/pf_core/strategies/daban_sleeve_strategy.py
+  domain_id: D_PF_CORE
+  name_zh: "打板 sleeve 组装策略"
+  name_en: "Daban Sleeve Strategy"
+  desc_zh: "打板 sleeve 组装策略（STR-DABAN-022）：短线选股资格门+游资情绪+量化强度+双引擎融合四引擎流水线，融合分×6类决策优先级取 Top-N，urgency=immediate"
+  desc_en: "Daban sleeve assembly strategy (STR-DABAN-022): four-engine pipeline (selector gate + youzi emotion + quant strength + dual-engine fusion), fused score x decision priority Top-N, urgency=immediate"
+  plain_zh: "打板 sleeve 组装策略。把四个已验证的短线引擎串成一条流水线：先过资格门（回避的票直接踢掉），再算游资情绪和量化强度两个分数，最后融合出六类决策按优先级排序，取最强的几只涨停票，要求盘中立即执行。"
+- module_path: src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py
+  domain_id: D_PF_CORE
+  name_zh: "多因子 sleeve 组装策略"
+  name_en: "Multifactor Sleeve Strategy"
+  desc_zh: "多因子 sleeve 组装策略（STR-MULTIFACTOR-096）：横截面多因子合成（等权/IC加权）打分降序取 Top-N 等权归一化，urgency=gradual"
+  desc_en: "Multifactor sleeve assembly strategy (STR-MULTIFACTOR-096): cross-sectional multifactor synthesis (equal/IC-weighted) ranking Top-N equal-weight normalized, urgency=gradual"
+  plain_zh: "多因子 sleeve 组装策略。把每个候选股票的多个因子分数合成一个综合分（可以等权，也可以按因子历史预测能力加权），全市场横向比排名，取前几十只等权买入，不着急一次买满，分三到五天逐步建仓。"
+- module_path: src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py
+  domain_id: D_PF_CORE
+  name_zh: "事件驱动 sleeve 组装策略"
+  name_en: "Event Driven Sleeve Strategy"
+  desc_zh: "事件驱动 sleeve 组装策略（STR-EVENT-001）：事件冲击评分（compute_event_score 族）+盘中异动确认，评分降序 Top-N，urgency=next_open；依赖 event_score=design 态如实标注"
+  desc_en: "Event-driven sleeve assembly strategy (STR-EVENT-001): event impact scoring (compute_event_score family) + intraday anomaly confirmation, score-ranked Top-N, urgency=next_open; event_score dependency maturity=design honestly annotated"
+  plain_zh: "事件驱动 sleeve 组装策略。公司出公告、新闻出大事时给这只股票算一个事件冲击分，分数太小的当噪音不理、利空的不碰（A股不能做空），再结合盘中异动确认剔除假动作，选出的票次日开盘买入，两三天内完成建仓。"
+
 
 battle_map_steps:
 - step_id: BM-BUY-04

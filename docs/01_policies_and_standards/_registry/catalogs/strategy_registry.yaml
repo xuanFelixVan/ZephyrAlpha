@@ -11802,3 +11802,243 @@ strategies:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+
+  - strategy_id: "STR-DABAN-022"
+    name: "打板 sleeve 组装策略（双引擎融合 Top-N）"
+    name_zh: "打板 sleeve 组装策略（双引擎融合 Top-N）"
+    aliases: ["daban-sleeve", "打板sleeve", "CAND-SIG-012"]
+    strategy_class: "daban"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "涨停标的+连板梯队候选池 → BM-SEL-22 短线选股资格门（引擎降级/推荐\"回避\"剔除）→ 游资情绪6因子（BM-SEL-23）+ 量化强度6维（BM-SEL-24）双引擎评分 → 双引擎融合6类决策（BM-SEL-25）→ final_score=融合分×决策优先级（主升龙头1.0/二进三0.85/跟风0.65/复苏0.50/伪强0.30/地天反包0.20，\"中性\"剔除）降序取 Top-N（N≤10 容量硬约束），评分比例归一化+max_single 截顶（权重和≤1.0）。urgency=immediate（T 日盘中买入）。"
+    exit_logic: "T+1 次日卖出（24号 §3.7 T+1 约束下打板时序；21号 urgency=immediate 映射 convergence_window 1-2 天，窗口在 StrategyBook 层持有）。"
+    position_sizing: "sleeve 只产粗权重（评分比例归一化≤1.0），精仓位（Kelly/risk parity）在 firm 层统一裁决（21号 §3.7 边界裁定）"
+    risk_rules: []
+    holding_period: "T+1"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "20_first_batch_strategies.md §2.2; 24_daban_strategy_detail.md §3.5; 21_stock_selection_engine.md §3.5/§3.6"
+    code_path: "src/zephyr/pf_core/strategies/daban_sleeve_strategy.py"
+    lifecycle_status: "candidate"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-21"
+    updated_at: "2026-08-21"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: null
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: true
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    last_quality_scan_at: null
+    entry_series: null
+    range_bounds: {}
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["打板", "龙头", "信号", "量化"]
+    algorithm_status: "quantized"
+    evidence: "P0-4① 施工（2026-08-21，CAND-SIG-012 晋升）：代码落地 [MATURITY] testing（宪章B-007 新模块封顶，production 启用属 Owner）；单测 10 项全绿（tests/pf_core/test_daban_sleeve_strategy.py）；未回测"
+    code_symbol: "src/zephyr/pf_core/strategies/daban_sleeve_strategy.py::DabanSleeveStrategy"
+    code_fingerprint: "188a0338a2ea27a7"
+
+  - strategy_id: "STR-MULTIFACTOR-096"
+    name: "多因子 sleeve 组装策略（横截面合成 Top-N）"
+    name_zh: "多因子 sleeve 组装策略（横截面合成 Top-N）"
+    aliases: ["multifactor-sleeve", "多因子sleeve", "CAND-SIG-012"]
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "全市场沪深 A 股候选池 → 横截面多因子合成打分（multifactor_synthesis 等权/IC加权，25号 §3.1 打分→IC加权路径；IC 权重由 ic_ir_calc.compute_ic_ir_table 离线产出经 constraints 注入，PIT 铁律 INV-004 不引入未来函数）→ 降序取 Top-N（默认20）等权归一化 min(1/N, max_single)（权重和≤1.0）。urgency=gradual（T+1 起 3-5 天逐步建仓）。"
+    exit_logic: "3-5 天收敛窗口调仓（21号 urgency=gradual 映射 convergence_window 3-5 天）；因子衰减 IC 末位淘汰触发因子替换（25号 §3.3）。"
+    position_sizing: "sleeve 只产粗权重（top-N 等权≤1.0），精仓位在 firm 层（21号 §3.7）"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "20_first_batch_strategies.md §2.3; 25_multifactor_strategy_detail.md §3.1; 21_stock_selection_engine.md §3.5/§3.6"
+    code_path: "src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py"
+    lifecycle_status: "candidate"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-21"
+    updated_at: "2026-08-21"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: null
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: true
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    last_quality_scan_at: null
+    entry_series: null
+    range_bounds: {}
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "ranking"
+    applies_to: ["stock"]
+    tags: ["多因子", "因子", "量化"]
+    algorithm_status: "quantized"
+    evidence: "P0-4① 施工（2026-08-21，CAND-SIG-012 晋升）：代码落地 [MATURITY] testing（宪章B-007 新模块封顶，production 启用属 Owner）；单测 8 项全绿（tests/pf_core/test_multifactor_sleeve_strategy.py）；未回测"
+    code_symbol: "src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py::MultifactorSleeveStrategy"
+    code_fingerprint: "2d32a120d0b3876a"
+
+  - strategy_id: "STR-EVENT-001"
+    name: "事件驱动 sleeve 组装策略（事件冲击评分×异动确认）"
+    name_zh: "事件驱动 sleeve 组装策略（事件冲击评分×异动确认）"
+    aliases: ["eventdriven-sleeve", "事件驱动sleeve", "CAND-SIG-012"]
+    strategy_class: "event_driven"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "事件触发标的动态候选池 → compute_event_score 族评分（业绩类 SUE+EAR+ORJ 三/双因子、其余五类单因子降级链，26号 §2.5；score 已含衰减阶段因子×极端反应修正）→ |score|<0.2 噪声不动作、score<0 利空剔除（A股不能做空）→ 盘中异动确认（负向异动剔除）→ 评分降序取 Top-N（默认10）比例归一化+max_single 截顶（权重和≤1.0）。urgency=next_open（T+1 开盘买入）。依赖成熟度：event_score=design 态（#ARCH-NLP-PIPELINE-001 事件链 NLP 管道未闭环）。"
+    exit_logic: "三道线：decay phase 兜底退出（按事件类衰减表）/极端反应提前退出（holding_days≥1，T+1 约束）/反向事件覆盖（26号 §2.5）；2-3 天收敛（21号 urgency=next_open 映射）。"
+    position_sizing: "sleeve 只产粗权重（评分比例归一化≤1.0），精仓位在 firm 层（21号 §3.7）"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "20_first_batch_strategies.md §2.4; 26_event_driven_strategy_detail.md §2.5; 21_stock_selection_engine.md §3.5/§3.6"
+    code_path: "src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py"
+    lifecycle_status: "candidate"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-21"
+    updated_at: "2026-08-21"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: null
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: true
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    last_quality_scan_at: null
+    entry_series: null
+    range_bounds: {}
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["事件", "财报", "放量"]
+    algorithm_status: "quantized"
+    evidence: "P0-4① 施工（2026-08-21，CAND-SIG-012 晋升）：代码落地 [MATURITY] testing（宪章B-007 新模块封顶，production 启用属 Owner）；单测 10 项全绿（tests/pf_core/test_eventdriven_sleeve_strategy.py）；未回测"
+    code_symbol: "src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py::EventDrivenSleeveStrategy"
+    code_fingerprint: "8ae95d92bb4eaabb"
