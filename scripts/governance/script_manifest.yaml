@@ -1,12 +1,12 @@
-# 自动生成于 2026-08-21T04:48:03Z
+# 自动生成于 2026-08-21T09:15:49Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-21T04:48:03Z'
+generated_at: '2026-08-21T09:15:49Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 405
-with_manifest: 404
+total_scripts: 406
+with_manifest: 405
 missing_manifest: 1
 categories:
   governance:_sync: 4
@@ -22,7 +22,7 @@ categories:
   governance:d5_architecture: 114
   governance:d6_security: 15
   governance:d7_code: 41
-  governance:d8_doc_sync: 13
+  governance:d8_doc_sync: 14
   governance:d9_knowledge: 2
   governance:data_quality: 2
   governance:generators: 11
@@ -3508,6 +3508,18 @@ scripts:
   description: 未使用导入检测——AST 级扫描，检查 import 了但未引用的模块
   tags:
   - Critical
+- name: d8_doc_sync/agents_cheatsheet_drift_reconciler.py
+  owner: governance:d8_doc_sync
+  dimensions:
+  - D8
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: true
+  description: AGENTS.md 速查区硬编码数字漂移检测 reconciler——post-commit 触发，校验 AGENTS.md 速查表计数（18
+    表体系/明细行/告警阈值/能力计数）与 ROOR/capability 注册表真值一致性（warn-only 不重写）
+  tags:
+  - Quick
 - name: d8_doc_sync/algo_flow_translation_reconciler.py
   owner: governance:d8_doc_sync
   dimensions:
