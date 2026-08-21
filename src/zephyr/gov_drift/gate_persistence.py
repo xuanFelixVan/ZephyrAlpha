@@ -21,7 +21,8 @@ Gate Persistence — gate_persistence.py
 
 门禁结果持久化：scan_result.json + governance.db(SQLite) + manifest.json + 防篡改 SHA256。
 
-
+注意（#62 裁定 2026-08-21）：本文件 data/drift_audit/drift_events.db 不再含 drift_events
+表（空壳 schema B 已废止）；drift_events 唯一真源=DB_PATH governance.db（drift_engine 写）。
 对标 blueprint.md §2.17门禁持久化 / D-023-31。"""
 
 from __future__ import annotations
@@ -91,53 +92,9 @@ class GatePersistence:
         conn = get_db_connection(self._db_path)
 
         try:
-            conn.execute("""
-
-
-                CREATE TABLE IF NOT EXISTS drift_events (
-
-
-                    event_id TEXT PRIMARY KEY,
-
-
-                    module_id TEXT,
-
-
-                    detector_id TEXT,
-
-
-                    drift_dimension TEXT,
-
-
-                    baseline_version TEXT,
-
-
-                    state TEXT,
-
-
-                    created_at TEXT,
-
-
-                    updated_at TEXT,
-
-
-                    resolved_by TEXT,
-
-
-                    resolution_detail TEXT,
-
-
-                    auto_fixed INTEGER,
-
-
-                    rollback_verified INTEGER
-
-
-                )
-
-
-            """)
-
+            # #62 裁定（2026-08-21 裁定书）：本文件不再创建 drift_events 表——
+            # drift_events 唯一真源=governance.db 22 列 schema（drift_engine 唯一写方），
+            # 此处 12 列 schema B 空壳已删除（全表 0 行实证零损失），消除第三 schema 来源。
             conn.execute("""
 
 

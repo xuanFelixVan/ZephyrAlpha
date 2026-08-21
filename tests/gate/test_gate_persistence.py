@@ -44,11 +44,13 @@ class TestGatePersistenceInstantiation:
         assert gp.db_path.endswith("drift_events.db")
 
     def test_db_tables_exist(self, tmp_path):
+        """#62 裁定（2026-08-21）：gate_persistence 不再创建 drift_events 空壳表——
+        唯一真源=governance.db（drift_engine 写）；scan_results/gate_decisions 保留。"""
         gp = GatePersistence(project_root=str(tmp_path))
         conn = sqlite3.connect(gp.db_path)
         tables = [row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()]
         conn.close()
-        assert "drift_events" in tables
+        assert "drift_events" not in tables  # 空壳 schema B 已废止（第三 schema 来源消除）
         assert "scan_results" in tables
         assert "gate_decisions" in tables
 

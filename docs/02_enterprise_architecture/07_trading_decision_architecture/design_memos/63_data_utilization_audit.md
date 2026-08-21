@@ -1381,7 +1381,7 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 |---|---|---|
 | Q1 ✅ | **DEPRECATED 观察期**（Owner 2026-08-21 拍板"挂牌观察"）：index_meta 标 DEPRECATED，62 号 universe/benchmark 施工若需 meta 字段转 ACTIVE 补建，1 季度无认领→SUNSET→REMOVED（§7.5 路径）。本轮不动注册表/DDL/采集 | Owner 原话"挂牌观察（DEPRECATED）"=采纳默认建议；删除不可逆 vs 观察零成本 |
 | Q8 ✅ | **6 张全标 dormant 保留**（Owner 2026-08-21 确认"肯定保留，后面会针对性开发相应功能"）：dividend_tax_node 免归档（DB 派生 VIEW 零成本）；index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation 五张标 `status: dormant` 保留 DDL，**消费方功能开发时同步补采集并转 ACTIVE**（Owner 明确后续将针对性开发对应功能——26 号事件驱动/15 号估值等消费侧立项时激活，激活路径=补采集+注册表状态翻转+消费文档接线） | Owner 原话确认保留+后续开发意图；dormant 语义=DDL 保留/不采集/不删除/待激活 |
-| Q3 ⏳ | **AI 第一性原理分析已登记，待 Owner 确认**：实证 7 处引用全为生产侧（miniqmt 写表 2+tasks.yaml 采集任务 2+speed_tester 测速 3），分析侧（指标/因子/回测）零 hfq 周月表消费——矛盾为纸面口径非行为分歧。裁定建议：①复权分层=raw 事实层+factor 解释层+hfq/qfq 视图层，存储必 raw+factor 分离（PIT 可复现），qfq（前复权）锚定"今天"每日漂移禁入回测存储，hfq（后复权）锚定上市首日时间稳定=唯一可作视图资产的复权口径；②16 号 §3.2"未复权"语义应明确为"原始口径+adj_factor 点乘"（与项目 raw+factor 架构一致），补一行分层口径说明即消矛盾，不改代码不改表；③hfq 周/月线=视图层缓存资产保留（生产侧 active/消费侧 dormant），指标栈切换复权口径属专项 | 行业实践（Wind/聚源 raw+factor 分离；qlib/zipline/vectorbt 信号用复权价、撮合用真实价、估值用 raw×factor）；第一性原理：回测要"可比价算信号+真实价算成交+raw×factor 算估值"三价分层，复权不是二选一是分层 |
+| Q3 ✅ | **已裁定（Owner 2026-08-21 确认）**：实证 7 处引用全为生产侧（miniqmt 写表 2+tasks.yaml 采集任务 2+speed_tester 测速 3），分析侧（指标/因子/回测）零 hfq 周月表消费——矛盾为纸面口径非行为分歧。处置：①复权分层=raw 事实层+factor 解释层+hfq/qfq 视图层，存储必 raw+factor 分离（PIT 可复现），qfq 禁入回测存储（每日漂移），hfq=唯一时间稳定视图口径；②16 号 §3.1 已补"复权口径分层声明"（"未复权"=原始口径+adj_factor 点乘），不改代码不改表；③hfq 周/月线=视图层缓存资产保留（生产侧 active/消费侧 dormant），指标栈切换属专项 | Owner 确认采纳 AI 第一性原理分析（行业实践：Wind/聚源 raw+factor 分离；qlib/zipline/vectorbt 信号复权价/撮合真实价/估值 raw×factor） |
 
 ## 11. 修订记录
 

@@ -44,15 +44,22 @@ class CorrelationReport:
     systemic_risks: list[str] = field(default_factory=list)
 
 
+# #62 裁定（2026-08-21）：查询列对齐生产 22 列 schema——drift_dimension 语义由
+# description 列承载（writer 同口径映射）；生产 schema 无 scan_id 批次列，共现批次以
+# date(created_at) 天级近似（扫描为天级任务；未来加 scan_id 列可切回精确口径）。
+# §5.160.2 SQL 集中化——SQL_* 常量定义行 gate 豁免。
+_SQL_CO_OCCURRENCE = "SELECT date(created_at) AS scan_day, module_id FROM drift_events WHERE state != 'FALSE_POSITIVE'"
+_SQL_DIMENSION_CLUSTERS = "SELECT description AS drift_dimension, module_id FROM drift_events WHERE state != 'FALSE_POSITIVE'"
+
+
 class CorrelationEngine:
     def __init__(self, db_path: str | None = None) -> None:
         if db_path is None:
-            db_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
-                "data",
-                "databases",
-                "governance.db",
-            )
+            # #62 治本③：硬编码路径改 DB_PATH SSoT（paths.py 仓级共享治理库唯一真源，
+            # worktree 锚定主仓——#ARCH-WORKTREE-DB-SPLIT-001 同口径）
+            from zephyr.shared.io.paths import DB_PATH  # noqa: PLC0415
+
+            db_path = str(DB_PATH)
 
         self._db_path = db_path
 
@@ -74,7 +81,7 @@ class CorrelationEngine:
         # 5.144.7 修复: conn.close() 移入 finally, 防止 execute 抛异常跳过 close
         conn = get_db_connection(self._db_path)
         try:
-            rows = conn.execute("SELECT scan_id, module_id FROM drift_events WHERE state!='FALSE_POSITIVE'").fetchall()
+            rows = conn.execute(_SQL_CO_OCCURRENCE).fetchall()
         finally:
             conn.close()
 
@@ -115,12 +122,10 @@ class CorrelationEngine:
         if not os.path.exists(self._db_path):
             return {}
 
-        # 5.144.7 修复: conn.close() 移入 finally
+        # 5.144.7 修复: conn.close() 移入 finally, 防止 execute 抛异常跳过 close
         conn = get_db_connection(self._db_path)
         try:
-            rows = conn.execute(
-                "SELECT drift_dimension, module_id FROM drift_events WHERE state!='FALSE_POSITIVE'"
-            ).fetchall()
+            rows = conn.execute(_SQL_DIMENSION_CLUSTERS).fetchall()
         finally:
             conn.close()
 

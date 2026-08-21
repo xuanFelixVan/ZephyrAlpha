@@ -36,6 +36,9 @@ from pathlib import Path
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.shared.io.paths import DB_PATH
 
+# #62 裁定（2026-08-21）：死数据风险提示查询（§5.160.2 SQL 集中化——SQL_* 常量定义行 gate 豁免）
+_SQL_DRIFT_EVENTS_DATA_AS_OF = "SELECT MAX(created_at) FROM drift_events"
+
 # S5: drift 持续监控 SQL（§5.160.2 NO-BARE-SQL gate 合规）
 # 数据源：drift_scan_results（S1 写入）、drift_audit_findings（S2 写入）
 SQL_DRIFT_TREND = (
@@ -159,6 +162,22 @@ class Dashboard:
             conn.close()
 
         return [{"date": day, "module_id": mod, "count": cnt} for day, mod, cnt in rows]
+
+    def data_as_of(self) -> str | None:
+        """drift_events 最新事件时间（#62 裁定：死数据风险提示——读方展示"数据截至"用）。
+
+        返回 MAX(created_at)（ISO 字符串）；表空/库不存在返回 None。
+        用途：写入链断裂期（2026-05-26~2026-08-21 实证）Dashboard 读的是死数据，
+        展示层必须提示数据截至时间，避免"健康度良好"的过期假象。
+        """
+        if not os.path.exists(self._db_path):
+            return None
+        conn = get_db_connection(self._db_path)
+        try:
+            row = conn.execute(_SQL_DRIFT_EVENTS_DATA_AS_OF).fetchone()
+        finally:
+            conn.close()
+        return row[0] if row and row[0] else None
 
     # ------------------------------------------------------------------
     # S5: drift 持续监控（MOD-GOV-ALIGNMENT-LOOP §4.S5）

@@ -60,10 +60,10 @@ governance/ (桥接层, G-CT-001~008 契约)
 | `import` | 3376 |
 | `config_depends` | 515 |
 | `data` | 49 |
-| `runtime` | 38 |
+| `runtime` | 40 |
 | `contract` | 6 |
 | `event` | 3 |
-| **合计 / Total** | **13854** |
+| **合计 / Total** | **13856** |
 
 **跨域边 / Cross-domain edges：3583** 条（两端节点 domain_id 不同的依赖边）。
 <!-- AUTO-END:edge_stats -->
