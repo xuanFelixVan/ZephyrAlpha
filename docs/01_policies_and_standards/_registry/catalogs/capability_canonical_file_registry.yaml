@@ -4791,6 +4791,34 @@ capabilities:
   - generate_target_weights
   - select
   - _score_symbol
+- capability_id: agents_cheatsheet_drift_reconciler
+  canonical_override: scripts/governance/d8_doc_sync/agents_cheatsheet_drift_reconciler.py
+  aliases:
+  - make_agents_cheatsheet_drift_reconciler
+  - GATE-AGENTS-CHEATSHEET-SYNC
+  - agents_cheatsheet_drift
+  - AGENTS.md 速查表数字漂移检测
+  - CAND-REGSYNC-001
+  description: >-
+    AGENTS.md 速查区硬编码数字漂移检测 reconciler（tracker #41/#83 裁定承接，
+    2026-08-21 P0-6①，CAND-REGSYNC-001/#ARCH-133，warn-only MVP）。post-commit 事件触发
+    （priority=250，file_ops=read 只读不写），机械校验 AGENTS.md 速查表计数（业务资产
+    18 表体系总数+18 行明细/告警阈值条数/能力计数"时点 N 条"）与真源（ROOR #ARCH-BREG-001
+    区段条目数+各条目 entry_count、capability 注册表 `- capability_id:` 行数）一致性，
+    漂移时 action=warn 逐行报告「AGENTS.md L<行号> 写 X，实测 Y（真源=<文件>），请更新」，
+    不 auto-fix——AGENTS.md 属 PROTECTED-PATHS（#83 人工回填需 Owner 审批通道），并发会话期
+    reconciler auto-commit 曾引发 TRACKED-DRIFT 风暴；fix-in-place 自动重写升级路径登记在
+    CAND-REGSYNC-001（触发=warn 档稳定 ≥2 周+Owner 批准保护区通道）。解析失败 fail-visible
+    warn"速查区格式已变，检测器需跟进"。canonical = scripts/governance/d8_doc_sync/
+    agents_cheatsheet_drift_reconciler.py（MOD-agents_cheatsheet_drift，D_GOV_DOCS，
+    [MATURITY] testing）。注册点：git_commit_gateway.py _register_default_reconcilers
+    （d8_doc_sync 插件 sys.path 动态 import+ImportError 守卫）。解决发现性：新 AI 搜
+    "AGENTS.md 速查表数字漂移/硬编码计数检测/REGSYNC" 可定位真源。解决防重建：
+    check_file_canonical() 反查。
+  integrity_anchors:
+  - make_agents_cheatsheet_drift_reconciler
+  - _parse_agents_cheatsheet
+  - _load_roor_truth
 creation_tokens:
 - file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/56_backtest_vs_sim_reconciliation_plan.md
   token: auto-backtest-vs-sim-reconciliation-plan-20260821
@@ -7502,6 +7530,10 @@ creation_tokens:
   token: auto-architecture-review-module-upgrade-audit-20260821
   created_by: AI-ARCH-AUDIT-001
   capability: architecture_review_module_upgrade_audit
+- file: scripts/governance/d8_doc_sync/agents_cheatsheet_drift_reconciler.py
+  token: auto-agents-cheatsheet-drift-reconciler-20260821
+  created_by: AI-P0-6-001
+  capability: agents_cheatsheet_drift_reconciler
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

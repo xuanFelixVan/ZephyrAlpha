@@ -21,6 +21,7 @@ last_updated: '2026-08-21'
 # 2026-08-18: +CAND-SEC-001（Whistleblower Agent MVP，裁定 9 联动降级远期 P4，AI-ADJ-004）
 # 2026-08-20: +40 条（AI-NIGHT-001 阶段3 未来工程-大型登记批，tracker #223 承接，均不施工附触发条件）
 # 2026-08-21: +CAND-FBL-002（FLE 自卫门禁激活专项，#61 挂起转正）+CAND-GOVDRIFT-001（drift_events 容量保留，任务1 残余）（AI-RESIDUAL-001）
+# 2026-08-21: +CAND-REGSYNC-001（AGENTS.md 速查区数字动态化，tracker #41/#83 裁定承接，P0-6① warn-only MVP 已落地+fix-in-place 升级路径登记）
 
 # ============================================================
 # 设计原则
@@ -7488,5 +7489,35 @@ entries:
   status: candidate
   priority: P2
   source: '2026-08-21 残余四项专项批 任务1 trend_analyzer 回迁子裁定残余登记'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
+# --- CAND-REGSYNC-001: AGENTS.md 速查区数字动态化（tracker #41/#83 裁定承接，GATE-REGISTRY-SYNC 增强） ---
+- id: CAND-REGSYNC-001
+  name: AGENTS.md 速查区数字动态化（#41/#83 裁定承接，GATE-REGISTRY-SYNC 增强）
+  aliases: [AGENTS.md 速查表数字漂移检测, agents_cheatsheet_drift_reconciler, GATE-AGENTS-CHEATSHEET-SYNC, 速查区硬编码数字漂移]
+  domain: D_GOV_DOCS
+  domain_status: active
+  sub_layer: 文档同步校验（d8_doc_sync reconciler 插件族）
+  problem: >-
+    AGENTS.md 速查表硬编码数字反复漂移：179→341 能力计数事故、18 业务表计数失真史、
+    当前实证 L539 能力计数写"2026-08-15 时点 347 条"而 capability 注册表实测 359 条
+    （漂移 12 条）。tracker #41/#83 裁定长效方案=reconciler 动态化，但 CAND 登记一直未落
+    （裁定尾巴丢失，本批补登）。
+  proposal: >-
+    分两档：①warn-only 检测（done，2026-08-21 P0-6① 落地）——
+    scripts/governance/d8_doc_sync/agents_cheatsheet_drift_reconciler.py 插件式注册进
+    git_commit_gateway._register_default_reconcilers，post-commit 检测速查区硬编码数字
+    （18 表体系总数+18 行明细+告警阈值+能力计数）与 ROOR/capability 注册表真值漂移，
+    只 warn 不重写 AGENTS.md；②升级路径=fix-in-place 自动重写速查区（严格锚点圈定重写区
+    +CRLF 保尺寸+幂等 diff），触发条件=warn 档稳定运行 ≥2 周且 Owner 批准 PROTECTED-PATHS
+    通道（AGENTS.md 属保护区，#83 人工回填当年需 Owner 审批通道；并发会话期 reconciler
+    auto-commit 已引发 TRACKED-DRIFT 风暴，故 MVP 不做自动重写）。
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "既有 GATE-REGISTRY-SYNC/master_index 派生缓存只覆盖 catalogs/ 目录漂移，不覆盖 AGENTS.md 速查区数字；metric_count_drift_reconciler 同型（INV-11 只 warn 不 auto-fix）但校验面为 dashboard 指标数描述，与本场景不重复"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  source: '2026-08-21 P0-6① 施工批（tracker #41/#83 裁定承接——裁定尾巴 CAND 登记补落）'
   created: '2026-08-21'
   last_updated: '2026-08-21'

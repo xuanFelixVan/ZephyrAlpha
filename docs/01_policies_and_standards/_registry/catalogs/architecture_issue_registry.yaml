@@ -17738,3 +17738,36 @@ entries:
   related_adjudication: '21号 §3.5/§3.6; 20号 §2.2/§2.3/§2.4; 宪章 B-007'
   created: '2026-08-21'
   last_updated: '2026-08-21'
+# --- #ARCH-133: AGENTS.md 速查区数字漂移 reconciler（warn-only MVP）+ CAND 补登（tracker #41/#83 裁定承接，P0-6①） ---
+- issue_id: '#ARCH-133'
+  title: 'AGENTS.md 速查区硬编码数字漂移检测 reconciler（warn-only MVP）落地 + CAND-REGSYNC-001 补登（tracker #41/#83 裁定尾巴）'
+  severity: P2中
+  category: architecture_governance
+  discovered: '2026-08-21 tracker 总账 P0-6①：AGENTS.md L539 能力计数写"2026-08-15 时点 347 条"，capability 注册表实测 359 条（漂移 12 条）；#41/#83 裁定长效方案=reconciler 动态化但 CAND 登记未落（裁定尾巴丢失）'
+  adjudication: |
+    裁定（tracker #41/#83 既定裁定的承接落地，非新价值判断）：
+    ① MVP=warn-only——agents_cheatsheet_drift_reconciler 只检测+报告（含精确现值），
+    不重写 AGENTS.md。依据：AGENTS.md 属 PROTECTED-PATHS（#83 人工回填当年需 Owner
+    审批通道）；并发会话期 reconciler auto-commit 已引发 TRACKED-DRIFT 风暴
+    （#ARCH-084 实证族）。同型先例=metric_count_drift_reconciler INV-11"只 warn 不
+    auto-fix"保守路线。
+    ② 升级路径=fix-in-place 自动重写速查区（严格锚点圈定重写区+CRLF 保尺寸+幂等 diff）
+    +_commit_auto，登记 CAND-REGSYNC-001，触发=warn 档稳定运行 ≥2 周且 Owner 批准
+    PROTECTED-PATHS 通道后晋升。
+    ③ 插件式注册（sys.path 动态 import+ImportError 守卫，git_commit_gateway.py
+    L1048-1052 同款），注册失败仅 log 不阻断 commit。
+    ④ 检测面：18 表体系总数+18 行明细+告警阈值条数（真源=ROOR #ARCH-BREG-001 区段
+    条目数/各条目 entry_count/REG-ATH-001）+能力计数"时点 N 条"（真源=capability
+    注册表 `- capability_id:` 行数）；解析失败 fail-visible warn 不静默。
+  impact:
+    - 'scripts/governance/d8_doc_sync/agents_cheatsheet_drift_reconciler.py（新建，MOD-agents_cheatsheet_drift，D_GOV_DOCS，[MATURITY] testing，file_ops=read）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（_register_default_reconcilers 插件式注册，priority=250）'
+    - 'tests/scripts/governance/d8_doc_sync/test_agents_cheatsheet_drift_reconciler.py（新建）'
+    - 'candidate_module_registry.yaml（+CAND-REGSYNC-001）'
+    - 'capability_canonical_file_registry.yaml（+capability/creation_token auto-agents-cheatsheet-drift-reconciler-20260821）'
+    - 'module_translation_registry.yaml（+plain_zh）'
+  fix_phase: '施工落地（2026-08-21 P0-6①）：reconciler 新建+注册+治理登记四联+测试；真实环境首跑检出能力计数 347→359 漂移 1 处（warn 符合预期）'
+  status: decided
+  related_rules: 'tracker #41/#83; CAND-REGSYNC-001; GATE-AGENTS-CHEATSHEET-SYNC; INV-11（metric_count_drift 同型先例）'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'

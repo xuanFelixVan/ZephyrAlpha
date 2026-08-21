@@ -41579,6 +41579,13 @@ entries:
   desc_zh: "事件驱动 sleeve 组装策略（STR-EVENT-001）：事件冲击评分（compute_event_score 族）+盘中异动确认，评分降序 Top-N，urgency=next_open；依赖 event_score=design 态如实标注"
   desc_en: "Event-driven sleeve assembly strategy (STR-EVENT-001): event impact scoring (compute_event_score family) + intraday anomaly confirmation, score-ranked Top-N, urgency=next_open; event_score dependency maturity=design honestly annotated"
   plain_zh: "事件驱动 sleeve 组装策略。公司出公告、新闻出大事时给这只股票算一个事件冲击分，分数太小的当噪音不理、利空的不碰（A股不能做空），再结合盘中异动确认剔除假动作，选出的票次日开盘买入，两三天内完成建仓。"
+- module_path: scripts/governance/d8_doc_sync/agents_cheatsheet_drift_reconciler.py
+  domain_id: D_GOV_DOCS
+  name_zh: AGENTS.md 速查表数字漂移检测器
+  name_en: Agents Cheatsheet Drift Reconciler
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 每次提交后自动体检：AGENTS.md 速查表里写死的数字（业务资产 18 表总数和每行条数、告警阈值条数、能力计数），和 ROOR 注册表总纲、capability 能力注册表的真值对不对得上，对不上就告警并告诉你该行写了几、实际是多少，提醒人工更新——只报告不改文件，防止速查表数字悄悄过期（tracker #41/#83，CAND-REGSYNC-001）。
 
 
 battle_map_steps:
