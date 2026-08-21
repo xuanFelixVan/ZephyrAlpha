@@ -52,6 +52,7 @@ python -c "import sys;sys.path.insert(0,'src');from zephyr.data.source_health_ch
 - 冒烟验证（非交易日/彩排用）：`python scripts/tests/smoke_test_trading_session.py`（mock 信号、限价不成交设计）。
 - 交易日运行（过渡形态）：由 AI 会话在 09:25 前手动拉起 TradingSession 进程并保活；FillHandler 内存累计当日 Fill（**进程退出即失——56 号文 G3 Fill 落盘持久化未施工，当日 Fill 须 15:00 前在进程内导出**）。
 - QMT 探活（只读）：`broker.get_positions()` 正常返回即在线（56 号文 C1 判据）。
+- **trading 主进程看门狗已备（INT-03，2026-08-22）**：`scripts/start_trading.ps1`（while-true 守护+单实例锁+15s 心跳 `tmp/trading.heartbeat`+孤儿清理，守护对象 `python -m zephyr.trading`）；注册块已入 `scripts/register_guard_tasks.ps1`（**Disabled 态**，92 号 D3 裁定：当前无常驻 trading 生产进程，enabled 会拉起本不在跑的进程=生产变更，disabled 保留恢复可能）。执行注册=统筹/Owner 窗口；翻开=`Enable-ScheduledTask ZephyrAlpha_TradingWatchdog` Owner 一键。翻开后进程级自愈 RTO<5min（5min 重点火+心跳接管，同数据域看门狗三件套口径）；**QMT 崩溃/掉线场景端到端 RTO 仍依赖人工重登**（QMT 无法自动登录，同 RestartMiniQmt disable 先例），对齐 system_charter 约束五"交易时段 RTO<5 分钟"。启用时配套：把 `tmp/trading.heartbeat` 加入 deadman_switch.ps1 `$Heartbeats` 第四路（Disabled 态不纳入，防 MISSING 误报）。
 
 ## 3. ③ 收盘结算（15:30 后）
 
