@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-REGIME-002 | docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [MODULE] zephyr.regime.regime_feature_builder
 # [DOMAIN] D_REGIME
-# [DEPENDENCIES] numpy; pandas; zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.regime.features.trend_features; zephyr.regime.features.market_features; zephyr.regime.core.regime_detector
+# [DEPENDENCIES] numpy; pandas; zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.regime.features.trend_features; zephyr.regime.features.market_features; zephyr.regime.core.regime_detector; zephyr.regime.cross_sectional_features
 # [CONSUMERS] scripts/tests/run_c1_shrinkage_validation.py(real模式); BM-BT-03-E(回测验证)
 # [STARTUP] imported
 # [MATURITY] production
@@ -39,6 +39,13 @@ walk-forward（blueprint §7）：季度重拟合，滚动5年训练，季度内
 PIT 铁律（blueprint §6.1）：detect(t) 用 ≤ t-1 的特征（features.shift(1)），
 禁止未来信息泄漏——C1 一票否决的前提。
 
+ALG-01 横截面结构特征开关（2026-08 架构审查 P1，默认关）：
+  enable_cross_sectional=True 时把 MOD-REGIME-007 的 4 列横截面结构特征
+  （cross_dispersion/avg_pairwise_corr/vol_dispersion/momentum_breadth）并入
+  特征 DataFrame **尾部**——既有 6 列列序零破坏（FEATURE_NAMES 不增不改），
+  X 矩阵列序 = FEATURE_NAMES + 4 新列；默认 False 时输出与历史逐字节一致
+  （A/B 对照纪律：开关即实验臂，先证增量再谈转正）。
+
 依据: 10_regime_detector_spec v1.3.1 §3 / 11_regime_backtest_validation_plan v1.0.0 §4.5/§6
 SSoT: depgraph MOD-REGIME-002
 Version: 0.1.0
@@ -55,6 +62,10 @@ import pandas as pd
 
 from zephyr.data import ch_reader
 from zephyr.data.table_registry import get_registry
+from zephyr.regime.cross_sectional_features import (
+    CROSS_SECTIONAL_FEATURE_NAMES,
+    compute_cross_sectional_features,
+)
 from zephyr.regime.features.market_features import (
     ad_ratio,
     cross_asset_corr,
@@ -139,6 +150,9 @@ class RegimeFeatureBuilder:
         enable_full_risk: bool = False,
         enable_overlay: bool = False,
         enable_phase2c: bool = False,
+        enable_cross_sectional: bool = False,
+        cross_sectional_panel: pd.DataFrame | None = None,
+        cross_sectional_top_n: int = 800,
         data_loader: Any = None,
     ) -> None:
         """初始化。
@@ -168,6 +182,15 @@ class RegimeFeatureBuilder:
                 多分时共振（需配合 data_loader）；False=Phase 2b 行为（stub=0/1.0）。默认 False。
             data_loader: RegimeDataLoader 实例（Phase 2c 新数据源加载层）。
                 None 时 Phase 2c 新维度全降级（0.0/1.0），保持 Phase 2b 行为。
+            enable_cross_sectional: ALG-01 横截面结构特征开关（默认 False，
+                A/B 对照纪律）。True=把 MOD-REGIME-007 的 4 列横截面结构特征
+                并入特征 DataFrame 尾部（既有 6 列列序零破坏，X=(T,10)）；
+                False=输出与历史逐字节一致（X=(T,6)）。
+            cross_sectional_panel: 预加载个股日 K 面板（长表 trade_date/symbol/
+                close/volume/amount，测试/离线注入用）。None 且开关开时经
+                _load_stock_panel 从 ClickHouse kline_daily 惰性加载。
+            cross_sectional_top_n: 面板加载的每日流动性 top N（默认 800，
+                控制 TSV 体积；横截面抽样在其内再分层抽 ~200）。
         """
         self.backtest_start = backtest_start
         self.backtest_end = backtest_end
@@ -182,6 +205,10 @@ class RegimeFeatureBuilder:
         self.enable_full_risk = enable_full_risk
         self.enable_overlay = enable_overlay
         self.enable_phase2c = enable_phase2c
+        self.enable_cross_sectional = enable_cross_sectional
+        self._cs_panel = cross_sectional_panel  # 预注入个股面板（None=惰性 CH 加载）
+        self._cs_top_n = cross_sectional_top_n
+        self._cs_features_cache: pd.DataFrame | None = None  # 横截面 4 列缓存
         self._features_cache: pd.DataFrame | None = None
         self._index_df_cache: pd.DataFrame | None = None  # 代理 OHLC 缓存（供 risk/overlay 构造器复用）
         self._risk_ctor: Any = None  # RiskSignalConstructor（惰性构造）
@@ -197,6 +224,8 @@ class RegimeFeatureBuilder:
         Returns:
             pd.DataFrame，列序 = FEATURE_NAMES，index 为 pd.Timestamp（交易日）。
             warmup 期（前 ~250+200 日）含 NaN，由 walk-forward 训练时 dropna 处理。
+            enable_cross_sectional=True 时列序 = FEATURE_NAMES + 横截面 4 列
+            （尾部追加，既有 6 列列序零破坏）；默认 False 时输出与历史逐字节一致。
         """
         if self._features_cache is not None:
             return self._features_cache
@@ -239,15 +268,29 @@ class RegimeFeatureBuilder:
         # 限定到 [data_load_start, backtest_end]
         features = features.loc[self.data_load_start : self.backtest_end]
         features = features.sort_index()
+        # ALG-01 横截面结构特征（可选开关，默认关；尾部追加，6 列列序零破坏）
+        if self.enable_cross_sectional:
+            cs = self._build_cross_sectional_features()
+            features = pd.concat([features, cs.reindex(features.index)], axis=1)
         self._features_cache = features
         _logger.info(
             "RegimeFeatureBuilder.build_features: %d 行 × %d 特征，区间 [%s, %s]",
             len(features),
-            len(FEATURE_NAMES),
+            features.shape[1],
             features.index.min(),
             features.index.max(),
         )
         return features
+
+    def active_feature_names(self) -> list[str]:
+        """当前生效的 X 矩阵特征列序。
+
+        开关关 = FEATURE_NAMES 原样（(T,6)，与历史一致）；开关开 =
+        FEATURE_NAMES + 横截面 4 列（(T,10)，尾部追加）。
+        """
+        if self.enable_cross_sectional:
+            return list(FEATURE_NAMES) + list(CROSS_SECTIONAL_FEATURE_NAMES)
+        return list(FEATURE_NAMES)
 
     def get_index_kline(self) -> pd.DataFrame:
         """加载并缓存指数 K 线（市场代理 + 跨资产 + 广度指数）。
@@ -302,14 +345,15 @@ class RegimeFeatureBuilder:
             end: 训练结束日（含）。
 
         Returns:
-            {"X": np.ndarray (T, 6), "lengths": None}。
+            {"X": np.ndarray (T, n_features), "lengths": None}，
+            n_features = 6（开关关）/ 10（ALG-01 开关开，尾部追加横截面 4 列）。
             NaN 行 dropna（warmup 期），保证 HMM 拟合无 NaN。
         """
         features = self.build_features()
         sub = features.loc[start:end].dropna()
         if len(sub) < 100:
             raise RegimeFeatureError(f"训练矩阵样本不足: [{start}, {end}] 仅 {len(sub)} 行（需 ≥100）")
-        X = sub[FEATURE_NAMES].to_numpy(dtype=float)
+        X = sub[self.active_feature_names()].to_numpy(dtype=float)
         # 钳制 inf/NaN（防极端值破坏 HMM 拟合）
         X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
         return {"X": X, "lengths": None}
@@ -443,7 +487,7 @@ class RegimeFeatureBuilder:
                     )
                 # overlay_signals：Phase 2b 构造器 vs 空覆盖层（纯 HMM）
                 overlay_signals = self._overlay_ctor.build_for_date(dt) if self._overlay_ctor is not None else {}
-                X = window[FEATURE_NAMES].to_numpy(dtype=float)
+                X = window[self.active_feature_names()].to_numpy(dtype=float)
                 X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
                 if scaler is not None:
                     X = scaler.transform(X)
@@ -532,6 +576,59 @@ class RegimeFeatureBuilder:
         """把多指数 close 展开成 date × symbol DataFrame（F3 用）。"""
         sub = index_df.loc[[s for s in symbols if s in index_df.index.get_level_values(0)]]
         return sub["close"].unstack("symbol")
+
+    # ── 私有：ALG-01 横截面结构特征（可选开关，默认关）────────────────────
+
+    def _build_cross_sectional_features(self) -> pd.DataFrame:
+        """计算横截面 4 列特征（MOD-REGIME-007），index=trade_date，带缓存。"""
+        if self._cs_features_cache is not None:
+            return self._cs_features_cache
+        panel = self._cs_panel if self._cs_panel is not None else self._load_stock_panel()
+        self._cs_features_cache = compute_cross_sectional_features(panel)
+        return self._cs_features_cache
+
+    def _load_stock_panel(self) -> pd.DataFrame:
+        """从 ClickHouse kline_daily 加载个股日 K 面板（ALG-01 开关开时调用）。
+
+        每日按成交额取 top N（cross_sectional_top_n，控制 TSV 体积；横截面
+        分层抽样在其内再抽 ~200 只），A_share + quality_flag=1。
+
+        Returns:
+            长表 DataFrame：trade_date / symbol / close / volume / amount。
+        """
+        table = self._registry.table("market_kline_daily")
+        sql = (
+            f"SELECT trade_date, symbol, close, volume, amount "
+            f"FROM {table} FINAL "
+            f"WHERE market_type = 'A_share' AND quality_flag = 1 "
+            f"AND trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"AND (trade_date, symbol) IN ("
+            f"SELECT trade_date, symbol FROM {table} FINAL "
+            f"WHERE market_type = 'A_share' AND quality_flag = 1 "
+            f"AND trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"ORDER BY amount DESC LIMIT {int(self._cs_top_n)} BY trade_date"
+            f") ORDER BY trade_date, symbol"
+        )
+        tsv = self._safe_query(sql, context="stock_panel (cross_sectional)")
+        rows = parse_tsv(tsv, ncols=5)
+        if not rows:
+            raise RegimeFeatureError(
+                f"stock_panel 查询为空: [{self.data_load_start}, {self.backtest_end}] top_n={self._cs_top_n}"
+            )
+        df = pd.DataFrame(rows, columns=["trade_date", "symbol", "close", "volume", "amount"])
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        for c in ["close", "volume", "amount"]:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+        _logger.info(
+            "stock_panel 加载: %d 行, %d 只, %s~%s",
+            len(df),
+            df["symbol"].nunique(),
+            df["trade_date"].min(),
+            df["trade_date"].max(),
+        )
+        return df
 
     # ── 私有：工具 ────────────────────────────────────────────────────────
 

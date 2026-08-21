@@ -40,8 +40,8 @@ D_BACKTEST — Parameter Analyzer (参数优化结果分析器)
 # - id: A1
 #   name_zh: ① 最优参数选择
 #   name_en: analyze(选优段)
-#   intro: 按目标值取最大的那组参数当最优
-#   desc: 空runs直接raise → best_run=max(runs, key=objective)（L203-218）
+#   intro: 默认按目标值取最大的那组参数当最优; 开关开时选稳定区代表点
+#   desc: 空runs直接raise → 默认 best_run=max(runs, key=objective)（A/B对照纪律: 默认行为零变化）; plateau_selection_enabled=True 时经 select_plateau_param 选 SR≥0.9·SR_opt 平台区中位代表点（与 B-009 过拟合防护互锁, 52/90号注记）
 #   inputs: I1
 #   outputs: best_run
 #   invariant: 空列表raise ParamAnalysisError
@@ -117,6 +117,7 @@ __all__ = [
     "ParamAnalysisConfig",
     "ParamAnalysisReport",
     "ParameterAnalyzer",
+    "select_plateau_param",
 ]
 
 _logger = logging.getLogger(__name__)
@@ -203,18 +204,27 @@ class ParamAnalysisConfig:
         overfit_threshold: 过拟合分数阈值。
         stability_cv_threshold: 稳定性 CV 阈值。
         top_n: 稳定性评估的最优结果数。
+        plateau_selection_enabled: 稳定区优选开关 (默认 False=单点 argmax,
+            A/B 对照纪律: 默认行为零变化; True=经 select_plateau_param 选
+            SR≥plateau_sr_ratio·SR_opt 平台区代表点, 避悬崖孤峰;
+            与 B-009 过拟合防护互锁, 52/90 号注记)。
+        plateau_sr_ratio: 稳定区目标值比率下限 (默认 0.9, 须 (0, 1])。
     """
 
     sensitivity_threshold: float = 0.5
     overfit_threshold: float = 0.5
     stability_cv_threshold: float = 0.1
     top_n: int = 5
+    plateau_selection_enabled: bool = False
+    plateau_sr_ratio: float = 0.9
 
     def __post_init__(self) -> None:
         if self.sensitivity_threshold <= 0:
             raise ParamAnalysisError(f"sensitivity_threshold must be > 0, got {self.sensitivity_threshold}")
         if self.top_n <= 0:
             raise ParamAnalysisError(f"top_n must be > 0, got {self.top_n}")
+        if not (0 < self.plateau_sr_ratio <= 1):
+            raise ParamAnalysisError(f"plateau_sr_ratio must be in (0, 1], got {self.plateau_sr_ratio}")
 
 
 @dataclass(frozen=True)
@@ -284,7 +294,13 @@ class ParameterAnalyzer:
         if not runs:
             raise ParamAnalysisError("runs 不能为空")
 
-        best_run = max(runs, key=lambda r: r.objective)
+        # A1 最优参数选择: 默认单点 argmax (A/B 对照纪律: 默认行为零变化);
+        # plateau_selection_enabled=True 时切换稳定区优选
+        # (与 B-009 过拟合防护互锁; 52/90 号注记)
+        if self._config.plateau_selection_enabled:
+            best_run = select_plateau_param(runs, sr_ratio=self._config.plateau_sr_ratio)
+        else:
+            best_run = max(runs, key=lambda r: r.objective)
         sensitivities = self._compute_sensitivities(runs)
         overfitting = self._check_overfitting(runs)
         stability = self._assess_stability(runs)
@@ -442,6 +458,82 @@ class ParameterAnalyzer:
             )
         except Exception:
             _logger.warning("缓存分析结果失败", exc_info=True)
+
+
+def select_plateau_param(
+    runs: list[ParamRun],
+    sr_ratio: float = 0.9,
+    cliff_drop: float = 0.5,
+) -> ParamRun:
+    """稳定区优选——选 objective ≥ sr_ratio·objective_opt 平台区代表点, 避悬崖孤峰。
+
+    2026 AlgoXpert IS–WFA–OOS 协议核心件: 不选单点最优, 选稳定区代表点。
+    与 B-009 过拟合防护互锁: 单点 argmax 易选中估计噪声堆出的过拟合孤峰,
+    平台区中位代表点对噪声更鲁棒 (52/90 号注记)。
+
+    算法:
+      1. objective_opt = max(objective); Ω_stable = {θ | objective(θ) ≥ sr_ratio·objective_opt}
+      2. |Ω| ≥ 2 → 取 Ω 内 objective 中位数对应的真实 run (下中位数, 偏保守;
+         取真实参数点而非虚拟质心, 保证参数组合可复跑)
+      3. |Ω| == 1 → 参数面无平台可选, 诚实回退最优点; 若区外最高点相对最优点
+         下降 > cliff_drop 则确认悬崖形态并 warning。悬崖语义对齐
+         decision_gate.DecisionGate.check_stability_plateau 的
+         cliff_sharpe_drop=0.50 判定 (同口径实现, 不 import: 避免连带
+         threshold_loader 注册表 import 期 fail-closed 加载副作用)
+      4. objective_opt ≤ 0 → 比率语义失效 (负目标乘比率方向反转), 回退 argmax
+
+    Args:
+        runs: 参数运行列表 (非空)。
+        sr_ratio: 稳定区目标值比率下限, 须 (0, 1], 默认 0.9。
+        cliff_drop: 悬崖判定相对下降阈值, 默认 0.50 (对齐 decision_gate cliff_sharpe_drop)。
+
+    Returns:
+        选中的 ParamRun (平台代表点; 无平台时回退单点最优)。
+
+    Raises:
+        ParamAnalysisError: runs 为空或 sr_ratio 非法。
+    """
+    if not runs:
+        raise ParamAnalysisError("runs 不能为空")
+    if not (0 < sr_ratio <= 1):
+        raise ParamAnalysisError(f"sr_ratio must be in (0, 1], got {sr_ratio}")
+
+    opt_run = max(runs, key=lambda r: r.objective)
+    opt = opt_run.objective
+
+    if opt <= 0:
+        _logger.debug("objective_opt=%.4f ≤ 0, 比率语义失效, 回退单点 argmax", opt)
+        return opt_run
+
+    threshold = sr_ratio * opt
+    stable = [r for r in runs if r.objective >= threshold]
+
+    if len(stable) == 1:
+        # 无平台可选: 悬崖语义对齐 decision_gate.check_stability_plateau
+        # (区外最高点代理"相邻面", 相对下降 > cliff_drop 即悬崖形态)
+        outside_best = max((r.objective for r in runs if r is not stable[0]), default=None)
+        if outside_best is not None and (opt - outside_best) / opt > cliff_drop:
+            _logger.warning(
+                "参数面呈悬崖形态: objective_opt=%.4f, 区外最高=%.4f, 相对下降=%.2f%% > %.0f%%, "
+                "无稳定区可选, 回退孤峰单点 (B-009 过拟合风险, 建议人工复核)",
+                opt,
+                outside_best,
+                (opt - outside_best) / opt * 100,
+                cliff_drop * 100,
+            )
+        return stable[0]
+
+    stable_sorted = sorted(stable, key=lambda r: r.objective)
+    median_idx = (len(stable_sorted) - 1) // 2
+    selected = stable_sorted[median_idx]
+    _logger.debug(
+        "稳定区优选: |Ω|=%d (阈值=%.4f), 选中位代表点 objective=%.4f (opt=%.4f)",
+        len(stable),
+        threshold,
+        selected.objective,
+        opt,
+    )
+    return selected
 
 
 def _mean(values: list[float]) -> float:
