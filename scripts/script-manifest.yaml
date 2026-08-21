@@ -42,6 +42,14 @@ scripts:
   path: clone_guard_audit.py
   status: registered
   timeout_seconds: 60
+- description: '----'
+  dimensions: []
+  domain: commit_queue.py
+  execution_plane: warm-path
+  name: commit_queue.py
+  path: commit_queue.py
+  status: registered
+  timeout_seconds: 60
 - description: 诊断 breadth_failed 能力的根因。
   dimensions: []
   domain: diagnose_breadth_failed.py
@@ -5733,4 +5741,4 @@ scripts:
 - name: my_script
   path: scripts/my_script.py
   registered_by: auto-fix-engine
-total_scripts: 709
+total_scripts: 710
