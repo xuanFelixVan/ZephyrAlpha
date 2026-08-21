@@ -41600,6 +41600,27 @@ entries:
   desc_zh: "提交队列 MVP：快照入队即返回 + Serializer 单写者 FIFO 排空 + 死信不卡队 + 同键 compaction（66 号 §6/08 号文 §4.2）"
   desc_en: "Commit queue MVP: snapshot enqueue-and-return + single-writer Serializer FIFO drain + dead-letter + same-key compaction (memo 66 §6)"
   plain_zh: "多个 AI 同时改完代码要提交时，先把文件完整快照存进一个队列文件夹就算交差，不用等 git；随后同一时刻只放行一个程序按先来后到顺序逐个真正落盘，失败的进死信区不堵后面，同一会话重复提交同一文件只留最新版。"
+- module_path: src/zephyr/trading/broker_settlement_adapter.py
+  domain_id: D_TRADING
+  name_zh: "券商侧对账适配器"
+  name_en: "Broker Settlement Adapter"
+  desc_zh: "56号文G4适配层B：QMT盘后成交查询结果转BrokerSettlementRecord（含业务配对键口径真源）"
+  desc_en: ""
+  plain_zh: "把券商那边查到的当天成交单子，翻译成对账引擎看得懂的标准格式。因为回测和实盘两边的单子没有共同编号，这里定了个规矩：同一只股票按成交时间先后编上序号，两边用同样的规矩编号，才能一笔一笔对上账。"
+- module_path: src/zephyr/trading/backtest_fills_adapter.py
+  domain_id: D_TRADING
+  name_zh: "回测侧对账适配层"
+  name_en: "Backtest Fills Adapter"
+  desc_zh: "56号文G5适配层A：backtest_artifacts的trade_log转系统侧Fill列表+持仓重放推导"
+  desc_en: ""
+  plain_zh: "把回测跑出来的成交记录，翻译成和实盘对账时一样的标准格式，并按买入加、卖出减算出回测最后拿着多少股票。这样回测账和实盘账摆在同一个桌子上，才能比出哪里不一样。"
+- module_path: src/zephyr/trading/recon_runner.py
+  domain_id: D_TRADING
+  name_zh: "回测模拟盘对账编排器"
+  name_en: "Recon Runner"
+  desc_zh: "56号文G7：串L1交易级/L2持仓级/L3 PnL级三层diff+归因三分类+差异落reconciliation_differences库"
+  desc_en: ""
+  plain_zh: "每天收盘后把回测账和模拟盘账放在一起对一遍：先对每笔成交的价格数量，再对收盘持股，最后对当天盈亏。对不上的地方自动分三类——价格滑了点、只成交了一部分、整笔没成交，其中最严重的整笔缺失当天就报警，全部差异记进数据库留档。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

@@ -4848,6 +4848,18 @@ capabilities:
   - queue_status
   - SerializerLease
 creation_tokens:
+- file: src/zephyr/trading/broker_settlement_adapter.py
+  token: auto-broker-settlement-adapter-20260821
+  created_by: AI-P0-G3567
+  capability: backtest_vs_sim_reconciliation
+- file: src/zephyr/trading/backtest_fills_adapter.py
+  token: auto-backtest-fills-adapter-20260821
+  created_by: AI-P0-G3567
+  capability: backtest_vs_sim_reconciliation
+- file: src/zephyr/trading/recon_runner.py
+  token: auto-recon-runner-20260821
+  created_by: AI-P0-G3567
+  capability: backtest_vs_sim_reconciliation
 - file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/57_daily_cycle_sop.md
   token: auto-daily-cycle-sop-20260821
   created_by: AI-P0BATCH-001

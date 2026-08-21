@@ -17840,3 +17840,44 @@ entries:
   related_rules: 'tracker #233; CST-ASTOCK-001; 90 号 §5（T0 滑点分档专项假设不动）'
   created: '2026-08-21'
   last_updated: '2026-08-21'
+# --- #ARCH-135: 回测 vs 模拟盘对账链路 G3/G4/G5/G7 施工（56号文 §4 缺口清单，Owner 2026-08-21 批准） ---
+- issue_id: '#ARCH-135'
+  title: '回测 vs 模拟盘对账执行件 G3/G4/G5/G7（QMT成交查询兜底+Fill落盘持久化/券商侧适配器/回测侧适配层/recon_runner编排器，56号文 §4）'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    Owner 2026-08-21 批准 56号文 §4 缺口清单 G3/G4/G5/G7 四件施工（G1 费率口径
+    已经 #ARCH-134 裁定；G6 表 DDL 已经 #234 Owner 窗口执行）。
+    ①G3：MiniQmtBroker.query_trades_today() 盘后同步查询兜底封装（严守 40 号
+    戒律：仅回调外/盘后场景，转成 Fill 契约列表，broker_fill_id=traded_id）+
+    FillHandler JSONL 追加落盘（data/fills/YYYYMMDD.jsonl，与 AppendOnlyDedupSet
+    同目录风格）+ query_fills_by_date 回放（修"进程退出丢当日 Fill"病根）；
+    ②G4：broker_settlement_adapter.py——券商成交 Fill→BrokerSettlementRecord，
+    业务配对键（symbol+组内时间序）为两侧唯一口径真源（回测无券商 ID，
+    56号文口径铁律：数量与成交价为主键）；
+    ③G5：backtest_fills_adapter.py——backtest_artifacts trade_log→系统侧 Fill
+    列表 + 持仓重放推导（buy+/sell-）；
+    ④G7：recon_runner.py 编排器（testing 封顶=宪章 B-007）——串 L1
+    SettlementReconciler/L2 PositionReconciler 双源语义/L3 DailyAuditor
+    PnLReconciliation 0.1% 容差 → 归因三分类（A 滑点/B 部分成交/C 拒单缺失，
+    费用差仅参考列不归类=56号文 C9）→ 差异 append-only 写
+    reconciliation_differences（参数化+SQL 常量=NO-BARE-SQL）→ 结构化结果
+    含 C 类当日告警清单；db_path 默认 None 走 DB_PATH SSoT（测试注入临时库，
+    trend_analyzer db_path setter 同款隔离先例）。
+    口径出入记录：L3 模拟盘侧 PnL 为期末市值-当日净买入现金流代理（隐含期初
+    空仓假设，期初快照数据源属 57号文 SOP 窗口项）；QUANTITY_MISMATCH 不分
+    方向统归 B 类（56号文 C6 口径）；L2/L3 drift_type 用 position_qty_mismatch/
+    pnl_gap_mismatch（表列注释仅列 L1 5 类，recon_layer 区分层级）。
+  impact:
+    - 'src/zephyr/ex_core/adapters/miniqmt_broker.py（+query_trades_today，盘后场景）'
+    - 'src/zephyr/ex_core/fill_handler.py（+fills_dir JSONL落盘/+query_fills_by_date 回放）'
+    - 'src/zephyr/trading/broker_settlement_adapter.py（新建，MOD-TRADING-005）'
+    - 'src/zephyr/trading/backtest_fills_adapter.py（新建，MOD-TRADING-006）'
+    - 'src/zephyr/trading/recon_runner.py（新建，MOD-TRADING-007，testing 封顶）'
+    - 'tests/trading/test_g3_fill_persistence.py、test_broker_settlement_adapter.py、test_backtest_fills_adapter.py、test_recon_runner.py（全 mock/tmp 隔离）'
+  fix_phase: '已落地（2026-08-21）：4 件施工完成；新测试 39 passed；关联域两轮全绿（tests/ex_core fill_handler 3 文件 + tests/trading 全域，各 2062 passed/15 skipped/3 xfailed 零失败）；depgraph 三节点 planned→generated→testing 两跳推进；不改 SettlementReconciler/PositionReconciler/DailyAuditor 既有逻辑（只消费）；不挂调度（57号文 SOP 人工/后续触发）；57号文 §5 文本升级由统筹会话负责。'
+  status: decided
+  confirmed_by_user: '2026-08-21 Owner 批准 56号文 §4 缺口清单 G3/G4/G5/G7 施工'
+  related_rules: '56号文（backtest_vs_sim_reconciliation_plan）; 57号文 §5; 40号文 §决策①工程约束1; #ARCH-134; tracker #234; 宪章 B-007（testing 封顶）'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
