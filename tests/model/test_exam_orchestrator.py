@@ -208,7 +208,8 @@ class TestExamOrchestratorInit:
 
     def test_instantiation_model_id_from_chat(self):
         chat = MagicMock()
-        chat.model = "inferred-model"
+        # 契约：model_id 缺省时从 chat._model 推断（OllamaChat 私有存储 + property 模式）
+        chat._model = "inferred-model"
         orch = ExamOrchestrator(chat)
         assert orch.model_id == "inferred-model"
 
@@ -233,11 +234,10 @@ class TestDepthMultiSampling:
         assert orch.depth_samples_per_case == 3
 
     def test_invalid_env_var_falls_back_to_1(self, monkeypatch):
-        """非法环境变量值会抛 ValueError — 用户应提供合法值。"""
+        """非法环境变量值回退为 1 — 5.155.4 契约：非整数值不抛错，静默回退默认。"""
         monkeypatch.setenv("ZEPHYR_DEPTH_SAMPLES", "not_a_number")
-        with pytest.raises(ValueError):
-            # int("not_a_number") 会抛 ValueError — 这是预期行为
-            ExamOrchestrator(MagicMock(), model_id="t")
+        orch = ExamOrchestrator(MagicMock(), model_id="t")
+        assert orch.depth_samples_per_case == 1
 
     def test_negative_samples_clamped_to_1(self):
         """负数被 max(1, ...) 钳制为 1。"""

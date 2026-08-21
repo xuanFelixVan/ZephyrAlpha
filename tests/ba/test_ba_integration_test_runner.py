@@ -67,7 +67,8 @@ class TestIntegrationTestRunner:
         runner = IntegrationTestRunner(project_root=str(tmp_path))
         result = runner.pip_check()
         assert isinstance(result, SelfTestResult)
-        assert isinstance(result.test_id, uuid.UUID)
+        # 契约：单项 check 未 finalize 前 test_id 为 None（finalize 时分配 UUID）
+        assert result.test_id is None
         assert len(result.checks) >= 1
         assert result.checks[0]["check"] == "pip_check"
 
@@ -89,12 +90,18 @@ class TestIntegrationTestRunner:
         assert isinstance(result, SelfTestResult)
         assert result.tests_run >= 3
         assert len(result.checks) >= 3
-        assert result.run_at != ""
+        # 契约：run_at 由 finalize 打时间戳，未 finalize 前为空
+        assert result.run_at == ""
+        finalized = runner.finalize(result)
+        assert finalized.run_at != ""
 
     def test_finalize_writes_json(self, tmp_path):
         runner = IntegrationTestRunner(project_root=str(tmp_path))
         result = runner.pip_check()
-        result_file = os.path.join(runner.result_dir, f"{result.test_id}_test.json")
+        # 契约：显式 finalize 分配 UUID + 落盘 JSON（Stage 4 公共化契约）
+        finalized = runner.finalize(result)
+        assert isinstance(finalized.test_id, uuid.UUID)
+        result_file = os.path.join(runner.result_dir, f"{finalized.test_id}_test.json")
         assert os.path.exists(result_file)
         with open(result_file, encoding="utf-8") as fh:
             data = json.load(fh)

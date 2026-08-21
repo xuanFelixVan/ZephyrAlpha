@@ -63,7 +63,7 @@ class TestCheckCoreFiles:
         with tempfile.TemporaryDirectory() as tmpdir:
             results = check_core_files(Path(tmpdir))
             expected = {
-                "_detector-registry.yaml",
+                "_detector_registry.yaml",
                 "drift_engine.py",
                 "reconciler.py",
                 "state_machine.py",
@@ -81,19 +81,19 @@ class TestCheckRegistryParsable:
 
     def test_valid_registry_returns_true(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            registry = Path(tmpdir) / "_detector-registry.yaml"
+            registry = Path(tmpdir) / "_detector_registry.yaml"
             registry.write_text("detectors:\n  d1:\n    name: test\n", encoding="utf-8")
             assert check_registry_parsable(Path(tmpdir)) is True
 
     def test_empty_registry_returns_false(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            registry = Path(tmpdir) / "_detector-registry.yaml"
+            registry = Path(tmpdir) / "_detector_registry.yaml"
             registry.write_text("", encoding="utf-8")
             assert check_registry_parsable(Path(tmpdir)) is False
 
     def test_invalid_yaml_returns_false(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            registry = Path(tmpdir) / "_detector-registry.yaml"
+            registry = Path(tmpdir) / "_detector_registry.yaml"
             registry.write_text("detectors: [invalid: yaml: content", encoding="utf-8")
             assert check_registry_parsable(Path(tmpdir)) is False
 
@@ -107,7 +107,7 @@ class TestBootstrapSelfCheck:
         with tempfile.TemporaryDirectory() as tmpdir:
             base = Path(tmpdir)
             for fname in [
-                "_detector-registry.yaml",
+                "_detector_registry.yaml",
                 "drift_engine.py",
                 "reconciler.py",
                 "state_machine.py",
@@ -116,7 +116,7 @@ class TestBootstrapSelfCheck:
                 "drift_models.py",
             ]:
                 (base / fname).write_text("x=1", encoding="utf-8")
-            registry = base / "_detector-registry.yaml"
+            registry = base / "_detector_registry.yaml"
             registry.write_text("detectors:\n  d1:\n    name: test\n", encoding="utf-8")
             assert bootstrap_self_check(base) is True
 

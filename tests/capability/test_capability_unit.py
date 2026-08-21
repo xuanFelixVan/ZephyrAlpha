@@ -160,7 +160,7 @@ class TestCapabilityCheck:
         )
         with patch("zephyr.shared.security.capability.CAPABILITIES_YAML_PATH", yaml_path):
             with pytest.raises(CapabilityDenied) as exc_info:
-                capability_check("write", "src/zephyr/risk/stop_loss.py")
+                capability_check("write", "src/zephyr/l04-risk-management/risk/stop_loss.py")
             assert "write_src" in str(exc_info.value)
             assert "deny" in str(exc_info.value)
 

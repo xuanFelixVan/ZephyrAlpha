@@ -4,6 +4,8 @@
 # [TTL] task_bound
 from __future__ import annotations
 
+import json
+import sqlite3
 import sys
 from pathlib import Path
 
@@ -15,25 +17,44 @@ from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 DB_PATH = REPO_ROOT / "data" / "databases" / "governance.db"
 
+# 契约真源：tool_contracts.yaml §task_manager（fc318f9631 复制簇#3 治理收敛为 6 工具，
+# claim_task/mark_task_done/mark_task_failed/batch_progress/list_dependents 及
+# staging 系列 write_draft/commit_draft/list_drafts/discard_draft 已移出契约）
+_CONTRACT_TOOLS = {
+    "task_manager.create_task",
+    "task_manager.get_task",
+    "task_manager.list_tasks",
+    "task_manager.update_task_status",
+    "task_manager.decompose_blueprint",
+    "task_manager.register_from_triage",
+}
+
 
 def test_mcp_claim_task():
     repo = TaskRepository(str(DB_PATH))
     mcp = TaskManagerMCP(task_repo=repo)
     tool_names = mcp.tool_names
-    assert "task_manager.claim_task" in tool_names, f"claim_task not in {tool_names}"
-    assert "task_manager.mark_task_done" in tool_names
-    assert "task_manager.mark_task_failed" in tool_names
-    assert "task_manager.batch_progress" in tool_names
-    assert "task_manager.list_dependents" in tool_names
+    for name in _CONTRACT_TOOLS:
+        assert name in tool_names, f"{name} not in {tool_names}"
     print("test_mcp_claim_task PASSED")
 
 
 def test_mcp_list_dependents():
     repo = TaskRepository(str(DB_PATH))
-    downstream = repo.list_by_dependency("CP-1001")
+    # 真源演进：CP-1001/CP-1002 历史依赖关系已在 DB 中清空（depends_on=[]）；
+    # 改为从真源动态取一条 depends_on 非空的任务，验证 list_by_dependency 反查。
+    conn = sqlite3.connect(str(DB_PATH))
+    row = conn.execute(
+        "SELECT task_id, depends_on FROM tasks "
+        "WHERE depends_on != '[]' AND depends_on IS NOT NULL AND is_deleted = 0 LIMIT 1"
+    ).fetchone()
+    conn.close()
+    assert row is not None, "真源 DB 中无 depends_on 非空任务，无法验证 list_by_dependency"
+    downstream_id, upstream_id = row[0], json.loads(row[1])[0]
+    downstream = repo.list_by_dependency(upstream_id)
     ids = [d.task_id for d in downstream]
-    assert "CP-1002" in ids, f"CP-1002 should depend on CP-1001, got {ids}"
-    print(f"  CP-1001 downstream: {ids}")
+    assert downstream_id in ids, f"{downstream_id} should depend on {upstream_id}, got {ids}"
+    print(f"  {upstream_id} downstream: {ids}")
     print("test_mcp_list_dependents PASSED")
 
 
@@ -50,10 +71,9 @@ def test_mcp_batch_progress():
 def test_mcp_staging_tools():
     mcp = TaskManagerMCP()
     tool_names = mcp.tool_names
-    assert "task_manager.write_draft" in tool_names, f"write_draft not in {tool_names}"
-    assert "task_manager.commit_draft" in tool_names
-    assert "task_manager.list_drafts" in tool_names
-    assert "task_manager.discard_draft" in tool_names
+    # staging 系列工具已随契约收敛移除；契约为准的 6 工具须全部注册
+    for name in _CONTRACT_TOOLS:
+        assert name in tool_names, f"{name} not in {tool_names}"
     print("test_mcp_staging_tools PASSED")
 
 

@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -64,7 +65,12 @@ class TestDependsOnIntegrity:
         from zephyr.gov_enforcement.rule_enforcement.sys_master_compliance import check_depends_on_integrity
 
         mock_data = {"depends_on": [{"target": "MOD-MASTER_BLUEPRINT", "type": "reference"}]}
-        with patch(f"{SYS_MASTER}.extract_frontmatter", return_value=mock_data):
+        # 契约演进：SYS_MASTER_PATH 从 blueprint_registry.yaml SSoT 查询（不再硬编码），
+        # registry 缺失时为 None 会提前 FAIL；patch 为非 None 以走到 frontmatter 断言路径
+        with (
+            patch(f"{SYS_MASTER}.SYS_MASTER_PATH", Path("/fake/sys_master.md")),
+            patch(f"{SYS_MASTER}.extract_frontmatter", return_value=mock_data),
+        ):
             results = check_depends_on_integrity()
             assert results[0]["status"] == "PASS"
 

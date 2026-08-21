@@ -1178,6 +1178,7 @@ def check_new_files_naming(
     new_files: list[str],
     project_root: Path | None = None,
     scopes: tuple[str, ...] | None = ("tests", "docs", "src"),
+    require_staged: bool = True,
 ) -> list[NamingViolation]:
     """增量 N-16 检查（真源唯一）：只检查新文件是否与已跟踪文件同名冲突。
 
@@ -1187,6 +1188,11 @@ def check_new_files_naming(
         scopes: N-16 覆盖的顶级目录元组。默认 ("tests", "docs") 向后兼容；
             None 表示全库覆盖（所有目录）。
             跨包合法同名（__init__.py/conftest.py）由豁免清单处理。
+        require_staged: True（默认，pre-commit --check-new 场景）以
+            ``git diff --cached --diff-filter=AR`` 求真·新增集，已跟踪的修改
+            文件一律跳过；False（check_new_files_full / gateway 在 git add 之前
+            调用的场景）跳过该过滤——调用方已用 git ls-files 判定新增，
+            否则 staged 区为空会导致 N-16 静默空转。
 
     用 ``git ls-files`` 构建已跟踪文件基线（避免 os.walk 扫描未跟踪 WIP，
     防多 session 临时文件误阻断），只检测新文件是否引入冲突（不阻断历史遗留）。
@@ -1233,18 +1239,21 @@ def check_new_files_naming(
     # 「只拦 staged 新增重名…不拦历史遗留」直接矛盾。现以 git diff --cached --diff-filter=AR
     # 求真·新增集（A=新增，R=重命名目标），M 文件一律跳过（存量重名走 gate-naming-audit 清零）。
     # fail-open：git 不可用时返回 [] 不阻断（与下方 ls-files 失败路径同策略）。
-    try:
-        added_r = subprocess.run(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=AR"],
-            capture_output=True,
-            text=True,
-            check=True,
-            cwd=str(project_root),
-        )
-        truly_added = {f.replace("\\", "/") for f in added_r.stdout.strip().splitlines() if f}
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return []  # fail-open：git 不可用时不阻断 commit
-    new_rel_files = [rel for rel in new_rel_files if rel in truly_added]
+    # require_staged=False（gateway add 前调用路径）：跳过本过滤，否则 staged 区为空
+    # 会把所有候选误过滤导致 N-16 静默空转（回归：tests/gate N-16 同名新文件漏报）。
+    if require_staged:
+        try:
+            added_r = subprocess.run(
+                ["git", "diff", "--cached", "--name-only", "--diff-filter=AR"],
+                capture_output=True,
+                text=True,
+                check=True,
+                cwd=str(project_root),
+            )
+            truly_added = {f.replace("\\", "/") for f in added_r.stdout.strip().splitlines() if f}
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            return []  # fail-open：git 不可用时不阻断 commit
+        new_rel_files = [rel for rel in new_rel_files if rel in truly_added]
 
     if not new_rel_files:
         return []
@@ -1396,7 +1405,7 @@ def check_new_files_full(
         if _is_new_file(rel) and rel.startswith(_N16_NEW_FILE_SCOPES):
             added_files_for_n16.append(f)
     if added_files_for_n16:
-        violations.extend(check_new_files_naming(added_files_for_n16, project_root, scopes=None))
+        violations.extend(check_new_files_naming(added_files_for_n16, project_root, scopes=None, require_staged=False))
 
     # 2. N-01~N-17 风格检查
     # - 新增文件：全量检查

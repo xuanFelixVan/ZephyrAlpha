@@ -1200,7 +1200,8 @@ def test_real_registry_canonical_derived():
     rb = reg.get("rollback_executor")
     assert rb["canonical_file"] == "src/zephyr/infrastructure/rollback/rollback_executor.py"
     assert rb["maturity"] == "production"
-    assert rb["module_id"] == "MOD-INF-rollback_executor"
+    # module_id 真源对齐 depgraph 数字号（89bb5c2c59 文件头 module_id 对齐演进）
+    assert rb["module_id"] == "MOD-INF-021"
     # session_handoff_continuity canonical = shared/session/session_continuity.py
     # （单候选：shared_services proxy 版已删除，commit 9ae4970995，P2 闭环）
     sh = reg.get("session_handoff_continuity")
