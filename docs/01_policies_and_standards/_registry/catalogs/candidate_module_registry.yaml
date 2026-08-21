@@ -7521,3 +7521,28 @@ entries:
   source: '2026-08-21 P0-6① 施工批（tracker #41/#83 裁定承接——裁定尾巴 CAND 登记补落）'
   created: '2026-08-21'
   last_updated: '2026-08-21'
+# --- CAND-BT-003: 向量化回测逐笔 trade_log 产出（57 号文 GAP-5 登记） ---
+- id: CAND-BT-003
+  name: 向量化回测引擎逐笔 trade_log 产出（57 号文 GAP-5）
+  aliases: [vectorized trade_log, 向量化逐笔成交, BacktestResult 明细]
+  domain: D_BACKTEST
+  domain_status: active
+  sub_layer: 回测引擎产出层
+  problem: >-
+    向量化路径 BacktestResult（CTR-P1-016）只有 15 个汇总字段无逐笔成交明细——56 号文
+    不变量 I4「逐笔可得」在向量化引擎不满足（EDE 路径有 BacktestFill/trades_log）。
+    对账 L1 逐笔 diff 若要以向量化结果为基准则缺明细源。
+  proposal: >-
+    触发=对账 L1 需以向量化回测为基准日级比对（当前口径=EDE tick 路径出 fills，向量化
+    用于因子筛选快速层，不对账——56 号文 §2 架构行已定此分工）；施工=引擎调仓点生成
+    TradeRecord 序列填充 BacktestSinkData.trade_log（改造点=DefaultBacktestEngine
+    调仓执行段），量约 80-120 行。
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [zephyr.backtest.core.portfolio trades_log], evidence: "EDE 路径 portfolio.trades_log 已有逐笔（L315）；向量化路径分工=筛选层不对账，缺口仅在跨层复用时成立"}
+    blocking_question: 向量化产出是否会被用做对账基准
+    result: candidate
+  status: candidate
+  priority: P2
+  source: '2026-08-21 P0-5 日循环 SOP 彩排发现（57 号文 §7 GAP-5 登记转化）'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'

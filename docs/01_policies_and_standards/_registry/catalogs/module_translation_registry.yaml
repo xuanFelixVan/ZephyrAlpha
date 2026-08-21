@@ -41621,6 +41621,20 @@ entries:
   desc_zh: "56号文G7：串L1交易级/L2持仓级/L3 PnL级三层diff+归因三分类+差异落reconciliation_differences库"
   desc_en: ""
   plain_zh: "每天收盘后把回测账和模拟盘账放在一起对一遍：先对每笔成交的价格数量，再对收盘持股，最后对当天盈亏。对不上的地方自动分三类——价格滑了点、只成交了一部分、整笔没成交，其中最严重的整笔缺失当天就报警，全部差异记进数据库留档。"
+- module_path: scripts/run_post_settlement.py
+  domain_id: D_TRADING
+  name_zh: "盘后结算对账 CLI"
+  name_en: "Post Settlement Pipeline CLI"
+  desc_zh: "57号文GAP-3运营入口：串系统侧Fill（data/fills JSONL）+券商侧结算记录→SettlementReconciler对账→DailyAuditor日终审计，QMT离线降级仅系统侧+标注；exit 0/3/1=OK或SKIPPED/DRIFT/ERROR"
+  desc_en: ""
+  plain_zh: "每天下午三点半之后，人手动跑一下这个命令，它就把今天系统记下的成交单和券商那边的结算单摆在一起逐笔对账，再做一遍日终体检。对不上会大字报出来（价格差、数量差、整笔缺失），整笔缺失的单独列清单。券商终端没开机也不硬对，只数一遍系统自己的单子并明确标注'今天没和券商对上'。只看不写，不动数据库。"
+- module_path: scripts/start_paper_session.py
+  domain_id: D_EX_CORE
+  name_zh: "模拟盘交易日启动脚本"
+  name_en: "Start Paper Session"
+  desc_zh: "57号文GAP-2过渡形态：读config/.env.qmt模拟账户→MiniQmtBroker→TradingSession.start()保活至15:05自动stop（撤未成交单）；--dry-run只连不下单；--strategy显式开启才接策略"
+  desc_en: ""
+  plain_zh: "交易日早上九点二十五分之前，人手动跑一下这个命令，它就连上模拟盘券商终端，把盘中交易会话拉起来守着，下午三点零五分自动收工——收工前会把还没成交的单子全撤掉，按 Ctrl+C 也一样体面收场。默认只守活不下单；想冒烟试一下连接加 --dry-run，连一下就退，绝不下单。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

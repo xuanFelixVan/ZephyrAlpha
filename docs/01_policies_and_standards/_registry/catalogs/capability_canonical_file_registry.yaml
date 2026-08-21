@@ -4876,6 +4876,14 @@ creation_tokens:
   token: auto-commit-queue-landing-20260821
   created_by: AI-P0-6-005
   capability: commit_queue_serialization
+- file: scripts/run_post_settlement.py
+  token: auto-run-post-settlement-20260821
+  created_by: AI-P0-GAP23
+  capability: daily_cycle_sop
+- file: scripts/start_paper_session.py
+  token: auto-start-paper-session-20260821
+  created_by: AI-P0-GAP23
+  capability: daily_cycle_sop
 - file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/56_backtest_vs_sim_reconciliation_plan.md
   token: auto-backtest-vs-sim-reconciliation-plan-20260821
   created_by: AI-P0BATCH-001

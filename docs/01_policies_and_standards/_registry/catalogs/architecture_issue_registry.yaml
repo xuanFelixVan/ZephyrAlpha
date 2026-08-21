@@ -16899,6 +16899,38 @@ entries:
   related_rules: '66 号备忘 §6/§8/§9/§10/§11（协议与验收真源）; 08 号文 §4.2 Phase 0 + §5（11 条不做什么）; #ARCH-AICOLLAB-001（三件套）; 遗留 #67'
   created: '2026-08-21'
   last_updated: '2026-08-21'
+- issue_id: '#ARCH-DAILY-CYCLE-GAP23-001'
+  title: 57 号文 GAP-2/GAP-3 运营入口施工——盘后结算 CLI + 模拟盘交易日启动脚本（合并登记）
+  severity: P0
+  category: trading_operations
+  adjudication: |-
+    真源：57 号文 §2（盘中模拟盘过渡形态=09:25 前手动拉起）+§3（收盘结算管线
+    手动触发）+§7 缺口登记（GAP-2 盘中常驻服务入口 / GAP-3 post_settlement_pipeline
+    无 CLI/注入脚本）；Owner 2026-08-21 批准施工。
+    裁定（本条目为施工登记非新提议）：
+    - GAP-3 本件只落 CLI+真实件注入（reconcile_fn=SettlementReconciler 包
+      data/fills JSONL 系统侧+broker_settlement_adapter 券商侧，QMT 离线降级
+      仅系统侧+标注；audit_fn=DailyAuditor.audit 包装）；挂调度（cron 30 15 * * *
+      规格已在 build_post_settlement_jobs 备好）不在本件，留 Owner 窗口后续批准。
+    - GAP-2 本件只落手动拉起保活 MVP（有界循环 15:05 自动 stop，KeyboardInterrupt
+      优雅 stop 撤未成交单）；LiveStrategyAdapter（真信号喂策略）未施工，--strategy
+      默认空=纯保活不自动 rebalance 安全默认。
+    - 两脚本均只读/模拟盘面：run_post_settlement 不写业务 DB
+      （reconciliation_differences 落库由 recon_runner 负责，不重复写）；
+      start_paper_session 仅连 QMT 模拟账户（config/.env.qmt QMT_SIM_*），
+      --dry-run 只连不下单。
+  impact:
+  - 'scripts/run_post_settlement.py（新建，MOD-SCRIPT-run_post_settlement，D_TRADING，[MATURITY] testing；exit 0=OK/SKIPPED、3=DRIFT、1=ERROR）'
+  - 'scripts/start_paper_session.py（新建，MOD-SCRIPT-start_paper_session，D_EX_CORE，[MATURITY] testing；有界保活循环 PERM-TRIGGER 合规+m11 豁免）'
+  - 'tests/scripts/test_run_post_settlement.py + tests/scripts/test_start_paper_session.py（新建，mock 注入点+exit 码矩阵+tmp 隔离）'
+  - 'depgraph node_id=10306212（run_post_settlement，file）+10306213（start_paper_session，file），build_status planned→generated→testing 两跳合规'
+  - 'creation_token：auto-run-post-settlement-20260821 / auto-start-paper-session-20260821（created_by=AI-P0-GAP23，capability=daily_cycle_sop）'
+  fix_phase: '已落码（2026-08-21 AI-P0-GAP23）。残余：①GAP-3 挂调度=Owner 窗口项（57 号文 §3）；②audit_fn 持仓/净值/限额真源未接线，当前空快照跑通五件套链路，接线随 GAP 族后续批；③GAP-2 LiveStrategyAdapter 真信号源施工属后续批（57 号文 §7 GAP-2 原文）'
+  status: decided
+  confirmed_by_user: 'Owner 2026-08-21 批准 57 号文 GAP-2/GAP-3 施工（任务书原话："Owner 2026-08-21 批准"）'
+  related_rules: '57_daily_cycle_sop.md §2/§3/§7（运行形态与缺口真源）; 56_backtest_vs_sim_reconciliation_plan.md §3/§5（对账口径与 15:30 硬时点）; 54_reconciliation_attribution.md §2.4/§3.3（盘后管线接线缺口与硬时点）'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
 - issue_id: '#ARCH-079'
   title: gov_drift.drift_detector.trigger_recovery 为桩（return True）——恢复编排契约未实现
   severity: P2中
