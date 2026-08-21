@@ -118,6 +118,17 @@ python -c "import sys;sys.path.insert(0,'src');from zephyr.trading.settlement_re
 
 **彩排结论**：日循环骨架可走通；两处 Owner 窗口（QMT 启动、G1/G6 裁定）+五处 GAP 登记在案。下一交易日按 §1-§6 全流程复演。
 
+**2026-08-21 深夜第二场（QMT 模拟盘在线后补演，Owner 批准）**：
+
+| 环节 | 结果 | 证据 |
+|---|---|---|
+| ① C1 QMT 在线 | ✅ XtMiniQmt 进程在（PID 62132，22:44 启动）；broker.connect+get_positions 实测通过——PositionSnapshot cash=10,000,000 模拟资金、holdings={} | MiniQmtBroker 实测 |
+| P0-7 drift 复产 | ✅ scheduled_light 扫描 11 事件全写入（807→818 行，written>0），Dashboard data_as_of=2026-08-21T14:57:07Z 实时可见——断链 3 个月修复后首个受控生产验证 | drift_events 行数对账+data_as_of |
+| ④ EDE tick 回放回测 | ✅ Path A 端到端（CH 日K→因子→权重→tick callback→EDE→5 档撮合→成交）：trades=2，验收三步全 OK | smoke_test_ede_path_a.py |
+| ⑤ 空对账 | ✅（沿首场） | — |
+
+**彩排总结论**：目标态六环节全部实证可走通——开盘前检查（含 QMT 人工确认）、回测双引擎（向量化+EDE tick）、sink 落盘、结算管线、对账冒烟、drift 监控复产。盘中模拟盘段待下一交易日（09:30-15:00）按 §2 过渡形态复演。
+
 ## 9. 与 55 号监控节奏对接
 
 - **日自动**：本 SOP ③⑤ 即 55 号"日自动"件（DailyAuditor 五件套+对账 diff），人只看 FAIL/C 类项。
