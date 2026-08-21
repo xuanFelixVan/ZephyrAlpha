@@ -28,11 +28,11 @@ from zephyr.ex_sor.services.t0_cost_model import (
 
 
 class TestDefaults:
-    """默认配置对齐 cost_model_registry CST-ASTOCK-001（佣金万3/最低5元/印花税万5）。"""
+    """默认配置对齐主口径（2026-08-21 #233：佣金万0.854/最低5元/印花税万5）。"""
 
     def test_default_rates(self):
         cfg = T0CostConfig()
-        assert cfg.commission_rate == Decimal("0.0003")
+        assert cfg.commission_rate == Decimal("0.0000854")
         assert cfg.min_commission == Decimal("5")
         assert cfg.stamp_duty_rate == Decimal("0.0005")
 
@@ -43,10 +43,11 @@ class TestDefaults:
 
 class TestRoundTripCost:
     def test_small_notional_min_commission_kicks_in(self):
-        """1 万元双边：佣金被最低 5 元抬升（费率仅 3 元 < 5 元）。
+        """1 万元双边：佣金被最低 5 元抬升（费率仅 0.854 元 < 5 元）。
 
         佣金 5+5=10，印花税 10000×0.0005=5，
         高流动档滑点 10bps/边 × 双边 = 20000×0.001=20 → 合计 35 元。
+        （2026-08-21 #233：费率降至万0.854 后本场景仍全触最低佣金，金额不变）
         """
         cfg = T0CostConfig(slippage_tier=SlippageTier.HIGH_LIQUIDITY)
         cost = calc_t0_roundtrip_cost(buy_notional=Decimal("10000"), sell_notional=Decimal("10000"), config=cfg)
@@ -56,13 +57,13 @@ class TestRoundTripCost:
         assert cost.total == Decimal("35")
 
     def test_large_notional_rate_applies(self):
-        """10 万元双边：佣金 30+30=60，印花税 50，滑点 20000×0.001×10=200 → 310。"""
+        """10 万元双边：佣金 8.54+8.54=17.08（#233 万0.854），印花税 50，滑点 200 → 267.08。"""
         cfg = T0CostConfig(slippage_tier=SlippageTier.HIGH_LIQUIDITY)
         cost = calc_t0_roundtrip_cost(buy_notional=Decimal("100000"), sell_notional=Decimal("100000"), config=cfg)
-        assert cost.commission_total == Decimal("60")
+        assert cost.commission_total == Decimal("17.08")
         assert cost.stamp_duty == Decimal("50")
         assert cost.slippage_total == Decimal("200")
-        assert cost.total == Decimal("310")
+        assert cost.total == Decimal("267.08")
 
     def test_daban_tier_slippage_higher(self):
         """打板/事件档滑点（默认 20bps/边）高于高流动档（10bps/边）。"""

@@ -63,7 +63,7 @@ class TestConfig:
     def test_default_config(self):
         cfg = StrategySimulatorConfig()
         assert cfg.initial_capital == 1_000_000.0
-        assert cfg.commission_rate == 0.0003
+        assert cfg.commission_rate == 0.0000854  # 万0.854（2026-08-21 费率口径统一 #233）
         assert cfg.min_commission == 5.0
         assert cfg.slippage == 0.001
         assert cfg.allow_short is False

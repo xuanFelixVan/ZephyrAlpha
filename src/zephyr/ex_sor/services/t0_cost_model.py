@@ -68,7 +68,7 @@ _TIER_SLIPPAGE_BPS: dict[SlippageTier, Decimal] = {
 class T0CostConfig:
     """做T成本配置（费率按账户配置不硬编码——默认值对齐 CST-ASTOCK-001）。"""
 
-    commission_rate: Decimal = Decimal("0.0003")  # 佣金万3（双边）
+    commission_rate: Decimal = Decimal("0.0000854")  # 佣金万0.854（双边；2026-08-21 费率口径统一 #233，与主口径对齐 Owner 实盘协议费率）
     min_commission: Decimal = Decimal("5")  # 最低佣金 5 元/笔（显式建模）
     stamp_duty_rate: Decimal = Decimal("0.0005")  # 印花税万5（卖出单边）
     slippage_tier: SlippageTier = SlippageTier.HIGH_LIQUIDITY

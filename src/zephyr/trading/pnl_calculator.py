@@ -29,7 +29,7 @@ D_TRADING — PnL Calculator (盈亏计算器)
 核心职责（阶段1）:
   - 已实现盈亏: 卖出成交 (fill_price - avg_cost) × qty - 费用
   - 未实现盈亏: (current_price - avg_cost) × qty
-  - A股费率: 佣金(0.025%最低¥5) + 印花税(0.05%仅卖出) + 过户费(0.001%双向)
+  - A股费率: 佣金(万0.854=0.0000854最低¥5) + 印花税(0.05%仅卖出) + 过户费(0.001%双向)（2026-08-21 费率口径统一 #233）
   - 组合盈亏: 汇总已实现+未实现
 
 属 A 类基础设施（确定性数学计算），费率为 C 类可调参数(FeeConfig)。
@@ -51,7 +51,7 @@ D_TRADING — PnL Calculator (盈亏计算器)
 #   code: calculate_portfolio(positions) L368
 # - id: I4
 #   name: A股费率配置 FeeConfig（C类可调参数）
-#   fields: 佣金0.025%最低¥5 / 印花税0.05%仅卖出 / 过户费0.001%双向
+#   fields: 佣金万0.854最低¥5 / 印花税0.05%仅卖出 / 过户费0.001%双向（2026-08-21 费率口径统一 #233）
 #   code: FeeConfig L60
 # 层: 算法
 # - id: A1
@@ -150,13 +150,13 @@ class InvalidPnlInputError(ZephyrBaseError):
 class FeeConfig:
     """A股交易费率配置（C 类可调参数）。
 
-    默认值反映 2023 年印花税减半后的 A 股标准费率:
-      - 佣金: 0.025%，最低 ¥5/笔（买入+卖出）
-      - 印花税: 0.05%（仅卖出，2023 减半）
-      - 过户费: 0.001%（买入+卖出，2022 沪深统一）
+    默认值反映 2026-08-21 费率口径统一（#233，Owner 裁定：回测以实盘费率为准）:
+      - 佣金: 万0.854=0.0000854，最低 ¥5/笔（买入+卖出；Owner 实盘账户实测协议费率；免五待 Owner 确认）
+      - 印花税: 0.05%（仅卖出，2023-08 起现行法定）
+      - 过户费: 0.001%（买入+卖出，沪深现行法定）
     """
 
-    commission_rate: Decimal = Decimal("0.00025")  # 0.025%
+    commission_rate: Decimal = Decimal("0.0000854")  # 万0.854（Owner 实盘协议费率，#233 裁定 2026-08-21）
     commission_min: Decimal = Decimal("5")  # 最低 ¥5/笔
     stamp_duty_rate: Decimal = Decimal("0.0005")  # 0.05% (卖出)
     transfer_fee_rate: Decimal = Decimal("0.00001")  # 0.001%

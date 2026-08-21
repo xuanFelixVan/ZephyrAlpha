@@ -473,7 +473,7 @@ def _gen_trades(rng: random.Random, dates: list[datetime], n: int) -> list[PerfT
                 price=round(price, 3),
                 quantity=qty,
                 amount=round(price * qty, 2),
-                fee=round(price * qty * 0.0003, 2),
+                fee=round(price * qty * 0.0000854, 2),  # 演示 mock：万0.854（2026-08-21 费率口径统一 #233）
             )
         )
     return trades

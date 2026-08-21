@@ -26,7 +26,7 @@ from zephyr.backtest.core.portfolio import Portfolio
 
 def test_backward_compatible_generate_fills():
     """向后兼容 - generate_fills with prices (日线回测模式)"""
-    config = MatchingConfig(commission_rate=Decimal("0.0003"), slippage_bps=Decimal("1"))
+    config = MatchingConfig(commission_rate=Decimal("0.0000854"), slippage_bps=Decimal("1"))
     engine = MatchingEngine(config=config)
     assert isinstance(engine.logic, MatchingLogic), "logic must be MatchingLogic instance"
 
@@ -307,32 +307,34 @@ def _make_ob(last: str = "10.00") -> OrderBookSnapshot:
 
 def test_total_cost_no_double_count_slippage():
     """total_cost 不得双重计入滑点（fill.price 已含滑点价）——AI-NIGHT-001 审查发现"""
+    # 2026-08-21 费率口径统一（#233）：佣金万0.854 / 印花税万5卖出 / 过户费万0.1双向
     config = MatchingConfig(
-        commission_rate=Decimal("0.0003"),
+        commission_rate=Decimal("0.0000854"),
         slippage_bps=Decimal("10"),  # 10bp 放大差异便于观测
-        stamp_tax_rate=Decimal("0.001"),
+        stamp_tax_rate=Decimal("0.0005"),
         min_commission=Decimal("5"),
     )
     logic = MatchingLogic(config)
     ob = _make_ob()
 
-    # BUY: price = 10.00*(1+10/10000) = 10.01；commission = max(1000*10.01*0.0003, 5) = max(3.003, 5) = 5
+    # BUY: price = 10.00*(1+10/10000) = 10.01；佣金 = max(1000*10.01*0.0000854, 5) = max(0.855, 5) = 5；过户费 = gross*0.00001
     buy_fill = logic.match_market_order(
         MatchOrderInput(symbol="000001.SZ", side="BUY", quantity=Decimal("1000"), order_type="MARKET"), ob
     )
     assert buy_fill.price == Decimal("10.01")
-    expected_buy = Decimal("1000") * Decimal("10.01") + Decimal("5")
+    gross_buy = Decimal("1000") * Decimal("10.01")
+    expected_buy = gross_buy + Decimal("5") + gross_buy * Decimal("0.00001")
     assert buy_fill.total_cost == expected_buy, (
-        f"BUY total_cost 双计滑点: 期望 {expected_buy}（gross+commission），实际 {buy_fill.total_cost}"
+        f"BUY total_cost 双计滑点: 期望 {expected_buy}（gross+commission+transfer），实际 {buy_fill.total_cost}"
     )
 
-    # SELL: price = 9.99*(1-10/10000) = 9.98001；commission = max(3, 5) + 印花税 9.98001*1000*0.001
+    # SELL: price = 9.99*(1-10/10000) = 9.98001；费用 = max(gross*0.0000854, 5) + 印花税 gross*0.0005 + 过户费 gross*0.00001
     sell_fill = logic.match_market_order(
         MatchOrderInput(symbol="000001.SZ", side="SELL", quantity=Decimal("1000"), order_type="MARKET"), ob
     )
     assert sell_fill.price == Decimal("9.98001")
     gross = Decimal("1000") * Decimal("9.98001")
-    expected_sell = gross - (Decimal("5") + gross * Decimal("0.001"))
+    expected_sell = gross - (Decimal("5") + gross * Decimal("0.0005") + gross * Decimal("0.00001"))
     assert sell_fill.total_cost == expected_sell, (
         f"SELL total_cost 双计滑点: 期望 {expected_sell}（gross-commission-tax），实际 {sell_fill.total_cost}"
     )
@@ -342,7 +344,7 @@ def test_sell_realized_pnl_no_double_slippage():
     """卖出已实现盈亏不得再减 slippage_cost（成交价已含滑点）——AI-NIGHT-001 审查发现"""
     portfolio = Portfolio(initial_capital=Decimal("200000"))
     config = MatchingConfig(
-        commission_rate=Decimal("0.0003"), slippage_bps=Decimal("10"), stamp_tax_rate=Decimal("0.001")
+        commission_rate=Decimal("0.0000854"), slippage_bps=Decimal("10"), stamp_tax_rate=Decimal("0.0005")
     )
     engine = MatchingEngine(config=config)
     ob = _make_ob()

@@ -19,7 +19,8 @@
 
 对账口径（来自模块 docstring/SSoT 的公开规则，独立手算）:
   - 滑点: BUY 价 = base×(1+1bp) = base×1.0001; SELL 价 = base×0.9999
-  - 佣金: max(qty×price×0.0003, 5)；卖出另加印花税 qty×price×0.001
+  - 佣金: max(qty×price×0.0000854, 5)；卖出另加印花税 qty×price×0.0005；
+    过户费 qty×price×0.00001 双向（2026-08-21 费率口径统一 #233）
   - total_cost: BUY = qty×price + commission；SELL = qty×price − commission
     （price 已含滑点，不得再加减 slippage_cost——#210 双计修复口径）
   - avg_cost = (旧成本×旧量 + qty×price + commission) / 新量
@@ -56,17 +57,18 @@ from zephyr.backtest.implementations.vectorized_engine import (
 
 D = Decimal
 
-# 撮合默认口径：佣金万三/滑点1bp/印花税千一/最低佣金5元/100股整手
-COMMISSION_RATE = D("0.0003")
+# 撮合默认口径（2026-08-21 费率口径统一 #233）：佣金万0.854/滑点1bp/印花税万5卖出/过户费万0.1双向/最低佣金5元/100股整手
+COMMISSION_RATE = D("0.0000854")
 SLIPPAGE = D("0.0001")  # 1bp
-STAMP = D("0.001")
+STAMP = D("0.0005")
+TRANSFER = D("0.00001")
 
 
 def _buy_cost(qty: int, base: str) -> D:
     """独立手算买入总成本（公开规则）。"""
     price = D(base) * (1 + SLIPPAGE)
     gross = D(qty) * price
-    comm = max(gross * COMMISSION_RATE, D("5"))
+    comm = max(gross * COMMISSION_RATE, D("5")) + gross * TRANSFER
     return gross + comm
 
 
@@ -74,7 +76,7 @@ def _sell_proceeds(qty: int, base: str) -> D:
     """独立手算卖出净回款（公开规则）。"""
     price = D(base) * (1 - SLIPPAGE)
     gross = D(qty) * price
-    comm = max(gross * COMMISSION_RATE, D("5")) + gross * STAMP
+    comm = max(gross * COMMISSION_RATE, D("5")) + gross * STAMP + gross * TRANSFER
     return gross - comm
 
 
@@ -87,7 +89,7 @@ class TestNormalBuySellExactReconciliation:
     """普通买卖：逐分对账 成交价/量/佣金/现金/成本。"""
 
     def test_buy_fill_fields_exact(self):
-        """BUY 50,000股@10.00：价=10.001，佣金=150.015，总成本=500,200.015。"""
+        """BUY 50,000股@10.00：价=10.001，佣金+过户费=47.70477，总成本=500,097.70477（#233 新口径）。"""
         engine = MatchingEngine()
         pf = Portfolio(initial_capital=D("1000000"))
         fills = engine.generate_fills(
@@ -101,10 +103,11 @@ class TestNormalBuySellExactReconciliation:
         assert f.side == "BUY"
         assert f.quantity == D("50000")  # floor(500000/10/100)*100
         assert f.price == D("10.001")  # 10.00×1.0001 精确
-        assert f.commission == D("150.015")  # 500050×0.0003 > 5（不触最低佣金）
+        # 2026-08-21 费率口径统一（#233）：500050×0.0000854=42.70427(>5 不触最低) + 过户费 500050×0.00001=5.0005
+        assert f.commission == D("47.70477")
         assert f.slippage_cost == D("50")  # 信息字段: 0.001×50000
         # #210 口径: total_cost = gross+comm，不得再加 slippage_cost
-        assert f.total_cost == D("500200.015")
+        assert f.total_cost == D("500097.70477")
 
     def test_buy_then_sell_portfolio_bookkeeping_exact(self):
         """买入→记账→卖出一半：现金/avg_cost/realized 逐分对账。"""
@@ -120,11 +123,11 @@ class TestNormalBuySellExactReconciliation:
         )
         for f in fills:
             pf.apply_fill(f)
-        assert pf.cash == D("1000000") - D("500200.015") == D("499799.985")
+        assert pf.cash == D("1000000") - D("500097.70477") == D("499902.29523")
         pos = pf.get_position("600000")
         assert pos.quantity == D("50000")
-        # avg_cost = (50000×10.001 + 150.015)/50000 = 10.0040003 精确
-        assert pos.avg_cost == D("10.0040003")
+        # avg_cost = (50000×10.001 + 47.70477)/50000 = 10.0019540954 精确（#233 新口径）
+        assert pos.avg_cost == D("10.0019540954")
         assert pos.buy_date == "2026-08-03"
 
         # Day2 价格 11.00，降权至 0.25 → 卖 26,200 股
@@ -137,27 +140,28 @@ class TestNormalBuySellExactReconciliation:
         assert len(fills2) == 1
         s = fills2[0]
         assert s.side == "SELL"
-        # NAV = 499799.985 + 50000×11 = 1049799.985；target = 0.25×NAV = 262449.99625
-        # qty = floor(262449.99625/11/100)×100 = 23800；diff = 23800−50000 = −26200
+        # NAV = 499902.29523 + 50000×11 = 1049902.29523；target = 0.25×NAV = 262475.5738075
+        # qty = floor(262475.5738075/11/100)×100 = 23800；diff = 23800−50000 = −26200
         assert s.quantity == D("26200")
         assert s.price == D("10.9989")  # 11×0.9999 精确
-        # 佣金 = max(288171.18×0.0003,5) + 288171.18×0.001 = 86.451354 + 288.17118
-        assert s.commission == D("374.622534")
+        # 费用（#233）= max(288171.18×0.0000854,5) + 印花税 288171.18×0.0005 + 过户费 288171.18×0.00001
+        # = 24.609818772 + 144.08559 + 2.8817118
+        assert s.commission == D("171.577120572")
         # 回款 = gross − comm（不双计滑点）
-        assert s.total_cost == D("288171.18") - D("374.622534") == D("287796.557466")
+        assert s.total_cost == D("288171.18") - D("171.577120572") == D("287999.602879428")
 
         pf.apply_fill(s)
-        assert pf.cash == D("499799.985") + D("287796.557466") == D("787596.542466")
+        assert pf.cash == D("499902.29523") + D("287999.602879428") == D("787901.898109428")
         pos2 = pf.get_position("600000")
         assert pos2.quantity == D("23800")
-        # realized = (10.9989 − 10.0040003)×26200 − 374.622534 = 25,691.749606 精确
-        assert pos2.realized_pnl == D("25691.749606")
+        # realized = (10.9989 − 10.0019540954)×26200 − 171.577120572 = 25,948.405579948 精确
+        assert pos2.realized_pnl == D("25948.405579948")
 
     def test_min_commission_floor(self):
         """小额买入触最低佣金 5 元。"""
         engine = MatchingEngine()
         pf = Portfolio(initial_capital=D("1000000"))
-        # 100 股@10.00: gross=1000.10, 1000.10×0.0003=0.30003 < 5 → 佣金=5
+        # 100 股@10.00: gross=1000.10, 1000.10×0.0000854=0.0855 < 5 → 佣金=5；+过户费 0.010001（#233）
         fills = engine.generate_fills(
             target_weights={"600000": 0.00001},  # target=10元 → qty=0 → 无单
             prices={"600000": D("10.00")},
@@ -174,8 +178,9 @@ class TestNormalBuySellExactReconciliation:
         )
         assert len(fills2) == 1
         assert fills2[0].quantity == D("100")
-        assert fills2[0].commission == D("5")  # 触最低佣金
-        assert fills2[0].total_cost == D("1000.10") + D("5")
+        # 触最低佣金 5 元 + 过户费 1000.10×0.00001=0.010001（#233 新口径）
+        assert fills2[0].commission == D("5.010001")
+        assert fills2[0].total_cost == D("1000.10") + D("5.010001")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -266,8 +271,8 @@ class TestPriceLimitBoardInference:
         # day2(08-04) 涨停：target=90,900 股买单生成 → 涨停阻断 → 零成交
         assert not [t for t in trades if t["date"].startswith("2026-08-04")]
         # day3(08-05) 非涨停（prev=11）：满仓买单收缩至可负担整手成交
-        # target=floor(1,000,000/11/100)×100=90,900 → 成本 1,000,299.99>1,000,000
-        # → 收缩 90,800 股（成本 999,199.55 可负担）
+        # target=floor(1,000,000/11/100)×100=90,900 → 成本 1,000,095.40>1,000,000
+        # → 收缩 90,800 股（成本 998,995.18 可负担）（2026-08-21 #233 新口径重算，数量不变）
         day3 = [t for t in trades if t["date"].startswith("2026-08-05")]
         assert len(day3) == 1
         assert day3[0]["side"] == "BUY"
@@ -468,69 +473,69 @@ class TestEngineLevelToyReconciliation:
         result = engine.run(data=data, signals=sig, strategy_name="toy-5d")
         pf = engine.last_portfolio
 
-        # ── d1 手算（NAV=1,000,000，归一化 {A:2/3, B:1/3}）──
+        # ── d1 手算（NAV=1,000,000，归一化 {A:2/3, B:1/3}）（2026-08-21 #233 新口径重算）──
         # A: target=666,666.67 → qty=floor(666666.67/10/100)×100=66,600
-        #    price=10.001, gross=666,066.60, comm=199.81998, cost=666,266.41998
+        #    price=10.001, gross=666,066.60, 费用=56.88208764佣金+6.660666过户=63.54275364, cost=666,130.14275364
         # B: target=333,333.33 → qty=floor(333333.33/1000/100)×100=300
-        #    price=1000.10, gross=300,030, comm=90.009, cost=300,120.009
+        #    price=1000.10, gross=300,030, 费用=25.622562+3.0003=28.622862, cost=300,058.622862
         trades_d1 = [t for t in pf.trades_log if t["date"].startswith("2026-08-03")]
         assert len(trades_d1) == 2
         buy_a = next(t for t in trades_d1 if t["symbol"] == "600000")
         buy_b1 = next(t for t in trades_d1 if t["symbol"] == "600519")
         assert buy_a["quantity"] == 66600.0
         assert buy_a["price"] == 10.001
-        assert buy_a["commission"] == pytest.approx(199.81998)
+        assert buy_a["commission"] == pytest.approx(63.54275364)
         assert buy_b1["quantity"] == 300.0
         assert buy_b1["price"] == 1000.1
-        assert buy_b1["commission"] == pytest.approx(90.009)
-        # cash_d1 = 1,000,000 − 666,266.41998 − 300,120.009 = 33,613.57102
-        cash_d1 = D("1000000") - D("666266.41998") - D("300120.009")
+        assert buy_b1["commission"] == pytest.approx(28.622862)
+        # cash_d1 = 1,000,000 − 666,130.14275364 − 300,058.622862 = 33,811.23438436
+        cash_d1 = D("1000000") - D("666130.14275364") - D("300058.622862")
 
         # ── d4 手算（A=11 涨停价；prev={A:10,B:1000}）──
-        # NAV = 33,613.57102 + 66,600×11 + 300×1000 = 1,066,213.57102
+        # NAV = 33,811.23438436 + 66,600×11 + 300×1000 = 1,066,411.23438436
         # A 清仓（跌出信号；涨停日卖单可成交——方向感知阻断）: sell 66,600@10.9989
-        #   gross=732,526.74, comm=219.758022+732.52674=952.284762, 回款=731,574.455238
+        #   gross=732,526.74, 费用=62.557783596佣金+366.26337印花+7.3252674过户=436.146420996, 回款=732,090.593579004
         # B 补仓: target=NAV → qty=1,000, diff=700 @ 1000.10
-        #   gross=700,070, comm=210.021, cost=700,280.021
+        #   gross=700,070, 费用=59.785978+7.0007=66.786678, cost=700,136.786678
         trades_d4 = [t for t in pf.trades_log if t["date"].startswith("2026-08-06")]
         assert len(trades_d4) == 2
         sell_a = next(t for t in trades_d4 if t["symbol"] == "600000")
         buy_b = next(t for t in trades_d4 if t["symbol"] == "600519")
         assert sell_a["side"] == "SELL" and sell_a["quantity"] == 66600.0
         assert sell_a["price"] == pytest.approx(10.9989)
-        assert sell_a["commission"] == pytest.approx(952.284762)
+        assert sell_a["commission"] == pytest.approx(436.146420996)
         assert buy_b["side"] == "BUY" and buy_b["quantity"] == 700.0
         assert buy_b["price"] == 1000.1
-        assert buy_b["commission"] == pytest.approx(210.021)
+        assert buy_b["commission"] == pytest.approx(66.786678)
 
         # ── 终态对账（d5 无信号，持仓不变）──
-        # 现金 = cash_d1 + 731,574.455238 − 700,280.021 = 64,908.005258
-        expected_cash = cash_d1 + D("731574.455238") - D("700280.021")
-        assert pf.cash == expected_cash == D("64908.005258")
+        # 现金 = cash_d1 + 732,090.593579004 − 700,136.786678 = 65,765.041285364
+        expected_cash = cash_d1 + D("732090.593579004") - D("700136.786678")
+        assert pf.cash == expected_cash == D("65765.041285364")
         pos_a = pf.get_position("600000")
         assert pos_a.quantity == D("0")
         pos_b = pf.get_position("600519")
         assert pos_b.quantity == D("1000")
-        assert pos_b.avg_cost == D("1000.40003")  # (300,120.009+700,070+210.021)/1000
+        assert pos_b.avg_cost == D("1000.19540954")  # (300,058.622862+700,136.786678)/1000
 
-        # A 已实现盈亏 = (10.9989−10.0040003)×66,600 − 952.284762
-        #             = 66,260.32002 − 952.284762 = 65,308.035258
-        assert pos_a.realized_pnl == D("65308.035258")
+        # A 已实现盈亏 = (10.9989−10.0019540954)×66,600 − 436.146420996
+        #             = 66,396.59724636 − 436.146420996 = 65,960.450825364
+        assert pos_a.realized_pnl == D("65960.450825364")
 
         # ── 逐日 NAV 手算 ──
         nav = pf.nav_series
         assert float(nav.iloc[0]) == 1_000_000.0  # 初始
-        # 价序: d1..d3 A=10/B=1000 → NAV = 33,613.57102+666,000+300,000 = 999,613.57102
-        d_low_nav = 999_613.57102
+        # 价序: d1..d3 A=10/B=1000 → NAV = 33,811.23438436+666,000+300,000 = 999,811.23438436
+        d_low_nav = 999_811.23438436
         assert float(nav.iloc[1]) == pytest.approx(d_low_nav, abs=1e-6)
         assert float(nav.iloc[2]) == pytest.approx(d_low_nav, abs=1e-6)
         assert float(nav.iloc[3]) == pytest.approx(d_low_nav, abs=1e-6)
-        d4_nav = 64_908.005258 + 1000 * 1000.0  # 1,064,908.005258
+        d4_nav = 65_765.041285364 + 1000 * 1000.0  # 1,065,765.041285364
         assert float(nav.iloc[4]) == pytest.approx(d4_nav, abs=1e-6)
         assert float(nav.iloc[5]) == pytest.approx(d4_nav, abs=1e-6)
 
         # ── BacktestResult 与手算终值一致 ──
-        assert result.total_return == pytest.approx(64_908.005258 / 1_000_000, rel=1e-9)
+        assert result.total_return == pytest.approx(65_765.041285364 / 1_000_000, rel=1e-9)
         assert result.trades_count == 4
 
 
@@ -710,13 +715,14 @@ class TestFullWeightCostFrictionFill:
         with caplog.at_level(logging.WARNING, logger="zephyr.backtest.implementations.vectorized_engine"):
             result = engine.run(data=data, signals=sig, strategy_name="toy-fullweight")
         pf = engine.last_portfolio
-        # 满仓成本收缩：100,000 股成本 1,000,400.03>1,000,000 → 收缩至 99,900 股
-        # （成本 999,399.62997 可负担）；day2 NAV 口径下 target=99,900 → diff=0 无单
+        # 满仓成本收缩：100,000 股成本 1,000,195.40954>1,000,000 → 收缩至 99,900 股
+        # （成本 999,195.21413046 可负担）；day2 NAV 口径下 target=99,900 → diff=0 无单
+        # （2026-08-21 #233 新口径重算，收缩数量不变）
         assert result.trades_count == 1
         pos = pf.get_position("600000")
         assert pos.quantity == D("99900")
-        # 逐分对账：cash = 1,000,000 − 999,399.62997 = 600.37003
-        assert pf.cash == D("600.37003")
+        # 逐分对账：cash = 1,000,000 − 999,195.21413046 = 804.78586954
+        assert pf.cash == D("804.78586954")
         # 满仓不再触发拒单 warning（修复目标行为）
         per_fill = [r for r in caplog.records if "Fill skipped" in r.getMessage()]
         summary = [r for r in caplog.records if "fill 被拒绝" in r.getMessage()]

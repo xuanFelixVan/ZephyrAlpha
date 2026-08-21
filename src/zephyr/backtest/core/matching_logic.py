@@ -83,19 +83,23 @@ class MatchingLogicError(Exception):
 class MatchingConfig:
     """撮合配置（frozen，实例化后不可变，保证纯函数式语义）
 
+    费率口径：2026-08-21 费率口径统一（#233，Owner 裁定：回测以实盘费率为准）。
+
     Attributes:
-        commission_rate: 券商佣金费率(万三=0.0003)
-        slippage_bps: 滑点(bps, 1bp=0.01%)
-        stamp_tax_rate: 印花税率(卖出0.1%=0.001)
-        min_commission: 最低佣金(5元)
+        commission_rate: 券商佣金费率(万0.854=0.0000854，Owner 实盘账户实测协议费率，2026-08-21 裁定)
+        slippage_bps: 滑点(bps, 1bp=0.01%，维持 1bps 假设不变)
+        stamp_tax_rate: 印花税率(卖出单边 万5=0.0005，2023-08 起现行法定)
+        transfer_fee_rate: 过户费率(双向 万0.1=0.00001，沪深现行法定)
+        min_commission: 最低佣金(5元；免五待 Owner 确认，暂保留 5 元下限)
         lot_size: 最小交易单位(A股100股)
         price_limit_pct: 涨跌停板限制(10%=0.10, ST股5%=0.05)
     """
 
-    commission_rate: Decimal = Decimal("0.0003")
+    commission_rate: Decimal = Decimal("0.0000854")  # 万0.854（Owner 实盘协议费率，#233 裁定 2026-08-21）
     slippage_bps: Decimal = Decimal("1")
-    stamp_tax_rate: Decimal = Decimal("0.001")
-    min_commission: Decimal = Decimal("5")
+    stamp_tax_rate: Decimal = Decimal("0.0005")  # 万5，卖出单边（2023-08 起法定）
+    transfer_fee_rate: Decimal = Decimal("0.00001")  # 万0.1，双向（沪深现行法定）
+    min_commission: Decimal = Decimal("5")  # 免五待 Owner 确认，暂保留 5 元下限
     lot_size: int = 100
     price_limit_pct: Decimal = Decimal("0.10")
 
@@ -493,10 +497,12 @@ class MatchingLogic:
             raise MatchingLogicError(f"无效side: {side}, 必须为BUY或SELL")
 
     def _calc_commission(self, quantity: Decimal, price: Decimal, side: str) -> Decimal:
-        """计算手续费（纯函数: 券商佣金 + 印花税）
+        """计算手续费（纯函数: 券商佣金 + 印花税 + 过户费）
 
-        券商佣金: max(quantity * price * commission_rate, min_commission)
-        印花税: 卖出时 quantity * price * stamp_tax_rate
+        券商佣金: max(quantity * price * commission_rate, min_commission)（双向）
+        印花税: 卖出时 quantity * price * stamp_tax_rate（卖出单边，2023-08 起法定万5）
+        过户费: quantity * price * transfer_fee_rate（双向，沪深法定万0.1）
+        口径: 2026-08-21 费率口径统一（#233，Owner 裁定回测以实盘费率为准）
 
         Args:
             quantity: 成交数量
@@ -510,6 +516,8 @@ class MatchingLogic:
         commission = gross * self._config.commission_rate
         if commission < self._config.min_commission:
             commission = self._config.min_commission
+        # 过户费：买入卖出双向收取
+        commission += gross * self._config.transfer_fee_rate
         if side == "SELL":
             commission += gross * self._config.stamp_tax_rate
         return commission

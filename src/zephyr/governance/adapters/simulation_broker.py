@@ -72,7 +72,7 @@ class SimulationBroker(BrokerInterface):
     def __init__(
         self,
         initial_cash: Decimal = Decimal("1000000"),
-        commission_rate: Decimal = Decimal("0.0003"),
+        commission_rate: Decimal = Decimal("0.0000854"),  # 万0.854（2026-08-21 费率口径统一 #233，对齐 Owner 实盘协议费率）
         slippage_bps: Decimal = Decimal("1"),
         fill_latency_ms: int = 10,
     ):

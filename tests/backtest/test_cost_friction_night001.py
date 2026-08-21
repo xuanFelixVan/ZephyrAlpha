@@ -36,11 +36,12 @@
 MatchingEngine._clamp_buys_to_projected_cash 按先卖后买投影现金，
 将超支买单收缩到可负担最大整手；非满仓场景逐位不变（零回归）。
 
-口径（与 MatchingLogic 一致）：
+口径（与 MatchingLogic 一致；2026-08-21 费率口径统一 #233）：
   BUY 执行价 = ask1×(1+slippage_bps/10000)
   SELL 执行价 = bid1×(1−slippage_bps/10000)
   佣金 = max(qty×price×rate, 最低佣金)
   印花税 = 卖出时 qty×price×stamp_tax_rate
+  过户费 = qty×price×transfer_fee_rate（双向）
 """
 
 from __future__ import annotations
@@ -78,10 +79,11 @@ class TestFullWeightCostFrictionClamp:
         assert f.side == "BUY"
         assert f.quantity == D("99900")
         assert f.price == D("10.001")
-        assert f.total_cost == D("999399.6299700")
+        # 2026-08-21 费率口径统一（#233）：费用 = 999099.9×0.0000854=85.32313146 + 过户费 9.990999
+        assert f.total_cost == D("999195.21413046")
         # 成交后现金必须非负
         pf.apply_fill(f)
-        assert pf.cash == D("600.3700300")
+        assert pf.cash == D("804.78586954")
 
     def test_double_full_weight_split_clamp(self):
         """双标的全仓 {A:0.6,B:0.4}：先A后B，B 被收缩到可负担"""
@@ -98,17 +100,17 @@ class TestFullWeightCostFrictionClamp:
         b = next(f for f in fills if f.symbol == "600002")
         assert a.side == "BUY"
         assert a.quantity == D("60000")
-        # A 成本：60,000×10.001 + 180.018 = 600,240.018
-        assert a.total_cost == D("600240.0180000")
-        # 投影剩余 = 1,000,000 − 600,240.018 = 399,759.982
+        # A 成本（#233）：60,000×10.001 + 佣金 51.245124 + 过户费 6.0006 = 600,117.245724
+        assert a.total_cost == D("600117.245724")
+        # 投影剩余 = 1,000,000 − 600,117.245724 = 399,882.754276
         # B 原始需求：floor(400,000/10.001/100)×100 = 39,900
-        # 39,900×10.001 + 119.73003 = 399,159.61197 ≤ 399,759.982，可负担 → 不变
+        # 39,900×10.001 + 34.07800746 + 3.990399 = 399,077.96840646 ≤ 399,882.754276，可负担 → 不变
         assert b.quantity == D("39900")
-        assert b.total_cost == D("399159.6119700")
-        # 全量成交后现金 = 1000000 − 600240.018 − 399159.61197 = 600.37003
+        assert b.total_cost == D("399077.96840646")
+        # 全量成交后现金 = 1000000 − 600117.245724 − 399077.96840646 = 804.78586954
         for f in fills:
             pf.apply_fill(f)
-        assert pf.cash == D("600.3700300")
+        assert pf.cash == D("804.78586954")
 
     def test_full_weight_hits_min_commission(self):
         """小资金满仓触最低佣金 5 元，收缩后仍是整手"""
@@ -123,10 +125,11 @@ class TestFullWeightCostFrictionClamp:
         assert len(fills) == 1
         f = fills[0]
         assert f.quantity == D("900")
-        assert f.commission == D("5")
-        assert f.total_cost == D("9005.9")
+        # 触最低佣金 5 元 + 过户费 9000.9×0.00001=0.090009（#233 新口径）
+        assert f.commission == D("5.090009")
+        assert f.total_cost == D("9005.990009")
         pf.apply_fill(f)
-        assert pf.cash == D("994.1")
+        assert pf.cash == D("994.009991")
 
     def test_full_weight_below_one_lot(self):
         """资金不足一手 → 无单（不报错）"""
@@ -168,8 +171,8 @@ class TestFullWeightCostFrictionClamp:
         assert fills[0].side == "SELL"
         assert sell.quantity == D("10000")  # A 全量清仓
         # NAV = 899,970 + 10,000×11 = 1,009,970 → B 目标 = floor(1,009,970/10/100)×100
-        # = 100,900 股；成本 = 100,900×10.001 + 302.73027 = 1,009,503.63
-        # 投影现金 = 899,970 + (109,989 − 142.9857) = 1,009,816.01 ≥ 成本 → 不收缩
+        # = 100,900 股；成本（#233）= 100,900×10.001 + 86.17721686 + 10.091009 = 1,009,197.16822586
+        # 投影现金 = 899,970 + (109,989 − 65.4874506) = 1,009,893.51 ≥ 成本 → 不收缩
         assert buy.quantity == D("100900")
         for f in fills:
             pf.apply_fill(f)

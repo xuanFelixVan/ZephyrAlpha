@@ -69,16 +69,16 @@ class TestAShareFeeCalculator:
     def test_commission_uses_min_when_below_threshold(self) -> None:
         """小单佣金不足¥5时取最低¥5。"""
         calc = AShareFeeCalculator()
-        # turnover=100, commission_rate=0.00025 → 0.025 < 5 → 取5
+        # turnover=100, commission_rate=0.0000854（#233）→ 0.00854 < 5 → 取5
         fees = calc.calculate(Decimal("100"), OrderSide.BUY)
         assert fees.commission == Decimal("5")
 
     def test_commission_uses_rate_when_above_threshold(self) -> None:
         """大单佣金按费率计算（超过最低¥5）。"""
         calc = AShareFeeCalculator()
-        # turnover=100000, 0.00025 → 25 > 5 → 取25
+        # turnover=100000, 0.0000854（#233）→ 8.54 > 5 → 取8.54
         fees = calc.calculate(Decimal("100000"), OrderSide.BUY)
-        assert fees.commission == Decimal("25")
+        assert fees.commission == Decimal("8.54")
 
     def test_stamp_duty_only_on_sell(self) -> None:
         """印花税仅卖出收取。"""
@@ -102,8 +102,8 @@ class TestAShareFeeCalculator:
         """FeeBreakdown.total = 佣金+印花税+过户费。"""
         calc = AShareFeeCalculator()
         fees = calc.calculate(Decimal("100000"), OrderSide.SELL)
-        # commission=25, stamp_duty=50, transfer_fee=1
-        assert fees.total == Decimal("76")
+        # commission=8.54（#233）, stamp_duty=50, transfer_fee=1
+        assert fees.total == Decimal("59.54")
 
     def test_custom_fee_config(self) -> None:
         """自定义 FeeConfig 生效。"""
@@ -132,7 +132,7 @@ class TestRealizedPnl:
         fill = make_fill(fill_price=Decimal("11"), filled_quantity=Decimal("100"))
         result = calc.calculate_realized(fill, OrderSide.SELL, avg_cost=Decimal("10"))
         # turnover=1100, gross=(11-10)*100=100
-        # commission=max(1100*0.00025,5)=max(0.275,5)=5
+        # commission=max(1100*0.0000854,5)=max(0.09394,5)=5（#233）
         # stamp_duty=1100*0.0005=0.55, transfer_fee=1100*0.00001=0.011
         # fees=5.561, net=100-5.561=94.439
         assert result.symbol == "600000"
@@ -154,12 +154,12 @@ class TestRealizedPnl:
         fill = make_fill(fill_price=Decimal("100"), filled_quantity=Decimal("1000"))
         result = calc.calculate_realized(fill, OrderSide.SELL, avg_cost=Decimal("90"))
         # turnover=100000, gross=(100-90)*1000=10000
-        # commission=max(25,5)=25, stamp_duty=50, transfer_fee=1 → fees=76
-        # net=10000-76=9924
+        # commission=max(8.54,5)=8.54（#233）, stamp_duty=50, transfer_fee=1 → fees=59.54
+        # net=10000-59.54=9940.46
         assert result.gross_pnl == Decimal("10000")
-        assert result.fees.commission == Decimal("25")
-        assert result.fees.total == Decimal("76")
-        assert result.net_pnl == Decimal("9924")
+        assert result.fees.commission == Decimal("8.54")
+        assert result.fees.total == Decimal("59.54")
+        assert result.net_pnl == Decimal("9940.46")
 
     def test_sell_realized_pnl_loss(self) -> None:
         """亏损卖出: 毛盈亏为负。"""
@@ -167,7 +167,7 @@ class TestRealizedPnl:
         fill = make_fill(fill_price=Decimal("9"), filled_quantity=Decimal("100"))
         result = calc.calculate_realized(fill, OrderSide.SELL, avg_cost=Decimal("10"))
         # gross=(9-10)*100=-100, turnover=900
-        # commission=max(900*0.00025,5)=max(0.225,5)=5
+        # commission=max(900*0.0000854,5)=max(0.07686,5)=5（#233）
         # stamp_duty=900*0.0005=0.45, transfer_fee=900*0.00001=0.009
         # fees=5.459, net=-100-5.459=-105.459
         assert result.gross_pnl == Decimal("-100")
@@ -180,7 +180,7 @@ class TestRealizedPnl:
         fill = make_fill(fill_price=Decimal("10"), filled_quantity=Decimal("100"))
         result = calc.calculate_realized(fill, OrderSide.BUY, avg_cost=Decimal("10"))
         # gross=0, turnover=1000
-        # commission=max(0.25,5)=5, stamp_duty=0(BUY), transfer_fee=0.01
+        # commission=max(0.0854,5)=5（#233）, stamp_duty=0(BUY), transfer_fee=0.01
         # fees=5.01, net=0-5.01=-5.01
         assert result.gross_pnl == Decimal("0")
         assert result.fees.stamp_duty == Decimal("0")
@@ -288,7 +288,7 @@ class TestPortfolioPnl:
         fills = [
             # 卖出1: price=11,qty=100,cost=10 → gross=100, fees=5.561, net=94.439
             (make_fill(fill_price=Decimal("11"), fill_id="F1"), OrderSide.SELL, Decimal("10")),
-            # 卖出2: price=100,qty=1000,cost=90 → gross=10000, fees=76, net=9924
+            # 卖出2: price=100,qty=1000,cost=90 → gross=10000, fees=59.54（#233）, net=9940.46
             (
                 make_fill(fill_price=Decimal("100"), filled_quantity=Decimal("1000"), fill_id="F2"),
                 OrderSide.SELL,
@@ -305,14 +305,14 @@ class TestPortfolioPnl:
 
         assert len(portfolio.realized) == 2
         assert len(portfolio.unrealized) == 2
-        # total_realized = 94.439 + 9924 = 10018.439
-        assert portfolio.total_realized == Decimal("10018.439")
+        # total_realized = 94.439 + 9940.46 = 10034.899（#233 重算）
+        assert portfolio.total_realized == Decimal("10034.899")
         # total_unrealized = 100 + (-400) = -300
         assert portfolio.total_unrealized == Decimal("-300")
-        # total_pnl = 10018.439 + (-300) = 9718.439
-        assert portfolio.total_pnl == Decimal("9718.439")
-        # total_fees = 5.561 + 76 = 81.561
-        assert portfolio.total_fees == Decimal("81.561")
+        # total_pnl = 10034.899 + (-300) = 9734.899
+        assert portfolio.total_pnl == Decimal("9734.899")
+        # total_fees = 5.561 + 59.54 = 65.101
+        assert portfolio.total_fees == Decimal("65.101")
 
     def test_portfolio_empty(self) -> None:
         """空组合: 全部合计=0。"""

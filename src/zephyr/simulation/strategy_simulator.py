@@ -152,11 +152,12 @@ class StrategySimulationError(ZephyrBaseError):
 class StrategySimulatorConfig:
     """策略仿真配置——不可变。
 
-    默认值对齐 A 股约束(万三佣金/5 元起步/1bp 滑点), 与 BT-04 matching_logic 一致。
+    默认值对齐 A 股约束(万0.854佣金/5 元起步/1bp 滑点), 与 BT-04 matching_logic 一致。
+    （2026-08-21 费率口径统一 #233：回测以实盘费率为准）
     """
 
     initial_capital: float = 1_000_000.0  # 初始资金
-    commission_rate: float = 0.0003  # 佣金费率(万三)
+    commission_rate: float = 0.0000854  # 佣金费率(万0.854，Owner 实盘协议费率，#233 裁定 2026-08-21)
     min_commission: float = 5.0  # 单笔最小佣金(5 元)
     slippage: float = 0.001  # 滑点(1bp)
     allow_short: bool = False  # 是否允许做空

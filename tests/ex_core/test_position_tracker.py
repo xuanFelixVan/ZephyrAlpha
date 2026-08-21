@@ -283,9 +283,9 @@ class TestSimulationBrokerEquivalence:
 
         # PositionTracker (commission=0 to match — SimulationBroker applies commission internally)
         tracker = PositionTracker(initial_cash=Decimal("1000000"))
-        # SimulationBroker commission_rate=0.0003, slippage_bps=1
+        # SimulationBroker commission_rate=0.0000854（#233）, slippage_bps=1
         # fill_price = 10 * (1 + 1/10000) = 10.001
-        # commission = 100 * 10.001 * 0.0003 = 0.30003
+        # commission = 100 * 10.001 * 0.0000854 = 0.08540854
         fill = Fill(
             fill_id="fill-1",
             fill_price=Decimal("10.001"),
@@ -295,7 +295,7 @@ class TestSimulationBrokerEquivalence:
             order_id="ord-1",
             strategy_id="test",
             symbol="600000.SH",
-            commission=Decimal("100") * Decimal("10.001") * Decimal("0.0003"),
+            commission=Decimal("100") * Decimal("10.001") * Decimal("0.0000854"),
         )
         tracker.apply_fill(fill, OrderSide.BUY)
         tracker_snap = tracker.get_positions()

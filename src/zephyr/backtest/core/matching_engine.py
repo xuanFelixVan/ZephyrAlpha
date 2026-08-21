@@ -489,14 +489,16 @@ class MatchingEngine:
         """按投影现金收缩买单至可负担的最大整手（满仓成本摩擦修复）
 
         逐单按"先卖后买"顺序投影现金：卖单按估算净回款累加，买单按估算总成本
-        （成交额×(1+滑点)+max(佣金率佣金,最低佣金)，与 MatchingLogic 口径一致）
+        （成交额×(1+滑点)+max(佣金率佣金,最低佣金)+过户费，与 MatchingLogic 口径一致）
         扣减；买单预计超支时收缩数量到可负担整手，不足一手则丢弃。
         Portfolio._apply_buy 的现金非负检查仍是最终防线（本步骤只做 sizing 收缩）。
+        （2026-08-21 费率口径统一 #233：估算含双向过户费 万0.1）
         """
         slip = self._config.slippage_bps / Decimal("10000")
         rate = self._config.commission_rate
         min_comm = self._config.min_commission
         stamp = self._config.stamp_tax_rate
+        transfer = self._config.transfer_fee_rate
         lot = self._config.lot_size
 
         projected = portfolio.cash
@@ -507,7 +509,7 @@ class MatchingEngine:
                 base = self._side_base_price(ob, "SELL")
                 exec_price = base * (1 - slip)
                 gross = order["quantity"] * exec_price
-                comm = max(gross * rate, min_comm) + gross * stamp
+                comm = max(gross * rate, min_comm) + gross * stamp + gross * transfer
                 projected += gross - comm
                 out.append(order)
                 continue
@@ -518,11 +520,11 @@ class MatchingEngine:
 
             def _buy_cost(q: Decimal) -> Decimal:
                 g = q * exec_price
-                return g + max(g * rate, min_comm)
+                return g + max(g * rate, min_comm) + g * transfer
 
             if _buy_cost(qty) > projected:
                 # 佣金率情形的可负担手数，再按最低佣金/滑点实际成本回校验递减
-                qty = Decimal(int(projected / (exec_price * (1 + rate)) / lot) * lot)
+                qty = Decimal(int(projected / (exec_price * (1 + rate + transfer)) / lot) * lot)
                 while qty > 0 and _buy_cost(qty) > projected:
                     qty -= lot
                 if qty <= 0:

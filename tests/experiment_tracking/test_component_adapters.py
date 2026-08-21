@@ -102,7 +102,7 @@ def _make_bt_result():
 def _make_bt_config():
     return SimpleNamespace(
         initial_capital="1000000",
-        commission_rate="0.0003",
+        commission_rate="0.0000854",
         slippage_bps="1",
         benchmark_symbol="000300",
         risk_free_rate=0.025,
@@ -213,7 +213,7 @@ class TestVectorizedAdapter:
             lineage={"regime_run_id": "rrun-1"},
         )
         meta = _read_meta(fb_dir, "vectorized-backtest", run_id)
-        assert meta["params"]["commission_rate"] == "0.0003"
+        assert meta["params"]["commission_rate"] == "0.0000854"
         assert meta["params"]["slippage_bps"] == "1"
         assert meta["metrics"]["sharpe_ratio"] == pytest.approx(1.3)
         assert meta["metrics"]["trades_count"] == 42.0
@@ -265,7 +265,7 @@ class TestStrategyRunnerAdapter:
         assert meta["params"]["synthesis_method"] == "equal_weight"
         assert meta["params"]["pit_shift"] == "1"  # FallbackBackend params 字符串化
         # 全链路成本细节（滑点/手续费）
-        assert meta["params"]["commission_rate"] == "0.0003"
+        assert meta["params"]["commission_rate"] == "0.0000854"
         assert meta["params"]["slippage_bps"] == "1"
         assert meta["tags"]["lineage_feature_run_id"] == "frun-9"
         assert meta["tags"]["lineage_regime_run_id"] == "rrun-9"

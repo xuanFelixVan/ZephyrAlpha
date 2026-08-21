@@ -59,18 +59,18 @@ class TestStrategyPnlAccountant:
     def test_buy_sell_round_trip_net_pnl(self):
         acct = StrategyPnlAccountant(fee_calculator=_ZERO_MIN_FEE_CALC)
         buy_net = acct.record_fill(_fill("f1", "600000", "10.00", "100"), OrderSide.BUY)
-        # 买入费用 1000×(0.00025+0.00001)=0.26，BUY realized = -费用
-        assert buy_net == pytest.approx(Decimal("-0.26"))
+        # 买入费用 1000×(0.0000854+0.00001)=0.0954（#233），BUY realized = -费用
+        assert buy_net == pytest.approx(Decimal("-0.0954"))
         sell_net = acct.record_fill(_fill("f2", "600000", "11.00", "100"), OrderSide.SELL)
-        # unit_cost=10.0026; gross=(11-10.0026)×100=99.74; 卖出费=0.275+0.55+0.011=0.836
-        assert sell_net == pytest.approx(Decimal("98.904"))
-        assert acct.strategy_net_pnl("S1") == pytest.approx(Decimal("98.644"))
+        # unit_cost=10.000954; gross=(11-10.000954)×100=99.9046; 卖出费=0.09394+0.55+0.011=0.65494
+        assert sell_net == pytest.approx(Decimal("99.24966"))
+        assert acct.strategy_net_pnl("S1") == pytest.approx(Decimal("99.15426"))
 
     def test_fifo_partial_sell_multi_lot(self):
         acct = StrategyPnlAccountant(fee_calculator=_ZERO_MIN_FEE_CALC)
         acct.record_fill(_fill("f1", "600000", "10.00", "100"), OrderSide.BUY)
         acct.record_fill(_fill("f2", "600000", "12.00", "100"), OrderSide.BUY)
-        # 卖 150：先撮合第一批 100@10.0026，再撮合第二批 50@12.00312
+        # 卖 150：先撮合第一批 100@10.000954，再撮合第二批 50@12.0011448（#233 口径成本价）
         acct.record_fill(_fill("f3", "600000", "11.00", "150"), OrderSide.SELL)
         snap = acct.open_positions("S1")
         assert snap["600000"].open_quantity == Decimal("50")

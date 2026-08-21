@@ -100,7 +100,7 @@ class BacktestConfig:
     """
 
     initial_capital: Decimal = Decimal("1000000")
-    commission_rate: Decimal = Decimal("0.0003")
+    commission_rate: Decimal = Decimal("0.0000854")
     slippage_bps: Decimal = Decimal("1")
     benchmark_symbol: str = "000300"
     risk_free_rate: float = DEFAULT_RISK_FREE_RATE
