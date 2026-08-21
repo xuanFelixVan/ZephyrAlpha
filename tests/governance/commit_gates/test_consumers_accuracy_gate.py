@@ -240,6 +240,28 @@ class TestCheckConsumersAccuracyOrphan:
         violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
         assert violations == []
 
+    def test_module_level_assign_constant_no_orphan(self, tmp_path):
+        """#231①：模块级 Assign 常量（_SQL_X = ...）被识别——不算 orphan。"""
+        self._create_consumer_module(tmp_path, "zephyr/foo.py")
+        content = '# [CONSUMERS] zephyr.foo (_SQL_X)\n_SQL_X = "SELECT 1"\n'
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
+        assert violations == []
+
+    def test_module_level_annassign_constant_no_orphan(self, tmp_path):
+        """#231①：AnnAssign 常量（NAME: Final[...] = ...）被识别——rule_patterns.py 3 条误报形态。"""
+        self._create_consumer_module(tmp_path, "zephyr/foo.py")
+        content = '# [CONSUMERS] zephyr.foo (RULE_NAME_RE)\nRULE_NAME_RE: Final[str] = "^x$"\n'
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
+        assert violations == []
+
+    def test_function_local_variable_still_orphan(self, tmp_path):
+        """#231①：函数内局部变量不是合法声明对象——仍报 orphan（防检测口径变松）。"""
+        self._create_consumer_module(tmp_path, "zephyr/foo.py")
+        content = "# [CONSUMERS] zephyr.foo (local_var)\ndef f():\n    local_var = 1\n"
+        violations = check_consumers_accuracy("src/zephyr/foo.py", content, tmp_path)
+        assert len(violations) == 1
+        assert "orphan function 'local_var'" in violations[0]
+
 
 # ---------------------------------------------------------------------------
 # TestCheckConsumersAccuracyPhantom
