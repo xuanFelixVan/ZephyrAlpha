@@ -4715,6 +4715,10 @@ creation_tokens:
   token: auto-trend-analyzer-ssot-adjudication-20260821
   created_by: AI-RESIDUAL-001
   capability: trend_analyzer_ssot_adjudication
+- file: docs/_working/reviews/2026-08-21-fle-gates-activation-adjudication.md
+  token: auto-fle-gates-activation-adjudication-20260821
+  created_by: AI-RESIDUAL-001
+  capability: fle_gates_activation_adjudication
 - file: docs/_working/reviews/2026-08-21-drift-events-ssot-adjudication.md
   token: auto-drift-events-ssot-adjudication-20260821
   created_by: AI-NIGHT-001

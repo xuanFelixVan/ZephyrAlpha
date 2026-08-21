@@ -16,10 +16,11 @@ tier: tier_1_governance
 status: active
 version: 1.1.1
 created: '2026-07-31'
-last_updated: '2026-08-20'
+last_updated: '2026-08-21'
 # 2026-08-16: +CAND-AUTONOMYCORE-002（FHS 引擎，双轮审查深挖④裁定，AI-RFIX-001）
 # 2026-08-18: +CAND-SEC-001（Whistleblower Agent MVP，裁定 9 联动降级远期 P4，AI-ADJ-004）
 # 2026-08-20: +40 条（AI-NIGHT-001 阶段3 未来工程-大型登记批，tracker #223 承接，均不施工附触发条件）
+# 2026-08-21: +CAND-FBL-002（FLE 自卫门禁激活专项，#61 挂起转正）+CAND-GOVDRIFT-001（drift_events 容量保留，任务1 残余）（AI-RESIDUAL-001）
 
 # ============================================================
 # 设计原则
@@ -7444,3 +7445,48 @@ entries:
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 66号节'
   created: '2026-08-20'
   last_updated: '2026-08-20'
+- id: CAND-FBL-002
+  name: FLE 自卫门禁激活专项（44 门，#61 挂起转正登记）
+  aliases: [FLE gates 启用, fle_self_defense 注册条目再生, FLE self-defense gates activation]
+  domain: D_FEEDBACK_LOOP
+  domain_status: active
+  sub_layer: 反馈环自愈安全网
+  problem: >-
+    scheduler_safety.dispatch_fle_gates 消费 _registry.yaml 的 fle_self_defense 条目——
+    2026-05-19 7ed644a288 注册表重写丢失 43 条目（82→43）至今 0 条，FLE 调度安全网空转 3 个月。
+    激活=新功能上线三修复+一评审（探针 .runtime/_b8_probe_fle_gates.py 实证 48 文件）：
+    ①sync_fle_gates 再生条目须先修——不跳过 _ 前缀聚合模块会产出 FLE--* 畸形 ID（4 件）；
+    ②类名推导修复——gate_id 连字符 vs split("_") 致精确命中 0/48，fallback 抓字母序首个
+    public 类（如 ActionContext）语义未定；③_evaluate_gate_method evaluate 分支 list 语义反转——
+    L 系 17 门返回 violations 列表，空列表（干净）→bool=False 误阻断、非空（有违规）→True 放行；
+    另 data_quality_gate.validate("fle_action") 单参误调预计 False 阻断。消费链 scheduler.py:629
+    任一 False 即压制 FLE Act 自愈动作——阻断语义真实存在，门禁必须语义诚实方可启用。
+  proposal: >-
+    触发=Owner 排期+三修复落地+44 门逐门契约评审完成+FLE Act 自治主链临近上线（第三期）。
+    灰度路径：L 系 17 门语义统一修正后作首批子集。裁定书
+    docs/_working/reviews/2026-08-21-fle-gates-activation-adjudication.md（维持挂起结论+实证矩阵）。
+  status: candidate
+  priority: P2
+  source: '2026-08-21 残余四项专项批 任务4（#61 挂起项转正）'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
+- id: CAND-GOVDRIFT-001
+  name: drift_events 容量保留与冷热分层（blueprint §17 >2GB 触发）
+  aliases: [drift_events 冷热分层, drift_events retention, 90天热数据归档, drift archive delete]
+  domain: D_GOV_DRIFT
+  domain_status: active
+  sub_layer: 治理观测事件流运维
+  problem: >-
+    trend_analyzer 回迁 SSoT 后 archive_old_data 改 export-only（2026-08-21 子裁定：读方不得
+    DELETE SSoT，一写方原则+tamper_proof drift_events_no_delete trigger 终局一致）——
+    drift_events 长期增长无保留策略承接。blueprint §17 设计口径="DB>2GB → VACUUM+归档+冷热分层"；
+    当前 386 行无容量压力。保留动作须 trigger-aware 设计（trigger 装上后任何 DELETE 须走豁免
+    通道或迁归档表），属治理动作非读方侧效应。
+  proposal: >-
+    触发=governance.db drift_events 体量逼近阈值（如 >10 万行或库 >2GB）或 tamper_proof
+    trigger 启用前排期；设计=归档表/分区+trigger-aware 删除豁免通道。
+  status: candidate
+  priority: P2
+  source: '2026-08-21 残余四项专项批 任务1 trend_analyzer 回迁子裁定残余登记'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
