@@ -41586,7 +41586,13 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 每次提交后自动体检：AGENTS.md 速查表里写死的数字（业务资产 18 表总数和每行条数、告警阈值条数、能力计数），和 ROOR 注册表总纲、capability 能力注册表的真值对不对得上，对不上就告警并告诉你该行写了几、实际是多少，提醒人工更新——只报告不改文件，防止速查表数字悄悄过期（tracker #41/#83，CAND-REGSYNC-001）。
-
+- module_path: scripts/commit_queue.py
+  domain_id: D_GOVERNANCE
+  name_zh: "提交队列串行化"
+  name_en: "Commit Queue Serialization"
+  desc_zh: "提交队列 MVP：快照入队即返回 + Serializer 单写者 FIFO 排空 + 死信不卡队 + 同键 compaction（66 号 §6/08 号文 §4.2）"
+  desc_en: "Commit queue MVP: snapshot enqueue-and-return + single-writer Serializer FIFO drain + dead-letter + same-key compaction (memo 66 §6)"
+  plain_zh: "多个 AI 同时改完代码要提交时，先把文件完整快照存进一个队列文件夹就算交差，不用等 git；随后同一时刻只放行一个程序按先来后到顺序逐个真正落盘，失败的进死信区不堵后面，同一会话重复提交同一文件只留最新版。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

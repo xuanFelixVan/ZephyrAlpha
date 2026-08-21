@@ -16866,6 +16866,36 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+
+# --- #ARCH-COMMIT-QUEUE-MVP-001: 提交队列 MVP A 段落码（66 号第一层，遗留 #67 施工）---
+- issue_id: '#ARCH-COMMIT-QUEUE-MVP-001'
+  title: 提交队列串行化 MVP（A 段：队列协议+CLI+Serializer 自举排空+死信+compaction）
+  severity: P0
+  category: ai_collaboration
+  adjudication: |-
+    真源：66 号备忘 §6（入队 schema/compaction/Serializer 主循环/冲突判定）+ 08 号文
+    §4.2 Phase 0 步骤 0/1/2/4；遗留 #67（66 号 2026-08-16 结案报告登记）。
+    裁定（与 66 号 §4/§9 一致，本段不翻案）：快照入队即返回（blob 内容寻址落袋即安全）；
+    单写者 Serializer 纯 FIFO（qid 单调序，无优先级插队）；入队自举排空无常驻 daemon
+    （enqueue/status 写队后尝试拿 lease，拿不到放弃等下次）；死信不卡队回退给人；
+    永不改主工作区文件；v0.1 仅 dev 单目标。
+    A 段刻意取舍：落盘为 landing callable 桩（仅标记 done 不真提交）——队列语义
+    （零丢失/FIFO/死信/compaction）本段钉死；真 git 落盘（专用 worktree + 全门禁）
+    与 _commit_auto 改道属 B 段另会话施工，git_commit_gateway.py 本段不碰。
+    2026-08-21 竞态测试实证修正一处：supersedes 不得先落盘后回填——os.replace 对
+    不存在目标静默重建，drain 取走后回填会重建 pending 项致同快照双落（v17 实例）；
+    改为会话锁内先 compact 后随新项一次落盘。
+  impact:
+  - 'scripts/commit_queue.py（新建，MOD-GOV-046；enqueue/status/drain 三命令 CLI）'
+  - '.runtime/commit_queue/{pending,processing,done,dead,blobs}（运行时创建，.runtime 已整体 gitignore）'
+  - 'tests/governance/test_commit_queue.py（新建，41 用例：红队全拦/3 会话并发 50 项零丢失零重复 FIFO/故障注入幂等续跑/compaction 竞态/死信不卡队/lease 三态）'
+  - 'depgraph node_id=10260222（file）+10260223（directory），build_status planned→generated→testing 两跳合规'
+  fix_phase: 'A 段已落码（2026-08-21 AI-P0-6-004）；B 段待施工：专用 worktree 真落盘（08 号文 §4.2 步骤 3）+ _commit_auto 改道入队（步骤 5，66 号 §7）+ task_board 死信标签联动'
+  status: decided
+  confirmed_by_user: '66 号 v1.0.0 用户已确认全部 3 项裁定（2026-08-12，含队列串行化为集成层唯一提交入口）；本条目为其施工登记非新提议；A 段施工单 P0-6④ 经用户任务下发（2026-08-21）'
+  related_rules: '66 号备忘 §6/§8/§9/§10/§11（协议与验收真源）; 08 号文 §4.2 Phase 0 + §5（11 条不做什么）; #ARCH-AICOLLAB-001（三件套）; 遗留 #67'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
 - issue_id: '#ARCH-079'
   title: gov_drift.drift_detector.trigger_recovery 为桩（return True）——恢复编排契约未实现
   severity: P2中
