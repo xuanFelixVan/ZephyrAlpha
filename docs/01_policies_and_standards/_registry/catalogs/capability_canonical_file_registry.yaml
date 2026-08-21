@@ -4707,6 +4707,14 @@ capabilities:
   - _try_fit_garch
   - _simulate_fhs
 creation_tokens:
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/pre_expiry_full_backlog_roadmap.md
+  token: auto-pre-expiry-backlog-roadmap-20260821
+  created_by: AI-NIGHT-001
+  capability: pre_expiry_backlog_roadmap
+- file: docs/_working/reviews/2026-08-21-trend-analyzer-ssot-adjudication.md
+  token: auto-trend-analyzer-ssot-adjudication-20260821
+  created_by: AI-RESIDUAL-001
+  capability: trend_analyzer_ssot_adjudication
 - file: docs/_working/reviews/2026-08-21-drift-events-ssot-adjudication.md
   token: auto-drift-events-ssot-adjudication-20260821
   created_by: AI-NIGHT-001
