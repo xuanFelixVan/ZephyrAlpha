@@ -144,6 +144,31 @@ _CLAIM_SNAPSHOTS_DIR = ".runtime/claim_snapshots"
 GATEWAY_ENV = _GATEWAY_ENV
 GLOBAL_LOCK_FILE = _GLOBAL_LOCK_FILE
 
+# 提交队列改道 feature flag（66 号 §7 / 08 号文 §4.2 步骤 5，B 段 2026-08-21）
+_COMMIT_QUEUE_SERIALIZER_FLAG = "commit_queue_serializer"
+
+
+def _commit_queue_serializer_enabled() -> bool:
+    """commit_queue_serializer flag 读取唯一点（fail-closed：设施异常=OFF 现状直提不变）。
+
+    flag 注册在 config/flags.yaml（默认 enabled:false → ALWAYS_OFF）。**启用属 Owner
+    窗口（宪章 B-007 production 行为变更）**——ON 后 _commit_auto 改道 commit_queue
+    入队，dev 单写者不变量生效（66 号 §5 关键不变量①）；OFF 期 reconciler 直提照旧，
+    非双写者终态而是门控灰度（08 号文 §5 ⑪ 灰度语义）。#ARCH-COMMIT-QUEUE-MVP-001 登记
+    （B 段进展注记同条目，2026-08-21）。
+    """
+    try:
+        from zephyr.shared.foundation.flags import (  # noqa: PLC0415 延迟 import：读 flag 非热路径，且避免模块级耦合
+            ensure_global_flags_loaded,
+            global_flag_registry,
+        )
+
+        ensure_global_flags_loaded()
+        return global_flag_registry.is_enabled(_COMMIT_QUEUE_SERIALIZER_FLAG, default=False)
+    except Exception:  # noqa: BLE001 — flag 设施异常 fail-closed OFF（绝不暗中改道）
+        logger.warning("_commit_queue_serializer_enabled: flag 读取异常，fail-closed OFF", exc_info=True)
+        return False
+
 
 class CommitStatus(str, Enum):
     """commit 结果状态。"""
@@ -2227,6 +2252,23 @@ class GitCommitGateway:
             ),
         )
 
+    def _reroute_commit_auto_to_queue(self, session_id: str, files: list[str], message: str) -> CommitResult:
+        """flag ON 时 _commit_auto 改道 commit_queue.enqueue（66 号 §7，B 段 2026-08-21）。
+
+        实现委托 scripts.governance.commit_queue_landing.reroute_auto_commit_to_queue
+        （快照读盘 → enqueue_item(base_head=dev HEAD, deletes 通道带删除) → 自举排空
+        尝试 → CommitResult(OK, QUEUED:{qid})）。fail-safe（08 号文 §4.2 步骤 5 任务
+        口径）：改道通道任何异常（含设施 import 失败/入队异常）向上传播，由
+        _commit_auto 捕获后 logging.warning + 降级现行直提——队列异常不阻塞
+        reconciler 工作流；降级留 warning 痕非静默，且降级 commit 无队列标记，可被
+        assert_single_writer_dev_history 机械点名（可见性闭环）。
+        """
+        from scripts.governance.commit_queue_landing import (  # noqa: PLC0415 延迟 import：flag OFF 期零开销，且避免 src→scripts 模块级耦合
+            reroute_auto_commit_to_queue,
+        )
+
+        return reroute_auto_commit_to_queue(self, session_id, files, message)
+
     def _commit_auto(
         self,
         session_id: str,
@@ -2237,6 +2279,25 @@ class GitCommitGateway:
         # ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): batch intercept -- buffer when enabled.
         if self._batcher.is_enabled():
             return self._batcher.buffer(session_id, files, message)
+
+        # 提交队列改道预备（66 号 §7 一处改动，B 段 2026-08-21）：flag ON → 快照入队即返回
+        # （Serializer 单写者经专用 worktree 异步落盘）；flag OFF（默认）→ 现状直提不变。
+        # 启用属 Owner 窗口（宪章 B-007）；灰度语义见 _commit_queue_serializer_enabled docstring。
+        # fail-safe（08 号文 §4.2 步骤 5 任务口径）：改道通道任何异常 → logging.warning
+        # 留痕后降级现行直提——队列异常不阻塞 reconciler 工作流。降级窗口内 dev 出现
+        # 队列外写入（瞬态双写者）：warning 可见非静默，且降级 commit 无 [GW:{sid}:{qid}]
+        # 队列标记，Owner 可用 assert_single_writer_dev_history 机械点名追账。
+        if _commit_queue_serializer_enabled():
+            try:
+                return self._reroute_commit_auto_to_queue(session_id, files, message)
+            except Exception as exc:  # noqa: BLE001 — fail-safe 降级直提（warning 留痕，绝不静默）
+                logger.warning(
+                    "_commit_auto: 队列改道异常（%s: %s），降级现行直提——reconciler 工作流不阻塞；"
+                    "降级窗口为瞬态双写者形态，修复队列设施后恢复单写者",
+                    type(exc).__name__,
+                    exc,
+                    exc_info=True,
+                )
 
         if not files:
             return CommitResult(status=CommitStatus.NOTHING_TO_COMMIT, message="empty files list")
