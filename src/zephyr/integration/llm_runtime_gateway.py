@@ -51,11 +51,14 @@ status=blocked 落库。
 
 成本口径（元/百万 token，对账报告 docs/_working/reports/2026-08-22-llm-registry-reconciliation.md §四）
 ----------------------------------------------------------------------------------------------------------
-- deepseek-chat / deepseek-v4-flash（同档，实证价一致）：峰时 1.0/2.0（model_pricing.yaml
-  注册表实证价），谷时 1.5/4.5（18号工单口径；谷时=Asia/Shanghai 18:00-次日 9:00。
-  注意：谷>峰与公开「谷时折扣」方向相反，已登记待 Owner 校准，MVP 按工单口径并由单测锁定）。
-- deepseek-reasoner 4.0/12.0（注册表）；deepseek-v4-pro 3.0/6.0（profiling PRICING_RMB 实证）。
-- qwen：model_pricing.yaml 无条目 -> 0.0 待校准标注（真跑后回填）。
+来源：DeepSeek 官网 2026-08-17 调价（引入峰谷分时：高峰=Asia/Shanghai [9:00,12:00)∪[14:00,18:00)，
+其余为空闲时段，空闲价=高峰半价）/ 阿里云百炼 qwen-flash 定价页 2026-07-31；校准登记日 2026-08-22
+（tracker #254，Owner 已批准）。缓存未命中口径（缓存命中输入价更低，本网关不区分缓存命中，按未命中
+保守计价）；任何不确定情形（如无 tz 信息）按峰时计价，防低估成本。
+- deepseek-chat / deepseek-v4-flash（同一模型，别称）：高峰 3.0/9.0；空闲 1.5/4.5。
+- deepseek-v4-pro：高峰 9.0/27.0；空闲 4.5/13.5。
+- deepseek-reasoner：官方已弃用该名称，底层归 deepseek-v4-flash -> 按 v4-flash 同价。
+- qwen-flash（百炼，华北2，输入≤128k 档，无峰谷）：0.15/1.5；真跑实证 llm_call_log 模型名=qwen-flash。
 - ollama：本地推理零费用 0.0。
 - tokens 为估算值（len/4 上取整）：DeepSeekChat/OllamaChat.ask 只回文本不回 usage，
   真 token 计数待波5 真跑接线时从 API usage 字段回填（DeepSeek/Qwen 响应均含 usage，
@@ -124,21 +127,32 @@ CHANNEL_QWEN: Final[str] = "qwen"
 CHANNEL_OLLAMA: Final[str] = "ollama"
 DEFAULT_CHANNEL_CHAIN: Final[tuple[str, ...]] = (CHANNEL_DEEPSEEK, CHANNEL_QWEN, CHANNEL_OLLAMA)
 
-# ── 谷峰计价（Asia/Shanghai；18号工单口径，待 Owner 校准——见对账报告 §2.2-F3）──
+# ── 峰谷计价（Asia/Shanghai；DeepSeek 官网 2026-08-17 调价口径，2026-08-22 校准登记 tracker #254）──
 _BEIJING_TZ: Final = ZoneInfo("Asia/Shanghai")
-_VALLEY_START_HOUR: Final[int] = 18  # 谷时起点（含）
-_VALLEY_END_HOUR: Final[int] = 9  # 谷时终点（不含）
+# 高峰时段=[9:00,12:00)∪[14:00,18:00)，其余为空闲（谷时）；空闲价=高峰半价
+_PEAK_AM_START_HOUR: Final[int] = 9  # 上午高峰起点（含）
+_PEAK_AM_END_HOUR: Final[int] = 12  # 上午高峰终点（不含）
+_PEAK_PM_START_HOUR: Final[int] = 14  # 下午高峰起点（含）
+_PEAK_PM_END_HOUR: Final[int] = 18  # 下午高峰终点（不含）
 
-# 内置价表（元/百万 token；peak=注册表实证价，valley=工单口径待校准）。
-# 真源归属：model_pricing.yaml 为定价真源（对账报告 §2.4）；本表为其运行时镜像 + 谷峰维度补齐。
+# 内置价表（元/百万 token，缓存未命中口径；缓存命中输入价更低，本网关不区分按未命中保守计价）。
+# 真源归属：model_pricing.yaml 为定价真源（对账报告 §2.4）；本表为其运行时镜像 + 峰谷维度补齐。
+# 来源：DeepSeek 官网 2026-08-17 调价 / 百炼 qwen-flash 页 2026-07-31；2026-08-22 校准（tracker #254）。
 _PRICING_PER_MILLION: Final[dict[str, dict[str, float]]] = {
-    "deepseek-chat": {"peak_in": 1.0, "peak_out": 2.0, "valley_in": 1.5, "valley_out": 4.5},
-    "deepseek-v4-flash": {"peak_in": 1.0, "peak_out": 2.0, "valley_in": 1.5, "valley_out": 4.5},
-    "deepseek-reasoner": {"peak_in": 4.0, "peak_out": 12.0, "valley_in": 4.0, "valley_out": 12.0},
-    "deepseek-v4-pro": {"peak_in": 3.0, "peak_out": 6.0, "valley_in": 3.0, "valley_out": 6.0},
+    "deepseek-chat": {"peak_in": 3.0, "peak_out": 9.0, "valley_in": 1.5, "valley_out": 4.5},
+    # deepseek-v4-flash 与 deepseek-chat 为同一模型（别称），同价
+    "deepseek-v4-flash": {"peak_in": 3.0, "peak_out": 9.0, "valley_in": 1.5, "valley_out": 4.5},
+    # deepseek-reasoner 官方已弃用该名称，底层归 deepseek-v4-flash -> 按 v4-flash 同价
+    "deepseek-reasoner": {"peak_in": 3.0, "peak_out": 9.0, "valley_in": 1.5, "valley_out": 4.5},
+    "deepseek-v4-pro": {"peak_in": 9.0, "peak_out": 27.0, "valley_in": 4.5, "valley_out": 13.5},
+    # qwen-flash（阿里云百炼，华北2，输入≤128k 档）：无峰谷 -> 峰谷同价
+    "qwen-flash": {"peak_in": 0.15, "peak_out": 1.5, "valley_in": 0.15, "valley_out": 1.5},
 }
-# 模型名缺失时按通道兜底（deepseek 通道默认 deepseek-chat 档；qwen/ollama 恒 0 待校准/本地免费）
-_PROVIDER_FALLBACK_PRICE_KEY: Final[dict[str, str]] = {CHANNEL_DEEPSEEK: "deepseek-chat"}
+# 模型名缺失时按通道兜底（deepseek 默认 deepseek-chat 档；qwen 默认 qwen-flash 档；ollama 本地免费不入表）
+_PROVIDER_FALLBACK_PRICE_KEY: Final[dict[str, str]] = {
+    CHANNEL_DEEPSEEK: "deepseek-chat",
+    CHANNEL_QWEN: "qwen-flash",
+}
 
 _QWEN_DEFAULT_BASE_URL: Final[str] = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 _QWEN_DEFAULT_MODEL: Final[str] = "qwen-flash"
@@ -200,9 +214,18 @@ class InferResult:
 
 
 def is_valley_period(ts: datetime) -> bool:
-    """谷时判定：Asia/Shanghai 18:00（含）-次日 9:00（不含）。"""
+    """谷时判定（DeepSeek 官网 2026-08-17 口径）：高峰=Asia/Shanghai [9:00,12:00)∪[14:00,18:00)，其余为谷时。
+
+    保守原则：ts 无 tz 信息等不确定情形按峰时计价（返回 False，防低估成本）。
+    """
+    if ts.tzinfo is None:
+        return False
     hour = ts.astimezone(_BEIJING_TZ).hour
-    return hour >= _VALLEY_START_HOUR or hour < _VALLEY_END_HOUR
+    in_peak = (
+        _PEAK_AM_START_HOUR <= hour < _PEAK_AM_END_HOUR
+        or _PEAK_PM_START_HOUR <= hour < _PEAK_PM_END_HOUR
+    )
+    return not in_peak
 
 
 def compute_cost_yuan(
@@ -212,8 +235,8 @@ def compute_cost_yuan(
     tokens_out: int,
     ts: datetime,
 ) -> float:
-    """按内置价表估算成本（元）。qwen/ollama 恒 0（待校准/本地免费）；未知模型按通道兜底档。"""
-    if provider in (CHANNEL_QWEN, CHANNEL_OLLAMA):
+    """按内置价表估算成本（元）。ollama 恒 0（本地免费）；qwen 无峰谷（峰谷同价）；未知模型按通道兜底档。"""
+    if provider == CHANNEL_OLLAMA:
         return 0.0
     price = _PRICING_PER_MILLION.get(model)
     if price is None:

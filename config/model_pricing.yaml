@@ -32,16 +32,25 @@ deepseek-chat-free:
   updated_at: 2026_05_08
 
 deepseek-chat:
-  input_price: 0.001
-  output_price: 0.002
+  # 峰时价；谷时半价；2026-08-17 官方调价
+  input_price: 0.003
+  output_price: 0.009
   provider: deepseek
-  updated_at: 2026_05_08
+  updated_at: 2026_08_22
 
 deepseek-reasoner:
-  input_price: 0.004
-  output_price: 0.012
+  # 峰时价；谷时半价；2026-08-17 官方调价；名称已弃用=v4-flash 同价
+  input_price: 0.003
+  output_price: 0.009
   provider: deepseek
-  updated_at: 2026_05_08
+  updated_at: 2026_08_22
+
+qwen-flash:
+  # 阿里云百炼（华北2，输入≤128k 档，无峰谷）
+  input_price: 0.00015
+  output_price: 0.0015
+  provider: aliyun_bailian
+  updated_at: 2026_08_22
 
 gpt-4o-mini:
   input_price: 0.003

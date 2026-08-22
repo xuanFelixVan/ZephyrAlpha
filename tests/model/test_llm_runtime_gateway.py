@@ -4,7 +4,8 @@ test_llm_runtime_gateway.py — llm_runtime_gateway MVP 单测（10号文 §4 + 
 全 mock 通道（不真调 API；真跑在波5 由统筹执行）。覆盖：
 - 三通道优先级链：DeepSeek 成功 / Qwen 备用降级 / Ollama 兜底 / 全失败 status=error / 显式 channel 钉死
 - 登记落库三态断言：ok / error（降级留痕，每尝试一行）/ blocked（LSG 判决不发起调用）
-- 成本计算：谷时（北京 18:00-次日 9:00）/峰时判定与价差、qwen/ollama 零价、未知模型通道兜底
+- 成本计算：峰谷判定（高峰=北京 [9:00,12:00)∪[14:00,18:00)，DeepSeek 官网 2026-08-17 口径，谷=峰半价）、
+  qwen 无峰谷平价/ollama 零价、未知模型通道兜底、无 tz 信息保守按峰时计价（防低估）
 - reconcile_daily_calls 日终对账汇总（by_status/by_provider/重算 delta/防超额判定/非法日期 fail-closed）
 - LSG：入口判决 BLOCK -> 不发起任何通道调用 + status=blocked 落库；LSG 异常 -> fail-closed 同径
 """
@@ -180,34 +181,71 @@ class TestCallLogPersistence:
 
 
 class TestCostCalculation:
+    # 官方口径（DeepSeek 官网 2026-08-17 调价，tracker #254 校准）：高峰=[9:00,12:00)∪[14:00,18:00)，
+    # 其余为谷时（含午间 12:00-14:00），谷时价=高峰半价。
     @pytest.mark.parametrize(
-        ("hour", "expected"),
-        [(18, True), (23, True), (0, True), (8, True), (9, False), (12, False), (17, False)],
+        ("hour", "minute", "expected"),
+        [
+            (0, 0, True),    # 凌晨谷时
+            (8, 59, True),   # 上午高峰前一刻仍谷时
+            (9, 0, False),   # 上午高峰起点（含）
+            (11, 59, False),  # 上午高峰内
+            (12, 0, True),   # 上午高峰终点（不含）-> 午间谷时
+            (13, 59, True),  # 午间 12:00-14:00 谷时
+            (14, 0, False),  # 下午高峰起点（含）
+            (17, 59, False),  # 下午高峰内
+            (18, 0, True),   # 下午高峰终点（不含）-> 晚间谷时
+            (20, 0, True),   # 晚间谷时
+            (23, 0, True),   # 深夜谷时
+        ],
     )
-    def test_valley_window_boundaries(self, hour, expected):
-        ts = datetime(2026, 8, 22, hour, 0, tzinfo=_BEIJING)
+    def test_valley_window_boundaries(self, hour, minute, expected):
+        ts = datetime(2026, 8, 22, hour, minute, tzinfo=_BEIJING)
         assert gw_mod.is_valley_period(ts) is expected
 
-    def test_peak_cost_uses_registry_price(self):
-        ts = datetime(2026, 8, 22, 12, 0, tzinfo=_BEIJING)  # 峰时
-        cost = gw_mod.compute_cost_yuan("deepseek", "deepseek-chat", 1_000_000, 1_000_000, ts)
-        assert cost == 3.0  # 注册表实证价 1.0/2.0 元每百万
+    @pytest.mark.parametrize(
+        ("model", "peak_cost", "valley_cost"),
+        [
+            ("deepseek-chat", 12.0, 6.0),       # 高峰 3.0/9.0，空闲 1.5/4.5
+            ("deepseek-v4-flash", 12.0, 6.0),   # 与 deepseek-chat 同一模型（别称）同价
+            ("deepseek-reasoner", 12.0, 6.0),   # 名称已弃用=v4-flash 同价
+            ("deepseek-v4-pro", 36.0, 18.0),    # 高峰 9.0/27.0，空闲 4.5/13.5
+        ],
+    )
+    def test_pricing_table_official_values(self, model, peak_cost, valley_cost):
+        peak_ts = datetime(2026, 8, 22, 10, 0, tzinfo=_BEIJING)    # 峰时
+        valley_ts = datetime(2026, 8, 22, 20, 0, tzinfo=_BEIJING)  # 谷时
+        assert gw_mod.compute_cost_yuan("deepseek", model, 10**6, 10**6, peak_ts) == peak_cost
+        assert gw_mod.compute_cost_yuan("deepseek", model, 10**6, 10**6, valley_ts) == valley_cost
 
-    def test_valley_cost_uses_order_price(self):
-        ts = datetime(2026, 8, 22, 20, 0, tzinfo=_BEIJING)  # 谷时
-        cost = gw_mod.compute_cost_yuan("deepseek", "deepseek-chat", 1_000_000, 1_000_000, ts)
-        assert cost == 6.0  # 工单口径谷时价 1.5/4.5 元每百万（待 Owner 校准）
+    def test_valley_is_half_of_peak(self):
+        # 谷时折扣方向按官方校准：谷=峰半价（纠正旧口径谷>峰的方向错误）
+        peak_ts = datetime(2026, 8, 22, 15, 0, tzinfo=_BEIJING)
+        valley_ts = datetime(2026, 8, 22, 12, 30, tzinfo=_BEIJING)  # 午间谷时
+        peak = gw_mod.compute_cost_yuan("deepseek", "deepseek-chat", 10**6, 10**6, peak_ts)
+        valley = gw_mod.compute_cost_yuan("deepseek", "deepseek-chat", 10**6, 10**6, valley_ts)
+        assert peak == 12.0 and valley == peak / 2
 
-    def test_qwen_and_ollama_zero_pending_calibration(self):
-        ts = datetime(2026, 8, 22, 12, 0, tzinfo=_BEIJING)
-        assert gw_mod.compute_cost_yuan("qwen", "qwen-flash", 10**6, 10**6, ts) == 0.0
-        assert gw_mod.compute_cost_yuan("ollama", "qwen3:8b", 10**6, 10**6, ts) == 0.0
+    def test_qwen_flat_price_and_ollama_free(self):
+        peak_ts = datetime(2026, 8, 22, 10, 0, tzinfo=_BEIJING)
+        valley_ts = datetime(2026, 8, 22, 20, 0, tzinfo=_BEIJING)
+        # qwen-flash 无峰谷平价 0.15/1.5 元每百万（百炼 2026-07-31 页；真跑实证模型名=qwen-flash）
+        assert gw_mod.compute_cost_yuan("qwen", "qwen-flash", 10**6, 10**6, peak_ts) == 1.65
+        assert gw_mod.compute_cost_yuan("qwen", "qwen-flash", 10**6, 10**6, valley_ts) == 1.65
+        assert gw_mod.compute_cost_yuan("ollama", "qwen3:8b", 10**6, 10**6, peak_ts) == 0.0
 
     def test_unknown_model_falls_back_to_provider_price(self):
-        ts = datetime(2026, 8, 22, 12, 0, tzinfo=_BEIJING)
+        ts = datetime(2026, 8, 22, 10, 0, tzinfo=_BEIJING)
         cost = gw_mod.compute_cost_yuan("deepseek", "deepseek-v9-future", 10**6, 10**6, ts)
-        assert cost == 3.0  # 通道兜底 deepseek-chat 档
+        assert cost == 12.0  # 通道兜底 deepseek-chat 峰时档
+        assert gw_mod.compute_cost_yuan("qwen", "qwen-unknown", 10**6, 10**6, ts) == 1.65  # 兜底 qwen-flash 档
         assert gw_mod.compute_cost_yuan("unknown-provider", "m", 10**6, 10**6, ts) == 0.0
+
+    def test_naive_timestamp_conservatively_peak(self):
+        # 保守原则：无 tz 信息的不确定情形按峰时计价（防低估成本），即使钟点落在谷时窗口
+        naive = datetime(2026, 8, 22, 20, 0)
+        assert gw_mod.is_valley_period(naive) is False
+        assert gw_mod.compute_cost_yuan("deepseek", "deepseek-chat", 10**6, 10**6, naive) == 12.0
 
 
 class TestReconcileDailyCalls:
