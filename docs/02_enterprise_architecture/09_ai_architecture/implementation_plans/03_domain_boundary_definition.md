@@ -4,9 +4,9 @@ doc_type: architecture_view
 title: AI 层域边界定义
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
-version: "0.2.2"
-date: 2026-08-18
+status: active
+version: "0.3.0"
+date: 2026-08-22
 topic: domain_boundary_definition
 scope: 09_ai_architecture
 ---
@@ -158,7 +158,11 @@ scope: 09_ai_architecture
 | 过度工程风险 | 无 | 高（触发红线） | 无 |
 | 可逆性 | 高（删标签即回滚） | 低 | 高 |
 
-**分析倾向（供裁定参考，非裁定结论）**：选项 C 在全部维度不劣于 A/B，且与词表已有「AI/智能域」分组、61 号备忘编排冻结裁定、代码散布现实三者同时兼容；选项 B 触发过度工程红线（大规模迁移、新增超容域），仅在未来 AI 设施规模翻倍且标签治理失效时才有重评价值。**最终裁定：待裁定（Owner 拍板）**。
+**分析倾向（供裁定参考，非裁定结论）**：选项 C 在全部维度不劣于 A/B，且与词表已有「AI/智能域」分组、61 号备忘编排冻结裁定、代码散布现实三者同时兼容；选项 B 触发过度工程红线（大规模迁移、新增超容域），仅在未来 AI 设施规模翻倍且标签治理失效时才有重评价值。
+
+**最终裁定（2026-08-22，Owner 授权架构师裁定，#ARCH-169）：采纳选项 C（混合）**。第一性依据：①域的第一性功能是治理粒度（容量/归属/机器可查），不是语义纯度容器——AI 设施物理散布 10+ 域是既成事实，收拢（B）=大规模迁移+新增超容巨型域，触发过度工程红线，且与横切三角模型（治理管规则/安全防攻击/自治管行为，三顶点职责分离）结构性冲突；②100% AI 开发约束下边界必须机器可查——nodes.tags 载体 schema 原生存在、受控词表（PS-VOC-036）防拼写漂移、apply_depgraph.py --tag-nodes 写路径（TRAE-054 协议）全链路可审计，不靠 AI 记忆；③长期战略：AI 设施会持续向各业务域生长渗透，横切视图随生长零成本扩展且可逆（删标签即回滚），独立域方案每次生长都需重议归属；④与词表已有「AI/智能域」分组零成本衔接。
+**AI 核心域清单（8 域，本裁定的「核心域」部分）**：D_AUTONOMY_CORE、D_INTELLIGENCE、D_ML_TRAIN、D_ML_SERVE、D_AUTONOMY_PERM、D_KNOWLEDGE、D_SECURITY_LLM（D1 已改挂）、D_INTEGRATION_GATEWAY（D2 已改挂）。
+**AI 层 = 核心域集合 ∪ ai_layer 横切标签集合（派生视图）**；横切打标 147 节点已执行（intelligence_governance 24 / feedback_loop/evolution 20 / a2a_protocol 72 / infrastructure/runtime 4 / vector_memory 26 / ml_train/ai_operator 1；infra_runtime 候选映射至物理载体 infrastructure/runtime/，D_INFRA_RUNTIME 全域不整体打标——含资产盘点/容量保障等非 AI 专属设施，全量打标会稀释视图）。
 
 ### 3.2 Q2 选项分析：D_KNOWLEDGE 处置
 
@@ -172,7 +176,9 @@ scope: 09_ai_architecture
 
 **草稿源支撑（记忆 vs 知识正交边界）**：知识域草稿明确 D-KNOWLEDGE 与 D-AUTONOMY-05 的正交拆分——D-AUTONOMY-05 管「AI 怎么记住」（存储机制/检索机制/记忆生命周期，类比海马体，FAISS/SQLite/FTS5），D-KNOWLEDGE 管「知识本身是什么、记住什么」（知识结构/知识关系/知识质量，类比新皮层，知识图谱/因子库/策略库/教训库）；草稿 §6 决策 1：「知识域独立于自治域——自治管怎么记住，知识管记住什么」，且 §1 已为知识本体规划 K01~K14 子模块（知识图谱/因子知识库/策略知识库/教训库/RAG/知识蒸馏等）（源：`.runtime/aidrafts/09_drafts_audit/依赖图/21-D-KNOWLEDGE-知识域.md` §0 与 D-AUTONOMY 的边界表/§6 决策 1，2026-08-17 实测读取）。对选项的含义：C1 保留 = 为草稿已规划的知识本体留位，与正交边界兼容；C2 合并入 D_INTELLIGENCE 与草稿的边界划分不兼容（草稿中知识的正交对方是自治域记忆机制，而非智能域）；C3 退役则丢失草稿已确立的「知识本体」语义载体，13 号文若施工知识库需重建该语义。
 
-**分析倾向（供裁定参考）**：C1 与 C3 各有依据——若 13 号文模块工厂路线确认施工，C1 留位成本最低；若 Phase 0 不施工知识库，C3 更符合物理一致。C2 改动语义最大、收益最小。**最终裁定：待裁定（与 13 号文路线联动）**。
+**分析倾向（供裁定参考）**：C1 与 C3 各有依据——若 13 号文模块工厂路线确认施工，C1 留位成本最低；若 Phase 0 不施工知识库，C3 更符合物理一致。C2 改动语义最大、收益最小。
+
+**最终裁定（2026-08-22，#ARCH-169）：C1 保留**。裁定时的关键新事实（2026-08-22 实证）：①D_KNOWLEDGE 已非空壳——阶段三 GP0 证据链组件（MOD-EVIDENCE_CHAIN：hypothesis_registry/evidence_chain/iteration_guide/batch_entry/__init__ 共 5 节点）已实际挂入本域，§2.1 的「1 蓝图节点、0 生产节点」前提已变化；②13 号文模块工厂 GP0 已施工完成（17 号文 E0-6 ✅），知识库作为模块工厂采集→入库落点的方向已确认，C1 留位与路线联动成立；③草稿源正交边界（D-AUTONOMY-05 管「怎么记住」、D-KNOWLEDGE 管「记住什么」）支持独立语义存续；④保留零迁移零成本。
 
 ### 3.3 Q3 衍生边界问题分析
 
@@ -185,7 +191,12 @@ scope: 09_ai_architecture
 | D5 | D_ORCHESTRATOR 角色界定 | 72 模块（生命周期/沙箱/回滚/健康监控）production；61 号备忘冻结"编排系统" | ①维持域+文档明确"生命周期基础设施≠编排"②域改名去 orchestrator 语义 | **已裁定 2026-08-18：采纳倾向①**——维持域名不改，语义澄清为「任务/阶段的确定性流转 + Agent 生命周期基础设施（回滚/容错/健康/质量门/契约）」，明确「生命周期基础设施 ≠ Agent 自治编排」（61 号备忘 §2.3/§4.1/§5.1 已定稿不做 agent 编排系统，§5.2 第三阶段重评口子保留）（原分析倾向：改名成本高（路径/注册表/蓝图全链路），语义澄清零成本） |
 | D6 | D_ML_SERVE 未入 target_layer 词表 | 词表 44 值无 D_ML_SERVE；注册表与 depgraph 均有此域（7 模块） | ①词表补登 ②不管 | 倾向①：词表自述与注册表/契约保持一致的 SSoT 链路，缺值=链路断裂 |
 
-以上 D1/D2/D3/D6 均为**待裁定**；**D4/D5 已裁定 2026-08-18**（结论见表内，裁定 2）；D1~D3 若裁定"改挂/补挂"，执行走 TRAE-054 协议（apply_depgraph.py），不属于本文档施工范围。
+**D4/D5 已裁定 2026-08-18**（结论见表内，裁定 2）。**D1/D2/D3/D6 已裁定 2026-08-22（#ARCH-169，Owner 授权架构师裁定）并当日执行完毕**：
+
+- **D1 = ① 改挂**：`security/llm_defense/` 25 节点 D_SECURITY → D_SECURITY_LLM（apply_depgraph.py --migrate-nodes，TRAE-054 备份+事务）。依据：注册表 ssot_module=MOD-LLM_SECURITY 是在先契约，depgraph 零节点=契约未兑现；D_SECURITY 172/150 超容，改挂后 147/150 回到容量线内；09 号文 L0~L8 独立施工面与阶段三 LSG 贯通后 LLM 安全已是独立治理面。
+- **D2 = ① 改挂**：`integration/mcp/` 17 节点 D_INTEGRATION → D_INTEGRATION_GATEWAY。依据：草稿选项③（归 D_AUTONOMY_CORE）容量不可行——140+17=157 超 150 上限，容量硬约束优先于语义纯度；注册表 MOD-INF-013（11 MCP 服务端）在先登记；MCP 是 AI 工具调用的网关面，语义独立。Q9 联动：A2A 维持 D_INFRA_A2A 不动（归 D_AUTONOMY_CORE 则 140+72=212 严重超容；depgraph 真源优先于草稿未施工裁定），已打 ai_layer 标签保证 AI 层视图可见。
+- **D3 = ② 退役**：D_BEHAVIORAL_AUDIT 删域（0 节点零迁移；连带清理 arch_path_mappings 残留 1462 行）+ functional_domain_registry 条目退役（ARCH-045 先例留痕）；`gov_drift/detector_core/` 代码留 D_GOV_DRIFT 不动，MOD-INF-023 蓝图不受影响。
+- **D6 = ① 补登**：target_layer_vocabulary.yaml +D_ML_SERVE（total_values 44→45），SSoT 链路断裂修复。
 
 **MCP/A2A 归属裁定史（草稿源，D2 选项③的依据）**：集成域草稿两版对 MCP/A2A 归属裁定相反——27-D-INTEGRATION（较早版）将 D-INTEGRATION-08 MCP Server（P0）与 D-INTEGRATION-09 A2A Protocol Bridge（P1）登记在集成域内（理由：MCP 是 AI 工具集成协议、Agent 间通信是集成能力）；25-D-INTEGRATION（较新版）§6.1/§6.3 裁定 MCP 不入集成域骨架——MCP 是 AI 工具调用协议、属「Agent 能力暴露层」，非 INV-006 定义的「前后端唯一接触点」；§6.5 处置表将 MCP Server 与 A2A Bridge 同归 D-AUTONOMY-CORE（MCP 是 Agent 能力、Agent 间通信是自治能力）（源：`.runtime/aidrafts/09_drafts_audit/依赖图/25-D-INTEGRATION-集成域.md` §6.1/§6.3/§6.5、`27-D-INTEGRATION-集成域.md` §1 子模块表/§6 决策 3~4，2026-08-17 实测读取）。当前三口径并存：depgraph 现挂（MCP→D_INTEGRATION 71 模块、A2A→D_INFRA_A2A 72 模块）｜注册表登记（D_INTEGRATION_GATEWAY 空域，MOD-INF-013 共 11 个 MCP 服务端）｜草稿较新版裁定（归 D-AUTONOMY-CORE）。A2A 的口径冲突（depgraph D_INFRA_A2A vs 草稿裁定 D-AUTONOMY-CORE）超出 D1~D3 空域归位范围，登记为开放问题 Q9。
 
