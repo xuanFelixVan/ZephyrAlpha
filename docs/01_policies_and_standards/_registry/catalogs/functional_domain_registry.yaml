@@ -1162,23 +1162,8 @@ entries:
 # ARCH-045 裁定：D_SIGLEGACY 已删除（signal 层拆分为 D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC 3 个平级子域）。
 # 历史依据：裁定#204 D-SIGNAL→D_SIGLEGACY 保留为占位域 → ARCH-045 推翻该决定，清理 deprecated 条目。
 # 旧 signal_fundamental/pipeline.py 的 [DOMAIN] D_SIGLEGACY 同步修正为 D_FUNDAMENTAL_SIGNAL（2026-07-17 AI-08 审计修复）。
-# 补注册: D_BEHAVIORAL_AUDIT（drift_detector_core 7-file subset, MOD-INF-023）
-- domain: D_BEHAVIORAL_AUDIT
-  subdomain: drift_detector_core
-  domain_name_zh: 行为审计
-  ssot_module: MOD-INF-023
-  ssot_path: src/zephyr/gov_drift/detector_core/
-  covers:
-  - AI决策行为可追溯审计
-  - 漂移检测核心子集(benchmark_integrity/ml_engineering/model_drift_monitor)
-  - 性能基线与模型漂移监控
-  - regime检测与 regimes 分析
-  aliases:
-  - behavioral audit
-  - 行为审计
-  - drift detector core
-  stability: stable
-  ai_autonomy: ai_modifiable
+# ARCH-169 裁定（03号文 E0-8 Q3-D3，2026-08-22 Owner 授权裁定）：D_BEHAVIORAL_AUDIT 空域退役删除——depgraph 零节点，
+# 功能与 D_GOV_DRIFT 同源同路径（gov_drift/detector_core/），独立域语义弱；代码归属 D_GOV_DRIFT 不变，MOD-INF-023 蓝图不受影响。
 # 补注册: D_COMPLIANCE（合规层, MOD-L10-001）
 - domain: D_COMPLIANCE
   subdomain: compliance_gate

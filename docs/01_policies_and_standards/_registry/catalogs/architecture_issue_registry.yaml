@@ -18647,3 +18647,35 @@ entries:
   related_rules: '14号文 §4 Phase 0; 18号清单 §6 波4-14'
   created: '2026-08-22'
   last_updated: '2026-08-22'
+# --- #ARCH-169: 03号文 E0-8 AI 层域边界裁定（Owner 授权架构师裁定，混合方案落地） ---
+- issue_id: '#ARCH-169'
+  title: 'AI 层域边界最终裁定——核心域∪横切标签混合方案（03号文 E0-8 Q1 选项C）'
+  severity: P1高
+  category: governance
+  adjudication: |
+    目的声明（D2）：03号文（AI 层域边界定义）E0-8 遗留 Owner 裁定项——AI 层"到底归哪个域管"
+    未定，阻塞 M0 宣布。裁定（2026-08-22 Owner 授权架构师裁定）：采纳选项C 混合方案。
+    第一性依据：①域的第一性功能是治理粒度（改动政策/信任区/审批链的最小单元），AI 设施
+    物理散布多域是事实，强并单一大域会毁掉既有治理粒度；②AI 层视图是派生需求（查询/
+    审计/报表），用横切标签承载而非物理域合并；③8 个 AI 核心域承载 AI 专属设施
+    （D_AUTONOMY_CORE/D_INTELLIGENCE/D_ML_TRAIN/D_ML_SERVE/D_AUTONOMY_PERM/D_KNOWLEDGE/
+    D_SECURITY_LLM/D_INTEGRATION_GATEWAY），非核心域中的 AI 设施节点打 ai_layer 标签。
+    Q2：D_KNOWLEDGE 保留（向量记忆/知识库治理政策与通用数据域不同质）。
+    Q3：25 个 LLM 安全节点迁 D_SECURITY_LLM、17 个 MCP 节点迁 D_INTEGRATION_GATEWAY、
+    D_BEHAVIORAL_AUDIT 空域退役（功能与 D_GOV_DRIFT 同源同路径）。
+    配套：depgraph_tags_vocabulary.yaml（PS-VOC-036）受控词表防标签漂移；
+    apply_depgraph.py 增 --tag-nodes/--untag-nodes 横切标签写路径；
+    target_layer_vocabulary.yaml 补 D_ML_SERVE（45 值）。
+  impact:
+    - 'docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/03_domain_boundary_definition.md（v0.3.0 active）'
+    - 'docs/01_policies_and_standards/_registry/vocabularies/depgraph_tags_vocabulary.yaml（PS-VOC-036 新建）'
+    - 'docs/01_policies_and_standards/_registry/vocabularies/target_layer_vocabulary.yaml（+D_ML_SERVE）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml（D_BEHAVIORAL_AUDIT 退役）'
+    - 'scripts/governance/apply_depgraph.py（--tag-nodes/--untag-nodes）'
+    - 'depgraph PG：147 节点 ai_layer 标签+42 节点域迁移+1 空域退役'
+  fix_phase: '已落地（2026-08-22）：PG 实证 147 标签/25+17 迁移/空域 0 节点'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 拍板授权（"你按照你的裁定结果执行就行"）'
+  related_rules: '03号文 §3.1 选项C/§4.4 分支C; PS-VOC-036; 18号清单 E0-8'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'

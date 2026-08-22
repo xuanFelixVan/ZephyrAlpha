@@ -3131,6 +3131,20 @@ capabilities:
     \ edge type\" 可定位真源。 解决防重建：禁止在别处新建 decisiongraph 词表。"
   integrity_anchors:
   - total_values
+- capability_id: depgraph_tags_vocabulary
+  canonical_override: docs/01_policies_and_standards/_registry/vocabularies/depgraph_tags_vocabulary.yaml
+  aliases:
+  - depgraph_node_tags
+  - ai_layer_tag
+  - 横切标签词表
+  description: "depgraph nodes.tags 横切标签受控词表（#ARCH-169，2026-08-22，PS-VOC-036）。
+    canonical = docs/01_policies_and_standards/_registry/vocabularies/depgraph_tags_vocabulary.yaml。
+    当前 1 值：ai_layer（AI 层横切标签——03号文 E0-8 选项C 混合方案：AI 层视图=8 核心域∪标签节点）。
+    写路径=scripts/governance/apply_depgraph.py --tag-nodes/--untag-nodes。
+    解决发现性：新 AI 搜 \"横切标签/ai_layer/depgraph tags\" 可定位真源。
+    解决防重建：新增横切标签必须先入本词表再打标，禁止别处新建 tags 词表。"
+  integrity_anchors:
+  - total_values
 - capability_id: decisiongraph_reader
   canonical_override: src/zephyr/governance/persistence/decision_graph_reader.py
   aliases:
@@ -8145,3 +8159,8 @@ di_seam_exemptions:
   token: auto-blueprint-batch-p3-20260822
   created_by: AI-P2-001
   capability: reflexion_agent
+# --- 2026-08-22 E0-8 域边界裁定批 creation_token（#ARCH-169） ---
+- file: docs/01_policies_and_standards/_registry/vocabularies/depgraph_tags_vocabulary.yaml
+  token: auto-depgraph-tags-vocabulary-20260822
+  created_by: AI-P2-001
+  capability: depgraph_tags_vocabulary
