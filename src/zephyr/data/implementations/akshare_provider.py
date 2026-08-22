@@ -4281,6 +4281,15 @@ class AkshareIngestProvider(IngestProviderBase):
 
     # ---- 22. 期货主力合约K线（kline_futures） ----
 
+    # tracker #246 治本：kline_futures 口径=股指期货 IF/IC/IM/IH（#ARCH-146 裁定，
+    # 注册表无更宽口径条目）。symbols 空时默认新浪主力连续 IF0/IC0/IM0/IH0（与 2026-08-22
+    # 期指日频回补存量行一致），不再拉 futures_display_main_sina 全品种宇宙（82 个含商品期货）。
+    _KLINE_FUTURES_DEFAULT_SYMBOLS = ("IF0", "IC0", "IM0", "IH0")
+    # 白名单护栏：仅放行 IF0/IF2509 等股指期货形态；个股代码（000001）与商品期货（RB0）剔除。
+    _KLINE_FUTURES_SYMBOL_RE = re.compile(r"^(IF|IC|IM|IH)\d+$", re.IGNORECASE)
+    # IF/IC/IM/IH 均为中金所品种（小写，与存量行 exchange='cffex' 一致）
+    _KLINE_FUTURES_EXCHANGE = "cffex"
+
     @staticmethod
     def _parse_kline_futures_row(
         row,
@@ -4312,10 +4321,11 @@ class AkshareIngestProvider(IngestProviderBase):
         )
 
     def _fetch_kline_futures(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
-        """获取期货主力合约K线，写入 c1_market.kline_futures。
+        """获取股指期货K线，写入 c1_market.kline_futures。
 
-        1. 调用 ak.futures_display_main_sina() 获取当前主力合约列表
-        2. 对每个主力合约调用 ak.futures_main_sina(symbol) 获取历史K线
+        tracker #246 治本后口径：仅股指期货 IF/IC/IM/IH（#ARCH-146）。
+        1. contract_list = payload.symbols（经白名单过滤）或默认主力连续 IF0/IC0/IM0/IH0
+        2. 对每个合约调用 ak.futures_main_sina(symbol) 获取历史K线
         """
         import akshare as ak
 
@@ -4341,46 +4351,31 @@ class AkshareIngestProvider(IngestProviderBase):
         batch_rows: list[tuple] = []
         t0 = time.monotonic()
 
-        # 步骤1：获取主力合约列表
-        try:
-            contracts_df = self._call_with_policy(
-                ak.futures_display_main_sina,
-                policy,
-            )
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        # 步骤1：确定合约清单（白名单护栏，tracker #246）
+        requested = [str(s) for s in (payload.symbols or []) if s]
+        if requested:
+            contract_list = [s for s in requested if self._KLINE_FUTURES_SYMBOL_RE.match(s)]
+            dropped = [s for s in requested if not self._KLINE_FUTURES_SYMBOL_RE.match(s)]
+            if dropped:
+                self._log.warning(
+                    "kline_futures 白名单护栏剔除非股指期货标的 %d 个（样例 %s）",
+                    len(dropped),
+                    dropped[:10],
+                )
+        else:
+            contract_list = list(self._KLINE_FUTURES_DEFAULT_SYMBOLS)
+        if not contract_list:
             yield FetchResult(
                 table=table,
                 columns=columns,
                 rows=[],
                 last_key=last_key,
                 elapsed_sec=time.monotonic() - t0,
-                error=f"futures_display_main_sina 失败: {e}",
+                error="kline_futures 白名单过滤后无有效股指期货合约",
             )
             return
-
-        if contracts_df is None or len(contracts_df) == 0:
-            yield FetchResult(
-                table=table,
-                columns=columns,
-                rows=[],
-                last_key=last_key,
-                elapsed_sec=time.monotonic() - t0,
-                error="futures_display_main_sina 返回空",
-            )
-            return
-
-        sym_col = "symbol" if "symbol" in contracts_df.columns else contracts_df.columns[0]
-        contract_list = [str(s) for s in contracts_df[sym_col].tolist() if s]
-        self._log.info(f"期货主力合约: {len(contract_list)} 个")
-        # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 从 contracts_df 提取交易所映射
-        # futures_display_main_sina 返回 symbol + exchange 两列
-        contract_exchange_map: dict[str, str] = {}
-        if "exchange" in contracts_df.columns:
-            for _, _r in contracts_df.iterrows():
-                _sym = str(_r[sym_col]) if _r[sym_col] else ""
-                _ex = str(_r["exchange"]).strip() if _r["exchange"] else ""
-                if _sym and _ex:
-                    contract_exchange_map[_sym] = _ex
+        self._log.info(f"股指期货合约: {len(contract_list)} 个 {contract_list}")
+        contract_exchange_map = {s: self._KLINE_FUTURES_EXCHANGE for s in contract_list}
 
         # 步骤2：逐合约获取K线
         for idx, contract_sym in enumerate(contract_list):

@@ -201,9 +201,11 @@ tasks:
   date_col: trade_date
   dependencies: []
   capability: kline_futures
-  symbols:
+  symbols:         # null=provider 内置口径：股指期货 IF/IC/IM/IH（#ARCH-146；tracker #246 治本——
+                   # 原 capability kline_futures 错路由通用 _fetch_kline 致沪深A股全量个股混入本表，
+                   # 已改路由期货专用通道+IF/IC/IM/IH 白名单护栏，勿回填全市场 symbol 列表）
   extra:
-    description: "期货行情K线增量"
+    description: "期货行情K线增量（口径=股指期货 IF/IC/IM/IH，tracker #246）"
 
   fallback_sources:
   - source: akshare
@@ -1235,9 +1237,10 @@ tasks:
   date_col: trade_date
   dependencies: []
   capability: kline_futures
-  symbols:
+  symbols:         # null=provider 内置口径：新浪主力连续 IF0/IC0/IM0/IH0（#ARCH-146；tracker #246 治本——
+                   # 原拉 futures_display_main_sina 全品种宇宙 82 个含商品期货，已收口 IF/IC/IM/IH+白名单护栏）
   extra:
-    description: "AKShare期货主力合约K线（ak.futures_main_sina，82个主力合约历史K线，含持仓量）"
+    description: "AKShare股指期货主力连续K线（ak.futures_main_sina，IF0/IC0/IM0/IH0 历史K线，含持仓量；口径 tracker #246）"
 
   # ============== AKShare 新增 6 个能力（2026-07-11）==============
 - task_id: limit_up_down_incremental

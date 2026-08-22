@@ -67,6 +67,7 @@ import dataclasses
 import datetime
 import logging
 import math
+import re
 import time
 from typing import Iterator
 
@@ -224,7 +225,14 @@ _AGGREGATED_KLINE_ROUTES = {
 }
 
 # 日K直接路由（无 sector 参数）
-_KLINE_1D_CAPABILITIES = frozenset({"kline_hk_daily", "kline_futures"})
+# tracker #246 治本：kline_futures 不得走通用 _fetch_kline（symbols 空时默认 sector="沪深A股"
+# 会把全市场个股日K写入 c1_market.kline_futures）；改由 _DIRECT_ROUTES 路由到
+# _fetch_kline_futures_qmt（期货板块加载 + IF/IC/IM/IH 白名单护栏）。
+_KLINE_1D_CAPABILITIES = frozenset({"kline_hk_daily"})
+
+# tracker #246 防混入护栏：kline_futures/futures_kline_qmt 口径=股指期货 IF/IC/IM/IH（#ARCH-146 裁定），
+# 白名单仅放行 IF0/IF00.IF/IF2407.CFFEX 等形态；个股裸码（000001）与商品期货（RB2407.SHF）一律剔除。
+_INDEX_FUTURES_SYMBOL_RE = re.compile(r"^(IF|IC|IM|IH)\d+(\.[A-Za-z0-9]+)?$", re.IGNORECASE)
 
 # 能力 → 方法名 直接路由表（31个能力，均调用 self.<method>(payload, policy)）
 _DIRECT_ROUTES = {
@@ -253,6 +261,7 @@ _DIRECT_ROUTES = {
     "auction_book": "_fetch_auction_book",
     "market_breadth_snapshot": "_fetch_market_breadth_snapshot",
     "futures_kline_qmt": "_fetch_kline_futures_qmt",
+    "kline_futures": "_fetch_kline_futures_qmt",  # tracker #246：期货K线走期货专用通道（原错路由 _KLINE_1D_CAPABILITIES→_fetch_kline 沪深A股）
     "hk_kline": "_fetch_hk_kline",
     "kline_us_daily": "_fetch_us_kline",
     "etf_nav": "_fetch_etf_nav",
@@ -5020,6 +5029,26 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取期货合约列表失败: {e}")
+
+        # tracker #246 白名单护栏：仅放行股指期货 IF/IC/IM/IH（板块加载会带入商品期货，
+        # 历史 bug 形态是个股经通用 _fetch_kline 混入本表，此处兜底双防）
+        if payload.symbols:
+            allowed = [s for s in payload.symbols if _INDEX_FUTURES_SYMBOL_RE.match(str(s))]
+            if len(allowed) != len(payload.symbols):
+                dropped = [str(s) for s in payload.symbols if not _INDEX_FUTURES_SYMBOL_RE.match(str(s))]
+                self._log.warning(
+                    "kline_futures 白名单护栏剔除非股指期货标的 %d 个（样例 %s）",
+                    len(dropped),
+                    dropped[:10],
+                )
+                payload = FetchPayload(
+                    table=payload.table,
+                    symbols=allowed,
+                    start=payload.start,
+                    end=payload.end,
+                    incremental=payload.incremental,
+                    extra=payload.extra,
+                )
 
         yield from self._fetch_simple_kline(
             payload,

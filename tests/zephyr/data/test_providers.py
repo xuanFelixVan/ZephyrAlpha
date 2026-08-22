@@ -671,6 +671,49 @@ class TestMiniQMTBatch2Capabilities:
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["futures_kline_qmt"]
 
+    def test_kline_futures_route(self, monkeypatch):
+        """fetch(capability=kline_futures) 路由到 _fetch_kline_futures_qmt（tracker #246 治本：
+        原错路由 _KLINE_1D_CAPABILITIES→_fetch_kline，symbols 空时拉沪深A股全量个股写入期货表）。"""
+        p = MiniQmtIngestProvider()
+        called = []
+
+        def fake(self, payload, policy):
+            called.append("kline_futures")
+            yield FetchResult(table="c1_market.kline_futures", columns=[], rows=[], last_key="", elapsed_sec=0.0)
+
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline_futures_qmt", fake)
+        payload = FetchPayload(
+            table="c1_market.kline_futures",
+            symbols=["IF2407.CFFEX"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "kline_futures"},
+        )
+        list(p.fetch(payload, SourcePolicy()))
+        assert called == ["kline_futures"]
+
+    def test_kline_futures_whitelist_guard(self, monkeypatch):
+        """tracker #246 白名单护栏：fetch_kline_futures_qmt 剔除非 IF/IC/IM/IH 标的（个股/商品期货）。"""
+        monkeypatch.setitem(sys.modules, "xtquant", MagicMock())  # 方法内 import xtquant，测试环境 mock
+        p = MiniQmtIngestProvider()
+        captured = []
+
+        def fake_simple_kline(self, payload, policy, default_table, include_exchange=False):
+            captured.append(list(payload.symbols or []))
+            yield FetchResult(table=default_table, columns=[], rows=[], last_key="", elapsed_sec=0.0)
+
+        monkeypatch.setattr(MiniQmtIngestProvider, "_fetch_simple_kline", fake_simple_kline)
+        payload = FetchPayload(
+            table="c1_market.kline_futures",
+            symbols=["IF00.IF", "IC2407.CFFEX", "IM0", "IH2409.CFFEX", "000001.SZ", "600000.SH", "RB2407.SHF", "I2407.DCE"],
+            start=datetime.date(2024, 1, 1),
+            end=datetime.date(2024, 1, 10),
+            extra={"capability": "kline_futures"},
+        )
+        list(p.fetch_kline_futures_qmt(payload, SourcePolicy()))
+        assert captured == [["IF00.IF", "IC2407.CFFEX", "IM0", "IH2409.CFFEX"]]
+
+
     def test_hk_kline_route(self, monkeypatch):
         """fetch(capability=hk_kline) 路由到 _fetch_hk_kline。"""
         p = MiniQmtIngestProvider()
@@ -1736,3 +1779,95 @@ class TestMiniQmtOptionIvChFallback:
         monkeypatch.setattr(p, "_load_option_close_from_ch", lambda *a, **k: (None, ""))
         rows = p._compute_iv_for_option("10010971.SHO", "20260814", "20260819", SourcePolicy())
         assert rows == []
+
+
+class TestAKShareKlineFuturesScope:
+    """tracker #246 治本：akshare _fetch_kline_futures 收口股指期货 IF/IC/IM/IH + 白名单护栏。
+
+    原实现无视 payload.symbols，拉 futures_display_main_sina 全品种宇宙（82 个含商品期货）；
+    治本后 symbols 空时默认新浪主力连续 IF0/IC0/IM0/IH0（#ARCH-146 口径），
+    显式 symbols 经 ^(IF|IC|IM|IH)\\d+$ 白名单过滤。
+    """
+
+    @staticmethod
+    def _kline_df() -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "日期": "2026-08-20",
+                    "开盘价": 4000.0,
+                    "最高价": 4010.0,
+                    "最低价": 3990.0,
+                    "收盘价": 4005.0,
+                    "成交量": 12345,
+                    "持仓量": 67890,
+                }
+            ]
+        )
+
+    @staticmethod
+    def _mock_ak(monkeypatch, kline_df) -> MagicMock:
+        mock_ak = MagicMock()
+        mock_ak.futures_main_sina.__name__ = "futures_main_sina"
+        mock_ak.futures_main_sina.return_value = kline_df
+        mock_ak.futures_display_main_sina.__name__ = "futures_display_main_sina"
+        monkeypatch.setitem(sys.modules, "akshare", mock_ak)
+        return mock_ak
+
+    def test_default_symbols_index_futures_only(self, monkeypatch):
+        """symbols 空 → 仅采 IF0/IC0/IM0/IH0，不再调 futures_display_main_sina 全品种宇宙。"""
+        mock_ak = self._mock_ak(monkeypatch, self._kline_df())
+        p = AkshareIngestProvider()
+        payload = FetchPayload(
+            table="c1_market.kline_futures",
+            symbols=None,
+            start=datetime.date(2026, 8, 1),
+            end=datetime.date(2026, 8, 21),
+            extra={"capability": "kline_futures"},
+        )
+        results = list(p._fetch_kline_futures(payload, SourcePolicy()))
+        called = [c.kwargs["symbol"] for c in mock_ak.futures_main_sina.call_args_list]
+        assert called == ["IF0", "IC0", "IM0", "IH0"]
+        mock_ak.futures_display_main_sina.assert_not_called()
+        rows = [r for res in results for r in res.rows]
+        assert len(rows) == 4
+        for row in rows:
+            assert row[10] == "1d"  # period
+            assert row[11] == "cffex"  # exchange
+            assert row[12] == "akshare"  # data_source
+
+    def test_whitelist_drops_stock_and_commodity(self, monkeypatch):
+        """显式 symbols 混入个股/商品期货 → 白名单剔除，仅采 IF0。"""
+        mock_ak = self._mock_ak(monkeypatch, self._kline_df())
+        p = AkshareIngestProvider()
+        payload = FetchPayload(
+            table="c1_market.kline_futures",
+            symbols=["IF0", "000001.SZ", "000001", "RB0", "I2407"],
+            start=datetime.date(2026, 8, 1),
+            end=datetime.date(2026, 8, 21),
+            extra={"capability": "kline_futures"},
+        )
+        results = list(p._fetch_kline_futures(payload, SourcePolicy()))
+        called = [c.kwargs["symbol"] for c in mock_ak.futures_main_sina.call_args_list]
+        assert called == ["IF0"]
+        rows = [r for res in results for r in res.rows]
+        assert len(rows) == 1
+        assert rows[0][2] == "IF0"
+
+    def test_all_illegal_symbols_yields_error(self, monkeypatch):
+        """symbols 全部不合法 → 空结果 + error 留痕，不触网。"""
+        mock_ak = self._mock_ak(monkeypatch, self._kline_df())
+        p = AkshareIngestProvider()
+        payload = FetchPayload(
+            table="c1_market.kline_futures",
+            symbols=["000001.SZ", "600000.SH"],
+            start=datetime.date(2026, 8, 1),
+            end=datetime.date(2026, 8, 21),
+            extra={"capability": "kline_futures"},
+        )
+        results = list(p._fetch_kline_futures(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].rows == []
+        assert results[0].error is not None
+        mock_ak.futures_main_sina.assert_not_called()
+

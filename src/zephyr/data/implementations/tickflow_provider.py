@@ -211,9 +211,10 @@ class TickFlowProvider(IngestProviderBase):
 
         SPX->SPY, DJI->DIA, IXIC->QQQ。
         免费版支持美股日K线，用 period+count 参数。
+        产出列对齐 us_index DDL INSERT_COLUMNS：symbol 填指数代码（SPX/DJI/IXIC）。
         """
         table = payload.table or _TBL_US_INDEX
-        columns = ["trade_date", "index_code", "etf_code", "open", "high", "low", "close", "volume"]
+        columns = ["trade_date", "symbol", "open", "high", "low", "close", "volume"]
         start = payload.start or datetime.date.today() - datetime.timedelta(days=365)
         end = payload.end or datetime.date.today()
         count = max((end - start).days, 1)
@@ -236,7 +237,6 @@ class TickFlowProvider(IngestProviderBase):
                             (
                                 str(row.get("trade_date", "")),
                                 index_code,
-                                etf_symbol,
                                 float(row.get("open", 0) or 0),
                                 float(row.get("high", 0) or 0),
                                 float(row.get("low", 0) or 0),
