@@ -38,7 +38,10 @@
 $ErrorActionPreference = "Stop"
 
 # ============== Paths ==============
-$RepoRoot = "D:\ZephyrAlpha"
+# INT-01 fix (2026-08-23): derive repo root from script location instead of hardcoded
+# "D:\ZephyrAlpha" -- survives drive/machine/repo relocation. Same pattern as
+# audit_data_utilization.ps1; scripts/ is a direct child, so its parent is the repo root.
+$RepoRoot = Split-Path -Parent $PSScriptRoot
 $BizModule = "zephyr.data.scheduler"
 $PythonExe = "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe"
 if (-not (Test-Path $PythonExe)) {

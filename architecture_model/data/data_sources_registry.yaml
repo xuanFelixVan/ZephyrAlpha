@@ -401,7 +401,10 @@ data_sources:
       session_ttl_sec: 0
       relogin_on_auth_error: false
       extra:
-        requires_path: "E:\\tdx\\PYPlugins\\user"
+        # INT-01 治本（2026-08-23）：通达信插件路径不再硬编码——真源=secret_registry.yaml
+        # 的 TDX_PLUGIN_DIR（service=tqcenter），运行时由 sector_kline_downloader.py 等
+        # 经 get_service_secret 读取（含默认值回退）。此处仅留依赖声明占位。
+        requires_path: "${TDX_PLUGIN_DIR}"
         requires_process: "tdx client"
         note: "tqcenter 非 pip 安装，需 sys.path.insert 注入；由 sector_kline_downloader.py 独立脚本触发"
 

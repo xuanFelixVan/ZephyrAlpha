@@ -7624,6 +7624,11 @@ creation_tokens:
   token: auto-architecture-review-module-upgrade-audit-20260821
   created_by: AI-ARCH-AUDIT-001
   capability: architecture_review_module_upgrade_audit
+# --- 2026-08-23 长城任务进度核对报告 creation_token（INT-01 收官批） ---
+- file: docs/_working/reports/2026-08-23-greatwall-progress-reconciliation.md
+  token: auto-greatwall-progress-reconciliation-20260823
+  created_by: AI-M258-001
+  capability: greatwall_progress_reconciliation
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

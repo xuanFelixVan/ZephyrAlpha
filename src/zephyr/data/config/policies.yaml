@@ -136,7 +136,7 @@ tqcenter:
   session_ttl_sec: 0
   relogin_on_auth_error: false
   extra:
-    requires_path: E:\tdx\PYPlugins\user
+    requires_path: ${TDX_PLUGIN_DIR}
     requires_process: tdx client
     note: tqcenter 非 pip 安装，需 sys.path.insert 注入；由 sector_kline_downloader.py 独立脚本触发
 fred:
