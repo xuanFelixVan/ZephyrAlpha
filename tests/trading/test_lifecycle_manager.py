@@ -216,3 +216,42 @@ class TestShutdownSequence:
         )
 
         assert report.finalizer_results == {"db": True, "cache": False}
+
+
+class TestStartGovernanceWatchdog:
+    """#255① 回归：_start_governance_watchdog 动态加载 sys.modules 注册（NoneType 病根）。"""
+
+    def test_real_load_no_nonetype(self, tmp_path: Path) -> None:
+        """真加载 governance_watchdog.py——dataclass `X | None` 注解不再触发 NoneType。"""
+        import sys
+
+        config = _make_config(tmp_path)
+        lm = LifecycleManager(config)
+        sys.modules.pop("governance_watchdog", None)
+        try:
+            lm._start_governance_watchdog()
+            assert "governance_watchdog" in sys.modules
+            assert lm._governance_watchdog is not None
+        finally:
+            if getattr(lm, "_governance_watchdog", None) is not None:
+                lm._governance_watchdog.stop()
+
+    def test_exec_failure_rolls_back_sys_modules(self, tmp_path: Path) -> None:
+        """管理器路径 exec_module 失败 → 异常上抛且 sys.modules 回滚无半注册残留。"""
+        import sys
+
+        bad_root = tmp_path / "repo"
+        watchdog_dir = bad_root / "scripts" / "governance" / "meta"
+        watchdog_dir.mkdir(parents=True)
+        (watchdog_dir / "governance_watchdog.py").write_text("raise RuntimeError('boom')\n", encoding="utf-8")
+        config = _make_config(tmp_path)
+        lm = LifecycleManager(config)
+        sys.modules.pop("governance_watchdog", None)
+        with patch("zephyr.trading.lifecycle_manager.REPO_ROOT", bad_root):
+            try:
+                lm._start_governance_watchdog()
+                raised = False
+            except RuntimeError:
+                raised = True
+        assert raised is True
+        assert "governance_watchdog" not in sys.modules

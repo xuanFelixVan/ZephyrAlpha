@@ -14,6 +14,10 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=immutable_core
 # [CHANGE-NOTE] 2026-06-26: Owner 授权手术式修改——移除 CircadianScheduler 依赖（项目硬约束"废除CircadianScheduler定时触发机制"）。
+# [CHANGE-NOTE] 2026-08-22: Owner 授权手术式修改（"全部执行"指令覆盖 tracker #255①）——_start_governance_watchdog
+#   exec_module 前注册 sys.modules：@dataclass 处理 `X | None` 注解时 dataclasses._is_type 需
+#   sys.modules[cls.__module__].__dict__，未注册即 NoneType AttributeError（boot 09a 步存量病根）。
+#   纯加载机制修复，零接口/语义变动。
 # [TTL] permanent
 #   删除 circadian_scheduler 参数（boot_sequence/shutdown_sequence）、_register_audit_tasks（no-op）、
 #   _register_audit_event_hooks（注册的回调因 trigger_event 从未被调用而永不触发=死代码）、
@@ -34,6 +38,7 @@ LifecycleManager — 启动/停止序列
 """
 
 import logging
+import sys
 from dataclasses import dataclass, field
 
 from zephyr.feedback_loop import FeedbackLoop
@@ -170,7 +175,15 @@ class LifecycleManager:
             logger.warning("GovernanceWatchdog spec creation failed")
             return
         mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
+        # #255①（2026-08-22）：exec_module 前注册 sys.modules——@dataclass 处理 `X | None`
+        # 注解时 dataclasses._is_type 需 sys.modules[cls.__module__].__dict__，
+        # 未注册则 NoneType AttributeError（boot 09a 步 NoneType 存量病根）；失败回滚防半注册
+        sys.modules[spec.name] = mod
+        try:
+            spec.loader.exec_module(mod)
+        except Exception:
+            sys.modules.pop(spec.name, None)
+            raise
         self._governance_watchdog = mod.GovernanceWatchdog()
         self._governance_watchdog.run(daemon=True)
 
