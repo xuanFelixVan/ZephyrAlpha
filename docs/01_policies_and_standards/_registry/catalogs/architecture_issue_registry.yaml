@@ -18558,7 +18558,13 @@ entries:
   impact:
     - 'docs/03_modules/_cross_layer/context_engine/blueprint.md（v1.1.4→v1.2.0）'
     - 'tests/ce/test_ce_kill_switch.py（陈旧导入修复）'
-  fix_phase: '已落地（2026-08-22）：956 passed 全绿基线；depgraph 边缺口 7 项登记建议随片段在册'
+  fix_phase: '已落地（2026-08-22）：956 passed 全绿基线；depgraph 边缺口 7 项登记建议随片段在册。【2026-08-22
+    晚缺口闭环（#255⑤）：①syncer 过滤器治本——_SQL_GET_GENERATED_NODES 由 generated 单值扩为
+    generated/testing/stable 三态（CE 实证 38 stable module 节点零派生→§1.1 重跑 1→39 行全量，
+    幂等复跑零漂移）；②蓝图依赖关系表以 PG depgraph 26 实测出边对齐——补 MOD-INF-001 六边
+    （token_budget×5+kill_switch×1），VMS 行注记 Protocol 注入无边=正确反映，TaskSystem/AutoRuntime
+    两行标"无 import 边"事件驱动形态（boot_hooks 接线仍归 07文 Q2 Owner 裁定项）；余 322 蓝图
+    §1.1 派生刷新归下轮 align_all 统一收（派生文档不手提）】'
   status: decided
   confirmed_by_user: '2026-08-22 Owner 长城任务指令'
   related_rules: '07号文 §4 Phase 0; 18号清单 §6 波3-07'

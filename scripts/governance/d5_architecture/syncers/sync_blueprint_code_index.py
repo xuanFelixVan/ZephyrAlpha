@@ -22,7 +22,7 @@
 
 功能：
   1. 扫描所有蓝图，为缺少「已实现代码完整路径索引」章节的蓝图自动补齐
-  2. 已有章节幂等更新：从 depgraph.nodes 运营态（build_status=generated）单向派生
+  2. 已有章节幂等更新：从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生
      重新生成，与现有内容比对，漂移则替换（治本：原"已有章节直接跳过"导致目录
      迁移后旧表永久残留，如 feedback_loop 308 处 observability/ 幽灵前缀）
   3. 数据源优先级：frontmatter module_id → depgraph.nodes（真源）→
@@ -94,14 +94,22 @@ FRONTMATTER_MODULE_ID_RE = re.compile(
 
 _AUTOGEN_NOTE = (
     "> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态"
-    "（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。"
+    "（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。"
 )
 
 PATH_IN_TABLE_PATTERN = re.compile(r"`([^`]+\.(?:py|yaml|yml|json|toml))`")
 PATH_MUST_HAVE_DIR = re.compile(r"[/\\]")
 
 # §5.160.2 SQL 集中化：depgraph.nodes 运营态查询（NO-BARE-SQL 门禁豁免的 _SQL_ 常量）
-_SQL_GET_GENERATED_NODES = "SELECT path, node_type FROM nodes WHERE blueprint_id = %s AND build_status = 'generated'"
+# tracker #255⑤ 治本（2026-08-22）：过滤器 generated 单值→generated/testing/stable 三态——
+# 生命周期 planned→generated→testing→stable（--transition-build-status 推进），
+# 代码在盘节点含 generated/testing/stable 三态；旧单值过滤器对 stable 成熟模块结构性低报
+#（CE 实证：38 个 stable module 节点零派生，§1.1 仅 __init__.py 1 行）；planned（未施工）
+# 与 deprecated/dormant（退役/休眠）维持排除。
+_SQL_GET_GENERATED_NODES = (
+    "SELECT path, node_type FROM nodes WHERE blueprint_id = %s"
+    " AND build_status IN ('generated', 'testing', 'stable')"
+)
 
 BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     "_master-blueprint": {
@@ -383,7 +391,7 @@ def _read_frontmatter_module_id(content: str) -> str | None:
 
 
 def _get_files_from_depgraph(module_id: str) -> dict[str, list[str]] | None:
-    """从 depgraph.nodes 运营态（build_status='generated'）派生文件清单。
+    """从 depgraph.nodes 运营态（build_status∈generated/testing/stable）派生文件清单。
 
     真源铁律：架构数据真源在 PostgreSQL depgraph，蓝图路径索引是派生缓存，
     必须从 depgraph 单向派生。node_type=module→source 组，node_type=test→test 组。

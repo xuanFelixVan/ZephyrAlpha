@@ -5,7 +5,7 @@ title: Context Engine 集成蓝图 — 上下文引擎集成索引
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: 1.2.1
+version: 1.2.2
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -69,12 +69,15 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 
 ## 依赖关系
 
+> **2026-08-22 depgraph 真源对齐（#255⑤ / #ARCH-164 尾巴）**：以 PG depgraph 实测 import 边为准——CE 出边 26 条：MOD-INF-016×10、内部×6、MOD-INF-001×6、MOD-INF-002×2、MOD-SHARED-001×1、MOD-LLM_SECURITY×1。
+
 | 依赖模块 | 依赖类型 | 依赖内容 | 蓝图路径 |
 |---------|---------|---------|---------|
-| MOD-INF-011 VMS | 必须 | 知识检索 | `docs/03_modules/_domain_knowledge/vector_memory/blueprint.md` |
-| MOD-TASK_SYSTEM Task System | 必须 | 任务状态 | `docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md` |
-| MOD-LLM_SECURITY LSG | 必须 | 安全校验 | `docs/03_modules/_cross_layer/large_language_model_security/blueprint.md` |
-| MOD-INF-035 AutoRuntime Core | 可选 | 运行时调度 | `docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md` |
+| MOD-INF-001 capacity_assurance | 必须 | token 预算（token_budget×5 文件）+熔断（kill_switch×1）——depgraph 实测 6 边 | `docs/03_modules/_domain_infrastructure_operations/capacity_assurance/index.md` |
+| MOD-LLM_SECURITY LSG | 必须 | 安全校验（context_injector→gateway 实测 1 边） | `docs/03_modules/_cross_layer/large_language_model_security/blueprint.md` |
+| MOD-INF-011 VMS | 必须（协议注入） | 知识检索——vector_bridge 依赖 VMSSearchProtocol 而非具体实现，depgraph 无 import 边属**正确反映**（CT-CE-VMS-001） | `docs/03_modules/_domain_knowledge/vector_memory/blueprint.md` |
+| MOD-TASK_SYSTEM Task System | 事件驱动（无 import 边） | 任务状态——接口形态=boot 触发注册+EventBus 订阅（07 文 Q2 部分成立）；boot_hooks 接线缺口归 Q2 Owner 裁定项 | `docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md` |
+| MOD-INF-035 AutoRuntime Core | 可选（无 import 边） | 运行时调度——代码实测无 import 对应，同归 07 文 Q2 裁定语境 | `docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md` |
 
 ## 消费者注册表
 
@@ -143,14 +146,52 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
-> **2026-08-22 手工对齐注记（P0-2）**：depgraph 中本模块 38 个代码节点 build_status=**stable**（非 generated），生成器 SQL 过滤器（`build_status='generated'`）结构性低报——§1.1 仅派生 1 行。本节按磁盘实测（`Get-ChildItem` 39 文件）手工对齐；待 depgraph build_status 语义/生成器过滤器修正后，重跑 syncer 幂等覆盖。行数为 2026-08-22 `(Get-Content).Count` 实测。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
+> **2026-08-22 过滤器治本闭环注记（#255⑤）**：生成器 SQL 过滤器已由 `generated` 单值扩为 `generated/testing/stable` 三态（生命周期推进后代码仍在盘），本表重跑幂等覆盖——§1.1 源码 1 行→39 行全量派生（38 stable+1 generated），行数为 `(Get-Content).Count` 实测口径见 §2。
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/autonomy_core/context/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/atomic_injector.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/ce_bootstrap.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/ce_explain_cli.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/ce_file_lister.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/ce_playground_v2.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/ce_vibe_shortcuts.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/checkpoint_manager.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/cold_start_booster.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/complexity_budget.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_assembler.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_budget.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_budget_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_debt_score.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_evaluator.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_evictor.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_health_score.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_injector.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_model_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_outcome_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_pipeline_auto.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_playground.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_rot_model.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_rule_registry.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/context_value_attribution.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/contextual_fetch_api.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/curation_loop.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/diff_injector.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/diversity_constraint.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/domain_decay_config.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/fallback_staleness_gate.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/integrity_check.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/memory_bank.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/mode_manager.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/position_optimizer.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/shadow_canary.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/staleness_manager.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/context/vector_bridge.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
