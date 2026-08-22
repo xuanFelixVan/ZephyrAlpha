@@ -46,7 +46,7 @@ scripts/governance/
 ├── run_all.py                     全维度扫描入口
 ├── status.py                      健康仪表盘
 ├── check_registry_consistency.py  跨登记表一致性校验
-├── script_manifest.yaml           脚本注册表（SSoT — 210 条目）
+├── script_manifest.yaml           脚本注册表（SSoT — 211 条目）
 └── quality_standard.md            审计脚本质量标准
 ```
 <!-- TREE-AUTO-END -->
