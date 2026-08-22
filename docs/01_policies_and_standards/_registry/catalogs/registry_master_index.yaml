@@ -1,11 +1,11 @@
-# 自动生成于 2026-08-21T21:11:42Z
+# 自动生成于 2026-08-22T05:50:45Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-21T21:11:42Z'
+generated_at: '2026-08-22T05:50:45Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 45
+total_registries: 46
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -45,7 +45,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 572
+  entry_count: 593
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -295,6 +295,14 @@ registries:
   maintenance: manual
   entry_count: 21
   status: active
+- registry_id: REG-LOG-001
+  name: Registry of Logs
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/registry_of_logs.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
 - registry_id: REG-RLM-001
   name: 风控限额登记表
   category: governance_rule
@@ -317,7 +325,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 217
+  entry_count: 218
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表
