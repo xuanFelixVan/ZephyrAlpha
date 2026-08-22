@@ -42,10 +42,15 @@ description: >-
 # v1.3.0 changelog(2026-08-15): 补登 DS-103 market_data.northbound_hold_snapshot（北向资金季度持仓快照，
 #   SRC-TUSHARE-001 hk_hold 口径，港交所 2024-08-19 日频断档后替代源）+ JOB-083 ingest.tushare_northbound_hold
 #   ——设计备忘 19 号施工落地（AI-NORTH-001），外资行为因子（待立项）的前提数据资产。
+# v1.3.4 changelog(2026-08-22): 补登 DS-108 market_data.market_breadth_snapshot（全市场分钟级宽度快照，
+#   SRC-QMT-001 get_full_tick 全市场推导口径）+ JOB-088 ingest.miniqmt_market_breadth_snapshot
+#   ——92号清单 §8.2 / 44号备忘 M1-④ 实时调度回路数据地基（M1-① 涨跌加速度/③ 相似日推演消费）。
+# v1.3.3 changelog(2026-08-22): 补登 DS-107 event.news_sentiment_window（新闻情绪窗口聚合，92号§8.4/44号§4 M3-②
+#   tracker #138 闭环；produced_by_job=null——由 nightly_sentiment_window 写入器被夜间批/盘前流程调用，无调度任务）
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.3.2
+version: 1.3.4
 created: '2026-08-13'
 last_updated: '2026-08-22'
 related_arch: '#ARCH-BREG-001'
@@ -53,7 +58,7 @@ unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 15, datasets: 106, jobs: 87}  # 2026-08-22 实测修正（92号 §7.2：DS-106 us_futures_intraday + JOB-087 补计）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+entry_counts: {sources: 15, datasets: 108, jobs: 88}  # 2026-08-22 实测修正（92号 §8.2：DS-108 market_breadth_snapshot + JOB-088 补计）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
 
 source_schema:
   source_id: str               # SRC-{PROVIDER}-{NNN}
@@ -4422,6 +4427,82 @@ datasets:
   updated_at: '2026-08-16'
   owner: MOD-L00-004
 
+# 92号清单 §8.4 / 44号备忘 §4 M3-②（2026-08-22）：tracker #138 闭环——夜间新闻情绪窗口落库（DS-104 同族）
+- dataset_id: DS-107
+  entity_name: event.news_sentiment_window
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: schemas/categories/market_news_sentiment_window.py
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_ASHARE_SIGNAL
+  pit_policy: strict
+  format_summary: 新闻/公告情绪窗口聚合表（夜间窗=前一交易日18:00含→交易日08:00不含，1h整点窗可选；scope=market市场级/symbol标的级预留；sentiment_index∈[-1,1]+正/负/中性计数+top_events_json头部事件摘要；data_source=rule/llm/llm_fallback打分方法），44号§4 M3-②夜间新闻情绪→盘前边界微调的数据地基；情绪分数作事件信号维度非独立alpha（26号§2.7裁定）
+  valid_since: '2026-08-22'
+  module_id: MOD-INT-AISA
+  design_maturity: testing
+  name: event.news_sentiment_window
+  name_zh: 新闻情绪窗口聚合
+  status: testing
+  version: 1.0.0
+  created_at: '2026-08-22'
+  updated_at: '2026-08-22'
+  owner: MOD-INT-AISA
+  produced_by_source: SRC-AKSHARE-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据", "事件", "情绪"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-08-22 建表实证：zephyr_writer TCP 直建（apply_market_tables_ddl 因 CREATE DATABASE 权限缺授权整体走 HTTP 500 降级——与 ipo_calendar 同根因 pre-existing，本表经探针绕开建成），--verify 引擎 ReplacingMergeTree ✅ 一致；写入→同键重写→FINAL 回读幂等实证（1 行 0.43 覆盖 0.42），window_date MATERIALIZED 派生正确；冒烟行已清理（mutation 异步已轮询归零）"
+  code_symbol: "src/zephyr/intelligence/nightly_sentiment_window.py::compute_nightly_sentiment"
+  code_fingerprint: null
+
+# 92号清单 §8.2 / 44号备忘 §2 M1-④ 行+§6（2026-08-22）：全市场分钟级宽度快照——M1-①③ 数据地基
+- dataset_id: DS-108
+  entity_name: market_data.market_breadth_snapshot
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: schemas/categories/market_breadth_snapshot.py
+  produced_by_job: JOB-088
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 分钟级全市场宽度快照（ts分钟截断：上涨/下跌/平盘家数、涨停/跌停/封住涨停/曾涨停(含炸板)计数、参与统计标的数、全市场累计成交额；degraded=1=ST集加载失败按非ST幅度近似），44号§9.1 M1-①涨跌加速度输入 s_t=(adv,dec,lu,attempted)+total 与§9.3 M1-③相似日KNN特征曲线的数据地基；涨跌停=最新价×昨收×板块差异化幅度推导（主板10%/ST 5%/创业科创20%/北交所30%，stk_limit DS-082 同口径）；TRAE-082 派生列不适用（无 symbol 维度非 securities 表，lint 同款口径）
+  valid_since: '2026-08-22'
+  module_id: MOD-L00-004
+  design_maturity: testing
+  name: market_data.market_breadth_snapshot
+  name_zh: 全市场分钟级宽度快照
+  status: testing
+  version: 1.0.0
+  created_at: '2026-08-22'
+  updated_at: '2026-08-22'
+  owner: MOD-L00-004
+  produced_by_source: SRC-QMT-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据", "行情", "高频", "市场结构"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-08-22 建表实证：基础账号 TCP 直建（apply_market_tables_ddl 因 zephyr_writer CREATE DATABASE 权限缺授权静默降级——与 ipo_calendar 同根因 pre-existing，本表经探针绕开建成），--verify 引擎 ReplacingMergeTree ✅ 一致；取数通道=miniqmt get_stock_list_in_sector(沪深A股)+get_full_tick 分批（_fetch_auction_book 既有实证同款）；周六模拟端/非交易日实采留首个交易日复测；单测覆盖合成tick映射/ST 5%/北交所30%/封板卖一无量/空跑不写零行"
+  code_symbol: "src/zephyr/data/implementations/miniqmt_provider.py::MiniQmtIngestProvider._fetch_market_breadth_snapshot"
+  code_fingerprint: null
+
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline
@@ -6949,4 +7030,34 @@ jobs:
   algorithm_status: "not_applicable"
   evidence: "2026-08-22 接口实证（92号§6.4评估报告）：新浪hf单次0.3s/未见限频（10s间隔）；兜底东财快照仅价格字段（无时间戳，周六量仓口径跨品种新旧不一故量仓仅参考）；分时段频率（美股时段60s/盘前30-60s）为留痕优化项，当前与intraday_realtime族同频5分钟"
   code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_us_futures_intraday"
+  code_fingerprint: null
+
+# 92号清单 §8.2 / 44号备忘 §2 M1-④ 行（2026-08-22）：全市场分钟级宽度快照采集任务
+- job_id: JOB-088
+  job_name: ingest.miniqmt_market_breadth_snapshot
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/miniqmt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-108
+  pit_relevance: strict
+  description: 全市场分钟级宽度快照（tasks.yaml market_breadth_snapshot_minute，L2 intraday_minute 族——族槽位当前 */5 9-15 实测，1分钟级节拍提速留痕为后续项；miniqmt get_stock_list_in_sector(沪深A股)+get_full_tick 200只/批→aggregate_market_ticks 纯函数聚合单行：涨跌家数/涨跌停/曾涨停/封住/累计成交额；ST集 st_stock_list 最近可得快照加载失败→degraded=1 留痕不炸；total_count=0 空跑不写零行防污染时序；ReplacingMergeTree(trade_date,ts) 同分钟幂等）——44号 M1-④ 数据地基，M1-①③ 消费；天然无副源（实时全市场 tick 仅 miniqmt 通道），fallback_sources 显式不配置
+  module_id: MOD-L00-004
+  design_maturity: testing
+  name: ingest.miniqmt_market_breadth_snapshot
+  name_zh: 全市场分钟级宽度快照接入
+  status: testing
+  version: 1.0.0
+  created_at: '2026-08-22'
+  updated_at: '2026-08-22'
+  owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据", "行情", "高频", "市场结构"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-08-22 建表+注册实证：c1_market.market_breadth_snapshot ReplacingMergeTree ✅ 一致；capability 路由+meta 双侧注册（check_route_meta_consistency 同款断言入测试）；周六非交易日实采不可证，留首个交易日盘中复测（同族 futures_kline_qmt 同款局限口径）"
+  code_symbol: "src/zephyr/data/implementations/miniqmt_provider.py::MiniQmtIngestProvider._fetch_market_breadth_snapshot"
   code_fingerprint: null

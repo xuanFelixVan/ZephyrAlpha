@@ -347,7 +347,11 @@ SETTINGS index_granularity = 8192
 # 不内联 fallback：DDL 部署必须 fail-closed（导入失败即报错），防止静默使用漂移副本建错表
 # tracker #114 / 37号 §3.2a（2026-08-17 AI-IPO-001）：IPO 日历/募资规模（巨潮新股列表）
 # 92号清单 §7.2（2026-08-22）：market_us_futures_intraday=美股期指 ES/NQ + A50 盘中实时快照（44号 §9.8 通道3）
+# 92号清单 §8.4（2026-08-22）：market_news_sentiment_window=夜间新闻情绪窗口落库（44号 §4 M3-②，tracker #138 闭环）
+# 92号清单 §8.2（2026-08-22）：market_breadth_snapshot=全市场分钟级宽度快照（44号 M1-④ 数据地基，M1-①/③ 消费）
+from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
 from schemas.categories.market_ipo_calendar import IPO_CALENDAR_DDL
+from schemas.categories.market_news_sentiment_window import NEWS_SENTIMENT_WINDOW_DDL
 from schemas.categories.market_stk_limit import STK_LIMIT_DDL
 from schemas.categories.market_suspend import SUSPEND_DDL
 from schemas.categories.market_us_futures_intraday import US_FUTURES_INTRADAY_DDL
@@ -373,6 +377,10 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.ipo_calendar", IPO_CALENDAR_DDL),
     # 92号清单 §7.2（2026-08-22）：美股期指 ES/NQ + A50 盘中实时快照
     ("c1_market.us_futures_intraday", US_FUTURES_INTRADAY_DDL),
+    # 92号清单 §8.4（2026-08-22）：夜间新闻情绪窗口落库（tracker #138 闭环）
+    ("c1_market.news_sentiment_window", NEWS_SENTIMENT_WINDOW_DDL),
+    # 92号清单 §8.2（2026-08-22）：全市场分钟级宽度快照（44号 M1-④ 数据地基）
+    ("c1_market.market_breadth_snapshot", MARKET_BREADTH_SNAPSHOT_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -407,6 +415,10 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "ipo_calendar": "ReplacingMergeTree",
     # 92号清单 §7.2（2026-08-22）：高频快照，按 (symbol, trade_date, timestamp) 去重
     "us_futures_intraday": "ReplacingMergeTree",
+    # 92号清单 §8.4（2026-08-22）：低频窗口写入，按 (scope, symbol, window_type, window_ts) 同键替换幂等
+    "news_sentiment_window": "ReplacingMergeTree",
+    # 92号清单 §8.2（2026-08-22）：分钟级快照，按 (trade_date, ts) 同分钟重跑幂等替换
+    "market_breadth_snapshot": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"
@@ -465,13 +477,13 @@ def verify() -> int:
         status = "✅ 一致" if matches else "❌ 不一致"
         if not matches:
             all_match = False
-        print(f"{table:<25} {expected_prefix:<25} {engine:<25} {str(is_replacing):<15} {status}")
+        print(f"{table:<25} {expected_prefix:<25} {engine:<25} {is_replacing!s:<15} {status}")
 
     extra = set(actual.keys()) - set(_EXPECTED_ENGINES.keys())
     for table in sorted(extra):
         engine = actual[table]
         is_replacing = ch_writer.is_replacing_engine(f"{_DATABASE}.{table}")
-        print(f"{table:<25} {'(未预期)':<25} {engine:<25} {str(is_replacing):<15} ⚠️ 未在选型矩阵中")
+        print(f"{table:<25} {'(未预期)':<25} {engine:<25} {is_replacing!s:<15} ⚠️ 未在选型矩阵中")
 
     print("-" * 100)
     if all_match:
