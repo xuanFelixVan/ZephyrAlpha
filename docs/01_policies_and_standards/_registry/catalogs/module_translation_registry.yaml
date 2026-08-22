@@ -52736,3 +52736,83 @@ algo_submodules:
   desc_zh: 龙虎榜次日溢价预判（44号 M3-⑤）：机构+一线游资净买入>5%且≥2席→次日高开候选；独食/一日游降权×0.3；机构净卖>5%→低开风险；跌停股知名游资抄底→反核观察名单
   desc_en: ''
   plain_zh: 龙虎榜盘后溢价分析器——前一交易日龙虎榜里谁在买决定明天大概率高开还是低开：机构和一线游资抱团大买=高开候选，单席位独食或一日游游资要打折，机构大额卖出=低开风险，跌停股有知名游资抄底=放进反核观察名单
+- module_path: src/zephyr/signal_ashare/futures_basis_monitor.py
+  domain_id: D_ASHARE_SIGNAL
+  module_id: MOD-SIG-058
+  name_zh: 期指基差情绪监测器
+  name_en: futures_basis_monitor
+  desc_zh: 国内股指期货基差情绪（44号 M1-⑧/M3-⑥）：IF/IC/IM/IH 主力基差率+贴水变化速率，贴水急扩=机构对冲避险急增（M2 降档触发）；交割周降权 0.5+持仓激增确认
+  desc_en: ''
+  plain_zh: 期指基差情绪监测器——股指期货是机构带杠杆的实时投票机，价格发现领先现货：期货比现货贴水急剧扩大=机构在疯狂买保护，情绪转差的领先信号；IM 看中证1000 中小盘情绪（打板主看），IF 看大盘蓝筹
+- module_path: src/zephyr/signal_ashare/option_sentiment.py
+  domain_id: D_ASHARE_SIGNAL
+  module_id: MOD-SIG-059
+  name_zh: 期权情绪三件套
+  name_en: option_sentiment
+  desc_zh: 期权情绪三件套（44号 M1-⑨，华泰 2026-03 机构范式）：成交量 PCR（无 OI 列降级口径）+300ETF IV Rank 分位（≥60 日守卫）+25Δ Skew 尾部偏度；PCR 低×Skew 高=多空分歧最大警示；到期日 M1 阈值×0.8
+  desc_en: ''
+  plain_zh: 期权情绪三件套——从期权市场读机构的真实恐惧程度：认沽/认购成交比太极端=情绪反转前兆，隐含波动率分位飙高=恐慌，尾部偏度左偏=机构在抢尾部保护；PCR 低（散户乐观）+Skew 高（机构买保护）的背离组合是最危险的多空分歧形态
+- module_path: src/zephyr/signal_ashare/sector_divergence.py
+  domain_id: D_ASHARE_SIGNAL
+  module_id: MOD-SIG-060
+  name_zh: 板块分歧度与轮动速度计
+  name_en: sector_divergence
+  desc_zh: 板块分歧度体系（44号 M1-⑩+SEC-03 合并）：消费 5 状态/虹吸态+电风扇速度计（周度行业排名变化均值>75 分位）+Top3 次日重合率+个股分歧度四件+5 状态×后续 3/5 日条件概率标定器；只出状态+风险清单不出方向
+  desc_en: ''
+  plain_zh: 板块分歧度与轮动速度计——板块涨得太一致（共识高潮/派发）=见顶风险，行业排名一天一变（电风扇行情）+没有连续领涨板块=无主线混沌，个股高位巨量长上影+炸板+游资对打=进风险清单；还给每个状态标历史条件概率（这个状态出现后 3 日跌超 2% 的历史频率和样本量），可复算不瞎编
+- module_path: src/zephyr/signal_ashare/mainline_candidates.py
+  domain_id: D_ASHARE_SIGNAL
+  module_id: MOD-SIG-061
+  name_zh: 主线候选榜
+  name_en: mainline_candidates
+  desc_zh: 最可能成主线板块 Top3-5（SEC-05）：HEALTHY_MAINLINE 判定+lead_streak 连续领涨+q3 动量前排+RRG 改善象限综合评分，附理由标签；无主线混沌态空榜+注解
+  desc_en: ''
+  plain_zh: 主线候选榜——每天盘后回答"哪几个板块最可能成为接下来的市场主线"：健康主线状态、连续领涨天数、动量前排、RRG 改善象限四个证据打分，每个候选都带理由标签；市场一片混沌就出空榜不硬凑
+- module_path: src/zephyr/signal_ashare/sector_leader.py
+  domain_id: D_ASHARE_SIGNAL
+  module_id: MOD-SIG-062
+  name_zh: 板块龙头识别器
+  name_en: sector_leader
+  desc_zh: 板块内个股角色四档识别（SEC-04，22号 §3.1⑦ 落码）：连板高度+成交额+涨幅辨识度→龙头×1.5/中军×1.2/跟风×0.8/中位股×0；观测先行不接交易
+  desc_en: ''
+  plain_zh: 板块龙头识别器——一个板块里谁是带头大哥（连板最高+成交额最大+涨幅最有辨识度=龙头）、谁是压阵的中军、谁是跟风小弟、谁是没人理的中位股；只看榜不下单
+- module_path: src/zephyr/data/sector_report_builder.py
+  domain_id: D_DATA
+  module_id: MOD-L00-009
+  name_zh: 板块盘后全景报告器
+  name_en: sector_report_builder
+  desc_zh: 板块盘后全景报告（SEC-01）：编排已落码板块库模块→Top10 板块榜（涨幅+五层资金流）+5 状态标签+涨停梯队+主线候选；落 .runtime/reports/ JSON+CLI 摘要
+  desc_en: ''
+  plain_zh: 板块盘后全景报告器——每天收盘后把全市场板块排个队：涨幅前 10 是谁、钱往哪里流、涨停梯队几连板、当前是什么结构状态、主线候选有哪几个；一份 JSON 报告供展示层消费
+- module_path: src/zephyr/data/sector_intraday_aggregator.py
+  domain_id: D_DATA
+  module_id: MOD-DATA-061
+  name_zh: 盘中板块实时聚合器
+  name_en: sector_intraday_aggregator
+  desc_zh: 盘中板块实时聚合（SEC-02）：sector_snapshot 30s 快照→板块资金流/涨跌家数/涨速榜/新开板聚合，18-30s 刷新级；调度挂接点=M1-④ 载体预留
+  desc_en: ''
+  plain_zh: 盘中板块实时聚合器——盘中最快 18 秒刷新一次板块榜单：钱在往哪个板块流、哪个板块涨速最快、哪些涨停板刚打开；给盘中监控和 M1-④ 调度回路当数据装配工
+- module_path: src/zephyr/regime/index_regime_panel.py
+  domain_id: D_REGIME
+  module_id: MOD-REGIME-008
+  name_zh: 四指数 regime 面板
+  name_en: index_regime_panel
+  desc_zh: 四指数 regime 面板（IDX-01，1 引擎×4 代理裁定）：沪深300/上证/创业板/科创50 各出 regime 概率分布+强弱排序+背离警示；只出概率不建点预测模型（90号 §7 铁律）
+  desc_en: ''
+  plain_zh: 四指数 regime 面板——四个大盘指数同屏看状态：各自处于哪种市场状态的概率多大、谁强谁弱、有没有权重掩护的背离假象；用同一个引擎四套配置，不给点位预测
+- module_path: src/zephyr/plan_engine/scenario_planner.py
+  domain_id: D_PLAN
+  module_id: MOD-PLAN-005
+  name_zh: 盘前多情景预案器
+  name_en: scenario_planner
+  desc_zh: 盘前多情景方案（44号 M3-③）：9:00 输出高开/平开/低开三情景操作预案+9:25 竞价实况二次匹配修正；竞价三细节（虚拟开盘偏离/匹配量放大/9:20 撤单识别虚假申报）；竞价仅验证不作下单通道（40号决策⑧）
+  desc_en: ''
+  plain_zh: 盘前多情景预案器——9 点先按外盘和资金面备好高开/平开/低开三套操作预案，9:25 集合竞价结果出来再校验一次：竞价量是平时的 1.2 倍以上且方向一致=确认，9:20 之前巨量挂撤=主力诱多诱空信号作废；竞价只看不动手
+- module_path: src/zephyr/reporting/prediction_log_writer.py
+  domain_id: D_REPORTING
+  module_id: MOD-RPT-028
+  name_zh: 预测输出统一落库写入器
+  name_en: prediction_log_writer
+  desc_zh: 每日预测类输出统一落库（44号 M4-②）：prediction_log 表（governance.db）——情绪分/边界修正/三情景/LLM 分析等每天预测了什么可回查可验证；幂等键同键跳过保首条，input_hash 内容寻址
+  desc_en: ''
+  plain_zh: 预测输出统一落库写入器——系统每天做的所有预测（情绪分、边界档位、三情景、LLM 分析）统一记进一张表，带模型版本和输入哈希，以后回查"那天到底预测了什么、准不准"全靠它

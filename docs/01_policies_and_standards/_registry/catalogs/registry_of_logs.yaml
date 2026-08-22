@@ -1,0 +1,966 @@
+# [A_config] module_id=REG-LOG-001 | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
+# ============================================================================
+# v1.0.0 首建（2026-08-22，92 号清单 §7.12 / 44 号备忘 §12.1 M4-①）：
+#   全仓日志/事件落盘写入点总索引（"100+ 日志的总清单"）——AI 进项目即可发现。
+#   覆盖口径：src/ + scripts/（_archive/__pycache__ 除外）四类写入模式扫描
+#   ①open(...,"a") 追加 ②logging FileHandler/RotatingFileHandler ③write_text 落
+#   日志/审计目标 ④治理库日志表 INSERT（drift_events/reconciliation_differences/
+#   prediction_log）；tests/ 临时落盘非生产日志不纳入。对账脚本=
+#   scripts/governance/check_registry_of_logs.py（warn-only MVP，exit 恒 0）。
+#   对标：机构 OMS/EMS 全量订单日志目录+数据字典；Fed SR 11-7 模型清单+验证记录。
+# ============================================================================
+module_id: REG-LOG-001
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-LOG-001
+name: Registry of Logs
+name_zh: 日志总账索引登记表
+description: >-
+  全仓日志/事件落盘载体唯一总索引（SSoT）。每条登记：log_id/路径/写入方（模块文件）/
+  消费方/schema 摘要/保留期/状态。用途：①AI 进项目即发现全量日志载体（44 号 §12.1
+  Owner 原话"所有日志应有一个总索引/总清单表"）；②日志→参数校准反馈闭环（M4-④）
+  与 experiment_registry 联动的发现入口；③治理审计对账（写入点漂移告警，配套
+  check_registry_of_logs.py warn-only 扫描）。范围=src/+scripts/ 生产写入点；
+  运行时数据本体（data/**、.runtime/**）不入 git、仅登记载体路径与口径。
+  边界：本表管"日志/事件落盘载体"，业务数据资产（CH 表/数据集/任务）归
+  data_asset_registry.yaml（REG-DATAFLOW-001），预测类输出统一落库表
+  prediction_log 同时在本表（LOG-DB-003）与治理库 DDL 登记。
+doc_type: register
+status: active
+version: 1.0.0
+owner: ZephyrAlpha-Owner
+tier: tier_1_governance
+created: '2026-08-22'
+last_updated: '2026-08-22'
+related_arch: '92号清单 §7.12（M4-①）/ 44号备忘 §12.1'
+unique_key: [log_id]
+entry_counts: {logs: 97}
+
+# 扫描口径（check_registry_of_logs.py 对账基准，改动需同步脚本常量）：
+scan_scope:
+  roots: [src, scripts]
+  exclude_dirs: [__pycache__, _archive]
+  patterns:
+    append_open: 'open(...,"a") 追加写入（含 Path.open("a")）'
+    file_handler: 'logging FileHandler/RotatingFileHandler/TimedRotatingFileHandler'
+    write_text_log: 'write_text 且同行含 log/audit/.jsonl/.ndjson 词元'
+    db_insert: 'INSERT INTO drift_events/reconciliation_differences/prediction_log'
+
+entry_schema:
+  log_id: str              # LOG-{FAMILY}-{NNN}；FAMILY∈{AUD,CMP,DED,SEC,MCP,GATE,RBK,INF,DATA,TRD,SIG,SKL,SHD,GOV,DRF,DB,OPS}
+  name_zh: str             # 中文名
+  kind: str                # event_log/audit_log/run_log/metrics_log/db_table/data_append
+  path: str                # 仓相对路径或模式（<>/{} 为注入/动态段；db_table 用 库文件::表名）
+  writers: list[str]       # 写入方模块文件（仓相对路径）——对账键
+  consumers: list[str]     # 消费方模块文件或角色（未知=人工查询排障）
+  schema_summary: str      # 记录字段摘要（一行）
+  retention: str           # 保留期口径
+  status: str              # active/legacy
+
+logs:
+  # ═══════════════ AUD — 治理审计链（不可变/WORM 族） ═══════════════
+  - log_id: LOG-AUD-001
+    name_zh: 治理审计事件主链
+    kind: audit_log
+    path: data/audit_trail/events.jsonl
+    writers: [src/zephyr/gov_audit/writer.py]
+    consumers: [src/zephyr/gov_audit/integrity.py, src/zephyr/gov_audit/anomaly.py, src/zephyr/gov_audit/merkle_hourly.py, src/zephyr/gov_audit/query.py, src/zephyr/gov_audit/replay_engine.py]
+    schema_summary: JSONL 追加+SHA-256 哈希链+HMAC-SHA256 签名+Lamport 时钟（event/ts/prev_hash/hash 等）
+    retention: permanent（核心不可变链；merkle_hourly 批次固化，log_rotation 归档 data/audit_history）
+    status: active
+  - log_id: LOG-AUD-002
+    name_zh: 门禁链持久化（gate chain）
+    kind: audit_log
+    path: data/audit_trail/gate_chain.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_enforcement/audit_chain_verifier.py]
+    consumers: [src/zephyr/gov_enforcement/rule_enforcement/audit_chain_verifier.py]
+    schema_summary: 门禁判定记录 JSONL 链（env ZEPHYR_GATE_CHAIN_PATH 可覆盖）
+    retention: permanent
+    status: active
+
+  # ═══════════════ CMP — 合规 ═══════════════
+  - log_id: LOG-CMP-001
+    name_zh: 合规检测日志
+    kind: audit_log
+    path: data/compliance_log/compliance_log.jsonl
+    writers: [src/zephyr/compliance/compliance_log.py]
+    consumers: [src/zephyr/compliance（域内查询）, 人工查询排障]
+    schema_summary: 合规检测事件 JSONL（append-only，newline=\n 固定）
+    retention: permanent
+    status: active
+
+  # ═══════════════ DED — 代码去重决策链 ═══════════════
+  - log_id: LOG-DED-001
+    name_zh: 决策审计链（code_dedup）
+    kind: audit_log
+    path: data/cache/decision_audit_chain.ndjson
+    writers: [src/zephyr/gov_code_quality/code_dedup/decision_auditor.py]
+    consumers: [人工查询排障]
+    schema_summary: NDJSON 决策事件链（44 号 §12.1 实证"已有"件）
+    retention: permanent
+    status: active
+
+  # ═══════════════ SEC — 安全 ═══════════════
+  - log_id: LOG-SEC-001
+    name_zh: LLM 行为审计日志
+    kind: audit_log
+    path: '{log_dir}/audit-{YYYY-MM-DD}.jsonl（log_dir 构造注入）'
+    writers: [src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py]
+    consumers: [人工查询排障]
+    schema_summary: LLM 行为事件 JSONL（按日切分）
+    retention: permanent
+    status: active
+  - log_id: LOG-SEC-002
+    name_zh: 防篡改证据日志
+    kind: audit_log
+    path: logs/tamper_evident.jsonl
+    writers: [src/zephyr/governance/security_governance/tamper_evident_log.py]
+    consumers: [人工查询排障]
+    schema_summary: 防篡改事件 JSONL（log_path 可注入覆盖）
+    retention: permanent
+    status: active
+
+  # ═══════════════ MCP — 集成审计 ═══════════════
+  - log_id: LOG-MCP-001
+    name_zh: MCP 工具调用审计
+    kind: audit_log
+    path: logs/mcp_audit/tools_call.jsonl
+    writers: [src/zephyr/integration/mcp/audit_logger.py]
+    consumers: [人工查询排障]
+    schema_summary: 工具调用记录 JSONL（log_dir 注入可覆盖默认 AUDIT_LOG_DIR）
+    retention: permanent
+    status: active
+
+  # ═══════════════ GATE — 提交网关/session worktree 族（.runtime） ═══════════════
+  - log_id: LOG-GATE-001
+    name_zh: worktree 操作遥测日志
+    kind: event_log
+    path: .runtime/worktree_ops_log.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/session_worktree.py, src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py, src/zephyr/shared/io/workspace_telemetry.py]
+    consumers: [人工查询排障, worktree 治理审计]
+    schema_summary: '{ts, op/session_id, source, file, content_hash, backup_path} JSONL'
+    retention: .runtime 运行时（gitignored，随治理清理）
+    status: active
+  - log_id: LOG-GATE-002
+    name_zh: worktree abort 审计
+    kind: audit_log
+    path: .runtime/gate_audit/worktree_abort.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/session_worktree.py, scripts/session_worktree.py]
+    consumers: [worktree 治理审计]
+    schema_summary: abort 事件 JSONL（四段验证留痕字段）
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-003
+    name_zh: force_merge 逃生通道使用记录
+    kind: audit_log
+    path: .runtime/gate_audit/force_merge_usage.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/session_worktree.py]
+    consumers: [worktree 治理审计]
+    schema_summary: '{timestamp, session_id} JSONL'
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-004
+    name_zh: 工作区漂移告警
+    kind: event_log
+    path: .runtime/workspace_drift_warn.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/session_worktree.py]
+    consumers: [人工查询排障]
+    schema_summary: 漂移告警事件 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-005
+    name_zh: session 心跳审计
+    kind: event_log
+    path: .runtime/sessions/<session_id>/heartbeat.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py]
+    consumers: [src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（merge/abort 清理）]
+    schema_summary: '{ts, pid, status(started/alive/exited/...), extra} JSONL，30s 间隔'
+    retention: session 生命周期（merge/abort 时删除 heartbeat.jsonl）
+    status: active
+  - log_id: LOG-GATE-006
+    name_zh: commit 锁降级回退记录
+    kind: audit_log
+    path: .runtime/gate_audit/commit_lock_fallback.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py]
+    consumers: [commit 网关治理审计]
+    schema_summary: 锁回退事件 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-007
+    name_zh: 网关 index 卫生事件
+    kind: audit_log
+    path: .runtime/gate_audit/gateway_index_hygiene.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py]
+    consumers: [commit 网关治理审计]
+    schema_summary: index 卫生事件 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-008
+    name_zh: claim 快照采纳记录
+    kind: audit_log
+    path: '{claim_snapshots_dir}/<session_id>_adopted.jsonl（注入）'
+    writers: [src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py]
+    consumers: [commit 网关治理审计]
+    schema_summary: 采纳快照 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-009
+    name_zh: worktree 状态快照
+    kind: event_log
+    path: .runtime/gate_audit/worktree_status_snapshots.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py]
+    consumers: [commit 网关治理审计]
+    schema_summary: 状态快照 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-010
+    name_zh: hook 跟踪漂移记录
+    kind: audit_log
+    path: .runtime/audit/hook_tracked_drift.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py]
+    consumers: [commit 网关治理审计]
+    schema_summary: hook 漂移事件 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-011
+    name_zh: --allow-overlap 旗标使用记录
+    kind: audit_log
+    path: .runtime/gate_audit/allow_overlap_usage.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py]
+    consumers: [commit 网关治理审计]
+    schema_summary: 旗标使用事件 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-012
+    name_zh: 受保护路径绕过记录
+    kind: audit_log
+    path: .runtime/gate_audit/protected_paths_bypass.jsonl
+    writers: [src/zephyr/gov_enforcement/commit_gates/protected_paths_gate.py]
+    consumers: [commit 网关治理审计]
+    schema_summary: 绕过事件 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-013
+    name_zh: worktree 漂移看门狗
+    kind: event_log
+    path: .runtime/audit/worktree_drift_watchdog.jsonl + .runtime/audit/watchdog.jsonl
+    writers: [src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py]
+    consumers: [人工查询排障]
+    schema_summary: 归因审计/看门狗事件 JSONL（永不回 tracked 区）
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-014
+    name_zh: claim 后外來改动审计
+    kind: audit_log
+    path: .runtime/gate_audit/post_claim_modifications.jsonl
+    writers: [src/zephyr/gov_enforcement/commit_gates/foreign_change_gate.py]
+    consumers: [commit 网关治理审计]
+    schema_summary: '{timestamp, session_id, file, baseline_size, current_size, adopted, post_claim_change} JSONL'
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-015
+    name_zh: capability 查阅审计（按 session）
+    kind: audit_log
+    path: .runtime/lookup_audit/<session_id>.jsonl
+    writers: [src/zephyr/governance/capability_lookup.py, src/zephyr/integration/mcp/rule_discovery_server.py]
+    consumers: [src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py]
+    schema_summary: capability 查阅事件 JSONL（无有效 session_id 跳过）
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-016
+    name_zh: git 性能监控日志
+    kind: metrics_log
+    path: .runtime/git_performance_log.jsonl
+    writers: [src/zephyr/governance/audit/git_performance_monitor_reconciler.py]
+    consumers: [src/zephyr/governance/audit/git_performance_monitor_reconciler.py（趋势检测回读）]
+    schema_summary: git 操作耗时记录 JSONL（写入失败仅 debug 不阻断）
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-GATE-017
+    name_zh: capability 查阅绕过审计
+    kind: audit_log
+    path: .runtime/lookup_audit/bypass_audit.jsonl
+    writers: [src/zephyr/governance/audit/reconciliation_registry.py]
+    consumers: [commit 网关治理审计]
+    schema_summary: 绕过事件 JSONL
+    retention: .runtime 运行时
+    status: active
+
+  # ═══════════════ RBK — 回滚族（.zephyr） ═══════════════
+  - log_id: LOG-RBK-001
+    name_zh: 拓扑变更日志
+    kind: event_log
+    path: .zephyr/topology_change_log.jsonl
+    writers: [src/zephyr/infrastructure/rollback/topology_change_log.py]
+    consumers: [人工查询排障]
+    schema_summary: '{timestamp_utc, details, ...} JSONL'
+    retention: permanent（.zephyr 治理区）
+    status: active
+  - log_id: LOG-RBK-002
+    name_zh: 回滚 WAL（预写日志）
+    kind: audit_log
+    path: .zephyr/rollback_wal.jsonl
+    writers: [src/zephyr/infrastructure/rollback/rollback_wal.py]
+    consumers: [src/zephyr/infrastructure/rollback/rollback_scheduler.py, src/zephyr/infrastructure/rollback/rollback_executor.py]
+    schema_summary: WAL 条目 JSONL（append-only，含 written_at）
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-003
+    name_zh: 回滚循环检测日志
+    kind: event_log
+    path: .zephyr/rollback_loop_log.jsonl
+    writers: [src/zephyr/infrastructure/rollback/rollback_loop_detector.py]
+    consumers: [人工查询排障]
+    schema_summary: '{gate_id, success, ...} JSONL'
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-004
+    name_zh: 回滚锁请求队列
+    kind: event_log
+    path: .zephyr/rollback_lock_queue.jsonl
+    writers: [src/zephyr/infrastructure/rollback/rollback_lock.py]
+    consumers: [src/zephyr/infrastructure/rollback/rollback_lock.py（队列消费）]
+    schema_summary: LockRequest JSONL 队列（有效行重写压缩同文件）
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-005
+    name_zh: 回滚丢弃审计
+    kind: audit_log
+    path: .zephyr/audit/rollback_discard_audit.jsonl
+    writers: [src/zephyr/infrastructure/rollback/rollback_executor.py]
+    consumers: [回滚治理审计]
+    schema_summary: 丢弃事件 JSONL
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-006
+    name_zh: 回滚操作审计
+    kind: audit_log
+    path: .zephyr/audit/rollback_operations_audit.jsonl
+    writers: [src/zephyr/infrastructure/rollback/rollback_executor.py]
+    consumers: [src/zephyr/infrastructure/rollback/rollback_abuse_detector.py]
+    schema_summary: 回滚操作事件 JSONL
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-007
+    name_zh: 回滚预算消耗日志
+    kind: metrics_log
+    path: .zephyr/rollback_budget_log.jsonl
+    writers: [src/zephyr/infrastructure/rollback/rollback_budget.py]
+    consumers: [人工查询排障]
+    schema_summary: '{reason, token_cost, ...} JSONL'
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-008
+    name_zh: 回滚审计枢纽
+    kind: audit_log
+    path: .zephyr/audit/rollback_nexus_audit.jsonl
+    writers: [src/zephyr/infrastructure/rollback/rollback_audit_nexus.py]
+    consumers: [回滚治理审计（summary 派生 .zephyr/audit/rollback_nexus_summary.json）]
+    schema_summary: '{success, details, ...} JSONL'
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-009
+    name_zh: 已知好状态台账
+    kind: audit_log
+    path: .zephyr/knowngoodstate_ledger.jsonl
+    writers: [src/zephyr/infrastructure/rollback/knowngoodstate_ledger.py]
+    consumers: [src/zephyr/infrastructure/rollback/checkpoint_gc.py]
+    schema_summary: 签名台账记录 JSONL（含 signature）
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-010
+    name_zh: 熔断开关记录
+    kind: audit_log
+    path: .zephyr/kill_switches.jsonl
+    writers: [src/zephyr/infrastructure/rollback/kill_switch.py]
+    consumers: [人工查询排障]
+    schema_summary: '{token_used, ...} JSONL'
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-011
+    name_zh: 意图归档清单
+    kind: event_log
+    path: .zephyr/intent_archive/manifest.jsonl
+    writers: [src/zephyr/infrastructure/rollback/intent_archiver.py]
+    consumers: [人工查询排障]
+    schema_summary: 意图清单 JSONL（intent 文本同目录落 .md）
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-012
+    name_zh: 取证 merkle 链
+    kind: audit_log
+    path: '{forensic_dir}/merkle_chain.jsonl（注入）'
+    writers: [src/zephyr/infrastructure/rollback/forensic.py]
+    consumers: [人工查询排障]
+    schema_summary: 取证链 JSONL
+    retention: permanent
+    status: active
+  - log_id: LOG-RBK-013
+    name_zh: 回滚演练日志+熔断告警
+    kind: event_log
+    path: .zephyr/drill_logs/ + .zephyr/ROLLBACK_MELTDOWN.json（告警单文件）
+    writers: [src/zephyr/infrastructure/rollback/rollback_drill.py]
+    consumers: [人工查询排障]
+    schema_summary: 演练日志文本 + meltdown 告警 JSON（write_text 快照）
+    retention: permanent
+    status: active
+
+  # ═══════════════ INF — 基础设施遥测/队列/SLA ═══════════════
+  - log_id: LOG-INF-001
+    name_zh: 领域事件存储
+    kind: event_log
+    path: data/events/event_store.jsonl
+    writers: [src/zephyr/infrastructure/events/event_store.py]
+    consumers: [人工查询排障]
+    schema_summary: DomainEvent JSONL（data_dir 注入可覆盖）
+    retention: permanent
+    status: active
+  - log_id: LOG-INF-002
+    name_zh: 任务调度持久化
+    kind: event_log
+    path: data/queue/schedules.jsonl
+    writers: [src/zephyr/infrastructure/queue/task_scheduler.py]
+    consumers: [src/zephyr/infrastructure/queue/task_scheduler.py（重启回放）]
+    schema_summary: ScheduledTask JSONL（append-only 逐任务追加）
+    retention: permanent
+    status: active
+  - log_id: LOG-INF-003
+    name_zh: kill-switch 探针指标
+    kind: metrics_log
+    path: data/metrics/kill_switch_probes.jsonl
+    writers: [src/zephyr/infrastructure/kill_switch_sim.py]
+    consumers: [src/zephyr/governance/audit/workspace_hygiene_reconciler.py]
+    schema_summary: 探针记录 JSONL（latency_us/target_ms 等；44 号 §12.1 实证"已有"件）
+    retention: permanent
+    status: active
+  - log_id: LOG-INF-004
+    name_zh: 系统遥测指标流
+    kind: metrics_log
+    path: data/telemetry/metrics.jsonl
+    writers: [src/zephyr/infrastructure/system_telemetry/facade.py]
+    consumers: [src/zephyr/infrastructure/system_telemetry/facade.py（get_recent_metrics 回读）]
+    schema_summary: 遥测 ring buffer 定期冲刷 JSONL（tmp+replace 主路径，PermissionError 降级追加）
+    retention: 滚动（内存 ring 定长冲刷，磁盘文件无轮转——容量治理另案）
+    status: active
+  - log_id: LOG-INF-005
+    name_zh: 调用链 trace 落盘
+    kind: event_log
+    path: data/traces/trace-<UTC 时间戳>.jsonl
+    writers: [src/zephyr/infrastructure/observability/trace_decorator.py]
+    consumers: [人工查询排障]
+    schema_summary: TraceSpan JSONL（flush 时按时间戳分文件）
+    retention: permanent
+    status: active
+  - log_id: LOG-INF-006
+    name_zh: 资产扫描安全访问日志
+    kind: audit_log
+    path: '{log_dir}/security_access_log.jsonl（注入）'
+    writers: [src/zephyr/infrastructure/asset_inventory/scanner.py]
+    consumers: [人工查询排障]
+    schema_summary: 访问记录 JSONL/CSV 追加（newline="" csv 模式同点）
+    retention: permanent
+    status: active
+  - log_id: LOG-INF-007
+    name_zh: 蓝图读取遥测
+    kind: metrics_log
+    path: data/telemetry/blueprint_reads.jsonl
+    writers: [src/zephyr/infrastructure/system_telemetry/metrics/blueprint_metrics.py]
+    consumers: [人工查询排障]
+    schema_summary: 蓝图读取事件 JSONL（tmp+replace 主路径，PermissionError 降级追加）
+    retention: permanent
+    status: active
+  - log_id: LOG-INF-008
+    name_zh: 治理脚本 findings 总账
+    kind: audit_log
+    path: scripts/governance/reports/findings.jsonl
+    writers: [src/zephyr/infrastructure/script_system/finding.py]
+    consumers: [src/zephyr/gov_audit/finding_ingest.py, scripts/governance 治理脚本族]
+    schema_summary: Finding 结构化 JSONL（dimension/severity/category/target_file/evidence/...）
+    retention: permanent
+    status: active
+  - log_id: LOG-INF-009
+    name_zh: SLA 违约日志
+    kind: event_log
+    path: data/sla/sla_breaches.jsonl
+    writers: [src/zephyr/infrastructure/sla/sla_monitor.py]
+    consumers: [人工查询排障]
+    schema_summary: 违约事件 JSONL（data_dir 注入可覆盖）
+    retention: permanent
+    status: active
+
+  # ═══════════════ DATA — 数据采集/调度 ═══════════════
+  - log_id: LOG-DATA-001
+    name_zh: 取数性能记录
+    kind: metrics_log
+    path: .runtime/fetch_perf/fetch_perf_YYYYMMDD.jsonl
+    writers: [src/zephyr/data/fetch_perf_recorder.py]
+    consumers: [人工查询排障]
+    schema_summary: '{task_id/source/capability/table/status/elapsed_sec/rows/error/ts} JSONL（按日分文件）'
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-DATA-002
+    name_zh: 本地回放缓存清单
+    kind: event_log
+    path: data/local_fallback/_manifest.jsonl
+    writers: [src/zephyr/data/local_replay.py]
+    consumers: [src/zephyr/data/local_replay.py（回放消费）]
+    schema_summary: 落盘分片清单 JSONL
+    retention: permanent
+    status: active
+  - log_id: LOG-DATA-003
+    name_zh: 损坏分片审计
+    kind: audit_log
+    path: data/local_fallback/corrupted_parts_audit.jsonl
+    writers: [src/zephyr/data/scheduler.py]
+    consumers: [人工查询排障]
+    schema_summary: 损坏分片事件 JSONL
+    retention: permanent
+    status: active
+  - log_id: LOG-DATA-004
+    name_zh: 调度器运行日志
+    kind: run_log
+    path: tmp/scheduler_run.log
+    writers: [src/zephyr/data/scheduler.py]
+    consumers: [人工查询排障]
+    schema_summary: logging 文本行（RotatingFileHandler 自治轮转）
+    retention: 10MB×5 轮转
+    status: active
+  - log_id: LOG-DATA-005
+    name_zh: tick 订阅器运行日志
+    kind: run_log
+    path: tmp/tick_subscriber_run.log
+    writers: [src/zephyr/data/tick_subscriber.py]
+    consumers: [人工查询排障]
+    schema_summary: logging 文本行（#ARCH-DATA-017 裁定B 进程内落盘）
+    retention: 10MB×5 轮转
+    status: active
+
+  # ═══════════════ TRD — 交易/执行 ═══════════════
+  - log_id: LOG-TRD-001
+    name_zh: 僵尸进程猎杀日志
+    kind: event_log
+    path: data/runtime/zombie_kill.log
+    writers: [src/zephyr/trading/zombie_scanner.py]
+    consumers: [人工查询排障]
+    schema_summary: '{pid, reason, ts} JSONL'
+    retention: permanent
+    status: active
+  - log_id: LOG-TRD-002
+    name_zh: AI 交易审计（哈希链）
+    kind: audit_log
+    path: '{log_dir}/ai_audit_YYYY-MM-DD.jsonl（log_dir 构造注入）'
+    writers: [src/zephyr/trading/ai_audit_logger.py]
+    consumers: [人工查询排障]
+    schema_summary: pydantic entry JSONL（prev_hash/entry_hash 链式）
+    retention: permanent
+    status: active
+  - log_id: LOG-TRD-003
+    name_zh: action_dispatcher 文件生命周期清单
+    kind: audit_log
+    path: '{BRAIN_BACKUPS_DIR}/manifest.jsonl + {BRAIN_TRASH_DIR}/trash_manifest.jsonl'
+    writers: [src/zephyr/trading/action_dispatcher/_file_lifecycle_manager.py]
+    consumers: [人工查询排障]
+    schema_summary: '{action, file, backup_path/trash_path, git_commit, ts} JSONL'
+    retention: permanent
+    status: active
+  - log_id: LOG-TRD-004
+    name_zh: action_dispatcher 审计写出
+    kind: audit_log
+    path: '{out_file}（调用方注入）'
+    writers: [src/zephyr/trading/action_dispatcher/_audit_log_writer.py]
+    consumers: [人工查询排障]
+    schema_summary: '{needs_human, reason, ...} JSONL'
+    retention: permanent
+    status: active
+  - log_id: LOG-TRD-005
+    name_zh: 夜班登记队列
+    kind: event_log
+    path: '{storage_path}（构造注入）'
+    writers: [src/zephyr/trading/night_shift_queue.py]
+    consumers: [人工裁定（次日人类复核）]
+    schema_summary: NightShiftEntry pydantic JSONL（NSL-XXXX 幂等 ID；写后 write_text 整文件压缩同路径）
+    retention: permanent
+    status: active
+  - log_id: LOG-TRD-006
+    name_zh: 成交 Fill 落盘（56号文 G3）
+    kind: event_log
+    path: '{fills_dir}/YYYYMMDD.jsonl（构造注入）'
+    writers: [src/zephyr/ex_core/fill_handler.py]
+    consumers: [src/zephyr/ex_core/fill_handler.py（query_fills_by_date 回放）, src/zephyr/trading/recon_runner.py（对账链路）]
+    schema_summary: '{trade_date, fill} JSONL（append-only，落盘失败不阻断成交主流程）'
+    retention: permanent
+    status: active
+  - log_id: LOG-TRD-007
+    name_zh: dream_cycle 遗忘日志
+    kind: event_log
+    path: '{archive_dir}/forgotten.log（构造注入）'
+    writers: [src/zephyr/trading/dream_cycle.py]
+    consumers: [人工查询排障]
+    schema_summary: 遗忘条目文本（write_text 初始化+追加）
+    retention: permanent
+    status: active
+  - log_id: LOG-TRD-008
+    name_zh: 执行审计台账（EX）
+    kind: audit_log
+    path: '{persist_path}.jsonl（构造注入；tmp+replace 整链重写）'
+    writers: [src/zephyr/ex_core/audit_journal/auditor.py]
+    consumers: [src/zephyr/ex_core/audit_journal/auditor.py（load 回放校验）]
+    schema_summary: '{record_id, timestamp, event_type, order_id, symbol, source, detail, prev_hash, record_hash} JSONL 哈希链'
+    retention: permanent
+    status: active
+  - log_id: LOG-TRD-009
+    name_zh: 持仓审计台账（POS）
+    kind: audit_log
+    path: '{persist_path}.jsonl（构造注入；tmp+replace 整链重写）'
+    writers: [src/zephyr/position/services/position_audit_logger.py]
+    consumers: [src/zephyr/position/services/position_audit_logger.py（load 回放校验）]
+    schema_summary: '{record_id, timestamp, event_type, symbol, source, detail, prev_hash, record_hash} JSONL 哈希链'
+    retention: permanent
+    status: active
+
+  # ═══════════════ SIG — 信号审计 ═══════════════
+  - log_id: LOG-SIG-001
+    name_zh: 信号审计 WORM 日志
+    kind: audit_log
+    path: '{log_dir}/audit_YYYYMMDD.log（AuditLogConfig.log_dir 注入；无 log_dir=纯内存）'
+    writers: [src/zephyr/signal_fundamental/audit/signal_audit_logger.py]
+    consumers: [人工查询排障]
+    schema_summary: WORM 追加（链式哈希，不可改不可删）
+    retention: permanent（WORM）
+    status: active
+  - log_id: LOG-SIG-002
+    name_zh: 决策快照记录
+    kind: audit_log
+    path: '{log_path}（构造注入；None=纯内存模式）'
+    writers: [src/zephyr/signal_fundamental/audit/decision_snapshot.py]
+    consumers: [src/zephyr/signal_fundamental/audit/decision_snapshot.py（内存索引溯源）]
+    schema_summary: DecisionSnapshot.to_dict() JSONL（sort_keys 稳定序；degraded 即告警）
+    retention: permanent
+    status: active
+
+  # ═══════════════ SKL — 技能族 journals ═══════════════
+  - log_id: LOG-SKL-001
+    name_zh: 技能遥测日志
+    kind: metrics_log
+    path: _journals/skill_telemetry.jsonl（cwd 相对——消费方需同 cwd 锚定，留痕待治理）
+    writers: [src/zephyr/autonomy_core/skills/skill_telemetry.py]
+    consumers: [人工查询排障]
+    schema_summary: 遥测条目 JSONL
+    retention: permanent
+    status: active
+  - log_id: LOG-SKL-002
+    name_zh: 技能事件日志
+    kind: event_log
+    path: _journals/skill_events.jsonl（cwd 相对）
+    writers: [src/zephyr/autonomy_core/skills/skill_observability.py]
+    consumers: [人工查询排障]
+    schema_summary: '{timestamp, ...} JSONL'
+    retention: permanent
+    status: active
+  - log_id: LOG-SKL-003
+    name_zh: 技能生命周期迁移日志
+    kind: event_log
+    path: _journals/skill_transitions.jsonl（cwd 相对）
+    writers: [src/zephyr/autonomy_core/skills/skill_lifecycle.py]
+    consumers: [人工查询排障]
+    schema_summary: Transition JSONL
+    retention: permanent
+    status: active
+  - log_id: LOG-SKL-004
+    name_zh: 技能反馈信号日志
+    kind: event_log
+    path: _journals/skill_feedback.jsonl（cwd 相对）
+    writers: [src/zephyr/autonomy_core/skills/skill_feedback.py]
+    consumers: [src/zephyr/autonomy_core/skills/skill_feedback.py（load_history 回读）]
+    schema_summary: FeedbackSignal JSONL
+    retention: permanent
+    status: active
+  - log_id: LOG-SKL-005
+    name_zh: 技能工厂 CAS 审计
+    kind: audit_log
+    path: .runtime/audit/skill_factory_cas.jsonl
+    writers: [src/zephyr/autonomy_core/skills/skill_factory.py]
+    consumers: [人工查询排障]
+    schema_summary: CAS 事件 JSONL
+    retention: .runtime 运行时
+    status: active
+
+  # ═══════════════ SHD — shared 层 ═══════════════
+  - log_id: LOG-SHD-001
+    name_zh: StateStore 去重 ID 存储
+    kind: data_append
+    path: '{path}（构造注入——AppendOnlyDedupSet 持久化载体，非事件日志）'
+    writers: [src/zephyr/shared/state_store.py]
+    consumers: [src/zephyr/shared/state_store.py（启动加载去重）]
+    schema_summary: 去重 ID 逐行文本（非法 ID 含换行 fail-closed 拒绝）
+    retention: permanent
+    status: active
+  - log_id: LOG-SHD-002
+    name_zh: session 审计轨迹
+    kind: audit_log
+    path: logs/audit/<session_id>.jsonl
+    writers: [src/zephyr/shared/session/session_audit.py]
+    consumers: [人工查询排障]
+    schema_summary: SessionRecord JSONL（session_id 消毒防路径穿越）
+    retention: permanent
+    status: active
+  - log_id: LOG-SHD-003
+    name_zh: safe_write 审计
+    kind: audit_log
+    path: .runtime/audit/safe_write.jsonl
+    writers: [src/zephyr/shared/io/file_utils.py]
+    consumers: [人工查询排障]
+    schema_summary: 安全写事件 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-SHD-004
+    name_zh: feature flag 审计
+    kind: audit_log
+    path: .runtime/audit/feature_flags.jsonl
+    writers: [src/zephyr/shared/foundation/flags.py]
+    consumers: [人工查询排障]
+    schema_summary: flag 变更事件 JSONL（#55 治本迁出 tracked 区）
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-SHD-005
+    name_zh: root logger JSON 行输出
+    kind: run_log
+    path: '{json_file}（configure_root_logger 参数注入；None=不写文件）'
+    writers: [src/zephyr/shared/utils/logging.py]
+    consumers: [人工查询排障]
+    schema_summary: logging FileHandler JSON 行（通用设施，非独立日志载体）
+    retention: 调用方自治
+    status: active
+
+  # ═══════════════ GOV — 治理智能 ═══════════════
+  - log_id: LOG-GOV-001
+    name_zh: 自治度历史
+    kind: metrics_log
+    path: data/rollback/autonomy/autonomy_history.jsonl
+    writers: [src/zephyr/governance/intelligence_governance/autonomy_dashboard.py]
+    consumers: [src/zephyr/governance/intelligence_governance/autonomy_dashboard.py（趋势回读）]
+    schema_summary: 自治度快照 JSONL
+    retention: permanent
+    status: active
+  - log_id: LOG-GOV-002
+    name_zh: 持续信任台账
+    kind: audit_log
+    path: data/rollback/trust/continuous_trust_ledger.jsonl
+    writers: [src/zephyr/governance/intelligence_governance/continuous_trust.py]
+    consumers: [人工查询排障]
+    schema_summary: 信任台账 JSONL
+    retention: permanent
+    status: active
+
+  # ═══════════════ DRF — 漂移治理 ═══════════════
+  - log_id: LOG-DRF-001
+    name_zh: drift 热修绕过审计
+    kind: audit_log
+    path: '{audit_dir}/hotfix_audit.jsonl（注入）'
+    writers: [src/zephyr/gov_drift/drift_hotfix_bypass.py]
+    consumers: [人工查询排障]
+    schema_summary: 热修绕过事件 JSONL
+    retention: permanent
+    status: active
+  - log_id: LOG-DRF-002
+    name_zh: drift 事件年度归档（派生）
+    kind: audit_log
+    path: data/drift_audit/archive/drift_YYYY.jsonl
+    writers: [src/zephyr/gov_drift/trend_analyzer.py]
+    consumers: [人工查询排障]
+    schema_summary: drift 事件导出 JSONL（#62 子裁定 export-only 派生物，SSoT=LOG-DB-001 不删行；重复导出需下游去重）
+    retention: permanent（派生物）
+    status: active
+
+  # ═══════════════ DB — 治理库日志表（governance.db） ═══════════════
+  - log_id: LOG-DB-001
+    name_zh: drift 事件表
+    kind: db_table
+    path: data/databases/governance.db::drift_events
+    writers: [src/zephyr/gov_drift/drift_engine.py]
+    consumers: [src/zephyr/gov_drift/trend_analyzer.py, src/zephyr/gov_drift/dashboard.py]
+    schema_summary: 22 列 legacy schema（event_id/drift_type/detector_id/module_id/severity/state/created_at/...；append-only 唯一写方=drift_engine）
+    retention: permanent（tamper_proof no-delete trigger 设计终局；90 天热数据+导出归档 LOG-DRF-002）
+    status: active
+  - log_id: LOG-DB-002
+    name_zh: 回测 vs 模拟盘对账差异表
+    kind: db_table
+    path: data/databases/governance.db::reconciliation_differences
+    writers: [src/zephyr/trading/recon_runner.py]
+    consumers: [人工查询排障（56号文 §6 C10 闭环首查）]
+    schema_summary: '{trade_date, recon_layer(trade/position/cash), trade_id, symbol, drift_type, system_value, broker_value, diff, detected_at, schema_version}（#234 已建表，append-only 仅 INSERT）'
+    retention: permanent
+    status: active
+  - log_id: LOG-DB-003
+    name_zh: 每日预测类输出统一落库表（M4-②）
+    kind: db_table
+    path: data/databases/governance.db::prediction_log
+    writers: [src/zephyr/reporting/prediction_log_writer.py]
+    consumers: [92号 §8.7 M4-④ 命中率统计器/experiment_registry 触发器（规划）, 波5 各生产模块回查]
+    schema_summary: '{trade_date, module, prediction_type, payload_json, asof_ts, model_version, prompt_version, input_hash, created_at} + UNIQUE(trade_date,module,prediction_type,input_hash) 幂等键（92号 §7.13，D2 授权 2026-08-22 建表）'
+    retention: permanent
+    status: active
+
+  # ═══════════════ OPS — scripts/ 运维侧 ═══════════════
+  - log_id: LOG-OPS-001
+    name_zh: CH 冷归档清单
+    kind: audit_log
+    path: E:/zephyr_cold_archive/archive_manifest.jsonl（仓外绝对路径——冷归档盘）
+    writers: [scripts/ch/archiver.py]
+    consumers: [人工查询排障]
+    schema_summary: 归档分片清单 JSONL
+    retention: permanent（仓外冷存）
+    status: active
+  - log_id: LOG-OPS-002
+    name_zh: ops_guard 删除审计
+    kind: audit_log
+    path: .runtime/gate_audit/ops_guard_delete.jsonl
+    writers: [scripts/ops_guard.py]
+    consumers: [治理审计]
+    schema_summary: '{pid, ...} 删除事件 JSONL'
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-OPS-003
+    name_zh: 隔离区分支引用日志
+    kind: audit_log
+    path: .runtime/quarantine/branch_refs.log
+    writers: [scripts/session_worktree.py]
+    consumers: [治理审计]
+    schema_summary: 分支引用文本行
+    retention: .runtime 运行时（隔离区生命周期）
+    status: active
+  - log_id: LOG-OPS-004
+    name_zh: git_guard 自伤审计
+    kind: audit_log
+    path: .runtime/gate_audit/git_guard_self_harm.jsonl
+    writers: [scripts/git_guard.py]
+    consumers: [治理审计]
+    schema_summary: '{files, ...} 自伤事件 JSONL'
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-OPS-005
+    name_zh: depgraph 设计节点删除审计
+    kind: audit_log
+    path: .runtime/gate_audit/design_node_delete.jsonl + .runtime/gate_audit/depgraph_anchor_cascade.jsonl
+    writers: [scripts/governance/apply_depgraph.py]
+    consumers: [治理审计]
+    schema_summary: 删除/级联事件 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-OPS-006
+    name_zh: 草稿区归档审计
+    kind: audit_log
+    path: .runtime/audit/archive_log.jsonl
+    writers: [scripts/governance/d1_structure/archive_drafts_zone.py, scripts/governance/d1_structure/drafts_zone_archiver.py]
+    consumers: [治理审计]
+    schema_summary: 归档事件 JSONL（newline=\n 固定）
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-OPS-007
+    name_zh: worktree 跳过记录
+    kind: audit_log
+    path: .runtime/gate_audit/worktree_skip.jsonl
+    writers: [scripts/governance/d11_compliance/validate_worktree_required.py]
+    consumers: [治理审计]
+    schema_summary: 跳过事件 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-OPS-008
+    name_zh: 候选模块登记表追加（非事件日志）
+    kind: data_append
+    path: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml（追加 YAML 块保注释）
+    writers: [scripts/governance/harvest_candidates_from_drafts.py]
+    consumers: [ROOR 登记流程]
+    schema_summary: YAML 块追加（登记表写入，登记以闭合写入点对账）
+    retention: permanent（tracked）
+    status: active
+  - log_id: LOG-OPS-009
+    name_zh: algo_flow 翻译同步运行记录
+    kind: event_log
+    path: .runtime/audit/algo_flow_translation_sync_runs.jsonl
+    writers: [scripts/governance/_shared/algo_flow_translation_sync.py]
+    consumers: [治理审计]
+    schema_summary: 同步运行事件 JSONL
+    retention: .runtime 运行时
+    status: active
+  - log_id: LOG-OPS-010
+    name_zh: 治理脚本 SLA 指标
+    kind: metrics_log
+    path: scripts/governance/meta/sla_metrics.jsonl
+    writers: [scripts/governance/run_all.py]
+    consumers: [治理审计]
+    schema_summary: 脚本运行耗时/超时 JSONL
+    retention: permanent（tracked 目录，内容运行时滚动）
+    status: active
+  - log_id: LOG-OPS-011
+    name_zh: VMS cron 监控日志
+    kind: event_log
+    path: data/vector_db/cron_monitor_log.jsonl
+    writers: [scripts/governance/vms/vms_cron_monitor.py]
+    consumers: [治理审计]
+    schema_summary: cron 监控事件 JSONL
+    retention: permanent（data/vector_db gitignored 运行时）
+    status: active
+  - log_id: LOG-OPS-012
+    name_zh: CH 健康探针运行日志
+    kind: run_log
+    path: logs/ch_health_probe.log（env CH_PROBE_LOG 可覆盖）
+    writers: [scripts/ops/ch_health_probe.py]
+    consumers: [人工查询排障]
+    schema_summary: logging 文本行（RotatingFileHandler）
+    retention: 10MB×5 轮转
+    status: active
+  - log_id: LOG-OPS-013
+    name_zh: 脚本腐化检测 findings
+    kind: audit_log
+    path: scripts/governance/meta/script_rot_findings.jsonl
+    writers: [scripts/governance/meta/detect_script_rot.py]
+    consumers: [治理审计]
+    schema_summary: 腐化脚本 finding JSONL
+    retention: permanent（meta 目录运行时滚动）
+    status: active
+  - log_id: LOG-OPS-014
+    name_zh: 脚本运行成本台账
+    kind: metrics_log
+    path: scripts/governance/meta/script_cost_db.jsonl
+    writers: [scripts/governance/meta/track_script_costs.py]
+    consumers: [治理审计]
+    schema_summary: '{tokens, cost_usd, detail, ...} JSONL'
+    retention: permanent（meta 目录运行时滚动）
+    status: active
+  - log_id: LOG-OPS-015
+    name_zh: 跨模型共识评估记录
+    kind: event_log
+    path: scripts/governance/meta/cross_model_consensus.jsonl
+    writers: [scripts/governance/meta/validate_cross_model_consensus.py]
+    consumers: [治理审计]
+    schema_summary: 共识评估结果 JSONL
+    retention: permanent（meta 目录运行时滚动）
+    status: active
+  - log_id: LOG-OPS-016
+    name_zh: 假阴性检测用例结果
+    kind: event_log
+    path: scripts/governance/meta/false_negative_cases/results.jsonl
+    writers: [scripts/governance/meta/validate_false_negatives.py]
+    consumers: [治理审计]
+    schema_summary: 用例结果 JSONL
+    retention: permanent（meta 目录运行时滚动）
+    status: active
+  - log_id: LOG-OPS-017
+    name_zh: 端到端 benchmark 历史
+    kind: metrics_log
+    path: scripts/governance/meta/benchmark/history.jsonl
+    writers: [scripts/governance/meta/validate_end_to_end_benchmark.py]
+    consumers: [治理审计]
+    schema_summary: '{by_severity, degradation_detected, ...} JSONL'
+    retention: permanent（meta 目录运行时滚动）
+    status: active
+  - log_id: LOG-OPS-018
+    name_zh: 阈值变更审计
+    kind: audit_log
+    path: scripts/governance/meta/threshold_changes_audit.jsonl
+    writers: [scripts/governance/meta/validate_threshold_changes.py]
+    consumers: [治理审计]
+    schema_summary: '{content_hash_after, diff_preview, ...} JSONL'
+    retention: permanent（meta 目录运行时滚动）
+    status: active

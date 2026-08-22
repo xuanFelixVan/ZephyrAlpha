@@ -18093,3 +18093,175 @@ entries:
   related_rules: '44号 §9.7; 92号清单 §6.3; CAND-PLAN-002; 62号 seat 注册表'
   created: '2026-08-22'
   last_updated: '2026-08-22'
+# --- #ARCH-146: 期指基差情绪通道落地（44号 M1-⑧/M3-⑥+采集配置，MOD-SIG-058） ---
+- issue_id: '#ARCH-146'
+  title: '期指基差情绪监测（MOD-SIG-058）+期指/ES·NQ/A50 盘中采集通道——期指三时点通道裁定四/五落地'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：期货=机构带杠杆的实时投票机，价格发现领先现货（恐慌时贴水急扩
+    先行）——44号 §1 缺口④。两件：①MOD-SIG-058 futures_basis_monitor（基差率/
+    贴水 30m 速率/贴水急扩>1.5σ 降档触发/交割周降权 0.5/持仓激增确认/IM-中小盘·
+    IF-大盘分工注解；分钟腿未积累期 basis_vel 以日频代理并显式标 vel_source=d1_proxy）；
+    ②采集通道：tasks.yaml futures_kline_qmt symbols 补 IF00/IC00/IM00/IH00.IF 主力连续
+    挪盘中族+us_futures_intraday_snapshot 新任务（新浪 hf 裸调主源/东财快照兜底+3 次
+    失败自动切换）+新表 us_futures_intraday（DDL-as-Code 已建表验证）+期指日频回补
+    实证（IF0/IC0/IH0 各 2329 行 2017 起、IM0 991 行 2022 上市起，复用既有写入通道）。
+    裁定留痕：miniqmt 中金所 market 码=IF（非 .CFFEX 字面，迅投官方示例+既有落库行
+    互证）；ES/NQ 须裸调新浪（akshare wrapper 无品种）；东财 push2his 族本机不可达
+    降级快照级（环境级风险登记）。
+  impact:
+    - 'src/zephyr/signal_ashare/futures_basis_monitor.py（新建，testing 封顶）'
+    - 'src/zephyr/data/config/tasks.yaml（futures_kline_qmt symbols+盘中族；+us_futures_intraday_snapshot）'
+    - 'src/zephyr/data/implementations/akshare_provider.py（+us_futures_intraday 能力）'
+    - 'schemas/categories/market_us_futures_intraday.py + c1_market.us_futures_intraday（已建表）'
+    - 'data_asset_registry.yaml（DS-106/JOB-087）'
+    - 'kline_futures 期指日频回补（IF0/IC0/IH0/IM0，CH 写=92号 D2 授权）'
+  fix_phase: '已落地（2026-08-22）：17+15 新用例全绿；e2e 采集→写入→回读通过；首个交易日盘中复测留痕 tasks.yaml'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §9.8/§11 裁定四/裁定五; 92号清单 §7.1/§7.2; CAND-SIG-023/CAND-PLAN-002'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-147: 期权情绪三件套落地（44号 M1-⑨，MOD-SIG-059） ---
+- issue_id: '#ARCH-147'
+  title: 'MOD-SIG-059 option_sentiment——华泰 2026-03 机构范式衍生品少而精（PCR+IV Rank+Skew）接入'
+  severity: P2中
+  category: architecture
+  adjudication: |
+    目的声明（D2）：44号 §1 缺口——衍生品维度机构情绪未消费；华泰范式"A 股单边做多
+    市场衍生品只取 PCR+IV 两指标最有效（多了反而噪音）"。降级实证（2026-08-22 直查）：
+    三表均无 open_interest 列→PCR 用成交量口径（pcr_basis=volume 契约留痕）；
+    iv_surface.delta 全 0 不可用→平值=strike 中位数近似、25Δ 选约用 greeks.delta；
+    Skew 窗仅 ~14 交易日→min_periods=10 守卫常态降级；IV Rank min_periods=60 守卫。
+    纪律：三件套权重≤0.10（少而精）；PCR 低×Skew 高背离=多空分歧最大警示；期权到期
+    日输出 m1_threshold_scale=0.8（防伽马挤压假情绪，2026-08-21 实证）。
+  impact:
+    - 'src/zephyr/signal_ashare/option_sentiment.py（新建，testing 封顶）'
+    - 'tests/signal_ashare/test_option_sentiment.py（19 用例）'
+  fix_phase: '已落地（2026-08-22）：19 新用例全绿+域收口零新增红；CH 端到端 smoke 待 VM 稳定后补留痕'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §9.9/§2.1; 92号清单 §7.3/D4; CAND-SIG-023'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-148: 板块分歧度与概率标定落地（44号 M1-⑩+审查报告 SEC-03 合并，MOD-SIG-060） ---
+- issue_id: '#ARCH-148'
+  title: 'MOD-SIG-060 sector_divergence——22号 5 状态/虹吸态消费接入断裂治理+电风扇速度计/个股分歧度+条件概率标定器'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：22号板块算法库 80% 已落码但消费接入断裂（5 状态只喂板块强度未接
+    M2 边界修正）——本模块接通消费方并补两因子（电风扇速度计=周度行业排名变化均值
+    >75 分位/Top3 次日重合率<20%；个股分歧度四件>80 分位进风险清单）。SEC-03 概率
+    标定合并施工（审查报告 §11.5 防双真源裁定）：5 状态×后续 3/5 日条件频率滚动 250
+    日窗，输出"状态+条件概率+样本量"（N<30 标 insufficient）——可审计可复算，不做
+    伪精确点概率。映射纪律：个股分歧≠必然下跌，只出风险清单不出方向（44号 §9.13）。
+    实证留痕：kline_sector_880 无纯行业板块（469=市场指数/地区/概念风格），881xxx
+    行业板无 K 线→族收益经成分股等权聚合；limit_up_down 无炸板类→炸板=high≥limit_up
+    且 close<limit_up 联算；板块属性标签真源=config/sector_attribute_labels.yaml
+    （防御族/进攻族逐条锚定实证）。
+  impact:
+    - 'src/zephyr/signal_ashare/sector_divergence.py（新建，testing 封顶）'
+    - 'config/sector_attribute_labels.yaml（新建，M1-②c 标签真源）'
+    - 'tests/signal_ashare/test_sector_divergence.py（30 用例）'
+  fix_phase: '已落地（2026-08-22）：30 新用例全绿+域收口零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §9.13/§9.2c; 审查报告 §11.5 SEC-03/§12.3 裁定二; 92号清单 §7.4/§7.10; 22号 spec'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-149: 板块观测层四件落地（审查报告 SEC-01/02/04/05） ---
+- issue_id: '#ARCH-149'
+  title: '板块观测层四件：MOD-L00-009 板块盘后全景报告器+MOD-DATA-061 盘中聚合器+MOD-SIG-062 龙头识别+MOD-SIG-061 主线候选榜'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：Owner 板块全景四问（审查报告 §11）——板块算法库已落码但榜单→
+    展示断裂、个股→板块资金盘中聚合器不存在、龙头识别定稿未施工、主线候选无输出。
+    观测层先行、交易接线后置（审查报告 §11.3 裁定三，B-007 零风险）。实证留痕：
+    money_flow 五层净流入实为万元口径（schema COMMENT 标元与实值不符，登记待修）；
+    sector_snapshot inside/outside 对 880xxx 指数不可用→资金腿=成交额增量代理；
+    kline_daily.pct_change 列全 0 未填充→涨幅改相邻收盘推导（数据域缺口登记）；
+    sector_constituent 重复行按 (sector,stock) 去重修复+回归。
+  impact:
+    - 'src/zephyr/data/sector_report_builder.py + src/zephyr/data/sector_intraday_aggregator.py'
+    - 'src/zephyr/signal_ashare/sector_leader.py + src/zephyr/signal_ashare/mainline_candidates.py'
+    - '测试 4 文件 74 用例；真实数据 E2E 留痕（2026-08-20 报告落盘+全宇宙 593 板块/165 板块出龙头）'
+  fix_phase: '已落地（2026-08-22）：74 新用例全绿+两域收口零新增红；报告产物落 .runtime/reports/（不入 git）'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '审查报告 §11.5 SEC-01/02/04/05/§11.3 裁定三; 92号清单 §7.5/§7.6/§7.7/§7.8; 22号 §3.1⑦'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-150: 四指数 regime 面板落地（审查报告 IDX-01，MOD-REGIME-008） ---
+- issue_id: '#ARCH-150'
+  title: 'MOD-REGIME-008 index_regime_panel——1 引擎×4 代理裁定落地（不建 4 个点预测模型）'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：Owner 要四指数同屏状态——审查报告 §11.3 裁定一：不建 4 个独立
+    预测模型（4 倍过拟合风险违反 90号 §7+B-009），建"1 引擎×4 代理"regime 面板。
+    耦合度实证：builder 的 market_proxy/cross_asset_indices/breadth_index 均构造注入
+    （000300 未写死），但数据层直连模块级 ch_reader 且 build_features 为全区间回测级
+    ——裁定=轻适配层（数据加载面板自控+特征逐函数复用 MOD-REGIME-002 公式零分叉+
+    HMM 引擎复用 RegimeDetector 公共接口）；F3/F4（跨资产相关/涨跌家数）为市场共享
+    环境维度四代理同值。输出=概率分布+强弱排序+背离警示，不输出点位/方向。
+  impact:
+    - 'src/zephyr/regime/index_regime_panel.py（新建，testing 封顶）'
+    - 'tests/regime/test_index_regime_panel.py（20 用例）'
+  fix_phase: '已落地（2026-08-22）：20 新用例全绿+tests/regime 597 passed 零新增红；hmmlearn 真拟合路径覆盖'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '审查报告 §11.3 裁定一/§11.5 IDX-01; 92号清单 §7.9; 90号 §7（不预测铁律）'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-151: 盘前多情景预案+竞价三细节落地（44号 M3-③，MOD-PLAN-005） ---
+- issue_id: '#ARCH-151'
+  title: 'MOD-PLAN-005 scenario_planner——9:00 三情景预案整机+9:25 竞价三细节验证（auction_book 在库未消费接通）'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：44号 §1 缺口⑤——"今日多情景方案"整机缺失+竞价盘口数据
+    （146 万行在采）未消费。9:00 段=OvernightRevision.final_shift 五档映射×边界
+    →高开/平开/低开三套参数化预案；9:25 段=竞价三细节（虚拟开盘偏离与 gap_adj
+    交叉验证/匹配量放大≥1.2× 确认/9:20 撤单 fake_ratio>0.6 作废）+9 情景二次匹配
+    （final_scenario 恒∈SCENARIO_LIST 与 MOD-PLAN-002 对齐）。铁律：竞价仅作验证
+    信号不作下单通道（40号决策⑧，INVARIANTS 钉死）。
+  impact:
+    - 'src/zephyr/plan_engine/scenario_planner.py（新建，testing 封顶）'
+    - 'tests/plan_engine/test_scenario_planner.py（30 用例）'
+  fix_phase: '已落地（2026-08-22）：30 新用例全绿+plan_engine 70 passed 零回归'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §4 M3-③/§9.11/§9.6 末段; 40号决策⑧; 92号清单 §7.11; CAND-PLAN-002'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-152: M4 日志体系两件落地（44号 §12.1：registry_of_logs+prediction_log，MOD-RPT-028） ---
+- issue_id: '#ARCH-152'
+  title: '日志总账索引（registry_of_logs 97 条目覆盖度 100%）+预测输出统一落库（prediction_log 表+MOD-RPT-028 写入器）'
+  severity: P1高
+  category: governance
+  adjudication: |
+    目的声明（D2）：Owner 原话——每个业务模块每个输出都应有记录；每天预测什么都应
+    有记录；所有日志应有一个总索引/总清单表，AI 进项目时就知道有这么个清单。两件：
+    ①registry_of_logs.yaml（log_id/路径/写入方/消费方/schema/保留期/状态）+warn-only
+    校验脚本 check_registry_of_logs.py（对账基准=脚本扫描：86 写入点在册 100%）；
+    AGENTS.md 速查联动走 Owner 审批通道（92号 D10，PROTECTED 不绕）。②governance.db
+    新表 prediction_log（UNIQUE 幂等键同键跳过保首条+input_hash 内容寻址缺省）+
+    统一写入器 MOD-RPT-028（log_prediction/query_predictions，db_path 注入隔离先例）；
+    对齐 reconciliation_differences 落治理库先例（92号 D2 授权 DB 写）。机构对标：
+    Fed SR 11-7 模型清单+OMS 全量日志目录+TradingAgents decision log。
+    遗留：governance.db 表族在 data_asset_registry 无登记先例（drift_events 等同族
+    均未在册），登记去向裁定留 Owner/统筹后续。
+  impact:
+    - 'docs/01_policies_and_standards/_registry/catalogs/registry_of_logs.yaml（新建 97 条目）'
+    - 'scripts/governance/check_registry_of_logs.py（新建，warn-only）'
+    - 'src/zephyr/reporting/prediction_log_writer.py + governance.db::prediction_log（已建表验证幂等）'
+    - 'tests/reporting/test_prediction_log_writer.py（25 用例）'
+  fix_phase: '已落地（2026-08-22）：25 新用例全绿+tests/reporting 432 passed 零新增红；校验脚本自验零告警'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §12.1 M4-①/②; 92号清单 §7.12/§7.13; CAND-RPT-005'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'

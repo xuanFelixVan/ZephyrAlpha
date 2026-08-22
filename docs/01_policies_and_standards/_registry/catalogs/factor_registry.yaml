@@ -10504,3 +10504,905 @@ factors:
   evidence: ""
   code_symbol: null
   code_fingerprint: null
+
+# --- 2026-08-22 44号 §2.1 FCT-sentiment 12 条（92号清单波4 ROOR 登记，挂 CAND-FAC-003 IC 实证回填链路） ---
+- factor_id: "FCT-SENT-016"
+  name: "期指基差率"
+  name_zh: "期指基差率"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "basis_rate=(F_主力-S_现货)/S_现货（主力=当日成交量最大合约；IF→000300/IC→000905/IM→000852/IH→000016 映射）"
+  alpha_source: "期货=机构带杠杆的实时投票机，价格发现领先现货（44号 §9.8）；贴水=机构对冲避险情绪温度计，IM 对中小盘情绪最敏感"
+
+  doc_ref: "44号 §9.8 通道2+M1-⑧（#ARCH-146）"
+  direction: "short"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/futures_basis_monitor.py::compute_futures_basis"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-017"
+  name: "期指基差变化率"
+  name_zh: "期指基差变化率"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "basis_vel_30m=basis_rate(t)-basis_rate(t-30min)（分钟腿未积累期以日频差分代理并显式标注 vel_source=d1_proxy）；贴水急扩=basis_vel<-1.5σ_20d"
+  alpha_source: "贴水急扩=机构对冲避险急增=情绪转差领先信号（44号 §9.8：期货价格发现领先现货，尤其恐慌时）"
+
+  doc_ref: "44号 §9.8 通道2+M1-⑧（#ARCH-146）"
+  direction: "short"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/futures_basis_monitor.py::compute_futures_basis"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-018"
+  name: "期权成交量PCR"
+  name_zh: "期权成交量PCR"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "PCR=Σ认沽成交量/Σ认购成交量（三表无 OI 列实证降级为成交量口径，pcr_basis=volume 留痕）；历史分位<20%=过度乐观反向风险，>80%=恐慌过度底部区"
+  alpha_source: "华泰 2026-03 A 股情绪指数范式：单边做多市场衍生品只取 PCR+IV 两指标最有效；toutiao 2026-08-14 分位实战口径"
+
+  doc_ref: "44号 §9.9+M1-⑨（#ARCH-147）"
+  direction: "short"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/option_sentiment.py::compute_option_sentiment"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-019"
+  name: "300ETF隐含波动率IV_Rank分位"
+  name_zh: "300ETF隐含波动率IV_Rank分位"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "IV Rank=当前平值 IV 在可用 IV 序列中的分位（min_periods=60 守卫，不足 degraded）；<20% 低波温和/>80% 高波恐慌；IV 单日跳升>+3σ=机构避险急增"
+  alpha_source: "华泰 2026-03 机构范式衍生品两指标之一；IV Rank=恐慌定价分位（44号 §9.9 F2）"
+
+  doc_ref: "44号 §9.9+M1-⑨（#ARCH-147）"
+  direction: "short"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/option_sentiment.py::compute_option_sentiment"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-020"
+  name: "涨跌家数速度breadth_vel"
+  name_zh: "涨跌家数速度breadth_vel"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "breadth_vel_5m=(adv_t-adv_{t-5})/total（另有二阶加速度 acc_15m）；20 日滚动 z-score 归一；快照缺失>2min 当分钟 NaN 不外推"
+  alpha_source: "开盘啦情绪五维度之一（涨跌家数变化率，2026-02）；识别情绪拐点正在发生（13:30 后涨停净增转正=尾盘修复）"
+
+  doc_ref: "44号 §9.1+M1-①（CAND-SIG-023）"
+  direction: "long"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-021"
+  name: "涨停净增速率lu_net_rate"
+  name_zh: "涨停净增速率lu_net_rate"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "lu_net_rate_5m=lu_t-lu_{t-5}（负值=涨停在减少）；修复中=由负转正且持续≥10min"
+  alpha_source: "涨停家数净增速=打板情绪动能一阶导（44号 §9.1 F3，开盘啦涨停表现维度同族）"
+
+  doc_ref: "44号 §9.1+M1-①（CAND-SIG-023）"
+  direction: "long"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-022"
+  name: "边际炸板率break_rate"
+  name_zh: "边际炸板率break_rate"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "break_rate_5m=Δattempted_5m/max(Δattempted_5m,Δsealed_5m+Δattempted_5m)——边际炸板发生速率"
+  alpha_source: "炸板速率=封板资金承接力的边际恶化信号（44号 §9.1 F4，与既有 FCT-SENT-007 炸板率静态口径互补=动态边际版）"
+
+  doc_ref: "44号 §9.1+M1-①（CAND-SIG-023）"
+  direction: "short"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-023"
+  name: "护盘背离度guard_ratio"
+  name_zh: "护盘背离度guard_ratio"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "guard_ratio=Σ(w_i×ret_i，固定权重股 TOP≈10)/max(指数涨幅,ε)；护盘假象=guard_ratio>0.6 且 adv/total<0.4；黄白线掩护=spread>+1σ_20d 且 30min 走扩；触发→情绪分×0.7"
+  alpha_source: "eastmoney 2026-08 实证（20 年 241 个月四大行贡献 vs 中证1000 相关性 -0.755，银行涨+小票跌背离占 40.5% 月份）+xueqiu 2026-06 权重掩护三特征"
+
+  doc_ref: "44号 §9.2+M1-②（CAND-SIG-023）"
+  direction: "short"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.detect_distortion"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-024"
+  name: "量能外推比volume_ratio"
+  name_zh: "量能外推比volume_ratio"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "ŷ_full=cum_vol(t)/p̄(t)（p̄=20 日同时刻累计成交占比中位数曲线 240 点）；volume_ratio=ŷ_full/20日均量；缩量<0.85 警示/放量>1.2 且 breadth_vel>0 确认"
+  alpha_source: "开盘啦范式：盘中实时外推全天成交额——缩量环境下情绪高亢难持续（44号 §9.4，量能盘中预测维度）"
+
+  doc_ref: "44号 §9.4+M1-⑤（CAND-SIG-023）"
+  direction: "long"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.forecast_volume"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-025"
+  name: "大幅回撤个股数drawdown_count"
+  name_zh: "大幅回撤个股数drawdown_count"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "回撤股={日内最高涨幅≥5% 且现价较最高回吐≥50%}；count≥7 且最大回撤>10%→追涨被埋警示（M2 降档触发之一）"
+  alpha_source: "开盘啦大幅回撤维度：今日追涨资金亏钱效应=场内资金兑现无承接（44号 §9.4 下半）"
+
+  doc_ref: "44号 §9.4+M1-⑥（CAND-SIG-023）"
+  direction: "short"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.count_large_drawdowns"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-026"
+  name: "电风扇速度计rotation_velocity"
+  name_zh: "电风扇速度计rotation_velocity"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "rotation_velocity=mean(|rank_t(行业涨幅)-rank_{t-5}(行业涨幅)|)——周度行业排名变化均值；>75 分位_250d=电风扇行情；+Top3 次日重合率<20%=一日游生态；lead_streak<2 且速度计>75 分位=无主线混沌"
+  alpha_source: "国泰海通 2026-08 口径（12.75 超 75 分位 11.75）；快速轮动无主线=大盘混沌/下跌中继判定输入（44号 §9.13b）"
+
+  doc_ref: "44号 §9.13+M1-⑩（#ARCH-148）"
+  direction: "short"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/sector_divergence.py::compute_sector_divergence"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
+- factor_id: "FCT-SENT-027"
+  name: "个股分歧度divergence_stock"
+  name_zh: "个股分歧度divergence_stock"
+  aliases: ["44号 M1/M3 升级增量"]
+  factor_class: "sentiment"
+  formula: "divergence_stock=0.4·z(换手率突增倍数)+0.3·上影占比+0.2·炸板标记+0.1·龙虎榜买卖对打强度；>80 分位→个股级例外清单（只出风险清单不出方向）"
+  alpha_source: "24号打板内部口径通用化：高位巨量长上影+炸板+席位对打=分歧三态（见顶/上涨中继/下跌中继都可能）风险清单（44号 §9.13c）"
+
+  doc_ref: "44号 §9.13+M1-⑩（#ARCH-148）"
+  direction: "short"
+  entry_role: "ranking"
+  applies_to: ["stock"]
+  tags: ["情绪", "市场级择时", "44号升级"]
+  algorithm_status: "pending_backtest"
+  evidence: ""
+  code_symbol: "src/zephyr/signal_ashare/sector_divergence.py::compute_sector_divergence"
+  code_fingerprint: null
+  params: {}
+  inputs: []
+  outputs: []
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []
+
