@@ -18559,3 +18559,91 @@ entries:
   related_rules: '07号文 §4 Phase 0; 18号清单 §6 波3-07'
   created: '2026-08-22'
   last_updated: '2026-08-22'
+# --- #ARCH-165: 11号文证据关联组件落地（GP0 E0-6，MOD-EVIDENCE_CHAIN） ---
+- issue_id: '#ARCH-165'
+  title: '证据关联三件套+批量入口（research/evidence/ 四件）——假设→证据→迭代引导自我进化核心机制零代码治理'
+  severity: P2中
+  category: architecture
+  adjudication: |
+    目的声明（D2）：11号文 §4.2 P0-1~P0-4——假设注册表（五态状态机非法迁移拒）+
+    证据链（三态+外键+SHA-256 固化篡改可检）+迭代引导器（规则化继续/转向/放弃
+    可追溯，config/iteration_guide_rules.yaml 词表真源）+日/周频批量入口（盘中
+    09:30-15:00 拒执行守卫 CLI rc=3）。落点裁定：data/research/evidence/（参照
+    data/brain/passports/ 研究资产先例；.runtime TTL 清理不可落永久资产）。
+    research 包 DORMANT 摘标（#ARCH-143 R4 作者义务）+翻译注册表回写 active。
+    错误码 ZA-RE×11 登记入册。盘中零调用佐证：守卫单测+全 src grep 包外零 import。
+  impact:
+    - 'src/zephyr/research/evidence/（__init__+hypothesis_registry+evidence_chain+iteration_guide+batch_entry）'
+    - 'config/iteration_guide_rules.yaml（新建）'
+    - 'tests/research/test_evidence_phase0.py（56 用例）'
+  fix_phase: '已落地（2026-08-22）：56 新用例全绿+errcode 对账 6 passed+邻域回归零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '11号文 §4.2; 18号清单 §6 波4-11; #ARCH-143 R4'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-166: 12号文自反 Agent Phase 0 落地（GP0 E0-6，MOD-REFLEXION_AGENT） ---
+- issue_id: '#ARCH-166'
+  title: 'L1 反思+三角色骨架（intelligence/reflexion/ 四件）——失败轨迹→归因→改进建议地基'
+  severity: P2中
+  category: architecture
+  adjudication: |
+    目的声明（D2）：12号文 §4.2 P0-1~P0-4——反思记录 schema（严格校验缺字段拒收+
+    落盘 data/brain/reflections/）+Actor→Evaluator→SelfReflection 三角色协议化骨架
+    （同任务分角色跑通）+L1 单轨迹反思器（规则化归因六类词表+建议非空锚定归因，
+    不调 LLM=GP0 手动形态）+盘后批量入口（盘中拒执行守卫）。避让纪律：feedback_loop
+    同名运维桩零触碰；L2/L3/PreFlect/ReflCtrl 留 Phase 1+不抢。
+  impact:
+    - 'src/zephyr/intelligence/reflexion/（__init__+reflection_schema+roles+l1_reflector+batch_runner）'
+    - 'tests/intelligence/test_reflexion_phase0.py（28 用例）'
+  fix_phase: '已落地（2026-08-22）：28 新用例全绿+tests/intelligence 249 passed 零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '12号文 §4.2; 18号清单 §6 波4-12'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-167: 13号文模块工厂 Phase 0 落地（GP0 E0-6） ---
+- issue_id: '#ARCH-167'
+  title: '《模块工厂手动 SOP》（19号文）六环节检查单+首个手动实例全链路（FCT-SENT-028 变体裁决路径）'
+  severity: P2中
+  category: architecture
+  adjudication: |
+    目的声明（D2）：13号文 §4.1 P0-S1~S4——模块工厂（知识→模块映射核心独创件）
+    手动形态先行：19号 SOP 六环节检查单（知识采集→分类→映射→施工落码→四级验证→
+    入库登记，每环节输入/操作/输出/验收/常见坑，可被他会话独立执行）+首个手动实例
+    （FCT-SENT-028 涨跌家数二阶加速度——44号 §9.1 F2 真实缺口，F1/F3/F4 已登记
+    FCT-SENT-020/021/022 而 F2 未独立登记；变体裁决路径 variant_of=FCT-SENT-020；
+    17/17 验证 PASS 含 schema 66 字段/词表/AST 锚点/公式对拍/演示 IC 标注非正式）。
+    实例 5 项刻意差异（schema_plan/causal_graph 实填等 62号 MUST 口径示范）统筹裁定
+    保留（2026-08-22）；走查复盘 3 改进点已回写 SOP 常见坑；观察项 O1-O4 在册。
+  impact:
+    - 'docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/19_module_factory_manual_sop.md（新建）'
+    - 'docs/_working/reports/2026-08-22-module-factory-manual-instance.md（实例报告）'
+    - 'factor_registry.yaml（FCT-SENT-028 登记）'
+  fix_phase: '已落地（2026-08-22）：SOP+实例+登记三件套齐；depgraph 占位节点域归属待 03号文裁定（E0-8 同族登记）'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '13号文 §4.1; 18号清单 §6 波4-13; 62号 ROOR; CAND-FAC-003'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-168: 14号文执行层四类薄入口落地（GP0 E0-7，MOD-EXE-AGENTS） ---
+- issue_id: '#ARCH-168'
+  title: '治理/业务/算法/自我迭代四类 Agent 薄入口（autonomy_core/agents/）——执行层手动形态地基'
+  severity: P2中
+  category: architecture
+  adjudication: |
+    目的声明（D2）：14号文 §4 Phase 0 S0.2~S0.6——四类 <200 行纯组装薄入口：
+    治理（gate 检查工单+审计落盘）/业务（注册查询+因子候选评估，产出 100% 仅建议，
+    AST 零下单调用断言）/算法（实验登记先于执行+显存≥90% 拒启动守卫）/自我迭代
+    （只读形态+human_gated 建议工单+无代码自改路径断言）；统一 AgentRunStore 落盘
+    纪律件（信封强制 human_gated/human_manual）。四样例 CLI 端到端跑通留痕
+    （.runtime/agent_runs/）。域归属沿用 D_AUTONOMY_CORE（14号文 Q4 待裁定同族登记）。
+  impact:
+    - 'src/zephyr/autonomy_core/agents/（__init__+_run_store+四入口）'
+    - 'tests/autonomy/test_execution_layer_agent_entries.py（16 用例）'
+  fix_phase: '已落地（2026-08-22）：16 新用例全绿+tests/autonomy 1191 passed 零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '14号文 §4 Phase 0; 18号清单 §6 波4-14'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'

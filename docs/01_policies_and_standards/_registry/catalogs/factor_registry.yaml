@@ -11406,3 +11406,86 @@ factors:
   regime_valid: []
   regime_invalid: []
 
+
+# --- 2026-08-22 FCT-SENT-028（模块工厂手动实例 P0-S3，19号 SOP 首个全链路实例） ---
+- factor_id: "FCT-SENT-028"
+  name: "涨跌家数二阶加速度breadth_acc"
+  name_zh: "涨跌家数二阶加速度breadth_acc"
+  aliases: ["44号 M1/M3 升级增量", "宽度二阶加速度", "breadth_acc_15m"]
+  factor_class: "sentiment"
+  formula: "breadth_acc_15m=breadth_vel_5m(t)-breadth_vel_5m(t-15)（二阶；breadth_vel_5m=(adv_t-adv_{t-5})/total）；20 日滚动 z-score 归一；快照缺失>2min 当分钟 NaN 不外推"
+  alpha_source: "市场宽度动能的二阶变化=情绪拐点加速/减速的领先确认（44号 §9.1 F2，与一阶速度 FCT-SENT-020 互补=加速度维度；acc>0=修复动能正在加强）"
+  doc_ref: "44号 §9.1+M1-①（CAND-SIG-023）；模块工厂手动实例 docs/_working/reports/2026-08-22-module-factory-manual-instance.md"
+  direction: "long"
+  entry_role: "timing"
+  applies_to: ["index"]
+  tags: ["情绪"]
+  algorithm_status: "pending_backtest"
+  evidence: "演示级功能验证（2026-08-22，非正式 G1/G2 回测）：analyze_breadth_acceleration 实测 acc_15m 公式逐值对拍 PASS（确定性合成快照序列，手算值一致）；NaN 纪律 PASS（尾部缺口→acc 置 None 不外推）；合成注入信号演示 rank IC=+0.2860（n=11460，纯管道可跑性演示，非真实 alpha 证据）。正式 G1/G2 回测待 M1-④ 分钟级全市场快照落库积累后按 C-003 排期。"
+  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
+  code_fingerprint: null
+  params: {vel_window_min: 5, acc_window_min: 15, zscore_window_d: 20, gap_nan_threshold_min: 2}
+  inputs: ["分钟级全市场快照序列（advancing_count/limit_up_count/attempted_limit_up_count/sealed_limit_up_count）", "全市场家数 total_count"]
+  outputs: ["breadth_acc_15m", "breadth_acc_15m_z"]
+  frequency: "intraday"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: "FCT-SENT-020"
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-22"
+  updated_at: "2026-08-22"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: "宽度动能加速（acc>0）→散户跟风盘入场加速→短线情绪自我强化→尾盘/次日延续概率升；减速（acc<0）反之。混杂变量：指数权重失真（联动 FCT-SENT-023 护盘背离度控制）、市场整体趋势 regime。对撞警示：勿以 past_return 作控制变量（被质量类因子与未来收益共同影响，López de Prado 26 审计口径）。"
+  causal_structure:
+    confounders: ["index_weight_distortion", "market_regime"]
+    colliders: []
+    specification_audit: "natural_language"
+  attribution_stability: {method: "none", model_count: 0, flip_rate: null, stable_ranking: null}
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan:
+    event: "市场宽度动能边际变化——上涨家数 5min 速度的 15min 二阶差分"
+    context: "盘中分钟级全市场快照序列可用（M1-④ 快照落库供给）；适用池 UNI-RULE-001 全 A 可交易；T+1 规则下作尾盘/择时确认信号"
+    qualities: "acc>0=修复/走强动能正在加强；acc<0=动能衰减；与一阶速度 FCT-SENT-020 联读防单维误判（速度正但减速=拐点临近）；缺失分钟>2min 置 NaN 不外推"
+    direction: "long"
+    output: "连续值 breadth_acc_15m（宽度差分比值，理论域 [-2,2]）+ 20 日滚动 z-score；消费方式=市场级择时确认（timing）"
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "intraday"
+  applicable_timeframes: ["intraday", "daily"]
+  regime_valid: []
+  regime_invalid: []

@@ -47547,7 +47547,7 @@ algo_submodules:
   name_en: __all__ = []
   plain_zh: 仅声明空导出列表，占位保留 models 子包结构
 - module_path: src/zephyr/research/__init__.py
-  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
+  build_status: active  # 2026-08-22 #ARCH-143 R4：包内首个真实实现（research/evidence/ 四件，#ARCH-165）落地，DORMANT 摘标回写
   module_id: __unmanaged__src/zephyr/research/__init__.py
   node_id: A1
   name_zh: ① 研究创新核心包占位
@@ -52920,3 +52920,91 @@ algo_submodules:
   desc_zh: LLM 统一推理入口（10号文 GP0 最小 MVP）：单一 infer 签名+DeepSeek/Qwen/Ollama 三通道降级链+每次调用登记 llm_call_log（模型/token/成本/延迟）供日终对账+LSG 注入点（不过闸不调用）；预算门/路由级联属 GP1 不做
   desc_en: ''
   plain_zh: LLM 运行时网关——项目里所有大模型调用的统一大门：一个 infer 接口，先走 DeepSeek，失败自动切 Qwen，再失败切本地模型；每次调用花多少 token、多少钱、多快都记账，每天能对账防超额；不过安全检查的调用一律不出门
+- module_path: src/zephyr/research/evidence/hypothesis_registry.py
+  domain_id: D_KNOWLEDGE
+  module_id: MOD-EVIDENCE_CHAIN
+  name_zh: 假设注册表
+  name_en: hypothesis_registry
+  desc_zh: 证据关联三件套之一（11号文 P0-1）：研究假设条目+五态状态机（proposed→testing→supported/refuted→archived 非法迁移拒）+迁移留痕
+  desc_en: ''
+  plain_zh: 假设注册表——每个研究假设（这个因子可能有用）登记在册，状态流转有规矩：没经过测试不能直接标有效，每步状态变化都留痕
+- module_path: src/zephyr/research/evidence/evidence_chain.py
+  domain_id: D_KNOWLEDGE
+  module_id: MOD-EVIDENCE_CHAIN
+  name_zh: 证据链
+  name_en: evidence_chain
+  desc_zh: 证据关联三件套之二（11号文 P0-2）：证据条目（支持/反驳/中立三态+假设外键+SHA-256 固化篡改可检）
+  desc_en: ''
+  plain_zh: 证据链——每条证据挂在哪个假设下、是支持还是反驳、来源是什么，内容哈希固化，事后篡改能被发现
+- module_path: src/zephyr/research/evidence/iteration_guide.py
+  domain_id: D_KNOWLEDGE
+  module_id: MOD-EVIDENCE_CHAIN
+  name_zh: 迭代引导器
+  name_en: iteration_guide
+  desc_zh: 证据关联三件套之三（11号文 P0-3）：规则化继续/转向/放弃建议，每条建议带命中规则 id 与证据计数可追溯
+  desc_en: ''
+  plain_zh: 迭代引导器——根据假设攒了多少支持/反驳证据，按规则表给出继续做、换方向还是放弃的建议，每条建议都能查到是哪条规则触发的
+- module_path: src/zephyr/research/evidence/batch_entry.py
+  domain_id: D_KNOWLEDGE
+  module_id: MOD-EVIDENCE_CHAIN
+  name_zh: 证据批量评估入口
+  name_en: evidence_batch_entry
+  desc_zh: 日/周频批量评估入口（11号文 P0-4）：盘中 09:30-15:00 拒执行守卫
+  desc_en: ''
+  plain_zh: 证据批量评估入口——每天或每周批量把所有在册假设过一遍出建议清单；盘中时间一律不跑
+- module_path: src/zephyr/intelligence/reflexion/reflection_schema.py
+  domain_id: D_INTELLIGENCE
+  module_id: MOD-REFLEXION_AGENT
+  name_zh: 反思记录基座
+  name_en: reflection_schema
+  desc_zh: 自反 Agent Phase 0（12号文 P0-1）：ReflectionRecord 严格校验+落盘 data/brain/reflections/
+  desc_en: ''
+  plain_zh: 反思记录基座——每次任务失败的反思记录（败在哪类、怎么改进）严格校验后落盘，缺字段不收
+- module_path: src/zephyr/intelligence/reflexion/roles.py
+  domain_id: D_INTELLIGENCE
+  module_id: MOD-REFLEXION_AGENT
+  name_zh: 自反三角色骨架
+  name_en: reflexion_roles
+  desc_zh: Actor→Evaluator→SelfReflection 三角色协议化骨架（12号文 P0-2），同任务分角色跑通
+  desc_en: ''
+  plain_zh: 自反三角色骨架——干活的、打分的、写反思的三种角色分开跑同一个任务，为以后自动复盘改进打底
+- module_path: src/zephyr/intelligence/reflexion/l1_reflector.py
+  domain_id: D_INTELLIGENCE
+  module_id: MOD-REFLEXION_AGENT
+  name_zh: L1 单轨迹反思器
+  name_en: l1_reflector
+  desc_zh: L1 单轨迹反思（12号文 P0-3）：失败轨迹→规则化归因六类+改进建议非空锚定归因；不调 LLM（GP0 手动形态）
+  desc_en: ''
+  plain_zh: L1 单轨迹反思器——一条失败的任务轨迹进来，按规则分出是哪类错（数据/逻辑/契约/环境/需求），给出对应的改进建议
+- module_path: src/zephyr/autonomy_core/agents/governance_agent_entry.py
+  domain_id: D_AUTONOMY_CORE
+  module_id: MOD-EXE-GOV-001
+  name_zh: 治理 Agent 薄入口
+  name_en: governance_agent_entry
+  desc_zh: 执行层四类薄入口之一（14号文 S0.2）：gate 检查工单端到端+审计落盘，人工手动触发
+  desc_en: ''
+  plain_zh: 治理 Agent 薄入口——人手动触发跑一趟治理检查工单，结果落盘可审计
+- module_path: src/zephyr/autonomy_core/agents/business_agent_entry.py
+  domain_id: D_AUTONOMY_CORE
+  module_id: MOD-EXE-BIZ-001
+  name_zh: 业务 Agent 薄入口
+  name_en: business_agent_entry
+  desc_zh: 执行层四类薄入口之二（14号文 S0.3）：注册状态查询+因子候选评估工单，产出 100% 标仅建议，无下单调用
+  desc_en: ''
+  plain_zh: 业务 Agent 薄入口——查注册表状态、评估因子候选，只出建议不碰交易
+- module_path: src/zephyr/autonomy_core/agents/algorithm_agent_entry.py
+  domain_id: D_AUTONOMY_CORE
+  module_id: MOD-EXE-ALGO-001
+  name_zh: 算法 Agent 薄入口
+  name_en: algorithm_agent_entry
+  desc_zh: 执行层四类薄入口之三（14号文 S0.4）：实验登记先于执行+显存≥90% 拒启动守卫
+  desc_en: ''
+  plain_zh: 算法 Agent 薄入口——跑算法实验前先登记，显存快满了就不启动
+- module_path: src/zephyr/autonomy_core/agents/self_iteration_agent_entry.py
+  domain_id: D_AUTONOMY_CORE
+  module_id: MOD-EXE-ITER-001
+  name_zh: 自我迭代 Agent 薄入口
+  name_en: self_iteration_agent_entry
+  desc_zh: 执行层四类薄入口之四（14号文 S0.5）：只读形态，读证据出 human_gated 建议工单，无代码自改路径
+  desc_en: ''
+  plain_zh: 自我迭代 Agent 薄入口——只能读不能写，看完证据产出改进建议工单等人审，自己改不了代码
