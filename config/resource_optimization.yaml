@@ -11,13 +11,15 @@
 # 热加载：文件 mtime 变化后下一个监控周期生效（≤5 秒）
 
 module_id: MOD-INF-002
+# 阈值真源 = AutoRuntime Core 蓝图 §3.3 四级降级链（2026-08-22 对齐，04号文 Phase 0 步骤 0.5）：
+#   Lv1(WARNING): CPU>75%/MEM>70%  Lv2(CRITICAL): CPU>85%/MEM>80%  Lv3(EMERGENCY): CPU>95%/MEM>90%
 pressure_thresholds:
-  memory_warning_percent: 75.0
-  memory_critical_percent: 85.0
-  memory_emergency_percent: 95.0
-  cpu_warning_percent: 80.0
-  cpu_critical_percent: 90.0
-  cpu_emergency_percent: 98.0
+  memory_warning_percent: 70.0
+  memory_critical_percent: 80.0
+  memory_emergency_percent: 90.0
+  cpu_warning_percent: 75.0
+  cpu_critical_percent: 85.0
+  cpu_emergency_percent: 95.0
   process_warning_count: 50
   process_critical_count: 100
   process_emergency_count: 250

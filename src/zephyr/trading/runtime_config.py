@@ -15,10 +15,70 @@
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+from collections.abc import Callable
+from dataclasses import dataclass
+
+from pydantic import BaseModel, Field
+
 from zephyr.shared.contracts.runtime_types import DATA_DIR, RuntimeConfig
 
 # human_detection_method 合法值——与 runtime_types.RuntimeConfig 字段 description 保持一致
 _HUMAN_DETECTION_METHODS = ("heartbeat", "manual_switch", "time_window")
+
+
+class BrainResourceBudget(BaseModel):
+    """大脑资源预算（GAP-006 / GAP-010，蓝图 §3.3 / D-INF035-08 / D-INF035-09）。
+
+    参数真源为蓝图已裁定决策：RAM 上限 2GB（D-INF035-08）、冷启动 SLA P99<10s
+    （D-INF035-09）、RTO<5min（蓝图 §1.4）。默认值即裁定值，构造零行为变化。
+    """
+
+    max_brain_memory_mb: int = Field(default=2048, description="大脑进程 RAM 预算上限（MB，D-INF035-08=2GB）")
+    boot_timeout_ms: int = Field(default=10_000, description="冷启动 SLA 上限（ms，D-INF035-09 P99<10s）")
+    recovery_timeout_ms: int = Field(default=300_000, description="崩溃恢复 SLA 上限（ms，RTO<5min）")
+
+
+@dataclass
+class BrainBudgetResult:
+    within_budget: bool
+    current_mb: float
+    budget_mb: int
+    action: str  # "ok" | "degrade"（运行中超限→触发降级链）| "refuse_start"（boot 阶段超限→拒启动）
+
+
+def _default_rss_reader() -> float:
+    """当前进程 RSS（MB）。psutil 不可用时返回 0.0（不阻断启动）。"""
+    try:
+        import os
+
+        import psutil
+
+        return psutil.Process(os.getpid()).memory_info().rss / (1024**2)
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        return 0.0
+
+
+def check_brain_memory_budget(
+    budget: BrainResourceBudget | None = None,
+    rss_reader: Callable[[], float] | None = None,
+    *,
+    boot_phase: bool = False,
+) -> BrainBudgetResult:
+    """RAM 预算检查（GAP-006）：超限 → boot 阶段拒启动 / 运行中触发降级。
+
+    rss_reader 可注入（测试 mock 超限场景）；默认读当前进程 RSS。
+    """
+    budget = budget or BrainResourceBudget()
+    reader = rss_reader or _default_rss_reader
+    current_mb = reader()
+    within = current_mb <= budget.max_brain_memory_mb
+    action = "ok" if within else ("refuse_start" if boot_phase else "degrade")
+    return BrainBudgetResult(
+        within_budget=within,
+        current_mb=current_mb,
+        budget_mb=budget.max_brain_memory_mb,
+        action=action,
+    )
 
 
 def validate_config(config: RuntimeConfig) -> None:
@@ -84,4 +144,12 @@ def ensure_runtime_dirs(config: RuntimeConfig) -> None:
         d.mkdir(parents=True, exist_ok=True)
 
 
-__all__ = ["DATA_DIR", "RuntimeConfig", "ensure_runtime_dirs", "validate_config"]
+__all__ = [
+    "DATA_DIR",
+    "BrainBudgetResult",
+    "BrainResourceBudget",
+    "RuntimeConfig",
+    "check_brain_memory_budget",
+    "ensure_runtime_dirs",
+    "validate_config",
+]

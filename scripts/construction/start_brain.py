@@ -58,6 +58,12 @@ def main() -> None:
     parser.add_argument("--no-onboard", action="store_true", help="跳过自动接入扫描")
     parser.add_argument("--no-generate", action="store_true", help="跳过自动任务生成")
     parser.add_argument("--batch", type=int, default=12, help="每批推理任务数")
+    parser.add_argument(
+        "--boot-sla-ms",
+        type=float,
+        default=10_000.0,
+        help="冷启动 SLA 上限（ms，D-INF035-09 P99<10s）；boot 耗时超限打印 SLA_BREACH",
+    )
     args = parser.parse_args()
 
     config = RuntimeConfig(poll_interval=args.interval)
@@ -73,13 +79,21 @@ def main() -> None:
         print(f"  AutoTaskGenerator: 活跃 (batch={args.batch})")
     print("=" * 60)
 
+    _boot_start = time.monotonic()
     boot_report = core.boot()
+    boot_ms = (time.monotonic() - _boot_start) * 1000
+
+    # 冷启动 SLA 埋点（GAP-010 / D-INF035-09：boot P99 <10s；04号文 Phase 0 步骤 0.7）。
+    # 每次 boot 打印一行机器可读的耗时记录，供连跑实测收集 P99 口径。
+    sla_ms = args.boot_sla_ms
+    sla_status = "OK" if boot_ms < sla_ms else "SLA_BREACH"
+    print(f"[BOOT_SLA] boot_ms={boot_ms:.0f} sla_ms={sla_ms:.0f} status={sla_status}")
 
     if not boot_report.success:
         print(f"\n[FAIL] Boot 失败: {boot_report.errors}")
         sys.exit(1)
 
-    print(f"\n[OK] Boot: {boot_report.steps_completed} 步骤")
+    print(f"\n[OK] Boot: {boot_report.steps_completed} 步骤 ({boot_ms:.0f}ms)")
     if boot_report.components_started:
         print(f"     已启动: {', '.join(boot_report.components_started)}")
     print()

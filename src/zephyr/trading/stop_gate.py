@@ -42,11 +42,26 @@ class StopGate:
     设计原理:
       - 不告诉 AI 该做什么（避免过度约束）
       - 只阻止 AI 什么都不做就退出（最低质量标准）
+
+    Session 预算（蓝图 §16.3 步骤 1「StopGate session 预算参数」）：
+      - session_max_actions / session_max_minutes 为 session 继续工作的预算上限；
+      - 预算超限 → 阻断 session 继续工作（can_continue()=False），质量闸门
+        放行退出（check() 强制 can_stop=True 并记录预算原因）——预算是
+        「继续」的预算而非「退出」的预算，语义与空转闸门的初衷一致（防空转、
+        也防失控长跑）；
+      - 默认 None 不设限，零行为变化。
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        session_max_actions: int | None = None,
+        session_max_minutes: float | None = None,
+    ) -> None:
         self._session_start: str = ""
         self._shutdown_acknowledged = False
+        self._session_max_actions = session_max_actions
+        self._session_max_minutes = session_max_minutes
+        self._action_count = 0
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -72,6 +87,36 @@ class StopGate:
     def initialize(self) -> None:
         self._session_start = now_utc().isoformat()
         self._shutdown_acknowledged = False
+        self._action_count = 0
+
+    # ── Session 预算（蓝图 §16.3 步骤 1）──
+    def record_action(self, n: int = 1) -> None:
+        """记录 session 工作动作计数（用于动作数预算）。"""
+        self._action_count += n
+
+    def budget_status(self) -> dict[str, int | float | bool | None]:
+        return {
+            "action_count": self._action_count,
+            "session_max_actions": self._session_max_actions,
+            "session_max_minutes": self._session_max_minutes,
+            "exceeded": self.budget_exceeded(),
+        }
+
+    def budget_exceeded(self) -> bool:
+        if self._session_max_actions is not None and self._action_count >= self._session_max_actions:
+            return True
+        if self._session_max_minutes is not None and self._session_start:
+            try:
+                start = datetime.fromisoformat(self._session_start)
+            except ValueError:
+                return False
+            elapsed_s = (now_utc() - start).total_seconds()
+            return elapsed_s >= self._session_max_minutes * 60
+        return False
+
+    def can_continue(self) -> bool:
+        """session 是否可继续工作——预算超限即阻断继续。"""
+        return not self.budget_exceeded()
 
     def check(
         self,
@@ -98,6 +143,11 @@ class StopGate:
         if not git_clean:
             result.can_stop = False
             result.reasons.append("Git: uncommitted changes remain")
+
+        if self.budget_exceeded():
+            # 预算超限：阻断 session 继续工作，质量闸门放行退出（防止失控长跑）
+            result.can_stop = True
+            result.reasons.append("Session budget exceeded: further work blocked, stop forced")
 
         return result
 

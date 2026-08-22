@@ -72,6 +72,7 @@ from zephyr.shared.lifecycle.resource_optimization_models import (
 )
 
 __all__ = [
+    "DEGRADATION_CHAIN",
     "CacheStats",
     "CircuitBreaker",
     "CircuitBreakerState",
@@ -86,19 +87,59 @@ __all__ = [
     "ProcessPoolStats",
     "ResourceOptimizationEngine",
     "ResourceSnapshot",
+    "degradation_lv",
 ]
+
+
+# 四级降级链（AutoRuntime Core 蓝图 §3.3，D-INF035-05）——PressureLevel ↔ Lv0~Lv3 映射真源。
+# 阈值见 _PressureThresholds（Lv1: CPU>75%/MEM>70%；Lv2: CPU>85%/MEM>80%；Lv3: CPU>95%/MEM>90%）。
+DEGRADATION_CHAIN: dict[PressureLevel, dict[str, str]] = {
+    PressureLevel.NORMAL: {
+        "lv": "Lv0",
+        "name": "Normal",
+        "trigger": "CPU<75% & MEM<70%",
+        "actions": "全功能运行",
+    },
+    PressureLevel.WARNING: {
+        "lv": "Lv1",
+        "name": "Throttle",
+        "trigger": "CPU>75% 或 MEM>70%",
+        "actions": "StatusDashboard 降采样 / OrphanDetector 暂停 / DreamCycle 推迟",
+    },
+    PressureLevel.CRITICAL: {
+        "lv": "Lv2",
+        "name": "Shed",
+        "trigger": "CPU>85% 或 MEM>80%",
+        "actions": "ModuleOnboardingScanner 纯增量 / MAPE-K 降频30s / AiAuditLogger 环形缓冲",
+    },
+    PressureLevel.EMERGENCY: {
+        "lv": "Lv3",
+        "name": "Critical",
+        "trigger": "CPU>95% 或 MEM>90%",
+        "actions": "拒绝非P0 DAG / HealthMonitor 仅心跳 / 通知Owner / 5min未恢复→Kill Switch",
+    },
+}
+
+
+def degradation_lv(level: PressureLevel) -> str:
+    """PressureLevel → 蓝图 §3.3 降级链级别（Lv0~Lv3）。"""
+    return DEGRADATION_CHAIN[level]["lv"]
 
 
 logger = logging.getLogger(__name__)
 
 
 class _PressureThresholds(BaseModel):
-    memory_warning_percent: float = 75.0
-    memory_critical_percent: float = 85.0
-    memory_emergency_percent: float = 95.0
-    cpu_warning_percent: float = 80.0
-    cpu_critical_percent: float = 90.0
-    cpu_emergency_percent: float = 98.0
+    # 阈值真源 = AutoRuntime Core 蓝图 §3.3 四级降级链（2026-08-22 对齐，04号文 Phase 0 步骤 0.5）：
+    #   Lv1(WARNING):   CPU>75% 或 MEM>70%
+    #   Lv2(CRITICAL):  CPU>85% 或 MEM>80%
+    #   Lv3(EMERGENCY): CPU>95% 或 MEM>90%
+    memory_warning_percent: float = 70.0
+    memory_critical_percent: float = 80.0
+    memory_emergency_percent: float = 90.0
+    cpu_warning_percent: float = 75.0
+    cpu_critical_percent: float = 85.0
+    cpu_emergency_percent: float = 95.0
     process_warning_count: int = 50
     process_critical_count: int = 100
     process_emergency_count: int = 250
@@ -314,12 +355,12 @@ class _ConfigReloader:
         pt = cfg.get("pressure_thresholds", {})
         if pt:
             engine.thresholds = _PressureThresholds(
-                memory_warning_percent=pt.get("memory_warning_percent", 75.0),
-                memory_critical_percent=pt.get("memory_critical_percent", 85.0),
-                memory_emergency_percent=pt.get("memory_emergency_percent", 95.0),
-                cpu_warning_percent=pt.get("cpu_warning_percent", 80.0),
-                cpu_critical_percent=pt.get("cpu_critical_percent", 90.0),
-                cpu_emergency_percent=pt.get("cpu_emergency_percent", 98.0),
+                memory_warning_percent=pt.get("memory_warning_percent", 70.0),
+                memory_critical_percent=pt.get("memory_critical_percent", 80.0),
+                memory_emergency_percent=pt.get("memory_emergency_percent", 90.0),
+                cpu_warning_percent=pt.get("cpu_warning_percent", 75.0),
+                cpu_critical_percent=pt.get("cpu_critical_percent", 85.0),
+                cpu_emergency_percent=pt.get("cpu_emergency_percent", 95.0),
                 process_warning_count=pt.get("process_warning_count", 50),
                 process_critical_count=pt.get("process_critical_count", 100),
                 process_emergency_count=pt.get("process_emergency_count", 250),
