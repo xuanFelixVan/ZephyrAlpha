@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "48c14b4216f5b547",
+      "hash": "81c20dd4c4c7728a",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -91,6 +91,6 @@
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-08-22T05:56:48.259585+00:00",
+  "registered_at": "2026-08-22T05:58:32.738436+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
