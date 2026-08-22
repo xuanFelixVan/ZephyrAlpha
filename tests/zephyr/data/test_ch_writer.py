@@ -20,6 +20,7 @@ import pytest
 from src.zephyr.data.ch_writer import (
     WriteDisposition,
     delete_where,
+    ensure_database,
     get_insert_columns,
     get_table_engine,
     is_replacing_engine,
@@ -373,3 +374,44 @@ class TestGetTableEngine:
             engine = get_table_engine("nonexistent.table")
         assert engine == ""
         assert is_replacing_engine("nonexistent.table") is False
+
+
+class TestEnsureDatabase:
+    """ensure_database 测试（#256③ 路线B：writer 无 CREATE DATABASE 权限的容错通道）。"""
+
+    def test_exists_short_circuit(self):
+        """库已存在 → 直接 True，不发 CREATE DATABASE。"""
+        with (
+            patch("src.zephyr.data.ch_writer.query", return_value="c1_market\n"),
+            patch("src.zephyr.data.ch_writer.get_client") as mock_gc,
+        ):
+            assert ensure_database("c1_market") is True
+        mock_gc.assert_not_called()
+
+    def test_missing_create_success(self):
+        """库缺失 + admin 凭据 → CREATE 成功返回 True。"""
+        mock_client = MagicMock()
+        with (
+            patch("src.zephyr.data.ch_writer.query", return_value=""),
+            patch("src.zephyr.data.ch_writer.get_client", return_value=mock_client),
+        ):
+            assert ensure_database("new_db") is True
+        assert "CREATE DATABASE IF NOT EXISTS new_db" in mock_client.execute.call_args[0][0]
+
+    def test_missing_privilege_denied(self):
+        """库缺失 + writer 权限不足（Code 497）→ fail-visible 返回 False，不抛异常。"""
+        mock_client = MagicMock()
+        mock_client.execute.side_effect = RuntimeError("Code: 497. Not enough privileges")
+        with (
+            patch("src.zephyr.data.ch_writer.query", return_value=""),
+            patch("src.zephyr.data.ch_writer.get_client", return_value=mock_client),
+        ):
+            assert ensure_database("new_db") is False
+
+    def test_missing_no_client(self):
+        """库缺失 + TCP 不可用 → 返回 False。"""
+        with (
+            patch("src.zephyr.data.ch_writer.query", return_value=""),
+            patch("src.zephyr.data.ch_writer.get_client", return_value=None),
+        ):
+            assert ensure_database("new_db") is False

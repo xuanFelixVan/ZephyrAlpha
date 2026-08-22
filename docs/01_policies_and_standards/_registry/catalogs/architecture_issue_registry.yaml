@@ -18681,3 +18681,34 @@ entries:
   related_rules: '03号文 §3.1 选项C/§4.4 分支C; PS-VOC-036; 18号清单 E0-8'
   created: '2026-08-22'
   last_updated: '2026-08-22'
+# --- #ARCH-CH-036: zephyr_writer 缺 CREATE DATABASE 权限——路线B 管理员预建库（#256③） ---
+- issue_id: '#ARCH-CH-036'
+  title: 'zephyr_writer 无 CREATE DATABASE 权限致 apply 脚本降级伪报——路线B 管理员预建库 + ensure_database 容错通道'
+  category: data_security
+  severity: P2中
+  adjudication: |-
+    病根（2026-08-22 实证 Code 497）：zephyr_writer 授权集（#ARCH-CH-027）不含
+    CREATE DATABASE，apply_market/apply_fundamental 两脚本建表前置
+    CREATE DATABASE IF NOT EXISTS 经 ch_writer.query 直发——权限错误走 query()
+    降级链：TCP 单例被误失效（连接 churn）+ HTTP 重发同样 497 + query() 吞错返回
+    空串 → 调用方打印 ✓ 伪报（#ARCH-154/ipo_calendar 两次实证留痕）。
+    裁定（路线B，#256③）：①库由管理员预建——apply_rbac.py apply() 增
+    _PRECREATE_DATABASES（c1_market/c3_fundamental/c0_meta）admin 通道幂等预建，
+    verify() 增库存在性检查；②ch_writer 增 ensure_database()——system.databases
+    存在性短路（存在即过零 CREATE），缺失才尝试 CREATE，权限不足 fail-visible
+    返回 False（不抛异常不走降级链）；③两 apply 脚本建表前置改调 ensure_database，
+    失败即退出码 2 中止，防后续建表连环伪报。
+    备选路线A（GRANT CREATE DATABASE TO writer）放弃：写账号扩权到库级 DDL 违反
+    最小权限原则，且生产库集合收敛三库、无动态建库需求。
+  impact:
+    - 'scripts/ch/apply_rbac.py（_PRECREATE_DATABASES 预建 + verify 库存在性检查）'
+    - 'src/zephyr/data/ch_writer.py（ensure_database）'
+    - 'scripts/ch/apply_market_tables_ddl.py / apply_fundamental_tables_ddl.py（建库前置改 ensure_database，移除 SQL_CREATE_DB 死常量）'
+    - 'tests/zephyr/data/test_ch_writer.py（TestEnsureDatabase 4 用例）'
+  fix_phase: '已落地（2026-08-22）：4 新用例全绿+test_ch_writer 41 passed；apply_rbac --verify 10/10 PASS（含 3 库存在性）；writer 凭据冒烟——3 存量库 True 零 CREATE 零 churn，缺失库 fail-visible False（Code 497 实证）'
+  status: resolved
+  related_rules:
+  - '#ARCH-CH-027'
+  - '#ARCH-154'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'

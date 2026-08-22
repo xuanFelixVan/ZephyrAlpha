@@ -427,7 +427,12 @@ _DATABASE = "c1_market"
 def apply() -> int:
     """执行所有建表 DDL + 增量迁移。"""
     print("=== 创建数据库 ===")
-    ch_writer.query(f"CREATE DATABASE IF NOT EXISTS {_DATABASE}")
+    # #256③ 路线B（2026-08-22）：writer 无 CREATE DATABASE 权限（实证 Code 497），
+    # 库由管理员预建（apply_rbac.py）；ensure_database 存在即过、缺失才 CREATE、失败 fail-visible，
+    # 替代 ch_writer.query 直发 CREATE 走降级链的旧路径（TCP churn + HTTP 伪报病根）。
+    if not ch_writer.ensure_database(_DATABASE):
+        print(f"  [ERROR] 数据库 {_DATABASE} 不存在且当前凭据无权创建——需管理员预建（apply_rbac.py）")
+        return 2
     print(f"  {_DATABASE} ✓")
 
     print("\n=== 执行建表 DDL ===")

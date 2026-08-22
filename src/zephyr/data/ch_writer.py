@@ -27,6 +27,7 @@
 - tsv_escape(v): 转义字段值（None/NaN -> \\N，字符串去换行制表符）
 - delete_where(table, condition): 写前删除（MergeTree 幂等性）
 - query(sql): 查询 CH（用于 DESCRIBE TABLE 获取列清单）
+- ensure_database(name): 建库前置容错（#256③ 路线B：存在即过，缺失才 CREATE，权限不足 fail-visible）
 - get_table_engine(table) / is_replacing_engine(table): 查询表引擎，辅助幂等性决策（裁定 #ARCH-CH-002）
 
 幂等性策略（§7.3）：
@@ -410,6 +411,38 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
 
     log.error("CH query 失败(TCP+HTTP 均失败): %s", sql[:200])
     return ""
+
+
+def ensure_database(name: str, timeout: int = _DEFAULT_TIMEOUT) -> bool:
+    """确保数据库存在（#256③ 路线B：writer 无 CREATE DATABASE 权限的容错通道）。
+
+    语义：
+    - 库已存在（system.databases 可查，writer 有 SELECT ON system.*）→ 直接返回 True，
+      不发 CREATE DATABASE（避免权限错误走 query() 降级链：TCP 失效 churn + HTTP 伪报）；
+    - 库不存在 → 尝试 CREATE DATABASE（仅 admin 凭据场景会成功）；权限不足/失败 →
+      log.error fail-visible 并返回 False（调用方应中止，防后续建表连环伪报）。
+
+    治本路径：生产库由管理员预建（scripts/ch/apply_rbac.py apply() 预建步骤），
+    writer 凭据永不需要 CREATE DATABASE（2026-08-22 实证 Code 497）。
+    """
+    probe = query(f"SELECT name FROM system.databases WHERE name = '{name}'", timeout=timeout)
+    if probe.strip():
+        return True
+    client = get_client()
+    if client is None:
+        log.error("ensure_database(%s): 库不存在且 TCP 不可用——需管理员预建（apply_rbac.py）", name)
+        return False
+    try:
+        with _ch_lock:  # 串行化 execute（clickhouse-driver Client 非线程安全）
+            client.execute(f"CREATE DATABASE IF NOT EXISTS {name}", settings={"max_execution_time": timeout})
+        return True
+    except Exception as e:  # noqa: BLE001 — 权限不足属预期分支，fail-visible 返回 False
+        log.error(
+            "ensure_database(%s): CREATE DATABASE 失败（writer 无权限时需管理员预建，apply_rbac.py）: %s",
+            name,
+            e,
+        )
+        return False
 
 
 def tsv_escape(v) -> str:

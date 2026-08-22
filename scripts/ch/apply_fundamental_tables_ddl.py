@@ -133,7 +133,6 @@ _MONEY_FIELDS = {
 }
 
 # SQL 常量集中化（NO-BARE-SQL gate 豁免 SQL_* 前缀）
-SQL_CREATE_DB = "CREATE DATABASE IF NOT EXISTS {db}"
 SQL_TABLES_ENGINE = "SELECT name, engine FROM system.tables WHERE database = '{db}' ORDER BY name"
 SQL_COLUMNS_TYPE = "SELECT name, type FROM system.columns WHERE database='{db}' AND table='{table}' FORMAT TabSeparated"
 
@@ -146,7 +145,11 @@ def apply() -> int:
     对 CREATE DATABASE/CREATE TABLE 无 FROM 子句则透传，功能等价 ch_writer.query。
     """
     print("=== 创建数据库 ===")
-    ch_reader.query(SQL_CREATE_DB.format(db=_DATABASE))
+    # #256③ 路线B（2026-08-22）：writer 无 CREATE DATABASE 权限（实证 Code 497），
+    # 库由管理员预建（apply_rbac.py）；ensure_database 存在即过、缺失才 CREATE、失败 fail-visible。
+    if not ch_writer.ensure_database(_DATABASE):
+        print(f"  [ERROR] 数据库 {_DATABASE} 不存在且当前凭据无权创建——需管理员预建（apply_rbac.py）")
+        return 2
     print(f"  {_DATABASE} ✓")
 
     print("\n=== 执行建表 DDL ===")

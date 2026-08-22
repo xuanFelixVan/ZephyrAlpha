@@ -54,6 +54,11 @@ from zephyr.data.ch_config import load_ch_config, load_ch_reader_config, load_ch
 # default(admin) 账号配置——用于创建用户和授权
 _ADMIN_CONFIG = load_ch_config()
 
+# 管理员预建库清单（#256③ 路线B，2026-08-22）：zephyr_writer 无 CREATE DATABASE 权限
+# （实证 Code 497），业务库一律由本脚本 admin 通道预建；apply 脚本建表前置改走
+# ch_writer.ensure_database（存在即过，不再对 writer 发 CREATE DATABASE）。
+_PRECREATE_DATABASES = ["c1_market", "c3_fundamental", "c0_meta"]
+
 # zephyr_writer 权限：INSERT/SELECT/ALTER/CREATE/DROP/OPTIMIZE on 业务库 + SELECT on system/c0_meta
 _WRITER_GRANTS = [
     "GRANT SELECT ON c1_market.* TO zephyr_writer",
@@ -145,7 +150,17 @@ def apply() -> bool:
             print(f"  FAIL: {sql} -> {e}")
             ok = False
 
-    # 2. 授权（幂等：GRANT 可重复执行）
+    # 2. 管理员预建库（幂等：CREATE DATABASE IF NOT EXISTS，#256③ 路线B）
+    print("\n--- Pre-creating databases (admin channel) ---")
+    for db in _PRECREATE_DATABASES:
+        try:
+            c.execute(f"CREATE DATABASE IF NOT EXISTS {db}")
+            print(f"  OK: {db}")
+        except Exception as e:  # noqa: BLE001
+            print(f"  FAIL: CREATE DATABASE {db} -> {e}")
+            ok = False
+
+    # 3. 授权（幂等：GRANT 可重复执行）
     print("\n--- Granting zephyr_writer permissions ---")
     for sql in _WRITER_GRANTS:
         try:
@@ -200,6 +215,14 @@ def verify() -> bool:
     _check("zephyr_writer exists", "zephyr_writer" in users, f"users={users}")
     if "zephyr_reader" not in users or "zephyr_writer" not in users:
         ok = False
+
+    # 1b. 管理员预建库存在性（#256③ 路线B）
+    rows = c_admin.execute("SELECT name FROM system.databases ORDER BY name FORMAT TabSeparated")
+    dbs = [r[0] for r in rows]
+    for db in _PRECREATE_DATABASES:
+        _check(f"database {db} exists", db in dbs, f"dbs={dbs}")
+        if db not in dbs:
+            ok = False
     c_admin.disconnect()
 
     # 2-3. reader 权限验证
