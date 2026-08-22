@@ -1605,14 +1605,35 @@ tasks:
 - task_id: futures_kline_qmt_incremental
   table: c1_market.futures_kline_qmt
   source: miniqmt
-  schedule: daily_capital
+  schedule: intraday_realtime    # 92号 §7.1（44号 §9.8 通道2）：盘中层每5分钟滚动刷新当日K线（forming bar close=最新价=期指盘中价格腿）；
+                                # 原挂 daily_capital 盘后层——CFFEX 期指 15:00 收无夜盘，盘中层末班（15:55）捕获的当日bar即为终版，
+                                # ReplacingMergeTree(symbol,trade_date) 幂等重刷，盘后层冗余故迁移不保留副本。
   incremental: true
   date_col: trade_date
   dependencies: []
   capability: futures_kline_qmt
-  symbols:         # 需指定合约代码如IF2407.CFFEX
+  symbols: ["IF00.IF", "IC00.IF", "IM00.IF", "IH00.IF"]    # IF/IC/IM/IH 主力连续（xtquant 期货 market 码：中金所=IF；{品种}00.IF=主力连续虚拟代码，
+                                                           # 官方论坛实证示例 IF00.IF + 本表 2026-07-31~08-14 既有 miniqmt 落库行 symbol=IF00 裸码/exchange=IF 互证）。
+                                                           # 实证留痕（2026-08-22 周六，国金模拟端）：裸代码无后缀直接"代码错误"拒绝（必须带后缀）；
+                                                           # .IF/.CFFEX 后缀代码 download_history_data+get_market_data_ex 均 0 行（A股 600000.SH 对照 15 行通道正常）——
+                                                           # 模拟端+非交易日无法实证取数，首个交易日盘中复测；若 00 主力连续不支撑则回退具体合约（IF2407.IF 式）按月换月。
   extra:
-    description: "期货日K线增量-QMT专用表（miniQMT get_market_data_ex，symbols如IF2407.CFFEX）"
+    description: "期货日K线增量-QMT专用表（miniQMT get_market_data_ex，IF/IC/IM/IH 主力连续，92号 §7.1 盘中滚动刷新）"
+
+- task_id: us_futures_intraday_snapshot
+  table: c1_market.us_futures_intraday
+  source: akshare
+  schedule: intraday_realtime    # 92号 §7.2（44号 §9.8 通道3，裁定五）：挂 L1 盘中实时族（每5分钟，与族内任务同频）。
+                                # 分时段优化项留痕（调度器仅支持 schedule 槽位级 cron，本工单不新增槽位）：
+                                # 评估报告 §五建议 美股时段60s/盘前09:00-09:30窗口30~60s/其余5min+冻结态降频15min——
+                                # 待调度器支持分时段频率或 futures_basis_monitor 上线时评是否拆独立槽位。
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: us_futures_intraday
+  symbols:         # null=默认品种表 ES/NQ/CHA50CFD（provider 内置；东财兜底映射 ES00Y/NQ00Y/CN00Y）
+  extra:
+    description: "美股期指ES/NQ+新交所A50盘中实时快照（新浪hf裸调主源，东财futures_global_spot_em快照兜底degraded=1，主源连续3次失败自动切换+告警留痕；44号 §9.8 通道3）"
 
 - task_id: hk_kline_incremental
   table: c1_market.hk_kline

@@ -346,9 +346,11 @@ SETTINGS index_granularity = 8192
 # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）— 真源: schemas/categories/ 同名文件
 # 不内联 fallback：DDL 部署必须 fail-closed（导入失败即报错），防止静默使用漂移副本建错表
 # tracker #114 / 37号 §3.2a（2026-08-17 AI-IPO-001）：IPO 日历/募资规模（巨潮新股列表）
+# 92号清单 §7.2（2026-08-22）：market_us_futures_intraday=美股期指 ES/NQ + A50 盘中实时快照（44号 §9.8 通道3）
 from schemas.categories.market_ipo_calendar import IPO_CALENDAR_DDL
 from schemas.categories.market_stk_limit import STK_LIMIT_DDL
 from schemas.categories.market_suspend import SUSPEND_DDL
+from schemas.categories.market_us_futures_intraday import US_FUTURES_INTRADAY_DDL
 from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
 
 # 所有 DDL（按依赖顺序）
@@ -369,6 +371,8 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.suspend", SUSPEND_DDL),
     # tracker #114 / 37号 §3.2a（2026-08-17 AI-IPO-001）
     ("c1_market.ipo_calendar", IPO_CALENDAR_DDL),
+    # 92号清单 §7.2（2026-08-22）：美股期指 ES/NQ + A50 盘中实时快照
+    ("c1_market.us_futures_intraday", US_FUTURES_INTRADAY_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -401,6 +405,8 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "stk_limit": "ReplacingMergeTree",
     "suspend": "ReplacingMergeTree",
     "ipo_calendar": "ReplacingMergeTree",
+    # 92号清单 §7.2（2026-08-22）：高频快照，按 (symbol, trade_date, timestamp) 去重
+    "us_futures_intraday": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

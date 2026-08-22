@@ -1,0 +1,74 @@
+# [REGISTRY] sector_attribute_labels — 板块属性标签（防御族/进攻族）映射真源
+# [BLUEPRINT] MOD-SIG-060 | 真源=44号备忘录 §9.2 通道 c + 92号清单 §7.10（M1-②c）
+# [DOMAIN] D_ASHARE_SIGNAL
+# [MATURITY] testing
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TTL] permanent
+#
+# 用途：M1-②c 相对强度雷达（rs_ratio = mean_ret(进攻族) − mean_ret(防御族)）的
+# 板块族归属真源；由 zephyr.signal_ashare.sector_divergence 的
+# load_sector_attribute_labels() 消费。
+#
+# 实证依据（2026-08-22 直查 c1_market 锚定校验，可信）：
+# - kline_sector_880（period='1d'）现存 469 个板块代码：880001-880009 市场统计指数(11)、
+#   880201-880232 地区板块(32，锚定实证：工商/人寿/神华/长电∈880207 北京、
+#   招商/平安/中信/中兴∈880218 深圳、东财/中芯∈880216 上海、陕煤∈880208 陕西、
+#   华能水电∈880227 云南、科大讯飞∈880224 安徽、浪潮信息∈880215 山东)、
+#   8805xx-8809xx 概念/风格板块(426)。**sector_name 列在库中为空串**，
+#   且无成分纯净的 880xxx 行业板块（密度法锚定探测最高 precision=0.33）。
+# - 纯行业板块为 881xxx 族（sector_constituent SCD-2 当前有效清单锚定）：
+#   银行=881386(n=15，15/15 银行锚全中)、保险=881395(n=5，5/6)、券商=881394(n=50，9/10)、
+#   煤炭=881002(n=25，10/10)、电力公用=881459(n=103，10/10)、半导体=881319(n=182，10/10)、
+#   通信设备=881338(n=90，8/10)。**881xxx 在 kline_sector_880 无 K 线（0 行）**。
+# - 裁定：族归属以 881xxx 行业板成分清单为准；族收益经成分股等权聚合
+#   （kline_daily.pct_change）计算，不依赖板块指数 K 线（口径登记于 MOD-SIG-060 头注）。
+#
+# 待办（下波次）：TDX 客户端可用时补采 881xxx 板块指数 K 线或回填 sector_name，
+# 候选补录：软件开发 881355.SH（科大讯飞∈，单锚未密度验证）/计算机设备 881352.SH
+# （浪潮信息∈，单锚未密度验证）——验证通过前不进 boards。
+
+version: "0.1.0"
+asof: "2026-08-22"
+source: "44号备忘录 §9.2 通道 c + 92号清单 §7.10（M1-②c）"
+
+families:
+  defensive:
+    label: "防御族"
+    boards:
+      - key: bank
+        name: "银行"
+        code: "881386.SH"
+        evidence: "2026-08-22 锚定：成分 15 家全为银行（招商/工商/农业/中国/建设等 15/15）"
+      - key: insurance
+        name: "保险"
+        code: "881395.SH"
+        evidence: "2026-08-22 锚定：成分 5 家（平安/人寿/太保/新华/人保 5/6 锚中，000627 未入）"
+      - key: utilities
+        name: "公用事业(电力)"
+        code: "881459.SH"
+        evidence: "2026-08-22 锚定：成分 103 家，电力锚 10/10（长电/华水/广核/核电等）"
+      - key: coal
+        name: "煤炭"
+        code: "881002.SH"
+        evidence: "2026-08-22 锚定：成分 25 家，煤炭锚 10/10（神华/陕煤/兖矿等）"
+  offensive:
+    label: "进攻族"
+    boards:
+      - key: tech_semiconductor
+        name: "半导体"
+        code: "881319.SH"
+        evidence: "2026-08-22 锚定：成分 182 家，半导体锚 10/10（中芯/韦尔/中微等）"
+      - key: tech_telecom
+        name: "通信设备"
+        code: "881338.SH"
+        evidence: "2026-08-22 锚定：成分 90 家，通信锚 8/10（中兴/中天/光迅等）"
+      - key: broker
+        name: "证券(券商)"
+        code: "881394.SH"
+        evidence: "2026-08-22 锚定：成分 50 家，券商锚 9/10（中信/东财/华泰等，601236 未入）"
+
+params:
+  rs_sigma_window: 20        # rs_ratio ±1σ 判读窗（交易日，对齐 44号 §9.2 通道 b σ_20d 约定）
+  rs_min_periods: 10         # σ 序列最小样本（不足 → rs_z=None 降级，不出注解）
+  family_equal_weight: true  # 族收益=成分股 pct_change 等权均值（881xxx 无 K 线实证裁定）
