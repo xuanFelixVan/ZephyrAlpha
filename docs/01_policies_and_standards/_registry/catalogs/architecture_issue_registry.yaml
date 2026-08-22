@@ -18035,15 +18035,17 @@ entries:
     先例：6 张 dormant 数据表（保留、标注、不采集）。
     首批落地：research/alt_data/cross_asset/data_eng/ml_serve/digital_twin/
     data_security 7 包 43 文件；alt_data 根 [MATURITY] production→design 勘正；
-    depgraph 14 零节点域侧写**未执行**——domains.build_status CHECK 词表
-    （planned/generated/testing/stable/deprecated）无 dormant 值，deprecated
-    语义错误不强行复用；休眠真源=翻译注册表 build_status: dormant + 本条目
-    （词表扩展属 schema 变更，留 Owner 窗口，登记 tracker 遗留项）。
+    depgraph 14 零节点域侧写~~未执行~~ **已执行（2026-08-22 晚，tracker #251 闭环）**：
+    domains.build_status CHECK 经 --fix-domains-build-status-vocab 扩为 6 态（+dormant，
+    superuser DDL，SSoT 02_create_pg_schema.sql 同步）；E0-8 补偿后净零节点域 11 个
+    （原 14 - D_BEHAVIORAL_AUDIT 已退役 - D_SECURITY_LLM/D_INTEGRATION_GATEWAY 已激活），
+    侧写裁定=10 域 dormant（8 脚本组织空壳域+D_CONTRACTS/D_SIGLEGACY 注册从未激活）
+    +D_ARCHIVE_SCRIPTS 维持 deprecated 终态。
   impact:
     - '7 包 43 个 __init__.py（DORMANT 标注）'
     - 'module_translation_registry.yaml（43 条目 build_status: dormant）'
-    - 'depgraph PG domains 表（未动——词表不支持，见 adjudication 末段）'
-  fix_phase: '已落地（2026-08-22）：grep DORMANT 43 命中+全包 import 不破坏+关联测试 36 passed 零新增红'
+    - 'depgraph PG domains 表（✅ 2026-08-22：CHECK +dormant 6态，10 域 dormant 落库）'
+  fix_phase: '已落地（2026-08-22）：grep DORMANT 43 命中+全包 import 不破坏+关联测试 36 passed 零新增红；域侧写 2026-08-22 晚闭环（见 adjudication 末段）'
   status: decided
   confirmed_by_user: '2026-08-22 Owner 长城任务指令'
   related_rules: '2026-08 架构审查报告 §3.2 STR-01/§9.3; 92号清单 §5.5'
@@ -18673,7 +18675,7 @@ entries:
     - 'docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml（D_BEHAVIORAL_AUDIT 退役）'
     - 'scripts/governance/apply_depgraph.py（--tag-nodes/--untag-nodes）'
     - 'depgraph PG：147 节点 ai_layer 标签+42 节点域迁移+1 空域退役'
-  fix_phase: '已落地（2026-08-22）：PG 实证 147 标签/25+17 迁移/空域 0 节点'
+  fix_phase: '已落地（2026-08-22）：PG 实证 147 标签/25+17 迁移/空域 0 节点。【2026-08-22 晚勘正：原 PG 直写未同步 domain_mapping 且 tags 无 SSoT 载体，经 regen 增量重扫后实证回退（D_SECURITY_LLM/D_INTEGRATION_GATEWAY 各 0 节点、ai_layer 仅剩 1）——tracker #251 补偿执行：domain_mapping 2 行改挂（SSoT 治本）+migrate-nodes 25/17 重迁+derive_tags 增 _AI_LAYER_TAG_PREFIXES 派生（抗全量重扫）+168 节点重打标，regen 后复核 D_SECURITY_LLM=25/D_INTEGRATION_GATEWAY=17/ai_layer=168/D_SECURITY=147 全达标】'
   status: decided
   confirmed_by_user: '2026-08-22 Owner 拍板授权（"你按照你的裁定结果执行就行"）'
   related_rules: '03号文 §3.1 选项C/§4.4 分支C; PS-VOC-036; 18号清单 E0-8'
