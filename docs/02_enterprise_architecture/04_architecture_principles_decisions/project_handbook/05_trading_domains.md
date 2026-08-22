@@ -65,17 +65,17 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
-| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 467 |
-| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 442 |
-| `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 243 |
-| `D_DATA` | 数据接入层 | L1_foundation | 232 |
+| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 473 |
+| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 443 |
+| `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 244 |
+| `D_DATA` | 数据接入层 | L1_foundation | 239 |
 | `D_GOV_AUDIT` | 审计追踪 | L2_domain | 201 |
 | `D_SHARED` | 共享服务 | L0_infrastructure | 195 |
-| `D_SECURITY` | 对抗验证 | L1_foundation | 171 |
-| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 168 |
-| `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 131 |
+| `D_SECURITY` | 对抗验证 | L1_foundation | 172 |
+| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 169 |
+| `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 140 |
 | `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 128 |
-| `D_FACTOR` | 因子 | L2_domain | 124 |
+| `D_FACTOR` | 因子 | L2_domain | 127 |
 | `D_FEEDBACK_LOOP` | 反馈循环引擎 | L1_foundation | 124 |
 | `D_GOV_OPS_RESILIENCE` | 运维弹性治理 | L1_foundation | 116 |
 | `D_FBL_DIAGNOSERS` | 反馈诊断器 | L1_foundation | 76 |
@@ -83,25 +83,25 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_INFRA_A2A` | A2A通信 | L0_infrastructure | 72 |
 | `D_ORCHESTRATOR` | 代理编排器 | L1_foundation | 72 |
 | `D_FBL_VERIFICATION` | 反馈验证 | L1_foundation | 71 |
-| `D_EX_CORE` | 执行核心 | L2_domain | 66 |
-| `D_INTEGRATION` | 管线路由 | L1_foundation | 66 |
+| `D_EX_CORE` | 执行核心 | L2_domain | 68 |
+| `D_INTEGRATION` | 管线路由 | L1_foundation | 68 |
 | `D_FBL_DETECTORS` | 反馈检测器 | L1_foundation | 65 |
 | `D_BACKTEST` | 回测 | L2_domain | 62 |
 | `D_RISK` | 风控 | L2_domain | 61 |
+| `D_TRADING` | 交易运营 | L2_domain | 56 |
 | `D_INFRA_RECOVERY` | 回滚恢复 | L0_infrastructure | 55 |
-| `D_ASHARE_SIGNAL` | A股特色信号 | L2_domain | 46 |
-| `D_REGIME` | 市场状态 | L2_domain | 46 |
-| `D_TRADING` | 交易运营 | L2_domain | 46 |
-| `D_INTELLIGENCE` | 上下文管理 | L2_domain | 41 |
+| `D_ASHARE_SIGNAL` | A股特色信号 | L2_domain | 54 |
+| `D_INTELLIGENCE` | 上下文管理 | L2_domain | 49 |
+| `D_REGIME` | 市场状态 | L2_domain | 49 |
 | `D_GOV_RULE` | 规则治理 | L2_domain | 36 |
-| `D_REPORTING` | 报告 | L1_foundation | 31 |
+| `D_REPORTING` | 报告 | L1_foundation | 33 |
 | `D_SELL_DECISION` | 卖出决策 | L2_domain | 30 |
 | `D_POSITION` | 仓位管理 | L2_domain | 29 |
-| `D_GOV_DOCS` | 架构文档治理 | L2_domain | 27 |
+| `D_GOV_DOCS` | 架构文档治理 | L2_domain | 28 |
+| `D_INFRASTRUCTURE` | 跨层契约基础设施 | L0_infrastructure | 27 |
 | `D_FRONTEND` | 前端 | L2_domain | 26 |
-| `D_INFRASTRUCTURE` | 跨层契约基础设施 | L0_infrastructure | 26 |
 | `D_MKT_DATA` | 行情数据 | L1_foundation | 26 |
-| `D_PF_CORE` | 组合核心 | L2_domain | 22 |
+| `D_PF_CORE` | 组合核心 | L2_domain | 25 |
 | `D_SIMULATION` | 仿真 | L2_domain | 21 |
 | `D_DATA_ENG` | 数据工程 | L1_foundation | 20 |
 | `D_EX_SOR` | 执行路由 | L2_domain | 18 |
@@ -118,17 +118,16 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_DIGITAL_TWIN` | 数字孪生 | L2_domain | 7 |
 | `D_EXEC_SIM` | 执行仿真 | L2_domain | 7 |
 | `D_ML_SERVE` | 推理 | L2_domain | 7 |
+| `D_PLAN` | 预案引擎 | L2_domain | 7 |
+| `D_KNOWLEDGE` | 知识管理 | L2_domain | 6 |
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 3 |
-| `D_PLAN` | 预案引擎 | L2_domain | 3 |
 | `D_AUTONOMY_PERM` | 自治保护 | L2_domain | 2 |
 | `D_INFRA_OPS` | 基础设施运维 | L0_infrastructure | 2 |
 | `D_SIGQC` | 信号质量控制 | L2_domain | 2 |
 | `D_GOV_REPAIR` | 治理修复 | L2_domain | 1 |
-| `D_KNOWLEDGE` | 知识管理 | L2_domain | 1 |
 | `D_ARCHIVE_SCRIPTS` | Archived Scripts | L2_domain | 0 |
 | `D_ARCH_GUARD` | 架构守护脚本 | L2_domain | 0 |
 | `D_ARCH_SCRIPTS` | 架构治理脚本 | L2_domain | 0 |
-| `D_BEHAVIORAL_AUDIT` | 行为审计 | L2_domain | 0 |
 | `D_CODE_SCRIPTS` | 代码质量脚本 | L2_domain | 0 |
 | `D_COMPLIANCE_SCRIPTS` | 合规治理脚本 | L2_domain | 0 |
 | `D_CONTRACTS` | 共享契约 | L0_infrastructure | 0 |
@@ -140,7 +139,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_SIGLEGACY` | 信号遗留设计态 | L2_domain | 0 |
 | `D_STRUCT_SCRIPTS` | 结构治理脚本 | L2_domain | 0 |
 
-**合计 74 个域**
+**合计 73 个域**
 <!-- AUTO-END:domain_list -->
 
 ## 4. 外部权威源（逐域详解）

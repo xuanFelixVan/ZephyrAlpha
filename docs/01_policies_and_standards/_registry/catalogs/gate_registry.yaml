@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-20T16:12:22Z'
+generated_at: '2026-08-21T18:58:26Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 151
+total_gates: 152
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -864,6 +864,16 @@ gates:
     priority=42）'
   entry: in-process (GitCommitGateway)
   description: 编码安全校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-ENCODING 的缺口）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: GATE-ERRCODE-CONSISTENCY
+  name: 'GATE-ERRCODE-CONSISTENCY: error_code 注册表↔代码真源对账门禁 in-process 版（GATE-ERRCODE-CONSISTENCY）（CommitGate,
+    priority=131）'
+  entry: in-process (GitCommitGateway)
+  description: error_code 注册表↔代码真源对账门禁 in-process 版（GATE-ERRCODE-CONSISTENCY）
   files_trigger: ''
   always_run: false
   category: commit_gate

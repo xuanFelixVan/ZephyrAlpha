@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-22T08:00:49Z'
+generated_at: '2026-08-22T12:14:23Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 218
+total_files: 219
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -3248,6 +3248,21 @@ files:
 - path: docs/01_policies_and_standards/_registry/vocabularies/dep_type_vocabulary.yaml
   module_id: PS-VOC-034
   title: dep_type 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/depgraph_tags_vocabulary.yaml
+  module_id: PS-VOC-036
+  title: depgraph nodes.tags 横切标签受控词表
   doc_type: vocabulary
   status: active
   version: 1.0.0

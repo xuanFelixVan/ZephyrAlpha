@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """
 test_llm_runtime_gateway.py — llm_runtime_gateway MVP 单测（10号文 §4 + 18号清单 §5 E1，2026-08-22）
 =====================================================================================================

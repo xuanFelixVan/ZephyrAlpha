@@ -18,7 +18,7 @@ scope: 07_trading_decision_architecture
 > 用途：用户将开启多个 AI，每个 AI 认领一个主题组 → 讨论 → 落盘 discussion/design_memo → 施工。本文档是分工的"作战地图"。
 > 关联：[30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)（多策略并发架构，已定稿 v2.5.0）｜ [10_regime_detector_spec](10_regime_detector_spec.md)（regime 完整 spec，已定稿 v1.5.1）｜ [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md)（regime 验证，已定稿 v1.5.2，C1 已通过 commit 852457e9）
 
-## 0. 现有文档总目录（53 篇·按段位编号）
+## 0. 现有文档总目录（54 篇·按段位编号）
 
 > 段位语义：**0x**=meta（规范与索引）｜**1x**=地基层（regime/数据特征）｜**2x**=Alpha 策略层｜**3x**=组合仓位与风控层｜**4x**=交易执行层｜**5x**=验证与可观测性层｜**6x**=跨切治理层｜**9x**=开放问题与远期愿景。
 > 命名规则见 §8；新旧名对照见 §10；占用登记见 §7.3。
@@ -66,6 +66,7 @@ scope: 07_trading_decision_architecture
 | [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec（MVP 已施工：Triage/止损/止盈/执行编排 4 模块） | active v1.7.1 |
 | [43_compliance_discipline.md](43_compliance_discipline.md) | G30 合规与交易纪律体系（四项必做/四项严禁/信息合规/硬边界裁定/交易合规检测，D_COMPLIANCE 域设计真源） | active v1.1.0（2026-08-15 施工落地 AI-COMP-001 + 运行时装配 AI-ASM-001） |
 | [44_premarket_intraday_decision_upgrade.md](44_premarket_intraday_decision_upgrade.md) | 盘前与盘中决策支持升级（M1 情绪实时分析 10 增量/M2 盘中次日预案边界修正/M3 盘前综合预判 9 增量含 LLM 盘后分析，28+41+90 号升级备忘；§9 施工算法十四件；§11 五项裁定 Owner 已批准；§12 附录 M4 日志体系+短板复核+开源评估+Tito 提取；CAND 登记因并发纪律缓办） | active v1.2.0（2026-08-21 五项裁定全批+Owner 四问批次，施工按分期排 P0 之后） |
+| [45_warroom_playbook.md](45_warroom_playbook.md) | 作战手册体系（作战室）施工设计——预案/验证/执行跟踪三位一体（第一性原理五则+机构实践对标[quantamental 定位]+W0-W6+W2b 区块规格+数据契约映射+缺口⑥~⑩分期；前端改版 L15 落地件，HTML 原型 14 项自检全绿） | active v1.0.0（2026-08-22 Owner 裁定新增页） |
 | [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | draft v1.0.2 |
 | [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active v1.2.6 |
 | [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.0（2026-08-12 重建） |

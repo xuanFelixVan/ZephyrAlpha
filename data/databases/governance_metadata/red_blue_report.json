@@ -1,6 +1,6 @@
 {
   "report_type": "red_blue_adversarial",
-  "generated_at": "2026-08-20T19:07:22.271769+00:00",
+  "generated_at": "2026-08-21T11:42:18.600976+00:00",
   "total_rules_tested": 9,
   "green_detected": 6,
   "yellow_partial": 3,
@@ -13,7 +13,7 @@
       "violation_type": "create_file_without_lock",
       "detection_status": "YELLOW",
       "detection_detail": "audit exited -1 but no orphan mention: audit_registration.py not found",
-      "timestamp": "2026-08-20T19:07:22.186140+00:00"
+      "timestamp": "2026-08-21T11:42:18.461156+00:00"
     },
     {
       "rule_id": "TRAE-002",
@@ -21,7 +21,7 @@
       "violation_type": "create_py_without_register",
       "detection_status": "YELLOW",
       "detection_detail": "audit exited -1: audit_registration.py not found",
-      "timestamp": "2026-08-20T19:07:22.194724+00:00"
+      "timestamp": "2026-08-21T11:42:18.479496+00:00"
     },
     {
       "rule_id": "TRAE-003",
@@ -29,7 +29,7 @@
       "violation_type": "task_card_over_granularity",
       "detection_status": "GREEN",
       "detection_detail": "TaskRepository rejected: RULE-ZERO-TASK 违规: 任务的 source_blueprint 为空或 'unknown'。蓝图任务建卡路径 = BlueprintDecomposer.decompose(blueprint_path)（MOD-TASK_SYSTEM）。非蓝图任务（Bug修复/架构债务/代码扫描/重构任务）请传 allow_direct_create=True。RULE-ZERO-TASK v2.0+: 建卡触发=用户主动 OR 八指标阈值触发，蓝图拆解非唯一路径。",
-      "timestamp": "2026-08-20T19:07:22.206339+00:00"
+      "timestamp": "2026-08-21T11:42:18.497291+00:00"
     },
     {
       "rule_id": "TRAE-004",
@@ -37,7 +37,7 @@
       "violation_type": "serial_subprocess_loop",
       "detection_status": "GREEN",
       "detection_detail": "Static pattern check detected for+subprocess without ThreadPoolExecutor",
-      "timestamp": "2026-08-20T19:07:22.213388+00:00"
+      "timestamp": "2026-08-21T11:42:18.509970+00:00"
     },
     {
       "rule_id": "TRAE-005",
@@ -45,7 +45,7 @@
       "violation_type": "skip_depgraph_simulation",
       "detection_status": "YELLOW",
       "detection_detail": "diagnose_depgraph.py not found",
-      "timestamp": "2026-08-20T19:07:22.222076+00:00"
+      "timestamp": "2026-08-21T11:42:18.524307+00:00"
     },
     {
       "rule_id": "TRAE-006",
@@ -53,7 +53,7 @@
       "violation_type": "missing_ten_field_header",
       "detection_status": "GREEN",
       "detection_detail": "Static check detected missing required header fields",
-      "timestamp": "2026-08-20T19:07:22.232757+00:00"
+      "timestamp": "2026-08-21T11:42:18.547991+00:00"
     },
     {
       "rule_id": "TRAE-007",
@@ -61,7 +61,7 @@
       "violation_type": "placeholder_in_code",
       "detection_status": "GREEN",
       "detection_detail": "Static check detected TODO/pass placeholder",
-      "timestamp": "2026-08-20T19:07:22.242438+00:00"
+      "timestamp": "2026-08-21T11:42:18.561274+00:00"
     },
     {
       "rule_id": "TRAE-008",
@@ -69,7 +69,7 @@
       "violation_type": "import_without_verify",
       "detection_status": "GREEN",
       "detection_detail": "ImportError raised for nonexistent module (runtime guard)",
-      "timestamp": "2026-08-20T19:07:22.251699+00:00"
+      "timestamp": "2026-08-21T11:42:18.576079+00:00"
     },
     {
       "rule_id": "TRAE-009",
@@ -77,7 +77,7 @@
       "violation_type": "sql_string_concatenation",
       "detection_status": "GREEN",
       "detection_detail": "Static check detected SQL string concatenation",
-      "timestamp": "2026-08-20T19:07:22.260348+00:00"
+      "timestamp": "2026-08-21T11:42:18.591382+00:00"
     }
   ]
 }
