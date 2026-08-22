@@ -126,6 +126,74 @@ class TestMiniQMTHelpers:
     def test_safe_float_invalid(self):
         assert MiniQmtIngestProvider.safe_float("abc") is None
 
+    def test_build_kline_rows_daily_fills_pct_change_256(self):
+        """#256①：日线非 hfq 行必须携带 amplitude/pct_change/change（preClose 官方口径）。
+
+        修复前列序仅 OHLCV+amount，三列靠表 DEFAULT 0 兜底 → 全库 87.5% 行 pct_change=0，
+        sector_report_builder 881 行业板合成收益全 0。钉住：列序含三列、值按
+        preClose 计算、首日 preClose 缺失降级差分。
+        """
+        df = pd.DataFrame(
+            {
+                "open": [10.0, 10.2],
+                "high": [10.5, 10.6],
+                "low": [9.9, 10.1],
+                "close": [10.2, 10.4],
+                "volume": [1000, 1100],
+                "amount": [10200.0, 11440.0],
+                "preClose": [10.1, 10.2],  # 官方前收盘（含除权修正）
+            },
+            index=[20260820, 20260821],
+        )
+        cols = MiniQmtIngestProvider._kline_columns("c1_market.kline_daily", True, False)
+        rows = MiniQmtIngestProvider._build_kline_rows(df, "600000.SH", "c1_market.kline_daily", True, False)
+        assert cols[-3:] == ["amplitude", "pct_change", "change"]
+        assert len(rows) == 2 and all(len(r) == len(cols) for r in rows)
+        r0 = dict(zip(cols, rows[0], strict=True))
+        assert r0["pct_change"] == round((10.2 - 10.1) / 10.1 * 100, 4)
+        assert r0["amplitude"] == round((10.5 - 9.9) / 10.1 * 100, 4)
+        assert r0["change"] == round(10.2 - 10.1, 4)
+
+    def test_build_kline_rows_daily_fallback_diff_256(self):
+        """#256①：df 无 preClose 列时降级相邻收盘差分；首日无前值三列为 0。"""
+        df = pd.DataFrame(
+            {
+                "open": [10.0, 10.2],
+                "high": [10.5, 10.6],
+                "low": [9.9, 10.1],
+                "close": [10.2, 10.4],
+                "volume": [1000, 1100],
+                "amount": [10200.0, 11440.0],
+            },
+            index=[20260820, 20260821],
+        )
+        cols = MiniQmtIngestProvider._kline_columns("c1_market.kline_daily", True, False)
+        rows = MiniQmtIngestProvider._build_kline_rows(df, "600000.SH", "c1_market.kline_daily", True, False)
+        r0 = dict(zip(cols, rows[0], strict=True))
+        r1 = dict(zip(cols, rows[1], strict=True))
+        assert r0["pct_change"] == 0.0 and r0["amplitude"] == 0.0 and r0["change"] == 0.0
+        assert r1["pct_change"] == round((10.4 - 10.2) / 10.2 * 100, 4)
+        assert r1["change"] == round(10.4 - 10.2, 4)
+
+    def test_build_kline_rows_hfq_untouched_256(self):
+        """#256①：hfq 路径列序不动（OCLH 8 列，视图层口径候选另行登记）。"""
+        df = pd.DataFrame(
+            {
+                "open": [10.0],
+                "high": [10.5],
+                "low": [9.9],
+                "close": [10.2],
+                "volume": [1000],
+                "amount": [10200.0],
+                "preClose": [10.1],
+            },
+            index=[20260821],
+        )
+        cols = MiniQmtIngestProvider._kline_columns("c1_market.kline_daily_hfq", True, True)
+        rows = MiniQmtIngestProvider._build_kline_rows(df, "600000.SH", "c1_market.kline_daily_hfq", True, True)
+        assert cols == ["trade_date", "symbol", "open", "close", "high", "low", "volume", "amount"]
+        assert len(rows[0]) == 8
+
 
 class TestMiniQMTFetchRoute:
     def test_unknown_capability_yields_error(self):
@@ -1142,7 +1210,7 @@ class TestBaostockKlineDailyFallback:
         p = self._provider()
         p.tls.bs.query_history_k_data_plus = MagicMock(
             return_value=_FakeBsResultSet(
-                [["2026-08-01", "sh.600000", "10.0", "10.5", "9.9", "10.2", "1000", "10200.00"]]
+                [["2026-08-01", "sh.600000", "10.0", "10.5", "9.9", "10.2", "10.1", "1000", "10200.00", "0.99"]]
             )
         )
         payload = FetchPayload(
@@ -1172,7 +1240,7 @@ class TestBaostockKlineDailyFallback:
         p = self._provider()
         p.tls.bs.query_history_k_data_plus = MagicMock(
             return_value=_FakeBsResultSet(
-                [["2026-08-01", "sh.600000", "10.0", "10.5", "9.9", "10.2", "1000", "10200.00"]]
+                [["2026-08-01", "sh.600000", "10.0", "10.5", "9.9", "10.2", "10.1", "1000", "10200.00", "0.99"]]
             )
         )
         payload = FetchPayload(
@@ -1198,6 +1266,10 @@ class TestBaostockKlineDailyFallback:
         assert row[cols.index("symbol")] != ""
         assert row[cols.index("trade_date")] != "1970-01-01"
         assert row[cols.index("data_source")] == "Baostock"
+        # #256①：amplitude/pct_change/change 三列由 preclose/pctChg 官方口径填充（不再 DEFAULT 0）
+        assert row[cols.index("pct_change")] == 0.99
+        assert row[cols.index("amplitude")] == 5.9406  # (10.5-9.9)/10.1*100
+        assert row[cols.index("change")] == 0.1  # 10.2-10.1
 
 
 class TestBaostockDelistedKline:

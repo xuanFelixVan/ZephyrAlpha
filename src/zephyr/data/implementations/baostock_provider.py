@@ -321,6 +321,9 @@ class BaostockProvider(IngestProviderBase):
         # 同键 (symbol, trade_date) 去重）；补 data_source='Baostock'（同
         # _fetch_kline_daily_delisted 链）；adj_factor 由表 DEFAULT 1 填充（#196
         # 不复权口径）。CH 存量垃圾行清洗留 Owner 窗口，本修复只防新增。
+        # #256①（2026-08-22）：补 amplitude/pct_change/change 三列——fields 增
+        # preclose/pctChg（官方口径，含除权修正），此前 DEFAULT 0 兜底致降级源行
+        # pct_change 全 0；空值 0 兜底对齐 _map_delisted_kline_rows 口径。
         columns = [
             "trade_date",
             "symbol",
@@ -330,6 +333,9 @@ class BaostockProvider(IngestProviderBase):
             "close",
             "volume",
             "amount",
+            "amplitude",
+            "pct_change",
+            "change",
             "data_source",
         ]
         t0 = time.time()
@@ -343,7 +349,7 @@ class BaostockProvider(IngestProviderBase):
                     bs.query_history_k_data_plus,
                     policy,
                     code=code,
-                    fields="date,code,open,high,low,close,volume,amount",
+                    fields="date,code,open,high,low,close,preclose,volume,amount,pctChg",
                     start_date=start,
                     end_date=end,
                     frequency="d",
@@ -352,10 +358,35 @@ class BaostockProvider(IngestProviderBase):
                 rows: list[tuple] = []
                 while rs.error_code == "0" and rs.next():
                     item = rs.get_row_data()
-                    # item: [date, code(sh.600000), open..amount]（全 str）；
+                    # item: [date, code(sh.600000), open..close, preclose, volume, amount, pctChg]（全 str）；
                     # #219：code 取 "." 后纯数字段作 symbol（无 "." 原样，幂等）
                     symbol6 = str(item[1]).split(".")[-1] if len(item) > 1 else ""
-                    rows.append((item[0], symbol6, *item[2:], "Baostock"))
+                    close_f = float(item[5]) if item[5] else 0.0
+                    pre_f = float(item[6]) if item[6] else 0.0
+                    high_f = float(item[3]) if item[3] else close_f
+                    low_f = float(item[4]) if item[4] else close_f
+                    if pre_f > 0:
+                        amplitude = round((high_f - low_f) / pre_f * 100, 4)
+                        change = round(close_f - pre_f, 4)
+                    else:
+                        amplitude, change = 0.0, 0.0
+                    pct_chg = round(float(item[9]), 4) if item[9] else 0.0
+                    rows.append(
+                        (
+                            item[0],
+                            symbol6,
+                            item[2],
+                            item[3],
+                            item[4],
+                            item[5],
+                            item[7],
+                            item[8],
+                            amplitude,
+                            pct_chg,
+                            change,
+                            "Baostock",
+                        )
+                    )
                 if rows:
                     yield FetchResult(
                         table=table,

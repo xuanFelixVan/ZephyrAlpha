@@ -925,7 +925,22 @@ class MiniQmtIngestProvider(IngestProviderBase):
             if is_hfq:
                 # kline_daily_hfq 表列为 OCLH 顺序；amplitude/pct_change/change/turnover/data_source 有 DEFAULT 不返回
                 return ["trade_date", "symbol", "open", "close", "high", "low", "volume", "amount"]
-            return ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount"]
+            # #256①（2026-08-22）：补 amplitude/pct_change/change 三列（preClose 官方口径，
+            # 降级 df 内差分）——此前仅靠表 DEFAULT 0 兜底致全库 87.5% 行 pct_change=0，
+            # 下游 sector_report_builder 881 行业板等权合成收益全 0（生产 bug）。
+            return [
+                "trade_date",
+                "symbol",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "amount",
+                "amplitude",
+                "pct_change",
+                "change",
+            ]
         if "kline_1min" in table:
             # kline_1min 表有 pct_change/amplitude（无 DEFAULT），需补充；data_source 有 DEFAULT
             return [
@@ -966,6 +981,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
         closes = df["close"].tolist()
         volumes = df["volume"].tolist()
         amounts = df["amount"].tolist()
+        # #256①：preClose 官方前收盘（xtquant 日线字段，含除权修正口径）；
+        # 列缺失时降级 df 内相邻收盘差分（除息日失真已知妥协，留痕 tracker #256①）
+        precloses = df["preClose"].tolist() if "preClose" in df.columns else [None] * len(times)
         for i in range(len(times)):
             s = str(times[i])
             if is_daily:
@@ -989,16 +1007,32 @@ class MiniQmtIngestProvider(IngestProviderBase):
                         )
                     )
                 else:
+                    cl = MiniQmtIngestProvider.safe_float(closes[i])
+                    hi = MiniQmtIngestProvider.safe_float(highs[i])
+                    lo = MiniQmtIngestProvider.safe_float(lows[i])
+                    pre = MiniQmtIngestProvider.safe_float(precloses[i])
+                    if (pre is None or pre <= 0) and i > 0:
+                        pre = MiniQmtIngestProvider.safe_float(closes[i - 1])
+                    if pre is not None and pre > 0 and cl is not None and hi is not None and lo is not None:
+                        amplitude = round((hi - lo) / pre * 100, 4)
+                        pct_change = round((cl - pre) / pre * 100, 4)
+                        change = round(cl - pre, 4)
+                    else:
+                        # 首日无前值/价格缺失 → 0（对齐 Baostock 退市链兜底口径）
+                        amplitude, pct_change, change = 0.0, 0.0, 0.0
                     rows.append(
                         (
                             trade_date,
                             symbol,
                             MiniQmtIngestProvider.safe_float(opens[i]),
-                            MiniQmtIngestProvider.safe_float(highs[i]),
-                            MiniQmtIngestProvider.safe_float(lows[i]),
-                            MiniQmtIngestProvider.safe_float(closes[i]),
+                            hi,
+                            lo,
+                            cl,
                             vol,
                             MiniQmtIngestProvider.safe_float(amounts[i]),
+                            amplitude,
+                            pct_change,
+                            change,
                         )
                     )
             else:
