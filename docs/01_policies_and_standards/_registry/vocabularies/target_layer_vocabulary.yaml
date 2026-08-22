@@ -54,7 +54,7 @@ version: "1.0.0"
 title: "target_layer 受控词表"
 status: active
 vocabulary_name: target_layer
-total_values: 44
+total_values: 45
 depends_on:
   - target: src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
     at: "_FOUNDATION_LAYERS 集合"
@@ -226,6 +226,10 @@ values:
     definition: "ML训练域——模型训练/推理引擎"
     is_foundation: false
     ai_keywords: ["ML训练", "ml train"]
+  - value: D_ML_SERVE
+    definition: "ML服务域——模型服务/在线推理"
+    is_foundation: false
+    ai_keywords: ["ML服务", "ml serve", "模型服务"]
   - value: D_KNOWLEDGE
     definition: "知识域——向量记忆/知识库"
     is_foundation: false

@@ -1,0 +1,45 @@
+# [A_config] module_id=CFG-depgraph-tags-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# depgraph nodes.tags 横切标签受控词表
+# ZephyrAlpha 2.0 depgraph 横切标签唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-08-22
+#
+# 本词表定义 depgraph nodes.tags 字段横切标签的合法值（防标签拼写漂移）。
+# 存储格式：逗号分隔串（沿用存量约定，如 'ARCH-052,aggregate_node'）；
+# 写路径：scripts/governance/apply_depgraph.py --tag-nodes/--untag-nodes（TRAE-054 协议）。
+# 源裁定：03号文（AI 层域边界定义）E0-8 Q1 分支C「核心域∪横切标签」混合方案，#ARCH-169。
+#
+# 注意：存量历史标签（如 ARCH-052、aggregate_node、module 等）为冻结事实数据，
+# 新增横切标签必须先入本词表再打标。
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-036
+version: "1.0.0"
+date: "2026-08-22"
+owner: ZephyrAlpha-Owner
+title: "depgraph nodes.tags 横切标签受控词表"
+status: active
+vocabulary_name: depgraph_node_tags
+total_values: 1
+depends_on:
+  - target: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/03_domain_boundary_definition.md
+    at: "§3.1 选项C / §4.4 分支C"
+    why: "ai_layer 横切标签裁定真源（#ARCH-169）"
+
+values:
+  - value: ai_layer
+    definition: "AI 层横切标签——标注物理上散布在非 AI 核心域、但属 AI 层视图的设施节点"
+    ai_consumption: "AI 层视图 = AI 核心域集合 ∪ 本标签节点集合（派生视图，03号文 §3.4）；仅打给非核心域中的 AI 设施，核心域成员不打"
+    ai_keywords: ["AI层", "ai_layer", "横切标签", "cross-cutting"]
+    scope: "depgraph nodes.tags"
+    core_domains: "D_AUTONOMY_CORE / D_INTELLIGENCE / D_ML_TRAIN / D_ML_SERVE / D_AUTONOMY_PERM / D_KNOWLEDGE / D_SECURITY_LLM / D_INTEGRATION_GATEWAY"

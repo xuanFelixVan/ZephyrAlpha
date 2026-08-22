@@ -12,9 +12,9 @@ generated: '2026-08-17'
 
 ## 责任声明（Single Responsibility）
 
-本目录存放：**AI 消费的 YAML 受控词表**。包括 `*_vocabulary.yaml` 模式的受控词表（38 个）以及 `terminology_mapping.yaml` 术语映射文件。
+本目录存放：**AI 消费的 YAML 受控词表**。包括 `*_vocabulary.yaml` 模式的受控词表（39 个）以及 `terminology_mapping.yaml` 术语映射文件。
 
-## 文件清单（39 个 YAML）
+## 文件清单（40 个 YAML）
 
 | 文件 | 说明 |
 |------|------|
@@ -30,6 +30,7 @@ generated: '2026-08-17'
 | decision_edge_type_vocabulary.yaml | decision_edge_type 受控词表（4 值：triggering/informing/constraining/approving） |
 | decision_layer_vocabulary.yaml | decision_layer 受控词表（10 值：L0/L1/L2A~L2D/L3~L6） |
 | dep_type_vocabulary.yaml | dep_type 受控词表（12 值：import_depends/references/test_depends 等） |
+| depgraph_tags_vocabulary.yaml | depgraph nodes.tags 横切标签受控词表（1 值：ai_layer，#ARCH-169） |
 | derived_from_relationship_vocabulary.yaml | derived_from.relationship 受控词表（3 值） |
 | doc_type_vocabulary.yaml | doc_type 受控词表（10 值） |
 | domain_vocabulary.yaml | domain 受控词表（10 值） |
