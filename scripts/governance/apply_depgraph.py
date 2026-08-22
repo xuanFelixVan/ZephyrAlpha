@@ -256,6 +256,10 @@ SQL_UPDATE_BUILD_STATUS = "UPDATE nodes SET build_status=%s WHERE node_id=%s"
 SQL_SELECT_DESIGN_MATURITY_BY_NODE = "SELECT design_maturity, path FROM nodes WHERE node_id=%s"
 SQL_UPDATE_DESIGN_MATURITY = "UPDATE nodes SET design_maturity=%s WHERE node_id=%s"
 
+# --- tag_nodes（横切标签，03号文分支C裁定执行工具，#ARCH-169） ---
+SQL_SELECT_TAGS_BY_NODE = "SELECT tags FROM nodes WHERE node_id=%s"
+SQL_UPDATE_TAGS_BY_NODE = "UPDATE nodes SET tags=%s WHERE node_id=%s"
+
 # --- remove_design_node ---
 SQL_SELECT_NODE_DETAIL_BY_ID = (
     "SELECT node_id, path, blueprint_id, design_maturity, build_status FROM nodes WHERE node_id=%s"
@@ -750,6 +754,18 @@ def _handle_migrate_nodes(change: dict, dry_run: bool, conn=None) -> bool:
     return count >= 0
 
 
+def _handle_tag_nodes(change: dict, dry_run: bool, conn=None) -> bool:
+    """_handle_tag_nodes implementation."""
+    count = cmd_tag_nodes(
+        node_ids=change.get("node_ids", []),
+        tag=change.get("tag", ""),
+        remove=change.get("remove", False),
+        dry_run=dry_run,
+        conn=conn,
+    )
+    return count >= 0
+
+
 def _handle_update_domain_ssot_path(change: dict, dry_run: bool, conn=None) -> bool:
     """_handle_update_domain_ssot_path implementation."""
     return cmd_update_domain_ssot_path(
@@ -794,6 +810,7 @@ _DOMAIN_OPS: dict[str, object] = {
     "migrate_dependencies": _handle_migrate_dependencies,
     "update_domain_layer": _handle_update_domain_layer,
     "migrate_nodes": _handle_migrate_nodes,
+    "tag_nodes": _handle_tag_nodes,
     "update_domain_ssot_path": _handle_update_domain_ssot_path,
     "rename_domain": _handle_rename_domain,
     "delete_domain": _handle_delete_domain,
@@ -4190,7 +4207,7 @@ def cmd_migrate_nodes(
             if not domain:
                 print(f"ERROR: new_domain_id '{new_domain_id}' 不在 domains 表中", file=sys.stderr)
                 return -1
-            placeholders = ",".join("%s" * len(node_ids))
+            placeholders = ",".join(["%s"] * len(node_ids))  # 修复: ",".join("%s"*n) 在 n>1 时产生 %, 坏占位符（存量 bug，#ARCH-169 实证）
             rows = conn.execute(
                 f"SELECT node_id, path, domain_id FROM nodes WHERE node_id IN ({placeholders})",  # 5.160.2 OK: dynamic SQL, kept inline
                 node_ids,
@@ -4217,6 +4234,71 @@ def cmd_migrate_nodes(
             if own_conn:
                 conn.rollback()
             logger.error("cmd_migrate_nodes失败: %s", e)
+            return -1
+        finally:
+            if own_conn:
+                conn.close()
+
+
+def cmd_tag_nodes(
+    node_ids: list[int],
+    tag: str,
+    remove: bool = False,
+    dry_run: bool = False,
+    db_path: str = None,
+    conn=None,
+) -> int:
+    """按 node_id 列表为 nodes.tags 添加/移除横切标签（逗号分隔串格式，幂等）。
+
+    用途：AI 层横切视图打标（03号文分支C裁定执行，#ARCH-169）。
+    tags 存储格式沿用存量逗号分隔串约定（如 'ARCH-052,aggregate_node'）。
+    返回：受影响行数，-1=失败
+    """
+    if not node_ids:
+        print("ERROR: node_ids 列表为空", file=sys.stderr)
+        return -1
+    if not tag or "," in tag:
+        print(f"ERROR: tag 非法（空或含逗号）: {tag!r}", file=sys.stderr)
+        return -1
+    own_conn = conn is None
+    with _optional_db_lock(own_conn, task="cmd_tag_nodes", db_path=db_path):
+        if own_conn:
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
+        try:
+            changed = 0
+            for nid in node_ids:
+                row = conn.execute(SQL_SELECT_TAGS_BY_NODE, (nid,)).fetchone()
+                if not row:
+                    print(f"ERROR: node_id={nid} 不存在", file=sys.stderr)
+                    if own_conn:
+                        conn.rollback()
+                    return -1
+                current = row["tags"] or ""
+                parts = [p for p in current.split(",") if p]
+                if remove:
+                    if tag not in parts:
+                        continue
+                    new_tags = ",".join(p for p in parts if p != tag)
+                else:
+                    if tag in parts:
+                        continue
+                    new_tags = ",".join(parts + [tag])
+                if dry_run:
+                    print(f"[DRY RUN] 将 UPDATE node_id={nid} tags: {current!r} -> {new_tags!r}", file=sys.stderr)
+                else:
+                    conn.execute(SQL_UPDATE_TAGS_BY_NODE, (new_tags, nid))
+                changed += 1
+            if dry_run:
+                return changed
+            if own_conn:
+                conn.commit()
+            action = "移除" if remove else "添加"
+            print(f"[OK] {action}标签 {tag!r}: {changed} 个节点", file=sys.stderr)
+            return changed
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            logger.error("cmd_tag_nodes失败: %s", e)
             return -1
         finally:
             if own_conn:
@@ -5016,6 +5098,20 @@ def main() -> None:
         help="按 node_id 列表精确迁移 domain_id（JSON文件: [id1, id2, ...]）",
     )
     parser.add_argument(
+        "--tag-nodes",
+        type=str,
+        nargs=2,
+        metavar=("NODE_IDS_FILE", "TAG"),
+        help="按 node_id 列表为 nodes.tags 添加横切标签（JSON文件: [id1, id2, ...]，幂等，逗号分隔串格式）",
+    )
+    parser.add_argument(
+        "--untag-nodes",
+        type=str,
+        nargs=2,
+        metavar=("NODE_IDS_FILE", "TAG"),
+        help="按 node_id 列表从 nodes.tags 移除横切标签（JSON文件: [id1, id2, ...]，幂等）",
+    )
+    parser.add_argument(
         "--delete-nodes",
         type=str,
         metavar="NODE_IDS_FILE",
@@ -5462,6 +5558,14 @@ def main() -> None:
         count = cmd_migrate_nodes(node_ids=node_ids, new_domain_id=new_domain_id, dry_run=args.dry_run)
         sys.exit(0 if count >= 0 else 4)
 
+    if args.tag_nodes or args.untag_nodes:
+        is_remove = bool(args.untag_nodes)
+        node_ids_file, tag = args.untag_nodes if is_remove else args.tag_nodes
+        with open(node_ids_file) as f:
+            node_ids = json.load(f)
+        count = cmd_tag_nodes(node_ids=node_ids, tag=tag, remove=is_remove, dry_run=args.dry_run)
+        sys.exit(0 if count >= 0 else 4)
+
     if args.delete_nodes:
         node_ids_file = args.delete_nodes
         with open(node_ids_file) as f:
@@ -5750,6 +5854,8 @@ _WRITE_COMMANDS = {
     "--update-domain-capacity",
     "--update-domain-layer",
     "--migrate-nodes",
+    "--tag-nodes",
+    "--untag-nodes",
     "--update-domain-ssot-path",
     "--insert-domain-mapping",
     "--rename-domain",
