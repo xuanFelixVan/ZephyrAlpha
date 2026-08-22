@@ -5,7 +5,7 @@ title: Context Engine 集成蓝图 — 上下文引擎集成索引
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: 1.2.0
+version: 1.2.1
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -145,126 +145,38 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > **2026-08-22 手工对齐注记（P0-2）**：depgraph 中本模块 38 个代码节点 build_status=**stable**（非 generated），生成器 SQL 过滤器（`build_status='generated'`）结构性低报——§1.1 仅派生 1 行。本节按磁盘实测（`Get-ChildItem` 39 文件）手工对齐；待 depgraph build_status 语义/生成器过滤器修正后，重跑 syncer 幂等覆盖。行数为 2026-08-22 `(Get-Content).Count` 实测。
-> 
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/autonomy_core/context/__init__.py` | ✅ 已实现 | 80 行；包入口，38 模块 `__all__` 导出（无初始化逻辑） |
-| `src/zephyr/autonomy_core/context/atomic_injector.py` | ✅ 已实现 | 35 行；原子注入（temp-file + os.replace） |
-| `src/zephyr/autonomy_core/context/ce_bootstrap.py` | ✅ 已实现 | 55 行；CE 自举（CE_MVP/FUNCTIONAL/FULL_CE 三级） |
-| `src/zephyr/autonomy_core/context/ce_explain_cli.py` | ✅ 已实现 | 44 行；KE inclusion rationale 解释 CLI |
-| `src/zephyr/autonomy_core/context/ce_file_lister.py` | ✅ 已实现 | 63 行；CE 文件清单生成器 |
-| `src/zephyr/autonomy_core/context/ce_playground_v2.py` | ✅ 已实现 | 38 行；V2 Playground（全决策链） |
-| `src/zephyr/autonomy_core/context/ce_vibe_shortcuts.py` | ✅ 已实现 | 49 行；Vibe/Strict 模式切换 |
-| `src/zephyr/autonomy_core/context/checkpoint_manager.py` | ✅ 已实现 | 52 行；Inject 前快照 |
-| `src/zephyr/autonomy_core/context/cold_start_booster.py` | ✅ 已实现 | 38 行；冷启动加速 |
-| `src/zephyr/autonomy_core/context/complexity_budget.py` | ✅ 已实现 | 39 行；Token 预算复杂度因子 |
-| `src/zephyr/autonomy_core/context/context_assembler.py` | ✅ 已实现 | 633 行；装配/压缩/G3 校验/影子副本 + build_context VMS 检索 |
-| `src/zephyr/autonomy_core/context/context_budget.py` | ✅ 已实现 | 385 行；预算配额 + 四种截断策略 |
-| `src/zephyr/autonomy_core/context/context_budget_tracker.py` | ✅ 已实现 | 336 行；Token 预算追踪 + 三级阈值告警 |
-| `src/zephyr/autonomy_core/context/context_debt_score.py` | ✅ 已实现 | 46 行；上下文债务评分 |
-| `src/zephyr/autonomy_core/context/context_evaluator.py` | ✅ 已实现 | 78 行；AI 引用率评估 |
-| `src/zephyr/autonomy_core/context/context_evictor.py` | ✅ 已实现 | 165 行；优先级×新鲜度×相关性三维逐出 |
-| `src/zephyr/autonomy_core/context/context_health_score.py` | ✅ 已实现 | 39 行；统一健康分 |
-| `src/zephyr/autonomy_core/context/context_injector.py` | ✅ 已实现 | 485 行；inject 三模式 API（生产返回空，数据源待接线） |
-| `src/zephyr/autonomy_core/context/context_model_strategy.py` | ✅ 已实现 | 43 行；模型选择策略 |
-| `src/zephyr/autonomy_core/context/context_outcome_tracker.py` | ✅ 已实现 | 62 行；因果链追踪 |
-| `src/zephyr/autonomy_core/context/context_pipeline.py` | ✅ 已实现 | 173 行；四段组合根 run_context_four_stage |
-| `src/zephyr/autonomy_core/context/context_pipeline_auto.py` | ✅ 已实现 | 203 行；EventBus 订阅 + KillSwitch 熔断 + 超时自动关闭 |
-| `src/zephyr/autonomy_core/context/context_playground.py` | ✅ 已实现 | 39 行；上下文沙箱 dry-run |
-| `src/zephyr/autonomy_core/context/context_rot_model.py` | ✅ 已实现 | 263 行；Context Rot 注意力衰减数学模型 |
-| `src/zephyr/autonomy_core/context/context_rule_registry.py` | ✅ 已实现 | 199 行；按 task_type/tags/keywords 注入治理规则 |
-| `src/zephyr/autonomy_core/context/context_value_attribution.py` | ✅ 已实现 | 41 行；KE 级 ROI 归因 |
-| `src/zephyr/autonomy_core/context/contextual_fetch_api.py` | ✅ 已实现 | 37 行；GET /api/ce/session/{id} 骨架（硬编码返回） |
-| `src/zephyr/autonomy_core/context/curation_loop.py` | ✅ 已实现 | 74 行；Per-Turn 策展 |
-| `src/zephyr/autonomy_core/context/diff_injector.py` | ✅ 已实现 | 40 行；增量注入 |
-| `src/zephyr/autonomy_core/context/diversity_constraint.py` | ✅ 已实现 | 41 行；多样性约束 |
-| `src/zephyr/autonomy_core/context/domain_decay_config.py` | ✅ 已实现 | 41 行；每领域半衰期配置 |
-| `src/zephyr/autonomy_core/context/fallback_staleness_gate.py` | ✅ 已实现 | 68 行；兜底层自腐检测 |
-| `src/zephyr/autonomy_core/context/integrity_check.py` | ✅ 已实现 | 43 行；注入后完整性校验 |
-| `src/zephyr/autonomy_core/context/memory_bank.py` | ✅ 已实现 | 174 行；6 个结构化 .md 跨 session 持久上下文 |
-| `src/zephyr/autonomy_core/context/mode_manager.py` | ✅ 已实现 | 43 行；模式管理器 |
-| `src/zephyr/autonomy_core/context/position_optimizer.py` | ✅ 已实现 | 40 行；注入位置优化 |
-| `src/zephyr/autonomy_core/context/shadow_canary.py` | ✅ 已实现 | 38 行；金丝雀部署 |
-| `src/zephyr/autonomy_core/context/staleness_manager.py` | ✅ 已实现 | 40 行；全局过期检测 |
-| `src/zephyr/autonomy_core/context/vector_bridge.py` | ✅ 已实现 | 224 行；CE↔VMS 检索桥接（VMSSearchProtocol + 5s 超时 + 降级） |
+| `src/zephyr/autonomy_core/context/__init__.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
-> 口径：引用 `zephyr.autonomy_core.context` 的测试文件（2026-08-22 全仓扫描实证 62 个）+ tests/ce 目录语义件 2 个（kill_switch/cache_invalidation 测 CE 相邻安全/缓存件）+ depgraph 登记的 CE 测试节点 4 个（lsg_pattern_tracker/solo_dev_safety_net/verify_paths/config_safety_guard，测相邻治理件）。tests/context 下另有 14 个文件测 `governance/context_governance` 等相邻设施，非本模块地址簿范围。
-
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/autonomy/test_assembly_context_assembler.py` | ✅ 已实现 | |
-| `tests/autonomy/test_assembly_context_injector.py` | ✅ 已实现 | |
-| `tests/autonomy/test_assembly_context_pipeline.py` | ✅ 已实现 | |
-| `tests/autonomy/test_atomic_injector.py` | ✅ 已实现 | |
 | `tests/autonomy/test_checkpoint_manager.py` | ✅ 已实现 | |
 | `tests/autonomy/test_complexity_budget.py` | ✅ 已实现 | |
 | `tests/autonomy/test_context_pipeline_red_blue.py` | ✅ 已实现 | |
-| `tests/autonomy/test_contextual_fetch_api.py` | ✅ 已实现 | |
-| `tests/autonomy/test_curation_loop_root.py` | ✅ 已实现 | |
-| `tests/autonomy/test_diff_injector.py` | ✅ 已实现 | |
-| `tests/autonomy/test_diversity_constraint.py` | ✅ 已实现 | |
-| `tests/autonomy/test_domain_decay_config.py` | ✅ 已实现 | |
-| `tests/autonomy/test_fallback_staleness_gate.py` | ✅ 已实现 | |
 | `tests/autonomy/test_integrity_check.py` | ✅ 已实现 | |
-| `tests/autonomy/test_list_ce_files.py` | ✅ 已实现 | |
-| `tests/autonomy/test_lsg_pattern_tracker.py` | ✅ 已实现 | depgraph 登记（测 LSG 相邻件） |
-| `tests/autonomy/test_mgmt_context_budget_tracker.py` | ✅ 已实现 | |
-| `tests/autonomy/test_mgmt_context_evictor.py` | ✅ 已实现 | |
-| `tests/autonomy/test_mgmt_context_rot_model.py` | ✅ 已实现 | |
-| `tests/autonomy/test_mode_manager.py` | ✅ 已实现 | |
-| `tests/autonomy/test_position_optimizer.py` | ✅ 已实现 | |
+| `tests/autonomy/test_lsg_pattern_tracker.py` | ✅ 已实现 | |
 | `tests/autonomy/test_shadow_canary.py` | ✅ 已实现 | |
-| `tests/autonomy/test_solo_dev_safety_net.py` | ✅ 已实现 | depgraph 登记（测 LSG 相邻件） |
+| `tests/autonomy/test_solo_dev_safety_net.py` | ✅ 已实现 | |
 | `tests/autonomy/test_staleness_manager.py` | ✅ 已实现 | |
-| `tests/autonomy/test_task_system_red_team.py` | ✅ 已实现 | |
 | `tests/autonomy/test_vector_bridge.py` | ✅ 已实现 | |
-| `tests/autonomy/test_verify_paths.py` | ✅ 已实现 | depgraph 登记（路径验证） |
+| `tests/autonomy/test_verify_paths.py` | ✅ 已实现 | |
 | `tests/ce/test_ce_bootstrap.py` | ✅ 已实现 | |
-| `tests/ce/test_ce_cache_invalidation.py` | ✅ 已实现 | 目录语义件（测 shared.io.cache_invalidation） |
 | `tests/ce/test_ce_explain_cli.py` | ✅ 已实现 | |
-| `tests/ce/test_ce_integrity_check.py` | ✅ 已实现 | |
-| `tests/ce/test_ce_kill_switch.py` | ✅ 已实现 | 目录语义件（测 capacity_assurance.kill_switch；2026-08-22 修复陈旧导入路径） |
 | `tests/ce/test_ce_playground_v2.py` | ✅ 已实现 | |
 | `tests/ce/test_ce_vibe_shortcuts.py` | ✅ 已实现 | |
 | `tests/cold/test_cold_start_booster.py` | ✅ 已实现 | |
-| `tests/config/test_config_safety_guard.py` | ✅ 已实现 | depgraph 登记（测配置安全件） |
-| `tests/context/test_context_assembler_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_assembler_unit.py` | ✅ 已实现 | |
+| `tests/config/test_config_safety_guard.py` | ✅ 已实现 | |
 | `tests/context/test_context_budget_tracker.py` | ✅ 已实现 | |
-| `tests/context/test_context_budget_unit.py` | ✅ 已实现 | |
-| `tests/context/test_context_core.py` | ✅ 已实现 | |
 | `tests/context/test_context_debt_score.py` | ✅ 已实现 | |
-| `tests/context/test_context_evaluator_context_engine.py` | ✅ 已实现 | |
-| `tests/context/test_context_evaluator_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_evictor_context_engine.py` | ✅ 已实现 | |
-| `tests/context/test_context_evictor_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_evictor_unit.py` | ✅ 已实现 | |
 | `tests/context/test_context_health_score.py` | ✅ 已实现 | |
-| `tests/context/test_context_injector_context_engine.py` | ✅ 已实现 | |
-| `tests/context/test_context_injector_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_injector_unit.py` | ✅ 已实现 | |
 | `tests/context/test_context_model_strategy.py` | ✅ 已实现 | |
-| `tests/context/test_context_outcome_tracker.py` | ✅ 已实现 | |
 | `tests/context/test_context_pipeline_auto.py` | ✅ 已实现 | |
-| `tests/context/test_context_pipeline_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_pipeline_unit.py` | ✅ 已实现 | |
-| `tests/context/test_context_playground.py` | ✅ 已实现 | |
-| `tests/context/test_context_rot_model_unit.py` | ✅ 已实现 | |
-| `tests/context/test_context_rule_registry_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_rule_registry_unit.py` | ✅ 已实现 | |
-| `tests/context/test_context_value_attribution.py` | ✅ 已实现 | |
-| `tests/context/test_curation_loop_context_engine.py` | ✅ 已实现 | |
-| `tests/context/test_doc_compressor_context_engine.py` | ✅ 已实现 | |
-| `tests/context/test_doc_compressor_unit.py` | ✅ 已实现 | |
-| `tests/context/test_memory_bank_context_engine.py` | ✅ 已实现 | |
-| `tests/memory/test_memory_bank_root.py` | ✅ 已实现 | |
-| `tests/utils/test_adversarial_shared.py` | ✅ 已实现 | |
-| `tests/utils/test_context_budget_shared.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

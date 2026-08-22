@@ -3,7 +3,7 @@ module_id: MOD-EX-049
 title: "执行域聚合根管理器蓝图 — Order/Position生命周期协调层"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -160,6 +160,7 @@ class ExecutionAggregateManager:
 | `tests/ex_core/test_daban_pit_safety.py` | ✅ 已实现 | |
 | `tests/ex_core/test_daban_signal_decision.py` | ✅ 已实现 | |
 | `tests/ex_core/test_operational_risk_stats.py` | ✅ 已实现 | |
+| `tests/ex_core/test_position_tracker.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

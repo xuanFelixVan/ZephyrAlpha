@@ -4,7 +4,7 @@ submodule_path: src/zephyr/reporting
 title: "Post Trade Analytics Core 蓝图 — 盘后分析层"
 doc_type: blueprint
 status: Active
-version: "2.1.4"
+version: "2.1.5"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -45,7 +45,7 @@ build_status: generated
 design_maturity: production
 ---
 
-> module_id: MOD-L07-001 | version: 2.1.4 | status: active | domain: reporting
+> module_id: MOD-L07-001 | version: 2.1.5 | status: active | domain: reporting
 > actual_disk_path: src/zephyr/reporting/ | generation: 2 | construction_progress: partially_implemented
 
 # ✅ Post Trade Analytics Core 蓝图 — 盘后分析层
@@ -853,6 +853,7 @@ class PerformanceAttributionReport:
 |---------|:---:|------|
 | `tests/reporting/test_attribution.py` | ✅ 已实现 | |
 | `tests/reporting/test_attribution_registry_mapper.py` | ✅ 已实现 | |
+| `tests/reporting/test_prediction_log_writer.py` | ✅ 已实现 | |
 | `tests/trading/pipeline/test_l07_post_trade_analytics.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

@@ -3,7 +3,7 @@ module_id: MOD-INF-042
 submodule_path: src/zephyr/integration/local_model
 title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
 summary: 本地模型推理基础设施——BGE-M3文本嵌入+Ollama本地推理+调度+缓存，为KB向量检索和LLM调用提供本地化推理能力。
-version: 0.1.3
+version: 0.1.4
 status: Active
 layer: L0_infrastructure
 date: "2026-06-23"
@@ -372,6 +372,7 @@ design_maturity: production
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/model/test_local_model.py` | ✅ 已实现 | |
+| `tests/model/test_local_model_lsg_gate.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

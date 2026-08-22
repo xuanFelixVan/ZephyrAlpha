@@ -5,7 +5,7 @@ title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: "1.1.4"
+version: "1.1.5"
 layer: L0_infrastructure
 domain: infra_ops
 owner: ZephyrAlpha-Owner
@@ -7122,23 +7122,23 @@ class PermissionHooks:
 |---------|:---:|------|
 | `src/zephyr/security/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/build_sanitizer.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/cascading_failure_isolator.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/compliance_matrix.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/defense_depth.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/build_sanitizer.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/cascading_failure_isolator.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/compliance_matrix.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/defense_depth.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/detectors/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/environment_manager.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/environment_manager.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/guards/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/anti_pattern_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/anti_pattern_guard.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/key_hierarchy.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/permission_mode_manager.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/permission_mode_manager.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/phase_executor.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/secrets_lifecycle.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/secrets_lifecycle.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/verifiers/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/verifiers/bootstrap_verifier.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/verifiers/continuous_verifier.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/verifiers/micro_verifier.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/verifiers/post_action_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/verifiers/bootstrap_verifier.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/verifiers/continuous_verifier.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/verifiers/micro_verifier.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/verifiers/post_action_verifier.py` | ⚠️ 骨架 | |
 
 ### 1.2 测试文件
 
@@ -7200,8 +7200,8 @@ class PermissionHooks:
 | `tests/cross/test_cross_session_detector.py` | ✅ 已实现 | |
 | `tests/decision/test_decision_explainer_root.py` | ✅ 已实现 | |
 | `tests/decision/test_decision_registry.py` | ✅ 已实现 | |
-| `tests/dependency/test_dependency_auditor.py` | ✅ 已实现 | |
-| `tests/escalation/test_escalation_handler.py` | ✅ 已实现 | |
+| `tests/dependency/test_dependency_auditor.py` | ⚠️ 骨架 | |
+| `tests/escalation/test_escalation_handler.py` | ⚠️ 骨架 | |
 | `tests/governance/security/test_governance_a2a_check.py` | ✅ 已实现 | |
 | `tests/governance/security/test_governance_approver_check.py` | ✅ 已实现 | |
 | `tests/governance/security/test_governance_bootstrap_superadmin.py` | ✅ 已实现 | |

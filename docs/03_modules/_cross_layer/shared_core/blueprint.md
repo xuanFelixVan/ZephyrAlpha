@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.10"
+version: "0.19.11"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -465,7 +465,6 @@ build_status: generated
 | `src/zephyr/trading/trading_contracts/market/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/trading/trading_contracts/market/instrument.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/market/signal_degradation_warning.py` | ✅ 已实现 | |
-| `src/zephyr/trading/trading_contracts/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/risk/compliance_rule.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/risk/risk_limits.py` | ✅ 已实现 | |
 

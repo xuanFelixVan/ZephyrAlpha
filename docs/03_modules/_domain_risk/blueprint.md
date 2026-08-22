@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.11"
+version: "2.2.12"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.11 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.12 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -940,6 +940,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_auction_book.py` | ✅ 已实现 | |
 | `schemas/categories/market_block_trade.py` | ✅ 已实现 | |
 | `schemas/categories/market_block_trade_detail.py` | ✅ 已实现 | |
+| `schemas/categories/market_breadth_snapshot.py` | ✅ 已实现 | |
 | `schemas/categories/market_calendar_event.py` | ✅ 已实现 | |
 | `schemas/categories/market_cb_iv.py` | ✅ 已实现 | |
 | `schemas/categories/market_concept_board.py` | ✅ 已实现 | |
@@ -1007,6 +1008,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_margin_trading.py` | ✅ 已实现 | |
 | `schemas/categories/market_money_flow.py` | ✅ 已实现 | |
 | `schemas/categories/market_msci_adjustment.py` | ✅ 已实现 | |
+| `schemas/categories/market_news_sentiment_window.py` | ✅ 已实现 | |
 | `schemas/categories/market_northbound_hold_snapshot.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_greeks.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_iv.py` | ✅ 已实现 | |
@@ -1025,6 +1027,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_technical_indicator.py` | ✅ 已实现 | |
 | `schemas/categories/market_tick.py` | ✅ 已实现 | |
 | `schemas/categories/market_trade_calendar.py` | ✅ 已实现 | |
+| `schemas/categories/market_us_futures_intraday.py` | ✅ 已实现 | |
 | `schemas/categories/market_us_index.py` | ✅ 已实现 | |
 | `schemas/categories/meta_stock_basic.py` | ✅ 已实现 | |
 | `src/zephyr/risk/__init__.py` | ✅ 已实现 | |

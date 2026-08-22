@@ -42,7 +42,7 @@ rule_form: structural
 scope: global
 stability: evolving
 verifiability: hybrid
-build_status: testing
+build_status: stable
 design_maturity: design
 responsibility_domain: 
 ---
@@ -224,7 +224,7 @@ Version: 0.1.0
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-OBS-001 | MOD-OBS-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | testing | ✅ |
+| build_status | stable | stable | ✅ |
 | file_count | 18 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
