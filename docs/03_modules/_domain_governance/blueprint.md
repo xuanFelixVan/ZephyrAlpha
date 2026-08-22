@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.8"
+version: "0.13.9"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -91,7 +91,7 @@ ssot_claims:
     note: "D-GAP-01~12设计真源在MOD-GOV-CAP-001（2026-05归档，docs/_archive/03_modules/_gov_cap_001/blueprint.md），本蓝图仅保留索引+引用"
   - claim: "治理域Phase施工路线图与进度"
     scope: layer
-design_maturity: design
+design_maturity: production
 build_status: generated
 ---
 
@@ -214,8 +214,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GOVERNANCE` 的 89 个 file 节点 | design | `extract_depgraph.py --modules MOD-GOVERNANCE` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GOVERNANCE` 的 89 个 file 节点 | production | `extract_depgraph.py --modules MOD-GOVERNANCE` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -2162,33 +2162,79 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 12.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `docs/03_modules/_domain_governance/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/behavioral_admission/admission_response.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/behavioral_admission/ai_code_standards.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/behavioral_admission/code_review_ai.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/behavioral_admission/mcp_result_push.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/behavioral_admission/post_process.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/behavioral_admission/vibe_coding_enforcer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_rule/constitutional_update/constitutional_update.py` | ✅ 已实现 | |
+| `src/zephyr/governance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/architecture_contracts.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/architecture_principles.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/cross_env_consistency.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/dependency_manager.py` | ✅ 已实现 | |
 | `src/zephyr/governance/architecture_governance/llm_impact_analyzer.py` | ✅ 已实现 | |
 | `src/zephyr/governance/architecture_governance/local_first_arch.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/path_resolver.py` | ✅ 已实现 | |
 | `src/zephyr/governance/context_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/context_governance/prompt_lifecycle.py` | ✅ 已实现 | |
 | `src/zephyr/governance/data_governance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/data_classification.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/data_lifecycle.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/data_quality.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/data_source_reliability.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/realtime_streaming.py` | ⚠️ 骨架 | |
+| `src/zephyr/governance/financial_governance/financial_compliance.py` | ✅ 已实现 | |
+| `src/zephyr/governance/financial_governance/fsm_verifier.py` | ✅ 已实现 | |
 | `src/zephyr/governance/financial_governance/microstructure_defense.py` | ✅ 已实现 | |
+| `src/zephyr/governance/financial_governance/oms_risk_engine.py` | ✅ 已实现 | |
+| `src/zephyr/governance/financial_governance/strategy_portfolio.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/agent_debate.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/ai_self_diagnosis.py` | ✅ 已实现 | |
 | `src/zephyr/governance/intelligence_governance/multi_model_consensus.py` | ✅ 已实现 | |
 | `src/zephyr/governance/lifecycle_governance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/ai_behavior_baseline.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/api_lifecycle.py` | ✅ 已实现 | |
 | `src/zephyr/governance/lifecycle_governance/migration_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/paper_live_transition.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/post_live_verification.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/retirement_workflow.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/strategy_archive.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py` | ✅ 已实现 | |
 | `src/zephyr/governance/observability_governance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/observability_governance/observability_dashboard.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/agent_dispatch.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/decision_fatigue.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/environment_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/phase_check_registry.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/phase_manager.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/startup_shutdown.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/startup_shutdown_cli.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/bus_factor_defense.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/fault_tolerance.py` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/offline_autonomy.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/resilience_governance/offline_resilience.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/runtime/startup_shutdown.py` | ✅ 已实现 | |
 | `src/zephyr/integration/behavioral_admission/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/integration/behavioral_admission/admission_response.py` | ✅ 已实现 | |
+| `src/zephyr/shared/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/evaluation/evals.py` | ✅ 已实现 | |
+| `src/zephyr/shared/resilience/durable_execution.py` | ✅ 已实现 | |
+| `src/zephyr/shared/versioning/version_negotiation.py` | ✅ 已实现 | |
 
 ### 12.2 测试文件
 

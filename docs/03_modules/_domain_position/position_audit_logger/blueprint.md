@@ -3,7 +3,7 @@ module_id: MOD-POS-009
 title: "仓位审计记录器蓝图 — 全记录+哈希链+可追溯"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.5"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -306,10 +306,16 @@ logger.log_position_sized(plan)
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 11.1 测试文件
+### 11.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/position/services/position_audit_logger.py` | ✅ 已实现 | |
+
+### 11.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -317,6 +323,7 @@ logger.log_position_sized(plan)
 | `tests/position/test_capital_curve_manager.py` | ✅ 已实现 | |
 | `tests/position/test_cash_manager.py` | ✅ 已实现 | |
 | `tests/position/test_firm_risk_aggregator.py` | ✅ 已实现 | |
+| `tests/position/test_position_audit_logger.py` | ✅ 已实现 | |
 | `tests/position/test_position_limit_enforcer.py` | ✅ 已实现 | |
 | `tests/position/test_position_state_machine.py` | ✅ 已实现 | |
 | `tests/position/test_rebalance_engine.py` | ✅ 已实现 | |

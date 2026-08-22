@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_sor/services/slippage_analyzer.py
 title: "滑点分析器蓝图 — 多基准滑点计算+三因子归因+平方根冲击预测"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -213,10 +213,16 @@ class SlippageAnalyzer:
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 13.1 测试文件
+### 13.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/ex_sor/services/slippage_analyzer.py` | ✅ 已实现 | |
+
+### 13.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

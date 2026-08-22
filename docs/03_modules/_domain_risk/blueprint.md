@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.12"
+version: "2.2.13"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.12 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.13 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -913,7 +913,7 @@ class ViolationDetail(BaseModel):
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -1033,7 +1033,15 @@ class ViolationDetail(BaseModel):
 | `src/zephyr/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/default_position_limit_checker.py` | ✅ 已实现 | |
+| `src/zephyr/risk/implementations/default_risk_limits_calculator.py` | ✅ 已实现 | |
+| `src/zephyr/risk/implementations/default_risk_manager_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/risk/implementations/default_risk_validator.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/default_stop_loss_engine.py` | ✅ 已实现 | |
+| `src/zephyr/risk/risk_limits.py` | ✅ 已实现 | |
+| `src/zephyr/risk/risk_manager.py` | ✅ 已实现 | |
+| `src/zephyr/risk/risk_manager_base.py` | ✅ 已实现 | |
+| `src/zephyr/risk/risk_validator.py` | ✅ 已实现 | |
+| `src/zephyr/risk/stop_loss.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

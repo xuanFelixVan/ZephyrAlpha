@@ -3,7 +3,7 @@ module_id: MOD-PA-007
 title: "Regime元分配器蓝图 — Shrinkage风险节流+PerformanceScore后验分配（A模型·meta层）"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.5"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -395,10 +395,16 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 10.1 测试文件
+### 10.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/pf_alloc/core/regime_meta_allocator.py` | ✅ 已实现 | |
+
+### 10.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

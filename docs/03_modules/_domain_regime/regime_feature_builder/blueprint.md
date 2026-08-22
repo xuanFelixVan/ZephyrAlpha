@@ -3,7 +3,7 @@ module_id: MOD-REGIME-002
 title: "Regime特征管道蓝图 — ClickHouse→RegimeFeatures/OverlaySignals/RiskSignalInputs（C1一票否决验证的数据地基）"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -883,16 +883,26 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 14.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/regime/features/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/regime/features/evolution_signals.py` | ✅ 已实现 | |
+| `src/zephyr/regime/features/lppl_detector.py` | ✅ 已实现 | |
+| `src/zephyr/regime/features/market_features.py` | ✅ 已实现 | |
+| `src/zephyr/regime/features/overlay_features.py` | ✅ 已实现 | |
 | `src/zephyr/regime/features/regime_data_loader.py` | ✅ 已实现 | |
 | `src/zephyr/regime/features/risk_features.py` | ✅ 已实现 | |
+| `src/zephyr/regime/features/synthetic_vix.py` | ✅ 已实现 | |
+| `src/zephyr/regime/features/trend_features.py` | ✅ 已实现 | |
 | `src/zephyr/regime/features/wyckoff_engine.py` | ✅ 已实现 | |
+| `src/zephyr/regime/overlay_signals_builder.py` | ✅ 已实现 | |
+| `src/zephyr/regime/regime_feature_builder.py` | ✅ 已实现 | |
+| `src/zephyr/regime/risk_signal_builder.py` | ✅ 已实现 | |
 
 ### 14.2 测试文件
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "Data Source Core 蓝图+施工图 — 数据接入层"
 doc_type: blueprint
 status: Active
-version: "4.0.5"
+version: "4.0.6"
 layer: L2_domain
 layer_name: data_source
 functional_domain: data
@@ -64,7 +64,7 @@ design_maturity: production
 
 # Data Source Core 蓝图+施工图 — 数据接入层
 
-> module_id: MOD-L00-001 | version: 4.0.5 | status: active | domain: data
+> module_id: MOD-L00-001 | version: 4.0.6 | status: active | domain: data
 > actual_disk_path: src/zephyr/data/ | generation: 4 | construction_progress: partially_implemented
 
 > ⚠️ **职责拆分通知（2026-07-06）**
@@ -1107,15 +1107,23 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/data/news_collector.py` | ✅ 已实现 | |
 | `src/zephyr/data/satellite_geospatial_engine/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/data/tick_subscriber.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/default_quality_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/quality_gate.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/akshare_provider.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/akshare_quote_provider.py` | ✅ 已实现 | |
 | `src/zephyr/governance/data_governance/miniqmt_provider.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/memory_provider.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/provider_base.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/portfolio/contracts/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/portfolio/contracts/money.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/portfolio/contracts/strategy_lifecycle_event.py` | ⚠️ 骨架 | |

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/access_control/orphan_judge
 title: "Orphan Judge 蓝图 — 孤儿判定器·三决策树处置"
 doc_type: blueprint
 status: Active
-version: "2.1.3"
+version: "2.1.4"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -112,7 +112,7 @@ END_REQUIRED_SECTIONS
 
 # Orphan Judge 蓝图 — 孤儿判定器·三决策树处置
 
-> module_id: MOD-INF-029 | version: 2.1.3 | status: Active | layer: cross_layer
+> module_id: MOD-INF-029 | version: 2.1.4 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/orphan-judge/ | generation: 3 | construction_progress: scaffold
 
 ## 概述
@@ -203,7 +203,7 @@ OrphanJudge 是孤儿文件的资产生死判决引擎——解决"文件不在�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-029` 的 28 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-029` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-029` 的 28 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-029` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -214,7 +214,7 @@ OrphanJudge 是孤儿文件的资产生死判决引擎——解决"文件不在�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-029 | MOD-INF-029 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | stable | planned | ❌ |
 | file_count | 28 文件 | 24 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1417,29 +1417,36 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `docs/03_modules/_cross_layer/orphan_judge/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/__main__.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/cascade_analyzer.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/config_loader.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/db.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/decision_table.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/deprecation_tracker.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/drift_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/duplicate_detector.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/escalation_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/feedback_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/judge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/kb_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/mcp_integration.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/models.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/orphan_collector.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/orphan_detector.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/rbac_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/reference_graph_engine.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/registration_checker.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/report_generator.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/safety_fence.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/standalone_evaluator.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/swid_tag.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/unique_analyzer.py` | ✅ 已实现 | |

@@ -3,7 +3,7 @@ module_id: MOD-GOV_SYNC_PANORAMA
 title: "五图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 五图对齐"
 doc_type: blueprint
 status: Active
-version: "1.1.3"
+version: "1.1.4"
 ttl: permanent
 layer: L1_foundation
 layer_name: cross_layer
@@ -37,7 +37,7 @@ build_status: generated
 
 # 五图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 五图对齐
 
-> module_id: MOD-GOV_SYNC_PANORAMA | version: 1.1.3 | status: Active
+> module_id: MOD-GOV_SYNC_PANORAMA | version: 1.1.4 | status: Active
 > actual_disk_path: sync_panorama_module.py + align_panoramas.py + blueprint_frontmatter_reconciler.py
 
 ### §0.6 五图对齐视图
@@ -332,7 +332,7 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 测试文件

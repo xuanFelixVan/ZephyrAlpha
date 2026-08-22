@@ -5,7 +5,7 @@ submodule_path: src/zephyr/infrastructure/a2a_protocol
 title: "A2A Protocol 蓝图 — Agent间通信协议与冲突解决"
 doc_type: blueprint
 status: Active
-version: "0.12.2"
+version: "0.12.3"
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -78,7 +78,7 @@ design_maturity: production
 > **什么时候建**: 当同时活跃 AI Agent ≥3，或跨 Agent 任务依赖 ≥5，或 Owner 要求多 Agent 协作调度时。
 > **自动化宿主**: FLE `_periodic_checks()` → `_a2a_health_check()` + CircadianScheduler `hour=5` → `_a2a_discovery_scan()`
 
-> module_id: MOD-INF-025 | version: 0.12.2 | status: active | domain: infra_ops
+> module_id: MOD-INF-025 | version: 0.12.3 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/infra_ops/a2a_protocol/ | generation: 3 | construction_progress: scaffold
 
 # A2A Protocol 蓝图 — Agent间通信协议与冲突解决
@@ -1437,7 +1437,7 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -1445,17 +1445,32 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/governance/a2a/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/a2a_protocol/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/a2a_card_registry.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/_base_server.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/audit_logger.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/auditor.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/error_codes.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/governance/governance_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/governance/phase_hold.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/policy_engine.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/governance/protocol.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/governance/rate_limiter.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/session_manager.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer1_discovery/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer1_discovery/a2a_registry.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer1_discovery/agent_card.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer1_discovery/identity_verifier.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer2_communication/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer2_communication/a2a_schemas.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer2_communication/a2a_state.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer2_communication/context_package.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer2_communication/handoff_manager.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer2_communication/message_router.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer2_communication/push_notifier.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer2_communication/streaming.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer2_communication/trigger_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_consensus.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_core_coordination.py` | ✅ 已实现 | |
@@ -1490,16 +1505,34 @@ STEP 3: 拆分后验证
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_knowledge_distill.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_latent_comm.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_metrics.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_negotiation.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_protocol_gateway.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_red_team.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_saga.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_security.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_temporal_admission.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_tracing.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_vector_reputation.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_voting.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_work_steal.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/arbitrator.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/cascade_guard.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/conflict_detector.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/construction_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/deadlock_guard.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/livelock_detector.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/semantic_diff.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/session_smuggling_defense.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/spec_sync.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/supervisor.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/local_first_arch.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/migration_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/multi_agent.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/multi_model_consensus.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/offline_autonomy.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/offline_resilience.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/phase_hold.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/a2a_protocol/prompt_lifecycle.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/a2a_protocol/realtime_streaming.py` | ⚠️ 骨架 | |
 
 ### 1.2 测试文件

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/research
 title: "Research Innovation Core 蓝图+施工图 — 研究创新层"
 doc_type: blueprint
 status: Active
-version: "2.1.1"
+version: "2.1.2"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -58,7 +58,7 @@ design_maturity: production
 
 # Research Innovation Core 蓝图+施工图 — 研究创新层
 
-> module_id: MOD-L09-001 | version: 2.1.1 | status: active | domain: research
+> module_id: MOD-L09-001 | version: 2.1.2 | status: active | domain: research
 > actual_disk_path: src/zephyr/research/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -848,7 +848,7 @@ class BacktestConfig:
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 测试文件
@@ -870,6 +870,7 @@ class BacktestConfig:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

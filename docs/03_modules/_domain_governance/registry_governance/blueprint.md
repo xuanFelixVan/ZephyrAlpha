@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/registry_governance
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.3"
+version: "0.2.4"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -139,7 +139,7 @@ END_REQUIRED_SECTIONS
 
 # Registry Governance 蓝图+施工图 — 注册表体系架构+功能域注册表+SSoT门禁
 
-> module_id: MOD-INF-037 | version: 0.2.3 | status: Draft | domain: infra_ops
+> module_id: MOD-INF-037 | version: 0.2.4 | status: Draft | domain: infra_ops
 > actual_disk_path: src/zephyr/infra_ops/ | generation: 1 | construction_progress: partially_implemented
 
 ## 概述
@@ -247,7 +247,7 @@ END_REQUIRED_SECTIONS
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-037` 的 27 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-037` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-037` 的 27 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-037` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -258,7 +258,7 @@ END_REQUIRED_SECTIONS
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-037 | MOD-INF-037 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | stable | planned | ❌ |
 | file_count | 27 文件 | 20 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1101,10 +1101,18 @@ class OverlapResult:
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 测试文件
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `docs/03_modules/_domain_governance/registry_governance/blueprint.md` | ✅ 已实现 | |
+| `src/zephyr/governance/capability_lookup.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/registry_governance.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

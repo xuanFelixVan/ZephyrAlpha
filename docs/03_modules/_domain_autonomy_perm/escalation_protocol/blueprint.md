@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/escalation_engine.py
 title: Escalation Protocol 蓝图
 doc_type: blueprint
 status: Active
-version: "2.1.4"
+version: "2.1.5"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -87,7 +87,7 @@ build_status: planned
 
 # Escalation Protocol 蓝图+施工图 — AI操作安全升级与委托治理协议
 
-> module_id: MOD-INF-022 | version: 2.1.4 | status: active | domain: infra_ops
+> module_id: MOD-INF-022 | version: 2.1.5 | status: active | domain: infra_ops
 > actual_disk_path: `D:\ZephyrAlpha\src\zephyr\escalation-engine\` | generation: 3 | construction_progress: partially_implemented
 
 ## 概述
@@ -280,7 +280,7 @@ Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-022` 的 192 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-022` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-022` 的 192 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-022` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -291,7 +291,7 @@ Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-022 | MOD-INF-022 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | stable | planned | ❌ |
 | file_count | 192 文件 | 112 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1529,15 +1529,122 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/audit_write_failure_protector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/forensic_package.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/integrity_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/merkle_audit.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/autonomy_regressor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/drift_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/reward_hacking_rebound_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/silence_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/vigil_runtime.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/approval.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_canary_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_debt_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_shadow_runner.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/slo_contract.py` | ✅ 已实现 | |
+| `src/zephyr/governance/agent_spec/a2a_failure.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/blueprint_bloat_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/blueprint_code_consistency.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/blueprint_reconciler.py` | ✅ 已实现 | |
 | `src/zephyr/governance/architecture_governance/construction_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/formal_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/gap_analyzer.py` | ✅ 已实现 | |
+| `src/zephyr/governance/compliance_gate_a6/compliance_mapper.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/command_chain_length_gate.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/context_package.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/context_switch_governor.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/multi_turn_intent_analyzer.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/protocol_self_context.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/data_pipeline_guard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/exchange_partition_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/exchange_reg_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/alternative_path_blocker.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/consequence_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/contracts.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/escalation_api.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/escalation_engine.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/escalation_fatigue_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/escalation_loop_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/escalation_metrics.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/escalation_models.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/escalation_smoke_tests.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/git_hook_pre_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/human_factors.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/identity_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/incident_response.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/order_state_escalator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/owner_absent.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/spof_checker.py` | ✅ 已实现 | |
+| `src/zephyr/governance/financial_governance/arbitrage_asymmetry_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/financial_governance/flash_crash_guard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/financial_governance/risk_matrix.py` | ✅ 已实现 | |
+| `src/zephyr/governance/financial_governance/strategy_scoper.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/autonomy_dashboard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/confidence_estimator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/confidence_quantifier.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/continuous_trust.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/cross_agent_conflict_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/cross_assistant_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/delegation_engine.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/delegation_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/meta_confidence.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/model_version_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/mvep_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/provider_failover.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/self_test.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/self_validator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/subagent_hook_propagator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/observability_governance/objective_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/budget_handler.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/clock_guard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/coldstart_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/error_budget_burst_limiter.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/interrupt_handler.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/maintenance_window_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/meta_observability.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/protocol_state_store.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/account_isolator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/broker_resilience.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/circuit_breaker.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/deadlock_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/decision_fatigue.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/decision_fatigue_cli.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/engine_sandbox.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/f5_boot_integration.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/f5_event_subscriber.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/f5_shutdown_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/last_resort_watchdog.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/process_isolator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/witness_isolation.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/anti_automation_bias.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/api_response_sanitizer.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/bare_repo_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/compositional_safety_tester.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/config_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/credential_guard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/ghost_scan.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/github_api_guard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/hooks_integrity_guard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/memory_poison_guard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/persuasion_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/sbom_guard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/security_config_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/vibe_security_verify.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/vibe_verify_integration.py` | ✅ 已实现 | |
 | `src/zephyr/governance/services/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/governance/services/adapter.py` | ✅ 已实现 | |
+| `src/zephyr/governance/services/cross_session_correlator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/services/memory_provenance.py` | ✅ 已实现 | |
+| `src/zephyr/position/position_reconciler.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

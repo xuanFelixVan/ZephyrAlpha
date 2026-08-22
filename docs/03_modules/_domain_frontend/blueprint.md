@@ -4,7 +4,7 @@ submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层"
 doc_type: blueprint
 status: Active
-version: "3.4.1"
+version: "3.4.2"
 layer: L3_application
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -68,7 +68,7 @@ build_status: generated
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
 > 当前 construction_progress = partially_implemented，可继续业务代码实现。
 
-> module_id: MOD-L08-001 | version: 3.4.1 | status: active | domain: frontend
+> module_id: MOD-L08-001 | version: 3.4.2 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: partially_implemented
 > v2.2.0新增: 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel), 对接D_BACKTEST/D_EX_CORE/D_DATA, 支持joinquant/Qbot风格仪表盘+实盘交易面板
 > v3.0.0(#ARCH-047): Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; 新增ChartFactory(callback仅编排); 5组件已迁移
@@ -1375,7 +1375,7 @@ def render_trade_panel(data: TradePanelData) -> None:
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -1387,9 +1387,24 @@ def render_trade_panel(data: TradePanelData) -> None:
 | `src/zephyr/frontend/api/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/frontend/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/frontend/dashboard/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/frontend/dashboard/app.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/app_panel.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/dashboard/components/backtest_performance.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/backtest_results.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/dashboard/components/chart_factory.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/experiment_history.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/fitness_functions.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/gate_statistics.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/knowledge_overview.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/olap_trend.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/order_book.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/position_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/task_progress.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/tick_replay.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/dashboard/components/trade_panel.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/infrastructure/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/frontend/interface_base.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/models/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/frontend/services/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/dashboard/__init__.py` | ⚠️ 骨架 | |

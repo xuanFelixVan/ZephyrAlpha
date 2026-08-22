@@ -4,7 +4,7 @@ submodule_path: src/zephyr/pf_core
 title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层"
 doc_type: blueprint
 status: Active
-version: "2.1.7"
+version: "2.1.8"
 layer: L2_domain
 layer_name: portfolio_construction
 functional_domain: portfolio
@@ -48,7 +48,7 @@ build_status: generated
 
 > ✅ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，可以此蓝图为依据新增组合构建业务代码。
 
-> module_id: MOD-L05-001 | version: 2.1.7 | status: Active | layer: L2_domain
+> module_id: MOD-L05-001 | version: 2.1.8 | status: Active | layer: L2_domain
 > actual_disk_path: src/zephyr/pf_core/ | generation: 2 | construction_progress: partially_implemented
 
 # Portfolio Construction Core 蓝图+施工图 — 组合构建层
@@ -947,7 +947,7 @@ ZephyrAlpha 量化架构需要从信号层（D_SIGNAL）和风控层（D_RISK）
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -955,8 +955,21 @@ ZephyrAlpha 量化架构需要从信号层（D_SIGNAL）和风控层（D_RISK）
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/governance/strategies/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/strategies/strategy_base.py` | ✅ 已实现 | |
 | `src/zephyr/governance/strategies/strategy_registry.py` | ⚠️ 骨架 | |
+| `src/zephyr/pf_core/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/default_equity_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/intraday_surge_fall_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/orderbook_imbalance_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/strategies/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/strategies/daban_sleeve_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/strategy_engine/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/strategy_engine/strategy_runner.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/strategy_engine/tick_strategy_base.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/topn_momentum_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/vwap_reversion_strategy.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

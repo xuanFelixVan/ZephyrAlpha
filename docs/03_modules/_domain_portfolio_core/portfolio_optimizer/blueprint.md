@@ -3,7 +3,7 @@ module_id: MOD-PF-002
 title: "组合优化器蓝图 — 风险预算为主 + 均值方差备选 + Kelly 截断"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -138,7 +138,7 @@ build_status: generated
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 8.1 源码文件
@@ -148,6 +148,7 @@ build_status: generated
 | `src/zephyr/pf_core/core/multifactor_constraint_arbitration.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/core/multifactor_holding_drift_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/core/multifactor_rebalance_trigger.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/core/portfolio_optimizer.py` | ✅ 已实现 | |
 
 ### 8.2 测试文件
 

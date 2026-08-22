@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估"
 doc_type: blueprint
 status: Active
-version: "2.3.5"
+version: "2.3.6"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -128,7 +128,7 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-036` 的 16 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-036` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-036` 的 16 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-036` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -139,7 +139,7 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-036 | MOD-INF-036 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | stable | planned | ❌ |
 | file_count | 16 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1000,13 +1000,14 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `docs/03_modules/_cross_layer/model_capability_exam/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/model_capability_exam/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/intelligence/model_evaluation/__init__.py` | ✅ 已实现 | |
@@ -1014,8 +1015,11 @@ STEP 3: 拆分后验证
 | `src/zephyr/intelligence/model_evaluation/activate.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/experiment_tracker/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/implementations/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_evaluation/implementations/default_inference_engine.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_evaluation/inference_base.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/notebook_integration/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/reranker.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_evaluation/unified_memory_api.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

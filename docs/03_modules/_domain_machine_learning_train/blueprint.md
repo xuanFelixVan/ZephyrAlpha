@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ml_train
 title: "ML Platform Core 蓝图+施工图 — 机器学习平台"
 doc_type: blueprint
 status: Active
-version: "2.1.3"
+version: "2.1.4"
 layer: L2_domain
 functional_domain: research
 owner: ZephyrAlpha-Owner
@@ -46,7 +46,7 @@ design_maturity: production
 
 > ✅ **业务层已开放，可施工** — 本蓝图处于 C 轨占位状态，当前仅有 Phase B 骨架代码，可启动新施工。待 B 轨容量升级完成后按 ARB-11 三梯队策略激活。
 
-> module_id: MOD-L11-001 | version: 2.1.3 | status: active | domain: ml_train
+> module_id: MOD-L11-001 | version: 2.1.4 | status: active | domain: ml_train
 > actual_disk_path: src/zephyr/ml_train/ | generation: 2 | construction_progress: partially_implemented
 
 # ML Platform Core 蓝图+施工图 — 机器学习平台
@@ -806,7 +806,7 @@ class ModelMetadata:
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -816,6 +816,7 @@ class ModelMetadata:
 | `src/zephyr/ml_train/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/ml_train/implementations/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/ml_train/implementations/default_inference_engine.py` | ✅ 已实现 | |
+| `src/zephyr/ml_train/implementations/sentiment_sft_trainer.py` | ✅ 已实现 | |
 | `src/zephyr/ml_train/inference_base.py` | ✅ 已实现 | |
 | `src/zephyr/ml_train/trainer_base.py` | ✅ 已实现 | |
 

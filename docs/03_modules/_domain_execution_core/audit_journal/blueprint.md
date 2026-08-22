@@ -3,7 +3,7 @@ module_id: MOD-EX-003
 title: "执行审计器蓝图 — 执行事件哈希链审计日志+报告"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -248,7 +248,7 @@ depgraph `blueprint_id=MOD-EX-003` 对应设计文档 `D-EX-CORE-15`（ID 错位
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 10.1 源码文件
@@ -256,6 +256,7 @@ depgraph `blueprint_id=MOD-EX-003` 对应设计文档 `D-EX-CORE-15`（ID 错位
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/ex_core/audit_journal/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/audit_journal/auditor.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 
@@ -270,3 +271,5 @@ depgraph `blueprint_id=MOD-EX-003` 对应设计文档 `D-EX-CORE-15`（ID 错位
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

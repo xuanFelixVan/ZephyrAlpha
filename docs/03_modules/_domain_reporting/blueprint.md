@@ -4,7 +4,7 @@ submodule_path: src/zephyr/reporting
 title: "Post Trade Analytics Core 蓝图 — 盘后分析层"
 doc_type: blueprint
 status: Active
-version: "2.1.5"
+version: "2.1.6"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -45,7 +45,7 @@ build_status: generated
 design_maturity: production
 ---
 
-> module_id: MOD-L07-001 | version: 2.1.5 | status: active | domain: reporting
+> module_id: MOD-L07-001 | version: 2.1.6 | status: active | domain: reporting
 > actual_disk_path: src/zephyr/reporting/ | generation: 2 | construction_progress: partially_implemented
 
 # ✅ Post Trade Analytics Core 蓝图 — 盘后分析层
@@ -835,7 +835,7 @@ class PerformanceAttributionReport:
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -843,7 +843,12 @@ class PerformanceAttributionReport:
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/governance/audit/default_attribution_engine.py` | ⚠️ 骨架 | |
+| `src/zephyr/governance/audit/default_tca_engine.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/observability_governance/analytics_base.py` | ⚠️ 骨架 | |
+| `src/zephyr/reporting/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/reporting/analytics_base.py` | ✅ 已实现 | |
+| `src/zephyr/reporting/attribution.py` | ✅ 已实现 | |
+| `src/zephyr/reporting/attribution_registry_mapper.py` | ✅ 已实现 | |
 | `src/zephyr/reporting/default_attribution_engine.py` | ✅ 已实现 | |
 | `src/zephyr/reporting/default_tca_engine.py` | ✅ 已实现 | |
 

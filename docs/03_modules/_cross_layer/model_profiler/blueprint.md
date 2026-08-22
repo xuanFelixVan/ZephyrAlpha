@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Profiler 蓝图 — 模型画像器·LLM能力基线测量"
 doc_type: blueprint
 status: Active
-version: "2.2.5"
+version: "2.2.6"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -137,7 +137,7 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-034` 的 36 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-034` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-034` 的 36 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-034` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -148,7 +148,7 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-034 | MOD-INF-034 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | stable | planned | ❌ |
 | file_count | 36 文件 | 8 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1008,17 +1008,33 @@ MAX_OLLAMA_MODELS, SKIP_MODEL_PATTERNS
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `docs/03_modules/_cross_layer/model_profiler/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/model_profiler/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/benchmark_suite.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/capability_passport.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/case_assembler.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/cli.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/exam_checks.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/exam_executor.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/exam_judge.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/exam_orchestrator.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/exam_rubric.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/exam_test_cases.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/job_matcher.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/model_discovery.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/profiler.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/provider_data.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/results_writer.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/task_model_learner.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

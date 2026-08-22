@@ -5,7 +5,7 @@ title: "嵌入模型下载器蓝图 — HuggingFace模型按需下载，永不�
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.1"
+version: "1.0.2"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -41,7 +41,7 @@ responsibility_domain:
 build_status: generated
 design_maturity: production
 ---
-> module_id: MOD-INF-045 | version: 1.0.1 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-045 | version: 1.0.2 | status: active | layer: L0_infrastructure
 
 ## 1. 定位与痛点
 
@@ -135,7 +135,7 @@ python scripts/ops/download_models.py --dry-run     # 预览（不下载）
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 8.1 源码文件
@@ -157,3 +157,5 @@ python scripts/ops/download_models.py --dry-run     # 预览（不下载）
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

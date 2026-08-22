@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.11"
+version: "0.19.12"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -132,7 +132,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-016` 的 343 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-016` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-016` 的 343 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-016` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -350,14 +350,17 @@ build_status: generated
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 共享+核心——115 已跟踪文件（67 Phase 0-14 + 41 原 orphan 归类 + 7 core 根目录）已落盘 + 109 shared 子目录文件（§5.1a）+ 53 core 子目录文件（§5.1a-core）= 215 shared/ + 60 core/ .py 文件全覆盖
 
 ### 5.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `docs/03_modules/_cross_layer/shared_core/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/compliance_rule.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en_process_lifecycle_gateway.py` | ✅ 已实现 | |
+| `src/zephyr/governance/financial_governance/instrument.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/adaptation/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/compensation/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/dependency/__init__.py` | ✅ 已实现 | |
@@ -365,40 +368,84 @@ build_status: generated
 | `src/zephyr/infrastructure/events/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/events/event_store.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/impact/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/impact/impact_propagator.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/impact/llm_impact_analyzer.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/lifecycle/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/lifecycle/scope_guard.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/lifecycle/task_lifecycle_manager.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/maintenance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/observability/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/observability/notifier.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/observability/trace_decorator.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/quality/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/quality/quality_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/queue/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/queue/task_queue.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/queue/task_scheduler.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/reliability/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/reliability/circuit_breaker.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/reliability/context_guard.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/session/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/sla/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/sla/sla_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/integration/shared/events/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/integration/shared/events/dlq_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/integration/shared/events/event_bus_upgrade.py` | ✅ 已实现 | |
 | `src/zephyr/integration/shared/events/event_schemas.py` | ✅ 已实现 | |
+| `src/zephyr/integration/shared/events/upgrade_strategy.py` | ✅ 已实现 | |
 | `src/zephyr/pf_alloc/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/pf_alloc/strategy_lifecycle_event.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/__version__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/adaptation/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/adaptation/execution_tuner.py` | ✅ 已实现 | |
+| `src/zephyr/shared/adaptation/prompt_version_manager.py` | ✅ 已实现 | |
 | `src/zephyr/shared/ai_guards/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/ai_guards/ai_audit_guard.py` | ✅ 已实现 | |
+| `src/zephyr/shared/ai_guards/combinatorial_gate.py` | ✅ 已实现 | |
+| `src/zephyr/shared/ai_guards/config_safety_guard.py` | ✅ 已实现 | |
+| `src/zephyr/shared/ai_guards/core_integrity_guard.py` | ✅ 已实现 | |
 | `src/zephyr/shared/alerts/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/alerts/alert_escalation.py` | ✅ 已实现 | |
+| `src/zephyr/shared/alerts/alert_manager.py` | ✅ 已实现 | |
+| `src/zephyr/shared/alerts/alert_precision_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/shared/alerts/alert_senders.py` | ✅ 已实现 | |
+| `src/zephyr/shared/alerts/dual_channel_alert.py` | ✅ 已实现 | |
+| `src/zephyr/shared/alerts/heartbeat_server.py` | ✅ 已实现 | |
+| `src/zephyr/shared/alerts/threshold_loader.py` | ✅ 已实现 | |
 | `src/zephyr/shared/api/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/api/api_client.py` | ✅ 已实现 | |
 | `src/zephyr/shared/api/api_index.py` | ✅ 已实现 | |
+| `src/zephyr/shared/api/dos_launcher.py` | ✅ 已实现 | |
 | `src/zephyr/shared/blueprint_tools/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/blueprint_tools/ai_understandability_constraint.py` | ✅ 已实现 | |
+| `src/zephyr/shared/blueprint_tools/architecture_context_loader.py` | ✅ 已实现 | |
+| `src/zephyr/shared/blueprint_tools/blueprint_code_auditor.py` | ✅ 已实现 | |
 | `src/zephyr/shared/blueprint_tools/blueprint_scorer.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/adaptive_sampler.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/budget_aware_prompt.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/capacity_calibrator.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/capacity_digital_twin.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/capacity_fingerprint.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/capacity_runbook_generator.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/cost_estimator.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/dependency_capacity_guard.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/model_capacity_probe.py` | ✅ 已实现 | |
 | `src/zephyr/shared/compensation/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/compensation/saga_compensator.py` | ✅ 已实现 | |
 | `src/zephyr/shared/context/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/context/context_engine.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/approval_types.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/_types.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/pause.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/resume.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/throttle.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/capital_allocation_result.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/compliance_rule.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/contract_bus.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/enums/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/enums/order_enums.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/errors/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/errors/contract_violation_error.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/errors/data_quality_error.py` | ✅ 已实现 | |
@@ -407,66 +454,193 @@ build_status: generated
 | `src/zephyr/shared/contracts/errors/risk_limit_violation_error.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/errors/signal_degradation_warning.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/escalation/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/escalation/budget_alert.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/execution/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/execution/capital_allocation_result.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/execution/execution_report.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/execution/fill.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/execution/model_serving_request.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/execution/order.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/execution_report.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/experiment/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/experiment/experiment_result.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/experiment/model_serving_response.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/experiment_result.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/external/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/external/ext_001.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/external/ext_002.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/external/ext_003.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/external/ext_004.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/factor_monitor_report.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/factor_signal.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/fill.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/identity/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/identity/agent_identity.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/identity/permission.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/llm_gateway_protocol.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/macro_factor_signal.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/market/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/market/instrument.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/market_data.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/model_serving_request.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/model_serving_response.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/orchestration_protocol.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/order.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/performance_attribution_report.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/portfolio/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/portfolio/money.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/portfolio/position.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/position.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/protocols.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk/compliance_rule.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/risk/risk_dashboard_snapshot.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/risk/risk_limits.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/risk/risk_metrics.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/risk/risk_validator_protocol.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/risk_dashboard_snapshot.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/risk_limits.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk_metrics.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/rollback_types.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/security/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/security/security_decision.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/selection_result.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/skill_protocol.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/strategy_lifecycle_event.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/synthesized_signal.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/system_configuration.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/target_portfolio.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/task_repository_protocol.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/telemetry_emitter.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/trace_context.py` | ✅ 已实现 | |
 | `src/zephyr/shared/dependency/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/dependency/dependency_graph.py` | ✅ 已实现 | |
+| `src/zephyr/shared/dependency/dependency_tracker.py` | ✅ 已实现 | |
 | `src/zephyr/shared/draft/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/draft/draft_assistant.py` | ✅ 已实现 | |
 | `src/zephyr/shared/evaluation/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/event_bus.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/dlq.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/dlq_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/shared/events/event_bus_upgrade.py` | ✅ 已实现 | |
+| `src/zephyr/shared/events/event_reactor.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/event_schemas.py` | ✅ 已实现 | |
+| `src/zephyr/shared/events/hook_dispatcher.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/upgrade_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/shared/foundation/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/foundation/constants.py` | ✅ 已实现 | |
+| `src/zephyr/shared/foundation/deprecation.py` | ✅ 已实现 | |
+| `src/zephyr/shared/foundation/env.py` | ✅ 已实现 | |
+| `src/zephyr/shared/foundation/errors.py` | ✅ 已实现 | |
+| `src/zephyr/shared/foundation/flags.py` | ✅ 已实现 | |
+| `src/zephyr/shared/foundation/models.py` | ✅ 已实现 | |
+| `src/zephyr/shared/foundation/types.py` | ✅ 已实现 | |
 | `src/zephyr/shared/infra/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/infra/cache.py` | ✅ 已实现 | |
+| `src/zephyr/shared/infra/idempotency.py` | ✅ 已实现 | |
+| `src/zephyr/shared/infra/limiter.py` | ✅ 已实现 | |
+| `src/zephyr/shared/infra/lock.py` | ✅ 已实现 | |
+| `src/zephyr/shared/infra/observer.py` | ✅ 已实现 | |
+| `src/zephyr/shared/infra/outbox.py` | ✅ 已实现 | |
+| `src/zephyr/shared/infra/process_lifecycle_gateway.py` | ✅ 已实现 | |
+| `src/zephyr/shared/infra/process_pool.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/cache_invalidation.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/content_fingerprint.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/file_utils.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/frontmatter_utils.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/io_cache.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/paths.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/serialization.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/streaming_reader.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/workspace_telemetry.py` | ✅ 已实现 | |
 | `src/zephyr/shared/lifecycle/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/lifecycle/daemon_registry.py` | ✅ 已实现 | |
+| `src/zephyr/shared/lifecycle/health.py` | ✅ 已实现 | |
+| `src/zephyr/shared/lifecycle/health_discovery.py` | ✅ 已实现 | |
+| `src/zephyr/shared/lifecycle/healthcheck_service.py` | ✅ 已实现 | |
+| `src/zephyr/shared/lifecycle/hooks.py` | ✅ 已实现 | |
+| `src/zephyr/shared/lifecycle/lazy_loader.py` | ✅ 已实现 | |
+| `src/zephyr/shared/lifecycle/longevity_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/shared/lifecycle/resource_optimization_models.py` | ✅ 已实现 | |
+| `src/zephyr/shared/lifecycle/task_heartbeat.py` | ✅ 已实现 | |
+| `src/zephyr/shared/lifecycle/ttl_cleanup_engine.py` | ✅ 已实现 | |
 | `src/zephyr/shared/maintenance/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/maintenance/autonomy_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/shared/maintenance/code_economy_analyzer.py` | ✅ 已实现 | |
+| `src/zephyr/shared/maintenance/owner_trust_gauge.py` | ✅ 已实现 | |
+| `src/zephyr/shared/maintenance/slo_review_assistant.py` | ✅ 已实现 | |
+| `src/zephyr/shared/observability/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/observability/metrics.py` | ✅ 已实现 | |
+| `src/zephyr/shared/observability/metrics_server.py` | ✅ 已实现 | |
+| `src/zephyr/shared/observability/reasoning_spans.py` | ✅ 已实现 | |
+| `src/zephyr/shared/observability/tracing.py` | ✅ 已实现 | |
+| `src/zephyr/shared/protocols/module_birth_registry.py` | ✅ 已实现 | |
 | `src/zephyr/shared/reliability/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/reliability/diff_planner.py` | ✅ 已实现 | |
+| `src/zephyr/shared/reliability/retry_handler.py` | ✅ 已实现 | |
 | `src/zephyr/shared/resilience/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/resilience/circuit_breaker.py` | ✅ 已实现 | |
+| `src/zephyr/shared/resilience/degradation_chain.py` | ✅ 已实现 | |
+| `src/zephyr/shared/resilience/error_budget_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/shared/resilience/fallback.py` | ✅ 已实现 | |
+| `src/zephyr/shared/resilience/fault_isolator.py` | ✅ 已实现 | |
+| `src/zephyr/shared/resilience/retry.py` | ✅ 已实现 | |
 | `src/zephyr/shared/schema/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/schema/base_config.py` | ✅ 已实现 | |
+| `src/zephyr/shared/schema/execution_model.py` | ✅ 已实现 | |
+| `src/zephyr/shared/schema/schema_registry.py` | ✅ 已实现 | |
+| `src/zephyr/shared/schema/schemas.py` | ✅ 已实现 | |
+| `src/zephyr/shared/schema/severity_types.py` | ✅ 已实现 | |
+| `src/zephyr/shared/schema/task_types.py` | ✅ 已实现 | |
 | `src/zephyr/shared/security/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/security/capability.py` | ✅ 已实现 | |
+| `src/zephyr/shared/security/sandbox_executor.py` | ✅ 已实现 | |
+| `src/zephyr/shared/security/secrets.py` | ✅ 已实现 | |
+| `src/zephyr/shared/security/ssot_guard.py` | ✅ 已实现 | |
 | `src/zephyr/shared/session/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/session/session_audit.py` | ✅ 已实现 | |
+| `src/zephyr/shared/session/session_boundary.py` | ✅ 已实现 | |
+| `src/zephyr/shared/session/session_continuity.py` | ✅ 已实现 | |
+| `src/zephyr/shared/state_store.py` | ✅ 已实现 | |
+| `src/zephyr/shared/state_store_redis.py` | ✅ 已实现 | |
 | `src/zephyr/shared/utils/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/utils/async_utils.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/cli_summary.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/context.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/db_utils.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/diff_utils.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/logging.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/migration.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/pagination.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/testing.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/time_utils.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/verify_paths.py` | ✅ 已实现 | |
+| `src/zephyr/shared/utils/zephyr_logger.py` | ✅ 已实现 | |
 | `src/zephyr/shared/versioning/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/versioning/vibe_experiment_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/trading/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/execution/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/execution/capital_allocation_result.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/execution/execution_rejection_error.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/execution/execution_report.py` | ⚠️ 骨架 | |
+| `src/zephyr/trading/trading_contracts/execution/fill.py` | ⚠️ 骨架 | |
+| `src/zephyr/trading/trading_contracts/execution/model_serving_request.py` | ⚠️ 骨架 | |
+| `src/zephyr/trading/trading_contracts/execution/order.py` | ⚠️ 骨架 | |
+| `src/zephyr/trading/trading_contracts/execution/position.py` | ⚠️ 骨架 | |
 | `src/zephyr/trading/trading_contracts/market/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/trading/trading_contracts/market/instrument.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/market/signal_degradation_warning.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/risk/compliance_rule.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/risk/risk_dashboard_snapshot.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/risk/risk_limit_violation_error.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/risk/risk_limits.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/risk/risk_metrics.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/risk/risk_validator_protocol.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py` | ✅ 已实现 | |
 
 ### 5.2 测试文件
 

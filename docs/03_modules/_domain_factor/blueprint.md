@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.7"
+version: "4.0.8"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -218,7 +218,7 @@ build_status: stable
 
 # Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色
 
-> module_id: MOD-L02-001 | version: 4.0.7 | status: active | domain: factor
+> module_id: MOD-L02-001 | version: 4.0.8 | status: active | domain: factor
 > actual_disk_path: src/zephyr/factor/ | generation: 3 | construction_progress: partially_implemented
 > 子模块体系: D-FACTOR-01~11+24（蓝图内部编号，不进blueprint_registry）
 
@@ -1098,14 +1098,16 @@ class FactorMeta(BaseModel):
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/factor/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/alpha_signal_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/factor/bus_factor_defense.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/factor/core/backpressure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/backpressure/limiter.py` | ✅ 已实现 | |
@@ -1118,10 +1120,21 @@ class FactorMeta(BaseModel):
 | `src/zephyr/factor/core/ctr002_producer/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/factor/core/ctr002_producer/converter.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/dag_manager/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/factor/core/dag_manager/executor.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/dist_feature_eng/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/dist_feature_eng/engine.py` | ✅ 已实现 | |
+| `src/zephyr/factor/core/evaluation/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/factor/core/evaluation/backtest.py` | ✅ 已实现 | |
+| `src/zephyr/factor/core/evaluation/metrics.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/factor_dag/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/factor_dag/dag.py` | ✅ 已实现 | |
+| `src/zephyr/factor/core/intraday_factor_loop.py` | ✅ 已实现 | |
+| `src/zephyr/factor/factor_base.py` | ✅ 已实现 | |
+| `src/zephyr/factor/intraday_snapshot_factors.py` | ✅ 已实现 | |
+| `src/zephyr/factor/momentum_factor.py` | ✅ 已实现 | |
+| `src/zephyr/factor/technical_indicators/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/factor/technical_indicators/indicator_base.py` | ✅ 已实现 | |
+| `src/zephyr/factor/value_factor.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

@@ -4,7 +4,7 @@ title: "Task System 蓝图 — 全链路任务卡生命周期管理"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "0.9.7"
+version: "0.9.8"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -60,7 +60,7 @@ build_status: generated
 
 # Task System 蓝图 — 全链路任务卡生命周期管理
 
-> module_id: MOD-TASK_SYSTEM | version: 0.9.7 | status: active | layer: L0_infrastructure
+> module_id: MOD-TASK_SYSTEM | version: 0.9.8 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/governance/task_repo.py | generation: 1 | construction_progress: partially_implemented
 
 ## 概述
@@ -1443,7 +1443,7 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > **蓝图-代码同步强制约定（见 AGENTS.md §7 代码规范）**——本节是蓝图与磁盘代码的「地址簿」。
 
 ### 1.1 源码文件
@@ -1452,7 +1452,11 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `src/zephyr/governance/architecture_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/architecture_governance/post_sync_validator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/transition.py` | ✅ 已实现 | |
 | `src/zephyr/governance/persistence/base_repo.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/intent_keyword_mapper.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/intent_parser.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/task_repo.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

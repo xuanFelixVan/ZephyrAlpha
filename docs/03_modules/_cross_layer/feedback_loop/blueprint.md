@@ -5,7 +5,7 @@ title: "Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.35.8"
+version: "0.35.9"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -54,7 +54,7 @@ responsibility_domain:
 
 本蓝图描述 Feedback Loop Engine——ZephyrAlpha 的自我改进闭环引擎。它解决了系统运行时异常检测、根因诊断、自动修复和自我进化的问题。核心职责包括：regime→predict→detect→diagnose→act→verify→self-heal→govern 全链路自治、67+ Detector 多模态检测、三级检测池并行化、32 代进化×429 盲点覆盖。当前规模单线程 30s 轮询，目标容量 100 AI Session 并发/500 findings/cycle/240 events/s。上游依赖 ScriptSystem(MOD-INF-005)提供扫描结果，下游被 AutoRuntime(MOD-INF-035)消费异常调度。
 
-> module_id: MOD-FEEDBACK_LOOP | version: 0.35.8 | status: Draft | layer: cross_layer
+> module_id: MOD-FEEDBACK_LOOP | version: 0.35.9 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/feedback_loop/ | generation: 1 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -143,7 +143,7 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-FEEDBACK_LOOP` 的 636 个 file 节点 | design | `extract_depgraph.py --modules MOD-FEEDBACK_LOOP` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-FEEDBACK_LOOP` 的 636 个 file 节点 | production | `extract_depgraph.py --modules MOD-FEEDBACK_LOOP` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -782,38 +782,301 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 反馈闭环——6文件骨架+metrics_collector+fitness_functions已实现
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `docs/03_modules/_cross_layer/feedback_loop/blueprint.md` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/actors/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/actors/action_selector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/actors/agent_lifecycle.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/actors/alert_router.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/actors/api_version_contract.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/actors/global_action_scheduler.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/actors/incident_priority_triage_automator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/actors/intent_driven_ops.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/actors/multi_agent_orchestrator.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/actors/notification_personalizer.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/actors/owner_absence_escalation.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/actors/saga_compensator.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/actors/secondary_alert_channel.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/alert_dispatcher.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/auto_evolution.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/backpressure_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/collectors/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/calendar_adapter.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/collectors/config_timeline.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/data_quality_validator.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/collectors/feedback_collector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/financial_stratification.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/collectors/kb_provenance.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/collectors/knowledge_capture.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/knowledge_freshness.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/knowledge_injection.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/knowledge_packaging.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/collectors/known_unknown_registry.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/llm_cost_accounting.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/market_calendar.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/market_event_integrator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/metrics_collector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/notification_feedback.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/schema_evolution.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/collectors/schema_migration.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/temporal_event_store.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/collectors/token_finops.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/config.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/db_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/db_writer.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/decision_engine.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/detectors/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/detectors/anomaly/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/anomaly_clustering.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/anomaly_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/emergent_behavior_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/flapping_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/heisenbug_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/infinite_loop_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/intermittent_failure_pattern.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/log_anomaly.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/silent_corruption_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/synthetic_anomaly_generator.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/anomaly/temporal_pattern.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/detectors/correlation/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/action_efficacy_decay_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/action_interaction_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/action_side_effect_cumulative_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/agent_trajectory_anomaly_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/cross_signal_validator.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/correlation/cross_system_correlator.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/correlation/decision_provenance.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/dependency_freshness_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/ensemble_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/external_health.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/external_validation_checkpoint.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/fle_performance_regression_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/multi_signal_correlator.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/correlation/rumor_noise_filter.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/trace_causal_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/correlation/traffic_replay_validator.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/detectors/drift/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/drift/concept_drift.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/drift/config_drift.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/drift/context_window_contamination_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/drift/diminishing_returns_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/drift/ensemble_drift.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/drift/gradual_poisoning_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/drift/trend_cycle_separator.py` | ⚠️ 骨架 | |
 | `src/zephyr/feedback_loop/detectors/guard/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/guard/alert_desensitization_curve.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/guard/guard_cascade_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/guard/guard_oscillation_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/guard/placebo_action_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/guard/positive_feedback_defense.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/guard/recursive_diagnosis_trust_evaluator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/guard/self_audit.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/guard/self_diagnosis_data_leak_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/guard/self_ha.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/guard/temporal_coherence_of_self_model.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/detectors/reliability/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/reliability/autoscale_remediation.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/reliability/blast_radius.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/reliability/blast_radius_budget.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/reliability/capacity_forecast.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/reliability/chaos_engineering.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/reliability/ebpf_monitor.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/reliability/flag_lifecycle.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/reliability/maintenance_coordinator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/reliability/metric_cardinality_guard.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/reliability/openfeature.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/reliability/otel_adapter.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/reliability/regulatory_audit.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/reliability/resolution_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/detectors/reliability/runbook_executor.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/detectors/reliability/version_migrator.py` | ⚠️ 骨架 | |
 | `src/zephyr/feedback_loop/diagnosers/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/diagnosers/cognitive/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/cognitive/adaptive_param_tuning.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/cognitive/cognitive_load.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/cognitive/cognitive_load_budget.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/cognitive/collaborative_learning.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/cognitive/confidence_decomposer.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/diagnosers/cognitive/gamification.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/cognitive/meta_guard_latency_budget.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/cognitive/socratic_questions.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/cognitive/tone_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/cognitive/tone_adapter_v2.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/diagnosers/diagnosis/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/auto_diagnosis.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/causal_inference_engine.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/counterfactual.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/diagnosis_engine.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/diagnosis_kpi.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/impact_predictor.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/incident_knowledge_injector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/interactive_diagnosis.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/diagnosers/diagnosis/knowledge_bus_factor_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/diagnosers/diagnosis/knowledge_market.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/mtti_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/nonstationary_effectiveness.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/statistical_hygiene_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/diagnosis/vertical_self_assessment.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/diagnosers/health/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/action_composition_health_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/dr_resilience_metrics.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/e2e_integration_health.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/fle_dogfood_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/fle_self_slo_metrics.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/global_health_map.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/memory_self_check.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/diagnosers/health/model_health.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/self_benchmark.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/self_bottleneck_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/self_health_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/health/self_llm_observability.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/diagnosers/reliability/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/amplification_guard.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/api_dependency_metrics.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/burn_rate_alerter.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/burnout_alarm.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/capacity_aware_repair.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/cold_start_conservative_mode.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/context_truncation.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/context_window_pressure_manager.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/cross_guard_conflict_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/cross_session_consistency_validator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/data_volume_growth_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/feedback_delay_compensator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/guard_interaction_topology_mapper.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/guard_self_consistency_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/human_anomaly_flood_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/latency_slo.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/llm_provider_integrity.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/llm_quality_regression.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/model_rotation.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/model_rotation_v2.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/model_version_semantic_drift.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/numerical_stability_guard.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/operational_seasonality.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/prompt_fingerprint.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/prompt_sanitizer.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/recovery_time_stats.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/regime_gain_scheduling.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/retirement_planner.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/slo_capacity_metrics.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/system_entropy_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/temporal_integrity_guard.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/timezone_semantic_reasoner.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/toil_quantification.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/value_added_baseline.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/diagnosers/reliability/zombie_fle_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/docs/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/docs/cold_start_manual.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/error_budget.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/eval_harness.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/evolution/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/auto_reward.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/evolution/conformal_prediction.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/evolution/cross_gen_validation.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/evolution/dynamic_threshold.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/evolution/ewc_kb_review.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/failure_replay.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/graduated_activation_protocol.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/hypernetwork.py` | ⚠️ 骨架 | |
 | `src/zephyr/feedback_loop/evolution/knowledge_distillation.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/evolution/online_feature_importance.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/prompt_factory_governance.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/prompt_optimization_regression_detector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/prompt_self_optimization_loop.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/self_modification_rate_limiter.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/self_reflection.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/evolution/self_upgrade_canary.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/semantic_intent_preservation_guard.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/teacher_transfer.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution/training_data_gov.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/evolution_engine.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/exceptions.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/feedback_collector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/fitness_functions.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/forensic/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/architectural_sod.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/automated_rca_postmortem_generator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/boot_integrity_attestation.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/crypto_bootstrap.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/deterministic_replay.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/external_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/fle_upgrade_safety_validator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/guard_complexity_budget.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/guard_configuration_drift_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/interrupt_coherence_validator.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/forensic/knowledge_injection_pre_flight_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/point_in_time_reconstructor.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/self_modification_audit.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/serialization_format_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/state_migration_validator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/sub_agent_collusion.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/forensic/toctou_guard.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/forensic/worm_write_integrity.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/generator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/metrics_collector.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/protocols.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/resilience/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/resilience/config_hot_reload_guard.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/resilience/deadman_switch.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/resilience/dr_automation.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/resilience/graceful_degradation_planner.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/resilience/multi_instance_coord.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/resilience/oscillation_damping.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/resilience/resource_starvation_aware.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/resilience/self_api_throttle_defense.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/resilience/split_brain_quorum.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/scheduler.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/scheduler_act.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/scheduler_collect_detect.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/scheduler_health.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/scheduler_safety.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/security/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/security/agent_skill_guard.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/security/dep_cve_correlator.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/security/metric_prompt_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/security/remote_attestation.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/security/secret_rotation.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/security/wireheading_prevention.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/self_diagnosis.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/session_learner.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/slo_manager.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/template.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/tests/e2e/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/tests/e2e/integration_test_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/validator.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/verifiers/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/ab_test.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/action_explainability.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/ai_comment_veracity.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/attack_simulator.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/auto_rollback.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/build_reproducibility_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/canary_repair.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/cascading_rollback_analyzer.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/cross_blueprint_contract_drift.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/cross_module_integration.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/cross_session_knowledge_integrity.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/digital_twin_sandbox.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/dry_run_sandbox.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/federated_protocol.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/golden_test_external.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/no_llm_degradation.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/pre_flight_simulator.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/preventive_repair.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/rollback_integrity.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/verifiers/sim2real_calibration.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/stochastic_diagnosis_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/toctou_revalidation.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/verifiers/verification_engine.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/contracts/alert_handler.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
@@ -1119,6 +1382,7 @@ STEP 3: 拆分后验证
 | `tests/llm_security/test_security.py` | ✅ 已实现 | |
 | `tests/llm_security/test_wireheading_prevention.py` | ✅ 已实现 | |
 | `tests/memory/test_memory_self_check.py` | ✅ 已实现 | |
+| `tests/model/test_llm_runtime_gateway.py` | ✅ 已实现 | |
 | `tests/model/test_model_health.py` | ✅ 已实现 | |
 | `tests/model/test_model_rotation.py` | ✅ 已实现 | |
 | `tests/model/test_model_rotation_v2.py` | ✅ 已实现 | |
@@ -1136,6 +1400,7 @@ STEP 3: 拆分后验证
 | `tests/resource/test_resource_starvation_aware.py` | ✅ 已实现 | |
 | `tests/risk/test_backtest_store.py` | ✅ 已实现 | |
 | `tests/risk/test_blast_radius_detector.py` | ✅ 已实现 | |
+| `tests/risk/test_daily_auditor.py` | ✅ 已实现 | |
 | `tests/risk/test_daily_auditor_var_backtest.py` | ✅ 已实现 | |
 | `tests/risk/test_drawdown_tracker.py` | ✅ 已实现 | |
 | `tests/risk/test_fhs_orchestration_wiring.py` | ✅ 已实现 | |

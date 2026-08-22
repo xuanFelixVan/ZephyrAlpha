@@ -5,7 +5,7 @@ submodule_path: src/zephyr/governance
 title: "Audit Orchestrator 蓝图 — 审计编排器·三子系统架构"
 doc_type: blueprint
 status: Active
-version: "6.1.1"
+version: "6.1.2"
 layer: L1_foundation
 architecture_layer: "L2_编排调度"
 layer_name: cross_layer
@@ -96,7 +96,7 @@ design_maturity: design
 
 # Audit Orchestrator 蓝图 — 审计编排器·三子系统架构
 
-> module_id: MOD-INF-027 | version: 6.1.1 | status: active | layer: cross_layer
+> module_id: MOD-INF-027 | version: 6.1.2 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/audit-orchestrator/ | generation: 6 | construction_progress: partially_implemented | realized: 7/33
 
 ## 概述
@@ -194,7 +194,7 @@ Audit Orchestrator 是 ZephyrAlpha 的全维度系统自证清白引擎，基于
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-027` 的 9 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-027` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-027` 的 9 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-027` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -205,7 +205,7 @@ Audit Orchestrator 是 ZephyrAlpha 的全维度系统自证清白引擎，基于
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-027 | MOD-INF-027 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | stable | planned | ❌ |
 | file_count | 9 文件 | 33 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1017,10 +1017,16 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 测试文件
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md` | ✅ 已实现 | |
+
+### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -1046,6 +1052,7 @@ STEP 3: 拆分后验证
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

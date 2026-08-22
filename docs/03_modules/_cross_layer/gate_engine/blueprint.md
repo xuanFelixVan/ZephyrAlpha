@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.15"
+version: "0.8.16"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -61,7 +61,7 @@ build_status: planned
 
 本蓝图描述 Gate Engine——ZephyrAlpha 的门禁引擎。它解决了任务执行和知识生命周期关键决策点的合规判定问题。核心职责包括：G0-G7 八门禁覆盖任务全生命周期、G1-G5 KMS 决策门覆盖知识生命周期、熔断器阻断异常传播、法证审计完整性。当前规模 ~268 脚本/51 模块，目标容量 10000 脚本/1500 模块/100 AI 并发。上游依赖脚本系统(MOD-INF-005)提供 exit code，下游被 Orchestrator(MOD-TASK_SYSTEM)消费判定结果。
 
-> module_id: MOD-GATE_ENGINE | version: 0.8.15 | status: Draft | layer: cross_layer
+> module_id: MOD-GATE_ENGINE | version: 0.8.16 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/gov_enforcement/rule_enforcement/ + src/zephyr/feedback_loop/gates/ | generation: 1 | construction_progress: partially_implemented
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：blueprint-template.md
@@ -296,7 +296,7 @@ build_status: planned
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 306 个 file 节点 | design | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 306 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -307,7 +307,7 @@ build_status: planned
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-GATE_ENGINE | MOD-GATE_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | stable | planned | ❌ |
 | file_count | 306 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1458,35 +1458,206 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 门禁引擎——gate_engine.py+5个KMS YAML门禁已实现
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `docs/03_modules/_cross_layer/gate_engine/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_governance_gates.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_operational_gates.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_safety_gates.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_security_gates.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/action_reversibility.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/adversarial_validation.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/autonomy_credit.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/gates/autonomy_maturity.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/gates/blueprint_code_reconciler.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/blueprint_validator.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/gates/checkpoint_manager.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/ci_cd_pre_scanner.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/gates/concurrent_change_deconfliction.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/config_complexity_budget.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/config_governance.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/conflict_arbitration.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/gates/cve_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/data_quality_gate.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/gates/db_integrity.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/deployment_suppression.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/dynamic_llm_cost_router.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/gates/emergency_takeover.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/federated_security.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/flag_lifecycle_manager.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/license_compliance.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/llm_cost_router.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/merkle_audit_root.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/meta_performance_gate.py` | ⚠️ 骨架 | |
+| `src/zephyr/feedback_loop/gates/parameterized_safety_gate.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l1_l27.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l28_l29.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l36_l37.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l38_l39.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l40_l41.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l42_l43.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l44_l45.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l46_l47.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l48_l49.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l50_l51.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l52_l53.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l54_l55.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l56_l57.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l58_l59.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l60_l61.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l62_l63.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l64_l65.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/safety_gate_l66_l67.py` | ✅ 已实现 | |
+| `src/zephyr/feedback_loop/gates/scope_creep_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/behavioral_admission/gate_event_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/_reference_helpers.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/arch_reference_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/asyncio_run_in_context_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/bare_getenv_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/bare_sql_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/bare_subprocess_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_cross_check_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/blueprint_node_id_hardcode_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/capability_consistency_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/capability_lookup_bypass_policy.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/ch_batch_size_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/ch_final_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/ch_version_col_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/claim_required_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/commit_scope_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/create_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/data_task_completeness_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/depgraph_pre_registration_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/derivation_annotation_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/derived_file_deletion_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/directory_contract_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/doc_ref_broken_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/domain_name_zh_direct_access_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/empty_handler_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/encoding_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/errcode_consistency_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/exempt_zone_frontmatter_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/file_copy_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/file_placement_ttl_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/folder_capacity_hard_limit_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/foreign_change_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/forged_gw_marker_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/function_dup_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/gate_repo.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/git_call_budget_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/god_class_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/hardcoded_url_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/high_complexity_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/id_uniqueness_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/import_direction_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/issue_resolved_integrity_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/long_param_list_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/module_id_consistency_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/msg_exposure_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/msg_style_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/mutable_const_without_final_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/new_file_depgraph_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/no_import_side_effect_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/noqa_validation_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/open_without_with_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/orphan_module_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/panorama_alignment_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/precommit_offline_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/protected_paths_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/pure_assertion_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/pure_shim_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/reconciler_health_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/registry_code_anchor_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/relative_path_literal_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/rename_depgraph_sync_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/rule_four_way_alignment_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/ruling_commit_verified_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/schema_file_exists_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/secret_hardcode_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/secret_registry_consistency_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/session_required_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/snapshot_drift_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/ssot_redefinition_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/ttl_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/undefined_name_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/vocab_chain_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/vocab_hardcode_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/worktree_required_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/zephyr_env_direct_access_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/adaptive_threshold.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/admission/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/adversarial_strategies.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/ai_capability_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/anti_pattern_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/audit_chain_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/breaking_change_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/can_i_deploy.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/capability_checker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/cbac_matrix.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/cdc_broker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/contract_template_manager.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/end_to_end_walkthrough.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/gate_engine/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_engine/adversarial_validation.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_context.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_health.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_integrity_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_override.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_simulator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_types.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/integration_test_runner.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/invariants/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en_001_circular_dependency.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en_002_enforcement_validator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en_003_contract_compatibility.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/post_doc_review_check.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/zero_residue_check.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/kiss_enforcer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/risk_ssot.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/secrets_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/sys_master_compliance.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/task/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/task_types.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/truth_source_validator.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

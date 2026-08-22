@@ -4,7 +4,7 @@ submodule_path: src/zephyr/signal
 title: "Signal Generation Core 蓝图+施工图 — 信号工厂·策略生命周期管理"
 doc_type: blueprint
 status: Active
-version: "3.0.3"
+version: "3.0.4"
 layer: L2_domain
 layer_name: signal_generation
 functional_domain: research
@@ -166,7 +166,7 @@ design_maturity: production
 > 开工条件已满足：Owner 已解除 C 轨占位禁令，基础设施已就绪。
 > 任何修改需 Owner 审批。
 
-> module_id: MOD-L03-001 | version: 3.0.3 | status: active | domain: signal
+> module_id: MOD-L03-001 | version: 3.0.4 | status: active | domain: signal
 > actual_disk_path: src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + src/zephyr/signal_quality/ | generation: 3 | construction_progress: partially_implemented
 > 子模块体系: D-SIGNAL-01~164（蓝图内部编号，不进blueprint_registry）
 
@@ -1012,13 +1012,14 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/signal_fundamental/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/signal_fundamental/capital/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/signal_fundamental/capital/capital_allocation_result.py` | ⚠️ 骨架 | |
 | `src/zephyr/signal_fundamental/capital/capital_allocator.py` | ✅ 已实现 | |
@@ -1028,10 +1029,14 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 | `src/zephyr/signal_fundamental/gen/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/signal_fundamental/gen/aggregator_base.py` | ✅ 已实现 | |
 | `src/zephyr/signal_fundamental/gen/implementations/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/signal_fundamental/gen/implementations/default_signal_aggregator.py` | ✅ 已实现 | |
+| `src/zephyr/signal_fundamental/pipeline.py` | ✅ 已实现 | |
 | `src/zephyr/signal_fundamental/strategy/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/signal_fundamental/strategy/capital_allocator.py` | ⚠️ 骨架 | |
 | `src/zephyr/signal_fundamental/strategy/implementations/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/signal_fundamental/strategy/implementations/default_capital_allocator.py` | ✅ 已实现 | |
 | `src/zephyr/signal_fundamental/synth/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/signal_fundamental/synth/signal_synthesizer.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

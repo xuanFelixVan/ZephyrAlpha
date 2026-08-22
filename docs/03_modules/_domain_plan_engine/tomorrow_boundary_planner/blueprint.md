@@ -3,7 +3,7 @@ module_id: MOD-PLAN-001
 title: "明日预案引擎 — 盘后生成TomorrowBoundary操作边界（箱体上下沿+加仓上限+禁加仓/必出价位）"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L2_domain
 functional_domain: plan_engine
@@ -28,7 +28,7 @@ summary: "BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静�
 ---
 # Tomorrow Boundary Planner 蓝图+施工图 — 明日预案引擎 — 盘后生成TomorrowBoundary操作边界（箱体上下沿+加仓上限+禁加仓/必出价位）
 
-> module_id: MOD-PLAN-001 | version: 0.1.1 | status: Active | layer: L2_domain (plan_engine)
+> module_id: MOD-PLAN-001 | version: 0.1.2 | status: Active | layer: L2_domain (plan_engine)
 > actual_disk_path: src/zephyr/plan_engine/tomorrow_boundary_planner.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.10.2 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -459,10 +459,16 @@ class TomorrowBoundary:
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 测试文件
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/plan_engine/tomorrow_boundary_planner.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -481,6 +487,7 @@ class TomorrowBoundary:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

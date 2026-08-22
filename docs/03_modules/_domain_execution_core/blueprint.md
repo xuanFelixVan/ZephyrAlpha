@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.12"
+version: "2.2.13"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -1178,16 +1178,37 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/ex_core/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/ex_core/adapters/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/adapters/miniqmt_broker.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/async_fill_dispatcher.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/board_lot.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/cancel_rate_guard.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/corporate_action_adjuster.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/execution_engine.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/execution_report.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/open_order_resolver.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/order_manager.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/price_cage.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/pricing_policy.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/programmatic_trading_guard.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/rejection_action_handler.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/risk_layer_orchestrator.py` | ✅ 已实现 | |
 | `src/zephyr/ex_core/services/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/ex_core/signal_providers.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/trading_halt_resolver.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/trading_session.py` | ✅ 已实现 | |
 | `src/zephyr/governance/adapters/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/adapters/risk_validation_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/governance/adapters/simulation_broker.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/broker_interface.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

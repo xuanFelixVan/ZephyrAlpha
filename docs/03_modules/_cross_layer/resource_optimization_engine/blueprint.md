@@ -3,7 +3,7 @@ module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
 title: "资源优化引擎蓝图"
 doc_type: blueprint
 status: Active
-version: "5.4.2"
+version: "5.4.3"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -130,7 +130,7 @@ build_status: planned
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RESOURCE_OPTIMIZATION_ENGINE | MOD-RESOURCE_OPTIMIZATION_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | deprecated | planned | ❌ |
 | file_count | 7 文件 | 13 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1360,7 +1360,7 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -1368,6 +1368,7 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/trading/gpu_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/trading/ide_health_daemon.py` | ✅ 已实现 | |
 | `src/zephyr/trading/speed_baseline_checker.py` | ✅ 已实现 | |
 | `src/zephyr/trading/zombie_scanner.py` | ✅ 已实现 | |
 

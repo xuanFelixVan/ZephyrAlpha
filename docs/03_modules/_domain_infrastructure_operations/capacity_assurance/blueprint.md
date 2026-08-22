@@ -5,7 +5,7 @@ title: "Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Tok
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: 3.1.3
+version: 3.1.4
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: capacity
@@ -1648,7 +1648,7 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > **与 §0.1 的关系**：§0.1 代码文件清单是当前对齐状态的权威来源（存在性=已实现/已阻塞）。本节保留历史模块状态和测试路径等 §0.1 未覆盖的信息。两者冲突时以 §0.1 为准。
 
 ### 20.1 源码文件
@@ -1656,19 +1656,24 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/infrastructure/capacity_assurance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/budget_forecaster.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/batch1_infra.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/batch2_governance.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/batch3_integration.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/contract_bus.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/cross_module_integration.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/host_resource_governor.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/kill_switch.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/schema.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/sli_instrumentation.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/tech_stack.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/token_budget.py` | ✅ 已实现 | |
 | `src/zephyr/integration/budget_enforcer/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/budget_enforcer/degradation_spiral_detector.py` | ✅ 已实现 | |
 | `src/zephyr/shared/capacity_governance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/capacity_governance_loop.py` | ✅ 已实现 | |
 
 ### 20.2 测试文件
 

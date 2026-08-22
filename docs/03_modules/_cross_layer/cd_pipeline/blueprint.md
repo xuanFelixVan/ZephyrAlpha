@@ -5,7 +5,7 @@ title: "CD Pipeline 蓝图 — Shadow Canary 灰度发布基建（簇C，满足 
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.1.2"
+version: "0.1.3"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -167,7 +167,7 @@ CD 流水线 (.github/workflows/deploy.yml)
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 测试文件

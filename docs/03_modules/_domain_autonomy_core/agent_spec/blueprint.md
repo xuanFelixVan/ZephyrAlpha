@@ -4,7 +4,7 @@ submodule_path: src/zephyr/autonomy_core
 title: "可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎"
 doc_type: blueprint
 status: Active
-version: "0.19.4"
+version: "0.19.5"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -75,7 +75,7 @@ build_status: planned
 > **什么时候建**: 当未注册 Skill ≥3（新模块大量增加），或 Skill 加载失败率 ≥10%，或 Owner 要求 Skill 自发现自注册时。
 > **自动化宿主**: CircadianScheduler `hour=4` → `_skill_registration_scan()` + FLE `_periodic_checks()` → `_skill_health_check()`
 
-> module_id: MOD-INF-019 | version: 0.19.4 | status: Active | layer: cross_layer
+> module_id: MOD-INF-019 | version: 0.19.5 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/agent-spec/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -247,7 +247,7 @@ build_status: planned
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-019 | MOD-INF-019 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | deprecated | planned | ❌ |
 | file_count | 203 文件 | 67 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1524,15 +1524,87 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/autonomy_core/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/__main__.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/agent_observability.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/all_skill_modules.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/file_autoregister.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/ide_watcher.py` | ✅ 已实现 | |
 | `src/zephyr/autonomy_core/integration/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/integration/pipeline_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/phase_planner.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/progressive_disclosure_injector.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/prompt_registry.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/self_evolution_fidelity_gate.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skill_rbac_registry.py` | ✅ 已实现 | |
 | `src/zephyr/autonomy_core/skills/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_attention.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_breakage_checker.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_cache_provider.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_calibration.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_canary.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_cognitive_preservation.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_compliance.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_consensus.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_constructor.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_context_isolation.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_contract.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_cross_model.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_di.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_discovery.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_durable.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_economics.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_efficacy_calibrator.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_evaluator.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_executor.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_explain.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_factory.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_feature_flags.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_feedback.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_freshness.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_freshness_ext.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_gitops.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_guardrails.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_idempotency.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_kill_switch.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_kya.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_learning.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_lifecycle.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_lineage.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_loader.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_locking.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_model.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_model_evolution.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_observability.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_ontology.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_postmortem.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_prompt_cache.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_prompt_opt.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_registry.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_resilience.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_risk_mitigator.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_router.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_sandbox.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_schema_registry.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_security.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_shadow.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_silent_failure.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_team_optimizer.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_telemetry.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_temperature.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_tokenomics.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_translator.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_workflow.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/spec_engine.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/trigger_router.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/vibe_coding_quality_gate.py` | ✅ 已实现 | |
 | `src/zephyr/governance/agent-spec/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/agent_spec/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/agent_spec/registry.py` | ✅ 已实现 | |

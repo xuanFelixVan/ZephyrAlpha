@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
 doc_type: blueprint
 status: Active
-version: "0.39.6"
+version: "0.39.7"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -38,7 +38,7 @@ build_status: planned
 responsibility_domain: 
 ---
 
-> module_id: MOD-INF-009 | version: 0.39.6 | status: active | layer: cross_layer
+> module_id: MOD-INF-009 | version: 0.39.7 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/integration/pipeline_orchestrator.py | generation: 2 | construction_progress: partially_implemented
 
 # Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
@@ -137,7 +137,7 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-009` 的 33 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-009` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-009` 的 33 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-009` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -148,7 +148,7 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-009 | MOD-INF-009 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | stable | planned | ❌ |
 | file_count | 33 文件 | 25 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1013,14 +1013,30 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 任务管线——pipeline_orchestrator+models骨架完成
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `docs/03_modules/_cross_layer/pipeline/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/pipeline/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/backpressure_manager.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/backpressure_types.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/circuit_breaker_manager.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/cost_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/ct_pipe_routing.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/dead_letter_queue.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/llm_gateway.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/model_router.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/models.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/pipeline_agent_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/pipeline_lock.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/pipeline_roadmap.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/preemption_manager.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/routing_plugins.py` | ✅ 已实现 | |
+| `src/zephyr/integration/pipeline_orchestrator.py` | ✅ 已实现 | |
 | `src/zephyr/integration/ports.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件

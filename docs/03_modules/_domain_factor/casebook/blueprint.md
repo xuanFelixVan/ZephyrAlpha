@@ -3,7 +3,7 @@ module_id: MOD-L02-027
 title: "因子研究案例库蓝图 — 成功/失败→修复案例沉淀，防 AI 重复试错"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -156,13 +156,14 @@ depgraph `blueprint_id=MOD-L02-027`（建议）。首个计划消费者：数据
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 8.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/factor/casebook/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/casebook/casebook.py` | ✅ 已实现 | |
 
 ### 8.2 测试文件
@@ -184,3 +185,5 @@ depgraph `blueprint_id=MOD-L02-027`（建议）。首个计划消费者：数据
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

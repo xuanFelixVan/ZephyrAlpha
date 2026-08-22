@@ -4,7 +4,7 @@ submodule_path: src/zephyr/compliance
 title: "Compliance Core 蓝图+施工图 — 合规引擎"
 doc_type: blueprint
 status: Active
-version: "2.1.5"
+version: "2.1.6"
 layer: L1_foundation
 layer_name: compliance
 functional_domain: compliance
@@ -56,7 +56,7 @@ build_status: generated
 
 > ⚠️ **业务层已开放，可施工** — D_COMPLIANCE 属于 C 轨 T2-deferred 层，当前阶段仅做设计审查和代码验证，不开放新功能施工。
 
-> module_id: MOD-L10-001 | version: 2.1.5 | status: Active | layer: L1_foundation
+> module_id: MOD-L10-001 | version: 2.1.6 | status: Active | layer: L1_foundation
 > actual_disk_path: src/zephyr/compliance/ | generation: 2 | construction_progress: partially_implemented
 
 # Compliance Core 蓝图+施工图 — 合规引擎
@@ -906,7 +906,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -914,9 +914,14 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/compliance/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_drift/artifact_scanner.py` | ✅ 已实现 | |
 | `src/zephyr/governance/compliance_gate_a6/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/governance/compliance_gate_a6/compliance_manager.py` | ✅ 已实现 | |
 | `src/zephyr/governance/implementations/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/implementations/default_security_gateway.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/aisg_sandbox.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/default_security_gateway.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/security_gateway_base.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

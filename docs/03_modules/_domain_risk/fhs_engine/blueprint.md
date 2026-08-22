@@ -3,7 +3,7 @@ module_id: MOD-RK-26
 title: "FHS 引擎蓝图 — Filtered Historical Simulation（GARCH 残差重采样 VaR/ES）MVP"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -162,10 +162,16 @@ memo ES method='lower'，多日 √T 缩放）——供 FHS vs HS 偏离度审�
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 测试文件
+### 8.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/risk/core/fhs_engine.py` | ✅ 已实现 | |
+
+### 8.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

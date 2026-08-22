@@ -5,7 +5,7 @@ title: "资产盘点系统蓝图 — 全量资产发现→自动分类→统一�
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "3.1.3"
+version: "3.1.4"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -41,7 +41,7 @@ responsibility_domain:
 build_status: stable
 design_maturity: production
 ---
-> module_id: MOD-INF-026 | version: 3.1.3 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-026 | version: 3.1.4 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/asset-inventory/ | generation: 3 | construction_progress: completed
 
 # Asset Inventory 蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
@@ -3844,15 +3844,28 @@ ZephyrAlpha MOD-INF-026 Asset Inventory Blueprint
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 40.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/infrastructure/asset_inventory/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/asset_inventory/__main__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/classifier.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/dashboard.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/dependency.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/index_generator.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/lifecycle.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/asset_inventory/mcp_server.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/metadata.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/models.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/reconciler.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/registry_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/scanner.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/telemetry.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/trust_anchor.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp_server.py` | ✅ 已实现 | |
 
 ### 40.2 测试文件

@@ -3,7 +3,7 @@ module_id: MOD-TRIG-001
 title: "扳机清单注册与仲裁引擎 — 触发器统一注册+优先级仲裁+同源去重+冷却期防重"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L2_domain
 functional_domain: trading
@@ -29,7 +29,7 @@ summary: "41 §3.9 条件触发执行队列：买入/卖出/执行/风控触发�
 ---
 # Trigger Registry 蓝图+施工图 — 扳机清单注册与仲裁引擎 — 触发器统一注册+优先级仲裁+同源去重+冷却期防重
 
-> module_id: MOD-TRIG-001 | version: 0.1.1 | status: Active | layer: L2_domain (trading)
+> module_id: MOD-TRIG-001 | version: 0.1.2 | status: Active | layer: L2_domain (trading)
 > actual_disk_path: src/zephyr/trading/trigger_registry.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.9 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -506,10 +506,16 @@ class TriggeredEvent:
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 测试文件
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/trading/trigger_registry.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -528,6 +534,7 @@ class TriggeredEvent:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

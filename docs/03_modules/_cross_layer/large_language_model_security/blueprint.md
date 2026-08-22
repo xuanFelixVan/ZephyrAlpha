@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/llm_defense/llm_security
 title: "LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则"
 doc_type: blueprint
 status: Active
-version: "2.0.3"
+version: "2.0.4"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -5831,7 +5831,7 @@ Encoding Defense Layers — LSG + LLM 协作
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > LLM安全网关——3文件骨架+input_sanitizer已实现
 
 ### 1.1 源码文件
@@ -5840,15 +5840,43 @@ Encoding Defense Layers — LSG + LLM 协作
 |---------|:---:|------|
 | `src/zephyr/security/llm_defense/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/llm_defense/llm_security/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/adversarial_robustness.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/alignment_scorer.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/dashboard/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/dashboard/app.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/gateway.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/input_sanitizer.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l1_input.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l2_prompt_protection.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l2a_process_sandbox.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l3_output.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l6_data_flow.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/lsg_pattern_tracker.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/patterns/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/patterns/injection_patterns.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/patterns/secrets.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/payloads/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/poisoning_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/process_sandbox.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/protocol.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/sandbox/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/llm_defense/llm_security/self_protection/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/self_protection/adversarial_mutator.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/self_protection/code_integrity.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/self_protection/isolation.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/self_protection/red_team_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/sensitivity_classifier.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/solo_dev_safety_net.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

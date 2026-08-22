@@ -3,7 +3,7 @@ module_id: MOD-INF-042
 submodule_path: src/zephyr/integration/local_model
 title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
 summary: 本地模型推理基础设施——BGE-M3文本嵌入+Ollama本地推理+调度+缓存，为KB向量检索和LLM调用提供本地化推理能力。
-version: 0.1.4
+version: 0.1.5
 status: Active
 layer: L0_infrastructure
 date: "2026-06-23"
@@ -353,7 +353,7 @@ design_maturity: production
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -362,7 +362,9 @@ design_maturity: production
 |---------|:---:|------|
 | `src/zephyr/integration/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/integration/local_model/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/integration/local_model/cache_layer.py` | ✅ 已实现 | |
 | `src/zephyr/integration/local_model/deepseek_chat.py` | ✅ 已实现 | |
+| `src/zephyr/integration/local_model/embedding_router.py` | ✅ 已实现 | |
 | `src/zephyr/integration/local_model/local_model_scheduler.py` | ✅ 已实现 | |
 | `src/zephyr/integration/local_model/ollama_chat.py` | ✅ 已实现 | |
 | `src/zephyr/integration/local_model/ollama_embedding.py` | ✅ 已实现 | |

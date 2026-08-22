@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/db
 title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.3.5"
+version: "4.3.6"
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -50,7 +50,7 @@ build_status: planned
 
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
 
-> module_id: SH-DB-001 | version: 4.3.5 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
+> module_id: SH-DB-001 | version: 4.3.6 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
 > actual_disk_path: `src/zephyr/governance/persistence/` | generation: 3 | construction_progress: completed
 > **DW-045 拆分完成**。详细内容见子蓝图。本文档为集成入口。
 
@@ -260,7 +260,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=SH-DB-001` 的 12 个 file 节点 | design | `extract_depgraph.py --modules SH-DB-001` |
+| 依赖图 (depgraph) | `blueprint_id=SH-DB-001` 的 12 个 file 节点 | production | `extract_depgraph.py --modules SH-DB-001` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -271,7 +271,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 |------|-------------------|--------------------------|:-------:|
 | module_id | SH-DB-001 | SH-DB-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | stable | planned | ❌ |
 | file_count | 12 文件 | 27 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -387,17 +387,25 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 数据库——task_repo+sqlite_schema+ATM+olap_engine 均已实现（012A 完整）
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `docs/03_modules/_cross_layer/database/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/dlq_retry_policy.py` | ✅ 已实现 | |
+| `src/zephyr/governance/depgraph_schema.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/database_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/database_service.py` | ✅ 已实现 | |
 | `src/zephyr/governance/persistence/dataflowgraph_schema.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/depgraph_reader.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/sqlite_schema.py` | ✅ 已实现 | |
 | `src/zephyr/shared/database/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/database/database_crud_mixin.py` | ✅ 已实现 | |
+| `src/zephyr/trading/autopilot.py` | ✅ 已实现 | |
+| `src/zephyr/trading/conductor.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

@@ -5,7 +5,7 @@ title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "6.0.4"
+version: "6.0.5"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -55,7 +55,7 @@ responsibility_domain:
 
 本蓝图描述 AutoRuntime Core——ZephyrAlpha 的系统大脑。它解决了 1500 模块/10000 脚本/100 AI 并发下的全局运行时编排问题。核心职责包括：三层运行时编排、MAPE-K 调和循环、节律调度、健康监控、工作编排、自动接入。当前规模 51 模块/268 脚本/0 AI 并发，目标容量 1500 模块/10000 脚本/100 AI 并发。上游依赖 Pipeline/Gate Engine/Audit Trail，下游被所有模块消费。
 
-> module_id: MOD-INF-035 | version: 6.0.4 | status: active | layer: cross_layer
+> module_id: MOD-INF-035 | version: 6.0.5 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/trading/ | generation: 2 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -1019,7 +1019,7 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -1027,16 +1027,43 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/feedback_loop/core.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/health_monitor/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/health_monitor/health_aggregator.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/runtime_types.py` | ✅ 已实现 | |
 | `src/zephyr/trading/__main__.py` | ✅ 已实现 | |
+| `src/zephyr/trading/action_dispatcher/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/action_dispatcher/_annotation_writer.py` | ✅ 已实现 | |
 | `src/zephyr/trading/action_dispatcher/_audit_log_writer.py` | ✅ 已实现 | |
 | `src/zephyr/trading/action_dispatcher/_file_lifecycle_manager.py` | ✅ 已实现 | |
 | `src/zephyr/trading/action_dispatcher/_search_replace_engine.py` | ✅ 已实现 | |
+| `src/zephyr/trading/ai_audit_logger.py` | ✅ 已实现 | |
+| `src/zephyr/trading/auto_integrator.py` | ✅ 已实现 | |
+| `src/zephyr/trading/auto_runtime_core.py` | ✅ 已实现 | |
+| `src/zephyr/trading/auto_task_generator.py` | ✅ 已实现 | |
+| `src/zephyr/trading/boot_hooks.py` | ✅ 已实现 | |
+| `src/zephyr/trading/capability_card.py` | ✅ 已实现 | |
+| `src/zephyr/trading/capability_registry.py` | ✅ 已实现 | |
+| `src/zephyr/trading/capability_sync.py` | ✅ 已实现 | |
+| `src/zephyr/trading/dream_cycle.py` | ✅ 已实现 | |
+| `src/zephyr/trading/finalizer.py` | ✅ 已实现 | |
+| `src/zephyr/trading/health_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/trading/integration_registry.py` | ✅ 已实现 | |
+| `src/zephyr/trading/lifecycle_manager.py` | ✅ 已实现 | |
+| `src/zephyr/trading/module_onboarding_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/trading/night_shift_queue.py` | ✅ 已实现 | |
 | `src/zephyr/trading/orphan_detector.py` | ✅ 已实现 | |
 | `src/zephyr/trading/ports.py` | ✅ 已实现 | |
+| `src/zephyr/trading/resource_optimization.py` | ✅ 已实现 | |
+| `src/zephyr/trading/runtime/async_runtime.py` | ✅ 已实现 | |
+| `src/zephyr/trading/runtime_config.py` | ✅ 已实现 | |
+| `src/zephyr/trading/staging_area.py` | ✅ 已实现 | |
+| `src/zephyr/trading/status_dashboard.py` | ✅ 已实现 | |
+| `src/zephyr/trading/stop_gate.py` | ✅ 已实现 | |
+| `src/zephyr/trading/task_gate.py` | ✅ 已实现 | |
 | `src/zephyr/trading/windows_service.py` | ✅ 已实现 | |
+| `src/zephyr/trading/work_dag.py` | ✅ 已实现 | |
+| `src/zephyr/trading/work_orchestrator.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

@@ -3,7 +3,7 @@ module_id: MOD-PF-007
 title: "绩效归因引擎蓝图 — Brinson 三因子 + 因子/风险归因 + 降级检测"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -143,14 +143,14 @@ interaction_effect = Σ (w_p,i - w_b,i) × (r_p,i - r_b,i)  (交互效应)
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 8.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/pf_core/core/performance_attribution_engine.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 
@@ -165,3 +165,5 @@ interaction_effect = Σ (w_p,i - w_b,i) × (r_p,i - r_b,i)  (交互效应)
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

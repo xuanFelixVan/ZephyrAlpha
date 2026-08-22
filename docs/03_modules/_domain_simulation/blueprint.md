@@ -4,7 +4,7 @@ submodule_path: src/zephyr/simulation
 title: "Experimentation Core 蓝图+施工图 — 实验管理平台"
 doc_type: blueprint
 status: Active
-version: "2.1.3"
+version: "2.1.4"
 layer: L2_domain
 functional_domain: research
 owner: ZephyrAlpha-Owner
@@ -50,7 +50,7 @@ design_maturity: production
 
 > ✅ **业务层已开放·可施工** — 本蓝图所属 实验 实验管线层已解除 C 轨 T2-deferred 状态。Owner 已解除占位禁令，基础设施已就绪，AI 可自主实施本层业务代码。
 
-> module_id: MOD-L13-001 | version: 2.1.3 | status: active | domain: simulation
+> module_id: MOD-L13-001 | version: 2.1.4 | status: active | domain: simulation
 > actual_disk_path: src/zephyr/simulation/ | generation: 2 | construction_progress: partially_implemented
 
 # Experimentation Core 蓝图+施工图 — 实验管理平台
@@ -922,7 +922,7 @@ class ExperimentMetric:
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -934,6 +934,8 @@ class ExperimentMetric:
 | `src/zephyr/governance/implementations/default_experiment_pipeline.py` | ✅ 已实现 | |
 | `src/zephyr/simulation/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/simulation/implementations/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/simulation/implementations/default_experiment_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/simulation/pipeline_base.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/adversarial_validation
 title: "Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认"
 doc_type: blueprint
 status: Active
-version: "2.2.2"
+version: "2.2.3"
 generation: 17
 layer: L1_foundation
 layer_name: 跨层基础设施
@@ -167,7 +167,7 @@ build_status: planned
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-030 | MOD-INF-030 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
+| build_status | deprecated | planned | ❌ |
 | file_count | 32 文件 | 9 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1258,7 +1258,7 @@ STEP 3: 拆分后验证
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 1.1 源码文件
@@ -1269,19 +1269,24 @@ STEP 3: 拆分后验证
 | `src/zephyr/security/adversarial_validation/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/__main__.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/adversarial_validation/ai_attack_generator.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/async_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/attack_registry.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/blast_radius.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/bypass_recorder.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/circuit_breaker.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/cleanup.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/cli.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/cold_start.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/commit_trigger.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/constitution_engine.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/constitution_guard.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/convergence_checker.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/defense_runner.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/game_day_runner.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/game_day_scheduler.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/injection_engine.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/mcp_endpoints.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/models.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/scenario_loader.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/steady_state.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/validator.py` | ✅ 已实现 | |

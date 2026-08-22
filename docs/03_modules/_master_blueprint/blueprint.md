@@ -4,7 +4,7 @@ submodule_paths_scope: all-modules
 title: "Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图"
 doc_type: blueprint
 status: Active
-version: "1.3.2"
+version: "1.3.3"
 layer: L1_foundation
 layer_name: cross_layer
 blueprint_level: domain
@@ -69,7 +69,7 @@ design_maturity: design
 
 # Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图
 
-> module_id: MOD-MASTER_BLUEPRINT | version: 1.3.2 | status: active | layer: cross_layer | blueprint_level: domain
+> module_id: MOD-MASTER_BLUEPRINT | version: 1.3.3 | status: active | layer: cross_layer | blueprint_level: domain
 > actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master_blueprint\ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -220,7 +220,7 @@ design_maturity: design
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 总蓝图不产生代码，仅定义集成契约
 
 ### 1.1 源码文件

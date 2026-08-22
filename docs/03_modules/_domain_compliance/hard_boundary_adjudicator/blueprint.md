@@ -3,7 +3,7 @@ module_id: MOD-CMP-005
 title: "硬边界功能裁定门禁蓝图 — 能建/禁建清单 + FeatureGate"
 doc_type: blueprint
 status: Active
-version: "0.1.19"
+version: "0.1.20"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -87,14 +87,14 @@ tests/compliance/test_hard_boundary_adjudicator.py — 8 用例：能建/禁建/
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 9.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/compliance/hard_boundary_adjudicator.py` | ✅ 已实现 | |
 
 ### 9.5 路径索引使用指南
 
@@ -109,6 +109,7 @@ tests/compliance/test_hard_boundary_adjudicator.py — 8 用例：能建/禁建/
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ### §0.6 五图对齐视图
 

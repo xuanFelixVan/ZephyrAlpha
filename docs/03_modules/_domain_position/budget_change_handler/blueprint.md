@@ -3,7 +3,7 @@ module_id: MOD-POS-022
 title: "Budget变动处理器蓝图 — 三级升级落地+convergence_window+超时强裁（A模型·执行层）"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -398,14 +398,14 @@ if delta ≥ 0 (budget 上调):
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
 ### 11.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/position/core/budget_change_handler.py` | ✅ 已实现 | |
 
 ### 11.5 路径索引使用指南
 
