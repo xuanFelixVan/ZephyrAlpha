@@ -90,10 +90,10 @@ responsibility_domain:
 | 5 | orphan_detector.py | §3.1 | 孤儿检测器 | 已实现 |
 | 6 | work_orchestrator.py | §3.1 | DAG 驱动任务调度 | 已实现 |
 | 7 | work_dag.py | §3.1 | DAG 数据模型 | 已实现 |
-| 8 | circadian_scheduler.py | §3.1 | 日间/夜间/周末节律调度 | 已实现 |
+| 8 | ~~circadian_scheduler.py~~（无独立文件，2026-06-26 裁定废除） | §3.1 | 节律阶段展示内联于 status_dashboard.py `_current_phase()`；boot 流程钩子保留在 auto_runtime_core.py | 已废除 |
 | 9 | dream_cycle.py | §3.1 | 夜间知识固化 | 已实现 |
-| 10 | health-monitor.py | §3.1 | 健康监控+自愈 | 已实现 |
-| 11 | feedback_loop.py | §3.1 | 反馈闭环 | 已实现 |
+| 10 | health_monitor.py | §3.1 | 健康监控+自愈 | 已实现 |
+| 11 | feedback_loop/（独立包 `src/zephyr/feedback_loop/`） | §3.1 | 反馈闭环 | 已实现 |
 | 12 | capability_registry.py | §3.1 | 能力注册中心 | 已实现 |
 | 13 | capability_card.py | §3.1 | 能力卡片数据模型 | 已实现 |
 | 14 | status_dashboard.py | §3.1 | 实时状态面板 | 已实现 |
@@ -109,7 +109,7 @@ responsibility_domain:
 | 24 | windows_service.py | §3.1 | Windows Service 包装器 | 已实现 |
 | 25 | __init__.py | — | 包初始化 | 已实现 |
 | 26 | __main__.py | — | 入口点 | 已实现 |
-| `boot_cron_jobs.py` | § — | — | 已实现 | | 本模块 |
+| ~~boot_cron_jobs.py~~（更名为 boot_hooks.py，见下行） | § — | — | 已更名 | | 本模块 |
 | `boot_hooks.py` | § — | — | 已实现 | | 本模块 |
 | `capability_sync.py` | § — | — | 已实现 | | 本模块 |
 | `resource_optimization.py` | § — | — | 已实现 | | 本模块 |
@@ -545,8 +545,8 @@ class WorkDAG(BaseModel):
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\runtime\` | 24 子组件 Python 源码 |
-| 测试代码 | `D:\ZephyrAlpha\tests\runtime\` | 测试用例 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\trading\` | 24 子组件 Python 源码 |
+| 测试代码 | `D:\ZephyrAlpha\tests\trading\` + `D:\ZephyrAlpha\tests\automation\` | 测试用例 |
 | 启动脚本 | `D:\ZephyrAlpha\scripts\construction\start_brain.py` | 大脑启动入口 |
 | 容量配置 | `D:\ZephyrAlpha\config\capacity_params.yaml` | 容量预算参数 |
 | 审计日志 | `D:\ZephyrAlpha\data\audit_logs\` | AI 行为审计 JSONL |
@@ -645,9 +645,9 @@ class WorkDAG(BaseModel):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 / §17 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\runtime\` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\trading\` |
 | 验收标准 | CapabilityRegistry 内存缓存命中率 >95%；StatusDashboard 聚合视图可用；StopGate 预算生效 |
-| 验证命令 | `python -m pytest tests/runtime/test_capability_registry.py tests/runtime/test_status_dashboard.py -v` |
+| 验证命令 | `python -m pytest tests/trading/test_capability_registry_cache.py tests/trading/test_status_dashboard.py -v` |
 | G7 检查项 | 缓存失效策略已定义？聚合维度已列出？StopGate 预算参数已配置？ |
 
 **变更文件清单**：
@@ -663,9 +663,9 @@ class WorkDAG(BaseModel):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 / §17 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\runtime\` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\trading\` |
 | 验收标准 | ModuleOnboardingScanner 增量 diff <3s；HealthMonitor 分层检查核心模块 30s/其他 5min；MAPE-K 事件驱动生效 |
-| 验证命令 | `python -m pytest tests/runtime/test_onboarding_scanner.py tests/runtime/test_health_monitor.py tests/runtime/test_mape_k.py -v` |
+| 验证命令 | `python -m pytest tests/trading/test_module_onboarding_scanner.py tests/trading/test_status_dashboard.py -v`（health_monitor 现经 status_dashboard 间接覆盖；test_mape_k.py 不存在，T1 施工时随事件驱动落地补建） |
 | G7 检查项 | 增量 diff 算法已选？分层检查频率已配置？事件驱动+兜底轮询已实现？ |
 
 **变更文件清单**：
@@ -673,7 +673,7 @@ class WorkDAG(BaseModel):
 | 文件 | 变更 |
 |------|------|
 | module_onboarding_scanner.py | 增量 diff 模式 + 自动注册 API |
-| health-monitor.py | 分层检查频率 + 异常触发深检 |
+| health_monitor.py | 分层检查频率 + 异常触发深检 |
 | auto_runtime_core.py | 事件驱动 Monitor + 兜底轮询 |
 | runtime_config.py | 追加 GPU 调度参数 + MAPE-K 自观测 SLI |
 
@@ -682,9 +682,9 @@ class WorkDAG(BaseModel):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 / §17 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\runtime\` |
-| 验收标准 | WorkOrchestrator WIP 池 + 公平调度；CircadianScheduler 轮转策略生效；无饥饿任务 |
-| 验证命令 | `python -m pytest tests/runtime/test_work_orchestrator.py tests/runtime/test_circadian_scheduler.py -v` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\trading\` |
+| 验收标准 | WorkOrchestrator WIP 池 + 公平调度；DreamCycle 轮转策略生效；无饥饿任务 |
+| 验证命令 | `python -m pytest tests/trading/test_work_orchestrator.py tests/trading/test_dream_cycle.py -v` |
 | G7 检查项 | WIP 池深度已定？公平调度算法已选？饥饿防护超时已配置？ |
 
 **变更文件清单**：
@@ -692,16 +692,16 @@ class WorkDAG(BaseModel):
 | 文件 | 变更 |
 |------|------|
 | work_orchestrator.py | WIP 池 + session 配额 + 饥饿防护 |
-| circadian_scheduler.py | DreamCycle 轮转策略 + 窗口溢出截断 |
+| dream_cycle.py | DreamCycle 轮转策略 + 窗口溢出截断（原挂在幽灵文件 circadian_scheduler.py 名下，2026-08-22 裁定承载文件=dream_cycle.py，不复活幽灵文件） |
 
 #### 步骤 4：T3 拐点（1,000→1,500 模块 / 50→100 AI）
 
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 / §17 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\runtime\` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\trading\` |
 | 验收标准 | DreamCycle 分层固化优先级生效；全量参数调优对齐 1,500；增量扫描 <1min / 全量周检 <75min |
-| 验证命令 | `python -m pytest tests/runtime/test_dream_cycle.py tests/runtime/ -v --capacity` |
+| 验证命令 | `python -m pytest tests/trading/test_dream_cycle.py tests/trading/ -v --capacity` |
 | G7 检查项 | 固化优先级已定义？知识老化策略已配置？全量参数已对齐？ |
 
 **变更文件清单**：
@@ -724,11 +724,11 @@ class WorkDAG(BaseModel):
 
 | # | 产出物 | 存放完整绝对路径 | 是否存在 | 内容非空 | §0对齐 |
 |---|--------|---------------|:---:|:---:|:---:|
-| 1 | capability_registry.py | `D:\ZephyrAlpha\src\zephyr\runtime\capability_registry.py` | ☐ | ☐ | ☐ |
-| 2 | work_orchestrator.py | `D:\ZephyrAlpha\src\zephyr\runtime\work_orchestrator.py` | ☐ | ☐ | ☐ |
-| 3 | health-monitor.py | `D:\ZephyrAlpha\src\zephyr\runtime\health-monitor.py` | ☐ | ☐ | ☐ |
-| 4 | dream_cycle.py | `D:\ZephyrAlpha\src\zephyr\runtime\dream_cycle.py` | ☐ | ☐ | ☐ |
-| 5 | 测试套件 | `D:\ZephyrAlpha\tests\runtime\` | ☐ | ☐ | ☐ |
+| 1 | capability_registry.py | `D:\ZephyrAlpha\src\zephyr\trading\capability_registry.py` | ✅ | ✅ | ✅ |
+| 2 | work_orchestrator.py | `D:\ZephyrAlpha\src\zephyr\trading\work_orchestrator.py` | ✅ | ✅ | ✅ |
+| 3 | health_monitor.py | `D:\ZephyrAlpha\src\zephyr\trading\health_monitor.py` | ✅ | ✅ | ✅ |
+| 4 | dream_cycle.py | `D:\ZephyrAlpha\src\zephyr\trading\dream_cycle.py` | ✅ | ✅ | ✅ |
+| 5 | 测试套件 | `D:\ZephyrAlpha\tests\trading\` + `D:\ZephyrAlpha\tests\automation\` | ✅ | ✅ | ✅ |
 
 ### 16.6 施工状态
 
@@ -802,16 +802,16 @@ class WorkDAG(BaseModel):
 
 | 组件名 | 对应缺口 | 代码文件 | 施工Phase | 状态 |
 |--------|---------|---------|----------|:---:|
-| CapabilityRegistry 内存缓存 | GAP-006 | capability_registry.py | T0 | 待施工 |
-| StatusDashboard 聚合视图 | — | status_dashboard.py | T0 | 待施工 |
-| StopGate 预算 | — | stop_gate.py | T0 | 待施工 |
+| CapabilityRegistry 内存缓存 | GAP-006 | capability_registry.py | T0 | ✅ 已施工（2026-08-22） |
+| StatusDashboard 聚合视图 | — | status_dashboard.py | T0 | ✅ 已施工（2026-08-22） |
+| StopGate 预算 | — | stop_gate.py | T0 | ✅ 已施工（2026-08-22） |
 | MAPE-K 事件驱动 | GAP-001 | auto_runtime_core.py | T1 | 待施工 |
-| HealthMonitor 分层检查 | GAP-001 | health-monitor.py | T1 | 待施工 |
+| HealthMonitor 分层检查 | GAP-001 | health_monitor.py | T1 | 待施工 |
 | ModuleOnboardingScanner 增量 | GAP-003 | module_onboarding_scanner.py | T1 | 待施工 |
 | GPU 调度模型 | GAP-004 | runtime_config.py | T1 | 待施工 |
 | MAPE-K 自观测 SLI | GAP-005 | auto_runtime_core.py | T1 | 待施工 |
 | WorkOrchestrator WIP 池 | GAP-002 | work_orchestrator.py | T2 | 待施工 |
-| CircadianScheduler 轮转 | — | circadian_scheduler.py | T2 | 待施工 |
+| DreamCycle 轮转 | — | dream_cycle.py（不复活 circadian_scheduler.py 幽灵文件） | T2 | 待施工 |
 | BrainAdmissionController | GAP-008 | 新建 brain_admission_controller.py | T2 | 待施工 |
 | DreamCycle 分层固化 | — | dream_cycle.py | T3 | 待施工 |
 
@@ -957,8 +957,8 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | runtime 包 | `D:\ZephyrAlpha\src\zephyr\runtime\` | 修改 | 容量升级组件新增 |
-| 2 | 测试目录 | `D:\ZephyrAlpha\tests\runtime\` | 修改 | 新增容量升级测试 |
+| 1 | trading 包 | `D:\ZephyrAlpha\src\zephyr\trading\` | 修改 | 容量升级组件新增 |
+| 2 | 测试目录 | `D:\ZephyrAlpha\tests\trading\` | 修改 | 新增容量升级测试 |
 | 3 | 启动脚本 | `D:\ZephyrAlpha\scripts\construction\start_brain.py` | 读取 | 启动入口 |
 | 4 | 容量配置 | `D:\ZephyrAlpha\config\capacity_params.yaml` | 修改 | 新增容量参数 |
 | 5 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` | 修改 | 本文件 |
