@@ -18723,7 +18723,7 @@ entries:
   last_updated: '2026-08-22'
 # --- #ARCH-170: depgraph 域派生链断裂——conn.execute 静默失败 + apply --batch 静默回滚（tracker #258 治本） ---
 - issue_id: '#ARCH-170'
-  title: 'depgraph NULL domain_id 2669 节点根因双修复——generate load_panorama cursor 化 + apply_depgraph batch 混合 op 静默回滚登记'
+  title: 'depgraph NULL domain_id 2669 节点根因双治本——generate load_panorama cursor 化 + apply_depgraph batch 静默回滚 only_node_ids 脏追踪'
   severity: P1高
   category: governance
   adjudication: |
@@ -18739,15 +18739,21 @@ entries:
     写 conn）场景下整体静默回滚——cmd_batch 尾部 _atomic_write(dep, conn) 用内存中
     未含本次 domain 变更的 dep 快照经 SQL_UPDATE_NODE_SET_DYNAMIC 全量回写 nodes，
     把刚 UPDATE 的 domain_id 覆盖回 NULL（两次实证 exit 0 报 OK 但超管直查仍 NULL）。
-    本批绕行=逐域 UPDATE+commit 直连 writer（._m258_apply.py，2668 节点落库），
-    batch bug 修复另列（混合 op 时 _atomic_write 应跳过 domain 已由 SQL 直写的字段，
-    或 migrate_nodes 类 op 应只改 dep 内存不交 SQL）。
+    本批绕行=逐域 UPDATE+commit 直连 writer（._m258_apply.py，2668 节点落库）。
+    【2026-08-22 晚根因二治本落地】修复=_atomic_write 增 only_node_ids 脏追踪参数——
+    cmd_batch 收集 node_op 触碰的 node_id 集合，仅回写这些节点；纯 domain_ops 批次
+    dirty 为空 → 跳过全量回写（消除陈旧快照覆盖 domain_id 的静默回滚根因）。
+    实证：混合 op 场景下 migrate_nodes 落库成功（修复前同场景被快照覆盖回滚）。
+    连带暴露独立陈旧债（另列登记，非本次范围）：add/remove/set_physical_files 三
+    node_op 在内存 dep 上写的 physical_files 字段无 nodes 表对应列（迁移期旧概念，
+    设计态/运营态分离后已不在 schema），_atomic_write 回写该键必然 SQL 列不存在错——
+    这三 op 的回写路径从未真正工作，应改为写 nodes_metadata 或随设计态节点 schema。
   impact:
     - 'scripts/governance/generate_project_depgraph.py（_load_panorama_from_db 四处 conn.execute→cursor，#258 注记）'
     - 'tests/governance/test_generate_project_depgraph_smoke.py（TestPanoramaDomainDerivation 2 用例锁回归）'
-    - 'scripts/governance/apply_depgraph.py（batch 混合 op 静默回滚 bug 登记，修复另列）'
+    - 'scripts/governance/apply_depgraph.py（_atomic_write only_node_ids 脏追踪 + cmd_batch 收集 node_op 触碰集 + _apply_node_op 返回 node_id）'
     - 'depgraph PG：2668 节点 domain_id 回填（54 域，tests 1969/src 326/scripts 218/docs 90/config 41/architecture_model 25 各簇归位）'
-  fix_phase: '已落地（2026-08-22）：load_panorama cursor 化后 derivation 932 条；2668 节点 domain_id 回填零 NULL（D_GOVERNANCE 738/D_GOV_SCRIPTS 539/D_AUTONOMY_CORE 466/D_INFRA_RUNTIME 424/D_GOV_AUDIT 389/D_SHARED 371 等）；TestPanoramaDomainDerivation 2 用例+既有 9 smoke 全绿。残余：apply_depgraph batch 混合 op 静默回滚修复另列（当前绕行=逐域 UPDATE 或纯 domain_ops 批次）'
+  fix_phase: '已落地（2026-08-22）：①load_panorama cursor 化后 derivation 932 条；2668 节点 domain_id 回填零 NULL（D_GOVERNANCE 738/D_GOV_SCRIPTS 539/D_AUTONOMY_CORE 466/D_INFRA_RUNTIME 424/D_GOV_AUDIT 389/D_SHARED 371 等）；TestPanoramaDomainDerivation 2 用例+既有 9 smoke 全绿（提交 ba587063）。②batch 静默回滚治本——_atomic_write only_node_ids 脏追踪，纯 domain_ops 批次跳过全量回写，实证 migrate_nodes 落库成功。残余另列：physical_files 三 node_op（add/remove/set）回写路径列错位——该字段无 nodes 表列（迁移期旧概念），应改落 nodes_metadata 或设计态 schema'
   status: resolved
   related_rules:
   - '#ARCH-169'

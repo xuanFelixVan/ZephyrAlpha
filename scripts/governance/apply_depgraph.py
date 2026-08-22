@@ -578,18 +578,30 @@ def _find_module(dep: dict, module_id: str) -> dict | None:
     return None
 
 
-def _atomic_write(dep: dict, conn=None) -> None:
+def _atomic_write(dep: dict, conn=None, only_node_ids: set | None = None) -> None:
     """将修改后的 depgraph 数据写回 PostgreSQL 数据库。
 
     如果提供 conn 参数，使用该连接（不 commit/close）——用于 cmd_batch 统一事务。
     如果未提供 conn，打开新连接（独立模式，commit+close）。
+
+    only_node_ids（#ARCH-170 混合 op 静默回滚治本，2026-08-22）：
+    - None（默认）= 全量回写 dep["nodes"]（独立模式旧行为，兼容单 op CLI 入口）。
+    - 空 set() = 跳过回写（纯 domain_ops 批次无 node_op 触碰，避免陈旧快照覆盖）。
+    - 非空 set = 仅回写被 node_op 触碰的节点（混合批次下，domain_ops 如 migrate_nodes
+      已 SQL 直写 domain_id，全量回写会用加载时的陈旧 NULL 快照覆盖之——静默回滚根因）。
     """
     own_conn = conn is None
+    if only_node_ids is not None and not only_node_ids:
+        # 纯 domain_ops 批次：无 node_op 触碰节点，全量回写只会用陈旧快照覆盖 domain_ops
+        # 的 SQL 直写结果。跳过回写，由 cmd_batch 尾部统一 commit domain_ops 的变更。
+        return
     with _optional_db_lock(own_conn, task="_atomic_write"):
         if own_conn:
             conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             for node_id, node_data in dep.get("nodes", {}).items():
+                if only_node_ids is not None and node_id not in only_node_ids:
+                    continue
                 clean = {k: v for k, v in node_data.items() if not k.startswith("_")}
                 if "type" in clean:
                     clean["node_type"] = clean.pop("type")
@@ -654,37 +666,53 @@ def cmd_update_module(dep: dict, module_id: str, field: str, value: str) -> None
     print(f"Updated {module_id}.{field}: {old_value} -> {module[field]}", file=sys.stderr)
 
 
-def _apply_node_op(dep: dict, change: dict, index: int) -> None:
-    """对 dep dict 执行节点级操作（不写 DB）。供 cmd_batch 复用。"""
+def _apply_node_op(dep: dict, change: dict, index: int) -> int | None:
+    """对 dep dict 执行节点级操作（不写 DB）。供 cmd_batch 复用。
+
+    返回被触碰节点的 node_id（_find_module 命中时写入 node["_node_id"]），
+    未命中/op 未识别返回 None——cmd_batch 收集为 dirty 集传给 _atomic_write
+    仅回写触碰节点（#ARCH-170 混合 op 静默回滚治本）。
+    """
     op = change.get("op", "update")
     module_id = change.get("module_id", "")
+    touched: int | None = None
     if op == "update":
+        module = _find_module(dep, module_id)
+        touched = module.get("_node_id") if module else None
         cmd_update_module(dep, module_id, change.get("field", ""), change.get("value", ""))
+        return touched
     elif op == "add_physical_file":
         module = _find_module(dep, module_id)
         if module is None:
             print(f"ERROR: Module '{module_id}' not found for change #{index}", file=sys.stderr)
-            return
+            return None
+        touched = module.get("_node_id")
         pf = change.get("path", "")
         if pf not in module.get("physical_files", []):
             module.setdefault("physical_files", []).append(pf)
             print(f"Added {pf} to {module_id}", file=sys.stderr)
+        return touched
     elif op == "remove_physical_file":
         module = _find_module(dep, module_id)
         if module is None:
             print(f"ERROR: Module '{module_id}' not found for change #{index}", file=sys.stderr)
-            return
+            return None
+        touched = module.get("_node_id")
         pf = change.get("path", "")
         if pf in module.get("physical_files", []):
             module["physical_files"].remove(pf)
             print(f"Removed {pf} from {module_id}", file=sys.stderr)
+        return touched
     elif op == "set_physical_files":
         module = _find_module(dep, module_id)
         if module is None:
             print(f"ERROR: Module '{module_id}' not found for change #{index}", file=sys.stderr)
-            return
+            return None
+        touched = module.get("_node_id")
         module["physical_files"] = change.get("files", [])
         print(f"Set {len(module['physical_files'])} physical_files for {module_id}", file=sys.stderr)
+        return touched
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -901,6 +929,7 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
     with _db_write_lock(task="cmd_batch"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         domain_op_count = 0
+        dirty_node_ids: set = set()
         try:
             for i, change in enumerate(changes):
                 op = change.get("op", "update")
@@ -910,12 +939,18 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                         raise RuntimeError(f"change #{i}: {op} failed")
                     domain_op_count += 1
                 elif op in _NODE_OPS:
-                    _apply_node_op(dep, change, i)
+                    touched = _apply_node_op(dep, change, i)
+                    if touched is not None:
+                        dirty_node_ids.add(touched)
                 else:
                     raise ValueError(f"change #{i}: unknown op '{op}', supported: {sorted(all_ops)}")
 
-            # 节点级变更通过共享连接写入（不单独commit）
-            _atomic_write(dep, conn=conn)
+            # 节点级变更通过共享连接写入（不单独commit）。
+            # #ARCH-170：仅回写被 node_op 触碰的节点（dirty_node_ids）——全量回写会用
+            # 加载时的陈旧快照覆盖 domain_ops（migrate_nodes 等）SQL 直写的 domain_id，
+            # 造成 exit 0 报 OK 但超管直查仍旧值的静默回滚（2026-08-22 两次实证）。
+            # 纯 domain_ops 批次 dirty 为空 → _atomic_write 跳过回写，仅 commit domain_ops。
+            _atomic_write(dep, conn=conn, only_node_ids=dirty_node_ids)
             # 统一提交所有变更（域级+节点级）
             conn.commit()
             print(f"Applied {len(changes)} changes to depgraph (domain_ops={domain_op_count})", file=sys.stderr)

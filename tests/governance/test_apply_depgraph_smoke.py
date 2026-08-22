@@ -790,3 +790,75 @@ class TestDesignNodeDeleteDualSourceGate:
         assert result is False, "非 design 节点应阻断（design 检查在 evidence 之前）"
         err = capsys.readouterr().err
         assert "非设计态节点" in err, f"应提示非设计态节点禁止删除，实际 stderr: {err[:300]}"
+
+
+# ============================================================================
+# Test 8: #ARCH-170 batch 静默回滚治本 —— _atomic_write only_node_ids 脏追踪（2026-08-22）
+# ============================================================================
+
+
+class TestAtomicWriteDirtyTracking:
+    """#ARCH-170 治本回归：_atomic_write only_node_ids 脏追踪。
+
+    根因：cmd_batch 尾部 _atomic_write(dep, conn) 用加载时的陈旧 dep 快照
+    全量回写 nodes，把 domain_ops（migrate_nodes 等）SQL 直写的 domain_id
+    覆盖回旧值——exit 0 报 OK 但超管直查仍旧值（静默回滚，2026-08-22 两次实证）。
+    治本：only_node_ids 脏追踪——仅回写 node_op 触碰的节点；纯 domain_ops 批次
+    dirty 为空 → 跳过全量回写。mock conn 验证回写调用集，不触生产 DB。
+    """
+
+    def _dep_two_nodes(self):
+        """构造含 2 节点的内存 dep（domain_id 均为陈旧 NULL）。"""
+        return {
+            "nodes": {
+                1: {"path": "a.py", "domain_id": None, "node_type": "module"},
+                2: {"path": "b.py", "domain_id": None, "node_type": "module"},
+            },
+            "edges": [],
+            "domains": {},
+            "metadata": {},
+        }
+
+    def _spy_conn(self):
+        """mock conn：记录每次 execute 的 SQL+参数，供断言回写了哪些 node_id。"""
+        conn = MagicMock()
+        cursor = MagicMock()
+        conn.execute.return_value = cursor
+        conn.cursor.return_value = cursor
+        return conn, cursor
+
+    def test_empty_dirty_set_skips_writeback(self, adg):
+        """纯 domain_ops 批次（dirty 空集）→ _atomic_write 跳过回写（零 UPDATE）。"""
+        dep = self._dep_two_nodes()
+        conn, cursor = self._spy_conn()
+        adg._atomic_write(dep, conn=conn, only_node_ids=set())
+        # 空 dirty 集 → 提前 return，零 UPDATE 调用
+        update_calls = [c for c in conn.execute.call_args_list if "UPDATE nodes" in str(c)]
+        assert not update_calls, "纯 domain_ops 批次不应回写任何节点（陈旧快照覆盖根因）"
+
+    def test_only_dirty_node_written(self, adg):
+        """混合批次：仅 dirty 节点被回写，未触碰节点不被覆盖。"""
+        dep = self._dep_two_nodes()
+        conn, cursor = self._spy_conn()
+        adg._atomic_write(dep, conn=conn, only_node_ids={1})
+        # 只有 node_id=1 被回写：UPDATE ... WHERE node_id=%s 参数末位为 1
+        written_ids = [
+            c.args[1][-1]
+            for c in conn.execute.call_args_list
+            if len(c.args) >= 2 and "UPDATE nodes" in str(c.args[0])
+        ]
+        assert written_ids == [1], f"应仅回写 dirty 节点 1，实际回写集={written_ids}"
+
+    def test_none_dirty_set_full_writeback_compat(self, adg):
+        """only_node_ids=None（默认，独立模式）→ 全量回写（向后兼容单 op CLI）。"""
+        dep = self._dep_two_nodes()
+        conn, cursor = self._spy_conn()
+        adg._atomic_write(dep, conn=conn, only_node_ids=None)
+        written_ids = [
+            c.args[1][-1]
+            for c in conn.execute.call_args_list
+            if len(c.args) >= 2 and "UPDATE nodes" in str(c.args[0])
+        ]
+        assert sorted(written_ids) == [1, 2], (
+            f"独立模式 None 应全量回写（向后兼容），实际回写集={written_ids}"
+        )
