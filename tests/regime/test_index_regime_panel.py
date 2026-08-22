@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-007 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """test_index_regime_panel.py — IndexRegimePanel（MOD-REGIME-008，IDX-01）单元测试
 
 覆盖（92 号 §7.9 验收 + §11.3 裁定一"1 引擎×4 代理"纪律）：

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-TEST-696 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """tests/autonomy/test_autonomy_boundary_gate.py — AutonomyBoundaryGate（MOD-AU-001）单元测试.
 
 覆盖 15号文（15_autonomy_boundary_risk.md）§4.1 S0.2 验收口径：

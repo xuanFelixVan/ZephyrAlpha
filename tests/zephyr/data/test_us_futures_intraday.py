@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-H1_REDIS_HOT | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """us_futures_intraday 能力 + tasks.yaml 登记一致性单元测试（92号清单 §7.1/§7.2，44号备忘 §9.8 通道2/3）。
 
 覆盖：

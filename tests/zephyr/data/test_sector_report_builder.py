@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-H1_REDIS_HOT | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-L00-009 板块盘后全景报告器 单元测试（92号清单 §7.5 / 架构审查报告 §11.5 SEC-01，合成数据不触库）"""
 
 import json

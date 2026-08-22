@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L07-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """prediction_log 统一落库写入器单元测试（92号清单 §7.13 M4-②，44号备忘 §12.1）。
 
 覆盖：

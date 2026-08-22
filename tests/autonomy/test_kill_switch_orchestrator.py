@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-TEST-696 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """tests/autonomy/test_kill_switch_orchestrator.py — KillSwitchOrchestrator（MOD-AU-002）单元测试.
 
 覆盖 15号文（15_autonomy_boundary_risk.md）§4.1 S0.3 验收口径：

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-H1_REDIS_HOT | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-DATA-061 盘中板块实时聚合器（SEC-02）单元测试（92号清单 §7.6，合成快照注入不触库）"""
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-# [BLUEPRINT] 16号文(security_ops) | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/16_ai_security_ops.md | §4.2 P0-1/P0-3
+# [BLUEPRINT] MOD-SEC-EVENTBUS | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/16_ai_security_ops.md | §4.2 P0-1/P0-3
 # [MODULE] zephyr.security.security_event_bus
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.utils.time_utils; zephyr.shared.security.secrets
