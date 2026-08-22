@@ -51,7 +51,10 @@ Version: 1.0.0
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:  # 仅类型注解用（经修正边界消费接口，44号 §3 M2；运行时鸭子类型读字段）
+    from zephyr.plan_engine.tomorrow_boundary_planner import TomorrowBoundary
 
 # ── 常量（41 §3.10.4 参数默认值）──
 
@@ -105,6 +108,7 @@ class ClosingSessionDecision:
         position_state: dict[str, Any],
         high_open_prob: float = 0.0,
         low_open_prob: float = 0.0,
+        boundary: TomorrowBoundary | None = None,
     ) -> BoundedActionAdvice:
         """尾盘决策。
 
@@ -114,6 +118,9 @@ class ClosingSessionDecision:
             position_state: 今日持仓状态（BM-POS-01）。
             high_open_prob: 明日高开概率（0-1）。
             low_open_prob: 明日低开概率（0-1）。
+            boundary: 经修正边界（可选，44号 §3 M2 消费接口——调用方先经
+                TomorrowBoundary.apply_revision 应用 MOD-PLAN-006 盘中修正再注入；
+                None=保持既有硬编码上限行为，零破坏）。
 
         Returns:
             BoundedActionAdvice: 边界内动作建议。
@@ -124,12 +131,17 @@ class ClosingSessionDecision:
 
         # 尾盘加仓：明日高开概率 >70%
         if high_open_prob > ADD_POSITION_THRESHOLD:
+            # 经修正边界消费（44号 §3：尾盘决策在修正后边界内执行）；缺省保持既有口径
+            add_cap = boundary.max_add_position if boundary is not None else 0.30
+            reason = f"明日高开概率{high_open_prob:.1%}>{ADD_POSITION_THRESHOLD:.0%}，加仓博高开"
+            if boundary is not None:
+                reason += f"（经修正边界加仓上限{add_cap:.0%}）"
             return BoundedActionAdvice(
                 symbol=symbol,
                 action="ADD",
                 price_bound=(box_lower, box_upper),
-                max_weight=0.30,  # 加仓仓位上限
-                reason=f"明日高开概率{high_open_prob:.1%}>{ADD_POSITION_THRESHOLD:.0%}，加仓博高开",
+                max_weight=add_cap,
+                reason=reason,
             )
 
         # 尾盘减仓：明日低开概率 >60%

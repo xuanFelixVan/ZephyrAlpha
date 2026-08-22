@@ -18265,3 +18265,150 @@ entries:
   related_rules: '44号 §12.1 M4-①/②; 92号清单 §7.12/§7.13; CAND-RPT-005'
   created: '2026-08-22'
   last_updated: '2026-08-22'
+# --- #ARCH-153: 相似日剩余走势推演器落地（44号 M1-③，MOD-SIG-063） ---
+- issue_id: '#ARCH-153'
+  title: 'MOD-SIG-063 similar_day_inference——尾盘三档情景概率状态推演器（KNN 相似日，不出点位）'
+  severity: P2中
+  category: architecture
+  adjudication: |
+    目的声明（D2）：44号 §1 缺口③剩余走势推演——供尾盘决策消费的"尾盘走强/持平/
+    转弱"三档概率。纪律：不做点预测（90号 §7 哲学），输出概率分布非点位；KNN k=10
+    Pearson 距离（五维量纲异构免归一化+"形态相似"语义）；D<60 或均距>阈值→退化 28 号
+    五阶段转移先验（只读复用 sentiment_cycle 常量不重复造）；walk-forward 命中率<55%
+    自动停用开关（数据期校准）。数据地基=market_breadth_snapshot（#ARCH-154 同批建表），
+    零积累期恒走先验兜底分支，随数据积累自动升级。
+  impact:
+    - 'src/zephyr/signal_ashare/similar_day_inference.py（新建，testing 封顶）'
+    - 'tests/signal_ashare/test_similar_day_inference.py（8 用例）'
+  fix_phase: '已落地（2026-08-22）：8 新用例全绿+signal_ashare 763 passed 零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §9.3/§2.1（非因子裁定）; 90号 §7; 92号清单 §8.1; CAND-SIG-023'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-154: 全市场分钟快照落库+盘中调度回路（44号 M1-④，MOD-DATA-062/063） ---
+- issue_id: '#ARCH-154'
+  title: 'market_breadth_snapshot 表+采集器+intraday_sentiment_loop 调度回路——M1-①③ 数据地基与实时回路'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：44号 §6 实证缺口——全市场分钟级快照 miniqmt 实时可取但未落库
+    （M1-①③ 数据地基）；MOD-SIG-025 是快照式纯函数无独立盘中监控回路。落地三件：
+    ①新表 market_breadth_snapshot（DDL-as-Code 已建表验证，月分区 ReplacingMergeTree）；
+    ②采集器 market_breadth_collector（全市场 tick 聚合，涨跌停幅度复用 stk_limit
+    _limit_pct_of 单一真源）+tasks.yaml 任务挂 L2 分钟族；③intraday_sentiment_loop
+    回路模块 run_once 单拍（读快照→装配 M1-① BreadthTimeSeries 首个生产侧→MOD-SIG-025
+    增量分析→prediction_log 落库+SEC-02 挂接同载体；常驻节拍交调度器不写 while True，
+    PERM-TRIGGER 合规）。留痕：apply 脚本 zephyr_writer 缺 CREATE DATABASE 权限致 HTTP
+    降级伪报（与 ipo_calendar 同根因，表经 TCP 直建；权限治本建议登记）；周六实采
+    不可证留首个交易日盘中复测。
+  impact:
+    - 'schemas/categories/market_breadth_snapshot.py + c1_market.market_breadth_snapshot（已建表）'
+    - 'src/zephyr/data/market_breadth_collector.py + intraday_sentiment_loop.py（新建，testing 封顶）'
+    - 'src/zephyr/data/config/tasks.yaml（+market_breadth_snapshot_minute）'
+    - 'data_asset_registry.yaml（DS-108/JOB-088）'
+    - 'tests/zephyr/data/ 2 文件 35 用例'
+  fix_phase: '已落地（2026-08-22）：35 新用例全绿+tests/zephyr/data 1058 passed 零新增红；e2e 写入/幂等/回读验证'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §2 M1-④/§6; 92号清单 §8.2; P0-5 日循环 SOP 对接注记'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-155: 盘中边界修正引擎落地（44号 M2，MOD-PLAN-006） ---
+- issue_id: '#ARCH-155'
+  title: 'MOD-PLAN-006 boundary_revision_engine——盘中实时输入→当晚边界档位修正通道（不重启点预测的替代路线）'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：44号 §1 缺口②——边界盘后静态生成，盘中无动态修正通道。决策语义
+    锚定：不输出"明天涨/跌"，输出"今晚的边界该收多紧"（41号"边界比聪明更重要"+90号
+    §7 绕行 BM-SEL-04）。44号 §9.5 全量落码：14:00/14:45 双时点+防抖 15min+当日各 1
+    次冷却+七降档触发/升档三条件+仅当日有效次日覆盖（防滞后污染）+plan_revision 事件
+    落 prediction_log。文档张力裁定（2026-08-22 统筹）：§9.5 禁加仓价位"上移"与 §3
+    "下移"矛盾——按语义裁定=下移（no_add_price=防追高线，保守=更严=线更低），已翻转
+    CONSERVATIVE_NO_ADD_SHIFT_ATR=-0.5 并同步测试与 docstring，44号 §9.5 文本随批修订
+    （92号 D11）。口径代理：lu_net_rate_30m 字段 M1 侧未落地，触发①暂以 5m 代理并显式
+    标注 rate_proxy_5m=True。
+  impact:
+    - 'src/zephyr/plan_engine/boundary_revision_engine.py（新建，testing 封顶，SAFETY H）'
+    - 'src/zephyr/plan_engine/tomorrow_boundary_planner.py（+apply_revision 消费接口，契约零破坏）'
+    - 'src/zephyr/plan_engine/closing_session_decision.py（+Optional boundary 尾参，默认行为不变）'
+    - 'tests/plan_engine/test_boundary_revision_engine.py（31 用例）'
+  fix_phase: '已落地（2026-08-22）：31 新用例全绿+plan_engine 101 passed 零回归（41号 BM-PLAN 族）'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §3/§9.5; 92号清单 §8.3; CAND-PLAN-001; 30号 §2.2（firm 封顶）'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-156: 夜间新闻情绪落库+标的关联（44号 M3-②，tracker #138/#139 闭环） ---
+- issue_id: '#ARCH-156'
+  title: 'news_sentiment_window 表+nightly_sentiment_window 聚合器+news_symbol_linker 关联层——tracker #138/#139 挂账闭环'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：44号 M3-② 前置挂账——情绪持久化表未建（#138，MVP 内存态）+symbol
+    级舆情标的关联缺失（#139）。落地：①新表 news_sentiment_window（DDL-as-Code 已建表，
+    幂等实证）+夜间窗口 [18:00, 次日 08:00) 左闭右开聚合写入器（PIT 查询+SCD 去重+
+    plan004_input 对接预留字段）；②news_symbol_linker 规则 MVP（公告字段直用/代码显式
+    命中/简称归一化最长匹配/歧义标 ambiguous/零命中 market 级；词表=stock_basic 5211
+    名称实证）。真实 e2e（2026-08-22 窗口）：1601 条新闻→sentiment_index=+0.0044，
+    788 条关联标的/813 条 market 级。挂账：MOD-PLAN-004 消费接线（契约字段已预留，
+    接线待统筹裁定）；symbol 级聚合表结构已预留本批只写 market 级；AISA #137 LLM
+    切换条件不变（规则法默认）。
+  impact:
+    - 'schemas/categories/market_news_sentiment_window.py + c1_market.news_sentiment_window（已建表）'
+    - 'src/zephyr/intelligence/nightly_sentiment_window.py + news_symbol_linker.py（新建，testing 封顶）'
+    - 'src/zephyr/intelligence/news_sentiment_analyzer.py（+persist_windows 钩子默认关，契约零破坏）'
+    - 'data_asset_registry.yaml（DS-107）'
+    - 'tests/intelligence/ 2 文件 49 用例'
+  fix_phase: '已落地（2026-08-22）：49 新用例全绿+tests/intelligence 221 passed 零回归'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §4 M3-②; tracker #138/#139; 26号备忘（情绪=事件信号维度非独立 alpha）; 92号清单 §8.4'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-157: LLM 盘前分析核心件落地（44号 M3-⑨，MOD-PLAN-007） ---
+- issue_id: '#ARCH-157'
+  title: 'MOD-PLAN-007 llm_premarket_analysis——09架构 llm_runtime_gateway 首个真实消费场景+PIT 可复现四铁律'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：44号 M3-⑨——次日 8:00 数据最全时点（隔夜美股已收+A50 夜盘+夜间
+    新闻+日韩早盘+DeepSeek 谷时窗口）LLM 输出当日三情景+风险点+关键位。纪律锚点：
+    LLM=分析参考注解层非信号真源，输出只进注解不直接改档位（防幻觉直通交易）；PIT
+    四铁律落码（①8:00 cutoff 双护栏拒入越界数据 ②model_version 冻结入库 ③prompt
+    版本化 pm-v1.0.0 ④input_hash=canonical JSON SHA-256 同源校验）；v2 多空辩论模式
+    =prompt 编排三调用（多/空/综合席）不引入框架本体，开关默认 v1。LLM 客户端注入式
+    ——本模块不直连任何 LLM API，llm_client=None 标 skipped_not_wired 落库留痕；
+    阶段三 gateway 就绪后接线真跑（92号 D5）。llm_daily_analysis 表已建（13 列+幂等键）。
+  impact:
+    - 'src/zephyr/plan_engine/llm_premarket_analysis.py（新建，testing 封顶）'
+    - 'governance.db::llm_daily_analysis（已建表验证幂等）'
+    - 'tests/plan_engine/test_llm_premarket_analysis.py（32 用例）'
+  fix_phase: '已落地（2026-08-22）：32 新用例全绿+plan_engine 133 passed 零新增红；真跑留阶段三'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §9.14/§4 M3-⑨; 92号清单 §8.6/D5; 09架构 10号文（gateway 前置）; CAND-PLAN-002'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-158: 预测校准监控器落地（44号 M4-④，MOD-RPT-029） ---
+- issue_id: '#ARCH-158'
+  title: 'MOD-RPT-029 prediction_calibration_monitor——日志→参数校准反馈闭环骨架（只出人审工单，自治改参永不）'
+  severity: P2中
+  category: governance
+  adjudication: |
+    目的声明（D2）：44号 M4-④——"AI 通过日志不断调参优化"的反馈闭环；本批=统计器+
+    触发器骨架+样本量守卫（<30 不触发）。裁定四件：①真值回写落 prediction_log 本表
+    （prediction_type=outcome 族）不建姊妹表防第二真源；②命中判定归回写方，统计器只
+    聚合不判定；③registry 联动=评审工单落 .runtime/calibration_review/ 供 G04 人审
+    流程消费，不写注册表；④失败分层（输入校验 fail-closed/评估落盘 fail-open）——
+    本模块只出"评审建议"，调参动作永远人审/G04（INVARIANTS 钉死自治改参永不）。
+  impact:
+    - 'src/zephyr/reporting/prediction_calibration_monitor.py（新建，testing 封顶）'
+    - 'tests/reporting/test_prediction_calibration_monitor.py（38 用例）'
+  fix_phase: '已落地（2026-08-22）：38 新用例全绿+tests/reporting 470 passed 零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '44号 §12.1 M4-④; 92号清单 §8.7; G04 校准流程; CAND-RPT-005'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'

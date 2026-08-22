@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-PLAN-001 | docs/03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md
 # [MODULE] zephyr.plan_engine.tomorrow_boundary_planner
 # [DOMAIN] D_PLAN
-# [DEPENDENCIES] (待登记)
+# [DEPENDENCIES] zephyr.shared.utils.time_utils(now_utc); zephyr.plan_engine.boundary_revision_engine(BoundaryRevision, 仅 TYPE_CHECKING 类型引用)
 # [CONSUMERS] MOD-PLAN-002(premarket_constraint_loader); BM-BUY-02(买入融合); BM-SELL-02(卖出融合)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 边界层坏=致命暂停操作; 盘后生成次日边界; 不读盘中实时数据
+# [INVARIANTS] 边界层坏=致命暂停操作; 盘后生成次日边界; 不读盘中实时数据; 盘中修正仅当日有效(跨日/过期消费拒发)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -45,10 +45,13 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any
+from dataclasses import dataclass, replace
+from typing import TYPE_CHECKING, Any
 
 from zephyr.shared.utils.time_utils import now_utc
+
+if TYPE_CHECKING:  # 仅类型注解用（MOD-PLAN-006 盘中修正产出；运行时鸭子类型读字段）
+    from zephyr.plan_engine.boundary_revision_engine import BoundaryRevision
 
 # ── 常量（41 §3.10.2 参数默认值）──
 
@@ -83,6 +86,51 @@ class TomorrowBoundary:
     must_exit_price: float  # 必出止盈价位（冲上沿必出，纪律）
     breakout_confirm: str  # 突破验证条件（"放量站稳10分钟"）
     computed_at: Any = None  # 计算时间（datetime，由 now_utc() 生成）
+
+    def apply_revision(
+        self,
+        revision: BoundaryRevision,
+        atr14: float | None = None,
+        on_date: str | None = None,
+    ) -> TomorrowBoundary:
+        """应用盘中边界修正（44号 §3 M2，MOD-PLAN-006 产出），返回修正后新实例。
+
+        修正仅当日有效（44号 §3 修正有效期）：revision.expired 或 on_date 与
+        revision.trade_date 不符 → 拒发（ValueError，fail-closed，防"昨日恐慌
+        今日过期"的滞后污染）。revision_applied=False（评估未改档）→ 原样返回。
+
+        档位映射（44号 §9.5）：max_add_position×position_cap_scale（保守 0.5/
+        进攻 1.2）；保守档 no_add_price 下移 0.5×ATR(14)（2026-08-22 裁定：
+        §9.5"上移"与 §3"下移"张力按语义裁定=下移，防追高线更严）——位移
+        非零而 atr14 缺失 → 拒发（无法定价，fail-closed）。进攻档 ×1.2 封顶
+        firm 单票 8% 硬约束（30号 §2.2）由 firm 层 FirmRiskAggregator 执行。
+
+        Args:
+            revision: 盘中边界修正结果（MOD-PLAN-006 evaluate 产出）。
+            atr14: ATR(14) 值（禁加仓价位位移定价用；保守修正必填）。
+            on_date: 消费交易日（ISO）；None=仅校验 expired 标记。
+
+        Returns:
+            TomorrowBoundary: 修正后新实例（frozen，不改原边界）。
+
+        Raises:
+            ValueError: 修正过期/跨日消费/保守修正缺 atr14（拒发，fail-closed）。
+        """
+        if revision.expired:
+            msg = f"边界修正已过期（expired），拒发: trade_date={revision.trade_date}"
+            raise ValueError(msg)
+        if on_date is not None and revision.trade_date != on_date:
+            msg = f"边界修正仅当日有效，跨日消费拒发: revision={revision.trade_date} 消费日={on_date}"
+            raise ValueError(msg)
+        if not revision.revision_applied:
+            return self
+        new_cap = self.max_add_position * revision.position_cap_scale
+        shift = revision.no_add_price_shift
+        if shift != 0.0 and atr14 is None:
+            msg = "保守修正含禁加仓价位位移（ATR 倍数），缺 atr14 无法定价，拒发"
+            raise ValueError(msg)
+        new_no_add = self.no_add_price + shift * (atr14 or 0.0)
+        return replace(self, max_add_position=new_cap, no_add_price=new_no_add)
 
 
 # ── 明日预案引擎 ──

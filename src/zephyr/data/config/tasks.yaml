@@ -473,6 +473,23 @@ tasks:
   extra:
     description: "LOF 60分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
 
+  # ============== 全市场分钟级宽度快照（2026-08-22 新增，92号清单 §8.2 / 44号备忘 M1-④）==============
+- task_id: market_breadth_snapshot_minute
+  table: c1_market.market_breadth_snapshot
+  source: miniqmt
+  schedule: intraday_minute    # 挂 L2 盘中分钟族（与既有分钟K任务同族挂法）；快照本身为分钟粒度语义
+                               # （ts=采集时刻分钟截断）。族槽位当前 cron=*/5 9-15（schedule.yaml v2 实测），
+                               # 44号 §9.1 的 1 分钟级节拍需槽位提速或独立槽位——留痕为后续优化项，本工单不新增槽位。
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: market_breadth_snapshot
+  symbols:         # null=沪深A股全市场（provider 内 get_stock_list_in_sector 实证通道）
+  fallback_sources: []    # 天然无副源：实时全市场 tick 仅 miniqmt 通道（tick_subscriber/l2 同源不同表），显式置空留痕
+  extra:
+    description: "全市场分钟级宽度快照（miniQMT get_full_tick 分批全市场→涨跌家数/涨跌停/曾涨停/封住/累计成交额聚合单行；M1-①③ 数据地基；ST集加载失败 degraded=1 留痕；total_count=0 空跑不写零行；ReplacingMergeTree(trade_date,ts) 同分钟幂等）"
+    trading_day_only: true    # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，节假日空跑防护由 provider total_count=0 空行兜底
+
   # ============== 后复权周月K线增量（2026-07-11 新增）==============
 - task_id: kline_weekly_hfq_incremental
   table: c1_market.kline_weekly_hfq

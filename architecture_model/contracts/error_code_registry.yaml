@@ -2100,6 +2100,21 @@ error_codes:
   module: zephyr.trading.post_settlement_pipeline
   file: src/zephyr/trading/post_settlement_pipeline.py
   introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-PLAN-0006
+  class: BoundaryRevisionError
+  module: zephyr.plan_engine.boundary_revision_engine
+  file: src/zephyr/plan_engine/boundary_revision_engine.py
+  introduced: '2026-08-22: AI-P2-001 波5（44号 M2，#ARCH-155）'
+- code: ZA-IT-0007
+  class: NewsSymbolLinkerError
+  module: zephyr.intelligence.news_symbol_linker
+  file: src/zephyr/intelligence/news_symbol_linker.py
+  introduced: '2026-08-22: AI-P2-001 波5（tracker #139，#ARCH-156）'
+- code: ZA-IT-0008
+  class: NightlySentimentError
+  module: zephyr.intelligence.nightly_sentiment_window
+  file: src/zephyr/intelligence/nightly_sentiment_window.py
+  introduced: '2026-08-22: AI-P2-001 波5（tracker #138，#ARCH-156）'
 # ============================================================
 # 跨定义点重码白名单（对账门禁仅豁免本段存量、硬阻断新增；白名单防腐——条目不再对应真实重码即红）
 # 2026-08-18 Owner 批准执行改号收口（#ARCH-ERRCODE-001，第八统筹施工）：9 码 10 处全部改号完成——

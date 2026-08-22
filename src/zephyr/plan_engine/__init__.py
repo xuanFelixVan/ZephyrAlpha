@@ -6,7 +6,9 @@
 from typing import Final
 
 from zephyr.plan_engine import (
+    boundary_revision_engine,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-006）
     closing_session_decision,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-003）
+    llm_premarket_analysis,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-007）
     overnight_boundary_reviser,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-004）
     premarket_constraint_loader,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-002）
     scenario_planner,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-005）
@@ -19,4 +21,6 @@ __all__: Final = [
     "closing_session_decision",
     "overnight_boundary_reviser",
     "scenario_planner",
+    "boundary_revision_engine",
+    "llm_premarket_analysis",
 ]

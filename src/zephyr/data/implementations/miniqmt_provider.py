@@ -251,6 +251,7 @@ _DIRECT_ROUTES = {
     "l2_tick": "_fetch_l2_tick",
     "auction_data": "_fetch_auction_data",
     "auction_book": "_fetch_auction_book",
+    "market_breadth_snapshot": "_fetch_market_breadth_snapshot",
     "futures_kline_qmt": "_fetch_kline_futures_qmt",
     "hk_kline": "_fetch_hk_kline",
     "kline_us_daily": "_fetch_us_kline",
@@ -546,6 +547,8 @@ class MiniQmtIngestProvider(IngestProviderBase):
             "l2_tick",
             CapabilityContract("auction_data", supports_symbols_null=True),
             CapabilityContract("auction_book", supports_symbols_null=True),
+            # 92号清单 §8.2（2026-08-22）：全市场分钟级宽度快照（44号 M1-④ 数据地基；symbols=null→沪深A股全市场）
+            CapabilityContract("market_breadth_snapshot", supports_symbols_null=True),
             CapabilityContract("futures_kline_qmt", supports_symbols_null=True),
             CapabilityContract("hk_kline", supports_symbols_null=True),
             CapabilityContract("kline_us_daily", supports_symbols_null=True),
@@ -4860,6 +4863,123 @@ class MiniQmtIngestProvider(IngestProviderBase):
                 last_key="",
                 elapsed_sec=time.monotonic() - t0,
                 error=f"集合竞价盘口抓取失败: {e}",
+            )
+
+    def _fetch_market_breadth_snapshot(
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取全市场分钟级宽度快照，写 market_breadth_snapshot 表（单行/次）。
+
+        设计真源：92号清单 §8.2 / 44号备忘 §2 M1-④ 行 + §6（全市场分钟级快照
+        "miniqmt 实时可取，未落库"）——M1-① 涨跌加速度（§9.1 输入
+        s_t=(adv,dec,lu,attempted)+total）与 M1-③ 相似日推演的数据地基。
+
+        取数通道（实证=既有 _fetch_auction_book 同款模式）：
+        xtdata.get_stock_list_in_sector("沪深A股") 取全市场标的 →
+        xtdata.get_full_tick 分批（200 只/批）取实时快照 →
+        market_breadth_collector.aggregate_market_ticks 纯函数聚合单行。
+        涨跌停计数=全市场最新价×昨收×板块差异化涨跌停价推导（不走板块统计接口）；
+        ST 集经 load_current_st_codes 加载，失败置 degraded=1 留痕不炸。
+
+        Args:
+            payload: 下载请求（table 必填——本表尚未登记 business_data_categories.yaml，
+                92号工单纪律不写其他注册表 yaml，表名经 tasks.yaml table 字段传入，
+                禁止硬编码绕过真源；symbols=None → 沪深A股全市场）。
+            policy: 调用策略。
+
+        Yields:
+            FetchResult: 单批单行（快照语义）；total_count=0（非交易日/全失败）→
+                空行+log.warning 留痕不写零行；取数异常 → error 留痕不抛（fail-open）。
+        """
+        from xtquant import xtdata
+
+        from zephyr.data.market_breadth_collector import (
+            INSERT_COLUMN_NAMES as _BREADTH_COLUMNS,
+        )
+        from zephyr.data.market_breadth_collector import (
+            aggregate_market_ticks,
+            build_insert_row,
+            load_current_st_codes,
+        )
+
+        t0 = time.monotonic()
+        last_key = payload.end.isoformat()
+        table = payload.table
+        if not table:
+            yield FetchResult(
+                table="",
+                columns=list(_BREADTH_COLUMNS),
+                rows=[],
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                error="market_breadth_snapshot 需 tasks.yaml 显式指定 table（payload.table 为空，fail-closed）",
+            )
+            return
+
+        symbols = payload.symbols
+        if not symbols:
+            try:
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
+            except Exception as e:  # noqa: BLE001 — fail-open：留痕不炸调度
+                yield FetchResult(
+                    table=table,
+                    columns=list(_BREADTH_COLUMNS),
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=time.monotonic() - t0,
+                    error=f"获取沪深A股标的清单失败: {e}",
+                )
+                return
+
+        try:
+            # ST 集加载（fail-open；失败按非 ST 幅度近似并置 degraded=1 留痕）
+            st_codes, st_ok = load_current_st_codes(as_of=payload.end)
+            degraded = 0 if st_ok else 1
+
+            batch_size = 200
+            ticks: dict = {}
+            for i in range(0, len(symbols), batch_size):
+                batch = symbols[i : i + batch_size]
+                tick_data = self._call_with_policy(xtdata.get_full_tick, policy, batch)
+                if tick_data:
+                    ticks.update(tick_data)
+
+            # 快照时间戳=采集时刻分钟截断（Asia/Shanghai 口径，与表 ts 列时区一致）
+            now_cn = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
+            ts = now_cn.replace(second=0, microsecond=0).strftime("%Y-%m-%d %H:%M:%S")
+            agg = aggregate_market_ticks(ticks, st_codes, trade_date=payload.end)
+            if agg.total_count == 0:
+                # 非交易日/全量取数失败：不写全零行污染时序，留痕不炸
+                self._log.warning(
+                    "market_breadth_snapshot 全市场 tick 有效数=0（n_skipped=%d），本分钟空跑不写行",
+                    agg.n_skipped,
+                )
+                yield FetchResult(
+                    table=table,
+                    columns=list(_BREADTH_COLUMNS),
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                )
+                return
+            row = build_insert_row(agg, payload.end.isoformat(), ts, degraded=degraded)
+            yield FetchResult(
+                table=table,
+                columns=list(_BREADTH_COLUMNS),
+                rows=[row],
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+            )
+        except Exception as e:  # noqa: BLE001 — fail-open：单次失败留痕不炸调度
+            yield FetchResult(
+                table=table,
+                columns=list(_BREADTH_COLUMNS),
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=f"全市场宽度快照抓取失败: {e}",
             )
 
     def fetch_kline_futures_qmt(

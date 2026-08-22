@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INT-AISA | docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md | §
 # [MODULE] zephyr.intelligence.news_sentiment_analyzer
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] pandas; zephyr.data.news_collector; zephyr.nlp.nlp_inference
-# [CONSUMERS] MOD-SIG-002(信号生成器, 消费 SentimentEvent)
+# [DEPENDENCIES] pandas; zephyr.data.news_collector; zephyr.nlp.nlp_inference; zephyr.data.ch_writer（persist_windows 钩子惰性导入，默认关）
+# [CONSUMERS] MOD-SIG-002(信号生成器, 消费 SentimentEvent); zephyr.intelligence.nightly_sentiment_window(92号 §8.4 M3-② 夜间聚合)
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] 规则法情绪打分MVP桩，LLM打分走zephyr.nlp.nlp_inference扩展口（取polarity有向极性∈[-1,1]，禁用score强度∈[0,1]——neutral强度0.5会伪造正向）；ST风险警示大小写敏感词边界匹配（防英文普通词st子串误伤）；反转短语（终止重组/并购失败等）先扣除再匹配短词典（防"重组"正向误判负向公告）；聚合窗口默认1h整点对齐，空输入返回空结果不报错
@@ -26,7 +26,9 @@ MOD-INT-AISA NewsSentimentAnalyzer — A股舆情分析器MVP。
 - 聚合器：按时间窗口（默认1h）聚合单条 sentiment → 窗口级 sentiment_index
 - 事件信号：sentiment_index 突破阈值时产出 SentimentEvent（方向+强度+标的列表）
 
-不建表、不持久化——sentiment 结果以内存态返回，由下游消费方决定是否落盘。
+不建表、默认不持久化——sentiment 结果以内存态返回，由下游消费方决定是否落盘；
+可选 persist_windows 钩子（92号 §8.4 / tracker #138，默认关）把 SentimentWindow
+写 c1_market.news_sentiment_window（window_type='1h'，ReplacingMergeTree 同键替换幂等）。
 """
 
 from __future__ import annotations
@@ -453,6 +455,7 @@ class NewsSentimentAnalyzer:
         self,
         start_date: str,
         end_date: str,
+        persist: bool = False,
         **news_kwargs,
     ) -> tuple[pd.DataFrame, list[SentimentWindow], list[SentimentEvent]]:
         """一站式分析：查新闻 → 打分 → 聚合 → 事件检出。
@@ -460,6 +463,8 @@ class NewsSentimentAnalyzer:
         Parameters
         ----------
         start_date, end_date : YYYY-MM-DD
+        persist : True 时把聚合窗口写 news_sentiment_window 表（92号 §8.4 / tracker #138，
+            默认关；写表异常降级不抛，日志留痕）
         news_kwargs : 透传给 collect_news 的额外参数（region/language/limit 等）
 
         Returns
@@ -480,7 +485,81 @@ class NewsSentimentAnalyzer:
         merged = scored_df.merge(time_map, on="news_id", how="left").drop_duplicates(subset="news_id", keep="first")
         windows = self._aggregator.aggregate_from_df(merged)
         events = self._detect_events(windows)
+        if persist:
+            self.persist_windows(windows)
         return scored_df, windows, events
+
+    def persist_windows(
+        self,
+        windows: list[SentimentWindow],
+        *,
+        data_source: str = "rule",
+        writer: Callable[[object], bool] | None = None,
+    ) -> bool:
+        """持久化钩子：把 SentimentWindow 列表写 news_sentiment_window 表（默认不调用=关）。
+
+        tracker #138 闭环（92号 §8.4）：window_type='1h'、scope='market'；
+        ReplacingMergeTree(scope,symbol,window_type,window_ts) 同键替换 → 重跑幂等。
+
+        Parameters
+        ----------
+        windows : SentimentWindow 列表（空列表直接返回 True 不写）
+        data_source : 打分方法留痕（rule/llm/llm_fallback/mixed）
+        writer : 写表函数注入（签名 FetchResult→bool；None=ch_writer.write_result）
+
+        Returns
+        -------
+        是否写入成功；写表异常降级返回 False（fail-open 不抛）。
+        """
+        if not windows:
+            return True
+        try:
+            from zephyr.data.provider_base import FetchResult
+
+            rows = []
+            for w in windows:
+                pos_n = int(round(w.positive_ratio * w.news_count))
+                neg_n = int(round(w.negative_ratio * w.news_count))
+                neu_n = w.news_count - pos_n - neg_n
+                rows.append(
+                    (
+                        w.window_start.strftime("%Y-%m-%d %H:%M:%S"),
+                        w.window_end.strftime("%Y-%m-%d %H:%M:%S"),
+                        "1h",
+                        "market",
+                        "",
+                        w.sentiment_index,
+                        w.avg_polarity,
+                        pos_n,
+                        neg_n,
+                        neu_n,
+                        w.news_count,
+                        "",
+                        data_source,
+                    )
+                )
+            # 列序=DDL-as-Code 真源 schemas/categories/market_news_sentiment_window.py INSERT_COLUMNS
+            insert_columns = (
+                "(window_ts, window_end, window_type, scope, symbol, sentiment_index, avg_polarity, "
+                "positive_count, negative_count, neutral_count, total_count, top_events_json, data_source)"
+            )
+            fetch = FetchResult(
+                table="c1_market.news_sentiment_window",
+                columns=[c.strip() for c in insert_columns.strip("()").split(",")],
+                rows=rows,
+                last_key="",
+                elapsed_sec=0.0,
+            )
+            if writer is not None:
+                return bool(writer(fetch))
+            from zephyr.data import ch_writer
+
+            return ch_writer.write_result(fetch, columns=insert_columns)
+        except Exception as exc:  # noqa: BLE001 — 写表异常降级不抛（钩子默认关，开了也不炸主流程）
+            import logging
+
+            logging.getLogger(__name__).warning("persist_windows 写表异常，降级返回 False: %s", exc)
+            return False
 
     # ------------------------------------------------------------------
     # 内部
