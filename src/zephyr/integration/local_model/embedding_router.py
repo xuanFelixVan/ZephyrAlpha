@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.embedding_router
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.local_model.ollama_embedding
+# [DEPENDENCIES] zephyr.integration.local_model.ollama_embedding; zephyr.integration.local_model.lsg_gate
 # [CONSUMERS] zephyr.autonomy_core.skills.skill_router; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.pipeline_orchestrator; zephyr.integration.local_model.local_model_scheduler; zephyr.integration.local_model.__init__; zephyr.trading.auto_runtime_core; tests.automation.test_auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] production
@@ -10,7 +10,7 @@
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] LSG 判决 BLOCK/DENY 时 embed/embed_batch 抛 LSGBlockedError(RuntimeError)
 # [TESTS]
 # [A_module] module_id=MOD-INF-042 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -45,6 +45,8 @@ from pathlib import Path
 from typing import Any, Final, Literal, Protocol, runtime_checkable
 
 import numpy as np
+
+from zephyr.integration.local_model.lsg_gate import enforce_input, resolve_lsg_enabled
 
 _logger = logging.getLogger(__name__)
 
@@ -157,10 +159,13 @@ class EmbeddingRouter:
         *,
         backend: Literal["local", "ollama"] = "ollama",
         max_loaded_models: int = 2,
+        lsg_enabled: bool | None = None,
     ) -> None:
         self._backend: str = backend
         self._model_dir_bge_m3 = Path(model_dir_bge_m3)
         self._model_dir_bge_small = Path(model_dir_bge_small)
+        # 09号文 §4.2 P0-1: LSG 注入开关（默认开；None -> 读 ZEPHYR_LSG_LOCAL_MODEL_ENABLED）
+        self._lsg_enabled: bool = resolve_lsg_enabled(lsg_enabled)
         self._bge_m3_model: Any | None = None
         self._bge_small_model: Any | None = None
         self._bge_m3_dim: int = 0
@@ -424,6 +429,10 @@ class EmbeddingRouter:
         if self._fallback_mode == "in_memory":
             return np.zeros(self._bge_small_dim or 384, dtype=np.float32)
 
+        # 09号文 §4.2 P0-1: LSG 输入闸门——BLOCK/DENY 抛 LSGBlockedError，不发起嵌入计算
+        # （in_memory 降级返回零向量、文本不被任何模型消费，无需扫描——保持降级健壮性契约）
+        enforce_input(text, source=f"EmbeddingRouter.embed.{collection_name}", enabled=self._lsg_enabled)
+
         if collection_name in BGE_M3_COLLECTIONS:
             if self._bge_m3_available:
                 start = time.perf_counter()
@@ -470,6 +479,14 @@ class EmbeddingRouter:
     def embed_batch(self, texts: list[str], collection_name: str) -> np.ndarray:
         if self._fallback_mode == "in_memory":
             return np.zeros((len(texts), self._bge_small_dim or 384), dtype=np.float32)
+
+        # 09号文 §4.2 P0-1: LSG 输入闸门——批量文本合并扫描，BLOCK/DENY 抛 LSGBlockedError
+        # （in_memory 降级路径同上不扫描）
+        enforce_input(
+            "\n".join(str(t) for t in texts),
+            source=f"EmbeddingRouter.embed_batch.{collection_name}",
+            enabled=self._lsg_enabled,
+        )
 
         if collection_name in BGE_M3_COLLECTIONS:
             model = self._bge_m3_model if self._bge_m3_available else self._bge_small_model

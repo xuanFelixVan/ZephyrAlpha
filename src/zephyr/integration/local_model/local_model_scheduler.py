@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.local_model_scheduler
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.trading.resource_optimization; zephyr.integration.local_model.embedding_router; zephyr.integration.local_model.ollama_chat
+# [DEPENDENCIES] zephyr.trading.resource_optimization; zephyr.integration.local_model.embedding_router; zephyr.integration.local_model.ollama_chat; zephyr.integration.local_model.lsg_gate
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] LSG 判决 BLOCK/DENY 时任务处理抛 LSGBlockedError(RuntimeError) 转入 failed
 # [TESTS]
 # [A_module] module_id=MOD-INF-042 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -55,6 +55,8 @@ from typing import Final
 
 logger = logging.getLogger(__name__)
 from typing import TYPE_CHECKING, Any
+
+from zephyr.integration.local_model.lsg_gate import enforce_input, resolve_lsg_enabled
 
 if TYPE_CHECKING:
     from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
@@ -122,10 +124,13 @@ class LocalModelScheduler:
         ollama_chat: OllamaChatProtocol | None = None,
         *,
         poll_interval_s: float = POLL_INTERVAL_S,
+        lsg_enabled: bool | None = None,
     ) -> None:
         self._embedding_router = embedding_router
         self._ollama_chat = ollama_chat
         self._poll_interval = poll_interval_s
+        # 09号文 §4.2 P0-1: LSG 注入开关（默认开；None -> 读 ZEPHYR_LSG_LOCAL_MODEL_ENABLED）
+        self._lsg_enabled: bool = resolve_lsg_enabled(lsg_enabled)
         self._task_queue: queue.Queue[LocalTask] = queue.Queue(maxsize=100)  # 5.16.12 修复：添加 maxsize 防止无边界积压
         self._results: dict[str, LocalTask] = {}
         self._lock = threading.Lock()
@@ -323,8 +328,12 @@ class LocalModelScheduler:
             raise ValueError("embedding payload 缺少 text")
 
         if isinstance(text, list):
+            # 09号文 §4.2 P0-1: LSG 输入闸门——批量文本合并扫描，BLOCK/DENY 转入 failed 不发起嵌入
+            enforce_input("\n".join(str(t) for t in text), source="LocalModelScheduler.embedding", enabled=self._lsg_enabled)
             self._embedding_router.embed_batch(text, collection)
             return {"dim": self._embedding_router.bge_m3_dim, "count": len(text)}
+        # 09号文 §4.2 P0-1: LSG 输入闸门
+        enforce_input(str(text), source="LocalModelScheduler.embedding", enabled=self._lsg_enabled)
         vector = self._embedding_router.embed(text, collection)
         return {"dim": int(vector.shape[0]), "normalized": True}
 
@@ -369,6 +378,9 @@ class LocalModelScheduler:
         if not text:
             raise ValueError("inference payload 缺少 text")
 
+        # 09号文 §4.2 P0-1: LSG 输入闸门——BLOCK/DENY 转入 failed 不发起推理
+        # （后端为 OllamaChat/DeepSeekChat 时其 _chat 内置闸门会形成纵深双扫，本地规则层微秒级可忽略）
+        enforce_input(str(text), source=f"LocalModelScheduler.{work_type}", enabled=self._lsg_enabled)
         _log.info("LocalModelScheduler: inference %s -> qwen3:8b", work_type)
         return self._ollama_chat.inference(work_type, text)
 

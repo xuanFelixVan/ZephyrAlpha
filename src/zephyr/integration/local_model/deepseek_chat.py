@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.deepseek_chat
 # [DOMAIN]
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.integration.local_model.lsg_gate
 # [CONSUMERS] auto_runtime_core.py; local_model_scheduler.py
 # [STARTUP] imported
 # [MATURITY] production
@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] API失败时抛RuntimeError;JSON解析失败返回空dict
+# [ERROR_CONTRACT] API失败时抛RuntimeError;JSON解析失败返回空dict;LSG 判决 BLOCK/DENY 时抛 LSGBlockedError(RuntimeError)
 # [TESTS] tests/test_integration/test_deepseek_chat.py
 # [A_module] module_id=MOD-INF-042 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -43,6 +43,12 @@ import time
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
 
+from zephyr.integration.local_model.lsg_gate import (
+    LSGBlockedError,
+    enforce_input,
+    enforce_output,
+    resolve_lsg_enabled,
+)
 from zephyr.shared.foundation.constants import DEFAULT_DEEPSEEK_URL
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -129,6 +135,7 @@ class DeepSeekChat:
         max_tokens: int = INFERENCE_MAX_TOKENS,
         timeout_s: float = INFERENCE_TIMEOUT_S,
         budget_engine: BudgetEngineProtocol | None = None,
+        lsg_enabled: bool | None = None,
     ) -> None:
         _load_env()
         self._model = model
@@ -140,6 +147,8 @@ class DeepSeekChat:
         self._verified = False
         # 5.133.2 DI: 注入 BudgetEngine，避免每次 LLM 调用都硬编码实例化
         self._budget_engine: BudgetEngineProtocol | None = budget_engine
+        # 09号文 §4.2 P0-1: LSG 注入开关（默认开；None -> 读 ZEPHYR_LSG_LOCAL_MODEL_ENABLED）
+        self._lsg_enabled: bool = resolve_lsg_enabled(lsg_enabled)
 
     # 5.110.2 修复: 显式 __repr__ 排除 _api_key, 防止调试/日志泄露
     def __repr__(self) -> str:
@@ -249,6 +258,9 @@ class DeepSeekChat:
                         attempt + 1,
                         max_retries,
                     )
+            except LSGBlockedError:
+                # LSG 安全判决不重试——重试同一被拒 prompt 无意义，直接上抛
+                raise
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 if attempt < max_retries - 1:
                     _log.warning(
@@ -277,6 +289,13 @@ class DeepSeekChat:
     ) -> str:
         """使用 requests 库直接调用 DeepSeek API。"""
         import requests
+
+        # 09号文 §4.2 P0-1: LSG 输入闸门（L0/L1/L2/L5）——BLOCK/DENY 抛 LSGBlockedError，不发起 API 调用
+        enforce_input(
+            "\n".join(str(m.get("content", "")) for m in messages),
+            source=f"DeepSeekChat.{self._model}",
+            enabled=self._lsg_enabled,
+        )
 
         body: dict[str, Any] = {
             "model": self._model,
@@ -313,6 +332,8 @@ class DeepSeekChat:
 
         content = choices[0].get("message", {}).get("content", "")
         content = self._strip_think_block(content)
+        # 09号文 §4.2 P0-1: LSG 输出闸门（L3/L6）——违规输出抛 LSGBlockedError，不返回调用方
+        enforce_output(content, source=f"DeepSeekChat.{self._model}", enabled=self._lsg_enabled)
         return content
 
     def _budget_preflight(self, msg_count: int) -> None:
