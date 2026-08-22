@@ -257,9 +257,10 @@ _SQL_SECTOR_CONSTITUENTS: Final = (
     "SELECT sector_code, stock_code FROM {table} FINAL "
     "WHERE valid_from <= toDate('{prev_date}') AND (valid_to IS NULL OR valid_to > toDate('{prev_date}'))"
 )
-# 外盘族：us_index 最新收盘序列（Python 侧按 index_code 分组取最新两条算隔夜涨跌幅）
+# 外盘族：us_index 最新收盘序列（Python 侧按 symbol 分组取最新两条算隔夜涨跌幅；
+# 2026-08-22 真跑实证修正：表无 index_code 列，真身=symbol（tracker #247 当前空值缺陷期整族降级））
 _SQL_US_INDEX: Final = (
-    "SELECT trade_date, index_code, close FROM {table} FINAL "
+    "SELECT trade_date, symbol, close FROM {table} FINAL "
     "WHERE trade_date < toDate('{trade_date}') ORDER BY trade_date DESC LIMIT {limit}"
 )
 # 资金族：两融融资净买入（margin_buy-margin_repay，MOD-PLAN-004 同口径）
@@ -1106,7 +1107,7 @@ class PremarketPackager:
             code = (code or "").strip()
             close = _safe_float(close_s)
             if d is None or not code or close is None or close <= 0:
-                continue  # 实证缺陷：index_code 空值行剔除（与 MOD-PLAN-004 同口径）
+                continue  # 实证缺陷：symbol 空值行剔除（tracker #247，与 MOD-PLAN-004 同口径）
             if not ledger.admit_date("overseas", code, d):  # PIT 护栏
                 continue
             series.setdefault(code, []).append((d.isoformat(), close))
@@ -1397,13 +1398,14 @@ def build_user_prompt(
 
 @dataclass(frozen=True)
 class _LlmReply:
-    """单次调用归一结果（text + 可选计量）。"""
+    """单次调用归一结果（text + 可选计量 + 实际服务模型）。"""
 
     text: str
     tokens_in: int | None
     tokens_out: int | None
     cost_yuan: float | None
     latency_ms: float
+    model: str | None = None  # 实际服务模型（gateway 降级链真实通道模型，铁律②真值）
 
 
 def _invoke_llm(
@@ -1434,6 +1436,7 @@ def _invoke_llm(
             tokens_out=_safe_int(raw.get("tokens_out")),
             cost_yuan=_safe_float(raw.get("cost_yuan")),
             latency_ms=latency,
+            model=(str(raw["model"]) if raw.get("model") else None),
         )
     errors.append(f"llm_reply_type_illegal:{role}: {type(raw).__name__}")
     return None
@@ -1709,11 +1712,12 @@ def run_llm_analysis(
         tokens_out: int | None = None,
         cost_yuan: float | None = None,
         latency_ms: float | None = None,
+        actual_model: str | None = None,
     ) -> tuple[int, bool]:
         return _persist_row(
             db_path,
             trade_date=package.trade_date,
-            model_version=cfg.model_version,
+            model_version=actual_model or cfg.model_version,
             prompt_version=prompt_version_eff,
             input_hash=package.input_hash,
             output_json=output_json,
@@ -1787,6 +1791,13 @@ def run_llm_analysis(
     cost_yuan = sum(r.cost_yuan for r in replies if r.cost_yuan is not None) or None
     latency_ms = sum(r.latency_ms for r in replies) if replies else None
 
+    # ── 铁律②真值：实际服务模型以客户端回报为准（gateway 降级链真实通道），
+    #    与 cfg.model_version（预期模型）不一致时留痕——落库 model_version=实际值 ──
+    actual_model = next((r.model for r in replies if r.model), None)
+    if actual_model and actual_model != cfg.model_version:
+        errors.append(f"model_version_divergence: expected={cfg.model_version} actual={actual_model}")
+    persist_model = actual_model or cfg.model_version
+
     # ── 调用失败 → invalid 落库留痕不炸 ──
     if final_reply is None:
         err_s = "; ".join(errors) or "llm_call_failed"
@@ -1795,13 +1806,15 @@ def run_llm_analysis(
             ensure_ascii=False,
             sort_keys=True,
         )
-        row_id, logged = _persist(STATUS_INVALID, output_json, err_s, tokens_in, tokens_out, cost_yuan, latency_ms)
+        row_id, logged = _persist(
+            STATUS_INVALID, output_json, err_s, tokens_in, tokens_out, cost_yuan, latency_ms, actual_model=persist_model
+        )
         return LlmRunResult(
             trade_date=package.trade_date,
             status=STATUS_INVALID,
             analysis=None,
             input_hash=package.input_hash,
-            model_version=cfg.model_version,
+            model_version=persist_model,
             prompt_version=prompt_version_eff,
             debate_mode=cfg.debate_mode,
             tokens_in=tokens_in,
@@ -1836,14 +1849,15 @@ def run_llm_analysis(
             sort_keys=True,
         )
         row_id, logged = _persist(
-            STATUS_INVALID, output_json, "; ".join(parse_errors), tokens_in, tokens_out, cost_yuan, latency_ms
+            STATUS_INVALID, output_json, "; ".join(parse_errors), tokens_in, tokens_out, cost_yuan, latency_ms,
+            actual_model=persist_model,
         )
         return LlmRunResult(
             trade_date=package.trade_date,
             status=STATUS_INVALID,
             analysis=None,
             input_hash=package.input_hash,
-            model_version=cfg.model_version,
+            model_version=persist_model,
             prompt_version=prompt_version_eff,
             debate_mode=cfg.debate_mode,
             tokens_in=tokens_in,
@@ -1865,13 +1879,15 @@ def run_llm_analysis(
         ensure_ascii=False,
         sort_keys=True,
     )
-    row_id, logged = _persist(STATUS_SUCCESS, output_json, None, tokens_in, tokens_out, cost_yuan, latency_ms)
+    row_id, logged = _persist(
+        STATUS_SUCCESS, output_json, None, tokens_in, tokens_out, cost_yuan, latency_ms, actual_model=persist_model
+    )
     return LlmRunResult(
         trade_date=package.trade_date,
         status=STATUS_SUCCESS,
         analysis=analysis,
         input_hash=package.input_hash,
-        model_version=cfg.model_version,
+        model_version=persist_model,
         prompt_version=prompt_version_eff,
         debate_mode=cfg.debate_mode,
         tokens_in=tokens_in,
