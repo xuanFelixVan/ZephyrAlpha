@@ -360,7 +360,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | stable | ❌ |
+| build_status | planned | planned | ✅ |
 | file_count | 61 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
