@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS domains (
     created_at             TEXT NOT NULL,
     updated_at             TEXT NOT NULL,
     build_status           TEXT DEFAULT 'planned'
-        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'dormant')),
     modification_permission TEXT,
     layer_id               TEXT
         CHECK (layer_id IS NULL OR layer_id IN ('L0_infrastructure', 'L1_foundation', 'L2_domain', 'L3_application')),

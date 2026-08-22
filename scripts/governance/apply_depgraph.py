@@ -383,6 +383,17 @@ SQL_SELECT_DOMAIN_BUILD_STATUS_DEFAULT = (
 )
 SQL_ALTER_DOMAIN_BUILD_STATUS_DEFAULT = "ALTER TABLE domains ALTER COLUMN build_status SET DEFAULT 'planned'"
 
+# --- cmd_fix_domains_build_status_vocab（tracker #251 / #ARCH-143 续作，Owner 窗口 schema 变更） ---
+SQL_SELECT_DOMAIN_BUILD_STATUS_CHECK = (
+    "SELECT conname, pg_get_constraintdef(oid) AS def FROM pg_constraint "
+    "WHERE conrelid = 'domains'::regclass AND contype = 'c'"
+)
+SQL_DROP_DOMAIN_BUILD_STATUS_CHECK = "ALTER TABLE domains DROP CONSTRAINT domains_build_status_check"
+SQL_ADD_DOMAIN_BUILD_STATUS_CHECK = (
+    "ALTER TABLE domains ADD CONSTRAINT domains_build_status_check "
+    "CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'dormant'))"
+)
+
 # --- _restore_blueprint_links_readonly_trigger ---
 SQL_CREATE_PREVENT_UPDATE_FUNCTION = (
     "CREATE OR REPLACE FUNCTION _prevent_blueprint_links_update() "
@@ -3548,6 +3559,54 @@ def cmd_fix_domains_defaults(
             c.close()
 
 
+def cmd_fix_domains_build_status_vocab(
+    dry_run: bool = False,
+    conn=None,
+) -> int:
+    """domains.build_status CHECK 词表扩展 +dormant（tracker #251 / #ARCH-143 续作）。
+
+    背景：#ARCH-143 R2 裁定零节点域休眠真源=翻译注册表 build_status: dormant，
+    但 depgraph domains.build_status CHECK 仅 5 态（planned/generated/testing/stable/
+    deprecated）无 dormant，14 零节点域侧写无法落库。deprecated 语义（有替代品）
+    与 dormant（保留不激活）不同，不强行复用。Owner 窗口 schema 变更（2026-08-22 授权）。
+
+    幂等：CHECK 定义已含 'dormant' 则跳过；无约束行（异常态）直接补 ADD。
+    nodes.build_status 维持 5 态不动（dormant 仅域级语义）。
+    superuser：ALTER TABLE 需属主权限（表 owner=zephyr，仅 postgres 可 DDL，
+    先例 migrations/add_acquisition_fields.py）。
+
+    返回 0=成功/已修复，-1=失败。
+    """
+    own_conn = conn is None
+
+    def _run(c) -> int:
+        """_run implementation."""
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        rows = c.execute(SQL_SELECT_DOMAIN_BUILD_STATUS_CHECK).fetchall()
+        row = next((r for r in rows if "build_status" in (r["def"] or "")), None)
+        current_def = row["def"] if row else None
+        print(f"  {mode} 当前 domains.build_status CHECK: {current_def}", file=sys.stderr)
+
+        if current_def and "'dormant'" in current_def:
+            print(f"  {mode} CHECK 已含 'dormant'，跳过", file=sys.stderr)
+            return EXIT_PASS
+        if not dry_run:
+            if current_def:
+                c.execute(SQL_DROP_DOMAIN_BUILD_STATUS_CHECK)
+            c.execute(SQL_ADD_DOMAIN_BUILD_STATUS_CHECK)
+            if own_conn:
+                c.commit()
+        print(f"{mode} cmd_fix_domains_build_status_vocab: CHECK 已扩展 6 态（+dormant）", file=sys.stderr)
+        return EXIT_PASS
+
+    c = get_depgraph_pg_connection(autocommit=False, superuser=True) if own_conn else conn
+    try:
+        return _run(c)
+    finally:
+        if own_conn:
+            c.close()
+
+
 def _restore_blueprint_links_readonly_trigger(c) -> None:
     """恢复 blueprint_links 只读触发器（裁定#207 R1 B2 通行证恢复）。
 
@@ -5186,6 +5245,13 @@ def main() -> None:
         "修复预存bug：DEFAULT 'unbuilt' 不在 CHECK 允许值中，INSERT 不提供 build_status 时失败。",
     )
     parser.add_argument(
+        "--fix-domains-build-status-vocab",
+        action="store_true",
+        help="domains.build_status CHECK 词表扩展 +dormant（tracker #251 / #ARCH-143 续作，Owner 窗口 schema 变更）："
+        "幂等 DROP+ADD CONSTRAINT domains_build_status_check 为 6 态。"
+        "dormant=零节点域休眠标注（保留不激活），与 deprecated（有替代品）语义分立；nodes.build_status 不动。",
+    )
+    parser.add_argument(
         "--update-domain-name",
         type=str,
         nargs=2,
@@ -5666,6 +5732,14 @@ def main() -> None:
         print(f"rc={rc}")
         return
 
+    # tracker #251 / #ARCH-143 续作：domains.build_status CHECK +dormant——dispatch
+    if args.fix_domains_build_status_vocab:
+        rc = cmd_fix_domains_build_status_vocab(dry_run=args.dry_run)
+        if rc < 0:
+            sys.exit(4)
+        print(f"rc={rc}")
+        return
+
     if args.update_domain_name:
         domain_id, new_name = args.update_domain_name
         n = cmd_update_domain_name(domain_id, new_name, dry_run=args.dry_run)
@@ -5872,6 +5946,7 @@ _WRITE_COMMANDS = {
     "--replace-text-domain",
     "--apply-domain-id-check",
     "--fix-domains-defaults",
+    "--fix-domains-build-status-vocab",
 }
 
 

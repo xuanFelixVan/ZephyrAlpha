@@ -46,6 +46,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
+from typing import Final
 
 import yaml
 
@@ -1029,6 +1030,19 @@ def derive_drive_direction(has_blueprint: bool, node_type: str) -> str:
     return "bottom_up"
 
 
+# AI 层横切标签路径真源（03号文 E0-8 选项C 裁定，#ARCH-169）：
+# resync 对 production 节点 DELETE+重 INSERT 重推导 tags（derive_tags 为唯一推导口），
+# PG 直写 tags 不持久——ai_layer 必须在此派生才抗重扫。路径集=裁定书 §3.3 括号定义。
+_AI_LAYER_TAG_PREFIXES: Final = (
+    "src/zephyr/governance/intelligence_governance/",
+    "src/zephyr/feedback_loop/evolution/",
+    "src/zephyr/infrastructure/a2a_protocol/",
+    "src/zephyr/infrastructure/runtime/",
+    "src/zephyr/integration/vector_memory/",
+    "src/zephyr/ml_train/ai_operator",
+)
+
+
 def derive_tags(rel_path: str, node_type: str) -> list:
     """derive_tags implementation."""
     tags = []
@@ -1039,7 +1053,11 @@ def derive_tags(rel_path: str, node_type: str) -> list:
             tags.append(part)
     if node_type and node_type not in tags:
         tags.append(node_type)
-    return tags[:10]
+    capped = tags[:10]
+    # #ARCH-169：裁定路径集强制保留 ai_layer，防深层路径标签被 10 上限截断挤出
+    if rp.startswith(_AI_LAYER_TAG_PREFIXES) and "ai_layer" not in capped:
+        capped = capped[:9] + ["ai_layer"]
+    return capped
 
 
 def count_header_completeness(filepath) -> int:
