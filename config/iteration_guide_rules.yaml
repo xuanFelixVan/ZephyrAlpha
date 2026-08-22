@@ -1,0 +1,36 @@
+# --- 治理锚定 ---
+# blueprint: MOD-EVIDENCE_CHAIN | 待统筹登记（18号清单 §6 波4-11 / 11号文 §4.2） | §
+# module_id: MOD-EVIDENCE_CHAIN
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 迭代引导规则表——研究证据关联组件 P0-3 真源（11号文 §4.2/§3.1）
+# 消费方：zephyr.research.evidence.iteration_guide（IterationGuide 默认加载本文件）
+# 语义：规则按本文件顺序评估，首命中生效；条件键 AND 语义（全部满足才命中）；
+#       条件键词表见 iteration_guide.KNOWN_CONDITION_KEYS，词表外键加载即拒；
+#       recommendation ∈ {continue, pivot, abandon}；
+#       必须保留一条空条件兜底规则（保证任意证据聚合都有建议输出，无命中即报错）。
+version: "1.0.0"
+rules:
+  - rule_id: R-ABANDON-CONTRADICTED
+    recommendation: abandon
+    conditions: {contradict_gte: 2, no_support_within_weeks: 4}
+    rationale_zh: 独立反驳证据≥2 条且近 4 周无新支持 → 建议放弃（11号文 §3.1 示例规则）
+  - rule_id: R-PIVOT-ALL-NEUTRAL
+    recommendation: pivot
+    conditions: {evidence_gte: 3, support_eq: 0, contradict_eq: 0}
+    rationale_zh: 证据≥3 条且全为中性（零支持零反驳）→ 方向无判别力，建议转向
+  - rule_id: R-PIVOT-CONTESTED
+    recommendation: pivot
+    conditions: {support_gte: 1, contradict_gte: 1}
+    rationale_zh: 支持/反驳证据并存 → 建议转向细化适用边界（regime/条件切分）
+  - rule_id: R-CONTINUE-SUPPORTED
+    recommendation: continue
+    conditions: {support_gte: 2, contradict_eq: 0}
+    rationale_zh: 支持证据≥2 条且零反驳 → 建议继续投入
+  - rule_id: R-CONTINUE-DEFAULT
+    recommendation: continue
+    conditions: {}
+    rationale_zh: 兜底规则——证据不足，继续收集证据

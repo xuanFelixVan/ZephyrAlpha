@@ -43,6 +43,7 @@ domain_prefixes:
   PF: D_PF_CORE
   PLAN: D_PLAN
   POS: D_POSITION
+  RE: D_RESEARCH
   REGIME: D_REGIME
   RK: D_RISK
   RPT: D_REPORTING
@@ -2115,6 +2116,61 @@ error_codes:
   module: zephyr.intelligence.nightly_sentiment_window
   file: src/zephyr/intelligence/nightly_sentiment_window.py
   introduced: '2026-08-22: AI-P2-001 波5（tracker #138，#ARCH-156）'
+- code: ZA-RE-0001
+  class: HypothesisRegistryError
+  module: zephyr.research.evidence.hypothesis_registry
+  file: src/zephyr/research/evidence/hypothesis_registry.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
+- code: ZA-RE-0002
+  class: HypothesisNotFoundError
+  module: zephyr.research.evidence.hypothesis_registry
+  file: src/zephyr/research/evidence/hypothesis_registry.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
+- code: ZA-RE-0003
+  class: InvalidTransitionError
+  module: zephyr.research.evidence.hypothesis_registry
+  file: src/zephyr/research/evidence/hypothesis_registry.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
+- code: ZA-RE-0010
+  class: EvidenceChainError
+  module: zephyr.research.evidence.evidence_chain
+  file: src/zephyr/research/evidence/evidence_chain.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
+- code: ZA-RE-0011
+  class: UnknownHypothesisError
+  module: zephyr.research.evidence.evidence_chain
+  file: src/zephyr/research/evidence/evidence_chain.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
+- code: ZA-RE-0012
+  class: InvalidPolarityError
+  module: zephyr.research.evidence.evidence_chain
+  file: src/zephyr/research/evidence/evidence_chain.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
+- code: ZA-RE-0013
+  class: EvidenceIntegrityError
+  module: zephyr.research.evidence.evidence_chain
+  file: src/zephyr/research/evidence/evidence_chain.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
+- code: ZA-RE-0020
+  class: IterationGuideError
+  module: zephyr.research.evidence.iteration_guide
+  file: src/zephyr/research/evidence/iteration_guide.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
+- code: ZA-RE-0021
+  class: IterationGuideConfigError
+  module: zephyr.research.evidence.iteration_guide
+  file: src/zephyr/research/evidence/iteration_guide.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
+- code: ZA-RE-0030
+  class: BatchEntryError
+  module: zephyr.research.evidence.batch_entry
+  file: src/zephyr/research/evidence/batch_entry.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
+- code: ZA-RE-0031
+  class: IntradayExecutionForbiddenError
+  module: zephyr.research.evidence.batch_entry
+  file: src/zephyr/research/evidence/batch_entry.py
+  introduced: '2026-08-22: 18号清单 §6 波4-11（11号文 §4.2 Phase 0，GP0 E0-6）'
 # ============================================================
 # 跨定义点重码白名单（对账门禁仅豁免本段存量、硬阻断新增；白名单防腐——条目不再对应真实重码即红）
 # 2026-08-18 Owner 批准执行改号收口（#ARCH-ERRCODE-001，第八统筹施工）：9 码 10 处全部改号完成——
