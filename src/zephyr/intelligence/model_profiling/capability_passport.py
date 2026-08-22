@@ -362,9 +362,32 @@ class CapabilityPassport:
 
     @staticmethod
     def list_all() -> list[str]:
+        """列出全部护照的 model_id（#255④ 口径统一，2026-08-22）。
+
+        真源=护照 JSON 内 model_id 字段——文件名是 `:`/`/`→`_` 的有损安全编码
+        （qwen2.5-coder_14b 原名含下划线 vs qwen3:8b 原名含冒号，落盘同名形态
+        无法反推），旧实现 stem.replace("_", ":") 对下划线原名模型（如
+        qwen2.5-coder_14b/qwen3-coder_30b）返回错误冒号形态，TaskGate 以其为
+        dict 键而 dispatch 链持原名查询 → no_passport 假阴性。
+
+        边缘语义：JSON 不可读/model_id 缺失 → warning 留痕 + 跳过（fail-visible
+        不中断批量加载，与 load() 容错契约一致；损坏护照由审计/重考通道处置）。
+        """
         if not PASSPORTS_DIR.exists():
             return []
-        return [p.stem.replace("_", ":") for p in PASSPORTS_DIR.glob("*.json")]
+        model_ids: list[str] = []
+        for p in sorted(PASSPORTS_DIR.glob("*.json")):
+            try:
+                data = json.loads(p.read_text(encoding="utf-8"))
+                mid = data.get("model_id") or ""
+            except Exception as exc:  # noqa: BLE001 — 与 load() 容错契约一致
+                _log.warning("list_all: 跳过不可读护照 %s: %s", p.name, exc)
+                continue
+            if not mid:
+                _log.warning("list_all: 跳过缺 model_id 字段护照 %s", p.name)
+                continue
+            model_ids.append(mid)
+        return model_ids
 
 
 def compute_grade(score: float) -> str:

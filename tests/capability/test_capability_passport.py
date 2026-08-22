@@ -298,6 +298,78 @@ class TestCapabilityPassportSaveLoad:
         assert saved_path.name == "org_model_tag.json"
 
 
+class TestListAll:
+    """#255④ 回归——list_all 以护照内 model_id 字段为唯一真源（2026-08-22）。
+
+    契约：文件名是 `:`/`/`→`_` 的有损安全编码，不可反推；下划线原名模型
+    （qwen2.5-coder_14b 族）必须原样返回不得错转冒号；损坏/缺字段护照
+    warning 跳过不中断批量加载。
+    """
+
+    def test_list_all_underscore_model_id_not_mangled(self, tmp_path, monkeypatch):
+        """下划线原名（qwen2.5-coder_14b）返回原名——旧实现错转 qwen2.5-coder:14b。"""
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
+
+        monkeypatch.setattr(cp_module, "PASSPORTS_DIR", tmp_path)
+        CapabilityPassport(model_id="qwen2.5-coder_14b").save()
+        CapabilityPassport(model_id="qwen3-coder_30b").save()
+        assert sorted(CapabilityPassport.list_all()) == ["qwen2.5-coder_14b", "qwen3-coder_30b"]
+
+    def test_list_all_colon_model_id_preserved(self, tmp_path, monkeypatch):
+        """冒号原名（qwen3:8b）落盘 qwen3_8b.json，返回冒号原名。"""
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
+
+        monkeypatch.setattr(cp_module, "PASSPORTS_DIR", tmp_path)
+        CapabilityPassport(model_id="qwen3:8b").save()
+        assert CapabilityPassport.list_all() == ["qwen3:8b"]
+
+    def test_list_all_roundtrip_into_task_gate(self, tmp_path, monkeypatch):
+        """端到端：list_all 键 → TaskGate.load_passports → can_dispatch 原名查询命中。"""
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
+
+        monkeypatch.setattr(cp_module, "PASSPORTS_DIR", tmp_path)
+        cap = DepthCapabilityResult(pass_=True, grade="A", precision=0.9, f1=0.9)
+        CapabilityPassport(
+            model_id="qwen2.5-coder_14b",
+            depth=DepthResult(overall_score=0.9, capabilities={"code_fix": cap}),
+        ).save()
+
+        from zephyr.trading.task_gate import TaskGate
+
+        gate = TaskGate()
+        assert gate.load_passports() == 1
+        ok, reason = gate.can_dispatch("qwen2.5-coder_14b", "code_fix")
+        assert (ok, reason) == (True, "ok")
+
+    def test_list_all_skips_corrupt_json(self, tmp_path, monkeypatch):
+        """损坏 JSON warning 跳过，不中断其余护照枚举。"""
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
+
+        monkeypatch.setattr(cp_module, "PASSPORTS_DIR", tmp_path)
+        CapabilityPassport(model_id="good-model").save()
+        (tmp_path / "corrupt.json").write_text("{not json", encoding="utf-8")
+        assert CapabilityPassport.list_all() == ["good-model"]
+
+    def test_list_all_skips_missing_model_id(self, tmp_path, monkeypatch):
+        """缺 model_id 字段护照 warning 跳过。"""
+        import json
+
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
+
+        monkeypatch.setattr(cp_module, "PASSPORTS_DIR", tmp_path)
+        CapabilityPassport(model_id="good-model").save()
+        (tmp_path / "legacy.json").write_text(
+            json.dumps({"overall_grade": "A"}), encoding="utf-8"
+        )
+        assert CapabilityPassport.list_all() == ["good-model"]
+
+    def test_list_all_missing_dir(self, tmp_path, monkeypatch):
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
+
+        monkeypatch.setattr(cp_module, "PASSPORTS_DIR", tmp_path / "nonexistent")
+        assert CapabilityPassport.list_all() == []
+
+
 class TestPassportsDir:
     def test_passports_dir_is_path(self):
         from pathlib import Path
