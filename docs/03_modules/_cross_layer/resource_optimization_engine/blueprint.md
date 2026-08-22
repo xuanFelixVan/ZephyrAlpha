@@ -37,7 +37,7 @@ references:
   - {id: "MOD-INF-009", at: "全篇", why: "Pipeline——pipeline_lock与资源调度协调"}
 responsibility_domain: 
 design_maturity: design
-build_status: planned
+build_status: deprecated
 ---
 
 # Resource Optimization Engine 蓝图 — MAPE-K 驱动的进程池化/I/O零拷贝/缓存复用/自愈闭环
@@ -130,7 +130,7 @@ build_status: planned
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RESOURCE_OPTIMIZATION_ENGINE | MOD-RESOURCE_OPTIMIZATION_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | deprecated | planned | ❌ |
+| build_status | deprecated | deprecated | ✅ |
 | file_count | 7 文件 | 13 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

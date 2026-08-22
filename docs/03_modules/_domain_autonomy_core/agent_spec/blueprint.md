@@ -58,7 +58,7 @@ verifiability: hybrid
 references: []
 responsibility_domain: 
 design_maturity: design
-build_status: planned
+build_status: deprecated
 ---
 
 # Agent Spec 蓝图+施工图 — 蓝图→Skill 升级引擎
@@ -247,7 +247,7 @@ build_status: planned
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-019 | MOD-INF-019 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | deprecated | planned | ❌ |
+| build_status | deprecated | deprecated | ✅ |
 | file_count | 203 文件 | 67 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

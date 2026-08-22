@@ -52,7 +52,7 @@ references:
   - {id: "MOD-INF-026", at: "§1", why: "Asset Inventory——攻击目标资产发现与枚举"}
 responsibility_domain: 
 design_maturity: design
-build_status: planned
+build_status: deprecated
 ---
 
 # Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认
@@ -167,7 +167,7 @@ build_status: planned
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-030 | MOD-INF-030 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | deprecated | planned | ❌ |
+| build_status | deprecated | deprecated | ✅ |
 | file_count | 32 文件 | 9 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

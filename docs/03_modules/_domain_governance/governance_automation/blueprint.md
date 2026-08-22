@@ -47,8 +47,8 @@ codification_level: L1
 codification_at: "2026-05-13"
 references: []
 responsibility_domain: 
-build_status: planned
-design_maturity: design
+build_status: stable
+design_maturity: production
 ---
 
 > actual_disk_path: src/zephyr/infrastructure/script_system/ + scripts/governance/ + scripts/governance/meta/ + scripts/governance/generators/ (12 .py files)
@@ -115,7 +115,7 @@ design_maturity: design
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-005` 的 481 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-005` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -125,7 +125,7 @@ design_maturity: design
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-005 | MOD-INF-005 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | planned | ❌ |
+| build_status | stable | stable | ✅ |
 | file_count | 481 文件 | 13 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

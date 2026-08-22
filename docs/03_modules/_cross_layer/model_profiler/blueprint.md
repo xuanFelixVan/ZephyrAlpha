@@ -37,8 +37,8 @@ references:
   - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\blueprint.md", section: "§3", why: "MOD-GOVERNANCE 集成契约定义"}
 codification_level: L1
 responsibility_domain: 
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 ---
 
 # Model Profiler 蓝图 — 模型画像器·LLM能力基线测量
@@ -138,7 +138,7 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-034` 的 36 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-034` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -148,7 +148,7 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-034 | MOD-INF-034 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | planned | ❌ |
+| build_status | stable | stable | ✅ |
 | file_count | 36 文件 | 8 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

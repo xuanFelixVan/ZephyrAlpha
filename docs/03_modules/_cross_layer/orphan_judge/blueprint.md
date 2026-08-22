@@ -48,8 +48,8 @@ references:
   - {id: "MOD-INF-019", at: "full", why: "Agent Spec——SKILL-DOM-ORP-001技能注册与发现"}
   - {id: "MOD-GATE_ENGINE", at: "§2", why: "Phase Manager——gate_orphan_judge门禁检查注册"}
 responsibility_domain: 
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 ---
 
 <!--
@@ -204,7 +204,7 @@ OrphanJudge 是孤儿文件的资产生死判决引擎——解决"文件不在�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-029` 的 28 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-029` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -214,7 +214,7 @@ OrphanJudge 是孤儿文件的资产生死判决引擎——解决"文件不在�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-029 | MOD-INF-029 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | planned | ❌ |
+| build_status | stable | stable | ✅ |
 | file_count | 28 文件 | 24 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

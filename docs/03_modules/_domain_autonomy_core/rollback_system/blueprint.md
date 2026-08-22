@@ -70,8 +70,8 @@ references:
 summary: >
   Git-native+SQLite dump双轨回滚+auto_guard后验自动触发+四级回滚操作+130盲点覆盖+8层防御架构+容量升级至1500模块。62代码文件，completed。v7.0.0模板v3.5/v3.6升级。
 responsibility_domain: 
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 ---
 
 > module_id: MOD-INF-021 | version: 9.0.0 | status: Active | layer: L01_infrastructure
@@ -237,7 +237,7 @@ build_status: planned
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-021` 的 194 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-021` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -247,7 +247,7 @@ build_status: planned
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-021 | MOD-INF-021 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | planned | ❌ |
+| build_status | stable | stable | ✅ |
 | file_count | 194 文件 | 61 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

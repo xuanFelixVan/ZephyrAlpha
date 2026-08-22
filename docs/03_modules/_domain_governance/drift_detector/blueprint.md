@@ -73,8 +73,8 @@ tags:
 summary: >
   39检测器漂移检测引擎+10状态漂移生命周期+基线快照+自动对账+漂移预算+告警路由+混沌注入+漂移取证+防篡改审计。54文件，4Phase全部完成，红白对抗验证通过。
 responsibility_domain: 
-build_status: planned
-design_maturity: design
+build_status: stable
+design_maturity: production
 ---
 
 > module_id: MOD-INF-023 | version: 3.1.6 | status: Active | layer: cross_layer
@@ -224,7 +224,7 @@ design_maturity: design
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-023` 的 76 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-023` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -234,7 +234,7 @@ design_maturity: design
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-023 | MOD-INF-023 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | planned | ❌ |
+| build_status | stable | stable | ✅ |
 | file_count | 76 文件 | 54 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

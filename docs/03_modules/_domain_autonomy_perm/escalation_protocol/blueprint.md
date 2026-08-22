@@ -70,8 +70,8 @@ depends_on:
   - {target: MOD-INF-024, at: "$TODO", why: "TODO -- auto-converted"}
   - {target: MOD-INF-025, at: "$TODO", why: "TODO -- auto-converted"}
 responsibility_domain: 
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 ---
 
 ## MOD-GOVERNANCE 集成契约锚点
@@ -281,7 +281,7 @@ Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-022` 的 192 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-022` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -291,7 +291,7 @@ Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-022 | MOD-INF-022 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | planned | ❌ |
+| build_status | stable | stable | ✅ |
 | file_count | 192 文件 | 112 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

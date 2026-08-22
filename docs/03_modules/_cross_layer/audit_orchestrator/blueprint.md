@@ -90,8 +90,8 @@ references:
     at: "section 3"
     why: "Agent Spec"
 responsibility_domain: 
-build_status: planned
-design_maturity: design
+build_status: stable
+design_maturity: production
 ---
 
 # Audit Orchestrator 蓝图 — 审计编排器·三子系统架构
@@ -195,7 +195,7 @@ Audit Orchestrator 是 ZephyrAlpha 的全维度系统自证清白引擎，基于
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-027` 的 9 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-027` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -205,7 +205,7 @@ Audit Orchestrator 是 ZephyrAlpha 的全维度系统自证清白引擎，基于
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-027 | MOD-INF-027 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | planned | ❌ |
+| build_status | stable | stable | ✅ |
 | file_count | 9 文件 | 33 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

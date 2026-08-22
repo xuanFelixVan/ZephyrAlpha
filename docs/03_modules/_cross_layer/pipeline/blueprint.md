@@ -33,8 +33,8 @@ references:
   - {id: "MOD-INF-020", at: "全篇", why: "Decision Log——仅存 references（打破 009↔020↔022 环）"}
   - {id: "MOD-INF-018", at: "全篇", why: "SoD——仅存 references"}
   - {id: "architecture_model/layers/b_pipeline.yaml", at: "全篇", why: "Pipeline YAML SSoT——本蓝图真源"}
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 responsibility_domain: 
 ---
 
@@ -138,7 +138,7 @@ responsibility_domain:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-009` 的 33 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-009` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -148,7 +148,7 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-009 | MOD-INF-009 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | planned | ❌ |
+| build_status | stable | stable | ✅ |
 | file_count | 33 文件 | 25 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

@@ -29,7 +29,7 @@ verifiability: hybrid
 depends_on:
   - {target: "MOD-INF-016-SHARED", at: "全篇", why: "Shared Infrastructure — BaseEvent/schemas 基类依赖"}
 responsibility_domain: 
-design_maturity: design
+design_maturity: production
 build_status: generated
 ---
 

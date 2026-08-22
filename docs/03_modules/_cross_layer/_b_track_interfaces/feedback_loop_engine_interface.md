@@ -37,7 +37,7 @@ mod_master_contracts:
   - "CT-FLE-DB-001"
   - "CT-TELE-FLE-001"
 responsibility_domain: 
-design_maturity: design
+design_maturity: production
 build_status: generated
 ---
 
