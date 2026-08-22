@@ -18412,3 +18412,75 @@ entries:
   related_rules: '44号 §12.1 M4-④; 92号清单 §8.7; G04 校准流程; CAND-RPT-005'
   created: '2026-08-22'
   last_updated: '2026-08-22'
+# --- #ARCH-159: 09号文 LSG 主链路贯通收尾（GP0 E0-2） ---
+- issue_id: '#ARCH-159'
+  title: '三层运行时客户端 LSG 统一注入（MOD-INF-045 lsg_gate）——L2/L3 客户端旁路缺口治理'
+  severity: P1高
+  category: security
+  adjudication: |
+    目的声明（D2）：LSG 网关/拦截器/静态扫描/测试四件套早已建好，但 L2/L3 客户端
+    （OllamaChat/DeepSeekChat/scheduler/embedding_router）构造点零 LSG 引用=主链路
+    有旁路（09号文 P0-1 未贯通）。落地：lsg_gate.py 统一注入闸门（构造参数>env>
+    默认开三级开关；HTTP 咽喉点注入输入+输出闸门；BLOCK/DENY 不重试直接上抛；判决
+    落 L6 审计只记元数据；embedding 降级短路后注入保既有契约）。配套验收产物：
+    绕过路径全仓扫描=0（RULE-LSG-001 2919 文件 0 命中+阴性对照证扫描器非空转）；
+    fail-closed 演练 L1/L3/L4/L5 各挂一次全被拒+Owner override 通道实证可用。
+    登记缺口：L0 启动时验证 verify_model/scan_dependencies 能力在无启动链路消费方，
+    建议挂 _LocalModelBootstrap（P1 候选）。
+  impact:
+    - 'src/zephyr/integration/local_model/lsg_gate.py（新建，testing 封顶）'
+    - 'local_model 4 客户端构造器尾部可选参 lsg_enabled（公开签名零破坏）'
+    - 'tests/model/test_local_model_lsg_gate.py（26 用例）+test_fail_closed.py +8 演练项'
+    - 'docs/_working/reports/2026-08-22-lsg-bypass-scan.md + lsg-failclosed-drill.md'
+  fix_phase: '已落地（2026-08-22）：34 新用例全绿+tests/llm_security 1158 passed+local_model 关联 493 passed 零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '09号文 §4.2 P0-1~P0-5; 18号清单 §4.1; 10号文 Q4（三通道同一闸门）'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-160: 15号文 Phase 0 落地（GP0 E0-3：MOD-AU-001/002） ---
+- issue_id: '#ARCH-160'
+  title: '运行时三分类 gate（MOD-AU-001）+Kill Switch 两级编排器（MOD-AU-002）+延迟实测写回'
+  severity: P1高
+  category: security
+  adjudication: |
+    目的声明（D2）：AI 写操作无运行时权限边界=自治无刹车（标注/静态校验/注册表有，
+    运行时判定零代码）；五套 Kill Switch 各自独立无编排。落地：①autonomy_boundary_gate
+    ——GOV-AI-001 mtime 缓存+最长前缀匹配，放行留痕/人审工单/物理拦截三态，注册表
+    不可读/条目缺失 fail-closed；②kill_switch_orchestrator——系统级 TRIPPED 域级一致
+    /复位 approver 强制/编排器不持态故障分散可用；③延迟实测（1000 采样）：gate 热路径
+    P95=313.5µs、KS 内联查询 P95≤0.8µs——全部 P95<1ms 达标（15号文 §2.3 口径成立，
+    实测数据回写随批）；BLOCK 路径首轮 P95=1.74ms 已改持久句柄修正复测达标。
+  impact:
+    - 'src/zephyr/autonomy_core/autonomy_boundary_gate.py + kill_switch_orchestrator.py（新建，testing 封顶，SAFETY H）'
+    - 'tests/autonomy/ 2 文件 34 用例'
+    - 'docs/_working/reports/2026-08-22-autonomy-gate-latency.md（S0.4 实测）'
+  fix_phase: '已落地（2026-08-22）：34 新用例全绿+tests/autonomy 1175 passed 零新增红；三类事故仿真全过'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '15号文 §4.1 S0.1~S0.4/§2.3; 18号清单 §4.2; GOV-AI-001'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-161: 16号文 Phase 0 落地（GP0 E0-4：MOD-SEC-EVENTBUS） ---
+- issue_id: '#ARCH-161'
+  title: '统一安全事件总线（MOD-SEC-EVENTBUS）+TNR 基线演练双达标+保命轨 runbook'
+  severity: P1高
+  category: security
+  adjudication: |
+    目的声明（D2）：四域安全事件无统一出口=无可观测性（仅 LSG 内部内存态事件）。
+    落地：①security_event_bus——pydantic 严格 schema（缺字段/非法枚举拒收）+jsonl
+    落盘+四域 adapter 独立降级；②高危事件飞书告警+不可达本地持久化 alerts_pending
+    不丢+重试出队/死信；③TNR 演练（auto_fix_engine MOD-INF-031 端到端）：合成结构
+    故障（.runtime 临时文件零生产触碰）→修复 COMPLETED→不恶化✅+可撤销✅（字节级
+    回退一致）双达标；不变量抽查行为类永不自动修复（CANCELLED 正确）；④保命轨
+    D-L1~D-L3 runbook 落盘（RTO<5min 演练实测通过）。
+  impact:
+    - 'src/zephyr/security/security_event_bus.py（新建，testing 封顶）'
+    - 'tests/security/test_security_event_bus.py（21 用例）'
+    - 'docs/_working/reports/2026-08-22-tnr-drill.md + 2026-08-22-emergency-runbook.md'
+  fix_phase: '已落地（2026-08-22）：21 新用例全绿+llm_security+fix 1470/safety+agent_rbac 1140/escalation+security 370 零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '16号文 §4.2 P0-1~P0-4; 18号清单 §4.3; TNR（可撤销+不恶化）'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'

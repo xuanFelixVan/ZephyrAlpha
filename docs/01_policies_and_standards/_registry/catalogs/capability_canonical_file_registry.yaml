@@ -7941,3 +7941,56 @@ di_seam_exemptions:
   token: auto-test-phase2-e2e-20260822
   created_by: AI-P2-W6E2E
   capability: phase2_e2e_integration
+# --- 2026-08-22 阶段三波1（18号清单 保障四件套）creation_token ---
+- file: src/zephyr/integration/local_model/lsg_gate.py
+  token: auto-lsg-gate-20260822
+  created_by: AI-P3-W1A
+  capability: local_model_lsg_gate
+- file: tests/model/test_local_model_lsg_gate.py
+  token: auto-test-local-model-lsg-gate-20260822
+  created_by: AI-P3-W1A
+  capability: local_model_lsg_gate
+- file: docs/_working/reports/2026-08-22-lsg-bypass-scan.md
+  token: auto-lsg-bypass-scan-20260822
+  created_by: AI-P3-W1A
+  capability: local_model_lsg_gate
+- file: docs/_working/reports/2026-08-22-lsg-failclosed-drill.md
+  token: auto-lsg-failclosed-drill-20260822
+  created_by: AI-P3-W1A
+  capability: local_model_lsg_gate
+- file: src/zephyr/autonomy_core/autonomy_boundary_gate.py
+  token: auto-autonomy-boundary-gate-20260822
+  created_by: AI-P3-W1B
+  capability: autonomy_boundary_gate
+- file: src/zephyr/autonomy_core/kill_switch_orchestrator.py
+  token: auto-kill-switch-orchestrator-20260822
+  created_by: AI-P3-W1B
+  capability: kill_switch_orchestrator
+- file: tests/autonomy/test_autonomy_boundary_gate.py
+  token: auto-test-autonomy-boundary-gate-20260822
+  created_by: AI-P3-W1B
+  capability: autonomy_boundary_gate
+- file: tests/autonomy/test_kill_switch_orchestrator.py
+  token: auto-test-kill-switch-orchestrator-20260822
+  created_by: AI-P3-W1B
+  capability: kill_switch_orchestrator
+- file: docs/_working/reports/2026-08-22-autonomy-gate-latency.md
+  token: auto-autonomy-gate-latency-20260822
+  created_by: AI-P3-W1B
+  capability: autonomy_boundary_gate
+- file: src/zephyr/security/security_event_bus.py
+  token: auto-security-event-bus-20260822
+  created_by: AI-P3-W1C
+  capability: security_event_bus
+- file: tests/security/test_security_event_bus.py
+  token: auto-test-security-event-bus-20260822
+  created_by: AI-P3-W1C
+  capability: security_event_bus
+- file: docs/_working/reports/2026-08-22-tnr-drill.md
+  token: auto-tnr-drill-20260822
+  created_by: AI-P3-W1C
+  capability: security_event_bus
+- file: docs/_working/reports/2026-08-22-emergency-runbook.md
+  token: auto-emergency-runbook-20260822
+  created_by: AI-P3-W1C
+  capability: security_event_bus

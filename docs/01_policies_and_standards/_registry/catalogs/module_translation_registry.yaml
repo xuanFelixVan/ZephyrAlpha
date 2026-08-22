@@ -52880,3 +52880,35 @@ algo_submodules:
   desc_zh: 日志→参数校准反馈闭环骨架（44号 M4-④）：读 prediction_log 算命中率/窗口趋势，样本<30 不触发，命中率<0.55 且样本够→出人审校准评审工单（落 .runtime/calibration_review/）；只出建议永不自治改参
   desc_en: ''
   plain_zh: 预测校准监控器——盯着预测日志表算每个模块的预测命中率，哪个模块持续不准（样本够 30 条且命中率跌破阈值）就开一张参数校准评审工单等人来审；它只提建议，永远不会自己动手改参数
+- module_path: src/zephyr/integration/local_model/lsg_gate.py
+  domain_id: D_INTEGRATION
+  module_id: MOD-INF-045
+  name_zh: 本地模型 LSG 统一注入闸门
+  name_en: lsg_gate
+  desc_zh: 三层运行时客户端统一注入 LSG 安全栈（09号文 P0-1）：OllamaChat/DeepSeekChat/scheduler/embedding_router 构造点统一过闸，判决 BLOCK/DENY 即拒调用并落 L6 审计；开关默认开
+  desc_en: ''
+  plain_zh: 本地模型 LSG 统一注入闸门——所有本地/远程模型客户端调用大模型前必须先过安全检查这道闸，恶意输入直接拦截不发起调用；以前各客户端自己裸奔，现在三通道同一闸门没有旁路
+- module_path: src/zephyr/autonomy_core/autonomy_boundary_gate.py
+  domain_id: D_AUTONOMY_CORE
+  module_id: MOD-AU-001
+  name_zh: 运行时自治边界三分类门
+  name_en: autonomy_boundary_gate
+  desc_zh: 运行时三分类写操作判定（15号文 S0.2）：写操作前查 GOV-AI-001 注册表——ai_modifiable 放行留痕/human_gated 拦截出人审工单/immutable_core 物理拦截告警；注册表不可读 fail-closed
+  desc_en: ''
+  plain_zh: 运行时自治边界三分类门——AI 每次要写文件/改东西之前先查权限表：能自己改的放行留痕，要人审的拦下来出工单，硬边界的一律物理拦截报警；权限表读不出来时一律按拒绝处理
+- module_path: src/zephyr/autonomy_core/kill_switch_orchestrator.py
+  domain_id: D_AUTONOMY_CORE
+  module_id: MOD-AU-002
+  name_zh: Kill Switch 两级编排器
+  name_en: kill_switch_orchestrator
+  desc_zh: Kill Switch 两级编排（15号文 S0.3）：系统级+域级五套开关统一编排 trip/reset/route_incident；系统级跳闸域级一致生效；复位须 Owner 批准标记；编排器不持态故障时各开关独立可用
+  desc_en: ''
+  plain_zh: Kill Switch 两级编排器——项目里有五套各自独立的急停开关，这个编排器把它们统一指挥：系统级急停时该联动的域级一起停，复位必须有人批准，编排器自己坏了各开关照样能单独用
+- module_path: src/zephyr/security/security_event_bus.py
+  domain_id: D_SECURITY
+  module_id: MOD-SEC-EVENTBUS
+  name_zh: 统一安全事件总线
+  name_en: security_event_bus
+  desc_zh: 统一安全事件流（16号文 P0-1/P0-3）：四域事件统一 schema 落盘 jsonl（LSG/自治边界/治理门禁/运行时四 adapter 独立降级）；高危事件飞书告警+不可达本地持久化不丢
+  desc_en: ''
+  plain_zh: 统一安全事件总线——安全栈、自治边界、治理门禁、运行时四个来源的安全事件统一格式记到一个地方，谁出问题都能查；高危事件发飞书告警，发不出去就存本地队列绝不丢
