@@ -94,10 +94,46 @@ class TestImportSmoke:
 
 
 # ============================================================================
-# Test 2: CLI smoke —— --help 可运行（只读，不写 DB）
+# Test 1b: Panorama 域派生回归 —— tracker #258 治本（2026-08-22）
 # ============================================================================
 
 
+@pytest.mark.e2e
+class TestPanoramaDomainDerivation:
+    """回归 _load_panorama_from_db 的 conn.execute→cursor 修复。
+
+    根因（#258）：真源 get_depgraph_pg_connection 返回裸 psycopg2 连接（无 .execute
+    sqlite shim——那是 _shared.constants wrapper 的增强），旧四处 conn.execute 必然
+    AttributeError，被 load_panorama bare except 静默吞掉 → domain_derivation 恒空 →
+    新扫节点 domain_id 全 NULL（2669 个实证）。本测试锁住：load_panorama 必须返回
+    非空 derivation，且常见前缀可派生出域。
+    """
+
+    def test_load_panorama_returns_derivation(self, gpd):
+        """load_panorama 必须返回非空 domain_derivation（不再静默 None）。"""
+        try:
+            data, derivation, _ = gpd.load_panorama()
+        except Exception as e:
+            pytest.skip(f"PostgreSQL depgraph 不可达（CI 环境？）: {e}")
+        assert data is not None, "load_panorama 静默返回 None——conn.execute bug 疑似回退"
+        assert derivation, "domain_derivation 为空——域派生链断裂（#258 根因）"
+
+    def test_common_prefixes_derive_domain(self, gpd):
+        """常见前缀经 derive_domain_id 应派生出非空 domain_id。"""
+        try:
+            _, derivation, _ = gpd.load_panorama()
+        except Exception as e:
+            pytest.skip(f"PostgreSQL depgraph 不可达（CI 环境？）: {e}")
+        if not derivation:
+            pytest.skip("domain_derivation 为空（DB 无映射数据）")
+        # tests/ 前缀必命中 non_src 映射（domain_mapping 已登记）
+        did = gpd.derive_domain_id("tests/trading/test_x.py", derivation, None)
+        assert did, "tests/trading/ 前缀派生 NULL——non_src 映射未生效"
+
+
+# ============================================================================
+# Test 2: CLI smoke —— --help 可运行（只读，不写 DB）
+# ============================================================================
 class TestCLISmoke:
     """验证 generate_project_depgraph.py CLI 入口可运行。"""
 

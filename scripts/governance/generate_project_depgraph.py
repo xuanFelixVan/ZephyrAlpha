@@ -394,6 +394,11 @@ DESIGN_STATE_FIELDS = (
 
 
 # ── #ARCH-70 双态转换（design→production 同身份 UPDATE）──────────────
+# tracker #258 治本（2026-08-22）：panorama 加载四查询提 _SQL_ 常量（NO-BARE-SQL 门禁）
+_SQL_PANORAMA_DOMAINS = "SELECT * FROM domains"
+_SQL_PANORAMA_PATH_MAPPINGS = "SELECT * FROM arch_path_mappings"
+_SQL_PANORAMA_DIRECTORY_TREE = "SELECT * FROM arch_directory_tree ORDER BY path"
+_SQL_PANORAMA_SCHEMA_VERSION = "SELECT version FROM _schema_version ORDER BY version DESC LIMIT 1"
 # 病根（2026-08-13 实证，56 个存量病态节点）：全量重建 DELETE 保护 design 行
 # （WHERE design_maturity != 'design'），内存 merge 后的扫描节点 INSERT 撞
 # idx_nodes_path 唯一索引 → SAVEPOINT 静默跳过 → 文件落地后 design 节点永远卡死
@@ -604,10 +609,17 @@ def _load_panorama_from_db(db_path):
     import json as _json
 
     conn = _get_pg_conn_with_dict_cursor(autocommit=False)  # Bug 2 修复：DictCursor
+    # tracker #258 治本（2026-08-22）：真源 get_depgraph_pg_connection 返回裸 psycopg2
+    # 连接（无 .execute sqlite 兼容 shim——那是 _shared.constants wrapper 的增强），
+    # 旧 conn.execute 四连必然 AttributeError，被 load_panorama bare except 静默吞掉 →
+    # domain_derivation 恒空 → 新扫节点 domain_id 全 NULL（2669 个实证）。
+    # 统一 cursor 模式（与 _load_domain_mappings_from_db 同形）。
+    cur = conn.cursor()
     data = {"domains": {}, "tree": {}, "meta": {}}
 
     # Load domains — map to the same structure as the YAML panorama domains section
-    for row in conn.execute("SELECT * FROM domains"):
+    cur.execute(_SQL_PANORAMA_DOMAINS)
+    for row in cur.fetchall():
         domain = dict(row)
         did = domain.pop("domain_id")
         # Map DB column names to YAML panorama field names
@@ -627,7 +639,8 @@ def _load_panorama_from_db(db_path):
         data["domains"][did] = domain_entry
 
     # Enrich domains with covers/aliases from arch_path_mappings
-    for row in conn.execute("SELECT * FROM arch_path_mappings"):
+    cur.execute(_SQL_PANORAMA_PATH_MAPPINGS)
+    for row in cur.fetchall():
         mapping = dict(row)
         did = mapping.get("domain_id", "")
         if did in data["domains"]:
@@ -646,7 +659,8 @@ def _load_panorama_from_db(db_path):
 
     # Build tree structure from arch_directory_tree
     tree = {}
-    for row in conn.execute("SELECT * FROM arch_directory_tree ORDER BY path"):
+    cur.execute(_SQL_PANORAMA_DIRECTORY_TREE)
+    for row in cur.fetchall():
         entry = dict(row)
         path = entry.get("path", "")
         if not path:
@@ -666,7 +680,7 @@ def _load_panorama_from_db(db_path):
 
     # Load metadata
     try:
-        cur = conn.execute("SELECT version FROM _schema_version ORDER BY version DESC LIMIT 1")
+        cur.execute(_SQL_PANORAMA_SCHEMA_VERSION)
         r = cur.fetchone()
         if r:
             data["meta"]["schema_version"] = r["version"]

@@ -18721,3 +18721,36 @@ entries:
   - '#ARCH-154'
   created: '2026-08-22'
   last_updated: '2026-08-22'
+# --- #ARCH-170: depgraph 域派生链断裂——conn.execute 静默失败 + apply --batch 静默回滚（tracker #258 治本） ---
+- issue_id: '#ARCH-170'
+  title: 'depgraph NULL domain_id 2669 节点根因双修复——generate load_panorama cursor 化 + apply_depgraph batch 混合 op 静默回滚登记'
+  severity: P1高
+  category: governance
+  adjudication: |
+    目的声明（D2）：tracker #258 附带实证 nodes.domain_id IS NULL 2669 个（含 tests/src/scripts/docs/config/architecture_model 各簇），E0-8 补偿核验暴露域派生链断裂。
+    根因一（治本）：generate_project_depgraph._load_panorama_from_db 旧四处
+    conn.execute("SELECT * FROM ...")——真源 get_depgraph_pg_connection 返回裸
+    psycopg2 连接（无 .execute sqlite 兼容 shim，那是 _shared.constants wrapper 的
+    增强），必然 AttributeError，被 load_panorama 的 bare except 静默吞掉 →
+    domain_derivation 恒空 → 新扫节点 derive_domain_id 全返空串 → INSERT 时
+    domain_id or None 全 NULL。修复=统一 cursor 模式（与 _load_domain_mappings_from_db
+    同形），探针实证 derivation 0→932 条、2669 NULL 节点逐路径 100% 可派生零残余。
+    根因二（登记）：apply_depgraph --batch 在混合 domain_ops（migrate_nodes 直接 SQL
+    写 conn）场景下整体静默回滚——cmd_batch 尾部 _atomic_write(dep, conn) 用内存中
+    未含本次 domain 变更的 dep 快照经 SQL_UPDATE_NODE_SET_DYNAMIC 全量回写 nodes，
+    把刚 UPDATE 的 domain_id 覆盖回 NULL（两次实证 exit 0 报 OK 但超管直查仍 NULL）。
+    本批绕行=逐域 UPDATE+commit 直连 writer（._m258_apply.py，2668 节点落库），
+    batch bug 修复另列（混合 op 时 _atomic_write 应跳过 domain 已由 SQL 直写的字段，
+    或 migrate_nodes 类 op 应只改 dep 内存不交 SQL）。
+  impact:
+    - 'scripts/governance/generate_project_depgraph.py（_load_panorama_from_db 四处 conn.execute→cursor，#258 注记）'
+    - 'tests/governance/test_generate_project_depgraph_smoke.py（TestPanoramaDomainDerivation 2 用例锁回归）'
+    - 'scripts/governance/apply_depgraph.py（batch 混合 op 静默回滚 bug 登记，修复另列）'
+    - 'depgraph PG：2668 节点 domain_id 回填（54 域，tests 1969/src 326/scripts 218/docs 90/config 41/architecture_model 25 各簇归位）'
+  fix_phase: '已落地（2026-08-22）：load_panorama cursor 化后 derivation 932 条；2668 节点 domain_id 回填零 NULL（D_GOVERNANCE 738/D_GOV_SCRIPTS 539/D_AUTONOMY_CORE 466/D_INFRA_RUNTIME 424/D_GOV_AUDIT 389/D_SHARED 371 等）；TestPanoramaDomainDerivation 2 用例+既有 9 smoke 全绿。残余：apply_depgraph batch 混合 op 静默回滚修复另列（当前绕行=逐域 UPDATE 或纯 domain_ops 批次）'
+  status: resolved
+  related_rules:
+  - '#ARCH-169'
+  - '#ARCH-DEPGRAPH_ACCESS_CONTROL'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
