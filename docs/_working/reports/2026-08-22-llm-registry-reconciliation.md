@@ -93,3 +93,10 @@ Q8 四漂移项：1 项已收敛（sandbox），2 项裁定「实现真源为准
 - C 源 `LLMResponse.cost_usd` 字段名与数值口径（元人民币档）不符——字段命名历史偏差，登记（不改代码，GP1 对齐）。
 - 网关 MVP 成本口径：内置价表（族映射：deepseek-chat/v4-flash 同档 1/2 峰、1.5/4.5 谷；reasoner 4/12；v4-pro 3/6；qwen 0 待校准；ollama 本地 0），ts 按 Asia/Shanghai 判定谷峰（18:00-次日 9:00 谷）。
 - 日终对账接口 `reconcile_daily_calls(date)`：按 llm_call_log 落库行汇总（调用次数×单价=登记成本），与重算价对照出 delta，供防超额口径（44号 §9.14 联动）。
+
+## 校准附记（2026-08-22 #254 闭环）
+
+- 旧口径问题：①网关内置价表 `_PRICING_PER_MILLION` 沿用 2026-08-17 前 DeepSeek 旧价（deepseek-chat/v4-flash 峰 1.0/2.0、reasoner 4.0/12.0、v4-pro 3.0/6.0）；②谷时方向错误——旧口径谷（18:00-次日 9:00，1.5/4.5）>峰（1.0/2.0），与官方「谷时折扣」方向相反（本报告 §2.2-F3 登记项）；③qwen 0.0 待校准（§2.2-F4 登记项）；④model_pricing.yaml deepseek 系为 2026-05-08 静态价。
+- 官方新价表（元/百万 token，缓存未命中口径；缓存命中输入高峰 0.10/空闲 0.05，本网关不区分缓存命中按未命中保守计价）：DeepSeek 官网 2026-08-17 生效峰谷分时——高峰=Asia/Shanghai [9:00,12:00)∪[14:00,18:00)，其余为空闲时段，空闲价=高峰半价。deepseek-chat / deepseek-v4-flash（同一模型别称）：高峰 3.0/9.0，空闲 1.5/4.5；deepseek-v4-pro：高峰 9.0/27.0，空闲 4.5/13.5；deepseek-reasoner：官方已弃用该名称，底层归 deepseek-v4-flash，按 v4-flash 同价。Qwen：阿里云百炼 qwen-flash（华北2，输入≤128k 档，无峰谷）0.15/1.5（缓存命中输入 0.03，不区分），真跑实证 llm_call_log 模型名=qwen-flash。Ollama：本地 0.0 不变。
+- 改动文件清单：`src/zephyr/integration/llm_runtime_gateway.py`（_PRICING_PER_MILLION 按官方新价更新含 qwen-flash 条目；谷时判定改官方口径——高峰两段窗口，无 tz 等不确定情形保守按峰时计价；模块 docstring 成本口径段重写并注明来源与校准日期）；`config/model_pricing.yaml`（deepseek-chat 改 0.003/0.009、deepseek-reasoner 改 0.003/0.009 并注「名称已弃用=v4-flash 同价」、新增 qwen-flash 0.00015/0.0015 provider=aliyun_bailian，updated_at 均 2026_08_22）；`tests/model/test_llm_runtime_gateway.py`（成本口径用例按新峰谷方向/数值/9:00/12:00/14:00/18:00 边界与午间谷时改写，新增谷=峰半价、qwen 平价、无 tz 保守峰时锁定用例）。
+- 验证：`python -m pytest tests/model/test_llm_runtime_gateway.py -n 0 -q` -> 42 passed。§2.2-F3/F4 两项待校准登记就此闭环。

@@ -17,7 +17,9 @@ ttl: task_bound
 | E0-5 04/07/10 Phase 0 | ✅ | 04 T0 七件（缓存/RAM预算/降级链/SLA 埋点，#ARCH-163）；07 CE 蓝图 v1.2.0 收口 956 测试绿（#ARCH-164）；10 gateway MVP+四源对账（#ARCH-162） |
 | E0-6 11/12/13 Phase 0 | ✅ | 11 证据关联三件套+盘中守卫（#ARCH-165）；12 L1 反思+三角色（#ARCH-166）；13 模块工厂 SOP+首实例 FCT-SENT-028（#ARCH-167） |
 | E0-7 14 四类薄入口 | ✅ | 治理/业务/算法/迭代四入口<200 行纯组装，四样例跑通落盘 human_gated（#ARCH-168） |
-| E0-8 03 域边界 Owner 裁定 | ⏸ 登记跳过 | 人工裁定项，AI 不代拍板；M0 宣布留 Owner 终审 |
+| E0-8 03 域边界 Owner 裁定 | ✅（2026-08-22 Owner 授权架构师裁定） | 选项C 混合方案落地：8 核心域（D_AUTONOMY_CORE/D_INTELLIGENCE/D_ML_TRAIN/D_ML_SERVE/D_AUTONOMY_PERM/D_KNOWLEDGE/D_SECURITY_LLM/D_INTEGRATION_GATEWAY）∪ ai_layer 横切标签 147 节点；25 节点迁 D_SECURITY_LLM+17 节点迁 D_INTEGRATION_GATEWAY+D_BEHAVIORAL_AUDIT 空域退役；PS-VOC-036 词表+apply_depgraph --tag-nodes 写路径；03号文 v0.3.0 active；#ARCH-169 |
+
+> **M0 宣布（2026-08-22 Owner 终审通过）**：E0-1~E0-8 全绿，GP0 手动地基里程碑达成。GP1+ 按 18号清单既定排期，不抢建。
 
 ## 二、M3-⑨ 真跑实证（44号首个 LLM 消费场景，E7 裁定授权）
 
@@ -32,13 +34,15 @@ ttl: task_bound
 
 ## 四、遗留项（留 Owner 裁定/后续批）
 
-1. **DeepSeek 账户欠费 402**——需充值恢复主通道（当前 Qwen 承载）。
-2. model_pricing 谷时价方向存疑（谷时 1.5/4.5>注册表峰时 1.0/2.0）——Owner 校准后改真源。
-3. E0-8（03号文域边界裁定）+M0 宣布——Owner 人审。
-4. 数据域：us_index symbol 空值（#247）/kline_futures 漂移（#246）/kline_daily.pct_change 全 0/money_flow 单位注释不符/zephyr_writer CREATE DATABASE 权限。
-5. 04 附带：boot watchdog 09a_governance_watchdog_start NoneType 存量缺陷（20 次连跑 SLA 复测待其修复）；tests/automation AutoEvolution 3 项存量失败。
-6. L0 启动验证 verify_model 挂接 _LocalModelBootstrap（P1 候选）；task_gate passports ID 口径（冒号 vs 下划线）Phase 2 接 dispatch 链前统一；CE depgraph 边缺口 7 项登记在册。
-7. 各新模块 testing→production 启用——Owner 审批（B-007）。
+> 2026-08-22 Owner"剩下的全部执行修复"授权后刷新：2/3/4(部分)/7 已闭环。
+
+1. **DeepSeek 账户欠费 402**——需充值恢复主通道（当前 Qwen 承载）。⏳ Owner 行动项（tracker #253）
+2. ~~model_pricing 谷时价方向存疑~~——✅ 已闭环（tracker #254：DeepSeek 官网 2026-08-17 峰谷分时真源校准，三处同改 42 用例绿）。
+3. ~~E0-8（03号文域边界裁定）+M0 宣布~~——✅ 已闭环（#ARCH-169 混合方案；M0 宣布见 §一末）。
+4. 数据域：~~us_index symbol 空值（#247）~~ ✅/~~kline_futures 漂移（#246）~~ ✅；仍开三项转 tracker #256：kline_daily.pct_change 全 0/money_flow 单位注释不符/zephyr_writer CREATE DATABASE 权限。
+5. 04 附带：boot watchdog 09a_governance_watchdog_start NoneType 存量缺陷（20 次连跑 SLA 复测待其修复）；tests/automation AutoEvolution 3 项存量失败。⏳ tracker #255
+6. L0 启动验证 verify_model 挂接 _LocalModelBootstrap（P1 候选）；task_gate passports ID 口径（冒号 vs 下划线）Phase 2 接 dispatch 链前统一；CE depgraph 边缺口 7 项登记在册。⏳ tracker #255
+7. ~~各新模块 testing→production 启用~~——✅ 已闭环（tracker #257：6 个 testing 节点全转 stable，commit_queue flag 仍默认关不变）。
 
 ## 五、提交总账（阶段三）
 
