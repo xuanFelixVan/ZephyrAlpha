@@ -1,17 +1,17 @@
-# 自动生成于 2026-08-21T21:58:08Z
+# 自动生成于 2026-08-22T01:08:33Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-21T21:58:08Z'
+generated_at: '2026-08-22T01:08:33Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 407
-with_manifest: 405
+total_scripts: 408
+with_manifest: 406
 missing_manifest: 2
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 39
+  governance: 40
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -247,6 +247,19 @@ scripts:
   description: check_commit_message.py — GitHub Actions PR commit message guard (P4-3).
   tags:
   - Quick
+- name: check_registry_of_logs.py
+  owner: governance
+  dimensions:
+  - D3
+  - D11
+  priority: P2
+  timeout_seconds: 120
+  args: []
+  warn_only: true
+  description: 日志总账索引对账（registry_of_logs.yaml vs 全仓写入点扫描，warn-only）
+  tags:
+  - Quick
+  - Security
 - name: check_ssot_gate.py
   owner: governance
   dimensions:
