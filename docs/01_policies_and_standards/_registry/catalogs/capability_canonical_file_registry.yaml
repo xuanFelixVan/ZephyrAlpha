@@ -7629,6 +7629,11 @@ creation_tokens:
   token: auto-greatwall-progress-reconciliation-20260823
   created_by: AI-M258-001
   capability: greatwall_progress_reconciliation
+# --- 2026-08-23 src 误删取证报告 creation_token（P0 安全事件） ---
+- file: docs/_working/reports/2026-08-23-src-accidental-deletion-forensics.md
+  token: auto-src-accidental-deletion-forensics-20260823
+  created_by: AI-M258-001
+  capability: src_accidental_deletion_forensics
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

@@ -7794,3 +7794,53 @@ entries:
   last_review_outcome: "首次登记（2026-08-22 STR-02）——92号清单 §5.6 裁定 deferred：单人单信任域无 RBAC 需求，触发条件=多账户/多用户上线"
   acquisition_method: self_build
   acquisition_source: ''
+# ----------------------------------------------------------
+# CAND-GOVSEC-001: 治理进程删除操作硬护栏+全进程仪表化（P0 安全事件防复发，2026-08-23 src 误删取证）
+# 来源: docs/_working/reports/2026-08-23-src-accidental-deletion-forensics.md（src/zephyr 2936 文件被物理删除，已从 HEAD 恢复零损失）
+# ----------------------------------------------------------
+- id: CAND-GOVSEC-001
+  name: "治理进程删除操作硬护栏 + 全进程 in-process 仪表化（src 误删防复发）"
+  aliases: ["删除硬护栏", "rmtree 硬断言", "junction 穿透防护", "治理进程仪表化", "ops_guard 推广"]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: "governance/worktree 生命周期与删除操作安全层"
+  description: >-
+    2026-08-23 凌晨 src/zephyr 2936 文件被物理删除（git HEAD 完整，已恢复零损失）。
+    取证结论：肇事指令走未仪表化通道（主仓 session 经 python 一次性脚本渐进式 FS 删除），
+    全部 reconciler/commit_queue 护栏零触发（ops_guard block=0）。同型代码级隐患：
+    ①worktree_manager._wt_path 对 session_id 零消毒 + _force_rmtree（session_id='../src' 即 rmtree(src)）；
+    ②commit_queue_landing.rmtree 无"必须落在 .runtime 内"硬断言；③worktree sweep 无 junction/reparse-point
+    检测（Windows shutil.rmtree 穿透 junction 删目标）；④ops_guard in-process 护栏仅装 reconcile_worker，
+    git_commit/session_worktree CLI/drain/pytest 等治理入口未装。提案四件套：
+    ①删除前三件套硬断言（resolve 后 is_relative_to 预期前缀 + 拒绝 reparse point + session_id 白名单字符集）；
+    ②ops_guard.install_inprocess_enforcement() 推广到全部治理入口进程；③sweep 删除遥测前置（删除发起前落
+    worktree_ops_log 含调用栈）；④worker 并发闸门改文件锁互斥。附带修 GATE-GIT-GUARD-BYPASS same-sha reset 误报。
+  capability: ""
+  problem_it_solves: "治理/工具的批量删除操作（rmtree/reset/clean）当前存在'能删主仓 src 而无护栏拦截'的结构缺口——一旦 session_id 污染/路径解析错/junction 穿透/进程未装护栏，即物理删除源码树且无审计。本次已实证一起（零损失纯运气=HEAD 完整）。"
+  trigger_signals:
+  - "本起 src 误删已实证（2026-08-23）——非假想风险"
+  - "任何治理入口新增批量删除/worktree 清理能力前必须先把本项护栏落地"
+  keywords: ["rmtree", "git clean", "reset --hard", "worktree", "session_id 消毒", "junction", "reparse point", "ops_guard", "删除护栏", "误删"]
+  upstream_deps:
+  - {contract: "ops_guard.install_inprocess_enforcement（现有，仅 reconcile_worker 装）", from_domain: D_GOVERNANCE, dep_type: S, availability: available, note: "推广面=git_commit/session_worktree/drain/pytest conftest"}
+  - {contract: "worktree_ops_log.jsonl 遥测（现有）", from_domain: D_GOVERNANCE, dep_type: S, availability: available, note: "需前置到删除发起前"}
+  downstream_consumers: []
+  contracts_to_produce:
+  - {id: "rmtree 三件套硬断言助手", name: "safe_rmtree(path, allowed_prefix)：resolve+is_relative_to+reparse 检测+字符集白名单"}
+  - {id: "治理进程护栏装配清单", name: "需装 in-process 护栏的入口进程枚举+conftest 注入"}
+  contracts_to_consume: []
+  estimated_complexity: M
+  estimated_effort: "2-3 人天（4 处删除点硬断言 + ops_guard 推广 4-5 入口 + 遥测前置 + 并发文件锁 + 误报修正 + 单测）"
+  tech_notes: "优先落地 ①（删除硬断言）——它是唯一能在肇事指令发出瞬间物理阻断的层；②③④ 是观测/覆盖面补强。junction 检测 Windows 用 GetFileAttributes FILE_ATTRIBUTE_REPARSE_POINT（ctypes 或 pywin32）。GATE-GIT-GUARD-BYPASS 误报修正对比 reflog 前后 sha 即可。"
+  risks: ["硬断言加严可能误伤合法 worktree 清理（需配套白名单测试）", "ops_guard 推广到 pytest 可能拉长测试启动", "junction 检测在跨盘符/符号链接场景需边界测试"]
+  alternatives: "维持现状（纯观测护栏）：已实证拦不住未仪表化通道的删除。代价：下次误删未必有 HEAD 可恢复（若删的是未提交内容则不可逆）"
+  tags: ["candidate", "P0", "security", "governance", "worktree", "rmtree", "误删", "取证"]
+  search_terms: ["_force_rmtree", "_wt_path", "ensure_worktree", "session_worktree_sweep", "shutil.rmtree", "ops_guard", "FILE_ATTRIBUTE_REPARSE_POINT"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-09-23'
+  review_frequency: monthly
+  last_review_outcome: "首次登记（2026-08-23 P0 安全事件）——src 误删取证落地，建议优先评审（非 yearly——安全缺口）"
+  acquisition_method: self_build
+  acquisition_source: ''
