@@ -34,8 +34,8 @@ import sys
 
 def main() -> None:
     try:
-        from zephyr.infrastructure.config.runtime_config import RuntimeConfig
-        from zephyr.infrastructure.runtime.auto_runtime_core import AutoRuntimeCore
+        from zephyr.trading.runtime_config import RuntimeConfig
+        from zephyr.trading.auto_runtime_core import AutoRuntimeCore
     except ImportError:
         _fallback()
         return

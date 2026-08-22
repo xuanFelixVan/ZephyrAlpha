@@ -47,8 +47,8 @@ print("=" * 60)
 
 # === 验证2: AutoRuntimeCore启动链路 ===
 print("\n[验证2] AutoRuntimeCore启动链路A2A集成")
-from zephyr.infrastructure.config.runtime_config import RuntimeConfig
-from zephyr.infrastructure.runtime.auto_runtime_core import AutoRuntimeCore
+from zephyr.trading.runtime_config import RuntimeConfig
+from zephyr.trading.auto_runtime_core import AutoRuntimeCore
 
 c = AutoRuntimeCore(RuntimeConfig())
 c._registry.load_from_dir()

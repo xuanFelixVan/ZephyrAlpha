@@ -82,7 +82,10 @@ SECTION_NUM_PATTERN = re.compile(
     re.MULTILINE,
 )
 
-NEXT_SECTION_OR_RULE = re.compile(r"^##\s|^---\s*$", re.MULTILINE)
+# tracker #249 连带治本：边界补 `^### §`——索引章节合法子节为同前缀编号（如 ### 10.1），
+# 而 ### §0.6 五图对齐视图等 autogen 尾随节是独立章节；旧模式只认 ^##/^---，
+# 索引位于倒数第二节时 end=len(content) 会吞掉尾随节（2026-08-22 实证 12 份蓝图全景节被截断）。
+NEXT_SECTION_OR_RULE = re.compile(r"^##\s|^---\s*$|^###\s+§", re.MULTILINE)
 
 FRONTMATTER_MODULE_ID_RE = re.compile(
     r"^module_id:\s*[\"']?([A-Za-z0-9_\-]+)[\"']?\s*$",
@@ -419,12 +422,19 @@ def _check_file_exists(rel_path: str) -> bool:
 
 
 def _is_skeleton_file(rel_path: str) -> bool:
-    """_is_skeleton_file implementation."""
+    """_is_skeleton_file implementation.
+
+    tracker #249 治本：stub 文件（"implementation pending" / "# stub constant" 标记）
+    非注释行可超过 10 行阈值（多 stub 类/函数堆叠），旧启发式误判为 ✅已实现，
+    与蓝图模块表 "stub (pending ARCH-036)" 自相矛盾。显式 stub 标记优先判骨架。
+    """
     abs_path = REPO_ROOT / rel_path
     if not abs_path.exists():
         return False
     try:
         content = abs_path.read_text(encoding="utf-8")
+        if "implementation pending" in content or "# stub constant" in content:
+            return True
         non_blank = [l for l in content.split("\n") if l.strip() and not l.strip().startswith("#")]
         return len(non_blank) < 10
     except Exception:
