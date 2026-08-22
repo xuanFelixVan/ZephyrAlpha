@@ -116,3 +116,59 @@ class TestStopGateResult:
         result = StopGateResult(can_stop=False, reasons=["reason1", "reason2"])
         assert result.can_stop is False
         assert len(result.reasons) == 2
+
+
+class TestSessionBudget:
+    """Session 预算参数（蓝图 §16.3 步骤 1）：超限阻断继续工作、放行退出。"""
+
+    def test_default_no_budget_zero_behavior_change(self):
+        gate = StopGate()
+        assert gate.budget_exceeded() is False
+        assert gate.can_continue() is True
+        assert gate.check().can_stop is True
+        assert gate.budget_status()["exceeded"] is False
+
+    def test_action_budget_not_exceeded(self):
+        gate = StopGate(session_max_actions=3)
+        gate.record_action()
+        gate.record_action()
+        assert gate.budget_exceeded() is False
+        assert gate.can_continue() is True
+
+    def test_action_budget_exceeded_blocks_continue(self):
+        gate = StopGate(session_max_actions=2)
+        gate.record_action(2)
+        assert gate.budget_exceeded() is True
+        assert gate.can_continue() is False
+
+    def test_action_budget_exceeded_forces_stop_despite_quality_failures(self):
+        gate = StopGate(session_max_actions=1)
+        gate.record_action()
+        result = gate.check(audit_has_new_entries=False, git_clean=False)
+        assert result.can_stop is True
+        assert any("budget" in r.lower() for r in result.reasons)
+        # 质量原因仍留痕
+        assert any("AiAuditLogger" in r for r in result.reasons)
+
+    def test_minutes_budget_exceeded(self):
+        gate = StopGate(session_max_minutes=0.0)  # 0 分钟预算：initialize 后立即超限
+        gate.initialize()
+        assert gate.budget_exceeded() is True
+        assert gate.can_continue() is False
+
+    def test_minutes_budget_not_exceeded_without_initialize(self):
+        gate = StopGate(session_max_minutes=10.0)
+        assert gate.budget_exceeded() is False
+
+    def test_minutes_budget_invalid_start_tolerated(self):
+        gate = StopGate(session_max_minutes=10.0)
+        gate.session_start = "not-a-timestamp"
+        assert gate.budget_exceeded() is False
+
+    def test_initialize_resets_action_count(self):
+        gate = StopGate(session_max_actions=2)
+        gate.record_action(2)
+        assert gate.budget_exceeded() is True
+        gate.initialize()
+        assert gate.budget_exceeded() is False
+        assert gate.budget_status()["action_count"] == 0

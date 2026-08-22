@@ -15,7 +15,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.trading.runtime_config import DATA_DIR, RuntimeConfig, ensure_runtime_dirs
+from zephyr.trading.runtime_config import (
+    DATA_DIR,
+    BrainResourceBudget,
+    RuntimeConfig,
+    check_brain_memory_budget,
+    ensure_runtime_dirs,
+)
 
 
 class TestRuntimeConfigDefaults:
@@ -128,3 +134,49 @@ class TestRuntimeConfigSerialization:
         restored = RuntimeConfig.model_validate_json(json_str)
         assert restored.poll_interval == 7.5
         assert restored.dashboard_enabled is False
+
+
+class TestBrainResourceBudget:
+    """大脑 RAM 预算（GAP-006 / D-INF035-08）+ 冷启动/恢复 SLA 参数（GAP-010 / D-INF035-09）。"""
+
+    def test_defaults_match_blueprint_decisions(self):
+        budget = BrainResourceBudget()
+        assert budget.max_brain_memory_mb == 2048  # D-INF035-08：2GB
+        assert budget.boot_timeout_ms == 10_000  # D-INF035-09：P99<10s
+        assert budget.recovery_timeout_ms == 300_000  # RTO<5min
+
+    def test_custom_budget(self):
+        budget = BrainResourceBudget(max_brain_memory_mb=512)
+        assert budget.max_brain_memory_mb == 512
+
+    def test_within_budget_ok(self):
+        result = check_brain_memory_budget(rss_reader=lambda: 1024.0)
+        assert result.within_budget is True
+        assert result.action == "ok"
+        assert result.current_mb == 1024.0
+        assert result.budget_mb == 2048
+
+    def test_over_budget_runtime_triggers_degrade(self):
+        """超限注入：mock RSS 超 2GB → 运行中触发降级。"""
+        result = check_brain_memory_budget(rss_reader=lambda: 4096.0)
+        assert result.within_budget is False
+        assert result.action == "degrade"
+
+    def test_over_budget_boot_phase_refuses_start(self):
+        """超限注入：mock RSS 超 2GB → boot 阶段拒启动。"""
+        result = check_brain_memory_budget(rss_reader=lambda: 4096.0, boot_phase=True)
+        assert result.within_budget is False
+        assert result.action == "refuse_start"
+
+    def test_boundary_exactly_at_budget_ok(self):
+        result = check_brain_memory_budget(rss_reader=lambda: 2048.0)
+        assert result.within_budget is True
+        assert result.action == "ok"
+
+    def test_custom_budget_injection(self):
+        result = check_brain_memory_budget(
+            budget=BrainResourceBudget(max_brain_memory_mb=512),
+            rss_reader=lambda: 600.0,
+        )
+        assert result.within_budget is False
+        assert result.budget_mb == 512
