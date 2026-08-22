@@ -7994,3 +7994,32 @@ di_seam_exemptions:
   token: auto-emergency-runbook-20260822
   created_by: AI-P3-W1C
   capability: security_event_bus
+# --- 2026-08-22 阶段三波2+3 creation_token ---
+- file: src/zephyr/integration/llm_runtime_gateway.py
+  token: auto-llm-runtime-gateway-20260822
+  created_by: AI-P3-W2GW
+  capability: llm_runtime_gateway
+- file: tests/model/test_llm_runtime_gateway.py
+  token: auto-test-llm-runtime-gateway-20260822
+  created_by: AI-P3-W2GW
+  capability: llm_runtime_gateway
+- file: docs/_working/reports/2026-08-22-llm-registry-reconciliation.md
+  token: auto-llm-registry-reconciliation-20260822
+  created_by: AI-P3-W2GW
+  capability: llm_runtime_gateway
+- file: tests/trading/test_capability_registry_cache.py
+  token: auto-test-capability-registry-cache-20260822
+  created_by: AI-P3-W3-04
+  capability: autoruntime_core
+- file: tests/trading/test_degradation_chain.py
+  token: auto-test-degradation-chain-20260822
+  created_by: AI-P3-W3-04
+  capability: autoruntime_core
+- file: docs/_working/reports/2026-08-22-autoruntime-blueprint-drift.md
+  token: auto-autoruntime-blueprint-drift-20260822
+  created_by: AI-P3-W3-04
+  capability: autoruntime_core
+- file: docs/_working/reports/2026-08-22-model-profiling-p0-walkthrough.md
+  token: auto-model-profiling-p0-walkthrough-20260822
+  created_by: AI-P3-W3-06
+  capability: model_profiling_pipeline

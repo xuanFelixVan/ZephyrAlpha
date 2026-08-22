@@ -52912,3 +52912,11 @@ algo_submodules:
   desc_zh: 统一安全事件流（16号文 P0-1/P0-3）：四域事件统一 schema 落盘 jsonl（LSG/自治边界/治理门禁/运行时四 adapter 独立降级）；高危事件飞书告警+不可达本地持久化不丢
   desc_en: ''
   plain_zh: 统一安全事件总线——安全栈、自治边界、治理门禁、运行时四个来源的安全事件统一格式记到一个地方，谁出问题都能查；高危事件发飞书告警，发不出去就存本地队列绝不丢
+- module_path: src/zephyr/integration/llm_runtime_gateway.py
+  domain_id: D_INTEGRATION
+  module_id: MOD-INF-051
+  name_zh: LLM 运行时网关
+  name_en: llm_runtime_gateway
+  desc_zh: LLM 统一推理入口（10号文 GP0 最小 MVP）：单一 infer 签名+DeepSeek/Qwen/Ollama 三通道降级链+每次调用登记 llm_call_log（模型/token/成本/延迟）供日终对账+LSG 注入点（不过闸不调用）；预算门/路由级联属 GP1 不做
+  desc_en: ''
+  plain_zh: LLM 运行时网关——项目里所有大模型调用的统一大门：一个 infer 接口，先走 DeepSeek，失败自动切 Qwen，再失败切本地模型；每次调用花多少 token、多少钱、多快都记账，每天能对账防超额；不过安全检查的调用一律不出门

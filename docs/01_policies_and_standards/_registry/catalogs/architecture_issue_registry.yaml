@@ -18484,3 +18484,78 @@ entries:
   related_rules: '16号文 §4.2 P0-1~P0-4; 18号清单 §4.3; TNR（可撤销+不恶化）'
   created: '2026-08-22'
   last_updated: '2026-08-22'
+# --- #ARCH-162: llm_runtime_gateway 落地（10号文 GP0 登记对账+最小 MVP，MOD-INF-051） ---
+- issue_id: '#ARCH-162'
+  title: 'MOD-INF-051 llm_runtime_gateway——模型调用统一入口+登记对账（44号 M3-⑨ 前置，GP0 E0-5 核心件）'
+  severity: P1高
+  category: architecture
+  adjudication: |
+    目的声明（D2）：LLM 调用入口分散（DeepSeekChat/OllamaChat 直实例化）无统一登记
+    对账——10号文 Phase 0+18号 E1 裁定最小 MVP：单一 infer 签名+三通道降级链
+    （DeepSeek→Qwen→Ollama）+llm_call_log 每次调用落库（成本谷峰分时计价）+LSG 注入
+    （BLOCK/LSG 异常 fail-closed 不发起调用）+reconcile_daily_calls 日终对账接口；
+    预算硬门/路由级联属 GP1 不做。Phase 0 对账三件产物：四源对账（MOD-INF-039 治理
+    登记/model_pricing 定价/_build_providers 路由实证/REG-ML-001 训练产物——正交
+    零重叠裁定）不一致项全有归属；mcp↔tool_contracts Q8 四 server 漂移逐条裁定。
+    **待 Owner 校准项**：谷时价 1.5/4.5 元/百万 > 注册表峰时价 1.0/2.0，方向与公开
+    谷时折扣相反——按 44号口径实现并单测锁定，Owner 校准后改 model_pricing 真源。
+    QwenChat 零存量实证内置网关同文件（OpenAI 兼容端点+get_required_secret+LSG 同款）。
+  impact:
+    - 'src/zephyr/integration/llm_runtime_gateway.py（新建，testing 封顶）'
+    - 'governance.db::llm_call_log（已建表+ts 索引）'
+    - 'tests/model/test_llm_runtime_gateway.py（34 用例）'
+    - 'docs/_working/reports/2026-08-22-llm-registry-reconciliation.md（对账+Q8 裁定）'
+  fix_phase: '已落地（2026-08-22）：34 新用例全绿+tests/model 766 passed 零新增红；GATE-20 零绕过实证'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '10号文 §4 Phase 0; 18号清单 §5/E1; 44号 §9.14（M3-⑨ 消费场景）; #ARCH-159（LSG 注入点）'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-163: 04号文 AutoRuntime T0 拐点落地（GP0 E0-5） ---
+- issue_id: '#ARCH-163'
+  title: 'AutoRuntime T0 七件：蓝图漂移修正+CapabilityRegistry 缓存+StatusDashboard 降采样+StopGate 预算+四级降级链对齐+RAM 预算+冷启动 SLA'
+  severity: P2中
+  category: architecture
+  adjudication: |
+    目的声明（D2）：04号文 §4 Phase 0 步骤 0.1~0.7 逐项落地——蓝图 5 漂移项实证修正
+    （幽灵文件不复活，T2 轮转承载=dream_cycle.py；runtime→trading 全对齐）；
+    CapabilityRegistry RWLock+TTL 缓存（命中率 99/100>95%）；StatusDashboard 聚合视图+
+    压力降采样（5s→60s 升档）；StopGate session 预算参数化（语义裁定=「继续工作」预算）；
+    四级降级链阈值以蓝图 §3.3 为准改代码（75/85/95 CPU、70/80/90 MEM 三处同步含
+    config yaml）；RAM 预算 BrainResourceBudget（2048MB 超限 boot 拒启动/运行降级）；
+    冷启动 SLA 埋点+单次实测 47ms（20 次连跑因存量 boot 缺陷 09a_governance_watchdog_start
+    NoneType 降级登记——与本工单零因果，归存量修复项）。
+  impact:
+    - 'src/zephyr/trading/capability_registry.py/status_dashboard.py/stop_gate.py/resource_optimization.py/runtime_config.py'
+    - 'config/resource_optimization.yaml; scripts/construction/start_brain.py（[BOOT_SLA] 埋点）'
+    - 'tests/trading/ 2 新测试文件+3 追加；auto_runtime_core 蓝图修正'
+  fix_phase: '已落地（2026-08-22）：04号文 0.2 验收 11 passed+0.5 链 278 passed+全量回归 2248 passed 零新增红'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '04号文 §4 Phase 0; 18号清单 §6 波3-04'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+# --- #ARCH-164: 07号文 CE 对齐收口（GP0 E0-5） ---
+- issue_id: '#ARCH-164'
+  title: 'Context Engine 蓝图对齐收口（22→39 文件/分类标记/测试基线 956 绿）+depgraph 边缺口登记'
+  severity: P2中
+  category: governance
+  adjudication: |
+    目的声明（D2）：07号文 §4 Phase 0——蓝图漂移（22 文件 planned/partially_implemented）
+    与实况（39 文件四段管道完备）收口：蓝图 v1.2.0（build_status stable/design_maturity
+    production/construction_progress completed 含 inject 段待接线限定语；§1.1 全量清单+
+    §1.2 实证口径+§2 核心 15/辅助 1/候选废弃 23 分类只标不删）；测试基线 956 passed
+    （修 1 陈旧测试导入：infrastructure.rollback.kill_switch→capacity_assurance 迁移
+    落点）。depgraph 缺口登记（统筹后续）：CE→VMS/TaskSystem/AutoRuntime 三声称边无
+    对应（VMS=Protocol 注入无 import 属正确反映；另两条与蓝图声称不符随 07文 Q2 裁定）；
+    syncer 过滤器 generated/stable 结构性低报根因登记；CE→MOD-INF-001 六条实测 import
+    边蓝图未列。
+  impact:
+    - 'docs/03_modules/_cross_layer/context_engine/blueprint.md（v1.1.4→v1.2.0）'
+    - 'tests/ce/test_ce_kill_switch.py（陈旧导入修复）'
+  fix_phase: '已落地（2026-08-22）：956 passed 全绿基线；depgraph 边缺口 7 项登记建议随片段在册'
+  status: decided
+  confirmed_by_user: '2026-08-22 Owner 长城任务指令'
+  related_rules: '07号文 §4 Phase 0; 18号清单 §6 波3-07'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
