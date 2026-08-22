@@ -104,7 +104,7 @@ import re
 import threading
 import time
 from decimal import ROUND_HALF_UP, Decimal
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING, Final, Iterator
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -339,6 +339,8 @@ _AKSHARE_CAPABILITIES = frozenset(
         "income_statement",  # 利润表（东财 stock_profit_sheet_by_report_em）
         "cashflow_statement",  # 现金流量表（东财 stock_cash_flow_sheet_by_report_em）
         "financial_indicator",  # 财务指标（新浪 stock_financial_analysis_indicator；东财 em 版 1.18.75 已损坏）
+        # 92号清单 §7.2 / 44号备忘 §9.8 通道3（2026-08-21 Owner 裁定五）：美股期指 ES/NQ + A50 盘中实时
+        "us_futures_intraday",
     }
 )
 
@@ -467,6 +469,97 @@ SQL_STOCK_CODE_FROM_LIST = (
 )
 
 
+# ============== 美股期指/A50 盘中实时（us_futures_intraday，92号清单 §7.2）==============
+# 设计真源：44号备忘 §9.8 通道3（2026-08-21 Owner 裁定五：实时下载+实时分析）
+# 接口实证：docs/_working/reports/2026-08-22-foreign-interface-evaluation.md §五
+#   主源=新浪 hq.sinajs.cn hf 通道裸调（akshare wrapper 品种表硬编码 30 个商品代码，
+#   ES/NQ/CHA50CFD 直调报 KeyError——评估报告 §4a' 实证）；必带 Referer 头（不带 403）；
+#   GBK 编码；免费通道未见限频（10s 间隔实证）。
+#   兜底=东财 futures_global_spot_em 快照级（无行情时间戳字段，degraded=1 标记，
+#   评估报告 §三.2 裁定"降级保留为快照级"）。
+_US_FUTURES_DEFAULT_SYMBOLS: Final[tuple[str, ...]] = ("ES", "NQ", "CHA50CFD")
+# 东财兜底快照代码映射（评估报告 §二实证：ES00Y/NQ00Y/CN00Y 全在位）
+_US_FUTURES_EM_CODE_MAP: Final[dict[str, str]] = {
+    "ES": "ES00Y",
+    "NQ": "NQ00Y",
+    "CHA50CFD": "CN00Y",
+}
+_US_FUTURES_SINA_URL: Final[str] = "https://hq.sinajs.cn/"
+_US_FUTURES_SINA_HEADERS: Final[dict[str, str]] = {
+    "Referer": "https://finance.sina.com.cn/",
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    ),
+}
+# 主源连续失败上限（44号 §9.8 通道3：连续 3 次失败自动切兜底+告警留痕）
+_US_FUTURES_MAX_ATTEMPTS: Final[int] = 3
+_US_FUTURES_TIMEOUT_SEC: Final[int] = 12
+_US_FUTURES_RETRY_WAIT_SEC: Final[float] = 2.0
+# us_futures_intraday 表列序（与 schemas/categories/market_us_futures_intraday.py
+# INSERT_COLUMNS 一致；MATERIALIZED 列 exchange/symbol_canonical 由 CH 派生不写入）
+_US_FUTURES_COLUMNS: Final[tuple[str, ...]] = (
+    "trade_date",
+    "timestamp",
+    "symbol",
+    "last_price",
+    "bid",
+    "ask",
+    "open",
+    "high",
+    "low",
+    "prev_settle",
+    "open_interest",
+    "name_cn",
+    "data_source",
+    "degraded",
+)
+
+
+def parse_sina_hf_futures_quotes(text: str) -> dict[str, dict]:
+    """解析新浪 hf 外盘期货行情载荷（纯函数，可离线单测）。
+
+    载荷形如 ``var hq_str_hf_ES="7689.850,,7687.500,...,04:59:59,...,2026-08-22,标普500指数期货,0";``
+    逗号字段序（评估报告 §五 + akshare futures_hq_sina.py:152-167 列序交叉确认）：
+        0 最新价 / 2 买价 / 3 卖价 / 4 最高 / 5 最低 / 6 行情时间 HH:MM:SS /
+        7 昨日结算价 / 8 开盘价 / 9 持仓量 / 12 日期 YYYY-MM-DD / 13 中文名
+        （位置 14 人民币报价批量调用存在错位 bug，评估报告 §四裁定弃用不采集）
+
+    Args:
+        text: hq.sinajs.cn 响应体（GBK 解码后文本）。
+
+    Returns:
+        {hf 后缀品种代码（如 ES）: 字段字典}；空字段解析为 None；无法解析的行跳过。
+    """
+    quotes: dict[str, dict] = {}
+    for line in text.split(";"):
+        line = line.strip()
+        if not line or "=" not in line:
+            continue
+        var_part, _, payload_part = line.partition("=")
+        # var hq_str_hf_ES → ES
+        code = var_part.strip().rsplit("hq_str_hf_", 1)[-1].strip()
+        if not code or code == var_part.strip():
+            continue
+        fields = payload_part.strip().strip('"').split(",")
+        if len(fields) < 14:
+            continue
+        quotes[code] = {
+            "last_price": safe_float(fields[0]),
+            "bid": safe_float(fields[2]),
+            "ask": safe_float(fields[3]),
+            "high": safe_float(fields[4]),
+            "low": safe_float(fields[5]),
+            "quote_time": fields[6].strip() or None,
+            "prev_settle": safe_float(fields[7]),
+            "open": safe_float(fields[8]),
+            "open_interest": safe_int(fields[9]),
+            "quote_date": fields[12].strip() or None,
+            "name_cn": fields[13].strip(),
+        }
+    return quotes
+
+
 class AkshareIngestProvider(IngestProviderBase):
     """AKShare 免费开源数据源 Provider。
 
@@ -576,6 +669,8 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("income_statement", supports_symbols_null=True),
             CapabilityContract("cashflow_statement", supports_symbols_null=True),
             CapabilityContract("financial_indicator", supports_symbols_null=True),
+            # 92号清单 §7.2 / 44号备忘 §9.8 通道3：symbols=null 时取默认品种表（ES/NQ/CHA50CFD）
+            CapabilityContract("us_futures_intraday", supports_symbols_null=True),
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -7837,6 +7932,206 @@ class AkshareIngestProvider(IngestProviderBase):
             table=table,
             columns=columns,
             rows=batch_rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    # ---- 23. 美股期指/A50 盘中实时快照（us_futures_intraday，92号清单 §7.2）----
+
+    def _request_sina_hf_quotes(self, symbols: list[str]) -> dict[str, dict]:
+        """裸调新浪 hq.sinajs.cn hf 通道拉取外盘期货行情（单次请求批量多品种）。
+
+        用 requests（模块顶部已 patch trust_env=False 绕过系统代理）；
+        响应 GBK 编码。异常向上抛出（由调用方计次重试）。
+
+        Args:
+            symbols: hf 后缀品种代码列表（如 ["ES", "NQ", "CHA50CFD"]）。
+
+        Returns:
+            {品种代码: 字段字典}（parse_sina_hf_futures_quotes 输出）；空 dict=无可解析行。
+        """
+        import requests as _requests
+
+        # 注意：list 参数必须原样拼进 URL（逗号不得编码）——requests params= 会把 ','
+        # 编成 %2C，新浪侧将整串视为单一品种返回空（2026-08-22 实盘诊断实证），
+        # 与 akshare futures_hq_sina.py 的拼接形态保持一致。
+        list_param = ",".join(f"hf_{sym}" for sym in symbols)
+        resp = _requests.get(
+            f"{_US_FUTURES_SINA_URL}?list={list_param}",
+            headers=_US_FUTURES_SINA_HEADERS,
+            timeout=_US_FUTURES_TIMEOUT_SEC,
+            proxies={},
+        )
+        resp.raise_for_status()
+        resp.encoding = "gbk"
+        return parse_sina_hf_futures_quotes(resp.text)
+
+    def _build_sina_hf_rows(self, quotes: dict[str, dict], symbols: list[str]) -> list[tuple]:
+        """把新浪 hf 解析结果转成 us_futures_intraday 表行（列序=_US_FUTURES_COLUMNS）。"""
+        rows: list[tuple] = []
+        for sym in symbols:
+            q = quotes.get(sym)
+            if not q or q.get("last_price") is None:
+                self._log.warning(f"us_futures_intraday 新浪 hf 载荷缺 {sym}（或最新价空），跳过")
+                continue
+            quote_date = q.get("quote_date") or datetime.date.today().isoformat()
+            quote_time = q.get("quote_time") or "00:00:00"
+            rows.append(
+                (
+                    quote_date,
+                    f"{quote_date} {quote_time}",
+                    sym,
+                    q["last_price"],
+                    q.get("bid"),
+                    q.get("ask"),
+                    q.get("open"),
+                    q.get("high"),
+                    q.get("low"),
+                    q.get("prev_settle"),
+                    q.get("open_interest") or 0,
+                    q.get("name_cn") or "",
+                    "sina_hf",
+                    0,
+                )
+            )
+        return rows
+
+    def _fetch_us_futures_intraday(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """抓取美股期指 ES/NQ + 新交所 A50 盘中实时快照，写 c1_market.us_futures_intraday。
+
+        设计真源：44号备忘 §9.8 通道3（M3-⑥，2026-08-21 Owner 裁定五）。
+        主源=新浪 hf 通道裸调（单次批量），连续 _US_FUTURES_MAX_ATTEMPTS(3) 次失败
+        →自动切东财 futures_global_spot_em 快照兜底（无行情时间戳，degraded=1）
+        +log.warning 告警留痕（55 号监控消费日志联动）。
+        异动规则引擎（涨跌幅阈值/脉冲标记）属 futures_basis_monitor 另一施工面，本方法只管采集落库。
+
+        Args:
+            payload: 下载请求（symbols=None → 默认 ES/NQ/CHA50CFD；table 必填——
+                本表尚未登记 business_data_categories.yaml，92号工单纪律不写其他注册表
+                yaml，表名经 tasks.yaml table 字段传入，禁止硬编码绕过真源）。
+            policy: 调用策略（兜底通道 futures_global_spot_em 走 _call_with_policy）。
+
+        Yields:
+            FetchResult: 单批（快照语义，一批写全部品种）。
+        """
+        t0 = time.monotonic()
+        last_key = payload.end.isoformat()
+        table = payload.table
+        if not table:
+            yield FetchResult(
+                table="",
+                columns=list(_US_FUTURES_COLUMNS),
+                rows=[],
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                error="us_futures_intraday 需 tasks.yaml 显式指定 table（payload.table 为空，fail-closed）",
+            )
+            return
+        symbols = [str(s).strip().upper() for s in (payload.symbols or []) if str(s).strip()]
+        if not symbols:
+            symbols = list(_US_FUTURES_DEFAULT_SYMBOLS)
+        unknown = [s for s in symbols if s not in _US_FUTURES_EM_CODE_MAP]
+        if unknown:
+            self._log.warning(f"us_futures_intraday 未知品种 {unknown}（无 hf/东财代码映射），跳过")
+
+        # 主源：新浪 hf 通道（最多 _US_FUTURES_MAX_ATTEMPTS 次）
+        quotes: dict[str, dict] = {}
+        last_err: Exception | None = None
+        for attempt in range(1, _US_FUTURES_MAX_ATTEMPTS + 1):
+            try:
+                quotes = self._request_sina_hf_quotes(symbols)
+                if quotes:
+                    break
+                self._log.info(f"us_futures_intraday 新浪 hf 第 {attempt} 次响应无可解析行")
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                last_err = e
+                self._log.info(f"us_futures_intraday 新浪 hf 第 {attempt} 次失败: {e}")
+            if attempt < _US_FUTURES_MAX_ATTEMPTS:
+                threading.Event().wait(_US_FUTURES_RETRY_WAIT_SEC)
+
+        if quotes:
+            rows = self._build_sina_hf_rows(quotes, symbols)
+            yield FetchResult(
+                table=table,
+                columns=list(_US_FUTURES_COLUMNS),
+                rows=rows,
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+            )
+            return
+
+        # 主源连续失败 → 东财快照兜底（degraded=1）+ 告警留痕
+        self._log.warning(
+            "us_futures_intraday 主源新浪 hf 连续 %d 次失败（%s），切换东财兜底快照"
+            "（degraded=1，无行情时间戳，仅价格字段可用）",
+            _US_FUTURES_MAX_ATTEMPTS,
+            last_err or "响应无可解析行",
+        )
+        yield from self._fetch_us_futures_em_fallback(table, symbols, payload, policy, t0, last_key)
+
+    def _fetch_us_futures_em_fallback(
+        self,
+        table: str,
+        symbols: list[str],
+        payload: FetchPayload,
+        policy: SourcePolicy,
+        t0: float,
+        last_key: str,
+    ) -> Iterator[FetchResult]:
+        """东财 futures_global_spot_em 快照级兜底（degraded=1）。
+
+        无行情时间戳字段（评估报告 §1c/§4c 实证）：timestamp 落采集时刻、
+        trade_date 落当日；买卖盘为量非价（评估报告 §五字段表），bid/ask 置 None。
+        """
+        import akshare as ak
+
+        try:
+            spot_df = self._call_with_policy(ak.futures_global_spot_em, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table,
+                columns=list(_US_FUTURES_COLUMNS),
+                rows=[],
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                error=f"us_futures_intraday 主源+兜底双失败，东财 futures_global_spot_em: {e}",
+            )
+            return
+
+        em_to_sym = {_US_FUTURES_EM_CODE_MAP[s]: s for s in symbols if s in _US_FUTURES_EM_CODE_MAP}
+        now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # noqa: DTZ005 — 本地时区即 Asia/Shanghai
+        today_str = payload.end.isoformat()
+        rows: list[tuple] = []
+        if spot_df is not None and len(spot_df) > 0:
+            for _, row in spot_df.iterrows():
+                sym = em_to_sym.get(str(row.get("代码") or "").strip())
+                if sym is None:
+                    continue
+                rows.append(
+                    (
+                        today_str,
+                        now_str,
+                        sym,
+                        safe_float(row.get("最新价")),
+                        None,  # bid（东财快照买盘为量非价，置空）
+                        None,  # ask（同上）
+                        safe_float(row.get("今开")),
+                        safe_float(row.get("最高")),
+                        safe_float(row.get("最低")),
+                        safe_float(row.get("昨结")),
+                        safe_int(row.get("持仓量")) or 0,
+                        str(row.get("名称") or ""),
+                        "eastmoney_em",
+                        1,
+                    )
+                )
+        missing = [s for s in symbols if s in _US_FUTURES_EM_CODE_MAP and all(r[2] != s for r in rows)]
+        if missing:
+            self._log.warning(f"us_futures_intraday 东财兜底快照缺品种 {missing}")
+        yield FetchResult(
+            table=table,
+            columns=list(_US_FUTURES_COLUMNS),
+            rows=rows,
             last_key=last_key,
             elapsed_sec=time.monotonic() - t0,
         )
