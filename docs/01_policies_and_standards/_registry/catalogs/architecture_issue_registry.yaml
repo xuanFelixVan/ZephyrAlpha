@@ -18414,7 +18414,7 @@ entries:
   last_updated: '2026-08-22'
 # --- #ARCH-159: 09号文 LSG 主链路贯通收尾（GP0 E0-2） ---
 - issue_id: '#ARCH-159'
-  title: '三层运行时客户端 LSG 统一注入（MOD-INF-045 lsg_gate）——L2/L3 客户端旁路缺口治理'
+  title: '三层运行时客户端 LSG 统一注入（MOD-INF-052 lsg_gate）——L2/L3 客户端旁路缺口治理'
   severity: P1高
   category: security
   adjudication: |

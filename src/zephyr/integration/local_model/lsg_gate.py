@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md | §3.1
+# [BLUEPRINT] MOD-INF-052 | docs/03_modules/_domain_integration/lsg_gate/blueprint.md | §
 # [MODULE] zephyr.integration.local_model.lsg_gate
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.security_decision; zephyr.shared.utils.async_utils
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] LSG 判决 BLOCK/DENY 或 LSG 不可用 -> 抛 LSGBlockedError(RuntimeError)
 # [TESTS] tests/model/test_local_model_lsg_gate.py
-# [A_module] module_id=MOD-INF-042 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-052 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

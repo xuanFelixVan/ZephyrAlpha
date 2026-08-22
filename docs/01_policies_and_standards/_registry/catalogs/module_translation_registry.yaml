@@ -52882,7 +52882,7 @@ algo_submodules:
   plain_zh: 预测校准监控器——盯着预测日志表算每个模块的预测命中率，哪个模块持续不准（样本够 30 条且命中率跌破阈值）就开一张参数校准评审工单等人来审；它只提建议，永远不会自己动手改参数
 - module_path: src/zephyr/integration/local_model/lsg_gate.py
   domain_id: D_INTEGRATION
-  module_id: MOD-INF-045
+  module_id: MOD-INF-052
   name_zh: 本地模型 LSG 统一注入闸门
   name_en: lsg_gate
   desc_zh: 三层运行时客户端统一注入 LSG 安全栈（09号文 P0-1）：OllamaChat/DeepSeekChat/scheduler/embedding_router 构造点统一过闸，判决 BLOCK/DENY 即拒调用并落 L6 审计；开关默认开

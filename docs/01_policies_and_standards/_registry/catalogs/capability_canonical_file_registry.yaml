@@ -8112,3 +8112,36 @@ di_seam_exemptions:
   token: auto-test-execution-layer-agent-entries-20260822
   created_by: AI-P3-W4-14
   capability: execution_layer_agents
+# --- 2026-08-22 阶段三波7 蓝图批 creation_token ---
+- file: docs/03_modules/_domain_integration/lsg_gate/blueprint.md
+  token: auto-blueprint-batch-p3-20260822
+  created_by: AI-P2-001
+  capability: local_model_lsg_gate
+- file: docs/03_modules/_domain_integration/llm_runtime_gateway/blueprint.md
+  token: auto-blueprint-batch-p3-20260822
+  created_by: AI-P2-001
+  capability: llm_runtime_gateway
+- file: docs/03_modules/_domain_autonomy_core/autonomy_boundary_gate/blueprint.md
+  token: auto-blueprint-batch-p3-20260822
+  created_by: AI-P2-001
+  capability: autonomy_boundary_gate
+- file: docs/03_modules/_domain_autonomy_core/kill_switch_orchestrator/blueprint.md
+  token: auto-blueprint-batch-p3-20260822
+  created_by: AI-P2-001
+  capability: kill_switch_orchestrator
+- file: docs/03_modules/_domain_autonomy_core/execution_layer_agents/blueprint.md
+  token: auto-blueprint-batch-p3-20260822
+  created_by: AI-P2-001
+  capability: execution_layer_agents
+- file: docs/03_modules/_domain_security/security_event_bus/blueprint.md
+  token: auto-blueprint-batch-p3-20260822
+  created_by: AI-P2-001
+  capability: security_event_bus
+- file: docs/03_modules/_domain_knowledge/evidence_chain/blueprint.md
+  token: auto-blueprint-batch-p3-20260822
+  created_by: AI-P2-001
+  capability: evidence_chain
+- file: docs/03_modules/_domain_intelligence/reflexion_agent/blueprint.md
+  token: auto-blueprint-batch-p3-20260822
+  created_by: AI-P2-001
+  capability: reflexion_agent
