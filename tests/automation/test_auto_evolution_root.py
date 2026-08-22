@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 from datetime import datetime
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from zephyr.feedback_loop.auto_evolution import (
     AutoEvolution,
@@ -212,25 +212,27 @@ class TestAutoEvolutionEngineExportHistory:
 
 
 class TestAutoEvolutionInstantiation:
+    """#255②（2026-08-22）：原 start/stop/thread 三断言为陈旧漂移——AutoEvolution 自入库起即
+    事件驱动设计（consolidate 由外部事件触发，源码注释"替代原 time.wait 轮询"），
+    无线程轮询 API；项目硬约束禁 while True 轮询（PERM-TRIGGER/CircadianScheduler 废除同族）。
+    改写为对齐事件驱动契约。"""
+
     def test_init(self):
         engine = EvolutionEngine()
         ae = AutoEvolution(engine=engine, interval_seconds=1.0)
         assert ae.interval_seconds == 1.0
-        assert ae.thread is None
+        assert ae.engine is engine
 
-    def test_start_and_stop(self):
+    def test_consolidate_delegates_to_engine(self):
         engine = EvolutionEngine()
         ae = AutoEvolution(engine=engine, interval_seconds=0.1)
-        ae.start()
-        assert ae.thread is not None
-        ae.stop(timeout=2.0)
-        assert ae.thread is None
+        with patch.object(engine, "consolidate_knowledge") as mock_ck:
+            ae.consolidate()
+        mock_ck.assert_called_once_with()
 
-    def test_double_start_noop(self):
+    def test_consolidate_swallows_engine_error(self):
+        """事件驱动入口容错：engine 异常吞没记 debug（ERROR_CONTRACT 对齐），不外抛。"""
         engine = EvolutionEngine()
         ae = AutoEvolution(engine=engine, interval_seconds=10.0)
-        ae.start()
-        first_thread = ae.thread
-        ae.start()
-        assert ae.thread is first_thread
-        ae.stop(timeout=2.0)
+        with patch.object(engine, "consolidate_knowledge", side_effect=RuntimeError("boom")):
+            ae.consolidate()  # 不抛即通过
