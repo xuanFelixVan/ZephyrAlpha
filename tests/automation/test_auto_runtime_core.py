@@ -385,3 +385,119 @@ class TestStartLocalModelsRefactor:
             core.start_local_models(report)
         existing_scheduler.start.assert_called_once()
         existing_vms.start.assert_called_once()
+
+
+class TestL0SupplyChainVerify:
+    """#255③ 回归——_LocalModelBootstrap.l0_supply_chain_verify 挂接验证（2026-08-22）。
+
+    契约：config/model_digests.yaml 缺失/空表=跳过不空转；verify_model 三态
+    （verified/mismatch/missing）结果缓存 core._l0_verify_results+审计留痕；
+    失败 fail-visible（report.errors）不 raise；dependency_scan 默认关。
+    """
+
+    def make_core(self, tmp_path):
+        config = RuntimeConfig(
+            audit_log_dir=tmp_path / "audit",
+            capability_card_dir=tmp_path / "cards",
+            night_shift_storage_path=tmp_path / "night.jsonl",
+            work_dag_dir=tmp_path / "dags",
+            dream_archive_dir=tmp_path / "dream",
+            feedback_proposal_dir=tmp_path / "feedback",
+            health_snapshot_dir=tmp_path / "health",
+            auto_start_l2=False,
+        )
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
+            core = AutoRuntimeCore(config)
+        core.audit_logger = MagicMock()
+        return core
+
+    def _write_cfg(self, root, body: str) -> None:
+        cfg_dir = root / "config"
+        cfg_dir.mkdir(parents=True, exist_ok=True)
+        (cfg_dir / "model_digests.yaml").write_text(body, encoding="utf-8")
+
+    def test_config_absent_skips(self, tmp_path):
+        """配置文件不存在 → 跳过，结果缓存为空 dict，零 errors 零审计。"""
+        core = self.make_core(tmp_path)
+        report = BootReport()
+        with patch("zephyr.trading.auto_runtime_core.REPO_ROOT", tmp_path):
+            from zephyr.trading.auto_runtime_core import _LocalModelBootstrap
+
+            _LocalModelBootstrap.l0_supply_chain_verify(core, report)
+        assert core._l0_verify_results == {}
+        assert report.errors == []
+        core._audit_logger.log_registration.assert_not_called()
+
+    def test_empty_models_noop(self, tmp_path):
+        """空 models 表 + dependency_scan 默认关 → 不构造 guard 不扫描。"""
+        core = self.make_core(tmp_path)
+        report = BootReport()
+        self._write_cfg(tmp_path, "models: {}\ndependency_scan:\n  enabled: false\n")
+        with (
+            patch("zephyr.trading.auto_runtime_core.REPO_ROOT", tmp_path),
+            patch(
+                "zephyr.security.llm_defense.llm_security.layers.l0_supply_chain.SupplyChainGuard.scan_dependencies"
+            ) as mock_scan,
+        ):
+            from zephyr.trading.auto_runtime_core import _LocalModelBootstrap
+
+            _LocalModelBootstrap.l0_supply_chain_verify(core, report)
+        assert core._l0_verify_results == {}
+        assert report.errors == []
+        mock_scan.assert_not_called()
+
+    def test_model_verified_and_mismatch(self, tmp_path):
+        """一真一假：verified 审计 OK；mismatch 进 report.errors + 状态缓存。"""
+        import hashlib
+
+        good = tmp_path / "models" / "good.bin"
+        good.parent.mkdir(parents=True, exist_ok=True)
+        good.write_bytes(b"weights")
+        good_sha = hashlib.sha256(b"weights").hexdigest()
+        bad = tmp_path / "models" / "bad.bin"
+        bad.write_bytes(b"tampered")
+        self._write_cfg(
+            tmp_path,
+            "models:\n"
+            f'  "{good.as_posix()}": "{good_sha}"\n'
+            f'  "{bad.as_posix()}": "{"0" * 64}"\n',
+        )
+        core = self.make_core(tmp_path)
+        report = BootReport()
+        with patch("zephyr.trading.auto_runtime_core.REPO_ROOT", tmp_path):
+            from zephyr.trading.auto_runtime_core import _LocalModelBootstrap
+
+            _LocalModelBootstrap.l0_supply_chain_verify(core, report)
+        results = core._l0_verify_results
+        assert results[good.as_posix()] == "verified"
+        assert results[bad.as_posix()] == "mismatch"
+        assert any("mismatch" in e for e in report.errors)
+        statuses = [c.args[1] for c in core._audit_logger.log_registration.call_args_list]
+        assert "L0_VERIFY_OK" in statuses
+        assert "L0_VERIFY_MISMATCH" in statuses
+
+    def test_dependency_scan_enabled_flags_unsafe(self, tmp_path):
+        """dependency_scan 翻开 → 扫描执行+unsafe 摘要入 errors+结果缓存。"""
+        from types import SimpleNamespace
+
+        self._write_cfg(tmp_path, "models: {}\ndependency_scan:\n  enabled: true\n")
+        core = self.make_core(tmp_path)
+        report = BootReport()
+        fake_deps = [
+            SimpleNamespace(name="safe-pkg", version="1.0", is_safe=True, vulns=[]),
+            SimpleNamespace(name="evil-pkg", version="0.1", is_safe=False, vulns=[{"id": "CVE-X"}]),
+        ]
+        with (
+            patch("zephyr.trading.auto_runtime_core.REPO_ROOT", tmp_path),
+            patch(
+                "zephyr.security.llm_defense.llm_security.layers.l0_supply_chain.SupplyChainGuard.scan_dependencies",
+                return_value=fake_deps,
+            ),
+        ):
+            from zephyr.trading.auto_runtime_core import _LocalModelBootstrap
+
+            _LocalModelBootstrap.l0_supply_chain_verify(core, report)
+        cached = core._l0_verify_results["dependency_scan"]
+        assert cached["scanned"] == 2
+        assert cached["unsafe"] == ["evil-pkg"]
+        assert any("evil-pkg" in e for e in report.errors)

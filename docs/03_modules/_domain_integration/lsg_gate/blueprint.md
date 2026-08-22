@@ -53,7 +53,7 @@ local_model 包 LSG 统一注入闸门：L2/L3 运行时 LLM 客户端（OllamaC
 ## 5. 边界（不做）
 
 - 不改动 LSG 网关本体与各层逻辑（本件只是注入闸门）
-- L0 启动时验证（verify_model/scan_dependencies）无启动链路消费方，挂 _LocalModelBootstrap 为 P1 候选（#ARCH-159 登记缺口）
+- ~~L0 启动时验证（verify_model/scan_dependencies）无启动链路消费方，挂 _LocalModelBootstrap 为 P1 候选（#ARCH-159 登记缺口）~~ **已落地（2026-08-22，#255③）**：_LocalModelBootstrap.l0_supply_chain_verify 在 start_local_models 模型加载前调用，真源=config/model_digests.yaml（空表跳过），结果缓存 core._l0_verify_results，失败 fail-visible 不阻断 boot
 
 ## 6. 测试
 

@@ -762,7 +762,63 @@ class _LocalModelBootstrap:
     """
 
     @staticmethod
+    def l0_supply_chain_verify(core: AutoRuntimeCore, report: BootReport) -> None:
+        """L0 启动供应链验证（#255③ / #ARCH-159 缺口落地，2026-08-22 Owner"全部执行"授权）。
+
+        模型加载前调 verify_model/scan_dependencies 并缓存结果（core._l0_verify_results）。
+        真源=config/model_digests.yaml（可选）：缺失/空 models 表=跳过不空转；
+        dependency_scan.enabled 默认关（pip-audit 子进程上限 60s 不进 boot 热路径）。
+        失败语义=fail-visible（report.errors+审计 L0_VERIFY_MISMATCH）不 raise——
+        与 boot 既有 errors 收集语义一致，硬阻断属 Owner 政策位。
+        """
+        core._l0_verify_results = {}
+        cfg_path = REPO_ROOT / "config" / "model_digests.yaml"
+        if not cfg_path.exists():
+            logger.debug("L0 supply chain verify skipped: %s 不存在", cfg_path)
+            return
+        try:
+            import yaml
+
+            from zephyr.security.llm_defense.llm_security.layers.l0_supply_chain import SupplyChainGuard
+        except ImportError as e:
+            logger.debug("L0 supply chain verify skipped (import): %s", e)
+            return
+        try:
+            cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
+        except Exception as e:  # noqa: BLE001 — 配置解析失败 fail-visible 不阻断 boot
+            report.errors.append(f"l0_supply_chain_verify: config parse failed: {e}")
+            return
+        results: dict[str, object] = {}
+        guard: SupplyChainGuard | None = None
+        models = cfg.get("models") or {}
+        if models:
+            guard = SupplyChainGuard(model_digest_registry=models)
+            for path, expected in models.items():
+                fp = Path(path)
+                if not fp.is_absolute():
+                    fp = REPO_ROOT / fp
+                r = guard.verify_model(str(fp), expected)
+                results[path] = r.status
+                if r.status == "verified":
+                    core._audit_logger.log_registration(f"l0-model:{path}", "L0_VERIFY_OK")
+                else:
+                    core._audit_logger.log_registration(f"l0-model:{path}", f"L0_VERIFY_{r.status.upper()}")
+                    report.errors.append(f"l0_supply_chain_verify: {path} {r.status}")
+        dep_cfg = cfg.get("dependency_scan") or {}
+        if dep_cfg.get("enabled"):
+            if guard is None:
+                guard = SupplyChainGuard()
+            deps = guard.scan_dependencies()
+            unsafe = [d.name for d in deps if not d.is_safe]
+            results["dependency_scan"] = {"scanned": len(deps), "unsafe": unsafe}
+            if unsafe:
+                report.errors.append(f"l0_supply_chain_verify: unsafe dependencies {unsafe}")
+        core._l0_verify_results = results
+
+    @staticmethod
     def start_local_models(core: AutoRuntimeCore, report: BootReport) -> None:
+        # L0 供应链验证：模型加载前（#255③，空注册表=零成本跳过）
+        _LocalModelBootstrap.l0_supply_chain_verify(core, report)
         # chat backend 选择保留 inline 维持 warmup sleep 语义（5.158.11），
         # 避免 time.sleep 跨文件迁移触发 PERM-TRIGGER 误判。
         if not core._ensure_ollama_available(report):

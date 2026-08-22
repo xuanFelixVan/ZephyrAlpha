@@ -18428,7 +18428,10 @@ entries:
     绕过路径全仓扫描=0（RULE-LSG-001 2919 文件 0 命中+阴性对照证扫描器非空转）；
     fail-closed 演练 L1/L3/L4/L5 各挂一次全被拒+Owner override 通道实证可用。
     登记缺口：L0 启动时验证 verify_model/scan_dependencies 能力在无启动链路消费方，
-    建议挂 _LocalModelBootstrap（P1 候选）。
+    建议挂 _LocalModelBootstrap（P1 候选）。【2026-08-22 晚已闭环（#255③）：
+    _LocalModelBootstrap.l0_supply_chain_verify 挂接 start_local_models 加载前，
+    真源 config/model_digests.yaml（空表跳过零成本），结果缓存 core._l0_verify_results，
+    mismatch/unsafe fail-visible 入 report.errors+审计留痕，4 回归用例绿】
   impact:
     - 'src/zephyr/integration/local_model/lsg_gate.py（新建，testing 封顶）'
     - 'local_model 4 客户端构造器尾部可选参 lsg_enabled（公开签名零破坏）'

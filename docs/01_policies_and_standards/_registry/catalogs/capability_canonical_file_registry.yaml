@@ -8164,3 +8164,7 @@ di_seam_exemptions:
   token: auto-depgraph-tags-vocabulary-20260822
   created_by: AI-P2-001
   capability: depgraph_tags_vocabulary
+- file: config/model_digests.yaml
+  token: auto-model-digests-20260822
+  created_by: AI-RESIDUAL-255C
+  capability: l0_supply_chain_boot_verify

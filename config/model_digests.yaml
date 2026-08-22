@@ -1,0 +1,14 @@
+# [TTL] permanent
+# L0 供应链启动验证注册表（#255③ / #ARCH-159 缺口落地，2026-08-22）
+#
+# 消费方：zephyr.trading.auto_runtime_core._LocalModelBootstrap.l0_supply_chain_verify
+# （start_local_models 模型加载前调用，验证结果缓存 core._l0_verify_results）。
+#
+# 登记口径：
+#   models = { 模型文件路径（相对仓根或绝对路径）: 预期 sha256（小写 hex） }
+#   空表 = 跳过模型校验（无真源不空转）。
+#   dependency_scan.enabled 默认 false——pip-audit 子进程上限 60s，
+#   boot 热路径默认关，Owner 翻开。
+models: {}
+dependency_scan:
+  enabled: false
