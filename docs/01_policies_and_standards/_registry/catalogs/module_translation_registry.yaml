@@ -52816,3 +52816,67 @@ algo_submodules:
   desc_zh: 每日预测类输出统一落库（44号 M4-②）：prediction_log 表（governance.db）——情绪分/边界修正/三情景/LLM 分析等每天预测了什么可回查可验证；幂等键同键跳过保首条，input_hash 内容寻址
   desc_en: ''
   plain_zh: 预测输出统一落库写入器——系统每天做的所有预测（情绪分、边界档位、三情景、LLM 分析）统一记进一张表，带模型版本和输入哈希，以后回查"那天到底预测了什么、准不准"全靠它
+- module_path: src/zephyr/signal_ashare/similar_day_inference.py
+  domain_id: D_ASHARE_SIGNAL
+  module_id: MOD-SIG-063
+  name_zh: 相似日剩余走势推演器
+  name_en: similar_day_inference
+  desc_zh: 剩余走势推演（44号 M1-③）：当日盘中曲线族（宽度速度/涨停净增/量能外推/黄白线/IF基差）重采样 30 时点，KNN k=10 历史相似日→尾盘走强/持平/转弱三档概率；D<60 或距离超阈退化五阶段转移先验；只出档位概率不出点位
+  desc_en: ''
+  plain_zh: 相似日剩余走势推演器——把今天盘中到现在的走势曲线和历史上每个交易日同时刻比一比，找最像的 10 天，看它们尾盘收涨/走平/收跌各占多少，给尾盘决策一个三档概率参考；历史数据不够就用情绪周期阶段转移的先验概率兜底；只说概率不说点位
+- module_path: src/zephyr/data/market_breadth_collector.py
+  domain_id: D_DATA
+  module_id: MOD-DATA-062
+  name_zh: 全市场宽度快照采集器
+  name_en: market_breadth_collector
+  desc_zh: 全市场分钟级快照采集（44号 M1-④ 数据地基）：miniqmt 全市场 tick 聚合涨跌家数/涨跌停/曾涨停/封板/成交额→market_breadth_snapshot 表；板块四档幅度复用 stk_limit 单一真源
+  desc_en: ''
+  plain_zh: 全市场宽度快照采集器——盘中每分钟数一遍全市场：多少家涨多少家跌、多少涨停多少跌停、多少炸板多少封死、成交了多少钱，存进数据库给情绪加速度/相似日推演当数据地基
+- module_path: src/zephyr/data/intraday_sentiment_loop.py
+  domain_id: D_DATA
+  module_id: MOD-DATA-063
+  name_zh: 盘中情绪调度回路
+  name_en: intraday_sentiment_loop
+  desc_zh: 盘中实时调度回路（44号 M1-④）：分钟级单拍 run_once——读最新快照装配 BreadthTimeSeries→MOD-SIG-025 增量分析→prediction_log 落库+SEC-02 板块聚合挂接同载体；常驻节拍交 APScheduler 不写 while True
+  desc_en: ''
+  plain_zh: 盘中情绪调度回路——每分钟把最新的全市场快照喂给情绪分析器算出最新情绪分和拐点信号，写进预测日志表，顺带驱动板块盘中聚合；只干单拍，分钟节拍由调度器管
+- module_path: src/zephyr/plan_engine/boundary_revision_engine.py
+  domain_id: D_PLAN
+  module_id: MOD-PLAN-006
+  name_zh: 盘中边界修正引擎
+  name_en: boundary_revision_engine
+  desc_zh: 盘中次日预案边界修正（44号 M2）：14:00/14:45 双时点评估，七降档触发+防抖 15min+当日各 1 次冷却；保守=上限×0.5+禁加仓价位下移 0.5×ATR（2026-08-22 裁定下移）/进攻=×1.2 封顶 firm 硬约束；仅当日有效次日覆盖；修正事件落 prediction_log
+  desc_en: ''
+  plain_zh: 盘中边界修正引擎——盘中情绪显著恶化就把今晚的加仓边界收紧一档（上限砍半、禁追高线压低），显著改善就放宽一点（不超过公司硬约束）；信号要持续 15 分钟才算数防毛刺，一天最多升降各一次，修正只管今天，明天盘前重新生成
+- module_path: src/zephyr/intelligence/news_symbol_linker.py
+  domain_id: D_INTELLIGENCE
+  module_id: MOD-INT-NEWS-LINK
+  name_zh: 新闻标的关联器
+  name_en: news_symbol_linker
+  desc_zh: 新闻/公告→标的关联层（tracker #139）：公告标的字段直用/6 位代码显式命中/简称归一化最长匹配/一词多标的标 ambiguous/零命中 market 级；词表载 stock_basic 最新快照
+  desc_en: ''
+  plain_zh: 新闻标的关联器——一条新闻说的是哪几只股票：公告自带标的直接用，新闻正文里的股票代码和简称用词表匹配，一个词对多只股票的标出来不瞎猜，关联不上的算全市场级消息
+- module_path: src/zephyr/intelligence/nightly_sentiment_window.py
+  domain_id: D_INTELLIGENCE
+  module_id: MOD-INT-NEWS-NIGHT
+  name_zh: 夜间新闻情绪聚合器
+  name_en: nightly_sentiment_window
+  desc_zh: 夜间新闻情绪聚合（tracker #138+44号 M3-②）：18:00-次日 8:00 窗口新闻情绪聚合→news_sentiment_window 表落库+plan004_input 对接预留字段（MOD-PLAN-004 消费接线后续裁定）
+  desc_en: ''
+  plain_zh: 夜间新闻情绪聚合器——每天傍晚 6 点到次日早 8 点的新闻和公告汇总出一个夜间情绪分，落库存档，供盘前边界修正器参考要不要微调今天的操作边界
+- module_path: src/zephyr/plan_engine/llm_premarket_analysis.py
+  domain_id: D_PLAN
+  module_id: MOD-PLAN-007
+  name_zh: LLM 盘前综合分析
+  name_en: llm_premarket_analysis
+  desc_zh: LLM 盘前综合复盘与当日情景分析（44号 M3-⑨）：次日 8:00 七族数据打包（PIT 铁律 cutoff 后数据拒入）+prompt 版本化+v2 多空辩论编排+输出三情景/风险点/关键位契约+llm_daily_analysis 落库（模型/prompt 版本+input_hash 冻结）；注解层不改档位；LLM 客户端注入式（阶段三 gateway 接线）
+  desc_en: ''
+  plain_zh: LLM 盘前综合分析——每天早上 8 点把昨天 A 股收盘、隔夜美股、A50 夜盘、夜间新闻、两融资金面打包喂给大模型，输出今天高开/平开/低开三套情景加风险点和关键价位；模型版本和输入哈希都存库以后能复现；它只写注解不改操作档位，防止 AI 幻觉直接指挥交易
+- module_path: src/zephyr/reporting/prediction_calibration_monitor.py
+  domain_id: D_REPORTING
+  module_id: MOD-RPT-029
+  name_zh: 预测校准监控器
+  name_en: prediction_calibration_monitor
+  desc_zh: 日志→参数校准反馈闭环骨架（44号 M4-④）：读 prediction_log 算命中率/窗口趋势，样本<30 不触发，命中率<0.55 且样本够→出人审校准评审工单（落 .runtime/calibration_review/）；只出建议永不自治改参
+  desc_en: ''
+  plain_zh: 预测校准监控器——盯着预测日志表算每个模块的预测命中率，哪个模块持续不准（样本够 30 条且命中率跌破阈值）就开一张参数校准评审工单等人来审；它只提建议，永远不会自己动手改参数
