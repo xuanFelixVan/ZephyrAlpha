@@ -6,7 +6,7 @@
 # [CONSUMERS] (CLI 验收脚本，无模块消费者)
 # [STARTUP] manual
 # [MATURITY] design
-# [INVARIANTS] 产物驱动验收（不跑真实推理）；必需项全 PASS 才 exit 0，任一 FAIL→exit 1；WARN 不阻塞；检查项与 13 号 §3.1.12 验收清单一一对应
+# [INVARIANTS] 产物驱动验收（不跑真实推理）；必需项全 PASS 才 exit 0，任一 FAIL→exit 1；WARN 不阻塞；检查项与 13 号 §3.1.12 验收清单一一对应；--report-out 输出 markdown 验收报告（指标汇总落盘）
 # [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 8
 # [STABILITY] evolving
 # [SAFETY] L
@@ -220,6 +220,38 @@ def print_report(items: list[CheckItem]) -> None:
     print(f"总验收: {verdict}")
 
 
+def render_markdown_report(items: list[CheckItem]) -> str:
+    """验收报告 markdown（指标汇总落盘件——管道跑通结论 + 各检查项指标明细）。
+
+    布局：总验收结论 → 检查项明细表（状态/指标 detail）→ 口径注记。
+    纯函数（测试直调）；生成时间由调用方写入文件名或外部留痕，报告体不含时钟。
+    """
+    verdict = "通过" if summarize(items) else "未通过"
+    lines = [
+        "# NLP 管道验收报告（13 号 §3.1.12 / Phase 8）",
+        "",
+        f"**总验收: {verdict}**",
+        "",
+        "| 检查项 | 状态 | 必需 | 指标明细 |",
+        "|---|---|---|---|",
+    ]
+    for it in items:
+        req = "是" if it.required else "可选"
+        lines.append(f"| {it.name} | {it.status} | {req} | {it.detail} |")
+    lines += [
+        "",
+        "> 口径：产物驱动验收（不跑真实推理）；必需项全 PASS 总验收才通过；WARN 不阻塞。",
+        "> 检查项与 13 号 §3.1.12 验收清单一一对应（SFT F1 / 推理速度 / 端到端管道 / 批量覆盖 / 权重持久化 / RLSP 可选）。",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def write_markdown_report(items: list[CheckItem], out_path: Path) -> None:
+    """验收报告落盘（父目录自动创建）。"""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(render_markdown_report(items), encoding="utf-8")
+
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="NLP 管道验收检查清单（Phase 8）")
     parser.add_argument("--metrics", type=Path, default=ROOT / "data" / "eval" / "sft_metrics.json")
@@ -228,6 +260,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--adapter-dir", type=Path, default=ROOT / "models" / "qwen25-7b-sft-v1")
     parser.add_argument("--rlsp-dir", type=Path, default=ROOT / "models" / "qwen25-7b-rlsp-v1")
     parser.add_argument("--start-date", default=DEFAULT_START_DATE)
+    parser.add_argument("--report-out", type=Path, default=None, help="markdown 验收报告落盘路径（可选）")
     return parser.parse_args()
 
 
@@ -242,6 +275,9 @@ def main() -> None:
         start_date=args.start_date,
     )
     print_report(items)
+    if args.report_out is not None:
+        write_markdown_report(items, args.report_out)
+        log.info("验收报告已写入 %s", args.report_out)
     sys.exit(0 if summarize(items) else 1)
 
 

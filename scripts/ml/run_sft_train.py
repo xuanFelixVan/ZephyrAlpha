@@ -6,13 +6,13 @@
 # [CONSUMERS] (CLI 训练脚本，无模块消费者)
 # [STARTUP] manual
 # [MATURITY] design
-# [INVARIANTS] 加载 data/sft/{train,eval}.jsonl → build_sft_dataset 转 messages → SentimentSFTTrainer 训练 → validate 算 F1；支持 --smoke 快速验证管道
+# [INVARIANTS] 加载 data/sft/{train,eval}.jsonl → build_sft_dataset 转 messages → SentimentSFTTrainer 训练 → validate 算 F1；支持 --smoke 快速验证管道；validate 成功后 metrics JSON 落盘（默认 data/eval/sft_metrics.json，Phase 8 验收检查项 1 生产者）
 # [MODIFY-GUARD] 13_regime_phase3_engineering_plan.md §3.1.9
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 训练失败 exit 1；评估失败记录但不阻断（已训练 adapter 保留）
-# [TESTS] (CLI 训练脚本，无单元测试)
+# [TESTS] tests/scripts/test_ml_run_sft_train.py
 # [TTL] permanent
 """run_sft_train.py — P1-E3 Phase 4: 执行 LoRA SFT 训练 + F1 评估。
 
@@ -52,6 +52,7 @@ SFT_TRAIN_PATH = ROOT / "data" / "sft" / "train.jsonl"
 SFT_EVAL_PATH = ROOT / "data" / "sft" / "eval.jsonl"
 EVAL_200_PATH = ROOT / "data" / "eval" / "news_sentiment_200.jsonl"
 OUTPUT_DIR = ROOT / "models" / "qwen25-7b-sft-v1"
+DEFAULT_METRICS_PATH = ROOT / "data" / "eval" / "sft_metrics.json"
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -67,6 +68,17 @@ def load_jsonl(path: Path) -> list[dict]:
     return items
 
 
+def write_metrics_json(metrics: dict, out_path: Path) -> None:
+    """validate 指标 JSON 落盘（Phase 8 验收检查项 1 生产者：macro_f1 必填）。
+
+    附带 generated_at 留痕；父目录自动创建。
+    """
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = dict(metrics)
+    payload["generated_at"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+    out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="LoRA SFT 训练 + F1 评估")
     parser.add_argument("--smoke", action="store_true", help="快速验证管道（50 条）")
@@ -76,6 +88,12 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--lr", type=float, default=2e-4)
     parser.add_argument("--max-seq-length", type=int, default=1024)
     parser.add_argument("--no-validate", action="store_true", help="跳过最终 F1 评估")
+    parser.add_argument(
+        "--metrics-out",
+        type=Path,
+        default=DEFAULT_METRICS_PATH,
+        help="validate 指标 JSON 落盘路径（Phase 8 验收检查项 1 产物）",
+    )
     return parser.parse_args()
 
 
@@ -159,6 +177,13 @@ def main() -> None:
     print(f"Accuracy: {acc:.4f}  (n={n})")
     print(f"LoRA adapter: {OUTPUT_DIR}")
     print("=" * 60)
+
+    # 5. metrics JSON 落盘（Phase 8 验收检查项 1 产物：macro_f1/accuracy/n + train_loss）
+    write_metrics_json(
+        {**val_metrics, "train_loss": metrics.get("train_loss", 0.0), "model": OUTPUT_DIR.name},
+        args.metrics_out,
+    )
+    log.info("metrics 已写入 %s", args.metrics_out)
 
 
 if __name__ == "__main__":

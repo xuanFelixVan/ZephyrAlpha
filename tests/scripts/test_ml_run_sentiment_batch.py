@@ -154,7 +154,25 @@ class TestWriteDaily:
         assert rows[0]["vote_strength"] == "strong"
 
 
-# ============ 5. main 守卫 ============
+# ============ 5. benchmark 产物（验收检查项 2 生产者）============
+
+
+class TestWriteBenchmark:
+    def test_writes_items_and_elapsed(self, tmp_path):
+        bench = tmp_path / "sub" / "benchmark.json"
+        rsb.write_benchmark(1000, 240.5, bench)
+        obj = json.loads(bench.read_text(encoding="utf-8"))
+        assert obj["items"] == 1000
+        assert obj["elapsed_s"] == pytest.approx(240.5)
+
+    def test_zero_items(self, tmp_path):
+        bench = tmp_path / "benchmark.json"
+        rsb.write_benchmark(0, 0.0, bench)
+        obj = json.loads(bench.read_text(encoding="utf-8"))
+        assert obj == {"items": 0, "elapsed_s": 0.0}
+
+
+# ============ 6. main 守卫 ============
 
 
 class TestMainGuards:

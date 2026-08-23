@@ -6,7 +6,7 @@
 # [CONSUMERS] (CLI 批量脚本，无模块消费者；产物供回测/regime S2 消费)
 # [STARTUP] manual
 # [MATURITY] design
-# [INVARIANTS] 断点续作追加写入（news_id 去重）；单条推理失败降级 neutral 不阻断批量；Ollama 不可达 exit 1；输入文件不存在 exit 1；聚合产物含 negative_count（S2 bad_news_flat 入参）与 vote_score（跨源一致性）
+# [INVARIANTS] 断点续作追加写入（news_id 去重）；单条推理失败降级 neutral 不阻断批量；Ollama 不可达 exit 1；输入文件不存在 exit 1；聚合产物含 negative_count（S2 bad_news_flat 入参）与 vote_score（跨源一致性）；批次结束写 benchmark.json（items/elapsed_s，验收检查项 2 生产者）
 # [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 7
 # [STABILITY] evolving
 # [SAFETY] L
@@ -23,6 +23,7 @@ sentiment_aggregator 跨源一致性投票 + 按日聚合 → 产物落盘（回
 产物（--out-dir 下）:
   - predictions.jsonl     逐条预测（news_id/sentiment/score/polarity/cached/error）
   - daily_sentiment.jsonl 日级聚合（negative_count/vote_score/vote_strength 等）
+  - benchmark.json        推理速度产物（items/elapsed_s，Phase 8 验收检查项 2）
 
 用法:
     # JSONL 输入（离线/测试）
@@ -61,6 +62,7 @@ log = logging.getLogger(__name__)
 DEFAULT_OUT_DIR = ROOT / "data" / "sentiment_batch"
 PRED_FILENAME = "predictions.jsonl"
 DAILY_FILENAME = "daily_sentiment.jsonl"
+BENCH_FILENAME = "benchmark.json"
 
 
 def load_news_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -181,6 +183,18 @@ def write_daily(daily: list[DailySentiment], out_path: Path) -> None:
             f.write(json.dumps(asdict(d), ensure_ascii=False) + "\n")
 
 
+def write_benchmark(items: int, elapsed_s: float, out_path: Path) -> None:
+    """推理速度 benchmark 产物落盘（验收检查项 2 生产者：{"items", "elapsed_s"}）。
+
+    items=本次新推理条数（断点续作跳过部分不计）；父目录自动创建。
+    """
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(
+        json.dumps({"items": int(items), "elapsed_s": float(elapsed_s)}, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="离线批量情感推理 + 日级聚合（Phase 7）")
     parser.add_argument("--source", choices=["db", "jsonl"], default="jsonl")
@@ -222,13 +236,26 @@ def main() -> None:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     pred_path = args.out_dir / PRED_FILENAME
     cfg = InferConfig(model_version=args.model)
+    t_batch = time.time()
     results = run_batch(news_items, chat=chat, pred_path=pred_path, config=cfg, resume=args.resume)
+    batch_elapsed = time.time() - t_batch
 
     # 4. 日级聚合（跨源一致性投票，26 号 §2.7；从 predictions 全量聚合 resume 安全）
     daily = aggregate_from_predictions(pred_path)
     daily_path = args.out_dir / DAILY_FILENAME
     write_daily(daily, daily_path)
-    log.info("完成：预测 %d 条 → %s；日级聚合 %d 天 → %s", len(results), pred_path, len(daily), daily_path)
+
+    # 5. benchmark 产物（验收检查项 2：1000 条 < 300s；items=本次新推理条数）
+    bench_path = args.out_dir / BENCH_FILENAME
+    write_benchmark(len(results), batch_elapsed, bench_path)
+    log.info(
+        "完成：预测 %d 条 → %s；日级聚合 %d 天 → %s；benchmark → %s",
+        len(results),
+        pred_path,
+        len(daily),
+        daily_path,
+        bench_path,
+    )
 
 
 if __name__ == "__main__":

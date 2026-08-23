@@ -209,6 +209,65 @@ class TestSummarize:
         assert acp.summarize(items) is True
 
 
+# ============ 7. 验收报告生成件（render_markdown_report / --report-out）============
+
+
+class TestRenderMarkdownReport:
+    def test_contains_items_and_verdict(self, tmp_path):
+        items = acp.run_acceptance(**_all_pass_dir(tmp_path))
+        md = acp.render_markdown_report(items)
+        assert "# NLP 管道验收报告" in md
+        assert "sft_f1" in md and "inference_speed" in md and "e2e_pipeline" in md
+        assert "PASS" in md and "WARN" in md  # rlsp_weights WARN 行
+        assert "总验收" in md and "通过" in md
+
+    def test_fail_verdict_wording(self, tmp_path):
+        paths = _all_pass_dir(tmp_path)
+        (paths["adapter_dir"] / "adapter_model.safetensors").unlink()
+        items = acp.run_acceptance(**paths)
+        md = acp.render_markdown_report(items)
+        assert "未通过" in md
+        assert "sft_weights" in md and "FAIL" in md
+
+    def test_metrics_summary_section(self, tmp_path):
+        items = acp.run_acceptance(**_all_pass_dir(tmp_path))
+        md = acp.render_markdown_report(items)
+        # 指标汇总：各检查项 detail 入表
+        assert "0.7699" in md
+        assert "1000" in md
+
+
+class TestReportOut:
+    def test_main_writes_report_file(self, tmp_path, monkeypatch):
+        paths = _all_pass_dir(tmp_path)
+        report = tmp_path / "out" / "acceptance.md"
+        monkeypatch.setattr(
+            acp.sys,
+            "argv",
+            [
+                "accept_nlp_pipeline.py",
+                "--metrics",
+                str(paths["metrics_path"]),
+                "--benchmark",
+                str(paths["benchmark_path"]),
+                "--daily",
+                str(paths["daily_path"]),
+                "--adapter-dir",
+                str(paths["adapter_dir"]),
+                "--rlsp-dir",
+                str(paths["rlsp_dir"]),
+                "--report-out",
+                str(report),
+            ],
+        )
+        with pytest.raises(SystemExit) as exc:
+            acp.main()
+        assert exc.value.code == 0
+        assert report.exists()
+        md = report.read_text(encoding="utf-8")
+        assert "# NLP 管道验收报告" in md
+
+
 class TestMain:
     def test_main_exit_0(self, tmp_path, monkeypatch):
         paths = _all_pass_dir(tmp_path)
