@@ -563,7 +563,15 @@ def _make_wt_run_git(wt_path, gw, block_reason: str, env_var: str):
     return _wt_run_git
 
 
-def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root: Path) -> None:
+def _log_worktree_delete(
+    session_id: str,
+    source: str,
+    path: "Path | str",
+    root: Path,
+    *,
+    phase: str = "done",
+    with_stack: bool = False,
+) -> None:
     """worktree 删除遥测（GATE-DEPGRAPH-OPS 治本 Phase 4）。
 
     病根：并发场景下 worktree 意外消失无迹可查——merge/abort/sweep 三个删除点
@@ -574,11 +582,17 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
     worktree 进程内写主仓库——worktree 删除后自身文件系统随之消失）。
 
+    CAND-GOVSEC-001 ③（2026-08-23 src 误删取证 §5.4）：sweep 遥测前置——删除发起
+    前即落 phase="begin" 记录（含调用栈），删除进行中崩溃/误删也有"谁发起了删除"
+    的现场可查；既有删除成功后记录为 phase="done"。
+
     降级：遥测失败仅 debug 日志，绝不阻断 merge/abort/sweep 主流程。
 
     """
 
     try:
+        import traceback
+
         from datetime import datetime, timezone
 
         from zephyr.shared.io.paths import anchor_main_root
@@ -592,10 +606,18 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
         entry = {
             "ts": datetime.now(timezone.utc).isoformat(),
             "op": "worktree_delete",
+            "phase": phase,
             "session_id": session_id,
             "source": source,
             "path": str(path),
         }
+
+        if with_stack:
+            # 调用栈留痕（截断防日志膨胀）——肇事指令发出瞬间的调用现场。
+            # [:-1] 仅去本函数帧——必须保留直接调用方帧（「谁发起了删除」的关键
+            # 现场，如 _sweep_one_dir/cmd_abort）。
+            stack_lines = traceback.format_stack()[:-1]
+            entry["stack"] = "".join(stack_lines)[-4000:]
 
         with open(log_dir / "worktree_ops_log.jsonl", "a", encoding="utf-8") as fh:
             fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
@@ -2065,6 +2087,14 @@ def _sweep_one_dir(
 
             return 0, 1, warnings
 
+    # 通过三重保护——清理
+
+    # CAND-GOVSEC-001 ③ 遥测前置（2026-08-23 src 误删取证 §5.4）：删除发起前即落
+    # phase="begin" 记录（含调用栈）——原实现仅在清理成功后落盘，删除进行中崩溃/
+    # 误删时"谁发起了删除"零现场可查。begin/done 成对出现；崩溃现场只有 begin 无
+    # done = 删除未完成即中断的强信号。
+    _log_worktree_delete(sid, "sweep", d, manager.repo_root, phase="begin", with_stack=True)
+
     swept = 0
 
     try:
@@ -2293,6 +2323,15 @@ def session_worktree_sweep(
     """
 
     root = Path(project_root) if project_root else REPO_ROOT
+
+    # CAND-GOVSEC-001 ②（2026-08-23）：sweep 是库层删除执行入口——调用方进程
+    # 纳入 in-process 删除护栏观测面（audit-only，幂等，失败静默降级不阻断清理）。
+    try:
+        from scripts.ops_guard import install_inprocess_enforcement_audit_only
+
+        install_inprocess_enforcement_audit_only()
+    except Exception:  # noqa: BLE001 — 观测补强永不阻断 sweep 主链路
+        pass
 
     manager = _get_manager(root)
 

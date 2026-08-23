@@ -610,6 +610,17 @@ def cmd_list(args: argparse.Namespace) -> int:
 
 
 def main() -> int:
+    # CAND-GOVSEC-001 ②（2026-08-23）：worktree CLI 入口纳入 in-process 删除护栏
+    # 观测面（audit-only——先补仪表化盲区不硬拦）。失败静默降级，不阻断主链路。
+    try:
+        try:
+            from scripts.ops_guard import install_inprocess_enforcement_audit_only
+        except ImportError:  # python scripts/session_worktree.py 直跑：sys.path[0]=scripts/
+            from ops_guard import install_inprocess_enforcement_audit_only
+        install_inprocess_enforcement_audit_only()
+    except Exception:  # noqa: BLE001 — 观测补强永不阻断 worktree 主链路
+        pass
+
     parser = argparse.ArgumentParser(
         description="Session Worktree — 每 AI 独立 checkout+分支（§11.3.1 v2.1.0）",
     )

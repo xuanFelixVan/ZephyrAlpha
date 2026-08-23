@@ -457,6 +457,17 @@ def _cleanup_message_file(args, exit_code: int | None = None) -> None:
 
 
 def main() -> int:
+    # CAND-GOVSEC-001 ②（2026-08-23）：commit 入口纳入 in-process 删除护栏观测面
+    # （audit-only——先补仪表化盲区不硬拦）。观测补强失败静默降级，不阻断 commit。
+    try:
+        try:
+            from scripts.ops_guard import install_inprocess_enforcement_audit_only
+        except ImportError:  # python scripts/git_commit.py 直跑：sys.path[0]=scripts/
+            from ops_guard import install_inprocess_enforcement_audit_only
+        install_inprocess_enforcement_audit_only()
+    except Exception:  # noqa: BLE001 — 观测补强永不阻断 commit 主链路
+        pass
+
     parser = argparse.ArgumentParser(
         prog="git_commit.py",
         description="GitCommitGateway CLI——全项目唯一合法 git commit 入口（串行锁+stash隔离+GW标记）",

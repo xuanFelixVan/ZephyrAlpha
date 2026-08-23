@@ -75,6 +75,7 @@ __all__ = [
     "reset_reconciler_context",
     "get_reconciler_context",
     "install_inprocess_enforcement",
+    "install_inprocess_enforcement_audit_only",
     "inprocess_enforcement_installed",
     "main",
 ]
@@ -108,6 +109,12 @@ SESSION_ID_ENV = "ZEPHYR_SESSION_ID"
 # 授权环境变量（与 git_guard.py 对齐——gateway/强制场景）
 GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"
 FORCE_ENV = "ZEPHYR_FORCE_DELETE"
+
+#: 观测模式环境变量（CAND-GOVSEC-001 ② 推广配套）：=1 时 in-process 补丁只审计不阻断。
+#: 供 pytest conftest 等「先补仪表化盲区、暂不硬拦」的入口进程使用——判定应拦的
+#: 目标落 inprocess_would_block 审计 + would_block 计数，实际放行。审计覆盖率=100%
+#: 语义不变（每次删除判定必落审计），仅阻断面软化；遥测证明零误伤后可翻硬拦。
+AUDIT_ONLY_ENV = "ZEPHYR_OPS_GUARD_AUDIT_ONLY"
 
 
 class DeleteBlockedError(RuntimeError):
@@ -957,7 +964,8 @@ _INSTALLED = False
 _INSTALL_LOCK = threading.Lock()
 
 #: 删除判定/审计运行统计（T2③ 审计覆盖率指标化真源）：
-#: judge_calls=补丁判定调用总数；allow/block=判定结果；audit_failed=审计落盘失败数。
+#: judge_calls=补丁判定调用总数；allow/block=判定结果；audit_failed=审计落盘失败数；
+#: would_block=观测模式（AUDIT_ONLY_ENV=1）下「应拦但放行」计数。
 #: 覆盖率 = 已落审计的删除动作 / 实际删除动作 ——每次判定必先审计后执行，
 #: audit_failed>0 即覆盖率<100%（RECONCILER-HEALTH 消费报警）。
 _AUDIT_STATS: dict[str, int] = {
@@ -965,12 +973,66 @@ _AUDIT_STATS: dict[str, int] = {
     "allow": 0,
     "block": 0,
     "audit_failed": 0,
+    "would_block": 0,
 }
 
 
 def get_audit_stats() -> dict[str, int]:
     """读取删除判定/审计统计（RECONCILER-HEALTH 覆盖率指标消费）。"""
     return dict(_AUDIT_STATS)
+
+
+def _audit_only_mode() -> bool:
+    """观测模式开关（CAND-GOVSEC-001 ②）：=1 时补丁只审计不阻断。"""
+    return os.environ.get(AUDIT_ONLY_ENV) == "1"
+
+
+def _raise_or_observe(verdict: DeleteVerdict, cmd_repr: str, message: str) -> bool:
+    """阻断统一出口（观测模式软化）。
+
+    硬拦模式（默认）：block 计数 + inprocess_block 审计 + raise DeleteBlockedError。
+    观测模式：would_block 计数 + inprocess_would_block 审计 + 返回 True——
+    调用方 MUST 立即 return 放行（不再落 allow 审计，防同一删除双记）。
+    硬拦模式不返回（raise 不可达）。
+    """
+    if _audit_only_mode():
+        _AUDIT_STATS["would_block"] += 1
+        audit_delete("inprocess_would_block", cmd_repr, verdict)
+        return True
+    _AUDIT_STATS["block"] += 1
+    audit_delete("inprocess_block", cmd_repr, verdict)
+    raise DeleteBlockedError(message)
+
+
+def _enforce_docs_untracked_inprocess(op: str, path_str: str, *, recursive: bool) -> bool:
+    """T3② docs/ untracked 闸门（in-process 补丁路径包装，观测模式软化）。
+
+    硬拦模式：委托 _enforce_docs_untracked（自落 docs_untracked_block 审计+raise）。
+    观测模式：命中则落 inprocess_would_block 审计 + would_block 计数，返回 True
+    （调用方 MUST 立即 return 放行）。
+    未命中：返回 False（继续主流判定）。
+    """
+    if not _audit_only_mode():
+        try:
+            _enforce_docs_untracked(path_str)
+        except DeleteBlockedError:
+            _AUDIT_STATS["block"] += 1
+            raise
+        return False
+    if not _is_docs_untracked(path_str):
+        return False
+    rel = _resolve_to_repo_rel(path_str)
+    verdict = DeleteVerdict(
+        allowed=False,
+        reason=f"docs/ untracked 人工确认闸门（观测模式记录，硬拦模式阻断）: {rel}",
+        primitive=f"inprocess_{op}",
+        targets=[rel],
+        is_recursive=recursive,
+        is_protected_zone=True,
+    )
+    _AUDIT_STATS["would_block"] += 1
+    audit_delete("inprocess_would_block", f"{op}('{path_str}')", verdict)
+    return True
 
 
 def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
@@ -990,18 +1052,14 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
     if ctx is not None:
         rel = _resolve_to_repo_rel(path_str)
         _enforce_file_ops(op, [rel])
-        try:
-            _enforce_docs_untracked(path_str)  # T3②：声明制不豁免 untracked 人工确认
-        except DeleteBlockedError:
-            _AUDIT_STATS["block"] += 1
-            raise
+        if _enforce_docs_untracked_inprocess(op, path_str, recursive=recursive):
+            return  # 观测模式：would_block 已落审计，放行
         if (
             recursive
             and not _is_whitelisted(rel)
             and any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
             and not _is_authorized()
         ):
-            _AUDIT_STATS["block"] += 1
             verdict = DeleteVerdict(
                 allowed=False,
                 reason=f"reconciler {ctx[0]} 已声明 {op} 但保护区内递归删除硬拦（双保险）: {rel}",
@@ -1010,8 +1068,8 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
                 is_recursive=True,
                 is_protected_zone=True,
             )
-            audit_delete("inprocess_block", f"{op}('{path_str}')", verdict)
-            raise DeleteBlockedError(f"[OPS-GUARD] {verdict.reason}")
+            if _raise_or_observe(verdict, f"{op}('{path_str}')", f"[OPS-GUARD] {verdict.reason}"):
+                return  # 观测模式：would_block 已落审计，放行
         _AUDIT_STATS["allow"] += 1
         audit_delete(
             "inprocess_allow",
@@ -1038,13 +1096,9 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
             ),
         )
         return
-    try:
-        _enforce_docs_untracked(path_str)  # T3②：裸调用同样受人工确认闸门约束
-    except DeleteBlockedError:
-        _AUDIT_STATS["block"] += 1
-        raise
+    if _enforce_docs_untracked_inprocess(op, path_str, recursive=recursive):
+        return  # 观测模式：would_block 已落审计，放行
     if any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES) and not _is_authorized():
-        _AUDIT_STATS["block"] += 1
         verdict = DeleteVerdict(
             allowed=False,
             reason=f"in-process 裸删除命中保护区: {rel}",
@@ -1053,11 +1107,13 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
             is_recursive=recursive,
             is_protected_zone=True,
         )
-        audit_delete("inprocess_block", f"{op}('{path_str}')", verdict)
-        raise DeleteBlockedError(
+        if _raise_or_observe(
+            verdict,
+            f"{op}('{path_str}')",
             f"[OPS-GUARD] in-process 删除被阻断——{verdict.reason}\n"
-            f"  解决方案: 治理代理改用 guard_* API 并在 ReconcilerSpec.file_ops 显式声明"
-        )
+            f"  解决方案: 治理代理改用 guard_* API 并在 ReconcilerSpec.file_ops 显式声明",
+        ):
+            return  # 观测模式：would_block 已落审计，放行
     _AUDIT_STATS["allow"] += 1
     audit_delete(
         "inprocess_allow",
@@ -1134,6 +1190,25 @@ def install_inprocess_enforcement() -> bool:
         _shutil_mod.move = _wrapped_shutil_move  # type: ignore[assignment]
         _INSTALLED = True
         return True
+
+
+def install_inprocess_enforcement_audit_only() -> bool:
+    """CAND-GOVSEC-001 ② 推广入口专用：audit-only 模式装 in-process 删除护栏。
+
+    推广期一律观测模式（ZEPHYR_OPS_GUARD_AUDIT_ONLY=1，setdefault 不覆盖宿主
+    显式 =0 的硬拦配置）——先补仪表化盲区不硬拦，遥测证明零误伤后可翻硬拦。
+    装配面：git_commit / session_worktree CLI / commit_queue drain / pytest
+    conftest / session_worktree_sweep 库入口（reconcile_worker 仍走硬拦版
+    install_inprocess_enforcement）。永不抛异常（观测补强不阻断宿主主链路）。
+
+    Returns:
+        bool: True=本次新装，False=已装（幂等）或安装失败降级。
+    """
+    os.environ.setdefault(AUDIT_ONLY_ENV, "1")
+    try:
+        return install_inprocess_enforcement()
+    except Exception:  # noqa: BLE001 — 观测补强永不阻断宿主主链路
+        return False
 
 
 def inprocess_enforcement_installed() -> bool:

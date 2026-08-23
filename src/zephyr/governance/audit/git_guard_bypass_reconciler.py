@@ -161,15 +161,28 @@ def _get_commit_timestamp(project_root: Path, ref: str) -> float | None:
     return None
 
 
-def _get_reflog_resets_in_window(project_root: Path, window_start: float, window_end: float) -> list[tuple[float, str]]:
-    """获取时间窗口内的 reflog reset 条目。
+def _get_reflog_resets_in_window(
+    project_root: Path, window_start: float, window_end: float
+) -> tuple[list[tuple[float, str]], int]:
+    """获取时间窗口内的 reflog reset 条目（same-sha 自指 reset 已排除）。
+
+    CAND-GOVSEC-001 附修（2026-08-23 src 误删取证 §5.3）：``git reset``（mixed/--hard）
+    回到当前位置（same-sha）同样产生 ``reset: moving to`` reflog 条目，但 HEAD 未发生
+    任何移动、工作区零破坏——计入即误报（事故 session 的 ``git reset -q`` 实证）。
+    判定原理：HEAD reflog 按时间倒序，第 i 行记录「从旧位置移动到新位置 %H」，
+    其旧位置 = 下一行（更老一行）的 %H——same-sha reset ⟺ 本行 %H == 下一行 %H。
+    一次 subprocess 全量判定，零额外 rev-parse 开销。
 
     Returns:
-        [(timestamp, subject), ...] 列表，按时间升序。
+        (entries, same_sha_excluded)：
+        - entries: [(timestamp, subject), ...] 有效 reset 列表，按时间升序；
+        - same_sha_excluded: 被排除的 same-sha 自指 reset 条数（全窗口外也统计，供
+          detail 可观测——same-sha 永不构成绕过信号，窗口过滤前排除）。
+        最老一行无下一行可比对 → 保守计入（warn-only 方向）。
     """
     try:
         result = subprocess.run(
-            ["git", "reflog", "--format=%ct|%gs"],
+            ["git", "reflog", "--format=%ct|%H|%gs"],
             cwd=str(project_root),
             capture_output=True,
             text=True,
@@ -177,29 +190,42 @@ def _get_reflog_resets_in_window(project_root: Path, window_start: float, window
             timeout=15,
         )
     except Exception:  # noqa: BLE001 — reconciler 永不抛异常
-        return []
+        return [], 0
 
     if result.returncode != 0:
-        return []
+        return [], 0
 
-    entries: list[tuple[float, str]] = []
+    # 1. 全量行解析（倒序链——same-sha 判定依赖「下一行 %H = 本行旧位置」，
+    #    故必须先建全量序列再做窗口过滤）
+    rows: list[tuple[float, str, str]] = []  # (ts, new_sha, subject) newest-first
     for line in result.stdout.splitlines():
         line = line.strip()
         if not line or "|" not in line:
             continue
-        ts_str, _, subject = line.partition("|")
-        # 只关心 reset 操作（checkout/commit/stash 等不属本 reconciler 范围）
-        if not subject.startswith("reset:"):
-            continue
+        ts_str, _, rest = line.partition("|")
+        new_sha, _, subject = rest.partition("|")
         try:
             ts = float(ts_str)
         except ValueError:
+            continue
+        rows.append((ts, new_sha, subject))
+
+    # 2. same-sha 排除 + 窗口过滤
+    entries: list[tuple[float, str]] = []
+    same_sha_excluded = 0
+    for i, (ts, new_sha, subject) in enumerate(rows):
+        # 只关心 reset 操作（checkout/commit/stash 等不属本 reconciler 范围）
+        if not subject.startswith("reset:"):
+            continue
+        old_sha = rows[i + 1][1] if i + 1 < len(rows) else None
+        if old_sha is not None and old_sha == new_sha:
+            same_sha_excluded += 1  # 自指 reset（如 `git reset -q` / `reset --hard HEAD`）——无害
             continue
         # 窗口: [window_start, window_end]——含两端。reset 可能与上次 commit 同秒
         # （git log --format=%ct 秒级精度），用 >= 避免漏检（warn-only 容忍少量误报）
         if window_start <= ts <= window_end:
             entries.append((ts, subject))
-    return entries
+    return entries, same_sha_excluded
 
 
 def _get_audited_resets_in_window(audit_log: Path, window_start: float, window_end: float) -> list[dict]:
@@ -264,20 +290,25 @@ def make_git_guard_bypass_reconciler(gateway: object) -> ReconcilerSpec:
                     gate_id=_GATE_ID,
                 )
 
-            # 2. 获取窗口内的 reflog reset 条目
-            reflog_resets = _get_reflog_resets_in_window(project_root, prev_ts, head_ts)
+            # 2. 获取窗口内的 reflog reset 条目（same-sha 自指 reset 已排除——误报治本）
+            reflog_resets, same_sha_excluded = _get_reflog_resets_in_window(project_root, prev_ts, head_ts)
 
             # 3. 获取窗口内的审计记录
             audited = _get_audited_resets_in_window(audit_log, prev_ts, head_ts)
 
             reflog_count = len(reflog_resets)
             audit_count = len(audited)
+            excluded_note = (
+                f"（已排除 {same_sha_excluded} 次 same-sha 自指 reset——HEAD 未移动的无害操作）"
+                if same_sha_excluded
+                else ""
+            )
 
             # 4. 对比判定
             if reflog_count == 0:
                 return ReconcileResult(
                     action="skip",
-                    detail="git-guard-bypass: 窗口内无 reset 操作",
+                    detail=f"git-guard-bypass: 窗口内无有效 reset 操作{excluded_note}",
                     gate_id=_GATE_ID,
                 )
 
@@ -288,7 +319,7 @@ def make_git_guard_bypass_reconciler(gateway: object) -> ReconcilerSpec:
                 detail = (
                     f"git-guard-bypass: 窗口内 {reflog_count} 次 reset 但 0 条审计记录"
                     f"（{file_status}）——疑似 alias 绕过"
-                    f"（如 `git -c alias.reset= reset --hard`）"
+                    f"（如 `git -c alias.reset= reset --hard`）{excluded_note}"
                 )
                 logger.warning("GATE-GIT-GUARD-BYPASS: %s", detail)
                 return ReconcileResult(
@@ -302,7 +333,7 @@ def make_git_guard_bypass_reconciler(gateway: object) -> ReconcilerSpec:
             if diff > 0:
                 detail = (
                     f"git-guard-bypass: reflog reset={reflog_count} > 审计记录={audit_count}"
-                    f"（差值 {diff} 可能是 --soft/--mixed 合法操作，也可能是绕过）"
+                    f"（差值 {diff} 可能是 --soft/--mixed 合法操作，也可能是绕过）{excluded_note}"
                 )
                 logger.info("GATE-GIT-GUARD-BYPASS: %s", detail)
                 return ReconcileResult(
@@ -315,7 +346,8 @@ def make_git_guard_bypass_reconciler(gateway: object) -> ReconcilerSpec:
             return ReconcileResult(
                 action="clean",
                 detail=(
-                    f"git-guard-bypass: 窗口内 {reflog_count} 次 reset 全部被审计（audit={audit_count}），无绕过迹象"
+                    f"git-guard-bypass: 窗口内 {reflog_count} 次 reset 全部被审计（audit={audit_count}），"
+                    f"无绕过迹象{excluded_note}"
                 ),
                 gate_id=_GATE_ID,
             )

@@ -935,6 +935,18 @@ def _cmd_drain(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # CAND-GOVSEC-001 ②（2026-08-23）：队列 CLI（含 drain 排空路径）纳入
+    # in-process 删除护栏观测面（audit-only——先补仪表化盲区不硬拦）。
+    # 失败静默降级，不阻断队列主链路。
+    try:
+        try:
+            from scripts.ops_guard import install_inprocess_enforcement_audit_only
+        except ImportError:  # python scripts/commit_queue.py 直跑：sys.path[0]=scripts/
+            from ops_guard import install_inprocess_enforcement_audit_only
+        install_inprocess_enforcement_audit_only()
+    except Exception:  # noqa: BLE001 — 观测补强永不阻断队列主链路
+        pass
+
     parser = argparse.ArgumentParser(
         prog="commit_queue.py",
         description="提交队列串行化 MVP（66 号 §6 协议）：enqueue/status/drain",

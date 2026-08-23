@@ -92,7 +92,7 @@ def make_worktree_required_gate() -> GateSpec:
         # 非 worktree——检测是否有其他活跃 session
         # #ARCH-RECONCILER-WORKTREE-RACE 治本（2026-08-09）：
         # 排除 reconciler worker session（worker-{sha8}-{pid} 命名约定，与
-        # reconcile_runner._count_active_workers 同源）。worker 是 commit 的下游产物——
+        # reconcile_runner._count_inflight_workers 同源）。worker 是 commit 的下游产物——
         # post-commit auto-committer，held_files 为空、变更经 gateway 串行提交，无搭便车
         # 风险。原逻辑把 worker 计入"其他活跃 session"导致每条非-worktree commit 必触发
         # WORKTREE_VIOLATION，--allow-non-worktree 逃生通道被常态化（审计噪音 + 治理稀释）。

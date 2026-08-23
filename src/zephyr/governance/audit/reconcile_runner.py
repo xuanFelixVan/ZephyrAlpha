@@ -72,7 +72,7 @@ Worker 入口
 # - id: I3
 #   name: SessionRegistry 活跃会话
 #   fields: worker-* 前缀的逻辑 session 列表
-#   code: _count_active_workers L470
+#   code: _count_inflight_workers L706
 # 层: 算法
 # - id: A1
 #   name_zh: ① 孤儿 worker 清扫
@@ -83,9 +83,9 @@ Worker 入口
 #   outputs: 本次 sweep 标记 stale 的文件数
 # - id: A2
 #   name_zh: ② 并发闸门
-#   name_en: _count_active_workers
-#   intro: 活跃 worker 达到上限就跳过本次 spawn，防止进程爆炸
-#   desc: SessionRegistry.list_active() 数 worker-* 会话；>=MAX_CONCURRENT_WORKERS(2) → status=skipped 返回；查询失败 fail-open 归 0
+#   name_en: _count_inflight_workers
+#   intro: 在途 worker（已注册 ∪ 新鲜 pending/running status）达到上限就跳过本次 spawn，防止进程爆炸
+#   desc: 计数口径=SessionRegistry worker-* 会话 ∪ launcher 锁内同步写的新鲜 pending status（按 sha8 去重），CAND-GOVSEC-001 ④ 闭合 spawn 前 TOCTOU 缝隙；>=MAX_CONCURRENT_WORKERS(2) → status=skipped 返回；查询失败 fail-open 归 0；launch 临界区整体由 _acquire_launch_lock 跨进程文件锁互斥
 #   inputs: I1 I3
 #   outputs: 活跃 worker 计数
 # - id: A3
@@ -165,6 +165,7 @@ __all__ = [
     "sweep_stale_workers",  # #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）
 ]
 
+import contextlib
 import json
 import os
 import subprocess
@@ -609,22 +610,139 @@ def sweep_stale_workers(project_root: Path | str) -> int:
     return swept
 
 
-def _count_active_workers(project_root: str) -> int:
-    """Count active reconcile workers via SessionRegistry.
+# ----------------------------------------------------------------------------
+# CAND-GOVSEC-001 ④（2026-08-23 src 误删取证 §5.5）：worker 并发闸门文件锁互斥
+#
+# 病根（worker A/B 并发重叠 61 秒实证）：旧闸门只数 SessionRegistry 已注册
+# worker，而注册发生在 worker 子进程启动之后——两笔 commit 间隔小于 worker
+# 启动注册耗时时双双通过闸门（TOCTOU 缝隙）。治本两层：
+#   1. launch 临界区（计数+写 pending+spawn）跨进程文件锁互斥——第二个
+#      launcher 在锁内必看到第一个刚写的 pending status；
+#   2. 计数口径扩为「已注册 worker ∪ 新鲜 pending/running status file」——
+#      pending status 是 launcher 在锁内同步写的（spawn 前），计数不依赖
+#      worker 子进程的注册时机，缝隙物理闭合。
+# ----------------------------------------------------------------------------
 
-    #ARCH-RECONCILER-WORKER-SESSION-001 Phase C (2026-07-22):
-    Workers register as logical sessions (worker-{sha8}-{pid}).
-    This function counts them for concurrency control in launch_reconcile_async.
+#: launch 临界区互斥锁文件（相对 project_root；.runtime 已 gitignore）
+_LAUNCH_LOCK_REL: str = ".runtime/reconcile_launch.lock"
 
-    Returns: count of active worker sessions (0 if SessionRegistry unavailable).
+#: 锁获取超时（秒）——持锁进程崩溃时 OS 随句柄关闭自动释放，超时只是慢路径
+#: 兜底；超时后 fail-open 继续 launch（post-commit best-effort 不阻断 commit）。
+_LAUNCH_LOCK_TIMEOUT_SECONDS: float = 10.0
+
+
+@contextlib.contextmanager
+def _acquire_launch_lock(root: Path):
+    """跨进程文件锁（launch 临界区互斥）。
+
+    Windows=msvcrt.locking 非阻塞重试；POSIX=fcntl.flock LOCK_EX|LOCK_NB。
+    持锁进程崩溃时句柄随进程消亡由 OS 释放（无永久死锁）。
+    fail-open：锁文件不可创建/超时未拿到 → yield False（降级无锁继续，
+    不阻断 commit——与旧行为同平面，不差于现状）。
+
+    Yields:
+        bool: True=本次真正持锁；False=降级无锁。
     """
+    fh = None
+    locked = False
+    try:
+        lock_path = root / _LAUNCH_LOCK_REL
+        lock_path.parent.mkdir(parents=True, exist_ok=True)
+        fh = open(lock_path, "a+b")  # noqa: SIM115 — 锁句柄生命周期随本 with 块
+        deadline = time.monotonic() + _LAUNCH_LOCK_TIMEOUT_SECONDS
+        while not locked and time.monotonic() < deadline:
+            try:
+                if os.name == "nt":
+                    import msvcrt
+
+                    fh.seek(0)
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+                else:
+                    import fcntl
+
+                    fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                locked = True
+            except OSError:
+                time.sleep(0.05)  # 锁被持有——短重试直至超时
+    except OSError:
+        fh = None  # 锁文件不可创建（权限/盘满）→ 降级无锁
+    try:
+        yield locked
+    finally:
+        if fh is not None:
+            if locked:
+                try:
+                    if os.name == "nt":
+                        import msvcrt
+
+                        fh.seek(0)
+                        msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
+                    else:
+                        import fcntl
+
+                        fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+                except OSError:
+                    pass
+            fh.close()
+
+
+def _count_inflight_workers(project_root: str) -> int:
+    """并发闸门计数（CAND-GOVSEC-001 ④）：已注册 worker ∪ 新鲜 pending/running status。
+
+    旧口径只数 SessionRegistry 已注册 worker，注册发生在 worker 子进程启动后，
+    两笔紧邻 commit 双双过闸（A/B 重叠 61s 实证）。新口径把 launcher 在锁内
+    同步写的 pending status file 计入——spawn 前的注册窗口缝隙物理闭合。
+
+    计数规则（按 commit_sha[:8] 去重，防注册+status 双记同一 worker）：
+    - SessionRegistry 活跃 worker-* 会话（worker-{sha8}-{pid}）→ 计 sha8；
+    - status=pending 且 age < _PENDING_DEAD_THRESHOLD_SECONDS：无 pid（spawn 前
+      窗口，缝隙本体）或 pid 存活 → 计入；超龄/死 pid 由 sweep_stale_workers
+      处置，不计；
+    - status=running 且 worker_pid 存活 → 计入；死 pid/无 pid 不计（sweep 兜底）；
+    - 一切读取异常 fail-open 跳过该条（宁可少计放过，不可多计误杀——闸门
+      本就是 best-effort 资源保护）。
+    """
+    shas: set[str] = set()
     try:
         from zephyr.security.access_control.session_concurrency import SessionRegistry
 
         registry = SessionRegistry(project_root)
-        return sum(1 for s in registry.list_active() if s.session_id.startswith("worker-"))
+        for s in registry.list_active():
+            sid = s.session_id
+            if sid.startswith("worker-"):
+                parts = sid.split("-")
+                if len(parts) >= 2 and parts[1]:
+                    shas.add(parts[1])
     except Exception:  # noqa: BLE001 — fail-open
-        return 0
+        pass
+    try:
+        reports = Path(project_root) / _REPORTS_SUBDIR
+        now = time.time()
+        for status_path in reports.glob("reconcile_status_*.json"):
+            try:
+                data = json.loads(status_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            status = data.get("status")
+            if status not in (STATUS_PENDING, STATUS_RUNNING):
+                continue
+            started = float(data.get("started_at", 0) or 0)
+            pid = int(data.get("worker_pid", 0) or 0)
+            if status == STATUS_PENDING:
+                if not started or now - started > _PENDING_DEAD_THRESHOLD_SECONDS:
+                    continue  # 无时间基准/超龄 pending 由 sweep 处置，不计
+                if pid and not _is_pid_alive(pid):
+                    continue  # pending 即死（spawn 传输层失败）——sweep 会清
+                # 新鲜 pending（含无 pid 的 spawn 前窗口）→ 计入
+            else:  # STATUS_RUNNING
+                if not pid or not _is_pid_alive(pid):
+                    continue  # 死 worker 尸体不计（sweep 兜底清理）
+            sha = str(data.get("commit_sha", "")).strip()
+            if sha:
+                shas.add(sha[:8])
+    except OSError:  # noqa: BLE001 — fail-open
+        pass
+    return len(shas)
 
 
 def launch_reconcile_async(
@@ -669,10 +787,36 @@ def launch_reconcile_async(
     except Exception:  # noqa: BLE001 — 清扫失败不阻断 launch
         pass
 
-    # 0. 并发控制（#ARCH-RECONCILER-WORKER-SESSION-001 Phase C, 2026-07-22）
+    # CAND-GOVSEC-001 ④（2026-08-23）：launch 临界区（并发计数 + 写 pending
+    # status + spawn）整体跨进程文件锁互斥——第二个 launcher 在锁内必看到第一个
+    # 刚写的 pending status，TOCTOU 缝隙物理闭合。锁获取失败/超时降级无锁继续
+    # （fail-open，post-commit best-effort 不阻断 commit，与旧行为同平面）。
+    with _acquire_launch_lock(root):
+        return _launch_worker_locked(
+            root, commit_sha, session_id, committed_files, commit_message, started_at
+        )
+
+
+def _launch_worker_locked(
+    root: Path,
+    commit_sha: str,
+    session_id: str,
+    committed_files: list[str],
+    commit_message: str,
+    started_at: int,
+) -> dict:
+    """launch 临界区本体——必须在 ``_acquire_launch_lock`` 持锁内调用。
+
+    锁内序列：并发计数（inflight 口径）→ 写 payload → 写 pending status →
+    spawn worker → 回填 worker_pid。pending status 在锁内落盘是缝隙闭合的
+    关键：后续 launcher 持锁计数时必见到它（CAND-GOVSEC-001 ④）。
+    """
+    # 0. 并发控制（#ARCH-RECONCILER-WORKER-SESSION-001 Phase C, 2026-07-22；
+    #    CAND-GOVSEC-001 ④ 扩口径为 inflight=已注册 worker ∪ 新鲜 pending/running
+    #    status，spawn 前注册窗口由锁内同步写的 pending status 计入闭合）。
     #    超过 MAX_CONCURRENT_WORKERS 时跳过 spawn——fail-open 不阻断 commit，
     #    reconciler 结果缺失本次 commit（可接受：post-commit 审计是 best-effort）。
-    active_workers = _count_active_workers(str(root))
+    active_workers = _count_inflight_workers(str(root))
     if active_workers >= MAX_CONCURRENT_WORKERS:
         return {
             "ok": True,
