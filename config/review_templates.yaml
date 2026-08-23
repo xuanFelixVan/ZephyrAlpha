@@ -1,0 +1,57 @@
+# --- 治理锚定 ---
+# blueprint: MOD-RPT-032 | 待统筹登记（55 号 §6 模板引擎固化外化行） | §templates
+# module_id: MOD-RPT-032
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 复盘模板注册表（55 号 §6 模板引擎固化外化 / GAP-F-40 模板从 ai_review_summary 代码常量迁出）
+# 消费：zephyr.reporting.review_template_registry.ReviewTemplateRegistry.load()
+# 口径：版本可切换（get(kind, version)）；默认模板回退（version=None/版本缺失→default_version）
+# 纪律：v1 与 review_template_registry 打包默认 v1 双向一致性锁（测试锁定，改 v1 须同步两侧；
+#       演进请新增 v2+ 版本并切换 default_version，勿改 v1 原文）
+# 占位符：封闭集校验（war_report 六占位符 / prompt_summary 六占位符 / fallback_summary 五占位符），
+#         缺失或未声明一律 ReviewTemplateRegistryError fail-closed
+default_version: v1
+templates:
+  war_report:
+    description: 每日战报五段模板（市场回顾/板块亮点/预案执行/风险事件/AI 结语，GAP-F-40）
+    versions:
+      v1:
+        status: active
+        body: |
+          # 每日战报 {trade_date}
+
+          ## 1. 市场回顾
+          {market_overview}
+
+          ## 2. 板块亮点
+          {sector_highlights}
+
+          ## 3. 预案执行
+          {plan_outcomes}
+
+          ## 4. 风险事件
+          {risk_events}
+
+          ## 5. AI 结语
+          {summary}
+  prompt_summary:
+    description: LLM 复盘结语 prompt 参数化模板（模型网关注入位供给）
+    versions:
+      v1:
+        status: active
+        body: |
+          你是盘后复盘助手。请基于以下 {trade_date} 盘面事实，用一句话总结今日行情并给出明日操作建议（不超过 {max_chars} 字，只说事实与纪律，不预测点位）：
+          市场回顾：{market_overview}
+          板块亮点：{sector_highlights}
+          预案执行：{plan_outcomes}
+          风险事件：{risk_events}
+  fallback_summary:
+    description: LLM 网关降级兜底结语模板（网关未注入/异常/空输出时 fail-open）
+    versions:
+      v1:
+        status: active
+        body: |-
+          {trade_date} 复盘：{market_overview}；板块亮点：{sector_highlights}；预案执行：{plan_outcomes}；风险事件：{risk_events}。操作建议：严格按预案边界执行，控制仓位，不追预案外标的。

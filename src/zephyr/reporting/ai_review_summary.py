@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-RPT-009 | docs/03_modules/_domain_reporting/review_orchestrator/blueprint.md | 待统筹登记（缺口总账 GAP-F-40 行）
 # [MODULE] zephyr.reporting.ai_review_summary
 # [DOMAIN] D_REPORTING
-# [DEPENDENCIES] 无硬依赖（LLM 经模型网关抽象 llm_gateway 注入位调用，本模块不 import 具体网关实现；测试全 mock）
+# [DEPENDENCIES] zephyr.reporting.review_template_registry(MOD-RPT-032 模板注册位,模板单一真源); 无硬 LLM 依赖（LLM 经模型网关抽象 llm_gateway 注入位调用，本模块不 import 具体网关实现；测试全 mock）
 # [CONSUMERS] （候选：盘后复盘页"一键生成战报"，GAP-F-40 消费位；渲染产物由调用方经 ReportPublisher 归档——归档唯一出口 D-RPT-D05）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] LLM 走模型网关抽象（prompt→text 注入位，本模块零真实 LLM/网络调用）；网关未注入/异常/空输出 → 模板兜底降级（fail-open 留痕不抛，source=template_fallback）；LLM 输出 strip+空白折叠+max_chars 截断；战报模板五段结构固定（市场回顾/板块亮点/预案执行/风险事件/AI 结语），空段降级"（无）"；只渲染不归档（D-RPT-D05，同 review_template_engine 口径）；frozen dataclass JSON 可序列化
+# [INVARIANTS] LLM 走模型网关抽象（prompt→text 注入位，本模块零真实 LLM/网络调用）；网关未注入/异常/空输出 → 模板兜底降级（fail-open 留痕不抛，source=template_fallback）；LLM 输出 strip+空白折叠+max_chars 截断；模板经 MOD-RPT-032 注册位供给（战报五段结构固定=注册位默认 v1，版本可切换+默认模板回退），空段降级"（无）"；只渲染不归档（D-RPT-D05，同 review_template_engine 口径）；frozen dataclass JSON 可序列化
 # [MODIFY-GUARD] docs/_working/2026-08-22-frontend-backend-gap-ledger.md GAP-F-40 行
 # [STABILITY] testing
 # [SAFETY] L
@@ -27,6 +27,8 @@ r"""AI 复盘结语生成器（GAP-F-40，MOD-RPT-009 复盘族扩展）。
     （source=template_fallback + notes 留痕，fail-open 不抛）。
 
 战报模板（五段固定，注入式渲染）：市场回顾/板块亮点/预案执行/风险事件/AI 结语。
+模板经 MOD-RPT-032 模板注册位供给（config/review_templates.yaml，版本可切换+
+默认模板回退；默认 v1=迁移前代码常量原文）——本模块不再持有模板文本常量。
 本模块只渲染不归档（归档唯一出口 ReportPublisher，D-RPT-D05，同
 review_template_engine 口径）。
 
@@ -48,6 +50,13 @@ import re as _re
 from dataclasses import asdict, dataclass, field
 from typing import Any, Callable, Final
 
+from zephyr.reporting.review_template_registry import (
+    TEMPLATE_FALLBACK_SUMMARY,
+    TEMPLATE_PROMPT_SUMMARY,
+    TEMPLATE_WAR_REPORT,
+    ReviewTemplateRegistry,
+)
+
 logger = logging.getLogger(__name__)
 
 __all__: Final = [
@@ -66,39 +75,15 @@ _WS_RE: Final = _re.compile(r"\s+")
 
 _EMPTY_FALLBACK: Final = "（无）"
 
-#: 战报模板（五段固定，占位符注入；模板引擎家族同 review_template_engine 口径）
-WAR_REPORT_TEMPLATE: Final = """# 每日战报 {trade_date}
+#: 打包默认模板注册表（懒加载单例；未显式注入注册位时的零配置路径）
+_DEFAULT_REGISTRY: "ReviewTemplateRegistry | None" = None
 
-## 1. 市场回顾
-{market_overview}
 
-## 2. 板块亮点
-{sector_highlights}
-
-## 3. 预案执行
-{plan_outcomes}
-
-## 4. 风险事件
-{risk_events}
-
-## 5. AI 结语
-{summary}
-"""
-
-_PROMPT_TEMPLATE: Final = (
-    "你是盘后复盘助手。请基于以下 {trade_date} 盘面事实，用一句话总结今日行情并给出明日操作建议"
-    "（不超过 {max_chars} 字，只说事实与纪律，不预测点位）：\n"
-    "市场回顾：{market_overview}\n"
-    "板块亮点：{sector_highlights}\n"
-    "预案执行：{plan_outcomes}\n"
-    "风险事件：{risk_events}\n"
-)
-
-_FALLBACK_TEMPLATE: Final = (
-    "{trade_date} 复盘：{market_overview}；板块亮点：{sector_highlights}；"
-    "预案执行：{plan_outcomes}；风险事件：{risk_events}。"
-    "操作建议：严格按预案边界执行，控制仓位，不追预案外标的。"
-)
+def _default_registry() -> ReviewTemplateRegistry:
+    global _DEFAULT_REGISTRY
+    if _DEFAULT_REGISTRY is None:
+        _DEFAULT_REGISTRY = ReviewTemplateRegistry.embedded_default()
+    return _DEFAULT_REGISTRY
 
 
 @dataclass(frozen=True, slots=True)
@@ -158,8 +143,8 @@ def _normalize(text: str, max_chars: int) -> str:
     return _WS_RE.sub(" ", text).strip()[:max_chars]
 
 
-def _fallback_summary(ctx: ReviewContext) -> str:
-    return _FALLBACK_TEMPLATE.format(
+def _fallback_summary(ctx: ReviewContext, registry: ReviewTemplateRegistry) -> str:
+    return registry.get(TEMPLATE_FALLBACK_SUMMARY).body.format(
         trade_date=ctx.trade_date,
         market_overview=ctx.market_overview,
         sector_highlights=_join(ctx.sector_highlights),
@@ -173,6 +158,7 @@ def generate_review_summary(
     *,
     llm_gateway: LLMSummaryGateway | None = None,
     config: SummaryConfig | None = None,
+    template_registry: ReviewTemplateRegistry | None = None,
 ) -> ReviewSummary:
     """复盘结语生成主入口（LLM 走模型网关抽象，降级链 fail-open）。
 
@@ -180,23 +166,25 @@ def generate_review_summary(
         context: 复盘语境（fail-closed 校验见 ReviewContext）。
         llm_gateway: 模型网关注入位（prompt→text）；None=模板兜底。
         config: 生成配置（None=默认 200 字封顶）。
+        template_registry: MOD-RPT-032 模板注册位（None=打包默认注册表 v1）。
 
     Returns:
         ReviewSummary（source 标定 llm/template_fallback，notes 留痕降级原因）。
     """
     cfg = config or SummaryConfig()
+    registry = template_registry or _default_registry()
     notes: list[str] = []
 
     if llm_gateway is None:
         notes.append("LLM 网关未注入（模板兜底）")
         return ReviewSummary(
             trade_date=context.trade_date,
-            summary_text=_fallback_summary(context),
+            summary_text=_fallback_summary(context, registry),
             source="template_fallback",
             notes=tuple(notes),
         )
 
-    prompt = _PROMPT_TEMPLATE.format(
+    prompt = registry.get(TEMPLATE_PROMPT_SUMMARY).body.format(
         trade_date=context.trade_date,
         market_overview=context.market_overview,
         sector_highlights=_join(context.sector_highlights),
@@ -211,7 +199,7 @@ def generate_review_summary(
         notes.append(f"LLM 网关异常降级（{type(exc).__name__}）")
         return ReviewSummary(
             trade_date=context.trade_date,
-            summary_text=_fallback_summary(context),
+            summary_text=_fallback_summary(context, registry),
             source="template_fallback",
             notes=tuple(notes),
         )
@@ -221,7 +209,7 @@ def generate_review_summary(
         notes.append("LLM 输出为空（模板兜底）")
         return ReviewSummary(
             trade_date=context.trade_date,
-            summary_text=_fallback_summary(context),
+            summary_text=_fallback_summary(context, registry),
             source="template_fallback",
             notes=tuple(notes),
         )
@@ -233,17 +221,26 @@ def generate_review_summary(
     )
 
 
-def render_war_report(context: ReviewContext, summary: ReviewSummary) -> str:
+def render_war_report(
+    context: ReviewContext,
+    summary: ReviewSummary,
+    *,
+    template_registry: ReviewTemplateRegistry | None = None,
+    template_version: str | None = None,
+) -> str:
     """战报模板注入渲染（五段固定；只渲染不归档——归档经 ReportPublisher）。
 
     Args:
         context: 复盘语境。
         summary: generate_review_summary 产出（结语注入第 5 段）。
+        template_registry: MOD-RPT-032 模板注册位（None=打包默认注册表）。
+        template_version: 模板版本（None=注册表默认版本；未注册版本回退默认）。
 
     Returns:
         战报 markdown 字符串。
     """
-    return WAR_REPORT_TEMPLATE.format(
+    registry = template_registry or _default_registry()
+    return registry.get(TEMPLATE_WAR_REPORT, template_version).body.format(
         trade_date=context.trade_date,
         market_overview=context.market_overview,
         sector_highlights=_join(context.sector_highlights),
