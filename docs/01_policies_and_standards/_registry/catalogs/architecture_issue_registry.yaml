@@ -19228,3 +19228,96 @@ entries:
   - '90号 §7'
   created: '2026-08-23'
   last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-194'
+  title: MOD-AU-003 Agentic Drift 防护四件套（15号文 S1.1~S1.3 Phase 1）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    双维度阈值（置信度×意图偏差度）Hard-Gate + S1.1 行为基线（复用 BM-RC-04-F 已落地
+    ai_behavior_baseline 口径不重造核：10×频率突增/首触 production 模块检出）+ S1.2 操作链
+    内联漂移检查（0.3 容差/10 步滑窗/类型熵>1.5 WARNING→auto_guard/路径熵>2.0 DETECTED→
+    blocked+P0 告警）+ S1.3 深度语义复核批量件（嵌入协议注入 mock 可测）+ Agent Challenge
+    工单落盘/降级（交叉会话复审归外部编排）。正常施工链不误报测试锁定。
+  impact:
+    - 'src/zephyr/autonomy_core/agentic_drift_guard.py + drift_semantic_reviewer.py（testing）'
+    - '30 新用例全绿 + autonomy 域 1203 回归零失败'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-AU003）；S0.2 gate 链路接线另排期'
+  status: resolved
+  related_rules:
+  - '15号文 §3.2/§4.2'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-195'
+  title: MOD-INF-053 自治运维闭环接线 + MOD-INF-055 成熟度状态机 + 涌现介入工单（16号文 P1/12号文 §4.4）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    ①incident_pipeline：统一事件流→failure_matcher 双件诊断→auto_fix_engine 三通道判决
+    （结构直通模板化/语义过 LLM Bridge 必经 LSG 闸/行为类 Block+Alert 永不自动修复——四威胁
+    参数化不变量测试 engine.calls==[]）；不可修走 escalation 落盘；知识库
+    data/fix_patterns/ 两件 append-only 记录优先。②ops_maturity：A-L0→A-L1→A-L2 逐级解锁
+    禁跳级+连续 N 周零 TNR 判定留痕+A-L3 请求拒绝。③涌现介入（12号文 §4.1 不新建节点
+    口径）：消费 MOD-RK-14 is_breached 告警→介入工单 SOP 三态（告警→人审→关闭，关闭必须
+    actor）。白名单 human_gated：未审批豁免 0 条。
+  impact:
+    - 'src/zephyr/security/ops/ 新子包三件 + data/fix_patterns/ 两数据资产（testing）'
+    - '36 新用例全绿 + security 域 57 回归零失败'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-INF053）；TNR 演练与 Learn 周期挖掘另排期'
+  status: resolved
+  related_rules:
+  - '16号文 §4.3/§4.4'
+  - '12号文 §4.1'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-196'
+  title: MOD-INF-051 gateway 预算硬门 + MOD-INF-054 考试调度器 + MOD-MODEL_ROUTER_ORCH 级联路由（10/06/11号文 Phase 1）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    依赖序施工 1.3→1.5→1.4：①gateway 门面统一 BudgetEngine.pre_flight_check（DENY 阻断
+    不发起调用+落库）；LLMDeg-1~4 降级走向逐条对 §3.6 表；route() 返回 tier/reason/
+    performance_score；源码零 bypass token L2 无旁路。②考试调度器：新模型→Quick 考试→
+    QuickProfile 落盘（seen 快照防重复）；连续 low_accuracy 超阈→复核建议 JSONL 落盘
+    human_gated:true，零 Standard/Deep 自动调用路径。③级联路由：L1 护照验签硬门→L2
+    JobMatcher×task_model_learner 融合排序（样本=0 静态映射兜底）→L3 成本/层级路由复用
+    MOD-INF-024（源文件零改动 git diff 佐证）；逐段故障注入降级不中断；风控类不可降级。
+  impact:
+    - 'integration/llm_runtime_gateway.py 演进 + intelligence/model_profiling/exam_trigger_scheduler.py + intelligence/model_routing/ 新包 + config/model_routing_policy.yaml（testing）'
+    - '98 新用例全绿 + model 域 859 回归零失败'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-ROUTER）；route() 接 infer() 主链路与预算阈值复核留后续批'
+  status: resolved
+  related_rules:
+  - '10号文 §4'
+  - '06号文 §4'
+  - '11号文 §3.3'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-197'
+  title: CE inject 接线+压缩三档 + LSG 蓝图收尾（07/09号文 Phase 1；L6 复用裁定+Red Team 拦截率发现）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    ①CE inject：ContextInjector 经 VMSSearchProtocol 协议注入接 UnifiedMemoryAPI（跨域仅
+    懒加载工厂），inject_by_keyword 返回非空含 sources+provenances；压缩三档降级
+    llm_summary→rule_based→truncate（裁定：rule_based 不变量违反仍抛错保存量 fail-closed
+    契约，仅执行异常降 truncate——存量 90 用例全绿）。②L6 飞书告警裁定复用（委托）：
+    MOD-SEC-EVENTBUS FeishuAlertChannel 全覆盖诉求（webhook/不可达本地持久化不丢/重试/
+    死信/dry_run），LSG 仅建薄适配 LsgFeishuAlerter。③L5 LSGPerformanceGuard 超预算按
+    §40.4 序降级+永不可降级项三态不变量（篡改注入构造期拒绝）。④phase_check_registry
+    既有已挂 GREEN 实测。⑤CI 门禁 workflow+golden 回归集（13 正必拦/8 负不误拦）。
+    新发现：Red Team LLM01 25 变体 L1 regex 仅拦 8（32%）——中文注入/拆字/多轮未覆盖，
+    回归冻结基线 ≥8 防退步（不假绿），增强列 P2。
+  impact:
+    - 'context_injector.py / doc_compressor.py / l5_resource_protection.py 演进 + layers/l6_feishu_alert.py 新建 + .github/workflows/lsg_security_gate.yml + tests/llm_security/golden/（testing）'
+    - '240 用例全绿（13 相关文件）'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-CELSG）；B⑤ blueprint_registry.yaml 本体缺失阻断待 Owner；Red Team 增强列 P2'
+  status: resolved
+  related_rules:
+  - '07号文 §4'
+  - '09号文 §4.3'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'

@@ -42572,6 +42572,168 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '给作战室 W2 九宫格每格算"明天走这格的概率"——三路证据加权合成：历史 同格局实际走了多少回（基础率）、八态马尔可夫说明天什么天气（状态条件）、密度 预测头的收益分布带蒙特卡洛采样折算（密度头）；哪路缺了就自动降权重并标注， 每格还带置信度，说"三成把握"就真是三成口径，留待校准器验证。'
+# --- 2026-08-24 GW-T4 plain_zh ---
+- module_path: src/zephyr/autonomy_core/agentic_drift_guard.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: Agentic Drift 防护实时档（行为基线+内联漂移检查+双维硬门+Challenge 工单）
+  name_en: 'Agentic Drift Guard (Real-time Tier)'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '盯着 AI 干活有没有"跑偏"的实时哨兵，干三件事加一件文书：一是先按历史会话建一本 "正常长什么样"的账（每小时提交多少次、常碰哪些模块），新会话频率突然暴涨十倍或 第一次碰从没碰过的生产模块就报警；二是盯着最近 10 步操作链——读写删混着来 （类型熵超 1.5）亮黄灯自动降自治，文件从 src/ 一路写到 config/scripts/docs/data 到处乱碰（路径熵超 2.0）直接红灯拦下并发 P0 告警；三是置信度和意图偏差两个维度 同时都不像话时物理阻断。最后还负责开"挑战工单"：把原来的任务意图、当前动作怎么 对齐的、检测器证据写清楚落盘，等另一个 AI 会话复审，复审不了就标记降级直接送人审。'
+- module_path: src/zephyr/autonomy_core/drift_semantic_reviewer.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: Agentic Drift 深度语义复核批量件（日/周频跑批骨架）
+  name_en: 'Drift Semantic Reviewer (Batch Tier)'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '跑偏检查的"慢工细活"档：每天或每周挑交易空档把各会话"当初说要干啥"和"实际干了 啥"两段文字变成向量算相似度，像得起来的放行，差太远的标成疑似漂移写进报告。嵌入 模型不从这儿真调——接口留好由外面注入（测试用假模型），报告只产出"待人工复核" 状态不自动处置，误报多不多由人抽样说了算。'
+- module_path: tests/autonomy_core/test_agentic_drift_guard.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: Agentic Drift 防护实时档验收测试
+  name_en: 'Agentic Drift Guard Tests'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '验收四件事：频率突增十倍和首触生产模块两类合成异常必须被抓到；读→写→删渐变的 操作链必须亮黄灯、src→config 渐变的必须亮红灯；老老实实写代码加测试的正常链 一次都不许误报；挑战工单的字段和降级标记写盘要齐。'
+- module_path: tests/autonomy_core/test_drift_semantic_reviewer.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: 深度语义复核批量件验收测试
+  name_en: 'Drift Semantic Reviewer Tests'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '用假嵌入模型验证：意图和动作一致的会话不标、跑偏的必标；跑批报告结构完整且 落盘"待人工复核"；向量维度不齐、阈值非法这类坏输入必须报错而不是硬吞。'
+- module_path: src/zephyr/security/ops/__init__.py
+  domain_id: D_SECURITY
+  name_zh: 安全运维子包
+  name_en: 'Security Ops Package'
+  desc_zh: 'MOD-INF-053/055 自治运维闭环子包入口——统一事件流消费→诊断→三通道判决管线与成熟度状态机。'
+  desc_en: 'MOD-INF-053/055 autonomous ops loop package entry — event→diagnose→three-channel pipeline and maturity state machine.'
+  plain_zh: '安全运维的工具包入口。系统出了毛病，这里负责判断是啥毛病、能不能自己修、修不了就叫人。'
+- module_path: src/zephyr/security/ops/incident_pipeline.py
+  domain_id: D_SECURITY
+  name_zh: 安全事件处置管线
+  name_en: 'Incident Pipeline'
+  desc_zh: 'MOD-INF-053。统一安全事件消费→failure_matcher 诊断→auto_fix_engine 三通道判决（结构类直通模板化/语义类过 LLM Bridge 必经 LSG 闸/行为类 Block+Alert 永不自动修复）；不可自动修走 escalation 落盘；每次修复动作自动写 data/fix_patterns/ 知识库（append-only）；白名单豁免走 human_gated（未审批 0 条）；消费 MOD-RK-14 涌现 is_breached 告警产人工介入工单（告警→工单→人审→关闭）。'
+  desc_en: 'MOD-INF-053. Unified security event consumption → failure_matcher diagnosis → auto_fix_engine three-channel verdict (structural→template / semantic→LLM Bridge via LSG / behavioral→Block+Alert never auto-fix); unfixable escalates to disk; every fix action appends a KB record; whitelist exemptions human_gated; MOD-RK-14 emergence alerts produce human-intervention tickets.'
+  plain_zh: '系统毛病的分诊台。先判断毛病类型：结构问题照模板自己修，逻辑问题交给大模型修（必须过安全闸），AI 行为出问题绝不自动修、直接报警叫人；修不了的全部记下来升级给人看。每次修理都记账，越权改白名单没批条一律拒绝。'
+- module_path: src/zephyr/security/ops/ops_maturity.py
+  domain_id: D_SECURITY
+  name_zh: 自治运维成熟度状态机
+  name_en: 'Ops Maturity Tracker'
+  desc_zh: 'MOD-INF-055。A-L0（只记录）→A-L1（告警）→A-L2（自愈建议）逐级解锁状态机；每级解锁须连续 N 周零 TNR 违规，判定（批准/拒绝）全部留痕；A-L2 人工采纳率留痕；A-L3 不在本件范围一律拒绝。'
+  desc_en: 'MOD-INF-055. A-L0→A-L1→A-L2 staged unlock state machine; each unlock requires N consecutive zero-TNR-violation weeks with audited decisions; A-L2 human adoption rate tracked; A-L3 rejected (out of scope).'
+  plain_zh: '系统自动修复的「驾照分级」。一开始只许记账，表现好（连续几周没修砸过）才升级到可以报警，再表现好才升级到可以给人提修复建议；每级考试都留成绩单，越级考直接打回。'
+- module_path: tests/security/ops/__init__.py
+  domain_id: 
+  name_zh: 安全运维测试包
+  name_en: 'Test Security Ops Package'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 'security.ops 子包测试目录标记。'
+- module_path: tests/security/ops/test_incident_pipeline.py
+  domain_id: 
+  name_zh: 事件处置管线测试
+  name_en: 'Test Incident Pipeline'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：三类故障探针全链路/行为类永不自动修/知识库落盘/白名单审批/涌现介入工单。'
+- module_path: tests/security/ops/test_ops_maturity.py
+  domain_id: 
+  name_zh: 成熟度状态机测试
+  name_en: 'Test Ops Maturity'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：逐级解锁/零 TNR 周数门槛/判定留痕/采纳率统计/A-L3 拒绝。'
+- module_path: data/fix_patterns/pattern_index.yaml
+  domain_id: 
+  name_zh: 修复模式知识库索引
+  name_en: 'Fix Pattern Index'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '修复动作记录本（只追加不修改，记录优先不做匹配）。'
+- module_path: data/fix_patterns/_fixer-registry.yaml
+  domain_id: 
+  name_zh: 修复器注册表
+  name_en: 'Fixer Registry'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '三条修复通道的登记册（模板化/LLM/行为类不自动修）。'
+- module_path: src/zephyr/intelligence/model_profiling/exam_trigger_scheduler.py
+  domain_id: D_INTELLIGENCE
+  name_zh: 触发式考试调度器
+  name_en: 'Exam Trigger Scheduler'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '两件事自动盯着：一是有新模型上线就自动给它跑一场快速入职考试，成绩单存档； 二是某个模型连续几次因"精度不够"被门控拦下，就发一张"建议人工复核考试"的纸条—— 只发纸条不自动开考，深度考试永远要人点头。'
+- module_path: src/zephyr/intelligence/model_routing/cascade_orchestrator.py
+  domain_id: D_INTELLIGENCE
+  name_zh: 模型路由级联编排器
+  name_en: 'Cascade Routing Orchestrator'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '给任务挑模型走三道闸：先查"能力护照"（假护照直接拒），再按岗位匹配分和历史 表现分排队，最后按成本和时段定用本地模型还是云端 API；哪道闸坏了都有兜底产物加告警， 绝不半路罢工；风控类任务永远必须用外部 API，任何故障都不许降级。'
+- module_path: src/zephyr/integration/llm_runtime_gateway.py
+  domain_id: D_INTEGRATION
+  name_zh: LLM 统一推理门面（预算硬门演进）
+  name_en: 'LLM Runtime Gateway'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '所有大模型调用的唯一大门，现在加了成本刹车：每次调用前先过预算检查，超支 直接拒单；预算越紧走越省的路（先本地后云端，最紧时只用本地），五级降级全自动； 本地模型和云端模型过同一道安全闸和预算闸，没有后门。'
+- module_path: src/zephyr/security/llm_defense/llm_security/layers/l6_feishu_alert.py
+  domain_id: D_SECURITY
+  name_zh: LSG L6 飞书高危告警器
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 'LSG 高危安全事件转统一事件 schema 后委托 MOD-SEC-EVENTBUS FeishuAlertChannel 推送飞书；webhook 不可达时本地持久化队列不丢事件，支持重试与 dry_run 演练。'
+- module_path: tests/llm_security/test_l6_feishu_alert.py
+  domain_id: D_SECURITY
+  name_zh: L6 飞书告警单测
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 'webhook 全 mock——送达、不可达本地持久化不丢、重试出队、dry_run 不触网四条路径。'
+- module_path: tests/llm_security/test_l5_performance_guard.py
+  domain_id: D_SECURITY
+  name_zh: L5 性能预算守卫单测
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '延迟埋点三态判定、超预算按 §40.4 顺序降级、永不可降级项（L1A/L3B/L4/L5成本熔断）不变量与篡改拒绝。'
+- module_path: tests/llm_security/test_lsg_self_regression.py
+  domain_id: D_SECURITY
+  name_zh: LSG 自身安全回归（golden 集）
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 'golden 正样本必拦、负样本不误拦、LLM01 载荷库回放拦截数不低于冻结基线 8/25。'
+- module_path: tests/llm_security/golden/injection_positive.yaml
+  domain_id: D_SECURITY
+  name_zh: golden 注入正样本集
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '13 条已知注入/越狱载荷，L1 必须全部阻断；新增攻击模式只追加不修改。'
+- module_path: tests/llm_security/golden/benign_negative.yaml
+  domain_id: D_SECURITY
+  name_zh: golden 良性负样本集
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '8 条良性输入，L1 不得误拦（误报回归门）。'
+- module_path: tests/context/test_context_injector_memory_wiring.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: CE 注入器记忆接线单测
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 'fake 检索客户端 + 内存后端 UnifiedMemoryAPI 双通道验证 inject_by_keyword 非空（含 sources+provenances）、预算截断与降级纪律。'
+- module_path: tests/context/test_doc_compressor_tiered.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: 文档压缩三档降级单测
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 'llm_summary 注入位 mock——成功/异常/空结果/违反不变量四条降级路径，rule_based 不变量违反保持 fail-closed，truncate 保底必成功。'
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
