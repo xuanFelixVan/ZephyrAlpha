@@ -11570,7 +11570,7 @@ factors:
   entry_role: "factor"
   note: "IC 为正但量级弱；eps 默认值口径下非真基本面估值因子；与 momentum_20d 高度镜像（lag20 IC 绝对值同为 0.0571）——价均偏离≈反动量，回填时须带本口径说明"
 
-- factor_id: "FCT-INTRADAY-015"
+- factor_id: "FCT-INTRADAY-029"
   name: "Intraday VWAP (code-anchored)"
   name_zh: "盘中VWAP（代码锚）"
   aliases: ["intraday_vwap"]
@@ -11610,7 +11610,7 @@ factors:
   entry_role: "factor"
   note: "同 intraday_close——设计定位为盘中成交均价基准，非 alpha 因子；日 K 口径下 vwap≈当日均价，与 close 截面排名近一致（周 rank 自相关 0.9945）"
 
-- factor_id: "FCT-INTRADAY-016"
+- factor_id: "FCT-INTRADAY-030"
   name: "Intraday Close (code-anchored)"
   name_zh: "盘中收盘价（代码锚）"
   aliases: ["intraday_close"]
