@@ -43,6 +43,12 @@ DocCompressor 是 M1 build() pipeline 注入的单例服务，向 M3 触发器�
 3. DocCompressor.compress(text, ...) — 便捷入口，等价于 ``compress_with_provenance(...).compressed_text``。
 4. ``compress_with_provenance`` — **AP4 类型保障**：一并返回 ``raw_text`` 与 ``compressed_text``，
    避免仅靠调用方手写备份。
+5. 三档降级压缩（07 号文 §4 Phase 1 P1-2）——``strategy`` 指定首选档，
+   按 ``llm_summary → rule_based → truncate`` 顺序自动降级：
+   - llm_summary：经注入的 ``llm_summarizer`` 可调用对象做本地摘要（LLM 调用
+     注入位，测试可 mock；未注入或摘要结果违反不变量时自动降级）；
+   - rule_based：现状规则式压缩；
+   - truncate：最终保底——保留 frontmatter 后按 max_chars 硬截断（必成功）。
 
 不变量 Immutable Core 约束
 --------------------------
@@ -60,6 +66,8 @@ from __future__ import annotations
 
 import logging
 import re
+from collections.abc import Callable
+from enum import Enum
 from pathlib import Path
 from threading import RLock
 from typing import Any, Final
@@ -77,6 +85,7 @@ __all__ = [
     "CompressionInvariantError",
     "CompressionOutcome",
     "CompressionPolicy",
+    "CompressionStrategy",
     "DocCompressor",
     "load_policy_from_yaml",
 ]
@@ -169,6 +178,14 @@ class CompressionInvariantError(Exception):
             self.error_code = error_code
 
 
+class CompressionStrategy(str, Enum):
+    """三档压缩策略（07 号文 §4 Phase 1 P1-2 降级链）。"""
+
+    LLM_SUMMARY = "llm_summary"
+    RULE_BASED = "rule_based"
+    TRUNCATE = "truncate"
+
+
 class CompressionOutcome(BaseModel):
     """压缩结果（AP4：类型层同时携带原文与压缩稿，避免静默丢原文）。"""
 
@@ -176,6 +193,7 @@ class CompressionOutcome(BaseModel):
 
     raw_text: str = Field(description="输入原文")
     compressed_text: str = Field(description="压缩后正文")
+    strategy_used: str = Field(default="rule_based", description="实际生效的压缩档（降级链终态）")
 
 
 # ---------------------------------------------------------------------------
@@ -300,26 +318,39 @@ class DocCompressor:
         text: str,
         target_path: str | None = None,
         session_id: str = "default",
+        *,
+        strategy: CompressionStrategy = CompressionStrategy.LLM_SUMMARY,
+        llm_summarizer: Callable[[str], str] | None = None,
     ) -> CompressionOutcome:
-        """规则基压缩，**同时**返回原文与压缩正文（AP4 类型保障）。
+        """三档降级压缩，**同时**返回原文与压缩正文（AP4 类型保障）。
 
         ``session_id`` 保留供未来与 ContextBudgetTracker / 遥测关联。
+
+        参数
+        ----
+        strategy
+            首选压缩档；按 ``llm_summary → rule_based → truncate`` 链自动降级。
+            未注入 ``llm_summarizer`` 时 llm_summary 档自动跳过（等价 rule_based）。
+        llm_summarizer
+            LLM 摘要调用注入位（本地 Qwen 分 slot 摘要的生产注入点；
+            测试注入 mock）。摘要有例外/返回空/违反不变量一律降级，绝不替换原文。
         """
         if target_path is not None:
             capability_check("write", target_path)
 
-        policy = self._policy
-        compressed = self._rule_based_compress(text, policy)
-        self._check_invariants(text, compressed, policy)
-        return CompressionOutcome(raw_text=text, compressed_text=compressed)
+        compressed, tier_used = self._compress_tiered(text, self._policy, strategy, llm_summarizer)
+        return CompressionOutcome(raw_text=text, compressed_text=compressed, strategy_used=tier_used.value)
 
     def compress(
         self,
         text: str,
         target_path: str | None = None,
         session_id: str = "default",
+        *,
+        strategy: CompressionStrategy = CompressionStrategy.LLM_SUMMARY,
+        llm_summarizer: Callable[[str], str] | None = None,
     ) -> str:
-        """对文本执行规则基压缩，检查不变量后返回结果。
+        """对文本执行三档降级压缩，返回压缩后文本。
 
         参数
         ----
@@ -330,6 +361,10 @@ class DocCompressor:
             若为 None，跳过 CBAC 检查（纯内存压缩）。
         session_id
             会话标识（供 ContextBudgetTracker 关联使用）。
+        strategy
+            首选压缩档（默认 llm_summary，未注入 summarizer 时自动降 rule_based）。
+        llm_summarizer
+            LLM 摘要调用注入位（mock 可测）。
 
         返回
         ----
@@ -343,7 +378,92 @@ class DocCompressor:
         CapabilityDenied（来自 zephyr.shared.capability）
             target_path 不在 CBAC allow 列表时抛出。
         """
-        return self.compress_with_provenance(text, target_path=target_path, session_id=session_id).compressed_text
+        return self.compress_with_provenance(
+            text,
+            target_path=target_path,
+            session_id=session_id,
+            strategy=strategy,
+            llm_summarizer=llm_summarizer,
+        ).compressed_text
+
+    # ------------------------------------------------------------------
+    # 内部：三档降级链（07 号文 §4 Phase 1 P1-2）
+    # ------------------------------------------------------------------
+
+    _TIER_CHAINS: Final[dict[CompressionStrategy, tuple[CompressionStrategy, ...]]] = {
+        CompressionStrategy.LLM_SUMMARY: (
+            CompressionStrategy.LLM_SUMMARY,
+            CompressionStrategy.RULE_BASED,
+            CompressionStrategy.TRUNCATE,
+        ),
+        CompressionStrategy.RULE_BASED: (CompressionStrategy.RULE_BASED, CompressionStrategy.TRUNCATE),
+        CompressionStrategy.TRUNCATE: (CompressionStrategy.TRUNCATE,),
+    }
+
+    def _compress_tiered(
+        self,
+        text: str,
+        policy: CompressionPolicy,
+        strategy: CompressionStrategy,
+        llm_summarizer: Callable[[str], str] | None,
+    ) -> tuple[str, CompressionStrategy]:
+        """按降级链执行压缩；除 truncate 保底档外每档须过不变量校验。"""
+        chain = tuple(
+            tier
+            for tier in self._TIER_CHAINS[strategy]
+            if tier is not CompressionStrategy.LLM_SUMMARY or llm_summarizer is not None
+        )
+        last_error: Exception | None = None
+        for tier in chain:
+            try:
+                compressed = self._run_tier(tier, text, policy, llm_summarizer)
+                if tier is not CompressionStrategy.TRUNCATE:
+                    self._check_invariants(text, compressed, policy)
+                return compressed, tier
+            except CompressionInvariantError:
+                if tier is CompressionStrategy.LLM_SUMMARY:
+                    _log.warning("llm_summary 摘要违反压缩不变量，降级 rule_based", exc_info=True)
+                    continue
+                raise  # rule_based 不变量违反保持 fail-closed（存量契约，不降级掩盖）
+            except Exception as exc:  # noqa: BLE001 — 降级链纪律：任一档执行异常自动降下一档
+                last_error = exc
+                _log.warning("压缩档 %s 失败，自动降级下一档: %s", tier.value, exc)
+        raise CompressionInvariantError(
+            field="compression_chain",
+            original=f"原文长度 {len(text)} 字符",
+            compressed=f"全部压缩档失败（末档错误：{last_error}）",
+        )
+
+    def _run_tier(
+        self,
+        tier: CompressionStrategy,
+        text: str,
+        policy: CompressionPolicy,
+        llm_summarizer: Callable[[str], str] | None,
+    ) -> str:
+        if tier is CompressionStrategy.LLM_SUMMARY:
+            if llm_summarizer is None:
+                raise ValueError("llm_summarizer 未注入")
+            summary = llm_summarizer(text)
+            if not isinstance(summary, str) or not summary.strip():
+                raise ValueError("llm_summary 返回空结果")
+            return summary
+        if tier is CompressionStrategy.RULE_BASED:
+            return self._rule_based_compress(text, policy)
+        return self._truncate_compress(text, policy)
+
+    def _truncate_compress(self, text: str, policy: CompressionPolicy) -> str:
+        """保底档：保留 frontmatter 后按 max_chars 硬截断（纯字符串操作，必成功）。"""
+        if not text:
+            return text
+        frontmatter_block = ""
+        body = text
+        if policy.preserve_provenance:
+            fm_match = re.match(r"^(---\n.*?\n---\n?)", text, re.DOTALL)
+            if fm_match:
+                frontmatter_block = fm_match.group(1)
+                body = text[len(frontmatter_block) :]
+        return self._enforce_length(frontmatter_block + body, policy)
 
     # ------------------------------------------------------------------
     # 内部：规则基压缩（experimental 实现）

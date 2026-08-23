@@ -1,0 +1,61 @@
+# --- 治理锚定 ---
+# blueprint: MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §35.3
+# module_id: MOD-LLM_SECURITY
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# LSG Security Gate（蓝图 §35.3 / 09 号文 §4.3 P1-2）
+# PR 触发门禁：golden 回归集全绿才放行。
+
+name: LSG Security Gate
+
+on:
+  push:
+    branches: [main, master, dev]
+    paths:
+      - "src/zephyr/security/llm_defense/llm_security/**"
+      - "tests/llm_security/**"
+      - "config/**/*.yaml"
+      - ".github/workflows/lsg_security_gate.yml"
+  pull_request:
+    branches: [main, master, dev]
+    paths:
+      - "src/zephyr/security/llm_defense/llm_security/**"
+      - "tests/llm_security/**"
+      - "config/**/*.yaml"
+      - ".github/workflows/lsg_security_gate.yml"
+
+jobs:
+  security-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . pytest pytest-timeout pyyaml pydantic
+
+      - name: Run LSG self-regression tests (golden set gate)
+        run: python -m pytest tests/llm_security/test_lsg_self_regression.py -v -n 0
+
+      - name: Replay golden positive set (injection must be blocked)
+        run: >-
+          python -m pytest
+          "tests/llm_security/test_lsg_self_regression.py::TestLSGSelfRegression::test_known_injection_patterns_still_detected"
+          -v -n 0
+
+      - name: Check false positive rate (benign must pass)
+        run: >-
+          python -m pytest
+          "tests/llm_security/test_lsg_self_regression.py::TestLSGSelfRegression::test_known_bypass_patterns_not_in_positive_set"
+          -v -n 0
+
+      - name: L5 performance guard invariant (never-degradable layers)
+        run: python -m pytest tests/llm_security/test_l5_performance_guard.py -v -n 0

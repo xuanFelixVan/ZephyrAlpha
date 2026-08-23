@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.context_injector
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security.gateway
+# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security.gateway; zephyr.autonomy_core.context.vector_bridge
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -27,8 +27,11 @@ prompt construction. Supports three retrieval modes:
   2. By module_id — find KEs belonging to a module
   3. By keyword  — semantic/keyword search
 
-inject_by_* methods return empty InjectedContext (no data source).
-Production retrieval is handled out-of-band by the context pipeline.
+Phase 1 (07 号文 §4 P1-1): inject_by_keyword() 数据源接至 UnifiedMemoryAPI
+（D_INTELLIGENCE 域）——经 VMSSearchProtocol 协议注入，不跨域硬编码具体
+实现；未注入检索客户端时经懒加载默认适配器（构造失败降级为空结果）。
+inject_by_task_id / inject_by_module_id 仍返回空 InjectedContext（无对应
+检索通道，归 Phase 2 裁定）。
 
 Respects token budget limits from ContextBudgetTracker.
 """
@@ -37,10 +40,11 @@ from __future__ import annotations
 
 import time
 from enum import Enum
-from typing import Final
+from typing import Any, Final
 
 from pydantic import BaseModel, Field
 
+from zephyr.autonomy_core.context.vector_bridge import VMSSearchProtocol
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
@@ -75,11 +79,56 @@ class InjectedContext(BaseModel):
     budget_remaining: int = Field(default=0, ge=0, description="Remaining token budget")
 
 
+class _UnifiedMemorySearchAdapter:
+    """UnifiedMemoryAPI（D_INTELLIGENCE）→ VMSSearchProtocol 适配器。
+
+    UnifiedMemoryAPI.search(query, k, topic) 与 VMSSearchProtocol
+    .search(collection, query, top_k) 签名不同，本适配器做签名与结果
+    结构对齐（MemoryRecord → dict），使 ContextInjector 只依赖协议。
+    """
+
+    def __init__(self, api: Any) -> None:
+        self._api = api
+
+    def search(self, collection: str, query: str, top_k: int) -> list[dict[str, Any]]:
+        records = self._api.search(query, k=top_k)
+        results: list[dict[str, Any]] = []
+        for rec in records:
+            results.append(
+                {
+                    "content": str(getattr(rec, "content", "")),
+                    "score": float(getattr(rec, "score", 0.0)),
+                    "metadata": {
+                        "chunk_id": str(getattr(rec, "chunk_id", "")),
+                        "topic": str(getattr(rec, "topic", collection)) or collection,
+                    },
+                }
+            )
+        return results
+
+
+def _build_default_search_client() -> VMSSearchProtocol | None:
+    """懒加载默认检索客户端（UnifiedMemoryAPI 单例 + 适配器）。
+
+    跨域访问仅发生在此函数体内的惰性 import——模块层不硬编码
+    D_INTELLIGENCE 依赖；构造失败（VMS/后端不可用）降级返回 None，
+    由调用方走空结果降级路径。
+    """
+    try:
+        from zephyr.intelligence.model_evaluation.unified_memory_api import get_unified_memory_api
+
+        return _UnifiedMemorySearchAdapter(get_unified_memory_api())
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        return None
+
+
 class ContextInjector:
     """Retrieve and inject knowledge context.
 
-    inject_by_* methods return empty InjectedContext (no data source).
-    Production retrieval is handled out-of-band by the context pipeline.
+    inject_by_keyword() 经 VMSSearchProtocol 检索客户端接 UnifiedMemoryAPI
+    返回非空 InjectedContext（含 sources + provenances）；无可用数据源时
+    降级为空结果。inject_by_task_id / inject_by_module_id 仍返回空
+    InjectedContext（生产检索由 context pipeline 带外处理）。
 
     Parameters
     ----------
@@ -87,6 +136,11 @@ class ContextInjector:
         Maximum token budget for injected context (default 8000).
     max_sources : int
         Maximum number of sources to include (default 10).
+    search_client : VMSSearchProtocol | None
+        检索客户端（协议注入）；None 时首次 keyword 检索懒加载默认
+        UnifiedMemoryAPI 适配器，构造失败降级为空结果。
+    search_collection : str
+        默认检索 collection（默认 "ke_entries"）。
     """
 
     def __init__(
@@ -94,13 +148,18 @@ class ContextInjector:
         *,
         token_budget: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
         max_sources: int = 10,
+        search_client: VMSSearchProtocol | None = None,
+        search_collection: str = "ke_entries",
     ) -> None:
         self._token_budget = token_budget
         self._max_sources = max_sources
+        self._search_client = search_client
+        self._search_collection = search_collection
+        self._default_client: VMSSearchProtocol | None = None
+        self._default_client_resolved = search_client is not None
 
     # ------------------------------------------------------------------
-    # Public API — inject_by_* return empty InjectedContext (KB system
-    # retired 2026-07; production retrieval handled by context pipeline)
+    # Public API — inject_by_keyword 经协议检索；task_id/module_id 仍为空
     # ------------------------------------------------------------------
     def _empty_context(self, mode: RetrievalMode, query: str) -> InjectedContext:
         return InjectedContext(
@@ -112,6 +171,59 @@ class ContextInjector:
             budget_remaining=self._token_budget,
         )
 
+    def _resolve_search_client(self) -> VMSSearchProtocol | None:
+        if self._search_client is not None:
+            return self._search_client
+        if not self._default_client_resolved:
+            self._default_client = _build_default_search_client()
+            self._default_client_resolved = True
+        return self._default_client
+
+    @staticmethod
+    def _parse_hit(item: Any) -> tuple[str, str, str]:
+        """将单条检索命中解析为 (content, source, provenance)。"""
+        if isinstance(item, dict):
+            content = str(item.get("content", item.get("summary", "")))
+            metadata = item.get("metadata") or {}
+        else:
+            content = str(getattr(item, "content", ""))
+            metadata = getattr(item, "metadata", None) or {}
+        chunk_id = str(metadata.get("chunk_id", ""))
+        topic = str(metadata.get("topic", ""))
+        source = str(metadata.get("source", "")) or (f"{topic}:{chunk_id}" if chunk_id else topic)
+        provenance = f"unified_memory:{topic}:{chunk_id}" if chunk_id else f"unified_memory:{topic}"
+        return content, source, provenance
+
+    def _assemble_keyword_context(self, keyword: str, raw_hits: list[Any]) -> InjectedContext:
+        """将检索命中组装为受 token 预算约束的 InjectedContext。"""
+        parts: list[str] = []
+        sources: list[str] = []
+        provenances: list[str] = []
+        total_tokens = 0
+        for item in raw_hits[: self._max_sources]:
+            content, source, provenance = self._parse_hit(item)
+            if not content.strip():
+                continue
+            entry_tokens = estimate_tokens(content)
+            if total_tokens + entry_tokens > self._token_budget:
+                break
+            parts.append(content)
+            total_tokens += entry_tokens
+            if source:
+                sources.append(source)
+            provenances.append(provenance)
+        if not parts:
+            return self._empty_context(RetrievalMode.KEYWORD, keyword)
+        return InjectedContext(
+            context="\n\n".join(parts),
+            sources=sources,
+            provenances=provenances,
+            token_count=total_tokens,
+            retrieval_mode=RetrievalMode.KEYWORD.value,
+            query=keyword,
+            budget_remaining=max(0, self._token_budget - total_tokens),
+        )
+
     def inject_by_task_id(self, task_id: str) -> InjectedContext:
         return self._empty_context(RetrievalMode.TASK_ID, task_id)
 
@@ -119,7 +231,14 @@ class ContextInjector:
         return self._empty_context(RetrievalMode.MODULE_ID, module_id)
 
     def inject_by_keyword(self, keyword: str) -> InjectedContext:
-        return self._empty_context(RetrievalMode.KEYWORD, keyword)
+        client = self._resolve_search_client()
+        if client is None or not keyword.strip():
+            return self._empty_context(RetrievalMode.KEYWORD, keyword)
+        try:
+            raw_hits = client.search(self._search_collection, keyword, top_k=self._max_sources)
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            return self._empty_context(RetrievalMode.KEYWORD, keyword)
+        return self._assemble_keyword_context(keyword, raw_hits)
 
     def inject(self, query: str, mode: RetrievalMode = RetrievalMode.KEYWORD) -> InjectedContext:
         if mode is RetrievalMode.TASK_ID:

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l5_resource_protection
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS]
+# [INVARIANTS] 永不可降级项 L1A/L3B/L4/L5成本熔断 MUST 不出现在任何降级计划
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -18,9 +18,10 @@ import hashlib
 import hmac
 import math
 import time
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict, deque
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any
+from typing import Any, Final
 
 
 class ResourceProtectionLayer:
@@ -309,6 +310,143 @@ class LSGPerformanceBudget:
 
     def check_budget(self, tokens_used: int, elapsed_ms: int) -> bool:
         return tokens_used <= self.max_tokens and elapsed_ms <= self.max_time_ms
+
+
+class BudgetStatus(str, Enum):
+    """性能预算状态（蓝图 §40.4）。"""
+
+    WITHIN_BUDGET = "within_budget"
+    APPROACHING = "approaching"
+    EXCEEDED = "exceeded"
+
+
+@dataclass(frozen=True)
+class DegradationStep:
+    """单步降级动作：某防御子层从 from_mode 降到 to_mode。"""
+
+    layer: str
+    from_mode: str
+    to_mode: str
+    reason: str = "latency budget exceeded"
+
+
+@dataclass(frozen=True)
+class DegradationPlan:
+    """降级计划（蓝图 §40.4 enact_degradation 产物）。"""
+
+    status: BudgetStatus
+    steps: tuple[DegradationStep, ...] = ()
+    alert: bool = False
+
+    @property
+    def degraded_layers(self) -> tuple[str, ...]:
+        return tuple(step.layer for step in self.steps)
+
+
+class LSGPerformanceGuard:
+    """LSG 性能预算管理（蓝图 §40.4）——安全不能以不可接受的延迟为代价。
+
+    - track_latency：每层延迟埋点（滚动窗口，有界）。
+    - check_budget：聚合延迟分位数判定 WITHIN/APPROACHING/EXCEEDED。
+    - enact_degradation：EXCEEDED 时按 §40.4 既定顺序产出降级计划；
+      永不可降级项（L1A/L3B/L4/L5 成本熔断）绝不进入计划（不变量，
+      构造期校验 + is_degradable 查询）。
+    """
+
+    # §40.4 降级顺序（按安全影响从小到大）——唯一合法降级清单
+    DEGRADATION_ORDER: Final[tuple[tuple[str, str, str], ...]] = (
+        ("L1C", "越狱LLM辅助检测", "纯pattern match"),
+        ("L3D", "幻觉LLM辅助检测", "纯启发式"),
+        ("L6", "详细审计日志", "摘要日志"),
+        ("L8", "Agent间行为分析", "纯身份验证"),
+        ("L7", "实时验证", "定期批量验证"),
+    )
+    # §40.4 永不可降级（必须保留）：L1A 核心注入检测 / L3B 沙箱执行 /
+    # L4 工具调用权限检查 / L5 成本熔断
+    NEVER_DEGRADABLE: Final[frozenset[str]] = frozenset({"L1A", "L3B", "L4", "L5_COST_BREAKER"})
+
+    def __init__(
+        self,
+        p95_budget_ms: float = 50.0,
+        p99_budget_ms: float = 100.0,
+        *,
+        approaching_ratio: float = 0.8,
+        min_samples: int = 5,
+        window_size: int = 1000,
+    ) -> None:
+        if any(layer in self.NEVER_DEGRADABLE for layer, _, _ in self.DEGRADATION_ORDER):
+            raise ValueError("DEGRADATION_ORDER 含永不可降级层——违反蓝图 §40.4 不变量")
+        self._p95_budget = p95_budget_ms
+        self._p99_budget = p99_budget_ms
+        self._approaching_ratio = approaching_ratio
+        self._min_samples = max(1, min_samples)
+        self._records: dict[str, deque[float]] = defaultdict(lambda: deque(maxlen=window_size))
+
+    def track_latency(self, layer: str, latency_ms: float) -> None:
+        """记录每个防御层的延迟消耗。"""
+        self._records[layer].append(float(latency_ms))
+
+    def _all_latencies(self) -> list[float]:
+        return [v for recs in self._records.values() for v in recs]
+
+    @staticmethod
+    def _percentile(sorted_vals: list[float], p: float) -> float:
+        idx = min(len(sorted_vals) - 1, max(0, int(len(sorted_vals) * p)))
+        return sorted_vals[idx]
+
+    def check_budget(self) -> BudgetStatus:
+        """检查当前延迟是否超出预算。
+
+        WITHIN_BUDGET → 正常运行；APPROACHING → 记录告警，准备降级；
+        EXCEEDED → 触发降级策略。样本不足一律 WITHIN_BUDGET（不误降）。
+        """
+        vals = sorted(self._all_latencies())
+        if len(vals) < self._min_samples:
+            return BudgetStatus.WITHIN_BUDGET
+        p95 = self._percentile(vals, 0.95)
+        p99 = self._percentile(vals, 0.99)
+        if p95 >= self._p95_budget or p99 >= self._p99_budget:
+            return BudgetStatus.EXCEEDED
+        if p95 >= self._p95_budget * self._approaching_ratio or p99 >= self._p99_budget * self._approaching_ratio:
+            return BudgetStatus.APPROACHING
+        return BudgetStatus.WITHIN_BUDGET
+
+    def enact_degradation(self, status: BudgetStatus) -> DegradationPlan:
+        """延迟超预算时的自动安全降级策略（§40.4 既定顺序）。
+
+        EXCEEDED → 全量五步降级计划；APPROACHING → 空计划 + 告警；
+        WITHIN_BUDGET → 空计划。永不可降级项绝不出现于计划。
+        """
+        if status is BudgetStatus.EXCEEDED:
+            steps = tuple(
+                DegradationStep(layer=layer, from_mode=from_mode, to_mode=to_mode)
+                for layer, from_mode, to_mode in self.DEGRADATION_ORDER
+            )
+            plan = DegradationPlan(status=status, steps=steps, alert=True)
+        elif status is BudgetStatus.APPROACHING:
+            plan = DegradationPlan(status=status, steps=(), alert=True)
+        else:
+            plan = DegradationPlan(status=status, steps=(), alert=False)
+        assert not (set(plan.degraded_layers) & self.NEVER_DEGRADABLE), "不变量：永不可降级项进入降级计划"
+        return plan
+
+    @classmethod
+    def is_degradable(cls, layer: str) -> bool:
+        """查询某层是否可降级——永不可降级项恒 False。"""
+        return layer not in cls.NEVER_DEGRADABLE
+
+    def stats(self) -> dict[str, Any]:
+        """分位数快照（观测用）。"""
+        vals = sorted(self._all_latencies())
+        if not vals:
+            return {"count": 0, "p50": 0.0, "p95": 0.0, "p99": 0.0, "status": BudgetStatus.WITHIN_BUDGET.value}
+        return {
+            "count": len(vals),
+            "p50": self._percentile(vals, 0.50),
+            "p95": self._percentile(vals, 0.95),
+            "p99": self._percentile(vals, 0.99),
+            "status": self.check_budget().value,
+        }
 
 
 class ModelExtractionDefender:
