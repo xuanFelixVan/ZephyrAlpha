@@ -86,7 +86,7 @@ benchmarks:
     underlying_universe: UNI-INDEX-001
     weight_method: cap_weighted
     data_source: SRC-AKSHARE-001
-    used_by_strategies: []
+    used_by_strategies: [STR-DABAN-022, STR-MULTIFACTOR-096, STR-EVENT-001]
     module_id: MOD-MKT-DATA
     doc_ref: 25_multifactor_strategy_detail.md §3.7（归因基准伪代码默认值——v1.34.0 修正，原"§CSI300实证"章节不存在）
     code_path: src/zephyr/data/implementations/akshare_provider.py

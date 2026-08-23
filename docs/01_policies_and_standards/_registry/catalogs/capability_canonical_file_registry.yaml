@@ -9131,6 +9131,15 @@ creation_tokens:
   token: auto-test-voting-first-multi-agent-20260823
   created_by: AI-K3-GW-INFRA
   capability: voting_orchestration
+# --- 2026-08-23 GW-B5 GAP-F-01 creation_token ---
+- file: src/zephyr/plan_engine/scenario_probability_model.py
+  token: auto-scenario-probability-model-20260823
+  created_by: AI-K3-GW-GAPF01
+  capability: scenario_probability_model
+- file: tests/plan_engine/test_scenario_probability_model.py
+  token: auto-test-scenario-probability-model-20260823
+  created_by: AI-K3-GW-GAPF01
+  capability: scenario_probability_model
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

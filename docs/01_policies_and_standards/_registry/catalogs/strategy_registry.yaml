@@ -50,6 +50,8 @@ entry_schema:
   risk_rules: list               # risk_limit_id列表
   holding_period: str            # T+1/波段/趋势
   benchmark_id: str
+  universe_id: str               # A4 三件套：回测股票池引用（universe_registry.universe_id）
+  cost_model_id: str             # A4 三件套：交易成本模型引用（cost_model_registry.cost_model_id）
   module_id: str
   doc_ref: str
   code_path: str
@@ -11817,14 +11819,16 @@ strategies:
     risk_rules: []
     holding_period: "T+1"
     benchmark_id: "BMK-INDEX-001"
+    universe_id: "UNI-DYNAMIC-001"
+    cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-STRATEGY"
     doc_ref: "20_first_batch_strategies.md §2.2; 24_daban_strategy_detail.md §3.5; 21_stock_selection_engine.md §3.5/§3.6"
     code_path: "src/zephyr/pf_core/strategies/daban_sleeve_strategy.py"
-    lifecycle_status: "candidate"
-    status: "candidate"
+    lifecycle_status: "backtest"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-21"
-    updated_at: "2026-08-21"
+    updated_at: "2026-08-23"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -11897,14 +11901,16 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-STRATEGY"
     doc_ref: "20_first_batch_strategies.md §2.3; 25_multifactor_strategy_detail.md §3.1; 21_stock_selection_engine.md §3.5/§3.6"
     code_path: "src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py"
-    lifecycle_status: "candidate"
-    status: "candidate"
+    lifecycle_status: "backtest"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-21"
-    updated_at: "2026-08-21"
+    updated_at: "2026-08-23"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -11977,14 +11983,16 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-STRATEGY"
     doc_ref: "20_first_batch_strategies.md §2.4; 26_event_driven_strategy_detail.md §2.5; 21_stock_selection_engine.md §3.5/§3.6"
     code_path: "src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py"
-    lifecycle_status: "candidate"
-    status: "candidate"
+    lifecycle_status: "backtest"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-21"
-    updated_at: "2026-08-21"
+    updated_at: "2026-08-23"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"

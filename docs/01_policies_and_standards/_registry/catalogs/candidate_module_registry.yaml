@@ -8513,3 +8513,19 @@ entries:
   estimated_complexity: 中
   acquisition_method: candidate
   last_review_outcome: '2026-08-23 转候选库待 Owner 终裁（#ARCH-191）'
+
+- id: CAND-PLAN-012
+  name: '情景概率分布模型（GAP-F-01，作战室 W2 九格概率）'
+  aliases: ['情景概率', 'scenario probability', 'W2矩阵']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 预案概率层
+  description: '三层融合（基础率经验频率/8态马尔可夫条件映射/密度头分位数准蒙特卡洛折算）合成 9 格概率分布+置信度+降级留痕，供作战室 W2 与 Brier 校准消费。'
+  capability: scenario_probability_model
+  problem_it_solves: 'W2 九宫格无概率分布模型产出'
+  keywords: ['scenario', 'probability', 'warroom']
+  upstream_deps: ['MOD-PLAN-008', 'MOD-SIG-037', 'MOD-ML-DENSITY']
+  downstream_consumers: ['作战室 W2', 'MOD-PLAN-010']
+  estimated_complexity: 高
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-017，testing），#ARCH-193'

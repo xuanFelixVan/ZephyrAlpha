@@ -96,7 +96,7 @@ cost_models:
     slippage_model: fixed
     impact_model: none
     propagator_config: null
-    used_by_strategies: []
+    used_by_strategies: [STR-DABAN-022, STR-MULTIFACTOR-096, STR-EVENT-001]
     module_id: MOD-EX-CORE
     doc_ref: 62_business_registry_construction.md §5.3（2026 费率校准真源；原引 52 号 §G1 悬空，v1.34.0 修正）
     code_path: src/zephyr/backtest/core/engine_base.py

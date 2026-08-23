@@ -42564,6 +42564,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '测试：纯函数聚票/平票确定性/容错与全灭 fail-closed。'
+# --- 2026-08-23 GW-B5 GAP-F-01 plain_zh ---
+- module_path: src/zephyr/plan_engine/scenario_probability_model.py
+  domain_id: D_PLAN
+  name_zh: 情景概率分布模型
+  name_en: 'Scenario Probability Model'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '给作战室 W2 九宫格每格算"明天走这格的概率"——三路证据加权合成：历史 同格局实际走了多少回（基础率）、八态马尔可夫说明天什么天气（状态条件）、密度 预测头的收益分布带蒙特卡洛采样折算（密度头）；哪路缺了就自动降权重并标注， 每格还带置信度，说"三成把握"就真是三成口径，留待校准器验证。'
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

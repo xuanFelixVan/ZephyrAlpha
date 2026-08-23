@@ -91,7 +91,7 @@ universes:
     rebalance_frequency: daily
     component_count: null
     components_ref: src/zephyr/signal_ashare/
-    used_by_strategies: [STR-DABAN-001]
+    used_by_strategies: [STR-DABAN-001, STR-DABAN-022]
     data_source: SRC-QMT-001
     module_id: MOD-SIGNAL-ASHARE
     doc_ref: 24_daban_strategy_detail.md §3.1
@@ -131,7 +131,7 @@ universes:
     rebalance_frequency: monthly
     component_count: 4500
     components_ref: src/zephyr/ex_core/trading_halt_resolver.py
-    used_by_strategies: [STR-MULTIFACTOR-001]
+    used_by_strategies: [STR-MULTIFACTOR-096, STR-EVENT-001]
     data_source: SRC-AKSHARE-001
     module_id: MOD-EX-CORE
     doc_ref: 25_multifactor_strategy_detail.md §选股池

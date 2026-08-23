@@ -19203,3 +19203,28 @@ entries:
   - 'B-009'
   created: '2026-08-23'
   last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-193'
+  title: 'MOD-PLAN-017 情景概率分布模型——作战室 W2 矩阵 9 格概率（GAP-F-01，总单标注最难）'
+  severity: P0
+  category: 功能施工
+  adjudication: >-
+    9 格概率=三层融合：①基础率层 MOD-PLAN-008 落库 outcome.actual_scenario 经验频率
+    （Laplace α=1；样本<20 全 1/9 均匀+degraded 标记，PIT 窗口不含当日）；②状态条件层
+    MOD-SIG-037 8 态马尔可夫→9 格条件映射（FLAT_CLOSE→平开洗盘；VIOLENT 均匀摊 9 格诚实
+    表达不确定）；③密度头层 MOD-ML-DENSITY 分位数带→准蒙特卡洛（定数网格逆 CDF 插值零
+    随机数）→gap_share=0.4 拆隔夜/日内→9 格概率质量折算。默认权重 0.5/0.3/0.2 待
+    MOD-PLAN-010 校准标定，权重和校验 fail-closed；缺层降级重归一+degraded_layers 留痕；
+    三层全缺 ValueError fail-closed。置信度=跨层一致性×层自置信。落库 prediction_log
+    scenario_probability 族 append-only 幂等，供多分类 Brier 消费。只出分布不出点位（90号§7）。
+  impact:
+    - 'src/zephyr/plan_engine/scenario_probability_model.py（新建 MOD-PLAN-017，testing）'
+    - 'tests/plan_engine/test_scenario_probability_model.py（41 用例全绿）+ plan_engine 367 零回归'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-GAPF01）；初拍权重待真样本校准'
+  status: resolved
+  related_rules:
+  - 'GAP-F-01'
+  - '45号 W2'
+  - '90号 §7'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
