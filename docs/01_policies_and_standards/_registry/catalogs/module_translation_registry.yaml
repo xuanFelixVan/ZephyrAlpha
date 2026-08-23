@@ -41691,6 +41691,13 @@ entries:
   desc_zh: "57号文GAP-2过渡形态：读config/.env.qmt模拟账户→MiniQmtBroker→TradingSession.start()保活至15:05自动stop（撤未成交单）；--dry-run只连不下单；--strategy显式开启才接策略"
   desc_en: ""
   plain_zh: "交易日早上九点二十五分之前，人手动跑一下这个命令，它就连上模拟盘券商终端，把盘中交易会话拉起来守着，下午三点零五分自动收工——收工前会把还没成交的单子全撤掉，按 Ctrl+C 也一样体面收场。默认只守活不下单；想冒烟试一下连接加 --dry-run，连一下就退，绝不下单。"
+- module_path: src/zephyr/gov_enforcement/commit_gates/hot_file_base_freshness_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "热文件base新鲜度门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交前检查：你认领（claim）的热注册表文件，在你认领之后有没有被别人抢先提交过新版本。如果被抢先了，说明你的修改是基于旧版本做的，直接提交会把别人的新改动覆盖掉——门禁会拦下这次提交，让你确认文件已包含别人的修改后重新认领再提交。和你写文件时的 CAS 校验（safe_write_text）是两层互补防线：CAS 管写盘那一刻，本门禁管提交那一刻。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

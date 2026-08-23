@@ -7634,6 +7634,15 @@ creation_tokens:
   token: auto-src-accidental-deletion-forensics-20260823
   created_by: AI-M258-001
   capability: src_accidental_deletion_forensics
+# --- 2026-08-23 HOT-FILE-BASE-FRESHNESS gate creation_token（陈旧快照覆写事故治本 批2c） ---
+- file: src/zephyr/gov_enforcement/commit_gates/hot_file_base_freshness_gate.py
+  token: auto-hot-file-base-freshness-gate-20260823
+  created_by: AI-M258-001
+  capability: hot_file_base_freshness_gate
+- file: tests/governance/commit_gates/test_hot_file_base_freshness_gate.py
+  token: auto-test-hot-file-base-freshness-gate-20260823
+  created_by: AI-M258-001
+  capability: hot_file_base_freshness_gate
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

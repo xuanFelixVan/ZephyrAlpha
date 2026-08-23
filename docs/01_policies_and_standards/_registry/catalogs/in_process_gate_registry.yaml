@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 98  # 2026-08-17 AI-AUDIT11 实测修正 93→97；2026-08-21 AI-RESIDUAL-001 +GATE-ERRCODE-CONSISTENCY（errcode 门禁 in-process 化，裁定书 2026-08-21-errorcode-stability-adjudication.md）
+total_gates: 99  # 2026-08-17 AI-AUDIT11 实测修正 93→97；2026-08-21 AI-RESIDUAL-001 +GATE-ERRCODE-CONSISTENCY（errcode 门禁 in-process 化，裁定书 2026-08-21-errorcode-stability-adjudication.md）；2026-08-23 +HOT-FILE-BASE-FRESHNESS（陈旧快照覆写事故治本，git 级 base 新鲜度防线）
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
 - gate_id: HELD-OVERLAP
@@ -672,4 +672,10 @@ gates:
   factory_function: make_errcode_consistency_gate
   source: in_process
   register_line: 0  # priority=131；2026-08-21 AI-RESIDUAL-001（裁定书 errorcode-stability：ERRCODE 门禁从外部 pre-commit 链移植 in-process 主通道，堵 gateway --no-verify 结构洞）
+  enabled: true
+- gate_id: HOT-FILE-BASE-FRESHNESS
+  module_path: zephyr.gov_enforcement.commit_gates.hot_file_base_freshness_gate
+  factory_function: make_hot_file_base_freshness_gate
+  source: in_process
+  register_line: 0  # priority=47；2026-08-23 陈旧快照覆写事故治本（claim_head 锚点 vs 当前 HEAD：热文件上游已推进则阻断，与 safe_write_text CAS 文件级防线互补）
   enabled: true
