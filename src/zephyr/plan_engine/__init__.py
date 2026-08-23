@@ -6,6 +6,7 @@
 from typing import Final
 
 from zephyr.plan_engine import (
+    auction_hit_recorder,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-015）
     batch_boundary_runner,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-012）
     boundary_revision_engine,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-006）
     brier_calibration,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-010）
@@ -17,7 +18,9 @@ from zephyr.plan_engine import (
     scenario_attribution_stats,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-009）
     scenario_plan_recorder,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-008）
     scenario_planner,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-005）
+    sit_out_list,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-014）
     tomorrow_boundary_planner,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-001）
+    trading_debate,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-013）
 )
 
 __all__: Final = [
@@ -33,4 +36,7 @@ __all__: Final = [
     "brier_calibration",
     "daily_trade_plan",
     "batch_boundary_runner",
+    "trading_debate",
+    "sit_out_list",
+    "auction_hit_recorder",
 ]
