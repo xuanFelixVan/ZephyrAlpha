@@ -2,10 +2,10 @@
 # [MODULE] scripts.task_board
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] stdlib (sqlite3/argparse/json/os/sys/subprocess/uuid/pathlib)
-# [CONSUMERS] 全部 AI session（任务认领协调）；66 号提交队列死信标签承载（metadata_json）
+# [CONSUMERS] 全部 AI session（任务认领协调）；66 号提交队列死信标签承载（deadletter 子命令打标 + list --label 查询，metadata_json 承载）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 状态机仅 pending→claimed→completed 三态；认领走单条 UPDATE CAS（changes()>0 即成功）；completed 任务禁止再认领/删除；DB 锚主仓 .runtime（跨 worktree 共享）
+# [INVARIANTS] 状态机仅 pending→claimed→completed 三态；认领走单条 UPDATE CAS（changes()>0 即成功）；completed 任务禁止再认领/删除/打标；DB 锚主仓 .runtime（跨 worktree 共享）；死信标签=metadata_json.deadletter{qid,reason,owner,tagged_at}（66 号 §6.4，不改表，重复打标以最新为准）
 # [MODIFY-GUARD] 65 号 §11.2.3 规格；66 号 §2.4 #9 schema；CLI 子命令面
 # [STABILITY] stable
 # [SAFETY] M
@@ -51,7 +51,8 @@ CLI
 - start <id> --session S                                  → 记 started 事件（状态保持 claimed）
 - complete <id> --session S [--result R]                  → 仅当前认领者可完成
 - delete <id> --session S                                 → pending 任意；claimed 仅认领者；completed DENIED
-- list [--status S] [--session S]                         → 表格输出
+- deadletter <id> --session S --qid Q --reason R [--owner O] → 66 号 §6.4 死信打标（metadata_json.deadletter，completed DENIED）
+- list [--status S] [--session S] [--label deadletter]    → 表格输出（--label 查死信标签）
 - show <id>                                               → 任务全字段 + 事件历史
 - --warn-only                                             → 自测（建库建表+空查询）后 exit 0
 
@@ -91,6 +92,7 @@ import sqlite3
 import subprocess
 import sys
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 
 _SQL_SCHEMA = """
@@ -138,6 +140,7 @@ _SQL_INSERT_EVENT = (
     "INSERT INTO task_events (task_id, event_type, actor, timestamp, payload_json) VALUES (?, ?, ?, datetime('now'), ?)"
 )
 _SQL_COMPLETE_TASK = "UPDATE tasks SET status='completed', completed_at=datetime('now') WHERE task_id=?"
+_SQL_UPDATE_METADATA = "UPDATE tasks SET metadata_json=? WHERE task_id=?"
 _SQL_DELETE_TASK = "DELETE FROM tasks WHERE task_id=?"
 _SQL_LIST_TASKS_BASE = "SELECT task_id, status, title, claimed_by, claimed_at, created_at FROM tasks"
 _SQL_LIST_EVENTS = (
@@ -326,8 +329,46 @@ def cmd_delete(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
         return 0
 
 
+def cmd_deadletter(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
+    """66 号 §6.4 死信打标：qid+原因+属主写入 metadata_json.deadletter（不改表）。
+
+    重复打标以最新为准（死信取回重入队后再失败须更新原因）；completed 任务
+    禁止打标（与禁删/禁认领同守卫）。标签经 list --label deadletter 可查。
+    """
+    with conn:
+        task = _get_task(conn, args.task_id)
+        if task is None:
+            print(f"DENIED: task {args.task_id} 不存在", file=sys.stderr)
+            return 2
+        if task["status"] == "completed":
+            print(f"DENIED: task {args.task_id} 已完成，禁止死信打标", file=sys.stderr)
+            return 2
+        try:
+            metadata = json.loads(task["metadata_json"] or "{}")
+        except json.JSONDecodeError as e:
+            print(f"ERROR: task {args.task_id} metadata_json 损坏: {e}", file=sys.stderr)
+            return 1
+        owner = args.owner or args.session
+        tag = {
+            "qid": args.qid,
+            "reason": args.reason,
+            "owner": owner,
+            "tagged_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }
+        metadata["deadletter"] = tag
+        conn.execute(_SQL_UPDATE_METADATA, (json.dumps(metadata, ensure_ascii=False), args.task_id))
+        _add_event(conn, args.task_id, "deadlettered", args.session, dict(tag))
+        print(f"DEADLETTER {args.task_id} qid={args.qid}")
+        return 0
+
+
 def cmd_list(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
-    sql = _SQL_LIST_TASKS_BASE
+    label = getattr(args, "label", "")
+    sql = (
+        "SELECT task_id, status, title, claimed_by, claimed_at, created_at, metadata_json FROM tasks"
+        if label
+        else _SQL_LIST_TASKS_BASE
+    )
     conds: list[str] = []
     params: list[str] = []
     if args.status:
@@ -338,8 +379,21 @@ def cmd_list(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
         params.append(args.session)
     if conds:
         sql += " WHERE " + " AND ".join(conds)
-    sql += " ORDER BY created_at DESC LIMIT 100"
+    sql += " ORDER BY created_at DESC"
+    if not label:
+        sql += " LIMIT 100"
     rows = conn.execute(sql, params).fetchall()
+    if label:
+        # 标签过滤（Python 端解析 metadata_json，不依赖 SQLite JSON1 扩展）
+        filtered = []
+        for r in rows:
+            try:
+                meta = json.loads(r["metadata_json"] or "{}")
+            except json.JSONDecodeError:
+                continue
+            if label in meta:
+                filtered.append(r)
+        rows = filtered[:100]
     if not rows:
         print("(empty)")
         return 0
@@ -402,9 +456,17 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("task_id")
     p.add_argument("--session", default="")
 
-    p = sub.add_parser("list", help="列表（--status/--session 过滤）")
+    p = sub.add_parser("deadletter", help="死信打标（66 号 §6.4：qid+原因+属主入 metadata_json，completed DENIED）")
+    p.add_argument("task_id")
+    p.add_argument("--session", required=True)
+    p.add_argument("--qid", required=True)
+    p.add_argument("--reason", required=True)
+    p.add_argument("--owner", default="", help="属主（缺省=--session）")
+
+    p = sub.add_parser("list", help="列表（--status/--session/--label 过滤）")
     p.add_argument("--status", choices=["pending", "claimed", "completed"], default="")
     p.add_argument("--session", default="")
+    p.add_argument("--label", choices=["deadletter"], default="", help="标签过滤（deadletter=死信任务）")
 
     p = sub.add_parser("show", help="任务全字段 + 事件历史")
     p.add_argument("task_id")
@@ -425,6 +487,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_complete(conn, args)
         if args.cmd == "delete":
             return cmd_delete(conn, args)
+        if args.cmd == "deadletter":
+            return cmd_deadletter(conn, args)
         if args.cmd == "list":
             return cmd_list(conn, args)
         if args.cmd == "show":

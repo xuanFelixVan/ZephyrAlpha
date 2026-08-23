@@ -5,8 +5,8 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.11.13"
-date: 2026-08-21
+version: "2.12.0"
+date: 2026-08-24
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
 ---
@@ -18,7 +18,7 @@ scope: 07_trading_decision_architecture
 > 用途：用户将开启多个 AI，每个 AI 认领一个主题组 → 讨论 → 落盘 discussion/design_memo → 施工。本文档是分工的"作战地图"。
 > 关联：[30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)（多策略并发架构，已定稿 v2.5.0）｜ [10_regime_detector_spec](10_regime_detector_spec.md)（regime 完整 spec，已定稿 v1.5.1）｜ [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md)（regime 验证，已定稿 v1.5.2，C1 已通过 commit 852457e9）
 
-## 0. 现有文档总目录（54 篇·按段位编号）
+## 0. 现有文档总目录（55 篇·按段位编号）
 
 > 段位语义：**0x**=meta（规范与索引）｜**1x**=地基层（regime/数据特征）｜**2x**=Alpha 策略层｜**3x**=组合仓位与风控层｜**4x**=交易执行层｜**5x**=验证与可观测性层｜**6x**=跨切治理层｜**9x**=开放问题与远期愿景。
 > 命名规则见 §8；新旧名对照见 §10；占用登记见 §7.3。
@@ -29,63 +29,64 @@ scope: 07_trading_decision_architecture
 
 | 文件 | 内容一句话 | 状态 |
 |---|---|---|
-| [00_index_trading_decision.md](00_index_trading_decision.md) | 本文档：总目录 + G01-G29 主题组路线图 + 多 AI 分工认领 | active v2.9.0 |
-| [01_design_memo_management_spec.md](01_design_memo_management_spec.md) | 设计备忘管理规范（三层分治 / 命名 / 防飘移机制） | active v1.2.0 |
+| [00_index_trading_decision.md](00_index_trading_decision.md) | 本文档：总目录 + G01-G29 主题组路线图 + 多 AI 分工认领 | active v2.12.0 |
+| [01_design_memo_management_spec.md](01_design_memo_management_spec.md) | 设计备忘管理规范（三层分治 / 命名 / 防飘移机制） | active v1.3.1 |
 | [02_construction_workflow_sop.md](../../../01_policies_and_standards/sop/construction_workflow_sop.md) | 07 域施工流程 SOP——端到端 15 步施工闭环（编排层，整合 18+15 盲点+附录 A 长清单审查 12 节+附录 B 验证脚本索引+附录 C 40+ reconciler 清单）**→ 2026-08-13 迁至 docs/01_policies_and_standards/sop/construction_workflow_sop.md（SOP 属永久规则，与施工图纸临时区分离）** | active v1.4.0（已迁出本目录） |
-| [10_regime_detector_spec.md](10_regime_detector_spec.md) | regime 检测器完整 spec（12 态设计真源；实现态 4 态 HMM + 3 特殊态 overlay） | active v1.5.1 |
-| [11_regime_backtest_validation_plan.md](11_regime_backtest_validation_plan.md) | regime 回测验证方案（Phase 1-5 验收指南；C1 四项全通过） | active v1.5.2 |
-| [12_regime_phase2_validation.md](12_regime_phase2_validation.md) | Phase 2 模型质量验证（A1/A2/B1/B4 四验证器） | active v0.2.2 |
-| [13_regime_phase3_engineering_plan.md](13_regime_phase3_engineering_plan.md) | Phase 3 工程规划（降态+校准+NLP+S2/T3） | draft v0.3.2 |
-| [14_regime_s2_diagnosis.md](14_regime_s2_diagnosis.md) | S2 算法错配诊断报告 | draft v0.4.5 |
-| [15_data_feature_layer_spec.md](15_data_feature_layer_spec.md) | G01 数据与特征层规范 | active v1.0.0（2026-08-12 重建 6a4f5392） |
-| [16_technical_indicator_build_plan.md](16_technical_indicator_build_plan.md) | 技术指标施工计划（9周期覆盖+增量/全量调度） | active v1.0.0（2026-08-12 重建） |
-| [16_technical_indicator_catalog.md](16_technical_indicator_catalog.md) | 技术指标目录（5大类指标规范：trend/momentum/volatility/volume/reversal，对齐代码真源） | active v1.0.0（2026-08-12 重建） |
-| [17_special_trading_days_data_assets.md](17_special_trading_days_data_assets.md) | A股特殊交易日数据资产全景与治理（完整清单+已施工盘点+hk_trade_calendar修复#ARCH-DATA-001+治本方案#ARCH-DATA-002） | active v1.0.0 |
-| [18_cold_archive_build_plan.md](18_cold_archive_build_plan.md) | 冷归档施工计划 | active v0.2.0 |
-| [19_northbound_hold_snapshot.md](19_northbound_hold_snapshot.md) | 北向资金季度持仓快照 fetcher 施工计划（日频断档替代方案，tushare hk_hold 已验证） | draft v0.1.0 |
-| [20_first_batch_strategies.md](20_first_batch_strategies.md) | 首批 3 策略定义（打板+多因子+事件驱动） | active v1.2.4 |
-| [21_stock_selection_engine.md](21_stock_selection_engine.md) | G05 选股引擎架构 | active v1.1.18 |
+| [10_regime_detector_spec.md](10_regime_detector_spec.md) | regime 检测器完整 spec（12 态设计真源；实现态 4 态 HMM + 3 特殊态 overlay） | active v1.6.3 |
+| [11_regime_backtest_validation_plan.md](11_regime_backtest_validation_plan.md) | regime 回测验证方案（Phase 1-5 验收指南；C1 四项全通过） | active v1.6.1 |
+| [12_regime_phase2_validation.md](12_regime_phase2_validation.md) | Phase 2 模型质量验证（A1/A2/B1/B4 四验证器） | active v0.3.1 |
+| [13_regime_phase3_engineering_plan.md](13_regime_phase3_engineering_plan.md) | Phase 3 工程规划（降态+校准+NLP+S2/T3） | draft v0.4.1 |
+| [14_regime_s2_diagnosis.md](14_regime_s2_diagnosis.md) | S2 算法错配诊断报告 | draft v0.5.2 |
+| [15_data_feature_layer_spec.md](15_data_feature_layer_spec.md) | G01 数据与特征层规范 | active v1.0.3 |
+| [16_technical_indicator_build_plan.md](16_technical_indicator_build_plan.md) | 技术指标施工计划（9周期覆盖+增量/全量调度） | active v1.0.1 |
+| [16_technical_indicator_catalog.md](16_technical_indicator_catalog.md) | 技术指标目录（5大类指标规范：trend/momentum/volatility/volume/reversal，对齐代码真源） | active v1.0.1 |
+| [17_special_trading_days_data_assets.md](17_special_trading_days_data_assets.md) | A股特殊交易日数据资产全景与治理（完整清单+已施工盘点+hk_trade_calendar修复#ARCH-DATA-001+治本方案#ARCH-DATA-002） | active v1.0.1 |
+| [18_cold_archive_build_plan.md](18_cold_archive_build_plan.md) | 冷归档施工计划 | active v0.3.1 |
+| [19_northbound_hold_snapshot.md](19_northbound_hold_snapshot.md) | 北向资金季度持仓快照 fetcher 施工计划（日频断档替代方案，tushare hk_hold 已验证） | active v1.0.1 |
+| [20_first_batch_strategies.md](20_first_batch_strategies.md) | 首批 3 策略定义（打板+多因子+事件驱动） | active v1.3.2 |
+| [21_stock_selection_engine.md](21_stock_selection_engine.md) | G05 选股引擎架构 | active v1.1.21 |
 | [22_sector_rotation_spec.md](22_sector_rotation_spec.md) | G06 板块轮动 spec | active v1.9.8（2026-08-21 电风扇速度计升独立因子跨文档登记，44 号 M1-⑩） |
-| [23_strategy_correlation_validation.md](23_strategy_correlation_validation.md) | G07 策略间相关性验证 | active v1.7.0 |
-| [24_daban_strategy_detail.md](24_daban_strategy_detail.md) | G08 打板策略细节 | active v1.10.4 |
-| [25_multifactor_strategy_detail.md](25_multifactor_strategy_detail.md) | G09 多因子策略细节 | active v1.12.11 |
-| [26_event_driven_strategy_detail.md](26_event_driven_strategy_detail.md) | G10 事件驱动策略细节 | active v1.8.0 |
-| [27_second_batch_strategies.md](27_second_batch_strategies.md) | G11 第二批次策略（价值反转/动量趋势，暂缓） | draft v0.2.0（暂缓说明已补） |
-| [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md) | G21 情绪周期×交易决策（五阶段+定位器+regime分工+策略部署+隐形驱动验证） | active v1.2.0（2026-08-12 从 a3750b90d1 恢复，16f119bd） |
-| [29_factor_strategy_extraction.md](29_factor_strategy_extraction.md) | 潘潘直播课程因子与策略提炼知识库（546 条：F1-F8 因子+S9-S16 策略，二十一轮审查收敛，factor/strategy/risk_limit 三注册表 doc_ref 真源） | active v1.0.0（2026-08-14 从 _working/潘潘直播课程 迁入） |
-| [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) | 多策略并发架构总纲（Model A：独立账本+firm聚合） | active v2.5.0 |
-| [31_position_sizing.md](31_position_sizing.md) | 仓位算法 spec（策略层粗仓位+firm层Kelly精裁决） | active v1.25.0 |
-| [32_firm_risk_aggregator.md](32_firm_risk_aggregator.md) | G13 FirmRiskAggregator 逻辑 | active v1.0.22 |
-| [33_budget_change_handler.md](33_budget_change_handler.md) | G14 BudgetChangeHandler 三级升级 | active v1.1.0（2026-08-14 AI-BGT-001 行号漂移修正+§7 四项闭环，1b8a774ad5） |
-| [34_regime_meta_allocator.md](34_regime_meta_allocator.md) | G15 RegimeMetaAllocator 参数（框架 active + 代码 production v1.0.0；C1 已通过；参数待首批策略 PnL 校准） | active v2.8.1 |
-| [35_drawdown_protocol_impl.md](35_drawdown_protocol_impl.md) | G16 回撤 Protocol 落地 | active v1.39.0 |
+| [23_strategy_correlation_validation.md](23_strategy_correlation_validation.md) | G07 策略间相关性验证 | active v1.7.2 |
+| [24_daban_strategy_detail.md](24_daban_strategy_detail.md) | G08 打板策略细节 | active v1.10.6 |
+| [25_multifactor_strategy_detail.md](25_multifactor_strategy_detail.md) | G09 多因子策略细节 | active v1.13.5 |
+| [26_event_driven_strategy_detail.md](26_event_driven_strategy_detail.md) | G10 事件驱动策略细节 | active v1.9.8 |
+| [27_second_batch_strategies.md](27_second_batch_strategies.md) | G11 第二批次策略（价值反转/动量趋势，暂缓） | draft v0.2.1（暂缓说明已补） |
+| [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md) | G21 情绪周期×交易决策（五阶段+定位器+regime分工+策略部署+隐形驱动验证） | active v1.2.4 |
+| [29_factor_strategy_extraction.md](29_factor_strategy_extraction.md) | 潘潘直播课程因子与策略提炼知识库（546 条：F1-F8 因子+S9-S16 策略，二十一轮审查收敛，factor/strategy/risk_limit 三注册表 doc_ref 真源） | active v1.3.3 |
+| [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) | 多策略并发架构总纲（Model A：独立账本+firm聚合） | active v2.6.1 |
+| [31_position_sizing.md](31_position_sizing.md) | 仓位算法 spec（策略层粗仓位+firm层Kelly精裁决） | active v1.25.2 |
+| [32_firm_risk_aggregator.md](32_firm_risk_aggregator.md) | G13 FirmRiskAggregator 逻辑 | active v1.0.24 |
+| [33_budget_change_handler.md](33_budget_change_handler.md) | G14 BudgetChangeHandler 三级升级 | active v1.1.1 |
+| [34_regime_meta_allocator.md](34_regime_meta_allocator.md) | G15 RegimeMetaAllocator 参数（框架 active + 代码 production v1.0.0；C1 已通过；参数待首批策略 PnL 校准） | active v2.8.6 |
+| [35_drawdown_protocol_impl.md](35_drawdown_protocol_impl.md) | G16 回撤 Protocol 落地 | active v1.39.3 |
 | [36_var_es_monitoring.md](36_var_es_monitoring.md) | G17 VaR/ES 与波动率监控 | active v1.11.2 |
-| [37_liquidity_crisis_protocol.md](37_liquidity_crisis_protocol.md) | G18 流动性危机处理 | active v1.2.0（2026-08-17 AI-LVL3-001 LEVEL_3 生产接线完工，检测→逃生指令→Kill Switch 清算全链+降级机阶梯，c37b4b6f merge） |
-| [40_execution_broker.md](40_execution_broker.md) | 执行层下单对接（19项决策+代码已施工；§2.8 盘前检查链+订单层熔断两级） | active v2.10.1 |
-| [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec（含明日预案双层架构+上游四轨裁定） | active v1.7.0 |
-| [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec（MVP 已施工：Triage/止损/止盈/执行编排 4 模块） | active v1.7.1 |
+| [37_liquidity_crisis_protocol.md](37_liquidity_crisis_protocol.md) | G18 流动性危机处理 | active v1.2.1 |
+| [40_execution_broker.md](40_execution_broker.md) | 执行层下单对接（19项决策+代码已施工；§2.8 盘前检查链+订单层熔断两级） | active v2.11.2 |
+| [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec（含明日预案双层架构+上游四轨裁定） | active v1.7.1 |
+| [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec（MVP 已施工：Triage/止损/止盈/执行编排 4 模块） | active v1.7.2 |
 | [43_compliance_discipline.md](43_compliance_discipline.md) | G30 合规与交易纪律体系（四项必做/四项严禁/信息合规/硬边界裁定/交易合规检测，D_COMPLIANCE 域设计真源） | active v1.1.0（2026-08-15 施工落地 AI-COMP-001 + 运行时装配 AI-ASM-001） |
-| [44_premarket_intraday_decision_upgrade.md](44_premarket_intraday_decision_upgrade.md) | 盘前与盘中决策支持升级（M1 情绪实时分析 10 增量/M2 盘中次日预案边界修正/M3 盘前综合预判 9 增量含 LLM 盘后分析，28+41+90 号升级备忘；§9 施工算法十四件；§11 五项裁定 Owner 已批准；§12 附录 M4 日志体系+短板复核+开源评估+Tito 提取；CAND 登记因并发纪律缓办） | active v1.2.0（2026-08-21 五项裁定全批+Owner 四问批次，施工按分期排 P0 之后） |
+| [44_premarket_intraday_decision_upgrade.md](44_premarket_intraday_decision_upgrade.md) | 盘前与盘中决策支持升级（M1 情绪实时分析 10 增量/M2 盘中次日预案边界修正/M3 盘前综合预判 9 增量含 LLM 盘后分析，28+41+90 号升级备忘；§9 施工算法十四件；§11 五项裁定 Owner 已批准；§12 附录 M4 日志体系+短板复核+开源评估+Tito 提取；CAND 登记因并发纪律缓办） | active v1.3.0 |
 | [45_warroom_playbook.md](45_warroom_playbook.md) | 作战手册体系（作战室）施工设计——预案/验证/执行跟踪三位一体（第一性原理五则+机构实践对标[quantamental 定位]+W0-W6+W2b 区块规格+数据契约映射+缺口⑥~⑩分期；前端改版 L15 落地件，HTML 原型 14 项自检全绿） | active v1.0.0（2026-08-22 Owner 裁定新增页） |
-| [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | draft v1.0.2 |
-| [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active v1.2.6 |
-| [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.0（2026-08-12 重建） |
+| [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | active v1.1.1 |
+| [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active v1.2.14 |
+| [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.4 |
 | [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（5 态 FSM 已落码 AI-DGR-001，MOD-GOV-045 production） | active v1.7.9 |
-| [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因 | active v1.14.0 |
+| [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因 | active v1.15.8 |
 | [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.2.0（2026-08-17 AI-THD-001 存量 9 模块阈值统读完工） |
 | [56_backtest_vs_sim_reconciliation_plan.md](56_backtest_vs_sim_reconciliation_plan.md) | 回测 vs 模拟盘对账方案（P0-1②：不变量 I1-I4+三层 diff 复用+归因三分类+10 项对照清单；G1/G6 转 Owner 窗口） | active v1.0.0（2026-08-21 P0 批） |
-| [57_daily_cycle_sop.md](57_daily_cycle_sop.md) | 交易日模拟盘+收盘后回测 日循环 SOP（P0-5：六环节命令清单+开盘前 QMT 人工确认项+缺口 GAP1-5+首跑彩排记录） | active v1.0.0（2026-08-21 P0 批，首跑彩排已过） |
+| [57_daily_cycle_sop.md](57_daily_cycle_sop.md) | 交易日模拟盘+收盘后回测 日循环 SOP（P0-5：六环节命令清单+开盘前 QMT 人工确认项+缺口 GAP1-5+首跑彩排记录+RUN-05 断网断电断点恢复演练节） | active v1.1.0（2026-08-24 RUN-05 入册，真实演练留 Owner 窗口） |
 | [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（31条仲裁→3条firm硬上限+任务系统总线+三档节奏） | active v1.1.0 |
-| [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.10.0 |
-| [62_business_registry_construction.md](62_business_registry_construction.md) | 18业务注册表施工（registry_of_registries） | active v1.32.0 |
-| [63_data_utilization_audit.md](63_data_utilization_audit.md) | 数据利用审计 | draft v2.0.0 |
-| [64_data_source_download_spec.md](64_data_source_download_spec.md) | 数据源与下载体系规范（15 源/130+任务/11档调度/落库/韧性全面盘点+升级讨论载体） | active v1.4.0 |
-| [65_git_safety_governance.md](65_git_safety_governance.md) | Git 安全治理体系（alias 失效修复+多层防护施工总案，Trae IDE 专用；#ARCH-AICOLLAB-001 三件套方案落 §12；wipe 治本 S1-S6+task_board 已 merge 回 dev，四证首次真实清理走通；**Phase 1 wrapper 层 7 项已全部施工**，merge 后跑安装脚本激活） | active v2.3.1 |
-| [66_commit_queue_serialization.md](66_commit_queue_serialization.md) | 提交队列串行化（跨切治理层·集成基建；commit queue 三层防护方案，MVP 待排期；§2.4 #9 task_board 已按其 schema 重建 production 并 merge 回 dev） | active v1.1.0 |
+| [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.13.3 |
+| [62_business_registry_construction.md](62_business_registry_construction.md) | 18业务注册表施工（registry_of_registries） | active v1.36.1 |
+| [63_data_utilization_audit.md](63_data_utilization_audit.md) | 数据利用审计 | draft v2.1.2 |
+| [64_data_source_download_spec.md](64_data_source_download_spec.md) | 数据源与下载体系规范（15 源/130+任务/11档调度/落库/韧性全面盘点+升级讨论载体） | active v1.4.3 |
+| [65_git_safety_governance.md](65_git_safety_governance.md) | Git 安全治理体系（alias 失效修复+多层防护施工总案，Trae IDE 专用；#ARCH-AICOLLAB-001 三件套方案落 §12；wipe 治本 S1-S6+task_board 已 merge 回 dev，四证首次真实清理走通；**Phase 1 wrapper 层 7 项已全部施工**，merge 后跑安装脚本激活） | active v2.5.0 |
+| [66_commit_queue_serialization.md](66_commit_queue_serialization.md) | 提交队列串行化（跨切治理层·集成基建；commit queue 三层防护方案，MVP 待排期；§2.4 #9 task_board 已按其 schema 重建 production 并 merge 回 dev） | active v1.2.0 |
 | [67_merge_conflict_resolution_sop.md](../../../01_policies_and_standards/sop/merge_conflict_resolution_sop.md) | Merge 冲突处理 SOP——冲突三分法（叠加型合并/迭代型取新/互斥型升级裁定）+标准 7 步流程+5 红线，全项目冲突处理唯一真源 **→ 2026-08-13 迁至 docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md** | active v1.0.1（已迁出本目录） |
-| [68_code_algorithm_review_pipeline.md](68_code_algorithm_review_pipeline.md) | 代码与算法多模型审查流水线（跨切治理层；施工后审查线——5+5 路并发：施工 5 对话+审查修复 5 对话复用 audit 20 域每路 4 域，Kimi-K3/GLM-5.3/Qwen3.8-Max 多模型轮流交叉审查已 merge 模块代码/算法/运行情况，全自动化零打扰自主治本修复，冲突防护五机制，统一统筹调度；执行蓝本 docs/audit_prompts_20_ai.md；模型池已定 Kimi-K3/GLM-5.3/Qwen3.8-Max（Trae CN 切换）+轮换矩阵+调度卡一键复制指令模板库） | draft v1.2.0 |
-| [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案 21 项（全部待讨论） | draft v1.18.1 |
-| [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.2 |
+| [68_code_algorithm_review_pipeline.md](68_code_algorithm_review_pipeline.md) | 代码与算法多模型审查流水线（跨切治理层；施工后审查线——5+5 路并发：施工 5 对话+审查修复 5 对话复用 audit 20 域每路 4 域，Kimi-K3/GLM-5.3/Qwen3.8-Max 多模型轮流交叉审查已 merge 模块代码/算法/运行情况，全自动化零打扰自主治本修复，冲突防护五机制，统一统筹调度；执行蓝本 docs/audit_prompts_20_ai.md；模型池已定 Kimi-K3/GLM-5.3/Qwen3.8-Max（Trae CN 切换）+轮换矩阵+调度卡一键复制指令模板库） | active v1.2.1 |
+| [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案（P0/P1 施工优先级表+远期开放问题） | active v2.0.3 |
+| [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.4 |
+| [92_phase2_business_construction_order.md](92_phase2_business_construction_order.md) | 阶段二业务层施工顺序清单（44 号升级+2026-08 架构审查升级项全量按依赖/冲突面排序成波次，并发施工派单真源；ClickHouse 数据实证分支裁定） | active v1.0.0（2026-08-22 Owner 指令落盘） |
 
 ## 1. 文档定位
 
@@ -629,56 +630,61 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 
 | 产出物编号 | 主题组 | 认领方 | 状态 |
 |---|---|---|---|
-| 10_regime_detector_spec | G02 regime spec | 另一AI | ✅ v1.5.1 |
-| 11_regime_backtest_validation_plan | G03 regime 验证 | 另一AI | ✅ v1.5.2（C1 已通过） |
-| 20_first_batch_strategies | G04 首批3策略 | G04-AI | ✅ v1.2.4 |
+| 10_regime_detector_spec | G02 regime spec | 另一AI | ✅ v1.6.3 |
+| 11_regime_backtest_validation_plan | G03 regime 验证 | 另一AI | ✅ v1.6.1（C1 已通过） |
+| 20_first_batch_strategies | G04 首批3策略 | G04-AI | ✅ v1.3.2 |
 | discussion_004 | ⚠️ 编号冲突已澄清：代码误用此号指代 13 号文档（Phase 3 降维裁定）；G06 板块轮动实际产出物为 `22_sector_rotation_spec.md` | — | 已澄清 |
-| 15_data_feature_layer_spec | G01 数据特征层 | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
-| 21_stock_selection_engine | G05 选股引擎 | ✅ 已定稿 | active v1.1.18 |
-| 22_sector_rotation_spec | G06 板块轮动 | ✅ 已定稿 | active v1.8.0 |
-| 23_strategy_correlation_validation | G07 相关性验证 | ✅ 已定稿 | active v1.7.0 |
-| 24_daban_strategy_detail | G08 打板细节 | ✅ 已定稿 | active v1.9.7（8 要点+12 施工算法） |
-| 25_multifactor_strategy_detail | G09 多因子细节 | ✅ 已定稿 | active v1.12.11（6 要点+8 施工算法+Phase 4 栈） |
-| 26_event_driven_strategy_detail | G10 事件驱动 | ✅ 已定稿 | active v1.8.0 |
-| 27_second_batch_strategies | G11 第二批次 | （待认领） | draft v0.2.0（暂缓讨论，说明已补） |
-| 35_drawdown_protocol_impl | G16 回撤落地 | ✅ 已定稿 | active v1.39.0 |
+| 15_data_feature_layer_spec | G01 数据特征层 | ✅ 已定稿 | active v1.0.3 |
+| 21_stock_selection_engine | G05 选股引擎 | ✅ 已定稿 | active v1.1.21 |
+| 22_sector_rotation_spec | G06 板块轮动 | ✅ 已定稿 | active v1.9.8 |
+| 23_strategy_correlation_validation | G07 相关性验证 | ✅ 已定稿 | active v1.7.2 |
+| 24_daban_strategy_detail | G08 打板细节 | ✅ 已定稿 | active v1.10.6 |
+| 25_multifactor_strategy_detail | G09 多因子细节 | ✅ 已定稿 | active v1.13.5 |
+| 26_event_driven_strategy_detail | G10 事件驱动 | ✅ 已定稿 | active v1.9.8 |
+| 27_second_batch_strategies | G11 第二批次 | （待认领） | draft v0.2.1（暂缓讨论，说明已补） |
+| 35_drawdown_protocol_impl | G16 回撤落地 | ✅ 已定稿 | active v1.39.3 |
 | 36_var_es_monitoring | G17 VaR/ES | ✅ 已定稿 | active v1.11.2 |
-| 37_liquidity_crisis_protocol | G18 流动性危机 | ✅ 已定稿 | active v1.2.0（2026-08-17 AI-LVL3-001 LEVEL_3 生产接线完工，检测→逃生指令→Kill Switch 清算全链） |
-| 28_sentiment_cycle_trading | G21 情绪周期 | （待重建） | 骨架 v0.1.0 ⚠️内容丢失（v1.2.0 可从 a3750b90d1 恢复） |
-| 29_factor_strategy_extraction | 潘潘课程因子策略提炼知识库（工程文档，非G主题） | 已落盘 | active v1.0.0（2026-08-14 用户裁定从 _working 迁入，原名 因子与策略提炼.md） |
-| 52_backtest_framework_docking | G23 回测对接 | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
+| 37_liquidity_crisis_protocol | G18 流动性危机 | ✅ 已定稿 | active v1.2.1 |
+| 28_sentiment_cycle_trading | G21 情绪周期 | ✅ 已恢复 | active v1.2.4 |
+| 29_factor_strategy_extraction | 潘潘课程因子策略提炼知识库（工程文档，非G主题） | 已落盘 | active v1.3.3 |
+| 52_backtest_framework_docking | G23 回测对接 | ✅ 已定稿 | active v1.0.4 |
 | 53_simulation_live_path | G24 模拟实盘 | ✅ 已定稿 | active v1.7.9 |
 | 55_monitoring_review | G26 监控复盘 | ✅ 已定稿 | active v1.2.0（2026-08-17 AI-THD-001 阈值统读完工） |
-| 12_regime_phase2_validation | Phase 2 模型质量验证（工程文档，非G主题） | 已落地 | ✅ v0.2.2 |
-| 50_backtest_observability_workplan | 回测可观测性工作计划（工程文档，非G主题） | 已提议 | draft v1.0.2 |
-| 13_regime_phase3_engineering_plan | Phase 3 工程规划（工程文档，非G主题） | 已提议 | draft v0.3.2 |
-| 14_regime_s2_diagnosis | S2 算法错配诊断（工程文档，非G主题） | 已提议 | draft v0.4.5 |
-| 16_technical_indicator_build_plan | 技术指标施工计划（数据地基层子项） | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
-| 16_technical_indicator_catalog | 技术指标目录（数据地基层子项） | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
-| 17_special_trading_days_data_assets | 特殊交易日数据资产（数据地基层子项） | ✅ 已定稿 | active v1.0.0 |
-| 18_cold_archive_build_plan | 冷归档施工计划（数据地基层子项） | 已提议 | active v0.2.0 |
-| 62_business_registry_construction | 18 业务注册表施工（跨切治理层） | ✅ 已定稿 | active v1.32.0 |
-| 63_data_utilization_audit | 数据利用审计（跨切治理层） | 已提议 | draft v2.0.0 |
-| 65_git_safety_governance | Git 安全治理体系（跨切治理层） | ✅ 已定稿（Phase 1 wrapper 层已施工，待激活） | active v2.3.1 |
-| 66_commit_queue_serialization | 提交队列串行化（跨切治理层·集成基建） | ✅ 已定稿（MVP 待排期） | active v1.1.0 |
-| 90_methodology_open_questions | 方法论遗留提案（工程文档，非G主题） | 已提议 | draft v1.18.1 |
-| 91_density_prediction | 密度预测远期愿景（工程文档，非G主题） | 已提议 | draft v0.1.2 |
-| 51_panel_experiment_history_mlflow_retirement | Panel 实验历史 Tab + mlflow 退役施工计划（工程文档，非G主题，50_backtest_observability_workplan M2 下游） | ✅ 已定稿 | active v1.2.6 |
-| 30_multi_strategy_concurrency | 多策略并发架构 | ✅ 已定稿 | active v2.5.0 |
-| 31_position_sizing | G12 仓位算法 | ✅ 已定稿 | active v1.25.0 |
-| 32_firm_risk_aggregator | G13 FirmRiskAggregator | ✅ 已定稿 | active v1.0.22 |
-| 33_budget_change_handler | G14 BudgetChangeHandler | ✅ 已定稿 | active v1.1.0（2026-08-14 AI-BGT-001 行号漂移修正+§7 四项闭环，1b8a774ad5） |
-| 34_regime_meta_allocator | G15 RegimeMetaAllocator | ✅ 已定稿 | active v2.8.1（C1 已通过；参数待策略 PnL 校准） |
-| 41_buy_flow | G19 买入流 | ✅ 已定稿 | active v1.7.0 |
-| 42_sell_flow | G20 卖出流 | ✅ 已定稿 | active v1.7.1 |
+| 12_regime_phase2_validation | Phase 2 模型质量验证（工程文档，非G主题） | 已落地 | ✅ v0.3.1 |
+| 50_backtest_observability_workplan | 回测可观测性工作计划（工程文档，非G主题） | ✅ 已定稿 | active v1.1.1 |
+| 13_regime_phase3_engineering_plan | Phase 3 工程规划（工程文档，非G主题） | 已提议 | draft v0.4.1 |
+| 14_regime_s2_diagnosis | S2 算法错配诊断（工程文档，非G主题） | 已提议 | draft v0.5.2 |
+| 16_technical_indicator_build_plan | 技术指标施工计划（数据地基层子项） | ✅ 已定稿 | active v1.0.1 |
+| 16_technical_indicator_catalog | 技术指标目录（数据地基层子项） | ✅ 已定稿 | active v1.0.1 |
+| 17_special_trading_days_data_assets | 特殊交易日数据资产（数据地基层子项） | ✅ 已定稿 | active v1.0.1 |
+| 18_cold_archive_build_plan | 冷归档施工计划（数据地基层子项） | 已提议 | active v0.3.1 |
+| 62_business_registry_construction | 18 业务注册表施工（跨切治理层） | ✅ 已定稿 | active v1.36.1 |
+| 63_data_utilization_audit | 数据利用审计（跨切治理层） | 已提议 | draft v2.1.2 |
+| 65_git_safety_governance | Git 安全治理体系（跨切治理层） | ✅ 已定稿（Phase 1 wrapper 层已施工，待激活） | active v2.5.0 |
+| 66_commit_queue_serialization | 提交队列串行化（跨切治理层·集成基建） | ✅ 已定稿（MVP 已落，task_board 死信标签联动已补） | active v1.2.0 |
+| 90_methodology_open_questions | 方法论遗留提案（工程文档，非G主题） | ✅ 已定稿 | active v2.0.3 |
+| 91_density_prediction | 密度预测远期愿景（工程文档，非G主题） | 已提议 | draft v0.1.4 |
+| 51_panel_experiment_history_mlflow_retirement | Panel 实验历史 Tab + mlflow 退役施工计划（工程文档，非G主题，50_backtest_observability_workplan M2 下游） | ✅ 已定稿 | active v1.2.14 |
+| 30_multi_strategy_concurrency | 多策略并发架构 | ✅ 已定稿 | active v2.6.1 |
+| 31_position_sizing | G12 仓位算法 | ✅ 已定稿 | active v1.25.2 |
+| 32_firm_risk_aggregator | G13 FirmRiskAggregator | ✅ 已定稿 | active v1.0.24 |
+| 33_budget_change_handler | G14 BudgetChangeHandler | ✅ 已定稿 | active v1.1.1 |
+| 34_regime_meta_allocator | G15 RegimeMetaAllocator | ✅ 已定稿 | active v2.8.6（C1 已通过；参数待策略 PnL 校准） |
+| 41_buy_flow | G19 买入流 | ✅ 已定稿 | active v1.7.1 |
+| 42_sell_flow | G20 卖出流 | ✅ 已定稿 | active v1.7.2 |
 | 43_compliance_discipline | G30 合规与交易纪律体系（交易流层子项，D_COMPLIANCE 域） | ✅ 已施工 | active v1.1.0（2026-08-15 AI-COMP-001 落地 7 模块 + AI-ASM-001 运行时装配：C-004/C-002/MOD-PA-006 接线+日申报笔数硬计数器，213 测试全绿） |
-| 40_execution_broker | G22 下单对接 | G22-AI | ✅ v2.10.1 + 代码已施工 |
-| 54_reconciliation_attribution | G25 对账归因 | ✅ 已定稿 | active v1.14.0 |
+| 40_execution_broker | G22 下单对接 | G22-AI | ✅ v2.11.2 + 代码已施工 |
+| 54_reconciliation_attribution | G25 对账归因 | ✅ 已定稿 | active v1.15.8 |
 | 60_cross_cutting_cleanup | G27 冲突矩阵清理 | ✅ 已定稿 | active v1.1.0（2026-08-15 AI-XCUT-001 实证非骨架：v1.0.2 内容完整；施工=§7⑦ 闭环+CAND-PFALLOC-002 标 rejected+battle_map §16 真源收敛 31→3） |
-| 61_lifecycle_multi_ai | G28 生命周期多AI | ✅ 已定稿 | active v2.10.0 |
-| 19_northbound_hold_snapshot | 北向季度快照 fetcher（数据地基层子项） | 待施工 | draft v0.1.0 |
-| 64_data_source_download_spec | G29 数据源与下载体系（跨切治理层·6x 段位） | ✅ 已定稿 | active v1.4.0 |
-| 44_premarket_intraday_decision_upgrade | 盘前与盘中决策支持升级（28/41/90 号升级备忘，4x 交易流层） | ✅ Owner 五项裁定全批（2026-08-21） | active v1.2.0 |
+| 61_lifecycle_multi_ai | G28 生命周期多AI | ✅ 已定稿 | active v2.13.3 |
+| 19_northbound_hold_snapshot | 北向季度快照 fetcher（数据地基层子项） | ✅ 已定稿 | active v1.0.1 |
+| 64_data_source_download_spec | G29 数据源与下载体系（跨切治理层·6x 段位） | ✅ 已定稿 | active v1.4.3 |
+| 44_premarket_intraday_decision_upgrade | 盘前与盘中决策支持升级（28/41/90 号升级备忘，4x 交易流层） | ✅ Owner 五项裁定全批（2026-08-21） | active v1.3.0 |
+| 45_warroom_playbook | 作战手册体系（作战室）施工设计（4x 交易流层） | ✅ 已定稿 | active v1.0.0（2026-08-22 Owner 裁定新增页） |
+| 56_backtest_vs_sim_reconciliation_plan | 回测 vs 模拟盘对账方案（5x 验证层，P0-1②） | ✅ 已定稿 | active v1.0.0（2026-08-21 P0 批） |
+| 57_daily_cycle_sop | 日循环 SOP（5x 验证层，P0-5） | ✅ 已定稿 | active v1.1.0（2026-08-24 RUN-05 演练节入册） |
+| 68_code_algorithm_review_pipeline | 代码与算法多模型审查流水线（跨切治理层） | ✅ 已定稿 | active v1.2.1 |
+| 92_phase2_business_construction_order | 阶段二业务层施工顺序清单（9x 开放问题与施工排序段） | ✅ 已定稿 | active v1.0.0（2026-08-22 Owner 指令落盘） |
 
 ## 8. 产出物命名规范
 
@@ -869,3 +875,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-21 | 2.11.11 | 22 号 v1.8.0→v1.9.8 版本同步（§0 目录一处，顺带修正 v1.8.0→v1.9.7 历史漂移）：22 号 §2.4 补"电风扇速度计已升级为独立因子"跨文档登记（44 号 M1-⑩/§9.13，rotation_velocity+top3_overlap+lead_streak 无主线判定→M2 降档），22 号 §2.3/§2.4 为其设计真源锚点 | Owner 指令驱动：把"电风扇行情口径有未落成独立因子"的升级状态写入文档——44 号因子设计+22 号锚点登记双向互引闭环 |
 | 2026-08-21 | 2.11.12 | 44 号 v1.1.2→v1.2.0 版本同步（§0 目录+§7.3 两处）：Owner 四问批次——新增 M3-⑨ LLM 盘后分析（DeepSeek-V4-Flash+PIT 回填四铁律+llm_daily_analysis 新表）+§9.14+§12 附录（M4 日志体系 4 缺口/外部短板复核 5 条全有主/开源评估 15 项/Tito 提取 2 因子+MA10 gate） | Owner 四问驱动（短板复核/日志体系/开源评估/LLM 数据源+Tito）：DeepSeek 官方定价实证、TradingAgents v0.3.0 决策日志同构借鉴、optuna/Numba 候选引入 |
 | 2026-08-21 | 2.11.13 | **56/57 号补登（P0 批两件）**——§0 目录 51→53 篇：56_backtest_vs_sim_reconciliation_plan.md（P0-1② 回测 vs 模拟盘对账方案，不变量 I1-I4+三层 diff+归因三分类+对照清单，G1/G6 转 Owner 窗口）+57_daily_cycle_sop.md（P0-5 日循环 SOP，六环节命令清单+开盘前 QMT 人工确认项+缺口 GAP1-5 登记+首跑彩排记录已过），均 active v1.0.0 | P0 批施工驱动：到期前目标态（交易日模拟盘+收盘后回测对账）的两件承载文档落位 5x 验证与可观测性层 |
+| 2026-08-24 | 2.12.0 | **G4 批全量版本同步 + 92 号补登**——§0 目录 54→55 篇：92_phase2_business_construction_order 补登（active v1.0.0，2026-08-22 Owner 指令落盘，此前漏登）；§0 目录+§7.3 与各文档 frontmatter 全量对齐一轮（44 号 v1.2.0→v1.3.0、68 号 draft v1.2.0→active v1.2.1、50 号 draft→active v1.1.1、90 号 draft→active v2.0.3、19 号 draft→active v1.0.1、28 号 §7.3 骨架误标→active v1.2.4 等 40+ 处版本/状态漂移修正）；§7.3 补登缺失行（45/56/57/68/92）；66 号行注记 task_board 死信标签联动已补、57 号行注记 RUN-05 演练节入册 | 施工清单 P3-27 驱动：44/68 版本漂移+92 号漏登实证；本轮为快照口径对齐（frontmatter 提取脚本实证），§2/§3/§5 内嵌历史版本引用沿用既有惯例不逐处同步，下轮审查时再核 |

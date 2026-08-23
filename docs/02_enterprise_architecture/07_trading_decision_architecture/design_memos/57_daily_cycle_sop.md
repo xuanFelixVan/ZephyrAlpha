@@ -2,7 +2,8 @@
 ttl: permanent
 completes_when: "日循环连续运行 5 个交易日且对账 G3-G7 施工完毕后转 maintenance（文档保留，流程图并入 55 号监控体系）"
 doc_type: architecture_view
-version: 1.0.0
+status: active
+version: 1.1.0
 created: 2026-08-21
 owner: P0 批统筹代办，Owner 审批
 ---
@@ -134,7 +135,37 @@ python -c "import sys;sys.path.insert(0,'src');from zephyr.ex_core.adapters.mini
 
 **彩排总结论**：目标态六环节全部实证可走通——开盘前检查（含 QMT 人工确认）、回测双引擎（向量化+EDE tick）、sink 落盘、结算管线、对账冒烟、drift 监控复产。盘中模拟盘段待下一交易日（09:30-15:00）按 §2 过渡形态复演。
 
-## 9. 与 55 号监控节奏对接
+## 9. 断网断电断点恢复演练（RUN-05，宪章约束五 RPO=0 实证）
+
+> 来源：architecture_review_2026_08_module_upgrade_audit.md §5.3（唯一新增项）。宪章约束五「断电断网→策略状态机断点恢复、持仓 RPO=0」此前无演练项，彩排清单（§1-§6）未覆盖家用最高概率故障。本节为文档口径预置；**真实演练留 Owner 窗口**（断网断电是物理操作，须 Owner 执行或在场，AI 不得自行断电/断网），首次实测排期后按 §8 格式回填演练记录。
+
+**频次**：随彩排日每演 1 次；**验收口径**：彩排日实测留记录（无演练记录不予通过，同 §8）。
+
+**演练步骤**：
+
+1. **前置**：日循环 ② 盘中形态运行中——TradingSession（或 `scripts/start_paper_session.py` 拉起的模拟盘会话）保活、数据调度在跑、当日已有 fill 流入（无成交日用 §2 冒烟单造 1 笔 mock fill）。
+2. **故障注入**：杀 trading 进程 + data 调度进程（`Get-Process python | Where-Object 命令行匹配即停`）；Owner 断网 **5 分钟**（拔网线/禁用网卡）。
+3. **恢复**：恢复网络 → 重启 data 调度与 trading 进程（看门狗翻开态由 `scripts/start_trading.ps1` 自动接管，Disabled 态手动拉起）。
+4. **三项核对（全部自 state_store 重建核对，RPO=0 判据）**：
+
+   | # | 核对项 | 通过线 |
+   |---|---|---|
+   | K1 | KillSwitch 状态 | `state_store.load("kill_switch")` 记录与故障前一致——未误触发、状态机断点连续（state_store 损坏须 raise StateCorruptError 而非静默重置） |
+   | K2 | 持仓 | 重启后 PositionTracker 自 fill 持久化日志重建持仓 == `broker.get_positions()` 实盘快照逐标的一致（RPO=0） |
+   | K3 | fill 去重集 | AppendOnlyDedupSet 持久化去重集重启后完整加载，重放当日 fill 零重复入账（at-most-once 实证，FillHandler/PositionTracker 双路径各核一遍） |
+
+5. **记录**：按下表格式留证并追加到 §8（故障注入时刻/恢复时刻/RTO/三项核对结果/异常处置）。
+
+   | 环节 | 结果 | 证据 |
+   |---|---|---|
+   | 故障注入+恢复 | ⏳ 待 Owner 窗口首演 | — |
+   | K1 KillSwitch 状态 | ⏳ | — |
+   | K2 持仓 RPO=0 | ⏳ | — |
+   | K3 fill 去重零重复 | ⏳ | — |
+
+**当前状态（2026-08-24）**：文档节已入册；首次真实演练待 Owner 窗口排期，实测后本节子表回填并同步 55 号监控月评审。
+
+## 10. 与 55 号监控节奏对接
 
 - **日自动**：本 SOP ③⑤ 即 55 号"日自动"件（DailyAuditor 五件套+对账 diff），人只看 FAIL/C 类项。
 - **周人工**：对账差异周汇总+滑点样本池复核进 55 号 run_weekly 通道。

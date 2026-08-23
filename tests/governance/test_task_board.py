@@ -178,6 +178,86 @@ class TestDeadLetterMetadata:
         assert tb.main(["create", "--title", "x", "--metadata", "{not json"]) == 1
 
 
+class TestDeadLetterTagging:
+    """66 号 P1 残余小项：死信任务自动打标签可查（deadletter 子命令 + list --label）。"""
+
+    @staticmethod
+    def _meta(board: Path, tid: str) -> dict:
+        import json
+
+        conn = sqlite3.connect(str(board))
+        conn.row_factory = sqlite3.Row
+        row = conn.execute("SELECT metadata_json FROM tasks WHERE task_id=?", (tid,)).fetchone()
+        conn.close()
+        return json.loads(row["metadata_json"])
+
+    def test_tag_writes_metadata_and_event(self, board: Path) -> None:
+        tid = _create()
+        rc = tb.main(["deadletter", tid, "--session", "sess-x", "--qid", "q-0001", "--reason", "FOREIGN-CHANGE"])
+        assert rc == 0
+        tag = self._meta(board, tid)["deadletter"]
+        assert tag["qid"] == "q-0001"
+        assert tag["reason"] == "FOREIGN-CHANGE"
+        assert tag["owner"] == "sess-x"  # 缺省 owner=--session
+        assert tag["tagged_at"]
+        conn = sqlite3.connect(str(board))
+        conn.row_factory = sqlite3.Row
+        ev = conn.execute(
+            "SELECT event_type, payload_json FROM task_events WHERE task_id=? AND event_type='deadlettered'",
+            (tid,),
+        ).fetchall()
+        conn.close()
+        assert len(ev) == 1
+        import json
+
+        assert json.loads(ev[0]["payload_json"])["qid"] == "q-0001"
+
+    def test_tag_owner_override_and_metadata_merge(self, board: Path) -> None:
+        tid = _create("keep-meta", metadata='{"type":"dead_letter","note":"原 metadata 保留"}')
+        rc = tb.main(["deadletter", tid, "--session", "sess-x", "--qid", "q-0002", "--reason", "GATE-FAIL", "--owner", "sess-y"])
+        assert rc == 0
+        meta = self._meta(board, tid)
+        assert meta["deadletter"]["owner"] == "sess-y"
+        assert meta["note"] == "原 metadata 保留"  # 打标合并不覆盖既有键
+
+    def test_tag_completed_denied(self, board: Path) -> None:
+        tid = _create()
+        tb.main(["claim", tid, "--session", "AI-01"])
+        tb.main(["complete", tid, "--session", "AI-01"])
+        assert tb.main(["deadletter", tid, "--session", "AI-01", "--qid", "q-1", "--reason", "r"]) == 2
+        assert "deadletter" not in self._meta(board, tid)
+
+    def test_tag_nonexistent_denied(self, board: Path) -> None:
+        assert tb.main(["deadletter", "T-nonexistent", "--session", "AI-01", "--qid", "q-1", "--reason", "r"]) == 2
+
+    def test_retag_latest_wins(self, board: Path) -> None:
+        tid = _create()
+        tb.main(["deadletter", tid, "--session", "AI-01", "--qid", "q-1", "--reason", "首次"])
+        tb.main(["deadletter", tid, "--session", "AI-01", "--qid", "q-2", "--reason", "重入队后再失败"])
+        tag = self._meta(board, tid)["deadletter"]
+        assert tag["qid"] == "q-2"
+        assert tag["reason"] == "重入队后再失败"
+        conn = sqlite3.connect(str(board))
+        n = conn.execute(
+            "SELECT count(*) FROM task_events WHERE task_id=? AND event_type='deadlettered'", (tid,)
+        ).fetchone()[0]
+        conn.close()
+        assert n == 2  # 两次打标均留事件痕
+
+    def test_list_label_filter(self, board: Path, capsys: pytest.CaptureFixture) -> None:
+        t_dead = _create("dead-task")
+        t_ok = _create("ok-task")
+        tb.main(["deadletter", t_dead, "--session", "AI-01", "--qid", "q-1", "--reason", "r"])
+        capsys.readouterr()  # 清缓冲
+        assert tb.main(["list", "--label", "deadletter"]) == 0
+        out = capsys.readouterr().out
+        assert t_dead in out
+        assert t_ok not in out
+        assert tb.main(["list"]) == 0
+        out_all = capsys.readouterr().out
+        assert t_dead in out_all and t_ok in out_all
+
+
 class TestCASConcurrency:
     def test_concurrent_claim_exactly_one_winner(self, board: Path) -> None:
         """CAS 实证：8 线程同时认领同一任务，恰一人胜（SQLite 单写者串行）。"""
