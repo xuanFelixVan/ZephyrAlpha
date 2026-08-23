@@ -31,6 +31,11 @@
 4. flag 门控（08 号文 §4.2 步骤 5）：ALWAYS_OFF（默认）_commit_auto 直提不变且
    enqueue 零调用；flag ON 改道 enqueue（enqueue_item 被调 + 直提路径未执行）；
    改道异常（入队抛错/QueueReject）→ fail-safe 降级直提 + logging.warning 留痕。
+5. 主工作区受限收敛（66 号 §9.7 受控放松 2026-08-23）：landing 后干净文件（与旧
+   HEAD 逐字节一致）快进写入新内容；脏/缺失/untracked-WIP 一律跳过且审计留痕
+   main_workspace_sync.jsonl（零 WIP 丢失）；delete action 收敛删除；崩溃窗口
+   （update-ref 后收敛前）重放补收敛且 already_synced 幂等；收敛异常 fail-open
+   不改变 LandingResult。
 """
 
 from __future__ import annotations
@@ -346,16 +351,22 @@ class TestCommitAutoFlagGating:
         reg.register(sid)
         return GitCommitGateway(project_root=repo, registry=reg)
 
-    def test_flags_yaml_registers_flag_always_off_by_default(self) -> None:
-        """默认态证明：真仓 config/flags.yaml 注册 commit_queue_serializer 且 enabled: false。
+    def test_flags_yaml_registers_flag_matches_owner_window_state(self) -> None:
+        """flag 注册与 Owner 窗口状态一致性证明：真仓 config/flags.yaml 注册
+        commit_queue_serializer，且 enabled 值与 _commit_queue_serializer_enabled()
+        设施读出端到端一致（单真源，禁止 YAML 与设施漂移）。
 
-        宪章 B-007：默认 ALWAYS_OFF；翻开（enabled: true）属 Owner 窗口审批，不属本批。
-        """
+        状态沿革：注册默认 ALWAYS_OFF（宪章 B-007 安全默认）→ Owner 2026-08-22 批准
+        翻开启用（commit 2814b7f469，Owner 窗口操作非本测试职责）。本测试只钉
+        「YAML 值 == 设施读出值」一致性 + 当前 Owner 批准态为 ON。"""
         flags = yaml.safe_load((REPO_ROOT / "config" / "flags.yaml").read_text(encoding="utf-8"))
         entry = flags["flags"]["commit_queue_serializer"]
-        assert entry["enabled"] is False, "commit_queue_serializer 默认 MUST 为 ALWAYS_OFF"
-        # 真 flags 设施读出亦为 OFF（接线点 _commit_queue_serializer_enabled 端到端）
-        assert gw_mod._commit_queue_serializer_enabled() is False
+        assert entry["enabled"] is True, (
+            "commit_queue_serializer 当前 Owner 批准态=ON（2814b7f469，2026-08-22）；"
+            "若需回退 ALWAYS_OFF 须再走 Owner 窗口并同步改本断言"
+        )
+        # YAML 与真 flags 设施读出端到端一致（接线点 _commit_queue_serializer_enabled）
+        assert gw_mod._commit_queue_serializer_enabled() is True
 
     def test_flag_off_direct_commit_unchanged(
         self, tmp_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -454,3 +465,178 @@ class TestCommitAutoFlagGating:
         assert result.status is CommitStatus.OK, f"QueueReject 降级直提失败: {result.message}"
         warnings = [r for r in caplog.records if r.levelno >= logging.WARNING and "降级" in r.getMessage()]
         assert warnings, "QueueReject 降级同样 warning 留痕"
+
+
+# ---------------------------------------------------------------------------
+# 5. 主工作区受限收敛（66 号 §9.7 受控放松 2026-08-23）
+#    干净快进 / 脏·缺失·untracked-WIP 跳过留痕 / 崩溃重放补收敛 / fail-open
+# ---------------------------------------------------------------------------
+
+
+def _audit_records(qroot: Path) -> list[dict]:
+    """读取主工作区收敛审计 JSONL（不存在=零跳过，返回空表）。"""
+    p = qroot / "main_workspace_sync.jsonl"
+    if not p.exists():
+        return []
+    return [json.loads(ln) for ln in p.read_text(encoding="utf-8").splitlines() if ln.strip()]
+
+
+class TestMainWorkspaceConvergence:
+    def test_clean_file_fast_forwarded_to_main_workspace(
+        self, tmp_repo: Path, queue_root: Path
+    ) -> None:
+        """干净文件（与旧 HEAD 逐字节一致）→ 快进写入新内容；零审计（无跳过项）。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        new_base = "base v2 落盘\n".encode()
+        item = cq.enqueue_item(
+            "sess-conv-a",
+            "feat: 收敛快进",
+            [("base.txt", new_base), ("docs/added.txt", b"new file\n")],
+            queue_root=queue_root,
+        )
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1 and stats["dead"] == 0
+
+        # 主工作区字节级快进（治陈旧快照：landing 后工作区即见新内容）
+        assert (tmp_repo / "base.txt").read_bytes() == new_base
+        assert (tmp_repo / "docs" / "added.txt").read_bytes() == b"new file\n"
+        assert _audit_records(queue_root) == [], f"干净快进不得产生审计留痕（qid={item['qid']}）"
+
+    def test_dirty_file_skipped_with_audit_and_wip_preserved(
+        self, tmp_repo: Path, queue_root: Path
+    ) -> None:
+        """脏文件（主工作区有 WIP 修改）→ 跳过 + 审计留痕，WIP 字节零丢失。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        wip = "本地 WIP 未提交\n".encode()
+        (tmp_repo / "base.txt").write_bytes(wip)  # 队列外会话的未提交修改
+        item = cq.enqueue_item(
+            "sess-conv-b", "feat: 脏跳过", [("base.txt", b"queue content\n")], queue_root=queue_root
+        )
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1, "landing 从专用 worktree 落盘，主工作区脏不阻塞"
+
+        assert (tmp_repo / "base.txt").read_bytes() == wip, "零 WIP 丢失铁律：脏文件绝不被覆写"
+        assert _git_bytes(tmp_repo, "show", "dev:base.txt") == b"queue content\n", "dev 树已推进（收敛只影响工作区）"
+        recs = _audit_records(queue_root)
+        assert len(recs) == 1 and recs[0]["action"] == "skipped_dirty"
+        assert recs[0]["path"] == "base.txt" and recs[0]["qid"] == item["qid"]
+
+    def test_missing_file_skipped_with_audit(
+        self, tmp_repo: Path, queue_root: Path
+    ) -> None:
+        """缺失文件（WIP 删除态）→ skipped_missing + 审计；盘上维持缺失不重建。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        os.remove(tmp_repo / "base.txt")  # 队列外会话的未提交删除
+        item = cq.enqueue_item(
+            "sess-conv-c", "feat: 缺失跳过", [("base.txt", b"queue content\n")], queue_root=queue_root
+        )
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1
+
+        assert not (tmp_repo / "base.txt").exists(), "缺失态不被收敛重建（WIP 删除同样受保护）"
+        recs = _audit_records(queue_root)
+        assert len(recs) == 1 and recs[0]["action"] == "skipped_missing"
+        assert recs[0]["path"] == "base.txt" and recs[0]["qid"] == item["qid"]
+
+    def test_untracked_wip_at_new_path_skipped_not_overwritten(
+        self, tmp_repo: Path, queue_root: Path
+    ) -> None:
+        """untracked-WIP 补盲（红队钉）：旧树无此路径 + 盘上有未跟踪同名文件——
+        git diff 对 untracked 不可见会误判「双方一致」，快进即覆写他人 WIP。
+        必须按脏跳过 + 审计，WIP 字节保留。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        (tmp_repo / "docs").mkdir(exist_ok=True)
+        wip = "他人 untracked WIP\n".encode()
+        (tmp_repo / "docs" / "wip.txt").write_bytes(wip)
+        cq.enqueue_item(
+            "sess-conv-d", "feat: untracked 补盲", [("docs/wip.txt", b"queue content\n")], queue_root=queue_root
+        )
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1
+
+        assert (tmp_repo / "docs" / "wip.txt").read_bytes() == wip, "untracked WIP 绝不被快进覆写"
+        assert _git_bytes(tmp_repo, "show", "dev:docs/wip.txt") == b"queue content\n"
+        recs = _audit_records(queue_root)
+        assert len(recs) == 1 and recs[0]["action"] == "skipped_dirty"
+        assert recs[0]["path"] == "docs/wip.txt"
+
+    def test_delete_action_removes_clean_file_from_main_workspace(
+        self, tmp_repo: Path, queue_root: Path
+    ) -> None:
+        """delete action + 工作区干净 → 收敛删除主工作区文件（dev 树与工作区同态）。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        cq.enqueue_item(
+            "sess-conv-e",
+            "chore: 删除收敛",
+            [],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(deletes=["base.txt"]),
+        )
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1 and stats["dead"] == 0
+
+        assert not (tmp_repo / "base.txt").exists(), "干净删除项收敛后工作区文件移除"
+        assert _git(tmp_repo, "cat-file", "-e", "dev:base.txt", check=False).returncode != 0, "dev 树已删除"
+        assert _audit_records(queue_root) == [], "成功删除非跳过项，零审计"
+
+    def test_delete_action_already_missing_is_noop_without_audit(
+        self, tmp_repo: Path, queue_root: Path
+    ) -> None:
+        """delete action + 工作区已缺失（WIP 删除先行）→ already_deleted 幂等零审计。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        os.remove(tmp_repo / "base.txt")
+        cq.enqueue_item(
+            "sess-conv-f",
+            "chore: 删除幂等",
+            [],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(deletes=["base.txt"]),
+        )
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1
+        assert not (tmp_repo / "base.txt").exists()
+        assert _audit_records(queue_root) == [], "语义已达成的删除不审计（already_deleted）"
+
+    def test_replay_converges_after_crash_window(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """崩溃窗口补收敛 + fail-open 双钉：①收敛抛异常不改变 LandingResult（landing
+        已成功，done=1）；②重放走 _already_landed 短路时补跑收敛（幂等快进）；
+        ③二次重放 already_synced 零审计。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        orig_bytes = (tmp_repo / "base.txt").read_bytes()  # fixture text 模式写入，Windows 盘上为 CRLF
+        new_base = b"base v2 after crash\n"
+        item = cq.enqueue_item(
+            "sess-conv-g", "feat: 崩溃窗口", [("base.txt", new_base)], queue_root=queue_root
+        )
+
+        # ① 模拟 update-ref 后、收敛写入前的崩溃窗口：收敛整体失效但 landing 成功
+        orig = landing._converge_main_workspace
+        calls = {"n": 0}
+
+        def _flaky(it: dict, old: str, new: str) -> None:
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise RuntimeError("模拟崩溃窗口：dev 已推进，主工作区未收敛")
+            orig(it, old, new)
+
+        monkeypatch.setattr(landing, "_converge_main_workspace", _flaky)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1 and stats["dead"] == 0, "收敛 fail-open：异常不改变落盘结果"
+        assert (tmp_repo / "base.txt").read_bytes() == orig_bytes, "崩溃窗口内主工作区停在旧内容"
+
+        # ② 重放（done 项回 pending，模拟崩溃重入）→ _already_landed 短路 + 补跑收敛
+        done_path = queue_root / "done" / f"{item['qid']}.json"
+        (queue_root / "pending" / done_path.name).write_bytes(done_path.read_bytes())
+        stats2 = cq.drain_queue(queue_root, landing=landing)
+        assert stats2["done"] == 1 and stats2["dead"] == 0
+        assert calls["n"] == 2, "重放短路路径补跑收敛"
+        assert (tmp_repo / "base.txt").read_bytes() == new_base, "补收敛把干净文件快进到新内容"
+        assert _dev_commit_count(tmp_repo) == 1, "补收敛不双 commit"
+        assert _audit_records(queue_root) == [], "快进成功零审计"
+
+        # ③ 二次重放：文件已 == new_sha → already_synced，幂等零副作用
+        (queue_root / "pending" / done_path.name).write_bytes(done_path.read_bytes())
+        stats3 = cq.drain_queue(queue_root, landing=landing)
+        assert stats3["done"] == 1
+        assert _audit_records(queue_root) == [], "already_synced 幂等，零审计零副作用"
