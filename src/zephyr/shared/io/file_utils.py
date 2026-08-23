@@ -84,6 +84,7 @@ __all__: Final = [
     "backup_and_rollback",
     "backup_file",
     "content_sha256",
+    "is_hot_file",
     "restore_backup",
     "safe_read",
     "safe_rmtree",
@@ -109,6 +110,7 @@ def atomic_write(
     encoding: str = "utf-8",
     auto_backup: bool = False,
     max_backups: int = 5,
+    newline: str | None = None,
 ) -> Path:
     """原子写入文件——先写临时文件，再 rename 到目标路径。
 
@@ -123,6 +125,9 @@ def atomic_write(
         encoding: 文件编码。
         auto_backup: 是否在写入前自动备份原文件。
         max_backups: 最多保留的备份版本数。
+        newline: 行尾策略（透传 TextIOWrapper）。None=平台默认（Windows 会把
+            ``\\n`` 翻成 ``\\r\\n``）；注册表 YAML 等 .gitattributes 钉 LF 的
+            热文件必须显式传 ``newline="\\n"`` 保字节级行尾约定。
 
     Returns:
         写入后的目标文件 Path。
@@ -144,7 +149,7 @@ def atomic_write(
     tmp_path = Path(tmp_path_str)
 
     try:
-        with os.fdopen(fd, "w", encoding=encoding) as f:
+        with os.fdopen(fd, "w", encoding=encoding, newline=newline) as f:
             f.write(content)
             f.flush()
             os.fsync(f.fileno())
@@ -359,12 +364,16 @@ def _safe_write_audit(repo_root: Path, record: dict) -> None:
         logger.warning("safe_write audit append failed: %s", e)
 
 
-def _is_hot_file(path: Path, repo_root: Path) -> bool:
+def is_hot_file(path: Path, repo_root: Path) -> bool:
+    """热文件判定（公开接口——commit gate / 注册表写者共用，防第二真源）。"""
     try:
         rel = path.resolve().relative_to(repo_root.resolve()).as_posix()
     except ValueError:
         return False  # 仓外文件不按热文件约束
     return rel in DEFAULT_HOT_FILES
+
+
+_is_hot_file = is_hot_file  # 向后兼容别名（模块内既有调用）
 
 
 def safe_write_text(
@@ -374,6 +383,7 @@ def safe_write_text(
     expected_base_sha256: str | None = None,
     repo_root: str | Path | None = None,
     encoding: str = "utf-8",
+    newline: str | None = None,
 ) -> SafeWriteResult:
     """CAS 语义写文本文件：base 校验→原子写→回读校验→审计。
 
@@ -384,6 +394,8 @@ def safe_write_text(
             热文件必填；非热文件可选（给了就校验）。
         repo_root: 仓根（热文件判定/审计锚定）；None 时经 paths.REPO_ROOT 解析。
         encoding: 读写编码。
+        newline: 行尾策略（透传 atomic_write）；.gitattributes 钉 LF 的注册表
+            热文件传 ``"\\n"`` 保字节级行尾约定。
 
     Raises:
         StaleWriteRefused: 热文件未带 base，或 base 与磁盘不符（拒写，不落盘）。
@@ -425,7 +437,7 @@ def safe_write_text(
         )
 
     # ③ 原子写（复用本模块 atomic_write 真源）
-    atomic_write(target, content, encoding=encoding)
+    atomic_write(target, content, encoding=encoding, newline=newline)
 
     # ④ 写后回读校验（防"修改已生效"假象）
     after_hash = content_sha256(target.read_text(encoding=encoding))

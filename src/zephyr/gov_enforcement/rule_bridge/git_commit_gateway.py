@@ -482,6 +482,11 @@ class GitCommitGateway:
         # S3-C 治本（2026-07-17）：快照持久化到 .runtime/claim_snapshots/，
         # 进程崩溃后重启可恢复快照（原纯内存 dict 崩溃即丢失，gate 降级为 PASS）。
         self._claim_snapshots: dict[str, dict[str, str]] = {}
+        # HOT-FILE-BASE-FRESHNESS（2026-08-23 陈旧快照覆写事故治本）：
+        # session 首次 claim 时的 HEAD sha（base 锚点），commit 时 gate 对比
+        # 当前 HEAD——上游已推进且改到目标热文件=本 session 基于陈旧 base 工作。
+        # 生命周期与 _claim_snapshots 同步（release_files 一并清理）。
+        self._claim_heads: dict[str, str] = {}
         self._claim_snapshots_dir: Path = self.project_root / _CLAIM_SNAPSHOTS_DIR
         self.load_claim_snapshots_from_disk()
 
@@ -571,6 +576,21 @@ class GitCommitGateway:
     @claim_snapshots.setter
     def claim_snapshots(self, value: dict[str, dict[str, str]]) -> None:
         self._claim_snapshots = value
+
+    @property
+    def claim_heads(self) -> dict[str, str]:
+        """session 首次 claim 时的 HEAD sha（公开接口，backing store: _claim_heads）。
+
+        HOT-FILE-BASE-FRESHNESS gate 的 base 锚点真源——commit gate / 测试共用，
+        防第二真源。懒初始化：兼容测试以 ``__new__`` 构造的轻量实例（无 __init__）。
+        """
+        if not hasattr(self, "_claim_heads"):
+            self._claim_heads = {}
+        return self._claim_heads
+
+    @claim_heads.setter
+    def claim_heads(self, value: dict[str, str]) -> None:
+        self._claim_heads = value
 
     @property
     def claim_snapshots_dir(self) -> Path:
@@ -686,6 +706,19 @@ class GitCommitGateway:
         for f in files:
             if self.registry.claim_file(session_id, f):
                 claimed.append(f)
+                # HOT-FILE-BASE-FRESHNESS：session 首次 claim 锚定 HEAD（幂等——
+                # 幂等重跑保留首次锚点，语义与基线快照一致；release 后重 claim 刷新）。
+                try:
+                    if session_id not in self.claim_heads:
+                        head_result = self.run_git(["git", "rev-parse", "HEAD"])
+                        if head_result.returncode == 0:
+                            self.claim_heads[session_id] = head_result.stdout.strip()
+                except Exception:  # noqa: BLE001 — git 不可用降级为无锚点（gate fail-open）
+                    logger.warning(
+                        "GitCommitGateway: claim_files HEAD 锚点捕获失败 (session=%s)",
+                        session_id,
+                        exc_info=True,
+                    )
                 # ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
                 try:
                     abs_f = os.path.abspath(f)
@@ -735,8 +768,10 @@ class GitCommitGateway:
                     session_id,
                 )
         # ARCH-054: 清理 session 的基线快照（内存 + 磁盘，S3-C 治本）
+        # HOT-FILE-BASE-FRESHNESS: HEAD 锚点与快照同生命周期，一并清理
         try:
             self.claim_snapshots.pop(session_id, None)
+            self.claim_heads.pop(session_id, None)
             self.delete_session_snapshot(session_id)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
@@ -832,6 +867,10 @@ class GitCommitGateway:
                     snapshots = data.get("snapshots", {})
                     if isinstance(snapshots, dict):
                         self.claim_snapshots[sid] = snapshots
+                    # HOT-FILE-BASE-FRESHNESS: 恢复 HEAD 锚点（旧格式无此字段 → 空串，gate fail-open）
+                    claim_head = data.get("claim_head", "")
+                    if isinstance(claim_head, str) and claim_head:
+                        self.claim_heads[sid] = claim_head
                 except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning(
                         "GitCommitGateway: claim snapshot file corrupt, skipped — %s",
@@ -859,7 +898,12 @@ class GitCommitGateway:
         try:
             self.claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
             payload = json.dumps(
-                {"session_id": session_id, "snapshots": snapshots},
+                {
+                    "session_id": session_id,
+                    "snapshots": snapshots,
+                    # HOT-FILE-BASE-FRESHNESS: HEAD 锚点随快照一并持久化（崩溃可恢复）
+                    "claim_head": self.claim_heads.get(session_id, ""),
+                },
                 ensure_ascii=False,
             )
             # 原子写入：tmp + os.replace（对标 SessionRegistry._save）
