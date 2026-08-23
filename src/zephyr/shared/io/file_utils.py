@@ -50,7 +50,7 @@ import logging
 import os
 import shutil
 import tempfile
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -77,13 +77,16 @@ __all__: Final = [
     "DEFAULT_HOT_FILES",
     "SafeWriteResult",
     "StaleWriteRefused",
+    "UnsafeDeleteRefused",
     "WriteVerificationError",
+    "assert_safe_rmtree_target",
     "atomic_write",
     "backup_and_rollback",
     "backup_file",
     "content_sha256",
     "restore_backup",
     "safe_read",
+    "safe_rmtree",
     "safe_write_text",
 ]
 
@@ -436,3 +439,99 @@ def safe_write_text(
 
     _safe_write_audit(root, {**base_record, "event": "written", "after_sha256": after_hash})
     return SafeWriteResult(path=str(target), written=True, before_sha256=before_hash, after_sha256=after_hash)
+
+
+# ── 删除硬断言（CAND-GOVSEC-001 ①，2026-08-23 src 误删防复发）─────────────────
+# 第一性：观测护栏只覆盖仪表化通道，AI 会话可随时开未仪表化通道 → 破坏性
+# 操作必须在执行点物理阻断（让坏事做不成），而非仅事后审计（做了被发现）。
+# 三件套：resolve 后严格落在允许前缀内（'../src' 逃逸/junction 指向仓内均被
+# resolve 后前缀判定拦住）+ 目标树自顶向下拒绝 reparse point（Windows
+# shutil.rmtree 穿透 junction 删目标内容）+ 删除动作必须经本断言（硬阻断）。
+
+FILE_ATTRIBUTE_REPARSE_POINT: Final = 0x400
+
+
+class UnsafeDeleteRefused(RuntimeError):
+    """删除目标硬断言失败——路径越出允许前缀，或目标树内含 reparse point。
+
+    路径等细节入 details 字段（MSG-EXPOSURE 合规：消息文本不含敏感标识）。
+    """
+
+    def __init__(self, message: str, *, details: dict | None = None):
+        super().__init__(message)
+        self.details = details or {}
+
+
+def _is_reparse_point(path: Path) -> bool:
+    """reparse point（junction/symlink）检测；POSIX 退化为 is_symlink。"""
+    try:
+        if os.name == "nt":
+            attrs = getattr(os.lstat(path), "st_file_attributes", 0)
+            return bool(attrs & FILE_ATTRIBUTE_REPARSE_POINT)
+        return path.is_symlink()
+    except OSError:
+        return False
+
+
+def assert_safe_rmtree_target(path: str | Path, *, allowed_prefix: str | Path) -> Path:
+    """rmtree 删除前硬断言三件套（CAND-GOVSEC-001 ①）。
+
+    ① resolve 后必须**严格**落在 allowed_prefix 之内（等于前缀本身亦拒绝——
+       本助手的语义是删前缀下的内容，不是删前缀）；
+    ② 目标树自顶向下拒绝任何 reparse point——Windows ``shutil.rmtree`` 会穿透
+       junction 删除其目标内容（2026-08-23 src 误删同型隐患③）。
+
+    Args:
+        path: 待删除目标。
+        allowed_prefix: 允许删除的前缀目录（如 ``.aidrafts/``、queue_root）。
+
+    Returns:
+        resolve 后的目标路径——调用方应删除本返回值而非原始入参。
+
+    Raises:
+        UnsafeDeleteRefused: 任一断言失败。硬阻断，不降级为告警。
+    """
+    prefix = Path(allowed_prefix).resolve()
+    resolved = Path(path).resolve()
+    if resolved == prefix or not resolved.is_relative_to(prefix):
+        raise UnsafeDeleteRefused(
+            "删除目标越出允许前缀，硬断言拒绝",
+            details={"target": str(resolved), "allowed_prefix": str(prefix)},
+        )
+    if resolved.is_dir():
+        # os.walk top-down：dirnames 先于下降产出，检出即在下降前阻断，
+        # 不会跟随 junction 走入目标树。
+        for dirpath, dirnames, _filenames in os.walk(resolved):
+            for name in dirnames:
+                child = Path(dirpath) / name
+                if _is_reparse_point(child):
+                    raise UnsafeDeleteRefused(
+                        "删除目标树内含 reparse point，硬断言拒绝",
+                        details={"target": str(resolved), "reparse": str(child)},
+                    )
+    return resolved
+
+
+def safe_rmtree(
+    path: str | Path,
+    *,
+    allowed_prefix: str | Path,
+    ignore_errors: bool = False,
+    onerror: Callable[..., None] | None = None,
+) -> bool:
+    """硬断言通过后执行删除（CAND-GOVSEC-001 ① 一站式入口）。
+
+    目录走 ``shutil.rmtree``（透传 ignore_errors/onerror），单文件走 unlink。
+    目标不存在返回 False（幂等短路）。
+
+    Raises:
+        UnsafeDeleteRefused: 硬断言失败（不执行任何删除）。
+    """
+    resolved = assert_safe_rmtree_target(path, allowed_prefix=allowed_prefix)
+    if not resolved.exists():
+        return False
+    if resolved.is_dir():
+        shutil.rmtree(resolved, ignore_errors=ignore_errors, onerror=onerror)
+    else:
+        resolved.unlink()
+    return True

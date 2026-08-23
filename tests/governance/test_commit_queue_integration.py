@@ -658,8 +658,16 @@ class TestCommitAutoReroute:
         monkeypatch.setattr(flags_mod.global_flag_registry, "is_enabled", boom)
         assert gw_mod._commit_queue_serializer_enabled() is False
 
-    def test_flag_default_off_when_unregistered(self) -> None:
-        """flag 未注册/未启用 → 默认 OFF（config/flags.yaml 注册项 enabled: false）。"""
+    def test_flag_default_off_when_unregistered(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """flag 未注册 → is_enabled 返回传入 default=False（fail-closed 语义）。
+
+        注：本测试隔离模拟"未注册"场景，不读生产 config/flags.yaml 当前值——
+        该 flag 已经 Owner 2026-08-22 批准翻开（commit 2814b7f4，enabled:true），
+        直读生产配置断言 OFF 的旧实现与 Owner 裁定相矛盾。
+        """
+        from zephyr.shared.foundation import flags as flags_mod
+
+        monkeypatch.setattr(flags_mod.global_flag_registry, "is_enabled", lambda name, default=None: default)
         assert gw_mod._commit_queue_serializer_enabled() is False
 
 

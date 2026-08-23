@@ -258,6 +258,7 @@ from zephyr.shared.infra.process_pool import (
     run_subprocess_hidden,
     spawn_python_hidden,
 )
+from zephyr.shared.io.file_utils import safe_rmtree  # CAND-GOVSEC-001① 删除硬断言
 from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
@@ -783,11 +784,12 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
                 continue
 
             # 过期 session 目录——递归删除
+            # （CAND-GOVSEC-001①：safe_rmtree 硬断言——resolve 后须严格落在
+            # q_root 内 + 拒绝 reparse point；UnsafeDeleteRefused 向上传播，
+            # fail-closed 不吞）
 
             try:
-                import shutil
-
-                shutil.rmtree(session_dir)
+                safe_rmtree(session_dir, allowed_prefix=q_root)
 
                 deleted += 1
 
@@ -1856,12 +1858,12 @@ def _cleanup_session_staging(root: Path, session_id: str) -> None:
     """
 
     try:
-        import shutil as _shutil_staging
-
         staging = root / ".runtime" / "sessions" / session_id / "staging"
 
+        # CAND-GOVSEC-001①：硬断言（resolve+前缀+reparse）后删除；
+        # UnsafeDeleteRefused 被下方 fail-open 捕获=安全跳过（不执行删除）
         if staging.exists():
-            _shutil_staging.rmtree(staging, ignore_errors=True)
+            safe_rmtree(staging, allowed_prefix=root / ".runtime" / "sessions", ignore_errors=True)
 
     except Exception:  # noqa: BLE001 — fail-open
         logger.debug(
@@ -2075,7 +2077,7 @@ def _sweep_one_dir(
                 manager.run_git(["git", "worktree", "prune"])
 
                 if d.exists():
-                    _force_rmtree(d)
+                    _force_rmtree(d, allowed_prefix=manager._drafts_dir)
 
                 manager.run_git(["git", "worktree", "prune"])
 
@@ -2083,7 +2085,7 @@ def _sweep_one_dir(
             manager.run_git(["git", "worktree", "prune"])
 
             if d.exists():
-                _force_rmtree(d)
+                _force_rmtree(d, allowed_prefix=manager._drafts_dir)
 
             manager.run_git(["git", "worktree", "prune"])
 

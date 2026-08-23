@@ -894,6 +894,7 @@ def test_sweep_one_dir_force_clean_triggers_when_over_age():
     mgr.branch_name = lambda sid: f"session/{sid}"
     mgr.worktree_exists = lambda sid: False
     mgr.repo_root = Path(REPO_ROOT)
+    mgr._drafts_dir = Path(REPO_ROOT) / ".aidrafts"  # CAND-GOVSEC-001①：_force_rmtree 删除断言前缀
 
     old_dir = Path(REPO_ROOT) / ".aidrafts" / "sess-force-clean-trigger"
     old_dir.mkdir(parents=True, exist_ok=True)

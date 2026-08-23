@@ -191,6 +191,7 @@ class WorktreeLanding:
         gateway=None,
         max_cas_retries: int = _MAX_CAS_RETRIES,
     ) -> None:
+        """__init__ implementation."""
         self.repo_root = Path(repo_root).resolve()
         self.queue_root = cq.resolve_queue_root(queue_root)
         self.worktree_path = Path(worktree_path).resolve() if worktree_path else (self.queue_root / _WORKTREE_DIR_NAME).resolve()
@@ -204,12 +205,15 @@ class WorktreeLanding:
     # git 便捷封装
     # ------------------------------------------------------------------
     def _git_repo(self, *args: str, check: bool = True) -> subprocess.CompletedProcess:
+        """_git_repo implementation."""
         return _run_git(self.repo_root, list(args), check=check)
 
     def _git_wt(self, *args: str, check: bool = True) -> subprocess.CompletedProcess:
+        """_git_wt implementation."""
         return _run_git(self.worktree_path, list(args), check=check)
 
     def _dev_head(self) -> str:
+        """_dev_head implementation."""
         return self._git_repo("rev-parse", f"refs/heads/{self.target_branch}").stdout.strip()
 
     # ------------------------------------------------------------------
@@ -237,10 +241,12 @@ class WorktreeLanding:
             self._git_repo("worktree", "prune")
         elif wt.exists() and not registered:
             # 半成品残骸（上次 worktree add 中断）——仅限本专用路径，物理清掉重建
+            # （CAND-GOVSEC-001①：safe_rmtree 硬断言——resolve 后须严格落在
+            # queue_root 内 + 拒绝 reparse point，拦截 rmtree 越界/junction 穿透）
             logger.warning("[landing] 专用 worktree 半成品残骸，清除后重建: %s", wt)
-            import shutil
+            from zephyr.shared.io.file_utils import safe_rmtree  # noqa: PLC0415
 
-            shutil.rmtree(str(wt), ignore_errors=True)
+            safe_rmtree(wt, allowed_prefix=self.queue_root, ignore_errors=True)
             self._git_repo("worktree", "prune")
         wt.parent.mkdir(parents=True, exist_ok=True)
         branch_exists = self._git_repo(
@@ -288,9 +294,11 @@ class WorktreeLanding:
     # 冲突判定（66 号 §6.4：逐文件快进；语义冲突一律死信回退给人，§9.1）
     # ------------------------------------------------------------------
     def _item_paths(self, item: dict) -> set[str]:
+        """_item_paths implementation."""
         return {f.get("path", "") for f in (item.get("files") or []) if f.get("path")}
 
     def _changed_paths_between(self, from_sha: str, to_sha: str) -> set[str]:
+        """_changed_paths_between implementation."""
         r = self._git_repo("diff", "--name-only", from_sha, to_sha)
         return {line.strip() for line in r.stdout.splitlines() if line.strip()}
 
@@ -361,6 +369,7 @@ class WorktreeLanding:
     # 网关（惰性构造一次，跨项复用）
     # ------------------------------------------------------------------
     def _get_gateway(self):
+        """_get_gateway implementation."""
         if self._gateway is None:
             from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
             from zephyr.security.access_control.session_concurrency import SessionRegistry
@@ -376,6 +385,7 @@ class WorktreeLanding:
     # 落盘主入口（drain_queue landing 协议：fn(item, queue_root) -> LandingResult）
     # ------------------------------------------------------------------
     def __call__(self, item: dict, queue_root: Path) -> cq.LandingResult:
+        """__call__ implementation."""
         qid = item.get("qid", "?")
         session_id = item.get("session_id", "")
         queue_root = Path(queue_root)

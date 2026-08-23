@@ -62,3 +62,44 @@ def test_not_in_worktree_returns_none(fake_repo: Path, monkeypatch: pytest.Monke
     """主仓库根 cwd → None。"""
     monkeypatch.chdir(fake_repo)
     assert WorktreeManager(fake_repo).get_current_worktree() is None
+
+
+# ── _wt_path session_id 白名单消毒（CAND-GOVSEC-001 ① 红队用例）──────────────
+# 事故型：session_id='../src' 拼进路径即 rmtree(src)——必须在拼接前物理拦住。
+
+
+class TestSessionIdSanitization:
+    """_wt_path 拼接前白名单校验：逃逸形态 fail-closed，合法形态零误伤。"""
+
+    @pytest.mark.parametrize(
+        "evil",
+        [
+            "../src",  # 2026-08-23 误删事故型（相对逃逸）
+            "..\\src",  # Windows 反斜杠逃逸
+            "..",  # 裸父目录
+            "a/b",  # 子路径注入
+            "a\\b",  # Windows 子路径注入
+            "",  # 空串
+            "sess/../../etc",  # 中段逃逸
+            ".hidden..x",  # 含 '..' 子串
+        ],
+    )
+    def test_evil_session_id_refused(self, fake_repo: Path, evil: str) -> None:
+        from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeError
+
+        with pytest.raises(WorktreeError):
+            WorktreeManager(fake_repo)._wt_path(evil)
+
+    @pytest.mark.parametrize(
+        "good",
+        [
+            "sess-001",  # 常规 session
+            "AI-M258-001",  # 现行 AI 会话编号
+            "task:SRC-081",  # 子任务编号（含冒号）
+            "q-20260823-AI-M258-001-0006",  # 队列项编号
+            "session_2026.08.23-x",  # 下划线/点号
+        ],
+    )
+    def test_legit_session_id_accepted(self, fake_repo: Path, good: str) -> None:
+        wt = WorktreeManager(fake_repo)._wt_path(good)
+        assert wt == fake_repo / ".aidrafts" / good

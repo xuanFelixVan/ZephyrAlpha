@@ -20,7 +20,10 @@ import pytest
 
 from zephyr.shared.io.file_utils import (
     StaleWriteRefused,
+    UnsafeDeleteRefused,
+    assert_safe_rmtree_target,
     content_sha256,
+    safe_rmtree,
     safe_write_text,
 )
 
@@ -90,3 +93,93 @@ def test_write_then_reread_consistency(repo: Path) -> None:
     content = "# 中文内容混合 ascii 12345\n" * 100
     safe_write_text(repo / "plain.txt", content, repo_root=repo)
     assert (repo / "plain.txt").read_text(encoding="utf-8") == content
+
+
+# ── safe_rmtree 删除硬断言（CAND-GOVSEC-001 ① 红队用例）──────────────────────
+# 事故型：2026-08-23 src/zephyr 2936 文件被物理删除（走未仪表化通道）。
+# 以下用例模拟肇事指令形态，断言硬阻断生效且目标字节级完好。
+
+
+@pytest.fixture
+def drafts(repo: Path) -> Path:
+    """伪 .aidrafts/：含一个合法 session worktree 目录。"""
+    d = repo / ".aidrafts"
+    (d / "sess-001" / "sub").mkdir(parents=True)
+    (d / "sess-001" / "sub" / "f.txt").write_text("work\n", encoding="utf-8")
+    return d
+
+
+class TestSafeRmtree:
+    """删除硬断言三件套：前缀逃逸阻断 / reparse point 阻断 / 正常删除放行。"""
+
+    def test_dotdot_escape_refused(self, repo: Path, drafts: Path) -> None:
+        """红队核心：session_id='../src' 型逃逸——resolve 后越出前缀，硬拒。"""
+        src = repo / "src" / "zephyr"
+        src.mkdir(parents=True)
+        (src / "core.py").write_text("# 2936 files\n", encoding="utf-8")
+        with pytest.raises(UnsafeDeleteRefused):
+            safe_rmtree(drafts / ".." / "src", allowed_prefix=drafts)
+        assert (src / "core.py").read_text(encoding="utf-8") == "# 2936 files\n"
+
+    def test_prefix_itself_refused(self, drafts: Path) -> None:
+        """删除允许前缀本身（等于而非严格在内）——硬拒。"""
+        with pytest.raises(UnsafeDeleteRefused):
+            safe_rmtree(drafts, allowed_prefix=drafts)
+        assert (drafts / "sess-001").is_dir()
+
+    def test_absolute_outside_prefix_refused(self, repo: Path, drafts: Path) -> None:
+        """绝对路径指向前缀外——硬拒。"""
+        outside = repo / "elsewhere"
+        outside.mkdir()
+        with pytest.raises(UnsafeDeleteRefused):
+            safe_rmtree(outside, allowed_prefix=drafts)
+        assert outside.is_dir()
+
+    def test_normal_tree_deleted(self, drafts: Path) -> None:
+        """合法目标正常删除（白名单路径无误伤）。"""
+        assert safe_rmtree(drafts / "sess-001", allowed_prefix=drafts) is True
+        assert not (drafts / "sess-001").exists()
+
+    def test_nonexistent_idempotent(self, drafts: Path) -> None:
+        """目标不存在 → False 幂等短路，不抛错。"""
+        assert safe_rmtree(drafts / "sess-ghost", allowed_prefix=drafts) is False
+
+    def test_single_file_deleted(self, drafts: Path) -> None:
+        """单文件目标走 unlink 分支。"""
+        f = drafts / "stray.txt"
+        f.write_text("x\n", encoding="utf-8")
+        assert safe_rmtree(f, allowed_prefix=drafts) is True
+        assert not f.exists()
+
+    def test_reparse_point_in_tree_refused(self, repo: Path, drafts: Path) -> None:
+        """目标树内含 junction/symlink → 硬拒（Windows rmtree 穿透防目标被删）。"""
+        import os
+        import subprocess
+
+        victim = repo / "victim"
+        victim.mkdir()
+        (victim / "important.py").write_text("# do not delete\n", encoding="utf-8")
+        link = drafts / "sess-001" / "sub" / "evil_link"
+        if os.name == "nt":
+            r = subprocess.run(
+                ["cmd", "/c", "mklink", "/J", str(link), str(victim)],
+                capture_output=True,
+            )
+            if r.returncode != 0:
+                pytest.skip("无法创建 junction（环境限制）")
+        else:
+            os.symlink(victim, link, target_is_directory=True)
+        try:
+            with pytest.raises(UnsafeDeleteRefused):
+                safe_rmtree(drafts / "sess-001", allowed_prefix=drafts)
+            # 阻断后两边都必须字节级完好
+            assert (victim / "important.py").read_text(encoding="utf-8") == "# do not delete\n"
+            assert (drafts / "sess-001" / "sub" / "f.txt").read_text(encoding="utf-8") == "work\n"
+        finally:
+            if os.name == "nt" and link.exists():
+                os.rmdir(link)  # rmdir 删 junction 本体不触目标（避免 pytest 清理穿透）
+
+    def test_assert_returns_resolved_path(self, repo: Path, drafts: Path) -> None:
+        """assert_safe_rmtree_target 返回 resolve 后路径（调用方删返回值而非入参）。"""
+        resolved = assert_safe_rmtree_target(drafts / "." / "sess-001", allowed_prefix=drafts)
+        assert resolved == (drafts / "sess-001").resolve()

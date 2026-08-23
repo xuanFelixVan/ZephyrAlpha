@@ -133,16 +133,19 @@ Usage::
 
 from __future__ import annotations
 
-__all__ = ["WorktreeManager", "WorktreeError"]
+__all__: Final = ["WorktreeManager", "WorktreeError"]
 
 import json
 import logging
 import os
+import re
 import subprocess
 import threading
 import time
 from pathlib import Path
+from typing import Final
 
+from zephyr.shared.io.file_utils import assert_safe_rmtree_target
 from zephyr.shared.io.paths import REPO_ROOT, anchor_main_root
 
 logger = logging.getLogger(__name__)
@@ -154,6 +157,20 @@ _AIDRAFTS_DIR = REPO_ROOT / ".aidrafts"
 _LOCK_TIMEOUT = 30.0  # worktree 操作锁最长等待 30s
 _LOCK_POLL = 0.1
 _BRANCH_PREFIX = "session/"
+
+#: session_id 白名单字符集（CAND-GOVSEC-001 ①）——仅字母数字开头 + [._:@-]，
+#: 禁路径分隔符与 '..'：_wt_path 直接拼接进文件系统路径，session_id='../src'
+#: 即解析到 .aidrafts/ 之外（2026-08-23 src 误删同型隐患①），必须在拼接前拦住。
+_SESSION_ID_RE: Final = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:@-]{0,127}$")
+
+
+def _validate_session_id(session_id: str) -> None:
+    """session_id 白名单消毒（CAND-GOVSEC-001 ①）。非法即 WorktreeError（fail-closed）。
+
+    消息不含 session_id 本体（MSG-EXPOSURE 合规）。
+    """
+    if not isinstance(session_id, str) or not _SESSION_ID_RE.fullmatch(session_id) or ".." in session_id:
+        raise WorktreeError("session_id 字符集校验失败（白名单 [A-Za-z0-9._:@-] 且禁 '..'）")
 
 
 class WorktreeError(RuntimeError):
@@ -235,7 +252,7 @@ class _WorktreeLock:
         return False
 
 
-def _force_rmtree(path: Path) -> bool:
+def _force_rmtree(path: Path, *, allowed_prefix: Path) -> bool:
     """Windows 文件锁兜底强删目录。返回 True=完全删除，False=有残留。
 
     ``shutil.rmtree`` 默认遇 [WinError 32]（文件被占用）/ 只读位 直接失败。
@@ -243,9 +260,17 @@ def _force_rmtree(path: Path) -> bool:
     立即删除会失败。本 helper 用 ``onerror`` 回调：清除只读位 -> 重试 ->
     sleep 500ms 等句柄释放再试 -> 记录失败（不再静默吞错，调用方据返回值决策）。
     被 ``create_session_worktree``（清残留以重建）和 ``_remove_worktree``（清残留）复用。
+
+    CAND-GOVSEC-001 ①：删除前经 ``assert_safe_rmtree_target`` 硬断言——resolve 后
+    必须严格落在 allowed_prefix 内（session_id 污染/junction 逃逸物理阻断），
+    断言失败抛 UnsafeDeleteRefused，不执行任何删除。
     """
     import shutil
     import stat
+
+    resolved = assert_safe_rmtree_target(path, allowed_prefix=allowed_prefix)
+    if not resolved.exists():
+        return True  # 幂等：不存在=无残留
 
     failed: list[str] = []
 
@@ -264,8 +289,8 @@ def _force_rmtree(path: Path) -> bool:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             failed.append(str(p))  # 记录失败，不再静默吞错
 
-    shutil.rmtree(str(path), onerror=_on_error)
-    return not failed and not path.exists()
+    shutil.rmtree(str(resolved), onerror=_on_error)
+    return not failed and not resolved.exists()
 
 
 class WorktreeManager:
@@ -308,7 +333,8 @@ class WorktreeManager:
         return self.run_git(cmd, cwd)
 
     def _wt_path(self, session_id: str) -> Path:
-        """session worktree 的绝对路径。"""
+        """session worktree 的绝对路径（CAND-GOVSEC-001①：拼接前白名单消毒）。"""
+        _validate_session_id(session_id)
         return self._drafts_dir / session_id
 
     def _branch_name(self, session_id: str) -> str:
@@ -434,7 +460,7 @@ class WorktreeManager:
                     session_id,
                     wt_path,
                 )
-                _force_rmtree(wt_path)
+                _force_rmtree(wt_path, allowed_prefix=self._drafts_dir)
 
             # 清理可能残留的旧分支（上次未 merge 的 cleanup 可能留下分支）
             self.run_git(["git", "branch", "-D", branch])
@@ -565,7 +591,7 @@ class WorktreeManager:
             # 尝试 prune + 物理删除兜底
             self.run_git(["git", "worktree", "prune"])
             if wt_path.exists():
-                _force_rmtree(wt_path)
+                _force_rmtree(wt_path, allowed_prefix=self._drafts_dir)
             self.run_git(["git", "worktree", "prune"])
             # Windows 文件锁可能导致物理目录残留，但 git worktree 元数据已清理。
             # 物理残留无害（下次 create_session_worktree 会覆盖）。
