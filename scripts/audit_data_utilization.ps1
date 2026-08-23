@@ -15,6 +15,12 @@
 # Output: docs/_working/data_utilization_audit_snapshot_<yyyy-MM-dd>.md
 #         frontmatter is exactly three lines (--- / ttl: task_bound / ---)
 #         per EXEMPT-ZONE-FM gate rules for the docs/_working/ zone.
+#         docs/_audit/data_utilization_audit_<yyyy-MM-dd>.csv
+#         machine-readable CSV matrix for version diffing (memo 63 section 3.4:
+#         "CSV matrix ... may be stored in docs/_audit/ for version compare").
+#         2026-08-24: CSV sink restored per design memo 63 section 3.4 original
+#         design (the 2026-08-20 run note had diverted output to docs/_working/
+#         only); the markdown snapshot behavior is unchanged.
 # Policy: warn-only, always exits 0 on success (memo 63 section 9 states the
 #         documentation coverage gate must not block CI, warn only).
 # Note: comments and output labels are kept pure ASCII per ENCODING-SAFETY.
@@ -27,9 +33,11 @@ $registry = Join-Path $repoRoot 'docs\01_policies_and_standards\_registry\catalo
 $srcDir   = Join-Path $repoRoot 'src\zephyr'
 $memoDir  = Join-Path $repoRoot 'docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos'
 $outDir   = Join-Path $repoRoot 'docs\_working'
+$auditDir = Join-Path $repoRoot 'docs\_audit'
 $selfMemo = '63_data_utilization_audit.md'
 $date     = Get-Date -Format 'yyyy-MM-dd'
 $outFile  = Join-Path $outDir "data_utilization_audit_snapshot_$date.md"
+$csvFile  = Join-Path $auditDir "data_utilization_audit_$date.csv"
 
 # --- Step 1: parse dataset entries (dataset_id + entity_name) from registry --
 $entries = New-Object System.Collections.Generic.List[object]
@@ -132,8 +140,23 @@ foreach ($r in $rows) {
 # Write UTF-8 without BOM so the three-line frontmatter stays byte-clean.
 [System.IO.File]::WriteAllText($outFile, $sb.ToString(), (New-Object System.Text.UTF8Encoding($false)))
 
+# --- Step 6: write CSV snapshot (memo 63 section 3.4, docs/_audit/) -----------
+if (-not (Test-Path $auditDir)) {
+    New-Item -ItemType Directory -Path $auditDir -Force | Out-Null
+}
+$csvRows = $rows | Select-Object `
+    @{ n = 'dataset_id';  e = { $_.Id } }, `
+    @{ n = 'entity_name'; e = { $_.Entity } }, `
+    @{ n = 'table';       e = { $_.Table } }, `
+    @{ n = 'src_refs';    e = { $_.Src } }, `
+    @{ n = 'memo_refs';   e = { $_.Memo } }, `
+    @{ n = 'status';      e = { $_.Status } }
+$csvText = ($csvRows | ConvertTo-Csv -NoTypeInformation) -join [Environment]::NewLine
+[System.IO.File]::WriteAllText($csvFile, $csvText + [Environment]::NewLine, (New-Object System.Text.UTF8Encoding($false)))
+
 # --- Console summary ----------------------------------------------------------
 Write-Host "snapshot written: $outFile"
+Write-Host "csv written: $csvFile"
 Write-Host "entries=$($rows.Count) tables=$($tables.Count) covered=$nCovered code_only=$nCodeOnly doc_only=$nDocOnly zero_ref=$nZeroRef"
 if ($nCodeOnly -gt 0) {
     Write-Host "WARN: $nCodeOnly dataset entries are code_only (documentation gap), see snapshot matrix"

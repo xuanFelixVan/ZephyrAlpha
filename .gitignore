@@ -206,6 +206,9 @@ data/metrics.prom
 **/sec_leak_*.json
 
 # Runtime cache and state
+
+# 63 号审查工具链 CSV 快照（可重跑再生产物，不入 git；产线=scripts/audit_data_utilization.ps1）
+docs/_audit/
 .audit_cache/
 .zephyr/
 .zephyr_secure/
