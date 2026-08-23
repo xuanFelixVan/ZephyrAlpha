@@ -7643,6 +7643,11 @@ creation_tokens:
   token: auto-test-hot-file-base-freshness-gate-20260823
   created_by: AI-M258-001
   capability: hot_file_base_freshness_gate
+# --- 2026-08-23 GATE-BLUEPRINT-CODE-INDEX-SYNC reconciler creation_token（autogen 段 auto-commit 通道 批3b） ---
+- file: tests/governance/audit/test_blueprint_code_index_reconciler_post_commit.py
+  token: auto-test-blueprint-code-index-reconciler-20260823
+  created_by: AI-K3-GOVSEC-001
+  capability: blueprint_code_index_sync_reconciler
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
