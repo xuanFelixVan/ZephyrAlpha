@@ -7648,16 +7648,6 @@ creation_tokens:
   token: auto-test-blueprint-code-index-reconciler-20260823
   created_by: AI-K3-GOVSEC-001
   capability: blueprint_code_index_sync_reconciler
-di_seam_exemptions:
-- module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
-  reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
-  created: '2026-07-18'
-- module_path: zephyr.gov_enforcement.behavioral_admission.admission_controller.AdmissionController
-  reason: 行为准入控制器，依赖图已知 DI seam，待后续重构
-  created: '2026-07-18'
-- module_path: zephyr.orchestrator.agent_orchestrator.AgentOrchestrator
-  reason: 编排器核心，P1-3 RoutingRole 改造期暂豁免
-  created: '2026-07-18'
 # --- 2026-08-22 阶段二波2（92号清单）新建文件 creation_token ---
 - file: src/zephyr/regime/cross_sectional_features.py
   token: auto-cross-sectional-features-20260822
@@ -8192,3 +8182,13 @@ di_seam_exemptions:
   token: auto-model-digests-20260822
   created_by: AI-RESIDUAL-255C
   capability: l0_supply_chain_boot_verify
+di_seam_exemptions:
+- module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
+  reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
+  created: '2026-07-18'
+- module_path: zephyr.gov_enforcement.behavioral_admission.admission_controller.AdmissionController
+  reason: 行为准入控制器，依赖图已知 DI seam，待后续重构
+  created: '2026-07-18'
+- module_path: zephyr.orchestrator.agent_orchestrator.AgentOrchestrator
+  reason: 编排器核心，P1-3 RoutingRole 改造期暂豁免
+  created: '2026-07-18'

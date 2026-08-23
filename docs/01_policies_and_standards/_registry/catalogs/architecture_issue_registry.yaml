@@ -18760,3 +18760,26 @@ entries:
   - '#ARCH-DEPGRAPH_ACCESS_CONTROL'
   created: '2026-08-22'
   last_updated: '2026-08-22'
+
+- issue_id: '#ARCH-171'
+  title: capability 注册表 creation_tokens 段结构错位——131 条目被 YAML 解析吞入 di_seam_exemptions
+  severity: P1
+  category: 治理基建/注册表完整性
+  adjudication: >-
+    2026-08-23 长城任务取证：capability_canonical_file_registry.yaml 行 7651 处
+    di_seam_exemptions: 顶层键插入在 creation_tokens 列表中间，其后再追加的
+    creation_token 条目（2026-08-22 阶段二波2/3/4 起共 131 条）被 YAML 解析吞入
+    di_seam_exemptions 键下，CREATE-GUARD 门禁 _collect_registered_files 只读
+    data[creation_tokens] → 该 131 条 token 对门禁不可见；且任何文件尾追加写法都会
+    继续落入错误键。裁定（第一性原理：单一真源必须结构正确，否则门禁形同虚设）：
+    文本级搬迁错位条目回 creation_tokens 段（保注释零重排），di_seam_exemptions
+    归位文件尾仅留 3 条真豁免。
+  impact:
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（结构修复：creation_tokens 679→810 全量可见，di_seam_exemptions 归位 3 条）'
+    - '备份 .runtime/capability_registry_backup_20260823.yaml（修复前快照，不入 git）'
+  fix_phase: '已落地（2026-08-23）：文本级块搬迁+修复后 yaml.safe_load 实证 creation_tokens=810、di_seam_exemptions=3（module_path 键）'
+  status: resolved
+  related_rules:
+  - 'CREATE-GUARD'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
