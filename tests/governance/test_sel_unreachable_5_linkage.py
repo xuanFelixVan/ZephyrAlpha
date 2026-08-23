@@ -177,15 +177,25 @@ class TestDataflowChain:
 
     @pytest.mark.parametrize("step_id,module_id", list(UNREACHABLE_5.items()))
     def test_module_node_exists(self, db_conn, step_id, module_id):
-        """验证5个模块在 depgraph nodes 表中存在（设计态节点）。"""
+        """验证5个模块在 depgraph nodes 表中存在（设计态或已建成节点）。
+
+        2026-08-23 长城任务批1/批2 实证：MOD-SIG-036/038/040/041（REGIME 批）与
+        MOD-SIG-045（SIGNAL 批）已建成转态（build_status=testing、design_maturity
+        可随生成器 rescan 转 production）——断言从"planned 设计态"演进为"节点存在
+        且 build_status 合法"，链路治理意图（节点在图中）不变。
+        """
         with db_conn.cursor() as cur:
             cur.execute(
                 "SELECT build_status, design_maturity FROM nodes "
-                "WHERE blueprint_id = %s AND design_maturity = 'design'",
+                "WHERE blueprint_id = %s",
                 (module_id,),
             )
             rows = cur.fetchall()
-        assert len(rows) > 0, f"{step_id}({module_id}) 无设计态节点"
+        assert len(rows) > 0, f"{step_id}({module_id}) 无 depgraph 节点"
         build_status, maturity = rows[0]
-        assert build_status == "planned", f"{step_id}({module_id}): build_status={build_status}≠planned"
-        assert maturity == "design", f"{step_id}({module_id}): maturity={maturity}≠design"
+        assert build_status in ("planned", "generated", "testing", "stable", "production"), (
+            f"{step_id}({module_id}): build_status={build_status} 非法"
+        )
+        assert maturity in ("design", "production"), (
+            f"{step_id}({module_id}): maturity={maturity} 非法"
+        )
