@@ -2217,6 +2217,87 @@ error_codes:
   module: zephyr.frontend.implementations.default_notification_manager
   file: src/zephyr/frontend/implementations/default_notification_manager.py
   introduced: '2026-08-23: 长城任务批1 MOD-L08-001（原 ZA-HMI-NM-001 改号）'
+# --- 2026-08-23 长城任务批2 error_code（POSSELL 15 + CWIRE 1） ---
+- code: ZA-POS-0019
+  class: InvalidCovarianceInputError
+  module: zephyr.position.core.covariance_estimator
+  file: src/zephyr/position/core/covariance_estimator.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工（POS max=0018 → 0019 起）'
+- code: ZA-POS-0020
+  class: InvalidCorrelationRegimeInputError
+  module: zephyr.position.core.correlation_regime_monitor
+  file: src/zephyr/position/core/correlation_regime_monitor.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-POS-0021
+  class: InvalidRiskBudgetInputError
+  module: zephyr.position.core.position_risk_budget_allocator
+  file: src/zephyr/position/core/position_risk_budget_allocator.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-POS-0022
+  class: InvalidMergerInputError
+  module: zephyr.position.core.cross_strategy_position_merger
+  file: src/zephyr/position/core/cross_strategy_position_merger.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-POS-0023
+  class: InvalidIntradayConstraintInputError
+  module: zephyr.position.core.intraday_position_constraint
+  file: src/zephyr/position/core/intraday_position_constraint.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-POS-0024
+  class: InvalidTimeBudgetInputError
+  module: zephyr.position.core.position_time_budget
+  file: src/zephyr/position/core/position_time_budget.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-POS-0025
+  class: InvalidPositionFeatureError
+  module: zephyr.position.core.position_behavior_classifier
+  file: src/zephyr/position/core/position_behavior_classifier.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-SELL-0020
+  class: InvalidScoreInputError
+  module: zephyr.sell_decision.core.sell_signal_scorer
+  file: src/zephyr/sell_decision/core/sell_signal_scorer.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工（SELL max=0019 → 0020 起）'
+- code: ZA-SELL-0021
+  class: InvalidStopFrameworkInputError
+  module: zephyr.sell_decision.core.strategy_specific_stop_framework
+  file: src/zephyr/sell_decision/core/strategy_specific_stop_framework.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-SELL-0022
+  class: InvalidExitPlanInputError
+  module: zephyr.sell_decision.core.exit_scenario_planner
+  file: src/zephyr/sell_decision/core/exit_scenario_planner.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-SELL-0023
+  class: InvalidScalingPlanInputError
+  module: zephyr.sell_decision.core.scaling_out_architect
+  file: src/zephyr/sell_decision/core/scaling_out_architect.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-SELL-0024
+  class: InvalidTTradeInputError
+  module: zephyr.sell_decision.core.t_trade_coordinator
+  file: src/zephyr/sell_decision/core/t_trade_coordinator.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-SELL-0025
+  class: InvalidAccuracyRecordError
+  module: zephyr.sell_decision.core.sell_signal_accuracy_monitor
+  file: src/zephyr/sell_decision/core/sell_signal_accuracy_monitor.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-SELL-0026
+  class: InvalidABTestInputError
+  module: zephyr.sell_decision.core.sell_strategy_ab_tester
+  file: src/zephyr/sell_decision/core/sell_strategy_ab_tester.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-SELL-0027
+  class: InvalidFillRecordError
+  module: zephyr.sell_decision.core.sell_execution_quality_tracker
+  file: src/zephyr/sell_decision/core/sell_execution_quality_tracker.py
+  introduced: '2026-08-23: AI-K3-GW-POSSELL 波次4施工'
+- code: ZA-FE-0005
+  class: DashboardFeedInputError
+  module: zephyr.frontend.services.dashboard_feeds
+  file: src/zephyr/frontend/services/dashboard_feeds.py
+  introduced: '2026-08-23: AI-K3-GW-CWIRE C类通道批（FE max=0004 → 0005）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
