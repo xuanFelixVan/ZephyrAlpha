@@ -7890,3 +7890,79 @@ entries:
   estimated_complexity: 低
   acquisition_method: constructed
   last_review_outcome: '2026-08-23 已建成（MOD-PLAN-012，testing），#ARCH-172'
+
+- id: CAND-SIG-024
+  name: 主线概率综合评分（GAP-F-12）
+  aliases: ['主线概率', 'mainline probability']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 板块层
+  description: RRG 象限+接力阶段+资金持续性+梯队完整度四因子合成主线概率（0~100）；静态权重 MVP，config.weight_overrides 留动态化接口位；缺维重归一。
+  capability: mainline_probability
+  problem_it_solves: 板块是否主线无可量化综合分，作战室主线层缺锚
+  keywords: ['mainline', 'sector', 'rrg', 'probability']
+  upstream_deps: ['MOD-SIG-060', 'MOD-SIG-061', 'MOD-SIG-062']
+  downstream_consumers: ['作战室主线层', 'GAP-F-06', 'GAP-F-30']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-064，testing），#ARCH-177'
+- id: CAND-SIG-025
+  name: 持仓×板块语境关联查询（GAP-F-30）
+  aliases: ['持仓板块语境']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 查询层
+  description: 持仓（调用方显式供给）×sector_constituent SCD-2 时点归属×主线概率×板内角色关联查询；两源独立降级，缺持仓 fail-closed。
+  capability: position_sector_context
+  problem_it_solves: 持仓页看不到每只票的板块语境（主线排名/龙头跟风）
+  keywords: ['position', 'sector', 'context']
+  upstream_deps: ['MOD-SIG-064', 'MOD-SIG-062']
+  downstream_consumers: ['持仓页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-065，testing），#ARCH-177'
+- id: CAND-DAT-004
+  name: 涨停池明细字段扩充（GAP-F-13）
+  aliases: ['涨停池明细', 'limit_up_pool']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: data 采集层
+  description: 新建 c1_market.limit_up_pool 明细表承接 stock_zt_pool_em 全量字段（封单比/首封/封住时长/炸板次数/连板/行业）；本批落采集器+解析层，DDL 建表/品类登记/tasks.yaml 接线三件为 Owner 窗口待办。
+  capability: limit_up_pool_collector
+  problem_it_solves: 梯队个股明细（封单比/首封/封住时间/开板次数）无存储
+  keywords: ['limit up', 'pool', 'collector']
+  upstream_deps: ['akshare stock_zt_pool_em']
+  downstream_consumers: ['作战室梯队层', '板块详情页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 采集器+解析层建成（testing）；DDL 四件 Owner 窗口待办，#ARCH-177'
+- id: CAND-PFALLOC-005
+  name: 相关性净额查询接口+前端接线（GAP-F-04）
+  aliases: ['相关性净额']
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: frontend services 查询层
+  description: 组合域相关性约束（已 prod）结论级查询接口 query_correlation_netting + 持仓页相关性净额卡 mock 渲染接线。
+  capability: dashboard_feeds
+  problem_it_solves: 后端相关性净额能力前端不可见
+  keywords: ['correlation', 'netting', 'dashboard']
+  upstream_deps: ['组合域相关性约束模块']
+  downstream_consumers: ['持仓页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（dashboard_feeds.py，testing）'
+- id: CAND-FE-001
+  name: 指标/形态渲染器全量接入（GAP-F-32，持续工程）
+  aliases: ['渲染器接入']
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: dashboard 渲染层
+  description: 41 指标+256 形态注册表全量接入 mockup 渲染层；2026-08-23 实证 39→65/256（目录 39 项全绿）；余量按族续接（DL 族 13 条为模型锚点不做前端规则渲染）。
+  capability: dashboard_renderers
+  problem_it_solves: 注册表指标/形态前端渲染覆盖率不足
+  keywords: ['renderer', 'indicator', 'chart pattern']
+  upstream_deps: ['technical_indicator_registry', 'chart_pattern_registry']
+  downstream_consumers: ['dashboard 各页']
+  estimated_complexity: 中
+  acquisition_method: in_progress
+  last_review_outcome: '2026-08-23 65/256（+26），持续工程'

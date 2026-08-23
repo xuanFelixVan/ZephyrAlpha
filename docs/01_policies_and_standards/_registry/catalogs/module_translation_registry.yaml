@@ -41840,6 +41840,196 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '把"明日边界"从一次算一只升级成一次算一篮子：候选清单批量并发计算， 哪只缺数据、哪只算失败都留痕，算完统一落库供作战室 W2/W2b 取用。'
+# --- 2026-08-23 长城任务批2 plain_zh 翻译 ---
+- module_path: src/zephyr/signal_ashare/mainline_probability.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 主线概率综合评分器
+  name_en: 'Mainline Probability Scorer'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把"一个板块有多大概率成为市场主线"拆成四件事打分——板块相对大盘的 走位象限、板块内涨停接力打到第几棒、主力资金是不是连续流入、龙头/中军/跟风 梯队齐不齐，四项各打 0~1 分再加权合成 0~100。权重是写死可调的常量，留了 动态权重接口位以后接模型；哪个维度缺数据就按剩下的维度重新配权，不硬编分。'
+- module_path: src/zephyr/signal_ashare/position_sector_context.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 持仓板块语境关联查询
+  name_en: 'Position Sector Context'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '回答"我手里这只票属于哪些板块、这些板块今天主线概率排第几、这票在 板块里是龙头还是跟风"——持仓清单纯由调用方传入（券商持仓通道未接，库里没有 持仓表），板块归属用当日有效成分钟表反查，概率和角色直接复用主线概率评分器 与龙头识别器的产出。'
+- module_path: src/zephyr/data/implementations/limit_up_pool_collector.py
+  domain_id: D_DATA
+  name_zh: 涨停池明细采集器
+  name_en: 'Limit Up Pool Collector'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '每天把东财涨停股池的明细存下来：封单金额、封单占流通盘比例、首次 封板几点几分、封住到收盘多少秒、盘中炸板几次、几连板、属于哪个行业。老表 limit_up_down 不动，新表 limit_up_pool 承接；建表和排期接线是 Owner 窗口待办， 本模块先把采集和解析逻辑备好并通过假数据源测试。'
+- module_path: src/zephyr/signal_fundamental/router/__init__.py
+  domain_id: D_FUNDAMENTAL_SIGNAL
+  name_zh: 信号路由包入口
+  name_en: 'Signal Router Package'
+  desc_zh: '信号优先级路由器与冲突消解器包入口（MOD-SIG-009/010）。'
+  desc_en: 'Package entry for signal priority router and conflict resolver (MOD-SIG-009/010).'
+  plain_zh: '信号路由包。信号排队（谁先处理）和信号打架裁定（听谁的）两个组件的入口。'
+- module_path: src/zephyr/data/connectors/__init__.py
+  domain_id: D_DATA
+  name_zh: 连接器包入口
+  name_en: 'Data Connectors Package'
+  desc_zh: '数据连接器包入口（抽象基类 + 文件连接器）。'
+  desc_en: 'Package entry for data connectors (ABC + file connector).'
+  plain_zh: '数据连接器包入口，统一"连得上、拉得到"的传输适配抽象。'
+- module_path: src/zephyr/data/connectors/connector_base.py
+  domain_id: D_DATA
+  name_zh: 连接器抽象基类
+  name_en: 'Connector Base'
+  desc_zh: '数据连接器抽象：connect/health_check/fetch_batch/close 四件套 + 请求/批结构。'
+  desc_en: 'Data connector abstraction: connect/health_check/fetch_batch/close plus request/batch structures.'
+  plain_zh: '连接器抽象基类。只管连和拉，不写库；失败统一 ConnectorError。'
+- module_path: src/zephyr/data/connectors/file_connector.py
+  domain_id: D_DATA
+  name_zh: 文件连接器
+  name_en: 'File Connector'
+  desc_zh: '本地 CSV 目录连接器（{dataset}.csv 约定 + symbols/日期过滤），离线回放/测试夹具/应急降级用。'
+  desc_en: 'Local CSV directory connector ({dataset}.csv convention, symbol/date filters) for offline replay, fixtures and emergency fallback.'
+  plain_zh: '文件连接器。把本地 CSV 目录当数据源用，断网/降级时兜底。'
+- module_path: src/zephyr/data/normalizers/__init__.py
+  domain_id: D_DATA
+  name_zh: 归一化器包入口
+  name_en: 'Data Normalizers Package'
+  desc_zh: '数据归一化器包入口（抽象基类 + OHLCV 归一化器）。'
+  desc_en: 'Package entry for data normalizers (ABC + OHLCV normalizer).'
+  plain_zh: '归一化器包入口，把各家原始记录统一成标准形状。'
+- module_path: src/zephyr/data/normalizers/normalizer_base.py
+  domain_id: D_DATA
+  name_zh: 归一化器抽象基类
+  name_en: 'Normalizer Base'
+  desc_zh: '归一化器抽象：normalize(records)→NormalizeResult（剔除留痕 issues，不中断整批）。'
+  desc_en: 'Normalizer abstraction: normalize(records) -> NormalizeResult (drops tracked in issues, batch never aborts).'
+  plain_zh: '归一化器抽象基类。坏记录剔掉并留痕，不因一条坏数据废掉一整批。'
+- module_path: src/zephyr/data/normalizers/ohlcv_normalizer.py
+  domain_id: D_DATA
+  name_zh: OHLCV 归一化器
+  name_en: 'OHLCV Normalizer'
+  desc_zh: '行情日线归一化：列名别名归一/类型强转/负价负量 high<low 校验/(symbol,date) 排序去重 keep-last。'
+  desc_en: 'OHLCV daily-bar normalizer: column aliases, type coercion, negative-price/high<low validation, (symbol,date) sort + keep-last dedup.'
+  plain_zh: 'OHLCV 归一化器。中文列名、YYYYMMDD 日期、字符串数字统统归一成标准行情记录。'
+- module_path: src/zephyr/position/core/covariance_estimator.py
+  domain_id: D_POSITION
+  name_zh: 协方差估计器
+  name_en: 'covariance_estimator'
+  desc_zh: 'Ledoit-Wolf收缩协方差估计（等方差对角目标+自适应收缩强度）'
+  desc_en: ''
+  plain_zh: '风险估计的底座计算器，把各标的收益率收成一张稳健的"联动表"；样本少时自动向保守的对角阵收缩，绝不算出病态矩阵。'
+- module_path: src/zephyr/position/core/correlation_regime_monitor.py
+  domain_id: D_POSITION
+  name_zh: 相关性regime监控器
+  name_en: 'correlation_regime_monitor'
+  desc_zh: '组合平均成对相关→LOW/NORMAL/HIGH三档regime+分散失效预警'
+  desc_en: ''
+  plain_zh: '组合分散度的哨兵，盯着持仓之间的平均相关性；相关性飙高就说明"看似分散实则同向"，立刻亮黄灯提醒风险预算要收紧。'
+- module_path: src/zephyr/position/core/position_risk_budget_allocator.py
+  domain_id: D_POSITION
+  name_zh: 风险预算分配器
+  name_en: 'position_risk_budget_allocator'
+  desc_zh: '按风险预算分配权重（等预算=ERC等风险贡献），消费MOD-POS-011'
+  desc_en: ''
+  plain_zh: '按"每只股票贡献的风险相等"来分钱，而不是按金额平分；波动大的少给、波动小的多给，还能按自定义预算比例调配。'
+- module_path: src/zephyr/position/core/cross_strategy_position_merger.py
+  domain_id: D_POSITION
+  name_zh: 跨策略仓位合并器
+  name_en: 'cross_strategy_position_merger'
+  desc_zh: '多子策略权重簿按资金占比净额合并为组合级目标权重'
+  desc_en: ''
+  plain_zh: '多个子策略各开各的"购物清单"，它按各策略分到的资金比例合成一张组合总单；同一股票多空意图相互抵消，完全抵消的不留痕迹。'
+- module_path: src/zephyr/position/core/intraday_position_constraint.py
+  domain_id: D_POSITION
+  name_zh: 盘中仓位约束
+  name_en: 'intraday_position_constraint'
+  desc_zh: '盘中交易意图校验——T+1冻结+单标的/总仓上限，Fail-Closed'
+  desc_en: ''
+  plain_zh: '盘中下单前的仓位安检：今天买的今天不能卖（T+1内生），单票和总仓位不许越线；任何一条不合格都拦下并写明原因。'
+- module_path: src/zephyr/position/core/position_time_budget.py
+  domain_id: D_POSITION
+  name_zh: 持仓时间预算
+  name_en: 'position_time_budget'
+  desc_zh: '持仓持有天数对时间预算的三态巡检（WITHIN/APPROACHING/EXPIRED）'
+  desc_en: ''
+  plain_zh: '每只持仓都有"最大持有天数"闹钟，快到期的提醒、超期的标记为时间止损候选；它只报状态不动手，卖不卖由卖出域决定。'
+- module_path: src/zephyr/position/core/position_behavior_classifier.py
+  domain_id: D_POSITION
+  name_zh: 持仓行为分类器
+  name_en: 'position_behavior_classifier'
+  desc_zh: '行为金融学规则分类（套牢/急卖/趋势持有/呆滞/中性）+处置效应预警'
+  desc_en: ''
+  plain_zh: '给持仓做"行为体检"：亏着死扛的标成处置效应套牢，赚点就跑的标成过早止盈，呆滞不动的提示占用资金；只贴标签供复盘，不自动操作。'
+- module_path: src/zephyr/sell_decision/core/sell_signal_scorer.py
+  domain_id: D_SELL_DECISION
+  name_zh: 卖出信号评分器
+  name_en: 'sell_signal_scorer'
+  desc_zh: '置信度×强度×贝叶斯准确率×跨周期共振加成的信号综合评分'
+  desc_en: ''
+  plain_zh: '给每个卖出信号打综合分：信号本身多自信、力度多强、这类信号历史上准不准（样本少就往中间靠）、多个周期一起喊卖还加分；分高者优先处理。'
+- module_path: src/zephyr/sell_decision/core/strategy_specific_stop_framework.py
+  domain_id: D_SELL_DECISION
+  name_zh: 策略特异止损框架
+  name_en: 'strategy_specific_stop_framework'
+  desc_zh: '风格画像→止损参数映射+初始/移动/保本/时间四类止损计算'
+  desc_en: ''
+  plain_zh: '不同风格的策略配不同的止损尺：趋势策略放宽些、均值回归卡紧些；它只认"风格"不认具体策略，算出当前最紧的那条止损线和触发原因。'
+- module_path: src/zephyr/sell_decision/core/exit_scenario_planner.py
+  domain_id: D_SELL_DECISION
+  name_zh: 离场情景规划器
+  name_en: 'exit_scenario_planner'
+  desc_zh: '立即/分批/条件持有/持有四情景菜单+推荐，T+1可卖量内生'
+  desc_en: ''
+  plain_zh: '给每个持仓开"离场菜单"：紧急的全出（但当天买的部分依法顺延）、中等的先卖一半、不急的守住止损线；每个选项附理由，选择权留给决策层。'
+- module_path: src/zephyr/sell_decision/core/scaling_out_architect.py
+  domain_id: D_SELL_DECISION
+  name_zh: 分批卖出架构师
+  name_en: 'scaling_out_architect'
+  desc_zh: '紧迫度→分批节奏（前重/均匀/后重）+批次触发结构设计'
+  desc_en: ''
+  plain_zh: '设计"分几批卖、每批卖多少、什么条件卖"的计划表：越急首批卖越多，越从容越往后留；首批绝不超今天能卖的数量，超出的自动顺延。'
+- module_path: src/zephyr/sell_decision/core/t_trade_coordinator.py
+  domain_id: D_SELL_DECISION
+  name_zh: 做T协调器
+  name_en: 't_trade_coordinator'
+  desc_zh: 'T+1规则内日内做T规划（两腿≤可卖底仓+净价差门槛+日终复原）'
+  desc_en: ''
+  plain_zh: '日内做T的合规管家：不管正T倒T，卖出的那部分只能动可卖底仓，收盘前必须买回来保持仓位不变；差价扣完成本不够门槛就劝退。'
+- module_path: src/zephyr/sell_decision/core/sell_signal_accuracy_monitor.py
+  domain_id: D_SELL_DECISION
+  name_zh: 卖出信号准确度监控器
+  name_en: 'sell_signal_accuracy_monitor'
+  desc_zh: '按信号类型聚合命中率回喂评分器+衰退预警'
+  desc_en: ''
+  plain_zh: '信号质量的复盘员：统计每类卖出信号历史上灵不灵，准确率回喂给评分器；哪类信号明显不如从前且样本够多，就预警它可能失效了。'
+- module_path: src/zephyr/sell_decision/core/sell_strategy_ab_tester.py
+  domain_id: D_SELL_DECISION
+  name_zh: 卖出策略AB测试器
+  name_en: 'sell_strategy_ab_tester'
+  desc_zh: '两卖出策略变体双样本z检验→ADOPT_B/KEEP_A/INCONCLUSIVE'
+  desc_en: ''
+  plain_zh: '新旧卖出策略的裁判：拿两组实战结果做统计检验，新策略显著更好才建议换，样本不够一律"再观察"，防止被小样本骗了换错人。'
+- module_path: src/zephyr/sell_decision/core/sell_execution_quality_tracker.py
+  domain_id: D_SELL_DECISION
+  name_zh: 卖出执行质量追踪器
+  name_en: 'sell_execution_quality_tracker'
+  desc_zh: '卖出滑点加权聚合+GOOD/ACCEPTABLE/DEGRADED分级+超阈留痕'
+  desc_en: ''
+  plain_zh: '卖出执行的对账员：每笔成交和决策价比一比亏了多少滑点，加权汇总打分；平均滑点超标就报执行通道劣化，单笔异常单独留痕。'
+- module_path: src/zephyr/frontend/services/dashboard_feeds.py
+  domain_id: D_FRONTEND
+  name_zh: 前端结论级查询接口层
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把已上线的后端引擎结果包装成前端页面能直接渲染的结构化字典——相关性净额、盘中买卖点、T+1 可卖、压力测试、持仓状态、回撤油门刹车、日历仓位约束、流动性、尾部风险九条查询，只读不写、数据由调用方注入。'
+- module_path: tests/frontend/test_dashboard_feeds.py
+  domain_id: D_FRONTEND
+  name_zh: 前端查询接口层单测
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '用内存 mock 数据验证九条查询接口的输出结构与异常纪律，不连真实数据库。'
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

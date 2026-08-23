@@ -18888,3 +18888,102 @@ entries:
   - 'C-004'
   created: '2026-08-23'
   last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-177'
+  title: 'MOD-SIG-064/065 + MOD-DAT-limit_up_pool_ingest 板块链三件（GAP-F-12/30/13）'
+  severity: P0
+  category: 功能施工
+  adjudication: >-
+    缺口总账波次3+波次1 C类落码：①GAP-F-12 mainline_probability 四因子合成主线概率
+    （RRG象限/接力阶段/资金持续性/梯队完整度），全量复用 MOD-SIG-061/062 与 060 资金腿口径；
+    静态权重 MVP（0.30/0.25/0.20/0.25 初拍待标定），config.weight_overrides 动态化接口位
+    （白名单键 fail-closed）；缺维重归一不出伪分；无主线混沌期空榜。②GAP-F-30
+    position_sector_context 关联查询：positions 调用方显式供给（CH 无持仓表真源，
+    CTR-P1-008 未接，fail-closed ValueError）；symbol canonical 归一化；两源独立降级。
+    ③GAP-F-13 裁定：不动 limit_up_down 生产表（DDL 需 Owner 窗口），新建
+    c1_market.limit_up_pool 明细表承接 stock_zt_pool_em 全量字段；本批只落采集器+解析层，
+    DDL 建表/品类登记/tasks.yaml 接线三件标 Owner 窗口待办（DDL 草稿在模块 docstring）。
+  impact:
+    - 'src/zephyr/signal_ashare/mainline_probability.py / position_sector_context.py + src/zephyr/data/implementations/limit_up_pool_collector.py（testing）'
+    - 'tests 三文件 39 用例全绿 + signal_ashare 917 / data 1083 零回归'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-SECTOR）；GAP-F-13 DDL 四件 Owner 窗口待办'
+  status: resolved
+  related_rules:
+  - 'GAP-F-12/13/30'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-178'
+  title: 仓位/卖出域消费"风格画像"而非具体策略（三维解耦红线工程化）
+  severity: P1
+  category: 架构决策
+  adjudication: >-
+    宪章 §3 约束四要求选股×权重×执行三维解耦。裁定：MOD-SELL-014 引入 StrategyProfile
+    风格枚举（TREND_FOLLOWING/MEAN_REVERSION/BREAKOUT/SWING）作为止损结构维度唯一接口；
+    波次4 全部 15 件输入只含权重/价格/信号枚举/统计量，无策略逻辑引用。
+  impact:
+    - 'position/core 七件 + sell_decision/core 八件（testing，210 用例全绿）'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-POSSELL）'
+  status: resolved
+  related_rules:
+  - '宪章§3约束四'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-179'
+  title: T+1 约束在波次4四件中内生化（非外挂检查）
+  severity: P1
+  category: 架构决策
+  adjudication: >-
+    MOD-POS-018 复用 t1_sellable 盘中意图校验（卖出≤昨仓−今卖）；MOD-SELL-013 立即离场量=
+    可卖权重+顺延提示；MOD-SELL-017 首批≤可卖+deferred 留痕；MOD-SELL-018 两腿卖出≤
+    可卖底仓+日终复原。统一"可卖量超限→截断/拦截+留痕"语义，T+1 违规在规划层不可表达。
+  impact:
+    - 'MOD-POS-018 / MOD-SELL-013/017/018（testing）'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-POSSELL）'
+  status: resolved
+  related_rules:
+  - '宪章§2约束四'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-180'
+  title: BM-SEL-16/17/18 双域实现重叠——signal_fundamental 版 vs signal_ashare 版保留或归并
+  severity: P3
+  category: 架构议题
+  adjudication: >-
+    signal_fundamental/selection_funnel.py（MOD-L03-001 包内）已实现 BM-SEL-16/17/18 同口径
+    契约；2026-08-23 SIGNAL 批按 depgraph 设计节点在 signal_ashare 落
+    tiered_screening_filter/coarse_screening_funnel/fine_scoring_engine 三件，差异点=
+    板块涨跌停幅度自推导（046）/容量截断（047）/密度摘要鸭子类型消费（048）。
+    暂定：两域实现保留各自定位（基本面日频批处理 vs A股信号域漏斗）；归并与否待 Owner 裁定。
+  impact:
+    - 'src/zephyr/signal_ashare/tiered_screening_filter.py / coarse_screening_funnel.py / fine_scoring_engine.py（testing）'
+  fix_phase: '待裁定（2026-08-23 登记）；当前双实现并存零冲突'
+  status: open
+  related_rules:
+  - 'BM-SEL-16/17/18'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-181'
+  title: 设计态波次3 信号/因子 14 件落地（筛选漏斗三层/事件筛选/预测族/因果族/基本面路由/分布特征/数据连接器+归一化器）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    设计态账波次3 全量落码：MOD-SIG-046/047/048 筛选漏斗三层（先建）→ SIG-049 事件驱动筛选
+    → SIG-042 因果推断引擎（Stub 式极简；PSM/IV/DID 三法骨架+共同支撑假设校验）→
+    SIG-043/044/045 预测族（条件密度分位数回归/split-conformal 标准算法/Weibull AFT
+    Levenberg 阻尼 MLE——裸 Newton 过冲发散实证修复）→ SIG-054 因果因子验证器 →
+    SIG-009/010 基本面信号路由/冲突消解 → L02-026 分布特征工程器 → L00-005/006
+    data/connectors+normalizers 骨架（ABC+文件连接器/OHLCV 归一化器）。全部纯函数核+
+    依赖注入，零 DB 依赖单测 184 例全绿。
+  impact:
+    - 'signal_ashare 九件 + signal_fundamental/router 三件 + factor/core 一件 + data/connectors+normalizers 六件（testing）'
+    - 'tests 15 文件 184 用例全绿'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-SIGNAL）'
+  status: resolved
+  related_rules:
+  - '设计态账波次3'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
