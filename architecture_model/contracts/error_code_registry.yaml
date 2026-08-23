@@ -2421,6 +2421,12 @@ error_codes:
   module: zephyr.intelligence.model_routing.cascade_orchestrator
   file: src/zephyr/intelligence/model_routing/cascade_orchestrator.py
   introduced: '2026-08-24: AI-K3-T4-ROUTER MOD-MODEL_ROUTER_ORCH 新增'
+# --- 2026-08-24 GW-T4-EF errcode ---
+- code: ZA-CMP-0014
+  class: ManipulationBatchError
+  module: zephyr.compliance.intraday_manipulation_detector
+  file: src/zephyr/compliance/intraday_manipulation_detector.py
+  introduced: '2026-08-24: AI-K3-T4-P2A 清单 §P2-8 新增'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
