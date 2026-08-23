@@ -201,6 +201,7 @@ __all__ = [
     "make_path_ownership_reconciler",
     "make_depgraph_ops_reconciler",
     "make_blueprint_frontmatter_reconciler",
+    "make_blueprint_code_index_reconciler",  # autogen 段 auto-commit 通道（2026-08-23 批3b，仿135模板）
     "make_drift_scan_reconciler",
     "make_drift_fix_reconciler",
     "make_module_id_recommend_reconciler",
@@ -2750,6 +2751,176 @@ def make_blueprint_frontmatter_reconciler(gateway: object) -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=135,
+        file_ops=frozenset({"read", "write"}),
+    )
+
+
+# 2026-08-23 立项（用户批准「autogen 段 auto-commit 通道」批3b）：blueprint「已实现代码
+# 完整路径索引」段与 frontmatter 同病——sync_blueprint_code_index.py 只有手动/CI --check
+# 触发路径，无 post-commit 自动写+提交通道，depgraph 演进后索引段漂移挂工作区（派生物
+# 滞留事故族）。仿 135 模板补齐 Link B 同型断链：syncer 已有 atomic_write_safe +
+# blueprint_write_lock（#ARCH-RECONCILER-TOCTOU-CLOBBER-001），本 reconciler 只做
+# 事件触发 + 变更检测 + _commit_auto 收口，不重写同步逻辑（单一真源在 syncer）。
+def make_blueprint_code_index_reconciler(gateway: object) -> ReconcilerSpec:
+    """构造 blueprint 代码索引段 post-commit 自动同步 reconciler（GATE-BLUEPRINT-CODE-INDEX-SYNC）。
+
+    与 make_blueprint_frontmatter_reconciler@135 同型（仿 135 模板）：
+
+        代码真源 → depgraph.nodes（运营态）→ blueprint「已实现代码完整路径索引」段（缓存层）
+
+    断链：sync_blueprint_code_index.py 仅手动/CI --check 路径，无 post-commit 自动
+    写+提交通道——depgraph 演进后索引段漂移挂工作区，派生物滞留。本 reconciler
+    补齐「事件触发 → syncer 重算 → git diff 检测 → _commit_auto 收口」链路。
+
+    依赖顺序（priority=136 设计）：
+
+        - priority=130 (depgraph_ops)：代码 → depgraph nodes/edges 运营态同步
+        - priority=135 (frontmatter)：depgraph → blueprint frontmatter 同步
+        - priority=136 (本 reconciler)：depgraph → blueprint 代码索引段同步
+          （在 frontmatter 之后串行化——两者都写 blueprint.md 且本 syncer 自 bump
+          frontmatter version；在 drift_scan@140 之前，保证漂移检测看到已同步状态）
+
+    模式（对标 135）：
+
+        - trigger：.py（代码变更→depgraph 演进→索引需重算）或 docs/03_modules/
+          下 .md（frontmatter module_id 可能变更）
+        - reconcile：subprocess 跑 sync_blueprint_code_index.py（写入模式，幂等）
+        - skip-if-recent cooldown：syncer 恒为全量扫描（600+ 蓝图 × depgraph 查询），
+          100% AI 高频 commit 下每次触发浪费且放大 TOCTOU 窗口——600s attempt
+          cooldown（#ARCH-RECONCILER-TOCTOU-CLOBBER-001 同根因同款止血）
+        - 检测 docs/03_modules/ 下 .md 变更 → _commit_auto 自动提交
+        - 失败降级 warn，不阻断 commit
+
+    防递归：本 reconciler 提交的 blueprint.md 变更再触发 135/本 reconciler，但
+    索引段已同步 → syncer 幂等无改动 → git diff 为空 → clean 终止，无无限循环。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root / run_git / _commit_auto）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-BLUEPRINT-CODE-INDEX-SYNC", priority=136)。
+    """
+
+    import os
+    import sys
+    import time
+
+    project_root = gateway.project_root
+
+    def _safe_relpath(f: str) -> str:
+        """相对路径安全转换（跨盘符 ValueError 兜底，同 135 模板 SSoT）。"""
+        try:
+            return _rel_path(f, str(project_root))
+        except (ValueError, OSError):
+            return f.replace("\\", "/")
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = _safe_relpath(f)
+            if rel.endswith(".py"):
+                return True
+            if rel.startswith("docs/03_modules/") and rel.endswith(".md"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        start = time.time()
+
+        _env = dict(os.environ)
+        _src = str(project_root / "src")
+        _env["PYTHONPATH"] = _src + (os.pathsep + _env["PYTHONPATH"] if _env.get("PYTHONPATH") else "")
+
+        # skip-if-recent cooldown（对标 135：syncer 恒全量扫描，attempt 打点即生效——
+        # 失败也有 cooldown，超时=系统过载立即重试大概率再超时）
+        _SKIP_WINDOW = 600  # 10 min cooldown after any attempt（success or failure）
+        _marker = project_root / ".runtime" / "code_index_sync_last_attempt"
+        try:
+            if _marker.exists():
+                _last = float(_marker.read_text(encoding="utf-8").strip())
+                _elapsed = now_utc().timestamp() - _last
+                if _elapsed < _SKIP_WINDOW:
+                    return ReconcileResult(
+                        action="skip",
+                        detail=f"skip code-index sync: last attempt {_elapsed:.0f}s ago < {_SKIP_WINDOW}s cooldown (#ARCH-RECONCILER-TOCTOU-CLOBBER-001)",
+                    )
+        except (ValueError, OSError):  # noqa: BLE001 — corrupt marker, proceed
+            pass
+        try:
+            _marker.parent.mkdir(parents=True, exist_ok=True)
+            _marker.write_text(str(now_utc().timestamp()), encoding="utf-8")
+        except OSError:  # noqa: BLE001 — marker 写失败不阻断 sync
+            pass
+
+        timeout = int(_env.get("ZEPHYR_CODE_INDEX_SYNC_TIMEOUT", "300"))
+        cmd = [
+            sys.executable,
+            "scripts/governance/d5_architecture/syncers/sync_blueprint_code_index.py",
+        ]
+
+        sync_result = _run_subprocess(
+            cmd,
+            cwd=str(project_root),
+            timeout=timeout,
+            env=_env,
+        )
+
+        elapsed = time.time() - start
+
+        if sync_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"code-index sync failed in {elapsed:.1f}s (rc={sync_result.returncode}, timeout={timeout}s): "
+                f"{sync_result.stderr.strip()}",
+            )
+
+        # 检测 docs/03_modules/ 下 .md 变更（索引段 + version bump 均落蓝图文件）
+        diff_result = gateway.run_git(["git", "diff", "--name-only", "--", "docs/03_modules/"])
+        if diff_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"code-index sync: git diff failed: {diff_result.stderr.strip()}",
+            )
+
+        changed_files = [
+            f.strip() for f in diff_result.stdout.strip().splitlines() if f.strip() and f.strip().endswith(".md")
+        ]
+
+        if not changed_files:
+            return ReconcileResult(
+                action="clean",
+                detail=f"code-index sync: no drift in {elapsed:.1f}s (all consistent)",
+            )
+
+        # 变更 → 自动提交修复（_commit_auto 统一入口，DCR gate 覆盖）
+        abs_files = [str(project_root / f) for f in changed_files]
+        auto_msg = (
+            "chore(code-index): auto-sync by GATE-BLUEPRINT-CODE-INDEX-SYNC "
+            "post-commit (autogen 段 auto-commit 通道，2026-08-23 批3b)"
+        )
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail=f"code-index sync: {len(changed_files)} files auto-reconciled in {elapsed:.1f}s",
+            )
+
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail=f"code-index sync: {len(changed_files)} files but no staged changes in {elapsed:.1f}s",
+            )
+
+        return ReconcileResult(
+            action="warn",
+            detail=f"code-index sync: auto-commit failed ({commit_result.status}): {commit_result.message}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-BLUEPRINT-CODE-INDEX-SYNC",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=136,
         file_ops=frozenset({"read", "write"}),
     )
 

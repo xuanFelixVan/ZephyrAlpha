@@ -79,6 +79,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
     make_arch_diagram_reconciler,
     make_architecture_health_reconciler,
+    make_blueprint_code_index_reconciler,  # autogen 段 auto-commit 通道（2026-08-23 批3b）
     make_blueprint_frontmatter_reconciler,  # ARCH-FRONTMATTER-STATE-001 Phase 2
     make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
     make_capability_lookup_health_reconciler,  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺
@@ -950,6 +951,9 @@ class GitCommitGateway:
         self._reconciliation_registry.register(
             make_blueprint_frontmatter_reconciler(self)
         )  # ARCH-FRONTMATTER-STATE-001 Phase 2 (Link B)
+        self._reconciliation_registry.register(
+            make_blueprint_code_index_reconciler(self)
+        )  # autogen 段 auto-commit 通道（2026-08-23 批3b，priority=136 在 frontmatter@135 后/drift_scan@140 前）
         self._reconciliation_registry.register(make_drift_scan_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S1
         self._reconciliation_registry.register(make_drift_fix_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S2
         self._reconciliation_registry.register(
