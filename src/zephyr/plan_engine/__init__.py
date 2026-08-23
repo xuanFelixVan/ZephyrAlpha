@@ -12,15 +12,18 @@ from zephyr.plan_engine import (
     brier_calibration,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-010）
     closing_session_decision,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-003）
     daily_trade_plan,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-011）
+    evidence_chain_decision,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-SIG-076，GAP-F-42）
     llm_premarket_analysis,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-007）
     overnight_boundary_reviser,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-004）
     premarket_constraint_loader,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-002）
     scenario_attribution_stats,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-009）
     scenario_plan_recorder,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-008）
     scenario_planner,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-005）
+    scenario_probability_model,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-017）
     sit_out_list,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-014）
     tomorrow_boundary_planner,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-001）
     trading_debate,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-013）
+    trading_analyst_agents,  # noqa: F401  # ORPHAN-MODULE: 引用登记（MOD-PLAN-013 扩展，GAP-F-44）
 )
 
 __all__: Final = [
@@ -37,6 +40,9 @@ __all__: Final = [
     "daily_trade_plan",
     "batch_boundary_runner",
     "trading_debate",
+    "trading_analyst_agents",
+    "evidence_chain_decision",
     "sit_out_list",
     "auction_hit_recorder",
+    "scenario_probability_model",
 ]
