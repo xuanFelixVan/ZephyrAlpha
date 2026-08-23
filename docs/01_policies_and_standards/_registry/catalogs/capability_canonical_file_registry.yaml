@@ -9249,6 +9249,47 @@ creation_tokens:
   token: auto-test-doc-compressor-tiered-20260823
   created_by: AI-K3-T4-CELSG
   capability: doc_compression
+# --- 2026-08-24 GW-T4-EF（OBS002/P2A，含 adapters 补登） creation_token ---
+- file: src/zephyr/plan_engine/daily_warroom_pipeline.py
+  token: auto-daily-warroom-pipeline-20260824
+  created_by: AI-K3-T4-OBS002
+  capability: daily_warroom_pipeline
+- file: tests/plan_engine/test_daily_warroom_pipeline.py
+  token: auto-test-daily-warroom-pipeline-20260824
+  created_by: AI-K3-T4-OBS002
+  capability: daily_warroom_pipeline
+- file: src/zephyr/experiment_tracking/adapters/regime_adapter.py
+  token: auto-regime-adapter-20260824
+  created_by: AI-K3-T4-OBS002
+  capability: regime_adapter
+- file: src/zephyr/experiment_tracking/adapters/feature_adapter.py
+  token: auto-feature-adapter-20260824
+  created_by: AI-K3-T4-OBS002
+  capability: feature_adapter
+- file: src/zephyr/experiment_tracking/adapters/vectorized_adapter.py
+  token: auto-vectorized-adapter-20260824
+  created_by: AI-K3-T4-OBS002
+  capability: vectorized_adapter
+- file: src/zephyr/experiment_tracking/adapters/strategy_runner_adapter.py
+  token: auto-strategy-runner-adapter-20260824
+  created_by: AI-K3-T4-OBS002
+  capability: strategy_runner_adapter
+- file: src/zephyr/experiment_tracking/adapters/c2c3_adapter.py
+  token: auto-c2c3-adapter-20260824
+  created_by: AI-K3-T4-OBS002
+  capability: c2c3_adapter
+- file: tests/experiment_tracking/test_component_adapters.py
+  token: auto-test-component-adapters-20260824
+  created_by: AI-K3-T4-OBS002
+  capability: component_adapters_test
+- file: src/zephyr/compliance/intraday_manipulation_detector.py
+  token: auto-intraday-manipulation-detector-20260824
+  created_by: AI-K3-T4-P2A
+  capability: intraday_manipulation_batch_detection
+- file: tests/compliance/test_intraday_manipulation_detector.py
+  token: auto-test-intraday-manipulation-detector-20260824
+  created_by: AI-K3-T4-P2A
+  capability: intraday_manipulation_batch_detection
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

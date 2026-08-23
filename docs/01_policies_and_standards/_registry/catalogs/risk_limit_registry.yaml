@@ -4164,3 +4164,122 @@ risk_limits:
     evidence: "90 号 Phase2 项（#17）；代码真源 PositionLimitConfig.single_instrument_cap=0.05"
     code_symbol: "src/zephyr/position/core/position_limit_enforcer.py::PositionLimitConfig"
     code_fingerprint: null
+
+# --- 2026-08-24 GW-T4-EF MOD-CMP-011 盘中操纵检测阈值三件（43 号 §7.3） ---
+  - limit_id: "RLM-FIRM-RISK-006"
+    risk_limit_id: "RLM-FIRM-RISK-006"
+    name: "Spoofing Detection Threshold"
+    name_zh: "幌骗检测阈值（大额快撤重复模式）"
+    limit_type: "firm_risk"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: 0.2
+    threshold_unit: "分钟均量占比（另含 10s 撤单窗口 + 30min 内 ≥3 次重复）"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "大额挂单(>分钟均量20%)后10s内撤单且同pattern 30min≥3次→Hard Block+告警；检出事件落 compliance_log（MANIPULATION_VERDICT）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-CMP-011"
+    doc_ref: "43_compliance_discipline.md §7.3"
+    code_path: "src/zephyr/compliance/trading_compliance_detector.py"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-24"
+    updated_at: "2026-08-24"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: [stock]
+    tags: [风控, 规则, 行情]
+    algorithm_status: "quantized"
+    evidence: ""
+    code_symbol: "src/zephyr/compliance/trading_compliance_detector.py::ComplianceThresholds"
+    code_fingerprint: null
+    status: "candidate"
+    stage: "candidate"
+    owner: "MOD-CMP-011"
+    updated_at: "2026-08-24"
+  - limit_id: "RLM-FIRM-RISK-007"
+    risk_limit_id: "RLM-FIRM-RISK-007"
+    name: "Layering Detection Threshold"
+    name_zh: "分层压单检测阈值（梯度序列撤单率）"
+    limit_type: "firm_risk"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: 0.8
+    threshold_unit: "序列内撤单率（另含同侧 ≥3 档价格梯度）"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "同侧连续≥3档价格梯度单且序列内总撤单率>80%→Hard Block+告警；检出事件落 compliance_log（MANIPULATION_VERDICT）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-CMP-011"
+    doc_ref: "43_compliance_discipline.md §7.3"
+    code_path: "src/zephyr/compliance/trading_compliance_detector.py"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-24"
+    updated_at: "2026-08-24"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: [stock]
+    tags: [风控, 规则, 行情]
+    algorithm_status: "quantized"
+    evidence: ""
+    code_symbol: "src/zephyr/compliance/trading_compliance_detector.py::ComplianceThresholds"
+    code_fingerprint: null
+    status: "candidate"
+    stage: "candidate"
+    owner: "MOD-CMP-011"
+    updated_at: "2026-08-24"
+  - limit_id: "RLM-FIRM-RISK-008"
+    risk_limit_id: "RLM-FIRM-RISK-008"
+    name: "Wash Trade Zero Tolerance"
+    name_zh: "对敲自成交零容忍"
+    limit_type: "firm_risk"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: 0.0
+    threshold_unit: "自成交笔数容忍上限（零容忍）"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "买卖双方同账户自成交→Hard Block+立即人工复核；逐笔检测，检出事件落 compliance_log（MANIPULATION_VERDICT）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-CMP-011"
+    doc_ref: "43_compliance_discipline.md §7.3"
+    code_path: "src/zephyr/compliance/trading_compliance_detector.py"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-24"
+    updated_at: "2026-08-24"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: [stock]
+    tags: [风控, 规则, 行情]
+    algorithm_status: "quantized"
+    evidence: ""
+    code_symbol: "src/zephyr/compliance/trading_compliance_detector.py::TradingComplianceDetector.check_wash_trade"
+    code_fingerprint: null
+    status: "candidate"
+    stage: "candidate"
+    owner: "MOD-CMP-011"
+    updated_at: "2026-08-24"

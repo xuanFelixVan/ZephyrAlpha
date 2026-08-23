@@ -42734,6 +42734,70 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 'llm_summary 注入位 mock——成功/异常/空结果/违反不变量四条降级路径，rule_based 不变量违反保持 fail-closed，truncate 保底必成功。'
+# --- 2026-08-24 GW-T4-EF plain_zh ---
+- module_path: src/zephyr/plan_engine/daily_warroom_pipeline.py
+  domain_id: D_PLAN
+  name_zh: 作战室日循环编排器
+  name_en: 'Daily Warroom Pipeline'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '作战室的"每日打卡机"：盘后先回写今天预案命中没有，再照交易日历 算出下一个交易日、把明天的三情景预案提前算好落库——同一天重跑不会重复记账， W0 验证窗口的样本就靠它一天一天攒出来。'
+- module_path: tests/plan_engine/test_daily_warroom_pipeline.py
+  domain_id: D_PLAN
+  name_zh: 作战室日循环编排器测试
+  name_en: 'Daily Warroom Pipeline Test'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '用假行情和临时库验证打卡机：次交易日解析对不对、预案和回写落没落库、 同一天重跑是不是真的不重复。'
+- module_path: src/zephyr/experiment_tracking/adapters/regime_adapter.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: Regime 检测实验跟踪适配器
+  name_en: 'Regime Detector Adapter'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把每次市场状态检测结果（7 态概率+节流系数）记成一条实验档案， 特征统计和模型参数一起留底，还能挂上上游特征构建的档案号串成全链。'
+- module_path: src/zephyr/experiment_tracking/adapters/feature_adapter.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: 特征构建实验跟踪适配器
+  name_en: 'Feature Builder Adapter'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把每次特征矩阵构建记成一条实验档案：多少行多少列、缺失率多少、 列名清单和前几行快照都存成附件，方便回查哪次特征长什么样。'
+- module_path: src/zephyr/experiment_tracking/adapters/vectorized_adapter.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: 向量化回测实验跟踪适配器
+  name_en: 'Vectorized Backtest Adapter'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把每次向量化回测记成一条实验档案：回测配置、七项核心指标、 净值曲线 CSV 都留底，多次回测可以横向对比。'
+- module_path: src/zephyr/experiment_tracking/adapters/strategy_runner_adapter.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: 全链路回测实验跟踪适配器
+  name_en: 'Strategy Runner Adapter'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把每次全链路回测（因子合成到策略到回测）记成一条实验档案， 连滑点手续费这些成本细节也记进参数，哪个版本赚了亏了都能查。'
+- module_path: src/zephyr/experiment_tracking/adapters/c2c3_adapter.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: C2/C3 验证实验跟踪适配器
+  name_en: 'C2C3 Validation Adapter'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把 C2 极端事件保护和 C3 节流归因两份验证报告各记成一条实验档案， 逐事件/逐状态指标全留底，还能挂上 C1 的档案号串成验证链。'
+- module_path: tests/experiment_tracking/test_component_adapters.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: 五零件适配器测试
+  name_en: 'Component Adapters Test'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '用假对象和临时目录验证五个适配器：档案字段齐不齐、档案号串联灵不灵、 跟踪开关关了是不是安静不炸。'
+- module_path: src/zephyr/compliance/intraday_manipulation_detector.py
+  domain_id: D_COMPLIANCE
+  name_zh: 盘中操纵检测批处理器
+  name_en: 'Intraday Manipulation Batch Detector'
+  desc_zh: 'Spoofing/Layering/WashTrade 三规则离线批处理 MVP（43 号 §7.3）：全日订单/成交按 placed_at 时间序重放经 30min 滚动窗口，规则唯一真源=TradingComplianceDetector 零重实现；首命中去重报告 + compliance_log 双类事件。'
+  desc_en: 'Offline batch MVP for Spoofing/Layering/WashTrade (memo-43 §7.3): time-ordered replay over 30min rolling windows; rules delegated to TradingComplianceDetector; first-hit-dedup report plus compliance_log events.'
+  plain_zh: '盘中操纵检测批处理器。每天收盘后把全天挂单撤单成交回放一遍，查有没有虚假挂单、分层压单、自成交，查到的留证据，没查到也留''今天扫过了''的记录。'
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

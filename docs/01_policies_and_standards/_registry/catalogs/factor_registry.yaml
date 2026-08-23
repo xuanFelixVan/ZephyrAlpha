@@ -11489,3 +11489,163 @@ factors:
   applicable_timeframes: ["intraday", "daily"]
   regime_valid: []
   regime_invalid: []
+
+- factor_id: "FCT-MOM-029"
+  name: "Momentum 20d (code-anchored)"
+  name_zh: "20日动量（代码锚）"
+  aliases: ["momentum_20d"]
+  factor_class: "momentum"
+  formula: "代码锚定因子（code_symbol 见下）；公式真源=代码实现"
+  params: {}
+  inputs: []
+  outputs: []
+  alpha_source: "代码锚定实证条目（ICBATCH 2026-08-24 回填批）"
+  frequency: "daily"
+  lookback_period: null
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  doc_ref: "ICBATCH_report.md（2026-08-24）"
+  code_path: "src/zephyr/factor/momentum_factor.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-24"
+  updated_at: "2026-08-24"
+  owner: "MOD-GOVERNANCE"
+  ic: -0.0399
+  ir: -0.2042
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: 0.5476
+  capacity: null
+  last_evaluated_at: "2026-08-24"
+  evidence: "ICBATCH 2026-08-24 .runtime/construction_20260823/_icbatch_factor_ic_summary.json 窗2026-02-23~08-21 universe≈UNI-RULE-001(N=5169) horizon=5 oos_pos=0.20 overfit=false n=118"
+  code_symbol: "src/zephyr/factor/momentum_factor.py::Momentum20d"
+  code_fingerprint: null
+  entry_role: "factor"
+  note: "IC 为负——20 日动量窗口内呈反转特征，与 BTRUN 结论一致；decay 曲线显示反转效应在 lag10~13 最强"
+
+- factor_id: "FCT-QUAL-002"
+  name: "Value Factor (code-anchored)"
+  name_zh: "价值因子（代码锚，价均偏离口径）"
+  aliases: ["value_factor"]
+  factor_class: "value"
+  formula: "代码锚定因子（code_symbol 见下）；公式真源=代码实现"
+  params: {}
+  inputs: []
+  outputs: []
+  alpha_source: "代码锚定实证条目（ICBATCH 2026-08-24 回填批）"
+  frequency: "daily"
+  lookback_period: null
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  doc_ref: "ICBATCH_report.md（2026-08-24）"
+  code_path: "src/zephyr/factor/value_factor.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-24"
+  updated_at: "2026-08-24"
+  owner: "MOD-GOVERNANCE"
+  ic: 0.0216
+  ir: 0.1111
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: 0.064
+  capacity: null
+  last_evaluated_at: "2026-08-24"
+  evidence: "ICBATCH 2026-08-24 _icbatch_factor_ic_summary.json 同窗同池 horizon=5 oos_pos=0.71 overfit=false n=118"
+  code_symbol: "src/zephyr/factor/value_factor.py::ValueFactor"
+  code_fingerprint: null
+  entry_role: "factor"
+  note: "IC 为正但量级弱；eps 默认值口径下非真基本面估值因子；与 momentum_20d 高度镜像（lag20 IC 绝对值同为 0.0571）——价均偏离≈反动量，回填时须带本口径说明"
+
+- factor_id: "FCT-INTRADAY-015"
+  name: "Intraday VWAP (code-anchored)"
+  name_zh: "盘中VWAP（代码锚）"
+  aliases: ["intraday_vwap"]
+  factor_class: "intraday"
+  formula: "代码锚定因子（code_symbol 见下）；公式真源=代码实现"
+  params: {}
+  inputs: []
+  outputs: []
+  alpha_source: "代码锚定实证条目（ICBATCH 2026-08-24 回填批）"
+  frequency: "daily"
+  lookback_period: null
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  doc_ref: "ICBATCH_report.md（2026-08-24）"
+  code_path: "src/zephyr/factor/intraday_snapshot_factors.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-24"
+  updated_at: "2026-08-24"
+  owner: "MOD-GOVERNANCE"
+  ic: 0.0013
+  ir: 0.0055
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: 0.098
+  capacity: null
+  last_evaluated_at: "2026-08-24"
+  evidence: "ICBATCH 2026-08-24 _icbatch_factor_ic_summary.json 同窗同池 horizon=5 oos_pos=0.29 overfit=true* n=118"
+  code_symbol: "src/zephyr/factor/intraday_snapshot_factors.py::IntradayVwap"
+  code_fingerprint: null
+  entry_role: "factor"
+  note: "同 intraday_close——设计定位为盘中成交均价基准，非 alpha 因子；日 K 口径下 vwap≈当日均价，与 close 截面排名近一致（周 rank 自相关 0.9945）"
+
+- factor_id: "FCT-INTRADAY-016"
+  name: "Intraday Close (code-anchored)"
+  name_zh: "盘中收盘价（代码锚）"
+  aliases: ["intraday_close"]
+  factor_class: "intraday"
+  formula: "代码锚定因子（code_symbol 见下）；公式真源=代码实现"
+  params: {}
+  inputs: []
+  outputs: []
+  alpha_source: "代码锚定实证条目（ICBATCH 2026-08-24 回填批）"
+  frequency: "daily"
+  lookback_period: null
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  doc_ref: "ICBATCH_report.md（2026-08-24）"
+  code_path: "src/zephyr/factor/intraday_snapshot_factors.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-24"
+  updated_at: "2026-08-24"
+  owner: "MOD-GOVERNANCE"
+  ic: 0.001
+  ir: 0.0041
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: 0.102
+  capacity: null
+  last_evaluated_at: "2026-08-24"
+  evidence: "ICBATCH 2026-08-24 _icbatch_factor_ic_summary.json 同窗同池 horizon=5 oos_pos=0.29 overfit=true* n=118"
+  code_symbol: "src/zephyr/factor/intraday_snapshot_factors.py::IntradayClose"
+  code_fingerprint: null
+  entry_role: "factor"
+  note: "截面价格水平无预测力（符合设计定位——盘中基准价因子）；*overfit=true 系 check_overfitting 在 IC≈0 时比值判定失真，无实际过拟合含义"

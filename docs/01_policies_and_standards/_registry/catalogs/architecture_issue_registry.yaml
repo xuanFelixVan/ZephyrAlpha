@@ -19321,3 +19321,70 @@ entries:
   - '09号文 §4.3'
   created: '2026-08-24'
   last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-198'
+  title: MOD-REGIME-009 S2 评分重设计五子项核销——Step 0 勘探两路阻断降级+B4 翻 true 条件未成就（零调参）
+  severity: P1
+  category: 功能核销
+  adjudication: >-
+    五子项代码实证已在码（AI-NIGHT-001 包A commit 8f9a16af6e），本批完成 Step 0 勘探+验证+转态：
+    ①daily_valuation 七字段全缺+历史仅 17 交易日→路 A 保留不接链，路 B 校准版接线；②wyckoff
+    Spring 二值 flag 不达标→按 §4.3 自算兜底版；③涨跌家数 399106 可得（2024-09-24 上涨占比
+    96.78% 与设计锚一致）；④期权 put-call 无历史→接口留位 enable_options_filter=False。
+    B4 三事件 0/3 命中：卡点=valuation 数据阻断+fund≥50 依赖 P1-E4+capitulation 跌停边界
+    （A股跌停封板指数暴跌缩量，美股口径 z>1+2.0× 过滤器不给分——新发现，14 号设计修订候选）。
+    按 §4.5 预注册铁律零调参，historical_events.yaml 未动；五测试节点转 testing。
+  impact:
+    - 'tests/regime 五子项测试节点 testing（10511356/10511364/10511358/10511361/10511362）；606 域回归零失败'
+  fix_phase: '核销落地（2026-08-24，AI-K3-T4-REGIME9）；B4 翻 true 待 CAPE 管道+P1-E4+capitulation 跌停适配三前置'
+  status: resolved
+  related_rules:
+  - '14号文 §4'
+  - '13号文 P1-E9'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-199'
+  title: MOD-OBS-002 核销（五 adapters 已在码挂 MOD-OBS-001 §M4）+ MOD-PLAN-018 作战室日循环编排新建
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    ①五零件 experiment_tracking adapters 实证已在码（regime/feature/vectorized/strategy_runner/
+    c2c3，挂 MOD-OBS-001 §M4 c1_adapter 同蓝图先例）——不改挂编号避免治理 churn，核销。
+    ②MOD-PLAN-018 daily_warroom_pipeline 新建：盘前 compute_and_record+盘后 writeback
+    三段编排（phase=premarket/postmarket/both）；target_date=次交易日接 market_trade_calendar
+    （is_open=1 严格大于数据日，实证 08-21→08-24）；幂等复用 prediction_log UNIQUE 保首条
+    （重跑 row_id 相同测试实证）。
+  impact:
+    - 'src/zephyr/plan_engine/daily_warroom_pipeline.py（testing）+ 22 新用例全绿 + experiment_tracking/plan_engine 466 零回归'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-OBS002）；57 号 SOP 环节④挂接与 20 日样本校准为数据期件'
+  status: resolved
+  related_rules:
+  - '50号文 §3⑥'
+  - '45号 W0/W6'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-200'
+  title: MOD-CMP-011 盘中操纵检测三规则（43号）+ MOD-RK-027 核销（已在码）+ 测试卫生缺口登记
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    ①MOD-CMP-011 intraday_manipulation_detector：Spoofing/Layering/WashTrade 三规则离线批处理
+    MVP——全日订单按 placed_at 时间序重放经 30min 滚动窗口，规则/阈值/逐命中唯一真源=
+    TradingComplianceDetector（批层零重实现）；阈值 RLM-FIRM-RISK-006/007/008 已入册
+    （candidate）；检出事件落 compliance_log 兼容格式+首命中去重+批次汇总事件。
+    ②MOD-RK-027 daily_auditor 包装层核销：四方法已由 AI-NIGHT-001 包J（3508d0b3bb）落码，
+    契约逐条核对与 36 号 §3.11/§3.10 全吻合，测试节点转 testing。
+    ③测试卫生缺口登记：test_manipulation_stream_driver 未注入 logger 致全域回归每次污染生产
+    compliance_log.jsonl 3 行——后续批修（P3）。
+  impact:
+    - 'src/zephyr/compliance/intraday_manipulation_detector.py（testing，18 测全绿）+ tests/risk/test_daily_auditor_var_backtest.py 转态（33 绿）'
+    - 'compliance 159 / risk 1315 回归零失败'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-P2A）'
+  status: resolved
+  related_rules:
+  - '43号文 §7.3'
+  - '36号文 §3.11'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
