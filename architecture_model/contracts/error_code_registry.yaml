@@ -2395,6 +2395,32 @@ error_codes:
   module: zephyr.orchestrator.voting_first_multi_agent
   file: src/zephyr/orchestrator/voting_first_multi_agent.py
   introduced: '2026-08-23: AI-K3-GW-INFRA 阶段14 MOD-INF-048 新增'
+# --- 2026-08-24 GW-T4 errcode（INF053 3 + ROUTER 2） ---
+- code: ZA-SC-0035
+  class: IncidentPipelineError
+  module: zephyr.security.ops.incident_pipeline
+  file: src/zephyr/security/ops/incident_pipeline.py
+  introduced: '2026-08-24: AI-K3-T4-INF053 MOD-INF-053 新增'
+- code: ZA-SC-0036
+  class: FixPatternStoreError
+  module: zephyr.security.ops.incident_pipeline
+  file: src/zephyr/security/ops/incident_pipeline.py
+  introduced: '2026-08-24: AI-K3-T4-INF053 MOD-INF-053 新增'
+- code: ZA-SC-0037
+  class: OpsMaturityError
+  module: zephyr.security.ops.ops_maturity
+  file: src/zephyr/security/ops/ops_maturity.py
+  introduced: '2026-08-24: AI-K3-T4-INF053 MOD-INF-055 新增'
+- code: ZA-IT-0011
+  class: ExamTriggerError
+  module: zephyr.intelligence.model_profiling.exam_trigger_scheduler
+  file: src/zephyr/intelligence/model_profiling/exam_trigger_scheduler.py
+  introduced: '2026-08-24: AI-K3-T4-ROUTER MOD-INF-054 新增'
+- code: ZA-IT-0012
+  class: CascadeRoutingError
+  module: zephyr.intelligence.model_routing.cascade_orchestrator
+  file: src/zephyr/intelligence/model_routing/cascade_orchestrator.py
+  introduced: '2026-08-24: AI-K3-T4-ROUTER MOD-MODEL_ROUTER_ORCH 新增'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
