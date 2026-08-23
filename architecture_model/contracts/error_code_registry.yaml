@@ -2298,6 +2298,67 @@ error_codes:
   module: zephyr.frontend.services.dashboard_feeds
   file: src/zephyr/frontend/services/dashboard_feeds.py
   introduced: '2026-08-23: AI-K3-GW-CWIRE C类通道批（FE max=0004 → 0005）'
+# --- 2026-08-23 长城任务批3 error_code（EXEC 5 + ML 7） ---
+- code: ZA-EX-0017
+  class: MiniQmtChannelError
+  module: zephyr.ex_core.miniqmt_channel_manager
+  file: src/zephyr/ex_core/miniqmt_channel_manager.py
+  introduced: '2026-08-23: AI-K3-GW-EXEC 阶段9 执行链路批新增'
+- code: ZA-EX-0018
+  class: InvalidSplitRequestError
+  module: zephyr.ex_core.order_splitter
+  file: src/zephyr/ex_core/order_splitter.py
+  introduced: '2026-08-23: AI-K3-GW-EXEC 阶段9 执行链路批新增'
+- code: ZA-EX-0019
+  class: LiveSwitchError
+  module: zephyr.ex_core.live_simulation_switcher
+  file: src/zephyr/ex_core/live_simulation_switcher.py
+  introduced: '2026-08-23: AI-K3-GW-EXEC 阶段9 执行链路批新增'
+- code: ZA-EX-0020
+  class: StrategySelectionError
+  module: zephyr.ex_core.execution_strategy_selector
+  file: src/zephyr/ex_core/execution_strategy_selector.py
+  introduced: '2026-08-23: AI-K3-GW-EXEC 阶段9 执行链路批新增'
+- code: ZA-EX-0021
+  class: LivePortfolioError
+  module: zephyr.ex_core.services.live_portfolio
+  file: src/zephyr/ex_core/services/live_portfolio.py
+  introduced: '2026-08-23: AI-K3-GW-EXEC 阶段9 执行链路批新增'
+- code: ZA-MLT-0002
+  class: DensityTrainError
+  module: zephyr.ml_train.implementations.density_quantile_trainer
+  file: src/zephyr/ml_train/implementations/density_quantile_trainer.py
+  introduced: '2026-08-23: AI-K3-GW-ML2 GAP-F-34 密度预测 MVP 新增'
+- code: ZA-MLT-0003
+  class: CandidateTrainDisabledError
+  module: zephyr.ml_train.services.sentiment_sft_entry
+  file: src/zephyr/ml_train/services/sentiment_sft_entry.py
+  introduced: '2026-08-23: AI-K3-GW-ML2 GAP-F-35 三候选骨架新增'
+- code: ZA-MLT-0004
+  class: PipelineStageError
+  module: zephyr.ml_train.training_pipeline.pipeline_orchestrator
+  file: src/zephyr/ml_train/training_pipeline/pipeline_orchestrator.py
+  introduced: '2026-08-23: AI-K3-GW-ML2 MOD-ML-001 新增'
+- code: ZA-MLT-0005
+  class: OperatorActionError
+  module: zephyr.ml_train.ai_operator.operator
+  file: src/zephyr/ml_train/ai_operator/operator.py
+  introduced: '2026-08-23: AI-K3-GW-ML2 MOD-ML-002 新增'
+- code: ZA-MLT-0006
+  class: DatasetLineageError
+  module: zephyr.ml_train.training_dataset_manager.manager
+  file: src/zephyr/ml_train/training_dataset_manager/manager.py
+  introduced: '2026-08-23: AI-K3-GW-ML2 MOD-ML-003 新增'
+- code: ZA-MLT-0007
+  class: ShadowDeployError
+  module: zephyr.ml_train.gray_release_shadow_deployer
+  file: src/zephyr/ml_train/gray_release_shadow_deployer.py
+  introduced: '2026-08-23: AI-K3-GW-ML2 MOD-ML-004 新增'
+- code: ZA-MLT-0008
+  class: FeedbackSignalError
+  module: zephyr.ml_train.learning_effect_feedback
+  file: src/zephyr/ml_train/learning_effect_feedback.py
+  introduced: '2026-08-23: AI-K3-GW-ML2 MOD-ML-009 新增'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
