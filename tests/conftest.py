@@ -44,6 +44,19 @@ if _src_abs not in _existing_pp.split(_os.pathsep):
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
+# CAND-GOVSEC-001 ②（2026-08-23）：pytest 进程纳入 in-process 删除护栏观测面
+# （audit-only——先补仪表化盲区不硬拦，遥测证明零误伤后可翻硬拦）。
+# ops_guard 自测文件 test_file_ops_enforcement.py 在 fixture 内 delenv 恢复硬拦语义。
+# 安装失败静默降级——观测补强永不阻断 pytest。
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+try:
+    from scripts.ops_guard import install_inprocess_enforcement_audit_only as _install_ops_guard
+
+    _install_ops_guard()
+except Exception:  # noqa: BLE001 — 观测补强永不阻断 pytest
+    pass
+
 
 def pytest_configure(config):
     """治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: pytest 输出归位 .runtime/（gitignored）。

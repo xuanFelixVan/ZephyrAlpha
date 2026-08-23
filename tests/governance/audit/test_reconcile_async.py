@@ -271,6 +271,131 @@ class TestLaunchReconcileAsync:
 
 
 # ---------------------------------------------------------------------------
+# CAND-GOVSEC-001 ④（2026-08-23）：launch 文件锁互斥 + inflight 并发计数口径
+# ---------------------------------------------------------------------------
+
+
+class TestLaunchLockInflightGate:
+    """worker 并发闸门治本（A/B 重叠 61s 事故）：临界区文件锁 + 计数口径扩为
+    已注册 worker ∪ 新鲜 pending/running status（spawn 前窗口缝隙物理闭合）。"""
+
+    def test_inflight_counts_fresh_pending_without_pid(self, tmp_repo):
+        """新鲜 pending status（无 worker_pid=spawn 前窗口本体）必须计入。"""
+        from zephyr.governance.audit import reconcile_runner as rr
+        from zephyr.governance.audit.reconcile_runner import STATUS_PENDING, write_status_file
+
+        assert rr._count_inflight_workers(str(tmp_repo)) == 0
+        write_status_file(
+            tmp_repo,
+            "pendsha1",
+            STATUS_PENDING,
+            session_id="sess-p",
+            started_at=int(time.time()),
+        )
+        assert rr._count_inflight_workers(str(tmp_repo)) == 1
+
+    def test_inflight_excludes_stale_pending(self, tmp_repo):
+        """超龄 pending（无 pid）由 sweep 处置，不计入闸门。"""
+        from zephyr.governance.audit import reconcile_runner as rr
+        from zephyr.governance.audit.reconcile_runner import STATUS_PENDING, write_status_file
+
+        stale_started = int(time.time()) - int(rr._PENDING_DEAD_THRESHOLD_SECONDS) - 10
+        write_status_file(
+            tmp_repo,
+            "stalesha1",
+            STATUS_PENDING,
+            session_id="sess-s",
+            started_at=stale_started,
+        )
+        assert rr._count_inflight_workers(str(tmp_repo)) == 0
+
+    def test_inflight_dedups_registry_and_status(self, tmp_repo, monkeypatch):
+        """注册表 worker 与同源 pending status 按 sha8 去重（防双记）。"""
+        import zephyr.security.access_control.session_concurrency as sc
+        from zephyr.governance.audit import reconcile_runner as rr
+        from zephyr.governance.audit.reconcile_runner import STATUS_PENDING, write_status_file
+
+        class _FakeSess:
+            session_id = "worker-abc12345-4321"
+
+        class _FakeRegistry:
+            def __init__(self, _root):
+                pass
+
+            def list_active(self):
+                return [_FakeSess()]
+
+        monkeypatch.setattr(sc, "SessionRegistry", _FakeRegistry)
+
+        # 同一 sha8 的 pending status——与注册表条目同源，不得双记
+        write_status_file(
+            tmp_repo,
+            "abc12345deadbeef",
+            STATUS_PENDING,
+            session_id="sess-x",
+            started_at=int(time.time()),
+        )
+        assert rr._count_inflight_workers(str(tmp_repo)) == 1
+        # 不同 sha8 的 pending——合计 2
+        write_status_file(
+            tmp_repo,
+            "fff99900deadbeef",
+            STATUS_PENDING,
+            session_id="sess-y",
+            started_at=int(time.time()),
+        )
+        assert rr._count_inflight_workers(str(tmp_repo)) == 2
+
+    def test_launch_lock_contention_failopen_and_release(self, tmp_repo, monkeypatch):
+        """文件锁互斥：持锁期间第二获取者超时降级（yield False），释放后恢复可获。"""
+        from zephyr.governance.audit import reconcile_runner as rr
+
+        monkeypatch.setattr(rr, "_LAUNCH_LOCK_TIMEOUT_SECONDS", 0.3)
+        with rr._acquire_launch_lock(tmp_repo) as first:
+            assert first is True
+            with rr._acquire_launch_lock(tmp_repo) as second:
+                assert second is False, "持锁期间第二获取者应超时降级 fail-open"
+        with rr._acquire_launch_lock(tmp_repo) as third:
+            assert third is True, "锁释放后应恢复可获取"
+
+    def test_launch_skips_when_inflight_at_limit(self, tmp_repo, monkeypatch):
+        """TOCTOU 回归锚：新鲜 pending status 计入 inflight——旧口径（仅注册表）
+        在本场景返回 0 会放行 spawn（A/B 重叠事故），新口径达限必 skipped 零 spawn。"""
+        from zephyr.governance.audit import reconcile_runner as rr
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_PENDING,
+            launch_reconcile_async,
+            write_status_file,
+        )
+
+        monkeypatch.setattr(rr, "MAX_CONCURRENT_WORKERS", 1)
+        # 另一 launcher 刚在锁内写下的新鲜 pending（无 worker_pid——spawn 前窗口）
+        write_status_file(
+            tmp_repo,
+            "busysha111",
+            STATUS_PENDING,
+            session_id="sess-busy",
+            started_at=int(time.time()),
+        )
+
+        spawned: list = []
+
+        class FakeProc:
+            pid = 77777
+
+        def fake_popen(*args, **kwargs):
+            spawned.append(1)
+            return FakeProc()
+
+        monkeypatch.setattr(subprocess, "Popen", fake_popen)
+
+        result = launch_reconcile_async(tmp_repo, "newsha222", "sess-new", ["d:/fake.py"])
+        assert result["status"] == "skipped"
+        assert spawned == [], "达限必须零 spawn"
+
+
+
+# ---------------------------------------------------------------------------
 # query_reconcile_status
 # ---------------------------------------------------------------------------
 

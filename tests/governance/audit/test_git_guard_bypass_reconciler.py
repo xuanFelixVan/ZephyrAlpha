@@ -19,6 +19,8 @@
 4. 窗口内 reset 多于审计记录 → warn（弱信号：部分绕过）
 5. 首次 commit（无 HEAD~1）→ skip
 6. reconciler 异常降级为 warn（永不抛异常）
+7. same-sha 自指 reset（reset --hard HEAD）→ 排除不计，skip+排除留痕
+   （CAND-GOVSEC-001 附修 2026-08-23；场景 2-4 用影子 commit+回滚构造真实移动 reset）
 
 测试隔离: 用 tmp_path 临时 git 仓库，构造 reflog + 审计日志场景。
 """
@@ -98,11 +100,26 @@ def _make_commit(repo_dir: Path, msg: str, filename: str = "file2.py") -> None:
 
 
 def _do_reset_hard(repo_dir: Path) -> None:
-    """执行一次真实 reset --hard（产生 reflog reset 条目）。"""
+    """执行一次真实移动 HEAD 的 reset --hard（old≠new sha，产生有效 reflog reset 条目）。
+
+    构造：影子 commit + ``reset --hard HEAD~1`` 回滚（绕过 alias 直调 git，模拟绕过场景）。
+    CAND-GOVSEC-001 附修（2026-08-23）后 same-sha 自指 reset（如 ``reset --hard HEAD``）
+    被排除不计——测试必须用影子 commit 构造真实移动才能产生有效信号。
+    """
     env = _git_env()
-    # 绕过 alias 直接调 git（模拟绕过场景）
+    # 影子 commit（将被回滚——确保后续 reset 是真实移动而非 same-sha 自指）
+    (repo_dir / "_shadow.py").write_text(f"# shadow {time.time_ns()}\n", encoding="utf-8")
+    subprocess.run(["git", "add", "_shadow.py"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
-        ["git", "-c", "alias.reset=", "reset", "--hard", "HEAD"],
+        ["git", "commit", "-m", "shadow", "--no-verify"],
+        cwd=str(repo_dir),
+        capture_output=True,
+        env=env,
+        check=True,
+    )
+    # 绕过 alias 直接调 git（模拟绕过场景），真实移动 HEAD
+    subprocess.run(
+        ["git", "-c", "alias.reset=", "reset", "--hard", "HEAD~1"],
         cwd=str(repo_dir),
         capture_output=True,
         env=env,
@@ -142,7 +159,7 @@ class TestGitGuardBypassReconciler:
 
         result = spec.reconcile(["file2.py"], "sess-test")
         assert result.action == "skip", f"无 reset 应 skip: {result.detail}"
-        assert "无 reset" in result.detail
+        assert "无有效 reset" in result.detail
 
     def test_reset_all_audited_clean(self, tmp_path: Path) -> None:
         """窗口内 reset 全部被审计 → clean。"""
@@ -211,6 +228,31 @@ class TestGitGuardBypassReconciler:
         result = spec.reconcile(["file2.py"], "sess-test")
         assert result.action == "warn", f"部分绕过应 warn: {result.detail}"
         assert "差值" in result.detail or "部分" in result.detail or ">" in result.detail
+
+    def test_same_sha_reset_excluded_no_false_positive(self, tmp_path: Path) -> None:
+        """CAND-GOVSEC-001 附修（2026-08-23）回归锚：same-sha 自指 reset 排除——误报治本。
+
+        ``git reset --hard HEAD`` / ``git reset -q`` 产生 ``reset: moving to`` reflog
+        条目但 HEAD 未移动、工作区零破坏（事故 session 的 ``git reset -q`` 曾触发
+        本 reconciler 误报）。排除后：窗口内仅有 same-sha reset 且无审计 → skip
+        （而非 warn），detail 留痕排除计数供观测。
+        """
+        _init_repo(tmp_path)
+        env = _git_env()
+        # 绕过 alias 直调 git，same-sha 自指 reset（HEAD→HEAD，零移动零破坏）
+        subprocess.run(
+            ["git", "-c", "alias.reset=", "reset", "--hard", "HEAD"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            env=env,
+            check=True,
+        )
+        _make_commit(tmp_path, "second")  # 产生 HEAD~1 窗口（窗口覆盖上述 reset）
+
+        spec = make_git_guard_bypass_reconciler(_make_gateway(tmp_path))
+        result = spec.reconcile(["file2.py"], "sess-test")
+        assert result.action == "skip", f"same-sha reset 不应告警: {result.detail}"
+        assert "已排除 1 次 same-sha" in result.detail
 
     def test_first_commit_skip(self, tmp_path: Path) -> None:
         """首次 commit（无 HEAD~1）→ skip。"""

@@ -762,6 +762,50 @@ def test_sweep_skips_recent_dirs():
 
 
 # ---------------------------------------------------------------------------
+# CAND-GOVSEC-001 ③（2026-08-23 src 误删取证 §5.4）：sweep 删除遥测前置
+# ---------------------------------------------------------------------------
+def test_log_worktree_delete_begin_phase_with_stack(tmp_path):
+    """phase="begin" + with_stack=True：删除发起前落盘（含调用栈）——删除进行中
+    崩溃/误删也有「谁发起了删除」现场可查。begin/done 成对出现；只有 begin 无
+    done = 删除未完成即中断的强信号。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _log_worktree_delete
+
+    _log_worktree_delete(
+        "sess-tel-begin",
+        "sweep",
+        tmp_path / ".aidrafts" / "sess-tel-begin",
+        tmp_path,
+        phase="begin",
+        with_stack=True,
+    )
+    log_file = tmp_path / ".runtime" / "worktree_ops_log.jsonl"
+    assert log_file.is_file(), "begin 遥测未落盘"
+    entries = [json.loads(ln) for ln in log_file.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    assert len(entries) == 1
+    e = entries[0]
+    assert e["op"] == "worktree_delete"
+    assert e["phase"] == "begin"
+    assert e["session_id"] == "sess-tel-begin"
+    assert e["source"] == "sweep"
+    assert "stack" in e, "with_stack=True 必须带调用栈"
+    assert "test_log_worktree_delete_begin_phase_with_stack" in e["stack"]
+
+
+def test_log_worktree_delete_done_phase_default_no_stack(tmp_path):
+    """默认 phase="done" 不带调用栈（既有行为不回归——begin/done 成对语义）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _log_worktree_delete
+
+    _log_worktree_delete("sess-tel-done", "sweep", tmp_path / "x", tmp_path)
+    log_file = tmp_path / ".runtime" / "worktree_ops_log.jsonl"
+    entries = [json.loads(ln) for ln in log_file.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    assert len(entries) == 1
+    e = entries[0]
+    assert e["phase"] == "done"
+    assert "stack" not in e, "done 相位默认不应带调用栈"
+
+
+
+# ---------------------------------------------------------------------------
 # P3.5 测试：age-based force-clean + quarantine ref（ARCH-GIT-CALL-BUDGET P3.5，2026-07-20）
 # 验证 _quarantine_branch_ref / _sweep_quarantine_refs / force_clean 逻辑
 # ---------------------------------------------------------------------------

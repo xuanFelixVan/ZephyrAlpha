@@ -38,10 +38,12 @@ from scripts.ops_guard import (  # noqa: E402
     DeleteBlockedError,
     _inprocess_judge,
     audit_delete,
+    get_audit_stats,
     get_reconciler_context,
     guard_remove,
     guard_rmtree,
     install_inprocess_enforcement,
+    install_inprocess_enforcement_audit_only,
     prune_recycle_bin,
     reset_reconciler_context,
     set_reconciler_context,
@@ -222,12 +224,17 @@ class TestReconcilerContextEnforcement:
 # 3. in-process 补丁（worker 进程裸 stdlib 删除拦截）
 # ---------------------------------------------------------------------------
 @pytest.fixture()
-def _restore_primitives():
+def _restore_primitives(monkeypatch):
     """补丁进程级——测试后恢复原始原语防污染。
 
     使用官方 uninstall_inprocess_enforcement()（而非手动恢复），
     确保 _ORIG_PRIMITIVES 字典被正确清空，避免二次安装时原语链损坏。
+    setup 段剥离 conftest 推广期 audit-only 环境（CAND-GOVSEC-001 ②）
+    并回到未装净态——本文件多数用例断言硬拦语义，观测模式由
+    TestAuditOnlyMode 专项覆盖。
     """
+    monkeypatch.delenv(ops_guard_mod.AUDIT_ONLY_ENV, raising=False)
+    uninstall_inprocess_enforcement()
     yield
     uninstall_inprocess_enforcement()
 
@@ -297,6 +304,57 @@ class TestInprocessEnforcement:
         assert after["allow"] - before["allow"] == 1
         assert after["block"] - before["block"] == 1
         assert after["audit_failed"] == before["audit_failed"]  # 零落盘失败=覆盖率 100%
+
+
+# ---------------------------------------------------------------------------
+# 3c. audit-only 观测模式（CAND-GOVSEC-001 ② 推广配套，2026-08-23）
+# ---------------------------------------------------------------------------
+@pytest.mark.usefixtures("_restore_primitives")
+class TestAuditOnlyMode:
+    """观测模式（ZEPHYR_OPS_GUARD_AUDIT_ONLY=1）：判定应拦的目标落
+    inprocess_would_block 审计 + would_block 计数，实际放行——
+    推广期「先补仪表化盲区、暂不硬拦」的零误伤证据层。"""
+
+    def test_audit_only_would_block_not_raise(self, tmp_path, monkeypatch):
+        """保护区裸删：观测模式放行执行 + would_block 计数 + 专项审计落盘。"""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        monkeypatch.setenv(ops_guard_mod.AUDIT_ONLY_ENV, "1")
+        install_inprocess_enforcement()
+        victim = tmp_path / "src" / "pkg" / "x.py"
+        victim.parent.mkdir(parents=True)
+        victim.write_text("x", encoding="utf-8")
+        before = get_audit_stats()
+        os.remove("src/pkg/x.py")  # 保护区裸删——观测模式不抛 DeleteBlockedError
+        assert not victim.exists(), "观测模式应实际放行"
+        after = get_audit_stats()
+        assert after["would_block"] - before["would_block"] == 1
+        assert after["block"] == before["block"], "观测模式不应计入硬拦"
+        entries = _read_audit(tmp_path)
+        assert any(e.get("action") == "inprocess_would_block" for e in entries), (
+            "观测模式的应拦事件未落 inprocess_would_block 审计"
+        )
+
+    def test_audit_only_env_unset_restores_hard_block(self, tmp_path, monkeypatch):
+        """env 非 1（fixture 已剥离）→ 维持硬拦语义（推广后可翻硬拦的回归锚）。"""
+        monkeypatch.chdir(tmp_path)
+        install_inprocess_enforcement()
+        with pytest.raises(DeleteBlockedError):
+            os.remove("src/zephyr/__init__.py")
+
+    def test_helper_sets_env_and_installs_idempotent(self, monkeypatch):
+        """推广入口 helper：setdefault 落 env + 幂等安装。"""
+        monkeypatch.delenv(ops_guard_mod.AUDIT_ONLY_ENV, raising=False)
+        assert install_inprocess_enforcement_audit_only() is True
+        assert os.environ.get(ops_guard_mod.AUDIT_ONLY_ENV) == "1"
+        assert install_inprocess_enforcement_audit_only() is False  # 已装幂等
+
+    def test_helper_respects_explicit_enforce_env(self, monkeypatch):
+        """宿主显式 =0（硬拦配置）不被 helper 的 setdefault 覆盖。"""
+        monkeypatch.setenv(ops_guard_mod.AUDIT_ONLY_ENV, "0")
+        assert install_inprocess_enforcement_audit_only() is True
+        assert os.environ.get(ops_guard_mod.AUDIT_ONLY_ENV) == "0"
+
 
 
 # ---------------------------------------------------------------------------
